@@ -80,6 +80,18 @@ namespace System.Windows.Forms
 			}
 		}
 
+		internal enum ItemNavigation
+		{
+			First,
+			Last,
+			Next,
+			Previous,
+			NextPage,
+			PreviousPage,
+			PreviousColumn,
+			NextColumn
+		}
+
 		private BorderStyle border_style;
 		private int column_width;
 		private DrawMode draw_mode;
@@ -153,7 +165,7 @@ namespace System.Windows.Forms
 
 			/* Events */
 			MouseDown += new MouseEventHandler (OnMouseDownLB);
-			
+			KeyDown += new KeyEventHandler (OnKeyDownLB);			
 
 			UpdateFormatString ();
 		}
@@ -586,10 +598,6 @@ namespace System.Windows.Forms
 			else {
 				int which_page;
 
-				if (listbox_info.page_size == 0) {
-					listbox_info.page_size = 1;
-				}
-
 				which_page = index / listbox_info.page_size;
 				rect.Y = (index % listbox_info.page_size) * ItemHeight;
 				rect.X = which_page * ColumnWidthInternal;
@@ -682,9 +690,7 @@ namespace System.Windows.Forms
 			UpdateInternalClientRect (ClientRectangle);
 			Controls.Add (vscrollbar_ctrl);
 			Controls.Add (hscrollbar_ctrl);
-
-			if (Sorted)
-				Sort ();
+			UpdateItemInfo (false, -1, -1);
 		}
 
 		protected override void OnHandleDestroyed (EventArgs e)
@@ -824,8 +830,11 @@ namespace System.Windows.Forms
 			if (listbox_info.show_horizontalsb)
 				listbox_info.textdrawing_rect.Height -= hscrollbar_ctrl.Height;
 
-			//listbox_info.page_size = listbox_info.client_rect.Height / listbox_info.item_height;
 			listbox_info.page_size = listbox_info.textdrawing_rect.Height / listbox_info.item_height;
+
+			if (listbox_info.page_size == 0) {
+				listbox_info.page_size = 1;
+			}
 
 			/* Adjust size to visible the maxim number of displayable items */
 			if (IntegralHeight == true) {
@@ -846,9 +855,6 @@ namespace System.Windows.Forms
 					Refresh ();
 				}
 			}
-
-			LBoxInfo.last_item = LastVisibleItem ();
-
 		}
 
 		internal void Draw (Rectangle clip)
@@ -870,7 +876,7 @@ namespace System.Windows.Forms
 				Rectangle item_rect;
 				DrawItemState state = DrawItemState.None;
 
-				for (int i = LBoxInfo.top_item; i < LBoxInfo.last_item; i++) {
+				for (int i = LBoxInfo.top_item; i <= LBoxInfo.last_item; i++) {
 					item_rect = GetItemDisplayRectangle (i, LBoxInfo.top_item);
 
 					if (clip.IntersectsWith (item_rect) == false)
@@ -933,6 +939,9 @@ namespace System.Windows.Forms
 			int top_y = LBoxInfo.textdrawing_rect.Y + LBoxInfo.textdrawing_rect.Height;
 			int i = 0;
 
+			if (LBoxInfo.top_item >= Items.Count)
+				return LBoxInfo.top_item;
+
 			for (i = LBoxInfo.top_item; i < Items.Count; i++) {
 
 				item_rect = GetItemDisplayRectangle (i, LBoxInfo.top_item);
@@ -944,19 +953,216 @@ namespace System.Windows.Forms
 				else {
 					if (IntegralHeight) {
 						if (item_rect.Y + item_rect.Height > top_y) {
-							return i;
+							return i - 1;
 						}
 					}
 					else {
-						if (item_rect.Y > top_y)
-							return i;
+						if (item_rect.Y + item_rect.Height > top_y)
+							return i - 1;
 					}
 				}
 			}
-
-			return i;
+			return i - 1;
 		}
 
+		private void UpdatedTopItem ()
+		{
+			if (multicolumn) {
+				int col = (LBoxInfo.top_item / LBoxInfo.page_size);
+				hscrollbar_ctrl.Value = col;
+			}				
+			else {
+				if (LBoxInfo.top_item > vscrollbar_ctrl.Maximum)
+					vscrollbar_ctrl.Value = vscrollbar_ctrl.Maximum;
+				else
+					vscrollbar_ctrl.Value = LBoxInfo.top_item;
+			}
+		}
+
+		private void NavigateItem (ItemNavigation navigation)
+		{
+			int highlighted_item = SelectedIndex;
+			int page_size, columns;
+
+			if (multicolumn) {
+				columns = LBoxInfo.textdrawing_rect.Width / ColumnWidthInternal; 
+				page_size = columns * LBoxInfo.page_size;
+				if (page_size == 0) {
+					page_size = LBoxInfo.page_size;
+				}
+			} else {
+				page_size = LBoxInfo.page_size;	
+			}
+
+			switch (navigation) {
+
+			case ItemNavigation.PreviousColumn: {
+				if (highlighted_item - LBoxInfo.page_size < 0) {
+					return;
+				}
+
+				if (highlighted_item - LBoxInfo.page_size < LBoxInfo.top_item) {
+					LBoxInfo.top_item = highlighted_item - LBoxInfo.page_size;
+					UpdatedTopItem ();
+				}
+					
+				SelectedIndex = highlighted_item - LBoxInfo.page_size;
+				break;
+			}
+			
+			case ItemNavigation.NextColumn: {
+				if (highlighted_item + LBoxInfo.page_size >= Items.Count) {
+					return;
+				}
+
+				if (highlighted_item + LBoxInfo.page_size > LBoxInfo.last_item) {
+					LBoxInfo.top_item = highlighted_item;
+					UpdatedTopItem ();
+				}
+					
+				SelectedIndex = highlighted_item + LBoxInfo.page_size;					
+				break;
+			}
+
+			case ItemNavigation.First: {
+				LBoxInfo.top_item = 0;
+				SelectedIndex  = 0;
+				UpdatedTopItem ();
+				break;
+			}
+
+			case ItemNavigation.Last: {
+
+				if (Items.Count < LBoxInfo.page_size) {
+					LBoxInfo.top_item = 0;
+					SelectedIndex  = Items.Count - 1;
+					UpdatedTopItem ();
+				} else {
+					LBoxInfo.top_item = Items.Count - LBoxInfo.page_size;
+					SelectedIndex  = Items.Count - 1;
+					UpdatedTopItem ();
+				}
+				break;
+			}
+
+			case ItemNavigation.Next: {
+				if (highlighted_item + 1 < Items.Count) {	
+					if (highlighted_item + 1 > LBoxInfo.last_item) {
+						LBoxInfo.top_item++;
+						UpdatedTopItem ();						
+					}
+					SelectedIndex  = highlighted_item + 1;
+				}
+				break;
+			}
+
+			case ItemNavigation.Previous: {
+				if (highlighted_item > 0) {						
+					if (highlighted_item - 1 < LBoxInfo.top_item) {							
+						LBoxInfo.top_item--;
+						UpdatedTopItem ();
+					}
+					SelectedIndex = highlighted_item - 1;
+				}					
+				break;
+			}
+
+			case ItemNavigation.NextPage: {
+				if (Items.Count < page_size) {
+					NavigateItem (ItemNavigation.Last);
+					return;
+				}
+
+				if (highlighted_item + page_size - 1 >= Items.Count) {
+					LBoxInfo.top_item = Items.Count - page_size;
+					UpdatedTopItem ();
+					SelectedIndex = Items.Count - 1;						
+				}
+				else {
+					if (highlighted_item + page_size - 1  > LBoxInfo.last_item) {
+						LBoxInfo.top_item = highlighted_item;
+						UpdatedTopItem ();
+					}
+					
+					SelectedIndex = highlighted_item + page_size - 1;						
+				}
+					
+				break;
+			}			
+
+			case ItemNavigation.PreviousPage: {
+					
+				if (highlighted_item - (LBoxInfo.page_size - 1) <= 0) {
+																		
+					LBoxInfo.top_item = 0;
+					vscrollbar_ctrl.Value = LBoxInfo.top_item;
+					SelectedIndex = 0;					
+				}
+				else { 
+					if (highlighted_item - (LBoxInfo.page_size - 1)  < LBoxInfo.top_item) {
+						LBoxInfo.top_item = highlighted_item - (LBoxInfo.page_size - 1);
+						vscrollbar_ctrl.Value = LBoxInfo.top_item;
+					}
+					
+					SelectedIndex = highlighted_item - (LBoxInfo.page_size - 1);
+				}
+					
+				break;
+			}		
+			default:
+				break;
+				
+			}		
+		}
+
+		private void OnKeyDownLB (object sender, KeyEventArgs e) 			
+		{	
+			if (SelectionMode == SelectionMode.None)	// No keyboard navigation
+				return;
+
+			switch (e.KeyCode) {			
+				case Keys.Home:
+					NavigateItem (ItemNavigation.First);
+					break;	
+
+				case Keys.End:
+					NavigateItem (ItemNavigation.Last);
+					break;	
+
+				case Keys.Up:
+					NavigateItem (ItemNavigation.Previous);
+					break;				
+	
+				case Keys.Down:				
+					NavigateItem (ItemNavigation.Next);
+					break;
+				
+				case Keys.PageUp:
+					NavigateItem (ItemNavigation.PreviousPage);
+					break;				
+	
+				case Keys.PageDown:				
+					NavigateItem (ItemNavigation.NextPage);
+					break;
+
+				case Keys.Right:
+					if (multicolumn == true) {
+						NavigateItem (ItemNavigation.NextColumn);
+					}
+					break;				
+	
+				case Keys.Left:			
+					if (multicolumn == true) {	
+						NavigateItem (ItemNavigation.PreviousColumn);
+					}
+					break;
+				
+
+				default:
+					break;
+				}
+
+		}
 
 		internal virtual void OnMouseDownLB (object sender, MouseEventArgs e)
     		{
@@ -1131,11 +1337,12 @@ namespace System.Windows.Forms
 				}
 			}
 
-			if (sorted)
+			if (sorted) 
 				Sort ();
 
 			SelectedItems.ReCreate ();
 			SelectedIndices.ReCreate ();
+			LBoxInfo.last_item = LastVisibleItem ();
 
 			UpdateShowHorizontalScrollBar ();
 			Refresh ();

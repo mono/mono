@@ -123,7 +123,7 @@ namespace System.Windows.Forms {
 		}
 
 		protected override bool ProcessDialogKey(Keys keyData) {
-			throw new NotImplementedException();
+			return base.ProcessDialogKey (keyData);
 		}
 
 		protected override bool ProcessMnemonic(char charCode) {

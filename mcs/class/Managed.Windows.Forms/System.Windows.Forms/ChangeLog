@@ -1,3 +1,8 @@
+2005-01-112  Jordi Mas i Hernandez <jordi@ximian.com>
+
+	* ContainerControl.cs, ListControl.cs, ListBox.cs: keyboard navigation and
+	bug fixes
+
 2005-01-12  Peter Bartok  <pbartok@novell.com>
 
 	* Control.cs:

@@ -101,7 +101,7 @@ namespace System.Windows.Forms
 
 		protected override bool IsInputKey (Keys keyData)
 		{
-			 throw new NotImplementedException ();
+			return base.IsInputKey (keyData);
 		}
 
 		protected override void OnBindingContextChanged (EventArgs e)
