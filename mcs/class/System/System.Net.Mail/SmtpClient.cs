@@ -214,26 +214,27 @@ namespace System.Net.Mail {
 			if (IsError (status))
 				throw new SmtpException (status.StatusCode);
 
-			// Send RCPT TO: for all recipients in the To list
+			// Send RCPT TO: for all recipients
+			SmtpFailedRecipientsException sfre = new SmtpFailedRecipientsException ();
+
 			for (int i = 0; i < message.To.Count; i += 1) {
 				status = SendCommand (Command.RcptTo, message.To [i].Address);
-				if (IsError (status))
-					throw new SmtpException (status.StatusCode);
+				if (IsError (status)) 
+					sfre.AddFailedRecipient (new SmtpException (status.StatusCode), message.To [i].Address);
 			}
-
-			// Send RCPT TO: for all recipients in the CC list
 			for (int i = 0; i < message.CC.Count; i += 1) {
 				status = SendCommand (Command.RcptTo, message.CC [i].Address);
-				if (IsError (status))
-					throw new SmtpException (status.StatusCode);
+				if (IsError (status)) 
+					sfre.AddFailedRecipient (new SmtpException (status.StatusCode), message.CC [i].Address);
 			}
-
-			// Send RCPT TO: for all recipients in the Bcc list
 			for (int i = 0; i < message.Bcc.Count; i += 1) {
 				status = SendCommand (Command.RcptTo, message.Bcc [i].Address);
-				if (IsError (status))
-					throw new SmtpException (status.StatusCode);
+				if (IsError (status)) 
+					sfre.AddFailedRecipient (new SmtpException (status.StatusCode), message.Bcc [i].Address);
 			}
+
+			if (sfre.FailedRecipients.Length > 0)
+				throw sfre;
 
 			// DATA
 			status = SendCommand (Command.Data);

@@ -1,3 +1,7 @@
+2004-09-10  Tim Coleman <tim@timcoleman.com>
+	* SmtpClient.cs SmtpFailedRecipientsException.cs:
+		Add failed recipient exception handling.
+
 2004-09-09  Tim Coleman <tim@timcoleman.com>
 	* AttachmentCollection.cs MailAddressCollection.cs:
 		New classes
