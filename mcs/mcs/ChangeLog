@@ -1,3 +1,7 @@
+2003-11-30  Zoltan Varga  <vargaz@freemail.hu>
+
+	* typemanager.cs: Fix lookup of GetNamespaces.
+
 2003-11-29  Miguel de Icaza  <miguel@ximian.com>
 
 	* expression.cs: Removed redundant line.
