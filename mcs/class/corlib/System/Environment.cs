@@ -22,6 +22,15 @@ namespace System
 {
 	public sealed class Environment
 	{
+		/*
+		 * This is the version number of the corlib-runtime interface. When
+		 * making changes to this interface (by changing the layout
+		 * of classes the runtime knows about, changing icall semantics etc),
+		 * increment this variable. Also increment the
+		 * pair of this variable in the runtime in metadata/verify.c.
+		 */
+		private int mono_corlib_version = 1;
+
 		private Environment () {}
 
 		[MonoTODO]
