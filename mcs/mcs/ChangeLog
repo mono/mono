@@ -1,5 +1,11 @@
 2004-06-18  Marek Safar  <marek.safar@seznam.cz>
 
+	Fix bug #60219
+ 	* class.cs (ConstructorInitializer.GetOverloadedConstructor):
+ 	Don't throw exception but return null (it's sufficient now).
+
+2004-06-18  Marek Safar  <marek.safar@seznam.cz>
+
  	* typemanager.cs (GetArgumentTypes): Faster implementation.
 
 2004-06-18  Martin Baulig  <martin@ximian.com>

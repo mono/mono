@@ -3277,7 +3277,7 @@ namespace Mono.CSharp {
 				return c;
 			}
 
-			throw new InternalErrorException ();
+			return null;
 		}
 
 		//TODO: implement caching when it will be necessary
