@@ -43,6 +43,7 @@ SUBDIRS = \
 	System.DirectoryServices	\
 	System.Messaging	\
 	System.ServiceProcess \
+	System.Drawing.Design		\
 	Microsoft.Vsa			
 #	Microsoft.JScript		\
 
@@ -58,7 +59,6 @@ SUBDIRS = \
 # I wrote makefiles for them.
 
 DIST_ONLY_SUBDIRS = \
-	System.Drawing.Design		\
 	Custommarshalers		\
 	Mono.Globalization
 

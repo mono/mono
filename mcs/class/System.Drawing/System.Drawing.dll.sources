@@ -22,6 +22,7 @@ System.Drawing/ImageConverter.cs
 System.Drawing/Image.cs
 System.Drawing/ImageFormatConverter.cs
 System.Drawing/Pen.cs
+System.Drawing/Pens.cs
 System.Drawing/PointConverter.cs
 System.Drawing/Point.cs
 System.Drawing/PointF.cs
