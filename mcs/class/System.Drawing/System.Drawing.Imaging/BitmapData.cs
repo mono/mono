@@ -17,6 +17,7 @@ namespace System.Drawing.Imaging
 	public sealed class BitmapData {
 		internal int width, height, stride;
 		internal PixelFormat pixel_format;
+		internal bool own_scan0;
 		internal IntPtr address;
 		internal int reserved;
 		private	 bool bAllocated = false;
