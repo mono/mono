@@ -1,5 +1,8 @@
 2004-07-08  Zoltan Varga  <vargaz@freemail.hu>
 
+	* mini.c (handle_stack_args): Handle some corner cases. Fixes 
+	58863.
+
 	* cpu-*.md: Remove removed opcodes.
 
 	* mini.h mini.c: Move JIT icall handling to icall.c. Replace usage of
