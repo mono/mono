@@ -1,5 +1,7 @@
 2004-08-18  Zoltan Varga  <vargaz@freemail.hu>
 
+	* appdomain.c threads.c: Call GC_CreateThread on windows.
+
 	* Makefile.am (libmetadata_la_LIBADD): Avoid linking libmonoos into
 	multiple libraries since this don't work on windows.
 
