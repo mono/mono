@@ -161,10 +161,8 @@ public class CryptoStream : Stream {
 		if (_mode != CryptoStreamMode.Write)
 			throw new NotSupportedException ("cannot flush a non-writeable CryptoStream");
 
-		if (_stream != null) {
+		if (_stream != null)
 			_stream.Flush ();
-			Close ();
-		}
 	}
 
 	public override long Seek (long offset, SeekOrigin origin)

@@ -1,3 +1,8 @@
+2003-03-28  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* CryptoStream.cs: don't Close the underlying stream in FlushFinalBlock.
+	Fixes bug #40394.
+
 2003-03-03  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* RSACryptoServiceProvider.cs: Delay keypair generation event when 
