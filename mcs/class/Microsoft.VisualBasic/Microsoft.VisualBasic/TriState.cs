@@ -34,7 +34,9 @@ namespace Microsoft.VisualBasic {
 	/// When you call number-formatting functions, you can use the following enumeration 
 	/// members in your code in place of the actual values.
 	/// </summary>
+#if NET_2_0
 	[System.Serializable]
+#endif
 	public enum TriState : int {
 		False = 0,
 		UseDefault = -2,

@@ -35,7 +35,9 @@ namespace Microsoft.VisualBasic {
 	/// When you call the DateValue function, you can use the following 
 	/// enumeration members in your code in place of the actual values.
 	/// </summary>
+#if NET_2_0
 	[System.Serializable]
+#endif
 	public enum DateFormat : int {
 		/// <summary>
 		/// For real numbers, displays a date and time. If the number has no fractional part, displays only a date. If the number has no integer part, displays time only. Date and time display is determined by your computer's regional settings.

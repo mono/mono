@@ -36,7 +36,9 @@ namespace Microsoft.VisualBasic {
 	/// way strings are compared when using functions such as InStr and StrComp. 
 	/// These constants can be used anywhere in your code.
 	/// </summary>
+#if NET_2_0
 	[System.Serializable]
+#endif
 	public enum CompareMethod : int {
 		/// <summary>
 		/// Performs a binary comparison

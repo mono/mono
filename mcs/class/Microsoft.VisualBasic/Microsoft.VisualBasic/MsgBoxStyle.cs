@@ -30,8 +30,10 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 namespace Microsoft.VisualBasic {
-	[System.FlagsAttribute] 
+	[System.Flags] 
+#if NET_2_0
 	[System.Serializable]
+#endif
 	public enum MsgBoxStyle : int {
 		ApplicationModal = 0,
 		DefaultButton1 = 0,
