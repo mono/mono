@@ -3978,7 +3978,6 @@ namespace Mono.CSharp {
 			ILGenerator ig = ec.ig;
 			int arg_idx = idx;
 
-			Console.WriteLine ("Loading: " + ec.MethodIsStatic);
 			if (!ec.MethodIsStatic)
 				arg_idx++;
 			
