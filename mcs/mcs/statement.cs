@@ -3636,16 +3636,16 @@ namespace Mono.CSharp {
 		//
 		static MethodInfo FetchMethodGetCurrent (Type t)
 		{
-			MemberList move_next_list;
-			
-			move_next_list = TypeContainer.FindMembers (
+			MemberList get_current_list;
+
+			get_current_list = TypeContainer.FindMembers (
 				t, MemberTypes.Method,
 				BindingFlags.Public | BindingFlags.Instance,
 				Type.FilterName, "get_Current");
-			if (move_next_list.Count == 0)
+			if (get_current_list.Count == 0)
 				return null;
 
-			foreach (MemberInfo m in move_next_list){
+			foreach (MemberInfo m in get_current_list){
 				MethodInfo mi = (MethodInfo) m;
 				Type [] args;
 
@@ -3799,7 +3799,7 @@ namespace Mono.CSharp {
 			
 			mi = TypeContainer.FindMembers (t, MemberTypes.Method,
 							BindingFlags.Public | BindingFlags.NonPublic |
-							BindingFlags.Instance,
+							BindingFlags.Instance | BindingFlags.DeclaredOnly,
 							FilterEnumerator, hm);
 
 			if (mi.Count == 0)
@@ -3817,8 +3817,11 @@ namespace Mono.CSharp {
 		{
 			ForeachHelperMethods hm = new ForeachHelperMethods (ec);
 
-			if (TryType (t, hm))
-				return hm;
+			for (Type tt = t; tt != null && tt != TypeManager.object_type;){
+				if (TryType (tt, hm))
+					return hm;
+				tt = tt.BaseType;
+			}
 
 			//
 			// Now try to find the method in the interfaces

@@ -1,5 +1,11 @@
 2003-11-27  Miguel de Icaza  <miguel@ximian.com>
 
+	* statement.cs (Foreach.TryType): Use DeclaredOnly to find the
+	GetEnumerator method.
+
+	(ProbeCollectionType): Iterate starting at the most specific type
+	upwards looking for a GetEnumerator
+
 	* expression.cs: Shift count can be up to 31 for int/uint and 63
 	for long/ulong.
 
