@@ -24,6 +24,12 @@
 //
 //
 // $Log: ControlPaint.cs,v $
+// Revision 1.5  2004/10/13 03:15:16  pbartok
+// - Fixed Dark(), DarkDark(), Light() and LightLight() methods to match MS
+//   documentation. They need to return defined colors if the passed
+//   color matches the configured control color. Thanks to John BouAntoun for
+//   pointing this out.
+//
 // Revision 1.4  2004/09/28 18:44:25  pbartok
 // - Streamlined Theme interfaces:
 //   * Each DrawXXX method for a control now is passed the object for the
@@ -206,6 +212,10 @@ namespace System.Windows.Forms {
 		}
 
 		public static Color Light(Color baseColor) {
+			if (baseColor == ThemeEngine.Current.ColorButtonFace) {
+				return ThemeEngine.Current.ColorButtonLight;
+			}
+
 			return Light( baseColor, 10.0f);
 		}
 
@@ -218,21 +228,34 @@ namespace System.Windows.Forms {
 		}
 
 		public static Color LightLight(Color baseColor) {
+			if (baseColor == ThemeEngine.Current.ColorButtonFace) {
+				return ThemeEngine.Current.ColorButtonHilight;
+			}
+
 			return Light( baseColor, 20.0f);
 		}
 
 		public static Color Dark(Color baseColor) {
+			if (baseColor == ThemeEngine.Current.ColorButtonFace) {
+				return ThemeEngine.Current.ColorButtonShadow;
+			}
+
 			return Dark(baseColor, 10.0f);
 		}
 
 		public static Color Dark(Color baseColor,float percOfDarkDark) {
 			int H, I, S;
+
 			ControlPaint.Color2HBS(baseColor, out H, out I, out S);
 			int NewIntensity = Math.Max(0, I - ((255*(int)percOfDarkDark) / 100));
 			return ControlPaint.HBS2Color(H, NewIntensity, S);
 		}
 
 		public static Color DarkDark(Color baseColor) {
+			if (baseColor == ThemeEngine.Current.ColorButtonFace) {
+				return ThemeEngine.Current.ColorButtonDkShadow;
+			}
+
 			return Dark(baseColor, 20.0f);
 		}
 
