@@ -207,10 +207,19 @@ namespace Mono.CSharp {
 		// Given an expression, if the expression is a valid attribute-argument-expression
 		// returns an object that can be used to encode it, or null on failure.
 		//
-		public static bool GetAttributeArgumentExpression (Expression e, Location loc, out object result)
+		public static bool GetAttributeArgumentExpression (Expression e, Location loc, Type arg_type, out object result)
 		{
-			if (e is Constant) {
-				result = ((Constant) e).GetValue ();
+			Constant constant = e as Constant;
+			if (constant != null) {
+				if (e.Type != arg_type) {
+					constant = Const.ChangeType (loc, constant, arg_type);
+					if (constant == null) {
+						result = null;
+						Error_AttributeArgumentNotValid (loc);
+						return false;
+					}
+				}
+				result = constant.GetValue ();
 				return true;
 			} else if (e is TypeOf) {
 				result = ((TypeOf) e).TypeArg;
@@ -302,7 +311,7 @@ namespace Mono.CSharp {
 				e = a.Expr;
 
 				object val;
-				if (!GetAttributeArgumentExpression (e, Location, out val))
+				if (!GetAttributeArgumentExpression (e, Location, a.Type, out val))
 					return null;
 				
 				pos_values [i] = val;
@@ -391,38 +400,18 @@ namespace Mono.CSharp {
 						return null;
 					}
 
-					Type type = e.Type;
-					EmptyCast ecast = e as EmptyCast;
-					if ((ecast != null) && (ecast.Child is Constant))
-						e = ecast.Child;
-
-					Constant c = e as Constant;
-					if (c != null) {
-						if (type != pi.PropertyType) {
-							c = Const.ChangeType (Location, c, pi.PropertyType);
-							if (c == null)
-								return null;
-						}
-						
-						object o = c.GetValue ();
-						prop_values.Add (o);
-						
-						if (usage_attribute != null) {
-							if (member_name == "AllowMultiple")
-								usage_attribute.AllowMultiple = (bool) o;
-							if (member_name == "Inherited")
-								usage_attribute.Inherited = (bool) o;
-						}
-						
-					} else if (e is TypeOf) {
-						prop_values.Add (((TypeOf) e).TypeArg);
-					} else if (e is ArrayCreation) {
-						prop_values.Add (((ArrayCreation) e).EncodeAsAttribute());
-					} else {
-						Error_AttributeArgumentNotValid (Location);
+					object value;
+					if (!GetAttributeArgumentExpression (e, Location, pi.PropertyType, out value))
 						return null;
+
+					if (usage_attribute != null) {
+						if (member_name == "AllowMultiple")
+							usage_attribute.AllowMultiple = (bool) value;
+						if (member_name == "Inherited")
+							usage_attribute.Inherited = (bool) value;
 					}
-					
+
+					prop_values.Add (value);
 					prop_infos.Add (pi);
 					
 				} else if (member is FieldExpr) {
@@ -434,33 +423,11 @@ namespace Mono.CSharp {
 						return null;
 					}
 
-					Type type = e.Type;
-					EmptyCast ecast = e as EmptyCast;
-					if ((ecast != null) && (ecast.Child is Constant))
-						e = ecast.Child;
+ 					object value;
+ 					if (!GetAttributeArgumentExpression (e, Location, fi.FieldType, out value))
+  						return null;
 
-					//
-					// Handle charset here, and set the TypeAttributes
-
-					Constant c = e as Constant;
-					if (c != null) {
-						if (type != fi.FieldType) {
-							c = Const.ChangeType (Location, c, fi.FieldType);
-							if (c == null)
-								return null;
-						}					
-						
-						object value = c.GetValue ();
-						field_values.Add (value);
-					} else if (e is TypeOf) {
-						field_values.Add (((TypeOf) e).TypeArg);
-					} else if (e is ArrayCreation) {
-						field_values.Add (((ArrayCreation) e).EncodeAsAttribute());
-					} else {
-						Error_AttributeArgumentNotValid (Location);
-						return null;
-					}
-					
+ 					field_values.Add (value);  					
 					field_infos.Add (fi);
 				}
 			}

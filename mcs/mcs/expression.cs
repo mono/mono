@@ -6457,7 +6457,7 @@ namespace Mono.CSharp {
 				if (e is NullLiteral)
 					v = null;
 				else {
-					if (!Attribute.GetAttributeArgumentExpression (e, Location, out v))
+					if (!Attribute.GetAttributeArgumentExpression (e, Location, array_element_type, out v))
 						return null;
 				}
 				ret [i++] = v;

@@ -1,5 +1,12 @@
 2004-08-04  Marek Safar  <marek.safar@seznam.cz>
 
+	Fix bug 60333, 55971 in the more general way
+	* attribute.cs (Attribute.GetAttributeArgumentExpression):
+	Added arg_type argument for constant conversion.
+	(Attribute.Resolve): Reuse GetAttributeArgumentExpression.
+
+2004-08-04  Marek Safar  <marek.safar@seznam.cz>
+
 	Fix bug #59760
 	* class.cs (TypeContainer ): New inner classes MethodArrayList, 
 	OperatorArrayList, MethodCoreArrayList for typecontainer
