@@ -591,7 +591,7 @@ namespace Mono.CSharp.Debugger
 			LexicalBlocks = blocks;
 			NumLexicalBlocks = LexicalBlocks.Length;
 
-			LineNumbers = BuildLineNumberTable (lines);
+			LineNumbers = lines;
 			NumLineNumbers = LineNumbers.Length;
 
 			ParameterInfo[] parameters = method.GetParameters ();

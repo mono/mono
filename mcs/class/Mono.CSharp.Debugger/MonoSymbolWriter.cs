@@ -54,7 +54,7 @@ namespace Mono.CSharp.Debugger
 
 	internal class SourceMethod
 	{
-		private ArrayList _lines = new ArrayList ();
+		LineNumberEntry [] lines;
 		private ArrayList _locals;
 		private ArrayList _blocks;
 		private Stack _block_stack;
@@ -125,15 +125,8 @@ namespace Mono.CSharp.Debugger
 
 		public LineNumberEntry[] Lines {
 			get {
-				LineNumberEntry[] retval = new LineNumberEntry [_lines.Count];
-				_lines.CopyTo (retval);
-				return retval;
+				return lines;
 			}
-		}
-
-		public void AddLine (LineNumberEntry line)
-		{
-			_lines.Add (line);
 		}
 
 		public LocalVariableEntry[] Locals {
@@ -229,6 +222,47 @@ namespace Mono.CSharp.Debugger
 				return _namespace_id;
 			}
 		}
+		
+		//
+		// Passes on the lines from the MonoSymbolWriter. This method is
+		// free to mutate the lns array, and it does.
+		//
+		internal void SetLineNumbers (LineNumberEntry [] lns, int count)
+		{
+			int pos = 0;
+			
+			int last_offset = -1;
+			int last_row = -1;
+			for (int i = 0; i < count; i++) {
+				LineNumberEntry line = lns [i];
+
+				if (line.Offset > last_offset) {
+					if (last_row >= 0)
+						lns [pos++] = new LineNumberEntry (last_row, last_offset);
+						
+					last_row = line.Row;
+					last_offset = line.Offset;
+				} else if (line.Row > last_row) {
+					last_row = line.Row;
+				}
+			}
+			
+			lines = new LineNumberEntry [count + ((last_row >= 0) ? 1 : 0)];
+			Array.Copy (lns, lines, pos);
+			if (last_row >= 0)
+				lines [pos] = new LineNumberEntry (last_row, last_offset);
+		}
+		
+		LineNumberEntry[] BuildLineNumberTable (LineNumberEntry[] line_numbers)
+		{
+			ArrayList list = new ArrayList ();
+
+
+
+			LineNumberEntry[] retval = new LineNumberEntry [list.Count];
+			list.CopyTo (retval, 0);
+			return retval;
+		}
 	}
 
 	public class MonoSymbolWriter : IMonoSymbolWriter
@@ -239,6 +273,9 @@ namespace Mono.CSharp.Debugger
 		protected ArrayList methods = null;
 		protected Hashtable sources = null;
 		private MonoSymbolFile file = null;
+		
+		LineNumberEntry [] current_method_lines;
+		int current_method_lines_pos = 0;
 
 		internal SourceMethod[] Methods {
 			get {
@@ -270,6 +307,8 @@ namespace Mono.CSharp.Debugger
 			this.orphant_methods = new ArrayList ();
 			this.locals = new ArrayList ();
 			this.file = new MonoSymbolFile ();
+			
+			this.current_method_lines = new LineNumberEntry [50];
 		}
 
 		public void Close ()
@@ -367,8 +406,13 @@ namespace Mono.CSharp.Debugger
 			if (current_method == null)
 				return;
 
-			LineNumberEntry source_line = new LineNumberEntry (line, offset);
-			current_method.AddLine (source_line);
+			if (current_method_lines_pos == current_method_lines.Length) {
+				LineNumberEntry [] tmp = current_method_lines;
+				current_method_lines = new LineNumberEntry [current_method_lines.Length * 2];
+				Array.Copy (tmp, current_method_lines, current_method_lines_pos);
+			}
+			
+			current_method_lines [current_method_lines_pos++] = new LineNumberEntry (line, offset);
 		}
 
 		public void Initialize (IntPtr emitter, string filename, bool fFullBuild)
@@ -406,6 +450,9 @@ namespace Mono.CSharp.Debugger
 
 		public void CloseMethod ()
 		{
+			current_method.SetLineNumbers (current_method_lines, current_method_lines_pos + 1);
+			current_method_lines_pos = 0;
+			
 			current_method = null;
 		}
 
