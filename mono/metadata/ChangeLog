@@ -1,3 +1,7 @@
+2002-10-29  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* icall.c: removed get_property internal call.
+
 2002-10-25  Zoltan Varga  <vargaz@freemail.hu>
 
 	* appdomain.h domain.c: Added an ID to appdomains.
