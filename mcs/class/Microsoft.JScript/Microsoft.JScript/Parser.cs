@@ -836,7 +836,7 @@ namespace Microsoft.JScript {
 				u.operand = UnaryExpr (u);
 				return u;
 			} else if (tt == Token.INC || tt == Token.DEC) {
-				return new PostOrPrefixOperator (null, MemberExpr (parent, true), ToJSToken (tt));
+				return new PostOrPrefixOperator (parent, MemberExpr (parent, true), ToJSToken (tt), true);
 			} else if (tt == Token.ERROR) {
 				;
 			} else {
@@ -855,7 +855,7 @@ namespace Microsoft.JScript {
 				int peeked;				
 				if (((peeked = ts.PeekToken ()) == Token.INC || peeked == Token.DEC) && ts.LineNumber == line_number) {
 					int pf = ts.GetToken ();
-					return new PostOrPrefixOperator (null, pn, ToJSToken (peeked));
+					return new PostOrPrefixOperator (parent, pn, ToJSToken (peeked), false);
 				}
 				return pn;
 			}
@@ -992,7 +992,7 @@ namespace Microsoft.JScript {
 					pn = PrimaryExpr (parent);
 			} else
 				pn = PrimaryExpr (parent);
-			return MemberExprTail (parent, allow_call_syntax, pn);
+			return MemberExprTail (pn, allow_call_syntax, pn);
 		}
 
 		AST MemberExprTail (AST parent, bool allow_call_syntax, AST pn)

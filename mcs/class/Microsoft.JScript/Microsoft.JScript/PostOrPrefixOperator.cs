@@ -29,21 +29,25 @@
 //
 
 using System;
+using System.Reflection.Emit;
 
 namespace Microsoft.JScript {
 
 	public class PostOrPrefixOperator : UnaryOp {
 
+		bool prefix;
+
 		public PostOrPrefixOperator (int operatorTok)
 		{
-			throw new NotImplementedException ();
+			oper = (JSToken) operatorTok;
 		}
 
-		internal PostOrPrefixOperator (AST parent, AST operand, JSToken oper)
+		internal PostOrPrefixOperator (AST parent, AST operand, JSToken oper, bool prefix)
 		{
 			this.parent = parent;
 			this.operand = operand;
 			this.oper = oper;
+			this.prefix = prefix;
 		}
 
 		public object EvaluatePostOrPrefix (ref object v)
@@ -53,29 +57,75 @@ namespace Microsoft.JScript {
 
 		internal override bool Resolve (IdentificationTable context)
 		{
-			if (oper == JSToken.None)
-				return operand.Resolve (context);
-			else
-				throw new NotImplementedException ();
+			return operand.Resolve (context);
 		}
 
 		internal override bool Resolve (IdentificationTable context, bool no_effect)
 		{
-			if (oper == JSToken.None)
-				if (operand is Exp)
-					return ((Exp) operand).Resolve (context, no_effect);
-				else
-					return operand.Resolve (context);
+			if (operand is Exp)
+				return ((Exp) operand).Resolve (context, no_effect);
 			else
-				throw new NotImplementedException ();
+				return operand.Resolve (context);
 		}
 
 		internal override void Emit (EmitContext ec)
 		{
 			if (oper == JSToken.None)
 				operand.Emit (ec);
-			else
-				throw new NotImplementedException ();
+			else {
+				ILGenerator ig = ec.ig;
+				Type post_prefix = typeof (PostOrPrefixOperator);
+				LocalBuilder post_prefix_local = ig.DeclareLocal (post_prefix);
+				LocalBuilder tmp_obj = ig.DeclareLocal (typeof (object));
+
+				switch (this.oper) {
+				case JSToken.Increment:
+					if (prefix)
+						ig.Emit (OpCodes.Ldc_I4_3);
+					else 
+						ig.Emit (OpCodes.Ldc_I4_1);
+					break;
+				case JSToken.Decrement:
+					if (prefix)
+						ig.Emit (OpCodes.Ldc_I4_2);
+					else
+						ig.Emit (OpCodes.Ldc_I4_0);
+					break;
+				}
+
+				ig.Emit (OpCodes.Newobj, post_prefix.GetConstructor (new Type [] { typeof (int) }));
+				ig.Emit (OpCodes.Stloc, post_prefix_local);
+
+				if (operand is Identifier)
+					((Identifier) operand).EmitLoad (ec);
+				else throw new NotImplementedException ();
+
+				ig.Emit (OpCodes.Stloc, tmp_obj);
+				ig.Emit (OpCodes.Ldloc, post_prefix_local);
+				ig.Emit (OpCodes.Ldloca_S, tmp_obj);
+				ig.Emit (OpCodes.Call, post_prefix.GetMethod ("EvaluatePostOrPrefix"));
+
+				Console.WriteLine ("parent.GetType = {0}", parent.GetType ());
+			
+				// if does not appear as a global expression
+				if (prefix && !(parent is ScriptBlock)) {
+					ig.Emit (OpCodes.Dup);
+					ig.Emit (OpCodes.Stloc, tmp_obj);
+				}
+
+				if (operand is Identifier)
+					((Identifier) operand).EmitStore (ec);
+				else throw new NotImplementedException ();
+
+				//
+				// If value will be used, load the
+				// temp var that holded the value
+				// before inc/dec was evaluated
+				//
+				if (!(parent is ScriptBlock || parent is FunctionDeclaration ||
+						 parent is FunctionExpression))
+					ig.Emit (OpCodes.Ldloc, tmp_obj);
+			}
 		}
 	}
 }

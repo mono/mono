@@ -1,3 +1,12 @@
+2005-02-10  Cesar Lopez Nataren  <cnataren@novell.com>
+
+	* expression.cs: use InFuntion in proper places.
+
+	* Parser.cs: Add parameter that indicates if it's a prefix
+	operator. When building the MemberExprTail set to proper parent.
+	* PostOrPrefixOperator.cs: Partial implementation of ++ and --,
+	prefix and suffix, we assume that the operand is a variable.
+
 2005-02-09  Cesar Lopez Nataren  <cnataren@novell.com>
 
 	* expression.cs: Added method EmitStore and EmitLoad to Identifier

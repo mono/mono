@@ -284,11 +284,12 @@ namespace Microsoft.JScript {
 		
 		internal void get_default_this (ILGenerator ig)
 		{
-			if (parent == null || parent.GetType () == typeof (ScriptBlock)) {
+			if (InFunction)
+				ig.Emit (OpCodes.Ldarg_1);
+			else {
 				ig.Emit (OpCodes.Ldarg_0);
 				ig.Emit (OpCodes.Ldfld, typeof (ScriptObject).GetField ("engine"));
-			} else
-				ig.Emit (OpCodes.Ldarg_1);
+			}
 		       
 			ig.Emit (OpCodes.Call, typeof (Microsoft.JScript.Vsa.VsaEngine).GetMethod ("ScriptObjectStackTop"));
 			Type iact_obj = typeof (IActivationObject);
@@ -315,11 +316,12 @@ namespace Microsoft.JScript {
 				ig.Emit (OpCodes.Ldc_I4_0);
 				ig.Emit (OpCodes.Ldc_I4_1);
 
-				if (parent == null || parent.GetType () == typeof (ScriptBlock)) {
+				if (InFunction)
+					ig.Emit (OpCodes.Ldarg_1);
+				else {
 					ig.Emit (OpCodes.Ldarg_0);
 					ig.Emit (OpCodes.Ldfld, typeof (ScriptObject).GetField ("engine"));
-				} else
-					ig.Emit (OpCodes.Ldarg_1);
+				}
 				ig.Emit (OpCodes.Call, typeof (LateBinding).GetMethod ("CallValue"));
 			}
 		}
@@ -680,11 +682,12 @@ namespace Microsoft.JScript {
 
 		internal void get_global_scope_or_this (ILGenerator ig)
 		{
-			if (parent == null || parent.GetType () == typeof (ScriptBlock)) {
+			if (InFunction)
+				ig.Emit (OpCodes.Ldarg_1);
+			else {
 				ig.Emit (OpCodes.Ldarg_0);
 				ig.Emit (OpCodes.Ldfld, typeof (ScriptObject).GetField ("engine"));
-			} else
-				ig.Emit (OpCodes.Ldarg_1);
+			}
 
 			ig.Emit (OpCodes.Call, typeof (Microsoft.JScript.Vsa.VsaEngine).GetMethod ("ScriptObjectStackTop"));
 			Type iact_obj = typeof (IActivationObject);
