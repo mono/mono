@@ -27,6 +27,8 @@ namespace System.Data.SqlClient {
 	{
 		#region Fields
 
+		bool disposed = false;
+
 		int commandTimeout;
 		bool designTimeVisible;
 		string commandText;
@@ -368,6 +370,17 @@ namespace System.Data.SqlClient {
 			reader.Close ();	
 		}
 
+		private void Dispose (bool disposing) 
+		{
+			if (!disposed) {
+				if (disposing) {
+					// Release managed resources
+				}
+				// Release unmanaged resources
+				disposed = true;
+			}
+		}
+
 		public int ExecuteNonQuery ()
 		{
 			ValidateCommand ("ExecuteNonQuery");
@@ -406,7 +419,7 @@ namespace System.Data.SqlClient {
 			catch (TdsTimeoutException e) {
 				throw SqlException.FromTdsInternalException ((TdsInternalException) e);
 			}
-			
+		
 			Connection.DataReader = new SqlDataReader (this);
 			return Connection.DataReader;
 		}
@@ -513,6 +526,7 @@ namespace System.Data.SqlClient {
 		void IDisposable.Dispose ()
 		{
 			Dispose (true);
+			GC.SuppressFinalize (this);
 		}
 
 		public void Prepare ()

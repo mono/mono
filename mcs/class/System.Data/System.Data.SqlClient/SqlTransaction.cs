@@ -17,6 +17,7 @@ namespace System.Data.SqlClient {
 	{
 		#region Fields
 
+		bool disposed = false;
 		SqlConnection connection;
 		IsolationLevel isolationLevel;
 		bool isOpen;
@@ -67,11 +68,18 @@ namespace System.Data.SqlClient {
 
 		private void Dispose (bool disposing)
 		{
+			if (!disposed)  {
+				if (disposing) {
+					Rollback ();
+				}
+				disposed = true;
+			}
 		}
 
 		public void Dispose ()
 		{
 			Dispose (true);
+			GC.SuppressFinalize (this);
 		}
 
 		public void Rollback ()

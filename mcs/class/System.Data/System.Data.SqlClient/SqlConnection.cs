@@ -24,11 +24,11 @@ using System.Text;
 using System.Xml;
 
 namespace System.Data.SqlClient {
-	[MonoTODO ("Implement the connection timeout (on the protocol side?)")]
 	[DefaultEvent ("InfoMessage")]
 	public sealed class SqlConnection : Component, IDbConnection, ICloneable	
 	{
 		#region Fields
+		bool disposed = false;
 
 		// The set of SQL connection pools
 		static Hashtable SqlConnectionPools = new Hashtable ();
@@ -281,7 +281,11 @@ namespace System.Data.SqlClient {
 
 		protected override void Dispose (bool disposing) 
 		{
-			Close ();
+			if (!disposed) { 
+				if (disposing) 
+					Close ();
+				disposed = true;
+			}
 		}
 
 		[MonoTODO ("Not sure what this means at present.")]
@@ -312,7 +316,8 @@ namespace System.Data.SqlClient {
 
 		void IDisposable.Dispose ()
 		{
-			Dispose ();
+			Dispose (true);
+			GC.SuppressFinalize (this);
 		}
 
 		public void Open () 

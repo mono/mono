@@ -20,7 +20,8 @@ namespace System.Data.SqlClient {
 	public sealed class SqlDataAdapter : DbDataAdapter, IDbDataAdapter 
 	{
 		#region Fields
-	
+
+		bool disposed = false;	
 		SqlCommand deleteCommand;
 		SqlCommand insertCommand;
 		SqlCommand selectCommand;
@@ -143,6 +144,17 @@ namespace System.Data.SqlClient {
 		protected override RowUpdatingEventArgs CreateRowUpdatingEvent (DataRow dataRow, IDbCommand command, StatementType statementType, DataTableMapping tableMapping) 
 		{
 			return new SqlRowUpdatingEventArgs (dataRow, command, statementType, tableMapping);
+		}
+
+		protected override void Dispose (bool disposing)
+		{
+			if (!disposed) {
+				if (disposing) {
+					// Release managed resources
+				}
+				// Release unmanaged resources
+				disposed = true;
+			}
 		}
 
 		protected override void OnRowUpdated (RowUpdatedEventArgs value) 

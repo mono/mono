@@ -21,6 +21,7 @@ namespace System.Data.SqlClient {
 	{
 		#region Fields
 
+		bool disposed = false;
 		bool eof = false;
 		SqlDataReader reader;
 		string localBuffer = "<results>";
@@ -47,12 +48,17 @@ namespace System.Data.SqlClient {
 
 		protected override void Dispose (bool disposing)
 		{
-			reader.Close ();
+			if (!disposed) {
+				if (disposing) 
+					((IDisposable) reader).Dispose ();
+				disposed = true;
+			}
 		}
 
 		void IDisposable.Dispose ()
 		{
 			Dispose (true);
+			GC.SuppressFinalize (this);
 		}
 
 		private bool GetNextBuffer ()

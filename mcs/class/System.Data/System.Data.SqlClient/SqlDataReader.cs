@@ -24,6 +24,8 @@ namespace System.Data.SqlClient {
 	{
 		#region Fields
 
+		bool disposed = false;
+
 		int fieldCount;
 		bool isClosed;
 		int recordsAffected;
@@ -85,7 +87,7 @@ namespace System.Data.SqlClient {
 
 		#region Methods
 
-		public void Close()
+		public void Close ()
 		{
 			isClosed = true;
 			command.CloseDataReader (moreResults);
@@ -125,6 +127,17 @@ namespace System.Data.SqlClient {
 			schemaTable.Columns.Add ("IsReadOnly", booleanType);
 
 			return schemaTable;
+		}
+
+		private void Dispose (bool disposing) 
+		{
+			if (!disposed) {
+				if (disposing) {
+					schemaTable.Dispose ();
+					Close ();
+				}
+				disposed = true;
+			}
 		}
 
 		public bool GetBoolean (int i)
@@ -626,10 +639,10 @@ namespace System.Data.SqlClient {
 			return (len > FieldCount ? len : FieldCount);
 		}
 
-		[MonoTODO ("Implement Dispose().  Determine what must be disposed of.")]
 		void IDisposable.Dispose ()
 		{
-			throw new NotImplementedException ();
+			Dispose (true);
+			GC.SuppressFinalize (this);
 		}
 
 		IEnumerator IEnumerable.GetEnumerator ()

@@ -1,3 +1,13 @@
+2002-11-13  Tim Coleman <tim@timcoleman.com>
+	* System.Data.SqlClient/SqlCommand.cs:
+	* System.Data.SqlClient/SqlCommandBuilder.cs:
+	* System.Data.SqlClient/SqlConnection.cs:
+	* System.Data.SqlClient/SqlDataAdapter.cs:
+	* System.Data.SqlClient/SqlDataReader.cs:
+	* System.Data.SqlClient/SqlTransaction.cs:
+	* System.Data.SqlClient/SqlXmlTextReader.cs:
+		Implement Dispose () methods.
+
 2002-11-12  Tim Coleman <tim@timcoleman.com>
 	* list:
 		Remove Mono.Data.TdsClient.Internal/TdsContext.cs

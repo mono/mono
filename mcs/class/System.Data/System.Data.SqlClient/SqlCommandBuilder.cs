@@ -19,6 +19,8 @@ namespace System.Data.SqlClient {
 	{
 		#region Fields
 
+		bool disposed = false;
+
 		DataTable dbSchemaTable;
 		SqlDataAdapter adapter;
 		string quotePrefix;
@@ -343,20 +345,20 @@ namespace System.Data.SqlClient {
 			command.DeriveParameters ();
 		}
 
-		[MonoTODO ("Determine what should be disposed.")]
 		protected override void Dispose (bool disposing)
 		{
-			// Should dispose the commands, schema table, and should remove itself from the 
-			// message queues
-			if (disposing) {
-				if (insertCommand != null)
-					insertCommand.Dispose ();
-				if (deleteCommand != null)
-					deleteCommand.Dispose ();
-				if (updateCommand != null)
-					updateCommand.Dispose ();
-				if (dbSchemaTable != null)
-					dbSchemaTable.Dispose ();
+			if (!disposed) {
+				if (disposing) {
+					if (insertCommand != null)
+						insertCommand.Dispose ();
+					if (deleteCommand != null)
+						deleteCommand.Dispose ();
+					if (updateCommand != null)
+						updateCommand.Dispose ();
+					if (dbSchemaTable != null)
+						dbSchemaTable.Dispose ();
+				}
+				disposed = true;
 			}
 		}
 
