@@ -33,29 +33,53 @@ using Mono.Security.Cryptography;
 
 namespace Mono.Security.Protocol.Tls
 {
-	internal abstract class TlsAbstractCipherSuite
+	internal abstract class CipherSuite
 	{
 		#region FIELDS
 
-		protected short					code;
-		protected string				name;
-		protected string				algName;
-		protected string				hashName;
-		protected bool					isExportable;
-		protected CipherMode			cipherMode;
-		protected byte					keyMaterialSize;
-		protected byte					expandedKeyMaterialSize;
-		protected short					effectiveKeyBits;
-		protected byte					ivSize;
-		protected byte					blockSize;
-		protected TlsSessionContext		context;
-		protected SymmetricAlgorithm	encryptionAlgorithm;
-		protected ICryptoTransform		encryptionCipher;
-		protected SymmetricAlgorithm	decryptionAlgorithm;
-		protected ICryptoTransform		decryptionCipher;
-		protected KeyedHashAlgorithm	clientHMAC;
-		protected KeyedHashAlgorithm	serverHMAC;
+		private short				code;
+		private string				name;
+		private string				algName;
+		private string				hashName;
+		private bool				isExportable;
+		private CipherMode			cipherMode;
+		private byte				keyMaterialSize;
+		private byte				expandedKeyMaterialSize;
+		private short				effectiveKeyBits;
+		private byte				ivSize;
+		private byte				blockSize;
+		private TlsSessionContext	context;
+		private SymmetricAlgorithm	encryptionAlgorithm;
+		private ICryptoTransform	encryptionCipher;
+		private SymmetricAlgorithm	decryptionAlgorithm;
+		private ICryptoTransform	decryptionCipher;
+		private KeyedHashAlgorithm	clientHMAC;
+		private KeyedHashAlgorithm	serverHMAC;
 			
+		#endregion
+
+		#region PROTECTED_PROPERTIES
+
+		protected ICryptoTransform EncryptionCipher
+		{
+			get { return encryptionCipher; }
+		}
+
+		protected ICryptoTransform DecryptionCipher
+		{
+			get { return decryptionCipher; }
+		}
+
+		protected KeyedHashAlgorithm ClientHMAC
+		{
+			get { return clientHMAC; }
+		}
+		
+		protected KeyedHashAlgorithm ServerHMAC
+		{
+			get { return serverHMAC; }
+		}
+
 		#endregion
 
 		#region PROPERTIES
@@ -129,21 +153,11 @@ namespace Mono.Security.Protocol.Tls
 			set { context = value; }
 		}
 
-		public KeyedHashAlgorithm ClientHMAC
-		{
-			get { return clientHMAC; }
-		}
-
-		public KeyedHashAlgorithm ServerHMAC
-		{
-			get { return serverHMAC; }
-		}
-
 		#endregion
 
 		#region CONSTRUCTORS
 		
-		public TlsAbstractCipherSuite(short code, string name, string algName, string hashName, bool exportable, bool blockMode, byte keyMaterialSize, byte expandedKeyMaterialSize, short effectiveKeyBytes, byte ivSize, byte blockSize)
+		public CipherSuite(short code, string name, string algName, string hashName, bool exportable, bool blockMode, byte keyMaterialSize, byte expandedKeyMaterialSize, short effectiveKeyBytes, byte ivSize, byte blockSize)
 		{
 			this.code						= code;
 			this.name						= name;
@@ -164,6 +178,12 @@ namespace Mono.Security.Protocol.Tls
 		#endregion
 
 		#region METHODS
+
+		public void InitializeCipher()
+		{
+			createEncryptionCipher();
+			createDecryptionCipher();
+		}
 
 		public RSACryptoServiceProvider CreateRSA(X509Certificate certificate)
 		{
@@ -201,12 +221,6 @@ namespace Mono.Security.Protocol.Tls
 			return rsa;
 		}
 
-		public void InitializeCipher()
-		{
-			createEncryptionCipher();
-			createDecryptionCipher();
-		}
-
 		public void UpdateClientCipherIV(byte[] iv)
 		{
 			if (cipherMode == CipherMode.CBC)
@@ -231,17 +245,77 @@ namespace Mono.Security.Protocol.Tls
 			}
 		}
 
+		public byte[] EncryptRecord(byte[] fragment, byte[] mac)
+		{
+			// Encryption ( fragment + mac [+ padding + padding_length] )
+			MemoryStream ms = new MemoryStream();
+			CryptoStream cs = new CryptoStream(ms, this.EncryptionCipher, CryptoStreamMode.Write);
+
+			cs.Write(fragment, 0, fragment.Length);
+			cs.Write(mac, 0, mac.Length);
+			if (this.CipherMode == CipherMode.CBC)
+			{
+				// Calculate padding_length
+				int fragmentLength	= fragment.Length + mac.Length + 1;
+				int paddingLength	= (((fragmentLength/this.BlockSize)*this.BlockSize) + this.BlockSize) - fragmentLength;
+
+				// Write padding length byte
+				cs.WriteByte((byte)paddingLength);
+			}
+			//cs.FlushFinalBlock();
+			cs.Close();			
+
+			return ms.ToArray();
+		}
+
+		public void DecryptRecord(byte[] fragment, ref byte[] dcrFragment, ref byte[] dcrMAC)
+		{
+			int	fragmentSize	= 0;
+			int paddingLength	= 0;
+
+			// Decrypt message fragment ( fragment + mac [+ padding + padding_length] )
+			byte[] buffer = new byte[fragment.Length];
+			this.DecryptionCipher.TransformBlock(fragment, 0, fragment.Length, buffer, 0);
+
+			// Calculate fragment size
+			if (this.CipherMode == CipherMode.CBC)
+			{
+				// Calculate padding_length
+				paddingLength = buffer[buffer.Length - 1];
+				for (int i = (buffer.Length - 1); i > (buffer.Length - (paddingLength + 1)); i--)
+				{
+					if (buffer[i] != paddingLength)
+					{
+						paddingLength = 0;
+						break;
+					}
+				}
+
+				fragmentSize = (buffer.Length - (paddingLength + 1)) - HashSize;
+			}
+			else
+			{
+				fragmentSize = buffer.Length - HashSize;
+			}
+
+			dcrFragment = new byte[fragmentSize];
+			dcrMAC		= new byte[HashSize];
+
+			Buffer.BlockCopy(buffer, 0, dcrFragment, 0, dcrFragment.Length);
+			Buffer.BlockCopy(buffer, dcrFragment.Length, dcrMAC, 0, dcrMAC.Length);
+		}
+
 		#endregion
 
 		#region ABSTRACT_METHODS
 
-		public abstract byte[] EncryptRecord(byte[] fragment, byte[] mac);
+		public abstract byte[] ComputeClientRecordMAC(TlsContentType contentType, byte[] fragment);
 
-		public abstract void DecryptRecord(byte[] fragment, ref byte[] dcrFragment, ref byte[] dcrMAC);
+		public abstract byte[] ComputeServerRecordMAC(TlsContentType contentType, byte[] fragment);
 
-		public abstract void CreateMasterSecret(byte[] preMasterSecret);
+		public abstract void ComputeMasterSecret(byte[] preMasterSecret);
 
-		public abstract void CreateKeys();
+		public abstract void ComputeKeys();
 
 		#endregion
 
@@ -252,7 +326,7 @@ namespace Mono.Security.Protocol.Tls
 			TlsStream stream = new TlsStream();
 
 			// Write protocol version
-			stream.Write((short)this.context.Protocol);
+			stream.Write((short)this.Context.Protocol);
 
 			// Generate random bytes
 			stream.Write(this.context.GetSecureRandomBytes(46));
