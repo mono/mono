@@ -191,8 +191,8 @@ namespace System.Reflection.Emit {
 			return DefineDynamicModule (name, fileName, emitSymbolInfo, false);
 		}
 
-		public ModuleBuilder DefineDynamicModule (string name, string fileName,
-							  bool emitSymbolInfo, bool transient)
+		private ModuleBuilder DefineDynamicModule (string name, string fileName,
+												   bool emitSymbolInfo, bool transient)
 		{
 			check_name_and_filename (name, fileName, false);
 
@@ -352,7 +352,12 @@ namespace System.Reflection.Emit {
 			mainModule.IsMain = true;
 
 			foreach (ModuleBuilder module in modules)
-				module.Save ();
+				if (module != mainModule)
+					module.Save ();
+
+			// Write out the main module at the end, because it needs to
+			// contain the hash of the other modules
+			mainModule.Save ();
 
 			created = true;
 		}

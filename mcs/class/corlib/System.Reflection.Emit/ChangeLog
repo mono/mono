@@ -1,3 +1,10 @@
+2003-11-12  Zoltan Varga  <vargaz@freemail.hu>
+
+	* AssemblyBuilder.cs (DefineDynamicModule): Make internal method
+	private.
+
+	* AssemblyBuilder.cs (Save): Write out the main module at the end.
+	
 2003-11-06  Zoltan Varga  <vargaz@freemail.hu>
 	
 	* ConstructorBuilder.cs (.ctor): Automatically add RTSpecialName flag
