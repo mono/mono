@@ -866,7 +866,6 @@ namespace Mono.CSharp {
 									  TypeAttr,
 									  parent,
 									  ifaces);
-
 			} else {
 				TypeBuilder builder = (TypeBuilder) parent_builder;
 				
@@ -1868,7 +1867,8 @@ namespace Mono.CSharp {
 			}
 
 			if ((ModFlags & Modifiers.EXTERN) != 0 && (ModFlags & Modifiers.ABSTRACT) != 0) {
-				Report.Error (180, Location, MakeName (parent) + " cannot be both extern and abstract");
+				Report.Error (180, Location, MakeName (parent) +
+					      " cannot be both extern and abstract");
 				error = true;
 			}
 
@@ -1896,16 +1896,18 @@ namespace Mono.CSharp {
 			//
 
 			if (IsPInvoke) {
-
-				EmitContext ec = new EmitContext (parent, Location, null, GetReturnType (parent), ModFlags);
+				EmitContext ec = new EmitContext (
+					parent, Location, null, GetReturnType (parent), ModFlags);
 				
-				MethodBuilder = dllimport_attr.DefinePInvokeMethod (ec, parent.TypeBuilder,
-										    Name, flags, ret_type, parameters);
-			} else
+				MethodBuilder = dllimport_attr.DefinePInvokeMethod (
+					ec, parent.TypeBuilder,
+					Name, flags, ret_type, parameters);
+			} else {
 				MethodBuilder = parent.TypeBuilder.DefineMethod (
 								      Name, flags,
 								      GetCallingConvention (parent is Class),
 								      ret_type, parameters);
+			}
 
 			if (MethodBuilder == null)
 				return null;
@@ -1914,9 +1916,11 @@ namespace Mono.CSharp {
 			// HACK because System.Reflection.Emit is lame
 			//
 			if (!TypeManager.RegisterMethod (MethodBuilder, parameters)) {
-				Report.Error (111, Location,
-					      "Class `" + parent.Name + "' already contains a definition with the " +
-					      "same return value and parameter types for method `" + Name + "'");
+				Report.Error (
+					111, Location,
+					"Class `" + parent.Name + "' already contains a definition with " +
+					" the same return value and parameter types for method `" +
+					Name + "'");
 				return null;
 			}
 			
@@ -2911,7 +2915,7 @@ namespace Mono.CSharp {
 					       "User-defined conversion cannot convert to or from object type");
 				
 				if (first_arg_type.IsInterface || return_type.IsInterface)
-					Report.Error (-9, Location,
+					Report.Error (552, Location,
 					       "User-defined conversion cannot convert to or from an interface type");	 
 				
 				if (first_arg_type.IsSubclassOf (return_type) || return_type.IsSubclassOf (first_arg_type))

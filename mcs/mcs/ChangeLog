@@ -1,3 +1,51 @@
+2001-12-08  Miguel de Icaza  <miguel@ximian.com>
+
+	* support.cs: 
+
+	* rootcontext.cs: (ModuleBuilder) Made static, first step into
+	making things static.  I need this to avoid passing the
+	TypeContainer when calling ParameterType.
+
+	* support.cs (InternalParameters.ParameterType): Remove ugly hack
+	that did string manipulation to compute the type and then call
+	GetType.  Use Parameter.ParameterType instead.
+
+	* cs-tokenizer.cs: Consume the suffix for floating values.
+
+	* expression.cs (ParameterReference): figure out whether this is a
+	reference parameter or not.  Kill an extra variable by computing
+	the arg_idx during emission.
+
+	* parameter.cs (Parameters.GetParameterInfo): New overloaded
+	function that returns whether a parameter is an out/ref value or not.
+
+	(Parameter.ParameterType): The type of the parameter (base,
+	without ref/out applied).
+	
+	(Parameter.Resolve): Perform resolution here.
+	(Parameter.ExternalType): The full type (with ref/out applied).
+
+	* statement.cs (Using.Emit, Using.EmitExpression): Implement
+	support for expressions on the using statement.
+
+2001-12-07  Miguel de Icaza  <miguel@ximian.com>
+
+	* statement.cs (Using.EmitLocalVariableDecls): Split the
+	localvariable handling of the using statement.
+
+	(Block.EmitMeta): Keep track of variable count across blocks.  We
+	were reusing slots on separate branches of blocks.
+
+	(Try.Emit): Emit the general code block, we were not emitting it. 
+
+	Check the type of the declaration to be an IDisposable or
+	something that can be implicity converted to it. 
+
+	Emit conversions if required.
+
+	* ecore.cs (EmptyExpression): New utility class.
+	(Expression.ImplicitConversionExists): New utility function.
+
 2001-12-06  Miguel de Icaza  <miguel@ximian.com>
 
 	* statement.cs (Using): Implement.

@@ -429,7 +429,6 @@ namespace Mono.CSharp {
 			} else {
 				// from any class-type S to any interface-type T.
 				if (expr_type.IsClass && target_type.IsInterface) {
-
 					if (TypeManager.ImplementsInterface (expr_type, target_type))
 						return new EmptyCast (expr, target_type);
 					else
@@ -843,6 +842,22 @@ namespace Mono.CSharp {
 
 			return false;
 		}
+
+		static EmptyExpression MyEmptyExpr;
+		/// <summary>
+		///   Tells whether an implicit conversion exists from expr_type to
+		///   target_type
+		/// </summary>
+		public bool ImplicitConversionExists (EmitContext ec, Type expr_type, Type target_type,
+						      Location l)
+		{
+			if (MyEmptyExpr == null)
+				MyEmptyExpr = new EmptyExpression (expr_type);
+			else
+				MyEmptyExpr.SetType (expr_type);
+
+			return ConvertImplicit (ec, MyEmptyExpr, target_type, l) != null;
+		}
 		
 		/// <summary>
 		///  Finds "most encompassed type" according to the spec (13.4.2)
@@ -1030,7 +1045,7 @@ namespace Mono.CSharp {
 
 				if (source == null)
 					return null;
-				
+
 				e =  new UserCast ((MethodInfo) method, source);
 				
 				if (e.Type != target){
@@ -1177,6 +1192,12 @@ namespace Mono.CSharp {
 			e = ConvertImplicit (ec, source, target_type, loc);
 			if (e != null)
 				return e;
+
+			if (source is DoubleLiteral && target_type == TypeManager.float_type){
+				Error (664, loc,
+				       "Double literal cannot be implicitly converted to " +
+				       "float type, use F suffix to create a float literal");
+			}
 			
 			string msg = "Cannot convert implicitly from `"+
 				TypeManager.CSharpName (source.Type) + "' to `" +
@@ -2851,5 +2872,4 @@ namespace Mono.CSharp {
 			// FIXME: Implement.
 		}
 	}
-	
 }	

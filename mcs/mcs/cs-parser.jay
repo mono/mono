@@ -3096,7 +3096,6 @@ using_statement
 		
 		if ($3 is DictionaryEntry){
 			DictionaryEntry de = (DictionaryEntry) $3;
-			$3 = null;
 			Location l = lexer.Location;
 
 			string type = (string) de.Key;
@@ -3143,7 +3142,7 @@ using_statement
 				// Assign a = new Assign (var, expr, decl.Location);
 				// assign_block.AddStatement (new StatementExpression (a));
 			}
-			$3 = vars;
+			$3 = new DictionaryEntry (type, vars);
 		 }
 	  } 
 	  embedded_statement

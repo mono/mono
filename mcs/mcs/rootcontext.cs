@@ -33,9 +33,9 @@ namespace Mono.CSharp {
 		CodeGen cg;
 
 		//
-		// The module builder pointer
+		// The module builder pointer.
 		//
-		ModuleBuilder mb;
+		static ModuleBuilder mb;
 
 		//
 		// Whether we are being linked against the standard libraries.
@@ -310,7 +310,7 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public ModuleBuilder ModuleBuilder {
+		public static ModuleBuilder ModuleBuilder {
 			get {
 				return mb;
 			}

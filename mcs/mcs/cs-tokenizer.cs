@@ -465,7 +465,7 @@ namespace Mono.CSharp
 		int real_type_suffix (int c)
 		{
 			int t;
-			
+
 			switch (c){
 			case 'F': case 'f':
 				t =  Token.LITERAL_FLOAT;
@@ -479,7 +479,7 @@ namespace Mono.CSharp
 			default:
 				return Token.NONE;
 			}
-			//getChar ();
+			getChar ();
 			return t;
 		}
 

@@ -123,14 +123,10 @@ namespace Mono.CSharp {
 				pos = len;
 			}
 
-			Type t = param_types [pos];
-			string name = t.FullName;
-			
-			if (p.ModFlags == Parameter.Modifier.REF ||
-			    p.ModFlags == Parameter.Modifier.OUT)
-				t = Type.GetType (name.Substring (0, name.Length - 1));
-			
-			return t;
+			//
+			// Return the internal type.
+			//
+			return p.ParameterType;
 		}
 
 		public string ParameterDesc (int pos)

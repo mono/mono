@@ -9,37 +9,69 @@
 //
 //
 //
+using System;
+using System.Reflection;
+using System.Reflection.Emit;
+using System.Collections;
 
 namespace Mono.CSharp {
 
-	using System;
-	using System.Reflection;
-	using System.Collections;
 
 	/// <summary>
 	///   Represents a single method parameter
 	/// </summary>
 	public class Parameter {
+		[Flags]
 		public enum Modifier : byte {
-			NONE,
-			REF,
-			OUT,
-			PARAMS,
+			NONE   = 0,
+			REF    = 1,
+			OUT    = 2,
+			PARAMS = 4,
 		}
 
-		public readonly string   Type;
+		public readonly string   TypeName;
 		public readonly string   Name;
 		public readonly Modifier ModFlags;
 		public Attributes OptAttributes;
+		public Type ParameterType;
 		
 		public Parameter (string type, string name, Modifier mod, Attributes attrs)
 		{
 			Name = name;
 			ModFlags = mod;
-			Type = type = type;
+			TypeName = type;
 			OptAttributes = attrs;
 		}
 
+		public bool Resolve (TypeContainer tc)
+		{
+			ParameterType = tc.LookupType (TypeName, false);
+			return ParameterType != null;
+		}
+
+		public Type ExternalType ()
+		{
+			if ((ModFlags & (Parameter.Modifier.REF | Parameter.Modifier.OUT)) != 0){
+				string n = ParameterType.FullName + "&";
+				Type t;
+				
+				t = Type.GetType (n);
+
+				//
+				// It is a type defined by the source code we are compiling
+				//
+				if (t == null){
+					ModuleBuilder mb = RootContext.ModuleBuilder;
+
+					t = mb.GetType (n);
+				}
+
+				return t;
+			}
+
+			return ParameterType;
+		}
+		
 		public ParameterAttributes Attributes {
 			get {
 				switch (ModFlags){
@@ -57,34 +89,18 @@ namespace Mono.CSharp {
 			}
 		}
 		
-		string ModSignature ()
-		{
-			switch (ModFlags){
-			case Modifier.NONE:
-				return "";
-			case Modifier.REF:
-				return "&";
-			case Modifier.OUT:
-				return ">";
-			case Modifier.PARAMS:
-				return "";
-			}
-			// This should not happen.
-			return (string) null;
-		}
-
 		/// <summary>
 		///   Returns the signature for this parameter evaluating it on the
 		///   @tc context
 		/// </summary>
 		public string GetSignature (TypeContainer tc)
 		{
-			Type t = tc.LookupType (Type, false);
+			if (ParameterType == null){
+				if (!Resolve (tc))
+					return null;
+			}
 
-			if (t == null)
-				return "";
-			
-			return ModSignature () + t.FullName;
+			return ExternalType ().FullName;
 		}
 	}
 
@@ -96,7 +112,7 @@ namespace Mono.CSharp {
 		public readonly Parameter ArrayParameter;
 		string signature;
 		Type [] types;
-
+		
 		static Parameters empty_parameters;
 		
 		public Parameters (Parameter [] fixed_parameters, Parameter array_parameter)
@@ -203,6 +219,36 @@ namespace Mono.CSharp {
 			return null;
 		}
 
+		bool ComputeParameterTypes (TypeContainer tc)
+		{
+			int extra = (ArrayParameter != null) ? 1 : 0;
+			int i = 0;
+			int pc = FixedParameters.Length + extra;
+			
+			types = new Type [pc];
+			
+			if (!VerifyArgs (tc)){
+				FixedParameters = null;
+				return false;
+			}
+			
+			foreach (Parameter p in FixedParameters){
+				Type t = null;
+				
+				if (p.Resolve (tc))
+					t = p.ExternalType ();
+				
+				types [i] = t;
+				i++;
+			}
+
+			if (extra > 0){
+				if (ArrayParameter.Resolve (tc))
+					types [i] = ArrayParameter.ExternalType ();
+			}
+
+			return true;
+		}
 		
 		/// <summary>
 		///   Returns the argument types as an array
@@ -214,32 +260,53 @@ namespace Mono.CSharp {
 			
 			if (FixedParameters == null)
 				return null;
-			
-			int extra = (ArrayParameter != null) ? 1 : 0;
-			int i = 0;
-			int pc = FixedParameters.Length + extra;
-			
-			types = new Type [pc];
 
+			if (ComputeParameterTypes (tc) == false)
+				return null;
+			
+			return types;
+		}
+
+		/// <summary>
+		///   Returns the type of a given parameter, and stores in the `is_out'
+		///   boolean whether this is an out or ref parameter.
+		///
+		///   Note that the returned type will not contain any dereference in this
+		///   case (ie, you get "int" for a ref int instead of "int&"
+		/// </summary>
+		public Type GetParameterInfo (TypeContainer tc, int idx, out bool is_out)
+		{
+			is_out = false;
+			
 			if (!VerifyArgs (tc)){
 				FixedParameters = null;
 				return null;
 			}
-			
-			foreach (Parameter p in FixedParameters){
-				Type t = tc.LookupType (p.Type, false);
 
-				if ((p.ModFlags & (Parameter.Modifier.REF | Parameter.Modifier.OUT)) != 0){
-					t = Type.GetType (t.FullName + "&");
+			if (FixedParameters == null)
+				return null;
+			
+			if (types == null)
+				if (ComputeParameterTypes (tc) == false){
+					is_out = false;
+					return null;
 				}
-				types [i] = t;
-				i++;
-			}
 
-			if (extra > 0)
-			        types [i] = tc.LookupType (ArrayParameter.Type, false);
-			
-			return types;
+			//
+			// If this is a request for the variable lenght arg.
+			//
+			if (idx == FixedParameters.Length){
+				is_out = false;
+				return types [idx];
+			} 
+
+			//
+			// Otherwise, it is a fixed parameter
+			//
+			Parameter p = FixedParameters [idx];
+			is_out = ((p.ModFlags & (Parameter.Modifier.REF | Parameter.Modifier.OUT)) != 0);
+
+			return p.ParameterType;
 		}
 
 		public CallingConventions GetCallingConvention ()

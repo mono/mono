@@ -1,6 +1,19 @@
 BUGS
 ----
 
+* Returning from exception blocks.
+
+	Exception blocks can not actually "return", they have
+	to "leave" to the end of the routine.
+
+	If they need to return a value, the return value is stored in
+	a temporary variable, and the final code, loads this value on
+	the stack and returns.
+
+* Reworking return values.
+
+	To implement the above we need to rework the return mechanism.
+
 * Adding variables.
 
 	We do add variables in a number of places, and this is erroneous:
@@ -18,25 +31,9 @@ BUGS
 			;
 	}
 
-
-* FindMembers
-
-	Move our utility FindMembers from TypeContainer to Decl, because interfaces
-	are also scanned with it.
-
-	>> DONE - we have separate FindMembers methods for interfaces,
-        >> enums,  delegates etc.
-
 * Visibility
 
 	I am not reporting errors on visibility yet.
-
-* Enumerations
-
-	They currently can not be defined in terms of other enumerations
-	or constants.
-	
-	>> DONE 
 
 * Interfaces
 
@@ -59,17 +56,13 @@ BUGS
 	Explanation: The reason for the `instance' attribute on
 	indexers is that indexers only apply to instances
 
-* In class.cs: Method.Define
-
-	Need to use FindMembers to lookup the member for reporting
-	whether a new is needed or not.  
-
-	>> DONE
-
 * Handle destructors specially
 
 	Turn ~X () { a () } into:
 	void Finalize () { try { a (); } finally { base.Finalize (); } }
+
+	The code is mostly done, but `base' is missing.  The reason it is 
+	missing is because we have to implement visibility first.
 
 * Method Names
 
@@ -96,8 +89,6 @@ BUGS
 
 	We need to make sure at *compile time* that the arguments in
 	the expression list of an array creation are always positive.
-
-* Fix access to variables of type ref/out
 
 * Implement dead code elimination in statement.cs
 
@@ -135,8 +126,6 @@ BUGS
 PENDING TASKS
 -------------
 
-	* Finish Using.
-
 	* Implement explicit interface implemenation.
 
 	* Implement Goto.
@@ -144,6 +133,10 @@ PENDING TASKS
 	* Unsafe code.
 
 	* Implement `base' (BaseAccess class)
+
+* OUT Variables passed as OUT variables.
+
+	Currently we pass the pointer to the pointer (see expression.cs:Argument.Emit)
 
 * Function Declarations
 
@@ -324,3 +317,4 @@ RECOMMENDATIONS
 	Only create one `This' instance per class, and reuse it.
 
 	Maybe keep a pool of constants/literals (zero, 1)?
+

@@ -803,7 +803,7 @@ namespace Mono.CSharp {
 		///   toplevel: the toplevel block.  This is used for checking 
 		///   		that no two labels with the same name are used.
 		/// </remarks>
-		public void EmitMeta (TypeContainer tc, ILGenerator ig, Block toplevel, int count)
+		public int EmitMeta (TypeContainer tc, ILGenerator ig, Block toplevel, int count)
 		{
 			//
 			// Process this block variables
@@ -831,8 +831,10 @@ namespace Mono.CSharp {
 			//
 			if (children != null){
 				foreach (Block b in children)
-					b.EmitMeta (tc, ig, toplevel, count);
+					count = b.EmitMeta (tc, ig, toplevel, count);
 			}
+
+			return count;
 		}
 
 		public void UsageWarning ()
@@ -1511,6 +1513,7 @@ namespace Mono.CSharp {
 			if (General != null){
 				ig.BeginCatchBlock (TypeManager.object_type);
 				ig.Emit (OpCodes.Pop);
+				General.Block.Emit (ec);
 			}
 
 			ig.MarkLabel (finish);
@@ -1546,43 +1549,136 @@ namespace Mono.CSharp {
 			loc = l;
 		}
 
-		public override bool Emit (EmitContext ec)
+		//
+		// Emits the code for the case of using using a local variable declaration.
+		//
+		bool EmitLocalVariableDecls (EmitContext ec, string type_name, ArrayList var_list)
 		{
 			ILGenerator ig = ec.ig;
+			Expression [] converted_vars;
+			bool need_conv = false;
+			Type type = ec.TypeContainer.LookupType (type_name, false);
+			int i = 0;
 
-			if (expression_or_block is ArrayList){
-				ArrayList var_list = (ArrayList) expression_or_block;
+			if (type == null)
+				return false;
+			
+			//
+			// The type must be an IDisposable or an implicit conversion
+			// must exist.
+			//
+			converted_vars = new Expression [var_list.Count];
+			if (!TypeManager.ImplementsInterface (type, TypeManager.idisposable_type)){
 				foreach (DictionaryEntry e in var_list){
-					LocalVariableReference var = (LocalVariableReference) e.Key;
-					Expression expr = (Expression) e.Value;
-					Expression a;
+					Expression var = (Expression) e.Key;
 
-					a = new Assign (var, expr, loc);
-					a.Resolve (ec);
-					if (a == null)
-						continue;
-					((ExpressionStatement) a).EmitStatement (ec);
+					var = var.Resolve (ec);
+					if (var == null)
+						return false;
 					
-					ig.BeginExceptionBlock ();
-				}
-				Statement.Emit (ec);
+					converted_vars [i] = Expression.ConvertImplicit (
+						ec, var, TypeManager.idisposable_type, loc);
 
-				var_list.Reverse ();
-				foreach (DictionaryEntry e in var_list){
-					LocalVariableReference var = (LocalVariableReference) e.Key;
-					Label skip = ig.DefineLabel ();
-					
-					ig.BeginFinallyBlock ();
-
-					var.Emit (ec);
-					ig.Emit (OpCodes.Brfalse, skip);
-					var.Emit (ec);
-					ig.Emit (OpCodes.Callvirt, TypeManager.void_dispose_void);
-					ig.MarkLabel (skip);
-					ig.EndExceptionBlock ();
+					if (converted_vars [i] == null)
+						return false;
+					i++;
 				}
-			} else {
-				throw new Exception ("UNIMPLEMENTED");
+				need_conv = true;
+			}
+			
+			i = 0;
+			foreach (DictionaryEntry e in var_list){
+				LocalVariableReference var = (LocalVariableReference) e.Key;
+				Expression expr = (Expression) e.Value;
+				Expression a;
+
+				a = new Assign (var, expr, loc);
+				a.Resolve (ec);
+				if (!need_conv)
+					converted_vars [i] = var;
+				i++;
+				if (a == null)
+					continue;
+				((ExpressionStatement) a).EmitStatement (ec);
+				
+				ig.BeginExceptionBlock ();
+
+			}
+			Statement.Emit (ec);
+			
+			var_list.Reverse ();
+			foreach (DictionaryEntry e in var_list){
+				LocalVariableReference var = (LocalVariableReference) e.Key;
+				Label skip = ig.DefineLabel ();
+				i--;
+				
+				ig.BeginFinallyBlock ();
+				
+				var.Emit (ec);
+				ig.Emit (OpCodes.Brfalse, skip);
+				converted_vars [i].Emit (ec);
+				ig.Emit (OpCodes.Callvirt, TypeManager.void_dispose_void);
+				ig.MarkLabel (skip);
+				ig.EndExceptionBlock ();
+			}
+
+			return false;
+		}
+
+		bool EmitExpression (EmitContext ec, Expression expr)
+		{
+			Type expr_type = expr.Type;
+			Expression conv = null;
+			
+			if (!TypeManager.ImplementsInterface (expr_type, TypeManager.idisposable_type)){
+				conv = Expression.ConvertImplicit (
+					ec, expr, TypeManager.idisposable_type, loc);
+
+				if (conv == null)
+					return false;
+			}
+
+			//
+			// Make a copy of the expression and operate on that.
+			//
+			ILGenerator ig = ec.ig;
+			LocalBuilder local_copy = ig.DeclareLocal (expr_type);
+			if (conv != null)
+				conv.Emit (ec);
+			else
+				expr.Emit (ec);
+			ig.Emit (OpCodes.Stloc, local_copy);
+
+			ig.BeginExceptionBlock ();
+			Statement.Emit (ec);
+
+			Label skip = ig.DefineLabel ();
+			ig.BeginFinallyBlock ();
+			ig.Emit (OpCodes.Ldloc, local_copy);
+			ig.Emit (OpCodes.Brfalse, skip);
+			ig.Emit (OpCodes.Ldloc, local_copy);
+			ig.Emit (OpCodes.Callvirt, TypeManager.void_dispose_void);
+			ig.MarkLabel (skip);
+			ig.EndExceptionBlock ();
+
+			return false;
+		}
+		
+		public override bool Emit (EmitContext ec)
+		{
+			if (expression_or_block is DictionaryEntry){
+				string t = (string) ((DictionaryEntry) expression_or_block).Key;
+				ArrayList var_list = (ArrayList)((DictionaryEntry)expression_or_block).Value;
+
+				return EmitLocalVariableDecls (ec, t, var_list);
+			} if (expression_or_block is Expression){
+				Expression e = (Expression) expression_or_block;
+
+				e = e.Resolve (ec);
+				if (e == null)
+					return false;
+
+				return EmitExpression (ec, e);
 			}
 			return false;
 		}
@@ -1862,7 +1958,7 @@ namespace Mono.CSharp {
 				for (int i = 0; i < rank; i++)
 					args [i] = TypeManager.int32_type;
 
-				ModuleBuilder mb = ec.TypeContainer.RootContext.ModuleBuilder;
+				ModuleBuilder mb = RootContext.ModuleBuilder;
 				get = mb.GetArrayMethod (
 					array_type, "Get",
 					CallingConventions.HasThis| CallingConventions.Standard,

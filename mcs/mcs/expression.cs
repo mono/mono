@@ -1909,53 +1909,138 @@ namespace Mono.CSharp {
 	///   representation.
 	/// </summary>
 	public class ParameterReference : Expression, IAssignMethod, IMemoryLocation {
-		public readonly Parameters Pars;
-		public readonly String Name;
-		public readonly int Idx;
-		int arg_idx;
+		Parameters pars;
+		String name;
+		int idx;
+		bool is_ref;
 		
 		public ParameterReference (Parameters pars, int idx, string name)
 		{
-			Pars = pars;
-			Idx  = idx;
-			Name = name;
+			this.pars = pars;
+			this.idx  = idx;
+			this.name = name;
 			eclass = ExprClass.Variable;
 		}
 
+		//
+		// Notice that for ref/out parameters, the type exposed is not the
+		// same type exposed externally.
+		//
+		// for "ref int a":
+		//   externally we expose "int&"
+		//   here we expose       "int".
+		//
+		// We record this in "is_ref".  This means that the type system can treat
+		// the type as it is expected, but when we generate the code, we generate
+		// the alternate kind of code.
+		//
 		public override Expression DoResolve (EmitContext ec)
 		{
-			Type [] types = Pars.GetParameterInfo (ec.TypeContainer);
-
-			type = types [Idx];
-
-			arg_idx = Idx;
-			if (!ec.IsStatic)
-				arg_idx++;
+			type = pars.GetParameterInfo (ec.TypeContainer, idx, out is_ref);
+			eclass = ExprClass.Variable;
 			
 			return this;
 		}
 
 		public override void Emit (EmitContext ec)
 		{
+			ILGenerator ig = ec.ig;
+			int arg_idx = idx;
+
+			if (!ec.IsStatic)
+				arg_idx++;
+			
 			if (arg_idx <= 255)
-				ec.ig.Emit (OpCodes.Ldarg_S, (byte) arg_idx);
+				ig.Emit (OpCodes.Ldarg_S, (byte) arg_idx);
 			else
-				ec.ig.Emit (OpCodes.Ldarg, arg_idx);
+				ig.Emit (OpCodes.Ldarg, arg_idx);
+
+			if (!is_ref)
+				return;
+
+			//
+			// If we are a reference, we loaded on the stack a pointer
+			// Now lets load the real value
+			//
+
+			if (type == TypeManager.int32_type)
+				ig.Emit (OpCodes.Ldind_I4);
+			else if (type == TypeManager.uint32_type)
+				ig.Emit (OpCodes.Ldind_U4);
+			else if (type == TypeManager.int64_type || type == TypeManager.uint64_type)
+				ig.Emit (OpCodes.Ldind_I8);
+			else if (type == TypeManager.char_type)
+				ig.Emit (OpCodes.Ldind_U2);
+			else if (type == TypeManager.short_type)
+				ig.Emit (OpCodes.Ldind_I2);
+			else if (type == TypeManager.ushort_type)
+				ig.Emit (OpCodes.Ldind_U2);
+			else if (type == TypeManager.float_type)
+				ig.Emit (OpCodes.Ldind_R4);
+			else if (type == TypeManager.double_type)
+				ig.Emit (OpCodes.Ldind_R8);
+			else if (type == TypeManager.byte_type)
+				ig.Emit (OpCodes.Ldind_U1);
+			else if (type == TypeManager.sbyte_type)
+				ig.Emit (OpCodes.Ldind_I1);
+			else if (type == TypeManager.intptr_type)
+				ig.Emit (OpCodes.Ldind_I);
+			else
+				ig.Emit (OpCodes.Ldind_Ref);
 		}
 
 		public void EmitAssign (EmitContext ec, Expression source)
 		{
-			source.Emit (ec);
+			ILGenerator ig = ec.ig;
+			int arg_idx = idx;
+
+			if (!ec.IsStatic)
+				arg_idx++;
+
+			if (is_ref){
+				// Load the pointer
+				if (arg_idx <= 255)
+					ig.Emit (OpCodes.Ldarg_S, (byte) arg_idx);
+				else
+					ig.Emit (OpCodes.Ldarg, arg_idx);
+			}
 			
-			if (arg_idx <= 255)
-				ec.ig.Emit (OpCodes.Starg_S, (byte) arg_idx);
-			else
-				ec.ig.Emit (OpCodes.Starg, arg_idx);
+			source.Emit (ec);
+
+			if (is_ref){
+				if (type == TypeManager.int32_type || type == TypeManager.uint32_type)
+					ig.Emit (OpCodes.Stind_I4);
+				else if (type == TypeManager.int64_type || type == TypeManager.uint64_type)
+					ig.Emit (OpCodes.Stind_I8);
+				else if (type == TypeManager.char_type || type == TypeManager.short_type ||
+					type == TypeManager.ushort_type)
+					ig.Emit (OpCodes.Stind_I2);
+				else if (type == TypeManager.float_type)
+					ig.Emit (OpCodes.Stind_R4);
+				else if (type == TypeManager.double_type)
+					ig.Emit (OpCodes.Stind_R8);
+				else if (type == TypeManager.byte_type || type == TypeManager.sbyte_type)
+					ig.Emit (OpCodes.Stind_I1);
+				else if (type == TypeManager.intptr_type)
+					ig.Emit (OpCodes.Stind_I);
+				else
+					ig.Emit (OpCodes.Stind_Ref);
+			} else {
+				if (arg_idx <= 255)
+					ig.Emit (OpCodes.Starg_S, (byte) arg_idx);
+				else
+					ig.Emit (OpCodes.Starg, arg_idx);
+			}
 			
 		}
 
 		public void AddressOf (EmitContext ec)
 		{
+			int arg_idx = idx;
+
+			if (!ec.IsStatic)
+				arg_idx++;
+
 			if (arg_idx <= 255)
 				ec.ig.Emit (OpCodes.Ldarga_S, (byte) arg_idx);
 			else
@@ -2362,7 +2447,7 @@ namespace Mono.CSharp {
 			
 			for (int i = count; i > 0; ) {
 				i--;
-				
+
 				sb.Append (pd.ParameterDesc (count - i - 1));
 				if (i != 0)
 					sb.Append (", ");
@@ -2624,7 +2709,6 @@ namespace Mono.CSharp {
 			int pd_count = pd.Count;
 
 			for (int j = 0; j < argument_count; j++) {
-
 				Argument a = (Argument) Arguments [j];
 				Expression a_expr = a.Expr;
 				Type parameter_type = pd.ParameterType (j);
@@ -2642,14 +2726,18 @@ namespace Mono.CSharp {
 					Expression conv;
 					
 					if (use_standard)
-						conv = ConvertImplicitStandard (ec, a_expr, parameter_type, Location.Null);
+						conv = ConvertImplicitStandard (
+							ec, a_expr, parameter_type, Location.Null);
 					else
-						conv = ConvertImplicit (ec, a_expr, parameter_type, Location.Null);
+						conv = ConvertImplicit (
+							ec, a_expr, parameter_type, Location.Null);
 
+					Console.WriteLine ("From " + a.Type + " to " + parameter_type);
 					if (conv == null) {
 						if (!Location.IsNull (loc)) {
 							Error (1502, loc,
-						        "The best overloaded match for method '" + FullMethodDesc (method)+
+							       "The best overloaded match for method '" +
+							       FullMethodDesc (method) +
 							       "' has some invalid arguments");
 							Error (1503, loc,
 							 "Argument " + (j+1) +
@@ -3322,8 +3410,7 @@ namespace Mono.CSharp {
 				return this;
 				
 			} else {
-
-				ModuleBuilder mb = ec.TypeContainer.RootContext.ModuleBuilder;
+				ModuleBuilder mb = RootContext.ModuleBuilder;
 
 				ArrayList args = new ArrayList ();
 				if (Arguments != null){
@@ -3474,7 +3561,7 @@ namespace Mono.CSharp {
 			if (dims != 1){
 				Type [] args;
 				ModuleBuilder mb = null;
-				mb = ec.TypeContainer.RootContext.ModuleBuilder;
+				mb = RootContext.ModuleBuilder;
 				args = new Type [dims + 1];
 
 				int j;
@@ -4163,7 +4250,7 @@ namespace Mono.CSharp {
 			if (rank == 1)
 				EmitLoadOpcode (ig, type);
 			else {
-				ModuleBuilder mb = ec.TypeContainer.RootContext.ModuleBuilder;
+				ModuleBuilder mb = RootContext.ModuleBuilder;
 				Type [] args = new Type [ea.Arguments.Count];
 				MethodInfo get;
 				
@@ -4199,7 +4286,7 @@ namespace Mono.CSharp {
 			if (rank == 1)
 				EmitStoreOpcode (ig, t);
 			else {
-				ModuleBuilder mb = ec.TypeContainer.RootContext.ModuleBuilder;
+				ModuleBuilder mb = RootContext.ModuleBuilder;
 				Type [] args = new Type [ea.Arguments.Count + 1];
 				MethodInfo set;
 				
@@ -4468,6 +4555,16 @@ namespace Mono.CSharp {
 		public override void Emit (EmitContext ec)
 		{
 			// nothing, as we only exist to not do anything.
+		}
+
+		//
+		// This is just because we might want to reuse this bad boy
+		// instead of creating gazillions of EmptyExpressions.
+		// (CanConvertImplicit uses it)
+		//
+		public void SetType (Type t)
+		{
+			type = t;
 		}
 	}
 
