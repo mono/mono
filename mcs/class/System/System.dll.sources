@@ -1,4 +1,5 @@
 Assembly/AssemblyInfo.cs
+Assembly/Consts.cs
 Microsoft.CSharp/CSharpCodeCompiler.cs
 Microsoft.CSharp/CSharpCodeGenerator.cs
 Microsoft.CSharp/CSharpCodeProvider.cs
