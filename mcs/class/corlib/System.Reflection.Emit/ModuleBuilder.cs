@@ -212,6 +212,9 @@ namespace System.Reflection.Emit {
 		}
 
 		private TypeBuilder DefineType (string name, TypeAttributes attr, Type parent, Type[] interfaces, PackingSize packsize, int typesize) {
+			if (name_cache.Contains (name))
+				throw new ArgumentException ("Duplicate type name within an assembly.");
+
 			TypeBuilder res = new TypeBuilder (this, name, attr, parent, interfaces, packsize, typesize, null);
 			if (types != null) {
 				if (types.Length == num_types) {
