@@ -1,5 +1,9 @@
 2004-06-24  Dick Porter  <dick@ximian.com>
 
+	* mutexes.c: Indicate when a named mutex was reused
+
+2004-06-24  Dick Porter  <dick@ximian.com>
+
 	* threads.c (SuspendThread): 
 	* timed-thread.c (_wapi_timed_thread_suspend): Wrap sem_wait in a
 	while loop.  See bug 58161.

@@ -1,3 +1,11 @@
+2004-06-24  Dick Porter  <dick@ximian.com>
+
+	* threads.c
+	(ves_icall_System_Threading_Mutex_CreateMutex_internal): Correctly
+	return createdNew.  Fixes bug 60412.
+
+	* threads-types.h: 
+	* icall.c: Add createdNew parameter to CreateMutex icall
 
 Thu Jun 24 16:06:41 CEST 2004 Paolo Molaro <lupus@ximian.com>
 
