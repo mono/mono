@@ -837,7 +837,6 @@ Sat Jan 5 15:53:50 CET 2002 Paolo Molaro <lupus@ximian.com>
 	* Enum.cs, Environment.cs, Exception.cs, Int64.cs, SByte.cs,
 	Single.cs, UInt16.cs, UInt32.cs, ValueType.cs: Ditto.
 	
->>>>>>> 1.107
 Thu Jan 3 23:24:04 CET 2002 Paolo Molaro <lupus@ximian.com>
 
 	* Delegate.cs: add Remove() stub.
