@@ -132,7 +132,8 @@ namespace Mono.ILASM {
                                                         next = reader.Read ());
                                                 continue;
                                         } else if (next == '*') {
-                                                for (reader.Read ();
+                                                reader.Read ();
+                                                for (next = reader.Read ();
                                                      next != -1 && next != '*' && reader.Peek () != '/';
                                                      next = reader.Read ());
                                                 reader.Read ();

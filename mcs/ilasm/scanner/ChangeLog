@@ -1,3 +1,7 @@
+2003-10-14 Jackson Harper <jackson@ximian.com>
+
+	* ILTokenizer.cs: Fix /* */ comment blocks.
+	
 2003-09-16 Jackson Harper <jackson@latitudegeo.com>
 
 	* ILTables.cs: compilercontrolled is lowercase. I am guessing this
