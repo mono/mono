@@ -107,7 +107,7 @@ namespace MonoTests.System.Data.Odbc
 			dbcmd.CommandType = CommandType.Text;
                         dbcmd.CommandText = "delete from test where (col_int >257);";
 			ret = dbcmd.ExecuteNonQuery();
-			Assertion.AssertEquals("ExecuteNonQuery not working", 2, ret);}	
+			Assertion.AssertEquals("ExecuteNonQuery not working", 2, ret);	
+		}
 
-	         }
 }
