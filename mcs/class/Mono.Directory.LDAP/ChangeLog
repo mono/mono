@@ -1,3 +1,7 @@
+2002-12-11  Jeroen Janssen <japj@darius.demon.nl>
+	
+	* add reference to corlib.dll in order to eliminate [MonoTODO] build error
+	
 2002-12-10  Jeroen Janssen <japj@darius.demon.nl>
 	
 	* added Mono.Directory.LDAP.build file

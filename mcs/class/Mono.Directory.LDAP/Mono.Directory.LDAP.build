@@ -14,28 +14,13 @@
 			<arg value="/nowarn:0649"/>
 			<arg value="/unsafe"/>
 			<arg value="/noconfig"/>
-<!-- TODO: check values
-			<arg value="/r:System.dll"/>
-			<arg value="/r:System.EnterpriseServices.dll"/>
-			<arg value="/r:System.Xml.dll"/>
-			<arg value="/r:System.Data.dll"/>
-			<arg value="/r:../lib/Mono.Data.Tds.dll"/>
--->			
+			<arg value="/lib:../lib/"/>
+			<arg value="/r:corlib.dll"/>
+			
 			<sources>
 				<includes name="**/*.cs"/> 
-				<excludes name="Test/**"/>
-				
+				<excludes name="Test/**"/>				
 			</sources>
-<!-- TODO: check values
-			<references>
-				<includes name="../lib/corlib.dll"/>
-				<includes name="../lib/System.dll"/>
-				<includes name="../lib/System.EnterpriseServices.dll"/>
-				<includes name="../lib/System.Xml.dll"/>
-				<includes name="../lib/System.Data.dll"/>
-				<includes name="../lib/Mono.Data.Tds.dll"/>
-			</references>
--->			
 		</csc>
 	</target>
 	<target name="test" depends="build">
