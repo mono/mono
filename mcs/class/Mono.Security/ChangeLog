@@ -1,3 +1,8 @@
+2004-11-23  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Mono.Security_test.dll.sources: Added Mono.Security.Cryptography.
+	PKCS1Test to the build.
+
 2004-10-19  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Mono.Security_test.dll.sources: Added more unit tests BigInteger.

@@ -21,6 +21,7 @@ Mono.Security.Cryptography/MD2ManagedTest.cs
 Mono.Security.Cryptography/MD2Test.cs
 Mono.Security.Cryptography/MD4ManagedTest.cs
 Mono.Security.Cryptography/MD4Test.cs
+Mono.Security.Cryptography/PKCS1Test.cs
 Mono.Security.Cryptography/PKCS8Test.cs
 Mono.Security.Cryptography/SHA224ManagedTest.cs
 Mono.Security.Cryptography/SHA224Test.cs
