@@ -327,6 +327,9 @@ class AspGenerator
 
 	HttpContext context;
 
+	static Type styleType = typeof (System.Web.UI.WebControls.Style);
+	static Type fontinfoType = typeof (System.Web.UI.WebControls.FontInfo);
+
 	enum UserControlResult
 	{
 		OK = 0,
@@ -854,31 +857,31 @@ class AspGenerator
 	/*
 	 * Returns true if it generates some code for the specified property
 	 */
-	private void AddPropertyCode (Type prop_type, string var_name, string att, bool isDataBound)
+	private void AddCodeForPropertyOrField (Type type, string var_name, string att, bool isDataBound)
 	{
 		/* FIXME: should i check for this or let the compiler fail?
 		 * if (!prop.CanWrite)
 		 *    ....
 		 */
 		if (isDataBound) {
-			DataBoundProperty (prop_type, var_name, att);
+			DataBoundProperty (type, var_name, att);
 		}
-		else if (prop_type == typeof (string)){
+		else if (type == typeof (string)){
 			if (att == null)
 				throw new ApplicationException ("null value for attribute " + var_name );
 
 			current_function.AppendFormat ("\t\t\t__ctrl.{0} = \"{1}\";\n", var_name,
 							Escape (att)); // FIXME: really Escape this?
 		} 
-		else if (prop_type.IsEnum){
+		else if (type.IsEnum){
 			if (att == null)
 				throw new ApplicationException ("null value for attribute " + var_name );
 
-			string enum_value = EnumValueNameToString (prop_type, att);
+			string enum_value = EnumValueNameToString (type, att);
 
 			current_function.AppendFormat ("\t\t\t__ctrl.{0} = {1};\n", var_name, enum_value);
 		} 
-		else if (prop_type == typeof (bool)){
+		else if (type == typeof (bool)){
 			string value;
 			if (att == null)
 				value = "true"; //FIXME: is this ok for non Style properties?
@@ -891,7 +894,7 @@ class AspGenerator
 
 			current_function.AppendFormat ("\t\t\t__ctrl.{0} = {1};\n", var_name, value);
 		}
-		else if (prop_type == typeof (System.Web.UI.WebControls.Unit)){
+		else if (type == typeof (System.Web.UI.WebControls.Unit)){
 			 //FIXME: should use the culture specified in Page
 			try {
 				Unit value = Unit.Parse (att, System.Globalization.CultureInfo.InvariantCulture);
@@ -903,7 +906,7 @@ class AspGenerator
 							"System.Globalization.CultureInfo.InvariantCulture);\n", 
 							var_name, att);
 		}
-		else if (prop_type == typeof (System.Web.UI.WebControls.FontUnit)){
+		else if (type == typeof (System.Web.UI.WebControls.FontUnit)){
 			 //FIXME: should use the culture specified in Page
 			try {
 				FontUnit value = FontUnit.Parse (att, System.Globalization.CultureInfo.InvariantCulture);
@@ -915,9 +918,7 @@ class AspGenerator
 							"System.Globalization.CultureInfo.InvariantCulture);\n", 
 							var_name, att);
 		}
-		else if (prop_type == typeof (Int16) ||
-			 prop_type == typeof (Int32) ||
-			 prop_type == typeof (Int64)){
+		else if (type == typeof (Int16) || type == typeof (Int32) || type == typeof (Int64)) {
 			long value;
 			try {
 				value = Int64.Parse (att); //FIXME: should use the culture specified in Page
@@ -928,9 +929,7 @@ class AspGenerator
 
 			current_function.AppendFormat ("\t\t\t__ctrl.{0} = {1};\n", var_name, value);
 		}
-		else if (prop_type == typeof (UInt16) ||
-			 prop_type == typeof (UInt32) ||
-			 prop_type == typeof (UInt64)){
+		else if (type == typeof (UInt16) || type == typeof (UInt32) || type == typeof (UInt64)) {
 			ulong value;
 			try {
 				value = UInt64.Parse (att); //FIXME: should use the culture specified in Page
@@ -941,7 +940,7 @@ class AspGenerator
 
 			current_function.AppendFormat ("\t\t\t__ctrl.{0} = {1};\n", var_name, value);
 		}
-		else if (prop_type == typeof (float)){
+		else if (type == typeof (float)) {
 			float value;
 			try {
 				value = Single.Parse (att);
@@ -952,7 +951,7 @@ class AspGenerator
 
 			current_function.AppendFormat ("\t\t\t__ctrl.{0} = {1};\n", var_name, value);
 		}
-		else if (prop_type == typeof (double)){
+		else if (type == typeof (double)){
 			double value;
 			try {
 				value = Double.Parse (att);
@@ -963,7 +962,7 @@ class AspGenerator
 
 			current_function.AppendFormat ("\t\t\t__ctrl.{0} = {1};\n", var_name, value);
 		}
-		else if (prop_type == typeof (System.Drawing.Color)){
+		else if (type == typeof (System.Drawing.Color)){
 			Color c;
 			try {
 				c = (Color) TypeDescriptor.GetConverter (typeof (Color)).ConvertFromString (att);
@@ -985,30 +984,34 @@ class AspGenerator
 		}	
 		else {
 			throw new ApplicationException ("Unsupported type in property: " + 
-							prop_type.ToString ());
+							type.ToString ());
 		}
 	}
 
-	private bool ProcessProperties (PropertyInfo prop, string id, TagAttributes att)
+	private bool ProcessPropertiesAndFields (MemberInfo member, string id, TagAttributes att)
 	{
 		int hyphen = id.IndexOf ('-');
 
-		if (hyphen == -1 && prop.CanWrite == false)
-			return false;
+		bool isPropertyInfo = (member is PropertyInfo);
 
 		bool is_processed = false;
 		bool isDataBound = att.IsDataBound ((string) att [id]);
-		Type type = prop.PropertyType;
-		Type style = typeof (System.Web.UI.WebControls.Style);
-		Type fontinfo = typeof (System.Web.UI.WebControls.FontInfo);
+		Type type;
+		if (isPropertyInfo) {
+			type = ((PropertyInfo) member).PropertyType;
+			if (hyphen == -1 && ((PropertyInfo) member).CanWrite == false)
+				return false;
+		} else {
+			type = ((FieldInfo) member).FieldType;
+		}
 
-		if (0 == String.Compare (prop.Name, id, true)){
-			AddPropertyCode (type, prop.Name, (string) att [id], isDataBound);
+		if (0 == String.Compare (member.Name, id, true)){
+			AddCodeForPropertyOrField (type, member.Name, (string) att [id], isDataBound);
 			is_processed = true;
-		} else if ((type == fontinfo || type == style || type.IsSubclassOf (style)) && hyphen != -1){
+		} else if (hyphen != -1 && (type == fontinfoType || type == styleType || type.IsSubclassOf (styleType))){
 			string prop_field = id.Replace ("-", ".");
 			string [] parts = prop_field.Split (new char [] {'.'});
-			if (parts.Length != 2 || 0 != String.Compare (prop.Name, parts [0], true))
+			if (parts.Length != 2 || 0 != String.Compare (member.Name, parts [0], true))
 				return false;
 
 			PropertyInfo [] subprops = type.GetProperties ();
@@ -1020,19 +1023,19 @@ class AspGenerator
 					return false;
 
 				bool is_bool = subprop.PropertyType == typeof (bool);
-				if (!is_bool && att == null){
+				if (!is_bool && att [id] == null){
 					att [id] = ""; // Font-Size -> Font-Size="" as html
 					return false;
 				}
 
 				string value;
-				if (att == null && is_bool)
+				if (att [id] == null && is_bool)
 					value = "true"; // Font-Bold <=> Font-Bold="true"
 				else
 					value = (string) att [id];
 
-				AddPropertyCode (subprop.PropertyType,
-						 prop.Name + "." + subprop.Name,
+				AddCodeForPropertyOrField (subprop.PropertyType,
+						 member.Name + "." + subprop.Name,
 						 value, isDataBound);
 				is_processed = true;
 			}
@@ -1045,6 +1048,7 @@ class AspGenerator
 	{
 		EventInfo [] ev_info = type.GetEvents ();
 		PropertyInfo [] prop_info = type.GetProperties ();
+		FieldInfo [] field_info = type.GetFields ();
 		bool is_processed = false;
 		ArrayList processed = new ArrayList ();
 
@@ -1071,9 +1075,17 @@ class AspGenerator
 			} 
 
 			foreach (PropertyInfo prop in prop_info){
-				is_processed = ProcessProperties (prop, id, att);
+				is_processed = ProcessPropertiesAndFields (prop, id, att);
 				if (is_processed)
 					break;
+			}
+
+			if (!is_processed) {
+				foreach (FieldInfo field in field_info){
+					is_processed = ProcessPropertiesAndFields (field, id, att);
+					if (is_processed)
+						break;
+				}
 			}
 
 			if (is_processed){
@@ -1405,7 +1417,7 @@ class AspGenerator
 
 			bool is_processed = false;
 			foreach (PropertyInfo subprop in subprop_info){
-				is_processed = ProcessProperties (subprop, id, att);
+				is_processed = ProcessPropertiesAndFields (subprop, id, att);
 				if (is_processed){
 					subprop_name = subprop.Name;
 					break;

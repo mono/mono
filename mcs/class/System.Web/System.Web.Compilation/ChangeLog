@@ -1,3 +1,8 @@
+2002-12-19  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* AspGenerator.cs: generate code like 'control.XXX = value' also for
+	public fields (properties were being handled in that way too).
+
 2002-12-18  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* AspGenerator.cs: now it uses the current HttpContext when creating
