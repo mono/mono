@@ -1,8 +1,8 @@
 //
-// System.Configuration.ConfigurationAllowDefinition.cs
+// System.Configuration.RuntimeOnlySection.cs
 //
 // Authors:
-//	Duncan Mak (duncan@ximian.com)
+//	Lluis Sanchez (lluis@novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -25,15 +25,43 @@
 //
 // Copyright (C) 2004 Novell, Inc (http://www.novell.com)
 //
+#if NET_2_0 && XML_DEP
+using System;
+using System.Xml;
+using System.IO;
 
-#if NET_2_0
 namespace System.Configuration
 {
-        public enum ConfigurationAllowDefinition
-        {
-                Everywhere = 0,
-                MachineOnly = 1,
-                MachineToApplication = 2
-        }
+	internal class RuntimeOnlySection: ConfigurationSection
+	{
+		string xml;
+		
+		protected internal override bool IsModified ()
+		{
+			return false;
+		}
+
+		protected internal override void ReadXml (XmlReader reader, object context)
+		{
+			xml = reader.ReadOuterXml ();
+		}
+
+		protected internal override void Reset (ConfigurationElement parent_element, object context)
+		{
+		}
+
+		protected internal override void ResetModified ()
+		{
+		}
+
+		protected internal override string WriteXml (
+				ConfigurationElement parent,
+				object context, string name,
+				ConfigurationUpdateMode updateMode)
+		{
+			return xml;
+		}
+	}
 }
+
 #endif

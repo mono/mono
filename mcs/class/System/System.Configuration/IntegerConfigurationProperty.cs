@@ -1,8 +1,7 @@
 //
-// System.Configuration.ConfigurationSection.cs
+// System.Configuration.ConfigurationProperty.cs
 //
 // Authors:
-//	Duncan Mak (duncan@ximian.com)
 //  Lluis Sanchez Gual (lluis@novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -28,73 +27,44 @@
 //
 
 #if NET_2_0 && XML_DEP
+#if XML_DEP
 using System;
+using System.ComponentModel;
 
 namespace System.Configuration
 {
-	public class ConfigurationSectionGroup
+	public class IntegerConfigurationProperty : ConfigurationProperty
 	{
-		bool require_declaration;
-		string name, path, type_name;
-
-		ConfigurationSectionCollection sections;
-		ConfigurationSectionGroupCollection groups;
-		Configuration config;
-		SectionGroupInfo group;
+		int min;
+		int max;
 		
-		public ConfigurationSectionGroup ()
+		public IntegerConfigurationProperty (string name, int defaultValue, ConfigurationPropertyFlags flags)
+			: base (name, typeof(int), defaultValue, flags)
 		{
+			min = int.MinValue;
+			max = int.MaxValue;
 		}
-		
-		internal void Initialize (Configuration config, SectionGroupInfo group)
+
+		public IntegerConfigurationProperty (string name, int defaultValue, int minimumValue, int maximumValue, ConfigurationPropertyFlags flags)
+			: base (name, typeof(int), defaultValue, flags)
 		{
-			this.config = config;
-			this.group = group;
+			min = minimumValue;
+			max = maximumValue;
 		}
-		
-		internal void SetName (string name)
+
+		protected internal override object ConvertFromString (string value)
 		{
-			this.name = name;
+			return int.Parse (value);
 		}
 
-		[MonoTODO]
-		public void RequireDeclaration (bool require)
+		protected internal override string ConvertToString (object value)
 		{
-			this.require_declaration = require;
-		}
-
-		[MonoTODO]
-		public bool IsDeclared {
-			get { return require_declaration; }
-		}
-
-		public string Name {
-			get { return name; }
-		}
-
-		[MonoTODO]
-		public string Path {
-			get { return path; }
-		}
-
-		public ConfigurationSectionGroupCollection SectionGroups {
-			get {
-				if (groups == null) groups = new ConfigurationSectionGroupCollection (config, group);
-				return groups;
-			}
-		}
-
-		public ConfigurationSectionCollection Sections {
-			get {
-				if (sections == null) sections = new ConfigurationSectionCollection (config, group);
-				return sections;
-			}
-		}
-
-		public string TypeName {
-			get { return type_name;}
-			set { type_name = value; }
+			int val = (int)value;
+			if (val < min || val > max)
+				throw new ConfigurationException ("The property '" + Name + "' must have a value between '" + min + "' and '" + max + "'");
+			return value.ToString ();
 		}
 	}
 }
+#endif
 #endif

@@ -3,6 +3,7 @@
 //
 // Authors:
 //	Duncan Mak (duncan@ximian.com)
+//  Lluis Sanchez Gual (lluis@novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -30,47 +31,55 @@
 
 namespace System.Configuration
 {
-        public sealed class ConfigurationPropertyAttribute : Attribute
-        {
-                string name;
-                bool collection_key, default_collection_property, required_value;
-                object default_value;
-                ConfigurationPropertyFlags flags;
-                
-                public ConfigurationPropertyAttribute (string name)
-                {
-                        this.name = name;
-                }
-
-                public bool CollectionKey {
-                        get { return collection_key; }
-                        set { collection_key = value; }
-                }
-
-                public bool DefaultCollectionProperty {
-                        get { return default_collection_property; }
-                        set { default_collection_property = value; }
-                }
-
-                public object DefaultValue {
-                        get { return default_value; }
-                        set { default_value = value; }
-                }
-                
-                public ConfigurationPropertyFlags Flags {
-                        get { return flags; }
-                        set { flags = value; }
-                }
-
-                public string Name {
-                        get { return name; }
-                        set { name = value; }
-                }
-
-                public bool RequiredValue {
-                        get { return required_value; }
-                        set { required_value = value; }
-                }                        
-        }
+	public sealed class ConfigurationPropertyAttribute : Attribute
+	{
+		string name;
+		object default_value;
+		ConfigurationPropertyFlags flags;
+		
+		public ConfigurationPropertyAttribute (string name)
+		{
+			this.name = name;
+		}
+		
+		public bool CollectionKey {
+			get { return (flags & ConfigurationPropertyFlags.IsKey) != 0; }
+			set {
+				if (value) flags |= ConfigurationPropertyFlags.IsKey; 
+				else flags &= ~ConfigurationPropertyFlags.IsKey; 
+			}
+		}
+		
+		public bool DefaultCollectionProperty {
+			get { return (flags & ConfigurationPropertyFlags.DefaultCollection) != 0; }
+			set {
+				if (value) flags |= ConfigurationPropertyFlags.DefaultCollection; 
+				else flags &= ~ConfigurationPropertyFlags.DefaultCollection; 
+			}
+		}
+		
+		public object DefaultValue {
+			get { return default_value; }
+			set { default_value = value; }
+		}
+		
+		public ConfigurationPropertyFlags Flags {
+			get { return flags; }
+			set { flags = value; }
+		}
+		
+		public string Name {
+			get { return name; }
+			set { name = value; }
+		}
+		
+		public bool RequiredValue {
+			get { return (flags & ConfigurationPropertyFlags.Required) != 0; }
+			set {
+				if (value) flags |= ConfigurationPropertyFlags.Required; 
+				else flags &= ~ConfigurationPropertyFlags.Required; 
+			}
+		}
+	}
 }
 #endif

@@ -1,3 +1,16 @@
+2004-11-04  Lluis Sanchez Gual <lluis@novell.com>
+
+	* Configuration.cs, ConfigurationElement.cs, ConfigurationLocation.cs,
+	  ConfigurationLocationCollection.cs, ConfigurationProperty.cs,
+	  ConfigurationPropertyAttribute.cs, ConfigurationSection.cs,
+	  ConfigurationSectionCollection.cs, ConfigurationSectionGroup.cs,
+	  ConfigurationSectionGroupCollection.cs,IntegerConfigurationProperty.cs,
+	  RuntimeOnlySection.cs: Initial implementation.
+	* ConfigurationAllowDefinition.cs: Removed XML_DEP ifdef
+	* ConfigurationException.cs: format fix.
+	* ConfigInfo.cs, SectionInfo.cs, SectionGroupInfo.cs: New support
+	  classes.
+
 2004-09-10  Tim Coleman <tim@timcoleman.com>
 	* ConfigurationElementCollection.cs ConfigurationElementCollectionType.cs:
 		New Fx 2.0 stubs

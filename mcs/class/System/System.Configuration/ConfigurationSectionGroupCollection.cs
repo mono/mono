@@ -3,6 +3,7 @@
 //
 // Authors:
 //	Duncan Mak (duncan@ximian.com)
+//  Lluis Sanchez Gual (lluis@novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -33,72 +34,93 @@ using System.Collections.Specialized;
 
 namespace System.Configuration {
 
-        public sealed class ConfigurationSectionGroupCollection : NameObjectCollectionBase
-        {
-                public ICollection AllKeys {
-                        get { return BaseGetAllKeys (); }
-                }
+	public sealed class ConfigurationSectionGroupCollection : NameObjectCollectionBase
+	{
+		SectionGroupInfo group;
+		Configuration config;
+		
+		internal ConfigurationSectionGroupCollection (Configuration config, SectionGroupInfo group)
+		{
+			this.config = config;
+			this.group = group;
+		}
+		
+		public ICollection AllKeys {
+			get { return group.Groups.AllKeys; }
+		}
 
-                public override int Count {
-                        get { throw new NotImplementedException (); }
-                }
+		public override int Count {
+			get { return group.Groups.Count; }
+		}
 
-                public ConfigurationSectionGroup this [int index] {
-                        get { throw new NotImplementedException (); }
-                }
+		public ConfigurationSectionGroup this [string name] {
+			get {
+				ConfigurationSectionGroup sec = BaseGet (name) as ConfigurationSectionGroup;
+				if (sec == null) {
+					SectionGroupInfo secData = group.Groups [name] as SectionGroupInfo;
+					if (secData == null) return null;
+					sec = config.GetSectionGroupInstance (secData);
+					BaseSet (name, sec);
+				}
+				return sec;
+			}
+		}
 
-                public ConfigurationSectionGroup this [string index] {
-                        get { throw new NotImplementedException (); }                        
-                }
+		public ConfigurationSectionGroup this [int index] {
+			get { return this [GetKey (index)]; }
+		}
 
-                public override NameObjectCollectionBase.KeysCollection Keys {
-                        get { throw new NotImplementedException (); }
-                }
+		public void Add (string name, ConfigurationSectionGroup sectionGroup)
+		{
+			config.CreateSectionGroup (group, name, sectionGroup);
+		}
 
-                public void Add (string name, ConfigurationSectionGroup section_group)
-                {
-                        BaseAdd (name, section_group);
-                }
+		public void Clear ()
+		{
+			if (group.Groups != null) {
+				foreach (ConfigInfo data in group.Groups)
+					config.RemoveConfigInfo (data);
+			}
+		}
 
-                public void Clear ()
-                {
-                        BaseClear ();
-                }
+		public void CopyTo (ConfigurationSectionGroup [] array, int index)
+		{
+			for (int n=0; n<group.Groups.Count; n++)
+				array [n + index] = this [n];
+		}
 
-                public void CopyTo (ConfigurationSectionGroup [] array, int index)
-                {
-                        throw new NotImplementedException ();
-                }
+		public ConfigurationSectionGroup Get (int index)
+		{
+			return this [index];
+		}
 
-                public ConfigurationSectionGroup Get (int index)
-                {
-                        return BaseGet (index) as ConfigurationSectionGroup;
-                }
+		public ConfigurationSectionGroup Get (string name)
+		{
+			return this [name];
+		}
 
-                public ConfigurationSectionGroup Get (string index)
-                {
-                        return BaseGet (index) as ConfigurationSectionGroup;
-                }
+		public override IEnumerator GetEnumerator ()
+		{
+			return group.Groups.AllKeys.GetEnumerator ();
+		}
 
-                public override IEnumerator GetEnumerator ()
-                {
-                        throw new NotImplementedException ();
-                }
+		public string GetKey (int index)
+		{
+			return group.Groups.GetKey (index);
+		}
 
-                public string GetKey (string index)
-                {
-                        throw new NotImplementedException ();
-                }
-
-                public void Remove (string index)
-                {
-                        BaseRemove (index);
-                }
-
-                public void RemoveAt (int index)
-                {
-                        BaseRemoveAt (index);
-                }
-        }
+		public void Remove (string name)
+		{
+			SectionGroupInfo secData = group.Groups [name] as SectionGroupInfo;
+			if (secData != null)
+				config.RemoveConfigInfo (secData);
+		}
+		
+		public void RemoveAt (int index)
+		{
+			SectionGroupInfo secData = group.Groups [index] as SectionGroupInfo;
+			config.RemoveConfigInfo (secData);
+		}
+	}
 }
 #endif

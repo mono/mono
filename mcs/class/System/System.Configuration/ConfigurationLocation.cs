@@ -3,6 +3,7 @@
 //
 // Authors:
 //	Duncan Mak (duncan@ximian.com)
+//  Lluis Sanchez Gual (lluis@novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -30,19 +31,30 @@
 
 namespace System.Configuration {
 
-        public class ConfigurationLocation
-        {
-                string path;
-                
-                public string Path {
-                        get { return path; }
-                }
+	public class ConfigurationLocation
+	{
+		string path;
+		Configuration configuration;
+		
+		internal ConfigurationLocation()
+		{
+		}
+		
+		internal ConfigurationLocation (string path, Configuration config)
+		{
+			this.path = path;
+			configuration = config;
+		}
+		
+		public string Path {
+			get { return path; }
+		}
 
-                public Configuration GetConfiguration ()
-                {
-                        return null;
-                }
-        }
+		public Configuration GetConfiguration ()
+		{
+			return configuration;
+		}
+	}
 }
 
 #endif

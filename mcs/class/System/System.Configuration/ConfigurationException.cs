@@ -133,7 +133,7 @@ namespace System.Configuration
 				string f = (filename == null) ? String.Empty : filename;
 				string l = (line == 0) ? String.Empty : (" line " + line);
 
-				return baseMsg + "(" + f + l + ")";
+				return baseMsg + " (" + f + l + ")";
 			}
 		}
 

@@ -3,6 +3,7 @@
 //
 // Authors:
 //	Duncan Mak (duncan@ximian.com)
+//  Lluis Sanchez Gual (lluis@novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -31,11 +32,100 @@ using System;
 using System.Collections;
 using System.Collections.Specialized;
 
-namespace System.Configuration {
-
-        public sealed class ConfigurationSectionCollection : NameObjectCollectionBase
-        {
-                
-        }
+namespace System.Configuration
+{
+	public sealed class ConfigurationSectionCollection : NameObjectCollectionBase
+	{
+		SectionGroupInfo group;
+		Configuration config;
+		
+		internal ConfigurationSectionCollection (Configuration config, SectionGroupInfo group)
+		{
+			this.config = config;
+			this.group = group;
+		}
+		
+		public ICollection AllKeys
+		{
+			get { return group.Sections.AllKeys; }
+		}
+		
+		public override int Count 
+		{
+			get { return group.Sections.Count; }
+		}
+	
+		public ConfigurationSection this [string name]
+		{
+			get {
+				ConfigurationSection sec = BaseGet (name) as ConfigurationSection;
+				if (sec == null) {
+					SectionInfo secData = group.Sections [name] as SectionInfo;
+					if (secData == null) return null;
+					sec = config.GetSectionInstance (secData, true);
+					if (sec == null) return null;
+					BaseSet (name, sec);
+				}
+				return sec;
+			}
+		}
+	
+		public ConfigurationSection this [int index]
+		{
+			get { return this [GetKey (index)]; }
+		}
+		
+		public void Add (string name, ConfigurationSection section)
+		{
+			config.CreateSection (group, name, section);
+		}
+		
+		public void Clear ()
+		{
+			if (group.Sections != null) {
+				foreach (ConfigInfo data in group.Sections)
+					config.RemoveConfigInfo (data);
+			}
+		}
+		
+		public void CopyTo (ConfigurationSection [] array, int index)
+		{
+			for (int n=0; n<group.Sections.Count; n++)
+				array [n + index] = this [n];
+		}
+		
+		public ConfigurationSection Get (int index)
+		{
+			return this [index];
+		}
+		
+		public ConfigurationSection Get (string name)
+		{
+			return this [name];
+		}
+		
+		public override IEnumerator GetEnumerator()
+		{
+			return group.Sections.AllKeys.GetEnumerator ();
+		}
+		
+		public string GetKey (int index)
+		{
+			return group.Sections.GetKey (index);
+		}
+		
+		public void Remove (string name)
+		{
+			SectionInfo secData = group.Sections [name] as SectionInfo;
+			if (secData != null)
+				config.RemoveConfigInfo (secData);
+		}
+		
+		public void RemoveAt (int index)
+		{
+			SectionInfo secData = group.Sections [index] as SectionInfo;
+			config.RemoveConfigInfo (secData);
+		}
+	}
 }
 #endif

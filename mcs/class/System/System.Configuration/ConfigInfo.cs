@@ -1,8 +1,8 @@
 //
-// System.Configuration.ConfigurationLocation.cs
+// System.Configuration.ConfigInfo.cs
 //
 // Authors:
-//	Duncan Mak (duncan@ximian.com)
+//	Lluis Sanchez (lluis@novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -25,23 +25,42 @@
 //
 // Copyright (C) 2004 Novell, Inc (http://www.novell.com)
 //
-
 #if NET_2_0 && XML_DEP
-
+using System;
 using System.Collections;
+using System.Collections.Specialized;
+using System.Xml;
+using System.IO;
 
 namespace System.Configuration {
 
-	public class ConfigurationLocationCollection : ReadOnlyCollectionBase
+	internal abstract class ConfigInfo
 	{
-		public ConfigurationLocation this [int index] {
-			get { return this [index] as ConfigurationLocation; }
+		public string Name;
+		public string TypeName;
+		Type type;
+		public string FileName;
+		
+		public object CreateInstance ()
+		{
+			if (type == null) type = Type.GetType (TypeName);
+			return Activator.CreateInstance (type);
 		}
 		
-		internal void Add (ConfigurationLocation loc)
+		public abstract bool HasConfigContent (Configuration cfg);
+		public abstract bool HasDataContent (Configuration cfg);
+		
+#if (XML_DEP)
+		protected void ThrowException (string text, XmlTextReader reader)
 		{
-			InnerList.Add (loc);
+			throw new ConfigurationException (text, FileName, reader.LineNumber);
 		}
+		
+		public abstract void ReadConfig (Configuration cfg, XmlTextReader reader);
+		public abstract void WriteConfig (Configuration cfg, XmlWriter writer, ConfigurationUpdateMode mode);
+		public abstract void ReadData (Configuration config, XmlTextReader reader);
+		public abstract void WriteData (Configuration config, XmlWriter writer, ConfigurationUpdateMode mode);
+#endif
 	}
 }
 
