@@ -303,6 +303,12 @@ namespace System.Xml
 			get { return readState; }
 		}
 
+#if NET_2_0
+		public override XmlReaderSettings Settings {
+			get { return base.Settings; }
+		}
+#endif
+
 		public override string Value {
 			get { return cursorToken.Value != null ? cursorToken.Value : String.Empty; }
 		}
@@ -789,6 +795,18 @@ namespace System.Xml
 		public override string ReadValueAsString ()
 		{
 			return ReadString ();
+		}
+
+		[MonoTODO]
+		public override object ReadValueAs (Type type)
+		{
+			return base.ReadValueAs (type);
+		}
+
+		[MonoTODO]
+		public override object ReadValueAs (Type type, IXmlNamespaceResolver resolver)
+		{
+			return base.ReadValueAs (type, resolver);
 		}
 #endif
 

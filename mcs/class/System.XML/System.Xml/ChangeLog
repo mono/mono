@@ -1,5 +1,12 @@
 2004-07-28  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* XmlReader.cs : Implemented missing MoveToNextSibling() and
+	  MoveToDescendant().
+	* XmlTextReader.cs : Added missing ReadValueAs() override (hmm...
+	  are they really worth overriding?)
+
+2004-07-28  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* XmlWriter.cs : Added new WriteStartAttribute(string).
 
 2004-07-28  Atsushi Enomoto  <atsushi@ximian.com>

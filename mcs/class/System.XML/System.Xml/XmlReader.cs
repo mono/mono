@@ -658,6 +658,76 @@ namespace System.Xml
 		}
 
 #if NET_2_0
+		[MonoTODO]
+		public Type ValueType {
+			get { throw new NotImplementedException (); }
+		}
+
+		[MonoTODO]
+		public virtual bool ReadToDescendant (string name)
+		{
+			if (NodeType != XmlNodeType.Element || IsEmptyElement)
+				return false;
+			int depth = Depth;
+			for (Read (); depth < Depth; Read ())
+				if (NodeType == XmlNodeType.Element && name == Name)
+					return true;
+			return false;
+		}
+
+		[MonoTODO]
+		public virtual bool ReadToDescendant (string localName, string namespaceURI)
+		{
+			if (NodeType != XmlNodeType.Element || IsEmptyElement)
+				return false;
+			int depth = Depth;
+			for (Read (); depth < Depth; Read ())
+				if (NodeType == XmlNodeType.Element && localName == LocalName && namespaceURI == NamespaceURI)
+					return true;
+			return false;
+		}
+
+		[MonoTODO]
+		public virtual bool ReadToNextSibling (string name)
+		{
+			if (NodeType != XmlNodeType.Element || IsEmptyElement)
+				return false;
+			int depth = Depth;
+			for (Skip (); depth < Depth; Skip ())
+				if (NodeType == XmlNodeType.Element && name == Name)
+					return true;
+			return false;
+		}
+
+		[MonoTODO]
+		public virtual bool ReadToNextSibling (string localName, string namespaceURI)
+		{
+			if (NodeType != XmlNodeType.Element || IsEmptyElement)
+				return false;
+			int depth = Depth;
+			for (Skip (); depth < Depth; Skip ())
+				if (NodeType == XmlNodeType.Element && localName == LocalName && namespaceURI == NamespaceURI)
+					return true;
+			return false;
+		}
+
+		[MonoTODO]
+		public object ReadAsObject (Type type)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public XmlReader ReadSubtree ()
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public object ReadTypedValue ()
+		{
+			throw new NotImplementedException ();
+		}
 
 		[MonoTODO]
 		public virtual object ReadValueAs (Type type)
