@@ -1,3 +1,8 @@
+
+Tue Jul 29 15:25:01 CEST 2003 Paolo Molaro <lupus@ximian.com>
+
+	* class.h, class.c: removed unused subclasses field in MonoClass.
+
 2003-07-29  Lluis Sanchez Gual  <lluis@ximian.com>
 
 	* icall.c: improve fix of get_base_definition(). If the parent class
