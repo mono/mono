@@ -31,6 +31,19 @@ namespace MonoTests.System.Data
                 }
 
 		[Test]
+		public void Properties ()
+		{
+			DataSet ds = new DataSet ();
+			AssertEquals ("default namespace", String.Empty, ds.Namespace);
+			ds.Namespace = null; // setting null == setting ""
+			AssertEquals ("after setting null to namespace", String.Empty, ds.Namespace);
+
+			AssertEquals ("default prefix", String.Empty, ds.Prefix);
+			ds.Prefix = null; // setting null == setting ""
+			AssertEquals ("after setting null to prefix", String.Empty, ds.Prefix);
+		}
+
+		[Test]
 		public void ReadXmlSchema ()
 		{
 			DataSet ds = new DataSet ();
@@ -383,6 +396,7 @@ namespace MonoTests.System.Data
 		public void ReadWriteXmlDiffGram ()
 		{
 			DataSet ds = new DataSet ();
+			// It is not a diffgram, so no data loading should be done.
 			ds.ReadXml ("Test/System.Data/region.xml", XmlReadMode.DiffGram);
 			TextWriter writer = new StringWriter ();
 			ds.WriteXml (writer);
@@ -828,6 +842,51 @@ namespace MonoTests.System.Data
 			AssertEquals ("test#37", "  </xs:element>", substring);
 
 			AssertEquals ("test#38", "</xs:schema>", TextString);
+		}
+
+		[Test]
+		public void WriteDifferentNamespaceSchema ()
+		{
+			// Attribute order is modified from MS.NET output
+			string schema = @"<?xml version='1.0' encoding='utf-16'?>
+<xs:schema xmlns:msdata='urn:schemas-microsoft-com:xml-msdata' xmlns:mstns='urn:bar' attributeFormDefault='qualified' elementFormDefault='qualified' targetNamespace='urn:bar' id='NewDataSet' xmlns:xs='http://www.w3.org/2001/XMLSchema' xmlns:app1='urn:baz' xmlns:app2='urn:foo' xmlns='urn:bar'>
+  <!--ATTENTION: This schema contains references to other imported schemas-->
+  <xs:import namespace='urn:baz' schemaLocation='_app1.xsd' />
+  <xs:import namespace='urn:foo' schemaLocation='_app2.xsd' />
+  <xs:element name='NewDataSet' msdata:IsDataSet='true' msdata:Locale='ja-JP'>
+    <xs:complexType>
+      <xs:choice maxOccurs='unbounded'>
+        <xs:element ref='app2:NS1Table' />
+        <xs:element name='NS2Table'>
+          <xs:complexType>
+          </xs:complexType>
+        </xs:element>
+      </xs:choice>
+    </xs:complexType>
+  </xs:element>
+</xs:schema>
+";
+
+			DataSet ds = new DataSet();
+			DataTable dt = new DataTable ();
+			dt.TableName = "NS1Table";
+			dt.Namespace = "urn:foo";
+			dt.Columns.Add ("column1");
+			dt.Columns.Add ("column2");
+			dt.Columns [1].Namespace = "urn:baz";
+			ds.Tables.Add (dt);
+			DataTable dt2 = new DataTable ();
+			dt2.TableName = "NS2Table";
+			dt2.Namespace = "urn:bar";
+			ds.Tables.Add (dt2);
+			ds.Namespace = "urn:bar";
+			StringWriter sw = new StringWriter ();
+			XmlTextWriter xw = new XmlTextWriter (sw);
+			xw.Formatting = Formatting.Indented;
+			xw.QuoteChar = '\'';
+			ds.WriteXmlSchema (xw);
+			AssertEquals (schema, sw.ToString ());
+
 		}
 
 		[Test]

@@ -92,21 +92,21 @@ namespace MonoTests.System.Data
 			AssertReadXml (ds, "SimpleTable", xml6,
 				XmlReadMode.Auto, XmlReadMode.InferSchema,
 				"NewDataSet", 1);
-			AssertDataTable ("xml6", ds.Tables [0], "root", 1, 0);
+			AssertDataTable ("xml6", ds.Tables [0], "root", 1, 1);
 
 			// simple table with 2 columns:
 			ds = new DataSet ();
 			AssertReadXml (ds, "SimpleTable2", xml7,
 				XmlReadMode.Auto, XmlReadMode.InferSchema,
 				"NewDataSet", 1);
-			AssertDataTable ("xml7", ds.Tables [0], "root", 2, 0);
+			AssertDataTable ("xml7", ds.Tables [0], "root", 2, 1);
 
 			// simple dataset with 1 table:
 			ds = new DataSet ();
 			AssertReadXml (ds, "SimpleDataSet", xml8,
 				XmlReadMode.Auto, XmlReadMode.InferSchema,
 				"dataset", 1);
-			AssertDataTable ("xml8", ds.Tables [0], "table", 2, 0);
+			AssertDataTable ("xml8", ds.Tables [0], "table", 2, 1);
 		}
 
 		[Test]
