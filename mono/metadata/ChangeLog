@@ -1,3 +1,8 @@
+2004-08-18  Zoltan Varga  <vargaz@freemail.hu>
+
+	* Makefile.am (libmetadata_la_LIBADD): Avoid linking libmonoos into
+	multiple libraries since this don't work on windows.
+
 2004-08-18  Martin Baulig  <martin@ximian.com>
 
 	* class-internals.h
