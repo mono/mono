@@ -20,7 +20,6 @@ using System.Reflection;
 
 namespace System.Web.UI.WebControls
 {
-	//[DefaultMember("Item")] I need the this[...] thing...
 	//[Editor("??", typeof(Design.WebControls.ListItemCollectionEditor))]
 	public sealed class ListItemCollection : IList, ICollection, IEnumerable, IStateManager
 	{
@@ -206,66 +205,68 @@ namespace System.Web.UI.WebControls
 			RemoveAt(IndexOf(ListItem.FromString(item)));
 		}
 
-		internal object SaveViewState()
+		internal object SaveViewState ()
 		{
-			if(saveAll)
-			{
-				string[] keys = new string[Count];
-				string[] vals = new string[Count];
-				for(int i=0; i < Count; i++)
-				{
-					keys[i] = this[i].Text;
-					vals[i] = this[i].Value;
+			int count = Count;
+			if (saveAll) {
+				string [] keys = new string [count];
+				string [] vals = new string [count];
+				for(int i = 0; i < count; i++) {
+					keys[i] = this [i].Text;
+					vals[i] = this [i].Value;
 				}
-				return new Triplet(Count, keys, vals);
+
+				return new Triplet (count, keys, vals);
 			}
-			ArrayList indices = new ArrayList();
-			ArrayList states = new ArrayList();
+
+			ArrayList indices = new ArrayList ();
+			ArrayList states = new ArrayList ();
 			object o;
-			for(int i=0; i < Count; i++)
-			{
-				o = this[i].SaveViewState();
-				if(o!=null)
-				{
-					indices.Add(i);
-					states.Add(o);
-				}
+			for(int i = 0; i < count; i++) {
+				o = this [i].SaveViewState ();
+				if (o == null)
+					continue;
+
+				indices.Add (i);
+				states.Add (o);
 			}
-			if(indices.Count > 0)
-				return new Pair(indices, states);
+
+			if (indices.Count > 0)
+				return new Pair (indices, states);
+
 			return null;
 		}
 
-		internal void LoadViewState(object savedState)
+		internal void LoadViewState (object savedState)
 		{
-			if(savedState!=null)
-			{
-				if(savedState is Pair)
-				{
-					ArrayList indices = (ArrayList)(((Pair)savedState).First);
-					ArrayList states  = (ArrayList)(((Pair)savedState).Second);
-					for(int i=0; i < indices.Count; i++)
-					{
-						if( (int)indices[i] < Count )
-							this[i].LoadViewState(states[i]);
-						else
-						{
-							ListItem temp = new ListItem();
-							temp.LoadViewState(states[i]);
-							Add(temp);
-						}
+			if (savedState == null)
+				return;
+
+			int i, end;
+			if (savedState is Pair) {
+				Pair pair = (Pair) savedState;
+				ArrayList indices = (ArrayList) pair.First;
+				ArrayList states  = (ArrayList) pair.Second;
+
+				end = indices.Count;
+				for (i = 0; i < end; i++) {
+					if ((int) indices [i] < Count ) {
+						this [i].LoadViewState (states [i]);
+					} else {
+						ListItem temp = new ListItem ();
+						temp.LoadViewState (states [i]);
+						Add (temp);
 					}
 				}
-				if(savedState is Triplet)
-				{
-					Triplet t = (Triplet)savedState;
-					items = new ArrayList((int)t.First);
-					saveAll = true;
-					string[] text = (string[])t.Second;
-					string[] vals = (string[])t.Third;
-					for(int i=0; i < text.Length; i++)
-						items.Add(new ListItem(text[i], vals[i]));
-				}
+			} else if (savedState is Triplet) {
+				Triplet t = (Triplet) savedState;
+				items = new ArrayList ((int) t.First);
+				saveAll = true;
+				object [] text = (object []) t.Second;
+				object [] vals = (object []) t.Third;
+				end = text.Length;
+				for(i = 0; i < end; i++)
+					items.Add (new ListItem (text[i].ToString (), vals[i].ToString ()));
 			}
 		}
 
