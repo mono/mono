@@ -1,3 +1,10 @@
+2003-10-28 Jackson Harper <jackson@ximian.com>
+
+	* ExternTable.cs: This is now used to store ExternTypeRefs so we
+	only create 1 for each external type.
+	* ExternTypeRef.cs: Only create one method and field per a
+	signature/name.
+	
 2003-10-18 Jackson Harper <jackson@ximian.com>
 
 	* ExternTable.cs: Separate class and value types into diff tables.
