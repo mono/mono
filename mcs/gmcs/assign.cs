@@ -279,7 +279,14 @@ namespace Mono.CSharp {
 					} 
 				}
 			}
-			
+
+			if (!(target is IAssignMethod) && (target.eclass != ExprClass.EventAccess)) {
+				Report.Error (131, loc,
+					      "Left hand of an assignment must be a variable, " +
+					      "a property or an indexer");
+				return null;
+			}
+
 			if (source is New && target_type.IsValueType &&
 			    (target.eclass != ExprClass.IndexerAccess) && (target.eclass != ExprClass.PropertyAccess)){
 				New n = (New) source;
@@ -288,13 +295,6 @@ namespace Mono.CSharp {
 					return n;
 				else
 					return null;
-			}
-
-			if (!(target is IAssignMethod) && (target.eclass != ExprClass.EventAccess)) {
-				Report.Error (131, loc,
-					      "Left hand of an assignment must be a variable, " +
-					      "a property or an indexer");
-				return null;
 			}
 
 			if ((source.eclass == ExprClass.Type) && (source is TypeExpr)) {

@@ -1,3 +1,8 @@
+2004-07-13  Martin Baulig  <martin@ximian.com>
+
+	* assign.cs (Assign.DoResolve): Moved the CS0131 check up a little
+	bit to fix #60119.
+
 2004-07-09  Miguel de Icaza  <miguel@ximian.com>
 
 	* assign.cs (LocalTemporary): Add new argument: is_address,If
