@@ -1,3 +1,8 @@
+2003-06-10  Duncan Mak  <duncan@ximian.com>
+
+	* XmlDocumentNavigator.cs (GetNode): Make it implement
+	IHasXmlNode.
+
 2003-06-05  Lluis Sanchez Gual <lluis@ideary.com>
 
 	* XmlTextWriter.cs : Fixed bug. After calling for example WriteStartElement ("pref","ln","ns");

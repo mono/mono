@@ -14,7 +14,7 @@ using System.Xml.XPath;
 
 namespace System.Xml
 {
-	internal class XmlDocumentNavigator : XPathNavigator
+	internal class XmlDocumentNavigator : XPathNavigator, IHasXmlNode
 	{
 		#region Constructors
 
@@ -320,6 +320,11 @@ namespace System.Xml
 		}
 
 		internal XmlNode Node { get { return node; } }
+
+                XmlNode IHasXmlNode.GetNode ()
+                {
+                        return node;
+                }
 
 		#endregion
 	}
