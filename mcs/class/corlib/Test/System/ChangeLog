@@ -1,3 +1,9 @@
+2005-01-08  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* AppDomainTest.cs: Un-ignore tests that unloaded the appdomain (they
+	previously displayed a lot of GC warnings). SetAppDomainPolicy_Dual is
+	fixed (i.e. it throws the excepted exception) in 2.0 (Dec CTP).
+
 2005-01-08  Miguel de Icaza  <miguel@ximian.com>
 
 	* BitConverterTest.cs: There is no exception thrown in .NET here.

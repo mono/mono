@@ -50,8 +50,7 @@ namespace MonoTests.System {
 		{
 			if (ad != null) {
 				try {
-// FIXME: Lots of GC warning when unloading
-//					AppDomain.Unload (ad);
+					AppDomain.Unload (ad);
 					ad = null;
 				}
 				catch {} // do not affect unit test results in TearDown
@@ -92,7 +91,6 @@ namespace MonoTests.System {
 
 		[Test]
 		[ExpectedException (typeof (AppDomainUnloadedException))]
-		[Ignore ("Unloading cause lots of GC warning")]
 		public void SetThreadPrincipalUnloaded () 
 		{
 			ad = AppDomain.CreateDomain ("Ximian");
@@ -122,7 +120,6 @@ namespace MonoTests.System {
 
 		[Test]
 		[ExpectedException (typeof (AppDomainUnloadedException))]
-		[Ignore ("Unloading cause lots of GC warning")]
 		public void SetPrincipalPolicyUnloaded () 
 		{
 			ad = AppDomain.CreateDomain ("Ximian");
@@ -255,10 +252,7 @@ namespace MonoTests.System {
 		}
 
 		[Test]
-#if ! NET_2_0
-		// MS bug for 2.x ???
 		[ExpectedException (typeof (PolicyException))]
-#endif
 		public void SetAppDomainPolicy_Dual ()
 		{
 			ad = AppDomain.CreateDomain ("SetAppDomainPolicy_Dual");
@@ -276,7 +270,6 @@ namespace MonoTests.System {
 
 		[Test]
 		[ExpectedException (typeof (AppDomainUnloadedException))]
-		[Ignore ("Unloading cause lots of GC warning")]
 		public void SetAppDomainPolicy_Unloaded ()
 		{
 			ad = AppDomain.CreateDomain ("SetAppDomainPolicy_Unloaded");
