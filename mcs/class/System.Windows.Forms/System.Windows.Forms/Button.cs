@@ -47,7 +47,7 @@ namespace System.Windows.Forms {
 					WindowStyles.WS_VISIBLE |
 					WindowStyles.WS_CLIPSIBLINGS );
 				createParams.Style |= (int)Win32.ContentAlignment2SystemButtonStyle(TextAlign);
-				//createParams.Style |= (int) ButtonStyles.BS_OWNERDRAW;
+				createParams.Style |= (int) ButtonStyles.BS_OWNERDRAW;
 				// CHECKME : this call is commented because (IMHO) Control.CreateHandle suppose to do this
 				// and this function is CreateParams, not CreateHandle
 				// window.CreateHandle (createParams);
@@ -140,6 +140,11 @@ namespace System.Windows.Forms {
 			Rectangle rc = paintBounds;
 			Rectangle rcImageClip = paintBounds;
 			rcImageClip.Inflate(-2,-2);
+
+			/* Clear the button background */
+			Brush br = new SolidBrush(controlColor);
+			pevent.Graphics.FillRectangle(br, pevent.ClipRectangle);
+			br.Dispose();
 
 			if( FlatStyle == FlatStyle.Flat) {
 				if( Pushed) {
@@ -260,14 +265,14 @@ namespace System.Windows.Forms {
 			}
 
 			// DrawString does not paint _ under character, so we can use Win32 function call
-			if( Enabled) {
+			if (Enabled) {
 				Win32.DrawText(paintOn, Text, Font, textColor, rc, TextAlign);
 			}
 			else {
 				ControlPaint.DrawStringDisabled(paintOn, Text, Font, textColor, rc, Win32.ContentAlignment2StringFormat(TextAlign));
 			}
 
-			if( Focused) {
+			if (Focused) {
 				// FIXME: Draw focus rectangle in different colors
 				ControlPaint.DrawFocusRectangle( paintOn, focusRC);
 			}

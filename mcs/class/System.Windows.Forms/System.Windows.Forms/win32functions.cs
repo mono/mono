@@ -107,7 +107,7 @@ namespace System.Windows.Forms{
 		// No need to construct this object
 		#endregion
 		
-		#region Constans values
+		#region Constant values
 		internal const string TOOLBARCLASSNAME = "ToolbarWindow32";
 		internal const string REBARCLASSNAME = "ReBarWindow32";
 		internal const string PROGRESSBARCLASSNAME = "msctls_progress32";
@@ -1249,18 +1249,12 @@ namespace System.Windows.Forms{
 			IntPtr hdc = paintOn.GetHdc();
 			int prevColor = Win32.SetTextColor(hdc, RGB(color));
 
-#if ToHfontIsWorking
 			IntPtr prevFont = Win32.SelectObject(hdc, font.ToHfont());
-#else
-			Console.WriteLine("DrawText ToHfont() hack active");
-#endif
 			BackgroundMode prevBkMode = Win32.SetBkMode(hdc, BackgroundMode.TRANSPARENT);
 			Win32.DrawText(hdc, text, text.Length, ref rc, 
 			       DrawTextFormatFlags.DT_SINGLELINE | Win32.ContentAlignment2DrawTextFormat(alignment));
 			Win32.SetBkMode(hdc, prevBkMode);
-#if ToHfontIsWorking
 			Win32.SelectObject(hdc, prevFont);
-#endif
 			Win32.SetTextColor(hdc, prevColor);
 			paintOn.ReleaseHdc(hdc);
 		}
@@ -1269,18 +1263,12 @@ namespace System.Windows.Forms{
 			IntPtr hOldFont = new IntPtr ( 0 );
 			IntPtr hFont = new IntPtr ( Win32.SendMessage ( hWnd, (int)Msg.WM_GETFONT, 0, 0 ) );
 			IntPtr hDC   = Win32.GetWindowDC ( hWnd );
-#if ToHfontIsWorking
 			if ( hFont != IntPtr.Zero )
 				hOldFont = Win32.SelectObject ( hDC, hFont );
-#else
-			Console.WriteLine("GetTextExtent ToHfont() hack active");
-#endif
 			SIZE size = new SIZE();
 			Win32.GetTextExtentPoint32 ( hDC, text, text.Length, ref size);
-#if ToHfontIsWorking
 			if ( hOldFont != IntPtr.Zero )
 				Win32.SelectObject ( hDC, hOldFont );
-#endif
 			Win32.ReleaseDC ( hWnd, hDC );
 			return size;
 		}

@@ -1921,8 +1921,7 @@ namespace System.Windows.Forms
     		{
 			if (GetStyle (ControlStyles.UserPaint)) {
 				Brush br = new SolidBrush (BackColor);
-				//pevent.Graphics.FillRectangle (br, pevent.ClipRectangle);
-				Console.WriteLine ("WARNING: Missing call to FillRectangle in OnPaintBackground");
+				pevent.Graphics.FillRectangle (br, pevent.ClipRectangle);
 				br.Dispose ();
 			}
 		}
