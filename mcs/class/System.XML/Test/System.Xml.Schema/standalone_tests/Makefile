@@ -24,7 +24,7 @@ $(TEST_ARCHIVE) :
 xsd-test-suite:
 	mkdir xsd-test-suite
 
-test : xsdtest.exe
+test :
 	$(RUNTIME) xsdtest.exe
 
 test-psci : xs-psci-compare.exe

@@ -1,3 +1,8 @@
+2004-03-04  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Makefile : made "make test" independent of "make" so that extraneous
+	  archive extraction won't be run every time (for automated tests).
+
 2004-01-20  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* Added set of Post Schema Compilation Information tests, i.e.
