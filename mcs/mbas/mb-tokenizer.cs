@@ -861,6 +861,20 @@ namespace Mono.MonoBASIC
 			return Token.EOF;
 		}
 
+		public void cleanup ()
+		{
+/* borrowed from mcs - have to work it to have preprocessing in mbas
+
+			if (ifstack != null && ifstack.Count >= 1) {
+				int state = (int) ifstack.Pop ();
+				if ((state & REGION) != 0)
+					Report.Error (1038, "#endregion directive expected");
+				else 
+					Report.Error (1027, "#endif directive expected");
+			}
+*/				
+		}
+
 		public Tokenizer (System.IO.TextReader input, string fname, ArrayList defines)
 		{
 			this.ref_name = fname;

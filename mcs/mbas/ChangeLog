@@ -1,3 +1,6 @@
+2003-01-13  Rafael Teixeira <rafaelteixeirabr@hotmail.com>
+	* added cleanup method to tokenizer as needed but modifications made in jay
+
 2003-01-12  Rafael Teixeira <rafaelteixeirabr@hotmail.com>
 	* changed test target in makefile work
         * corrected authors list to include Marco
