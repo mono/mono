@@ -76,8 +76,8 @@ namespace System.Threading
 		private IntPtr static_data;
 		private IntPtr jit_data;
 		private IntPtr lock_data;
-		IntPtr unused1;
-		IntPtr unused2;
+		Hashtable slothash;
+		Context current_appcontext;
 		int stack_size;
 		object start_obj;
 		private IntPtr appdomain_refs;
@@ -144,34 +144,27 @@ namespace System.Threading
 			}
 		}
 
-		// Looks up the slot hash for the current thread
-		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		private extern static Hashtable SlotHash_lookup();
-
-		// Stores the slot hash for the current thread
-		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		private extern static void SlotHash_store(Hashtable slothash);
-
 		private static Hashtable GetTLSSlotHash() {
-			Hashtable slothash=SlotHash_lookup();
-			if(slothash==null) {
+			Thread t = CurrentThread;
+			if (t.slothash == null) {
 				// Not synchronised, because this is
 				// thread specific anyway.
-				slothash=new Hashtable();
-				SlotHash_store(slothash);
+				t.slothash = new Hashtable ();
 			}
 
-			return(slothash);
+			return t.slothash;
 		}
 		
 		internal static object ResetDataStoreStatus () {
-			Hashtable slothash=SlotHash_lookup();
-			SlotHash_store(null);
+			Thread t = CurrentThread;
+			Hashtable slothash = t.slothash;
+			t.slothash = null;
 			return slothash;
 		}
 
 		internal static void RestoreDataStoreStatus (object data) {
-			SlotHash_store((Hashtable)data);
+			Thread t = CurrentThread;
+			t.slothash = ((Hashtable)data);
 		}
 
 		public static LocalDataStoreSlot AllocateDataSlot() {

@@ -1,3 +1,8 @@
+
+Tue Feb 15 18:19:11 CET 2005 Paolo Molaro <lupus@ximian.com>
+
+	* Thread.cs: make the slothash a field in MonoThread.
+
 2005-01-27  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Overlapped.cs: Added check for ControlPolicy and ControlEvidence for
