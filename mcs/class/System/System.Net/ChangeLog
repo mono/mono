@@ -1,5 +1,10 @@
 2002-04-15  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* IPEndPoint.cs: implemented Equals() and GetHashCode(). Now 100%
+	complete.
+
+2002-04-15  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* IPAddress.cs: finished all MonoTODO's. Use network order to store 
 	the address. Check for max and min values in Address:set. IsLoopback()
 	returns now true for all 127.x.y.z. Some more checks in Parse ().

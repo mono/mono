@@ -116,5 +116,20 @@ namespace System.Net {
 		public override string ToString() {
 			return(address.ToString() + ":" + port);
 		}
+
+		public override string Equals (Object obj)
+		{
+			if (obj is System.Net.IPEndPoint) {
+				return ( ((IPEndPoint) obj).port == port &&
+					 ((IPEndPoint) obj).address == address);
+			}
+
+			return false;
+		}
+
+		public override string GetHashcode ()
+		{
+			return address.GetHashCode () + port;
+		}
 	}
 }
