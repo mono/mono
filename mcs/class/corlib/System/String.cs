@@ -33,10 +33,16 @@ namespace System {
 			if (null == str1 || null == str2)
 				return false;
 
-			if (str1.length != str2.length)
+			int len = str1.length;
+			
+			if (len != str2.length)
 				return false;
 
-			return InternalEquals(str1, str2);
+			for (int i = 0; i < len; i++)
+				if (str1 [i] != str2 [i])
+					return false;
+
+			return true;
 		}
 
 		public static bool operator == (String str1, String str2) {
@@ -48,33 +54,11 @@ namespace System {
 		}
 
 		public override bool Equals(Object obj) {
-			if ((this as object) == obj)
-				return true;
-
-			if (null == obj)
-				return false;
-
-			if (!(obj is String))
-				return false;
-
-			string other = (string) obj;
-			if (length != other.length)
-				return false;
-
-			return InternalEquals(this, other);
+			return Equals (this, obj as String);
 		}
 
 		public bool Equals(String value) {
-			if ((this as object) == value)
-				return true;
-
-			if (null == value)
-				return false;
-
-			if (length != value.length)
-				return false;
-
-			return InternalEquals(this, value);
+			return Equals (this, value);
 		}
 
 		[IndexerName("Chars")]

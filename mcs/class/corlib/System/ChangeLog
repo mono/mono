@@ -1,3 +1,7 @@
+2003-04-11  Dietmar Maurer  <dietmar@ximian.com>
+
+	* String.cs (Equals): avoid the internal call, code cleanups
+
 2003-04-11  Alan Tam <Tam@SiuLung.com>
 
 	* Convert.cs: fixed bug #41085.
