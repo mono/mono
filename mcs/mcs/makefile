@@ -10,6 +10,7 @@ COMPILER_SOURCES = \
 	assign.cs			\
 	driver.cs $(COMMON_SOURCES) 	\
 	class.cs 			\
+	delegate.cs			\
 	codegen.cs			\
 	constant.cs			\
 	decl.cs				\

@@ -291,9 +291,9 @@ using_namespace_directive
           }
 	;
 
-namespace_declarations
-	: namespace_declaration
-	| namespace_declarations namespace_declaration
+//  namespace_declarations
+//  	: namespace_declaration
+//  	| namespace_declarations namespace_declaration
 
 namespace_declaration
 	: NAMESPACE qualified_identifier 
@@ -443,15 +443,15 @@ attribute_arguments
 	;
 
 
-opt_dimension_separators
-	: /* empty */
-	| dimension_separators
-	;
+//  opt_dimension_separators
+//  	: /* empty */
+//  	| dimension_separators
+//  	;
 
-dimension_separators
-	: COMMA 
-	| dimension_separators COMMA 
-	;
+//  dimension_separators
+//  	: COMMA 
+//  	| dimension_separators COMMA 
+//  	;
 
 class_body
 	:  OPEN_BRACE opt_class_member_declarations CLOSE_BRACE
@@ -1297,11 +1297,9 @@ enum_declaration
 		Enum e = new Enum ((string) $5, (int) $2, name);
 
 		foreach (VariableDeclaration ev in (ArrayList) $6){
-			CheckDef (
-				e.AddEnum (
-					ev.identifier, 
-					(Expression) ev.expression_or_array_initializer),
-				ev.identifier);
+			CheckDef (e.AddEnumMember (ev.identifier, 
+						   (Expression) ev.expression_or_array_initializer),
+				  ev.identifier);
 		}
 
 		CheckDef (current_container.AddEnum (e), name);
@@ -1362,8 +1360,9 @@ delegate_declaration
 	  formal_parameter_list
 	  CLOSE_PARENS 
 	  SEMICOLON
-	  { note ("validate that modifiers only contains NEW PUBLIC PROTECTED INTERNAL PRIVATE"); }
-
+	  {
+		$$ = new Delegate ((string) $4, (int) $2, (string) $5, (Parameters) $7);
+	  }
 	| opt_attributes
 	  opt_modifiers
 	  DELEGATE VOID	  
@@ -1371,7 +1370,9 @@ delegate_declaration
 	  formal_parameter_list
 	  CLOSE_PARENS 
 	  SEMICOLON
-	  { note ("validate that modifiers only contains NEW PUBLIC PROTECTED INTERNAL PRIVATE"); }
+	  {
+		$$ = new Delegate (null, (int) $2, (string) $5, (Parameters) $7);
+	  }
 	;
 
 type_name
@@ -2654,27 +2655,6 @@ opt_catch_clauses
         | catch_clauses
 	;
 
-//  catch_clauses
-//  	: specific_catch_clauses opt_general_catch_clause
-//  	  {
-//  		$$ = new DictionaryEntry ($1, $2);
-//  	  }
-//  	| opt_specific_catch_clauses general_catch_clause
-//  	  {
-//  		$$ = new DictionaryEntry ($2, $1);
-//  	  }
-//  	;
-
-//  opt_general_catch_clause
-//  	: /* empty */			{ $$ = null; }
-//  	| general_catch_clause 
-//  	;
-
-//  opt_specific_catch_clauses
-//  	: /* emtpy */			{ $$ = null; }
-//  	| specific_catch_clauses 
-//  	;
-
 catch_clauses
 	: catch_clause 
 	  {
@@ -2692,29 +2672,10 @@ catch_clauses
 	  }
 	;
 
-//  specific_catch_clause
-//  	: CATCH OPEN_PARENS type opt_identifier CLOSE_PARENS block
-//  	  {
-//  		string id = null;
-
-//  		if ($4 != null)
-//  			id = (string) $4;
-
-//  		$$ = new Catch ((string) $3, id, (Block) $6);
-//  	  }
-//  	;
-
 opt_identifier
 	: /* empty */	{ $$ = null; }
 	| IDENTIFIER
 	;
-
-//  general_catch_clause
-//  	: CATCH block
-//  	  {
-//  		$$ = new Catch (null, null, (Block) $2);
-//  	  }
-//  	;
 
 catch_clause 
 	: CATCH opt_catch_args block

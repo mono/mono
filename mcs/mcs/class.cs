@@ -1249,7 +1249,7 @@ namespace CIR {
 			default :
 				// We have an error
 				
-				CSharpParser.error (-4, "Overloaded operator should be unary"); 
+				CSharpParser.error (1019, "Overloadable unary operator expected"); 
 				break;
 				
 			}
@@ -1269,7 +1269,7 @@ namespace CIR {
 
 			default :
 
-				CSharpParser.error (-5, "Overloaded operator should be binary");
+				CSharpParser.error (1020, "Overloadable binary operator expected");
 				break;
 			}
 

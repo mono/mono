@@ -1,3 +1,30 @@
+2001-09-02  Ravi Pratap  <ravi@ximian.com>
+
+	* class.cs (Operator::CheckUnaryOperator): Correct error number used
+	to make it coincide with MS' number.
+	(Operator::CheckBinaryOperator): Ditto.
+
+	* ../errors/errors.txt : Remove error numbers added earlier.
+
+	* ../errors/cs1019.cs : Test case for error # 1019
+
+	* ../errros/cs1020.cs : Test case for error # 1020
+
+	* cs-parser.jay : Clean out commented cruft.
+	(dimension_separators, dimension_separator): Comment out. Ostensibly not
+	used anywhere - non-reducing rule.
+	(namespace_declarations): Non-reducing rule - comment out.
+
+	* enum.cs (Enum::AddEnum): Rename to AddEnumMember as I was getting confused
+	with TypeContainer::AddEnum.
+
+	* delegate.cs : New file for delegate handling classes.
+	(Delegate): Class for declaring delegates.
+
+	* makefile : Update.
+
+	* cs-parser.jay (delegate_declaration): Implement.
+
 2001-09-01  Ravi Pratap  <ravi@che.iitm.ac.in>
 
 	* class.cs (Event::Define): Implement.

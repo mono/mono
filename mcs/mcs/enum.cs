@@ -43,7 +43,7 @@ namespace CIR {
 		//   Adds @name to the enumeration space, with @expr
 		//   being its definition.  
 		// </summary>
-		public AdditionResult AddEnum (string name, Expression expr)
+		public AdditionResult AddEnumMember (string name, Expression expr)
 		{
 			if (defined_names.Contains (name))
 				return AdditionResult.NameExists;
