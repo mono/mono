@@ -40,8 +40,6 @@ namespace System.Net.Configuration
 					string bypass = HandlersUtil.ExtractAttributeValue ("bypassonlocal", child, true);
 					string address = HandlersUtil.ExtractAttributeValue ("proxyaddress", child, true);
 					if (child.Attributes != null && child.Attributes.Count != 0) {
-						foreach (XmlAttribute n in child.Attributes)
-							Console.WriteLine ("att: {0}", n.Name);
 						HandlersUtil.ThrowException ("Unrecognized attribute", child);
 					}
 
@@ -76,8 +74,7 @@ namespace System.Net.Configuration
 				}
 
 				if (name == "module") {
-					Console.WriteLine ("WARNING: module not implemented yet");
-					continue;
+					HandlersUtil.ThrowException ("WARNING: module not implemented yet", child);
 				}
 
 				HandlersUtil.ThrowException ("Unexpected element", child);
@@ -105,7 +102,6 @@ namespace System.Net.Configuration
 				if (name == "add") {
 					string address = HandlersUtil.ExtractAttributeValue ("address", child);
 					if (!bypass.Contains (address)) {
-						Console.WriteLine ("added: {0}", address);
 						bypass.Add (address);
 					}
 					continue;
@@ -114,7 +110,6 @@ namespace System.Net.Configuration
 				if (name == "remove") {
 					string address = HandlersUtil.ExtractAttributeValue ("address", child);
 					bypass.Remove (address);
-						Console.WriteLine ("removed: {0}", address);
 					continue;
 				}
 
@@ -123,7 +118,6 @@ namespace System.Net.Configuration
 						HandlersUtil.ThrowException ("Unrecognized attribute", node);
 					
 					bypass.Clear ();
-						Console.WriteLine ("clear");
 					continue;
 				}
 
