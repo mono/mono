@@ -10,6 +10,7 @@
 //
 
 using System.Collections;
+using System.Collections.Specialized;
 
 namespace System.Xml
 {
@@ -179,6 +180,13 @@ namespace System.Xml
 			
 			return ht.Keys.GetEnumerator ();
 		}
+#if NET_1_2
+		[MonoTODO]
+		public virtual StringDictionary GetNamespacesInScope (XmlNamespaceScope scope)
+		{
+			throw new NotImplementedException ();
+		}
+#endif
 
 		public virtual bool HasNamespace (string prefix)
 		{

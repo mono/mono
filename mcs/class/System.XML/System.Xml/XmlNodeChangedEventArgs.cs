@@ -47,7 +47,27 @@ namespace System.Xml
 				return _newParent;
 			}
 		} 
+
+
+#if NET_1_2
+		public string OldValue
+		{
+			get
+			{
+				throw new NotImplementedException ();
+			}
+		}
 		
+
+		public string NewValue
+		{
+			get
+			{
+				throw new NotImplementedException ();
+			}
+		}
+#endif
+
 
 		// Public Methods
 		// Internal Methods

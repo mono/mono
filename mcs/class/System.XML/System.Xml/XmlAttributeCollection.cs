@@ -144,10 +144,10 @@ namespace System.Xml
 			}
 
 			if(retAttr != null) {
-				ownerDocument.onNodeRemoving (node, null);
+				ownerDocument.onNodeRemoving (node, ownerElement);
 				base.RemoveNamedItem (retAttr.LocalName, retAttr.NamespaceURI);
 				RemoveIdenticalAttribute (retAttr);
-				ownerDocument.onNodeRemoved (node, null);
+				ownerDocument.onNodeRemoved (node, ownerElement);
 			}
 			// If it is default, then directly create new attribute.
 			DTDAttListDeclaration attList = ownerDocument.DocumentType != null ? ownerDocument.DocumentType.DTD.AttListDecls [ownerElement.Name] : null;

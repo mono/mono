@@ -271,11 +271,8 @@ namespace System.Xml
 
 		public override void RemoveAll ()
 		{
-			// Remove the child nodes.
+			// Remove all attributes and child nodes.
 			base.RemoveAll ();
-
-			// Remove all attributes.
-			attributes.RemoveAll ();
 		}
 
 		public virtual void RemoveAllAttributes ()
