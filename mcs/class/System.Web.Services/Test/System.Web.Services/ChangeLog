@@ -1,0 +1,6 @@
+2002-08-07  Tim Coleman <tim@timcoleman.com>
+	* AllTests.cs:
+	* ChangeLog:
+	* WebMethodAttributeTest.cs:
+	* WebServiceAttributeTest.cs:
+		New files and directories added for test suite.
