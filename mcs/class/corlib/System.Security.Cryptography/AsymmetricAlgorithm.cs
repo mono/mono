@@ -9,7 +9,6 @@
 //
 
 using System;
-using System.Xml;
 
 namespace System.Security.Cryptography {
 
@@ -41,7 +40,7 @@ namespace System.Security.Cryptography {
 				return this.KeySizeValue;
 			}
 			set {
-				if (!IsLegalKeySize(this.LegalKeySizesValue, value))
+				if (!IsLegalKeySize (this.LegalKeySizesValue, value))
 					throw new CryptographicException("key size not supported by algorithm");
 				
 				this.KeySizeValue = value;
@@ -62,17 +61,20 @@ namespace System.Security.Cryptography {
 		/// </summary>
 		public abstract string SignatureAlgorithm {get;}
 
-		void System.IDisposable.Dispose() 
+		public void Dispose() 
 		{
+			Dispose (true);
+			GC.SuppressFinalize (this);  // Finalization is now unnecessary
 		}
 
 		public void Clear() 
 		{
-//			Dispose();
+			Dispose (false);
 		}
 
 		protected abstract void Dispose (bool disposing);
 
+/* Commented to remove cyclic dependency between corlib and System.Xml
 		// helper function for FromXmlString (used in RSA and DSA)
 		protected byte[] GetElement (XmlDocument xml, string tag) 
 		{
@@ -81,7 +83,7 @@ namespace System.Security.Cryptography {
 				return Convert.FromBase64String (xnl[0].InnerText);
 			else
 				return null;
-		}
+		}*/
 
 		/// <summary>
 		/// Reconstructs the AsymmetricAlgorithm Object from an XML-string

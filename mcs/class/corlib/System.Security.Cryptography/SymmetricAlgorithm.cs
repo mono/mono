@@ -11,13 +11,211 @@
 using System;
 
 namespace System.Security.Cryptography {
+
+	// This class implement most of the common code required for symmetric
+	// algorithm transforms, like:
+	// - CipherMode: Build CBC... on top of (descendant supplied) ECB
+	// - PaddingMode, transform properties, multiple blocks, reuse...
+	//
+	// Descendants MUST:
+	// - intialize themselves (like key expansion, ...)
+	// - override the ECB (Electronic Code Book) method which will only be
+	//   called using BlockSize byte[] array.
+	internal abstract class SymmetricTransform : ICryptoTransform {
+		protected SymmetricAlgorithm algo;
+		protected bool encrypt;
+		private int BlockSizeByte;
+		private byte[] temp;
+		private byte[] temp2;
+		private int FeedBackByte;
+
+		public SymmetricTransform (SymmetricAlgorithm symmAlgo, bool encryption, byte[] rgbIV) 
+		{
+			algo = symmAlgo;
+			encrypt = encryption;
+			BlockSizeByte = (algo.BlockSize >> 3);
+			temp = new byte [BlockSizeByte];
+			Array.Copy (rgbIV, 0, temp, 0, BlockSizeByte);
+			temp2 = new byte [BlockSizeByte];
+			FeedBackByte = (algo.FeedbackSize >> 3);
+		}
+
+		public void Dispose () 
+		{
+		}
+
+		public virtual bool CanTransformMultipleBlocks {
+			get { return false; }
+		}
+
+		public bool CanReuseTransform {
+			get { return true; }
+		}
+
+		public virtual int InputBlockSize {
+			get { return BlockSizeByte; }
+		}
+
+		public virtual int OutputBlockSize {
+			get { return BlockSizeByte; }
+		}
+
+		// note: Each block MUST be BlockSizeValue in size!!!
+		// i.e. Any padding must be done before calling this method
+		protected void Transform (byte[] input, byte[] output) 
+		{
+			switch (algo.Mode) {
+			case CipherMode.ECB:
+				ECB (input, output);
+				break;
+			case CipherMode.CBC:
+				CBC (input, output);
+				break;
+			case CipherMode.CFB:
+				CFB (input, output);
+				break;
+			case CipherMode.OFB:
+				OFB (input, output);
+				break;
+			case CipherMode.CTS:
+				CTS (input, output);
+				break;
+			default:
+				throw new NotImplementedException ("Unkown CipherMode");
+			}
+		}
+
+		protected abstract void ECB (byte[] input, byte[] output); 
+
+		protected virtual void CBC (byte[] input, byte[] output) 
+		{
+			if (encrypt) {
+				for (int i = 0; i < BlockSizeByte; i++)
+					temp[i] ^= input[i];
+				ECB (temp, output);
+				Array.Copy (output, 0, temp, 0, BlockSizeByte);
+			}
+			else {
+				Array.Copy (input, 0, temp2, 0, BlockSizeByte);
+				ECB (input, output);
+				for (int i = 0; i < BlockSizeByte; i++)
+					output[i] ^= temp[i];
+				Array.Copy (temp2, 0, temp, 0, BlockSizeByte);
+			}
+		}
+
+		protected virtual void CFB (byte[] input, byte[] output) 
+		{
+			throw new NotImplementedException ("CFB not yet supported");
+		}
+
+		// Output-FeedBack (OFB)
+		protected virtual void OFB (byte[] input, byte[] output) 
+		{
+			ECB (temp, temp2);
+
+			for (int i = 0; i < BlockSizeByte; i++) 
+				output[i] = (byte) (temp2[i] ^ input[i]);
+
+			Array.Copy(temp, FeedBackByte, temp, 0, BlockSizeByte - FeedBackByte);
+			Array.Copy(temp2, 0, temp, BlockSizeByte - FeedBackByte, FeedBackByte);
+		}
+
+		protected virtual void CTS (byte[] input, byte[] output) 
+		{
+			throw new NotImplementedException ("CTS not yet supported");
+		}
+
+		public virtual int TransformBlock (byte [] inputBuffer, int inputOffset, int inputCount, byte [] outputBuffer, int outputOffset) 
+		{
+			// if ((inputCount & (BlockSizeByte-1)) != 0) didn't work for Rijndael block = 192
+			if ((inputCount % BlockSizeByte) != 0)
+				throw new CryptographicException ("Invalid input block size.");
+
+			if (outputOffset + inputCount > outputBuffer.Length)
+				throw new CryptographicException ("Insufficient output buffer size.");
+
+			int step = InputBlockSize;
+			int offs = inputOffset;
+			int full = inputCount / step;
+
+			byte [] workBuff = new byte [step];
+			byte[] workout =  new byte [step];
+
+			for (int i = 0; i < full; i++) {
+				Array.Copy (inputBuffer, offs, workBuff, 0, step);
+				Transform (workBuff, workout);
+				Array.Copy (workout, 0, outputBuffer, outputOffset, step);
+				offs += step;
+				outputOffset += step;
+			}
+
+			return (full * step);
+		}
+
+		public virtual byte [] TransformFinalBlock (byte [] inputBuffer, int inputOffset, int inputCount) 
+		{
+			int num = (inputCount + BlockSizeByte) & (~(BlockSizeByte-1));
+			byte [] res = new byte [num];
+			//int full = (num - BlockSizeByte); // didn't work for bs 192
+			int full = (inputCount / BlockSizeByte) * BlockSizeByte;
+
+			// are there still full block to process ?
+			if (full > 0)
+				TransformBlock (inputBuffer, inputOffset, full, res, 0);
+
+			//int rem = inputCount & (BlockSizeByte-1);
+			int rem = inputCount - full; 
+
+			// is there a partial block to pad ?
+			if (rem > 0) {
+				if (encrypt) {
+					int padding = BlockSizeByte - (inputCount % BlockSizeByte);
+					switch (algo.Padding) {
+					case PaddingMode.None:
+						break;
+					case PaddingMode.PKCS7:
+						for (int i = BlockSizeByte; --i >= (BlockSizeByte - padding);) 
+							res [i] = (byte) padding;
+						break;
+					case PaddingMode.Zeros:
+						for (int i = BlockSizeByte; --i >= (BlockSizeByte - padding);)
+							res [i] = 0;
+						break;
+					}
+
+					Array.Copy (inputBuffer, inputOffset + full, res, full, rem);
+
+					// the last padded block will be transformed in-place
+					TransformBlock (res, full, BlockSizeByte, res, full);
+				}
+				else {
+					switch (algo.Padding) {
+					case PaddingMode.None:
+						break;
+					case PaddingMode.PKCS7:
+						byte padding = res [inputCount - 1];
+						for (int i = 0; i < padding; i++) {
+							if (res [inputCount - 1 - i] == padding)
+								res[inputCount - 1 - i] = 0x00;
+						}
+						break;
+					case PaddingMode.Zeros:
+						break;
+					}
+				}
+			}
+			return res;
+		}
+
+	}
+
 	/// <summary>
 	/// Abstract base class for all cryptographic symmetric algorithms.
 	/// Available algorithms include:
 	/// DES, RC2, Rijndael, TripleDES
 	/// </summary>
-	public abstract class SymmetricAlgorithm 
-	{
+	public abstract class SymmetricAlgorithm {
 		protected int BlockSizeValue; // The block size of the cryptographic operation in bits. 
 		protected int FeedbackSizeValue; // The feedback size of the cryptographic operation in bits. 
 		protected byte[] IVValue; // The initialization vector ( IV) for the symmetric algorithm. 
@@ -33,7 +231,6 @@ namespace System.Security.Cryptography {
 		/// </summary>
 		public SymmetricAlgorithm () 
 		{
-			// default for all symmetric algorithm
 			ModeValue = CipherMode.CBC;
 			PaddingValue = PaddingMode.PKCS7;
 		}
@@ -43,16 +240,17 @@ namespace System.Security.Cryptography {
 		/// </summary>
 		~SymmetricAlgorithm () 
 		{
-			Dispose (true);
+			if (KeyValue != null) {
+				Array.Clear (KeyValue, 0, KeyValue.Length);
+				KeyValue = null;
+			}
 		}
 
 		/// <summary>
 		/// Gets or sets the actual BlockSize
 		/// </summary>
 		public virtual int BlockSize {
-			get {
-				return this.BlockSizeValue;
-			}
+			get { return this.BlockSizeValue; }
 			set {
 				if (IsLegalKeySize(this.LegalBlockSizesValue, value))
 					this.BlockSizeValue = value;
@@ -65,9 +263,7 @@ namespace System.Security.Cryptography {
 		/// Gets or sets the actual FeedbackSize
 		/// </summary>
 		public virtual int FeedbackSize {
-			get {
-				return this.FeedbackSizeValue;
-			}
+			get { return this.FeedbackSizeValue; }
 			set {
 				if (value > this.BlockSizeValue)
 					throw new CryptographicException("feedback size larger than block size");
@@ -89,10 +285,10 @@ namespace System.Security.Cryptography {
 			}
 			set {
 				if (value == null)
-					throw new ArgumentNullException("tried setting initial vector to null");
+					throw new ArgumentNullException ("tried setting initial vector to null");
 					
 				if (value.Length * 8 != this.BlockSizeValue)
-					throw new CryptographicException("IV length must match block size");
+					throw new CryptographicException ("IV length must match block size");
 				
 				this.IVValue = new byte [value.Length];
 				System.Array.Copy (value, 0, this.IVValue, 0, value.Length);
@@ -111,10 +307,10 @@ namespace System.Security.Cryptography {
 			}
 			set {
 				if (value == null)
-					throw new ArgumentNullException("tried setting key to null");
+					throw new ArgumentNullException ("tried setting key to null");
 
-				if (!IsLegalKeySize(this.LegalKeySizesValue, value.Length * 8))
-					throw new CryptographicException("key size not supported by algorithm");
+				if (!IsLegalKeySize (this.LegalKeySizesValue, value.Length * 8))
+					throw new CryptographicException ("key size not supported by algorithm");
 
 				this.KeySizeValue = value.Length * 8;
 				this.KeyValue = new byte [value.Length];
@@ -126,10 +322,10 @@ namespace System.Security.Cryptography {
 		/// Gets or sets the actual key size in bits
 		/// </summary>
 		public virtual int KeySize {
-			get { return this.KeySizeValue;	}
+			get { return this.KeySizeValue; }
 			set {
-				if (!IsLegalKeySize(this.LegalKeySizesValue, value))
-					throw new CryptographicException("key size not supported by algorithm");
+				if (!IsLegalKeySize (this.LegalKeySizesValue, value))
+					throw new CryptographicException ("key size not supported by algorithm");
 				
 				this.KeyValue = null;
 				this.KeySizeValue = value;
@@ -140,7 +336,7 @@ namespace System.Security.Cryptography {
 		/// Gets all legal block sizes
 		/// </summary>
 		public virtual KeySizes[] LegalBlockSizes {
-			get { return this.LegalBlockSizesValue;	}
+			get { return this.LegalBlockSizesValue; }
 		}
 
 		/// <summary>
@@ -153,13 +349,13 @@ namespace System.Security.Cryptography {
 		/// <summary>
 		/// Gets or sets the actual cipher mode
 		/// </summary>
-		public virtual CipherMode Mode 	{
+		public virtual CipherMode Mode {
 			get { return this.ModeValue; }
 			set {
-				if (Enum.IsDefined(ModeValue.GetType(), value))
+				if (Enum.IsDefined( ModeValue.GetType (), value))
 					this.ModeValue = value;
 				else
-					throw new CryptographicException("padding mode not available");
+					throw new CryptographicException ("padding mode not available");
 			}
 		}
 
@@ -169,16 +365,11 @@ namespace System.Security.Cryptography {
 		public virtual PaddingMode Padding {
 			get { return this.PaddingValue; }
 			set {
-				if (Enum.IsDefined(PaddingValue.GetType(), value))
+				if (Enum.IsDefined (PaddingValue.GetType (), value))
 					this.PaddingValue = value;
 				else
-					throw new CryptographicException("padding mode not available");
+					throw new CryptographicException ("padding mode not available");
 			}
-		}
-
-		public void Clear() 
-		{
-			Dispose (true);
 		}
 
 		/// <summary>
@@ -197,7 +388,7 @@ namespace System.Security.Cryptography {
 		/// <summary>
 		/// Gets an Encryptor transform object to work with a CryptoStream
 		/// </summary>
-		public virtual ICryptoTransform CreateEncryptor () 
+		public virtual ICryptoTransform CreateEncryptor() 
 		{
 			return CreateEncryptor (Key, IV);
 		}
@@ -206,15 +397,6 @@ namespace System.Security.Cryptography {
 		/// Gets an Encryptor transform object to work with a CryptoStream
 		/// </summary>
 		public abstract ICryptoTransform CreateEncryptor (byte[] rgbKey, byte[] rgbIV);
-
-		protected virtual void Dispose (bool disposing) 
-		{
-			// zeroize key material for security
-			if (KeyValue != null) {
-				Array.Clear(KeyValue, 0, KeyValue.Length);
-				KeyValue = null;
-			}
-		}
 
 		/// <summary>
 		/// used to generate an inital vector if none is specified
@@ -254,7 +436,7 @@ namespace System.Security.Cryptography {
 		{
 			return Create ("System.Security.Cryptography.SymmetricAlgorithm");
 		}
-	
+
 		/// <summary>
 		/// Creates a specific implementation of the given symmetric algorithm.
 		/// </summary>

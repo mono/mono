@@ -10,7 +10,7 @@
 
 using System;
 using System.Text;
-using System.Xml;
+//using System.Xml;
 
 // References:
 // a.	FIPS PUB 186-2: Digital Signature Standard (DSS) 
@@ -54,7 +54,7 @@ namespace System.Security.Cryptography
 			
 			DSAParameters dsaParams = new DSAParameters ();
 			try {
-				XmlDocument xml = new XmlDocument ();
+/*				XmlDocument xml = new XmlDocument ();
 				xml.LoadXml (xmlString);
 				dsaParams.P = GetElement (xml, "P");
 				dsaParams.Q = GetElement (xml, "Q");
@@ -67,7 +67,7 @@ namespace System.Security.Cryptography
 				byte[] counter4b = new byte[4];
 				Array.Copy (counter, 0, counter4b, 0, counter.Length);
 				dsaParams.Counter = BitConverter.ToInt32 (counter4b, 0);
-				dsaParams.X = GetElement (xml, "X");
+				dsaParams.X = GetElement (xml, "X");*/
 				ImportParameters (dsaParams);
 			}
 			catch {

@@ -1,3 +1,22 @@
+2002-10-19  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* SymmetricAlgorithm.cs: Added new class SymmetricTransform to avoid
+	duplicating CipherMode (currently ECB, CBC) and PaddingMode functionalities
+	in every crytographic algorithm implementation.
+	* RijndaelManaged.cs: Added the RjindaelTransform class (inherited
+	from SymmetricTransform) based the old RijndaelImpl / RijndaelController 
+	code. Fixed encryption for block size 192, 256, there is still a problem
+	decrypting block size 192, 256. Unrolled some loops + littl'optimizations
+	* PKCS1MaskGenerationMethod.cs: Removed Array.Reverse in I2OSP to be
+	compatible with MS implementation (however we are now failing the PKCS#1
+	test vector) + added some more checks (null, overflow, ...)
+	* AsymmetricAlgorithm.cs: Commented XMLDocument stuff to end the cyclic
+	dependency (corlib->System.Xml->corlib)
+	* RSA.cs: Commented FromXmlString stuff to end the cyclic dependency
+	* DSA.cs: Commented FromXmlString stuff to end the cyclic dependency
+	* RC2.cs: Create using CryptoConfig
+	* TripleDES.cs: Marked class public. Added LegalKeySizes and LegalBlockSizes
+
 2002-10-14  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* MD5.cs: Create using CryptoConfig, set HashSizeValue, removed TODO.

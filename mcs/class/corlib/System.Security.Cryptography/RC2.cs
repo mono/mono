@@ -9,8 +9,16 @@ using System;
 namespace System.Security.Cryptography {
 
 	public abstract class RC2 : SymmetricAlgorithm {
-		public static new RC2 Create () { return new RC2CryptoServiceProvider(); }
-		public static new RC2 Create (string alg) { return Create (); }
+
+		public static new RC2 Create () 
+		{
+			return Create ("System.Security.Cryptography.RC2");
+		}
+		
+		public static new RC2 Create (string algName) 
+		{
+			return (RC2) CryptoConfig.CreateFromName (algName);
+		}
 
 		protected int EffectiveKeySizeValue;
 		public virtual int EffectiveKeySize {

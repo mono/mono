@@ -11,7 +11,7 @@
 
 using System;
 using System.Text;
-using System.Xml;
+//using System.Xml;
 
 namespace System.Security.Cryptography 
 {
@@ -58,7 +58,7 @@ namespace System.Security.Cryptography
 
 			RSAParameters rsaParams = new RSAParameters ();
 			try {
-				XmlDocument xml = new XmlDocument ();
+/*				XmlDocument xml = new XmlDocument ();
 				xml.LoadXml (xmlString);
 				rsaParams.Modulus = GetElement (xml, "Modulus");
 				rsaParams.Exponent = GetElement (xml, "Exponent");
@@ -67,7 +67,7 @@ namespace System.Security.Cryptography
 				rsaParams.DP = GetElement (xml, "DP");
 				rsaParams.DQ = GetElement (xml, "DQ");
 				rsaParams.InverseQ = GetElement (xml, "InverseQ");
-				rsaParams.D = GetElement (xml, "D");
+				rsaParams.D = GetElement (xml, "D");*/
 				ImportParameters (rsaParams);
 			}
 			catch {

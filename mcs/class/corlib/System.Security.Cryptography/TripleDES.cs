@@ -18,7 +18,7 @@ namespace System.Security.Cryptography {
 // b.	ANSI X9.52
 //	http://webstore.ansi.org/ansidocstore/product.asp?sku=ANSI+X9%2E52%2D1998
 
-abstract class TripleDES : SymmetricAlgorithm {
+public abstract class TripleDES : SymmetricAlgorithm {
 
 	public TripleDES ()
 	{
@@ -26,6 +26,12 @@ abstract class TripleDES : SymmetricAlgorithm {
 		KeySizeValue = 192;
 		BlockSizeValue = 64;
 		FeedbackSizeValue = 64;
+
+		LegalKeySizesValue = new KeySizes[1];
+		LegalKeySizesValue[0] = new KeySizes(128, 192, 64);
+
+		LegalBlockSizesValue = new KeySizes[1];
+		LegalBlockSizesValue[0] = new KeySizes(64, 64, 0);
 	}
 
 	public override byte[] Key {

@@ -27,25 +27,33 @@ public class PKCS1MaskGenerationMethod : MaskGenerationMethod {
 	public string HashName 
 	{
 		get { return hashName; }
-		set { hashName = value; }
+		set { 
+			if (value == null)
+				hashName = "SHA1";
+			else
+				hashName = value; 
+		}
 	}
 
 	// I2OSP converts a nonnegative integer to an octet string of a specified length.
 	// in this case xLen is always 4 so we simplify the function 
-	[CLSCompliant(false)]
-	protected byte[] I2OSP (uint x)
+	private byte[] I2OSP (int x)
 	{
 		byte[] array = BitConverter.GetBytes (x);
-		Array.Reverse (array); // big-little endian issues
+		// FIXME: This line is commented for compatibility with MS .NET
+		// Framework.
+//		Array.Reverse (array); // big-little endian issues
 		return array;
 	}
 
 	// from MGF1 on page 48 from PKCS#1 v2.1 (pdf version)
-	[CLSCompliant(false)]
 	public override byte[] GenerateMask (byte[] mgfSeed, int maskLen)
 	{
 		// 1. If maskLen > 2^32 hLen, output “mask too long” and stop.
-		// easy - this is impossible by using a int (32bits) as parameter ;-)
+		// easy - this is impossible by using a int (31bits) as parameter ;-)
+		// BUT with a signed int we do have to check for negative values!
+		if (maskLen < 0)
+			throw new OverflowException();
 
 		int mgfSeedLength = mgfSeed.Length;
 		HashAlgorithm hash = HashAlgorithm.Create (hashName);
@@ -59,7 +67,7 @@ public class PKCS1MaskGenerationMethod : MaskGenerationMethod {
 		byte[] toBeHashed = new byte [mgfSeedLength + 4];
 		int pos = 0;
 		// 3. For counter from 0 to (maskLen / hLen) – 1, do the following:
-		for (uint counter = 0; counter < iterations; counter++) {
+		for (int counter = 0; counter < iterations; counter++) {
 			// a.	Convert counter to an octet string C of length 4 octets
 			//	C = I2OSP (counter, 4)
 			byte[] C = I2OSP (counter);
