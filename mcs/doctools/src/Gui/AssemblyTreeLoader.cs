@@ -90,9 +90,10 @@ namespace Mono.Doc.Gui
 				typeNode.SelectedImageIndex = AssemblyTreeImages.Interface;
 				typeNode.Text               = nodeName + "Interface"; // TODO: i18n
 
-				// Methods, properties
+				// Methods, properties, events
 				TreeNode methodsNode = GetMethodsNode(t);
 				TreeNode propsNode   = GetPropertiesNode(t);
+				TreeNode eventsNode  = GetEventsNode(t);
 
 				if (methodsNode != null)
 				{
@@ -102,6 +103,11 @@ namespace Mono.Doc.Gui
 				if (propsNode != null)
 				{
 					typeNode.Nodes.Add(propsNode);
+				}
+
+				if (eventsNode != null)
+				{
+					typeNode.Nodes.Add(eventsNode);
 				}
 			}
 			else if (t.IsValueType && !t.IsEnum)
