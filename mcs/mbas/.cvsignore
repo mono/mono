@@ -5,5 +5,7 @@ y.output
 *.pdb
 mbas.csproj.user
 mbas.suo
-bin/*
-obj/*
+D/bin
+D/obj
+D/bin/*
+D/obj/*
