@@ -1,3 +1,9 @@
+2002-05-31  Martin Baulig  <martin@gnome.org>
+
+	* debug.c (mono_debug_address_from_il_offset): New public function.
+	(mono_debug_add_method): Improved local variable info: correctly handle
+	variables in registers and their start/end scopes.
+
 2002-05-30  Martin Baulig  <martin@gnome.org>
 
 	* debug-dwarf2.c (dwarf2_write_string): Use "0x%lx" as fprintf() format,
