@@ -1,10 +1,12 @@
 //
 // System.Data.OleDb.OleDbParameter
 //
-// Author:
+// Authors:
 //   Rodrigo Moya (rodrigo@ximian.com)
+//   Tim Coleman (tim@timcoleman.com)
 //
 // Copyright (C) Rodrigo Moya, 2002
+// Copyright (C) Tim Coleman, 2002
 //
 
 using System.Data;
@@ -12,183 +14,290 @@ using System.Data.Common;
 
 namespace System.Data.OleDb
 {
-	public sealed class OleDbParameter : MarshalByRefObject,
-		IDbDataParameter, IDataParameter, ICloneable
+	public sealed class OleDbParameter : MarshalByRefObject, IDbDataParameter, IDataParameter, ICloneable
 	{
-		private string m_name = null;
-		private object m_value = null;
-		private int m_size = 0;
-		private bool m_isNullable = true;
-		private byte m_precision = 0;
-		private byte m_scale = 0;
-		private DataRowVersion m_sourceVersion;
-		private string m_sourceColumn = null;
-		private ParameterDirection m_direction;
-		private DbType m_type;
+		#region Fields
 
-		/*
-		 * Constructors
-		 */
+		string name;
+		object value;
+		int size;
+		bool isNullable;
+		byte precision;
+		byte scale;
+		DataRowVersion sourceVersion;
+		string sourceColumn;
+		ParameterDirection direction;
+		OleDbType oleDbType;
+		DbType dbType;
+
+		#endregion
+
+		#region Constructors
 		
 		public OleDbParameter ()
 		{
+			name = String.Empty;
+			value = null;
+			size = 0;
+			isNullable = true;
+			precision = 0;
+			scale = 0;
+			sourceColumn = String.Empty;
 		}
 
-		public OleDbParameter (string name, object value) : this ()
+		public OleDbParameter (string name, object value) 
+			: this ()
 		{
-			m_name = name;
-			m_value = value;
+			this.name = name;
+			this.value = value;
 		}
 
-		public OleDbParameter (string name, OleDbType type) : this ()
+		public OleDbParameter (string name, OleDbType dataType) 
+			: this ()
 		{
-			m_name = name;
-			m_type = (DbType) type;
+			this.name = name;
+			this.oleDbType = dataType;
 		}
 
-		public OleDbParameter (string name, OleDbType type, int width)
-			: this (name, type)
+		public OleDbParameter (string name, OleDbType dataType, int size)
+			: this (name, dataType)
 		{
-			m_size = width;
+			this.size = size;
 		}
 
-		public OleDbParameter (string name, OleDbType type,
-				       int width, string src_col)
-			: this (name, type, width)
+		public OleDbParameter (string name, OleDbType dataType, int size, string srcColumn)
+			: this (name, dataType, size)
 		{
-			m_name = name;
-			m_type = (DbType) type;
-			m_size = width;
-			m_sourceColumn = src_col;
+			this.sourceColumn = srcColumn;
 		}
 
-		public OleDbParameter(string name, OleDbType type,
-				      int width, ParameterDirection direction,
-				      bool is_nullable, byte precision,
-				      byte scale, string src_col,
-				      DataRowVersion src_version, object value)
-			: this (name, type, width, src_col)
+		public OleDbParameter(string name, OleDbType dataType, int size, ParameterDirection direction, bool isNullable, byte precision, byte scale, string srcColumn, DataRowVersion srcVersion, object value)
+			: this (name, dataType, size, srcColumn)
 		{
-			m_direction = direction;
-			m_isNullable = is_nullable;
-			m_precision = precision;
-			m_scale = scale;
-			m_sourceVersion = src_version;
-			m_value = value;
+			this.direction = direction;
+			this.isNullable = isNullable;
+			this.precision = precision;
+			this.scale = scale;
+			this.sourceVersion = srcVersion;
+			this.value = value;
 		}
 
-		/*
-		 * Properties
-		 */
+		#endregion
 
-		DbType IDataParameter.DbType
-		{
-			get {
-				return m_type;
-			}
-			set {
-				m_type = value;
+		#region Properties
+
+		public DbType DbType {
+			get { return dbType; }
+			set { 
+				dbType = value;
+				oleDbType = DbTypeToOleDbType (value);
 			}
 		}
 		
-		ParameterDirection IDataParameter.Direction
-		{
-			get {
-				return m_direction;
-			}
-			set {
-				m_direction = value;
-			}
+		public ParameterDirection Direction {
+			get { return direction; }
+			set { direction = value; }
 		}
 		
-		bool IDataParameter.IsNullable
-	        {
-			get {
-				return m_isNullable;
-			}
-			set {
-				m_isNullable = value;
-			}
-		}
-		
-		string IDataParameter.ParameterName
-		{
-			get {
-				return m_name;
-			}
-			set {
-				m_name = value;
-			}
+		public bool IsNullable {
+			get { return isNullable; }
+			set { isNullable = value; }
 		}
 
-		byte IDbDataParameter.Precision
-		{
-			get {
-				return m_precision;
-			}
+		public OleDbType OleDbType {
+			get { return oleDbType; }
 			set {
-				m_precision = value;
+				oleDbType = value;
+				dbType = OleDbTypeToDbType (value);
 			}
 		}
 		
-		byte IDbDataParameter.Scale
-	        {
-			get {
-				return m_scale;
-			}
-			set {
-				m_scale = value;
-			}
-		}
-		
-		int IDbDataParameter.Size
-		{
-			get {
-				return m_size;
-			}
-			set {
-				m_size = value;
-			}
+		public string ParameterName {
+			get { return name; }
+			set { name = value; }
 		}
 
-		string IDataParameter.SourceColumn
-		{
-			get {
-				return m_sourceColumn;
-			}
-			set {
-				m_sourceColumn = value;
-			}
+		public byte Precision {
+			get { return precision; }
+			set { precision = value; }
 		}
 		
-		DataRowVersion IDataParameter.SourceVersion
-		{
-			get {
-				return m_sourceVersion;
-			}
-			set {
-				m_sourceVersion = value;
-			}
+		public byte Scale {
+			get { return scale; }
+			set { scale = value; }
 		}
 		
-		object IDataParameter.Value
-		{
-			get {
-				return m_value;
-			}
-			set {
-				m_value = value;
-			}
+		public int Size {
+			get { return size; }
+			set { size = value; }
 		}
 
-		/*
-		 * Methods
-		 */
+		public string SourceColumn {
+			get { return sourceColumn; }
+			set { sourceColumn = value; }
+		}
+		
+		public DataRowVersion SourceVersion {
+			get { return sourceVersion; }
+			set { sourceVersion = value; }
+		}
+		
+		public object Value {
+			get { return value; }
+			set { value = value; }
+		}
+
+		#endregion // Properties
+
+		#region Methods
 
 		[MonoTODO]
 		object ICloneable.Clone ()
 		{
 			throw new NotImplementedException ();
 		}
+
+		public override string ToString ()
+		{
+			return ParameterName;
+		}
+
+		private OleDbType DbTypeToOleDbType (DbType dbType)
+		{
+			switch (dbType) {
+			case DbType.AnsiString :
+				return OleDbType.VarChar;
+			case DbType.AnsiStringFixedLength :
+				return OleDbType.Char;
+			case DbType.Binary :
+				return OleDbType.Binary;
+			case DbType.Boolean :
+				return OleDbType.Boolean;
+			case DbType.Byte :
+				return OleDbType.UnsignedTinyInt;
+			case DbType.Currency :
+				return OleDbType.Currency;
+			case DbType.Date :
+				return OleDbType.Date;
+			case DbType.DateTime :
+				throw new NotImplementedException ();
+			case DbType.Decimal :
+				return OleDbType.Decimal;
+			case DbType.Double :
+				return OleDbType.Double;
+			case DbType.Guid :
+				return OleDbType.Guid;
+			case DbType.Int16 :
+				return OleDbType.SmallInt;
+			case DbType.Int32 :
+				return OleDbType.Integer;
+			case DbType.Int64 :
+				return OleDbType.BigInt;
+			case DbType.Object :
+				return OleDbType.Variant;
+			case DbType.SByte :
+				return OleDbType.TinyInt;
+			case DbType.Single :
+				return OleDbType.Single;
+			case DbType.String :
+				return OleDbType.WChar;
+			case DbType.StringFixedLength :
+				return OleDbType.VarWChar;
+			case DbType.Time :
+				throw new NotImplementedException ();
+			case DbType.UInt16 :
+				return OleDbType.UnsignedSmallInt;
+			case DbType.UInt32 :
+				return OleDbType.UnsignedInt;
+			case DbType.UInt64 :
+				return OleDbType.UnsignedBigInt;
+			case DbType.VarNumeric :
+				return OleDbType.VarNumeric;
+			}
+			return OleDbType.Variant;
+		}
+
+		private DbType OleDbTypeToDbType (OleDbType oleDbType)
+		{
+			switch (oleDbType) {
+			case OleDbType.BigInt :
+				return DbType.Int64;
+			case OleDbType.Binary :
+				return DbType.Binary;
+			case OleDbType.Boolean :
+				return DbType.Boolean;
+			case OleDbType.BSTR :
+				return DbType.AnsiString;
+			case OleDbType.Char :
+				return DbType.AnsiStringFixedLength;
+			case OleDbType.Currency :
+				return DbType.Currency;
+			case OleDbType.Date :
+				return DbType.DateTime;
+			case OleDbType.DBDate :
+				return DbType.DateTime;
+			case OleDbType.DBTime :
+				throw new NotImplementedException ();
+			case OleDbType.DBTimeStamp :
+				return DbType.DateTime;
+			case OleDbType.Decimal :
+				return DbType.Decimal;
+			case OleDbType.Double :
+				return DbType.Double;
+			case OleDbType.Empty :
+				throw new NotImplementedException ();
+			case OleDbType.Error :
+				throw new NotImplementedException ();
+			case OleDbType.Filetime :
+				return DbType.DateTime;
+			case OleDbType.Guid :
+				return DbType.Guid;
+			case OleDbType.IDispatch :
+				return DbType.Object;
+			case OleDbType.Integer :
+				return DbType.Int32;
+			case OleDbType.IUnknown :
+				return DbType.Object;
+			case OleDbType.LongVarBinary :
+				return DbType.Binary;
+			case OleDbType.LongVarChar :
+				return DbType.AnsiString;
+			case OleDbType.LongVarWChar :
+				return DbType.String;
+			case OleDbType.Numeric :
+				return DbType.Decimal;
+			case OleDbType.PropVariant :
+				return DbType.Object;
+			case OleDbType.Single :
+				return DbType.Single;
+			case OleDbType.SmallInt :
+				return DbType.Int16;
+			case OleDbType.TinyInt :
+				return DbType.SByte;
+			case OleDbType.UnsignedBigInt :
+				return DbType.UInt64;
+			case OleDbType.UnsignedInt :
+				return DbType.UInt32;
+			case OleDbType.UnsignedSmallInt :
+				return DbType.UInt16;
+			case OleDbType.UnsignedTinyInt :
+				return DbType.Byte;
+			case OleDbType.VarBinary :
+				return DbType.Binary;
+			case OleDbType.VarChar :
+				return DbType.AnsiString;
+			case OleDbType.Variant :
+				return DbType.Object;
+			case OleDbType.VarNumeric :
+				return DbType.VarNumeric;
+			case OleDbType.VarWChar :
+				return DbType.StringFixedLength;
+			case OleDbType.WChar :
+				return DbType.String;
+			}
+			return DbType.Object;
+		}
+
+		#endregion
 	}
 }

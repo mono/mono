@@ -33,19 +33,13 @@ namespace System.Data.OleDb
 		}
 		
 		[DllImport("gda-2")]
-		public static extern void gda_init (string app_id,
-						    string version,
-						    int nargs,
-						    string[] args);
+		public static extern void gda_init (string app_id, string version, int nargs, string[] args);
 
 		[DllImport("gda-2")]
 		public static extern IntPtr gda_client_new ();
 
 		[DllImport("gda-2")]
-		public static extern IntPtr gda_client_open_connection (IntPtr client,
-									string dsn,
-									string username,
-									string password);
+		public static extern IntPtr gda_client_open_connection (IntPtr client, string dsn, string username, string password);
 
 		[DllImport("gda-2")]
 		public static extern bool gda_connection_is_open (IntPtr cnc);
@@ -72,15 +66,29 @@ namespace System.Data.OleDb
 		public static extern string gda_connection_get_password (IntPtr cnc);
 
 		[DllImport("gda-2")]
-		public static extern bool gda_connection_begin_transaction (IntPtr cnc,
-									    string name);
+		public static extern IntPtr gda_transaction_new (string name);
 
 		[DllImport("gda-2")]
-		public static extern bool gda_connection_commit_transaction (IntPtr cnc,
-									     string name);
+		public static extern IntPtr gda_transaction_get_name (IntPtr xaction);
 
 		[DllImport("gda-2")]
-		public static extern bool gda_connection_rollback_transaction (IntPtr cnc,
-									    string name);
+		public static extern IntPtr gda_transaction_set_name (IntPtr xaction, string name);
+		[DllImport("gda-2")]
+		public static extern bool gda_connection_begin_transaction (IntPtr cnc, IntPtr xaction);
+
+		[DllImport("gda-2")]
+		public static extern bool gda_connection_commit_transaction (IntPtr cnc, IntPtr xaction);
+
+		[DllImport("gda-2")]
+		public static extern bool gda_connection_rollback_transaction (IntPtr cnc, IntPtr xaction);
+
+		[DllImport("gda-2")]
+		public static extern int gda_connection_execute_non_query (IntPtr cnc, IntPtr command, IntPtr parameterList);
+
+		[DllImport("gda-2")]
+		public static extern IntPtr gda_connection_execute_single_command (IntPtr cnc, IntPtr command, IntPtr parameterList);
+
+		[DllImport("gda-2")]
+		public static extern IntPtr gda_command_new (string text, int type, int options);
 	}
 }

@@ -3,8 +3,10 @@
 //
 // Author:
 //   Rodrigo Moya (rodrigo@ximian.com)
+//   Tim Coleman (tim@timcoleman.com)
 //
 // Copyright (C) Rodrigo Moya, 2002
+// Copyright (C) Tim Coleman, 2002
 //
 
 using System.Data;
@@ -39,11 +41,11 @@ namespace System.Data.OleDb
 		PropVariant,
 		Single,
 		SmallInt,
-		Tinyint,
+		TinyInt,
 		UnsignedBigInt,
 		UnsignedInt,
 		UnsignedSmallInt,
-		UnisgnedTinyInt,
+		UnsignedTinyInt,
 		VarBinary,
 		VarChar,
 		Variant,

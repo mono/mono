@@ -1,87 +1,84 @@
 //
 // System.Data.OleDb.OleDbTransaction
 //
-// Author:
+// Authors:
 //   Rodrigo Moya (rodrigo@ximian.com)
+//   Tim Coleman (tim@timcoleman.com)
 //
 // Copyright (C) Rodrigo Moya, 2002
+// Copyright (C) Tim Coleman, 2002
 //
 
 using System.Data;
 using System.Data.Common;
-using System.Exception;
 
 namespace System.Data.OleDb
 {
-	public sealed class OleDbTransaction : MarshalByRefObject,
-		IDbTransaction, IDisposable
+	public sealed class OleDbTransaction : MarshalByRefObject, IDbTransaction, IDisposable
 	{
-		private OleDbConnection m_connection = null;
-		private IsolationLevel m_level = IsolationLevel.ReadCommitted;
 
-		/*
-		 * Constructors
-		 */
+		#region Fields
+
+		OleDbConnection connection = null;
+		IsolationLevel isolationLevel = IsolationLevel.ReadCommitted;
+
+		#endregion // Fields
+
+		#region Constructors
 		
-		protected OleDbTransaction (OleDbConnection cnc)
+		internal OleDbTransaction (OleDbConnection connection)
 		{
-			m_connection = cnc;
-			libgda.gda_connection_begin_transaction (m_connection.GdaConnection,
-								 null);
+			this.connection = connection;
+			libgda.gda_connection_begin_transaction (connection.GdaConnection, IntPtr.Zero);
 		}
 
-		protected OleDbTransaction (OleDbConnection cnc,
-					    IsolationLevel level) : this (cnc)
+		internal OleDbTransaction (OleDbConnection connection, IsolationLevel isolevel) 
+			: this (connection)
 		{
-			m_level = level;
+			isolationLevel = isolevel;
 		}
 
-		/*
-		 * Properties
-		 */
+		#endregion // Constructors
 
-		IDbConnection IDbTransaction.Connection
-		{
-			get {
-				return m_connection;
-			}
+		#region Properties
+
+		public OleDbConnection Connection {
+			get { return connection; }
 		}
 
-		IsolationLevel IDbTransaction.IsolationLevel
+		public IsolationLevel IsolationLevel
 		{
-			get {
-				return m_level;
-			}
+			get { return isolationLevel; }
 		}
 
-		/*
-		 * Methods
-		 */
+		IDbConnection IDbTransaction.Connection {
+			[MonoTODO]
+			get { throw new NotImplementedException (); }
+		}
+
+		#endregion // Properties
+
+		#region Methods
 
 		public OleDbTransaction Begin ()
 		{
-			return new OleDbTransaction (m_connection);
+			return new OleDbTransaction (connection);
 		}
 
-		public OleDbTransaction Begin (IsolationLevel level)
+		public OleDbTransaction Begin (IsolationLevel isolevel)
 		{
-			return new OleDbTransaction (m_connection, level);
+			return new OleDbTransaction (connection, isolevel);
 		}
 
-		void IDbTransaction.Commit ()
+		public void Commit ()
 		{
-			if (!libgda.gda_connection_commit_transaction (
-				    m_connection.GdaConnection,
-				    null))
+			if (!libgda.gda_connection_commit_transaction (connection.GdaConnection, IntPtr.Zero))
 				throw new InvalidOperationException ();
 		}
 
-		void IDbTransaction.Rollback ()
-	        {
-			if (!libgda.gda_connection_rollback_transaction (
-				    m_connection.GdaConnection,
-				    null))
-				throw new InvalidOperationException ();
+		[MonoTODO]
+		~OleDbTransaction ()
+		{
 		}
 
 		[MonoTODO]
@@ -89,5 +86,13 @@ namespace System.Data.OleDb
 		{
 			throw new NotImplementedException ();
 		}
+
+		public void Rollback ()
+	        {
+			if (!libgda.gda_connection_rollback_transaction (connection.GdaConnection, IntPtr.Zero))
+				throw new InvalidOperationException ();
+		}
+
+		#endregion // Methods
 	}
 }

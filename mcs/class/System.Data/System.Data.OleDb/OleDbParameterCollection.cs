@@ -3,8 +3,10 @@
 //
 // Author:
 //   Rodrigo Moya (rodrigo@ximian.com)
+//   Tim Coleman (tim@timcoleman.com)
 //
 // Copyright (C) Rodrigo Moya, 2002
+// Copyright (C) Tim Coleman, 2002
 //
 
 using System.Collections;
@@ -16,105 +18,96 @@ namespace System.Data.OleDb
 	public sealed class OleDbParameterCollection : MarshalByRefObject,
 		IDataParameterCollection, IList, ICollection, IEnumerable
 	{
-		private ArrayList m_list = new ArrayList ();
+		#region Fields
 
-		/*
-		 * Properties
-		 */
+		ArrayList list = new ArrayList ();
+
+		#endregion // Fields
+
+		#region Properties
+
+		public int Count {
+			get { return list.Count; }
+		}
+
+		public OleDbParameter this[int index] {
+			get { return (OleDbParameter) list[index]; }
+			set { list[index] = value; }
+		}
+
+		public OleDbParameter this[string parameterName] {
+			[MonoTODO]
+			get { throw new NotImplementedException (); }
+			[MonoTODO]
+			set { throw new NotImplementedException (); }
+		}
 
 		int ICollection.Count {
-			get {
-				return m_list.Count;
-			}
+			get { return list.Count; }
 		}
 
-		bool IList.IsFixedSize
-	        {
-			get {
-				return false;
-			}
+		bool IList.IsFixedSize {
+			get { return false; }
 		}
 		
-		bool IList.IsReadOnly
-		{
-			get {
-				return false;
-			}
+		bool IList.IsReadOnly {
+			get { return false; }
 		}
 		
-		bool ICollection.IsSynchronized
-		{
-			get {
-				return m_list.IsSynchronized;
-			}
+		bool ICollection.IsSynchronized {
+			get { return list.IsSynchronized; }
 		}
 
-		object ICollection.SyncRoot
-		{
-			get {
-				return m_list.SyncRoot;
-			}
+		object ICollection.SyncRoot {
+			get { return list.SyncRoot; }
 		}
 		
-		object IList.this[int index]
-		{
-			get {
-				return m_list[index];
-			}
-			set {
-				m_list[index] = value;
-			}
+		object IList.this[int index] {
+			get { return list[index]; }
+			set { list[index] = value; }
 		}
 
-		object IDataParameterCollection.this[string name]
-		{
+		object IDataParameterCollection.this[string name] {
 			[MonoTODO]
-			get {
-				throw new NotImplementedException ();
-			}
+			get { throw new NotImplementedException (); }
 			[MonoTODO]
-			set {
-				throw new NotImplementedException ();
-			}
+			set { throw new NotImplementedException (); }
 		}
 
-		/*
-		 * Methods
-		 */
-
-		int IList.Add (object value)
-		{
-			if (!(value is IDataParameter))
-				throw new InvalidCastException ();
-
-			m_list.Add (value);
-			return m_list.IndexOf (value);
+		internal IntPtr GdaParameterList {
+			[MonoTODO]
+			get { throw new NotImplementedException (); }
 		}
+
+		#endregion // Properties
+
+		#region Methods
+
 
 		public OleDbParameter Add (OleDbParameter parameter)
 		{
-			m_list.Add (parameter);
+			list.Add (parameter);
 			return parameter;
 		}
 
 		public OleDbParameter Add (string name, object value)
 		{
 			OleDbParameter parameter = new OleDbParameter (name, value);
-			m_list.Add (parameter);
+			list.Add (parameter);
 			return parameter;
 		}
 
 		public OleDbParameter Add (string name, OleDbType type)
 	        {
 			OleDbParameter parameter = new OleDbParameter (name, type);
-			m_list.Add (parameter);
+			list.Add (parameter);
 			return parameter;
 		}
 
 		public OleDbParameter Add (string name, OleDbType type, int width)
 		{
 			OleDbParameter parameter = new OleDbParameter (name, type, width);
-			m_list.Add (parameter);
+			list.Add (parameter);
 			return parameter;
 		}
 
@@ -122,26 +115,35 @@ namespace System.Data.OleDb
 					   int width, string src_col)
 		{
 			OleDbParameter parameter = new OleDbParameter (name, type, width, src_col);
-			m_list.Add (parameter);
+			list.Add (parameter);
 			return parameter;
+		}
+
+		int IList.Add (object value)
+		{
+			if (!(value is IDataParameter))
+				throw new InvalidCastException ();
+
+			list.Add (value);
+			return list.IndexOf (value);
 		}
 
 		void IList.Clear ()
 		{
-			m_list.Clear ();
+			list.Clear ();
 		}
 
 		bool IList.Contains (object value)
 		{
-			return m_list.Contains (value);
+			return list.Contains (value);
 		}
 
 		bool IDataParameterCollection.Contains (string value)
 		{
-			for (int i = 0; i < m_list.Count; i++) {
+			for (int i = 0; i < list.Count; i++) {
 				IDataParameter parameter;
 
-				parameter = (IDataParameter) m_list[i];
+				parameter = (IDataParameter) list[i];
 				if (parameter.ParameterName == value)
 					return true;
 			}
@@ -151,42 +153,44 @@ namespace System.Data.OleDb
 
 		void ICollection.CopyTo (Array array, int index)
 		{
-			((OleDbParameter[])(m_list.ToArray ())).CopyTo (array, index);
+			((OleDbParameter[])(list.ToArray ())).CopyTo (array, index);
 		}
 
 		IEnumerator IEnumerable.GetEnumerator ()
 		{
-			return m_list.GetEnumerator ();
+			return list.GetEnumerator ();
 		}
 		
 		int IList.IndexOf (object value)
 		{
-			return m_list.IndexOf (value);
+			return list.IndexOf (value);
 		}
 
 		int IDataParameterCollection.IndexOf (string name)
 		{
-			return m_list.IndexOf (((IDataParameterCollection) this)[name]);
+			return list.IndexOf (((IDataParameterCollection) this)[name]);
 		}
 
 		void IList.Insert (int index, object value)
 	        {
-			m_list.Insert (index, value);
+			list.Insert (index, value);
 		}
 
 		void IList.Remove (object value)
 		{
-			m_list.Remove (value);
+			list.Remove (value);
 		}
 
 		void IList.RemoveAt (int index)
 		{
-			m_list.Remove ((object) m_list[index]);
+			list.Remove ((object) list[index]);
 		}
 
 		void IDataParameterCollection.RemoveAt (string name)
 		{
-			m_list.Remove (((IDataParameterCollection) this)[name]);
+			list.Remove (((IDataParameterCollection) this)[name]);
 		}
+
+		#endregion // Methods
 	}
 }

@@ -1,15 +1,18 @@
 //
 // System.Data.OleDb.OleDbCommand
 //
-// Author:
+// Authors:
 //   Rodrigo Moya (rodrigo@ximian.com)
+//   Tim Coleman (tim@timcoleman.com)
 //
 // Copyright (C) Rodrigo Moya, 2002
+// Copyright (C) Tim Coleman, 2002
 //
 
 using System.ComponentModel;
 using System.Data;
 using System.Data.Common;
+using System.Collections;
 
 namespace System.Data.OleDb
 {
@@ -18,184 +21,243 @@ namespace System.Data.OleDb
 	/// </summary>
 	public sealed class OleDbCommand : Component, ICloneable, IDbCommand
 	{
-		private string m_command_string = null;
-		private OleDbConnection m_connection = null;
-		private OleDbTransaction m_transaction = null;
-		private int m_timeout = 30; // 30 is the default, as per .NET docs
-		private CommandType m_type = CommandType.Text;
-		private OleDbParameterCollection m_parameters;
+		#region Fields
 
-		/*
-		 * Constructors
-		 */
-		
+		string commandText;
+		int timeout;
+		CommandType commandType;
+		OleDbConnection connection;
+		OleDbParameterCollection parameters;
+		OleDbTransaction transaction;
+		bool designTimeVisible;
+		OleDbDataReader dataReader;
+		CommandBehavior behavior;
+		ArrayList gdaCommands;
+		ArrayList gdaResults;
+
+		#endregion // Fields
+
+		#region Constructors
+
 		public OleDbCommand ()
 	        {
-			m_parameters = new OleDbParameterCollection ();
+			commandText = String.Empty;
+			timeout = 30; // default timeout per .NET
+			commandType = CommandType.Text;
+			connection = null;
+			parameters = new OleDbParameterCollection ();
+			transaction = null;
+			designTimeVisible = false;
+			dataReader = null;
+			behavior = CommandBehavior.Default;
+			gdaCommands = new ArrayList ();
+			gdaResults = new ArrayList ();
 		}
 
-		public OleDbCommand (string s) : this ()
+		public OleDbCommand (string cmdText)
+			: this ()
 		{
-			m_command_string = s;
+			CommandText = cmdText;
 		}
 
-		public OleDbCommand (string s, OleDbConnection cnc) : this ()
+		public OleDbCommand (string cmdText, OleDbConnection connection)
+			: this (cmdText)
 		{
-			m_command_string = s;
-			m_connection = cnc;
+			Connection = connection;
 		}
 
-		public OleDbCommand (string s,
-				     OleDbConnection cnc,
-				     OleDbTransaction xtrans) : this ()
+		public OleDbCommand (string cmdText, OleDbConnection connection, OleDbTransaction transaction)
+			: this (cmdText, connection)
 		{
-			m_command_string = s;
-			m_connection = cnc;
-			m_transaction = xtrans;
+			this.transaction = transaction;
 		}
 
-		/*
-		 * Properties
-		 */
-		
-		string IDbCommand.CommandText
-		{
-			get {
-				return m_command_string;
-			}
-			set {
-				m_command_string = value;
-			}
-		}
+		#endregion // Constructors
 
-		int IDbCommand.CommandTimeout
+		#region Properties
+	
+		public string CommandText 
 		{
-			get {
-				return m_timeout;
-			}
-			set {
-				m_timeout = value;
-			}
-		}
+			get { return commandText; }
+			set { 
+				string[] queries = value.Split (new Char[] {';'});
+				gdaCommands.Clear ();
 
-		CommandType IDbCommand.CommandType
-		{
-			get {
-				return m_type;
-			}
-			set {
-				m_type = value;
+				foreach (string query in queries) 
+					gdaCommands.Add (libgda.gda_command_new (query, 0, 0));
+
+				commandText = value; 
 			}
 		}
 
-		IDbConnection IDbCommand.Connection
-		{
-			get {
-				return m_connection;
-			}
-			set {
-				m_connection = (OleDbConnection) value;
-			}
+		public int CommandTimeout {
+			get { return timeout; }
+			set { timeout = value; }
 		}
 
-		public bool DesignTimeVisible
-		{
+		public CommandType CommandType { 
+			get { return commandType; }
+			set { commandType = value; }
+		}
+
+		public OleDbConnection Connection { 
+			get { return connection; }
+			set { connection = value; }
+		}
+
+		public bool DesignTimeVisible { 
+			get { return designTimeVisible; }
+			set { designTimeVisible = value; }
+		}
+
+		public OleDbParameterCollection Parameters {
+			get { return parameters; }
+			set { parameters = value; }
+		}
+
+		public OleDbTransaction Transaction {
+			get { return transaction; }
+			set { transaction = value; }
+		}
+
+		public UpdateRowSource UpdatedRowSource { 
 			[MonoTODO]
-			get {
-				throw new NotImplementedException ();
-			}
+			get { throw new NotImplementedException (); }
 			[MonoTODO]
-			set {
-				throw new NotImplementedException ();
-			}
+			set { throw new NotImplementedException (); }
 		}
 
-		IDataParameterCollection IDbCommand.Parameters
-		{
-			get {
-				return m_parameters;
-			}
+		IDbConnection IDbCommand.Connection {
+			get { return Connection; }
+			set { Connection = (OleDbConnection) value; }
 		}
 
-		IDbTransaction IDbCommand.Transaction
-		{
-			get {
-				return m_transaction;
-			}
-			set {
-				m_transaction = (OleDbTransaction) value;
-			}
+		IDataParameterCollection IDbCommand.Parameters  {
+			get { return Parameters; }
 		}
 
-		UpdateRowSource IDbCommand.UpdatedRowSource
-		{
-			[MonoTODO]
-			get {
-				throw new NotImplementedException ();
-			}
-			[MonoTODO]
-			set {
-				throw new NotImplementedException ();
-			}
+		IDbTransaction IDbCommand.Transaction  {
+			get { return Transaction; }
+			set { Transaction = (OleDbTransaction) value; }
 		}
 
-		/*
-		 * Methods
-		 */
-		
+		internal ArrayList GdaResults {
+			get { return gdaResults; }
+		}
+
+		#endregion // Properties
+
+		#region Methods
+
 		[MonoTODO]
-		void IDbCommand.Cancel ()
+		public void Cancel () 
 		{
 			throw new NotImplementedException ();
+		}
+
+		public OleDbParameter CreateParameter ()
+		{
+			return new OleDbParameter ();
+		}
+
+		[MonoTODO]
+		protected override void Dispose (bool disposing)
+		{
+			throw new NotImplementedException ();
+		}
+
+		public int ExecuteNonQuery ()
+		{
+			if (connection == null)
+				throw new InvalidOperationException ();
+			if (connection.State == ConnectionState.Closed)
+				throw new InvalidOperationException ();
+			// FIXME: a third check is mentioned in .NET docs
+
+			IntPtr gdaConnection = connection.GdaConnection;
+			IntPtr gdaParameterList = parameters.GdaParameterList;
+
+			return libgda.gda_connection_execute_non_query (gdaConnection, (IntPtr) gdaCommands[0], gdaParameterList);
+		}
+
+		public OleDbDataReader ExecuteReader ()
+		{
+			return ExecuteReader (CommandBehavior.Default);
+		}
+
+		public OleDbDataReader ExecuteReader (CommandBehavior behavior)
+		{
+			if (connection.State != ConnectionState.Open)
+				throw new InvalidOperationException ();
+
+			this.behavior = behavior;
+
+			IntPtr gdaConnection = connection.GdaConnection;
+			IntPtr gdaParameterList = parameters.GdaParameterList;
+
+			foreach (IntPtr gdaCommand in gdaCommands) 
+				GdaResults.Add (libgda.gda_connection_execute_single_command (gdaConnection, gdaCommand, gdaParameterList));
+
+			dataReader = new OleDbDataReader (this);
+
+			dataReader.NextResult ();
+
+			return dataReader;
+		}
+
+		[MonoTODO]
+		public object ExecuteScalar ()
+		{
+			throw new NotImplementedException ();	
 		}
 
 		[MonoTODO]
 		object ICloneable.Clone ()
 		{
-			throw new NotImplementedException ();
+			throw new NotImplementedException ();	
 		}
-		
+
+		[MonoTODO]
 		IDbDataParameter IDbCommand.CreateParameter ()
 		{
-			return new OleDbParameter ();
-		}
-
-		
-		int IDbCommand.ExecuteNonQuery ()
-		{
-			if (m_command_string == null)
-				return -1;
-
-			// FIXME
-			return 0;
+			throw new NotImplementedException ();	
 		}
 
 		[MonoTODO]
 		IDataReader IDbCommand.ExecuteReader ()
 		{
-			throw new NotImplementedException ();
+			throw new NotImplementedException ();	
 		}
 
 		[MonoTODO]
 		IDataReader IDbCommand.ExecuteReader (CommandBehavior behavior)
 		{
-			throw new NotImplementedException ();
-		}
-		
-		[MonoTODO]
-		object IDbCommand.ExecuteScalar ()
-		{
-			throw new NotImplementedException ();
+			throw new NotImplementedException ();	
 		}
 
-		void IDbCommand.Prepare ()
+		[MonoTODO]
+		public void Prepare ()
 		{
-			// FIXME: prepare string with parameters
+			throw new NotImplementedException ();	
 		}
 
 		public void ResetCommandTimeout ()
 		{
-			m_timeout = 30;
+			timeout = 30;
 		}
+
+		#endregion
+
+		#region Internal Methods
+
+		// only meant to be used between OleDbConnectioin,
+		// OleDbCommand, and OleDbDataReader
+		internal void OpenReader (OleDbDataReader reader) 
+		{
+			connection.OpenReader (reader);
+		}
+
+		#endregion
+
 	}
 }

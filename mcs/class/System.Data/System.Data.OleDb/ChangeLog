@@ -1,3 +1,19 @@
+2002-07-09  Tim Coleman <tim@timcoleman.com>
+	* OleDbCommand.cs: Style changes, added new methods
+	* OleDbConnection.cs: Style changes, added new methods
+	* OleDbDataAdapter.cs: Implementation
+	* OleDbDataReader.cs: Added stubbs
+	* OleDbErrorCollection.cs: Added stubbs, some implementation
+	* OleDbParameter.cs: Style changes, added new methods
+	* OleDbParameterCollection.cs: Style changes, added new methods
+	* OleDbPermissionAttribute.cs: Style changes, added new methods
+	* OleDbRowUpdatedEventArgs.cs: Added stubbs
+	* OleDbRowUpdatingEventArgs.cs: Added stubbs
+	* OleDbTransaction.cs: Style changes, added new methods
+	* OleDbType.cs: Fixed two typos
+	* libgda.cs: Style changes, added new methods
+
+
 2002-06-03  Rodrigo Moya <rodrigo@ximian.com>
 
 	* OleDbParameterCollection.cs (GetEnumerator, SyncRoot,

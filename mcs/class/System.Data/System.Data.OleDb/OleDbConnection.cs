@@ -1,104 +1,95 @@
 //
 // System.Data.OleDb.OleDbConnection
 //
-// Author:
+// Authors:
 //   Rodrigo Moya (rodrigo@ximian.com)
+//   Tim Coleman (tim@timcoleman.com)
 //
 // Copyright (C) Rodrigo Moya, 2002
+// Copyright (C) Tim Coleman, 2002
 //
 
 using System.ComponentModel;
 using System.Data;
 using System.Data.Common;
-using System.Exception;
 
 namespace System.Data.OleDb
 {
 	public sealed class OleDbConnection : Component, ICloneable, IDbConnection
 	{
-		private IntPtr m_gdaConnection = IntPtr.Zero;
-		private string m_string = "";
-		private int m_timeout = 15; // default is 15 seconds
+		#region Fields
 
-		/*
-		 * Constructors
-		 */
+		string connectionString;
+		int connectionTimeout = 15;
+		OleDbDataReader dataReader;
+		bool dataReaderOpen;
+
+		IntPtr gdaConnection = IntPtr.Zero;
+
+		#endregion
+
+		#region Constructors
 		
 		public OleDbConnection ()
 		{
 		}
 
-		/*
-		 * Properties
-		 */
-		
-		public OleDbConnection (string cnc_string) : this ()
+		public OleDbConnection (string connectionString) 
+			: this ()
 		{
-			m_string = cnc_string;
+			this.connectionString = connectionString;
 		}
 
-		string IDbConnection.ConnectionString
-		{
-			get {
-				return m_string;
-			}
-			set {
-				m_string = value;
-			}
+		#endregion // Constructors
+
+		#region Properties
+
+		public string ConnectionString {
+			get { return connectionString; }
+			set { connectionString = value; }
 		}
 
-		int IDbConnection.ConnectionTimeout
-		{
-			get {
-				return m_timeout;
-			}
+		public int ConnectionTimeout {
+			get { return connectionTimeout; }
 		}
 
-		string IDbConnection.Database
-		{
+		public string Database { 
 			get {
-				if (m_gdaConnection != IntPtr.Zero
-				    && libgda.gda_connection_is_open (m_gdaConnection)) {
-					return libgda.gda_connection_get_database (m_gdaConnection);
+				if (gdaConnection != IntPtr.Zero && libgda.gda_connection_is_open (gdaConnection)) {
+					return libgda.gda_connection_get_database (gdaConnection);
 				}
 
 				return null;
 			}
 		}
 
-		public string DataSource
-		{
+		public string DataSource {
 			[MonoTODO]
 			get {
 				throw new NotImplementedException ();
 			}
 		}
 
-		public string Provider
-		{
+		public string Provider {
 			get {
-				if (m_gdaConnection != IntPtr.Zero
-				    && libgda.gda_connection_is_open (m_gdaConnection)) {
-					return libgda.gda_connection_get_provider (m_gdaConnection);
+				if (gdaConnection != IntPtr.Zero && libgda.gda_connection_is_open (gdaConnection)) {
+					return libgda.gda_connection_get_provider (gdaConnection);
 				}
 
 				return null;
 			}
 		}
 
-		public string ServerVersion
-		{
+		public string ServerVersion {
 			[MonoTODO]
-			get {
-				throw new NotImplementedException ();
-			}
+			get { throw new NotImplementedException (); }
 		}
 
-		ConnectionState IDbConnection.State
+		public ConnectionState State
 		{
 			get {
-				if (m_gdaConnection != IntPtr.Zero) {
-					if (libgda.gda_connection_is_open (m_gdaConnection))
+				if (gdaConnection != IntPtr.Zero) {
+					if (libgda.gda_connection_is_open (gdaConnection))
 						return ConnectionState.Open;
 				}
 
@@ -108,34 +99,60 @@ namespace System.Data.OleDb
 
 		internal IntPtr GdaConnection
 		{
-			get {
-				return m_gdaConnection;
-			}
+			get { return gdaConnection; }
 		}
-		
-		/*
-		 * Methods
-		 */
-		
-		IDbTransaction IDbConnection.BeginTransaction ()
+
+		#endregion // Properties
+	
+		#region Methods
+	
+		public OleDbTransaction BeginTransaction ()
 		{
-			if (m_gdaConnection != IntPtr.Zero)
+			if (gdaConnection != IntPtr.Zero)
 				return new OleDbTransaction (this);
 
 			return null;
 		}
 
-		IDbTransaction IDbConnection.BeginTransaction (IsolationLevel level)
+		public OleDbTransaction BeginTransaction (IsolationLevel level)
 		{
-			if (m_gdaConnection != IntPtr.Zero)
+			if (gdaConnection != IntPtr.Zero)
 				return new OleDbTransaction (this, level);
 
 			return null;
 		}
 
-		void IDbConnection.ChangeDatabase (string name)
+		public void ChangeDatabase (string name)
 		{
 			// FIXME: see http://bugzilla.gnome.org/show_bug.cgi?id=83315
+		}
+
+		public void Close ()
+		{
+			if (gdaConnection != IntPtr.Zero) {
+				libgda.gda_connection_close (gdaConnection);
+				gdaConnection = IntPtr.Zero;
+			}
+		}
+
+		public OleDbCommand CreateCommand ()
+		{
+			if (gdaConnection != IntPtr.Zero && libgda.gda_connection_is_open (gdaConnection))
+				return new OleDbCommand ();
+
+			return null;
+		}
+
+		[MonoTODO]
+		protected override void Dispose (bool disposing)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public DataTable GetOleDbSchemaTable (Guid schema, object[] restrictions)
+		{
+			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
@@ -143,49 +160,68 @@ namespace System.Data.OleDb
 		{
 			throw new NotImplementedException();
 		}
-		
-		void IDbConnection.Close ()
-		{
-			if (m_gdaConnection != IntPtr.Zero) {
-				libgda.gda_connection_close (m_gdaConnection);
-				m_gdaConnection = IntPtr.Zero;
-			}
-		}
-
-		IDbCommand IDbConnection.CreateCommand ()
-		{
-			if (m_gdaConnection != IntPtr.Zero
-			    && libgda.gda_connection_is_open (m_gdaConnection)) {
-				return new OleDbCommand ();
-			}
-
-			return null;
-		}
 
 		[MonoTODO]
-		public DataTable GetOleDbSchemaTable (Guid schema,
-						      object[] restrictions)
+		IDbTransaction IDbConnection.BeginTransaction ()
 		{
 			throw new NotImplementedException ();
 		}
 
-		void IDbConnection.Open ()
+		[MonoTODO]
+		IDbTransaction IDbConnection.BeginTransaction (IsolationLevel level)
 		{
-			if (m_gdaConnection != IntPtr.Zero ||
-			    libgda.gda_connection_is_open (m_gdaConnection))
-				throw new InvalidOperationException ();
-
-			m_gdaConnection = libgda.gda_client_open_connection (
-				libgda.GdaClient,
-				m_string,
-				"", "");
+			throw new NotImplementedException ();
 		}
 
-		/*
-		 * Events
-		 */
-		
+		[MonoTODO]
+		IDbCommand IDbConnection.CreateCommand ()
+		{
+			throw new NotImplementedException ();
+		}
+
+		public void Open ()
+		{
+			if (gdaConnection != IntPtr.Zero || libgda.gda_connection_is_open (gdaConnection))
+				throw new InvalidOperationException ();
+
+			gdaConnection = libgda.gda_client_open_connection (libgda.GdaClient, connectionString, "", "");
+		}
+
+		[MonoTODO]
+		public static void ReleaseObjectPool ()
+		{
+			throw new NotImplementedException ();
+		}
+
+		#endregion
+
+		#region Internal Methods
+
+		// Used to prevent OleDbConnection
+		// from doing anything while
+		// OleDbDataReader is open.
+		// Open the Reader. (called from OleDbCommand)
+		internal void OpenReader(OleDbDataReader reader)
+		{
+			if(dataReaderOpen == true) {
+				// TODO: throw exception here?
+				//       because a reader
+				//       is already open
+			}
+			else {
+				dataReader = reader;
+				dataReaderOpen = true;
+			}
+		}
+
+
+		#endregion
+
+		#region Events and Delegates
+
 		public event OleDbInfoMessageEventHandler InfoMessage;
 		public event StateChangeEventHandler StateChange;
+
+		#endregion
 	}
 }
