@@ -98,6 +98,13 @@ namespace MonoTests.System.Xml
 		}
 
 		[Test]
+		[ExpectedException (typeof (XmlException))]
+		public void InvalidInnerText ()
+		{
+			declaration.InnerText = "version='1.0a'";
+		}
+
+		[Test]
 		public void StandaloneProperty ()
 		{
 			XmlDeclaration d1 = document.CreateXmlDeclaration ("1.0", null, "yes");

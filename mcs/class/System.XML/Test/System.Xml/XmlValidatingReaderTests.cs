@@ -20,7 +20,6 @@ namespace MonoTests.System.Xml
 		{
 		}
 
-		XmlReader xtr;
 		XmlValidatingReader dvr;
 
 		private XmlValidatingReader PrepareXmlReader (string xml)
@@ -303,7 +302,7 @@ namespace MonoTests.System.Xml
 			try {
 				dvr.Read ();	// missing attributes
 				Fail ("should be failed.");
-			} catch (XmlSchemaException ex) {
+			} catch (XmlSchemaException) {
 			}
 
 			// empty element but attributes are required
@@ -316,7 +315,7 @@ namespace MonoTests.System.Xml
 			try {
 				dvr.Read ();	// missing attributes
 				Fail ("should be failed.");
-			} catch (XmlSchemaException ex) {
+			} catch (XmlSchemaException) {
 			}
 
 			xml = dtd + "<root foo='value' />";
@@ -440,7 +439,8 @@ namespace MonoTests.System.Xml
 			AssertEquals ("root", dvr.Name);
 			Assert (dvr.MoveToFirstAttribute ());
 			AssertEquals ("foo", dvr.Name);
-			AssertEquals ("entity string", dvr.Value);
+			// MS BUG: it returns "entity string", however, entity should not be exanded.
+			AssertEquals ("&ent;", dvr.Value);
 			//  ReadAttributeValue()
 			Assert (dvr.ReadAttributeValue ());
 			AssertEquals (XmlNodeType.EntityReference, dvr.NodeType);
@@ -451,7 +451,7 @@ namespace MonoTests.System.Xml
 			// bar
 			Assert (dvr.MoveToNextAttribute ());
 			AssertEquals ("bar", dvr.Name);
-			AssertEquals ("internal entity string value", dvr.Value);
+			AssertEquals ("internal &ent; value", dvr.Value);
 			//  ReadAttributeValue()
 			Assert (dvr.ReadAttributeValue ());
 			AssertEquals (XmlNodeType.Text, dvr.NodeType);
@@ -479,7 +479,7 @@ namespace MonoTests.System.Xml
 			// foo
 			Assert (dvr.MoveToFirstAttribute ());
 			AssertEquals ("foo", dvr.Name);
-			AssertEquals ("entity string", dvr.Value);
+			AssertEquals ("&ent;", dvr.Value);
 			//  ReadAttributeValue()
 			Assert (dvr.ReadAttributeValue ());
 			AssertEquals (XmlNodeType.EntityReference, dvr.NodeType);
@@ -490,7 +490,7 @@ namespace MonoTests.System.Xml
 			// bar
 			Assert (dvr.MoveToNextAttribute ());
 			AssertEquals ("bar", dvr.Name);
-			AssertEquals ("internal entity string value", dvr.Value);
+			AssertEquals ("internal &ent; value", dvr.Value);
 			//  ReadAttributeValue()
 			Assert (dvr.ReadAttributeValue ());
 			AssertEquals (XmlNodeType.Text, dvr.NodeType);

@@ -50,7 +50,7 @@ namespace MonoTests.System.Xml
 
 			// With encoding
 			setupWriter ();
-			xml = "<?xml version='1.0' encoding='iso-2022-jp' ?><root />";
+			xml = "<?xml version='1.0' encoding='iso-2022-jp'?><root />";
 			xtr = new XmlTextReader (xml, XmlNodeType.Document, null);
 			xtw.WriteNode (xtr, false);
 			AssertEquals (xml, writer.ToString ());

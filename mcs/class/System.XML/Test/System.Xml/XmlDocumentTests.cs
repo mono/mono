@@ -974,7 +974,7 @@ namespace MonoTests.System.Xml
 		}
 
 		[Test]
-		public void ResolveEntityWithoutDTD ()
+		public void CreateEntityReferencesWithoutDTD ()
 		{
 			document.RemoveAll ();
 			document.AppendChild (document.CreateElement ("root"));
