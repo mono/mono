@@ -177,26 +177,23 @@ namespace System.Web.Util
 		 */
 		public static string MakeRelative(string fullUrl, string relativeTo)
 		{
-			if(fullUrl==relativeTo)
-			{
+			if (fullUrl == relativeTo)
 				return String.Empty;
-			}
-			if(fullUrl.IndexOf(relativeTo)!=0)
-			{
+
+			if (fullUrl.IndexOf (relativeTo) != 0)
 				return null;
-			}
-			string leftOver = fullUrl.Substring(0, relativeTo.Length);
-			if(!fullUrl.EndsWith("/") && !leftOver.StartsWith("/"))
-			{
-				return null;
-			}
-			if(leftOver.StartsWith("/"))
-			{
-				leftOver = leftOver.Substring(1);
-			}
+
+			string leftOver = fullUrl.Substring (relativeTo.Length);
+			if (leftOver.Length > 0 && leftOver [0] == '/')
+				leftOver = leftOver.Substring (1);
+
+			leftOver = Reduce (leftOver);
+			if (leftOver.Length > 0 && leftOver [0] == '/')
+				leftOver = leftOver.Substring (1);
+
 			return leftOver;
 		}
-		
+
 		/*
 		 * Check JavaDocs for java.lang.String#RegionMatches(bool, int, String, int, int)
 		 * Could not find anything similar in the System.String class
