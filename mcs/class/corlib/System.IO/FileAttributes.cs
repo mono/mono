@@ -12,6 +12,7 @@
 
 namespace System.IO
 {
+	[Flags]
 	public enum FileAttributes
 	{
 		Archive,
