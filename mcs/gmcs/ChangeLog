@@ -1,3 +1,19 @@
+2004-12-01  Raja R Harinath  <rharinath@novell.com>
+
+	* attribute.cs (Attribute.CheckAttributeType): Remove complain flag.
+	Fix long-standing bug in type-lookup.  Use FindType instead of
+	LookupType when ec.ResolvingTypeTree.
+	(Attribute.ResolveType, Attribute.Resolve)
+	(Attribute.DefinePInvokeMethod,GlobalAttribute.CheckAttributeType):
+	Update to changes.
+	(Attributes.Search): Remove internal version.  Update.
+	(Attributes.SearchMulti): Update.
+	(Attributes.GetClsCompliantAttribute): Remove.
+	(Attributes.GetIndexerNameAttribute): Remove.
+	* decl.cs (MemberCore.GetClsCompliantAttributeValue): Update to changes.
+	(DeclSpace.GetClsCompliantAttributeValue): Likewise.
+	* class.cs (Indexer.Define): Likewise.
+
 2004-12-01  Marek Safar  <marek.safar@seznam.cz>
 
 	Fix bug #68790

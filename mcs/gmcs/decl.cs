@@ -395,7 +395,8 @@ namespace Mono.CSharp {
 		bool GetClsCompliantAttributeValue (DeclSpace ds)
 		{
 			if (OptAttributes != null) {
-				Attribute cls_attribute = OptAttributes.GetClsCompliantAttribute (ds.EmitContext);
+				Attribute cls_attribute = OptAttributes.Search (
+					TypeManager.cls_compliant_attribute_type, ds.EmitContext);
 				if (cls_attribute != null) {
 					caching_flags |= Flags.HasClsCompliantAttribute;
 					return cls_attribute.GetClsCompliantAttributeValue (ds);
@@ -1178,7 +1179,7 @@ namespace Mono.CSharp {
 			caching_flags &= ~Flags.HasCompliantAttribute_Undetected;
 
 			if (OptAttributes != null) {
-				Attribute cls_attribute = OptAttributes.GetClsCompliantAttribute (ec);
+				Attribute cls_attribute = OptAttributes.Search (TypeManager.cls_compliant_attribute_type, ec);
 				if (cls_attribute != null) {
 					caching_flags |= Flags.HasClsCompliantAttribute;
 					if (cls_attribute.GetClsCompliantAttributeValue (this)) {
