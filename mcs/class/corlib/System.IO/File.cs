@@ -57,9 +57,13 @@ namespace System.IO
 		}
 
 		public static StreamWriter CreateText(string path)
+		
 		{
 			return new StreamWriter (path, false);
+		
 		}
+		
+		
 		
 		public static void Delete (string path)
 		{
@@ -67,9 +71,11 @@ namespace System.IO
 				throw new ArgumentNullException ();
 			if (path == "" || path.IndexOfAny (Path.InvalidPathChars) != -1)
 				throw new ArgumentException ();
-			
-			if (!MonoIO.DeleteFile (path))
-				throw MonoIO.GetException ();
+			if (!MonoIO.DeleteFile (path)){
+				Exception e = MonoIO.GetException ();
+				if (e != null && !(e is FileNotFoundException))
+					throw e;
+			}
 		}
 		
 		public static bool Exists (string path)
