@@ -59,7 +59,7 @@ assemblies_DATA =	\
 	System.Xml.dll						\
 	libgdiplus.dll.so
 
-monobins_DATA = mcs.exe mbas.exe monoresgen.exe secutil.exe ilasm.exe cilc.exe xsd.exe wsdl.exe genxs.exe disco.exe sqlsharp.exe signcode.exe chktrust.exe
+monobins_DATA = mcs.exe mbas.exe monoresgen.exe secutil.exe ilasm.exe cilc.exe xsd.exe wsdl.exe genxs.exe disco.exe sqlsharp.exe signcode.exe chktrust.exe soapsuds.exe
 
 EXTRA_DIST = $(monobins_DATA) $(assemblies_DATA)
 
@@ -83,6 +83,7 @@ $(monobins_DATA):
 	-cp $(top_srcdir)/../mcs/tools/wsdl/wsdl.exe . || cp $(monobinsdir)/wsdl.exe .
 	-cp $(top_srcdir)/../mcs/tools/genxs/genxs.exe . || cp $(monobinsdir)/genxs.exe .
 	-cp $(top_srcdir)/../mcs/tools/disco/disco.exe . || cp $(monobinsdir)/disco.exe .
+	-cp $(top_srcdir)/../mcs/tools/soapsuds/soapsuds.exe . || cp $(monobinsdir)/soapsuds.exe .
 	-cp $(top_srcdir)/../mcs/tools/SqlSharp/sqlsharp.exe . || cp $(monobinsdir)/sqlsharp.exe .
 	-cp $(top_srcdir)/../mcs/tools/security/chktrust.exe . || cp $(monobinsdir)/chktrust.exe .
 	-cp $(top_srcdir)/../mcs/tools/security/signcode.exe . || cp $(monobinsdir)/signcode.exe .

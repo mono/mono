@@ -1,8 +1,8 @@
-EXTRA_DIST = mcs.in mbas.in ilasm.in cilc.in monoresgen.in secutil.in sqlsharp.in xsd.in wsdl.in genxs.in chktrust.in signcode.in disco.in
+EXTRA_DIST = mcs.in mbas.in ilasm.in cilc.in monoresgen.in secutil.in sqlsharp.in xsd.in wsdl.in genxs.in soapsuds.in chktrust.in signcode.in disco.in
 
-bin_SCRIPTS = mcs mbas ilasm cilc monoresgen secutil sqlsharp xsd wsdl genxs chktrust signcode disco
+bin_SCRIPTS = mcs mbas ilasm cilc monoresgen secutil sqlsharp xsd wsdl genxs soapsuds chktrust signcode disco
 
-CLEANFILES = mcs mbas ilasm cilc monoresgen secutil sqlsharp xsd wsdl genxs chktrust signcode disco
+CLEANFILES = mcs mbas ilasm cilc monoresgen secutil sqlsharp xsd wsdl genxs soapsuds chktrust signcode disco
 
 if X86
 MONO_INTERP = mono
@@ -59,6 +59,10 @@ genxs: genxs.in
 disco: disco.in
 	sed -e 's^\@bindir\@^$(bindir)^g' -e 's^\@mono_interp\@^$(MONO_INTERP)^g' -e's^\@plat_bindir\@^$(plat_bindir)^g' < $(srcdir)/disco.in > disco.tmp \
 	&& mv disco.tmp disco
+
+soapsuds: soapsuds.in
+	sed -e 's^\@bindir\@^$(bindir)^g' -e 's^\@mono_interp\@^$(MONO_INTERP)^g' -e's^\@plat_bindir\@^$(plat_bindir)^g' < $(srcdir)/soapsuds.in > soapsuds.tmp \
+	&& mv soapsuds.tmp soapsuds
 
 chktrust: chktrust.in
 	sed -e 's^\@bindir\@^$(bindir)^g' -e 's^\@mono_interp\@^$(MONO_INTERP)^g' -e's^\@plat_bindir\@^$(plat_bindir)^g' < $(srcdir)/chktrust.in > chktrust.tmp \
