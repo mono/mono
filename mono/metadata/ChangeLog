@@ -1,3 +1,8 @@
+2002-03-20  Dietmar Maurer  <dietmar@ximian.com>
+
+	* threads.c (mono_thread_create): new function to create thread
+	from C
+
 2002-03-20  Martin Baulig  <martin@gnome.org>
 
 	* icall.c (ves_icall_InternalInvoke): Create a new object if the
