@@ -1,3 +1,10 @@
+2003-03-31  Martin Baulig  <martin@ximian.com>
+
+	* threads.h (MonoThreadCallbacks): Added `thread_created'.
+
+	* threads.c (mono_thread_new_init): Call `thread_created' in the
+	mono_thread_callbacks.
+
 2003-03-31  Lluis Sanchez Gual <lluis@ideary.com>
 
 	* loader.h: added marshalbyrefobject_class to mono_defaults
