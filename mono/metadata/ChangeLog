@@ -1,3 +1,6 @@
+2003-02-09  Martin Baulig  <martin@ximian.com>
+
+	* debug-mono-symfile.h: Reflect latest symbol writer changes.
 
 Sun Feb 9 18:37:01 CET 2003 Paolo Molaro <lupus@ximian.com>
 
