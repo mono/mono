@@ -1362,7 +1362,18 @@ namespace System.Drawing
 		[MonoTODO]
 		public Region [] MeasureCharacterRanges (string text, Font font, RectangleF layoutRect, StringFormat stringFormat)
 		{
-			throw new NotImplementedException ();
+			Region []	result=new Region[stringFormat.GetCharRanges.Length];
+			string 		textFragment;
+			SizeF		fragmentSize;
+			int		counter;
+			
+			for (int i=0; i<stringFormat.GetCharRanges.Length; i++) { 
+				textFragment=text.Substring(stringFormat.GetCharRanges[i].First, stringFormat.GetCharRanges[i].Length);
+				fragmentSize=MeasureString(textFragment, font, new SizeF(layoutRect.Width, layoutRect.Height), stringFormat);
+				result[i]=new Region(new RectangleF(layoutRect.X, layoutRect.Y, layoutRect.X+fragmentSize.Width, layoutRect.Y+fragmentSize.Height));
+			}
+
+			return(result);
 		}
 
 		

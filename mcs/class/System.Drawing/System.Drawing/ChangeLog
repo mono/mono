@@ -1,4 +1,8 @@
 2004-05-14  Peter Bartok <pbartok@novell.com>
+	* StringFormat.cs: Added CharacterRange handling
+	* Graphics.cs: Implemented MeasureCharacterRanges method
+
+2004-05-14  Peter Bartok <pbartok@novell.com>
 	* Graphics.cs: Added error check
 
 2004-05-14  Duncan Mak  <duncan@ximian.com>

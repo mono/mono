@@ -22,6 +22,7 @@ namespace System.Drawing
 		private static StringFormat genericDefault;
 		private IntPtr nativeStrFmt = IntPtr.Zero;
                 private int language = GDIPlus.LANG_NEUTRAL;
+		internal CharacterRange [] CharRanges;
 		
 		public StringFormat() : this (0, GDIPlus.LANG_NEUTRAL)
 		{					   
@@ -191,10 +192,16 @@ namespace System.Drawing
 		}
 
 
-		[MonoTODO]
       		public void SetMeasurableCharacterRanges (CharacterRange [] range)
 		{
+			CharRanges=(CharacterRange [])range.Clone();
+		}
 
+		internal CharacterRange [] GetCharRanges
+		{
+			get {
+				return(CharRanges);
+			}
 		}
 	
 		public object Clone()
