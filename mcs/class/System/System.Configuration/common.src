@@ -1,5 +1,4 @@
 ConfigurationException.cs
-ConfigurationSettings.cs
 IConfigurationSectionHandler.cs
 IgnoreSectionHandler.cs
 NameValueSectionHandler.cs
