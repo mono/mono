@@ -1,4 +1,14 @@
 
+2003-09-04	Gaurav Vaish <gvaish_mono AT lycos.com>
+
+	* ControlAdapter.cs     : Control property         - Marked virtual
+	                        : LoadPostData(...)        - Marked virtual
+	* HtmlCommandAdapter.cs : Implemented.
+	* HtmlControlAdapter.cs : RenderEndLink(...)       - Correct signature
+	* HtmlMobileTextWriter.cs
+	                        : Added several properties,
+	                        : Stubbed several methods
+
 2003-09-03	Gaurav Vaish <gvaish_mono AT lycos.com>
 
 	* HtmlControlAdapter.cs : Looks like done, at least stubbing.

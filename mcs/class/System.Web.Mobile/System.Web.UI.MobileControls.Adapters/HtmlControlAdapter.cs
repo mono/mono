@@ -151,8 +151,7 @@ namespace System.Web.UI.MobileControls.Adapters
 		}
 
 		[MonoTODO]
-		protected void RenderEndLink(HtmlMobileTextWriter writer,
-		                              string target)
+		protected void RenderEndLink(HtmlMobileTextWriter writer)
 		{
 			throw new NotImplementedException();
 		}

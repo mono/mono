@@ -68,7 +68,7 @@ namespace System.Web.UI.MobileControls.Adapters
 			}
 		}
 
-		public MobileControl Control
+		public virtual MobileControl Control
 		{
 			get
 			{
@@ -120,7 +120,7 @@ namespace System.Web.UI.MobileControls.Adapters
 		{
 		}
 
-		public bool LoadPostData(string postKey,
+		public virtual bool LoadPostData(string postKey,
 		               NameValueCollection postCollection,
 		               object privateControlData, out bool dataChanged)
 		{
