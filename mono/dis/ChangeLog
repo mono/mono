@@ -1,3 +1,12 @@
+Sun Jul 15 17:29:10 CEST 2001 Paolo Molaro <lupus@ximian.com>
+
+	* get.h,get.c: added some dis_stringify_object() functions:
+	metadata decoding is now done in libmetadata. Still need to use
+	them throughhout the code (and move other decode code to
+	metadata). Fix also field decoding (band-aid until we load
+	also referenced assemblies).
+	* dis/main.c: start using the new routines.
+
 2001-07-13  Miguel de Icaza  <miguel@ximian.com>
 
 	* get.c (get_method): GOOD. Implemented this other bad boy.
