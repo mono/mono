@@ -1,3 +1,7 @@
+2001-09-25  Miguel de Icaza  <miguel@ximian.com>
+
+	* driver.cs: Change the wording of message
+
 2001-09-25  Ravi Pratap  <ravi@ximian.com>
 
 	* expression.cs (Binary::ResolveOperator): Had forgottten to set 

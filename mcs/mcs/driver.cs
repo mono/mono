@@ -58,7 +58,7 @@ namespace CIR
 			try {
 				input = System.IO.File.OpenRead (input_file);
 			} catch {
-				context.Report.Error (2001, "Source file '" + input_file + "' could not be parsed");
+				context.Report.Error (2001, "Source file '" + input_file + "' could not be opened");
 				return 1;
 			}
 
