@@ -1,3 +1,9 @@
+2004-05-28  Peter Bartok <pbartok@novell.com>
+	* ContainerControl.cs: First attempt at implementing some missing
+	  methods
+	* ScrollableControl.cs: Fixed creation parameters and cleaned up a bit
+	* UserControl.cs: Clean up and small fixes
+
 2004-05-25  Atsushi Enomoto <atsushi@ximian.com>
 
 	* PrintDialog.cs : Build fix related to win32functions.cs changes.

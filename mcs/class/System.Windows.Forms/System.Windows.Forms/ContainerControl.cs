@@ -21,18 +21,30 @@ namespace System.Windows.Forms {
 
 	public class ContainerControl : ScrollableControl, IContainerControl {
 
+		private Control	activeControl;
+
 		public ContainerControl () : base () 
 		{
 			controlStyles_ |= ControlStyles.ContainerControl;
 		}
 		
 		
+		[MonoTODO]
 		public Control ActiveControl {
 			get {
-				throw new NotImplementedException ();
+				return(activeControl);
 			}
 			set { 
-				//FIXME:
+				if ((value==activeControl) || (value==null)) {
+					return;
+				}
+
+				if (!Contains(value)) {
+					throw new ArgumentException("Not a child control");
+				}
+
+				// FIXME; need to let Wine know
+				activeControl=value;
 			}
 		}
 		
@@ -52,9 +64,14 @@ namespace System.Windows.Forms {
 			get { return base.CreateParams; }
 		}
 		
-		[MonoTODO]
 		public Form ParentForm {
-			get { throw new NotImplementedException (); }
+			get {
+				if (Parent != null) {
+					return(Parent.FindForm());
+				} else {
+					return(FindForm());
+				}
+			}
 		}
 		
 		/// --- Methods ---
@@ -74,39 +91,76 @@ namespace System.Windows.Forms {
 			base.Dispose(disposing);
 		}
 		
-		[MonoTODO]
-		// not memeber?
-		bool IContainerControl.ActivateControl(Control control) 
+		public bool ActivateControl(Control control) 
 		{
-			throw new NotImplementedException ();
+			Control 		parent=Parent;
+			ContainerControl	container;
+			bool			result=true;
+
+			// We might have a container inside a container, etc...
+			// if we do, make sure that the whole chain up knows about the activation
+			if (parent!=null) {
+				container=parent.GetContainerControl() as ContainerControl;
+				if ((container!=null) && (container.ActiveControl!=this)) {
+					container.ActivateControl(this);
+				}
+			}
+
+			if (activeControl!=control) {
+				// FIXME - let wine know
+				activeControl=control;
+			}
+			return(result);
 		}
 		
 		// [event methods]
 		protected override void OnControlRemoved (ControlEventArgs e) 
 		{
-			//FIXME:
-			base.OnControlRemoved (e);
+			if ((e.Control==activeControl) || (e.Control.Contains(activeControl))) {
+				ActiveControl=null;
+			}
+			base.OnControlRemoved(e);
 		}
 		
 		protected override void OnCreateControl ()
 		{
-			//FIXME:
 			base.OnCreateControl ();
+			OnBindingContextChanged(EventArgs.Empty);
 		}
 		// end of [event methods]
 		
-		[MonoTODO]
 		protected override bool ProcessDialogChar (char charCode) 
 		{
-			//FIXME:
+			// Only process if we own the whole thing
+			if (GetTopLevel()) {
+				if (ProcessMnemonic(charCode)) {
+					return(true);
+				}
+			}
 			return base.ProcessDialogChar(charCode);
 		}
 		
 		[MonoTODO]
-		protected override bool ProcessDialogKey (Keys keyData) 
+		protected override bool ProcessDialogKey (Keys keyData)
 		{
 			if ( keyData == Keys.Tab ) {
 				return ProcessTabKey ( Control.ModifierKeys != Keys.Shift );
+			} else if ((keyData==Keys.Left) || (keyData==Keys.Right) || (keyData==Keys.Up) || (keyData==Keys.Down)) {
+				// Select the next control
+
+				Control	select=this;
+				bool	forward=true;
+
+				if ((keyData==Keys.Left) || (keyData==Keys.Up)) {
+					forward=false;
+				}
+
+				if (activeControl!=null) {
+					select=activeControl.Parent;
+				}
+
+				select.SelectNextControl(activeControl, forward, false, false, true);
+				return(true);
 			}
 			return base.ProcessDialogKey(keyData);
 		}
@@ -145,7 +199,6 @@ namespace System.Windows.Forms {
 		
 		protected override void WndProc(ref Message m) 
 		{
-			//FIXME:
 			base.WndProc(ref m);
 		}
 	}

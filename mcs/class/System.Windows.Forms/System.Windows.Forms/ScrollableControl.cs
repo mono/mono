@@ -31,6 +31,7 @@ namespace System.Windows.Forms {
 		//  --- Constructor
 		//
 		public ScrollableControl () : base () {
+			base.SetStyle(ControlStyles.ContainerControl, true);
 			dockPadding = new ScrollableControl.DockPaddingEdges();
 			TabStop = false;
 		}
@@ -108,10 +109,10 @@ namespace System.Windows.Forms {
 				RegisterDefaultWindowClass ( );
 
 				CreateParams createParams = base.CreateParams;
-				createParams.Caption = "Hello World";
+				createParams.Caption = "ScrollableControl";
 				createParams.ClassName = Win32.DEFAULT_WINDOW_CLASS;
   				
-				createParams.Style = (int) (WindowStyles.WS_CLIPCHILDREN | WindowStyles.WS_CHILD);
+				createParams.Style = (int) (WindowStyles.WS_CLIPCHILDREN | WindowStyles.WS_CLIPSIBLINGS | WindowStyles.WS_CHILD | WindowStyles.WS_VISIBLE);
 				//test version with scroll bars.
 				//createParams.Style = (int) (WindowStyles.WS_OVERLAPPEDWINDOW | WindowStyles.WS_HSCROLL | WindowStyles.WS_VSCROLL);
 				
@@ -142,17 +143,6 @@ namespace System.Windows.Forms {
 		//
 		//  --- Protected Methods
 		//
-		static private IntPtr WndProc (IntPtr hWnd, Msg msg, IntPtr wParam, IntPtr lParam) {
-			Message message = new Message();
-
-			message.HWnd = hWnd;
-			message.Msg = (int) msg;
-			message.WParam = wParam;
-			message.LParam = lParam;
-			message.Result = (IntPtr)0;
-
-			return (IntPtr)0;
-		}
 		
 		[MonoTODO]
 		protected virtual void AdjustFormScrollbars (

@@ -13,60 +13,54 @@ using System.Drawing;
 namespace System.Windows.Forms {
 
 	public class UserControl : ContainerControl{
+		// --- Events ---
+		public event EventHandler Load;
 
 		// --- Properties ---
-		[MonoTODO]
 		protected override Size DefaultSize {
-			get { return new Size ( 150, 150 ); }
+			get {
+				return new Size(150, 150);
+			}
 		}
 
-		[MonoTODO]
 		public override string Text {
 
 			get {
-				//FIXME:
 				return base.Text;
 			}
 			set {
-				//FIXME:
 				base.Text = value;
 			}
 		}
 
 		// --- Constructor ---
-		[MonoTODO]
 		public UserControl()
 		{
-			
+			// Nothing to do at this time
 		}
 
 		// --- Methods ---
-		[MonoTODO]
 		protected override void OnCreateControl()
 		{
-			//FIXME:
 			base.OnCreateControl();
+			OnLoad(EventArgs.Empty);
 		}
 
-		[MonoTODO]
 		protected virtual void OnLoad(EventArgs e)
 		{
-			//FIXME:
+			if (Load!=null) {
+				Load(this, e);
+			}
 		}
 
-		[MonoTODO]
 		protected override void OnMouseDown(MouseEventArgs e)
 		{
-			//FIXME:
+			base.OnMouseDown(e);
 		}
 
-		[MonoTODO]
 		protected override void WndProc(ref Message m)
 		{
-			//FIXME:
+			base.WndProc(ref m);
 		}
-
-		// --- Events ---
-		public event EventHandler Load;
 	}
 }
