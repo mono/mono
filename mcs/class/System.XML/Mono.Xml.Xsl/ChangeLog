@@ -1,5 +1,10 @@
 2005-02-08  Atsushi Enomoto <atsushi@ximian.com>
 
+	* XslAttributeSet.cs : just ignore other kind of nodes than element
+	  in its content. Fix by Andrew Skiba.
+
+2005-02-08  Atsushi Enomoto <atsushi@ximian.com>
+
 	* XslOutput.cs : for html and text output mode, just set internal
 	  omitXmlDeclaration status true. Patch by Andrew Skiba.
 

@@ -69,17 +69,8 @@ namespace Mono.Xml.Xsl {
 			if (!c.Input.MoveToFirstChild ()) return;
 				
 			do {
-				switch (c.Input.NodeType) {
-				case XPathNodeType.Element:
-					break;
-				case XPathNodeType.Whitespace:
+				if (c.Input.NodeType != XPathNodeType.Element)
 					continue;
-				default:
-					if (c.CurrentStylesheet.Version == "1.0")
-						throw new XsltCompileException ("Content " + c.Input.NodeType + " is not allowed in XSLT attribute-set element.", null, c.Input);
-					break;
-				}
-					
 				if (c.Input.NamespaceURI != XsltNamespace || c.Input.LocalName != "attribute")
 					throw new XsltCompileException ("Invalid attr set content", null, c.Input);
 				attributes.Add (new XslAttribute (c));
