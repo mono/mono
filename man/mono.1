@@ -96,12 +96,9 @@ Writes out stabs debug information.
 .I "dwarf"
 Writes out dwarf debug information.
 .TP
-.I "dwarf-plus"
-Uses an extended debugging information file which has been generated
-by MCS.  This extended debugging information will allow you to debug
-C# source code rather than IL code.  To use it, just run the JIT in
-your debugger and call "mono_debug_make_symbols" each time the program
-stops.
+.I "mono"
+Use a symbol file which has been created by MCS.  It can be used to get
+source lines in stack traces.
 .PP
 The "stabs" and "dwarf" formats support the following options:
 .TP
@@ -130,11 +127,6 @@ behaviour.
 .I "dont_create_il_files"
 Update the *.il files if their assemblies have changed, but only if the
 file already exists.
-.PP
-The "dwarf-plus" format supports the following options:
-.TP
-.I "dont_fallback"
-Don't fallback to normal dwarf2 if the symbol file cannot be found.
 .PP
 .SH FILES
 On Unix assemblies are loaded from the installation lib directory.  If you set
