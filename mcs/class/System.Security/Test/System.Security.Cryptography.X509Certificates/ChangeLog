@@ -1,3 +1,11 @@
+2005-01-17  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* X509BasicConstraintsExtensionTest.cs: New. Unit tests.
+	* X509EnhancedKeyUsageExtensionTest.cs: New. Unit tests.
+	* X509ExtensionTest.cs: New. Unit tests.
+	* X509KeyUsageExtensionTest.cs: New. Unit tests.
+	* X509SubjectKeyIdentifierExtensionTest.cs: New. Unit tests.
+
 2003-11-08  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* X509ChainElementCollectionTest.cs: New. Unit tests for 
