@@ -39,6 +39,11 @@ namespace Mono.Data.TdsClient.Internal {
 			throw new NotImplementedException ();
 		}
 
+		protected abstract TdsPacketColumnInfoResult ProcessColumnInfo ()
+		{
+			throw new NotImplementedException ();
+		}
+
 		#endregion // Methods
 	}
 }
