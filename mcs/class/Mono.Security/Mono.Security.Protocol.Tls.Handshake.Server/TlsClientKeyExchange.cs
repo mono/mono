@@ -75,9 +75,6 @@ namespace Mono.Security.Protocol.Tls.Handshake.Server
 
             // Initialize Cipher Suite
             this.Context.Cipher.InitializeCipher();
-
-            // Clear resources
-            privKey.Clear();
         }
 
         protected override void ProcessAsTls1()
@@ -112,9 +109,6 @@ namespace Mono.Security.Protocol.Tls.Handshake.Server
 
             // Initialize Cipher Suite
             this.Context.Cipher.InitializeCipher();
-
-            // Clear resources
-            privKey.Clear();
         }
 
         #endregion
