@@ -1,3 +1,9 @@
+2005-01-05  Zoltan Varga  <vargaz@freemail.hu>
+
+	* domain.c object.c domain-internals.h: Revert part of r38077 since the
+	keys to proxy_vtable_hash are GCd objects. Fixes running the class lib
+	tests.
+
 2005-01-03  Zoltan Varga  <vargaz@freemail.hu>
 
 	* marshal.c: Use MONO_CLASSCONST instead of MONO_LDPTR in some places,
