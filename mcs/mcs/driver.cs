@@ -269,7 +269,6 @@ namespace Mono.CSharp
 				if (Report.Warnings > 0) {
 					Console.Write(" - {0} warning(s)", Report.Warnings);
 				}
-				Console.WriteLine();
 				if (show_counters){
 					Console.WriteLine ("Counter1: " + counter1);
 					Console.WriteLine ("Counter2: " + counter2);
