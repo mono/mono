@@ -1,3 +1,8 @@
+
+Fri Jun 13 19:10:55 CEST 2003 Paolo Molaro <lupus@ximian.com>
+
+	* object.c: some support to handle out of memory exceptions.
+
 2003-06-12  Dietmar Maurer  <dietmar@ximian.com>
 
 	* marshal.c (mono_marshal_get_native_wrapper): support reference
