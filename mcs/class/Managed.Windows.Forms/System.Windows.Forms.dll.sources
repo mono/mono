@@ -36,6 +36,7 @@ System.Windows.Forms/ColumnClickEventArgs.cs
 System.Windows.Forms/ColumnClickEventHandler.cs
 System.Windows.Forms/ColumnHeaderStyle.cs
 System.Windows.Forms/ContainerControl.cs
+System.Windows.Forms/ContextMenu.cs
 System.Windows.Forms/Control.cs
 System.Windows.Forms/ControlEventArgs.cs
 System.Windows.Forms/ControlEventHandler.cs
@@ -103,9 +104,13 @@ System.Windows.Forms/LinkLabelLinkClickedEventHandler.cs
 System.Windows.Forms/LinkState.cs
 System.Windows.Forms/ListViewAlignment.cs
 System.Windows.Forms/GroupBox.cs
+System.Windows.Forms/MainMenu.cs
 System.Windows.Forms/MeasureItemEventHandler.cs
 System.Windows.Forms/MeasureItemEventArgs.cs
 System.Windows.Forms/MenuGlyph.cs
+System.Windows.Forms/Menu.cs
+System.Windows.Forms/MenuAPI.cs
+System.Windows.Forms/MenuItem.cs
 System.Windows.Forms/MenuMerge.cs
 System.Windows.Forms/MessageBoxButtons.cs
 System.Windows.Forms/MessageBox.cs

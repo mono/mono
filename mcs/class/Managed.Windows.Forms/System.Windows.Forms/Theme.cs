@@ -23,9 +23,12 @@
 //	Jordi Mas i Hernandez, jordi@ximian.com
 //
 //
-// $Revision: 1.8 $
+// $Revision: 1.9 $
 // $Modtime: $
 // $Log: Theme.cs,v $
+// Revision 1.9  2004/09/17 12:18:42  jordi
+// Very early menu support
+//
 // Revision 1.8  2004/09/07 17:12:26  jordi
 // GroupBox control
 //
@@ -114,7 +117,7 @@ namespace System.Windows.Forms
 		protected Font default_font;
 		protected Color defaultWindowBackColor;
 		protected Color defaultWindowForeColor;		
-		static protected SystemResPool ResPool = new SystemResPool ();
+		internal SystemResPool ResPool = new SystemResPool ();
 	
 		/* Default properties */		
 		public virtual Color ColorScrollbar {
