@@ -9,6 +9,8 @@
 // (C) Ximian, Inc. 2002
 // Copyright (C) Tim Coleman, 2002
 //
+
+using Mono.Data.TdsClient.Internal;
 using System;
 using System.ComponentModel;
 using System.Data;
@@ -26,9 +28,11 @@ namespace System.Data.SqlClient {
 	{
 		#region Fields
 
+		SqlDbType sqlDbType;
+		DbType dbType;
+		string typeName;
+
 		string parmName;
-		SqlDbType dbtype;
-		DbType theDbType;
 		object objValue;
 		int size;
 		string sourceColumn;
@@ -38,7 +42,6 @@ namespace System.Data.SqlClient {
 		byte scale;
 		DataRowVersion sourceVersion;
 		int offset;
-
 		bool sizeSet = false;
 
 		#endregion // Fields
@@ -51,8 +54,11 @@ namespace System.Data.SqlClient {
 		}
 
 		public SqlParameter (string parameterName, object value) 
-			: this (parameterName, SqlDbType.NVarChar, 0, ParameterDirection.Input, false, 0, 0, String.Empty, DataRowVersion.Current, value)
 		{
+			this.parmName = parameterName;
+			this.objValue = value;
+			this.sourceVersion = DataRowVersion.Current;
+			SetType (value.GetType ());
 		}
 		
 		public SqlParameter (string parameterName, SqlDbType dbType) 
@@ -74,7 +80,6 @@ namespace System.Data.SqlClient {
 		public SqlParameter (string parameterName, SqlDbType dbType, int size, ParameterDirection direction, bool isNullable, byte precision, byte scale, string sourceColumn, DataRowVersion sourceVersion, object value) 
 		{
 			this.parmName = parameterName;
-			this.dbtype = dbType;
 			this.size = size;
 			this.sourceColumn = sourceColumn;
 			this.direction = direction;
@@ -83,6 +88,7 @@ namespace System.Data.SqlClient {
 			this.scale = scale;
 			this.sourceVersion = sourceVersion;
 			this.objValue = value;
+			SqlDbType = dbType;
 		}
 
 		internal SqlParameter (object[] dbValues)
@@ -115,7 +121,7 @@ namespace System.Data.SqlClient {
 			if (dbValues[13] != null)
 				scale = (byte) ((short) dbValues[13]);
 
-			dbtype = TypeNameToSqlDbType ((string) dbValues[16]);
+			SetDbTypeName ((string) dbValues[16]);
 		}
 
 		#endregion // Constructors
@@ -128,8 +134,8 @@ namespace System.Data.SqlClient {
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		[RefreshProperties (RefreshProperties.All)]
 		public DbType DbType {
-			get { return theDbType; }
-			set { theDbType = value; }
+			get { return dbType; }
+			set { SetDbType (value); }
 		}
 
 		[DataCategory ("Data")]
@@ -219,8 +225,8 @@ namespace System.Data.SqlClient {
 		[DefaultValue (SqlDbType.NVarChar)]
 		[RefreshProperties (RefreshProperties.All)]
 		public SqlDbType SqlDbType {
-			get { return dbtype; }
-			set { dbtype = value; }
+			get { return sqlDbType; }
+			set { SetSqlDbType (value); }
 		}
 
 		[DataCategory ("Data")]
@@ -245,9 +251,9 @@ namespace System.Data.SqlClient {
 			StringBuilder result = new StringBuilder ();
 			result.Append (name);
 			result.Append (" ");
-			result.Append (dbtype.ToString ().ToLower ());
+			result.Append (typeName);
 
-			switch (dbtype) {
+			switch (sqlDbType) {
 			case SqlDbType.Image :
 			case SqlDbType.VarBinary :
 			case SqlDbType.NVarChar :
@@ -260,6 +266,7 @@ namespace System.Data.SqlClient {
 				break;
 			case SqlDbType.NChar :
 			case SqlDbType.Char :
+			case SqlDbType.Binary :
 				if (size > 0) {
 					result.Append ("(");
 					result.Append (size.ToString ());
@@ -282,57 +289,305 @@ namespace System.Data.SqlClient {
                         return result.ToString ();
 		}
 
-		internal static SqlDbType TypeNameToSqlDbType (string typeName)
+		private void SetDbType (DbType type)
 		{
-			switch (typeName) {
-			case "bigint":
-				return SqlDbType.BigInt;
-			case "binary":
-				return SqlDbType.Binary;
-			case "bit":
-				return SqlDbType.Bit;
-			case "char":
-				return SqlDbType.Char;
-			case "datetime":
-				return SqlDbType.DateTime;
-			case "decimal":
-				return SqlDbType.Decimal;
-			case "float":
-				return SqlDbType.Float;
-			case "image":
-				return SqlDbType.Image;
-			case "int":
-				return SqlDbType.Int;
-			case "money":
-				return SqlDbType.Money;
-			case "nchar":
-				return SqlDbType.NChar;
-			case "ntext":
-				return SqlDbType.NText;
-			case "nvarchar":
-				return SqlDbType.NVarChar;
-			case "real":
-				return SqlDbType.Real;
-			case "smalldatetime":
-				return SqlDbType.SmallDateTime;
-			case "smallint":
-				return SqlDbType.SmallInt;
-			case "smallmoney":
-				return SqlDbType.SmallMoney;
-			case "text":
-				return SqlDbType.Text;
-			case "timestamp":
-				return SqlDbType.Timestamp;
-			case "tinyint":
-				return SqlDbType.TinyInt;
-			case "uniqueidentifier":
-				return SqlDbType.UniqueIdentifier;
-			case "varbinary":
-				return SqlDbType.VarBinary;
-			case "varchar":
-				return SqlDbType.VarChar;
+			string exception = String.Format ("No mapping exists from DbType {0} to a known SqlDbType.", type);
+
+			switch (type) {
+			case DbType.AnsiString:
+				sqlDbType = SqlDbType.VarChar;
+				break;
+			case DbType.AnsiStringFixedLength:
+				sqlDbType = SqlDbType.Char;
+				break;
+			case DbType.Binary:
+				sqlDbType = SqlDbType.VarBinary;
+				break;
+			case DbType.Boolean:
+				sqlDbType = SqlDbType.Bit;
+				break;
+			case DbType.Byte:
+				sqlDbType = SqlDbType.TinyInt;
+				break;
+			case DbType.Currency:
+				sqlDbType = SqlDbType.Money;
+				break;
+			case DbType.Date:
+			case DbType.DateTime:
+				sqlDbType = SqlDbType.DateTime;
+				break;
+			case DbType.Decimal:
+				sqlDbType = SqlDbType.Decimal;
+				break;
+			case DbType.Double:
+				sqlDbType = SqlDbType.Float;
+				break;
+			case DbType.Guid:
+				sqlDbType = SqlDbType.UniqueIdentifier;
+				break;
+			case DbType.Int16:
+				sqlDbType = SqlDbType.SmallInt;
+				break;
+			case DbType.Int32:
+				sqlDbType = SqlDbType.Int;
+				break;
+			case DbType.Int64:
+				sqlDbType = SqlDbType.BigInt;
+				break;
+			case DbType.Object:
+				sqlDbType = SqlDbType.Variant;
+				break;
+			case DbType.Single:
+				sqlDbType = SqlDbType.Real;
+				break;
+			case DbType.String:
+				sqlDbType = SqlDbType.NVarChar;
+				break;
+			case DbType.StringFixedLength:
+				sqlDbType = SqlDbType.NChar;
+				break;
+			case DbType.Time:
+				sqlDbType = SqlDbType.DateTime;
+				break;
+			default:
+				throw new ArgumentException (exception);
 			}
-			return SqlDbType.Variant;
+			dbType = type;
+		}
+
+		// Used by internal constructor which has a SQL Server typename
+		private void SetDbTypeName (string dbTypeName)
+		{
+			switch (dbTypeName.ToLower ()) {	
+			case "bigint":
+				SqlDbType = SqlDbType.BigInt;
+				break;
+			case "binary":
+				SqlDbType = SqlDbType.Binary;
+				break;
+			case "bit":
+				SqlDbType = SqlDbType.Bit;
+				break;
+			case "char":
+				SqlDbType = SqlDbType.Char;
+				break;
+			case "datetime":
+				SqlDbType = SqlDbType.DateTime;
+				break;
+			case "decimal":
+				SqlDbType = SqlDbType.Decimal;
+				break;
+			case "float":
+				SqlDbType = SqlDbType.Float;
+				break;
+			case "image":
+				SqlDbType = SqlDbType.Image;
+				break;
+			case "int":
+				SqlDbType = SqlDbType.Int;
+				break;
+			case "money":
+				SqlDbType = SqlDbType.Money;
+				break;
+			case "nchar":
+				SqlDbType = SqlDbType.NChar;
+				break;
+			case "ntext":
+				SqlDbType = SqlDbType.NText;
+				break;
+			case "nvarchar":
+				SqlDbType = SqlDbType.NVarChar;
+				break;
+			case "real":
+				SqlDbType = SqlDbType.Real;
+				break;
+			case "smalldatetime":
+				SqlDbType = SqlDbType.SmallDateTime;
+				break;
+			case "smallint":
+				SqlDbType = SqlDbType.SmallInt;
+				break;
+			case "smallmoney":
+				SqlDbType = SqlDbType.SmallMoney;
+				break;
+			case "text":
+				SqlDbType = SqlDbType.Text;
+				break;
+			case "timestamp":
+				SqlDbType = SqlDbType.Timestamp;
+				break;
+			case "tinyint":
+				SqlDbType = SqlDbType.TinyInt;
+				break;
+			case "uniqueidentifier":
+				SqlDbType = SqlDbType.UniqueIdentifier;
+				break;
+			case "varbinary":
+				SqlDbType = SqlDbType.VarBinary;
+				break;
+			case "varchar":
+				SqlDbType = SqlDbType.VarChar;
+				break;
+			default:
+				SqlDbType = SqlDbType.Variant;
+				break;
+			}
+		}
+
+		private void SetSqlDbType (SqlDbType type)
+		{
+			string exception = String.Format ("No mapping exists from SqlDbType {0} to a known DbType.", type);
+
+			switch (type) {
+			case SqlDbType.BigInt:
+				typeName = "bigint";
+				dbType = DbType.Int64;
+				break;
+			case SqlDbType.Binary:
+				typeName = "binary";
+				dbType = DbType.Binary;
+				break;
+			case SqlDbType.Timestamp:
+				typeName = "timestamp";
+				dbType = DbType.Binary;
+				break;
+			case SqlDbType.VarBinary:
+				typeName = "varbinary";
+				dbType = DbType.Binary;
+				break;
+			case SqlDbType.Bit:
+				typeName = "bit";
+				dbType = DbType.Boolean;
+				break;
+			case SqlDbType.Char:
+				typeName = "char";
+				dbType = DbType.AnsiStringFixedLength;
+				break;
+			case SqlDbType.DateTime:
+				typeName = "datetime";
+				dbType = DbType.DateTime;
+				break;
+			case SqlDbType.SmallDateTime:
+				typeName = "smalldatetime";
+				dbType = DbType.DateTime;
+				break;
+			case SqlDbType.Decimal:
+				typeName = "decimal";
+				dbType = DbType.Decimal;
+				break;
+			case SqlDbType.Float:
+				typeName = "float";
+				dbType = DbType.Double;
+				break;
+			case SqlDbType.Image:
+				typeName = "image";
+				dbType = DbType.Binary;
+				break;
+			case SqlDbType.Int:
+				typeName = "int";
+				dbType = DbType.Int32;
+				break;
+			case SqlDbType.Money:
+				typeName = "money";
+				dbType = DbType.Currency;
+				break;
+			case SqlDbType.SmallMoney:
+				typeName = "smallmoney";
+				dbType = DbType.Currency;
+				break;
+			case SqlDbType.NChar:
+				typeName = "nchar";
+				dbType = DbType.StringFixedLength;
+				break;
+			case SqlDbType.NText:
+				typeName = "ntext";
+				dbType = DbType.String;
+				break;
+			case SqlDbType.NVarChar:
+				typeName = "nvarchar";
+				dbType = DbType.String;
+				break;
+			case SqlDbType.Real:
+				typeName = "real";
+				dbType = DbType.Single;
+				break;
+			case SqlDbType.SmallInt:
+				typeName = "smallint";
+				dbType = DbType.Int16;
+				break;
+			case SqlDbType.Text:
+				typeName = "text";
+				dbType = DbType.AnsiString;
+				break;
+			case SqlDbType.VarChar:
+				typeName = "varchar";
+				dbType = DbType.AnsiString;
+				break;
+			case SqlDbType.TinyInt:
+				typeName = "tinyint";
+				dbType = DbType.Byte;
+				break;
+			case SqlDbType.UniqueIdentifier:
+				typeName = "uniqueidentifier";
+				dbType = DbType.Guid;
+				break;
+			case SqlDbType.Variant:
+				typeName = "variant";
+				dbType = DbType.Object;
+				break;
+			default:
+				throw new ArgumentException (exception);
+			}
+			sqlDbType = type;
+		}
+
+		private void SetType (Type type)
+		{
+			string exception = String.Format ("The parameter data type of {0} is invalid.", type.Name);
+
+			switch (type.FullName) {
+			case "System.Int64":
+				SetSqlDbType (SqlDbType.BigInt);
+				break;
+			case "System.Boolean":
+				SetSqlDbType (SqlDbType.Bit);
+				break;
+			case "System.String":
+				SetSqlDbType (SqlDbType.NVarChar);
+				break;
+			case "System.DateTime":
+				SetSqlDbType (SqlDbType.DateTime);
+				break;
+			case "System.Decimal":
+				SetSqlDbType (SqlDbType.Decimal);
+				break;
+			case "System.Double":
+				SetSqlDbType (SqlDbType.Float);
+				break;
+			case "System.Byte[]":
+				SetSqlDbType (SqlDbType.VarBinary);
+				break;
+			case "System.Byte":
+				SetSqlDbType (SqlDbType.TinyInt);
+				break;
+			case "System.Int32":
+				SetSqlDbType (SqlDbType.Int);
+				break;
+			case "System.Single":
+				SetSqlDbType (SqlDbType.Real);
+				break;
+			case "System.Int16":
+				SetSqlDbType (SqlDbType.SmallInt);
+				break;
+			case "System.Guid":
+				SetSqlDbType (SqlDbType.UniqueIdentifier);
+				break;
+			case "System.Object":
+				SetSqlDbType (SqlDbType.Variant);
+				break;
+			default:
+				throw new ArgumentException (exception);				
+			}
 		}
 
 		public override string ToString() 

@@ -469,10 +469,18 @@ namespace System.Data.SqlClient {
 				case SqlDbType.NVarChar :
 				case SqlDbType.NChar :
 					return String.Format ("N'{0}'", parameter.Value.ToString ().Replace ("'", "''"));
-				case SqlDbType.Bit :
+				case SqlDbType.UniqueIdentifier :
+					return String.Format ("0x{0}", ((Guid) parameter.Value).ToString ("N"));
+				case SqlDbType.Bit:
 					if (parameter.Value.GetType () == typeof (bool))
 						return (((bool) parameter.Value) ? "0x1" : "0x0");
 					return parameter.Value.ToString ();
+				case SqlDbType.Binary:
+				case SqlDbType.VarBinary:
+					StringBuilder result = new StringBuilder ("0x");
+					foreach (byte b in (byte[]) parameter.Value)
+						result.Append (Convert.ToString (b, 16));
+					return result.ToString ();
 				default:
 					return String.Format ("'{0}'", parameter.Value.ToString ().Replace ("'", "''"));
 			}

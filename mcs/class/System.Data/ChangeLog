@@ -1,3 +1,14 @@
+2002-11-15  Tim Coleman <tim@timcoleman.com>
+        * Test/SqlTest.cs:
+                - Add more types to test: unique identifier, binary
+                  types.
+        * System.Data.SqlClient/SqlParameter.cs:
+                - Provide support for conversion between Type,
+                  DbType, SqlDbType, and the SQL server type names.
+                - Fix up handling of GUID and [Var]Binary types
+        * System.Data.SqlClient/SqlCommand.cs:
+                - Fix up handling of GUID and [Var]Binary types
+
 2002-11-14  Daniel Morgan <danmorg@sc.rr.com>
 
 	* System.Data/DataColumnPropertyDescriptor.cs

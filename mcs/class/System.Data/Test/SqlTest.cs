@@ -36,6 +36,7 @@
 using System;
 using System.Data;
 using System.Data.SqlClient;
+using System.Text;
 
 namespace Test.Mono.Data.SqlClient {
 
@@ -62,6 +63,9 @@ namespace Test.Mono.Data.SqlClient {
 				"text_value text, " +
 				"ntext_value ntext, " +
 				"datetime_value datetime, " +
+				"guid_value uniqueidentifier, " +
+				"binary_value binary (8), " +
+				"varbinary_value varbinary (8), " +
 				"null_boolean_value bit, " +
 				"null_byte_value tinyint, " +
 				"null_int2_value smallint, " +
@@ -75,7 +79,10 @@ namespace Test.Mono.Data.SqlClient {
 				"null_nvarchar_value nvarchar(20), " +
 				"null_text_value text, " +
 				"null_ntext_value ntext, " +
-				"null_datetime_value datetime " +
+				"null_datetime_value datetime, " +
+				"null_guid_value uniqueidentifier, " +
+				"null_binary_value binary (8), " +
+				"null_varbinary_value varbinary (8) " +
 				")";			
 	
 			createCommand.ExecuteNonQuery ();
@@ -128,7 +135,10 @@ namespace Test.Mono.Data.SqlClient {
 				"nvarchar_value, " +
 				"text_value, " +
 				"ntext_value, " +
-				"datetime_value " +
+				"datetime_value, " +
+				"guid_value, " +
+				"binary_value, " +
+				"varbinary_value " +
 				") values (" +
 				"@p1, " +
 				"@p2, " +
@@ -143,25 +153,31 @@ namespace Test.Mono.Data.SqlClient {
 				"@p11, " +
 				"@p12, " +
 				"@p13, " +
-				"@p14 " +
+				"@p14, " +
+				"@p15, " +
+				"@p16, " +
+				"@p17 " +
 				")";
 
 			SqlParameterCollection parameters = ((SqlCommand) insertCommand).Parameters;
 
-			parameters.Add ("@p1",  SqlDbType.Bit, 1);
-			parameters.Add ("@p2",  SqlDbType.TinyInt, 1);
-			parameters.Add ("@p3",  SqlDbType.SmallInt, 2);
-			parameters.Add ("@p4",  SqlDbType.Int, 4);
-			parameters.Add ("@p5",  SqlDbType.Real, 4);
-			parameters.Add ("@p6",  SqlDbType.Float, 8);
-			parameters.Add ("@p7",  SqlDbType.Decimal, 12);
+			parameters.Add ("@p1",  SqlDbType.Bit);
+			parameters.Add ("@p2",  SqlDbType.TinyInt);
+			parameters.Add ("@p3",  SqlDbType.SmallInt);
+			parameters.Add ("@p4",  SqlDbType.Int);
+			parameters.Add ("@p5",  SqlDbType.Real);
+			parameters.Add ("@p6",  SqlDbType.Float);
+			parameters.Add ("@p7",  SqlDbType.Decimal);
 			parameters.Add ("@p8",  SqlDbType.Char, 14);
 			parameters.Add ("@p9",  SqlDbType.NChar, 16);
 			parameters.Add ("@p10", SqlDbType.VarChar, 17);
 			parameters.Add ("@p11", SqlDbType.NVarChar, 19);
-			parameters.Add ("@p12", SqlDbType.Text, 14);
-			parameters.Add ("@p13", SqlDbType.NText, 16);
-			parameters.Add ("@p14", SqlDbType.DateTime, 4);
+			parameters.Add ("@p12", SqlDbType.Text);
+			parameters.Add ("@p13", SqlDbType.NText);
+			parameters.Add ("@p14", SqlDbType.DateTime);
+			parameters.Add ("@p15", SqlDbType.UniqueIdentifier);
+			parameters.Add ("@p16", SqlDbType.Binary, 8);
+			parameters.Add ("@p17", SqlDbType.VarBinary, 8);
 
 			parameters ["@p1"].Value = true;
 			parameters ["@p2"].Value = 15;
@@ -179,6 +195,9 @@ namespace Test.Mono.Data.SqlClient {
 			parameters ["@p12"].Value = "This is a text";
 			parameters ["@p13"].Value = "This is an ntext";
 			parameters ["@p14"].Value = DateTime.Now;
+			parameters ["@p15"].Value = Guid.NewGuid ();
+			parameters ["@p16"].Value = new byte[2] {0x12,0x34};
+			parameters ["@p17"].Value = new byte[2] {0x56,0x78};
 
 			insertCommand.ExecuteNonQuery ();
 		}
@@ -215,6 +234,9 @@ namespace Test.Mono.Data.SqlClient {
 				"text_value, " +
 				"ntext_value, " +
 				"datetime_value, " +
+				"guid_value, " +
+				"binary_value, " +
+				"varbinary_value, " +
 				"null_boolean_value, " +
 				"null_byte_value, " +
 				"null_int2_value, " +
@@ -228,7 +250,10 @@ namespace Test.Mono.Data.SqlClient {
 				"null_nvarchar_value, " +
 				"null_text_value, " +
 				"null_ntext_value, " +
-				"null_datetime_value " +
+				"null_datetime_value, " +
+				"null_guid_value, " +
+				"null_binary_value, " +
+				"null_varbinary_value " +
 				"from mono_sql_test";
 
 
@@ -260,7 +285,10 @@ namespace Test.Mono.Data.SqlClient {
 				"nvarchar_value, " +
 				"text_value, " +
 				"ntext_value, " +
-				"datetime_value " +
+				"datetime_value, " +
+				"guid_value, " +
+				"binary_value, " +
+				"varbinary_value " +
 				") values (" +
 				"@p1, " +
 				"@p2, " +
@@ -275,25 +303,31 @@ namespace Test.Mono.Data.SqlClient {
 				"@p11, " +
 				"@p12, " +
 				"@p13, " +
-				"@p14 " +
+				"@p14, " +
+				"@p15, " +
+				"@p16, " +
+				"@p17 " +
 				")";
 
 			SqlParameterCollection parameters = ((SqlCommand) selectCommand).Parameters;
 
-			parameters.Add ("@p1",  SqlDbType.Bit, 1);
-			parameters.Add ("@p2",  SqlDbType.TinyInt, 1);
-			parameters.Add ("@p3",  SqlDbType.SmallInt, 2);
-			parameters.Add ("@p4",  SqlDbType.Int, 4);
-			parameters.Add ("@p5",  SqlDbType.Real, 4);
-			parameters.Add ("@p6",  SqlDbType.Float, 8);
-			parameters.Add ("@p7",  SqlDbType.Decimal, 12);
+			parameters.Add ("@p1",  SqlDbType.Bit);
+			parameters.Add ("@p2",  SqlDbType.TinyInt);
+			parameters.Add ("@p3",  SqlDbType.SmallInt);
+			parameters.Add ("@p4",  SqlDbType.Int);
+			parameters.Add ("@p5",  SqlDbType.Real);
+			parameters.Add ("@p6",  SqlDbType.Float);
+			parameters.Add ("@p7",  SqlDbType.Decimal);
 			parameters.Add ("@p8",  SqlDbType.Char, 14);
 			parameters.Add ("@p9",  SqlDbType.NChar, 16);
 			parameters.Add ("@p10", SqlDbType.VarChar, 17);
 			parameters.Add ("@p11", SqlDbType.NVarChar, 19);
-			parameters.Add ("@p12", SqlDbType.Text, 14);
-			parameters.Add ("@p13", SqlDbType.NText, 16);
-			parameters.Add ("@p14", SqlDbType.DateTime, 4);
+			parameters.Add ("@p12", SqlDbType.Text);
+			parameters.Add ("@p13", SqlDbType.NText);
+			parameters.Add ("@p14", SqlDbType.DateTime);
+			parameters.Add ("@p15", SqlDbType.UniqueIdentifier);
+			parameters.Add ("@p16", SqlDbType.Binary, 8);
+			parameters.Add ("@p17", SqlDbType.VarBinary, 8);
 
 			parameters ["@p1"].Value = true;
 			parameters ["@p2"].Value = 15;
@@ -311,6 +345,9 @@ namespace Test.Mono.Data.SqlClient {
 			parameters ["@p12"].Value = "This is a text";
 			parameters ["@p13"].Value = "This is an ntext";
 			parameters ["@p14"].Value = DateTime.Now;
+			parameters ["@p15"].Value = Guid.NewGuid ();
+			parameters ["@p16"].Value = new byte[2] {0x9a,0xbc};
+			parameters ["@p17"].Value = new byte[2] {0xde, 0xef};
 
 			reader = selectCommand.ExecuteReader ();
 
@@ -351,22 +388,28 @@ namespace Test.Mono.Data.SqlClient {
 				"varchar_value    = @p7, " +
 				"nvarchar_value   = @p8, " +
 				"text_value       = @p9, " +
-				"ntext_value      = @p10 " +
-				"where int2_value = @p11";
+				"ntext_value      = @p10, " +
+				"guid_value       = @p11, " +
+				"binary_value     = @p12, " +
+				"varbinary_value  = @p13 " +
+				"where int2_value = @p14";
 
 			SqlParameterCollection parameters = ((SqlCommand) updateCommand).Parameters;
 
-			parameters.Add ("@p1",  SqlDbType.Bit, 1);
-			parameters.Add ("@p2",  SqlDbType.TinyInt, 1);
-			parameters.Add ("@p3",  SqlDbType.SmallInt, 2);
-			parameters.Add ("@p4",  SqlDbType.Int, 4);
+			parameters.Add ("@p1",  SqlDbType.Bit);
+			parameters.Add ("@p2",  SqlDbType.TinyInt);
+			parameters.Add ("@p3",  SqlDbType.SmallInt);
+			parameters.Add ("@p4",  SqlDbType.Int);
 			parameters.Add ("@p5",  SqlDbType.Char, 10);
 			parameters.Add ("@p6",  SqlDbType.NChar, 10);
 			parameters.Add ("@p7",  SqlDbType.VarChar, 14);
 			parameters.Add ("@p8",  SqlDbType.NVarChar, 14);
-			parameters.Add ("@p9",  SqlDbType.Text, 12);
-			parameters.Add ("@p10", SqlDbType.NText, 12);
-			parameters.Add ("@p11", SqlDbType.SmallInt, 2);
+			parameters.Add ("@p9",  SqlDbType.Text);
+			parameters.Add ("@p10", SqlDbType.NText);
+			parameters.Add ("@p11", SqlDbType.UniqueIdentifier);
+			parameters.Add ("@p12", SqlDbType.Binary, 8);
+			parameters.Add ("@p13", SqlDbType.VarBinary, 8);
+			parameters.Add ("@p14", SqlDbType.SmallInt);
 
 			parameters ["@p1"].Value = false;
 			parameters ["@p2"].Value = 2;
@@ -378,7 +421,10 @@ namespace Test.Mono.Data.SqlClient {
 			parameters ["@p8"].Value = "It was not me!";
 			parameters ["@p9"].Value = "We got data!";
 			parameters ["@p10"].Value = "We got data!";
-			parameters ["@p11"].Value = -22;
+			parameters ["@p11"].Value = Guid.NewGuid ();
+			parameters ["@p12"].Value = new byte[2] {0x57,0x3e};
+			parameters ["@p13"].Value = new byte[2] {0xa2,0xf7};
+			parameters ["@p14"].Value = -22;
 
 			updateCommand.ExecuteNonQuery ();		
 		}
@@ -437,8 +483,14 @@ namespace Test.Mono.Data.SqlClient {
 						dr["ColumnName"];
 						
 					// column data
-					if(rdr.IsDBNull(c) == true)
+					if (rdr.IsDBNull(c) == true)
 						dataValue = " is NULL";
+					else if ((Type) dr["DataType"] == typeof (byte[])) {
+						StringBuilder builder = new StringBuilder ("0x");
+						foreach (byte b in (byte[]) rdr.GetValue (c)) 
+							builder.Append (Convert.ToString (b, 16));
+						dataValue = ": " + builder.ToString ();
+					}
 					else
 						dataValue = 
 							": " + 
@@ -576,7 +628,7 @@ namespace Test.Mono.Data.SqlClient {
 				/* Clean up */
 				Console.WriteLine ("Clean up...");
 				Console.WriteLine ("\t\tDrop table...");
-				DropTable (cnc);
+				//DropTable (cnc);
 				Console.WriteLine("OK");
 			}
 			catch(Exception e) {
