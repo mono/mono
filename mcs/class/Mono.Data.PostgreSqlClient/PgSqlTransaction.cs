@@ -20,28 +20,18 @@ namespace System.Data.SqlClient
 			connection = cnc;
 		}
 
-		[DllImport("pq")]
-                public static extern IntPtr PQexec(IntPtr pgconn, String sql);
-		public static extern int PQresultStatus(IntPtr pgres);
-		public static extern void PQclear(IntPtr pgres);
-
 		public void Commit () {
 			IntPtr pgres;
 
-			pgres = PQexec (pgconn, "COMMIT");
+			pgres = PostgresLibrary.PQexec (pgconn, "COMMIT");
 			/* FIXME: check result and emit exceptions on errors? */
 			PQclear (pgres);
 		}
 
-		[DllImport("pq")]
-                public static extern IntPtr PQexec(IntPtr pgconn, String sql);
-		public static extern int PQresultStatus(IntPtr pgres);
-		public static extern void PQclear(IntPtr pgres);
-
 		void Rollback() {
 			IntPtr pgres;
 
-			pgres = PQexec (pgconn, "ROLLBACK");
+			pgres = PostgresLibrary.PQexec (pgconn, "ROLLBACK");
 			/* FIXME: check result and emit exceptions on errors? */
 			PQclear (pgres);
 		}
