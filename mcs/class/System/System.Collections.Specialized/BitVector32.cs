@@ -4,6 +4,7 @@
 // Author:
 //   Miguel de Icaza (miguel@ximian.com)
 //   Lawrence Pit (loz@cable.a2000.nl)
+//   Andrew Birkett (adb@tardis.ed.ac.uk)
 //
 // (C) Ximian, Inc.  http://www.ximian.com
 //
@@ -128,25 +129,15 @@ namespace System.Collections.Specialized {
 			if (maxValue < 1)
 				throw new ArgumentException ("maxValue");
 			
-			int newmask = (int) maxValue;
-			int mask = 0x8000;
-			while ((newmask & mask) == 0)
-				mask >>= 1;
-			while (mask > 0) {
-				newmask |= mask;
-				mask >>= 1;
+			int bit = HighestSetBit(maxValue) + 1;
+			int mask = (1 << bit) - 1;
+			int offset = previous.Offset + NumberOfSetBits (previous.Mask);
+
+			if (offset + NumberOfSetBits (mask) > 32) {
+				throw new ArgumentException ("Sections cannot exceed 32 bits in total");
 			}
 
-			short count = 0;
-			int prev = previous.Mask;
-			mask = 0x8000;
-			while (mask > 0) {
-				if ((prev & mask) != 0)
-					count++;
-				mask >>= 1;
-			}
-
-			return new Section ((short) newmask, (short) (previous.Offset + count));
+			return new Section ((short) mask, (short) offset);
 		}
 		
 		public override bool Equals (object o)
@@ -179,5 +170,30 @@ namespace System.Collections.Specialized {
 			b.Append ('}');
 			return b.ToString ();
 		}
+
+		// Private utilities
+		private static int NumberOfSetBits (int i) 
+		{
+			int count = 0;
+			for (int bit = 0; bit < 32; bit++) {
+				int mask = 1 << bit;
+				if ((i & mask) != 0) 
+					count++;
+			}
+			return count;
+		}
+
+		private static int HighestSetBit (int i) 
+		{
+			for (int bit = 31; bit >= 0; bit--) {
+				int mask = 1 << bit;
+				if ((mask & i) != 0) {
+					return bit;
+				}
+			}
+
+			return -1;
+		}
+
 	}
 }
