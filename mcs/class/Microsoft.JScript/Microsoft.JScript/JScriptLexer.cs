@@ -1,4 +1,4 @@
-// $ANTLR 2.7.3rc2: "jscript-lexer-parser.g" -> "JScriptLexer.cs"$
+// $ANTLR 2.7.3rc3-20040317: "jscript-lexer-parser.g" -> "JScriptLexer.cs"$
 
 namespace Microsoft.JScript
 {
@@ -149,29 +149,29 @@ namespace Microsoft.JScript
 			literals.Add("case", 19);
 			literals.Add("this", 76);
 			literals.Add("for", 26);
-			literals.Add("catch", 14);
+			literals.Add("false", 79);
 			literals.Add("true", 78);
-			literals.Add("default", 18);
 			literals.Add("try", 13);
+			literals.Add("finally", 15);
 			literals.Add("void", 39);
-			literals.Add("break", 22);
-			literals.Add("while", 25);
+			literals.Add("typeof", 40);
+			literals.Add("instanceof", 55);
+			literals.Add("throw", 16);
 			literals.Add("continue", 23);
 			literals.Add("do", 24);
 			literals.Add("in", 28);
 			literals.Add("null", 77);
 			literals.Add("function", 4);
-			literals.Add("throw", 16);
-			literals.Add("instanceof", 55);
-			literals.Add("typeof", 40);
+			literals.Add("while", 25);
+			literals.Add("break", 22);
 			literals.Add("new", 32);
 			literals.Add("return", 21);
 			literals.Add("delete", 38);
 			literals.Add("if", 29);
-			literals.Add("finally", 15);
-			literals.Add("false", 79);
+			literals.Add("default", 18);
 			literals.Add("else", 30);
 			literals.Add("var", 27);
+			literals.Add("catch", 14);
 			literals.Add("with", 20);
 		}
 		

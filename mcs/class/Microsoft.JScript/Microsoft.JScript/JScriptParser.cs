@@ -2512,11 +2512,12 @@ _loop86_breakloop:			;
 		case LOGICAL_NOT:
 		{
 			op=unary_op();
-			u_expr=unary_expr(parent);
+			u_expr=unary_expr(null);
 			if (0==inputState.guessing)
 			{
 				
-						  unary_exprn = new Unary (parent, u_expr, op); 
+						  unary_exprn = new Unary (parent, u_expr, op);
+						  u_expr.parent = unary_exprn; 
 					
 			}
 			break;
