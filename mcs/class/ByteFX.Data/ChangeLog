@@ -1,3 +1,7 @@
+2003-10-06  Nick Drochak <ndrochak@gol.com>
+
+	* AssemblyInfo.cs: Fix the build by ignoring assembly signing for now.
+
 2003-03-15  Daniel Morgan <danmorg@sc.rr.com>
 
 	* mysqlclient/datareader.cs: in GetSchemaTable(),
