@@ -40,6 +40,13 @@ namespace MonoTests.System.Text.RegularExpressions
 			AssertEquals ("#04", length, splitResult.Length);
 			for (i = 0; i < length; i++)
 				AssertEquals ("#05 " + i, expected [i], splitResult [i]);
+				
+			splitResult = new Regex ("-").Split ("a-bcd-e-fg-");
+			expected = new string [] {"a", "bcd", "e", "fg", ""};
+			length = expected.Length;
+			AssertEquals ("#06", length, splitResult.Length);
+			for (i = 0; i < length; i++)
+				AssertEquals ("#07 " + i, expected [i], splitResult [i]);
 		}
 
 		[Test]
