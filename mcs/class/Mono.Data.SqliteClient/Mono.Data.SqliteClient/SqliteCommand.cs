@@ -247,9 +247,7 @@ namespace Mono.Data.SqliteClient
 			if (err != SqliteError.OK) {
 				if (errMsg != IntPtr.Zero) {
 					msg = Marshal.PtrToStringAnsi (errMsg);
-					if (parent_conn.Version == 3)
-						Sqlite.sqlite3Free (errMsg);
-					else
+					if (parent_conn.Version != 3)
 						Sqlite.sqliteFree (errMsg);
 				}
 				throw new ApplicationException ("Sqlite error " + msg);

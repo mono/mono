@@ -1,3 +1,9 @@
+2004-11-17  Geoff Norton  <gnorton@customerdna.com>
+
+	* Mono.Data.SqliteClient/Sqlite.cs:
+	  Mono.Data.SqliteClient/SqliteCommand.cs:
+  	  Remove sqlite3Free as this doesn't exist and isn't used by sqlite3.
+
 2004-11-14  Geoff Norton  <gnorton@customerdna.com>
 
 	* Mono.Data.SqliteClient/SqliteConnection.cs:  Default to v2 not v3 if version
