@@ -372,15 +372,16 @@ namespace System.Windows.Forms {
 		}
 
 		private bool CanScrollRight {
-			get { return slider_pos != 0; }
-		}
-
-		private bool CanScrollLeft {
-			get {
+                        get {
 				if (TabPages [TabCount - 1].TabBounds.Right > ClientRectangle.Right - 40)
 					return true;
 				return false;
 			}
+			
+		}
+
+		private bool CanScrollLeft {
+			get { return slider_pos > 0; }
 		}
 
 		private void MouseDownHandler (object sender, MouseEventArgs e)
@@ -391,7 +392,8 @@ namespace System.Windows.Forms {
 				if (right.Contains (e.X, e.Y)) {
 					right_slider_state = ButtonState.Pushed;
 					if (CanScrollRight) {
-						slider_pos++;
+                                                Console.WriteLine ("right slider pos:  " + slider_pos);
+						slider_pos--;
 						SizeTabs ();
 					}
 					Refresh ();
@@ -399,7 +401,8 @@ namespace System.Windows.Forms {
 				} else if (left.Contains (e.X, e.Y)) {
 					left_slider_state = ButtonState.Pushed;
 					if (CanScrollLeft) {
-						slider_pos--;
+                                                Console.WriteLine ("left slider pos:  " + slider_pos);
+						slider_pos++;
 						SizeTabs ();
 					}
 					Refresh ();
@@ -661,7 +664,7 @@ namespace System.Windows.Forms {
 				if (width < MinimumTabWidth)
 					width = MinimumTabWidth;
 				if (page.Row != prev_row)
-					xpos = 4 + (slider_pos * size);
+                                        xpos = 4 + size;
 
 				page.TabBounds = new Rectangle (xpos,
 						ypos + (row_count - page.Row) * (item_size.Height + spacing.Height),
