@@ -1,5 +1,16 @@
 2003-01-27  Zoltan Varga  <vargaz@freemail.hu>
 
+	* class.c (mono_class_setup_vtable): pass the override info as an
+	argument.
+
+	* class.c (mono_class_setup_vtable): set the slot of overriding methods
+	correctly.
+	
+	* reflection.c (ensure_runtime_vtable); add support for method 
+	overrides.
+	
+2003-01-27  Zoltan Varga  <vargaz@freemail.hu>
+
 	* reflection.c (resolution_scope_from_image): Hack to work to work with
 	dynamic assemblies.
 
