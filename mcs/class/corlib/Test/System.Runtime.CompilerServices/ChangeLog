@@ -1,0 +1,6 @@
+2002-09-21  Zoltan Varga  <vargaz@freemail.hu>
+
+	* AllTests.cs: new file
+
+	* RuntimeHelpersTest.cs: new file
+
