@@ -1,3 +1,7 @@
+2001-12-18  Gaurav Vaish <gvaish@iitk.ac.in>
+
+        * HttpRuntime.cs       : Initial implementation
+
 2001-08-29  Bob Smith  <bob@thestuff.net>
 
         * HttpWorkerRequest.cs: Partial Implementation.
