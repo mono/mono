@@ -838,8 +838,8 @@ public void Certificate13 ()
 	byte[] hash = { 0x0E,0x29,0xCD,0xDC,0xA5,0xE7,0x32,0xA2,0x0D,0xCE,0xD8,0x7B,0x3D,0x00,0x24,0x46,0x85,0x3E,0xBB,0xD1 };
 	AssertEquals ("GetCertHash", hash, x509.GetCertHash ());
 	Assertion.AssertEquals ("GetCertHashString", "0E29CDDCA5E732A20DCED87B3D002446853EBBD1", x509.GetCertHashString ());
-	Assertion.AssertEquals ("GetEffectiveDateString", DateTime.Parse ("04/19/2001 06:57:20").ToUniversalTime (), DateTime.Parse (x509.GetEffectiveDateString ()));
-	Assertion.AssertEquals ("GetExpirationDateString", DateTime.Parse ("04/19/2011 06:57:20").ToUniversalTime (), DateTime.Parse (x509.GetExpirationDateString ()));
+	Assertion.AssertEquals ("GetEffectiveDateString", DateTime.Parse ("04/19/2001 06:57:20"), DateTime.Parse (x509.GetEffectiveDateString ()));
+	Assertion.AssertEquals ("GetExpirationDateString", DateTime.Parse ("04/19/2011 06:57:20"), DateTime.Parse (x509.GetExpirationDateString ()));
 	Assertion.AssertEquals ("GetFormat", "X509", x509.GetFormat ());
 	Assertion.AssertEquals ("GetHashCode", 237620700, x509.GetHashCode ());
 	Assertion.AssertEquals ("GetIssuerName", "C=US, O=Test Certificates, CN=DSA CA", x509.GetIssuerName ());
