@@ -101,6 +101,7 @@ System.Xml/XmlException.cs
 System.Xml/XmlFactory.cs
 System.Xml/XmlImplementation.cs
 System.Xml/XmlConvert.cs
+System.Xml/XmlConvertDateTimeOption.cs
 System.Xml/XmlLinkedNode.cs
 System.Xml/XmlNameTable.cs
 System.Xml/XmlNamedNodeMap.cs

@@ -1,5 +1,9 @@
 2004-07-09  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* System.Xml.dll.sources: Added XmlConvertDateTimeOption.cs.
+
+2004-07-09  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* System.Xml.dll.sources: removed XmlItemView.cs and
 	  XmlItemViewCollection.cs (only in 1.2).
 
