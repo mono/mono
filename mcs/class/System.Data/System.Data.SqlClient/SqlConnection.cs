@@ -518,6 +518,7 @@ namespace System.Data.SqlClient {
                                 case "POOLING" :
                                         pooling = !(value.ToUpper ().Equals ("FALSE") || value.ToUpper ().Equals ("NO"));
                                         break;
+				case "UID" :
                                 case "USER ID" :
                                         parms.User = value;
                                         break;
