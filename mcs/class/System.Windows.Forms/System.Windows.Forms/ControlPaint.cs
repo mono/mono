@@ -5,8 +5,13 @@
 //   stubbed out by Jaak Simm (jaaksimm@firm.ee)
 //   Dennis Hayes (dennish@Raytek.com)
 //	 Alexandre Pigolkine (pigolkine@gmx.de)
+//  
+// rewritten for System.Drawing
+//   by Peter Dennis Bartok (pbartok@novell.com)
+//
 //
 // (C) Ximian, Inc 2002/3
+// (C) Novell, Inc 2003
 //
 
 
@@ -28,6 +33,7 @@ namespace System.Windows.Forms {
 		static Color	colorShadow;
 		static Color	colorDarkShadow;
 		static Color	colorSurface;
+		static Color	colorText;
 		static Pen		penHighlight;
 		static Pen		penLight;
 		static Pen		penShadow;
@@ -38,7 +44,8 @@ namespace System.Windows.Forms {
 			colorLight=Win32ToColor(Win32.GetSysColor(GetSysColorIndex.COLOR_3DLIGHT));
 			colorShadow=Win32ToColor(Win32.GetSysColor(GetSysColorIndex.COLOR_3DSHADOW));
 			colorDarkShadow=Win32ToColor(Win32.GetSysColor(GetSysColorIndex.COLOR_3DDKSHADOW));
-			colorSurface=Win32ToColor(Win32.GetSysColor(GetSysColorIndex.COLOR_3DFACE));
+			colorSurface=Win32ToColor(Win32.GetSysColor(GetSysColorIndex.COLOR_BTNFACE));
+			colorText=Win32ToColor(Win32.GetSysColor(GetSysColorIndex.COLOR_BTNTEXT));
 
 			penHighlight=new Pen(colorHighlight);
 			penLight=new Pen(colorLight);
@@ -55,10 +62,9 @@ namespace System.Windows.Forms {
 		}
 
 		#region Properties
-		[MonoTODO]
 		public static Color ContrastControlDark {
 
-			get { throw new NotImplementedException (); }
+			get { return(colorShadow); }
 		}
 		#endregion
 		
@@ -215,37 +221,6 @@ namespace System.Windows.Forms {
 			DrawBorderInternal(graphics, bounds.Left, bounds.Top, bounds.Right-1, bounds.Top, topWidth, topColor, topStyle, Border3DSide.Top);
 			DrawBorderInternal(graphics, bounds.Right-1, bounds.Top, bounds.Right-1, bounds.Bottom-1, rightWidth, rightColor, rightStyle, Border3DSide.Right);
 			DrawBorderInternal(graphics, bounds.Left, bounds.Bottom-1, bounds.Right-1, bounds.Bottom-1, bottomWidth, bottomColor, bottomStyle, Border3DSide.Bottom);
-#if false
-			IntPtr hdc = graphics.GetHdc();
-
-			RECT rc = new RECT();
-
-			// Top side
-			Win32.SetBkColor(hdc, (uint)Win32.RGB(topColor));
-			rc.left = bounds.Left;
-			rc.top = bounds.Top;
-			rc.right = bounds.Right - rightWidth;
-			rc.bottom = bounds.Top + topWidth;
-			Win32.ExtTextOut(hdc, 0, 0, ExtTextOutFlags.ETO_OPAQUE, ref rc, 0, 0, IntPtr.Zero);
-			// Left side
-			Win32.SetBkColor(hdc, (uint)Win32.RGB(leftColor));
-			rc.right = bounds.Left + leftWidth;
-			rc.bottom = bounds.Bottom - bottomWidth;
-			Win32.ExtTextOut(hdc, 0, 0, ExtTextOutFlags.ETO_OPAQUE, ref rc, 0, 0, IntPtr.Zero);
-			// Right side
-			Win32.SetBkColor(hdc, (uint)Win32.RGB(rightColor));
-			rc.left = bounds.Right - rightWidth;
-			rc.right = bounds.Right;
-			Win32.ExtTextOut(hdc, 0, 0, ExtTextOutFlags.ETO_OPAQUE, ref rc, 0, 0, IntPtr.Zero);
-			// Bottom side
-			Win32.SetBkColor(hdc, (uint)Win32.RGB(bottomColor));
-			rc.left = bounds.Left;
-			rc.top = bounds.Bottom - bottomWidth;
-			rc.bottom = bounds.Bottom;
-			Win32.ExtTextOut(hdc, 0, 0, ExtTextOutFlags.ETO_OPAQUE, ref rc, 0, 0, IntPtr.Zero);
-
-			graphics.ReleaseHdc(hdc);
-#endif
 		}
 
 		private static void DrawBorderInternal(Graphics graphics, int startX, int startY, int endX, int endY, 
@@ -477,13 +452,13 @@ namespace System.Windows.Forms {
 			penBottomRightInner=penShadow;
 
 			if ((style & Border3DStyle.RaisedOuter)!=0) {
-				penTopLeft=penLight;
+				penTopLeft=penHighlight;
 				penBottomRight=penDarkShadow;
 				if ((style & (Border3DStyle.RaisedInner | Border3DStyle.SunkenInner))!=0) {
 					doInner=true;
 				}
 			} else if ((style & Border3DStyle.SunkenOuter)!=0) {
-				penTopLeft=penShadow;
+				penTopLeft=penDarkShadow;
 				penBottomRight=penHighlight;
 				if ((style & (Border3DStyle.RaisedInner | Border3DStyle.SunkenInner))!=0) {
 					doInner=true;
@@ -492,26 +467,26 @@ namespace System.Windows.Forms {
 
 			if ((style & Border3DStyle.RaisedInner)!=0) {
 				if (doInner) {
-					penTopLeftInner=penHighlight;
+					penTopLeftInner=penLight;
 					penBottomRightInner=penShadow;
 				} else {
 					penTopLeft=penHighlight;
-					penBottomRight=penShadow;
+					penBottomRight=penDarkShadow;
 				}
 			} else if ((style & Border3DStyle.SunkenInner)!=0) {
 				if (doInner) {
-					penTopLeftInner=penDarkShadow;
+					penTopLeftInner=penShadow;
 					penBottomRightInner=penLight;
 				} else {
 					penTopLeft=penDarkShadow;
-					penBottomRight=penLight;
+					penBottomRight=penHighlight;
 				}
 			}
 
 			if ((sides & Border3DSide.Middle)!=0) {
-				SolidBrush	sb = new SolidBrush(colorSurface);
-				graphics.FillRectangle(sb, rect);
-				sb.Dispose();
+//				SolidBrush	sb = new SolidBrush(colorSurface);
+				graphics.FillRectangle(SystemBrushes.Control, rect);
+//				sb.Dispose();
 			}
 
 			if ((sides & Border3DSide.Left)!=0) {
@@ -564,59 +539,251 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		[MonoTODO]
-		public static void DrawButton( Graphics graphics, Rectangle rectangle, ButtonState state) {
-			DrawFrameControl( graphics, rectangle, (uint)DrawFrameControlTypes.DFC_BUTTON,
-				(uint)state | (uint)DrawFrameControlStates.DFCS_BUTTONPUSH);
-		}
-
-		[MonoTODO]
 		public static void DrawButton( Graphics graphics, int x, int y, int width, int height, ButtonState state) {
-			DrawButton( graphics, new Rectangle(x, y, width, height), state);
+			DrawButton(graphics, new Rectangle(x, y, width, height), state);
 		}
 
-		[MonoTODO]
-		public static void DrawCaptionButton(
-			Graphics graphics,
-			int x,
-			int y,
-			int width,
-			int height,
-			CaptionButton button,
-			ButtonState state) {
-			//FIXME:
+		public static void DrawButton( Graphics graphics, Rectangle rectangle, ButtonState state) {
+			DrawFrameControlStates	dfcs=DrawFrameControlStates.DFCS_BUTTONPUSH;
+
+			if ((state & ButtonState.Pushed)!=0) {
+				dfcs |= DrawFrameControlStates.DFCS_PUSHED;
+			}
+
+			if ((state & ButtonState.Checked)!=0) {
+				dfcs |= DrawFrameControlStates.DFCS_CHECKED;
+			}
+
+			if ((state & ButtonState.Flat)!=0) {
+				dfcs |= DrawFrameControlStates.DFCS_FLAT;
+			}
+
+			if ((state & ButtonState.Inactive)!=0) {
+				dfcs |= DrawFrameControlStates.DFCS_INACTIVE;
+			}
+			DrawFrameControl(graphics, rectangle, DrawFrameControlTypes.DFC_BUTTON, dfcs);
 		}
 
-		public static void DrawCheckBox( Graphics graphics, Rectangle rectangle, ButtonState state) {
-			DrawFrameControl (graphics, rectangle, (uint)DrawFrameControlTypes.DFC_BUTTON, (uint)state | (uint)DrawFrameControlStates.DFCS_BUTTONCHECK);
+		/* 
+			This function literally draws the various caption elements. 
+			This way we can scale them nicely, no matter what size, and they
+			still look like MS's scaled caption buttons. (as opposed to scaling a bitmap)
+		*/
+
+		private static void DrawCaptionHelper(Graphics graphics, Color color, Pen pen, int lineWidth, int shift, Rectangle captionRect, CaptionButton button) {
+			switch(button) {
+				case CaptionButton.Close: {
+					pen.StartCap=LineCap.Triangle;
+					pen.EndCap=LineCap.Triangle;
+					if (lineWidth<2) {
+						graphics.DrawLine(pen, captionRect.Left+2*lineWidth+1+shift, captionRect.Top+2*lineWidth+shift, captionRect.Right-2*lineWidth+1+shift, captionRect.Bottom-2*lineWidth+shift);
+						graphics.DrawLine(pen, captionRect.Right-2*lineWidth+1+shift, captionRect.Top+2*lineWidth+shift, captionRect.Left+2*lineWidth+1+shift, captionRect.Bottom-2*lineWidth+shift);
+					}
+
+					graphics.DrawLine(pen, captionRect.Left+2*lineWidth+shift, captionRect.Top+2*lineWidth+shift, captionRect.Right-2*lineWidth+shift, captionRect.Bottom-2*lineWidth+shift);
+					graphics.DrawLine(pen, captionRect.Right-2*lineWidth+shift, captionRect.Top+2*lineWidth+shift, captionRect.Left+2*lineWidth+shift, captionRect.Bottom-2*lineWidth+shift);
+					return;
+				}
+
+				case CaptionButton.Help: {
+					StringFormat	sf = new StringFormat();
+					SolidBrush		sb = new SolidBrush(color);
+					Font				font = new Font("Microsoft Sans Serif", captionRect.Height, FontStyle.Bold, GraphicsUnit.Pixel);
+
+					sf.Alignment=StringAlignment.Center;
+					sf.LineAlignment=StringAlignment.Center;
+					
+
+					graphics.DrawString("?", font, sb, captionRect.X+captionRect.Width/2+shift, captionRect.Y+captionRect.Height/2+shift+lineWidth/2, sf);
+
+					sf.Dispose();
+					sb.Dispose();
+					font.Dispose();
+
+					return;
+				}
+
+				case CaptionButton.Maximize: {
+					/* Top 'caption bar' line */
+					for (int i=0; i<Math.Max(2, lineWidth); i++) {
+						graphics.DrawLine(pen, captionRect.Left+lineWidth+shift, captionRect.Top+2*lineWidth+shift+i, captionRect.Right-lineWidth-lineWidth/2+shift, captionRect.Top+2*lineWidth+shift+i);
+					}
+
+					/* Left side line */
+					for (int i=0; i<Math.Max(1, lineWidth/2); i++) {
+						graphics.DrawLine(pen, captionRect.Left+lineWidth+shift+i, captionRect.Top+2*lineWidth+shift, captionRect.Left+lineWidth+shift+i, captionRect.Bottom-lineWidth+shift);
+					}
+
+					/* Right side line */
+					for (int i=0; i<Math.Max(1, lineWidth/2); i++) {
+						graphics.DrawLine(pen, captionRect.Right-lineWidth-lineWidth/2+shift+i, captionRect.Top+2*lineWidth+shift, captionRect.Right-lineWidth-lineWidth/2+shift+i, captionRect.Bottom-lineWidth+shift);
+					}
+
+					/* Bottom line */
+					for (int i=0; i<Math.Max(1, lineWidth/2); i++) {
+						graphics.DrawLine(pen, captionRect.Left+lineWidth+shift, captionRect.Bottom-lineWidth+shift-i, captionRect.Right-lineWidth-lineWidth/2+shift, captionRect.Bottom-lineWidth+shift-i);
+					}
+					return;
+				}
+
+				case CaptionButton.Minimize: {
+					/* Bottom line */
+					for (int i=0; i<Math.Max(2, lineWidth); i++) {
+						graphics.DrawLine(pen, captionRect.Left+lineWidth+shift, captionRect.Bottom-lineWidth+shift-i, captionRect.Right-3*lineWidth+shift, captionRect.Bottom-lineWidth+shift-i);
+					}
+					return;
+				}
+
+				case CaptionButton.Restore: {
+					/** First 'window' **/
+					/* Top 'caption bar' line */
+					for (int i=0; i<Math.Max(2, lineWidth); i++) {
+						graphics.DrawLine(pen, captionRect.Left+3*lineWidth+shift, captionRect.Top+2*lineWidth+shift-i, captionRect.Right-lineWidth-lineWidth/2+shift, captionRect.Top+2*lineWidth+shift-i);
+					}
+
+					/* Left side line */
+					for (int i=0; i<Math.Max(1, lineWidth/2); i++) {
+						graphics.DrawLine(pen, captionRect.Left+3*lineWidth+shift+i, captionRect.Top+2*lineWidth+shift, captionRect.Left+3*lineWidth+shift+i, captionRect.Top+4*lineWidth+shift);
+					}
+
+					/* Right side line */
+					for (int i=0; i<Math.Max(1, lineWidth/2); i++) {
+						graphics.DrawLine(pen, captionRect.Right-lineWidth-lineWidth/2+shift-i, captionRect.Top+2*lineWidth+shift, captionRect.Right-lineWidth-lineWidth/2+shift-i, captionRect.Top+5*lineWidth-lineWidth/2+shift);
+					}
+
+					/* Bottom line */
+					for (int i=0; i<Math.Max(1, lineWidth/2); i++) {
+						graphics.DrawLine(pen, captionRect.Right-3*lineWidth-lineWidth/2+shift, captionRect.Top+5*lineWidth-lineWidth/2+shift+1+i, captionRect.Right-lineWidth-lineWidth/2+shift, captionRect.Top+5*lineWidth-lineWidth/2+shift+1+i);
+					}
+
+					/** Second 'window' **/
+					/* Top 'caption bar' line */
+					for (int i=0; i<Math.Max(2, lineWidth); i++) {
+						graphics.DrawLine(pen, captionRect.Left+lineWidth+shift, captionRect.Top+4*lineWidth+shift+1-i, captionRect.Right-3*lineWidth-lineWidth/2+shift, captionRect.Top+4*lineWidth+shift+1-i);
+					}
+
+					/* Left side line */
+					for (int i=0; i<Math.Max(1, lineWidth/2); i++) {
+						graphics.DrawLine(pen, captionRect.Left+lineWidth+shift+i, captionRect.Top+4*lineWidth+shift+1, captionRect.Left+lineWidth+shift+i, captionRect.Bottom-lineWidth+shift);
+					}
+
+					/* Right side line */
+					for (int i=0; i<Math.Max(1, lineWidth/2); i++) {
+						graphics.DrawLine(pen, captionRect.Right-3*lineWidth-lineWidth/2+shift-i, captionRect.Top+4*lineWidth+shift+1, captionRect.Right-3*lineWidth-lineWidth/2+shift-i, captionRect.Bottom-lineWidth+shift);
+					}
+
+					/* Bottom line */
+					for (int i=0; i<Math.Max(1, lineWidth/2); i++) {
+						graphics.DrawLine(pen, captionRect.Left+lineWidth+shift, captionRect.Bottom-lineWidth+shift-i, captionRect.Right-3*lineWidth-lineWidth/2+shift, captionRect.Bottom-lineWidth+shift-i);
+					}
+
+					return;
+				}
+
+			}
 		}
-		
-		[MonoTODO]
-		public static void DrawCaptionButton( Graphics graphics, Rectangle rectangle,CaptionButton button, ButtonState state) {
-			//FIXME:
+
+		public static void DrawCaptionButton(Graphics graphics, int x, int y, int width, int height, CaptionButton button, ButtonState state) {
+			DrawCaptionButton(graphics, new Rectangle(x, y, width, height), button, state);
 		}
-		
-		[MonoTODO]
+
+		public static void DrawCaptionButton(Graphics graphics, Rectangle rectangle, CaptionButton button, ButtonState state) {
+			Rectangle	captionRect;
+			int			lineWidth;
+
+			DrawButton(graphics, rectangle, state);
+
+			if (rectangle.Width<rectangle.Height) {
+				captionRect=new Rectangle(rectangle.X+1, rectangle.Y+rectangle.Height/2-rectangle.Width/2+1, rectangle.Width-4, rectangle.Width-4);
+			} else {
+				captionRect=new Rectangle(rectangle.X+rectangle.Width/2-rectangle.Height/2+1, rectangle.Y+1, rectangle.Height-4, rectangle.Height-4);
+			}
+
+			if ((state & ButtonState.Pushed)!=0) {
+				captionRect=new Rectangle(rectangle.X+2, rectangle.Y+2, rectangle.Width-3, rectangle.Height-3);
+			}
+
+			/* Make sure we've got at least a line width of 1 */
+			lineWidth=Math.Max(1, captionRect.Width/7);
+
+			switch(button) {
+				case CaptionButton.Close: {
+					Pen	pen;
+
+					if ((state & ButtonState.Inactive)!=0) {
+						pen=new Pen(colorHighlight, lineWidth);
+						DrawCaptionHelper(graphics, colorHighlight, pen, lineWidth, 1, captionRect, button);
+						pen.Dispose();
+
+						pen=new Pen(colorShadow, lineWidth);
+						DrawCaptionHelper(graphics, colorShadow, pen, lineWidth, 0, captionRect, button);
+						pen.Dispose();
+						return;
+					} else {
+						pen=new Pen(colorText, lineWidth);
+						DrawCaptionHelper(graphics, colorText, pen, lineWidth, 0, captionRect, button);
+						pen.Dispose();
+						return;
+					}
+				}
+
+				case CaptionButton.Help:
+				case CaptionButton.Maximize:
+				case CaptionButton.Minimize:
+				case CaptionButton.Restore: {
+					Pen	pen;
+
+					if ((state & ButtonState.Inactive)!=0) {
+						pen=new Pen(colorHighlight, 1);
+						DrawCaptionHelper(graphics, colorHighlight, pen, lineWidth, 1, captionRect, button);
+						pen.Dispose();
+
+						pen=new Pen(colorShadow, 1);
+						DrawCaptionHelper(graphics, colorShadow, pen, lineWidth, 0, captionRect, button);
+						pen.Dispose();
+						return;
+					} else {
+						pen=new Pen(colorText, 1);
+						DrawCaptionHelper(graphics, colorText, pen, lineWidth, 0, captionRect, button);
+						pen.Dispose();
+						return;
+					}
+				}
+			}
+		}
+
 		public static void DrawCheckBox(Graphics graphics, int x, int y, int width, int height, ButtonState state) {
 			DrawCheckBox(graphics, new Rectangle(x, y, width, height), state);
 		}
 		
+		public static void DrawCheckBox(Graphics graphics, Rectangle rectangle, ButtonState state) {
+			DrawFrameControlStates	dfcs=DrawFrameControlStates.DFCS_BUTTONCHECK;
+
+			if ((state & ButtonState.Pushed)!=0) {
+				dfcs |= DrawFrameControlStates.DFCS_PUSHED;
+			}
+
+			if ((state & ButtonState.Checked)!=0) {
+				dfcs |= DrawFrameControlStates.DFCS_CHECKED;
+			}
+
+			if ((state & ButtonState.Flat)!=0) {
+				dfcs |= DrawFrameControlStates.DFCS_FLAT;
+			}
+
+			if ((state & ButtonState.Inactive)!=0) {
+				dfcs |= DrawFrameControlStates.DFCS_INACTIVE;
+			}
+			DrawFrameControl(graphics, rectangle, DrawFrameControlTypes.DFC_BUTTON, dfcs);
+		}
+		
 		[MonoTODO]
-		public static void DrawComboButton(
-			Graphics graphics,
-			Rectangle rectangle,
-			ButtonState state) {
+		public static void DrawComboButton(Graphics graphics, Rectangle rectangle, ButtonState state) {
 			//FIXME:
 		}
 		
 		[MonoTODO]
-		public static void DrawComboButton(
-			Graphics graphics,
-			int x,
-			int y,
-			int width,
-			int height,
-			ButtonState state) {
+		public static void DrawComboButton(Graphics graphics, int x, int y, int width, int height, ButtonState state) {
 			//FIXME:
 		}
 		
@@ -644,236 +811,314 @@ namespace System.Windows.Forms {
 		}
 		
 		[MonoTODO]
-		public static void DrawGrabHandle(
-			Graphics graphics,
-			Rectangle rectangle,
-			bool primary,
-			bool enabled) {
+		public static void DrawGrabHandle(Graphics graphics, Rectangle rectangle, bool primary, bool enabled) {
 			//FIXME:
 		}
 		
 		[MonoTODO]
-		public static void DrawGrid(
-			Graphics graphics,
-			Rectangle area,
-			Size pixelsBetweenDots,
-			Color backColor) {
+		public static void DrawGrid(Graphics graphics, Rectangle area, Size pixelsBetweenDots, Color backColor) {
 			//FIXME:
 		}
 		
 		[MonoTODO]
-		public static void DrawImageDisabled(
-			Graphics graphics,
-			Image image,
-			int x,
-			int y,
-			Color background) {
+		public static void DrawImageDisabled(Graphics graphics, Image image, int x, int y, Color background) {
 			//FIXME:
 		}
 		
 		[MonoTODO]
-		public static void DrawLockedFrame(
-			Graphics graphics,
-			Rectangle rectangle,
-			bool primary) {
+		public static void DrawLockedFrame(Graphics graphics, Rectangle rectangle, bool primary) {
 			//FIXME:
 		}
 		
 		[MonoTODO]
-		public static void DrawMenuGlyph(
-			Graphics graphics,
-			Rectangle rectangle,
-			MenuGlyph glyph) {
+		public static void DrawMenuGlyph(Graphics graphics, Rectangle rectangle, MenuGlyph glyph) {
 			//FIXME:
 		}
 		
 		[MonoTODO]
-		public static void DrawMenuGlyph(
-			Graphics graphics,
-			int x,
-			int y,
-			int width,
-			int height,
-			MenuGlyph glyph) {
+		public static void DrawMenuGlyph(Graphics graphics, int x, int y, int width, int height, MenuGlyph glyph) {
 			//FIXME:
 		}
 		
 		[MonoTODO]
-		public static void DrawMixedCheckBox(
-			Graphics graphics,
-			Rectangle rectangle,
-			ButtonState state) {
+		public static void DrawMixedCheckBox(Graphics graphics, Rectangle rectangle, ButtonState state) {
 			//FIXME:
 		}
 		
 		[MonoTODO]
-		public static void DrawMixedCheckBox(
-			Graphics graphics,
-			int x,
-			int y,
-			int width,
-			int height,
-			ButtonState state) {
+		public static void DrawMixedCheckBox(Graphics graphics, int x, int y, int width, int height, ButtonState state) {
 			//FIXME:
 		}
 
-		internal static void CopyImageTransparent (IntPtr targetDC, IntPtr sourceDC, Rectangle rectangle, Color transparentColor) {
-			// Monochrome mask
-			IntPtr maskDC = Win32.CreateCompatibleDC (sourceDC);
-			IntPtr maskBmp = Win32.CreateBitmap (rectangle.Width, rectangle.Height, 1, 1, IntPtr.Zero);
-			IntPtr oldMaskBmp = Win32.SelectObject (maskDC, maskBmp);
-
-			uint oldColor = Win32.SetBkColor (sourceDC, (uint)Win32.RGB (transparentColor));
-			Win32.StretchBlt (maskDC, 0, 0, rectangle.Width, rectangle.Height, sourceDC, 
-				0, 0, rectangle.Width, rectangle.Height, PatBltTypes.SRCCOPY);
-			Win32.SetBkColor (sourceDC, oldColor);
-
-			Win32.StretchBlt (targetDC, rectangle.X, rectangle.Y, rectangle.Width, rectangle.Height,
-				sourceDC, 0, 0, rectangle.Width, rectangle.Height, PatBltTypes.SRCINVERT);
-
-			uint oldBkClr = Win32.SetBkColor (targetDC, 0xFFFFFF);
-			int oldTextClr = Win32.SetTextColor (targetDC, 0);
-			Win32.StretchBlt (targetDC, rectangle.X, rectangle.Y, rectangle.Width, rectangle.Height,
-				maskDC, 0, 0, rectangle.Width, rectangle.Height, PatBltTypes.SRCAND);
-			Win32.SetTextColor (targetDC, oldTextClr);
-			Win32.SetBkColor (targetDC, oldBkClr);
-
-			Win32.StretchBlt (targetDC, rectangle.X, rectangle.Y, rectangle.Width, rectangle.Height,
-				sourceDC, 0, 0, rectangle.Width, rectangle.Height, PatBltTypes.SRCINVERT);
-
-			Win32.SelectObject (maskDC, oldMaskBmp);
-			Win32.DeleteDC (maskDC);
-			Win32.DeleteObject (maskBmp);
-		}
-
-		internal static void DrawFrameControl(Graphics graphics, Rectangle rectangle, uint Type, uint State) {
+		internal static void DrawFrameControl(Graphics graphics, Rectangle rectangle, DrawFrameControlTypes Type, DrawFrameControlStates State) {
 			switch(Type) {
-				case (uint)DrawFrameControlTypes.DFC_BUTTON: {
-					graphics.DrawLine(penHighlight, rectangle.Left, rectangle.Y, rectangle.Right, rectangle.Y);
+				case DrawFrameControlTypes.DFC_BUTTON: {
+					if ((State & DrawFrameControlStates.DFCS_BUTTONPUSH)!=0) {
+						/* Goes first, affects the background */
+						if ((State & DrawFrameControlStates.DFCS_CHECKED)!=0) {
+							HatchBrush	hatchBrush=new HatchBrush(HatchStyle.Percent50, colorLight, colorHighlight);
+							graphics.FillRectangle(hatchBrush,rectangle);
+							hatchBrush.Dispose();
+						}
+
+						if ((State & DrawFrameControlStates.DFCS_PUSHED)!=0) {
+							DrawBorder3D(graphics, rectangle, Border3DStyle.Sunken, Border3DSide.Left | Border3DSide.Top | Border3DSide.Right | Border3DSide.Bottom);
+						} else if ((State & DrawFrameControlStates.DFCS_FLAT)!=0) {
+							DrawBorder(graphics, rectangle, colorShadow, ButtonBorderStyle.Solid);
+						} else if ((State & DrawFrameControlStates.DFCS_INACTIVE)!=0) {
+							/* Same as normal, it would seem */
+							DrawBorder3D(graphics, rectangle, Border3DStyle.Raised, Border3DSide.Left | Border3DSide.Top | Border3DSide.Right | Border3DSide.Bottom);
+						} else {
+							DrawBorder3D(graphics, rectangle, Border3DStyle.Raised, Border3DSide.Left | Border3DSide.Top | Border3DSide.Right | Border3DSide.Bottom);
+						}
+					} else if ((State & DrawFrameControlStates.DFCS_BUTTONRADIO)!=0) {
+						Pen			penFatDark	= new Pen(colorDarkShadow, 2);
+						Pen			penFatLight	= new Pen(colorLight, 2);
+						int			lineWidth;
+
+						graphics.DrawArc(penFatDark, rectangle.X+1, rectangle.Y+1, rectangle.Width-2, rectangle.Height-2, 135, 180);
+						graphics.DrawArc(penFatLight, rectangle.X+1, rectangle.Y+1, rectangle.Width-2, rectangle.Height-2, 315, 180);
+
+						graphics.DrawArc(penShadow, rectangle, 135, 180);
+						graphics.DrawArc(penHighlight, rectangle, 315, 180);
+
+						lineWidth=Math.Max(1, Math.Min(rectangle.Width, rectangle.Height)/3);
+
+						if ((State & DrawFrameControlStates.DFCS_CHECKED)!=0) {
+							SolidBrush	buttonBrush;
+
+							if ((State & DrawFrameControlStates.DFCS_INACTIVE)!=0) {
+								buttonBrush=new SolidBrush(colorShadow);
+							} else {
+								buttonBrush=new SolidBrush(colorText);
+							}
+							graphics.FillPie(buttonBrush, rectangle.X+lineWidth, rectangle.Y+lineWidth, rectangle.Width-lineWidth*2, rectangle.Height-lineWidth*2, 0, 359);
+
+							buttonBrush.Dispose();
+						}
+						penFatDark.Dispose();
+						penFatLight.Dispose();
+					} else if ((State & DrawFrameControlStates.DFCS_BUTTONRADIOIMAGE)!=0) {
+						throw new NotImplementedException () ;
+					} else if ((State & DrawFrameControlStates.DFCS_BUTTONRADIOMASK)!=0) {
+						throw new NotImplementedException ();
+					} else {	/* Must be Checkbox */
+						Pen			pen;
+						int			lineWidth;
+						Rectangle	rect;
+						int			Scale;
+
+						/* FIXME: I'm sure there's an easier way to calculate all this, but it should do for now */
+
+						/* Goes first, affects the background */
+						if ((State & DrawFrameControlStates.DFCS_PUSHED)!=0) {
+							HatchBrush	hatchBrush=new HatchBrush(HatchStyle.Percent50, colorLight, colorHighlight);
+							graphics.FillRectangle(hatchBrush,rectangle);
+							hatchBrush.Dispose();
+						}
+
+						/* Draw the sunken frame */
+						if ((State & DrawFrameControlStates.DFCS_FLAT)!=0) {
+							DrawBorder(graphics, rectangle, colorShadow, ButtonBorderStyle.Solid);
+						} else {
+							DrawBorder3D(graphics, rectangle, Border3DStyle.Sunken, Border3DSide.Left | Border3DSide.Top | Border3DSide.Right | Border3DSide.Bottom);
+						}
+
+						/* Make sure we've got at least a line width of 1 */
+						lineWidth=Math.Max(3, rectangle.Width/6);
+						Scale=Math.Max(1, rectangle.Width/12);
+
+						rect=new Rectangle(rectangle.X+lineWidth, rectangle.Y+lineWidth, rectangle.Width-lineWidth*2, rectangle.Height-lineWidth*2);
+						if ((State & DrawFrameControlStates.DFCS_INACTIVE)!=0) {
+							pen=new Pen(colorShadow, 1);
+						} else {
+							pen=new Pen(colorText, 1);
+						}
+
+						if ((State & DrawFrameControlStates.DFCS_CHECKED)!=0) {
+							/* Need to draw a check-mark */
+							for (int i=0; i<lineWidth; i++) {
+								graphics.DrawLine(pen, rect.Left+lineWidth/2, rect.Top+lineWidth+i, rect.Left+lineWidth/2+2*Scale, rect.Top+lineWidth+2*Scale+i);
+								graphics.DrawLine(pen, rect.Left+lineWidth/2+2*Scale, rect.Top+lineWidth+2*Scale+i, rect.Left+lineWidth/2+6*Scale, rect.Top+lineWidth-2*Scale+i);
+							}
+							
+						}
+
+						pen.Dispose();
+					}
+					return;
+				}
+
+				case DrawFrameControlTypes.DFC_CAPTION: {
 					break;
 				}
 
-				case (uint)DrawFrameControlTypes.DFC_CAPTION: {
+				case DrawFrameControlTypes.DFC_MENU: {
 					break;
 				}
 
-				case (uint)DrawFrameControlTypes.DFC_MENU: {
-					break;
-				}
-
-				case (uint)DrawFrameControlTypes.DFC_SCROLL: {
+				case DrawFrameControlTypes.DFC_SCROLL: {
 					break;
 				}
 			}
 		}
 	
-		internal static void DrawFrameControlHelper (Graphics graphics, Rectangle rectangle, uint type, uint state) {
-
-			IntPtr targetDC = graphics.GetHdc ();
-			Bitmap bmp = new Bitmap (rectangle.Width, rectangle.Height);
-			Graphics g = Graphics.FromImage (bmp);
-
-			IntPtr memDC = g.GetHdc ();
-
-			RECT rc = new RECT();
-			rc.left = 0;
-			rc.top = 0;
-			rc.right = rectangle.Width;
-			rc.bottom = rectangle.Height;
-
-			Color transparentColor = Color.FromArgb (0, 0, 1);
-			uint oldBk = Win32.SetBkColor (memDC, (uint)Win32.RGB(transparentColor));
-			Win32.ExtTextOut (memDC, 0, 0, ExtTextOutFlags.ETO_OPAQUE, ref rc, 0, 0, IntPtr.Zero);
-			Win32.SetBkColor (memDC, oldBk);
-
-			int res = Win32.DrawFrameControl( memDC, ref rc, type, state);
-
-			CopyImageTransparent (targetDC, memDC, rectangle, transparentColor);
-
-			g.ReleaseHdc(memDC);
-			g.Dispose();
-			bmp.Dispose();
-			graphics.ReleaseHdc (targetDC);
-		}
-
-		public static void DrawRadioButton (Graphics graphics, Rectangle rectangle, ButtonState state) {
-			DrawFrameControl (graphics,  rectangle, (uint)DrawFrameControlTypes.DFC_BUTTON, (uint)state | (uint)DrawFrameControlStates.DFCS_BUTTONRADIO);
-		}
-		
-		[MonoTODO]
-		public static void DrawRadioButton(
-			Graphics graphics,
-			int x,
-			int y,
-			int width,
-			int height,
-			ButtonState state) {
+		public static void DrawRadioButton(Graphics graphics, int x, int y, int width, int height, ButtonState state) {
 			DrawRadioButton(graphics, new Rectangle(x, y, width, height), state);
 		}
 		
+		public static void DrawRadioButton(Graphics graphics, Rectangle rectangle, ButtonState state) {
+			DrawFrameControlStates	dfcs=DrawFrameControlStates.DFCS_BUTTONRADIO;
+
+			if ((state & ButtonState.Pushed)!=0) {
+				dfcs |= DrawFrameControlStates.DFCS_PUSHED;
+			}
+
+			if ((state & ButtonState.Checked)!=0) {
+				dfcs |= DrawFrameControlStates.DFCS_CHECKED;
+			}
+
+			if ((state & ButtonState.Flat)!=0) {
+				dfcs |= DrawFrameControlStates.DFCS_FLAT;
+			}
+
+			if ((state & ButtonState.Inactive)!=0) {
+				dfcs |= DrawFrameControlStates.DFCS_INACTIVE;
+			}
+			DrawFrameControl(graphics, rectangle, DrawFrameControlTypes.DFC_BUTTON, dfcs);
+		}
+		
 		[MonoTODO]
-		public static void DrawReversibleFrame(
-			Rectangle rectangle,
-			Color backColor,
-			FrameStyle style) {
+		public static void DrawReversibleFrame(Rectangle rectangle, Color backColor, FrameStyle style) {
 			//FIXME:
 		}
 		
 		[MonoTODO]
-		public static void DrawReversibleLine(
-			Point start,
-			Point end,
-			Color backColor) {
+		public static void DrawReversibleLine(Point start, Point end, Color backColor) {
+			//FIXME:
+		}
+
+		
+		
+		public static void DrawScrollButton(Graphics graphics, Rectangle rectangle, ScrollButton button, ButtonState state) {
+			SolidBrush		sb;
+			Point[]			arrow = new Point[3];
+			Point				P1;
+			Point				P2;
+			Point				P3;
+			int				centerX;
+			int				centerY;
+			int				shiftX;
+			int				shiftY;
+			Rectangle		rect;
+
+			if ((state & ButtonState.Checked)!=0) {
+				HatchBrush	hatchBrush=new HatchBrush(HatchStyle.Percent50, colorLight, colorHighlight);
+				graphics.FillRectangle(hatchBrush,rectangle);
+				hatchBrush.Dispose();
+			}
+
+			if ((state & ButtonState.Flat)!=0) {
+				DrawBorder(graphics, rectangle, colorShadow, ButtonBorderStyle.Solid);
+			} else {
+				DrawBorder3D(graphics, rectangle, Border3DStyle.Raised, Border3DSide.Left | Border3DSide.Top | Border3DSide.Right | Border3DSide.Bottom);
+			}
+
+			rect=new Rectangle(rectangle.X+rectangle.Width/4, rectangle.Y+rectangle.Height/4, rectangle.Width/2, rectangle.Height/2);
+			centerX=rect.Left+rect.Width/2;
+			centerY=rect.Top+rect.Height/2;
+			shiftX=Math.Max(1, rect.Width/8);
+			shiftY=Math.Max(1, rect.Height/8);
+
+			if ((state & ButtonState.Pushed)!=0) {
+				shiftX++;
+				shiftY++;
+			}
+
+			switch(button) {
+				default:
+				case ScrollButton.Down: {
+					rect.Y-=shiftY;
+					centerY-=shiftY;
+					P1=new Point(rect.Left, centerY);
+					P2=new Point(rect.Right, centerY);
+					P3=new Point(centerX, rect.Bottom);
+					break;
+				}
+
+				case ScrollButton.Up: {
+					rect.Y+=shiftY;
+					centerY+=shiftY;
+					P1=new Point(rect.Left, centerY);
+					P2=new Point(rect.Right, centerY);
+					P3=new Point(centerX, rect.Top-1);
+					break;
+				}
+
+				case ScrollButton.Left: {
+					rect.X+=shiftX;
+					centerX+=shiftX;
+					P1=new Point(centerX, rect.Top-1);
+					P2=new Point(centerX, rect.Bottom);
+					P3=new Point(rect.Left, centerY);
+					break;
+				}
+
+				case ScrollButton.Right: {
+					rect.X-=shiftX;
+					centerX-=shiftX;
+					P1=new Point(centerX, rect.Top-1);
+					P2=new Point(centerX, rect.Bottom);
+					P3=new Point(rect.Right, centerY);
+					break;
+				}
+			}
+			arrow[0]=P1;
+			arrow[1]=P2;
+			arrow[2]=P3;
+
+			/* Draw the arrow */
+			if ((state & ButtonState.Inactive)!=0) {
+				sb=new SolidBrush(colorHighlight);
+				graphics.FillPolygon(sb, arrow, FillMode.Winding);
+				sb.Dispose();
+
+				/* Move away from the shadow */
+				P1.X-=1;		P1.Y-=1;
+				P2.X-=1;		P2.Y-=1;
+				P3.X-=1;		P3.Y-=1;
+
+				arrow[0]=P1;
+				arrow[1]=P2;
+				arrow[2]=P3;
+				
+
+				sb=new SolidBrush(colorShadow);
+				graphics.FillPolygon(sb, arrow, FillMode.Winding);
+			} else {
+				sb=new SolidBrush(colorText);
+				
+				graphics.FillPolygon(sb, arrow, FillMode.Winding);
+			}
+			sb.Dispose();
+		}
+		
+		public static void DrawScrollButton(Graphics graphics, int x, int y, int width, int height, ScrollButton button, ButtonState state) {
+			DrawScrollButton(graphics, new Rectangle(x, y, width, height), button, state);
+		}
+		
+		[MonoTODO]
+		public static void DrawSelectionFrame(Graphics graphics, bool active, Rectangle outsideRect, Rectangle insideRect, Color backColor) {
 			//FIXME:
 		}
 		
 		[MonoTODO]
-		public static void DrawScrollButton(
-			Graphics graphics,
-			Rectangle rectangle,
-			ScrollButton button,
-			ButtonState state) {
+		public static void DrawSizeGrip(Graphics graphics, Color backColor, Rectangle bounds) {
 			//FIXME:
 		}
 		
 		[MonoTODO]
-		public static void DrawScrollButton(
-			Graphics graphics,
-			int x,
-			int y,
-			int width,
-			int height,
-			ScrollButton button,
-			ButtonState state) {
-			//FIXME:
-		}
-		
-		[MonoTODO]
-		public static void DrawSelectionFrame(
-			Graphics graphics,
-			bool active,
-			Rectangle outsideRect,
-			Rectangle insideRect,
-			Color backColor) {
-			//FIXME:
-		}
-		
-		[MonoTODO]
-		public static void DrawSizeGrip(
-			Graphics graphics,
-			Color backColor,
-			Rectangle bounds) {
-			//FIXME:
-		}
-		
-		[MonoTODO]
-		public static void DrawSizeGrip(
-			Graphics graphics,
-			Color backColor,
-			int x,
-			int y,
-			int width,
-			int height) {
+		public static void DrawSizeGrip(Graphics graphics, Color backColor, int x, int y, int width, int height) {
 			//FIXME:
 		}
 		
@@ -912,9 +1157,7 @@ namespace System.Windows.Forms {
 		}
 		
 		[MonoTODO]
-		public static void FillReversibleRectangle(
-			Rectangle rectangle,
-			Color backColor) {
+		public static void FillReversibleRectangle(Rectangle rectangle, Color backColor) {
 			//FIXME:
 		}
 		
