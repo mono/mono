@@ -1,3 +1,18 @@
+2003-03-22  Duncan Mak  <duncan@ximian.com>
+
+	* MonoXSD.cs: Moved things around, now it's not only
+	static methods (functions) anymore.
+
+	Attributes handling galore! We now handle:
+
+	   - XmlElementAttribute
+	   - XmlAttributeAtribute
+	   - XmlArrayAttribute
+	   - XmlArrayItemAttribute
+	   - XmlTextAttribute
+	   - XmlAnyElementAttribute
+	   - XmlAnyAttributeAttribute
+
 2003-03-20  Duncan Mak  <duncan@ximian.com>
 
 	* MonoXSD.cs: More refinements. We now support transforming
