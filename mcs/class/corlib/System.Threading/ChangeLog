@@ -1,3 +1,7 @@
+2004-02-19  Jackson Harper <jackson@ximian.com>
+
+	* Monitor.cs: Fix spelleng.
+	
 2004-02-09  Zoltan Varga  <vargaz@freemail.hu>
 
 	* Thread.cs: Add fields added to unmanaged MonoThread here as well.

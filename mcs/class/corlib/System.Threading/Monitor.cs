@@ -60,7 +60,7 @@ namespace System.Threading
 				throw new ArgumentNullException("Object is null");
 			}
 			if(Monitor_test_synchronised(obj)==false) {
-				throw new SynchronizationLockException("Object is not synchronised");
+				throw new SynchronizationLockException("Object is not synchronized");
 			}
 
 			Monitor_pulse(obj);
@@ -76,7 +76,7 @@ namespace System.Threading
 				throw new ArgumentNullException("Object is null");
 			}
 			if(Monitor_test_synchronised(obj)==false) {
-				throw new SynchronizationLockException("Object is not synchronised");
+				throw new SynchronizationLockException("Object is not synchronized");
 			}
 
 			Monitor_pulse_all(obj);
@@ -150,7 +150,7 @@ namespace System.Threading
 				throw new ArgumentNullException("Object is null");
 			}
 			if(Monitor_test_synchronised(obj)==false) {
-				throw new SynchronizationLockException("Object is not synchronised");
+				throw new SynchronizationLockException("Object is not synchronized");
 			}
 
 			return(Monitor_wait(obj, Timeout.Infinite));
@@ -161,7 +161,7 @@ namespace System.Threading
 				throw new ArgumentNullException("Object is null");
 			}
 			if(Monitor_test_synchronised(obj)==false) {
-				throw new SynchronizationLockException("Object is not synchronised");
+				throw new SynchronizationLockException("Object is not synchronized");
 			}
 			// LAMESPEC: no mention of timeout sanity checking
 
@@ -179,7 +179,7 @@ namespace System.Threading
 				throw new ArgumentOutOfRangeException("timeout out of range");
 			}
 			if(Monitor_test_synchronised(obj)==false) {
-				throw new SynchronizationLockException("Object is not synchronised");
+				throw new SynchronizationLockException("Object is not synchronized");
 			}
 
 			return(Monitor_wait(obj, ms));
