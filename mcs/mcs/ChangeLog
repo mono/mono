@@ -1,3 +1,10 @@
+2002-07-02  Martin Baulig  <martin@gnome.org>
+
+	* typemanager.cs (TypeManager.InitCoreTypes): When compiling
+	corlib, dynamically call AssemblyBuilder.SetCorlibTypeBuilders()
+	to tell the runtime about our newly created System.Object and
+	System.ValueType types.
+
 2002-07-02  Miguel de Icaza  <miguel@ximian.com>
 
 	* expression.cs (This): Use Stobj/Ldobj when we are a member of a

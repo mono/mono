@@ -79,6 +79,8 @@ public class TypeManager {
 	//
 	static public Type system_int32_type;
 	static public Type system_array_type;
+	static public Type system_type_type;
+	static public Type system_assemblybuilder_type;
 	static public MethodInfo system_int_array_get_length;
 	static public MethodInfo system_int_array_get_rank;
 	static public MethodInfo system_object_array_clone;
@@ -86,6 +88,7 @@ public class TypeManager {
 	static public MethodInfo system_int_array_get_lower_bound_int;
 	static public MethodInfo system_int_array_get_upper_bound_int;
 	static public MethodInfo system_void_array_copyto_array_int;
+	static public MethodInfo system_void_set_corlib_type_builders;
 
 	
 	//
@@ -629,6 +632,8 @@ public class TypeManager {
 		if (!RootContext.StdLib) {
 			system_int32_type = typeof (System.Int32);
 			system_array_type = typeof (System.Array);
+			system_type_type = typeof (System.Type);
+			system_assemblybuilder_type = typeof (System.Reflection.Emit.AssemblyBuilder);
 
 			Type [] void_arg = {  };
 			system_int_array_get_length = GetMethod (
@@ -649,6 +654,17 @@ public class TypeManager {
 			Type [] system_array_int_arg = { system_array_type, system_int32_type };
 			system_void_array_copyto_array_int = GetMethod (
 				system_array_type, "CopyTo", system_array_int_arg);
+
+			Type [] system_type_type_arg = { system_type_type, system_type_type };
+			system_void_set_corlib_type_builders = GetMethod (
+				system_assemblybuilder_type, "SetCorlibTypeBuilders",
+				system_type_type_arg);
+
+			object[] args = new object [2];
+			args [0] = object_type;
+			args [1] = value_type;
+
+			system_void_set_corlib_type_builders.Invoke (CodeGen.AssemblyBuilder, args);
 		}
 	}
 
