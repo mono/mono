@@ -1,5 +1,9 @@
 2004-09-14  Martin Baulig  <martin@ximian.com>
 
+	* cs-parser.jay: Sync a bit with the GMCS version.
+
+2004-09-14  Martin Baulig  <martin@ximian.com>
+
 	* cs-parser.jay (CSharpParser): Don't derive from GenericsParser.
 	(CSharpParser.yacc_verbose_flag): New public field.
 

@@ -41,6 +41,11 @@ namespace Mono.CSharp {
 		{
 		}
 
+		public string GetName ()
+		{
+			return GetName (false);
+		}
+
 		public string GetName (bool is_generic)
 		{
 			string name = is_generic ? Basename : Name;

@@ -352,7 +352,7 @@ namespace_declaration
 		}
 
 		current_namespace = new NamespaceEntry (
-			current_namespace, file, name.GetName (false), lexer.Location);
+			current_namespace, file, name.GetName (), lexer.Location);
 	  } 
 	  namespace_body opt_semicolon
 	  { 
@@ -374,7 +374,7 @@ namespace_name
 	: namespace_or_type_name {
 		MemberName name = (MemberName) $1;
 
-		$$ = name.GetName (false);
+		$$ = name.GetName ();
 	  }
 	;
 
@@ -483,7 +483,7 @@ opt_attributes
 
 attribute_sections
 	: attribute_section
-      {
+	  {
 		ArrayList sect = (ArrayList) $1;
 
 		if (global_attrs_enabled) {
@@ -500,7 +500,7 @@ attribute_sections
 			$$ = new Attributes (sect);
 		}		
 		current_attr_target = null;
-      }
+	  }
 	| attribute_sections attribute_section
 	  {
 		Attributes attrs = $1 as Attributes;
@@ -584,10 +584,14 @@ attribute
 	  }
 	  opt_attribute_arguments
 	  {
+		MemberName mname = (MemberName) $1;
+		string name = mname.GetName ();
 		if (current_attr_target == "assembly" || current_attr_target == "module")
-			$$ = new GlobalAttribute (current_container, current_attr_target, (string) ($1).ToString (), (ArrayList) $3, (Location) $2);
+			$$ = new GlobalAttribute (current_container, current_attr_target,
+						  name, (ArrayList) $3, (Location) $2);
 		else
-			$$ = new Attribute (current_attr_target, (string) ($1).ToString (), (ArrayList) $3, (Location) $2);
+			$$ = new Attribute (current_attr_target, name, (ArrayList) $3,
+					    (Location) $2);
 	  }
 	;
 
@@ -1463,7 +1467,7 @@ operator_declaration
 		Operator op = new Operator (
 			current_class, decl.optype, decl.ret_type, (int) $2, 
 			new Parameters (param_list, null, decl.location),
-			(Block) $5,	(Attributes) $1, decl.location);
+			(Block) $5, (Attributes) $1, decl.location);
 
 		if (SimpleIteratorContainer.Simple.Yields)
 			op.SetYields ();
@@ -1929,11 +1933,11 @@ enum_declaration
 		
 		foreach (VariableDeclaration ev in (ArrayList) $6) {
 			e.AddEnumMember (ev.identifier, 
-						   (Expression) ev.expression_or_array_initializer,
-						   ev.Location, ev.OptAttributes);
+					 (Expression) ev.expression_or_array_initializer,
+					 ev.Location, ev.OptAttributes);
 		}
 
-		string name = full_name.GetName (false);
+		string name = full_name.GetName ();
 		current_container.AddEnum (e);
 		RootContext.Tree.RecordDecl (name, e);
 
@@ -2003,7 +2007,7 @@ delegate_declaration
 					     (int) $2, name, (Parameters) $7, (Attributes) $1, l);
 
 		current_container.AddDelegate (del);
-		RootContext.Tree.RecordDecl (name.GetName (false), del);
+		RootContext.Tree.RecordDecl (name.GetName (true), del);
 	  }	
 	| opt_attributes
 	  opt_modifiers
@@ -2019,7 +2023,7 @@ delegate_declaration
 			(Parameters) $7, (Attributes) $1, l);
 
 		current_container.AddDelegate (del);
-		RootContext.Tree.RecordDecl (name.GetName (false), del);
+		RootContext.Tree.RecordDecl (name.GetName (true), del);
 	  }
 	;
 
@@ -2991,7 +2995,7 @@ class_declaration
 			}
 
 			current_container = current_class;
-			RootContext.Tree.RecordDecl (name.GetName (false), current_class);
+			RootContext.Tree.RecordDecl (name.GetName (true), current_class);
 		}
 	  }
 	  opt_class_base
