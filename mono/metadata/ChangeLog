@@ -1,3 +1,7 @@
+2001-07-04  Miguel de Icaza  <miguel@ximian.com>
+
+	* metadata.h: Add a couple of macros to manipulate tokens. 
+
 Tue Jul  3 18:33:32 CEST 2001 Paolo Molaro <lupus@ximian.com>
 
 	* assembly.c: g_free(ii->cli_sections) (and avoid double free of

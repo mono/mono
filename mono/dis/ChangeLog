@@ -1,3 +1,10 @@
+2001-07-04  Miguel de Icaza  <miguel@ximian.com>
+
+	
+	* get.c (get_methodref_signature): Implement.
+
+	* dump.c (dump_table_memberref): Add memberref dumping.
+
 Tue,  3 Jul 2001 18:32:10 +0200 Paolo Molaro <lupus@ximian.com>
 
 	* main.c: return on failure.
