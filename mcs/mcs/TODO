@@ -1,16 +1,3 @@
-NOTES:
-	I am trying to remove the LocalVariableReference from the code
-	but the compiler does not pass its own self-compilation.
-
-	The problem is that constructs with embedded_statements like:
-
-	foreach (int b in X)
-		if (b ...)
-
-	The ec.CurrentBlock is not updated with the fact that `b' lives
-	in an implicit internal block, and the lookup is attempted on the
-	parent's block, hence rendering the lookup invalid.
-
 Major tasks:
 ------------
 
@@ -150,6 +137,8 @@ BUGS
 PENDING TASKS
 -------------
 
+* Merge test 89 and test-34
+
 * Constant Folding
 
 	Constant Folding does not take into account Enumerations, we should maybe
@@ -186,6 +175,11 @@ PENDING TASKS
 
 OPTIMIZATIONS
 -------------
+
+* Places that use `Ldelema' are basically places where I will be
+  initializing a value type.  I could apply an optimization to 
+  disable the implicit local temporary from being created (by using
+  the method in New).
 
 * Dropping TypeContainer as an argument to EmitContext
 

@@ -108,8 +108,8 @@ namespace Mono.CSharp {
 			this.parameters = parameters;
 		}
 
-		public InternalParameters (TypeContainer tc, Parameters parameters)
-			: this (parameters.GetParameterInfo (tc), parameters)
+		public InternalParameters (DeclSpace ds, Parameters parameters)
+			: this (parameters.GetParameterInfo (ds), parameters)
 		{
 		}
 

@@ -397,7 +397,7 @@ namespace Mono.CSharp {
 				Parameter [] parms = new Parameter [1];
 				parms [0] = new Parameter (ip.Type, "value", Parameter.Modifier.NONE, null);
 				InternalParameters ipp = new InternalParameters (
-					Parent, new Parameters (parms, null, Location.Null));
+					this, new Parameters (parms, null, Location.Null));
 					
 				if (!RegisterMethod (set, ipp, setter_args)) {
 					Error111 (ip);

@@ -1,3 +1,22 @@
+2002-03-18  Miguel de Icaza  <miguel@ximian.com>
+
+	* interface.cs (Interface.PopulateProperty): Instead of using
+	`parent' as the declaration space for the set parameters, use
+	`this' 
+
+	* support.cs (InternalParameters): InternalParameters constructor
+	takes a DeclSpace instead of a TypeContainer.
+
+	* expression.cs (ArrayCreation.EmitDynamicInitializers): If value
+	types are being initialized, load the address of it before calling
+	the function.  
+
+	(New): Provide a mechanism to disable the generation of local
+	value type temporaries when the caller will be providing us with
+	an address to store it.
+
+	(ArrayCreation.EmitDynamicInitializers): Use it.
+
 2002-03-17  Miguel de Icaza  <miguel@ximian.com>
 
 	* expression.cs (Invocation.EmitArguments): Only probe for array

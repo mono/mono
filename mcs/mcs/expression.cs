@@ -3685,6 +3685,17 @@ namespace Mono.CSharp {
 		}
 	}
 
+	//
+	// This class is used to "disable" the code generation for the
+	// temporary variable when initializing value types.
+	//
+	class EmptyAddressOf : EmptyExpression, IMemoryLocation {
+		public void AddressOf (EmitContext ec, AddressOp Mode)
+		{
+			// nothing
+		}
+	}
+	
 	/// <summary>
 	///    Implements the new expression 
 	/// </summary>
@@ -3718,6 +3729,33 @@ namespace Mono.CSharp {
 			}
 		}
 
+		//
+		// This function is used to disable the following code sequence for
+		// value type initialization:
+		//
+		// AddressOf (temporary)
+		// Construct/Init
+		// LoadTemporary
+		//
+		// Instead the provide will have provided us with the address on the
+		// stack to store the results.
+		//
+		static Expression MyEmptyExpression;
+		
+		public void DisableTemporaryValueType ()
+		{
+			if (MyEmptyExpression == null)
+				MyEmptyExpression = new EmptyAddressOf ();
+
+			//
+			// To enable this, look into:
+			// test-34 and test-89 and self bootstrapping.
+			//
+			// For instance, we can avoid a copy by using `newobj'
+			// instead of Call + Push-temp on value types.
+//			value_target = MyEmptyExpression;
+		}
+		
 		public override Expression DoResolve (EmitContext ec)
 		{
 			type = RootContext.LookupType (ec.DeclSpace, RequestedType, false, loc);
@@ -3804,13 +3842,13 @@ namespace Mono.CSharp {
 		{
 			bool is_value_type = type.IsSubclassOf (TypeManager.value_type);
 			ILGenerator ig = ec.ig;
-			
+
 			if (is_value_type){
 				IMemoryLocation ml;
 
 				if (value_target == null)
 					value_target = new LocalTemporary (ec, type);
-
+					
 				ml = (IMemoryLocation) value_target;
 				ml.AddressOf (ec, AddressOp.Store);
 			}
@@ -3821,14 +3859,13 @@ namespace Mono.CSharp {
 			if (is_value_type){
 				if (method == null)
 					ig.Emit (OpCodes.Initobj, type);
-				else
+				else 
 					ig.Emit (OpCodes.Call, (ConstructorInfo) method);
-
-				if (need_value_on_stack){
-					value_target.Emit (ec);
-					return true;
-				}
-				return false;
+                                if (need_value_on_stack){
+                                        value_target.Emit (ec);
+                                        return true;
+                                }
+                                return false;
 			} else {
 				ig.Emit (OpCodes.Newobj, (ConstructorInfo) method);
 				return true;
@@ -4386,8 +4423,10 @@ namespace Mono.CSharp {
 					// Basically we do this for string literals and
 					// other non-literal expressions
 					//
-					if (e is StringConstant || !(e is Constant) || num_automatic_initializers <= 2) {
-
+					if (e is StringConstant || !(e is Constant) ||
+					    num_automatic_initializers <= 2) {
+						Type etype = e.Type;
+						
 						ig.Emit (OpCodes.Ldloc, temp);
 
 						for (int idx = dims; idx > 0; ) {
@@ -4395,13 +4434,31 @@ namespace Mono.CSharp {
 							IntConstant.EmitInt (ig, current_pos [idx]);
 						}
 
+						//
+						// If we are dealing with a struct, get the
+						// address of it, so we can store it.
+						//
+						if (etype.IsSubclassOf (TypeManager.value_type) &&
+						    !TypeManager.IsBuiltinType (etype)){
+							if (e is New){
+								New n = (New) e;
+
+								//
+								// Let new know that we are providing
+								// the address where to store the results
+								//
+								n.DisableTemporaryValueType ();
+							}
+									     
+							ig.Emit (OpCodes.Ldelema, etype);
+						}
+						    
 						e.Emit (ec);
 						
 						if (dims == 1)
 							ArrayAccess.EmitStoreOpcode (ig, array_element_type);
 						else 
 							ig.Emit (OpCodes.Call, set);
-						
 					}
 				}
 				
@@ -5639,6 +5696,9 @@ namespace Mono.CSharp {
 	///   foreach implementation to typecast the object return value from
 	///   get_Current into the proper type.  All code has been generated and
 	///   we only care about the side effect conversions to be performed
+	///
+	///   This is also now used as a placeholder where a no-action expression
+	///   is needed (the `New' class).
 	/// </summary>
 	public class EmptyExpression : Expression {
 		public EmptyExpression ()
