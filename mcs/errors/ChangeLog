@@ -1,3 +1,8 @@
+2005-02-04  Zoltan Varga  <vargaz@freemail.hu>
+
+	* cs1617.cs: Add a newline so do-tests.pl can process it under
+	sparc.
+
 2005-02-02  Raja R Harinath  <rharinath@novell.com>
 
 	* cs0108-12.cs: New test.  Ensure that cs0108 handling occurs when
