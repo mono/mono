@@ -1,5 +1,9 @@
 2004-03-25 Ben Maurer  <bmaurer@users.sourceforge.net>
 
+	* cs1510-2.cs: test for 56016.
+
+2004-03-25 Ben Maurer  <bmaurer@users.sourceforge.net>
+
 	* cs0122-4.cs: test for bug 55970.
 
 2004-03-25  Sebastien Pouliot  <sebastien@ximian.com>
