@@ -8,7 +8,8 @@
 
 using System.Collections;
 
-namespace System.Runtime.Remoting.Channels {
+namespace System.Runtime.Remoting.Channels
+{
 
 	public abstract class BaseChannelObjectWithProperties :
 		IDictionary, ICollection, IEnumerable

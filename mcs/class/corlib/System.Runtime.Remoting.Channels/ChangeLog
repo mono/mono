@@ -1,5 +1,6 @@
 2002-07-31  Rodrigo Moya <rodrigo@ximian.com>
 
+	* BaseChannelSinkWithProperties.cs:
 	* BaseChannelObjectWithProperties.cs: new stubs.
 
 2002-08-01  Duncan Mak  <duncan@ximian.com>
