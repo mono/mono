@@ -7,7 +7,6 @@
 
 using NUnit.Framework;
 using System;
-using S = System; // for implementation switching only
 
 using System.Globalization;
 using System.Runtime.CompilerServices;
@@ -24,7 +23,7 @@ namespace MonoTests.System {
             this.d = 0;
         }
 
-        public ParseTest(String str, S.Decimal d)
+        public ParseTest(String str, Decimal d)
         {
             this.str = str;
             this.exceptionFlag = false;
@@ -32,7 +31,7 @@ namespace MonoTests.System {
             this.d = d;
         }
 
-        public ParseTest(String str, S.Decimal d, NumberStyles style)
+        public ParseTest(String str, Decimal d, NumberStyles style)
         {
             this.str = str;
             this.exceptionFlag = false;
@@ -41,14 +40,14 @@ namespace MonoTests.System {
         }
 
         public String str;
-        public S.Decimal d;
+        public Decimal d;
         public NumberStyles style;
         public bool exceptionFlag;
     }
 
     internal struct ToStringTest
     {
-        public ToStringTest(String format, S.Decimal d, String str)
+        public ToStringTest(String format, Decimal d, String str)
         {
             this.format = format;
             this.d = d;
@@ -56,7 +55,7 @@ namespace MonoTests.System {
         }
 
         public String format;
-        public S.Decimal d;
+        public Decimal d;
         public String str;
     }
 
@@ -184,20 +183,20 @@ namespace MonoTests.System {
                 new ToStringTest("E3", -123, "-1.230E+002"),
                 new ToStringTest("E0", -123, "-1E+002"),
                 new ToStringTest("E", -123, "-1.230000E+002"),
-                new ToStringTest("F3", S.Decimal.MinValue, "-79228162514264337593543950335.000"),
-                new ToStringTest("F", S.Decimal.MinValue, "-79228162514264337593543950335.00"),
-                new ToStringTest("F0", S.Decimal.MinValue, "-79228162514264337593543950335"),
-                new ToStringTest("E", S.Decimal.MinValue, "-7.922816E+028"),
-                new ToStringTest("E3", S.Decimal.MinValue, "-7.923E+028"),
-                new ToStringTest("E28", S.Decimal.MinValue, "-7.9228162514264337593543950335E+028"),
-                new ToStringTest("E30", S.Decimal.MinValue, "-7.922816251426433759354395033500E+028"),
-                new ToStringTest("E0", S.Decimal.MinValue, "-8E+028"),
-                new ToStringTest("N3", S.Decimal.MinValue, "-79,228,162,514,264,337,593,543,950,335.000"),
-                new ToStringTest("N0", S.Decimal.MinValue, "-79,228,162,514,264,337,593,543,950,335"),
-                new ToStringTest("N", S.Decimal.MinValue, "-79,228,162,514,264,337,593,543,950,335.00"),
-                new ToStringTest("n3", S.Decimal.MinValue, "-79,228,162,514,264,337,593,543,950,335.000"),
-                new ToStringTest("n0", S.Decimal.MinValue, "-79,228,162,514,264,337,593,543,950,335"),
-                new ToStringTest("n", S.Decimal.MinValue, "-79,228,162,514,264,337,593,543,950,335.00"),
+                new ToStringTest("F3", Decimal.MinValue, "-79228162514264337593543950335.000"),
+                new ToStringTest("F", Decimal.MinValue, "-79228162514264337593543950335.00"),
+                new ToStringTest("F0", Decimal.MinValue, "-79228162514264337593543950335"),
+                new ToStringTest("E", Decimal.MinValue, "-7.922816E+028"),
+                new ToStringTest("E3", Decimal.MinValue, "-7.923E+028"),
+                new ToStringTest("E28", Decimal.MinValue, "-7.9228162514264337593543950335E+028"),
+                new ToStringTest("E30", Decimal.MinValue, "-7.922816251426433759354395033500E+028"),
+                new ToStringTest("E0", Decimal.MinValue, "-8E+028"),
+                new ToStringTest("N3", Decimal.MinValue, "-79,228,162,514,264,337,593,543,950,335.000"),
+                new ToStringTest("N0", Decimal.MinValue, "-79,228,162,514,264,337,593,543,950,335"),
+                new ToStringTest("N", Decimal.MinValue, "-79,228,162,514,264,337,593,543,950,335.00"),
+                new ToStringTest("n3", Decimal.MinValue, "-79,228,162,514,264,337,593,543,950,335.000"),
+                new ToStringTest("n0", Decimal.MinValue, "-79,228,162,514,264,337,593,543,950,335"),
+                new ToStringTest("n", Decimal.MinValue, "-79,228,162,514,264,337,593,543,950,335.00"),
                 new ToStringTest("C", 123456.7890m, NumberFormatInfo.InvariantInfo.CurrencySymbol + "123,456.79"),
                 new ToStringTest("C", -123456.7890m, "(" + NumberFormatInfo.InvariantInfo.CurrencySymbol + "123,456.79)"),
                 new ToStringTest("C3", 1123456.7890m, NumberFormatInfo.InvariantInfo.CurrencySymbol + "1,123,456.789"),
@@ -231,7 +230,7 @@ namespace MonoTests.System {
         public void TestCurrencyPattern()
         {
             NumberFormatInfo nfi2 = (NumberFormatInfo)NfiUser.Clone();
-            S.Decimal d = -1234567.8976m;
+            Decimal d = -1234567.8976m;
             string[] ergCurrencyNegativePattern = new String[16] {
                 "(XYZ1234_5_67,898)", "-XYZ1234_5_67,898", "XYZ-1234_5_67,898", "XYZ1234_5_67,898-",
                 "(1234_5_67,898XYZ)", "-1234_5_67,898XYZ", "1234_5_67,898-XYZ", "1234_5_67,898XYZ-",
@@ -268,7 +267,7 @@ namespace MonoTests.System {
         public void TestNumberNegativePattern()
         {
             NumberFormatInfo nfi2 = (NumberFormatInfo)NfiUser.Clone();
-            S.Decimal d = -1234.89765m;
+            Decimal d = -1234.89765m;
             string[] ergNumberNegativePattern = new String[5] {
                 "(1__2__34##8977)", "-1__2__34##8977", "- 1__2__34##8977", "1__2__34##8977-", "1__2__34##8977 -",
             };
@@ -283,7 +282,7 @@ namespace MonoTests.System {
         public void TestPercentPattern()
         {
             NumberFormatInfo nfi2 = (NumberFormatInfo)NfiUser.Clone();
-            S.Decimal d = -1234.8976m;
+            Decimal d = -1234.8976m;
             string[] ergPercentNegativePattern = new String[3] {
                 "-1~2~3~4~8~9;8 %%%", "-1~2~3~4~8~9;8%%%", "-%%%1~2~3~4~8~9;8"
             };
@@ -320,8 +319,8 @@ namespace MonoTests.System {
                 new ParseTest("1.2345", 1.2345m),
                 new ParseTest("-9876543210", -9876543210m),
                 new ParseTest(NumberFormatInfo.InvariantInfo.CurrencySymbol 
-			+ " (  79,228,162,514,264,337,593,543,950,335.000 ) ", S.Decimal.MinValue, NumberStyles.Currency),
-                new ParseTest("1.234567890e-10", (S.Decimal)1.234567890e-10, NumberStyles.Float),
+			+ " (  79,228,162,514,264,337,593,543,950,335.000 ) ", Decimal.MinValue, NumberStyles.Currency),
+                new ParseTest("1.234567890e-10", (Decimal)1.234567890e-10, NumberStyles.Float),
                 new ParseTest("1.234567890e-24", 1.2346e-24m, NumberStyles.Float),
                 new ParseTest("  47896396.457983645462346E10  ", 478963964579836454.62346m, NumberStyles.Float),
                 new ParseTest("-7922816251426433759354395033.250000000000001", -7922816251426433759354395033.3m),
@@ -332,12 +331,12 @@ namespace MonoTests.System {
                 new ParseTest("-7922816251426433759354395033.2600000000000", -7922816251426433759354395033.3m)
             };
 
-            S.Decimal d;
+            Decimal d;
             for (int i = 0; i < tab.Length; i++) 
             {
                 try
                 {
-                    d = S.Decimal.Parse(tab[i].str, tab[i].style, NumberFormatInfo.InvariantInfo);
+                    d = Decimal.Parse(tab[i].str, tab[i].style, NumberFormatInfo.InvariantInfo);
                     if (tab[i].exceptionFlag)
                     {
                         Fail(tab[i].str + ": missing exception !");
@@ -358,7 +357,7 @@ namespace MonoTests.System {
     
             try 
             {
-                d = S.Decimal.Parse(null);
+                d = Decimal.Parse(null);
                 Fail("Expected ArgumentNullException");
             }
             catch (ArgumentNullException)
@@ -368,7 +367,7 @@ namespace MonoTests.System {
 
             try 
             {
-                d = S.Decimal.Parse("123nx");
+                d = Decimal.Parse("123nx");
                 Fail("Expected FormatException");
             }
             catch (FormatException)
@@ -378,7 +377,7 @@ namespace MonoTests.System {
 
             try 
             {
-                d = S.Decimal.Parse("79228162514264337593543950336");
+                d = Decimal.Parse("79228162514264337593543950336");
                 Fail("Expected OverflowException" + d);
             }
             catch (OverflowException)
@@ -389,12 +388,12 @@ namespace MonoTests.System {
 
         public void TestConstants()
         {
-            Assert(0m == (decimal)S.Decimal.Zero);
-            Assert(1m == (decimal)S.Decimal.One);
-            Assert(-1m == (decimal)S.Decimal.MinusOne);
-            Assert(0m == (decimal)S.Decimal.Zero);
-            Assert(79228162514264337593543950335m == (decimal)S.Decimal.MaxValue);
-            Assert(-79228162514264337593543950335m == (decimal)S.Decimal.MinValue);       
+            Assert(0m == (decimal)Decimal.Zero);
+            Assert(1m == (decimal)Decimal.One);
+            Assert(-1m == (decimal)Decimal.MinusOne);
+            Assert(0m == (decimal)Decimal.Zero);
+            Assert(79228162514264337593543950335m == (decimal)Decimal.MaxValue);
+            Assert(-79228162514264337593543950335m == (decimal)Decimal.MinValue);       
         }
 
         public void TestConstructInt32()
@@ -402,11 +401,11 @@ namespace MonoTests.System {
             decimal[] dtab = {0m, 1m, -1m, 123456m, -1234567m};
             int[] itab = {0, 1, -1, 123456, -1234567};
 
-            S.Decimal d;
+            Decimal d;
             
             for (int i = 0; i < dtab.GetLength(0); i++)
             {
-                d = new S.Decimal(itab[i]);
+                d = new Decimal(itab[i]);
                 if ((decimal)d != dtab[i]) 
                 {
                     Fail("Int32 -> Decimal: " + itab[i] + " != " + d);
@@ -421,10 +420,10 @@ namespace MonoTests.System {
                 }
             }
 
-            d = new S.Decimal(Int32.MaxValue);
+            d = new Decimal(Int32.MaxValue);
             Assert((int)d == Int32.MaxValue);
 
-            d = new S.Decimal(Int32.MinValue);
+            d = new Decimal(Int32.MinValue);
             Assert((int)d == Int32.MinValue);
         }
 
@@ -433,11 +432,11 @@ namespace MonoTests.System {
             decimal[] dtab = {0m, 1m, 123456m, 123456789m};
             uint[] itab = {0, 1, 123456, 123456789};
 
-            S.Decimal d;
+            Decimal d;
             
             for (int i = 0; i < dtab.GetLength(0); i++)
             {
-                d = new S.Decimal(itab[i]);
+                d = new Decimal(itab[i]);
                 if ((decimal)d != dtab[i]) 
                 {
                     Fail("UInt32 -> Decimal: " + itab[i] + " != " + d);
@@ -452,7 +451,7 @@ namespace MonoTests.System {
                 }
             }
 
-            d = new S.Decimal(UInt32.MaxValue);
+            d = new Decimal(UInt32.MaxValue);
             Assert((uint)d == UInt32.MaxValue);
 
             d = new Decimal(UInt32.MinValue);
@@ -464,11 +463,11 @@ namespace MonoTests.System {
             decimal[] dtab = {0m, 1m, -1m, 9876543m, -9876543210m, 12345678987654321m};
             long[] itab = {0, 1, -1, 9876543, -9876543210L, 12345678987654321L};
 
-            S.Decimal d;
+            Decimal d;
             
             for (int i = 0; i < dtab.GetLength(0); i++)
             {
-                d = new S.Decimal(itab[i]);
+                d = new Decimal(itab[i]);
                 if ((decimal)d != dtab[i]) 
                 {
                     Fail("Int64 -> Decimal: " + itab[i] + " != " + d);
@@ -483,7 +482,7 @@ namespace MonoTests.System {
                 }
             }
 
-            d = new S.Decimal(Int64.MaxValue);
+            d = new Decimal(Int64.MaxValue);
             Assert((long)d == Int64.MaxValue);
 
             d = new Decimal(Int64.MinValue);
@@ -495,11 +494,11 @@ namespace MonoTests.System {
             decimal[] dtab = {0m, 1m, 987654321m, 123456789876543210m};
             ulong[] itab = {0, 1, 987654321, 123456789876543210L};
 
-            S.Decimal d;
+            Decimal d;
             
             for (int i = 0; i < dtab.GetLength(0); i++)
             {
-                d = new S.Decimal(itab[i]);
+                d = new Decimal(itab[i]);
                 if ((decimal)d != dtab[i]) 
                 {
                     Fail("UInt64 -> Decimal: " + itab[i] + " != " + d);
@@ -514,7 +513,7 @@ namespace MonoTests.System {
                 }
             }
 
-            d = new S.Decimal(UInt64.MaxValue);
+            d = new Decimal(UInt64.MaxValue);
             Assert((ulong)d == UInt64.MaxValue);
 
             d = new Decimal(UInt64.MinValue);
@@ -523,40 +522,40 @@ namespace MonoTests.System {
 
         public void TestConstructSingle()
         {
-            S.Decimal d;
+            Decimal d;
 
-            d = new S.Decimal(-1.2345678f);
+            d = new Decimal(-1.2345678f);
             AssertEquals("A#01", -1.234568m, (decimal)d);
 
             d=3;
             AssertEquals("A#02", 3.0f, (float)d);
 
-            d = new S.Decimal(0.0f);
+            d = new Decimal(0.0f);
             AssertEquals("A#03", 0m, (decimal)d);
             AssertEquals("A#04", 0.0f, (float)d);
 
-            d = new S.Decimal(1.0f);
+            d = new Decimal(1.0f);
             AssertEquals("A#05", 1m, (decimal)d);
             AssertEquals("A#06", 1.0f, (float)d);
 
-            d = new S.Decimal(-1.2345678f);
+            d = new Decimal(-1.2345678f);
             AssertEquals("A#07", -1.234568m, (decimal)d);
             AssertEquals("A#08", -1.234568f, (float)d);
 
-            d = new S.Decimal(1.2345673f);
+            d = new Decimal(1.2345673f);
             AssertEquals("A#09", 1.234567m, (decimal)d);
 
-            d = new S.Decimal(1.2345673e7f);
+            d = new Decimal(1.2345673e7f);
             AssertEquals("A#10", 12345670m, (decimal)d);
 
-            d = new S.Decimal(1.2345673e-17f);
+            d = new Decimal(1.2345673e-17f);
             AssertEquals("A#11", 0.00000000000000001234567m, (decimal)d);
             AssertEquals("A#12", 1.234567e-17f, (float)d);
 
             // test exceptions
             try
             {
-                d = new S.Decimal(Single.MaxValue);
+                d = new Decimal(Single.MaxValue);
                 Fail();
             } 
             catch (OverflowException) 
@@ -565,7 +564,7 @@ namespace MonoTests.System {
 
             try
             {
-                d = new S.Decimal(Single.NaN);
+                d = new Decimal(Single.NaN);
                 Fail();
             } 
             catch (OverflowException) 
@@ -574,7 +573,7 @@ namespace MonoTests.System {
 
             try
             {
-                d = new S.Decimal(Single.PositiveInfinity);
+                d = new Decimal(Single.PositiveInfinity);
                 Fail();
             } 
             catch (OverflowException) 
@@ -586,116 +585,116 @@ namespace MonoTests.System {
         {
             decimal d;
 
-            d = new S.Decimal(1765.2356f);
+            d = new Decimal(1765.2356f);
             Assert(d == 1765.236m);
 
-            d = new S.Decimal(1765.23554f);
+            d = new Decimal(1765.23554f);
             Assert("failed banker's rule rounding test 1", d == 1765.236m);
 
-            d = new S.Decimal(1765.2354f);
+            d = new Decimal(1765.2354f);
             Assert(d == 1765.235m);
 
-            d = new S.Decimal(1765.2346f);
+            d = new Decimal(1765.2346f);
             Assert(d == 1765.235m);
 
-            d = new S.Decimal(1765.23454f);
+            d = new Decimal(1765.23454f);
             Assert("failed banker's rule rounding test 2", d == 1765.234m);
 
-            d = new S.Decimal(1765.2344f);
+            d = new Decimal(1765.2344f);
             Assert(d == 1765.234m);
 
-            d = new S.Decimal(0.00017652356f);
+            d = new Decimal(0.00017652356f);
             Assert(d == 0.0001765236m);
 
-            d = new S.Decimal(0.000176523554f);
+            d = new Decimal(0.000176523554f);
             Assert("failed banker's rule rounding test 3", d == 0.0001765236m);
 
-            d = new S.Decimal(0.00017652354f);
+            d = new Decimal(0.00017652354f);
             Assert(d == 0.0001765235m);
 
-            d = new S.Decimal(0.00017652346f);
+            d = new Decimal(0.00017652346f);
             Assert(d == 0.0001765235m);
 
-            d = new S.Decimal(0.000176523454f);
+            d = new Decimal(0.000176523454f);
             Assert("failed banker's rule rounding test 4", d == 0.0001765234m);
 
-            d = new S.Decimal(0.00017652344f);
+            d = new Decimal(0.00017652344f);
             Assert(d == 0.0001765234m);
 
-            d = new S.Decimal(3.7652356e10f);
+            d = new Decimal(3.7652356e10f);
             Assert(d == 37652360000m);
 
-            d = new S.Decimal(3.7652356e20f);
+            d = new Decimal(3.7652356e20f);
             Assert(d == 376523600000000000000m);
 
-            d = new S.Decimal(3.76523554e20f);
+            d = new Decimal(3.76523554e20f);
             Assert("failed banker's rule rounding test 5", d == 376523600000000000000m);
 
-            d = new S.Decimal(3.7652352e20f);
+            d = new Decimal(3.7652352e20f);
             Assert(d == 376523500000000000000m);
 
-            d = new S.Decimal(3.7652348e20f);
+            d = new Decimal(3.7652348e20f);
             Assert(d == 376523500000000000000m);
 
-            d = new S.Decimal(3.76523454e20f);
+            d = new Decimal(3.76523454e20f);
             Assert("failed banker's rule rounding test 6", d == 376523400000000000000m);
 
-            d = new S.Decimal(3.7652342e20f);
+            d = new Decimal(3.7652342e20f);
             Assert(d == 376523400000000000000m);
         }
 
         public void TestConstructDouble()
         {
-            S.Decimal d;
+            Decimal d;
 
-            d = new S.Decimal(0.0);
+            d = new Decimal(0.0);
             Assert((decimal)d == 0m);
 
-            d = new S.Decimal(1.0);
+            d = new Decimal(1.0);
             Assert((decimal)d == 1m);
             Assert(1.0 == (double)d);
 
-            d = new S.Decimal(-1.2345678901234);
+            d = new Decimal(-1.2345678901234);
             Assert((decimal)d == -1.2345678901234m);
             Assert(-1.2345678901234 == (double)d);
 
-            d = new S.Decimal(1.2345678901234);
+            d = new Decimal(1.2345678901234);
             Assert((decimal)d == 1.2345678901234m);
 
-            d = new S.Decimal(1.2345678901234e8);
+            d = new Decimal(1.2345678901234e8);
             Assert((decimal)d == 123456789.01234m);
             Assert(1.2345678901234e8 == (double)d);
 
-            d = new S.Decimal(1.2345678901234e16);
+            d = new Decimal(1.2345678901234e16);
             Assert((decimal)d == 12345678901234000m);
             Assert(1.2345678901234e16 == (double)d);
 
-            d = new S.Decimal(1.2345678901234e24);
+            d = new Decimal(1.2345678901234e24);
             Assert((decimal)d == 1234567890123400000000000m);
             Assert(1.2345678901234e24 == (double)d);
 
-            d = new S.Decimal(1.2345678901234e28);
+            d = new Decimal(1.2345678901234e28);
             Assert((decimal)d == 1.2345678901234e28m);
             Assert(1.2345678901234e28 == (double)d);
 
-            d = new S.Decimal(7.2345678901234e28);
+            d = new Decimal(7.2345678901234e28);
             Assert((decimal)d == 7.2345678901234e28m);
-            Assert(new S.Decimal((double)d) == d);
+            Assert(new Decimal((double)d) == d);
 
-            d = new S.Decimal(1.2345678901234e-8);
+            d = new Decimal(1.2345678901234e-8);
             Assert((decimal)d == 1.2345678901234e-8m);
 
-            d = new S.Decimal(1.2345678901234e-14);
+            d = new Decimal(1.2345678901234e-14);
             Assert((decimal)d == 1.2345678901234e-14m);
             Assert(1.2345678901234e-14 == (double)d);
 
-            d = new S.Decimal(1.2342278901234e-25);
+            d = new Decimal(1.2342278901234e-25);
             Assert((decimal)d == 1.234e-25m);
 
             // test exceptions
             try
             {
-                d = new S.Decimal(8e28);
+                d = new Decimal(8e28);
                 Fail();
             } 
             catch (OverflowException) 
@@ -704,7 +703,7 @@ namespace MonoTests.System {
 
             try
             {
-                d = new S.Decimal(8e48);
+                d = new Decimal(8e48);
                 Fail();
             } 
             catch (OverflowException) 
@@ -713,7 +712,7 @@ namespace MonoTests.System {
 
             try
             {
-                d = new S.Decimal(Double.NaN);
+                d = new Decimal(Double.NaN);
                 Fail();
             } 
             catch (OverflowException) 
@@ -722,7 +721,7 @@ namespace MonoTests.System {
 
             try
             {
-                d = new S.Decimal(Double.PositiveInfinity);
+                d = new Decimal(Double.PositiveInfinity);
                 Fail();
             } 
             catch (OverflowException) 
@@ -734,41 +733,41 @@ namespace MonoTests.System {
         {
             decimal d;
             
-            d = new S.Decimal(1765.231234567857);
+            d = new Decimal(1765.231234567857);
             Assert(d == 1765.23123456786m);
 
-            d = new S.Decimal(1765.2312345678554);
+            d = new Decimal(1765.2312345678554);
             Assert("failed banker's rule rounding test 1", d == 1765.23123456786m);
             Assert(1765.23123456786 == (double)d);
 
-            d = new S.Decimal(1765.231234567853);
+            d = new Decimal(1765.231234567853);
             Assert(d == 1765.23123456785m);
 
-            d = new S.Decimal(1765.231234567847);
+            d = new Decimal(1765.231234567847);
             Assert(d == 1765.23123456785m);
 
-            d = new S.Decimal(1765.231234567843);
+            d = new Decimal(1765.231234567843);
             Assert(d == 1765.23123456784m);
 
-            d = new S.Decimal(1.765231234567857e-9);
+            d = new Decimal(1.765231234567857e-9);
             Assert(d == 1.76523123456786e-9m);
 
-            d = new S.Decimal(1.7652312345678554e-9);
+            d = new Decimal(1.7652312345678554e-9);
             Assert("failed banker's rule rounding test 3", d == 1.76523123456786e-9m);
 
-            d = new S.Decimal(1.765231234567853e-9);
+            d = new Decimal(1.765231234567853e-9);
             Assert(d == 1.76523123456785e-9m);
 
-            d = new S.Decimal(1.765231234567857e+24);
+            d = new Decimal(1.765231234567857e+24);
             Assert(d == 1.76523123456786e+24m);
 
-            d = new S.Decimal(1.7652312345678554e+24);
+            d = new Decimal(1.7652312345678554e+24);
             Assert("failed banker's rule rounding test 4", d == 1.76523123456786e+24m);
 
-            d = new S.Decimal(1.765231234567853e+24);
+            d = new Decimal(1.765231234567853e+24);
             Assert(d == 1.76523123456785e+24m);
 
-            d = new S.Decimal(1765.2312345678454);
+            d = new Decimal(1765.2312345678454);
             Assert(d == 1765.23123456785m);
         }
 
@@ -776,8 +775,8 @@ namespace MonoTests.System {
         {
             decimal d;
 
-            d = new S.Decimal(12345678);
-            Assert((decimal)S.Decimal.Negate(d) == -12345678m);
+            d = new Decimal(12345678);
+            Assert((decimal)Decimal.Negate(d) == -12345678m);
         }
 
         public void TestPartConstruct()
@@ -822,8 +821,8 @@ namespace MonoTests.System {
                 {0m, 0m, 0m}, {1m, 1m, 1m}, {-1m, -1m, -1m}, {1.1m, 1m, 1m}, 
                 {-1.000000000001m, -2m, -1m}, {12345.67890m,12345m,12345m},
                 {-123456789012345.67890m, -123456789012346m, -123456789012345m},
-                {S.Decimal.MaxValue, S.Decimal.MaxValue, S.Decimal.MaxValue},
-                {S.Decimal.MinValue, S.Decimal.MinValue, S.Decimal.MinValue},
+                {Decimal.MaxValue, Decimal.MaxValue, Decimal.MaxValue},
+                {Decimal.MinValue, Decimal.MinValue, Decimal.MinValue},
                 {6.999999999m, 6m, 6m}, {-6.999999999m, -7m, -6m}, 
                 {0.00001m, 0m, 0m}, {-0.00001m, -1m, 0m}
             };
@@ -832,12 +831,12 @@ namespace MonoTests.System {
             
             for (int i = 0; i < dtab.GetLength(0); i++)
             {
-                d = S.Decimal.Floor(dtab[i,0]);
+                d = Decimal.Floor(dtab[i,0]);
                 if (d != dtab[i,1]) 
                 {
                     Fail("Floor: Floor(" + dtab[i,0] + ") != " + d);
                 }
-                d = S.Decimal.Truncate(dtab[i,0]);
+                d = Decimal.Truncate(dtab[i,0]);
                 if (d != dtab[i,2]) 
                 {
                     Fail("Truncate: Truncate(" + dtab[i,0] + ") != " + d);
@@ -861,7 +860,7 @@ namespace MonoTests.System {
             
             for (int i = 0; i < dtab.GetLength(0); i++)
             {
-                d = S.Decimal.Round(dtab[i,0], (int)dtab[i,1]);
+                d = Decimal.Round(dtab[i,0], (int)dtab[i,1]);
                 if (d != dtab[i,2]) 
                 {
                     Fail("Round: Round(" + dtab[i,0] + "," + (int)dtab[i,1] + ") != " + d);

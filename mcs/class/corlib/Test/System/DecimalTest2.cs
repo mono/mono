@@ -7,7 +7,6 @@
 
 using NUnit.Framework;
 using System;
-using S = System;  // used for implementation switching
 using System.Globalization;
 using System.Runtime.CompilerServices;
 
@@ -94,14 +93,14 @@ namespace MonoTests.System
 
             for (int i = 0; i < size; i++) 
             {
-                S.Decimal d1 = data[i];
+                Decimal d1 = data[i];
                 for (int j = 0; j < size; j++) 
                 {
                     Assert(cmpTable[i,j] == -cmpTable[j,i]);
                     int x = cmpTable[i,j];
-                    S.Decimal d2 = data[j];
+                    Decimal d2 = data[j];
 
-                    int y = S.Decimal.Compare(d1, d2);
+                    int y = Decimal.Compare(d1, d2);
                     if (y < 0) y = -1;
                     else if (y > 0) y = 1;
                     Assert(x == y);
@@ -135,7 +134,7 @@ namespace MonoTests.System
                     if (x != 0) b = !b;
                     Assert(b);
 
-                    b = S.Decimal.Equals(d1, d2);
+                    b = Decimal.Equals(d1, d2);
                     if (x != 0) b = !b;
                     Assert(b);
                 }
@@ -144,15 +143,15 @@ namespace MonoTests.System
 
         public void TestRemainder()
         {
-            Assert((decimal)S.Decimal.Remainder(3.6m, 1.3m) == 1.0m);
-            Assert((decimal)S.Decimal.Remainder(79228162514264337593543950335m , 
+            Assert((decimal)Decimal.Remainder(3.6m, 1.3m) == 1.0m);
+            Assert((decimal)Decimal.Remainder(79228162514264337593543950335m , 
                 27703302467091960609331879.53200m) == 24420760848422211464106753m);
 
-            Assert((decimal)S.Decimal.Remainder(45937986975432m, 43987453m)
+            Assert((decimal)Decimal.Remainder(45937986975432m, 43987453m)
                 == 42334506m);
-            Assert((decimal)S.Decimal.Remainder(45937986975000m, 5000m)
+            Assert((decimal)Decimal.Remainder(45937986975000m, 5000m)
                 == 0m);
-            Assert((decimal)S.Decimal.Remainder(-54789548973.6234m, 1.3356m) 
+            Assert((decimal)Decimal.Remainder(-54789548973.6234m, 1.3356m) 
                 == -0.1074m);
         }
 
@@ -175,7 +174,7 @@ namespace MonoTests.System
                     TestResult tr = trs[n];
                     try
                     {
-                        d3 = S.Decimal.Add(d1, d2);
+                        d3 = Decimal.Add(d1, d2);
                         if (d3 != tr.val) 
                         {
                             if (tr.info == TestResultInfo.Overflow)
@@ -191,7 +190,7 @@ namespace MonoTests.System
                         }
                         else if (tr.info == TestResultInfo.Ok)
                         {
-                            d4 = S.Decimal.Subtract(d3, d2);
+                            d4 = Decimal.Subtract(d3, d2);
                             if (d4 != d1)
                             {
                                 ReportOpError("Subtract: result mismatch", i, j, d3, d2, d4, d1);
@@ -235,7 +234,7 @@ namespace MonoTests.System
                     TestResult tr = trs[n];
                     try
                     {
-                        d3 = S.Decimal.Multiply(d1, d2);
+                        d3 = Decimal.Multiply(d1, d2);
                         if (d3 != tr.val) 
                         {
                             if (tr.info == TestResultInfo.Overflow)
@@ -263,7 +262,7 @@ namespace MonoTests.System
                     {
                         try 
                         {
-                            d4 = S.Decimal.Divide(d3, d2);
+                            d4 = Decimal.Divide(d3, d2);
                             if (d4 != d1 && tr.info != TestResultInfo.ReverseRound)
                             {
                                 ReportOpError("MultDiv: result mismatch", i, j, d3, d2, d4, d1);
@@ -309,7 +308,7 @@ namespace MonoTests.System
                     TestResult tr = trs[n];
                     try
                     {
-                        d3 = S.Decimal.Divide(d1, d2);
+                        d3 = Decimal.Divide(d1, d2);
                         if (d3 != tr.val) 
                         {
                             if (tr.info == TestResultInfo.Overflow)
@@ -350,7 +349,7 @@ namespace MonoTests.System
                     {
                         try
                         {
-                            d4 = S.Decimal.Multiply(d3, d2);
+                            d4 = Decimal.Multiply(d3, d2);
                             if (d4 != d1 && tr.info != TestResultInfo.ReverseRound)
                             {
                                 ReportOpError("DivMult: result mismatch", i, j, d3, d2, d4, d1);
