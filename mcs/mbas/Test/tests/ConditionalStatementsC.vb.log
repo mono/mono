@@ -1,9 +1,0 @@
-
-MONO_PATH="../../../class/lib/default:$MONO_PATH" mono  ../../../mbas/mbas.exe   -d:NET_1_1 -d:ONLY_1_1 -debug /libpath:../../../class/lib/default /imports:System   ConditionalStatementsC.vb
-MonoBASIC Compiler  0.95.0.0 - (c)2002, 2003, 2004, 2005 Rafael Teixeira
---------
-THIS IS AN ALPHA SOFTWARE.
---------
-syntax error, got token `OP_GE'
-ConditionalStatementsC.vb(26,28) error BC29999: Parsing error
-Compilation failed: 1 Error(s), 0 warnings
