@@ -1,3 +1,9 @@
+2004-01-21  Duncan Mak  <duncan@ximian.com>
+
+	* gdipFunctions.cs (GdipGetPathTypes, GdipGetPathPoints): Add
+	OutAttribute to the array argument. This fixes the PathPoints
+	property in System.Drawing.Drawing2D.GraphicsPath.
+
 2004-01-20  Ravindra  <rkumar@novell.com>
 
 	* Pen.cs: Fixed bug #52811 in Pen.Transform property. Setting

@@ -319,11 +319,11 @@ namespace System.Drawing {
                 [DllImport ("gdiplus.dll")]                
                 internal static extern Status GdipGetPointCount (IntPtr path, out int count);
                 [DllImport ("gdiplus.dll")]                
-                internal static extern Status GdipGetPathTypes (IntPtr path, byte [] types, int count);
+                internal static extern Status GdipGetPathTypes (IntPtr path, [Out] byte [] types, int count);
                 [DllImport ("gdiplus.dll")]                
-                internal static extern Status GdipGetPathPoints (IntPtr path, PointF [] points, int count);
+                internal static extern Status GdipGetPathPoints (IntPtr path, [Out] PointF [] points, int count);
                 [DllImport ("gdiplus.dll")]                
-                internal static extern Status GdipGetPathPointsI (IntPtr path, Point [] points, int count);
+                internal static extern Status GdipGetPathPointsI (IntPtr path, [Out] Point [] points, int count);
                 [DllImport ("gdiplus.dll")]                                
                 internal static extern Status GdipGetPathFillMode (IntPtr path, out FillMode fillMode);
                 [DllImport ("gdiplus.dll")]                                                

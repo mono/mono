@@ -3,7 +3,7 @@
 //
 // Authors:
 //
-//   Miguel de Icaza (miguel@ximian.com)v
+//   Miguel de Icaza (miguel@ximian.com)
 //   Duncan Mak (duncan@ximian.com)
 //
 // (C) 2004 Novell, Inc
@@ -15,7 +15,6 @@ using System.Runtime.InteropServices;
 
 namespace System.Drawing.Drawing2D
 {
-
         public sealed class GraphicsPath : MarshalByRefObject, ICloneable, IDisposable {
 
                 internal IntPtr nativePath;

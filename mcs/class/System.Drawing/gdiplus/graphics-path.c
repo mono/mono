@@ -759,5 +759,3 @@ GdipIsOutlineVisiblePathPointI (GpPath *path, int x, int y, GpGraphics *graphics
 {
         return NotImplemented;
 }
-
-
