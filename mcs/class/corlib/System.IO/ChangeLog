@@ -1,3 +1,9 @@
+2004-05-26  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* FileInfo.cs,
+	  DirectoryInfo.cs : ToString() should return constructor arg as is.
+	  This fixes bug #58804.
+
 2004-05-25  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Directory.cs: ERROR_FILE_NOT_FOUND in FindFirstFile means there are
