@@ -1,3 +1,7 @@
+2004-07-09  Ben Maurer  <bmaurer@ximian.com>
+	
+	* interp.c: register gc roots
+
 2004-07-08  Zoltan Varga  <vargaz@freemail.hu>
 
 	* interp.c mintops.def transform.c: Replace CEE_MONO_PROC<x> with
