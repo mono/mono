@@ -31,19 +31,19 @@ namespace System.Runtime.Remoting.Channels.Http
 
 		public HttpChannel()
 		{
-			SetupChannel(null,null,null);
+			SetupChannel (new Hashtable(), null, null);
 		}
 
-		public HttpChannel(int port)
+		public HttpChannel (int port)
 		{
 			Hashtable prop = new Hashtable();
 			prop["port"] = port;
 			SetupChannel(prop,null,null);
 		}
 
-		public HttpChannel(IDictionary Properties,IClientChannelSinkProvider clientSinkProvider,IServerChannelSinkProvider serverSinkProvider)
+		public HttpChannel (IDictionary Properties,IClientChannelSinkProvider clientSinkProvider,IServerChannelSinkProvider serverSinkProvider)
 		{
-			SetupChannel(Properties,clientSinkProvider,serverSinkProvider);
+			SetupChannel (Properties,clientSinkProvider,serverSinkProvider);
 		}
 
 		private void SetupChannel (IDictionary properties, IClientChannelSinkProvider clientSinkProvider, IServerChannelSinkProvider serverSinkProvider)

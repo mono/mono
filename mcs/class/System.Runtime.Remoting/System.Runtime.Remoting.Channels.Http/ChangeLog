@@ -1,5 +1,10 @@
 2003-11-13  Lluis Sanchez Gual <lluis@ximian.com>
 
+	* HttpChannel.cs: Create empty property dictionary in the default
+	  constructor.
+
+2003-11-13  Lluis Sanchez Gual <lluis@ximian.com>
+
 	* HttpChannel.cs: Moved initialization code in SetupChannel to the
 	  respective client and server channels. Added implementatoin of the
 	  interface IChannelReceiverHook.
