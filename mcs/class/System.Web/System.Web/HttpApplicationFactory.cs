@@ -222,7 +222,6 @@ namespace System.Web {
 		{
 			Hashtable possibleEvents = GetApplicationTypeEvents (app);
 			foreach (string key in possibleEvents.Keys) {
-				Console.WriteLine ("Tengo: {0}", key);
 				int pos = key.IndexOf ('_');
 				if (pos == -1 || key.Length <= pos + 1)
 					continue;
@@ -249,7 +248,6 @@ namespace System.Web {
 				if (methodData == null)
 					continue;
 
-				Console.WriteLine ("Attaching: {0} {1}", key, moduleName + ":" + eventName);
 				if (methodData is MethodInfo) {
 					MethodInfo method = (MethodInfo) methodData;
 					evt.AddEventHandler (target, Delegate.CreateDelegate (typeof (EventHandler), method));
