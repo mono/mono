@@ -3882,7 +3882,7 @@ namespace Mono.CSharp {
 					//
 					// Push the instance expression
 					//
-					if (instance_expr.Type.IsSubclassOf (TypeManager.value_type)){
+					if (instance_expr.Type.IsValueType){
 						//
 						// Special case: calls to a function declared in a 
 						// reference-type with a value-type argument need
@@ -4046,7 +4046,7 @@ namespace Mono.CSharp {
 			}
 			
 			bool is_struct = false;
-			is_struct = type.IsSubclassOf (TypeManager.value_type);
+			is_struct = type.IsValueType;
 			eclass = ExprClass.Value;
 
 			//
@@ -4121,7 +4121,7 @@ namespace Mono.CSharp {
 		//
 		bool DoEmit (EmitContext ec, bool need_value_on_stack)
 		{
-			bool is_value_type = type.IsSubclassOf (TypeManager.value_type);
+			bool is_value_type = type.IsValueType;
 			ILGenerator ig = ec.ig;
 
 			if (is_value_type){

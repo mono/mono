@@ -223,7 +223,7 @@ namespace Mono.CSharp {
 				}
 			}
 			
-			if (source is New && target_type.IsSubclassOf (TypeManager.value_type)){
+			if (source is New && target_type.IsValueType){
 				New n = (New) source;
 
 				n.ValueTypeVariable = target;
