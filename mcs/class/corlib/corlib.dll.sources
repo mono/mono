@@ -845,8 +845,10 @@ System.Security.Policy/Publisher.cs
 System.Security.Policy/Site.cs
 System.Security.Policy/PublisherMembershipCondition.cs
 System.Security.Policy/StrongName.cs
+System.Security.Policy/StrongNameMembershipCondition.cs
 System.Security.Policy/UnionCodeGroup.cs
 System.Security.Policy/Url.cs
+System.Security.Policy/UrlMembershipCondition.cs
 System.Security.Policy/Zone.cs 
 System.Security.Principal/GenericIdentity.cs
 System.Security.Principal/GenericPrincipal.cs

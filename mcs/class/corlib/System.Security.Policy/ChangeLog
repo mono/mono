@@ -1,3 +1,14 @@
+2003-08-03  Duncan Mak  <duncan@ximian.com>
+
+	* StrongNameMembershipCondition.cs:
+	* UrlMembershipCondition.cs: Implemented.
+
+2003-08-01  Duncan Mak  <duncan@ximian.com>
+
+	* PolicyStatement.cs (Copy): Added.
+
+	* PolicyLevel.cs: Implemented missing methods.
+
 2003-07-31  Duncan Mak  <duncan@ximian.com>
 
 	* Site.cs (IsValidSite): new method for checking the validing of
