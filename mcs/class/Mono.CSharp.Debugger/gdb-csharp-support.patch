@@ -1,0 +1,103 @@
+Index: gdb/Makefile.in
+===================================================================
+RCS file: /cvs/src/src/gdb/Makefile.in,v
+retrieving revision 1.179
+diff -u -u -p -r1.179 Makefile.in
+--- gdb/Makefile.in	25 Apr 2002 20:34:54 -0000	1.179
++++ gdb/Makefile.in	26 Apr 2002 17:32:06 -0000
+@@ -555,7 +555,8 @@ SFILES = ax-general.c ax-gdb.c bcache.c 
+ 	ui-file.h ui-file.c \
+ 	frame.c doublest.c \
+ 	builtin-regs.c std-regs.c \
+-	gnu-v2-abi.c gnu-v3-abi.c hpacc-abi.c cp-abi.c
++	gnu-v2-abi.c gnu-v3-abi.c hpacc-abi.c cp-abi.c \
++	csharp-lang.c csharp-mono-lang.c
+ 
+ LINTFILES = $(SFILES) $(YYFILES) $(CONFIG_SRCS) init.c
+ 
+@@ -679,7 +680,8 @@ HFILES_NO_SRCDIR = bcache.h buildsym.h c
+ 	vx-share/dbgRpcLib.h vx-share/ptrace.h vx-share/vxTypes.h \
+ 	vx-share/vxWorks.h vx-share/wait.h vx-share/xdr_ld.h \
+ 	vx-share/xdr_ptrace.h vx-share/xdr_rdb.h gdbthread.h \
+-	dcache.h remote-utils.h top.h somsolib.h
++	dcache.h remote-utils.h top.h somsolib.h \
++	csharp-lang.h
+ 
+ # Header files that already have srcdir in them, or which are in objdir.
+ 
+@@ -732,7 +734,8 @@ COMMON_OBS = version.o blockframe.o brea
+ 	nlmread.o serial.o mdebugread.o os9kread.o top.o utils.o \
+ 	ui-file.o \
+ 	frame.o doublest.o \
+-	gnu-v2-abi.o gnu-v3-abi.o hpacc-abi.o cp-abi.o
++	gnu-v2-abi.o gnu-v3-abi.o hpacc-abi.o cp-abi.o \
++	csharp-lang.o csharp-mono-lang.o
+ 
+ OBS = $(COMMON_OBS) $(ANNOTATE_OBS)
+ 
+Index: gdb/defs.h
+===================================================================
+RCS file: /cvs/src/src/gdb/defs.h,v
+retrieving revision 1.88
+diff -u -u -p -r1.88 defs.h
+--- gdb/defs.h	18 Apr 2002 18:08:59 -0000	1.88
++++ gdb/defs.h	26 Apr 2002 17:32:08 -0000
+@@ -212,7 +212,8 @@ enum language
+     language_m2,		/* Modula-2 */
+     language_asm,		/* Assembly language */
+     language_scm,    		/* Scheme / Guile */
+-    language_pascal		/* Pascal */
++    language_pascal,		/* Pascal */
++    language_csharp_mono	/* C# using Mono */
+   };
+ 
+ enum precision_type
+Index: gdb/dwarf2read.c
+===================================================================
+RCS file: /cvs/src/src/gdb/dwarf2read.c,v
+retrieving revision 1.52
+diff -u -u -p -r1.52 dwarf2read.c
+--- gdb/dwarf2read.c	4 Apr 2002 22:26:43 -0000	1.52
++++ gdb/dwarf2read.c	26 Apr 2002 17:32:14 -0000
+@@ -3886,6 +3886,9 @@ set_cu_language (unsigned int lang)
+     case DW_LANG_Java:
+       cu_language = language_java;
+       break;
++    case DW_LANG_CSharp_Mono:
++      cu_language = language_csharp_mono;
++      break;
+     case DW_LANG_Ada83:
+     case DW_LANG_Cobol74:
+     case DW_LANG_Cobol85:
+Index: gdb/language.c
+===================================================================
+RCS file: /cvs/src/src/gdb/language.c,v
+retrieving revision 1.23
+diff -u -u -p -r1.23 language.c
+--- gdb/language.c	28 Mar 2002 01:35:55 -0000	1.23
++++ gdb/language.c	26 Apr 2002 17:32:15 -0000
+@@ -865,6 +865,7 @@ character_type (struct type *type)
+     case language_chill:
+     case language_m2:
+     case language_pascal:
++    case language_csharp_mono:
+       return TYPE_CODE (type) != TYPE_CODE_CHAR ? 0 : 1;
+ 
+     case language_c:
+Index: include/elf/dwarf2.h
+===================================================================
+RCS file: /cvs/src/src/include/elf/dwarf2.h,v
+retrieving revision 1.9
+diff -u -u -p -r1.9 dwarf2.h
+--- include/elf/dwarf2.h	25 Apr 2002 12:46:16 -0000	1.9
++++ include/elf/dwarf2.h	26 Apr 2002 17:32:19 -0000
+@@ -676,7 +676,8 @@ enum dwarf_source_language
+     DW_LANG_Ada95 = 0x000d,
+     DW_LANG_Fortran95 = 0x000e,
+     /* MIPS.  */
+-    DW_LANG_Mips_Assembler = 0x8001
++    DW_LANG_Mips_Assembler = 0x8001,
++    DW_LANG_CSharp_Mono = 0x9001
+   };
+ 
+ 

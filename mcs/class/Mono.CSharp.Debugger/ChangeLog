@@ -1,5 +1,13 @@
 2002-04-26  Martin Baulig  <martin@gnome.org>
 
+	* gdb-csharp-support.patch: A patch for GDB (against the latest CVS version)
+	to implement C# support.
+
+	* csharp-lang.c, csharp-lang.h, csharp-mono-lang.c: Copy these into your GDB
+	source directory after applying the patch.
+
+2002-04-26  Martin Baulig  <martin@gnome.org>
+
 	* MonoDwarfFileWriter.cs (DieInternalString): Removed.
 
 2002-04-25  Martin Baulig  <martin@gnome.org>
