@@ -447,6 +447,42 @@ class X {
 				return 2;
 		}
 	}
+
+	public enum TestEnum : long {
+		a, b, c
+	}
+
+	public static int testSwitchEnumLong (TestEnum c)
+	{
+		
+		switch (c) {
+		case TestEnum.a:
+			return 10;
+			
+		case TestEnum.b:
+			return 20;
+
+		case TestEnum.c:
+			return 30;
+
+		default:
+			return 40;
+		}
+		
+	}
+
+	static int test_long_enum_switch ()
+	{
+		if (testSwitchEnumLong (TestEnum.a) != 10)
+			return 1;
+		if (testSwitchEnumLong (TestEnum.b) != 20)
+			return 2;
+		if (testSwitchEnumLong (TestEnum.c) != 30)
+			return 3;
+		if (testSwitchEnumLong ((TestEnum)5) != 40)
+			return 4;
+		return 0;
+	}
 	
 	static int Main ()
 	{
@@ -554,6 +590,9 @@ class X {
 		if (test_casts (0) != 1)
 			return 41;
  
+		if (test_long_enum_switch () != 0)
+			return 42;
+		
 		Console.WriteLine ("All tests pass");
 		return 0;
 	}
