@@ -1,7 +1,3 @@
-2002-08-24  Gonzalo Paniagua Javier <gonzalo@ximian.com>
-
-	* icall.c: added ves_icall_StringBuilder_CopyChars.
-
 2002-08-24  Martin Baulig  <martin@gnome.org>
 
 	* debug-mono-symfile.[ch]: New files.  Similar to debug-symfile.[ch]
