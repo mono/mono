@@ -13,6 +13,7 @@ namespace System.Drawing.Drawing2D
 	/// <summary>
 	/// Summary description for DashStyle.
 	/// </summary>
+	[Serializable]
 	public enum DashStyle {
 		Custom = 5,
 		Dash = 1,

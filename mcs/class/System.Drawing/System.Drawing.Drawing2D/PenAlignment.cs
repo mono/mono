@@ -11,6 +11,7 @@ using System;
 
 namespace System.Drawing.Drawing2D {
 
+	[Serializable]
 	public enum PenAlignment {
 		Center = 0,
 		Inset = 1,

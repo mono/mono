@@ -13,6 +13,7 @@ namespace System.Drawing.Drawing2D {
 	/// <summary>
 	/// Summary description for SmoothingMode.
 	/// </summary>
+	[Serializable]
 	public enum SmoothingMode {
 		AntiAlias = 4,
 		Default = 0,

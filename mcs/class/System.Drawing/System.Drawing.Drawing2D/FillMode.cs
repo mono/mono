@@ -14,6 +14,7 @@ namespace System.Drawing.Drawing2D {
 	/// <summary>
 	/// Summary description for FillMode.
 	/// </summary>
+	[Serializable]
 	public enum FillMode {
 		Alternate = 0,
 		Winding = 1

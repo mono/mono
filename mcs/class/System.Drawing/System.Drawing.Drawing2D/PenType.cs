@@ -12,6 +12,7 @@ namespace System.Drawing.Drawing2D
 	/// <summary>
 	/// Summary description for PenType.
 	/// </summary>
+	[Serializable]
 	public enum PenType {
 		HatchFill = 1,
 		LinearGradient = 4,

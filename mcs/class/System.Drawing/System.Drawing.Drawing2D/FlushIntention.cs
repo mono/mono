@@ -13,6 +13,7 @@ namespace System.Drawing.Drawing2D {
 	/// <summary>
 	/// Summary description for FlushIntention.
 	/// </summary>
+	[Serializable]
 	public enum FlushIntention {
 		Flush = 0,
 		Sync = 1

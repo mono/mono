@@ -13,6 +13,7 @@ namespace System.Drawing.Drawing2D {
 	/// <summary>
 	/// Summary description for CompostingMode.
 	/// </summary>
+	[Serializable]
 	public enum CompositingMode {
 		SourceCopy = 1,
 		SourceOver = 0

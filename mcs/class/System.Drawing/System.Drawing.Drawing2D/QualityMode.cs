@@ -13,6 +13,7 @@ namespace System.Drawing.Drawing2D {
 	/// <summary>
 	/// Summary description for QualityMode.
 	/// </summary>
+	[Serializable]
 	public enum QualityMode {
 		Default = 0,
 		High = 2,

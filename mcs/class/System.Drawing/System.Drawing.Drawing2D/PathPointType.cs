@@ -13,6 +13,7 @@ namespace System.Drawing.Drawing2D {
 	/// <summary>
 	/// Summary description for PathPointType.
 	/// </summary>
+	[Serializable]
 	public enum PathPointType {
 		Bezier = 3,
 		Bezier3 = 3,

@@ -13,6 +13,7 @@ namespace System.Drawing.Drawing2D {
 	/// <summary>
 	/// Summary description for CoordinateSpace.
 	/// </summary>
+	[Serializable]
 	public enum CoordinateSpace {
 		Device = 2,
 		Page = 1,

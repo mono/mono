@@ -13,6 +13,7 @@ namespace System.Drawing.Drawing2D {
 	/// <summary>
 	/// Summary description for DashCap.
 	/// </summary>
+	[Serializable]
 	public enum DashCap {
 		Flat,
 		Round,

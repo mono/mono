@@ -13,6 +13,7 @@ namespace System.Drawing.Drawing2D {
 	/// <summary>
 	/// Summary description for MatrixOrder.
 	/// </summary>
+	[Serializable]
 	public enum MatrixOrder {
 		Append = 1,
 		Prepend = 0

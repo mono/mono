@@ -1,3 +1,11 @@
+2004-01-10  Ravindra  <rkumar@novell.com>
+
+	* All Enums: Made serializable.
+
+	* GraphicsPathIterator.cs: Implements IDisposable.
+
+	* GraphicsState.cs: Inherits MarshalByRefObject.
+
 2003-12-25  Duncan Mak  <duncan@ximian.com>
 
 	* Matrix.cs (ToString): Cache the elements inside a local variable

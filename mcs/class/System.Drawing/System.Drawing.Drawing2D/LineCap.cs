@@ -13,6 +13,7 @@ namespace System.Drawing.Drawing2D {
 	/// <summary>
 	/// Summary description for LineCap.
 	/// </summary>
+	[Serializable]
 	public enum LineCap {
 		AnchorMask = 240,
 		ArrowAnchor = 20,

@@ -13,6 +13,7 @@ namespace System.Drawing.Drawing2D {
 	/// <summary>
 	/// Summary description for CompostingQuality.
 	/// </summary>
+	[Serializable]
 	public enum CompositingQuality {
 		AssumeLinear = 4,
 		Default = 0,

@@ -13,6 +13,7 @@ namespace System.Drawing.Drawing2D {
 	/// <summary>
 	/// Summary description for InterpolationMode.
 	/// </summary>
+	[Serializable]
 	public enum InterpolationMode {
 		Bicubic = 4,
 		Bilinear = 3,

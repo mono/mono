@@ -14,6 +14,7 @@ namespace System.Drawing.Drawing2D {
 	/// <summary>
 	/// Summary description for HatchStyle.
 	/// </summary>
+	[Serializable]
 	public enum HatchStyle {
 		BackwardDiagonal = 3,
 		Cross = 4,

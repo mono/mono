@@ -13,6 +13,7 @@ namespace System.Drawing.Drawing2D {
 	/// <summary>
 	/// Summary description for LineJoin.
 	/// </summary>
+	[Serializable]
 	public enum LineJoin {
 		Bevel = 1,
 		Miter = 0,

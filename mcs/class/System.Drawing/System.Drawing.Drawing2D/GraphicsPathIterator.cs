@@ -14,7 +14,7 @@ namespace System.Drawing.Drawing2D {
 	/// </summary>
 	/// 
 
-	public sealed class GraphicsPathIterator : MarshalByRefObject {
+	public sealed class GraphicsPathIterator : MarshalByRefObject, IDisposable {
 
 		GraphicsPath path;
 		

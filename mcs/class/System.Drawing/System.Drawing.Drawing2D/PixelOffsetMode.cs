@@ -13,6 +13,7 @@ namespace System.Drawing.Drawing2D {
 	/// <summary>
 	/// Summary description for PixelOffsetMode.
 	/// </summary>
+	[Serializable]
 	public enum PixelOffsetMode {
 		Default = 0,
 		Half = 4,

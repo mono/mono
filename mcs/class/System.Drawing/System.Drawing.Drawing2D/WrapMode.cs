@@ -13,6 +13,7 @@ namespace System.Drawing.Drawing2D {
 	/// <summary>
 	/// Summary description for WrapMode.
 	/// </summary>
+	[Serializable]
 	public enum WrapMode {
 		Clamp,
 		Tile,
