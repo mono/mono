@@ -75,7 +75,7 @@ namespace Mono.CSharp {
 				CSharpParser.error (1529, "A using clause must precede all other namespace elements");
 				return;
 			}
-			
+
 			if (using_clauses == null)
 				using_clauses = new ArrayList ();
 
@@ -88,13 +88,22 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public void UsingAlias (string alias, string namespace_or_type) {
+		public void UsingAlias (string alias, string namespace_or_type, Location loc)
+		{
 			if (aliases == null)
 				aliases = new Hashtable ();
+			
+			if (aliases.Contains (alias)){
+				Report.Error (1537, loc, "The using alias `" + alias +
+					      "' appeared previously in this namespace");
+				return;
+			}
+					
 			aliases [alias] = namespace_or_type;
 		}
 
-		public string LookupAlias (string alias) {
+		public string LookupAlias (string alias)
+		{
 			string value = null;
 
 			// System.Console.WriteLine ("Lookup " + alias + " in " + name);

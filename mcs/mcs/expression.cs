@@ -2544,9 +2544,20 @@ namespace Mono.CSharp {
 				return expr != null;
 
 			if (expr.eclass != ExprClass.Variable){
-				Report.Error (206, loc,
-					      "A property or indexer can not be passed as an out or ref " +
-					      "parameter");
+				//
+				// We just probe to match the CSC output
+				//
+				if (expr.eclass == ExprClass.PropertyAccess ||
+				    expr.eclass == ExprClass.IndexerAccess){
+					Report.Error (
+						206, loc,
+						"A property or indexer can not be passed as an out or ref " +
+						"parameter");
+				} else {
+					Report.Error (
+						1510, loc,
+						"An lvalue is required as an argument to out or ref");
+				}
 				return false;
 			}
 				
@@ -5247,6 +5258,12 @@ namespace Mono.CSharp {
 			Type current_type = ec.TypeContainer.TypeBuilder;
 			Type base_type = current_type.BaseType;
 			Expression e;
+
+			if (ec.IsStatic){
+				Report.Error (1511, loc,
+					      "Keyword base is not allowed in static method");
+				return null;
+			}
 			
 			member_lookup = MemberLookup (ec, base_type, member, loc);
 			if (member_lookup == null)
@@ -5294,6 +5311,12 @@ namespace Mono.CSharp {
 			Type base_type = current_type.BaseType;
 			Expression member_lookup;
 
+			if (ec.IsStatic){
+				Report.Error (1511, loc,
+					      "Keyword base is not allowed in static method");
+				return null;
+			}
+			
 			member_lookup = MemberLookup (ec, base_type, "get_Item", loc);
 			if (member_lookup == null)
 				return null;

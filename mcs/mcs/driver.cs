@@ -15,6 +15,7 @@ namespace Mono.CSharp
 	using System.Reflection.Emit;
 	using System.Collections;
 	using System.IO;
+	using System.Globalization;
 	using Mono.Languages;
 
 	enum Target {
@@ -51,6 +52,9 @@ namespace Mono.CSharp
 		static bool parse_only = false;
 		static bool timestamps = false;
 
+		static Hashtable response_file_list;
+		static Hashtable source_files = new Hashtable ();
+		
 		//
 		// An array of the defines from the command line
 		//
@@ -304,7 +308,19 @@ namespace Mono.CSharp
 				if (arg.StartsWith ("@")){
 					string [] new_args, extra_args;
 					string response_file = arg.Substring (1);
+
+					if (response_file_list == null)
+						response_file_list = new Hashtable ();
 					
+					if (response_file_list.Contains (response_file)){
+						Report.Error (
+							1515, "Response file `" + response_file +
+							"' specified multiple times");
+						Environment.Exit (1);
+					}
+					
+					response_file_list.Add (response_file, response_file);
+						    
 					extra_args = LoadArgs (response_file);
 					if (extra_args == null){
 						Report.Error (2011, "Unable to open response file: " +
@@ -361,7 +377,8 @@ namespace Mono.CSharp
 					case "--probe": {
 						int code, line;
 						
-						code = Int32.Parse (args [++i], 0);
+						code = Int32.Parse (
+							args [++i], NumberStyles.AllowLeadingSign);
 						line = Int32.Parse (args [++i], 0);
 						Report.SetProbe (code, line);
 						continue;
@@ -507,6 +524,15 @@ namespace Mono.CSharp
 						errors++;
 						continue;
 					}
+
+					if (source_files.Contains (f)){
+						Report.Error (
+							1516,
+							"Source file `" + f + "' specified multiple times");
+						Environment.Exit (1);
+					} else
+						source_files.Add (f, f);
+					
 					if (tokenize)
 						tokenize_file (f);
 					else {

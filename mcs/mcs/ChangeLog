@@ -1,3 +1,29 @@
+2002-01-16  Miguel de Icaza  <miguel@ximian.com>
+
+	* driver.cs: Allow negative numbers as an error code to flag.
+
+	* cs-parser.jay: Handle 1551.
+
+	* namespace.cs: Add 1537 checking (repeated using alias namespaces).
+
+2002-01-15  Miguel de Icaza  <miguel@ximian.com>
+
+	* cs-parser.jay: Report 1518 (type declaration can only contain
+	class, struct, interface, enum or delegate)
+
+	(switch_label): Report 1523 (keywords `case' or `default' must
+	preced code)
+
+	(opt_switch_sections): Report 1522 (empty switch)
+
+	* driver.cs: Report 1515 (response file specified multiple times)
+	Report 1516 (Source file specified multiple times).
+
+	* expression.cs (Argument.Resolve): Signal 1510
+
+	(BaseAccess.Resolve, BaseIndexer.Resolve): Signal 1511 (base
+	access not allowed in static code)
+
 2002-01-11  Ravi Pratap  <ravi@ximian.com>
 
 	* typemanager.cs (IsPointerType): Utility method which we are going

@@ -278,7 +278,7 @@ using_alias_directive
 	: USING IDENTIFIER ASSIGN 
 	  namespace_or_type_name SEMICOLON
 	  {
-		  current_namespace.UsingAlias ((string) $2, (string) $4);
+		  current_namespace.UsingAlias ((string) $2, (string) $4, lexer.Location);
 	  }
 	;
 
@@ -367,8 +367,10 @@ namespace_member_declaration
 			break;
 
 		if ((mod_flags & (Modifiers.PRIVATE|Modifiers.PROTECTED)) != 0){
-			error (1527, "Namespace elements cant be explicitly " +
-			             "declared private or protected in `" + name + "'");
+			Report.Error (
+				1527, lexer.Location, 
+				"Namespace elements cant be explicitly " +
+			        "declared private or protected in `" + name + "'");
 		}
 	  }
 	| namespace_declaration
@@ -379,7 +381,13 @@ type_declaration
 	| struct_declaration		
 	| interface_declaration		
 	| enum_declaration		
-	| delegate_declaration	       
+	| delegate_declaration
+//
+// Enable this when we have handled all errors, because this acts as a generic fallback
+//
+//	| error {
+//		Report.Error (1518, lexer.Location, "Expected class, struct, interface, enum or delegate");
+//	  }
 	;
 
 //
@@ -1535,13 +1543,24 @@ indexer_declaration
 	;
 
 indexer_declarator
-	: type THIS OPEN_BRACKET formal_parameter_list CLOSE_BRACKET
+	: type THIS OPEN_BRACKET opt_formal_parameter_list CLOSE_BRACKET
 	  {
-		$$ = new IndexerDeclaration ((string) $1, null, (Parameters) $4);
+		Parameters pars = (Parameters) $4;
+
+		if (pars.FixedParameters == null){
+			Report.Error (1551, lexer.Location, "Indexers must have at least one parameter");
+		}
+
+		$$ = new IndexerDeclaration ((string) $1, null, pars);
 	  }
-	| type qualified_identifier DOT THIS OPEN_BRACKET formal_parameter_list CLOSE_BRACKET
+	| type qualified_identifier DOT THIS OPEN_BRACKET opt_formal_parameter_list CLOSE_BRACKET
 	  {
-		$$ = new IndexerDeclaration ((string) $1, (string) $2, (Parameters) $6);
+		Parameters pars = (Parameters) $6;
+
+		if (pars.FixedParameters == null){
+			Report.Error (1551, lexer.Location, "Indexers must have at least one parameter");
+		}
+		$$ = new IndexerDeclaration ((string) $1, (string) $2, pars);
 	  }
 	;
 
@@ -2003,6 +2022,10 @@ array_creation_expression
 	| NEW type rank_specifiers array_initializer
 	  {
 		$$ = new ArrayCreation ((string) $2, (string) $3, (ArrayList) $4, lexer.Location);
+	  }
+	| NEW type error 
+	  {
+		Report.Error (1526, lexer.Location, "new expression requires () or [] after type");
 	  }
 	;
 
@@ -2795,7 +2818,10 @@ switch_block
 	;
 
 opt_switch_sections
-	: /* empty */ 		{ $$ = new ArrayList (); }
+	: /* empty */ 		
+          {
+	  	Report.Error (1522, lexer.Location, "Empty switch block"); 
+	  }
 	| switch_sections
 	;
 
@@ -2850,6 +2876,11 @@ switch_labels
 switch_label
 	: CASE constant_expression COLON 	{ $$ = new SwitchLabel ((Expression) $2, lexer.Location); }
 	| DEFAULT COLON				{ $$ = new SwitchLabel (null, lexer.Location); }
+	| error {
+		Report.Error (
+			1523, lexer.Location, 
+			"The keyword case or default must precede code in switch block");
+	  }
 	;
 
 iteration_statement
