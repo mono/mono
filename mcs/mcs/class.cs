@@ -2424,19 +2424,17 @@ namespace Mono.CSharp {
 				}
 				ca |= MethodAttributes.HideBySig;
 
-				if ((ModFlags & Modifiers.PUBLIC) != 0)
-					ca |= MethodAttributes.Public;
-				else if ((ModFlags & Modifiers.PRIVATE) != 0)
+				if ((ModFlags & Modifiers.PRIVATE) != 0)
 					ca |= MethodAttributes.Private;
 				else if ((ModFlags & Modifiers.PROTECTED) != 0){
 					if ((ModFlags & Modifiers.INTERNAL) != 0)
 						ca |= MethodAttributes.FamORAssem;
 					else 
 						ca |= MethodAttributes.Family;
-				} else {
-					if ((ModFlags & Modifiers.INTERNAL) != 0)
-						ca |= MethodAttributes.Assembly;
-				}
+				} else if ((ModFlags & Modifiers.INTERNAL) != 0)
+					ca |= MethodAttributes.Assembly;
+				else
+					ca |= MethodAttributes.Public;
 			}
 
 			ConstructorBuilder = parent.TypeBuilder.DefineConstructor (
