@@ -418,6 +418,10 @@ This tests that conversions from Enum and ValueType to structs
 are treated as unboxing conversions, and the `unbox' opcode
 is emitted. #52569.
 
+test-224.cs:
+------------
+This tests the compilation of attributes with array parameters.
+
 verify-1.cs
 -----------
 Test whether we do not jump out of the method in a Try/Finally block.

@@ -1,3 +1,7 @@
+2004-01-03 Todd Berman  <tberman@gentoo.org>
+
+	* test-224.cs: new test for #52429
+
 2004-01-03 Ben Maurer  <bmaurer@users.sourceforge.net>
 
 	* test-205.cs: remove from the build. This does
