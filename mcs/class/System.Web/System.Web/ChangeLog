@@ -1,3 +1,7 @@
+2002/04/10  Nick Drochak <ndrochak@gol.com>
+
+	* HttpServerUtility.cs: Fix build breaker.
+
 2002-03-28  Wictor Wilén  <wictor@iBizkit.se>
 
 	* HttpServerUtils.cs : Added some more functionality
