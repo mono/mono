@@ -1,6 +1,8 @@
 2003-12-23  Tim Coleman <tim@timcoleman.com>
 	* DbConnectionString.cs:
 		Some implementation
+	* DbProviderFactory.cs:
+		Fix typo to make CLS compliant
 
 2003-12-16  Jackson Harper <jackson@ximian.com>
 

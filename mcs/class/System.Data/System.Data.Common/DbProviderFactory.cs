@@ -49,7 +49,7 @@ namespace System.Data.Common {
 		}
 
 		[MonoTODO]
-		public virtual DbCommandSet BuildCommandSet ()
+		protected virtual DbCommandSet CreateCommandSet ()
 		{
 			throw new NotImplementedException ();
 		}
