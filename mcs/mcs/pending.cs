@@ -175,7 +175,13 @@ namespace Mono.CSharp {
 				
 				int j = 0;
 				foreach (MethodInfo m in mi){
-					Type [] types = TypeManager.GetArgumentTypes (m);
+					Type [] types;
+					
+					// If there is a previous error, just ignore
+					if (m == null)
+						types = TypeManager.NoTypes;
+					else
+						types = TypeManager.GetArgumentTypes (m);
 					
 					pending_implementations [i].args [j] = types;
 					j++;
