@@ -96,6 +96,8 @@ namespace Mono.CSharp {
 			DeclSpace tdecl = o as DeclSpace;
 			if (tdecl != null) {
 				t = tdecl.DefineType ();
+				if (t == null)
+					return null;
 
 				if ((ds == null) || ds.CheckAccessLevel (t))
 					return new TypeExpression (t, loc);
