@@ -1,3 +1,23 @@
+2004-04-06  Miguel de Icaza  <miguel@ximian.com>
+
+	* tramp-ppc.c (create_trampoline_code): Added
+	JUMP_TRAMPOLINE_SIZE. 
+	(ppc_magic_trampoline): Follow the pattern from
+	x86_magic_trampoline: if code is set to zero, return. 
+	(create_trampoline_code): Always pass MonoMethod to the jump
+	trampoline, before it was passing a null.
+	(mono_arch_create_jump_trampoline): Implement the jump stub, could
+	share the code with mono_arch_create_jit_trampoline. 
+
+	* mini-ppc.c (mono_arch_output_basic_block): CEE_JMP opcode
+	implemented.
+	(mono_arch_patch_code): MONO_PATCH_INFO_METHOD_JUMP patch type
+	implemented.  
+
+	* cpu-g4.md: Added length for jmp instruction, the worst case
+	scenario is 92 bytes (4 mandatory bytes, potential 19 registers
+	for save_lmf).
+
 2004-04-08  Zoltan Varga  <vargaz@freemail.hu>
 
 	* aot.c (mono_compile_assembly): Add back unlink removed by mistake.
