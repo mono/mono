@@ -21,7 +21,7 @@ namespace MonoTests.System.Security {
 		SecurityElement elem;
 		
 		[SetUp]
-		void SetUp () 
+		public void SetUp () 
 		{
 			elem = CreateElement ();
 		}
