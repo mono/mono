@@ -1,3 +1,11 @@
+2002-01-23  Miguel de Icaza  <miguel@ximian.com>
+
+	* icall.c (ves_icall_appdomain_get_cur_domain): Cache the value of
+	the mono_class_from_name lookup.
+	(ves_icall_get_parameter_info): ditto.
+	(ves_icall_appdomain_get_assemblies, add_assembly): Implement new internal
+	method.
+	(ves_icall_System_Reflection_Assembly_get_code_base): Another new call.
 
 Tue Jan 22 22:43:47 CET 2002 Paolo Molaro <lupus@ximian.com>
 
