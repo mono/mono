@@ -1,0 +1,117 @@
+.\" 
+.\" sn manual page.
+.\" Copyright 2003 Motus Technologies
+.\" Author:
+.\"   Sebastien Pouliot (spouliot@motus.com)
+.\"
+.TH Mono "sn"
+.SH NAME
+sn \- Digitally sign/verify/compare strongname on CLR assemblies.
+.SH SYNOPSIS
+.PP
+.B sn [-q | -quiet] [options] [parameters]
+.SH DESCRIPTION
+Digitally sign, verify or compare, CLR assemblies using strongnames. 
+.SH CONFIGURATION OPTIONS
+.TP
+.I "-c provider"
+Change the default CSP (Crypto Service Provider).
+.TP
+.I "-m [y|n]"
+Use a machine [y] key container or a user [n] key container.
+.TP
+.I "-Vl"
+List the verification options.
+.TP
+.I "-Vr assembly [userlist]"
+Exempt the specified assembly from verification for the specified user list.
+.TP
+.I "-Vu assembly"
+Remove the exemption entry for the specified assembly.
+.TP
+.I "-Vx"
+Remove all exemptions entries.
+.SH CSP RELATED OPTIONS
+.TP
+.I "-d container"
+Delete the keypair present in the specified key container.
+.TP
+.I "-i keypair.snk container"
+Import the specified strongname file into the specified container.
+.TP
+.I "-pc container publickey"
+Export the public key from the specified CSP container to the specified file.
+.SH CONVERTION OPTIONS
+.TP
+.I "-e assembly output.pub"
+Export the assembly public key to the specified output file.
+.TP
+.I "-p keypair.snk output.pub"
+Export the public key from the specified strongname key file (SNK) to the 
+specified output file.
+.TP
+.I "-o input output.txt"
+Convert the input file to a CSV file (using decimal).
+.TP
+.I "-oh input output.txt"
+Convert the input file to a CSV file (using hexadecimal).
+.SH STRONGNAME SIGNING OPTIONS
+.TP
+.I "-D assembly1 assembly2"
+Compare if assembly1 and assembly are the same exception for their signature.
+This is done by comparing the hash of the metadata of both assembly.
+.TP
+.I "-k keypair.snk"
+Create a new strongname keypair in the specified file.
+.TP
+.I "-R assembly keypair.snk"
+Resign the specified assembly using the specified strongname keypair file 
+(SNK).
+.TP
+.I "-Rc assembly container"
+Resign the specified assembly using the specified strongname container.
+.TP
+.I "-t file"
+Show the public key from the specified file.
+.TP
+.I "-tp file"
+Show the public key and the public key token from the specified file.
+.TP
+.I "-T assembly"
+Show the public key from the specified assembly.
+.TP
+.I "-Tp assembly"
+Show the public key and the public key token from the specified assembly.
+.TP
+.I "-V assembly"
+Verify the specified assembly signature.
+.TP
+.I "-Vf assembly"
+Verify the specified assembly signature (even if disabled).
+.SH HELP OPTIONS
+.TP
+.I "-h", "-?"
+Display basic help about this tool.
+.TP
+.I "-h config", "-? config"
+Display configuration related help about this tool.
+.TP
+.I "-h csp", "-? csp"
+Display Cryptographic Service Provider related help about this tool.
+.TP
+.I "-h convert", "-? convert"
+Display convertion related help about this tool.
+.TP
+.I "-h sn", "-? sn"
+Display strongname related help about this tool.
+.SH AUTHOR
+Written by Sebastien Pouliot
+.SH COPYRIGHT
+Copyright (C) 2003 Motus Technologies. 
+Released under BSD license.
+.SH MAILING LISTS
+Visit http://mail.ximian.com/mailman/mono-list for details.
+.SH WEB SITE
+Visit: http://www.go-mono.com for details
+.SH SEE ALSO
+.BR secutil(1)

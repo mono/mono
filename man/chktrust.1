@@ -1,0 +1,37 @@
+.\" 
+.\" chktrust manual page.
+.\" Copyright 2003 Motus Technologies
+.\" Author:
+.\"   Sebastien Pouliot (spouliot@motus.com)
+.\"
+.TH Mono "chktrust"
+.SH NAME
+chktrust \- Check the trust of a PE executable.
+.SH SYNOPSIS
+.PP
+.B chktrust [options] filename
+.SH DESCRIPTION
+Verify if an PE executable (CLR assembly, Win32 EXE or DLL) has a valid 
+Authenticode(r) signature that can be traced back to a trusted certificate
+authority (CA).
+.SH OPTIONS
+.TP
+.I "-q", "-quiet"
+Limited display on console.
+.TP
+.I "-v", "-verbose"
+More details displayed on the console.
+.TP
+.I "-help", "-h", "-?", "/?"
+Display help about this tool.
+.SH AUTHOR
+Written by Sebastien Pouliot
+.SH COPYRIGHT
+Copyright (C) 2003 Motus Technologies. 
+Released under BSD license.
+.SH MAILING LISTS
+Visit http://mail.ximian.com/mailman/mono-list for details.
+.SH WEB SITE
+Visit: http://www.go-mono.com for details
+.SH SEE ALSO
+.BR signcode(1), makecert(1)
