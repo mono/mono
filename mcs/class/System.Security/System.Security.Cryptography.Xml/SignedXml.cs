@@ -13,6 +13,7 @@ using System.Collections;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Security.Cryptography;
+using System.Security.Policy;
 using System.Net;
 using System.Text;
 using System.Xml;
@@ -28,7 +29,13 @@ namespace System.Security.Cryptography.Xml {
 		private IEnumerator pkEnumerator;
 		private XmlElement signatureElement;
 		private Hashtable hashes;
+#if NET_1_0
 		private XmlResolver xmlResolver = new XmlUrlResolver ();
+#else
+		// FIXME: later
+		private XmlResolver xmlResolver = new XmlUrlResolver ();
+//		private XmlResolver xmlResolver = new XmlSecureResolver (new XmlUrlResolver (), new Evidence ());
+#endif
 		private ArrayList manifests;
 
 		public SignedXml () 
@@ -155,7 +162,17 @@ namespace System.Security.Cryptography.Xml {
 				// local manifest
 				if (signatureElement != null) {
 					XmlElement xel = GetIdElement (signatureElement.OwnerDocument, r.Uri.Substring (1));
+					if (xel == null)
+						throw new CryptographicException ("Manifest targeted by Reference was not found: " + r.Uri.Substring (1));
 					doc.LoadXml (xel.OuterXml);
+					// add namespace nodes
+					foreach (XmlAttribute attr in xel.SelectNodes ("namespace::*")) {
+						if (attr.LocalName == "xml")
+							continue;
+						if (attr.OwnerElement == xel)
+							continue;
+						doc.DocumentElement.SetAttributeNode (doc.ImportNode (attr, true) as XmlAttribute);
+					}
 				}
 			}
 			else if (xmlResolver != null) {
