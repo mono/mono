@@ -1,5 +1,10 @@
 2002-02-27  Martin Baulig  <martin@gnome.org>
 
+	* corlib_test.build: Don't link TheTests.cs into the dlls, renamed
+	RunTests.exe to RunTests.corlib.exe and link it against NUnitBase.dll.
+
+2002-02-27  Martin Baulig  <martin@gnome.org>
+
 	* scan-tests.pl: Moved to ../../../tools/.
 
 2002-02-26  Martin Baulig  <martin@gnome.org>
