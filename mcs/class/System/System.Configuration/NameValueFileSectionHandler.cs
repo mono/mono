@@ -31,11 +31,9 @@ namespace System.Configuration
 									"key",
 									"value");
 
-			if (file != null && file.Value == String.Empty) {
-				if (!(file is IConfigXmlNode))
-					return null;
-
-				string fileName = ((IConfigXmlNode) file).Filename;
+			if (file != null && file.Value != String.Empty) {
+				string fileName = ((IConfigXmlNode) section).Filename;
+				fileName = Path.GetFullPath (fileName);
 				string fullPath = Path.Combine (Path.GetDirectoryName (fileName), file.Value);
 				if (!File.Exists (fullPath))
 					return pairs;

@@ -1,3 +1,16 @@
+2004-04-20  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* ConfigXmlDocument.cs: fixed overloaded Load and added a new one that
+	sets the file name.
+
+	* ConfigurationSettings.cs: use the new Load in ConfigXmlDocument when
+	loading sections.
+
+	* NameValueFileSectionHandler.cs: don't fails if the path for the 'file'
+	attribute doesn't have a directory.
+
+	Closes bug #57244.
+
 2004-03-19  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* ConfigurationSettings.cs: removed FileWatcherCache. See bug #53445.

@@ -294,7 +294,7 @@ namespace System.Configuration
 			if (outerxml == null)
 				return doc;
 			
-			doc.Load (new StringReader (outerxml));
+			doc.Load (fileName, outerxml);
 			return GetInnerDoc (doc, 0, sectionPath);
 		}
                 

@@ -60,7 +60,17 @@ namespace System.Configuration
 
 		public override void Load (string filename)
 		{
-			LoadSingleElement (filename, new XmlTextReader (filename));
+			XmlTextReader rd = new XmlTextReader (filename);
+			rd.MoveToContent ();
+			LoadSingleElement (filename, rd);
+		}
+
+		public void Load (string filename, string xml)
+		{
+			fileName = filename;
+			reader = new XmlTextReader (new StringReader (xml), null);
+			Load (reader);
+			reader.Close ();
 		}
 
 		public void LoadSingleElement (string filename, XmlTextReader sourceReader)
