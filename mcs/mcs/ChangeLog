@@ -1,5 +1,10 @@
 2002-09-14  Martin Baulig  <martin@gnome.org>
 
+	* parameter.cs (Parameter.Attributes): Make this work if Modifier.ISBYREF
+	is set.
+
+2002-09-14  Martin Baulig  <martin@gnome.org>
+
 	* typemanager.cs (TypeManager.IsNestedChildOf): This must return false
 	if `type == parent' since in this case `type.IsSubclassOf (parent)' will
 	be false on the ms runtime.
