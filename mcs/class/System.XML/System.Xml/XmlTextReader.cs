@@ -54,7 +54,11 @@ namespace System.Xml
 		[MonoTODO]
 		public XmlTextReader (string url)
 		{
-			throw new NotImplementedException ();
+			XmlNameTable nt = new NameTable ();
+			XmlNamespaceManager nsMgr = new XmlNamespaceManager (nt);
+			parserContext = new XmlParserContext (null, nsMgr, null, XmlSpace.None);
+			Init ();
+			reader = new StreamReader(url);
 		}
 
 		[MonoTODO]
