@@ -1,3 +1,8 @@
+2003-06-21  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
+
+	* XslTransform.cs : Fixed Transform (string, string) not to call
+	  File.OpenWrite() that *appends* (not truncates) existing files.
+
 2003-06-01  Joshua Tauberer <tauberer@for.net>
 
 	* XslTransform.cs: Cache extension object delegates

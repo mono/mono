@@ -187,7 +187,7 @@ namespace System.Xml.Xsl
 				if (-1 == xsltSaveResultToFilename (outputfile, resultDocument, stylesheet, 0))
 					throw new XmlException ("Error xsltSaveResultToFilename");
 				*/
-				StreamWriter writer = new StreamWriter (File.OpenWrite (outputfile));
+				StreamWriter writer = new StreamWriter (new FileStream (outputfile, FileMode.Create));
 				writer.Write (GetStringFromDocument (resultDocument));
 				writer.Close ();
 			} finally {
