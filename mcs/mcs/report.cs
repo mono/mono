@@ -68,6 +68,7 @@ namespace Mono.CSharp {
 		CS0659_overrides_Equals_but_does_not_override_GetHashCode = 659,
 		CS0660_defines_operator_but_does_not_override_Equals = 660,
 		CS0661_defines_operator_but_does_not_override_GetHashCode = 661,
+		CS0668_Two_indexers_have_different_names = 668,
 		CS0672_Member_overrides_obsolete_member = 672,
 		CS1030_warning = 1030,
 		CS1555_Could_not_find_specified_for_Main_method = 1555,
@@ -307,6 +308,7 @@ namespace Mono.CSharp {
 				case 0659: return new WarningData (3, "'{0}' overrides Object.Equals(object) but does not override Object.GetHashCode()");
 				case 0660: return new WarningData (3, "'{0}' defines operator == or operator != but does not override Object.Equals(object o)");
 				case 0661: return new WarningData (3, "'{0}' defines operator == or operator != but does not override Object.GetHashCode()");
+				case 0668: return new ErrorData ("Two indexers have different names; the IndexerName attribute must be used with the same name on every indexer within a type");
 				case 0672: return new WarningData (1, "Member '{0}' overrides obsolete member. Add the Obsolete attribute to '{0}'");
 				case 1030: return new WarningData (1, "#warning: '{0}'");
 				case 1555: return new ErrorData ("Could not find '{0}' specified for Main method");

@@ -178,6 +178,7 @@ public class TypeManager {
 	static public ConstructorInfo void_decimal_ctor_five_args;
 	static public ConstructorInfo unverifiable_code_ctor;
 	static public ConstructorInfo invalid_operation_ctor;
+	static public ConstructorInfo default_member_ctor;
 	
 	// <remarks>
 	//   Holds the Array of Assemblies that have been loaded
@@ -1318,6 +1319,8 @@ public class TypeManager {
 		unverifiable_code_ctor = GetConstructor (
 			unverifiable_code_type, void_arg);
 
+		default_member_ctor = GetConstructor (default_member_type, string_);
+
 		//
 		// InvalidOperationException
 		//
@@ -2259,28 +2262,14 @@ public class TypeManager {
 	/// </summary>
 	/// <remarks>
 	///   The default is not always `Item'.  The user can change this behaviour by
-	///   using the DefaultMemberAttribute in the class.
-	///
+	///   using the IndexerNameAttribute in the container.
 	///   For example, the String class indexer is named `Chars' not `Item' 
 	/// </remarks>
 	public static string IndexerPropertyName (Type t)
 	{
 		if (t is TypeBuilder) {
-			if (t.IsInterface) {
-				TypeContainer i = LookupInterface (t);
-
-				if ((i == null) || (i.IndexerName == null))
-					return "Item";
-
-				return i.IndexerName;
-			} else {
-				TypeContainer tc = LookupTypeContainer (t);
-
-				if ((tc == null) || (tc.IndexerName == null))
-					return "Item";
-
-				return tc.IndexerName;
-			}
+			TypeContainer tc = t.IsInterface ? LookupInterface (t) : LookupTypeContainer (t);
+			return tc == null ? TypeContainer.DefaultIndexerName : tc.IndexerName;
 		}
 		
 		System.Attribute attr = System.Attribute.GetCustomAttribute (
@@ -2290,7 +2279,7 @@ public class TypeManager {
 			return dma.MemberName;
 		}
 
-		return "Item";
+		return TypeContainer.DefaultIndexerName;
 	}
 
 	static MethodInfo declare_local_method = null;

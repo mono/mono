@@ -64,6 +64,12 @@ namespace Mono.CSharp {
 					mc.Define ();
 				}
 			}
+
+			public virtual void Emit ()
+			{
+				foreach (MemberCore mc in this)
+					mc.Emit ();
+			}
  		}
 
  		public class MethodArrayList: MemberCoreArrayList
@@ -118,6 +124,78 @@ namespace Mono.CSharp {
  			}
  
  		}
+
+		public sealed class IndexerArrayList: MemberCoreArrayList
+		{
+			/// <summary>
+			/// The indexer name for this container
+			/// </summary>
+ 			public string IndexerName = DefaultIndexerName;
+
+			bool seen_normal_indexers = false;
+
+			TypeContainer container;
+
+			public IndexerArrayList (TypeContainer container)
+			{
+				this.container = container;
+			}
+
+			/// <summary>
+			/// Defines the indexers, and also verifies that the IndexerNameAttribute in the
+			/// class is consistent.  Either it is `Item' or it is the name defined by all the
+			/// indexers with the `IndexerName' attribute.
+			///
+			/// Turns out that the IndexerNameAttribute is applied to each indexer,
+			/// but it is never emitted, instead a DefaultMember attribute is attached
+			/// to the class.
+			/// </summary>
+			public override void DefineContainerMembers()
+			{
+				base.DefineContainerMembers ();
+
+				string class_indexer_name = null;
+
+				//
+				// If there's both an explicit and an implicit interface implementation, the
+				// explicit one actually implements the interface while the other one is just
+				// a normal indexer.  See bug #37714.
+				//
+
+				// Invariant maintained by AddIndexer(): All explicit interface indexers precede normal indexers
+				foreach (Indexer i in this) {
+					if (i.InterfaceType != null) {
+						if (seen_normal_indexers)
+							throw new Exception ("Internal Error: 'Indexers' array not sorted properly.");
+						continue;
+					}
+
+					seen_normal_indexers = true;
+
+					if (class_indexer_name == null) {
+						class_indexer_name = i.IndexerName;
+						continue;
+					}
+
+					if (i.IndexerName != class_indexer_name)
+						Report.Error_T (Message.CS0668_Two_indexers_have_different_names, i.Location);
+				}
+
+				if (class_indexer_name != null)
+					IndexerName = class_indexer_name;
+			}
+
+			public override void Emit ()
+			{
+				base.Emit ();
+
+				if (!seen_normal_indexers)
+					return;
+
+				CustomAttributeBuilder cb = new CustomAttributeBuilder (TypeManager.default_member_ctor, new string [] { IndexerName });
+				container.TypeBuilder.SetCustomAttribute (cb);
+			}
+		}
 
  		public class OperatorArrayList: MemberCoreArrayList
 		{
@@ -328,7 +406,7 @@ namespace Mono.CSharp {
 		MemberCoreArrayList events;
 
 		// Holds the indexers
-		ArrayList indexers;
+		IndexerArrayList indexers;
 
 		// Holds the operators
 		MemberCoreArrayList operators;
@@ -377,12 +455,9 @@ namespace Mono.CSharp {
 		// The parent member container and our member cache
 		IMemberContainer parent_container;
 		MemberCache member_cache;
-		
-		//
-		// The indexer name for this class
-		//
-		public string IndexerName;
 
+		public const string DefaultIndexerName = "Item";
+		
 		public TypeContainer (NamespaceEntry ns, TypeContainer parent, string name,
 				      Attributes attrs, Kind kind, Location l)
 			: base (ns, parent, name, attrs, l)
@@ -686,7 +761,7 @@ namespace Mono.CSharp {
 		public void AddIndexer (Indexer i)
 		{
 			if (indexers == null)
-				indexers = new ArrayList ();
+				indexers = new IndexerArrayList (this);
 
 			if (i.ExplicitInterfaceName != null)
 				indexers.Insert (0, i);
@@ -854,6 +929,12 @@ namespace Mono.CSharp {
 		public virtual TypeAttributes TypeAttr {
 			get {
 				return Modifiers.TypeAttr (ModFlags, this);
+			}
+		}
+
+		public string IndexerName {
+			get {
+				return indexers == null ? DefaultIndexerName : indexers.IndexerName;
 			}
 		}
 
@@ -1315,55 +1396,6 @@ namespace Mono.CSharp {
 			return true;
 		}
 
-		//
-		// Defines the indexers, and also verifies that the IndexerNameAttribute in the
-		// class is consistent.  Either it is `Item' or it is the name defined by all the
-		// indexers with the `IndexerName' attribute.
-		//
-		// Turns out that the IndexerNameAttribute is applied to each indexer,
-		// but it is never emitted, instead a DefaultMember attribute is attached
-		// to the class.
-		//
-		void DefineIndexers ()
-		{
-			string class_indexer_name = null;
-
-			//
-			// If there's both an explicit and an implicit interface implementation, the
-			// explicit one actually implements the interface while the other one is just
-			// a normal indexer.  See bug #37714.
-			//
-
-			// Invariant maintained by AddIndexer(): All explicit interface indexers precede normal indexers
-			bool seen_normal_indexers = false;
-
-			foreach (Indexer i in Indexers) {
-				string name;
-
-				i.Define ();
-
-				name = i.IndexerName;
-
-				if (i.InterfaceType != null) {
-					if (seen_normal_indexers)
-						throw new Exception ("Internal Error: 'Indexers' array not sorted properly.");
-					continue;
-				}
-
-				seen_normal_indexers = true;
-
-				if (class_indexer_name == null)
-					class_indexer_name = name;
-				else if (name != class_indexer_name)
-					Report.Error (668, i.Location, "Two indexers have different names, " +
-						      " you should use the same name for all your indexers");
-			}
-
-			if (seen_normal_indexers && class_indexer_name == null)
-				class_indexer_name = "Item";
-			IndexerName = class_indexer_name;
-		}
-
 		static void Error_KeywordNotAllowed (Location loc)
 		{
 			Report.Error (1530, loc, "Keyword new not allowed for namespace elements");
@@ -1478,7 +1510,7 @@ namespace Mono.CSharp {
 				events.DefineContainerMembers ();
 
 			if (indexers != null)
-				DefineIndexers ();
+				indexers.DefineContainerMembers ();
 
 			if (operators != null)
 				operators.DefineContainerMembers ();
@@ -2138,12 +2170,7 @@ namespace Mono.CSharp {
 					p.Emit ();
 
 			if (indexers != null){
-				foreach (Indexer ix in indexers)
-					ix.Emit ();
-				if (IndexerName != null) {
-					CustomAttributeBuilder cb = EmitDefaultMemberAttr ();
-					TypeBuilder.SetCustomAttribute (cb);
-				}
+				indexers.Emit ();
 			}
 			
 			if (fields != null)
@@ -2185,31 +2212,6 @@ namespace Mono.CSharp {
 //			if (types != null)
 //				foreach (TypeContainer tc in types)
 //					tc.Emit ();
-		}
-
-		CustomAttributeBuilder EmitDefaultMemberAttr ()
-		{
-			EmitContext ec = new EmitContext (this, Location, null, null, ModFlags);
-
-			Expression ml = Expression.MemberLookup (ec, TypeManager.default_member_type,
-								 ".ctor", MemberTypes.Constructor,
-								 BindingFlags.Public | BindingFlags.Instance,
-								 Location.Null);
-			
-			MethodGroupExpr mg = (MethodGroupExpr) ml;
-
-			MethodBase constructor = mg.Methods [0];
-
-			string [] vals = { IndexerName };
-
-			CustomAttributeBuilder cb = null;
-			try {
-				cb = new CustomAttributeBuilder ((ConstructorInfo) constructor, vals);
-			} catch {
-				Report.Warning (-100, "Can not set the indexer default member attribute");
-			}
-
-			return cb;
 		}
 
 		public override void CloseType ()
@@ -6301,7 +6303,7 @@ namespace Mono.CSharp {
 		const int AllowedInterfaceModifiers =
 			Modifiers.NEW;
 
-		public string IndexerName = "Item";
+		public string IndexerName = TypeContainer.DefaultIndexerName;
 		public string InterfaceIndexerName;
 
 		//
