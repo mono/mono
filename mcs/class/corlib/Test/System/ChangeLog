@@ -1,3 +1,9 @@
+2004-06-15  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* DecimalTest.cs: Added test to ensure we keep/output the decimals
+	precision (#59425). Added tests to see how many decimals are supported
+	in "G" before switching to "E".
+
 2004-06-14  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* TimeSpanTest.cs: Added more cases with MinValue and MaxValue for 

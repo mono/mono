@@ -1332,5 +1332,60 @@ namespace MonoTests.System {
 		AssertEquals ("-2,2_5,27", -2.222222222222222222222222222m, Decimal.Round (-2.2222222222222222222222222225m, 27));
 		AssertEquals ("-2,2_5,28", -2.2222222222222222222222222222m, Decimal.Round (-2.22222222222222222222222222225m, 28));
 	}
+
+	[Test]
+	// http://bugzilla.ximian.com/show_bug.cgi?id=59425
+	public void ParseAndKeepPrecision () 
+	{
+		string value = "5";
+		AssertEquals (value, value, Decimal.Parse (value).ToString ());
+		value += '.';
+		for (int i=0; i < 28; i++) {
+			value += "0";
+			AssertEquals (i.ToString(), value, Decimal.Parse (value).ToString ());
+		}
+
+		value = "-5";
+		AssertEquals (value, value, Decimal.Parse (value).ToString ());
+		value += '.';
+		for (int i=0; i < 28; i++) {
+			value += "0";
+			AssertEquals ("-" + i.ToString(), value, Decimal.Parse (value).ToString ());
+		}
+	}
+
+	[Test]
+	public void ToString_G () 
+	{
+		AssertEquals ("00", "1.0", (1.0m).ToString ());
+		AssertEquals ("01", "0.1", (0.1m).ToString ());
+		AssertEquals ("02", "0.01", (0.01m).ToString ());
+		AssertEquals ("03", "0.001", (0.001m).ToString ());
+		AssertEquals ("04", "0.0001", (0.0001m).ToString ());
+		AssertEquals ("05", "0.00001", (0.00001m).ToString ());
+		AssertEquals ("06", "0.000001", (0.000001m).ToString ());
+		AssertEquals ("07", "0.0000001", (0.0000001m).ToString ());
+		AssertEquals ("08", "0.00000001", (0.00000001m).ToString ());
+		AssertEquals ("09", "0.000000001", (0.000000001m).ToString ());
+		AssertEquals ("10", "0.0000000001", (0.0000000001m).ToString ());
+		AssertEquals ("11", "0.00000000001", (0.00000000001m).ToString ());
+		AssertEquals ("12", "0.000000000001", (0.000000000001m).ToString ());
+		AssertEquals ("13", "0.0000000000001", (0.0000000000001m).ToString ());
+		AssertEquals ("14", "0.00000000000001", (0.00000000000001m).ToString ());
+		AssertEquals ("15", "0.000000000000001", (0.000000000000001m).ToString ());
+		AssertEquals ("16", "0.0000000000000001", (0.0000000000000001m).ToString ());
+		AssertEquals ("17", "0.00000000000000001", (0.00000000000000001m).ToString ());
+		AssertEquals ("18", "0.000000000000000001", (0.000000000000000001m).ToString ());
+		AssertEquals ("19", "0.0000000000000000001", (0.0000000000000000001m).ToString ());
+		AssertEquals ("20", "0.00000000000000000001", (0.00000000000000000001m).ToString ());
+		AssertEquals ("21", "0.000000000000000000001", (0.000000000000000000001m).ToString ());
+		AssertEquals ("22", "0.0000000000000000000001", (0.0000000000000000000001m).ToString ());
+		AssertEquals ("23", "0.00000000000000000000001", (0.00000000000000000000001m).ToString ());
+		AssertEquals ("24", "0.000000000000000000000001", (0.000000000000000000000001m).ToString ());
+		AssertEquals ("25", "0.0000000000000000000000001", (0.0000000000000000000000001m).ToString ());
+		AssertEquals ("26", "0.00000000000000000000000001", (0.00000000000000000000000001m).ToString ());
+		AssertEquals ("27", "0.000000000000000000000000001", (0.000000000000000000000000001m).ToString ());
+		AssertEquals ("28", "0.0000000000000000000000000001", (0.0000000000000000000000000001m).ToString ());
+	}
     }
 }
