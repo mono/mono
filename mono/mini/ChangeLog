@@ -1,3 +1,8 @@
+2004-12-01  Neale Ferguson <Neale.Ferguson@SoftwareAG-usa.com>
+
+	* inssel-s390.brgi, mini-ops.h, mini-s390.c : Add stubs for support of tls offset
+	support.
+
 2004-12-06  Zoltan Varga  <vargaz@freemail.hu>
 
 	* mini-sparc.c: Zero out localled-ed memory.
