@@ -15,6 +15,7 @@ using System.ComponentModel;
 
 namespace System.Data.Common {
 	[ListBindable (false)]
+	[EditorAttribute ("Microsoft.VSDesigner.Data.Design.DataTableMappingCollectionEditor, "+ Consts.AssemblyMicrosoft_VSDesigner, "System.Drawing.Design.UITypeEditor, "+ Consts.AssemblySystem_Drawing )]
 	public sealed class DataTableMappingCollection : MarshalByRefObject, ITableMappingCollection, IList, ICollection, IEnumerable
 	{
 		#region Fields
@@ -38,6 +39,7 @@ namespace System.Data.Common {
 
 		#region Properties
 
+		[Browsable (false)]
 		[DataSysDescription ("The number of items in the collection")]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public int Count {
@@ -64,7 +66,7 @@ namespace System.Data.Common {
 			get { return (DataTableMapping) sourceTables[sourceTable]; }
 			set { this [mappings.IndexOf (sourceTables[sourceTable])] = value; }
 		}
-	
+			
 		object IList.this [int index] {
 			get { return (object)(this[index]); }
 			set { 
