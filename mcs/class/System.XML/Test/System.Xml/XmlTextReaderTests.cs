@@ -900,6 +900,21 @@ namespace MonoTests.System.Xml
 			AssertEquals (0, aux.LineNumber);
 			AssertEquals (0, aux.LinePosition);
 		}
+
+		[Test]
+		public void AttributeNormalizationWrapped ()
+		{
+			// When XmlValidatingReader there used to be a problem.
+			string xml = "<root attr=' value\nstring' />";
+			XmlTextReader xtr = new XmlTextReader (xml,
+				XmlNodeType.Document, null);
+			xtr.Normalization = true;
+			XmlValidatingReader xvr = new XmlValidatingReader (xtr);
+			xvr.Read ();
+			xvr.MoveToFirstAttribute ();
+			AssertEquals (" value string", xvr.Value);
+		}
+
 #if NET_2_0
 		[Test]
 		[ExpectedException (typeof (XmlException))]
