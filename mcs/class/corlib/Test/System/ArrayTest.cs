@@ -1587,6 +1587,8 @@ public class ArrayTest : TestCase
 				1, 1, 1, 0, 1, 1, 1, 1, 0, 1, 1, 0
 			};
 
+			// SetValue
+
 			for (int i = 0; i < types.Length; i++) {
 				for (int j = 0; j < types.Length; j++) {
 					Array array = Array.CreateInstance (types [j], 2);
@@ -1650,6 +1652,64 @@ public class ArrayTest : TestCase
 				}
 
 				Assert ("#M93(" + types [i] + ")", !errorThrown);
+			}
+
+			// Copy
+
+			for (int i = 0; i < types.Length; i++) {
+				for (int j = 0; j < types.Length; j++) {
+					Array source = Array.CreateInstance (types [i], 2);
+					Array array = Array.CreateInstance (types [j], 2);
+
+					source.SetValue (vt[j][i], 0);
+					source.SetValue (vt[j][i], 1);
+
+					bool errorThrown = false;
+					try {
+						Array.Copy (source, array, 2);
+					} catch (ArrayTypeMismatchException) {
+						errorThrown = true;
+					}
+
+					int ex_index = (i * types.Length) + j;
+
+					AssertEquals ("#M94(" + types [i] + "," + types [j] + ")",
+						      errorThrown, arg_ex [ex_index] == 1);
+				}
+			}
+
+			for (int i = 0; i < types.Length; i++) {
+				Array source = Array.CreateInstance (types [i], 2);
+				String[] array = new String [2];
+
+				source.SetValue (va1 [i], 0);
+				source.SetValue (va1 [i], 1);
+
+				bool errorThrown = false;
+				try {
+					Array.Copy (source, array, 2);
+				} catch (ArrayTypeMismatchException) {
+					errorThrown = true;
+				}
+
+				Assert ("#M95(" + types [i] + ")", errorThrown);
+			}
+
+			for (int i = 0; i < types.Length; i++) {
+				String[] source = new String [2];
+				Array array = Array.CreateInstance (types [i], 2);
+
+				source.SetValue (va2 [i], 0);
+				source.SetValue (va2 [i], 1);
+
+				bool errorThrown = false;
+				try {
+					Array.Copy (source, array, 2);
+				} catch (ArrayTypeMismatchException) {
+					errorThrown = true;
+				}
+
+				Assert ("#M96(" + types [i] + ")", errorThrown);
 			}
 		}
 	}

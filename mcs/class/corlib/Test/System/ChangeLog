@@ -1,5 +1,7 @@
 2002-03-06  Martin Baulig  <martin@gnome.org>
 
+	* ArrayTest.cs (TestSetValue4): Added testcases #M94-#M96 for Array.Copy.
+
 	* ArrayTest.cs (TestCopyTo): Added testcases #F10-#F13 for arrays with
 	non-zero lower bounds.
 
