@@ -406,11 +406,7 @@ namespace Npgsql
 		  // and parsing from there?
 		  NpgsqlEventLog.LogMsg("Entering " + CLASSNAME + ".GetInt32(Int32)", LogLevel.Debug);
 		  try {
-			  // FIXME: here until DateTime works
-			  string sValue = (string) this[i];
-			  Console.WriteLine("GetDateTime: " + sValue);
-
-			  return DateTime.Now;
+			  return DateTime.ParseExact((string) this[i], "dd/MM/yyyy", null);
 		  } catch (System.FormatException) {
 			  throw new System.InvalidCastException();
 		  }

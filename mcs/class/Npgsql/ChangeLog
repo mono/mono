@@ -1,3 +1,9 @@
+2003-04-26  Pedro Martínez Juliá  <yoros@wanadoo.es>
+
+	* Npgsql/NpgsqlDataReader.cs: Now GetDateTime works for "dd/MM/yyyy"
+	date formats. I think that it's needed support to auto-detect
+	DateTime format through PgSql server configuration.
+
 2003-01-28  Daniel Morgan <danmorg@sc.rr.com>
 
 	* Npgsql.build: got it to work for Windows build
