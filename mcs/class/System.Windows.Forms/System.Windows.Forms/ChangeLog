@@ -1,3 +1,31 @@
+  2002-10-29  DennisHayes <dennish@raytek.com>	
+
+	* AmbientProperties.cs
+	* Application.cs
+	* ApplicationContext.cs
+	* CheckBox.cs
+	* CheckedListBox.cs
+	* ColumnHeader.cs
+	* ContainerControl.cs
+	* ContextMenu.cs
+	* Control.cs
+	* Cursors.cs
+	* HScrollBar.cs
+	* ListBox.cs
+	* MainMenu.cs
+	* Menu.cs
+	* MenuItem.cs
+	* MessageBox.cs
+	* NativeWindow.cs
+	* PictureBox.cs
+	* ScrollableControl.cs
+	* ScrollBar.cs
+	* System.Windows.Forms.csproj
+	* System.Windows.Forms.csproj.user
+	* VScrollBar.cs
+	* Win32.cs
+
+	* minor formating, bug fixes, and implmentation
 2002-11-02  Miguel de Icaza  <miguel@ximian.com>
 
 	* Win32.cs: Added IsMenu, CreateMenu, AppendMenuA, DestroyMenu entry points.

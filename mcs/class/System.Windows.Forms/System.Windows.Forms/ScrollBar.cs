@@ -129,15 +129,15 @@ namespace System.Windows.Forms {
 		}
 
 		 //COMPACT FRAMEWORK
-		 [MonoTODO]
-		public override string Text {
-			get {
-				throw new NotImplementedException ();
-			}
-			set {
-				throw new NotImplementedException ();
-			}
-		}
+		 public override string Text {
+			 //Can't imagen what a scroll bar would do with text, so just call base.
+			 get {
+				 return base.Text;
+			 }
+			 set {
+				 base.Text = value;
+			 }
+		 }
 
 		 //COMPACT FRAMEWORK
 		 [MonoTODO]
@@ -155,10 +155,10 @@ namespace System.Windows.Forms {
 		//
 
 		//COMPACT FRAMEWORK
-		 [MonoTODO]
 		public override string ToString()
-		{
-			throw new NotImplementedException ();
+		{	
+			 //replace with value, if implmeted as properity.
+			return Value.ToString();
 		}
 
 		//
@@ -185,7 +185,25 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		protected override CreateParams CreateParams {
 			get {
-				throw new NotImplementedException ();
+				CreateParams createParams = new CreateParams ();
+				createParams.Caption = "";
+				createParams.ClassName = "mono_scrollable_control";
+				createParams.X = Left;
+				createParams.Y = Top;
+				createParams.Width = Width;
+				createParams.Height = Height;
+				createParams.ClassStyle = 0;
+				createParams.ExStyle = 0;
+				createParams.Param = 0;
+  				
+				//if (parent != null)
+				//	createParams.Parent = parent.Handle;
+				//else 
+				createParams.Parent = (IntPtr) 0;
+	  
+				createParams.Style = (int) Win32.WS_OVERLAPPEDWINDOW;
+	  
+				return createParams;
 			}
 		}
 

@@ -18,13 +18,15 @@ namespace System.Windows.Forms {
 
 	public class ScrollableControl : Control {
 
+		private ScrollableControl.DockPaddingEdges dockPadding;
+
 		//
 		//  --- Constructor
 		//
 		public ScrollableControl () : base ()
 		{
+			dockPadding = new ScrollableControl.DockPaddingEdges();
 		}
-
 		//
 		//  --- Public Properties
 		//
@@ -77,13 +79,9 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		public ScrollableControl.DockPaddingEdges DockPadding {
 			get {
-				throw new NotImplementedException ();
+				return dockPadding;
 			}
 		}
-
-		//
-		//  --- Public Methods
-		//
 
 		//
 		//  --- Protected Properties
@@ -91,7 +89,25 @@ namespace System.Windows.Forms {
 
 		protected override CreateParams CreateParams {
 			get {
-				return base.CreateParams;
+				CreateParams createParams = new CreateParams ();
+				createParams.Caption = "";
+				createParams.ClassName = "mono_scrollable_control";
+				createParams.X = Left;
+				createParams.Y = Top;
+				createParams.Width = Width;
+				createParams.Height = Height;
+				createParams.ClassStyle = 0;
+				createParams.ExStyle = 0;
+				createParams.Param = 0;
+  				
+				//if (parent != null)
+				//	createParams.Parent = parent.Handle;
+				//else 
+					createParams.Parent = (IntPtr) 0;
+	  
+				createParams.Style = (int) Win32.WS_OVERLAPPEDWINDOW;
+	  
+				return createParams;
 			}
 		}
 
@@ -160,55 +176,130 @@ namespace System.Windows.Forms {
 			
 			// --- public Properties ---
 			public int All {
-				get { return all; }
-				set { all=value; }
+				get {
+					return all;
+				}
+				set {
+					all = value;
+					left = value;
+					right = value;
+					bottom = value;
+					top = value;
+				}
 			}
 			
 			public int Bottom {
 				get { return bottom; }
-				set { bottom=value; }
+				set { bottom = value; }
 			}
 			
 			public int Left {
 				get { return left; }
-				set { left=value; }
+				set { left = value; }
 			}
 			
 			public int Right {
 				get { return right; }
-				set { right=value; }
+				set { right = value; }
 			}
 			
 			public int Top {
 				get { return top; }
-				set { top=value; }
+				set { top = value; }
 			}
 			
 			
 			/// --- public Methods ---
-			[MonoTODO]
-			public override bool Equals (object other) 
-			{
-				throw new NotImplementedException ();
+
+			/// <summary>
+			///	Equality Operator
+			/// </summary>
+			///
+			/// <remarks>
+			///	Compares two DockPaddingEdges objects. The return value is
+			///	based on the equivalence of the  
+			///	properties of the two DockPaddingEdges.
+			/// </remarks>
+
+			public static bool operator == (DockPaddingEdges objA, DockPaddingEdges objB) {
+				return ((objA.left == objB.left) && 
+					(objA.right == objB.right) && 
+					(objA.top == objB.top) && 
+					(objA.bottom == objB.bottom) && 
+					(objA.all == objB.all));
+			} 			
+			/// <summary>
+			///	Equals Method
+			/// </summary>
+			///
+			/// <remarks>
+			///	Checks equivalence of this DockPaddingEdges and another object.
+			/// </remarks>
+		
+			public override bool Equals (object obj) {
+				if (!(obj is DockPaddingEdges))
+					return false;
+
+				return (this == (DockPaddingEdges) obj);
 			}
-			
-			[MonoTODO]
-			public override int GetHashCode () 
-			{
-				throw new NotImplementedException ();
+
+			/// <summary>
+			///	Inequality Operator
+			/// </summary>
+			///
+			/// <remarks>
+			///	Compares two DockPaddingEdges objects. The return value is
+			///	based on the equivalence of the  
+			///	properties of the two Sizes.
+			/// </remarks>
+
+			public static bool operator != (DockPaddingEdges objA, DockPaddingEdges objB) {
+				return ((objA.left != objB.left) ||
+					(objA.right != objB.right) ||
+					(objA.top != objB.top) ||
+					(objA.bottom != objB.bottom) ||
+					(objA.all != objB.all));
+			} 		
+			/// <summary>
+			///	GetHashCode Method
+			/// </summary>
+			///
+			/// <remarks>
+			///	Calculates a hashing value.
+			/// </remarks>
+		
+			public override int GetHashCode () {
+				unchecked{
+					return all * top * bottom * right * left;
+				}
 			}
+
 			
 			/// This member supports the .NET Framework infrastructure and is not intended to be used directly from your code.
-			[MonoTODO]
 			object ICloneable.Clone () 
 			{
-				throw new NotImplementedException ();
+				DockPaddingEdges dpe = new DockPaddingEdges();
+				dpe.all = all;
+				dpe.top = top;
+				dpe.right = right;
+				dpe.bottom = bottom;
+				dpe.left = left;
+				return (object) dpe;
 			}
 			
-			[MonoTODO]
+			/// <summary>
+			///	ToString Method
+			/// </summary>
+			///
+			/// <remarks>
+			///	Formats the DockPaddingEdges as a string.
+			/// </remarks>
+		
 			public override string ToString () 
 			{
-				throw new NotImplementedException ();
+				return "All = " + all.ToString() + " Top = " + top.ToString() + 
+					" Right = " + right.ToString() + " Bottom = " + bottom.ToString() + 
+					" Left = " + left.ToString();
 			}
 		}
 		

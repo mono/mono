@@ -597,6 +597,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Font.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "FontDialog.cs"
                     SubType = "Component"
                     BuildAction = "Compile"
@@ -1163,6 +1168,11 @@
                 />
                 <File
                     RelPath = "Panel.cs"
+                    SubType = "Component"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "PictureBox.cs"
                     SubType = "Component"
                     BuildAction = "Compile"
                 />

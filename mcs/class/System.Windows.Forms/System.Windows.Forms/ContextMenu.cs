@@ -39,9 +39,6 @@ namespace System.Windows.Forms {
 		{
 		}
 		
-		
-		
-		
 		// --- Properties ---
 		public virtual RightToLeft RightToLeft {
 			get { return rightToLeft; }
@@ -53,9 +50,6 @@ namespace System.Windows.Forms {
 			get { throw new NotImplementedException (); }
 		}
 		
-		
-		
-		
 		/// --- Methods ---
 		/// internal .NET framework supporting methods, not stubbed out:
 		/// - protected internal virtual void OnPopup(EventArgs e);
@@ -65,19 +59,8 @@ namespace System.Windows.Forms {
 			throw new NotImplementedException ();
 		}
 		
-		
-		
-		
 		/// events
 		[MonoTODO]
-		public event EventHandler Popup {
-			add {
-				throw new NotImplementedException ();
-			}
-			remove {
-				throw new NotImplementedException ();
-			}
-		}
-
+		public event EventHandler Popup;
 	}
 }

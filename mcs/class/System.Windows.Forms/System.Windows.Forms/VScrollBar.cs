@@ -18,9 +18,25 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		protected override CreateParams CreateParams {
 			get {
-				CreateParams cp = base.CreateParams;
-				//Modify cp before returning it.
-				return cp;
+				CreateParams createParams = new CreateParams ();
+				createParams.Caption = "";
+				createParams.ClassName = "mono_scrollable_control";
+				createParams.X = Left;
+				createParams.Y = Top;
+				createParams.Width = Width;
+				createParams.Height = Height;
+				createParams.ClassStyle = 0;
+				createParams.ExStyle = 0;
+				createParams.Param = 0;
+  				
+				//if (parent != null)
+				//	createParams.Parent = parent.Handle;
+				//else 
+				createParams.Parent = (IntPtr) 0;
+	  
+				createParams.Style = (int) Win32.WS_OVERLAPPEDWINDOW;
+	  
+				return createParams;
 			}
 		}
 

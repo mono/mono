@@ -20,7 +20,6 @@ namespace System.Windows.Forms {
 
 	/// <summary>
 	/// ToDo note:
-	///  - Nothing is implemented
 	/// </summary>
 
 	public class MenuItem : Menu {
@@ -62,19 +61,6 @@ namespace System.Windows.Forms {
 		public override ObjRef CreateObjRef(Type t) {
 			throw new NotImplementedException ();
 		}
-        //inherited
-		//public void Dispose()
-		//{
-		//        throw new NotImplementedException ();
-		//}
-		//
-		//public override void Dispose(bool disposing)
-		//{
-		//        throw new NotImplementedException ();
-		//}
-		//public override bool Equals(object o, object o1) {
-		//	throw new NotImplementedException ();
-		//}
 
 		public override bool Equals(object o) {
 			throw new NotImplementedException ();
@@ -90,19 +76,7 @@ namespace System.Windows.Forms {
 		//	throw new NotImplementedException ();
 		//}
                 
-		//public object GetLifetimeService() {
-		//	throw new NotImplementedException ();
-		//}
-        //        
 		//public MainMenu GetMainMenu() {
-		//	throw new NotImplementedException ();
-		//}
-                
-		//public Type GetType() {
-		//	throw new NotImplementedException ();
-		//}
-                
-		//public virtual object InitializeLifetimeService() {
 		//	throw new NotImplementedException ();
 		//}
                 
@@ -142,11 +116,6 @@ namespace System.Windows.Forms {
 		//inherited
 		//protected void CloneMenu(Menu m) {
 		//	throw new NotImplementedException ();
-		//}
-                
-		//protected override void Dispose(bool disposing)
-		//{
-		//        throw new NotImplementedException ();
 		//}
                 
 		~MenuItem() {

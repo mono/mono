@@ -435,24 +435,24 @@
     		
     		protected virtual CreateParams CreateParams {
     			get {
-  				CreateParams createParams = new CreateParams ();
-  				createParams.Caption = Text;
-  				createParams.ClassName = "mono_native_window";
-  				createParams.X = Left;
-  				createParams.Y = Top;
-  				createParams.Width = Width;
-  				createParams.Height = Height;
-  				createParams.ClassStyle = 0;
-  				createParams.ExStyle = 0;
-  				createParams.Param = 0;
+  					CreateParams createParams = new CreateParams ();
+  					createParams.Caption = Text;
+  					createParams.ClassName = "mono_native_window";
+  					createParams.X = Left;
+  					createParams.Y = Top;
+  					createParams.Width = Width;
+  					createParams.Height = Height;
+  					createParams.ClassStyle = 0;
+  					createParams.ExStyle = 0;
+  					createParams.Param = 0;
   				
-  				if (parent != null)
-  					createParams.Parent = parent.Handle;
-  				else 
-  					createParams.Parent = (IntPtr) 0;
-  
-  				createParams.Style = (int) Win32.WS_OVERLAPPEDWINDOW;
-  
+  					if (parent != null)
+  						createParams.Parent = parent.Handle;
+  					else 
+  						createParams.Parent = (IntPtr) 0;
+	  
+  					createParams.Style = (int) Win32.WS_OVERLAPPEDWINDOW;
+	  
     				return createParams;
     			}
     		}

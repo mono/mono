@@ -67,7 +67,8 @@ namespace System.Windows.Forms {
 			if (!registeredClass) {
 				Win32.WndProc wp = new Win32.WndProc (WndProc);
 				if (Win32.MonoRegisterClass(
-					 (int) (Win32.CS_OWNDC | 
+				//if (Win32.RegisterClass(
+					(int) (Win32.CS_OWNDC | 
 					 Win32.CS_VREDRAW | 
 					 Win32.CS_HREDRAW), 
 					 wp, 0, 0, (IntPtr) 0, (IntPtr) 0,

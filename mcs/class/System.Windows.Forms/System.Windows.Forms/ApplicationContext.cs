@@ -30,12 +30,12 @@ namespace System.Windows.Forms {
 		// --- Constructor ---
 		public ApplicationContext() 
 		{
-			mainForm=null;
+			mainForm = null;
 		}
 		
 		public ApplicationContext(Form mainForm) : this() 
 		{
-			this.mainForm=mainForm;
+			this.mainForm = mainForm;
 		}
 		
 		// --- Methods ---

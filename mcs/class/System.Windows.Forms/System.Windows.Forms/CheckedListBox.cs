@@ -55,19 +55,19 @@ namespace System.Windows.Forms {
 			get { throw new NotImplementedException (); }
 		}
 		
-//		[MonoTODO]
-// FIXME
-//		public override DrawMode DrawMode {
-//			get { throw new NotImplementedException (); }
-//			set { throw new NotImplementedException (); }
-//		}
-//		
-//		[MonoTODO]
-//		public override int ItemHeight {
-//			get { throw new NotImplementedException (); }
-//			set { throw new NotImplementedException (); }
-//		}
-//		
+		[MonoTODO]
+		//FIXME
+		public override DrawMode DrawMode {
+			get { throw new NotImplementedException (); }
+			set { throw new NotImplementedException (); }
+		}
+		
+		[MonoTODO]
+		public override int ItemHeight {
+			get { throw new NotImplementedException (); }
+			set { throw new NotImplementedException (); }
+		}
+		
 		[MonoTODO]
 		public CheckedListBox.ObjectCollection Items {
 			get { throw new NotImplementedException (); }
@@ -104,9 +104,6 @@ namespace System.Windows.Forms {
 			set { threeDCheckBoxes=value; }
 		}
 		
-		
-		
-		
 		// --- CheckedListBox methods ---
 		// following methods were not stubbed out, because they only support .NET framework:
 		// - protected virtual void OnItemCheck(ItemCheckEventArgs ice)
@@ -118,11 +115,11 @@ namespace System.Windows.Forms {
 		//	throw new NotImplementedException ();
 		//}
 		
-		[MonoTODO]
-		protected override ObjectCollection CreateItemCollection() 
-		{
-			throw new NotImplementedException ();
-		}
+//		[MonoTODO]
+//		protected override ObjectCollection CreateItemCollection() 
+//		{
+//			throw new NotImplementedException ();
+//		}
 		
 		[MonoTODO]
 		public bool GetItemChecked(int index) 
@@ -221,15 +218,7 @@ namespace System.Windows.Forms {
 		/// - public new event EventHandler Click;
 		/// - public new event DrawItemEventHandler DrawItem;
 		/// - public new event MeasureItemEventHandler MeasureItem;
-		[MonoTODO]
-		public event ItemCheckEventHandler ItemCheck {
-			add {
-				throw new NotImplementedException ();
-			}
-			remove {
-				throw new NotImplementedException ();
-			}
-		}
+		public event ItemCheckEventHandler ItemCheck;
 		
 		
 		
@@ -279,9 +268,7 @@ namespace System.Windows.Forms {
 				[MonoTODO] get { throw new NotImplementedException (); }
 			}
 			
-			
-			
-			
+		
 			/// --- CheckedIndexCollection Methods ---
 			/// Note: IList methods are stubbed out, otherwise does not IList interface cannot be implemented
 			[MonoTODO]
@@ -472,29 +459,21 @@ namespace System.Windows.Forms {
 				throw new NotImplementedException ();
 			}
 		}  // --- end of CheckedListBox.CheckedItemCollection ---
-
-		
-		
-		// FIXME:
-		// fix the problem of causing error CS0508.
-		// The error occurs as the ObjectCollection class will change the return type of the overriden method
-		// CheckedListBox.CreateItemCollection().
 		
 		/// sub-class: CheckedListBox.ObjectCollection
 		/// <summary>
 		/// Represents the collection of items in a CheckedListBox.
 		/// </summary>
-		/*
+		
 		[MonoTODO]
 		public class ObjectCollection : ListBox.ObjectCollection {
 			
 			/// --- ObjectCollection.constructor ---
 			[MonoTODO]
-			public ObjectCollection(CheckedListBox owner) 
+			public ObjectCollection(CheckedListBox owner) :base(owner)
 			{
 				throw new NotImplementedException ();
 			}
-			
 			
 			/// --- methods ---
 			[MonoTODO]
@@ -509,6 +488,6 @@ namespace System.Windows.Forms {
 				throw new NotImplementedException ();
 			}
 		}
-		*/
+		
 	}
 }

@@ -67,6 +67,24 @@ namespace System.Windows.Forms {
 		public delegate IntPtr WndProc (IntPtr hwnd, int msg,
 						IntPtr wParam, IntPtr lParam);
 
+//
+//
+//		[StructLayout(LayoutKind.Sequential)]
+//		public struct WNDCLASSA {
+//			uint style;
+//			WNDPROC lpfnWndProc;
+//			INT cbClsExtra;
+//			INT cbWndExtra;
+//			HINSTANCE hInstance;
+//			HICON hIcon;
+//			HCURSOR hCursor;
+//			HBRUSH hbrBackground;
+//			LPCSTR lpszMenuName;
+//			LPCSTR lpszClassName;
+//		}
+
+//
+
 		[DllImport ("monostub.exe", 
 			    CallingConvention = CallingConvention.StdCall,
 			    CharSet = CharSet.Auto)]
@@ -75,7 +93,17 @@ namespace System.Windows.Forms {
 			int cbWndExtra, IntPtr hInstance, IntPtr hIcon,
 			IntPtr hCursor,	IntPtr hbrBackground,
 			string lpszMenuName, string lpszClassName);
+//
+//		[DllImport ("user32.DLL", 
+//			 CallingConvention = CallingConvention.StdCall,
+//			 CharSet = CharSet.Auto)]
+//		public static extern int RegisterClass (
+//			int style, WndProc lpfnWndProc, int cbClsExtra,
+//			int cbWndExtra, IntPtr hInstance, IntPtr hIcon,
+//			IntPtr hCursor,	IntPtr hbrBackground,
+//			string lpszMenuName, string lpszClassName);
 
+		
 		#region Added by Dennis hayes 10-20-2002
 		//correct?
 		[DllImport ("user32.dll", 

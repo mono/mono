@@ -14,105 +14,114 @@ namespace System.Windows.Forms {
 	//	Skeleton. Nothing is implemented
 	//
 	//</summary>
-	using System.ComponentModel {
+	using System.Drawing;
+	using System.ComponentModel;
+	public class PictureBox : Control {
 
-
+		Image image;
+		PictureBoxSizeMode sizeMode;
 		//
 		// --- Public Constructor
 		//
-		[MONOTODO]
+		[MonoTODO]
 		public PictureBox () 
 		{
-			throw new NotImplementedException ();
+			image = null;
+			sizeMode = PictureBoxSizeMode.Normal;
 		}
 		//
 		// --- Public Properties
 		//
-		[MONOTODO]
+
+		[MonoTODO]
 		public Image Image {
 			get {
-				throw new NotImplementedException();
+				return image;
 			}
 			set {
-				throw new NotImplementedException();
+				image = value;
 			}
 		}
+
+		[MonoTODO]
 		public new ImeMode ImeMode {
 			get {
-				throw new NotImplementedException();
+				return base.ImeMode;
 			}
 			set {
-				throw new NotImplementedException();
+				base.ImeMode = value;
 			}
 		}
 		//
 		// --- Protected Properties
 		//
-		[MONOTODO]
+		[MonoTODO]
 		protected override CreateParams CreateParams {
 			get {
 				throw new NotImplementedException();
 			}
 		}
-		[MONOTODO]
+		[MonoTODO]
 		protected override ImeMode DefaultImeMode {
 			get {
-				throw new NotImplementedException();
+				return base.DefaultImeMode;
 			}
 		}
-		[MONOTODO]
+		[MonoTODO]
 		protected override Size DefaultSize {
 			get {
-				throw new NotImplementedException();
+				return new Size(100,50);
 			}
 		}
 		//
 		// --- Public Methods
 		//
-		[MONOTODO]
+		[MonoTODO]
 		public override string ToString()
 		{
 			throw new NotImplementedException();
 		}
+
+		[MonoTODO]
+		public PictureBoxSizeMode SizeMode () {
+			return sizeMode;
+		}
+		
 		//
 		// --- Protected Methods
 		//
-		[MONOTODO]
-		protected override void Dispose(bool disposing) 
-		{
-			throw new NotImplementedException();
-		}
-		[MONOTODO]
+
+		[MonoTODO]
 		protected override void OnEnabledChanged(EventArgs e) 
 		{
 			throw new NotImplementedException();
 		}
-		[MONOTODO]
+		[MonoTODO]
 		protected override void OnPaint(PaintEventArgs pe) 
 		{
 			throw new NotImplementedException();
 		}
-		[MONOTODO]
+		[MonoTODO]
 		protected override void OnParentChanged(EventArgs e) 
 		{
 			throw new NotImplementedException();
 		}
-		[MONOTODO]
+		[MonoTODO]
 		protected override void OnResize(EventArgs e) 
 		{
 			throw new NotImplementedException();
 		}
-		[MONOTODO]
+		[MonoTODO]
 		protected virtual void OnSizeModeChanged(EventArgs e)
 		{
 			throw new NotImplementedException();
 		}
-		[MONOTODO]
+		[MonoTODO]
 		protected override void OnVisibleChanged(EventArgs e) 
 		{
 			throw new NotImplementedException();
 		}
-		[MONOTODO]
+		[MonoTODO]
 		protected override void SetBoundsCore(int x,int y,int width,int height,BoundsSpecified specified) 
 		{
 			throw new NotImplementedException();
@@ -120,17 +129,8 @@ namespace System.Windows.Forms {
 		//
 		// --- Public Events
 		//
-		[MONOTODO]
-		public new event EventHandler Enter;
-		[MONOTODO]
-		public new event KeyEventHandler KeyDown;
-		[MONOTODO]
-		public new event KeyPressEventHandler KeyPress;
-		[MONOTODO]
-		public new event KeyEventHandler KeyUp;
-		[MONOTODO]
-		public new event EventHandler Leave;
-		[MONOTODO]
+
+		[MonoTODO]
 		public event EventHandler SizeModeChanged;
 	}
 }

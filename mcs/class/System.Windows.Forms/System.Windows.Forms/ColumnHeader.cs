@@ -53,12 +53,12 @@ namespace System.Windows.Forms {
 		
 		public string Text {
 			get { return text; }
-			set { text=value; }
+			set { text = value; }
 		}
 		
 		public HorizontalAlignment TextAlign {
 			get { return textAlign; }
-			set { textAlign=value; }
+			set { textAlign = value; }
 		}
 		
 		[MonoTODO]
@@ -77,7 +77,7 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		protected override void Dispose(bool disposing) 
 		{
-			throw new NotImplementedException ();
+			base.Dispose(disposing);
 		}
 		
 		public override string ToString() 

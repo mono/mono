@@ -23,17 +23,8 @@ namespace System.Windows.Forms {
 
 		[MonoTODO]
 		public HScrollBar() {
-			throw new NotImplementedException ();
+			//FIXME: implment
 		}
-
-		//
-		//  --- Public Methods
-		//
-
-		//
-		//  --- Public Properties
-		//
-
 
 		//
 		//  --- Protected Properties
@@ -49,13 +40,8 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		protected override  Size DefaultSize {
 			get {
-				throw new NotImplementedException ();
+				return new Size(80,16);
 			}
 		}
-
-		//
-		//  --- Protected Methods
-		//
-
 	}
 }

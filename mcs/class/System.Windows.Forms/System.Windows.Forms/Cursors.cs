@@ -28,11 +28,24 @@ namespace System.Windows.Forms {
 		#region Properties
 		[MonoTODO]
 		public static Cursor AppStarting {
-			get { throw new NotImplementedException (); }
+			
+			get {
+//HANDLE LoadImage(
+//  HINSTANCE hinst,   // handle to instance // = null
+//  LPCTSTR lpszName,  // image to load // = IDC_APPSTARTING
+//  UINT uType,        // image type //= IMAGE_CURSOR
+//  int cxDesired,     // desired width  // = 0
+//  int cyDesired,     // desired height // = 0
+//  UINT fuLoad        // load options // = LR_DEFAULTSIZE || ??
+//);
+				//Cursor cursor = new Cursor(
+				throw new NotImplementedException (); 
+			}
 		}
 		
 		[MonoTODO]
 		public static Cursor Arrow {
+			//  LPCTSTR lpszName,  // image to load // = IDC_ARROW
 			get { throw new NotImplementedException (); }
 		}
 		

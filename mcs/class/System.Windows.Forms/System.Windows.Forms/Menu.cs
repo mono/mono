@@ -30,57 +30,32 @@ namespace System.Windows.Forms  {
 		//
 		// -- Public Methods
 		//
-		//inherited
-		//public virtual ObjRef CreateObjRef(Type t) {
-		//	throw new NotImplementedException();
-		//}
-		//
-		//public void Dispose() {
-		//	throw new NotImplementedException();
-		//}
-		//
-		//protected virtual void Dispose(bool disposing) {
-		//	throw new NotImplementedException();
-		//}
 
-		public override bool Equals(object o) {
-			throw new NotImplementedException();
-		}
-
-		//public static bool Equals(object o1, object o2) {
-		//	throw new NotImplementedException();
-		//}
 		[MonoTODO]
-		public override int GetHashCode() {
-			//FIXME add our proprities
-			return base.GetHashCode();
-		}
-
 		public ContextMenu GetContextMenu() {
 			throw new NotImplementedException();
 		}
 
+		[MonoTODO]
 		public MainMenu GetMainMenu() {
 			throw new NotImplementedException();
 		}
 
-		//inherited
-		//public object GetLifetimeService() {
-		//	throw new NotImplementedException();
-		//}
-		//public Type GetType() {
-		//	throw new NotImplementedException();
-		//}
-		//public virtual object InitializeLifetimeService() {
-		//	throw new NotImplementedException();
-		//}
-
+		[MonoTODO]
 		public virtual void MergeMenu(Menu menuSrc) {
 			throw new NotImplementedException();
 		}
 
+		[MonoTODO]
+		protected override void Dispose(bool disposing) {
+			throw new NotImplementedException ();
+		}
+		
+		[MonoTODO]
 		public override string ToString() {
-			throw new NotImplementedException();
+			//do our own ToString here.
+			// this is overrridden
+			return base.ToString();
 		}
 
 		//
@@ -98,37 +73,10 @@ namespace System.Windows.Forms  {
 			}
 		}
 
-		~Menu() {
-			// TODO: Check whats happening if Menu was already destroyed by Win32 Window
-			if (Win32.IsMenu( menuHandle_))
-				Win32.DestroyMenu( menuHandle_);
-		}
-
-		//protected virtual object GetService(Type service) {
-		//	throw new NotImplementedException();
-		//}
-		//
-		//protected object MemberwiseClone() {
-		//	throw new NotImplementedException();
-		//}
-
-		//
-		// -- Public Events
-		//
-
-		//inherited
-		//public event EventHandler Disposed;
-
 		//
 		// -- Public Properties
 		//
 
-		//inherited
-		//public IContainer Container {
-		//	get {
-		//		throw new NotImplementedException();
-		//	}
-		//}
 
 		private IntPtr menuHandle_ = IntPtr.Zero;
 		public IntPtr Handle {
@@ -236,6 +184,8 @@ namespace System.Windows.Forms  {
 		//		throw new NotImplementedException();
 		//	}
 		//}
+
+
 		//
 		// System.Windows.Forms.Menu.MenuItemCollection.cs
 		//
@@ -327,11 +277,6 @@ namespace System.Windows.Forms  {
 				throw new NotImplementedException ();
 			}
 
-			//inherited
-			//public static bool Equals(object o1, object o2) {
-			//	throw new NotImplementedException ();
-			//}
-
 			[MonoTODO]
 			public override int GetHashCode() {
 				//FIXME add our proprities
@@ -341,10 +286,6 @@ namespace System.Windows.Forms  {
 			public IEnumerator GetEnumerator() {
 				return items_.GetEnumerator();
 			}
-
-			//public override Type GetType() {
-			//	throw new NotImplementedException ();
-			//}
 
 			public int IndexOf(MenuItem m) {
 				throw new NotImplementedException ();
@@ -478,7 +419,6 @@ namespace System.Windows.Forms  {
 			// End Of ICollection
 		}
 	}
-	
 }
 
 

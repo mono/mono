@@ -110,7 +110,7 @@ namespace System.Windows.Forms {
 			get { throw new NotImplementedException (); }
 		}
 	
-		[MonoTODO]
+		//[MonoTODO]
 		// Registry key not yet defined
 		//public static RegistryKey UserAppDataRegistry {
 		//	get { throw new NotImplementedException (); }

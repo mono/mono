@@ -30,56 +30,7 @@ namespace System.Windows.Forms {
 			foreColor = Color.Empty;
 		}
 
-		//[Serializable]
-		//[ClassInterface(ClassInterfaceType.AutoDual)]
-		~AmbientProperties(){
-		}
-
 		// --- (public) Properties ---
-
-		/// <summary>
-		///	Equals Method
-		/// </summary>
-		///
-		/// <remarks>
-		///	Checks equivalence of this AmbientProperties and another object.
-		/// </remarks>
-		
-		public override bool Equals (object obj) {
-			if (!(obj is AmbientProperties))
-				return false;
-
-			return (this == (AmbientProperties) obj);
-		}
-
-		/// <summary>
-		///	GetHashCode Method
-		/// </summary>
-		///
-		/// <remarks>
-		///	Calculates a hashing value.
-		/// </remarks>
-		
-		public override int GetHashCode () {
-			unchecked{//FIXME Add out proprities to the hash
-				return base.GetHashCode();
-			}
-		}
-
-		/// <summary>
-		///	ToString Method
-		/// </summary>
-		///
-		/// <remarks>
-		///	Formats the AmbientProperties as a string.
-		/// </remarks>
-		
-		//inherited
-		//public override string ToString () 
-		//{
-		//	//FIXME add our proprities to ToString
-		//	return base.ToString();// String.Format ("[{0},{1},{2}]", bindingpath, bindingfield, bindingmember);
-		//}
 
 		public Cursor Cursor {
 			get {

@@ -42,9 +42,6 @@ namespace System.Windows.Forms {
 			textAlign = ContentAlignment.MiddleCenter;
 		}
 		
-		
-		
-		
 		// --- CheckBox Properties ---
 		public Appearance Appearance {
 			get { return appearance; }
@@ -53,7 +50,7 @@ namespace System.Windows.Forms {
 		
 		public bool AutoCheck {
 			get { return autoCheck; }
-			set { autoCheck=value; }
+			set { autoCheck = value; }
 		}
 		
 		public ContentAlignment CheckAlign {
@@ -93,7 +90,7 @@ namespace System.Windows.Forms {
 		
 		public bool ThreeState {
 			get { return threeState; }
-			set { threeState=value; }
+			set { threeState = value; }
 		}
 		
 		
@@ -165,39 +162,10 @@ namespace System.Windows.Forms {
 			}
 		}
 		
-		
-		
-		
 		/// --- CheckBox events ---
-		[MonoTODO]
-		public event EventHandler AppearanceChanged {
-			add {
-				throw new NotImplementedException ();
-			}
-			remove {
-				throw new NotImplementedException ();
-			}
-		}
-		
-		[MonoTODO]
-		public event EventHandler CheckedChanged {
-			add {
-				throw new NotImplementedException ();
-			}
-			remove {
-				throw new NotImplementedException ();
-			}
-		}
-		
-		[MonoTODO]
-		public event EventHandler CheckStateChanged {
-			add {
-				throw new NotImplementedException ();
-			}
-			remove {
-				throw new NotImplementedException ();
-			}
-		}
+		public event EventHandler AppearanceChanged;
+		public event EventHandler CheckedChanged;
+		public event EventHandler CheckStateChanged;
 		
 		/// --- public class CheckBox.CheckBoxAccessibleObject : ButtonBase.ButtonBaseAccessibleObject ---
 		/// the class is not stubbed, cause it's only used for .NET framework
