@@ -1,3 +1,16 @@
+2002-04-08  Dietmar Maurer  <dietmar@ximian.com>
+
+	* invoke.c (arch_create_native_wrapper): special case EndInvoke -
+	we need to pass the MonoMethod pointer as first argument.
+
+	* delegate.c (mono_async_invoke): notify all listeners, not only a
+	single one.
+	(arch_end_invoke): we now pass a MonoMethod as first parameter and
+	use arch_method_call_message_new() to access the stack.
+	(arch_end_invoke): wait until we really finished processing
+	(async_invoke_abort): notify all listeners, not only a
+	single one.
+
 2002-04-06  Dietmar Maurer  <dietmar@ximian.com>
 
 	* message.c (arch_return_value): impl.
