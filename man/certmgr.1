@@ -44,6 +44,25 @@ More details displayed on the console.
 .TP
 .I "-help", "-h", "-?", "/?"
 Display help about this tool.
+.SH FILES
+.B WARNING: This details the current behavior of Mono and could change between releases.
+The only safe way to interact with certificate stores is to use the certmgr
+tool. The current releases of Mono keeps all the user certificate stores in 
+separates directories under
+.I ~/.mono/certs/
+.TP
+For example the trusted root certificates for a user would be kept under
+.I ~/.mono/certs/Trust/
+.TP
+Certificates files are kept in DER (binary) format (extension .cer).
+.TP
+The filenames either starts with
+.I tbp 
+(thumbprint) or
+.I ski
+(subject key identifier).
+.TP
+The rest of the filename is the base64-encoded value (tbp or ski).
 .SH AUTHOR
 Written by Sebastien Pouliot
 .SH COPYRIGHT
