@@ -252,6 +252,15 @@ test-193.cs
 -----------
 Fix for bug 39828, allow goto to a label in another switch section.
 
+test-194.cs
+-----------
+Fix for bug #39108 - ensure that the correct form of a params method is called:
+
+"explicit conversion of argument to object
+(type object cannot be implicitly converted to type
+object[]) affects resolution of normal/expanded form
+of method invocation."
+
 verify-1.cs
 -----------
 Test whether we do not jump out of the method in a Try/Finally block.

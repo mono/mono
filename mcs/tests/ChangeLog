@@ -1,3 +1,11 @@
+2003-05-17  Ravi Pratap  <ravi@ximian.com>
+
+	* test-194.cs: New test for bug #39108
+
+	* README.tests : Update accordingly.
+
+	* makefile : Add new test.
+
 2003-05-19  Martin Baulig  <martin@ximian.com>
 
 	* test-162.cs: Added testcases for structs containing other
