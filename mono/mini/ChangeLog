@@ -1,3 +1,8 @@
+2005-01-25  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* declsec.c: Look for security attributes on the original MonoMethod 
+	(and not the wrapped one). This fix permissions on icalls.
+
 2005-01-23  Zoltan Varga  <vargaz@freemail.hu>
 
 	* mini-amd64.c (mono_arch_allocate_vars): Use mono_allocate_stack_slots ().
