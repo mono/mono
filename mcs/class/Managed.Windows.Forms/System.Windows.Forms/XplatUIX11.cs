@@ -762,6 +762,260 @@ namespace System.Windows.Forms {
 		}
 		#endregion	// Callbacks
 
+		// System information
+		#region Public Properties
+		internal override  Size CursorSize {
+			get {
+				int	x;
+				int	y;
+
+				if (XQueryBestCursor(DisplayHandle, RootWindow, 32, 32, out x, out y) != 0) {
+					return new Size(x, y);
+				} else {
+					return new Size(16, 16);
+				}
+			}
+		} 
+
+		internal override  bool DragFullWindows {
+			get {
+				return true;
+			}
+		} 
+
+		internal override  Size DragSize {
+			get {
+				return new Size(4, 4);
+			}
+		} 
+
+		internal override  Size IconSize {
+			get {
+				IntPtr		list;
+				XIconSize	size;
+				int		count;
+
+				if (XGetIconSizes(DisplayHandle, RootWindow, out list, out count) != 0) {
+					long		current;
+					int		largest;
+
+					current = (long)list;
+					largest = 0;
+
+					size = new XIconSize();
+
+					for (int i = 0; i < count; i++) {
+						size = (XIconSize)Marshal.PtrToStructure((IntPtr)current, size.GetType());
+						current += Marshal.SizeOf(size);
+
+						// Look for our preferred size
+						if (size.min_width == 32) {
+							XFree(list);
+							return new Size(32, 32);
+						}
+
+						if (size.max_width == 32) {
+							XFree(list);
+							return new Size(32, 32);
+						}
+
+						if (size.min_width < 32 && size.max_width > 32) {
+							int	x;
+
+							// check if we can fit one
+							x = size.min_width;
+							while (x < size.max_width) {
+								x += size.width_inc;
+								if (x == 32) {
+									XFree(list);
+									return new Size(32, 32);
+								}
+							}
+						}
+
+						if (largest < size.max_width) {
+							largest = size.max_width;
+						}
+					}
+
+					// We didn't find a match or we wouldn't be here
+					return new Size(largest, largest);
+
+				} else {
+					return new Size(32, 32);
+				}
+			}
+		} 
+
+		internal override int KeyboardSpeed {
+			get{
+				//
+				// A lot harder: need to do:
+				// XkbQueryExtension(0x08051008, 0xbfffdf4c, 0xbfffdf50, 0xbfffdf54, 0xbfffdf58)       = 1
+				// XkbAllocKeyboard(0x08051008, 0xbfffdf4c, 0xbfffdf50, 0xbfffdf54, 0xbfffdf58)        = 0x080517a8
+				// XkbGetControls(0x08051008, 1, 0x080517a8, 0xbfffdf54, 0xbfffdf58)                   = 0
+				//
+				// And from that we can tell the repetition rate
+				//
+				// Notice, the values must map to:
+				//   [0, 31] which maps to 2.5 to 30 repetitions per second.
+				//
+				return 0;
+			}
+		}
+
+		internal override int KeyboardDelay {
+			get {
+				//
+				// Return values must range from 0 to 4, 0 meaning 250ms,
+				// and 4 meaning 1000 ms.
+				//
+				return 1; // ie, 500 ms
+			}
+		} 
+
+		internal override  Size MaxWindowTrackSize {
+			get {
+				return new Size (WorkingArea.Width, WorkingArea.Height);
+			}
+		} 
+
+		internal override  Size MinimizedWindowSize {
+			get {
+				return new Size(1, 1);
+			}
+		} 
+
+		internal override  Size MinimizedWindowSpacingSize {
+			get {
+				return new Size(1, 1);
+			}
+		} 
+
+		internal override  Size MinimumWindowSize {
+			get {
+				return new Size(1, 1);
+			}
+		} 
+
+		internal override  Size MinWindowTrackSize {
+			get {
+				return new Size(1, 1);
+			}
+		} 
+
+		internal override  Size SmallIconSize {
+			get {
+				IntPtr		list;
+				XIconSize	size;
+				int		count;
+
+				if (XGetIconSizes(DisplayHandle, RootWindow, out list, out count) != 0) {
+					long		current;
+					int		smallest;
+
+					current = (long)list;
+					smallest = 0;
+
+					size = new XIconSize();
+
+					for (int i = 0; i < count; i++) {
+						size = (XIconSize)Marshal.PtrToStructure((IntPtr)current, size.GetType());
+						current += Marshal.SizeOf(size);
+
+						// Look for our preferred size
+						if (size.min_width == 16) {
+							XFree(list);
+							return new Size(16, 16);
+						}
+
+						if (size.max_width == 16) {
+							XFree(list);
+							return new Size(16, 16);
+						}
+
+						if (size.min_width < 16 && size.max_width > 16) {
+							int	x;
+
+							// check if we can fit one
+							x = size.min_width;
+							while (x < size.max_width) {
+								x += size.width_inc;
+								if (x == 16) {
+									XFree(list);
+									return new Size(16, 16);
+								}
+							}
+						}
+
+						if (smallest == 0 || smallest > size.min_width) {
+							smallest = size.min_width;
+						}
+					}
+
+					// We didn't find a match or we wouldn't be here
+					return new Size(smallest, smallest);
+
+				} else {
+					return new Size(16, 16);
+				}
+			}
+		} 
+
+		internal override  int MouseButtonCount {
+			get {
+				return 3;
+			}
+		} 
+
+		internal override  bool MouseButtonsSwapped {
+			get {
+				return false;	// FIXME - how to detect?
+			}
+		} 
+
+		internal override  bool MouseWheelPresent {
+			get {
+				return true;	// FIXME - how to detect?
+			}
+		} 
+
+		internal override  Rectangle VirtualScreen {
+			get {
+				return WorkingArea;
+			}
+		} 
+
+		internal override  Rectangle WorkingArea {
+			get {
+				Atom			actual_atom;
+				int			actual_format;
+				int			nitems;
+				int			bytes_after;
+				IntPtr			prop = IntPtr.Zero;
+				int			width;
+				int			height;
+
+				XGetWindowProperty(DisplayHandle, RootWindow, NetAtoms[(int)NA._NET_DESKTOP_GEOMETRY], 0, 256, false, Atom.XA_CARDINAL, out actual_atom, out actual_format, out nitems, out bytes_after, ref prop);
+				if ((nitems == 2) && (prop != IntPtr.Zero)) {
+					width = Marshal.ReadInt32(prop, 0);
+					height = Marshal.ReadInt32(prop, 4);
+
+					XFree(prop);
+					return new Rectangle(0, 0, width, height);
+				} else {
+					int	x;
+					int	y;
+					int	client_width;
+					int	client_height;
+
+					GetWindowPos(RootWindow, true, out x, out y, out width, out height, out client_width, out client_height);
+					return new Rectangle(x, y, width, height);
+				}
+			}
+		} 
+		#endregion	// Public properties
+
 		#region Public Static Methods
 		internal override IntPtr InitializeDriver() {
 			lock (this) {
@@ -2487,27 +2741,6 @@ namespace System.Windows.Forms {
 			hwnd.expose_pending = true;
 		}
 		#endregion	// Public Static Methods
-
-		// System information
-
-		internal override int KeyboardSpeed { get{ throw new NotImplementedException(); } } 
-		internal override int KeyboardDelay { get{ throw new NotImplementedException(); } } 
-
-		internal override  Size CursorSize { get{ throw new NotImplementedException(); } }
-		internal override  bool DragFullWindows { get{ throw new NotImplementedException(); } }
-		internal override  Size DragSize { get{ throw new NotImplementedException(); } }
-		internal override  Size IconSize { get{ throw new NotImplementedException(); } }
-		internal override  Size MaxWindowTrackSize { get{ throw new NotImplementedException(); } }
-		internal override  Size MinimizedWindowSize { get{ throw new NotImplementedException(); } }
-		internal override  Size MinimizedWindowSpacingSize { get{ throw new NotImplementedException(); } }
-		internal override  Size MinimumWindowSize { get{ throw new NotImplementedException(); } }
-		internal override  Size MinWindowTrackSize { get{ throw new NotImplementedException(); } }
-		internal override  Size SmallIconSize { get{ throw new NotImplementedException(); } }
-		internal override  int MouseButtonCount { get{ throw new NotImplementedException(); } }
-		internal override  bool MouseButtonsSwapped { get{ throw new NotImplementedException(); } }
-		internal override  bool MouseWheelPresent { get{ throw new NotImplementedException(); } }
-		internal override  Rectangle VirtualScreen { get{ throw new NotImplementedException(); } }
-		internal override  Rectangle WorkingArea { get{ throw new NotImplementedException(); } }
 
 		internal override event EventHandler Idle;
 

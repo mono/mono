@@ -1,3 +1,8 @@
+2005-02-13  Peter Bartok  <pbartok@novell.com>
+
+	* XplatUIX11.cs: Fixed NotImplemented exceptions for properties,
+	  missed those in the rewrite
+
 2005-02-14  Miguel de Icaza  <miguel@novell.com>
 
 	* NumericUpDown.cs (Increment, ToString): Add.
