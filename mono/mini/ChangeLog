@@ -1,4 +1,9 @@
 
+Tue Dec 7 11:44:39 CET 2004 Paolo Molaro <lupus@ximian.com>
+
+	* mini-ppc.c, objectc.cs: handle large structs passed by value
+	(fixes bug #69972).
+
 Tue Dec 7 10:43:31 CET 2004 Paolo Molaro <lupus@ximian.com>
 
 	* mini-ppc.c: OP_ARGLIST implementation from
