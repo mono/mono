@@ -2,6 +2,8 @@
 
 	* DateTime.cs: Added a AddRoundedMilliseconds which use the "old Mono"
 	rounding logic which worked for FromOADate (while the newer didn't).
+	* TimeSpan.cs: Now throw an OverflowException when the timespan is
+	over MaxValue or under MinValue.
 
 2004-06-11  Martin Baulig  <martin@ximian.com>
 

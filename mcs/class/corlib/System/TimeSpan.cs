@@ -577,9 +577,7 @@ namespace System
 				}
 
 				long t = TimeSpan.CalculateTicks (days, hours, minutes, seconds, 0);
-				t += ticks;
-				if (sign)
-					t = -t;
+				t = checked ((sign) ? (-t - ticks) : (t + ticks));
 				return new TimeSpan (t);
 			}
 		}
