@@ -1,3 +1,6 @@
+2004-04-27  Zoltan Varga  <vargaz@freemail.hu>
+
+	* marshal.c: Handle null properly in PtrToString* icalls. Fixes #57706.
 
 Tue Apr 27 15:55:17 CEST 2004 Paolo Molaro <lupus@ximian.com>
 
