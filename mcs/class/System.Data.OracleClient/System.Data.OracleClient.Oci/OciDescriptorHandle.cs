@@ -35,8 +35,7 @@ namespace System.Data.OracleClient.Oci {
 		protected override void FreeHandle ()
 		{
 			if (HandleType != OciHandleType.Parameter) {	// Parameter handles are disposed implicitely
-				int status = 0;
-				status = OciCalls.OCIDescriptorFree (this, HandleType);
+				OciCalls.OCIDescriptorFree (this, HandleType);
 			}
 		}
 

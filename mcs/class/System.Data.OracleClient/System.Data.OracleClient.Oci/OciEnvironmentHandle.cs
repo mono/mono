@@ -31,9 +31,8 @@ namespace System.Data.OracleClient.Oci {
 		public OciEnvironmentHandle (OciEnvironmentMode mode)
 			: base (OciHandleType.Environment, null, IntPtr.Zero)
 		{
-			int status = 0;
 			IntPtr newHandle = IntPtr.Zero;
-			status = OciCalls.OCIEnvCreate (out newHandle, 
+			OciCalls.OCIEnvCreate (out newHandle, 
 						mode, 
 						IntPtr.Zero, 
 						IntPtr.Zero, 
