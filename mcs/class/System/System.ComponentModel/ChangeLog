@@ -1,3 +1,8 @@
+2003-07-17  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
+
+	* IComponent.cs:
+	* MarshalByValueComponent.cs: Reworked attributes based on the new Consts scheme
+
 2003-07-16  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* TypeDescriptor.cs: fixed GetConverter (type) for enumerations that
