@@ -9,6 +9,7 @@ namespace WindowsApplication1
 	/// </summary>
 	public class Form1 : System.Windows.Forms.Form
 	{
+		private Label label;
 		/// <summary>
 		/// Required designer variable.
 		/// </summary>
@@ -55,6 +56,11 @@ namespace WindowsApplication1
 			this.ClientSize = new System.Drawing.Size(292, 273);
 			this.Name = "Form1";
 			this.Text = "Form1";
+			this.label = new Label ();
+			this.label.Text = "test";
+
+			this.Controls.AddRange(new System.Windows.Forms.Control[] { this.label });
+
 
 		}
 		#endregion
