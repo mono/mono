@@ -29,6 +29,8 @@
 
 2001-12-13  Miguel de Icaza  <miguel@ximian.com>
 
+	* class.cs (MakeKey): Kill routine.
+	
 	* class.cs (TypeContainer.Define): Correctly define explicit
 	method implementations (they require the full interface name plus
 	the method name).

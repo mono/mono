@@ -666,15 +666,6 @@ namespace Mono.CSharp {
 			
 		}
 
-		static object MakeKey (MethodBase mb)
-		{
-			if (mb is MethodBuilder || mb is ConstructorBuilder)
-				return mb.ReflectedType.FullName + ":" + mb;
-			else
-				return mb.MethodHandle.ToString ();
-		}
-
-
 		public static string MakeFQN (string nsn, string name)
 		{
 			string prefix = (nsn == "" ? "" : nsn + ".");

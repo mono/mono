@@ -110,12 +110,6 @@ BUGS
 	Method registration should only be used to register methodbuilders,
 	we need an alternate method of checking for duplicates.
 
-* Mapping of methods
-
-	Currently various hashtables fail because the Equals implementation
-	for MethodBuilders is not complete enough.  We could work around this
-	by having our own Hashtable implementation.
-
 * We need to catch:
 
 	extern string Property {
