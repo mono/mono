@@ -1,3 +1,9 @@
+2004-10-06  Jackson Harper  <jackson@ximian.com>
+
+	* pt.xml: We need a space after R$. Is there a better way to do
+	this? I should know...
+	* pt_BR.xml: Fix currency format.
+
 2004-06-08  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* ja.xml : added extra datetime patterns.
