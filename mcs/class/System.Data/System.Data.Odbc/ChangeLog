@@ -1,3 +1,15 @@
+2002-11-01  Daniel Morgan <danmorg@sc.rr.com>
+
+	* OdbcDataReader.cs: - uncommented code, but
+	I put a FIXME: according to Brian, 
+    this does not work on MS .NET
+    however, we need it for Mono 
+    for now. schemaRow.AcceptChanges(),
+    - implement IEnumerable.GetEnumerator()
+    
+    * libodbc.cs: changed the DllImport from "odbc32.dll"
+    to "odbc32"
+    
 2002-10-21  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* ChangeLog: added.

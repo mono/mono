@@ -344,7 +344,11 @@ namespace System.Data.Odbc
 					schemaRow["IsLong"] = false;
 					schemaRow["IsReadOnly"] = false;
 					
-	//				schemaRow.AcceptChanges();
+					// FIXME: according to Brian, 
+					// this does not work on MS .NET
+					// however, we need it for Mono 
+					// for now
+					schemaRow.AcceptChanges();
 					
 				}
 
@@ -476,7 +480,7 @@ namespace System.Data.Odbc
 		[MonoTODO]
 		IEnumerator IEnumerable.GetEnumerator ()
 		{
-			throw new NotImplementedException ();
+			return new DbEnumerator (this);
 		}
 
 		public bool IsDBNull (int ordinal)
