@@ -1,3 +1,26 @@
+2002-04-22  Duncan Mak  <duncan@ximian.com>
+
+	* AutomationProxyAttribute.cs: 
+	* CoClassAttribute.cs: 
+	* ComAliasNameAttribute.cs: 
+	* ComConventionLossAttribute.cs: 
+	* ComEventInterfaceAttribute.cs: 
+	* ComImportAttribute.cs: 
+	* ComRegisterFunctionAttribute.cs: 
+	* ComUnregisterFunctionAttribute.cs: 
+	* DispIdAttribute.cs: 
+	* ImportedFromTypeLibAttribute.cs: 
+	* LCIDConversionAttribute.cs: 
+	* PreserveSigAttribute.cs: 
+	* PrimaryInteropAssemblyAttribute.cs: 
+	* ProgIdAttribute.cs: 
+	* TypeLibFuncAttribute.cs: 
+	* TypeLibFuncFlags.cs: 
+	* TypeLibTypeAttribute.cs: 
+	* TypeLibTypeFlags.cs: 
+	* TypeLibVarAttribute.cs: 
+	* TypeLibVarFlags.cs:  Added to CVS.
+
 2002-04-08  Nick Drochak  <ndrochak@gol.com>
 
 	* Marshal.cs: Make class public.
