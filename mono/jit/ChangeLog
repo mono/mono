@@ -1,3 +1,10 @@
+2001-12-21  Dietmar Maurer  <dietmar@ximian.com>
+
+	* jit.c (mono_analyze_stack): spill MUL to avoid problem with
+	register allocation.
+
+	* emit-x86.c (arch_compile_method): fixed static delegate bug
+
 2001-12-16  Miguel de Icaza  <miguel@ximian.com>
 
 	* x86.brg, jit.c: Split up the nodes that we used to share on
