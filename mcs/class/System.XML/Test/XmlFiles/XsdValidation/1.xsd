@@ -1,0 +1,7 @@
+<xs:schema
+	xmlns:xs='http://www.w3.org/2001/XMLSchema'
+	targetNamespace="urn:foo">
+
+<xs:element name="root" type="xs:string" />
+
+</xs:schema>
