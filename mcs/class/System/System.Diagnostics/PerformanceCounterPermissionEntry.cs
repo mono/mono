@@ -30,44 +30,44 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System;
-using System.Diagnostics;
 using System.Security.Permissions;
 
-namespace System.Diagnostics 
-{
+namespace System.Diagnostics {
+
 	[Serializable]
-	public class PerformanceCounterPermissionEntry 
-	{
+	public class PerformanceCounterPermissionEntry {
+
 		private PerformanceCounterPermissionAccess permissionAccess;
 		private string machineName;
 		private string categoryName;
 
-		public PerformanceCounterPermissionEntry (
-			PerformanceCounterPermissionAccess permissionAccess,
-			string machineName,
-			string categoryName)
+		public PerformanceCounterPermissionEntry (PerformanceCounterPermissionAccess permissionAccess,
+			string machineName, string categoryName)
 		{
+			ResourcePermissionBase.ValidateMachineName (machineName);
+			if (categoryName == null)
+				throw new ArgumentNullException ("categoryName");
+
 			this.permissionAccess = permissionAccess;
 			this.machineName = machineName;
 			this.categoryName = categoryName;
 		}
 
 		public string CategoryName {
-			get {return categoryName; }
+			get { return categoryName; }
 		}
 
 		public string MachineName {
-			get {return machineName; }
+			get { return machineName; }
 		}
 
 		public PerformanceCounterPermissionAccess PermissionAccess {
-			get {return permissionAccess; }
+			get { return permissionAccess; }
 		}
 
 		internal ResourcePermissionBaseEntry CreateResourcePermissionBaseEntry ()
 		{
-			return new ResourcePermissionBaseEntry ((int) permissionAccess, new string[] {machineName, categoryName});
+			return new ResourcePermissionBaseEntry ((int) permissionAccess, new string[] { machineName, categoryName });
 		} 
 	}
 }

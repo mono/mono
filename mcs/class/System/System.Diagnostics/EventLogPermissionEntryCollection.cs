@@ -2,13 +2,13 @@
 // System.Diagnostics.EventLogPermissionEntryCollection.cs
 //
 // Authors:
-//   Jonathan Pryor (jonpryor@vt.edu)
-//   Andreas Nahr (ClassDevelopment@A-SoftTech.com)
+//	Jonathan Pryor (jonpryor@vt.edu)
+//	Andreas Nahr (ClassDevelopment@A-SoftTech.com)
+//	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) 2002 Jonathan Pryor
 // (C) 2003 Andreas Nahr
-//
-
+// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -30,28 +30,28 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-
-using System;
 using System.Collections;
-using System.Diagnostics;
 using System.Security.Permissions;
 
-namespace System.Diagnostics 
-{
+namespace System.Diagnostics {
 
 	[Serializable]
-	public class EventLogPermissionEntryCollection : CollectionBase 
-	{
+	public class EventLogPermissionEntryCollection : CollectionBase {
 
-		private EventLogPermissionEntryCollection()
-		{
-		}
+		private EventLogPermission owner;
 
-		internal EventLogPermissionEntryCollection (ResourcePermissionBaseEntry[] entries)
+		internal EventLogPermissionEntryCollection (EventLogPermission owner)
 		{
-			foreach (ResourcePermissionBaseEntry entry in entries) {
-				List.Add (new EventLogPermissionEntry ((EventLogPermissionAccess) entry.PermissionAccess, entry.PermissionAccessPath[0]));
-			}	
+			this.owner = owner;
+			ResourcePermissionBaseEntry[] entries = owner.GetEntries ();
+			if (entries.Length > 0) {
+				foreach (ResourcePermissionBaseEntry entry in entries) {
+					EventLogPermissionAccess elpa = (EventLogPermissionAccess) entry.PermissionAccess;
+					EventLogPermissionEntry elpe = new EventLogPermissionEntry (elpa, entry.PermissionAccessPath [0]);
+					// we don't want to add them (again) to the base class
+					InnerList.Add (elpe);
+				}
+			}
 		}
 
 		public EventLogPermissionEntry this [int index] {
@@ -76,52 +76,48 @@ namespace System.Diagnostics
 				List.Add (entry);
 		}
 
-		public bool Contains(EventLogPermissionEntry value)
+		public bool Contains (EventLogPermissionEntry value)
 		{
 			return List.Contains (value);
 		}
 
-		public void CopyTo(EventLogPermissionEntry[] array, int index)
+		public void CopyTo (EventLogPermissionEntry[] array, int index)
 		{
 			List.CopyTo (array, index);
 		}
 
-		public int IndexOf(EventLogPermissionEntry value)
+		public int IndexOf (EventLogPermissionEntry value)
 		{
 			return List.IndexOf (value);
 		}
 
-		public void Insert(int index, EventLogPermissionEntry value)
+		public void Insert (int index, EventLogPermissionEntry value)
 		{
 			List.Insert (index, value);
 		}
 
-		[MonoTODO]
-		protected override void OnClear()
+		protected override void OnClear ()
 		{
-			throw new NotImplementedException();
+			owner.ClearEntries ();
 		}
 
-		[MonoTODO]
-		protected override void OnInsert(int index, object value)
+		protected override void OnInsert (int index, object value)
 		{
-			throw new NotImplementedException();
+			owner.Add (value);
 		}
 
-		[MonoTODO]
-		protected override void OnRemove(int index, object value)
+		protected override void OnRemove (int index, object value)
 		{
-			throw new NotImplementedException();
+			owner.Remove (value);
 		}
 
-		[MonoTODO]
-		protected override void OnSet(int index, object oldValue, 
-			object newValue)
+		protected override void OnSet (int index, object oldValue, object newValue)
 		{
-			throw new NotImplementedException();
+			owner.Remove (oldValue);
+			owner.Add (newValue);
 		}
 
-		public void Remove(EventLogPermissionEntry value)
+		public void Remove (EventLogPermissionEntry value)
 		{
 			List.Remove (value);
 		}

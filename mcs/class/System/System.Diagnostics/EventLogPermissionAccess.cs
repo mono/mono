@@ -40,8 +40,8 @@ namespace System.Diagnostics {
 		Instrument=0x6,
 		[Obsolete ()]
 		Audit=0xA,
-		Write,
-		Administer,
+		Write = 16,
+		Administer = 48,
 #else
 		Browse=0x2,
 		Instrument=0x6,

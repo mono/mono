@@ -2,13 +2,13 @@
 // System.Diagnostics.PerformanceCounterPermissionEntryCollection.cs
 //
 // Authors:
-//   Jonathan Pryor (jonpryor@vt.edu)
-//   Andreas Nahr (ClassDevelopment@A-SoftTech.com)
+//	Jonathan Pryor (jonpryor@vt.edu)
+//	Andreas Nahr (ClassDevelopment@A-SoftTech.com)
+//	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) 2002
 // (C) 2003 Andreas Nahr
-//
-
+// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -30,8 +30,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System;
-using System.Diagnostics;
 using System.Collections;
 using System.Globalization;
 using System.Security.Permissions;
@@ -39,8 +37,26 @@ using System.Security.Permissions;
 namespace System.Diagnostics {
 
 	[Serializable]
-	public class PerformanceCounterPermissionEntryCollection : CollectionBase 
-	{
+	public class PerformanceCounterPermissionEntryCollection : CollectionBase {
+
+		private PerformanceCounterPermission owner;
+
+		internal PerformanceCounterPermissionEntryCollection (PerformanceCounterPermission owner)
+		{
+			this.owner = owner;
+			ResourcePermissionBaseEntry[] entries = owner.GetEntries ();
+			if (entries.Length > 0) {
+				foreach (ResourcePermissionBaseEntry entry in entries) {
+					PerformanceCounterPermissionAccess elpa = (PerformanceCounterPermissionAccess) entry.PermissionAccess;
+					string machine = entry.PermissionAccessPath [0];
+					string category = entry.PermissionAccessPath [1];
+					PerformanceCounterPermissionEntry elpe = new PerformanceCounterPermissionEntry (elpa, machine, category);
+					// we don't want to add them (again) to the base class
+					InnerList.Add (elpe);
+				}
+			}
+		}
+
 		internal PerformanceCounterPermissionEntryCollection (ResourcePermissionBaseEntry[] entries)
 		{
 			foreach (ResourcePermissionBaseEntry entry in entries) {
@@ -49,85 +65,71 @@ namespace System.Diagnostics {
 		}
 
 		public PerformanceCounterPermissionEntry this [int index] {
-			get {
-				return (PerformanceCounterPermissionEntry)
-					InnerList[index];
-			}
-			set {InnerList[index] = value;}
+			get { return (PerformanceCounterPermissionEntry) InnerList[index]; }
+			set { InnerList[index] = value; }
 		}
 
 		public int Add (PerformanceCounterPermissionEntry value)
 		{
-			return InnerList.Add (value);
+			return List.Add (value);
 		}
 
 		public void AddRange (PerformanceCounterPermissionEntry[] value)
 		{
 			foreach (PerformanceCounterPermissionEntry e in value)
-				Add (e);
+				List.Add (e);
 		}
 
-		public void AddRange (
-			PerformanceCounterPermissionEntryCollection value)
+		public void AddRange (PerformanceCounterPermissionEntryCollection value)
 		{
 			foreach (PerformanceCounterPermissionEntry e in value)
-				Add (e);
+				List.Add (e);
 		}
 
 		public bool Contains (PerformanceCounterPermissionEntry value)
 		{
-			return InnerList.Contains (value);
+			return List.Contains (value);
 		}
 
-		public void CopyTo (PerformanceCounterPermissionEntry[] array,
-			int index)
+		public void CopyTo (PerformanceCounterPermissionEntry[] array, int index)
 		{
-			InnerList.CopyTo (array, index);
+			List.CopyTo (array, index);
 		}
 
 		public int IndexOf (PerformanceCounterPermissionEntry value)
 		{
-			return InnerList.IndexOf (value);
+			return List.IndexOf (value);
 		}
 
-		public void Insert (int index, 
-			PerformanceCounterPermissionEntry value)
+		public void Insert (int index, PerformanceCounterPermissionEntry value)
 		{
-			InnerList.Insert (index, value);
+			List.Insert (index, value);
 		}
 
 		protected override void OnClear ()
 		{
+			owner.ClearEntries ();
 		}
 
 		protected override void OnInsert (int index, object value)
 		{
-			if (!(value is PerformanceCounterPermissionEntry))
-				throw new NotSupportedException (Locale.GetText(
-					"You can only insert " +
-					"PerformanceCounterPermissionEntry " +
-					"objects into the collection."));
+			owner.Add (value);
 		}
 
 		protected override void OnRemove (int index, object value)
 		{
+			owner.Remove (value);
 		}
 
-		protected override void OnSet (int index, 
-			object oldValue, 
-			object newValue)
+		protected override void OnSet (int index, object oldValue, object newValue)
 		{
-			if (!(newValue is PerformanceCounterPermissionEntry))
-				throw new NotSupportedException (Locale.GetText(
-					"You can only insert " +
-					"PerformanceCounterPermissionEntry " +
-					"objects into the collection."));
+			owner.Remove (oldValue);
+			owner.Add (newValue);
 		}
 
 		public void Remove (PerformanceCounterPermissionEntry value)
 		{
-			InnerList.Remove (value);
+			List.Remove (value);
 		}
 	}
 }
-

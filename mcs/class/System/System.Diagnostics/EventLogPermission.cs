@@ -37,6 +37,8 @@ namespace System.Diagnostics {
 	[Serializable]
 	public sealed class EventLogPermission : ResourcePermissionBase {
 
+		EventLogPermissionEntryCollection innerCollection;
+
 		public EventLogPermission ()
 		{
 			SetUp ();
@@ -48,8 +50,8 @@ namespace System.Diagnostics {
 				throw new ArgumentNullException ("permissionAccessEntries");
 
 			SetUp ();
-			foreach (EventLogPermissionEntry entry in permissionAccessEntries)
-				AddPermissionAccess (entry.CreateResourcePermissionBaseEntry ());
+			innerCollection = new EventLogPermissionEntryCollection (this);
+			innerCollection.AddRange (permissionAccessEntries);
 		}
 
 		public EventLogPermission (PermissionState state)
@@ -61,12 +63,18 @@ namespace System.Diagnostics {
 		public EventLogPermission (EventLogPermissionAccess permissionAccess, string machineName)
 		{
 			SetUp ();
-			EventLogPermissionEntry elpe = new EventLogPermissionEntry (permissionAccess, machineName);
-			AddPermissionAccess (elpe.CreateResourcePermissionBaseEntry ());
+			innerCollection = new EventLogPermissionEntryCollection (this);
+			innerCollection.Add (new EventLogPermissionEntry (permissionAccess, machineName));
 		}
 
 		public EventLogPermissionEntryCollection PermissionEntries {
-			get { return new EventLogPermissionEntryCollection (base.GetPermissionEntries ()); }
+			get {
+				if (innerCollection == null) {
+					// must be here to work with XML deserialization
+					innerCollection = new EventLogPermissionEntryCollection (this);
+				}
+				return innerCollection;
+			}
 		}
 
 		// private stuff
@@ -75,6 +83,28 @@ namespace System.Diagnostics {
 		{
 			TagNames = new string [1] { "Machine" };
 			PermissionAccessType = typeof (EventLogPermissionAccess);
+		}
+
+		internal ResourcePermissionBaseEntry[] GetEntries ()
+		{
+			return base.GetPermissionEntries ();
+		}
+
+		internal void ClearEntries ()
+		{
+			base.Clear ();
+		}
+
+		internal void Add (object obj) 
+		{
+			EventLogPermissionEntry elpe = (obj as EventLogPermissionEntry);
+			base.AddPermissionAccess (elpe.CreateResourcePermissionBaseEntry ());
+		}
+
+		internal void Remove (object obj) 
+		{
+			EventLogPermissionEntry elpe = (obj as EventLogPermissionEntry);
+			base.RemovePermissionAccess (elpe.CreateResourcePermissionBaseEntry ());
 		}
 	}
 }

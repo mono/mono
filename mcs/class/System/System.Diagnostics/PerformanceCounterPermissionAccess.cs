@@ -32,20 +32,24 @@
 
 namespace System.Diagnostics {
 
+#if NET_2_0
+	[Serializable]
+#endif
 	[Flags]
 	public enum PerformanceCounterPermissionAccess {
-		Administer=0x0E,
 		None=0x00,
 #if NET_2_0
 		[Obsolete ()]
-		Browse=0x02,
+		Browse=1,
+		Read=1,
+		Write=2,
 		[Obsolete ()]
-		Instrument=0x06,
-		Read,
-		Write,
+		Instrument=3,
+		Administer=7,
 #else
 		Browse=0x02,
 		Instrument=0x06,
+		Administer=0x0E,
 #endif
 	}
 }

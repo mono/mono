@@ -1,3 +1,17 @@
+2004-09-11  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* EventLogPermission.cs: Completed implementation.
+	* EventLogPermissionAccess.cs: Fixed enum values.
+	* EventLogPermissionEntry.cs: Added validation for machine names.
+	* EventLogPermissionEntryCollection.cs: Added synchronization
+	of entries with the base permission class.
+	* PerformanceCounterPermission.cs: Completed implementation.
+	* PerformanceCounterPermissionAccess.cs: Fixed enum values.
+	* PerformanceCounterPermissionEntry.cs: Added validations for machine
+	and category names.
+	* PerformanceCounterPermissionEntryCollection.cs: Added synchronization
+	of entries with the base permission class.
+
 2004-09-10  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* EventLogPermission.cs: Fixed initialization (TagNames and
