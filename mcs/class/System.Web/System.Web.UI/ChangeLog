@@ -1,3 +1,8 @@
+2004-10-01 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Control.cs: even if the control has no children the naming container
+	may contain the control we're looking for. Fixes bug #67304.
+
 2004-09-09 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* TemplateParser.cs: ensure bin directory exists before trying to access

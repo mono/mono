@@ -501,9 +501,6 @@ namespace System.Web.UI
                 protected virtual Control FindControl (string id, int pathOffset)
                 {
 			EnsureChildControls ();
-			if (_controls == null)
-				return null;
-
 			Control namingContainer = null;
 			if (!_isNamingContainer) {
 				namingContainer = NamingContainer;
@@ -512,6 +509,9 @@ namespace System.Web.UI
 
 				return namingContainer.FindControl (id, pathOffset);
 			}
+
+			if (!HasControls ())
+				return null;
 
 			int colon = id.IndexOf (':', pathOffset);
 			if (colon == -1)
