@@ -1,3 +1,6 @@
+2004-03-17  Ravindra <rkumar@novell.com>
+	* TestHatchBrush.cs: Added.
+
 2004-01-26  Ravindra <rkumar@novell.com>
 	* TestPointF.cs: Added.
 	* TestSize.cs: Added.
