@@ -1,3 +1,9 @@
+2004-06-08  Duncan Mak  <duncan@ximian.com>
+
+	* StreamReader.cs (StreamReader):
+	(Initialize): Add a check that buffer_size must not be less than
+	or equal to zero.
+
 2004-06-07  Duncan Mak  <duncan@ximian.com>
 
 	* FileStream.cs (SetLength): The other exceptions have precendence
