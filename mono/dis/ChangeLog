@@ -1,5 +1,10 @@
 2004-12-10  Martin Baulig  <martin@ximian.com>
 
+	* get.c (get_fieldref_signature): Escape the field type and name
+	here, too.
+
+2004-12-10  Martin Baulig  <martin@ximian.com>
+
 	Started to add generics support to monodis.
 
 	* get.c (get_typedef_or_ref): Added `MonoGenericContext *'.
