@@ -21,7 +21,7 @@ namespace demo
 		private Button cutbutton = new Button();
 		private Button button1 = new Button(); 
 		private Button button2 = new Button(); 
-		//private Label label1 = new Label();
+		private Label label1 = new Label();
 		private TextBox text1 = new TextBox(); 
 		private ProgressBar bar1 = new ProgressBar();
 		private CheckBox check1 = new CheckBox();
@@ -96,8 +96,8 @@ namespace demo
 			this.bar1.ForeColor = Color.Blue;
 			this.bar1.BackColor = Color.Lime;
 
-		//this.label1.Location = new Point(330, 20);
-		//this.label1.Text = "This is a Label";	
+			this.label1.Location = new Point(330, 20);
+			this.label1.Text = "This is a Label";	
 
 			this.check1.Location = new Point(150, 160);
 			this.check1.Size = new Size(180, 20);
@@ -144,8 +144,8 @@ namespace demo
 						this.pbox,
 						this.fdialog,
 						this.vScrollBar1,
-						this.hScrollBar1 });
-//						this.label1 });
+						this.hScrollBar1,
+						this.label1 });
 
 			this.Size = new Size(512, 250);
 		}
