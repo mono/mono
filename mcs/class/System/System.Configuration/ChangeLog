@@ -1,3 +1,7 @@
+2002-10-31  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* ConfigHelper.cs: NameValueCollection.Add is now fixed.
+
 2002-10-14  Martin Baulig  <martin@gnome.org>
 
 	* ConfigurationSettings.cs (DefaultConfig.GetAppConfigPath):
