@@ -1,3 +1,8 @@
+2004-02-14  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* NumberFormatInfo.cs : CurrentInfo should not return clone every 
+	  time (MS.NET returns the same object; try object.ReferenceEquals()).
+
 2004-02-08 David Sheldon <dave-mono@earth.li>
 
   * NumberFormatInfo.cs: When parsing the percentages, put the data 

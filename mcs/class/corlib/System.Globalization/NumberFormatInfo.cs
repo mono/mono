@@ -437,7 +437,7 @@ namespace System.Globalization {
 
 		public static NumberFormatInfo CurrentInfo {
 			get {
-				NumberFormatInfo nfi = (NumberFormatInfo) System.Threading.Thread.CurrentThread.CurrentCulture.NumberFormat.Clone();
+				NumberFormatInfo nfi = (NumberFormatInfo) System.Threading.Thread.CurrentThread.CurrentCulture.NumberFormat;
 				nfi.readOnly = true;
 				return nfi;
 			}		       
