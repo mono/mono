@@ -30,6 +30,7 @@
 //
 
 using System.Web.Services;
+using System.Xml;
 
 namespace System.Web.Services.Protocols {
 	public abstract class MimeFormatter {
@@ -76,6 +77,55 @@ namespace System.Web.Services.Protocols {
 
 		public abstract void Initialize (object initializer);	
 
+		internal static object StringToObj (Type type, string value)
+		{
+			switch (Type.GetTypeCode (type))
+			{
+				case TypeCode.Boolean: return XmlConvert.ToBoolean (value);
+				case TypeCode.Byte: return XmlConvert.ToByte (value);
+				case TypeCode.DateTime: return XmlConvert.ToDateTime (value);
+				case TypeCode.Decimal: return XmlConvert.ToDecimal (value);
+				case TypeCode.Double: return XmlConvert.ToDouble (value);
+				case TypeCode.Int16: return XmlConvert.ToInt16 (value);
+				case TypeCode.Int32: return XmlConvert.ToInt32 (value);
+				case TypeCode.Int64: return XmlConvert.ToInt64 (value);
+				case TypeCode.SByte: return XmlConvert.ToSByte (value);
+				case TypeCode.Single: return XmlConvert.ToSingle (value);
+				case TypeCode.UInt16: return XmlConvert.ToUInt16 (value);
+				case TypeCode.UInt32: return XmlConvert.ToUInt32 (value);
+				case TypeCode.UInt64: return XmlConvert.ToUInt64 (value);
+				case TypeCode.String: return value;
+				case TypeCode.Char:
+					if (value.Length != 1) throw new InvalidOperationException ("Invalid char value");
+					return value [0];
+			}
+			throw new InvalidOperationException ("Type not supported");
+		}
+
+		internal static string ObjToString (object value)
+		{
+			if (value == null) return "";
+			switch (Type.GetTypeCode (value.GetType ()))
+			{
+				case TypeCode.Boolean: return XmlConvert.ToString ((bool)value);
+				case TypeCode.Byte: return XmlConvert.ToString ((byte)value);
+				case TypeCode.Char: return XmlConvert.ToString ((char)value);
+				case TypeCode.DateTime: return XmlConvert.ToString ((DateTime)value);
+				case TypeCode.Decimal: return XmlConvert.ToString ((decimal)value);
+				case TypeCode.Double: return XmlConvert.ToString ((double)value);
+				case TypeCode.Int16: return XmlConvert.ToString ((Int16)value);
+				case TypeCode.Int32: return XmlConvert.ToString ((Int32)value);
+				case TypeCode.Int64: return XmlConvert.ToString ((Int64)value);
+				case TypeCode.SByte: return XmlConvert.ToString ((sbyte)value);
+				case TypeCode.Single: return XmlConvert.ToString ((Single)value);
+				case TypeCode.UInt16: return XmlConvert.ToString ((UInt16)value);
+				case TypeCode.UInt32: return XmlConvert.ToString ((UInt32)value);
+				case TypeCode.UInt64: return XmlConvert.ToString ((UInt64)value);
+				case TypeCode.String: return value as string;
+			}
+			throw new InvalidOperationException ("Type not supported");
+		}
+		
 		#endregion // Methods
 	}
 }

@@ -1,3 +1,12 @@
+2004-12-09  Lluis Sanchez Gual <lluis@novell.com> 
+
+	* ValueCollectionParameterReader.cs: Parse parameters in the correct
+	way, Convert.ChangeType is not enough. This fixes bug #70266.
+	Removed some types that are not supported as parameters.
+	* MimeFormatter.cs: Added methods for xml <-> object conversion.
+	* UrlEncodedParameterWriter.cs: Use a more elaborate method for converting
+	from object to string, ToString() is not enough.
+
 2004-12-09  Lluis Sanchez Gual <lluis@novell.com>
 
 	* TypeStubManager.cs: Removed redundat hastable access.

@@ -80,10 +80,7 @@ namespace System.Web.Services.Protocols {
 			return ( type.IsPrimitive || 
 					 type == typeof(string) ||
 					 type == typeof(DateTime) ||
-					 type == typeof(Guid) ||
-					 type == typeof(XmlQualifiedName) ||
-					 type == typeof(TimeSpan) ||
-					 type == typeof(byte[])
+					 type == typeof(Decimal)
 					 );
 		}
 
@@ -96,18 +93,17 @@ namespace System.Web.Services.Protocols {
 				if (val == null) throw new InvalidOperationException ("Missing parameter: " + parameters[n].Name);
 				try
 				{
-					res [n] = Convert.ChangeType (val, parameters[n].ParameterType);
+					res [n] = StringToObj (parameters[n].ParameterType, val);
 				}
 				catch (Exception ex)
 				{
-					string error = "Cannot convert " + val + " to " + parameters[n].ParameterType.FullName + "\n";
+					string error = "Cannot convert '" + val + "' to " + parameters[n].ParameterType.FullName + "\n";
 					error += "Parameter name: " + parameters[n].Name + " --> " + ex.Message;
 					throw new InvalidOperationException (error);
 				}
 			}
 			return res;
 		}
-
 		#endregion // Methods
 	}
 }
