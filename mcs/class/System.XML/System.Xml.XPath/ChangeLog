@@ -1,3 +1,10 @@
+2004-01-27  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* DefaultContext.cs : Avoid exception if possible.
+	* Iterator.cs : Fixed PrecedingSiblingIterator.MoveNext(). When the
+	  nav was positioned at the first, it incorrectly points itself.
+	  Don't add names to name table while it is useless and expensive.
+
 2004-01-08  Nick Drochak <ndrochak@ieee.org>
 
 	* Iterator.cs: Removed unused variable.

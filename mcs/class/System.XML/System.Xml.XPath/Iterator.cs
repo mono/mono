@@ -300,7 +300,7 @@ namespace System.Xml.XPath
 				}
 
 				_nav.MoveToFirst ();
-				if (_nav.ComparePosition (startPosition) == XmlNodeOrder.Same) {
+				if (_nav.ComparePosition (startPosition) != XmlNodeOrder.Same) {
 					_pos++;
 					_current = _nav.Clone ();
 					return true;
@@ -763,11 +763,11 @@ namespace System.Xml.XPath
 			_iter = iter;
 			_test = test;
 			test.GetInfo (out name, out ns, out matchType, NamespaceManager);
-			if (name != null)
-				name = Current.NameTable.Add (name);
+//			if (name != null)
+//				name = Current.NameTable.Add (name);
 
-			if (ns != null)
-				ns = Current.NameTable.Add (ns);
+//			if (ns != null)
+//				ns = Current.NameTable.Add (ns);
 		}
 
 		protected AxisIterator (AxisIterator other) : base (other)

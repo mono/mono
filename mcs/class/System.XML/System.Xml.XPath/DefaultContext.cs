@@ -64,9 +64,12 @@ namespace System.Xml.XPath
 				throw new ArgumentNullException ();
 			if (arg is string)
 			{
+				string s = arg as string;
+				if (s.Length == 0)
+					return double.NaN;
 				try
 				{
-					return XmlConvert.ToDouble ((string) arg);	// TODO: spec? convert string to number
+					return XmlConvert.ToDouble (s);	// TODO: spec? convert string to number
 				}
 				catch (System.FormatException)
 				{
@@ -84,6 +87,10 @@ namespace System.Xml.XPath
 		
 		public static double ToNumber (string arg)
 		{
+			if (arg == null)
+				throw new ArgumentNullException ();
+			if (arg.Length == 0)
+				return double.NaN;
 			try {
 				return XmlConvert.ToDouble ((string) arg.Trim (XmlChar.WhitespaceChars));
 			} catch (System.OverflowException) {
