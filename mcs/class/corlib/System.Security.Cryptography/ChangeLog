@@ -1,3 +1,8 @@
+2004-02-06  David Sheldon <dave-mono@earth.li>
+
+  * FromBase64Transform.cs: Improved code layout to match coding style, 
+   and removed the Byte comparison with -1.
+
 2004-02-04  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* CryptoStream.cs: New implementation - should fix all known issues

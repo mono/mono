@@ -138,10 +138,11 @@ namespace System.Security.Cryptography {
 
 		private byte [] lookupTable; 
 		private byte lookup(byte input) {
-		  byte ret;
-                  if ((input >= lookupTable.Length) || ((ret = lookupTable[input])==-1))
-		    throw new System.FormatException("Invalid character in a Base-64 string.");
-		  return ret;
+			byte ret;
+			if ((input >= lookupTable.Length) || 
+			    ((ret = lookupTable[input]) == Byte.MaxValue))
+				throw new System.FormatException("Invalid character in a Base-64 string.");
+			return ret;
 		}
 
 		private int DoTransform (byte [] inputBuffer,
