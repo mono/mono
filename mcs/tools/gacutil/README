@@ -1,0 +1,15 @@
+Very beta beta gacutil.exe
+
+Help is still placeholder, use:
+
+/i for install. Example: (/i /path/to/assembly.dll)
+/u for uninstall Example: (/u assembly)
+/l for listing Example: (/l)
+
+Wont work if your prefix isnt /usr and /usr/lib/mono/gac isnt created.
+
+Not all potential error paths/exceptions are caught.
+
+This is just mainly being put into cvs to get it off my somewhat instable hard drive and under revision control.
+
+This code is also ugly, and nasty, I wrote most of it over the course of about an hour, if not less.

@@ -1,0 +1,8 @@
+2003-11-12  Todd Berman  <tberman@gentoo.org>
+
+	* Makefile:
+	* TODO:
+	* README:
+	* ChangeLog: 
+	* gacutil.exe.sources:
+	* gacutil.cs: Added
