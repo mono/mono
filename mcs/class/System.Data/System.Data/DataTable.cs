@@ -310,14 +310,22 @@ namespace System.Data {
 
 				//YUK: msft removes a previous unique constraint if it is flagged as a pk  
 				//when a new pk is set 
-
+				
 				//clear Primary Key if value == null
 				if (null == value) {
+					
+					foreach (Constraint Cons in Constraints) {
+
+						if (Cons is UniqueConstraint) {
+							Constraints.Remove (Cons);
+							break;
+						}
+					}
+
 					UniqueConstraint.SetAsPrimaryKey(this.Constraints, null);
 					return;
 				}
 			
-
 				//Does constraint exist for these columns
 				UniqueConstraint uc = UniqueConstraint.GetUniqueConstraintForColumnSet(
 					this.Constraints, (DataColumn[]) value);
@@ -325,7 +333,21 @@ namespace System.Data {
 				//if constraint doesn't exist for columns
 				//create new unique primary key constraint
 				if (null == uc) {
+
+					
+					foreach (DataColumn Col in (DataColumn[]) value) {
+
+						if (Col.Table == null)
+							break;
+
+						if (Columns.IndexOf (Col) < 0)
+							throw new ArgumentException ("PrimaryKey columns do not belong to this table.");
+					}
+
+
 					uc = new UniqueConstraint( (DataColumn[]) value, true);
+					
+					Constraints.Add (uc);
 				}
 				else { //set existing constraint as the new primary key
 					UniqueConstraint.SetAsPrimaryKey(this.Constraints, uc);

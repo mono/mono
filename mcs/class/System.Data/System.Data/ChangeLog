@@ -1,5 +1,10 @@
 2003-03-27  Ville Palo <vi64pa@kolumbus.fi>
 
+	* DataTable.cs: Some fixes to PrimaryKey etc...
+	* UniqueConstraint.cs: Little clean up
+	
+2003-03-27  Ville Palo <vi64pa@kolumbus.fi>
+
 	* DataTable.cs: Tiny fix to ToString () -method
 	
 2003-03-27  Ville Palo <vi64pa@kolumbus.fi>

@@ -176,16 +176,8 @@ namespace System.Data {
 			
 			//column must belong to a table
 			//LAMESPEC: not in spec
-			if (null == column.Table) {
-				string message = "Column ";
-				if (column.ColumnName != string.Empty)
-					message += column.ColumnName + " ";
-				
-				message += "must belong to a table.";
-				
-				throw new ArgumentException(message);
-			}
-			
+			if (null == column.Table)
+				throw new ArgumentException ("Column must belong to a table.");			
 		}
 
 		/// <summary>
