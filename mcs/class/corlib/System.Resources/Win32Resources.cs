@@ -12,24 +12,36 @@ using System.Collections;
 using System.IO;
 using System.Text;
 
+namespace System.Resources {
+
+internal enum Win32ResourceType {
+	RT_CURSOR = 1,
+	RT_FONT = 8,
+	RT_BITMAP = 2,
+	RT_ICON = 3,
+	RT_MENU = 4,
+	RT_DIALOG = 5,
+	RT_STRING = 6,
+	RT_FONTDIR = 7,
+	RT_ACCELERATOR = 9,
+	RT_RCDATA = 10,
+	RT_MESSAGETABLE = 11,
+	RT_GROUP_CURSOR = 12,
+	RT_GROUP_ICON = 14,
+	RT_VERSION = 16,
+	RT_DLGINCLUDE = 17,
+	RT_PLUGPLAY = 19,
+	RT_VXD = 20,
+	RT_ANICURSOR = 21,
+	RT_ANIICON = 22,
+	RT_HTML = 23,
+}
+
 //
 // This class represents the contents of a VS_VERSIONINFO structure and its
 // children.
 //
 internal class Win32VersionResource {
-
-	long signature;
-	int struct_version;
-	long file_version;
-	long product_version;
-	int file_flags_mask;
-	int file_flags;
-	int file_os;
-	int file_type;
-	int file_subtype;
-	long file_date;
-
-	Hashtable properties;
 
 	public string[] WellKnownProperties = {
 		"Comments",
@@ -43,6 +55,19 @@ internal class Win32VersionResource {
 		"ProductName",
 		"ProductVersion"
 	};
+
+	long signature;
+	int struct_version;
+	long file_version;
+	long product_version;
+	int file_flags_mask;
+	int file_flags;
+	int file_os;
+	int file_type;
+	int file_subtype;
+	long file_date;
+
+	Hashtable properties;
 
 	public Win32VersionResource () {
 		// Initialize non-public members to the usual values used in
@@ -95,6 +120,71 @@ internal class Win32VersionResource {
 	public virtual string this [string key] {
 		set {
 			properties [key] = value;
+		}
+	}
+
+	// Accessors for well known properties
+
+	public virtual string Comments {
+		get {
+			return (string)properties ["Comments"];
+		}
+		set {
+			properties ["Comments"] = value == String.Empty ? " " : value;
+		}
+	}
+
+	public virtual string CompanyName {
+		get {
+			return (string)properties ["CompanyName"];
+		}
+		set {
+			properties ["CompanyName"] = value == String.Empty ? " " : value;
+		}
+	}
+
+	public virtual string LegalCopyright {
+		get {
+			return (string)properties ["LegalCopyright"];
+		}
+		set {
+			properties ["LegalCopyright"] = value == String.Empty ? " " : value;
+		}
+	}
+
+	public virtual string LegalTrademarks {
+		get {
+			return (string)properties ["LegalTrademarks"];
+		}
+		set {
+			properties ["LegalTrademarks"] = value == String.Empty ? " " : value;
+		}
+	}
+
+	public virtual string OriginalFilename {
+		get {
+			return (string)properties ["OriginalFilename"];
+		}
+		set {
+			properties ["OriginalFilename"] = value == String.Empty ? " " : value;
+		}
+	}
+
+	public virtual string ProductName {
+		get {
+			return (string)properties ["ProductName"];
+		}
+		set {
+			properties ["ProductName"] = value == String.Empty ? " " : value;
+		}
+	}
+
+	public virtual string ProductVersion {
+		get {
+			return (string)properties ["ProductVersion"];
+		}
+		set {
+			properties ["ProductVersion"] = value == String.Empty ? " " : value;
 		}
 	}
 
@@ -225,4 +315,6 @@ internal class Win32VersionResource {
 			patch_length (w, 0);
 		}
 	}
+}
+
 }

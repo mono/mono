@@ -4,6 +4,9 @@
 
 	* Win32Resources.cs: The value of properties can't be empty.
 
+	* Win32Resources.cs: Add Win32ResourceType enumeration. Add accessors
+	for well-known property names. Add missing namespace declaration.
+
 2003-12-17  Zoltan Varga  <vargaz@freemail.hu>
 
 	* ResourceWriter.cs (Stream): New internal property used by Ref.Emit.
