@@ -1,3 +1,9 @@
+2003-04-23  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* PublisherTest.cs: Updated to NUnit2 style.
+	* PublisherMembershipConditionTest.cs: Updated to NUnit2 style.
+	* StrongNameTest.cs: Updated to NUnit2 style.
+
 2002-12-21  Nick Drochak <ndrochak@gol.com>
 
 	* all: make tests build and run under nunit2
