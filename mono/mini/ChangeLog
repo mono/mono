@@ -1,4 +1,8 @@
 
+Sun Apr 27 13:18:04 CEST 2003 Paolo Molaro <lupus@ximian.com>
+
+	* mini.c: allow some more unsafe compares.
+
 Sat Apr 26 11:55:41 CEST 2003 Paolo Molaro <lupus@ximian.com>
 
 	* mini-x86.c, Makefile.am: make distcheck works (partially from
