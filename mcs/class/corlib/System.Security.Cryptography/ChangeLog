@@ -1,3 +1,8 @@
+2002-10-21  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* RC2CryptoServiceProvider.cs: fixed end of lines (changed from \r
+	to \n).
+
 2002-10-20  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* SymmetricAlgorithm.cs: Added better Dispose support
