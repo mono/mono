@@ -1,3 +1,8 @@
+
+Thu Jan 24 12:59:23 CET 2002 Paolo Molaro <lupus@ximian.com>
+
+	* icall.c: ignore "file://" prefix when loading an assembly.
+
 2002-01-23  Dick Porter  <dick@ximian.com>
 
 	* socket-io.c:
