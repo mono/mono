@@ -1,6 +1,15 @@
 2003-05-30  Miguel de Icaza  <miguel@ximian.com>
 
-	* Methods.cs (MakeResponseSerializer): OneWay is not the only
+	* Methods.cs (MethodStubInfo): Start support for RPC style as well
+	as Literal style.  Take an object instead of a
+	SoapDocumentMethodAttribute, and allow the value to be also a
+	SoapRpcMethodAttribute.  Pull data from both.
+
+	Kill SoapBindingUse, we only use this during validation.
+
+	Turn out Google uses RPC/Literal, and its a good demo.
+
+	(MakeResponseSerializer): OneWay is not the only
 	condition to catch;  Also void return types are not required to
 	have a response.
 

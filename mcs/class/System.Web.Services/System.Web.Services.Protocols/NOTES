@@ -77,6 +77,11 @@ Notes on the Soap Client
 	* We do not pass the SoapClientMessage as we should to any
 	  extensions
 
+	* Ignored elements in the MethodStubInfo:
+		* ParameterStyle, have to understand what this does.
+		* Binding
+		* RoutingStyle.
+
 * Other notes.
 
 	  VisualStudio does not allow method overloaded in web

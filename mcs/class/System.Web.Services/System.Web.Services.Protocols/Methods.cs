@@ -6,6 +6,8 @@
 //
 // (C) 2003 Ximian, Inc.
 //
+// TODO:
+//    
 //
 
 using System.Reflection;
@@ -39,25 +41,53 @@ namespace System.Web.Services.Protocols {
 		
 		internal bool   OneWay;
 		internal SoapParameterStyle ParameterStyle;
-		internal SoapBindingUse Use;
 
 		internal XmlSerializer RequestSerializer;
 		internal XmlSerializer ResponseSerializer;
-		
+
 		//
 		// Constructor
 		//
-		MethodStubInfo (TypeStubInfo parent, LogicalMethodInfo source, SoapDocumentMethodAttribute dma, XmlReflectionImporter importer)
+		MethodStubInfo (TypeStubInfo parent, LogicalMethodInfo source, object kind, XmlReflectionImporter importer)
 		{
 			MethodInfo = source;
 
-			Use = dma.Use;
-			if (Use == SoapBindingUse.Default)
-				Use = parent.Use;
-			if (Use != SoapBindingUse.Literal)
-				throw new Exception ("Only SoapBindingUse.Literal supported");
+			if (kind is SoapDocumentMethodAttribute){
+				SoapDocumentMethodAttribute dma = (SoapDocumentMethodAttribute) kind;
+				
+				SoapBindingUse use = dma.Use;
+				if (use == SoapBindingUse.Default)
+					use = parent.Use;
+				if (use != SoapBindingUse.Literal)
+					throw new Exception ("Only SoapBindingUse.Literal supported");
+				
+				Action = dma.Action;
+				Binding = dma.Binding;
+				RequestName = dma.RequestElementName;
+				RequestNamespace = dma.RequestNamespace;
+				ResponseName = dma.ResponseElementName;
+				ResponseNamespace = dma.ResponseNamespace;
+				ParameterStyle = dma.ParameterStyle;
+				if (ParameterStyle == SoapParameterStyle.Default)
+					ParameterStyle = parent.ParameterStyle;
+				OneWay = dma.OneWay;
+			} else {
+				SoapRpcMethodAttribute rma = (SoapRpcMethodAttribute) kind;
+
+				// Assuem that the TypeStub already caught any possible use of Encoded
+				Action = rma.Action;
+				Binding = rma.Binding;
+				RequestName = rma.RequestElementName;
+				RequestNamespace = rma.RequestNamespace;
+				ResponseNamespace = rma.ResponseNamespace;
+				ResponseName = rma.ResponseElementName;
+				OneWay = rma.OneWay;
+			}
+			if (Binding == "")
+				Binding = parent.BindingName;
+			if (RequestName == "")
+				RequestName = source.Name;
 			
-			OneWay = dma.OneWay;
 			if (OneWay){
 				if (source.ReturnType != typeof (void))
 					throw new Exception ("OneWay methods should not have a return value");
@@ -65,19 +95,6 @@ namespace System.Web.Services.Protocols {
 					throw new Exception ("OneWay methods should not have out/ref parameters");
 			}
 			
-			Action = dma.Action;
-			Binding = (dma.Binding == "" ? parent.BindingName : dma.Binding);
-			RequestName = dma.RequestElementName;
-			if (RequestName == "")
-				RequestName = source.Name;
-			
-			RequestNamespace = dma.RequestNamespace;
-			ResponseName = dma.ResponseElementName;
-			ResponseNamespace = dma.ResponseNamespace;
-			ParameterStyle = dma.ParameterStyle;
-			if (ParameterStyle == SoapParameterStyle.Default)
-				ParameterStyle = parent.ParameterStyle;
-
 			object [] o = source.GetCustomAttributes (typeof (WebMethodAttribute));
 			if (o.Length == 1){
 				WebMethodAttribute wma = (WebMethodAttribute) o [0];
@@ -99,13 +116,12 @@ namespace System.Web.Services.Protocols {
 		{
 			object [] o = lmi.GetCustomAttributes (typeof (SoapDocumentMethodAttribute));
 			if (o.Length == 0){
-				lmi.GetCustomAttributes (typeof (SoapRpcMethodAttribute));
-				if (o.Length != 0)
-					throw new Exception ("SoapRpcMethod not supported, only SoapDocumentMethod");
-				return null;
-			}
-
-			return new MethodStubInfo (parent, lmi, (SoapDocumentMethodAttribute) o [0], importer);
+				o = lmi.GetCustomAttributes (typeof (SoapRpcMethodAttribute));
+				if (o.Length == 0)
+					return null;
+				return new MethodStubInfo (parent, lmi, o [0], importer);
+			} else 
+				return new MethodStubInfo (parent, lmi, o [0], importer);
 		}
 
 		void MakeRequestSerializer (XmlReflectionImporter importer)
@@ -126,6 +142,7 @@ namespace System.Web.Services.Protocols {
 
 			XmlMembersMapping [] members = new XmlMembersMapping [1];
 			try {
+				Console.WriteLine ("XmLSerializer: {0} {1}", RequestName, RequestNamespace);
 				members [0] = importer.ImportMembersMapping (RequestName, RequestNamespace, in_members, true);
 				XmlSerializer [] s = null;
 				s = XmlSerializer.FromMappings (members);
@@ -234,17 +251,19 @@ namespace System.Web.Services.Protocols {
 				RoutingStyle = a.RoutingStyle;
 				Use = a.Use;
 			} else {
-				ParameterStyle = SoapParameterStyle.Wrapped;
-				RoutingStyle = SoapServiceRoutingStyle.SoapAction;
-				Use = SoapBindingUse.Literal;
+				o = t.GetCustomAttributes (typeof (SoapRpcServiceAttribute), false);
+				if (o.Length == 1){
+					SoapRpcServiceAttribute srs = (SoapRpcServiceAttribute) o [0];
+					
+					ParameterStyle = SoapParameterStyle.Wrapped;
+					RoutingStyle = srs.RoutingStyle;
+					Use = SoapBindingUse.Literal;
+				} else {
+					ParameterStyle = SoapParameterStyle.Wrapped;
+					RoutingStyle = SoapServiceRoutingStyle.SoapAction;
+					Use = SoapBindingUse.Literal;
+				}
 			}
-
-			//
-			// Some validation
-			//
-			o = t.GetCustomAttributes (typeof (SoapRpcServiceAttribute), false);
-			if (o.Length != 0)
-				throw new Exception ("We do not support SoapRpcService encoding, Type=" + t.Name);
 		}
 
 		//
@@ -260,7 +279,7 @@ namespace System.Web.Services.Protocols {
 
 				if (msi == null)
 					continue;
-				
+
 				name_to_method [msi.Name] = msi;
 			}
 		}

@@ -178,7 +178,7 @@ namespace System.Web.Services.Protocols {
 		protected object[] Invoke (string method_name, object[] parameters)
 		{
 			MethodStubInfo msi = type_info.GetMethod (method_name);
-			
+
 			SoapClientMessage message = new SoapClientMessage (
 				this, msi, Url, parameters);
 
