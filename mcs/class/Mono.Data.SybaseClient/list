@@ -41,6 +41,7 @@ Mono.Data.SybaseTypes/SybaseTypeException.cs
 ../Mono.Data.TdsClient/Mono.Data.TdsClient.Internal/ITds.cs
 ../Mono.Data.TdsClient/Mono.Data.TdsClient.Internal/Tds.cs
 ../Mono.Data.TdsClient/Mono.Data.TdsClient.Internal/Tds50.cs
+../Mono.Data.TdsClient/Mono.Data.TdsClient.Internal/TdsBigDecimal.cs
 ../Mono.Data.TdsClient/Mono.Data.TdsClient.Internal/TdsColumnStatus.cs
 ../Mono.Data.TdsClient/Mono.Data.TdsClient.Internal/TdsColumnType.cs
 ../Mono.Data.TdsClient/Mono.Data.TdsClient.Internal/TdsComm.cs

@@ -18,6 +18,7 @@ Mono.Data.TdsClient/TODOAttribute.cs
 Mono.Data.TdsClient.Internal/ITds.cs
 Mono.Data.TdsClient.Internal/Tds.cs
 Mono.Data.TdsClient.Internal/Tds42.cs
+Mono.Data.TdsClient.Internal/TdsBigDecimal.cs
 Mono.Data.TdsClient.Internal/TdsColumnStatus.cs
 Mono.Data.TdsClient.Internal/TdsColumnType.cs
 Mono.Data.TdsClient.Internal/TdsComm.cs

@@ -1,3 +1,7 @@
+2002-11-04  Tim Coleman (tim@timcoleman.com)
+	* list :
+		Add Mono.Data.TdsClient.Internal.TdsBigDecimal
+
 2002-11-03  Tim Coleman (tim@timcoleman.com)
 	* list:
 		Add Mono.Data.TdsClient.Internal.TdsColumnStatus
