@@ -4,6 +4,7 @@
 // Authors:
 //   Dietmar Maurer (dietmar@ximian.com)
 //   Gonzalo Paniagua (gonzalo@ximian.com)
+//   Jaime Anguiano Olarra (jaime@gnome.org)
 //
 // (C) Ximian, Inc.  http://www.ximian.com
 //
@@ -27,7 +28,7 @@ namespace System.Runtime.Remoting {
 		[MonoTODO]
 		public override object InitializeLifetimeService ()
 		{
-			life_ctrl = new object ();
+			life_ctrl = base.InitializeLifetimeService ();
 			ILease ilife_ctrl = life_ctrl as ILease;
 			
 			if (ilife_ctrl != null)
