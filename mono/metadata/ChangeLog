@@ -1,5 +1,11 @@
 2004-10-20  Martin Baulig  <martin@ximian.com>
 
+	* mono-debug-debugger.c
+	(mono_debugger_unhandled_exception): Added `gpointer stack' argument.
+	(mono_debugger_handled_exception): Likewise.
+
+2004-10-20  Martin Baulig  <martin@ximian.com>
+
 	* mono-debug-debugger.h (MonoDebuggerEvent): Added
 	MONO_DEBUGGER_EVENT_EXCEPTION.
 
