@@ -44,6 +44,11 @@ namespace System.Xml.Xsl
 
 		#region Methods
 
+		~XslTransform ()
+		{
+			FreeStylesheetIfNeeded ();
+		}
+
 		void FreeStylesheetIfNeeded ()
 		{
 			if (stylesheet != IntPtr.Zero) {
