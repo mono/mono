@@ -42,6 +42,8 @@ namespace System.Xml.XPath
 #else
 		public override XPathExpression Clone () { return new CompiledExpression (this); }
 #endif
+		
+		public Expression ExpressionNode { get { return _expr; }}
 
 		public override void SetContext (XmlNamespaceManager nsManager)
 		{
@@ -1118,6 +1120,7 @@ namespace System.Xml.XPath
 			_expr = expr;
 			_pred = pred;
 		}
+		internal Expression LeftHandSide {get{return _expr;}}
 		public override String ToString () { return "(" + _expr.ToString () + ")[" + _pred.ToString () + "]"; }
 		public override object Evaluate (BaseIterator iter)
 		{

@@ -245,6 +245,22 @@ namespace System.Xml.XPath
 		[MonoTODO]	// optimize...
 		public virtual bool Matches (XPathExpression expr)
 		{
+			Expression e = ((CompiledExpression)expr).ExpressionNode;
+			
+			if (e is NodeTest)
+				return ((NodeTest)e).Match (((CompiledExpression)expr).NamespaceManager, this);
+			if (e is ExprFilter) {
+				do {
+					e = ((ExprFilter)e).LeftHandSide;
+				} while (e is ExprFilter);
+				
+				if (e is NodeTest && !((NodeTest)e).Match (((CompiledExpression)expr).NamespaceManager, this))
+					return false;
+			}
+			
+			//e = ((CompiledExpression)expr).ExpressionNode;
+			//Console.WriteLine ("Didnt filter : " + e.GetType ().ToString () + " " + e.ToString ());
+			
 			XPathNodeIterator nodes = Select (expr);
 
 			while (nodes.MoveNext ()) {

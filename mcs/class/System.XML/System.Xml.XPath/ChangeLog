@@ -1,3 +1,10 @@
+2003-08-25 Ben Maurer  <bmaurer@users.sourceforge.net>
+
+	* XPathNavigator.cs: "Smart" behavior in Matches. Nice 8x speed
+	improvement in the method (5ms/call -> .7 ms / call) measured by
+	monodoc's rendering of N:System.
+	* Expression.cs: Utility methods to support above.
+
 2003-08-13 Piers Haken	<piersh@friskit.com>
 	
 	* Iterator.cs:
