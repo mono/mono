@@ -1,5 +1,8 @@
 2004-05-25  Zoltan Varga  <vargaz@freemail.hu>
 
+	* jit-icalls.c: Remove the broken approximation for truncl, doing
+	no conversion is better.
+
 	* mini.c (handle_stack_args): Avoid reusing variables for stack slots.
 	Fixes #58863.
 
