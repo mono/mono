@@ -23,9 +23,12 @@
 //	Peter Bartok	pbartok@novell.com
 //
 //
-// $Revision: 1.3 $
+// $Revision: 1.4 $
 // $Modtime: $
 // $Log: XplatUIStructs.cs,v $
+// Revision 1.4  2004/08/21 00:58:31  pbartok
+// - Added private message for async communication
+//
 // Revision 1.3  2004/08/16 21:46:08  pbartok
 // - Added WM_MOUSE_ENTER & WM_MOUSE_LEAVE to support OnMouseEnter/Leave()
 //
@@ -311,6 +314,7 @@ namespace System.Windows.Forms {
 		// Our "private" ones
 		WM_MOUSE_ENTER            = 0x0401,
 		WM_MOUSE_LEAVE            = 0x0402,
+		WM_ASYNC_MESSAGE          = 0x0403,
 		WM_REFLECT                = WM_USER + 0x1c00
 	}
 
