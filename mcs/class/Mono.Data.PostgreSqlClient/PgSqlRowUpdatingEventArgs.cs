@@ -17,10 +17,10 @@ namespace System.Data.SqlClient
 	public sealed class SqlRowUpdatingEventArgs : RowUpdatingEventArgs
 	{
 		[MonoTODO]
-		public SqlRowUpdatingEventArgs(	DataRow row,
-			IDbCommand command, StatementType statementType,
-			DataTableMapping tableMapping) {
-			// FIXME: do the constructor
+		public SqlRowUpdatingEventArgs (DataRow row, IDbCommand command, StatementType statementType, DataTableMapping tableMapping) 
+			: base (row, command, statementType, tableMapping)
+		{
+			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
@@ -35,8 +35,9 @@ namespace System.Data.SqlClient
 		}
 
 		[MonoTODO]
-		~SqlRowUpdatingEventArgs() {
-			// FIXME: create destructor to release resources
+		~SqlRowUpdatingEventArgs() 
+		{
+			throw new NotImplementedException ();
 		}
 	}
 }

@@ -13,25 +13,24 @@ using System.Data;
 using System.Data.Common;
 
 namespace System.Data.SqlClient {
-	public sealed class SqlRowUpdatedEventArgs : RowUpdatedEventArgs {	
-		
+	public sealed class SqlRowUpdatedEventArgs : RowUpdatedEventArgs 
+	{
 		[MonoTODO]
-		public SqlRowUpdatedEventArgs (DataRow row,
-			IDbCommand command, StatementType statementType,
-			DataTableMapping tableMapping) {
-			// FIXME: do the constructor
+		public SqlRowUpdatedEventArgs (DataRow row, IDbCommand command, StatementType statementType, DataTableMapping tableMapping) 
+			: base (row, command, statementType, tableMapping)
+		{
+			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
 		public new SqlCommand Command {
-			get {
-		
-			}
+			get { throw new NotImplementedException (); }
 		}
 
 		[MonoTODO]
-		~SqlRowUpdatedEventArgs () {
-			// FIXME: need destructor to release resources
+		~SqlRowUpdatedEventArgs () 
+		{
+			throw new NotImplementedException ();
 		}
 
 	}
