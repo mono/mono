@@ -2,7 +2,7 @@
 
 	* serialize.cs: Added namespace block.
 
-2002-2-1  Duncan Mak  <duncan@localhost.localdomain>
+2002-02-01  Duncan Mak  <duncan@ximian.com>
 
 	* serialize.cs: Added a new tool for serializing objects. It
 	can create new types dynamically, but can only handle
