@@ -6,10 +6,8 @@ TODO
 	  thing for other scope things.
 	* Add support for events
 	* Support for params (show the params keyword)
-	* Support for out (it shows as ref)
 	* Handle interfaces:
 		* handle explicit vs. implicit impl
-	* Show virtual/override?
 	* Fields
 	* Do enums
 	* Do delegates

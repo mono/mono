@@ -1,3 +1,10 @@
+2004-03-15 Ben Maurer  <bmaurer@users.sourceforge.net>
+
+	* monop.cs: remove printing logic.
+	* outline.cs: new file that just does printing stuff.
+
+	Makes the code *MUCH* cleaner.
+
 2004-03-15  Miguel de Icaza  <miguel@ximian.com>
 
 	* monop.cs: Add -r: command line.
