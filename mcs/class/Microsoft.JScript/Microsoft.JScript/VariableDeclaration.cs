@@ -14,17 +14,15 @@ using System.Reflection.Emit;
 
 namespace Microsoft.JScript {
 	
-	public abstract class Decl : AST {
-		internal FieldInfo field_info;
-		internal LocalBuilder local_builder;
-	}
-	
-	public class VariableDeclaration : Decl {
+	public class VariableDeclaration : AST {
 
 		internal string id;
 		internal Type type;
 		internal string type_annot;
 		internal AST val;
+
+		internal FieldInfo field_info;
+		internal LocalBuilder local_builder;
 
 		internal VariableDeclaration (AST parent, string id, string t, AST init)
 		{
