@@ -1,7 +1,7 @@
 //
 // System.Security.Permissions.IsolatedStoragePermission.cs
 //
-// Duncan Mak <duncan@ximian.com>
+// Piers Haken <piersh@friskit.com>
 //
 // (C) 2002 Ximian, Inc.			http://www.ximian.com
 //
@@ -11,38 +11,74 @@ using System.Security.Permissions;
 
 namespace System.Security.Permissions
 {
-	[AttributeUsage (AttributeTargets.Assembly | AttributeTargets.Class |
-			 AttributeTargets.Struct | AttributeTargets.Constructor |
-			 AttributeTargets.Method)]
-        [Serializable]
-	public abstract class IsolatedStoragePermission : CodeAccessSecurityAttribute
+	[Serializable]
+	public abstract class IsolatedStoragePermission : CodeAccessPermission, IUnrestrictedPermission
 	{
-		// Fields
-		private IsolatedStorageContainment containment;
-		private long quota;
-		
-		// Constructor
-		public IsolatedStoragePermission (SecurityAction action)
-			: base (action)
-		{
-		}
+		internal long m_userQuota;
+		internal long m_machineQuota;
+		internal long m_expirationDays;
+		internal bool m_permanentData;
+		internal IsolatedStorageContainment m_allowed;
 
-		// Properties
-		public IsolatedStorageContainment UsageAllowed
+		public IsolatedStoragePermission (PermissionState state)
 		{
-			get { return containment; }
-			set { containment = value; }
+			if (state == PermissionState.None)
+			{
+				m_userQuota = 0;
+				m_machineQuota = 0;
+				m_expirationDays = 0;
+				m_permanentData = false;
+				m_allowed = IsolatedStorageContainment.None;
+			}
+			else if (state == PermissionState.Unrestricted)
+			{
+				m_userQuota = Int64.MaxValue;
+				m_machineQuota = Int64.MaxValue;
+				m_expirationDays = Int64.MaxValue ;
+				m_permanentData = true;
+				m_allowed = IsolatedStorageContainment.UnrestrictedIsolatedStorage;
+			}
+			else
+			{
+				throw new ArgumentException("Invalid Permission state");
+			}
 		}
 
 		public long UserQuota
 		{
-			get { return quota; }
-			set { quota = value; }
+			set { m_userQuota = value; }
+			get { return m_userQuota; }
+		}
+
+
+		public IsolatedStorageContainment UsageAllowed
+		{
+			set { m_allowed = value; }
+			get { return m_allowed; }
+		}
+
+
+		public bool IsUnrestricted ()
+		{
+			return IsolatedStorageContainment.UnrestrictedIsolatedStorage == m_allowed;
+		}
+
+		[MonoTODO]
+		public override SecurityElement ToXml ()
+		{
+			throw new NotImplementedException ();
+		}
+
+
+		[MonoTODO]
+		public override void FromXml (SecurityElement esd)
+		{
+			throw new NotImplementedException ();
 		}
 	}
 }
-			 
 
-			 
-			 
-				    
+
+
+
+
