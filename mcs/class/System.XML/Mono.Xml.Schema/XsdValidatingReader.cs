@@ -27,6 +27,7 @@ namespace Mono.Xml.Schema
 
 		XmlReader reader;
 		XmlValidatingReader xvReader;
+		XmlResolver resolver;
 		IHasXmlSchemaInfo sourceReaderSchemaInfo;
 		IXmlLineInfo readerLineInfo;
 		bool laxElementValidation = true;
@@ -109,6 +110,13 @@ namespace Mono.Xml.Schema
 
 		public XmlReader Reader {
 			get { return reader; }
+		}
+
+		// This is required to resolve xsi:schemaLocation
+		public XmlResolver XmlResolver {
+			set {
+				resolver = value;
+			}
 		}
 
 		// This should be changed before the first Read() call.
@@ -462,21 +470,31 @@ namespace Mono.Xml.Schema
 
 		private void HandleError (string error, Exception innerException)
 		{
+			HandleError (error, innerException, false);
+		}
+
+		private void HandleError (string error, Exception innerException, bool isWarning)
+		{
 			if (reportNoValidationError)	// extra quick check
 				return;
 
 			XmlSchemaException schemaException = new XmlSchemaException (error, 
 					this, this.BaseURI, null, innerException);
-			HandleError (schemaException);
+			HandleError (schemaException, isWarning);
 		}
 
 		private void HandleError (XmlSchemaException schemaException)
+		{
+			HandleError (schemaException, false);
+		}
+
+		private void HandleError (XmlSchemaException schemaException, bool isWarning)
 		{
 			if (reportNoValidationError)
 				return;
 
 			ValidationEventArgs e = new ValidationEventArgs (schemaException,
-				schemaException.Message, XmlSeverityType.Error);
+				schemaException.Message, isWarning ? XmlSeverityType.Warning : XmlSeverityType.Error);
 
 			if (this.ValidationEventHandler != null)
 				this.ValidationEventHandler (this, e);
@@ -710,12 +728,10 @@ namespace Mono.Xml.Schema
 		{
 			object xsiType = null;
 			XmlQualifiedName typeQName = QualifyName (name);
-			if (typeQName.Namespace == XmlSchema.Namespace) {
-				if (typeQName.Name == "anyType")
-					xsiType = XmlSchemaComplexType.AnyType;
-				else
-					xsiType = XmlSchemaDatatype.FromName (typeQName);
-			}
+			if (typeQName == XmlSchemaComplexType.AnyTypeName)
+				xsiType = XmlSchemaComplexType.AnyType;
+			else if (XmlSchemaUtil.IsBuiltInDatatypeName (typeQName))
+				xsiType = XmlSchemaDatatype.FromName (typeQName);
 			else
 				xsiType = FindType (typeQName);
 			return xsiType;
@@ -780,6 +796,7 @@ namespace Mono.Xml.Schema
 			}
 
 			// If validation state exists, then first assess particle validity.
+			context.SchemaType = null;
 			if (context.ParticleState != null) {
 				ValidateStartElementParticle ();
 			}
@@ -1042,7 +1059,7 @@ namespace Mono.Xml.Schema
 			if (!AttributeWildcardItemValid (cType.AttributeWildcard, qname))
 				return null;
 
-			if (cType.AttributeWildcard.ProcessContents == XmlSchemaContentProcessing.Skip)
+			if (cType.AttributeWildcard.ResolvedProcessContents == XmlSchemaContentProcessing.Skip)
 				return cType.AttributeWildcard;
 			foreach (XmlSchema schema in schemas) {
 				foreach (DictionaryEntry entry in schema.Attributes) {
@@ -1051,7 +1068,7 @@ namespace Mono.Xml.Schema
 						return attr;
 				}
 			}
-			if (cType.AttributeWildcard.ProcessContents == XmlSchemaContentProcessing.Lax)
+			if (cType.AttributeWildcard.ResolvedProcessContents == XmlSchemaContentProcessing.Lax)
 				return cType.AttributeWildcard;
 			else
 				return null;
@@ -1157,8 +1174,6 @@ namespace Mono.Xml.Schema
 				shouldValidateCharacters = false;
 			}
 
-			context.Load (reader.Depth);
-
 			// 3.3.4 Assess ElementLocallyValidElement 5: value constraints.
 			// 3.3.4 Assess ElementLocallyValidType 3.1.3. = StringValid(3.14.4)
 			// => ValidateEndCharacters().
@@ -1195,7 +1210,6 @@ namespace Mono.Xml.Schema
 			for (int i = 0; i < keyTables.Count; i++) {
 				XsdKeyTable keyseq = this.keyTables [i] as XsdKeyTable;
 				if (keyseq.StartDepth == reader.Depth) {
-//Console.WriteLine ("Finishing table.");
 					keyTables.RemoveAt (i);
 					i--;
 				}
@@ -1547,11 +1561,13 @@ namespace Mono.Xml.Schema
 				if (tmp.Length % 2 != 0)
 					HandleError ("Invalid schemaLocation attribute format.");
 				for (int i = 0; i < tmp.Length; i += 2) {
+					Uri absUri = null;
 					try {
-						Uri absUri = new Uri ((this.BaseURI != "" ? new Uri (BaseURI) : null), tmp [i + 1]);
+						absUri = new Uri ((this.BaseURI != "" ? new Uri (BaseURI) : null), tmp [i + 1]);
 						XmlTextReader xtr = new XmlTextReader (absUri.ToString ());
 						schema = XmlSchema.Read (xtr, null);
 					} catch (Exception) { // FIXME: (wishlist) It is bad manner ;-(
+						HandleError ("Could not resolve schema location URI: " + absUri, null, true);
 						continue;
 					}
 					if (schema.TargetNamespace == null)
@@ -1562,7 +1578,7 @@ namespace Mono.Xml.Schema
 			}
 			if (schema != null) {
 				try {
-					schemas.Add (schema);
+					schemas.Add (schema, resolver);
 				} catch (XmlSchemaException ex) {
 					HandleError (ex);
 				}
@@ -1570,17 +1586,20 @@ namespace Mono.Xml.Schema
 			schema = null;
 			string noNsSchemaLocation = reader.GetAttribute ("noNamespaceSchemaLocation", XmlSchema.InstanceNamespace);
 			if (noNsSchemaLocation != null) {
+				Uri absUri = null;
 				try {
-					Uri absUri = new Uri ((this.BaseURI != "" ? new Uri (BaseURI) : null), noNsSchemaLocation);
+					absUri = new Uri ((this.BaseURI != "" ? new Uri (BaseURI) : null), noNsSchemaLocation);
 					XmlTextReader xtr = new XmlTextReader (absUri.ToString ());
 					schema = XmlSchema.Read (xtr, null);
 				} catch (Exception) { // FIXME: (wishlist) It is bad manner ;-(
+					HandleError ("Could not resolve schema location URI: " + absUri, null, true);
 				}
 				if (schema != null && schema.TargetNamespace != null)
 					HandleError ("Specified schema has different target namespace.");
 			}
 			if (schema != null) {
 				try {
+					schema.Compile (ValidationEventHandler, resolver);
 					schemas.Add (schema);
 				} catch (XmlSchemaException ex) {
 					HandleError (ex);

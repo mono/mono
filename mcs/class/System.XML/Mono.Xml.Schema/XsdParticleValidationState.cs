@@ -67,8 +67,6 @@ namespace Mono.Xml.Schema
 			switch (typeName) {
 			case "XmlSchemaElement":
 				return AddElement ((XmlSchemaElement) xsobj);
-			case "XmlSchemaGroupRef":
-				return AddGroup ((XmlSchemaGroupRef) xsobj);
 			case "XmlSchemaSequence":
 				return AddSequence ((XmlSchemaSequence) xsobj);
 			case "XmlSchemaChoice":
@@ -77,11 +75,11 @@ namespace Mono.Xml.Schema
 				return AddAll ((XmlSchemaAll) xsobj);
 			case "XmlSchemaAny":
 				return AddAny ((XmlSchemaAny) xsobj);
-			case "EmptyParticle":	// Microsoft.NET
-			case "XmlSchemaParticleEmpty":	// Mono
+			case "EmptyParticle":
 				return AddEmpty ();
 			default:
-				throw new InvalidOperationException ();	// Should not occur.
+				// GroupRef should not appear
+				throw new InvalidOperationException ("Should not occur.");
 			}
 		}
 
@@ -96,42 +94,30 @@ namespace Mono.Xml.Schema
 		private XsdElementValidationState AddElement (XmlSchemaElement element)
 		{
 			XsdElementValidationState got = new XsdElementValidationState (element, this);
-//			table [element] = got;
-			return got;
-		}
-
-		private XsdGroupValidationState AddGroup (XmlSchemaGroupRef groupRef)
-		{
-			XsdGroupValidationState got = new XsdGroupValidationState (groupRef, this);
-//			table [groupRef] = got;
 			return got;
 		}
 
 		private XsdSequenceValidationState AddSequence (XmlSchemaSequence sequence)
 		{
 			XsdSequenceValidationState got = new XsdSequenceValidationState (sequence, this);
-//			table [sequence] = got;
 			return got;
 		}
 
 		private XsdChoiceValidationState AddChoice (XmlSchemaChoice choice)
 		{
 			XsdChoiceValidationState got = new XsdChoiceValidationState (choice, this);
-//			table [choice] = got;
 			return got;
 		}
 
 		private XsdAllValidationState AddAll (XmlSchemaAll all)
 		{
 			XsdAllValidationState got = new XsdAllValidationState (all, this);
-//			table [all] = got;
 			return got;
 		}
 
 		private XsdAnyValidationState AddAny (XmlSchemaAny any)
 		{
 			XsdAnyValidationState got = new XsdAnyValidationState (any, this);
-//			table [any] = got;
 			return got;
 		}
 
@@ -253,46 +239,6 @@ namespace Mono.Xml.Schema
 		{
 			return (element.ValidatedMinOccurs <= Occured &&
 				element.ValidatedMaxOccurs >= Occured);
-		}
-	}
-
-	public class XsdGroupValidationState : XsdValidationState
-	{
-		public XsdGroupValidationState (XmlSchemaGroupRef groupRef, XsdValidationStateManager manager)
-			: base (manager)
-		{
-			this.groupRef = groupRef;
-		}
-
-		XmlSchemaGroupRef groupRef;
-
-		// Methods
-
-		public override XsdValidationState EvaluateStartElement (string name, string ns)
-		{
-			XsdValidationState xa = Manager.Create (groupRef.Particle);
-			XsdValidationState result = xa.EvaluateStartElement (name, ns);
-			if (result == XsdValidationState.Invalid)
-				return result;
-
-			OccuredInternal++;
-			if (OccuredInternal > groupRef.ValidatedMaxOccurs)
-				return XsdValidationState.Invalid;
-			return Manager.MakeSequence (result, this);
-		}
-
-		public override bool EvaluateEndElement ()
-		{
-			if (groupRef.ValidatedMinOccurs > Occured + 1)
-				return false;
-			else if (groupRef.ValidatedMinOccurs <= Occured)
-				return true;
-			return Manager.Create (groupRef.Particle).EvaluateIsEmptiable ();
-		}
-
-		internal override bool EvaluateIsEmptiable ()
-		{
-			return (groupRef.ValidatedMinOccurs <= Occured);
 		}
 	}
 
@@ -591,7 +537,7 @@ namespace Mono.Xml.Schema
 				return XsdValidationState.Invalid;
 
 			OccuredInternal++;
-			Manager.SetProcessContents (any.ProcessContents);
+			Manager.SetProcessContents (any.ResolvedProcessContents);
 			if (Occured > any.ValidatedMaxOccurs)
 				return XsdValidationState.Invalid;
 			else if (Occured == any.ValidatedMaxOccurs)

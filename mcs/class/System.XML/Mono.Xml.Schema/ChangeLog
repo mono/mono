@@ -1,3 +1,20 @@
+2004-01-26  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XsdParticleValidationState.cs :
+	  - Now it uses ContentTypeParticle as inputs, so no GroupRef 
+	    should occur anymore.
+	  - xs:any should use ResolvedProcessContents. It fixes some errors.
+	* XsdValidatingReader.cs :
+	  - Attribute wildcard validation should use ResolvedProcessContents.
+	  - Use newly added XmlResolver field to resolve external schemas
+	    specified by xsi:schemaLocation attributes.
+	  - Added warning handler and raise warning events when instance-
+	    specified schemas could not be resolved.
+	  - xs:anyType should not be treated as a primitive datatype at
+	    xsi:type resolution.
+	  - Schema type was incorrectly remained when the element is laxly
+	    validated.
+
 2004-01-21  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XsdKeyTable.cs : Matching evaluation is incorrect when path is more
