@@ -1,3 +1,10 @@
+2005-04-04  Jordi Mas i Hernandez <jordi@ximian.com>
+
+	* PrivateFontCollection.cs: nativeFontCollection equals IntPtr.Zero to
+	avoid errors on multiple disposes
+	
+	* FontCollection.cs: implements dispose
+
 2004-11-25  Marek Safar  <marek.safar@seznam.cz>
 
 	* Image.cs: Add CheckStatus to Families.

@@ -71,9 +71,11 @@ namespace System.Drawing.Text {
 		protected override void Dispose(bool disposing)
 		{
 			if (nativeFontCollection!=IntPtr.Zero){				
-				GDIPlus.GdipDeletePrivateFontCollection (nativeFontCollection);			
-				GC.SuppressFinalize(this);
+				GDIPlus.GdipDeletePrivateFontCollection (nativeFontCollection);							
+				nativeFontCollection = IntPtr.Zero;
 			}
+			
+			base.Dispose (true);
 		}		
 		
 

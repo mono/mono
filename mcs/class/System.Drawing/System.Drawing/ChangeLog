@@ -1,3 +1,11 @@
+2005-04-04 Jordi Mas i Hernandez <jordi@ximian.com>
+
+	* Color.cs: take into account the name color in == and != operators
+	* Font.cs: Use Equals instead of == to compare the family name
+	* FontFamily.cs:
+	   -  Removes generic fontfamilies cache (done at libgdiplus level)
+	   -  Fixes Equals method
+
 2005-03-30 Jordi Mas i Hernandez <jordi@ximian.com>
 
 	* Pen.cs: remove locks. They are done at gdiplus level

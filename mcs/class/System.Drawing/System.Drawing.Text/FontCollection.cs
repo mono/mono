@@ -50,6 +50,8 @@ namespace System.Drawing.Text {
 		// methods
 		public void Dispose()
 		{
+			Dispose (true);
+			GC.SuppressFinalize (true);
 		}
 
 		protected virtual void Dispose (bool disposing)

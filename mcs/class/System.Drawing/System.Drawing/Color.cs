@@ -271,7 +271,8 @@ namespace System.Drawing
 		public static bool operator == (Color colorA, Color colorB)
 		{
 			return ((colorA.a == colorB.a) && (colorA.r == colorB.r)
-			&& (colorA.g == colorB.g) && (colorA.b == colorB.b));
+			&& (colorA.g == colorB.g) && (colorA.b == colorB.b) &&
+			(colorA.myname == colorB.myname));
 		}
 		
 		/// <summary>
@@ -287,7 +288,8 @@ namespace System.Drawing
 		public static bool operator != (Color colorA, Color colorB)
 		{
 			return ((colorA.a != colorB.a) || (colorA.r != colorB.r)
-			|| (colorA.g != colorB.g) || (colorA.b != colorB.b));
+			|| (colorA.g != colorB.g) || (colorA.b != colorB.b) &&
+			(colorA.myname != colorB.myname));
 		}
 
 		// This gives the right results, but the floats don't exactly match MS

@@ -141,15 +141,12 @@ namespace System.Drawing {
 		{
 			get 
 			{
-				if (genericMonospace == null) 
-				{
-					IntPtr generic = IntPtr.Zero;
-					Status status = GDIPlus.GdipGetGenericFontFamilyMonospace (out generic);
-					GDIPlus.CheckStatus (status);
-					genericMonospace = new FontFamily (generic);						
-					genericMonospace.refreshName ();
-					
-				}
+				
+				IntPtr generic = IntPtr.Zero;
+				Status status = GDIPlus.GdipGetGenericFontFamilyMonospace (out generic);
+				GDIPlus.CheckStatus (status);
+				FontFamily genericMonospace = new FontFamily (generic);						
+				genericMonospace.refreshName ();
 				return genericMonospace;
 			}
 		}
@@ -158,15 +155,11 @@ namespace System.Drawing {
 		{
 			get 
 			{
-				if (genericSansSerif == null) 
-				{
-					IntPtr generic = IntPtr.Zero;
-					Status status = GDIPlus.GdipGetGenericFontFamilySansSerif (out generic);
-					GDIPlus.CheckStatus (status);
-					genericSansSerif = new FontFamily (generic);
-					genericSansSerif.refreshName ();
-					
-				}
+				IntPtr generic = IntPtr.Zero;
+				Status status = GDIPlus.GdipGetGenericFontFamilySansSerif (out generic);
+				GDIPlus.CheckStatus (status);
+				FontFamily genericSansSerif = new FontFamily (generic);
+				genericSansSerif.refreshName ();
 				return genericSansSerif;
 			}
 		}
@@ -175,14 +168,11 @@ namespace System.Drawing {
 		{
 			get 
 			{
-				if (genericSerif == null) 
-				{
-					IntPtr generic = IntPtr.Zero;
-					Status status = GDIPlus.GdipGetGenericFontFamilySerif (out generic);
-					GDIPlus.CheckStatus (status);
-					genericSerif = new FontFamily (generic);
-					genericSerif.refreshName ();
-				}
+				IntPtr generic = IntPtr.Zero;
+				Status status = GDIPlus.GdipGetGenericFontFamilySerif (out generic);
+				GDIPlus.CheckStatus (status);
+				FontFamily genericSerif = new FontFamily (generic);
+				genericSerif.refreshName ();				
 				return genericSerif;
 			}
 		}
@@ -279,8 +269,9 @@ namespace System.Drawing {
 		{
 			if (!(obj is FontFamily))
 				return false;
-
-			return (this == (FontFamily) obj);			
+				
+			FontFamily o = (FontFamily) obj;
+			return (nativeFontFamily == o.nativeFontFamily);			
 		}
 		
 		public override int GetHashCode ()

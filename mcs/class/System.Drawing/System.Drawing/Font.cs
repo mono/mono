@@ -471,9 +471,9 @@ namespace System.Drawing
 			if (! (obj is Font))
 				return false;
 				
-			Font fnt = (Font) obj;
+			Font fnt = (Font) obj;			
 			
-			if (fnt.FontFamily == FontFamily && fnt.Size == Size &&
+			if (fnt.FontFamily.Equals (FontFamily) && fnt.Size == Size &&
 			    fnt.Style == Style && fnt.Unit == Unit &&
 			    fnt.GdiCharSet == GdiCharSet && 
 			    fnt.GdiVerticalFont == GdiVerticalFont)
