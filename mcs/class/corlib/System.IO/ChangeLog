@@ -1,3 +1,7 @@
+2004-05-16  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* FileInfo.cs: ToString() returns not full path but just the file name.
+
 2004-05-14  Marek Safar  <marek.safar@seznam.cz>
 
 	* TextWriter.cs: Removed useless [CLSCompliant (false)]
