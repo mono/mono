@@ -46,7 +46,7 @@ namespace System.IO {
 			m_stream.Close();
 		}
 		
-		protected void Dispose (bool disposing)
+		protected virtual void Dispose (bool disposing)
 		{
 			if (disposing)
 				m_stream.Close ();
