@@ -4,8 +4,10 @@
 //
 // Author:
 //	Sebastien Pouliot (spouliot@motus.com)
+//	Atsushi Enomoto (atsushi@ximian.com)
 //
 // (C) 2002, 2003 Motus Technologies Inc. (http://www.motus.com)
+// (C) 2004 Novell Inc.
 //
 
 using System.Xml;
@@ -20,7 +22,8 @@ namespace System.Security.Cryptography.Xml {
 		private string id;
 		private string mimeType;
 		private string encoding;
-		private XmlDocument document;
+		private XmlElement element;
+		private bool propertyModified;
 
 		public DataObject ()
 		{
@@ -38,7 +41,7 @@ namespace System.Security.Cryptography.Xml {
 		// this one accept a null "data" parameter
 		private void Build (string id, string mimeType, string encoding, XmlElement data) 
 		{
-			document = new XmlDocument ();
+			XmlDocument document = new XmlDocument ();
 			XmlElement xel = document.CreateElement (XmlSignature.ElementNames.Object, XmlSignature.NamespaceURI);
 			if (id != null) {
 				this.id = id;
@@ -56,93 +59,102 @@ namespace System.Security.Cryptography.Xml {
 				XmlNode newNode = document.ImportNode (data, true);
 				xel.AppendChild (newNode);
 			}
-			document.AppendChild (xel);
+			document.AppendChild (xel); // FIXME: it should not be appended
+			
+			element = document.DocumentElement;
 		}
 
 		// why is data a XmlNodeList instead of a XmlElement ?
 		public XmlNodeList Data {
 			get { 
-				XmlNodeList xnl = document.GetElementsByTagName (XmlSignature.ElementNames.Object);
-				return xnl[0].ChildNodes;
+				return element.ChildNodes;
 			}
 			set {
 				if (value == null)
 					throw new ArgumentNullException ("value");
-
-				Build (id, mimeType, encoding, null);
-				XmlNodeList xnl = document.GetElementsByTagName (XmlSignature.ElementNames.Object);
-				if ((xnl != null) && (xnl.Count > 0)) {
-					foreach (XmlNode xn in value) {
-						XmlNode newNode = document.ImportNode (xn, true);
-						xnl [0].AppendChild (newNode);
-					}
-				}
+				XmlDocument doc = new XmlDocument ();
+				XmlElement el = (XmlElement) doc.ImportNode (element, true);
+				doc.AppendChild (el); // FIXME: it should not be appended
+				el.RemoveAll ();
+				foreach (XmlNode n in value)
+					el.AppendChild (doc.ImportNode (n, true));
+				element = el;
+				propertyModified = true;
 			}
 		}
 
 		// default to null - no encoding
 		public string Encoding {
-			get { return encoding; }
-			set { encoding = value;	}
+			get { return GetField (XmlSignature.AttributeNames.Encoding); }
+			set { SetField (XmlSignature.AttributeNames.Encoding, value); }
 		}
 
 		// default to null
 		public string Id {
-			get { return id; }
-			set { id = value; }
+			get { return GetField (XmlSignature.AttributeNames.Id); }
+			set { SetField (XmlSignature.AttributeNames.Id, value); }
 		}
 
 		// default to null
 		public string MimeType {
-			get { return mimeType; }
-			set { mimeType = value; }
+			get { return GetField (XmlSignature.AttributeNames.MimeType); }
+			set { SetField (XmlSignature.AttributeNames.MimeType, value); }
+		}
+		
+		private string GetField (string attribute)
+		{
+			XmlNode attr = element.Attributes [attribute];
+			return attr != null ? attr.Value : null;
+		}
+
+		private void SetField (string attribute, string value)
+		{
+			// MS-BUGS: it never cleans attribute value up.
+			if (value == null)
+				return;
+
+			if (propertyModified)
+				element.SetAttribute (attribute, value);
+			else {
+				XmlDocument document = new XmlDocument ();
+				XmlElement el = document.ImportNode (element, true) as XmlElement;
+				el.Attributes.RemoveAll ();
+				document.AppendChild (el); // FIXME: it should not be appended
+				el.SetAttribute (attribute, value);
+				element = el;
+				propertyModified = true;
+			}
 		}
 
 		public XmlElement GetXml () 
 		{
-			if ((document.DocumentElement.LocalName == XmlSignature.ElementNames.Object) && (document.DocumentElement.NamespaceURI == XmlSignature.NamespaceURI)) {
-				// recreate all attributes in order
-				XmlAttribute xa = null;
-				document.DocumentElement.Attributes.RemoveAll ();
-				if (id != null) {
-					xa = document.CreateAttribute (XmlSignature.AttributeNames.Id);
-					xa.Value = id;
-					document.DocumentElement.Attributes.Append (xa);
+			if (propertyModified) {
+				// It looks MS.NET returns element which comes from new XmlDocument every time
+				XmlElement oldElement = element;
+				XmlDocument doc = new XmlDocument ();
+				element = doc.CreateElement (XmlSignature.ElementNames.Object, XmlSignature.NamespaceURI);
+				doc.AppendChild (element); // FIXME: it should not be appended
+				foreach (XmlAttribute attribute in oldElement.Attributes) {
+					switch (attribute.Name) {
+					case XmlSignature.AttributeNames.Id:
+					case XmlSignature.AttributeNames.Encoding:
+					case XmlSignature.AttributeNames.MimeType:
+						element.SetAttribute (attribute.Name, attribute.Value);
+						break;
+					}
 				}
-				if (mimeType != null) {
-					xa = document.CreateAttribute (XmlSignature.AttributeNames.MimeType);
-					xa.Value = mimeType;
-					document.DocumentElement.Attributes.Append (xa);
-				}
-				if (encoding != null) {
-					xa = document.CreateAttribute (XmlSignature.AttributeNames.Encoding);
-					xa.Value = encoding;
-					document.DocumentElement.Attributes.Append (xa);
-				}
-				xa = document.CreateAttribute ("xmlns");
-				xa.Value = XmlSignature.NamespaceURI;
-				document.DocumentElement.Attributes.Append (xa);
+				foreach (XmlNode n in oldElement.ChildNodes)
+					element.AppendChild (doc.ImportNode (n, true));
 			}
-			return document.DocumentElement;
+			return element;
 		}
 
 		public void LoadXml (XmlElement value) 
 		{
 			if (value == null)
 				throw new ArgumentNullException ("value");
-
-			if ((value.LocalName != XmlSignature.ElementNames.Object) || (value.NamespaceURI != XmlSignature.NamespaceURI)) {
-				document.LoadXml (value.OuterXml);
-			}
-			else {
-				document.LoadXml (value.OuterXml);
-				XmlAttribute xa = value.Attributes [XmlSignature.AttributeNames.Id];
-				id = ((xa != null) ? xa.InnerText : null);
-				xa = value.Attributes [XmlSignature.AttributeNames.MimeType];
-				mimeType = ((xa != null) ? xa.InnerText : null);
-				xa = value.Attributes [XmlSignature.AttributeNames.Encoding];
-				encoding = ((xa != null) ? xa.InnerText : null);
-			}
+			element = value;
+			propertyModified = false;
 		}
 	}
 }

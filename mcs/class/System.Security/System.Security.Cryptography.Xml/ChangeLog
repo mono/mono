@@ -1,3 +1,9 @@
+2004-03-23  Atsushi Enomoto <atsushi@ximian.com>
+
+	* DataObject.cs : It now hold element instead of each parameters.
+	  Avoid loading element content to different document unless its
+	  properties were modified (to keep namespace node context).
+
 2004-03-20 Sebastien Pouliot  <sebastien@ximian.com>
 
 	* SignedXml.cs: Removed unused (and commented) ComputeHash method.
