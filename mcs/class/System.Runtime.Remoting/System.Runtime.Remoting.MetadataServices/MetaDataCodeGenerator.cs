@@ -58,7 +58,6 @@ namespace System.Runtime.Remoting.MetadataServices
 			if (outputDirectory == null) outputDirectory = Directory.GetCurrentDirectory();
 			
 			CodeFile mainFile = new CodeFile (outputDirectory);
-			CodeFile interopFile = new CodeFile (outputDirectory);
 			
 			currentFile = mainFile;
 			

@@ -1,3 +1,7 @@
+2005-01-14  Lluis Sanchez Gual  <lluis@novell.com>
+
+	* MetaDataCodeGenerator.cs: Fix warning.
+
 2004-11-30  Lluis Sanchez Gual <lluis@ximian.com>
 
 	* MetaDataExporter.cs: Addded EnumToUnderlying method to get the underlying
