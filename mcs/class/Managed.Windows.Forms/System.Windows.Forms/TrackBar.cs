@@ -28,14 +28,16 @@
 //		- The AutoSize functionality seems quite broken for vertical controls in .Net 1.1. Not
 //		sure if we are implementing it the right way.
 //		- Vertical orientation still needs some work
-//		- OnMouseWheel event
 //
 // Copyright (C) Novell Inc., 2004
 //
 //
-// $Revision: 1.6 $
+// $Revision: 1.7 $
 // $Modtime: $
 // $Log: TrackBar.cs,v $
+// Revision 1.7  2004/08/10 23:27:12  jordi
+// add missing methods, properties, and restructure to hide extra ones
+//
 // Revision 1.6  2004/08/10 15:47:11  jackson
 // Allow control to handle buffering
 //
@@ -86,7 +88,6 @@ namespace System.Windows.Forms
 		#region Events
 		public event EventHandler Scroll;
 		public event EventHandler ValueChanged;		
-
 		#endregion // Events
 
 		public TrackBar ()
@@ -119,144 +120,6 @@ namespace System.Windows.Forms
 			set { base.BackgroundImage = value; }
 		}
 
-		public override Font Font {
-			get { return base.Font;	}
-			set { base.Font = value; }
-		}
-
-		public override Color ForeColor {
-			get { return base.ForeColor; }
-			set { base.ForeColor = value; }
-		}
-
-
-		public int LargeChange {
-			get { return largeChange; }
-			set {
-				if (value < 0)
-					throw new Exception( string.Format("Value '{0}' must be greater than or equal to 0.", value));
-
-				largeChange = value;
-				Invalidate ();
-			}
-		}
-
-		public int Maximum {
-			get { return maximum; }
-			set {
-				maximum = value;
-
-				if (maximum < minimum)
-					minimum = maximum;
-
-				Invalidate ();
-			}
-		}
-
-		public int Minimum {
-			get { return minimum; }
-			set {
-				minimum = value;
-
-				if (minimum > maximum)
-					maximum = minimum;
-
-				Invalidate ();
-			}
-		}
-
-		public Orientation Orientation {
-			get { return orientation; }
-			set {
-				if (!Enum.IsDefined (typeof (Orientation), value))
-					throw new InvalidEnumArgumentException (string.Format("Enum argument value '{0}' is not valid for Orientation", value));
-
-				/* Orientation can be changed once the control has been created*/
-				orientation = value;
-				
-				int old_witdh = Width;
-				Width = Height;
-				Height = old_witdh;
-				Invalidate (); 
-			}
-		}
-
-		public int SmallChange {
-			get { return smallChange;}
-			set {
-				if ( value < 0 )
-					throw new Exception( string.Format("Value '{0}' must be greater than or equal to 0.", value));
-
-				smallChange = value;
-				Invalidate ();
-			}
-		}
-
-
-		public override string Text {
-			get {	return base.Text; }
-			set {	base.Text = value; }
-		}
-
-
-		public int TickFrequency {
-			get { return tickFrequency; }
-			set {
-				if ( value > 0 ) {
-					tickFrequency = value;
-					Invalidate ();
-				}
-			}
-		}
-
-		public TickStyle TickStyle {
-			get { return tickStyle; }
-			set { 
-				
-				if (!Enum.IsDefined (typeof (TickStyle), value))
-					throw new InvalidEnumArgumentException (string.Format("Enum argument value '{0}' is not valid for TickStyle", value));
-
-				tickStyle = value;
-			}
-		}
-
-
-		public int Value {
-			get { return position; }
-			set {
-				if (value < Minimum || value > Maximum)
-					throw new ArgumentException(
-						string.Format("'{0}' is not a valid value for 'Value'. 'Value' should be between 'Minimum' and 'Maximum'", value));
-				
-				if (position != value) {													
-					position = value;					
-					
-					if (ValueChanged != null)				
-						ValueChanged (this, new EventArgs ());
-						
-					Invalidate ();
-				}				
-			}
-		}
-
-		#endregion //Public Properties
-
-		#region Public Methods
-
-		public void SetRange (int minValue, int maxValue)
-		{
-			Minimum = minValue;
-			Maximum = maxValue;
-
-			Invalidate ();
-		}
-
-		public override string ToString()
-		{
-			return string.Format("System.Windows.Forms.Trackbar, Minimum: {0}, Maximum: {1}, Value: {2}",
-						Minimum, Maximum, Value);
-		}
-
 		protected override CreateParams CreateParams {
 			get {
 				CreateParams createParams = base.CreateParams;
@@ -278,27 +141,274 @@ namespace System.Windows.Forms
 			get { return new System.Drawing.Size (104, 42); }
 		}	
 
-		public virtual void BeginInit()		
+		public override Font Font {
+			get { return base.Font;	}
+			set { base.Font = value; }
+		}
+
+		public override Color ForeColor {
+			get { return base.ForeColor; }
+			set { base.ForeColor = value; }
+		}
+		
+
+		public int LargeChange {
+			get { return largeChange; }
+			set {
+				if (value < 0)
+					throw new Exception( string.Format("Value '{0}' must be greater than or equal to 0.", value));
+
+				largeChange = value;
+				Refresh ();
+			}
+		}
+
+		public int Maximum {
+			get { return maximum; }
+			set {
+				if (maximum != value)  {
+					maximum = value;
+
+					if (maximum < minimum)
+						minimum = maximum;
+
+					Refresh ();
+				}
+			}
+		}
+
+		public int Minimum {
+			get { return minimum; }
+			set {
+
+				if (Minimum != value) {
+					minimum = value;
+
+					if (minimum > maximum)
+						maximum = minimum;
+
+					Refresh ();
+				}
+			}
+		}
+
+		public Orientation Orientation {
+			get { return orientation; }
+			set {
+				if (!Enum.IsDefined (typeof (Orientation), value))
+					throw new InvalidEnumArgumentException (string.Format("Enum argument value '{0}' is not valid for Orientation", value));
+
+				/* Orientation can be changed once the control has been created*/
+				if (orientation != value) {
+					orientation = value;
+				
+					int old_witdh = Width;
+					Width = Height;
+					Height = old_witdh;
+					Refresh (); 
+				}
+			}
+		}
+
+		public int SmallChange {
+			get { return smallChange;}
+			set {
+				if ( value < 0 )
+					throw new Exception( string.Format("Value '{0}' must be greater than or equal to 0.", value));
+
+				if (smallChange != value) {
+					smallChange = value;
+					Refresh ();
+				}
+			}
+		}
+
+
+		public override string Text {
+			get {	return base.Text; }
+			set {	base.Text = value; }
+		}
+
+
+		public int TickFrequency {
+			get { return tickFrequency; }
+			set {
+				if ( value > 0 ) {
+					tickFrequency = value;
+					Refresh ();
+				}
+			}
+		}
+
+		public TickStyle TickStyle {
+			get { return tickStyle; }
+			set { 				
+				if (!Enum.IsDefined (typeof (TickStyle), value))
+					throw new InvalidEnumArgumentException (string.Format("Enum argument value '{0}' is not valid for TickStyle", value));
+				
+				if (tickStyle != value) {
+					tickStyle = value;
+					Refresh ();
+				}
+			}
+		}
+
+
+		public int Value {
+			get { return position; }
+			set {
+				if (value < Minimum || value > Maximum)
+					throw new ArgumentException(
+						string.Format("'{0}' is not a valid value for 'Value'. 'Value' should be between 'Minimum' and 'Maximum'", value));
+				
+				if (position != value) {													
+					position = value;					
+					
+					if (ValueChanged != null)				
+						ValueChanged (this, new EventArgs ());
+						
+					Refresh ();
+				}				
+			}
+		}
+
+		#endregion //Public Properties
+
+		#region Public Methods
+
+		public virtual void BeginInit ()		
 		{
 
 		}
 
-		public virtual void EndInit()		
+		protected override void CreateHandle ()
+		{
+			base.CreateHandle ();
+		}
+
+
+		public virtual void EndInit ()		
 		{
 
 		}
 
+		protected override bool IsInputKey (Keys keyData)
+		{
+			return false;
+		}
+
+		protected override void OnBackColorChanged (EventArgs e)
+		{
+
+		}
+
+		protected override void OnHandleCreated (EventArgs e)
+		{
+			if (AutoSize)
+				if (Orientation == Orientation.Horizontal)
+					Size = new Size (Width, 45);
+				else
+					Size = new Size (50, Height);
+
+			UpdateArea ();
+			CreateBuffers (Width, Height);
+
+			UpdatePos (Value, true);
+			UpdatePixelPerPos ();
+
+			Draw ();
+			UpdatePos (Value, true);
+
+			
+		}
+
+		protected override void OnMouseWheel (MouseEventArgs e)
+		{
+			if (!Enabled) return;
+    			
+			if (e.Delta > 0)
+				SmallDecrement ();
+			else
+				SmallIncrement ();
+    					
+		}
+
+		protected virtual void OnScroll (EventArgs e) 
+		{
+			if (Scroll != null) 
+				Scroll (this, e);
+		}
+
+		protected virtual void OnValueChanged (EventArgs e) 
+		{
+			if (ValueChanged != null) 
+				ValueChanged (this, e);
+		}
+
+		public void SetRange (int minValue, int maxValue)
+		{
+			Minimum = minValue;
+			Maximum = maxValue;
+
+			Refresh ();
+		}
+
+		public override string ToString()
+		{
+			return string.Format("System.Windows.Forms.Trackbar, Minimum: {0}, Maximum: {1}, Value: {2}",
+						Minimum, Maximum, Value);
+		}
+				
+			
+
+		protected override void WndProc (ref Message m)
+    		{
+			int clicks = 1;
+
+			switch ((Msg) m.Msg) {
+				
+			case Msg.WM_LBUTTONDOWN:
+				OnMouseDownTB (new MouseEventArgs (FromParamToMouseButtons ((int) m.WParam.ToInt32()), 
+						clicks, LowOrder ((int) m.LParam.ToInt32 ()), HighOrder ((int) m.LParam.ToInt32 ()), 
+						0));
+					
+				break;
+				
+			case Msg.WM_MOUSEMOVE: 
+				OnMouseMoveTB  (new MouseEventArgs (FromParamToMouseButtons ((int) m.WParam.ToInt32()), 
+						clicks, 
+						LowOrder ((int) m.LParam.ToInt32 ()), HighOrder ((int) m.LParam.ToInt32 ()), 
+						0));
+				break;
+
+			case Msg.WM_SIZE:
+				OnResize_TB ();
+				break;
+
+			case Msg.WM_PAINT: {
+				Rectangle	rect;
+				PaintEventArgs	paint_event;
+
+				paint_event = XplatUI.PaintEventStart (Handle);
+				OnPaint_TB (paint_event);
+				XplatUI.PaintEventEnd (Handle);
+				return;
+			}
+				
+			case Msg.WM_ERASEBKGND:
+				m.Result = (IntPtr)1; /* Disable background painting to avoid flickering */
+				return;
+				
+			default:
+				break;
+			}
+
+			base.WndProc (ref m);
+    		}
+    		
 		#endregion Public Methods
 
 		#region Private Methods
-
-		private void fire_scroll_event ()
-		{
-			if (Scroll == null)
-				return;
-
-			Scroll (this, new EventArgs ());
-		}
 
 		private void UpdateArea ()
 		{
@@ -352,20 +462,32 @@ namespace System.Windows.Forms
 				UpdatePos ((int) new_pos, false);
     		}
 
-		private void LargeIncrement()
-    		{
-    			//Console.WriteLine ("large inc: {0} {1}", position, LargeChange);
+		private void LargeIncrement ()
+    		{    			
 			UpdatePos (position + LargeChange, true);
-
-			fire_scroll_event ();
+			Refresh ();
+			OnScroll (new EventArgs ());
     		}
 
-    		private void LargeDecrement()
+    		private void LargeDecrement ()
     		{
-    			//Console.WriteLine ("large dec: {0} {1}", position, LargeChange);
 			UpdatePos (position - LargeChange, true);
+			Refresh ();
+			OnScroll (new EventArgs ());
+    		}
 
-			fire_scroll_event ();
+		private void SmallIncrement ()
+    		{    			
+			UpdatePos (position + SmallChange, true);
+			Refresh ();
+			OnScroll (new EventArgs ());
+    		}
+
+    		private void SmallDecrement ()
+    		{
+			UpdatePos (position - SmallChange, true);
+			Refresh ();
+			OnScroll (new EventArgs ());	
     		}
 
     		private void UpdatePixelPerPos ()
@@ -373,6 +495,14 @@ namespace System.Windows.Forms
 			pixel_per_pos = ((float)(thumb_area.Width)
 				/ (float) (1 + Maximum - Minimum));
     		}
+
+		private void Draw ()
+		{
+			int ticks = (Maximum - Minimum)	/ tickFrequency;
+			
+			ThemeEngine.Current.DrawTrackBar (DeviceContext, paint_area, ref thumb_pos, ref thumb_area,
+				tickStyle, ticks, Orientation, Focused);
+		}
 
 		private void UpdatePos (int newPos, bool update_trumbpos)
     		{
@@ -396,73 +526,7 @@ namespace System.Windows.Forms
 			}
     		}
 
-    		#endregion // Private Methods
-
-    		#region Override Event Methods
-
-		protected override void OnResize (EventArgs e)
-    		{
-    			//Console.WriteLine ("OnResize");
-    			base.OnResize (e);
-
-    			if (Width <= 0 || Height <= 0)
-    				return;
-
-			UpdateArea ();
-			CreateBuffers (Width, Height);
-		}
-
-
-		protected override void OnHandleCreated (EventArgs e)
-		{
-			base.OnHandleCreated(e);
-			//Console.WriteLine ("OnHandleCreated");
-			UpdateArea ();
-
-			CreateBuffers (Width, Height);
-
-			UpdatePos (Value, true);
-			UpdatePixelPerPos ();
-
-			Draw();
-			UpdatePos (Value, true);
-
-			if (AutoSize)
-				if (Orientation == Orientation.Horizontal)
-					Size = new Size (Width, 45);
-				else
-					Size = new Size (50, Height);
-		}
-
-
-		/* Disable background painting to avoid flickering, since we do our painting*/
-		protected override void OnPaintBackground (PaintEventArgs pevent)
-    		{
-    			// None
-    		}
-
-		private void Draw ()
-		{
-			int ticks = (Maximum - Minimum)	/ tickFrequency;
-			
-			ThemeEngine.Current.DrawTrackBar (DeviceContext, paint_area, ref thumb_pos, ref thumb_area,
-				tickStyle, ticks, Orientation, Focused);
-		}
-
-		protected override void OnPaint (PaintEventArgs pevent)
-		{		
-			Console.WriteLine ("OnDraw");
-
-			if (Width <= 0 || Height <=  0 || Visible == false)
-    				return;
-
-			/* Copies memory drawing buffer to screen*/
-			UpdateArea ();
-			Draw();
-			pevent.Graphics.DrawImage (ImageBuffer, 0, 0);
-		}
-
-		protected override void OnMouseDown (MouseEventArgs e)
+		private void OnMouseDownTB (MouseEventArgs e)
     		{
     			if (!Enabled) return;
     			
@@ -473,8 +537,9 @@ namespace System.Windows.Forms
 			if (orientation == Orientation.Horizontal) {
 
 				if (thumb_pos.Contains (point)) {
+					//XplatUI.GrabWindow (Handle);
 					thumb_pressed = true;
-					Invalidate ();
+					Refresh ();
 					thumb_pixel_click_move = e.X;
 				}
 				else {
@@ -484,14 +549,15 @@ namespace System.Windows.Forms
 						else
 							LargeDecrement ();
 
-						Invalidate ();
+						Refresh ();
 					}
 				}
 			}
 			else {
 				if (thumb_pos.Contains (point)) {
+					//XplatUI.GrabWindow (Handle);
 					thumb_pressed = true;
-					Invalidate ();
+					Refresh ();
 					thumb_pixel_click_move = e.Y;
 				}
 				else {
@@ -501,25 +567,24 @@ namespace System.Windows.Forms
 						else
 							LargeDecrement ();
 
-						Invalidate ();
+						Refresh ();
 					}
 				}
 
 			}
     		}
 
-    		protected override void OnMouseMove (MouseEventArgs e)
+    		private void OnMouseMoveTB (MouseEventArgs e)
     		{    			
     			if (!Enabled) return;
-    			
-    			//System.Console.WriteLine ("OnMouseMove " + thumb_pressed);
+    		
     			Point pnt = new Point (e.X, e.Y);
 
     			/* Moving the thumb */
     			if (thumb_pos.Contains (pnt) && thumb_pressed) {
 
-    				System.Console.WriteLine ("OnMouseMove " + thumb_pressed);
-
+    				//System.Console.WriteLine ("OnMouseMove " + thumb_pressed);
+				//XplatUI.GrabWindow (Handle);
     				int pixel_pos;
 
     				if (orientation == Orientation.Horizontal)
@@ -534,31 +599,45 @@ namespace System.Windows.Forms
     				else
     					thumb_pixel_click_move = e.Y;
 
-
-    				fire_scroll_event ();
+    				OnScroll (new EventArgs ());
 
 				//System.Console.WriteLine ("OnMouseMove thumb "+ e.Y
 				//	+ " clickpos " + thumb_pixel_click_move   + " pos:" + thumb_pos.Y);
 
-				Invalidate ();
+				Refresh ();
 			}
 
 			if (!thumb_pos.Contains (pnt) && thumb_pressed) {
+				//XplatUI.ReleaseWindow (Handle);
     				thumb_pressed = false;
 				Invalidate ();
 			}
 
     		}
-    		
-    		protected override void OnMouseWheel (MouseEventArgs e) 
+
+		private void OnResize_TB ()
     		{
-			if (!Enabled) return;
-    			
-  			System.Console.WriteLine ("OnMouseWheel delta: " + e.Delta + " clicks:" + e.Clicks);
-    					
-    		}
-    		
-    		#endregion //Override Event Methods
+    			//Console.WriteLine ("OnResize");
+
+    			if (Width <= 0 || Height <= 0)
+    				return;
+
+			UpdateArea ();
+			CreateBuffers (Width, Height);
+		}		
+
+		private void OnPaint_TB (PaintEventArgs pevent)
+		{		
+			if (Width <= 0 || Height <=  0 || Visible == false)
+    				return;
+
+			/* Copies memory drawing buffer to screen*/
+			UpdateArea ();
+			Draw ();
+			pevent.Graphics.DrawImage (ImageBuffer, 0, 0);
+		}  
+
+    		#endregion // Private Methods
 	}
 }
 
