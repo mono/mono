@@ -28,6 +28,7 @@
 		<csc target="library" output="corlib_reference.dll" debug="${debug}">
 			<sources>
 				<includes name="**/*.cs"/>
+				<excludes name="Mono.Math/*.cs"/>
 			</sources>
 			<references basedir="..\..\..\nunit20">
 				<includes name="NUnit.Framework.dll"/>
