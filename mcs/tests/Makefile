@@ -7,7 +7,8 @@ thisdir = tests
 SUBDIRS =
 include ../build/rules.make
 
-DISTFILES = README.tests harness.mk $(wildcard *.cs) $(wildcard *.il) $(wildcard *.xml) $(wildcard *.inc)
+DISTFILES = README.tests harness.mk $(wildcard *.cs) $(wildcard *.il) $(wildcard *.xml) $(wildcard *.inc) \
+	test-353-2.cs
 
 with_mono_path = MONO_PATH="$(topdir)/class/lib/$(PROFILE)$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH"
 
@@ -85,6 +86,7 @@ TEST_SOURCES_common = \
 	mtest-4-dll mtest-4-exe \
 	mtest-5-dll mtest-5-exe \
 	mtest-6-dll mtest-6-exe \
+	mtest-7-dll mtest-7-exe \
 	test-319-dll test-319-exe \
 	covariance-1 covariance-2 covariance-3 \
 	conv-dll conv-exe \

@@ -794,6 +794,8 @@ public class TypeManager {
 	{
 		MethodInfo assembly_get_namespaces = typeof (Assembly).GetMethod ("GetNamespaces", BindingFlags.Instance|BindingFlags.NonPublic);
 
+		Hashtable cache = null;
+
 		//
 		// First add the assembly namespaces
 		//
@@ -810,7 +812,7 @@ public class TypeManager {
 				}
 			}
 		} else {
-			Hashtable cache = new Hashtable ();
+			cache = new Hashtable ();
 			cache.Add ("", null);
 			foreach (Assembly a in assemblies) {
 				foreach (Type t in a.GetExportedTypes ()) {
@@ -821,6 +823,25 @@ public class TypeManager {
 					Namespace.LookupNamespace (ns, true);
 					cache.Add (ns, null);
 				}
+			}
+		}
+
+		//
+		// Then add module namespaces
+		//
+		foreach (Module m in modules) {
+			if (m == CodeGen.Module.Builder)
+				continue;
+			if (cache == null) {
+				cache = new Hashtable ();
+				cache.Add ("", null);
+			}
+			foreach (Type t in m.GetTypes ()) {
+				string ns = t.Namespace;
+				if (ns == null || cache.Contains (ns))
+					continue;
+				Namespace.LookupNamespace (ns, true);
+				cache.Add (ns, null);
 			}
 		}
 	}
