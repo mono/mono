@@ -2745,5 +2745,47 @@ namespace MonoTests.System
 				AssertEquals("#V12", typeof(FormatException), e.GetType());
 			}
 		}
+
+                public void TestConvertFromNull() {
+                	
+                	AssertEquals ("#W1", false, Convert.ToBoolean (null as object));
+	               	AssertEquals ("#W2", 0, Convert.ToByte (null as object));
+                	AssertEquals ("#W3", 0, Convert.ToChar (null as object));
+                	AssertEquals ("#W4", new DateTime (1,1,1,0,0,0), Convert.ToDateTime (null as object));
+                	AssertEquals ("#W5", 0, Convert.ToDecimal (null as object));
+                	AssertEquals ("#W6", 0, Convert.ToDouble (null as object));
+                	AssertEquals ("#W7", 0, Convert.ToInt16 (null as object));
+                	AssertEquals ("#W8", 0, Convert.ToInt32 (null as object));
+                	AssertEquals ("#W9", 0, Convert.ToInt64 (null as object));
+                	AssertEquals ("#W10", 0, Convert.ToSByte (null as object));
+                	AssertEquals ("#W11", 0, Convert.ToSingle (null as object));
+                	AssertEquals ("#W12", "", Convert.ToString (null as object));
+                	AssertEquals ("#W13", 0, Convert.ToUInt16 (null as object));
+                	AssertEquals ("#W14", 0, Convert.ToUInt32 (null as object));
+                	AssertEquals ("#W15", 0, Convert.ToUInt64 (null as object));
+                	AssertEquals ("#W16", false, Convert.ToBoolean (null as string));
+	               	AssertEquals ("#W17", 0, Convert.ToByte (null as string));
+
+                	try {
+                		Convert.ToChar (null as string);
+                		Fail ();
+                	} catch (Exception e) {
+                		AssertEquals ("#W18", typeof (ArgumentNullException), e.GetType ());                		
+                	}
+                	
+                	AssertEquals ("#W19", new DateTime (1,1,1,0,0,0), Convert.ToDateTime (null as string));
+                	AssertEquals ("#W20", 0, Convert.ToDecimal (null as string));
+                	AssertEquals ("#W21", 0, Convert.ToDouble (null as string));
+                	AssertEquals ("#W22", 0, Convert.ToInt16 (null as string));
+                	AssertEquals ("#W23", 0, Convert.ToInt32 (null as string));
+                	AssertEquals ("#W24", 0, Convert.ToInt64 (null as string));
+                	AssertEquals ("#W25", 0, Convert.ToSByte (null as string));
+                	AssertEquals ("#W26", 0, Convert.ToSingle (null as string));
+                	AssertEquals ("#W27", null, Convert.ToString (null as string));
+                	AssertEquals ("#W28", 0, Convert.ToUInt16 (null as string));
+                	AssertEquals ("#W29", 0, Convert.ToUInt32 (null as string));
+                	AssertEquals ("#W30", 0, Convert.ToUInt64 (null as string));                	
+                }
+
 	}
 }
