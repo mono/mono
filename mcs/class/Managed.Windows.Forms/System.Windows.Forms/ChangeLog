@@ -1,3 +1,7 @@
+2004-12-21  Peter Bartok  <pbartok@novell.com>
+
+	* Form.cs (ShowDialog): Unset modality for the proper window
+ 
 2004-12-20  Peter Bartok  <pbartok@novell.com>
 
 	* CommonDialog.cs: Initial check-in

@@ -556,7 +556,7 @@ namespace System.Windows.Forms {
 			is_modal = false;
 			Hide();
 
-			XplatUI.SetModal(window.Handle, false);
+			XplatUI.SetModal(form_parent_window.window.Handle, false);
 
 			return DialogResult;
 		}
