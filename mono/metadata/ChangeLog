@@ -1,4 +1,8 @@
 
+Fri May 10 18:14:51 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* reflection.c: sort methodsemantics table.
+
 Fri May 10 16:31:49 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
 	* reflection.h, reflection.c: honour init locals setting.
