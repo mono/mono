@@ -185,9 +185,11 @@ namespace Mono.AssemblyCompare
 
 		protected void AddExtra (XmlNode node)
 		{
+			//TODO: count all the subnodes?
 			AddAttribute (node, "presence", "extra");
 			AddAttribute (node, "ok", "1");
 			AddAttribute (node, "ok_total", "1");
+			AddAttribute (node, "extra", "1");
 			AddAttribute (node, "extra_total", "1");
 		}
 
@@ -581,6 +583,7 @@ namespace Mono.AssemblyCompare
 					node = document.CreateElement ("class", null);
 					newNodes.Add (node);
 					AddAttribute (node, "name", c.Name);
+					AddAttribute (node, "type", c.Type);
 					AddExtra (node);
 					counters.Extra++;
 					counters.ExtraTotal++;

@@ -1,3 +1,8 @@
+2003-11-14  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* mono-api-diff.cs: added a couple of missing attributes for extra
+	classes.
+
 2003-11-13  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* mono-api-diff.cs: ensure no nested type gets in as non-nested.
