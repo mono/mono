@@ -1,3 +1,13 @@
+2002-03-24  Martin Baulig  <martin@gnome.org>
+
+	* debug-symfile.c (mono_debug_local_type_from_signature): New func.
+	(mono_debug_method_from_token): New func.
+
+	* icall.c (Mono.CSharp.Debugger.MonoSymbolWriter::get_local_type_from_sig):
+	New interncall, calls mono_debug_local_type_from_signature().
+	(Mono.CSharp.Debugger.MonoSymbolWriter::get_method): New interncall,
+	calls mono_debug_method_from_token().
+
 2002-03-23  Martin Baulig  <martin@gnome.org>
 
 	* unicode.c (ves_icall_iconv_get_char_count): The `count' argument
@@ -13,8 +23,8 @@
 	* reflection.c (mono_reflection_sighelper_get_signature_local),
 	(mono_reflection_sighelper_get_signature_local): New functions.
 
-	* icall.c ("System.Reflection.Emit.SignatureHelper::get_signature_local"),
-	("System.Reflection.Emit.SignatureHelper::get_signature_field"): New
+	* icall.c (System.Reflection.Emit.SignatureHelper::get_signature_local),
+	(System.Reflection.Emit.SignatureHelper::get_signature_field): New
 	interncalls.
 
 2002-03-23  Martin Baulig  <martin@gnome.org>
