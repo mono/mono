@@ -722,8 +722,8 @@ namespace System.Reflection.Emit {
 				Emit (OpCodes.Ldfld, field);
 			}
 			Emit (OpCodes.Call, 
-				  typeof (Console).GetMethod ("WriteLine",
-											  new Type[1] { field.FieldType }));
+			      typeof (Console).GetMethod ("WriteLine",
+							  new Type[1] { field.FieldType }));
 		}
 
 		public virtual void EmitWriteLine (LocalBuilder lbuilder)
@@ -736,16 +736,16 @@ namespace System.Reflection.Emit {
 			// should.
 			Emit (OpCodes.Ldloc, lbuilder);
 			Emit (OpCodes.Call, 
-				  typeof (Console).GetMethod ("WriteLine",
-											  new Type[1] { lbuilder.LocalType }));
+			      typeof (Console).GetMethod ("WriteLine",
+							  new Type[1] { lbuilder.LocalType }));
 		}
 		
 		public virtual void EmitWriteLine (string val)
 		{
 			Emit (OpCodes.Ldstr, val);
 			Emit (OpCodes.Call, 
-				  typeof (Console).GetMethod ("WriteLine",
-											  new Type[1] { typeof(string)}));
+			      typeof (Console).GetMethod ("WriteLine",
+							  new Type[1] { typeof(string)}));
 		}
 
 		public virtual void EndExceptionBlock ()
