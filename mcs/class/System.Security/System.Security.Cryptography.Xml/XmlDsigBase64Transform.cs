@@ -65,7 +65,6 @@ namespace System.Security.Cryptography.Xml {
 			// documented as not changing the state of the transform
 		}
 
-		[MonoTODO("There's still one unit test failing")]
 		public override void LoadInput (object obj) 
 		{
 			XmlNodeList xnl = null;
@@ -74,7 +73,7 @@ namespace System.Security.Cryptography.Xml {
 			if (obj is Stream) 
 				stream = (obj as Stream);
 			else if (obj is XmlDocument)
-				xnl = (obj as XmlDocument).ChildNodes;
+				xnl = (obj as XmlDocument).SelectNodes ("//.");
 			else if (obj is XmlNodeList)
 				xnl = (XmlNodeList) obj;
 
@@ -82,8 +81,15 @@ namespace System.Security.Cryptography.Xml {
 				stream = new MemoryStream ();
 				StreamWriter sw = new StreamWriter (stream);
 				foreach (XmlNode xn in xnl) {
-					if (xn is XmlElement)
-						sw.Write (xn.InnerText);
+					switch (xn.NodeType) {
+					case XmlNodeType.Attribute:
+					case XmlNodeType.Text:
+					case XmlNodeType.CDATA:
+					case XmlNodeType.SignificantWhitespace:
+					case XmlNodeType.Whitespace:
+						sw.Write (xn.Value);
+						break;
+					}
 				}
 				sw.Flush ();
 				// ready to be re-used
