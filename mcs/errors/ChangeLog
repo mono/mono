@@ -1,7 +1,12 @@
+2005-01-12  Raja R Harinath  <rharinath@novell.com>
+
+	* Makefile (run-generics-tests): Fix quoting to better work in
+	Windows.  Remove some stray code leftover from testing.
+
 2005-01-10  Raja R Harinath  <rharinath@novell.com>
 
 	* Makefile (all-local): Add CS0118-2-lib.dll.
-	(run-mcs-tests, runt-generics-tests): Don't pipe through tee.  It
+	(run-mcs-tests, run-generics-tests): Don't pipe through tee.  It
 	loses exit code of do-tests.pl.
 	* do-tests.pl (PROFILELOG): New.  Copy all output to this file too.
 	* cs0234-2.cs: Bug #52697.

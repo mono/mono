@@ -56,8 +56,7 @@ run-mcs-tests:
 
 run-generics-tests:
 	-rm -f generics.log
-	@./do-tests.pl generics "$(GENERICS_COMPILE)" "gcs*.cs"
-	@test -z "`grep UNEXPECTED generics.log`"
+	@./do-tests.pl generics '$(GENERICS_COMPILE)' "gcs*.cs"
 
 test-multi-local:
 	@ failed=false; \
