@@ -1,5 +1,11 @@
 2004-05-15  Gert Driesen (drieseng@users.sourceforge.net)
 
+	* Makefile: add reference to Accessibility assembly, needed
+	to check CLS compliance
+	* Assembly/AssemblyInfo.cs: System.Design is CLS Compliant
+
+2004-05-15  Gert Driesen (drieseng@users.sourceforge.net)
+
 	* System.Design.dll.sources: remove DataBindingCollection
 	* System.Web.UI.Design/DataBindingCollection.cs: removed
 	* System.Web.UI.Design/WebControlToolboxItem.cs: fixed

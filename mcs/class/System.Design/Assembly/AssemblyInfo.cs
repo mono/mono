@@ -37,8 +37,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyCopyright ("(c) 2003 Various Authors")]
 [assembly: AssemblyTrademark ("")]
 
-// FIXME: add once CLS compliance is reached (CLS compliance requests that Accessibility needs to be referenced - doesn't on mcs, probably a mcs bug)
-//[assembly: CLSCompliant (true)]
+[assembly: CLSCompliant (true)]
 [assembly: AssemblyDefaultAlias ("System.Design.dll")]
 [assembly: AssemblyInformationalVersion ("0.0.0.1")]
 [assembly: NeutralResourcesLanguage ("en-US")]

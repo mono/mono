@@ -4,7 +4,8 @@ include ../../build/rules.make
 
 LIBRARY = System.Design.dll
 LIB_MCS_FLAGS = /r:$(corlib) /r:System.dll /r:System.Web.dll \
-	/r:System.Windows.Forms.dll /r:System.Drawing.dll
+	/r:System.Windows.Forms.dll /r:System.Drawing.dll \
+	/r:Accessibility.dll
 NO_TEST = yes
 
 include ../../build/library.make
