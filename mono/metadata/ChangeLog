@@ -1,3 +1,6 @@
+2001-11-09  Dietmar Maurer  <dietmar@ximian.com>
+
+	* class.c (mono_class_metadata_init): bug fix: compute the right slot
 
 Fri Nov 9 15:48:02 CET 2001 Paolo Molaro <lupus@ximian.com>
 

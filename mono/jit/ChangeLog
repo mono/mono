@@ -1,6 +1,11 @@
 2001-11-09  Dietmar Maurer  <dietmar@ximian.com>
 
+	* testjit.c (mono_analyze_stack): new BOX impl.
+
+	* x86.brg: implemented INITOBJ
+
 	* testjit.c (mono_analyze_stack): finished array support
+	(mono_analyze_stack): reimplemented DUP instruction
 
 2001-11-08  Dietmar Maurer  <dietmar@ximian.com>
 
