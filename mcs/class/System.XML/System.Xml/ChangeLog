@@ -1,3 +1,8 @@
+2003-07-19  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
+
+	* XmlUrlResolver.cs : applied BenM's patch for file uri problem
+	  (bug #46610).
+
 2003-07-15  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
 
 	* DTDValidatingReader.cs :

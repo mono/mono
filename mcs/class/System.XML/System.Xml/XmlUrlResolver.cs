@@ -42,6 +42,9 @@ namespace System.Xml
 		[MonoTODO("Use Credentials; Uri must be absolute.")]
 		public override object GetEntity (Uri absoluteUri, string role, Type ofObjectToReturn)
 		{
+			if (absoluteUri.Scheme == "file")
+				return new FileStream (absoluteUri.LocalPath, FileMode.Open, FileAccess.Read, FileShare.Read);
+
 			// (MS documentation says) parameter role isn't used yet.
 			Stream s = null;
 			using (s) {
