@@ -1,3 +1,13 @@
+2004-09-01 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Xml.cs: fixed get_DocumentContent (it was returning "" always!) and
+	don't call MapPathSecure on the content itself.
+	
+	* XmlBuilder.cs: handle XML documents written inside asp:xml. The
+	document is checked at parse time and will be checked again at run time.
+
+	Fixes bug #63828.
+
 2004-08-10 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Xml.cs: use MapPath in DocumentSource and documentContent. Fixes
