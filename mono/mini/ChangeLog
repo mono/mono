@@ -1,4 +1,9 @@
 
+Sun May 2 20:12:22 CEST 2004 Paolo Molaro <lupus@ximian.com>
+
+	* mini.c, mini-ops, inssel-long32.brg: speedup ulong >> 32
+	(also works around a weird ppc bug: 57957).
+
 Sat May 1 16:56:10 EDT 2004 Paolo Molaro <lupus@ximian.com>
 
 	* tramp-ppc.c: trampoline fixes.
