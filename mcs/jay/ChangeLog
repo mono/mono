@@ -1,3 +1,7 @@
+2003-12-16  Atsushi Enomoto <atsushi@ximian.com>
+
+	* skelton.cs : Added ErrorOutput text writer.
+
 2003-10-08  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
 
 	* output.c, skelton, skelton.cs : Renamed yyName[] to yyNames[]
