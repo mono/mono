@@ -1,3 +1,12 @@
+2003-02-25 Lluis Sanchez Gual <lluis@ideary.com>
+
+	* Identity.cs: Added property to check if an identity is connected (it is remotely accesible)
+	* ObjRef.cs: Added internal helper method for getting the server type of an ObjRef.
+	* RemotingServices.cs: Implemented Disconnect method. Added support for custom proxy
+	  creating using ProxyAttribute. Added support for activation attributes in creation
+	  of proxies. Some other minor corrections.
+	* ServerIdentity.cs: minor corrections.
+
 2003-02-18 Lluis Sanchez Gual <lluis@ideary.com>
 
 	* Identity.cs: Added envoy message sink.

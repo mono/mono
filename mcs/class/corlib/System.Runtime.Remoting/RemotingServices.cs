@@ -93,6 +93,22 @@ namespace System.Runtime.Remoting
 			return GetRemoteObject(objRef);
 		}
 
+		public static bool Disconnect (MarshalByRefObject obj)
+		{
+			if (obj == null) throw new ArgumentNullException ("obj");
+			if (IsTransparentProxy (obj)) throw new ArgumentException ("The obj parameter is a proxy");
+
+			ServerIdentity identity = obj.ObjectIdentity;
+			if (identity == null || !identity.IsConnected)
+				return false;
+			else
+			{
+				LifetimeServices.StopTrackingLifetime (identity);
+				DisposeIdentity (identity);
+				return true;
+			}
+		}
+
 		public static Type GetServerTypeForUri (string uri)
 		{
 			Identity ident = GetIdentityForUri (uri);
@@ -120,9 +136,14 @@ namespace System.Runtime.Remoting
 				return GetRemoteObject(objref);
 			else
 			{
-				ClientActivatedIdentity identity = uri_hash [objref.URI] as ClientActivatedIdentity;
-				if (identity != null) return identity.GetServerObject ();
-				else return GetRemoteObject (objref);
+				if (objref.ServerType.IsContextful)
+				{
+					// Look for a ProxyAttribute
+					ProxyAttribute att = (ProxyAttribute) Attribute.GetCustomAttribute (objref.ServerType, typeof(ProxyAttribute),true);
+					if (att != null)
+						return att.CreateProxy (objref, objref.ServerType, null, null).GetTransparentProxy();
+				}
+				return GetProxyForRemoteObject (objref, fRefine);
 			}
 		}
 
@@ -145,13 +166,15 @@ namespace System.Runtime.Remoting
 
 				if (identity != null)
 				{
-					if (identity.ObjectType.IsContextful && identity.ObjectUri == null)
+					if (identity.ObjectType.IsContextful && !identity.IsConnected)
 					{
-						// Unregistered contextbound object. Register now.
+						// Unregistered local contextbound object. Register now.
+						ClientActivatedIdentity cboundIdentity = (ClientActivatedIdentity)identity;
 						if (uri == null) uri = NewUri();
-						identity.ObjectUri = uri;
-						RegisterServerIdentity ((ServerIdentity) identity);
-						((ServerIdentity)identity).StartTrackingLifetime();
+						cboundIdentity.ObjectUri = uri;
+						RegisterServerIdentity (cboundIdentity);
+						cboundIdentity.StartTrackingLifetime ((ILease)obj.InitializeLifetimeService());
+						return cboundIdentity.CreateObjRef(requested_type);
 					}
 					else if (uri != null)
 						throw new RemotingException ("It is not possible marshal a proxy of a remote object");
@@ -257,25 +280,45 @@ namespace System.Runtime.Remoting
 
 		#region Internal Methods
 		
-		internal static object CreateClientProxy (ActivatedClientTypeEntry entry)
+		internal static object CreateClientProxy (ActivatedClientTypeEntry entry, object[] activationAttributes)
 		{
-			string activationUrl = entry.ApplicationUrl + "/RemoteActivationService.rem";
+			if (entry.ContextAttributes != null || activationAttributes != null)
+			{
+				ArrayList props = new ArrayList ();
+				if (entry.ContextAttributes != null) props.AddRange (entry.ContextAttributes);
+				if (activationAttributes != null) props.AddRange (activationAttributes);
+				return CreateClientProxy (entry.ObjectType, entry.ApplicationUrl, props.ToArray ());
+			}
+			else
+				return CreateClientProxy (entry.ObjectType, entry.ApplicationUrl, null);
+		}
+	
+		internal static object CreateClientProxy (Type objectType, string url, object[] activationAttributes)
+		{
+			string activationUrl = url + "/RemoteActivationService.rem";
 
 			string objectUri;
 			IMessageSink sink = GetClientChannelSinkChain (activationUrl, null, out objectUri);
 
-			RemotingProxy proxy = new RemotingProxy (entry.ObjectType, activationUrl, sink);
+			RemotingProxy proxy = new RemotingProxy (objectType, activationUrl, activationAttributes);
 			return proxy.GetTransparentProxy();
 		}
 	
 		internal static object CreateClientProxy (WellKnownClientTypeEntry entry)
 		{
-			return Connect (entry.ObjectType, entry.ObjectUrl);
+			return Connect (entry.ObjectType, entry.ObjectUrl, null);
 		}
 	
-		internal static object CreateClientProxyForContextBound (Type type)
+		internal static object CreateClientProxyForContextBound (Type type, object[] activationAttributes)
 		{
-			RemotingProxy proxy = new RemotingProxy (type, ChannelServices.CrossContextUrl, ChannelServices.CrossContextChannel);
+			if (type.IsContextful)
+			{
+				// Look for a ProxyAttribute
+				ProxyAttribute att = (ProxyAttribute) Attribute.GetCustomAttribute (type, typeof(ProxyAttribute), true);
+				if (att != null)
+					return att.CreateInstance (type);
+			}
+			RemotingProxy proxy = new RemotingProxy (type, ChannelServices.CrossContextUrl, activationAttributes);
 			return proxy.GetTransparentProxy();
 		}
 	
@@ -323,7 +366,7 @@ namespace System.Runtime.Remoting
 				identity = new ClientIdentity (objectUri, objRef);
 				identity.ChannelSink = sink;
 
-				if (proxyToAttach == null) proxyToAttach = new RemotingProxy (Type.GetType (objRef.TypeInfo.TypeName), identity);
+				if (proxyToAttach == null) proxyToAttach = new RemotingProxy (objRef.ServerType, identity);
 				identity.ClientProxy = (MarshalByRefObject) proxyToAttach.GetTransparentProxy();
 
 				// Registers the identity
@@ -363,7 +406,7 @@ namespace System.Runtime.Remoting
 			ClientActivatedIdentity identity = new ClientActivatedIdentity (objectUri, objectType);
 			identity.AttachServerObject (realObject, Context.DefaultContext);
 			RegisterServerIdentity (identity);
-			identity.StartTrackingLifetime();
+			identity.StartTrackingLifetime ((ILease)realObject.InitializeLifetimeService ());
 			return identity;
 		}
 
@@ -389,6 +432,13 @@ namespace System.Runtime.Remoting
 
 				uri_hash[identity.ObjectUri] = identity;
 			}
+		}
+
+		internal static object GetProxyForRemoteObject (ObjRef objref, bool fRefine)
+		{
+			ClientActivatedIdentity identity = uri_hash [objref.URI] as ClientActivatedIdentity;
+			if (identity != null) return identity.GetServerObject ();
+			else return GetRemoteObject (objref);
 		}
 
 		internal static object GetRemoteObject(ObjRef objRef)
@@ -426,7 +476,7 @@ namespace System.Runtime.Remoting
 			CrossAppDomainChannel.RegisterCrossAppDomainChannel();
 		}
 	        
-		internal static void DisposeIdentity (Identity ident)
+		internal static void DisposeIdentity (ServerIdentity ident)
 		{
 			uri_hash.Remove (ident.ObjectUri);
 		}

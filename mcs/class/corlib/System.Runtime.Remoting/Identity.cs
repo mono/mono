@@ -71,6 +71,11 @@ namespace System.Runtime.Remoting
 			get { return _objectUri; }
 			set { _objectUri = value; }
 		}
+
+		public bool IsConnected
+		{
+			get { return _objectUri != null; }
+		}
 	}
 
 	internal class ClientIdentity : Identity

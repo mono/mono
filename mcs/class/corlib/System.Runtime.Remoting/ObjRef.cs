@@ -26,6 +26,7 @@ namespace System.Runtime.Remoting {
 		IRemotingTypeInfo typeInfo;
 		IEnvoyInfo envoyInfo;
 		int flags;
+		Type _serverType;
 
 		static int MarshalledObjectRef = 1;
 		static int WellKnowObjectRef = 2;
@@ -210,6 +211,15 @@ namespace System.Runtime.Remoting {
 		internal void UpdateChannelInfo()
 		{
 			channel_info = new ChannelInfoStore ();
+		}
+
+		internal Type ServerType
+		{
+			get
+			{
+				if (_serverType == null) _serverType = Type.GetType (typeInfo.TypeName);
+				return _serverType;
+			}
 		}
 	}
 }

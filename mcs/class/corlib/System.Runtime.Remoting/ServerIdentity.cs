@@ -29,13 +29,11 @@ namespace System.Runtime.Remoting
 			_context = context;
 		}
 
-		public void StartTrackingLifetime ()
+		public void StartTrackingLifetime (ILease lease)
 		{
 			// Adds this identity to the LeaseManager. 
 			// _serverObject must be set.
 
-			// FIXME: make the call through the sink
-			ILease lease = (ILease) _serverObject.InitializeLifetimeService ();
 			if (lease != null && lease.CurrentState == LeaseState.Null) lease = null;
 
 			if (lease != null) 
@@ -149,8 +147,9 @@ namespace System.Runtime.Remoting
 			lock (this) 
 			{
 				if (_serverObject == null) {
-					AttachServerObject ((MarshalByRefObject) Activator.CreateInstance (_objectType), Context.DefaultContext);
-					StartTrackingLifetime();
+					MarshalByRefObject server = (MarshalByRefObject) Activator.CreateInstance (_objectType);
+					AttachServerObject (server, Context.DefaultContext);
+					StartTrackingLifetime ((ILease)server.InitializeLifetimeService ());
 				}
 			}
 			return _serverObject;
