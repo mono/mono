@@ -1,3 +1,21 @@
+2002-9-24  John Sohn <jsohn@columbus.rr.com>
+	* Application.cs: Run method now creates the Form
+	* ContainerControl.cs: no implementation but made sure overridden
+	methods call the base class
+	* Control.cs: Implemented several more methods in the implementation
+	of this class. Implemented ControlCollection, allowing controls
+	to be added and removed from the Form.
+	* Form.cs: Implemented more methods of the Form class
+	* FormTest.cs: Added code to draw and display a Label
+	* Label.cs: Initial implementation of Label class. The Label can 
+	be added and displayed on a Form.
+	* NativeWindow.cs: modified debugging (console) output
+	* ScrollableControl.cs: no implementation but made sure overridden
+	methods call the base class
+	* Win32.cs: added more Win32 imports and definitions
+	* monostub.c: now store the application HINSTANCE
+	* makefile: added Label.cs to makefile
+	
 2002-9-16  John Sohn <jsohn@columbus.rr.com>
 	* Control.cs:
 	* ScrollableControl.cs
