@@ -1,4 +1,7 @@
 2004-05-09  Gert Driesen (drieseng@users.sourceforge.net)
+	* OdbcTransaction.cs: fixed signature to match MS.NET
+
+2004-05-09  Gert Driesen (drieseng@users.sourceforge.net)
 	* OdbcType.cs: fixed typo UniqueIndetifier
 	* OdbcColumn.cs : fixed typo UniqueIndetifier
 

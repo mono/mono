@@ -11,10 +11,7 @@ using System.Data;
 
 namespace System.Data.Odbc
 {
-	/// <summary>
-	/// Summary description for OdbcTransaction.
-	/// </summary>
-	public class OdbcTransaction : MarshalByRefObject, IDbTransaction
+	public sealed class OdbcTransaction : MarshalByRefObject, IDbTransaction
 	{
 		private bool disposed = false;
 		private OdbcConnection connection;
@@ -32,7 +29,7 @@ namespace System.Data.Odbc
 			{
 				case IsolationLevel.ReadUncommitted:
 					lev=1;
-					break;				
+					break;
 				case IsolationLevel.ReadCommitted:
 					lev=2;
 					break;
@@ -54,6 +51,26 @@ namespace System.Data.Odbc
 			this.isolationlevel=isolationlevel;
 			connection=conn;
 		}
+
+		#region Implementation of IDisposable
+
+		private void Dispose(bool disposing) {
+			if (!disposed) {
+				if (disposing) {
+					Rollback();
+				}
+				disposed = true;
+			}
+		}
+
+		void IDisposable.Dispose() {
+			Dispose(true);
+			GC.SuppressFinalize(this);
+		}
+
+		#endregion Implementation of IDisposable
+
+		#region Implementation of IDbTransaction
 
 		public void Commit()
 		{
@@ -81,35 +98,34 @@ namespace System.Data.Odbc
 				throw new InvalidOperationException();
 		}
 
-		public IDbConnection Connection
+		IDbConnection IDbTransaction.Connection
 		{
-			get {
-				return connection;
+			get
+			{
+				return Connection;
 			}
 		}
-		
+
 		public IsolationLevel IsolationLevel
 		{
-			get {
+			get
+			{
 				return isolationlevel;
 			}
 		}
 
-		private void Dispose (bool disposing)
+		#endregion Implementation of IDbTransaction
+
+		#region Public Instance Properties
+
+		public OdbcConnection Connection
 		{
-			if (!disposed)  {
-				if (disposing) {
-					Rollback ();
-				}
-				disposed = true;
+			get
+			{
+				return connection;
 			}
 		}
 
-		public void Dispose ()
-		{
-			Dispose (true);
-			GC.SuppressFinalize (this);
-		}
-
+		#endregion Public Instance Properties
 	}
 }
