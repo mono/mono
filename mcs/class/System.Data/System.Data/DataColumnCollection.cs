@@ -199,9 +199,9 @@ namespace System.Data {
 			column.SetOrdinal (ordinal);
 
 			if (column.AutoIncrement) {
-				long value = column.AutoIncrementSeed;
-				for (int i = 0; i < column.Table.Rows.Count; i++, value += column.AutoIncrementStep)
-					column.Table.Rows [i] [ordinal] = value;
+				DataRowCollection rows = column.Table.Rows;
+				for (int i = 0; i < rows.Count; i++)
+					rows [i] [ordinal] = column.AutoIncrementValue ();
 			}
 
 			if (column.AutoIncrement)
