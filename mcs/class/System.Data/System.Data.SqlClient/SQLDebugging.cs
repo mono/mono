@@ -4,17 +4,23 @@
 // Authors:
 // 	Umadevi S (sumadevi@novell.com)
 
+using System.Data;
+using System.Runtime.InteropServices;	
+
 namespace System.Data.SqlClient {
 	
-	[MonoTODO]
-	public class SQLDebugging {
+	[ComVisible (true)]
+        [GuidAttribute ("afef65ad-4577-447a-a148-83acadd3d4b9")]
+        [ClassInterface (ClassInterfaceType.None)]
+	public  class SQLDebugging {
 
 		[MonoTODO]
-		internal SQLDebugging ()
+		public SQLDebugging ()
 		{
 			throw new NotImplementedException ();
-		}	
+		}
 
+	
 	}
 }
 
