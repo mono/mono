@@ -771,6 +771,26 @@ namespace System.Drawing {
 		[DllImport("gdiplus.dll")]
 		internal static extern Status GdipGetCustomLineCapWidthScale (IntPtr customCap, out float widthScale);
 
+		// AdjustableArrowCap functions
+		[DllImport("gdiplus.dll")]
+		internal static extern Status GdipCreateAdjustableArrowCap (float height, float width, bool isFilled, out IntPtr arrowCap);
+		[DllImport("gdiplus.dll")]
+		internal static extern Status GdipSetAdjustableArrowCapHeight (IntPtr arrowCap, float height);
+		[DllImport("gdiplus.dll")]
+		internal static extern Status GdipGetAdjustableArrowCapHeight (IntPtr arrowCap, out float height);
+		[DllImport("gdiplus.dll")]
+		internal static extern Status GdipSetAdjustableArrowCapWidth (IntPtr arrowCap, float width);
+		[DllImport("gdiplus.dll")]
+		internal static extern Status GdipGetAdjustableArrowCapWidth (IntPtr arrowCap, out float width);
+		[DllImport("gdiplus.dll")]
+		internal static extern Status GdipSetAdjustableArrowCapMiddleInset (IntPtr arrowCap, float middleInset);
+		[DllImport("gdiplus.dll")]
+		internal static extern Status GdipGetAdjustableArrowCapMiddleInset (IntPtr arrowCap, out float middleInset);
+		[DllImport("gdiplus.dll")]
+		internal static extern Status GdipSetAdjustableArrowCapFillState (IntPtr arrowCap, bool isFilled);
+		[DllImport("gdiplus.dll")]
+		internal static extern Status GdipGetAdjustableArrowCapFillState (IntPtr arrowCap, out bool isFilled);
+
 
 		[DllImport("gdiplus.dll")]
 		internal static extern Status GdipCreateFromHWND (IntPtr hwnd, out IntPtr graphics);
