@@ -27,7 +27,7 @@ Test cases listed by Category:
 
 * Switch blocks
 
-  test-152.cs verify-4.cs
+  test-152.cs test-193.cs verify-4.cs
 
 * Member Access & Simple Names
 
@@ -251,6 +251,10 @@ test-192.cs
 -----------
 Fix for bug 41952, basically, we were not using the `unchecked' bit during
 constant resolution due to the nature of EmitMeta.
+
+test-193.cs
+-----------
+Fix for bug 39828, allow goto to a label in another switch section.
 
 verify-1.cs
 -----------
