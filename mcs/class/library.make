@@ -54,7 +54,7 @@ install: all
 
 ifdef TEST_DIR
 test:
-	$(MAKE) -C $(TEST_DIR) -f makefile.gnu $@
+	if [ ! -z $(TEST_DIR) -a -d $(TEST_DIR) ]; then $(MAKE) -C $(TEST_DIR) -f makefile.gnu $@; fi
 else
 test:
 endif
