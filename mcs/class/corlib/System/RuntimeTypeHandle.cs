@@ -24,7 +24,7 @@ namespace System {
                 // This is from ISerializable
                 public void GetObjectData (SerializationInfo info, StreamingContext context)
                 {
-                        // TODO: IMPLEMENT ME
+                        // TODO: IMPLEMENT ME.
                 }
 
 	}

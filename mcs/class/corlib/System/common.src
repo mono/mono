@@ -29,6 +29,7 @@ IndexOutOfRangeException.cs
 Int16.cs
 Int32.cs
 Int64.cs
+IntPtr.cs
 InvalidCastException.cs
 InvalidOperationException.cs
 InvalidProgramException.cs

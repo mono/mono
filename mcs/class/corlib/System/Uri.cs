@@ -302,10 +302,10 @@ namespace System {
 			throw new NotImplementedException();	
 		}
 
-		// FIXME: should this be public?
 		public void GetObjectData(SerializationInfo info, 
-					  StreamingContext context) {
-
+					  StreamingContext context)
+		{
+			// FIXME: Implement me.  yes, it is public because it implements ISerializable
 		}
 
 		protected static string EscapeString(string str) {
