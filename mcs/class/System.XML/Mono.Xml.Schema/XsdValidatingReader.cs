@@ -429,7 +429,7 @@ namespace Mono.Xml.Schema
 				this.ValidationEventHandler (this, e);
 			else if (xvReader != null)
 				xvReader.OnValidationEvent (this, e);
-			else
+			else if (e.Severity == XmlSeverityType.Error)
 #if NON_MONO_ENV
 				this.xvReader.OnValidationEvent (this, e);
 #else
