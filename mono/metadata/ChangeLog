@@ -1,3 +1,16 @@
+2003-03-03  Lluis Sanchez Gual  <lluis@ideary.com>
+
+	* appdomain.c: Added method for initializing the default context of
+	a domain. Added internal call for getting the default context.
+	* appdomain.h: Added context variable in MonoDomain struct.
+	* domain.c: mono_domain_set also sets the default context of the domain
+	* icall.c: Mapped internal method InternalGetDefaultContext.
+	* object.c: mono_object_get_virtual_method returns always a remoting
+	wrapper if the object is a transparent proxy.
+	mono_runtime_invoke_array: when creating an object by calling the
+	constructor, if the created object is a proxy, then the constructor should
+	be called using the a remoting wrapper.
+
 2003-03-03  Dick Porter  <dick@ximian.com>
 
 	* socket-io.c (create_sockaddr_from_object): Rename sockaddr_un
