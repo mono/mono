@@ -1,3 +1,20 @@
+2002-11-21  Tim Coleman <tim@timcoleman.com>
+	* Mono.Data.TdsClient.build:
+	* Mono.Data.TdsClient/TdsCommand.cs:
+	* Mono.Data.TdsClient/TdsConnection.cs:
+	* Mono.Data.TdsClient/TdsConnectionPool.cs:
+	* Mono.Data.TdsClient/TdsDataReader.cs:
+	* Mono.Data.TdsClient/TdsError.cs:
+	* Mono.Data.TdsClient/TdsErrorCollection.cs:
+	* Mono.Data.TdsClient/TdsException.cs:
+	* Mono.Data.TdsClient/TdsInfoMessageEventArgs.cs:
+	* Mono.Data.TdsClient/TdsParameterCollection.cs:
+	* Mono.Data.TdsClient/TdsTransaction.cs:
+	* Mono.Data.TdsTypes/TdsDecimal.cs:
+		Modify to accept new Mono.Data.Tds.Protocol
+		namespace in Mono.Data.Tds assembly, replacing
+		Mono.Data.TdsClient.Internal
+
 2002-11-19  Tim Coleman <tim@timcoleman.com>
 	* Mono.Data.TdsClient.Internal/Tds.cs:
 	* Mono.Data.TdsClient.Internal/Tds50.cs:

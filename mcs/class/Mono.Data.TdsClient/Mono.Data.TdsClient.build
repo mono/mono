@@ -17,12 +17,11 @@
 			<arg value="/r:System.dll"/>
 			<arg value="/r:System.Xml.dll"/>
 			<arg value="/r:System.Data.dll"/>
+			<arg value="/r:../lib/Mono.Data.Tds.dll"/>
 			<sources>
 				<includes name="**/*.cs"/> 
-				<excludes name="Mono.Data.TdsClient.Internal/Tds50.cs"/>
-				<excludes name="Mono.Data.TdsClient.Internal/Tds70.cs"/>
-				<excludes name="Mono.Data.TdsClient.Internal/Tds80.cs"/>
 				<excludes name="Test/**"/>
+				<excludes name="Mono.Data.TdsClient.Internal/**"/>
 				<excludes name="Mono.Data.TdsClient/Test.cs"/>
 				
 			</sources>
@@ -31,20 +30,14 @@
 				<includes name="../lib/System.dll"/>
 				<includes name="../lib/System.Xml.dll"/>
 				<includes name="../lib/System.Data.dll"/>
+				<includes name="../lib/Mono.Data.Tds.dll"/>
 			</references>
 		</csc>
-		<copy file="../lib/System.Data.dll" tofile="Test/System.Data.dll"/>
-		<copy file="../lib/Mono.Data.TdsClient.dll" tofile="Test/Mono.Data.TdsClient.dll"/>
-		<copy file="../lib/Mono.Data.TdsClient.dll" tofile="Mono.Data.TdsClient/Mono.Data.TdsClient.dll"/>
-		<copy file="../lib/Mono.Data.TdsClient.dll" tofile="../System.Data/Test/Mono.Data.TdsClient.dll"/>
 	</target>
 	<target name="test" depends="build">
 		<nant basedir="Test" target="test"/>
 	</target>
 	<target name="clean">
-		<delete file="Test/System.Data.dll" failonerror="false"/>
 		<delete file="../lib/Mono.Data.TdsClient.dll" failonerror="false"/>
-		<delete file="Test/Mono.Data.TdsClient.dll" failonerror="false"/>
-
 	</target>
 </project>

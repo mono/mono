@@ -7,7 +7,7 @@
 // Copyright (C) 2002 Tim Coleman
 //
 
-using Mono.Data.TdsClient.Internal;
+using Mono.Data.Tds.Protocol;
 using System;
 using System.Collections;
 using System.Threading;
@@ -45,8 +45,8 @@ namespace Mono.Data.TdsClient {
 
 		#region Properties
 
-		public Tds this[int index] {
-			get { return (Tds) list[index]; }
+		public ITds this[int index] {
+			get { return (ITds) list[index]; }
 		}
 
 		object IList.this[int index] {
@@ -88,7 +88,7 @@ namespace Mono.Data.TdsClient {
 
 		public int Add (object o)
 		{
-			return list.Add ((Tds) o);
+			return list.Add ((ITds) o);
 		}
 
 		public void Clear ()
@@ -98,7 +98,7 @@ namespace Mono.Data.TdsClient {
 
 		public bool Contains (object o)
 		{
-			return list.Contains ((Tds) o);
+			return list.Contains ((ITds) o);
 		}
 
 		public void CopyTo (Array array, int index)
@@ -126,7 +126,7 @@ namespace Mono.Data.TdsClient {
 					return (ITds) o;
 
 			if (Count < maxSize) {
-				Tds tds = new Tds42 (dataSource, port, packetSize, timeout);
+				ITds tds = new Tds42 (dataSource, port, packetSize, timeout);
 				Monitor.Enter (tds);
 				Add (tds);
 				return tds;
@@ -144,17 +144,17 @@ namespace Mono.Data.TdsClient {
 
 		public int IndexOf (object o)
 		{
-			return list.IndexOf ((Tds) o);
+			return list.IndexOf ((ITds) o);
 		}
 
 		public void Insert (int index, object o)
 		{
-			list.Insert (index, (Tds) o);
+			list.Insert (index, (ITds) o);
 		}
 
 		public void Remove (object o)
 		{
-			list.Remove ((Tds) o);
+			list.Remove ((ITds) o);
 		}
 
 		public void RemoveAt (int index)
