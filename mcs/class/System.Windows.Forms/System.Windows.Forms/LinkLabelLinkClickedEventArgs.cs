@@ -14,11 +14,11 @@ namespace System.Windows.Forms {
 	// </summary>
 
     public class LinkLabelLinkClickedEventArgs : EventArgs {
-		private Link link;
+		private LinkLabel.Link link;
 		//
 		//  --- Constructor
 		//
-		public LinkLabelLinkClickedEventArgs(Link link)
+		public LinkLabelLinkClickedEventArgs(LinkLabel.Link link)
 		{
 			this.link = link;
 		}
@@ -27,7 +27,7 @@ namespace System.Windows.Forms {
 		//  --- Public Properties
 		//
 		//public 
-		Link Link {
+		LinkLabel.Link Link {
 			get {
 				return link;
 			}

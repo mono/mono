@@ -3,11 +3,12 @@
 //
 // Author:
 //   stubbed out by Daniel Carrera (dcarrera@math.toronto.edu)
+//	Dennis Hayes (dennish@raytek.com)
 //
 // (C) 2002 Ximian, Inc
 //
 using System.Collections;
-
+using System.ComponentModel;
 namespace System.Windows.Forms {
 
 	// <summary>
@@ -20,94 +21,86 @@ namespace System.Windows.Forms {
 		//
 		//  --- Public Properties
 		//
-		//[MonoTODO]
-		//public DataGridTableStyle this[int index]  {
-		//	get {
-		//		throw new NotImplementedException ();
-		//	}
-		//}
-		//[MonoTODO]
-		//public DataGridTableStyle this[string s]  {
-		//	get {
-		//		throw new NotImplementedException ();
-		//	}
-		//}
+		[MonoTODO]
+		public DataGridTableStyle this[int index]  {
+			get {
+				throw new NotImplementedException ();
+			}
+		}
+		[MonoTODO]
+		public DataGridTableStyle this[string s]  {
+			get {
+				throw new NotImplementedException ();
+			}
+		}
 
 		//
 		//  --- Public Methods
 		//
-		//[MonoTODO]
-		//public virtual int Add(DataGridTableStyle table)
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//[MonoTODO]
-		//public virtual void AddRange(DataGridTableStyle[] tables)
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//[MonoTODO]
-		//public virtual void Clear()
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//[MonoTODO]
-		//public virtual bool Equals(object o);
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//[MonoTODO]
-		//public static bool Equals(object o1, object o2);
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//[MonoTODO]
-		//public bool Contains(DataGridTableStyle table)
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//[MonoTODO]
-		//public void Remove(DataGridTableStyle table)
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//[MonoTODO]
-		//public void RemoveAt(int index)
-		//{
-		//	throw new NotImplementedException ();
-		//}
+		[MonoTODO]
+		public virtual int Add(DataGridTableStyle table)
+		{
+			throw new NotImplementedException ();
+		}
+		[MonoTODO]
+		public virtual void AddRange(DataGridTableStyle[] tables)
+		{
+			throw new NotImplementedException ();
+		}
+		[MonoTODO]
+		public virtual void Clear()
+		{
+			throw new NotImplementedException ();
+		}
+		[MonoTODO]
+		public virtual bool Equals(object o)
+		{
+			throw new NotImplementedException ();
+		}
+		[MonoTODO]
+		public static bool Equals(object o1, object o2)
+		{
+			throw new NotImplementedException ();
+		}
+		[MonoTODO]
+		public bool Contains(DataGridTableStyle table)
+		{
+			throw new NotImplementedException ();
+		}
+		[MonoTODO]
+		public void Remove(DataGridTableStyle table)
+		{
+			throw new NotImplementedException ();
+		}
+		[MonoTODO]
+		public void RemoveAt(int index)
+		{
+			throw new NotImplementedException ();
+		}
 
 		//
 		//  --- Public Events
 		//
-		//[MonoTODO]
-		//public event CollectionChangeEvnentHandler CollectionChanged {
-		//	add {
-		//		throw new NotImplementedException ();
-		//	}
-		//	remove {
-		//		throw new NotImplementedException ();
-		//	}
-		//}
-
+		[MonoTODO]
+		public event CollectionChangeEventHandler CollectionChanged;
 
 		//
 		//  --- Protected Properties
 		//
-		//[MonoTODO]
-		//protected override ArrayList List {
-		//	get {
-		//		throw new NotImplementedException ();
-		//	}
-		//}
+		[MonoTODO]
+		protected override ArrayList List {
+			get {
+				throw new NotImplementedException ();
+			}
+		}
 
 		//
 		//  --- Protected Methods
 		//
-		//[MonoTODO]
-		//protected void OnCollectionChanged(CollectionChangeEvnentArgs cevent)
-		//{
-		//	throw new NotImplementedException ();
-		//}
+		[MonoTODO]
+		protected void OnCollectionChanged(CollectionChangeEventArgs cevent)
+		{
+			throw new NotImplementedException ();
+		}
 	 }
 }

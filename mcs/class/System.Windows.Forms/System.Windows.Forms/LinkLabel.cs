@@ -3,6 +3,7 @@
 //
 // Author:
 //   stubbed out by Daniel Carrera (dcarrera@math.toronto.edu)
+//	Dennis Hayes (dennish@raytek.com)
 //
 // (C) 2002 Ximian, Inc
 //
@@ -489,6 +490,23 @@ namespace System.Windows.Forms {
 			//{
 			//	throw new NotImplementedException ();
 			//}
+		}//End of subclass
+//
+// System.Windows.Forms.LinkLabel.Link
+//
+// Author:
+//   stubbed out by Dennis Hayes (dennish@raytek.com)
+//
+// (C) 2002 Ximian, Inc
+//
+
+			// <summary>
+			//	This is only a template.  Nothing is implemented yet.
+			//
+			// </summary>
+			[MonoTODO]
+			public class Link {
+			//	throw new NotImplementedException ();
 		}//End of subclass
 	}// End of Class
 }

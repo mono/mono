@@ -3,6 +3,7 @@
 //
 // Author:
 //   stubbed out by Jaak Simm (jaaksimm@firm.ee)
+//	Dennis Hayes (dennish@raytek.com)
 //
 // (C) Ximian, Inc., 2002
 //
@@ -11,7 +12,7 @@ using System.Drawing;
 //using System.Drawing.Printing;
 using System.ComponentModel;
 using System.Collections;
-using System.Windows.Forms.Design;
+//using System.Windows.Forms.Design;
 
 namespace System.Windows.Forms
 {
@@ -207,10 +208,10 @@ namespace System.Windows.Forms
 			set { throw new NotImplementedException (); }
 		}
 		
-		[MonoTODO]
-		public PropertyTab SelectedTab {
-			get { throw new NotImplementedException (); }
-		}
+//		[MonoTODO]
+//		public PropertyTab SelectedTab {
+//			get { throw new NotImplementedException (); }
+//		}
 		
 		[MonoTODO]
 		protected override bool ShowFocusCues {
@@ -248,10 +249,10 @@ namespace System.Windows.Forms
 			throw new NotImplementedException ();
 		}
 		
-		[MonoTODO]
-		protected virtual PropertyTab CreatePropertyTab(Type tabType) {
-			throw new NotImplementedException ();
-		}
+//		[MonoTODO]
+//		protected virtual PropertyTab CreatePropertyTab(Type tabType) {
+//			throw new NotImplementedException ();
+//		}
 		
 		[MonoTODO]
 		protected override void Dispose(bool disposing) {
@@ -438,10 +439,10 @@ namespace System.Windows.Forms
 				get { throw new NotImplementedException (); }
 			}
 			
-			[MonoTODO]
-			public PropertyTab this[int index] {
-				get { throw new NotImplementedException (); }
-			}
+//			[MonoTODO]
+//			public PropertyTab this[int index] {
+//				get { throw new NotImplementedException (); }
+//			}
 			#endregion
 			
 			

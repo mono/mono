@@ -7,7 +7,7 @@
 //
 // (C) 2002 Ximian, Inc. http://www.ximian.com
 //
-
+using System.IO;
 namespace System.Windows.Forms
 {
 	public interface IFileReaderService

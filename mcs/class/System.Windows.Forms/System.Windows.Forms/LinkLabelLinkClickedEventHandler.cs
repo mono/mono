@@ -11,6 +11,6 @@ namespace System.Windows.Forms {
 	[Serializable]
 	public delegate void LinkLabelLinkClickEventHandler (
 	object sender,
-	LinkLabelLinkClickEventArgs e
+	LinkLabelLinkClickedEventArgs e
 	);
 }

@@ -3,6 +3,7 @@
 //
 // Author:
 //   stubbed out by Jaak Simm (jaaksimm@firm.ee)
+//	Dennis Hayes (dennish@raytek.com)
 //
 // (C) Ximian, Inc., 2002
 //
@@ -11,7 +12,7 @@
 //using System.Drawing.Printing;
 //using System.ComponentModel;
 //using System.Collections;
-using System.Windows.Forms.Design;
+//using System.Windows.Forms.Design;
 using System.Runtime.InteropServices;
 
 namespace System.Windows.Forms
@@ -27,27 +28,27 @@ namespace System.Windows.Forms
 	[ComVisible(true)]
 	public class PropertyTabChangedEventArgs : EventArgs	{
 		#region Constructor
-		[MonoTODO]
+//		[MonoTODO]
 //		[ComVisible(true)]
-		public PropertyTabChangedEventArgs(PropertyTab oldTab,PropertyTab newTab) {
-			throw new NotImplementedException ();
-		}
+//		public PropertyTabChangedEventArgs(PropertyTab oldTab,PropertyTab newTab) {
+//			throw new NotImplementedException ();
+//		}
 		#endregion
 		
 		
 		
 		#region Properties
-		[MonoTODO]
-		[ComVisible(true)]
-		public PropertyTab NewTab  {
-			get { throw new NotImplementedException (); }
-		}
-		
-		[MonoTODO]
-		[ComVisible(true)]
-		public PropertyTab OldTab {
-			get { throw new NotImplementedException (); }
-		}
+//		[MonoTODO]
+//		[ComVisible(true)]
+//		public PropertyTab NewTab  {
+//			get { throw new NotImplementedException (); }
+//		}
+//		
+//		[MonoTODO]
+//		[ComVisible(true)]
+//		public PropertyTab OldTab {
+//			get { throw new NotImplementedException (); }
+//		}
 		#endregion
 	}
 }

@@ -9,7 +9,7 @@
 
 namespace System.Windows.Forms {
 
-	interface IButtonControl {
+	public interface IButtonControl {
 		void NotifyDefault(bool value);
 		void PerformClick();
 		DialogResult DialogResult {get; set;}

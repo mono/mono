@@ -89,9 +89,10 @@ namespace System.Windows.Forms
 		/// <remarks>
 		///	Formats the StatusBarPanelClickEventArgs as a string.
 		/// </remarks>
-		//[MonoTODO]
-		//public override string ToString () {
-		//	throw new NotImplementedException();
-		//}
+		[MonoTODO]
+		public override string ToString () {
+			//FIXME: add class specific stuff;
+			return base.ToString();
+		}
 	}
 }

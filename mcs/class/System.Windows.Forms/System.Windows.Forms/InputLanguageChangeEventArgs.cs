@@ -3,10 +3,11 @@
 //
 // Author:
 //   stubbed out by Daniel Carrera (dcarrera@math.toronto.edu)
+//	Dennis Hayes (dennish@raytek.com)
 //
 // (C) 2002 Ximian, Inc
 //
-
+using System.Globalization;
 namespace System.Windows.Forms {
 
 	// <summary>
@@ -14,38 +15,38 @@ namespace System.Windows.Forms {
 	//
 	// </summary>
 
-        //public class InputLanguageChangeEventArgs : EventArgs {
+        public class InputLanguageChangeEventArgs : EventArgs {
 
 		//
 		//  --- Constructor
 		//
-		//[MonoTODO]
-		//public InputLanguageChangeEventArgs ( CultureInfo culture, byte b)
-		//{
-		//	throw new NotImplementedException ();
-		//}
+		[MonoTODO]
+		public InputLanguageChangeEventArgs ( CultureInfo culture, byte b)
+		{
+			throw new NotImplementedException ();
+		}
 
 		//
 		//  --- Public Properties
 		//
-		//[MonoTODO]
-		//public byte CharSet {
-		//	get {
-		//		throw new NotImplementedException ();
-		//	}
-		//}
-		//[MonoTODO]
-		//public CultureInfo Culture {
-		//	get {
-		//		throw new NotImplementedException ();
-		//	}
-		//}
-		//[MonoTODO]
-		//public InputLanguage InputLanguage {
-		//	get {
-		//		throw new NotImplementedException ();
-		//	}
-		//}
+		[MonoTODO]
+		public byte CharSet {
+			get {
+				throw new NotImplementedException ();
+			}
+		}
+		[MonoTODO]
+		public CultureInfo Culture {
+			get {
+				throw new NotImplementedException ();
+			}
+		}
+		[MonoTODO]
+		public InputLanguage InputLanguage {
+			get {
+				throw new NotImplementedException ();
+			}
+		}
 
 		//
 		//  --- Public Methods
@@ -60,5 +61,5 @@ namespace System.Windows.Forms {
 		//{
 		//	throw new NotImplementedException ();
 		//}
-	// }
+	 }
 }
