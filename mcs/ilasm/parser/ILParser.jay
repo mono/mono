@@ -644,6 +644,10 @@ type			: K_CLASS class_ref
                           }
 			| K_METHOD call_conv type STAR OPEN_PARENS sig_args CLOSE_PARENS
 			| K_TYPEDREF
+                          {
+                                $$ = new TypeRef (PrimativeType.TypedRef,
+                                        "System.TypedReference");
+                          }
 			| K_CHAR
                           {
                                 $$ = new TypeRef (PrimitiveType.Char, "System.Char");

@@ -1,5 +1,9 @@
 2003-04-01 Jackson Harper <jackson@latitudegeo.com>
 
+	* ILParser.jay: Add TypedRef primative type.
+	
+2003-04-01 Jackson Harper <jackson@latitudegeo.com>
+
 	* ILParser.jay: Support pinned, modreq, and modopt types.
 	
 2003-04-01 Jackson Harper <jackson@latitudegeo.com>
