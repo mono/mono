@@ -36,10 +36,10 @@ No. 0006
 	disable-output-escaping is not working when XmlWriter is specified as
 	output. It affects on almost all output operations such as xsl:text,
 	xsl:value-of, and so on.
-	(Text_78308, Text_78311, modified_78308, modified_78309,
-	modified_78311, output_output03, output_output06, output_output08,
-	output_output46, output_output61, output_output62,
-	output_output74, output_output75)
+	(Text_78308, Text_78311, Text_modified_78308, Text_modified_78309,
+	Text_modified_78311, output_output03, output_output06, output_output08,
+	output_output46, output_output61, output_output62, output_output74,
+	output_output75)
 
 No. 0007
 	cdata-section-elements is not working when XmlWriter is specified as
@@ -52,8 +52,29 @@ No. 0008
 	template "match" attribute does not allow variable reference.
 	(match_match14)
 
+No. 0009
+	variable references are rejected inside id() function, being said that
+	"It either has a variable reference or key function."
+	(idkey_idkey43)
+
+No. 0010
+	id() does not consider the possibility that the argument might be a
+	list string of IDs.
+	(idkey_idkey57)
+
+No. 0011
+	key() does not handle variable references.
+	(idkey_idkey18, idkey_idkey50)
+
+No.0012
+	If "name" attribute of xsl:attribute is evaluated as to contain ':'
+	(i.e. CName with non-empty prefix) and no matching xmlns declaration,
+	MS.NET raises an error.
+	(attribset_attribset15)
 
 Not sure the reason why:
+	idkey_idkey49
+	impincl_impincl08
 	From mdocs_mdocs01 to mdocs_mdocs18
 	whitespace_whitespace35
 
