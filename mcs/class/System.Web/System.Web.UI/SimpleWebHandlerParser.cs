@@ -16,7 +16,6 @@ using System.Text;
 using System.Web;
 using System.Web.Compilation;
 using System.Web.Util;
-using TagType = System.Web.Compilation.TagType;
 
 namespace System.Web.UI
 {
@@ -85,9 +84,9 @@ namespace System.Web.UI
 			reader.Close ();
 		}
 
-		void TagParsed (ILocation location, TagType tagtype, string tagid, TagAttributes attributes)
+		void TagParsed (ILocation location, System.Web.Compilation.TagType tagtype, string tagid, TagAttributes attributes)
 		{
-			if (tagtype != TagType.Directive)
+			if (tagtype != System.Web.Compilation.TagType.Directive)
 				throw new ParseException (location, "Unexpected tag");
 
 			if (String.Compare (tagid, DefaultDirectiveName, true) == 0) {
