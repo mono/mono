@@ -1,5 +1,13 @@
 2003-11-26  Zoltan Varga  <vargaz@freemail.hu>
 
+	* exception.c (mono_exception_from_name_domain): New helper function.
+
+	* appdomain.c (ves_icall_System_AppDomain_createDomain): Create the
+	exception object in the correct domain.
+
+	* appdomain.c (ves_icall_System_AppDomain_LoadAssemblyRaw): Fix 
+	formatting + make a copy a the input data.
+
 	* loader.c (mono_get_method_from_token): Methods which contain
 	native code do not have entries in the ImplMap.
 
