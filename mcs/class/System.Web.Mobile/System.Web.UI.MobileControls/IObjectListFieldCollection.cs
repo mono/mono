@@ -18,6 +18,6 @@ namespace System.Web.UI.MobileControls
 		
 		ObjectListField[] GetAll();
 		int               IndexOf(ObjectListField field);
-		int               ObjectListField(string fieldID);
+		int               IndexOf(string fieldID);
 	}
 }

@@ -1,4 +1,18 @@
 
+2003-01-19	Gaurav Vaish <gvaish_mono AT lycos.com>
+
+	* Command.cs             : Initial implementation.
+	* IObjectListFieldCollection.cs
+	                         : F*** the docs. Use only reflection
+	                           to get the correct methods / properties.
+	* TextControl.cs         : Implemented.
+	* ObjectListCommandEventArgs/Handler.cs
+	                         : Implemented.
+	* MobileListItem.cs      : Initial Implementation.
+	* ObjectListItem.cs      : Initial Implementation.
+	* ObjectList.cs          : Initial Implementation.
+	* TemplateContainer.cs   : Initial Implementation.
+
 2003-01-18	Gaurav Vaish <gvaish_mono AT lycos.com>
 
 	* Constants.cs           : Undocumented class. Reflection revealed.	
