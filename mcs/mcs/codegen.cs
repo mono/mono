@@ -19,11 +19,11 @@ namespace Mono.CSharp {
 	///    Code generator class.
 	/// </summary>
 	public class CodeGen {
-		AppDomain current_domain;
-		AssemblyBuilder assembly_builder;
-		ModuleBuilder   module_builder;
+		static AppDomain current_domain;
+		static AssemblyBuilder assembly_builder;
+		static ModuleBuilder   module_builder;
 
-		public ISymbolWriter SymbolWriter;
+		static public ISymbolWriter SymbolWriter;
 
 		public static string Basename (string name)
 		{
@@ -39,19 +39,19 @@ namespace Mono.CSharp {
 			return name;
 		}
 
-		string TrimExt (string name)
+		static string TrimExt (string name)
 		{
 			int pos = name.LastIndexOf (".");
 
 			return name.Substring (0, pos);
 		}
 
-		public string FileName;
+		static public string FileName;
 
 		//
 		// This routine initializes the Mono runtime SymbolWriter.
 		//
-		void InitMonoSymbolWriter (string basename)
+		static void InitMonoSymbolWriter (string basename)
 		{
 			string symbol_output = basename + "-debug.s";
 
@@ -65,7 +65,7 @@ namespace Mono.CSharp {
 		//
 		// Initializes the symbol writer
 		//
-		void InitializeSymbolWriter (string basename)
+		static void InitializeSymbolWriter (string basename)
 		{
 			SymbolWriter = module_builder.GetSymWriter ();
 
@@ -98,8 +98,11 @@ namespace Mono.CSharp {
 				break;
 			}
 		}
-		
-		public CodeGen (string name, string output, bool want_debugging_support)
+
+		//
+		// Initializes the code generator variables
+		//
+		static public void Init (string name, string output, bool want_debugging_support)
 		{
 			AssemblyName an;
 
@@ -125,19 +128,19 @@ namespace Mono.CSharp {
 				InitializeSymbolWriter (an.Name);
 		}
 
-		public AssemblyBuilder AssemblyBuilder {
+		static public AssemblyBuilder AssemblyBuilder {
 			get {
 				return assembly_builder;
 			}
 		}
 		
-		public ModuleBuilder ModuleBuilder {
+		static public ModuleBuilder ModuleBuilder {
 			get {
 				return module_builder;
 			}
 		}
 
-		public void Save (string name)
+		static public void Save (string name)
 		{
 			try {
 				assembly_builder.Save (Basename (name));
@@ -146,7 +149,7 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public void SaveSymbols ()
+		static public void SaveSymbols ()
 		{
 			if (SymbolWriter != null) {
 				// If we have a symbol writer, call its Close() method to write
@@ -304,7 +307,7 @@ namespace Mono.CSharp {
 
 //			Console.WriteLine ("Emitting: " + loc);
 
-			if (RootContext.CodeGen.SymbolWriter != null)
+			if (CodeGen.SymbolWriter != null)
 				Mark (loc);
 
 			if (block != null){

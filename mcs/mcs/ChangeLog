@@ -1,3 +1,39 @@
+2002-03-30  Miguel de Icaza  <miguel@ximian.com>
+
+	* expression.cs (Unary): Optimize - - expr into expr.
+	(Binary): Optimize a + (-b) into a -b.
+
+	* codegen.cs (CodeGen): Made all methods static.
+
+2002-03-29  Miguel de Icaza  <miguel@ximian.com>
+
+	* rootcontext.cs: 
+
+	* decl.cs: Rename `definition' into `TypeBuilder' and drop the
+	TypeBuilder property.
+
+	* cs-parser.jay: Drop the use of RecordXXX and use RecordDecl
+	instead. 
+
+	* tree.cs: Removed the various RecordXXXX, and replaced with a
+	single RecordDecl.  Removed all the accessor methods, and just
+	left a single access point Type 
+
+	* enum.cs: Rename DefineEnum to DefineType.
+
+	* decl.cs: New abstract method `DefineType' used to unify the
+	Defines for Enumerations, Interfaces, TypeContainers and
+	Delegates.
+
+	(FindType): Moved LookupInterfaceOrClass here.  Moved the
+	LookupBaseClasses method that used to live in class.cs and
+	interface.cs here, and renamed to FindType.
+	
+	* delegate.cs: Implement DefineType.  Take advantage of the
+	refactored pattern for locating the parent builder without taking
+	the parent_builder argument (which we know does not work if we are
+	nested, and triggering a toplevel definition).
+
 2002-03-28  Miguel de Icaza  <miguel@ximian.com>
 
 	* decl.cs (MemberCore.CheckMethodAgainstBase): Test if the

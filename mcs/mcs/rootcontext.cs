@@ -22,18 +22,8 @@ namespace Mono.CSharp {
 		//
 		static Tree tree;
 
-		//
-		// The System.Reflection.Emit CodeGenerator
-		//
-		static CodeGen cg;
-
 		static public bool Optimize;
 		
-		//
-		// The module builder pointer.
-		//
-		static ModuleBuilder mb;
-
 		//
 		// The list of global attributes (those that target the assembly)
 		//
@@ -84,22 +74,6 @@ namespace Mono.CSharp {
 
 		static public string MainClass;
 		
-		static public CodeGen CodeGen {
-			get {
-				return cg;
-			}
-
-			set {
-				//
-				// Temporary hack, we should probably
-				// intialize `cg' rather than depending on
-				// external initialization of it.
-				//
-				cg = value;
-				mb = cg.ModuleBuilder;
-			}
-		}
-
 		public static void RegisterOrder (Interface iface)
 		{
 			interface_resolve_order.Add (iface);
@@ -148,7 +122,7 @@ namespace Mono.CSharp {
 			ArrayList ifaces = root.Interfaces;
 			if (ifaces != null){
 				foreach (Interface i in ifaces) 
-					i.DefineInterface ();
+					i.DefineType ();
 			}
 						
 			foreach (TypeContainer tc in root.Types) 
@@ -156,11 +130,11 @@ namespace Mono.CSharp {
 
 			if (root.Delegates != null)
 				foreach (Delegate d in root.Delegates) 
-					d.DefineDelegate (mb);
+					d.DefineType ();
 
 			if (root.Enums != null)
 				foreach (Enum e in root.Enums)
-					e.DefineEnum ();
+					e.DefineType ();
 			
 		}
 
@@ -198,7 +172,7 @@ namespace Mono.CSharp {
 				return;
 			}
 
-			((TypeContainer) o).DefineType ();
+			((DeclSpace) o).DefineType ();
 		}
 
 		//
@@ -223,7 +197,7 @@ namespace Mono.CSharp {
 				return;
 			}
 
-			((TypeContainer) o).DefineType ();
+			((DeclSpace) o).DefineType ();
 		}
 
 		//
@@ -248,7 +222,7 @@ namespace Mono.CSharp {
 				return;
 			}
 
-			((Interface) o).DefineInterface ();
+			((DeclSpace) o).DefineType ();
 		}
 
 		//
@@ -267,7 +241,7 @@ namespace Mono.CSharp {
 				return;
 			}
 
-			((Delegate) o).DefineDelegate (mb);
+			((DeclSpace) o).DefineType ();
 		}
 		
 
@@ -495,6 +469,9 @@ namespace Mono.CSharp {
 				Type current_type = containing_ds.TypeBuilder;
 
 				while (current_type != null) {
+					//
+					// nested class
+					//
 					t = TypeManager.LookupType (current_type.FullName + "+" + name);
 					if (t != null)
 						return t;
@@ -602,7 +579,7 @@ namespace Mono.CSharp {
 			if (global_attributes != null){
 				EmitContext ec = new EmitContext (
 					tree.Types, Mono.CSharp.Location.Null, null, null, 0, false);
-				AssemblyBuilder ab = cg.AssemblyBuilder;
+				AssemblyBuilder ab = CodeGen.AssemblyBuilder;
 
 				Attribute.ApplyAttributes (ec, ab, ab, global_attributes,
 							   global_attributes.Location);
@@ -617,16 +594,10 @@ namespace Mono.CSharp {
 				}
 				
 				CustomAttributeBuilder cb = new CustomAttributeBuilder (ci, new object [0]);
-				mb.SetCustomAttribute (cb);
+				CodeGen.ModuleBuilder.SetCustomAttribute (cb);
 			}
 		}
 		
-		static public ModuleBuilder ModuleBuilder {
-			get {
-				return mb;
-			}
-		}
-
 		//
 		// Public Field, used to track which method is the public entry
 		// point.
@@ -658,7 +629,7 @@ namespace Mono.CSharp {
 			int size = data.Length;
 			
 			if (impl_details_class == null)
-				impl_details_class = mb.DefineType (
+				impl_details_class = CodeGen.ModuleBuilder.DefineType (
 					"<PrivateImplementationDetails>", TypeAttributes.NotPublic);
 
 			fb = impl_details_class.DefineInitializedData (

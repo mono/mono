@@ -43,12 +43,25 @@ namespace Mono.CSharp {
 			OptAttributes = attrs;
 		}
 
+		// <summary>
+		//   Resolve is used in method definitions
+		// </summary>
 		public bool Resolve (DeclSpace ds, Location l)
 		{
 			ParameterType = RootContext.LookupType (ds, TypeName, false, l);
 			return ParameterType != null;
 		}
 
+		// <summary>
+		//   ResolveAndDefine is used by delegate declarations, because
+		//   they happen during the initial tree resolution process
+		// </summary>
+		public bool ResolveAndDefine (DeclSpace ds)
+		{
+			ParameterType = ds.FindType (TypeName);
+			return ParameterType != null;
+		}
+		
 		public Type ExternalType (DeclSpace ds, Location l)
 		{
 			if ((ModFlags & (Parameter.Modifier.REF | Parameter.Modifier.OUT)) != 0){
@@ -255,6 +268,48 @@ namespace Mono.CSharp {
 			
 			if (extra > 0){
 				if (ArrayParameter.Resolve (ds, loc))
+					types [i] = ArrayParameter.ExternalType (ds, loc);
+			}
+
+			return true;
+		}
+
+		//
+		// This variant is used by Delegates, because they need to
+		// resolve/define names, instead of the plain LookupType
+		//
+		public bool ComputeAndDefineParameterTypes (DeclSpace ds)
+		{
+			int extra = (ArrayParameter != null) ? 1 : 0;
+			int i = 0;
+			int pc;
+
+			if (FixedParameters == null)
+				pc = extra;
+			else
+				pc = extra + FixedParameters.Length;
+			
+			types = new Type [pc];
+			
+			if (!VerifyArgs ()){
+				FixedParameters = null;
+				return false;
+			}
+
+			if (FixedParameters != null){
+				foreach (Parameter p in FixedParameters){
+					Type t = null;
+					
+					if (p.ResolveAndDefine (ds))
+						t = p.ExternalType (ds, loc);
+					
+					types [i] = t;
+					i++;
+				}
+			}
+			
+			if (extra > 0){
+				if (ArrayParameter.ResolveAndDefine (ds))
 					types [i] = ArrayParameter.ExternalType (ds, loc);
 			}
 

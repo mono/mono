@@ -803,10 +803,9 @@ namespace Mono.CSharp
 					output_file = first_source + target_ext;
 			}
 
-			RootContext.CodeGen = new CodeGen (output_file, output_file,
-							   want_debugging_support);
+			CodeGen.Init (output_file, output_file, want_debugging_support);
 
-			TypeManager.AddModule (RootContext.CodeGen.ModuleBuilder);
+			TypeManager.AddModule (CodeGen.ModuleBuilder);
 
 			//
 			// Before emitting, we need to get the core
@@ -880,7 +879,7 @@ namespace Mono.CSharp
 					return;
 				}
 				
-				RootContext.CodeGen.AssemblyBuilder.SetEntryPoint (ep, k);
+				CodeGen.AssemblyBuilder.SetEntryPoint (ep, k);
 			}
 
 			//
@@ -888,15 +887,15 @@ namespace Mono.CSharp
 			//
 			if (resources != null){
 				foreach (string file in resources)
-					RootContext.CodeGen.AssemblyBuilder.AddResourceFile (file, file);
+					CodeGen.AssemblyBuilder.AddResourceFile (file, file);
 			}
 			
-			RootContext.CodeGen.Save (output_file);
+			CodeGen.Save (output_file);
 			if (timestamps)
 				ShowTime ("Saved output");
 
 			if (want_debugging_support) {
-				RootContext.CodeGen.SaveSymbols ();
+				CodeGen.SaveSymbols ();
 				if (timestamps)
 					ShowTime ("Saved symbols");
 			}

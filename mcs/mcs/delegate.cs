@@ -55,24 +55,23 @@ namespace Mono.CSharp {
 			OptAttributes   = attrs;
 		}
 
-		public void DefineDelegate (object parent_builder)
+		public override TypeBuilder DefineType ()
 		{
 			TypeAttributes attr;
 
 			if (TypeBuilder != null)
-				return;
+				return TypeBuilder;
 			
 			string name = Name.Substring (1 + Name.LastIndexOf ('.'));
 
-			if (parent_builder is ModuleBuilder) {
-				ModuleBuilder builder = (ModuleBuilder) parent_builder;
+			if (IsTopLevel) {
+				ModuleBuilder builder = CodeGen.ModuleBuilder;
 				attr = TypeAttributes.Public | TypeAttributes.Class | TypeAttributes.Sealed;
 
 				TypeBuilder = builder.DefineType (
 					name, attr, TypeManager.multicast_delegate_type);
 			} else {
-				// FIXME: We could just use TypeBuilder here.
-				TypeBuilder builder = (System.Reflection.Emit.TypeBuilder) parent_builder;
+				TypeBuilder builder = Parent.TypeBuilder;
 				attr = TypeAttributes.NestedPublic | TypeAttributes.Class |
 					TypeAttributes.Sealed;
 
@@ -81,6 +80,8 @@ namespace Mono.CSharp {
 			}
 
 			TypeManager.AddDelegateType (Name, TypeBuilder, this);
+
+			return TypeBuilder;
 		}
 
 		public override bool Define (TypeContainer parent)
@@ -120,22 +121,29 @@ namespace Mono.CSharp {
 				
 			
 			ConstructorBuilder.SetImplementationFlags (MethodImplAttributes.Runtime);
-			
+
+			//
 			// Here the various methods like Invoke, BeginInvoke etc are defined
+			//
+			// First, call the `out of band' special method for
+			// defining recursively any types we need:
+			Parameters.ComputeAndDefineParameterTypes (this);
+			
+ 			param_types = Parameters.GetParameterInfo (this);
+			if (param_types == null)
+				return false;
+
 
 			//
 			// Invoke method
 			//
- 			param_types = Parameters.GetParameterInfo (parent);
-			if (param_types == null)
-				return false;
-
+			
 			// Check accessibility
 			foreach (Type partype in param_types)
 				if (!TypeContainer.AsAccessible (partype, ModFlags))
 					return false;
 			
-  			ret_type = RootContext.LookupType (parent, ReturnType, false, Location);
+  			ret_type = FindType (ReturnType);
 			if (ret_type == null)
 				return false;
 

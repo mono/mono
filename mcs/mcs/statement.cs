@@ -46,7 +46,7 @@ namespace Mono.CSharp {
 				return null;
 			}
 
-			if (RootContext.CodeGen.SymbolWriter != null)
+			if (CodeGen.SymbolWriter != null)
 				ec.Mark (loc);
 
 			bool invert = false;
@@ -980,7 +980,7 @@ namespace Mono.CSharp {
 					vi.VariableType = t;
 					vi.LocalBuilder = ig.DeclareLocal (t);
 
-					if (RootContext.CodeGen.SymbolWriter != null)
+					if (CodeGen.SymbolWriter != null)
 						vi.LocalBuilder.SetLocalSymInfo (name);
 
 					if (constants == null)
@@ -1053,7 +1053,7 @@ namespace Mono.CSharp {
 
 			ec.CurrentBlock = this;
 
-			if (RootContext.CodeGen.SymbolWriter != null) {
+			if (CodeGen.SymbolWriter != null) {
 				ec.Mark (StartLocation);
 
 				foreach (Statement s in Statements) {
@@ -2576,7 +2576,7 @@ namespace Mono.CSharp {
 				for (int i = 0; i < rank; i++)
 					args [i] = TypeManager.int32_type;
 
-				ModuleBuilder mb = RootContext.ModuleBuilder;
+				ModuleBuilder mb = CodeGen.ModuleBuilder;
 				get = mb.GetArrayMethod (
 					array_type, "Get",
 					CallingConventions.HasThis| CallingConventions.Standard,

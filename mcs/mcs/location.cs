@@ -120,7 +120,7 @@ namespace Mono.CSharp {
 		// If we don't have a symbol writer, this property is always null.
 		public ISymbolDocumentWriter SymbolDocument {
 			get {
-				ISymbolWriter sw = RootContext.CodeGen.SymbolWriter;
+				ISymbolWriter sw = CodeGen.SymbolWriter;
 				ISymbolDocumentWriter doc;
 
 				if (token < 0)

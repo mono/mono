@@ -73,7 +73,7 @@ namespace Mono.CSharp {
 			return AdditionResult.Success;
 		}
 
-		public Type DefineEnum ()
+		public override TypeBuilder DefineType ()
 		{
 			if (TypeBuilder != null)
 				return TypeBuilder;
@@ -97,7 +97,7 @@ namespace Mono.CSharp {
 			}
 
 			if (IsTopLevel) {
-				ModuleBuilder builder = RootContext.ModuleBuilder;
+				ModuleBuilder builder = CodeGen.ModuleBuilder;
 
 				if ((ModFlags & Modifiers.PUBLIC) != 0)
 					attr |= TypeAttributes.Public;
