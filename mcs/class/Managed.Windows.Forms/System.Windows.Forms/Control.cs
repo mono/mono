@@ -29,9 +29,12 @@
 //	Jaak Simm		jaaksimm@firm.ee
 //	John Sohn		jsohn@columbus.rr.com
 //
-// $Revision: 1.35 $
+// $Revision: 1.36 $
 // $Modtime: $
 // $Log: Control.cs,v $
+// Revision 1.36  2004/08/20 19:18:30  jackson
+// Implement Begininvoke
+//
 // Revision 1.35  2004/08/20 01:17:24  pbartok
 // - Added handling of WM_MOUSEHOVER
 // - Worked around 'bug' in Win32 WM_MOUSE_ENTER/WM_MOUSE_LEAVE driver code
@@ -540,7 +543,7 @@ namespace System.Windows.Forms
 		~Control() {
 			Dispose(true);
 		}
-	
+
 		public void Dispose() {
 			Dispose(true);
 			GC.SuppressFinalize(this);
@@ -1224,18 +1227,16 @@ namespace System.Windows.Forms
 			this.Visible=true;			
 		}
 
-		public object Invoke(Delegate method) {					// ISynchronizeInvoke
+		public object Invoke (Delegate method) {
 			return Invoke(method, null);
 		}
 
-		public object Invoke(Delegate method, object[] args) {			// ISynchronizeInvoke
-			IAsyncResult	result;
-
-			result=BeginInvoke(method, args);
+		public object Invoke (Delegate method, object[] args) {
+			IAsyncResult result = BeginInvoke (method, args);
 			return EndInvoke(result);
 		}
 
-		public IAsyncResult BeginInvoke(Delegate method) {			// ISynchronizeInvoke
+		public IAsyncResult BeginInvoke(Delegate method) {
 			return BeginInvoke(method, null);
 		}
 
@@ -1345,10 +1346,21 @@ namespace System.Windows.Forms
 			}
 		}
 
-		[MonoTODO("BeginInvoke() : Figure out a cross-platform way to handle this")]
-		public IAsyncResult BeginInvoke(Delegate method, object[] args) {	// ISynchronizeInvoke
-			IAsyncResult	result = null;
+		public IAsyncResult BeginInvoke (Delegate method, object[] args)
+		{
+			return BeginInvokeInternal (method, args);
+		}
 
+		internal static IAsyncResult BeginInvokeInternal (Delegate method, object [] args)
+		{
+			AsyncMethodResult result = new AsyncMethodResult ();
+			AsyncMethodData data = new AsyncMethodData ();
+
+			data.Method = method;
+			data.Args = args;
+			data.Result = new WeakReference (result);
+
+			XplatUI.SendAsyncMethod (data);
 			return result;
 		}
 
