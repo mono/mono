@@ -29,9 +29,15 @@
 //	Jaak Simm		jaaksimm@firm.ee
 //	John Sohn		jsohn@columbus.rr.com
 //
-// $Revision: 1.29 $
+// $Revision: 1.30 $
 // $Modtime: $
 // $Log: Control.cs,v $
+// Revision 1.30  2004/08/16 21:47:11  pbartok
+// - Added handling of WM_MOUSE_ENTER & WM_MOUSE_LEAVE to
+//   support OnMouseEnter/Leave()
+// - Added WS_CLIPSIBLINGS and WS_CLIPCHILDREN window styles to improve
+//   exposure handling
+//
 // Revision 1.29  2004/08/13 22:15:46  pbartok
 // - Fixed Anchor default
 //
@@ -462,7 +468,7 @@ namespace System.Windows.Forms
 			bounds = new Rectangle(0, 0, DefaultSize.Width, DefaultSize.Height);
 			client_size = new Size(DefaultSize.Width, DefaultSize.Height);
 			prev_size = Size.Empty;
-			anchor_style=AnchorStyles.Top | AnchorStyles.Left;
+			anchor_style = AnchorStyles.Top | AnchorStyles.Left;
 
 			is_visible = true;
 			is_disposed = false;
@@ -1098,7 +1104,7 @@ namespace System.Windows.Forms
 					create_params.Parent = parent.Handle;
 				}
 
-				create_params.Style = (int)WindowStyles.WS_OVERLAPPED;
+				create_params.Style = (int)WindowStyles.WS_OVERLAPPED | (int)WindowStyles.WS_CLIPCHILDREN | (int)WindowStyles.WS_CLIPSIBLINGS;
 
 				if (is_visible) {
 					create_params.Style |= (int)WindowStyles.WS_VISIBLE;
@@ -1528,7 +1534,7 @@ namespace System.Windows.Forms
 	    					m.Result = (IntPtr)1;
     					}	
     					else {
-    						m.Result = (IntPtr)0;
+    						m.Result = IntPtr.Zero;
     						DefWndProc (ref m);	
     					}    					
     					
@@ -1572,6 +1578,16 @@ namespace System.Windows.Forms
 							clicks, 
 							LowOrder ((int) m.LParam.ToInt32 ()), HighOrder ((int) m.LParam.ToInt32 ()), 
 							0));
+					break;
+				}
+
+				case Msg.WM_MOUSE_ENTER: {
+					OnMouseEnter(EventArgs.Empty);
+					break;
+				}
+
+				case Msg.WM_MOUSE_LEAVE: {
+					OnMouseLeave(EventArgs.Empty);
 					break;
 				}
 
