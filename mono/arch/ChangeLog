@@ -1,3 +1,7 @@
+2004-11-15  Zoltan Varga  <vargaz@freemail.hu>
+
+	* amd64/x86-64-codegen.h: Get rid of this.
+
 2004-08-30  Zoltan Varga  <vargaz@freemail.hu>
 
 	* amd64/amd64-codegen.h (amd64_imul_reg_membase_size): Fix REX
