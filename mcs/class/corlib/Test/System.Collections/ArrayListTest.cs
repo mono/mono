@@ -580,6 +580,111 @@ public class ArrayListTest : TestCase {
 		}
 	}
 
+	public void TestEnumerator() {
+		String[] s1 = {"this", "is", "a", "test"};
+		ArrayList al1 = new ArrayList(s1);
+		IEnumerator en = al1.GetEnumerator();
+		en.MoveNext();
+		al1.Add("something");
+		try {
+			en.MoveNext();
+			Fail("Add() didn't invalidate the enumerator");
+		} catch (InvalidOperationException) {
+			// do nothing...this is what we expect
+		}
+
+		en = al1.GetEnumerator();
+		en.MoveNext();
+		al1.AddRange(al1);
+		try {
+			en.MoveNext();
+			Fail("AddRange() didn't invalidate the enumerator");
+		} catch (InvalidOperationException) {
+			// do nothing...this is what we expect
+		}
+
+		en = al1.GetEnumerator();
+		en.MoveNext();
+		al1.Clear();
+		try {
+			en.MoveNext();
+			Fail("Clear() didn't invalidate the enumerator");
+		} catch (InvalidOperationException) {
+			// do nothing...this is what we expect
+		}
+
+		al1 = new ArrayList(s1);
+		en = al1.GetEnumerator();
+		en.MoveNext();
+		al1.Insert(0, "new first");
+		try {
+			en.MoveNext();
+			Fail("Insert() didn't invalidate the enumerator");
+		} catch (InvalidOperationException) {
+			// do nothing...this is what we expect
+		}
+
+		en = al1.GetEnumerator();
+		en.MoveNext();
+		al1.InsertRange(0, al1);
+		try {
+			en.MoveNext();
+			Fail("InsertRange() didn't invalidate the enumerator");
+		} catch (InvalidOperationException) {
+			// do nothing...this is what we expect
+		}
+
+		en = al1.GetEnumerator();
+		en.MoveNext();
+		al1.Remove("this");
+		try {
+			en.MoveNext();
+			Fail("Remove() didn't invalidate the enumerator");
+		} catch (InvalidOperationException) {
+			// do nothing...this is what we expect
+		}
+
+		en = al1.GetEnumerator();
+		en.MoveNext();
+		al1.RemoveAt(2);
+		try {
+			en.MoveNext();
+			Fail("RemoveAt() didn't invalidate the enumerator");
+		} catch (InvalidOperationException) {
+			// do nothing...this is what we expect
+		}
+		
+		en = al1.GetEnumerator();
+		en.MoveNext();
+		al1.RemoveRange(1, 1);
+		try {
+			en.MoveNext();
+			Fail("RemoveRange() didn't invalidate the enumerator");
+		} catch (InvalidOperationException) {
+			// do nothing...this is what we expect
+		}
+		
+		en = al1.GetEnumerator();
+		en.MoveNext();
+		al1.Reverse();
+		try {
+			en.MoveNext();
+			Fail("Reverse() didn't invalidate the enumerator");
+		} catch (InvalidOperationException) {
+			// do nothing...this is what we expect
+		}
+		
+		en = al1.GetEnumerator();
+		en.MoveNext();
+		al1.Sort();
+		try {
+			en.MoveNext();
+			Fail("Sort() didn't invalidate the enumerator");
+		} catch (InvalidOperationException) {
+			// do nothing...this is what we expect
+		}
+	}
+
 	public void TestGetEnumerator() {
 		{
 			bool errorThrown = false;

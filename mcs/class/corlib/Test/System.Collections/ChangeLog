@@ -1,3 +1,8 @@
+2002-09-24  Nick Drochak  <ndrochak@gol.com>
+
+	* ArrayListTest.cs: Add check that enumerator is invalidated after a
+	method that changes the list, such as Add(), Remove(), etc.
+
 2002-07-02  Nick Drochak  <ndrochak@gol.com>
 
 	* SortedListTest.cs: Fix some expected/actual value parameters for
