@@ -7,7 +7,7 @@
 //
 // (C) Nick Drochak
 // (C) 2004 Motus Technologies Inc. (http://www.motus.com)
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -72,29 +72,34 @@ namespace System.Security {
 
 		[ComVisible (false)]
 		public object Demanded {
+			[SecurityPermission (SecurityAction.Demand, ControlEvidence=true, ControlPolicy=true)]
 			get { return _demanded; }
 			set { _demanded = value; }
 		}
 
 		[ComVisible (false)]
 		public object DenySetInstance {
+			[SecurityPermission (SecurityAction.Demand, ControlEvidence=true, ControlPolicy=true)]
 			get { return _denyset; }
 			set { _denyset = value; }
 		}
 
 		[ComVisible (false)]
 		public AssemblyName FailedAssemblyInfo {
+			[SecurityPermission (SecurityAction.Demand, ControlEvidence=true, ControlPolicy=true)]
 			get { return _assembly; }
 			set { _assembly = value; }
 		}
 
 		public IPermission FirstPermissionThatFailed {
+			[SecurityPermission (SecurityAction.Demand, ControlEvidence=true, ControlPolicy=true)]
 			get { return _firstperm; }
 			set { _firstperm = value; }
 		}
 
 		[ComVisible (false)]
 		public MethodInfo Method {
+			[SecurityPermission (SecurityAction.Demand, ControlEvidence=true, ControlPolicy=true)]
 			get { return _method; }
 			set { _method = value; }
 		}
@@ -108,11 +113,13 @@ namespace System.Security {
 
 		[ComVisible (false)]
 		public object PermitOnlySetInstance {
+			[SecurityPermission (SecurityAction.Demand, ControlEvidence=true, ControlPolicy=true)]
 			get { return _permitset; }
 			set { _permitset = value; }
 		}
 
 		public string Url {
+			[SecurityPermission (SecurityAction.Demand, ControlEvidence=true, ControlPolicy=true)]
 			get { return _url; }
 			set { _url = value; }
 		}
@@ -124,6 +131,7 @@ namespace System.Security {
 #endif
 
 		public string PermissionState {
+			[SecurityPermission (SecurityAction.Demand, ControlEvidence=true, ControlPolicy=true)]
 			get { return permissionState; }
 #if NET_2_0
 			set { permissionState = value; }
@@ -139,6 +147,7 @@ namespace System.Security {
 
 #if NET_1_1
 		public string GrantedSet {
+			[SecurityPermission (SecurityAction.Demand, ControlEvidence=true, ControlPolicy=true)]
 			get { return _granted; }
 #if NET_2_0
 			set { _granted = value; }
@@ -146,6 +155,7 @@ namespace System.Security {
 		}
 
 		public string RefusedSet {
+			[SecurityPermission (SecurityAction.Demand, ControlEvidence=true, ControlPolicy=true)]
 			get { return _refused; }
 #if NET_2_0
 			set { _refused = value; }
@@ -211,6 +221,7 @@ namespace System.Security {
 			object demanded, IPermission permThatFailed)
 			: base (message)
 		{
+			base.HResult = unchecked ((int)0x8013150A);
 			_denyset = deny;
 			_permitset = permitOnly;
 			_method = method;
@@ -228,6 +239,7 @@ namespace System.Security {
 			IPermission permThatFailed, Evidence evidence)
 			: base (message)
 		{
+			base.HResult = unchecked ((int)0x8013150A);
 			_assembly = assemblyName;
 			_granted = (grant == null) ? String.Empty : grant.ToString ();
 			_refused = (refused == null) ? String.Empty : refused.ToString ();
@@ -250,23 +262,30 @@ namespace System.Security {
 		public override string ToString ()
 		{
 			StringBuilder sb = new StringBuilder (base.ToString ());
-			if (permissionState != null) {
-				sb.AppendFormat ("{0}State: {1}", Environment.NewLine, permissionState);
+			try {
+				if (permissionState != null) {
+					sb.AppendFormat ("{0}State: {1}", Environment.NewLine, PermissionState);
+				}
+				if (permissionType != null) {
+					sb.AppendFormat ("{0}Type: {1}", Environment.NewLine, PermissionType);
+				}
+				if ((_granted != null) && (_granted.Length > 0)) {
+					sb.AppendFormat ("{0}Granted: {1}", Environment.NewLine, GrantedSet);
+				}
+				if ((_refused != null) && (_refused.Length > 0)) {
+					sb.AppendFormat ("{0}Refused: {1}", Environment.NewLine, RefusedSet);
+				}
+#if NET_2_0
+				if (_demanded != null) {
+					sb.AppendFormat ("{0}Demanded: {1}", Environment.NewLine, Demanded);
+				}
+				if (_permfailed != null) {
+					sb.AppendFormat ("{0}Failed Permission: {1}", Environment.NewLine, FirstPermissionThatFailed);
+				}
+#endif
 			}
-			if (permissionType != null) {
-				sb.AppendFormat ("{0}Type: {1}", Environment.NewLine, permissionType);
-			}
-			if ((_granted != null) && (_granted.Length > 0)) {
-				sb.AppendFormat ("{0}Granted: {1}", Environment.NewLine, _granted);
-			}
-			if ((_refused != null) && (_refused.Length > 0)) {
-				sb.AppendFormat ("{0}Refused: {1}", Environment.NewLine, _refused);
-			}
-			if (_demanded != null) {
-				sb.AppendFormat ("{0}Demanded: {1}", Environment.NewLine, _demanded);
-			}
-			if (_permfailed != null) {
-				sb.AppendFormat ("{0}Failed Permission: {1}", Environment.NewLine, _permfailed);
+			catch (SecurityException) {
+				// some informations can't be displayed
 			}
 			return sb.ToString ();
 		}

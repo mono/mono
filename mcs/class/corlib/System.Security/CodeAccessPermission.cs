@@ -333,6 +333,9 @@ namespace System.Security {
 
 			// 3. CheckDeny
 			if (frame.Deny != null) {
+				// special case where everything is denied (i.e. no child to be processed)
+				if (frame.Deny.IsUnrestricted ())
+					ThrowSecurityException (this, "Deny", current, frame.Method, SecurityAction.Demand, null);
 				foreach (IPermission p in frame.Deny) {
 					if (!CheckDeny (p as CodeAccessPermission))
 						ThrowSecurityException (this, "Deny", current, frame.Method, SecurityAction.Demand, p);

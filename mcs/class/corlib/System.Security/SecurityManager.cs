@@ -7,7 +7,7 @@
 //
 // (C) Nick Drochak
 // Portions (C) 2004 Motus Technologies Inc. (http://www.motus.com)
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -134,7 +134,6 @@ namespace System.Security {
 		[SecurityPermission (SecurityAction.Demand, Flags=SecurityPermissionFlag.ControlPolicy)]
 		public static PolicyLevel LoadPolicyLevelFromFile (string path, PolicyLevelType type)
 		{
-			// throw a SecurityException if we don't have ControlPolicy permission
 			if (path == null)
 				throw new ArgumentNullException ("path");
 
@@ -152,7 +151,6 @@ namespace System.Security {
 		[SecurityPermission (SecurityAction.Demand, Flags=SecurityPermissionFlag.ControlPolicy)]
 		public static PolicyLevel LoadPolicyLevelFromString (string str, PolicyLevelType type)
 		{
-			// throw a SecurityException if we don't have ControlPolicy permission
 			if (null == str)
 				throw new ArgumentNullException ("str");
 
@@ -170,7 +168,6 @@ namespace System.Security {
 		[SecurityPermission (SecurityAction.Demand, Flags=SecurityPermissionFlag.ControlPolicy)]
 		public static IEnumerator PolicyHierarchy ()
 		{
-			// throw a SecurityException if we don't have ControlPolicy permission
 			return Hierarchy;
 		}
 
@@ -280,7 +277,6 @@ namespace System.Security {
 		[SecurityPermission (SecurityAction.Demand, Flags=SecurityPermissionFlag.ControlPolicy)]
 		public static void SavePolicy () 
 		{
-			// throw a SecurityException if we don't have ControlPolicy permission
 			IEnumerator e = Hierarchy;
 			while (e.MoveNext ()) {
 				PolicyLevel level = (e.Current as PolicyLevel);

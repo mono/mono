@@ -1,3 +1,14 @@
+2005-01-27  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* CodeAccessPermission.cs: Process Deny for empty PermissionSet (e.g.
+	an unrestricted permission set must deny all permissions).
+	* SecurityException.cs: Added missing HResult to NET_2_0 constructors.
+	Added securiy permissions for GrantedSet, RefusedSet and 
+	PermissionState properties (to avoid leaking policy informations). 
+	Make sure that ToString() always works.
+	* SecurityManager.cs: Remove outdated comments (now that the 
+	declarative attributes are in place).
+
 2005-01-25  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* SecurityManager.cs: Now use Environment.InternalGetFolderPath to
