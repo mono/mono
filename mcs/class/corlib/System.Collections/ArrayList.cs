@@ -684,7 +684,7 @@ namespace System.Collections {
 			if (array.Rank > 1)
 				throw new ArgumentException("array cannot be multidimensional");
 
-			System.Array.Copy (dataArray, 0, array, 0, this.count);
+			Array.Copy (dataArray, 0, array, 0, this.count);
 		}
 
 		public virtual void CopyTo (Array array, int arrayIndex) {
@@ -697,7 +697,7 @@ namespace System.Collections {
 			if (this.count > array.Length - arrayIndex)
 				throw new ArgumentException("this ArrayList has more items than the space available in array from arrayIndex to the end of array");
 			
-			System.Array.Copy (dataArray, 0, array, arrayIndex, this.count);
+			Array.Copy (dataArray, 0, array, arrayIndex, this.count);
 		}
 
 		public virtual void CopyTo (int index, Array array,
@@ -719,7 +719,7 @@ namespace System.Collections {
 			if (this.count > array.Length - arrayIndex)
 				throw new ArgumentException("this ArrayList has more items than the space available in array from arrayIndex to the end of array");
 
-			System.Array.Copy (dataArray, index, array, arrayIndex, count);
+			Array.Copy (dataArray, index, array, arrayIndex, count);
 		}
 
 		[Serializable]
@@ -728,17 +728,21 @@ namespace System.Collections {
 			private int idx;
 			private int start;
 			private int num;
+			private ArrayList enumeratee;
+			private long version;
 
-			internal ArrayListEnumerator(int index, int count, object[] items) {
+			internal ArrayListEnumerator(int index, int count, object[] items, ArrayList al, long ver) {
 				data = items;
 				start = index;
 				num = count;
 				idx = start - 1;
+				enumeratee = al;
+				version = ver;
 			}
 
 			public object Clone ()
 			{
-				return new ArrayListEnumerator (start, num, data);
+				return new ArrayListEnumerator (start, num, data, enumeratee, version);
 			}
 
 			public virtual object Current {
@@ -747,6 +751,8 @@ namespace System.Collections {
 				}
 			}
 			public virtual bool MoveNext() {
+				if (enumeratee.version != version)
+					throw new InvalidOperationException();
 				if (++idx < start + num)
 					return true;
 				return false;
@@ -757,7 +763,7 @@ namespace System.Collections {
 		}
 
 		public virtual IEnumerator GetEnumerator () {
-			return new ArrayListEnumerator(0, this.Count, dataArray);
+			return new ArrayListEnumerator(0, this.Count, dataArray, this, this.version);
 		}
 
 		private void ValidateRange(int index, int count) {
@@ -777,7 +783,7 @@ namespace System.Collections {
 
 		public virtual IEnumerator GetEnumerator (int index, int count) {
 			ValidateRange(index, count);
-			return new ArrayListEnumerator(index, count, dataArray);
+			return new ArrayListEnumerator(index, count, dataArray, this, this.version);
 		}
 
 		public virtual ArrayList GetRange (int index, int count) {
@@ -845,12 +851,16 @@ namespace System.Collections {
 			if (IsReadOnly || IsFixedSize)
 				throw new NotSupportedException ();
 
+			// Get a copy of the collection before the shift in case the collection
+			// is this.  Otherwise the enumerator will be confused.
+			Array source = Array.CreateInstance(typeof(object), c.Count);
+			c.CopyTo(source, 0);
+
 			shiftElements (index, c.Count);
 			count += c.Count;
 
-			IEnumerator en = c.GetEnumerator();
-			while (en.MoveNext())
-				dataArray[index++] = en.Current;
+			foreach (object o in source)
+				dataArray[index++] = o;
 
 			version++;
 		}
