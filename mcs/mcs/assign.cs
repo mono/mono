@@ -44,6 +44,110 @@ namespace Mono.CSharp {
 		// for expressions like a [f ()] ++, where you can't call `f ()' twice.
 		//
 		void EmitAssign (EmitContext ec, Expression source, bool leave_copy, bool prepare_for_load);
+		
+		/*
+		For simple assignments, this interface is very simple, EmitAssign is called with source
+		as the source expression and leave_copy and prepare_for_load false.
+		
+		For compound assignments it gets complicated.
+		
+		EmitAssign will be called as before, however, prepare_for_load will be
+		true. The @source expression will contain an expression
+		which calls Emit. So, the calls look like:
+		
+		this.EmitAssign (ec, source, false, true) ->
+			source.Emit (ec); ->
+				[...] ->
+					this.Emit (ec, false); ->
+					end this.Emit (ec, false); ->
+				end [...]
+			end source.Emit (ec);
+		end this.EmitAssign (ec, source, false, true)
+		
+		
+		When prepare_for_load is true, EmitAssign emits a `token' on the stack that
+		Emit will use for its state.
+		
+		Let's take FieldExpr as an example. assume we are emitting f ().y += 1;
+		
+		Here is the call tree again. This time, each call is annotated with the IL
+		it produces:
+		
+		this.EmitAssign (ec, source, false, true)
+			call f
+			dup
+			
+			Binary.Emit ()
+				this.Emit (ec, false);
+				ldfld y
+				end this.Emit (ec, false);
+				
+				IntConstant.Emit ()
+				ldc.i4.1
+				end IntConstant.Emit
+				
+				add
+			end Binary.Emit ()
+			
+			stfld
+		end this.EmitAssign (ec, source, false, true)
+		
+		Observe two things:
+			1) EmitAssign left a token on the stack. It was the result of f ().
+			2) This token was used by Emit
+		
+		leave_copy (in both EmitAssign and Emit) tells the compiler to leave a copy
+		of the expression at that point in evaluation. This is used for pre/post inc/dec
+		and for a = x += y. Let's do the above example with leave_copy true in EmitAssign
+		
+		this.EmitAssign (ec, source, true, true)
+			call f
+			dup
+			
+			Binary.Emit ()
+				this.Emit (ec, false);
+				ldfld y
+				end this.Emit (ec, false);
+				
+				IntConstant.Emit ()
+				ldc.i4.1
+				end IntConstant.Emit
+				
+				add
+			end Binary.Emit ()
+			
+			dup
+			stloc temp
+			stfld
+			ldloc temp
+		end this.EmitAssign (ec, source, true, true)
+		
+		And with it true in Emit
+		
+		this.EmitAssign (ec, source, false, true)
+			call f
+			dup
+			
+			Binary.Emit ()
+				this.Emit (ec, true);
+				ldfld y
+				dup
+				stloc temp
+				end this.Emit (ec, true);
+				
+				IntConstant.Emit ()
+				ldc.i4.1
+				end IntConstant.Emit
+				
+				add
+			end Binary.Emit ()
+			
+			stfld
+			ldloc temp
+		end this.EmitAssign (ec, source, false, true)
+		
+		Note that these two examples are what happens for ++x and x++, respectively.
+		*/
 	}
 
 	/// <summary>
