@@ -204,7 +204,7 @@ namespace System.Security.Policy {
 					ps.FromXml (pset);
 				}
 				else {
-					ps = new NamedPermissionSet ("Nothing", new PermissionSet (PermissionState.None));
+					ps = new PermissionSet (new PermissionSet (PermissionState.None));
 				}
 			}
 			m_policy = new PolicyStatement (ps);

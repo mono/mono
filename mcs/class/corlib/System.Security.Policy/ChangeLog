@@ -1,3 +1,16 @@
+2004-09-03  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* CodeGroup.cs: Creates an empty PermissionSet (and not an empty 
+	NamedPermissionSet). Required to run the MSDN library samples.
+	* FileCodeGroup.cs: Fixed Copy so that CodeGroup.Equals would work 
+	preperly. Required to run the MSDN library samples.
+	* FirstMatchCodeGroup.cs: Reworked the Resolve* logic to run the MSDN
+	library samples.
+	* PolicyLevel.cs: Fixed RemoveNamedPermissionSet and (more) complete
+	CreateAppDomainLevel to run the MSDN library samples.
+	* StrongNameMembershipCondition.cs: Fix ToXml to run the MSDN library
+	samples.
+
 2004-09-02  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Site.cs: Updated to match latest unit tests, i.e. match Fx 1.1 on

@@ -27,15 +27,15 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System;
-
 namespace System.Security.Policy {
 
 	[Serializable]
 	public sealed class FirstMatchCodeGroup : CodeGroup {
 		
-		public FirstMatchCodeGroup (IMembershipCondition membershipCondition, PolicyStatement policy) :
-			base (membershipCondition, policy) {}
+		public FirstMatchCodeGroup (IMembershipCondition membershipCondition, PolicyStatement policy)
+			: base (membershipCondition, policy)
+		{
+		}
 
 		// for PolicyLevel (to avoid validation duplication)
 		internal FirstMatchCodeGroup (SecurityElement e, PolicyLevel level)
@@ -47,8 +47,7 @@ namespace System.Security.Policy {
 		// Public Properties
 		//
 
-		public override string MergeLogic
-		{
+		public override string MergeLogic {
 			get { return "First Match"; }
 		}
 
@@ -56,7 +55,7 @@ namespace System.Security.Policy {
 		// Public Methods
 		//
 		
-		public override CodeGroup Copy()
+		public override CodeGroup Copy ()
 		{
 			FirstMatchCodeGroup copy = CopyNoChildren ();
 			foreach (CodeGroup child in Children) {
@@ -65,58 +64,45 @@ namespace System.Security.Policy {
 			return copy;
 		}
 
-		public override PolicyStatement Resolve(Evidence evidence)
+		public override PolicyStatement Resolve (Evidence evidence)
 		{
-			PolicyStatement policy = null;
-			PolicyStatement child_policy;
+			if (evidence == null)
+				throw new ArgumentNullException ("evidence");
 
-			if (null == evidence)
-				throw new ArgumentNullException ();
+			if (!MembershipCondition.Check (evidence))
+				return null;
 
-			if (MembershipCondition.Check (evidence)) {
-				if (null != PolicyStatement) {
-					policy = PolicyStatement;
-				} else {
-					// Loop through all children breaking on the first one that resolves
-					foreach (CodeGroup child in Children) {
-						if (null == (child_policy = child.Resolve (evidence)))
-							continue;
-						policy = child_policy;
-						break;
-					}
+			foreach (CodeGroup child in Children) {
+				PolicyStatement policy = child.Resolve (evidence);
+				if (policy != null) {
+					return policy;	// first match
 				}
 			}
-			
-			return policy;
+			return this.PolicyStatement;	// default
 		}
 		
-		public override CodeGroup ResolveMatchingCodeGroups(Evidence evidence)
+		public override CodeGroup ResolveMatchingCodeGroups (Evidence evidence)
 		{
-			CodeGroup group = null;
+			if (evidence == null)
+				throw new ArgumentNullException ("evidence");
 
-			if (null == evidence)
-				throw new ArgumentNullException ();
-			
-			if (MembershipCondition.Check (evidence)) {
-				group = CopyNoChildren ();
-				
-				// Add the first child that resolves
-				foreach (CodeGroup child in Children) {
-					if ( null == child.Resolve (evidence))
-						continue;
-					group.AddChild (child);
-					break;
+			if (!MembershipCondition.Check (evidence))
+				return null;
+
+			foreach (CodeGroup child in Children) {
+				if (child.Resolve (evidence) != null) {
+					return child.Copy ();	// first match
+					// FIXME copy childrens ?
 				}
 			}
-
-			return group;
+			return this.CopyNoChildren ();	// default
 		}
 	
 		//
 		// Private Methods
 		//
 	
-		private FirstMatchCodeGroup CopyNoChildren()
+		private FirstMatchCodeGroup CopyNoChildren ()
 		{
 			FirstMatchCodeGroup copy = new FirstMatchCodeGroup (MembershipCondition, PolicyStatement);
 
@@ -126,6 +112,4 @@ namespace System.Security.Policy {
 			return copy;
 		}
 	}
-
 }
-

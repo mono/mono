@@ -56,6 +56,8 @@ namespace System.Security.Policy {
 		public override CodeGroup Copy ()
 		{
 			FileCodeGroup copy = new FileCodeGroup (MembershipCondition, m_access);
+			copy.Name = this.Name;
+			copy.Description = this.Description;
 			foreach (CodeGroup child in Children) {
 				copy.AddChild (child.Copy ());	// deep copy
 			}
@@ -126,7 +128,7 @@ namespace System.Security.Policy {
 		}
 #endif
 
-		public override bool Equals(object o)
+		public override bool Equals (object o)
 		{
 			if (!(o is FileCodeGroup))
 				return false;

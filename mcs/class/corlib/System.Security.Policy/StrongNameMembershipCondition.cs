@@ -156,12 +156,15 @@ namespace System.Security.Policy {
 			// PolicyLevel isn't used as there's no need to resolve NamedPermissionSet references
 			SecurityElement se = MembershipConditionHelper.Element (typeof (StrongNameMembershipCondition), version);
 
-                        se.AddAttribute ("PublicKeyBlob", blob.ToString ());
-                        se.AddAttribute ("Name", name);
-			string v = assemblyVersion.ToString ();
-			if (v != "0.0")
-				se.AddAttribute ("AssemblyVersion", assemblyVersion.ToString ());
-
+			if (blob != null)
+	                        se.AddAttribute ("PublicKeyBlob", blob.ToString ());
+			if (name != null)
+	                        se.AddAttribute ("Name", name);
+			if (assemblyVersion != null) {
+				string v = assemblyVersion.ToString ();
+				if (v != "0.0")
+					se.AddAttribute ("AssemblyVersion", v);
+			}
 			return se;
                 }
         }

@@ -201,7 +201,7 @@ namespace System.Security.Policy {
 						Locale.GetText ("This NamedPermissionSet is the same an existing NamedPermissionSet."));
 				}
 			}
-                        named_permission_sets.Add (permSet);
+                        named_permission_sets.Add (permSet.Copy ());
                 }
 
 		public NamedPermissionSet ChangeNamedPermissionSet (string name, PermissionSet pSet)
@@ -230,6 +230,7 @@ namespace System.Security.Policy {
 			cg.Name = "All_Code";
 			PolicyLevel pl = new PolicyLevel ("AppDomain", PolicyLevelType.AppDomain);
 			pl.RootCodeGroup = cg;
+			pl.Reset ();
                         return pl;
                 }
 
@@ -287,10 +288,10 @@ namespace System.Security.Policy {
                         if (name == null)
                                 throw new ArgumentNullException ("name");
 
-                        foreach (NamedPermissionSet n in named_permission_sets)
+                        foreach (NamedPermissionSet n in named_permission_sets) {
                                 if (n.Name == name)
-                                        return n;
-
+                                        return (NamedPermissionSet) n.Copy ();
+			}
                         return null;
                 }
 
@@ -325,8 +326,7 @@ namespace System.Security.Policy {
                 public NamedPermissionSet RemoveNamedPermissionSet (NamedPermissionSet permSet)
                 {
                         if (permSet == null)
-                                throw new ArgumentNullException (
-                                        Locale.GetText ("The Argument is null."));
+                                throw new ArgumentNullException ("permSet");
 
                         if (! ((IList )named_permission_sets).Contains (permSet))
                                 throw new ArgumentException (
@@ -337,29 +337,20 @@ namespace System.Security.Policy {
                         return permSet;
                 }
 
-                [MonoTODO ("Check for reserved names")]
-                public NamedPermissionSet RemoveNamedPermissionSet (string name)
-                {
-                        if (name == null)
-                                throw new ArgumentNullException ("name");
+		[MonoTODO ("Check for reserved names")]
+		public NamedPermissionSet RemoveNamedPermissionSet (string name)
+		{
+			if (name == null)
+				throw new ArgumentNullException ("name");
 
-                        int idx = -1;
-                        for (int i = 0; i < named_permission_sets.Count; i++) {
-                                NamedPermissionSet current = (NamedPermissionSet) named_permission_sets [i];
-
-                                if (current.Name == name)
-                                        idx = i;
-                                i ++;
-                        }                       
-
-                        if (idx == -1)
-                                throw new ArgumentException (
-                                        Locale.GetText ("Name cannot be found."));
-
-                        NamedPermissionSet retval = (NamedPermissionSet) named_permission_sets [idx];
-                        named_permission_sets.RemoveAt (idx);
-
-                        return retval;
+			foreach (NamedPermissionSet nps in named_permission_sets) {
+				if (name == nps.Name) {
+					named_permission_sets.Remove (nps);
+					return nps;
+				}
+			}
+			string msg = String.Format (Locale.GetText ("Name '{0}' cannot be found."), name);
+			throw new ArgumentException (msg, "name");
                 }
 
                 public void Reset ()
@@ -381,6 +372,15 @@ namespace System.Security.Policy {
 					catch {}
 				}
 				LoadFromFile (_location);
+			}
+			else {
+				named_permission_sets.Add (new NamedPermissionSet ("LocalIntranet"));
+				named_permission_sets.Add (new NamedPermissionSet ("Internet"));
+				named_permission_sets.Add (new NamedPermissionSet ("SkipVerification"));
+				named_permission_sets.Add (new NamedPermissionSet ("Execution"));
+				named_permission_sets.Add (new NamedPermissionSet ("Nothing"));
+				named_permission_sets.Add (new NamedPermissionSet ("Everything"));
+				named_permission_sets.Add (new NamedPermissionSet ("FullTrust"));
 			}
                 }
 
@@ -497,12 +497,14 @@ namespace System.Security.Policy {
 			case PolicyLevelType.Machine:
 				// by default all stuff is in the machine policy...
 				root_code_group = new UnionCodeGroup (new ZoneMembershipCondition (SecurityZone.MyComputer), psu);
+				root_code_group.Name = "All_Code";
 				break;
 			case PolicyLevelType.User:
 			case PolicyLevelType.Enterprise:
 			case PolicyLevelType.AppDomain:
 				// while the other policies don't restrict anything
 				root_code_group = new UnionCodeGroup (new AllMembershipCondition (), psu); 
+				root_code_group.Name = "All_Code";
 				break;
 			}
 		}
