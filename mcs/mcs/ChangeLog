@@ -1,3 +1,30 @@
+2003-02-15  Miguel de Icaza  <miguel@ximian.com>
+
+	The goal here is to remove the dependency on EmptyCast.Peel ().
+	Killing it completely.
+	
+	The problem is that currently in a number of places where
+	constants are expected, we have to "probe" for an EmptyCast, and
+	Peel, which is not the correct thing to do, as this will be
+	repetitive and will likely lead to errors. 
+
+	The idea is to remove any EmptyCasts that are used in casts that
+	can be reduced to constants, so we only have to cope with
+	constants. 
+
+	This bug hunt was triggered by Bug 37363 and the desire to remove
+	the duplicate pattern where we were "peeling" emptycasts to check
+	whether they were constants.  Now constants will always be
+	constants.
+	
+	* ecore.cs: Use an enumconstant here instead of wrapping with
+	EmptyCast.  
+
+	* expression.cs (Cast.TryReduce): Ah, the tricky EnumConstant was
+	throwing me off.  By handling this we can get rid of a few hacks.
+	
+	* statement.cs (Switch): Removed Peel() code.
+
 2003-02-14  Miguel de Icaza  <miguel@ximian.com>
 
 	* class.cs: Location information for error 508

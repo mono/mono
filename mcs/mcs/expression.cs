@@ -1231,8 +1231,12 @@ namespace Mono.CSharp {
 		/// </summary>
 		Expression TryReduce (EmitContext ec, Type target_type)
 		{
-			if (expr is ByteConstant){
-				byte v = ((ByteConstant) expr).Value;
+			Expression real_expr = expr;
+			if (real_expr is EnumConstant)
+				real_expr = ((EnumConstant) real_expr).Child;
+				
+			if (real_expr is ByteConstant){
+				byte v = ((ByteConstant) real_expr).Value;
 	
 				if (target_type == TypeManager.sbyte_type) {
 					if (!CheckRange (ec, v, target_type, SByte.MinValue, SByte.MaxValue))
@@ -1260,8 +1264,8 @@ namespace Mono.CSharp {
 				if (target_type == TypeManager.decimal_type)
 					return new DecimalConstant ((decimal) v);
 			}
-			if (expr is SByteConstant){
-				sbyte v = ((SByteConstant) expr).Value;
+			if (real_expr is SByteConstant){
+				sbyte v = ((SByteConstant) real_expr).Value;
 	
 				if (target_type == TypeManager.byte_type) {
 					if (!CheckUnsigned (ec, v, target_type))
@@ -1299,8 +1303,8 @@ namespace Mono.CSharp {
 				if (target_type == TypeManager.decimal_type)
 					return new DecimalConstant ((decimal) v);
 			}
-			if (expr is ShortConstant){
-				short v = ((ShortConstant) expr).Value;
+			if (real_expr is ShortConstant){
+				short v = ((ShortConstant) real_expr).Value;
 	
 				if (target_type == TypeManager.byte_type) {
 					if (!CheckRange (ec, v, target_type, Byte.MinValue, Byte.MaxValue))
@@ -1343,8 +1347,8 @@ namespace Mono.CSharp {
 				if (target_type == TypeManager.decimal_type)
 					return new DecimalConstant ((decimal) v);
 			}
-			if (expr is UShortConstant){
-				ushort v = ((UShortConstant) expr).Value;
+			if (real_expr is UShortConstant){
+				ushort v = ((UShortConstant) real_expr).Value;
 	
 				if (target_type == TypeManager.byte_type) {
 					if (!CheckRange (ec, v, target_type, Byte.MinValue, Byte.MaxValue))
@@ -1381,8 +1385,8 @@ namespace Mono.CSharp {
 				if (target_type == TypeManager.decimal_type)
 					return new DecimalConstant ((decimal) v);
 			}
-			if (expr is IntConstant){
-				int v = ((IntConstant) expr).Value;
+			if (real_expr is IntConstant){
+				int v = ((IntConstant) real_expr).Value;
 	
 				if (target_type == TypeManager.byte_type) {
 					if (!CheckRange (ec, v, target_type, Byte.MinValue, Byte.MaxValue))
@@ -1428,8 +1432,8 @@ namespace Mono.CSharp {
 				if (target_type == TypeManager.decimal_type)
 					return new DecimalConstant ((decimal) v);
 			}
-			if (expr is UIntConstant){
-				uint v = ((UIntConstant) expr).Value;
+			if (real_expr is UIntConstant){
+				uint v = ((UIntConstant) real_expr).Value;
 	
 				if (target_type == TypeManager.byte_type) {
 					if (!CheckRange (ec, v, target_type, Char.MinValue, Char.MaxValue))
@@ -1472,8 +1476,8 @@ namespace Mono.CSharp {
 				if (target_type == TypeManager.decimal_type)
 					return new DecimalConstant ((decimal) v);
 			}
-			if (expr is LongConstant){
-				long v = ((LongConstant) expr).Value;
+			if (real_expr is LongConstant){
+				long v = ((LongConstant) real_expr).Value;
 	
 				if (target_type == TypeManager.byte_type) {
 					if (!CheckRange (ec, v, target_type, Byte.MinValue, Byte.MaxValue))
@@ -1522,8 +1526,8 @@ namespace Mono.CSharp {
 				if (target_type == TypeManager.decimal_type)
 					return new DecimalConstant ((decimal) v);
 			}
-			if (expr is ULongConstant){
-				ulong v = ((ULongConstant) expr).Value;
+			if (real_expr is ULongConstant){
+				ulong v = ((ULongConstant) real_expr).Value;
 	
 				if (target_type == TypeManager.byte_type) {
 					if (!CheckRange (ec, v, target_type, Byte.MaxValue))
@@ -1572,8 +1576,8 @@ namespace Mono.CSharp {
 				if (target_type == TypeManager.decimal_type)
 					return new DecimalConstant ((decimal) v);
 			}
-			if (expr is FloatConstant){
-				float v = ((FloatConstant) expr).Value;
+			if (real_expr is FloatConstant){
+				float v = ((FloatConstant) real_expr).Value;
 	
 				if (target_type == TypeManager.byte_type)
 					return new ByteConstant ((byte) v);
@@ -1598,8 +1602,8 @@ namespace Mono.CSharp {
 				if (target_type == TypeManager.decimal_type)
 					return new DecimalConstant ((decimal) v);
 			}
-			if (expr is DoubleConstant){
-				double v = ((DoubleConstant) expr).Value;
+			if (real_expr is DoubleConstant){
+				double v = ((DoubleConstant) real_expr).Value;
 	
 				if (target_type == TypeManager.byte_type)
 					return new ByteConstant ((byte) v);
@@ -1625,8 +1629,8 @@ namespace Mono.CSharp {
 					return new DecimalConstant ((decimal) v);
 			}
 
-			if (expr is CharConstant){
-				char v = ((CharConstant) expr).Value;
+			if (real_expr is CharConstant){
+				char v = ((CharConstant) real_expr).Value;
 				
 				if (target_type == TypeManager.byte_type) {
 					if (!CheckRange (ec, v, target_type, Byte.MinValue, Byte.MaxValue))
