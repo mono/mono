@@ -21,7 +21,7 @@ namespace System.Globalization {
 		DecimalDigitNumber      =  8,
 		LetterNumber            =  9,
 		OtherNumber             = 10,
-		SpaceSeperator          = 11,
+		SpaceSeparator          = 11,
 		LineSeperator           = 12,
 		ParagraphSeperator      = 13,
 		Control                 = 14,

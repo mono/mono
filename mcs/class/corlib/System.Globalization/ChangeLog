@@ -1,3 +1,7 @@
+2002-02-12  Nick Drochak  <ndrochak@gol.com>
+
+	* UnicodeCategory.cs: Fix typo.
+
 2002-02-01  Radek Doulik  <rodo@ximian.com>
 
 	* RegionInfo.cs: started work on RegionInfo
