@@ -56,7 +56,7 @@ namespace Mono.ILASM {
                         get { return current_typedef; }
                 }
 
-                public MethodDef CurrentMethoDef {
+                public MethodDef CurrentMethodDef {
                         get { return current_methoddef; }
                 }
 

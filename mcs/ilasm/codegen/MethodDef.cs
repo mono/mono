@@ -23,6 +23,7 @@ namespace Mono.ILASM {
                 private string signature;
                 private ITypeRef ret_type;
                 private ArrayList param_list;
+                private ArrayList inst_list;
                 private PEAPI.MethodDef methoddef;
                 private bool is_defined;
 
@@ -35,6 +36,7 @@ namespace Mono.ILASM {
                         this.ret_type = ret_type;
                         this.param_list = param_list;
 
+                        inst_list = new ArrayList ();
                         is_defined = false;
                         CreateSignature ();
                 }
@@ -93,7 +95,18 @@ namespace Mono.ILASM {
                         methoddef = classdef.AddMethod (meth_attr, impl_attr,
                                         name, ret_type.PeapiType, param_array);
 
+                        if (inst_list.Count > 0) {
+                                PEAPI.CILInstructions cil = methoddef.CreateCodeBuffer ();
+                                foreach (IInstr instr in inst_list)
+                                        instr.Emit (code_gen, cil);
+                        }
+
                         is_defined = true;
+                }
+
+                public void AddInstr (IInstr instr)
+                {
+                        inst_list.Add (instr);
                 }
 
                 private void CreateSignature ()

@@ -1,3 +1,13 @@
+2003-04-30 Jackson Harper <jackson@latitudegeo.com>
+
+	* MethodDef.cs: Accept and emit instructions.
+	* CodeGen.cs: Fix typo
+	* IInstr.cs: New file - Interface for instructions that are added to methods
+	* IntInstr.cs: New file - Instruction that takes a single int
+	param
+	* LdstrInstr.cs: New file - ldstr instruction (the only
+	instruction that takes a string parameter)
+		
 2003-04-28 Jackson Harper <jackson@latitudegeo.com>
 
 	* InstrTable.cs: Much simpler system. All tokens go into one
