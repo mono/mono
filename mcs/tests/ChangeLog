@@ -1,3 +1,8 @@
+2002-12-18  Ravi Pratap  <ravi@ximian.com>
+
+	* test-177.cs : Add. This doesn't pass yet because we don't have
+	ReturnTypeCustomAttributes working.
+
 2002-12-10  Ravi Pratap  <ravi@ximian.com>
 
 	* test-102.cs : Improve to catch the case when an attribute
