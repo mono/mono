@@ -1,4 +1,9 @@
 
+Sat Feb 26 16:06:59 CET 2005 Paolo Molaro <lupus@ximian.com>
+
+	* domain.c: help the compiler to produce better code
+	in mono_jit_info_table_find ().
+
 Fri Feb 25 16:50:14 CET 2005 Paolo Molaro <lupus@ximian.com>
 
 	* object.c: make all allocations look typed.
