@@ -1,4 +1,8 @@
 
+2002-08-28  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* DateTime.cs: fixed buglet.
+
 Tue Aug 27 16:39:47 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
 	* MonoType.cs: speedup access to common data.

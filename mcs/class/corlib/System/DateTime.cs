@@ -721,7 +721,7 @@ namespace System
 						num = 3;
 					}
 					
-					if (year < 1 || year > 9999)
+					if (year != 0 && (year < 1 || year > 9999))
 						throw new ArgumentOutOfRangeException ("year", "Valid " + 
 								"values are between 1 and 9999 inclusive");
 					break;
