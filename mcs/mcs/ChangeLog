@@ -1,5 +1,9 @@
 2004-09-09  Marek Safar  <marek.safar@seznam.cz>
 
+	* cs-parser.jay: Added CS0230 error report.
+
+2004-09-09  Marek Safar  <marek.safar@seznam.cz>
+
 	* cs-parser.jay: Added errors CS0231 and CS0257 report.
 
 2004-09-09  Marek Safar  <marek.safar@seznam.cz>

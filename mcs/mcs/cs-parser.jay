@@ -3583,7 +3583,12 @@ statement_expression_list
 	;
 
 foreach_statement
-	: FOREACH OPEN_PARENS type IDENTIFIER IN 
+	: FOREACH OPEN_PARENS type IN expression CLOSE_PARENS
+	{
+		Report.Error (230, lexer.Location, "Type and identifier are both required in a foreach statement");
+		$$ = null;
+	}
+	| FOREACH OPEN_PARENS type IDENTIFIER IN 
 	  {
 		oob_stack.Push (lexer.Location);
 	  }
