@@ -1,3 +1,8 @@
+2003-10-01  Atsushi Enomoto  <ginga@kit.hi-ho.ne.jp>
+
+	* XmlSchema.cs : Read() should keep current position of XmlReader if
+	  it was already positioned to 'schema' element.
+
 2003-09-30  Atsushi Enomoto  <ginga@kit.hi-ho.ne.jp>
 
 	* Forgot to append 8/24/2003 ChangeLog.

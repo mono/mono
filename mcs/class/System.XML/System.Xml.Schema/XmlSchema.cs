@@ -590,7 +590,12 @@ namespace System.Xml.Schema
 */
 			XmlSchemaReader reader = new XmlSchemaReader(rdr, validationEventHandler);
 
-                        while(reader.ReadNextElement())
+			if (reader.ReadState == ReadState.Initial)
+				reader.ReadNextElement ();
+
+			int startDepth = reader.Depth;
+
+			do
                         {
                                 switch(reader.NodeType)
                                 {
@@ -612,6 +617,8 @@ namespace System.Xml.Schema
                                                         {
                                                                 ReadContent(schema, reader, validationEventHandler);
                                                         }
+							if (rdr.NodeType == XmlNodeType.EndElement)
+								rdr.Read ();
                                                         return schema;
                                                 }
                                                 else
@@ -623,7 +630,7 @@ namespace System.Xml.Schema
                                                 error(validationEventHandler, "This should never happen. XmlSchema.Read 1 ",null);
                                                 break;
                                 }
-                        }
+                        } while(reader.Depth > startDepth && reader.ReadNextElement());
                         throw new XmlSchemaException("The top level schema must have namespace "+XmlSchema.Namespace, null);
                 }
 
