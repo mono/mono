@@ -873,8 +873,12 @@ public class StringTest : Assertion
 			     s1.Replace("gin", "rum"));
 		AssertEquals("double string", "oreigeinal", 
 			     s1.Replace("i", "ei"));
-			     			     
+
 		AssertEquals ("result longer", ":!:", "::".Replace ("::", ":!:"));
+
+		// Test overlapping matches (bug #54988)
+        string s2 = "...aaaaaaa.bbbbbbbbb,............ccccccc.u...";
+		AssertEquals ("..aaaaaaa.bbbbbbbbb,......ccccccc.u..", s2.Replace("..", "."));
 	}
 
 	public void TestSplit() {

@@ -1,3 +1,7 @@
+2004-02-29  Zoltan Varga  <vargaz@freemail.hu>
+
+	* StringTest.cs: Add regression test for bug #54988.
+
 2004-02-27  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* ConvertTest.cs: Added a new test for bug #54939 when converting a
