@@ -1,7 +1,12 @@
+2004-02-16  Zoltan Varga  <vargaz@freemail.hu>
+
+	* mini-ops.h cpu-pentium.md mini-x86.c inssel-x86.brg: Remove 
+	OP_CALL_IMM opcodes, since the CALL opcodes handles immediates as well.
+
 2004-02-15  Zoltan Varga  <vargaz@freemail.hu>
 
-	* mini-x86.c: Fix compilation under gcc 2.95.
-
+	* mini-x86.c: Fix compilation under gcc 2.
+	
 2004-02-14  Zoltan Varga  <vargaz@freemail.hu>
 
 	* mini.c (mono_codegen): Avoid infinite loop when an icall wrapper
