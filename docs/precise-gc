@@ -8,6 +8,12 @@ This is a large task, but it can be done in steps.
 1) use the GCJ support to mark reference fields in objects, so
 scanning the heap is faster. This is mostly done already, needs
 checking that it is always used correctly (big objects, arrays).
+There are also some data structures we use in the runtime that are
+currently untyped that are allocated in the Gc heap and used to 
+keep references to GC objects. We need to make them typed as to
+precisely track GC references or make them non-GC memory,
+by using more the GC hnadle support code (MonoGHashTable, MonoDomain, 
+etc).
 
 2) don't include in the static roots the .bss and .data segments
 to save in scanning time and limit false-positives. This is mostly 
@@ -58,6 +64,12 @@ The important features needed:
 *) pointer-hopping allocation to reduce alloc time
 *) possibly per-thread lock-free allocation
 *) handle weakrefs and finalizers with the CLR semantics
+
+Note: some GC engines use a single mmap area, because it makes
+handling generations and the implementation much easier, but this also 
+limits the expension of the heap, so people may need to use a command-line
+option to set the max heap size etc. It would be better to have a design 
+that allows mmapping a few megabytes chunks at a time.
 
 The different tasks can be done in parallel. 1, 2 and 4 can be done in time
 for the mono 1.2 release. Parts of 3 and 5 could be done as well.
