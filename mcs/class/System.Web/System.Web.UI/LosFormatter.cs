@@ -35,6 +35,7 @@ namespace System.Web.UI
 		const char arrayListID = 'L';
 		const char hashtableID = 'h';
 		const char binaryID = 'b';
+		const char arrayID = 'a';
 		
 		static Hashtable specialTypes;
 		static Hashtable idToType;
@@ -48,6 +49,7 @@ namespace System.Web.UI
 			specialTypes.Add (typeof (Color), new WriteObject (WriteColor));
 			specialTypes.Add (typeof (ArrayList), new WriteObject (WriteArrayList));
 			specialTypes.Add (typeof (Hashtable), new WriteObject (WriteHashtable));
+			specialTypes.Add (typeof (Array), new WriteObject (WriteArray));
 
 			idToType = new Hashtable ();
 			idToType.Add (typeof (string), stringID);
@@ -61,6 +63,7 @@ namespace System.Web.UI
 			idToType.Add (typeof (Color), colorID);
 			idToType.Add (typeof (ArrayList), arrayListID);
 			idToType.Add (typeof (Hashtable), hashtableID);
+			idToType.Add (typeof (Array), arrayID);
 		}
 		
 		public object Deserialize (Stream stream)
@@ -215,6 +218,7 @@ namespace System.Web.UI
 				triplet.Third = DeserializeObject (splitted [2]);
 				break;
 			case arrayListID:
+			case arrayID:
 				ArrayList list = new ArrayList ();
 				obj = list;
 				splitted = GetStringValues (enclosed);
@@ -222,6 +226,10 @@ namespace System.Web.UI
 					object o = DeserializeObject (s);
 					list.Add (o);
 				}
+
+				if (input [0] == arrayID)
+					obj = list.ToArray (typeof (object));
+
 				break;
 			case hashtableID:
 				object key;
@@ -346,6 +354,22 @@ namespace System.Web.UI
 			output.Write('>');
 		}
 
+		private static void WriteArray (LosFormatter formatter, TextWriter output, object value)
+		{
+			if (value == null)
+				return;
+			
+			output.Write (arrayID);
+			output.Write ('<');
+			Array array = (Array) value;
+			for (int i = 0; i < array.Length; i++) {
+				formatter.SerializeObject (output, array.GetValue (i));
+				if (i != array.Length - 1)
+					output.Write (';');
+			}
+			output.Write('>');
+		}
+
 		private static void WriteHashtable (LosFormatter formatter, TextWriter output, object value)
 		{
 			if (value == null)
@@ -380,6 +404,21 @@ namespace System.Web.UI
 		
 		private void SerializeBinary (TextWriter output, object value)
 		{
+			WebTrace.PushContext ("LosFormatter.SerializeBinary");
+			WebTrace.WriteLine ("not serializing value type: " + value.GetType ());
+			/* This is just for debugging purposes */
+			/*if (value is Array) {
+				Array array = (Array) value;
+				for (int i = 0; i < array.Length; i++) {
+					object o = array.GetValue (i);
+					if (o == null)
+						WebTrace.WriteLine ("\t{0} is null", i);
+					else
+						WebTrace.WriteLine ("\t{0} {1} {2}", i, o.GetType (), o);
+				}
+			}
+			*/
+			/*
 			BinaryFormatter fmt = new BinaryFormatter ();
 			MemoryStream stream = new MemoryStream ();
 
@@ -389,6 +428,8 @@ namespace System.Web.UI
 			byte [] buffer = stream.GetBuffer ();
 			output.Write (Convert.ToBase64String (stream.GetBuffer ()));
 			output.Write ('>');
+			*/
+			WebTrace.PopContext ();
 		}
 
 		private void SerializeObject (TextWriter output, object value)
@@ -401,6 +442,9 @@ namespace System.Web.UI
 			}
 
 			Type t = value.GetType ();
+			if (t.IsArray)
+				t = typeof (Array);
+
 			if (specialTypes.Contains (t)) {
 				WriteObject w = (WriteObject) specialTypes [t];
 				w (this, output, value);

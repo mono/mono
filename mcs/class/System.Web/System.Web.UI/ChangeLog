@@ -1,3 +1,11 @@
+2002-11-12  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* LosFormatter.cs: added array serialization support. Disabled binary
+	serialization and add some debugging code.
+
+	* StateBag.cs: the length of the list of value can be less than the
+	length if the list of keys when remaining values are null.
+
 2002-11-07  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Page.cs: return something useful in GetPostBackClientEvent.

@@ -144,8 +144,14 @@ namespace System.Web.UI
 				Pair pair = (Pair) state;
 				ArrayList keyList = (ArrayList) (pair.First);
 				ArrayList valList = (ArrayList) (pair.Second);
-				for(int i = 0; i < keyList.Count; i++)
-					Add ((string) keyList [i], valList [i]);
+
+				int valCount = valList.Count;
+				for(int i = 0; i < keyList.Count; i++) {
+					if (i < valCount)
+						Add ((string) keyList [i], valList [i]);
+					else
+						Add ((string) keyList [i], null);
+				}
 			}
 		}
 		
