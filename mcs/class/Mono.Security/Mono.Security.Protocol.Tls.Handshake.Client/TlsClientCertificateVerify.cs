@@ -35,7 +35,7 @@ namespace Mono.Security.Protocol.Tls.Handshake.Client
 		#region Constructors
 
 		public TlsClientCertificateVerify(Context context) 
-			: base(context, HandshakeType.Finished)
+			: base(context, HandshakeType.CertificateVerify)
 		{
 		}
 

@@ -1,3 +1,27 @@
+2004-03-10 Carlos Guzman Alvarez  <carlosga@telefonica.net>
+
+	* Mono.Security.Protocol.Tls/Ciphersuite.cs:
+
+		- Added generation of the Server encryption algorithms.
+
+		- Modified encryption/decription methods for work
+		as client or server as needed.
+
+	* Mono.Security.Protocol.Tls/RecordProtocol.cs:
+	* Mono.Security.Protocol.Tls/ClientRecordProtocol.cs:
+	* Mono.Security.Protocol.Tls/ServerRecordProtocol.cs:
+
+		- Added new ProcessChangeCipherSpec method.
+
+	* Mono.Security.Protocol.Tls/Context.cs:
+
+		- Added new PrintBuffer method ( for debug ).
+
+	* Mono.Security.Protocol.Tls/SslClientStream.cs:
+	* Mono.Security.Protocol.Tls/SslServerStream.cs:
+
+		- Callback cleanup.
+
 2004-03-06 Carlos Guzman Alvarez  <carlosga@telefonica.net>
 
 	* Mono.Security.Protocol.Tls/SslServerStream.cs:

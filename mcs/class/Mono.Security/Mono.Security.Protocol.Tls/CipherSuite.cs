@@ -488,16 +488,33 @@ namespace Mono.Security.Protocol.Tls
 			}
 
 			// Set the key and IV for the algorithm
-			this.encryptionAlgorithm.Key	= this.context.ClientWriteKey;
-			this.encryptionAlgorithm.IV		= this.context.ClientWriteIV;
+			if (this.context is ClientContext)
+			{
+				this.encryptionAlgorithm.Key	= this.context.ClientWriteKey;
+				this.encryptionAlgorithm.IV		= this.context.ClientWriteIV;
+			}
+			else
+			{
+				this.encryptionAlgorithm.Key	= this.context.ServerWriteKey;
+				this.encryptionAlgorithm.IV		= this.context.ServerWriteIV;
+			}
 			
 			// Create encryption cipher
 			this.encryptionCipher = this.encryptionAlgorithm.CreateEncryptor();
 
-			// Create the HMAC algorithm for the client
-			this.clientHMAC = new M.HMAC(
-				this.HashAlgorithmName,
-				this.context.ClientWriteMAC);
+			// Create the HMAC algorithm
+			if (this.context is ClientContext)
+			{
+				this.clientHMAC = new M.HMAC(
+					this.HashAlgorithmName,
+					this.context.ClientWriteMAC);
+			}
+			else
+			{
+				this.serverHMAC = new M.HMAC(
+					this.HashAlgorithmName,
+					this.context.ServerWriteMAC);
+			}
 		}
 
 		private void createDecryptionCipher()
@@ -537,16 +554,33 @@ namespace Mono.Security.Protocol.Tls
 			}
 
 			// Set the key and IV for the algorithm
-			this.decryptionAlgorithm.Key	= this.context.ServerWriteKey;
-			this.decryptionAlgorithm.IV		= this.context.ServerWriteIV;
+			if (this.context is ClientContext)
+			{
+				this.decryptionAlgorithm.Key	= this.context.ServerWriteKey;
+				this.decryptionAlgorithm.IV		= this.context.ServerWriteIV;
+			}
+			else
+			{
+				this.decryptionAlgorithm.Key	= this.context.ClientWriteKey;
+				this.decryptionAlgorithm.IV		= this.context.ClientWriteIV;
+			}
 
 			// Create decryption cipher			
 			this.decryptionCipher = this.decryptionAlgorithm.CreateDecryptor();
 
-			// Create the HMAC algorithm for the server
-			this.serverHMAC = new M.HMAC(
-				this.HashAlgorithmName,
-				this.context.ServerWriteMAC);
+			// Create the HMAC
+			if (this.context is ClientContext)
+			{
+				this.serverHMAC = new M.HMAC(
+					this.HashAlgorithmName,
+					this.context.ServerWriteMAC);
+			}
+			else
+			{
+				this.clientHMAC = new M.HMAC(
+					this.HashAlgorithmName,
+					this.context.ClientWriteMAC);
+			}
 		}
 
 		#endregion

@@ -42,8 +42,8 @@ namespace Mono.Security.Protocol.Tls
 			HashAlgorithmType hashAlgorithmType, ExchangeAlgorithmType exchangeAlgorithmType,
 			bool exportable, bool blockMode, byte keyMaterialSize, 
 			byte expandedKeyMaterialSize, short effectiveKeyBytes, 
-			byte ivSize, byte blockSize) :
-			base(code, name, cipherAlgorithmType, hashAlgorithmType, 
+			byte ivSize, byte blockSize) 
+			:base(code, name, cipherAlgorithmType, hashAlgorithmType, 
 			exchangeAlgorithmType, exportable, blockMode, keyMaterialSize, 
 			expandedKeyMaterialSize, effectiveKeyBytes, ivSize, blockSize)
 		{
@@ -58,7 +58,15 @@ namespace Mono.Security.Protocol.Tls
 			TlsStream	data	= new TlsStream();
 			byte[]		result	= null;
 
-			data.Write(this.Context.ReadSequenceNumber);
+			if (this.Context is ClientContext)
+			{
+				data.Write(this.Context.ReadSequenceNumber);
+			}
+			else
+			{
+				data.Write(this.Context.WriteSequenceNumber);
+			}
+
 			data.Write((byte)contentType);
 			data.Write(this.Context.Protocol);
 			data.Write((short)fragment.Length);
@@ -76,7 +84,15 @@ namespace Mono.Security.Protocol.Tls
 			TlsStream	data	= new TlsStream();
 			byte[]		result	= null;
 
-			data.Write(this.Context.WriteSequenceNumber);
+			if (this.Context is ClientContext)
+			{
+				data.Write(this.Context.WriteSequenceNumber);
+			}
+			else
+			{
+				data.Write(this.Context.ReadSequenceNumber);
+			}
+
 			data.Write((byte)contentType);
 			data.Write(this.Context.Protocol);
 			data.Write((short)fragment.Length);

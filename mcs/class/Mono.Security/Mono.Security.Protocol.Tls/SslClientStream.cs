@@ -39,13 +39,13 @@ namespace Mono.Security.Protocol.Tls
 	public delegate bool CertificateValidationCallback(
 		X509Certificate certificate, 
 		int[]			certificateErrors);
-	
+
 	public delegate X509Certificate CertificateSelectionCallback(
 		X509CertificateCollection	clientCertificates, 
 		X509Certificate				serverCertificate, 
 		string						targetHost, 
 		X509CertificateCollection	serverRequestedCertificates);
-	
+
 	public delegate AsymmetricAlgorithm PrivateKeySelectionCallback(
 		X509Certificate	certificate, 
 		string			targetHost);
@@ -63,10 +63,6 @@ namespace Mono.Security.Protocol.Tls
 		#endregion
 
 		#region Fields
-
-		private CertificateValidationCallback	serverCertValidationDelegate;
-		private CertificateSelectionCallback	clientCertSelectionDelegate;
-		private PrivateKeySelectionCallback		privateKeySelectionDelegate;
 
 		private Stream							innerStream;
 		private BufferedStream					inputBuffer;
@@ -242,44 +238,20 @@ namespace Mono.Security.Protocol.Tls
 
 		public CertificateValidationCallback ServerCertValidationDelegate
 		{
-			get { return this.serverCertValidationDelegate; }
-			set 
-			{ 
-				if (this.ServerCertValidation != null)
-				{
-					this.ServerCertValidation -= this.serverCertValidationDelegate;
-				}
-				this.serverCertValidationDelegate	= value;
-				this.ServerCertValidation			+= this.serverCertValidationDelegate;
-			}
+			get { return this.ServerCertValidation; }
+			set { this.ServerCertValidation = value; }			
 		}
 
 		public CertificateSelectionCallback ClientCertSelectionDelegate 
 		{
-			get { return this.clientCertSelectionDelegate; }
-			set 
-			{ 
-				if (this.ClientCertSelection != null)
-				{
-					this.ClientCertSelection -= this.clientCertSelectionDelegate;
-				}
-				this.clientCertSelectionDelegate	= value;
-				this.ClientCertSelection			+= this.clientCertSelectionDelegate;
-			}
+			get { return this.ClientCertSelection; }
+			set { this.ClientCertSelection = value; }
 		}
 
 		public PrivateKeySelectionCallback PrivateKeyCertSelectionDelegate 
 		{
-			get { return this.privateKeySelectionDelegate; }
-			set 
-			{ 
-				if (this.PrivateKeySelection != null)
-				{
-					this.PrivateKeySelection -= this.privateKeySelectionDelegate;
-				}
-				this.privateKeySelectionDelegate	= value;
-				this.PrivateKeySelection			+= this.privateKeySelectionDelegate;
-			}
+			get { return this.PrivateKeySelection; }
+			set { this.PrivateKeySelection = value; }
 		}
 
 		#endregion
@@ -401,18 +373,11 @@ namespace Mono.Security.Protocol.Tls
 							this.innerStream.Close();
 						}
 					}
-					this.ownsStream		= false;
-					this.innerStream	= null;
-					if (this.ClientCertSelection != null)
-					{
-						this.ClientCertSelection -= this.clientCertSelectionDelegate;
-					}
-					if (this.ServerCertValidation != null)
-					{
-						this.ServerCertValidation -= this.serverCertValidationDelegate;
-					}
-					this.serverCertValidationDelegate	= null;
-					this.clientCertSelectionDelegate	= null;
+					this.ownsStream				= false;
+					this.innerStream			= null;
+					this.ClientCertSelection	= null;
+					this.ServerCertValidation	= null;
+					this.PrivateKeySelection	= null;
 				}
 
 				this.disposed = true;

@@ -33,7 +33,7 @@ namespace Mono.Security.Protocol.Tls.Handshake.Server
 		#region Constructors
 
 		public TlsServerCertificateRequest(Context context) 
-			: base(context, HandshakeType.ServerHello)
+			: base(context, HandshakeType.CertificateRequest)
 		{
 		}
 

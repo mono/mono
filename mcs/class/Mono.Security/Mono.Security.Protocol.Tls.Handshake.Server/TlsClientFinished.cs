@@ -40,15 +40,6 @@ namespace Mono.Security.Protocol.Tls.Handshake.Server
 
 		#endregion
 
-		#region Methods
-
-		public override void Update()
-		{
-			throw new NotSupportedException();
-		}
-
-		#endregion
-
 		#region Protected Methods
 
 		protected override void ProcessAsSsl3()
@@ -72,6 +63,7 @@ namespace Mono.Security.Protocol.Tls.Handshake.Server
 			{
 				throw new TlsException("Invalid ServerFinished message received.");
 			}
+
 			for (int i = 0; i < clientHash.Length; i++)
 			{
 				if (clientHash[i] != serverHash[i])
@@ -91,13 +83,15 @@ namespace Mono.Security.Protocol.Tls.Handshake.Server
 				0,
 				(int)this.Context.HandshakeMessages.Length);
 
-			byte[] serverPRF = this.Context.Cipher.PRF(this.Context.MasterSecret, "client finished", hash.Hash, 12);
+			byte[] serverPRF = this.Context.Cipher.PRF(
+				this.Context.MasterSecret, "client finished", hash.Hash, 12);
 
 			// Check client prf against server prf
 			if (clientPRF.Length != serverPRF.Length)
 			{
 				throw new TlsException("Invalid ServerFinished message received.");
 			}
+
 			for (int i = 0; i < serverPRF.Length; i++)
 			{
 				if (clientPRF[i] != serverPRF[i])

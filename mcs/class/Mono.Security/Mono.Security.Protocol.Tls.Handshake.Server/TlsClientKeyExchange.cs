@@ -25,6 +25,7 @@
 using System;
 using System.IO;
 using System.Security.Cryptography;
+using System.Security.Cryptography.X509Certificates;
 
 namespace Mono.Security.Protocol.Tls.Handshake.Server
 {
@@ -32,7 +33,7 @@ namespace Mono.Security.Protocol.Tls.Handshake.Server
 	{
 		#region Constructors
 
-		public TlsClientKeyExchange (Context context, byte[] buffer) : 
+		public TlsClientKeyExchange(Context context, byte[] buffer) : 
 			base(context,
 				HandshakeType.ClientKeyExchange, 
 				buffer)
@@ -45,27 +46,59 @@ namespace Mono.Security.Protocol.Tls.Handshake.Server
 
 		protected override void ProcessAsSsl3()
 		{
-			throw new NotSupportedException();
-		}
-
-		protected override void ProcessAsTls1()
-		{
+			ServerContext context = (ServerContext)this.Context;
+            
+			// Select the private key information
+			RSA rsa = (RSA)context.SslStream.PrivateKeyCertSelectionDelegate(
+				new X509Certificate(context.ServerSettings.Certificates[0].RawData),
+				null);
+			
 			// Read client premaster secret
-			byte[] clientSecret = this.ReadBytes(this.ReadInt16());
-
-			// Create a new RSA key
-			RSA rsa = this.Context.Cipher.CertificateRSA();
+			byte[] clientSecret = this.ReadBytes((int)this.Length);
 
 			// Decrypt premaster secret
 			RSAPKCS1KeyExchangeDeformatter deformatter = new RSAPKCS1KeyExchangeDeformatter(rsa);
 
 			byte[] preMasterSecret = deformatter.DecryptKeyExchange(clientSecret);
-			
+
 			// Create master secret
 			this.Context.Cipher.ComputeMasterSecret(preMasterSecret);
 
 			// Create keys
 			this.Context.Cipher.ComputeKeys();
+
+			// Initialize Cipher Suite
+			this.Context.Cipher.InitializeCipher();
+
+			// Clear resources
+			rsa.Clear();
+		}
+
+		protected override void ProcessAsTls1()
+		{
+			ServerContext context = (ServerContext)this.Context;
+            
+			// Select the private key information
+			RSA rsa = (RSA)context.SslStream.PrivateKeyCertSelectionDelegate(
+				new X509Certificate(context.ServerSettings.Certificates[0].RawData),
+				null);
+			
+			// Read client premaster secret
+			byte[] clientSecret = this.ReadBytes(this.ReadInt16());
+
+			// Decrypt premaster secret
+			RSAPKCS1KeyExchangeDeformatter deformatter = new RSAPKCS1KeyExchangeDeformatter(rsa);
+
+			byte[] preMasterSecret = deformatter.DecryptKeyExchange(clientSecret);
+
+			// Create master secret
+			this.Context.Cipher.ComputeMasterSecret(preMasterSecret);
+
+			// Create keys
+			this.Context.Cipher.ComputeKeys();
+
+			// Initialize Cipher Suite
+			this.Context.Cipher.InitializeCipher();
 
 			// Clear resources
 			rsa.Clear();

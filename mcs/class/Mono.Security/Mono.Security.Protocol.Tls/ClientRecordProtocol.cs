@@ -63,6 +63,12 @@ namespace Mono.Security.Protocol.Tls
 
 		#region Handshake Processing Methods
 
+		protected override void ProcessChangeCipherSpec()
+		{
+			// Reset sequence numbers
+			this.context.ReadSequenceNumber = 0;
+		}
+
 		protected override void ProcessHandshakeMessage(TlsStream handMsg)
 		{
 			HandshakeType		handshakeType	= (HandshakeType)handMsg.ReadByte();

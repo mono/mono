@@ -34,7 +34,7 @@ namespace Mono.Security.Protocol.Tls.Handshake.Client
 		#region Constructors
 
 		public TlsServerFinished(Context context, byte[] buffer) 
-			: base(context, HandshakeType.ServerHello, buffer)
+			: base(context, HandshakeType.Finished, buffer)
 		{
 		}
 

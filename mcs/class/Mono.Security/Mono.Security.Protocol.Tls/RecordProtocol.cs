@@ -70,6 +70,7 @@ namespace Mono.Security.Protocol.Tls
 
 		public abstract void SendRecord(HandshakeType type);
 		protected abstract void ProcessHandshakeMessage(TlsStream handMsg);
+		protected abstract void ProcessChangeCipherSpec();
 				
 		#endregion
 
@@ -143,8 +144,7 @@ namespace Mono.Security.Protocol.Tls
 					break;
 
 				case ContentType.ChangeCipherSpec:
-					// Reset sequence numbers
-					this.context.ReadSequenceNumber = 0;
+					this.ProcessChangeCipherSpec();
 					break;
 
 				case ContentType.ApplicationData:
@@ -232,6 +232,9 @@ namespace Mono.Security.Protocol.Tls
 
 		public void SendChangeCipherSpec()
 		{
+			// Send Change Cipher Spec message as a plain message
+			this.context.IsActual = false;
+
 			// Send Change Cipher Spec message
 			this.SendRecord(ContentType.ChangeCipherSpec, new byte[] {1});
 
@@ -326,17 +329,27 @@ namespace Mono.Security.Protocol.Tls
 			ContentType	contentType, 
 			byte[]		fragment)
 		{
+			byte[] mac	= null;
+
 			// Calculate message MAC
-			byte[] mac	= this.context.Cipher.ComputeClientRecordMAC(contentType, fragment);
+			if (this.Context is ClientContext)
+			{
+				mac	= this.context.Cipher.ComputeClientRecordMAC(contentType, fragment);
+			}	
+			else
+			{
+				mac	= this.context.Cipher.ComputeServerRecordMAC(contentType, fragment);
+			}
 
 			// Encrypt the message
 			byte[] ecr = this.context.Cipher.EncryptRecord(fragment, mac);
 
-			// Set new IV
+			// Set new Client Cipher IV
 			if (this.context.Cipher.CipherMode == CipherMode.CBC)
 			{
 				byte[] iv = new byte[this.context.Cipher.IvSize];
 				System.Array.Copy(ecr, ecr.Length - iv.Length, iv, 0, iv.Length);
+
 				this.context.Cipher.UpdateClientCipherIV(iv);
 			}
 
@@ -355,23 +368,24 @@ namespace Mono.Security.Protocol.Tls
 
 			// Decrypt message
 			this.context.Cipher.DecryptRecord(fragment, ref dcrFragment, ref dcrMAC);
-
-			// Set new IV
-			if (this.context.Cipher.CipherMode == CipherMode.CBC)
-			{
-				byte[] iv = new byte[this.context.Cipher.IvSize];
-				System.Array.Copy(fragment, fragment.Length - iv.Length, iv, 0, iv.Length);
-				this.context.Cipher.UpdateServerCipherIV(iv);
-			}
 			
 			// Check MAC code
-			byte[] mac = this.context.Cipher.ComputeServerRecordMAC(contentType, dcrFragment);
+			byte[] mac = null;
+			if (this.Context is ClientContext)
+			{
+				mac = this.context.Cipher.ComputeServerRecordMAC(contentType, dcrFragment);
+			}
+			else
+			{
+				mac = this.context.Cipher.ComputeClientRecordMAC(contentType, dcrFragment);
+			}
 
 			// Check that the mac is correct
 			if (mac.Length != dcrMAC.Length)
 			{
 				throw new TlsException("Invalid MAC received from server.");
 			}
+
 			for (int i = 0; i < mac.Length; i++)
 			{
 				if (mac[i] != dcrMAC[i])

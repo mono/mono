@@ -34,17 +34,8 @@ namespace Mono.Security.Protocol.Tls.Handshake.Server
 		#region Constructors
 
 		public TlsServerFinished(Context context) 
-			: base(context, HandshakeType.ServerHello)
+			: base(context, HandshakeType.Finished)
 		{
-		}
-
-		#endregion
-
-		#region Methods
-
-		public override void Update()
-		{
-			throw new NotSupportedException();
 		}
 
 		#endregion
@@ -77,7 +68,8 @@ namespace Mono.Security.Protocol.Tls.Handshake.Server
 				(int)this.Context.HandshakeMessages.Length);
 
 			// Write message
-			this.Write(this.Context.Cipher.PRF(this.Context.MasterSecret, "server finished", hash.Hash, 12));
+			this.Write(this.Context.Cipher.PRF(
+				this.Context.MasterSecret, "server finished", hash.Hash, 12));
 		}
 
 		#endregion

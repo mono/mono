@@ -399,6 +399,16 @@ namespace Mono.Security.Protocol.Tls
 			}
 		}
 
+		public void PrintBuffer(string title, byte[] buffer)
+		{
+			Console.WriteLine("{0}\n", title);
+			for (int i = 0; i < buffer.Length; i++)
+			{
+				Console.Write(buffer[i].ToString("x2"));
+			}
+			Console.WriteLine("\n\n");
+		}
+
 		#endregion
 
 		#region Exception Methods

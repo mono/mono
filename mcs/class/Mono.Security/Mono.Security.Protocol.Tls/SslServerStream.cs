@@ -45,9 +45,6 @@ namespace Mono.Security.Protocol.Tls
 
 		#region Fields
 
-		private CertificateValidationCallback	clientCertValidationDelegate;
-		private PrivateKeySelectionCallback		privateKeySelectionDelegate;
-
 		private ServerRecordProtocol	protocol;
 		private BufferedStream			inputBuffer;
 		private ServerContext			context;
@@ -225,30 +222,14 @@ namespace Mono.Security.Protocol.Tls
 
 		public CertificateValidationCallback ClientCertValidationDelegate 
 		{
-			get { return this.clientCertValidationDelegate; }
-			set 
-			{ 
-				if (this.ClientCertValidation != null)
-				{
-					this.ClientCertValidation -= this.clientCertValidationDelegate;
-				}
-				this.clientCertValidationDelegate	= value;
-				this.ClientCertValidation			+= this.clientCertValidationDelegate;
-			}
+			get { return this.ClientCertValidation; }
+			set { this.ClientCertValidation = value; }
 		}
 
 		public PrivateKeySelectionCallback PrivateKeyCertSelectionDelegate 
 		{
-			get { return this.privateKeySelectionDelegate; }
-			set 
-			{ 
-				if (this.PrivateKeySelection != null)
-				{
-					this.PrivateKeySelection -= this.privateKeySelectionDelegate;
-				}
-				this.privateKeySelectionDelegate	= value;
-				this.PrivateKeySelection			+= this.privateKeySelectionDelegate;
-			}
+			get { return this.PrivateKeySelection; }
+			set { this.PrivateKeySelection = value; }
 		}
 
 		#endregion
@@ -348,13 +329,10 @@ namespace Mono.Security.Protocol.Tls
 							this.innerStream.Close();
 						}
 					}
-					this.ownsStream		= false;
-					this.innerStream	= null;
-					if (this.ClientCertValidation != null)
-					{
-						this.ClientCertValidation -= this.clientCertValidationDelegate;
-					}
-					this.clientCertValidationDelegate	= null;
+					this.ownsStream				= false;
+					this.innerStream			= null;
+					this.ClientCertValidation	= null;
+					this.PrivateKeySelection	= null;
 				}
 
 				this.disposed = true;
@@ -706,7 +684,7 @@ namespace Mono.Security.Protocol.Tls
 				{
 					this.protocol.ReceiveRecord();
 				}
-
+				
 				// Send ChangeCipherSpec and ServerFinished messages
 				this.protocol.SendChangeCipherSpec();
 

@@ -35,7 +35,7 @@ namespace Mono.Security.Protocol.Tls.Handshake.Server
 		#region Constructors
 
 		public TlsClientCertificateVerify(Context context, byte[] buffer)
-			: base(context, HandshakeType.Finished, buffer)
+			: base(context, HandshakeType.CertificateVerify, buffer)
 		{
 		}
 
