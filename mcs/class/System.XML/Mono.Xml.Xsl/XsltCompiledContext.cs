@@ -165,6 +165,22 @@ namespace Mono.Xml.Xsl {
 		public override int CompareDocument (string baseUri, string nextBaseUri) { throw new NotImplementedException (); }
 		public override bool PreserveWhitespace (XPathNavigator nav) { throw new NotImplementedException (); }
 		public override bool Whitespace { get { throw new NotImplementedException (); }}
+		public string BaseUri { get { return doc.BaseURI; }}
+		public XPathNavigator Stylesheet {
+			get {
+				XPathNavigator ret = doc.Clone ();
+				ret.MoveToRoot ();
+				return ret;
+			}
+		}
+		
+		public XPathNavigator GetDocument (Uri uri)
+		{
+			if (uri.ToString () == string.Empty)
+				return Stylesheet;
+			
+			return p.GetDocument (uri);
+		}
 	}
 
 
@@ -284,7 +300,59 @@ namespace Mono.Xml.Xsl.Functions {
 		
 		public override object Invoke (XsltCompiledContext xsltContext, object [] args, XPathNavigator docContext)
 		{
-			throw new NotImplementedException ();
+			string baseUri = null;
+			if (args.Length == 2) {
+				XPathNodeIterator it = (XPathNodeIterator) args [1];
+				if (it.MoveNext())
+					baseUri = it.Current.BaseURI;
+				else
+					baseUri = VoidBaseUriFlag;
+			}
+
+			if (args [0] is XPathNodeIterator)
+				return GetDocument (xsltContext, (XPathNodeIterator)args [0], baseUri);
+			else
+				return GetDocument (xsltContext, args [0].ToString (), baseUri);
+		}
+		
+		static string VoidBaseUriFlag = "&^)(*&%*^$&$VOID!BASE!URI!";
+		
+		Uri Resolve (string thisUri, string baseUri, XslTransformProcessor p)
+		{
+			Debug.WriteLine ("THIS: " + thisUri);
+			Debug.WriteLine ("BASE: " + baseUri);
+			XmlResolver r = p.Resolver;
+			
+			Uri uriBase = null;
+			if (! object.ReferenceEquals (baseUri, VoidBaseUriFlag))
+				uriBase = r.ResolveUri (null, baseUri);
+				
+			return r.ResolveUri (uriBase, thisUri);
+		}
+		
+		XPathNodeIterator GetDocument (XsltCompiledContext xsltContext, XPathNodeIterator itr, string baseUri)
+		{
+			ArrayList list = new ArrayList ();
+			Hashtable got = new Hashtable ();
+			
+			while (itr.MoveNext()) {
+				Uri uri = Resolve (itr.Current.Value, baseUri != null ? baseUri : itr.Current.BaseURI, xsltContext.Processor);
+				if (!got.ContainsKey (uri)) {
+					got.Add (uri, null);
+					list.Add (xsltContext.GetDocument (uri));
+				}
+			}
+			
+			return new EnumeratorIterator (list.GetEnumerator (), xsltContext);
+		}
+	
+		XPathNodeIterator GetDocument (XsltCompiledContext xsltContext, string arg0, string baseUri)
+		{
+			return new SelfIterator (
+				xsltContext.GetDocument (
+					Resolve (arg0, baseUri != null ? baseUri : xsltContext.BaseUri, xsltContext.Processor)
+				)
+			, null);
 		}
 	}
 	

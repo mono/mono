@@ -1,3 +1,8 @@
+2003-08-19 Ben Maurer  <bmaurer@users.sourceforge.net>
+
+	* XslTransformProcessor.cs: add support for resolving documents.
+	* XsltCompiledContext: add support for document () function.
+
 2003-08-18 Ben Maurer  <bmaurer@users.sourceforge.net>
 
 	* System.Xml.dll.sources: add files from Oleg.

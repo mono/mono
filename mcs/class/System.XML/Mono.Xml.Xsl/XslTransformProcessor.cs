@@ -66,6 +66,29 @@ namespace Mono.Xml.Xsl {
 		
 		#region Document Resolution
 		public XmlResolver Resolver {get{return resolver;}}
+		
+		Hashtable docCache;
+		
+		public XPathNavigator GetDocument (Uri uri)
+		{
+			XPathNavigator result;
+			
+			if (docCache != null) {
+				result = docCache [uri] as XPathNavigator;
+				if (result != null)
+					return result.Clone();
+			} else {
+				docCache = new Hashtable();
+			}
+
+			XmlReader rdr = new XmlTextReader (uri.ToString(), (Stream) resolver.GetEntity (uri, null, null));
+			result = new XPathDocument (rdr).CreateNavigator ();
+			rdr.Close ();
+			
+			docCache [uri] = result.Clone ();
+			return result;
+		}
+		
 		#endregion
 		
 		#region Output
