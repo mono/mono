@@ -86,7 +86,7 @@ namespace Mono.Xml.XPath2
 		internal void ProcessMessageEvent (object sender, QueryEventArgs e)
 		{
 			// FIXME: how to handle event raise method?
-			throw new NotImplementedException ().
+			throw new NotImplementedException ();
 			/*
 			MethodInfo mi = GetEventHandler (xqueryCommand);
 			if (mi != null)

@@ -1,5 +1,9 @@
 2004-08-30  Atsushi Enomoto <atsushi@ximian.com>
 
+	* XQueryCommandImpl.cs : dust cleaning :(
+
+2004-08-30  Atsushi Enomoto <atsushi@ximian.com>
+
 	* XQueryASTCompiler.cs, XQueryStaticContext.cs :
 	  Now it requires Evidence and XQueryCommandImpl for security check 
 	  and event dispatch.
