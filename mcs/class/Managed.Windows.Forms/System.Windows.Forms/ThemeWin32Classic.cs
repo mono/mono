@@ -25,9 +25,12 @@
 //
 //
 //
-// $Revision: 1.16 $
+// $Revision: 1.17 $
 // $Modtime: $
 // $Log: ThemeWin32Classic.cs,v $
+// Revision 1.17  2004/08/11 01:31:35  jackson
+// Create Brushes as little as possible
+//
 // Revision 1.16  2004/08/10 19:21:27  jordi
 // scrollbar enhancements and standarize on win colors defaults
 //
@@ -97,8 +100,10 @@ namespace System.Windows.Forms
 		static private SolidBrush br_buttonface;
 		static private SolidBrush br_buttonshadow;
 		static private SolidBrush br_buttondkshadow;
-		static private SolidBrush br_buttonhilight;		
-		static private SolidBrush br_buttonlight;
+		static private SolidBrush br_buttonhilight;
+		static private SolidBrush br_buttontext;
+		static private SolidBrush br_menutext;
+
 		static private Pen pen_buttonshadow;
 		static private Pen pen_buttondkshadow;
 		static private Pen pen_buttonhilight;
@@ -128,7 +133,7 @@ namespace System.Windows.Forms
 			br_buttonshadow = new SolidBrush (ColorButtonShadow);
 			br_buttondkshadow = new SolidBrush (ColorButtonDkShadow);
 			br_buttonhilight = new SolidBrush (ColorButtonHilight);
-			br_buttonlight = new SolidBrush (ColorButtonLight);
+			br_buttontext = new SolidBrush (ColorButtonText);
 			pen_buttonshadow = new Pen (ColorButtonShadow);
 			pen_buttondkshadow = new Pen (ColorButtonDkShadow);
 			pen_buttonhilight = new Pen (ColorButtonHilight);
@@ -199,7 +204,7 @@ namespace System.Windows.Forms
 		}
 
 		public Color ColorButtonFace{
-			get {return Color.FromArgb (255, 192, 192, 192);}
+			get {return Color.FromKnownColor (KnownColor.Control);}
 		}
 
 		public Color ColorButtonShadow{
@@ -211,7 +216,7 @@ namespace System.Windows.Forms
 		}
 
 		public Color ColorButtonText{
-			get {return Color.FromArgb (255, 0, 0, 0);}
+			get {return Color.FromKnownColor (KnownColor.ControlText);}
 		}
 
 		public Color ColorInactiveTitleText{
@@ -636,7 +641,7 @@ namespace System.Windows.Forms
 
 		public void DrawContainerGrabHandle (Graphics graphics, Rectangle bounds)
 		{
-			SolidBrush	sb		= new SolidBrush(Color.White);
+			SolidBrush	sb		= br_buttontext;
 			Pen			pen	= new Pen(Color.Black, 1);
 			Rectangle	rect	= new Rectangle(bounds.X, bounds.Y, bounds.Width-1, bounds.Height-1);	// Dunno why, but MS does it that way, too
 			int			X;
@@ -692,16 +697,16 @@ namespace System.Windows.Forms
 			if (primary==true) {
 				pen=new Pen(Color.Black, 1);
 				if (enabled==true) {
-					sb=new SolidBrush(Color.White);
+					sb=br_buttontext;
 				} else {
-					sb=new SolidBrush(SystemColors.Control);
+					sb=br_buttonface;
 				}
 			} else {
 				pen=new Pen(Color.White, 1);
 				if (enabled==true) {
 					sb=new SolidBrush(Color.Black);
 				} else {
-					sb=new SolidBrush(SystemColors.Control);
+					sb=br_buttonface;
 				}
 			}
 			graphics.FillRectangle(sb, rectangle);
@@ -826,7 +831,7 @@ namespace System.Windows.Forms
 			int			lineWidth;
 
 			// MS seems to draw the background white
-			graphics.FillRectangle(new SolidBrush(Color.White), rectangle);
+			graphics.FillRectangle(br_buttontext, rectangle);
 
 			switch(glyph) {
 				case MenuGlyph.Arrow: {
@@ -867,7 +872,7 @@ namespace System.Windows.Forms
 					lineWidth=Math.Max(2, rectangle.Width/3);
 					rect=new Rectangle(rectangle.X+lineWidth, rectangle.Y+lineWidth, rectangle.Width-lineWidth*2, rectangle.Height-lineWidth*2);
 
-					sb=new SolidBrush(SystemColors.MenuText);
+					sb=br_buttontext;
 					graphics.FillEllipse(sb, rect);
 					sb.Dispose();
 					return;
@@ -1464,10 +1469,10 @@ namespace System.Windows.Forms
 
 		{
 			if (label_br_fore_color == null || label_br_fore_color.Color != fore_color) 
-				label_br_fore_color = new SolidBrush (fore_color);
+				label_br_fore_color = GetControlForeBrush (fore_color);
 
 			if (label_br_back_color == null || label_br_back_color.Color != back_color) 
-				label_br_back_color = new SolidBrush (back_color);
+				label_br_back_color = GetControlBackBrush (back_color);
 
 			dc.FillRectangle (label_br_back_color, area);
 			
@@ -1486,12 +1491,12 @@ namespace System.Windows.Forms
 			int horz_border = 2;
 			int vert_border = 2;
 
-			// Background
-			dc.FillRectangle (new SolidBrush (sb.BackColor), area);
+			dc.FillRectangle (GetControlBackBrush (sb.BackColor), area);
 			
 			if (sb.ShowPanels && sb.Panels.Count == 0) {
 				// Create a default panel.
-				SolidBrush br_forecolor = new SolidBrush (sb.ForeColor);
+				SolidBrush br_forecolor = GetControlForeBrush (sb.ForeColor);
+				
 				StatusBarPanel panel = new StatusBarPanel ();
 				Rectangle new_area = new Rectangle (area.X + horz_border,
 						area.Y + horz_border,
@@ -1499,7 +1504,7 @@ namespace System.Windows.Forms
 						area.Height - horz_border);
 				DrawStatusBarPanel (dc, new_area, br_forecolor, panel);
 			} else if (sb.ShowPanels) {
-				SolidBrush br_forecolor = new SolidBrush (sb.ForeColor);
+				SolidBrush br_forecolor = GetControlForeBrush (sb.ForeColor);
 				int prev_x = area.X + horz_border;
 				int y = area.Y + vert_border;
 				for (int i = 0; i < sb.Panels.Count; i++) {
@@ -1572,7 +1577,7 @@ namespace System.Windows.Forms
 				return;
 			}
 
-			e.Graphics.FillRectangle (new SolidBrush (e.BackColor), e.Bounds);
+			e.Graphics.FillRectangle (GetControlBackBrush (e.BackColor), e.Bounds);
 		}
 
 		public void DrawOwnerDrawFocusRectangle (DrawItemEventArgs e)
@@ -2064,6 +2069,20 @@ namespace System.Windows.Forms
 				break;
 			}
 			
+		}
+
+		private SolidBrush GetControlBackBrush (Color c)
+		{
+			if (c == DefaultControlBackColor)
+				return br_buttonface;
+			return new SolidBrush (c);
+		}
+
+		private SolidBrush GetControlForeBrush (Color c)
+		{
+			if (c == DefaultControlForeColor)
+				return br_buttontext;
+			return new SolidBrush (c);
 		}
 
 	} //class
