@@ -37,7 +37,7 @@ using System.Xml.Schema;
 
 namespace System.Xml
 {
-	public sealed class XmlReaderSettings : ICloneable
+	public class XmlReaderSettings
 	{
 		private bool checkCharacters;
 		private bool closeInput;
@@ -90,11 +90,6 @@ namespace System.Xml
 		public XmlReaderSettings Clone ()
 		{
 			return new XmlReaderSettings (this);
-		}
-
-		object ICloneable.Clone ()
-		{
-			return this.Clone ();
 		}
 
 		public void Reset ()

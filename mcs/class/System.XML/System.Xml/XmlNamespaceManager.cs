@@ -131,6 +131,7 @@ namespace System.Xml
 		}
 
 #if NET_2_0
+		[Obsolete]
 		public virtual void AddNamespace (string prefix, string uri, bool atomizedNames)
 #else
 		internal virtual void AddNamespace (string prefix, string uri, bool atomizedNames)
@@ -248,6 +249,7 @@ namespace System.Xml
 		}
 		
 #if NET_2_0
+		[Obsolete]
 		public virtual bool HasNamespace (string prefix, bool atomizedNames)
 #else
 		internal virtual bool HasNamespace (string prefix, bool atomizedNames)
@@ -274,6 +276,7 @@ namespace System.Xml
 		}
 
 #if NET_2_0
+		[Obsolete]
 		public virtual string LookupNamespace (string prefix, bool atomizedNames)
 #else
 		string IXmlNamespaceResolver.LookupNamespace (string prefix, bool atomizedNames)
@@ -321,6 +324,7 @@ namespace System.Xml
 		}
 
 #if NET_2_0
+		[Obsolete]
 		public string LookupPrefix (string uri, bool atomizedName)
 #else
 		string IXmlNamespaceResolver.LookupPrefix (string uri, bool atomizedName)
@@ -386,6 +390,7 @@ namespace System.Xml
 		}
 
 #if NET_2_0
+		[Obsolete]
 		public virtual void RemoveNamespace (string prefix, string uri, bool atomizedNames)
 #else
 		internal virtual void RemoveNamespace (string prefix, string uri, bool atomizedNames)

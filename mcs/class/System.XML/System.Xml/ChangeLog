@@ -1,5 +1,16 @@
 2004-10-28  Atsushi Enomoto <atsushi@ximian.com>
 
+	* IXmlDataEvidence.cs : disappeared.
+	* XmlConvertDateTimeSerializationMode.cs : incorrect filename. removed.
+	* XmlDateTimeSerializationMode.cs : added
+	* NewLineHandling.cs : added
+	* IXmlNamespaceResolver.cs, XmlNamespaceManager.cs :
+	  now 'atomizedNames' is obsolete.
+	* XmlReaderSettings.cs, XmlWriterSettings.cs :
+	  Should not be sealed. Should not be ICloneable.
+
+2004-10-28  Atsushi Enomoto <atsushi@ximian.com>
+
 	* XmlDocument.cs : XPathEditableDocument looks broken. Just reverted
 	  to fix 2.0 corcompare.
 

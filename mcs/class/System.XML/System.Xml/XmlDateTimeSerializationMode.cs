@@ -1,5 +1,5 @@
 //
-// XmlConvertDateTimeOption.cs
+// XmlDateTimeSerializationMode.cs
 //
 // Author:
 //	Atsushi Enomoto <atsushi@ximian.com>
@@ -30,7 +30,7 @@
 
 namespace System.Xml {
 
-	public enum XmlConvertDateTimeOption {
+	public enum XmlDateTimeSerializationMode {
 
 		Local = 0,
 

@@ -37,9 +37,7 @@ using System.Xml.Schema;
 
 namespace System.Xml
 {
-	// FIXME: this class SHOULD have QuoteChar property
-	// (feedback has done against Microsoft).
-	public sealed class XmlWriterSettings : ICloneable
+	public class XmlWriterSettings
 	{
 		private bool checkCharacters;
 		private bool closeOutput;
@@ -74,11 +72,6 @@ namespace System.Xml
 		public XmlWriterSettings Clone ()
 		{
 			return new XmlWriterSettings (this);
-		}
-
-		object ICloneable.Clone ()
-		{
-			return this.Clone ();
 		}
 
 		public void Reset ()

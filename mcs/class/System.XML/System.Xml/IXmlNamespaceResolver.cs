@@ -39,16 +39,19 @@ namespace System.Xml
 	internal interface IXmlNamespaceResolver
 #endif
 	{
+		[Obsolete]
 		XmlNameTable NameTable { get; } 
 
 		IDictionary GetNamespacesInScope (XmlNamespaceScope scope);
 
 		string LookupNamespace (string prefix);  
 
+		[Obsolete]
 		string LookupNamespace (string prefix, bool atomizedName);  
 
 		string LookupPrefix (string ns);  
 
+		[Obsolete]
 		string LookupPrefix (string ns, bool atomizedName);  
 	}
 }

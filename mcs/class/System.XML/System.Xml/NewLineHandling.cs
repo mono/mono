@@ -1,8 +1,8 @@
 //
-// IXmlDataEvidence.cs
+// NewLineHandling.cs
 //
 // Author:
-//	Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
+//	Atsushi Enomoto <atsushi@ximian.com>
 //
 
 //
@@ -26,16 +26,13 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 #if NET_2_0
-
-using System;
-using System.Security.Policy;
-
 namespace System.Xml
 {
-
-	public interface IXmlDataEvidence
+	public enum NewLineHandling
 	{
-		Evidence Evidence { get; } 
+		Replace,
+		Entitize,
+		None
 	}
 }
 #endif
