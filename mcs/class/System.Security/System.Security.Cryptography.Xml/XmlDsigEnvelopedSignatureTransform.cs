@@ -22,6 +22,7 @@ namespace System.Security.Cryptography.Xml {
 
 		public XmlDsigEnvelopedSignatureTransform () 
 		{
+			Algorithm = "http://www.w3.org/2000/09/xmldsig#enveloped-signature";
 			comments = false;
 		}
 

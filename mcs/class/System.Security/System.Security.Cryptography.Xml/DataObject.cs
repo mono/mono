@@ -8,7 +8,6 @@
 // (C) 2002, 2003 Motus Technologies Inc. (http://www.motus.com)
 //
 
-using System.Text;
 using System.Xml;
 
 namespace System.Security.Cryptography.Xml {
@@ -21,11 +20,9 @@ namespace System.Security.Cryptography.Xml {
 		private string id;
 		private string mimeType;
 		private string encoding;
-		private XmlDocument doc;
+		private XmlDocument document;
 
-		static private string xmldsig = "http://www.w3.org/2000/09/xmldsig#";
-
-		public DataObject () 
+		public DataObject ()
 		{
 			Build (null, null, null, null);
 		}
@@ -38,43 +35,34 @@ namespace System.Security.Cryptography.Xml {
 			Build (id, mimeType, encoding, data);
 		}
 
+		// this one accept a null "data" parameter
 		private void Build (string id, string mimeType, string encoding, XmlElement data) 
 		{
-			StringBuilder sb = new StringBuilder ();
-			sb.Append ("<Object ");
+			document = new XmlDocument ();
+			XmlElement xel = document.CreateElement (XmlSignature.ElementNames.Object, XmlSignature.NamespaceURI);
 			if (id != null) {
 				this.id = id;
-				sb.Append ("Id=\"");
-				sb.Append (id);
-				sb.Append ("\" ");
+				xel.SetAttribute (XmlSignature.AttributeNames.Id, id);
 			}
 			if (mimeType != null) {
 				this.mimeType = mimeType;
-				sb.Append ("MimeType=\"");
-				sb.Append (mimeType);
-				sb.Append ("\" ");
+				xel.SetAttribute (XmlSignature.AttributeNames.MimeType, mimeType);
 			}
 			if (encoding != null) {
 				this.encoding = encoding;
-				sb.Append ("Encoding=\"");
-				sb.Append (encoding);
-				sb.Append ("\" ");
+				xel.SetAttribute (XmlSignature.AttributeNames.Encoding, encoding);
 			}
-			sb.Append ("xmlns=\"http://www.w3.org/2000/09/xmldsig#\" />");
-			
-			doc = new XmlDocument ();
-			doc.LoadXml (sb.ToString ());
 			if (data != null) {
-				XmlNodeList xnl = doc.GetElementsByTagName ("Object");
-				XmlNode newNode = doc.ImportNode (data, true);
-				xnl[0].AppendChild (newNode);
+				XmlNode newNode = document.ImportNode (data, true);
+				xel.AppendChild (newNode);
 			}
+			document.AppendChild (xel);
 		}
 
 		// why is data a XmlNodeList instead of a XmlElement ?
 		public XmlNodeList Data {
 			get { 
-				XmlNodeList xnl = doc.GetElementsByTagName ("Object");
+				XmlNodeList xnl = document.GetElementsByTagName (XmlSignature.ElementNames.Object);
 				return xnl[0].ChildNodes;
 			}
 			set {
@@ -82,11 +70,11 @@ namespace System.Security.Cryptography.Xml {
 					throw new ArgumentNullException ("value");
 
 				Build (id, mimeType, encoding, null);
-				XmlNodeList xnl = doc.GetElementsByTagName ("Object");
+				XmlNodeList xnl = document.GetElementsByTagName (XmlSignature.ElementNames.Object);
 				if ((xnl != null) && (xnl.Count > 0)) {
 					foreach (XmlNode xn in value) {
-						XmlNode newNode = doc.ImportNode (xn, true);
-						xnl[0].AppendChild (newNode);
+						XmlNode newNode = document.ImportNode (xn, true);
+						xnl [0].AppendChild (newNode);
 					}
 				}
 			}
@@ -112,30 +100,30 @@ namespace System.Security.Cryptography.Xml {
 
 		public XmlElement GetXml () 
 		{
-			if ((doc.DocumentElement.LocalName == "Object") && (doc.DocumentElement.NamespaceURI == xmldsig)) {
+			if ((document.DocumentElement.LocalName == XmlSignature.ElementNames.Object) && (document.DocumentElement.NamespaceURI == XmlSignature.NamespaceURI)) {
 				// recreate all attributes in order
 				XmlAttribute xa = null;
-				doc.DocumentElement.Attributes.RemoveAll ();
+				document.DocumentElement.Attributes.RemoveAll ();
 				if (id != null) {
-					xa = doc.CreateAttribute ("Id");
+					xa = document.CreateAttribute (XmlSignature.AttributeNames.Id);
 					xa.Value = id;
-					doc.DocumentElement.Attributes.Append (xa);
+					document.DocumentElement.Attributes.Append (xa);
 				}
 				if (mimeType != null) {
-					xa = doc.CreateAttribute ("MimeType");
+					xa = document.CreateAttribute (XmlSignature.AttributeNames.MimeType);
 					xa.Value = mimeType;
-					doc.DocumentElement.Attributes.Append (xa);
+					document.DocumentElement.Attributes.Append (xa);
 				}
 				if (encoding != null) {
-					xa = doc.CreateAttribute ("Encoding");
+					xa = document.CreateAttribute (XmlSignature.AttributeNames.Encoding);
 					xa.Value = encoding;
-					doc.DocumentElement.Attributes.Append (xa);
+					document.DocumentElement.Attributes.Append (xa);
 				}
-				xa = doc.CreateAttribute ("xmlns");
-				xa.Value = xmldsig;
-				doc.DocumentElement.Attributes.Append (xa);
+				xa = document.CreateAttribute ("xmlns");
+				xa.Value = XmlSignature.NamespaceURI;
+				document.DocumentElement.Attributes.Append (xa);
 			}
-			return doc.DocumentElement;
+			return document.DocumentElement;
 		}
 
 		public void LoadXml (XmlElement value) 
@@ -143,17 +131,18 @@ namespace System.Security.Cryptography.Xml {
 			if (value == null)
 				throw new ArgumentNullException ("value");
 
-			if ((value.LocalName == "Object") && (value.NamespaceURI == xmldsig)) {
-				doc.LoadXml (value.OuterXml);
-				XmlAttribute xa = value.Attributes ["Id"];
+			if ((value.LocalName != XmlSignature.ElementNames.Object) || (value.NamespaceURI != XmlSignature.NamespaceURI)) {
+				document.LoadXml (value.OuterXml);
+			}
+			else {
+				document.LoadXml (value.OuterXml);
+				XmlAttribute xa = value.Attributes [XmlSignature.AttributeNames.Id];
 				id = ((xa != null) ? xa.InnerText : null);
-				xa = value.Attributes ["MimeType"];
+				xa = value.Attributes [XmlSignature.AttributeNames.MimeType];
 				mimeType = ((xa != null) ? xa.InnerText : null);
-				xa = value.Attributes ["Encoding"];
+				xa = value.Attributes [XmlSignature.AttributeNames.Encoding];
 				encoding = ((xa != null) ? xa.InnerText : null);
 			}
-			else
-				doc.LoadXml (value.OuterXml);
 		}
 	}
 }

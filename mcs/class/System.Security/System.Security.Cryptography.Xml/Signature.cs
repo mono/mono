@@ -9,14 +9,11 @@
 
 using System.Collections;
 using System.Security.Cryptography;
-using System.Text;
 using System.Xml;
 
 namespace System.Security.Cryptography.Xml {
 
 	public class Signature {
-
-		static private string xmldsig = "http://www.w3.org/2000/09/xmldsig#";
 
 		private ArrayList list;
 		private SignedInfo info;
@@ -66,51 +63,36 @@ namespace System.Security.Cryptography.Xml {
 			if (signature == null)
 				throw new CryptographicException ("SignatureValue");
 
-			StringBuilder sb = new StringBuilder ();
-			sb.Append ("<Signature");
-			if (id != null) {
-				sb.Append (" Id = \"");
-				sb.Append (id);
-				sb.Append ("\"");
-			}
-			sb.Append (" xmlns=\"");
-			sb.Append (xmldsig);
-			sb.Append ("\" />");
+			XmlDocument document = new XmlDocument ();
+			XmlElement xel = document.CreateElement (XmlSignature.ElementNames.Signature, XmlSignature.NamespaceURI);
+			if (id != null)
+				xel.SetAttribute (XmlSignature.AttributeNames.Id, id);
 
-			XmlDocument doc = new XmlDocument ();
-			doc.LoadXml (sb.ToString ());
-
-			XmlNode xn = null;
-			XmlNode newNode = null;
-
-			if (info != null) {
-				// this adds the xmlns=xmldsig
-				xn = info.GetXml ();
-				newNode = doc.ImportNode (xn, true);
-				doc.DocumentElement.AppendChild (newNode);
-			}
+			XmlNode xn = info.GetXml ();
+			XmlNode newNode = document.ImportNode (xn, true);
+			xel.AppendChild (newNode);
 
 			if (signature != null) {
-				XmlElement sv = doc.CreateElement ("SignatureValue", xmldsig);
+				XmlElement sv = document.CreateElement (XmlSignature.ElementNames.SignatureValue, XmlSignature.NamespaceURI);
 				sv.InnerText = Convert.ToBase64String (signature);
-				doc.DocumentElement.AppendChild (sv);
+				xel.AppendChild (sv);
 			}
 
 			if (key != null) {
 				xn = key.GetXml ();
-				newNode = doc.ImportNode (xn, true);
-				doc.DocumentElement.AppendChild (newNode);
+				newNode = document.ImportNode (xn, true);
+				xel.AppendChild (newNode);
 			}
 
 			if (list.Count > 0) {
 				foreach (DataObject obj in list) {
 					xn = obj.GetXml ();
-					newNode = doc.ImportNode (xn, true);
-					doc.DocumentElement.AppendChild (newNode);
+					newNode = document.ImportNode (xn, true);
+					xel.AppendChild (newNode);
 				}
 			}
 
-			return doc.DocumentElement;
+			return xel;
 		}
 
 		private string GetAttribute (XmlElement xel, string attribute) 
@@ -124,27 +106,27 @@ namespace System.Security.Cryptography.Xml {
 			if (value == null)
 				throw new ArgumentNullException ("value");
 
-			if ((value.LocalName == "Signature") && (value.NamespaceURI == xmldsig)) {
-				id = GetAttribute (value, "Id");
+			if ((value.LocalName == XmlSignature.ElementNames.Signature) && (value.NamespaceURI == XmlSignature.NamespaceURI)) {
+				id = GetAttribute (value, XmlSignature.AttributeNames.Id);
 
-				XmlNodeList xnl = value.GetElementsByTagName ("SignedInfo");
+				XmlNodeList xnl = value.GetElementsByTagName (XmlSignature.ElementNames.SignedInfo);
 				if ((xnl != null) && (xnl.Count == 1)) {
 					info = new SignedInfo ();
 					info.LoadXml ((XmlElement) xnl[0]);
 				}
 
-				xnl = value.GetElementsByTagName ("SignatureValue");
+				xnl = value.GetElementsByTagName (XmlSignature.ElementNames.SignatureValue);
 				if ((xnl != null) && (xnl.Count == 1)) {
 					signature = Convert.FromBase64String (xnl[0].InnerText);
 				}
 
-				xnl = value.GetElementsByTagName ("KeyInfo");
+				xnl = value.GetElementsByTagName (XmlSignature.ElementNames.KeyInfo);
 				if ((xnl != null) && (xnl.Count == 1)) {
 					key = new KeyInfo ();
 					key.LoadXml ((XmlElement) xnl[0]);
 				}
 
-				xnl = value.GetElementsByTagName ("Object");
+				xnl = value.GetElementsByTagName (XmlSignature.ElementNames.Object);
 				if ((xnl != null) && (xnl.Count > 0)) {
 					foreach (XmlNode xn in xnl) {
 						DataObject obj = new DataObject ();

@@ -8,14 +8,11 @@
 //
 
 using System.Collections;
-using System.Text;
 using System.Xml;
 
 namespace System.Security.Cryptography.Xml { 
 
 	public class SignedInfo : ICollection, IEnumerable {
-
-		static private string xmldsig = "http://www.w3.org/2000/09/xmldsig#";
 
 		private ArrayList references;
 		private string c14nMethod;
@@ -96,47 +93,36 @@ namespace System.Security.Cryptography.Xml {
 			if (references.Count == 0)
 				throw new CryptographicException ("References empty");
 
-			StringBuilder sb = new StringBuilder ();
-			sb.Append ("<SignedInfo");
-			if (id != null) {
-				sb.Append (" Id=\"");
-				sb.Append (id);
-				sb.Append ("\"");
-			}
-			sb.Append (" xmlns=\"");
-			sb.Append (xmldsig);
-			sb.Append ("\">");
+			XmlDocument document = new XmlDocument ();
+			XmlElement xel = document.CreateElement (XmlSignature.ElementNames.SignedInfo, XmlSignature.NamespaceURI);
+			if (id != null)
+				xel.SetAttribute (XmlSignature.AttributeNames.Id, id);
+
 			if (c14nMethod != null) {
-				sb.Append ("<CanonicalizationMethod Algorithm=\"");
-				sb.Append (c14nMethod);
-				sb.Append ("\" />");
+				XmlElement c14n = document.CreateElement (XmlSignature.ElementNames.CanonicalizationMethod, XmlSignature.NamespaceURI);
+				c14n.SetAttribute (XmlSignature.AttributeNames.Algorithm, c14nMethod);
+				xel.AppendChild (c14n);
 			}
 			if (signatureMethod != null) {
-				sb.Append ("<SignatureMethod Algorithm=\"");
-				sb.Append (signatureMethod);
+				XmlElement sm = document.CreateElement (XmlSignature.ElementNames.SignatureMethod, XmlSignature.NamespaceURI);
+				sm.SetAttribute (XmlSignature.AttributeNames.Algorithm, signatureMethod);
 				if (signatureLength != null) {
-					sb.Append ("\">");
-					sb.Append ("<HMACOutputLength>");
-					sb.Append (signatureLength);
-					sb.Append ("</HMACOutputLength>");
-					sb.Append ("</SignatureMethod>");
+					XmlElement hmac = document.CreateElement (XmlSignature.ElementNames.HMACOutputLength, XmlSignature.NamespaceURI);
+					hmac.InnerText = signatureLength;
+					sm.AppendChild (hmac);
 				}
-				else
-					sb.Append ("\" />");
+				xel.AppendChild (sm);
 			}
-			sb.Append ("</SignedInfo>");
 
-			XmlDocument doc = new XmlDocument ();
-			doc.LoadXml (sb.ToString ());
 			// we add References afterward so we don't end up with extraneous
 			// xmlns="..." in each reference elements.
 			foreach (Reference r in references) {
 				XmlNode xn = r.GetXml ();
-				XmlNode newNode = doc.ImportNode (xn, true);
-				doc.DocumentElement.AppendChild (newNode);
+				XmlNode newNode = document.ImportNode (xn, true);
+				xel.AppendChild (newNode);
 			}
 
-			return doc.DocumentElement;
+			return xel;
 		}
 
 		private string GetAttributeFromElement (XmlElement xel, string attribute, string element) 
@@ -163,20 +149,19 @@ namespace System.Security.Cryptography.Xml {
 			if (value == null)
 				throw new ArgumentNullException ("value");
 
-			if ((value.LocalName == "SignedInfo") && (value.NamespaceURI == xmldsig)) {
-				id = GetAttribute (value, "Id");
-				c14nMethod = GetAttributeFromElement (value, "Algorithm", "CanonicalizationMethod");
-				signatureMethod = GetAttributeFromElement (value, "Algorithm", "SignatureMethod");
-				// TODO signatureLength for HMAC
-				XmlNodeList xnl = value.GetElementsByTagName ("Reference");
-				foreach (XmlNode xn in xnl) {
-					Reference r = new Reference ();
-					r.LoadXml ((XmlElement) xn);
-					AddReference (r);
-				}
-			}
-			else
+			if ((value.LocalName != XmlSignature.ElementNames.SignedInfo) || (value.NamespaceURI != XmlSignature.NamespaceURI))
 				throw new CryptographicException ();
+
+			id = GetAttribute (value, XmlSignature.AttributeNames.Id);
+			c14nMethod = GetAttributeFromElement (value, XmlSignature.AttributeNames.Algorithm, XmlSignature.ElementNames.CanonicalizationMethod);
+			signatureMethod = GetAttributeFromElement (value, XmlSignature.AttributeNames.Algorithm, XmlSignature.ElementNames.SignatureMethod);
+			// TODO signatureLength for HMAC
+			XmlNodeList xnl = value.GetElementsByTagName (XmlSignature.ElementNames.Reference);
+			foreach (XmlNode xn in xnl) {
+				Reference r = new Reference ();
+				r.LoadXml ((XmlElement) xn);
+				AddReference (r);
+			}
 		}
 	}
 }

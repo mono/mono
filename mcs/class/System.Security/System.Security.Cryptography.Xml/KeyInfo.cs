@@ -8,14 +8,11 @@
 //
 
 using System.Collections;
-using System.Text;
 using System.Xml;
 
 namespace System.Security.Cryptography.Xml {
 
 	public class KeyInfo : IEnumerable {
-
-		static private string xmldsig = "http://www.w3.org/2000/09/xmldsig#";
 
 		private ArrayList Info;
 		private string id;
@@ -62,21 +59,16 @@ namespace System.Security.Cryptography.Xml {
 
 		public XmlElement GetXml () 
 		{
-			StringBuilder sb = new StringBuilder ();
-			sb.Append ("<KeyInfo xmlns=\"");
-			sb.Append (xmldsig);
-			sb.Append ("\" />");
-
-			XmlDocument doc = new XmlDocument ();
-			doc.LoadXml (sb.ToString ());
+			XmlDocument document = new XmlDocument ();
+			XmlElement xel = document.CreateElement (XmlSignature.ElementNames.KeyInfo, XmlSignature.NamespaceURI);
 			// we add References afterward so we don't end up with extraneous
 			// xmlns="..." in each reference elements.
 			foreach (KeyInfoClause kic in Info) {
 				XmlNode xn = kic.GetXml ();
-				XmlNode newNode = doc.ImportNode (xn, true);
-				doc.DocumentElement.AppendChild (newNode);
+				XmlNode newNode = document.ImportNode (xn, true);
+				xel.AppendChild (newNode);
 			}
-			return doc.DocumentElement;
+			return xel;
 		}
 
 		public void LoadXml (XmlElement value) 
@@ -84,41 +76,41 @@ namespace System.Security.Cryptography.Xml {
 			if (value == null)
 				throw new ArgumentNullException ("value");
 
-			if ((value.LocalName == "KeyInfo") && (value.NamespaceURI == xmldsig)) {
+			if ((value.LocalName == XmlSignature.ElementNames.KeyInfo) && (value.NamespaceURI == XmlSignature.NamespaceURI)) {
 				foreach (XmlNode n in value.ChildNodes) {
 					KeyInfoClause kic = null;
 					if (n is XmlWhitespace)
 						continue;
 
 					switch (n.LocalName) {
-					case "KeyValue":
+					case XmlSignature.ElementNames.KeyValue:
 						XmlNodeList xnl = n.ChildNodes;
 						if (xnl.Count > 0) {
 							// we must now treat the whitespace !
 							foreach (XmlNode m in xnl) {
 								switch (m.LocalName) {
-								case "DSAKeyValue":
+								case XmlSignature.ElementNames.DSAKeyValue:
 									kic = (KeyInfoClause) new DSAKeyValue ();
 									break;
-								case "RSAKeyValue":
+								case XmlSignature.ElementNames.RSAKeyValue:
 									kic = (KeyInfoClause) new RSAKeyValue ();
 									break;
 								}
 							}
 						}
 						break;
-					case "KeyName":
+					case XmlSignature.ElementNames.KeyName:
 						kic = (KeyInfoClause) new KeyInfoName ();
 						break;
-					case "RetrievalMethod":
+					case XmlSignature.ElementNames.RetrievalMethod:
 						kic = (KeyInfoClause) new KeyInfoRetrievalMethod ();
 						break;
-					case "X509Data":
+					case XmlSignature.ElementNames.X509Data:
 						kic = (KeyInfoClause) new KeyInfoX509Data ();
 						break;
-					case "RSAKeyValue":
+/*					case XmlSignature.ElementNames.RSAKeyValue:
 						kic = (KeyInfoClause) new RSAKeyValue ();
-						break;
+						break;*/
 					default:
 						kic = (KeyInfoClause) new KeyInfoNode ();
 						break;

@@ -1,3 +1,24 @@
+2003-03-02  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* DSAKeyValue.cs: New XML generation is commented. Old string technique
+	did a better job to match MS implementation.
+	* DataObject.cs: Replaced XML generation from StringBuilder to XmlElement.
+	* KeyInfo.cs: Replaced XML generation from StringBuilder to XmlElement.
+	* KeyInfoName.cs: Replaced XML generation from StringBuilder to XmlElement.
+	* KeyInfoNode.cs: Replaced XML generation from StringBuilder to XmlElement.
+	* KeyInfoRetrievalMethod.cs: Replaced XML generation from StringBuilder to XmlElement.
+	* KeyInfoX509Data.cs: Replaced XML generation from StringBuilder to XmlElement.
+	* RSAKeyValue.cs: New XML generation is commented. Old string technique
+	did a better job to match MS implementation.
+	* Reference.cs: Replaced XML generation from StringBuilder to XmlElement.
+	* Signature.cs: Replaced XML generation from StringBuilder to XmlElement.
+	* SignedInfo.cs: Replaced XML generation from StringBuilder to XmlElement.
+	* SignedXml.cs: Replaced XML generation from StringBuilder to XmlElement.
+	* Transform.cs: Replaced XML generation from StringBuilder to XmlElement.
+	* XmlDsigEnvelopedSignatureTransform.cs: Added missing Algorithm URL.
+	* XmlDsigXPathTransform.cs: Added missing Algorithm URL.
+	* XmlSignature.cs: New. Private contants (construct similar to WSE).
+
 2003-02-19  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* All: Corrected class indentation, minor fixes, added many MonoTODO (so class status

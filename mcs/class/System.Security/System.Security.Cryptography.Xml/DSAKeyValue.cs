@@ -15,7 +15,6 @@ namespace System.Security.Cryptography.Xml {
 
 	public class DSAKeyValue : KeyInfoClause {
 
-		static private string xmldsig = "http://www.w3.org/2000/09/xmldsig#";
 		private DSA dsa;
 
 		public DSAKeyValue () 
@@ -36,16 +35,14 @@ namespace System.Security.Cryptography.Xml {
 
 		public override XmlElement GetXml () 
 		{
-			StringBuilder sb = new StringBuilder ();
-			sb.Append ("<KeyValue xmlns=\"");
-			sb.Append (xmldsig);
-			sb.Append ("\">");
-			sb.Append (dsa.ToXmlString (false));
-			sb.Append ("</KeyValue>");
+			XmlDocument document = new XmlDocument ();
+			document.LoadXml ("<KeyValue xmlns=\"" + XmlSignature.NamespaceURI + "\">" + dsa.ToXmlString (false) + "</KeyValue>");
+			return document.DocumentElement;
 
-			XmlDocument doc = new XmlDocument ();
-			doc.LoadXml(sb.ToString ());
-			return doc.DocumentElement;
+			// FIX: this way we get a xmlns="" in DSAKeyValue
+/*			XmlElement xel = document.CreateElement (XmlSignature.ElementNames.KeyValue, XmlSignature.NamespaceURI);
+			xel.InnerXml = dsa.ToXmlString (false);
+			return xel;*/
 		}
 
 		public override void LoadXml (XmlElement value) 
@@ -53,10 +50,11 @@ namespace System.Security.Cryptography.Xml {
 			if (value == null)
 				throw new ArgumentNullException ();
 
-			if ((value.LocalName == "KeyValue") && (value.NamespaceURI == xmldsig))
-				dsa.FromXmlString (value.InnerXml);
-			else
+			// FIXME: again hack to match MS implementation (required for previous hack)
+			if ((value.LocalName != XmlSignature.ElementNames.KeyValue) || ((value.NamespaceURI != XmlSignature.NamespaceURI) && (value.GetAttribute("xmlns") != XmlSignature.NamespaceURI)))
 				throw new CryptographicException ("value");
+
+			dsa.FromXmlString (value.InnerXml);
 		}
 	}
 }

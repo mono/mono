@@ -9,7 +9,6 @@
 
 using System.Collections;
 using System.Security.Cryptography.X509Certificates;
-using System.Text;
 using System.Xml;
 
 namespace System.Security.Cryptography.Xml {
@@ -27,8 +26,6 @@ namespace System.Security.Cryptography.Xml {
 	}
 
 	public class KeyInfoX509Data : KeyInfoClause {
-
-		static private string xmldsig = "http://www.w3.org/2000/09/xmldsig#";
 
 		private byte[] x509crl;
 		private ArrayList IssuerSerialList;
@@ -103,58 +100,54 @@ namespace System.Security.Cryptography.Xml {
 			if ((x509crl == null) && (count == 0))
 				throw new CryptographicException ("value");
 
-			StringBuilder sb = new StringBuilder ();
-			sb.Append ("<X509Data xmlns=\"");
-			sb.Append (xmldsig);
-			sb.Append ("\">");
+			XmlDocument document = new XmlDocument ();
+			XmlElement xel = document.CreateElement (XmlSignature.ElementNames.X509Data, XmlSignature.NamespaceURI);
+			// FIXME: hack to match MS implementation
+			xel.SetAttribute ("xmlns", XmlSignature.NamespaceURI);
 			// <X509IssuerSerial>
 			if (IssuerSerialList.Count > 0) {
-				sb.Append ("<X509IssuerSerial>");
 				foreach (IssuerSerial iser in IssuerSerialList) {
-					sb.Append ("<X509IssuerName>");
-					sb.Append (iser.Issuer);
-					sb.Append ("</X509IssuerName>");
-					sb.Append ("<X509SerialNumber>");
-					sb.Append (iser.Serial);
-					sb.Append ("</X509SerialNumber>");
+					XmlElement isl = document.CreateElement (XmlSignature.ElementNames.X509IssuerSerial, XmlSignature.NamespaceURI);
+					XmlElement xin = document.CreateElement (XmlSignature.ElementNames.X509IssuerName, XmlSignature.NamespaceURI);
+					xin.InnerText = iser.Issuer;
+					isl.AppendChild (xin);
+ 					XmlElement xsn = document.CreateElement (XmlSignature.ElementNames.X509SerialNumber, XmlSignature.NamespaceURI);
+					xsn.InnerText = iser.Serial;
+					isl.AppendChild (xsn);
+					xel.AppendChild (isl);
 				}
-				sb.Append ("</X509IssuerSerial>");
 			}
 			// <X509SKI>
 			if (SubjectKeyIdList.Count > 0) {
 				foreach (byte[] skid in SubjectKeyIdList) {
-					sb.Append ("<X509SKI>");
-					sb.Append (Convert.ToBase64String (skid));
-					sb.Append ("</X509SKI>");
+					XmlElement ski = document.CreateElement (XmlSignature.ElementNames.X509SKI, XmlSignature.NamespaceURI);
+					ski.InnerText = Convert.ToBase64String (skid);
+					xel.AppendChild (ski);
 				}
 			}
 			// <X509SubjectName>
 			if (SubjectNameList.Count > 0) {
 				foreach (string subject in SubjectNameList) {
-					sb.Append ("<X509SubjectName>");
-					sb.Append (subject);
-					sb.Append ("</X509SubjectName>");
+					XmlElement sn = document.CreateElement (XmlSignature.ElementNames.X509SubjectName, XmlSignature.NamespaceURI);
+					sn.InnerText = subject;
+					xel.AppendChild (sn);
 				}
 			}
 			// <X509Certificate>
 			if (X509CertificateList.Count > 0) {
 				foreach (X509Certificate x509 in X509CertificateList) {
-					sb.Append ("<X509Certificate>");
-					sb.Append (Convert.ToBase64String (x509.GetRawCertData ()));
-					sb.Append ("</X509Certificate>");
+					XmlElement cert = document.CreateElement (XmlSignature.ElementNames.X509Certificate, XmlSignature.NamespaceURI);
+					cert.InnerText = Convert.ToBase64String (x509.GetRawCertData ());
+					xel.AppendChild (cert);
 				}
 			}
 			// only one <X509CRL> 
 			if (x509crl != null) {
-				sb.Append ("<X509CRL>");
-				sb.Append (Convert.ToBase64String (x509crl));
-				sb.Append ("</X509CRL>");
+				XmlElement crl = document.CreateElement (XmlSignature.ElementNames.X509CRL, XmlSignature.NamespaceURI);
+				crl.InnerText = Convert.ToBase64String (x509crl);
+				xel.AppendChild (crl);
 			}
-			sb.Append ("</X509Data>");
-
-			XmlDocument doc = new XmlDocument ();
-			doc.LoadXml(sb.ToString ());
-			return doc.DocumentElement;
+			return xel;
 		}
 
 		public override void LoadXml (XmlElement element) 
@@ -168,49 +161,48 @@ namespace System.Security.Cryptography.Xml {
 			X509CertificateList.Clear ();
 			x509crl = null;
 
-			if ((element.LocalName == "X509Data") && (element.NamespaceURI == xmldsig)) {
-				XmlNodeList xnl = null;
-				// <X509IssuerSerial>
-				xnl = element.GetElementsByTagName ("X509IssuerSerial", xmldsig);
-				if (xnl != null) {
-					for (int i=0; i < xnl.Count; i++) {
-						XmlElement xel = (XmlElement) xnl[i];
-						XmlNodeList issuer = xel.GetElementsByTagName ("X509IssuerName", xmldsig);
-						XmlNodeList serial = xel.GetElementsByTagName ("X509SerialNumber", xmldsig);
-						AddIssuerSerial (issuer[0].InnerText, serial[0].InnerText);
-					}
-				}
-				// <X509SKI>
-				xnl = element.GetElementsByTagName ("X509SKI", xmldsig);
-				if (xnl != null) {
-					for (int i=0; i < xnl.Count; i++) {
-						byte[] skid = Convert.FromBase64String (xnl[i].InnerXml);
-						AddSubjectKeyId (skid);
-					}
-				}
-				// <X509SubjectName>
-				xnl = element.GetElementsByTagName ("X509SubjectName", xmldsig);
-				if (xnl != null) {
-					for (int i=0; i < xnl.Count; i++) {
-						AddSubjectName (xnl[i].InnerXml);
-					}
-				}
-				// <X509Certificate>
-				xnl = element.GetElementsByTagName ("X509Certificate", xmldsig);
-				if (xnl != null) {
-					for (int i=0; i < xnl.Count; i++) {
-						byte[] cert = Convert.FromBase64String (xnl[i].InnerXml);
-						AddCertificate (new X509Certificate (cert));
-					}
-				}
-				// only one <X509CRL> 
-				xnl = element.GetElementsByTagName ("X509CRL", xmldsig);
-				if ((xnl != null) && (xnl.Count > 0)) {
-					x509crl = Convert.FromBase64String (xnl[0].InnerXml);
+			if ((element.LocalName != XmlSignature.ElementNames.X509Data) || (element.NamespaceURI != XmlSignature.NamespaceURI))
+				throw new CryptographicException ("element");
+
+			XmlNodeList xnl = null;
+			// <X509IssuerSerial>
+			xnl = element.GetElementsByTagName (XmlSignature.ElementNames.X509IssuerSerial, XmlSignature.NamespaceURI);
+			if (xnl != null) {
+				for (int i=0; i < xnl.Count; i++) {
+					XmlElement xel = (XmlElement) xnl[i];
+					XmlNodeList issuer = xel.GetElementsByTagName (XmlSignature.ElementNames.X509IssuerName, XmlSignature.NamespaceURI);
+					XmlNodeList serial = xel.GetElementsByTagName (XmlSignature.ElementNames.X509SerialNumber, XmlSignature.NamespaceURI);
+					AddIssuerSerial (issuer[0].InnerText, serial[0].InnerText);
 				}
 			}
-			else
-				throw new CryptographicException ("element");
+			// <X509SKI>
+			xnl = element.GetElementsByTagName (XmlSignature.ElementNames.X509SKI, XmlSignature.NamespaceURI);
+			if (xnl != null) {
+				for (int i=0; i < xnl.Count; i++) {
+					byte[] skid = Convert.FromBase64String (xnl[i].InnerXml);
+					AddSubjectKeyId (skid);
+				}
+			}
+			// <X509SubjectName>
+			xnl = element.GetElementsByTagName (XmlSignature.ElementNames.X509SubjectName, XmlSignature.NamespaceURI);
+			if (xnl != null) {
+				for (int i=0; i < xnl.Count; i++) {
+					AddSubjectName (xnl[i].InnerXml);
+				}
+			}
+			// <X509Certificate>
+			xnl = element.GetElementsByTagName (XmlSignature.ElementNames.X509Certificate, XmlSignature.NamespaceURI);
+			if (xnl != null) {
+				for (int i=0; i < xnl.Count; i++) {
+					byte[] cert = Convert.FromBase64String (xnl[i].InnerXml);
+					AddCertificate (new X509Certificate (cert));
+				}
+			}
+			// only one <X509CRL> 
+			xnl = element.GetElementsByTagName (XmlSignature.ElementNames.X509CRL, XmlSignature.NamespaceURI);
+			if ((xnl != null) && (xnl.Count > 0)) {
+				x509crl = Convert.FromBase64String (xnl[0].InnerXml);
+			}
 		}
 	}
 }

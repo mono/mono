@@ -7,14 +7,11 @@
 // (C) 2002, 2003 Motus Technologies Inc. (http://www.motus.com)
 //
 
-using System.Text;
 using System.Xml;
 
 namespace System.Security.Cryptography.Xml { 
 
 	public abstract class Transform {
-
-		static private string xmldsig = "http://www.w3.org/2000/09/xmldsig#";
 
 		private string algo;
 
@@ -41,16 +38,10 @@ namespace System.Security.Cryptography.Xml {
 
 		public XmlElement GetXml () 
 		{
-			StringBuilder sb = new StringBuilder ();
-			sb.Append ("<Transform Algorithm=\"");
-			sb.Append (algo);
-//			sb.Append ("\" xmlns=\"");
-//			sb.Append (xmldsig);
-			sb.Append ("\" />");
-
-			XmlDocument doc = new XmlDocument ();
-			doc.LoadXml (sb.ToString ());
-			return doc.DocumentElement;
+			XmlDocument document = new XmlDocument ();
+			XmlElement xel = document.CreateElement (XmlSignature.ElementNames.Transform, XmlSignature.NamespaceURI);
+			xel.SetAttribute (XmlSignature.AttributeNames.Algorithm, algo);
+			return xel;
 		}
 
 		public abstract void LoadInnerXml (XmlNodeList nodeList);

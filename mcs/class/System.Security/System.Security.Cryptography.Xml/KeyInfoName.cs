@@ -7,47 +7,37 @@
 // (C) 2002, 2003 Motus Technologies Inc. (http://www.motus.com)
 //
 
-using System.Text;
 using System.Xml;
 
 namespace System.Security.Cryptography.Xml {
 
 	public class KeyInfoName : KeyInfoClause {
 
-		static private string xmldsig = "http://www.w3.org/2000/09/xmldsig#";
-
-		private string Name;
+		private string name;
 
 		public KeyInfoName() {}
 
 		public string Value {
-			get { return Name; }
-			set { Name = value; }
+			get { return name; }
+			set { name = value; }
 		}
 
 		public override XmlElement GetXml () 
 		{
-			StringBuilder sb = new StringBuilder ();
-			sb.Append ("<KeyName xmlns=\"");
-			sb.Append (xmldsig);
-			sb.Append ("\">");
-			sb.Append (Name);
-			sb.Append ("</KeyName>");
-
-			XmlDocument doc = new XmlDocument ();
-			doc.LoadXml(sb.ToString ());
-			return doc.DocumentElement;
+			XmlDocument document = new XmlDocument ();
+			XmlElement xel = document.CreateElement (XmlSignature.ElementNames.KeyName, XmlSignature.NamespaceURI);
+			xel.InnerText = name;
+			return xel;
 		}
 
 		public override void LoadXml (XmlElement value) 
 		{
 			if (value == null)
 				throw new ArgumentNullException ();
-
-			if ((value.LocalName == "KeyName") && (value.NamespaceURI == xmldsig))
-				Name = value.InnerXml;
+			if ((value.LocalName != XmlSignature.ElementNames.KeyName) || (value.NamespaceURI != XmlSignature.NamespaceURI))
+				name = "";
 			else
-				Name = null;
+				name = value.InnerText;
 		}
 	}
 }

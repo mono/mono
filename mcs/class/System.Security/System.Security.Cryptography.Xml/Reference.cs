@@ -8,7 +8,6 @@
 //
 
 using System.IO;
-using System.Text;
 using System.Xml;
 
 namespace System.Security.Cryptography.Xml { 
@@ -24,13 +23,10 @@ namespace System.Security.Cryptography.Xml {
 		private string type;
 		private HashAlgorithm hash;
 
-		static private string xmldsig = "http://www.w3.org/2000/09/xmldsig#";
-		static private string sha1 = xmldsig + "sha1";
-
 		public Reference () 
 		{
 			chain = new TransformChain ();
-			digestMethod = sha1;
+			digestMethod = XmlSignature.NamespaceURI + "sha1";
 		}
 
 		[MonoTODO()]
@@ -85,53 +81,34 @@ namespace System.Security.Cryptography.Xml {
 			if (digestValue == null)
 				throw new NullReferenceException ("DigestValue");
 
-			StringBuilder sb = new StringBuilder ();
-			sb.Append ("<Reference");
-			if (id != null) {
-				sb.Append (" Id=\"");
-				sb.Append (id);
-				sb.Append ("\"");
-			}
-			if (uri != null) {
-				sb.Append (" URI=\"");
-				sb.Append (uri);
-				sb.Append ("\"");
-			}
-			if (type != null) {
-				sb.Append (" Type=\"");
-				sb.Append (type);
-				sb.Append ("\"");
-			}
-			sb.Append (" xmlns=\"");
-			sb.Append (xmldsig);
-			sb.Append ("\">");
+			XmlDocument document = new XmlDocument ();
+			XmlElement xel = document.CreateElement (XmlSignature.ElementNames.Reference, XmlSignature.NamespaceURI);
+			if (id != null)
+				xel.SetAttribute (XmlSignature.AttributeNames.Id, id);
+			if (uri != null)
+				xel.SetAttribute (XmlSignature.AttributeNames.URI, uri);
+			if (type != null)
+				xel.SetAttribute (XmlSignature.AttributeNames.Type, type);
 
 			if (chain.Count > 0) {
-				sb.Append ("<Transforms>");
-				sb.Append ("</Transforms>");
-			}
-
-			sb.Append ("<DigestMethod Algorithm=\"");
-			sb.Append (digestMethod);
-			sb.Append ("\" />");
-			sb.Append ("<DigestValue>");
-			sb.Append (Convert.ToBase64String (digestValue));
-			sb.Append ("</DigestValue>");
-			sb.Append ("</Reference>");
-
-			XmlDocument doc = new XmlDocument ();
-			doc.LoadXml (sb.ToString ());
-
-			if (chain.Count > 0) {
-				XmlNodeList xnl = doc.GetElementsByTagName ("Transforms");
+				XmlElement ts = document.CreateElement (XmlSignature.ElementNames.Transforms, XmlSignature.NamespaceURI);
 				foreach (Transform t in chain) {
 					XmlNode xn = t.GetXml ();
-					XmlNode newNode = doc.ImportNode (xn, true);
-					xnl[0].AppendChild (newNode);
+					XmlNode newNode = document.ImportNode (xn, true);
+					ts.AppendChild (newNode);
 				}
+				xel.AppendChild (ts);
 			}
 
-			return doc.DocumentElement;
+			XmlElement dm = document.CreateElement (XmlSignature.ElementNames.DigestMethod, XmlSignature.NamespaceURI);
+			dm.SetAttribute (XmlSignature.AttributeNames.Algorithm, digestMethod);
+			xel.AppendChild (dm);
+
+			XmlElement dv = document.CreateElement (XmlSignature.ElementNames.DigestValue, XmlSignature.NamespaceURI);
+			dv.InnerText = Convert.ToBase64String (digestValue);
+			xel.AppendChild (dv);
+
+			return xel;
 		}
 
 		private string GetAttributeFromElement (XmlElement xel, string attribute, string element) 
@@ -158,51 +135,50 @@ namespace System.Security.Cryptography.Xml {
 			if (value == null)
 				throw new ArgumentNullException ("value");
 
-			if ((value.LocalName == "Reference") && (value.NamespaceURI == xmldsig)) {
-				id = GetAttribute (value, "Id");
-				uri = GetAttribute (value, "URI");
-				type = GetAttribute (value, "Type");
-				// Note: order is important for validations
-				XmlNodeList xnl = value.GetElementsByTagName ("Transform");
-				if ((xnl != null) && (xnl.Count > 0)) {
-					Transform t = null;
-					foreach (XmlNode xn in xnl) {
-						string a = GetAttribute ((XmlElement)xn, "Algorithm");
-						switch (a) {
-							case "http://www.w3.org/2000/09/xmldsig#base64":
-								t = new XmlDsigBase64Transform ();
-								break;
-							case "http://www.w3.org/TR/2001/REC-xml-c14n-20010315":
-								t = new XmlDsigC14NTransform ();
-								break;
-							case "http://www.w3.org/TR/2001/REC-xml-c14n-20010315#WithComments":
-								t = new XmlDsigC14NWithCommentsTransform ();
-								break;
-							case "http://www.w3.org/2000/09/xmldsig#enveloped-signature":
-								t = new XmlDsigEnvelopedSignatureTransform ();
-								break;
-							case "http://www.w3.org/TR/1999/REC-xpath-19991116":
-								t = new XmlDsigXPathTransform ();
-								break;
-							case "http://www.w3.org/TR/1999/REC-xslt-19991116":
-								t = new XmlDsigXsltTransform ();
-								break;
-							default:
-								throw new NotSupportedException ();
-						}
-						AddTransform (t);
+			if ((value.LocalName != XmlSignature.ElementNames.Reference) || (value.NamespaceURI != XmlSignature.NamespaceURI))
+				throw new CryptographicException ();
+
+			id = GetAttribute (value, XmlSignature.AttributeNames.Id);
+			uri = GetAttribute (value, XmlSignature.AttributeNames.URI);
+			type = GetAttribute (value, XmlSignature.AttributeNames.Type);
+			// Note: order is important for validations
+			XmlNodeList xnl = value.GetElementsByTagName (XmlSignature.ElementNames.Transform);
+			if ((xnl != null) && (xnl.Count > 0)) {
+				Transform t = null;
+				foreach (XmlNode xn in xnl) {
+					string a = GetAttribute ((XmlElement)xn, XmlSignature.AttributeNames.Algorithm);
+					switch (a) {
+						case "http://www.w3.org/2000/09/xmldsig#base64":
+							t = new XmlDsigBase64Transform ();
+							break;
+						case "http://www.w3.org/TR/2001/REC-xml-c14n-20010315":
+							t = new XmlDsigC14NTransform ();
+							break;
+						case "http://www.w3.org/TR/2001/REC-xml-c14n-20010315#WithComments":
+							t = new XmlDsigC14NWithCommentsTransform ();
+							break;
+						case "http://www.w3.org/2000/09/xmldsig#enveloped-signature":
+							t = new XmlDsigEnvelopedSignatureTransform ();
+							break;
+						case "http://www.w3.org/TR/1999/REC-xpath-19991116":
+							t = new XmlDsigXPathTransform ();
+							break;
+						case "http://www.w3.org/TR/1999/REC-xslt-19991116":
+							t = new XmlDsigXsltTransform ();
+							break;
+						default:
+							throw new NotSupportedException ();
 					}
-				}
-				// get DigestMethod
-				DigestMethod = GetAttributeFromElement (value, "Algorithm", "DigestMethod");
-				// get DigestValue
-				xnl = value.GetElementsByTagName ("DigestValue");
-				if ((xnl != null) && (xnl.Count > 0)) {
-					DigestValue = Convert.FromBase64String (xnl[0].InnerText);
+					AddTransform (t);
 				}
 			}
-			else
-				throw new CryptographicException ();
+			// get DigestMethod
+			DigestMethod = GetAttributeFromElement (value, XmlSignature.AttributeNames.Algorithm, XmlSignature.ElementNames.DigestMethod);
+			// get DigestValue
+			xnl = value.GetElementsByTagName (XmlSignature.ElementNames.DigestValue);
+			if ((xnl != null) && (xnl.Count > 0)) {
+				DigestValue = Convert.FromBase64String (xnl[0].InnerText);
+			}
 		}
 	}
 }

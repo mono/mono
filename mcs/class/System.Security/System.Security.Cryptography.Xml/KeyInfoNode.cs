@@ -7,7 +7,6 @@
 // (C) 2002, 2003 Motus Technologies Inc. (http://www.motus.com)
 //
 
-using System.Text;
 using System.Xml;
 
 namespace System.Security.Cryptography.Xml {
