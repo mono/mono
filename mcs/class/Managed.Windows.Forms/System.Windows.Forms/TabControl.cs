@@ -225,14 +225,17 @@ namespace System.Windows.Forms {
 
 				OnSelectedIndexChanged (EventArgs.Empty);
 
+				TabPage selected = (TabPage) Controls [selected_index];
+
 				if (selected_index != -1) {
 					invalid = Rectangle.Union (invalid, GetTabRect (selected_index));
-					Controls [selected_index].Visible = true;
+					selected.Visible = true;
+					selected.Focus ();
 				}
 
 				ResumeLayout ();
 
-				if (SelectedIndex != -1 && TabPages [SelectedIndex].Row != BottomRow) {
+				if (selected_index != -1 && selected.Row != BottomRow) {
 					DropRow (TabPages [selected_index].Row);
 					// calculating what to invalidate here seems to be slower then just
 					// refreshing the whole thing

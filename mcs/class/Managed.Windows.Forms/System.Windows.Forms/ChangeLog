@@ -1,5 +1,9 @@
 2005-03-23  Jackson Harper  <jackson@ximian.com>
 
+	* TabControl.cs: Give the tab page focus when it is selected.
+
+2005-03-23  Jackson Harper  <jackson@ximian.com>
+
 	* TabControl.cs: Account for the drawing of tabs borders when
 	invalidating. If the slider was clicked dont do click detection on
 	the tabs.
