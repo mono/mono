@@ -3,19 +3,23 @@
 # being compiled on windows.
 #
 
+assemblies_DATA =	\
+	corlib.dll	\
+	System.dll	\
+	System.Data.dll	\
+	System.Xml.dll	\
+	System.Web.dll	\
+	System.Drawing.dll
+
+monobins_DATA = mcs.exe
+
+EXTRA_DIST = $(monobins_DATA) $(assemblies_DATA)
+
 #
 # Keep in sync with mono/mono/metadata/Makefile.am
 #
 assembliesdir = $(libdir)
-
-install-data-hook:
-	-cp $(srcdir)/*.dll $(assembliesdir)
-	-cp $(srcdir)/*.exe $(bindir)
-
-
-dist-hook:
-	-cp $(srcdir)/*.dll $(distdir)
-	-cp $(srcdir)/*.exe $(distdir)
+monobinsdir = $(bindir)
 
 copy_dlls:
 	cp /nt/mono/mcs/class/*/*.dll .
