@@ -155,7 +155,15 @@ public interface ICachingMemberFinder : IMemberFinder {
 }
 
 public interface IMemberContainer : ICachingMemberFinder {
-	MemberList GetMembers (MemberTypes mt, BindingFlags bf, bool declared);
+	string Name {
+		get;
+	}
+
+	IMemberContainer Parent {
+		get;
+	}
+
+	MemberList GetMembers (MemberTypes mt, BindingFlags bf);
 }
 
 public class TypeManager {
@@ -1016,6 +1024,54 @@ public class TypeManager {
 		return caching_finder.FindMembers (mt, bf, (string) criteria, filter, null);
 	}
 
+
+	/// FIXME FIXME FIXME
+	///   This method is a big hack until the new MemberCache is finished, it will be gone in
+	///   a few days.
+	/// FIXME FIXME FIXME
+
+	private static MemberList MemberLookup_FindMembers (Type t, MemberTypes mt, BindingFlags bf,
+							    string name, ref bool searching)
+	{
+		//
+		// We have to take care of arrays specially, because GetType on
+		// a TypeBuilder array will return a Type, not a TypeBuilder,
+		// and we can not call FindMembers on this type.
+		//
+
+		if (t.IsSubclassOf (TypeManager.array_type)) {
+			searching = false;
+			return TypeHandle.ArrayType.FindMembers (
+				mt, bf, name, FilterWithClosure_delegate, null);
+		// return new MemberList (TypeManager.array_type.FindMembers (
+		// 		mt, bf | BindingFlags.DeclaredOnly, FilterWithClosure_delegate, name));
+		}
+
+		IMemberFinder finder = (IMemberFinder) builder_to_member_finder [t];
+		ICachingMemberFinder caching_finder = finder as ICachingMemberFinder;
+
+		if (caching_finder != null) {
+			searching = false;
+			return caching_finder.FindMembers (
+				mt, bf, name, FilterWithClosure_delegate, null);
+		}
+
+		if (finder != null) {
+			MemberList list;
+			Timer.StartTimer (TimerType.FindMembers);
+			list = finder.FindMembers (mt, bf | BindingFlags.DeclaredOnly,
+						   FilterWithClosure_delegate, name);
+			Timer.StopTimer (TimerType.FindMembers);
+			return list;
+		}
+
+		caching_finder = new TypeHandle (t);
+		builder_to_member_finder.Add (t, caching_finder);
+
+		searching = false;
+		return caching_finder.FindMembers (mt, bf, name, FilterWithClosure_delegate, null);
+	}
+
 	//
 	// FIXME: This can be optimized easily.  speedup by having a single builder mapping
 	//
@@ -1116,7 +1172,7 @@ public class TypeManager {
 	public static bool IsSubclassOrNestedChildOf (Type type, Type parent)
 	{
 		do {
-			if (type.IsSubclassOf (parent))
+			if ((type == parent) || type.IsSubclassOf (parent))
 				return true;
 
 			// Handle nested types.
@@ -2105,15 +2161,8 @@ public class TypeManager {
 
 			Timer.StopTimer (TimerType.MemberLookup);
 
-			if (MemberCache.IsSingleMemberType (mt)) {
-				searching = false;
-				list = TypeManager.FindMembers (current_type, mt, bf,
-					FilterWithClosure_delegate, name);
-			} else
-				list = TypeManager.FindMembers (
-					current_type, mt, bf | BindingFlags.DeclaredOnly,
-					FilterWithClosure_delegate, name);
-			
+			list = MemberLookup_FindMembers (current_type, mt, bf, name, ref searching);
+
 			Timer.StartTimer (TimerType.MemberLookup);
 
 			if (current_type == TypeManager.object_type)
@@ -2200,34 +2249,40 @@ public class MemberCache {
 		Timer.IncrementCounter (CounterType.MemberCache);
 		Timer.StartTimer (TimerType.CacheInit);
 
-		AddMembers (true);
-		AddMembers (false);
+		if (Container == null)
+			throw new Exception ("FUCK");
+
+		IMemberContainer current = Container;
+		do {
+			AddMembers (current);
+			current = current.Parent;
+		} while (current != null);
 
 		Timer.StopTimer (TimerType.CacheInit);
 	}
 
-	void AddMembers (bool declared)
+	void AddMembers (IMemberContainer container)
 	{
-		AddMembers (MemberTypes.Constructor, declared);
-		AddMembers (MemberTypes.Event, declared);
-		AddMembers (MemberTypes.Field, declared);
-		AddMembers (MemberTypes.Method, declared);
-		AddMembers (MemberTypes.Property, declared);
-		AddMembers (MemberTypes.NestedType, declared);
+		AddMembers (MemberTypes.Constructor, container);
+		AddMembers (MemberTypes.Event, container);
+		AddMembers (MemberTypes.Field, container);
+		AddMembers (MemberTypes.Method, container);
+		AddMembers (MemberTypes.Property, container);
+		AddMembers (MemberTypes.NestedType, container);
 	}
 
-	void AddMembers (MemberTypes mt, bool declared)
+	void AddMembers (MemberTypes mt, IMemberContainer container)
 	{
-		AddMembers (mt, BindingFlags.Static | BindingFlags.Public, declared);
-		AddMembers (mt, BindingFlags.Static | BindingFlags.NonPublic, declared);
-		AddMembers (mt, BindingFlags.Instance | BindingFlags.Public, declared);
-		AddMembers (mt, BindingFlags.Instance | BindingFlags.NonPublic, declared);
+		AddMembers (mt, BindingFlags.Static | BindingFlags.Public, container);
+		AddMembers (mt, BindingFlags.Static | BindingFlags.NonPublic, container);
+		AddMembers (mt, BindingFlags.Instance | BindingFlags.Public, container);
+		AddMembers (mt, BindingFlags.Instance | BindingFlags.NonPublic, container);
 	}
 
-	void AddMembers (MemberTypes mt, BindingFlags bf, bool declared)
+	void AddMembers (MemberTypes mt, BindingFlags bf, IMemberContainer container)
 	{
-		MemberList members = Container.GetMembers (mt, bf, declared);
-		BindingFlags new_bf = declared ? bf | BindingFlags.DeclaredOnly : bf;
+		MemberList members = container.GetMembers (mt, bf);
+		BindingFlags new_bf = (container == Container) ? bf | BindingFlags.DeclaredOnly : bf;
 
 		foreach (MemberInfo member in members) {
 			string name = member.Name;
@@ -2238,7 +2293,7 @@ public class MemberCache {
 				MemberHash.Add (name, list);
 			}
 
-			list.Add (new CacheEntry (member, mt, new_bf));
+			list.Add (new CacheEntry (container, member, mt, new_bf));
 		}
 	}
 
@@ -2314,11 +2369,16 @@ public class MemberCache {
 	}
 
 	protected struct CacheEntry {
-		public EntryType EntryType;
-		public MemberInfo Member;
+		// FIXME: This field is a temporary hack until the Mono runtime is fixed
+		//        and distinguishes between ReflectedType and DeclaringType.
+		public readonly IMemberContainer Container;
+		public readonly EntryType EntryType;
+		public readonly MemberInfo Member;
 
-		public CacheEntry (MemberInfo member, MemberTypes mt, BindingFlags bf)
+		public CacheEntry (IMemberContainer container, MemberInfo member, MemberTypes mt,
+				   BindingFlags bf)
 		{
+			this.Container = container;
 			this.Member = member;
 			this.EntryType = GetEntryType (mt, bf);
 		}
@@ -2330,9 +2390,31 @@ public class MemberCache {
 		bool declared_only = (bf & BindingFlags.DeclaredOnly) != 0;
 		EntryType type = GetEntryType (mt, bf);
 
+		IMemberContainer current = Container;
+
 		foreach (CacheEntry entry in applicable) {
-			if (declared_only && ((entry.EntryType & EntryType.Declared) == 0))
-				continue;
+			if (entry.Container != current) {
+				current = entry.Container;
+
+				// We've reached a base class while doing a DeclaredOnly search.
+				if (declared_only)
+					break;
+
+				//
+				// Events and types are returned by both `static' and `instance'
+				// searches, which means that our above FindMembers will
+				// return two copies of the same.
+				//
+				if (list.Count == 1 && !(list [0] is MethodBase))
+					break;
+
+				//
+				// Multiple properties: we query those just to find out the indexer
+				// name
+				//
+				if ((list.Count > 0) && (list [0] is PropertyInfo))
+					break;
+			}
 
 			if ((entry.EntryType & type & EntryType.MaskType) == 0)
 				continue;
@@ -2377,29 +2459,107 @@ public class MemberCache {
 	}
 }
 
-public class TypeHandle : IMemberContainer {
+public sealed class TypeHandle : IMemberContainer {
 	public readonly Type Type;
-	public readonly Type BaseType;
+	public readonly TypeHandle BaseType;
 	public readonly MemberCache MemberCache;
 
-	public TypeHandle (Type t)
+	/// <summary>
+	///   Lookup a TypeHandle instance for the given type.  If the type doesn't have
+	///   a TypeHandle yet, a new instance of it is created.  This static method
+	///   ensures that we'll only have one TypeHandle instance per type.
+	/// </summary>
+	public static TypeHandle GetTypeHandle (Type t)
 	{
-		this.Type = t;
-		this.BaseType = t.BaseType;
+		TypeHandle handle = (TypeHandle) type_hash [t];
+		if (handle != null)
+			return handle;
+
+		handle = new TypeHandle (t);
+		type_hash.Add (t, handle);
+		return handle;
+	}
+
+	/// <summary>
+	///   Returns the TypeHandle for TypeManager.object_type.
+	/// </summary>
+	public static IMemberContainer ObjectType {
+		get {
+			if (object_type != null)
+				return object_type;
+
+			Initialize ();
+
+			return object_type;
+		}
+	}
+
+	/// <summary>
+	///   Returns the TypeHandle for TypeManager.array_type.
+	/// </summary>
+	public static IMemberContainer ArrayType {
+		get {
+			if (array_type != null)
+				return array_type;
+
+			Initialize ();
+
+			return array_type;
+		}
+	}
+
+	// This must be called after the core types have been created.
+	private static void Initialize ()
+	{
+		if (object_type == null)
+			object_type = GetTypeHandle (TypeManager.object_type);
+
+		if (array_type == null)
+			array_type = GetTypeHandle (TypeManager.array_type);
+	}
+
+	private static PtrHashtable type_hash = new PtrHashtable ();
+	private static bool initialized = false;
+
+	static TypeHandle object_type = null;
+	static TypeHandle array_type = null;
+
+	private TypeHandle (Type type)
+	{
+		this.Type = type;
+		if (type.BaseType != null)
+			BaseType = GetTypeHandle (type.BaseType);
+		else {
+			//
+			// This happens with interfaces, they have a null
+			// basetype.  Look members up in the Object class.
+			//
+			BaseType = object_type;
+		}
 		this.MemberCache = new MemberCache (this);
 	}
 
-	public MemberList GetMembers (MemberTypes mt, BindingFlags bf, bool declared)
-	{
-		if (declared)
-			return new MemberList (Type.FindMembers (
-				mt, bf | BindingFlags.DeclaredOnly, null, null));
+	// IMemberContainer methods
 
-		if (BaseType == null)
-			return MemberList.Empty;
-
-		return new MemberList (BaseType.FindMembers (mt, bf, null, null));
+	public string Name {
+		get {
+			return Type.FullName;
+		}
 	}
+
+	public IMemberContainer Parent {
+		get {
+			return BaseType;
+		}
+	}
+
+	public MemberList GetMembers (MemberTypes mt, BindingFlags bf)
+	{
+		return new MemberList (Type.FindMembers (
+			mt, bf | BindingFlags.DeclaredOnly, null, null));
+	}
+
+	// IMemberFinder methods
 
 	public MemberList FindMembers (MemberTypes mt, BindingFlags bf,
 				       MemberFilter filter, object criteria)

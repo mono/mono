@@ -1,3 +1,30 @@
+2002-08-15  Martin Baulig  <martin@gnome.org>
+
+	* class.cs (ConstructorInitializer.Resolve): In the
+	Expression.MemberLookup call, use the queried_type as
+	invocation_type.
+
+	* typemanager.cs (IMemberContainer.GetMembers): Removed the `bool
+	declared' attribute, it's always true.
+	(IMemberContainer.Parent, IMemberContainer.Name): New properties.
+	(TypeManager.MemberLookup_FindMembers): [FIXME FIXME FIXME] Added
+	temporary wrapper for FindMembers which tells MemberLookup whether
+	members from the base classes are included in the return value.
+	This will go away soon.
+	(TypeManager.MemberLookup): Use this temporary hack here; once the
+	new MemberCache is completed, we don't need to do the DeclaredOnly
+	looping here anymore since the MemberCache will take care of this.
+	(TypeManager.IsSubclassOrNestedChildOf): Allow `type == parent'.
+	(MemberCache): When creating the MemberCache for a class, get
+	members from the current class and all its base classes.
+	(MemberCache.CacheEntry.Container): New field.  This is a
+	temporary hack until the Mono runtime is fixed to distinguish
+	between ReflectedType and DeclaringType.  It allows us to use MCS
+	with both the MS runtime and the unfixed Mono runtime without
+	problems and without accecting performance.
+	(MemberCache.SearchMembers): The DeclaredOnly looping from
+	TypeManager.MemberLookup is now done here.	
+
 2002-08-14  Martin Baulig  <martin@gnome.org>
 
 	* statement.cs (MyStructInfo.MyStructInfo): Don't call

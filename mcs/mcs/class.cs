@@ -1,3 +1,4 @@
+
 //
 // class.cs: Class and Struct handlers
 //
@@ -2173,9 +2174,9 @@ namespace Mono.CSharp {
 				}
 			} else
 				t = ec.ContainerType;
-			
+
 			parent_constructor_group = Expression.MemberLookup (
-				ec, t, ".ctor", 
+				ec, t, t, ".ctor", 
 				MemberTypes.Constructor,
 				BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly,
 				loc);
