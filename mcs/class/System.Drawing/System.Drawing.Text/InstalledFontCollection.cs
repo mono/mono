@@ -11,12 +11,12 @@ using System.Drawing;
 namespace System.Drawing.Text {
 
 	public sealed class InstalledFontCollection : FontCollection {
-		internal static IFontCollectionFactory	factory = Factories.GetFontCollectionFactory();
+		//internal static IFontCollectionFactory	factory = Factories.GetFontCollectionFactory();
 
 		// constructors
 		[MonoTODO]
 		public InstalledFontCollection() {
-			implementation = factory.InstalledFontCollection();
+			//implementation = factory.InstalledFontCollection();
 		}
 	}
 }
