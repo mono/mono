@@ -25,14 +25,14 @@ namespace System.Drawing
 	{
 		[StructLayout(LayoutKind.Sequential)]
 		internal struct IconDirEntry {
-			internal byte	width;				// Width of icon
-			internal byte	height;				// Height of icon
-			internal byte	colorCount;			// colors in icon 
-			internal byte	reserved;			// Reserved
-			internal ushort planes;             // Color Planes
-			internal ushort	bitCount;           // Bits per pixel
-			internal uint	bytesInRes;         // bytes in resource
-			internal uint	imageOffset;        // position in file 
+			internal byte	width;		// Width of icon
+			internal byte	height;		// Height of icon
+			internal byte	colorCount;	// colors in icon 
+			internal byte	reserved;	// Reserved
+			internal ushort planes;         // Color Planes
+			internal ushort	bitCount;       // Bits per pixel
+			internal uint	bytesInRes;     // bytes in resource
+			internal uint	imageOffset;	// position in file 
 		}; 
 
 		[StructLayout(LayoutKind.Sequential)]
@@ -40,12 +40,12 @@ namespace System.Drawing
 			internal ushort			idReserved;   // Reserved
 			internal ushort			idType;       // resource type (1 for icons)
 			internal ushort			idCount;      // how many images?
-			internal IconDirEntry []	idEntries;	  // the entries for each image
+			internal IconDirEntry []	idEntries;    // the entries for each image
 		};
 		
 		[StructLayout(LayoutKind.Sequential)]
 		internal struct BitmapInfoHeader {
-            internal uint	biSize; 
+            		internal uint	biSize; 
 			internal int	biWidth; 
 			internal int	biHeight; 
 			internal ushort	biPlanes; 
@@ -61,9 +61,9 @@ namespace System.Drawing
 		[StructLayout(LayoutKind.Sequential)]
 		internal struct IconImage {
 			internal BitmapInfoHeader	iconHeader;	//image header
-			internal uint []			iconColors;	//colors table
-			internal byte []			iconXOR;	// bits for XOR mask
-			internal byte []			iconAND;	//bits for AND mask
+			internal uint []		iconColors;	//colors table
+			internal byte []		iconXOR;	// bits for XOR mask
+			internal byte []		iconAND;	//bits for AND mask
 		};	
 
 		Size iconSize;
@@ -82,8 +82,6 @@ namespace System.Drawing
 
 		public Icon (Icon original, Size size)
 		{
-			//FIXME, need to check how MS stores Icon structure
-			//Will serialized form help
 			this.iconSize = size;
 			this.winHandle = original.winHandle;
 			this.iconDir = original.iconDir;
@@ -263,8 +261,10 @@ namespace System.Drawing
 		}
 
 		[MonoTODO ("Implement")]
-       	private Icon (SerializationInfo info, StreamingContext context)
+       		private Icon (SerializationInfo info, StreamingContext context)
 		{
+			//FIXME, need to check how MS stores Icon structure
+			//Will serialized form help
 			throw new NotImplementedException ();
 		}
 
@@ -351,14 +351,19 @@ namespace System.Drawing
 			if (imageData!=null){
 				
 				//select active icon from the iconDirEntry
-                IconImage ii = imageData [this.id];
-				MemoryStream stream = new MemoryStream ();
+                		IconImage ii = imageData [this.id];
+				//MemoryStream stream = new MemoryStream ();
+				//UGLY HACK.....Hate to create a FileStream and then do writing and reading back
+				//but no other option as using MemoryStream causes the program to fail
+				//The Constructor for Bitmap which takes a memory stream some how
+				//fails everytime and i m not able to get the reason for that.
+				FileStream stream = new FileStream ("yajnas_temp.bmp", FileMode.CreateNew);
 				BinaryWriter writer = new BinaryWriter (stream);
 				
 				//write bitmap file header
 				//start with writing signature
-				char [] sig = {'B', 'M'};
-				writer.Write (sig);
+				writer.Write ('B');
+				writer.Write ('M');
 				
 				//now write file size
 				//file size is bitmapfileheader + bitmapinfo + colorpalette + image bits
@@ -388,7 +393,7 @@ namespace System.Drawing
 				writer.Write (bih.biYPelsPerMeter);
 				writer.Write (bih.biClrUsed);
 				writer.Write (bih.biClrImportant);
-
+				
 				//now write color table
 				int colCount = ii.iconColors.Length;
 				for (int j=0; j<colCount; j++)
@@ -397,10 +402,14 @@ namespace System.Drawing
 				//now write image bits
 				writer.Write (ii.iconXOR);
 
-				//create bitmap from stream and return
-				bmp = new Bitmap (writer.BaseStream);
+				writer.Flush();
 				writer.Close();
 				stream.Close();
+				//create bitmap from stream and return
+				FileStream fs = new FileStream("yajnas_temp.bmp", FileMode.Open);
+				bmp = new Bitmap(fs);
+				fs.Close();
+				File.Delete("yajnas_temp.bmp");
 			} else {
 				bmp = new Bitmap (32, 32);
 			}

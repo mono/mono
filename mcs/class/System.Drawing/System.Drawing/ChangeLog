@@ -1,3 +1,6 @@
+2004-04-19  Sanjay Gupta <gsanjay@novell.com>
+	* Icon.cs: Fixed problem in extracting bitmap from Icon.
+
 2004-04-16  Ravindra <rkumar@novell.com>
 
 	* Pen.cs: GC should be allowed to collect any pen including
