@@ -50,7 +50,7 @@ LDC.1		(5,1)		[5,0]
 STLOC.0		(5)		[1,0]
 STLOC.1		()		[1,5]
 
-The current forest generation generates: 
+A simple forest generation generates: 
 
 STLOC.0(LDC.1)
 STLOC.1(LDLOC.0)
