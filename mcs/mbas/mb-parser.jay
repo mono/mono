@@ -608,6 +608,21 @@ namespace Mono.MonoBASIC
 %start compilation_unit
 %%
 
+end_of_stmt
+	: logical_end_of_line
+	| COLON
+	;	
+
+logical_end_of_line
+	: EOL
+	| logical_end_of_line pp_directive 
+	;
+
+opt_logical_end_of_line
+	: /* empty */
+	| logical_end_of_line
+	;
+
 compilation_unit
 	: logical_end_of_line
 	  opt_option_directives
@@ -2310,13 +2325,8 @@ label_name
 	}
 	;
 
-opt_linebreak
-	: /* empty */
-	| EOL
-	;
-
 labeled_statement
-	: label_name COLON opt_linebreak 
+	: label_name COLON opt_logical_end_of_line 
 	  {
 		LabeledStatement labeled = new LabeledStatement ((string) $1, lexer.Location);
 
@@ -4150,16 +4160,6 @@ interface_type
 	: type_name
 	;
 	
-end_of_stmt
-	: logical_end_of_line
-	| COLON
-	;	
-
-logical_end_of_line
-	: EOL
-	| logical_end_of_line pp_directive 
-	;
-
 pp_directive
 	: HASH IDENTIFIER OPEN_PARENS LITERAL_STRING COMMA LITERAL_INTEGER CLOSE_PARENS EOL
 	  { 

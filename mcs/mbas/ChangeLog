@@ -1,3 +1,8 @@
+2004/08/01  Rafael Teixeira <rafaelteixeirabr@hotmail.com>
+	* mb-parser.jay : Some correction as pointed by Jambunathan, 
+		to allow intermixing preprocessor directives between 
+		the label and it's associated statement
+
 2004-08-02  Jambunathan K  <kjambunathan@novell.com>
 	* mb-tokenizer.cs: Oops. Also pulled out all of the old
 	pre-processor code that is no more used.

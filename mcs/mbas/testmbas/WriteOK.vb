@@ -75,7 +75,8 @@ Public Class WriteOK2
 		SyncLock Text
 	        Console.WriteLine("Sub:OK! - """ & Text & """ " & someText & " " & someOtherText)
 		End SyncLock
-#If CAUSEERRORS
+#If False 
+'#If CAUSEERRORS
 	Yield 1
 	Yield Stop
 #End If
