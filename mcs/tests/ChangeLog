@@ -1,3 +1,7 @@
+2002-06-08  Martin Baulig  <martin@gnome.org>
+
+	* test-127.cs: New test for Enum.IsDefined().
+
 2002-05-24  Ravi Pratap  <ravi@ximian.com>
 
 	* test-124.cs, test-125.cs : Add.
