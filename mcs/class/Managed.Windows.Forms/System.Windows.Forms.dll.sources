@@ -17,6 +17,7 @@ System.Windows.Forms/Border3DSide.cs
 System.Windows.Forms/Border3DStyle.cs
 System.Windows.Forms/BorderStyle.cs
 System.Windows.Forms/BoundsSpecified.cs
+System.Windows.Forms/ButtonBase.cs
 System.Windows.Forms/ButtonBorderStyle.cs
 System.Windows.Forms/ButtonState.cs
 System.Windows.Forms/CaptionButton.cs
