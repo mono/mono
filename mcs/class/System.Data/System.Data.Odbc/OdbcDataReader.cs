@@ -519,8 +519,17 @@ namespace System.Data.Odbc
 						break;
 					case OdbcType.Timestamp:
 					case OdbcType.DateTime:
+					case OdbcType.Date:
+					case OdbcType.Time:
 						OdbcTimestamp ts_data=new OdbcTimestamp();
-						ret=libodbc.SQLGetData(hstmt, ColIndex, OdbcType.DateTime, ref ts_data, 0, ref outsize);
+						if (col.OdbcType == OdbcType.Timestamp) 
+							ret=libodbc.SQLGetData(hstmt, ColIndex, OdbcType.Timestamp, ref ts_data, 0, ref outsize);
+						else if (col.OdbcType == OdbcType.DateTime)
+							ret=libodbc.SQLGetData(hstmt, ColIndex, OdbcType.DateTime, ref ts_data, 0, ref outsize);
+						else if (col.OdbcType == OdbcType.Date)
+							ret=libodbc.SQLGetData(hstmt, ColIndex, OdbcType.Date, ref ts_data, 0, ref outsize);
+						else  // FIXME: how to get TIME datatype ??
+							ret=libodbc.SQLGetData(hstmt, ColIndex, OdbcType.DateTime, ref ts_data, 0, ref outsize);
 						if (outsize!=-1) // This means SQL_NULL_DATA 
 							DataValue=new DateTime(ts_data.year,ts_data.month,ts_data.day,ts_data.hour,
 								ts_data.minute,ts_data.second,Convert.ToInt32(ts_data.fraction));
@@ -529,7 +538,7 @@ namespace System.Data.Odbc
                                         case OdbcType.Image :
                                                 bufsize = col.MaxLength + 1;
                                                 buffer = new byte [bufsize];
-                                                long read = GetBytes (ColIndex, 0, buffer, 0, bufsize);
+                                                long read = GetBytes (ordinal, 0, buffer, 0, bufsize);
                                                 ret = OdbcReturn.Success;
                                                 DataValue = buffer;
                                                 break;
