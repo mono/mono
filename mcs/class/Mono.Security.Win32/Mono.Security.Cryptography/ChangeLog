@@ -1,0 +1,16 @@
+2003-02-05  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* CapiContext.cs: New. Class to acquire and release an
+	  unmanaged context with CryptoAPI.
+	* CapiHash.cs: New. Base class to handle hash algorithms.
+	* CapiRandomNumberGenerator.cs: New. Base class to handle
+	  random number generation.
+	* CryptoAPI.cs: Wrapper class around CryptoAPI.
+	* MD2.cs: Abstract class for Message Digest 2 (RFC1319).
+	* MD2CryptoServiceProvider.cs: Unmanaged MD2 implementation.
+	* MD4.cs: Abstract class for Message Digest 4 (RFC1320).
+	* MD4CryptoServiceProvider.cs: Unmanaged MD4 implementation.
+	* MD5CryptoServiceProvider.cs: Unmanaged MD5 implementation.
+	* RNGCryptoServiceProvider.cs: Unmanaged RNG implementation.
+	* MD2CryptoServiceProvider.cs: Unmanaged SHA1 implementation.
+
