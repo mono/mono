@@ -1,4 +1,9 @@
 
+Thu Sep 20 19:37:39 CEST 2001 Paolo Molaro <lupus@ximian.com>
+
+	* loader.c: work around the different signatures for delegates
+	constructors csc generates in compiled code vs the ones compiled in mscorlib.
+
 Tue Sep 18 13:16:32 CEST 2001 Paolo Molaro <lupus@ximian.com>
 
 	* class.h, class.c: add mono_class_get_field_from_name ().
