@@ -21,7 +21,8 @@ namespace System.Security.Cryptography {
 		/// constructor, no idea why it is here (abstract class)  :-)
 		/// just for compatibility with MS
 		/// </summary>
-		public AsymmetricSignatureFormatter() {
+		public AsymmetricSignatureFormatter() 
+		{
 		}
 		
 		/// <summary>
@@ -42,8 +43,11 @@ namespace System.Security.Cryptography {
 		/// <summary>
 		/// Create a signature from data with the specified hash algorithm
 		/// </summary>
-		public virtual byte[] CreateSignature(HashAlgorithm hash) {
-			return CreateSignature(hash.Hash);
+		public virtual byte[] CreateSignature(HashAlgorithm hash) 
+		{
+			if (hash == null)
+				throw new ArgumentNullException ("hash");
+			return CreateSignature (hash.Hash);
 		}
 		
 	} // AsymmetricSignatureFormatter

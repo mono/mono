@@ -26,12 +26,6 @@ namespace System.Security.Cryptography {
 			disposed = false;
 		}
 
-		// important so we can destory any unmanaged resources
-		~HashAlgorithm () 
-		{
-			Dispose (true);
-		}
-	
 		/// <summary>
 		/// Get whether or not the hash can transform multiple blocks at a time.
 		/// Note: MUST be overriden if descendant can transform multiple block

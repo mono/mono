@@ -1,3 +1,22 @@
+2002-11-20  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* AsymmetricSignatureDeformatter.cs: Added exception handling in
+	VerifySignature (moved from RSAPKCS1SignatureDeformatter).
+	* AsymmetricSignatureFormatter.cs: Added exception handling in
+	CreateSignature (moved from RSAPKCS1SignatureFormatter).
+	* CryptoAPITransform.cs: Removed "= false" assignation from a private
+	member (because this created an unwanted "ghost" constructor) and 
+	modified Dispose declaration.
+	* HashAlgorithm.cs: Removed destructor. Disposing unmanaged 
+	ressources is the responsability of each class (not an abstract class).
+	* RSAPKCS1SignatureDeformatter.cs: Removed a VerifySignature method
+	which was present in the base class AsymmetricSignatureDeformatter.
+	* RSAPKCS1SignatureFormatter.cs: Removed a CreateSignature method
+	which was present in the base class AsymmetricSignatureFormatter.
+	* SHA1Managed.cs: Removed sealed from class declaration. Removed 
+	destructor and Dispose method as class is fully managed.
+	* ToBase64Transform.cs: Added virtual to property CanReuseTransform.
+
 2002-11-17  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* CryptoConfig.cs: Added full classes name for MapNameToOID.

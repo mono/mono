@@ -16,24 +16,13 @@ namespace System.Security.Cryptography {
 // Mono must provide those two class for binayry compatibility.
 // In our case both class are wrappers around a managed internal class SHA1Internal.
 
-public sealed class SHA1Managed : SHA1 {
+public class SHA1Managed : SHA1 {
 
 	private SHA1Internal sha;
 
 	public SHA1Managed () 
 	{
 		sha = new SHA1Internal ();
-	}
-
-	~SHA1Managed () 
-	{
-		Dispose (false);
-	}
-
-	protected override void Dispose (bool disposing) 
-	{
-		// nothing new to do (managed implementation)
-		base.Dispose (disposing);
 	}
 
 	protected override void HashCore (byte[] rgb, int start, int size) 

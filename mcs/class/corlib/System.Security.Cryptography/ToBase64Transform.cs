@@ -33,7 +33,7 @@ namespace System.Security.Cryptography {
 			}
 		}
 
-		public bool CanReuseTransform {
+		public virtual bool CanReuseTransform {
 			get { return false; }
 		}
 
@@ -48,7 +48,6 @@ namespace System.Security.Cryptography {
 				return 3;
 			}
 		}
-
 
 		/// <summary>
 		///  Returns the output block size for the Base64 encoder.
@@ -108,9 +107,6 @@ namespace System.Security.Cryptography {
 
 			return this.OutputBlockSize;
 		}
-
-
-
 
 		// LAMESPEC: It's not clear from Beta2 docs what should be
 		// happening here if inputCount > InputBlockSize.
@@ -187,12 +183,9 @@ namespace System.Security.Cryptography {
 
 			return res;
 		}
-
 	} // ToBase64Transform
 
 
-
-	
 	[MonoTODO ("Put me in a separate file")]
 	internal sealed class Base64Table {
 
@@ -228,12 +221,10 @@ namespace System.Security.Cryptography {
 			}
 		}
 
-
 		private Base64Table ()
 		{
 			// Never instantiated.
 		}
-
 
 		internal static byte [] EncodeTable {
 			get {
@@ -246,7 +237,6 @@ namespace System.Security.Cryptography {
 				return decodeTable;
 			}
 		}
-
 	} // Base64Table
 
 } // System.Security.Cryptography

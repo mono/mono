@@ -53,14 +53,6 @@ public class RSAPKCS1SignatureDeformatter : AsymmetricSignatureDeformatter {
 		string oid = CryptoConfig.MapNameToOID (hash.ToString ());
 		return PKCS1.Verify_v15 (rsa, oid, rgbHash, rgbSignature);
 	}
-
-	public override bool VerifySignature (HashAlgorithm hash, byte[] rgbSignature) 
-	{
-		if (hash == null)
-			throw new ArgumentNullException ();
-
-		return VerifySignature (hash.Hash, rgbSignature);
-	}
 }
 
 }

@@ -13,7 +13,7 @@ namespace System.Security.Cryptography {
 
 public sealed class CryptoAPITransform : ICryptoTransform {
 
-	private bool m_disposed = false;
+	private bool m_disposed;
 
 	~CryptoAPITransform () 
 	{
@@ -53,7 +53,7 @@ public sealed class CryptoAPITransform : ICryptoTransform {
 		get { return 0; }
 	}
 
-	public void Dispose() 
+	void IDisposable.Dispose () 
 	{
 		Dispose (true);
 		GC.SuppressFinalize (this);  // Finalization is now unnecessary
