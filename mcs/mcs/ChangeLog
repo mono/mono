@@ -1,5 +1,9 @@
 2003-02-23  Martin Baulig  <martin@ximian.com>
 
+	* statement.cs (FlowBranching.UsageVector.MergeChildren): Fix bug #37708.
+
+2003-02-23  Martin Baulig  <martin@ximian.com>
+
 	* statement.cs (Block.AddChildVariableNames): We need to call this
 	recursively, not just for our immediate children.
 
