@@ -157,10 +157,10 @@ namespace System.Text.RegularExpressions {
 				// compile
 				
 				ICompiler cmp;
-				if ((options & RegexOptions.Compiled) != 0)
-					throw new Exception ("Not implemented.");
+				//if ((options & RegexOptions.Compiled) != 0)
+				//	throw new Exception ("Not implemented.");
 					//cmp = new CILCompiler ();
-				else
+				//else
 					cmp = new PatternCompiler ();
 
 				re.Compile (cmp, RightToLeft);
