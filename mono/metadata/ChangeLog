@@ -1,3 +1,8 @@
+
+Tue Mar 22 15:13:54 CET 2005 Paolo Molaro <lupus@ximian.com>
+
+	* metadata.c: added missing break in case statement.
+
 2005-03-22  Zoltan Varga  <vargaz@freemail.hu>
 
 	* marshal.c (mono_marshal_get_runtime_invoke): Add support for
