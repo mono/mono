@@ -1,3 +1,12 @@
+2004-12-28  Geoff Norton  <gnorton@customerdna.com>
+
+	* XplatUIOSX.cs: Implement mouse hovering.  Fix QDPoint struct to avoid
+	  swizzling.  Implement ClientToScreen and ScreenToClient.  Implement
+	  GetCursorPos.  Fix major visibility issues.  Rework the windowing
+	  system to support borderless/titleless windows (implements menus).
+	  Fix GetWindowPos.  Implement initial background color support for
+	  views.
+
 2004-12-28  Peter Bartok  <pbartok@novell.com>
 
 	* Form.cs (get_CreateParams): Make sure we have an owner before using
