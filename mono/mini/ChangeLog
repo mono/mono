@@ -1,3 +1,8 @@
+
+Fri Feb 11 18:47:11 CET 2005 Paolo Molaro <lupus@ximian.com>
+
+	* mini.c, jit-icalls.c: use the managed implementation of memcpy, too.
+
 2005-02-11  Martin Baulig  <martin@ximian.com>
 
 	* debug-mini.c (mono_debug_close_method): Free the line number array.
