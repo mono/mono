@@ -35,9 +35,9 @@ namespace System.Windows.Forms {
 		internal ArrayList	list;
 
 		#region Public Constructors
-		public BaseCollection() {
-			this.list=null;
-		}
+		public BaseCollection ()
+		{
+		}		 
 		#endregion	// Public Constructors
 
 		#region Public Instance Properties
@@ -45,7 +45,7 @@ namespace System.Windows.Forms {
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		public virtual int Count {
 			get {
-				return this.list.Count;
+				return List.Count;
 			}
 		}
 
@@ -77,18 +77,22 @@ namespace System.Windows.Forms {
 		#region Protected Instance Properties
 		protected virtual ArrayList List {
 			get {
-				return this.list;
+				if (list == null)
+					list = new ArrayList ();
+				return list;
 			}
 		}
 		#endregion	// Protected Instance Properties
 
 		#region Public Instance Methods
-		public void CopyTo(Array ar, int index) {
-			this.list.CopyTo(ar, index);
+		public void CopyTo (Array ar, int index)
+		{
+			List.CopyTo (ar, index);
 		}
 
-		public IEnumerator GetEnumerator() {
-			return this.list.GetEnumerator();
+		public IEnumerator GetEnumerator ()
+		{
+			return List.GetEnumerator ();
 		}
 		#endregion	// Public Instance Methods
 	}
