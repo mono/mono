@@ -1,3 +1,7 @@
+2003-09-24    <cesar@ciencias.unam.mx>
+
+	* corlib.dll.sources: Added CompilerGlobalScopeAttribute.cs to the build
+
 2003-08-20  Duncan Mak  <duncan@ximian.com>
 
 	* corlib_test.dll.sources: Added DictionaryBaseTest.cs

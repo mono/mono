@@ -405,6 +405,7 @@ System.Runtime.CompilerServices/CallConvFastcall.cs
 System.Runtime.CompilerServices/CallConvThiscall.cs
 System.Runtime.CompilerServices/CallConvStdcall.cs
 System.Runtime.CompilerServices/CompilationRelaxationsAttribute.cs
+System.Runtime.CompilerServices/CompilerGlobalScopeAttribute.cs
 System.Runtime.CompilerServices/CustomConstantAttribute.cs
 System.Runtime.CompilerServices/DateTimeConstantAttribute.cs
 System.Runtime.CompilerServices/DecimalConstantAttribute.cs
