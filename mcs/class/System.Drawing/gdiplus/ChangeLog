@@ -1,6 +1,12 @@
 2004-01-26  Duncan Mak  <duncan@ximian.com>
 
 	* bitmap.c:
+	(GdipCreateBitmapFromScan0): Set allocate memory for scan0 if it
+	is NULL. Thanks to Jordi for fixing this, we can now write out to
+	a file again.
+
+2004-01-26  Duncan Mak  <duncan@ximian.com>	
+
 	* graphics.c: Use C style comments instead of C++ style.
 
 	* pen.c (clone_dash_array): new helper function.
