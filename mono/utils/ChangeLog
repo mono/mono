@@ -1,3 +1,10 @@
+
+Wed May 22 12:42:06 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* monobitset.c: use our own bit_nth_lsf since the glib one is buggy.
+	Add more tests. mono_bitset_find_first (set, -1) will work correctly
+	now.
+
 2002-05-09  Dietmar Maurer  <dietmar@ximian.com>
 
 	* monobitset.c: use memcmp instead of memcpy
