@@ -161,19 +161,12 @@ namespace Mono.ILASM {
                         customattr_list.Add (customattr);
                 }
 
-                // Lamespec: Is id just for debugging? I don't see a spot for it
-                // in the metadata, unless it overrides name.
-                public void AddGenericParam (string name, string id)
-                {
-                        AddGenericParam (name, id, null);
-                }
-
-                public void AddGenericParam (string name, string id, ITypeRef constraint)
+                public void AddGenericParam (string id)
                 {
                         if (typar_list == null)
                                 typar_list = new ArrayList ();
 
-                        typar_list.Add (new DictionaryEntry (name, constraint));
+                        typar_list.Add (id);
                 }
 
                 public void Define (CodeGen code_gen)
@@ -218,24 +211,12 @@ namespace Mono.ILASM {
                         if (size != -1)
                                 classdef.AddLayoutInfo (pack, size);
 
-                        /*
-                          ///
-                          /// Commented out until I checkin PEAPI generics fixes
-                          ///
                         if (typar_list != null) {
                                 short index = 0;
-                                foreach (DictionaryEntry typar in typar_list) {
-                                        if (typar.Value == null) {
-                                                classdef.AddGenericParameter (index++, (string) typar.Key);
-                                        } else {
-                                                ITypeRef constraint = (ITypeRef) typar.Value;
-                                                constraint.Resolve (code_gen);
-                                                classdef.AddGenericParameter (index++, (string) typar.Key,
-                                                                constraint.PeapiType);
-                                        }
-                                }
+                                foreach (string id in typar_list)
+                                        classdef.AddGenericParameter (index++, id);
                         }
-                        */
+
                         is_intransit = false;
                         is_defined = true;
 

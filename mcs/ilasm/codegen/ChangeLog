@@ -1,3 +1,7 @@
+2003-07-14 Jackson Harper <jackson@latitudegeo.com>
+
+	* TypeDef.cs: Emit generic parameters.
+
 2003-06-15 Jackson Harper <jackson@latitudegeo.com>
 
 	* CodeGen.cs: Fix buglet in cache name creating (I will claim this
