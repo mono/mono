@@ -1,4 +1,8 @@
-2003/11/10  Rafael Teixeira <rafaelteixeirabr@hotmail.com>
+2003/11/12  Rafael Teixeira <rafaelteixeirabr@hotmail.com>
+	* driver.cs : /imports option now is implemented
+	* mb-parser.jay: support for pre-imported namespaces (the default Microsoft.VisualBasic and those from /imports)
+	
+2003/11/12  Rafael Teixeira <rafaelteixeirabr@hotmail.com>
 	* mb-tokenizer.cs : integer literal (Hex starts with &H not 0x), handle Octal literals (&O)
 	* 	handle unicode specialized double-quotes in string literals	
 	* 	corrected some mishandling of conversions in numeric literals

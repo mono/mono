@@ -136,6 +136,7 @@ namespace Mono.MonoBASIC
 		static public bool InitialOptionExplicit = false;
 		static public bool InitialOptionStrict = false;
 		static public bool InitialOptionCompareBinary = true;
+		static public ArrayList ImportsList = null;
 
 		bool OptionExplicit;
 		bool OptionStrict;
@@ -4063,6 +4064,8 @@ private void ReportError9998()
 protected override int parse ()
 {
 	current_namespace = new Namespace (null, RootContext.RootNamespace);
+	foreach(string preImportedNamespace in ImportsList)
+		current_namespace.Using(preImportedNamespace, Location.Null);
 	current_container = RootContext.Tree.Types;
 	current_container.Namespace = current_namespace;
 	oob_stack = new Stack ();

@@ -3,7 +3,6 @@ Option Strict Off
 Option Compare Text
 
 Imports System, IO = System.Console
-Imports Microsoft.VisualBasic
 
 Module WriteOK
 

@@ -221,12 +221,10 @@ namespace Mono.Languages
 			} 
 		}
 		
-		private string[] importsList = null;
-		
-		[Option("[NOT IMPLEMENTED YET]Declare global Imports for namespaces in referenced metadata files. {import-list}:namespace,...", "imports")]
+		[Option("Declare global Imports for namespaces in referenced metadata files. {import-list}:namespace,...", "imports")]
 		public WhatToDoNext imports(string importslist)
 		{
-			importsList = importslist.Split(',');
+			Mono.MonoBASIC.Parser.ImportsList.AddRange(importslist.Split(','));
 			return WhatToDoNext.GoAhead;
 		}
 
@@ -302,6 +300,7 @@ namespace Mono.Languages
 		ArrayList defines = new ArrayList();
 		ArrayList references = new ArrayList();
 		ArrayList soft_references = new ArrayList();
+		
 		string first_source = null;
 		Target target = Target.Exe;
 		string target_ext = ".exe";
@@ -410,6 +409,12 @@ namespace Mono.Languages
 		{
 			defines = new ArrayList ();
 			defines.Add ("__MonoBASIC__");
+		}
+		
+		void SetupDefaultImports()
+		{
+			Mono.MonoBASIC.Parser.ImportsList = new ArrayList();
+			Mono.MonoBASIC.Parser.ImportsList.Add("Microsoft.VisualBasic");
 		}
 
 
@@ -857,6 +862,8 @@ namespace Mono.Languages
 		int MainDriver(string [] args)
 		{
 			SetupDefaultDefines();	
+			
+			SetupDefaultImports();
 
 			ProcessArgs(args);
 			
