@@ -1,5 +1,10 @@
 2003-01-08  Martin Baulig  <martin@ximian.com>
 
+	* statement.cs (FlowBranching.MergeChild): A break in a
+	SWITCH_SECTION does not leave a loop.  Fixes #36155.
+
+2003-01-08  Martin Baulig  <martin@ximian.com>
+
 	* statement.cs (FlowBranching.CheckOutParameters): `struct_params'
 	lives in the same number space than `param_map'.  Fixes #36154.
 
