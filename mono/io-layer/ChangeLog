@@ -1,3 +1,13 @@
+2002-05-09  Dick Porter  <dick@ximian.com>
+
+	* threads.c: 
+	* semaphores.c: 
+	* processes.c: 
+	* mutexes.c: 
+	* handles-private.h: 
+	* events.c: 
+	* Makefile.am: Remove now-unused file wait-private.h
+
 2002-05-08  Dick Porter  <dick@ximian.com>
 
 	* shared.c: Better error messages, and report when daemon
