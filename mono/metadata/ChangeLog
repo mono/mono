@@ -1,5 +1,8 @@
 2001-07-17  Miguel de Icaza  <miguel@ximian.com>
 
+	* assembly.c (mono_assembly_open): Keep track of the file name in
+	case the assembly has no ASSEMBLY table.
+
 	* metadata.h: Fixed Paolo's quick hack.  Put the documnentation
 	from get.c here.
 
