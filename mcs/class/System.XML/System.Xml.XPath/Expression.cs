@@ -284,8 +284,14 @@ namespace System.Xml.XPath
 
 		public BaseIterator EvaluateNodeSet (BaseIterator iter)
 		{
-			if (GetReturnType (iter) == XPathResultType.NodeSet)
-				return (BaseIterator) Evaluate (iter);
+			XPathResultType type = GetReturnType (iter);
+			if (type == XPathResultType.NodeSet ||
+				type == XPathResultType.Any)
+			{
+				BaseIterator iterResult = Evaluate (iter) as BaseIterator;
+				if (iterResult != null)
+					return iterResult;
+			}
 			throw new XPathException ("expected nodeset: "+ToString ());
 		}
 		protected static XsltContext DefaultContext { get { return _ctxDefault; } }

@@ -1,7 +1,11 @@
+2003-07-27  Piers Haken	<piersh@friskit.com>
+
+	* Expression.cs: allow EvaluateNodeSet to take XPathResultType.Any
+
 2003-07-26  Piers Haken	<piersh@friskit.com>
 
 	* Expression.cs: fix function evaluation with ambigous argument types
-	* XPathnavigator.cs: fix silly null reference bug
+	* XPathNavigator.cs: fix silly null reference bug
 
 2003-07-26  Piers Haken	<piersh@friskit.com>
 
