@@ -1,3 +1,7 @@
+2005-03-09  Marek Safar  <marek.safar@seznam.cz>
+
+	* ILGenerator.cs (DeclareLocal): Throw an exception for null argument.
+
 2005-03-01  Zoltan Varga  <vargaz@freemail.hu>
 
 	* CustomAttributeBuilder.cs UnmanagedMarshal.cs: Allow sizeConst and

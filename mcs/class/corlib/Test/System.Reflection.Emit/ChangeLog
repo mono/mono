@@ -1,3 +1,7 @@
+2005-03-09  Marek Safar  <marek.safar@seznam.cz>
+
+	* ILGeneratorTest.cs: New test file.
+
 2005-03-09  Zoltan Varga  <vargaz@freemail.hu>
 
 	* TypeBuilderTest.cs: Disable last test since the fix is reverted.

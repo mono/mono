@@ -405,6 +405,9 @@ namespace System.Reflection.Emit {
 #endif
 		LocalBuilder DeclareLocal (Type localType, bool pinned)
 		{
+			if (localType == null)
+				throw new ArgumentNullException ("localType");
+
 			LocalBuilder res = new LocalBuilder (localType, this);
 			res.is_pinned = pinned;
 			
