@@ -709,7 +709,7 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression {
 				opt_len = static_len;
 			}
 			
-			if (stored_offset >= 0 && stored_len+4 < opt_len >> 3) {
+			if (stored_offset >= 0 && stored_len+4 < (opt_len >> 3)) {
 				/* Store Block */
 //				if (DeflaterConstants.DEBUGGING) {
 //					Console.WriteLine("Storing, since " + stored_len + " < " + opt_len
