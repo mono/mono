@@ -1,3 +1,10 @@
+2002-12-01  Alejandro Sánchez Acosta  <raciel@es.gnu.org>
+
+	* cs0100.cs,
+	  cs0105.cs,
+	  cs0112.cs,
+	  cs0116.cs: New test.
+
 2002-09-12  Martin Baulig  <martin@gnome.org>
 
 	* cs0038.cs: New test.
