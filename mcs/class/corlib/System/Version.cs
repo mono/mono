@@ -118,7 +118,83 @@ namespace System {
 			return 0;
 		}
 
-		
+		public override bool Equals (object obj)
+		{
+			Version x;
+			
+			if (obj == null)
+				throw new ArgumentNullException ("obj");
+			if (!(obj is Version))
+				return false;
+
+			x = (Version) obj;
+			
+			if ((x.major == major) &&
+			    (x.minor == minor) &&
+			    (x.build == build) &&
+			    (x.revision == revision))
+				return true;
+			return false;
+		}
+
+		// <summary>
+		//   This is sort of lame: the documentation claims that the
+		//   return value is a 32-bit integer, but "int" can be 64
+		//   on Alphas for example. 
+		// </summary>
+		public override int GetHashCode ()
+		{
+			return (revision << 24) | (build << 16) | (minor << 8) | major;
+		}
+
+		// <summary>
+		//   Returns a stringified representation of the version, format:
+		//   major.minor[.build[.revision]]
+		// </summary>
+		public override string ToString ()
+		{
+			string mm = major.ToString + "." + minor.ToString ();
+			
+			if (build != MAXINT)
+				mm = mm + "." + build.ToString ();
+			if (revision != MAXINT)
+				mm = mm + "." + revision.ToString ();
+
+			return mm;
+		}
+
+		// <summary>
+		//    LAME: This API is lame, since there is no way of knowing
+		//    how many fields a Version object has, it is unfair to throw
+		//    an ArgumentException, but this is what the spec claims.
+		//
+		//    ie, Version a = new Version (1, 2);  a.ToString (3) should
+		//    throw the expcetion.
+		// </summary>
+		public string ToString (int fields)
+		{
+			if (fields == 0)
+				return "";
+			if (fields == 1)
+				return major.ToString ();
+			if (fields == 2)
+				return major.ToString () + "." + minor.ToString ();
+			if (fields == 3){
+				if (build == MAXINT)
+					throw new ArgumentException ("fields is larger than the number of components defined in this instance");
+				return major.ToString () + "." + minor.ToString () + "." +
+					build.ToString ();
+			}
+			if (fields == 4){
+				if (build == MAXINT || revision == MAXINT)
+					throw new ArgumentException ("fields is larger than the number of components defined in this instance");
+				return major.ToString () + "." + minor.ToString () + "." +
+					build.ToString () + "." + revision.ToString ();
+			}
+			
+		}
 	}
 }
+
+
 

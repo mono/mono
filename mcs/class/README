@@ -18,6 +18,14 @@ divide the code based on the namespace they implement.
 	Do not use XXX or obscure descriptions, because otherwise people
 	will not be able to understand what you mean.
 
+* Tagging Lame specs
+
+	Sometimes the specification will be lame (consider Version.ToString (fieldCount)
+	where there is no way of knowing how many fields are available, making the API
+	not only stupid, but leading to unreliable code).
+
+	In those cases, use the keyword "LAMESPEC".
+
 * Coding consideration
 
 	Use 8 space tabs for writing your code (hopefully we can keep
