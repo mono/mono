@@ -1,3 +1,8 @@
+2002/03/08  Nick Drochak <ndrochak@gol.com>
+
+	* System_test.build: Don't build test dll by default.  Only build
+	it when 'make test' is specified.
+
 2002-03-06  Kral Ferch <kral_ferch@hotmail.com>
 
 	* XmlAttributeTests.cs: Fixed bug in TestHasChildNodes test.
