@@ -101,8 +101,8 @@ System.Drawing.Printing/PaperSource.cs
 System.Drawing.Printing/PaperSourceKind.cs
 System.Drawing.Printing/PaperUnitConvert.cs
 System.Drawing.Printing/PreviewPageInfo.cs
-System.Drawing.Printing/PreviewPrintControler.cs
-System.Drawing.Printing/PrintControler.cs
+System.Drawing.Printing/PreviewPrintController.cs
+System.Drawing.Printing/PrintController.cs
 System.Drawing.Printing/PrintDocument.cs
 System.Drawing.Printing/PrinterResolution.cs
 System.Drawing.Printing/PrinterResolutionKind.cs

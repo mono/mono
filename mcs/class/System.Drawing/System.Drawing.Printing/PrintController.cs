@@ -1,5 +1,5 @@
 //
-// System.Drawing.PreviewPrintControler.cs
+// System.Drawing.PrintControler.cs
 //
 // Author:
 //   Dennis Hayes (dennish@Raytek.com)
@@ -11,16 +11,17 @@ using System;
 namespace System.Drawing.Printing
 {
 	/// <summary>
-	/// Summary description for PreviewPrintControler.
+	/// Summary description for PrintControler.
 	/// </summary>
-	public class PreviewPrintControler : PrintControler
+	public abstract class PrintController
 	{
-		private bool useantialias;
-		public PreviewPrintControler()
+		public PrintControler()
 		{
-			useantialias = false;
+			//
+			// TODO: Add constructor logic here
+			//
 		}
-//		//[MonoTODO]
+		//[MonoTODO]
 //		public override void OnEndPage(PrintDocument document, PrintPageEventArgs e){
 //			throw new NotImplementedException ();
 //		}
@@ -33,22 +34,8 @@ namespace System.Drawing.Printing
 //			throw new NotImplementedException ();
 //		}
 		//[MonoTODO]
-		//public override Graphics OnStartPage(PrintDocument document, PrintPageEventArgs e){
-		//	throw new NotImplementedException ();
-		//}
-		
-		public bool UseAntiAlias {
-			get{
-				return useantialias;
-			}
-			set{
-				useantialias = value;
-			}
-		}
-		//[MonoTODO]
-		public PreviewPageInfo [] GetPreviewPageInfo(){
-			throw new NotImplementedException ();
-		}
-
+//		public override Graphics OnStartPage(PrintDocument document, PrintPageEventArgs e){
+//			throw new NotImplementedException ();
+//		}
 	}
 }
