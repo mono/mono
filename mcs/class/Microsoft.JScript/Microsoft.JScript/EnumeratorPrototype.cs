@@ -42,7 +42,7 @@ namespace Microsoft.JScript {
 
 
 		public static EnumeratorConstructor constructor {
-			get { throw new NotImplementedException (); }
+			get { return EnumeratorConstructor.Ctr; }
 		}
 
 		[JSFunctionAttribute (JSFunctionAttributeEnum.HasThisObject, JSBuiltin.Enumerator_item)]
