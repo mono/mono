@@ -133,6 +133,15 @@ namespace PEAPI
             }
   }
 
+	public class Sentinel : Type {
+
+            public Sentinel () : base (0x41) { }
+
+            internal sealed override void TypeSig(MemoryStream str) {
+                    str.WriteByte(typeIndex);
+            }
+        }
+
 	/// <summary>
 	/// The IL Array type
 	/// </summary>
