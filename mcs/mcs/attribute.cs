@@ -309,7 +309,13 @@ namespace Mono.CSharp {
 					}
 
 					if (e is Constant) {
-						object o = ((Constant) e).GetValue ();
+						Constant c = Const.ChangeType (
+							Location, (Constant) e,
+							pi.PropertyType);
+						if (c == null)
+							return null;
+
+						object o = c.GetValue ();
 						prop_values.Add (o);
 						
 						if (UsageAttr) {
@@ -343,8 +349,12 @@ namespace Mono.CSharp {
 					// Handle charset here, and set the TypeAttributes
 					
 					if (e is Constant){
-						object value = ((Constant) e).GetValue ();
-						
+						Constant c = Const.ChangeType (
+							Location, (Constant) e, fi.FieldType);
+						if (c == null)
+							return null;
+
+						object value = c.GetValue ();
 						field_values.Add (value);
 					} else if (e is TypeOf) {
 						field_values.Add (((TypeOf) e).TypeArg);
@@ -387,7 +397,7 @@ namespace Mono.CSharp {
 			int pc = pd.Count;
 			if (pc > 0 && pd.ParameterModifier (pc-1) == Parameter.Modifier.PARAMS)
 				group_in_params_array = pc-1;
-			
+
 			for (int j = 0; j < pos_arg_count; ++j) {
 				Argument a = (Argument) pos_args [j];
 				

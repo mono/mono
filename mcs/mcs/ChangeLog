@@ -1,3 +1,9 @@
+2004-04-27  Martin Baulig  <martin@ximian.com>
+
+	* attribute.cs (Attribute.Resolve): If we have a constant value
+	for a named field or property, implicity convert it to the correct
+	type.
+
 2004-04-27  Raja R Harinath  <rharinath@novell.com>
 
 	* statement.cs (Block.Block): Implicit blocks share
