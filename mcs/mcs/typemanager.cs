@@ -175,10 +175,10 @@ public class TypeManager {
 	static Assembly [] assemblies;
 
 	// <remarks>
-	//  Keeps a list of module builders. We used this to do lookups
-	//  on the modulebuilder using GetType -- needed for arrays
+	//  Keeps a list of modules. We used this to do lookups
+	//  on the module using GetType -- needed for arrays
 	// </remarks>
-	static ModuleBuilder [] modules;
+	static Module [] modules;
 
 	// <remarks>
 	//   This is the type_cache from the assemblies to avoid
@@ -496,10 +496,10 @@ public class TypeManager {
 	/// <summary>
 	///  Registers a module builder to lookup types from
 	/// </summary>
-	public static void AddModule (ModuleBuilder mb)
+	public static void AddModule (Module mb)
 	{
 		int top = modules != null ? modules.Length : 0;
-		ModuleBuilder [] n = new ModuleBuilder [top + 1];
+		Module [] n = new Module [top + 1];
 
 		if (modules != null)
 			modules.CopyTo (n, 0);
@@ -592,7 +592,7 @@ public class TypeManager {
 			} while (t != null);
 		}
 
-		foreach (ModuleBuilder mb in modules) {
+		foreach (Module mb in modules) {
 			t = mb.GetType (name);
 			if (t != null) 
 				return t;
