@@ -101,6 +101,7 @@ namespace Mono.CSharp {
  				case 0629: return "Conditional member '{0}' cannot implement interface member";
 				case 0657: return "'{0}' is not a valid attribute location for this declaration. Valid attribute locations for this declaration are '{1}'";
  				case 1618: return "Cannot create delegate with '{0}' because it has a Conditional attribute";
+				case 1667: return "'{0}' is not valid on property or event accessors. It is valid on '{1}' declarations only";
 				case 3000: return "Methods with variable arguments are not CLS-compliant";
 				case 3001: return "Argument type '{0}' is not CLS-compliant";
 				case 3002: return "Return type of '{0}' is not CLS-compliant";

@@ -562,7 +562,7 @@ namespace Mono.CSharp {
 		/// <summary>
 		///   Get a string containing a list of valid targets for the attribute 'attr'
 		/// </summary>
-		string GetValidTargets ()
+		public string GetValidTargets ()
 		{
 			StringBuilder sb = new StringBuilder ();
 			AttributeTargets targets = GetAttributeUsage ().ValidOn;

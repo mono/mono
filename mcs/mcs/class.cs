@@ -4703,6 +4703,93 @@ namespace Mono.CSharp {
 		}
 	}
 
+
+	// Ooouh Martin, templates are missing here.
+	// When it will be possible move here a lot of child code and template method type.
+	public abstract class AbstractPropertyEventMethod: Attributable, IMethodData
+	{
+		protected MethodData method_data;
+		protected Block block;
+
+		ReturnParameter return_attributes;
+
+		public AbstractPropertyEventMethod ():
+			base (null)
+		{
+		}
+
+		public AbstractPropertyEventMethod (Accessor accessor):
+			base (accessor.Attributes)
+		{
+			this.block = accessor.Block;
+		}
+
+		#region IMethodData Members
+
+		public Block Block {
+			get {
+				return block;
+			}
+		}
+
+		public CallingConventions CallingConventions {
+			get {
+				return CallingConventions.Standard;
+			}
+		}
+
+		public bool IsExcluded (EmitContext ec)
+		{
+			return false;
+		}
+
+		public abstract ObsoleteAttribute GetObsoleteAttribute ();
+		public abstract string GetSignatureForError (TypeContainer tc);
+		public abstract Location Location { get; }
+		public abstract string MethodName { get; }
+		public abstract Type[] ParameterTypes { get; }
+		public abstract Type ReturnType { get; }
+		public abstract EmitContext CreateEmitContext(TypeContainer tc, ILGenerator ig);
+
+		#endregion
+
+		public override void ApplyAttributeBuilder(Attribute a, CustomAttributeBuilder cb)
+		{
+			if (a.Type == TypeManager.cls_compliant_attribute_type || a.Type == TypeManager.obsolete_attribute_type ||
+					a.Type == TypeManager.conditional_attribute_type) {
+				//"'{0}' is not valid on property or event accessors. It is valid on '{1}' declarations only"
+				Report.Error_T (1667, a.Location, TypeManager.CSharpName (a.Type), a.GetValidTargets ());
+				return;
+			}
+
+			if (a.Target == "method") {
+				method_data.MethodBuilder.SetCustomAttribute (cb);
+				return;
+			}
+
+			if (a.Target == "return") {
+				if (return_attributes == null)
+					return_attributes = new ReturnParameter (method_data.MethodBuilder, Location);
+
+				return_attributes.ApplyAttributeBuilder (a, cb);
+				return;
+			}
+
+			ApplyToExtraTarget (a, cb);
+		}
+
+		virtual protected void ApplyToExtraTarget (Attribute a, CustomAttributeBuilder cb)
+		{
+			System.Diagnostics.Debug.Fail ("You forgot to define special attribute target handling");
+		}
+
+		public virtual void Emit (TypeContainer container)
+		{
+			method_data.Emit (container, this);
+			block = null;
+		}
+	}
+
 	//
 	// Properties and Indexers both generate PropertyBuilders, we use this to share 
 	// their common bits.
@@ -4763,7 +4850,7 @@ namespace Mono.CSharp {
 			{
 			}
 
-			public override void ApplyAttributeBuilder(Attribute a, CustomAttributeBuilder cb)
+			protected override void ApplyToExtraTarget(Attribute a, CustomAttributeBuilder cb)
 			{
 				if (a.Target == "param") {
 					if (param_attr == null)
@@ -4824,22 +4911,16 @@ namespace Mono.CSharp {
 			}
 		}
 
-
 		static string[] attribute_targets = new string [] { "property" };
 
-		public abstract class PropertyMethod: Attributable, IMethodData 
+		public abstract class PropertyMethod: AbstractPropertyEventMethod
 		{
 			protected readonly MethodCore method;
-			protected MethodData method_data;
-			Block block;
-
-			ReturnParameter return_attributes;
 
 			public PropertyMethod (MethodCore method, Accessor accessor):
-				base (accessor.Attributes)
+				base (accessor)
 			{
 				this.method = method;
-				this.block = accessor.Block;
 			}
 
 			public override AttributeTargets AttributeTargets {
@@ -4860,78 +4941,34 @@ namespace Mono.CSharp {
 				}
 			}
 
-			#region IMethodData Members
-
-			public Block Block {
-				get {
-					return block;
-				}
-			}
-
-			public CallingConventions CallingConventions {
-				get {
-					return CallingConventions.Standard;
-				}
-			}
-
 			public abstract MethodBuilder Define (TypeContainer container);
 
-			public void Emit (TypeContainer container)
-			{
-				method_data.Emit (container, this);
-				block = null;
-			}
-
-			public virtual string GetSignatureForError (TypeContainer tc)
-			{
-				return String.Concat (tc.Name, '.', method.Name);
-			}
-
-			public override void ApplyAttributeBuilder(Attribute a, CustomAttributeBuilder cb)
-			{
-				if (a.Target == "return") {
-					if (return_attributes == null)
-						return_attributes = new ReturnParameter (method_data.MethodBuilder, Location);
-
-					return_attributes.ApplyAttributeBuilder (a, cb);
-					return;
-				}
-
-				method_data.MethodBuilder.SetCustomAttribute (cb);
-			}
-
-			public virtual Type[] ParameterTypes {
+			public override Type[] ParameterTypes {
 				get {
 					return TypeManager.NoTypes;
 				}
 			}
 
-			public abstract Type ReturnType { get; }
-
-			public Location Location {
+			public override Location Location {
 				get {
 					return method.Location;
 				}
 			}
 
-			public abstract string MethodName { get; }
-
-			public EmitContext CreateEmitContext (TypeContainer tc, ILGenerator ig)
+			public override EmitContext CreateEmitContext (TypeContainer tc, ILGenerator ig)
 			{
 				return new EmitContext (tc, method.ds, method.Location, ig, ReturnType, method.ModFlags, false);
 			}
 
-			public ObsoleteAttribute GetObsoleteAttribute ()
+			public override ObsoleteAttribute GetObsoleteAttribute ()
 			{
 				return method.GetObsoleteAttribute (method.ds);
 			}
 
-			public bool IsExcluded (EmitContext ec)
+			public override string GetSignatureForError (TypeContainer tc)
 			{
-				return false;
+				return String.Concat (tc.Name, '.', method.Name);
 			}
-
-			#endregion
 		}
 
 
@@ -5515,39 +5552,26 @@ namespace Mono.CSharp {
 
 		}
 
-		public abstract class DelegateMethod: Attributable, IMethodData
+		public abstract class DelegateMethod: AbstractPropertyEventMethod
 		{
 			protected readonly Event method;
-			protected MethodData method_data;
-			Block block;
-			ReturnParameter return_attributes;
 			ImplicitParameter param_attr;
 
 			static string[] attribute_targets = new string [] { "method", "param", "return" };
 
-			public DelegateMethod (Event method):
-				base (null)
+			public DelegateMethod (Event method)
 			{
 				this.method = method;
 			}
 
 			public DelegateMethod (Event method, Accessor accessor):
-				base (accessor.Attributes)
+				base (accessor)
 			{
 				this.method = method;
-				this.block = accessor.Block;
 			}
 
-			public override void ApplyAttributeBuilder(Attribute a, CustomAttributeBuilder cb)
+			protected override void ApplyToExtraTarget(Attribute a, CustomAttributeBuilder cb)
 			{
-				if (a.Target == "return") {
-					if (return_attributes == null)
-						return_attributes = new ReturnParameter (method_data.MethodBuilder, Location);
-
-					return_attributes.ApplyAttributeBuilder (a, cb);
-					return;
-				}
-
 				if (a.Target == "param") {
 					if (param_attr == null)
 						param_attr = new ImplicitParameter (method_data.MethodBuilder);
@@ -5556,7 +5580,7 @@ namespace Mono.CSharp {
 					return;
 				}
 
-				method_data.MethodBuilder.SetCustomAttribute (cb);
+				base.ApplyAttributeBuilder (a, cb);
 			}
 
 			public override AttributeTargets AttributeTargets {
@@ -5583,25 +5607,11 @@ namespace Mono.CSharp {
 				return mb;
 			}
 
-			#region IMethodData Members
 
-			public Block Block {
-				get {
-					return block;
-				}
-			}
-
-			public CallingConventions CallingConventions {
-				get {
-					return CallingConventions.Standard;
-				}
-			}
-
-			public void Emit (TypeContainer tc)
+			public override void Emit (TypeContainer tc)
 			{
 				if (block != null) {
-					method_data.Emit (tc, this);
-					block = null;
+					base.Emit (tc);
 					return;
 				}
 
@@ -5627,49 +5637,40 @@ namespace Mono.CSharp {
 				ig.Emit (OpCodes.Ret);
 			}
 
-			public string GetSignatureForError (TypeContainer tc)
-			{
-				return String.Concat (tc.Name, '.', method.Name);
-			}
-
 			protected abstract MethodInfo DelegateMethodInfo { get; }
 
-			public Type[] ParameterTypes {
+			public override Type[] ParameterTypes {
 				get {
 					return new Type[] { method.MemberType };
 				}
 			}
 
-			public Type ReturnType {
+			public override Type ReturnType {
 				get {
 					return TypeManager.void_type;
 				}
 			}
 
-			public Location Location {
+			public override Location Location {
 				get {
 					return method.Location;
 				}
 			}
 
-			public EmitContext CreateEmitContext (TypeContainer tc, ILGenerator ig)
+			public override EmitContext CreateEmitContext (TypeContainer tc, ILGenerator ig)
 			{
 				return new EmitContext (tc, method.ds, Location, ig, ReturnType, method.ModFlags, false);
 			}
 
-			public ObsoleteAttribute GetObsoleteAttribute ()
+			public override string GetSignatureForError (TypeContainer tc)
+			{
+				return String.Concat (tc.Name, '.', method.Name);
+			}
+
+			public override ObsoleteAttribute GetObsoleteAttribute ()
 			{
 				return method.GetObsoleteAttribute (method.ds);
 			}
-
-			public bool IsExcluded (EmitContext ec)
-			{
-				return false;
-			}
-
-			public abstract string MethodName { get; }
-
-			#endregion
 
 			protected override string[] ValidAttributeTargets {
 				get {
