@@ -1,5 +1,9 @@
 2004-11-08  Atsushi Enomoto <atsushi@ximian.com>
 
+	* XmlNodeReaderTests.cs : numbered some of asserts.
+
+2004-11-08  Atsushi Enomoto <atsushi@ximian.com>
+
 	* XmlTextReaderTests.cs : added tests for 2.0 entity handling.
 	* XmlValidatingReaderTests.cs : modified tests for entity handling
 	  that are changed in 2.0.

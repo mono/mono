@@ -88,22 +88,22 @@ namespace MonoTests.System.Xml
 			nr.Read ();	// root
 			nr.Read ();	// &ent;
 			AssertEquals (XmlNodeType.EntityReference, nr.NodeType);
-			AssertEquals (1, nr.Depth);
+			AssertEquals ("depth#1", 1, nr.Depth);
 			nr.ResolveEntity ();
 			// It is still entity reference.
 			AssertEquals (XmlNodeType.EntityReference, nr.NodeType);
 			nr.Read ();
 			AssertEquals (XmlNodeType.Text, nr.NodeType);
-			AssertEquals (2, nr.Depth);
+			AssertEquals ("depth#2", 2, nr.Depth);
 			AssertEquals ("entity string", nr.Value);
 			nr.Read ();
 			AssertEquals (XmlNodeType.EndEntity, nr.NodeType);
-			AssertEquals (1, nr.Depth);
+			AssertEquals ("depth#3", 1, nr.Depth);
 			AssertEquals ("", nr.Value);
 
 			nr.Read ();	// &ent2;
 			AssertEquals (XmlNodeType.EntityReference, nr.NodeType);
-			AssertEquals (1, nr.Depth);
+			AssertEquals ("depth#4", 1, nr.Depth);
 			nr.ResolveEntity ();
 			AssertEquals (xml, document.OuterXml);
 			// It is still entity reference.
@@ -111,7 +111,7 @@ namespace MonoTests.System.Xml
 			// It now became element node.
 			nr.Read ();
 			AssertEquals (XmlNodeType.Element, nr.NodeType);
-			AssertEquals (2, nr.Depth);
+			AssertEquals ("depth#5", 2, nr.Depth);
 
 			AssertEquals (xml, document.OuterXml);
 		}
