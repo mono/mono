@@ -6,6 +6,7 @@
 #include <grp.h>
 #include <errno.h>
 #include <dirent.h>
+#include <string.h>
 
 int wifexited (int status)
 {
@@ -81,16 +82,16 @@ int helper_Mono_Posix_Stat(char *filename, int dereference,
 char *helper_Mono_Posix_GetUserName(int uid) {
 	struct passwd *p = getpwuid(uid);
 	if (p == NULL) return NULL;
-	return p->pw_name;
+	return strdup (p->pw_name);
 }
 char *helper_Mono_Posix_GetGroupName(int gid) {
 	struct group *p = getgrgid(gid);
 	if (p == NULL) return NULL;
-	return p->gr_name;
+	return strdup (p->gr_name);
 }
 
 char *helper_Mono_Posix_readdir(DIR *dir) {
 	struct dirent* e = readdir(dir);
 	if (e == NULL) return NULL;
-	return e->d_name;
+	return strdup (e->d_name);
 }
