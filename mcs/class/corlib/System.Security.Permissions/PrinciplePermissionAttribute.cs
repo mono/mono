@@ -1,5 +1,5 @@
 //
-// System.Security.Permissions.PrinciplePermissionAttribute.cs
+// System.Security.Permissions.PrincipalPermissionAttribute.cs
 //
 // Duncan Mak <duncan@ximian.com>
 //
@@ -15,7 +15,7 @@ namespace System.Security.Permissions
 			 AttributeTargets.Struct | AttributeTargets.Constructor |
 			 AttributeTargets.Method)]
 	[Serializable]
-	public sealed class PrinciplePermissionAttribute : CodeAccessSecurityAttribute
+	public sealed class PrincipalPermissionAttribute : CodeAccessSecurityAttribute
 	{
 		// Fields
 		private bool authenticated;
@@ -23,7 +23,7 @@ namespace System.Security.Permissions
 		private string role;
 		
 		// Constructor
-		public PrinciplePermissionAttribute (SecurityAction action)
+		public PrincipalPermissionAttribute (SecurityAction action)
 			: base (action)
 		{
 		}
