@@ -67,11 +67,11 @@ my @status_items = (
 my %results_map = ();
 
 foreach (glob ($files)) {
-
-	print "$_...";
+        print "$_";
 	my ($error_number) = (/[a-z]*(\d+)(-\d+)?\.cs/);
-	my $options = `fgrep "// Compiler options:" $_ | sed -e 's/\\/\\/ Compiler options://'`;
-	chomp $options;
+	my $options = `sed -n 's,^// Compiler options:,,p' $_`;
+	print "...";
+
 	system "$compile $options $_ --expect-error $error_number > /dev/null";
 	
 	exit 1 if $? & 127;
