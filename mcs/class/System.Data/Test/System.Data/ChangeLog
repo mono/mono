@@ -1,3 +1,13 @@
+2005-01-19  Sureshkumar T  <tsureshkumar@novell.com>
+
+	* DataRelationCollectionTest.cs: 
+	        "Remove" Method: Should not throw
+		exception while removing null data relaiton.
+		"RemoveAt" Method: Should throw only IndexOutRange exception
+		not ArgumentException.
+
+	This is same for all MS.NET versions.
+
 2004-10-12  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* DataSetTest.cs : now xs:schema contains xmlns="".

@@ -541,7 +541,7 @@ namespace System.Data {
 		public void Remove (DataRelation relation)
 		{
 			if (relation == null)
-				throw new ArgumentNullException("Relation specified is null");
+                                return;
 
 			 // check if the list doesnot contains this relation.
                         if (!(List.Contains(relation)))
@@ -563,7 +563,7 @@ namespace System.Data {
 		public void RemoveAt (int index)
 		{
 			if (( index < 0 ) || (index >=List.Count))
-                                throw new ArgumentException("There is no row at position "+index+".");
+                                throw new IndexOutOfRangeException ("There is no row at position " + index + ".");
 			Remove(this[index]);
 		}
 
