@@ -4,6 +4,7 @@
 // Author:
 //   Rodrigo Moya (rodrigo@ximian.com)
 //   Daniel Morgan (danmorg@sc.rr.com)
+//   Tim Coleman (tim@timcoleman.com)
 //
 // (C) Ximian, Inc. 2002
 //
@@ -14,39 +15,36 @@ namespace System.Data.SqlTypes
 	/// Represents an integer value that is either 1 or 0 
 	/// to be stored in or retrieved from a database.
 	/// </summary>
-	public struct SqlBoolean : INullable, IComparable {
+	public struct SqlBoolean : INullable, IComparable 
+	{
 
 		#region Fields
 
-		// FIXME: populate the static Fields?
+		private byte value;
 
-		// Value
-		public static readonly SqlBoolean False;
-
-		// Value
+		public static readonly SqlBoolean False = new SqlBoolean (false);
+		[MonoTODO]
 		public static readonly SqlBoolean Null;
 
-		// ByteValue
-		public static readonly SqlBoolean One;
+		public static readonly SqlBoolean One = new SqlBoolean (1);
 		
-		// Value
-		public static readonly SqlBoolean True;
+		public static readonly SqlBoolean True = new SqlBoolean (true);
 
-		// ByteValue
-		public static readonly SqlBoolean Zero;
+		public static readonly SqlBoolean Zero = new SqlBoolean (0);
+
 
 		#endregion // Fields
 
 		#region Constructors
 
-		[MonoTODO]
-		public SqlBoolean(bool value) {
-			throw new NotImplementedException ();
+		public SqlBoolean (bool value) 
+		{
+			this.value = (byte) (value ? 1 : 0);
 		}
 
-		[MonoTODO]
-		public SqlBoolean(int value) {
-			throw new NotImplementedException ();
+		public SqlBoolean (int value) 
+		{
+			this.value = (byte) (value != 0 ? 1 : 0);
 		}
 
 		#endregion // Constructors
@@ -54,127 +52,144 @@ namespace System.Data.SqlTypes
 		#region Properties
 
 		public byte ByteValue {
-			[MonoTODO]
-			get {
-				throw new NotImplementedException ();
-			}
+			get { return value; }
 		}
 
 		public bool IsFalse {
-			[MonoTODO]
-			get {
-				throw new NotImplementedException ();
+			get { 
+				if (this.IsNull) return false;
+				else return (value == 0);
 			}
 		}
 
 		public bool IsNull {
-			[MonoTODO]
-			get {
-				throw new NotImplementedException ();
-			}
+			get { return (bool) (this == SqlBoolean.Null); }
 		}
 
 		public bool IsTrue {
-			[MonoTODO]
-			get {
-				throw new NotImplementedException ();
+			get { 
+				if (this.IsNull) return false;
+				else return (value != 0);
 			}
 		}
 
 		public bool Value {
-			[MonoTODO]
-			get {
-				throw new NotImplementedException ();
+			get { 
+				if (this.IsNull)
+					throw new SqlNullValueException( "The property is set to null.");
+				else
+					return this.IsTrue;
 			}
 		}
 
 		#endregion // Properties
 
+		public static SqlBoolean And (SqlBoolean x, SqlBoolean y) 
+		{
+			return (x & y);
+		}
+
 		[MonoTODO]
-		public static SqlBoolean And(SqlBoolean x, SqlBoolean y) {
+		public int CompareTo (object value) 
+		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		public int CompareTo(object value) {
+		public override bool Equals(object value) 
+		{
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
-		public override bool Equals(object value) {
+		public static SqlBoolean Equals(SqlBoolean x, SqlBoolean y) 
+		{
+			return (x == y);
 		}
 
-		[MonoTODO]
-		public static SqlBoolean Equals(SqlBoolean x, SqlBoolean y) {
+		public override int GetHashCode() 
+		{
+			return (int)value;
 		}
 
-		[MonoTODO]
-		public override int GetHashCode() {
+		public static SqlBoolean NotEquals(SqlBoolean x, SqlBoolean y) 
+		{
+			return (x != y);
 		}
 
-		[MonoTODO]
-		public static SqlBoolean NotEquals(SqlBoolean x, SqlBoolean y) {
+		public static SqlBoolean OnesComplement(SqlBoolean x) 
+		{
+			return ~x;
 		}
 
-		[MonoTODO]
-		public static SqlBoolean OnesComplement(SqlBoolean x) {
+		public static SqlBoolean Or(SqlBoolean x, SqlBoolean y) 
+		{
+			return (x | y);
 		}
 
-		[MonoTODO]
-		public static SqlBoolean Or(SqlBoolean x, SqlBoolean y) {
+		public static SqlBoolean Parse(string s) 
+		{
+			return new SqlBoolean (Boolean.Parse (s));
 		}
 
-		[MonoTODO]
-		public static SqlBoolean Parse(string s) {
-		}
-
-		[MonoTODO]
-		public SqlByte ToSqlByte() {
+		public SqlByte ToSqlByte() 
+		{
+			return new SqlByte (value);
 		}
 
 		// **************************************************
 		// Conversion from SqlBoolean to other SqlTypes
 		// **************************************************
 
-		[MonoTODO]
-		public SqlDecimal ToSqlDecimal() {
+		public SqlDecimal ToSqlDecimal() 
+		{
+			return ((SqlDecimal)value);
+		}
+
+		public SqlDouble ToSqlDouble() 
+		{
+			return ((SqlDouble)value);
+		}
+
+		public SqlInt16 ToSqlInt16() 
+		{
+			return ((SqlInt16)value);
+		}
+
+		public SqlInt32 ToSqlInt32() 
+		{
+			return ((SqlInt32)value);
+		}
+
+		public SqlInt64 ToSqlInt64() 
+		{
+			return ((SqlInt64)value);
+		}
+
+		public SqlMoney ToSqlMoney() 
+		{
+			return ((SqlMoney)value);
+		}
+
+		public SqlSingle ToSqlSingle() 
+		{
+			return ((SqlSingle)value);
+		}
+
+		public SqlString ToSqlString() 
+		{
+			return new SqlString (this.ToString());
 		}
 
 		[MonoTODO]
-		public SqlDouble ToSqlDouble() {
-		}
-
-		[MonoTODO]
-		public SqlInt16 ToSqlInt16() {
-		}
-
-		[MonoTODO]
-		public SqlInt32 ToSqlInt32() {
-		}
-
-		[MonoTODO]
-		public SqlInt64 ToSqlInt64() {
-		}
-
-		[MonoTODO]
-		public SqlMoney ToSqlMoney() {
-		}
-
-		[MonoTODO]
-		public SqlSingle ToSqlSingle() {
-		}
-
-		[MonoTODO]
-		public SqlString ToSqlString() {
-		}
-
-		[MonoTODO]
-		public override string ToString() {
+		public override string ToString() 
+		{
+			throw new NotImplementedException ();
 		}
 
 		// Bitwise exclusive-OR (XOR)
-		[MonoTODO]
-		public static SqlBoolean Xor(SqlBoolean x, SqlBoolean y) {
+		public static SqlBoolean Xor(SqlBoolean x, SqlBoolean y) 
+		{
+			return (x ^ y);
 		}
 
 		// **************************************************
@@ -182,48 +197,58 @@ namespace System.Data.SqlTypes
 		// **************************************************
 
 		// Bitwise AND
-		[MonoTODO]
-		public static SqlBoolean operator &(SqlBoolean x, SqlBoolean y) {
+		public static SqlBoolean operator & (SqlBoolean x, SqlBoolean y)
+		{
+			return new SqlBoolean (x.Value & y.Value);
 		}
 
 		// Bitwise OR
-		[MonoTODO]
-		public static SqlBoolean operator |(SqlBoolean x, SqlBoolean y) {
+		public static SqlBoolean operator | (SqlBoolean x, SqlBoolean y)
+		{
+			return new SqlBoolean (x.Value | y.Value);
+
 		}
 
 		// Compares two instances for equality
-		[MonoTODO]
-		public static SqlBoolean operator ==(SqlBoolean x, SqlBoolean y) {
+		public static SqlBoolean operator == (SqlBoolean x, SqlBoolean y)
+		{
+			return new SqlBoolean (x.Value == y.Value);
 		}
 		
 		// Bitwize exclusive-OR (XOR)
-		[MonoTODO]
-		public static SqlBoolean operator ^(SqlBoolean x, SqlBoolean y) {
+		public static SqlBoolean operator ^ (SqlBoolean x, SqlBoolean y) 
+		{
+			return new SqlBoolean (x.Value ^ y.Value);
 		}
 
 		// test Value of SqlBoolean to determine it is false.
-		[MonoTODO]
-		public static bool operator false(SqlBoolean x) {
+		public static bool operator false (SqlBoolean x) 
+		{
+			return x.IsFalse;
 		}
 
 		// in-equality
-		[MonoTODO]
-		public static SqlBoolean operator !=(SqlBoolean x, SqlBoolean y) {
+		public static SqlBoolean operator != (SqlBoolean x, SqlBoolean y)
+		{
+			return new SqlBoolean (x.Value != y.Value);
 		}
 
 		// Logical NOT
-		[MonoTODO]
-		public static SqlBoolean operator !(SqlBoolean x) {
+		public static SqlBoolean operator ! (SqlBoolean x) 
+		{
+			return new SqlBoolean (!x.Value);
 		}
 
 		// One's Complement
-		[MonoTODO]
-		public static SqlBoolean operator ~(SqlBoolean x) {
+		public static SqlBoolean operator ~ (SqlBoolean x) 
+		{
+			return new SqlBoolean (~x.ByteValue);
 		}
 
 		// test to see if value is true
-		[MonoTODO]
-		public static bool operator true(SqlBoolean x) {
+		public static bool operator true (SqlBoolean x) 
+		{
+			return x.IsTrue;
 		}
 
 		// ****************************************
@@ -232,59 +257,70 @@ namespace System.Data.SqlTypes
 
 		
 		// SqlBoolean to Boolean
-		[MonoTODO]
-		public static explicit operator bool(SqlBoolean x) {
+		public static explicit operator bool (SqlBoolean x) 
+		{
+			return x.Value;
 		}
 
 		
 		// SqlByte to SqlBoolean
-		[MonoTODO]
-		public static explicit operator SqlBoolean(SqlByte x) {
+		public static explicit operator SqlBoolean (SqlByte x) 
+		{
+			return x.ToSqlBoolean ();
 		}
 
 		// SqlDecimal to SqlBoolean
-		[MonoTODO]
-		public static explicit operator SqlBoolean(SqlDecimal x) {
+		public static explicit operator SqlBoolean (SqlDecimal x) 
+		{
+			return x.ToSqlBoolean ();
 		}
 		
 		// SqlDouble to SqlBoolean
-		[MonoTODO]
-		public static explicit operator SqlBoolean(SqlDouble x) {
+		public static explicit operator SqlBoolean (SqlDouble x) 
+		{
+			return x.ToSqlBoolean ();
 		}
 
 		// SqlInt16 to SqlBoolean
-		[MonoTODO]
-		public static explicit operator SqlBoolean(SqlInt16 x) {
+		public static explicit operator SqlBoolean (SqlInt16 x) 
+		{
+			return x.ToSqlBoolean ();
 		}
 
 		// SqlInt32 to SqlBoolean
-		[MonoTODO]
-		public static explicit operator SqlBoolean(SqlInt32 x) {
+		public static explicit operator SqlBoolean (SqlInt32 x) 
+		{
+			return x.ToSqlBoolean ();
 		}
 
 		// SqlInt64 to SqlBoolean
-		[MonoTODO]
-		public static explicit operator SqlBoolean(SqlInt64 x) {
+		public static explicit operator SqlBoolean (SqlInt64 x) 
+		{
+			return x.ToSqlBoolean ();
 		}
 
 		// SqlMoney to SqlBoolean
-		[MonoTODO]
-		public static explicit operator SqlBoolean(SqlMoney x) {
+		public static explicit operator SqlBoolean (SqlMoney x) 
+		{
+			return x.ToSqlBoolean ();
 		}
 
 		// SqlSingle to SqlBoolean
-		[MonoTODO]
-		public static explicit operator SqlBoolean(SqlSingle x) {
+		public static explicit operator SqlBoolean (SqlSingle x) 
+		{
+			return x.ToSqlBoolean ();
 		}
 
 		// SqlString to SqlBoolean
-		[MonoTODO]
-		public static explicit operator SqlBoolean(SqlString x) {
+		public static explicit operator SqlBoolean (SqlString x) 
+		{
+			return x.ToSqlBoolean ();
 		}
 
 		// Boolean to SqlBoolean
-		[MonoTODO]
-		public static implicit operator SqlBoolean(bool x) {
+		public static implicit operator SqlBoolean (bool x) 
+		{
+			return new SqlBoolean (x);
 		}
 	}
 }

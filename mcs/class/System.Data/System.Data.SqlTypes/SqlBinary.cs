@@ -3,6 +3,7 @@
 //
 // Author:
 //   Rodrigo Moya (rodrigo@ximian.com)
+//   Tim Coleman (tim@timcoleman.com)
 //
 // (C) Ximian, Inc.
 //
@@ -14,81 +15,85 @@ namespace System.Data.SqlTypes
 	/// </summary>
 	public struct SqlBinary : INullable, IComparable
 	{
-		public static readonly SqlBinary Null;
+		private byte[] value;
+		public static readonly SqlBinary Null = new SqlBinary (null);
 		
-		[MonoTODO]
-		public SqlBinary (byte[] value) {
-			throw new NotImplementedException ();
+		public SqlBinary (byte[] value) 
+		{
+			this.value = value;
 		}
 
 		[MonoTODO]
-		public int CompareTo (object value) {
+		public int CompareTo (object value) 
+		{
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
-		public static SqlBinary Concat (SqlBinary x, SqlBinary y) {
-			throw new NotImplementedException ();
+		public static SqlBinary Concat (SqlBinary x, SqlBinary y) 
+		{
+			return (x + y);
 		}
 
 		[MonoTODO]
-		public override bool Equals (object value) {
+		public override bool Equals (object value) 
+		{
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
-		public static SqlBoolean Equals(SqlBinary x, SqlBinary y) {
-			throw new NotImplementedException ();
+		public static SqlBoolean Equals(SqlBinary x, SqlBinary y) 
+		{
+			return (x == y);
 		}
 
 		[MonoTODO]
-		public override int GetHashCode () {
+		public override int GetHashCode () 
+		{
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
-		public static SqlBoolean GreaterThan (SqlBinary x, SqlBinary y) {
-			throw new NotImplementedException ();
+		public static SqlBoolean GreaterThan (SqlBinary x, SqlBinary y) 
+		{
+			return (x > y);
+		}
+
+		public static SqlBoolean GreaterThanOrEqual (SqlBinary x, SqlBinary y) 
+		{
+			return (x >= y);
+		}
+
+		public static SqlBoolean LessThan (SqlBinary x, SqlBinary y) 
+		{
+			return (x < y);
 		}
 
 		[MonoTODO]
-		public static SqlBoolean GreaterThanOrEqual (SqlBinary x, SqlBinary y) {
-			throw new NotImplementedException ();
+		public static SqlBoolean LessThanOrEqual (SqlBinary x, SqlBinary y) 
+		{
+			return (x <= y);
+		}
+
+		public static SqlBoolean NotEquals (SqlBinary x, SqlBinary y) 
+		{
+			return (x != y);
+		}
+
+		public SqlGuid ToSqlGuid () 
+		{
+			return new SqlGuid (value);
 		}
 
 		[MonoTODO]
-		public static SqlBoolean LessThan (SqlBinary x, SqlBinary y) {
-			throw new NotImplementedException ();
-		}
-
-		[MonoTODO]
-		public static SqlBoolean LessThanOrEqual (SqlBinary x, SqlBinary y) {
-			throw new NotImplementedException ();
-		}
-
-		[MonoTODO]
-		public static SqlBoolean NotEquals (SqlBinary x, SqlBinary y) {
-			throw new NotImplementedException ();
-		}
-
-		[MonoTODO]
-		public SqlGuid ToSqlGuid () {
-			throw new NotImplementedException ();
-		}
-
-		[MonoTODO]
-		public override string ToString () {
+		public override string ToString () 
+		{
 			throw new NotImplementedException ();
 		}
 		
-		[MonoTODO]
 		public bool IsNull {
-			get { throw new NotImplementedException (); }
+			get { return (value == null); }
 		}
 
-		[MonoTODO]
 		public byte this[int index] {
-			get { throw new NotImplementedException (); }
+			get { return value[index]; }
 		}
 
 		[MonoTODO]
@@ -96,60 +101,66 @@ namespace System.Data.SqlTypes
 			get { throw new NotImplementedException (); }
 		}
 
-		[MonoTODO]
-		public byte[] Value {
-			get { throw new NotImplementedException (); }
+		public byte[] Value 
+		{
+			get { return value; }
 		}
 
 		[MonoTODO]
-		public static SqlBinary operator + (SqlBinary x, SqlBinary y) {
+		public static SqlBinary operator + (SqlBinary x, SqlBinary y) 
+		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		public static SqlBoolean operator == (SqlBinary x, SqlBinary y) {
+		public static SqlBoolean operator == (SqlBinary x, SqlBinary y) 
+		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		public static SqlBoolean operator > (SqlBinary x, SqlBinary y) {
+		public static SqlBoolean operator > (SqlBinary x, SqlBinary y) 
+		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		public static SqlBoolean operator >= (SqlBinary x, SqlBinary y) {
+		public static SqlBoolean operator >= (SqlBinary x, SqlBinary y) 
+		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		public static SqlBoolean operator != (SqlBinary x, SqlBinary y) {
+		public static SqlBoolean operator != (SqlBinary x, SqlBinary y) 
+		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		public static SqlBoolean operator < (SqlBinary x, SqlBinary y) {
+		public static SqlBoolean operator < (SqlBinary x, SqlBinary y) 
+		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		public static SqlBoolean operator <= (SqlBinary x, SqlBinary y) {
+		public static SqlBoolean operator <= (SqlBinary x, SqlBinary y) 
+		{
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
-		public static explicit operator byte[] (SqlBinary x) {
-			throw new NotImplementedException ();
+		public static explicit operator byte[] (SqlBinary x) 
+		{
+			return x.Value;
 		}
 
-		[MonoTODO]
-		public static explicit operator SqlBinary (SqlGuid x) {
-			throw new NotImplementedException ();
+		public static explicit operator SqlBinary (SqlGuid x) 
+		{
+			return x.ToSqlBinary ();
 		}
 
-		[MonoTODO]
-		public static implicit operator SqlBinary (byte[] x) {
-			throw new NotImplementedException ();
+		public static implicit operator SqlBinary (byte[] x) 
+		{
+			return new SqlBinary (x);
 		}
 	}
 }
-			

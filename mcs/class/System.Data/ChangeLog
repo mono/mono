@@ -1,3 +1,11 @@
+2002-05-03  Rodrigo Moya <rodrigo@ximian.com>
+
+	* System.Data.SqlTypes/SqlBinary.cs:
+	* System.Data.SqlTypes/SqlBoolean.cs:
+	* System.Data.SqlTypes/SqlInt32.cs:
+	* System.Data.SqlTypes/SqlString.cs: more implementation, by
+	Tim Coleman <tcoleman@opentext.com>.
+
 2002-05-03  Daniel Morgan <danmorg@sc.rr.com>
 
 	* Test/TestExecuteScalar.cs: added test for 
