@@ -1,3 +1,12 @@
+2004-02-16  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XsdIdentityPath.cs,
+	  XsdIdentityState.cs,
+	  XsdKeyTable.cs,
+	  XsdParticleValidationState.cs,
+	  XsdValidatingReader.cs,
+	  XsdWildcard.cs : made classes internal. Removed extra TODO comments.
+
 2004-02-08  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XsdIdentityState.cs,

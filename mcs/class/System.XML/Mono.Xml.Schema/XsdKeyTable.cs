@@ -15,7 +15,7 @@ using System.Xml.Schema;
 namespace Mono.Xml.Schema
 {
 	// Created per constraining element.
-	public class XsdKeyTable
+	internal class XsdKeyTable
 	{
 		private XsdIdentitySelector selector;
 		private XmlSchemaIdentityConstraint source;

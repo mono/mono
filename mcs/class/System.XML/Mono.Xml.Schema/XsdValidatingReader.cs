@@ -21,7 +21,7 @@ using Mono.Xml;
 
 namespace Mono.Xml.Schema
 {
-	public class XsdValidatingReader : XmlReader, IXmlLineInfo, IHasXmlSchemaInfo, IHasXmlParserContext
+	internal class XsdValidatingReader : XmlReader, IXmlLineInfo, IHasXmlSchemaInfo, IHasXmlParserContext
 	{
 		static char [] wsChars = new char [] {' ', '\t', '\n', '\r'};
 
@@ -556,7 +556,6 @@ namespace Mono.Xml.Schema
 		// Utility for missing validation completion related to child items.
 		private void ValidateCharacters ()
 		{
-			// TODO: value context validation here.
 			if (xsiNilDepth >= 0 && xsiNilDepth < reader.Depth)
 				HandleError ("Element item appeared, while current element context is nil.");
 
@@ -573,7 +572,6 @@ namespace Mono.Xml.Schema
 
 			if (storedCharacters.Length == 0) {
 				// 3.3.4 Element Locally Valid (Element) 5.1.2
-				// TODO: check entire DefaultValid (3.3.6)
 				if (context.Element != null) {
 					if (context.Element.ValidatedDefaultValue != null)
 						value = context.Element.ValidatedDefaultValue;
@@ -837,7 +835,6 @@ namespace Mono.Xml.Schema
 						// If current schema type exists, then this xsi:type must be
 						// valid extension of that type. See 1.2.1.2.4.
 						if (context.Element != null) {
-							// FIXME: supply *correct* base type
 							AssessLocalTypeDerivationOK (xsiType, context.Element.ElementType, context.Element.BlockResolved);
 						}
 						AssessStartElementLocallyValidType (xsiType);	// 1.2.2:
@@ -975,7 +972,6 @@ namespace Mono.Xml.Schema
 		}
 
 		// 3.4.4 Element Locally Valid (Complex Type)
-		// TODO ("wild IDs constraints.")
 		private void AssessElementLocallyValidComplexType (XmlSchemaComplexType cType)
 		{
 			// 1.
@@ -1011,7 +1007,6 @@ namespace Mono.Xml.Schema
 
 			// Collect default attributes.
 			// 4.
-			// FIXME: FixedValue check maybe extraneous.
 			foreach (DictionaryEntry entry in cType.AttributeUses) {
 				XmlSchemaAttribute attr = (XmlSchemaAttribute) entry.Value;
 				if (reader [attr.QualifiedName.Name, attr.QualifiedName.Namespace] == null) {
@@ -1076,7 +1071,6 @@ namespace Mono.Xml.Schema
 		}
 
 		// 3.2.4 Attribute Locally Valid and 3.4.4 - 5.wildIDs
-		// TODO
 		private void AssessAttributeLocallyValid (XmlSchemaAttribute attr, bool checkWildIDs)
 		{
 			// 1.
@@ -1086,7 +1080,7 @@ namespace Mono.Xml.Schema
 			case XmlSchema.InstanceNamespace:
 				break;
 			}
-			// TODO 2. - 4.
+			// 2. - 4.
 			if (attr.AttributeType == null)
 				HandleError ("Attribute type is missing for " + attr.QualifiedName);
 			XmlSchemaDatatype dt = attr.AttributeType as XmlSchemaDatatype;
@@ -1103,7 +1097,6 @@ namespace Mono.Xml.Schema
 				}
 				if (attr.ValidatedFixedValue != null && attr.ValidatedFixedValue != normalized)
 					HandleError ("The value of the attribute " + attr.QualifiedName + " does not match with its fixed value.");
-				// FIXME: this is extraneous checks in 3.2.4 Attribute Locally Valid.
 				if (checkWildIDs)
 					AssessEachAttributeIdentityConstraint (dt, normalized, parsedValue);
 			}
@@ -1157,10 +1150,8 @@ namespace Mono.Xml.Schema
 			}
 		}
 
-		// TODO
 		private void AssessAttributeLocallyValidUse (XmlSchemaAttribute attr)
 		{
-			// TODO: value constraint check
 			// This is extra check than spec 3.5.4
 			if (attr.ValidatedUse == XmlSchemaUse.Prohibited)
 				HandleError ("Attribute " + attr.QualifiedName + " is prohibited in this context.");
@@ -1225,7 +1216,6 @@ namespace Mono.Xml.Schema
 		}
 
 		// 3.11.4 Identity Constraint Satisfied
-		// TODO
 		private void AssessStartIdentityConstraints ()
 		{
 			tmpKeyrefPool.Clear ();
@@ -1255,9 +1245,6 @@ namespace Mono.Xml.Schema
 				// If possible, create new field entry candidates.
 				for (int j = 0; j < seq.Entries.Count; j++) {
 					XsdKeyEntry entry = seq.Entries [j] as XsdKeyEntry;
-//					if (entry.KeyFound)
-// FIXME: it should not be skipped for multiple key check!!
-//						continue;
 					try {
 						entry.FieldMatches (this.elementQNameStack, this);
 					} catch (Exception ex) { // FIXME: (wishlist) It is bad manner ;-(

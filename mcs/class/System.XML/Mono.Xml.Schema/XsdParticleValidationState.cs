@@ -14,7 +14,7 @@ using Mono.Xml;
 
 namespace Mono.Xml.Schema
 {
-	public enum XsdParticleEvaluationResult
+	internal enum XsdParticleEvaluationResult
 	{
 		Matched = 1,	// Matched one of its components.
 		Passed = 2,	// Did not match, but it successfully passed the whole components.
@@ -22,7 +22,7 @@ namespace Mono.Xml.Schema
 		Mismatched = 4	// Dis not match, 
 	}
 
-	public class XsdValidationStateManager
+	internal class XsdValidationStateManager
 	{
 		Hashtable table;
 		XmlSchemaElement currentElement;
@@ -127,7 +127,7 @@ namespace Mono.Xml.Schema
 		}
 	}
 
-	public abstract class XsdValidationState
+	internal abstract class XsdValidationState
 	{
 		// Static members
 
@@ -184,7 +184,7 @@ namespace Mono.Xml.Schema
 		}
 	}
 
-	public class XsdElementValidationState : XsdValidationState
+	internal class XsdElementValidationState : XsdValidationState
 	{
 		public XsdElementValidationState (XmlSchemaElement element, XsdValidationStateManager manager)
 			: base (manager)
@@ -243,7 +243,7 @@ namespace Mono.Xml.Schema
 		}
 	}
 
-	public class XsdSequenceValidationState : XsdValidationState
+	internal class XsdSequenceValidationState : XsdValidationState
 	{
 		XmlSchemaSequence seq;
 		int current;
@@ -389,7 +389,7 @@ namespace Mono.Xml.Schema
 
 	}
 
-	public class XsdChoiceValidationState : XsdValidationState
+	internal class XsdChoiceValidationState : XsdValidationState
 	{
 		XmlSchemaChoice choice;
 		bool emptiable;
@@ -468,7 +468,7 @@ namespace Mono.Xml.Schema
 		}
 	}
 
-	public class XsdAllValidationState : XsdValidationState
+	internal class XsdAllValidationState : XsdValidationState
 	{
 		XmlSchemaAll all;
 		ArrayList consumed = new ArrayList ();
@@ -530,7 +530,7 @@ namespace Mono.Xml.Schema
 		}
 	}
 
-	public class XsdAnyValidationState : XsdValidationState
+	internal class XsdAnyValidationState : XsdValidationState
 	{
 		XmlSchemaAny any;
 
@@ -584,7 +584,7 @@ namespace Mono.Xml.Schema
 		}
 	}
 
-	public class XsdAppendedValidationState : XsdValidationState
+	internal class XsdAppendedValidationState : XsdValidationState
 	{
 		public XsdAppendedValidationState (XsdValidationStateManager manager,
 			XsdValidationState head, XsdValidationState rest)
@@ -630,7 +630,7 @@ namespace Mono.Xml.Schema
 		}
 	}
 
-	public class XsdEmptyValidationState : XsdValidationState
+	internal class XsdEmptyValidationState : XsdValidationState
 	{
 		public XsdEmptyValidationState (XsdValidationStateManager manager)
 			: base (manager)
@@ -655,7 +655,7 @@ namespace Mono.Xml.Schema
 
 	}
 
-	public class XsdInvalidValidationState : XsdValidationState
+	internal class XsdInvalidValidationState : XsdValidationState
 	{
 		internal XsdInvalidValidationState (XsdValidationStateManager manager)
 			: base (manager)

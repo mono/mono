@@ -19,7 +19,7 @@ using System.Xml.Schema;
 
 namespace Mono.Xml.Schema
 {
-	public class XsdIdentitySelector
+	internal class XsdIdentitySelector
 	{
 		XsdIdentityPath [] selectorPaths;
 
@@ -50,7 +50,7 @@ namespace Mono.Xml.Schema
 		}
 	}
 
-	public class XsdIdentityField
+	internal class XsdIdentityField
 	{
 		XsdIdentityPath [] fieldPaths;
 		int index;
@@ -70,7 +70,7 @@ namespace Mono.Xml.Schema
 		}
 	}
 
-	public class XsdIdentityPath
+	internal class XsdIdentityPath
 	{
 		public XsdIdentityStep [] OrderedSteps;
 		public bool Descendants;
@@ -78,7 +78,7 @@ namespace Mono.Xml.Schema
 		public string AttributeName;
 	}
 
-	public class XsdIdentityStep
+	internal class XsdIdentityStep
 	{
 		public bool IsCurrent;
 		public bool IsAttribute;

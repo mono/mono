@@ -17,7 +17,7 @@ using System.Xml.Schema;
 
 namespace Mono.Xml.Schema
 {
-	public class XsdWildcard
+	internal class XsdWildcard
 	{
 		public XsdWildcard (XmlSchemaObject wildcard)
 		{

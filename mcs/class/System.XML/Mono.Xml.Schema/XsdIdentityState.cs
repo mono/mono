@@ -18,7 +18,7 @@ using System.Xml.Schema;
 
 namespace Mono.Xml.Schema
 {
-	public class XsdKeyEntryField
+	internal class XsdKeyEntryField
 	{
 		XsdKeyEntry entry;
 		XsdIdentityField field;
@@ -182,7 +182,7 @@ namespace Mono.Xml.Schema
 		}
 	}
 
-	public class XsdKeyEntryFieldCollection : IList
+	internal class XsdKeyEntryFieldCollection : IList
 	{
 		ArrayList al = new ArrayList ();
 
@@ -275,7 +275,7 @@ namespace Mono.Xml.Schema
 	}
 
 	// Created per field/key pair, created per selector-matched element.
-	public class XsdKeyEntry
+	internal class XsdKeyEntry
 	{
 		public int StartDepth;
 		public int CurrentStep;
