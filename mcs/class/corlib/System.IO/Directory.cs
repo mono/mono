@@ -164,15 +164,26 @@ namespace System.IO
 			IntPtr dir_handle;
 			IntPtr glob_handle = (IntPtr) 0;
 			ArrayList list;
-			string name;
+			string name, subdir = "";
+			int slashpos;
 			
 			if (path == null)
 				return null;
 
+			if (!path.EndsWith (Path.DirectorySeparatorStr))
+				path = path + Path.DirectorySeparatorChar;
+
 			if (pattern == "*")
 				pattern = null;
-			else
+			else {
+				// do we need to handle globbing in directory names, too?
+				if ((slashpos = pattern.LastIndexOf (Path.DirectorySeparatorStr)) >= 0) {
+					subdir = pattern.Substring (0, slashpos + 1);
+					path += subdir;
+					pattern = pattern.Substring (slashpos + 1);
+				}
 				glob_handle = Wrapper.mono_glob_compile (pattern);
+			}
 			
 			dir_handle = Wrapper.opendir (path);
 			list = new ArrayList ();
@@ -183,7 +194,7 @@ namespace System.IO
 				}
 
 				if (Wrapper.mono_glob_match (glob_handle, name) != 0)
-					list.Add (name);
+					list.Add (subdir + name);
 			}
 			if (pattern != null)
 				Wrapper.mono_glob_dispose (glob_handle);

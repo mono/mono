@@ -1,3 +1,8 @@
+
+Thu Jan 24 17:42:54 CET 2002 Paolo Molaro <lupus@ximian.com>
+
+	* Directory.cs: allow directories in GetFiles() mask.
+
 2002-01-23  Miguel de Icaza  <miguel@ximian.com>
 
 	* FileInfo.c (CopyTo, MoveTo): Implement.
