@@ -1,5 +1,7 @@
 2003-12-10  Zoltan Varga  <vargaz@freemail.hu>
 
+	* ModuleBuilder.cs: Implement some missing methods, add stubs for others.
+
 	* AssemblyBuilder.cs (GetFiles): Get rid of unneccessary override.
 
 	* AssemblyBuilder.cs (ImageRuntimeVersion): Add override to keep

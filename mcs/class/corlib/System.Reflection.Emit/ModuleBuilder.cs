@@ -15,6 +15,7 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Diagnostics.SymbolStore;
 using System.IO;
+using System.Resources;
 using Mono.CSharp.Debugger;
 using System.Globalization;
 
@@ -408,6 +409,130 @@ namespace System.Reflection.Emit {
 			Array.Copy (types, copy, n);
 
 			return copy;
+		}
+
+		[MonoTODO]
+		public IResourceWriter DefineResource (string name, string description, ResourceAttributes attribute)
+		{
+			if (name == null)
+				throw new ArgumentNullException ("name");
+			if (name == String.Empty)
+				throw new ArgumentException ("name cannot be empty");
+			if (transient)
+				throw new InvalidOperationException ("The module is transient");
+			if (!assemblyb.IsSave)
+				throw new InvalidOperationException ("The assembly is transient");
+			throw new NotImplementedException ();
+		}
+
+		public IResourceWriter DefineResource (string name, string description)
+		{
+			return DefineResource (name, description, ResourceAttributes.Public);
+		}
+
+		[MonoTODO]
+		public void DefineUnmanagedResource (byte[] resource)
+		{
+			if (resource == null)
+				throw new ArgumentNullException ("resource");
+
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public void DefineUnmanagedResource (string resourceFileName)
+		{
+			if (resourceFileName == null)
+				throw new ArgumentNullException ("resourceFileName");
+			if (resourceFileName == String.Empty)
+				throw new ArgumentException ("resourceFileName");
+			if (!File.Exists (resourceFileName) || Directory.Exists (resourceFileName))
+				throw new FileNotFoundException ("File '" + resourceFileName + "' does not exists or is a directory.");
+
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public void SetSymCustomAttribute (string name, byte[] data)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public void SetUserEntryPoint (MethodInfo entryPoint)
+		{
+			if (entryPoint == null)
+				throw new ArgumentNullException ("entryPoint");
+			if (entryPoint.DeclaringType.Module != this)
+				throw new InvalidOperationException ("entryPoint is not contained in this module");
+			throw new NotImplementedException ();
+		}
+
+		public MethodToken GetMethodToken (MethodInfo method)
+		{
+			if (method == null)
+				throw new ArgumentNullException ("method");
+			if (method.DeclaringType.Module != this)
+				throw new InvalidOperationException ("The method is not in this module");
+			return new MethodToken (GetToken (method));
+		}
+
+		public MethodToken GetArrayMethodToken (Type arrayClass, string methodName, CallingConventions callingConvention, Type returnType, Type[] parameterTypes)
+		{
+			return GetMethodToken (GetArrayMethod (arrayClass, methodName, callingConvention, returnType, parameterTypes));
+		}
+
+
+		public MethodToken GetConstructorToken (ConstructorInfo con)
+		{
+			if (con == null)
+				throw new ArgumentNullException ("con");
+			return new MethodToken (GetToken (con));
+		}
+
+		public FieldToken GetFieldToken (FieldInfo field)
+		{
+			if (field == null)
+				throw new ArgumentNullException ("field");
+			if (field.DeclaringType.Module != this)
+				throw new InvalidOperationException ("The method is not in this module");
+			return new FieldToken (GetToken (field));
+		}
+
+		[MonoTODO]
+		public SignatureToken GetSignatureToken (byte[] sigBytes, int sigLength)
+		{
+			throw new NotImplementedException ();
+		}
+
+		public SignatureToken GetSignatureToken (SignatureHelper sigHelper)
+		{
+			if (sigHelper == null)
+				throw new ArgumentNullException ("sigHelper");
+			return new SignatureToken (GetToken (sigHelper));
+		}
+
+		public StringToken GetStringConstant (string str)
+		{
+			if (str == null)
+				throw new ArgumentNullException ("str");
+			return new StringToken (GetToken (str));
+		}
+
+		public TypeToken GetTypeToken (Type type)
+		{
+			if (type == null)
+				throw new ArgumentNullException ("type");
+			if (type.IsByRef)
+				throw new ArgumentException ("type can't be a byref type", "type");
+			if (!IsTransient () && (type.Module is ModuleBuilder) && ((ModuleBuilder)type.Module).IsTransient ())
+				throw new InvalidOperationException ("a non-transient module can't reference a transient module");
+			return new TypeToken (GetToken (type));
+		}
+
+		public TypeToken GetTypeToken (string type)
+		{
+			return GetTypeToken (GetType (name));
 		}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
