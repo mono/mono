@@ -548,9 +548,18 @@ namespace System.Net
 					nbytes = nstream.EndRead (wr.InnerAsyncResult);
 
 				chunkStream.WriteAndReadBack (wr.Buffer, wr.Offset, wr.Size, ref nbytes);
-				if (nbytes == 0 && chunkStream.WantMore) {
-					nbytes = nstream.Read (wr.Buffer, wr.Offset, wr.Size);		
-					chunkStream.WriteAndReadBack (wr.Buffer, wr.Offset, wr.Size, ref nbytes);
+				if (nbytes < wr.Size && chunkStream.WantMore) {
+					int size = chunkStream.ChunkLeft;
+					if (size < 0) // not read chunk size yet
+						size = 1024;
+
+					byte [] morebytes = new byte [size];
+					int nread;
+					nread = nstream.Read (morebytes, 0, size);
+					chunkStream.Write (morebytes, 0, nread);
+					morebytes = null;
+					nbytes += chunkStream.Read (wr.Buffer, wr.Offset + nbytes,
+								wr.Size - nbytes);
 				}
 				return nbytes;
 			}

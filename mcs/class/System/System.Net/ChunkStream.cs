@@ -148,6 +148,10 @@ namespace System.Net
 		public bool WantMore {
 			get { return (chunkRead != chunkSize || chunkSize != 0); }
 		}
+
+		public int ChunkLeft {
+			get { return chunkSize - chunkRead; }
+		}
 		
 		State ReadBody (byte [] buffer, ref int offset, int size)
 		{
