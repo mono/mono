@@ -1,5 +1,10 @@
 2004-08-26  Atsushi Enomoto <atsushi@ximian.com>
 
+	* XPath2Expression.cs :
+	  Don't compute node's EBV based on atomized value.
+
+2004-08-26  Atsushi Enomoto <atsushi@ximian.com>
+
 	* XPath2Expression.cs : in Compiler(), function call's arguments must
 	  also be compiled.
 	* XQueryASTCompiler.cs : When function is external, it should not try

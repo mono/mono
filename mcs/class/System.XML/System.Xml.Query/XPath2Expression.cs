@@ -148,7 +148,9 @@ namespace Mono.Xml.XPath2
 			XPathSequence result = Evaluate (iter);
 			if (!result.MoveNext ())
 				return false;
-			XPathAtomicValue v = Atomize (result.Current);
+			XPathItem v = result.Current;
+			if (v is XPathNavigator)
+				return true;
 			if (result.MoveNext ())
 				return true;
 			switch (v.XmlType.TypeCode) {
