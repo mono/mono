@@ -1,8 +1,8 @@
 2003-08-14  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
-	* ListControl.cs: patch by Yaacov Akiba Slama <ya@slamail.org> that
-	fixes selection of values before assigning a data source and other
-	issues.
+	* ListControl.cs: patch sent by Yaacov Akiba Slama <ya@slamail.org> on
+	behalf of Yaron Shkop <yaronsh@mainsoft.com> that fixes selection of
+	values before assigning a data source and other issues.
 
 2003-08-11  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
