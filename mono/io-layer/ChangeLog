@@ -1,3 +1,20 @@
+2004-08-11  Dick Porter  <dick@ximian.com>
+
+	* sockets.c: 
+	* io.c: Returned handle values are the file descriptor the handle
+	encapsulates
+
+	* handles.c: 
+	* handles-private.h: 
+	* daemon.c: Reserve the range of handles that can have the same
+	values as file descriptors.  These won't be used, but the values
+	will be used as file, console, pipe or socket handles.  The fd to
+	handle mapping is done internally and is invisible to users.
+	Fixes bug 61828.
+
+	* wapi-private.h (_WAPI_HANDLE_VERSION): Increment, because we now
+	reserve a chunk of handle space.
+
 2004-08-04  Neale Ferguson <Neale.Ferguson@SoftwareAG-usa.com>
 
 	* atomic.h: add support for 64-bit S/390
