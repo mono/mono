@@ -1,3 +1,8 @@
+
+Tue May 20 17:18:16 CEST 2003 Paolo Molaro <lupus@ximian.com>
+
+	* appdomain.h, domain.c: add hashtable for jump target resolution.
+
 2003-05-19  Zoltan Varga  <vargaz@freemail.hu>
 
 	* reflection.h reflection.c icall.c: Added new icalls 
