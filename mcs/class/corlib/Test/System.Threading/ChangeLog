@@ -1,3 +1,9 @@
+2005-03-24  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* MutexCas.cs: New. CAS unit tests for Mutex.
+	* ThreadCas.cs: New. CAS unit tests for Thread.
+	* WaitHandleCas.cs: New. CAS unit tests for WaitHandle.
+
 2005-02-20  Zoltan Varga  <vargaz@freemail.hu>
 
 	* InterlockedTest.cs: Enable 2.0 tests.
