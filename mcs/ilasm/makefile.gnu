@@ -28,7 +28,7 @@ SOURCES = 				\
 
 all: ilasm.exe
 
-ildasm.exe: list
+ilasm.exe: list
 	$(MCS) $(CSFLAGS) @list -o ilasm.exe
 
 install: all
