@@ -220,14 +220,19 @@ namespace System.Runtime.Remoting
 
 					return proxy.ObjectIdentity.CreateObjRef(requested_type);
 				}
+				else
+					throw new NotSupportedException ();	// TODO
 			}
 
 			if (requested_type == null) requested_type = obj.GetType();
 
 			if (uri == null) 
 			{
-				uri = NewUri();
-				CreateClientActivatedServerIdentity (obj, requested_type, uri);
+				if (obj.ObjectIdentity == null)
+				{
+					uri = NewUri();
+					CreateClientActivatedServerIdentity (obj, requested_type, uri);
+				}
 			}
 			else
 			{
