@@ -1,3 +1,7 @@
+2004-09-16  Zoltan Varga  <vargaz@freemail.hu>
+
+	* get.c (get_token): Add support for memberrefs.
+
 2004-09-06  Zoltan Varga  <vargaz@freemail.hu>
 
 	* main.c: Fix build && warnings.
