@@ -17,6 +17,7 @@ using System.ComponentModel.Design.Serialization;
 namespace System.ComponentModel
 {
 	[ComVisible (true), TypeConverter (typeof (System.ComponentModel.ComponentConverter))]
+	[Designer ("System.Windows.Forms.Design.ComponentDocumentDesigner, " + Consts.AssemblySystem_Design, typeof (IDesigner))]
     	[Designer ("System.Windows.Forms.Design.ComponentDocumentDesigner, " + Consts.AssemblySystem_Design, typeof (IRootDesigner))]
 	[RootDesignerSerializer ("System.ComponentModel.Design.Serialization.RootCodeDomSerializer, " + Consts.AssemblySystem_Design, "System.ComponentModel.Design.Serialization.CodeDomSerializer, " + Consts.AssemblySystem_Design, true)]
 	public interface IComponent : IDisposable

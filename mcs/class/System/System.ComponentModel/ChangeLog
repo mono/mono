@@ -1,3 +1,7 @@
+2003-11-13  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
+
+	* IComponent.cs: Added missing attribute
+
 2003-11-12  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
 
 	* ComponentResourceManager.cs: Added and partially implemented
