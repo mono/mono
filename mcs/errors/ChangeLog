@@ -1,5 +1,7 @@
 2005-02-21  Raja R Harinath  <rharinath@novell.com>
 
+	* cs1594-1.cs, cs1594-2.cs, cs1594-3.cs: New tests based on #68955.
+
 	* runtest.pl: Add unexpected error check.
 
 2005-02-18  Raja R Harinath  <rharinath@novell.com>
