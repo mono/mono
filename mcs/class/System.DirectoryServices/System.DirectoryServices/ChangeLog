@@ -1,5 +1,10 @@
 2005-03-14 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* DirectoryEntry.cs: username and password are now initialized to null.
+	Patch by Boris Kirzner (Mainsoft).
+
+2005-03-14 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* PropertyValueCollection.cs: the Value property for an empty collection
 	is now null and setting Value to null clears the collection. Patch by
 	Boris Kirzner (Mainsoft).
