@@ -6,6 +6,7 @@
 //      Dennis Hayes        (dennish@raytek.com)
 //
 //      (C) 2002 Chris J Breisch
+//		(C) 2004 Joerg Rosenkranz <JoergR@voelcker.com>
 //      (C) 2004 Novell
 //
  /*
