@@ -1,3 +1,11 @@
+2004-12-01 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* CookieContainerTest.cs: added tests for CookieContainer.
+
+2004-10-10 David Sheldon <dave-mono@earth.li>
+
+	* DnsTest.cs: Updated IP for www.go-mono.com. 
+
 2004-01-02  Nick Drochak  <ndrochak@gol.com>
 
 	* ServicePointManagerTest.cs: Use the nunit v2 paradigm, and stop this

@@ -1,3 +1,7 @@
+2004-12-11 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* CookieContainer.cs: quote the port number.
+
 2004-12-10 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* WebConnection.cs:
@@ -34,6 +38,15 @@
 	(BeginRead): increase pendingReads earlier and even when reading from
 	the internal buffer.
 	(EndRead): decrease pendingReads later and always.
+
+2004-12-01 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* CookieContainer.cs: style, fixed checks for properties, implemented
+	the MonoTODOs for the method that take an Uri. GetCookies and
+	GetCookieHeaders now really return only the cookies that are requested
+	filtering by the Uri parameter.
+
+	* Cookie.cs: style, added default values for Comment, Domain and Port.
 
 2004-12-01 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 

@@ -25,6 +25,7 @@ System.Diagnostics/SwitchesTest.cs
 System.Diagnostics/DiagnosticsConfigurationHandlerTest.cs
 System.IO/FileSystemWatcherTest.cs
 System.Net/CookieCollectionTest.cs
+System.Net/CookieContainerTest.cs
 System.Net/CookieTest.cs
 System.Net/CredentialCacheTest.cs
 System.Net/DnsTest.cs

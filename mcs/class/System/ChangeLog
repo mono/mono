@@ -1,3 +1,7 @@
+2004-12-01 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* System_test.dll.sources: added CookieContainerTest.cs.
+
 2004-06-13  Gert Driesen <drieseng@users.sourceforge.net>
 
 	* System_test.dll.sources: Added IndentedTextWriterTest to unit

@@ -6,6 +6,7 @@
 //	Gonzalo Paniagua Javier (gonzalo@ximian.com)
 //
 // (c) 2003 Ximian, Inc. (http://www.ximian.com)
+// (c) Copyright 2004 Ximian, Inc. (http://www.ximian.com)
 //
 
 //
@@ -31,12 +32,14 @@
 
 using System;
 using System.Collections;
+using System.Globalization;
 using System.Runtime.Serialization;
 using System.Text;
 
 namespace System.Net 
 {
 	[Serializable]
+	[MonoTODO ("Need to remove older/unused cookies if it reaches the maximum capacity")]
 	public class CookieContainer
 	{
 		public const int DefaultCookieLengthLimit = 4096;
@@ -65,7 +68,7 @@ namespace System.Net
 		public CookieContainer (int capacity, int perDomainCapacity, int maxCookieSize)
 			: this (capacity)
 		{
-			if (perDomainCapacity <= 0 || perDomainCapacity < capacity)
+			if (perDomainCapacity != Int32.MaxValue && (perDomainCapacity <= 0 || perDomainCapacity > capacity))
 				throw new ArgumentException ("Invalid value", "perDomaniCapacity");
 
 			if (maxCookieSize <= 0)
@@ -84,11 +87,12 @@ namespace System.Net
 		public int Capacity {
 			get { return capacity; }
 			set { 
-				if ((value <= 0) ||
-				    (value < perDomainCapacity && perDomainCapacity != Int32.MaxValue))
+				if (value < 0 || (value < perDomainCapacity && perDomainCapacity != Int32.MaxValue))
 					throw new ArgumentOutOfRangeException ("value");
+
 				if (value < maxCookieSize)
 					maxCookieSize = value;
+
 				capacity = value;							
 			}
 		}
@@ -105,11 +109,9 @@ namespace System.Net
 		public int PerDomainCapacity {
 			get { return perDomainCapacity; }
 			set {
-				if ((value <= 0) ||
-				    (value > DefaultCookieLimit && value != Int32.MaxValue))
+				if (value != Int32.MaxValue && (value <= 0 || value > capacity))
 					throw new ArgumentOutOfRangeException ("value");					
-				if (value < perDomainCapacity)
-					perDomainCapacity = value;
+
 				perDomainCapacity = value;
 			}
 		}
@@ -119,11 +121,11 @@ namespace System.Net
 			if (cookie == null)
 				throw new ArgumentNullException ("cookie");
 
-			if (cookie.Domain == null && cookie.Domain == "")
+			if (cookie.Domain == "")
 				throw new ArgumentException ("Cookie domain not set.", "cookie");
 
-			if (cookie.Value.ToString ().Length > maxCookieSize)
-				throw new CookieException ("Cookie size too big");
+			if (cookie.Value.Length > maxCookieSize)
+				throw new CookieException ("value is larger than MaxCookieSize.");
 
 			AddCookie (cookie);
 		}
@@ -151,46 +153,90 @@ namespace System.Net
 				Add (cookie);
 		}
 
-		[MonoTODO ("Uri")]
+		void Cook (Uri uri, Cookie cookie)
+		{
+			if (cookie.Name == null || cookie.Name == "")
+				throw new CookieException ("Invalid cookie: name");
+
+			if (cookie.Value == null)
+				throw new CookieException ("Invalid cookie: value");
+
+			if (uri != null && cookie.Domain == "")
+				cookie.Domain = uri.Host;
+
+			if (cookie.Path == null || cookie.Path == "") {
+				if (uri != null) {
+					cookie.Path = uri.AbsolutePath;
+				} else {
+					cookie.Path = "/";
+				}
+			}
+
+			if (cookie.Port == "" && uri != null && !uri.IsDefaultPort) {
+				cookie.Port = "\"" + uri.Port.ToString () + "\"";
+			}
+		}
+
 		public void Add (Uri uri, Cookie cookie)
 		{
 			if (uri == null)
 				throw new ArgumentNullException ("uri");
-			
-			Add (cookie);
+
+			if (cookie == null)
+				throw new ArgumentNullException ("cookie");
+
+			Cook (uri, cookie);
+			AddCookie (cookie);
 		}
 
-		[MonoTODO("Uri")]
 		public void Add (Uri uri, CookieCollection cookies)
-		{
-			if (uri == null)
-				throw new ArgumentNullException ("uri");
-			
-			Add (cookies);
-		}		
-
-		[MonoTODO("Uri")]
-		public string GetCookieHeader (Uri uri)
 		{
 			if (uri == null)
 				throw new ArgumentNullException ("uri");
 
 			if (cookies == null)
+				throw new ArgumentNullException ("cookies");
+
+			foreach (Cookie c in cookies) {
+				Cook (uri, c);
+				AddCookie (c);
+			}
+		}		
+
+		public string GetCookieHeader (Uri uri)
+		{
+			if (uri == null)
+				throw new ArgumentNullException ("uri");
+
+			CookieCollection coll = GetCookies (uri);
+			if (coll.Count == 0)
 				return "";
 
 			StringBuilder result = new StringBuilder ();
-			bool notfirst = false;
 			foreach (Cookie cookie in cookies) {
-				if (notfirst)
-					result.Append (';');
-
 				result.Append (cookie.ToString ());
-				notfirst = true;
+				result.Append (';');
 			}
+
+			if (result.Length > 0)
+				result.Length--; // remove trailing semicolon
+
 			return result.ToString ();
 		}
 
-		[MonoTODO("Uri")]
+		static bool CheckDomain (string domain, string host)
+		{
+			if (domain != "" && domain [0] != '.')
+				return (String.Compare (domain, host, true, CultureInfo.InvariantCulture) == 0);
+
+			int dot = host.IndexOf ('.');
+			if (dot == -1)
+				return (String.Compare (host, domain, true, CultureInfo.InvariantCulture) == 0);
+			
+			string subdomain = host.Substring (dot);
+			return (String.Compare (subdomain, domain, true, CultureInfo.InvariantCulture) == 0);
+		}
+
 		public CookieCollection GetCookies (Uri uri)
 		{
 			if (uri == null)
@@ -200,8 +246,32 @@ namespace System.Net
 			if (cookies == null)
 				return coll;
 			
-			foreach (Cookie cookie in cookies)
+			foreach (Cookie cookie in cookies) {
+				string domain = cookie.Domain;
+				string host = uri.Host;
+				if (!CheckDomain (domain, host))
+					continue;
+
+				if (cookie.Port != "" && cookie.Ports != null && uri.Port != -1) {
+					if (Array.IndexOf (cookie.Ports, uri.Port) == -1)
+						continue;
+				}
+
+				string path = cookie.Path;
+				string uripath = uri.AbsolutePath;
+				if (path != "" && path != "/") {
+					if (uripath != path) {
+						if (!uripath.StartsWith (path))
+							continue;
+
+						if (path [path.Length - 1] != '/' && uripath.Length > path.Length &&
+						    path [path.Length] != '/')
+							continue;
+					}
+				}
+
 				coll.Add (cookie);
+			}
 			
 			return coll;
 		}
@@ -214,7 +284,7 @@ namespace System.Net
 			if (cookieHeader == null)
 				throw new ArgumentNullException ("cookieHeader");
 			
-			ParseAndAddCookies (cookieHeader);
+			ParseAndAddCookies (uri, cookieHeader);
 		}
 
 		// GetCookieValue, GetCookieName and ParseAndAddCookies copied from HttpRequest.cs
@@ -252,52 +322,77 @@ namespace System.Net
 			return str.Substring (begin, k - begin).Trim ();
 		}
 
+		static string GetDir (string path)
+		{
+			if (path == null || path == "")
+				return "/";
 
-		void ParseAndAddCookies (string header)
+			int last = path.LastIndexOf ('/');
+			if (last == -1)
+				return "/" + path;
+
+			return path.Substring (0, last + 1);
+		}
+		
+		void ParseAndAddCookies (Uri uri, string header)
 		{
 			if (header.Length == 0)
 				return;
-
-			/* RFC 2109
-			 *	cookie          =       "Cookie:" cookie-version
-			 *				   1*((";" | ",") cookie-value)
-			 *	cookie-value    =       NAME "=" VALUE [";" path] [";" domain]
-			 *	cookie-version  =       "$Version" "=" value
-			 *	NAME            =       attr
-			 *	VALUE           =       value
-			 *	path            =       "$Path" "=" value
-			 *	domain          =       "$Domain" "=" value
-			 *
-			 *	MS ignores $Version! 
-			 *	',' as a separator produces errors.
-			 */
 
 			string [] name_values = header.Trim ().Split (';');
 			int length = name_values.Length;
 			Cookie cookie = null;
 			int pos;
+			CultureInfo inv = CultureInfo.InvariantCulture;
+			bool havePath = false;
+			bool haveDomain = false;
+
 			for (int i = 0; i < length; i++) {
 				pos = 0;
 				string name_value = name_values [i].Trim ();
 				string name = GetCookieName (name_value, name_value.Length, ref pos);
+				if (name == null || name == "")
+					throw new CookieException ("Name is empty.");
+
 				string value = GetCookieValue (name_value, name_value.Length, ref pos);
 				if (cookie != null) {
-					if (name == "$Path") {
+					if (!havePath && String.Compare (name, "$Path", true, inv) == 0 ||
+					    String.Compare (name, "path", true, inv) == 0) {
+					    	havePath = true;
 						cookie.Path = value;
 						continue;
-					} else if (name == "$Domain") {
-						cookie.Domain = value;
-						continue;
-					} else {
-						Add (cookie);
-						cookie = null;
 					}
+					
+					if (!haveDomain && String.Compare (name, "$Domain", true, inv) == 0 ||
+				            String.Compare (name, "domain", true, inv) == 0) {
+						cookie.Domain = value;
+					    	haveDomain = true;
+						continue;
+					}
+
+					if (!havePath)
+						cookie.Path = GetDir (uri.AbsolutePath);
+
+					if (!haveDomain)
+						cookie.Domain = uri.Host;
+
+					havePath = false;
+					haveDomain = false;
+					Add (cookie);
+					cookie = null;
 				}
 				cookie = new Cookie (name, value);
 			}
 
-			if (cookie != null)
+			if (cookie != null) {
+				if (!havePath)
+					cookie.Path = GetDir (uri.AbsolutePath);
+
+				if (!haveDomain)
+					cookie.Domain = uri.Host;
+
 				Add (cookie);
+			}
 		}
 
 	} // CookieContainer
