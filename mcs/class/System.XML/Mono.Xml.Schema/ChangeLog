@@ -1,3 +1,10 @@
+2004-12-16  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XsdParticleValidationState.cs :
+	  Removed some unused or unnecessary members. Readonlify some members.
+	  Added GetExpectedParticles(ArrayList) and overriden in all state
+	  types, which is used in XmlSchemaValidator.GetExpectedParticles().
+
 2004-12-15  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlSchemaValidatingReader.cs : xsi:* attributes are now handled via

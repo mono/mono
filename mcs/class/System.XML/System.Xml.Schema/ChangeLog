@@ -1,3 +1,8 @@
+2004-12-16  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlSchemaValidator.cs : implemented GetExpectedParticles() and
+	  SkipToEndElement ().
+
 2004-12-15  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlSchemaSet.cs : set default resolver. Clear components before

@@ -164,8 +164,7 @@ namespace Mono.Xml.Schema
 		// Dynamic members
 
 		int occured;
-		string message;
-		XsdParticleStateManager manager;
+		readonly XsdParticleStateManager manager;
 
 		public XsdValidationState (XsdParticleStateManager manager)
 		{
@@ -180,17 +179,10 @@ namespace Mono.Xml.Schema
 
 		internal abstract bool EvaluateIsEmptiable ();
 
+		public abstract void GetExpectedParticles (ArrayList al);
+
 		public XsdParticleStateManager Manager {
 			get { return manager; }
-		}
-
-		public string Message {
-			get { return message; }
-		}
-
-		public string MessageInternal {
-			get { return message; }
-			set { message = value; }
 		}
 
 		public int Occured {
@@ -209,20 +201,35 @@ namespace Mono.Xml.Schema
 			: base (manager)
 		{
 			this.element = element;
-			name = element.QualifiedName.Name;
-			ns = element.QualifiedName.Namespace;
 		}
 
 		// final fields
-		XmlSchemaElement element;
-		string name;
-		string ns;
+		readonly XmlSchemaElement element;
+
+		string Name {
+			get { return element.QualifiedName.Name; }
+		}
+
+		string NS {
+			get { return element.QualifiedName.Namespace; }
+		}
 
 		// Methods
-		
+		public override void GetExpectedParticles (ArrayList al)
+		{
+			XmlSchemaElement copy = (XmlSchemaElement) MemberwiseClone ();
+			decimal mo = element.ValidatedMinOccurs - Occured;
+			copy.MinOccurs = mo > 0 ? mo : 0;
+			if (element.ValidatedMaxOccurs == decimal.MaxValue)
+				copy.MaxOccursString = "unbounded";
+			else
+				copy.MaxOccurs = element.ValidatedMaxOccurs - Occured;
+			al.Add (copy);
+		}
+
 		public override XsdValidationState EvaluateStartElement (string name, string ns)
 		{
-			if (this.name == name && this.ns == ns && !element.IsAbstract) {
+			if (this.Name == name && this.NS == ns && !element.IsAbstract) {
 				return this.CheckOccurence (element);
 			} else {
 				for (int i = 0; i < element.SubstitutingElements.Count; i++) {
@@ -241,7 +248,6 @@ namespace Mono.Xml.Schema
 			OccuredInternal++;
 			Manager.CurrentElement = maybeSubstituted;
 			if (Occured > element.ValidatedMaxOccurs) {
-				MessageInternal = "Element occurence excess.";
 				return XsdValidationState.Invalid;
 			} else if (Occured == element.ValidatedMaxOccurs) {
 				return Manager.Create (XmlSchemaParticle.Empty);
@@ -264,26 +270,53 @@ namespace Mono.Xml.Schema
 
 	internal class XsdSequenceValidationState : XsdValidationState
 	{
-		XmlSchemaSequence seq;
+		readonly XmlSchemaSequence seq;
 		int current;
 		XsdValidationState currentAutomata;
 		bool emptiable;
-		decimal minOccurs;
-		decimal maxOccurs;
 
 		public XsdSequenceValidationState (XmlSchemaSequence sequence, XsdParticleStateManager manager)
-			: this (sequence, manager, sequence.ValidatedMinOccurs, sequence.ValidatedMaxOccurs, -1)
-		{
-		}
-
-		public XsdSequenceValidationState (XmlSchemaSequence sequence, XsdParticleStateManager manager,
-			decimal minOccurs, decimal maxOccurs, int current)
 			: base (manager)
 		{
 			seq = sequence;
-			this.minOccurs = minOccurs;
-			this.maxOccurs = maxOccurs;
-			this.current = current;
+			this.current = -1;
+		}
+
+		public override void GetExpectedParticles (ArrayList al)
+		{
+			// if not started, then just collect all items from seq.
+			if (currentAutomata == null) {
+				foreach (XmlSchemaParticle p in seq.CompiledItems) {
+					al.Add (p);
+					if (!p.ValidateIsEmptiable ())
+						break;
+				}
+				return;
+			}
+
+			// automata for ongoing iteration
+			if (currentAutomata != null) {
+				currentAutomata.GetExpectedParticles (al);
+				if (!currentAutomata.EvaluateIsEmptiable ())
+					return;
+
+				// remaining items after currentAutomata
+				for (int i = current + 1; i < seq.CompiledItems.Count; i++) {
+					XmlSchemaParticle p = seq.CompiledItems [i] as XmlSchemaParticle;
+					al.Add (p);
+					if (!p.ValidateIsEmptiable ())
+						break;
+				}
+			}
+
+			// itself
+			if (Occured + 1 == seq.ValidatedMaxOccurs)
+				return;
+
+			{
+				for (int i = 0; i <= current; i++)
+					al.Add (seq.CompiledItems [i]);
+			}
 		}
 
 		public override XsdValidationState EvaluateStartElement (string name, string ns)
@@ -308,7 +341,7 @@ namespace Mono.Xml.Schema
 				}
 				if (xa is XsdEmptyValidationState &&
 						seq.CompiledItems.Count == idx + 1 &&
-						Occured == maxOccurs) {
+						Occured == seq.ValidatedMaxOccurs) {
 					return XsdValidationState.Invalid;
 				} else {
 					XsdValidationState result = xa.EvaluateStartElement (name, ns);
@@ -322,7 +355,7 @@ namespace Mono.Xml.Schema
 						currentAutomata = result;
 						if (increment) {
 							OccuredInternal++;
-							if (Occured > maxOccurs)
+							if (Occured > seq.ValidatedMaxOccurs)
 								return XsdValidationState.Invalid;
 						}
 //						current++;
@@ -350,11 +383,11 @@ namespace Mono.Xml.Schema
 
 		public override bool EvaluateEndElement ()
 		{
-			if (minOccurs > Occured + 1)
+			if (seq.ValidatedMinOccurs > Occured + 1)
 				return false;
 			if (seq.CompiledItems.Count == 0)
 				return true;
-			if (currentAutomata == null && minOccurs <= Occured)
+			if (currentAutomata == null && seq.ValidatedMinOccurs <= Occured)
 				return true;
 
 			int idx = current < 0 ? 0 : current;
@@ -374,14 +407,14 @@ namespace Mono.Xml.Schema
 			if (current < 0)
 				OccuredInternal++;
 
-			return minOccurs <= Occured && maxOccurs >= Occured;
+			return seq.ValidatedMinOccurs <= Occured && seq.ValidatedMaxOccurs >= Occured;
 		}
 
 		internal override bool EvaluateIsEmptiable ()
 		{
-			if (minOccurs > Occured + 1)
+			if (seq.ValidatedMinOccurs > Occured + 1)
 				return false;
-			if (minOccurs == 0 && currentAutomata == null)
+			if (seq.ValidatedMinOccurs == 0 && currentAutomata == null)
 				return true;
 
 			if (emptiable)
@@ -410,7 +443,7 @@ namespace Mono.Xml.Schema
 
 	internal class XsdChoiceValidationState : XsdValidationState
 	{
-		XmlSchemaChoice choice;
+		readonly XmlSchemaChoice choice;
 		bool emptiable;
 		bool emptiableComputed;
 
@@ -418,6 +451,13 @@ namespace Mono.Xml.Schema
 			: base (manager)
 		{
 			this.choice = choice;
+		}
+
+		public override void GetExpectedParticles (ArrayList al)
+		{
+			if (Occured < choice.ValidatedMaxOccurs)
+				foreach (XmlSchemaParticle p in choice.CompiledItems)
+					al.Add (p);
 		}
 
 		public override XsdValidationState EvaluateStartElement (string localName, string ns)
@@ -489,13 +529,20 @@ namespace Mono.Xml.Schema
 
 	internal class XsdAllValidationState : XsdValidationState
 	{
-		XmlSchemaAll all;
+		readonly XmlSchemaAll all;
 		ArrayList consumed = new ArrayList ();
 
 		public XsdAllValidationState (XmlSchemaAll all, XsdParticleStateManager manager)
 			: base (manager)
 		{
 			this.all = all;
+		}
+
+		public override void GetExpectedParticles (ArrayList al)
+		{
+			foreach (XmlSchemaParticle p in all.CompiledItems)
+				if (!consumed.Contains (p))
+					al.Add (p);
 		}
 
 		public override XsdValidationState EvaluateStartElement (string localName, string ns)
@@ -551,7 +598,7 @@ namespace Mono.Xml.Schema
 
 	internal class XsdAnyValidationState : XsdValidationState
 	{
-		XmlSchemaAny any;
+		readonly XmlSchemaAny any;
 
 		public XsdAnyValidationState (XmlSchemaAny any, XsdParticleStateManager manager)
 			: base (manager)
@@ -560,6 +607,11 @@ namespace Mono.Xml.Schema
 		}
 
 		// Methods
+		public override void GetExpectedParticles (ArrayList al)
+		{
+			al.Add (any);
+		}
+
 		public override XsdValidationState EvaluateStartElement (string name, string ns)
 		{
 			if (!MatchesNamespace (ns))
@@ -617,6 +669,12 @@ namespace Mono.Xml.Schema
 		XsdValidationState rest;
 
 		// Methods
+		public override void GetExpectedParticles (ArrayList al)
+		{
+			head.GetExpectedParticles (al);
+			rest.GetExpectedParticles (al);
+		}
+
 		public override XsdValidationState EvaluateStartElement (string name, string ns)
 		{
 			XsdValidationState afterHead = head.EvaluateStartElement (name, ns);
@@ -657,6 +715,12 @@ namespace Mono.Xml.Schema
 		}
 
 		// Methods
+
+		public override void GetExpectedParticles (ArrayList al)
+		{
+			// do nothing
+		}
+
 		public override XsdValidationState EvaluateStartElement (string name, string ns)
 		{
 			return XsdValidationState.Invalid;
@@ -682,6 +746,12 @@ namespace Mono.Xml.Schema
 		}
 
 		// Methods
+
+		public override void GetExpectedParticles (ArrayList al)
+		{
+			// do nothing
+		}
+
 		public override XsdValidationState EvaluateStartElement (string name, string ns)
 		{
 			return this;

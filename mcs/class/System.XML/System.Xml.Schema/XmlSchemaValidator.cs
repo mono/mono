@@ -229,10 +229,33 @@ namespace System.Xml.Schema
 				al.ToArray (typeof (XsAttribute));
 		}
 
-		[MonoTODO]
+		private void CollectAtomicParticles (XmlSchemaParticle p,
+			ArrayList al)
+		{
+			if (p is XmlSchemaGroupBase) {
+				foreach (XmlSchemaParticle c in 
+					((XmlSchemaGroupBase) p).Items)
+					CollectAtomicParticles (c, al);
+			}
+			else
+				al.Add (p);
+		}
+
+		[MonoTODO ("Need some tests.")]
+		// Its behavior is not obvious. For example, it does not
+		// contain groups (xs:sequence/xs:choice/xs:all). Since it
+		// might contain xs:any, it could not be of type element[].
 		public XmlSchemaParticle [] GetExpectedParticles ()
 		{
-			throw new NotImplementedException ();
+			ArrayList al = new ArrayList ();
+			Context.State.GetExpectedParticles (al);
+			ArrayList ret = new ArrayList ();
+
+			foreach (XmlSchemaParticle p in al)
+				CollectAtomicParticles (p, ret);
+
+			return (XmlSchemaParticle []) ret.ToArray (
+				typeof (XmlSchemaParticle));
 		}
 
 		public void GetUnspecifiedDefaultAttributes (ArrayList list)
@@ -295,13 +318,13 @@ namespace System.Xml.Schema
 		}
 
 		// I guess it is for validation error recovery
-		[MonoTODO]
+		[MonoTODO ("Find out how XmlSchemaInfo is used.")]
 		public void SkipToEndElement (XmlSchemaInfo info)
 		{
 			CheckState (Transition.Content);
 			if (schemas.Count == 0)
 				return;
-			throw new NotImplementedException ();
+			state.PopContext ();
 		}
 
 		// I guess this weird XmlValueGetter is for such case that
@@ -395,7 +418,7 @@ namespace System.Xml.Schema
 			return ValidateEndElement (schemaInfo, null);
 		}
 
-		// The return value is typed primitive, is supplied.
+		// The return value is typed primitive, if supplied.
 		// EndTagDeriv
 		[MonoTODO ("Find out what 'var' parameter means.")]
 		public object ValidateEndElement (XmlSchemaInfo schemaInfo,
