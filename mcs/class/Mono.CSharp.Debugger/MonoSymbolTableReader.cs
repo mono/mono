@@ -18,8 +18,10 @@ namespace Mono.CSharp.Debugger
 	public class MonoSymbolTableReader
 	{
 		public readonly MethodEntry[] Methods;
+		public readonly string ImageFile;
 
-		public MonoSymbolTableReader (BinaryReader reader, BinaryReader address_reader)
+		public MonoSymbolTableReader (string image_file, BinaryReader reader,
+					      BinaryReader address_reader)
 		{
 			//
 			// Read the offset table.
@@ -41,6 +43,7 @@ namespace Mono.CSharp.Debugger
 			reader.BaseStream.Position = offset_table.method_table_offset;
 
 			Methods = new MethodEntry [offset_table.method_count];
+			ImageFile = image_file;
 
 			for (int i = 0; i < offset_table.method_count; i++) {
 				try {
