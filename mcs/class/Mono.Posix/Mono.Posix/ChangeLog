@@ -1,3 +1,10 @@
+2004-09-14  Loren Bandiera <lorenb@mmgsecurity.com>
+
+	* Syscall.cs: Added method for getpwnam which uses Passwd
+	struct.
+	* macros.c: Helper function for getpwnam
+	(In committing, Josh Tauberer also added getpwuid.)
+
 2004-07-09  Dick Porter  <dick@ximian.com>
 
 	* PeerCred.cs: Get the unix socket peer credentials.

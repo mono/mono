@@ -490,7 +490,42 @@ namespace Mono.Posix {
 		
 		[DllImport ("MonoPosixHelper", EntryPoint="helper_Mono_Posix_readdir")]
 		public static extern string readdir(IntPtr dir);
+
+		[DllImport ("MonoPosixHelper")]
+		internal extern static int helper_Mono_Posix_getpwnamuid (int mode, string in_username, int in_uid,
+			out string account, out string password, out int uid,
+			out int gid, out string gecos, out string homedir,
+			out string shell);
 		
+		public static int getpwnam (string username, out Passwd passwd) {
+			return getpwnamuid(0, username, 0, out passwd);
+		}
+		
+		public static int getpwuid (int uid, out Passwd passwd) {
+			return getpwnamuid(1, null, uid, out passwd);
+		}
+		
+		private static int getpwnamuid (int mode, string in_username, int in_uid, out Passwd passwd) {
+			string account, password, name, home, shell;
+			int uid, gid;
+
+			int ret = helper_Mono_Posix_getpwnamuid(mode, in_username, in_uid,
+				out account, out password, out uid,
+				out gid, out name, out home,
+				out shell);
+				
+			if (ret != 0) {
+				passwd = new Passwd();
+				return ret;
+			}
+			
+			passwd = new Passwd(
+				account, password, uid, gid,
+				name, home, shell);
+
+			return 0;
+		}
+
 	}
 	
 	public enum StatModeMasks {
@@ -574,5 +609,28 @@ namespace Mono.Posix {
 		}
 	}
 	
+	public struct Passwd {
 
+		public readonly string Account;
+		public readonly string Password;
+		public readonly int Uid;
+		public readonly int Gid;
+		public readonly string Name;
+		public readonly string Home;
+		public readonly string Shell;
+
+		internal Passwd (
+			string account, string password, int uid,
+			int gid, string name, string home,
+			string shell) {
+
+			Account = account;
+			Password = password;
+			Uid = uid;
+			Gid = gid;
+			Name = name;
+			Home = home;
+			Shell = shell;
+		}
+	}
 }
