@@ -2,11 +2,10 @@
 // PKCS1.cs - Implements PKCS#1 primitives.
 //
 // Author:
-//	Sebastien Pouliot (spouliot@motus.com)
+//	Sebastien Pouliot <sebastien@ximian.com>
 //
 // (C) 2002, 2003 Motus Technologies Inc. (http://www.motus.com)
-//
-
+// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -107,7 +106,9 @@ namespace Mono.Security.Cryptography {
 		public static byte[] OS2IP (byte[] x) 
 		{
 			int i = 0;
-			while ((x [i++] == 0x00) && (i < x.Length));
+			while ((x [i++] == 0x00) && (i < x.Length)) {
+				// confuse compiler into reporting a warning with {}
+			}
 			i--;
 			if (i > 0) {
 				byte[] result = new byte [x.Length - i];
@@ -252,8 +253,8 @@ namespace Mono.Security.Cryptography {
 		// RSAES-PKCS1-V1_5-DECRYPT (K, C)
 		public static byte[] Decrypt_v15 (RSA rsa, byte[] C) 
 		{
-			int size = rsa.KeySize / 8;
-			if ((size < 11) || (C.Length != size))
+			int size = rsa.KeySize >> 3; // div by 8
+			if ((size < 11) || (C.Length > size))
 				throw new CryptographicException ("decryption error");
 			byte[] c = OS2IP (C);
 			byte[] m = RSADP (rsa, c);
