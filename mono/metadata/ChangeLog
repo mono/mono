@@ -1,3 +1,11 @@
+2003-02-05  Patrik Torstensson
+
+	* appdomain.c: changed unload to take the domain id instead
+	of domain
+	
+	* icall.c: changed icall for AppDomain.Unload to AppDomain.InternalUnload
+
+
 2003-02-05  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* appdomain.c: don't look for assemblies in ApplicationBase if
