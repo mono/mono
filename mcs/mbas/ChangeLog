@@ -1,3 +1,7 @@
+2003/01/22  Nick Drochak <ndrochak@gol.com>
+
+	* makefile: Use csc compiler in here. makefile.gnu assumes mono/mcs
+
 2003-01-13  Rafael Teixeira <rafaelteixeirabr@hotmail.com>
 	* added cleanup method to tokenizer as needed but modifications made in jay
 

@@ -1,4 +1,4 @@
-CSC=../mcs/mcs
+CSC=csc
 CSCFLAGS=/nologo /optimize /target:exe /r:System.dll /r:../class/lib/Mono.GetOptions.dll /out:mbas.exe 
 
 COMPILER_SOURCES = \
