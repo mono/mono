@@ -56,84 +56,84 @@ namespace MonoTests.System
 		[Test]
 		public void TestIsAssignableFrom () {
 			// Simple tests for inheritance
-			AssertEquals (typeof (Super).IsAssignableFrom (typeof (Duper)) , true);
-			AssertEquals (typeof (Duper).IsAssignableFrom (typeof (Duper)) , true);
-			AssertEquals (typeof (Object).IsAssignableFrom (typeof (Duper)) , true);
-			AssertEquals (typeof (ICloneable).IsAssignableFrom (typeof (Duper)) , true);
+			AssertEquals ("#01", typeof (Super).IsAssignableFrom (typeof (Duper)) , true);
+			AssertEquals ("#02", typeof (Duper).IsAssignableFrom (typeof (Duper)) , true);
+			AssertEquals ("#03", typeof (Object).IsAssignableFrom (typeof (Duper)) , true);
+			AssertEquals ("#04", typeof (ICloneable).IsAssignableFrom (typeof (Duper)) , true);
 
 			// Tests for arrays
-			AssertEquals (typeof (Super[]).IsAssignableFrom (typeof (Duper[])) , true);
-			AssertEquals (typeof (Duper[]).IsAssignableFrom (typeof (Super[])) , false);
-			AssertEquals (typeof (Object[]).IsAssignableFrom (typeof (Duper[])) , true);
-			AssertEquals (typeof (ICloneable[]).IsAssignableFrom (typeof (Duper[])) , true);
+			AssertEquals ("#05", typeof (Super[]).IsAssignableFrom (typeof (Duper[])) , true);
+			AssertEquals ("#06", typeof (Duper[]).IsAssignableFrom (typeof (Super[])) , false);
+			AssertEquals ("#07", typeof (Object[]).IsAssignableFrom (typeof (Duper[])) , true);
+			AssertEquals ("#08", typeof (ICloneable[]).IsAssignableFrom (typeof (Duper[])) , true);
 
 			// Tests for multiple dimensional arrays
-			AssertEquals (typeof (Super[][]).IsAssignableFrom (typeof (Duper[][])) , true);
-			AssertEquals (typeof (Duper[][]).IsAssignableFrom (typeof (Super[][])) , false);
-			AssertEquals (typeof (Object[][]).IsAssignableFrom (typeof (Duper[][])) , true);
-			AssertEquals (typeof (ICloneable[][]).IsAssignableFrom (typeof (Duper[][])) , true);
+			AssertEquals ("#09", typeof (Super[][]).IsAssignableFrom (typeof (Duper[][])) , true);
+			AssertEquals ("#10", typeof (Duper[][]).IsAssignableFrom (typeof (Super[][])) , false);
+			AssertEquals ("#11", typeof (Object[][]).IsAssignableFrom (typeof (Duper[][])) , true);
+			AssertEquals ("#12", typeof (ICloneable[][]).IsAssignableFrom (typeof (Duper[][])) , true);
 
 			// Tests for vectors<->one dimensional arrays */
 			Array arr1 = Array.CreateInstance (typeof (int), new int[] {1}, new int[] {0});
 			Array arr2 = Array.CreateInstance (typeof (int), new int[] {1}, new int[] {10});
 
-			AssertEquals (typeof (int[]).IsAssignableFrom (arr1.GetType ()), true);
-			AssertEquals (typeof (int[]).IsAssignableFrom (arr2.GetType ()), false);
+			AssertEquals ("#13", typeof (int[]).IsAssignableFrom (arr1.GetType ()), true);
+			AssertEquals ("#14", typeof (int[]).IsAssignableFrom (arr2.GetType ()), false);
 
 			// Test that arrays of enums can be cast to their base types
-			AssertEquals (typeof (int[]).IsAssignableFrom (typeof (TypeCode[])) , true);
+			AssertEquals ("#15", typeof (int[]).IsAssignableFrom (typeof (TypeCode[])) , true);
 
 			// Test that arrays of valuetypes can't be cast to arrays of
 			// references
-			AssertEquals (typeof (object[]).IsAssignableFrom (typeof (TypeCode[])) , false);			
-			AssertEquals (typeof (ValueType[]).IsAssignableFrom (typeof (TypeCode[])) , false);
-			AssertEquals (typeof (Enum[]).IsAssignableFrom (typeof (TypeCode[])) , false);
+			AssertEquals ("#16", typeof (object[]).IsAssignableFrom (typeof (TypeCode[])) , false);			
+			AssertEquals ("#17", typeof (ValueType[]).IsAssignableFrom (typeof (TypeCode[])) , false);
+			AssertEquals ("#18", typeof (Enum[]).IsAssignableFrom (typeof (TypeCode[])) , false);
 
 			// Test that arrays of enums can't be cast to arrays of references
-			AssertEquals (typeof (object[]).IsAssignableFrom (typeof (TheEnum[])) , false);
-			AssertEquals (typeof (ValueType[]).IsAssignableFrom (typeof (TheEnum[])) , false);
-			AssertEquals (typeof (Enum[]).IsAssignableFrom (typeof (TheEnum[])) , false);
+			AssertEquals ("#19", typeof (object[]).IsAssignableFrom (typeof (TheEnum[])) , false);
+			AssertEquals ("#20", typeof (ValueType[]).IsAssignableFrom (typeof (TheEnum[])) , false);
+			AssertEquals ("#21", typeof (Enum[]).IsAssignableFrom (typeof (TheEnum[])) , false);
 
 			// Check that ValueType and Enum are recognized as reference types
-			AssertEquals (typeof (object).IsAssignableFrom (typeof (ValueType)) , true);
-			AssertEquals (typeof (object).IsAssignableFrom (typeof (Enum)) , true);
-			AssertEquals (typeof (ValueType).IsAssignableFrom (typeof (Enum)) , true);
+			AssertEquals ("#22", typeof (object).IsAssignableFrom (typeof (ValueType)) , true);
+			AssertEquals ("#23", typeof (object).IsAssignableFrom (typeof (Enum)) , true);
+			AssertEquals ("#24", typeof (ValueType).IsAssignableFrom (typeof (Enum)) , true);
 
-			AssertEquals (typeof (object[]).IsAssignableFrom (typeof (ValueType[])) , true);
-			AssertEquals (typeof (ValueType[]).IsAssignableFrom (typeof (ValueType[])) , true);
-			AssertEquals (typeof (Enum[]).IsAssignableFrom (typeof (ValueType[])) , false);
+			AssertEquals ("#25", typeof (object[]).IsAssignableFrom (typeof (ValueType[])) , true);
+			AssertEquals ("#26", typeof (ValueType[]).IsAssignableFrom (typeof (ValueType[])) , true);
+			AssertEquals ("#27", typeof (Enum[]).IsAssignableFrom (typeof (ValueType[])) , false);
 
-			AssertEquals (typeof (object[]).IsAssignableFrom (typeof (Enum[])) , true);
-			AssertEquals (typeof (ValueType[]).IsAssignableFrom (typeof (Enum[])) , true);
-			AssertEquals (typeof (Enum[]).IsAssignableFrom (typeof (Enum[])) , true);
+			AssertEquals ("#28", typeof (object[]).IsAssignableFrom (typeof (Enum[])) , true);
+			AssertEquals ("#29", typeof (ValueType[]).IsAssignableFrom (typeof (Enum[])) , true);
+			AssertEquals ("#30", typeof (Enum[]).IsAssignableFrom (typeof (Enum[])) , true);
 		}
 
 		[Test]
 		public void TestIsSubclassOf () {
-			Assert (typeof (ICloneable).IsSubclassOf (typeof (object)));
+			Assert ("#01", typeof (ICloneable).IsSubclassOf (typeof (object)));
 		}
 
 		[Test]
 		public void TestGetMethodImpl() {
 			// Test binding of new slot methods (using no types)
-			AssertEquals(typeof (Base), typeof (Base).GetMethod("TestVoid").DeclaringType);
-			AssertEquals(typeof (NewVTable), typeof (NewVTable).GetMethod("TestVoid").DeclaringType);
+			AssertEquals("#01", typeof (Base), typeof (Base).GetMethod("TestVoid").DeclaringType);
+			AssertEquals("#02", typeof (NewVTable), typeof (NewVTable).GetMethod("TestVoid").DeclaringType);
 
 			// Test binding of new slot methods (using types)
-			AssertEquals(typeof (Base), typeof (Base).GetMethod("TestInt", new Type [] { typeof(int) }).DeclaringType);
-			AssertEquals(typeof (NewVTable), typeof (NewVTable).GetMethod("TestInt", new Type [] { typeof(int) }).DeclaringType);
+			AssertEquals("#03", typeof (Base), typeof (Base).GetMethod("TestInt", new Type [] { typeof(int) }).DeclaringType);
+			AssertEquals("#04", typeof (NewVTable), typeof (NewVTable).GetMethod("TestInt", new Type [] { typeof(int) }).DeclaringType);
 
 			// Test overload resolution
-			AssertEquals (0, typeof (NewVTable).GetMethod ("Overload", new Type [0]).GetParameters ().Length);
+			AssertEquals ("#05", 0, typeof (NewVTable).GetMethod ("Overload", new Type [0]).GetParameters ().Length);
 		}
 
 		[Test]
 		public void TestGetPropertyImpl() {
 			// Test getting property that is exact
-			AssertEquals(typeof (NewVTable), typeof (NewVTable).GetProperty("Item", new Type[1] { typeof(Int32) }).DeclaringType);
+			AssertEquals("#01", typeof (NewVTable), typeof (NewVTable).GetProperty("Item", new Type[1] { typeof(Int32) }).DeclaringType);
 
 			// Test getting property that is not exact
-			AssertEquals(typeof (NewVTable), typeof (NewVTable).GetProperty("Item", new Type[1] { typeof(Int16) }).DeclaringType);
+			AssertEquals("#02", typeof (NewVTable), typeof (NewVTable).GetProperty("Item", new Type[1] { typeof(Int16) }).DeclaringType);
 		}
 	}
 }

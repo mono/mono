@@ -1,5 +1,9 @@
 2004-04-07  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* TypeTest.cs: enumerated the tests.
+
+2004-04-07  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* EnvironmentTest.cs: use uppercase for PATH. Added test to check the
 	expected substitutions.
 
