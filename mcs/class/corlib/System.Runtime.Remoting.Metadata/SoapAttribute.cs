@@ -16,7 +16,9 @@ namespace System.Runtime.Remoting.Metadata {
 		bool _nested;
 		bool _useAttribute;
 		string _namespace;
-		object _reflectionObject;
+		
+		protected string ProtXmlNamespace;
+		protected object ReflectInfo;
 		
 		public SoapAttribute ()
 		{
@@ -54,6 +56,7 @@ namespace System.Runtime.Remoting.Metadata {
 		
 		internal virtual void SetReflectionObject (object reflectionObject)
 		{
+			ReflectInfo = reflectionObject;
 		}
 	}
 }
