@@ -156,6 +156,7 @@ namespace System.Web.Compilation
 		{
 			StreamReader reader = new StreamReader (filename, WebEncoding.FileEncoding);
 			AspParser parser = new AspParser (filename, reader);
+			reader.Close ();
 			parser.Error += new ParseErrorHandler (ParseError);
 			parser.TagParsed += new TagParsedHandler (TagParsed);
 			parser.TextParsed += new TextParsedHandler (TextParsed);

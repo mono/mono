@@ -1,3 +1,8 @@
+2004-01-03  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* AspGenerator.cs: don't rely on GC to close the files parsed. Fixes bug
+	#52521. Patch by liyul@hotmail.com.
+
 2003-12-25  Jackson Harper <jackson@ximian.com>
 
 	* AspGenerator.cs: Allow scriptlets in javascript. This fixes bug
