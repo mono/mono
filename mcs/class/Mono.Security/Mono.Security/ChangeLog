@@ -1,3 +1,12 @@
+2004-04-20  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* ASN1.cs: Added SaveToFile for easier debugging. Patch from
+	Jesper Pedersen.
+	* BitConverterLE.cs: New. Added Little-Endian BitConverter from 
+	Bernie Solomon to sync versions with corlib.
+	* StrongName.cs: Synched with corlib version. Adds ECMA key fixes,
+	endian fixes from Bernie Solomon and removed compilation warning.
+
 2004-03-31  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* StrongName.cs: Update to include new static method that can be 
