@@ -1,4 +1,8 @@
 
+Fri May 31 16:58:36 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* debug-symfile.c, sysmath.c: yet more compilation fixes.
+
 Fri May 31 16:35:56 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
 	* reflection.c, socket-io.c: more compilation fixes.
