@@ -1,3 +1,10 @@
+2002-08-14  Dietmar Maurer  <dietmar@ximian.com>
+
+	* marshal.c (mono_marshal_get_runtime_invoke): unbox value types
+
+	* class.c (class_compute_field_layout): set blittable to false for Strings
+
+	* appdomain.c (mono_domain_transfer_object): added support for ISerializable
 
 Wed Aug 14 17:26:27 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
