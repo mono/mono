@@ -307,6 +307,8 @@ namespace System.Windows.Forms {
 
 		internal override void Exit() {
 			getmessage_ret = false;
+			// Hackaround a codeman bad access
+			ExitToShell ();
 		}
 
 		internal override void GetDisplaySize(out Size size) {
@@ -640,6 +642,7 @@ namespace System.Windows.Forms {
 			switch ((Msg)msg.Msg) {
 				case Msg.WM_DESTROY: {
 					if (view_window_mapping [msg.HWnd] != null)
+
 						XplatUI.Exit ();
 					break;
 				}
@@ -1736,6 +1739,8 @@ DEBUG THIS:
 		internal extern static void SetRectRgn (IntPtr rgn, short left, short top, short right, short bottom);
 		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
 		internal extern static void DisposeRgn (IntPtr rgn);
+		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
+		internal extern static void ExitToShell ();
 		
 		#region Cursor imports
 		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]

@@ -1,4 +1,9 @@
 2005-01-31  Geoff Norton  <gnorton@customerdna.com>
+	
+	* XplatUIOSX.cs: Call ExitToShell in our teardown to avoid a 
+	crash reporter log.
+
+2005-01-31  Geoff Norton  <gnorton@customerdna.com>
 
 	* XplatUIOSX.cs: Allow applications to actually exit.
 
