@@ -1,3 +1,8 @@
+2002-06-08  Martin Baulig  <martin@gnome.org>
+
+	* Enum.cs (IsDefined): `value' may be of the enum's type itself, it
+	doesn't necessarily need to be of the enum's underlying type.
+
 2002/06/07  Nick Drochak <ndrochak@gol.com>
 
 	* String.cs: Add [Serializable] to class

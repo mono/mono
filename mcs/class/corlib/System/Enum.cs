@@ -185,7 +185,7 @@ namespace System {
 			Type vType = value.GetType ();
 			if (vType == typeof(String)) {
 				return ((IList)(info.names)).Contains (value);
-			} else if (vType == info.utype) {
+			} else if ((vType == info.utype) || (vType == enumType)) {
 				int i;
 				value = ToObject (enumType, value);
 				MonoEnumInfo.GetInfo (enumType, out info);
