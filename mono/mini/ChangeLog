@@ -1,4 +1,8 @@
 
+Wed Apr 9 15:22:18 CEST 2003 Paolo Molaro <lupus@ximian.com>
+
+	* mini.c: always intern strings references with ldstr at compile time.
+
 Tue Apr 8 11:41:26 CEST 2003 Paolo Molaro <lupus@ximian.com>
 
 	* Makefile.am: add BUILT_SOURCES.
