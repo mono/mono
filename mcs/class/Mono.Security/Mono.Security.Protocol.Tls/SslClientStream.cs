@@ -50,8 +50,8 @@ namespace Mono.Security.Protocol.Tls
 		X509CertificateCollection	serverRequestedCertificates);
 	
 	public delegate AsymmetricAlgorithm PrivateKeySelectionCallback(
-		X509Certificate				clientCertificate, 
-		string						targetHost);
+		X509Certificate	clientCertificate, 
+		string			targetHost);
 
 	#endregion
 
@@ -228,47 +228,52 @@ namespace Mono.Security.Protocol.Tls
 		#region Constructors
 		
 		public SslClientStream(
-			Stream stream, 
-			string targetHost, 
-			bool ownsStream) 
-			: this(stream, targetHost, 
-			ownsStream, SecurityProtocolType.Default, null)
+			Stream	stream, 
+			string	targetHost, 
+			bool	ownsStream) 
+			: this(
+				stream, targetHost, ownsStream, 
+				SecurityProtocolType.Default, null)
 		{
 		}
 		
 		public SslClientStream(
-			Stream stream, string targetHost, X509Certificate clientCertificate) : 
+			Stream				stream, 
+			string				targetHost, 
+			X509Certificate		clientCertificate) 
+			: this(
+				stream, targetHost, false, SecurityProtocolType.Default, 
+				new X509CertificateCollection(new X509Certificate[]{clientCertificate}))
+		{
+		}
+
+		public SslClientStream(
+			Stream						stream,
+			string						targetHost, 
+			X509CertificateCollection clientCertificates) : 
 			this(
-			stream, targetHost, 
-			false, SecurityProtocolType.Default, 
-			new X509CertificateCollection(new X509Certificate[]{clientCertificate}))
+				stream, targetHost, false, SecurityProtocolType.Default, 
+				clientCertificates)
 		{
 		}
 
 		public SslClientStream(
-			Stream stream,
-			string targetHost, X509CertificateCollection clientCertificates) : 
-			this(stream, targetHost, false, 
-			SecurityProtocolType.Default, clientCertificates)
+			Stream					stream,
+			string					targetHost,
+			bool					ownsStream,
+			SecurityProtocolType	securityProtocolType) 
+			: this(
+				stream, targetHost, ownsStream, securityProtocolType,
+				new X509CertificateCollection())
 		{
 		}
 
 		public SslClientStream(
-			Stream stream,
-			string targetHost,
-			bool ownsStream,
-			SecurityProtocolType securityProtocolType) : 
-			this(stream, targetHost, ownsStream, securityProtocolType,
-			new X509CertificateCollection())
-		{
-		}
-
-		public SslClientStream(
-			Stream stream,
-			string targetHost,
-			bool ownsStream,
-			SecurityProtocolType securityProtocolType,
-			X509CertificateCollection clientCertificates)
+			Stream						stream,
+			string						targetHost,
+			bool						ownsStream,
+			SecurityProtocolType		securityProtocolType,
+			X509CertificateCollection	clientCertificates)
 		{
 			if (stream == null)
 			{
@@ -322,12 +327,12 @@ namespace Mono.Security.Protocol.Tls
 				{
 					if (this.innerStream != null)
 					{
-            			if (this.context.HandshakeFinished)
-                        {
-                            // Write close notify
-                            TlsCloseNotifyAlert alert = new TlsCloseNotifyAlert(this.context);
-                            this.SendAlert(alert);
-                        }
+						if (this.context.HandshakeFinished)
+						{
+							// Write close notify
+							TlsCloseNotifyAlert alert = new TlsCloseNotifyAlert(this.context);
+							this.SendAlert(alert);
+						}
 
 						if (this.ownsStream)
 						{
@@ -335,8 +340,8 @@ namespace Mono.Security.Protocol.Tls
 							this.innerStream.Close();
 						}
 					}
-					this.ownsStream    = false;
-					this.innerStream   = null;
+					this.ownsStream		= false;
+					this.innerStream	= null;
 					if (this.ClientCertSelection != null)
 					{
 						this.ClientCertSelection -= this.clientCertSelectionDelegate;
@@ -358,16 +363,13 @@ namespace Mono.Security.Protocol.Tls
 		#region Methods
 
 		public override IAsyncResult BeginRead(
-			byte[] buffer,
-			int offset,
-			int count,
-			AsyncCallback callback,
-			object state)
+			byte[]			buffer,
+			int				offset,
+			int				count,
+			AsyncCallback	callback,
+			object			state)
 		{
-			if (this.disposed)
-			{
-				throw new ObjectDisposedException("The SslClientStream is closed.");
-			}
+			this.checkDisposed();
 			
 			if (buffer == null)
 			{
@@ -390,95 +392,18 @@ namespace Mono.Security.Protocol.Tls
 				throw new ArgumentOutOfRangeException("count is less than the length of buffer minus the value of the offset parameter.");
 			}
 
-			throw new NotSupportedException();
-		}
-
-		public override IAsyncResult BeginWrite(
-			byte[] buffer,
-			int offset,
-			int count,
-			AsyncCallback callback,
-			object state)
-		{
-			throw new NotSupportedException();
-		}
-
-		public override int EndRead(IAsyncResult asyncResult)
-		{
-			if (this.disposed)
-			{
-				throw new ObjectDisposedException("The SslClientStream is closed.");
-			}
-			if (asyncResult == null)
-			{
-				throw new ArgumentNullException("asyncResult is null or was not obtained by calling BeginRead.");
-			}
-
-			throw new NotSupportedException();
-		}
-
-		public override void EndWrite(IAsyncResult asyncResult)
-		{
-			throw new NotSupportedException();
-		}
-
-		public override void Close()
-		{
-			((IDisposable)this).Dispose();
-		}
-
-		public override void Flush()
-		{
-			if (this.disposed)
-			{
-				throw new ObjectDisposedException("The SslClientStream is closed.");
-			}
-
-			this.innerStream.Flush();
-		}
-
-		public int Read(byte[] buffer)
-		{
-			return this.Read(buffer, 0, buffer.Length);
-		}
-
-		public override int Read(byte[] buffer, int offset, int count)
-		{
-			if (this.disposed)
-			{
-				throw new ObjectDisposedException("The SslClientStream is closed.");
-			}
-			
 			if (!this.context.HandshakeFinished)
 			{
-				this.doHandshake(); // Handshake negotiation
-			}
-
-			if (buffer == null)
-			{
-				throw new ArgumentNullException("buffer is a null reference.");
-			}
-			if (offset < 0)
-			{
-				throw new ArgumentOutOfRangeException("offset is less than 0.");
-			}
-			if (offset > buffer.Length)
-			{
-				throw new ArgumentOutOfRangeException("offset is greater than the length of buffer.");
-			}
-			if (count < 0)
-			{
-				throw new ArgumentOutOfRangeException("count is less than 0.");
-			}
-			if (count > (buffer.Length - offset))
-			{
-				throw new ArgumentOutOfRangeException("count is less than the length of buffer minus the value of the offset parameter.");
+				this.doHandshake();	// Handshake negotiation
 			}
 
 			if (!Monitor.TryEnter(this.read))
 			{
 				throw new InvalidOperationException("A read operation is already in progress.");
 			}
+
+			IAsyncResult asyncResult;
+
 			try
 			{
 				System.Threading.Monitor.Enter(this.read);
@@ -514,19 +439,20 @@ namespace Mono.Security.Protocol.Tls
 							break;
 						}
 					}
- 
- 					// TODO: Review if we need to check the Length
- 					// property of the innerStream for other types
- 					// of streams, to check that there are data available
- 					// for read
- 					if (this.innerStream is NetworkStream &&
- 						!((NetworkStream)this.innerStream).DataAvailable)
- 					{
- 						break;
- 					}
+
+					// TODO: Review if we need to check the Length
+					// property of the innerStream for other types
+					// of streams, to check that there are data available
+					// for read
+					if (this.innerStream is NetworkStream &&
+						!((NetworkStream)this.innerStream).DataAvailable)
+					{
+						break;
+					}
 				}
 
-				return this.inputBuffer.Read(buffer, offset, count);
+				asyncResult = this.inputBuffer.BeginRead(
+					buffer, offset, count, callback, state);
 			}
 			catch (TlsException ex)
 			{
@@ -540,35 +466,18 @@ namespace Mono.Security.Protocol.Tls
 			{
 				System.Threading.Monitor.Exit(this.read);
 			}
+
+			return asyncResult;
 		}
 
-		public override long Seek(long offset, SeekOrigin origin)
+		public override IAsyncResult BeginWrite(
+			byte[]			buffer,
+			int				offset,
+			int				count,
+			AsyncCallback	callback,
+			object			state)
 		{
-			throw new NotSupportedException();
-		}
-		
-		public override void SetLength(long value)
-		{
-			throw new NotSupportedException();
-		}
-
-		public void Write(byte[] buffer)
-		{
-			this.Write(buffer, 0, buffer.Length);
-		}
-
-		public override void Write(byte[] buffer, int offset, int count)
-		{
-			if (this.disposed)
-			{
-				throw new ObjectDisposedException("The SslClientStream is closed.");
-			}
-
-			if (!this.context.HandshakeFinished)
-			{
-				// Start handshake negotiation
-				this.doHandshake();
-			}
+			this.checkDisposed();
 
 			if (buffer == null)
 			{
@@ -591,19 +500,29 @@ namespace Mono.Security.Protocol.Tls
 				throw new ArgumentOutOfRangeException("count is less than the length of buffer minus the value of the offset parameter.");
 			}
 
+			if (!this.context.HandshakeFinished)
+			{
+				// Start handshake negotiation
+				this.doHandshake();
+			}
+
 			if (!Monitor.TryEnter(this.write))
 			{
 				throw new InvalidOperationException("A write operation is already in progress.");
 			}
+
+			IAsyncResult asyncResult;
+
 			try
 			{
 				Monitor.Enter(this.write);
 
 				// Send the buffer as a TLS record
-				byte[] recordData = new byte[count];
-				System.Array.Copy(buffer, offset, recordData, 0, count);
-
-				this.sendRecord(TlsContentType.ApplicationData, recordData);
+				byte[] record = this.encodeRecord(
+					TlsContentType.ApplicationData, buffer, offset, count);
+				
+				asyncResult = this.innerStream.BeginWrite(
+					record, 0, record.Length, callback, state);
 			}
 			catch (TlsException ex)
 			{
@@ -617,6 +536,78 @@ namespace Mono.Security.Protocol.Tls
 			{
 				Monitor.Exit(this.write);
 			}			
+
+			return asyncResult;
+		}
+
+		public override int EndRead(IAsyncResult asyncResult)
+		{
+			this.checkDisposed();
+
+			if (asyncResult == null)
+			{
+				throw new ArgumentNullException("asyncResult is null or was not obtained by calling BeginRead.");
+			}
+
+			return this.inputBuffer.EndRead(asyncResult);
+		}
+
+		public override void EndWrite(IAsyncResult asyncResult)
+		{
+			this.checkDisposed();
+
+			if (asyncResult == null)
+			{
+				throw new ArgumentNullException("asyncResult is null or was not obtained by calling BeginRead.");
+			}
+
+			this.innerStream.EndWrite (asyncResult);
+		}
+
+		public override void Close()
+		{
+			((IDisposable)this).Dispose();
+		}
+
+		public override void Flush()
+		{
+			this.checkDisposed();
+
+			this.innerStream.Flush();
+		}
+
+		public int Read(byte[] buffer)
+		{
+			return this.Read(buffer, 0, buffer.Length);
+		}
+
+		public override int Read(byte[] buffer, int offset, int count)
+		{
+			IAsyncResult res = this.BeginRead(buffer, offset, count, null, null);
+
+			return this.EndRead(res);
+		}
+
+		public override long Seek(long offset, SeekOrigin origin)
+		{
+			throw new NotSupportedException();
+		}
+		
+		public override void SetLength(long value)
+		{
+			throw new NotSupportedException();
+		}
+
+		public void Write(byte[] buffer)
+		{
+			this.Write(buffer, 0, buffer.Length);
+		}
+
+		public override void Write(byte[] buffer, int offset, int count)
+		{
+			IAsyncResult res = this.BeginWrite (buffer, offset, count, null, null);
+
+			this.EndWrite(res);
 		}
 
 		#endregion
@@ -631,7 +622,7 @@ namespace Mono.Security.Protocol.Tls
 			}
 			
 			// Try to read the Record Content Type
-			int type = innerStream.ReadByte();
+			int type = this.innerStream.ReadByte();
 
 			// There are no more data for read
 			if (type == -1)
@@ -726,20 +717,6 @@ namespace Mono.Security.Protocol.Tls
 			alert.Reset();
 		}
 
-		private void sendRecord(TlsHandshakeType type)
-		{
-			TlsHandshakeMessage msg = createClientHandshakeMessage(type);
-			
-			// Write record
-			this.sendRecord(msg.ContentType, msg.EncodeMessage());
-
-			// Update session
-			msg.Update();
-
-			// Reset message contents
-			msg.Reset();
-		}
-
 		private void sendChangeCipherSpec()
 		{
 			// Send Change Cipher Spec message
@@ -754,7 +731,21 @@ namespace Mono.Security.Protocol.Tls
 			// Send Finished message
 			this.sendRecord(TlsHandshakeType.Finished);			
 		}
-		
+
+		private void sendRecord(TlsHandshakeType type)
+		{
+			TlsHandshakeMessage msg = this.createClientHandshakeMessage(type);
+			
+			// Write record
+			this.sendRecord(msg.ContentType, msg.EncodeMessage());
+
+			// Update session
+			msg.Update();
+
+			// Reset message contents
+			msg.Reset();
+		}
+
 		private void sendRecord(TlsContentType contentType, byte[] recordData)
 		{
 			if (this.context.ConnectionEnd)
@@ -762,10 +753,52 @@ namespace Mono.Security.Protocol.Tls
 				throw this.context.CreateException("The session is finished and it's no longer valid.");
 			}
 
-			byte[][] fragments = this.fragmentData(recordData);
-			for (int i = 0; i < fragments.Length; i++)
+			byte[] record = this.encodeRecord(contentType, recordData);
+
+			this.innerStream.Write(record, 0, record.Length);
+		}
+
+		private byte[] encodeRecord(TlsContentType contentType, byte[] recordData)
+		{
+			return this.encodeRecord(
+				contentType,
+				recordData,
+				0,
+				recordData.Length);
+		}
+
+		private byte[] encodeRecord(
+			TlsContentType	contentType, 
+			byte[]			recordData,
+			int				offset,
+			int				count)
+		{
+			if (this.context.ConnectionEnd)
 			{
-				byte[] fragment = fragments[i];
+				throw this.context.CreateException("The session is finished and it's no longer valid.");
+			}
+
+			TlsStream record = new TlsStream();
+
+			int	position = offset;
+
+			while (position < ( offset + count ))
+			{
+				short	fragmentLength = 0;
+				byte[]	fragment;
+
+				if ((count - position) > TlsContext.MAX_FRAGMENT_SIZE)
+				{
+					fragmentLength = TlsContext.MAX_FRAGMENT_SIZE;
+				}
+				else
+				{
+					fragmentLength = (short)(count - position);
+				}
+
+				// Fill the fragment data
+				fragment = new byte[fragmentLength];
+				Buffer.BlockCopy(recordData, position, fragment, 0, fragmentLength);
 
 				if (this.context.IsActual)
 				{
@@ -774,61 +807,25 @@ namespace Mono.Security.Protocol.Tls
 				}
 
 				// Write tls message
-				TlsStream record = new TlsStream();
 				record.Write((byte)contentType);
 				record.Write((short)this.context.Protocol);
 				record.Write((short)fragment.Length);
 				record.Write(fragment);
 
-				// Write record
-				this.innerStream.Write(record.ToArray(), 0, (int)record.Length);
-
-				// Reset record data
-				record.Reset();
-			}
-		}
-
-		private byte[][] fragmentData(byte[] messageData)
-		{
-			ArrayList d = new ArrayList();
-			
-			int	position = 0;
-
-			while (position < messageData.Length)
-			{
-				short	fragmentLength = 0;
-				byte[]	fragmentData;
-				if ((messageData.Length - position) > TlsContext.MAX_FRAGMENT_SIZE)
-				{
-					fragmentLength = TlsContext.MAX_FRAGMENT_SIZE;
-				}
-				else
-				{
-					fragmentLength = (short)(messageData.Length - position);
-				}
-				fragmentData = new byte[fragmentLength];
-
-				System.Array.Copy(messageData, position, fragmentData, 0, fragmentLength);
-
-				d.Add(fragmentData);
-
+				// Update buffer position
 				position += fragmentLength;
 			}
 
-			byte[][] result = new byte[d.Count][];
-			for (int i = 0; i < d.Count; i++)
-			{
-				result[i] = (byte[])d[i];
-			}
-
-			return result;
+			return record.ToArray();
 		}
-
+		
 		#endregion
 
 		#region Cryptography Methods
 
-		private byte[] encryptRecordFragment(TlsContentType contentType, byte[] fragment)
+		private byte[] encryptRecordFragment(
+			TlsContentType	contentType, 
+			byte[]			fragment)
 		{
 			// Calculate message MAC
 			byte[] mac	= this.context.Cipher.ComputeClientRecordMAC(contentType, fragment);
@@ -850,9 +847,10 @@ namespace Mono.Security.Protocol.Tls
 			return ecr;
 		}
 
-		private TlsStream decryptRecordFragment(TlsContentType contentType, 
-			SecurityProtocolType protocol,
-			byte[] fragment)
+		private TlsStream decryptRecordFragment(
+			TlsContentType			contentType, 
+			SecurityProtocolType	protocol,
+			byte[]					fragment)
 		{
 			byte[]	dcrFragment	= null;
 			byte[]	dcrMAC		= null;
@@ -916,7 +914,9 @@ namespace Mono.Security.Protocol.Tls
 			}
 		}
 
-		private void processAlert(TlsAlertLevel alertLevel, TlsAlertDescription alertDesc)
+		private void processAlert(
+			TlsAlertLevel		alertLevel, 
+			TlsAlertDescription alertDesc)
 		{
 			switch (alertLevel)
 			{
@@ -957,6 +957,14 @@ namespace Mono.Security.Protocol.Tls
 			short val = BitConverter.ToInt16(b, 0);
 
 			return System.Net.IPAddress.HostToNetworkOrder(val);
+		}
+
+		private void checkDisposed()
+		{
+			if (this.disposed)
+			{
+				throw new ObjectDisposedException("The SslClientStream is closed.");
+			}
 		}
 
 		#endregion
@@ -1092,7 +1100,9 @@ namespace Mono.Security.Protocol.Tls
 
 		#region Event Methods
 
-		internal void RaiseWarningAlert(TlsAlertLevel level, TlsAlertDescription description)
+		internal void RaiseWarningAlert(
+			TlsAlertLevel		level, 
+			TlsAlertDescription description)
 		{
 			if (WarningAlert != null)
 			{
@@ -1101,7 +1111,8 @@ namespace Mono.Security.Protocol.Tls
 		}
 
 		internal bool RaiseServerCertificateValidation(
-			X509Certificate certificate, int[] certificateErrors)
+			X509Certificate certificate, 
+			int[]			certificateErrors)
 		{
 			if (this.ServerCertValidation != null)
 			{
@@ -1112,10 +1123,10 @@ namespace Mono.Security.Protocol.Tls
 		}
 
 		internal X509Certificate RaiseClientCertificateSelection(
-			X509CertificateCollection clientCertificates, 
-			X509Certificate serverCertificate, 
-			string targetHost, 
-			X509CertificateCollection serverRequestedCertificates)
+			X509CertificateCollection	clientCertificates, 
+			X509Certificate				serverCertificate, 
+			string						targetHost, 
+			X509CertificateCollection	serverRequestedCertificates)
 		{
 			if (this.ClientCertSelection != null)
 			{
