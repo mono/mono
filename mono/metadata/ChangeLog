@@ -1,4 +1,9 @@
 
+Thu Dec 19 16:23:19 CET 2002 Paolo Molaro <lupus@ximian.com>
+
+	* object.c: removed assert to allow static fields on interfaces.
+	* loader.c: a TypeSpec may be used for any type, not just arrays.
+
 Thu Dec 19 14:19:42 CET 2002 Paolo Molaro <lupus@ximian.com>
 
 	* class.c, class.h: added mono_class_array_element_size ().
