@@ -187,8 +187,8 @@ namespace System.Data {
 				if (rowState == DataRowState.Deleted && version != DataRowVersion.Original)
 					throw new DeletedRowInaccessibleException ("Deleted row information cannot be accessed through the row.");
 				// Row not in table
-				if (rowState == DataRowState.Detached && version == DataRowVersion.Default)
-					throw new RowNotInTableException("This row has been removed from a table and does not have any data.  BeginEdit() will allow creation of new data in this row.");
+				//if (rowState == DataRowState.Detached && version == DataRowVersion.Default)
+				//	throw new RowNotInTableException("This row has been removed from a table and does not have any data.  BeginEdit() will allow creation of new data in this row.");
 				// Non-existent version
 				if (!HasVersion (version))
 					throw new VersionNotFoundException (Locale.GetText ("There is no " + version.ToString () + " data to access."));
