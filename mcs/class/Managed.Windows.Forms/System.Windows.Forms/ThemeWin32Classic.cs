@@ -25,9 +25,12 @@
 //
 //
 //
-// $Revision: 1.24 $
+// $Revision: 1.25 $
 // $Modtime: $
 // $Log: ThemeWin32Classic.cs,v $
+// Revision 1.25  2004/08/20 00:12:51  jordi
+// fixes methods signature
+//
 // Revision 1.24  2004/08/19 22:25:31  jordi
 // theme enhancaments
 //
@@ -215,15 +218,15 @@ namespace System.Windows.Forms
 			get {return false; }
 		}
 		
-		public int SizeGripWidth {
+		public override int SizeGripWidth {
 			get { return 15; }
 		}
 
-		public int StatusBarHorzGapWidth {
+		public override int StatusBarHorzGapWidth {
 			get { return 3; }
 		}
 
-		public int ScrollBarButtonSize {
+		public override int ScrollBarButtonSize {
 			get { return 16; }
 		}
 
@@ -231,27 +234,27 @@ namespace System.Windows.Forms
 		 * ToolBar Control properties
 		 */
 		// Grip width for the Image on the ToolBarButton
-		public int ToolBarImageGripWidth {
+		public override int ToolBarImageGripWidth {
 			get { return 2;}
 		}
 
 		// width of the separator
-		public int ToolBarSeparatorWidth {
+		public override int ToolBarSeparatorWidth {
 			get { return 4; }
 		}
 
 		// width of the dropdown arrow rect
-		public int ToolBarDropDownWidth {
+		public override int ToolBarDropDownWidth {
 			get { return 13; }
 		}
 
 		// width for the dropdown arrow on the ToolBarButton
-		public int ToolBarDropDownArrowWidth {
+		public override int ToolBarDropDownArrowWidth {
 			get { return 5;}
 		}
 
 		// height for the dropdown arrow on the ToolBarButton
-		public int ToolBarDropDownArrowHeight {
+		public override int ToolBarDropDownArrowHeight {
 			get { return 3;}
 		}
 
@@ -306,7 +309,7 @@ namespace System.Windows.Forms
 			Methods that mimic ControlPaint signature and draw basic objects
 		*/
 
-		public void DrawBorder (Graphics graphics, Rectangle bounds, Color leftColor, int leftWidth,
+		public override void DrawBorder (Graphics graphics, Rectangle bounds, Color leftColor, int leftWidth,
 			ButtonBorderStyle leftStyle, Color topColor, int topWidth, ButtonBorderStyle topStyle,
 			Color rightColor, int rightWidth, ButtonBorderStyle rightStyle, Color bottomColor,
 			int bottomWidth, ButtonBorderStyle bottomStyle)
@@ -317,7 +320,7 @@ namespace System.Windows.Forms
 			DrawBorderInternal(graphics, bounds.Left, bounds.Bottom-1, bounds.Right-1, bounds.Bottom-1, bottomWidth, bottomColor, bottomStyle, Border3DSide.Bottom);
 		}
 
-		public void DrawBorder3D (Graphics graphics, Rectangle rectangle, Border3DStyle style, Border3DSide sides)
+		public override void DrawBorder3D (Graphics graphics, Rectangle rectangle, Border3DStyle style, Border3DSide sides)
 		{
 			Pen			penTopLeft;
 			Pen			penTopLeftInner;
@@ -427,7 +430,7 @@ namespace System.Windows.Forms
 		}
 
 
-		public void DrawButton (Graphics graphics, Rectangle rectangle, ButtonState state)
+		public override void DrawButton (Graphics graphics, Rectangle rectangle, ButtonState state)
 		{
 			DrawFrameControlStates	dfcs=DrawFrameControlStates.ButtonPush;
 
@@ -450,7 +453,7 @@ namespace System.Windows.Forms
 		}
 
 
-		public void DrawCaptionButton (Graphics graphics, Rectangle rectangle, CaptionButton button, ButtonState state)
+		public override void DrawCaptionButton (Graphics graphics, Rectangle rectangle, CaptionButton button, ButtonState state)
 		{
 			Rectangle	captionRect;
 			int			lineWidth;
@@ -509,7 +512,7 @@ namespace System.Windows.Forms
 		}
 
 
-		public void DrawCheckBox (Graphics graphics, Rectangle rectangle, ButtonState state)
+		public override void DrawCheckBox (Graphics graphics, Rectangle rectangle, ButtonState state)
 		{
 			DrawFrameControlStates	dfcs=DrawFrameControlStates.ButtonCheck;
 
@@ -533,7 +536,7 @@ namespace System.Windows.Forms
 
 		}
 
-		public void DrawComboButton (Graphics graphics, Rectangle rectangle, ButtonState state)
+		public override void DrawComboButton (Graphics graphics, Rectangle rectangle, ButtonState state)
 		{
 			Point[]			arrow = new Point[3];
 			Point				P1;
@@ -603,7 +606,7 @@ namespace System.Windows.Forms
 		}
 
 
-		public void DrawContainerGrabHandle (Graphics graphics, Rectangle bounds)
+		public override void DrawContainerGrabHandle (Graphics graphics, Rectangle bounds)
 		{
 			SolidBrush	sb		= br_buttontext;
 			Pen			pen	= new Pen(Color.Black, 1);
@@ -632,7 +635,7 @@ namespace System.Windows.Forms
 		}
 
 
-		public void DrawFocusRectangle (Graphics graphics, Rectangle rectangle, Color foreColor, Color backColor)
+		public override void DrawFocusRectangle (Graphics graphics, Rectangle rectangle, Color foreColor, Color backColor)
 		{
 			//Color			colorForeInverted;
 			Color			colorBackInverted;
@@ -653,7 +656,7 @@ namespace System.Windows.Forms
 		}
 
 
-		public void DrawGrabHandle (Graphics graphics, Rectangle rectangle, bool primary, bool enabled)
+		public override void DrawGrabHandle (Graphics graphics, Rectangle rectangle, bool primary, bool enabled)
 		{
 			SolidBrush	sb;
 			Pen			pen;
@@ -680,7 +683,7 @@ namespace System.Windows.Forms
 		}
 
 
-		public void DrawGrid (Graphics graphics, Rectangle area, Size pixelsBetweenDots, Color backColor)
+		public override void DrawGrid (Graphics graphics, Rectangle area, Size pixelsBetweenDots, Color backColor)
 		{
 			Color	foreColor;
 			int	h;
@@ -733,7 +736,7 @@ namespace System.Windows.Forms
 			bitmap.Dispose();
 		}
 
-		public void DrawImageDisabled (Graphics graphics, Image image, int x, int y, Color background)
+		public override void DrawImageDisabled (Graphics graphics, Image image, int x, int y, Color background)
 		{
 			/*
 				Microsoft seems to ignore the background and simply make
@@ -767,7 +770,7 @@ namespace System.Windows.Forms
 		}
 
 
-		public void DrawLockedFrame (Graphics graphics, Rectangle rectangle, bool primary)
+		public override void DrawLockedFrame (Graphics graphics, Rectangle rectangle, bool primary)
 		{
 			Pen	penBorder;
 			Pen	penInside;
@@ -789,7 +792,7 @@ namespace System.Windows.Forms
 		}
 
 
-		public void DrawMenuGlyph (Graphics graphics, Rectangle rectangle, MenuGlyph glyph)
+		public override void DrawMenuGlyph (Graphics graphics, Rectangle rectangle, MenuGlyph glyph)
 		{
 			Rectangle	rect;
 			int			lineWidth;
@@ -860,7 +863,7 @@ namespace System.Windows.Forms
 
 		}
 
-		public void DrawRadioButton (Graphics graphics, Rectangle rectangle, ButtonState state)
+		public override void DrawRadioButton (Graphics graphics, Rectangle rectangle, ButtonState state)
 		{
 			DrawFrameControlStates	dfcs=DrawFrameControlStates.ButtonRadio;
 
@@ -884,20 +887,20 @@ namespace System.Windows.Forms
 		}
 
 
-		public void DrawReversibleFrame (Rectangle rectangle, Color backColor, FrameStyle style)
+		public override void DrawReversibleFrame (Rectangle rectangle, Color backColor, FrameStyle style)
 		{
 
 		}
 
 
-		public void DrawReversibleLine (Point start, Point end, Color backColor)
+		public override void DrawReversibleLine (Point start, Point end, Color backColor)
 		{
 
 		}
 
 
 		/* Scroll button: regular button + direction arrow */
-		public void DrawScrollButton (Graphics dc, Rectangle area, ScrollButton type, ButtonState state)
+		public  override void DrawScrollButton (Graphics dc, Rectangle area, ScrollButton type, ButtonState state)
 		{
 			bool enabled = (state == ButtonState.Inactive) ? false: true;			
 					
@@ -987,14 +990,14 @@ namespace System.Windows.Forms
 		}
 
 
-		public void DrawSelectionFrame (Graphics graphics, bool active, Rectangle outsideRect, Rectangle insideRect,
+		public  override void DrawSelectionFrame (Graphics graphics, bool active, Rectangle outsideRect, Rectangle insideRect,
 			Color backColor)
 		{
 
 		}
 
 
-		public void DrawSizeGrip (Graphics dc, Color backColor, Rectangle bounds)
+		public override void DrawSizeGrip (Graphics dc, Color backColor, Rectangle bounds)
 		{
 			Point pt = new Point (bounds.Right - 2, bounds.Bottom - 1);
 
@@ -1012,7 +1015,7 @@ namespace System.Windows.Forms
 		}
 
 
-		public void DrawStringDisabled (Graphics graphics, string s, Font font, Color color, RectangleF layoutRectangle,
+		public  override void DrawStringDisabled (Graphics graphics, string s, Font font, Color color, RectangleF layoutRectangle,
 			StringFormat format)
 		{
 			SolidBrush	brush;
@@ -1452,7 +1455,7 @@ namespace System.Windows.Forms
 			}
 		}
 
-		public void DrawTrackBar (Graphics dc, Rectangle area, TrackBar tb,
+		public override void DrawTrackBar (Graphics dc, Rectangle area, TrackBar tb,
 			ref Rectangle thumb_pos, ref Rectangle thumb_area,  bool highli_thumb,
 			float ticks, int value_pos, bool mouse_value)
 
@@ -1495,7 +1498,7 @@ namespace System.Windows.Forms
 					br_thumb, ticks, value_pos, mouse_value);
 		}
 
-		public void DrawProgressBar (Graphics dc, Rectangle area,  Rectangle client_area,
+		public override void DrawProgressBar (Graphics dc, Rectangle area,  Rectangle client_area,
 			int barpos_pixels, int block_width)
 
 		{
@@ -1519,7 +1522,7 @@ namespace System.Windows.Forms
 		}
 		
 
-		public void DrawLabel (Graphics dc, Rectangle area, BorderStyle border_style, string text, 
+		public  override void DrawLabel (Graphics dc, Rectangle area, BorderStyle border_style, string text, 
 			Color fore_color, Color back_color, Font font, StringFormat string_format, bool Enabled)
 
 		{
@@ -1540,7 +1543,7 @@ namespace System.Windows.Forms
 		
 		}
 
-		public void DrawStatusBar (Graphics dc, Rectangle area, StatusBar sb)
+		public  override void DrawStatusBar (Graphics dc, Rectangle area, StatusBar sb)
 		{
 			int horz_border = 2;
 			int vert_border = 2;
@@ -1575,7 +1578,7 @@ namespace System.Windows.Forms
 		}
 
 
-		public void DrawStatusBarPanel (Graphics dc, Rectangle area, int index,
+		public override void DrawStatusBarPanel (Graphics dc, Rectangle area, int index,
 				SolidBrush br_forecolor, StatusBarPanel panel)
 		{
 			int border_size = 3; // this is actually const, even if the border style is none
@@ -1629,7 +1632,7 @@ namespace System.Windows.Forms
 			dc.DrawString (text, panel.Parent.Font, br_forecolor, x, y, string_format);
 		}
 
-		public void DrawOwnerDrawBackground (DrawItemEventArgs e)
+		public  override void DrawOwnerDrawBackground (DrawItemEventArgs e)
 		{
 			if (e.State == DrawItemState.Selected) {
 				e.Graphics.FillRectangle (SystemBrushes.Highlight, e.Bounds);
@@ -1639,13 +1642,13 @@ namespace System.Windows.Forms
 			e.Graphics.FillRectangle (GetControlBackBrush (e.BackColor), e.Bounds);
 		}
 
-		public void DrawOwnerDrawFocusRectangle (DrawItemEventArgs e)
+		public  override void DrawOwnerDrawFocusRectangle (DrawItemEventArgs e)
 		{
 			if (e.State == DrawItemState.Focus)
 				DrawFocusRectangle (e.Graphics, e.Bounds, e.ForeColor, e.BackColor);
 		}
 
-		public void DrawToolBar (Graphics dc, ToolBar control, StringFormat format)
+		public  override void DrawToolBar (Graphics dc, ToolBar control, StringFormat format)
 		{
 			Rectangle paint_area = control.ClientRectangle;
 			dc.FillRectangle (br_buttonface, paint_area);

@@ -23,9 +23,12 @@
 //	Jordi Mas i Hernandez, jordi@ximian.com
 //
 //
-// $Revision: 1.1 $
+// $Revision: 1.2 $
 // $Modtime: $
 // $Log: Theme.cs,v $
+// Revision 1.2  2004/08/20 00:12:51  jordi
+// fixes methods signature
+//
 // Revision 1.1  2004/08/19 22:26:30  jordi
 // move themes from an interface to a class
 //
@@ -270,6 +273,10 @@ namespace System.Windows.Forms
 		public abstract void DrawOwnerDrawBackground (DrawItemEventArgs e);
 
 		public abstract void DrawOwnerDrawFocusRectangle (DrawItemEventArgs e);
+
+		public abstract void DrawStatusBarPanel (Graphics dc, Rectangle area, int index,
+			SolidBrush br_forecolor, StatusBarPanel panel);
+		
 
 	}
 }
