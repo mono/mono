@@ -1,3 +1,10 @@
+2001-11-02  Dietmar Maurer  <dietmar@ximian.com>
+
+	* testjit.c: impl. STELEM_XX, STELEM_XX
+
+	* x86.brg: impl. LDLEN, LDELEMA
+	
+
 2001-10-15  Dietmar Maurer  <dietmar@ximian.com>
 
 	* x86.brg: added some experimental code for CALL
