@@ -1,3 +1,20 @@
+2004-12-03 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* WebConnection.cs: remove prevStream and don't set busy to false in
+	HandleError. prevStream is not needed any more and setting 'busy' so
+	early might let a request skip the queue.
+	
+	* WebConnectionGroup.cs: decrement the indexer when removing a dead
+	reference from the arraylist.
+
+	* WebConnectionStream.cs:
+	(ReadAll): call NextRead if it has not been called before even when
+	we have completed the request. Reuse the read buffer when reading a
+	response of unknown size. Increase the buffer to 8kB.
+	(BeginRead): increase pendingReads earlier and even when reading from
+	the internal buffer.
+	(EndRead): decrease pendingReads later and always.
+
 2004-12-01 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* CookieContainer.cs: style, fixed checks for properties, implemented

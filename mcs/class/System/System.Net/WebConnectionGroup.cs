@@ -95,6 +95,7 @@ namespace System.Net
 				if (cnc == null) {
 					connections.RemoveAt (i);
 					count--;
+					i--;
 					continue;
 				}
 
