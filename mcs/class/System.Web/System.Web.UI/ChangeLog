@@ -1,3 +1,11 @@
+2005-04-01  Lluis Sanchez Gual <lluis@novell.com>
+
+	* DataSourceView.cs: Rethrow exceptions not handled by operation
+	callbacks.
+	* ITextControl.cs: Removed event.
+	* CollectionBuilder.cs: Don't crash when a collection has more
+	than one indexer.
+
 2005-03-23  Lluis Sanchez Gual <lluis@novell.com>
 
 	* Control.cs: Added a new internal property: HasRenderMethodDelegate.

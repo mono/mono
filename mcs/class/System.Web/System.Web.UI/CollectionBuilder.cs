@@ -69,7 +69,10 @@ namespace System.Web.UI
 			PropertyInfo prop = parentBuilder.ControlType.GetProperty (tagName, flagsNoCase);
 			SetControlType (prop.PropertyType);
 
-			prop = ControlType.GetProperty ("Item", flagsNoCase & ~BindingFlags.IgnoreCase);
+			MemberInfo[] mems = ControlType.GetMember ("Item", MemberTypes.Property, flagsNoCase & ~BindingFlags.IgnoreCase);
+			if (mems.Length > 0) prop = (PropertyInfo) mems [0];
+			else throw new HttpException ("Collection of type '" + ControlType + "' does not have an indexer.");
+			
 			elementType = prop.PropertyType;
 		}
 	}

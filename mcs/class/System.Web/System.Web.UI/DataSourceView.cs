@@ -67,7 +67,8 @@ namespace System.Web.UI {
 				passOn = e;
 			}
 
-			callBack (rowAffected, passOn);
+			if (!callBack (rowAffected, passOn) && passOn != null)
+				throw passOn;
 		}
 
 		protected virtual int ExecuteDelete(IDictionary keys, IDictionary values)
@@ -103,7 +104,8 @@ namespace System.Web.UI {
 				passOn = e;
 			}
 
-			callBack (rowAffected, passOn);
+			if (!callBack (rowAffected, passOn) && passOn != null)
+				throw passOn;
 		}
 
 		protected virtual void OnDataSourceViewChanged (EventArgs eventArgs)
@@ -157,7 +159,9 @@ namespace System.Web.UI {
 				passOn = e;
 			}
 
-			callBack (rowAffected, passOn);
+			if (!callBack (rowAffected, passOn) && passOn != null)
+				throw passOn;
+
 			return rowAffected;
 		} 
 		
