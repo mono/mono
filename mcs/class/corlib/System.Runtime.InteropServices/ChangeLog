@@ -1,3 +1,7 @@
+2003-07-12  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
+
+	* ComCompatibleVersionAttribute.cs: Added and implemented
+	* TypeLibVersionAttribute.cs: Added and implemented
 
 Wed Jun 18 12:49:54 CEST 2003 Paolo Molaro <lupus@ximian.com>
 
