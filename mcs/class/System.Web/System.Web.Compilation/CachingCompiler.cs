@@ -129,6 +129,26 @@ namespace System.Web.Compilation
 			return results;
 		}
 
+		public static CompilerResults Compile (WebServiceCompiler compiler, string file)
+		{
+			CompilationCacheItem item = GetCached (file);
+			if (item != null)
+				return item.Result;
+			
+			CompilerResults results = null;
+			lock (compilationLock) {
+				item = GetCached (file);
+				if (item != null)
+					return item.Result;
+
+				CompilerParameters options = GetOptions (compiler.Parser.Assemblies);
+				results = compiler.Compiler.CompileAssemblyFromFile (options, file);
+				cache [file] = new CompilationCacheItem (results, compiler.Parser.Dependencies);
+			}
+
+			return results;
+		}
+
 		static CompilerParameters GetOptions (ICollection assemblies)
 		{
 			CompilerParameters options = new CompilerParameters ();
@@ -141,9 +161,9 @@ namespace System.Web.Compilation
 			return options;
 		}
 
-		public static CompilerResults Compile (string file, ArrayList assemblies)
+		public static CompilerResults Compile (string key, string file, ArrayList assemblies)
 		{
-			CompilationCacheItem item = GetCached (file);
+			CompilationCacheItem item = GetCached (key);
 			if (item != null)
 				return item.Result;
 			
@@ -156,7 +176,7 @@ namespace System.Web.Compilation
 				CompilerParameters options = GetOptions (assemblies);
 				//TODO: support for other languages
 				results = CSCompiler.Compiler.CompileAssemblyFromFile (options, file);
-				cache [file] = new CompilationCacheItem (results, file);
+				cache [key] = new CompilationCacheItem (results, file);
 			}
 
 			return results;

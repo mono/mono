@@ -1,3 +1,9 @@
+2003-07-03  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* SimpleWebHandlerParser.cs: updated to new compilation interface.
+
+	* TemplateParser.cs: use the new parameter when compiling.  
+
 2003-07-01  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Page.cs: also keep the value for the second try on handling postback

@@ -4,16 +4,19 @@
 // Authors:
 //	Gonzalo Paniagua Javier (gonzalo@ximian.com)
 //
-// (C) 2002 Ximian, Inc (http://www.ximian.com)
+// (C) 2002,2003 Ximian, Inc (http://www.ximian.com)
 //
 
 using System;
+using System.CodeDom.Compiler;
 using System.Collections;
 using System.IO;
+using System.Reflection;
 using System.Text;
 using System.Web;
 using System.Web.Compilation;
 using System.Web.Util;
+using TagType = System.Web.Compilation.TagType;
 
 namespace System.Web.UI
 {
@@ -27,17 +30,33 @@ namespace System.Web.UI
 		bool debug;
 		string language;
 		string program;
-		ArrayList elements;
+		bool gotDefault;
+		ArrayList assemblies;
+		ArrayList dependencies;
+		Hashtable anames;
+		string privateBinPath;
+		string baseDir;
+		string baseVDir;
 
 		protected SimpleWebHandlerParser (HttpContext context, string virtualPath, string physicalPath)
 		{
 			this.context = context;
 			this.vPath = virtualPath;
 			this.physPath = physicalPath;
-			GetDirectiveAndContent ();
+
+			assemblies = new ArrayList ();
+			assemblies.Add ("System.dll");
+			assemblies.Add ("System.Drawing.dll");
+			assemblies.Add ("System.Data.dll");
+			assemblies.Add ("System.Web.dll");
+			assemblies.Add ("System.Web.Services.dll");
+			assemblies.Add ("System.Xml.dll");
+			AddAssembliesInBin ();
+
+			GetDirectivesAndContent ();
 		}
 
-		private void GetDirectiveAndContent ()
+		void GetDirectivesAndContent ()
 		{
 			StreamReader reader = new StreamReader (File.OpenRead (physPath));
 			string line;
@@ -46,10 +65,10 @@ namespace System.Web.UI
 
 			while ((line = reader.ReadLine ()) != null) {
 				string trimmed = line.Trim ();
-				if (!directiveFound && trimmed != String.Empty)
+				if (!directiveFound && trimmed == String.Empty)
 					continue;
 				
-				if (!directiveFound) {
+				if (trimmed.StartsWith ("<")) {
 					ParseDirective (trimmed);
 					directiveFound = true;
 					continue;
@@ -59,152 +78,307 @@ namespace System.Web.UI
 				content.Append (reader.ReadToEnd ());
 			}
 
+			if (!gotDefault)
+				throw new ParseException (null, "No @WebService directive found");
+				
 			this.program = content.ToString ();
 			reader.Close ();
 		}
 
-		void ParseError (string msg, int line, int col)
+		void TagParsed (ILocation location, TagType tagtype, string tagid, TagAttributes attributes)
 		{
-			string exc = String.Format ("parse error: {0}", msg);
-			throw new HttpException (exc);
+			if (tagtype != TagType.Directive)
+				throw new ParseException (location, "Unexpected tag");
+
+			if (String.Compare (tagid, DefaultDirectiveName, true) == 0) {
+				AddDefaultDirective (location, attributes);
+			} else if (String.Compare (tagid, "Assembly", true) == 0) {
+				AddAssemblyDirective (location, attributes);
+			} else {
+				throw new ParseException (location, "Unexpected directive: " + tagid);
+			}
 		}
 
-	/*	void TagParsed (Tag tag, int line, int col)
+		void TextParsed (ILocation location, string text)
 		{
-			elements.Add (tag);
-		}*/
-
-		void TextParsed (string msg, int line, int col)
-		{
-			//elements.Add (msg);
+			if (text.Trim () != "")
+				throw new ParseException (location, "Text not allowed here");
 		}
 
-		private void ParseDirective (string line)
+		void ParseError (ILocation location, string message)
 		{
-			/*byte [] bytes = WebEncoding.Encoding.GetBytes (line);
-			//AspTokenizer tok = new AspTokenizer (physPath, new MemoryStream (bytes));
-			//AspParser parser = new AspParser (tok);
+			throw new ParseException (location, message);
+		}
 
-			elements = new ArrayList ();
+		static string GetAndRemove (Hashtable table, string key)
+		{
+			string o = table [key] as string;
+			table.Remove (key);
+			return o;
+		}
+		
+		void ParseDirective (string line)
+		{
+			AspParser parser = new AspParser (physPath, new StringReader (line));
 			parser.Error += new ParseErrorHandler (ParseError);
 			parser.TagParsed += new TagParsedHandler (TagParsed);
 			parser.TextParsed += new TextParsedHandler (TextParsed);
 
 			parser.Parse ();
+		}
 
-			if (elements.Count != 1)
-				throw new ApplicationException ("Error looking for WebService directive.");
+		internal virtual void AddDefaultDirective (ILocation location, TagAttributes attrs)
+		{
+			if (gotDefault)
+				throw new ParseException (location, "duplicate " + DefaultDirectiveName + " directive");
 
-			Directive directive = elements [0] as Directive;
-			if (directive == null)
-				throw new ApplicationException ("Error looking for WebService directive.");
-
-			if (0 != String.Compare (directive.TagID, DefaultDirectiveName, false))
-				throw new ApplicationException ("Expecting @WebService. Got: " +
-								directive.TagID);
-
-			
-			TagAttributes ta = directive.Attributes;
-			className = ta ["class"] as string;
+			gotDefault = true;
+			Hashtable attributes = attrs.GetDictionary (null);
+			className = GetAndRemove (attributes, "class");
 			if (className == null)
-				throw new ApplicationException ("No Class attribute found.");
+				throw new ParseException (null, "No Class attribute found.");
 			
-			string d = ta ["debug"] as string;
-			if (d != null)
-				debug = Convert.ToBoolean (d);
+			string d = GetAndRemove (attributes, "debug");
+			if (d != null) {
+				debug = (String.Compare (d, "true", true) == 0);
+				if (debug == false && String.Compare (d, "false", true) != 0)
+					throw new ParseException (null, "Invalid value for Debug attribute");
+			}
 
-			language = ta ["language"] as string;
+			language = GetAndRemove (attributes, "language");
 			if (language != null) {
 				if (0 != String.Compare (language, "C#", false))
-					throw new ApplicationException ("Only C# language is supported.");
+					throw new ParseException (null, "Only C# language is supported by now.");
 			}
 
-			codeBehind = ta ["codebehind"] as string;
-			if (codeBehind != null) {
-				string ext = Path.GetExtension (codeBehind);
-				if (0 != String.Compare (ext, "cs", false) &&
-				    0 != String.Compare (ext, "dll", false))
-					throw new ApplicationException ("Unknown file type in CodeBehind.");
-
-			}
-			*/
+			codeBehind = GetAndRemove (attributes, "codebehind");
+			if (attributes.Count > 0)
+				throw new ParseException (location, "Unrecognized attribute in " +
+							  DefaultDirectiveName + " directive");
 		}
 
+		internal virtual void AddAssemblyDirective (ILocation location, TagAttributes attrs)
+		{
+			Hashtable tbl = attrs.GetDictionary (null);
+			string name = GetAndRemove (tbl, "Name");
+			string src = GetAndRemove (tbl, "Src");
+			if (name == null && src == null)
+				throw new ParseException (location, "You gotta specify Src or Name");
+
+			if (name != null && src != null)
+				throw new ParseException (location, "Src and Name cannot be used together");
+
+			if (name != null) {
+				AddAssemblyByName (name, location);
+			} else {
+				GetAssemblyFromSource (src, location);
+			}
+
+			if (tbl.Count > 0)
+				throw new ParseException (location, "Unrecognized attribute in Assembly directive");
+		}
+
+		internal virtual void AddAssembly (Assembly assembly, bool fullPath)
+		{
+			if (anames == null)
+				anames = new Hashtable ();
+
+			string name = assembly.GetName ().Name;
+			string loc = assembly.Location;
+			if (fullPath) {
+				if (!assemblies.Contains (loc)) {
+					assemblies.Add (loc);
+				}
+
+				anames [name] = loc;
+				anames [loc] = assembly;
+			} else {
+				if (!assemblies.Contains (name)) {
+					assemblies.Add (name);
+				}
+
+				anames [name] = assembly;
+			}
+		}
+
+		internal virtual Assembly AddAssemblyByName (string name, ILocation location)
+		{
+			if (anames == null)
+				anames = new Hashtable ();
+
+			if (anames.Contains (name)) {
+				object o = anames [name];
+				if (o is string)
+					o = anames [o];
+
+				return (Assembly) o;
+			}
+
+			bool fullpath = true;
+			Assembly assembly = LoadAssemblyFromBin (name);
+			if (assembly != null) {
+				AddAssembly (assembly, fullpath);
+				return assembly;
+			}
+
+			try {
+				assembly = Assembly.Load (name);
+				string loc = assembly.Location;
+				fullpath = (Path.GetDirectoryName (loc) == PrivateBinPath);
+			} catch (Exception e) {
+				throw new ParseException (location, "Assembly " + name + " not found", e);
+			}
+
+			AddAssembly (assembly, fullpath);
+			return assembly;
+		}
+
+		void AddAssembliesInBin ()
+		{
+			if (!Directory.Exists (PrivateBinPath))
+				return;
+
+			string [] binDlls = Directory.GetFiles (PrivateBinPath, "*.dll");
+			foreach (string dll in binDlls) {
+				Assembly assembly = Assembly.LoadFrom (dll);
+				AddAssembly (assembly, true);
+			}
+		}
+
+		Assembly LoadAssemblyFromBin (string name)
+		{
+			Assembly assembly;
+			if (!Directory.Exists (PrivateBinPath))
+				return null;
+
+			string [] binDlls = Directory.GetFiles (PrivateBinPath, "*.dll");
+			foreach (string dll in binDlls) {
+				string fn = Path.GetFileName (dll);
+				fn = Path.ChangeExtension (fn, null);
+				if (fn != name)
+					continue;
+
+				assembly = Assembly.LoadFrom (dll);
+				return assembly;
+			}
+
+			return null;
+		}
+
+		Assembly GetAssemblyFromSource (string vpath, ILocation location)
+		{
+			vpath = UrlUtils.Combine (BaseVirtualDir, vpath);
+			string realPath = context.Request.MapPath (vpath);
+			if (!File.Exists (realPath))
+				throw new ParseException (location, "File " + vpath + " not found");
+
+			AddDependency (realPath);
+
+			CompilerResults result = CachingCompiler.Compile (realPath, realPath, assemblies);
+			if (result.NativeCompilerReturnValue != 0) {
+				StringWriter writer = new StringWriter();
+				StreamReader reader = new StreamReader (realPath);
+				throw new CompilationException (realPath, result.Errors, reader.ReadToEnd ());
+			}
+
+			AddAssembly (result.CompiledAssembly, true);
+			return result.CompiledAssembly;
+		}
+		
+		internal Type GetTypeFromBin (string typeName)
+		{
+			return null;
+		}
+		
+		internal virtual void AddDependency (string filename)
+		{
+			if (dependencies == null)
+				dependencies = new ArrayList ();
+
+			if (!dependencies.Contains (filename))
+				dependencies.Add (filename);
+		}
+		
+		// Properties
 		protected abstract string DefaultDirectiveName { get; }
 
-		internal HttpContext Context
-		{
+		internal HttpContext Context {
+			get { return context; }
+		}
+
+		internal string VirtualPath {
+			get { return vPath; }
+		}
+
+		internal string PhysicalPath {
+			get { return physPath; }
+		}
+
+		internal string ClassName {
+			get { return className; }
+		}
+
+		internal string CodeBehind {
+			get { return codeBehind; }
+		}
+
+		internal bool Debug {
+			get { return debug; }
+		}
+
+		internal string Language {
+			get { return language; }
+		}
+
+		internal string Program {
+			get { return program; }
+		}
+
+		internal ArrayList Assemblies {
+			get { return assemblies; }
+		}
+
+		internal ArrayList Dependencies {
+			get { return dependencies; }
+		}
+
+		internal string PrivateBinPath {
 			get {
-				return context;
+				if (privateBinPath != null)
+					return privateBinPath;
+
+				AppDomainSetup setup = AppDomain.CurrentDomain.SetupInformation;
+				privateBinPath = setup.PrivateBinPath;
+					
+				if (!Path.IsPathRooted (privateBinPath)) {
+					string appbase = setup.ApplicationBase;
+					if (appbase.StartsWith ("file://")) {
+						appbase = appbase.Substring (7);
+						if (Path.DirectorySeparatorChar != '/')
+							appbase = appbase.Replace ('/', Path.DirectorySeparatorChar);
+					}
+					privateBinPath = Path.Combine (appbase, privateBinPath);
+				}
+
+				return privateBinPath;
 			}
 		}
 
-		internal string VirtualPath
-		{
+		internal string BaseDir {
 			get {
-				return vPath;
+				if (baseDir == null)
+					baseDir = context.Request.MapPath (BaseVirtualDir);
+
+				return baseDir;
 			}
 		}
 
-		internal string PhysicalPath
-		{
+		internal virtual string BaseVirtualDir {
 			get {
-				return physPath;
-			}
-		}
+				if (baseVDir == null)
+					baseVDir = UrlUtils.GetDirectory (context.Request.FilePath);
 
-		internal string ClassName
-		{
-			get {
-				return className;
-			}
-			
-			set {
-				className = value;
-			}
-		}
-
-		internal string CodeBehind
-		{
-			get {
-				return codeBehind;
-			}
-			
-			set {
-				codeBehind = value;
-			}
-		}
-
-		internal bool Debug
-		{
-			get {
-				return debug;
-			}
-			
-			set {
-				debug = value;
-			}
-		}
-
-		internal string Language
-		{
-			get {
-				return language;
-			}
-			
-			set {
-				language = value;
-			}
-		}
-
-		internal string Program
-		{
-			get {
-				return program;
-			}
-			
-			set {
-				program = value;
+				return baseVDir;
 			}
 		}
 	}

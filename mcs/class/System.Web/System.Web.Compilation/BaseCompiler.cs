@@ -167,7 +167,7 @@ namespace System.Web.Compilation
 			get { return unit; }
 		}
 
-		internal ICodeCompiler Compiler {
+		internal virtual ICodeCompiler Compiler {
 			get { return compiler; }
 		}
 

@@ -1,3 +1,11 @@
+2003-07-03  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* BaseCompiler.cs: made Compiler property virtual.
+
+	* CachingCompiler.cs: added support for compiling web services.
+
+	* WebServiceCompiler.cs: implemented.
+
 2003-05-22  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* CachingCompiler.cs: fixed bug #43477.
