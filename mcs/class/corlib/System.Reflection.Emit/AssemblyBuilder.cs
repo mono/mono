@@ -35,7 +35,7 @@ namespace System.Reflection.Emit {
 		private string dir;
 		private CustomAttributeBuilder[] cattrs;
 		private MonoResource[] resources;
-		string keyfile;
+		byte[] public_key;
 		string version;
 		string culture;
 		uint algid;
@@ -435,7 +435,15 @@ namespace System.Reflection.Emit {
 				data = customBuilder.Data;
 				pos = 2;
 				len = CustomAttributeBuilder.decode_len (data, pos, out pos);
-				keyfile = CustomAttributeBuilder.string_from_bytes (data, pos, len);
+				string keyfile_name = CustomAttributeBuilder.string_from_bytes (data, pos, len);
+				using (FileStream fs = new FileStream (keyfile_name, FileMode.Open)) {
+					byte[] snkeypair = new byte [fs.Length];
+					fs.Read (snkeypair, 0, snkeypair.Length);
+
+					/* FIXME: Extract public key from the keypair */
+					public_key = snkeypair;
+				}
+				return;
 			} else if (attrname == "System.Reflection.AssemblyCultureAttribute") {
 				data = customBuilder.Data;
 				pos = 2;
