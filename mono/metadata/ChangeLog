@@ -1,3 +1,10 @@
+2003-04-03  Zoltan Varga  <vargaz@freemail.hu>
+
+	* object.c object.h class.h: Added experimental typed allocation
+	facility using the interfaces in gc_gcj.h.
+
+	* os/gc_wrapper.h: Added new include files.
+	
 2003-04-03  Martin Baulig  <martin@ximian.com>
 
 	All the following changes are conditional to `WITH_INCLUDED_LIBGC'
