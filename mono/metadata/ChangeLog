@@ -1,3 +1,8 @@
+2004-12-07  Ben Maurer  <bmaurer@ximian.com>
+
+	* threads.c: Interlocked inc and dec for longs were messed up,
+	use a KISS based impl for this. Fixes 70234
+
 2004-12-07  Zoltan Varga  <vargaz@freemail.hu>
 
 	* threads.c (ves_icall_System_Threading_Thread_GetCachedCurrentCulture): Make this lock-less.
