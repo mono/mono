@@ -1,3 +1,7 @@
+2002-8-19  John Sohn <jsohn@columbus.rr.com>
+	* monostart.c: fixed link from monostub WndProc to Application
+	class WndProc
+	* FormTest.cs: test of class NOT derived from the Form class
 2002-8-18  John Sohn <jsohn@columbus.rr.com>
 	* Application.cs:
 	* ContainerControl.cs:
