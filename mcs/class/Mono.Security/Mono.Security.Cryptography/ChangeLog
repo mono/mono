@@ -1,3 +1,9 @@
+2004-09-17  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* SHA224.cs: New. Abstract class for all SHA224 implementations.
+	* SHA224Managed.cs: New. Managed implementation of SHA224 (a SHA256
+	derivate) as specified in RFC3874 and FIPS 180-2 Change Notice.
+
 2004-06-23  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* SymmetricTransform.cs: Reduce by one the number of block when 
