@@ -812,6 +812,34 @@ namespace Mono.CSharp {
 			return null;
 		}
 
+		private Type LookupNestedTypeInHierarchy (string name)
+		{
+			// if the member cache has been created, lets use it.
+			// the member cache is MUCH faster.
+			if (MemberCache != null)
+				return MemberCache.FindNestedType (name);
+
+			// no member cache. Do it the hard way -- reflection
+			Type t = null;
+			for (Type current_type = TypeBuilder;
+			     current_type != null && current_type != TypeManager.object_type;
+			     current_type = current_type.BaseType) {
+				if (current_type is TypeBuilder) {
+					DeclSpace decl = this;
+					if (current_type != TypeBuilder)
+						decl = TypeManager.LookupDeclSpace (current_type);
+					t = decl.FindNestedType (name);
+				} else {
+					t = TypeManager.LookupTypeDirect (current_type.FullName + "+" + name);
+				}
+
+				if (t != null && CheckAccessLevel (t))
+					return t;
+			}
+
+			return null;
+		}
+
 		//
 		// Public function used to locate types, this can only
 		// be used after the ResolveTree function has been invoked.
@@ -825,56 +853,19 @@ namespace Mono.CSharp {
 			if (this is PartialContainer)
 				throw new InternalErrorException ("Should not get here");
 
+			if (Cache.Contains (name))
+				return (FullNamedExpression) Cache [name];
+
 			FullNamedExpression e;
-
-			if (Cache.Contains (name)) {
-				e = (FullNamedExpression) Cache [name];
-			} else {
-				//
-				// For the case the type we are looking for is nested within this one
-				// or is in any base class
-				//
-
-				Type t = null;
-				for (DeclSpace containing_ds = this; containing_ds != null; containing_ds = containing_ds.Parent) {
-					// if the member cache has been created, lets use it.
-					// the member cache is MUCH faster.
-					if (containing_ds.MemberCache != null) {
-						t = containing_ds.MemberCache.FindNestedType (name);
-						if (t == null)
-							continue;
-
-						e = new TypeExpression (t, Location.Null);
-						Cache [name] = e;
-						return e;
-					}
-					
-					// no member cache. Do it the hard way -- reflection
-					for (Type current_type = containing_ds.TypeBuilder;
-					     current_type != null && current_type != TypeManager.object_type;
-					     current_type = current_type.BaseType) {
-						if (current_type is TypeBuilder) {
-							DeclSpace decl = containing_ds;
-							if (current_type != containing_ds.TypeBuilder)
-								decl = TypeManager.LookupDeclSpace (current_type);
-
-							t = decl.FindNestedType (name);
-						} else {
-							t = TypeManager.LookupTypeDirect (current_type.FullName + "+" + name);
-						}
-
-						if (t != null && containing_ds.CheckAccessLevel (t)) {
-							e = new TypeExpression (t, Location.Null);
-							Cache [name] = e;
-							return e;
-						}
-					}
-				}
-				
+			Type t = LookupNestedTypeInHierarchy (name);
+			if (t != null)
+				e = new TypeExpression (t, Location.Null);
+			else if (Parent != null && Parent != RootContext.Tree.Types)
+				e = Parent.LookupType (name, loc, ignore_cs0104);
+			else
 				e = NamespaceEntry.LookupNamespaceOrType (this, name, loc, ignore_cs0104);
-				Cache [name] = e;
-			}
 
+			Cache [name] = e;
 			return e;
 		}
 
