@@ -1,4 +1,8 @@
 
+Fri May 17 20:39:53 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* icall.c: ValueType_GetHashCode() initialize local var.
+
 Thu May 16 17:20:22 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
 	* reflection.c: sort custom attributes table.
