@@ -1015,7 +1015,9 @@ namespace System.Windows.Forms
 			}
 
 			set {
-				XplatUI.State.DropTarget=value;
+				#if later
+					XplatUI.State.DropTarget=value;
+				#endif
 			}
 		}
 
@@ -3263,6 +3265,10 @@ namespace System.Windows.Forms
 				}
 
 				case Msg.WM_RBUTTONUP: {
+					if (context_menu != null) {
+						context_menu.Show(this, new Point(LowOrder ((int) m.LParam.ToInt32 ()), HighOrder ((int) m.LParam.ToInt32 ())));
+					}
+
 					HandleClick(mouse_clicks);
 					OnMouseUp (new MouseEventArgs (FromParamToMouseButtons ((int) m.WParam.ToInt32()) | MouseButtons.Right, 
 						mouse_clicks, 

@@ -55,6 +55,7 @@ namespace System.Windows.Forms {
 			base.Dock = DockStyle.Bottom;
 			Anchor = AnchorStyles.Top | AnchorStyles.Left;
 			this.TabStop = false;
+			this.SetStyle(ControlStyles.ResizeRedraw, true);
 		}
 		#endregion	// Public Constructors
 
@@ -302,13 +303,12 @@ namespace System.Windows.Forms {
 
 		private void DoPaint (PaintEventArgs pevent)
 		{
-		       if (Width <= 0 || Height <=  0 || Visible == false)
-			       return;
+			if (Width <= 0 || Height <=  0 || Visible == false)
+				return;
 
-		       UpdateArea ();
-		       CalcPanelSizes ();
-		       Draw();
-		       pevent.Graphics.DrawImage (ImageBuffer, 0, 0);
+			UpdateArea ();
+			CalcPanelSizes ();
+			ThemeEngine.Current.DrawStatusBar (pevent.Graphics, this.ClientRectangle, this);
 		}
 
 		private void CalcPanelSizes ()

@@ -369,18 +369,33 @@ namespace System.Windows.Forms {
 		}
 
 		[MonoTODO("Figure out a good System.Drawing way for XOR drawing")]
+		private static bool DRFNotImpl = false;
 		public static void DrawReversibleFrame(Rectangle rectangle, Color backColor, FrameStyle style) {
-			throw new NotImplementedException();
+			if (!DRFNotImpl) {
+				DRFNotImpl = true;
+				Console.WriteLine("NOT IMPLEMENTED: FillReversibleRectangle(Rectangle rectangle, Color backColor)");
+			}
+			//throw new NotImplementedException();
 		}
 
 		[MonoTODO("Figure out a good System.Drawing way for XOR drawing")]
+		private static bool DRLNotImpl = false;
 		public static void DrawReversibleLine(Point start, Point end, Color backColor) {
-			throw new NotImplementedException();
+			if (!DRLNotImpl) {
+				DRLNotImpl = true;
+				Console.WriteLine("NOT IMPLEMENTED: FillReversibleRectangle(Rectangle rectangle, Color backColor)");
+			}
+			//throw new NotImplementedException();
 		}
 
 		[MonoTODO("Figure out a good System.Drawing way for XOR drawing")]
+		private static bool FRRNotImpl = false;
 		public static void FillReversibleRectangle(Rectangle rectangle, Color backColor) {
-			throw new NotImplementedException();
+			if (!FRRNotImpl) {
+				FRRNotImpl = true;
+				Console.WriteLine("NOT IMPLEMENTED: FillReversibleRectangle(Rectangle rectangle, Color backColor)");
+			}
+			//throw new NotImplementedException();
 		}
 
 
@@ -393,8 +408,13 @@ namespace System.Windows.Forms {
 		}
 
 		[MonoTODO]
+		private static bool DSFNotImpl = false;
 		public static void DrawSelectionFrame(Graphics graphics, bool active, Rectangle outsideRect, Rectangle insideRect, Color backColor) {
-			throw new NotImplementedException();
+			if (!DSFNotImpl) {
+				DSFNotImpl = true;
+				Console.WriteLine("NOT IMPLEMENTED: DrawSelectionFrame(Graphics graphics, bool active, Rectangle outsideRect, Rectangle insideRect, Color backColor)");
+			}
+			//throw new NotImplementedException();
 		}
 
 		public static void DrawSizeGrip (Graphics graphics, Color backColor, Rectangle bounds)

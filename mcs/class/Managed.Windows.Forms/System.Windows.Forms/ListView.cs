@@ -1198,8 +1198,6 @@ namespace System.Windows.Forms
 
 		private void ListView_Paint (object sender, PaintEventArgs pe)
 		{
-			Console.WriteLine ("ListView_Paint {0} {1}", this.TotalWidth, this.TotalHeight);
-			
 			if (this.Width <= 0 || this.Height <=  0 ||
 			    this.Visible == false || this.updating == true)
 				return;

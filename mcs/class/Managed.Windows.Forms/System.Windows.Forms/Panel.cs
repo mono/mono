@@ -102,6 +102,7 @@ namespace System.Windows.Forms {
 		#region Protected Instance Methods
 		protected override void OnResize(EventArgs e) {
 			base.OnResize (e);
+			Invalidate(true);
 		}
 
 		#endregion	// Protected Instance Methods

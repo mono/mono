@@ -2685,16 +2685,22 @@ namespace System.Windows.Forms
 
 			dc.FillRectangle (GetControlBackBrush (sb.BackColor), area);
 			
-			if (sb.ShowPanels && sb.Panels.Count == 0) {
-				// Create a default panel.
-				SolidBrush br_forecolor = GetControlForeBrush (sb.ForeColor);
-				
-				StatusBarPanel panel = new StatusBarPanel ();
-				Rectangle new_area = new Rectangle (area.X + horz_border,
-					area.Y + horz_border,
-					area.Width - StatusBarSizeGripWidth - horz_border,
-					area.Height - horz_border);
-				DrawStatusBarPanel (dc, new_area, -1, br_forecolor, panel);
+			if (sb.Panels.Count == 0 && sb.Text != String.Empty) {
+				string text = sb.Text;
+				StringFormat string_format = new StringFormat ();
+				string_format.Trimming = StringTrimming.Character;
+				string_format.FormatFlags = StringFormatFlags.NoWrap;
+
+				if (text [0] == '\t') {
+					string_format.Alignment = StringAlignment.Center;
+					text = text.Substring (1);
+					if (text [0] == '\t') {
+						string_format.Alignment = StringAlignment.Far;
+						text = text.Substring (1);
+					}
+				}
+		
+				dc.DrawString (text, sb.Font, ResPool.GetSolidBrush (sb.ForeColor), new Rectangle(area.X + 2, area.Y + 2, area.Width - 4, area.Height - 4), string_format);
 			} else if (sb.ShowPanels) {
 				SolidBrush br_forecolor = GetControlForeBrush (sb.ForeColor);
 				int prev_x = area.X + horz_border;
