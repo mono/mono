@@ -1,4 +1,7 @@
 2004-09-02 Umadevi S <sumadevi@novell.com>
+	* SqlCommandTest.cs - added file. Testing ExecuteNonQuery
+
+2004-09-02 Umadevi S <sumadevi@novell.com>
 	* SqlDataReaderTest.cs - added file
 
 2004-08-20 Umadevi S <sumadevi@novell.com>
