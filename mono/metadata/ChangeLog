@@ -1,3 +1,14 @@
+2004-01-05  Zoltan Varga  <vargaz@freemail.hu>
+
+	* reflection.h: Update after changes to object layout.
+
+	* reflection.c: Implement saving of unmanaged aka win32 resources.
+
+	* appdomain.c: Bump version number.
+
+	* appdomain.c (ves_icall_System_AppDomain_InternalSetDomainByID): 
+	Handle missing domains gracefully.
+
 2004-01-05  Atsushi Enomoto <atsushi@ximian.com>
 
 	* file-io.c : On Windows, there are much more invalid_path_chars.
