@@ -32,8 +32,14 @@ namespace System.Xml
 	public enum ValidationType
 	{
 		None = 0,
+#if NET_2_0
+		[Obsolete]
+#endif
 		Auto = 1,
 		DTD = 2,
+#if NET_2_0
+		[Obsolete]
+#endif
 		XDR = 3,
 		Schema = 4,
 	}

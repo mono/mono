@@ -38,6 +38,12 @@ namespace System.Xml
 {
 	public abstract class XmlResolver
 	{
+#if NET_2_0
+		public virtual XmlNameTable NameTable {
+			get { return null; }
+		}
+#endif
+
 		public abstract ICredentials Credentials { set; }
 
 		public abstract object GetEntity (

@@ -32,9 +32,10 @@ namespace System.Xml {
 
 	public enum XmlDateTimeSerializationMode {
 
-		Local = 0,
-
-		RoundTrip= 1,
+		Local,
+		Utc,
+		Unspecified,
+		RoundTripKind,
 	}
 
 }

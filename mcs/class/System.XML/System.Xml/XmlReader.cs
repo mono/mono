@@ -731,42 +731,64 @@ namespace System.Xml
 		}
 
 		[MonoTODO]
+		[Obsolete]
 		public virtual object ReadTypedValue ()
 		{
-			return ReadValueAs (ValueType);
+			if (NodeType == XmlNodeType.Element)
+				return ReadElementContentAs (ValueType, this as IXmlNamespaceResolver);
+			else
+				return ReadContentAs (ValueType, this as IXmlNamespaceResolver);
+		}
+
+		private string ReadContentString ()
+		{
+			switch (NodeType) {
+			case XmlNodeType.Text:
+			case XmlNodeType.CDATA:
+			case XmlNodeType.SignificantWhitespace:
+			case XmlNodeType.Whitespace:
+				break;
+			default:
+				throw new InvalidOperationException (String.Format ("This method does not support node type {0}.", NodeType));
+			}
+			return ReadString ();
 		}
 
 		[MonoTODO]
-		public virtual object ReadValueAs (Type type)
+		public virtual object ReadElementContentAs (Type type, IXmlNamespaceResolver resolver)
 		{
-			return ReadValueAs (type, this as IXmlNamespaceResolver);
+			return ValueAs (ReadElementString (), type, resolver);
 		}
 
 		[MonoTODO]
-		public virtual object ReadValueAs (Type type, IXmlNamespaceResolver resolver)
+		public virtual object ReadElementContentAs (Type type, IXmlNamespaceResolver resolver, string localName, string namespaceURI)
 		{
-			string text = ReadString ();
+			return ValueAs (ReadElementString (localName, namespaceURI), type, resolver);
+		}
+
+		[MonoTODO]
+		public virtual object ReadContentAs (Type type, IXmlNamespaceResolver resolver)
+		{
+			return ValueAs (ReadContentString (), type, resolver);
+		}
+
+		private object ValueAs (string text, Type type, IXmlNamespaceResolver resolver)
+		{
 			try {
 				if (type == typeof (XmlQualifiedName))
 					return XmlQualifiedName.Parse (text, resolver);
 
 				switch (Type.GetTypeCode (type)) {
 				case TypeCode.Boolean:
-					return ReadValueAsBoolean ();
+					return ReadContentAsBoolean ();
 				case TypeCode.DateTime:
-					return ReadValueAsDateTime ();
-				case TypeCode.Decimal:
-					return ReadValueAsDecimal ();
+					return ReadContentAsDateTime ();
 				case TypeCode.Double:
-					return ReadValueAsDouble ();
+					return ReadContentAsDouble ();
 				case TypeCode.Int32:
-					return ReadValueAsInt32 ();
-				case TypeCode.Int64:
-					return ReadValueAsInt64 ();
-				case TypeCode.Single:
-					return ReadValueAsSingle ();
+					return ReadContentAsInt ();
 				case TypeCode.String:
-					return ReadValueAsString ();
+					return ReadContentAsString ();
 				}
 			} catch (Exception ex) {
 				return new FormatException (String.Format ("Current text value '{0}' is not acceptable for specified type '{1}'.", text, type));
@@ -775,57 +797,93 @@ namespace System.Xml
 		}
 
 		[MonoTODO]
-		public virtual bool ReadValueAsBoolean ()
+		public virtual bool ReadElementContentAsBoolean ()
 		{
-			return XQueryConvert.StringToBoolean (ReadString ());
+			return XQueryConvert.StringToBoolean (ReadElementString ());
 		}
 
 		[MonoTODO]
-		public virtual DateTime ReadValueAsDateTime ()
+		public virtual DateTime ReadElementContentAsDateTime ()
 		{
-			return XQueryConvert.StringToDateTime (ReadString ());
+			return XQueryConvert.StringToDateTime (ReadElementString ());
 		}
 
 		[MonoTODO]
-		public virtual decimal ReadValueAsDecimal ()
+		public virtual double ReadElementContentAsDouble ()
 		{
-			return XQueryConvert.StringToDecimal (ReadString ());
+			return XQueryConvert.StringToDouble (ReadElementString ());
 		}
 
 		[MonoTODO]
-		public virtual double ReadValueAsDouble ()
+		public virtual int ReadElementContentAsInt ()
 		{
-			return XQueryConvert.StringToDouble (ReadString ());
+			return XQueryConvert.StringToInt (ReadElementString ());
 		}
 
 		[MonoTODO]
-		public virtual int ReadValueAsInt32 ()
+		public virtual string ReadElementContentAsString ()
 		{
-			return XQueryConvert.StringToInt (ReadString ());
+			return ReadElementString ();
 		}
 
 		[MonoTODO]
-		public virtual long ReadValueAsInt64 ()
+		public virtual bool ReadElementContentAsBoolean (string localName, string namespaceURI)
 		{
-			return XQueryConvert.StringToInteger (ReadString ());
+			return XQueryConvert.StringToBoolean (ReadElementString (localName, namespaceURI));
 		}
 
 		[MonoTODO]
-		public virtual ICollection ReadValueAsList ()
+		public virtual DateTime ReadElementContentAsDateTime (string localName, string namespaceURI)
 		{
-			throw new NotImplementedException ();
+			return XQueryConvert.StringToDateTime (ReadElementString (localName, namespaceURI));
 		}
 
 		[MonoTODO]
-		public virtual float ReadValueAsSingle ()
+		public virtual double ReadElementContentAsDouble (string localName, string namespaceURI)
 		{
-			return XQueryConvert.StringToFloat (ReadString ());
+			return XQueryConvert.StringToDouble (ReadElementString (localName, namespaceURI));
 		}
 
 		[MonoTODO]
-		public virtual string ReadValueAsString ()
+		public virtual int ReadElementContentAsInt (string localName, string namespaceURI)
 		{
-			return ReadString ();
+			return XQueryConvert.StringToInt (ReadElementString (localName, namespaceURI));
+		}
+
+		[MonoTODO]
+		public virtual string ReadElementContentAsString (string localName, string namespaceURI)
+		{
+			return ReadElementString (localName, namespaceURI);
+		}
+
+		[MonoTODO]
+		public virtual bool ReadContentAsBoolean ()
+		{
+			return XQueryConvert.StringToBoolean (ReadContentString ());
+		}
+
+		[MonoTODO]
+		public virtual DateTime ReadContentAsDateTime ()
+		{
+			return XQueryConvert.StringToDateTime (ReadContentString ());
+		}
+
+		[MonoTODO]
+		public virtual double ReadContentAsDouble ()
+		{
+			return XQueryConvert.StringToDouble (ReadContentString ());
+		}
+
+		[MonoTODO]
+		public virtual int ReadContentAsInt ()
+		{
+			return XQueryConvert.StringToInt (ReadContentString ());
+		}
+
+		[MonoTODO]
+		public virtual string ReadContentAsString ()
+		{
+			return ReadContentString ();
 		}
 #endif
 

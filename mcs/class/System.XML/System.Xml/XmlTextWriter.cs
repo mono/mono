@@ -494,6 +494,8 @@ openElements [openElementCount - 1]).IndentingOverriden;
 			CheckState ();
 			CloseStartElement ();
 
+			WriteIndent ();
+
 			w.Write ("<!--");
 			w.Write (text);
 			w.Write ("-->");

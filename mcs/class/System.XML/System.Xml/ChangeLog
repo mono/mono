@@ -1,3 +1,13 @@
+2004-11-22  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlReader.cs : removed old ReadValueAsXXX() and added new
+	  ReadContentAsXXX() and ReadElementContentAsXXX().
+	* XmlTextReader.cs : removed old ReadValueAsXXX() (no overrides now).
+	* XmlTextWriter.cs : added indentation on Comment nodes.
+	* XmlDateTimeSerializationMode.cs : updated.
+	* XmlResolver.cs : added 2.0 NameTable field.
+	* ValidationType.cs : added ObsoleteAttributes on some members.
+
 2004-11-18  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlParserContext.cs : the fix was not checked in :(
