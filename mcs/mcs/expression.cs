@@ -1031,10 +1031,10 @@ namespace Mono.CSharp {
 
 		public override Expression DoResolve (EmitContext ec)
 		{
-			ProbeType = ProbeType.ResolveAsTypeTerminal (ec, false);
-			if (ProbeType == null)
+			TypeExpr texpr = ProbeType.ResolveAsTypeTerminal (ec, false);
+			if (texpr == null)
 				return null;
-			probe_type = ProbeType.Type;
+			probe_type = texpr.ResolveType (ec);
 
 			CheckObsoleteAttribute (probe_type);
 
@@ -1772,7 +1772,7 @@ namespace Mono.CSharp {
 			if (target == null)
 				return null;
 
-			type = target.Type;
+			type = target.ResolveType (ec);
 
 			CheckObsoleteAttribute (type);
 
