@@ -67,7 +67,7 @@ namespace System.Web.Configuration
 			if (pathRegex.IsMatch (path))
 				return true;
 
-			int slash = path.LastIndexOf (path);
+			int slash = path.LastIndexOf ('/');
 			if (slash != -1 && path.Length > slash + 1)
 				return pathRegex.IsMatch (path.Substring (slash + 1));
 
