@@ -45,11 +45,12 @@ namespace System.Data
 	{
 		#region Fields
 
-		bool defaultSort;
-		DataViewManager viewManager;
+		bool applyDefaultSort;
+		DataViewManager dataViewManager;
 		string rowFilter;
 		DataViewRowState rowStateFilter;
-		string sortString;
+		string sort;
+		DataTable dataTable;
 
 		#endregion // Fields
 
@@ -64,13 +65,13 @@ namespace System.Data
 		#region Properties
 		
 		public bool ApplyDefaultSort {
-			get { return defaultSort; }
-			set { defaultSort = value; }
+			get { return applyDefaultSort; }
+			set { applyDefaultSort = value; }
 		}
 
 		[Browsable (false)]
 		public DataViewManager DataViewManager {
-			get { return viewManager; }
+			get { return dataViewManager; }
 		}
 
 		public string RowFilter {
@@ -84,14 +85,14 @@ namespace System.Data
 		}
 
 		public string Sort {
-			get { return sortString; }
-			set { sortString = value; }
+			get { return sort; }
+			set { sort = value; }
 		}
 
 		[MonoTODO]
 		[Browsable (false)]
 		public DataTable Table {
-			get { throw new NotImplementedException (); }
+			get { return dataTable; }
 		}
 
 		#endregion // Properties

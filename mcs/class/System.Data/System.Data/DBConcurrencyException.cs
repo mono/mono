@@ -61,6 +61,11 @@ namespace System.Data {
 		{
 		}
 #endif
+
+		private DBConcurrencyException (SerializationInfo si, StreamingContext sc) : base(si, sc)
+		{
+		}
+
 		#endregion // Constructors
 
 		#region Properties
@@ -99,9 +104,8 @@ namespace System.Data {
 		public override void GetObjectData (SerializationInfo info, StreamingContext context)
 		{
 			if (info == null)
-                                throw new ArgumentNullException ("info");
+				throw new ArgumentNullException ("info");
 
-			info.AddValue ("DataRow", row);
 			base.GetObjectData (info, context);
 		}
 
