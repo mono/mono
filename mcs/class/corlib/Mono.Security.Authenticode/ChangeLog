@@ -1,6 +1,7 @@
 2004-04-28  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* AuthenticodeBase.cs: In sync with Mono.Security.dll version.
+	* AuthenticodeDeformatter.cs: In sync with Mono.Security.dll version.
 
 2004-04-08  Bernie Solomon  <bernard@ugsolutions.com>
 

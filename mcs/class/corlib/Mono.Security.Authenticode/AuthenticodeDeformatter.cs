@@ -64,7 +64,7 @@ namespace Mono.Security.Authenticode {
 			get { 
 				if (signedHash == null)
 					return null;
-				return signedHash.Value; 
+				return (byte[]) signedHash.Value.Clone ();
 			}
 		}
 
@@ -116,7 +116,7 @@ namespace Mono.Security.Authenticode {
 		}
 
 		public byte[] Signature {
-			get { return rawData; }
+			get { return (byte[]) rawData.Clone (); }
 		}
 
 		public DateTime Timestamp {
@@ -145,7 +145,7 @@ namespace Mono.Security.Authenticode {
 				return false;
 
 			PKCS7.ContentInfo ci = new PKCS7.ContentInfo (rawData);
-			if (ci.ContentType != PKCS7.signedData)
+			if (ci.ContentType != PKCS7.Oid.signedData)
 				return false;
 
 			PKCS7.SignedData sd = new PKCS7.SignedData (ci.Content);
@@ -199,11 +199,11 @@ namespace Mono.Security.Authenticode {
 
 			for (int i=0; i < sd.SignerInfo.AuthenticatedAttributes.Count; i++) {
 				ASN1 attr = (ASN1) sd.SignerInfo.AuthenticatedAttributes [i];
-				string oid = ASN1Convert.ToOID (attr[0]);
+				string oid = ASN1Convert.ToOid (attr[0]);
 				switch (oid) {
 					case "1.2.840.113549.1.9.3":
 						// contentType
-						contentType = ASN1Convert.ToOID (attr[1][0]);
+						contentType = ASN1Convert.ToOid (attr[1][0]);
 						break;
 					case "1.2.840.113549.1.9.4":
 						// messageDigest
@@ -214,14 +214,14 @@ namespace Mono.Security.Authenticode {
 						// possible values
 						// - individualCodeSigning (1 3 6 1 4 1 311 2 1 21)
 						// - commercialCodeSigning (1 3 6 1 4 1 311 2 1 22)
-						spcStatementType = ASN1Convert.ToOID (attr[1][0][0]);
+						spcStatementType = ASN1Convert.ToOid (attr[1][0][0]);
 						break;
 					case "1.3.6.1.4.1.311.2.1.12":
 						// spcSpOpusInfo (Microsoft code signing)
 						try {
 							spcSpOpusInfo = System.Text.Encoding.UTF8.GetString (attr[1][0][1][0].Value);
 						}
-						catch {
+						catch (NullReferenceException) {
 							spcSpOpusInfo = null;
 						}
 						break;
@@ -259,7 +259,7 @@ namespace Mono.Security.Authenticode {
 						RSACryptoServiceProvider rsa = (RSACryptoServiceProvider) x509.RSA;
 						if (rsa.VerifyHash (p7hash, hashOID, signature)) {
 							signerChain.LoadCertificates (coll);
-							if (signerChain.GetChain (x509) != null)
+							if (signerChain.Build (x509))
 								signingCertificate = x509;
 							else
 								return false;
@@ -270,9 +270,9 @@ namespace Mono.Security.Authenticode {
 
 			for (int i=0; i < sd.SignerInfo.UnauthenticatedAttributes.Count; i++) {
 				ASN1 attr = (ASN1) sd.SignerInfo.UnauthenticatedAttributes [i];
-				string oid = ASN1Convert.ToOID (attr [0]);
+				string oid = ASN1Convert.ToOid (attr [0]);
 				switch (oid) {
-					case PKCS7.countersignature:
+					case PKCS7.Oid.countersignature:
 						// SEQUENCE {
 						//   OBJECT IDENTIFIER
 						//     countersignature (1 2 840 113549 1 9 6)
@@ -303,11 +303,11 @@ namespace Mono.Security.Authenticode {
 				// SEQUENCE {
 				//   OBJECT IDENTIFIER
 				ASN1 attr = (ASN1) cs.AuthenticatedAttributes [i];
-				string oid = ASN1Convert.ToOID (attr[0]);
+				string oid = ASN1Convert.ToOid (attr[0]);
 				switch (oid) {
 					case "1.2.840.113549.1.9.3":
 						// contentType
-						contentType = ASN1Convert.ToOID (attr[1][0]);
+						contentType = ASN1Convert.ToOid (attr[1][0]);
 						break;
 					case "1.2.840.113549.1.9.4":
 						// messageDigest
@@ -328,7 +328,7 @@ namespace Mono.Security.Authenticode {
 				}
 			}
 
-			if (contentType != PKCS7.data) 
+			if (contentType != PKCS7.Oid.data) 
 				return false;
 
 			// verify message digest
@@ -367,7 +367,7 @@ namespace Mono.Security.Authenticode {
 						RSACryptoServiceProvider rsa = (RSACryptoServiceProvider) x509.RSA;
 						if (rsa.VerifyHash (p7hash, hashOID, counterSignature)) {
 							timestampChain.LoadCertificates (coll);
-							return (timestampChain.GetChain (x509) != null);
+							return (timestampChain.Build (x509));
 						}
 					}
 				}
