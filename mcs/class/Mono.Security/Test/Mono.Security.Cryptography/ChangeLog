@@ -1,3 +1,8 @@
+2004-12-06  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* RSAManagedTest.cs: New. Unit tests to validate RSA decryption when 
+	using key blinding with or without using CRT.
+
 2004-11-05  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* KeyPairPersistenceTest.cs: Forgot to re-fix the second failing test.
