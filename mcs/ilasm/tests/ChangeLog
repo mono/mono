@@ -1,3 +1,8 @@
+2003-03-06 Jackson Harper <jackson@latitudegeo.com>
+
+	* makefile: add some tests
+	* test-5.il, test-6.il, test-7.il: New tests, test field declaration
+
 2003-02-10 Jackson Harper <jackson@latitudegeo.com>
 
 	* makefile: remove unneeded rm's

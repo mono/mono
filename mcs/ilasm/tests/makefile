@@ -1,7 +1,7 @@
 ILASM=mono ../ilasm.exe
 VERIFY=../../tools/verifier.exe
 
-TEST_SOURCES = test-1 test-2 test-3 test-4
+TEST_SOURCES = test-1 test-2 test-3 test-4 test-5 test-6 test-7
 
 all: test-compiler
 
