@@ -1,3 +1,5 @@
+Assembly/AssemblyInfo.cs
+Assembly/Locale.cs
 Commons.Xml/XmlDefaultReader.cs
 Commons.Xml.Relaxng/Misc.cs
 Commons.Xml.Relaxng/RelaxngDatatype.cs
