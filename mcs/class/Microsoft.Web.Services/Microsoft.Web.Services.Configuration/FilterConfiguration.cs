@@ -11,6 +11,7 @@ using System;
 
 using Microsoft.Web.Services;
 using Microsoft.Web.Services.Configuration;
+using Microsoft.Web.Services.Diagnostics;
 using Microsoft.Web.Services.Security;
 using Microsoft.Web.Services.Timestamp;
 using Microsoft.Web.Services.Referral;
@@ -27,6 +28,10 @@ namespace Microsoft.Web.Services.Configuration {
 		internal FilterConfiguration () 
 		{
 			input = new SoapInputFilterCollection ();
+			// trace availability depends on config (or manual setup)
+			if (WebServicesConfiguration.Config.Trace) {
+				input.Add (new TraceInputFilter ());
+			}
 			// the following 4 filters always seems present (notwithstanding config)
 			input.Add (new SecurityInputFilter ());
 			input.Add (new TimestampInputFilter ());
@@ -35,6 +40,10 @@ namespace Microsoft.Web.Services.Configuration {
 			// TODO: add custom input filters
 
 			output = new SoapOutputFilterCollection ();
+			// trace availability depends on config (or manual setup)
+			if (WebServicesConfiguration.Config.Trace) {
+				output.Add (new TraceOutputFilter ());
+			}
 			// the following 4 filters always seems present (notwithstanding config)
 			output.Add (new SecurityOutputFilter ());
 			output.Add (new TimestampOutputFilter ());
