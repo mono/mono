@@ -299,6 +299,7 @@ namespace System.Web.Services.Protocols
 				faultMessage = new SoapServerMessage (context.Request, soex, null, null, null);
 
 			SerializeResponse (context.Response, faultMessage);
+			context.Response.End ();
 			return;
 		}
 		
