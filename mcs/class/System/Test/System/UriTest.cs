@@ -520,7 +520,26 @@ namespace MonoTests.System
 			Assert ("#3", !uri2.Equals ("http://www.contoso.com/index.html?x=1"));
 			Assert ("#4: known to fail with ms.net", !uri1.Equals ("http://www.contoso.com:8080/index.htm?x=1"));
 		}
-		
+
+		[Test]
+		public void TestEquals2 ()
+		{
+			Uri a = new Uri ("http://www.go-mono.com");
+			Uri b = new Uri ("http://www.go-mono.com");
+
+			AssertEquals ("#1", a, b);
+
+			a = new Uri ("mailto:user:pwd@go-mono.com?subject=uri");
+			b = new Uri ("MAILTO:USER:PWD@GO-MONO.COM?SUBJECT=URI");
+
+			AssertEquals ("#2", a, b);
+
+			a = new Uri ("http://www.go-mono.com/ports/");
+			b = new Uri ("http://www.go-mono.com/PORTS/");
+
+			Assert ("#3", !a.Equals (b));
+		}
+
 		[Test]
 		public void GetHashCodeTest () 
 		{
