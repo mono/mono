@@ -1,5 +1,10 @@
 2003-04-30  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* TemplateControlCompiler.cs: correctly set the TemplateSourceDirectory 
+	value.
+
+2003-04-30  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* AspGenerator.cs: handle code render syntax in tag attributes.
 
 	* AspParser.cs: the constructor now takes a TextReader.

@@ -18,7 +18,6 @@ namespace System.Web.UI
 		internal UserControlParser (string virtualPath, string inputFile, HttpContext context)
 		{
 			Context = context;
-			CurrentVirtualPath = virtualPath;
 			InputFile = Path.Combine (context.Request.MapPath (virtualPath), inputFile);
 		}
 		

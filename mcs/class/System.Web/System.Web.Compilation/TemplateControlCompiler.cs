@@ -759,7 +759,7 @@ namespace System.Web.Compilation
 			prop.Name = "TemplateSourceDirectory";
 			prop.Attributes = MemberAttributes.Public | MemberAttributes.Override;
 
-			CodePrimitiveExpression expr = new CodePrimitiveExpression (parser.CurrentVirtualPath);
+			CodePrimitiveExpression expr = new CodePrimitiveExpression (parser.BaseVirtualDir);
 			prop.GetStatements.Add (new CodeMethodReturnStatement (expr));
 			mainClass.Members.Add (prop);
 		}

@@ -88,8 +88,8 @@ namespace System.Web.UI
 									    "must be .ascx");
 
 				
-				AddDependency (Path.Combine (MapPath (CurrentVirtualPath), src));
-				Type type = UserControlParser.GetCompiledType (CurrentVirtualPath, src, Context);
+				AddDependency (Path.Combine (MapPath (BaseVirtualDir), src));
+				Type type = UserControlParser.GetCompiledType (BaseVirtualDir, src, Context);
 				AddAssembly (type.Assembly, true);
 				RootBuilder.Foundry.RegisterFoundry (tagprefix, tagname, type);
 				return;

@@ -14,9 +14,10 @@ namespace System.Web.UI
 {
 	sealed class ApplicationFileParser : TemplateParser
 	{
-		public ApplicationFileParser (string fname)
+		public ApplicationFileParser (string fname, HttpContext context)
 		{
 			InputFile = fname;
+			Context = context;
 		}
 		
 		protected override Type CompileIntoType ()
@@ -27,7 +28,7 @@ namespace System.Web.UI
 
 		internal static Type GetCompiledApplicationType (string inputFile, HttpContext context)
 		{
-			ApplicationFileParser parser = new ApplicationFileParser (inputFile);
+			ApplicationFileParser parser = new ApplicationFileParser (inputFile, context);
 			parser.Context = context;
 			return parser.CompileIntoType ();
 		}
@@ -38,6 +39,10 @@ namespace System.Web.UI
 
 		protected internal override string DefaultDirectiveName {
 			get { return "application"; }
+		}
+
+		internal override string BaseVirtualDir {
+			get { return Context.Request.ApplicationPath; }
 		}
 	}
 

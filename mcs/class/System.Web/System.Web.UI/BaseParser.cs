@@ -21,7 +21,6 @@ namespace System.Web.UI
 		private HttpContext context;
 		private string baseDir;
 		private string baseVDir;
-		private string vPath;
 
 		internal string MapPath (string path)
 		{
@@ -89,7 +88,7 @@ namespace System.Web.UI
 			}
 		}
 
-		internal string BaseVirtualDir {
+		internal virtual string BaseVirtualDir {
 			get {
 				if (baseVDir == null)
 					baseVDir = UrlUtils.GetDirectory (context.Request.FilePath);
@@ -97,12 +96,6 @@ namespace System.Web.UI
 				return baseVDir;
 			}
 		}
-
-		internal string CurrentVirtualPath {
-			get { return vPath; }
-			set { vPath = value; }
-		}
 	}
-
 }
 

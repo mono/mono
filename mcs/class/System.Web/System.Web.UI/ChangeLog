@@ -1,5 +1,16 @@
 2003-04-30  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* ApplicationFileParser.cs: store the Context and override
+	BaseVirtualDir so that it's the application path.
+
+	* BaseParser.cs: removed CurrentVirtualPath property.
+
+	* TemplateControlParser.cs: use BaseVirtualDir.
+
+	* UserControlParser.cs: removed CurrentVirtualPath.
+
+2003-04-30  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* TemplateParser.cs: always reference all the assemblies in bin
 	directory.
 
