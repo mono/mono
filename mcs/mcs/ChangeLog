@@ -1,5 +1,15 @@
 2003-07-02  Martin Baulig  <martin@ximian.com>
 
+	* codegen.cs (EmitContext.NeedExplicitReturn): New public variable.
+	(EmitContext.EmitTopBlock): Emit an explicit return if it's set.
+
+	* statement.cs (Try.Resolve): Set ec.NeedExplicitReturn rather
+	than emitting it here.
+
+	* statement.cs: Fixed some more flow analysis bugs.
+
+2003-07-02  Martin Baulig  <martin@ximian.com>
+
 	* class.cs (MethodData.Define): When implementing interface
 	methods, set Final unless we're Virtual.
 

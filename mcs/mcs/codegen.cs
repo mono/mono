@@ -221,6 +221,11 @@ namespace Mono.CSharp {
 		///   Whether we are inside an iterator block.
 		/// </summary>
 		public bool InIterator;
+
+		/// <summary>
+		///   Whether we need an explicit return statement at the end of the method.
+		/// </summary>
+		public bool NeedExplicitReturn;
 		
 		/// <summary>
 		///   Whether remapping of locals, parameters and fields is turned on.
@@ -449,8 +454,21 @@ namespace Mono.CSharp {
 					if (InIterator)
 						has_ret = true;
 					
-					if (!has_ret || HasReturnLabel)
+					if (!has_ret || HasReturnLabel) {
 						ig.Emit (OpCodes.Ret);
+						NeedExplicitReturn = false;
+					}
+				}
+
+				// Unfortunately, System.Reflection.Emit automatically emits a leave
+				// to the end of a finally block.  This is a problem if no code is
+				// following the try/finally block since we may jump to a point after
+				// the end of the method. As a workaround, emit an explicit ret here.
+
+				if (NeedExplicitReturn) {
+					if (ReturnType != null)
+						ig.Emit (OpCodes.Ldloc, TemporaryReturn ());
+					ig.Emit (OpCodes.Ret);
 				}
 			}
 		}

@@ -654,8 +654,10 @@ namespace Mono.CSharp {
 					ec.HasReturnLabel = true;
 				}
 				ec.ig.Emit (OpCodes.Leave, ec.ReturnLabel);
-			} else
+			} else {
 				ec.ig.Emit (OpCodes.Ret);
+				ec.NeedExplicitReturn = false;
+			}
 
 			return true; 
 		}
@@ -1603,7 +1605,6 @@ namespace Mono.CSharp {
 								new_params = parameters.Clone ();
 							new_params.Or (child.parameters);
 						}
-
 					} else {
 						if (!child.AlwaysReturns && !child.AlwaysBreaks) {
 							if (new_locals != null)
@@ -1620,14 +1621,17 @@ namespace Mono.CSharp {
 						// An `out' parameter must be assigned in all branches which do
 						// not always throw an exception.
 						if (parameters != null) {
-							if (child.Breaks != FlowReturns.EXCEPTION) {
+							bool and_params = child.Breaks != FlowReturns.EXCEPTION;
+							if (branching.Type == FlowBranchingType.EXCEPTION)
+								and_params &= child.Returns != FlowReturns.NEVER;
+							if (and_params) {
 								if (new_params != null)
 									new_params.And (child.parameters);
 								else {
 									new_params = parameters.Clone ();
 									new_params.Or (child.parameters);
 								}
-							} else if (children.Length == 1) {
+							} else if ((children.Length == 1) || (new_params == null)) {
 								new_params = parameters.Clone ();
 								new_params.Or (child.parameters);
 							}
@@ -2172,6 +2176,11 @@ namespace Mono.CSharp {
 		public readonly int Offset;
 
 		// <summary>
+		//   If this is a struct.
+		// </summary>
+		public readonly bool IsStruct;	     
+
+		// <summary>
 		//   If this is a struct, all fields which are structs theirselves.
 		// </summary>
 		public TypeInfo[] SubStructInfo;
@@ -2210,9 +2219,11 @@ namespace Mono.CSharp {
 				Length = struct_info.Length;
 				TotalLength = struct_info.TotalLength;
 				SubStructInfo = struct_info.StructFields;
+				IsStruct = true;
 			} else {
 				Length = 0;
 				TotalLength = 1;
+				IsStruct = false;
 			}
 		}
 
@@ -2225,9 +2236,11 @@ namespace Mono.CSharp {
 				Length = struct_info.Length;
 				TotalLength = struct_info.TotalLength;
 				SubStructInfo = struct_info.StructFields;
+				IsStruct = true;
 			} else {
 				Length = 0;
 				TotalLength = 1;
+				IsStruct = false;
 			}
 		}
 
@@ -2239,6 +2252,7 @@ namespace Mono.CSharp {
 			this.TotalLength = struct_info.TotalLength;
 			this.SubStructInfo = struct_info.StructFields;
 			this.Type = struct_info.Type;
+			this.IsStruct = true;
 		}
 
 		public int GetFieldIndex (string name)
@@ -2535,6 +2549,10 @@ namespace Mono.CSharp {
 			for (VariableInfo parent = Parent; parent != null; parent = parent.Parent)
 				if (vector [parent.Offset])
 					return true;
+
+			// Return unless this is a struct.
+			if (!TypeInfo.IsStruct)
+				return false;
 
 			// Ok, so each field must be assigned.
 			for (int i = 0; i < TypeInfo.Length; i++) {
@@ -4887,6 +4905,14 @@ namespace Mono.CSharp {
 
 			Report.Debug (1, "END OF TRY", ec.CurrentBranching);
 
+			if (returns != FlowReturns.ALWAYS) {
+				// Unfortunately, System.Reflection.Emit automatically emits a leave
+				// to the end of the finally block.  This is a problem if `returns'
+				// is true since we may jump to a point after the end of the method.
+				// As a workaround, emit an explicit ret here.
+				ec.NeedExplicitReturn = true;
+			}
+
 			return ok;
 		}
 		
@@ -4950,19 +4976,7 @@ namespace Mono.CSharp {
 			ig.EndExceptionBlock ();
 			ec.TryCatchLevel--;
 
-			if (!returns || ec.InTry || ec.InCatch)
-				return returns;
-
-			// Unfortunately, System.Reflection.Emit automatically emits a leave
-			// to the end of the finally block.  This is a problem if `returns'
-			// is true since we may jump to a point after the end of the method.
-			// As a workaround, emit an explicit ret here.
-
-			if (ec.ReturnType != null)
-				ec.ig.Emit (OpCodes.Ldloc, ec.TemporaryReturn ());
-			ec.ig.Emit (OpCodes.Ret);
-
-			return true;
+			return returns;
 		}
 	}
 
