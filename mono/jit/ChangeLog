@@ -1,5 +1,9 @@
 2002-02-18  Dietmar Maurer  <dietmar@ximian.com>
 
+	* jit.c (mono_analyze_stack): optimize LDSFLD/STSFLD for domain
+	specific code.
+	(mono_analyze_stack): use MB_TERM_LDELEMA to perform bound check
+
 	* x86.brg: do not encode exception objects into the instruction
 	stream, because they are domain dependend. Use
 	arch_get_throw_exception_by_name() instead;
