@@ -33,6 +33,15 @@ namespace System.Drawing {
 		{
 			//FIXME								
 		}
+		
+		internal IntPtr NativeObject{            
+			get{
+					return nativeFontFamily;
+			}
+			set	{
+					nativeFontFamily = value;
+			}
+		}
 
 		public FontFamily ( GenericFontFamilies genericFamily ) 
 		{

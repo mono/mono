@@ -167,6 +167,7 @@ System.Drawing.Printing/QueryPageSettingsEventArgs.cs
 System.Drawing.Printing/QueryPageSettingsEventHandler.cs
 System.Drawing.Printing/StandardPrintController.cs
 System.Drawing.Text/FontCollection.cs
+System.Drawing.Text/PrivateFontCollection.cs
 System.Drawing.Text/GenericFontFamilies.cs
 System.Drawing.Text/HotkeyPrefix.cs
 System.Drawing.Text/InstalledFontCollection.cs

@@ -10,6 +10,8 @@ namespace System.Drawing {
 	[TypeConverter(typeof(FontConverter))]
 	public sealed class Font : MarshalByRefObject, ISerializable, ICloneable, IDisposable
 	{
+		IntPtr	fontObject = IntPtr.Zero;
+		
        	private Font (SerializationInfo info, StreamingContext context)
 		{
 		}
@@ -20,6 +22,11 @@ namespace System.Drawing {
 
 		public void Dispose ()
 		{
+			if (fontObject!=IntPtr.Zero)
+			{
+				GDIPlus.GdipDeleteFont(fontObject);			
+				GC.SuppressFinalize(this);
+			}
 		}
 
 		public static Font FromHfont(IntPtr font)
@@ -67,9 +74,10 @@ namespace System.Drawing {
 			: this(family, emSize, style, unit, charSet, false)
 		{
 		}
-
+		
 		public Font(FontFamily family, float emSize, FontStyle style, GraphicsUnit unit, byte charSet, bool isVertical)
-		{
+		{			
+			GDIPlus.GdipCreateFont(family.NativeObject,	emSize,  style,   unit,  out fontObject);		
 		}
 
 		public Font(string familyName, float emSize)
@@ -92,14 +100,25 @@ namespace System.Drawing {
 		{
 		}
 		
-		public Font(string familyName, float emSize, FontStyle style, GraphicsUnit unit, byte charSet, bool isVertical)
+		public Font(string familyName, float emSize, FontStyle style, GraphicsUnit unit, byte charSet, bool isVertical)			 
 		{
-			//throw new NotImplementedException ();
+			FontFamily family = new FontFamily(familyName);			
+			GDIPlus.GdipCreateFont(family.NativeObject,	emSize,  style,   unit,  out fontObject);		
 		}
+		
 		
 		object ICloneable.Clone()
 		{
 			throw new NotImplementedException ();
+		}
+		
+		internal IntPtr NativeObject{            
+			get{
+					return fontObject;
+			}
+			set	{
+					fontObject = value;
+			}
 		}
 		
 		private bool _bold;

@@ -3,7 +3,7 @@
 //
 // Author: 
 // Alexandre Pigolkine (pigolkine@gmx.de)
-// Jordi Mas i Hern√†ndez (jordi@ximian.com)
+// Jordi Mas i Hern‡ndez (jordi@ximian.com)
 // Sanjay Gupta (gsanjay@novell.com)
 //
 
@@ -656,6 +656,12 @@ namespace System.Drawing {
 				internal static extern Status GdipSetImageAttributesColorMatrix(IntPtr imageattr,
                              ColorAdjustType type, bool enableFlag, ColorMatrix colorMatrix,
                                ColorMatrix grayMatrix,  ColorMatrixFlag flags); 
+                               
+		// Font		
+		[DllImport("gdiplus.dll")]                   
+		internal static extern Status GdipCreateFont(IntPtr fontFamily, float emSize, FontStyle style, GraphicsUnit  unit,  out IntPtr font);
+		[DllImport("gdiplus.dll")]                   
+		internal static extern Status GdipDeleteFont(IntPtr font);		
 
 		// FontCollection
 		[DllImport ("gdiplus.dll")]

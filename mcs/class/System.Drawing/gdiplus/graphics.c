@@ -794,7 +794,7 @@ GdipFillPolygon2I (GpGraphics *graphics, GpBrush *brush, GpPoint *points, int co
 }
 
 GpStatus 
-GdipDrawString (GpGraphics *graphics, const char *string,
+GdipDrawString (GpGraphics *graphics, const char *string,// FIXME: The string is encode using Unicode, Jordi
                 int len, void *font, RectF *rc, void *format, GpBrush *brush)
 {
         cairo_save (graphics->ct);

@@ -595,11 +595,10 @@ namespace System.Drawing
 				DrawRectangle(pen, rc.Left, rc.Top, rc.Width, rc.Height);
 		}
 
-		[MonoTODO("Ignores the font")]
+		
 		public void DrawString (string s, Font font, Brush brush, RectangleF layoutRectangle)
-		{
-			//FIXME: It seems that Win32 GDI+ does not accept a NULL font
-			GDIPlus.GdipDrawString (nativeObject, s, s.Length, IntPtr.Zero, ref layoutRectangle, IntPtr.Zero, brush.nativeObject);			 
+		{			
+			GDIPlus.GdipDrawString (nativeObject, s, s.Length, font.NativeObject, ref layoutRectangle, IntPtr.Zero, brush.nativeObject);			 
 		}
 
 		[MonoTODO("This ignores the font")]
