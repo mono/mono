@@ -18,11 +18,13 @@ namespace Microsoft.JScript {
 
 		private ArrayList items;
 		private VsaEngine engine;
+		private ArrayList names;
 
 		public VsaItems (VsaEngine engine)
 		{
 			this.items = new ArrayList ();
 			this.engine = engine;
+			this.names = new ArrayList ();
 		}
 
 		public IVsaItem this [int index] {
@@ -73,12 +75,15 @@ namespace Microsoft.JScript {
 						    VsaItemType itemType,
 						    VsaItemFlag itemFlag)
 		{
+			if (names.Contains (name))
+				 throw new VsaException (VsaError.ItemNameInUse);
+
 			IVsaItem item = null;
 
 			switch (itemType) {
 			case VsaItemType.AppGlobal:
 				if (itemFlag != VsaItemFlag.None)
-					throw new VsaException (VsaError.ItemFlagNotSupported);
+				throw new VsaException (VsaError.ItemFlagNotSupported);
 				item = new VsaGlobalItem (engine, name, itemFlag);
 				break;
 
@@ -89,12 +94,15 @@ namespace Microsoft.JScript {
 			case VsaItemType.Reference:
 				if (itemFlag != VsaItemFlag.None)
 					throw new VsaException (VsaError.ItemFlagNotSupported);
-				item = new VsaReferenceItem (engine, name, itemFlag);
-				break;
+					item = new VsaReferenceItem (engine, name, itemFlag);
+					break;
 			}
-
-			if (item != null)
+				
+			if (item != null) {
 				items.Add (item);
+				names.Add (name);
+			}
+				
 			engine.IsDirty = true;
 
 			return item;

@@ -1,5 +1,8 @@
 2003-09-28    <cesar@ciencias.unam.mx>
 
+	* VsaItems.cs: Check that no name is repeated (this was docs fault
+	:-)). This is the beauty of testing.
+
 	* Add VsaItems.cs, implements IVsaItems.
 
 2003-09-22    <cesar@ciencias.unam.mx>
