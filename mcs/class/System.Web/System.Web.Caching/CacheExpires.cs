@@ -110,7 +110,6 @@ namespace System.Web.Caching {
 		}
 
 		internal void GarbageCleanup (object State) {
-			ExpiresBucket objBucket;
 			int bucket;
 
 			// We lock here if FlushExpiredItems take time

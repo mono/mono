@@ -128,7 +128,6 @@ namespace System.Web {
 		{
 			Type appType = app.GetType ();
 			Hashtable appTypeEventHandlers = new Hashtable ();
-			ArrayList evtMethods = new ArrayList ();
 			BindingFlags flags = BindingFlags.Public    |
 					     BindingFlags.NonPublic | 
 					     BindingFlags.Instance |

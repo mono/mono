@@ -388,8 +388,9 @@ namespace System.Web.UI.WebControls
 			if(Page.IsClientScriptBlockRegistered("ValidatorIncludeScript"))
 				return;
 			
-			string jsDirectory = System.Web.UI.Utils.GetScriptLocation(Context);
-			string jsFile = jsDirectory + "/WebUIValidation.js";
+			//string jsDirectory = System.Web.UI.Utils.GetScriptLocation(Context);
+			//string jsFile = jsDirectory + "/WebUIValidation.js";
+                        
 			//TODO: Ok, now add the <script language="javascript"> etc
 			//FIXME: Should I check for 'Explorer'? MS-Net seems to do it!
 			throw new NotImplementedException();

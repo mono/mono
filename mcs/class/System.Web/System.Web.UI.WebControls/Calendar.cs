@@ -876,7 +876,6 @@ namespace System.Web.UI.WebControls
 			if (dayStyle != null && !dayStyle.IsEmpty)
 				definedStyles |= MASK_DAY;
 
-			bool isCalendar = GetType () == typeof (Calendar);
 			int month = globCal.GetMonth (activeDate);
 			DateTime currentDay = firstDay;
 			int begin = (int) (firstDay - begin_date).TotalDays;

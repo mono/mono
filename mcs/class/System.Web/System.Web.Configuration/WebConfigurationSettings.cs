@@ -545,7 +545,6 @@ namespace System.Web.Configuration
 				string reduced = UrlUtils.MakeRelative (context.Request.CurrentExecutionFilePath, dirname);
 				string [] parts = reduced.Split ('/');
 				Location location = null;
-				int length = parts.Length;
 
 				string target = null;
 				for (int i = 0; i < parts.Length; i++) {
