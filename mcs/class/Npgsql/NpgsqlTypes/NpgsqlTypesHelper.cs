@@ -458,8 +458,7 @@ namespace NpgsqlTypes
         /// <param name="NpgsqlDbType">NpgsqlDbType</param>
         /// <param name="Type">System type to convert fields of this type to.</param>
         /// <param name="ConvertBackendToNative">Data conversion handler.</param>
-        public NpgsqlBackendTypeInfo(Int32 OID, String Name, NpgsqlDbType NpgsqlDbType, DbType DbType, Type Type,
-                              ConvertBackendToNativeHandler ConvertBackendToNative)
+        public NpgsqlBackendTypeInfo(Int32 OID, String Name, NpgsqlDbType NpgsqlDbType, DbType DbType, Type Type, ConvertBackendToNativeHandler ConvertBackendToNative)
         {
             _OID = OID;
             _Name = Name;
@@ -527,12 +526,20 @@ namespace NpgsqlTypes
     /// </summary>
     internal class NpgsqlNativeTypeInfo
     {
+        private static NumberFormatInfo ni;
+                        
         private ConvertNativeToBackendHandler _ConvertNativeToBackend;
 
         private String           _Name;
         private NpgsqlDbType     _NpgsqlDbType;
         private DbType           _DbType;
         private Boolean          _Quote;
+        
+        static NpgsqlNativeTypeInfo()
+        {
+            ni = new CultureInfo("en-US").NumberFormat;
+            ni.NumberGroupSeparator = "";
+        }
 
         /// <summary>
         /// Construct a new NpgsqlTypeInfo with the given attributes and conversion handlers.
@@ -543,8 +550,7 @@ namespace NpgsqlTypes
         /// <param name="Type">System type to convert fields of this type to.</param>
         /// <param name="ConvertBackendToNative">Data conversion handler.</param>
         /// <param name="ConvertNativeToBackend">Data conversion handler.</param>
-        public NpgsqlNativeTypeInfo(String Name, NpgsqlDbType NpgsqlDbType, DbType DbType, Boolean Quote,
-                              ConvertNativeToBackendHandler ConvertNativeToBackend)
+        public NpgsqlNativeTypeInfo(String Name, NpgsqlDbType NpgsqlDbType, DbType DbType, Boolean Quote, ConvertNativeToBackendHandler ConvertNativeToBackend)
         {
             _Name = Name;
             _NpgsqlDbType = NpgsqlDbType;
@@ -613,10 +619,17 @@ namespace NpgsqlTypes
                     // Translate enum value to its underlying type. 
                     return QuoteString((String)Convert.ChangeType(Enum.Format(NativeData.GetType(), NativeData, "d"), typeof(String), CultureInfo.InvariantCulture));
                 }
-                else 
-                    // Do special handling of strings when in simple query. Escape quotes and backslashes.
+                else if (NativeData is Double) 
+                {
+                    return QuoteString(((Double)NativeData).ToString("N", ni).Replace("'", "''").Replace("\\", "\\\\"));
                     
-                    return QuoteString(NativeData.ToString().Replace("'", "''").Replace("\\", "\\\\"));
+                }
+                else if (NativeData is Decimal) 
+                {
+                    return QuoteString(((Decimal)NativeData).ToString("N", ni).Replace("'", "''").Replace("\\", "\\\\"));
+                } 
+                // Do special handling of strings when in simple query. Escape quotes and backslashes.
+                return QuoteString(NativeData.ToString().Replace("'", "''").Replace("\\", "\\\\"));
                 
             }
     
@@ -637,9 +650,17 @@ namespace NpgsqlTypes
                     // Translate enum value to its underlying type. 
                     return (String)Convert.ChangeType(Enum.Format(NativeData.GetType(), NativeData, "d"), typeof(String), CultureInfo.InvariantCulture);
                 }
-                else 
-                    // Do special handling of strings when in simple query. Escape quotes and backslashes.
-                    return NativeData.ToString();
+                else if (NativeData is Double) 
+                {
+                    return ((Double)NativeData).ToString("N", ni);
+                    
+                }
+                else if (NativeData is Decimal) 
+                {
+                    return ((Decimal)NativeData).ToString("N", ni);
+                } 
+                
+                return NativeData.ToString();
                 
             }
         
