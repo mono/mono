@@ -85,7 +85,7 @@ namespace System.Runtime.Remoting
 			get 
 			{ 
 				if (_serverSink == null) {
-					_serverSink = _context.CreateServerObjectSinkChain((MarshalByRefObject)_realObject);
+					//_serverSink = _context.CreateServerObjectSinkChain((MarshalByRefObject)_realObject);
 				}
 				return _serverSink; 
 			}

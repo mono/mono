@@ -11,7 +11,7 @@ using System.Reflection;
 
 namespace System.Runtime.Remoting.Messaging {
 
-	public interface IMethodCallMessage : IMethodMessage, IMessage {
+	public interface IMethodCallMessage : IMethodMessage {
 
 		int InArgCount {
 			get;
