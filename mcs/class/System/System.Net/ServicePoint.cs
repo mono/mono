@@ -211,7 +211,6 @@ namespace System.Net
 			lock (this) {
 				currentConnections++;
 				idleSince = DateTime.Now.AddMilliseconds (1000000);
-				Console.WriteLine ("+CurerntCnc: {0} {1}", Address, currentConnections);
 			}
 		}
 
@@ -221,7 +220,6 @@ namespace System.Net
 				currentConnections--;
 				if (currentConnections == 0)
 					idleSince = DateTime.Now;
-				Console.WriteLine ("-CurerntCnc: {0} {1}", Address, currentConnections);
 			}
 		}
 
@@ -232,3 +230,4 @@ namespace System.Net
 		}
 	}
 }
+
