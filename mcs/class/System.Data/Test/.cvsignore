@@ -1,2 +1,3 @@
-*.dll
-*.pdb
+.makefrag
+.response
+library-deps.stamp

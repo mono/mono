@@ -21,10 +21,11 @@ namespace xrtest {
    float width = 400.0F;
    float height = 800.0F;
    
-   Bitmap bmp = new Bitmap((int)width, (int)height);
+   Bitmap bmp = new Bitmap((int)width, (int)height/*, PixelFormat.Format24bppRgb*/);
    Graphics gr = Graphics.FromImage(bmp);
    SolidBrush br = new SolidBrush(Color.White);
    gr.FillRectangle(br, 0.0F, 0.0F, width, height);
+
    int LINES = 32;
    float MAX_THETA  = (.80F * 90.0F);
    float THETA  = (2 * MAX_THETA / (LINES-1));
@@ -48,8 +49,10 @@ namespace xrtest {
    Console.WriteLine("output file Hering.bmp");
    bmp.Save("Hering.jpg", ImageFormat.Jpeg);
    Console.WriteLine("output file Hering.jpg");
+  /*
    bmp.Save("Hering.png", ImageFormat.Png);
    Console.WriteLine("output file Hering.png");
+  */
   }
  }
 }
