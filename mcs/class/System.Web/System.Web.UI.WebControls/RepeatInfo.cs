@@ -176,6 +176,8 @@ namespace System.Web.UI.WebControls
 			int rowIndex = 0;
 			int colIndex = 0;
 			int index = 0;
+			int diff = colsCount - (rowsCount*colsCount - total);
+			
 			while(rowIndex < rowsCount)
 			{
 				if(isTable)
@@ -183,7 +185,14 @@ namespace System.Web.UI.WebControls
 				colIndex = 0;
 				while(colIndex < colsCount)
 				{
-					index = rowIndex + colIndex * rowsCount;
+					if (rowIndex == rowsCount-1 && colIndex >= diff)
+						break;
+					
+					if (colIndex < diff)
+						index = rowIndex + colIndex * rowsCount;
+					else
+						index = rowIndex + colIndex * (rowsCount-1) + diff;
+
 					if(index < total)
 					{
 						if(isTable)
@@ -215,8 +224,7 @@ namespace System.Web.UI.WebControls
 									itemStyle.AddAttributesToRender(writer);
 								writer.RenderBeginTag(HtmlTextWriterTag.Td);
 							}
-							if(index < total)
-								user.RenderItem(ListItemType.Separator, index, this, writer);
+							user.RenderItem(ListItemType.Separator, index, this, writer);
 							if(isTable)
 								writer.RenderEndTag();
 						}

@@ -1,3 +1,9 @@
+2003-12-11  Jackson Harper <jackson@ximian.com>
+
+	* RepeatInfo.cs: When rendering vertically figure out how many
+	colmns are not going to be filled in in the last row, and adjust
+	things accordingly. This fixes bug #51863.
+	
 2003-12-10  Alon Gazit <along@mainsoft.com>
 	* TableRow.cs: Change the implementation of the properties 
 	HorizontalAlign and  VerticalAlign. The current implementation      
