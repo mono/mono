@@ -34,7 +34,7 @@ namespace System.Configuration
 				throw new InvalidOperationException ("'" + key + "' could not be found.");
 
 			if (type == typeof (string))
-				return value.Substring (1, value.Length - 2);
+				return value;
 			
 			MethodInfo parse = type.GetMethod ("Parse", new Type [] {typeof (string)});
 			if (parse == null)

@@ -1,3 +1,7 @@
+2003-03-02  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* AppSettingsReader.cs: fixed bug #38755.
+
 2002-12-19  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* ConfigXmlDocument.cs: don't jump over the first element.
