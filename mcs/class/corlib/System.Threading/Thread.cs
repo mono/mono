@@ -287,12 +287,7 @@ namespace System.Threading
 							} else {
 								in_currentculture=true;
 							
-								try {
-									current_culture = new CultureInfo (current_lcid ());
-								} catch (ArgumentException) {
-									
-									current_culture = CultureInfo.InvariantCulture;
-								}
+								current_culture = CultureInfo.ConstructCurrentCulture ();
 							}
 						}
 						
@@ -319,12 +314,7 @@ namespace System.Threading
 							 * System and
 							 * UI cultures
 							 */
-							try {
-								current_ui_culture = new CultureInfo (current_lcid ());
-							} catch (ArgumentException) {
-							
-								current_ui_culture = CultureInfo.InvariantCulture;
-							}
+							current_ui_culture = CultureInfo.ConstructCurrentUICulture ();
 						}
 					}
 				}

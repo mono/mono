@@ -1,3 +1,8 @@
+2004-04-07  Jackson Harper  <jackson@ximian.com>
+
+	* Thread.cs: Use new culture info method for constructing the
+	current culture.
+	
 2004-04-07  Lluis Sanchez Gual <lluis@ximian.com>
 
 	* ReaderWriterLock.cs: When a thread holds a writer lock, a call to
