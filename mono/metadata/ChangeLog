@@ -1,3 +1,9 @@
+2004-11-12  Martin Baulig  <martin@localhost>
+
+	* reflection.c (mono_image_create_token): Allow generic method
+	definitions here, since they may appear in an `.override'; see
+	gen-98/gen-99 for an example.
+
 2004-11-11  Zoltan Varga  <vargaz@freemail.hu>
 
 	* icall.c (ves_icall_Type_GetField): Support BFLAGS_IgnoreCase. Fixes
