@@ -37,7 +37,10 @@
 // NOT COMPLETE
 
 // define to log Window handles and relationships to stdout
-#undef DriverDebug
+#define DriverDebug
+
+// Extra detailed debug
+#define	DriverDebugExtra
 
 using System;
 using System.ComponentModel;
@@ -599,7 +602,7 @@ namespace System.Windows.Forms {
 			hwnd = Hwnd.GetObjectFromWindow(xevent.AnyEvent.window);
 
 			// Don't waste time
-			if (!hwnd.visible) {
+			if (hwnd == null || !hwnd.visible) {
 				return;
 			}
 
@@ -1684,6 +1687,11 @@ namespace System.Windows.Forms {
 				Console.WriteLine("Destroying window {0:X}", handle.ToInt32());
 			#endif
 
+			// Make sure if the caret is in the window, that we destroy the caret, too
+			if (Caret.Hwnd == hwnd.client_window) {
+				DestroyCaret(handle);
+			}
+
 			lock (XlibLock) {
 				if (hwnd.client_window != IntPtr.Zero) {
 					XDestroyWindow(DisplayHandle, hwnd.client_window);
@@ -1836,7 +1844,7 @@ namespace System.Windows.Forms {
 			// Handle messages for windows that are already destroyed
 			if (hwnd == null) {
 				#if DriverDebug
-					Console.WriteLine("got message for non-existant window {0:X}", xevent.AnyEvent.window.ToInt32());
+					Console.WriteLine("GetMessage(): Got message for non-existent window {0:X}", xevent.AnyEvent.window.ToInt32());
 				#endif
 				goto ProcessNextMessage;
 			}
@@ -2037,6 +2045,10 @@ namespace System.Windows.Forms {
 					if (!client && (xevent.ConfigureEvent.xevent == xevent.ConfigureEvent.window)) {	// Ignore events for children (SubstructureNotify) and client areas
 						Rectangle rect;
 
+						#if DriverDebugExtra
+							Console.WriteLine("GetMessage(): Window {0:X} ConfigureNotify x={1} y={2} width={3} height={4}", hwnd.client_window.ToInt32(), xevent.ConfigureEvent.x, xevent.ConfigureEvent.y, xevent.ConfigureEvent.width, xevent.ConfigureEvent.height);
+						#endif
+
 						if ((hwnd.x != xevent.ConfigureEvent.x) || (hwnd.y != xevent.ConfigureEvent.y) ||
 							(hwnd.width != xevent.ConfigureEvent.width) || (hwnd.height != xevent.ConfigureEvent.height)) {
 							msg.message=Msg.WM_WINDOWPOSCHANGED;
@@ -2079,6 +2091,9 @@ namespace System.Windows.Forms {
 				}
 
 				case XEventName.Expose: {
+					#if DriverDebugExtra
+						Console.WriteLine("GetMessage(): Window {0:X} Exposed area {1},{2} {3}x{4}", hwnd.client_window.ToInt32(), xevent.ExposeEvent.x, xevent.ExposeEvent.y, xevent.ExposeEvent.width, xevent.ExposeEvent.height);
+					#endif
 					if (Caret.Visible == 1) {
 						Caret.Paused = true;
 						HideCaret();
@@ -2096,12 +2111,23 @@ namespace System.Windows.Forms {
 				}
 
 				case XEventName.DestroyNotify: {
-					msg.message=Msg.WM_DESTROY;
 
-					#if DriverDebug
-						Console.WriteLine("Got DestroyNotify on Window {0:X}", xevent.AnyEvent.window.ToInt32());
-					#endif
-					hwnd.Dispose();
+					// This is a bit tricky, we don't receive our own DestroyNotify, we only get those for our children
+					hwnd = Hwnd.ObjectFromHandle(xevent.DestroyWindowEvent.window);
+
+					// We may get multiple for the same window, act only one the first (when Hwnd still knows about it)
+					if (hwnd != null) {
+						msg.hwnd = hwnd.client_window;
+						msg.message=Msg.WM_DESTROY;
+						hwnd.Dispose();
+
+						#if DriverDebug
+							Console.WriteLine("Got DestroyNotify on Window {0:X}", msg.hwnd.ToInt32());
+						#endif
+					} else {
+						goto ProcessNextMessage;
+					}
+
 					break;
 				}
 
@@ -2593,7 +2619,7 @@ namespace System.Windows.Forms {
 
 			lock (XlibLock) {
 				#if DriverDebug
-					Console.WriteLine("Parent for window {0:X} / {1:X} = {2:X}", hwnd.ClientWindow.ToInt32(), hwnd.WholeWindow.ToInt32(), hwnd.parent != null ? hwnd.parent.Handle.ToInt32() : 0);
+					Console.WriteLine("Parent for window {0:X} / {1:X} = {2:X} (Handle:{3:X})", hwnd.ClientWindow.ToInt32(), hwnd.WholeWindow.ToInt32(), hwnd.parent != null ? hwnd.parent.Handle.ToInt32() : 0, parent.ToInt32());
 				#endif
 				XReparentWindow(DisplayHandle, hwnd.whole_window, hwnd.parent.client_window, hwnd.x, hwnd.y);
 			}
