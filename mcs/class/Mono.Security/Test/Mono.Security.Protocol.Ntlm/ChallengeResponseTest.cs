@@ -2,9 +2,10 @@
 // Mono.Security.Protocol.Ntlm.ChallengeResponseTest
 //
 // Author:
-//	Sebastien Pouliot (spouliot@motus.com)
+//	Sebastien Pouliot (sebastien@ximian.com)
 //
 // Copyright (C) 2003 Motus Technologies Inc. (http://www.motus.com)
+// Copyright (C) 2004 Novell (http://www.novell.com)
 //
 
 using System;
@@ -60,6 +61,59 @@ namespace MonoTests.Mono.Security.Protocol.Ntlm {
 				AssertEquals ("NT", "4A-FD-81-EC-01-87-E8-8D-97-77-8D-F7-93-C6-DA-D4-F0-3A-36-63-66-9D-20-1C", BitConverter.ToString (ntlm.NT));
 				AssertEquals ("LM", "0A-39-2B-11-CF-05-2B-02-6D-65-CF-F5-68-BD-E4-15-A6-1B-FA-06-71-EA-5F-C8", BitConverter.ToString (ntlm.LM));
 			}
+		}
+		
+		[Test] 
+		public void NoPropertiesOutput () 
+		{
+			ChallengeResponse ntlm = new ChallengeResponse ("Mono", new byte [8]);
+			// no out!
+			AssertNull ("Password", ntlm.Password);
+			AssertNull ("Challenge", ntlm.Challenge);
+		}
+		
+		[Test] 
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void Challenge_Null () 
+		{
+			ChallengeResponse ntlm = new ChallengeResponse ();
+			ntlm.Challenge = null;
+		}
+		
+		[Test] 
+		[ExpectedException (typeof (ObjectDisposedException))]
+		public void Password_Disposed () 
+		{
+			ChallengeResponse ntlm = new ChallengeResponse ("Mono", new byte [8]);
+			ntlm.Dispose ();
+			ntlm.Password = "Mini";
+		}
+
+		[Test] 
+		[ExpectedException (typeof (ObjectDisposedException))]
+		public void Challenge_Disposed () 
+		{
+			ChallengeResponse ntlm = new ChallengeResponse ("Mono", new byte [8]);
+			ntlm.Dispose ();
+			ntlm.Challenge = new byte [8];
+		}
+		
+		[Test] 
+		[ExpectedException (typeof (ObjectDisposedException))]
+		public void NT_Disposed () 
+		{
+			ChallengeResponse ntlm = new ChallengeResponse ("Mono", new byte [8]);
+			ntlm.Dispose ();
+			AssertNotNull ("NT", ntlm.NT);
+		}
+
+		[Test] 
+		[ExpectedException (typeof (ObjectDisposedException))]
+		public void LM_Disposed () 
+		{
+			ChallengeResponse ntlm = new ChallengeResponse ("Mono", new byte [8]);
+			ntlm.Dispose ();
+			AssertNotNull ("LM", ntlm.LM);
 		}
 	}
 }

@@ -2,9 +2,10 @@
 // Mono.Security.Protocol.Ntlm.Type2MessageTest
 //
 // Author:
-//	Sebastien Pouliot (spouliot@motus.com)
+//	Sebastien Pouliot (sebastien@ximian.com)
 //
 // Copyright (C) 2003 Motus Technologies Inc. (http://www.motus.com)
+// Copyright (C) 2004 Novell (http://www.novell.com)
 //
 
 using System;
@@ -50,6 +51,22 @@ namespace MonoTests.Mono.Security.Protocol.Ntlm {
 			AssertEquals ("Flags", (NtlmFlags)0x00810201, msg.Flags);
 			AssertEquals ("Nonce", "01-23-45-67-89-AB-CD-EF", BitConverter.ToString (msg.Nonce));
 			AssertEquals ("Type", 2, msg.Type);
+		}
+		
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void Nonce_Null () 
+		{
+			Type2Message msg = new Type2Message ();
+			msg.Nonce = null;
+		}
+		
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void Nonce_InvalidLength () 
+		{
+			Type2Message msg = new Type2Message ();
+			msg.Nonce = new byte [9];
 		}
 	}
 }
