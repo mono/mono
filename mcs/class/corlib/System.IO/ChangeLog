@@ -1,5 +1,12 @@
 2004-06-08  Duncan Mak  <duncan@ximian.com>
 
+	* Directory.cs (IsRootDirectory): New helper method for
+	determining if a path is the root directory. Handles both Unix as
+	well as Windows.
+	(GetParent): Use IsRootDirectory for the check.
+
+2004-06-08  Duncan Mak  <duncan@ximian.com>
+
 	* File.cs: Fix line endings, took out ^Ms.
 
 	* Directory.cs (GetParent): Return null if the specified path is

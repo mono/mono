@@ -242,6 +242,20 @@ namespace System.IO
 				return new string [] { "A:\\", "C:\\" };
 		}
 
+		static bool IsRootDirectory (string path)
+		{
+			// Unix
+		       if (Path.DirectorySeparatorChar == '/' && path == "/")
+			       return true;
+
+		       // Windows
+		       if (Path.DirectorySeparatorChar == '\\')
+			       if (path.Length == 3 && path.EndsWith (":\\"))
+				       return true;
+
+		       return false;
+		}
+
 		public static DirectoryInfo GetParent (string path)
 		{
 			if (path == null)
@@ -252,8 +266,7 @@ namespace System.IO
 				throw new ArgumentException ("The Path do not have a valid format");
 
 			// return null if the path is the root directory
-			if ((Path.DirectorySeparatorChar == '/' && path == "/") || 
-				(Path.DirectorySeparatorChar == '\\' && path == "C:\\"))
+			if (IsRootDirectory (path))
 				return null;
 			
 			return new DirectoryInfo (Path.GetDirectoryName (path));
