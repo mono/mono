@@ -1,3 +1,8 @@
+2004-02-02  Ravi Pratap M  <ravi@ximian.com>
+
+	* test-157.cs: Improve test for interface property accessor
+	attributes.
+
 2004-01-26  Martin Baulig  <martin@ximian.com>
 
 	* gen-37.cs: New generics test.
