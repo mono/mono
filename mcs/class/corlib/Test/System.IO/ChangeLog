@@ -1,3 +1,8 @@
+2005-01-28  Sebastien Pouliot  <sebastien@ximian.com> 
+
+	* FileLoadExceptionCas.cs: Fixed failures under MS for NET_1_1.
+	* FileNotFoundExceptionCas.cs: Fixed failures under MS for NET_1_1.
+
 2005-03-02  Raja R Harinath  <rharinath@novell.com>
 
 	* FileStreamTest.cs (Constructor_InvalidFileHandle): Fix to work
