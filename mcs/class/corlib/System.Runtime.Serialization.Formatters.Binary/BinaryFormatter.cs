@@ -2,7 +2,7 @@
 //
 // Author:
 //	Dick Porter (dick@ximian.com)
-//  Lluis Sanchez Gual (lsg@ctv.es)
+//  Lluis Sanchez Gual (lluis@ideary.com)
 //
 // (C) 2002 Ximian, Inc.  http://www.ximian.com
 
@@ -86,34 +86,43 @@ namespace System.Runtime.Serialization.Formatters.Binary {
 
 		public object Deserialize(Stream serializationStream)
 		{
-			if(serializationStream==null) {
-				throw new ArgumentNullException("serializationStream is null");
-			}
-			if(serializationStream.CanSeek &&
-			   serializationStream.Length==0) {
-				throw new SerializationException("serializationStream supports seeking, but its length is 0");
-			}
-
-			ObjectReader serializer = new ObjectReader (surrogate_selector, context);
-			BinaryReader reader = new BinaryReader (serializationStream);
-			return serializer.ReadObjectGraph (reader);
+			return Deserialize (serializationStream, null);
 		}
 
-		[MonoTODO]
 		public object Deserialize(Stream serializationStream, HeaderHandler handler) 
 		{
-			if(serializationStream==null) {
+			if(serializationStream==null) 
+			{
 				throw new ArgumentNullException("serializationStream is null");
 			}
 			if(serializationStream.CanSeek &&
-			   serializationStream.Length==0) {
+				serializationStream.Length==0) 
+			{
 				throw new SerializationException("serializationStream supports seeking, but its length is 0");
 			}
-			
-			return(null);
+
+			BinaryReader reader = new BinaryReader (serializationStream);
+
+			bool hasHeader;
+			ReadBinaryHeader (reader, out hasHeader);
+
+			// Messages are read using a special static method, which does not use ObjectReader
+			// if it is not needed. This saves time and memory.
+
+			BinaryElement elem = (BinaryElement) reader.PeekChar();
+
+			if (elem == BinaryElement.MethodCall) {
+				return MessageFormatter.ReadMethodCall (reader, hasHeader, handler, surrogate_selector, context);
+			}
+			else if (elem == BinaryElement.MethodResponse) {
+				return MessageFormatter.ReadMethodResponse (reader, hasHeader, handler, null, surrogate_selector, context);
+			}
+			else {
+				ObjectReader serializer = new ObjectReader (surrogate_selector, context);
+				return serializer.ReadObjectGraph (reader, hasHeader, handler);
+			}
 		}
 		
-		[MonoTODO]
 		public object DeserializeMethodResponse(Stream serializationStream, HeaderHandler handler, IMethodCallMessage methodCallmessage)
 		{
 			if(serializationStream==null) {
@@ -123,31 +132,59 @@ namespace System.Runtime.Serialization.Formatters.Binary {
 			   serializationStream.Length==0) {
 				throw new SerializationException("serializationStream supports seeking, but its length is 0");
 			}
-			
-			return(null);
+
+			BinaryReader reader = new BinaryReader (serializationStream);
+
+			bool hasHeader;
+			ReadBinaryHeader (reader, out hasHeader);
+			return MessageFormatter.ReadMethodResponse (reader, hasHeader, handler, methodCallmessage, surrogate_selector, context);
 		}
 
 		public void Serialize(Stream serializationStream, object graph)
 		{
-			if(serializationStream==null) {
-				throw new ArgumentNullException("serializationStream is null");
-			}
-
-			ObjectWriter serializer = new ObjectWriter (surrogate_selector, context);
-			BinaryWriter writer = new BinaryWriter (serializationStream);
-			serializer.WriteObjectGraph (writer, graph);
-			writer.Flush();
+			Serialize (serializationStream, graph, null);
 		}
 
-		[MonoTODO]
 		public void Serialize(Stream serializationStream, object graph, Header[] headers)
 		{
 			if(serializationStream==null) {
 				throw new ArgumentNullException("serializationStream is null");
 			}
 
-			// fixme: what about headers?
-			Serialize (serializationStream, graph);			
+			BinaryWriter writer = new BinaryWriter (serializationStream);
+			WriteBinaryHeader (writer, headers!=null);
+
+			if (graph is IMethodCallMessage) {
+				MessageFormatter.WriteMethodCall (writer, graph, headers, surrogate_selector, context);
+			}
+			else if (graph is IMethodReturnMessage)  {
+				MessageFormatter.WriteMethodResponse (writer, graph, headers, surrogate_selector, context);
+			}
+			else {
+				ObjectWriter serializer = new ObjectWriter (surrogate_selector, context);
+				serializer.WriteObjectGraph (writer, graph, headers);
+			}
+			writer.Flush();
+		}
+
+		public void WriteBinaryHeader (BinaryWriter writer, bool hasHeaders)
+		{
+			writer.Write ((byte)BinaryElement.Header);
+			writer.Write ((int)1);
+			if (hasHeaders) writer.Write ((int)2);
+			else writer.Write ((int)-1);
+			writer.Write ((int)1);
+			writer.Write ((int)0);
+		}
+
+		private void ReadBinaryHeader (BinaryReader reader, out bool hasHeaders)
+		{
+			reader.ReadByte();
+			reader.ReadInt32();
+			int val = reader.ReadInt32();
+			hasHeaders = (val==2);
+			reader.ReadInt32();
+			reader.ReadInt32();
 		}
 	}
 }

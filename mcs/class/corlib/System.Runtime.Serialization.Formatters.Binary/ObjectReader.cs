@@ -1,7 +1,7 @@
 // ObjectReader.cs
 //
 // Author:
-//   Lluis Sanchez Gual (lsg@ctv.es)
+//   Lluis Sanchez Gual (lluis@ideary.com)
 //
 // (C) 2003 Lluis Sanchez Gual
 
@@ -12,10 +12,11 @@ using System.Runtime.Serialization;
 using System.IO;
 using System.Collections;
 using System.Reflection;
+using System.Runtime.Remoting.Messaging;
 
 namespace System.Runtime.Serialization.Formatters.Binary
 {
-	public class ObjectReader
+	internal class ObjectReader
 	{
 		ISurrogateSelector _surrogateSelector;
 		StreamingContext _context;
@@ -24,7 +25,7 @@ namespace System.Runtime.Serialization.Formatters.Binary
 		Hashtable _registeredAssemblies = new Hashtable();
 		Hashtable _typeMetadataCache = new Hashtable();
 
-		static Type[] _typeCodes;
+		object _lastObject = null;
 
 		class TypeMetadata
 		{
@@ -41,25 +42,6 @@ namespace System.Runtime.Serialization.Formatters.Binary
 			public int NullCount;
 		}
 
-		static ObjectReader()
-		{
-			_typeCodes = new Type [30];
-			_typeCodes[(int) TypeCode.Boolean] = typeof (Boolean);
-			_typeCodes[(int)TypeCode.Byte] = typeof (Byte);
-			_typeCodes[(int)TypeCode.Char] = typeof (Char);
-			_typeCodes[(int)TypeCode.DateTime] = typeof (DateTime);
-			_typeCodes[(int)TypeCode.Decimal] = typeof (Decimal);
-			_typeCodes[(int)TypeCode.Double] = typeof (Double);
-			_typeCodes[(int)TypeCode.Int16] = typeof (Int16);
-			_typeCodes[(int)TypeCode.Int32] = typeof (Int32);
-			_typeCodes[(int)TypeCode.Int64] = typeof (Int64);
-			_typeCodes[(int)TypeCode.SByte] = typeof (SByte);
-			_typeCodes[(int)TypeCode.Single] = typeof (Single);
-			_typeCodes[(int)TypeCode.UInt16] = typeof (UInt16);
-			_typeCodes[(int)TypeCode.UInt32] = typeof (UInt32);
-			_typeCodes[(int)TypeCode.UInt64] = typeof (UInt64);
-		}
-
 		public ObjectReader(ISurrogateSelector surrogateSelector, StreamingContext context)
 		{
 			_manager = new ObjectManager (surrogateSelector, context);
@@ -67,33 +49,51 @@ namespace System.Runtime.Serialization.Formatters.Binary
 			_context = context;
 		}
 
-		public object ReadObjectGraph (BinaryReader reader)
+		public object ReadObjectGraph (BinaryReader reader, bool readHeaders, HeaderHandler headerHandler)
 		{
 			object rootObject = null;
-			object tmpObject;
-			SerializationInfo info;
-			long objectId;
-
-			// Reads the header
-
-			int headerLen = BinaryCommon.BinaryHeader.Length;
-			reader.ReadBytes (headerLen);
+			Header[] headers = null;
 
 			// Reads the objects. The first object in the stream is the
 			// root object.
 
-			BinaryElement element = (BinaryElement)reader.ReadByte ();
-			while (element != BinaryElement.End)
+			while (ReadNextObject (reader))
 			{
-				ReadObject (element, reader, out objectId, out tmpObject, out info);
-				if (objectId != 0) RegisterObject (objectId, tmpObject, info, 0, null, null);
-				if (rootObject == null && tmpObject != null) rootObject = tmpObject;
-				element = (BinaryElement)reader.ReadByte ();
+				if (readHeaders && (headers == null))
+					headers = (Header[])CurrentObject;
+				else
+					if (rootObject == null) rootObject = CurrentObject;
 			}
 
-			_manager.DoFixups();
+			if (readHeaders && headerHandler != null)
+				headerHandler (headers);
 
 			return rootObject;
+		}
+
+		public bool ReadNextObject (BinaryReader reader)
+		{
+			BinaryElement element = (BinaryElement)reader.ReadByte ();
+			if (element == BinaryElement.End)
+			{
+				_manager.DoFixups();
+				return false;
+			}
+
+			SerializationInfo info;
+			long objectId;
+
+			ReadObject (element, reader, out objectId, out _lastObject, out info);
+
+			if (objectId != 0) 
+				RegisterObject (objectId, _lastObject, info, 0, null, null);
+
+			return true;
+		}
+
+		public object CurrentObject
+		{
+			get { return _lastObject; }
 		}
 
 		// Reads an object from the stream. The object is registered in the ObjectManager.
@@ -235,14 +235,25 @@ namespace System.Runtime.Serialization.Formatters.Binary
 			ArrayStructure structure = (ArrayStructure) reader.ReadByte();
 
 			int rank = reader.ReadInt32();
+
+			bool emptyDim = false;
 			int[] lengths = new int[rank];
 			for (int n=0; n<rank; n++)
+			{
 				lengths[n] = reader.ReadInt32();
+				if (lengths[n] == 0) emptyDim = true;
+			}
 
 			TypeTag code = (TypeTag) reader.ReadByte ();
 			Type elementType = ReadType (reader, code);
 
 			Array array = Array.CreateInstance (elementType, lengths);
+
+			if (emptyDim) 
+			{ 
+				val = array;
+				return;
+			}
 
 			int[] indices = new int[rank];
 
@@ -504,12 +515,12 @@ namespace System.Runtime.Serialization.Formatters.Binary
 			return members[0];
 		}
 
-		private Type ReadType (BinaryReader reader, TypeTag code)
+		public Type ReadType (BinaryReader reader, TypeTag code)
 		{
 			switch (code)
 			{
 				case TypeTag.PrimitiveType:
-					return _typeCodes [reader.ReadByte() + 1];
+					return BinaryCommon.GetTypeFromCode (reader.ReadByte());
 
 				case TypeTag.String:
 					return typeof(string);
@@ -538,7 +549,7 @@ namespace System.Runtime.Serialization.Formatters.Binary
 					return typeof(string[]);
 
 				case TypeTag.ArrayOfPrimitiveType:
-					Type elementType = _typeCodes [reader.ReadByte()+1];
+					Type elementType = BinaryCommon.GetTypeFromCode (reader.ReadByte());
 					return Type.GetType(elementType.FullName + "[]");
 
 				default:
@@ -546,8 +557,10 @@ namespace System.Runtime.Serialization.Formatters.Binary
 			}
 		}
 		
-		private object ReadPrimitiveTypeValue (BinaryReader reader, Type type)
+		public static object ReadPrimitiveTypeValue (BinaryReader reader, Type type)
 		{
+			if (type == null) return null;
+
 			switch (Type.GetTypeCode (type))
 			{
 				case TypeCode.Boolean:
@@ -592,6 +605,9 @@ namespace System.Runtime.Serialization.Formatters.Binary
 
 				case TypeCode.UInt64:
 					return reader.ReadUInt64();
+
+				case TypeCode.String:
+					return reader.ReadString();
 
 				default:
 					throw new NotSupportedException ("Unsupported primitive type: " + type.FullName);

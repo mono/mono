@@ -1,8 +1,16 @@
+2003-01-24  Lluis Sanchez Gual <lluis@ideary.com>
+
+    * ObjectWriter.cs, ObjectReader.cs: Added suport for headers. 
+      Corrected encoding of primitive types. Corrected a bug about zero-length arrays. 
+    * MessageFormatter.cs: Added. Implements serialization of messages.
+    * BinaryFormatter.cs: Added serialization of messages.
+    * BinaryCommon.cs: Added enum of codes of primitive types.
+
 2003-01-17  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* ObjectWriter.cs: make the exception message more useful.
 
-2003-01-16  Lluis Sanchez Gual <lsg@ctv.es>
+2003-01-16  Lluis Sanchez Gual <lluis@ideary.com>
 
     * BinaryFormatter.cs: implemented Serialize and Deserialize methods.
     * ObjectReader.cs: added.

@@ -1,7 +1,7 @@
 // ObjectWriter.cs
 //
 // Author:
-//   Lluis Sanchez Gual (lsg@ctv.es)
+//   Lluis Sanchez Gual (lluis@ideary.com)
 //
 // (C) 2003 Lluis Sanchez Gual
 
@@ -11,6 +11,7 @@ using System;
 using System.IO;
 using System.Collections;
 using System.Runtime.Serialization;
+using System.Runtime.Remoting.Messaging;
 using System.Reflection;
 
 namespace System.Runtime.Serialization.Formatters.Binary
@@ -20,8 +21,9 @@ namespace System.Runtime.Serialization.Formatters.Binary
 		ObjectIDGenerator _idGenerator = new ObjectIDGenerator();
 		Hashtable _cachedTypes = new Hashtable();
 		Queue _pendingObjects = new Queue();
-		Assembly _corlibAssembly;
 		Hashtable _assemblyCache = new Hashtable();
+
+		static Assembly _corlibAssembly = typeof(string).Assembly;
 
 		ISurrogateSelector _surrogateSelector;
 		StreamingContext _context;
@@ -56,21 +58,26 @@ namespace System.Runtime.Serialization.Formatters.Binary
 		{
 			_surrogateSelector = surrogateSelector;
 			_context = context;
-			_corlibAssembly = GetType().Assembly;
 		}
 
-		public void WriteObjectGraph (BinaryWriter writer, object obj)
+		public void WriteObjectGraph (BinaryWriter writer, object obj, Header[] headers)
 		{
-			writer.Write (BinaryCommon.BinaryHeader);
-
 			_pendingObjects.Clear();
+			if (headers != null) QueueObject (headers);
+			QueueObject (obj);
+			WriteQueuedObjects (writer);
+			WriteSerializationEnd (writer);
+		}
 
-			WriteObjectInstance (writer, obj);
+		public void QueueObject (object obj)
+		{
+			_pendingObjects.Enqueue (obj);
+		}
 
+		public void WriteQueuedObjects (BinaryWriter writer)
+		{
 			while (_pendingObjects.Count > 0)
 				WriteObjectInstance (writer, _pendingObjects.Dequeue());
-
-			writer.Write ((byte) BinaryElement.End);
 		}
 
 		public void WriteObjectInstance (BinaryWriter writer, object obj)
@@ -86,6 +93,11 @@ namespace System.Runtime.Serialization.Formatters.Binary
 			}
 			else
 				WriteObject (writer, id, obj);
+		}
+
+		public static void WriteSerializationEnd (BinaryWriter writer)
+		{
+			writer.Write ((byte) BinaryElement.End);
 		}
 
 		private void WriteObject (BinaryWriter writer, long id, object obj)
@@ -538,7 +550,7 @@ namespace System.Runtime.Serialization.Formatters.Binary
 			}
 		}
 
-		private void WritePrimitiveValue (BinaryWriter writer, object value)
+		public static void WritePrimitiveValue (BinaryWriter writer, object value)
 		{
 			switch (Type.GetTypeCode (value.GetType()))
 			{
@@ -597,15 +609,22 @@ namespace System.Runtime.Serialization.Formatters.Binary
 				case TypeCode.UInt64:
 					writer.Write ((ulong) value);
 					break;
+
+				case TypeCode.String:
+					writer.Write ((string) value);
+					break;
+
+				default:
+					throw new NotSupportedException ("Unsupported primitive type: " + value.GetType().FullName);
 			}
 		}
 
-		private void WriteTypeCode (BinaryWriter writer, Type type)
+		public static void WriteTypeCode (BinaryWriter writer, Type type)
 		{
 			writer.Write ((byte) GetTypeTag (type));
 		}
 
-		private TypeTag GetTypeTag (Type type)
+		public static TypeTag GetTypeTag (Type type)
 		{
 			if (type == typeof (string)) {
 				return TypeTag.String;
@@ -632,12 +651,12 @@ namespace System.Runtime.Serialization.Formatters.Binary
 				return TypeTag.GenericType;
 		}
 
-		private void WriteTypeSpec (BinaryWriter writer, Type type)
+		public void WriteTypeSpec (BinaryWriter writer, Type type)
 		{
 			switch (GetTypeTag (type))
 			{
 				case TypeTag.PrimitiveType:
-					writer.Write ((byte) (Type.GetTypeCode (type) - 1));
+					writer.Write (BinaryCommon.GetTypeCode (type));
 					break;
 
 				case TypeTag.RuntimeType:
@@ -650,7 +669,7 @@ namespace System.Runtime.Serialization.Formatters.Binary
 					break;
 
 				case TypeTag.ArrayOfPrimitiveType:
-					writer.Write ((byte) (Type.GetTypeCode (type.GetElementType()) - 1));
+					writer.Write (BinaryCommon.GetTypeCode (type.GetElementType()));
 					break;
 
 				default:
