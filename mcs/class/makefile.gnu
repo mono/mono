@@ -25,8 +25,8 @@ DIRS =	corlib				\
 	Mono.PEToolkit			\
 	Accessibility			\
 	Microsoft.VisualBasic		\
-	Cscompmgd			#\
-#	System.Windows.Forms
+	Cscompmgd			\
+	System.Windows.Forms
 
 default: all
 
