@@ -69,10 +69,14 @@ namespace Ximian.Mono.Tests
 		{
 			AssertNull (document.DocumentElement);
 			document.LoadXml ("<foo/>");
-			AssertNotNull (document.DocumentElement);
 
+			AssertNotNull (document.DocumentElement);
 			AssertSame (document.FirstChild, document.DocumentElement);
-			AssertSame (document.FirstChild, document.DocumentElement);
+
+			AssertEquals (String.Empty, document.DocumentElement.Prefix);
+			AssertEquals ("foo", document.DocumentElement.LocalName);
+			AssertEquals (String.Empty, document.DocumentElement.NamespaceURI);
+			AssertEquals ("foo", document.DocumentElement.Name);
 		}
 
 		public void TestLoadXmlElementWithAttributes ()

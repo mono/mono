@@ -1,5 +1,10 @@
 2002-03-18  Jason Diamond <jason@injektilo.org>
 
+	* XmlDocument.cs: Fixed typo in Load that was duplicating the LocalName
+	in the prefix.
+
+2002-03-18  Jason Diamond <jason@injektilo.org>
+
 	* XmlTextReader.cs: Don't restore properties after reading last
 	attribute on an element.
 

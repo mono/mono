@@ -1,3 +1,8 @@
+2002-03-19  Jason Diamond <jason@injektilo.org>
+
+	* XmlDocumentTests.cs: Added a test to check an element's names after 
+	loading.
+
 2002-03-17  Kral Ferch <kral_ferch@hotmail.com>
 
 	* XmlDocumentTests.cs: Tests navigation to parents since

@@ -390,7 +390,7 @@ namespace System.Xml
 					break;
 
 				case XmlNodeType.Element:
-					XmlElement element = CreateElement (xmlReader.Name, xmlReader.LocalName, xmlReader.NamespaceURI);
+					XmlElement element = CreateElement (xmlReader.Prefix, xmlReader.LocalName, xmlReader.NamespaceURI);
 					currentNode.AppendChild (element);
 
 					// set the element's attributes.
