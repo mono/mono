@@ -24,6 +24,7 @@
 				<excludes name="Test/**"/>
 				<excludes name="System.Windows.Forms.Test/**"/>
 				<excludes name="Gtk/**"/>
+				<excludes name="SWFTest/**"/>
 				<excludes name="System.Windows.Forms/PictureBox.cs"/>
 				<excludes name="System.Windows.Forms.Design/TODOAttribute.cs"/>
 				<excludes name="System.Windows.Forms.Design/AssemblyInfo.cs"/>
