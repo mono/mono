@@ -26,4 +26,5 @@ clean:
 
 dist: 
 	(c=`pwd`; d=`basename $$c`; cd ..; cp -a $$d mcs-$(VERSION); cd mcs-$(VERSION); make clean; cd ..; \
-	tar czvf mcs-$(VERSION).tar.gz --exclude=CVS --exclude='.#*' --exclude=core --exclude='*~' --exclude='*.exe' mcs-$(VERSION))
+	tar czvf $$d/mcs-$(VERSION).tar.gz --exclude=CVS --exclude='.#*' --exclude=core --exclude='*~' --exclude='*.exe' mcs-$(VERSION); \
+	rm -rf mcs-$(VERSION))
