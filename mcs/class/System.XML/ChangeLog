@@ -1,3 +1,8 @@
+2003-08-14  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
+
+	* System.Xml.dll.sources: Added Mono.Xml.Xsl.Operation/XslComment.cs 
+	  and Mono.Xml/IHasXmlSchemaInfo.cs
+
 2003-08-11  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
 
 	* System.Xml.dll.sources: Added Assembly/Locale.cs

@@ -9,6 +9,7 @@ Mono.Xml.Xsl.Operations/XslAttribute.cs
 Mono.Xml.Xsl.Operations/XslAvt.cs
 Mono.Xml.Xsl.Operations/XslCallTemplate.cs
 Mono.Xml.Xsl.Operations/XslChoose.cs
+Mono.Xml.Xsl.Operations/XslComment.cs
 Mono.Xml.Xsl.Operations/XslCompiledElement.cs
 Mono.Xml.Xsl.Operations/XslCopy.cs
 Mono.Xml.Xsl.Operations/XslCopyOf.cs
@@ -36,6 +37,7 @@ Mono.Xml.Xsl/XslTemplate.cs
 Mono.Xml.Xsl/XslTransformProcessor.cs
 Mono.Xml.Xsl/XsltCompiledContext.cs
 Mono.Xml/IHasXmlParserContext.cs
+Mono.Xml/IHasXmlSchemaInfo.cs
 Mono.Xml/XmlNodeWriter.cs
 System.Xml/IHasXmlNode.cs
 System.Xml/DTDAutomata.cs
