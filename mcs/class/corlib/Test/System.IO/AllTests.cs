@@ -26,6 +26,7 @@ namespace MonoTests.System.IO {
                                 suite.AddTest(PathTest.Suite);
                                 suite.AddTest(StringReaderTest.Suite);
                                 suite.AddTest(StringWriterTest.Suite);
+                                suite.AddTest(FileTest.Suite);
                                 return suite;
                         }
                 }

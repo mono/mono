@@ -1,3 +1,9 @@
+2002-05-07  Nick Drochak  <ndrochak@gol.com>
+
+	* FileTest.cs: Added TestOpen() from Mike Gray.
+	* AllTests.cs: Added missing FileTest.Suite as pointed out by Mike 
+	as well.
+
 2002-05-05  Nick Drochak  <ndrochak@gol.com>
 
 	* StreamReaderTest.cs: Change location of sample file. In some places,

@@ -68,5 +68,17 @@ namespace MonoTests.System.IO
 			Assert ("File filetest/bar should not exist", !File.Exists ("filetest/bar"));
 			Assert ("File filetest/baz should exist", File.Exists ("filetest/baz"));
 		}
+
+		public void TestOpen ()
+		{
+			try {
+				FileStream stream = File.Open("filedoesnotexist", FileMode.Open);
+				Fail ("File 'filedoesnotexist' should not exist");
+			} catch (FileNotFoundException) {
+				// do nothing, this is what we expect
+			} catch (Exception e) {
+				Fail ("Unexpect exception caught: e=" + e.ToString());
+			}
+		}
 	}
 }
