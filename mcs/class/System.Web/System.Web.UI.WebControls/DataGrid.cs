@@ -909,7 +909,7 @@ namespace System.Web.UI.WebControls
 				                          		Style colStyle = null;
 				                          		if(cols[i].Visible)
 				                          		{
-				                          			switch (item.ItemTyle)
+				                          			switch (item.ItemType)
 				                          			{
 				                          				case ListItemType.Header : colStyle = cols[i].HeaderStyleInternal;
 				                          				                           break;

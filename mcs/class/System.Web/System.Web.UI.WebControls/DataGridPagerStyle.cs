@@ -33,6 +33,22 @@ namespace System.Web.UI.WebControls
 			this.owner = owner;
 		}
 
+		internal bool IsPagerOnTop
+		{
+			get {
+				PagerPosition p = Position;
+				return (p == PagerPosition.Top || p == PagerPosition.TopAndBottom);
+			}
+		}
+		
+		internal bool IsPagerOnBottom
+		{
+			get {
+				PagerPosition p = Position;
+				return (p == PagerPosition.Bottom || p == PagerPosition.TopAndBottom);
+			}
+		}
+		
 		public PagerMode Mode
 		{
 			get
