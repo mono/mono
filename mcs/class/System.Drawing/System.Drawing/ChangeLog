@@ -1,3 +1,7 @@
+2004-10-04  Ravindra  <rkumar@novell.com>
+
+	* gdipFunctioncs.cs: Fix from Alois for bug #67383.
+
 2004-09-29  Jackson Harper  <jackson@ximian.com>
 
 	* Graphics.cs: Use FromHdcInternal to set the X display
