@@ -315,6 +315,7 @@ namespace Mono.Tools
 				Console.WriteLine ("RefCount of assembly '" + an.Name + "' increased by one.");
 				if (File.Exists (config_path))
 					File.Copy (config_path, fullPath + an.Name + ".dll" + ".config", force);
+				InstallPackage (libdir, linkPath, an, args [0], Path.GetFileName (args [0]));
 				return 0;
 			}
 
@@ -324,21 +325,7 @@ namespace Mono.Tools
 			}
 
 			File.Copy (args[0], fullPath + an.Name + ".dll", force);
-			if (package_name != String.Empty) {
-				string ref_file = libdir + package_name +
-						Path.DirectorySeparatorChar + Path.GetFileName (args[0]);
-				if (Path.DirectorySeparatorChar == '/') {
-					try {
-						Directory.CreateDirectory (libdir + package_name);
-					} catch {}
-					
-					symlink (linkPath + an.Name + ".dll", ref_file);
-				} else {
-					
-					File.Copy (args[0], ref_file, true);
-				}
-				Console.WriteLine ("Package exported to: " + libdir + package_name);
-			}
+			InstallPackage (libdir, linkPath, an, args [0], Path.GetFileName (args [0]));
 			if (File.Exists (config_path)){
 				File.Copy (config_path, fullPath + an.Name + ".dll" + ".config", force);
 			}
@@ -352,6 +339,26 @@ namespace Mono.Tools
 
 			Console.WriteLine ("{0} installed into the gac ({1})", an.Name, gac_path);
 			return 0;
+		}
+
+		private void InstallPackage (string libdir, string linkPath,
+                                AssemblyName an, string path, string filename)
+		{
+			if (package_name != String.Empty) {
+				string ref_file = libdir + package_name +
+						Path.DirectorySeparatorChar + filename;
+				if (Path.DirectorySeparatorChar == '/') {
+					try {
+						Directory.CreateDirectory (libdir + package_name);
+					} catch {}
+					
+					symlink (linkPath + an.Name + ".dll", ref_file);
+				} else {
+					
+					File.Copy (path, ref_file, true);
+				}
+				Console.WriteLine ("Package exported to: " + libdir + package_name);
+			}
 		}
 
 		private bool EnsureDirectories (string name, string tok)
