@@ -1,3 +1,8 @@
+2003-06-08 Jackson Harper <jackson@latitudegeo.com>
+
+	* AssemblyInfo.cs: Bump version number up (way up) lots of
+	features have been implemented since last version.
+		
 2003-05-19 Jackson Harper <jackson@latitudegeo.com>
 
 	* Driver.cs: Exit with 1 return code when no arguments are supplied.
