@@ -437,7 +437,7 @@ namespace System.Runtime.Remoting.Channels
 		}
 	}
 	
-	public class ExceptionFilterSink: IMessageSink
+	internal class ExceptionFilterSink: IMessageSink
 	{
 		IMessageSink _next;
 		IMessage _call;
