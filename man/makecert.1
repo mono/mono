@@ -1,15 +1,16 @@
 .\" 
 .\" makecert manual page.
 .\" Copyright 2003 Motus Technologies
+.\" Copyright 2004 Novell
 .\" Author:
-.\"   Sebastien Pouliot (spouliot@motus.com)
+.\"   Sebastien Pouliot (sebastien@ximian.com)
 .\"
 .TH Mono "MakeCert"
 .SH NAME
 MakeCert \- Create X.509 certificates for test purposes
 .SH SYNOPSIS
 .PP
-.B MakeCert [options] certificate
+.B makecert [options] certificate
 .SH DESCRIPTION
 Create an X.509 certificate using the provided informations. This
 is useful for testing Authenticode signatures, SSL and S/MIME
@@ -17,68 +18,108 @@ technologies.
 .SH PARAMETERS
 .TP
 .I "-# num"
-Certificate serial number
+Specify the certificate serial number.
 .TP
 .I "-n dn"
-Subject Distinguished Name
+Specify the subject Distinguished Name (DN).
 .TP
 .I "-in dn"
-Issuert Distinguished Name
+Specify the issuer Distinguished Name (DN).
 .TP
 .I "-r"
-Create a self-signed (root) certificate
-.TP
-.I "-sv pkvfile"
-Private key file (.PVK) for the subject (created if missing)
+Create a self-signed, also called root, certificate.
 .TP
 .I "-iv pvkfile"
-Private key file (.PVK) for the issuer
+Specify the private key file (.PVK) for the issuer. The private key in the 
+specified file will be used to sign the new certificate.
 .TP
 .I "-ic certfile"
-Extract the issuer's name from the specified certificate
+Extract the issuer's name from the specified certificate file - i.e. the
+subject name of the specified certificate becomes the issuer name of the
+new certificate.
+.TP
+.I "-in name"
+Use the issuer's name from the specified parameter.
+.TP
+.I "-ik container"
+Specify the key container name to be used for the issuer.
+.TP
+.I "-iky [signature | exchange | #]"
+Specify the key number to be used in the provider (when used with -ik).
+.TP
+.I "-ip provider"
+Specify the cryptographic provider to be used for the issuer.
+.TP
+.I "-ir [localmachine | currentuser]"
+Specify the provider will search the user or the machine keys containers for
+the issuer.
+.TP
+.I "-iy number"
+Specify the provider type to be used for the issuer.
+.TP
+.I "-sv pkvfile"
+Specify the private key file (.PVK) for the subject. The public part of the
+key will be inserted into the created certificate. If non-existant the 
+specified file will be created with a new key pair (default to 1024 bits RSA
+key pair).
+.TP
+.I "-sk container"
+Specify the key container name to be used for the subject.
+.TP
+.I "-sky [signature | exchange | #]"
+Specify the key number to be used in the provider (when used with -sk).
+.TP
+.I "-sp provider"
+Specify the cryptographic provider to be used for the subject.
+.TP
+.I "-sr [localmachine | currentuser]"
+Specify the provider will search the user or the machine keys containers for
+the subject.
+.TP
+.I "-sy number"
+Specify the provider type to be used for the issuer.
+.TP
+.I "-a hash"
+Select hash algorithm. Only MD5 and SHA1 algorithms are supported.
+.TP
+.I "-b date"
+The date since when the certificate is valid (notBefore).
+.TP
+.I "-e date"
+The date until when the certificate is valid (notAfter).
+.TP
+.I "-m number"
+Specify the certificate validity period in months. This is added to the
+notBefore validity date which can be set with -b or will default to the 
+current date/time.
+.TP
+.I "-cy [authority|end]"
+Basic constraints. Select Authority or End-Entity certificate. Only Authority
+certificates can be used to sign other certificates (-ic). End-Entity can
+be used by clients (e.g. Authenticode, S/MIME) or servers (e.g. SSL).
+.TP
+.I "-h number"
+Add a path length restriction to the certificate chain. This is only 
+applicable for certificates that have BasicConstraint set to Authority (-cy 
+authority). This is used to limit the chain of certificates than can be
+issued under this authority.
+.TP
+.I "-eku oid[,oid]"
+Add some extended key usage OID to the certificate.
 .TP
 .I "-?"
 Help (display this help message)
 .TP
 .I "-!"
 Extended help (for advanced options)
-.TP
-.I "-a hash"
-Select hash algorithm. Only MD5 and SHA1 are supported.
-.TP
-.I "-b date"
-The date since when the certificate is valid (notBefore).
-.TP
-.I "-cy [authority|end]"
-Basic constraints. Select Authority or End-Entity certificate.
-.TP
-.I "-e date"
-The date until when the certificate is valid (notAfter).
-.TP
-.I "-eku oid[,oid]"
-Add some extended key usage OID to the certificate.
-.TP
-.I "-h number"
-Add a path length restriction to the certificate chain.
-.TP
-.I "-ic cert"
-Take the issuer's name from the specified certificate.
-.TP
-.I "-in name"
-Take the issuer's name from the specified parameter.
-.TP
-.I "-iv pvkfile"
-Sign the certificate using the private key inside the PVK file.
-.TP
-.I "-m number"
-Certificate validity period (in months).
-.TP
-.I "-sv pvkfile"
-Create a new PVK file if non-existant, otherwise use the PVK file as the subject public key.
+.SH KNOWN RESTRICTIONS
+Compared to the Windows version some options aren't supported (-$, -d, -l, 
+-nscp, -is, -sc, -ss). Also PVK files with passwords aren't supported.
 .SH AUTHOR
 Written by Sebastien Pouliot
 .SH COPYRIGHT
 Copyright (C) 2003 Motus Technologies. 
+Copyright (C) 2004 Novell. 
 Released under BSD license.
 .SH MAILING LISTS
 Visit http://mail.ximian.com/mailman/mono-list for details.
