@@ -55,6 +55,7 @@ namespace Mono.Languages
 		static string target_ext = ".exe";
 
 		static bool want_debugging_support = false;
+		static ArrayList debug_arglist = new ArrayList ();
 
 		static bool parse_only = false;
 		static bool timestamps = false;
@@ -68,15 +69,15 @@ namespace Mono.Languages
 		static Hashtable source_files = new Hashtable ();
 
 		//
-		// A list of resource files
-		//
-		static ArrayList resources = new ArrayList();
-		
-		//
 		// An array of the defines from the command line
 		//
 		static ArrayList defines;
 
+		//
+		// A list of resource files
+		//
+		static ArrayList resources = new ArrayList();
+		
 		//
 		// Last time we took the time
 		//
@@ -606,6 +607,7 @@ Options:
 						if ((i + 1) >= argc)
 						{
 							Usage (true);
+							Console.WriteLine("Missing argument to --resource"); 
 							return;
 						}
 						
@@ -690,10 +692,21 @@ Options:
 					case "--timestamp":
 						timestamps = true;
 						last_time = DateTime.Now;
-						continue;
+						debug_arglist.Add("timestamp");
+ 						continue;
 
 					case "--debug": case "-g":
 						want_debugging_support = true;
+						continue;
+
+					case "--debug-args":
+						if ((i + 1) >= argc){
+							Console.WriteLine ("--debug-args requires an argument");
+							error_count++;
+							return;
+						}
+						char[] sep = { ',' };
+						debug_arglist.AddRange (args [++i].Split (sep));
 						continue;
 
 					case "--noconfig":
@@ -772,7 +785,9 @@ Options:
 					output_file = first_source + target_ext;
 			}
 
-			CodeGen.Init (output_file, output_file, want_debugging_support);
+			string[] debug_args = new string [debug_arglist.Count];
+			debug_arglist.CopyTo(debug_args);
+			CodeGen.Init (output_file, output_file, want_debugging_support, debug_args);
 
 			TypeManager.AddModule (CodeGen.ModuleBuilder);
 

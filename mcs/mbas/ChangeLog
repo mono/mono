@@ -1,4 +1,8 @@
-2002-05-27  Rafael Teixeira  <rafelteixeirabr@hotmail.com>
+2002-05-31  Rafael Teixeira <rafaelteixeirabr@hotmail.com>
+	* merged codegen.cs from mcs
+	* altered Driver.cs to work with new codegen.cs
+
+2002-05-27  Rafael Teixeira <rafaelteixeirabr@hotmail.com>
 
 	* merged all I could from mcs source files into mbas
 	* added VS.NET Solution and Project Files for mbas

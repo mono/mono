@@ -176,6 +176,10 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "mb-parser.jay"
+                    BuildAction = "None"
+                />
+                <File
                     RelPath = "mb-tokenizer.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
