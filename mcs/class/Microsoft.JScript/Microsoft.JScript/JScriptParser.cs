@@ -142,12 +142,14 @@ namespace Microsoft.JScript
 			initialize();
 		}
 		
-	public void program() //throws RecognitionException, TokenStreamException
+	public void program(
+		ASTList astList
+	) //throws RecognitionException, TokenStreamException
 {
 		
 		
 		try {      // for error handling
-			source_elements();
+			source_elements(astList);
 		}
 		catch (RecognitionException ex)
 		{
@@ -164,12 +166,19 @@ namespace Microsoft.JScript
 		}
 	}
 	
-	public void source_elements() //throws RecognitionException, TokenStreamException
+	public void source_elements(
+		ASTList astList
+	) //throws RecognitionException, TokenStreamException
 {
 		
+		AST ast = null;
 		
 		try {      // for error handling
-			source_element();
+			ast=source_element();
+			if (0==inputState.guessing)
+			{
+				if (ast != null) astList. Add (ast);
+			}
 			{
 				switch ( LA(1) )
 				{
@@ -190,7 +199,7 @@ namespace Microsoft.JScript
 				case LITERAL_var:
 				case LITERAL_function:
 				{
-					source_elements();
+					source_elements(astList);
 					break;
 				}
 				case EOF:
@@ -220,8 +229,14 @@ namespace Microsoft.JScript
 		}
 	}
 	
-	public void source_element() //throws RecognitionException, TokenStreamException
+	public AST  source_element() //throws RecognitionException, TokenStreamException
 {
+		AST ast;
+		
+		
+			ast = null;
+			Statement stm = null;
+			FunctionDeclaration fd = null;
 		
 		
 		try {      // for error handling
@@ -243,12 +258,20 @@ namespace Microsoft.JScript
 			case LITERAL_try:
 			case LITERAL_var:
 			{
-				statement();
+				stm=statement();
+				if (0==inputState.guessing)
+				{
+					ast = stm;
+				}
 				break;
 			}
 			case LITERAL_function:
 			{
-				function_declaration();
+				fd=function_declaration();
+				if (0==inputState.guessing)
+				{
+					ast = fd;
+				}
 				break;
 			}
 			default:
@@ -270,10 +293,16 @@ namespace Microsoft.JScript
 				throw;
 			}
 		}
+		return ast;
 	}
 	
-	public void statement() //throws RecognitionException, TokenStreamException
+	public Statement  statement() //throws RecognitionException, TokenStreamException
 {
+		Statement stm;
+		
+		
+			stm = null; 
+			VariableStatement varStm = null;
 		
 		
 		try {      // for error handling
@@ -286,7 +315,11 @@ namespace Microsoft.JScript
 			}
 			case LITERAL_var:
 			{
-				variable_statement();
+				varStm=variable_statement();
+				if (0==inputState.guessing)
+				{
+					stm = (Statement) varStm;
+				}
 				break;
 			}
 			case SEMI_COLON:
@@ -365,22 +398,31 @@ namespace Microsoft.JScript
 				throw;
 			}
 		}
+		return stm;
 	}
 	
-	public void function_declaration() //throws RecognitionException, TokenStreamException
+	public FunctionDeclaration  function_declaration() //throws RecognitionException, TokenStreamException
 {
+		FunctionDeclaration fd;
 		
+		Token  id = null;
+		fd = new FunctionDeclaration ();
 		
 		try {      // for error handling
 			match(LITERAL_function);
+			id = LT(1);
 			match(IDENTIFIER);
+			if (0==inputState.guessing)
+			{
+				fd.id = id.getText ();
+			}
 			match(LPAREN);
 			{
 				switch ( LA(1) )
 				{
 				case IDENTIFIER:
 				{
-					formal_parameter_list();
+					formal_parameter_list(fd.parameters);
 					break;
 				}
 				case RPAREN:
@@ -395,7 +437,7 @@ namespace Microsoft.JScript
 			}
 			match(RPAREN);
 			match(LBRACE);
-			function_body();
+			function_body(fd.funcBody);
 			match(RBRACE);
 		}
 		catch (RecognitionException ex)
@@ -411,6 +453,7 @@ namespace Microsoft.JScript
 				throw;
 			}
 		}
+		return fd;
 	}
 	
 	public void block() //throws RecognitionException, TokenStreamException
@@ -468,13 +511,15 @@ namespace Microsoft.JScript
 		}
 	}
 	
-	public void variable_statement() //throws RecognitionException, TokenStreamException
+	public VariableStatement  variable_statement() //throws RecognitionException, TokenStreamException
 {
+		VariableStatement varStm;
 		
+		varStm = new VariableStatement ();
 		
 		try {      // for error handling
 			match(LITERAL_var);
-			variable_declaration_list();
+			variable_declaration_list(varStm);
 			match(SEMI_COLON);
 		}
 		catch (RecognitionException ex)
@@ -490,6 +535,7 @@ namespace Microsoft.JScript
 				throw;
 			}
 		}
+		return varStm;
 	}
 	
 	public void empty_statement() //throws RecognitionException, TokenStreamException
@@ -1356,19 +1402,26 @@ _loop28_breakloop:			;
 		}
 	}
 	
-	public void variable_declaration_list() //throws RecognitionException, TokenStreamException
+	public void variable_declaration_list(
+		VariableStatement varStm
+	) //throws RecognitionException, TokenStreamException
 {
 		
+		VariableDeclaration varDecl = null;
 		
 		try {      // for error handling
-			variable_declaration();
+			varDecl=variable_declaration();
+			if (0==inputState.guessing)
+			{
+				varStm.Add (varDecl);
+			}
 			{
 				switch ( LA(1) )
 				{
 				case COMMA:
 				{
 					match(COMMA);
-					variable_declaration_list();
+					variable_declaration_list(varStm);
 					break;
 				}
 				case SEMI_COLON:
@@ -1397,12 +1450,20 @@ _loop28_breakloop:			;
 		}
 	}
 	
-	public void variable_declaration() //throws RecognitionException, TokenStreamException
+	public VariableDeclaration  variable_declaration() //throws RecognitionException, TokenStreamException
 {
+		VariableDeclaration varDecl;
 		
+		Token  id = null;
+		varDecl = new VariableDeclaration ();
 		
 		try {      // for error handling
+			id = LT(1);
 			match(IDENTIFIER);
+			if (0==inputState.guessing)
+			{
+				varDecl.Id = id.getText ();
+			}
 			{
 				switch ( LA(1) )
 				{
@@ -1436,6 +1497,7 @@ _loop28_breakloop:			;
 				throw;
 			}
 		}
+		return varDecl;
 	}
 	
 	public void initialiser() //throws RecognitionException, TokenStreamException
@@ -2813,7 +2875,7 @@ _loop86_breakloop:				;
 				{
 				case IDENTIFIER:
 				{
-					formal_parameter_list();
+					formal_parameter_list(null);
 					break;
 				}
 				case RPAREN:
@@ -2828,7 +2890,7 @@ _loop86_breakloop:				;
 			}
 			match(RPAREN);
 			match(LBRACE);
-			function_body();
+			function_body(null);
 			match(RBRACE);
 		}
 		catch (RecognitionException ex)
@@ -3193,19 +3255,27 @@ _loop101_breakloop:			;
 		}
 	}
 	
-	public void formal_parameter_list() //throws RecognitionException, TokenStreamException
+	public void formal_parameter_list(
+		FormalParameterList param
+	) //throws RecognitionException, TokenStreamException
 {
 		
+		Token  id = null;
 		
 		try {      // for error handling
+			id = LT(1);
 			match(IDENTIFIER);
+			if (0==inputState.guessing)
+			{
+				param.Add (id.getText ());
+			}
 			{
 				switch ( LA(1) )
 				{
 				case COMMA:
 				{
 					match(COMMA);
-					formal_parameter_list();
+					formal_parameter_list(param);
 					break;
 				}
 				case RPAREN:
@@ -3234,12 +3304,14 @@ _loop101_breakloop:			;
 		}
 	}
 	
-	public void function_body() //throws RecognitionException, TokenStreamException
+	public void function_body(
+		ASTList funcBody
+	) //throws RecognitionException, TokenStreamException
 {
 		
 		
 		try {      // for error handling
-			source_elements();
+			source_elements(funcBody);
 		}
 		catch (RecognitionException ex)
 		{
