@@ -1,3 +1,8 @@
+2004-03-22 Atsushi Enomoto <atsushi@ximian.com>
+
+	* ScriptCompilerInfo.cs : Modified compilation processing. Now it uses
+	  CodeDom. Compilation error should be caught. This fixes bug #55875.
+
 2004-03-13 Atsushi Enomoto <atsushi@ximian.com>
 
 	* XslStylesheet.cs : "version" attribute is also required for embedded

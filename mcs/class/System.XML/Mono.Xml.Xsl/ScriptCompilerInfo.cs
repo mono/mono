@@ -20,6 +20,8 @@ using System.Xml;
 using System.Xml.Schema;
 using System.Xml.XPath;
 using System.Xml.Xsl;
+using Microsoft.CSharp;
+using Microsoft.VisualBasic;
 
 namespace Mono.Xml.Xsl
 {
@@ -38,6 +40,8 @@ namespace Mono.Xml.Xsl
 			set { defaultCompilerOptions = value; }
 		}
 
+		public abstract CodeDomProvider CodeDomProvider { get; }
+
 		public abstract string Extension { get; }
 
 		public abstract string SourceTemplate { get; }
@@ -47,6 +51,40 @@ namespace Mono.Xml.Xsl
 			return String.Concat (DefaultCompilerOptions, " ", targetFileName);
 		}
 
+
+#if true // Use CodeDom
+		public virtual Type GetScriptClass (string code, string classSuffix, XPathNavigator scriptNode, Evidence evidence)
+		{
+			PermissionSet ps = SecurityManager.ResolvePolicy (evidence);
+			if (ps != null)
+				ps.Demand ();
+
+			ICodeCompiler compiler = CodeDomProvider.CreateCompiler ();
+			CompilerParameters parameters = new CompilerParameters ();
+			parameters.CompilerOptions = DefaultCompilerOptions;
+
+			// get source filename
+			string filename = String.Empty;
+			try {
+				if (scriptNode.BaseURI != String.Empty)
+					filename = new Uri (scriptNode.BaseURI).LocalPath;
+			} catch (FormatException) {
+			}
+
+			// get source location
+			IXmlLineInfo li = scriptNode as IXmlLineInfo;
+			string lineInfoLine = li != null ? "\n#line " + li.LineNumber + " \"" + filename + "\"" : String.Empty;
+
+			string source = SourceTemplate.Replace ("{0}", DateTime.Now.ToString ()).Replace ("{1}", classSuffix).Replace ("{2}", lineInfoLine + code);
+
+			CompilerResults res = compiler.CompileAssemblyFromSource (parameters, source);
+			if (res.Errors.Count != 0)
+				throw new XsltCompileException ("Stylesheet script compile error: \n" + FormatErrorMessage (res) /*+ "Code :\n" + source*/, null, scriptNode);
+			if (res.CompiledAssembly == null)
+				throw new XsltCompileException ("Cannot compile stylesheet script", null, scriptNode);
+			return res.CompiledAssembly.GetType ("GeneratedAssembly.Script" + classSuffix);
+		}
+#else // obsolete code - uses external process
 		[MonoTODO ("Should use Assembly.LoadFile() instead of LoadFrom() after its implementation has finished.")]
 		public virtual Type GetScriptClass (string code, string classSuffix, XPathNavigator scriptNode, Evidence evidence)
 		{
@@ -66,7 +104,9 @@ namespace Mono.Xml.Xsl
 				if (ps != null)
 					ps.Demand ();
 				sw = File.CreateText (tmpbase + Extension);
-				sw.WriteLine (SourceTemplate.Replace ("{0}", DateTime.Now.ToString ()).Replace ("{1}", classSuffix).Replace ("{2}", code));
+				IXmlLineInfo li = scriptNode as IXmlLineInfo;
+				string lineInfoLine = li != null ? "\n#line " + li.LineNumber + " \"" + scriptNode.BaseURI + "\"\n" : String.Empty;
+				sw.WriteLine (SourceTemplate.Replace ("{0}", DateTime.Now.ToString ()).Replace ("{1}", classSuffix).Replace ("{2}", lineInfoLine + code));
 
 				sw.Close ();
 				psi.FileName = CompilerCommand;
@@ -75,7 +115,7 @@ namespace Mono.Xml.Xsl
 				proc.Start ();
 //				Console.WriteLine (proc.StandardOutput.ReadToEnd ());
 //				Console.WriteLine (proc.StandardError.ReadToEnd ());
-				proc.WaitForExit (); // FIXME: should we configure timeout?
+				proc.WaitForExit (); // should we configure timeout?
 				Assembly generated = Assembly.LoadFrom (tmpbase + ".dll");
 
 				if (generated == null)
@@ -93,6 +133,24 @@ namespace Mono.Xml.Xsl
 				}
 			}
 		}
+#endif
+
+		private string FormatErrorMessage (CompilerResults res)
+		{
+			string s = String.Empty;
+			foreach (CompilerError e in res.Errors) {
+				object [] parameters = new object [] {"\n",
+					e.FileName,
+					" line ",
+					e.Line,
+					e.IsWarning ? " WARNING: " : " ERROR: ",
+					e.ErrorNumber,
+					": ",
+					e.ErrorText};
+				s += String.Concat (parameters);
+			}
+			return s;
+		}
 	}
 
 	internal class CSharpCompilerInfo : ScriptCompilerInfo
@@ -103,7 +161,11 @@ namespace Mono.Xml.Xsl
 #if MS_NET
 			this.CompilerCommand = "csc.exe";
 #endif
-			this.DefaultCompilerOptions = "/t:library /r:Microsoft.VisualBasic.dll";
+			this.DefaultCompilerOptions = "/t:library /r:System.dll /r:System.Xml.dll /r:Microsoft.VisualBasic.dll";
+		}
+
+		public override CodeDomProvider CodeDomProvider {
+			get { return new CSharpCodeProvider (); }
 		}
 
 		public override string Extension {
@@ -145,6 +207,10 @@ public class Script{1}
 			this.DefaultCompilerOptions = "/t:library  /r:System.dll /r:System.XML.dll /r:Microsoft.VisualBasic.dll";
 		}
 
+		public override CodeDomProvider CodeDomProvider {
+			get { return new VBCodeProvider (); }
+		}
+
 		public override string Extension {
 			get { return ".vb"; }
 		}
@@ -174,6 +240,14 @@ end namespace
 
 	internal class JScriptCompilerInfo : ScriptCompilerInfo
 	{
+		static Type providerType;
+
+		static JScriptCompilerInfo ()
+		{
+			Assembly jsasm = Assembly.LoadWithPartialName ("Microsoft.JScript.dll", null);
+			providerType = jsasm.GetType ("Microsoft.JScript.JScriptCodeProvider");
+		}
+
 		public JScriptCompilerInfo ()
 		{
 			this.CompilerCommand = "mjs";
@@ -181,6 +255,10 @@ end namespace
 			this.CompilerCommand = "jsc.exe";
 #endif
 			this.DefaultCompilerOptions = "/t:library /r:Microsoft.VisualBasic.dll";
+		}
+
+		public override CodeDomProvider CodeDomProvider {
+			get { return (CodeDomProvider) Activator.CreateInstance (providerType); }
 		}
 
 		public override string Extension {
@@ -209,26 +287,6 @@ class Script{1} {
 ";
 			}
 		}
-
-#if !MS_NET
-		public override Type GetScriptClass (string code, string classSuffix, XPathNavigator scriptNode, Evidence evidence)
-		{
-			PermissionSet ps = SecurityManager.ResolvePolicy (evidence);
-			if (ps != null)
-				ps.Demand ();
-			Assembly jsasm = Assembly.LoadWithPartialName ("Microsoft.JScript.dll", evidence);
-			Type providerType = jsasm.GetType ("Microsoft.JScript.JScriptCodeProvider");
-			CodeDomProvider provider = (CodeDomProvider) Activator.CreateInstance (providerType);
-
-			ICodeCompiler compiler = provider.CreateCompiler ();
-			CompilerParameters parameters = new CompilerParameters ();
-			parameters.CompilerOptions = DefaultCompilerOptions;
-			CompilerResults res = compiler.CompileAssemblyFromSource (parameters, SourceTemplate.Replace ("{0}", DateTime.Now.ToString ()).Replace ("{1}", classSuffix).Replace ("{2}", code));
-			if (res.CompiledAssembly == null)
-				throw new XsltCompileException ("Cannot compile stylesheet script", null, scriptNode);
-			return res.CompiledAssembly.GetType ("GeneratedAssembly.Script" + classSuffix);
-		}
-#endif
 	}
 }
 
