@@ -2,7 +2,7 @@
 
 	* DataGridPagerStyle.cs: Name of view state attribute is
 	PagerVisible not Visible. Call owner.OnPagerChanged when the pager
-	visibility is changed.
+	visibility is changed. Patch by Yaron Shkop.
 	
 2003-11-03 Jackson Harper <jackson@ximian.com>
 
