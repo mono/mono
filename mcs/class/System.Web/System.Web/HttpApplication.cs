@@ -709,6 +709,7 @@ namespace System.Web
 		HttpModuleCollection _ModuleCollection;
 		HttpSessionState _Session;
 		HttpApplicationState _appState;
+		string assemblyLocation;
 
 		bool _InPreRequestResponseMode;
 #endregion
@@ -717,6 +718,7 @@ namespace System.Web
 
 		public HttpApplication ()
 		{
+			assemblyLocation = GetType ().Assembly.Location;
 		}
 
 #endregion
@@ -951,6 +953,10 @@ namespace System.Web
 
 #region Properties
 
+		internal string AssemblyLocation {
+			get { return assemblyLocation; }
+		}
+		
 		[Browsable (false)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public HttpApplicationState Application {

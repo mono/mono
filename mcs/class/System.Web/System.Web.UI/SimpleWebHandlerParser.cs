@@ -47,6 +47,10 @@ namespace System.Web.UI
 			AddDependency (physicalPath);
 
 			assemblies = new ArrayList ();
+			string location = Context.ApplicationInstance.AssemblyLocation;
+			if (location != typeof (TemplateParser).Assembly.Location)
+				assemblies.Add (location);
+
 			assemblies.AddRange (CompilationConfig.Assemblies);
 			if (CompilationConfig.AssembliesInBin)
 				AddAssembliesInBin ();

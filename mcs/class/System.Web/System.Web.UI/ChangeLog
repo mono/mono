@@ -1,3 +1,23 @@
+2003-10-22  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* DesignTimeTemplateParser.cs: added FIXME related to PageParser.
+
+	* PageParser.cs: initialize the parser in the constructor, not just before
+	compiling and reference the application assembly.
+
+	* SimpleWebHandlerParser.cs: reference the assembly that contains the
+	application Type.
+
+	* TemplateControl.cs:
+	* TemplateControlParser.cs: fix BenM #1 bug. Now we pass correct virtual
+	path and physical path when compiling a user control.
+	
+	* TemplateParser.cs: new AddApplicationAssembly ().
+	* UserControlParser.cs: now we get valid values in the ctor.
+
+	Referencing the application assembly fixes bug #49652.
+	
+
 2003-10-18  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* TemplateControl.cs: moved NoParamsInvoker class to its own file.

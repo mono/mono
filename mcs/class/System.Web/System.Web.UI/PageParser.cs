@@ -10,6 +10,7 @@ using System;
 using System.Collections;
 using System.Web;
 using System.Web.Compilation;
+using System.Web.Util;
 
 namespace System.Web.UI
 {
@@ -18,12 +19,25 @@ namespace System.Web.UI
 		bool enableSessionState = true;
 		bool readonlySessionState;
 
+		// FIXME: this is here just for DesignTimeTemplateParser. Anything to do?
+		internal PageParser ()
+		{
+		}
+		
+		internal PageParser (string virtualPath, string inputFile, HttpContext context)
+		{
+			Context = context;
+			BaseVirtualDir = UrlUtils.GetDirectory (virtualPath);
+			InputFile = inputFile;
+			AddApplicationAssembly ();
+		}
+
 		public static IHttpHandler GetCompiledPageInstance (string virtualPath,
 								    string inputFile, 
 								    HttpContext context)
 		{
-			PageParser pp = new PageParser ();
-			IHttpHandler h = (IHttpHandler) pp.GetCompiledInstance (virtualPath, inputFile, context);
+			PageParser pp = new PageParser (virtualPath, inputFile, context);
+			IHttpHandler h = (IHttpHandler) pp.GetCompiledInstance ();
 			return h;
 		}
 

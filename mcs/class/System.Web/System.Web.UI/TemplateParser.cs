@@ -62,6 +62,13 @@ namespace System.Web.UI
 			language = CompilationConfig.DefaultLanguage;
 		}
 
+		internal void AddApplicationAssembly ()
+		{
+			string location = Context.ApplicationInstance.AssemblyLocation;
+			if (location != typeof (TemplateParser).Assembly.Location)
+				assemblies.Add (location);
+		}
+
 		protected abstract Type CompileIntoType ();
 
 		internal virtual void HandleOptions (object obj)

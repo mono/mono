@@ -41,7 +41,7 @@ namespace System.Web.UI
 		private static TemplateParser InitParser (DesignTimeParseData data)
 		{
 			// TODO create the parser and set data
-			TemplateParser NewParser = new PageParser();
+			TemplateParser NewParser = new PageParser(); // see FIXME in PageParser
 			// = data.DesignerHost;
 			// = data.DataBindingHandler;
 			// = data.ParseText;

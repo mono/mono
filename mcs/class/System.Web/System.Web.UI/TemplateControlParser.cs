@@ -30,10 +30,8 @@ namespace System.Web.UI
 			base.ProcessMainAttributes (atts);
 		}
 
-		internal object GetCompiledInstance (string virtualPath, string inputFile, HttpContext context)
+		internal object GetCompiledInstance ()
 		{
-			Context = context;
-			InputFile = inputFile;
 			Type type = CompileIntoType ();
 			if (type == null)
 				return null;
@@ -91,7 +89,10 @@ namespace System.Web.UI
 				} catch (Exception e) {
 					throw new ParseException (Location, e.Message);
 				}
-				Type type = UserControlParser.GetCompiledType (BaseVirtualDir, src, Context);
+
+				string vpath = UrlUtils.Combine (BaseVirtualDir, src);
+				string realpath = MapPath (src);
+				Type type = UserControlParser.GetCompiledType (vpath, realpath, Context);
 				AddAssembly (type.Assembly, true);
 				RootBuilder.Foundry.RegisterFoundry (tagprefix, tagname, type);
 				return;

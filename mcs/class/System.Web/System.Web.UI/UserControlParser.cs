@@ -19,9 +19,9 @@ namespace System.Web.UI
 		internal UserControlParser (string virtualPath, string inputFile, HttpContext context)
 		{
 			Context = context;
-			string vp = UrlUtils.Combine (virtualPath, inputFile);
-			BaseVirtualDir = UrlUtils.GetDirectory (vp);
-			InputFile = context.Request.MapPath (vp);
+			BaseVirtualDir = UrlUtils.GetDirectory (virtualPath);
+			InputFile = inputFile;
+			AddApplicationAssembly ();
 		}
 		
 		public static Type GetCompiledType (string virtualPath, string inputFile, HttpContext context)

@@ -122,7 +122,9 @@ namespace System.Web.UI {
 			if (virtualPath == null)
 				throw new ArgumentNullException ("virtualPath");
 
-			return UserControlParser.GetCompiledType (TemplateSourceDirectory, virtualPath, Context);
+			string vpath = UrlUtils.Combine (TemplateSourceDirectory, virtualPath);
+			string realpath = Context.Request.MapPath (vpath);
+			return UserControlParser.GetCompiledType (vpath, realpath, Context);
 		}
 
 		public Control LoadControl (string virtualPath)
