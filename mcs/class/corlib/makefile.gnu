@@ -1,5 +1,6 @@
 topdir = ../..
 
+TEST_DIR= Test
 LIBRARY = ../lib/corlib.dll
 
 LIB_LIST = unix.args

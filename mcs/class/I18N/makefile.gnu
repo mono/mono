@@ -5,7 +5,7 @@ DIRS =	Common West MidEast CJK Other Rare
 
 default: all
 
-all clean:
+all clean test:
 	@for i in $(DIRS) ; do \
 		if [ -d "$$i" ] && [ -f "$$i/makefile.gnu" ] ; then	\
 			(cd $$i && $(MAKE) -f makefile.gnu $@) || exit 1; \

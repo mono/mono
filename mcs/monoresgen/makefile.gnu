@@ -14,5 +14,7 @@ install: all
 	mkdir -p $(prefix)/bin/
 	$(INSTALL) -m 755 monoresgen.exe $(prefix)/bin/
 
+test:
+
 clean:
 	rm -f monoresgen.exe

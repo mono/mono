@@ -9,3 +9,5 @@ all install clean:
 		fi	\
 	done
 
+test:
+

@@ -57,10 +57,11 @@ System.Diagnostics/DebugTest.cs
 System.Diagnostics/StackFrameTest.cs
 System.Diagnostics/StackTraceTest.cs
 System.Diagnostics/TextWriterTraceListenerTest.cs
-System.IO/PathTest.cs
 System.IO/AllTests.cs
 System.IO/FileTest.cs
+System.IO/BinaryReaderTest.cs
 System.IO/MemoryStreamTest.cs
+System.IO/PathTest.cs
 System.IO/StreamReaderTest.cs
 System.IO/StreamWriterTest.cs
 System.IO/StringReaderTest.cs
@@ -77,8 +78,9 @@ System.Security.Permissions/FileIOPermissionTest.cs
 System.Text/AllTests.cs
 System.Text/StringBuilderTest.cs
 System.Text/ASCIIEncodingTest.cs
-System.Runtime.Serialization/ObjectIDGeneratorTests.cs
 System.Runtime.Serialization/AllTests.cs
+System.Runtime.Serialization/FormatterServicesTests.cs
+System.Runtime.Serialization/ObjectIDGeneratorTests.cs
 System.Globalization/AllTests.cs
 System.Globalization/CalendarTest.cs
 System.Security/AllTests.cs

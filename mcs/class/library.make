@@ -52,3 +52,10 @@ install: all
 	mkdir -p $(prefix)/lib/
 	$(INSTALL) -m 644 $(LIBRARY) $(prefix)/lib/
 
+ifdef TEST_DIR
+test:
+	$(MAKE) -C $(TEST_DIR) -f makefile.gnu $@
+else
+test:
+endif
+

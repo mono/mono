@@ -36,7 +36,7 @@ TEST_TOKENIZER_SOURCES = test-token.cs $(COMMON_SOURCES)
 
 all: mcs.exe
 
-mcs.exe: $(COMPILER_SOURCES)
+mcs.exe: $(COMPILER_SOURCES) 
 	$(MCS) $(MCS_FLAGS) -o $@ $(COMPILER_SOURCES)
 
 mcs-mono2.exe: $(COMPILER_SOURCES)
@@ -51,4 +51,6 @@ clean:
 install: all
 	mkdir -p $(prefix)/bin/
 	$(INSTALL) -m 755 mcs.exe $(prefix)/bin/
+
+test:
 

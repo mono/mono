@@ -6,3 +6,5 @@ clean:
 
 install: all
 
+test:
+
