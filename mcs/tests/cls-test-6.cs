@@ -45,3 +45,12 @@ public class CLSClass_2 {
     }
 
 }
+
+public class X1 {
+    [CLSCompliant (false)]
+    public void M2 (int i) {}
+}
+
+public class X2: X1 {
+    public void M2 (ref int i) {}
+}
