@@ -45,6 +45,9 @@ namespace System
 	public sealed class Activator
 	{
 		const BindingFlags _flags = BindingFlags.CreateInstance | BindingFlags.Public | BindingFlags.Instance;
+		const BindingFlags _accessFlags = BindingFlags.DeclaredOnly | BindingFlags.FlattenHierarchy | BindingFlags.IgnoreCase | 
+											BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public |
+											BindingFlags.Static;
 
 		private Activator ()
 		{
@@ -199,6 +202,11 @@ namespace System
 		
 			if (type.IsAbstract)
 				throw new MemberAccessException (Locale.GetText ("Cannot create an abstract class."));
+				
+			// It seems to apply the same rules documented for InvokeMember: "If the type of lookup
+			// is omitted, BindingFlags.Public | BindingFlags.Instance will apply".
+			if ((bindingAttr & _accessFlags) == 0)
+				bindingAttr |= BindingFlags.Public | BindingFlags.Instance;
 
 			int length = 0;
 			if (args != null)
