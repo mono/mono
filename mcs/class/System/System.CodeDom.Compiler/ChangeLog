@@ -1,3 +1,7 @@
+2002-11-30 Jackson Harper <jackson@latitudegeo.com>
+
+	* CodeCompiler.cs: Added stub
+
 2002-09-11  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* CodeDomProvider.cs:
