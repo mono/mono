@@ -32,9 +32,9 @@ using System;
 
 namespace Microsoft.JScript {
 
-	public sealed class InstanceOf : BinaryOp {
+	public sealed class Instanceof : BinaryOp {
 
-		internal InstanceOf ()
+		internal Instanceof ()
 			: base (null, null, (JSToken) 0)
 		{
 		}
