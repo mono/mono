@@ -5,7 +5,9 @@ lib_LTLIBRARIES= libMonoPosixHelper.la
 endif
 
 libMonoPosixHelper_la_SOURCES = \
-	map.c map.h macros.c
+	map.c map.h macros.c zlib_macros.c
+
+libMonoPosixHelper_la_LIBADD = -lz
 
 # 
 # Use this target to refresh the values in map.[ch]
