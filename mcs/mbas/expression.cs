@@ -2249,6 +2249,9 @@ namespace Mono.MonoBASIC {
 					case Operator.Division :
 						fqn = "ObjectType.DivObj";
 						break;
+					case Operator.IntDivision :
+						fqn = "ObjectType.IDivObj";
+						break;
 					case Operator.Modulus :
 						fqn = "ObjectType.ModObj";
 						break;
