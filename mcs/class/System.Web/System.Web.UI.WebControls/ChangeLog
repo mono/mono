@@ -1,3 +1,8 @@
+2004-05-14  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Calendar.cs: fire OnDayRender after assigning the calendar cell text.
+	Fixes bug #58097.
+
 2004-05-09 Gert Driesen (drieseng@users.sourceforge.net)
 	* Parameter.cs: 
 	* SqlDataSourceCommandEventArgs:

@@ -6,7 +6,7 @@
 //   Gonzalo Paniagua Javier (gonzalo@ximian.com)
 //   Andreas Nahr (ClassDevelopment@A-SoftTech.com)
 //
-// (c) 2002 Ximian, Inc. (http://www.ximian.com)
+// (c) Copyright 2002 Ximian, Inc. (http://www.ximian.com)
 // (C) Gaurav Vaish (2002)
 // (C) 2003 Andreas Nahr
 //
@@ -914,7 +914,6 @@ namespace System.Web.UI.WebControls
 					dayCell.ApplyStyle (currentDayStyle);
 					dayCell.Controls.Add (new LiteralControl (dayString));
 					calDay.IsSelectable = isActive;
-					OnDayRender (dayCell, calDay);
 					if (calDay.IsSelectable)
 						dayCell.Text = GetCalendarLinkText (
 									(begin + (crr * 7 + weekDay)).ToString (),
@@ -922,6 +921,7 @@ namespace System.Web.UI.WebControls
 									dayCell.ForeColor,
 									isActive);
 
+					OnDayRender (dayCell, calDay);
 					dayCell.RenderControl (writer);
 
 					currentDay = globCal.AddDays (currentDay, 1);
