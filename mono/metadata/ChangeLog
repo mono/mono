@@ -1,3 +1,10 @@
+2004-09-16  Lluis Sanchez Gual  <lluis@novell.com>
+ 
+	* locales.c: nullify the ICU_collator member of CompareInfo when it is
+	  finalized. There where random SIGSEVs at program termination, when
+	  an object being finalized was trying to do a string comparison and
+	  the current culture was already finalized.
+ 
 2004-09-16 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* threads.c: call thread_cleanup before finishing the thread if we get
