@@ -1,3 +1,9 @@
+2002-05-21  Martin Baulig  <martin@gnome.org>
+
+	* debug-symfile.c (mono_debug_find_source_location): New function.
+	Looks up an IL offset in the line number table and returns the source
+	location as a string.
+
 2002-05-21  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* icall.c:
