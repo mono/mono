@@ -43,7 +43,7 @@ namespace System
 
 		// Constructors
 		public InvalidOperationException ()
-			: base (Locale.GetText ("The requested operation could be performed."))
+			: base (Locale.GetText ("Operation is not valid due to the current state of the object"))
 		{
 			HResult = Result;
 		}
