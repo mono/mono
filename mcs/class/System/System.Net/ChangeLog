@@ -1,5 +1,9 @@
 2004-02-12  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* HttpWebRequest.cs: don't send 'Expect: 100-continue' for 1.0 version.
+
+2004-02-12  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* HttpWebRequest.cs: support proxy authentication.
 
 2004-02-12  Gonzalo Paniagua Javier <gonzalo@ximian.com>
