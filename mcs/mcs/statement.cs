@@ -1115,7 +1115,7 @@ namespace Mono.CSharp {
 			MemberInfo [] mi;
 
 			mi = TypeContainer.FindMembers (t, MemberTypes.Method,
-							BindingFlags.Public,
+							BindingFlags.Public | BindingFlags.Instance,
 							FilterEnumerator, null);
 
 			if (mi == null){

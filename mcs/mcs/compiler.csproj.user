@@ -11,7 +11,7 @@
                     RemoteDebugEnabled = "false"
                     RemoteDebugMachine = ""
                     StartAction = "Project"
-                    StartArguments = "c:\mono\mcs\tests\test-4.cs"
+                    StartArguments = "c:\mono\mcs\tests\test-34.cs"
                     StartPage = ""
                     StartProgram = ""
                     StartURL = ""

@@ -1171,8 +1171,8 @@ namespace Mono.CSharp {
 				return e;
 			
 			string msg = "Can not convert implicitly from `"+
-				TypeManager.CSharpName (target.Type) + "' to `" +
-				TypeManager.CSharpName (type) + "'";
+				TypeManager.CSharpName (type) + "' to `" +
+				TypeManager.CSharpName (target.Type) + "'";
 
 			Error (29, loc, msg);
 

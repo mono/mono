@@ -1221,18 +1221,26 @@ namespace Mono.CSharp {
 			if (left == null || right == null)
 				return null;
 
+			//
+			// reload our cached types if required
+			//
+			l = left.Type;
+			r = right.Type;
 			
 			if (oper == Operator.BitwiseAnd ||
 			    oper == Operator.BitwiseOr ||
 			    oper == Operator.ExclusiveOr){
-				if (!((l == TypeManager.int32_type) ||
-				      (l == TypeManager.uint32_type) ||
-				      (l == TypeManager.int64_type) ||
-				      (l == TypeManager.uint64_type))){
+				if (l == r){
+					if (l.IsSubclassOf (TypeManager.enum_type) ||
+					    !((l == TypeManager.int32_type) ||
+					      (l == TypeManager.uint32_type) ||
+					      (l == TypeManager.int64_type) ||
+					      (l == TypeManager.uint64_type)))
+						type = l;
+				} else {
 					error19 ();
 					return null;
 				}
-				type = l;
 			}
 
 			if (oper == Operator.Equality ||

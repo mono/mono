@@ -69,6 +69,10 @@
                     Name = "System.XML"
                     AssemblyName = "System.Xml"
                 />
+                <Reference
+                    Name = "System.Web.Services"
+                    AssemblyName = "System.Web.Services"
+                />
             </References>
         </Build>
         <Files>
@@ -154,11 +158,6 @@
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "gen-treedump.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
                     RelPath = "interface.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -227,6 +226,10 @@
                     RelPath = "typemanager.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
+                />
+                <Folder
+                    RelPath = "Web References\"
+                    WebReferences = "TRUE"
                 />
             </Include>
         </Files>
