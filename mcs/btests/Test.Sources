@@ -147,7 +147,12 @@ EventE \
 EventF \
 AssignmentOperators \
 RelationalOperators \
-RelationalOperatorsA 
+RelationalOperatorsA \
+ConcatenationOperator \
+LogicalOperators \
+LogicalOperatorsA \
+ShiftOperators \
+ShiftOperatorsA 
 
 # All negetive test cases which should
 # fail during compilation goes here
@@ -319,7 +324,13 @@ PropertyC9 \
 PropertyC10 \
 PropertyC11 \
 DelegateC1 \
-DelegateC2 
+DelegateC2 \
+ConcatenationOperatorC1 \
+LogicalOperatorsC1 \
+LogicalOperatorsC2 \
+LogicalOperatorsC3 \
+ShiftOperatorsC1 \
+ShiftOperatorsC2 
 
 # All negetive test cases which should fail at
 # runtime goes here
@@ -338,6 +349,8 @@ StringLiterals1 \
 BoolLiteralTest1 \
 CharacterLiterals1 \
 LiteralNothing1 \
-Inheritance1 
+Inheritance1 \
+LogicalOperators1 \
+ShiftOperators1
 
 

@@ -1,3 +1,17 @@
+2004-08-05 Sachin Kumar <skumar1@novell.com>
+	* ConcatenationOperator.vb:
+	* ConcatenationOperatorC1.vb:
+	* LogicalOperators1.vb:
+	* LogicalOperatorsA.vb:
+	* LogicalOperatorsC1.vb:
+	* LogicalOperatorsC2.vb:
+	* LogicalOperatorsC3.vb:
+	* ShiftOperators1.vb:
+	* ShiftOperatorsA.vb:
+	* ShiftOperatorsC1.vb:
+	* ShiftOperatorsC2.vb:
+	* Test.Sources: Included newly added tests
+
 2004-08-05 Anirban Bhattacharjee <banirban@novell.com>
 	* InterfaceA.vb: Test now covers all Interface members.
 
