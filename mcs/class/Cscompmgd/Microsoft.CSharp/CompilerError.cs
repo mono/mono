@@ -11,13 +11,6 @@ using System.Text;
 
 namespace Microsoft.CSharp {
 
-	public enum ErrorLevel {
-		None,
-		Warning,
-		Error,
-		FatalError,
-	}
-
 	public class CompilerError {
   
 		private ErrorLevel level = ErrorLevel.None;

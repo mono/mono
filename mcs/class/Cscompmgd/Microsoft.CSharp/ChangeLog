@@ -1,3 +1,7 @@
+2002-12-15 Jackson Harper <jackson@latitudegeo.com>
+
+	* CompilerError.cs ErrorLevel.cs: Moved ErrorLevel enum into its own file
+
 2002-12-12 Jackson Harper <jackson@latitudegeo.com>
 
 	* Compiler.cs: Partially implemented bugreport option, also only allow valid options now
