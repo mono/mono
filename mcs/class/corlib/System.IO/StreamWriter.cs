@@ -11,12 +11,13 @@ using System.Text;
 
 namespace System.IO {
 	
-		[Serializable]
+	[Serializable]
         public class StreamWriter : TextWriter {
 
 		private Encoding internalEncoding;
 
 		private Stream internalStream;
+		private bool closed = false;
 
 		private bool iflush;
 		
@@ -118,6 +119,9 @@ namespace System.IO {
 
 		public override void Flush ()
 		{
+			if (closed)
+				throw new ObjectDisposedException("TextWriter");
+
 			internalStream.Flush ();
 		}
 		
@@ -140,7 +144,11 @@ namespace System.IO {
 			Write (value.ToCharArray (), 0, value.Length);
 		}
 
-                         
+		public override void Close()
+		{
+			Dispose(true);
+			closed = true;
+		}
         }
 }
                         
