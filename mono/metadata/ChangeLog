@@ -1,3 +1,8 @@
+2002-03-12  Dietmar Maurer  <dietmar@ximian.com>
+
+	* class.c (class_compute_field_layout): separate computation of 
+	static field layout
+
 2002-03-12  Dan Lewis <dihlewis@yahoo.co.uk>
 
 	* icall.c: added System.Buffer support.
