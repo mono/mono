@@ -1,5 +1,12 @@
 2004-06-05  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* en_US.xml : fixed percent pattern.
+	* en_ZA.xml : fixed NumberDecimalDigits.
+	* id_ID.xml : fixed CurrencyDecimalDigits.
+	* ja_JP.xml : added currencySymbol (MS assigns 0x5c).
+
+2004-06-05  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* fr_CH.xml : missing updates.
 	* Renamed cs.xml as cs_CZ.xml and added number format.
 	  Also renamed lt.xml as lt_LT.xml. They are files' precedence matter.

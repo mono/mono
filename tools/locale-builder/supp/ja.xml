@@ -7,6 +7,11 @@
 >
 <ldml>
 	<numbers>
+		<currencies>
+			<currency type="JPY">
+				<symbol>\</symbol>
+			</currency>
+		</currencies>
 		<currencyFormats>
 			<currencyFormatLength >
 				<currencyFormat >
