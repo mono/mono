@@ -1,5 +1,16 @@
 2002-05-18  Daniel Morgan <danmorg@sc.rr.com>
 
+	* System.Xml: added directory for classes with namespace
+	System.Xml to go into the System.Data.dll assembly
+	
+	* System.Xml/XmlDataDocument: added file
+	for stubbed concrete class XmlDataDocument which 
+	inherits from XmlDocument.  Its purpose is to provide
+	a W3C XML DOM Document for relational data and interacting
+	with a DataSet
+
+2002-05-18  Daniel Morgan <danmorg@sc.rr.com>
+
 	* System.Data.SqlClient/SqlCommand.cs: handle CommandTypes
 	Text, TableDirect, and StoredProcedure
 	
