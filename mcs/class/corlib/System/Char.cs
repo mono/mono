@@ -41,7 +41,7 @@ namespace System
 		}
 
 		private readonly unsafe static byte *category_data;
-		private readonly unsafe static ushort *numeric_data;
+		private readonly unsafe static byte *numeric_data;
 		private readonly unsafe static double *numeric_data_values;
 		private readonly unsafe static ushort *to_lower_data_low;
 		private readonly unsafe static ushort *to_lower_data_high;
@@ -50,7 +50,7 @@ namespace System
 
 		[MethodImplAttribute(System.Runtime.CompilerServices.MethodImplOptions.InternalCall)]
 		private unsafe static extern void GetDataTablePointers (out byte *category_data,
-				out ushort *numeric_data, out double *numeric_data_values,
+				out byte *numeric_data, out double *numeric_data_values,
 				out ushort *to_lower_data_low, out ushort *to_lower_data_high,
 				out ushort *to_upper_data_low, out ushort *to_upper_data_high);
 
