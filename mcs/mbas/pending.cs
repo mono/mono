@@ -3,6 +3,7 @@
 //
 // Author:
 //   Miguel de Icaza (miguel@gnu.org)
+//   Anirban Bhattacharjee (banirban@novell.com)
 //
 // Licensed under the terms of the GNU GPL
 //
@@ -133,7 +134,6 @@ namespace Mono.MonoBASIC {
 			if (ifaces != null){
 				foreach (Type t in ifaces){
 					MethodInfo [] mi;
-
 					/*if (t is TypeBuilder){
 						Interface iface;
 
@@ -222,9 +222,10 @@ namespace Mono.MonoBASIC {
 				}
 			}
 #endif
-					
-			icount = ifaces.Length;
 
+            		
+			ifaces = TypeManager.ExpandInterfaces (ifaces);
+			icount = ifaces.Length;
 			//
 			// If we are implementing an abstract class, and we are not
 			// ourselves abstract, and there are abstract methods (C# allows
@@ -246,7 +247,7 @@ namespace Mono.MonoBASIC {
 			int total = icount +  (implementing_abstract ? 1 : 0);
 			if (total == 0)
 				return null;
-			
+
 			return new PendingImplementation (container, ifaces, abstract_methods, total);
 		}
 

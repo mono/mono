@@ -773,8 +773,7 @@ namespace Mono.MonoBASIC {
 				ifaces [j] = t;
 			}
 
-			//return ifaces;
-			return TypeManager.ExpandInterfaces (ifaces);
+			return ifaces;
 		}
 		
 		//
@@ -1131,7 +1130,8 @@ namespace Mono.MonoBASIC {
 					ReportStructInitializedInstanceError ();
 			}
 
-			Pending = PendingImplementation.GetPendingImplementations (this);
+			if (!(this is Interface))
+				Pending = PendingImplementation.GetPendingImplementations (this);
 			//
 			// Constructors are not in the defined_names array
 			//
@@ -3095,11 +3095,55 @@ namespace Mono.MonoBASIC {
 
 			return flags;
 		}
+		
+		//
+		// Search all the interface bases recursively for unimplemented methods
+		//
+		bool SearchBasesForAbstractMethods (
+			TypeContainer parent, Type iface_type, 
+			string method_name, ref ArrayList implementing_list, 
+			ref ArrayList implementing_iface)
+		{
+			MethodInfo implementing = null;
+			bool IsImplementing = false;
+			Type current_iface_type = iface_type;
+
+				if (member is Indexer)
+					implementing = parent.Pending.IsAbstractIndexer (
+					current_iface_type , ReturnType, ParameterTypes);
+				else
+					implementing = parent.Pending.IsAbstractMethod (
+					current_iface_type, method_name, ReturnType, ParameterTypes);
+
+				if (implementing != null) {
+					if (!implementing_list.Contains (implementing)) {
+						implementing_list.Add (implementing);
+						implementing_iface.Add(current_iface_type);
+					}
+					IsImplementing = true;
+				} else {
+					Type[] current_iface_types = current_iface_type.GetInterfaces();
+					if (current_iface_types.Length == 0)
+						return false;
+
+					foreach (Type curr_iface_type in current_iface_types) {
+						IsImplementing = SearchBasesForAbstractMethods (
+							parent, curr_iface_type, method_name, 
+							ref implementing_list, ref implementing_iface);
+
+						if (IsImplementing)
+							break;
+					}
+				}
+
+			return IsImplementing;
+		}
 
 		public virtual bool Define (TypeContainer parent)
 		{
 			MethodInfo implementing = null;
 			ArrayList implementing_list = null;
+			ArrayList implementing_iface = null;
 			string method_name, name, prefix, impl_method_name;
 			int pos = -1;
 
@@ -3120,10 +3164,12 @@ namespace Mono.MonoBASIC {
 					implementing = null;
 				else if (member is Indexer)
 					implementing = parent.Pending.IsAbstractIndexer (
-						(Type) parent.TypeBuilder.BaseType, ReturnType, ParameterTypes);
+						(Type) parent.TypeBuilder.BaseType, 
+						ReturnType, ParameterTypes);
 				else
 					implementing = parent.Pending.IsAbstractMethod (
-						(Type) parent.TypeBuilder.BaseType, name, ReturnType, ParameterTypes);
+						(Type) parent.TypeBuilder.BaseType, name, 
+						ReturnType, ParameterTypes);
 				
 				if (implementing != null)
 					IsImplementing = true;
@@ -3131,6 +3177,7 @@ namespace Mono.MonoBASIC {
 
 			if (member.Implements != null) {
 				implementing_list = new ArrayList();
+				implementing_iface = new ArrayList();
 
 				foreach (Expression Impl in member.Implements) {
 					name = Impl.ToString();
@@ -3142,21 +3189,16 @@ namespace Mono.MonoBASIC {
 					else
 						impl_method_name = name;
 
-					if (member is Indexer)
-						implementing = parent.Pending.IsAbstractIndexer (
-							(Type) member.InterfaceTypes[++pos] , ReturnType, ParameterTypes);
-					else
-						implementing = parent.Pending.IsAbstractMethod (
-							(Type) member.InterfaceTypes[++pos], impl_method_name, ReturnType, ParameterTypes);
+					Type current_iface_type = (Type) member.InterfaceTypes[++pos];
+					IsImplementing = SearchBasesForAbstractMethods (
+						parent, current_iface_type, impl_method_name, 
+						ref implementing_list, ref implementing_iface);
 
-					if (implementing == null) {
+					if (IsImplementing == false) {
 						TypeContainer.Error_NotInterfaceMember (
 							Location, name, prefix);
 						return false;
 					}
-					
-					implementing_list.Add (implementing);
-					IsImplementing = true;
 				}
 			} 
 
@@ -3200,8 +3242,8 @@ namespace Mono.MonoBASIC {
 				//
 				// When implementing interface methods, set NewSlot.
 				//
-				if (implementing.DeclaringType.IsInterface)
-					flags |= MethodAttributes.NewSlot;
+				if (implementing_list != null && implementing_list.Count != 0)
+						flags |= MethodAttributes.NewSlot;
 
 				flags |=
 					MethodAttributes.Virtual |
@@ -3258,12 +3300,12 @@ namespace Mono.MonoBASIC {
 					foreach (MethodInfo Impl in implementing_list)	{
 						if (member is Indexer)
 							parent.Pending.ImplementIndexer (
-								(Type) member.InterfaceTypes[pos++], 
+								(Type) implementing_iface[pos++],
 								builder, ReturnType,
 								ParameterTypes, true);
 						else
 							parent.Pending.ImplementMethod (
-								(Type) member.InterfaceTypes[pos++], 
+								(Type) implementing_iface[pos++],
 								Impl.Name, ReturnType,
 								ParameterTypes, member.IsExplicitImpl);
 
@@ -3284,7 +3326,6 @@ namespace Mono.MonoBASIC {
 			}
 
 			TypeManager.AddMethod (builder, this);
-
 			return true;
 		}
 

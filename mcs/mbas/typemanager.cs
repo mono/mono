@@ -1537,24 +1537,37 @@ public class TypeManager {
 	///   This expands in context like: IA; IB : IA; IC : IA, IB; the interface "IC" to
 	///   be IA, IB, IC.
 	/// </remarks>
+
 	public static Type [] ExpandInterfaces (Type [] base_interfaces)
+	{	
+		ArrayList new_ifaces = new ArrayList();
+		new_ifaces = ExpandAllInterfaces (base_interfaces, ref new_ifaces);
+		Type [] ret = new Type [new_ifaces.Count];
+		new_ifaces.CopyTo (ret, 0);
+
+		return ret;
+	}
+
+	/// <summary>
+	///   Recursively finds out each base interface in case  
+	///   of multiple inheritance
+	/// </summary>
+	public static ArrayList ExpandAllInterfaces 
+			(Type [] base_interfaces, ref ArrayList new_ifaces)
 	{
-		ArrayList new_ifaces = new ArrayList ();
-		
-		foreach (Type iface in base_interfaces){
+		foreach (Type iface in base_interfaces) {
 			if (!new_ifaces.Contains (iface))
 				new_ifaces.Add (iface);
 			
 			Type [] implementing = TypeManager.GetInterfaces (iface);
-			
-			foreach (Type imp in implementing){
-				if (!new_ifaces.Contains (imp))
-					new_ifaces.Add (imp);
-			}
+			//
+			// Incase any base interface is present call this function again
+			//
+			if (implementing.Length != 0)
+				ExpandAllInterfaces (implementing, ref new_ifaces);
 		}
-		Type [] ret = new Type [new_ifaces.Count];
-		new_ifaces.CopyTo (ret, 0);
-		return ret;
+
+		return new_ifaces;
 	}
 		
 	/// <summary>

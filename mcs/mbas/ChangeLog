@@ -1,3 +1,9 @@
+2004-08-13 Anirban Bhattacharjee <banirban@novell.com>
+	* class.cs:
+	* typemanager.cs:
+	* pending.cs:
+		Multiple interface inheritance implemented - fix for getting InheritanceD.vb working in bteasts		
+
 2004-08-12 Anirban Bhattacharjee <banirban@novell.com>
 	* mb-parser.jay: Implements support in Abstract methods
 
