@@ -171,7 +171,7 @@ namespace System.Runtime.Serialization.Formatters.Binary
 				formatFlag = MethodFlags.NoArguments;
 			else 
 			{
-				if (AllTypesArePrimitive (resp.OutArgs)) 
+				if (AllTypesArePrimitive (resp.Args)) 
 					formatFlag = MethodFlags.PrimitiveArguments;
 				else 
 				{
@@ -220,7 +220,7 @@ namespace System.Runtime.Serialization.Formatters.Binary
 				int n = 0;
 
 				if (formatFlag == MethodFlags.ArgumentsInMultiArray)
-					infoArray[n++] = resp.OutArgs;
+					infoArray[n++] = resp.Args;
 
 				if (returnTypeTag == ReturnTypeTag.ObjectType)
 					infoArray[n++] = resp.ReturnValue;
@@ -234,7 +234,7 @@ namespace System.Runtime.Serialization.Formatters.Binary
 				info = infoArray;
 			}
 			else if ((formatFlag & MethodFlags.ArgumentsInSimpleArray) > 0)
-				info = resp.OutArgs;
+				info = resp.Args;
 
 			if (info != null)
 			{

@@ -1,3 +1,7 @@
+2004-04-28  Lluis Sanchez Gual <lluis@ximian.com>
+
+	* MessageFormatter.cs: Serialize Args, not OutArgs, like in MS.NET.
+
 2004-04-26  Lluis Sanchez Gual <lluis@ximian.com>
 
 	* ObjectReader.cs, ObjectWriter.cs: FIXME cleaning.
