@@ -323,7 +323,8 @@ namespace System.Xml.XPath
 						i++;
 					}
 					positions.Add (i);
-					ancestors.MoveToParent ();
+					if (!ancestors.MoveToParent ())
+						break; // It is for detached nodes under XmlDocumentNavigator
 					_nav.MoveToParent ();
 				}
 
@@ -405,7 +406,8 @@ namespace System.Xml.XPath
 						i++;
 					}
 					positions.Add (i);
-					ancestors.MoveToParent ();
+					if (!ancestors.MoveToParent ())
+						break; // for detached nodes under XmlDocumentNavigator.
 					_nav.MoveToParent ();
 				} while (ancestors.NodeType != XPathNodeType.Root);
 				positions.Reverse ();

@@ -81,7 +81,8 @@ namespace System.Xml.XPath
 			{
 				while (nDepth1 > nDepth2)
 				{
-					nav1.MoveToParent ();
+					if (!nav1.MoveToParent ())
+						break;
 					nDepth1 --;
 				}
 				if (nav1.IsSamePosition (nav2))
@@ -91,7 +92,8 @@ namespace System.Xml.XPath
 			{
 				while (nDepth1 < nDepth2)
 				{
-					nav2.MoveToParent ();
+					if (!nav2.MoveToParent ())
+						break;
 					nDepth2 --;
 				}
 				if (nav1.IsSamePosition (nav2))
@@ -270,7 +272,6 @@ namespace System.Xml.XPath
 			return Matches (Compile (xpath));
 		}
 
-		[MonoTODO]	// optimize...
 		public virtual bool Matches (XPathExpression expr)
 		{
 			Expression e = ((CompiledExpression) expr).ExpressionNode;

@@ -1,3 +1,8 @@
+2004-03-16  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XPathNavigator.cs, Iterator.cs : Considered detached nodes, the 
+	  result of MoveToParent() should be checked.
+
 2004-02-17  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XPathNavigator.cs : Only child and attribute axes are allowed for
