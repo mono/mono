@@ -1,3 +1,8 @@
+2003-12-10  Alon Gazit <along@mainsoft.com>
+	* WebControl.cs: Change the implementation of the property 
+	Enabled. Before the change the WebControl also looked at 
+	parent.Enabled . fixed bug #52171.
+
 2003-12-11  Jackson Harper <jackson@ximian.com>
 
 	* RepeatInfo.cs: When rendering vertically figure out how many

@@ -198,14 +198,7 @@ namespace System.Web.UI.WebControls
 		[WebSysDescription ("The activation state of this WebControl.")]
 		public virtual bool Enabled {
 			get {
-				if (!enabled)
-					return false;
-
-				WebControl parent = Parent as WebControl;
-				if (parent != null)
-					return ((WebControl) parent).Enabled;
-					
-				return true;
+				return enabled;
 			}
 			set {
 				if (enabled != value) {
