@@ -1,5 +1,18 @@
 2002-02-26  Duncan Mak  <duncan@ximian.com>
 
+	* ComInterfaceType.cs: Added to CVS.
+
+	* AssemblyRegistrationFlags.cs:
+	* GuidAttribute.cs:
+	* ICustomAdapter.cs:
+	* ICustomFactory.cs:
+	* ICustomMarshaler.cs: 
+	* IRegistrationServices.cs:
+	* ITypeLibExporterNameProvider.cs:
+	* ITypeLibImporterNotifySink.cs:
+	* InterfaceTypeAttribute.cs:
+	* TypeLibExporterFlags.cs: Committed for Kevin Winchester <kwin@ns.sympatico.ca>.
+	
 	* GCHandle.cs: Added to CVS. Patch from Ajay kumar Dwivedi.
 
 	* GCHandleType.cs: Committed patch from Ajay.
