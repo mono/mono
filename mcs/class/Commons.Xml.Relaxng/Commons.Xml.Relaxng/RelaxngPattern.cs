@@ -1074,7 +1074,7 @@ namespace Commons.Xml.Relaxng
 			TargetGrammar.MarkReacheableDefine (this.name);
 		}
 
-		internal virtual RdpPattern ReduceEmptyAndNotAllowed (ref bool result, Hashtable visited)
+		internal override RdpPattern ReduceEmptyAndNotAllowed (ref bool result, Hashtable visited)
 		{
 			referencedPattern =
 				referencedPattern.ReduceEmptyAndNotAllowed (
