@@ -6,7 +6,7 @@
 //	Stefan Görling (stefan@gorling.se)
 //	Jackson Harper (jackson@ximian.com)
 //
-// (C) 2002,2003 Ximian, Inc (http://www.ximian.com)
+// (C) 2002,2003,2004,2005 Novell, Inc (http://www.novell.com)
 // (C) 2003 Stefan Görling (http://www.gorling.se)
 
 //
@@ -45,6 +45,7 @@ namespace System.Web.SessionState
 		static SessionConfig config;
 		static Type handlerType;
 		ISessionHandler handler;
+		bool sessionForStaticFiles;
 		
 		private RandomNumberGenerator rng;
 		
@@ -65,6 +66,7 @@ namespace System.Web.SessionState
 
 		public void Init (HttpApplication app)
 		{
+			sessionForStaticFiles = (Environment.GetEnvironmentVariable ("MONO_XSP_STATIC_SESSION") != null);
 			if (config == null) {
 				config = (SessionConfig) HttpContext.GetAppConfig ("system.web/sessionState");
 				if (config ==  null)
@@ -135,6 +137,17 @@ namespace System.Web.SessionState
 			HttpContext context = application.Context;
 
 			bool required = (context.Handler is IRequiresSessionState);
+			
+			// This is a hack. Sites that use Session in global.asax event handling code
+			// are not supposed to get a Session object for static files, but seems that
+			// IIS handles those files before getting there and thus they are served without
+			// error.
+			// As a workaround, setting MONO_XSP_STATIC_SESSION variable make this work
+			// on mono, but you lose performance when serving static files.
+			if (sessionForStaticFiles && context.Handler is StaticFileHandler)
+				required = true;
+			// hack end
+
 			bool read_only = (context.Handler is IReadOnlySessionState);
 			
 			bool isNew = false;
