@@ -1,3 +1,7 @@
+2002-07-05  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HtmlForm.cs: don't render action attribute.
+
 2002-07-04  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HtmlContainerControl.cs: 

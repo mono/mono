@@ -16,12 +16,12 @@ namespace System.Web.UI.HtmlControls{
 		public HtmlForm(): base("form"){}
 				
 		protected override void RenderAttributes(HtmlTextWriter writer){
-			writer.WriteAttribute("name",RenderedName);
+			writer.WriteAttribute("name", RenderedName);
 			Attributes.Remove("name");
-			writer.WriteAttribute("method",Method);
+			writer.WriteAttribute("method", Method);
 			Attributes.Remove("method");
-			//writer.WriteAttribute("action",Action,true);
-			Attributes.Remove("action");
+			//writer.WriteAttribute("action", Action, true);
+			//Attributes.Remove("action");
 			if (Enctype != null){
 				writer.WriteAttribute ("enctype", Enctype);
 				Attributes.Remove ("enctype");
