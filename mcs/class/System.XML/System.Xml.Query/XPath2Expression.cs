@@ -216,8 +216,12 @@ namespace Mono.Xml.XPath2
 			if (!iter.MoveNext ())
 				return null;
 			XPathNavigator nav = iter.Current as XPathNavigator;
-			if (nav != null)
-				return new XPathAtomicValue (nav.TypedValue, nav.SchemaInfo.SchemaType);
+			if (nav != null) {
+				// FIXME: is it really always untypedAtomic?
+				// It might be complex content.
+				XmlSchemaType type = nav.SchemaInfo == null ? XmlSchemaSimpleType.XdtUntypedAtomic : nav.SchemaInfo.SchemaType;
+				return new XPathAtomicValue (nav.TypedValue, type);
+			}
 			else
 				return (XPathAtomicValue) iter.Current;
 		}

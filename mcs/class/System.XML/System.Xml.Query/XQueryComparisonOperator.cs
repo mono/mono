@@ -78,65 +78,29 @@ namespace Mono.Xml.XPath2
 
 		public static bool ValueEQ (XPathAtomicValue lvalue, XPathAtomicValue rvalue)
 		{
-			switch (lvalue.XmlType.TypeCode) {
-			case XmlTypeCode.Decimal:
-				if (rvalue.XmlType.TypeCode == XmlTypeCode.Decimal)
-					return lvalue.ValueAsDecimal == rvalue.ValueAsDecimal;
-				goto case XmlTypeCode.Integer;
+			if (lvalue.XmlType.TypeCode == XmlTypeCode.Decimal &&
+				rvalue.XmlType.TypeCode == XmlTypeCode.Decimal)
+				return lvalue.ValueAsDecimal == rvalue.ValueAsDecimal;
+			if (SequenceType.IsNumeric (lvalue.XmlType.TypeCode) &&
+				SequenceType.IsNumeric (lvalue.XmlType.TypeCode))
+				return lvalue.ValueAsDouble == rvalue.ValueAsDouble;
+			if (lvalue.XmlType.TypeCode == rvalue.XmlType.TypeCode)
+				return CompareEquality (lvalue, rvalue);
 
-			// numerics
-			case XmlTypeCode.Integer:
-			case XmlTypeCode.Float:
-			case XmlTypeCode.Double:
-				switch (rvalue.XmlType.TypeCode) {
-				case XmlTypeCode.Integer:
-				case XmlTypeCode.Decimal:
-				case XmlTypeCode.Float:
-				case XmlTypeCode.Double:
-					return lvalue.ValueAsDouble == rvalue.ValueAsDouble;
-				}
-				break;
-
-			// FIXME: handle Gregorian (gXXX) types
-
-			// other types
-			default:
-				if (lvalue.XmlType.TypeCode == rvalue.XmlType.TypeCode)
-					return CompareEquality (lvalue, rvalue);
-				break;
-			}
 			throw new XmlQueryException (String.Format ("Not allowed value comparison between {0} and {1}.", lvalue.XmlType.QualifiedName, rvalue.XmlType.QualifiedName));
 		}
 
 		public static bool ValueNE (XPathAtomicValue lvalue, XPathAtomicValue rvalue)
 		{
-			switch (lvalue.XmlType.TypeCode) {
-			case XmlTypeCode.Decimal:
-				if (rvalue.XmlType.TypeCode == XmlTypeCode.Decimal)
-					return lvalue.ValueAsDecimal != rvalue.ValueAsDecimal;
-				goto case XmlTypeCode.Integer;
+			if (lvalue.XmlType.TypeCode == XmlTypeCode.Decimal &&
+				rvalue.XmlType.TypeCode == XmlTypeCode.Decimal)
+				return lvalue.ValueAsDecimal != rvalue.ValueAsDecimal;
+			if (SequenceType.IsNumeric (lvalue.XmlType.TypeCode) &&
+				SequenceType.IsNumeric (lvalue.XmlType.TypeCode))
+				return lvalue.ValueAsDouble != rvalue.ValueAsDouble;
+			if (lvalue.XmlType.TypeCode == rvalue.XmlType.TypeCode)
+				return !CompareEquality (lvalue, rvalue);
 
-			// numerics
-			case XmlTypeCode.Integer:
-			case XmlTypeCode.Float:
-			case XmlTypeCode.Double:
-				switch (rvalue.XmlType.TypeCode) {
-				case XmlTypeCode.Integer:
-				case XmlTypeCode.Decimal:
-				case XmlTypeCode.Float:
-				case XmlTypeCode.Double:
-					return lvalue.ValueAsDouble != rvalue.ValueAsDouble;
-				}
-				break;
-
-			// FIXME: handle Gregorian (gXXX) types
-
-			// other types
-			default:
-				if (lvalue.XmlType.TypeCode == rvalue.XmlType.TypeCode)
-					return !CompareEquality (lvalue, rvalue);
-				break;
-			}
 			throw new XmlQueryException (String.Format ("Not allowed value comparison between {0} and {1}.", lvalue.XmlType.QualifiedName, rvalue.XmlType.QualifiedName));
 		}
 
@@ -159,30 +123,15 @@ namespace Mono.Xml.XPath2
 
 		public static bool ValueLT (XPathAtomicValue lvalue, XPathAtomicValue rvalue)
 		{
-			switch (lvalue.XmlType.TypeCode) {
-			case XmlTypeCode.Decimal:
-				if (rvalue.XmlType.TypeCode == XmlTypeCode.Decimal)
-					return lvalue.ValueAsDecimal < rvalue.ValueAsDecimal;
-				goto case XmlTypeCode.Integer;
+			if (lvalue.XmlType.TypeCode == XmlTypeCode.Decimal &&
+				rvalue.XmlType.TypeCode == XmlTypeCode.Decimal)
+				return lvalue.ValueAsDecimal < rvalue.ValueAsDecimal;
+			if (SequenceType.IsNumeric (lvalue.XmlType.TypeCode) &&
+				SequenceType.IsNumeric (lvalue.XmlType.TypeCode))
+				return lvalue.ValueAsDouble < rvalue.ValueAsDouble;
+			if (lvalue.XmlType.TypeCode == rvalue.XmlType.TypeCode)
+				return CompareLT (lvalue, rvalue);
 
-			// numerics
-			case XmlTypeCode.Integer:
-			case XmlTypeCode.Float:
-			case XmlTypeCode.Double:
-				switch (rvalue.XmlType.TypeCode) {
-				case XmlTypeCode.Integer:
-				case XmlTypeCode.Decimal:
-				case XmlTypeCode.Float:
-				case XmlTypeCode.Double:
-					return lvalue.ValueAsDouble < rvalue.ValueAsDouble;
-				}
-				break;
-
-			default:
-				if (lvalue.XmlType.TypeCode == rvalue.XmlType.TypeCode)
-					return CompareLT (lvalue, rvalue);
-				break;
-			}
 			throw new XmlQueryException (String.Format ("Not allowed value comparison between {0} and {1}.", lvalue.XmlType.QualifiedName, rvalue.XmlType.QualifiedName));
 		}
 
@@ -205,30 +154,15 @@ namespace Mono.Xml.XPath2
 
 		public static bool ValueLE (XPathAtomicValue lvalue, XPathAtomicValue rvalue)
 		{
-			switch (lvalue.XmlType.TypeCode) {
-			case XmlTypeCode.Decimal:
-				if (rvalue.XmlType.TypeCode == XmlTypeCode.Decimal)
-					return lvalue.ValueAsDecimal <= rvalue.ValueAsDecimal;
-				goto case XmlTypeCode.Integer;
+			if (lvalue.XmlType.TypeCode == XmlTypeCode.Decimal &&
+				rvalue.XmlType.TypeCode == XmlTypeCode.Decimal)
+				return lvalue.ValueAsDecimal <= rvalue.ValueAsDecimal;
+			if (SequenceType.IsNumeric (lvalue.XmlType.TypeCode) &&
+				SequenceType.IsNumeric (lvalue.XmlType.TypeCode))
+				return lvalue.ValueAsDouble <= rvalue.ValueAsDouble;
+			if (lvalue.XmlType.TypeCode == rvalue.XmlType.TypeCode)
+				return CompareLE (lvalue, rvalue);
 
-			// numerics
-			case XmlTypeCode.Integer:
-			case XmlTypeCode.Float:
-			case XmlTypeCode.Double:
-				switch (rvalue.XmlType.TypeCode) {
-				case XmlTypeCode.Integer:
-				case XmlTypeCode.Decimal:
-				case XmlTypeCode.Float:
-				case XmlTypeCode.Double:
-					return lvalue.ValueAsDouble <= rvalue.ValueAsDouble;
-				}
-				break;
-
-			default:
-				if (lvalue.XmlType.TypeCode == rvalue.XmlType.TypeCode)
-					return CompareLE (lvalue, rvalue);
-				break;
-			}
 			throw new XmlQueryException (String.Format ("Not allowed value comparison between {0} and {1}.", lvalue.XmlType.QualifiedName, rvalue.XmlType.QualifiedName));
 		}
 
@@ -251,30 +185,15 @@ namespace Mono.Xml.XPath2
 
 		public static bool ValueGT (XPathAtomicValue lvalue, XPathAtomicValue rvalue)
 		{
-			switch (lvalue.XmlType.TypeCode) {
-			case XmlTypeCode.Decimal:
-				if (rvalue.XmlType.TypeCode == XmlTypeCode.Decimal)
-					return lvalue.ValueAsDecimal > rvalue.ValueAsDecimal;
-				goto case XmlTypeCode.Integer;
+			if (lvalue.XmlType.TypeCode == XmlTypeCode.Decimal &&
+				rvalue.XmlType.TypeCode == XmlTypeCode.Decimal)
+				return lvalue.ValueAsDecimal > rvalue.ValueAsDecimal;
+			if (SequenceType.IsNumeric (lvalue.XmlType.TypeCode) &&
+				SequenceType.IsNumeric (lvalue.XmlType.TypeCode))
+				return lvalue.ValueAsDouble > rvalue.ValueAsDouble;
+			if (lvalue.XmlType.TypeCode == rvalue.XmlType.TypeCode)
+				return CompareGT (lvalue, rvalue);
 
-			// numerics
-			case XmlTypeCode.Integer:
-			case XmlTypeCode.Float:
-			case XmlTypeCode.Double:
-				switch (rvalue.XmlType.TypeCode) {
-				case XmlTypeCode.Integer:
-				case XmlTypeCode.Decimal:
-				case XmlTypeCode.Float:
-				case XmlTypeCode.Double:
-					return lvalue.ValueAsDouble > rvalue.ValueAsDouble;
-				}
-				break;
-
-			default:
-				if (lvalue.XmlType.TypeCode == rvalue.XmlType.TypeCode)
-					return CompareGT (lvalue, rvalue);
-				break;
-			}
 			throw new XmlQueryException (String.Format ("Not allowed value comparison between {0} and {1}.", lvalue.XmlType.QualifiedName, rvalue.XmlType.QualifiedName));
 		}
 
@@ -297,30 +216,15 @@ namespace Mono.Xml.XPath2
 
 		public static bool ValueGE (XPathAtomicValue lvalue, XPathAtomicValue rvalue)
 		{
-			switch (lvalue.XmlType.TypeCode) {
-			case XmlTypeCode.Decimal:
-				if (rvalue.XmlType.TypeCode == XmlTypeCode.Decimal)
-					return lvalue.ValueAsDecimal >= rvalue.ValueAsDecimal;
-				goto case XmlTypeCode.Integer;
+			if (lvalue.XmlType.TypeCode == XmlTypeCode.Decimal &&
+				rvalue.XmlType.TypeCode == XmlTypeCode.Decimal)
+				return lvalue.ValueAsDecimal >= rvalue.ValueAsDecimal;
+			if (SequenceType.IsNumeric (lvalue.XmlType.TypeCode) &&
+				SequenceType.IsNumeric (lvalue.XmlType.TypeCode))
+				return lvalue.ValueAsDouble >= rvalue.ValueAsDouble;
+			if (lvalue.XmlType.TypeCode == rvalue.XmlType.TypeCode)
+				return CompareGE (lvalue, rvalue);
 
-			// numerics
-			case XmlTypeCode.Integer:
-			case XmlTypeCode.Float:
-			case XmlTypeCode.Double:
-				switch (rvalue.XmlType.TypeCode) {
-				case XmlTypeCode.Integer:
-				case XmlTypeCode.Decimal:
-				case XmlTypeCode.Float:
-				case XmlTypeCode.Double:
-					return lvalue.ValueAsDouble >= rvalue.ValueAsDouble;
-				}
-				break;
-
-			default:
-				if (lvalue.XmlType.TypeCode == rvalue.XmlType.TypeCode)
-					return CompareGE (lvalue, rvalue);
-				break;
-			}
 			throw new XmlQueryException (String.Format ("Not allowed value comparison between {0} and {1}.", lvalue.XmlType.QualifiedName, rvalue.XmlType.QualifiedName));
 		}
 	}

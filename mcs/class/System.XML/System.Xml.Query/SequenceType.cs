@@ -128,6 +128,8 @@ namespace Mono.Xml.XPath2
 			// typed Array
 			if (cliType.IsArray)
 				return Create (XPathAtomicValue.XmlTypeCodeFromRuntimeType (cliType.GetElementType (), true), Occurence.ZeroOrMore);
+//			if (cliType.GetInterface ("System.Collections.IEnumerable") != null)
+//				return Create (XmlTypeCode.Item, Occurence.ZeroOrMore);
 			if (cliType == typeof (XmlQualifiedName))
 				return QName;
 			if (cliType == typeof (XPathNavigator) || cliType.IsSubclassOf (typeof (XPathNavigator)))
@@ -136,6 +138,7 @@ namespace Mono.Xml.XPath2
 				return SingleAnyAtomic;
 			if (cliType == typeof (XPathItem))
 				return SingleItem;
+			// FIXME: handle Nullable type
 			return Create (XPathAtomicValue.XmlTypeCodeFromRuntimeType (cliType, true), Occurence.One);
 		}
 
@@ -188,6 +191,30 @@ namespace Mono.Xml.XPath2
 			// FIXME: implement
 			// throw new NotImplementedException ();
 			return SequenceType.AnyType;
+		}
+
+		internal static bool IsNumeric (XmlTypeCode code)
+		{
+			switch (code) {
+			case XmlTypeCode.Decimal:
+			case XmlTypeCode.Float:
+			case XmlTypeCode.Double:
+			case XmlTypeCode.Integer:
+			case XmlTypeCode.NonPositiveInteger:
+			case XmlTypeCode.NegativeInteger:
+			case XmlTypeCode.Long:
+			case XmlTypeCode.Int:
+			case XmlTypeCode.Short:
+			case XmlTypeCode.Byte:
+			case XmlTypeCode.NonNegativeInteger:
+			case XmlTypeCode.UnsignedLong:
+			case XmlTypeCode.UnsignedInt:
+			case XmlTypeCode.UnsignedShort:
+			case XmlTypeCode.UnsignedByte:
+			case XmlTypeCode.PositiveInteger:
+				return true;
+			}
+			return false;
 		}
 
 		// Instance members
@@ -454,6 +481,9 @@ namespace Mono.Xml.XPath2
 			XPathNavigator nav = item as XPathNavigator;
 			if (nav == null)
 				return false;
+			// FIXME: is it true? ('untyped' means 'matches with any type' ?
+			if (item.XmlType == null)
+				return true;
 			if (item.XmlType.TypeCode != TypeCode)
 				return false;
 			return true;
