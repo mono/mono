@@ -250,6 +250,11 @@ namespace Mono.CSharp {
 		public Label ReturnLabel;
 
 		/// <summary>
+		///   If we already defined the ReturnLabel
+		/// </summary>
+		public bool HasReturnLabel;
+
+		/// <summary>
 		///   Whether we are in a Finally block
 		/// </summary>
 		public bool InFinally;
@@ -379,13 +384,14 @@ namespace Mono.CSharp {
 				return;
 			}
 
-			if (return_value != null){
+			if (HasReturnLabel)
 				ig.MarkLabel (ReturnLabel);
+			if (return_value != null){
 				ig.Emit (OpCodes.Ldloc, return_value);
 				ig.Emit (OpCodes.Ret);
 			} else {
-				if (!has_ret){
-					if (!InTry)
+				if (!InTry){
+					if (!has_ret || HasReturnLabel)
 						ig.Emit (OpCodes.Ret);
 				}
 			}
@@ -440,6 +446,17 @@ namespace Mono.CSharp {
 		public bool  InLoop;
 
 		/// <summary>
+		///   This is incremented each time we enter a try/catch block and
+		///   decremented if we leave it.
+		/// </summary>
+		public int   TryCatchLevel;
+
+		/// <summary>
+		///   The TryCatchLevel at the begin of the current loop.
+		/// </summary>
+		public int   LoopBeginTryCatchLevel;
+
+		/// <summary>
 		///   Default target in a switch statement.   Only valid if
 		///   InSwitch is true
 		/// </summary>
@@ -461,6 +478,7 @@ namespace Mono.CSharp {
 			if (return_value == null){
 				return_value = ig.DeclareLocal (ReturnType);
 				ReturnLabel = ig.DefineLabel ();
+				HasReturnLabel = true;
 			}
 
 			return return_value;

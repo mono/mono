@@ -241,10 +241,12 @@ namespace Mono.CSharp {
 			Label old_end = ec.LoopEnd;
 			bool  old_inloop = ec.InLoop;
 			bool old_breaks = ec.Breaks;
+			int old_loop_begin_try_catch_level = ec.LoopBeginTryCatchLevel;
 			
 			ec.LoopBegin = ig.DefineLabel ();
 			ec.LoopEnd = ig.DefineLabel ();
 			ec.InLoop = true;
+			ec.LoopBeginTryCatchLevel = ec.TryCatchLevel;
 				
 			ig.MarkLabel (loop);
 			ec.Breaks = false;
@@ -265,6 +267,7 @@ namespace Mono.CSharp {
 			
 			ig.MarkLabel (ec.LoopEnd);
 
+			ec.LoopBeginTryCatchLevel = old_loop_begin_try_catch_level;
 			ec.LoopBegin = old_begin;
 			ec.LoopEnd = old_end;
 			ec.InLoop = old_inloop;
@@ -312,11 +315,13 @@ namespace Mono.CSharp {
 			bool old_inloop = ec.InLoop;
 			bool old_breaks = ec.Breaks;
 			Label while_loop = ig.DefineLabel ();
+			int old_loop_begin_try_catch_level = ec.LoopBeginTryCatchLevel;
 			bool ret;
 			
 			ec.LoopBegin = ig.DefineLabel ();
 			ec.LoopEnd = ig.DefineLabel ();
 			ec.InLoop = true;
+			ec.LoopBeginTryCatchLevel = ec.TryCatchLevel;
 
 			ig.Emit (OpCodes.Br, ec.LoopBegin);
 			ig.MarkLabel (while_loop);
@@ -361,6 +366,7 @@ namespace Mono.CSharp {
 			ec.LoopEnd = old_end;
 			ec.InLoop = old_inloop;
 			ec.Breaks = old_breaks;
+			ec.LoopBeginTryCatchLevel = old_loop_begin_try_catch_level;
 
 			return ret;
 		}
@@ -415,6 +421,7 @@ namespace Mono.CSharp {
 			Label old_end = ec.LoopEnd;
 			bool old_inloop = ec.InLoop;
 			bool old_breaks = ec.Breaks;
+			int old_loop_begin_try_catch_level = ec.LoopBeginTryCatchLevel;
 			Label loop = ig.DefineLabel ();
 			Label test = ig.DefineLabel ();
 			
@@ -425,6 +432,7 @@ namespace Mono.CSharp {
 			ec.LoopBegin = ig.DefineLabel ();
 			ec.LoopEnd = ig.DefineLabel ();
 			ec.InLoop = true;
+			ec.LoopBeginTryCatchLevel = ec.TryCatchLevel;
 
 			ig.Emit (OpCodes.Br, test);
 			ig.MarkLabel (loop);
@@ -451,6 +459,7 @@ namespace Mono.CSharp {
 			ec.LoopEnd = old_end;
 			ec.InLoop = old_inloop;
 			ec.Breaks = old_breaks;
+			ec.LoopBeginTryCatchLevel = old_loop_begin_try_catch_level;
 			
 			//
 			// Inform whether we are infinite or not
@@ -558,9 +567,13 @@ namespace Mono.CSharp {
 					ec.ig.Emit (OpCodes.Stloc, ec.TemporaryReturn ());
 			}
 
-			if (ec.InTry || ec.InCatch)
+			if (ec.InTry || ec.InCatch) {
+				if (!ec.HasReturnLabel) {
+					ec.ReturnLabel = ec.ig.DefineLabel ();
+					ec.HasReturnLabel = true;
+				}
 				ec.ig.Emit (OpCodes.Leave, ec.ReturnLabel);
-			else
+			} else
 				ec.ig.Emit (OpCodes.Ret);
 
 			return true; 
@@ -806,7 +819,12 @@ namespace Mono.CSharp {
 			// From:
 			// try {} catch { while () { continue; }}
 			//
-			ec.ig.Emit (OpCodes.Br, begin);
+			if (ec.TryCatchLevel > ec.LoopBeginTryCatchLevel)
+				ec.ig.Emit (OpCodes.Leave, begin);
+			else if (ec.TryCatchLevel < ec.LoopBeginTryCatchLevel)
+				throw new Exception ("Should never happen");
+			else
+				ec.ig.Emit (OpCodes.Br, begin);
 			return false;
 		}
 	}
@@ -2441,6 +2459,7 @@ namespace Mono.CSharp {
 			Label finish = ig.DefineLabel ();;
 			bool returns;
 			
+			ec.TryCatchLevel++;
 			end = ig.BeginExceptionBlock ();
 			bool old_in_try = ec.InTry;
 			ec.InTry = true;
@@ -2497,6 +2516,7 @@ namespace Mono.CSharp {
 			}
 			
 			ig.EndExceptionBlock ();
+			ec.TryCatchLevel--;
 
 			if (!returns || ec.InTry || ec.InCatch)
 				return returns;
@@ -3176,9 +3196,11 @@ namespace Mono.CSharp {
 			
 			Label old_begin = ec.LoopBegin, old_end = ec.LoopEnd;
 			bool old_inloop = ec.InLoop;
+			int old_loop_begin_try_catch_level = ec.LoopBeginTryCatchLevel;
 			ec.LoopBegin = ig.DefineLabel ();
 			ec.LoopEnd = ig.DefineLabel ();
 			ec.InLoop = true;
+			ec.LoopBeginTryCatchLevel = ec.TryCatchLevel;
 			
 			if (expr.Type.IsArray)
 				ret_val = EmitArrayForeach (ec, var_type);
@@ -3197,6 +3219,7 @@ namespace Mono.CSharp {
 			ec.LoopBegin = old_begin;
 			ec.LoopEnd = old_end;
 			ec.InLoop = old_inloop;
+			ec.LoopBeginTryCatchLevel = old_loop_begin_try_catch_level;
 
 			return ret_val;
 		}

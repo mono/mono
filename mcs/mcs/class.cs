@@ -2213,10 +2213,11 @@ namespace Mono.CSharp {
 			ig.BeginExceptionBlock ();
 			ec.InTry = true;
 			ec.ReturnLabel = finish;
+			ec.HasReturnLabel = true;
 			ec.EmitTopBlock (Block, Location);
 			ec.InTry = old_in_try;
 			
-			ig.MarkLabel (finish);
+			// ig.MarkLabel (finish);
 			bool old_in_finally = ec.InFinally;
 			ec.InFinally = true;
 			ig.BeginFinallyBlock ();
