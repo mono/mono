@@ -1,3 +1,8 @@
+2005-03-02  Martin Baulig  <martin@ximian.com>
+
+	* class.cs (TypeContainer.DoDefineMembers): We also need a default
+	static constructor in static classes.
+
 2005-03-01  Zoltan Varga  <vargaz@freemail.hu>
 
 	* attribute.cs: Pass -1 to DefineLPArrayInternal if sizeConst or
