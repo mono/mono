@@ -157,8 +157,8 @@ public class TypeManager {
 		assemblies = new ArrayList ();
 		modules = new ArrayList ();
 		user_types = new ArrayList ();
-		types = new Hashtable ();
-		typecontainers = new Hashtable ();
+		types = new PtrHashtable ();
+		typecontainers = new PtrHashtable ();
 		builder_to_interface = new PtrHashtable ();
 		builder_to_delegate = new PtrHashtable ();
 		builder_to_enum  = new PtrHashtable ();
@@ -578,7 +578,7 @@ public class TypeManager {
 	public static void RegisterConstant (FieldBuilder fb, Const c)
 	{
 		if (builder_to_constant == null)
-			builder_to_constant = new Hashtable ();
+			builder_to_constant = new PtrHashtable ();
 
 		if (builder_to_constant.Contains (fb))
 			return;
@@ -600,7 +600,7 @@ public class TypeManager {
 	public static void RegisterDelegateData (Type del_type, DictionaryEntry de)
 	{
 		if (delegate_to_data == null)
-			delegate_to_data = new Hashtable ();
+			delegate_to_data = new PtrHashtable ();
 
 		delegate_to_data.Add (del_type, de);
 	}

@@ -211,7 +211,7 @@ namespace Mono.CSharp {
 
 		void Emit (EmitContext ec, bool is_statement)
 		{
-			if (!EventIsLocal && target is EventExpr) {
+			if (target is EventExpr) {
 				((EventExpr) target).EmitAddOrRemove (ec, source);
 				return;
 			}

@@ -2754,8 +2754,9 @@ namespace Mono.CSharp {
 					else
 						instance_expr = new This (Location.Null);
 
-					instance_expr = instance_expr.Resolve (ec);
-
+					if (instance_expr != null)
+						instance_expr = instance_expr.Resolve (ec);
+					
 					return MemberAccess.ResolveMemberAccess (ec, ml, instance_expr, Location);
 				}
 			}

@@ -17,6 +17,10 @@
 	* ../errors/bug10.cs : Add.
 
 	* ../errors/cs0070.cs : Add.
+
+	* typemanager.cs : Use PtrHashtable for Delegate data hashtable etc.
+
+	* assign.cs : Get rid of EventIsLocal everywhere.
 	
 2001-12-23  Miguel de Icaza  <miguel@ximian.com>
 
