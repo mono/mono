@@ -4457,6 +4457,25 @@ if (rsrc != null)
       return metaDataSize;
     }
 
+    
+    private void CalcHeapSizes ()
+    {
+            if (strings.LargeIx()) {
+                    largeStrings = true;
+                    heapSizes |= StringsHeapMask;
+            }
+            if (guid.LargeIx()) {
+                    largeGUID = true;
+                    heapSizes |= GUIDHeapMask;
+            }
+            if (blob.LargeIx()) {
+                    largeBlob = true;
+                    heapSizes |= BlobHeapMask;
+            }
+
+            largeUS = us.LargeIx();
+   }
+
                 internal void StreamSize(byte mask) {
                         heapSizes |= mask;
                 }
@@ -4651,7 +4670,8 @@ if (rsrc != null)
                 lgeCIx[(int)CIx.CustomAttributeType] = true;
               if ((tabIx == MDTable.Method) || (tabIx == MDTable.MemberRef)) 
                 lgeCIx[(int)CIx.MemberRefParent] = true;
-            } else if (count > max2BitSmlIx) {
+            }
+            if (count > max2BitSmlIx) {
               if ((tabIx == MDTable.Field) || (tabIx == MDTable.Param) || (tabIx == MDTable.Property)) 
                 lgeCIx[(int)CIx.HasConst] = true;
               if ((tabIx == MDTable.TypeDef) || (tabIx == MDTable.TypeRef) || (tabIx == MDTable.TypeSpec))
@@ -4662,7 +4682,8 @@ if (rsrc != null)
                 lgeCIx[(int)CIx.Implementation] = true;
               if ((tabIx == MDTable.Module) || (tabIx == MDTable.ModuleRef) || (tabIx == MDTable.AssemblyRef) || (tabIx == MDTable.TypeRef))
                 lgeCIx[(int)CIx.ResolutionScope] = true;
-            } else if (count > max1BitSmlIx) {
+            }
+            if (count > max1BitSmlIx) {
               if ((tabIx == MDTable.Field) || (tabIx == MDTable.Param)) 
                 lgeCIx[(int)CIx.HasFieldMarshal] = true;
               if ((tabIx == MDTable.Event) || (tabIx == MDTable.Property)) 
@@ -4675,19 +4696,6 @@ if (rsrc != null)
                 lgeCIx[(int)CIx.TypeOrMethodDef] = true; 
             }
       }
-                        if (strings.LargeIx()) {
-                                largeStrings = true;
-                                heapSizes |= StringsHeapMask;
-                        }
-                        if (guid.LargeIx()) {
-                                largeGUID = true;
-                                heapSizes |= GUIDHeapMask;
-                        }
-                        if (blob.LargeIx()) {
-                                largeBlob = true;
-                                heapSizes |= BlobHeapMask;
-                        }
-      largeUS = us.LargeIx();
     }
 
     private void SetStreamOffsets() {
@@ -4706,6 +4714,7 @@ if (rsrc != null)
     }
 
     internal void CalcTildeStreamSize() {
+CalcHeapSizes ();
       //tilde.SetIndexSizes(strings.LargeIx(),us.LargeIx(),guid.LargeIx(),blob.LargeIx());
       tildeTide = TildeHeaderSize;
       tildeTide += 4 * numTables;

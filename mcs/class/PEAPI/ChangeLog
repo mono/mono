@@ -1,5 +1,13 @@
 2004-07-21  Jackson Harper  <jackson@ximian.com>
 
+	* PEAPI.cs: Do all the index size checks. I always wondered why
+	the code was like that and finally realized today that it was like
+	that because it was wrong. Wait until the opportune momement to
+	calculate the index sizes (after everything has been added to the
+	streams, and before writing anything).
+	
+2004-07-21  Jackson Harper  <jackson@ximian.com>
+
 	* PEAPI.cs: Create ClassRefInsts with types not just
 	ClassRefs. This way modified types can be used. I am having alot
 	of trouble remembering why I actually even need this class though.
