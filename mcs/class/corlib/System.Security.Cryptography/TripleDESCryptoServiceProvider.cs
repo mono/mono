@@ -5,11 +5,7 @@
 //	Sebastien Pouliot <sebastien@ximian.com>
 //
 // (C) 2002 Motus Technologies Inc. (http://www.motus.com)
-// (C) 2004 Novell (http://www.novell.com)
-//
-
-//
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -117,19 +113,18 @@ namespace System.Security.Cryptography {
 		// for both input and output
 		protected override void ECB (byte[] input, byte[] output) 
 		{
-			byte[] temp = new byte [input.Length];
+			DESTransform.Permutation (input, output, DESTransform.ipTab, false);
 			if (encrypt) {
-				E1.ProcessBlock (input, output);
-				D2.ProcessBlock (output, temp);
-				E3.ProcessBlock (temp, output);
+				E1.ProcessBlock (output, output);
+				D2.ProcessBlock (output, output);
+				E3.ProcessBlock (output, output);
 			}
 			else {
-				D1.ProcessBlock (input, output);
-				E2.ProcessBlock (output, temp);
-				D3.ProcessBlock (temp, output);
-				// don't keep decrypted content in memory
-				Array.Clear (temp, 0, temp.Length);
+				D1.ProcessBlock (output, output);
+				E2.ProcessBlock (output, output);
+				D3.ProcessBlock (output, output);
 			}
+			DESTransform.Permutation (output, output, DESTransform.fpTab, true);
 		}
 	}
 }
