@@ -1,3 +1,7 @@
+2003-09-04  Lluis Sanchez Gual  <lluis@ximian.com>
+
+	* Methods.cs: Added support for bare parameter style. Fixed some defaults.
+
 2003-09-01  Lluis Sanchez Gual  <lluis@ximian.com>
 
 	* Methods.cs: In TypeStubInfo, added Documentation field.

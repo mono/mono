@@ -117,6 +117,7 @@ namespace System.Web.Services.Protocols {
 				RequestNamespace = rma.RequestNamespace;
 				ResponseNamespace = rma.ResponseNamespace;
 				ResponseName = rma.ResponseElementName;
+				ParameterStyle = SoapParameterStyle.Wrapped;
 				OneWay = rma.OneWay;
 				SoapBindingStyle = SoapBindingStyle.Rpc;
 
@@ -155,18 +156,20 @@ namespace System.Web.Services.Protocols {
 			if (Action == null || Action == "")
 				Action = RequestNamespace.EndsWith("/") ? (RequestNamespace + Name) : (RequestNamespace + "/" + Name);
 			
+			bool hasWrappingElem = (ParameterStyle == SoapParameterStyle.Wrapped);
+			
 			XmlReflectionMember [] in_members = BuildRequestReflectionMembers (optional_ns);
 			XmlReflectionMember [] out_members = BuildResponseReflectionMembers (optional_ns);
 
 			_membersMapping = new XmlMembersMapping [2];
 
 			if (Use == SoapBindingUse.Literal) {
-				_membersMapping [0] = xmlImporter.ImportMembersMapping (RequestName, RequestNamespace, in_members, true);
-				_membersMapping [1] = xmlImporter.ImportMembersMapping (ResponseName, ResponseNamespace, out_members, true);
+				_membersMapping [0] = xmlImporter.ImportMembersMapping (RequestName, RequestNamespace, in_members, hasWrappingElem);
+				_membersMapping [1] = xmlImporter.ImportMembersMapping (ResponseName, ResponseNamespace, out_members, hasWrappingElem);
 			}
 			else {
-				_membersMapping [0] = soapImporter.ImportMembersMapping (RequestName, RequestNamespace, in_members, true, true);
-				_membersMapping [1] = soapImporter.ImportMembersMapping (ResponseName, ResponseNamespace, out_members, true, true);
+				_membersMapping [0] = soapImporter.ImportMembersMapping (RequestName, RequestNamespace, in_members, hasWrappingElem, true);
+				_membersMapping [1] = soapImporter.ImportMembersMapping (ResponseName, ResponseNamespace, out_members, hasWrappingElem, true);
 			}
 
 			XmlSerializer [] s = null;
@@ -409,7 +412,7 @@ namespace System.Web.Services.Protocols {
 					
 					ParameterStyle = SoapParameterStyle.Wrapped;
 					RoutingStyle = srs.RoutingStyle;
-					Use = SoapBindingUse.Literal;
+					Use = SoapBindingUse.Encoded;
 					SoapBindingStyle = SoapBindingStyle.Rpc;
 				} else {
 					ParameterStyle = SoapParameterStyle.Wrapped;
@@ -418,6 +421,10 @@ namespace System.Web.Services.Protocols {
 					SoapBindingStyle = SoapBindingStyle.Document;
 				}
 			}
+			
+			if (ParameterStyle == SoapParameterStyle.Default) ParameterStyle = SoapParameterStyle.Wrapped;
+			if (Use == SoapBindingUse.Default) Use = SoapBindingUse.Literal;
+
 			FaultSerializer = new XmlSerializer (typeof(Fault));
 			SoapExtensions = SoapExtension.GetTypeExtensions (t);
 		}
