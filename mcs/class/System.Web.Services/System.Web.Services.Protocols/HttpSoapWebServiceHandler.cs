@@ -243,7 +243,7 @@ namespace System.Web.Services.Protocols
 				if (message.Exception == null)
 					WebServiceHelper.WriteSoapMessage (xtw, _typeStubInfo, methodInfo.Use, methodInfo.ResponseSerializer, message.OutParameters, message.Headers);
 				else
-					WebServiceHelper.WriteSoapMessage (xtw, _typeStubInfo, SoapBindingUse.Literal, _typeStubInfo.GetFaultSerializer(), new Fault (message.Exception), null);
+					WebServiceHelper.WriteSoapMessage (xtw, _typeStubInfo, SoapBindingUse.Literal, Fault.Serializer, new Fault (message.Exception), null);
 
 				if (bufferResponse)
 				{

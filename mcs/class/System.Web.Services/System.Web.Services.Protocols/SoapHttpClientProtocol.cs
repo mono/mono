@@ -149,19 +149,6 @@ namespace System.Web.Services.Protocols {
 			return base.GetWebRequest (uri);
 		}
 
-		//
-		// Just for debugging
-		//
-		void DumpStackFrames ()
-		{
-			StackTrace st = new StackTrace ();
-
-			for (int i = 0; i < st.FrameCount; i++){
-				StackFrame sf = st.GetFrame (i);
-				Console.WriteLine ("At frame: {0} {1}", i, sf.GetMethod ().Name);
-			}
-		}
-
 		WebRequest GetRequestForMessage (Uri uri, SoapClientMessage message)
 		{
 			WebRequest request = GetWebRequest (uri);

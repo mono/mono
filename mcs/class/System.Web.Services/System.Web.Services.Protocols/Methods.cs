@@ -144,10 +144,12 @@ namespace System.Web.Services.Protocols {
 			XmlReflectionMember [] out_members = BuildResponseReflectionMembers (optional_ns);
 
 			if (Use == SoapBindingUse.Literal) {
+				xmlImporter.IncludeTypes (source.CustomAttributeProvider);
 				InputMembersMapping = xmlImporter.ImportMembersMapping (RequestName, RequestNamespace, in_members, hasWrappingElem);
 				OutputMembersMapping = xmlImporter.ImportMembersMapping (ResponseName, ResponseNamespace, out_members, hasWrappingElem);
 			}
 			else {
+				soapImporter.IncludeTypes (source.CustomAttributeProvider);
 				InputMembersMapping = soapImporter.ImportMembersMapping (RequestName, RequestNamespace, in_members, hasWrappingElem, writeAccessors);
 				OutputMembersMapping = soapImporter.ImportMembersMapping (ResponseName, ResponseNamespace, out_members, hasWrappingElem, writeAccessors);
 			}
@@ -276,34 +278,7 @@ namespace System.Web.Services.Protocols {
 		}
 	}
 
-	// FIXME: this class should be internal, but it needs to be public in
-	// order to be serialized using XmlSerializer.
-	[XmlRoot (Namespace="http://schemas.xmlsoap.org/soap/envelope/")]
-	public class Fault
-	{
-		public Fault () {}
 
-		public Fault (SoapException ex) 
-		{
-			faultcode = ex.Code;
-			faultstring = ex.Message;
-			faultactor = ex.Actor;
-			detail = ex.Detail;
-		}
-
-		[XmlElement (Namespace="")]
-		public XmlQualifiedName faultcode;
-		
-		[XmlElement (Namespace="")]
-		public string faultstring;
-		
-		[XmlElement (Namespace="")]
-		public string faultactor;
-		
-		[SoapIgnore]
-		public XmlNode detail;
-	}
-	
 	//
 	// Holds the metadata loaded from the type stub, as well as
 	// the metadata for all the methods in the type
@@ -318,7 +293,6 @@ namespace System.Web.Services.Protocols {
 		internal SoapParameterStyle      ParameterStyle;
 		internal SoapServiceRoutingStyle RoutingStyle;
 		internal SoapBindingUse          Use;
-		internal int                     faultSerializerId = -1;
 		internal SoapExtensionRuntimeConfig[][] SoapExtensions;
 		internal SoapBindingStyle SoapBindingStyle;
 		internal XmlReflectionImporter 	xmlImporter;
@@ -363,6 +337,9 @@ namespace System.Web.Services.Protocols {
 			
 			if (ParameterStyle == SoapParameterStyle.Default) ParameterStyle = SoapParameterStyle.Wrapped;
 			if (Use == SoapBindingUse.Default) Use = SoapBindingUse.Literal;
+			
+			xmlImporter.IncludeTypes (Type);
+			soapImporter.IncludeTypes (Type);
 
 			SoapExtensions = SoapExtension.GetTypeExtensions (Type);
 		}
@@ -395,19 +372,8 @@ namespace System.Web.Services.Protocols {
 			else
 				res = new SoapMethodStubInfo (parent, lmi, ats[0], xmlImporter, soapImporter);
 				
-			if (faultSerializerId == -1)
-			{
-				XmlReflectionImporter ri = new XmlReflectionImporter ();
-				XmlTypeMapping tm = ri.ImportTypeMapping (typeof(Fault));
-				faultSerializerId = RegisterSerializer (tm);
-			}
 			methods_byaction [res.Action] = res;
 			return res;
-		}
-		
-		public XmlSerializer GetFaultSerializer ()
-		{
-			return GetSerializer (faultSerializerId);
 		}
 		
 		internal void RegisterHeaderType (Type type, string serviceNamespace, SoapBindingUse use)

@@ -1,3 +1,12 @@
+2004-02-27  Lluis Sanchez Gual  <lluis@ximian.com>
+
+	* Fault.cs: Moved Fault class from Methods.cd to this file. It also includes
+	  a generated serializer.
+	* HttpSoapWebServiceHandler.cs, WebServiceHelper.cs: Use the new static Fault serializer.
+	* Methods.cs: Include types declared with XmlInclude and SoapInclude to the
+	  reflection importer. Moved Fault and its serializer to Fault.cs
+	* SoapHttpClientProtocol.cs: Removed unused method.
+
 2004-02-12  Lluis Sanchez Gual <lluis@ximian.com>
 
 	* WebServiceHelper.cs: When reading a soap request, skip empty headers. 

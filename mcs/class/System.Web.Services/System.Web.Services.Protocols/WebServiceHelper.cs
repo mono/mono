@@ -96,7 +96,7 @@ namespace System.Web.Services.Protocols
 			xmlReader.MoveToContent ();
 			
 			if (xmlReader.LocalName == "Fault" && xmlReader.NamespaceURI == SoapEnvelopeNamespace)
-				bodySerializer = typeStubInfo.GetFaultSerializer ();
+				bodySerializer = Fault.Serializer;
 
 			body = bodySerializer.Deserialize (xmlReader);
 		}
