@@ -1567,13 +1567,17 @@ namespace Mono.Xml.Schema
 					HandleError ("Invalid schemaLocation attribute format.");
 				for (int i = 0; i < tmp.Length; i += 2) {
 					Uri absUri = null;
+					XmlTextReader xtr = null;
 					try {
 						absUri = new Uri ((this.BaseURI != "" ? new Uri (BaseURI) : null), tmp [i + 1]);
-						XmlTextReader xtr = new XmlTextReader (absUri.ToString ());
+						xtr = new XmlTextReader (absUri.ToString ());
 						schema = XmlSchema.Read (xtr, null);
 					} catch (Exception) { // FIXME: (wishlist) It is bad manner ;-(
 						HandleError ("Could not resolve schema location URI: " + absUri, null, true);
 						continue;
+					} finally {
+						if (xtr != null)
+							xtr.Close ();
 					}
 					if (schema.TargetNamespace == null)
 						schema.TargetNamespace = tmp [i];
@@ -1592,12 +1596,16 @@ namespace Mono.Xml.Schema
 			string noNsSchemaLocation = reader.GetAttribute ("noNamespaceSchemaLocation", XmlSchema.InstanceNamespace);
 			if (noNsSchemaLocation != null) {
 				Uri absUri = null;
+				XmlTextReader xtr = null;
 				try {
 					absUri = new Uri ((this.BaseURI != "" ? new Uri (BaseURI) : null), noNsSchemaLocation);
-					XmlTextReader xtr = new XmlTextReader (absUri.ToString ());
+					xtr = new XmlTextReader (absUri.ToString ());
 					schema = XmlSchema.Read (xtr, null);
 				} catch (Exception) { // FIXME: (wishlist) It is bad manner ;-(
 					HandleError ("Could not resolve schema location URI: " + absUri, null, true);
+				} finally {
+					if (xtr != null)
+						xtr.Close ();
 				}
 				if (schema != null && schema.TargetNamespace != null)
 					HandleError ("Specified schema has different target namespace.");

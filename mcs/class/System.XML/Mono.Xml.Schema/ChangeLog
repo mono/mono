@@ -1,3 +1,8 @@
+2004-06-06  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XsdValidatingReader.cs : Close XmlTextReader more strictly. Exception
+	  might be thrown in ctor() *after* stream open and before try-catch.
+
 2004-06-03  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XsdValidatingReader.cs : XmlNamespaceManager.LookupPrefix() allows
