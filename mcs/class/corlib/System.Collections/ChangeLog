@@ -1,3 +1,7 @@
+2003-08-27  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* CaseInsensitiveHashCodeProvider.cs: small speed improvement.
+
 2003-08-21  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Stack.cs: patch by JoergR@voelcker.com (Joerg Rosenkranz) that fixes

@@ -75,15 +75,10 @@ namespace System.Collections {
 			int h = 0;
 			char c;
 
-			if (str.Length > 0) {
-				for (int i = 0;i<str.Length;i++) {
-					c = str [i];
-
-					if (Char.IsLetter (c))
-						c = Char.ToLower (c);
-
-					h = h * 31 + c;
-				}
+			int length = str.Length;
+			for (int i = 0;i<length;i++) {
+				c = Char.ToLower (str [i]);
+				h = h * 31 + c;
 			}
 
 			return h;
