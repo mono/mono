@@ -1,3 +1,9 @@
+2005-05-07  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* BigInteger.cs: Faster scan of smallPrimes in IsProbablePrime. 
+	Commented the methods OddModTwoPow and EvenModTwoPow as they are broken
+	in some cases (well tested primes test case). 
+	
 2004-04-22  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* BigInteger.cs: FxCop-ized. CLS compliance.
