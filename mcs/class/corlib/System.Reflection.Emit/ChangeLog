@@ -1,3 +1,7 @@
+2004-08-07  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* OpCodes.cs : csc complains CS1034 Line cannot exceed 2046 characters.
+
 2004-08-05  Duncan Mak  <duncan@ximian.com>
 
 	* OpCodes.cs (TakesSingleByteArgument): Add this back.
