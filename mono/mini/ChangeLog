@@ -1,5 +1,7 @@
 2004-11-07  Zoltan Varga  <vargaz@freemail.hu>
 
+	* mini-sparc.h mini-sparc.c exceptions-sparc.c: Add support for OP_RETHROW.
+
 	* mini.h: Add mono_arch_get_rethrow_exception () arch specific function.
 	* mini-ops.h: Add OP_RETHROW.
 
