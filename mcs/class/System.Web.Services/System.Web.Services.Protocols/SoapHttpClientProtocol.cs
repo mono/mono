@@ -279,9 +279,7 @@ namespace System.Web.Services.Protocols {
 			// Deserialize the response
 
 			StreamReader reader = new StreamReader (stream, encoding, false);
-			string ss = reader.ReadToEnd ();
-			Console.WriteLine (ss);
-			XmlTextReader xml_reader = new XmlTextReader (new StringReader (ss));
+			XmlTextReader xml_reader = new XmlTextReader (reader);
 
 			bool isSuccessful = (code != HttpStatusCode.InternalServerError);
 			SoapHeaderCollection headers;
