@@ -56,12 +56,20 @@ namespace System.Configuration
 			{
 				XmlNode childNode = childNodeList[i];
 
+				if(childNode.Name == "#text")
+				{
+					string text = childNode.Value.Trim (' ', '\t', '\n');
+					if (text == "")
+						continue;
+				} else if(childNode.Name == "#whitespace")
+					continue;
+				
 				//if the name of this childNode is not 'add' then throw a ConfigurationException.
 				if(childNode.Name != "add")
 				{
 					throw (new ConfigurationException("Unrecognized element"));
 				}
-				
+
 				//Get the attributes for the childNode
 				XmlAttributeCollection xmlAttributes = childNode.Attributes;
 				

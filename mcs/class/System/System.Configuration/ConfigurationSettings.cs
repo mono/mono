@@ -42,18 +42,18 @@ namespace System.Configuration
 		/// <returns></returns>
 		public static object GetConfig(string sectionName)
 		{
+			// NOTE: We can only use Assembly.GetCallingAssembly() if we're called
+			//       directly from user code.
+			return GetConfig (Assembly.GetCallingAssembly (), sectionName);
+		}
+
+		private static object GetConfig(Assembly assembly, string sectionName)
+		{
+			//Get the full path to the Applicaton Configuration File.
+			applicationConfigFileName =  assembly.Location + ".config";
+
 			//Create an instance of an XML Document.
 			XmlDocument ConfigurationDocument = new XmlDocument();
-
-			/*
-			 * LAMESPEC: The .config file that needs to be parsed is the name of the application, plus ".config"
-			 * ie. "Myapplication.exe.config"
-			 * The only way I could find to get the name of the application is through System.Forms.Application.ExecutablePath, this
-			 * may be an incorrect way to get this information.  It works properly on a windows machine when building an executable,
-			 * however, I'm not sure how this would work under other platforms.
-			*/
-			//Get the full path to the Applicaton Configuration File.
-			applicationConfigFileName =  "FIXME:ConfigurationSettings" + ".config";
 
 			//Try to load the XML Document.
 			try
@@ -66,9 +66,9 @@ namespace System.Configuration
 				throw(new ConfigurationException(e.Message, applicationConfigFileName, e.LineNumber));
 			}
 
-				string sectionHandlerName = GetSectionHanderType(ConfigurationDocument, sectionName);
-			     
-				XmlNode sectionNode = ConfigurationDocument.SelectSingleNode("/configuration/" + sectionName);
+			string sectionHandlerName = GetSectionHandlerType(ConfigurationDocument, sectionName);
+
+			XmlNode sectionNode = ConfigurationDocument.SelectSingleNode("/configuration/" + sectionName);
 			
 			
 			
@@ -121,13 +121,13 @@ namespace System.Configuration
 
 
 		/// <summary>
-		///		Gets the name of the SectionHander Class that will handle this section.
+		///		Gets the name of the SectionHandler Class that will handle this section.
 		/// </summary>
 		/// <param name="xmlDoc">An xml Configuration Document.</param>
 		/// <param name="sectionName">The name of the configuration section that configuration settings are read from.</param>
 		/// <returns>The name of the Handler Object for this configuration section, including the name if its Assembly.</returns>
 		[MonoTODO]
-		private static string GetSectionHanderType(XmlDocument xmlDoc, string sectionName)
+		private static string GetSectionHandlerType(XmlDocument xmlDoc, string sectionName)
 		{
 			//TODO: This method does not account for sectionGroups yet.
 			string handlerName = null;
@@ -186,7 +186,8 @@ namespace System.Configuration
 			get
 			{	
 				//Get the Configuration Settings for the "appSettings" section.
-				NameValueCollection appSettings = (NameValueCollection)GetConfig("appSettings");;
+				NameValueCollection appSettings = (NameValueCollection)GetConfig(
+					Assembly.GetCallingAssembly (), "appSettings");
 
 				return appSettings;
 			}

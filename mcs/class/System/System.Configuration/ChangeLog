@@ -1,3 +1,12 @@
+2002-09-03  Martin Baulig  <martin@gnome.org>
+
+	* ConfigurationSettings.cs (ConfigurationSettings.GetConfig): Use the
+	correct configuration filename, fixed the TODO.
+	(GetSectionHanderType): Renamed to GetSectionHandlerType.
+
+	* NameValueSectionHandler.cs (NameValueSectionHandler.Create): Allow
+	whitespaces in the configuration file.
+
 2002-01-31  Duncan Mak  <duncan@ximian.com>
 
 	* ConfigurationException.cs: Rewrote most of the file and added
