@@ -743,7 +743,7 @@ namespace MonoTests.System
 			AssertEquals("#H08", (decimal)tryInt64, Convert.ToDecimal(tryInt64));
 			AssertEquals("#H09", (decimal)trySByte, Convert.ToDecimal(trySByte));
 			AssertEquals("#H10", (decimal)tryFloat, Convert.ToDecimal(tryFloat));
-			AssertEquals("#H11", (decimal)23456.432, Convert.ToDecimal("23456,432"));
+			AssertEquals("#H11", (decimal)23456.432, Convert.ToDecimal("23456.432"));
 			AssertEquals("#H12", (decimal)tryUI16, Convert.ToDecimal(tryUI16));
 			AssertEquals("#H13", (decimal)tryUI32, Convert.ToDecimal(tryUI32));
 			AssertEquals("#H14", (decimal)tryUI64, Convert.ToDecimal(tryUI64));

@@ -1,3 +1,7 @@
+2002-06-02  Duncan Mak  <duncan@ximian.com>
+
+	* ConvertTest.cs (TestToDecimal): Fixed typo in case #H11.
+
 2002-06-01  Nick Drochak  <ndrochak@gol.com>
 
 	* BugTest.cs: Remove, bug fixed.  Yay!
