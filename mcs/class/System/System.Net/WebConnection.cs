@@ -375,7 +375,6 @@ namespace System.Net
 			if (!ExpectContent (data.StatusCode))
 				stream.ForceCompletion ();
 
-			stream.CheckComplete ();
 			data.request.SetResponseData (data);
 		}
 
