@@ -234,6 +234,28 @@ namespace MonoTests.System.Security.Permissions {
 		}
 
 		[Test]
+		public void IntersectNullName ()
+		{
+			PrincipalPermission p1 = new PrincipalPermission ("user", "role");
+			PrincipalPermission p2 = new PrincipalPermission (null, "role");
+			PrincipalPermission p3 = (PrincipalPermission) p1.Intersect (p2);
+			AssertEquals ("p1 N p2 == p1", p1.ToString (), p3.ToString ());
+			p3 = (PrincipalPermission) p2.Intersect (p1);
+			AssertEquals ("p2 N p1 == p1", p1.ToString (), p3.ToString ());
+		}
+
+		[Test]
+		public void IntersectNullRole ()
+		{
+			PrincipalPermission p1 = new PrincipalPermission ("user", "role");
+			PrincipalPermission p2 = new PrincipalPermission ("user", null);
+			PrincipalPermission p3 = (PrincipalPermission) p1.Intersect (p2);
+			AssertEquals ("p1 N p2 == p1", p1.ToString (), p3.ToString ());
+			p3 = (PrincipalPermission) p2.Intersect (p1);
+			AssertEquals ("p2 N p1 == p1", p1.ToString (), p3.ToString ());
+		}
+
+		[Test]
 		[ExpectedException (typeof (ArgumentException))]
 		public void IntersectWithBadPermission () 
 		{

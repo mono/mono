@@ -1,3 +1,8 @@
+2004-10-15  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* PrincipalPermissionTest.cs: Added two new tests to check for nulls
+	during intersection.
+
 2004-09-04  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* FileIOPermissionAttributeTest.cs: Added a new test to check that the
