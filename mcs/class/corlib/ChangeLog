@@ -1,5 +1,14 @@
 2003-07-20  Peter Williams  <peter@newton.cx>
 
+	* Makefile: Add in corlib_res.dll, which we use as a basis
+	for tests on non-linux platforms. Nearly identical rules to
+	corlib_cmp: corlib - some files that cause the MS runtime to
+	barf.
+
+	* corlib_res.dll.excludes: Added.
+
+2003-07-20  Peter Williams  <peter@newton.cx>
+
 	* Makefile: Don't use real_corlib; use $(PLATFORM_CORLIB).
 
 2003-07-18  Peter Williams  <peter@newton.cx>

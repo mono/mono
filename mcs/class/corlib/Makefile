@@ -7,13 +7,21 @@ include ../../build/rules.make
 #
 # Here, we define a bunch of variables.
 
+ifdef PLATFORM_MONO_NATIVE
+test_against = $(corlib)
+else
+test_against = $(reslib)
+endif
+
 corlib = $(topdir)/class/lib/corlib.dll
 testlib = corlib_test.dll
 cmplib = $(topdir)/class/lib/corlib_cmp.dll
+reslib = $(topdir)/class/lib/corlib_res.dll
 
 corpdb = $(patsubst %.dll,%.pdb,$(corlib))
 testpdb = $(patsubst %.dll,%.pdb,$(testlib))
 cmppdb = $(patsubst %.dll,%.pdb,$(cmplib))
+respdb = $(patsubst %.dll,%.pdb,$(reslib))
 
 sourcefile = corlib.dll.sources
 response = $(depsdir)/corlib.dll.response
@@ -27,12 +35,17 @@ test_sourcefile = corlib_test.dll.sources
 test_response = $(depsdir)/$(testlib).response
 test_makefrag = $(depsdir)/$(testlib).makefrag
 test_stampfile = $(depsdir)/$(testlib).stamp
-test_flags = /nowarn:0618 /nowarn:0672 /r:$(corlib) /r:$(topdir)/class/lib/NUnit.Framework.dll
+test_flags = /nowarn:0618 /nowarn:0672 /r:$(test_against) /r:$(topdir)/class/lib/NUnit.Framework.dll
 
 cmp_response = $(depsdir)/corlib_cmp.dll.response
 cmp_makefrag = $(depsdir)/corlib_cmp.dll.makefrag
 cmp_stampfile = $(depsdir)/corlib_cmp.dll.stamp
 cmp_flags = /r:$(PLATFORM_CORLIB) $(corlib_flags)
+
+res_response = $(depsdir)/corlib_res.dll.response
+res_makefrag = $(depsdir)/corlib_res.dll.makefrag
+res_stampfile = $(depsdir)/corlib_res.dll.stamp
+res_flags = /r:$(PLATFORM_CORLIB) $(corlib_flags)
 
 # Here, we make all.
 
@@ -43,14 +56,15 @@ install-local: $(corlib)
 	$(INSTALL_LIB) $(corlib) $(DESTDIR)$(prefix)/lib
 
 clean-local:
-	-rm -f $(corlib) $(cmplib) $(testlib) TestResult.xml \
+	-rm -f $(corlib) $(cmplib) $(testlib) $(reslib) TestResult.xml \
 	       $(response) $(makefrag) $(stampfile) \
 	       $(test_response) $(test_makefrag) $(test_stampfile) \
-	       $(corpdb) $(cmppdb) $(testpdb) \
-	       $(cmp_response) $(cmp_makefrag) $(cmp_stampfile)
+	       $(cmp_response) $(cmp_makefrag) $(cmp_stampfile) \
+	       $(res_response) $(res_makefrag) $(res_stampfile) \
+	       $(corpdb) $(cmppdb) $(testpdb) $(respdb)
 
 
-test-local: $(corlib) $(testlib)
+test-local: $(corlib) $(test_against) $(testlib)
 
 run-test-local:
 	$(TEST_RUNTIME) $(TEST_HARNESS) $(testlib)
@@ -60,7 +74,8 @@ run-test-local:
 # first, make dist.
 
 DISTFILES = $(sourcefile) $(test_sourcefile) \
-	corlib.dll.win32-excludes corlib_cmp.dll.excludes Test/ms_run_test.sh
+	corlib.dll.win32-excludes corlib_cmp.dll.excludes corlib_res.dll.excludes \
+	Test/ms_run_test.sh
 
 # see $(topdir)/build/library.make for explanation of what's going on
 # here.
@@ -131,6 +146,35 @@ $(cmp_makefrag): $(cmp_response)
 
 ifndef HAVE_CMP_MAKEFRAG
 $(cmp_stampfile):
+	touch $@
+endif
+
+# corlib_res
+
+$(reslib): $(res_makefrag) $(res_response) $(res_stampfile)
+	$(BOOT_COMPILE) $(LIBRARY_FLAGS) $(res_flags) /target:library /out:$@ @$(res_response)
+
+$(res_response): $(sourcefile) corlib_res.dll.excludes
+	@echo Creating $@ ...
+ifdef PLATFORM_CHANGE_SEPARATOR_CMD
+	@cat corlib_res.dll.excludes $(sourcefile) |sort |uniq -u |$(PLATFORM_CHANGE_SEPARATOR_CMD) >$@
+else
+	@cat corlib_res.dll.excludes $(sourcefile) |sort |uniq -u >$@
+endif
+
+$(res_makefrag): $(res_response)
+	@echo Creating $@ ...
+	@echo "HAVE_RES_MAKEFRAG = yes" >$@.new
+	@echo "$(res_stampfile): \\" >>$@.new
+	@cat $< |sed -e 's,\.cs[ \t]*$$,\.cs \\,' >>$@.new
+	@cat $@.new |sed -e '$$s, \\$$,,' >$@
+	@$(ECHO_ESCAPE) "\ttouch \$$@" >>$@
+	@rm -rf $@.new
+
+-include $(res_makefrag)
+
+ifndef HAVE_RES_MAKEFRAG
+$(res_stampfile):
 	touch $@
 endif
 
