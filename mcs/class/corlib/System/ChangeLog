@@ -1,3 +1,7 @@
+2002-03-08  Martin Baulig  <martin@gnome.org>
+
+	* Array.cs (Copy): Optimized: removed duplicate null check, removed
+	two duplicate GetLowerBound() calls and one duplicate IsValueType.
 
 Fri Mar 8 18:49:19 CET 2002 Paolo Molaro <lupus@ximian.com>
 
