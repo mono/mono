@@ -126,6 +126,7 @@ namespace System.Windows.Forms {
 
 		static Control ()
 		{
+			Gtk.Application.Init ();
 			init_me = 1;
 		}
 		
