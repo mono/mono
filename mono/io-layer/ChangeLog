@@ -1,6 +1,11 @@
+2003-06-17  Dick Porter  <dick@ximian.com>
+
+	* io.c (SetFileAttributes): Implement the ReadOnly attribute, and
+	ignore the unsupported ones ("fixes" bug 44977).
+
 2003-06-17  Lluis Sanchez Gual  <lluis@ximian.com>
 
-	* mics.c: fix bug in _wapi_calc_timeout. It gave wrong values for
+	* misc.c: fix bug in _wapi_calc_timeout. It gave wrong values for
 	  high ms values (there was an overflow).
 
 2003-06-17  Zoltan Varga  <vargaz@freemail.hu>
