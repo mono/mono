@@ -1,5 +1,7 @@
 2004-08-12  Sebastien Pouliot  <sebastien@ximian.com>
 
+	* SecurityManager.cs: Change ResolvePolicy to only care about host
+	provided evidence to create identity permissions.
 	* SecurityContextSwitcher.cs: Added missing [ReliabilityContract] to 
 	Undo method.
 

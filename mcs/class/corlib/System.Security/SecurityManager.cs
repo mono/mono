@@ -175,9 +175,11 @@ namespace System.Security {
 						break;
 				}
 			}
-	
-			foreach (object o in evidence) {
-				IIdentityPermissionFactory ipf = (o as IIdentityPermissionFactory);
+
+			// Only host evidence are used for policy resolution
+			IEnumerator ee = evidence.GetHostEnumerator ();
+			while (ee.MoveNext ()) {
+				IIdentityPermissionFactory ipf = (ee.Current as IIdentityPermissionFactory);
 				if (ipf != null) {
 					IPermission p = ipf.CreateIdentityPermission (evidence);
 					ps.AddPermission (p);
