@@ -1,3 +1,16 @@
+2002-07-20  Dick Porter  <dick@ximian.com>
+
+	* wapi-private.h:
+	* io-private.h:
+	* io.h:
+	* io.c:
+	* handles.c: Implemented pipe handles
+	
+	* handles.c:
+	* daemon.c: Fixed bug in handle closing.
+
+	* shared.c:
+	* daemon.c: Forked processes now close all open file descriptors.
 
 Fri Jul 19 19:05:19 CEST 2002 Paolo Molaro <lupus@ximian.com>
 

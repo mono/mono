@@ -1,3 +1,12 @@
+2002-07-20  Dick Porter  <dick@ximian.com>
+
+	* process.h:
+	* process.c: Pass file handles to CreateProcess
+	
+	* icall.c:
+	* file-io.h:
+	* file-io.c: Implemented CreatePipe
+
 2002-07-19  Dietmar Maurer  <dietmar@ximian.com>
 
 	* metadata.c (mono_get_param_info): set alignment for value types
