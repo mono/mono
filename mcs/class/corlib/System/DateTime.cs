@@ -1012,6 +1012,7 @@ namespace System
 				// verification  right now.
 				case 'Z':
 					useutc = true;
+					s = s.Substring (1);
 					break;
 				case ':':
 					if (!_ParseString (s, 0, dfi.TimeSeparator, out num_parsed))
