@@ -1,3 +1,9 @@
+2002-12-10  Ravi Pratap  <ravi@ximian.com>
+
+	* test-102.cs : Improve to catch the case when an attribute
+	can be emitted twice for the same program element but with
+	different targets.
+
 2002-11-24  Martin Baulig  <martin@ximian.com>
 
 	* test-130.cs: This test did not compile with csc and

@@ -26,7 +26,8 @@ namespace N1 {
 		
 		int i;
 		
-		[Mine ("Foo")]	
+		[Mine ("Foo")]
+		[return: Mine ("Bar")]	
 		public static int Main ()
 		{
 			return 0;
