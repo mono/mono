@@ -99,5 +99,15 @@ namespace System {
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		internal extern IntPtr obj_address ();
+ 
+		internal void FieldGetter (string klassName, string fieldName, ref object val)
+		{
+			/* never called */
+		}
+
+		internal void FieldSetter (string klassName, string fieldName, object val)
+		{
+			/* never called */
+		}
 	}
 }
