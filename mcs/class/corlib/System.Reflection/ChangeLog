@@ -1,3 +1,9 @@
+2004-03-09  Martin Baulig  <martin@ximian.com>
+
+	* MonoEvent.cs (MonoEventInfo): Replaced `parent' with
+	`declaring_type' and `reflected_type'.
+	(MonoEvent): Distinguish between declaring and reflected type.
+
 2004-02-25  Martin Baulig  <martin@ximian.com>
 
 	* MonoGenericInst.cs

@@ -15,7 +15,8 @@ using System.Runtime.InteropServices;
 namespace System.Reflection {
 
 	internal struct MonoEventInfo {
-		public Type parent;
+		public Type declaring_type;
+		public Type reflected_type;
 		public String name;
 		public MethodInfo add_method;
 		public MethodInfo remove_method;
@@ -65,7 +66,7 @@ namespace System.Reflection {
 				MonoEventInfo info;
 				MonoEventInfo.get_event_info (this, out info);
 				
-				return info.parent;
+				return info.declaring_type;
 			}
 		}
 
@@ -74,7 +75,7 @@ namespace System.Reflection {
 				MonoEventInfo info;
 				MonoEventInfo.get_event_info (this, out info);
 				
-				return info.parent;
+				return info.reflected_type;
 			}
 		}
 
