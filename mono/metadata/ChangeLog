@@ -1,6 +1,6 @@
 2003-01-10  Dietmar Maurer  <dietmar@ximian.com>
 
-	* marshal.c (emit_struct_conv): added an assertion for EXPLICIT_LAYOUT
+	* marshal.c (emit_struct_conv): added support for EXPLICIT_LAYOUT
 
 	* loader.c (mono_method_get_marshal_info): bug fix
 
