@@ -1,3 +1,8 @@
+2002-05-22  Dietmar Maurer  <dietmar@ximian.com>
+
+	* exception.c (arch_exc_is_catched): impl. MS like exception
+	handling (added a check for unhandled exceptions)
+
 2002-05-22  Martin Baulig  <martin@gnome.org>
 
 	* debug-dwarf2-plus.c (mono_debug_open_assembly_dwarf2_plus): Only run
