@@ -364,8 +364,8 @@ namespace System.Windows.Forms {
 		{
 			throw new NotImplementedException ();
 		}
-#endif
 		#endregion Implementation of UnsafeNativeMethods.IEnumVariant
+#endif
 	}
 
 }
