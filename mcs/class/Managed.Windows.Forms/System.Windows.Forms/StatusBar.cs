@@ -187,8 +187,7 @@ namespace System.Windows.Forms {
 		protected override void WndProc(ref Message m)
 		{
 			switch ((Msg) m.Msg) {
-			case Msg.WM_PAINT: {
-				Rectangle	rect;
+			case Msg.WM_PAINT: {				
 				PaintEventArgs	paint_event;
 
 				paint_event = XplatUI.PaintEventStart (Handle);

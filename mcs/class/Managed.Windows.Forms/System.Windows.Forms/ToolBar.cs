@@ -32,9 +32,12 @@
 // Copyright (C) Novell, Inc. 2004 (http://www.novell.com)
 //
 //
-// $Revision: 1.14 $
+// $Revision: 1.15 $
 // $Modtime: $
 // $Log: ToolBar.cs,v $
+// Revision 1.15  2004/10/06 09:59:05  jordi
+// removes warnings from compilation
+//
 // Revision 1.14  2004/10/05 09:07:07  ravindra
 // 	- Removed a private method, Draw ().
 // 	- Fixed the ButtonDropDown event handling.
@@ -716,7 +719,6 @@ namespace System.Windows.Forms
 
 		private Size CalcButtonSize ()
 		{
-			ToolBarButton button;
 			String longestText = buttons [0].Text;
 			for (int i = 1; i < buttons.Count; i++) {
 				if (buttons[i].Text.Length > longestText.Length)

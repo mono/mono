@@ -23,9 +23,12 @@
 //	Peter Bartok	pbartok@novell.com
 //
 //
-// $Revision: 1.38 $
+// $Revision: 1.39 $
 // $Modtime: $
 // $Log: XplatUIWin32.cs,v $
+// Revision 1.39  2004/10/06 09:59:05  jordi
+// removes warnings from compilation
+//
 // Revision 1.38  2004/10/02 19:08:38  pbartok
 // - Added Win32EnableWindow method (test for implementing modal dialogs)
 // - Added ClientToScreen method and imports
@@ -797,8 +800,7 @@ namespace System.Windows.Forms {
 
 		internal override void PaintEventEnd(IntPtr handle) {
 			HandleData	data;
-			PAINTSTRUCT	ps;
-			PaintEventArgs	paint_event;
+			PAINTSTRUCT	ps;			
 
 			data = (HandleData) handle_data [0];
 			if (data == null) {

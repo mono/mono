@@ -29,9 +29,12 @@
 //	Jaak Simm		jaaksimm@firm.ee
 //	John Sohn		jsohn@columbus.rr.com
 //
-// $Revision: 1.67 $
+// $Revision: 1.68 $
 // $Modtime: $
 // $Log: Control.cs,v $
+// Revision 1.68  2004/10/06 09:59:05  jordi
+// removes warnings from compilation
+//
 // Revision 1.67  2004/10/05 03:18:16  jackson
 // When resizing the buffers should be invalidated. This should be handled in Control not in derived classes.
 //
@@ -1845,7 +1848,6 @@ namespace System.Windows.Forms
 		}
 
 		public void CreateControl() {
-			Control	child;
 
 			CreateHandle();
 
@@ -1931,9 +1933,9 @@ namespace System.Windows.Forms
 			throw new NotImplementedException();
 
 			// FIXME - should use the GetRegionScans function of the region to invalidate each area
-			if (invalidateChildren) {
-				for (int i=0; i<child_controls.Count; i++) child_controls[i].Invalidate();
-			}
+			//if (invalidateChildren) {
+			//	for (int i=0; i<child_controls.Count; i++) child_controls[i].Invalidate();
+			//}
 		}
 
 		public object Invoke (Delegate method) {
@@ -2691,8 +2693,7 @@ namespace System.Windows.Forms
 				break;
 			}
 
-			case Msg.WM_PAINT: {
-				Rectangle	rect;
+			case Msg.WM_PAINT: {				
 				PaintEventArgs	paint_event;
 
 				paint_event = XplatUI.PaintEventStart(Handle);

@@ -25,9 +25,12 @@
 //
 //
 //
-// $Revision: 1.41 $
+// $Revision: 1.42 $
 // $Modtime: $
 // $Log: ThemeWin32Classic.cs,v $
+// Revision 1.42  2004/10/06 09:59:05  jordi
+// removes warnings from compilation
+//
 // Revision 1.41  2004/10/05 16:15:30  jackson
 // Improve rendering of the radio button patch by John BouAntoun
 //
@@ -274,7 +277,6 @@ namespace System.Windows.Forms
 
 		#region ButtonBase
 		public override void DrawButtonBase(Graphics dc, Rectangle clip_area, ButtonBase button) {
-			ButtonState	state;
 			int		width;
 			int		height;
 
