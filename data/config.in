@@ -1,4 +1,5 @@
 <configuration>
 	<dllmap dll="cygwin1.dll" target="@LIBC@" />
 	<dllmap dll="libc" target="@LIBC@" />
+	<dllmap dll="libxslt.dll" target="libxslt.so" />
 </configuration>
