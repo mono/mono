@@ -231,6 +231,7 @@ System.ComponentModel/RefreshEventHandler.cs
 System.ComponentModel/RefreshEventArgs.cs
 System.ComponentModel/StringConverter.cs
 System.ComponentModel/WarningException.cs
+System.ComponentModel/InvalidEnumArgumentException.cs
 System/UriPartial.cs
 System/TODOAttribute.cs
 System/UriFormatException.cs

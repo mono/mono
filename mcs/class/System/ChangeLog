@@ -1,3 +1,7 @@
+2002-11-02  Duncan Mak  <duncan@ximian.com>
+
+	* list.unix: Added InvalidEnumArgumentException.
+
 2002-10-31  Dick Porter  <dick@ximian.com>
 
 	* list.unix: Added MonoIO and MonoIOError to the build

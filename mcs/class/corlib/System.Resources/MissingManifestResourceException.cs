@@ -21,22 +21,22 @@ namespace System.Resources
 		// Constructors
 		public MissingManifestResourceException ()
 			: base (Locale.GetText ("The assembly does not contain the resources for the required culture."))
-			{
-			}
+		{
+		}
 		
 		public MissingManifestResourceException (string message)
 			:base (message)
-			{
-			}
+		{
+		}
 		
 		protected MissingManifestResourceException (SerializationInfo info, StreamingContext context)
 				    :base (info, context)
-			{
-			}
+		{
+		}
 		
 		public MissingManifestResourceException (String message, Exception e)
 			:base (message, e)
-			{
-			}
+		{
+		}
 	}
 }

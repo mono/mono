@@ -1,3 +1,7 @@
+2002-11-02  Duncan Mak  <duncan@ximian.com>
+
+	* InvalidEnumArgumentException.cs: Added.
+
 2002-10-30  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* EventHandlerList.cs: fixed bug #29535.
