@@ -182,7 +182,7 @@ namespace System.Runtime.Serialization.Formatters.Soap {
 
 								if(assemblyName == null || assemblyName == String.Empty)
 									throw new SerializationException(
-										String.Format("Parse Error, no assembly associated with XML key {1} {2}", 
+										String.Format("Parse Error, no assembly associated with XML key {0} {1}", 
 										localName, 
 										namespaceURI));
 								type = FormatterServices.GetTypeFromAssembly(

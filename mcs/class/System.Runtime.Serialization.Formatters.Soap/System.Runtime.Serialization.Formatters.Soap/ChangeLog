@@ -1,3 +1,7 @@
+2004-05-07  Lluis Sanchez Gual <lluis@ximian.com>
+
+	* SoapWriter.cs: Fixed string formatting.
+
 2004-04-30  Lluis Sanchez Gual <lluis@ximian.com>
 
 	* SoapReader.cs: If the SoapMessage  instance being filled includes the
