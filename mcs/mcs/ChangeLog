@@ -1,5 +1,12 @@
 2003-12-20  Martin Baulig  <martin@ximian.com>
 
+	* class.cs (TypeContainer.DefineMembers): Don't do the CS0649 check here.
+	(FieldBase.IsAssigned): Removed this field.
+	(FieldBase.SetAssigned): New public method.
+	(TypeContainer.Emit): Make the CS0169/CS0649 checks actually work.
+
+2003-12-20  Martin Baulig  <martin@ximian.com>
+
 	* expression.cs (LocalVariableReference.DoResolve): Don't set
 	`vi.Used' if we're called from DoResolveLValue().
 
