@@ -24,10 +24,10 @@ namespace System.IO {
 			Null = new BinaryWriter();
 		}
 
-		protected BinaryWriter() : this (Stream.Null, Encoding.UTF8) {
+		protected BinaryWriter() : this (Stream.Null, Encoding.UTF8Unmarked) {
 		}
 
-		public BinaryWriter(Stream output) : this(output, Encoding.UTF8) {
+		public BinaryWriter(Stream output) : this(output, Encoding.UTF8Unmarked) {
 		}
 
 		public BinaryWriter(Stream output, Encoding encoding) {

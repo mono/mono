@@ -1,3 +1,8 @@
+2002-10-30  Miguel de Icaza  <miguel@ximian.com>
+
+	* BinaryWriter.cs: Use the UTF8Unmarker encoding by default, this
+	is what .NET does.
+
 2002-10-23  Dick Porter  <dick@ximian.com>
 
 	* FileStream.cs: Implemented CanSeek, and used it around all the
