@@ -1,3 +1,8 @@
+2003-11-14  Martin Baulig  <martin@ximian.com>
+
+	* interface.cs (Interface.DefineType): Define all type parameters
+	before adding the interfaces we inherit.
+
 2003-11-11  Martin Baulig  <martin@ximian.com>
 
 	* generic.cs (ConstructedType.ResolveType): Always call

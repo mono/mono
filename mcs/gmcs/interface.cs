@@ -775,16 +775,16 @@ namespace Mono.CSharp {
 				tc.RegisterOrder (this);
 			}
 
+			if (IsGeneric) {
+				foreach (TypeParameter type_param in TypeParameters)
+					type_param.Define (TypeBuilder);
+			}
+
 			if (ifaces != null) {
 				foreach (TypeExpr iface in ifaces) {
 					Type itype = iface.ResolveType (ec);
 					TypeBuilder.AddInterfaceImplementation (itype);
 				}
-			}
-
-			if (IsGeneric) {
-				foreach (TypeParameter type_param in TypeParameters)
-					type_param.Define (TypeBuilder);
 			}
 
 			TypeManager.AddUserInterface (Name, TypeBuilder, this, ifaces);
