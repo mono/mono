@@ -67,6 +67,11 @@ namespace System.Xml
 				return base.InnerXml;
 			}
 			set {
+				foreach(XmlNode n in ChildNodes)
+				{
+					this.RemoveChild(n);
+				}		  
+
 				// How to get xml:lang and xml:space? Create logic as ConstructNamespaceManager()?
 				XmlNameTable nt = this.OwnerDocument.NameTable;
 				XmlNamespaceManager nsmgr = this.ConstructNamespaceManager(); //new XmlNamespaceManager(nt);
