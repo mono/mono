@@ -36,6 +36,7 @@ System.Diagnostics/TextWriterTraceListenerTest.cs
 System/DoubleFormatterTest.cs
 System/DoubleTest.cs
 System/EnumTest.cs
+System/EnvironmentTest.cs
 System/ExceptionTest.cs
 System/FloatingPointFormatterTest.cs
 System.Globalization/CalendarTest.cs
