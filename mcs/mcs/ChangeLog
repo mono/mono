@@ -1,3 +1,8 @@
+2002-12-10  Ravi Pratap  <ravi@ximian.com>
+
+	* attribute.cs (ApplyAttributes): Keep track of the emitted
+	attributes on a per-target basis. This fixes bug #35413.
+
 2002-12-10  Miguel de Icaza  <miguel@ximian.com>
 
 	* driver.cs (MainDriver): On rotor encoding 28591 does not exist,

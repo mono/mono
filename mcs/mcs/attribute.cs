@@ -667,6 +667,7 @@ namespace Mono.CSharp {
 						    Attributes opt_attrs, Location loc)
 		{
 			ArrayList emitted_attrs = new ArrayList ();
+			ArrayList emitted_targets = new ArrayList ();
 			Type attr_type = null;
 			
 			if (opt_attrs == null)
@@ -675,10 +676,12 @@ namespace Mono.CSharp {
 				return;
 
 			foreach (AttributeSection asec in opt_attrs.AttributeSections) {
+				string attr_target = asec.Target;
+				
 				if (asec.Attributes == null)
 					continue;
 
-				if (asec.Target == "assembly" && !(builder is AssemblyBuilder))
+				if (attr_target == "assembly" && !(builder is AssemblyBuilder))
 					continue;
 				
 				foreach (Attribute a in asec.Attributes) {
@@ -698,7 +701,8 @@ namespace Mono.CSharp {
 					// Perform the check for duplicate attributes
 					//
 					if (emitted_attrs.Contains (attr_type) &&
-					    TypeManager.AreMultipleAllowed (attr_type) != true) {
+					    emitted_targets.Contains (attr_target) &&
+					    !TypeManager.AreMultipleAllowed (attr_type)) {
 						Report.Error (579, loc, "Duplicate '" + a.Name + "' attribute");
 						return;
 					}
@@ -808,6 +812,13 @@ namespace Mono.CSharp {
 					//
 					if (!emitted_attrs.Contains (attr_type))
 						emitted_attrs.Add (attr_type);
+
+					//
+					// We keep of this target-wise and so emitted targets
+					// are tracked too
+					//
+					if (!emitted_targets.Contains (attr_target))
+						emitted_targets.Add (attr_target);
 				}
 				
 				
