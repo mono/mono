@@ -14,6 +14,7 @@
 
 using System;
 using System.IO;
+using System.Globalization;
 
 using Mono.Security.Cryptography;
 
@@ -172,7 +173,7 @@ namespace System.Security.Cryptography {
 		public byte[] SignHash (byte[] rgbHash, string str)
 		{
 			// right now only SHA1 is supported by FIPS186-2
-			if (str.ToUpper () != "SHA1")
+			if (String.Compare (str, "SHA1", true, CultureInfo.InvariantCulture) != 0)
 				throw new Exception (); // not documented
 			return dsa.CreateSignature (rgbHash);
 		}
