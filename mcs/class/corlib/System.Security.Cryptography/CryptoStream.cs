@@ -140,7 +140,7 @@ public class CryptoStream : Stream {
 			throw new NotSupportedException ("not in Read mode");
 		if (offset < 0) 
 			throw new ArgumentOutOfRangeException ("offset", "negative");
-		if (count < 0))
+		if (count < 0)
 			throw new ArgumentOutOfRangeException ("count", "negative");
 		if (offset + count > buffer.Length)
 			throw new ArgumentException ("(offset+count)", "buffer overflow");
@@ -188,7 +188,7 @@ public class CryptoStream : Stream {
 			throw new NotSupportedException ("not in Write mode");
 		if (offset < 0) 
 			throw new ArgumentOutOfRangeException ("offset", "negative");
-		if (count < 0))
+		if (count < 0)
 			throw new ArgumentOutOfRangeException ("count", "negative");
 		if (offset + count > buffer.Length)
 			throw new ArgumentException ("(offset+count)", "buffer overflow");
