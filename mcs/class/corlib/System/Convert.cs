@@ -2536,8 +2536,14 @@ namespace System {
 				
 				else if (conversionType == conversionTable[18]) // 18 TypeCode.String
 					return (object) convertValue.ToString (provider);
-				else
-					throw new ArgumentException (Locale.GetText ("Unknown target conversion type"));
+				else {
+					try {
+						return (object) convertValue;
+					}
+					catch {
+						throw new ArgumentException (Locale.GetText ("Unknown target conversion type"));
+					}
+				}
 			} else
 				// Not in the conversion table
 				throw new InvalidCastException ((Locale.GetText (

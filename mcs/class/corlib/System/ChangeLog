@@ -1,3 +1,12 @@
+2003-05-01  Pedro Martínez Juliá  <yoros@wanadoo.es>
+
+	* Environment.cs: Changed the method GetFolderPath because it must
+	return at least a directory name (not null).
+
+	* Convert.cs: In ToType, if the destination type is unknown, try to
+	cast the value to object (then, the calling method will downcast it
+	to the type it wants).
+
 2003-04-30  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Enum.cs: fixed bug #41522.

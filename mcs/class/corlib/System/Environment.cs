@@ -287,7 +287,8 @@ namespace System
 		[MonoTODO]
 		public static string GetFolderPath(SpecialFolder folder)
 		{
-			return null;
+			// At least return HOME path
+			return GetEnvironmentVariable("HOME");
 		}
 
 		/// <summary>
