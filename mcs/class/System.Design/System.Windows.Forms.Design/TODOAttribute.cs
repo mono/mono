@@ -8,7 +8,7 @@
 //
 using System;
 
-namespace System {
+namespace System.Windows.Forms.Design {
 
 	/// <summary>
 	///   The TODO attribute is used to flag all incomplete bits in our class libraries
