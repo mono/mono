@@ -1,3 +1,7 @@
+2002-01-18  Nick Drochak  <ndrochak@gol.com>
+
+	* makefile: remove path to beta2 csc.exe.  path to csc.exe must be in PATH instead.
+
 2002-01-17  Nick Drochak  <ndrochak@gol.com>
 
 	* IFaceDisco.cs, XMLUtil.cs: Added new files for interface discovery tool.

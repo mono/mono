@@ -1,5 +1,4 @@
-ROOT=/cygdrive/$(subst \,/,$(subst :\,/,$(SYSTEMROOT)))
-CSC=$(ROOT)/microsoft.net/framework/v1.0.2914/csc.exe
+CSC=csc.exe
 CSCFLAGS=/nologo /debug+ /debug:full  /optimize /unsafe
 
 VERSION=0.13
