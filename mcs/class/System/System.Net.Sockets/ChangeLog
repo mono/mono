@@ -1,3 +1,7 @@
+2005-04-04 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Socket.cs: remove unused async IO code.
+
 2005-03-01 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Socket.cs: don't Poll/block in Connect aither.

@@ -327,7 +327,6 @@ namespace System.Net.Sockets
 		internal bool blocking=true;
 		private int pendingEnds;
 		private int closeDelayed;
-		static readonly bool supportsAsync = FakeGetSupportsAsync ();
 
 		delegate void SocketAsyncCall ();
 		/*
@@ -803,18 +802,9 @@ namespace System.Net.Sockets
 			req.Offset = offset;
 			req.Size = size;
 			req.SockFlags = socket_flags;
-			if (supportsAsync && socket_type == SocketType.Stream) {
-				int error;
-				req.CreateAsyncDelegate ();
-				KeepReference (req);
-				AsyncReceiveInternal (req, out error);
-				if (error != 0 && error != 10036) // WSAEINPROGRESS
-					throw new SocketException (error);
-			} else {
-				Worker worker = new Worker (req);
-				SocketAsyncCall sac = new SocketAsyncCall (worker.Receive);
-				sac.BeginInvoke (null, null);
-			}
+			Worker worker = new Worker (req);
+			SocketAsyncCall sac = new SocketAsyncCall (worker.Receive);
+			sac.BeginInvoke (null, null);
 
 			return req;
 		}
@@ -877,18 +867,9 @@ namespace System.Net.Sockets
 			req.Offset = offset;
 			req.Size = size;
 			req.SockFlags = socket_flags;
-			if (supportsAsync && socket_type == SocketType.Stream) {
-				int error;
-				req.CreateAsyncDelegate ();
-				KeepReference (req);
-				AsyncSendInternal (req, out error);
-				if (error != 0 && error != 10036) // WSAEINPROGRESS
-					throw new SocketException (error);
-			} else {
-				Worker worker = new Worker (req);
-				SocketAsyncCall sac = new SocketAsyncCall (worker.Send);
-				sac.BeginInvoke (null, null);
-			}
+			Worker worker = new Worker (req);
+			SocketAsyncCall sac = new SocketAsyncCall (worker.Send);
+			sac.BeginInvoke (null, null);
 			return req;
 		}
 
@@ -1033,9 +1014,6 @@ namespace System.Net.Sockets
 			if (req == null)
 				throw new ArgumentException ("Invalid IAsyncResult", "result");
 
-			if (supportsAsync && socket_type == SocketType.Stream)
-				RemoveReference (req);
-
 			if (!result.IsCompleted)
 				result.AsyncWaitHandle.WaitOne();
 
@@ -1077,9 +1055,6 @@ namespace System.Net.Sockets
 			SocketAsyncResult req = result as SocketAsyncResult;
 			if (req == null)
 				throw new ArgumentException ("Invalid IAsyncResult", "result");
-
-			if (supportsAsync && socket_type == SocketType.Stream)
-				RemoveReference (req);
 
 			if (!result.IsCompleted)
 				result.AsyncWaitHandle.WaitOne();
@@ -1692,45 +1667,6 @@ namespace System.Net.Sockets
 		~Socket () {
 			Dispose(false);
 		}
-
-		static Hashtable asyncObjects;
-
-		static void KeepReference (object o)
-		{
-			lock (typeof (Socket)) {
-				if (asyncObjects == null)
-					asyncObjects = new Hashtable ();
-
-				asyncObjects [o] = o;
-			}
-		}
-
-		static void RemoveReference (object o)
-		{
-			lock (typeof (Socket)) {
-				if (asyncObjects == null)
-					return;
-
-				asyncObjects.Remove (o);
-			}
-		}
-
-		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		extern static bool GetSupportsAsync ();
-
-		static bool FakeGetSupportsAsync ()
-		{
-			if (Environment.GetEnvironmentVariable ("MONO_ENABLE_SOCKET_AIO") != null)
-				return GetSupportsAsync ();
-			
-			return false;
-		}
-
-		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		extern static void AsyncReceiveInternal (SocketAsyncResult ares, out int error);
-
-		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		extern static void AsyncSendInternal (SocketAsyncResult ares, out int error);
 	}
 }
 
