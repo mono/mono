@@ -411,11 +411,9 @@ namespace System.Web.UI.WebControls
 					throw new ArgumentOutOfRangeException();
 				int prevVal = SelectedIndex;
 				ViewState["SelectedIndex"] = value;
-				if(items != null)
-				{
-					if(prevVal !=-1 && prevVal < items.Count)
-					{
-						DataGridItem prev = (DataGridItem)items[prevVal];
+				if (itemsArrayList != null) {
+					if (prevVal !=-1 && prevVal < itemsArrayList.Count) {
+						DataGridItem prev = (DataGridItem)itemsArrayList[prevVal];
 						if(prev.ItemType != ListItemType.EditItem)
 						{
 							ListItemType newType = ListItemType.Item;
@@ -424,6 +422,13 @@ namespace System.Web.UI.WebControls
 								newType = ListItemType.AlternatingItem;
 							}
 							prev.SetItemType(newType);
+						}
+					}
+
+					if (value != -1 && itemsArrayList.Count > value) {
+						DataGridItem itemToSelect = (DataGridItem) itemsArrayList [value];
+						if (itemToSelect.ItemType != ListItemType.EditItem) {
+							itemToSelect.SetItemType (ListItemType.SelectedItem);
 						}
 					}
 				}

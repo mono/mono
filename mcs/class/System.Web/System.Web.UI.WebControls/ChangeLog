@@ -1,3 +1,8 @@
+2003-10-22  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* DataGrid.cs: applied patch from Yaron Shkop (yaronsh@mainsoft.com)
+	that fixes bug #49744. Now the selection doesn't lose its data.
+
 2003-10-21 Ben Maurer  <bmaurer@users.sourceforge.net>
 
 	* EditCommandColumn.cs: Implement; fix #49736
