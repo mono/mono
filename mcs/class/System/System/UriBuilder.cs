@@ -14,7 +14,6 @@ using System.Text;
 
 namespace System 
 {
-	[Serializable]
 	public class UriBuilder
 	{
 		private string scheme;

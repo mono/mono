@@ -302,6 +302,11 @@ namespace MonoTests.System
 			AssertEquals ("#20", "file://", uri.GetLeftPart (UriPartial.Scheme));
 			AssertEquals ("#21", "file://server", uri.GetLeftPart (UriPartial.Authority));
 			AssertEquals ("#22", "file://server/share/filename.ext", uri.GetLeftPart (UriPartial.Path));
+			
+			uri = new Uri ("http://www.contoso.com:8080/index.htm#main");
+			AssertEquals ("#23", "http://", uri.GetLeftPart (UriPartial.Scheme));
+			AssertEquals ("#24", "http://www.contoso.com:8080", uri.GetLeftPart (UriPartial.Authority));
+			AssertEquals ("#25", "http://www.contoso.com:8080/index.htm", uri.GetLeftPart (UriPartial.Path));
 		}
 		
 		public void TestCheckHostName ()
@@ -407,6 +412,48 @@ namespace MonoTests.System
 			AssertEquals ("#3", uri1.GetHashCode (), uri2.GetHashCode ());			
 			uri2 = new Uri ("http://www.contoso.com:8080/index.htm");
 			Assert ("#4", uri1.GetHashCode () != uri2.GetHashCode ());			
+		}
+		
+		public void TestMakeRelative ()
+		{
+			Uri uri1 = new Uri ("http://www.contoso.com/index.htm?x=2");
+			Uri uri2 = new Uri ("http://www.contoso.com/foo/bar/index.htm#fragment");
+			Uri uri3 = new Uri ("http://www.contoso.com/bar/foo/index.htm?y=1");
+			Uri uri4 = new Uri ("http://www.contoso.com/bar/foo2/index.htm?x=0");
+			Uri uri5 = new Uri ("https://www.contoso.com/bar/foo/index.htm?y=1");
+			Uri uri6 = new Uri ("http://www.contoso2.com/bar/foo/index.htm?x=0");
+			Uri uri7 = new Uri ("http://www.contoso2.com/bar/foo/foobar.htm?z=0&y=5");
+			Uri uri8 = new Uri ("http://www.xxx.com/bar/foo/foobar.htm?z=0&y=5" + (char) 0xa9);
+
+			AssertEquals ("#1", "foo/bar/index.htm", uri1.MakeRelative (uri2));
+			AssertEquals ("#2", "../../index.htm", uri2.MakeRelative (uri1));
+			
+			AssertEquals ("#3", "../../bar/foo/index.htm", uri2.MakeRelative (uri3));
+			AssertEquals ("#4", "../../foo/bar/index.htm", uri3.MakeRelative (uri2));			
+
+			AssertEquals ("#5", "../foo2/index.htm", uri3.MakeRelative (uri4));
+			AssertEquals ("#6", "../foo/index.htm", uri4.MakeRelative (uri3));
+			
+			AssertEquals ("#7", "https://www.contoso.com/bar/foo/index.htm?y=1", 
+				            uri4.MakeRelative (uri5));
+
+			AssertEquals ("#8", "http://www.contoso2.com/bar/foo/index.htm?x=0", 
+					    uri4.MakeRelative (uri6));
+
+			AssertEquals ("#9", "", uri6.MakeRelative (uri6));
+			AssertEquals ("#10", "foobar.htm", uri6.MakeRelative (uri7));
+			
+			Uri uri10 = new Uri ("mailto:xxx@xxx.com");
+			Uri uri11 = new Uri ("mailto:xxx@xxx.com?subject=hola");
+			AssertEquals ("#11", "", uri10.MakeRelative (uri11));
+			
+			Uri uri12 = new Uri ("mailto:xxx@mail.xxx.com?subject=hola");
+			AssertEquals ("#12", "mailto:xxx@mail.xxx.com?subject=hola", uri10.MakeRelative (uri12));
+						
+			Uri uri13 = new Uri ("mailto:xxx@xxx.com/foo/bar");
+			AssertEquals ("#13", "/foo/bar", uri10.MakeRelative (uri13));
+			
+			AssertEquals ("#14", "http://www.xxx.com/bar/foo/foobar.htm?z=0&y=5" + (char) 0xa9, uri1.MakeRelative (uri8));
 		}
 
 		public static void Print (Uri uri)

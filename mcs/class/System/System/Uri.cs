@@ -353,20 +353,41 @@ namespace System
 		
 		public string GetLeftPart (UriPartial part) 
 		{
-			switch (part) {
+			switch (part) {				
 			case UriPartial.Scheme : 
-				return scheme + GetSchemeDelimiter (scheme); 
+				return scheme + GetSchemeDelimiter (scheme); 				
 			case UriPartial.Authority :
 				if (host == String.Empty ||
 				    scheme == Uri.UriSchemeMailto ||
 				    scheme == Uri.UriSchemeNews)
 					return String.Empty;
-				else
-					return scheme + GetSchemeDelimiter (scheme) + host;
-			case UriPartial.Path :
-				return scheme + GetSchemeDelimiter (scheme) + userinfo +
-				       (userinfo.Length > 0 ? "@" : String.Empty) + 
-				       host + path;
+					
+				StringBuilder s = new StringBuilder ();
+				s.Append (scheme);
+				s.Append (GetSchemeDelimiter (scheme));
+				if (path.Length > 1 && path [1] == ':' && "file".Equals (scheme)) 
+					s.Append ('/');  // win32 file
+				if (userinfo.Length > 0) 
+					s.Append (userinfo).Append ('@');
+				s.Append (host);
+				int defaultPort = GetDefaultPort (scheme);
+				if ((port != -1) && (port != defaultPort))
+					s.Append (':').Append (port);			 
+				return s.ToString ();				
+			case UriPartial.Path :			
+				StringBuilder sb = new StringBuilder ();
+				sb.Append (scheme);
+				sb.Append (GetSchemeDelimiter (scheme));
+				if (path.Length > 1 && path [1] == ':' && "file".Equals (scheme)) 
+					sb.Append ('/');  // win32 file
+				if (userinfo.Length > 0) 
+					sb.Append (userinfo).Append ('@');
+				sb.Append (host);
+				defaultPort = GetDefaultPort (scheme);
+				if ((port != -1) && (port != defaultPort))
+					sb.Append (':').Append (port);			 
+				sb.Append (path);
+				return sb.ToString ();
 			}
 			return null;
 		}
@@ -433,10 +454,31 @@ namespace System
 			        IsHexDigit (pattern [index]));
 		}
 
-		[MonoTODO]
 		public string MakeRelative (Uri toUri) 
 		{
-			throw new NotImplementedException ();	
+			if ((this.Scheme != toUri.Scheme) ||
+			    (this.Authority != toUri.Authority))
+				return toUri.ToString ();
+				
+			if (this.path == toUri.path)
+				return String.Empty;
+				
+			string [] segments = this.Segments;
+			string [] segments2 = toUri.Segments;
+			
+			int k = 0;
+			int max = Math.Max (segments.Length, segments2.Length);
+			for (; k < max; k++)
+				if (segments [k] != segments2 [k]) 
+					break;
+			
+			string result = String.Empty;
+			for (int i = k + 1; i < segments.Length; i++)
+				result += "../";
+			for (int i = k; i < segments2.Length; i++)
+				result += segments2 [i];
+			
+			return result;
 		}
 
 		public override string ToString () 
@@ -449,6 +491,7 @@ namespace System
 			return cachedToString;
 		}
 
+		[MonoTODO]
 		public void GetObjectData (SerializationInfo info, 
 					  StreamingContext context)
 		{

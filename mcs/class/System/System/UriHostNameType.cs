@@ -20,6 +20,10 @@ namespace System {
 		/// <summary>
 		/// </summary>
 		Unknown = 0,
+		
+		/// <summary>
+		/// </summary>
+		Basic = 1,
 
 		/// <summary>
 		/// </summary>
