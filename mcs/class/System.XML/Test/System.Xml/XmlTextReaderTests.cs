@@ -843,6 +843,19 @@ namespace MonoTests.System.Xml
 		}
 
 		[Test]
+		public void NormalizationAttributes ()
+		{
+			// does not normalize attribute values.
+			StringReader sr = new StringReader ("<!DOCTYPE root [<!ELEMENT root EMPTY><!ATTLIST root attr ID #IMPLIED>]><root attr='   value   '/>");
+			XmlTextReader xtr = new XmlTextReader (sr);
+			xtr.Normalization = true;
+			xtr.Read ();
+			xtr.Read ();
+			xtr.MoveToFirstAttribute ();
+			AssertEquals ("   value   ", xtr.Value);
+		}
+
+		[Test]
 		public void CloseIsNotAlwaysEOF ()
 		{
 			// See bug #63505
@@ -896,6 +909,13 @@ namespace MonoTests.System.Xml
 			xtr.ProhibitDtd = true;
 			while (!xtr.EOF)
 				xtr.Read ();
+		}
+
+		[Test]
+		public void Settings ()
+		{
+			XmlTextReader xtr = new XmlTextReader ("<root/>", XmlNodeType.Document, null);
+			AssertNull (xtr.Settings);
 		}
 #endif
 	}

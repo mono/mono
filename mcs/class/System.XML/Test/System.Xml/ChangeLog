@@ -1,3 +1,8 @@
+2004-09-07  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlReaderSettingsTests.cs : added, including XmlReader.Create() tests
+	* XmlTextReaderTests.cs : added normalization and Setting sests.
+
 2004-09-06  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlElementTests.cs : added another set_InnerXml test.
