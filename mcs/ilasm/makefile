@@ -42,6 +42,7 @@ SOURCES =				\
         codegen/GlobalFieldRef.cs       \
         codegen/FeatureAttr.cs          \
         codegen/EventDef.cs             \
+	codegen/PropertyDef.cs          \
         codegen/FieldRef.cs             \
         codegen/FieldInstr.cs           \
 	codegen/LdtokenInstr.cs         \
