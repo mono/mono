@@ -2,7 +2,8 @@
 //
 // This code was automatically generated from
 // ECMA CLI XML Library Specification.
-// Generator: libgen.xsl
+// Generator: libgen.xsl [1.0; (C) Sergey Chaban (serge@wildwestsoftware.com)]
+// Created: Fri, 7 Sep 2001 16:32:20 UTC
 // Source file: AllTypes.xml
 // URL: http://msdn.microsoft.com/net/ecma/AllTypes.xml
 //
@@ -13,20 +14,20 @@ namespace System.IO {
 
 
 	/// <summary>
-	/// <para> Defines constants used to specify the level of file access being requested.</para>
 	/// </summary>
 	[Flags]
 	public enum FileAccess {
 
-		/// <summary><para> Specifies read access for a file.</para></summary>
+		/// <summary>
+		/// </summary>
 		Read = 0x00000001,
 
-		/// <summary><para> Specifies write access for
-		///       a file.</para></summary>
+		/// <summary>
+		/// </summary>
 		Write = 0x00000002,
 
-		/// <summary><para> 
-		///       Specifies read and write access for a file.</para></summary>
+		/// <summary>
+		/// </summary>
 		ReadWrite = Read | Write,
 	} // FileAccess
 
