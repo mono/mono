@@ -1,3 +1,8 @@
+2004-06-25  Atsushi Enomoto <atsushi@ximian.com>
+
+	* RdpContentType.cs, RdpNameClass.cs, RdpObjects.cs, RdpPatterns.cs,
+	  Util.cs : added novell license term.
+
 2004-06-21  Atsushi Enomoto <atsushi@ximian.com>
 
 	* RdpPatterns.cs : Fixed ExpandRef() that caused incorrect nest error.
