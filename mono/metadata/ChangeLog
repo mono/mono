@@ -1,3 +1,8 @@
+2004-08-24  Martin Baulig  <martin@ximian.com>
+
+	* class.cs (mono_class_is_subclass_of): Like an interface, a
+	generic instance also derives from System.Object.
+
 2004-08-23  Zoltan Varga  <vargaz@freemail.hu>
 
 	* metadata.c (mono_metadata_parse_type): Alloc pinned, byref and
