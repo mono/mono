@@ -1,3 +1,13 @@
+2004-08-02  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XPathDocument2.cs : new IXPathNavigable implementation
+	  XPathDocument2Navigator.cs : new XPathNavigator implementation
+	  XPathDocument2Editable.cs : new XPathEditableNavigator implementation
+
+	To use them in XPathDocument, set environment MONO_XPATH_DOCUMENT_2=yes
+	(It is still too unstable to pass all nunit tests and standalone XSLT
+	tests).
+
 2004-07-30  Atsushi Enomoto <atsushi@ximian.com>
 
 	* DTMXPathNavigator.cs :
