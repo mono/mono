@@ -100,6 +100,11 @@ SOURCES = \
 	Button.cs \
 	MessageBox.cs
 
+myall:
+	@echo This directory is now obsolete, its only used for reference purposes
+	@echo Please use the ../System.Windows.Forms directory now
+	@echo Read the mcs/class/System.Windows.Forms/README file for details.
+
 all:	monostub.exe.so System.Windows.Forms.dll NativeWindowTest.exe \
 	FormTest.exe Test.exe
 
