@@ -32,7 +32,10 @@ test_response = $(depsdir)/$(PROFILE)_$(test_lib).response
 test_makefrag = $(depsdir)/$(PROFILE)_$(test_lib).makefrag
 test_stampfile = $(depsdir)/$(PROFILE)_$(test_lib).stamp
 test_nunitfw = $(topdir)/class/lib/$(PROFILE)/nunit.framework.dll 
-test_flags = /r:$(the_lib) /r:$(test_nunitfw) $(TEST_MCS_FLAGS)
+test_nunitcore = $(topdir)/class/lib/$(PROFILE)/nunit.core.dll 
+test_nunitutil = $(topdir)/class/lib/$(PROFILE)/nunit.util.dll 
+test_nunit_ref = -r:$(test_nunitfw) -r:$(test_nunitcore) -r:$(test_nunitutil)
+test_flags = /r:$(the_lib) $(test_nunit_ref) $(TEST_MCS_FLAGS)
 endif
 
 gacutil = $(topdir)/tools/gacutil/gacutil.exe
