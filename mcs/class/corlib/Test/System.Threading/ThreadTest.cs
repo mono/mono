@@ -459,6 +459,7 @@ namespace MonoTests.System.Threading {
 		public void TestSuspend ()
 		{
 			Thread t = new Thread (new ThreadStart (DoCount));
+			t.IsBackground = true;
 			t.Start ();
 			
 			CheckIsRunning ("t1", t);
@@ -481,6 +482,7 @@ namespace MonoTests.System.Threading {
 		public void TestSuspendAbort ()
 		{
 			Thread t = new Thread (new ThreadStart (DoCount));
+			t.IsBackground = true;
 			t.Start ();
 			
 			CheckIsRunning ("t1", t);
@@ -491,7 +493,15 @@ namespace MonoTests.System.Threading {
 			CheckIsNotRunning ("t3", t);
 			
 			t.Abort ();
-			while(t.IsAlive);
+			
+			int n=0;
+			while (t.IsAlive && n < 200) {
+				Thread.Sleep (10);
+				n++;
+			}
+			
+			Assert ("Timeout while waiting for abort", n < 200);
+			
 			CheckIsNotRunning ("t6", t);
 		}		
 		

@@ -1,3 +1,7 @@
+2004-06-17  Lluis Sanchez Gual <lluis@ximian.com>
+
+	* ThreadTest.cs: Improved test.
+
 2004-06-15  Lluis Sanchez Gual <lluis@ximian.com>
 
 	* TimerTest.cs: Added more tests.
