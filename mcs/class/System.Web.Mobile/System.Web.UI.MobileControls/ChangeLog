@@ -1,4 +1,12 @@
 
+2003-01-10	Gaurav Vaish <gvaish_mono AT lycos.com>
+
+	* MobileListItemType.cs,
+	* ObjectListViewMode.cs,
+	* WmlListFieldType.cs,    // Failed to locate enumeration!
+	* Wrapping.cs
+	                         : Added enumerations.
+
 2003-01-09	Gaurav Vaish <gvaish_mono AT lycos.com>
 
 	* MobileControl.cs       : Added some more properties (dummies).
