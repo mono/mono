@@ -62,10 +62,45 @@ namespace Mono.AssemblyLinker
 
 		private void ParseArgs (string[] args) {
 
-			if (args.Length == 0)
+			ArrayList flat_args = new ArrayList ();
+
+			// Process response files
+			Hashtable response_files = new Hashtable ();
+			foreach (string str in args) {
+				if (str [0] != '@') {
+					flat_args.Add (str);
+					continue;
+				}
+
+				if (str.Length == 1)
+					ReportMissingFileSpec ("@");
+
+				string resfile_name = Path.GetFullPath (str.Substring (1));
+				if (response_files.ContainsKey (resfile_name))
+					Report (1006, "Response file '" + resfile_name + "' was already included");
+				response_files [resfile_name] = resfile_name;
+
+				StreamReader reader = null;
+				try {
+					reader = new StreamReader (new FileStream (resfile_name, FileMode.Open));
+
+					foreach (string s in reader.ReadToEnd ().Split (' '))
+						if (s.Length > 0)
+							flat_args.Add (s);
+				}
+				catch (Exception ex) {
+					Report (1007, "Error opening response file '" + resfile_name + "' -- '" + ex.Message + "'");
+				}
+				finally {
+					if (reader != null)
+						reader.Close ();
+				}
+			}
+
+			if (flat_args.Count == 0)
 				Usage ();
 
-			foreach (string str in args) {
+			foreach (string str in flat_args) {
 				if ((str [0] != '-') && (str [0] != '/')) {
 					string[] parts = str.Split (',');
 					ModuleInfo mod = new ModuleInfo ();
