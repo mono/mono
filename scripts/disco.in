@@ -1,0 +1,2 @@
+#!/bin/sh
+@bindir@/@mono_interp@ @plat_bindir@/disco.exe "$@"
