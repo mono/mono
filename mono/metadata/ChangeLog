@@ -1,4 +1,8 @@
 
+Wed Jan 26 17:49:45 CET 2005 Paolo Molaro <lupus@ximian.com>
+
+	* domain.c: fixed long standing bug in mono_string_equal().
+
 2005-01-20 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* threadpool.c: increase the timeout for threads in the thread pool to 10s.
