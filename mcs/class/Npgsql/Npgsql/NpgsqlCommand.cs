@@ -629,10 +629,12 @@ namespace Npgsql
                 // FIXME DEBUG ONLY
                 // adding the '::<datatype>' on the end of a parameter is a highly
                 // questionable practice, but it is great for debugging!
+                // Removed as this was going in infinite loop when the parameter name had the same name of parameter
+                // type name. i.e.: parameter name called :text of type text. It would conflict with the parameter type name ::text.
                 result = ReplaceParameterValue(
                             result,
                             Param.ParameterName,
-                            Param.TypeInfo.ConvertToBackend(Param.Value, false) + "::" + Param.TypeInfo.Name
+                            Param.TypeInfo.ConvertToBackend(Param.Value, false)
                          );
             }
 
@@ -764,11 +766,12 @@ namespace Npgsql
 
         private String ReplaceParameterValue(String result, String parameterName, String paramVal)
         {
-            Int32 resLen = result.Length;
+        	Int32 resLen = result.Length;
             Int32 paramStart = result.IndexOf(parameterName);
             Int32 paramLen = parameterName.Length;
             Int32 paramEnd = paramStart + paramLen;
             Boolean found = false;
+            
 
             while(paramStart > -1)
             {
@@ -798,6 +801,7 @@ namespace Npgsql
             if(!found)
                 throw new IndexOutOfRangeException (String.Format(resman.GetString("Exception_ParamNotInQuery"), parameterName));
 
+			
             return result;
         }//ReplaceParameterValue
 

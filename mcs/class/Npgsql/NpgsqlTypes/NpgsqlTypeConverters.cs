@@ -194,7 +194,7 @@ namespace NpgsqlTypes
         /// </summary>
         internal static String ToString(NpgsqlNativeTypeInfo TypeInfo, Object NativeData)
         {
-            return NativeData.ToString().Replace("'", "''");
+            return NativeData.ToString().Replace("'", "''").Replace("\\", "\\\\");
         }
 
         /// <summary>
