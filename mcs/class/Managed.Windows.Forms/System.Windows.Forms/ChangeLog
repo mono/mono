@@ -1,3 +1,7 @@
+2004-11-17  Jordi Mas i Hernandez <jordi@ximian.com>
+
+	*  Menu.cs: fixes signature
+
 2004-11-16  Peter Bartok  <pbartok@novell.com>
 
 	* XplatUIX11.cs (GetMessage): Implemented generation of

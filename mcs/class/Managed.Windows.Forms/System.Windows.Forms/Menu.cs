@@ -177,7 +177,7 @@ namespace System.Windows.Forms
 
 		#region Private Methods
 
-		protected void CreateItems ()
+		internal void CreateItems ()
 		{
 			creating = true;
 
