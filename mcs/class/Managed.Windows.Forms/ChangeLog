@@ -1,6 +1,8 @@
 2005-02-22  Raja R Harinath  <rharinath@novell.com>
 
 	* Makefile (EXTRA_DISTFILES): Add 'build-csproj'.
+	(PREBUILT): New rule to copy *.resources to *.resources.prebuilt.
+	(dist-default): Depend on it.
 
 2005-02-18  Peter Bartok  <pbartok@novell.com>
 

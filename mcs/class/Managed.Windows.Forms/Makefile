@@ -14,9 +14,11 @@ RESOURCES = \
 	resources/System.Windows.Forms.en.resources \
 	resources/System.Windows.Forms.de.resources
 
+PREBUILT = $(RESOURCES:=.prebuilt)
+
 EXTRA_DISTFILES = \
 	README System.Windows.Forms.dll.resources \
-	$(RESOURCES:.resources=.resx) $(RESOURCES:=.prebuilt) build-csproj
+	$(RESOURCES:.resources=.resx) $(PREBUILT) build-csproj
 
 TEST_MCS_FLAGS = /r:System.Drawing.dll
 
@@ -30,3 +32,7 @@ $(the_lib): $(RESOURCES) SWF.csproj
 $(RESOURCES): %.resources: %.resx
 	$(RESGEN) $< || cp $@.prebuilt $@
 
+$(PREBUILT): %.prebuilt: %
+	cp $* $@
+
+dist-default: $(PREBUILT)
