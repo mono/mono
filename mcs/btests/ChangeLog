@@ -1,3 +1,30 @@
+2004-09-08 Anirban Bhattacharjee <banirban@novell.com>
+	* OptionalArgu_ByRefFuncA.vb:
+	* OptionalArgu_ByValFuncD.vb:
+	* OptionalArgu_ByValueD.vb:
+	* OptionalArgu_ByRefFuncB.vb:  
+	* OptionalArgu_ByValFuncE.vb:
+	* OptionalArgu_ByValueE.vb:
+	* OptionalArgu_ByFunctionC1.vb:
+	* OptionalArgu_ByRefFuncC.vb:
+	* OptionalArgu_ByReferenceA.vb:
+	* OptionalArgu_ByRefFuncD.vb:
+	* OptionalArgu_ByValueA.vb:
+	* OptionalArgu_ByReferenceB.vb:
+	* OptionalArgu_ByValFuncA.vb:
+	* OptionalArgu_ByValueB.vb:
+	* Optional_ParamArrayC1.vb:
+	* OptionalArgu_ByReferenceC.vb:
+	* OptionalArgu_ByValFuncB.vb:
+	* OptionalArgu_ByValueC1.vb:
+	* Optional_ParamArrayC2.vb:
+	* OptionalArgu_ByReferenceD.vb:
+	* OptionalArgu_ByValFuncC.vb:
+	* OptionalArgu_ByValueC.vb:
+	* Test.Sources: Updated with new test names
+		This set of tests are developed by Manish Sinha <manishkumarsinha@sify.com> which nicely compliment Bernie Sonomon's nice & long work.
+
+
 2004-07-07 Bernie Solomon <bernard@ugsolutions.com>
 	* Test.Sources: make file names match actual files
 	
