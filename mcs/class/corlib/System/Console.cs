@@ -21,15 +21,22 @@ namespace System {
 		static Console ()
 		{
 			string codepage = Encoding.InternalCodePage ();
-			Encoding encoding = Encoding.Default;
+			Encoding encoding;
 
-			if (((int) Environment.OSVersion.Platform) != 128){
+			if (((int) Environment.Platform) != 128){
 				//
 				// On Unix systems (128), do not output the
 				// UTF-8 ZWNBSP (zero-width non-breaking space).
 				//
 				if (codepage.ToUpper ().Replace ('-', '_').IndexOf ("UTF_8") != -1)
 					encoding = Encoding.UTF8Unmarked;
+				else
+					encoding = Encoding.Default;
+			} else {
+				//
+				// On Windows, follow the Windows tradition
+				//
+				encoding = Encoding.Default;
 			}
 			
 			stderr = new StreamWriter (OpenStandardError (), encoding);
