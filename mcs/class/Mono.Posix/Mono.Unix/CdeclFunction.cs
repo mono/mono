@@ -35,7 +35,26 @@ using System.Text;
 
 namespace Mono.Unix {
 
-	// This class is intended to be thread-safe
+	// This class represents a single unmanaged function with "cdecl" calling
+	// convention -- that is, it can accept a variable number of arguments which
+	// are passed on the runtime stack.
+	//
+	// To use, create an instance:
+	//
+	//    CdeclFunction printf = new CdeclFunction ("the library", 
+	//        "the function name", /* optional */ typeof (ReturnType));
+	//
+	// Then call the Invoke method with the appropriate number of arguments:
+	//
+	// 		printf.Invoke (new object[]{"hello, %s\n", "world!"});
+	//
+	// In the background a P/Invoke definition for the method with the
+	// requested argument types will be generated and invoked, invoking the
+	// unmanaged function.  The generated methods are cached, so that subsequent
+	// calls with the same argument list do not generate new code, speeding up
+	// the call sequence.
+	//
+	// This class is intended to be thread-safe.
 	public sealed class CdeclFunction
 	{
 		// The readonly fields (1) shouldn't be modified, and (2) should only be
@@ -56,8 +75,6 @@ namespace Mono.Unix {
 
 		public CdeclFunction (string library, string method, Type returnType)
 		{
-			Console.WriteLine ("** construction CdeclFunction for lib [{0}], export {1}",
-					library, method);
 			this.library = library;
 			this.method = method;
 			this.returnType = returnType;
@@ -84,12 +101,9 @@ namespace Mono.Unix {
 				MethodInfo mi = (MethodInfo) overloads [typeName];
 
 				if (mi != null) {
-					Console.WriteLine ("** using cached MethodInfo");
 					return mi;
 				}
-				Console.WriteLine ("** creating a new P/Invoke import");
 
-				// TypeBuilder tb = ModuleBuilder.DefineType (typeName, TypeAttributes.Public);
 				TypeBuilder tb = CreateType (typeName);
 				MethodBuilder mb = tb.DefinePInvokeMethod (
 						method, 
@@ -102,7 +116,6 @@ namespace Mono.Unix {
 						CharSet.Ansi);
 				mi = tb.CreateType ().GetMethod (method);
 				overloads.Add (typeName, mi);
-				Console.WriteLine ("** # overloads: " + overloads.Count);
 				return mi;
 			}
 		}
@@ -146,9 +159,7 @@ namespace Mono.Unix {
 
 			sb.Append (") : ").Append (returnType.FullName);
 
-			string r = sb.ToString ();
-			Console.WriteLine ("** type name: " + r + "; HashCode=" + r.GetHashCode());
-			return r;
+			return sb.ToString ();
 		}
 
 		private static Type[] GetParameterTypes (object[] parameters)
