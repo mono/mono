@@ -107,11 +107,17 @@
     		
 			// Initialization for Wine
 			// FIXME - Should not use absolute path
-			[DllImport ("/usr/local/lib/wine/wine-sharedlib.exe.so", EntryPoint="SharedWineInit")]
+			[DllImport ("wine-sharedlib.exe.so", EntryPoint="SharedWineInit")]
 			extern static int SharedWineInit();
 
-			static Form () {
+			internal static void InitializeWine ()
+			{
+				Console.WriteLine ("Am initializing Wine from Form");
 				SharedWineInit();
+			}
+			
+			static Form () {
+				InitializeWine ();
 			}
     		
 			//  --- Public Properties

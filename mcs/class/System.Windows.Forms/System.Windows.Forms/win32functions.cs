@@ -1302,7 +1302,7 @@ namespace System.Windows.Forms{
 		}
 
 		// FIXME - should not use absolute path
-		[DllImport ("/usr/local/lib/wine/wine-sharedlib.exe.so", EntryPoint="WineLoadLibrary")]
+		[DllImport ("wine-sharedlib.exe.so", EntryPoint="WineLoadLibrary")]
 		extern static void WineLoadLibrary(string s);
 
 		static string[] WinColors = 	{
@@ -1391,7 +1391,7 @@ namespace System.Windows.Forms{
 
 			if (!RunningOnUnix)
 				return;
-			
+
 			WineLoadLibrary("gdi32.dll");
 			WineLoadLibrary("kernel32.dll");
 			WineLoadLibrary("comctl32.dll");
