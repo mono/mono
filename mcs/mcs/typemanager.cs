@@ -701,8 +701,8 @@ public class TypeManager {
 		//
 		// Store it sorted
 		//
-		namespaces = new string [namespaces_hash.Count];
 		int idx = 0;
+		TypeManager.namespaces = new string [namespaces_hash.Count];
 		foreach (string ns in namespaces_hash.Keys){
 			namespaces [idx++] = ns;
 		}
