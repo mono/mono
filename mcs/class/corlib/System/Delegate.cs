@@ -178,8 +178,11 @@ namespace System {
 
 		public static bool operator ==( Delegate a, Delegate b )
 		{
-			if ( (object)a == null )
+			if ( (object)a == null ) {
+				if ((object)b == null)
+					return true;
 				return false;
+			}
 			return a.Equals( b );
 		}
 

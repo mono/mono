@@ -17,7 +17,7 @@ namespace System {
 		[MonoTODO]
 		public static void SuppressFinalize (object obj)
 		{
-			throw new NotImplementedException ();
+			//throw new NotImplementedException ();
 		}
 
 	}
