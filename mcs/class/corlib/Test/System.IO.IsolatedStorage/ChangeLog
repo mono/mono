@@ -1,3 +1,10 @@
+2005-03-15  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* IsolatedStorageFileStreamCas.cs: New. CAS unit tests for 
+	IsolatedStorageFileStream.
+	* IsolatedStorageFileCas.cs: New. CAS unit tests for 
+	IsolatedStorageFile.
+
 2005-01-31  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* IsolatedStorageFileStreamTest.cs: New. Unit tests for 
