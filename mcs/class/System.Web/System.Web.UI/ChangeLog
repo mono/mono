@@ -1,3 +1,7 @@
+2004-10-18 Sanjay Gupta <gsanjay@novell.com>
+
+	* DataSourceSelectArguments.cs: Initial implementation.
+
 2004-10-12 Sanjay Gupta <gsanjay@novell.com>
 
 	* UrlPropertyAttribute.cs: Corrected implementation of Equals () method.
