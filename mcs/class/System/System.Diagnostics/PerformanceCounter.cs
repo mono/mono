@@ -3,18 +3,29 @@
 //
 // Authors:
 //   Jonathan Pryor (jonpryor@vt.edu)
+//   Andreas Nahr (ClassDevelopment@A-SoftTech.com)
 //
 // (C) 2002
+// (C) 2003 Andreas Nahr
 //
 
 using System;
 using System.ComponentModel;
+using System.ComponentModel.Design;
 using System.Diagnostics;
 
 namespace System.Diagnostics {
 
 	// must be safe for multithreaded operations
-	public class PerformanceCounter : Component, ISupportInitialize {
+	#if (NET_1_0)
+		[Designer ("Microsoft.VisualStudio.Install.PerformanceCounterDesigner, Microsoft.VisualStudio, Version=1.0.3300.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", typeof (IDesigner))]
+	#endif
+	#if (NET_1_1)
+		[Designer ("Microsoft.VisualStudio.Install.PerformanceCounterDesigner, Microsoft.VisualStudio, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", typeof (IDesigner))]
+	#endif
+	[InstallerType (typeof (PerformanceCounterInstaller))]
+	public sealed class PerformanceCounter : Component, ISupportInitialize 
+	{
 
 		private string categoryName;
 		private string counterName;
@@ -22,8 +33,7 @@ namespace System.Diagnostics {
 		private string machineName;
 		private bool readOnly;
 
-		[MonoTODO("Find the actual value")]
-		public static int DefaultFileMappingSize = 0x80000;
+		public static int DefaultFileMappingSize = 524288;
 
 		// set catname, countname, instname to "", machname to "."
 		public PerformanceCounter ()
@@ -83,6 +93,13 @@ namespace System.Diagnostics {
 		}
 
 		// may throw ArgumentNullException
+		[DefaultValue (""), ReadOnly (true), RecommendedAsConfigurable (true)]
+		#if (NET_1_0)
+			[TypeConverter ("System.Diagnostics.Design.CategoryValueConverter, System.Design, Version=1.0.3300.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")]
+		#endif
+		#if (NET_1_1)
+			[TypeConverter ("System.Diagnostics.Design.CategoryValueConverter, System.Design, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")]
+		#endif
 		public string CategoryName {
 			get {return categoryName;}
 			set {
@@ -92,14 +109,24 @@ namespace System.Diagnostics {
 			}
 		}
 
-//		// may throw InvalidOperationException
-//		[MonoTODO]
-//		public string CounterHelp {
-//			get {return "";}
-//		}
-//
+		// may throw InvalidOperationException
+		[MonoTODO]
+		[ReadOnly (true), DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[MonitoringDescription ("A description describing the counter.")]
+		public string CounterHelp {
+			get {return "";}
+		}
+
 		// may throw ArgumentNullException
-		public string CounterName {
+		[DefaultValue (""), ReadOnly (true), RecommendedAsConfigurable (true)]
+		#if (NET_1_0)
+			[TypeConverter ("System.Diagnostics.Design.CounterNameConverter, System.Design, Version=1.0.3300.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")]
+		#endif
+		#if (NET_1_1)
+			[TypeConverter ("System.Diagnostics.Design.CounterNameConverter, System.Design, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")]
+		#endif
+		public string CounterName 
+			{
 			get {return counterName;}
 			set {
 				if (value == null)
@@ -108,109 +135,124 @@ namespace System.Diagnostics {
 			}
 		}
 
-//		// may throw InvalidOperationException
-//		[MonoTODO]
-//		public PerformanceCounterType CounterType {
-//			get {return 0;}
-//		}
-//
-		public string InstanceName {
+		// may throw InvalidOperationException
+		[MonoTODO]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[MonitoringDescription ("The type of the counter.")]
+		public PerformanceCounterType CounterType {
+			get {return 0;}
+		}
+
+		[DefaultValue (""), ReadOnly (true), RecommendedAsConfigurable (true)]
+		#if (NET_1_0)
+			[TypeConverter ("System.Diagnostics.Design.InstanceNameConverter, System.Design, Version=1.0.3300.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")]
+		#endif
+		#if (NET_1_1)
+			[TypeConverter ("System.Diagnostics.Design.InstanceNameConverter, System.Design, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")]
+		#endif
+		public string InstanceName 
+			{
 			get {return instanceName;}
 			set {instanceName = value;}
 		}
 
-//		// may throw ArgumentException if machine name format is wrong
-//		[MonoTODO("What's the machine name format?")]
-//		public string MachineName {
-//			get {return machineName;}
-//			set {machineName = value;}
-//		}
-//
-//		// may throw InvalidOperationException, Win32Exception
-//		[MonoTODO]
-//		public long RawValue {
-//			get {return 0;}
-//			set {
-//				throw new NotImplementedException ();
-//			}
-//		}
-//
-//		public bool ReadOnly {
-//			get {return readOnly;}
-//			set {readOnly = value;}
-//		}
-//
+		// may throw ArgumentException if machine name format is wrong
+		[MonoTODO("What's the machine name format?")]
+		[DefaultValue ("."), Browsable (false), RecommendedAsConfigurable (true)]
+		public string MachineName {
+			get {return machineName;}
+			set {machineName = value;}
+		}
+
+		// may throw InvalidOperationException, Win32Exception
+		[MonoTODO]
+		[Browsable (false), DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[MonitoringDescription ("The raw value of the counter.")]
+		public long RawValue {
+			get {return 0;}
+			set {
+				throw new NotImplementedException ();
+			}
+		}
+
+		[Browsable (false), DefaultValue (true)]
+		[MonitoringDescription ("The accessability level of the counter.")]
+		public bool ReadOnly {
+			get {return readOnly;}
+			set {readOnly = value;}
+		}
+
 		[MonoTODO]
 		public void BeginInit ()
 		{
 			throw new NotImplementedException ();
 		}
 
-//		[MonoTODO]
-//		public void Close ()
-//		{
-//			throw new NotImplementedException ();
-//		}
-//
-//		[MonoTODO]
-//		public static void CloseSharedResources ()
-//		{
-//			throw new NotImplementedException ();
-//		}
-//
-//		// may throw InvalidOperationException, Win32Exception
-//		[MonoTODO]
-//		public long Decrement ()
-//		{
-//			throw new NotImplementedException ();
-//		}
-//
-//		[MonoTODO]
-//		protected override void Dispose (bool disposing)
-//		{
-//			throw new NotImplementedException ();
-//		}
-//
+		[MonoTODO]
+		public void Close ()
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public static void CloseSharedResources ()
+		{
+			throw new NotImplementedException ();
+		}
+
+		// may throw InvalidOperationException, Win32Exception
+		[MonoTODO]
+		public long Decrement ()
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		protected override void Dispose (bool disposing)
+		{
+			throw new NotImplementedException ();
+		}
+
 		[MonoTODO]
 		public void EndInit ()
 		{
 			throw new NotImplementedException ();
 		}
 
-//		// may throw InvalidOperationException, Win32Exception
-//		[MonoTODO]
-//		public long Increment ()
-//		{
-//			throw new NotImplementedException ();
-//		}
-//
-//		// may throw InvalidOperationException, Win32Exception
-//		[MonoTODO]
-//		public long IncrementBy (long value)
-//		{
-//			throw new NotImplementedException ();
-//		}
-//
-//		// may throw InvalidOperationException, Win32Exception
-//		[MonoTODO]
-//		public CounterSample NextSample ()
-//		{
-//			throw new NotImplementedException ();
-//		}
-//
-//		// may throw InvalidOperationException, Win32Exception
-//		[MonoTODO]
-//		public float NextValue ()
-//		{
-//			throw new NotImplementedException ();
-//		}
-//
-//		// may throw InvalidOperationException, Win32Exception
-//		[MonoTODO]
-//		public void RemoveInstance ()
-//		{
-//			throw new NotImplementedException ();
-//		}
+		// may throw InvalidOperationException, Win32Exception
+		[MonoTODO]
+		public long Increment ()
+		{
+			throw new NotImplementedException ();
+		}
+
+		// may throw InvalidOperationException, Win32Exception
+		[MonoTODO]
+		public long IncrementBy (long value)
+		{
+			throw new NotImplementedException ();
+		}
+
+		// may throw InvalidOperationException, Win32Exception
+		[MonoTODO]
+		public CounterSample NextSample ()
+		{
+			throw new NotImplementedException ();
+		}
+
+		// may throw InvalidOperationException, Win32Exception
+		[MonoTODO]
+		public float NextValue ()
+		{
+			throw new NotImplementedException ();
+		}
+
+		// may throw InvalidOperationException, Win32Exception
+		[MonoTODO]
+		public void RemoveInstance ()
+		{
+			throw new NotImplementedException ();
+		}
 	}
 }
 

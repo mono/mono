@@ -1,5 +1,9 @@
 2003-07-13  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
 
+	* PerformanceCounter: Implemented or implementation added
+
+2003-07-13  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
+
 	* DiagnosticsConfigurationHandler.cs: Removed a never used variable
 	* EventLog.cs: Small update to prevent a warning
 	* EventLogPermission.cs: Implemented or implementation added
