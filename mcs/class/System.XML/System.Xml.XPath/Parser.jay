@@ -248,7 +248,7 @@ AbsoluteLocationPath
 	}
 	| SLASH2 RelativeLocationPath
 	{
-		$$ = new ExprSLASH2 (new ExprRoot (), (NodeSet) $3);
+		$$ = new ExprSLASH2 (new ExprRoot (), (NodeSet) $2);
 	}
 	;
 
