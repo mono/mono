@@ -1,5 +1,7 @@
 2005-01-16  Zoltan Varga  <vargaz@freemail.hu>
 
+	* mini.c (mono_codegen): Fix installation of profiler hooks.
+
 	* mini-sparc.c mini-amd64.c: Don't allocate stack space for dead vars.
 
 Sun Jan 16 12:19:35 CET 2005 Paolo Molaro <lupus@ximian.com>
