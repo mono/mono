@@ -425,6 +425,15 @@ namespace System.Windows.Forms {
 
 			set {
 				image_stream = value;
+
+				size = image_stream.ImageSize;
+				color_depth = image_stream.ImageColorDepth;
+				transparency_color = image_stream.BackColor;
+
+				image_collection.Clear ();
+
+				foreach (Image image in image_stream.Images)
+					image_collection.Add (image);
 			}
 		}
 

@@ -1,3 +1,9 @@
+2005-03-18  Jackson Harper  <jackson@ximian.com>
+
+	* ImageList.cs: When the image stream is set pull all the images
+	from it.
+	* ImageListStreamer.cs: Implement reading image list streams.
+
 2005-03-18  Peter Bartok  <pbartok@novell.com>
 
 	* ThemeWin32Classic.cs (DrawPictureBox):
