@@ -1,0 +1,3 @@
+2003-10-23 Carlos Guzmán Álvarez <carlosga@telefonica.net>
+
+	* Added partial implementation of SSL3 protocol ( not finished yet ).
