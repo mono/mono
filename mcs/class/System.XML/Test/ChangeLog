@@ -1,3 +1,7 @@
+2003-04-13  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
+
+	* removed testcases from here.
+
 2003-04-12  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
 
 	* moved testcases into each namespace-named directories.
