@@ -12,7 +12,7 @@ using System.Configuration;
 using System.IO;
 using System.Xml;
 
-namespace Mono.Http
+namespace Mono.Http.Configuration
 {
 	public class AcceptEncodingSectionHandler : IConfigurationSectionHandler
 	{

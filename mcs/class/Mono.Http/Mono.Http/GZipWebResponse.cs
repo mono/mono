@@ -72,9 +72,6 @@ namespace System.Net
 		
 		void SetStream ()
 		{
-			if (stream != null)
-				return;
-
 			lock (this) {
 				if (stream != null)
 					return;
@@ -92,16 +89,25 @@ namespace System.Net
 		void ISerializable.GetObjectData (SerializationInfo info, StreamingContext context)
 		{
 			info.AddValue ("response", response);
+			info.AddValue ("compressed", compressed);
 		}		
 
 		public override void Close ()
 		{
-			response.Close ();
+			((IDisposable) this).Dispose ();
 		}
 		
 		void IDisposable.Dispose ()
 		{
-			response.Close ();
+			if (stream != null) {
+				stream.Close ();
+				stream = null;
+			}
+
+			if (response != null) {
+				response.Close ();
+				response = null;
+			}
 		}
 	}	
 }

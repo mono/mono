@@ -109,6 +109,7 @@ namespace Mono.Http
 		
 		public override IAsyncResult BeginGetRequestStream (AsyncCallback callback, object state) 
 		{
+			CheckHeader ();
 			return request.BeginGetRequestStream (callback, state);
 		}
 		
@@ -119,6 +120,7 @@ namespace Mono.Http
 		
 		public override Stream GetRequestStream ()
 		{
+			CheckHeader ();
 			return request.GetRequestStream ();
 		}
 		
@@ -142,6 +144,9 @@ namespace Mono.Http
 		{
 			WebResponse response = request.EndGetResponse (asyncResult);
 			bool compressed = (String.Compare (response.Headers ["Content-Encoding"], "gzip", true) == 0);
+			if (!compressed)
+				return response;
+
 			return new GZipWebResponse (response, compressed);
 		}
 		

@@ -1,3 +1,13 @@
+2003-12-12  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* AcceptEncodingModule.cs:
+	* AcceptEncodingSectionHandler.cs: moved files from here.
+
+	* GZipWebRequest.cs: small fixes to inject gzip header.
+	* GZipWebRequestCreator.cs: web request creator for gzip.
+	* GZipWebResponse.cs: fixed dispose/close.
+	* NtlmClient.cs: NTLM for HTTP. Used from System.Net.
+
 2003-07-26  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* GZipWebRequest.cs:

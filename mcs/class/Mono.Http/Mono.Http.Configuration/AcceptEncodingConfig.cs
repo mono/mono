@@ -13,7 +13,7 @@ using System.Collections.Specialized;
 using System.IO;
 using System.Web;
 
-namespace Mono.Http
+namespace Mono.Http.Configuration
 {
 	public class AcceptEncodingConfig
 	{
