@@ -1,3 +1,19 @@
+2003-07-29  Miguel de Icaza  <miguel@ximian.com>
+
+	* icall.c: Add new MemCopy internalcall.
+	(ves_icall_System_Reflection_Assembly_GetManifestResourceInternal):
+	Simplified code; It is not necessary to handle all the cases here,
+	as the C# code takes care of it.  Only handle the case of the name
+	resource embedded into the assembly.
+
+	Changed signature to return the data pointer and the size of the
+	data. 
+
+2003-07-26  Miguel de Icaza  <miguel@ximian.com>
+
+	* reflection.c (mono_image_get_method_info): Allow for 0x40 to be
+	encoded.	(Partition II.22.1.7: PInvokeAttribute:SupportsLastErr).
+
 2003-07-29  Lluis Sanchez Gual  <lluis@ximian.com>
 
 	* socket-io.c: ignore EINTR error in select.
