@@ -84,6 +84,11 @@ System.Windows.Forms/ScrollEventType.cs
 System.Windows.Forms/ScrollBar.cs
 System.Windows.Forms/ScrollBars.cs
 System.Windows.Forms/ScrollButton.cs
+System.Windows.Forms/StatusBar.cs
+System.Windows.Forms/StatusBarPanel.cs
+System.Windows.Forms/StatusBarPanelAutoSize.cs
+System.Windows.Forms/StatusBarPanelBorderStyle.cs
+System.Windows.Forms/StatusBarPanelStyle.cs
 System.Windows.Forms/TODOAttribute.cs
 System.Windows.Forms/UICues.cs
 System.Windows.Forms/UICuesEventArgs.cs
