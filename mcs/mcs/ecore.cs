@@ -2626,7 +2626,7 @@ namespace Mono.CSharp {
 			ObsoleteAttribute oa;
 			FieldBase f = TypeManager.GetField (FieldInfo);
 			if (f != null) {
-				oa = f.GetObsoleteAttribute (ec.DeclSpace);
+				oa = f.GetObsoleteAttribute (f.Parent);
 				if (oa != null)
 					AttributeTester.Report_ObsoleteMessage (oa, f.GetSignatureForError (), loc);
                                 
