@@ -1,7 +1,11 @@
 //
 // ExceptionTest.cs - NUnit Test Cases for the System.Exception class
-// 
-// Linus Upson (linus@linus.com)
+//
+// Authors:
+//	Linus Upson (linus@linus.com)
+//	Duncan Mak (duncan@ximian.com)
+//
+// (C) Copyright, Novell, Inc. 2004
 //
 
 using System;
@@ -9,7 +13,7 @@ using NUnit.Framework;
 
 namespace MonoTests.System
 {
-	public class ExceptionTest : TestCase
+	public class ExceptionTest : Assertion
 	{
 		public ExceptionTest() {}
 		
@@ -18,7 +22,8 @@ namespace MonoTests.System
 		// a little confusing since there are two catchers: the method being
 		// tested the the method calling the test. There is probably a better
 		// name, but I can't think of it right now.
-		
+
+		[Test]
 		public void TestThrowOnBlockBoundaries()
 		{
 			bool caught;
@@ -96,7 +101,8 @@ namespace MonoTests.System
 		{
 			throw new Exception();
 		}
-		
+
+		[Test]
 		private static void ThrowBeforeTry()
 		{
 			ThrowException();
@@ -107,6 +113,7 @@ namespace MonoTests.System
 			}
 		}
 
+		[Test]
 		private static void ThrowAtBeginOfTry()
 		{
 			DoNothing();
@@ -118,6 +125,7 @@ namespace MonoTests.System
 			}
 		}
 
+		[Test]
 		private static void ThrowAtEndOfTry()
 		{
 			DoNothing();
@@ -128,7 +136,7 @@ namespace MonoTests.System
 				DoNothing();
 			}
 		}
-
+		[Test]
 		private static void ThrowAtBeginOfCatch()
 		{
 			DoNothing();
@@ -140,6 +148,7 @@ namespace MonoTests.System
 			}
 		}
 
+		[Test]
 		private static void ThrowAtEndOfCatch()
 		{
 			DoNothing();
@@ -152,6 +161,7 @@ namespace MonoTests.System
 			}
 		}
 
+		[Test]
 		private static void ThrowAtBeginOfFinally()
 		{
 			DoNothing();
@@ -166,6 +176,7 @@ namespace MonoTests.System
 			}
 		}
 
+		[Test]
 		private static void ThrowAtEndOfFinally()
 		{
 			DoNothing();
@@ -180,6 +191,7 @@ namespace MonoTests.System
 			}
 		}
 
+		[Test]
 		private static void ThrowAfterFinally()
 		{
 			DoNothing();
@@ -192,6 +204,15 @@ namespace MonoTests.System
 				DoNothing();
 			}
 			ThrowException();
+		}
+
+		[Test]
+		private static void InnerExceptionSource ()
+		{
+			Exception a = new Exception ("a", new ArgumentException ("b"));
+			a.Source = "foo";
+
+			AssertEquals (null, e.InnerException.Source);
 		}
 	}
 }

@@ -108,10 +108,9 @@ namespace System
 							}
 						}
 					}
-					if (source == null)
-						source = "";
 				}
-				
+
+                                // source can be null
 				return source;
 			}
 

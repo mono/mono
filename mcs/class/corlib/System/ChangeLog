@@ -1,3 +1,7 @@
+2004-06-07  Duncan Mak  <duncan@ximian.com>
+
+	* Exception.cs (Source): This can return null.
+
 2004-06-07  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* DateTime.cs: Fixed FromFileTime for negative values. Fixed 

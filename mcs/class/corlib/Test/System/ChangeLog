@@ -1,3 +1,9 @@
+2004-06-07  Duncan Mak  <duncan@ximian.com>
+
+	* ExceptionTest.cs: Added [Test] attributes to the test methods.
+	(InnerExceptionSource): Test that the InnerException's Source is
+	null unless it's been set.
+
 2004-06-07  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* DateTimeTest.cs: Added new test cases for From|ToOADate (OLE 
