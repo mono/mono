@@ -7,11 +7,7 @@
 //	Gonzalo Paniagua Javier (gonzalo@ximian.com)
 //
 // (C) 2001-2003 Ximian, Inc.  http://www.ximian.com
-// (c) 2004 Novell, Inc. (http://www.novell.com)
-//
-
-//
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -40,6 +36,10 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Runtime.Remoting.Messaging;
 using System.Threading;
+
+#if NET_2_0
+using Microsoft.Win32.SafeHandles;
+#endif
 
 namespace System.IO
 {
@@ -100,24 +100,37 @@ namespace System.IO
 		// construct from filename
 		
 		public FileStream (string name, FileMode mode)
-			: this (name, mode, (mode == FileMode.Append ? FileAccess.Write : FileAccess.ReadWrite), FileShare.Read, DefaultBufferSize, false) { }
+			: this (name, mode, (mode == FileMode.Append ? FileAccess.Write : FileAccess.ReadWrite), FileShare.Read, DefaultBufferSize, false, false)
+		{
+		}
 
 		public FileStream (string name, FileMode mode, FileAccess access)
-			: this (name, mode, access, access == FileAccess.Write ? FileShare.None : FileShare.Read, DefaultBufferSize, false) { }
+			: this (name, mode, access, access == FileAccess.Write ? FileShare.None : FileShare.Read, DefaultBufferSize, false, false)
+		{
+		}
 
 		public FileStream (string name, FileMode mode, FileAccess access, FileShare share)
-			: this (name, mode, access, share, DefaultBufferSize, false) { }
+			: this (name, mode, access, share, DefaultBufferSize, false, false)
+		{
+		}
 		
 		public FileStream (string name, FileMode mode, FileAccess access, FileShare share, int bufferSize)
-			: this (name, mode, access, share, bufferSize, false) { }
+			: this (name, mode, access, share, bufferSize, false, false)
+		{
+		}
 
 		public FileStream (string name, FileMode mode, FileAccess access, FileShare share, int bufferSize, bool isAsync)
+			: this (name, mode, access, share, bufferSize, isAsync, false)
+		{
+		}
+
+		internal FileStream (string name, FileMode mode, FileAccess access, FileShare share, int bufferSize, bool isAsync, bool anonymous)
 		{
 			if (name == null) {
 				throw new ArgumentNullException ("name");
 			}
 			
-			if (name == "") {
+			if (name.Length == 0) {
 				throw new ArgumentException ("Name is empty");
 			}
 
@@ -165,7 +178,9 @@ namespace System.IO
 									"the path \"" + fp + "\".");
 			}
 
-			this.name = name;
+			// IsolatedStorage needs to keep the Name property to the default "[Unknown]"
+			if (!anonymous)
+				this.name = name;
 
 			// TODO: demand permissions
 
@@ -300,6 +315,12 @@ namespace System.IO
 				return handle;
 			}
 		}
+
+#if NET_2_0
+		public virtual SafeFileHandle SafeFileHandle {
+			get { throw new NotImplementedException (); }
+		}
+#endif
 
 		// methods
 
@@ -1023,7 +1044,7 @@ namespace System.IO
 
 		// fields
 
-		const int DefaultBufferSize = 8192;
+		internal const int DefaultBufferSize = 8192;
 		private static Hashtable asyncObjects;
 
 		private FileAccess access;

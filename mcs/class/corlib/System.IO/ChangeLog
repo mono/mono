@@ -1,3 +1,10 @@
+2005-01-31  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* FileStream.cs: Added new constructor to allow anonymous files (i.e.
+	when Name property is "[Unknown]") for IsolatedStorage. Added
+	SafeFileHandle property and a reference to Microsoft.Win32.SafeHandles
+	for the NET_2_0 profile.
+
 2005-01-28  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* FileNotFoundException.cs, FileLoadException.cs: Fixed bad "if ();".
