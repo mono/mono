@@ -28,10 +28,10 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-namespace Microsoft.JScript.Tmp
-{
-	using System;
-	using Microsoft.JScript.Vsa;
+using System;
+using Microsoft.JScript.Vsa;
+
+namespace Microsoft.JScript {
 
 	public sealed class LateBinding
 	{

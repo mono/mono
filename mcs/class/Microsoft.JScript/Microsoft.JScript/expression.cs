@@ -43,10 +43,9 @@ namespace Microsoft.JScript {
 	
 	public class Unary : UnaryOp {
 
-		internal Unary (AST parent, AST operand, JSToken oper)
+		internal Unary (AST parent, JSToken oper)
 		{		
 			this.parent = parent;
-			this.operand = operand;
 			this.oper = oper;
 		}
 
@@ -88,6 +87,11 @@ namespace Microsoft.JScript {
 	}
 
 	public class Binary : BinaryOp {
+
+		internal Binary (AST parent, AST left, JSToken op)
+			: this (parent, left, null, op)
+		{
+		}
 
 		internal Binary (AST parent, AST left, AST right, JSToken op)
 		{
@@ -135,7 +139,12 @@ namespace Microsoft.JScript {
 					left.Emit (ec);
 			} else if (current_op == JSToken.LogicalAnd || current_op == JSToken.LogicalOr)
 				emit_jumping_code (ec);
-			else {
+			else if (current_op == JSToken.LeftBracket) {
+				get_default_this (ig);
+				if (left != null)
+					left.Emit (ec);
+				emit_access (ec);
+			} else {
 				emit_operator (ig);
 				if (left != null)
 					left.Emit (ec);
@@ -145,6 +154,33 @@ namespace Microsoft.JScript {
 			}
 			if (no_effect)
 				ig.Emit (OpCodes.Pop);
+		}
+
+		internal void get_default_this (ILGenerator ig)
+		{
+			ig.Emit (OpCodes.Ldarg_0);
+			ig.Emit (OpCodes.Ldfld, typeof (ScriptObject).GetField ("engine"));
+			ig.Emit (OpCodes.Call, typeof (Microsoft.JScript.Vsa.VsaEngine).GetMethod ("ScriptObjectStackTop"));
+			Type iact_obj = typeof (IActivationObject);
+			ig.Emit (OpCodes.Castclass, iact_obj);
+			ig.Emit (OpCodes.Callvirt, iact_obj.GetMethod ("GetDefaultThisObject"));
+		}
+
+		internal void emit_access (EmitContext ec)
+		{
+			ILGenerator ig = ec.ig;
+			ig.Emit (OpCodes.Ldc_I4_1);
+			ig.Emit (OpCodes.Newarr, typeof (object));
+			ig.Emit (OpCodes.Dup);
+			ig.Emit (OpCodes.Ldc_I4_0);
+			if (right != null)
+				right.Emit (ec);
+			ig.Emit (OpCodes.Stelem_Ref);
+			ig.Emit (OpCodes.Ldc_I4_0);
+			ig.Emit (OpCodes.Ldc_I4_1);
+			ig.Emit (OpCodes.Ldarg_0);
+			ig.Emit (OpCodes.Ldfld, typeof (ScriptObject).GetField ("engine"));
+			ig.Emit (OpCodes.Call, typeof (LateBinding).GetMethod ("CallValue"));
 		}
 
 		internal void emit_op_eval (ILGenerator ig)
@@ -239,7 +275,6 @@ namespace Microsoft.JScript {
 				local_builder = ig.DeclareLocal (t);
 				ig.Emit (OpCodes.Ldc_I4_S, (byte) 52);
 			}
-
 			ig.Emit (OpCodes.Newobj, t.GetConstructor (new Type [] {typeof (int)}));
 			ig.Emit (OpCodes.Stloc, local_builder);
 			ig.Emit (OpCodes.Ldloc, local_builder);

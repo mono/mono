@@ -1,3 +1,14 @@
+2004-08-24  Cesar Lopez Nataren  <cesar@ciencias.unam.mx>
+
+	* expression.cs: do not pass the operand as a parameter to the
+	constructor as it gets after the parent gets constructed, same
+	with binary. Added code generation for array index access.
+	* Parser.cs: added ToJStoken which converts Token to JSToken,
+	factored the code for creation the Unary nodes. Take care of
+	parent relationship.
+	* LateBinding.cs: back to Microsoft.JScript namespace.
+	
+
 2004-08-23  Cesar Lopez Nataren  <cesar@ciencias.unam.mx>
 
 	* Parser.cs: pass the skip_count to ArrayLiteral constructor.

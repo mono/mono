@@ -826,19 +826,14 @@ namespace Microsoft.JScript {
 			tt = ts.GetToken ();
 			ts.allow_reg_exp = false;
 
-			if (tt == Token.VOID || tt == Token.NOT || tt == Token.BITNOT || tt == Token.TYPEOF) {
-				// FIXME, set to proper operator
-				return new Unary (parent, UnaryExpr (parent), JSToken.Void);
-			} else if (tt == Token.ADD) {
-				return new Unary (parent, UnaryExpr (parent), JSToken.Plus);
-			} else if (tt == Token.SUB) {
-				return new Unary (parent, UnaryExpr (parent), JSToken.Minus);
+			if (tt == Token.VOID || tt == Token.NOT || tt == Token.BITNOT || tt == Token.TYPEOF ||
+			    tt == Token.ADD || tt == Token.SUB || tt == Token.DELPROP) {
+				Unary u = new Unary (parent, ToJSToken (tt));
+				u.operand = UnaryExpr (u);
+				return u;
 			} else if (tt == Token.INC || tt == Token.DEC) {
-				// FIXME, set to proper incr/decr
-				return new PostOrPrefixOperator (null, MemberExpr (parent, true), JSToken.Increment);
-			} else if (tt == Token.DELPROP) {
-				return new Unary (parent, UnaryExpr (parent), JSToken.Delete);
-			} if (tt == Token.ERROR) {
+				return new PostOrPrefixOperator (null, MemberExpr (parent, true), ToJSToken (tt));
+			} else if (tt == Token.ERROR) {
 				;
 			} else {
 				ts.UnGetToken (tt);
@@ -857,11 +852,35 @@ namespace Microsoft.JScript {
 				if (((peeked = ts.PeekToken ()) == Token.INC || peeked == Token.DEC) && ts.LineNumber == line_number) {
 					int pf = ts.GetToken ();
 					// FIXME, set to proper JSToken.
-					return new PostOrPrefixOperator (null, pn, JSToken.Increment);
+					return new PostOrPrefixOperator (null, pn, ToJSToken (peeked));
 				}
 				return pn;
 			}
 			return new StringLiteral (null, "Error");  // Only reached on error.  Try to continue.
+		}
+
+		JSToken ToJSToken (int tt)
+		{
+			if (tt == Token.DELPROP)
+				return JSToken.Delete;
+			else if (tt == Token.VOID)
+				return JSToken.Void;
+			else if (tt == Token.TYPEOF)
+				return JSToken.Typeof;
+			else if (tt == Token.INC)
+				return JSToken.Increment;
+			else if (tt == Token.DEC)
+				return JSToken.Decrement;
+			else if (tt == Token.ADD)
+				return JSToken.Plus;
+			else if (tt == Token.SUB)
+				return JSToken.Minus;
+			else if (tt == Token.BITNOT)
+				return JSToken.BitwiseNot;
+			else if (tt == Token.NOT)
+				return JSToken.LogicalNot;
+			else 
+				return JSToken.None;
 		}
 
 		void ArgumentList (AST parent, ICallable list) 
@@ -928,8 +947,9 @@ namespace Microsoft.JScript {
 					// FIXME: is 'new Identifier' appropriate here?
 					pn = new Binary (null, pn, new Identifier (null, ts.GetString), JSToken.AccessField);
 				} else if (tt == Token.LB) {
-					// FIXME, 
-					pn = new Binary (parent, pn, Expr (parent, false), JSToken.LeftBracket);
+					Binary b = new Binary (parent, pn, JSToken.LeftBracket);
+					b.right = Expr (b, false);
+					pn = b;
 					MustMatchToken (Token.RB, "msg.no.bracket.index");
 				} else if (allow_call_syntax && tt == Token.LP) {
 					/* make a call node */
@@ -1035,7 +1055,7 @@ namespace Microsoft.JScript {
 				return new Identifier (null, name);
 			} else if (tt == Token.NUMBER) {
 				double n = ts.GetNumber;
-				return new NumericLiteral (null, n);
+				return new NumericLiteral (parent, n);
 			} else if (tt == Token.STRING) {
 				string s = ts.GetString;
 				return new StringLiteral (null, s);
