@@ -276,7 +276,7 @@ namespace System.Web.Util
 			{
 				return String.Empty;
 			}
-			url.Replace('\\','/');
+			url = url.Replace('\\','/');
 
 			string baseDir = "";
 			int last = url.LastIndexOf ('/');

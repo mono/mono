@@ -1,3 +1,7 @@
+2004-02-01  Alon Gazit <along@mainsoft.com>
+
+	* UrlUtils.cs: little fix in GetDirectory ().
+
 2004-01-11  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
 
 	* TransactedCallback.cs:
