@@ -76,14 +76,18 @@ endif
 
 endif
 
-gacutil = $(topdir)/tools/gacutil/gacutil.exe
-GACUTIL = MONO_PATH="$(topdir)/class/lib/default$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" $(RUNTIME) $(gacutil)
+ifdef NO_INSTALL
+GACUTIL = :
+else
+gacutil = $(topdir)/class/lib/net_1_1_bootstrap/gacutil.exe
+GACUTIL = MONO_PATH="$(topdir)/class/lib/net_1_1_bootstrap$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" $(RUNTIME) $(gacutil)
+endif
 
 ifdef NO_SIGN_ASSEMBLY
 SN = :
 else
 sn = $(topdir)/class/lib/net_1_1_bootstrap/sn.exe
-SN = MONO_PATH="$(topdir)/class/lib/net_1_1_bootstrap/$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" $(RUNTIME) $(sn)
+SN = MONO_PATH="$(topdir)/class/lib/net_1_1_bootstrap$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" $(RUNTIME) $(sn)
 SNFLAGS = -q -R
 endif
 
@@ -221,8 +225,10 @@ ifndef LIBRARY_SNK
 LIBRARY_SNK = $(topdir)/class/mono.snk
 endif
 
+ifdef gacutil
 $(gacutil):
-	cd $(topdir)/tools/gacutil && $(MAKE) PROFILE=default
+	cd $(topdir) && $(MAKE) PROFILE=net_1_1_bootstrap
+endif
 
 ifdef sn
 $(sn):

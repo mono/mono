@@ -3,6 +3,7 @@
 	* executable.make (install-local): Depend on all-local even when
 	NO_INSTALL is defined.
 	* library.make: Minor cleanups to match executable.make.
+	(gacutil): Use net_1_1_bootstrap/gacutil.exe.
 	* profiles/basic.make (no-install): Remove.
 	* profiles/net_1_1_bootstrap.make (no-install): Likewise.
 

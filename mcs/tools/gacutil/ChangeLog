@@ -1,3 +1,8 @@
+2005-03-14  Raja R Harinath  <rharinath@novell.com>
+
+	* Makefile (PROGRAM): Make profile-specific during
+	net_1_1_bootstrap.
+
 2005-01-18  Raja R Harinath  <rharinath@novell.com>
 
 	* driver.cs (Install): Restore fix from 2004-12-08.
