@@ -1,3 +1,7 @@
+2003-12-15  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* TrustAnchors.cs: Added a new trusted root, Thawte, for code signing.
+
 2003-12-07  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* PKCS12.cs: New. PKCS#12 implementation. Only decoding is working
