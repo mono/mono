@@ -104,30 +104,33 @@ public class UInt32Test : TestCase
 	public void TestParse()
 	{
 		//test Parse(string s)
-		Assert(MyUInt32_1 == UInt32.Parse(MyString1));
-		Assert(MyUInt32_2 == UInt32.Parse(MyString2));
-		Assert(MyUInt32_3 == UInt32.Parse(MyString3));
+		Assert("Parse problem on \""+MyString1+"\"", MyUInt32_1 == UInt32.Parse(MyString1));
+		Assert("Parse problem on \""+MyString2+"\"", MyUInt32_2 == UInt32.Parse(MyString2));
+		Assert("Parse problem on \""+MyString3+"\"", MyUInt32_3 == UInt32.Parse(MyString3));
 		try {
 			UInt32.Parse(null);
 			Fail("Should raise a System.ArgumentNullException");
 		}
 		catch (Exception e) {
-			Assert(typeof(ArgumentNullException) == e.GetType());
+			Assert("Did not get ArgumentNullException type", typeof(ArgumentNullException) == e.GetType());
 		}
 		try {
 			UInt32.Parse("not-a-number");
 			Fail("Should raise a System.FormatException");
 		}
 		catch (Exception e) {
-			Assert(typeof(FormatException) == e.GetType());
+			Assert("Did not get FormatException type", typeof(FormatException) == e.GetType());
 		}
 		try {
-			double OverInt = (double)UInt32.MaxValue + 1;
-			UInt32.Parse(OverInt.ToString());
+			// TODO: Use this after ToString() is completed. For now, hard code string that generates
+			// exception.
+			//double OverInt = (double)UInt32.MaxValue + 1;
+			//UInt32.Parse(OverInt.ToString());
+			UInt32.Parse("4294967296");
 			Fail("Should raise a System.OverflowException");
 		}
 		catch (Exception e) {
-			Assert(typeof(OverflowException) == e.GetType());
+			Assert("Did not get OverflowException type on '"+"4294967296"+"'. Instead, got: '"+e.GetType()+"'", typeof(OverflowException) == e.GetType());
 		}
 		//test Parse(string s, NumberStyles style)
 		Assert(42 == UInt32.Parse(" $42 ", NumberStyles.Currency));

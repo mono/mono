@@ -1,3 +1,7 @@
+2001-12-27  Nick Drochak <ndrochak@gol.com>
+
+	* UInt32Test.cs: Added messages to Asserts()'s to find out which one was faliing.
+
 2001-12-21  Miguel de Icaza  <miguel@ximian.com>
 
 	* UInt32Test.cs: Added tests for UInt32.Parse.
