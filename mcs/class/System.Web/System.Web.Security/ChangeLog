@@ -1,3 +1,11 @@
+2004-08-03  Sanjay Gupta <gsanjay@novell.com>
+
+	* MembershipSortOptions.cs:
+	* MembershipPasswordFormat.cs:
+	* MembershipOnlineStatus.cs:
+	* MembershipCreateStatus.cs:
+	* CookieProtection.cs: minor modifications.
+
 2004-06-12  Pedro Martínez Juliá  <yoros@wanadoo.es>
 
 	* FormsAuthentication.cs: Undo last change.

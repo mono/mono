@@ -31,9 +31,9 @@
 #if NET_2_0
 namespace System.Web.Security {
 	public enum MembershipOnlineStatus {
-		All,
-		Online,
-		Offline	
+		All = 0,
+		Online = 1,
+		Offline = 2	
 	}
 }
 #endif

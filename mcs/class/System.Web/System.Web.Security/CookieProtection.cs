@@ -31,10 +31,10 @@
 #if NET_2_0
 namespace System.Web.Security {
 	public enum CookieProtection {
-		None,
-		Validation,
-		Encryption,
-		All
+		None = 0,
+		Validation = 1,
+		Encryption = 2,
+		All = 3
 	}
 }
 #endif

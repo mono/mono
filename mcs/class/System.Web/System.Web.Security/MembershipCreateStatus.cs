@@ -31,16 +31,16 @@
 #if NET_2_0
 namespace System.Web.Security {
 	public enum MembershipCreateStatus {
-		Success,
-		UserNotFound,
-		InvalidPassword,
-		InvalidQuestion,
-		InvalidAnswer,
-		InvalidEmail,
-		DuplicateUsername,
-		DuplicateEmail,
-		UserRejected,
-		ProviderError
+		Success = 0,
+		UserNotFound = 1,
+		InvalidPassword = 2,
+		InvalidQuestion = 3,
+		InvalidAnswer = 4,
+		InvalidEmail = 5,
+		DuplicateUsername = 6,
+		DuplicateEmail = 7,
+		UserRejected = 8,
+		ProviderError = 9
 	}
 }
 #endif

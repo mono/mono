@@ -31,9 +31,9 @@
 #if NET_2_0
 namespace System.Web.Security {
 	public enum MembershipPasswordFormat {
-		Clear,
-		Hashed,
-		Encrypted
+		Clear = 0, 
+		Hashed = 1,
+		Encrypted = 2
 	}
 }
 #endif

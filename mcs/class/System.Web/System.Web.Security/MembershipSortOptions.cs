@@ -31,12 +31,12 @@
 #if NET_2_0
 namespace System.Web.Security {
 	public enum MembershipSortOptions {
-		UserName,
-		CreationDate,
-		LastActivityDate,
-		LastLoginDate,
-		LastPasswordChangeDate,
-		Email		
+		UserName = 0,
+		CreationDate = 1,
+		LastActivityDate = 2,
+		LastLoginDate = 3,
+		LastPasswordChangeDate = 4,
+		Email = 5		
 	}
 }
 #endif
