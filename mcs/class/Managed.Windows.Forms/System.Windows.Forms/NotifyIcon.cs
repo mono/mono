@@ -135,8 +135,6 @@ namespace System.Windows.Forms {
 					int		y;
 					int		size;
 
-Console.WriteLine("CalculateIconRect: Width:{0}, Height:{1}", Width, Height);
-
 					// Icons are always square. Try to center them in the window
 					if (ClientRectangle.Width < ClientRectangle.Height) {
 						size = ClientRectangle.Width;
@@ -148,8 +146,13 @@ Console.WriteLine("CalculateIconRect: Width:{0}, Height:{1}", Width, Height);
 					rect = new Rectangle(x, y, size, size);
 
 					// Force our window to be square
-					this.Width = size;
-					this.Height = size;
+					if (Width != size) {
+						this.Width = size;
+					}
+
+					if (Height != size) {
+						this.Height = size;
+					}
 				}
 			}
 

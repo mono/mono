@@ -363,7 +363,7 @@ namespace System.Windows.Forms {
 		}
 
 		protected override void OnVisibleChanged(EventArgs e) {
-			;; // Nothing to do yet
+			base.OnVisibleChanged(e);
 		}
 
 		protected override void ScaleCore(float dx, float dy) {

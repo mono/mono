@@ -42,6 +42,8 @@ namespace System.Windows.Forms {
 			scrollbars = ScrollBars.None;
 			alignment = HorizontalAlignment.Left;
 			this.LostFocus +=new EventHandler(TextBox_LostFocus);
+			this.BackColor = ThemeEngine.Current.ColorWindow;
+			this.ForeColor = ThemeEngine.Current.ColorWindowText;
 		}
 		#endregion	// Public Constructors
 

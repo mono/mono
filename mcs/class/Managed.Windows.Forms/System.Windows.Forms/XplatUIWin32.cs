@@ -1074,7 +1074,6 @@ namespace System.Windows.Forms {
 		}
 
 		internal override bool SetVisible(IntPtr handle, bool visible) {
-Console.WriteLine("Win32 Driver called, setting {0} visible: {1}", Control.FromHandle(handle).Text, visible);
 			if (visible) {
 				Win32ShowWindow(handle, WindowPlacementFlags.SW_SHOWNORMAL);
 			} else {

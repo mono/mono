@@ -1,3 +1,15 @@
+2005-01-30  Peter Bartok  <pbartok@novell.com>
+
+	* NotifyIcon.cs (CalculateIconRect): Removed debug output and added
+	  sanity check to prevent theoretical loop
+	* XplatUIWin32.cs (SetVisible): Removed debug output
+	* XplatUIX11.cs (SystrayChange): Added sanity check
+	* ScrollableControl.cs (OnVisibleChanged): Now calls base method
+	* Control.cs (OnVisibleChanged): Added workaround for ParentForm
+	  behaviour, valid until the X11 client window rewrite is done
+	* TextBox.cs (ctor): Setting proper default foreground and background
+	  colors
+
 2005-01-30	John BouAntoun  <jba-mono@optusnet.com.au>
 
 	* Theme: Added DrawDateTimePicker to interface

@@ -2465,9 +2465,16 @@ namespace System.Windows.Forms {
 		}
 
 		internal override bool SystrayChange(IntPtr hwnd, string tip, Icon icon, ref ToolTip tt) {
-			tt.SetToolTip(Control.FromHandle(hwnd), tip);
-			tt.Active = true;
-			return true;
+			Control	control;
+
+			control = Control.FromHandle(hwnd);
+			if (control != null && tt != null) {
+				tt.SetToolTip(control, tip);
+				tt.Active = true;
+				return true;
+			} else {
+				return false;
+			}
 		}	
 
 		internal override void SystrayRemove(IntPtr hwnd, ref ToolTip tt) {

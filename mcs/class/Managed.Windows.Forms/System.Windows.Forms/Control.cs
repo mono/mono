@@ -3829,7 +3829,15 @@ namespace System.Windows.Forms
 			}
 			
 			if (VisibleChanged!=null) VisibleChanged(this, e);
+//hack start
+			if (this is Form.FormParentWindow) {
+				Form	form;
 
+				form = ((Form.FormParentWindow)this).owner;
+
+				form.OnVisibleChanged(e);
+			}
+// hack end
 			// We need to tell our kids
 			for (int i=0; i<child_controls.Count; i++) {
 				child_controls[i].OnParentVisibleChanged(e);
