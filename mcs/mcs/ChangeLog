@@ -1,5 +1,10 @@
 2004-05-25  Martin Baulig  <martin@ximian.com>
 
+	* expression.cs (Invocation.DoResolve): Applied Ben Maurer's patch
+	for #56176 and made it actually work.
+
+2004-05-25  Martin Baulig  <martin@ximian.com>
+
 	* ecore.cs (Expression.CacheTemporaries): Make this virtual.
 	(FieldExpr, PropertyExpr): Override and implement
 	CacheTemporaries.  Fixes #52279.

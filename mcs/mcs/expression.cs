@@ -5027,12 +5027,20 @@ namespace Mono.CSharp {
 				       "Could not find any applicable function for this argument list");
 				return null;
 			}
-
+			
 			MethodInfo mi = method as MethodInfo;
 			if (mi != null) {
 				type = TypeManager.TypeToCoreType (mi.ReturnType);
-				if (!mi.IsStatic && !mg.IsExplicitImpl && (mg.InstanceExpression == null))
+				if (!mi.IsStatic && !mg.IsExplicitImpl && (mg.InstanceExpression == null)) {
 					SimpleName.Error_ObjectRefRequired (ec, loc, mi.Name);
+					return null;
+				}
+				
+				if (mi.IsStatic && (mg.InstanceExpression != null) &&
+				    !(mg.InstanceExpression is This)) {
+					MemberAccess.error176 (loc, mi.Name);
+					return null;
+				}
 			}
 
 			if (type.IsPointer){
@@ -6737,7 +6745,7 @@ namespace Mono.CSharp {
 			}
 		}
 
-		static void error176 (Location loc, string name)
+		public static void error176 (Location loc, string name)
 		{
 			Report.Error (176, loc, "Static member `" +
 				      name + "' cannot be accessed " +
