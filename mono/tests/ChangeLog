@@ -1,3 +1,7 @@
+2004-01-09  Zoltan Varga  <vargaz@freemail.hu>
+
+	* custom-attr.cs: Add test for properties with array type.
+
 2003-12-13  Patrik Torstensson  <p@rxc.se>
 
 	* bug-42136.cs: invalid liveness analyse for locals
