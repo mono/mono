@@ -1,3 +1,8 @@
+
+Tue Jan 7 15:15:41 CET 2003 Paolo Molaro <lupus@ximian.com>
+
+	* jit.c: handle wrapper_data in NEWOBJ/CALL.
+
 2003-01-07  Dietmar Maurer  <dietmar@ximian.com>
 
 	* jit.c (mono_analyze_stack): add check for NULL target in STFLD
