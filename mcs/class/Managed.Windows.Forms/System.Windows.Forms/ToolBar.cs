@@ -29,12 +29,17 @@
 //   - DropDown ContextMenu
 //   - Tooltip
 //
-// Copyright (C) Novell Inc., 2004 (http://www.novell.com)
+// Copyright (C) Novell, Inc. 2004 (http://www.novell.com)
 //
 //
-// $Revision: 1.13 $
+// $Revision: 1.14 $
 // $Modtime: $
 // $Log: ToolBar.cs,v $
+// Revision 1.14  2004/10/05 09:07:07  ravindra
+// 	- Removed a private method, Draw ().
+// 	- Fixed the ButtonDropDown event handling.
+// 	- Fixed MouseMove event handling.
+//
 // Revision 1.13  2004/10/05 04:56:12  jackson
 // Let the base Control handle the buffers, derived classes should not have to CreateBuffers themselves.
 //
@@ -87,10 +92,10 @@
 // NOT COMPLETE
 
 using System.Collections;
-using System.Drawing;
-using System.Drawing.Imaging;
 using System.ComponentModel;
 using System.ComponentModel.Design;
+using System.Drawing;
+using System.Drawing.Imaging;
 using System.Runtime.InteropServices;
 
 namespace System.Windows.Forms
@@ -515,9 +520,6 @@ namespace System.Windows.Forms
 			Invalidate (e.Button.Rectangle);
 			Redraw (false);
 
-			if (e.Button.Style == ToolBarButtonStyle.DropDownButton)
-				this.OnButtonDropDown (e);
-
 			if (ButtonClick != null)
 				ButtonClick (this, e);
 			else
@@ -528,6 +530,9 @@ namespace System.Windows.Forms
 		{
 			// if (e.Button.DropDownMenu == null) return;
 			// TODO: Display the dropdown menu
+
+			// Reset the flag set on DropDown
+			e.Button.dd_pressed = false;
 
 			if (ButtonDropDown != null)
 				ButtonDropDown (this, e);
@@ -574,12 +579,28 @@ namespace System.Windows.Forms
 			if (! this.Enabled) return;
 
 			Point hit = new Point (me.X, me.Y);
+			this.Capture = true;
 
 			// draw the pushed button
 			foreach (ToolBarButton button in buttons) {
-				if (button.Rectangle.Contains (hit) && button.Enabled) {
+				if (button.Enabled && button.Rectangle.Contains (hit)) {
+					// Mark the DropDown rect as pressed.
+					// We don't redraw the dropdown rect.
+					if (button.Style == ToolBarButtonStyle.DropDownButton) {
+						Rectangle ddRect = Rectangle.Empty;
+						Rectangle rect = button.Rectangle;
+						ddRect.Height = rect.Height;
+						ddRect.Width = ThemeEngine.Current.ToolBarDropDownWidth;
+						ddRect.X = rect.X + rect.Width - ddRect.Width;
+						ddRect.Y = rect.Y;
+						if (ddRect.Contains (hit)) {
+							button.dd_pressed = true;
+							break;
+						}
+					}
+					// If it is not dropdown then we treat it as a normal
+					// button press.
 					button.Pressed = true;
-					this.Capture = true;
 					Invalidate (button.Rectangle);
 					Redraw (false);
 					break;
@@ -596,19 +617,30 @@ namespace System.Windows.Forms
 
 			// draw the normal button
 			foreach (ToolBarButton button in buttons) {
-				if (button.Rectangle.Contains (hit) && button.Enabled) {
+				if (button.Enabled && button.Rectangle.Contains (hit)) {
+					if (button.Style == ToolBarButtonStyle.DropDownButton) {
+						Rectangle ddRect = Rectangle.Empty;
+						Rectangle rect = button.Rectangle;
+						ddRect.Height = rect.Height;
+						ddRect.Width = ThemeEngine.Current.ToolBarDropDownWidth;
+						ddRect.X = rect.X + rect.Width - ddRect.Width;
+						ddRect.Y = rect.Y;
+						// Fire a ButtonDropDown event
+						if (ddRect.Contains (hit)) {
+							if (button.dd_pressed)
+								this.OnButtonDropDown (new ToolBarButtonClickEventArgs (button));
+							continue;
+						}
+					}
+					// Fire a ButtonClick
 					if (button.Pressed)
 						this.OnButtonClick (new ToolBarButtonClickEventArgs (button));
-					else {
-						button.Pressed = false;
-						Invalidate (button.Rectangle);
-						Redraw (false);
-					}
 				}
+				// Clear the button press flags, if any
 				else if (button.Pressed) {
-						button.Pressed = false;
-						Invalidate (button.Rectangle);
-						Redraw (false);
+					button.Pressed = false;
+					Invalidate (button.Rectangle);
+					Redraw (false);
 				}
 			}
 		}
@@ -632,7 +664,7 @@ namespace System.Windows.Forms
 			Point hit = new Point (me.X, me.Y);
 
 			if (currentButton != null && currentButton.Rectangle.Contains (hit)) {
-				if (currentButton.Hilight)
+				if (currentButton.Hilight || currentButton.Pushed)
 					return;
 				currentButton.Hilight = true;
 				Invalidate (currentButton.Rectangle);
@@ -642,8 +674,8 @@ namespace System.Windows.Forms
 				foreach (ToolBarButton button in buttons) {
 					if (button.Rectangle.Contains (hit) && button.Enabled) {
 						currentButton = button;
-						if (currentButton.Hilight)
-							break;
+						if (currentButton.Hilight || currentButton.Pushed)
+							continue;
 						currentButton.Hilight = true;
 						Invalidate (currentButton.Rectangle);
 						Redraw (false);
@@ -662,7 +694,12 @@ namespace System.Windows.Forms
 			if (this.Width <= 0 || this.Height <=  0 || this.Visible == false)
 				return;
 
-			Draw ();
+			if (redraw) {
+				ThemeEngine.Current.DrawToolBar (this.DeviceContext, pe.ClipRectangle, this);
+				redraw = false;
+			}
+
+			// paint on the screen
 			pe.Graphics.DrawImage (this.ImageBuffer, pe.ClipRectangle, pe.ClipRectangle, GraphicsUnit.Pixel);
 
 			if (Paint != null)
@@ -671,19 +708,10 @@ namespace System.Windows.Forms
 
 		internal void Redraw (bool recalculate)
 		{
-			if (recalculate) {
+			if (recalculate)
 				CalcToolBar ();
-			}
-			redraw = true;
-			Refresh ();
-		}
 
-		private void Draw ()
-		{
-			if (redraw) {
-				ThemeEngine.Current.DrawToolBar (this.DeviceContext, this.ClientRectangle, this);
-			}
-			redraw = false;
+			redraw = true;
 		}
 
 		private Size CalcButtonSize ()
