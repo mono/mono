@@ -1,3 +1,13 @@
+2003-11-21  Zoltan Varga  <vargaz@freemail.hu>
+
+	* reflection.h: Update after changes to the managed types.
+
+	* reflection.c (encode_custom_modifiers): New helper function.
+
+	* reflection.c (method_encode_signature): Emit custom modifiers.
+
+	* reflection.c (field_encode_signature): Emit custom modifiers.
+
 2003-11-18  Zoltan Varga  <vargaz@freemail.hu>
 
 	* reflection.h (MonoReflectionAssemblyName): Applied patch from Laurent Morichetti (l_m@pacbell.net). Fix type of 'flags' field.
