@@ -1,3 +1,8 @@
+
+Wed Jan 8 20:11:46 CET 2003 Paolo Molaro <lupus@ximian.com>
+
+	* loader.c: fixed off by one error in loaded parameter names.
+
 2003-01-08  Dietmar Maurer  <dietmar@ximian.com>
 
 	* marshal.c (mono_marshal_get_icall_wrapper): like
