@@ -1,3 +1,8 @@
+2004-04-26  David Waite <mass@akuma.org>
+
+	* unknown.c: modify to have content for defined platforms (to
+	avoid ISO C warning)
+
 2004-03-29  Bernie Solomon  <bernard@ugsolutions.com>
 
 	* amd64/tramp.c:
