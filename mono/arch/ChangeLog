@@ -1,3 +1,7 @@
+2003-05-20  Dietmar Maurer  <dietmar@ximian.com>
+
+	* x86/x86-codegen.h (x86_set_reg): add an assertion - it does
+	not work for all registers.
 
 Sat Feb 1 10:59:31 CET 2003 Paolo Molaro <lupus@ximian.com>
 
