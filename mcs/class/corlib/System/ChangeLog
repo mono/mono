@@ -1,5 +1,9 @@
 2002-03-06  Martin Baulig  <martin@gnome.org>
 
+	* Array.cs (CopyTo): Bug fix from Ajay Dwivedi, correctly handle
+	arrays with non-zero lower bounds. Also adding testcases #F10-#F13
+	for this.
+
 	* Array.cs (CopyTo): Reverted my last change, it was incorrect.
 	(Copy): Actually allow copying multi-dimensional arrays.
 

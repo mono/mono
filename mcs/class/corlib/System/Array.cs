@@ -642,7 +642,7 @@ namespace System
 			// but that's how the microsoft runtime does it.
 			if (this.Rank > 1)
 				throw new RankException ();
-			if (index + this.GetLength(0) > array.GetLength(0))
+			if (index + this.GetLength (0) > array.GetLowerBound (0) + array.GetLength (0))
 				throw new ArgumentException ();
 			if (array.Rank > 1)
 				throw new RankException ();
