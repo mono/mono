@@ -1,3 +1,8 @@
+2004-06-06  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XslTransformProcessor.cs : On document() function, close the 
+	  XmlTextReader opened from uri string.
+
 2004-06-03  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* Compiler.cs,

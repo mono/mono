@@ -107,12 +107,16 @@ namespace Mono.Xml.Xsl {
 				docCache = new Hashtable();
 			}
 
-			XmlReader rdr = new XmlTextReader (uri.ToString(), (Stream) resolver.GetEntity (uri, null, null));
-			XmlValidatingReader xvr = new XmlValidatingReader (rdr);
-			xvr.ValidationType = ValidationType.None;
-			result = new XPathDocument (xvr, XmlSpace.Preserve).CreateNavigator ();
-			xvr.Close ();
-			
+			XmlReader rdr = null;
+			try {
+				rdr = new XmlTextReader (uri.ToString(), (Stream) resolver.GetEntity (uri, null, null));
+				XmlValidatingReader xvr = new XmlValidatingReader (rdr);
+				xvr.ValidationType = ValidationType.None;
+				result = new XPathDocument (xvr, XmlSpace.Preserve).CreateNavigator ();
+			} finally {
+				if (rdr != null)
+					rdr.Close ();
+			}
 			docCache [uri] = result.Clone ();
 			return result;
 		}
