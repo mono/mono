@@ -37,7 +37,7 @@ namespace WebServiceTests
 
 	[WebServiceAttribute (Namespace="urn:mono-ws-tests", Description="Web service that can make currency conversions")]
 	[SoapDocumentServiceAttribute (Use=SoapBindingUse.Literal, ParameterStyle=SoapParameterStyle.Bare)]
-	public class ConverterService : System.Web.Services.WebService
+	public class ConverterService
 	{
 		static int userCount = 0;
 		static Hashtable conversionTable;

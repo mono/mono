@@ -1,3 +1,13 @@
+2004-02-27  Lluis Sanchez Gual  <lluis@ximian.com>
+
+	* services.xml: Updated service list.
+	* wstest.cs: New feature: it generates a serviceStatus.xml file that
+	  helps keeping track of services that are not available any more.
+	* client/localhost/ConvDocEncBarTest.cs, ConvDocEncWraTest.cs:
+	  Improved tests.
+	* server/ConvDocLitBar.asmx: Removed inheritance from WebService, to make
+	  sure that this works.
+
 2004-02-04  Lluis Sanchez Gual <lluis@ximian.com>
 
 	* wstest.cs: Added new option that downloads and cahces the wsdl docs.

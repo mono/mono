@@ -813,7 +813,7 @@
     <protocols>
       <protocol>Soap</protocol>
     </protocols>
-    <clientTest>true</clientTest>
+    <clientTest>false</clientTest>
   </service>
   <service>
     <wsdl>http://clientservice.muse.net/ClientService.asmx?WSDL</wsdl>
@@ -3312,6 +3312,729 @@
   <service>
     <wsdl>http://www.boyzoid.com/threat.cfc?wsdl</wsdl>
     <name>threatTest</name>
+    <clientTest>false</clientTest>
+  </service>
+  <service>
+    <wsdl>http://localhost:8080/Test1.asmx?wsdl</wsdl>
+    <name>Test1Test</name>
+    <serverType>Mono-XSP Server/0.6.99.0 128 # Mono</serverType>
+    <protocols>
+      <protocol>Soap</protocol>
+      <protocol>HttpGet</protocol>
+      <protocol>HttpPost</protocol>
+    </protocols>
+    <clientTest>false</clientTest>
+  </service>
+  <service>
+    <wsdl>http://localhost:8080/TestBinding6.asmx?wsdl</wsdl>
+    <name>TestBinding6Test</name>
+    <serverType>Mono-XSP Server/0.6.99.0 128 # Mono</serverType>
+    <protocols>
+      <protocol>Soap</protocol>
+      <protocol>HttpGet</protocol>
+      <protocol>HttpPost</protocol>
+    </protocols>
+    <clientTest>false</clientTest>
+  </service>
+  <service>
+    <wsdl>http://localhost:8080/Test2.asmx?wsdl</wsdl>
+    <name>Test2Test</name>
+    <serverType>Mono-XSP Server/0.6.99.0 128 # Mono</serverType>
+    <protocols>
+      <protocol>Soap</protocol>
+    </protocols>
+    <clientTest>false</clientTest>
+  </service>
+  <service>
+    <wsdl>http://www.rzg.mpg.de/~michel/SOPCWeb.wsdl</wsdl>
+    <name>SOPCWebTest</name>
+    <protocols>
+      <protocol>Soap</protocol>
+    </protocols>
+    <clientTest>false</clientTest>
+  </service>
+  <service>
+    <wsdl>http://helena.europe.webmatrixhosting.net/Morse.asmx?WSDL</wsdl>
+    <name>MorseTest</name>
+    <serverType>Microsoft-IIS/6.0 # ASP.NET</serverType>
+    <protocols>
+      <protocol>Soap</protocol>
+    </protocols>
+    <clientTest>false</clientTest>
+  </service>
+  <service>
+    <wsdl>http://iis1.grantparksoftware.com:8080/gps/gps.asmx?WSDL</wsdl>
+    <name>gpsTest</name>
+    <protocols>
+      <protocol>Soap</protocol>
+      <protocol>HttpGet</protocol>
+      <protocol>HttpPost</protocol>
+    </protocols>
+    <clientTest>false</clientTest>
+  </service>
+  <service>
+    <wsdl>http://isnpx1158.in2p3.fr:8180/axis/services/AMIWebService?wsdl</wsdl>
+    <name>AMIWebServiceTest</name>
+    <serverType>Apache-Coyote/1.1 # </serverType>
+    <protocols>
+      <protocol>Soap</protocol>
+    </protocols>
+    <clientTest>false</clientTest>
+  </service>
+  <service>
+    <wsdl>http://www.dotnetclipper.com/clip.asmx?WSDL</wsdl>
+    <name>clipTest</name>
+    <serverType>Microsoft-IIS/6.0 # ASP.NET</serverType>
+    <protocols>
+      <protocol>Soap</protocol>
+      <protocol>HttpGet</protocol>
+      <protocol>HttpPost</protocol>
+    </protocols>
+    <clientTest>false</clientTest>
+  </service>
+  <service>
+    <wsdl>http://66.165.154.102/aba.asmx?WSDL</wsdl>
+    <name>abaTest2</name>
+    <serverType>Microsoft-IIS/5.0 # ASP.NET</serverType>
+    <protocols>
+      <protocol>Soap</protocol>
+      <protocol>HttpGet</protocol>
+      <protocol>HttpPost</protocol>
+    </protocols>
+    <clientTest>false</clientTest>
+  </service>
+  <service>
+    <wsdl>http://www.newcomer.de/WebServices/Lohn.dll/wsdl/ILohn2004</wsdl>
+    <name>ILohn2004Test</name>
+    <serverType>Microsoft-IIS/6.0 # </serverType>
+    <protocols>
+      <protocol>Soap</protocol>
+    </protocols>
+    <clientTest>false</clientTest>
+  </service>
+  <service>
+    <wsdl>http://66.165.154.102/fax.asmx?wsdl</wsdl>
+    <name>faxTest2</name>
+    <serverType>Microsoft-IIS/5.0 # ASP.NET</serverType>
+    <protocols>
+      <protocol>Soap</protocol>
+      <protocol>HttpGet</protocol>
+      <protocol>HttpPost</protocol>
+    </protocols>
+    <clientTest>false</clientTest>
+  </service>
+  <service>
+    <wsdl>http://66.165.154.102/RssToHTML.asmx?WSDL</wsdl>
+    <name>RssToHTMLTest2</name>
+    <serverType>Microsoft-IIS/5.0 # ASP.NET</serverType>
+    <protocols>
+      <protocol>Soap</protocol>
+      <protocol>HttpGet</protocol>
+      <protocol>HttpPost</protocol>
+    </protocols>
+    <clientTest>false</clientTest>
+  </service>
+  <service>
+    <wsdl>http://66.165.154.102/BibleWebservice.asmx?wsdl</wsdl>
+    <name>BibleWebserviceTest2</name>
+    <serverType>Microsoft-IIS/5.0 # ASP.NET</serverType>
+    <protocols>
+      <protocol>Soap</protocol>
+      <protocol>HttpGet</protocol>
+      <protocol>HttpPost</protocol>
+    </protocols>
+    <clientTest>false</clientTest>
+  </service>
+  <service>
+    <wsdl>http://66.165.154.102/ValidateEmail.asmx?WSDL</wsdl>
+    <name>ValidateEmailTest2</name>
+    <serverType>Microsoft-IIS/5.0 # ASP.NET</serverType>
+    <protocols>
+      <protocol>Soap</protocol>
+      <protocol>HttpGet</protocol>
+      <protocol>HttpPost</protocol>
+    </protocols>
+    <clientTest>false</clientTest>
+  </service>
+  <service>
+    <wsdl>http://66.165.154.102/icd9toicd10.asmx?WSDL</wsdl>
+    <name>icd9toicd10Test2</name>
+    <serverType>Microsoft-IIS/5.0 # ASP.NET</serverType>
+    <protocols>
+      <protocol>Soap</protocol>
+      <protocol>HttpGet</protocol>
+      <protocol>HttpPost</protocol>
+    </protocols>
+    <clientTest>false</clientTest>
+  </service>
+  <service>
+    <wsdl>http://66.165.154.102/stockquote.asmx?WSDL</wsdl>
+    <name>stockquoteTest2</name>
+    <serverType>Microsoft-IIS/5.0 # ASP.NET</serverType>
+    <protocols>
+      <protocol>Soap</protocol>
+      <protocol>HttpGet</protocol>
+      <protocol>HttpPost</protocol>
+    </protocols>
+    <clientTest>false</clientTest>
+  </service>
+  <service>
+    <wsdl>http://66.165.154.102/icd9.asmx?WSDL</wsdl>
+    <name>icd9Test2</name>
+    <serverType>Microsoft-IIS/5.0 # ASP.NET</serverType>
+    <protocols>
+      <protocol>Soap</protocol>
+      <protocol>HttpGet</protocol>
+      <protocol>HttpPost</protocol>
+    </protocols>
+    <clientTest>false</clientTest>
+  </service>
+  <service>
+    <wsdl>http://66.165.154.102/hcpcs.asmx?WSDL</wsdl>
+    <name>hcpcsTest2</name>
+    <serverType>Microsoft-IIS/5.0 # ASP.NET</serverType>
+    <protocols>
+      <protocol>Soap</protocol>
+      <protocol>HttpGet</protocol>
+      <protocol>HttpPost</protocol>
+    </protocols>
+    <clientTest>false</clientTest>
+  </service>
+  <service>
+    <wsdl>http://66.165.154.102/country.asmx?wsdl</wsdl>
+    <name>countryTest2</name>
+    <serverType>Microsoft-IIS/5.0 # ASP.NET</serverType>
+    <protocols>
+      <protocol>Soap</protocol>
+      <protocol>HttpGet</protocol>
+      <protocol>HttpPost</protocol>
+    </protocols>
+    <clientTest>false</clientTest>
+  </service>
+  <service>
+    <wsdl>http://66.165.154.102/barcode.asmx?WSDL</wsdl>
+    <name>barcodeTest2</name>
+    <serverType>Microsoft-IIS/5.0 # ASP.NET</serverType>
+    <protocols>
+      <protocol>Soap</protocol>
+      <protocol>HttpGet</protocol>
+      <protocol>HttpPost</protocol>
+    </protocols>
+    <clientTest>false</clientTest>
+  </service>
+  <service>
+    <wsdl>http://66.165.154.102/isbn.asmx?WSDL</wsdl>
+    <name>isbnTest2</name>
+    <serverType>Microsoft-IIS/5.0 # ASP.NET</serverType>
+    <protocols>
+      <protocol>Soap</protocol>
+      <protocol>HttpGet</protocol>
+      <protocol>HttpPost</protocol>
+    </protocols>
+    <clientTest>false</clientTest>
+  </service>
+  <service>
+    <wsdl>http://66.165.154.102/icd9drug.asmx?WSDL</wsdl>
+    <name>icd9drugTest2</name>
+    <serverType>Microsoft-IIS/5.0 # ASP.NET</serverType>
+    <protocols>
+      <protocol>Soap</protocol>
+      <protocol>HttpGet</protocol>
+      <protocol>HttpPost</protocol>
+    </protocols>
+    <clientTest>false</clientTest>
+  </service>
+  <service>
+    <wsdl>http://66.165.154.102/AustralianPostCode.asmx?WSDL</wsdl>
+    <name>AustralianPostCodeTest2</name>
+    <serverType>Microsoft-IIS/5.0 # ASP.NET</serverType>
+    <protocols>
+      <protocol>Soap</protocol>
+      <protocol>HttpGet</protocol>
+      <protocol>HttpPost</protocol>
+    </protocols>
+    <clientTest>false</clientTest>
+  </service>
+  <service>
+    <wsdl>http://66.165.154.102/usweather.asmx?WSDL</wsdl>
+    <name>usweatherTest2</name>
+    <serverType>Microsoft-IIS/5.0 # ASP.NET</serverType>
+    <protocols>
+      <protocol>Soap</protocol>
+      <protocol>HttpGet</protocol>
+      <protocol>HttpPost</protocol>
+    </protocols>
+    <clientTest>false</clientTest>
+  </service>
+  <service>
+    <wsdl>http://66.165.154.102/CurrencyConvertor.asmx?wsdl</wsdl>
+    <name>CurrencyConvertorTest2</name>
+    <serverType>Microsoft-IIS/5.0 # ASP.NET</serverType>
+    <protocols>
+      <protocol>Soap</protocol>
+      <protocol>HttpGet</protocol>
+      <protocol>HttpPost</protocol>
+    </protocols>
+    <clientTest>false</clientTest>
+  </service>
+  <service>
+    <wsdl>http://66.165.154.102/airport.asmx?wsdl</wsdl>
+    <name>airportTest2</name>
+    <serverType>Microsoft-IIS/5.0 # ASP.NET</serverType>
+    <protocols>
+      <protocol>Soap</protocol>
+      <protocol>HttpGet</protocol>
+      <protocol>HttpPost</protocol>
+    </protocols>
+    <clientTest>false</clientTest>
+  </service>
+  <service>
+    <wsdl>http://66.165.154.102/uszip.asmx?WSDL</wsdl>
+    <name>uszipTest2</name>
+    <serverType>Microsoft-IIS/5.0 # ASP.NET</serverType>
+    <protocols>
+      <protocol>Soap</protocol>
+      <protocol>HttpGet</protocol>
+      <protocol>HttpPost</protocol>
+    </protocols>
+    <clientTest>false</clientTest>
+  </service>
+  <service>
+    <wsdl>http://66.165.154.102/icd10.asmx?WSDL</wsdl>
+    <name>icd10Test2</name>
+    <serverType>Microsoft-IIS/5.0 # ASP.NET</serverType>
+    <protocols>
+      <protocol>Soap</protocol>
+      <protocol>HttpGet</protocol>
+      <protocol>HttpPost</protocol>
+    </protocols>
+    <clientTest>false</clientTest>
+  </service>
+  <service>
+    <wsdl>http://66.165.154.102/NAICS.asmx?wsdl</wsdl>
+    <name>NAICSTest2</name>
+    <serverType>Microsoft-IIS/5.0 # ASP.NET</serverType>
+    <protocols>
+      <protocol>Soap</protocol>
+      <protocol>HttpGet</protocol>
+      <protocol>HttpPost</protocol>
+    </protocols>
+    <clientTest>false</clientTest>
+  </service>
+  <service>
+    <wsdl>http://66.165.154.102/SendSMS.asmx?WSDL</wsdl>
+    <name>SendSMSTest2</name>
+    <serverType>Microsoft-IIS/5.0 # ASP.NET</serverType>
+    <protocols>
+      <protocol>Soap</protocol>
+      <protocol>HttpGet</protocol>
+      <protocol>HttpPost</protocol>
+    </protocols>
+    <clientTest>false</clientTest>
+  </service>
+  <service>
+    <wsdl>http://66.165.154.102/UDDIBusinessFinder.asmx?WSDL</wsdl>
+    <name>UDDIBusinessFinderTest2</name>
+    <serverType>Microsoft-IIS/5.0 # ASP.NET</serverType>
+    <protocols>
+      <protocol>Soap</protocol>
+      <protocol>HttpGet</protocol>
+      <protocol>HttpPost</protocol>
+    </protocols>
+    <clientTest>false</clientTest>
+  </service>
+  <service>
+    <wsdl>http://66.165.154.102/FinanceService.asmx?WSDL</wsdl>
+    <name>FinanceServiceTest2</name>
+    <serverType>Microsoft-IIS/5.0 # ASP.NET</serverType>
+    <protocols>
+      <protocol>Soap</protocol>
+      <protocol>HttpGet</protocol>
+      <protocol>HttpPost</protocol>
+    </protocols>
+    <clientTest>false</clientTest>
+  </service>
+  <service>
+    <wsdl>http://66.165.154.102/sendsmsworld.asmx?WSDL</wsdl>
+    <name>sendsmsworldTest2</name>
+    <serverType>Microsoft-IIS/5.0 # ASP.NET</serverType>
+    <protocols>
+      <protocol>Soap</protocol>
+      <protocol>HttpGet</protocol>
+      <protocol>HttpPost</protocol>
+    </protocols>
+    <clientTest>false</clientTest>
+  </service>
+  <service>
+    <wsdl>http://api.ecommstats.com/services/statService.wsdl</wsdl>
+    <name>statServiceTest</name>
+    <serverType>TME-GLUE/5.0,Apache-Coyote/1.1 # </serverType>
+    <protocols>
+      <protocol>Soap</protocol>
+    </protocols>
+    <clientTest>false</clientTest>
+  </service>
+  <service>
+    <wsdl>http://66.165.154.102/EMBLNucleotideSequenceWebService.asmx?wsdl</wsdl>
+    <name>EMBLNucleotideSequenceWebServiceTest2</name>
+    <serverType>Microsoft-IIS/5.0 # ASP.NET</serverType>
+    <protocols>
+      <protocol>Soap</protocol>
+      <protocol>HttpGet</protocol>
+      <protocol>HttpPost</protocol>
+    </protocols>
+    <clientTest>false</clientTest>
+  </service>
+  <service>
+    <wsdl>http://66.165.154.102/uklocation.asmx?WSDL</wsdl>
+    <name>uklocationTest2</name>
+    <serverType>Microsoft-IIS/5.0 # ASP.NET</serverType>
+    <protocols>
+      <protocol>Soap</protocol>
+      <protocol>HttpGet</protocol>
+      <protocol>HttpPost</protocol>
+    </protocols>
+    <clientTest>false</clientTest>
+  </service>
+  <service>
+    <wsdl>http://66.165.154.102/periodictable.asmx?wsdl</wsdl>
+    <name>periodictableTest2</name>
+    <serverType>Microsoft-IIS/5.0 # ASP.NET</serverType>
+    <protocols>
+      <protocol>Soap</protocol>
+      <protocol>HttpGet</protocol>
+      <protocol>HttpPost</protocol>
+    </protocols>
+    <clientTest>false</clientTest>
+  </service>
+  <service>
+    <wsdl>http://66.165.154.102/globalweather.asmx?WSDL</wsdl>
+    <name>globalweatherTest2</name>
+    <serverType>Microsoft-IIS/5.0 # ASP.NET</serverType>
+    <protocols>
+      <protocol>Soap</protocol>
+      <protocol>HttpGet</protocol>
+      <protocol>HttpPost</protocol>
+    </protocols>
+    <clientTest>false</clientTest>
+  </service>
+  <service>
+    <wsdl>http://localhost:8080/IncludeTest.asmx?wsdl</wsdl>
+    <name>IncludeTestTest</name>
+    <serverType>Mono-XSP Server/0.9.99.0 128 # Mono</serverType>
+    <protocols>
+      <protocol>Soap</protocol>
+      <protocol>HttpGet</protocol>
+      <protocol>HttpPost</protocol>
+    </protocols>
+    <clientTest>false</clientTest>
+  </service>
+  <service>
+    <wsdl>http://www.webservicex.com/EMBLNucleotideSequenceWebService.asmx?wsdl</wsdl>
+    <name>EMBLNucleotideSequenceWebServiceTest3</name>
+    <serverType>Microsoft-IIS/5.0 # ASP.NET</serverType>
+    <protocols>
+      <protocol>Soap</protocol>
+      <protocol>HttpGet</protocol>
+      <protocol>HttpPost</protocol>
+    </protocols>
+    <clientTest>false</clientTest>
+  </service>
+  <service>
+    <wsdl>http://www.webservicex.com/icd10.asmx?WSDL</wsdl>
+    <name>icd10Test3</name>
+    <serverType>Microsoft-IIS/5.0 # ASP.NET</serverType>
+    <protocols>
+      <protocol>Soap</protocol>
+      <protocol>HttpGet</protocol>
+      <protocol>HttpPost</protocol>
+    </protocols>
+    <clientTest>false</clientTest>
+  </service>
+  <service>
+    <wsdl>http://www.webservicex.com/hcpcs.asmx?WSDL</wsdl>
+    <name>hcpcsTest3</name>
+    <serverType>Microsoft-IIS/5.0 # ASP.NET</serverType>
+    <protocols>
+      <protocol>Soap</protocol>
+      <protocol>HttpGet</protocol>
+      <protocol>HttpPost</protocol>
+    </protocols>
+    <clientTest>false</clientTest>
+  </service>
+  <service>
+    <wsdl>http://www.webservicex.com/isbn.asmx?WSDL</wsdl>
+    <name>isbnTest3</name>
+    <serverType>Microsoft-IIS/5.0 # ASP.NET</serverType>
+    <protocols>
+      <protocol>Soap</protocol>
+      <protocol>HttpGet</protocol>
+      <protocol>HttpPost</protocol>
+    </protocols>
+    <clientTest>false</clientTest>
+  </service>
+  <service>
+    <wsdl>http://www.webservicex.com/AustralianPostCode.asmx?WSDL</wsdl>
+    <name>AustralianPostCodeTest3</name>
+    <serverType>Microsoft-IIS/5.0 # ASP.NET</serverType>
+    <protocols>
+      <protocol>Soap</protocol>
+      <protocol>HttpGet</protocol>
+      <protocol>HttpPost</protocol>
+    </protocols>
+    <clientTest>false</clientTest>
+  </service>
+  <service>
+    <wsdl>http://www.webservicex.com/fax.asmx?wsdl</wsdl>
+    <name>faxTest3</name>
+    <serverType>Microsoft-IIS/5.0 # ASP.NET</serverType>
+    <protocols>
+      <protocol>Soap</protocol>
+      <protocol>HttpGet</protocol>
+      <protocol>HttpPost</protocol>
+    </protocols>
+    <clientTest>false</clientTest>
+  </service>
+  <service>
+    <wsdl>http://www.webservicex.com/aba.asmx?WSDL</wsdl>
+    <name>abaTest3</name>
+    <serverType>Microsoft-IIS/5.0 # ASP.NET</serverType>
+    <protocols>
+      <protocol>Soap</protocol>
+      <protocol>HttpGet</protocol>
+      <protocol>HttpPost</protocol>
+    </protocols>
+    <clientTest>false</clientTest>
+  </service>
+  <service>
+    <wsdl>http://www.webservicex.com/globalweather.asmx?WSDL</wsdl>
+    <name>globalweatherTest3</name>
+    <serverType>Microsoft-IIS/5.0 # ASP.NET</serverType>
+    <protocols>
+      <protocol>Soap</protocol>
+      <protocol>HttpGet</protocol>
+      <protocol>HttpPost</protocol>
+    </protocols>
+    <clientTest>false</clientTest>
+  </service>
+  <service>
+    <wsdl>http://www.webservicex.com/UDDIBusinessFinder.asmx?WSDL</wsdl>
+    <name>UDDIBusinessFinderTest3</name>
+    <serverType>Microsoft-IIS/5.0 # ASP.NET</serverType>
+    <protocols>
+      <protocol>Soap</protocol>
+      <protocol>HttpGet</protocol>
+      <protocol>HttpPost</protocol>
+    </protocols>
+    <clientTest>false</clientTest>
+  </service>
+  <service>
+    <wsdl>http://www.webservicex.com/CurrencyConvertor.asmx?wsdl</wsdl>
+    <name>CurrencyConvertorTest3</name>
+    <serverType>Microsoft-IIS/5.0 # ASP.NET</serverType>
+    <protocols>
+      <protocol>Soap</protocol>
+      <protocol>HttpGet</protocol>
+      <protocol>HttpPost</protocol>
+    </protocols>
+    <clientTest>false</clientTest>
+  </service>
+  <service>
+    <wsdl>http://www.webservicex.com/NAICS.asmx?wsdl</wsdl>
+    <name>NAICSTest3</name>
+    <serverType>Microsoft-IIS/5.0 # ASP.NET</serverType>
+    <protocols>
+      <protocol>Soap</protocol>
+      <protocol>HttpGet</protocol>
+      <protocol>HttpPost</protocol>
+    </protocols>
+    <clientTest>false</clientTest>
+  </service>
+  <service>
+    <wsdl>http://www.webservicex.com/BibleWebservice.asmx?wsdl</wsdl>
+    <name>BibleWebserviceTest3</name>
+    <serverType>Microsoft-IIS/5.0 # ASP.NET</serverType>
+    <protocols>
+      <protocol>Soap</protocol>
+      <protocol>HttpGet</protocol>
+      <protocol>HttpPost</protocol>
+    </protocols>
+    <clientTest>false</clientTest>
+  </service>
+  <service>
+    <wsdl>http://www.webservicex.com/ValidateEmail.asmx?WSDL</wsdl>
+    <name>ValidateEmailTest3</name>
+    <serverType>Microsoft-IIS/5.0 # ASP.NET</serverType>
+    <protocols>
+      <protocol>Soap</protocol>
+      <protocol>HttpGet</protocol>
+      <protocol>HttpPost</protocol>
+    </protocols>
+    <clientTest>false</clientTest>
+  </service>
+  <service>
+    <wsdl>http://www.webservicex.com/uklocation.asmx?WSDL</wsdl>
+    <name>uklocationTest3</name>
+    <serverType>Microsoft-IIS/5.0 # ASP.NET</serverType>
+    <protocols>
+      <protocol>Soap</protocol>
+      <protocol>HttpGet</protocol>
+      <protocol>HttpPost</protocol>
+    </protocols>
+    <clientTest>false</clientTest>
+  </service>
+  <service>
+    <wsdl>http://www.webservicex.com/stockquote.asmx?WSDL</wsdl>
+    <name>stockquoteTest3</name>
+    <serverType>Microsoft-IIS/5.0 # ASP.NET</serverType>
+    <protocols>
+      <protocol>Soap</protocol>
+      <protocol>HttpGet</protocol>
+      <protocol>HttpPost</protocol>
+    </protocols>
+    <clientTest>false</clientTest>
+  </service>
+  <service>
+    <wsdl>http://www.webservicex.com/usweather.asmx?WSDL</wsdl>
+    <name>usweatherTest3</name>
+    <serverType>Microsoft-IIS/5.0 # ASP.NET</serverType>
+    <protocols>
+      <protocol>Soap</protocol>
+      <protocol>HttpGet</protocol>
+      <protocol>HttpPost</protocol>
+    </protocols>
+    <clientTest>false</clientTest>
+  </service>
+  <service>
+    <wsdl>http://www.webservicex.com/icd9drug.asmx?WSDL</wsdl>
+    <name>icd9drugTest3</name>
+    <serverType>Microsoft-IIS/5.0 # ASP.NET</serverType>
+    <protocols>
+      <protocol>Soap</protocol>
+      <protocol>HttpGet</protocol>
+      <protocol>HttpPost</protocol>
+    </protocols>
+    <clientTest>false</clientTest>
+  </service>
+  <service>
+    <wsdl>http://www.webservicex.com/periodictable.asmx?wsdl</wsdl>
+    <name>periodictableTest3</name>
+    <serverType>Microsoft-IIS/5.0 # ASP.NET</serverType>
+    <protocols>
+      <protocol>Soap</protocol>
+      <protocol>HttpGet</protocol>
+      <protocol>HttpPost</protocol>
+    </protocols>
+    <clientTest>false</clientTest>
+  </service>
+  <service>
+    <wsdl>http://www.webservicex.com/uszip.asmx?WSDL</wsdl>
+    <name>uszipTest3</name>
+    <serverType>Microsoft-IIS/5.0 # ASP.NET</serverType>
+    <protocols>
+      <protocol>Soap</protocol>
+      <protocol>HttpGet</protocol>
+      <protocol>HttpPost</protocol>
+    </protocols>
+    <clientTest>false</clientTest>
+  </service>
+  <service>
+    <wsdl>http://www.webservicex.com/SendSMS.asmx?WSDL</wsdl>
+    <name>SendSMSTest3</name>
+    <serverType>Microsoft-IIS/5.0 # ASP.NET</serverType>
+    <protocols>
+      <protocol>Soap</protocol>
+      <protocol>HttpGet</protocol>
+      <protocol>HttpPost</protocol>
+    </protocols>
+    <clientTest>false</clientTest>
+  </service>
+  <service>
+    <wsdl>http://www.webservicex.com/airport.asmx?wsdl</wsdl>
+    <name>airportTest3</name>
+    <serverType>Microsoft-IIS/5.0 # ASP.NET</serverType>
+    <protocols>
+      <protocol>Soap</protocol>
+      <protocol>HttpGet</protocol>
+      <protocol>HttpPost</protocol>
+    </protocols>
+    <clientTest>false</clientTest>
+  </service>
+  <service>
+    <wsdl>http://www.webservicex.com/sendsmsworld.asmx?WSDL</wsdl>
+    <name>sendsmsworldTest3</name>
+    <serverType>Microsoft-IIS/5.0 # ASP.NET</serverType>
+    <protocols>
+      <protocol>Soap</protocol>
+      <protocol>HttpGet</protocol>
+      <protocol>HttpPost</protocol>
+    </protocols>
+    <clientTest>false</clientTest>
+  </service>
+  <service>
+    <wsdl>http://www.webservicex.com/icd9toicd10.asmx?WSDL</wsdl>
+    <name>icd9toicd10Test3</name>
+    <serverType>Microsoft-IIS/5.0 # ASP.NET</serverType>
+    <protocols>
+      <protocol>Soap</protocol>
+      <protocol>HttpGet</protocol>
+      <protocol>HttpPost</protocol>
+    </protocols>
+    <clientTest>false</clientTest>
+  </service>
+  <service>
+    <wsdl>http://www.webservicex.com/FinanceService.asmx?WSDL</wsdl>
+    <name>FinanceServiceTest3</name>
+    <serverType>Microsoft-IIS/5.0 # ASP.NET</serverType>
+    <protocols>
+      <protocol>Soap</protocol>
+      <protocol>HttpGet</protocol>
+      <protocol>HttpPost</protocol>
+    </protocols>
+    <clientTest>false</clientTest>
+  </service>
+  <service>
+    <wsdl>http://www.webservicex.com/country.asmx?wsdl</wsdl>
+    <name>countryTest3</name>
+    <serverType>Microsoft-IIS/5.0 # ASP.NET</serverType>
+    <protocols>
+      <protocol>Soap</protocol>
+      <protocol>HttpGet</protocol>
+      <protocol>HttpPost</protocol>
+    </protocols>
+    <clientTest>false</clientTest>
+  </service>
+  <service>
+    <wsdl>http://www.webservicex.com/RssToHTML.asmx?WSDL</wsdl>
+    <name>RssToHTMLTest3</name>
+    <serverType>Microsoft-IIS/5.0 # ASP.NET</serverType>
+    <protocols>
+      <protocol>Soap</protocol>
+      <protocol>HttpGet</protocol>
+      <protocol>HttpPost</protocol>
+    </protocols>
+    <clientTest>false</clientTest>
+  </service>
+  <service>
+    <wsdl>http://www.webservicex.com/barcode.asmx?WSDL</wsdl>
+    <name>barcodeTest3</name>
+    <serverType>Microsoft-IIS/5.0 # ASP.NET</serverType>
+    <protocols>
+      <protocol>Soap</protocol>
+      <protocol>HttpGet</protocol>
+      <protocol>HttpPost</protocol>
+    </protocols>
+    <clientTest>false</clientTest>
+  </service>
+  <service>
+    <wsdl>http://www.webservicex.com/icd9.asmx?WSDL</wsdl>
+    <name>icd9Test3</name>
+    <serverType>Microsoft-IIS/5.0 # ASP.NET</serverType>
+    <protocols>
+      <protocol>Soap</protocol>
+      <protocol>HttpGet</protocol>
+      <protocol>HttpPost</protocol>
+    </protocols>
     <clientTest>false</clientTest>
   </service>
 </services>

@@ -22,9 +22,12 @@ namespace ConvDocEncBarTests
 			AssertEquals ("#2", (int)res, (int)12);
 			
 			CurrencyInfo[] infos = cs.GetCurrencyInfo ();
+			AssertNotNull ("infos", infos);
 			foreach (CurrencyInfo info in infos)
 			{
 				double val = 0;
+				AssertNotNull ("info.Name", info.Name);
+				
 				switch (info.Name)
 				{
 					case "USD": val = 1; break;

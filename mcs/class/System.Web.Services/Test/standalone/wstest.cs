@@ -18,6 +18,7 @@ public class Driver
 	static int runningCount;
 	
 	static ServiceCollection services;
+	static ServiceStatusCollection serviceStatus;
 	
 	public static void Main (string[] args)
 	{
@@ -37,17 +38,7 @@ public class Driver
 		
 		basePath = ".";
 		
-		XmlSerializer ser = new XmlSerializer (typeof(ServiceCollection));
-		
-		string servicesFile = Path.Combine (basePath, "services.xml");
-		if (!File.Exists (servicesFile)) 
-			services = new ServiceCollection ();
-		else
-		{
-			StreamReader sr = new StreamReader (servicesFile);
-			services = (ServiceCollection) ser.Deserialize (sr);
-			sr.Close ();
-		}
+		LoadInfo ();
 		
 		if (args[0] == "gp")
 		{
@@ -74,12 +65,52 @@ public class Driver
 			Clean ();
 		}
 		
+		SaveInfo ();
+		
+		if (foundErrors)
+			Console.WriteLine ("Please check error log at " + Path.Combine (GetErrorPath(), "error.log"));
+	}
+	
+	static void LoadInfo ()
+	{
+		XmlSerializer ser = new XmlSerializer (typeof(ServiceCollection));
+		
+		string servicesFile = Path.Combine (basePath, "services.xml");
+		if (!File.Exists (servicesFile)) 
+			services = new ServiceCollection ();
+		else
+		{
+			StreamReader sr = new StreamReader (servicesFile);
+			services = (ServiceCollection) ser.Deserialize (sr);
+			sr.Close ();
+		}
+		
+		ser = new XmlSerializer (typeof(ServiceStatusCollection));
+		
+		servicesFile = Path.Combine (basePath, "serviceStatus.xml");
+		if (!File.Exists (servicesFile)) 
+			serviceStatus = new ServiceStatusCollection ();
+		else
+		{
+			StreamReader sr = new StreamReader (servicesFile);
+			serviceStatus = (ServiceStatusCollection) ser.Deserialize (sr);
+			sr.Close ();
+		}
+	}
+	
+	static void SaveInfo ()
+	{
+		XmlSerializer ser = new XmlSerializer (typeof(ServiceCollection));
+		string servicesFile = Path.Combine (basePath, "services.xml");
 		StreamWriter sw = new StreamWriter (servicesFile);
 		ser.Serialize (sw, services);
 		sw.Close ();
 		
-		if (foundErrors)
-			Console.WriteLine ("Please check error log at " + Path.Combine (GetErrorPath(), "error.log"));
+		ser = new XmlSerializer (typeof(ServiceStatusCollection));
+		servicesFile = Path.Combine (basePath, "serviceStatus.xml");
+		sw = new StreamWriter (servicesFile);
+		ser.Serialize (sw, serviceStatus);
+		sw.Close ();
 	}
 	
 	static string GetArg (string[] args, int n)
@@ -105,9 +136,11 @@ public class Driver
 			if (sd.ClientTest)
 				clientHash [GetClientFile (sd)] = sd;
 				
-			foreach (string prot in sd.Protocols)
-				clientHash [GetProxyFile (sd, prot)] = sd;
-				
+			if (sd.Protocols != null)
+			{
+				foreach (string prot in sd.Protocols)
+					clientHash [GetProxyFile (sd, prot)] = sd;
+			}
 			clientHash [GetWsdlFile (sd)] = sd;
 		}
 			
@@ -227,11 +260,13 @@ public class Driver
 			doc.Write (wsdlFile);
 			
 			Console.WriteLine ("OK");
+			CleanFailures (sd);
 		}
 		catch (Exception ex)
 		{
 			Console.WriteLine ("FAILED");
 			ReportError ("Error resolving: " + sd.Wsdl, ex.ToString ());
+			RegisterFailure (sd);
 		}
 	}
 	
@@ -477,6 +512,7 @@ public class Driver
 			proc.StartInfo.RedirectStandardError = true;
 			proc.StartInfo.FileName = "wsdl";
 			proc.StartInfo.Arguments = "/out:" + pfile + " /nologo /namespace:" + ns + " /protocol:" + prot + " " + wsdl;
+			Console.WriteLine (proc.StartInfo.Arguments);
 			proc.Start();
 			proc.WaitForExit ();
 			
@@ -566,6 +602,46 @@ public class Driver
 		sw.Close ();
 		
 		Console.WriteLine ("Written file '" + file + "'");
+	}
+	
+	static void RegisterFailure (ServiceData sd)
+	{
+		ServiceStatus status = null;
+		foreach (ServiceStatus ss in serviceStatus.services)
+		{
+			if (ss.Name == sd.Name)
+			{
+				status = ss;
+				break;
+			}
+		}
+		
+		if (status == null)
+		{
+			status = new ServiceStatus ();
+			status.Name = sd.Name;
+			status.Retries = 1;
+			status.LastTestDate = DateTime.Now;
+			serviceStatus.services.Add (status);
+		}
+		else
+		{
+			if ((DateTime.Now - status.LastTestDate).TotalHours >= 24)
+				status.Retries++;
+		}
+	}
+
+	static void CleanFailures (ServiceData sd)
+	{
+		ServiceStatus status = null;
+		foreach (ServiceStatus ss in serviceStatus.services)
+		{
+			if (ss.Name == sd.Name)
+			{
+				serviceStatus.services.Remove (ss);
+				break;
+			}
+		}
 	}
 	
 	static string GetProxyFile (ServiceData fd, string protocol)
@@ -669,3 +745,23 @@ public class ServiceData
 		}
 	}
 }
+
+[XmlType("serviceStatus")]
+public class ServiceStatusCollection
+{
+	[XmlElement("service", typeof(ServiceStatus))]
+	public ArrayList services = new ArrayList ();
+}
+
+public class ServiceStatus
+{
+	[XmlElement("name")]
+	public string Name;
+	
+	[XmlElement("lastTestDate")]
+	public DateTime LastTestDate;
+	
+	[XmlElement("retries")]
+	public int Retries;
+}
+
