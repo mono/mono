@@ -1066,5 +1066,127 @@ namespace MonoTests.System.Security.Cryptography {
 			AssertEquals ("Encrypt-" + data, "0hGoonZ8jrLhMNDKBuWrlvFnq15ZLvnyq+Ilq8r4aYUEDxttQMwi5w==", encdata);
 			AssertEquals ("Decrypt-" + data, data, decdata);
 		}
+
+		// based on System.Security assembly XmlDsigBase64TransformTest
+
+		[Test]
+		public void FromBase64_Write () 
+		{
+			string expected = "http://www.go-mono.com/";
+			byte[] data = Encoding.UTF8.GetBytes (expected);
+			string temp = Convert.ToBase64String (data, 0, data.Length);
+			data = Encoding.UTF8.GetBytes (temp);
+
+			DebugStream debug = new DebugStream ();
+			ICryptoTransform base64 = new FromBase64Transform ();
+			cs = new CryptoStream (debug, base64, CryptoStreamMode.Write);
+			cs.Write (data, 0, data.Length);
+			cs.FlushFinalBlock ();
+			byte[] encoded = debug.ToArray ();
+
+			string result = Encoding.UTF8.GetString (encoded);
+			AssertEquals ("FromBase64_Write", expected, result);
+		}
+
+		[Test]
+		public void FromBase64_Read () 
+		{
+			byte[] original = Encoding.UTF8.GetBytes ("aHR0cDovL3d3dy5nby1tb25vLmNvbS8=");
+			DebugStream debug = new DebugStream (original);
+
+			ICryptoTransform base64 = new FromBase64Transform ();
+			cs = new CryptoStream (debug, base64, CryptoStreamMode.Read);
+			
+			byte[] data = new byte [1024];
+			int length = cs.Read (data, 0, data.Length);
+			cs.Close ();
+
+			string result = Encoding.UTF8.GetString (data, 0, length);
+			AssertEquals ("ToBase64_Read", "http://www.go-mono.com/", result);
+		}
+
+		[Test]
+		public void ToBase64_Write () 
+		{
+			byte[] data = Encoding.UTF8.GetBytes ("http://www.go-mono.com/");
+
+			DebugStream debug = new DebugStream ();
+			ICryptoTransform base64 = new ToBase64Transform ();
+			cs = new CryptoStream (debug, base64, CryptoStreamMode.Write);
+			cs.Write (data, 0, data.Length);
+			cs.FlushFinalBlock ();
+			byte[] encoded = debug.ToArray ();
+
+			string result = Encoding.UTF8.GetString (encoded);
+			AssertEquals ("ToBase64_Write", "aHR0cDovL3d3dy5nby1tb25vLmNvbS8=", result);
+		}
+
+		[Test]
+		public void ToBase64_Read () 
+		{
+			byte[] original = Encoding.UTF8.GetBytes ("http://www.go-mono.com/");
+			DebugStream debug = new DebugStream (original);
+
+			ICryptoTransform base64 = new ToBase64Transform ();
+			cs = new CryptoStream (debug, base64, CryptoStreamMode.Read);
+			
+			byte[] data = new byte [1024];
+			int length = cs.Read (data, 0, data.Length);
+			cs.Close ();
+
+			string result = Encoding.UTF8.GetString (data, 0, length);
+			AssertEquals ("ToBase64_Read", "aHR0cDovL3d3dy5nby1tb25vLmNvbS8=", result);
+		}
+
+		// Cascaded CryptoStream - like sample in book .NET Framework Security, chapter 30
+
+		[Test]
+		public void CascadedCryptoStream_Write () 
+		{
+			DebugStream debug = new DebugStream ();
+
+			// calculate both the hash (before encryption) and encrypt in one Write operation
+			byte[] key = {0, 1, 2, 3, 4, 5, 6, 7};
+			byte[] iv = {0, 1, 2, 3, 4, 5, 6, 7};
+			DES des = DES.Create ();
+			CryptoStream cse = new CryptoStream (debug, des.CreateEncryptor (key, iv), CryptoStreamMode.Write);
+
+			MD5 hash = MD5.Create ();
+			CryptoStream csh = new CryptoStream (cse, hash, CryptoStreamMode.Write);
+
+			byte[] data = Encoding.UTF8.GetBytes ("http://www.go-mono.com/");
+			csh.Write (data, 0, data.Length);
+			csh.FlushFinalBlock ();
+
+			byte[] result = debug.ToArray ();
+			AssertEquals ("Encrypted", "8C-24-76-74-09-79-2B-D3-47-C3-32-F5-F3-1A-5E-57-04-33-2E-B8-50-77-B2-A1", BitConverter.ToString (result));
+			byte[] digest = hash.Hash;
+			AssertEquals ("Hash", "71-04-12-D1-95-01-CF-F9-8D-8F-F8-0D-F9-AA-11-7D", BitConverter.ToString (digest));
+		}
+
+		[Test]
+		public void CascadedCryptoStream_Read () 
+		{
+			byte[] encdata = new byte[] { 0x8C, 0x24, 0x76, 0x74, 0x09, 0x79, 0x2B, 0xD3, 0x47, 0xC3, 0x32, 0xF5, 0xF3, 0x1A, 0x5E, 0x57, 0x04, 0x33, 0x2E, 0xB8, 0x50, 0x77, 0xB2, 0xA1 };
+			DebugStream debug = new DebugStream (encdata);
+
+			// decrypt data and validate its hash in one Read operation
+			byte[] key = {0, 1, 2, 3, 4, 5, 6, 7};
+			byte[] iv = {0, 1, 2, 3, 4, 5, 6, 7};
+			DES des = DES.Create ();
+			CryptoStream csd = new CryptoStream (debug, des.CreateDecryptor (key, iv), CryptoStreamMode.Read);
+
+			MD5 hash = MD5.Create ();
+			CryptoStream csh = new CryptoStream (csd, hash, CryptoStreamMode.Read);
+
+			byte[] data = new byte [1024];
+			int length = csh.Read (data, 0, data.Length);
+			csh.Close ();
+                        
+			string result = Encoding.UTF8.GetString (data, 0, length);
+			AssertEquals ("Decrypted", "http://www.go-mono.com/", result);
+			byte[] digest = hash.Hash;
+			AssertEquals ("Hash Validation", "71-04-12-D1-95-01-CF-F9-8D-8F-F8-0D-F9-AA-11-7D", BitConverter.ToString (digest));
+		}
 	}
 }
