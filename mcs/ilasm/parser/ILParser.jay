@@ -599,7 +599,7 @@ class_ref		: OPEN_BRACKET slashed_name CLOSE_BRACKET slashed_name
                                 if (codegen.IsThisAssembly ((string) $2)) {
                                         $$ = new TypeRef ((string) $4, false, null);
                                 } else {
-                                        $$ = new ExternTypeRef ((string) $2, (string) $4, false);
+                                        $$ = codegen.ExternTable.GetTypeRef ((string) $2, (string) $4, false);
                                 }
                           }
 			| OPEN_BRACKET D_MODULE slashed_name CLOSE_BRACKET slashed_name
@@ -2045,7 +2045,7 @@ method_ref		: call_conv type type_spec DOUBLE_COLON method_name
                                         
                                         methref = new GenericMethodRef (methref, new GenericMethodSig (ta));
                                 }
-                                Console.WriteLine ("methodref:  {0}", methref);
+                                
                                 $$ = methref;
                           }
 			;
