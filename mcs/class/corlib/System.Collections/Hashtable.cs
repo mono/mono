@@ -552,27 +552,28 @@ namespace System.Collections {
 			if (key == null)
 				throw new ArgumentNullException ("key", "null key");
 
-			uint size = (uint) this.table.Length;
+			Slot [] table = this.table;
+			uint size = (uint) table.Length;
 			int h = this.GetHash (key) & Int32.MaxValue;
-			uint spot = (uint)h;
+			uint indx = (uint)h;
 			uint step = (uint) ((h >> 5)+1) % (size-1)+1;
-			Slot[] table = this.table;
+			
 
-			for (uint i = 0; i < size;i++) {
-				int indx = (int) (spot % size);
+			for (uint i = size; i > 0; i--) {
+				indx %= size;
 				Slot entry = table [indx];
 				Object k = entry.key;
 				if (k == null)
 					return -1;
 				if (k == key || ((entry.hashMix & Int32.MaxValue) == h
 				    && this.KeyEquals (key, k))) {
-					return indx;
+					return (int) indx;
 				}
 
 				if ((entry.hashMix & CHAIN_MARKER) == 0)
 					return -1;
 
-				spot+= step;
+				indx += step;
 			}
 			return -1;
 		}
