@@ -25,7 +25,7 @@ LIBRARY_INSTALL_DIR = $(prefix)/lib
 endif
 
 CLEAN_FILES = $(cmplib) $(reslib) $(plattestlib) $(plattestlib).sources \
-	       $(net20bootstrap_response) $(net20bootstrap_makefrag) \
+	       $(net20bootstrap_makefrag) \
 	       $(cmp_response) $(cmp_makefrag) \
 	       $(res_response) $(res_makefrag) \
 	       $(cmppdb) $(respdb) $(plattestpdb)
@@ -45,7 +45,7 @@ reslib = $(topdir)/class/lib/$(PROFILE)/corlib_res.dll
 cmplib = $(topdir)/class/lib/$(PROFILE)/corlib_cmp.dll
 
 $(plattestlib).sources: corlib_test.dll.sources $(plattestlib).excludes
-	cat corlib_test.dll.sources $(plattestlib).excludes | sort | uniq -u >$@
+	sort corlib_test.dll.sources $(plattestlib).excludes | uniq -u >$@
 
 TEST_MCS_FLAGS = /debug+ /debug:full /nowarn:0618 /nowarn:0672 /unsafe
 
@@ -101,25 +101,14 @@ FORCE:
 $(gmcs): $(net20bootstraplib) FORCE
 	cd $(topdir)/gmcs && $(MAKE)
 
-ifdef PLATFORM_CHANGE_SEPARATOR_CMD
-post_process = $(PLATFORM_CHANGE_SEPARATOR_CMD)
-else
-post_process = cat
-endif
-
 #net_2_0_bootstrap
 
-net20bootstrap_response = $(depsdir)/net_2_0_bootstrap_corlib.dll.response
 net20bootstrap_makefrag = $(depsdir)/net_2_0_bootstrap_corlib.dll.makefrag
 
-$(net20bootstraplib): $(net20bootstrap_makefrag) $(net20bootstrap_response)
-	$(BOOTSTRAP_MCS) /nowarn:649 /nowarn:169 /define:INSIDE_CORLIB /define:NET_1_1 /define:BOOTSTRAP_NET_2_0 $(corlib_flags) /target:library /out:$(net20bootstraplib) @$(net20bootstrap_response)
+$(net20bootstraplib): $(net20bootstrap_makefrag) $(response)
+	$(BOOTSTRAP_MCS) $(LOCAL_MCS_FLAGS) /define:NET_1_1 /define:BOOTSTRAP_NET_2_0 $(corlib_flags) /target:library /out:$(net20bootstraplib) @$(response)
 
-$(net20bootstrap_response): $(sourcefile)
-	@echo Creating $@ ...
-	@cat $< |$(post_process) >$@
-
-$(net20bootstrap_makefrag): $(net20bootstrap_response)
+$(net20bootstrap_makefrag): $(response)
 	@echo Creating $@ ...
 	@sed 's,^,$(net20bootstraplib): ,' $< >$@
 
@@ -135,9 +124,9 @@ cmp_flags = /r:$(PLATFORM_CORLIB) $(corlib_flags)
 $(cmplib): $(cmp_makefrag) $(cmp_response)
 	$(BOOT_COMPILE) $(LIBRARY_FLAGS) $(cmp_flags) /target:library /out:$@ @$(cmp_response)
 
-$(cmp_response): $(response) corlib_cmp.dll.excludes
+$(cmp_response): $(sourcefile) corlib_cmp.dll.excludes
 	@echo Creating $@ ...
-	@cat corlib_cmp.dll.excludes $< | sort | uniq -u | $(post_process) >$@
+	@sort $(sourcefile) corlib_cmp.dll.excludes | uniq -u | $(PLATFORM_CHANGE_SEPARATOR_CMD) >$@
 
 $(cmp_makefrag): $(cmp_response)
 	@echo Creating $@ ...
@@ -162,7 +151,7 @@ $(reslib): $(res_makefrag) $(res_response)
 
 $(res_response): $(sourcefile) corlib_res.dll.excludes
 	@echo Creating $@ ...
-	@cat corlib_res.dll.excludes $(sourcefile) | sort | uniq -u | $(post_process) >$@
+	@sort $(sourcefile) corlib_res.dll.excludes | uniq -u | $(PLATFORM_CHANGE_SEPARATOR_CMD) >$@
 
 # warning: embedded tab in the 'echo touch' line
 $(res_makefrag): $(res_response)
