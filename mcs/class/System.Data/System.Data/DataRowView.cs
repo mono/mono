@@ -49,10 +49,9 @@ namespace System.Data
 
 		DataView dataView;
 		DataRow dataRow;
-		DataRowVersion rowVersion = DataRowVersion.Default;
+		DataRowVersion rowVersion = DataRowVersion.Current;
 
-		// FIXME: what is the default?
-		bool isNew = false;
+		bool isNew;
 
 		#endregion // Fields
 
@@ -86,7 +85,8 @@ namespace System.Data
 
 		public void CancelEdit ()
 		{
-			dataRow.CancelEdit ();
+			dataView.CancelEditRowView (this);
+			isNew = false;
 		}
 
 		public DataView CreateChildView (DataRelation relation)
@@ -105,35 +105,34 @@ namespace System.Data
 		[MonoTODO]
 		public void Delete ()
 		{
-			throw new NotImplementedException ();
+			dataView.DeleteRowView (this);
+			isNew = false;
 		}
 
 		public void EndEdit ()
 		{
-			dataRow.EndEdit ();
+			dataView.EndEditRowView (this);
+			isNew = false;
 		}
 
 		#endregion // Methods
 
 		#region Properties
 		
-		public DataView DataView
-		{
-			[MonoTODO]
-			get {
-				return dataView;
-			}
+		public DataView DataView {
+			get { return dataView; }
 		}
 
 		public bool IsEdit {
 			get { return dataRow.IsEditing; }
 		}
 
+		// It becomes true when this instance is created by
+		// DataView.AddNew(). If it is true, then the DataRow is
+		// "Detached", and when this.EndEdit() is invoked, the row
+		// will be added to the table.
 		public bool IsNew {
-			[MonoTODO]
-			get {
-				return isNew;
-			}
+			get { return isNew; }
 		}
 		
 		[System.Runtime.CompilerServices.IndexerName("Item")]
@@ -147,7 +146,6 @@ namespace System.Data
 			set {
 				DataColumn dc = dataView.Table.Columns[column];
 				dataRow[dc] = value;
-				dataView.ChangedList(ListChangedType.ItemChanged,dc.Ordinal,-1);
 			}
 		}
 
@@ -168,10 +166,7 @@ namespace System.Data
 		}
 
 		public DataRow Row {
-			[MonoTODO]
-			get {
-				return dataRow;
-			}
+			get { return dataRow; }
 		}
 
 		public DataRowVersion RowVersion {

@@ -1302,8 +1302,8 @@ namespace System.Data {
 			DataRow[] dataRows = (DataRow[])rowList.ToArray(typeof(DataRow));
 
 			if (sortableColumns != null) {
-				RowSorter rowSorter = new RowSorter (this, dataRows, sortableColumns);
-				dataRows = rowSorter.SortRows ();
+				RowSorter rowSorter = new RowSorter (this, sortableColumns);
+				dataRows = rowSorter.SortRows (dataRows);
 
 				sortableColumns = null;
 				rowSorter = null;
@@ -1666,19 +1666,16 @@ namespace System.Data {
 			UniqueConstraint.SetAsPrimaryKey(this.Constraints, null);
 		}
 
-		private class RowSorter : IComparer 
+		internal class RowSorter : IComparer 
 		{
 			private DataTable table;
 			private SortableColumn[] sortColumns;
-			private DataRow[] rowsToSort;
 			
 			internal RowSorter(DataTable table,
-					DataRow[] unsortedRows, 
 					SortableColumn[] sortColumns) 
 			{
 				this.table = table;
 				this.sortColumns = sortColumns;
-				this.rowsToSort = unsortedRows;
 			}
 
 			public SortableColumn[] SortColumns {
@@ -1687,7 +1684,7 @@ namespace System.Data {
 				}
 			}
 			
-			public DataRow[] SortRows () 
+			public DataRow[] SortRows (DataRow [] rowsToSort) 
 			{
 				Array.Sort (rowsToSort, this);
 				return rowsToSort;

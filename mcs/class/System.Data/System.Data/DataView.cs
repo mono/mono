@@ -37,6 +37,8 @@ namespace System.Data
 		SortableColumn [] sortedColumns = null;
 		DataViewRowState rowState;
 		DataRowView[] rowCache = new DataRowView[0];
+		// DataRow -> DataRowView
+		Hashtable addNewCache = new Hashtable ();
 
 		bool allowNew = true; 
 		bool allowEdit = true;
@@ -283,7 +285,6 @@ namespace System.Data
 		#endregion // PublicProperties
 		
 		#region	PublicMethods
-		[MonoTODO]
 		public virtual DataRowView AddNew() 
 		{
 			if (!IsOpen)
@@ -293,10 +294,19 @@ namespace System.Data
 			
 			DataRow row = dataTable.NewRow ();
 			if (row == null)
-				throw new Exception ("Row not created");
+				throw new SystemException ("Row not created");
 			DataRowView rowView = new DataRowView (this, row, true);
-			
-			dataTable.Rows.Add (row);
+			addNewCache.Add (row, rowView);
+
+			// Add to the end of the list (i.e. recreate rowCache),
+			// regardless of Sort property.
+			DataRowView [] newCache = new DataRowView [rowCache.Length + 1];
+			Array.Copy (rowCache, newCache, rowCache.Length);
+			newCache [newCache.Length - 1] = rowView;
+			rowCache = newCache;
+
+			// DataRowView is added, but DataRow is still Detached.
+			ChangedList (ListChangedType.ItemAdded, newCache.Length - 1, -1);
 			return rowView;
 		}
 
@@ -345,6 +355,27 @@ namespace System.Data
 			// FIXME:
 		}
 
+		internal void CancelEditRowView (DataRowView rowView)
+		{
+			addNewCache.Remove (rowView.Row);
+			UpdateIndex (false);
+			rowView.Row.CancelEdit ();
+		}
+
+		internal void DeleteRowView (DataRowView rowView)
+		{
+			addNewCache.Remove (rowView.Row);
+			UpdateIndex (false);
+			rowView.Row.Delete ();
+		}
+
+		internal void EndEditRowView (DataRowView rowView)
+		{
+			Table.Rows.Add (rowView.Row);
+			addNewCache.Remove (rowView.Row);
+			rowView.Row.EndEdit ();
+		}
+
 		public int Find(object key) 
 		{
 			object [] keys = new object[1];
@@ -358,16 +389,16 @@ namespace System.Data
 			if (sort == null || sort == string.Empty)
 				throw new ArgumentException ("Find finds a row based on a Sort order, and no Sort order is specified");
 			else {
-				// FIXME: maybe some of those thecks could be removel.
+				// FIXME: maybe some of those thecks could be removed.
 				if (sortedColumns == null)
-					throw new Exception ("sort expression result is null");
+					throw new SystemException ("sort expression result is null");
 				if (sortedColumns.Length == 0)
-					throw new Exception ("sort expression result is 0");
+					throw new SystemException ("sort expression result is 0");
 				if (sortedColumns.Length != key.Length)
 					throw new ArgumentException ("Expecting " + sortedColumns.Length +
 						" value(s) from the key being indexed, but recieved "+
 						key.Length+" value(s).");
-				RowComparer rowComparer = new RowComparer (dataTable,sortedColumns);
+				RowViewComparer rowComparer = new RowViewComparer (dataTable,sortedColumns);
 				int searchResult = Array.BinarySearch (rowCache,key,rowComparer);
 				if (searchResult < 0)
 					return -1;
@@ -450,11 +481,8 @@ namespace System.Data
 		[MonoTODO]
 		protected virtual void OnListChanged(ListChangedEventArgs e) 
 		{
-			try {
-				if (ListChanged != null)
-					ListChanged (this, e);
-			} catch {
-			}
+			if (ListChanged != null)
+				ListChanged (this, e);
 		}
 
 		internal void ChangedList(ListChangedType listChangedType, int newIndex,int oldIndex)
@@ -618,12 +646,32 @@ namespace System.Data
 		{
 			DataRowView[] newRowCache = null;
 			DataRow[] rows = null;
-			
-			rows = dataTable.Select (rowFilterExpr, sortedColumns, RowStateFilter);
 
-			newRowCache = new DataRowView[rows.Length];
+			ArrayList al = new ArrayList ();
+			
+			// I guess, "force" parameter is used to indicate
+			// whether we should "query" against DataTable.
+			// For example, when adding a new row, we don't have
+			// to re-query.
+
+			// Handle sort by itself, considering AddNew rows.
+			rows = dataTable.Select (rowFilterExpr, null, RowStateFilter);
+			al.AddRange (rows);
+
+			al.AddRange (addNewCache.Keys);
+
+			rows = (DataRow []) al.ToArray (typeof (DataRow));
+			if (sortedColumns != null)
+				new DataTable.RowSorter (dataTable, sortedColumns).SortRows (rows);
+
+			newRowCache = new DataRowView [rows.Length];
 			for (int r = 0; r < rows.Length; r++) {
-				newRowCache[r] = new DataRowView (this, rows[r]);
+				DataRow dr = rows [r];
+				if (addNewCache.ContainsKey (dr))
+					newRowCache [r] = (DataRowView) 
+						addNewCache [dr];
+				else
+					newRowCache[r] = new DataRowView (this, dr);
 			}
 			rowCache = newRowCache;
 		}
@@ -760,7 +808,7 @@ namespace System.Data
 		[MonoTODO]
 		object IBindingList.AddNew () 
 		{
-			throw new NotImplementedException ();
+			return this.AddNew ();
 		}
 
 		[MonoTODO]
@@ -919,11 +967,11 @@ namespace System.Data
 			}
 		}
 		
-		private class RowComparer : IComparer 
+		private class RowViewComparer : IComparer 
 		{
 			private SortableColumn [] sortColumns;
 			private DataTable table;
-			public RowComparer(DataTable table, SortableColumn[] sortColumns) 
+			public RowViewComparer (DataTable table, SortableColumn[] sortColumns) 
 			{
 				this.table = table;			
 				this.sortColumns = sortColumns;
@@ -938,9 +986,9 @@ namespace System.Data
 			int IComparer.Compare (object x, object y) 
 			{
 				if(x == null)
-					throw new Exception ("Object to compare is null: x");
+					throw new SystemException ("Object to compare is null: x");
 				if(y == null)
-					throw new Exception ("Object to compare is null: y");
+					throw new SystemException ("Object to compare is null: y");
 				DataRowView rowView = (DataRowView) y;
 				object [] keys = (object [])x;
 				for(int i = 0; i < sortColumns.Length; i++) {

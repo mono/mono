@@ -1,5 +1,16 @@
 2005-01-27  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* DataView.cs, DataRowView.cs : AddNew() should not add the row to table
+	  (it is still detached). So handle those rows differntly.
+	  CancelEdit(), EndEdit() and Delete() propagates those events to
+	  DataView (and handle row collection).
+	  Eliminate "throw new Exception()".
+	  Don't catch all the exception thrown in ListChanged event.
+	* DataTable.cs : made RowSorter as internal and use it in DataView.
+	  no need to pass DataRow[] to .ctor().
+
+2005-01-27  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* DataTable.cs : don't create DefaultView unless it is required. It
 	  significantly improves performance. (i.e. DataView perf. is sick ;-)
 
