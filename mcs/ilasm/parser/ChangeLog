@@ -1,5 +1,9 @@
 2003-07-29 Jackson Harper <jackson@latitudegeo.com>
 
+	* ILParser.jay: Use new labeling system for handler blocks.
+	
+2003-07-29 Jackson Harper <jackson@latitudegeo.com>
+
 	* ILParser.jay: No longer need to supply method references
 	to instructions, they get that when emitting now.
 	

@@ -1615,14 +1615,14 @@ type_spec		: class_ref
 
 scope_block		: scope_block_begin method_decls CLOSE_BRACE
                           {
-                                $$ = new HandlerBlock ((string) $1,
-                                        codegen.CurrentMethodDef.RandomLabel ());
+                                $$ = new HandlerBlock ((int) $1,
+                                        codegen.CurrentMethodDef.AddLabel ());
                           }
 			;
 
 scope_block_begin       : OPEN_BRACE
                           {
-                                $$ = codegen.CurrentMethodDef.RandomLabel ();
+                                $$ = codegen.CurrentMethodDef.AddLabel ();
                           }
                         ;
                         
@@ -1645,9 +1645,12 @@ try_block		: D_TRY scope_block
                           }
 			| D_TRY id K_TO id
                           {
-                                $$ = new TryBlock ((string) $2, (string) $4);
+                                $$ = new TryBlock (new HandlerBlock ((string) $2, (string) $4));
                           }
 			| D_TRY int32 K_TO int32
+			  {
+				$$ = new TryBlock (new HandlerBlock ((int) $2, (int) $4, true));
+			  }
 			;
 
 seh_clauses		: seh_clause
@@ -1692,15 +1695,19 @@ seh_clause		: K_CATCH class_ref handler_block
 filter_clause		: K_FILTER scope_block
                           {
                                 HandlerBlock block = (HandlerBlock) $2;
-                                FilterBlock fb = new FilterBlock (block.from_label);
+                                FilterBlock fb = new FilterBlock (block);
                                 $$ = fb;
                           }
 			| K_FILTER id
                           {
-                                FilterBlock fb = new FilterBlock ((string) $2);
+                                FilterBlock fb = new FilterBlock (new HandlerBlock (null, (string) $2));
                                 $$ = fb;
                           }
 			| K_FILTER int32
+			  {
+				FilterBlock fb = new FilterBlock (new HandlerBlock (-1, (int) $2, true));
+				$$ = fb;
+			  }
 			;
 
 handler_block		: scope_block
@@ -1712,6 +1719,9 @@ handler_block		: scope_block
                                 $$ = new HandlerBlock ((string) $2, (string) $4);
                           }
 			| K_HANDLER int32 K_TO int32
+			  {
+				$$ = new HandlerBlock ((int) $2, (int) $4);
+			  }
 			;
 
 instr			: INSTR_NONE
