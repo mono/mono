@@ -1,2 +1,2 @@
 #!/bin/sh
-@bindir@/mono @bindir@/mcs.exe $*
+@bindir@/mint @bindir@/mcs.exe $*
