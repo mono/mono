@@ -376,7 +376,8 @@ namespace Mono.CSharp {
 
 			int pd_count = pd.Count;
 
-			bool not_params_method = (pd.ParameterModifier (pd_count - 1) != Parameter.Modifier.PARAMS);
+			bool not_params_method = (pd_count == 0) ||
+				(pd.ParameterModifier (pd_count - 1) != Parameter.Modifier.PARAMS);
 
 			if (not_params_method && pd_count != arg_count) {
 				Report.Error (1593, loc,

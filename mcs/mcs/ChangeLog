@@ -1,3 +1,8 @@
+2002-09-21  Martin Baulig  <martin@gnome.org>
+
+	* delegate.cs (Delegate.VerifyApplicability): Make this work if the
+	delegate takes no arguments.
+
 2002-09-20  Miguel de Icaza  <miguel@ximian.com>
 
 	* constant.cs: Use Conv_U8 instead of Conv_I8 when loading longs
