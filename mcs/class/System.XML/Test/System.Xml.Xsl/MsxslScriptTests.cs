@@ -59,14 +59,14 @@ namespace MonoTests.System.Xml.Xsl
   </xsl:template>
 </xsl:stylesheet>";
 
-		string cs1 = @"<msxsl:script language='C#' implements-prefix='user'>
+		string cs1 = @"<msxsl:script language='C#' implements-prefix='user' xmlns:msxsl='urn:schemas-microsoft-com:xslt'>
     <![CDATA[
         string PadRight( string str, int padding) {
             return str.PadRight(padding);
         }
     ]]>
     </msxsl:script>";
-		string cs2 = @"<msxsl:script language='C#' implements-prefix='user'>
+		string cs2 = @"<msxsl:script language='C#' implements-prefix='user' xmlns:msxsl='urn:schemas-microsoft-com:xslt'>
      <![CDATA[
      public double circumference(double radius){
        double pi = 3.14;
@@ -75,7 +75,7 @@ namespace MonoTests.System.Xml.Xsl
      }
       ]]>
    </msxsl:script>";
-		string vb1 = @"<msxsl:script language='VB' implements-prefix='user'>
+		string vb1 = @"<msxsl:script language='VB' implements-prefix='user' xmlns:msxsl='urn:schemas-microsoft-com:xslt'>
      <![CDATA[
      public function circumference(radius as double) as double
        dim pi as double = 3.14
@@ -87,7 +87,7 @@ namespace MonoTests.System.Xml.Xsl
         end function
       ]]>
    </msxsl:script>";
-		string js1 = @"<msxsl:script language='JScript' implements-prefix='user'>
+		string js1 = @"<msxsl:script language='JScript' implements-prefix='user' xmlns:msxsl='urn:schemas-microsoft-com:xslt'>
      <![CDATA[
      function circumference(radius : double) : double {
        var pi : double = 3.14;
