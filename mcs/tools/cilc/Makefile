@@ -8,7 +8,7 @@ PROGRAM = cilc.exe
 # and we can't extend the make clean target.
 
 HAS_TEST = yes
-CLEAN_FILES = generated Test.dll
+CLEAN_FILES = generated Test.dll Test.pdb
 
 EXTRA_DISTFILES = demo.c README TODO Test.cs
 
