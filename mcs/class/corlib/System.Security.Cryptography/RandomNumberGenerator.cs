@@ -13,18 +13,17 @@ namespace System.Security.Cryptography {
 	
 public abstract class RandomNumberGenerator  {
 	
-	public RandomNumberGenerator () {
-	}
+	public RandomNumberGenerator () {}
 
-	public static RandomNumberGenerator Create () {
+	public static RandomNumberGenerator Create () 
+        {
 		// create the default random number generator
 		return Create ("System.Security.Cryptography.RandomNumberGenerator");
 	}
 
-	[MonoTODO]
-	public static RandomNumberGenerator Create (string rngName) {
-		return null;
-		// return (RandomNumberGenerator) (CryptoConfig.CreateFromName (rngName));
+	public static RandomNumberGenerator Create (string rngName) 
+        {
+		return (RandomNumberGenerator) (CryptoConfig.CreateFromName (rngName));
 	}
 
 	public abstract void GetBytes (byte[] data);

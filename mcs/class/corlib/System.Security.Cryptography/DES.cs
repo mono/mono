@@ -3,6 +3,9 @@
 //
 // Author:
 //   Sergey Chaban (serge@wildwestsoftware.com)
+//   Sebastien Pouliot (spouliot@motus.com)
+//
+// Portions (C) 2002 Motus Technologies Inc. (http://www.motus.com)
 //
 
 using System;
@@ -521,35 +524,29 @@ namespace System.Security.Cryptography {
 	} // DESCore
 
 
-
-
 	public abstract class DES : SymmetricAlgorithm {
-		private byte [] key;
 
 		public DES ()
 		{
+			KeySizeValue = 64; 
+			BlockSizeValue = 64; 
+			FeedbackSizeValue = 64;
 		}
 
-		[MonoTODO]
-		public static new DES Create()
+		public static new DES Create () 
 		{
-			// TODO: implement
-			return null;
+			return Create ("System.Security.Cryptography.DES");
 		}
 
-		[MonoTODO]
-		public static new DES Create(string name)
-		{
-			// TODO: implement
-			return null;
+		public static new DES Create (string algo) 
+                {
+			return (DES) CryptoConfig.CreateFromName (algo);
 		}
-
 
 		public static bool IsWeakKey (byte [] rgbKey)
 		{
-			if (!DESCore.IsValidKeySize (rgbKey)) {
+			if (!DESCore.IsValidKeySize (rgbKey)) 
 				throw new CryptographicException ();
-			}
 
 			ulong lk = DESCore.PackKey (rgbKey);
 			foreach (ulong wk in DESCore.weakKeys) {
@@ -558,12 +555,10 @@ namespace System.Security.Cryptography {
 			return false;
 		}
 
-
 		public static bool IsSemiWeakKey (byte [] rgbKey)
 		{
-			if (!DESCore.IsValidKeySize (rgbKey)) {
+			if (!DESCore.IsValidKeySize (rgbKey)) 
 				throw new CryptographicException ();
-			}
 
 			ulong lk = DESCore.PackKey (rgbKey);
 			foreach (ulong swk in DESCore.semiweakKeys) {
@@ -573,12 +568,17 @@ namespace System.Security.Cryptography {
 		}
 
 		public override byte[] Key {
-			get {
-				return this.key;
-			}
+			get { return KeyValue; }
 			set {
-				this.key = new byte [DESCore.KEY_BYTE_SIZE];
-				Array.Copy (value, 0, this.key, 0, DESCore.KEY_BYTE_SIZE);
+				if (value == null)
+					throw new ArgumentNullException ();
+				if (value.Length != (BlockSizeValue >> 3))
+					throw new ArgumentException ();
+				if (IsWeakKey (value) || IsSemiWeakKey (value))
+					throw new CryptographicException ();
+
+				KeyValue = new byte [DESCore.KEY_BYTE_SIZE];
+				Array.Copy (value, 0, KeyValue, 0, DESCore.KEY_BYTE_SIZE);
 			}
 		}
 

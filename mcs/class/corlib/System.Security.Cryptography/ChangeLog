@@ -1,3 +1,9 @@
+2002-10-11  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* DES.cs: Create() using CryptoConfig, fix #30256
+	* DESCryptoServiceProvider.cs: fix #30256
+	* RandomNumberGenerator.cs: uncomment in Create(rng) for CryptoConfig
+
 2002-10-10  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* AsymmetricAlgorithm.cs: Inherit from IDisposable, common support from XML import

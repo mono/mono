@@ -3,8 +3,10 @@
 //
 // Author:
 //   Sergey Chaban (serge@wildwestsoftware.com)
+//   Sebastien Pouliot (spouliot@motus.com)
 //
-
+// Portions (C) 2002 Motus Technologies Inc. (http://www.motus.com)
+//
 
 
 using System;
@@ -13,10 +15,9 @@ using System.Security.Cryptography;
 
 namespace System.Security.Cryptography {
 
-
 	internal class DESTransformBase : ICryptoTransform {
 
-		internal enum Mode : int {
+		internal enum Action : int {
 			ENCRYPTOR = 0,
 			DECRYPTOR = 1
 		}
@@ -31,16 +32,21 @@ namespace System.Security.Cryptography {
 
 		private byte [] iv;
 		private byte [] tmpBlock;
+		private CipherMode mode;
+		private Action action;
 
-		protected DESTransformBase (Mode mode, byte [] key, byte [] iv)
+		protected DESTransformBase (Action action, byte [] key, byte [] iv, CipherMode mode) 
 		{
 			core = new DESCore ();
+			this.action = action;
+			this.mode = mode;
 
-			if (mode == Mode.ENCRYPTOR) {
+			if (action == Action.ENCRYPTOR) {
 				cryptFn = new DESCore.DESCall (core.Encrypt);
 				preprocess = new Filter (this.EncPreprocess);
 				postprocess = new Filter (this.EncPostprocess);
-			} else {
+			} 
+			else {
 				cryptFn = new DESCore.DESCall (core.Decrypt);
 				preprocess = new Filter (this.DecPreprocess);
 				postprocess = new Filter (this.DecPostprocess);
@@ -53,13 +59,17 @@ namespace System.Security.Cryptography {
 			tmpBlock = new byte [DESCore.BLOCK_BYTE_SIZE];
 		}
 
-
-		public virtual bool CanTransformMultipleBlocks {
-			get {
-				return true;
-			}
+		void System.IDisposable.Dispose () 
+		{
 		}
 
+		public virtual bool CanTransformMultipleBlocks {
+			get { return false; }
+		}
+
+		public bool CanReuseTransform {
+			get { return true; }
+		}
 
 		public virtual int InputBlockSize {
 			get {
@@ -73,7 +83,7 @@ namespace System.Security.Cryptography {
 			}
 		}
 
-		private void EncPreprocess (byte [] workBuff)
+		private void EncPreprocess (byte [] workBuff) 
 		{
 			byte [] iv = this.iv;
 			for (int i = 0; i < DESCore.BLOCK_BYTE_SIZE; i++) {
@@ -81,34 +91,31 @@ namespace System.Security.Cryptography {
 			}
 		}
 
-		private void EncPostprocess (byte [] workBuff)
+		private void EncPostprocess (byte [] workBuff) 
 		{
 			Array.Copy (workBuff, 0, iv, 0, DESCore.BLOCK_BYTE_SIZE);
 		}
 
 
-		private void DecPreprocess (byte [] workBuff)
+		private void DecPreprocess (byte [] workBuff) 
 		{
 			Array.Copy (workBuff, 0, tmpBlock, 0, DESCore.BLOCK_BYTE_SIZE);
 		}
 
-		private void DecPostprocess (byte [] workBuff)
+		private void DecPostprocess (byte [] workBuff) 
 		{
 			EncPreprocess (workBuff);
 			Array.Copy (tmpBlock, 0, iv, 0, DESCore.BLOCK_BYTE_SIZE);
 		}
 
-
-
-		private void Transform (byte [] workBuff)
+		private void Transform (byte [] workBuff) 
 		{
 			preprocess (workBuff);
 			cryptFn (workBuff, null);
 			postprocess (workBuff);
 		}
 
-
-		public virtual int TransformBlock (byte [] inputBuffer, int inputOffset, int inputCount, byte [] outputBuffer, int outputOffset)
+		public virtual int TransformBlock (byte [] inputBuffer, int inputOffset, int inputCount, byte [] outputBuffer, int outputOffset) 
 		{
 			if ((inputCount & (DESCore.BLOCK_BYTE_SIZE-1)) != 0)
 				throw new CryptographicException ("Invalid input block size.");
@@ -133,12 +140,8 @@ namespace System.Security.Cryptography {
 			return (full * step);
 		}
 
-
-		[MonoTODO]
-		public virtual byte [] TransformFinalBlock (byte [] inputBuffer, int inputOffset, int inputCount)
+		public virtual byte [] TransformFinalBlock (byte [] inputBuffer, int inputOffset, int inputCount) 
 		{
-			// TODO: add decryption support
-
 			int num = (inputCount + DESCore.BLOCK_BYTE_SIZE) & (~(DESCore.BLOCK_BYTE_SIZE-1));
 			byte [] res = new byte [num];
 			int full = num - DESCore.BLOCK_BYTE_SIZE;
@@ -147,15 +150,26 @@ namespace System.Security.Cryptography {
 
 			int rem = inputCount & (DESCore.BLOCK_BYTE_SIZE-1);
 
-			// PKCS-5 padding
-			for (int i = num; --i >= (num - rem);) {
-				res [i] = (byte) rem;
+			if (action == Action.ENCRYPTOR) {
+				// PKCS#7 padding
+				int p7Padding = DESCore.BLOCK_BYTE_SIZE - (inputCount % DESCore.BLOCK_BYTE_SIZE);
+				for (int i = DESCore.BLOCK_BYTE_SIZE; --i >= (DESCore.BLOCK_BYTE_SIZE - p7Padding);) {
+					res [i] = (byte) p7Padding;
+				}
+
+				Array.Copy (inputBuffer, inputOffset + full, res, full, rem);
+
+				// the last padded block will be transformed in-place
+				TransformBlock (res, full, DESCore.BLOCK_BYTE_SIZE, res, full);
 			}
-
-			Array.Copy (inputBuffer, inputOffset + full, res, full, rem);
-
-			// the last padded block will be transformed in-place
-			TransformBlock (res, full, DESCore.BLOCK_BYTE_SIZE, res, full);
+			else {
+				// PKCS#7 padding
+				byte padding = res [inputCount - 1];
+				for (int i = 0; i < padding; i++) {
+					if (res [inputCount - 1 - i] == padding)
+						res[inputCount - 1 - i] = 0x00;
+				}
+			}
 
 			/*
 			byte [] workBuff = new byte [DESCore.BLOCK_BYTE_SIZE];
@@ -168,81 +182,69 @@ namespace System.Security.Cryptography {
 			return res;
 		}
 
-
 	} // DESTransformBase
 
 
 	internal sealed class DESEncryptor : DESTransformBase {
-		internal DESEncryptor (byte [] key, byte [] iv)
-		: base (DESTransformBase.Mode.ENCRYPTOR, key, iv)
+		internal DESEncryptor (byte [] key, byte [] iv, CipherMode mode)
+		: base (DESTransformBase.Action.ENCRYPTOR, key, iv, mode)
 		{
 		}
 	} // DESEncryptor
 
 
 	internal sealed class DESDecryptor : DESTransformBase {
-		internal DESDecryptor (byte [] key, byte [] iv)
-		: base (DESTransformBase.Mode.DECRYPTOR, key, iv)
+		internal DESDecryptor (byte [] key, byte [] iv, CipherMode mode)
+		: base (DESTransformBase.Action.DECRYPTOR, key, iv, mode)
 		{
 		}
 	} // DESDecryptor
 
 
-	public sealed class DESCryptoServiceProvider {
-		private byte [] iv;
-		private byte [] key;
+	public sealed class DESCryptoServiceProvider : DES {
+		private RandomNumberGenerator rng;
 
 		public DESCryptoServiceProvider ()
 		{
+			// there are no constructor accepting a secret key
+			// so we always need the RNG (using the default one)
+			rng = RandomNumberGenerator.Create();
+			// there's always a default key/iv available when 
+			// creating a symmetric algorithm object
+			GenerateKey();
+			GenerateIV();
 		}
 
-
-		//
-		// Factories
-		//
-
-		public ICryptoTransform CreateEncryptor()
+		public override ICryptoTransform CreateEncryptor (byte[] rgbKey, byte[] rgbIV) 
 		{
-			return new DESEncryptor (key, iv);
+			// by using Key/IV (instead of KeyValue/IVValue) we get
+			// all validation done by "set"
+			Key = rgbKey;
+			IV = rgbIV;
+			return new DESEncryptor (KeyValue, IVValue, ModeValue);
 		}
 
-		public ICryptoTransform CreateDecryptor()
+		public override ICryptoTransform CreateDecryptor (byte[] rgbKey, byte[] rgbIV) 
 		{
-			return new DESDecryptor (key, iv);
+			// by using Key/IV (instead of KeyValue/IVValue) we get
+			// all validation done by "set"
+			Key = rgbKey;
+			IV = rgbIV;
+			return new DESDecryptor (KeyValue, IVValue, ModeValue);
 		}
 
-
-
-		// FIXME: Ought to be in DES.cs
-
-		[MonoTODO ("Ought to be in DES.cs")]
-		public /*override*/ byte[] Key {
-			get {
-				return this.key;
-			}
-			set {
-				this.key = new byte [DESCore.KEY_BYTE_SIZE];
-				Array.Copy (value, 0, this.key, 0, DESCore.KEY_BYTE_SIZE);
-			}
-		}
-
-		public byte[] IV {
-			get {
-				return this.iv;
-			}
-			set {
-				this.iv = new byte [DESCore.KEY_BYTE_SIZE];
-				Array.Copy (value, 0, this.iv, 0, DESCore.KEY_BYTE_SIZE);
-			}
-		}
-
-
-
-
-
-		public override string ToString ()
+		public override void GenerateIV () 
 		{
-			return "mono::System.Security.Cryptography.DESCryptoServiceProvider";
+			IVValue = new byte [DESCore.BLOCK_BYTE_SIZE];
+			rng.GetBytes (IVValue);
+		}
+
+		public override void GenerateKey () 
+		{
+			KeyValue = new byte [DESCore.KEY_BYTE_SIZE];
+			rng.GetBytes (KeyValue);
+			while (IsWeakKey (KeyValue) || IsSemiWeakKey (KeyValue))
+				rng.GetBytes (KeyValue);
 		}
 
 	} // DESCryptoServiceProvider
