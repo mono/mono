@@ -1,3 +1,9 @@
+2002-01-16 Veronica De Santis <veron78@@interfree.it>
+
+        * icall.h : Added the internal calls mapping for CreateMutex_internal
+	  	    and ReleaseMutex_internal.
+	* threads.h : Added the prototype of mutexes internal calls.
+	* threads.c : Added the implementations of mutexes internal calls.
 
 Tue Jan 15 22:47:57 CET 2002 Paolo Molaro <lupus@ximian.com>
 
