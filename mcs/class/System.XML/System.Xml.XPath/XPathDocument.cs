@@ -41,10 +41,10 @@ using Mono.Xml.XPath;
 
 namespace System.Xml.XPath
 {
-#if NET_2_0
+#if NET_2_0obsolete
 	[XmlSchemaProvider ("GetSchema")]
-	public class XPathDocument : IXPathNavigable, IXPathEditable,
-		IChangeTracking, IRevertibleChangeTracking, IXmlSerializable
+	public class XPathDocument : IXPathNavigable//, IXPathEditable,
+//		IChangeTracking, IRevertibleChangeTracking, IXmlSerializable
 	{
 		// FIXME: In the future this switch will disappear.
 		// Regardless of this switch, those constructors that does 
@@ -187,7 +187,7 @@ namespace System.Xml.XPath
 
 			InitializeEvents ();
 		}
-		
+
 		private void InitializeEvents ()
 		{
 			editable.ChangeRejected += this.ChangeRejected;

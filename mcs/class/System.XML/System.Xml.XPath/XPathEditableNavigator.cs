@@ -44,12 +44,12 @@ using Mono.Xml.XPath;
 namespace System.Xml.XPath
 {
 	public abstract class XPathEditableNavigator 
-		: XPathNavigator, IXPathEditable
+		: XPathNavigator//, IXPathEditable
 	{
 		protected XPathEditableNavigator ()
 		{
 		}
-
+#if false
 		public abstract XmlWriter AppendChild ();
 
 		[MonoTODO]
@@ -106,6 +106,7 @@ namespace System.Xml.XPath
 
 		public abstract XmlWriter CreateAttributes ();
 
+/*
 		public virtual XPathEditableNavigator CreateEditor ()
 		{
 			return (XPathEditableNavigator) Clone ();
@@ -113,7 +114,6 @@ namespace System.Xml.XPath
 
 		// LAMESPEC: documented as public abstract, but it conflicts
 		// with XPathNavigator.CreateNavigator ().
-/*
 		[MonoTODO]
 		public override XPathNavigator CreateNavigator ()
 		{
@@ -305,6 +305,7 @@ namespace System.Xml.XPath
 				MoveToFirstChild ();
 			}
 		}
+#endif
 	}
 }
 

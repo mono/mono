@@ -1,3 +1,12 @@
+2004-10-22  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XPathDocument.cs : now all the new stuff that used to be in 2.0 are
+	  reverted.
+	* XPathEditableNavigator.cs : It will be removed. Right now modified
+	  a bit to pass build.
+	* XPathNavigator.cs : Added members that are merged from
+	  XPathEditableNavigator. Updated members name.
+
 2004-10-14  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* Iterator.cs :

@@ -65,6 +65,10 @@ namespace System.Xml.XPath
 		public abstract string BaseURI { get; }
 
 #if NET_2_0
+		public virtual bool CanEdit {
+			get { return false; }
+		}
+
 		public virtual bool HasAttributes {
 			get { return Clone ().MoveToFirstAttribute (); }
 		}
@@ -601,12 +605,6 @@ namespace System.Xml.XPath
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
-		public virtual object CopyAsObject (Type targetType)
-		{
-			throw new NotImplementedException ();
-		}
-
 		public virtual XPathNavigator CreateNavigator ()
 		{
 			return Clone ();
@@ -791,6 +789,14 @@ namespace System.Xml.XPath
 					xtw.WriteNode (r, false);
 				return sw.ToString ();
 			}
+			set {
+				DeleteChildren ();
+				if (NodeType == XPathNodeType.Attribute) {
+					SetValue (value);
+					return;
+				}
+				AppendChild (new XmlTextReader (value, XmlNodeType.Element, null));
+			}
 		}
 
 		[MonoTODO]
@@ -811,6 +817,18 @@ namespace System.Xml.XPath
 				WriteSubtree (xtw);
 				xtw.Close ();
 				return sw.ToString ();
+			}
+			set {
+				switch (NodeType) {
+				case XPathNodeType.Root:
+				case XPathNodeType.Attribute:
+				case XPathNodeType.Namespace:
+					throw new XmlException ("Setting OuterXml Root, Attribute and Namespace is not supported.");
+				}
+
+				DeleteSelf ();
+				AppendChild (value);
+				MoveToFirstChild ();
 			}
 		}
 
@@ -901,6 +919,233 @@ namespace System.Xml.XPath
 		protected XmlReader GetValidatingReader (XmlSchemaSet schemas, ValidationEventHandler handler, XmlSchemaType schemaType)
 		{
 			throw new NotImplementedException ();
+		}
+
+
+
+
+
+
+
+
+
+		public virtual XmlWriter AppendChild ()
+		{
+			throw new NotSupportedException ();
+		}
+
+		[MonoTODO]
+		public virtual XPathNavigator AppendChild (
+			string xmlFragments)
+		{
+			// FIXME: should XmlParserContext be something?
+			return AppendChild (new XmlTextReader (xmlFragments, XmlNodeType.Element, null));
+		}
+
+		[MonoTODO]
+		public virtual XPathNavigator AppendChild (
+			XmlReader reader)
+		{
+			XmlWriter w = AppendChild ();
+			while (!reader.EOF)
+				w.WriteNode (reader, false);
+			w.Close ();
+			XPathNavigator nav = Clone ();
+			nav.MoveToFirstChild ();
+			while (nav.MoveToNext ())
+				;
+			return nav;
+		}
+
+		[MonoTODO]
+		public virtual XPathNavigator AppendChild (
+			XPathNavigator nav)
+		{
+			return AppendChild (new XPathNavigatorReader (nav));
+		}
+
+		public void AppendChildElement (string prefix, string name, string ns, string value)
+		{
+			XmlWriter xw = AppendChild ();
+			xw.WriteStartElement (prefix, name, ns);
+			xw.WriteString (value);
+			xw.WriteEndElement ();
+			xw.Close ();
+		}
+
+		public virtual void CreateAttribute (string prefix, string localName, string namespaceURI, string value)
+		{
+			using (XmlWriter w = CreateAttributes ()) {
+				w.WriteAttributeString (prefix, localName, namespaceURI, value);
+			}
+		}
+
+		public virtual XmlWriter CreateAttributes ()
+		{
+			throw new NotSupportedException ();
+		}
+
+		// LAMESPEC: documented as public abstract, but it conflicts
+		// with XPathNavigator.CreateNavigator ().
+/*
+		[MonoTODO]
+		public override XPathNavigator CreateNavigator ()
+		{
+		}
+*/
+
+		public virtual bool DeleteSelf ()
+		{
+			throw new NotSupportedException ();
+		}
+
+		public virtual XmlWriter InsertAfter ()
+		{
+			XPathNavigator nav = Clone ();
+			if (nav.MoveToNext ())
+				return nav.InsertBefore ();
+			else
+				return AppendChild ();
+		}
+
+		public virtual XPathNavigator InsertAfter (string xmlFragments)
+		{
+			return InsertAfter (new XmlTextReader (xmlFragments, XmlNodeType.Element, null));
+		}
+
+		[MonoTODO]
+		public virtual XPathNavigator InsertAfter (XmlReader reader)
+		{
+			using (XmlWriter w = InsertAfter ()) {
+				w.WriteNode (reader, false);
+			}
+			XPathNavigator nav = Clone ();
+			nav.MoveToNext ();
+			return nav;
+		}
+
+		[MonoTODO]
+		public virtual XPathNavigator InsertAfter (XPathNavigator nav)
+		{
+			return InsertAfter (new XPathNavigatorReader (nav));
+		}
+
+		public virtual XmlWriter InsertBefore ()
+		{
+			throw new NotSupportedException ();
+		}
+
+		public virtual XPathNavigator InsertBefore (string xmlFragments)
+		{
+			return InsertBefore (new XmlTextReader (xmlFragments, XmlNodeType.Element, null));
+		}
+
+		[MonoTODO]
+		public virtual XPathNavigator InsertBefore (XmlReader reader)
+		{
+			using (XmlWriter w = InsertBefore ()) {
+				w.WriteNode (reader, false);
+			}
+			XPathNavigator nav = Clone ();
+			nav.MoveToPrevious ();
+			return nav;
+		}
+
+		[MonoTODO]
+		public virtual XPathNavigator InsertBefore (XPathNavigator nav)
+		{
+			return InsertBefore (new XPathNavigatorReader (nav));
+		}
+
+		public virtual void InsertElementAfter (string prefix, 
+			string localName, string namespaceURI, string value)
+		{
+			using (XmlWriter w = InsertAfter ()) {
+				w.WriteElementString (prefix, localName, namespaceURI, value);
+			}
+		}
+
+		public virtual void InsertElementBefore (string prefix, 
+			string localName, string namespaceURI, string value)
+		{
+			using (XmlWriter w = InsertBefore ()) {
+				w.WriteElementString (prefix, localName, namespaceURI, value);
+			}
+		}
+
+		public virtual XmlWriter PrependChild ()
+		{
+			XPathNavigator nav = Clone ();
+			if (nav.MoveToFirstChild ())
+				return nav.InsertBefore ();
+			else
+				return InsertBefore ();
+		}
+
+		public virtual XPathNavigator PrependChild (string xmlFragments)
+		{
+			return PrependChild (new XmlTextReader (xmlFragments, XmlNodeType.Element, null));
+		}
+
+		[MonoTODO]
+		public virtual XPathNavigator PrependChild (XmlReader reader)
+		{
+			using (XmlWriter w = PrependChild ()) {
+				w.WriteNode (reader, false);
+			}
+			XPathNavigator nav = Clone ();
+			nav.MoveToFirstChild ();
+			return nav;
+		}
+
+		[MonoTODO]
+		public virtual XPathNavigator PrependChild (XPathNavigator nav)
+		{
+			return PrependChild (new XPathNavigatorReader (nav));
+		}
+
+		public virtual void PrependChildElement (string prefix, 
+			string localName, string namespaceURI, string value)
+		{
+			using (XmlWriter w = PrependChild ()) {
+				w.WriteElementString (prefix, localName, namespaceURI, value);
+			}
+		}
+
+		// Dunno the exact purpose, but maybe internal editor use
+		[MonoTODO]
+		public virtual void SetTypedValue (object value)
+		{
+			throw new NotImplementedException ();
+		}
+
+		public virtual void SetValue (string value)
+		{
+			throw new NotSupportedException ();
+		}
+
+		[MonoTODO]
+		private void DeleteChildren ()
+		{
+			switch (NodeType) {
+			case XPathNodeType.Namespace:
+				throw new InvalidOperationException ("Removing namespace node content is not supported.");
+			case XPathNodeType.Attribute:
+				return;
+			case XPathNodeType.Text:
+			case XPathNodeType.SignificantWhitespace:
+			case XPathNodeType.Whitespace:
+			case XPathNodeType.ProcessingInstruction:
+			case XPathNodeType.Comment:
+				DeleteSelf ();
+				return;
+			}
+			if (!HasChildren)
+				return;
+			XPathNavigator nav = Clone ();
+			nav.MoveToFirstChild ();
+			while (!nav.IsSamePosition (this))
+				nav.DeleteSelf ();
 		}
 #endif
 	}
