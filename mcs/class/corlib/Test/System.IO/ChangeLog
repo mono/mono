@@ -1,5 +1,10 @@
 2003-05-15  Ville Palo <vi64pa@kolumbus.fi>
 
+	* StreamReaderTest.cs:
+	* StreamWriterTest.cs: now use temp-dir
+	
+2003-05-15  Ville Palo <vi64pa@kolumbus.fi>
+
 	* BinaryReaderTest.cs:
 	* BinaryWriterTest.cs:
 	* BufferedStreamTest.cs:

@@ -15,15 +15,38 @@ namespace MonoTests.System.IO
 
 public class StreamReaderTest : TestCase
 {
- 	protected override void SetUp() 
+	string TempFolder = Path.Combine (Path.GetTempPath (), "MonoTests.System.IO.Tests");
+	private string _codeFileName;
+
+	public StreamReaderTest ()
 	{
+		if (!Directory.Exists (TempFolder))				
+			Directory.CreateDirectory (TempFolder);
+
+		_codeFileName = TempFolder + Path.DirectorySeparatorChar + "AFile.txt";
+	}
+
+	~StreamReaderTest ()
+	{
+		if (Directory.Exists (TempFolder))
+			Directory.Delete (TempFolder, true);
+	}
+
+	
+ 	protected override void SetUp() 
+	{	
+		if (!Directory.Exists (TempFolder))				
+			Directory.CreateDirectory (TempFolder);
+		
+		if (!File.Exists (_codeFileName))
+			File.Create (_codeFileName).Close ();
 	}
 
 	protected override void TearDown() 
 	{
 	}
 
-	private string _codeFileName = "resources" + Path.DirectorySeparatorChar + "AFile.txt";
+
 
 	public void TestCtor1() {
 		{
@@ -223,7 +246,7 @@ public class StreamReaderTest : TestCase
 		{
 			bool errorThrown = false;
 			try {
-				StreamReader r = new StreamReader("nonexistentfile", false);
+				StreamReader r = new StreamReader(TempFolder + "/nonexistentfile", false);
 			} catch (FileNotFoundException) {
 				errorThrown = true;
 			} catch (Exception e) {
@@ -234,7 +257,7 @@ public class StreamReaderTest : TestCase
 		{
 			bool errorThrown = false;
 			try {
-				StreamReader r = new StreamReader("nonexistentdir/file", false);
+				StreamReader r = new StreamReader(TempFolder + "/nonexistentdir/file", false);
 			} catch (DirectoryNotFoundException) {
 				errorThrown = true;
 			} catch (Exception e) {
@@ -288,7 +311,7 @@ public class StreamReaderTest : TestCase
 		{
 			bool errorThrown = false;
 			try {
-				StreamReader r = new StreamReader("nonexistentfile", true);
+				StreamReader r = new StreamReader(TempFolder + "/nonexistentfile", true);
 			} catch (FileNotFoundException) {
 				errorThrown = true;
 			} catch (Exception e) {
@@ -299,7 +322,7 @@ public class StreamReaderTest : TestCase
 		{
 			bool errorThrown = false;
 			try {
-				StreamReader r = new StreamReader("nonexistentdir/file", true);
+				StreamReader r = new StreamReader(TempFolder + "/nonexistentdir/file", true);
 			} catch (DirectoryNotFoundException) {
 				errorThrown = true;
 			} catch (Exception e) {
