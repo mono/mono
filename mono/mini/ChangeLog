@@ -1,5 +1,7 @@
 2004-12-23  Zoltan Varga  <vargaz@freemail.hu>
 
+	* mini-sparc.c: Change mono_compile_aot to cfg->compile_aot.
+
 	* mini.h mini.c mini-x86.c aot.c mini-sparc.c: Add a 'compile_corlib'
 	argument mini_compile_method and to MonoCompile, and use this to
 	determine whenever a given method is compiled for AOT. This allows the
