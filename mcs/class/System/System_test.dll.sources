@@ -24,7 +24,9 @@ System.Diagnostics/TraceTest.cs
 System.Diagnostics/SwitchesTest.cs
 System.Diagnostics/DiagnosticsConfigurationHandlerTest.cs
 System.Diagnostics/EventLogPermissionAttributeTest.cs
+System.Diagnostics/EventLogPermissionTest.cs
 System.Diagnostics/PerformanceCounterPermissionAttributeTest.cs
+System.Diagnostics/PerformanceCounterPermissionTest.cs
 System.IO/FileSystemWatcherTest.cs
 System.Net/CookieCollectionTest.cs
 System.Net/CookieTest.cs
