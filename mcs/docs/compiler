@@ -219,7 +219,7 @@
 	At the time the assignment expression `a = "hello"' is parsed,
 	it is not know whether a is a class field from this class, or
 	its parents, or whether it is a property access or a variable
-	reference.  The actual meaning of `a' will not be discvored
+	reference.  The actual meaning of `a' will not be discovered
 	until the semantic analysis phase.
 
 ** The Tokenizer and the pre-processor
@@ -354,7 +354,7 @@
 
 ** Constants
 
-	Constants in the Mono C# compiler are reprensented by the
+	Constants in the Mono C# compiler are represented by the
 	abstract class `Constant'.  Constant is in turn derived from
 	Expression.  The base constructor for `Constant' just sets the
 	expression class to be an `ExprClass.Value', Constants are
@@ -523,7 +523,7 @@
 		* InUnsafe
 		  Whether we are inside an unsafe block
 		
-* Miscelaneous
+* Miscellaneous
 
 ** Error Processing.
 
@@ -537,7 +537,7 @@
 	The error codes in the Mono C# compiler are the same as those
 	found in the Microsoft C# compiler, with a few exceptions
 	(where we report a few more errors, those are documented in
-	mcs/errors/errors.txt).  The goal is to reduce confussion to
+	mcs/errors/errors.txt).  The goal is to reduce confusion to
 	the users, and also to help us track the progress of the
 	compiler in terms of the errors we report. 
 
