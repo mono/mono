@@ -40,7 +40,7 @@ using System.Runtime.InteropServices;
 namespace System.Globalization {
 
 	[Serializable]
-	public unsafe class TextInfo: IDeserializationCallback
+	public class TextInfo: IDeserializationCallback
 	{
 		
 		[StructLayout (LayoutKind.Sequential)]
@@ -60,62 +60,53 @@ namespace System.Globalization {
 		readonly CultureInfo ci;
 		
 		[NonSerialized]
-		readonly Data* data;
+		readonly Data data;
 
-		internal TextInfo (CultureInfo ci, int lcid, void* data)
+		internal unsafe TextInfo (CultureInfo ci, int lcid, void* data)
 		{
 			this.m_win32LangID = lcid;
 			this.ci = ci;
-			this.data = (Data*) data;
+			if (data != null)
+				this.data = *(Data*) data;
+			else {
+				this.data = new Data ();
+				this.data.list_sep = (byte) '.';
+			}
 		}
 
 		public virtual int ANSICodePage
 		{
 			get {
-				if (data == null)
-					return 0;
-				
-				return data->ansi;
+				return data.ansi;
 			}
 		}
 
 		public virtual int EBCDICCodePage
 		{
 			get {
-				if (data == null)
-					return 0;
-				
-				return data->ebcdic;
+				return data.ebcdic;
 			}
 		}
 
 		public virtual string ListSeparator 
 		{
 			get {
-				if (data == null)
-					return ";";
 				
-				return ((char) data->list_sep).ToString ();
+				return ((char) data.list_sep).ToString ();
 			}
 		}
 
 		public virtual int MacCodePage
 		{
 			get {
-				if (data == null)
-					return 0;
-				
-				return data->mac;
+				return data.mac;
 			}
 		}
 
 		public virtual int OEMCodePage
 		{
 			get {
-				if (data == null)
-					return 0;
-				
-				return data->oem;
+				return data.oem;
 			}
 		}
 
