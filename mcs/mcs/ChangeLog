@@ -1,3 +1,18 @@
+2001-12-26  Ravi Pratap  <ravi@ximian.com>
+
+	* class.cs (Event.Define): Define the private field only if there
+	are no accessors defined.
+
+	* expression.cs (ResolveMemberAccess): If there is no associated
+	field with the event, that means we have an event defined with its
+	own accessors and we should flag error cs0070 since transforming
+	ourselves into a field is not valid in that case.
+
+	* ecore.cs (SimpleName.DoResolve): Same as above.
+
+	* attribute.cs (DefinePInvokeMethod): Set the default calling convention
+	and charset to sane values.
+
 2001-12-25  Ravi Pratap  <ravi@ximian.com>
 
 	* assign.cs (DoResolve): Perform check on events only if they 

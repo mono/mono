@@ -502,8 +502,8 @@ namespace Mono.CSharp {
 			}
 
 			// Now we process the named arguments
-			CallingConvention cc = 0;
-			CharSet charset = 0;
+			CallingConvention cc = CallingConvention.StdCall;
+			CharSet charset = CharSet.Auto;
 			bool preserve_sig = false;
 			bool exact_spelling = false;
 			bool set_last_err = false;

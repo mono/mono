@@ -974,6 +974,7 @@ set_accessor_declaration
 			fp.CopyTo (args, 0);
 			args [count] = implicit_value_parameter;
 		}
+		
 		current_local_parameters = new Parameters (args, null, lexer.Location);
 		lexer.PropertyParsing = false;
 	  }

@@ -115,7 +115,7 @@ namespace Mono.CSharp {
 			}
 		}
 
-		void error70 (EventInfo ei)
+		public static void error70 (EventInfo ei, Location l)
 		{
 			Report.Error (70, l, "The event '" + ei.Name +
 				      "' can only appear on the left-side of a += or -= (except when" +
@@ -184,13 +184,13 @@ namespace Mono.CSharp {
 					//
 					
 					if (!(source is Binary)) {
-						error70 (ei);
+						error70 (ei, l);
 						return null;
 					} else {
 						tmp = ((Binary) source);
 						if (tmp.Oper != Binary.Operator.Addition &&
 						    tmp.Oper != Binary.Operator.Subtraction) {
-							error70 (ei);
+							error70 (ei, l);
 							return null;
 						}
 					}

@@ -2742,6 +2742,16 @@ namespace Mono.CSharp {
 				if (ml != null) {
 					MemberInfo mi = ec.TypeContainer.GetFieldFromEvent ((EventExpr) ml);
 
+					if (mi == null) {
+						//
+						// If this happens, then we have an event with its own
+						// accessors and private field etc so there's no need
+						// to transform ourselves : we should instead flag an error
+						//
+						Assign.error70 (ee.EventInfo, Location);
+						return null;
+					}
+
 					ml = ExprClassFromMemberInfo (ec, mi, Location);
 					
 					if (ml == null) {

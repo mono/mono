@@ -1286,10 +1286,14 @@ namespace Mono.CSharp {
 		{
 			EventInfo ei = event_expr.EventInfo;
 
-			foreach (Event e in events) 
+			foreach (Event e in events) { 
+
+				if (e.FieldBuilder == null)
+					continue;
+				
 				if (Type.FilterName (e.FieldBuilder, ei.Name))
 					return e.FieldBuilder;
-
+			}
 			return null;
 		}
 
@@ -2968,8 +2972,10 @@ namespace Mono.CSharp {
 			parameters [0] = EventType;
 
 			EventBuilder = new MyEventBuilder (parent.TypeBuilder, Name, e_attr, EventType);
-			FieldBuilder = parent.TypeBuilder.DefineField (Name, EventType, FieldAttributes.Private);
 
+			if (Add == null && Remove == null)
+				FieldBuilder = parent.TypeBuilder.DefineField (Name, EventType, FieldAttributes.Private);
+			
 			//
 			// Now define the accessors
 			//
