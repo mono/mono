@@ -1,3 +1,11 @@
+2002-05-16  Daniel Morgan <danmorg@sc.rr.com>
+
+	* Test/TestSqlDataAdapter.cs: added new test 
+	for SqlDataAdapter, DataSet, DataTableCollection, DataTable, 
+	DataRowCollection, and DataRow.  It tests retrieving data
+	based on a SQL SELECT query.  This test is based on Tim Coleman's
+	test he sent to me.
+
 2002-05-15  Tim Coleman <tim@timcoleman.com>
 	* System.Data.Common/DbDataAdapter.cs:
 		Use table.Rows.Add (thisRow) instead of 
