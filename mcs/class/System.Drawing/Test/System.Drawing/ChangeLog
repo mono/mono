@@ -4,6 +4,7 @@
 	because of bug #58435.
 	* TestPointConverter.cs: Same.
 	* TestSizeConverter.cs: Same.
+	* TestImageConverter.cs: Same.
 
 2004-05-26 Sanjay Gupta <gsanjay@novell.com>
 
