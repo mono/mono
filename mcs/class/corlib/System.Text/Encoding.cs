@@ -30,6 +30,7 @@ using System.Reflection;
 using System.Globalization;
 using System.Security;
 
+[Serializable]
 public abstract class Encoding
 {
 	// Code page used by this encoding.

@@ -27,6 +27,7 @@ namespace System.Text
 
 using System;
 
+[Serializable]
 public class ASCIIEncoding : Encoding
 {
 	// Magic number used by Windows for "ASCII".

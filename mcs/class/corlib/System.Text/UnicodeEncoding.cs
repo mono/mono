@@ -28,6 +28,7 @@ namespace System.Text
 
 using System;
 
+[Serializable]
 public class UnicodeEncoding : Encoding
 {
 	// Magic numbers used by Windows for Unicode.

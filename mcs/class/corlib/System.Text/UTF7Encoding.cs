@@ -28,6 +28,7 @@ namespace System.Text
 
 using System;
 
+[Serializable]
 #if ECMA_COMPAT
 internal
 #else

@@ -27,6 +27,7 @@ namespace System.Text
 
 using System;
 
+[Serializable]
 public class UTF8Encoding : Encoding
 {
 	// Magic number used by Windows for UTF-8.
@@ -965,6 +966,7 @@ public class UTF8Encoding : Encoding
 #endif // !ECMA_COMPAT
 
 	// UTF-8 decoder implementation.
+	[Serializable]
 	private sealed class UTF8Decoder : Decoder
 	{
 		private bool throwOnInvalid;
@@ -1000,6 +1002,7 @@ public class UTF8Encoding : Encoding
 	} // class UTF8Decoder
 
 	// UTF-8 encoder implementation.
+	[Serializable]
 	private sealed class UTF8Encoder : Encoder
 	{
 		private bool emitIdentifier;
