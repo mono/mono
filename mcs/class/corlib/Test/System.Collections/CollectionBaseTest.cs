@@ -16,7 +16,8 @@ using NUnit.Framework;
 namespace MonoTests.System.Collections
 {
 
-public class CollectionBaseTest : TestCase 	
+[TestFixture]
+public class CollectionBaseTest
 {
 	// We need a concrete class to test the abstract base class
 	public class ConcreteCollection : CollectionBase 
@@ -126,62 +127,65 @@ public class CollectionBaseTest : TestCase
 	}  // public class ConcreteCollection
 
 	// Check the count property
-	public void TestCount() {
+	[Test]
+	public void Count() {
 		ConcreteCollection myCollection;
 		myCollection = new ConcreteCollection(4);
-		Assert(4 == myCollection.Count);
+		Assertion.Assert(4 == myCollection.Count);
 	}
 
 	// Make sure GetEnumerator returns an object
-	public void TestGetEnumerator() {
+	[Test]
+	public void GetEnumerator() {
 		ConcreteCollection myCollection;
 		myCollection = new ConcreteCollection(4);
-		Assert(null != myCollection.GetEnumerator());
+		Assertion.Assert(null != myCollection.GetEnumerator());
 	}
 
 	// OnValid disallows nulls
-	public void TestOnValid() {
+	[Test]
+	[ExpectedException(typeof(ArgumentNullException))]
+	public void OnValid() {
 		ConcreteCollection myCollection;
-		try {
-			myCollection = new ConcreteCollection();
-		}
-		catch (ArgumentNullException) {
-		}
+		myCollection = new ConcreteCollection();
 	}
 
 	// Test various Insert paths
-	public void TestInsert() {
+	[Test]
+	public void Insert() {
 		ConcreteCollection myCollection;
 		int numberOfItems;
 		numberOfItems = 3;
 		// The constructor inserts
 		myCollection = new ConcreteCollection(numberOfItems);
-		Assert(myCollection.onInsertFired);
-		Assert(myCollection.onInsertCompleteFired);
+		Assertion.Assert(myCollection.onInsertFired);
+		Assertion.Assert(myCollection.onInsertCompleteFired);
 
 		// Using the IList interface, check inserts in the middle
 		IList listObj = myCollection;
 		listObj.Insert(1, 9);
-		Assert(myCollection.onInsertIndex == 1);
-		Assert(myCollection.onInsertCompleteIndex == 1);
-		Assert(myCollection.PeekAt(1) == 9);
+		Assertion.Assert(myCollection.onInsertIndex == 1);
+		Assertion.Assert(myCollection.onInsertCompleteIndex == 1);
+		Assertion.Assert(myCollection.PeekAt(1) == 9);
 	}
 
 	// Test Clear and it's hooks
-	public void TestClear() 
+	[Test]
+	public void Clear() 
 	{
 		ConcreteCollection myCollection;
 		int numberOfItems;
 		numberOfItems = 1;
 		myCollection = new ConcreteCollection(numberOfItems);
 		myCollection.Clear();
-		Assert(myCollection.Count == 0);
-		Assert(myCollection.onClearFired);
-		Assert(myCollection.onClearCompleteFired);
+		Assertion.Assert(myCollection.Count == 0);
+		Assertion.Assert(myCollection.onClearFired);
+		Assertion.Assert(myCollection.onClearCompleteFired);
 	}
 
 	// Test RemoveAt, other removes and the hooks
-	public void TestRemove() 
+	[Test]
+	public void Remove() 
 	{
 		ConcreteCollection myCollection;
 		int numberOfItems;
@@ -193,20 +197,21 @@ public class CollectionBaseTest : TestCase
 		myCollection.RemoveAt(1);
 
 		// We should see the original third one in it's place
-		Assert(myCollection.PeekAt(1) == 2);
-		Assert(myCollection.onRemoveFired);
-		Assert(myCollection.onRemoveIndex == 1);
-		Assert(myCollection.onRemoveCompleteFired);
-		Assert(myCollection.onRemoveCompleteIndex == 1);
+		Assertion.Assert(myCollection.PeekAt(1) == 2);
+		Assertion.Assert(myCollection.onRemoveFired);
+		Assertion.Assert(myCollection.onRemoveIndex == 1);
+		Assertion.Assert(myCollection.onRemoveCompleteFired);
+		Assertion.Assert(myCollection.onRemoveCompleteIndex == 1);
 		IList listObj = myCollection;
 		listObj.Remove(0);
 		// Confirm parameters are being passed to the hooks
-		Assert(myCollection.onRemoveIndex == 0);
-		Assert(myCollection.onRemoveCompleteIndex == 0);
+		Assertion.Assert(myCollection.onRemoveIndex == 0);
+		Assertion.Assert(myCollection.onRemoveCompleteIndex == 0);
 	}
 
 	// Test the random access feature
-	public void TestSet() 
+	[Test]
+	public void Set() 
 	{
 		ConcreteCollection myCollection;
 		int numberOfItems;
@@ -214,13 +219,13 @@ public class CollectionBaseTest : TestCase
 		myCollection = new ConcreteCollection(numberOfItems);
 		IList listObj = myCollection;
 		listObj[0] = 99;
-		Assert((int) listObj[0] == 99);
-		Assert(myCollection.onSetFired);
-		Assert(myCollection.onSetCompleteFired);
-		Assert(myCollection.onSetOldValue == 0);
-		Assert(myCollection.onSetCompleteOldValue == 0);
-		Assert(myCollection.onSetNewValue == 99);
-		Assert(myCollection.onSetCompleteNewValue == 99);
+		Assertion.Assert((int) listObj[0] == 99);
+		Assertion.Assert(myCollection.onSetFired);
+		Assertion.Assert(myCollection.onSetCompleteFired);
+		Assertion.Assert(myCollection.onSetOldValue == 0);
+		Assertion.Assert(myCollection.onSetCompleteOldValue == 0);
+		Assertion.Assert(myCollection.onSetNewValue == 99);
+		Assertion.Assert(myCollection.onSetCompleteNewValue == 99);
 	}
 }
 
