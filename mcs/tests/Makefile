@@ -109,7 +109,7 @@ TEST_SOURCES_net_2_0 = \
 TEST_EXCLUDES_net_2_0 =
 
 TEST_SOURCES = $(filter-out $(TEST_EXCLUDES_common) $(TEST_EXCLUDES_$(PROFILE)) $(TEST_EXCLUDES_$(PLATFORM)), \
-	$(TEST_SOURCES_common) $(TEST_SOURCES_default) $(TEST_SOURCES_$(PLATFORM)))
+	$(TEST_SOURCES_common) $(TEST_SOURCES_$(PROFILE)) $(TEST_SOURCES_$(PLATFORM)))
 
 # These tests load User32.dll and/or Kernel32.dll
 TEST_SOURCES_win32 = test-67
@@ -193,14 +193,16 @@ test-harness-run:
 	@-rm -fr dir-$(TEST_TAG)
 	@mkdir dir-$(TEST_TAG)
 	@sed 's,@thisdir@,$(thisdir)/dir-$(TEST_TAG),' harness.mk > dir-$(TEST_TAG)/Makefile
-	@test -z "$(exe_tests)" || for i in ''$(exe_tests); do echo $$i | sed 's,\(.*\)-exe$$,\1-exe.res: \1-dll.res,' >> dir-$(TEST_TAG)/Makefile; done
-	@test -z "$(TEST_ORDERING)" || for i in ''$(TEST_ORDERING); do echo $$i.res | sed 's,:,.res: ,' >> dir-$(TEST_TAG)/Makefile; done
+	@test -z '$(exe_tests)' || for i in ''$(exe_tests); do echo $$i | sed 's,\(.*\)-exe$$,\1-exe.res: \1-dll.res,' >> dir-$(TEST_TAG)/Makefile; done
+	@test -z '$(TEST_ORDERING)' || for i in ''$(TEST_ORDERING); do echo $$i.res | sed 's,:,.res: ,' >> dir-$(TEST_TAG)/Makefile; done
 	@echo 'Running $(TEST_TAG) tests with flags "$(TEST_RUNTIME)" ... '
-	@cd dir-$(TEST_TAG) ; \
-	$(MAKE) -s $(TEST_SOURCES:=.res) || failed="make " ; \
-	cat $(TEST_SOURCES:=.res) > ../$(TEST_TAG).log ; \
-	failed=$$failed`sed -n 's,^FAIL: ,,p' ../$(TEST_TAG).log` ; \
-	if test -z "$$failed"; then :; else echo "Failing tests: $$failed"; exit 1; fi
+	@if test -z '$(TEST_SOURCES)'; then :; else \
+	  cd dir-$(TEST_TAG) ; \
+	  $(MAKE) -s $(TEST_SOURCES:=.res) || failed="make " ; \
+	  for i in ''$(TEST_SOURCES:=.res); do if test -f $$i; then res="$$res $$i"; else failed="$$failed $$i"; fi; done; \
+	  test -z '$$res' || cat $$res < /dev/null > ../$(TEST_TAG).log 2>/dev/null ; \
+	  failed=$$failed`sed -n 's,^FAIL: ,,p' ../$(TEST_TAG).log` ; \
+	  if test -z "$$failed"; then :; else echo "Failing tests: $$failed"; exit 1; fi; fi
 
 #
 # Tests that require separate compilation
