@@ -1,3 +1,10 @@
+2005-01-14  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* DataTableMappingCollectionTest.cs,
+	  DataColumnMappingCollectionTests.cs : Equals() and Remove() contains
+	  invalid attempt to add one map to two collections, which is rejected
+	  under MS.NET 1.1 sp1.
+
 2004-11-22  Sureshkumar T  <tsureshkumar@novell.com>
 
 	* DbConnectionStringBuilderTest.cs: Test cases for
