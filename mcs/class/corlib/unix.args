@@ -498,6 +498,7 @@ System.Runtime.Remoting/WellKnownClientTypeEntry.cs
 System.Runtime.Remoting/WellKnownServiceTypeEntry.cs
 System.Runtime.Remoting.Activation/ActivationServices.cs
 System.Runtime.Remoting.Activation/ActivatorLevel.cs
+System.Runtime.Remoting.Activation/AppDomainLevelActivator.cs
 System.Runtime.Remoting.Activation/ConstructionLevelActivator.cs
 System.Runtime.Remoting.Activation/ContextLevelActivator.cs
 System.Runtime.Remoting.Activation/IActivator.cs
