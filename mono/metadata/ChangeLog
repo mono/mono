@@ -1,3 +1,7 @@
+2002-06-28  Martin Baulig  <martin@gnome.org>
+
+	* debug-symfile.c: Reflect latest MonoDwarfFileWriter changes.
+
 2002-06-27  Dick Porter  <dick@ximian.com>
 
 	* threads.c: Store the handle in both the parent thread and in the
