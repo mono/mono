@@ -309,10 +309,9 @@ namespace System {
 			return new String (value, 1);
 		}
 
-		[MonoTODO]
 		public static string ToString(char c)
 		{
-			throw new NotImplementedException();
+			return new String (new char [] {c});
 		}
 
 		public string ToString (IFormatProvider fp)

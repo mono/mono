@@ -90,7 +90,7 @@ using System.Globalization;
 
 namespace System {
 
-	public sealed class IntegerFormatter {
+	internal sealed class IntegerFormatter {
 
 		private static int maxByteLength = 4;
 		private static int maxShortLength = 6;

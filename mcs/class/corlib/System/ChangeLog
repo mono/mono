@@ -1,3 +1,8 @@
+2002-09-12  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Char.cs: implemented ToString (char)
+	* IntegerFormatter.cs: made it internal.
+
 2002-09-13  Nick Drochak  <ndrochak@gol.com>
 
 	* Enum.cs (Format): handle the "d" format for both signed and unsigned
