@@ -56,15 +56,19 @@ namespace Ximian.Mono.Tests
 
 		public void TestCloseWriteAfter ()
 		{
-			xtw.WriteElementString("foo", "bar");
-			xtw.Close();
+			xtw.WriteElementString ("foo", "bar");
+			xtw.Close ();
+
+			// WriteEndElement and WriteStartDocument aren't tested here because
+			// they will always throw different exceptions besides 'The Writer is closed.'
+			// and there are already tests for those exceptions.
 
 			try {
 				xtw.WriteCData ("foo");
 				Fail ("WriteCData after Close Should have thrown an InvalidOperationException.");
 			} 
 			catch (InvalidOperationException e) {
-				AssertEquals ("InvalidOperationException message incorrect.", "The Writer is closed.", e.Message);
+				AssertEquals ("Exception message is incorrect.", "The Writer is closed.", e.Message);
 			}
 
 			try {
@@ -72,7 +76,7 @@ namespace Ximian.Mono.Tests
 				Fail ("WriteComment after Close Should have thrown an InvalidOperationException.");
 			} 
 			catch (InvalidOperationException e) {
-				AssertEquals ("InvalidOperationException message incorrect.", "The Writer is closed.", e.Message);
+				AssertEquals ("Exception message is incorrect.", "The Writer is closed.", e.Message);
 			}
 
 			try {
@@ -80,7 +84,23 @@ namespace Ximian.Mono.Tests
 				Fail ("WriteProcessingInstruction after Close Should have thrown an InvalidOperationException.");
 			} 
 			catch (InvalidOperationException e) {
-				AssertEquals ("InvalidOperationException message incorrect.", "The Writer is closed.", e.Message);
+				AssertEquals ("Exception message is incorrect.", "The Writer is closed.", e.Message);
+			}
+
+			try {
+				xtw.WriteStartElement ("foo", "bar", "baz");
+				Fail ("WriteStartElement after Close Should have thrown an InvalidOperationException.");
+			} 
+			catch (InvalidOperationException e) {
+				AssertEquals ("Exception message is incorrect.", "The Writer is closed.", e.Message);
+			}
+
+			try {
+				xtw.WriteString ("foo");
+				Fail ("WriteString after Close Should have thrown an InvalidOperationException.");
+			} 
+			catch (InvalidOperationException e) {
+				AssertEquals ("Exception message is incorrect.", "The Writer is closed.", e.Message);
 			}
 		}
 
@@ -103,6 +123,23 @@ namespace Ximian.Mono.Tests
 				Fail("Should have thrown an ArgumentException.");
 			} 
 			catch (ArgumentException) { }
+		}
+
+		public void TestDocumentStart ()
+		{
+			xtw.WriteStartDocument ();
+			AssertEquals ("XmlDeclaration is incorrect.", "<?xml version=\"1.0\" encoding=\"utf-16\"?>",
+				sw.GetStringBuilder ().ToString ());
+
+			try 
+			{
+				xtw.WriteStartDocument ();
+				Fail("Should have thrown an InvalidOperationException.");
+			} 
+			catch (InvalidOperationException e) {
+				AssertEquals ("Exception message is incorrect.",
+					"WriteStartDocument should be the first call.", e.Message);
+			}
 		}
 
 		public void TestElementEmpty ()
@@ -178,8 +215,21 @@ namespace Ximian.Mono.Tests
 				Fail ("Should have thrown an ArgumentException.");
 			}
 			catch (ArgumentException e) {
-				AssertEquals ("ArgumentException text is incorrect.",
+				AssertEquals ("Exception message is incorrect.",
 					"Cannot use a prefix with an empty namespace.", e.Message);
+			}
+		}
+
+		public void TestWriteEndElement ()
+		{
+			try 
+			{
+				xtw.WriteEndElement ();
+				Fail ("Should have thrown an InvalidOperationException.");
+			}
+			catch (InvalidOperationException e) {
+				AssertEquals ("Exception message is incorrect.",
+					"There was no XML start tag open.", e.Message);
 			}
 		}
 	}

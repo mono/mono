@@ -101,6 +101,24 @@ namespace Ximian.Mono.Tests
 			AssertEquals ("Expected child2 element.", ((XmlElement)enumerator.Current).LocalName, "child2");
 		}
 
+		public void TestRemoveChildAffectOnEnumerationWhenEnumeratorIsOnRemovedChild ()
+		{
+			document.LoadXml ("<foo><child1/><child2/><child3/></foo>");
+			element = document.DocumentElement;
+			enumerator = element.GetEnumerator ();
+			enumerator.MoveNext ();
+			enumerator.MoveNext ();
+			AssertEquals ("Expected child2 element.", "child2", ((XmlElement)enumerator.Current).LocalName);
+			AssertEquals ("Expected child2 element.", "child2", element.FirstChild.NextSibling.LocalName);
+			element.RemoveChild (element.FirstChild.NextSibling);
+			enumerator.MoveNext ();
+			
+			try {
+				element = (XmlElement) enumerator.Current;
+				Fail ("Expected an InvalidOperationException.");
+			} catch (InvalidOperationException) { }
+		}
+
 		// TODO:  Take the word save off front of this method when XmlNode.ReplaceChild() is implemented.
 		public void saveTestReplaceChildAffectOnEnumeration ()
 		{

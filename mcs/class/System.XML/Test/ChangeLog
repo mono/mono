@@ -1,3 +1,16 @@
+2002-03-21  Kral Ferch <kral_ferch@hotmail.com>
+
+	* XmlDocumentTests.cs: Tests parent traversal up through
+	document itself until null.  Tests a removed elements next
+	sibling is null.
+	
+	* XmlNodeListTests.cs: Tests case where enumerator is on
+	a node that gets removed from list.
+	
+	* XmlTextWriterTests.cs: Keeping tests for WriteXXX after
+	writer is closed up to date as new WriteXXX methods are written.
+	TestDocumentStart and TestWriteEndElement.
+	
 2002-03-19  Jason Diamond <jason@injektilo.org>
 
 	* XmlDocumentTests.cs: Added a test to check an element's names after 

@@ -149,6 +149,20 @@ namespace Ximian.Mono.Tests
 			AssertEquals ("Wrong child found.", "baz", node.LocalName);
 			AssertEquals ("Wrong parent.", "bar", node.ParentNode.LocalName);
 			AssertEquals ("Wrong parent.", "foo", node.ParentNode.ParentNode.LocalName);
+			AssertEquals ("Wrong parent.", "#document", node.ParentNode.ParentNode.ParentNode.LocalName);
+			AssertNull ("Expected parent to be null.", node.ParentNode.ParentNode.ParentNode.ParentNode);
+		}
+
+		public void TestRemovedElementNextSibling ()
+		{
+			XmlNode node;
+			XmlNode nextSibling;
+
+			document.LoadXml ("<foo><child1/><child2/></foo>");
+			node = document.DocumentElement.FirstChild;
+			document.DocumentElement.RemoveChild (node);
+			nextSibling = node.NextSibling;
+			AssertNull ("Expected removed node's next sibling to be null.", nextSibling);
 		}
 	}
 }

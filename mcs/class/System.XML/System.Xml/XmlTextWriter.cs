@@ -21,6 +21,7 @@ namespace System.Xml
 		protected TextWriter w;
 		protected bool openWriter = true;
 		protected bool openStartElement;
+		protected bool documentStarted = false;
 		protected Stack openElements = new Stack ();
 		protected XmlNamespaceManager namespaceManager = new XmlNamespaceManager (new NameTable ());
 
@@ -102,11 +103,13 @@ namespace System.Xml
 
 		#region Methods
 
-		private void CheckOpenWriter ()
+		private void CheckState ()
 		{
 			if (!openWriter) {
 				throw new InvalidOperationException ("The Writer is closed.");
 			}
+
+			documentStarted = true;
 		}
 
 		public override void Close ()
@@ -160,7 +163,7 @@ namespace System.Xml
 				throw new ArgumentException ();
 			}
 
-			CheckOpenWriter ();
+			CheckState ();
 			CloseStartElement ();
 
 			w.Write("<![CDATA[{0}]]>", text);
@@ -184,7 +187,7 @@ namespace System.Xml
 				throw new ArgumentException ();
 			}
 
-			CheckOpenWriter ();
+			CheckState ();
 			CloseStartElement ();
 
 			w.Write ("<!--{0}-->", text);
@@ -210,6 +213,11 @@ namespace System.Xml
 
 		public override void WriteEndElement ()
 		{
+			if (openElements.Count == 0)
+				throw new InvalidOperationException("There was no XML start tag open.");
+
+			CheckState ();
+
 			if (openStartElement) {
 				w.Write (" />");
 				openElements.Pop ();
@@ -251,7 +259,7 @@ namespace System.Xml
 				throw new ArgumentException ();
 			}
 
-			CheckOpenWriter ();
+			CheckState ();
 			CloseStartElement ();
 
 			w.Write ("<?{0} {1}?>", name, text);
@@ -281,10 +289,15 @@ namespace System.Xml
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		public override void WriteStartDocument ()
 		{
-			throw new NotImplementedException ();
+			if (documentStarted == true) {
+				throw new InvalidOperationException("WriteStartDocument should be the first call.");
+			}
+
+			CheckState ();
+
+			w.Write("<?xml version=\"1.0\" encoding=\"" + w.Encoding.HeaderName + "\"?>");
 		}
 
 		[MonoTODO]
@@ -295,16 +308,17 @@ namespace System.Xml
 
 		public override void WriteStartElement (string prefix, string localName, string ns)
 		{
-			string formatXmlns = "";
-			string formatPrefix = "";
-
 			if ((prefix != String.Empty) && (ns == String.Empty))
 				throw new ArgumentException ("Cannot use a prefix with an empty namespace.");
 
-			CheckOpenWriter ();
+			CheckState ();
 			CloseStartElement ();
 
-			if (ns != String.Empty) {
+			string formatXmlns = "";
+			string formatPrefix = "";
+
+			if (ns != String.Empty) 
+			{
 				string existingPrefix = namespaceManager.LookupPrefix (ns);
 
 				if (prefix == String.Empty)
@@ -336,7 +350,7 @@ namespace System.Xml
 		public override void WriteString (string text)
 		{
 			if (text != String.Empty) {
-				CheckOpenWriter ();
+				CheckState ();
 				CloseStartElement ();
 				w.Write (text);
 			}
