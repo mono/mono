@@ -78,6 +78,10 @@ namespace MonoTests.System.Xml
 			// make sure the new namespace is there.
 			Assert (namespaceManager.HasNamespace ("foo"));
 			AssertEquals ("http://foo/", namespaceManager.LookupNamespace ("foo"));
+			// adding a different namespace with the same prefix
+			// is allowed.
+			namespaceManager.AddNamespace ("foo", "http://foo1/");
+			AssertEquals ("http://foo1/", namespaceManager.LookupNamespace ("foo"));
 		}
 
 		[Test]
@@ -157,6 +161,22 @@ namespace MonoTests.System.Xml
 		}
 
 		[Test]
+		public void AddPushPopRemove ()
+		{
+			XmlNamespaceManager nsmgr =
+				new XmlNamespaceManager (new NameTable ());
+			string ns = nsmgr.NameTable.Add ("urn:foo");
+			nsmgr.AddNamespace ("foo", ns);
+			AssertEquals ("foo", nsmgr.LookupPrefix (ns));
+			nsmgr.PushScope ();
+			AssertEquals ("foo", nsmgr.LookupPrefix (ns));
+			nsmgr.PopScope ();
+			AssertEquals ("foo", nsmgr.LookupPrefix (ns));
+			nsmgr.RemoveNamespace ("foo", ns);
+			AssertNull (nsmgr.LookupPrefix (ns));
+		}
+
+		[Test]
 		public void LookupPrefix ()
 		{
 			// This test should use an empty nametable.
@@ -168,5 +188,79 @@ namespace MonoTests.System.Xml
 			AssertNull (nsmgr.LookupPrefix ("urn:fuga"));
 			AssertEquals (String.Empty, nsmgr.LookupPrefix ("urn:hoge"));
 		}
+
+		string suffix = "oo";
+
+		[Test]
+		public void AtomizedLookup ()
+		{
+			if (DateTime.Now.Year == 0)
+				suffix = String.Empty;
+			XmlNamespaceManager nsmgr =
+				new XmlNamespaceManager (new NameTable ());
+			nsmgr.AddNamespace ("foo", "urn:foo");
+			AssertNotNull (nsmgr.LookupPrefix ("urn:foo"));
+// FIXME: This returns registered URI inconsistently.
+//			AssertNull ("It is not atomized and thus should be failed", nsmgr.LookupPrefix ("urn:f" + suffix));
+#if NET_2_0
+			AssertNotNull ("Atomization should not matter.", nsmgr.LookupPrefix ("urn:f" + suffix, false));
+#endif
+		}
+
+#if NET_2_0
+		XmlNamespaceScope l = XmlNamespaceScope.Local;
+		XmlNamespaceScope x = XmlNamespaceScope.ExcludeXml;
+		XmlNamespaceScope a = XmlNamespaceScope.All;
+
+		[Test]
+		public void GetNamespacesInScope ()
+		{
+			XmlNamespaceManager nsmgr =
+				new XmlNamespaceManager (new NameTable ());
+
+			AssertEquals (0, nsmgr.GetNamespacesInScope (l).Count);
+			AssertEquals (0, nsmgr.GetNamespacesInScope (x).Count);
+			AssertEquals (1, nsmgr.GetNamespacesInScope (a).Count);
+
+			nsmgr.AddNamespace ("foo", "urn:foo");
+			AssertEquals (1, nsmgr.GetNamespacesInScope (l).Count);
+			AssertEquals (1, nsmgr.GetNamespacesInScope (x).Count);
+			AssertEquals (2, nsmgr.GetNamespacesInScope (a).Count);
+
+			nsmgr.RemoveNamespace ("foo", "urn:foo", false);
+			AssertEquals (0, nsmgr.GetNamespacesInScope (l).Count);
+			AssertEquals (0, nsmgr.GetNamespacesInScope (x).Count);
+			AssertEquals (1, nsmgr.GetNamespacesInScope (a).Count);
+
+			// default namespace
+			nsmgr.AddNamespace ("", "urn:empty");
+			AssertEquals (1, nsmgr.GetNamespacesInScope (l).Count);
+			AssertEquals (1, nsmgr.GetNamespacesInScope (x).Count);
+			AssertEquals (2, nsmgr.GetNamespacesInScope (a).Count);
+
+			nsmgr.RemoveNamespace ("", "urn:empty", false);
+			AssertEquals (0, nsmgr.GetNamespacesInScope (l).Count);
+			AssertEquals (0, nsmgr.GetNamespacesInScope (x).Count);
+			AssertEquals (1, nsmgr.GetNamespacesInScope (a).Count);
+
+			// PushScope
+			nsmgr.AddNamespace ("foo", "urn:foo");
+			nsmgr.PushScope ();
+			AssertEquals (0, nsmgr.GetNamespacesInScope (l).Count);
+			AssertEquals (1, nsmgr.GetNamespacesInScope (x).Count);
+			AssertEquals (2, nsmgr.GetNamespacesInScope (a).Count);
+
+			// PopScope
+			nsmgr.PopScope ();
+			AssertEquals (1, nsmgr.GetNamespacesInScope (l).Count);
+			AssertEquals (1, nsmgr.GetNamespacesInScope (x).Count);
+			AssertEquals (2, nsmgr.GetNamespacesInScope (a).Count);
+
+			nsmgr.AddNamespace ("", "");
+			AssertEquals (1, nsmgr.GetNamespacesInScope (l).Count);
+			AssertEquals (1, nsmgr.GetNamespacesInScope (x).Count);
+			AssertEquals (2, nsmgr.GetNamespacesInScope (a).Count);
+		}
+#endif
 	}
 }
