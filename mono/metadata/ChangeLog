@@ -1,3 +1,17 @@
+
+Fri Feb 22 18:55:57 CET 2002 Paolo Molaro <lupus@ximian.com>
+
+	* class.c: when instancing a class in a domain, load the default
+	vaules for static fields from the constant table. Fix System.Enum to
+	not be an enum.
+	* icall.c: implement Object::GetType() internalcall. Implemented
+	MonoField::GetValue() internalcall. Avoid SEGV in search_method().
+	Fixed checking of binding flags in find_members().
+	* metadata.c, metadata.h: introduce mono_metadata_type_hash().
+	* reflection.c: handle enumerations when writing to the constant
+	table. Use a different object cache for types.
+
+
 2002-02-22  Dietmar Maurer  <dietmar@ximian.com>
 
 	* object.c (mono_object_isinst): fix for arrays
