@@ -283,7 +283,6 @@ namespace MonoTests.System {
 
 		[Test]
 		[ExpectedException (typeof (ArgumentNullException))]
-		[Ignore ("cause an assertion in mono runtime")]
 		public void GetData_Null ()
 		{
 			AppDomain.CurrentDomain.GetData (null);
@@ -300,7 +299,6 @@ namespace MonoTests.System {
 
 		[Test]
 		[ExpectedException (typeof (ArgumentNullException))]
-		[Ignore ("cause an assertion in mono runtime")]
 		public void SetData_Null ()
 		{
 			AppDomain.CurrentDomain.SetData (null, "data");

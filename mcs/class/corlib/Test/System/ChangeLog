@@ -1,3 +1,7 @@
+2004-11-06  Zoltan Varga  <vargaz@freemail.hu>
+
+	* AppDomainTest.cs: Reenable SetData/GetData (null) tests.
+
 2004-11-01  Zoltan Varga  <vargaz@freemail.hu>
 
 	* StringTest.cs: Add new tests for (sbyte*, Encoding) ctor.
