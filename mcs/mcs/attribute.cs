@@ -683,6 +683,9 @@ namespace Mono.CSharp {
 
 				if (attr_target == "assembly" && !(builder is AssemblyBuilder))
 					continue;
+
+				if (attr_target == "return" && !(builder is ParameterBuilder))
+					continue;
 				
 				foreach (Attribute a in asec.Attributes) {
 					CustomAttributeBuilder cb = a.Resolve (ec);
