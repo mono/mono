@@ -1,3 +1,7 @@
+2004-06-21  Martin Baulig  <martin@ximian.com>
+
+	* class.c (mono_vtable_get_static_field_data): New public method.
+
 2004-06-20  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* filewatcher.c : Windows build fix to be compliant with API changes.
