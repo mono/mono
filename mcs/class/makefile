@@ -1,4 +1,4 @@
-DIRS=corlib System System.XML
+DIRS=corlib System System.Drawing System.Web System.XML
 ROOT=//$(subst \,/,$(subst :\,/,$(SYSTEMROOT)))
 CSC=$(ROOT)/microsoft.net/framework/v1.0.2914/csc.exe
 

@@ -16,14 +16,14 @@ namespace CIR {
 
 		public void Error (int code, Location l, string text)
 		{
-			Console.WriteLine (l.Name + "(" + l.row + "," + l.col +
+			Console.WriteLine (l.Name + "(" + l.Row + "," + l.Col +
 					   "): Error CS"+code+": " + text);
 			errors++;
 		}
 
 		public void Warning (int code, Location l, string text)
 		{
-			Console.WriteLine (l.Name + "(" + l.row + "," + l.col +
+			Console.WriteLine (l.Name + "(" + l.Row + "," + l.Col +
 					   "): Warning CS"+code+": " + text);
 			warnings++;
 		}

@@ -28,6 +28,7 @@ namespace System.ComponentModel {
 		// </summary>
 		public Component ()
 		{
+			event_handlers = null;
 		}
 
 		// <summary>
@@ -71,7 +72,7 @@ namespace System.ComponentModel {
 			}
 		}
 
-		~Component() 
+		~Component()
 		{
 			// FIXME: Not sure this is correct.
 			Dispose(true);

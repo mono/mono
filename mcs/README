@@ -1,2 +1,21 @@
 
-This is the Ximian MCS C# compiler written in C#
+This contains the Mono C# compiler as well as the Mono runtime
+library.
+
+Layout:
+
+	class/
+		Class libraries
+
+	errors/
+		Sample programs that should generate errors by the compiler.
+
+	jay/
+		Yacc-based parser generator.
+
+	mcs/
+		The Mono C# compiler
+
+	tests/
+		Sample tests 
+		
