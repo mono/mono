@@ -881,7 +881,7 @@ CC_ON: "@cc_on" ;
 DECIMAL_LITERAL: ('0'  | ('1'..'9')('0'..'9')*) (DOT ('0'..'9')* | ) (('e' | 'E') (('+' | '-' | ) ('0'..'9')+) | )
     ;
 
-HEX_INTEGER_LITERAL: '0' 'x' ('0'..'9' | 'a'..'f' | 'A'..'F')+
+HEX_INTEGER_LITERAL: '0' ('x' | 'X') ('0'..'9' | 'a'..'f' | 'A'..'F')+
     ;
 
 // FIXME: this just temporal, in order to get into parsing

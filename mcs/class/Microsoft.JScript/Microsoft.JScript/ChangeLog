@@ -1,5 +1,7 @@
 2003-09-20    <cesar@ciencias.unam.mx>
 
+	* jscript-lexer-parser.g: One line patch, the beauty of tests :-)
+
 	* jscript-lexer-parser.g: Build ast for FunctionExpression.
 
 	* JSObject.cs: we don't throw NotImplementedException anymore,
