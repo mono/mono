@@ -16,6 +16,9 @@ namespace System.Web.Mobile
 {
 	public class ErrorHandlerModule //: IHttpModule
 	{
-		
+		public ErrorHandlerModule()
+		{
+			throw new NotImplementedException();
+		}
 	}
 }

@@ -16,6 +16,10 @@ namespace System.Web.Mobile
 {
 	public class MobileCapabilities : HttpBrowserCapabilities
 	{
+		internal delegate void
+		       EvaluateCapabilitiesHandler(MobileCapabilities capabilities,
+		                                    string evaluationParam);
+
 		private bool canCombineFormsInDeck = false;
 
 		public MobileCapabilities()
@@ -73,7 +77,7 @@ namespace System.Web.Mobile
 				return this.canRenderAfterInputOrSelectElement;
 			}
 		}
-		
+
 		private bool canRenderEmptySelects = false;
 
 		public bool CanRenderEmptySelects
@@ -91,7 +95,7 @@ namespace System.Web.Mobile
 				return this.canRenderEmptySelects;
 			}
 		}
-		
+
 		private bool canRenderInputAndSelectElementsTogether = false;
 
 		public bool CanRenderInputAndSelectElementsTogether
@@ -109,7 +113,7 @@ namespace System.Web.Mobile
 				return this.canRenderInputAndSelectElementsTogether;
 			}
 		}
-		
+
 		private bool canRenderMixedSelects = false;
 
 		public bool CanRenderMixedSelects
@@ -1296,6 +1300,15 @@ namespace System.Web.Mobile
 				}
 				return gatewayMinorVersion;
 			}
+		}
+
+		public bool HasCapability(string delegateName, string optParams)
+		{
+			if(delegateName == null || delegateName.Trim() == String.Empty)
+			{
+				throw new ArgumentException("MobCap_DelegateNameNoValue");
+			}
+			throw new NotImplementedException();
 		}
 	}
 }
