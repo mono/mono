@@ -1,3 +1,12 @@
+2003-08-16  Zoltan Varga  <vargaz@freemail.hu>
+
+	* reflection.h reflection.c (mono_param_get_objects): Changed this to 
+	return a MonoArray. This simplifies the code and also ensures that
+	the cache allways contains an object reference as a value.
+
+	* icall.c (ves_icall_get_parameter_info): Simplified using the new
+	function.
+
 2003-08-16  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* socket-io.c: patch by Bernie Solomon <bernard@ugsolutions.com> that
