@@ -21,7 +21,7 @@ namespace System.Windows.Forms {
 		Control parent;
 		string text;
 		int left, top, width, height;
-		ControlCollection controls = CreateControlsInstance ();
+		ControlCollection controls;
 		Point location = new Point (0, 0);
 		Gtk.Layout layout = null;
 		AnchorStyles anchor = AnchorStyles.Top|AnchorStyles.Left;
@@ -54,7 +54,6 @@ namespace System.Windows.Forms {
 			}
 			
 			public bool Contains (Control value) { return list.Contains (value); }
-			public int IndexOf (Control value) { return list.IndexOf (value); }
 			public virtual void Remove (Control value) {
 				list.Remove (value);
 				owner.OnControlAdded (new ControlEventArgs (value));
@@ -82,11 +81,6 @@ namespace System.Windows.Forms {
 			// IList
 			public bool IsFixedSize { get { return list.IsFixedSize; } }
 			public bool IsReadOnly { get { return list.IsReadOnly; } }
-			public object this[int index]
-			{
-				get { return list[index]; }
-				set { list[index] = value; }
-			}
 			int IList.Add (object value) { return list.Add (value); }
 			public void Clear () { list.Clear (); }
 			bool IList.Contains (object value) { return list.Contains (value); }
@@ -111,6 +105,13 @@ namespace System.Windows.Forms {
 				c.owner = owner;
 				return c;
 			}
+
+			object IList.this[int index]
+			{
+				get { return list[index]; }
+				set { list[index] = value; }
+			}
+	
 		}
 		
 		static Control ()
@@ -130,6 +131,7 @@ namespace System.Windows.Forms {
 		{
 			this.parent = parent;
 			this.text = text;
+			
 		}
 
 		public Control (string text, int left, int top, int width, int height)
@@ -194,12 +196,7 @@ namespace System.Windows.Forms {
 		}
 		
 		public ControlCollection Controls {
-			get { return controls;}
-		}
-		
-		protected virtual ControlCollection CreateControlsInstance() {
-			controls = new ControlCollection (this);
-			return controls;
+			get { if (controls == null) controls = new ControlCollection (this); return controls;}
 		}
 		
 		public event ControlEventHandler ControlAdded;
