@@ -1,5 +1,10 @@
 2004-10-12  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* DataSet.cs : DBNull attribute column should not be written as
+	  empty attribute. This fixes bug #68007.
+
+2004-10-12  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* DataSet.cs, XmlConstant.cs, XmlSchemaDataImporter.cs:
 	  DataColumn.ReadOnly was not handled. This fixes bug #68005.
 	  Attribute defaultValue was not handled too.
