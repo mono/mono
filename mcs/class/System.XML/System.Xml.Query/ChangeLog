@@ -1,5 +1,9 @@
 2004-08-25  Atsushi Enomoto <atsushi@ximian.com>
 
+	* removed IXmlCompilerInclude.cs (does not exist anymore).
+
+2004-08-25  Atsushi Enomoto <atsushi@ximian.com>
+
 	* SequenceType.cs : moved type inference method to XPathAtomicValue.
 	  Use IsArray in runtime type inference. Initialize fields completely.
 	  Handle collection to runtime type for functions that takes array.
