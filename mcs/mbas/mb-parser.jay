@@ -2935,11 +2935,21 @@ if_statement
 	  {
 		$$ = $3;
 	  }
-	| if_statement_open THEN pre_embedded_statement
+	| if_statement_open THEN pre_embedded_statement opt_else_pre_embedded_statement
 	  {
-		Location l = (Location) oob_stack.Pop ();
-		tmp_expr = (Expression)expr_stack.Pop(); 
-		$$ = new If ((Expression) tmp_expr, end_block(), l);
+		if ($4 == null)
+		{
+			Location l = (Location) oob_stack.Pop ();
+			tmp_expr = (Expression)expr_stack.Pop(); 
+			$$ = new If ((Expression) tmp_expr, end_block(), l);
+		}
+		else
+		{
+			Location l = (Location) oob_stack.Pop ();
+			tmp_expr = (Expression)expr_stack.Pop(); 
+			tmp_block = (Block) tmp_blocks.Pop ();
+			$$ = new If ((Expression) tmp_expr, (Statement) tmp_block, end_block(), l);
+		}
 	  }
 	;
 
@@ -2949,6 +2959,19 @@ pre_embedded_statement
 		Statement s = (Statement) $1;
 
 		current_block.AddStatement ((Statement) $1);
+	  } 
+	;	
+
+opt_else_pre_embedded_statement
+	: /* empty */	
+	| ELSE embedded_statement 
+	  {
+		Block bl = end_block(); 
+        tmp_blocks.Push(bl); 
+        
+	  	start_block();
+		Statement s = (Statement) $2;
+		current_block.AddStatement ((Statement) $2);
 	  } 
 	;	
 	
@@ -2973,7 +2996,7 @@ if_statement_rest
 	  END IF
 	  { 
 		Location l = (Location) oob_stack.Pop ();
-                Expression expr = (Expression)expr_stack.Pop(); 
+        Expression expr = (Expression)expr_stack.Pop(); 
 		$$ = new If ((Expression) expr, (Statement) end_block(), l);
 	  }	  
 	| end_of_stmt
@@ -2981,7 +3004,7 @@ if_statement_rest
 	  ELSE end_of_stmt 
 	  { 
 	  	Block bl = end_block(); 
- 	        tmp_blocks.Push(bl); 
+        tmp_blocks.Push(bl); 
 	  	start_block();
 	  }
 	  opt_statement_list
