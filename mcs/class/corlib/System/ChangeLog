@@ -1,3 +1,8 @@
+2005-03-31  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Exception.cs: Added Assert for TypeInformation to GetObjectData and
+	ToString methods (not required for 2.0 as TypeInformation will be 
+	deprecated). Added null check for GetObjectData.
 
 Tue Mar 29 11:47:19 CEST 2005 Paolo Molaro <lupus@ximian.com>
 

@@ -236,11 +236,17 @@ namespace System
 			return this;
 		}
 
+#if ONLY_1_1
+		[ReflectionPermission (SecurityAction.Assert, TypeInformation = true)]
+#endif
 		public virtual void GetObjectData (SerializationInfo info, StreamingContext context)
 		{
+			if (info == null)
+				throw new ArgumentNullException ("info");
+
 			if (class_name == null)
 				class_name = GetType ().FullName;
-			
+
 			info.AddValue ("ClassName", class_name);
 			info.AddValue ("Message", message);
 			info.AddValue ("InnerException", inner_exception);
@@ -253,6 +259,9 @@ namespace System
 			info.AddValue ("ExceptionMethod", null);
 		}
 
+#if ONLY_1_1
+		[ReflectionPermission (SecurityAction.Assert, TypeInformation = true)]
+#endif
 		public override string ToString ()
 		{
 			System.Text.StringBuilder result = new System.Text.StringBuilder (this.GetType ().FullName);
