@@ -1,5 +1,11 @@
 2004-11-16  Martin Baulig  <martin@ximian.com>
 
+	* test-316.cs: New test for #69082.
+
+	* test-317.cs; New test for #63705.
+
+2004-11-16  Martin Baulig  <martin@ximian.com>
+
 	* Makefile: Updated.
 
 2004-11-09  Martin Baulig  <martin@ximian.com>
