@@ -1,3 +1,8 @@
+2002-04-10  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* unicode.c (ves_icall_System_Char_IsNumber): use g_unichar_isxdigit
+	instead of g_unichar_isdigit.
+
 2002-04-11  Nick Drochak  <ndrochak@gol.com>
 
 	* icall.c: Implement a simple Double.ToString().
