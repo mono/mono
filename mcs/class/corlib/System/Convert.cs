@@ -1031,10 +1031,17 @@ namespace System {
 			return Int16.Parse (value, provider);
 		}
 
-		
 		public static short ToInt16 (string value, int fromBase)
 		{
-			return Convert.ToInt16 (ConvertFromBase (value, fromBase, false));
+			int result = ConvertFromBase (value, fromBase, false);
+			if (fromBase != 10) {
+				// note: no sign are available to detect negatives
+				if (result > Int16.MaxValue) {
+					// return negative 2's complement
+					return Convert.ToInt16 (-(65536 - result));
+				}
+			}
+			return Convert.ToInt16 (result);
 		}
 
 		[CLSCompliant (false)]
@@ -1308,9 +1315,6 @@ namespace System {
 
 		public static long ToInt64 (string value, int fromBase)
 		{
-			if (NotValidBase (fromBase))
-				throw new ArgumentException ("fromBase is not valid.");
-			
 			return ConvertFromBase64 (value, fromBase, false);
 		}
 
@@ -1472,15 +1476,15 @@ namespace System {
 		[CLSCompliant (false)]
 		public static sbyte ToSByte (string value, int fromBase)
 		{
-			int retVal = ConvertFromBase (value, fromBase, false);
-
-			if (retVal == 255)
-				return (sbyte)-1;
-
-			if (retVal < (int) SByte.MinValue || retVal > (int) SByte.MaxValue)
-				throw new OverflowException ();
-			else
-				return (sbyte) retVal;
+			int result = ConvertFromBase (value, fromBase, false);
+			if (fromBase != 10) {
+				// note: no sign are available to detect negatives
+				if (result > SByte.MaxValue) {
+					// return negative 2's complement
+					return Convert.ToSByte (-(256 - result));
+				}
+			}
+			return Convert.ToSByte (result);
 		}
 		
 		[CLSCompliant (false)]
@@ -2384,9 +2388,15 @@ namespace System {
 				}
 				break;
 			case 16:
-				// 0x00 or 0X00
-				if ((value[i] == '0') && ((value [i+1] == 'x') || (value [i+1] == 'X'))) {
-					i+=2;
+				if (len >= i+2) {
+					// 0x00 or 0X00
+					if ((value[i] == '0') && ((value [i+1] == 'x') || (value [i+1] == 'X'))) {
+						i+=2;
+					}
+					if (len == i) {
+						throw new OverflowException (
+							Locale.GetText ("Missing number after prefix"));
+					}
 				}
 				break;
 			}
@@ -2431,9 +2441,11 @@ namespace System {
 		{
 			if (NotValidBase (fromBase))
 				throw new ArgumentException ("fromBase is not valid.");
+			if (value == null)
+				return 0;
 
 			int chars = 0;
-			int digitValue;
+			int digitValue = -1;
 			long result = 0;
 
 			foreach (char c in value) {
@@ -2441,6 +2453,12 @@ namespace System {
 					digitValue = c - '0';
 				else if (Char.IsLetter (c))
 					digitValue = Char.ToLowerInvariant (c) - 'a' + 10;
+				else if ((c == '-') && (!unsigned)) {
+					if (fromBase != 10)
+						throw new ArgumentException ("Negative are valid only for base 10");
+					result = -result;
+					continue;
+				}
 				else
 					throw new FormatException ("This is an invalid string: " + value);
 
@@ -2454,9 +2472,6 @@ namespace System {
 			if (chars == 0)
 				throw new FormatException ("Could not find any digits.");
 
-			if (result > Int64.MaxValue || result < Int64.MinValue)
-				throw new OverflowException ("There is an overflow.");
-			
 			return result;
 		}
 
