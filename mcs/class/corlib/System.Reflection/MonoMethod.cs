@@ -141,13 +141,20 @@ namespace System.Reflection {
 		public override ParameterInfo[] GetParameters() {
 			return MonoMethodInfo.get_parameter_info (mhandle);
 		}
+
+		/*
+		 * InternalInvoke() receives the parameters corretcly converted by the binder
+		 * to match the types of the method signature.
+		 */
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		internal extern Object InternalInvoke (Object obj, Object[] parameters);
 		
 		public override Object Invoke(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture) {
 			throw new NotImplementedException ();
 		}
 
 		public override Object Invoke(BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture) {
-			throw new NotImplementedException ();
+			return InternalInvoke (null, parameters);
 		}
 
 		public override RuntimeMethodHandle MethodHandle { 

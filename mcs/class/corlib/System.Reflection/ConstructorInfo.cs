@@ -23,11 +23,12 @@ namespace System.Reflection {
 			get {return MemberTypes.Constructor;}
 		}
 
-		[MonoTODO]
 		public object Invoke (object[] parameters)
 		{
-			//FIXME
-			return null;
+			if (parameters == null)
+				parameters = new object [0];
+
+			return Invoke (BindingFlags.CreateInstance, null, parameters, null);
 		}
 
 		public abstract object Invoke (BindingFlags invokeAttr, Binder binder, object[] parameters,
