@@ -35,4 +35,12 @@ namespace System {
 	public interface IComparable {
 		int CompareTo (object obj);
 	}
+	
+#if NET_2_0
+	[CLSCompliant (false)]
+	public interface IComparable <T> {
+		int CompareTo (T x);
+		bool Equals (T x);
+	}
+#endif
 }

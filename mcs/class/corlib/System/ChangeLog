@@ -1,3 +1,10 @@
+2004-06-18  Ben Maurer  <bmaurer@ximian.com>
+	
+	* Action.cs, ArraySegment.cs, Comparison.cs, Converter.cs, Predicate.cs:
+	new generics classes
+	* IComparable.cs: add the new <T> version.
+	* EventHandler.cs: new <T> version.
+	
 2004-06-18  Dick Porter  <dick@ximian.com>
 
 	* String.cs: The icall can cope with embedded \0 now.

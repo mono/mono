@@ -1,14 +1,10 @@
 //
-// System.EventHandler.cs
+// ArraySegment.cs
 //
-// Author:
-//   Miguel de Icaza (miguel@ximian.com)
+// Authors:
+//  Ben Maurer (bmaurer@ximian.com)
 //
-// (C) Ximian, Inc.  http://www.ximian.com
-//
-
-//
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004 Novell
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -29,16 +25,47 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-
-namespace System {
-
-	public delegate void EventHandler (object sender, EventArgs e);
-		
 #if NET_2_0
+namespace System {
 	[CLSCompliant (false)]
-	public delegate void EventHandler <T> (object sender, T e) where T : EventArgs;
-#endif
-
+	public struct ArraySegment <T> {
+		T [] array;
+		int offset, length;
+		
+		public ArraySegment (T [] array, int offset, int length)
+		{
+			if (array == null)
+				throw new ArgumentNullException ("array");
+			
+			if (offset >= array.Length || (offset + length) >= array.Length)
+				throw new ArgumentException ("out of bounds");
+			
+			this.array = array;
+			this.offset = offset;
+			this.length = length;
+		}
+		
+		public ArraySegment (T [] array)
+		{
+			if (array == null)
+				throw new ArgumentNullException ("array");
+			
+			this.array = array;
+			this.offset = 0;
+			this.length = array.Length;
+		}
+		
+		public T [] Array {
+			get { return array; }
+		}
+		
+		public int Offset {
+			get { return offset; }
+		}
+		
+		public int Length {
+			get { return length; }
+		}
+	}
 }
-
-
+#endif
