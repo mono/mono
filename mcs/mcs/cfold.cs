@@ -457,6 +457,30 @@ namespace Mono.CSharp {
 					return result;
 
 			case Binary.Operator.Subtraction:
+				//
+				// handle "E operator - (E x, U y)"
+				// handle "E operator - (Y y, E x)"
+				// handle "U operator - (E x, E y)"
+				//
+				Type wrap_as = null;
+				if (left is EnumConstant){
+					if (right is EnumConstant){
+						if (left.Type == right.Type)
+							wrap_as = TypeManager.EnumToUnderlying (left.Type);
+						else
+							return null;
+					}
+					if (((EnumConstant) left).Child.Type != right.Type)
+						return null;
+
+					wrap_as = left.Type;
+				} else if (right is EnumConstant){
+					if (((EnumConstant) right).Child.Type != left.Type)
+						return null;
+					wrap_as = right.Type;
+				}
+
+				result = null;
 				DoConstantNumericPromotions (ec, oper, ref left, ref right, loc);
 				if (left == null || right == null)
 					return null;
@@ -472,7 +496,7 @@ namespace Mono.CSharp {
 							res = unchecked (((DoubleConstant) left).Value -
 									 ((DoubleConstant) right).Value);
 						
-						return new DoubleConstant (res);
+						result = new DoubleConstant (res);
 					} else if (left is FloatConstant){
 						float res;
 						
@@ -483,7 +507,7 @@ namespace Mono.CSharp {
 							res = unchecked (((FloatConstant) left).Value -
 									 ((FloatConstant) right).Value);
 						
-						return new FloatConstant (res);
+						result = new FloatConstant (res);
 					} else if (left is ULongConstant){
 						ulong res;
 						
@@ -494,7 +518,7 @@ namespace Mono.CSharp {
 							res = unchecked (((ULongConstant) left).Value -
 									 ((ULongConstant) right).Value);
 						
-						return new ULongConstant (res);
+						result = new ULongConstant (res);
 					} else if (left is LongConstant){
 						long res;
 						
@@ -505,7 +529,7 @@ namespace Mono.CSharp {
 							res = unchecked (((LongConstant) left).Value -
 									 ((LongConstant) right).Value);
 						
-						return new LongConstant (res);
+						result = new LongConstant (res);
 					} else if (left is UIntConstant){
 						uint res;
 						
@@ -516,7 +540,7 @@ namespace Mono.CSharp {
 							res = unchecked (((UIntConstant) left).Value -
 									 ((UIntConstant) right).Value);
 						
-						return new UIntConstant (res);
+						result = new UIntConstant (res);
 					} else if (left is IntConstant){
 						int res;
 
@@ -527,13 +551,17 @@ namespace Mono.CSharp {
 							res = unchecked (((IntConstant) left).Value -
 									 ((IntConstant) right).Value);
 
-						return new IntConstant (res);
+						result = new IntConstant (res);
 					} else {
 						throw new Exception ( "Unexepected input: " + left);
 					}
 				} catch (OverflowException){
 					Error_CompileTimeOverflow (loc);
 				}
+				if (wrap_as != null)
+					return new EnumConstant (result, wrap_as);
+				else
+					return result;
 				break;
 				
 			case Binary.Operator.Multiply:

@@ -2114,15 +2114,21 @@ namespace Mono.CSharp {
 			if (lie || rie){
 				Expression temp;
 
+				// U operator - (E e, E f)
+				if (lie && rie && oper == Operator.Subtraction){
+					if (l == r){
+						type = TypeManager.EnumToUnderlying (l);
+						return this;
+					} 
+					Error_OperatorCannotBeApplied ();
+					return null;
+				}
+					
 				//
 				// operator + (E e, U x)
+				// operator - (E e, U x)
 				//
-				if (oper == Operator.Addition){
-					if (lie && rie){
-						Error_OperatorCannotBeApplied ();
-						return null;
-					}
-
+				if (oper == Operator.Addition || oper == Operator.Subtraction){
 					Type enum_type = lie ? l : r;
 					Type other_type = lie ? r : l;
 					Type underlying_type = TypeManager.EnumToUnderlying (enum_type);
