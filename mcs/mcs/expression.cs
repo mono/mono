@@ -2226,8 +2226,6 @@ namespace Mono.CSharp {
 			Type l = left.Type;
 			Type r = right.Type;
 
-			bool overload_failed = false;
-
 			//
 			// Special cases: string comapred to null
 			//
@@ -2278,8 +2276,6 @@ namespace Mono.CSharp {
 						MethodInfo mi = (MethodInfo) method;
 						
 						return new BinaryMethod (mi.ReturnType, method, args);
-					} else {
-						overload_failed = true;
 					}
 				}
 			}
@@ -2604,14 +2600,6 @@ namespace Mono.CSharp {
 				}
 			}
 			
-			//
-			// We are dealing with numbers
-			//
-			if (overload_failed){
-				Error_OperatorCannotBeApplied ();
-				return null;
-			}
-
 			//
 			// This will leave left or right set to null if there is an error
 			//
