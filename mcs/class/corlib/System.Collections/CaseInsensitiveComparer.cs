@@ -35,6 +35,7 @@ using System.Globalization;
 namespace System.Collections
 {
 	[Serializable]
+	[MonoTODO ("Fix serialization compatibility with MS.NET")]
 	public class CaseInsensitiveComparer : IComparer
 	{
 		private static CaseInsensitiveComparer defaultComparer = new CaseInsensitiveComparer ();

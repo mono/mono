@@ -1,3 +1,10 @@
+2004-06-15  Gert Driesen <drieseng@users.sourceforge.net>
+
+	* CaseInsensitiveComparer.cs: added TODO for serialization
+	* CaseInsensitiveHashCodeProvider.cs: added TODO for serialization
+	* SortedList.cs: added TODO for serialization
+	* Stack.cs: added TODO for serialization
+
 2004-06-14  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Hashtable.cs: Compare index and length in CopyTo only when length > 0.

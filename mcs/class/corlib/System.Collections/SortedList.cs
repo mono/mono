@@ -43,6 +43,7 @@ namespace System.Collections {
 	///  and by index.
 	/// </summary>
 	[Serializable]
+	[MonoTODO ("Fix serialization compatibility with MS.NET")]
 	public class SortedList : IDictionary, ICollection,
 	                          IEnumerable, ICloneable {
 

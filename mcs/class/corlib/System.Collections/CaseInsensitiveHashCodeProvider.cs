@@ -34,6 +34,7 @@ using System.Globalization;
 namespace System.Collections
 {
 	[Serializable]
+	[MonoTODO ("Fix serialization compatibility with MS.NET")]
 	public class CaseInsensitiveHashCodeProvider : IHashCodeProvider
 	{
 		static readonly CaseInsensitiveHashCodeProvider singleton = new CaseInsensitiveHashCodeProvider ();

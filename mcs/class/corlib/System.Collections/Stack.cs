@@ -31,8 +31,8 @@
 //
 
 namespace System.Collections {
-
 	[Serializable]
+	[MonoTODO ("Fix serialization compatibility with MS.NET")]
 	public class Stack : ICollection, IEnumerable, ICloneable {
 
 		// properties
