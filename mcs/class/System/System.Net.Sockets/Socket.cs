@@ -812,30 +812,31 @@ namespace System.Net.Sockets
 							int count,
 							SocketFlags flags);
 
-		public int Send(byte[] buf, int offset, int size,
-				SocketFlags flags) {
-			if(buf==null) {
-				throw new ArgumentNullException("buffer is null");
-			}
-			if(offset<0 || offset>=buf.Length) {
-				throw new ArgumentOutOfRangeException("offset exceeds the size of buffer");
-			}
-			if(offset+size<0 || offset+size>buf.Length) {
-				throw new ArgumentOutOfRangeException("offset+size exceeds the size of buffer");
-			}
+		public int Send (byte[] buf, int offset, int size, SocketFlags flags)
+		{
+			if (buf == null)
+				throw new ArgumentNullException ("buffer");
+
+			if (offset < 0 || offset > buf.Length)
+				throw new ArgumentOutOfRangeException ("offset");
+
+			if (size < 0 || offset + size > buf.Length)
+				throw new ArgumentOutOfRangeException ("size");
+
+			if (size == 0)
+				return 0;
 
 			int ret;
 
 			try {
-				ret=Send_internal(socket, buf, offset, size,
-						  flags);
-			} catch(SocketException) {
-				connected=false;
+				ret = Send_internal (socket, buf, offset, size, flags);
+			} catch (SocketException) {
+				connected = false;
 				throw;
 			}
-			connected=true;
+			connected = true;
 
-			return(ret);
+			return ret;
 		}
 
 		public int SendTo(byte[] buffer, EndPoint remote_end) {

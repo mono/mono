@@ -1,3 +1,7 @@
+2002-11-09  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Socket.cs: offset == size == 0 it's ok in Send ().
+
 2002-11-03  Phillip Pearson  <pp@myelin.co.nz>
 
 	* TcpClient.cs: Fixed SetTcpClient() to pass through to the Client 
