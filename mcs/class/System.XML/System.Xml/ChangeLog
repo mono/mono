@@ -1,5 +1,9 @@
 2004-02-03  Atsushi Enomoto <atsushi@ximian.com>
 
+	* XmlTextReader.cs, DTDReader.cs : fixity fix ;)
+
+2004-02-03  Atsushi Enomoto <atsushi@ximian.com>
+
 	* ChangeLog : Fixed incorrect description that should be written for
 	  DTDValidatingReader.cs but written for DTDReader.cs.
 	* DTDValidatingReader.cs : Fixes described in the last DTDReader fix.

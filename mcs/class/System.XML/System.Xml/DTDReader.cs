@@ -1379,8 +1379,8 @@ namespace System.Xml
 			if (ch < Char.MaxValue)
 				return ((char) ch).ToString ();
 			else {
-				char [] tmp = new char [] {(char) (ch / 0x10000 + 0xD800), (char) (ch % 0x10000 + 0xDC00)};
-				return tmp.ToString ();
+				char [] tmp = new char [] {(char) (ch / 0x10000 + 0xD800 - 1), (char) (ch % 0x10000 + 0xDC00)};
+				return new string (tmp);
 			}
 		}
 
@@ -1584,7 +1584,7 @@ namespace System.Xml
 			if (ch < Char.MaxValue)
 				nameBuffer [nameLength++] = (char) ch;
 			else {
-				nameBuffer [nameLength++] = (char) (ch / 0x10000 + 0xD800);
+				nameBuffer [nameLength++] = (char) (ch / 0x10000 + 0xD800 - 1);
 				CheckNameCapacity ();
 				nameBuffer [nameLength++] = (char) (ch % 0x10000 + 0xDC00);
 			}
