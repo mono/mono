@@ -23,9 +23,12 @@
 //	Peter Bartok	pbartok@novell.com
 //
 //
-// $Revision: 1.3 $
+// $Revision: 1.4 $
 // $Modtime: $
 // $Log: XplatUIDriver.cs,v $
+// Revision 1.4  2004/08/09 20:51:25  pbartok
+// - Implemented GrabWindow/ReleaseWindow methods to allow pointer capture
+//
 // Revision 1.3  2004/08/04 20:11:24  pbartok
 // - Added Invalidate handling
 //
@@ -124,6 +127,9 @@ namespace System.Windows.Forms {
 		internal abstract bool MoveWindow(IntPtr hWnd, int x, int y, int width, int height);
 		internal abstract bool DispatchMessage(ref MSG msg);
 		internal abstract void Run();
+
+		internal abstract void GrabWindow(IntPtr hWnd);
+		internal abstract void ReleaseWindow(IntPtr hWnd);
 		#endregion	// XplatUI Driver Methods
 	}
 }

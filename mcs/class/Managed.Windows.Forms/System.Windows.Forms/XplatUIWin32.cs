@@ -23,9 +23,12 @@
 //	Peter Bartok	pbartok@novell.com
 //
 //
-// $Revision: 1.5 $
+// $Revision: 1.6 $
 // $Modtime: $
 // $Log: XplatUIWin32.cs,v $
+// Revision 1.6  2004/08/09 20:51:25  pbartok
+// - Implemented GrabWindow/ReleaseWindow methods to allow pointer capture
+//
 // Revision 1.5  2004/08/09 16:05:16  jackson
 // These properties are handled by the theme now.
 //
@@ -519,7 +522,6 @@ namespace System.Windows.Forms {
 			rect.top=rc.Top;
 			rect.right=rc.Right;
 			rect.bottom=rc.Bottom;
-Console.WriteLine("Invalidating window");
 			Win32InvalidateRect(handle, ref rect, clear);
 			return;
 		}
@@ -591,6 +593,14 @@ Console.WriteLine("Invalidating window");
 		internal override IntPtr GetParent(IntPtr handle) {
 			Console.WriteLine("Getting parent {0}", handle);
 			return IntPtr.Zero;
+		}
+
+		internal override void GrabWindow(IntPtr hWnd) {
+			Win32SetCapture(hWnd);
+		}
+
+		internal override void ReleaseWindow(IntPtr hWnd) {
+			Win32ReleaseCapture();
 		}
 
 		// Santa's little helper
@@ -666,6 +676,12 @@ Console.WriteLine("Invalidating window");
 
 		[DllImport ("user32.dll", EntryPoint="InvalidateRect", CharSet=CharSet.Ansi, CallingConvention=CallingConvention.StdCall)]
 		private extern static IntPtr Win32InvalidateRect(IntPtr hWnd, ref RECT lpRect, bool bErase);
+
+		[DllImport ("user32.dll", EntryPoint="SetCapture", CharSet=CharSet.Ansi, CallingConvention=CallingConvention.StdCall)]
+		private extern static IntPtr Win32SetCapture(IntPtr hWnd);
+
+		[DllImport ("user32.dll", EntryPoint="ReleaseCapture", CharSet=CharSet.Ansi, CallingConvention=CallingConvention.StdCall)]
+		private extern static IntPtr Win32ReleaseCapture();
 		#endregion
 
 	}

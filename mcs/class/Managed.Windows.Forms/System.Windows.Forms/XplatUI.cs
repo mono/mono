@@ -23,9 +23,12 @@
 //	Peter Bartok	pbartok@novell.com
 //
 //
-// $Revision: 1.4 $
+// $Revision: 1.5 $
 // $Modtime: $
 // $Log: XplatUI.cs,v $
+// Revision 1.5  2004/08/09 20:51:25  pbartok
+// - Implemented GrabWindow/ReleaseWindow methods to allow pointer capture
+//
 // Revision 1.4  2004/08/09 17:02:29  jackson
 // Get default window properties from the theme
 //
@@ -234,6 +237,13 @@ namespace System.Windows.Forms {
 
 		internal static bool DispatchMessage(ref MSG msg) {
 			return driver.DispatchMessage(ref msg);
+		}
+
+		internal static void GrabWindow(IntPtr hWnd) {
+			driver.GrabWindow(hWnd);
+		}
+		internal static void ReleaseWindow(IntPtr hWnd) {
+			driver.ReleaseWindow(hWnd);
 		}
 
 		// Santa's little helper

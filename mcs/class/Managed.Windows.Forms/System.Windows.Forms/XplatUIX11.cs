@@ -23,9 +23,12 @@
 //	Peter Bartok	pbartok@novell.com
 //
 //
-// $Revision: 1.12 $
+// $Revision: 1.13 $
 // $Modtime: $
 // $Log: XplatUIX11.cs,v $
+// Revision 1.13  2004/08/09 20:51:25  pbartok
+// - Implemented GrabWindow/ReleaseWindow methods to allow pointer capture
+//
 // Revision 1.12  2004/08/09 19:48:08  pbartok
 // - Fixed default sizing for child windows
 //
@@ -511,12 +514,10 @@ namespace System.Windows.Forms {
 		}
 
 		internal override bool TranslateMessage(ref MSG msg) {
-//			Console.WriteLine("XplatUIX11 TranslateMessage");
 			return true;
 		}
 
 		internal override bool DispatchMessage(ref MSG msg) {
-//			Console.WriteLine("XplatUIX11 DispatchMessage");
 			return true;
 		}
 
@@ -576,11 +577,11 @@ namespace System.Windows.Forms {
 		}
 
 		internal override void GrabWindow(IntPtr hWnd) {
-//			Win32SetCapture(hWnd);
+			XGrabPointer(DisplayHandle, hWnd, false, EventMask.ButtonPressMask | EventMask.ButtonMotionMask | EventMask.ButtonReleaseMask | EventMask.PointerMotionMask, GrabMode.GrabModeAsync, GrabMode.GrabModeAsync, IntPtr.Zero, 0, 0);
 		}
 
 		internal override void ReleaseWindow(IntPtr hWnd) {
-//			Win32ReleaseCapture();
+			XUngrabPointer(DisplayHandle, 0);
 		}
 
 		// Santa's little helper
@@ -598,7 +599,6 @@ namespace System.Windows.Forms {
 
 			while (true==true) {
 				XNextEvent(DisplayHandle, ref xevent);
-
 				switch(xevent.type) {
 					case XEventName.KeyPress: {
 						IntPtr	buffer = Marshal.AllocHGlobal(24);
@@ -748,8 +748,11 @@ namespace System.Windows.Forms {
 		[DllImport ("libX11.so", EntryPoint="XSetWMProtocols")]
 		internal extern static int XSetWMProtocols(IntPtr display, IntPtr window, ref int protocols, int count);
 
-//		[DllImport ("libX11.so", EntryPoint="XSetWMProtocols")]
-//		internal extern static int XGrabPointer(IntPtr display, IntPtr window, bool owner_events, uint event_mask, int pointer_mode, int keyboard_mode, IntPtr confine_to, XplatUICursor cursor, uint timestamp);
+		[DllImport ("libX11.so", EntryPoint="XGrabPointer")]
+		internal extern static int XGrabPointer(IntPtr display, IntPtr window, bool owner_events, EventMask event_mask, GrabMode pointer_mode, GrabMode keyboard_mode, IntPtr confine_to, uint cursor, uint timestamp);
+
+		[DllImport ("libX11.so", EntryPoint="XUngrabPointer")]
+		internal extern static int XUngrabPointer(IntPtr display, uint timestamp);
 
 		// Drawing
 		[DllImport ("libX11.so", EntryPoint="XCreateGC")]
