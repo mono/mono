@@ -1,5 +1,9 @@
 2003-07-10  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
 
+	* list.unix: Added AssemblyInfo.cs
+
+2003-07-10  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
+
 	* list.unix: Removed System.Net/ProxyUseType.cs, System.Net/WebStatus.cs
 
 2003-07-06  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
