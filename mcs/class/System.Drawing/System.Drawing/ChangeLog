@@ -1,3 +1,11 @@
+2003-11-16  Miguel de Icaza  <miguel@ximian.com>
+
+	* Graphics.cs: Implement the other DrawString overloads .
+
+2003-11-16  Miguel de Icaza  <miguel@ximian.com>
+
+	* gdipStructs.cs (GdipRectF): Added utility constructor
+
 2003-11-15  Duncan Mak  <duncan@ximian.com>
 
 	* gdipFunctions.cs: Imported matrix functions.

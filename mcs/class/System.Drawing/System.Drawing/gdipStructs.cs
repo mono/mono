@@ -9,6 +9,7 @@ using System;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Drawing.Imaging;
+using System.Drawing;
 
 namespace System.Drawing {
 	[StructLayout(LayoutKind.Sequential)]
@@ -61,6 +62,14 @@ namespace System.Drawing {
 		internal float top;
 		internal float right;
 		internal float bottom;
+
+		public GdipRectF (RectangleF r)
+		{
+			left = r.Left;
+			top = r.Top;
+			right = r.Right;
+			bottom = r.Bottom;
+		}
 	}
 
 }

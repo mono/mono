@@ -557,31 +557,46 @@ namespace System.Drawing
 			}
 		}
 
-		[MonoTODO]
+		[MonoTODO("Ignores the font")]
 		public void DrawString (string s, Font font, Brush brush, RectangleF layoutRectangle)
 		{
-			//throw new NotImplementedException ();
+			GdipRectF rf = new GdipRectF (layoutRectangle);
+			
+			GDIPlus.GdipDrawString (nativeObject, s, s.Length, IntPtr.Zero, ref rf, IntPtr.Zero, brush.nativeObject);
 		}
 
-		[MonoTODO]
+		[MonoTODO("This ignores the font")]
 		public void DrawString (string s, Font font, Brush brush, PointF point)
 		{
-			//throw new NotImplementedException ();
+			GdipRectF rc = new GdipRectF ();
+			rc.left = point.X;
+			rc.top = point.Y;
+			rc.right = 0;
+			rc.bottom = 0;
+			GDIPlus.GdipDrawString (nativeObject, s, s.Length, IntPtr.Zero, ref rc, IntPtr.Zero, brush.nativeObject);
 		}
 
-		[MonoTODO]
+		[MonoTODO ("This ignores the font and format")]
 		public void DrawString (string s, Font font, Brush brush, PointF point, StringFormat format)
 		{
-			//throw new NotImplementedException ();
+			GdipRectF rc = new GdipRectF ();
+			rc.left = point.X;
+			rc.top = point.Y;
+			rc.right = 0;
+			rc.bottom = 0;
+			GDIPlus.GdipDrawString (nativeObject, s, s.Length, IntPtr.Zero, ref rc, IntPtr.Zero, brush.nativeObject);
 		}
 
-		[MonoTODO]
+		[MonoTODO ("This ignores the font and the format")]
 		public void DrawString (string s, Font font, Brush brush, RectangleF layoutRectangle, StringFormat format)
 		{
-			throw new NotImplementedException ();
+			GdipRectF rect = new GdipRectF (layoutRectangle);
+			
+			GDIPlus.GdipDrawString (nativeObject, s, s.Length, IntPtr.Zero, ref rect, IntPtr.Zero, brush.nativeObject);
+			
 		}
 
-		[MonoTODO]
+		[MonoTODO("This ignores the font")]
 		public void DrawString (string s, Font font, Brush brush, float x, float y)
 		{
 			GdipRectF rc = new GdipRectF ();
