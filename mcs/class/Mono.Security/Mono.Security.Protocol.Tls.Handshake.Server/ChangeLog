@@ -1,11 +1,4 @@
 2004-11-10  Sebastien Pouliot  <sebastien@ximian.com>
 
-	* TlsClientFinished.cs: ProcessAsTls1 - get out of the loop if PRF are
-	different.
-
-2004-09-23  Sebastien Pouliot  <sebastien@ximian.com>
-
-	* TlsClientKeyExchange.cs: Removed .Clear call on private key as itn't
-	ours (but only a reference). It also requires the callback to recreate
-	a new key object each time (which is worse). This also implies that 
-	the caller (implementing the callback) is responsible to clear it.
+	* TlsClientFinished.cs: Merge from HEAD.
+	* TlsClientKeyExchange.cs: Merge from HEAD.
