@@ -257,7 +257,7 @@ namespace System.Web.Compilation
 
 			if (stack.Count > 1)
 				throw new ParseException (stack.Builder.location,
-						"Expecting </" + stack.Builder.TagName + ">" + stack.Builder);
+						"Expecting </" + stack.Builder.TagName + "> " + stack.Builder);
 
 			BaseCompiler compiler = GetCompilerFromType ();
 
@@ -558,7 +558,8 @@ namespace System.Web.Compilation
 		bool CloseControl (string tagid)
 		{
 			ControlBuilder current = stack.Builder;
-			if (String.Compare (tagid, "tbody", true) == 0) {
+			string btag = current.TagName;
+			if (String.Compare (btag, "tbody", true) != 0 && String.Compare (tagid, "tbody", true) == 0) {
 				if (!current.ChildrenAsProperties) {
 					try {
 						TextParsed (location, location.PlainText);
@@ -568,7 +569,6 @@ namespace System.Web.Compilation
 				return true;
 			}
 			
-			string btag = current.TagName;
 			if (0 != String.Compare (tagid, btag, true))
 				return false;
 

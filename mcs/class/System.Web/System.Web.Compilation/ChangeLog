@@ -1,3 +1,7 @@
+2005-02-11 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* AspGenerator.cs: don't fail on <tbody runat=server>. Fixes bug #71856.
+
 2004-10-29 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* AspGenerator.cs: correctly process script tags that self-closing.
