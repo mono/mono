@@ -5,11 +5,16 @@ namespace Test
 {
 	public class Bar : Foo
 	{
-		void Foo.Hello (Stack<int> stack)
+		public void Hello (Stack<int> stack)
 		{
 			Console.WriteLine ("Hello Generic World!");
 			Console.WriteLine (stack);
 			Console.WriteLine (stack.GetType ());
+		}
+
+		public Stack<int> Test ()
+		{
+			return Driver.int_stack;
 		}
 
 		public static void Main ()
