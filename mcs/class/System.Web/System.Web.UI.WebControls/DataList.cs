@@ -894,13 +894,19 @@ namespace System.Web.UI.WebControls
 					current.MergeStyle (rowStyle);
 					continue;
 				}
+				
+				if (current.HasChildren)
+				{
+					int len = current.Controls.Count;
+					for (int i = 0 ; i < len ; i++)
+					{
+						Control currentCtrl = current.Controls[i];
+						if (!(currentCtrl is Table))
+							continue;
 
-				foreach (Control currentCtrl in current.Controls) {
-					if (!(currentCtrl is Table))
-						continue;
-
-					foreach (TableRow cRow in ((Table) currentCtrl).Rows)
-						cRow.MergeStyle (rowStyle);
+						foreach (TableRow cRow in ((Table) currentCtrl).Rows)
+							cRow.MergeStyle (rowStyle);
+					}
 				}
 			}
 		}
