@@ -3268,7 +3268,7 @@ namespace Mono.CSharp {
 	/// </summary>
 	public class EventExpr : Expression, IMemberExpr {
 		public readonly EventInfo EventInfo;
-		public Expression instance_expr;
+		Expression instance_expr;
 
 		bool is_static;
 		MethodInfo add_accessor, remove_accessor;

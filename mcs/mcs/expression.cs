@@ -6883,6 +6883,7 @@ namespace Mono.CSharp {
 						// accessors and private field etc so there's no need
 						// to transform ourselves.
 						//
+						ee.InstanceExpression = left;
 						return ee;
 					}
 
@@ -6895,7 +6896,9 @@ namespace Mono.CSharp {
 
 					if (!left_is_explicit)
 						left = null;
-					
+
+					ee.InstanceExpression = left;
+
 					return ResolveMemberAccess (ec, ml, left, loc, left_original);
 				}
 			}
