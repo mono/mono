@@ -1,4 +1,8 @@
 
+2003-06-30  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* AdRotator.cs: fixed bug #44271 and a few others bugs. Mono-stylized.
+
 2003-06-26  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* ListControl.cs: save viewstate data when any of the 3 values is not
