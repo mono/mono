@@ -327,7 +327,13 @@ namespace Mono.Xml.Xsl {
 					break;
 				
 				case "namespace-alias":
-					namespaceAliases.Set ((string) c.GetAttribute ("stylesheet-prefix", ""), (string) c.GetAttribute ("result-prefix", ""));
+					string sprefix = (string) c.GetAttribute ("stylesheet-prefix", "");
+					if (sprefix == "#default")
+						sprefix = String.Empty;
+					string rprefix= (string) c.GetAttribute ("result-prefix", "");
+					if (rprefix == "#default")
+						rprefix = String.Empty;
+					namespaceAliases.Set (sprefix, rprefix);
 					break;
 				
 				case "attribute-set":
@@ -335,7 +341,7 @@ namespace Mono.Xml.Xsl {
 					break;
 
 				case "key":
-					keys.Add (c.ParseQNameAttribute ("name"), new XslKey (c));
+					keys [c.ParseQNameAttribute ("name")] = new XslKey (c);
 					break;
 					
 				case "output":
