@@ -1647,9 +1647,7 @@ namespace CIR {
 						"User-defined conversion cannot convert between types that " +
 						"derive from each other"); 
 				
-			}
-			
-			if (SecondArgType == null) {
+			} else if (SecondArgType == null) {
 				// Checks for Unary operators
 				
 				if (first_arg_type != declaring_type) 

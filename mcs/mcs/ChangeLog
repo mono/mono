@@ -1,3 +1,18 @@
+2001-10-02  Ravi Pratap  <ravi@ximian.com>
+
+	* expression.cs (Unary::ResolveOperator): Find operators on base type
+	too - we now conform exactly to the spec.
+
+	(Binary::ResolveOperator): Same here.
+
+	* class.cs (Operator::Define): Fix minor quirk in the tests.
+
+	* ../errors/cs0215.cs : Added.
+
+	* ../errors/cs0556.cs : Added.
+
+	* ../errors/cs0555.cs : Added.
+
 2001-10-01  Miguel de Icaza  <miguel@ximian.com>
 
 	* cs-tokenizer.cs: Reimplemented Location to be a struct with a

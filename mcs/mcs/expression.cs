@@ -374,9 +374,9 @@ namespace CIR {
 					return new EmptyCast (expr, target_type);
 				if (expr_type.IsValueType)
 					return new BoxedCast (expr);
-			} else if (expr_type.IsSubclassOf (target_type))
+			} else if (expr_type.IsSubclassOf (target_type)) {
 				return new EmptyCast (expr, target_type);
-			else {
+			} else {
 				// from any class-type S to any interface-type T.
 				if (expr_type.IsClass && target_type.IsInterface) {
 					Type [] interfaces = expr_type.FindInterfaces (Module.FilterTypeName,
@@ -1378,6 +1378,9 @@ namespace CIR {
 				op_name = "op_" + oper;
 
 			mg = MemberLookup (tc, expr_type, op_name, false);
+
+			if (mg == null && expr_type != TypeManager.object_type)
+				mg = MemberLookup (tc, expr_type.BaseType, op_name, false);
 			
 			if (mg != null) {
 				Arguments = new ArrayList ();
@@ -2097,7 +2100,13 @@ namespace CIR {
 
 			left_expr = MemberLookup (tc, l, op, false);
 
+			if (left_expr == null && l != TypeManager.object_type)
+				left_expr = MemberLookup (tc, l.BaseType, op, false);
+			
 			right_expr = MemberLookup (tc, r, op, false);
+			if (right_expr != null && r != TypeManager.object_type)
+				right_expr = MemberLookup (tc, r.BaseType, op, false);
+			
 
 			MethodGroupExpr union = Invocation.MakeUnionSet (left_expr, right_expr);
 
