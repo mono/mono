@@ -1,21 +1,27 @@
 A couple things:
 
-* To compile: make sure you have Qt# installed.  This can be found at
-http://qtcsharp.sourceforge.net.  There is a mailing list and IRC 
-(OpenProjects.net #qtcsharp) channel for any questions. Note: You'll need
-to install the Qt toolkit and the qtc bindings ;) Then:
+* Compiling and installing
 
-mcs -o monodoc.exe -r Qt monodoc-qt/*.cs lib/*.cs
+Make sure you've got Qt# (http://qtcsharp.sourceforge.net) installed.
+Email the Qt# mailing list or ask on IRC (FreeNode's #qtsharp) if you
+have any problems installing. Note: You'll need to install the Qt
+toolkit (v3.0.x) and the Qt C bindings (found in the kdebindings package
+of the KDE distribution) to install Qt#.
 
-AND
+To compile, type 'make' in the mcs/doctools directory. To install, type
+'make PREFIX=<prefix>', where <prefix> should be the same prefix you used
+when you installed mono. If you don't specify a prefix, /usr/local is the
+default.
 
-mkdir ~HOMEDIR/.monodoc; mkdir ~HOMEDIR/.monodoc/images; cp monodoc-qt/images/* ~HOMEDIR/.monodoc/images/
+Build environment configurables are found in Makefile.defs.
 
-* The 'lib' directory contains the xml parser and data representation
+* Info
+
+The 'lib' directory contains the xml parser and data representation
 of the Master.xml files.  This will be the common library between the
 qt#, ASP.NET, and gtk# clients.  It will also contain the serializer
 for saving the xml to our monodoc.dtd format.
 
-* monodoc-qt contains the Qt# documentation editor. To use just
+monodoc-qt contains the Qt# documentation editor. To use just
 'mono monodoc.exe' and open the corresponding Master.xml
 (example: mcs/class/corlib/doc/mscorlib.xml)  Have fun.

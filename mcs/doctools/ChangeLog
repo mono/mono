@@ -1,3 +1,7 @@
+2002-10-02  Nick Zigarovich <nick@chemlab.org>
+
+	* Added Makefiles and updated README.
+
 2002-03-28  John Barnette <jbarn@httcb.net>
 
 	* makefile: added gui target, no longer uses CVS NAnt
