@@ -106,14 +106,11 @@ namespace System.Web.UI {
 			callBack (rowAffected, passOn);
 		}
 
-		[MonoTODO]
 		protected virtual void OnDataSourceViewChanged (EventArgs eventArgs)
 		{
-			if (eventsList == null)
-				return;
-			/*EventHandler evtHandler = eventsList [EventDataSourceViewChanged] as EventHandler;
+			EventHandler evtHandler = eventsList [EventDataSourceViewChanged] as EventHandler;
 			if (evtHandler != null)
-				evtHandler(this, eventArgs);*/
+				evtHandler(this, eventArgs);
 		}
 		
 		protected internal virtual void RaiseUnsupportedCapabilityError (
@@ -204,16 +201,23 @@ namespace System.Web.UI {
 				return eventsList;
 			}
 		}
+		
+		internal bool HasEvents ()
+		{
+			return eventsList != null;
+		}
 
 		public virtual string Name { 
 			get { return viewName; } 
 		}
 
-		public event EventHandler DataSourceViewChanged;	
-		/*{
-			//add { Events.AddHandler (EventDataSourceViewChanged, value); }
-			//remove { Events.RemoveHandler (EventDataSourceViewChanged, value); }
-		}*/
+		static readonly object EventDataSourceViewChanged = new object ();
+				
+		public event EventHandler DataSourceViewChanged
+		{
+			add { Events.AddHandler (EventDataSourceViewChanged, value); }
+			remove { Events.RemoveHandler (EventDataSourceViewChanged, value); }
+		}
 		
 	}
 	
