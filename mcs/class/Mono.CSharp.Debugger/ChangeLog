@@ -1,3 +1,8 @@
+2004-09-21  Martin Baulig  <martin@ximian.com>
+
+	* MonoSymbolFile.cs (MonoDebuggerSupport.CheckRuntimeVersion): New
+	public method.
+
 2004-09-13  Chris Toshok  <toshok@ximian.com>
 
 	* MonoSymbolFile.cs (MonoSymbolFile.Write): don't sort methods by

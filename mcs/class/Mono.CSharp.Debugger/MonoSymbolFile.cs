@@ -222,12 +222,14 @@ namespace Mono.CompilerServices.SymbolWriter
 		static GetMethodFunc get_method;
 		static GetLocalTypeFromSignatureFunc local_type_from_sig;
 		static GetGuidFunc get_guid;
+		static CheckRuntimeVersionFunc check_runtime_version;
 
 		delegate Type GetTypeFunc (Assembly assembly, int token);
 		delegate int GetMethodTokenFunc (Assembly assembly, MethodBase method);
 		delegate MethodBase GetMethodFunc (Assembly assembly, int token);
 		delegate Type GetLocalTypeFromSignatureFunc (Assembly assembly, byte[] sig);
 		delegate Guid GetGuidFunc (Module module);
+		delegate string CheckRuntimeVersionFunc (string filename);
 
 		static Delegate create_delegate (Type type, Type delegate_type, string name)
 		{
@@ -259,6 +261,10 @@ namespace Mono.CompilerServices.SymbolWriter
 
 			get_guid = (GetGuidFunc) create_delegate (
 				typeof (Module), typeof (GetGuidFunc), "Mono_GetGuid");
+
+			check_runtime_version = (CheckRuntimeVersionFunc) create_delegate (
+				typeof (Assembly), typeof (CheckRuntimeVersionFunc),
+				"MonoDebugger_CheckRuntimeVersion");
 		}
 
 		public static Type GetType (Assembly assembly, int token)
@@ -279,6 +285,11 @@ namespace Mono.CompilerServices.SymbolWriter
 		public static Type GetLocalTypeFromSignature (Assembly assembly, byte[] sig)
 		{
 			return local_type_from_sig (assembly, sig);
+		}
+
+		public static string CheckRuntimeVersion (string filename)
+		{
+			return check_runtime_version (filename);
 		}
 
 		public static Guid GetGuid (Module module)
