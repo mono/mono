@@ -1,3 +1,10 @@
+2004-06-14  Dick Porter  <dick@ximian.com>
+
+	* file-io.c (ves_icall_System_IO_MonoIO_FindFirstFile): It was
+	possible to return successfully when '.' or '..' were the only
+	entries in a directory, but were skipped.  The MonoIOStat was not
+	filled in in that case.  Now return ERROR_NO_MORE_FILES instead.
+	Fixes bug 59574.
 
 Mon Jun 14 00:27:15 CEST 2004 Paolo Molaro <lupus@ximian.com>
 
