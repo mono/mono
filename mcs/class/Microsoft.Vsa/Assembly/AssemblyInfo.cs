@@ -15,13 +15,13 @@ using System.Runtime.InteropServices;
 #if (NET_2_0)
 	[assembly: AssemblyVersion ("2.0.3600.0")]
 #elif (NET_1_1)
-	[assembly: AssemblyVersion("7.0.5000.0")]
-	[assembly: SatelliteContractVersion("7.0.5000.0")]
-	[assembly: ComCompatibleVersion(7, 0, 3300, 0)]
+	[assembly: AssemblyVersion("1.0.5000.0")]
+	[assembly: SatelliteContractVersion("1.0.5000.0")]
+	[assembly: ComCompatibleVersion(1, 0, 3300, 0)]
 	[assembly: TypeLibVersion(7, 1)]
 #else
-	[assembly: AssemblyVersion("7.0.3300.0")]
-	[assembly: SatelliteContractVersion("7.0.3300.0")]
+	[assembly: AssemblyVersion("1.0.3300.0")]
+	[assembly: SatelliteContractVersion("1.0.3300.0")]
 #endif
 
 [assembly: AssemblyTitle ("")]
