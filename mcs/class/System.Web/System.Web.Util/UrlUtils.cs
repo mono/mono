@@ -242,7 +242,7 @@ namespace System.Web.Util
 			int end = parts.Length;
 			for (int i = 0; i < end; i++) {
 				string current = parts [i];
-				if (current == "" || current == "." )
+				if (current == "." )
 					continue;
 
 				if (current == "..") {
@@ -263,7 +263,6 @@ namespace System.Web.Util
 			if (result.Count == 0)
 				return "/";
 
-			result.Insert (0, "");
 			return String.Join ("/", (string []) result.ToArray (typeof (string)));
 		}
 		
