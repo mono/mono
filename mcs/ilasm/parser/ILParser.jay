@@ -1486,17 +1486,17 @@ dataitem		: K_CHAR STAR OPEN_PARENS comp_qstring CLOSE_PARENS
 
 method_all		: method_head OPEN_BRACE method_decls CLOSE_BRACE
                           {
-                                codegen.EndMethodDef ();
+                                codegen.EndMethodDef (tokenizer.Location);
                           }
 			;
 
 method_head		: D_METHOD meth_attr call_conv param_attr type method_name
                           formal_typars_clause OPEN_PARENS sig_args CLOSE_PARENS impl_attr
                           {
-                                MethodDef methdef = new MethodDef ((MethAttr) $2, (CallConv) $3,
+                                MethodDef methdef = new MethodDef (
+					codegen, (MethAttr) $2, (CallConv) $3,
                                         (ImplAttr) $11, (string) $6, (ITypeRef) $5,
-                                        (ArrayList) $9);
-                                codegen.BeginMethodDef (methdef);
+                                        (ArrayList) $9, tokenizer.Reader.Location);
 
                                 if (pinvoke_info) {
                                         ExternModule mod = codegen.ExternTable.AddModule (pinvoke_mod);
@@ -1812,21 +1812,21 @@ seh_block		: try_block seh_clauses
 
 try_block		: D_TRY scope_block
                           {
-                                $$ = new TryBlock ((HandlerBlock) $2);
+                                $$ = new TryBlock ((HandlerBlock) $2, tokenizer.Location);
                           }
 			| D_TRY id K_TO id
                           {
 				LabelInfo from = codegen.CurrentMethodDef.AddLabelRef ((string) $2);
 				LabelInfo to = codegen.CurrentMethodDef.AddLabelRef ((string) $4);
 				
-                                $$ = new TryBlock (new HandlerBlock (from, to));
+                                $$ = new TryBlock (new HandlerBlock (from, to), tokenizer.Location);
                           }
 			| D_TRY int32 K_TO int32
 			  {
 				LabelInfo from = codegen.CurrentMethodDef.AddLabel ((int) $2);
 				LabelInfo to = codegen.CurrentMethodDef.AddLabel ((int) $4);
 				
-				$$ = new TryBlock (new HandlerBlock (from, to));
+				$$ = new TryBlock (new HandlerBlock (from, to), tokenizer.Location);
 			  }
 			;
 
@@ -1912,40 +1912,40 @@ handler_block		: scope_block
 instr			: INSTR_NONE
                           {
                                 codegen.CurrentMethodDef.AddInstr (
-                                        new SimpInstr ((Op) $1));
+                                        new SimpInstr ((Op) $1, tokenizer.Location));
                           }
 			| INSTR_LOCAL int32
                           {
                                 codegen.CurrentMethodDef.AddInstr (
-                                        new IntInstr ((IntOp) $1, (int) $2));        
+                                        new IntInstr ((IntOp) $1, (int) $2, tokenizer.Location));        
                           }
                         | INSTR_LOCAL id
                           {
                                 int slot = codegen.CurrentMethodDef.GetNamedLocalSlot ((string) $2);
                                 codegen.CurrentMethodDef.AddInstr (
-                                        new IntInstr ((IntOp) $1, slot));
+                                        new IntInstr ((IntOp) $1, slot, tokenizer.Location));
                           }
                         | INSTR_PARAM int32
                           {
                                 codegen.CurrentMethodDef.AddInstr (
-                                        new IntInstr ((IntOp) $1, (int) $2));
+                                        new IntInstr ((IntOp) $1, (int) $2, tokenizer.Location));
                           }
                         | INSTR_PARAM id
                           {
                                 int pos = codegen.CurrentMethodDef.GetNamedParamPos ((string) $2);
                                 codegen.CurrentMethodDef.AddInstr (
-                                        new IntInstr ((IntOp) $1, pos));
+                                        new IntInstr ((IntOp) $1, pos, tokenizer.Location));
                           }
 			| INSTR_I int32
                           {
                                 codegen.CurrentMethodDef.AddInstr (new
-                                        IntInstr ((IntOp) $1, (int) $2));
+                                        IntInstr ((IntOp) $1, (int) $2, tokenizer.Location));
                           }
 			| INSTR_I id
                           {
                                 int slot = codegen.CurrentMethodDef.GetNamedLocalSlot ((string) $2);
                                 codegen.CurrentMethodDef.AddInstr (new
-                                        IntInstr ((IntOp) $1, slot));
+                                        IntInstr ((IntOp) $1, slot, tokenizer.Location));
                           }
 			| INSTR_I8 int64
                           {
@@ -1953,7 +1953,7 @@ instr			: INSTR_NONE
                                         switch ((MiscInstr) $1) {
                                         case MiscInstr.ldc_i8:
                                         codegen.CurrentMethodDef.AddInstr (new LdcInstr ((MiscInstr) $1,
-                                                (long) $2));
+                                                (long) $2, tokenizer.Location));
                                         break;
                                         }
                                 }
@@ -1963,7 +1963,7 @@ instr			: INSTR_NONE
                                 switch ((MiscInstr) $1) {
                                 case MiscInstr.ldc_r4:
                                 case MiscInstr.ldc_r8:
-                                         codegen.CurrentMethodDef.AddInstr (new LdcInstr ((MiscInstr) $1, (double) $2));
+                                         codegen.CurrentMethodDef.AddInstr (new LdcInstr ((MiscInstr) $1, (double) $2, tokenizer.Location));
                                          break;
                                 }
                           }
@@ -1974,7 +1974,7 @@ instr			: INSTR_NONE
                                 switch ((MiscInstr) $1) {
                                         case MiscInstr.ldc_r4:
                                         case MiscInstr.ldc_r8:
-                                        codegen.CurrentMethodDef.AddInstr (new LdcInstr ((MiscInstr) $1, (double) l));
+                                        codegen.CurrentMethodDef.AddInstr (new LdcInstr ((MiscInstr) $1, (double) l, tokenizer.Location));
                                         break;
                                 }
                           }
@@ -1983,18 +1983,18 @@ instr			: INSTR_NONE
                           {
 				LabelInfo target = codegen.CurrentMethodDef.AddLabel ((int) $2);
                                 codegen.CurrentMethodDef.AddInstr (new BranchInstr ((BranchOp) $1,
-								   target));  
+								   target, tokenizer.Location));  
                           }
 			| INSTR_BRTARGET id
                           {
 				LabelInfo target = codegen.CurrentMethodDef.AddLabelRef ((string) $2);
                                 codegen.CurrentMethodDef.AddInstr (new BranchInstr ((BranchOp) $1,
-                                        			   target));
+                                        			   target, tokenizer.Location));
                           }
 			| INSTR_METHOD method_ref
                           {
                                 codegen.CurrentMethodDef.AddInstr (new MethodInstr ((MethodOp) $1,
-                                        (IMethodRef) $2));
+                                        (IMethodRef) $2, tokenizer.Location));
                           }
 			| INSTR_FIELD type type_spec DOUBLE_COLON id
                           {
@@ -2003,35 +2003,35 @@ instr			: INSTR_NONE
                                 IFieldRef fieldref = owner.GetFieldRef (
                                         (ITypeRef) $2, (string) $5);
 
-                                codegen.CurrentMethodDef.AddInstr (new FieldInstr ((FieldOp) $1, fieldref));
+                                codegen.CurrentMethodDef.AddInstr (new FieldInstr ((FieldOp) $1, fieldref, tokenizer.Location));
                           }
 			| INSTR_FIELD type id
                           {
                                 GlobalFieldRef fieldref = new GlobalFieldRef ((ITypeRef) $2, (string) $3);
 
-                                codegen.CurrentMethodDef.AddInstr (new FieldInstr ((FieldOp) $1, fieldref));
+                                codegen.CurrentMethodDef.AddInstr (new FieldInstr ((FieldOp) $1, fieldref, tokenizer.Location));
                           }
 			| INSTR_TYPE type_spec
                           {
                                 codegen.CurrentMethodDef.AddInstr (new TypeInstr ((TypeOp) $1,
-                                        (ITypeRef) $2));
+                                        (ITypeRef) $2, tokenizer.Location));
                           }
 			| INSTR_STRING comp_qstring
                           {
                                 if ((MiscInstr) $1 == MiscInstr.ldstr)
-                                        codegen.CurrentMethodDef.AddInstr (new LdstrInstr ((string) $2));
+                                        codegen.CurrentMethodDef.AddInstr (new LdstrInstr ((string) $2, tokenizer.Location));
                           }
 			| INSTR_STRING K_BYTEARRAY ASSIGN bytes_list
                           {
                                 byte[] bs = (byte[]) $4;
                                 if ((MiscInstr) $1 == MiscInstr.ldstr)
-                                        codegen.CurrentMethodDef.AddInstr (new LdstrInstr (bs));
+                                        codegen.CurrentMethodDef.AddInstr (new LdstrInstr (bs, tokenizer.Location));
                           }
 			| INSTR_STRING K_BYTEARRAY bytes_list
                           {
                                 byte[] bs = (byte[]) $3;
                                 if ((MiscInstr) $1 == MiscInstr.ldstr)
-                                        codegen.CurrentMethodDef.AddInstr (new LdstrInstr (bs));
+                                        codegen.CurrentMethodDef.AddInstr (new LdstrInstr (bs, tokenizer.Location));
                           }
 			| INSTR_SIG call_conv type OPEN_PARENS type_list CLOSE_PARENS
                           {
@@ -2042,23 +2042,23 @@ instr			: INSTR_NONE
                                         arg_array = (ITypeRef[]) arg_list.ToArray (typeof (ITypeRef));
 
                                 codegen.CurrentMethodDef.AddInstr (new CalliInstr ((CallConv) $2,
-                                        (ITypeRef) $3, arg_array));
+                                        (ITypeRef) $3, arg_array, tokenizer.Location));
                           }     
 			| INSTR_TOK owner_type
                           {
                                 if ((MiscInstr) $1 == MiscInstr.ldtoken) {
                                         if ($2 is IMethodRef)
-                                                codegen.CurrentMethodDef.AddInstr (new LdtokenInstr ((IMethodRef) $2));
+                                                codegen.CurrentMethodDef.AddInstr (new LdtokenInstr ((IMethodRef) $2, tokenizer.Location));
                                         else if ($2 is IFieldRef)
-                                                codegen.CurrentMethodDef.AddInstr (new LdtokenInstr ((IFieldRef) $2));
+                                                codegen.CurrentMethodDef.AddInstr (new LdtokenInstr ((IFieldRef) $2, tokenizer.Location));
                                         else
-                                                codegen.CurrentMethodDef.AddInstr (new LdtokenInstr ((ITypeRef) $2));
+                                                codegen.CurrentMethodDef.AddInstr (new LdtokenInstr ((ITypeRef) $2, tokenizer.Location));
                                                 
                                 }
                           }
 			| INSTR_SWITCH OPEN_PARENS labels CLOSE_PARENS
                           {
-                                codegen.CurrentMethodDef.AddInstr (new SwitchInstr ((ArrayList) $3));
+                                codegen.CurrentMethodDef.AddInstr (new SwitchInstr ((ArrayList) $3, tokenizer.Location));
                           }
 			;
 

@@ -56,6 +56,7 @@ namespace Mono.ILASM {
                         private bool show_method_ref = false;
                         private bool show_parser = false;
                         private bool scan_only = false;
+			private bool debugging_info = false;
                         private CodeGen codegen;
 
                         public DriverMain (string[] args)
@@ -72,7 +73,7 @@ namespace Mono.ILASM {
                                                 Usage ();
                                         if (output_file == null)
                                                 output_file = CreateOutputFile ();
-                                        codegen = new CodeGen (output_file, target == Target.Dll, true, report);
+                                        codegen = new CodeGen (output_file, target == Target.Dll, true, debugging_info, report);
                                         foreach (string file_path in il_file_list)
                                                 ProcessFile (file_path);
                                         if (scan_only)
@@ -116,6 +117,7 @@ namespace Mono.ILASM {
                                 }
 
                                 ILParser parser = new ILParser (codegen, scanner);
+				codegen.BeginSourceFile (file_path);
                                 try {
                                         if (show_parser)
                                                 parser.yyparse (new ScannerAdapter (scanner),
@@ -128,7 +130,9 @@ namespace Mono.ILASM {
                                 } catch {
                                         Console.WriteLine ("Error at: " + scanner.Reader.Location);
                                         throw;
-                                }
+                                } finally {
+					codegen.EndSourceFile ();
+				}
                         }
 
                         public void ShowToken (object sender, NewTokenEventArgs args)
@@ -219,6 +223,11 @@ namespace Mono.ILASM {
                                                         break;
                                                 Version ();
                                                 break;
+					case "-debug":
+						if (str[0] != '-')
+							break;
+						debugging_info = true;
+						break;
                                         default:
                                                 if (str [0] == '-')
                                                         break;
