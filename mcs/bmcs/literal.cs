@@ -37,6 +37,15 @@ namespace System {
 namespace Mono.CSharp {
 
 	//
+	// Unlike C#, VB.NET doesn't understand "signed byte",
+	// "unsigned short", "unsigned int" and "unsigned long" as
+	// primitive types. The NotDefinedAsPrimitiveType just exists
+	// to accomodate this fact.
+	//
+	public class NotDefinedAsPrimitiveType {
+	}
+
+	//
 	// The NullType just exists to compare type equality, and for
 	// expressions that might have the `null type'
 	//

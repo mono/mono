@@ -38,9 +38,9 @@ public partial class TypeManager {
 	static public Type value_type;
 	static public Type string_type;
 	static public Type int32_type;
-	static public Type uint32_type;
+	static Type _uint32_type;
 	static public Type int64_type;
-	static public Type uint64_type;
+	static Type _uint64_type;
 	static public Type float_type;
 	static public Type double_type;
 	static public Type char_type;
@@ -48,9 +48,9 @@ public partial class TypeManager {
 	static public Type short_type;
 	static public Type decimal_type;
 	static public Type bool_type;
-	static public Type sbyte_type;
+	static public Type _sbyte_type;
 	static public Type byte_type;
-	static public Type ushort_type;
+	static public Type _ushort_type;
 	static public Type enum_type;
 	static public Type delegate_type;
 	static public Type multicast_delegate_type;
@@ -99,6 +99,42 @@ public partial class TypeManager {
 	static public Type field_offset_attribute_type;
 	static public Type security_attr_type;
 	static public Type date_type;
+
+	//
+	// Unlike C#, VB.NET doesn't understand "signed byte",
+	// "unsigned short" and "unsigned int" as primitive types. The
+	// NotDefinedAsPrimitiveType just exists to accomodate this fact.
+	//
+
+	static Type not_defined_as_primitive_type = typeof (NotDefinedAsPrimitiveType);
+
+	public static Type sbyte_type {
+		get {
+			return not_defined_as_primitive_type;
+		}
+
+	}
+
+	public static Type ushort_type {
+		get {
+			return not_defined_as_primitive_type;
+		}
+
+	}
+
+	public static Type uint32_type {
+		get {
+			return not_defined_as_primitive_type;
+		}
+
+	}
+
+	public static Type uint64_type {
+		get {
+			return not_defined_as_primitive_type;
+		}
+
+	}
 
 	//
 	// An empty array of types
@@ -1090,12 +1126,12 @@ public partial class TypeManager {
 
 		int32_type    = CoreLookupType ("System.Int32");
 		int64_type    = CoreLookupType ("System.Int64");
-		uint32_type   = CoreLookupType ("System.UInt32"); 
-		uint64_type   = CoreLookupType ("System.UInt64"); 
+		_uint32_type   = CoreLookupType ("System.UInt32"); 
+		_uint64_type   = CoreLookupType ("System.UInt64"); 
 		byte_type     = CoreLookupType ("System.Byte");
-		sbyte_type    = CoreLookupType ("System.SByte");
+		_sbyte_type    = CoreLookupType ("System.SByte");
 		short_type    = CoreLookupType ("System.Int16");
-		ushort_type   = CoreLookupType ("System.UInt16");
+		_ushort_type   = CoreLookupType ("System.UInt16");
 	}
 	
 	/// <remarks>
@@ -1259,14 +1295,14 @@ public partial class TypeManager {
 		system_decimal_expr.Type = decimal_type;
 		system_single_expr.Type = float_type;
 		system_double_expr.Type = double_type;
-		system_sbyte_expr.Type = sbyte_type;
+		system_sbyte_expr.Type = _sbyte_type;
 		system_byte_expr.Type = byte_type;
 		system_int16_expr.Type = short_type;
-		system_uint16_expr.Type = ushort_type;
+		system_uint16_expr.Type = _ushort_type;
 		system_int32_expr.Type = int32_type;
-		system_uint32_expr.Type = uint32_type;
+		system_uint32_expr.Type = _uint32_type;
 		system_int64_expr.Type = int64_type;
-		system_uint64_expr.Type = uint64_type;
+		system_uint64_expr.Type = _uint64_type;
 		system_char_expr.Type = char_type;
 		system_void_expr.Type = void_type;
 		system_asynccallback_expr.Type = asynccallback_type;
@@ -1412,7 +1448,7 @@ public partial class TypeManager {
 			unverifiable_code_type, void_arg);
 
 		decimal_constant_attribute_ctor = GetConstructor (decimal_constant_attribute_type, new Type []
-			{ byte_type, byte_type, uint32_type, uint32_type, uint32_type } );
+			{ byte_type, byte_type, _uint32_type, _uint32_type, _uint32_type } );
 
 		default_member_ctor = GetConstructor (default_member_type, string_);
 
@@ -1584,10 +1620,10 @@ public partial class TypeManager {
 
 	public static bool IsBuiltinType (Type t)
 	{
-		if (t == object_type || t == string_type || t == int32_type || t == uint32_type ||
-		    t == int64_type || t == uint64_type || t == float_type || t == double_type ||
+		if (t == object_type || t == string_type || t == int32_type || t == _uint32_type ||
+		    t == int64_type || t == _uint64_type || t == float_type || t == double_type ||
 		    t == char_type || t == short_type || t == decimal_type || t == bool_type ||
-		    t == sbyte_type || t == byte_type || t == ushort_type || t == void_type)
+		    t == _sbyte_type || t == byte_type || t == _ushort_type || t == void_type)
 			return true;
 		else
 			return false;
@@ -1604,10 +1640,10 @@ public partial class TypeManager {
 	// 
 	public static bool IsCLRType (Type t)
 	{
-		if (t == object_type || t == int32_type || t == uint32_type ||
-		    t == int64_type || t == uint64_type || t == float_type || t == double_type ||
+		if (t == object_type || t == int32_type || t == _uint32_type ||
+		    t == int64_type || t == _uint64_type || t == float_type || t == double_type ||
 		    t == char_type || t == short_type || t == bool_type ||
-		    t == sbyte_type || t == byte_type || t == ushort_type)
+		    t == _sbyte_type || t == byte_type || t == _ushort_type)
 			return true;
 		else
 			return false;
@@ -2347,14 +2383,14 @@ public partial class TypeManager {
 			// slow path needed to compile corlib
 			if (t == TypeManager.bool_type ||
 					t == TypeManager.byte_type ||
-					t == TypeManager.sbyte_type ||
+					t == TypeManager._sbyte_type ||
 					t == TypeManager.char_type ||
 					t == TypeManager.short_type ||
-					t == TypeManager.ushort_type ||
+					t == TypeManager._ushort_type ||
 					t == TypeManager.int32_type ||
-					t == TypeManager.uint32_type ||
+					t == TypeManager._uint32_type ||
 					t == TypeManager.int64_type ||
-					t == TypeManager.uint64_type)
+					t == TypeManager._uint64_type)
 				return t;
 			throw new Exception ("Unhandled typecode in enum " + " from " + t.AssemblyQualifiedName);
 		}
@@ -2366,21 +2402,21 @@ public partial class TypeManager {
 		case TypeCode.Byte:
 			return TypeManager.byte_type;
 		case TypeCode.SByte:
-			return TypeManager.sbyte_type;
+			return TypeManager._sbyte_type;
 		case TypeCode.Char:
 			return TypeManager.char_type;
 		case TypeCode.Int16:
 			return TypeManager.short_type;
 		case TypeCode.UInt16:
-			return TypeManager.ushort_type;
+			return TypeManager._ushort_type;
 		case TypeCode.Int32:
 			return TypeManager.int32_type;
 		case TypeCode.UInt32:
-			return TypeManager.uint32_type;
+			return TypeManager._uint32_type;
 		case TypeCode.Int64:
 			return TypeManager.int64_type;
 		case TypeCode.UInt64:
-			return TypeManager.uint64_type;
+			return TypeManager._uint64_type;
 		}
 		throw new Exception ("Unhandled typecode in enum " + tc + " from " + t.AssemblyQualifiedName);
 	}
@@ -2402,21 +2438,21 @@ public partial class TypeManager {
 		case TypeCode.Byte:
 			return TypeManager.byte_type;
 		case TypeCode.SByte:
-			return TypeManager.sbyte_type;
+			return TypeManager._sbyte_type;
 		case TypeCode.Char:
 			return TypeManager.char_type;
 		case TypeCode.Int16:
 			return TypeManager.short_type;
 		case TypeCode.UInt16:
-			return TypeManager.ushort_type;
+			return TypeManager._ushort_type;
 		case TypeCode.Int32:
 			return TypeManager.int32_type;
 		case TypeCode.UInt32:
-			return TypeManager.uint32_type;
+			return TypeManager._uint32_type;
 		case TypeCode.Int64:
 			return TypeManager.int64_type;
 		case TypeCode.UInt64:
-			return TypeManager.uint64_type;
+			return TypeManager._uint64_type;
 		case TypeCode.Single:
 			return TypeManager.float_type;
 		case TypeCode.Double:

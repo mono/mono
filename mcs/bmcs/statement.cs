@@ -719,7 +719,6 @@ namespace Mono.CSharp {
 		{
 			ec.CurrentBranching.Label (vectors);
 
-
 			return true;
 		}
 

@@ -1,3 +1,27 @@
+2005-03-25  Jambunathan K  <kjambunathan.devel@gmail.com>
+	
+	* AssemblyInfo.cs: Set assembly version to 0.1
+
+	* literal.cs (NotDefinedAsPrimitiveType): New class. Unlike C#,
+	VB.NET doesn't understand "signed byte", "unsigned short",
+	"unsigned int" and "unsigned long" as primitive types. This class
+	has been introduced just to "accomodate" this fact. Now we can
+	retain most of the existing gmcs code that test against these
+	types for doing language defined conversions.
+	
+	* typemanager.cs (sbyte_type, short_type, uint32_type,uint64_type): 
+	Converted as static properties that return typeof(NotDefinedAsPrimitiveType). 
+	
+	The existing sbyte_type, short_type, uint32_type, uint64_type are
+	renamed as _sbyte_type, _short_type, _uint32_type,
+	_uint64_type. Their accessibility type is now private.
+
+	* convert.cs (NarrowingNumericConversion, WideningNumericConversion): 
+	Reverted original gmcs code that handle byte type and unsigned
+	numeric types. Remember that all this code is a "nop" because
+	of the introduction of NotDefinedAsPrimitiveType class.
+
+
 2005-03-23  Jambunathan K  <kjambunathan.devel@gmail.com>
 	* Merged with GMCS trunk 42056
 	

@@ -419,14 +419,32 @@ namespace Mono.CSharp {
 			
  			Type real_target_type = target_type;
 
-			 if (expr_type == TypeManager.byte_type){
+			if (expr_type == TypeManager.sbyte_type){
+				//
+				// From sbyte to short, int, long, float, double.
+				//
+				if (real_target_type == TypeManager.int32_type)
+					return new OpcodeCast (expr, target_type, OpCodes.Conv_I4);
+				if (real_target_type == TypeManager.int64_type)
+					return new OpcodeCast (expr, target_type, OpCodes.Conv_I8);
+				if (real_target_type == TypeManager.double_type)
+					return new OpcodeCast (expr, target_type, OpCodes.Conv_R8);
+				if (real_target_type == TypeManager.float_type)
+					return new OpcodeCast (expr, target_type, OpCodes.Conv_R4);
+				if (real_target_type == TypeManager.short_type)
+					return new OpcodeCast (expr, target_type, OpCodes.Conv_I2);
+			} else if (expr_type == TypeManager.byte_type){
 				//
 				// From byte to short, ushort, int, uint, long, ulong, float, double
 				// 
 				if ((real_target_type == TypeManager.short_type) ||
-				    (real_target_type == TypeManager.int32_type))
+				    (real_target_type == TypeManager.ushort_type) ||
+				    (real_target_type == TypeManager.int32_type) ||
+				    (real_target_type == TypeManager.uint32_type))
 					return new EmptyCast (expr, target_type);
 
+				if (real_target_type == TypeManager.uint64_type)
+					return new OpcodeCast (expr, target_type, OpCodes.Conv_U8);
 				if (real_target_type == TypeManager.int64_type)
 					return new OpcodeCast (expr, target_type, OpCodes.Conv_I8);
 				if (real_target_type == TypeManager.float_type)
@@ -449,6 +467,23 @@ namespace Mono.CSharp {
 					return new OpcodeCast (expr, target_type, OpCodes.Conv_R4);
 				if (real_target_type == TypeManager.decimal_type)
 					return new ImplicitNew (ec, "System", "Decimal", loc, expr);
+			} else if (expr_type == TypeManager.ushort_type){
+				//
+				// From ushort to int, uint, long, ulong, float, double
+				//
+				if (real_target_type == TypeManager.uint32_type)
+					return new EmptyCast (expr, target_type);
+
+				if (real_target_type == TypeManager.uint64_type)
+					return new OpcodeCast (expr, target_type, OpCodes.Conv_U8);
+				if (real_target_type == TypeManager.int32_type)
+					return new OpcodeCast (expr, target_type, OpCodes.Conv_I4);
+				if (real_target_type == TypeManager.int64_type)
+					return new OpcodeCast (expr, target_type, OpCodes.Conv_I8);
+				if (real_target_type == TypeManager.double_type)
+					return new OpcodeCast (expr, target_type, OpCodes.Conv_R8);
+				if (real_target_type == TypeManager.float_type)
+					return new OpcodeCast (expr, target_type, OpCodes.Conv_R4);
 			} else if (expr_type == TypeManager.int32_type){
 				//
 				// From int to long, float, double
@@ -461,6 +496,30 @@ namespace Mono.CSharp {
 					return new OpcodeCast (expr, target_type, OpCodes.Conv_R4);
 				if (real_target_type == TypeManager.decimal_type)
 					return new ImplicitNew (ec, "System", "Decimal", loc, expr);
+			} else if (expr_type == TypeManager.uint32_type){
+				//
+				// From uint to long, ulong, float, double
+				//
+				if (real_target_type == TypeManager.int64_type)
+					return new OpcodeCast (expr, target_type, OpCodes.Conv_U8);
+				if (real_target_type == TypeManager.uint64_type)
+					return new OpcodeCast (expr, target_type, OpCodes.Conv_U8);
+				if (real_target_type == TypeManager.double_type)
+					return new OpcodeCast (expr, target_type, OpCodes.Conv_R_Un,
+							       OpCodes.Conv_R8);
+				if (real_target_type == TypeManager.float_type)
+					return new OpcodeCast (expr, target_type, OpCodes.Conv_R_Un,
+							       OpCodes.Conv_R4);
+			} else if (expr_type == TypeManager.uint64_type){
+				//
+				// From ulong to float, double
+				//
+				if (real_target_type == TypeManager.double_type)
+					return new OpcodeCast (expr, target_type, OpCodes.Conv_R_Un,
+							       OpCodes.Conv_R8);
+				if (real_target_type == TypeManager.float_type)
+					return new OpcodeCast (expr, target_type, OpCodes.Conv_R_Un,
+							       OpCodes.Conv_R4);	
 			} else if (expr_type == TypeManager.int64_type){
 				//
 				// From long/ulong to float, double
@@ -471,6 +530,12 @@ namespace Mono.CSharp {
 					return new OpcodeCast (expr, target_type, OpCodes.Conv_R4);	
 				if (real_target_type == TypeManager.decimal_type)
 					return new ImplicitNew (ec, "System", "Decimal", loc, expr);	
+			} else if (expr_type == TypeManager.float_type){
+				//
+				// float to double
+				//
+				if (real_target_type == TypeManager.double_type)
+					return new OpcodeCast (expr, target_type, OpCodes.Conv_R8);
 			} else if (expr_type == TypeManager.decimal_type){
 				//
 				// From decimal to float, double
@@ -479,12 +544,6 @@ namespace Mono.CSharp {
 					return new ImplicitInvocation (ec, "System", "Convert", "ToDouble", loc, expr);	
 				if (real_target_type == TypeManager.float_type)
 					return new ImplicitInvocation (ec, "System", "Convert" ,"ToSingle", loc, expr);	
-			} else if (expr_type == TypeManager.float_type){
-				//
-				// float to double
-				//
-				if (real_target_type == TypeManager.double_type)
-					return new OpcodeCast (expr, target_type, OpCodes.Conv_R8);
 			}
 
 			return null;
@@ -1466,30 +1525,169 @@ namespace Mono.CSharp {
 				return ce;
 			}
 			
-			if (expr_type == TypeManager.short_type){
+			if (expr_type == TypeManager.sbyte_type){
+				//
+				// From sbyte to byte, ushort, uint, ulong, char
+				//
+				if (real_target_type == TypeManager.byte_type)
+					return new ConvCast (ec, expr, target_type, ConvCast.Mode.I1_U1);
+				if (real_target_type == TypeManager.ushort_type)
+					return new ConvCast (ec, expr, target_type, ConvCast.Mode.I1_U2);
+				if (real_target_type == TypeManager.uint32_type)
+					return new ConvCast (ec, expr, target_type, ConvCast.Mode.I1_U4);
+				if (real_target_type == TypeManager.uint64_type)
+					return new ConvCast (ec, expr, target_type, ConvCast.Mode.I1_U8);
+				if (real_target_type == TypeManager.char_type)
+					return new ConvCast (ec, expr, target_type, ConvCast.Mode.I1_CH);
+			} else if (expr_type == TypeManager.byte_type){
+				//
+				// From byte to sbyte and char
+				//
+				if (real_target_type == TypeManager.sbyte_type)
+					return new ConvCast (ec, expr, target_type, ConvCast.Mode.U1_I1);
+			} else if (expr_type == TypeManager.short_type){
 				//
 				// From short to byte
 				//
+				if (real_target_type == TypeManager.sbyte_type)
+					return new ConvCast (ec, expr, target_type, ConvCast.Mode.I2_I1);
 				if (real_target_type == TypeManager.byte_type)
 					return new ConvCast (ec, expr, target_type, ConvCast.Mode.I2_U1);
+				if (real_target_type == TypeManager.ushort_type)
+					return new ConvCast (ec, expr, target_type, ConvCast.Mode.I2_U2);
+				if (real_target_type == TypeManager.uint32_type)
+					return new ConvCast (ec, expr, target_type, ConvCast.Mode.I2_U4);
+				if (real_target_type == TypeManager.uint64_type)
+					return new ConvCast (ec, expr, target_type, ConvCast.Mode.I2_U8);
+			} else if (expr_type == TypeManager.ushort_type){
+				//
+				// From ushort to sbyte, byte, short, char
+				//
+				if (real_target_type == TypeManager.sbyte_type)
+					return new ConvCast (ec, expr, target_type, ConvCast.Mode.U2_I1);
+				if (real_target_type == TypeManager.byte_type)
+					return new ConvCast (ec, expr, target_type, ConvCast.Mode.U2_U1);
+				if (real_target_type == TypeManager.short_type)
+					return new ConvCast (ec, expr, target_type, ConvCast.Mode.U2_I2);
+				if (real_target_type == TypeManager.char_type)
+					return new ConvCast (ec, expr, target_type, ConvCast.Mode.U2_CH);
 			} else if (expr_type == TypeManager.int32_type){
 				//
 				// From int to byte, short
 				//
+				if (real_target_type == TypeManager.sbyte_type)
+					return new ConvCast (ec, expr, target_type, ConvCast.Mode.I4_I1);
 				if (real_target_type == TypeManager.byte_type)
 					return new ConvCast (ec, expr, target_type, ConvCast.Mode.I4_U1);
 				if (real_target_type == TypeManager.short_type)
 					return new ConvCast (ec, expr, target_type, ConvCast.Mode.I4_I2);
+				if (real_target_type == TypeManager.ushort_type)
+					return new ConvCast (ec, expr, target_type, ConvCast.Mode.I4_U2);
+				if (real_target_type == TypeManager.uint32_type)
+					return new ConvCast (ec, expr, target_type, ConvCast.Mode.I4_U4);
+				if (real_target_type == TypeManager.uint64_type)
+					return new ConvCast (ec, expr, target_type, ConvCast.Mode.I4_U8);
+			} else if (expr_type == TypeManager.uint32_type){
+				//
+				// From uint to sbyte, byte, short, ushort, int, char
+				//
+				if (real_target_type == TypeManager.sbyte_type)
+					return new ConvCast (ec, expr, target_type, ConvCast.Mode.U4_I1);
+				if (real_target_type == TypeManager.byte_type)
+					return new ConvCast (ec, expr, target_type, ConvCast.Mode.U4_U1);
+				if (real_target_type == TypeManager.short_type)
+					return new ConvCast (ec, expr, target_type, ConvCast.Mode.U4_I2);
+				if (real_target_type == TypeManager.ushort_type)
+					return new ConvCast (ec, expr, target_type, ConvCast.Mode.U4_U2);
+				if (real_target_type == TypeManager.int32_type)
+					return new ConvCast (ec, expr, target_type, ConvCast.Mode.U4_I4);
+				if (real_target_type == TypeManager.char_type)
+					return new ConvCast (ec, expr, target_type, ConvCast.Mode.U4_CH);
 			} else if (expr_type == TypeManager.int64_type){
 				//
 				// From long to byte, short, int
 				//
+				if (real_target_type == TypeManager.sbyte_type)
+					return new ConvCast (ec, expr, target_type, ConvCast.Mode.I8_I1);
 				if (real_target_type == TypeManager.byte_type)
 					return new ConvCast (ec, expr, target_type, ConvCast.Mode.I8_U1);
 				if (real_target_type == TypeManager.short_type)
 					return new ConvCast (ec, expr, target_type, ConvCast.Mode.I8_I2);
+				if (real_target_type == TypeManager.ushort_type)
+					return new ConvCast (ec, expr, target_type, ConvCast.Mode.I8_U2);
 				if (real_target_type == TypeManager.int32_type)
 					return new ConvCast (ec, expr, target_type, ConvCast.Mode.I8_I4);
+				if (real_target_type == TypeManager.uint32_type)
+					return new ConvCast (ec, expr, target_type, ConvCast.Mode.I8_U4);
+				if (real_target_type == TypeManager.uint64_type)
+					return new ConvCast (ec, expr, target_type, ConvCast.Mode.I8_U8);
+			} else if (expr_type == TypeManager.uint64_type){
+				//
+				// From ulong to sbyte, byte, short, ushort, int, uint, long, char
+				//
+				if (real_target_type == TypeManager.sbyte_type)
+					return new ConvCast (ec, expr, target_type, ConvCast.Mode.U8_I1);
+				if (real_target_type == TypeManager.byte_type)
+					return new ConvCast (ec, expr, target_type, ConvCast.Mode.U8_U1);
+				if (real_target_type == TypeManager.short_type)
+					return new ConvCast (ec, expr, target_type, ConvCast.Mode.U8_I2);
+				if (real_target_type == TypeManager.ushort_type)
+					return new ConvCast (ec, expr, target_type, ConvCast.Mode.U8_U2);
+				if (real_target_type == TypeManager.int32_type)
+					return new ConvCast (ec, expr, target_type, ConvCast.Mode.U8_I4);
+				if (real_target_type == TypeManager.uint32_type)
+					return new ConvCast (ec, expr, target_type, ConvCast.Mode.U8_U4);
+				if (real_target_type == TypeManager.int64_type)
+					return new ConvCast (ec, expr, target_type, ConvCast.Mode.U8_I8);
+				if (real_target_type == TypeManager.char_type)
+					return new ConvCast (ec, expr, target_type, ConvCast.Mode.U8_CH);
+			} else if (expr_type == TypeManager.float_type){
+				//
+				// From float to byte, short, int, long, decimal
+				//
+				if (real_target_type == TypeManager.sbyte_type)
+					return new ConvCast (ec, expr, target_type, ConvCast.Mode.R4_I1);
+				if (real_target_type == TypeManager.byte_type)
+					return new FloatingToFixedCast (ec, expr, target_type, ConvCast.Mode.R8_U1);
+				if (real_target_type == TypeManager.short_type)
+					return new FloatingToFixedCast (ec, expr, target_type, ConvCast.Mode.R8_I2);
+				if (real_target_type == TypeManager.ushort_type)
+					return new ConvCast (ec, expr, target_type, ConvCast.Mode.R4_U2);
+				if (real_target_type == TypeManager.int32_type)
+					return new FloatingToFixedCast (ec, expr, target_type, ConvCast.Mode.R8_I4);
+				if (real_target_type == TypeManager.uint32_type)
+					return new ConvCast (ec, expr, target_type, ConvCast.Mode.R4_U4);
+				if (real_target_type == TypeManager.int64_type)
+					return new FloatingToFixedCast (ec, expr, target_type, ConvCast.Mode.R8_I8);
+				if (real_target_type == TypeManager.uint64_type)
+					return new ConvCast (ec, expr, target_type, ConvCast.Mode.R4_U8);
+				if (real_target_type == TypeManager.decimal_type)
+					return new ImplicitNew (ec, "System", "Decimal", loc, expr);	
+			} else if (expr_type == TypeManager.double_type){
+				//
+				// From double to byte, short, int, long, float, decimal
+				//
+				if (real_target_type == TypeManager.sbyte_type)
+					return new ConvCast (ec, expr, target_type, ConvCast.Mode.R8_I1);
+				if (real_target_type == TypeManager.byte_type)
+					return new FloatingToFixedCast (ec, expr, target_type, ConvCast.Mode.R8_U1);
+				if (real_target_type == TypeManager.short_type)
+					return new FloatingToFixedCast (ec, expr, target_type, ConvCast.Mode.R8_I2);
+				if (real_target_type == TypeManager.ushort_type)
+					return new ConvCast (ec, expr, target_type, ConvCast.Mode.R8_U2);
+				if (real_target_type == TypeManager.int32_type)
+					return new ConvCast (ec, expr, target_type, ConvCast.Mode.R8_I4);
+				if (real_target_type == TypeManager.uint32_type)
+					return new ConvCast (ec, expr, target_type, ConvCast.Mode.R8_U4);
+				if (real_target_type == TypeManager.int64_type)
+					return new ConvCast (ec, expr, target_type, ConvCast.Mode.R8_I8);
+				if (real_target_type == TypeManager.uint64_type)
+					return new ConvCast (ec, expr, target_type, ConvCast.Mode.R8_U8);
+
+				if (real_target_type == TypeManager.float_type)
+					return new ConvCast (ec, expr, target_type, ConvCast.Mode.R8_R4);
+				if (real_target_type == TypeManager.decimal_type)
+					return new ImplicitNew (ec, "System", "Decimal", loc, expr);
 			} else if (expr_type == TypeManager.decimal_type){
 				//
 				// From decimal to byte, short, int, long
@@ -1502,36 +1700,6 @@ namespace Mono.CSharp {
 					return new ImplicitInvocation (ec, "System", "Convert", "ToInt32", loc, expr);	
 				if (real_target_type == TypeManager.int64_type)
 					return new ImplicitInvocation (ec, "System", "Convert", "ToInt64", loc, expr);	
-			} else if (expr_type == TypeManager.float_type){
-				//
-				// From float to byte, short, int, long, decimal
-				//
-				if (real_target_type == TypeManager.byte_type)
-					return new FloatingToFixedCast (ec, expr, target_type, ConvCast.Mode.R8_U1);
-				if (real_target_type == TypeManager.short_type)
-					return new FloatingToFixedCast (ec, expr, target_type, ConvCast.Mode.R8_I2);
-				if (real_target_type == TypeManager.int32_type)
-					return new FloatingToFixedCast (ec, expr, target_type, ConvCast.Mode.R8_I4);
-				if (real_target_type == TypeManager.int64_type)
-					return new FloatingToFixedCast (ec, expr, target_type, ConvCast.Mode.R8_I8);
-				if (real_target_type == TypeManager.decimal_type)
-					return new ImplicitNew (ec, "System", "Decimal", loc, expr);	
-			} else if (expr_type == TypeManager.double_type){
-				//
-				// From double to byte, short, int, long, float, decimal
-				//
-				if (real_target_type == TypeManager.byte_type)
-					return new FloatingToFixedCast (ec, expr, target_type, ConvCast.Mode.R8_U1);
-				if (real_target_type == TypeManager.short_type)
-					return new FloatingToFixedCast (ec, expr, target_type, ConvCast.Mode.R8_I2);
-				if (real_target_type == TypeManager.int32_type)
-					return new ConvCast (ec, expr, target_type, ConvCast.Mode.R8_I4);
-				if (real_target_type == TypeManager.int64_type)
-					return new ConvCast (ec, expr, target_type, ConvCast.Mode.R8_I8);
-				if (real_target_type == TypeManager.float_type)
-					return new ConvCast (ec, expr, target_type, ConvCast.Mode.R8_R4);
-				if (real_target_type == TypeManager.decimal_type)
-					return new ImplicitNew (ec, "System", "Decimal", loc, expr);
 			} 
 
 			return null;
