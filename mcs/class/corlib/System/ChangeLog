@@ -1,3 +1,9 @@
+2005-01-02  Ben Maurer  <bmaurer@ximian.com>
+
+	* Int32.cs: NumberStyles.AllowExponent was supported by the
+	Int32.Parse function. From Akira <mei@work.email.ne.jp>. Fixes bug
+	70469.
+
 2005-01-01  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* Base64FormattingOptions.cs : it was not in System namespace.
