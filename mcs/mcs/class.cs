@@ -676,6 +676,14 @@ namespace Mono.CSharp {
 						return null;
 					}
 				}
+
+				for (int x = 0; x < j; x++) {
+					if (t == ifaces [x]) {
+						Report.Error (528, "`" + name + "' is already listed in interface list");
+						error = true;
+						return null;
+					}
+				}
 				
 				ifaces [j] = t;
 			}
