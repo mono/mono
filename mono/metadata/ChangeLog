@@ -1,4 +1,3 @@
-
 Mon Apr 8 17:17:04 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
 	* appdomain.h, appdomain.c: split initialization that requires the
@@ -8,6 +7,7 @@ Mon Apr 8 17:17:04 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
 	* class.c (mono_class_init): don't include vtable inside MonoClass
 	to save some memory, gather some statistics.
+	(mono_class_vtable): use g_malloc instead of GC_malloc when possible
 
 Sat Apr 6 20:07:48 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
