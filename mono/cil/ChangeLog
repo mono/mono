@@ -1,3 +1,9 @@
+Mon Jul  2 15:31:31 CEST 2001 Paolo Molaro <lupus@ximian.com>
+
+	* cil-opcodes.xml: use a more proper XML format (single root tag).
+	* make-opcodes-def.pl: use XML::Parser, remove debugging print that
+	broke compilation, corrected opcode byte len.
+
 2001-07-01  Miguel de Icaza  <miguel@ximian.com>
 
 	* cil-opcodes.xml: New file that describes the CIL opcodes in

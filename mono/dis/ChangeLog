@@ -1,3 +1,7 @@
+Tue,  3 Jul 2001 18:32:10 +0200 Paolo Molaro <lupus@ximian.com>
+
+	* main.c: return on failure.
+
 2001-07-02  Miguel de Icaza  <miguel@ximian.com>
 
 	* dis-cil.c (get_encoded_user_string): Return a string from the

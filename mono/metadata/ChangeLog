@@ -1,3 +1,8 @@
+Tue Jul  3 18:33:32 CEST 2001 Paolo Molaro <lupus@ximian.com>
+
+	* assembly.c: g_free(ii->cli_sections) (and avoid double free of
+	cli_section_tables).
+
 2001-07-01  Miguel de Icaza  <miguel@ximian.com>
 
 	* metadata.c (mono_metadata_user_string): New function, provides
