@@ -1,3 +1,14 @@
+2003-04-17  Zoltan Varga  <vargaz@freemail.hu>
+
+	* object.c (mono_class_compute_gc_descriptor): Update comment.
+
+	* loader.h marshal.h marshal.c: Added synchronized method wrappers.
+
+	* image.h: Add synchronized wrapper cache.
+
+	* image.c (do_mono_image_open): Initialize cache.
+
+	* reflection.c (create_dynamic_mono_image): Initialize cache.
 
 2003-04-16  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
