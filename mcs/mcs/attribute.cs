@@ -192,7 +192,7 @@ namespace Mono.CSharp {
 		/// <summary>
                 ///   Tries to resolve the type of the attribute. Flags an error if it can't, and complain is true.
                 /// </summary>
-		protected virtual Type CheckAttributeType (EmitContext ec)
+		Type CheckAttributeType (EmitContext ec)
 		{
 			Type t1, t2;
 
@@ -236,7 +236,7 @@ namespace Mono.CSharp {
 			return null;
 		}
 
-		public Type ResolveType (EmitContext ec)
+		public virtual Type ResolveType (EmitContext ec)
 		{
 			if (Type == null)
 				Type = CheckAttributeType (ec);
@@ -1218,46 +1218,39 @@ namespace Mono.CSharp {
 			ns = container.NamespaceEntry;
 		}
 
-		protected override Type CheckAttributeType (EmitContext ec)
+		void Enter ()
 		{
 			// RootContext.Tree.Types has a single NamespaceEntry which gets overwritten
 			// each time a new file is parsed.  However, we need to use the NamespaceEntry
 			// in effect where the attribute was used.  Since code elsewhere cannot assume
 			// that the NamespaceEntry is right, just overwrite it.
 			//
-			// Precondition: RootContext.Tree.Types == null || RootContext.Tree.Types == ns.
-			//               The second case happens when we are recursively invoked from inside Emit.
+			// Precondition: RootContext.Tree.Types == null
 
-			NamespaceEntry old = null;
-			if (ec.DeclSpace == RootContext.Tree.Types) {
-				old = ec.DeclSpace.NamespaceEntry;
-				ec.DeclSpace.NamespaceEntry = ns;
-				if (old != null && old != ns)
-					throw new InternalErrorException (Location + " non-null NamespaceEntry " + old);
-			}
+			if (RootContext.Tree.Types.NamespaceEntry != null)
+				throw new InternalErrorException (Location + " non-null NamespaceEntry");
 
-			Type retval = base.CheckAttributeType (ec);
+			RootContext.Tree.Types.NamespaceEntry = ns;
+		}
 
-			if (ec.DeclSpace == RootContext.Tree.Types)
-				ec.DeclSpace.NamespaceEntry = old;
+		void Leave ()
+		{
+			RootContext.Tree.Types.NamespaceEntry = null;
+		}
 
+		public override Type ResolveType (EmitContext ec)
+		{
+			Enter ();
+			Type retval = base.ResolveType (ec);
+			Leave ();
 			return retval;
 		}
 
 		public override CustomAttributeBuilder Resolve (EmitContext ec)
 		{
-			if (ec.DeclSpace == RootContext.Tree.Types) {
-				NamespaceEntry old = ec.DeclSpace.NamespaceEntry;
-				ec.DeclSpace.NamespaceEntry = ns;
-				if (old != null)
-					throw new InternalErrorException (Location + " non-null NamespaceEntry " + old);
-			}
-
+			Enter ();
 			CustomAttributeBuilder retval = base.Resolve (ec);
-
-			if (ec.DeclSpace == RootContext.Tree.Types)
-				ec.DeclSpace.NamespaceEntry = null;
-
+			Leave ();
 			return retval;
 		}
 	}

@@ -1,3 +1,11 @@
+2005-01-28  Raja R Harinath  <rharinath@novell.com>
+
+	* attribute.cs (Attribute.CheckAttributeType): Make private
+	non-virtual.
+	(Attribute.ResolveType): Make virtual.
+	(GlobalAttribute.ResolveType,GlobalAttribute.Resolve): Simplify
+	handling of RootContext.Tree.Types.
+
 2005-01-27  Raja R Harinath  <rharinath@novell.com>
 
 	Update attribute-handling to use the SimpleName/MemberAccess
