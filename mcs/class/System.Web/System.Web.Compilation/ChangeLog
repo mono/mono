@@ -1,5 +1,10 @@
 2003-05-06  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* CompilationException.cs: don't add duplicated lines in the case that
+	mcs reports several errors for the same one.
+
+2003-05-06  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* AspGenerator.cs: fully support including files, ie., treat them just
 	as C treats #includes.
 

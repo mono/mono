@@ -78,7 +78,7 @@ namespace System.Web.Compilation
 				if (errorLines == null && errors != null) {
 					ArrayList list = new ArrayList ();
 					foreach (CompilerError err in errors) {
-						if (err.Line != 0)
+						if (err.Line != 0 && !list.Contains (err.Line))
 							list.Add (err.Line);
 					}
 					errorLines = (int []) list.ToArray (typeof (int));
