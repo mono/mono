@@ -1,3 +1,9 @@
+2004-07-22  Dick Porter  <dick@ximian.com>
+
+	* timed-thread.c: 
+	* threads.c: Move the destruction of the internal thread data to
+	after the thread has been joined.  Fixes bug 61418.
+
 2004-07-14  Dick Porter  <dick@ximian.com>
 
 	* wait.c (test_and_own): When not waiting for all handles to
