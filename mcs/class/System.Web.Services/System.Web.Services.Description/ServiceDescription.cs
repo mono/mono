@@ -142,7 +142,9 @@ namespace System.Web.Services.Description {
 
 		public static bool CanRead (XmlReader reader)
 		{
-			return serializer.CanDeserialize (reader);
+			reader.MoveToContent ();
+			return reader.LocalName == "definitions" && 
+				reader.NamespaceURI == "http://schemas.xmlsoap.org/wsdl/";
 		}
 
 		public static ServiceDescription Read (Stream stream)

@@ -1,3 +1,7 @@
+2003-10-20  Lluis Sanchez Gual <lluis@ximian.com>
+
+	* ServiceDescription.cs: Fixed implementation of CanRead.
+
 2003-10-15  Lluis Sanchez Gual <lluis@ximian.com>
 
 	* MessageBinding.cs: Name property should be null by default.
