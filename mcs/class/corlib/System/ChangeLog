@@ -1,3 +1,8 @@
+
+Thu Jun 26 16:06:35 CEST 2003 Paolo Molaro <lupus@ximian.com>
+
+	* FloatingPointFormatter.cs: use dec_len2 as default precision.
+
 2003-06-26  Lluis Sanchez Gual <lluis@ximian.com>
 
 	* Object.cs: Object must have the Serializable attribute.

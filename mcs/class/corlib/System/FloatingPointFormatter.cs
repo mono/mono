@@ -127,7 +127,7 @@ namespace System {
 
 		private bool ParseFormat (out char specifier, out int precision) {
 			specifier = '\0';
-			precision = dec_len;
+			precision = dec_len2;
 			// FIXME: Math.Round is used and the max is 15.
 			if (precision > 15)
 				precision = 15;
