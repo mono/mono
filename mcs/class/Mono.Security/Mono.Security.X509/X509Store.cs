@@ -10,6 +10,7 @@
 using System;
 using System.Collections;
 using System.IO;
+using System.Text;
 
 using Mono.Security.X509.Extensions;
 
@@ -21,6 +22,7 @@ namespace Mono.Security.X509 {
 		private X509CertificateCollection _certificates;
 		private ArrayList _crls;
 		private bool _crl;
+		private string _name;
 
 		internal X509Store (string path, bool crl) 
 		{
@@ -40,12 +42,26 @@ namespace Mono.Security.X509 {
 		}
 
 		public ArrayList CRLs {
-			get { 
+			get {
 				// CRL aren't applicable to all stores
-				if ((_crls == null) && (_crl)) {
+				// but returning null is a little rude
+				if (!_crl) {
+					_crls = new ArrayList ();
+				}
+				if (_crls == null) {
 					_crls = BuildCRLsCollection (_storePath);
 				}
 				return _crls; 
+			}
+		}
+
+		public string Name {
+			get {
+				if (_name == null) {
+					int n = _storePath.LastIndexOf (Path.DirectorySeparatorChar);
+					_name = _storePath.Substring (n+1);
+				}
+				return _name;
 			}
 		}
 
@@ -90,22 +106,29 @@ namespace Mono.Security.X509 {
 		private string GetUniqueName (X509Certificate certificate) 
 		{
 			string method = null;
-			string uniquename = null;
+			byte[] name = null;
 
 			// We prefer Subject Key Identifier as the unique name
 			// as it will provide faster lookups
 			X509Extension ext = certificate.Extensions ["2.5.29.14"];
 			if (ext != null) {
 				SubjectKeyIdentifierExtension ski = new SubjectKeyIdentifierExtension (ext);
-				uniquename = Convert.ToBase64String (ski.Identifier);
+				name = ski.Identifier;
 				method = "ski";
 			}
 			else {
 				method = "tbp"; // thumbprint
-				uniquename = Convert.ToBase64String (certificate.Hash);
+				name = certificate.Hash;
 			}
 
-			return String.Format ("{0}{1}.cer", method, uniquename);
+			StringBuilder sb = new StringBuilder (method);
+			sb.Append ("-");
+			foreach (byte b in name) {
+				sb.Append (b.ToString ("X2"));
+			}
+			sb.Append (".cer");
+
+			return sb.ToString ();
 		}
 
 		private byte[] Load (string filename) 
@@ -144,8 +167,16 @@ namespace Mono.Security.X509 {
 			string[] files = Directory.GetFiles (path, "*.cer");
 			if ((files != null) && (files.Length > 0)) {
 				foreach (string file in files) {
-					X509Certificate cert = LoadCertificate (file);
-					coll.Add (cert);
+					try {
+						X509Certificate cert = LoadCertificate (file);
+						coll.Add (cert);
+					}
+					catch {
+						// in case someone is dumb enough
+						// (like me) to include a base64
+						// encoded certs (or other junk 
+						// into the store).
+					}
 				}
 			}
 			return coll;
@@ -158,8 +189,13 @@ namespace Mono.Security.X509 {
 			string[] files = Directory.GetFiles (path, "*.crl");
 			if ((files != null) && (files.Length > 0)) {
 				foreach (string file in files) {
-					X509CRL crl = LoadCRL (file);
-					list.Add (crl);
+					try {
+						X509CRL crl = LoadCRL (file);
+						list.Add (crl);
+					}
+					catch {
+						// junk catcher
+					}
 				}
 			}
 			return list;
