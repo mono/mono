@@ -1,3 +1,9 @@
+2002-12-29  Ville Palo <vi64pa@koti.soon.fi>
+
+	* DataRow.cs: Little fix to indexer and DataColumnCang* trigger fixes.
+	* DataTable.cs: Added ChanginDataColumn () for triggering 
+	DataColumnChanging event
+	
 2002-12-28  Ville Palo <vi64pa@koti.soon.fi>
 
 	* DataSet.cs: Indentations to WriteXmlSchema () and one little fix

@@ -7,6 +7,7 @@
 //   Daniel Morgan <danmorg@sc.rr.com>
 //   Rodrigo Moya <rodrigo@ximian.com>
 //   Tim Coleman (tim@timcoleman.com)
+//   Ville Palo <vi64pa@koti.soon.fi>
 //
 // (C) Chris Podurgiel
 // (C) Ximian, Inc 2002
@@ -116,6 +117,12 @@ namespace System.Data {
 		{
 			DataColumnChangeEventArgs e = new DataColumnChangeEventArgs (dr, dc, pv);
 			OnColumnChanged(e);
+		}
+
+		internal void ChangingDataColumn (DataRow dr, DataColumn dc, object pv)
+		{
+			DataColumnChangeEventArgs e = new DataColumnChangeEventArgs (dr, dc, pv);
+			OnColumnChanging (e);
 		}
 
 		internal void DeletedDataRow (DataRow dr, DataRowAction action)

@@ -5,6 +5,7 @@
 //   Rodrigo Moya <rodrigo@ximian.com>
 //   Daniel Morgan <danmorg@sc.rr.com>
 //   Tim Coleman <tim@timcoleman.com>
+//   Ville Palo <vi64pa@koti.soon.fi>
 //
 // (C) Ximian, Inc 2002
 // (C) Daniel Morgan 2002
@@ -13,6 +14,7 @@
 
 using System;
 using System.Collections;
+using System.Globalization;
 
 namespace System.Data {
 	/// <summary>
@@ -100,7 +102,7 @@ namespace System.Data {
 				value = (value == null) ? DBNull.Value : value;
 				bool objIsDBNull = value.Equals(DBNull.Value);
 				if (column == null)
-					throw new ArgumentNullException ();
+					throw new ArgumentNullException (Locale.GetText ("'column' argument cannot be null."));
 				int columnIndex = _table.Columns.IndexOf (column);
 				if (columnIndex == -1)
 					throw new ArgumentException ();
@@ -113,6 +115,8 @@ namespace System.Data {
 
 				if (rowState == DataRowState.Deleted)
 					throw new DeletedRowInaccessibleException ();
+
+				_table.ChangingDataColumn (this, column, value);
 
 				//MS Implementation doesn't seem to create the proposed or original
 				//set of values when a datarow has just been created or added to the
@@ -128,13 +132,16 @@ namespace System.Data {
 				else {
 					BeginEdit ();  // implicitly called
 
-					rowState = DataRowState.Modified;
-
 					if(objIsDBNull)
 						proposed[columnIndex] = DBNull.Value;
 					else
 						proposed[columnIndex] = value;
+
 					_table.ChangedDataColumn (this, column, value);
+
+					rowState = DataRowState.Modified;
+					current [columnIndex] = proposed[columnIndex];
+					proposed[columnIndex] = null;
 				}
 
 				//Don't know if this is the rigth thing to do,
@@ -191,7 +198,7 @@ namespace System.Data {
 					return column.DefaultValue;
 
 				if (!HasVersion (version))
-					throw new VersionNotFoundException ();
+					throw new VersionNotFoundException (Locale.GetText ("There is no " + version.ToString () + " data to access."));
 
 				switch (version)
 				{
