@@ -1,3 +1,9 @@
+
+Tue Jun 10 19:00:31 CEST 2003 Paolo Molaro <lupus@ximian.com>
+
+	* tramp-x86.c, tramp-ppc.c, debug-mini.c: move arch-specific code
+	to arch-specific files.
+
 2003-06-09  Martin Baulig  <martin@ximian.com>
 
 	* Makefile.am (libs): Added $(LIBGC_LIBS).
