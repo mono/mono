@@ -1,3 +1,7 @@
+2004-02-04 Lluis Sanchez Gual <lluis@ximian.com>
+
+	* DataSet.cs: Added missing method that broke the build.
+
 2004-02-04 Eran Domb <erand@mainsoft.com>
 
 	* DataRowCollection.cs (InsertAt): Add a check for null row. Replace check of IndexOf with RowId for

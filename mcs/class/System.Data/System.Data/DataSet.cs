@@ -1613,12 +1613,16 @@ namespace System.Data {
 
 		private void SetRowsID()
 		{
-			foreach (DataTable Table in Tables) {
-				int dataRowID = 0;
-				foreach (DataRow Row in Table.Rows) {
-					Row.XmlRowID = dataRowID;
-					dataRowID++;
-				}
+			foreach (DataTable Table in Tables)
+				SetTableRowsID (Table);
+		}
+		
+		private void SetTableRowsID (DataTable Table)
+		{
+			int dataRowID = 0;
+			foreach (DataRow Row in Table.Rows) {
+				Row.XmlRowID = dataRowID;
+				dataRowID++;
 			}
 		}
 
