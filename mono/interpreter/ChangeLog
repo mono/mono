@@ -1,3 +1,9 @@
+
+Thu Aug 23 12:04:34 CEST 2001 Paolo Molaro <lupus@ximian.com>
+
+	* interp.c: removed beforefieldinit check, it's a useless flag.
+	Added a couple more test cases to tests/ dir.
+
 2001-08-22  Miguel de Icaza  <miguel@ximian.com>
 
 	* interp.c (usage): Add version information
