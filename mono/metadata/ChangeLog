@@ -1,3 +1,23 @@
+2003-08-21  Zoltan Varga  <vargaz@freemail.hu>
+
+	* image.c (mono_image_init): Fixed warnings.
+
+	* class.c (mono_class_from_typeref): Handle assembly load failure
+	correctly.
+
+	* appdomain.c (add_assemblies_to_domain): Handle the case when
+	the references of an assembly are not yet loaded.
+
+	* metadata.c image.c assembly.c: Moved initialization of global
+	variables to a separate function called at startup since lazy 
+	initialization of these variables is not thread safe.
+	
+	* image.c assembly.c: Made this module thread safe by adding locks in 
+	the appropriate places.
+
+	* domain.c (mono_init): Call the new initialization functions of the
+	three modules.
+
 2003-08-20  Lluis Sanchez Gual  <lluis@ximian.com>
 
 	* marshal.c: mono_delegate_begin_invoke(): If the target is a proxy,
