@@ -41,14 +41,14 @@ prefix/lib/mono with the name NAME, and a symlink is created from
 NAME/assembly_name to the assembly on the GAC.  This is used so
 developers can reference a set of libraries at once.
 .Sp
-The -root option is used by developers integrating this with automake
-tools or packaging tools that require a prefix directory to be
-specified.  The root represents the "libdir" component of a prefix
-(typically prefix/lib).
+The -root option is used to specify the "libdir" value of an installation 
+prefix which differs from the prefix of the system GAC.
+Typical automake usage is "-root $(DESTDIR)$(libdir)".
+To access assemblies installed to a prefix other than the mono prefix, 
+it is necessary to set the MONO_GAC_PREFIX environment variable.
 .Sp
-The -gacdir option is used to specify the GACs base directory. Once an
-assembly has been installed to a non standard gacdir the MONO_GAC_PREFIX
-environment variable must be used to access the assembly.
+The -gacdir option is included for backward compatibility but is not
+recommended for new code. Use the -root option instead.
 .Sp
 The -check_refs option is used to ensure that the assembly being
 installed into the GAC does not reference any non strong named
