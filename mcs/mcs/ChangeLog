@@ -1,3 +1,12 @@
+2004-04-28  Martin Baulig  <martin@ximian.com>
+
+	* constant.cs (StringConstant.Emit): Emit Ldnull if we're null.
+
+	* const.cs (Const.LookupConstantValue): Return a `bool' signalling
+	success and added `out object value'.  Use a `bool resolved' field
+	to check whether we've already been called rather than
+	`ConstantValue != null' since this breaks for NullLiterals.
+
 2004-04-28  Raja R Harinath  <rharinath@novell.com>
 
 	* driver.cs (Driver.MainDriver) [IsModuleOnly]: Open code the

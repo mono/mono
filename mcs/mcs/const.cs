@@ -28,6 +28,7 @@ namespace Mono.CSharp {
 		public Expression Expr;
 		EmitContext const_ec;
 
+		bool resolved = false;
 		object ConstantValue = null;
 		Type type;
 
@@ -177,16 +178,19 @@ namespace Mono.CSharp {
 		///  Looks up the value of a constant field. Defines it if it hasn't
 		///  already been. Similar to LookupEnumValue in spirit.
 		/// </summary>
-		public object LookupConstantValue ()
+		public bool LookupConstantValue (out object value)
 		{
-			if (ConstantValue != null)
-				return ConstantValue;
+			if (resolved) {
+				value = ConstantValue;
+				return true;
+			}
 
 			if (in_transit) {
 				Report.Error (110, Location,
 					      "The evaluation of the constant value for `" +
 					      Name + "' involves a circular definition.");
-				return null;
+				value = null;
+				return false;
 			}
 
 			in_transit = true;
@@ -195,8 +199,10 @@ namespace Mono.CSharp {
 			//
 			// We might have cleared Expr ourselves in a recursive definition
 			//
-			if (Expr == null)
-				return null;
+			if (Expr == null){
+				value = null;
+				return false;
+			}
 			
 			Expr = Expr.Resolve (const_ec);
 
@@ -205,7 +211,8 @@ namespace Mono.CSharp {
 			if (Expr == null) {
 				if (errors == Report.Errors)
 					Report.Error (150, Location, "A constant value is expected");
-				return null;
+				value = null;
+				return false;
 			}
 
 			Constant ce = Expr as Constant;
@@ -223,19 +230,23 @@ namespace Mono.CSharp {
 					Expr = ac.TurnIntoConstant ();
 					if (Expr == null){
 						Report.Error (150, Location, "A constant value is expected");
-						return null;
+						value = null;
+						return false;
 					}
 				} else {
 					if (errors == Report.Errors)
 						Report.Error (150, Location, "A constant value is expected");
-					return null;
+					value = null;
+					return false;
 				}
 			}
 
 			if (type != ce.Type) {
 				ce = ChangeType (Location, ce, type);
-				if (ce == null)
-					return null;
+				if (ce == null){
+					value = null;
+					return false;
+				}
 				Expr = ce;
 			}
 			ConstantValue = ce.GetValue ();
@@ -258,9 +269,11 @@ namespace Mono.CSharp {
 			FieldBuilder.SetConstant (ConstantValue);
 
 			if (!TypeManager.RegisterFieldValue (FieldBuilder, ConstantValue))
-				return null;
+				throw new Exception ("Cannot register const value");
 
-			return ConstantValue;
+			value = ConstantValue;
+			resolved = true;
+			return true;
 		}
 		
 		
@@ -269,7 +282,8 @@ namespace Mono.CSharp {
 		/// </summary>
 		public override void Emit (TypeContainer parent)
 		{
-			LookupConstantValue ();
+			object value;
+			LookupConstantValue (out value);
 			base.Emit (parent);
 		}
 	}
