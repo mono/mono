@@ -1,3 +1,12 @@
+2004-01-15  Zoltan Varga  <vargaz@freemail.hu>
+
+	* AssemblyBuilder.cs (Save): If the entry point is in a module, create
+	a new entry point which calls the real one, since the entry point must
+	be in the module which contains the manifest.
+
+	* ModuleBuilder.cs (Save): Create the global type automatically if not
+	already done.
+
 2004-01-13  Zoltan Varga  <vargaz@freemail.hu>
 
 	* AssemblyBuilder.cs (DefineVersionInfoResource): Set more 

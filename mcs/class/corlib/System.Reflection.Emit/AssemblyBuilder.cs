@@ -537,6 +537,28 @@ namespace System.Reflection.Emit {
 			if (!is_module_only)
 				mainModule.IsMain = true;
 
+			/* 
+			 * Create a new entry point if the one specified
+			 * by the user is in another module.
+			 */
+			if ((entry_point != null) && entry_point.DeclaringType.Module != mainModule) {
+				Type[] paramTypes;
+				if (entry_point.GetParameters ().Length == 1)
+					paramTypes = new Type [] { typeof (string) };
+				else
+					paramTypes = new Type [0];
+
+				MethodBuilder mb = mainModule.DefineGlobalMethod ("__EntryPoint$", MethodAttributes.Static|MethodAttributes.PrivateScope, typeof (void), paramTypes);
+				ILGenerator ilgen = mb.GetILGenerator ();
+				if (paramTypes.Length == 1)
+					ilgen.Emit (OpCodes.Ldarg_0);
+				ilgen.Emit (OpCodes.Tailcall);
+				ilgen.Emit (OpCodes.Call, entry_point);
+				ilgen.Emit (OpCodes.Ret);
+
+				entry_point = mb;
+			}
+
 			if (version_res != null)
 				DefineVersionInfoResourceImpl (assemblyFileName);
 			

@@ -594,6 +594,9 @@ namespace System.Reflection.Emit {
 			if (transient)
 				return;
 
+			if ((global_type != null) && (global_type_created == null))
+				global_type_created = global_type.CreateType ();
+
 			if (resource_writers != null) {
 				for (int i = 0; i < resource_writers.Count; ++i) {
 					ResourceWriter writer = (ResourceWriter)resource_writers [i];
