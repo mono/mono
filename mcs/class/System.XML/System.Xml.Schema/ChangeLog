@@ -1,3 +1,9 @@
+2004-10-28  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlSchemaAttributeGroup.cs, XmlSchemaGroup.cs :
+	  in 2.0, QualifiedName properties are public.
+	* XmlSchemaType.cs : TypeCode is [XmlIgnore] (anyways ignored though).
+
 2004-10-22  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlSchemaType.cs : Implemented GetBuiltInComplexType(XmlTypeCode).

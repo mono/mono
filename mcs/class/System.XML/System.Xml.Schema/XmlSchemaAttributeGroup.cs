@@ -52,6 +52,7 @@ namespace System.Xml.Schema
 		public XmlSchemaAttributeGroup()
 		{
 			attributes  = new XmlSchemaObjectCollection();
+			qualifiedName = XmlQualifiedName.Empty;
 		}
 
 		[System.Xml.Serialization.XmlAttribute("name")]
@@ -92,7 +93,11 @@ namespace System.Xml.Schema
 		}
 
 		[XmlIgnore]
+#if NET_2_0
+		public XmlQualifiedName QualifiedName 
+#else
 		internal XmlQualifiedName QualifiedName 
+#endif
 		{
 			get{ return qualifiedName;}
 		}

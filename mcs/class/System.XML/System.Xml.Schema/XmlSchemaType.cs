@@ -137,6 +137,7 @@ namespace System.Xml.Schema
 		[MonoTODO]
 		// LAMESPEC: for IDREFS it returns Idref. for ENTITIES 
 		// it returns Entity. for NMTOKENS it returns NmToken.
+		[XmlIgnore]
 		public XmlTypeCode TypeCode {
 			get {
 				if (this == XmlSchemaComplexType.AnyType)
