@@ -1,3 +1,9 @@
+2002-08-23  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* CompilerError.cs: implemented.
+	* CompilerErrorCollection.cs: stubbed out and fix inheritance.
+	* GeneratorSupport.cs: fixed values.
+
 2002-05-28  Daniel Stodden <stodden@in.tum.de>
 
 	* CodeDomProvider.cs: added, incomplete
