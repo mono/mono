@@ -62,7 +62,7 @@ namespace System.Drawing
 		[MonoTODO]
 		public void Clear (Color color)
 		{
-			throw new NotImplementedException ();
+			implementation.Clear (color);
 		}
 
 		[MonoTODO]
