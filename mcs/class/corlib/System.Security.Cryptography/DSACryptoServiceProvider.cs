@@ -105,7 +105,7 @@ namespace System.Security.Cryptography {
 			set {
 				persistKey = value;
 				if (persistKey)
-					OnKeyGenerated (dsa);
+					OnKeyGenerated (dsa, null);
 			}
 		}
 
@@ -218,7 +218,7 @@ namespace System.Security.Cryptography {
 
 		// private stuff
 
-		private void OnKeyGenerated (object sender) 
+		private void OnKeyGenerated (object sender, EventArgs e) 
 		{
 			// the key isn't persisted and we want it persisted
 			if ((persistKey) && (!persisted)) {

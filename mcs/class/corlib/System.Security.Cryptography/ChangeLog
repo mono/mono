@@ -1,5 +1,10 @@
 2004-04-28  Sebastien Pouliot  <sebastien@ximian.com>
 
+	* DSACryptoServiceProvider.cs: Changed delegate signature.
+	* RSACryptoServiceProvider.cs: Changed delegate signature.
+
+2004-04-28  Sebastien Pouliot  <sebastien@ximian.com>
+
 	* DSA.cs: Moved XML comments to monodoc. Added globalization to 
 	exceptions. Already had 100% coverage.
 	* DSAParameters.cs: Moved XML comments to monodoc.
