@@ -1,3 +1,7 @@
+2003-09-21  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
+
+	* XmlNamespaceManagerTests.cs : Added PopScopeMustKeepAddedInScope().
+
 2003-08-24  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
 
 	* XmlAttributeTests.cs : Added DefaultAttributeRemoval() and

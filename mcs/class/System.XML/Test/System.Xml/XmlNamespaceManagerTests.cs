@@ -142,6 +142,21 @@ namespace MonoTests.System.Xml
 		}
 
 		[Test]
+		public void PopScopeMustKeepAddedInScope ()
+		{
+			namespaceManager = new XmlNamespaceManager (new NameTable ()); // clear
+			namespaceManager .AddNamespace ("foo", "urn:foo");	// 0
+			namespaceManager .AddNamespace ("bar", "urn:bar");	// 0
+			namespaceManager .PushScope ();	// 1
+			namespaceManager .PushScope ();	// 2
+			namespaceManager .PopScope ();	// 2
+			namespaceManager .PopScope ();	// 1
+			namespaceManager .PopScope ();	// 0
+			AssertEquals ("urn:foo", namespaceManager.LookupNamespace ("foo"));
+			AssertEquals ("urn:bar", namespaceManager.LookupNamespace ("bar"));
+		}
+
+		[Test]
 		public void LookupPrefix ()
 		{
 			// This test should use an empty nametable.
