@@ -1,4 +1,10 @@
 
+Fri Nov 14 21:34:06 CET 2003 Paolo Molaro <lupus@ximian.com>
+
+	* inssel-x86.brg, inssel-float.brg, mini-ops.h: move x86-specific
+	float rules to inssel-x86.brg: sane architectures with FP registers
+	don't need to implement these rules.
+
 Fri Nov 14 20:52:12 CET 2003 Paolo Molaro <lupus@ximian.com>
 
 	* mini-ppc.c, cpu-g4.md, inssel-ppc.brg: updates and fixes to the ppc port.
