@@ -50,7 +50,7 @@ namespace System.Xml
 	{
 		Encoding enc;
 		Stream stream;
-		byte[] buffer = new byte[256];
+		byte[] buffer;
 		int bufLength;
 		int bufPos;
 
@@ -63,132 +63,130 @@ namespace System.Xml
 
 		private void Initialize (Stream stream)
 		{
-			// FIXME: seems too waste...
-			MemoryStream ms = new MemoryStream ();
+			buffer = new byte [1024];
 			this.stream = stream;
-			int c = stream.ReadByte ();
+			enc = Encoding.UTF8; // Default to UTF8 if we can't guess it
+			bufLength = stream.Read (buffer, 0, buffer.Length);
+			if (bufLength == -1 || bufLength == 0) {
+				return;
+			}
+
+			int c = ReadByteSpecial ();
 			switch (c) {
 			case 0xFF:
-				c = stream.ReadByte ();
+				c = ReadByteSpecial ();
 				if (c == 0xFE) {
 					// BOM-ed little endian utf-16
 					enc = Encoding.Unicode;
 				} else {
 					// It doesn't start from "<?xml" then its encoding is utf-8
-					enc = Encoding.UTF8;
-					ms.WriteByte ((byte)0xFF);
-					ms.WriteByte ((byte)c);
+					bufPos = 0;
 				}
 				break;
 			case 0xFE:
-				c = stream.ReadByte ();
+				c = ReadByteSpecial ();
 				if (c == 0xFF) {
 					// BOM-ed big endian utf-16
 					enc = Encoding.BigEndianUnicode;
 					return;
 				} else {
 					// It doesn't start from "<?xml" then its encoding is utf-8
-					enc = Encoding.UTF8;
-					ms.WriteByte ((byte)0xFE);
-					ms.WriteByte ((byte)c);
+					bufPos = 0;
 				}
 				break;
 			case 0xEF:
-				enc = Encoding.UTF8;
-				c = ReadByte ();
+				c = ReadByteSpecial ();
 				if (c == 0xBB) {
-					c = ReadByte ();
+					c = ReadByteSpecial ();
 					if (c != 0xBF) {
-						ms.WriteByte ((byte)0xEF);
-						ms.WriteByte ((byte)0xBB);
-						ms.WriteByte ((byte)c);
+						bufPos = 0;
 					}
 				} else {
-					ms.WriteByte ((byte)0xEF);
+					buffer [--bufPos] = 0xEF;
 				}
 				break;
 			case '<':
 				// try to get encoding name from XMLDecl.
-				ms.WriteByte ((byte)'<');
-				int size = stream.Read (buffer, 1, 4);
-				ms.Write (buffer, 1, size);
-				if (Encoding.ASCII.GetString (buffer, 1, size) == "?xml") {
+				if (bufLength >= 5 && Encoding.ASCII.GetString (buffer, 1, 4) == "?xml") {
+					bufPos += 4;
 					int loop = 0;
-					c = SkipWhitespace (ms);
+					c = SkipWhitespace ();
 
 					// version. It is optional here.
 					if (c == 'v') {
-						ms.WriteByte ((byte)'v');
 						while (loop++ >= 0 && c >= 0) {
-							c = stream.ReadByte ();
-							ms.WriteByte ((byte)c);
+							ReadByteSpecial ();
+							c = ReadByteSpecial ();
 							if (c == '0') { // 0 of 1.0
-								ms.WriteByte ((byte)stream.ReadByte ());
 								break;
 							}
 						}
-						c = SkipWhitespace (ms);
+						c = SkipWhitespace ();
 					}
 
 					if (c == 'e') {
-						ms.WriteByte ((byte)'e');
-						size = stream.Read (buffer, 0, 7);
-						ms.Write (buffer, 0, 7);
-						if (Encoding.ASCII.GetString(buffer, 0, 7) == "ncoding") {
-							c = this.SkipWhitespace(ms);
+						int remaining = bufLength - bufPos;
+						if (remaining >= 7 && Encoding.ASCII.GetString(buffer, 0, 7) == "ncoding") {
+							bufPos += 7;
+							c = SkipWhitespace();
 							if (c != '=')
 								throw encodingException;
-							ms.WriteByte ((byte)'=');
-							c = this.SkipWhitespace (ms);
+							c = SkipWhitespace ();
 							int quoteChar = c;
-							ms.WriteByte ((byte)c);
-							int start = (int)ms.Position;
+							StringBuilder sb = new StringBuilder ();
 							while (loop++ >= 0) {
-								c = stream.ReadByte ();
+								c = ReadByteSpecial ();
 								if (c == quoteChar)
 									break;
 								else if (c < 0)
 									throw encodingException;
-								ms.WriteByte ((byte)c);
+
+								sb.Append ((char) c);
 							}
-							string encodingName = Encoding.UTF8.GetString (ms.GetBuffer (), start, (int)ms.Position - start);
+							string encodingName = sb.ToString ();
 							if (!XmlChar.IsValidIANAEncoding (encodingName))
 								throw encodingException;
-							ms.WriteByte ((byte)quoteChar);
 							enc = Encoding.GetEncoding (encodingName);
 						}
-						else
-							ms.Write (buffer, 0, size);
 					}
-					else
-						ms.WriteByte ((byte)c);
 				}
-				buffer = ms.ToArray ();
-				bufLength = buffer.Length;
 				bufPos = 0;
 				break;
 			default:
-				buffer [0] = (byte)c;
-				bufLength = 1;
-				enc = Encoding.UTF8;
+				bufPos = 0;
 				break;
 			}
 		}
 
+		// Just like readbyte, but grows the buffer too.
+		int ReadByteSpecial ()
+		{
+			if (bufLength > bufPos)
+				return buffer [bufPos++];
+
+			byte [] newbuf = new byte [buffer.Length * 2];
+			Buffer.BlockCopy (buffer, 0, newbuf, 0, bufLength);
+			int nbytes = stream.Read (newbuf, bufLength, buffer.Length);
+			if (nbytes == -1 || nbytes == 0)
+				return -1;
+				
+			bufLength += nbytes;
+			buffer = newbuf;
+			return buffer [bufPos++];
+		}
+
 		// skips whitespace and returns misc char that was read from stream
-		private int SkipWhitespace (MemoryStream ms)	// ms may be null
+		private int SkipWhitespace ()	// ms may be null
 		{
 			int loop = 0;
 			int c;
 			while (loop++ >= 0) { // defends infinite loop (expecting overflow)
-				c = stream.ReadByte ();
+				c = ReadByteSpecial ();
 				switch (c) {
 				case '\r': goto case ' ';
 				case '\n': goto case ' ';
 				case '\t': goto case ' ';
 				case ' ':
-					if (ms != null)
-						ms.WriteByte ((byte)c);
 					continue;
 				default:
 					return c;

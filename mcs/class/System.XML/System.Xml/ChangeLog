@@ -1,3 +1,8 @@
+2004-06-07  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* XmlInputStream.cs: Initialize reads a larger buffer now when trying
+	to guess the encoding.
+
 2004-06-06  Atsushi Enomoto <atsushi@ximian.com>
 
 	* NameTable.cs : Fixed incorrect hash computation. Thanks to Ben.
