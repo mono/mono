@@ -3863,10 +3863,15 @@ case_section
 case_clauses
 	: case_clause
 	  {
-		ArrayList labels = new ArrayList ();
+                if ($1 is ArrayList) //From expression TO expression 
+                         $$ = $1;
+		else {
 
-		labels.Add ($1);
-		$$ = labels;
+			ArrayList labels = new ArrayList ();
+
+			labels.Add ($1);
+			$$ = labels;
+		}
 	  }	
 	| case_clauses COMMA case_clause
 	  {
@@ -3883,6 +3888,25 @@ case_clause
 	  {
 	  	$$ = new SwitchLabel ((Expression) $1, lexer.Location);
 	  }
+	| expression TO expression
+        {
+		//FIXME: need to handle when expressions are character strings.
+               	Constant start = (Constant) $1;
+               	Constant end = (Constant) $3;
+               	int i = 0, s = 0, e = 0;
+               	Location l = lexer.Location ;
+               	ArrayList labels = new ArrayList ();
+
+               	if (start != null) 
+                       	s = (int) start.GetValue ();
+               	if(end != null) 
+                       	e = (int) end.GetValue ();
+               	for(i = s; i <= e; i++) {
+                       	labels.Add(new SwitchLabel ((Expression)new IntLiteral(i), l));
+               	}
+               	$$ = labels;
+        }
+
 	;
 	
 opt_is 

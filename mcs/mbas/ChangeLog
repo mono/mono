@@ -1,3 +1,7 @@
+2005-03-16 Manjula GHM <mmanjula@novell.com>
+	* mb-parser.jay:
+		Support 'expression TO expression' case clause for select statement
+
 2005-03-15 Satya Sudha K <ksathyasudha@novell.com>
 	* mb-parser.jay :
 	* expression.cs :
