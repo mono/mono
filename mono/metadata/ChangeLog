@@ -1,3 +1,8 @@
+2004-08-11  Martin Baulig  <martin@ximian.com>
+
+	* reflection.c (mono_reflection_setup_internal_class): Also call
+	mono_class_setup_mono_type() if we already have a `tb->type.type'.
+
 2004-08-09  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* appdomain.c: Fix ves_icall_System_AppDomain_getDomainByID when 
