@@ -92,11 +92,15 @@ namespace System
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		public extern override ConstructorInfo[] GetConstructors (BindingFlags bindingAttr);
 
-		[MonoTODO]
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		extern EventInfo InternalGetEvent (string name, BindingFlags bindingAttr);
+
 		public override EventInfo GetEvent (string name, BindingFlags bindingAttr)
 		{
-			// FIXME
-			throw new NotImplementedException ();
+			if (name == null)
+				throw new ArgumentNullException ("name");
+
+			return InternalGetEvent (name, bindingAttr);
 		}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
