@@ -23,9 +23,13 @@
 //	Peter Bartok	pbartok@novell.com
 //
 //
-// $Revision: 1.20 $
+// $Revision: 1.21 $
 // $Modtime: $
 // $Log: XplatUIX11.cs,v $
+// Revision 1.21  2004/08/13 18:52:59  pbartok
+// - Added generation of WM_POSCHANGED
+// - Changed GetWindowPos to also provide client area size
+//
 // Revision 1.20  2004/08/12 22:59:03  pbartok
 // - Implemented method to get current mouse position
 //
@@ -366,7 +370,7 @@ namespace System.Windows.Forms {
 			return;
 		}
 
-		internal override void GetWindowPos(IntPtr handle, out int x, out int y, out int width, out int height) {
+		internal override void GetWindowPos(IntPtr handle, out int x, out int y, out int width, out int height, out int client_width, out int client_height) {
 			XWindowAttributes	attributes = new XWindowAttributes();
 
 			XGetWindowAttributes(DisplayHandle, handle, ref attributes);
@@ -374,6 +378,8 @@ namespace System.Windows.Forms {
 			y = attributes.y;
 			width = attributes.width;
 			height = attributes.height;
+			client_width = attributes.width;
+			client_height = attributes.height;
 			return;
 		}
 
@@ -535,6 +541,7 @@ namespace System.Windows.Forms {
 
 			XNextEvent(DisplayHandle, ref xevent);
 			msg.hwnd=xevent.AnyEvent.window;
+
 			switch(xevent.type) {
 				case XEventName.KeyPress: {
 					msg.message = Msg.WM_KEYDOWN;
@@ -635,6 +642,15 @@ namespace System.Windows.Forms {
 					msg.lParam=(IntPtr) (xevent.MotionEvent.y << 16 | xevent.MotionEvent.x);
 					mouse_position.X=xevent.MotionEvent.x;
 					mouse_position.Y=xevent.MotionEvent.y;
+					break;
+				}
+
+				case XEventName.ConfigureNotify: {
+					msg.message=Msg.WM_WINDOWPOSCHANGED;
+					msg.wParam=IntPtr.Zero;
+					msg.lParam=IntPtr.Zero;
+
+Console.WriteLine("ConfigureNotify: Width:{0} Height:{1}", xevent.ConfigureEvent.width, xevent.ConfigureEvent.height);
 					break;
 				}
 
