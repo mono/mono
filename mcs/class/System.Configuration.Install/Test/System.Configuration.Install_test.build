@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+
+<!-- NAnt build file for System.Configuration.Install_test.dll -->
+<!-- Target build (default) builds tests -->
+<!-- Target test runs tests -->
+
+<project name="System_test" default="build">
+	<property name="debug" value="true"/>
+	<property name="nunit_home" value="..\..\..\nunit"/>
+
+	<target name="build">
+	</target>
+
+	<target name="assemblies">
+		<csc target="library" output="System.Configuration.Install_test.dll" debug="${debug}">
+			<sources>
+				<includes name="**/*.cs"/>
+				<excludes name="TheTests.cs"/>
+			</sources>
+			<references basedir="..\..\..\nunit">
+				<includes name="NUnitCore.dll"/>
+			</references>
+
+			<arg value="/noconfig"/>
+			<arg value="/r:.\System.Configuration.Install.dll"/>
+		</csc>
+
+		<csc target="exe" output="RunTests.System.exe" debug="${debug}">
+			<sources>
+				<includes name="**/*.cs"/>
+				<excludes name="**/AllTests.cs"/>
+				<excludes name="**/MartinTests.cs"/>
+			</sources>
+			<references basedir="..\..\..\nunit">
+				<includes name="NUnitBase.dll"/>
+			</references>
+			<references basedir=".">
+				<includes name="System.dll"/>
+			</references>
+			<arg value="/nowarn:1595"/>
+			<arg value="/noconfig"/>
+			<arg value="/r:.\System.dll"/>
+		</csc>
+
+	</target>
+
+	<target name="test" depends="assemblies">
+		<exec program="..\..\..\nunit\NUnitConsole" commandline="MonoTests.AllTests,System.Configuration.Install_test.dll" failonerror="false"/>
+	</target>
+
+	<target name="clean">
+		<delete file="System.Configuration.Install_test.dll" failonerror="false"/>
+	</target>
+</project>

@@ -1,0 +1,4 @@
+2002-08-13  Jonathan Pryor <jonpryor@vt.edu>
+	* ChangeLog: Add change log to this directory
+	* System.Configuration.Install.build: Add build file to this directory.
+
