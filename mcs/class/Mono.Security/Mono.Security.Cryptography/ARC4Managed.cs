@@ -79,10 +79,7 @@ namespace Mono.Security.Cryptography {
 
 		public override void GenerateKey () 
 		{
-			byte[] key = new byte [KeySizeValue >> 3];
-			RandomNumberGenerator rng = RandomNumberGenerator.Create ();
-			rng.GetBytes (key);
-			Key = key;
+			Key = KeyBuilder.Key (KeySizeValue >> 3);
 		}
 
 		public bool CanTransformMultipleBlocks {
@@ -107,7 +104,7 @@ namespace Mono.Security.Cryptography {
 			x = 0;
 			y = 0;
 			for (int counter = 0; counter < 256; counter++) {
-				index2 = (byte) ((key [index1] + state [counter] + index2) % 256);
+				index2 = (byte) (key [index1] + state [counter] + index2);
 				// swap byte
 				byte tmp = state [counter];
 				state [counter] = state [index2];
@@ -120,14 +117,14 @@ namespace Mono.Security.Cryptography {
 		{
 			byte xorIndex;
 			for (int counter = 0; counter < inputCount; counter ++) {               
-				x = (byte) ((x + 1) % 256);
-				y = (byte) ((state [x] + y) % 256);
+				x = (byte) (x + 1);
+				y = (byte) (state [x] + y);
 				// swap byte
 				byte tmp = state [x];
 				state [x] = state [y];
 				state [y] = tmp;
 
-				xorIndex = (byte) (state [x] + (state [y]) % 256);
+				xorIndex = (byte) (state [x] + state [y]);
 				outputBuffer [outputOffset + counter] = (byte) (inputBuffer [inputOffset + counter] ^ state [xorIndex]);
 			}
 			return inputCount;

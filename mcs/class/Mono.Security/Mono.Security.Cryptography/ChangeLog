@@ -1,3 +1,9 @@
+2004-02-15  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* ARC4Managed.cs: Removed all % 256 (modulo) because typecasting to 
+	byte already ensure the result would be correct (as suggested by 
+	Technoboy). Now use KeyBuilder to create new keys.
+
 2004-02-13  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* DHKeyGeneration.cs: New. Enumuration of possible key generation for
