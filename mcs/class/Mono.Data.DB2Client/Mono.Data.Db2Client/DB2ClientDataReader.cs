@@ -208,7 +208,7 @@ namespace DB2ClientCS
 
 				try 
 				{
-					switch (sqlDataType.ToInt32()) 
+					switch ((int)sqlDataType) 
 					{
 						case DB2ClientConstants.SQL_DECIMAL:	//These types are treated as SQL_C_CHAR for binding purposes
 						case DB2ClientConstants.SQL_TYPE_DATE:
