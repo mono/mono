@@ -76,6 +76,7 @@ namespace System.IO
 
    		public StreamWriter AppendText()
 		{	// TODO: Implement
+			return null;
 		}
 		
 

@@ -26,11 +26,11 @@ namespace System.IO
 		protected string FullPath;
 		protected string OriginalPath;
 
-		public FileSystemInfo()
+		protected FileSystemInfo()
 		{
-			// 
-			// TODO: Add constructor logic here
-			//
+			itsAttributes = FileAttributes.Normal;
+			itsCreated = itsLastAccess = itsLastWrite = DateTime.MinValue;
+			FullPath = OriginalPath = String.Empty;
 		}
 
 		public FileAttributes Attributes

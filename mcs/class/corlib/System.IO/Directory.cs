@@ -64,13 +64,15 @@ namespace System.IO
 		{
 			return getInfo(path).Exists;
 		}
+		
 		/// <summary>
 		/// Returns the date and time the directory specified by path was created
 		/// </summary>
 		public static DateTime GetCreationTime(string path)
 		{
-			return getInfo().GetCreationTime(path);
+			return getInfo(path).CreationTime;
 		}
+		
 		/// <summary>
 		/// Returns the date and time the directory specified by path was created
 		/// </summary>
@@ -78,6 +80,7 @@ namespace System.IO
 		{	// TODO: Implement
 			return null;
 		}
+		
 		/// <summary>
 		/// Returns an array of directories in the directory specified by path
 		/// </summary>
@@ -92,7 +95,7 @@ namespace System.IO
 		/// </summary>
 		public static string[] GetDirectories(string path, string mask)
 		{
-			return getNames(getInfo(path).GetDirectories(mask));
+			return getNames(DirectoryInfo.GetDirectories(mask));
 		}
 		
 		/// <summary>
@@ -100,7 +103,7 @@ namespace System.IO
 		/// </summary>
 		public static string GetDirectoryRoot(string path)
 		{
-			return getInfo(path).Root.FullName();
+			return getInfo(path).Root.FullName;
 		}
 		
 		/// <summary>
@@ -140,7 +143,7 @@ namespace System.IO
 		/// </summary>
 		public static DateTime GetLastAccessTime(string path)
 		{
-			return getInfo().GetLastWriteTime(path);
+			return getInfo(path).LastAccessTime;
 		}
 		
 		/// <summary>
@@ -148,7 +151,7 @@ namespace System.IO
 		/// </summary>
 		public static DateTime GetLastWriteTime(string path)
 		{
-			return getInfo().GetLastWriteTime(path);
+			return getInfo(path).LastWriteTime;
 		}
 		
 		/// <summary>
@@ -178,7 +181,7 @@ namespace System.IO
 		/// </summary>
 		public static void SetCreationTime(string path, DateTime creationTime)
 		{
-			getInfo().SetCreationTime(path, creationTime);
+			getInfo(path).CreationTime = creationTime;
 		}
 		
 		/// <summary>
@@ -193,7 +196,7 @@ namespace System.IO
 		/// </summary>
 		public static void SetLastAccessTime(string path, DateTime accessTime)
 		{
-			getInfo().SetLastAccessTime(path, accessTime);
+			getInfo(path).LastAccessTime = accessTime;
 		}
 		
 		/// <summary>
@@ -201,7 +204,7 @@ namespace System.IO
 		/// </summary>
 		public static void SetLastWriteTime(string path, DateTime modifiedTime)
 		{
-			getInfo().SetLastWriteTime(path, modifiedTime);
+			getInfo(path).LastWriteTime = modifiedTime;
 		}
 		
 		private static DirectoryInfo getInfo(string path)

@@ -15,11 +15,11 @@ namespace System.IO
 {
 	public class Path : Object
 	{
-		public static readonly char AltDirectorySeparatorChar = PlatformSpecific.InvalidPathChars;
-		public static readonly char DirectorySeparatorChar = PlatformSpecific.InvalidPathChars;
+		public static readonly char AltDirectorySeparatorChar = PlatformSpecific.AltDirectorySeparatorChar;
+		public static readonly char DirectorySeparatorChar = PlatformSpecific.DirectorySeparatorChar;
 		public static readonly char[] InvalidPathChars = PlatformSpecific.InvalidPathChars;
-		public static readonly char PathSeparator = PlatformSpecific.InvalidPathChars;
-		public static readonly char VolumeSeparatorChar = PlatformSpecific.InvalidPathChars;
+		public static readonly char PathSeparator = PlatformSpecific.PathSeparator;
+		public static readonly char VolumeSeparatorChar = PlatformSpecific.VolumeSeparatorChar;
 
 		private static readonly char[] PathSeparatorChars = {	DirectorySeparatorChar, 
 																AltDirectorySeparatorChar,
