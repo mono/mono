@@ -1,3 +1,7 @@
+2002-07-17  Dietmar Maurer  <dietmar@ximian.com>
+
+	* marshal.c (mono_delegate_to_ftnptr): invoke the right method
+	(fix bug #27695)
 
 Tue Jul 16 19:00:57 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
