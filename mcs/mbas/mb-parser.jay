@@ -79,8 +79,29 @@ namespace Mono.MonoBASIC
 		///   value parameter that is passed to the "set" accessor
 		///   method
 		/// </summary>
-		//Parameter [] implicit_value_parameters;
-
+		string get_implicit_value_parameter_name;
+		
+		// <summary>
+		//   Using during property parsing to describe the implicit
+		//   value parameter that is passed to the "set" and "get"accesor
+		//   methods (properties and indexers).
+		// </summary>
+		Expression get_implicit_value_parameter_type;
+		
+		/// <summary>
+		///   Using during property parsing to describe the implicit
+		///   value parameter that is passed to the "set" accessor
+		///   method
+		/// </summary>
+		string set_implicit_value_parameter_name;
+		
+		// <summary>
+		//   Using during property parsing to describe the implicit
+		//   value parameter that is passed to the "set" and "get"accesor
+		//   methods (properties and indexers).
+		// </summary>
+		Expression set_implicit_value_parameter_type;		
+		
 		// An out-of-band stack.
 		//
 		Stack oob_stack;
@@ -577,7 +598,7 @@ class_member_declarator
 	   	CheckDef (current_container.AddMethod (method), method.Name, method.Location);
 	   }	
 	|  field_declaration
-//	|  property_declaration			
+	|  property_declaration			
 //	|  event_declaration	
 	|  withevents_declaration	/* This is a field but must be treated specially, see below */
 	|  type_declaration			
@@ -611,10 +632,6 @@ sub_declaration
 	  			current_modifiers = Modifiers.STATIC;
 	  		}
 	  	}
-		if ($7 != null && (Block) $7 != current_block){
-			current_block.AddStatement ((Statement) $7);
-			current_block = (Block) $7;
-		}
 	  }
 	  opt_statement_list 
 	  END SUB EOL
@@ -645,6 +662,165 @@ sub_declaration
 	  }	  
 	;
 	
+func_declaration
+	: FUNCTION IDENTIFIER 
+	  OPEN_PARENS opt_formal_parameter_list CLOSE_PARENS AS type EOL
+	  { 
+	  	
+	  	current_local_parameters = (Parameters) $4;
+		start_block(); 
+	  } 
+	  opt_local_declarations 
+	  {	
+	  	/* This is WEIRD: declaring a method (sub) in a module as static will
+	  	   trigger a syntax error, but the same methods MUST be static in order
+	  	   to be properly called
+	  	*/
+	  	if (current_container is Module) {
+	  	 	if (current_modifiers == Modifiers.STATIC) {
+	  			Report.Error (30810, lexer.Location, "Methods cannot be declared 'Static'");
+	  		}
+	  		else
+	  		{
+	  			current_modifiers = Modifiers.STATIC;
+	  		}
+	  	}
+		// Add local var declaration
+		// for return value
+		ArrayList retval = new ArrayList ();
+		retval.Add (new VariableDeclaration ((string) $2, null, lexer.Location));
+		declare_local_variables ((Expression) $7, retval, lexer.Location);
+	  }	  
+	  opt_statement_list
+	  END FUNCTION EOL
+	  {
+		Method method = new Method ((Expression) $7, (int) current_modifiers, (string) $2,
+					    (Parameters) current_local_parameters, null, lexer.Location);
+	
+		method.Block = end_block();
+		$$ = method;
+
+	  }	  
+	;		
+	
+property_declaration
+	  : PROPERTY IDENTIFIER OPEN_PARENS opt_formal_parameter_list CLOSE_PARENS AS type EOL
+	  {
+		get_implicit_value_parameter_type = (Expression) $7;
+		get_implicit_value_parameter_name = (string) $2;
+		lexer.PropertyParsing = true;
+
+		$$ = lexer.Location;
+	  }
+	  accessor_declarations 
+	  END PROPERTY EOL
+	  {
+		lexer.PropertyParsing = false;
+
+		Property prop;
+		Pair pair = (Pair) $10;
+		Accessor get_block = (Accessor) pair.First;
+		Accessor set_block = (Accessor) pair.Second;
+		Location loc = lexer.Location;
+		
+		prop = new Property ((Expression) $7, (string) $2, current_modifiers, get_block, set_block,
+				     current_attributes, loc, set_implicit_value_parameter_name);
+		
+		CheckDef (current_container.AddProperty (prop), prop.Name, loc);
+		get_implicit_value_parameter_type = null;
+		set_implicit_value_parameter_type = null;
+	  }
+	;
+
+accessor_declarations
+	: get_accessor_declaration opt_set_accessor_declaration
+	  { 
+		$$ = new Pair ($1, $2);
+	  }
+	| set_accessor_declaration opt_get_accessor_declaration
+	  {
+		$$ = new Pair ($2, $1);
+	  }
+	;
+
+opt_get_accessor_declaration
+	: /* empty */			{ $$ = null; }
+	| get_accessor_declaration
+	;
+
+opt_set_accessor_declaration
+	: /* empty */			{ $$ = null; }
+	| set_accessor_declaration
+	;
+
+get_accessor_declaration
+	: opt_attributes GET EOL
+	  {
+		current_local_parameters = null;
+		
+		lexer.PropertyParsing = false;
+		start_block();
+		
+		// Add local var declaration
+		// for return value
+		ArrayList retval = new ArrayList ();
+		retval.Add (new VariableDeclaration (get_implicit_value_parameter_name, null, lexer.Location));
+		declare_local_variables (get_implicit_value_parameter_type, retval, lexer.Location);		
+	  }
+          opt_statement_list
+          END GET EOL
+	  {
+		$$ = new Accessor ((Block) end_block(), (Attributes) $1);
+		current_local_parameters = null;
+		lexer.PropertyParsing = true;
+	  }
+	;
+
+set_accessor_declaration
+	: opt_attributes SET opt_set_parameter EOL
+	  {
+		
+		Parameter [] args;
+		Parameter implicit_value_parameter = new Parameter (
+			set_implicit_value_parameter_type, 
+			set_implicit_value_parameter_name, 
+			Parameter.Modifier.NONE, null);
+
+		args  = new Parameter [1];
+		args [0] = implicit_value_parameter;
+		current_local_parameters = new Parameters (args, null, lexer.Location);
+		
+		start_block();
+		lexer.PropertyParsing = false;
+	  }
+	  opt_statement_list
+	  END SET EOL
+	  {
+		$$ = new Accessor ((Block) end_block(), (Attributes) $1);
+		current_local_parameters = null;
+		lexer.PropertyParsing = true;
+	  }
+	;
+		
+opt_set_parameter
+	: /* empty */
+	{
+		set_implicit_value_parameter_type = (Expression) TypeManager.system_object_expr;
+		set_implicit_value_parameter_name = "Value";
+	}	
+	| OPEN_PARENS opt_identifier opt_type_spec CLOSE_PARENS
+	{
+		/* FIXME: possible syntax error which must be caught
+		   Set ( As <type>) is currently (and wrongly so) legal
+		*/
+		set_implicit_value_parameter_type = (Expression) $3;
+		if ($2 != null)
+			set_implicit_value_parameter_name = (string) $2;
+		else
+			set_implicit_value_parameter_name = "Value";
+	}
+	;
+			
 field_declaration
 	: opt_dim_stmt 
 	  variable_declarators opt_type_spec EOL
@@ -740,12 +916,6 @@ opt_evt_handler
 	{
 		$$ = (Expression) DecomposeQI ((string)$2, lexer.Location);	
 	}
-	;	
-func_declaration
-	: FUNCTION IDENTIFIER 
-	  OPEN_PARENS opt_formal_parameter_list CLOSE_PARENS AS qualified_identifier EOL
-	  opt_statement_list
-	  END FUNCTION EOL
 	;	
 	
 constructor_declaration
@@ -898,10 +1068,24 @@ embedded_statement
 	| selection_statement
 	| iteration_statement
 	| try_statement
-	 /* | jump_statement */
+	| jump_statement 
 	;
         
-        
+jump_statement
+	: /*break_statement
+	| continue_statement
+	| goto_statement
+	| throw_statement
+	| */return_statement
+	;
+	        
+return_statement
+	: RETURN opt_expression 
+	  {	  
+		$$ = new Return ((Expression) $2, lexer.Location);
+	  }
+	;
+	        
 iteration_statement
 	: while_statement
 	| do_statement
@@ -1210,6 +1394,11 @@ assignment_expression
 opt_local_declarations
 	: /* empty */
 	| local_declarations
+	{	if ($1 != null && (Block) $1 != current_block){
+			current_block.AddStatement ((Statement) $1);
+			current_block = (Block) $1;
+		}
+	}
 	;
 	
 local_declarations
@@ -1578,6 +1767,11 @@ element_access
 	  }*/
 	;
 
+opt_expression
+	: /* empty */
+	| expression
+	;
+	
 expression_list
 	: expression
 	  {
