@@ -24,7 +24,8 @@ namespace System.Text {
 			is_mail_news_display = true;
 			is_mail_news_save = true;
 		}
-		
+
+		[MonoTODO]
 		public override int GetMaxByteCount (int charCount)
 		{
 			// FIXME: this is wrong, dont know the right value

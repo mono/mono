@@ -162,6 +162,7 @@ namespace System.Text {
                         }
                 }
 
+		[MonoTODO]
                 public virtual int WindowsCodePage {
                         get {
                                 // FIXME
@@ -310,18 +311,21 @@ namespace System.Text {
                         return default_encoder;
                 }
 
+		[MonoTODO]
                 public virtual Encoding GetEncoding (int codepage)
 		{
                         // FIXME
                         return null;
                 }
-
+		
+		[MonoTODO]
                 public virtual Encoding GetEncoding (string name)
 		{
                         // FIXME
                         return null;
                 }
 
+		[MonoTODO]
                 public override int GetHashCode()
 		{
                         // FIXME
@@ -332,6 +336,7 @@ namespace System.Text {
 
                 public abstract int GetMaxCharCount (int byteCount);
 
+		[MonoTODO]
                 public virtual byte[] GetPreamble()
 		{
                         // FIXME

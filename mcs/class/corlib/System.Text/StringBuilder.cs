@@ -13,6 +13,8 @@
 // variable names that probably don't (like sString)
 //
 namespace System.Text {
+	
+	[MonoTODO ("Implement AppendFormat methods and IFormatProvider, IFormattable")]
 	public sealed class StringBuilder {
 
 		private const int defaultCapacity = 16;
@@ -86,6 +88,7 @@ namespace System.Text {
 	
 		public StringBuilder( string value, int capacity) : this(value, 0, value.Length, capacity) {}
 	
+		[MonoTODO]
 		public int MaxCapacity {
 			get {
 				// TODO: Need to look at the memory of the system to return a useful value here
@@ -321,7 +324,7 @@ namespace System.Text {
 		// in a 5 million character string.  I believe MS uses a lot
 		// of "native" DLLs for the "meat" of the base classes.
 
-
+		[MonoTODO ("Look at all Append methods and complete them if necessary")]
 		public StringBuilder Append( char[] value ) {
 			if( sLength + value.Length > sCapacity ) {
 				// Need more capacity, double the capacity StringBuilder 
@@ -451,27 +454,32 @@ namespace System.Text {
 			return Append( value.Substring( startIndex, count ).ToCharArray() );
 		}
 
+		[MonoTODO]
 		public StringBuilder AppendFormat( string format, object arg0 ) {
 			// TODO: Implement
 			return this;
 		}
 
+		[MonoTODO]
 		public StringBuilder AppendFormat( string format, params object[] args ) {
 			// TODO: Implement
 			return this;
 		}
 
+		[MonoTODO]
 		public StringBuilder AppendFormat( IFormatProvider provider, string format,
 			params object[] args ) {
 			// TODO: Implement
 			return this;
 		}
 
+		[MonoTODO]
 		public StringBuilder AppendFormat( string format, object arg0, object arg1 ) {
 			// TODO: Implement;
 			return this;
 		}
 
+		[MonoTODO]
 		public StringBuilder AppendFormat( string format, object arg0, object arg1, object arg2 ) {
 			// TODO Implement
 			return this;
