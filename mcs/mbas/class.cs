@@ -80,6 +80,11 @@ namespace Mono.CSharp {
 		// Whether we have seen a static constructor for this class or not
 		//
 		bool have_static_constructor = false;
+
+		//
+		// Whether we have at least one non-static field
+		//
+		bool have_nonstatic_fields = false;
 		
 		//
 		// This one is computed after we can distinguish interfaces
@@ -297,6 +302,9 @@ namespace Mono.CSharp {
 					initialized_fields.Add (field);
 				}
 			}
+
+			if ((field.ModFlags & Modifiers.STATIC) == 0)
+				have_nonstatic_fields = true;
 			
 			DefineName (name, field);
 			return AdditionResult.Success;
@@ -907,7 +915,7 @@ namespace Mono.CSharp {
 				// appended
 				//
 
-				if (!is_class && Fields == null)
+				if (!is_class && !have_nonstatic_fields)
 					TypeBuilder = builder.DefineType (Name,
 									  type_attributes,
 									  parent, 
@@ -927,7 +935,7 @@ namespace Mono.CSharp {
 				// Structs with no fields need to have a ".size 1"
 				// appended
 				//
-				if (!is_class && Fields == null)
+				if (!is_class && !have_nonstatic_fields)
 					TypeBuilder = builder.DefineNestedType (Basename,
 										type_attributes,
 										parent, 

@@ -1,3 +1,6 @@
+2002-06-07  Rafael Teixeira <rafaelteixeirabr@hotmail.com>
+	* merged class.cs and ecore.cs from mcs/mcs
+
 2002-06-02  Rafael Teixeira <rafaelteixeirabr@hotmail.com>
 	* copied methods MakeName and CheckDef from mcs\cs-parser.jay to GenericParser.cs 
 	  where they are inherited by mb-parser.jay/cs
