@@ -28,7 +28,6 @@ MulticastNotSupportedException.cs
 NotFiniteNumberException.cs
 NotSupportedException.cs
 NullReferenceException.cs
-Object.cs
 OutOfMemoryException.cs
 OverflowException.cs
 RankException.cs
@@ -39,6 +38,5 @@ TypeInitializationException.cs
 UInt16.cs
 UInt32.cs
 UInt64.cs
-ValueType.cs
 Version.cs
 Void.cs

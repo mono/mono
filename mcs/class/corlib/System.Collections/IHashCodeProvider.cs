@@ -1,6 +1,6 @@
 // -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*-
 //
-// System.Collections.IDictionary
+// System.Collections.IHashCodeProvider
 //
 // Author:
 //    Vladimir Vukicevic (vladimir@pobox.com)

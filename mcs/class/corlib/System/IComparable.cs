@@ -1,5 +1,5 @@
 //
-// System.CoreInterfaces.cs
+// System.IComparable.cs
 //
 // Author:
 //   Miguel de Icaza (miguel@ximian.com)
