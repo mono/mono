@@ -875,6 +875,10 @@ namespace System
 						return false;
 					break;
 				case '-':
+					if (!_ParseString (s, 0, "-", out num_parsed)) {
+						return false;
+					}
+					break;
 				case '/':
 					if (!_ParseString (s, 0, dfi.DateSeparator, out num_parsed))
 						return false;
