@@ -17,7 +17,7 @@ using System.Xml.Serialization;
 
 using NUnit.Framework;
 
-namespace MonoTests.System.Xml.Serialization
+namespace MonoTests.System.XmlSerialization
 {
 	// base, common implementation of XmlSerializationWriter test harness.
 	// the reason for this is that all auto generated namespace prefixes 

@@ -12,8 +12,9 @@ using System.IO;
 using System.Xml;
 using System.Xml.Serialization;
 using NUnit.Framework;
+using MonoTests.System.Xml.TestClasses;
 
-namespace MonoTests.System.Xml.Serialization
+namespace MonoTests.System.XmlSerialization
 {
 	public class Sample
 	{
@@ -26,17 +27,18 @@ namespace MonoTests.System.Xml.Serialization
 	{
 		object result;
 
-		private void Deserialize (Type t, string xml)
+		private object Deserialize (Type t, string xml)
 		{
 			StringReader sr = new StringReader (xml);
 			XmlReader xr = new XmlTextReader (sr);
-			Deserialize (t, xr);
+			return Deserialize (t, xr);
 		}
 
-		private void Deserialize (Type t, XmlReader xr)
+		private object Deserialize (Type t, XmlReader xr)
 		{
 			XmlSerializer ser = new XmlSerializer (t);
 			result = ser.Deserialize (xr);
+			return result;
 		}
 
 		[Test]
@@ -66,5 +68,11 @@ namespace MonoTests.System.Xml.Serialization
 			Assertion.AssertEquals ("Test2", sample.ArrayText [1]);
 		}
 
+		[Test]
+		public void DeserializeEmptyEnum ()
+		{
+			Field f = Deserialize (typeof (Field), "<field modifiers=\"\" />") as Field;
+			Assertion.AssertEquals (MapModifiers.Public, f.Modifiers);
+		}
 	}
 }

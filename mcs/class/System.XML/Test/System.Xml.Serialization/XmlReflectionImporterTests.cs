@@ -18,7 +18,7 @@ using NUnit.Framework;
 
 using MonoTests.System.Xml.TestClasses;
 
-namespace MonoTests.System.Xml.Serialization
+namespace MonoTests.System.XmlSerialization
 {
 	// debugging class
 	internal class Debug

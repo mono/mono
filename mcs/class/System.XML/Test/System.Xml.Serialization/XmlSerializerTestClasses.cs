@@ -68,4 +68,21 @@ namespace MonoTests.System.Xml.TestClasses
 		[XmlAttribute("member")]
 		public string something = null;
 	}
+	
+	[XmlRoot("field")]
+	public class Field
+	{
+		[XmlAttribute("modifiers")]
+		public MapModifiers Modifiers;
+	}
+
+	[Flags]
+	public enum MapModifiers
+	{
+		[XmlEnum("public")]
+		Public = 0,
+		[XmlEnum("protected")]
+		Protected = 1,
+	}
+	
 }
