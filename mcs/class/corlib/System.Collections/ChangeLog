@@ -1,3 +1,8 @@
+2003-09-26  Zoltan Varga  <vargaz@freemail.hu>
+
+	* Hashtable.cs: Remove empty static constructor since it prevents this
+	class from being beforefieldinit.
+
 2003-08-27  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* CaseInsensitiveHashCodeProvider.cs: small speed improvement.

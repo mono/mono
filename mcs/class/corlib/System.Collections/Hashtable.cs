@@ -92,17 +92,6 @@ namespace System.Collections {
 			13845163
 		};
 
-		// Class constructor
-
-		static Hashtable () {
-			// NOTE: previously this static constructor was used
-			//       to calculate primeTbl, now primeTbl is
-			//       hardcoded and constructor does nothing
-			//       useful except for forcing compiler to
-			//       eliminate beforefieldinit from signature.
-		}
-
-
 		//
 		// Constructors
 		//
