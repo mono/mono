@@ -930,6 +930,13 @@ namespace System.Text.RegularExpressions.Syntax {
 			// character codes
 
 			case '0':
+				//
+				// Turns out that octal values can be specified
+				// without a leading zero.   But also the limit
+				// of three character should include this first
+				// one.  
+				//
+				ptr--;
 				int prevptr = ptr;
 				int result = ParseOctal (pattern, ref ptr);
 				if (result == -1 && prevptr == ptr)
