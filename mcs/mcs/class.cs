@@ -2298,7 +2298,9 @@ namespace Mono.CSharp {
 				return false;
 
 			MethodSignature ms = new MethodSignature (Name, null, ParameterTypes);
-			if (!IsOperator) {
+			if (IsOperator) {
+				flags |= MethodAttributes.SpecialName | MethodAttributes.HideBySig;
+			} else {
 				MemberList mi_this;
 
 				mi_this = TypeContainer.FindMembers (
@@ -2314,9 +2316,7 @@ namespace Mono.CSharp {
 						      "with the same parameter types");
 					return false;
 				}
-			} else {
-				flags |= MethodAttributes.SpecialName | MethodAttributes.HideBySig;
-			}
+			} 
 
 			//
 			// Verify if the parent has a type with the same name, and then
@@ -3769,7 +3769,7 @@ namespace Mono.CSharp {
 				GetData = new MethodData (this, "get", MemberType,
 							  parameters, ip, CallingConventions.Standard,
 							  Get.OptAttributes, ModFlags, flags, false);
-
+				
 				if (!GetData.Define (parent))
 					return false;
 
@@ -4202,6 +4202,7 @@ namespace Mono.CSharp {
 			if (!CheckBase (parent))
 				return false;
 
+			flags |= MethodAttributes.HideBySig | MethodAttributes.SpecialName;
 			if (Get != null){
                                 InternalParameters ip = new InternalParameters (parent, Parameters);
 

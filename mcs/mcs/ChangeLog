@@ -1,3 +1,12 @@
+2003-01-29  Miguel de Icaza  <miguel@ximian.com>
+
+	* class.cs (Operator): Set the SpecialName flags for operators.
+	
+	* expression.cs (Invocation.DoResolve): Only block calls to
+	accessors and operators on SpecialName methods.
+
+	(Cast.TryReduce): Handle conversions from char constants.
+
 
 Tue Jan 28 17:30:57 CET 2003 Paolo Molaro <lupus@ximian.com>
 

@@ -1625,6 +1625,45 @@ namespace Mono.CSharp {
 					return new DecimalConstant ((decimal) v);
 			}
 
+			if (expr is CharConstant){
+				char v = ((CharConstant) expr).Value;
+				
+				if (target_type == TypeManager.byte_type) {
+					if (!CheckRange (ec, v, target_type, Byte.MinValue, Byte.MaxValue))
+						return null;
+					return new ByteConstant ((byte) v);
+				}
+				if (target_type == TypeManager.sbyte_type) {
+					if (!CheckRange (ec, v, target_type, SByte.MinValue, SByte.MaxValue))
+						return null;
+					return new SByteConstant ((sbyte) v);
+				}
+				if (target_type == TypeManager.short_type) {
+					if (!CheckRange (ec, v, target_type, Int16.MinValue, Int16.MaxValue))
+						return null;
+					return new ShortConstant ((short) v);
+				}
+				if (target_type == TypeManager.int32_type)
+					return new IntConstant ((int) v);
+				if (target_type == TypeManager.uint32_type)
+					return new UIntConstant ((uint) v);
+				if (target_type == TypeManager.int64_type)
+					return new LongConstant ((long) v);
+				if (target_type == TypeManager.uint64_type)
+					return new ULongConstant ((ulong) v);
+				if (target_type == TypeManager.float_type)
+					return new FloatConstant ((float) v);
+				if (target_type == TypeManager.double_type)
+					return new DoubleConstant ((double) v);
+				if (target_type == TypeManager.char_type) {
+					if (!CheckRange (ec, v, target_type, Char.MinValue, Char.MaxValue))
+						return null;
+					return new CharConstant ((char) v);
+				}
+				if (target_type == TypeManager.decimal_type)
+					return new DecimalConstant ((decimal) v);
+			}
+
 			return null;
 		}
 		
@@ -1642,7 +1681,7 @@ namespace Mono.CSharp {
 				return null;
 
 			eclass = ExprClass.Value;
-			
+
 			if (expr is Constant){
 				Expression e = TryReduce (ec, type);
 
@@ -4445,7 +4484,10 @@ namespace Mono.CSharp {
 			}
 
 			if ((method.Attributes & MethodAttributes.SpecialName) != 0){
-				Report.Error (571, loc, method.Name + ": can not call operator or accessor");
+				string name = method.Name;
+
+				if (name.StartsWith ("get_") || name.StartsWith ("set_") || name.StartsWith ("op_"))
+					Report.Error (571, loc, method.Name + ": can not call operator or accessor");
 			}
 			
 			eclass = ExprClass.Value;
