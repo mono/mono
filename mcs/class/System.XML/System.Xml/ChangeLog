@@ -1,5 +1,9 @@
 2002-12-28  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
 
+	* XmlNodeReader.cs : primitive reading implementation.
+
+2002-12-28  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
+
 	* XmlElement.cs : quick fix for the incomplete patch of #35308 below.
 
 2002-12-28  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
