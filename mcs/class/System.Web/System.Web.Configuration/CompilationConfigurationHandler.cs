@@ -104,7 +104,7 @@ namespace System.Web.Configuration
 
 					aname = aname + ".dll";
 					if (!assemblies.Contains (aname))
-						assemblies.Add (aname);
+						assemblies.Add (ShortAsmName (aname));
 
 					continue;
 				}
@@ -115,7 +115,7 @@ namespace System.Web.Configuration
 						continue;
 					}
 					aname = aname + ".dll";
-					assemblies.Remove (aname);
+					assemblies.Remove (ShortAsmName (aname));
 					continue;
 				}
 
@@ -167,6 +167,14 @@ namespace System.Web.Configuration
 			return HandlersUtil.ExtractAttributeValue (name, node, true);
 		}
 
+		private static string ShortAsmName (string long_name)
+		{
+			int i = long_name.IndexOf (',');
+			if (i < 0)
+				return long_name;
+			return long_name.Substring (0, i);
+		}
+		
 		static void ThrowException (string message, XmlNode node)
 		{
 			HandlersUtil.ThrowException (message, node);

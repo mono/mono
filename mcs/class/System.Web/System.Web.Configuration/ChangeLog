@@ -1,3 +1,9 @@
+2003-11-08 Jackson Harper <jackson@ximian.com>
+
+	* CompilationConfigurationHandler.cs: Trim extra versioning
+	information off of assembly names. This is a workaround that fixes
+	bug #50355.
+	
 2003-11-05  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* GlobalizationConfiguration.cs: added GetInstance method.
