@@ -1,3 +1,9 @@
+2004-06-03  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Expression.cs : LookupNamespace() only allows already-atomized names.
+	* XPathEditableNavigator.cs : removed incorrect set_OuterXml() and 
+	  set_InnerXml().
+
 2004-05-22  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* DefaultContext.cs : Add XPathNavigator input support for ToBoolean()

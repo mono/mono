@@ -1273,7 +1273,7 @@ namespace System.Xml.XPath
 				if (resolvedName)
 					strURI1 = _name.Namespace;
 				else
-					strURI1 = nsm.LookupNamespace (_name.Namespace);
+					strURI1 = nsm.LookupNamespace (_name.Namespace, false);
 				if (strURI1 == null)
 					throw new XPathException ("Invalid namespace prefix: "+_name.Namespace);
 			}
@@ -1298,7 +1298,7 @@ namespace System.Xml.XPath
 				if (resolvedName)
 					ns = _name.Namespace;
 				else
-					ns = nsm.LookupNamespace (_name.Namespace);	// TODO: check to see if this returns null or ""
+					ns = nsm.LookupNamespace (_name.Namespace, false);	// TODO: check to see if this returns null or ""
 				if (ns == null)
 					throw new XPathException ("Invalid namespace prefix: "+_name.Namespace);
 			}
