@@ -38,6 +38,7 @@ namespace System.Reflection {
 				return info.attrs;
 			}
 		}
+		
 		public override bool CanRead {
 			get {
 				MonoPropertyInfo info;
@@ -45,6 +46,7 @@ namespace System.Reflection {
 				return (info.get_method != null);
 			}
 		}
+		
 		public override bool CanWrite {
 			get {
 				MonoPropertyInfo info;
@@ -67,6 +69,7 @@ namespace System.Reflection {
 				}
 			}
 		}
+
 		public override Type ReflectedType {
 			get {
 				MonoPropertyInfo info;
@@ -74,6 +77,7 @@ namespace System.Reflection {
 				return info.parent;
 			}
 		}
+		
 		public override Type DeclaringType {
 			get {
 				MonoPropertyInfo info;
@@ -81,6 +85,7 @@ namespace System.Reflection {
 				return info.parent;
 			}
 		}
+		
 		public override string Name {
 			get {
 				MonoPropertyInfo info;
@@ -90,7 +95,8 @@ namespace System.Reflection {
 		}
 
 		[MonoTODO]
-		public override MethodInfo[] GetAccessors( bool nonPublic) {
+		public override MethodInfo[] GetAccessors (bool nonPublic)
+		{
 			// FIXME: check nonPublic
 			MonoPropertyInfo info;
 			int n = 0;
@@ -109,37 +115,48 @@ namespace System.Reflection {
 		}
 
 		[MonoTODO]
-		public override MethodInfo GetGetMethod( bool nonPublic) {
+		public override MethodInfo GetGetMethod (bool nonPublic)
+		{
 			// FIXME: check nonPublic
 			MonoPropertyInfo info;
 			MonoPropertyInfo.get_property_info (this, out info);
 			return info.get_method;
 		}
-		public override ParameterInfo[] GetIndexParameters() {
+
+		public override ParameterInfo[] GetIndexParameters()
+		{
 			MonoPropertyInfo info;
 			MonoPropertyInfo.get_property_info (this, out info);
 			if (info.get_method != null)
 				return info.get_method.GetParameters ();
 			return new ParameterInfo [0];
 		}
-		public override MethodInfo GetSetMethod( bool nonPublic) {
+		
+		public override MethodInfo GetSetMethod (bool nonPublic)
+		{
 			// FIXME: check nonPublic
 			MonoPropertyInfo info;
 			MonoPropertyInfo.get_property_info (this, out info);
 			return info.set_method;
 		}
-		public override bool IsDefined (Type attributeType, bool inherit) {
+		
+		public override bool IsDefined (Type attributeType, bool inherit)
+		{
 			return MonoCustomAttrs.IsDefined (this, attributeType, inherit);
 		}
 
-		public override object[] GetCustomAttributes( bool inherit) {
+		public override object[] GetCustomAttributes (bool inherit)
+		{
 			return MonoCustomAttrs.GetCustomAttributes (this, inherit);
 		}
-		public override object[] GetCustomAttributes( Type attributeType, bool inherit) {
+		
+		public override object[] GetCustomAttributes (Type attributeType, bool inherit)
+		{
 			return MonoCustomAttrs.GetCustomAttributes (this, attributeType, inherit);
 		}
 
-		public override object GetValue( object obj, BindingFlags invokeAttr, Binder binder, object[] index, CultureInfo culture) {
+		public override object GetValue (object obj, BindingFlags invokeAttr, Binder binder, object[] index, CultureInfo culture)
+		{
 			object ret = null;
 
 			MethodInfo method = GetGetMethod (false);
@@ -154,7 +171,8 @@ namespace System.Reflection {
 			return ret;
 		}
 
-		public override void SetValue( object obj, object value, BindingFlags invokeAttr, Binder binder, object[] index, CultureInfo culture) {
+		public override void SetValue (object obj, object value, BindingFlags invokeAttr, Binder binder, object[] index, CultureInfo culture)
+		{
 			MethodInfo method = GetSetMethod (false);
 			if (method == null)
 				throw new ArgumentException ("Set Method not found for '" + Name + "'");
