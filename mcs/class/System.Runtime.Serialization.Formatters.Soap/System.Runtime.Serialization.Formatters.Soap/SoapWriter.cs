@@ -448,6 +448,13 @@ namespace System.Runtime.Serialization.Formatters.Soap {
 			Element xmlArrayType = _mapper[arrayType];
 			_xmlWriter.WriteStartElement(element.Prefix, element.LocalName, element.NamespaceURI);
 			if(currentArrayId > 0) Id(currentArrayId);
+			
+			if (arrayType == typeof(byte)) {
+				EncodeType (currentArray.GetType());
+				_xmlWriter.WriteString (Convert.ToBase64String ((byte[])currentArray));
+				_xmlWriter.WriteFullEndElement();
+				return;
+			}
 
 			if(_xmlWriter.LookupPrefix(xmlArrayType.NamespaceURI) == null)
 			{

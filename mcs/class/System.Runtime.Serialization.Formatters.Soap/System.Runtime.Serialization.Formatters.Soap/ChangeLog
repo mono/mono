@@ -1,3 +1,11 @@
+2004-08-24  Lluis Sanchez Gual <lluis@ximian.com>
+
+	* SoapReader.cs: Serialize byte arrays using base64 encoding.
+	  GetComponentType should always return the type if
+	  specified, GetId can now be !=0 for base64 arrrays.
+	* SoapTypeMapper.cs: Register byte[] as base64 xml type.
+	* SoapWriter.cs: Handle base64 encoded byte arrays.
+
 2004-06-10  Lluis Sanchez Gual <lluis@ximian.com>
 
 	* SoapWriter.cs: In SerializeArray, consider 1 a valid id.
