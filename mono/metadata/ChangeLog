@@ -1,3 +1,9 @@
+2003-09-25  Martin Baulig  <martin@ximian.com>
+
+	* icall.c (ves_icall_Type_IsGenericTypeDefinition): Removed this
+	interncall since it was identical to `Type.GetGenericTypeDefinition()'.
+	(ves_icall_Type_get_IsGenericInstance): New interncall.
+
 2003-09-24 Bernie Solomon <bernard@ugsolutions.com>
 
         * object.c: fix cast warning in big endian code.
