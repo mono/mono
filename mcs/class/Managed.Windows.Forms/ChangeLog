@@ -1,3 +1,9 @@
+2004-12-07  Geoff Norton  <gnorton@customerdna.com>
+
+	* System.Windows.Forms.dll.soruces:  Add the XplatUIOSX.cs driver.
+	  System.Windows.Forms/XplatUIOSX.cs: Initial checkin
+	  System.Windows.Forms/XplatUI.cs: Use the Quartz driver if the environment is set to use it
+
 2004-12-07  Ravindra  <rkumar@novell.com>
 
 	* SWF.csproj: Added ThreadExceptionDialog.cs to project and removed

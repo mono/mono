@@ -230,6 +230,7 @@ System.Windows.Forms/X11Structs.cs
 System.Windows.Forms/XEventQueue.cs
 System.Windows.Forms/XplatUI.cs
 System.Windows.Forms/XplatUIDriver.cs
+System.Windows.Forms/XplatUIOSX.cs
 System.Windows.Forms/XplatUIStructs.cs
 System.Windows.Forms/XplatUIWin32.cs
 System.Windows.Forms/XplatUIX11.cs
