@@ -9,7 +9,7 @@ Sub Main()
 	Dim B As Integer = 2 
 	Dim R As Boolean
 	R = A And B		'00 And 10 
-	if R = False Then
+	if R = True Then
 		throw new Exception("#Error With And Operator")
 	End if
 End Sub

@@ -1,3 +1,6 @@
+2005-03-03 Ritvik Mayank <mritvik@novell.com>
+	* Made some correction in the ConversionWithAndOperatorNumC.vb
+
 2005-02-18 Ritvik Mayank <mritvik@novell.com>
 	* Removed DefaultAttr*.vb replicas of DefaultProp*.vb 
 
