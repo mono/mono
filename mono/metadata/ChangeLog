@@ -1,3 +1,8 @@
+2004-07-29  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* appdomain.c: hack to build correctly the private bin path on windows.
+	Fixes bug #61991.
+
 2004-07-28  Dick Porter  <dick@ximian.com>
 
 	* socket-io.c
