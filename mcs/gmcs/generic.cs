@@ -214,6 +214,14 @@ namespace Mono.CSharp {
 			get { return has_ctor_constraint; }
 		}
 
+		bool GenericConstraints.IsReferenceType {
+			get { return has_reference_type; }
+		}
+
+		bool GenericConstraints.IsValueType {
+			get { return has_value_type; }
+		}
+
 		bool GenericConstraints.HasClassConstraint {
 			get { return class_constraint_type != null; }
 		}
@@ -605,11 +613,34 @@ namespace Mono.CSharp {
 
 			Expression aexpr = new EmptyExpression (atype);
 
-			//
-			// First, check the class constraint.
-			//
-
 			Type parent = ptype.BaseType;
+
+			//
+			// First, check the `class' and `struct' constraints.
+			//
+			if (parent == TypeManager.object_type) {
+				if (!atype.IsClass) {
+					Report.Error (452, loc, "The type `{0}' must be " +
+						      "a reference type in order to use it " +
+						      "as type parameter `{1}' in the " +
+						      "generic type or method `{2}'.",
+						      atype, ptype, DeclarationName);
+					return false;
+				}
+			} else if (parent == TypeManager.value_type) {
+				if (!atype.IsValueType) {
+					Report.Error (453, loc, "The type `{0}' must be " +
+						      "a value type in order to use it " +
+						      "as type parameter `{1}' in the " +
+						      "generic type or method `{2}'.",
+						      atype, ptype, DeclarationName);
+					return false;
+				}
+			}
+
+			//
+			// The class constraint comes next.
+			//
 			if ((parent != null) && (parent != TypeManager.object_type)) {
 				if (!Convert.ImplicitStandardConversionExists (aexpr, parent)) {
 					Report.Error (309, loc, "The type `{0}' must be " +

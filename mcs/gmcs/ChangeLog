@@ -1,5 +1,10 @@
 2004-04-07  Martin Baulig  <martin@ximian.com>
 
+	* generic.cs (ConstructedType.CheckConstraints): Enforce the
+	`class' and `struct' constraints.
+
+2004-04-07  Martin Baulig  <martin@ximian.com>
+
 	* generic.cs (SpecialConstraint): New public enum.
 	(Constraints.Resolve): Added support for the `class' and `struct'
 	constraints.

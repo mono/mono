@@ -20,6 +20,8 @@ namespace Mono.CSharp {
 
 	public interface GenericConstraints {
 		bool HasConstructor { get; }
+		bool IsReferenceType { get; }
+		bool IsValueType { get; }
 		bool HasClassConstraint { get; }
 		Type ClassConstraint { get; }
 		Type[] InterfaceConstraints { get; }
@@ -156,6 +158,8 @@ namespace Mono.CSharp {
 		protected class ReflectionConstraints : GenericConstraints
 		{
 			bool has_ctor;
+			bool is_reference_type;
+			bool is_value_type;
 			Type class_constraint;
 			Type[] iface_constraints;
 
@@ -165,6 +169,13 @@ namespace Mono.CSharp {
 				this.has_ctor = has_ctor;
 				this.class_constraint = class_constr;
 				this.iface_constraints = iface_constrs;
+
+				if (class_constraint != null) {
+					if (class_constraint == TypeManager.object_type)
+						is_reference_type = true;
+					else if (class_constraint == TypeManager.value_type)
+						is_value_type = true;
+				}
 			}
 
 			public static GenericConstraints Create (Type t)
@@ -186,6 +197,14 @@ namespace Mono.CSharp {
 
 			public bool HasClassConstraint {
 				get { return class_constraint != null; }
+			}
+
+			public bool IsReferenceType {
+				get { return is_reference_type; }
+			}
+
+			public bool IsValueType {
+				get { return is_value_type; }
 			}
 
 			public Type ClassConstraint {
