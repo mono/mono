@@ -38,18 +38,14 @@ namespace System.Web.Services.Description
 	public class BasicProfileViolation
 	{
 		WsiClaims _claims;
-		string _details;
 		StringCollection _elements;
-		string _statement;
-		string _recommendation;
+		ConformanceRule _rule;
 		
-		internal BasicProfileViolation (WsiClaims claims, string details, StringCollection elements, string statement, string recommendation)
+		internal BasicProfileViolation (WsiClaims claims, ConformanceRule rule)
 		{
 			_claims = claims;
-			_details = details;
-			_statement = statement;
-			_recommendation = recommendation;
-			_elements = elements;
+			_rule = rule;
+			_elements = new StringCollection ();
 		}
 		
 		public WsiClaims Claims {
@@ -57,7 +53,7 @@ namespace System.Web.Services.Description
 		}
 		
 		public string Details {
-			get { return _details; }
+			get { return _rule.Details; }
 		}
 		
 		public StringCollection Elements {
@@ -65,17 +61,17 @@ namespace System.Web.Services.Description
 		}
 		
 		public string NormativeStatement {
-			get { return _statement; }
+			get { return _rule.NormativeStatement ; }
 		}
 
 		public string Recommendation {
-			get { return _recommendation; }
+			get { return _rule.Recommendation; }
 		}
 		
 		public override string ToString ()
 		{
-			string res = _statement + ": " + _details;
-			foreach (string s in _elements)
+			string res = NormativeStatement + ": " + Details;
+			foreach (string s in Elements)
 				res += "\n  -  " + s;
 			return res;
 		}

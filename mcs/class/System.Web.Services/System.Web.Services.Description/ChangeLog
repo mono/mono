@@ -1,3 +1,13 @@
+2004-07-14  Lluis Sanchez Gual  <lluis@ximian.com>
+
+	* ConformanceChecker.cs, BasicProfileChecker.cs: New files that implement
+	  the basic infrastructure for basic profile conformance checking.
+	* BasicProfileViolation.cs: Take normative information from the rule object.
+	* BasicProfileViolationCollection.cs: Added Add method.
+	* ServiceDescriptionFormatExtension.cs: Little fix.
+	* WebServicesInteroperability.cs: Implemented basic support for conformance
+	  checking.
+
 2004-07-13  Lluis Sanchez Gual  <lluis@ximian.com>
 
 	* Binding.cs, Message.cs, MessageBinding.cs, MessagePart.cs, Operation.cs,

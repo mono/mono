@@ -45,6 +45,11 @@ namespace System.Web.Services.Description
 			set { List [index] = value; }
 		}
 		
+		public int Add (BasicProfileViolation violation)
+		{
+			return List.Add (violation);
+		}
+
 		public bool Contains (BasicProfileViolation violation)
 		{
 			return List.Contains (violation);

@@ -61,12 +61,12 @@ namespace System.Web.Services.Description {
 			set { handled = value; }
 		}
 
-#if NET_2_0
+#if !NET_2_0
 		[XmlIgnore]
+#endif
 		public object Parent {
 			get { return parent; }
 		}
-#endif
 
 		[DefaultValue (false)]
 		[XmlAttribute ("required", Namespace = "http://schemas.xmlsoap.org/wsdl/")]
