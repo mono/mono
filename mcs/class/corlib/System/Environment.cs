@@ -145,7 +145,7 @@ namespace System
 		//
 		static OperatingSystem os;
 
-		static extern PlatformID Platform {
+		internal static extern PlatformID Platform {
 			[MethodImplAttribute (MethodImplOptions.InternalCall)]
 			get;
 		}
