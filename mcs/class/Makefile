@@ -7,11 +7,16 @@ bootstrap_dirs := \
 	corlib 					\
 	System					\
 	System.XML				\
+	Mono.Security				\
+	System.Security				\
 	System					\
 	$(MONO_SYMBOLWRITER)
 
+# Note that Mono.Security and System.Security aren't listed.
+# We may have to add those if 'mcs' starts using them.
 basic_SUBDIRS := corlib System System.XML System
-net_1_1_bootstrap_SUBDIRS := $(bootstrap_dirs) Mono.Security
+
+net_1_1_bootstrap_SUBDIRS := $(bootstrap_dirs)
 net_2_0_bootstrap_SUBDIRS := $(bootstrap_dirs)
 
 include ../build/rules.make
@@ -22,14 +27,14 @@ SUBDIRS = \
 	corlib				\
 	System				\
 	System.XML			\
+	Mono.Security			\
+	System.Security			\
 	System				\
 	I18N				\
 	System.Drawing			\
 	System.EnterpriseServices	\
 	Mono.C5				\
-	Mono.Security			\
 	Mono.Data.Tds			\
-	System.Security			\
 	System.Data			\
 	Mono.Data			\
 	Mono.GetOptions			\

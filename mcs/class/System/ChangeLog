@@ -1,3 +1,15 @@
+2005-01-24  Raja R Harinath  <rharinath@novell.com>
+
+	Add circular dependency on System.Security.dll.
+	* Makefile (XML_DEP, XML_DEP_FILE): Rename from CYCLIC_DEP and
+	CYCLIC_DEP_FILE. 
+	(SECURITY_DEP, SECURITY_DEP_FILE): Parallel defines for expressing
+	cyclic dependency on System.Security.dll.
+	(CYCLIC_DEPS, CYCLIC_DEP_FILES): New.  Used to detect which of the
+	dependencies are present.
+	(echo-warning, LIB_MCS_FLAGS): Update to reflect new circular
+	dependencies.
+
 2005-01-20  Miguel de Icaza  <miguel@ximian.com>
 
 	* Add a couple more -nowarns when compiling tests. 

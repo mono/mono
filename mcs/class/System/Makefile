@@ -5,15 +5,21 @@ include ../../build/rules.make
 LIBRARY = System.dll
 LIBRARY_USE_INTERMEDIATE_FILE = yes
 
-# Because System.dll and System.Xml.dll have cyclic dependency we need two-pass build.
-# 1st pass - build System.dll without System.Xml.dll reference
-# 2nd pass - build System.dll with System.Xml.dll reference
+# Because System.dll, System.Security.dll System.Xml.dll have a cyclic dependency, we need a two-pass build.
+# 1st pass - build System.dll without System.Xml.dll or System.Security.dll references
+# 2nd pass - build System.dll with System.Xml.dll and System.Security.dll references
 
 LIB_MCS_FLAGS = /r:$(corlib)
 TEST_MCS_FLAGS = -nowarn:1595 -nowarn:0618 -nowarn:219 -nowarn:67
 
-CYCLIC_DEP := System.Xml.dll
-CYCLIC_DEP_FILE := $(wildcard ../lib/$(PROFILE)/$(CYCLIC_DEP))
+XML_DEP := System.Xml.dll
+XML_DEP_FILE := $(wildcard ../lib/$(PROFILE)/$(XML_DEP))
+
+SECURITY_DEP := System.Security.dll
+SECURITY_DEP_FILE := $(wildcard ../lib/$(PROFILE)/$(SECURITY_DEP))
+
+CYCLIC_DEPS := $(XML_DEP) $(SECURITY_DEP)
+CYCLIC_DEP_FILES := $(XML_DEP_FILE) $(SECURITY_DEP_FILE)
 
 EXTRA_DISTFILES = \
 	System.Text.RegularExpressions/notes.txt	\
@@ -33,21 +39,38 @@ ifdef USE_BOOT_COMPILE
 LIBRARY_COMPILE = $(BOOT_COMPILE)
 endif
 
-ifndef CYCLIC_DEP_FILE
-# First pass: Build temporary System.dll without depending on System.Xml.dll
-
+ifneq ($(CYCLIC_DEPS:%=../lib/$(PROFILE)/%), $(CYCLIC_DEP_FILES))
 NO_SIGN_ASSEMBLY = yes
 all-local: echo-warning
 .PHONY: echo-warning
+
+ifeq   (, $(strip $(CYCLIC_DEP_FILES)))
 echo-warning:
-	@echo "** Warning: System.dll built without parts that depend on System.Xml.dll"
+	@echo "** Warning: System.dll built without parts that depend on System.Xml.dll and System.Security.dll"
+else     # defined CYCLIC_DEP_FILES
+ifndef     XML_DEP_FILE
+# => defined SECURITY_DEP_FILE
+echo-warning:
+	@echo "** Warning: built System.dll with 'System.Security.dll'-dependent parts"
+	@echo "** Warning: ... without 'System.Xml.dll' present: it may not be usable"
+
+else       # defined XML_DEP_FILE
+echo-warning:
+	@echo "** Warning: System.dll built without parts that depend on System.Security.dll"
+endif
+endif
 endif
 
 include ../../build/library.make
 
-ifdef CYCLIC_DEP_FILE
-LIB_MCS_FLAGS += /define:XML_DEP /r:$(CYCLIC_DEP)
-$(the_lib): $(CYCLIC_DEP_FILE)
+ifdef XML_DEP_FILE
+LIB_MCS_FLAGS += /define:XML_DEP /r:$(XML_DEP)
+$(the_lib): $(XML_DEP_FILE)
+endif
+
+ifdef SECURITY_DEP_FILE
+LIB_MCS_FLAGS += /define:SECURITY_DEP /r:$(SECURITY_DEP)
+$(the_lib): $(SECURITY_DEP_FILE)
 endif
 
 $(test_lib): $(test_lib).config

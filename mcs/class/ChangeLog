@@ -1,3 +1,9 @@
+2005-01-24  Raja R Harinath  <rharinath@novell.com>
+
+	* Makefile (bootstrap_dirs): Add Mono.Security and System.Security
+	ahead of System.
+	(SUBDIRS): Move Mono.Security and System.Security ahead of System.
+
 2005-01-13  Cesar Lopez Nataren  <cnataren@novell.com>
 
 	* Makefile (SUBDIRS): added Microsoft.JScript to the default build.
