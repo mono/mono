@@ -1,3 +1,8 @@
+2003-09-04  Martin Baulig  <martin@ximian.com>
+
+	* TypeBuilder.cs (TypeBuilder.MonoGenericParam): Make this nested
+	class internal, not protected.
+
 2003-08-29  Martin Baulig  <martin@ximian.com>
 
 	* TypeBuilder.cs (TypeBuilder.DefineGenericParameter): New public

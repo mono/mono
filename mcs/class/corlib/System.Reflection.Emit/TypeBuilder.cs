@@ -1024,7 +1024,7 @@ namespace System.Reflection.Emit {
 		}
 #endif
 
-		protected sealed class MonoGenericParam {
+		internal sealed class MonoGenericParam {
 			private readonly uint Handle;
 
 			public readonly Type Type;
