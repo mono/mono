@@ -292,9 +292,8 @@ namespace Mono.Xml.Xsl {
 			XslAttributeSet existing = attrSets [set.Name] as XslAttributeSet;
 			// The latter set will have higher priority
 			if (existing != null)
-				set.Merge (existing);
-			
-			attrSets [set.Name] = set; 
+				existing.Merge (set);
+			attrSets [set.Name] = set;
 		}
 		
 		VariableScope curVarScope;

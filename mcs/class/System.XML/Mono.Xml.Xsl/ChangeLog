@@ -1,5 +1,10 @@
 2003-10-30 Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
 
+	* Compiler.cs : It is not important, but attribute order became closer
+	  to MS.NET and Xalan (assuming from OASIS tests).
+
+2003-10-30 Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
+
 	* GenericOutputter.cs : Attribute wasn't overwritten its properties
 	  because Attribute is struct it was let to another local variable.
 
