@@ -1,3 +1,8 @@
+2003-11-24  Zoltan Varga  <vargaz@freemail.hu>
+
+	* LocalBuilder.cs ILGenerator.cs: Get rid of 'module' field, obtain 
+	needed objects from the ilgen object instead.
+
 2003-11-21  Zoltan Varga  <vargaz@freemail.hu>
 
 	* TypeBuilder.cs FieldBuilder.cs MethodBuilder.cs ConstructorBuilder.cs:  Add support for custom modifiers from NET 1.2.

@@ -30,13 +30,11 @@ namespace System.Reflection.Emit {
 		//
 		// Order does not matter after here
 		//
-		private ModuleBuilder module;
 		internal uint position;
 		internal ILGenerator ilgen;
 
-		internal LocalBuilder (ModuleBuilder m, Type t, ILGenerator ilgen)
+		internal LocalBuilder (Type t, ILGenerator ilgen)
 		{
-			this.module = m;
 			this.type = t;
 			this.ilgen = ilgen;
 		}
@@ -44,11 +42,11 @@ namespace System.Reflection.Emit {
 		{
 			this.name = lname;
 
-			SignatureHelper sighelper = SignatureHelper.GetLocalVarSigHelper (module);
+			SignatureHelper sighelper = SignatureHelper.GetLocalVarSigHelper (ilgen.module);
 			sighelper.AddArgument (type);
 			byte[] signature = sighelper.GetSignature ();
 
-			module.symbol_writer.DefineLocalVariable (lname, FieldAttributes.Private,
+			ilgen.sym_writer.DefineLocalVariable (lname, FieldAttributes.Private,
 								  signature, SymAddressKind.ILOffset,
 								  (int) position, 0, 0,
 								  startOffset, endOffset);

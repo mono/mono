@@ -139,8 +139,8 @@ namespace System.Reflection.Emit {
 		private int num_labels;
 		private LabelFixup[] fixups;
 		private int num_fixups;
-		private ModuleBuilder module;
-		private IMonoSymbolWriter sym_writer;
+		internal ModuleBuilder module;
+		internal IMonoSymbolWriter sym_writer;
 		private Stack scopes;
 		private int cur_block;
 		private Stack open_blocks;
@@ -349,7 +349,7 @@ namespace System.Reflection.Emit {
 		
 		public LocalBuilder DeclareLocal (Type localType)
 		{
-			LocalBuilder res = new LocalBuilder (module, localType, this);
+			LocalBuilder res = new LocalBuilder (localType, this);
 			if (locals != null) {
 				LocalBuilder[] new_l = new LocalBuilder [locals.Length + 1];
 				System.Array.Copy (locals, new_l, locals.Length);
