@@ -64,7 +64,7 @@ btest_makefrag = $(depsdir)/$(btest_lib).makefrag
 btest_flags = /r:$(test_against) $(test_nunit_ref) $(TEST_MBAS_FLAGS)
 
 ifndef HAVE_CS_TESTS
-HAVE_CS_TESTS := $(wildcard $(btest_sourcefile))
+HAVE_CS_TESTS := $(wildcard $(test_sourcefile))
 endif
 ifndef HAVE_VB_TESTS
 HAVE_VB_TESTS := $(wildcard $(btest_sourcefile))
