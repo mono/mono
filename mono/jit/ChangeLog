@@ -1,3 +1,8 @@
+2002-04-25  Dietmar Maurer  <dietmar@ximian.com>
+
+	* x86.brg: enable stmt: STIND_I4 (addr, coni4) again,
+	added CONV_OVF_I4 (fix bug #23808)
+
 2002-04-23  Dietmar Maurer  <dietmar@ximian.com>
 
 	* x86.brg: code cleanup - use x86_patch ()
