@@ -687,7 +687,7 @@ namespace Mono.Xml.Schema
 						 * be restriction?
 						 * */
 						 // mmm, will check later.
-						XmlSchemaSimpleType baseType = str.ActualBaseSchemaType as XmlSchemaSimpleType;
+						XmlSchemaSimpleType baseType = st.BaseXmlSchemaType as XmlSchemaSimpleType;
 						if (baseType != null) {
 							 AssessStringValid(baseType, dt, normalized);
 						}
@@ -866,7 +866,7 @@ namespace Mono.Xml.Schema
 			// Finally, create child particle state.
 			XmlSchemaComplexType xsComplexType = SchemaType as XmlSchemaComplexType;
 			if (xsComplexType != null)
-				childParticleState = stateManager.Create (xsComplexType.ContentTypeParticle);
+				childParticleState = stateManager.Create (xsComplexType.ValidatableParticle);
 			else if (stateManager.ProcessContents == XmlSchemaContentProcessing.Lax)
 				childParticleState = stateManager.Create (XmlSchemaAny.AnyTypeContent);
 			else
