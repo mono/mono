@@ -1,10 +1,10 @@
 /**
- * Namespace: System.Web.UI.Utils
+ * Namespace: System.Web
  * Class:     HttpRuntime
  * 
  * Author:  Gaurav Vaish
  * Contact: <gvaish@iitk.ac.in>
- * Status:  100%
+ * Status:  ?%
  * 
  * (C) Gaurav Vaish (2001)
  */
@@ -34,14 +34,12 @@ namespace System.Web
 			autogenKeys = new byte[88];
 			initialized = false;
 			isapiLoaded = false;
-			//throw new NotImplementedException();
-			/*
+			throw new NotImplementedException();
 			if(!DesignTimeParseData.InDesigner)
 				Initialize();
 			runtime     = new HttpRuntime();
 			if(!DesignerTimeParseData.InDesigner)
 				runtime.Init();
-			*/
 		}
 		
 		internal static void Initialize()
