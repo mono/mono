@@ -1,3 +1,6 @@
+2004-08-13 Umadevi S <sumadevi@novell.com>
+	* Added File DataContainerTest
+
 2004-06-10 Umadevi S <sumadevi@novell.com>
 	* Corrected GetTableMappingBySchemaAction for DataTableMappingCollectionTest
 
