@@ -1,3 +1,9 @@
+2005-03-03  Zoltan Varga  <vargaz@freemail.hu>
+
+	* exceptions.cs: Add new regression test.
+
+	* mini.c (optimize_branches): Check regions in the cbranch to throw
+	block case as well. Fixes #73242.
 
 Tue Mar 1 18:35:27 CET 2005 Paolo Molaro <lupus@ximian.com>
 
