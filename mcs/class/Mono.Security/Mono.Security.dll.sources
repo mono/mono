@@ -55,6 +55,7 @@
 ./Mono.Security.X509.Extensions/CRLDistributionPointsExtension.cs
 ./Mono.Security.X509.Extensions/CertificatePoliciesExtension.cs
 ./Mono.Security.X509.Extensions/ExtendedKeyUsageExtension.cs
+./Mono.Security.X509.Extensions/GeneralNames.cs
 ./Mono.Security.X509.Extensions/KeyAttributesExtension.cs
 ./Mono.Security.X509.Extensions/KeyUsageExtension.cs
 ./Mono.Security.X509.Extensions/NetscapeCertTypeExtension.cs
