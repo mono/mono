@@ -1,3 +1,7 @@
+2004-04-05  Zoltan Varga  <vargaz@freemail.hu>
+
+	* liveness.c (update_gen_kill_set): Fix previous patch.
+
 2004-04-04  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* mini-x86.h: SA_STACK defined as SA_ONSTACK. Fixed build under NetBSD.
