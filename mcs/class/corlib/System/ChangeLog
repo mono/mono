@@ -1,3 +1,7 @@
+2002-04-02  Dietmar Maurer  <dietmar@ximian.com>
+
+	* Object.cs: fixed FieldGetter/FieldSetter signature
+
 2002-04-02  Nick Drochak  <ndrochak@gol.com>
 
 	* Environment.cs: add MonoTODO's on parts that should have it.
