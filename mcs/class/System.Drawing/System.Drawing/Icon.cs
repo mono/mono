@@ -80,11 +80,40 @@ namespace System.Drawing
 		{			
 		}
 
-		[MonoTODO ("Implement")]
 		public Icon (Icon original, Size size)
 		{
-			iconSize = size;
-			throw new NotImplementedException ();
+			//FIXME, need to check how MS stores Icon structure
+			//Will serialized form help
+			this.iconSize = size;
+			this.winHandle = original.winHandle;
+			this.iconDir = original.iconDir;
+			this.imageData = original.imageData;
+			
+			int count = iconDir.idCount;
+			bool sizeObtained = false;
+			for (int i=0; i<count; i++){
+				IconDirEntry ide = iconDir.idEntries [i];
+				if (!sizeObtained)   
+					if (ide.height>=size.Height && ide.width>=size.Width) {
+						this.id = (ushort) i;
+						sizeObtained = true;
+						this.iconSize.Height = ide.height;
+						this.iconSize.Width = ide.width;
+						break;
+					}
+			}
+
+			if (!sizeObtained){
+				uint largestSize = 0;
+				for (int j=0; j<count; j++){
+					if (iconDir.idEntries [j].bytesInRes >= largestSize){
+						largestSize = iconDir.idEntries [j].bytesInRes;
+						this.id = (ushort) j;
+						this.iconSize.Height = iconDir.idEntries [j].height;
+						this.iconSize.Width = iconDir.idEntries [j].width;
+					}
+				}
+			}
 		}
 
 		public Icon (Stream stream) : this (stream, 32, 32) 
@@ -132,7 +161,7 @@ namespace System.Drawing
 						sizeObtained = true;
 						this.iconSize.Height = ide.height;
 						this.iconSize.Width = ide.width;
-					}
+					}			
 			}
 			//if we havent found the best match, return the one with the
 			//largest size. Is this approach correct??
@@ -170,7 +199,6 @@ namespace System.Drawing
 				bih.biClrImportant = bihReader.ReadUInt32 ();
 
 				iidata.iconHeader = bih;
-
 				//Read the number of colors used and corresponding memory occupied by
 				//color table. Fill this memory chunk into rgbquad[]
 				int numColors;
@@ -185,10 +213,10 @@ namespace System.Drawing
 						break;
 				}
 				
-				
 				iidata.iconColors = new uint [numColors];
 				for (int i=0; i<numColors; i++)
 					iidata.iconColors [i] = bihReader.ReadUInt32 ();
+
 				//XOR mask is immediately after ColorTable and its size is 
 				//icon height* no. of bytes per line
 				
@@ -214,7 +242,10 @@ namespace System.Drawing
 					iidata.iconAND[i] = bihReader.ReadByte();		
 				
 				imageData [j] = iidata;
+				bihReader.Close();
 			}			
+
+			reader.Close();
 		}
 
 		public Icon (string fileName) : this (new FileStream (fileName, FileMode.Open))
@@ -232,7 +263,7 @@ namespace System.Drawing
 		}
 
 		[MonoTODO ("Implement")]
-        	private Icon (SerializationInfo info, StreamingContext context)
+       	private Icon (SerializationInfo info, StreamingContext context)
 		{
 			throw new NotImplementedException ();
 		}
@@ -250,10 +281,9 @@ namespace System.Drawing
 				winHandle = IntPtr.Zero;
 		}
 
-		[MonoTODO ("Implement")]
 		public object Clone ()
 		{
-			throw new NotImplementedException ();
+			return new Icon (this, this.Width, this.Height);
 		}
 
 		[MonoTODO ("Implement")]
@@ -262,12 +292,10 @@ namespace System.Drawing
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO ("Untested")]
 		public void Save (Stream outputStream)
 		{
 			if (iconDir.idEntries!=null){
-				StreamWriter bw = new StreamWriter (outputStream);
-				//BinaryWriter bw = new BinaryWriter (outputStream);
+				BinaryWriter bw = new BinaryWriter (outputStream);
 				//write icondir
 				bw.Write (iconDir.idReserved);
 				bw.Write (iconDir.idType);
@@ -284,7 +312,7 @@ namespace System.Drawing
 					bw.Write (ide.planes);
 					bw.Write (ide.bitCount);
 					bw.Write (ide.bytesInRes);
-					bw.Write (ide.imageOffset);
+					bw.Write (ide.imageOffset);				
 				}
 				
 				//now write iconImage data
@@ -294,6 +322,7 @@ namespace System.Drawing
 					bw.Write (bih.biWidth);
 					bw.Write (bih.biHeight);
 					bw.Write (bih.biPlanes);
+					bw.Write (bih.biBitCount);
 					bw.Write (bih.biCompression);
 					bw.Write (bih.biSizeImage);
 					bw.Write (bih.biXPelsPerMeter);
@@ -308,16 +337,17 @@ namespace System.Drawing
 
 					//now write XOR Mask
 					bw.Write (imageData [i].iconXOR);
-
+					
 					//now write AND Mask
 					bw.Write (imageData [i].iconAND);
 				}
+				bw.Flush();				
 			}
 		}
 
-		[MonoTODO ("Untested")]
 		public Bitmap ToBitmap ()
 		{
+			Bitmap bmp;
 			if (imageData!=null){
 				
 				//select active icon from the iconDirEntry
@@ -351,6 +381,7 @@ namespace System.Drawing
 				writer.Write (bih.biWidth);
 				writer.Write (bih.biHeight/2);
 				writer.Write (bih.biPlanes);
+				writer.Write (bih.biBitCount);
 				writer.Write (bih.biCompression);
 				writer.Write (bih.biSizeImage);
 				writer.Write (bih.biXPelsPerMeter);
@@ -367,10 +398,14 @@ namespace System.Drawing
 				writer.Write (ii.iconXOR);
 
 				//create bitmap from stream and return
-				return new Bitmap (writer.BaseStream);
+				bmp = new Bitmap (writer.BaseStream);
+				writer.Close();
+				stream.Close();
 			} else {
-					return new Bitmap (32, 32);
+				bmp = new Bitmap (32, 32);
 			}
+
+			return bmp;
 		}
 
 		public override string ToString ()

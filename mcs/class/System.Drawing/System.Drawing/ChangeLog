@@ -1,3 +1,7 @@
+2004-04-15  Sanjay Gupta <gsanjay@novell.com>
+	* Icon.cs: Implemented more missing bits and fixed the problem
+		of icon not getting saved in proper format
+
 2004-04-14  Sanjay Gupta <gsanjay@novell.com>
 	* Icon.cs: Implemented more missing bits
 
