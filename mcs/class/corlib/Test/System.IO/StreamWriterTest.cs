@@ -361,6 +361,79 @@ public class StreamWriterTest : Assertion
 		}		
 	}
 
+	[Test]
+	[ExpectedException (typeof (ObjectDisposedException))]
+	public void AutoFlush_Disposed () 
+	{
+		StreamWriter w = new StreamWriter (new MemoryStream ());
+		w.Close ();
+		w.AutoFlush = true;
+	}
+
+	[Test]
+	[ExpectedException (typeof (ObjectDisposedException))]
+	public void WriteChar_Disposed () 
+	{
+		StreamWriter w = new StreamWriter (new MemoryStream ());
+		w.Close ();
+		w.Write ('A');
+	}
+
+	[Test]
+	[ExpectedException (typeof (ObjectDisposedException))]
+	public void WriteCharArray_Disposed () 
+	{
+		char[] c = new char [2] { 'a', 'b' };
+		StreamWriter w = new StreamWriter (new MemoryStream ());
+		w.Close ();
+		w.Write (c, 0, 2);
+	}
+
+	[Test]
+	// accepted [ExpectedException (typeof (ArgumentNullException))]
+	public void WriteCharArray_Null () 
+	{
+		char[] c = null;
+		StreamWriter w = new StreamWriter (new MemoryStream ());
+		w.Write (c);
+	}
+
+	[Test]
+	[ExpectedException (typeof (ArgumentException))]
+	public void WriteCharArray_IndexOverflow () 
+	{
+		char[] c = new char [2] { 'a', 'b' };
+		StreamWriter w = new StreamWriter (new MemoryStream ());
+		w.Write (c, Int32.MaxValue, 2);
+	}
+
+	[Test]
+	[ExpectedException (typeof (ArgumentException))]
+	public void WriteCharArray_CountOverflow () 
+	{
+		char[] c = new char [2] { 'a', 'b' };
+		StreamWriter w = new StreamWriter (new MemoryStream ());
+		w.Write (c, 1, Int32.MaxValue);
+	}
+
+	[Test]
+	[ExpectedException (typeof (ObjectDisposedException))]
+	public void WriteString_Disposed () 
+	{
+		StreamWriter w = new StreamWriter (new MemoryStream ());
+		w.Close ();
+		w.Write ("mono");
+	}
+
+	[Test]
+	// accepted [ExpectedException (typeof (ArgumentNullException))]
+	public void WriteString_Null () 
+	{
+		string s = null;
+		StreamWriter w = new StreamWriter (new MemoryStream ());
+		w.Write (s);
+	}
+
 	// TODO - Write - test errors, functionality tested in TestFlush.
 }
 }
