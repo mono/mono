@@ -46,6 +46,8 @@ namespace System.Web.UI.HtmlControls{
 				ViewState.SetItemDirty("value",false);
 		}
 		
+		[WebCategory("Action")]
+		[WebSysDescription("Fires when the value of the control changes.")]
 		public event EventHandler ServerChange{
 			add{
 				Events.AddHandler(EventServerChange, value);

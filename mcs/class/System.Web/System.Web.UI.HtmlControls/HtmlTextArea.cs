@@ -13,12 +13,16 @@ using System.Collections.Specialized;
 namespace System.Web.UI.HtmlControls{
 	
 	[DefaultEvent("ServerChange")]
+	[ValidationProperty("Value")]
 	public class HtmlTextArea : HtmlContainerControl, IPostBackDataHandler{
 		
 		private static readonly object EventServerChange = new object ();
 		
 		public HtmlTextArea(): base("textarea"){}
 		
+		[DefaultValue("")]
+		[WebCategory("Appearance")]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public int Cols{
 			get{
 				string attr = Attributes["cols"];
@@ -32,6 +36,9 @@ namespace System.Web.UI.HtmlControls{
 			}
 		}
 		
+		[DefaultValue("")]
+		[WebCategory("Appearance")]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public int Rows{
 			get{
 				string attr = Attributes["rows"];
@@ -45,6 +52,9 @@ namespace System.Web.UI.HtmlControls{
 			}
 		}
 		
+		[DefaultValue("")]
+		[WebCategory("Appearance")]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public string Value{
 			get{
 				return InnerHtml;
@@ -54,6 +64,9 @@ namespace System.Web.UI.HtmlControls{
 			}
 		}
 			
+		[DefaultValue("")]
+		[WebCategory("Behavior")]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public virtual string Name{
 			get{
 				if (UniqueID != null){
@@ -64,6 +77,8 @@ namespace System.Web.UI.HtmlControls{
 			set{}
 		}
 		
+		[WebCategory("Action")]
+		[WebSysDescription("Fires when the text within the control changes.")]
 		public event EventHandler ServerChange{
 			add{
 				Events.AddHandler(EventServerChange, value);

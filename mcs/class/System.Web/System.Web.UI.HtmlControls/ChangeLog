@@ -1,3 +1,26 @@
+2002-09-23  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HtmlAnchor.cs:
+	* HtmlButton.cs:
+	* HtmlContainerControl.cs:
+	* HtmlControl.cs:
+	* HtmlForm.cs:
+	* HtmlGenericControl.cs:
+	* HtmlImage.cs:
+	* HtmlInputButton.cs:
+	* HtmlInputCheckBox.cs:
+	* HtmlInputControl.cs:
+	* HtmlInputFile.cs:
+	* HtmlInputHidden.cs:
+	* HtmlInputImage.cs:
+	* HtmlInputRadioButton.cs:
+	* HtmlInputText.cs:
+	* HtmlSelect.cs:
+	* HtmlTable.cs:
+	* HtmlTableCell.cs:
+	* HtmlTableRow.cs:
+	* HtmlTextArea.cs: added almost all missing attributes.
+
 2002-07-20  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HtmlControl.cs: the attributes must use ViewState as its StateBag,

@@ -4,6 +4,7 @@
 */
 
 using System;
+using System.ComponentModel;
 using System.Web;
 using System.Web.UI;
 using System.Globalization;
@@ -27,6 +28,9 @@ namespace System.Web.UI.HtmlControls
 			writer.Write (" /");
 		}
 		
+		[DefaultValue("")]
+		[WebCategory("Behavior")]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public virtual string Name
 		{
 			get { return UniqueID; }
@@ -38,6 +42,9 @@ namespace System.Web.UI.HtmlControls
 			get { return Name; }
 		}
 
+		[DefaultValue("")]
+		[WebCategory("Behavior")]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public string Type
 		{
 			get {
@@ -46,6 +53,9 @@ namespace System.Web.UI.HtmlControls
 			}
 		}
 		
+		[DefaultValue("")]
+		[WebCategory("Appearance")]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public virtual string Value
 		{
 			get {

@@ -9,12 +9,14 @@
 //
 
 using System;
+using System.ComponentModel;
 using System.Globalization;
 using System.Web;
 using System.Web.UI;
 
 namespace System.Web.UI.HtmlControls{
 	
+	[ToolboxItem(false)]
 	public abstract class HtmlControl : Control, IAttributeAccessor
 	{
 		private string _tagName = "span";
@@ -86,6 +88,8 @@ namespace System.Web.UI.HtmlControls{
 			Attributes.Render(writer);
 		}
 		
+		[Browsable(false)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public AttributeCollection Attributes
 		{
 			get { 
@@ -95,17 +99,25 @@ namespace System.Web.UI.HtmlControls{
 			}
 		}
 
+		[DefaultValue("")]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[WebCategory("Behavior")]
 		public bool Disabled
 		{
 			get { return _disabled; }
 			set { _disabled = value; }
 		}
 
+		[Browsable(false)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public CssStyleCollection Style
 		{
 			get { return Attributes.CssStyle; }
 		}
 
+		[DefaultValue("")]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[WebCategory("Appearance")]
 		public virtual string TagName
 		{
 			get { return _tagName; }

@@ -4,13 +4,14 @@
 */
 
 using System;
+using System.ComponentModel;
 using System.Web;
 using System.Web.UI;
 using System.Globalization;
 using System.Collections.Specialized;
 
 namespace System.Web.UI.HtmlControls{
-	
+	[ValidationProperty("Value")]
 	public class HtmlInputFile : HtmlInputControl, IPostBackDataHandler{
 		
 		public HtmlInputFile():base("file"){}
@@ -28,6 +29,9 @@ namespace System.Web.UI.HtmlControls{
 		{
 		}
 		
+		[DefaultValue("")]
+		[WebCategory("Behavior")]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public string Accept{
 			get{
 				string attr = Attributes["accept"];
@@ -40,6 +44,9 @@ namespace System.Web.UI.HtmlControls{
 			}
 		}
 		
+		[DefaultValue("")]
+		[WebCategory("Behavior")]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public int MaxLength{
 			get{
 				string attr = Attributes["maxlength"];
@@ -52,6 +59,9 @@ namespace System.Web.UI.HtmlControls{
 			}
 		}
 		
+		[DefaultValue("")]
+		[WebCategory("Appearance")]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public int Size{
 			get{
 				string attr = Attributes["size"];
@@ -64,6 +74,9 @@ namespace System.Web.UI.HtmlControls{
 			}
 		}
 		
+		[DefaultValue("")]
+		[WebCategory("Misc")]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public HttpPostedFile PostedFile{
 			get{
 				return Context.Request.Files[RenderedName];

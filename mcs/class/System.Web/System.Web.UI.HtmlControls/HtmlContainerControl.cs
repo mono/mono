@@ -10,6 +10,7 @@
 //
 
 using System;
+using System.ComponentModel;
 using System.Text;
 using System.Web;
 using System.Web.UI;
@@ -40,6 +41,8 @@ namespace System.Web.UI.HtmlControls
 		
 		public HtmlContainerControl (string tag) : base(tag) {}
 		
+		[BrowsableAttribute(false)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public virtual string InnerHtml
 		{
 			get {
@@ -70,6 +73,8 @@ namespace System.Web.UI.HtmlControls
 			}
 		}
 		
+		[BrowsableAttribute(false)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public virtual string InnerText
 		{
 			get {

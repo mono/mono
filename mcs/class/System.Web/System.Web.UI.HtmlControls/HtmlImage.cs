@@ -4,12 +4,12 @@
 */
 
 using System;
+using System.ComponentModel;
 using System.Web;
 using System.Web.UI;
 using System.Globalization;
 
 namespace System.Web.UI.HtmlControls{
-	
 	public class HtmlImage : HtmlControl{
 		
 		public HtmlImage(): base("img"){}
@@ -20,6 +20,9 @@ namespace System.Web.UI.HtmlControls{
 			writer.Write(" /");
 		}
 		
+		[DefaultValue("")]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[WebCategory("Layout")]
 		public string Align{
 			get{
 				string attr = Attributes["align"];
@@ -33,6 +36,9 @@ namespace System.Web.UI.HtmlControls{
 			}
 		}
 		
+		[DefaultValue("")]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[WebCategory("Appearance")]
 		public string Alt{
 			get{
 				string attr = Attributes["alt"];
@@ -46,6 +52,9 @@ namespace System.Web.UI.HtmlControls{
 			}
 		}
 		
+		[DefaultValue(0)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[WebCategory("Appearance")]
 		public int Border{
 			get{
 				string attr = Attributes["border"];
@@ -59,6 +68,9 @@ namespace System.Web.UI.HtmlControls{
 			}
 		}
 		
+		[DefaultValue(100)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[WebCategory("Layout")]
 		public int Height
 		{
 			get {
@@ -72,6 +84,9 @@ namespace System.Web.UI.HtmlControls{
 			set { Attributes["height"] = AttributeToString (value); }
 		}
 
+		[DefaultValue("")]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[WebCategory("Behavior")]
 		public string Src{
 			get{
 				string attr = Attributes["src"];
@@ -85,6 +100,9 @@ namespace System.Web.UI.HtmlControls{
 			}
 		}
 		
+		[DefaultValue(100)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[WebCategory("Layout")]
 		public int Width{
 			get{
 				string attr = Attributes["width"];

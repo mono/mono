@@ -4,6 +4,7 @@
 */
 
 using System;
+using System.ComponentModel;
 using System.Web;
 using System.Web.UI;
 
@@ -96,6 +97,9 @@ namespace System.Web.UI.HtmlControls{
 			}
 		}
 		
+		[DefaultValue("")]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[WebCategory("Behavior")]
 		public string Enctype{
 			get{
 				string attr = Attributes["enctype"];
@@ -109,6 +113,9 @@ namespace System.Web.UI.HtmlControls{
 			}
 		}
 		
+		[DefaultValue("")]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[WebCategory("Behavior")]
 		public string Method{
 			get{
 				string attr = Attributes["method"];
@@ -122,6 +129,9 @@ namespace System.Web.UI.HtmlControls{
 			}
 		}
 		
+		[DefaultValue("")]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[WebCategory("Behavior")]
 		public string Target{
 			get{
 				string attr = Attributes["target"];
@@ -135,6 +145,9 @@ namespace System.Web.UI.HtmlControls{
 			}
 		}
 		
+		[DefaultValue("")]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[WebCategory("Appearance")]
 		public virtual string Name{
 			get{
 				string attr = Attributes["name"];

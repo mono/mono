@@ -15,15 +15,13 @@ namespace System.Web.UI.HtmlControls{
 		
 		private static readonly object EventServerClick = new object ();
 		
-		static HtmlAnchor(){
-			EventServerClick = new Object();
-		}
-		
 		public HtmlAnchor(): base("a"){}
 		
 		protected override void OnPreRender (EventArgs e)
 		{
 			base.OnPreRender (e);
+			if (Page != null && Events [EventServerClick] != null)
+				Page.RequiresPostBackScript ();
 		}
 
 		protected virtual void OnServerClick(EventArgs e){
@@ -47,7 +45,9 @@ namespace System.Web.UI.HtmlControls{
 		void System.Web.UI.IPostBackEventHandler.RaisePostBackEvent(string eventArgument){
 			OnServerClick(EventArgs.Empty);
 		}
-		
+
+		[WebCategory("Action")]
+		[WebSysDescription("Fires when the control is clicked.")]
 		public event EventHandler ServerClick{
 			add{
 				Events.AddHandler(EventServerClick, value);
@@ -57,6 +57,9 @@ namespace System.Web.UI.HtmlControls{
 			}
 		}
 		
+		[DefaultValue("")]
+		[WebCategory("Action")]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public string HRef{
 			get{
 				string attr = Attributes["href"];
@@ -68,6 +71,9 @@ namespace System.Web.UI.HtmlControls{
 			}
 		}
 		
+		[DefaultValue("")]
+		[WebCategory("Navigation")]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public string Name{
 			get{
 				string attr = Attributes["name"];
@@ -79,6 +85,9 @@ namespace System.Web.UI.HtmlControls{
 			}
 		}
 		
+		[DefaultValue("")]
+		[WebCategory("Navigation")]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public string Target{
 			get{
 				string attr = Attributes["target"];
@@ -90,6 +99,9 @@ namespace System.Web.UI.HtmlControls{
 			}
 		}
 		
+		[DefaultValue("")]
+		[WebCategory("Appearance")]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public string Title{
 			get{
 				string attr = Attributes["title"];

@@ -47,6 +47,8 @@ namespace System.Web.UI.HtmlControls{
 			OnServerClick(EventArgs.Empty);
 		}
 		
+		[WebCategory("Action")]
+		[WebSysDescription("Fires when the control is clicked.")]
 		public event EventHandler ServerClick{
 			add{
 				Events.AddHandler(EventServerClick, value);
@@ -56,6 +58,8 @@ namespace System.Web.UI.HtmlControls{
 			}
 		}
 		
+		[DefaultValue(true)]
+		[WebCategory("Behavior")]
 		public bool CausesValidation{
 			get{
 				object causesVal = ViewState["CausesValidation"];

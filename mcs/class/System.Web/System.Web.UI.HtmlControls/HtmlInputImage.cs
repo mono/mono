@@ -61,6 +61,8 @@ namespace System.Web.UI.HtmlControls{
 		{
 		}
 		
+		[WebCategory("Action")]
+		[WebSysDescription("Fires when the image is clicked.")]
 		public event ImageClickEventHandler ServerClick{
 			add{
 				Events.AddHandler(EventServerClick, value);
@@ -70,6 +72,9 @@ namespace System.Web.UI.HtmlControls{
 			}
 		}
 		
+		[DefaultValue("")]
+		[WebCategory("Appearance")]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public string Align{
 			get{
 				string attr = Attributes["align"];
@@ -81,6 +86,9 @@ namespace System.Web.UI.HtmlControls{
 			}
 		}
 		
+		[DefaultValue("")]
+		[WebCategory("Appearance")]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public string Alt{
 			get{
 				string attr = Attributes["alt"];
@@ -92,6 +100,9 @@ namespace System.Web.UI.HtmlControls{
 			}
 		}
 		
+		[DefaultValue("")]
+		[WebCategory("Appearance")]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public int Border{
 			get{
 				string attr = Attributes["border"];
@@ -103,6 +114,8 @@ namespace System.Web.UI.HtmlControls{
 			}
 		}
 		
+		[DefaultValue(true)]
+		[WebCategory("Behavior")]
 		public bool CausesValidation{
 			get{
 				object causesVal = ViewState["CausesValidation"];
@@ -114,6 +127,9 @@ namespace System.Web.UI.HtmlControls{
 			}
 		}
 		
+		[DefaultValue("")]
+		[WebCategory("Appearance")]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public string Src{
 			get{
 				string attr = Attributes["src"];

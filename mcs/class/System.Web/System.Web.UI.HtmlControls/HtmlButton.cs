@@ -16,12 +16,15 @@ namespace System.Web.UI.HtmlControls{
 		private static readonly object EventServerClick = new object ();
 		
 		//Checked
-		static HtmlButton(){
-			EventServerClick = new Object();
-		}
-		//Checked
 		public HtmlButton(): base("button"){}
 		
+		protected override void OnPreRender (EventArgs e)
+		{
+			base.OnPreRender (e);
+			if (Page != null && Events [EventServerClick] != null)
+				Page.RequiresPostBackScript ();
+		}
+
 		//Checked
 		protected virtual void OnServerClick(EventArgs e){
 			EventHandler handler;
@@ -45,6 +48,8 @@ namespace System.Web.UI.HtmlControls{
 			OnServerClick(EventArgs.Empty);
 		}
 		
+		[WebCategory("Action")]
+		[WebSysDescription("Fires when the control is clicked.")]
 		public event EventHandler ServerClick{
 			add{
 				Events.AddHandler(EventServerClick, value);
@@ -54,6 +59,8 @@ namespace System.Web.UI.HtmlControls{
 			}
 		}
 		
+		[DefaultValue(true)]
+		[WebCategory("Behavior")]
 		public bool CausesValidation{
 			get{
 				object attr = ViewState["CausesValidation"];

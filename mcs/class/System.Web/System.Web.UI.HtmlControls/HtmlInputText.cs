@@ -57,6 +57,8 @@ namespace System.Web.UI.HtmlControls{
 			OnServerChange (EventArgs.Empty);
 		}
 		
+		[WebCategory("Action")]
+		[WebSysDescription("Fires when the the text within the control changes.")]
 		public event EventHandler ServerChange{
 			add{
 				Events.AddHandler(EventServerChange, value);
@@ -66,6 +68,9 @@ namespace System.Web.UI.HtmlControls{
 			}
 		}
 		
+		[DefaultValue("")]
+		[WebCategory("Behavior")]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public int MaxLength{
 			get{
 				string attr = (String) ViewState["maxlength"];
@@ -77,6 +82,9 @@ namespace System.Web.UI.HtmlControls{
 			}
 		}
 		
+		[DefaultValue("")]
+		[WebCategory("Appearance")]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public int Size{
 			get{
 				string attr = (String) ViewState["size"];

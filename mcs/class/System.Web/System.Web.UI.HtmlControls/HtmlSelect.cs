@@ -15,6 +15,7 @@ using System.Collections.Specialized;
 namespace System.Web.UI.HtmlControls{
 	
 	[DefaultEvent("ServerChange")]
+	[ValidationProperty("Value")]
 	public class HtmlSelect : HtmlContainerControl, IPostBackDataHandler{
 		
 		
@@ -231,6 +232,8 @@ namespace System.Web.UI.HtmlControls{
 			Items.TrackViewState();
 		}
 		
+		[WebCategory("Action")]
+		[WebSysDescription("Fires when the selection changes.")]
 		public event EventHandler ServerChange{
 			add{
 				Events.AddHandler(EventServerChange, value);
@@ -240,6 +243,10 @@ namespace System.Web.UI.HtmlControls{
 			}
 		}
 		
+		[DefaultValue("")]
+		[WebCategory("Data")]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+		[WebSysDescription("The data member of the select.")]
 		public virtual string DataMember{
 			get{
 				object viewStateDataMember = ViewState["DataMember"];
@@ -251,6 +258,10 @@ namespace System.Web.UI.HtmlControls{
 			}
 		}
 		
+		[DefaultValue(null)]
+		[WebCategory("Data")]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+		[WebSysDescription("The data source used to populate the list with data.")]
 		public virtual object DataSource{
 			get{
 				return _dataSource;
@@ -267,6 +278,9 @@ namespace System.Web.UI.HtmlControls{
 			}
 		}
 		
+		[DefaultValue("")]
+		[WebCategory("Data")]
+		[WebSysDescription("The field in the data source that provides the item value.")]
 		public virtual string DataTextField{
 			get{
 				string attr = Attributes["DataTextField"];
@@ -280,6 +294,9 @@ namespace System.Web.UI.HtmlControls{
 			}
 		}
 		
+		[DefaultValue("")]
+		[WebCategory("Data")]
+		[WebSysDescription("The field in the data source that provides the item value.")]
 		public virtual string DataValueField{
 			get{
 				string attr = Attributes["DataValueField"];
@@ -309,6 +326,8 @@ namespace System.Web.UI.HtmlControls{
 			}
 		}
 		
+		[Browsable(false)]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public ListItemCollection Items{
 			get{
 				if (_items == null){
@@ -319,6 +338,9 @@ namespace System.Web.UI.HtmlControls{
 			}
 		}
 		
+		[DefaultValue("")]
+		[WebCategory("Behavior")]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public bool Multiple{
 			get{
 				string attr = Attributes["multiple"];
@@ -330,6 +352,9 @@ namespace System.Web.UI.HtmlControls{
 			}
 		}
 		
+		[DefaultValue("")]
+		[WebCategory("Behavior")]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public string Name{
 			get{
 				return UniqueID;
@@ -340,6 +365,8 @@ namespace System.Web.UI.HtmlControls{
 			}
 		}
 		
+		[Browsable(false)]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public virtual int SelectedIndex {
 			get{
 				for (int i=0; i<Items.Count; i++){
@@ -387,6 +414,7 @@ namespace System.Web.UI.HtmlControls{
 			}
 		}
 		
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public int Size{
 			get{
 				string attr = Attributes["size"];
@@ -400,6 +428,7 @@ namespace System.Web.UI.HtmlControls{
 			}
 		}
 		
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public string Value {
 			get{
 				int selectedIndex = SelectedIndex;

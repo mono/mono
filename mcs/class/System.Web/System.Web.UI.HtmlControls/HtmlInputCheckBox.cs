@@ -54,6 +54,8 @@ namespace System.Web.UI.HtmlControls{
 				ViewState.SetItemDirty("checkbox",false);
 		}
 		
+		[WebCategory("Action")]
+		[WebSysDescription("Fires when the checked satte of the control is changed.")]
 		public event EventHandler ServerChange{
 			add{
 				Events.AddHandler(EventServerChange, value);
@@ -63,6 +65,9 @@ namespace System.Web.UI.HtmlControls{
 			}
 		}
 		
+		[DefaultValue("")]
+		[WebCategory("Misc")]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public bool Checked{
 			get{
 				string attr = Attributes["checked"];

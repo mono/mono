@@ -4,6 +4,7 @@
 */
 
 using System;
+using System.ComponentModel;
 using System.Web;
 using System.Web.UI;
 using System.Globalization;
@@ -32,6 +33,9 @@ namespace System.Web.UI.HtmlControls{
 			writer.WriteLine();
 		}
 		
+		[DefaultValue("")]
+		[WebCategory("Layout")]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public string Align {
 			get{
 				string attr = Attributes["align"];
@@ -43,6 +47,9 @@ namespace System.Web.UI.HtmlControls{
 			}
 		}
 		
+		[DefaultValue("")]
+		[WebCategory("Appearance")]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public string BgColor {
 			get{
 				string attr = Attributes["bgcolor"];
@@ -54,6 +61,9 @@ namespace System.Web.UI.HtmlControls{
 			}
 		}
 		
+		[DefaultValue(-1)]
+		[WebCategory("Appearance")]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public int Border {
 			get{
 				string attr = Attributes["border"];
@@ -65,6 +75,9 @@ namespace System.Web.UI.HtmlControls{
 			}
 		}
 		
+		[DefaultValue("")]
+		[WebCategory("Appearance")]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public string BorderColor {
 			get{
 				string attr = Attributes["bordercolor"];
@@ -76,6 +89,9 @@ namespace System.Web.UI.HtmlControls{
 			}
 		}
 		
+		[DefaultValue("")]
+		[WebCategory("Appearance")]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public int CellPadding {
 			get{
 				string attr = Attributes["cellpadding"];
@@ -87,6 +103,9 @@ namespace System.Web.UI.HtmlControls{
 			}
 		}
 		
+		[DefaultValue("")]
+		[WebCategory("Appearance")]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public int CellSpacing {
 			get{
 				string attr = Attributes["cellspacing"];
@@ -98,6 +117,9 @@ namespace System.Web.UI.HtmlControls{
 			}
 		}
 		
+		[DefaultValue("")]
+		[WebCategory("Layout")]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public string Height {
 			get{
 				string attr = Attributes["height"];
@@ -127,6 +149,8 @@ namespace System.Web.UI.HtmlControls{
 			}
 		}
 		
+		[Browsable(false)]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public virtual HtmlTableRowCollection Rows {
 			get{
 				if (_rows == null) _rows = new HtmlTableRowCollection(this);
@@ -134,6 +158,9 @@ namespace System.Web.UI.HtmlControls{
 			}
 		}
 		
+		[DefaultValue("")]
+		[WebCategory("Layout")]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public string Width {
 			get{
 				string attr = Attributes["width"];
