@@ -1,4 +1,10 @@
 
+Fri Jul 18 13:12:21 CEST 2003 Paolo Molaro <lupus@ximian.com>
+
+	* class.c, class.h, debug-helpers.c, icall.c, image.c, marshal.c,
+	metadata.c, metadata.h, mono-debug-debugger.c, object.c, reflection.c: 
+	array type representation changes.
+
 Fri Jul 18 11:26:58 CEST 2003 Paolo Molaro <lupus@ximian.com>
 
 	* icall.c, appdomain.h, appdomain.c: support full runtime shutdown
