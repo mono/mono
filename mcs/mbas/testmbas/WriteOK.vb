@@ -71,8 +71,8 @@ Public Class WriteOK2
 		Dim someOtherText as string = "Blah! Some Other Text"
 '		Const sometext = "Yeah! Some Text" ' FIXME: raises InvalidCastException in yyParse
 '		Const someOtherText as string = "Blah! Some Other Text" ' FIXME: raises InvalidCastException in yyParse
+		Text = "This is a test!"
 		SyncLock Text
-			Text = "This is a test!"
 	        Console.WriteLine("Sub:OK! - """ & Text & """ " & someText & " " & someOtherText)
 		End SyncLock
 #If CAUSEERRORS
