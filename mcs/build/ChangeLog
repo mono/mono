@@ -1,5 +1,9 @@
 2004-06-03  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* README.makefiles : added description for run-test-ondotnet.
+
+2004-06-03  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* Makefile, executable.make, library.make, rules.make :
 	  Added new target "run-test-ondotnet" that works what "run-test"
 	  used to be on windows (i.e. tests our libs under MS.NET).

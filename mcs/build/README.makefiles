@@ -40,6 +40,9 @@ test-local: my_test_program.exe
 run-test-local:
 	$(RUNTIME) my_test_program.exe
 
+run-test-ondotnet-local:
+	$(RUNTIME) my_test_program.exe
+
 DISTFILES = myfile.txt my_test_source.cs
 
 dist-local: dist-default
@@ -49,7 +52,7 @@ my_test_program.exe: my_test_source.cs
 ========================================
 
 Each makefile follows the same pattern: it does some setup, includes
-the standard make rules, and provides rules for six standard targets:
+the standard make rules, and provides rules for seven standard targets:
 all, install, test, run-test, clean, and dist.
 
 "Some setup" is defining two variables: $(thisdir) and
@@ -57,7 +60,7 @@ $(SUBDIRS). $(thisdir) is the directory that the makefile lives in,
 relative to the top directory (ie, class/corlib) and $(SUBDIRS)
 defines the subdirectories that should be built in.
 
-The six targets do the following:
+The seven targets do the following:
 
 	* all-local builds whatever someone would expect to be built
 when they just type 'make'. Most likely Foo.dll or Foo.exe
@@ -74,6 +77,8 @@ themselves automatically; interactive tests should have an individual
 target. The idea is that 'make run-test' from the toplevel should be
 able to proceed unsupervised and test everything that can be tested in
 such a manner.
+
+	* run-test-ondotnet-local is a variant of run-test-local. It is used only to validate if our tests themselves works fine under Microsoft runtime (on Windows). Basically, in this target, we should not use $(TEST_RUNTIME) to test our libraries.
 
 	* clean-local removes built files; 'make clean' should leave
 only files that go into a distribution tarball. (But it is not necessarily
