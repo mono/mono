@@ -1,3 +1,8 @@
+2005-03-14  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* StackFrame.cs: Fix CAS unit tests for NET_1_1.
+	* StackTrace.cs: Fix CAS unit tests for NET_1_1.
+
 2005-03-04  Zoltan Varga  <vargaz@freemail.hu>
 
 	* StackFrame.cs: Add an internalMethodName field to return info about

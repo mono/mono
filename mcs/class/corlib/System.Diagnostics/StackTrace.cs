@@ -33,6 +33,7 @@ using System.Globalization;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+using System.Security.Permissions;
 using System.Text;
 using System.Threading;
 
@@ -114,12 +115,18 @@ namespace System.Diagnostics {
 			frames = get_trace (e, skipFrames, needFileInfo);
 		}
 
+#if ONLY_1_1
+		[ReflectionPermission (SecurityAction.Demand, TypeInformation = true)]
+#endif
 		public StackTrace (StackFrame frame)
 		{
 			this.frames = new StackFrame [1];
 			this.frames [0] = frame;
 		}
 
+#if ONLY_1_1
+		[ReflectionPermission (SecurityAction.Demand, TypeInformation = true)]
+#endif
 		[MonoTODO]
 		public StackTrace (Thread targetThread, bool needFileInfo)
 		{

@@ -229,10 +229,12 @@ namespace System.Diagnostics {
                 /// </returns> 
                 public virtual string GetFileName()
                 {
+#if NET_2_0
 			if (SecurityManager.SecurityEnabled && (fileName != null) && (fileName.Length > 0)) {
 				string fn = Path.GetFullPath (fileName);
 				new FileIOPermission (FileIOPermissionAccess.PathDiscovery, fn).Demand ();
 			}
+#endif
                         return fileName;
                 }
                 
@@ -257,7 +259,10 @@ namespace System.Diagnostics {
                 /// <returns>
                 ///   The method the frame is executing in.
                 /// </returns>
-                public virtual MethodBase GetMethod()
+#if ONLY_1_1
+		[ReflectionPermission (SecurityAction.Demand, TypeInformation = true)]
+#endif
+		public virtual MethodBase GetMethod ()
                 {
                         return methodBase;
                 }
@@ -275,11 +280,11 @@ namespace System.Diagnostics {
                         return nativeOffset;                        
                 }
 
-			internal string GetInternalMethodName ()
-			{
-				return internalMethodName;
-			}
-                
+		internal string GetInternalMethodName ()
+		{
+			return internalMethodName;
+		}
+
                 /// <summary>
                 ///   Builds a readable representation of the stack frame.
                 /// </summary>
