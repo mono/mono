@@ -254,6 +254,7 @@ namespace System.Windows.Forms {
 					document.Add(i+1, CaseAdjust(value[i]), alignment, Font, brush);
 				}
 				document.RecalculateDocument(CreateGraphics());
+				OnTextChanged(EventArgs.Empty);
 			}
 		}
 
@@ -329,6 +330,7 @@ namespace System.Windows.Forms {
 
 			set {
 				document.ReplaceSelection(CaseAdjust(value));
+				OnTextChanged(EventArgs.Empty);
 			}
 		}
 
@@ -427,6 +429,7 @@ namespace System.Windows.Forms {
 					document.PositionCaret(line, value.Length);
 				}
 				base.Text = value;
+				OnTextChanged(EventArgs.Empty);
 			}
 		}
 
@@ -715,6 +718,7 @@ Console.WriteLine("Destroying caret");
 							
 							if (multiline && (accepts_return || ((Control.ModifierKeys & Keys.Control) != 0))) {
 								document.Split(document.CaretLine, document.CaretTag, document.CaretPosition);
+								OnTextChanged(EventArgs.Empty);
 								document.UpdateView(document.CaretLine, 2, 0);
 								document.MoveCaret(CaretDirection.CharForward);
 							}
@@ -724,6 +728,7 @@ Console.WriteLine("Destroying caret");
 						case Keys.Tab: {
 							if (accepts_tab) {
 								document.InsertChar(document.CaretLine, document.CaretPosition, '\t');
+								OnTextChanged(EventArgs.Empty);
 							}
 							return;
 						}
@@ -743,10 +748,12 @@ Console.WriteLine("Destroying caret");
 									document.UpdateView(line, 1, 0);
 									document.PositionCaret(line, new_caret_pos);
 									document.UpdateCaret();
+									OnTextChanged(EventArgs.Empty);
 								}
 							} else {
 								document.DeleteChar(document.CaretTag, document.CaretPosition, false);
 								document.MoveCaret(CaretDirection.CharBack);
+								OnTextChanged(EventArgs.Empty);
 							}
 							return;
 						}
@@ -760,6 +767,7 @@ Console.WriteLine("Destroying caret");
 									line = document.GetLine(document.CaretLine.LineNo + 1);
 									document.Combine(document.CaretLine, line);
 									document.UpdateView(document.CaretLine, 2, 0);
+									OnTextChanged(EventArgs.Empty);
 
 									#if Debug
 										Line	check_first;
@@ -775,6 +783,7 @@ Console.WriteLine("Destroying caret");
 								}
 							} else {
 								document.DeleteChar(document.CaretTag, document.CaretPosition, true);
+								OnTextChanged(EventArgs.Empty);
 							}
 							return;
 						}
@@ -787,16 +796,19 @@ Console.WriteLine("Destroying caret");
 						switch (character_casing) {
 							case CharacterCasing.Normal: {
 								document.InsertCharAtCaret((char)m.WParam, true);
+								OnTextChanged(EventArgs.Empty);
 								return;
 							}
 
 							case CharacterCasing.Lower: {
 								document.InsertCharAtCaret(Char.ToLower((char)m.WParam), true);
+								OnTextChanged(EventArgs.Empty);
 								return;
 							}
 
 							case CharacterCasing.Upper: {
 								document.InsertCharAtCaret(Char.ToUpper((char)m.WParam), true);
+								OnTextChanged(EventArgs.Empty);
 								return;
 							}
 						}
@@ -966,7 +978,7 @@ static int current;
 		}
 
 		private void hscroll_ValueChanged(object sender, EventArgs e) {
-			XplatUI.ScrollWindow(this.Handle, document.ViewPortX-this.hscroll.Value, 0, false);
+			XplatUI.ScrollWindow(this.Handle, document.ViewPortX-this.hscroll.Value, 0, true);
 			document.ViewPortX = this.hscroll.Value;
 			document.UpdateCaret();
 			Console.WriteLine("Dude scrolled");
@@ -980,7 +992,7 @@ static int current;
 				document.DisplayCaret();
 			}
 		}
-
+									      
 		private void TextBoxBase_FontOrColorChanged(object sender, EventArgs e) {
 			if (!richtext) {
 				Line	line;

@@ -1,3 +1,9 @@
+2005-01-11  Peter Bartok  <pbartok@novell.com>
+
+	* XplatUIWin32.cs: Switched P/Invokes to unicode charset to avoid
+	  I18n issues
+	* TextBoxBase.cs: Added sending of TextChanged event
+
 2005-01-10  Jackson Harper  <jackson@ximian.com>
 
 	* TreeView.cs: Try not to draw outside the clipping rectangle on

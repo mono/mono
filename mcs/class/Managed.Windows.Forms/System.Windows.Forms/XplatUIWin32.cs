@@ -57,7 +57,7 @@ namespace System.Windows.Forms {
 		#endregion	// Local Variables
 
 		#region Private Structs
-		[StructLayout(LayoutKind.Sequential)]
+		[StructLayout(LayoutKind.Sequential, CharSet=CharSet.Unicode)]
 		private struct WNDCLASS {
 			internal int		style;
 			internal WndProc	lpfnWndProc;
@@ -1108,25 +1108,25 @@ namespace System.Windows.Forms {
 		#endregion	// Public Static Methods
 
 		#region Win32 Imports
-		[DllImport ("kernel32.dll", EntryPoint="GetLastError", CharSet=CharSet.Ansi, CallingConvention=CallingConvention.StdCall)]
+		[DllImport ("kernel32.dll", EntryPoint="GetLastError", CallingConvention=CallingConvention.StdCall)]
 		private extern static uint Win32GetLastError();
 
-		[DllImport ("user32.dll", EntryPoint="CreateWindowExA", CallingConvention=CallingConvention.StdCall)]
+		[DllImport ("user32.dll", EntryPoint="CreateWindowExW", CharSet=CharSet.Unicode, CallingConvention=CallingConvention.StdCall)]
 		internal extern static IntPtr Win32CreateWindow(uint dwExStyle, string lpClassName, string lpWindowName, uint dwStyle, int x, int y, int nWidth, int nHeight, IntPtr hWndParent, IntPtr hMenu, IntPtr hInstance, IntPtr lParam);
 
 		[DllImport ("user32.dll", EntryPoint="DestroyWindow", CallingConvention=CallingConvention.StdCall)]
 		internal extern static bool Win32DestroyWindow(IntPtr hWnd);
 
-		[DllImport ("user32.dll", EntryPoint="PeekMessageA", CallingConvention=CallingConvention.StdCall)]
+		[DllImport ("user32.dll", EntryPoint="PeekMessageW", CharSet=CharSet.Unicode, CallingConvention=CallingConvention.StdCall)]
 		internal extern static bool Win32PeekMessage(ref MSG msg, IntPtr hWnd, int wFilterMin, int wFilterMax, uint flags);
 
-		[DllImport ("user32.dll", EntryPoint="GetMessageA", CallingConvention=CallingConvention.StdCall)]
+		[DllImport ("user32.dll", EntryPoint="GetMessageW", CharSet=CharSet.Unicode, CallingConvention=CallingConvention.StdCall)]
 		internal extern static bool Win32GetMessage(ref MSG msg, IntPtr hWnd, int wFilterMin, int wFilterMax);
 
 		[DllImport ("user32.dll", EntryPoint="TranslateMessage", CallingConvention=CallingConvention.StdCall)]
 		internal extern static bool Win32TranslateMessage(ref MSG msg);
 
-		[DllImport ("user32.dll", EntryPoint="DispatchMessageA", CallingConvention=CallingConvention.StdCall)]
+		[DllImport ("user32.dll", EntryPoint="DispatchMessageW", CharSet=CharSet.Unicode, CallingConvention=CallingConvention.StdCall)]
 		internal extern static IntPtr Win32DispatchMessage(ref MSG msg);
 
 		[DllImport ("user32.dll", EntryPoint="MoveWindow", CallingConvention=CallingConvention.StdCall)]
@@ -1138,175 +1138,175 @@ namespace System.Windows.Forms {
 		[DllImport ("user32.dll", EntryPoint="SetWindowPos", CallingConvention=CallingConvention.StdCall)]
 		internal extern static bool Win32SetWindowPos(IntPtr hWnd, SetWindowPosZOrder pos, int x, int y, int cx, int cy, SetWindowPosFlags Flags);
 
-		[DllImport ("user32.dll", EntryPoint="SetWindowTextA", CallingConvention=CallingConvention.StdCall)]
+		[DllImport ("user32.dll", EntryPoint="SetWindowTextW", CharSet=CharSet.Unicode, CallingConvention=CallingConvention.StdCall)]
 		internal extern static bool Win32SetWindowText(IntPtr hWnd, string lpString);
 
-		[DllImport ("user32.dll", EntryPoint="GetWindowTextA", CallingConvention=CallingConvention.StdCall)]
+		[DllImport ("user32.dll", EntryPoint="GetWindowTextW", CharSet=CharSet.Unicode, CallingConvention=CallingConvention.StdCall)]
 		internal extern static bool Win32GetWindowText(IntPtr hWnd, StringBuilder lpString, int nMaxCount);
 
 		[DllImport ("user32.dll", EntryPoint="SetParent", CallingConvention=CallingConvention.StdCall)]
 		internal extern static IntPtr Win32SetParent(IntPtr hWnd, IntPtr hParent);
 
-		[DllImport ("user32.dll", EntryPoint="RegisterClassA", CharSet=CharSet.Ansi, CallingConvention=CallingConvention.StdCall)]
+		[DllImport ("user32.dll", EntryPoint="RegisterClassW", CharSet=CharSet.Unicode, CallingConvention=CallingConvention.StdCall)]
 		private extern static bool Win32RegisterClass(ref WNDCLASS wndClass);
 
-		[DllImport ("user32.dll", EntryPoint="LoadCursorA", CharSet=CharSet.Ansi, CallingConvention=CallingConvention.StdCall)]
+		[DllImport ("user32.dll", EntryPoint="LoadCursorW", CharSet=CharSet.Unicode, CallingConvention=CallingConvention.StdCall)]
 		private extern static IntPtr Win32LoadCursor(IntPtr hInstance, LoadCursorType type);
 
-		[DllImport ("user32.dll", EntryPoint="DefWindowProcA", CharSet=CharSet.Ansi, CallingConvention=CallingConvention.StdCall)]
+		[DllImport ("user32.dll", EntryPoint="DefWindowProcW", CharSet=CharSet.Unicode, CallingConvention=CallingConvention.StdCall)]
 		private extern static IntPtr Win32DefWindowProc(IntPtr hWnd, Msg Msg, IntPtr wParam, IntPtr lParam);
 
-		[DllImport ("user32.dll", EntryPoint="DefDlgProcA", CharSet=CharSet.Ansi, CallingConvention=CallingConvention.StdCall)]
+		[DllImport ("user32.dll", EntryPoint="DefDlgProcW", CharSet=CharSet.Unicode, CallingConvention=CallingConvention.StdCall)]
 		private extern static IntPtr Win32DefDlgProc(IntPtr hWnd, Msg Msg, IntPtr wParam, IntPtr lParam);
 
-		[DllImport ("user32.dll", EntryPoint="PostQuitMessage", CharSet=CharSet.Ansi, CallingConvention=CallingConvention.StdCall)]
+		[DllImport ("user32.dll", EntryPoint="PostQuitMessage", CallingConvention=CallingConvention.StdCall)]
 		private extern static IntPtr Win32PostQuitMessage(int nExitCode);
 
-		[DllImport ("user32.dll", EntryPoint="UpdateWindow", CharSet=CharSet.Ansi, CallingConvention=CallingConvention.StdCall)]
+		[DllImport ("user32.dll", EntryPoint="UpdateWindow", CallingConvention=CallingConvention.StdCall)]
 		private extern static IntPtr Win32UpdateWindow(IntPtr hWnd);
 
-		[DllImport ("user32.dll", EntryPoint="GetUpdateRect", CharSet=CharSet.Ansi, CallingConvention=CallingConvention.StdCall)]
+		[DllImport ("user32.dll", EntryPoint="GetUpdateRect", CallingConvention=CallingConvention.StdCall)]
 		private extern static bool Win32GetUpdateRect(IntPtr hWnd, ref RECT rect, bool erase);
 
-		[DllImport ("user32.dll", EntryPoint="BeginPaint", CharSet=CharSet.Ansi, CallingConvention=CallingConvention.StdCall)]
+		[DllImport ("user32.dll", EntryPoint="BeginPaint", CallingConvention=CallingConvention.StdCall)]
 		private extern static IntPtr Win32BeginPaint(IntPtr hWnd, ref PAINTSTRUCT ps);
 
-		[DllImport ("user32.dll", EntryPoint="EndPaint", CharSet=CharSet.Ansi, CallingConvention=CallingConvention.StdCall)]
+		[DllImport ("user32.dll", EntryPoint="EndPaint", CallingConvention=CallingConvention.StdCall)]
 		private extern static bool Win32EndPaint(IntPtr hWnd, ref PAINTSTRUCT ps);
 
-		[DllImport ("user32.dll", EntryPoint="GetDC", CharSet=CharSet.Ansi, CallingConvention=CallingConvention.StdCall)]
+		[DllImport ("user32.dll", EntryPoint="GetDC", CallingConvention=CallingConvention.StdCall)]
 		private extern static IntPtr Win32GetDC(IntPtr hWnd);
 
-		[DllImport ("user32.dll", EntryPoint="ReleaseDC", CharSet=CharSet.Ansi, CallingConvention=CallingConvention.StdCall)]
+		[DllImport ("user32.dll", EntryPoint="ReleaseDC", CallingConvention=CallingConvention.StdCall)]
 		private extern static IntPtr Win32ReleaseDC(IntPtr hWnd, IntPtr hDC);
 
-		[DllImport ("user32.dll", EntryPoint="MessageBoxA", CharSet=CharSet.Ansi, CallingConvention=CallingConvention.StdCall)]
+		[DllImport ("user32.dll", EntryPoint="MessageBoxW", CharSet=CharSet.Unicode, CallingConvention=CallingConvention.StdCall)]
 		private extern static IntPtr Win32MessageBox(IntPtr hParent, string pText, string pCaption, uint uType);
 
-		[DllImport ("user32.dll", EntryPoint="InvalidateRect", CharSet=CharSet.Ansi, CallingConvention=CallingConvention.StdCall)]
+		[DllImport ("user32.dll", EntryPoint="InvalidateRect", CallingConvention=CallingConvention.StdCall)]
 		private extern static IntPtr Win32InvalidateRect(IntPtr hWnd, ref RECT lpRect, bool bErase);
 
-		[DllImport ("user32.dll", EntryPoint="InvalidateRect", CharSet=CharSet.Ansi, CallingConvention=CallingConvention.StdCall)]
+		[DllImport ("user32.dll", EntryPoint="InvalidateRect", CallingConvention=CallingConvention.StdCall)]
 		private extern static IntPtr Win32InvalidateRect(IntPtr hWnd, IntPtr lpRect, bool bErase);
 
-		[DllImport ("user32.dll", EntryPoint="SetCapture", CharSet=CharSet.Ansi, CallingConvention=CallingConvention.StdCall)]
+		[DllImport ("user32.dll", EntryPoint="SetCapture", CallingConvention=CallingConvention.StdCall)]
 		private extern static IntPtr Win32SetCapture(IntPtr hWnd);
 
-		[DllImport ("user32.dll", EntryPoint="ReleaseCapture", CharSet=CharSet.Ansi, CallingConvention=CallingConvention.StdCall)]
+		[DllImport ("user32.dll", EntryPoint="ReleaseCapture", CallingConvention=CallingConvention.StdCall)]
 		private extern static IntPtr Win32ReleaseCapture();
 
-		[DllImport ("user32.dll", EntryPoint="GetWindowRect", CharSet=CharSet.Ansi, CallingConvention=CallingConvention.StdCall)]
+		[DllImport ("user32.dll", EntryPoint="GetWindowRect", CallingConvention=CallingConvention.StdCall)]
 		private extern static IntPtr Win32GetWindowRect(IntPtr hWnd, out RECT rect);
 
-		[DllImport ("user32.dll", EntryPoint="GetClientRect", CharSet=CharSet.Ansi, CallingConvention=CallingConvention.StdCall)]
+		[DllImport ("user32.dll", EntryPoint="GetClientRect", CallingConvention=CallingConvention.StdCall)]
 		private extern static IntPtr Win32GetClientRect(IntPtr hWnd, out RECT rect);
 
-		[DllImport ("user32.dll", EntryPoint="ScreenToClient", CharSet=CharSet.Ansi, CallingConvention=CallingConvention.StdCall)]
+		[DllImport ("user32.dll", EntryPoint="ScreenToClient", CallingConvention=CallingConvention.StdCall)]
 		private extern static bool Win32ScreenToClient(IntPtr hWnd, ref POINT pt);
 
-		[DllImport ("user32.dll", EntryPoint="ClientToScreen", CharSet=CharSet.Ansi, CallingConvention=CallingConvention.StdCall)]
+		[DllImport ("user32.dll", EntryPoint="ClientToScreen", CallingConvention=CallingConvention.StdCall)]
 		private extern static bool Win32ClientToScreen(IntPtr hWnd, ref POINT pt);
 
-		[DllImport ("user32.dll", EntryPoint="GetParent", CharSet=CharSet.Ansi, CallingConvention=CallingConvention.StdCall)]
+		[DllImport ("user32.dll", EntryPoint="GetParent", CallingConvention=CallingConvention.StdCall)]
 		private extern static IntPtr Win32GetParent(IntPtr hWnd);
 
-		[DllImport ("user32.dll", EntryPoint="SetActiveWindow", CharSet=CharSet.Ansi, CallingConvention=CallingConvention.StdCall)]
+		[DllImport ("user32.dll", EntryPoint="SetActiveWindow", CallingConvention=CallingConvention.StdCall)]
 		private extern static IntPtr Win32SetActiveWindow(IntPtr hWnd);
 
-		[DllImport ("user32.dll", EntryPoint="PostQuitMessage", CharSet=CharSet.Ansi, CallingConvention=CallingConvention.StdCall)]
+		[DllImport ("user32.dll", EntryPoint="PostQuitMessage", CallingConvention=CallingConvention.StdCall)]
 		private extern static IntPtr Win32PostQuitMessage(IntPtr hWnd);
 
-		[DllImport ("user32.dll", EntryPoint="AdjustWindowRectEx", CharSet=CharSet.Ansi, CallingConvention=CallingConvention.StdCall)]
+		[DllImport ("user32.dll", EntryPoint="AdjustWindowRectEx", CallingConvention=CallingConvention.StdCall)]
 		private extern static bool Win32AdjustWindowRectEx(ref RECT lpRect, int dwStyle, bool bMenu, int dwExStyle);
 
-		[DllImport ("user32.dll", EntryPoint="GetCursorPos", CharSet=CharSet.Ansi, CallingConvention=CallingConvention.StdCall)]
+		[DllImport ("user32.dll", EntryPoint="GetCursorPos", CallingConvention=CallingConvention.StdCall)]
 		private extern static bool Win32GetCursorPos(out POINT lpPoint);
 
-		[DllImport ("user32.dll", EntryPoint="SetCursorPos", CharSet=CharSet.Ansi, CallingConvention=CallingConvention.StdCall)]
+		[DllImport ("user32.dll", EntryPoint="SetCursorPos", CallingConvention=CallingConvention.StdCall)]
 		private extern static bool Win32SetCursorPos(int x, int y);
 
-		[DllImport ("user32.dll", EntryPoint="GetWindowPlacement", CharSet=CharSet.Ansi, CallingConvention=CallingConvention.StdCall)]
+		[DllImport ("user32.dll", EntryPoint="GetWindowPlacement", CallingConvention=CallingConvention.StdCall)]
 		private extern static bool Win32GetWindowPlacement(IntPtr hWnd, ref WINDOWPLACEMENT lpwndpl);
 
-		[DllImport ("user32.dll", EntryPoint="TrackMouseEvent", CharSet=CharSet.Ansi, CallingConvention=CallingConvention.StdCall)]
+		[DllImport ("user32.dll", EntryPoint="TrackMouseEvent", CallingConvention=CallingConvention.StdCall)]
 		private extern static bool Win32TrackMouseEvent(ref TRACKMOUSEEVENT tme);
 
-		[DllImport ("gdi32.dll", EntryPoint="CreateBrushIndirect", CharSet=CharSet.Ansi, CallingConvention=CallingConvention.StdCall)]
+		[DllImport ("gdi32.dll", EntryPoint="CreateBrushIndirect", CallingConvention=CallingConvention.StdCall)]
 		private extern static IntPtr Win32CreateBrushIndirect(ref LOGBRUSH lb);
 
-		[DllImport ("user32.dll", EntryPoint="FillRect", CharSet=CharSet.Ansi, CallingConvention=CallingConvention.StdCall)]
+		[DllImport ("user32.dll", EntryPoint="FillRect", CallingConvention=CallingConvention.StdCall)]
 		private extern static int Win32FillRect(IntPtr hdc, ref RECT rect, IntPtr hbr);
 
-		[DllImport ("user32.dll", EntryPoint="SetWindowLong", CharSet=CharSet.Ansi, CallingConvention=CallingConvention.StdCall)]
+		[DllImport ("user32.dll", EntryPoint="SetWindowLong", CallingConvention=CallingConvention.StdCall)]
 		private extern static IntPtr Win32SetWindowLong(IntPtr hwnd, WindowLong index, IntPtr value);
 
-		[DllImport ("user32.dll", EntryPoint="GetWindowLong", CharSet=CharSet.Ansi, CallingConvention=CallingConvention.StdCall)]
+		[DllImport ("user32.dll", EntryPoint="GetWindowLong", CallingConvention=CallingConvention.StdCall)]
 		private extern static uint Win32GetWindowLong(IntPtr hwnd, WindowLong index);
 
-		[DllImport ("gdi32.dll", EntryPoint="DeleteObject", CharSet=CharSet.Ansi, CallingConvention=CallingConvention.StdCall)]
+		[DllImport ("gdi32.dll", EntryPoint="DeleteObject", CallingConvention=CallingConvention.StdCall)]
 		private extern static bool Win32DeleteObject(IntPtr o);
 
-		[DllImport ("user32.dll", EntryPoint="PostMessage", CharSet=CharSet.Ansi, CallingConvention=CallingConvention.StdCall)]
+		[DllImport ("user32.dll", EntryPoint="PostMessage", CallingConvention=CallingConvention.StdCall)]
 		private extern static bool Win32PostMessage(IntPtr hwnd, Msg msg, IntPtr wParam, IntPtr lParam);
 
-		[DllImport ("user32.dll", EntryPoint="GetKeyState", CharSet=CharSet.Ansi, CallingConvention=CallingConvention.StdCall)]
+		[DllImport ("user32.dll", EntryPoint="GetKeyState", CallingConvention=CallingConvention.StdCall)]
 		private extern static short Win32GetKeyState(VirtualKeys nVirtKey);
 
-		[DllImport ("user32.dll", EntryPoint="GetDesktopWindow", CharSet=CharSet.Ansi, CallingConvention=CallingConvention.StdCall)]
+		[DllImport ("user32.dll", EntryPoint="GetDesktopWindow", CallingConvention=CallingConvention.StdCall)]
 		private extern static IntPtr Win32GetDesktopWindow();
 
-		[DllImport ("user32.dll", EntryPoint="SetTimer", CharSet=CharSet.Ansi, CallingConvention=CallingConvention.StdCall)]
+		[DllImport ("user32.dll", EntryPoint="SetTimer", CallingConvention=CallingConvention.StdCall)]
 		private extern static IntPtr Win32SetTimer(IntPtr hwnd, int nIDEvent, uint uElapse, IntPtr timerProc);
 
-		[DllImport ("user32.dll", EntryPoint="KillTimer", CharSet=CharSet.Ansi, CallingConvention=CallingConvention.StdCall)]
+		[DllImport ("user32.dll", EntryPoint="KillTimer", CallingConvention=CallingConvention.StdCall)]
 		private extern static IntPtr Win32KillTimer(IntPtr hwnd, int nIDEvent);
 
-		[DllImport ("user32.dll", EntryPoint="ShowWindow", CharSet=CharSet.Ansi, CallingConvention=CallingConvention.StdCall)]
+		[DllImport ("user32.dll", EntryPoint="ShowWindow", CallingConvention=CallingConvention.StdCall)]
 		private extern static IntPtr Win32ShowWindow(IntPtr hwnd, WindowPlacementFlags nCmdShow);
 
-		[DllImport ("user32.dll", EntryPoint="EnableWindow", CharSet=CharSet.Ansi, CallingConvention=CallingConvention.StdCall)]
+		[DllImport ("user32.dll", EntryPoint="EnableWindow", CallingConvention=CallingConvention.StdCall)]
 		private extern static IntPtr Win32EnableWindow(IntPtr hwnd, bool Enabled);
 
-		[DllImport ("user32.dll", EntryPoint="SetFocus", CharSet=CharSet.Ansi, CallingConvention=CallingConvention.StdCall)]
+		[DllImport ("user32.dll", EntryPoint="SetFocus", CallingConvention=CallingConvention.StdCall)]
 		internal extern static IntPtr Win32SetFocus(IntPtr hwnd);
 
-		[DllImport ("user32.dll", EntryPoint="CreateCaret", CharSet=CharSet.Ansi, CallingConvention=CallingConvention.StdCall)]
+		[DllImport ("user32.dll", EntryPoint="CreateCaret", CallingConvention=CallingConvention.StdCall)]
 		internal extern static bool Win32CreateCaret(IntPtr hwnd, IntPtr hBitmap, int nWidth, int nHeight);
 
-		[DllImport ("user32.dll", EntryPoint="DestroyCaret", CharSet=CharSet.Ansi, CallingConvention=CallingConvention.StdCall)]
+		[DllImport ("user32.dll", EntryPoint="DestroyCaret", CallingConvention=CallingConvention.StdCall)]
 		private  extern static bool Win32DestroyCaret();
 
-		[DllImport ("user32.dll", EntryPoint="ShowCaret", CharSet=CharSet.Ansi, CallingConvention=CallingConvention.StdCall)]
+		[DllImport ("user32.dll", EntryPoint="ShowCaret", CallingConvention=CallingConvention.StdCall)]
 		private  extern static bool Win32ShowCaret(IntPtr hwnd);
 
-		[DllImport ("user32.dll", EntryPoint="HideCaret", CharSet=CharSet.Ansi, CallingConvention=CallingConvention.StdCall)]
+		[DllImport ("user32.dll", EntryPoint="HideCaret", CallingConvention=CallingConvention.StdCall)]
 		private  extern static bool Win32HideCaret(IntPtr hwnd);
 
-		[DllImport ("user32.dll", EntryPoint="SetCaretPos", CharSet=CharSet.Ansi, CallingConvention=CallingConvention.StdCall)]
+		[DllImport ("user32.dll", EntryPoint="SetCaretPos", CallingConvention=CallingConvention.StdCall)]
 		private  extern static bool Win32SetCaretPos(int X, int Y);
 
-		[DllImport ("user32.dll", EntryPoint="GetCaretBlinkTime", CharSet=CharSet.Ansi, CallingConvention=CallingConvention.StdCall)]
+		[DllImport ("user32.dll", EntryPoint="GetCaretBlinkTime", CallingConvention=CallingConvention.StdCall)]
 		private  extern static uint Win32GetCaretBlinkTime();
 
-		[DllImport ("gdi32.dll", EntryPoint="GetTextMetricsA", CharSet=CharSet.Ansi, CallingConvention=CallingConvention.StdCall)]
+		[DllImport ("gdi32.dll", EntryPoint="GetTextMetricsW", CharSet=CharSet.Unicode, CallingConvention=CallingConvention.StdCall)]
 		internal extern static bool Win32GetTextMetrics(IntPtr hdc, ref TEXTMETRIC tm);
 
-		[DllImport ("gdi32.dll", EntryPoint="SelectObject", CharSet=CharSet.Ansi, CallingConvention=CallingConvention.StdCall)]
+		[DllImport ("gdi32.dll", EntryPoint="SelectObject", CallingConvention=CallingConvention.StdCall)]
 		internal extern static bool Win32SelectObject(IntPtr hdc, IntPtr hgdiobject);
 
-		[DllImport ("user32.dll", EntryPoint="ScrollWindowEx", CharSet=CharSet.Ansi, CallingConvention=CallingConvention.StdCall)]
+		[DllImport ("user32.dll", EntryPoint="ScrollWindowEx", CallingConvention=CallingConvention.StdCall)]
 		private extern static bool Win32ScrollWindowEx(IntPtr hwnd, int dx, int dy, ref RECT prcScroll, ref RECT prcClip, IntPtr hrgnUpdate, out RECT prcUpdate, ScrollWindowExFlags flags);
 
-		[DllImport ("user32.dll", EntryPoint="ScrollWindowEx", CharSet=CharSet.Ansi, CallingConvention=CallingConvention.StdCall)]
+		[DllImport ("user32.dll", EntryPoint="ScrollWindowEx", CallingConvention=CallingConvention.StdCall)]
 		private extern static bool Win32ScrollWindowEx(IntPtr hwnd, int dx, int dy, ref RECT prcScroll, ref RECT prcClip, IntPtr hrgnUpdate, IntPtr prcUpdate, ScrollWindowExFlags flags);
 
-		[DllImport ("user32.dll", EntryPoint="ScrollWindowEx", CharSet=CharSet.Ansi, CallingConvention=CallingConvention.StdCall)]
+		[DllImport ("user32.dll", EntryPoint="ScrollWindowEx", CallingConvention=CallingConvention.StdCall)]
 		private extern static bool Win32ScrollWindowEx(IntPtr hwnd, int dx, int dy, ref RECT prcScroll, IntPtr prcClip, IntPtr hrgnUpdate, IntPtr prcUpdate, ScrollWindowExFlags flags);
 
-		[DllImport ("user32.dll", EntryPoint="ScrollWindowEx", CharSet=CharSet.Ansi, CallingConvention=CallingConvention.StdCall)]
+		[DllImport ("user32.dll", EntryPoint="ScrollWindowEx", CallingConvention=CallingConvention.StdCall)]
 		private extern static bool Win32ScrollWindowEx(IntPtr hwnd, int dx, int dy, IntPtr prcScroll, IntPtr prcClip, IntPtr hrgnUpdate, IntPtr prcUpdate, ScrollWindowExFlags flags);
 
-		[DllImport ("user32.dll", EntryPoint="GetActiveWindow", CharSet=CharSet.Ansi, CallingConvention=CallingConvention.StdCall)]
+		[DllImport ("user32.dll", EntryPoint="GetActiveWindow", CallingConvention=CallingConvention.StdCall)]
 		private extern static IntPtr Win32GetActiveWindow();
 		#endregion
 	}
