@@ -729,14 +729,16 @@ namespace MonoTests.System.Data
 				Assertion.AssertEquals ("test#10", "PrimaryKey columns do not belong to this table.", e.Message);
 			}
 			
+			
 			Assertion.AssertEquals ("test#11", 0, dt.Constraints.Count);
 			
 			dt.PrimaryKey = new DataColumn [] {dt.Columns [0], dt.Columns [1]};
 			Assertion.AssertEquals ("test#12", 2, dt.PrimaryKey.Length);
 			Assertion.AssertEquals ("test#13", 1, dt.Constraints.Count);
 			Assertion.AssertEquals ("test#14", true, dt.Constraints [0] is UniqueConstraint);
-			Assertion.AssertEquals ("test#15", "Column1", dt.PrimaryKey [0]);
-			Assertion.AssertEquals ("test#16", "Column2", dt.PrimaryKey [1]);
+			Assertion.AssertEquals ("test#15", "Column1", dt.PrimaryKey [0].ColumnName);
+			Assertion.AssertEquals ("test#16", "Column2", dt.PrimaryKey [1].ColumnName);
+			
 		}
 
 	}
