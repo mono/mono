@@ -34,12 +34,12 @@ namespace Npgsql
     /// </summary>
     internal sealed class NpgsqlQuery
     {
-        private String _commandText;
+        private NpgsqlCommand _command;
         private ProtocolVersion _protocolVersion;
 
-        public NpgsqlQuery(String commandText, ProtocolVersion protocolVersion)
+        public NpgsqlQuery(NpgsqlCommand command, ProtocolVersion protocolVersion)
         {
-            _commandText = commandText;
+            _command = command;
             _protocolVersion = protocolVersion;
 
         }
@@ -48,18 +48,22 @@ namespace Npgsql
             //NpgsqlEventLog.LogMsg( this.ToString() + _commandText, LogLevel.Debug  );
 
 
+            String commandText = _command.GetCommandText();
             // Send the query to server.
             // Write the byte 'Q' to identify a query message.
             outputStream.WriteByte((Byte)'Q');
 
-            if (_protocolVersion == ProtocolVersion.Version3) {
+            if (_protocolVersion == ProtocolVersion.Version3)
+            {
                 // Write message length. Int32 + string length + null terminator.
-                PGUtil.WriteInt32(outputStream, 4 + encoding.GetByteCount(_commandText) + 1);
+                PGUtil.WriteInt32(outputStream, 4 + encoding.GetByteCount(commandText) + 1);
             }
 
             // Write the query. In this case it is the CommandText text.
             // It is a string terminated by a C NULL character.
-            PGUtil.WriteString(_commandText, outputStream, encoding);
+            PGUtil.WriteString(commandText, outputStream, encoding);
         }
+
+
     }
 }

@@ -37,88 +37,88 @@ using System.Drawing;
 namespace NpgsqlTypes
 {
 
-	/// <summary>
-	/// Represents a PostgreSQL Point type
-	/// </summary>
-	
-	public struct NpgsqlPoint
-	{
-		private Single _X;
-		private Single _Y;
-		
-		public NpgsqlPoint(Single X, Single Y)
-		{
-			_X = X;
-			_Y = Y;
-		}
-		
-		public Single X
-		{
-			get
-			{
-				return _X;
-			}
-			
-			set
-			{
-				_X = value;
-			}
-		}
-		
-		
-		public Single Y
-		{
-			get
-			{
-				return _Y;
-			}
-			
-			set
-			{
-				_Y = value;
-			}
-		}
-	}
-	
-	public struct NpgsqlBox
-	{
-		private NpgsqlPoint _UpperRight;
-		private NpgsqlPoint _LowerLeft;
-		
-		public NpgsqlBox(NpgsqlPoint UpperRight, NpgsqlPoint LowerLeft)
-		{
-			_UpperRight = UpperRight;
-			_LowerLeft = LowerLeft;
-		}
-		
+    /// <summary>
+    /// Represents a PostgreSQL Point type
+    /// </summary>
 
-		public NpgsqlPoint UpperRight
-		{
-			get
-			{
-				return _UpperRight;
-			}
-			set
-			{
-				_UpperRight = value;
-			}
-		}
+    public struct NpgsqlPoint
+    {
+        private Single _X;
+        private Single _Y;
 
-		public NpgsqlPoint LowerLeft
-		{
-			get
-			{
-				return _LowerLeft;
-			}
-			set
-			{
-				_LowerLeft = value;
-			}
-		} 
-		
-	}
-	
-	
+        public NpgsqlPoint(Single X, Single Y)
+        {
+            _X = X;
+            _Y = Y;
+        }
+
+        public Single X
+        {
+            get
+            {
+                return _X;
+            }
+
+            set
+            {
+                _X = value;
+            }
+        }
+
+
+        public Single Y
+        {
+            get
+            {
+                return _Y;
+            }
+
+            set
+            {
+                _Y = value;
+            }
+        }
+    }
+
+    public struct NpgsqlBox
+    {
+        private NpgsqlPoint _UpperRight;
+        private NpgsqlPoint _LowerLeft;
+
+        public NpgsqlBox(NpgsqlPoint UpperRight, NpgsqlPoint LowerLeft)
+        {
+            _UpperRight = UpperRight;
+            _LowerLeft = LowerLeft;
+        }
+
+
+        public NpgsqlPoint UpperRight
+        {
+            get
+            {
+                return _UpperRight;
+            }
+            set
+            {
+                _UpperRight = value;
+            }
+        }
+
+        public NpgsqlPoint LowerLeft
+        {
+            get
+            {
+                return _LowerLeft;
+            }
+            set
+            {
+                _LowerLeft = value;
+            }
+        }
+
+    }
+
+
     /// <summary>
     /// Represents a PostgreSQL Line Segment type.
     /// </summary>
@@ -145,8 +145,8 @@ namespace NpgsqlTypes
     public struct NpgsqlPath
     {
         internal NpgsqlPoint[]	Points;
-        
-        internal Boolean 		IsOpen;			
+
+        internal Boolean 		IsOpen;
 
         public NpgsqlPath(NpgsqlPoint[] Points)
         {
@@ -155,17 +155,23 @@ namespace NpgsqlTypes
         }
 
         public Int32 Count
-        { get { return Points.Length; } }
+        { get
+          {
+              return Points.Length;
+          } }
 
         public NpgsqlPoint this [Int32 Index]
-        { get { return Points[Index]; } }
-        
+        { get
+          {
+              return Points[Index];
+          } }
+
         public Boolean Open
         {
-        	get
-        	{
-        		return IsOpen;
-        	}
+            get
+            {
+                return IsOpen;
+            }
         }
     }
 
@@ -182,10 +188,16 @@ namespace NpgsqlTypes
         }
 
         public Int32 Count
-        { get { return Points.Length; } }
+        { get
+          {
+              return Points.Length;
+          } }
 
         public NpgsqlPoint this [Int32 Index]
-        { get { return Points[Index]; } }
+        { get
+          {
+              return Points[Index];
+          } }
     }
 
     /// <summary>

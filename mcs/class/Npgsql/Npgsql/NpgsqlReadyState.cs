@@ -66,12 +66,15 @@ namespace Npgsql
 
             NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, "Query");
 
-            String commandText = command.GetCommandText();
-            NpgsqlEventLog.LogMsg(resman, "Log_QuerySent", LogLevel.Debug, commandText);
+
+
+            //String commandText = command.GetCommandText();
+            //NpgsqlEventLog.LogMsg(resman, "Log_QuerySent", LogLevel.Debug, commandText);
 
             // Send the query request to backend.
 
-            NpgsqlQuery query = new NpgsqlQuery(commandText, context.BackendProtocolVersion);
+            NpgsqlQuery query = new NpgsqlQuery(command, context.BackendProtocolVersion);
+
             BufferedStream stream = new BufferedStream(context.Stream);
             query.WriteToStream(stream, context.Encoding);
             stream.Flush();
@@ -127,19 +130,22 @@ namespace Npgsql
 
         public override void Close( NpgsqlConnector context )
         {
-            NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, "Close");   
+            NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, "Close");
             Stream stream = context.Stream;
             stream.WriteByte((Byte)'X');
             if (context.BackendProtocolVersion >= ProtocolVersion.Version3)
                 PGUtil.WriteInt32(stream, 4);
             stream.Flush();
 
-            try {
+            try
+            {
                 stream.Close();
-            } catch {}
+            }
+            catch {}
 
             context.Stream = null;
-            ChangeState( context, NpgsqlClosedState.Instance );
+        ChangeState( context, NpgsqlClosedState.Instance )
+            ;
         }
     }
 }

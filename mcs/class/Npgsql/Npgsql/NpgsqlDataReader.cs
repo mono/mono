@@ -498,7 +498,7 @@ namespace Npgsql
 
             // [TODO] Implement blob support.
 
-            result.CopyTo(buffer, fieldOffset);
+            result.CopyTo(buffer, 0);
 
 
             return result.Length;

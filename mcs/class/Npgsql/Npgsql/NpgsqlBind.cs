@@ -26,6 +26,8 @@
 using System;
 using System.IO;
 using System.Text;
+using System.Data;
+
 
 namespace Npgsql
 {
@@ -163,11 +165,11 @@ namespace Npgsql
                     }
                     else
                     {
-                        String parameterValue = (String)_parameterValues[i];
-                        if (parameterValue == null)
+                        if ((_parameterValues[i] == null))
                             PGUtil.WriteInt32(outputStream, -1);
                         else
                         {
+                            String parameterValue = (String)_parameterValues[i];
                             PGUtil.WriteInt32(outputStream, encoding.GetByteCount(parameterValue));
                             outputStream.Write(encoding.GetBytes(parameterValue), 0, encoding.GetByteCount(parameterValue));
                         }

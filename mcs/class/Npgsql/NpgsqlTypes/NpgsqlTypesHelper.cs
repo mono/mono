@@ -160,8 +160,7 @@ namespace NpgsqlTypes
 
                 NativeTypeMapping = new NpgsqlNativeTypeMapping();
 
-                NativeTypeMapping.AddType("text", NpgsqlDbType.Text, DbType.String, true,
-                new ConvertNativeToBackendHandler(BasicNativeToBackendTypeConverter.ToString));
+                NativeTypeMapping.AddType("text", NpgsqlDbType.Text, DbType.String, true, null);
 
                 NativeTypeMapping.AddDbTypeAlias("text", DbType.StringFixedLength);
                 NativeTypeMapping.AddDbTypeAlias("text", DbType.AnsiString);
@@ -221,8 +220,13 @@ namespace NpgsqlTypes
 
                 NativeTypeMapping.AddType("timestamp", NpgsqlDbType.Timestamp, DbType.DateTime, true,
                 new ConvertNativeToBackendHandler(BasicNativeToBackendTypeConverter.ToDateTime));
-
+                
                 NativeTypeMapping.AddTypeAlias("timestamp", typeof(DateTime));
+                
+                NativeTypeMapping.AddType("interval", NpgsqlDbType.Interval, DbType.DateTime, true,
+                new ConvertNativeToBackendHandler(BasicNativeToBackendTypeConverter.ToDateTime));
+
+                //NativeTypeMapping.AddTypeAlias("interval", typeof(DateTime));
 
                 NativeTypeMapping.AddType("point", NpgsqlDbType.Point, DbType.Object, true,
                 new ConvertNativeToBackendHandler(ExtendedNativeToBackendTypeConverter.ToPoint));
@@ -348,6 +352,9 @@ namespace NpgsqlTypes
                         new ConvertBackendToNativeHandler(BasicBackendToNativeTypeConverter.ToTime)),
 
                     new NpgsqlBackendTypeInfo(0, "timestamp", NpgsqlDbType.Timestamp, DbType.DateTime, typeof(DateTime),
+                        new ConvertBackendToNativeHandler(BasicBackendToNativeTypeConverter.ToDateTime)),
+                    
+                    new NpgsqlBackendTypeInfo(0, "interval", NpgsqlDbType.Interval, DbType.DateTime, typeof(DateTime),
                         new ConvertBackendToNativeHandler(BasicBackendToNativeTypeConverter.ToDateTime)),
 
                     new NpgsqlBackendTypeInfo(0, "timestamptz", NpgsqlDbType.Timestamp, DbType.DateTime, typeof(DateTime),
@@ -588,32 +595,66 @@ namespace NpgsqlTypes
 		/// plain queries or extended queries</param>
         public String ConvertToBackend(Object NativeData, Boolean ForExtendedQuery)
         {
+            if (ForExtendedQuery)
+                return ConvertToBackendExtendedQuery(NativeData);
+            else
+                return ConvertToBackendPlainQuery(NativeData);
+            
+        }
+	
+	   private String ConvertToBackendPlainQuery(Object NativeData)
+	   {
             if ((NativeData == DBNull.Value) || (NativeData == null))
-            	if (ForExtendedQuery)
-            		return null;	// Extended query expects null values be represented as null.
-            	else
-            		return "NULL"; 	// Plain queries exptects null values as string NULL. 
-			    
-            else if (_ConvertNativeToBackend != null) {
-                return QuoteString(! ForExtendedQuery, _ConvertNativeToBackend(this, NativeData));
+                return "NULL";  // Plain queries exptects null values as string NULL. 
+            
+            if (_ConvertNativeToBackend != null)
+                return QuoteString(_ConvertNativeToBackend(this, NativeData));
+            else
+            {
                 
-            } else {
-            	// Do a special handling of Enum values.
-            	// Translate enum value to its underlying type. 
-            	if (NativeData is System.Enum)
-            		return QuoteString(! ForExtendedQuery, (String)Convert.ChangeType(Enum.Format(NativeData.GetType(), NativeData, "d"), typeof(String), CultureInfo.InvariantCulture));
-            	
-                return QuoteString(! ForExtendedQuery, (String)Convert.ChangeType(NativeData, typeof(String), CultureInfo.InvariantCulture));
+                
+                if (NativeData is System.Enum)
+                {
+                    // Do a special handling of Enum values.
+                    // Translate enum value to its underlying type. 
+                    return QuoteString((String)Convert.ChangeType(Enum.Format(NativeData.GetType(), NativeData, "d"), typeof(String), CultureInfo.InvariantCulture));
+                }
+                else 
+                    // Do special handling of strings when in simple query. Escape quotes and backslashes.
+                    
+                    return QuoteString(NativeData.ToString().Replace("'", "''").Replace("\\", "\\\\"));
+                
             }
+    
+        }
+        
+        private String ConvertToBackendExtendedQuery(Object NativeData)
+        {
+            if ((NativeData == DBNull.Value) || (NativeData == null))
+                return null;    // Extended query expects null values be represented as null.
+            
+            if (_ConvertNativeToBackend != null)
+                return _ConvertNativeToBackend(this, NativeData);
+            else
+            {
+                if (NativeData is System.Enum)
+                {
+                    // Do a special handling of Enum values.
+                    // Translate enum value to its underlying type. 
+                    return (String)Convert.ChangeType(Enum.Format(NativeData.GetType(), NativeData, "d"), typeof(String), CultureInfo.InvariantCulture);
+                }
+                else 
+                    // Do special handling of strings when in simple query. Escape quotes and backslashes.
+                    return NativeData.ToString();
+                
+            }
+        
         }
 
-        private static String QuoteString(Boolean Quote, String S)
+        private static String QuoteString(String S)
         {
-            if (Quote) {
-                return String.Format("'{0}'", S);
-            } else {
-                return S;
-            }
+            return String.Format("'{0}'", S);
+            
         }
     }
 

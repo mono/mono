@@ -44,7 +44,7 @@ namespace Npgsql
         private static readonly String CLASSNAME = "NpgsqlBinaryRow";
 
         public NpgsqlBinaryRow(NpgsqlRowDescription rowDesc)
-        : base(rowDesc, ProtocolVersion.Version2)
+                : base(rowDesc, ProtocolVersion.Version2)
         {
             NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, CLASSNAME);
         }

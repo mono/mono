@@ -46,14 +46,15 @@ namespace Npgsql
         private readonly Int16        READ_BUFFER_SIZE = 300; //[FIXME] Is this enough??
 
         public NpgsqlAsciiRow(NpgsqlRowDescription rowDesc, ProtocolVersion protocolVersion)
-        : base(rowDesc, protocolVersion)
+                : base(rowDesc, protocolVersion)
         {
             NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, CLASSNAME);
         }
 
         public override void ReadFromStream(Stream inputStream, Encoding encoding)
         {
-            switch (protocol_version) {
+            switch (protocol_version)
+            {
             case ProtocolVersion.Version2 :
                 ReadFromStream_Ver_2(inputStream, encoding);
                 break;
@@ -74,14 +75,14 @@ namespace Npgsql
 
             Array.Clear(null_map_array, 0, null_map_array.Length);
 
-            
+
             // Decoders used to get decoded chars when using unicode like encodings which may have chars crossing the byte buffer bounds.
-            
+
             Decoder decoder = encoding.GetDecoder();
             Char[] chars = null;
             Int32 charCount;
-            
-	    
+
+
             // Read the null fields bitmap.
             PGUtil.CheckedStreamRead(inputStream, null_map_array, 0, null_map_array.Length );
 
@@ -114,7 +115,7 @@ namespace Npgsql
                     charCount = decoder.GetCharCount(input_buffer, 0, READ_BUFFER_SIZE);
 
                     chars = new Char[charCount];
-                    
+
                     decoder.GetChars(input_buffer, 0, READ_BUFFER_SIZE, chars, 0);
 
                     result.Append(new String(chars));
@@ -125,7 +126,7 @@ namespace Npgsql
                 // Now, read just the field value.
                 PGUtil.CheckedStreamRead(inputStream, input_buffer, 0, bytes_left);
 
-                
+
                 charCount = decoder.GetCharCount(input_buffer, 0, bytes_left);
                 chars = new Char[charCount];
                 decoder.GetChars(input_buffer, 0, bytes_left, chars, 0);
@@ -169,7 +170,7 @@ namespace Npgsql
 
                 while (bytes_left > READ_BUFFER_SIZE)
                 {
-		
+
                     // Now, read just the field value.
                     PGUtil.CheckedStreamRead(inputStream, input_buffer, 0, READ_BUFFER_SIZE);
 
@@ -178,7 +179,7 @@ namespace Npgsql
                     charCount = decoder.GetCharCount(input_buffer, 0, READ_BUFFER_SIZE);
 
                     chars = new Char[charCount];
-                    
+
                     decoder.GetChars(input_buffer, 0, READ_BUFFER_SIZE, chars, 0);
 
                     result.Append(new String(chars));
@@ -211,7 +212,7 @@ namespace Npgsql
 
                     // Add them to the AsciiRow data.
                     data.Add(NpgsqlTypesHelper.ConvertBackendStringToSystemType(field_descr.type_info, result.ToString(), field_descr.type_size, field_descr.type_modifier));
-                    
+
                 }
                 else
                     // FIXME: input_buffer isn't holding all the field value. This code isn't handling binary data correctly.

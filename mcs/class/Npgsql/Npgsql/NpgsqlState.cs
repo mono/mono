@@ -274,8 +274,8 @@ namespace Npgsql
                         }
 
                         // Only AuthenticationClearTextPassword and AuthenticationMD5Password supported for now.
-                        NpgsqlEventLog.LogMsg(resman, "Log_AuthenticationOK", LogLevel.Debug);
-                        mediator.Errors.Add(String.Format(resman.GetString("Exception_AuthenticationMethodNotSupported"), authType));
+
+                        mediator.Errors.Add(new NpgsqlError(context.BackendProtocolVersion, String.Format(resman.GetString("Exception_AuthenticationMethodNotSupported"), authType)));
                     }
 
                     return;
@@ -544,8 +544,7 @@ namespace Npgsql
                         }
 
                         // Only AuthenticationClearTextPassword and AuthenticationMD5Password supported for now.
-                        NpgsqlEventLog.LogMsg(resman, "Log_AuthenticationOK", LogLevel.Debug);
-                        mediator.Errors.Add(String.Format(resman.GetString("Exception_AuthenticationMethodNotSupported"), authType));
+                        mediator.Errors.Add(new NpgsqlError(context.BackendProtocolVersion, String.Format(resman.GetString("Exception_AuthenticationMethodNotSupported"), authType)));
                     }
 
                     return;

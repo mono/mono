@@ -190,14 +190,6 @@ namespace NpgsqlTypes
     internal abstract class BasicNativeToBackendTypeConverter
     {
         /// <summary>
-        /// String data.
-        /// </summary>
-        internal static String ToString(NpgsqlNativeTypeInfo TypeInfo, Object NativeData)
-        {
-            return NativeData.ToString().Replace("'", "''").Replace("\\", "\\\\");
-        }
-
-        /// <summary>
         /// Binary data.
         /// </summary>
         internal static String ToBinary(NpgsqlNativeTypeInfo TypeInfo, Object NativeData)

@@ -53,7 +53,8 @@ namespace Npgsql
         {
             connection_string = Other.connection_string;
             connection_string_values = new ListDictionary(CaseInsensitiveComparer.Default);
-            foreach (DictionaryEntry DE in Other.connection_string_values) {
+            foreach (DictionaryEntry DE in Other.connection_string_values)
+            {
                 connection_string_values.Add(DE.Key, DE.Value);
             }
         }
@@ -85,6 +86,9 @@ namespace Npgsql
             String[] pairs;
             String[] keyvalue;
 
+            if (CS == null)
+                CS = String.Empty;
+
             // Get the key-value pairs delimited by ;
             pairs = CS.Split(';');
 
@@ -95,7 +99,8 @@ namespace Npgsql
                 String Key = "", Value = "";
 
                 // Just ignore these.
-                if (s == "") {
+                if (s == "")
+                {
                     continue;
                 }
 
@@ -106,18 +111,21 @@ namespace Npgsql
                 Key = keyvalue[0].Trim().ToUpper();
 
                 // Make sure the key is even there...
-                if (Key.Length == 0) {
+                if (Key.Length == 0)
+                {
                     throw new ArgumentException(resman.GetString("Exception_WrongKeyVal"), "<BLANK>");
                 }
 
                 // We don't expect keys this long, and it might be about to be put
                 // in an error message, so makes sure it is a sane length.
-                if (Key.Length > 20) {
+                if (Key.Length > 20)
+                {
                     Key = Key.Substring(0, 20);
                 }
 
                 // Check if there is a key-value pair.
-                if (keyvalue.Length != 2) {
+                if (keyvalue.Length != 2)
+                {
                     throw new ArgumentException(resman.GetString("Exception_WrongKeyVal"), Key);
                 }
 
@@ -127,7 +135,8 @@ namespace Npgsql
                 // Substitute the real key name if this is an alias key (ODBC stuff for example)...
                 String      AliasKey = (string)ConnectionStringKeys.Aliases[Key];
 
-                if (AliasKey != null) {
+                if (AliasKey != null)
+                {
                     Key = AliasKey;
                 }
 
@@ -167,10 +176,12 @@ namespace Npgsql
         /// </summary>
         public override String ToString()
         {
-            if (connection_string == null) {
+            if (connection_string == null)
+            {
                 StringBuilder      S = new StringBuilder();
 
-                foreach (DictionaryEntry DE in this) {
+                foreach (DictionaryEntry DE in this)
+                {
                     S.AppendFormat("{0}={1};", DE.Key, DE.Value);
                 }
 
@@ -195,7 +206,8 @@ namespace Npgsql
         /// </summary>
         public String ToString(String Key, String Default)
         {
-            if (! connection_string_values.Contains(Key)) {
+            if (! connection_string_values.Contains(Key))
+            {
                 return Default;
             }
 
@@ -229,13 +241,17 @@ namespace Npgsql
         /// </summary>
         public Int32 ToInt32(String Key, Int32 Default)
         {
-            if (! connection_string_values.Contains(Key)) {
+            if (! connection_string_values.Contains(Key))
+            {
                 return Default;
             }
 
-            try {
+            try
+            {
                 return Convert.ToInt32(connection_string_values[Key]);
-            } catch (Exception E) {
+            }
+            catch (Exception E)
+            {
                 throw new ArgumentException(String.Format(resman.GetString("Exception_InvalidIntegerKeyVal"), Key), Key, E);
             }
         }
@@ -251,10 +267,12 @@ namespace Npgsql
 
             V = ToInt32(Key, Default);
 
-            if (V < Min) {
+            if (V < Min)
+            {
                 throw new ArgumentException(String.Format(resman.GetString("Exception_IntegerKeyValMin"), Key, Min), Key);
             }
-            if (V > Max) {
+            if (V > Max)
+            {
                 throw new ArgumentException(String.Format(resman.GetString("Exception_IntegerKeyValMax"), Key, Max), Key);
             }
 
@@ -278,11 +296,13 @@ namespace Npgsql
         /// </summary>
         public Boolean ToBool(String Key, Boolean Default)
         {
-            if (! connection_string_values.Contains(Key)) {
+            if (! connection_string_values.Contains(Key))
+            {
                 return Default;
             }
 
-            switch (connection_string_values[Key].ToString().ToLower()) {
+            switch (connection_string_values[Key].ToString().ToLower())
+            {
             case "t" :
             case "true" :
             case "y" :
@@ -309,11 +329,13 @@ namespace Npgsql
         /// </summary>
         public ProtocolVersion ToProtocolVersion(String Key)
         {
-            if (! connection_string_values.Contains(Key)) {
+            if (! connection_string_values.Contains(Key))
+            {
                 return ProtocolVersion.Version3;
             }
 
-            switch (ToInt32(Key)) {
+            switch (ToInt32(Key))
+            {
             case 2 :
                 return ProtocolVersion.Version2;
 

@@ -118,8 +118,8 @@ namespace Npgsql
         /// <param name="ConnectionString">The connection used to open the PostgreSQL database.</param>
         public NpgsqlConnection(String ConnectionString)
         {
-            NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, CLASSNAME, ConnectionString);
-
+            NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, CLASSNAME, "NpgsqlConnection()");
+            
             connection_string = NpgsqlConnectionString.ParseConnectionString(ConnectionString);
             LogConnectionString();
 

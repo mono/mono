@@ -204,6 +204,12 @@ namespace Npgsql
         {
             protocol_version = protocolVersion;
         }
+        
+        internal NpgsqlError(ProtocolVersion protocolVersion, String errorMessage)
+        {
+            protocol_version = protocolVersion;
+            _message = errorMessage;
+        }
 
         /// <summary>
         /// Backend protocol version in use.

@@ -105,10 +105,13 @@ namespace Npgsql
         private Boolean                          _shared;
 
         private NpgsqlState                      _state;
-        
-        
+
+
         private Int32                            _planIndex;
         private Int32                            _portalIndex;
+
+        private const String                     _planNamePrefix = "NpgsqlPlan";
+        private const String                     _portalNamePrefix = "NpgsqlPortal";
 
 
 
@@ -128,7 +131,7 @@ namespace Npgsql
             _oidToNameMapping = new NpgsqlBackendTypeMapping();
             _planIndex = 0;
             _portalIndex = 0;
-            
+
         }
 
 
@@ -233,6 +236,7 @@ namespace Npgsql
         /// This method checks if the connector is still ok.
         /// We try to send a simple query text, select 1 as ConnectionTest;
         /// </summary>
+	
         internal Boolean IsValid()
         {
             try
@@ -246,18 +250,36 @@ namespace Npgsql
             }
 
             return true;
+        }
+
+
+        /// <summary>
+        /// This method is responsible to release all portals used by this Connector.
+        /// </summary>
+        internal void ReleasePlansPortals()
+        {
+            Int32 i = 0;
+
+            if (_planIndex > 0)
+            {
+                for(i = 1; i <= _planIndex; i++)
+                    Query(new NpgsqlCommand(String.Format("deallocate \"{0}\";", _planNamePrefix + i)));
+            }
+
+            _portalIndex = 0;
+            _planIndex = 0;
+
+
+        }
 
 
 
-    }
-
-
-    /// <summary>
-    /// Check for mediator errors (sent by backend) and throw the appropriate
-    /// exception if errors found.  This needs to be called after every interaction
-    /// with the backend.
-    /// </summary>
-    internal void CheckErrors()
+        /// <summary>
+        /// Check for mediator errors (sent by backend) and throw the appropriate
+        /// exception if errors found.  This needs to be called after every interaction
+        /// with the backend.
+        /// </summary>
+        internal void CheckErrors()
         {
             if (_mediator.Errors.Count > 0)
             {
@@ -650,26 +672,27 @@ namespace Npgsql
             }
             catch {}
         }
-        
-        
-        ///<summary>
-        /// Returns next portal index.
-        ///</summary>
-        internal Int32 NextPortalIndex()
+
+
+    ///<summary>
+    /// Returns next portal index.
+    ///</summary>
+    internal String NextPortalName()
         {
-        	return System.Threading.Interlocked.Increment(ref _portalIndex);
+            return _portalNamePrefix + System.Threading.Interlocked.Increment(ref _portalIndex);
         }
-        
-        
+
+
         ///<summary>
         /// Returns next plan index.
         ///</summary>
-        internal Int32 NextPlanIndex()
+        internal String NextPlanName()
         {
-        	return System.Threading.Interlocked.Increment(ref _planIndex);
+
+            return _planNamePrefix + System.Threading.Interlocked.Increment(ref _planIndex);
         }
-        
-        
-        
-	}
+
+
+
+    }
 }

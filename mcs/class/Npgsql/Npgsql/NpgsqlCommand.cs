@@ -58,6 +58,8 @@ namespace Npgsql
         private NpgsqlParse                 parse;
         private NpgsqlBind                  bind;
 
+        private Boolean						invalidTransactionDetected = false;
+
         // Constructors
 
         /// <summary>
@@ -92,8 +94,8 @@ namespace Npgsql
             text = cmdText;
             this.connection = connection;
             if (this.connection != null)
-            	this.connector = connection.Connector;
-            
+                this.connector = connection.Connector;
+
             parameters = new NpgsqlParameterCollection();
             timeout = 20;
             type = CommandType.Text;
@@ -207,14 +209,19 @@ namespace Npgsql
 
             set
             {
+                if (this.Connection == value)
+                    return;
+
                 if (this.transaction != null && this.transaction.Connection == null)
                     this.transaction = null;
                 if (this.connection != null && this.Connector.Transaction != null)
                     throw new InvalidOperationException(resman.GetString("Exception_SetConnectionInTransaction"));
+
+
                 this.connection = value;
                 if (this.connection != null)
-                	connector = this.connection.Connector;
-                
+                    connector = this.connection.Connector;
+
                 NpgsqlEventLog.LogPropertySet(LogLevel.Debug, CLASSNAME, "Connection", value);
             }
         }
@@ -224,7 +231,7 @@ namespace Npgsql
             {
                 if (connector == null && this.connection != null)
                     connector = this.connection.Connector;
-                    
+
                 return connector;
             }
         }
@@ -343,7 +350,8 @@ namespace Npgsql
             ExecuteCommand();
 
             // If nothing is returned, just return -1.
-            if(Connector.Mediator.CompletedResponses.Count == 0) {
+            if(Connector.Mediator.CompletedResponses.Count == 0)
+            {
                 return -1;
             }
 
@@ -448,7 +456,7 @@ namespace Npgsql
                 {
                     // Do not quote strings, or escape existing quotes - this will be handled by the backend.
                     // DBNull or null values are returned as null.
-                    // TODO: Would it be better to remove this null special handling out of ConvertToBackend?? 
+                    // TODO: Would it be better to remove this null special handling out of ConvertToBackend??
                     parameterValues[i] = parameters[i].TypeInfo.ConvertToBackend(parameters[i].Value, true);
                 }
                 bind.ParameterValues = parameterValues;
@@ -520,7 +528,8 @@ namespace Npgsql
             // Check the connection state.
             CheckConnectionState();
 
-            if (! Connector.SupportsPrepare) {
+            if (! Connector.SupportsPrepare)
+            {
                 return;	// Do nothing.
             }
 
@@ -532,18 +541,19 @@ namespace Npgsql
             else
             {
                 // Use the extended query parsing...
-                planName = "NpgsqlPlan" + Connector.NextPlanIndex();
-                String portalName = "NpgsqlPortal" + Connector.NextPortalIndex();
+                //planName = "NpgsqlPlan" + Connector.NextPlanIndex();
+                planName = Connector.NextPlanName();
+                String portalName = Connector.NextPortalName();
 
                 parse = new NpgsqlParse(planName, GetParseCommandText(), new Int32[] {});
-                
+
                 Connector.Parse(parse);
                 Connector.Mediator.RequireReadyForQuery = false;
                 Connector.Flush();
-                
+
                 // Check for errors and/or notifications and do the Right Thing.
                 connector.CheckErrorsAndNotifications();
-                
+
                 bind = new NpgsqlBind(portalName, planName, new Int16[] {0}, null, new Int16[] {0});
             }
         }
@@ -577,9 +587,11 @@ namespace Npgsql
         private void CheckConnectionState()
         {
             NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, "CheckConnectionState");
-            
+
+
             // Check the connection state.
-            if (Connector == null || Connector.State != ConnectionState.Open) {
+            if (Connector == null || Connector.State != ConnectionState.Open)
+            {
                 throw new InvalidOperationException(resman.GetString("Exception_ConnectionNotOpen"));
             }
         }
@@ -625,16 +637,16 @@ namespace Npgsql
             for (Int32 i = 0; i < parameters.Count; i++)
             {
                 NpgsqlParameter Param = parameters[i];
-                
+
                 // FIXME DEBUG ONLY
                 // adding the '::<datatype>' on the end of a parameter is a highly
                 // questionable practice, but it is great for debugging!
                 // Removed as this was going in infinite loop when the parameter name had the same name of parameter
                 // type name. i.e.: parameter name called :text of type text. It would conflict with the parameter type name ::text.
                 result = ReplaceParameterValue(
-                            result,
-                            Param.ParameterName,
-                            Param.TypeInfo.ConvertToBackend(Param.Value, false)
+                             result,
+                             Param.ParameterName,
+                             Param.TypeInfo.ConvertToBackend(Param.Value, false)
                          );
             }
 
@@ -707,7 +719,7 @@ namespace Npgsql
 
 
 
-            planName = "NpgsqlPlan" + Connector.NextPlanIndex();
+            planName = Connector.NextPlanName();
 
             StringBuilder command = new StringBuilder("prepare " + planName);
 
@@ -744,7 +756,7 @@ namespace Npgsql
 
                 for (i = 0; i < parameters.Count; i++)
                 {
-//                    command.Append(NpgsqlTypesHelper.GetDefaultTypeInfo(parameters[i].DbType));
+                    //                    command.Append(NpgsqlTypesHelper.GetDefaultTypeInfo(parameters[i].DbType));
                     command.Append(parameters[i].TypeInfo.Name);
 
                     command.Append(',');
@@ -766,12 +778,12 @@ namespace Npgsql
 
         private String ReplaceParameterValue(String result, String parameterName, String paramVal)
         {
-        	Int32 resLen = result.Length;
+            Int32 resLen = result.Length;
             Int32 paramStart = result.IndexOf(parameterName);
             Int32 paramLen = parameterName.Length;
             Int32 paramEnd = paramStart + paramLen;
             Boolean found = false;
-            
+
 
             while(paramStart > -1)
             {
@@ -802,7 +814,7 @@ namespace Npgsql
             if(!found)
                 throw new IndexOutOfRangeException (String.Format(resman.GetString("Exception_ParamNotInQuery"), parameterName));
 
-			
+
             return result;
         }//ReplaceParameterValue
 
@@ -811,26 +823,24 @@ namespace Npgsql
         {
             // Check the connection state first.
             CheckConnectionState();
-	    
+
             // reset any responses just before getting new ones
             connector.Mediator.ResetResponses();
 
 
-            if (parse == null) {
+            if (parse == null)
+            {
                 Connector.Query(this);
 
                 // Check for errors and/or notifications and do the Right Thing.
                 connector.CheckErrorsAndNotifications();
-            } 
-            else 
+            }
+            else
             {
                 try
                 {
-					
-                    BindParameters();
 
-                    // Check for errors and/or notifications and do the Right Thing.
-                    connector.CheckErrorsAndNotifications();
+                    BindParameters();
 
                     connector.Execute(new NpgsqlExecute(bind.PortalName, 0));
 
@@ -847,7 +857,7 @@ namespace Npgsql
 
                     connector.Sync();
                 }
-            }           
+            }
         }
     }
 }

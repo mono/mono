@@ -42,7 +42,7 @@ namespace Npgsql
 
         private NpgsqlConnection    _conn = null;
         private IsolationLevel      _isolation = IsolationLevel.ReadCommitted;
-        private bool                _disposing = false;
+        private bool                _disposed = false;
 
         internal NpgsqlTransaction(NpgsqlConnection conn) : this(conn, IsolationLevel.ReadCommitted)
         {}
@@ -106,7 +106,8 @@ namespace Npgsql
         {
             get
             {
-                if (_conn == null) {
+                if (_conn == null)
+                {
                     throw new InvalidOperationException(resman.GetString("Exception_NoTransaction"));
                 }
 
@@ -121,16 +122,19 @@ namespace Npgsql
         /// </summary>
         public void Dispose()
         {
+            GC.SuppressFinalize(this);
+
             this.Dispose(true);
         }
 
-        private void Dispose(bool disposing)
+        private void Dispose(Boolean disposing)
         {
             if(disposing && this._conn != null)
             {
-                this._disposing = true;
                 if (_conn.Connector.Transaction != null)
                     this.Rollback();
+
+                this._disposed = true;
             }
         }
 
@@ -139,7 +143,10 @@ namespace Npgsql
         /// </summary>
         public void Commit()
         {
-            if (_conn == null) {
+            CheckDisposed();
+
+            if (_conn == null)
+            {
                 throw new InvalidOperationException(resman.GetString("Exception_NoTransaction"));
             }
 
@@ -156,7 +163,10 @@ namespace Npgsql
         /// </summary>
         public void Rollback()
         {
-            if (_conn == null) {
+            CheckDisposed();
+
+            if (_conn == null)
+            {
                 throw new InvalidOperationException(resman.GetString("Exception_NoTransaction"));
             }
 
@@ -174,17 +184,34 @@ namespace Npgsql
         /// </summary>
         internal void Cancel()
         {
-            if (_conn != null) {
+            CheckDisposed();
+
+            if (_conn != null)
+            {
                 _conn.Connector.Transaction = null;
                 _conn = null;
             }
         }
 
-        internal bool Disposing{
+        internal bool Disposed{
             get
             {
-                return _disposing;
+                return _disposed;
             }
         }
+
+
+        internal void CheckDisposed()
+        {
+            if (_disposed)
+                throw new ObjectDisposedException(CLASSNAME);
+
+        }
+
+        ~NpgsqlTransaction()
+        {
+            Dispose(false);
+        }
+
     }
 }
