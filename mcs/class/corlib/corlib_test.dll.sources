@@ -71,6 +71,9 @@ System.IO/StreamWriterTest.cs
 System.IO/StringReaderTest.cs
 System.IO/StringWriterTest.cs
 System.IO/TextWriterTest.cs
+System.IO.IsolatedStorage/IsolatedStorageTest.cs
+System.IO.IsolatedStorage/IsolatedStorageFileTest.cs
+System.IO.IsolatedStorage/IsolatedStorageFileStreamTest.cs
 System/MathTest.cs
 System/MulticastDelegate.cs
 System/NumberFormatterTest.cs
@@ -266,3 +269,11 @@ System/UInt64Test.cs
 System/UIntPtrTest.cs
 System/VersionTest.cs
 System/ValueTypeTest.cs
+System/EnvironmentCas.cs
+System/ExceptionCas.cs
+System.Diagnostics/StackFrameCas.cs
+System.Diagnostics/StackTraceCas.cs
+System.IO/DirectoryCas.cs
+System.IO/FileLoadExceptionCas.cs
+System.IO/FileNotFoundExceptionCas.cs
+System.Security/SecurityExceptionCas.cs

@@ -3,6 +3,8 @@
 	* corlib.dll.source: Added Microsoft.Win32.SafeHandles.SafeFileHandle,
 	removed IsolatedStorageInfo and added IsolatedStorageFileEnumerator to
 	the build.
+	* corlib_test.dll.sources : Added new unit tests for System.IO.
+	IsolatedStorage and new CAS (*.Cas.cs) tests to the build.
 
 2005-01-31  Kazuki Oikawa <kazuki@panicode.com>
 
