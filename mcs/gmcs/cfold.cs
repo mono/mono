@@ -171,6 +171,8 @@ namespace Mono.CSharp {
 					left = ((EnumConstant) left).Child;
 				if (right is EnumConstant)
 					right = ((EnumConstant) right).Child;
+
+				DoConstantNumericPromotions (ec, oper, ref left, ref right, loc);
 				return;
 
 			} else {
@@ -227,7 +229,7 @@ namespace Mono.CSharp {
 				DoConstantNumericPromotions (ec, oper, ref left, ref right, loc);
 				if (left == null || right == null)
 					return null;
-				
+
 				if (left is IntConstant){
 					IntConstant v;
 					int res = ((IntConstant) left).Value | ((IntConstant) right).Value;
