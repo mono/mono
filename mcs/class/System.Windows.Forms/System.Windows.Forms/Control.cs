@@ -1105,12 +1105,13 @@
     			throw new NotImplementedException ();
     		}
     		
- 			//Compact Framework
     		[MonoTODO]
     		public void BringToFront () 
     		{
-    			//FIXME:
-    		}
+			if ( IsHandleCreated )
+				Win32.SetWindowPos ( Handle, SetWindowPosZOrder.HWND_TOP, 0, 0, 0, 0, 
+					SetWindowPosFlags.SWP_NOMOVE | SetWindowPosFlags.SWP_NOSIZE );
+		}
     		
     		public bool Contains (Control ctl) 
     		{
@@ -2127,6 +2128,8 @@
 				DestroyHandle ();
 				CreateHandle ();
 
+				UpdateZOrder ( );
+
 				IEnumerator cw = childControls.GetEnumerator();
 				while ( cw.MoveNext() )
 					(( Control )cw.Current).RecreateHandle ( );
@@ -2523,8 +2526,24 @@
     		[MonoTODO]
     		protected void UpdateZOrder () 
     		{
-				//FIXME:
+			if ( !IsHandleCreated || Parent == null )
+				return;
+
+			int position = Parent.Controls.GetChildIndex ( this , false );
+			switch ( position ) {
+			case  0:
+				BringToFront();
+			break;
+				// not in collection for some reason
+			case -1:
+			break;
+			default:
+				Control prev = Parent.Controls [ position - 1 ];
+				if ( prev.IsHandleCreated )
+					Win32.SetWindowPos( Handle, prev.Handle, 0, 0, 0, 0, SetWindowPosFlags.SWP_NOMOVE | SetWindowPosFlags.SWP_NOSIZE );
+			break;
 			}
+		}
     		
 
 			internal MouseEventArgs Msg2MouseEventArgs( ref Message msg) {
@@ -3260,16 +3279,21 @@
     			{
 					//FIXME:
 					return base.Equals(obj);
-    			}
+			}
 
-    			public int GetChildIndex ( Control child )
-    			{
+			public int GetChildIndex ( Control child )
+			{
+				return GetChildIndex ( child, true );
+			}
+
+			public int GetChildIndex ( Control child, bool throwException )
+			{
 				int index = collection.IndexOf ( child );
-				if ( index == -1 )
+				if ( index == -1 && throwException )
 					throw new ArgumentException( "'child' is not a child control of this parent.");
 				return index;
-    			}
-    			
+			}
+
     			public IEnumerator GetEnumerator () 
     			{
     				return collection.GetEnumerator ();

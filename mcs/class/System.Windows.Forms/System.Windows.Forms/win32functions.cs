@@ -836,6 +836,13 @@ namespace System.Windows.Forms{
 			IntPtr hWnd, SetWindowPosZOrder pos,
 			int X, int Y, int cx, int cy, SetWindowPosFlags uFlags);
 
+		[DllImport ("user32.dll", CallingConvention =
+			 CallingConvention.StdCall,
+			 CharSet = CharSet.Auto)]
+		internal extern static int SetWindowPos (
+			IntPtr hWnd,  IntPtr hWndInsertAfter,
+			int X, int Y, int cx, int cy, SetWindowPosFlags uFlags);
+
 		[DllImport ("user32.dll", 
 			 CallingConvention = CallingConvention.StdCall, 
 			 CharSet = CharSet.Ansi)]

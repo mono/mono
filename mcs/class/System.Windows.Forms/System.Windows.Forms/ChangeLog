@@ -1,4 +1,9 @@
 2003-05-27  Aleksey Ryabchuk <ryabchuk@yahoo.com>
+	* Control.cs : implemented GetChildIndex, BringToFront, UpdateZOrder, update z-order when recreating handle,
+	* win32Strcuts.cs
+	* win32Enums.cs : use ansi CharSet for tooltips
+			
+2003-05-27  Aleksey Ryabchuk <ryabchuk@yahoo.com>
 	* Contols.cs : changes to SetVisibleCore, Invalidate (bool) is implemented
 	* NativeWindow.cs : don't use CS_VREDRAW and CS_HREDRAW flags
 	* ImageList.cs

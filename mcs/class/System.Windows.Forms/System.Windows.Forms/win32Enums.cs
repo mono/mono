@@ -2502,9 +2502,9 @@ namespace System.Windows.Forms{
 		TTM_ACTIVATE            = (Msg.WM_USER + 1),
 		TTM_SETDELAYTIME	= (Msg.WM_USER + 3),
 		TTM_SETMAXTIPWIDTH      = (Msg.WM_USER + 24),
-		TTM_ADDTOOL		= (Msg.WM_USER + 50),
-		TTM_DELTOOL		= (Msg.WM_USER + 51),
-		TTM_UPDATETIPTEXT	= (Msg.WM_USER +57)
+		TTM_ADDTOOL		= (Msg.WM_USER + 4),
+		TTM_DELTOOL		= (Msg.WM_USER + 5),
+		TTM_UPDATETIPTEXT	= (Msg.WM_USER + 12)
 
 	}
 	#endregion

@@ -758,7 +758,7 @@ namespace System.Windows.Forms
 		public IntPtr    itemData; 
 	}
 
-	[StructLayout(LayoutKind.Sequential, CharSet=CharSet.Unicode)]
+	[StructLayout(LayoutKind.Sequential, CharSet=CharSet.Ansi)]
 	internal struct TOOLINFO {
 		internal uint	cbSize; 
 		internal uint 	uFlags; 
