@@ -5,6 +5,8 @@
 //
 // (C) 2001 Ximian, Inc.
 
+using System.Runtime.Serialization;
+
 namespace System.Reflection
 {
 	[Serializable]
@@ -19,5 +21,10 @@ namespace System.Reflection
 			: base (message, inner)
 		{
 		}		
+
+		protected TargetInvocationException (SerializationInfo info, StreamingContext sc)
+			: base (info, sc)
+		{
+		}
 	}	
 }
