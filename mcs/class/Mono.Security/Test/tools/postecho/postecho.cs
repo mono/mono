@@ -21,7 +21,7 @@ class PostEcho {
 	static void Help ()
 	{
 		Console.WriteLine ("postecho url [size] [--web | --ssl3 | --tls1]");
-		Console.WriteLine ("  default size is 1024");
+		Console.WriteLine ("  default size is 1024 (bytes)");
 		Console.WriteLine ("  default mode is --tls1");
 		Console.WriteLine ("* a server side script must be installed to run postecho");
 	}
@@ -119,7 +119,7 @@ class PostEcho {
 		}
 		for (int i = 0; i < result.Length; i++) {
 			if (result[i] != 'A') {
-				Console.WriteLine ("Error at {0} - reveived {1}", i, result[i]);
+				Console.WriteLine ("Error at position #{0} - received '{1}'", i, result[i]);
 				return 1;
 			}
 		}

@@ -1,3 +1,9 @@
+2005-04-06  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* postecho.cs: Fix some strings.
+	* sendback.aspx: ASP.NET version of the server script.
+	* README: updated instructions with the new script.
+
 2005-02-04  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* ChangeLog: New. Track changes of postecho;
