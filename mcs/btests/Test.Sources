@@ -179,7 +179,8 @@ WithStatementB \
 WithStatementC \
 ForEachA \
 AssignmentStatementsA \
-AssignmentStatementsB
+AssignmentStatementsB \
+AssignmentStatementsC
 
 # All negetive test cases which should
 # fail during compilation goes here
@@ -377,7 +378,8 @@ WithStatementC3 \
 WithStatementC4 \
 AssignmentStatementsC1 \
 AssignmentStatementsC2 \
-AssignmentStatementsC3 
+AssignmentStatementsC3 \
+AssignmentStatementsC4
 
 # All negetive test cases which should fail at
 # runtime goes here
@@ -408,6 +410,7 @@ LocalVariables1 \
 AssignmentStatements1 \
 AssignmentStatements2 \
 AssignmentStatements3 \
-AssignmentStatements4
+AssignmentStatements4 \
+AssignmentStatements5
 
 
