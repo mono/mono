@@ -1,5 +1,8 @@
 2005-01-20  Zoltan Varga  <vargaz@freemail.hu>
 
+	* mini-amd64.c (mono_arch_local_regalloc): Revert last patch as it
+	breaks the amd64 build.
+
 	* mini-x86.c (mono_arch_local_regalloc): Fix bug in div/rem 
 	register allocation. Fixes #71454.
 
