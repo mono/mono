@@ -1,3 +1,7 @@
+2003-05-23  Dietmar Maurer  <dietmar@ximian.com>
+
+	* mini.c (optimize_branches): added some experimental code (disbaled) 
+
 2003-05-22  Dietmar Maurer  <dietmar@ximian.com>
 
 	* mini.c (optimize_branches): fix branch to branch optimization 
