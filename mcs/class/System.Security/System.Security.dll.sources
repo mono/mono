@@ -120,6 +120,7 @@ System.Security.Cryptography.Xml/XmlDsigXPathTransform.cs
 System.Security.Cryptography.Xml/XmlDsigXsltTransform.cs
 System.Security.Cryptography.Xml/XmlEncryption.cs
 System.Security.Cryptography.Xml/XmlSignature.cs
+System.Security.Cryptography.Xml/XmlSignatureStreamReader.cs
 System.Security.Cryptography.Xml/TODOAttribute.cs
 System.Security.Permissions/DataProtectionPermission.cs
 System.Security.Permissions/DataProtectionPermissionAttribute.cs

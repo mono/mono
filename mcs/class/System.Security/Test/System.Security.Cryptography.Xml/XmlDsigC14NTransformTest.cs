@@ -104,13 +104,15 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 			return sb.ToString ();
 		}
 
-		static string xml = "<Test  attrib='at ' xmlns=\"http://www.go-mono.com/\" > \r\n <Toto/> text &amp; </Test   >";
-		// BAD (framework 1.0 result)
-		static string c14xml1 = "<Test xmlns=\"http://www.go-mono.com/\" attrib=\"at \"> \r\n <Toto></Toto> text &amp; </Test>";
-		// BAD (framework 1.1 result for Stream)
-		static string c14xml2 = "<Test xmlns=\"http://www.go-mono.com/\" attrib=\"at \"> \n <Toto></Toto> text &amp; </Test>";
-		// GOOD (framework 1.1 for XmlDocument and Mono::)
-		static string c14xml3 = "<Test xmlns=\"http://www.go-mono.com/\" attrib=\"at \"> &#xD;\n <Toto></Toto> text &amp; </Test>";
+		static string xml = "<Test  attrib='at ' xmlns=\"http://www.go-mono.com/\" > \r\n &#xD; <Toto/> text &amp; </Test   >";
+		// BAD for XmlDocument input (framework 1.0 result)
+		static string c14xml1 = "<Test xmlns=\"http://www.go-mono.com/\" attrib=\"at \"> \r\n \r <Toto></Toto> text &amp; </Test>";
+		// GOOD for Stream input
+		static string c14xml2 = "<Test xmlns=\"http://www.go-mono.com/\" attrib=\"at \"> \n &#xD; <Toto></Toto> text &amp; </Test>";
+		// GOOD for XmlDocument input. The difference is because once
+		// xml string is loaded to XmlDocument, there is no difference
+		// between \r and &#xD;, so every \r must be handled as &#xD;.
+		static string c14xml3 = "<Test xmlns=\"http://www.go-mono.com/\" attrib=\"at \"> &#xD;\n &#xD; <Toto></Toto> text &amp; </Test>";
 
 		private XmlDocument GetDoc () 
 		{
@@ -127,11 +129,11 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 			transform.LoadInput (doc);
 			Stream s = (Stream) transform.GetOutput ();
 			string output = Stream2String (s);
-#if NET_1_0
+#if NET_1_1
+			AssertEquals("XmlDocument", c14xml3, output);
+#else
 			// .NET 1.0 keeps the \r\n (0x0D, 0x0A) - bug
 			AssertEquals("XmlDocument", c14xml1, output);
-#else
-			AssertEquals("XmlDocument", c14xml3, output);
 #endif
 		}
 
@@ -147,13 +149,17 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 		}
 
 		[Test]
+		[Category ("NotDotNet")]
+		// MS has a bug that those namespace declaration nodes in
+		// the node-set are written to output. Related spec section is:
+		// http://www.w3.org/TR/2001/REC-xml-c14n-20010315#ProcessingModel
 		public void LoadInputAsXmlNodeList2 () 
 		{
 			XmlDocument doc = GetDoc ();
 			transform.LoadInput (doc.SelectNodes ("//*"));
 			Stream s = (Stream) transform.GetOutput ();
 			string output = Stream2String (s);
-			string expected = @"<Test><Toto xmlns=""http://www.go-mono.com/""></Toto></Test>";
+			string expected = @"<Test><Toto></Toto></Test>";
 			AssertEquals ("XmlChildNodes", expected, output);
 		}
 
@@ -167,10 +173,7 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 			transform.LoadInput (ms);
 			Stream s = (Stream) transform.GetOutput ();
 			string output = Stream2String (s);
-			// ARGH! HOW CAN MS RETURN SOMETHING DIFFERENT IF A 
-			// STREAM IS USED THAN IF A XMLDOCUMENT IS USED :-(
-			bool result = ((output == c14xml2) || (output == c14xml3));
-			Assert ("MemoryStream", result);
+			AssertEquals ("MemoryStream", c14xml2, output);
 		}
 
 		[Test]

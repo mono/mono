@@ -1,3 +1,10 @@
+2005-04-06  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlDsigC14NTransformTest.cs :
+	  Reverted last change in LoadInputAsXmlNodeList2(). It is MS bug.
+	  It now handles Load() behavioral difference between Stream and
+	  XmlDocument as expected.
+
 2005-02-27  Nick Drochak  <ndrochak@ieee.org>
 
 	* XmlDsigXsltTransformTest.cs:

@@ -192,17 +192,19 @@ namespace System.Security.Cryptography.Xml
 			// possible input: Stream, XmlDocument, and XmlNodeList
 			if (obj is Stream) {
 				doc = new XmlDocument ();
-#if ! NET_1_0
+				doc.PreserveWhitespace = true;
+#if NET_1_1
 				doc.XmlResolver = GetResolver ();
 #endif
-				doc.Load (obj as Stream);
+				doc.Load (new XmlSignatureStreamReader (
+					new StreamReader ((Stream) obj)));
 			}
 			else if (obj is XmlDocument) {
 				doc = (obj as XmlDocument);
 			}
 			else if (obj is XmlNodeList) {
 				doc = new XmlDocument ();
-#if ! NET_1_0
+#if NET_1_1
 				doc.XmlResolver = GetResolver ();
 #endif
 				foreach (XmlNode xn in (obj as XmlNodeList))  {

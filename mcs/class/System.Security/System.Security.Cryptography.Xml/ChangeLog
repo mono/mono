@@ -1,3 +1,12 @@
+2005-04-04  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlSignatureStreamReader.cs : new file. Handles Stream to rip CR off.
+	* XmlDsigXPathTransform.cs,
+	  XmlDecryptionTransform.cs,
+	  XmlDsigC14NTransform.cs,
+	  XmlDsigEnvelopedSignatureTransform.cs,
+	  XmlDsigXsltTransform.cs : use XmlSignatureStreamReader for Streams.
+
 2004-09-16  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Signature.cs: Fixed Xmldsig and broken unit tests.

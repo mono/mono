@@ -129,10 +129,9 @@ namespace System.Security.Cryptography.Xml {
 			if (inputObj is Stream) {
 				document = new XmlDocument ();
 				document.PreserveWhitespace = true;
-#if NET_1_1
 				document.XmlResolver = GetResolver ();
-#endif
-				document.Load (inputObj as Stream);
+				document.Load (new XmlSignatureStreamReader (
+					new StreamReader (inputObj as Stream)));
 			}
 			else if (inputObj is XmlDocument) {
 				document = inputObj as XmlDocument;

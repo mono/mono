@@ -1,5 +1,8 @@
 RUNTIME = mono --debug 
 CSCOMPILE = mcs --debug
+PROFILE = default
+#XMLDSIG_EXE_OPTIONS =
+XMLDSIG_EXE_OPTIONS = --decent-reader
 
 run-test: c14n.exe xmldsig.exe merlin-xmldsig-twenty-three
 	$(RUNTIME) c14n.exe merlin-xmldsig-twenty-three/signature-enveloped-dsa.xml SignedInfo | cmp merlin-xmldsig-twenty-three/signature-enveloped-dsa-c14n-1.txt
@@ -10,10 +13,10 @@ run-test: c14n.exe xmldsig.exe merlin-xmldsig-twenty-three
 	$(RUNTIME) c14n.exe merlin-xmldsig-twenty-three/signature-enveloping-rsa.xml SignedInfo | cmp merlin-xmldsig-twenty-three/signature-enveloping-rsa-c14n-1.txt
 	$(RUNTIME) c14n.exe merlin-xmldsig-twenty-three/signature-external-b64-dsa.xml SignedInfo | cmp merlin-xmldsig-twenty-three/signature-external-b64-dsa-c14n-0.txt
 	$(RUNTIME) c14n.exe merlin-xmldsig-twenty-three/signature-external-dsa.xml SignedInfo | cmp merlin-xmldsig-twenty-three/signature-external-dsa-c14n-0.txt
-	$(RUNTIME) xmldsig.exe
+	$(RUNTIME) xmldsig.exe $(XMLDSIG_EXE_OPTIONS)
 
 ms-test: c14n.exe xmldsig.exe merlin-xmldsig-twenty-three
-	cp ../../../lib/Mono.Security.dll .
+	cp ../../../lib/$(PROFILE)/Mono.Security.dll .
 	./c14n.exe merlin-xmldsig-twenty-three/signature-enveloped-dsa.xml SignedInfo | cmp merlin-xmldsig-twenty-three/signature-enveloped-dsa-c14n-1.txt
 	./c14n.exe merlin-xmldsig-twenty-three/signature-enveloping-b64-dsa.xml SignedInfo | cmp merlin-xmldsig-twenty-three/signature-enveloping-b64-dsa-c14n-0.txt
 	./c14n.exe merlin-xmldsig-twenty-three/signature-enveloping-dsa.xml SignedInfo | cmp merlin-xmldsig-twenty-three/signature-enveloping-dsa-c14n-1.txt
@@ -22,17 +25,17 @@ ms-test: c14n.exe xmldsig.exe merlin-xmldsig-twenty-three
 	./c14n.exe merlin-xmldsig-twenty-three/signature-enveloping-rsa.xml SignedInfo | cmp merlin-xmldsig-twenty-three/signature-enveloping-rsa-c14n-1.txt
 	./c14n.exe merlin-xmldsig-twenty-three/signature-external-b64-dsa.xml SignedInfo | cmp merlin-xmldsig-twenty-three/signature-external-b64-dsa-c14n-0.txt
 	./c14n.exe merlin-xmldsig-twenty-three/signature-external-dsa.xml SignedInfo | cmp merlin-xmldsig-twenty-three/signature-external-dsa-c14n-0.txt
-	./xmldsig.exe
+	./xmldsig.exe $(XMLDSIG_EXE_OPTIONS)
 	rm Mono.Security.dll
 
 clean:
 	rm *.exe
 
 c14n.exe : c14n.cs
-	$(CSCOMPILE) c14n.cs -r:System.Security
+	$(CSCOMPILE) c14n.cs -r:System.Security.dll
 
 xmldsig.exe: xmldsig.cs
-	$(CSCOMPILE) xmldsig.cs -r:System.Security -r:../../../lib/Mono.Security.dll
+	$(CSCOMPILE) xmldsig.cs -r:System.Security.dll -r:Mono.Security.dll
 
 phaos-xmldsig-three: phaos-xmldsig-three.zip
 	unzip -u phaos-xmldsig-three.zip

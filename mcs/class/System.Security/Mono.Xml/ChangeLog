@@ -1,6 +1,11 @@
+2005-04-04  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlCanonicalizer.cs : don't rip &#xD; off here.
+
 2004-05-14  Atsushi Enomoto <atsushi@ximian.com>
 
-	* Reverted xmlns change that seems my misinterpretation.
+	* XmlCanonicalizer.cs :
+	  Reverted xmlns change that seems my misinterpretation.
 
 2004-05-13  Atsushi Enomoto <atsushi@ximian.com>
 

@@ -124,7 +124,12 @@ namespace System.Security.Cryptography.Xml {
 				s = (obj as Stream);
 				XmlDocument doc = new XmlDocument ();
 				doc.PreserveWhitespace = true;	// REALLY IMPORTANT
-				doc.Load (obj as Stream);
+#if NET_1_1
+				doc.XmlResolver = GetResolver ();
+#endif
+				doc.Load (new XmlSignatureStreamReader (
+					new StreamReader ((Stream) obj)));
+//				doc.Load ((Stream) obj);
 				s = canonicalizer.Canonicalize (doc);
 			} else if (obj is XmlDocument)
 				s = canonicalizer.Canonicalize ((obj as XmlDocument));

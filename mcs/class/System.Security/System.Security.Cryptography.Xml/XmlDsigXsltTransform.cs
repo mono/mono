@@ -144,7 +144,9 @@ namespace System.Security.Cryptography.Xml
 #if NET_1_1
 				inputDoc.XmlResolver = GetResolver ();
 #endif
-				inputDoc.Load (obj as Stream);
+//				inputDoc.Load (obj as Stream);
+				inputDoc.Load (new XmlSignatureStreamReader (
+					new StreamReader (obj as Stream)));
 			}
 			else if (obj is XmlDocument) {
 				inputDoc= obj as XmlDocument;

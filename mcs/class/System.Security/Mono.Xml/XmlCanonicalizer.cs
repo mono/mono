@@ -514,13 +514,8 @@ namespace Mono.Xml {
 					sb.Append ("&#x9;");
 				else if (ch == '\x0A' && type == XmlNodeType.Attribute)
 					sb.Append ("&#xA;");
-				else if (ch == '\x0D' && (type == XmlNodeType.Attribute ||
-							  IsTextNode (type) && type != XmlNodeType.Whitespace ||
-							  type == XmlNodeType.Comment ||
-							  type == XmlNodeType.ProcessingInstruction))
-					sb.Append ("&#xD;");
 				else if (ch == '\x0D')
-					continue;
+					sb.Append ("&#xD;");
 				else
 					sb.Append (ch);
 			}

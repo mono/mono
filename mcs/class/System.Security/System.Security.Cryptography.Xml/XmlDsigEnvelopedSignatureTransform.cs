@@ -104,7 +104,8 @@ namespace System.Security.Cryptography.Xml {
 #if NET_1_1
 				doc.XmlResolver = GetResolver ();
 #endif
-				doc.Load (inputObj as Stream);
+				doc.Load (new XmlSignatureStreamReader (
+					new StreamReader (inputObj as Stream)));
 				return GetOutputFromNode (doc, GetNamespaceManager (doc), true);
 			}
 			else if (inputObj is XmlDocument) {

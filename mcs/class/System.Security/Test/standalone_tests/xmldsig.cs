@@ -12,6 +12,7 @@ using System;
 using System.Collections;
 using System.IO;
 using System.Reflection;
+using System.Runtime.InteropServices;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using System.Security.Cryptography.Xml;
@@ -30,8 +31,13 @@ public class MyClass {
 	static bool exc14n;
 	static bool hmacmd5;
 
-	public static void Main() 
+	static bool useDecentReader;
+
+	public static void Main(string [] args) 
 	{
+		foreach (string arg in args)
+			if (arg == "--decent-reader")
+				useDecentReader = true;
 		try {
 			// automagically ajust tests to run depending on system config
 			exc14n = (CryptoConfig.CreateFromName ("http://www.w3.org/2001/10/xml-exc-c14n#WithComments") != null);
@@ -80,13 +86,27 @@ public class MyClass {
 		return path;
 	}
 
+	static TextReader GetReader (string filename)
+	{
+		XmlResolver resolver = new XmlUrlResolver ();
+		Stream stream = resolver.GetEntity (resolver.ResolveUri (null, filename), null, typeof (Stream)) as Stream;
+		if (useDecentReader)
+			return new XmlSignatureStreamReader (
+				new StreamReader (stream));
+		else
+			return new StreamReader (stream);
+	}
+
 	static void Symmetric (string filename, byte[] key) 
 	{
 		string shortName = Path.GetFileName (filename);
 
 		XmlDocument doc = new XmlDocument ();
 		doc.PreserveWhitespace = true;
-		doc.Load (filename);
+		XmlTextReader xtr = new XmlTextReader (GetReader (filename));
+		XmlValidatingReader xvr = new XmlValidatingReader (xtr);
+		xtr.Normalization = true;
+		doc.Load (xvr);
                 
 		try {
 			XmlNodeList nodeList = doc.GetElementsByTagName ("Signature", SignedXml.XmlDsigNamespaceUrl);
@@ -116,8 +136,11 @@ public class MyClass {
 		string shortName = Path.GetFileName (filename);
 
 		XmlDocument doc = new XmlDocument ();
+		XmlTextReader xtr = new XmlTextReader (GetReader (filename));
+		XmlValidatingReader xvr = new XmlValidatingReader (xtr);
+		xtr.Normalization = true;
 		doc.PreserveWhitespace = true;
-		doc.Load (filename);
+		doc.Load (xvr);
 
 		try {
 			SignedXml s = null;
@@ -331,4 +354,90 @@ class MySignedXml : SignedXml
 		Console.WriteLine (GetPublicKey () == null);
 	}
 }
+
+// below is a copy from our System.Security.dll source.
+	internal class XmlSignatureStreamReader : TextReader
+	{
+		TextReader source;
+		int cache = int.MinValue;
+
+		public XmlSignatureStreamReader (TextReader input)
+		{
+			source =input;
+		}
+
+		public override void Close ()
+		{
+			source.Close ();
+		}
+
+		public override int Peek ()
+		{
+			if (cache != int.MinValue)
+				return cache;
+			cache = source.Read ();
+			if (cache != '\r')
+				return cache;
+			// cache must be '\r' here.
+			if (source.Peek () != '\n')
+				return '\r';
+			// Now Peek() returns '\n', so clear cache.
+			cache = int.MinValue;
+			return '\n';
+		}
+
+		public override int Read ()
+		{
+			if (cache != int.MinValue) {
+				int ret = cache;
+				cache = int.MinValue;
+				return ret;
+			}
+			int i = source.Read ();
+			if (i != '\r')
+				return i;
+			// read one more char (after '\r')
+			cache = source.Read ();
+			if (cache != '\n')
+				return '\r';
+			cache = int.MinValue;
+			return '\n';
+		}
+
+		public override int ReadBlock (
+			[In, Out] char [] buffer, int index, int count)
+		{
+			char [] tmp = new char [count];
+			source.ReadBlock (tmp, 0, count);
+			int j = index;
+			for (int i = 0; i < count; j++) {
+				if (tmp [i] == '\r') {
+					if (++i < tmp.Length && tmp [i] == '\n')
+						buffer [j] = tmp [i++];
+					else
+						buffer [j] = '\r';
+				}
+				else
+					buffer [j] = tmp [i];
+			}
+			while (j < count) {
+				int d = Read ();
+				if (d < 0)
+					break;
+				buffer [j++] = (char) d;
+			}
+			return j;
+		}
+
+		public override string ReadLine ()
+		{
+			return source.ReadLine ().Replace ("\r\n", "\n");
+		}
+
+		public override string ReadToEnd ()
+		{
+			return source.ReadToEnd ().Replace ("\r\n", "\n");
+		}
+
+	}
 
