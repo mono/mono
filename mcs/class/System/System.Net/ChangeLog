@@ -1,3 +1,7 @@
+2002-04-15  Patrik Torstensson <patrik.torstensson@labs2.com>
+
+	* IPEndPoint.cs: Fixed build breaker.
+
 2002-04-15  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* IPEndPoint.cs: implemented Equals() and GetHashCode(). Now 100%

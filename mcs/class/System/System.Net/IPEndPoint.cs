@@ -117,7 +117,7 @@ namespace System.Net {
 			return(address.ToString() + ":" + port);
 		}
 
-		public override string Equals (Object obj)
+		public override bool Equals (Object obj)
 		{
 			if (obj is System.Net.IPEndPoint) {
 				return ( ((IPEndPoint) obj).port == port &&
@@ -127,7 +127,7 @@ namespace System.Net {
 			return false;
 		}
 
-		public override string GetHashcode ()
+		public override int GetHashCode ()
 		{
 			return address.GetHashCode () + port;
 		}
