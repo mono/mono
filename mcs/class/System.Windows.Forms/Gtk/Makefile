@@ -193,7 +193,8 @@ LIB_SOURCES = \
 	Cursors.cs	\
 	MessageBoxDefaultButton.cs	\
 	MessageBoxIcon.cs	\
-	MessageBoxOptions.cs	
+	MessageBoxOptions.cs \
+	AssemblyInfo.cs
 
 
 
