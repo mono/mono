@@ -14,7 +14,7 @@ namespace System.ComponentModel
 	/// </summary>
 	[Serializable]
 	public enum ListSortDirection {
-		Ascending = 1,
-		Descending = 2
+		Ascending = 0,
+		Descending = 1
 	}
 }
