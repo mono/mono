@@ -158,6 +158,7 @@ namespace System.Windows.Forms {
 			XlibLock = new object ();
 			MessageQueue = new XEventQueue ();
 			TimerList = new ArrayList ();
+			XInitThreads();
 
 			ErrorExceptions = false;
 
@@ -3366,6 +3367,9 @@ namespace System.Windows.Forms {
 
 		[DllImport ("libX11", EntryPoint="XGetErrorText")]
 		internal extern static IntPtr XGetErrorText(IntPtr display, byte code, StringBuilder buffer, int length);
+
+		[DllImport ("libX11", EntryPoint="XInitThreads")]
+		internal extern static int XInitThreads();
 		#endregion
 	}
 }

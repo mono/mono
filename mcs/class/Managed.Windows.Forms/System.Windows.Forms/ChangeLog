@@ -1,3 +1,8 @@
+2005-03-17  Jonathan Gilbert  <logic@deltaq.org>
+
+	* XplatUIX11.cs: Added call to XInitThreads() to allow multi-threaded
+	  X access (avoids X-Async errors)
+
 2005-03-16  Jackson Harper  <jackson@ximian.com>
 
 	* TabControl.cs: Raise the SelectedIndexChanged event.
