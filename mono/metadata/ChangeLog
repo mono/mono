@@ -1,3 +1,9 @@
+2004-12-05  Martin Baulig  <martin@ximian.com>
+
+	* class.c (mono_class_inflate_generic_signature): Make this a
+	no-op if `context' is NULL or we don't have any type parameters;
+	also copy `sentinelpos'.	
+
 2004-12-04  Zoltan Varga  <vargaz@freemail.hu>
 
 	* image.c: Add unbox_wrapper_cache.
@@ -12,6 +18,7 @@
 
 	* metadata-internals.h image.c: Add MonoImage->unbox_wrapper_cache.
 	
+>>>>>>> .r37131
 2004-12-04  Martin Baulig  <martin@ximian.com>
 
 	* loader.c (mono_method_get_signature_full): New public function;
