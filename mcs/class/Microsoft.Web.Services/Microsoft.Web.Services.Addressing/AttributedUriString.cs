@@ -13,7 +13,26 @@ namespace Microsoft.Web.Services.Addressing
 
 	public abstract class AttributedUriString : OpenAttributeElement
 	{
-	
+		
+		private string _uri;
+
+		[MonoTODO]
+		public AttributedUriString ()
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public AttributedUriString (string uri)
+		{
+			throw new NotImplementedException ();
+		}
+
+		public string Value {
+			get { return _uri; }
+			set { _uri = value; }
+		}
+		
 	}
 
 }

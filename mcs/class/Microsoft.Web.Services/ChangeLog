@@ -1,5 +1,10 @@
 2003-09-29  Todd Berman <tberman@gentoo.org>
 
+	* Microsoft.Web.Services.Addressing/AttributedUriString.cs: stubs
+	* Microsoft.Web.Services.Xml/OpenAttributeElement.cs: implemented
+
+2003-09-29  Todd Berman <tberman@gentoo.org>
+
 	* Microsoft.Web.Services.Addressing/AddressingHeaders.cs: Partially 
 	stubbed.
 	* Microsoft.Web.Services/SoapContext.cs: using AddressingHeaders now.
