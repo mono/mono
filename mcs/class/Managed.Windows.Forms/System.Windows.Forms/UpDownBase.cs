@@ -35,7 +35,7 @@ using System;
 using System.Drawing;
 
 namespace System.Windows.Forms {
-	public class UpDownBase : ContainerControl {
+	public abstract class UpDownBase : ContainerControl {
 
 		internal class Spinner : Control, IDisposable {
 			UpDownBase updownbase;
@@ -147,9 +147,9 @@ namespace System.Windows.Forms {
 			void Click ()
 			{
 				if (up_pressed)
-					updownbase.GoUp ();
+					updownbase.UpButton ();
 				if (down_pressed)
-					updownbase.GoDown ();
+					updownbase.DownButton ();
 			}
 
 			protected override void OnMouseMove (MouseEventArgs args)
@@ -205,17 +205,17 @@ namespace System.Windows.Forms {
 
 			void IDisposable.Dispose ()
 			{
-				base.Dispose ();
-				
 				if (timer != null){
 					timer.Stop ();
 					timer.Dispose ();
-					timer = null;
 				}
+				timer = null;
+				base.Dispose ();
 			}
 		}
-		
-		Label label;
+
+		int desired_height = 0;
+		Label entry;
 		Spinner spinner;
 
 		int scrollbar_button_size = ThemeEngine.Current.ScrollBarButtonSize;
@@ -223,12 +223,13 @@ namespace System.Windows.Forms {
 		public UpDownBase () : base ()
 		{
 			SuspendLayout ();
-			
-			label = new Label ();
-			label.Text = "Value";
-			label.Size = new Size (100, 100);
-			label.Location = new Point (0, 0);
-			Controls.Add (label);
+
+			entry = new Label ();
+			entry.Text = "I will be an Entry";
+			entry.Font = Font;
+			entry.Size = new Size (100, Font.Height + 4);
+			entry.Location = new Point (0, 0);
+			Controls.Add (entry);
 
 			spinner = new Spinner (this);
 			Controls.Add (spinner);
@@ -237,16 +238,39 @@ namespace System.Windows.Forms {
 			
 		}
 
+#region UpDownBase overwritten methods
+		
 		protected override void OnMouseWheel (MouseEventArgs args)
 		{
 			base.OnMouseWheel (args);
 
 			if (args.Delta > 0)
-				GoUp ();
+				UpButton ();
 			else if (args.Delta < 0)
-				GoDown ();
+				DownButton ();
 		}
-		
+
+		protected virtual void OnChanged (object source, EventArgs e)
+		{
+			// Not clear, the docs state that this will raise the
+			// Changed event, but that event is not listed anywhere.
+		}
+
+		protected override void OnFontChanged (EventArgs e)
+		{
+			base.OnFontChanged (e);
+
+			entry.Font = Font;
+			desired_height = entry.Height;
+			Height = desired_height;
+		}
+
+		protected override void OnHandleCreated (EventArgs e)
+		{
+			base.OnHandleCreated (e);
+			desired_height = entry.Height;
+		}
+				
 		protected override void OnLayout (LayoutEventArgs args)
 		{
 			base.OnLayout (args);
@@ -254,20 +278,90 @@ namespace System.Windows.Forms {
 			Rectangle bounds = Bounds;
 			int entry_width = bounds.Right - scrollbar_button_size - 1;
 
-			label.SetBounds (bounds.X, bounds.Y, entry_width, bounds.Height);
-			//scroll.SetBounds (entry_width + 1, bounds.Y, scrollbar_button_size, bounds.Height);
+			entry.SetBounds (bounds.X, bounds.Y, entry_width, bounds.Height);
 			spinner.SetBounds (entry_width + 1, bounds.Y, scrollbar_button_size, bounds.Height);
 		}
 
-		void GoUp ()
+		protected override void OnPaint (PaintEventArgs e)
 		{
-			Console.WriteLine ("Go Up" + DateTime.Now);
+			base.OnPaint (e);
+		}
+
+		protected override void SetVisibleCore (bool state)
+		{
+			base.SetVisibleCore (state);
+		}
+
+		protected override void WndProc (ref Message m)
+		{
+			base.WndProc (ref m);
+		}
+
+		protected override void SetBoundsCore (int x, int y, int width, int height, BoundsSpecified specified)
+		{
+			//
+			// Force the size to be our height.
+			//
+			base.SetBoundsCore (x, y, width, desired_height, specified);
 		}
 		
-		void GoDown ()
+		protected override void Dispose (bool disposing)
 		{
-			Console.WriteLine ("Go Down" + DateTime.Now);
+			if (spinner != null){
+				if (disposing){
+					spinner.Dispose ();
+					entry.Dispose ();
+				}
+			}
+			spinner = null;
+			entry = null;
+			base.Dispose (true);
 		}
-			
+		
+#endregion
+		
+#region UpDownBase virtual methods
+		//
+		// These are hooked up to the various events from the Entry line that
+		// we do not have yet, and implement the keyboard behavior (use a different
+		// widget to test)
+		//
+		protected virtual void OnTextBoxKeyDown (object source, KeyEventArgs e)
+		{
+		}
+		
+		protected virtual void OnTextBoxKeyPress (object source, KeyPressEventArgs e)
+		{
+		}
+
+		protected virtual void OnTextBoxLostFocus (object source, EventArgs e)
+		{
+		}
+
+		protected virtual void OnTextBoxResize (object source, EventArgs e)
+		{
+		}
+
+		protected virtual void OnTextBoxTextChanged (object source, EventArgs e)
+		{
+		}
+
+		protected virtual void ValidateEditText ()
+		{
+		}
+#endregion
+
+#region UpDownBase standard methods
+		public void Select (int start, int length)
+		{
+			// Selects text from start for lenght chars.
+		}
+#endregion
+
+#region Abstract methods
+		public abstract void DownButton ();
+		public abstract void UpButton ();
+		public abstract void UpdateEditText ();
+#endregion
 	}
 }

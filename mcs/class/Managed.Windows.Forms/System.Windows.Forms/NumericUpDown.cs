@@ -42,6 +42,22 @@ namespace System.Windows.Forms {
 		{
 		}
 #endregion
-		
+
+		public override void DownButton ()
+		{
+			Console.WriteLine ("Going down");
+			UpdateEditText ();
+		}
+
+		public override void UpButton ()
+		{
+			Console.WriteLine ("Going up");
+			UpdateEditText ();
+		}
+
+		public override void UpdateEditText ()
+		{
+			Console.WriteLine ("The new value is: " + Text);
+		}
 	}
 }

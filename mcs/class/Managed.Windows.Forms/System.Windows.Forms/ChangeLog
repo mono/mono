@@ -1,3 +1,18 @@
+2004-12-01  Miguel de Icaza  <miguel@ximian.com>
+
+	* UpDownBase.cs: Add abstract methods for the interface.
+	Add new virtual methods (need to be hooked up to TextEntry when it
+	exists).
+	Add override methods for most features.
+	Computes the size, forces the height of the text entry.
+
+	* NumericUpDown.cs: Put here the current testing code.
+
+	* Set eol-style property on all files that do not have mixed line
+	endings, to minimize the future problems.  There are still a few
+	files with mixed endings, and someone should choose whether they
+	want to move it or not.
+
 2004-11-30  Jordi Mas i Hernandez <jordi@ximian.com>
 
 	* MonthCalendar.cs, ListView.cs: use Theme colours instead of 
@@ -45,6 +60,7 @@
 
 	* TreeNode.cs, TreeNodeCollection.cs, TreeView.cs,
 	TreeViewAction.cs, TreeViewEventArgs.cs: New files.
+
 
 2004-11-29  John BouAntoun <jba-mono@optusnet.com.au>
 
