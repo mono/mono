@@ -1,3 +1,8 @@
+2002-04-24	Patrik Torstensson <patrik.torstensson@labs2.com>
+
+	* reflection.c (mono_reflection_get_custom_attrs) : fixed image bug (crash)
+	* object.c (mono_runtime_invoke_array) : handle null in params
+
 2002-04-23	Patrik Torstensson <patrik.torstensson@labs2.com>
 
 	* string-icalls.c: fixed bug in split (one off bug)
@@ -172,7 +177,7 @@ Fri Apr 12 18:30:29 CEST 2002 Paolo Molaro <lupus@ximian.com>
 	* reflection.c: handle typespecs.
 	* icall.c: MonoMethod::get_Name() implementation.
 
-Thu Apr 11 12:29:14 CEST 2002 Paolo Molaro <lupus@ximian.com>
+Thu Apr 11 12:29Ni:14 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
 	* icall.c: String::GetHashCode() icall implementation.
 
