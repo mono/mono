@@ -312,7 +312,7 @@ _loop4_breakloop:			;
 		}
 		case LITERAL_continue:
 		{
-			stm=continue_stm();
+			stm=continue_stm(parent);
 			break;
 		}
 		case LITERAL_break:
@@ -677,16 +677,17 @@ _loop15_breakloop:			;
 		case LITERAL_do:
 		{
 			match(LITERAL_do);
-			stm=statement(parent);
+			stm=statement(iter);
 			match(LITERAL_while);
 			match(OPEN_PARENS);
-			exprn=expr(parent);
+			exprn=expr(iter);
 			match(CLOSE_PARENS);
 			match(SEMI_COLON);
 			if (0==inputState.guessing)
 			{
 				
 						  iter = new DoWhile (parent, stm, exprn);
+						  exprn.parent = stm.parent = iter;
 					
 			}
 			break;
@@ -695,13 +696,14 @@ _loop15_breakloop:			;
 		{
 			match(LITERAL_while);
 			match(OPEN_PARENS);
-			exprn=expr(parent);
+			exprn=expr(iter);
 			match(CLOSE_PARENS);
-			stm=statement(parent);
+			stm=statement(iter);
 			if (0==inputState.guessing)
 			{
 				
 						  iter = new While (parent, exprn, stm);
+						  exprn.parent = stm.parent = iter;
 					
 			}
 			break;
@@ -710,13 +712,14 @@ _loop15_breakloop:			;
 		{
 			match(LITERAL_for);
 			match(OPEN_PARENS);
-			exprs=inside_for(parent);
+			exprs=inside_for(iter);
 			match(CLOSE_PARENS);
-			stm=statement(parent);
+			stm=statement(iter);
 			if (0==inputState.guessing)
 			{
 				
 						  iter = new For (parent, exprs, stm);
+						  stm.parent = iter;
 				
 					
 			}
@@ -730,12 +733,16 @@ _loop15_breakloop:			;
 		return iter;
 	}
 	
-	public AST  continue_stm() //throws RecognitionException, TokenStreamException
+	public AST  continue_stm(
+		AST parent
+	) //throws RecognitionException, TokenStreamException
 {
 		AST cont;
 		
 		Token  id = null;
-		cont = new Continue ();
+		
+			cont = new Continue (parent); 
+		
 		
 		match(LITERAL_continue);
 		{
