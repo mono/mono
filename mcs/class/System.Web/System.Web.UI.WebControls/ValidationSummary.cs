@@ -68,11 +68,11 @@ namespace System.Web.UI.WebControls
 		{
 			get
 			{
-				return ForeColor;
+				return base.ForeColor;
 			}
 			set
 			{
-				ForeColor = value;
+				base.ForeColor = value;
 			}
 		}
 
@@ -129,7 +129,7 @@ namespace System.Web.UI.WebControls
 
 		protected override void AddAttributesToRender(HtmlTextWriter writer)
 		{
-			AddAttributesToRender(writer);
+			base.AddAttributesToRender(writer);
 			if(uplevelRender)
 			{
 				if(ID == null || ID.Length == 0)
