@@ -3,7 +3,7 @@
 //
 // Author:
 //   Philip Van Hoof (me@freax.org)
-//
+//     (this Control is Unfinished and copied from ../System.Windows.Forms/*)
 
 using System;
 using System.Collections;
