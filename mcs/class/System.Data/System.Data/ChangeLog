@@ -1,5 +1,11 @@
 2005-02-01  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* DataTable.cs : Fixed row comparer. Even if every of the sort target
+	  columns are identical for two rows, they should not be regarded as
+	  the same unless they are Object.ReferenceEquals.
+
+2005-02-01  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* DataRowCollection.cs : on adding a row, should raise
 	  ChangingDataRow() as well as ChangedDataRow().
 

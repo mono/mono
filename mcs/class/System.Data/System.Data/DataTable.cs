@@ -1701,6 +1701,9 @@ namespace System.Data {
 				if(!(y is DataRow))
 					throw new SystemException ("Object to compare is not DataRow: y is " + x.GetType().ToString());
 
+				if (x == y)
+					return 0;
+
 				DataRow rowx = (DataRow) x;
 				DataRow rowy = (DataRow) y;
 
@@ -1721,7 +1724,7 @@ namespace System.Data {
 						}
 					}
 				}
-				return 0;
+				return x.GetHashCode () - y.GetHashCode ();
 			}
 		}
 
