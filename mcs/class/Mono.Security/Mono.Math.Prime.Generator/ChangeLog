@@ -1,0 +1,8 @@
+2004-02-09  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* NextPrimeFinder.cs: New. Copied from corlib. Required for PKCS1 and
+	RSAManaged (which are required for TLS).
+	* PrimeGeneratorBase.cs: New. Copied from corlib. Required for PKCS1 
+	and RSAManaged (which are required for TLS).
+	* SequentialSearchPrimeGeneratorBase.cs: New. Copied from corlib. 
+	Required for PKCS1 and RSAManaged (which are required for TLS).
