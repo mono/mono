@@ -814,6 +814,9 @@ namespace System.Data {
 			if (relation.DataSet != this.Table.DataSet)
 				throw new ArgumentException();
 
+			if (_table != relation.ParentTable)
+				throw new InvalidConstraintException ("GetChildRow requires a row whose Table is " + relation.ParentTable + ", but the specified row's table is " + _table);
+
 			if (relation.ChildKeyConstraint != null)
 				return GetChildRows (relation.ChildKeyConstraint, version);
 
@@ -845,7 +848,9 @@ namespace System.Data {
 					}
 					if (allColumnsMatch) rows.Add(row);
 				}
-			}
+			}else
+				throw new VersionNotFoundException("There is no " + version + " data to accces.");
+
 			DataRow[] result = relation.ChildTable.NewRowArray(rows.Count);
 			rows.CopyTo(result, 0);
 			return result;
@@ -906,7 +911,8 @@ namespace System.Data {
 						fkc.Table.RecordCache.DisposeRecord(tmpRecord);
 					}
 				}
-			}
+			}else
+				throw new VersionNotFoundException("There is no " + version + " data to accces.");
 
 			DataRow[] result = fkc.Table.NewRowArray(rows.Count);
 			rows.CopyTo(result, 0);
@@ -967,7 +973,7 @@ namespace System.Data {
 		/// </summary>
 		public DataRow GetParentRow (DataRelation relation) 
 		{
-			return GetParentRow (relation, DataRowVersion.Current);
+			return GetParentRow (relation, DataRowVersion.Default);
 		}
 
 		/// <summary>
@@ -976,7 +982,7 @@ namespace System.Data {
 		/// </summary>
 		public DataRow GetParentRow (string relationName) 
 		{
-			return GetParentRow (relationName, DataRowVersion.Current);
+			return GetParentRow (relationName, DataRowVersion.Default);
 		}
 
 		/// <summary>
@@ -1004,7 +1010,7 @@ namespace System.Data {
 		/// </summary>
 		public DataRow[] GetParentRows (DataRelation relation) 
 		{
-			return GetParentRows (relation, DataRowVersion.Current);
+			return GetParentRows (relation, DataRowVersion.Default);
 		}
 
 		/// <summary>
@@ -1013,7 +1019,7 @@ namespace System.Data {
 		/// </summary>
 		public DataRow[] GetParentRows (string relationName) 
 		{
-			return GetParentRows (relationName, DataRowVersion.Current);
+			return GetParentRows (relationName, DataRowVersion.Default);
 		}
 
 		/// <summary>
@@ -1026,11 +1032,14 @@ namespace System.Data {
 			if (relation == null)
 				return new DataRow[0];
 
-			if (this.Table == null || RowState == DataRowState.Detached)
+			if (this.Table == null)
 				throw new RowNotInTableException("This row has been removed from a table and does not have any data.  BeginEdit() will allow creation of new data in this row.");
 
 			if (relation.DataSet != this.Table.DataSet)
 				throw new ArgumentException();
+
+			if (_table != relation.ChildTable)
+				throw new InvalidConstraintException ("GetParentRows requires a row whose Table is " + relation.ChildTable + ", but the specified row's table is " + _table);
 
 			ArrayList rows = new ArrayList();
 			DataColumn[] parentColumns = relation.ParentColumns;
@@ -1047,7 +1056,7 @@ namespace System.Data {
 					}
 				}
 				else { // no index so we have to search manualy.
-					int curIndex = IndexFromVersion(DataRowVersion.Current);
+					int curIndex = IndexFromVersion(DataRowVersion.Default);
 					int tmpRecord = relation.ParentTable.RecordCache.NewRecord();
 					try {
 						for (int i = 0; i < numColumn; i++) {
@@ -1076,7 +1085,8 @@ namespace System.Data {
 						relation.ParentTable.RecordCache.DisposeRecord(tmpRecord);
 					}
 				}
-			}
+			}else
+				throw new VersionNotFoundException("There is no " + version + " data to accces.");
 
 			DataRow[] result = relation.ParentTable.NewRowArray(rows.Count);
 			rows.CopyTo(result, 0);

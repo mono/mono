@@ -1,5 +1,11 @@
 2005-01-21  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* DataRowTest.cs : more test for Detached -> Default, test for 
+	  VersionNotFound, and test for InvalidConstraint on GetChildRows().
+	  Patch by Ankit Jain.
+
+2005-01-21  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* DataRowTest.cs : Test if Default is used to check state of the row
 	  instead of Detached. Patch by Ankit Jain.
 

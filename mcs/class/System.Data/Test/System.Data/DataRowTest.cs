@@ -333,7 +333,52 @@ namespace MonoTests.System.Data
                         AssertEquals ("#A44", table.Rows [0], (tableC.Rows [0]).GetParentRow (dr));
                 } 
 
-				[Test]
+                [Test]
+                public void ParentRowTest2 ()
+                {
+                        DataSet ds = new DataSet ();
+                        DataTable tableP = ds.Tables.Add ("Parent");
+                        DataTable tableC = ds.Tables.Add ("Child");
+                        DataColumn colC;
+                        DataRow rowC;
+                                                                                                    
+                        colC = new DataColumn ();
+                        colC.DataType = Type.GetType ("System.Int32");
+                        colC.ColumnName = "Id";
+                        colC.AutoIncrement = true;
+                        tableP.Columns.Add (colC);
+                        
+                        colC = new DataColumn ();
+                        colC.DataType = Type.GetType ("System.Int32");
+                        colC.ColumnName = "Id";
+                        tableC.Columns.Add (colC);
+ 
+                        row = tableP.Rows.Add (new object [0]);
+                        rowC = tableC.NewRow ();
+ 
+                        ds.EnforceConstraints = false;
+                        DataRelation dr = new DataRelation ("PO", tableP.Columns ["Id"], tableC.Columns ["Id"]);
+                        ds.Relations.Add (dr);
+
+                        rowC.SetParentRow (row, dr);
+                        DataRow [] rows = rowC.GetParentRows (dr);
+
+                        AssertEquals ("#A49", 1, rows.Length);
+                        AssertEquals ("#A50", tableP.Rows [0], rows [0]);
+
+                        try{
+                            rows = row.GetParentRows (dr);
+                        }catch(InvalidConstraintException){
+                            //Test done
+                            return ;
+                        }catch(Exception e){
+                            Fail("#A51, InvalidConstraintException expected, got : " + e);
+                        }
+                        
+                        Fail("#A52, InvalidConstraintException expected but got none.");
+                }
+
+                [Test]
                 public void ChildRowTest ()
                 {
 
@@ -350,7 +395,6 @@ namespace MonoTests.System.Data
                         DataTable tableC = new DataTable ("Child");
                         DataColumn colC;
                         DataRow rowC;
-                                                                                                    
 
                         colC = new DataColumn ();
                         colC.DataType = Type.GetType ("System.Int32");
@@ -381,11 +425,11 @@ namespace MonoTests.System.Data
                         
                 } 
 
-				[Test]
+                [Test]
                 public void ChildRowTest2 ()
                 {
                         DataSet ds = new DataSet ();
-						DataTable tableP = ds.Tables.Add ("Parent");
+                        DataTable tableP = ds.Tables.Add ("Parent");
                         DataTable tableC = ds.Tables.Add ("Child");
                         DataColumn colC;
                         DataRow rowC;
@@ -395,26 +439,89 @@ namespace MonoTests.System.Data
                         colC.ColumnName = "Id";
                         colC.AutoIncrement = true;
                         tableP.Columns.Add (colC);
-						
-						colC = new DataColumn ();
+                        
+                        colC = new DataColumn ();
                         colC.DataType = Type.GetType ("System.Int32");
                         colC.ColumnName = "Id";
                         tableC.Columns.Add (colC);
 
-						row = tableP.NewRow ();
+                        row = tableP.NewRow ();
                         rowC = tableC.Rows.Add (new object [0]);
 
-						ds.EnforceConstraints = false;
+                        ds.EnforceConstraints = false;
                         DataRelation dr = new DataRelation ("PO", tableP.Columns ["Id"], tableC.Columns ["Id"]);
                         ds.Relations.Add (dr);
-						
+
                         rowC.SetParentRow (row, dr);
                         DataRow [] rows = row.GetChildRows (dr);
                         
                         AssertEquals ("#A47", 1, rows.Length);
                         AssertEquals ("#A48", tableC.Rows [0], rows [0]);
-				}
 
+                        try{
+                            rows = rowC.GetChildRows (dr);
+                        }catch(InvalidConstraintException){
+                            //Test done
+                            return ;
+                        }catch(Exception e){
+                            Fail("#A53, InvalidConstraintException expected, got : " + e);
+                        }
+                        
+                        Fail("#A54, InvalidConstraintException expected but got none.");
+                }
+
+                [Test]
+                public void ParentChildRowVersionTest ()
+                {
+                        DataSet ds = new DataSet ();
+                        DataTable tableP = ds.Tables.Add ("Parent");
+                        DataTable tableC = ds.Tables.Add ("Child");
+                        DataColumn colC;
+                        DataRow rowC;
+                                                                                                    
+                        colC = new DataColumn ();
+                        colC.DataType = Type.GetType ("System.Int32");
+                        colC.ColumnName = "Id";
+                        colC.AutoIncrement = true;
+                        tableP.Columns.Add (colC);
+                        
+                        colC = new DataColumn ();
+                        colC.DataType = Type.GetType ("System.Int32");
+                        colC.ColumnName = "Id";
+                        tableC.Columns.Add (colC);
+
+                        row = tableP.NewRow ();
+                        rowC = tableC.Rows.Add (new object [0]);
+
+                        ds.EnforceConstraints = false;
+                        DataRelation dr = new DataRelation ("PO", tableP.Columns ["Id"], tableC.Columns ["Id"]);
+                        ds.Relations.Add (dr);
+
+                        rowC.SetParentRow (row, dr);
+                        DataRow [] rows;
+
+                        try {
+                            rows = row.GetChildRows (dr, DataRowVersion.Current);
+                        }catch (VersionNotFoundException v) {
+                            //Check for GetParentRows
+                            try{
+                                //Child Row should be in Detached state for the next test
+                                rowC = tableC.NewRow();
+
+                                rows = rowC.GetParentRows (dr, DataRowVersion.Current);
+                            }catch (VersionNotFoundException v2) {
+                                //Test Done
+                                return ;
+                            }catch (Exception e){
+                                Fail ("#A55, VersionNotFoundException expected, got : " + e);
+                            }
+                            Fail ("#A56, VersionNotFoundException expected but got none.");
+                        }catch (Exception e){
+                            Fail ("#A57, VersionNotFoundException expected, got : " + e);
+                        }
+                        
+                        Fail("#A58, VersionNotFoundException expected but got none.");
+                }
 
 		// tests item at row, column in table to be DBNull.Value
 		private void DBNullTest (string message, DataTable dt, int row, int column) 
