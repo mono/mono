@@ -1,3 +1,19 @@
+2004-11-19  Daniel Morgan <danielmorgan@verizon.net>
+
+	* Mono.Data/.cvsignore
+	* Mono.Data/AssemblyInfo.cs
+	* Mono.Data/Makefile
+	* Mono.Data/Mono.Data.dll.sources: added files 
+	for build of Mono.Data.dll   
+	This assembly includes the ProviderFactory
+
+	* Makefile: added Mono.Data.dll to the build
+	* Mono.Data/app.config: added providers	and 
+	removed obsolete providers to app settings xml file
+	
+	* Mono.Data/test/Mono.Data.dll
+	* Mono.Data/test/test.exe: remove binaries
+	
 2004-06-24  Raja R Harinath  <rharinath@novell.com>
 
 	* IBM.Data.DB2/Makefile: Disable for 'net_2_0'.
