@@ -14,7 +14,7 @@ namespace System.Data
 	/// <summary>
 	/// Represents an open connection to a data source, and is implemented by .NET data providers that access relational databases.
 	/// </summary>
-	public interface IDbConnection
+	public interface IDbConnection : IDisposable
 	{
 		IDbTransaction BeginTransaction();
 
