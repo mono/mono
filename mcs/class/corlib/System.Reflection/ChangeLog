@@ -1,5 +1,7 @@
 2004-09-24  Zoltan Varga  <vargaz@freemail.hu>
 
+	* Assembly.cs: Add stub for ReflectionOnlyLoadFrom.
+	
 	* Assembly.cs (LoadWithPartialName): Add [ComVisible] attribute.
 
 	* MonoMethod.cs FieldInfo.cs: Add GetPseudoCustomAttributes () method.

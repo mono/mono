@@ -446,7 +446,13 @@ namespace System.Reflection {
 			throw new NotImplementedException ();
 		}
 
+		[MonoTODO]
 		public static Assembly ReflectionOnlyLoad (string assemblyString) {
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public static Assembly ReflectionOnlyLoadFrom (string assemblyFile) {
 			throw new NotImplementedException ();
 		}
 #endif
