@@ -41,7 +41,7 @@ namespace System.Web.UI {
 		{
 		}
 	
-		public abstract IHierarchicalEnumerable GetHierarchcialList ();
+		public abstract IHierarchicalEnumerable GetHierarchicalList ();
 		public override IEnumerable Select ()
 		{
 			return GetHierarchicalList ();
