@@ -1,5 +1,7 @@
 2004-09-26  Zoltan Varga  <vargaz@freemail.hu>
 
+	* FieldInfoTest.cs: New file.
+
 	* MethodInfoTest.cs: Add tests for PreserveSigAttribute.
 	
 	* MethodInfoTest.cs: New file.
