@@ -3392,8 +3392,11 @@ namespace Mono.CSharp {
 					else if (rtype == TypeManager.uint64_type)
 						ig.Emit (OpCodes.Conv_U8);
 					ig.Emit (OpCodes.Mul);
-					ig.Emit (OpCodes.Conv_I);
 				}
+				
+				if (rtype == TypeManager.int64_type || rtype == TypeManager.uint64_type)
+					ig.Emit (OpCodes.Conv_I);
+				
 				if (is_add)
 					ig.Emit (OpCodes.Add);
 				else

@@ -1,3 +1,8 @@
+2004-09-06 Ben Maurer  <bmaurer@users.sourceforge.net>
+
+	* expression.cs: Pointer arith always needs to do a conv.i
+	if the operand is a long. fix 65320
+
 2004-09-04  Marek Safar  <marek.safar@seznam.cz>
 
 	Fixed cs0619-37.cs, cs0619-38.cs
