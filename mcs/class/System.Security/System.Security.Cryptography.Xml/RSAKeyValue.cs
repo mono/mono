@@ -18,7 +18,7 @@ namespace System.Security.Cryptography.Xml {
 
 		public RSAKeyValue () 
 		{
-			rsa = RSA.Create ();
+			rsa = (RSA)RSA.Create ();
 		}
 
 		public RSAKeyValue (RSA key) 

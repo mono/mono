@@ -19,7 +19,7 @@ namespace System.Security.Cryptography.Xml {
 
 		public DSAKeyValue () 
 		{
-			dsa = DSA.Create ();
+			dsa = (DSA)DSA.Create ();
 		}
 
 		public DSAKeyValue (DSA key) 
