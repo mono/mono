@@ -3986,9 +3986,10 @@ namespace Mono.CSharp {
 		}
 
 		/// <summary>
-		///  Determines "better conversion" as specified in 7.4.2.3
-		///  Returns : 1 if a->p is better
-		///            0 if a->q or neither is better 
+		///   Determines "better conversion" as specified in 7.4.2.3
+		///
+                ///    Returns : 1 if a->p is better
+		///              0 if a->q or neither is better 
 		/// </summary>
 		static int BetterConversion (EmitContext ec, Argument a, Type p, Type q, Location loc)
 		{
@@ -3996,15 +3997,20 @@ namespace Mono.CSharp {
 			Expression argument_expr = a.Expr;
 
 			if (argument_type == null)
-				throw new Exception ("Expression of type " + a.Expr + " does not resolve its type");
+				throw new Exception ("Expression of type " + a.Expr +
+                                                     " does not resolve its type");
 
 			//
 			// This is a special case since csc behaves this way. I can't find
 			// it anywhere in the spec but oh well ...
 			//
-			if (argument_expr is NullLiteral && p == TypeManager.string_type && q == TypeManager.object_type)
+			if (argument_expr is NullLiteral &&
+                            p == TypeManager.string_type &&
+                            q == TypeManager.object_type)
 				return 1;
-			else if (argument_expr is NullLiteral && p == TypeManager.object_type && q == TypeManager.string_type)
+			else if (argument_expr is NullLiteral &&
+                                 p == TypeManager.object_type &&
+                                 q == TypeManager.string_type)
 				return 0;
 			
 			if (p == q)
@@ -4125,16 +4131,18 @@ namespace Mono.CSharp {
 		}
 		
 		/// <summary>
-		///  Determines "Better function"
+		///   Determines "Better function" between candidate
+                ///   and the current best match
 		/// </summary>
 		/// <remarks>
-		///    and returns an integer indicating :
-		///    0 if candidate ain't better
-		///    1 if candidate is better than the current best match
+		///    Returns an integer indicating :
+		///     0 if candidate ain't better
+		///     1 if candidate is better than the current best match
 		/// </remarks>
 		static int BetterFunction (EmitContext ec, ArrayList args,
-					   MethodBase candidate, MethodBase best,
-					   bool expanded_form, Location loc)
+					   MethodBase candidate, bool candidate_params,
+                                           MethodBase best, bool best_params,
+					   Location loc)
 		{
 			ParameterData candidate_pd = GetParameterData (candidate);
 			ParameterData best_pd;
@@ -4153,7 +4161,7 @@ namespace Mono.CSharp {
 			if (candidate_pd.ParameterModifier (cand_count - 1) != Parameter.Modifier.PARAMS)
 				if (cand_count != argument_count)
 					return 0;
-			
+
 			if (best == null) {
 				int x = 0;
 
@@ -4161,14 +4169,13 @@ namespace Mono.CSharp {
 				    candidate_pd.ParameterModifier (cand_count - 1) == Parameter.Modifier.PARAMS)
 					return 1;
 				
-				for (int j = argument_count; j > 0;) {
-					j--;
+				for (int j = 0; j < argument_count; ++j) {
 
 					Argument a = (Argument) args [j];
 					Type t = candidate_pd.ParameterType (j);
 
 					if (candidate_pd.ParameterModifier (j) == Parameter.Modifier.PARAMS)
-						if (expanded_form)
+						if (candidate_params)
 							t = TypeManager.GetElementType (t);
 
 					x = BetterConversion (ec, a, t, null, loc);
@@ -4196,13 +4203,13 @@ namespace Mono.CSharp {
 				Type bt = best_pd.ParameterType (j);
 
 				if (candidate_pd.ParameterModifier (j) == Parameter.Modifier.PARAMS)
-					if (expanded_form)
+					if (candidate_params)
 						ct = TypeManager.GetElementType (ct);
 
 				if (best_pd.ParameterModifier (j) == Parameter.Modifier.PARAMS)
-					if (expanded_form)
+					if (best_params)
 						bt = TypeManager.GetElementType (bt);
-				
+
 				x = BetterConversion (ec, a, ct, bt, loc);
 				y = BetterConversion (ec, a, bt, ct, loc);
 
@@ -4212,6 +4219,16 @@ namespace Mono.CSharp {
 				rating1 += x;
 				rating2 += y;
 			}
+
+                        //
+                        // If a method (in the normal form) with the
+                        // same signature as the expanded form of the
+                        // current best params method already exists,
+                        // the expanded form is not applicable so we
+                        // force it to select the candidate
+                        //
+                        if (!candidate_params && best_params && cand_count == argument_count)
+                                return 1;
 
 			if (rating1 > rating2)
 				return 1;
@@ -4299,8 +4316,8 @@ namespace Mono.CSharp {
 		}
 
 		/// <summary>
-		///  Determines is the candidate method, if a params method, is applicable
-		///  in its expanded form to the given set of arguments
+		///   Determines if the candidate method, if a params method, is applicable
+		///   in its expanded form to the given set of arguments
 		/// </summary>
 		static bool IsParamsMethodApplicable (EmitContext ec, ArrayList arguments, MethodBase candidate)
 		{
@@ -4328,8 +4345,9 @@ namespace Mono.CSharp {
 				return true;
 
 			//
-			// If we have come this far, the case which remains is when the number of parameters
-			// is less than or equal to the argument count.
+			// If we have come this far, the case which
+			// remains is when the number of parameters is
+			// less than or equal to the argument count.
 			//
 			for (int i = 0; i < pd_count - 1; ++i) {
 
@@ -4343,7 +4361,9 @@ namespace Mono.CSharp {
 				if (a_mod == p_mod) {
 
 					if (a_mod == Parameter.Modifier.NONE)
-						if (!Convert.ImplicitConversionExists (ec, a.Expr, pd.ParameterType (i)))
+						if (!Convert.ImplicitConversionExists (ec,
+                                                                                       a.Expr,
+                                                                                       pd.ParameterType (i)))
 							return false;
 										
 					if ((a_mod & Parameter.Modifier.ISBYREF) != 0) {
@@ -4373,8 +4393,8 @@ namespace Mono.CSharp {
 		}
 
 		/// <summary>
-		///  Determines if the candidate method is applicable (section 14.4.2.1)
-		///  to the given set of arguments
+		///   Determines if the candidate method is applicable (section 14.4.2.1)
+		///   to the given set of arguments
 		/// </summary>
 		static bool IsApplicable (EmitContext ec, ArrayList arguments, MethodBase candidate)
 		{
@@ -4407,8 +4427,9 @@ namespace Mono.CSharp {
 				if (a_mod == p_mod ||
 				    (a_mod == Parameter.Modifier.NONE && p_mod == Parameter.Modifier.PARAMS)) {
 					if (a_mod == Parameter.Modifier.NONE) {
-                                                 if (!Convert.ImplicitConversionExists (ec,
-                                                                                       a.Expr, pd.ParameterType (i)))
+                                                if (!Convert.ImplicitConversionExists (ec,
+                                                                                       a.Expr,
+                                                                                       pd.ParameterType (i)))
 							return false;
                                         }
 					
@@ -4417,7 +4438,7 @@ namespace Mono.CSharp {
 
 						if (!pt.IsByRef)
 							pt = TypeManager.GetReferenceType (pt);
-
+                                                
 						if (pt != a.Type)
 							return false;
 					}
@@ -4455,9 +4476,15 @@ namespace Mono.CSharp {
 			ArrayList candidates = new ArrayList ();
 
                         //
-                        // First we construct the set of applicable methods
+                        // Used to keep a map between the candidate
+                        // and whether it is being considered in its
+                        // normal or expanded form
                         //
+                        Hashtable candidate_to_form = new PtrHashtable ();
 
+
+                        //
+                        // First we construct the set of applicable methods
                         //
                         // We start at the top of the type hierarchy and
                         // go down to find applicable methods
@@ -4468,7 +4495,6 @@ namespace Mono.CSharp {
                                 Error_InvokeOnDelegate (loc);
                                 return null;
                         }
-
 
                         bool found_applicable = false;
 			foreach (MethodBase candidate in me.Methods) {
@@ -4486,21 +4512,38 @@ namespace Mono.CSharp {
 
 
 				// Check if candidate is applicable (section 14.4.2.1)
-				if (!IsApplicable (ec, Arguments, candidate))
-					continue;
-
-				candidates.Add (candidate);
-                                applicable_type = candidate.DeclaringType;
-                                found_applicable = true;
-
-			}
-
+				if (IsApplicable (ec, Arguments, candidate)) {
+                                        // Candidate is applicable in normal form
+                                        candidates.Add (candidate);
+                                        applicable_type = candidate.DeclaringType;
+                                        found_applicable = true;
+                                        candidate_to_form [candidate] = false;
+                                } else {
+                                        if (IsParamsMethodApplicable (ec, Arguments, candidate)) {
+                                                // Candidate is applicable in expanded form
+                                                candidates.Add (candidate);
+                                                applicable_type = candidate.DeclaringType;
+                                                found_applicable = true; 
+                                                candidate_to_form [candidate] = true;
+                                        }
+                                }
+                        }
+                        
 
                         //
                         // Now we actually find the best method
                         //
                         foreach (MethodBase candidate in candidates) {
-                                int x = BetterFunction (ec, Arguments, candidate, method, false, loc);
+                                bool cand_params = (bool) candidate_to_form [candidate];
+                                bool method_params = false;
+
+                                if (method != null)
+                                        method_params = (bool) candidate_to_form [method];
+                                
+                                int x = BetterFunction (ec, Arguments,
+                                                        candidate, cand_params,
+                                                        method, method_params,
+                                                        loc);
                                 
                                 if (x == 0)
                                         continue;
@@ -4508,36 +4551,11 @@ namespace Mono.CSharp {
                                 method = candidate;
                         }
 
-
 			if (Arguments == null)
 				argument_count = 0;
 			else
 				argument_count = Arguments.Count;
 			
-			//
-			// Now we see if we can find params functions,
-			// applicable in their expanded form since if
-			// they were applicable in their normal form,
-			// they would have been selected above anyways
-			//
-			bool chose_params_expanded = false;
-			
-			if (method == null) {
-				candidates = new ArrayList ();
-				foreach (MethodBase candidate in me.Methods){
-					if (!IsParamsMethodApplicable (ec, Arguments, candidate))
-						continue;
-
-					candidates.Add (candidate);
-
-					int x = BetterFunction (ec, Arguments, candidate, method, true, loc);
-					if (x == 0)
-						continue;
-
-					method = candidate; 
-					chose_params_expanded = true;
-				}
-			}
 
 			if (method == null) {
 				//
@@ -4554,6 +4572,7 @@ namespace Mono.CSharp {
 
 					VerifyArgumentsCompat (ec, Arguments, argument_count, c, false,
 							       null, loc);
+                                        break;
 				}
 
                                 if (!Location.IsNull (loc)) {
@@ -4571,11 +4590,13 @@ namespace Mono.CSharp {
 			// Now check that there are no ambiguities i.e the selected method
 			// should be better than all the others
 			//
+                        bool best_params = (bool) candidate_to_form [method];
 
 			foreach (MethodBase candidate in candidates){
- 				if (candidate == method)
- 					continue;
 
+                                if (candidate == method)
+                                        continue;
+                                               
 				//
 				// If a normal method is applicable in
 				// the sense that it has the same
@@ -4584,13 +4605,15 @@ namespace Mono.CSharp {
 				// applicable so we debar the params
 				// method.
 				//
-
-                                if (IsParamsMethodApplicable (ec, Arguments, candidate) &&
-				    IsApplicable (ec, Arguments, method))
-					continue;
-					
-				int x = BetterFunction (ec, Arguments, method, candidate,
-							chose_params_expanded, loc);
+                                if ((IsParamsMethodApplicable (ec, Arguments, candidate) &&
+                                     IsApplicable (ec, Arguments, method)))
+                                        continue;
+                                
+                                bool cand_params = (bool) candidate_to_form [candidate];
+				int x = BetterFunction (ec, Arguments,
+                                                        method, best_params,
+                                                        candidate, cand_params,
+							loc);
 
 				if (x != 1) {
  					Report.Error (
@@ -4606,9 +4629,8 @@ namespace Mono.CSharp {
 			// necessary etc. and return if everything is
 			// all right
 			//
-
-			if (!VerifyArgumentsCompat (ec, Arguments, argument_count, method,
-						   chose_params_expanded, null, loc))
+                        if (!VerifyArgumentsCompat (ec, Arguments, argument_count, method,
+                                                    best_params, null, loc))
 				return null;
 
 			return method;
@@ -4717,9 +4739,6 @@ namespace Mono.CSharp {
 				if (a_mod != p_mod &&
 				    pd.ParameterModifier (pd_count - 1) != Parameter.Modifier.PARAMS) {
 					if (!Location.IsNull (loc)) {
-						Console.WriteLine ("A:P: " + a.GetParameterModifier ());
-						Console.WriteLine ("PP:: " + pd.ParameterModifier (j));
-						Console.WriteLine ("PT:  " + parameter_type.IsByRef);
 						Report.Error (1502, loc,
 						       "The best overloaded match for method '" + FullMethodDesc (method)+
 						       "' has some invalid arguments");

@@ -1,3 +1,17 @@
+2003-07-28  Ravi Pratap  <ravi@ximian.com>
+
+	* expression.cs (Invocation.OverloadResolve): Fix the algorithm to
+	handle params methods the correct way by forming only one
+	applicable set with params and normal methods in them. Earlier we
+	were looking at params methods only if we found no normal methods
+	which was not the correct thing to do.
+
+	(Invocation.BetterFunction): Take separate arguments indicating
+	when candidate and the best method are params methods in their
+	expanded form.
+
+	This fixes bugs #43367 and #46199.
+
 2003-07-28  Martin Baulig  <martin@ximian.com>
 
 	* class.cs (TypeContainer.DefineMembers): Use the base type's full
