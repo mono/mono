@@ -1,3 +1,7 @@
+2003-12-15  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* PublisherMembershipCondition.cs: Completed TODO.
+
 2003-08-05  Duncan Mak  <duncan@ximian.com>
 
 	* ZoneMembershipCondition.cs: Added.
