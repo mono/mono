@@ -42,22 +42,19 @@ namespace System.Xml.Serialization {
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		public XmlMembersMapping ImportMembersMapping (string name, string ns, SoapSchemaMember member)
 		{
-			throw new NotImplementedException ();
+			return _importer.ImportEncodedMembersMapping (name, ns, member);
 		}
 
-		[MonoTODO]
 		public XmlMembersMapping ImportMembersMapping (string name, string ns, SoapSchemaMember[] members)
 		{
-			throw new NotImplementedException ();
+			return _importer.ImportEncodedMembersMapping (name, ns, members, false);
 		}
 
-		[MonoTODO]
 		public XmlMembersMapping ImportMembersMapping (string name, string ns, SoapSchemaMember[] members, bool hasWrapperElement)
 		{
-			throw new NotImplementedException ();
+			return _importer.ImportEncodedMembersMapping (name, ns, members, hasWrapperElement);
 		}
 
 		[MonoTODO]

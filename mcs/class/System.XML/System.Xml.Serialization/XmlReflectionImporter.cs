@@ -292,7 +292,7 @@ namespace System.Xml.Serialization {
 				elem.Namespace = att.Namespace != null ? att.Namespace : defaultNamespace;
 				if (elem.Namespace == null) elem.Namespace = "";
 				elem.Form = att.Form;
-				elem.IsNullable = att.IsNullable;
+				elem.IsNullable = att.IsNullable && CanBeNull (elem.TypeData);
 				elem.NestingLevel = att.NestingLevel;
 
 				if (isMultiArray)
@@ -319,7 +319,7 @@ namespace System.Xml.Serialization {
 				else elem.ElementName = TypeTranslator.GetTypeData(itemType).XmlType ;
 
 				elem.Namespace = (defaultNamespace != null) ? defaultNamespace : "";
-				elem.IsNullable = false;
+				elem.IsNullable = CanBeNull (elem.TypeData);
 				list.Add (elem);
 			}
 
@@ -648,6 +648,11 @@ namespace System.Xml.Serialization {
 				elem.WrappedElement = false;
 				list.Add (elem);
 			}
+		}
+		
+		bool CanBeNull (TypeData type)
+		{
+			return (type.SchemaType != SchemaTypes.Primitive || type.Type == typeof (string));
 		}
 		
 		public void IncludeType (Type type)

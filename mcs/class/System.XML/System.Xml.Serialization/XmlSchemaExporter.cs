@@ -54,10 +54,6 @@ namespace System.Xml.Serialization {
 
 			if (xmlMembersMapping.HasWrapperElement)
 			{
-				XmlSchemaElement selem = new XmlSchemaElement ();
-				selem.Name = xmlMembersMapping.ElementName;
-				schema.Items.Add (selem);
-	
 				XmlSchemaComplexType stype = new XmlSchemaComplexType ();
 	
 				XmlSchemaSequence particle;
@@ -65,8 +61,19 @@ namespace System.Xml.Serialization {
 				ExportMembersMapSchema (schema, cmap, null, stype.Attributes, out particle, out anyAttribute);
 				stype.Particle = particle;
 				stype.AnyAttribute = anyAttribute;
-	
-				selem.SchemaType = stype;
+				
+				if (encodedFormat)
+				{
+					stype.Name = xmlMembersMapping.ElementName;
+					schema.Items.Add (stype);
+				}
+				else
+				{
+					XmlSchemaElement selem = new XmlSchemaElement ();
+					selem.Name = xmlMembersMapping.ElementName;
+					selem.SchemaType = stype;
+					schema.Items.Add (selem);
+				}
 			}
 			else
 			{
@@ -164,6 +171,9 @@ namespace System.Xml.Serialization {
 				stype.AnyAttribute = anyAttribute;
 				stype.IsMixed = cmap.XmlTextCollector != null;
 			}
+			
+			foreach (XmlTypeMapping dmap in map.DerivedTypes)
+				if (dmap.TypeData.SchemaType == SchemaTypes.Class) ExportClassSchema (dmap);
 		}
 
 		void ExportMembersMapSchema (XmlSchema schema, ClassMap map, XmlTypeMapping baseMap, XmlSchemaObjectCollection outAttributes, out XmlSchemaSequence particle, out XmlSchemaAnyAttribute anyAttribute)

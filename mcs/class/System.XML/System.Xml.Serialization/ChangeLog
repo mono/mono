@@ -1,3 +1,10 @@
+2003-09-11  Lluis Sanchez Gual <lluis@ximian.com>
+
+	* SoapSchemaImporter.cs: implemented.
+	* XmlReflectionImporter.cs: Changed nullable default for array items to true.
+	* XmlSchemaExporter.cs: Some fixes in the generation of encoded format schema.
+	* XmlSchemaImporter.cs: more support for encoded format.
+
 2003-09-04  Lluis Sanchez Gual <lluis@ximian.com>
 
 	* SerializationCodeGenerator.cs: Minor fixes.
