@@ -242,16 +242,6 @@ namespace Mono.Xml {
 						has_empty_namespace = true;
 				}
 			}
-			// Do element ns check
-			if (visible && !IsNamespaceRendered (node.Prefix, node.NamespaceURI)) {
-				if (node.Prefix != String.Empty) {
-					// hack hack ;-)
-					XmlAttribute attr = node.OwnerDocument.CreateAttribute ("xmlns", node.Prefix, "http://www.w3.org/2000/xmlns/");
-					attr.Value = node.NamespaceURI;
-					list.Add (attr);
-				} else if (!has_empty_namespace)
-					res.Append (" xmlns=\"" + node.NamespaceURI + "\"");
-			}
 
 			// add empty namespace if needed		    
 			if (visible && !has_empty_namespace && !IsNamespaceRendered (string.Empty, string.Empty)) 
