@@ -798,7 +798,6 @@ namespace Mono.CSharp
 			int i;
 			int total = 0;
 			int c;
-			char e;
 			int top = count != -1 ? count : 4;
 			
 			getChar ();
@@ -1552,7 +1551,7 @@ namespace Mono.CSharp
 							line++;
 							ref_line++;
 							skipping = false;
-						} else if (c == ' ' || c == '\t' || c == '\v' || c == '\r')
+						} else if (c == ' ' || c == '\t' || c == '\v' || c == '\r' || c == 0xa0)
 							continue;
 						else if (c != '#')
 							skipping = true;
@@ -1624,7 +1623,7 @@ namespace Mono.CSharp
 					continue;
 				}
 
-				if (c == ' ' || c == '\t' || c == '\f' || c == '\v' || c == '\r'){
+				if (c == ' ' || c == '\t' || c == '\f' || c == '\v' || c == '\r' || c == 0xa0){
 					if (c == '\t')
 						col = (((col + 8) / 8) * 8) - 1;
 					continue;

@@ -1,3 +1,7 @@
+2002-11-30  Miguel de Icaza  <miguel@ximian.com>
+
+	* cs-tokenizer.cs: Handle 0xa0 as whitespace (#34752)
+
 2002-11-26  Miguel de Icaza  <miguel@ximian.com>
 
 	* typemanager.cs (IsCLRType): New routine to tell whether a type
