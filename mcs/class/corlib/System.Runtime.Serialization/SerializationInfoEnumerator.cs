@@ -25,12 +25,12 @@ namespace System.Runtime.Serialization
 		// Properties
 		public SerializationEntry Current
 		{
-		     get { return (SerializationEntry) ide.Value; }
+			get { return (SerializationEntry) ide.Value; }
 		}
 
 		object IEnumerator.Current
 		{			
-		     get { return ide.Value; }
+			get { return ide.Value; }
 		}
 
 		public string Name
@@ -58,6 +58,5 @@ namespace System.Runtime.Serialization
 		{
 			ide.Reset ();
 		}
-	}
-	
+	}	
 }

@@ -3,6 +3,7 @@
 //
 // Author:
 //   Derek Holden (dholden@draper.com)
+//   Duncan Mak (duncan@ximian.com)
 //
 // (C) Ximian, Inc.  http://www.ximian.com
 //
@@ -843,13 +844,13 @@ namespace System {
 			return Int16.Parse (value, provider);
 		}
 
-		[MonoTODO]
+		
 		public static short ToInt16 (string value, int fromBase)
 		{
 			if (NotValidBase (fromBase))
 				throw new ArgumentException ("fromBase is not valid.");
 			
-			return 0;
+			return (short) ConvertFromBase (value, fromBase);
 		}
 
 		[CLSCompliant (false)]
@@ -979,13 +980,13 @@ namespace System {
 			return Int32.Parse (value, provider);
 		}
 
-		[MonoTODO]
+		
 		public static int ToInt32 (string value, int fromBase)
 		{
 			if (NotValidBase (fromBase))
 				throw new ArgumentException ("fromBase is not valid.");
 			
-			return 0;
+			return ConvertFromBase (value, fromBase);
 		}
 		
 		[CLSCompliant (false)]
@@ -1108,13 +1109,12 @@ namespace System {
 			return Int64.Parse (value, provider);
 		}
 
-		[MonoTODO]
 		public static long ToInt64 (string value, int fromBase)
 		{
 			if (NotValidBase (fromBase))
 				throw new ArgumentException ("fromBase is not valid.");
 			
-			return 0;
+			return (long) ConvertFromBase (value, fromBase);
 		}
 
 		[CLSCompliant (false)]
@@ -1264,13 +1264,13 @@ namespace System {
 			return SByte.Parse (value, provider);
 		}
 
-		[MonoTODO] [CLSCompliant (false)]
+		[CLSCompliant (false)]
 		public static sbyte ToSByte (string value, int fromBase)
 		{
 			if (NotValidBase (fromBase))
 				throw new ArgumentException ("fromBase is not valid.");
 			
-			return 0;
+			return (sbyte) ConvertFromBase (value, fromBase);
 		}
 		
 		[CLSCompliant (false)]
@@ -1676,13 +1676,13 @@ namespace System {
 			return UInt16.Parse (value, provider);
 		}
 
-		[MonoTODO] [CLSCompliant (false)]
+		[CLSCompliant (false)]
 		public static ushort ToUInt16 (string value, int fromBase) 
 		{
 			if (NotValidBase (fromBase))
 				throw new ArgumentException ("fromBase is not valid.");
 			
-			return 0;
+			return (ushort) ConvertFromBase (value, fromBase);
 		} 
 
 		[CLSCompliant (false)]
@@ -1980,13 +1980,13 @@ namespace System {
 			return UInt64.Parse (value, provider);
 		}
 
-		[MonoTODO] [CLSCompliant (false)]
-		public static ulong TOUint64 (string value, int fromBase)
+		[CLSCompliant (false)]
+		public static ulong ToUint64 (string value, int fromBase)
 		{
 			if (NotValidBase (fromBase))
 				throw new ArgumentException ("fromBase is not valid.");
 
-			return 0;
+			return (ulong) ConvertFromBase (value, fromBase);
 		}					      
 
 		[CLSCompliant (false)]
@@ -2055,6 +2055,19 @@ namespace System {
 				return false;
 			
 			return true;
+		}
+
+		private static int ConvertFromBase (string value, int fromBase)
+		{
+			int result = 0;
+
+			foreach (char c in value) {
+				if (Char.IsLetter (c))
+					result = (fromBase) * result + c - 'a' + 10;
+				else
+					result = (fromBase) * result + c - '0';
+			}
+			return result;
 		}
 
                 // Lookup table for the conversion ToType method. Order
