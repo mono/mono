@@ -522,10 +522,17 @@ namespace System.Windows.Forms {
 			Size spacing = TabSpacing;
 			int size = item_size.Width + 2 + (spacing.Width * 2);
 			int xpos = 4 + (slider_pos * size);
+			int begin_prev = 0;
+
+			if (TabPages.Count == 0)
+				return;
+
+			prev_row = TabPages [0].Row;
 
 			for (int i = 0; i < TabPages.Count; i++) {
 				TabPage page = TabPages [i];
 				int width;
+
 				if (SizeMode == TabSizeMode.Fixed) {
 					width = item_size.Width;
 				} else {
@@ -543,11 +550,38 @@ namespace System.Windows.Forms {
 						ypos + (row_count - page.Row) * (item_size.Height + spacing.Height),
 						width, item_size.Height);
 
-				if (i == SelectedIndex)
-					 ExpandSelected (page, xpos == 4 || xpos == row_width, row_width);
+				
+				if (page.Row != prev_row) {
+					if (SizeMode == TabSizeMode.FillToRight) {
+						FillRow (begin_prev, i - 1, ((row_width - TabPages [i - 1].TabBounds.Right) / (i - begin_prev)), spacing);
+					}
+					begin_prev = i;
+				}
 
 				xpos += width + 1 + spacing.Width;
-				prev_row = page.Row;
+				prev_row = page.Row;				    
+			}
+
+			if (SizeMode == TabSizeMode.FillToRight) {
+				FillRow (begin_prev, TabPages.Count - 1,
+						((row_width - TabPages [TabPages.Count - 1].TabBounds.Right) / (TabPages.Count - begin_prev)), spacing);
+			}
+
+			if (SelectedIndex != -1) 
+				ExpandSelected (TabPages [SelectedIndex], xpos == 4 || TabPages [SelectedIndex].TabBounds.Right == row_width, row_width);
+		}
+
+		private void FillRow (int start, int end, int amount, Size spacing)
+		{
+			int xpos = TabPages [start].TabBounds.Left;
+			for (int i = start; i <= end; i++) {
+				TabPage page = TabPages [i];
+				int left = xpos;
+				int width = (i == end ? Width - left - 3 : page.TabBounds.Width + amount);
+
+				page.TabBounds = new Rectangle (left, page.TabBounds.Top,
+						width, page.TabBounds.Height);
+				xpos = page.TabBounds.Right + 1 + spacing.Width;
 			}
 		}
 
