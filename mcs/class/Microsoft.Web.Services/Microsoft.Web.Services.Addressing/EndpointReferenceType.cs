@@ -6,6 +6,7 @@
 // (C) 2003 Todd Berman
 
 using System;
+using System.Xml;
 using Microsoft.Web.Services.Xml;
 
 namespace Microsoft.Web.Services.Addressing
@@ -14,11 +15,113 @@ namespace Microsoft.Web.Services.Addressing
 	public abstract class EndpointReferenceType : OpenElement
 	{
 
-		private Address address;
+		private Address _address;
+		private PortType _portType;
+		private ReferenceProperties _properties;
+		private ServiceName _serviceName;
+
+		public EndpointReferenceType (Uri address) : base ()
+		{
+			if(address == null) {
+				throw new ArgumentNullException ("address");
+			}
+			_address = new Address (address);
+		}
+
+		public EndpointReferenceType (Address address) : base ()
+		{
+			if(address == null) {
+				throw new ArgumentNullException ("address");
+			}
+			_address = address;
+		}
+
+		public EndpointReferenceType () : base ()
+		{
+		}
+
+		public new void GetXmlAny (XmlDocument document, XmlElement element)
+		{
+			if(document == null) {
+				throw new ArgumentNullException ("document");
+			}
+			if(element == null) {
+				throw new ArgumentNullException ("element");
+			}
+
+			element.AppendChild (_address.GetXml (document));
+			
+			if(_portType != null) {
+				element.AppendChild (_portType.GetXml (document));
+			}
+
+			if(_properties != null) {
+				element.AppendChild (_properties.GetXml (document));
+			}
+
+			if(_serviceName != null) {
+				element.AppendChild (_serviceName.GetXml (document));
+			}
+
+			base.GetXmlAny (document, element);
+		}
+
+		public new void LoadXmlAny (XmlElement element)
+		{
+			if(element == null) {
+				throw new ArgumentNullException ("element");
+			}
+
+			foreach (XmlAttribute attrib in element.Attributes) {
+				AnyAttributes.Add (attrib);
+			}
+
+			foreach (XmlElement node in element.ChildNodes) {
+				if(node.NamespaceURI != "http://schemas.xmlsoap.org/ws/2003/03/addressing") {
+					continue;
+				}
+				switch (node.LocalName) {
+					case "Address":
+						_address = new Address (node);
+						break;
+					case "ReferenceProperties":
+						_properties = new ReferenceProperties (node);
+						break;
+					case "PortType":
+						_portType = new PortType (node);
+						break;
+					case "ServiceName":
+						_serviceName = new ServiceName (node);
+						break;
+				}
+
+				AnyElements.Add (node);
+			}
+		}
 
 		public Address Address {
-			get { return address; }
-			set { address = value; }
+			get { return _address; }
+			set { 
+				if(value == null) {
+					throw new ArgumentNullException ("Address");
+				}
+				_address = value; 
+			}
+		}
+
+		public PortType PortType {
+			get { return _portType; }
+			set { _portType = null; }
+		}
+
+		public ReferenceProperties ReferenceProperties {
+			get { return _properties; }
+			set { _properties = value; }
+		}
+
+		public ServiceName ServiceName {
+			get { return _serviceName; }
+			set { _serviceName = value; }
 		}
 
 	}

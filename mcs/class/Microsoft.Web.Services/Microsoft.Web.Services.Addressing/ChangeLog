@@ -1,3 +1,10 @@
+2003-10-07  Todd Berman <tberman@gentoo.org>
+
+	* ReferenceProperties.cs: Implemented
+	* ServiceName.cs: Partially Implemented
+	* EndpointReferenceType.cs: Implemented
+	* EndpointReference.cs: Implemented
+
 2003-10-05  Todd Berman <tberman@gentoo.org>
 
 	* AddressList.cs: Implemented.
