@@ -51,7 +51,18 @@ namespace System.Reflection.Emit {
 			return iattrs;
 		}
 		public override ParameterInfo[] GetParameters() {
-			return null;
+			if ((parameters == null) || (pinfo == null))
+				return null;
+
+			ParameterInfo[] retval = new ParameterInfo [parameters.Length];
+			for (int i = 0; i < parameters.Length; i++) {
+				if (pinfo [i+1] == null)
+					return null;
+
+				retval [i] = new ParameterInfo (pinfo [i+1], parameters [i], this);
+			}
+
+			return retval;
 		}
 		public override Object Invoke(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture) {
 			return null;
