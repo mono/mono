@@ -92,8 +92,10 @@ namespace TestSystemDataSqlClient {
 			IDbCommand callStoredProcCommand = cnc.CreateCommand ();
 			object data;
 
+			callStoredProcCommand.CommandType = 
+				CommandType.StoredProcedure;
 			callStoredProcCommand.CommandText =
-				"select version()";
+				"version";
 							
 			data = callStoredProcCommand.ExecuteScalar ();
 
@@ -217,6 +219,7 @@ namespace TestSystemDataSqlClient {
 
 			Console.WriteLine("Aggregate: " + agg);
 
+			selectCommand.CommandType = CommandType.Text;
 			selectCommand.CommandText = 
 				"select " + agg +
 				"from mono_postgres_test";

@@ -19,34 +19,26 @@ using System.Data.SqlClient;
 namespace TestSystemDataSqlClient {
 	class TestSqlDataReader {
 
-		static void Test() { 
-			SqlConnection con = null;
+		static void Test(SqlConnection con, string sql, 
+				CommandType cmdType, CommandBehavior behavior,
+				string testDesc) 
+		{ 
 			SqlCommand cmd = null;
 			SqlDataReader rdr = null;
 			
-			String connectionString = null;
-			String sql = null;
 			int c;
 			int results = 0;
 
-			connectionString = 
-				"host=localhost;" +
-				"dbname=test;" +
-				"user=postgres";
-				
-			sql = 	"select * from pg_user;" + 
-				"select * from pg_tables;" + 
-				"select * from pg_database;";
-							
-			con = new SqlConnection(connectionString);
-			con.Open();
-
-			Console.WriteLine("sql: " +
-				sql);
+			Console.WriteLine("Test: " + testDesc);
+			Console.WriteLine("[BEGIN SQL]");
+			Console.WriteLine(sql);
+			Console.WriteLine("[END SQL]");
 
 			cmd = new SqlCommand(sql, con);
+			cmd.CommandType = cmdType;
+						
 			Console.WriteLine("ExecuteReader...");
-			rdr = cmd.ExecuteReader();
+			rdr = cmd.ExecuteReader(behavior);
 
 			do {
 				results++;
@@ -72,32 +64,71 @@ namespace TestSystemDataSqlClient {
 				int nRows = 0;
 
 				// Read and display the rows
-				while(rdr.Read()) {
-					Console.WriteLine("   Row " + nRows + ": ");
+			while(rdr.Read()) {
+				Console.WriteLine("   Row " + nRows + ": ");
 
-					for(c = 0; c < rdr.FieldCount; c++) {
-						if(rdr.IsDBNull(c) == true)
-							Console.WriteLine("      " + 
-								rdr.GetName(c) + " is DBNull");
-						else
-							Console.WriteLine("      " + 
-								rdr.GetName(c) + ": " +
-								rdr[c].ToString());
-					}
-					nRows++;
+				for(c = 0; c < rdr.FieldCount; c++) {
+					if(rdr.IsDBNull(c) == true)
+						Console.WriteLine("      " + 
+							rdr.GetName(c) + " is DBNull");
+					else
+						Console.WriteLine("      " + 
+							rdr.GetName(c) + ": " +
+							rdr[c].ToString());
 				}
+				nRows++;
+			}
 				Console.WriteLine("   Total Rows: " + 
 					nRows);
 			} while(rdr.NextResult());
 			Console.WriteLine("Total Result sets: " + results);
 			
 			rdr.Close();
-			con.Close();
 		}
 
 		[STAThread]
 		static void Main(string[] args) {
-			Test();
+			String connectionString = null;
+			connectionString = 
+				"host=localhost;" +
+				"dbname=test;" +
+				"user=postgres";
+						
+			SqlConnection con;
+			con = new SqlConnection(connectionString);
+			con.Open();
+
+			string sql;
+
+			// Text - only has one query (single query behavior)
+			sql = "select * from pg_tables";
+			Test(con, sql, CommandType.Text, 
+				CommandBehavior.SingleResult, "Text1");
+
+			// Text - only has one query (default behavior)
+			sql = "select * from pg_tables";
+			Test(con, sql, CommandType.Text, 
+				CommandBehavior.Default, "Text2");
+			
+			// Text - has three queries
+			sql =
+				"select * from pg_user;" + 
+				"select * from pg_tables;" + 
+				"select * from pg_database";
+			Test(con, sql, CommandType.Text, 
+				CommandBehavior.Default, "Text3Queries");
+			
+			// Table Direct
+			sql = "pg_tables";
+			Test(con, sql, CommandType.TableDirect, 
+				CommandBehavior.Default, "TableDirect1");
+
+			// Stored Procedure
+			sql = "version";
+			Test(con, sql, CommandType.StoredProcedure, 
+				CommandBehavior.Default, "SP1");
+			
+			con.Close();
 		}
 	}
 }

@@ -1,5 +1,15 @@
 2002-05-18  Daniel Morgan <danmorg@sc.rr.com>
 
+	* System.Data.SqlClient/SqlCommand.cs: handle CommandTypes
+	Text, TableDirect, and StoredProcedure
+	
+	* Test/PostgresTest.cs: changed call to version() 
+	stored procedure to use the CommandType of StoredProcedure
+	
+	* Test/TestSqlDataReader.cs: test all the CommandTypes
+
+2002-05-18  Daniel Morgan <danmorg@sc.rr.com>
+
 	* System.Data.build: took out all excluded
 	files except the ones in the Test directory
 	because all files compile now.  It does not

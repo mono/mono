@@ -23,10 +23,12 @@
 // #define DEBUG_SqlCommand
 
 using System;
+using System.Collections;
 using System.ComponentModel;
 using System.Data;
 using System.Data.Common;
 using System.Runtime.InteropServices;
+using System.Text;
 using System.Xml;
 
 namespace System.Data.SqlClient {
@@ -108,10 +110,13 @@ namespace System.Data.SqlClient {
 			int rowsAffected = -1;
 			ExecStatusType execStatus;
 			String rowsAffectedString;
+			string query;
 
 			if(conn.State != ConnectionState.Open)
 				throw new InvalidOperationException(
 					"ConnnectionState is not Open");
+
+			query = TweakQuery(sql, cmdType);
 
 			// FIXME: PQexec blocks 
 			// while PQsendQuery is non-blocking
@@ -122,7 +127,7 @@ namespace System.Data.SqlClient {
 			// execute SQL command
 			// uses internal property to get the PGConn IntPtr
 			pgResult = PostgresLibrary.
-				PQexec (conn.PostgresConnection, sql);
+				PQexec (conn.PostgresConnection, query);
 
 			execStatus = PostgresLibrary.
 				PQresultStatus (pgResult);
@@ -200,11 +205,13 @@ namespace System.Data.SqlClient {
 		{
 			SqlResult res = new SqlResult();
 			res.Connection = this.Connection;
+			string statement;
 		
 			currentQuery++;
 
 			if(currentQuery < queries.Length && queries[currentQuery].Equals("") == false) {
-				ExecuteQuery(queries[currentQuery], res);
+				statement = TweakQuery(queries[currentQuery], cmdType);
+				ExecuteQuery(statement, res);
 				res.ResultReturned = true;
 			}
 			else {
@@ -212,6 +219,45 @@ namespace System.Data.SqlClient {
 			}
 
 			return res;
+		}
+
+		private string TweakQuery(string query, CommandType commandType) {
+			string statement = "";
+			StringBuilder td;
+
+			// TODO: need to handle parameters
+			
+			// finish building SQL based on CommandType
+			switch(commandType) {
+			case CommandType.Text:
+				statement = query;
+				break;
+			case CommandType.StoredProcedure:
+				statement = 
+					"SELECT " + query + "()";
+				break;
+			case CommandType.TableDirect:
+				string[] directTables = query.Split(
+					new Char[] {','});	
+										 
+				td = new StringBuilder("SELECT * FROM ");
+				
+				for(int tab = 0; tab < directTables.Length; tab++) {
+					if(tab > 0 && tab < directTables.Length - 1)
+						td.Append(',');
+					td.Append(directTables[tab]);
+					// FIXME: if multipe tables, how do we
+					//        join? based on Primary/Foreign Keys?
+					//        Otherwise, a Cartesian Product happens
+				}
+				statement = td.ToString();
+				break;
+			default:
+				// FIXME: throw an exception?
+				statement = query;
+				break;
+			}
+			return statement;
 		}
 
 		private void ExecuteQuery (string query, SqlResult res)
@@ -266,6 +312,12 @@ namespace System.Data.SqlClient {
 			queries = null;
 		}
 
+		/// <summary>
+		/// ExecuteScalar is used to retrieve one object
+		/// from one result set 
+		/// that has one row and one column.
+		/// It is lightweight compared to ExecuteReader.
+		/// </summary>
 		[MonoTODO]
 		public object ExecuteScalar () {
 			IntPtr pgResult; // PGresult
@@ -276,10 +328,13 @@ namespace System.Data.SqlClient {
 			String value;
 			int nRows;
 			int nFields;
+			string query;
 
 			if(conn.State != ConnectionState.Open)
 				throw new InvalidOperationException(
 					"ConnnectionState is not Open");
+
+			query = TweakQuery(sql, cmdType);
 
 			// FIXME: PQexec blocks 
 			// while PQsendQuery is non-blocking
@@ -290,7 +345,7 @@ namespace System.Data.SqlClient {
 			// execute SQL command
 			// uses internal property to get the PGConn IntPtr
 			pgResult = PostgresLibrary.
-				PQexec (conn.PostgresConnection, sql);
+				PQexec (conn.PostgresConnection, query);
 
 			execStatus = PostgresLibrary.
 				PQresultStatus (pgResult);
