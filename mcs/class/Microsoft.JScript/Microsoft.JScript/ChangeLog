@@ -1,3 +1,9 @@
+2004-07-29  Cesar Lopez Nataren  <cesar@ciencias.unam.mx>
+
+	* Parser.cs: Added ClauseType enum. Added all the statements to current_script_or_fn,
+	building the other block was not needed. Build the ast's for the
+	expressions and statements, keep track of the parent relationship.
+
 2004-07-19  Cesar Lopez Nataren  <cesar@ciencias.unam.mx>
 
 	* Added Token.cs, TokenStream.cs, Parser.cs which are the port of

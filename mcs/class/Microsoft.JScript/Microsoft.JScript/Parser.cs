@@ -51,9 +51,15 @@ namespace Microsoft.JScript {
 	 * distinquished.
 	 */
 	enum FunctionType {
-		STATEMENT		= 1,
-		EXPRESSION		= 2,
-		EXPRESSION_STATEMENT	= 3
+		Statement,
+		Expression,
+		ExpressionStatement
+	}
+
+	enum ClauseType {
+		Case,
+		Default,
+		CaseAfterDefault
 	}
 
 	public class Parser {
@@ -121,9 +127,7 @@ namespace Microsoft.JScript {
 		{
 			current_script_or_fn = new ScriptBlock ();
 			ok = true;
-			int base_line_number = ts.LineNumber;
-
-			Block pn = new Block (current_script_or_fn);
+			int base_line_number = ts.LineNumber; // line number where source starts
 
 			try {
 				for (;;) {
@@ -137,18 +141,16 @@ namespace Microsoft.JScript {
 					AST n;
 					if (tt == Token.FUNCTION) {
 						try {
-							n = Function (FunctionType.STATEMENT); 
+							n = Function (null, FunctionType.Statement);
 						} catch (ParserException e) {
 							ok = false;
 							break;
 						}
 					} else {
 						ts.UnGetToken (tt);
-						n = Statement ();
+						n = Statement (current_script_or_fn);
 					}
-					// FIXME: check if the semantics of addChildToBack (parent, child) 
-					// is the same.
-					pn.Add (n);
+					current_script_or_fn.Add (n);
 				}
 			} catch (StackOverflowException ex) {
 				throw new Exception ("Error: too deep parser recursion.");
@@ -156,10 +158,6 @@ namespace Microsoft.JScript {
 
 			if (!ok)
 				return null;
-		
-			// FIXME: they do nf.initScript(currentScriptOrFn, pn); 
-			// check if their semantics maps to ours
-			current_script_or_fn.Add (pn);
 
 			return current_script_or_fn;
 		}
@@ -172,7 +170,7 @@ namespace Microsoft.JScript {
 			get { return nesting_of_function != 0; }
 		}
 
-		AST ParseFunctionBody ()
+		Block ParseFunctionBody (AST parent)
 		{
 			++nesting_of_function;
 			Block pn = new Block (ts.LineNumber);
@@ -182,9 +180,9 @@ namespace Microsoft.JScript {
 					AST n;
 					if (tt == Token.FUNCTION) {
 						ts.GetToken ();
-						n = Function (FunctionType.STATEMENT);
+						n = Function (parent, FunctionType.Statement);
 					} else
-						n = Statement ();				
+						n = Statement (parent);
 					pn.Add (n);
 				}
 			} catch (ParserException e) {
@@ -195,7 +193,7 @@ namespace Microsoft.JScript {
 			return pn;
 		}
 
-		AST Function (FunctionType ft)
+		AST Function (AST parent,FunctionType ft)
 		{
 			FunctionType synthetic_type = ft;
 			int base_line_number = ts.LineNumber; // line number where source starts
@@ -211,7 +209,7 @@ namespace Microsoft.JScript {
 						// FIXME: is StringLiteral the correct AST to build?
 						AST member_expr_head = new StringLiteral (null, name);
 						name = "";
-						member_expr = MemberExprTail (false, member_expr_head);
+						member_expr = MemberExprTail (parent, false, member_expr_head);
 					}
 					MustMatchToken (Token.LP, "msg.no.paren.parms");
 				}
@@ -224,16 +222,16 @@ namespace Microsoft.JScript {
 					// Note that memberExpr can not start with '(' like
 					// in function (1+2).toString(), because 'function (' already
 					// processed as anonymous function
-					member_expr = MemberExpr (false);
+					member_expr = MemberExpr (parent, false);
 				}
 				MustMatchToken (Token.LP, "msg.no.paren.parms");
 			}
 
 			if (member_expr != null)
-				synthetic_type = FunctionType.EXPRESSION;
+				synthetic_type = FunctionType.Expression;
 			
-			bool nested = InsideFunction;			
-			Function fn = CreateFunction (synthetic_type, name);
+			bool nested = InsideFunction;
+			Function fn = CreateFunction (parent, synthetic_type, name);
 
 			if (nested)
 				fn.CheckThis = true;
@@ -247,72 +245,63 @@ namespace Microsoft.JScript {
 				fn.IgnoreDynamicScope = true;
 			}
 			
-			current_script_or_fn.Add (fn);
 			ScriptBlock saved_script_or_fn = current_script_or_fn;
-			// FIXME:
-			// current_script_or_fn = fn;
 			int saved_nesting_of_with = nesting_of_with;
 			nesting_of_with = 0;
 
-			AST body;
+			FormalParameterList _params = new FormalParameterList ();
+			Block body;
 			string source;
 
 			try {
 				if (!ts.MatchToken (Token.RP)) {
-					bool first = true;
 					do {
-						first = false;
 						MustMatchToken (Token.NAME, "msg.no.parm");
 						string s = ts.GetString;
-						// FIXME: check if func has repeated param or local vars
-						// if (fnNode.hasParamOrVar(s)) {
-						// 	ts.reportCurrentLineWarning(Context.getMessage1(
-						// 				"msg.dup.parms", s));
-						// }
-						// FIXME: add the parameter 
-						//fnNode.addParam(s);
+						_params.Add (s, String.Empty);
 					} while (ts.MatchToken (Token.COMMA));
-
 					MustMatchToken (Token.RP, "msg.no.paren.after.parms");
 				}
-
 				MustMatchToken (Token.LC, "msg.no.brace.body");
-				body = ParseFunctionBody ();
+				body = ParseFunctionBody (fn);
 				MustMatchToken (Token.RC, "msg.no.brace.after.body");
 
-				if (ft != FunctionType.EXPRESSION)
+				if (ft != FunctionType.Expression)
 					CheckWellTerminatedFunction ();
 			} finally {
 				current_script_or_fn = saved_script_or_fn;
 				nesting_of_with = saved_nesting_of_with;
 			}
 
-			// FIXME, set it to something meaningful in the if-cases that come below
-			AST pn = null; 
+			fn.Init (body, _params);
+			AST pn;
+
 			if (member_expr == null) {
 				// FIXME
-				// pn = nf.initFunction (...);
-				// if (functionType == FunctionNode.FUNCTION_EXPRESSION_STATEMENT) {
-					// The following can be removed but then code generators should
-					// be modified not to push on the stack function expression
-					// statements
-					// pn = nf.createExprStatementNoReturn(pn, baseLineno);
-				// }
-				;
+				pn = fn;
+
+				// FIXME, research about createExprStatementNoReturn
+				if (ft == FunctionType.ExpressionStatement)
+					pn = null;
 			} else {
-				;
+				// FIXME
+				pn = fn;
+				pn = new Assign (null, member_expr, pn, JSToken.Assign, false);
+				// FIXME, research about createExprStatement
+				if (ft != FunctionType.Expression)
+					;
 			}
 			return pn;
 		}
 
-		Function CreateFunction (FunctionType func_type, string name)
+		Function CreateFunction (AST parent, FunctionType func_type, string name)
 		{
 			Function func;
-			if (func_type == FunctionType.STATEMENT)
-				func = new FunctionDeclaration (name);
-			else if (func_type == FunctionType.EXPRESSION)
-				func = new FunctionExpression (name);
-			else if (func_type == FunctionType.EXPRESSION_STATEMENT) {
+			if (func_type == FunctionType.Statement)
+				func = new FunctionDeclaration (parent, name);
+			else if (func_type == FunctionType.Expression)
+				func = new FunctionExpression (parent, name);
+			else if (func_type == FunctionType.ExpressionStatement) {
 				// FIXME: set it to something meaningful
 				func = null;
 			} else func = null;
@@ -326,15 +315,15 @@ namespace Microsoft.JScript {
 			Block pn = new Block (null);
 			
 			while ((tt = ts.PeekToken ()) > Token.EOF && tt != Token.RC)
-				pn.Add (Statement ());			
+				pn.Add (Statement (null));
 			return pn;
 		}
 
-		AST Condition ()
+		AST Condition (AST parent)
 		{
 			AST pn;
 			MustMatchToken (Token.LP, "msg.no.paren.cond");
-			pn = Expr (false);
+			pn = Expr (parent, false);
 			MustMatchToken (Token.RP, "msg.no.paren.after.cond");
 			return pn;
 		}
@@ -350,7 +339,6 @@ namespace Microsoft.JScript {
 
 		void CheckWellTerminatedFunction ()
 		{
-			// FIXME:
 			CheckWellTerminated ();
 		}
 
@@ -371,10 +359,10 @@ namespace Microsoft.JScript {
 			return label;
 		}
 
-		AST Statement ()
+		AST Statement (AST parent)
 		{
 			try {
-				return StatementHelper ();
+				return StatementHelper (parent);
 			} catch (ParserException e) {
 				// skip to end of statement
 				int line_number = ts.LineNumber;
@@ -393,7 +381,7 @@ namespace Microsoft.JScript {
 		 * is implemented.
 		 */
 
-		AST StatementHelper ()
+		AST StatementHelper (AST parent)
 		{
 			AST pn = null;
 
@@ -407,61 +395,57 @@ namespace Microsoft.JScript {
 			if (tt == Token.IF) {
 				skip_semi = true;
 				int line_number = ts.LineNumber;
-				AST cond = Condition ();
-				AST if_true = Statement ();
+				AST cond = Condition (parent);
+				AST if_true = Statement (parent);
 				AST if_false = null;
 				if (ts.MatchToken (Token.ELSE))
-					if_false = Statement ();
-				pn = new If (null, cond, if_true, if_false, line_number);
+					if_false = Statement (parent);
+				pn = new If (parent, cond, if_true, if_false, line_number);
 			} else if (tt == Token.SWITCH) {
 				skip_semi = true;
-				pn = new Switch (ts.LineNumber);
-				AST cur_case = null;
-				ArrayList case_statements;
-
+				pn = new Switch (parent, ts.LineNumber);
+				Clause cur_case;
 				MustMatchToken (Token.LP, "msg.no.paren.switch");
-				((Switch) pn).exp = Expr (false);
+				((Switch) pn).exp = Expr (parent, false);
 				MustMatchToken (Token.RP, "msg.no.paren.after.switch");
 				MustMatchToken (Token.LC, "msg.no.brace.switch");
-				
+				ClauseType clause_type = ClauseType.Case;
+
 				while ((tt = ts.GetToken ()) != Token.RC && tt != Token.EOF) {
 					if (tt == Token.CASE) {
-						// FIXME:
-						cur_case = Expr (false);
+						cur_case = new Clause (pn);
+						cur_case.exp = Expr (pn, false);
+						if (clause_type == ClauseType.Default)
+							clause_type = ClauseType.CaseAfterDefault;
 					} else if (tt == Token.DEFAULT) {
-						// FIXME:
-						// cur_case = nf.createLeaf (Token.DEFAULT);
-						;
-					} else
+						cur_case = null;
+						clause_type = ClauseType.Default;
+					} else {
+						cur_case = null;
 						ReportError ("msg.bad.switch");
-					
-					MustMatchToken (Token.COLON, "msg.no.colon.case");
-
-					// FIXME:
-					case_statements = new ArrayList ();
-
-					while ((tt = ts.PeekToken ()) != Token.RC && tt != Token.CASE &&
-					       tt != Token.DEFAULT && tt != Token.EOF) {
-						case_statements.Add (Statement ());
 					}
-					// assert cur_case
-					// FIXME: 
-					// nf.addChildToBack(cur_case, case_statements);
+					MustMatchToken (Token.COLON, "msg.no.colon.case");
+					
+					while ((tt = ts.PeekToken ()) != Token.RC && tt != Token.CASE && tt != Token.DEFAULT && tt != Token.EOF) {
+						if (clause_type == ClauseType.Case || clause_type == ClauseType.CaseAfterDefault)
+							cur_case.AddStm (Statement (pn));
+						else if (clause_type == ClauseType.Default)
+							((Switch) pn).default_clauses.Add (Statement (pn));
+					}
+					((Switch) pn).AddClause (cur_case, clause_type);
 				}
 			} else if (tt == Token.WHILE) {
 				skip_semi = true;
 				int line_number = ts.LineNumber;
-				AST cond = Condition ();
-				AST body = Statement ();
-				// FIXME
-				pn = new While (null, cond, body, line_number);
+				AST cond = Condition (parent);
+				AST body = Statement (parent);
+				pn = new While (parent, cond, body, line_number);
 			} else if (tt == Token.DO) {
 				int line_number = ts.LineNumber;
-				AST body = Statement ();
+				AST body = Statement (parent);
 				MustMatchToken (Token.WHILE, "msg.no.while.do");
-				AST cond = Condition ();
-				// FIXME:
-				pn = new DoWhile (null, body, cond, line_number);
+				AST cond = Condition (parent);
+				pn = new DoWhile (parent, body, cond, line_number);
 			} else if (tt == Token.FOR) {
 				skip_semi = true;
 				int line_number = ts.LineNumber;
@@ -473,61 +457,53 @@ namespace Microsoft.JScript {
 				MustMatchToken (Token.LP, "msg.no.paren.for");
 				tt = ts.PeekToken ();
 
-				if (tt == Token.SEMI) {
-					// FIXME
+				if (tt == Token.SEMI)
 					init = null;
-				} else {
+				else {
 					if (tt == Token.VAR) {
 						// set init to a var list or initial
 						ts.GetToken (); // throw away the 'var' token
-						init = Variables (true);
+						init = Variables (parent, true);
 					} else
-						init = Expr (true);
+						init = Expr (parent, true);
 				}
-
-				if (ts.MatchToken (Token.IN)) {
-					// 'cond' is the object over which we're iterating
-					cond = Expr (false);
-				} else { // ordinary for loop
+				
+				if (ts.MatchToken (Token.IN))					
+					cond = Expr (parent, false); // 'cond' is the object over which we're iterating
+				else { 
+					// ordinary for loop
 					MustMatchToken (Token.SEMI, "msg.no.semi.for");
-					if (ts.PeekToken () == Token.SEMI) {
-						// no loop condition
-						// FIXME:
-						cond = null;
-					} else
-						cond = Expr (false);
+					
+					if (ts.PeekToken () == Token.SEMI)
+						cond = null; // no loop condition
+					else
+						cond = Expr (parent, false);
 
 					MustMatchToken (Token.SEMI, "msg.no.semi.for.cond");
-					if (ts.PeekToken () == Token.RP) {
-						// FIXME:
+					
+					if (ts.PeekToken () == Token.RP)
 						incr = null;
-					} else
-						incr = Expr (false);
+					else
+						incr = Expr (parent, false);
 				}
 
 				MustMatchToken (Token.RP, "msg.no.paren.for.ctrl");
-				body = Statement ();
+				body = Statement (parent);
 
-				if (incr == null) {
-					// cond could be null if 'in obj' got eaten by the init node.
-					// FIXME:
-					// pn = nf.createForIn(init, cond, body, lineno);
-					;
-				} else {
-					// FIXME:
-					// pn = nf.createFor(init, cond, incr, body, lineno);
-					;
-				}
+				if (incr == null) // cond could be null if 'in obj' got eaten by the init node.
+					pn = new ForIn (parent, line_number, init, cond, body);
+				else
+					pn = new For (parent, line_number, init, cond, incr, body);
 			} else if (tt == Token.TRY) {
 				int line_number = ts.LineNumber;
 				AST try_block;
-				Block catch_blocks = null;
+				ArrayList catch_blocks = null;
 				AST finally_block = null;
 
 				skip_semi = true;
 
-				try_block = Statement ();
-				catch_blocks = new Block ();
+				try_block = Statement (parent);
+				catch_blocks = new ArrayList ();
 
 				bool saw_default_catch = false;
 				int peek = ts.PeekToken ();
@@ -542,30 +518,26 @@ namespace Microsoft.JScript {
 						AST catch_cond = null;
 						
 						if (ts.MatchToken (Token.IF))
-							catch_cond = Expr (false);
+							catch_cond = Expr (parent, false);
 						else
 							saw_default_catch = true;
 						
 						MustMatchToken (Token.RP, "msg.bad.catchcond");
 						MustMatchToken (Token.LC, "msg.no.brace.catchblock");
 
-						// FIXME
 						catch_blocks.Add (new Catch (var_name, catch_cond, 
-									     Statements (), ts.LineNumber));
+									     Statements (), parent, ts.LineNumber));
 						MustMatchToken (Token.RC, "msg.no.brace.after.body");
 					}
 				} else if (peek != Token.FINALLY)
 					MustMatchToken (Token.FINALLY, "msg.try.no.catchfinally");
 				
 				if (ts.MatchToken (Token.FINALLY))
-					finally_block = Statement ();
-
-				// FIXME:
-				// pn=nf.createTryCatchFinally(tryblock, catchblocks,finallyblock, lineno);
-
+					finally_block = Statement (parent);
+				pn = new Try (try_block, catch_blocks, finally_block, parent, line_number);
 			} else if (tt == Token.THROW) {
 				int line_number = ts.LineNumber;
-				pn = new Throw (Expr (false), line_number);
+				pn = new Throw (Expr (parent, false), line_number);
 
 				if (line_number == ts.LineNumber)
 					CheckWellTerminated ();
@@ -582,19 +554,19 @@ namespace Microsoft.JScript {
 				skip_semi = true;
 				int line_number = ts.LineNumber;
 				MustMatchToken (Token.LP, "msg.no.paren.with");
-				AST obj = Expr (false);
+				AST obj = Expr (parent, false);
 				MustMatchToken (Token.RP, "msg.no.paren.after.with");
 				++nesting_of_with;
 				AST body;
 				try {
-					body = Statement ();
+					body = Statement (parent);
 				} finally {
 					--nesting_of_with;
 				}
-				pn = new With (null, obj, body, line_number);
+				pn = new With (parent, obj, body, line_number);
 			} else if (tt == Token.VAR) {
 				int line_number = ts.LineNumber;
-				pn = Variables (false);
+				pn = Variables (parent, false);
 				if (ts.LineNumber == line_number)
 					CheckWellTerminated ();
 			} else if (tt == Token.RETURN) {
@@ -610,11 +582,11 @@ namespace Microsoft.JScript {
 				
 				int line_number = ts.LineNumber;
 				if (tt != Token.EOF && tt != Token.EOL && tt != Token.SEMI && tt != Token.RC) {
-					ret_expr = Expr (false);
+					ret_expr = Expr (parent, false);
 					if (ts.LineNumber == line_number)
 						CheckWellTerminated ();
 				}
-				pn = new Return (null, ret_expr, line_number);
+				pn = new Return (parent, ret_expr, line_number);
 			} else if (tt == Token.LC) { 
 				skip_semi = true;
 				pn = Statements ();
@@ -624,15 +596,14 @@ namespace Microsoft.JScript {
 				pn = null;
 				skip_semi = true;
 			} else if (tt == Token.FUNCTION) {
-				// FIXME:
-				pn = Function (FunctionType.EXPRESSION_STATEMENT);
+				pn = Function (parent, FunctionType.ExpressionStatement);
 			} else {
 				int last_expr_type = tt;
 				int token_number = ts.TokenNumber;
 				ts.UnGetToken (tt);
 				int line_number = ts.LineNumber;
 
-				pn = Expr (false);
+				pn = Expr (parent, false);
 
 				if (ts.PeekToken () == Token.COLON) {
 					/* check that the last thing the tokenizer returned was a
@@ -657,32 +628,21 @@ namespace Microsoft.JScript {
 			return pn;
 		}
 		
-		AST Variables (bool in_for_init)
+		AST Variables (AST parent, bool in_for_init)
 		{
-			// FIXME
-			VariableStatement pn = new VariableStatement (ts.LineNumber);
-			bool first = true;
-
+			VariableStatement pn = new VariableStatement (parent, ts.LineNumber);
 			for (;;) {
 				VariableDeclaration name;
-				AST init;
+				AST init = null;
 				MustMatchToken (Token.NAME, "msg.bad.var");
-				string s = ts.GetString;
-				
-				first = false;
+				string s = ts.GetString;				
+				name = new VariableDeclaration (parent, s, null, null);
 
-				// FIXME
-				name = new VariableDeclaration (null, s, null, null);
-
-				// ommited check for argument hiding
-
+				// ommited check for argument hiding				
 				if (ts.MatchToken (Token.ASSIGN)) {
-					init = AssignExpr (in_for_init);
+					init = AssignExpr (parent, in_for_init);
 					name.val = init;
-					
 				}
-
-				// FIXME
 				pn.Add (name);
 
 				if (!ts.MatchToken (Token.COMMA))
@@ -691,114 +651,103 @@ namespace Microsoft.JScript {
 			return pn;
 		}
 
-		AST Expr (bool in_for_init)
+		AST Expr (AST parent, bool in_for_init)
 		{
-			// FIXME: parent hardcoded to be null
 			Expression pn = new Expression (null);
-			pn.Add (AssignExpr (in_for_init));
+			AST init = AssignExpr (parent, in_for_init);
+			pn.Add (init);
 
-			while (ts.MatchToken (Token.COMMA)) {
-				// FIXME
-				//pn = nf.createBinary(Token.COMMA, pn, assignExpr(inForInit));
-				pn.Add (AssignExpr (in_for_init));
-			}
+			if (init == null)
+				throw new Exception ("Expr, L680, AST is null");
+
+			//pn.Add (AssignExpr (in_for_init));
+			while (ts.MatchToken (Token.COMMA))
+				pn.Add (AssignExpr (parent, in_for_init));
 			return pn;
 		}				   
 
-		AST AssignExpr (bool in_for_init)
+		AST AssignExpr (AST parent, bool in_for_init)
 		{
-			AST pn = null;
-			AST cond_expr = CondExpr (in_for_init);
+			AST pn = CondExpr (parent, in_for_init);
 			int tt = ts.PeekToken ();
+
 			// omitted: "invalid assignment left-hand side" check.
 			if (tt == Token.ASSIGN) {
 				ts.GetToken ();
-				// FIXME:
-				pn = new Assign (null, cond_expr, AssignExpr (in_for_init), JSToken.Assign, false);
+				pn = new Assign (parent, pn, AssignExpr (parent, in_for_init), JSToken.Assign, false);
 			} else if (tt == Token.ASSIGNOP) {
 				ts.GetToken ();
 				int op = ts.GetOp ();
-				// FIXME: discriminate the operator, write Token->JSToken
-				pn = new Assign (null, cond_expr, AssignExpr (in_for_init), JSToken.Assign, false);
+				pn = new Assign (parent, pn, AssignExpr (parent, in_for_init), JSToken.Assign, false);
 			}
 			return pn;
 		}
 
-		AST CondExpr (bool in_for_init)
+		AST CondExpr (AST parent, bool in_for_init)
 		{
 			AST if_true;
 			AST if_false;
-			AST pn = OrExpr (in_for_init);
+			AST pn = OrExpr (parent, in_for_init);
 
 			if (ts.MatchToken (Token.HOOK)) {
-				if_true = AssignExpr (false);
+				if_true = AssignExpr (parent, false);
 				MustMatchToken (Token.COLON, "msg.no.colon.cond");
-				if_false = AssignExpr (in_for_init);
-				// FIXME
-				return new Conditional (null, pn, if_true, if_false);
+				if_false = AssignExpr (parent, in_for_init);
+				return new Conditional (parent, pn, if_true, if_false);
 			}
 			return pn;
 		}
 
-		AST OrExpr (bool in_for_init)
+		AST OrExpr (AST parent, bool in_for_init)
 		{
-			AST pn = AndExpr (in_for_init);
-			if (ts.MatchToken (Token.OR)) {
-				// FIXME
-				return new Binary (null, pn, OrExpr (in_for_init), JSToken.LogicalOr);
-			}
+			AST pn = AndExpr (parent, in_for_init);
+			if (ts.MatchToken (Token.OR))
+				return new Binary (parent, pn, OrExpr (parent, in_for_init), JSToken.LogicalOr);
 			return pn;
 		}
 
-		AST AndExpr (bool in_for_init)
+		AST AndExpr (AST parent, bool in_for_init)
 		{
-			AST pn = BitOrExpr (in_for_init);
+			AST pn = BitOrExpr (parent, in_for_init);
 			if (ts.MatchToken (Token.AND)) {
-				// FIXME
-				return new Binary (null, pn, AndExpr (in_for_init), JSToken.LogicalAnd);
+				return new Binary (parent, pn, AndExpr (parent, in_for_init), JSToken.LogicalAnd);
 			}
 			return pn;
 		}
 
-		AST BitOrExpr (bool in_for_init)
+		AST BitOrExpr (AST parent, bool in_for_init)
 		{
-			AST pn = BitXorExpr (in_for_init);
+			AST pn = BitXorExpr (parent, in_for_init);
 			while (ts.MatchToken (Token.BITOR)) {
-				// FIXME, create binary
-				BitXorExpr (in_for_init);
+				pn = new Binary (parent, pn, BitXorExpr (parent, in_for_init), JSToken.BitwiseOr);
 			}
 			return pn;
 		}
 
-		AST BitXorExpr (bool in_for_init)
+		AST BitXorExpr (AST parent, bool in_for_init)
 		{
-			AST pn = BitAndExpr (in_for_init);
-			while (ts.MatchToken (Token.BITXOR)) {
-				// FIMXE, create binary
-				BitAndExpr (in_for_init);
-			}
+			AST pn = BitAndExpr (parent, in_for_init);
+			while (ts.MatchToken (Token.BITXOR))
+				pn = new Binary (parent, pn, BitAndExpr (parent, in_for_init), JSToken.BitwiseXor);
 			return pn;
 		}
 
-		AST BitAndExpr (bool in_for_init)
+		AST BitAndExpr (AST parent, bool in_for_init)
 		{
-			AST pn = EqExpr (in_for_init);
-			while (ts.MatchToken (Token.BITAND)) {
-				// FIXME, must build binary
-				EqExpr (in_for_init);
-			}
+			AST pn = EqExpr (parent, in_for_init);
+			while (ts.MatchToken (Token.BITAND))
+				pn = new Binary (parent, pn, EqExpr (parent, in_for_init), JSToken.BitwiseAnd);
 			return pn;
 		}
 
-		AST EqExpr (bool in_for_init)
+		AST EqExpr (AST parent, bool in_for_init)
 		{
-			AST pn = RelExpr (in_for_init);
+			AST pn = RelExpr (parent, in_for_init);
 			for (;;) {
 				int tt = ts.PeekToken ();
 				if (tt == Token.EQ || tt == Token.NE || tt == Token.SHEQ || tt == Token.SHNE) {
 					ts.GetToken ();
-					// FIXME, create binary
-					RelExpr (in_for_init);
+					pn = new Equality (parent, pn, RelExpr (parent, in_for_init), JSToken.Equal);
 					continue;
 				}
 				break;
@@ -806,19 +755,17 @@ namespace Microsoft.JScript {
 			return pn;
 		}
 
-		AST RelExpr (bool in_for_init)
+		AST RelExpr (AST parent, bool in_for_init)
 		{	
-			AST pn = ShiftExpr ();
+			AST pn = ShiftExpr (parent);
 			for (;;) {
 				int tt = ts.PeekToken ();
 				if (tt == Token.IN) {
 					if (in_for_init)
 						break;
-				} else if (tt == Token.INSTANCEOF || tt == Token.LE || tt == Token.LT || tt == Token.GE || 
-					   tt == Token.GT) {
+				} else if (tt == Token.INSTANCEOF || tt == Token.LE || tt == Token.LT || tt == Token.GE || tt == Token.GT) {
 					ts.GetToken ();
-					// FIXME, build binary
-					ShiftExpr ();
+					pn = new Relational (parent, pn, ShiftExpr (parent), JSToken.LessThan);
 					continue;
 				}
 				break;
@@ -826,15 +773,14 @@ namespace Microsoft.JScript {
 			return pn;
 		}
 
-		AST ShiftExpr ()
+		AST ShiftExpr (AST parent)
 		{
-			AST pn = AddExpr ();
+			AST pn = AddExpr (parent);
 			for (;;) {
 				int tt = ts.PeekToken ();
 				if (tt == Token.LSH || tt == Token.URSH || tt == Token.RSH) {
 					ts.GetToken ();
-					// FIXME, build binary
-					AddExpr ();
+					pn = new Binary (parent, pn, AddExpr (parent), JSToken.LeftShift);
 					continue;
 				}
 				break;
@@ -842,15 +788,14 @@ namespace Microsoft.JScript {
 			return pn;
 		}
 
-		AST AddExpr ()
+		AST AddExpr (AST parent)
 		{
-			AST pn = MulExpr ();
+			AST pn = MulExpr (parent);
 			for (;;) {
 				int tt = ts.PeekToken ();
 				if (tt == Token.ADD || tt == Token.SUB) {
 					ts.GetToken ();
-					// FIXME, build binary
-					MulExpr ();
+					pn = new Binary (parent, pn, MulExpr (parent), JSToken.Plus);
 					continue;
 				}
 				break;
@@ -858,15 +803,14 @@ namespace Microsoft.JScript {
 			return pn;
 		}
 
-		AST MulExpr ()
+		AST MulExpr (AST parent)
 		{
-			AST pn = UnaryExpr ();
+			AST pn = UnaryExpr (parent);
 			for (;;) {
 				int tt = ts.PeekToken ();
 				if (tt == Token.MUL || tt == Token.DIV || tt == Token.MOD) {
 					ts.GetToken ();					
-					// FIXME, create binary
-					UnaryExpr ();
+					pn = new Binary (parent, pn, UnaryExpr (parent), JSToken.Multiply);
 					continue;
 				}
 				break;
@@ -874,7 +818,7 @@ namespace Microsoft.JScript {
 			return pn;
 		}
 		
-		AST UnaryExpr ()
+		AST UnaryExpr (AST parent)
 		{
 			int tt;
 
@@ -883,28 +827,25 @@ namespace Microsoft.JScript {
 			ts.allow_reg_exp = false;
 
 			if (tt == Token.VOID || tt == Token.NOT || tt == Token.BITNOT || tt == Token.TYPEOF) {
-				// FIXME, create unary
-				return UnaryExpr ();
+				// FIXME, set to proper operator
+				return new Unary (parent, UnaryExpr (parent), JSToken.Void);
 			} else if (tt == Token.ADD) {
-				// FIXME, create unary
-				return UnaryExpr ();
+				return new Unary (parent, UnaryExpr (parent), JSToken.Plus);
 			} else if (tt == Token.SUB) {
-				// FIXME, create unary
-				return UnaryExpr ();
+				return new Unary (parent, UnaryExpr (parent), JSToken.Minus);
 			} else if (tt == Token.INC || tt == Token.DEC) {
-				// FIXME, create inc decl
-				return MemberExpr (true);
+				// FIXME, set to proper incr/decr
+				return new PostOrPrefixOperator (null, MemberExpr (parent, true), JSToken.Increment);
 			} else if (tt == Token.DELPROP) {
-				// FIXME, create unary
-				return UnaryExpr ();
+				return new Unary (parent, UnaryExpr (parent), JSToken.Delete);
 			} if (tt == Token.ERROR) {
 				;
 			} else {
 				ts.UnGetToken (tt);
 				int line_number = ts.LineNumber;
 				
-				AST pn = MemberExpr (true);
-
+				AST pn = MemberExpr (parent, true);
+				
 				/* don't look across a newline boundary for a postfix incop.
 
 				* the rhino scanner seems to work differently than the js
@@ -915,16 +856,15 @@ namespace Microsoft.JScript {
 				int peeked;				
 				if (((peeked = ts.PeekToken ()) == Token.INC || peeked == Token.DEC) && ts.LineNumber == line_number) {
 					int pf = ts.GetToken ();
-					// FIXME, create inc decl
-					return null;
+					// FIXME, set to proper JSToken.
+					return new PostOrPrefixOperator (null, pn, JSToken.Increment);
 				}
 				return pn;
 			}
-			// FIXME, create name with error
-			return null;
+			return new StringLiteral (null, "Error");  // Only reached on error.  Try to continue.
 		}
 
-		void ArgumentList (AST list) 
+		void ArgumentList (AST parent, AST list) 
 		{
 			bool matched;
 			ts.allow_reg_exp = true;
@@ -932,22 +872,18 @@ namespace Microsoft.JScript {
 			ts.allow_reg_exp = false;
 
 			if (!matched) {
-				bool first = true;
 				do {
-					first = false;
 					// FIXME, add the AssignExpr to the list
-					AssignExpr (false);
-				} while (ts.MatchToken (Token.COMMA));
-				
+					AssignExpr (parent, false);
+				} while (ts.MatchToken (Token.COMMA));				
 				MustMatchToken (Token.RP, "msg.no.paren.arg");
 			}
 		}
 
-		AST MemberExpr (bool allow_call_syntax)
+		AST MemberExpr (AST parent, bool allow_call_syntax)
 		{
 			int tt;
-			// FIXME, set it to something meaningful in the rest of the func
-			AST pn = null;
+			AST pn;
 
 			/* Check for new expressions. */
 			ts.allow_reg_exp = true;
@@ -960,11 +896,11 @@ namespace Microsoft.JScript {
 
 				/* Make a NEW node to append to. */
 				// FIXME, create Call or New ast node.
-				MemberExpr (false);
+				pn = new New (parent, MemberExpr (parent, false));
 
 				if (ts.MatchToken (Token.LP)) {
 					// FIXME, add the arguments list to pn
-					ArgumentList (pn);
+					ArgumentList (parent, pn);
 				}
 
 				/* XXX there's a check in the C source against
@@ -978,17 +914,14 @@ namespace Microsoft.JScript {
 				 */
 
 				tt = ts.PeekToken ();
-				if (tt == Token.LC) {
-					// FIXME, set the result of PrimaryExpr to something ;-)
-					pn = PrimaryExpr ();
-				}
+				if (tt == Token.LC)
+					pn = PrimaryExpr (parent);
 			} else
-				pn = PrimaryExpr ();
-			
-			return MemberExprTail (allow_call_syntax, pn);
+				pn = PrimaryExpr (parent);
+			return MemberExprTail (parent, allow_call_syntax, pn);
 		}
 
-		AST MemberExprTail (bool allow_call_syntax, AST pn)
+		AST MemberExprTail (AST parent, bool allow_call_syntax, AST pn)
 		{
 			int tt;
 
@@ -996,14 +929,11 @@ namespace Microsoft.JScript {
 				if (tt == Token.DOT) {
 					MustMatchToken (Token.NAME, "msg.no.name.after.dot");
 					string s = ts.GetString;					
-					// FIXME, create binary
-					// pn = nf.createBinary(Token.DOT, pn,
-					// nf.createName(ts.getString());
-					string foo = ts.GetString;
+					// FIXME: is 'new Identifier' appropriate here?
+					pn = new Binary (null, pn, new Identifier (null, ts.GetString), JSToken.AccessField);
 				} else if (tt == Token.LB) {
-					// FIXME, create binary
-					// pn = nf.createBinary(Token.LB, pn, expr(false));
-					Expr (false);
+					// FIXME, 
+					pn = new Binary (parent, pn, Expr (parent, false), JSToken.LeftBracket);
 					MustMatchToken (Token.RB, "msg.no.bracket.index");
 				} else if (allow_call_syntax && tt == Token.LP) {
 					/* make a call node */
@@ -1011,7 +941,7 @@ namespace Microsoft.JScript {
 					// pn = nf.createCallOrNew(Token.CALL, pn);
 
 					/* Add the arguments to pn, if any are supplied. */
-					ArgumentList (pn);
+					ArgumentList (parent, pn);
 				} else {
 					ts.UnGetToken (tt);
 					break;
@@ -1020,7 +950,7 @@ namespace Microsoft.JScript {
 			return pn;
 		}
 
-		AST PrimaryExpr ()
+		AST PrimaryExpr (AST parent)
 		{
 			int tt;
 			AST pn;
@@ -1030,10 +960,8 @@ namespace Microsoft.JScript {
 			ts.allow_reg_exp = false;
 
 			if (tt == Token.FUNCTION) {
-				// FIXME
-				return Function (FunctionType.EXPRESSION);
+				return Function (parent, FunctionType.Expression);
 			} else if (tt == Token.LB) {
-				// FIXME, set elems to something like an ArrayLiteral
 				ASTList elems = new ASTList ();
 				int skip_count = 0;
 				bool after_lb_or_comma = true;
@@ -1056,14 +984,13 @@ namespace Microsoft.JScript {
 					} else {
 						if (!after_lb_or_comma) 
 							ReportError ("msg.no.bracket.arg");
-						elems.Add (AssignExpr (false));
+						elems.Add (AssignExpr (parent, false));
 						after_lb_or_comma = false;
 					}
 				}
 				// FIXME: pass a real Context
 				return new ArrayLiteral (null, elems);
 			} else if (tt == Token.LC) {
-				// FIXME, create an elements container
 				ArrayList elems = new ArrayList ();
 
 				if (!ts.MatchToken (Token.RC)) {
@@ -1082,13 +1009,9 @@ namespace Microsoft.JScript {
 						
 						if (tt == Token.NAME || tt == Token.STRING) {
 							string s = ts.GetString;
-							// FIXME: they do
-							// property = ScriptRuntime.getIndexObject(s);
 							property = new ObjectLiteralItem (s);
 						} else if (tt == Token.NUMBER) {
 							double n = ts.GetNumber;
-							// FIXME, they do
-							// property = ScriptRuntime.getIndexObject(s);
 							property = new ObjectLiteralItem (n);
 						} else if (tt == Token.RC) {
 							// trailing comma is OK
@@ -1099,11 +1022,7 @@ namespace Microsoft.JScript {
 							goto leave_commaloop;
 						}
 						MustMatchToken (Token.COLON, "msg.no.colon.prop");
-
-						// FIXME, add properties to elems
-						// elems.add(property);
-						// elems.add(assignExpr(false));
-						property.exp = AssignExpr (false);
+						property.exp = AssignExpr (parent, false);
 						elems.Add (property);
 					} while (ts.MatchToken (Token.COMMA));
 					MustMatchToken (Token.RC, "msg.no.brace.prop");
@@ -1113,12 +1032,11 @@ namespace Microsoft.JScript {
 				}
 				return new ObjectLiteral (elems);
 			} else if (tt == Token.LP) {
-				pn = Expr (false);
+				pn = Expr (parent, false);
 				MustMatchToken (Token.RP, "msg.no.paren");
 				return pn;
 			} else if (tt == Token.NAME) {
 				string name = ts.GetString;
-				// FIXME, sure must create a identifier?
 				return new Identifier (null, name);
 			} else if (tt == Token.NUMBER) {
 				double n = ts.GetNumber;
@@ -1130,15 +1048,14 @@ namespace Microsoft.JScript {
 				string flags = ts.reg_exp_flags;
 				ts.reg_exp_flags = null;
 				string re = ts.GetString;
-				// FIXME, add reg exp to script
-				// int index = currentScriptOrFn.addRegexp(re, flags);
 				return new RegExpLiteral (re, flags);
 			} else if (tt == Token.NULL) {
 				// FIXME, build the null object;
+				return null;
 			} else if (tt ==  Token.THIS) {
-				return new This ();
+				return new This (); 
 			} else if (tt == Token.FALSE || tt == Token.TRUE) {
-				bool v;
+				bool v;	
 				if (tt == Token.FALSE)
 					v = false;
 				else
@@ -1150,7 +1067,7 @@ namespace Microsoft.JScript {
 				/* the scanner or one of its subroutines reported the error. */
 			} else
 				ReportError ("msg.syntax");
-			return null;
-		}
+			return null; // should never reach here
+		}		
 	}
 }
