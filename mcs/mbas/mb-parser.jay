@@ -1373,7 +1373,7 @@ must_override_sub_declaration
 	: MUSTOVERRIDE SUB identifier opt_params opt_implement_clause logical_end_of_line
 	  {	
 	  	if (current_container is Module)
-	  		Report.Error (433, "Methods in a Module cannot be declared 'MustOverride'.");
+	  		Report.Error (30433, "Methods in a Module cannot be declared 'MustOverride'.");
 	  		
 	  	if (current_container is Struct)
 	  		Report.Error (435, "Methods in a Structure cannot be declared 'MustOverride'.");
@@ -1398,7 +1398,7 @@ must_override_func_declaration
 			system_object_expr : (Expression) $4 ) : (Expression) $6;
 
 	  	if (current_container is Module)
-	  		Report.Error (433, "Methods in a Module cannot be declared 'MustOverride'.");
+	  		Report.Error (30433, "Methods in a Module cannot be declared 'MustOverride'.");
 	  		
 	  	if (current_container is Struct)
 	  		Report.Error (435, "Methods in a Structure cannot be declared 'MustOverride'.");

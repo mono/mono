@@ -713,7 +713,7 @@ namespace Mono.MonoBASIC {
 			label = block.LookupLabel (target);
 			if (label == null){
 				Report.Error (
-					159, loc,
+					30132, loc,
 					"No such label `" + target + "' in this scope");
 				return false;
 			}
@@ -842,7 +842,7 @@ namespace Mono.MonoBASIC {
 			}
 
 			if (!ec.Switch.GotDefault){
-				Report.Error (159, loc, "No default target on switch statement");
+				Report.Error (30132, loc, "No default target on switch statement");
 				return false;
 			}
 			ec.ig.Emit (OpCodes.Br, ec.Switch.DefaultTarget);
@@ -875,7 +875,7 @@ namespace Mono.MonoBASIC {
 				return false;
 
 			if (!(expr is Constant)){
-				Report.Error (159, loc, "Target expression for goto case is not constant");
+				Report.Error (30132, loc, "Target expression for goto case is not constant");
 				return false;
 			}
 
@@ -889,7 +889,7 @@ namespace Mono.MonoBASIC {
 
 			if (sl == null){
 				Report.Error (
-					159, loc,
+					30132, loc,
 					"No such label 'case " + val + "': for the goto case");
 			}
 
@@ -4090,7 +4090,7 @@ namespace Mono.MonoBASIC {
 			bool val;
 			
 			if (type.IsValueType){
-				Report.Error (185, loc, "lock statement requires the expression to be " +
+				Report.Error (30582, loc, "lock statement requires the expression to be " +
 					      " a reference type (type is: `" +
 					      TypeManager.MonoBASIC_Name (type) + "'");
 				return false;
@@ -5685,7 +5685,7 @@ namespace Mono.MonoBASIC {
 
 				NewIndexes = args;
 				if (RedimTarget.Type.GetArrayRank() != args.Count)
-					Report.Error (3415, "'ReDim' cannot change the number of dimensions of an array.");
+					Report.Error (30415, "'ReDim' cannot change the number of dimensions of an array.");
 
 				BaseType = RedimTarget.Type.GetElementType();
 				Expression BaseTypeExpr = MonoBASIC.Parser.DecomposeQI(BaseType.FullName.ToString(), Location.Null);

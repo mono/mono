@@ -722,7 +722,7 @@ namespace Mono.MonoBASIC {
 					Error_CompileTimeOverflow (loc);
 
 				} catch (DivideByZeroException) {
-					Report.Error (020, loc, "Division by constant zero");
+					Report.Error (30542, loc, "Division by constant zero");
 				}
 				
 				break;

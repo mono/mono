@@ -3509,7 +3509,7 @@ namespace Mono.MonoBASIC {
 			}
 			
 			if ((parent is Struct) && ((ModFlags & Modifiers.PROTECTED) != 0))
-				Report.Error (30435, Location,
+				Report.Error (31047, Location,
 					"'Variable' inside a 'Structure' can not be " +
 					"declared as 'Protected'");
 

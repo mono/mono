@@ -429,7 +429,7 @@ namespace Mono.MonoBASIC {
 		public static void Error_AttributeNotValidForElement (Attribute a, Location loc)
 		{
 			Report.Error (
-				592, loc, "Attribute '" + a.Name +
+				30662, loc, "Attribute '" + a.Name +
 				"' is not valid on this declaration type. " +
 				"It is valid on " + a.GetValidTargets () + "declarations only.");
 		}
@@ -654,7 +654,7 @@ namespace Mono.MonoBASIC {
 		
 			AttributeUsageAttribute usage_attr = GetAttributeUsage ();
 			if ((usage_attr.ValidOn & ias.AttributeTargets) == 0) {
-				Report.Error (592, Location, "Attribute" + Name + "is not valid on this declaration type. It is valid on " + GetValidTargets () + " declarations only.");
+				Report.Error (30662, Location, "Attribute" + Name + "is not valid on this declaration type. It is valid on " + GetValidTargets () + " declarations only.");
 				return;
 			}
 		
