@@ -1,3 +1,9 @@
+2003-06-09  Duncan Mak  <duncan@ximian.com>
+
+	* Array.cs: Revert the last revert. I fixed it.
+	(Sort): Put a try-catch block around qsort, and wrap whatever
+	Exception we get into a InvalidOperationException.
+
 2003-06-08 Jackson Harper <jackson@latitudegeo.com>
 
 	* Array.cs: Revert last patch, it broke some other functionality.

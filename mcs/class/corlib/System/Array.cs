@@ -301,6 +301,9 @@ namespace System
 
 		public static Array CreateInstance(Type elementType, int[] lengths)
 		{
+                        if (elementType == null || lengths == null)
+                                throw new ArgumentException ("The input cannot be null.");
+
                         if (lengths.Length > 255)
                                 throw new TypeLoadException ();
 
@@ -311,8 +314,18 @@ namespace System
 
 		public static Array CreateInstance(Type elementType, int[] lengths, int [] bounds)
 		{
-			if (bounds == null)
-				throw new ArgumentNullException("bounds");
+			if (elementType == null || bounds == null || bounds == null)
+				throw new ArgumentNullException ("The input cannot be null.");
+
+                        if (lengths.Length < 1 || lengths.Length != bounds.Length)
+                                throw new ArgumentException ();
+
+                        foreach (int i in lengths)
+                                if (i < 0) throw new ArgumentOutOfRangeException ();
+
+                        for (int j = 0; j < bounds.Length; j ++)
+                                if (bounds [j] + lengths [j] > Int32.MaxValue)
+                                        throw new ArgumentOutOfRangeException ();
 
                         if (lengths.Length > 255)
                                 throw new TypeLoadException ();
@@ -615,9 +628,11 @@ namespace System
 			if (array.Rank > 1)
 				throw new RankException ();
 
-			if (length < 0 || index-length+1 < array.GetLowerBound (0) ||
-			    index > array.GetUpperBound (0))
-				throw new ArgumentOutOfRangeException ();
+			if (length < 0 ||
+                                index < array.GetLowerBound (0) || index > array.GetUpperBound (0) ||
+                                index-length+1 < array.GetLowerBound (0) || index > array.GetUpperBound (0))
+                                throw new ArgumentOutOfRangeException ();
+				
 
 			for (int i = index; i >= index-length+1; i--)
 			{
@@ -727,11 +742,15 @@ namespace System
 			if (keys.Length - (index + keys.GetLowerBound (0)) < length 
 				|| (items != null && index > items.Length - length))
 				throw new ArgumentException ();
-			
-			int low0 = index;
-			int high0 = index + length - 1;
 
-			qsort (keys, items, low0, high0, comparer);
+			try {
+                                int low0 = index;
+                                int high0 = index + length - 1;
+                                qsort (keys, items, low0, high0, comparer);
+
+                        } catch (Exception e) {
+                                throw new InvalidOperationException ("The comparer threw an exception", e);
+                        }
 		}
 
 		private static void qsort (Array keys, Array items, int low0, int high0, IComparer comparer)
