@@ -1,4 +1,8 @@
 
+Wed Jun 4 13:13:52 CEST 2003 Paolo Molaro <lupus@ximian.com>
+
+	* mini.c: kill duplicated definition of mono_debug_format.
+
 Wed Jun 4 13:09:51 CEST 2003 Paolo Molaro <lupus@ximian.com>
 
 	* mini-x86.c, arrays.cs: fixed register allocation bug.
