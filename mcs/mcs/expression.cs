@@ -5265,11 +5265,11 @@ namespace Mono.CSharp {
 			// If `left' is null, then we're called from SimpleNameResolve and this is
 			// a member in the currently defining class.
 			if (left == null) {
-				left_is_type = ec.IsStatic;
+				left_is_type = ec.IsStatic || ec.IsFieldInitializer;
 				left_is_explicit = false;
 
 				// Implicitly default to `this' unless we're static.
-				if (!ec.IsStatic && !ec.InEnumContext)
+				if (!ec.IsStatic && !ec.IsFieldInitializer && !ec.InEnumContext)
 					left = ec.This;
 			} else {
 				left_is_type = left is TypeExpr;
@@ -5287,7 +5287,7 @@ namespace Mono.CSharp {
 				//
 				if (left_is_type){
 					if (!mg.RemoveInstanceMethods ()){
-						SimpleName.Error_ObjectRefRequired (loc, mg.Methods [0].Name); 
+						SimpleName.Error_ObjectRefRequired (ec, loc, mg.Methods [0].Name); 
 						return null;
 					}
 
@@ -5313,7 +5313,7 @@ namespace Mono.CSharp {
 				if (!mg.RemoveStaticMethods ()){
 					if (IdenticalNameAndTypeName (ec, left_original, loc)){
 						if (!mg.RemoveInstanceMethods ()){
-							SimpleName.Error_ObjectRefRequired (loc, mg.Methods [0].Name);
+							SimpleName.Error_ObjectRefRequired (ec, loc, mg.Methods [0].Name);
 							return null;
 						}
 						return member_lookup;
@@ -5430,7 +5430,7 @@ namespace Mono.CSharp {
 						if (IdenticalNameAndTypeName (ec, left_original, loc))
 							return member_lookup;
 
-						SimpleName.Error_ObjectRefRequired (loc, me.Name);
+						SimpleName.Error_ObjectRefRequired (ec, loc, me.Name);
 						return null;
 					}
 				} else {
@@ -5460,7 +5460,7 @@ namespace Mono.CSharp {
 						IMemberExpr mexp = (IMemberExpr) left;
 
 						if (!mexp.IsStatic){
-							SimpleName.Error_ObjectRefRequired (loc, mexp.Name);
+							SimpleName.Error_ObjectRefRequired (ec, loc, mexp.Name);
 							return null;
 						}
 					}

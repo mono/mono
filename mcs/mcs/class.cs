@@ -294,7 +294,7 @@ namespace Mono.CSharp {
 			
 			fields.Add (field);
 			
-			if (field.Initializer != null){
+			if (field.HasInitializer){
 				if ((field.ModFlags & Modifiers.STATIC) != 0){
 					if (initialized_static_fields == null)
 						initialized_static_fields = new ArrayList ();
@@ -518,16 +518,11 @@ namespace Mono.CSharp {
 
 			if (fields == null)
 				return true;
-			
-			foreach (Field f in fields){
-				Object init = f.Initializer;
 
-				Expression e;
-				if (init is Expression)
-					e = (Expression) init;
-				else {
-					e = new ArrayCreation (f.Type, "", (ArrayList)init, f.Location);
-				}
+			foreach (Field f in fields){
+				Expression e = f.GetInitializerExpression (ec);
+				if (e == null)
+					return false;
 
 				Location l = f.Location;
 				FieldExpr fe = new FieldExpr (f.FieldBuilder, l);
@@ -544,7 +539,7 @@ namespace Mono.CSharp {
 					throw new Exception ("Assign.Resolve returned a non ExpressionStatement");
 				}
 			}
-			
+
 			return true;
 		}
 		
@@ -3026,7 +3021,6 @@ namespace Mono.CSharp {
 	// their common bits.  This is also used to flag usage of the field
 	//
 	abstract public class FieldBase : MemberBase {
-		public readonly Object Initializer;
 		public FieldBuilder  FieldBuilder;
 		public Status status;
 
@@ -3040,7 +3034,45 @@ namespace Mono.CSharp {
 				     object init, Attributes attrs, Location loc)
 			: base (type, mod, allowed_mod, name, attrs, loc)
 		{
-			Initializer = init;
+			this.init = init;
+		}
+
+		//
+		// Whether this field has an initializer.
+		//
+		public bool HasInitializer {
+			get {
+				return init != null;
+			}
+		}
+
+		// Private.
+		readonly Object init;
+		Expression init_expr;
+		bool init_expr_initialized = false;
+
+		//
+		// Resolves and returns the field initializer.
+		//
+		public Expression GetInitializerExpression (EmitContext ec)
+		{
+			if (init_expr_initialized)
+				return init_expr;
+
+			Expression e;
+			if (init is Expression)
+				e = (Expression) init;
+			else
+				e = new ArrayCreation (Type, "", (ArrayList)init, Location);
+
+			ec.IsFieldInitializer = true;
+			e = e.DoResolve (ec);
+			ec.IsFieldInitializer = false;
+
+			init_expr = e;
+			init_expr_initialized = true;
+
+			return init_expr;
 		}
 	}
 

@@ -3276,32 +3276,38 @@ namespace Mono.CSharp {
 			loc = l;
 		}
 
-		public static void Error_ObjectRefRequired (Location l, string name)
+		public static void Error_ObjectRefRequired (EmitContext ec, Location l, string name)
 		{
-			Report.Error (
-				120, l,
-				"An object reference is required " +
-				"for the non-static field `"+name+"'");
+			if (ec.IsFieldInitializer)
+				Report.Error (
+					236, l,
+					"A field initializer cannot reference the non-static field, " +
+					"method or property `"+name+"'");
+			else
+				Report.Error (
+					120, l,
+					"An object reference is required " +
+					"for the non-static field `"+name+"'");
 		}
 		
 		//
 		// Checks whether we are trying to access an instance
 		// property, method or field from a static body.
 		//
-		Expression MemberStaticCheck (Expression e)
+		Expression MemberStaticCheck (EmitContext ec, Expression e)
 		{
 			if (e is IMemberExpr){
 				IMemberExpr member = (IMemberExpr) e;
 				
 				if (!member.IsStatic){
-					Error_ObjectRefRequired (loc, Name);
+					Error_ObjectRefRequired (ec, loc, Name);
 					return null;
 				}
 			} else if (e is MethodGroupExpr){
 				MethodGroupExpr mg = (MethodGroupExpr) e;
 
 				if (!mg.RemoveInstanceMethods ()){
-					Error_ObjectRefRequired (loc, mg.Methods [0].Name);
+					Error_ObjectRefRequired (ec, loc, mg.Methods [0].Name);
 					return null;
 				}
 				return e;
@@ -3467,11 +3473,11 @@ namespace Mono.CSharp {
 			if (e is IMemberExpr)
 				return MemberAccess.ResolveMemberAccess (ec, e, null, loc, this);
 
-			if (ec.IsStatic){
+			if (ec.IsStatic || ec.IsFieldInitializer){
 				if (allow_static)
 					return e;
 
-				return MemberStaticCheck (e);
+				return MemberStaticCheck (ec, e);
 			} else
 				return e;
 		}

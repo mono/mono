@@ -1,5 +1,24 @@
 2002-08-07  Martin Baulig  <martin@gnome.org>
 
+	* class.cs (FieldBase.Initializer): Renamed to `init' and made private.
+	(FieldBase.HasFieldInitializer): New public property.
+	(FieldBase.GetInitializerExpression): New public method.  Resolves and
+	returns the field initializer and makes sure it is only resolved once.
+	(TypeContainer.EmitFieldInitializers): Call
+	FieldBase.GetInitializerExpression to get the initializer, this ensures
+	that it isn't resolved multiple times.
+
+	* codegen.cs (EmitContext): Added `bool IsFieldInitialier'.  This tells
+	the resolving process (SimpleName/MemberLookup) that we're currently
+	emitting a field initializer (which must not access any instance members,
+	this is an error CS0236).
+
+	* ecore.cs (SimpleName.Error_ObjectRefRequired): Added EmitContext
+	argument, if the `IsFieldInitializer' flag is set, we must report and
+	error CS0236 and not an error CS0120.	
+
+2002-08-07  Martin Baulig  <martin@gnome.org>
+
 	* ecore.cs (IMemberExpr): New public interface.
 	(FieldExpr, PropertyExpr, EventExpr): Implement IMemberExpr.
 	(SimpleName.SimpleNameResolve): Call MemberAccess.ResolveMemberAccess

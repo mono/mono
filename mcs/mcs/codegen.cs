@@ -213,6 +213,11 @@ namespace Mono.CSharp {
 		public bool IsStatic;
 
 		/// <summary>
+		///   Whether we are emitting a field initializer
+		/// </summary>
+		public bool IsFieldInitializer;
+
+		/// <summary>
 		///   The value that is allowed to be returned or NULL if there is no
 		///   return type.
 		/// </summary>
