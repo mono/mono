@@ -1,2 +1,2 @@
 #!/bin/sh
-exec @bindir@/@mono_interp@ @plat_bindir@/cert2spc.exe "$@"
+exec @bindir@/@mono_interp@ @mono_one_instdir@/cert2spc.exe "$@"
