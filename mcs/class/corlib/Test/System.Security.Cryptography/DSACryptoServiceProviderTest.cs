@@ -848,19 +848,27 @@ public class DSACryptoServiceProviderTest : Assertion {
 	{
 		// note only applicable when CspParameters isn't used - which don't
 		// help much as you can't know the generated key container name
-		DSACryptoServiceProvider.UseMachineKeyStore = true;
-		CspParameters csp = new CspParameters (13, null, "UseMachineKeyStore");
-		csp.KeyContainerName = "UseMachineKeyStore";
-		DSACryptoServiceProvider dsa = new DSACryptoServiceProvider (csp);
-		string machineKeyPair = dsa.ToXmlString (true);
-		dsa.Clear ();
+		try {
+			DSACryptoServiceProvider.UseMachineKeyStore = true;
+			CspParameters csp = new CspParameters (13, null, "UseMachineKeyStore");
+			csp.KeyContainerName = "UseMachineKeyStore";
+			DSACryptoServiceProvider dsa = new DSACryptoServiceProvider (csp);
+			string machineKeyPair = dsa.ToXmlString (true);
+			dsa.Clear ();
 
-		DSACryptoServiceProvider.UseMachineKeyStore = false;
-		csp = new CspParameters (13, null, "UseMachineKeyStore");
-		csp.Flags |= CspProviderFlags.UseMachineKeyStore;
-		dsa = new DSACryptoServiceProvider (csp);
+			DSACryptoServiceProvider.UseMachineKeyStore = false;
+			csp = new CspParameters (13, null, "UseMachineKeyStore");
+			csp.Flags |= CspProviderFlags.UseMachineKeyStore;
+			dsa = new DSACryptoServiceProvider (csp);
 
-		Assert ("UseMachineKeyStore", machineKeyPair != dsa.ToXmlString (true));
+			Assert ("UseMachineKeyStore", machineKeyPair != dsa.ToXmlString (true));
+		}
+		catch (CryptographicException ce) {
+			// only root can create the required directory (if inexistant)
+			// afterward anyone can use (read from) it
+			if (!(ce.InnerException is UnauthorizedAccessException))
+				throw;
+		}
 	}
 #endif
 

@@ -905,19 +905,27 @@ public class RSACryptoServiceProviderTest : Assertion {
 	{
 		// note only applicable when CspParameters isn't used - which don't
 		// help much as you can't know the generated key container name
-		RSACryptoServiceProvider.UseMachineKeyStore = true;
-		CspParameters csp = new CspParameters (1, null, "UseMachineKeyStore");
-		csp.KeyContainerName = "UseMachineKeyStore";
-		RSACryptoServiceProvider rsa = new RSACryptoServiceProvider (csp);
-		string machineKeyPair = rsa.ToXmlString (true);
-		rsa.Clear ();
+		try {
+			RSACryptoServiceProvider.UseMachineKeyStore = true;
+			CspParameters csp = new CspParameters (1, null, "UseMachineKeyStore");
+			csp.KeyContainerName = "UseMachineKeyStore";
+			RSACryptoServiceProvider rsa = new RSACryptoServiceProvider (csp);
+			string machineKeyPair = rsa.ToXmlString (true);
+			rsa.Clear ();
 
-		RSACryptoServiceProvider.UseMachineKeyStore = false;
-		csp = new CspParameters (1, null, "UseMachineKeyStore");
-		csp.Flags |= CspProviderFlags.UseMachineKeyStore;
-		rsa = new RSACryptoServiceProvider (csp);
+			RSACryptoServiceProvider.UseMachineKeyStore = false;
+			csp = new CspParameters (1, null, "UseMachineKeyStore");
+			csp.Flags |= CspProviderFlags.UseMachineKeyStore;
+			rsa = new RSACryptoServiceProvider (csp);
 
-		Assert ("UseMachineKeyStore", machineKeyPair != rsa.ToXmlString (true));
+			Assert ("UseMachineKeyStore", machineKeyPair != rsa.ToXmlString (true));
+		}
+		catch (CryptographicException ce) {
+			// only root can create the required directory (if inexistant)
+			// afterward anyone can use (read from) it
+			if (!(ce.InnerException is UnauthorizedAccessException))
+				throw;
+		}
 	}
 #endif
 

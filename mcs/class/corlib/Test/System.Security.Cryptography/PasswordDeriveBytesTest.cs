@@ -38,14 +38,263 @@ namespace MonoTests.System.Security.Cryptography {
 //	http://www.rsasecurity.com/rsalabs/pkcs/pkcs-5/index.html
 
 [TestFixture]
-public class PasswordDeriveBytesTest : Assertion {
-
-	public void AssertEquals (string msg, byte[] array1, byte[] array2)
-	{
-		AllTests.AssertEquals (msg, array1, array2);
-	}
+public class PasswordDeriveBytesTest {
 
 	static byte[] salt = { 0xDE, 0xAD, 0xC0, 0xDE };
+	static string ssalt = "DE-AD-C0-DE";
+
+	// Constructors
+
+	[Test]
+#if NET_2_0
+	[ExpectedException (typeof (ArgumentNullException))]
+#endif
+	public void Ctor_PasswordNullSalt ()
+	{
+		string pwd = null;
+		PasswordDeriveBytes pdb = new PasswordDeriveBytes (pwd, salt);
+	}
+
+	[Test]
+	public void Ctor_PasswordSaltNull ()
+	{
+		PasswordDeriveBytes pdb = new PasswordDeriveBytes ("s3kr3t", null);
+		Assert.AreEqual ("SHA1", pdb.HashName, "HashName");
+		Assert.AreEqual (100, pdb.IterationCount, "IterationCount");
+		Assert.IsNull (pdb.Salt, "Salt");
+	}
+
+	[Test]
+	public void Ctor_PasswordSalt ()
+	{
+		PasswordDeriveBytes pdb = new PasswordDeriveBytes ("s3kr3t", salt);
+		Assert.AreEqual ("SHA1", pdb.HashName, "HashName");
+		Assert.AreEqual (100, pdb.IterationCount, "IterationCount");
+		Assert.AreEqual (ssalt, BitConverter.ToString (pdb.Salt), "Salt");
+	}
+
+	[Test]
+#if NET_2_0
+	[ExpectedException (typeof (ArgumentNullException))]
+#else
+	[Ignore ("CspParameters aren't supported by Mono (requires CryptoAPI)")]
+#endif
+	public void Ctor_PasswordNullSaltCspParameters ()
+	{
+		string pwd = null;
+		PasswordDeriveBytes pdb = new PasswordDeriveBytes (pwd, salt, new CspParameters ());
+	}
+
+	[Test]
+	[Ignore ("CspParameters aren't supported by Mono (requires CryptoAPI)")]
+	public void Ctor_PasswordSaltNullCspParameters ()
+	{
+		PasswordDeriveBytes pdb = new PasswordDeriveBytes ("s3kr3t", null, new CspParameters ());
+		Assert.AreEqual ("SHA1", pdb.HashName, "HashName");
+		Assert.AreEqual (100, pdb.IterationCount, "IterationCount");
+		Assert.IsNull (pdb.Salt, "Salt");
+	}
+
+	[Test]
+	public void Ctor_PasswordSaltCspParametersNull ()
+	{
+		PasswordDeriveBytes pdb = new PasswordDeriveBytes ("s3kr3t", salt, null);
+		Assert.AreEqual ("SHA1", pdb.HashName, "HashName");
+		Assert.AreEqual (100, pdb.IterationCount, "IterationCount");
+		Assert.AreEqual (ssalt, BitConverter.ToString (pdb.Salt), "Salt");
+	}
+
+	[Test]
+	[Ignore ("CspParameters aren't supported by Mono (requires CryptoAPI)")]
+	public void Ctor_PasswordSaltCspParameters ()
+	{
+		PasswordDeriveBytes pdb = new PasswordDeriveBytes ("s3kr3t", salt, new CspParameters ());
+		Assert.AreEqual ("SHA1", pdb.HashName, "HashName");
+		Assert.AreEqual (100, pdb.IterationCount, "IterationCount");
+		Assert.AreEqual (ssalt, BitConverter.ToString (pdb.Salt), "Salt");
+	}
+
+	[Test]
+#if NET_2_0
+	[ExpectedException (typeof (ArgumentNullException))]
+#endif
+	public void Ctor_PasswordNullSaltHashIteration ()
+	{
+		string pwd = null;
+		PasswordDeriveBytes pdb = new PasswordDeriveBytes (pwd, salt, "SHA1", 1);
+	}
+
+	[Test]
+	public void Ctor_PasswordSaltNullHashIteration ()
+	{
+		PasswordDeriveBytes pdb = new PasswordDeriveBytes ("s3kr3t", null, "SHA1", 1);
+		Assert.AreEqual ("SHA1", pdb.HashName, "HashName");
+		Assert.AreEqual (1, pdb.IterationCount, "IterationCount");
+		Assert.IsNull (pdb.Salt, "Salt");
+	}
+
+	[Test]
+	[ExpectedException (typeof (ArgumentNullException))]
+	public void Ctor_PasswordSaltHashNullIteration ()
+	{
+		PasswordDeriveBytes pdb = new PasswordDeriveBytes ("s3kr3t", salt, null, 1);
+	}
+
+	[Test]
+	[ExpectedException (typeof (ArgumentOutOfRangeException))]
+	public void Ctor_PasswordSaltHashIterationNegative ()
+	{
+		PasswordDeriveBytes pdb = new PasswordDeriveBytes ("s3kr3t", salt, "SHA1", -1);
+	}
+
+	[Test]
+	[ExpectedException (typeof (ArgumentOutOfRangeException))]
+	public void Ctor_PasswordSaltHashIterationZero ()
+	{
+		PasswordDeriveBytes pdb = new PasswordDeriveBytes ("s3kr3t", salt, "SHA1", 0);
+	}
+
+	[Test]
+	public void Ctor_PasswordSaltHashIterationMaxValue ()
+	{
+		PasswordDeriveBytes pdb = new PasswordDeriveBytes ("s3kr3t", salt, "SHA1", Int32.MaxValue);
+		Assert.AreEqual ("SHA1", pdb.HashName, "HashName");
+		Assert.AreEqual (Int32.MaxValue, pdb.IterationCount, "IterationCount");
+		Assert.AreEqual (ssalt, BitConverter.ToString (pdb.Salt), "Salt");
+	}
+
+	[Test]
+	public void Ctor_PasswordSaltHashIteration ()
+	{
+		PasswordDeriveBytes pdb = new PasswordDeriveBytes ("s3kr3t", salt, "SHA1", 1);
+		Assert.AreEqual ("SHA1", pdb.HashName, "HashName");
+		Assert.AreEqual (1, pdb.IterationCount, "IterationCount");
+		Assert.AreEqual (ssalt, BitConverter.ToString (pdb.Salt), "Salt");
+	}
+
+	[Test]
+#if NET_2_0
+	[ExpectedException (typeof (ArgumentNullException))]
+#else
+	[Ignore ("CspParameters aren't supported by Mono (requires CryptoAPI)")]
+#endif
+	public void Ctor_PasswordNullSaltHashIterationCspParameters ()
+	{
+		string pwd = null;
+		PasswordDeriveBytes pdb = new PasswordDeriveBytes (pwd, salt, "SHA1", 1, new CspParameters ());
+	}
+
+	[Test]
+	[Ignore ("CspParameters aren't supported by Mono (requires CryptoAPI)")]
+	public void Ctor_PasswordSaltNullHashIterationCspParameters ()
+	{
+		PasswordDeriveBytes pdb = new PasswordDeriveBytes ("s3kr3t", null, "SHA1", 1, new CspParameters ());
+		Assert.AreEqual ("SHA1", pdb.HashName, "HashName");
+		Assert.AreEqual (1, pdb.IterationCount, "IterationCount");
+		Assert.IsNull (pdb.Salt, "Salt");
+	}
+
+	[Test]
+	[ExpectedException (typeof (ArgumentNullException))]
+	public void Ctor_PasswordSaltHashNullIterationCspParameters ()
+	{
+		PasswordDeriveBytes pdb = new PasswordDeriveBytes ("s3kr3t", salt, null, 1, new CspParameters ());
+	}
+
+	[Test]
+	[ExpectedException (typeof (ArgumentOutOfRangeException))]
+	public void Ctor_PasswordSaltHashIterationNegativeCspParameters ()
+	{
+		PasswordDeriveBytes pdb = new PasswordDeriveBytes ("s3kr3t", salt, "SHA1", -1, new CspParameters ());
+	}
+
+	[Test]
+	[ExpectedException (typeof (ArgumentOutOfRangeException))]
+	public void Ctor_PasswordSaltHashIterationZeroCspParameters ()
+	{
+		PasswordDeriveBytes pdb = new PasswordDeriveBytes ("s3kr3t", salt, "SHA1", 0, new CspParameters ());
+	}
+
+	[Test]
+	[Ignore ("CspParameters aren't supported by Mono (requires CryptoAPI)")]
+	public void Ctor_PasswordSaltHashIterationMaxValueCspParameters ()
+	{
+		PasswordDeriveBytes pdb = new PasswordDeriveBytes ("s3kr3t", salt, "SHA1", Int32.MaxValue, new CspParameters ());
+		Assert.AreEqual ("SHA1", pdb.HashName, "HashName");
+		Assert.AreEqual (Int32.MaxValue, pdb.IterationCount, "IterationCount");
+		Assert.AreEqual (ssalt, BitConverter.ToString (pdb.Salt), "Salt");
+	}
+
+	[Test]
+	public void Ctor_PasswordSaltHashIterationCspParametersNull ()
+	{
+		PasswordDeriveBytes pdb = new PasswordDeriveBytes ("s3kr3t", salt, "SHA1", 1, null);
+		Assert.AreEqual ("SHA1", pdb.HashName, "HashName");
+		Assert.AreEqual (1, pdb.IterationCount, "IterationCount");
+		Assert.AreEqual (ssalt, BitConverter.ToString (pdb.Salt), "Salt");
+	}
+
+	[Test]
+	[Ignore ("CspParameters aren't supported by Mono (requires CryptoAPI)")]
+	public void Ctor_PasswordSaltHashIterationCspParameters ()
+	{
+		PasswordDeriveBytes pdb = new PasswordDeriveBytes ("s3kr3t", salt, "SHA1", 1, new CspParameters ());
+		Assert.AreEqual ("SHA1", pdb.HashName, "HashName");
+		Assert.AreEqual (1, pdb.IterationCount, "IterationCount");
+		Assert.AreEqual (ssalt, BitConverter.ToString (pdb.Salt), "Salt");
+	}
+
+	// Properties
+
+	[Test]
+	[ExpectedException (typeof (ArgumentNullException))]
+	public void Property_HashName_Null ()
+	{
+		PasswordDeriveBytes pdb = new PasswordDeriveBytes ("s3kr3t", salt, "SHA1", 1);
+		Assert.AreEqual ("SHA1", pdb.HashName, "HashName");
+		pdb.HashName = null;
+	}
+
+	[Test]
+#if !NET_2_0
+	// Fixed in 2.0 beta 1
+	[ExpectedException (typeof (NullReferenceException))]
+#endif
+	public void Property_Salt ()
+	{
+		PasswordDeriveBytes pdb = new PasswordDeriveBytes ("s3kr3t", salt);
+		Assert.AreEqual (ssalt, BitConverter.ToString (pdb.Salt), "Salt");
+		pdb.Salt = null;
+		Assert.IsNull (pdb.Salt, "Salt");
+	}
+
+	[Test]
+	public void Property_Salt_Modify ()
+	{
+		PasswordDeriveBytes pdb = new PasswordDeriveBytes ("s3kr3t", salt);
+		Assert.AreEqual (ssalt, BitConverter.ToString (pdb.Salt), "Salt");
+		pdb.Salt [0] = 0xFF;
+		// modification rejected (the property returned a copy of the salt)
+		Assert.AreEqual (ssalt, BitConverter.ToString (pdb.Salt), "Salt");
+	}
+
+	// 1.0/1.1 compatibility
+
+#if !NET_2_0
+	// 1.0/1.1 accepted a null password as valid - but throw the 
+	// ArgumentNullException when GetBytes is called
+	// byte stream from the null input. Check that we can do the same...
+	[Test]
+	[ExpectedException (typeof (ArgumentNullException))]
+	public void GetBytes_PasswordNull ()
+	{
+		string pwd = null;
+		PasswordDeriveBytes pdb = new PasswordDeriveBytes (pwd, salt);
+		pdb.GetBytes (24);
+	}
+#endif
+
+	// Old tests
 
 	static int ToInt32LE(byte [] bytes, int offset)
 	{
@@ -65,7 +314,7 @@ public class PasswordDeriveBytesTest : Assertion {
 					break;
 				}
 			}
-			Assert (msg + " #" + j, compare);
+			Assert.IsTrue (compare, msg + " #" + j);
 			pd.Reset ();
 		}
 	}
@@ -79,7 +328,7 @@ public class PasswordDeriveBytesTest : Assertion {
 		for (int i=0; i < iter; i++) {
 			pass = pd.GetBytes (bloc);
 		}
-		AssertEquals (msg, pass, finalKey);
+		Assert.AreEqual (pass, finalKey, msg);
 	}
 
 	public void Run (string password, byte[] salt, string hashname, int iterations, int getbytes, int lastFourBytes) 
@@ -91,7 +340,7 @@ public class PasswordDeriveBytesTest : Assertion {
 		msg += ", hash=" + hashname;
 		msg += ", iter=" + iterations;
 		msg += ", get=" + getbytes + "]";
-		AssertEquals (msg, lastFourBytes, ToInt32LE (key, key.Length - 4));
+		Assert.AreEqual (lastFourBytes, ToInt32LE (key, key.Length - 4), msg);
 	}
 
 	[Test]
@@ -108,18 +357,18 @@ public class PasswordDeriveBytesTest : Assertion {
 		
 		// this should work (we check the last four devired bytes to be sure)
 		byte[] key = pd.GetBytes (size);
-		AssertEquals ("Last 4 bytes", lastFourBytes, ToInt32LE (key, size - 4));
+		Assert.AreEqual (lastFourBytes, ToInt32LE (key, size - 4), "Last 4 bytes");
 
 		// but we can't get another byte from it!
 		try {
 			key = pd.GetBytes (1);
-			Fail ("Expected CryptographicException but got none");
+			Assert.Fail ("Expected CryptographicException but got none");
 		}
 		catch (CryptographicException) {
 			// LAMESPEC: no limit is documented
 		}
 		catch (Exception e) {
-			Fail ("Expected CryptographicException but got " + e.ToString ());
+			Assert.Fail ("Expected CryptographicException but got " + e.ToString ());
 		}
 	}
 
@@ -289,13 +538,12 @@ public class PasswordDeriveBytesTest : Assertion {
 		for (int i=0; i < iter; i++) {
 			pass = pd.GetBytes (bloc);
 		}
-		AssertEquals (msg, pass, key);
+		Assert.AreEqual (pass, key, msg);
 	}
 
 	[Test]
 	public void SHA1SaltShortRun ()
 	{
-		byte[] salt = { 0xDE, 0xAD, 0xC0, 0xDE };
 		byte[] key = { 0x0B, 0x61, 0x93, 0x96, 0x3A, 0xFF, 0x0D, 0xFC, 0xF6, 0x3D, 0xA3, 0xDB, 0x34, 0xC2, 0x99, 0x71, 0x69, 0x11, 0x61, 0xB5 };
 		PasswordDeriveBytes pd = new PasswordDeriveBytes ("password", salt, "SHA1", 1);
 		string msg = "PKCS#5 password salt SHA1 (1)";
@@ -305,7 +553,6 @@ public class PasswordDeriveBytesTest : Assertion {
 	[Test]
 	public void SHA1SaltLongRun () 
 	{
-		byte[] salt = { 0xDE, 0xAD, 0xC0, 0xDE };
 		byte[] key = { 0x91, 0xDA, 0xF9, 0x9D, 0x7C, 0xA9, 0xB4, 0x42, 0xB8, 0xD9, 0x45, 0xAB, 0x69, 0xEE, 0x12, 0xBC, 0x48, 0xDD, 0x38, 0x74 };
 		PasswordDeriveBytes pd = new PasswordDeriveBytes ("password", salt, "SHA1", 1);
 		string msg = "PKCS#5-Long password salt SHA1 (1)";
@@ -333,7 +580,6 @@ public class PasswordDeriveBytesTest : Assertion {
 	[Test]
 	public void MD5SaltShortRun ()
 	{
-		byte[] salt = { 0xDE, 0xAD, 0xC0, 0xDE };
 		byte[] key = { 0xA5, 0x4D, 0x4E, 0xDD, 0x3A, 0x59, 0xAC, 0x98, 0x08, 0xDA, 0xE7, 0xF2, 0x85, 0x2F, 0x7F, 0xF2 };
 		PasswordDeriveBytes pd = new PasswordDeriveBytes ("mono", salt, "MD5", 100);
 		string msg = "PKCS#5 mono salt MD5 (100)";
@@ -343,7 +589,6 @@ public class PasswordDeriveBytesTest : Assertion {
 	[Test]
 	public void MD5SaltLongRun () 
 	{
-		byte[] salt = { 0xDE, 0xAD, 0xC0, 0xDE };
 		byte[] key = { 0x92, 0x51, 0x4D, 0x10, 0xE1, 0x5F, 0xA8, 0x44, 0xEF, 0xFC, 0x0F, 0x1F, 0x6F, 0x3E, 0x40, 0x36 };
 		PasswordDeriveBytes pd = new PasswordDeriveBytes ("mono", salt, "MD5", 100);
 		string msg = "PKCS#5-Long mono salt MD5 (100)";
@@ -371,84 +616,83 @@ public class PasswordDeriveBytesTest : Assertion {
 	[Test]
 	public void Properties () 
 	{
-		byte[] salt = { 0xDE, 0xAD, 0xC0, 0xDE };
 		// create object...
 		PasswordDeriveBytes pd = new PasswordDeriveBytes ("password", null, "MD5", 1000);
-		AssertEquals ("HashName-MD5", "MD5", pd.HashName);
-		AssertEquals ("IterationCount-1000", 1000, pd.IterationCount);
+		Assert.AreEqual ("MD5", pd.HashName, "HashName-MD5");
+		Assert.AreEqual (1000, pd.IterationCount, "IterationCount-1000");
 		// ...then change all its properties...
 		pd.HashName = "SHA1";
-		AssertEquals ("HashName-SHA1", "SHA1", pd.HashName);
+		Assert.AreEqual ("SHA1", pd.HashName, "HashName-SHA1");
 		pd.Salt = salt;
-		AssertEquals ("Salt", "DE-AD-C0-DE", BitConverter.ToString (pd.Salt));
+		Assert.AreEqual (ssalt, BitConverter.ToString (pd.Salt), "Salt");
 		pd.IterationCount = 1;
-		AssertEquals ("IterationCount-1", 1, pd.IterationCount);
+		Assert.AreEqual (1, pd.IterationCount, "IterationCount-1");
 		byte[] expectedKey = { 0x0b, 0x61, 0x93, 0x96 };
 		// ... before using it
-		AssertEquals ("PKCS#5 test properties", expectedKey, pd.GetBytes (4));
+		Assert.AreEqual (expectedKey, pd.GetBytes (4), "PKCS#5 test properties");
 		// it should work but if we try to set any properties after GetBytes
 		// they should all throw an exception
 		try {
 			pd.HashName = "SHA256";
-			Fail ("PKCS#5 can't set HashName after GetBytes - expected CryptographicException but got none");
+			Assert.Fail ("PKCS#5 can't set HashName after GetBytes - expected CryptographicException but got none");
 		}
 		catch (CryptographicException) {
 			// do nothing, this is what we expect
 		}
 		catch (Exception e) {
-			Fail ("PKCS#5 can't set HashName after GetBytes - expected CryptographicException but got " + e.ToString ());
+			Assert.Fail ("PKCS#5 can't set HashName after GetBytes - expected CryptographicException but got " + e.ToString ());
 		}
 		try {
 			pd.Salt = expectedKey;
-			Fail ("PKCS#5 can't set Salt after GetBytes - expected CryptographicException but got none");
+			Assert.Fail ("PKCS#5 can't set Salt after GetBytes - expected CryptographicException but got none");
 		}
 		catch (CryptographicException) {
 			// do nothing, this is what we expect
 		}
 		catch (Exception e) {
-			Fail ("PKCS#5 can't set Salt after GetBytes - expected CryptographicException but got " + e.ToString ());
+			Assert.Fail ("PKCS#5 can't set Salt after GetBytes - expected CryptographicException but got " + e.ToString ());
 		}
 		try {
 			pd.IterationCount = 10;
-			Fail ("PKCS#5 can't set IterationCount after GetBytes - expected CryptographicException but got none");
+			Assert.Fail ("PKCS#5 can't set IterationCount after GetBytes - expected CryptographicException but got none");
 		}
 		catch (CryptographicException) {
 			// do nothing, this is what we expect
 		}
 		catch (Exception e) {
-			Fail ("PKCS#5 can't set IterationCount after GetBytes - expected CryptographicException but got " + e.ToString ());
+			Assert.Fail ("PKCS#5 can't set IterationCount after GetBytes - expected CryptographicException but got " + e.ToString ());
 		}
 		// same thing after Reset
 		pd.Reset ();
 		try {
 			pd.HashName = "SHA256";
-			Fail ("PKCS#5 can't set HashName after Reset - expected CryptographicException but got none");
+			Assert.Fail ("PKCS#5 can't set HashName after Reset - expected CryptographicException but got none");
 		}
 		catch (CryptographicException) {
 			// do nothing, this is what we expect
 		}
 		catch (Exception e) {
-			Fail ("PKCS#5 can't set HashName after Reset - expected CryptographicException but got " + e.ToString ());
+			Assert.Fail ("PKCS#5 can't set HashName after Reset - expected CryptographicException but got " + e.ToString ());
 		}
 		try {
 			pd.Salt = expectedKey;
-			Fail ("PKCS#5 can't set Salt after Reset - expected CryptographicException but got none");
+			Assert.Fail ("PKCS#5 can't set Salt after Reset - expected CryptographicException but got none");
 		}
 		catch (CryptographicException) {
 			// do nothing, this is what we expect
 		}
 		catch (Exception e) {
-			Fail ("PKCS#5 can't set Salt after Reset - expected CryptographicException but got " + e.ToString ());
+			Assert.Fail ("PKCS#5 can't set Salt after Reset - expected CryptographicException but got " + e.ToString ());
 		}
 		try {
 			pd.IterationCount = 10;
-			Fail ("PKCS#5 can't set IterationCount after Reset - expected CryptographicException but got none");
+			Assert.Fail ("PKCS#5 can't set IterationCount after Reset - expected CryptographicException but got none");
 		}
 		catch (CryptographicException) {
 			// do nothing, this is what we expect
 		}
 		catch (Exception e) {
-			Fail ("PKCS#5 can't set IterationCount after Reset - expected CryptographicException but got " + e.ToString ());
+			Assert.Fail ("PKCS#5 can't set IterationCount after Reset - expected CryptographicException but got " + e.ToString ());
 		}
 	}
 
@@ -459,7 +703,6 @@ public class PasswordDeriveBytesTest : Assertion {
 #endif
 	public void StrangeBehaviour ()
 	{
-		byte[] salt = { 0xDE, 0xAD, 0xC0, 0xDE };
 		// create object with a salt...
 		PasswordDeriveBytes pd = new PasswordDeriveBytes ("password", salt, "MD5", 1000);
 		// ...then change the salt to null
@@ -472,6 +715,18 @@ public class PasswordDeriveBytesTest : Assertion {
 	{
 		PasswordDeriveBytes pd = new PasswordDeriveBytes ("password", null, "MD5", 1000);
 		pd.CryptDeriveKey ("AlgName", "MD5", 256, new byte [8]);
+	}
+
+	[Test]
+	public void Bug69036 ()
+	{
+		byte[] salt = new byte[] { 0x47, 0x6F, 0x6E, 0x7A, 0x61, 0x6C, 0x6F, 0x20, 0x53, 0x6F, 0x73, 0x61 };
+		PasswordDeriveBytes pdb = new PasswordDeriveBytes ("12345678password", salt);
+
+		byte[] key = pdb.GetBytes (32);
+		Assert.AreEqual ("55-BD-86-26-D2-7B-01-55-64-4A-6C-91-37-F7-C5-15-28-A4-87-C2-BF-66-89-E0-E7-8E-85-97-E4-88-63-95", BitConverter.ToString (key), "GetBytes(32)");
+		byte[] iv = pdb.GetBytes (16);
+		Assert.AreEqual ("64-4A-6C-91-37-F7-C5-15-2D-44-2E-0A-EE-B7-99-FA", BitConverter.ToString (iv), "GetBytes(16)");
 	}
 }
 

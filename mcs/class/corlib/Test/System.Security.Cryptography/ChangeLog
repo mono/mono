@@ -1,3 +1,12 @@
+2004-11-03  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* DSACryptoServiceProviderTest.cs: Fixed UseMachineKeyStore not to 
+	fail if the key container directory wasn't yet created (root).
+	* PasswordDeriveBytesTest.cs: Added tests for NET_2_0, more tests
+	for all constructors, tests for properties and a test for bug 69036.
+	* RSACryptoServiceProviderTest.cs: Fixed UseMachineKeyStore not to 
+	fail if the key container directory wasn't yet created (root).
+
 2004-08-31  Nick Drochak <ndrochak@gol.com>
 
 	* DSACryptoServiceProviderTest.cs: 
