@@ -81,28 +81,39 @@ namespace Mono.CSharp {
                 ///   Tries to resolve the type of the attribute. Flags an error if it can't.
                 /// </summary>
 		private Type CheckAttributeType (EmitContext ec) {
-			Type t;
-			bool isattributeclass = true;
+			Type t1 = RootContext.LookupType (ec.DeclSpace, Name, true, Location);
 
-			t = RootContext.LookupType (ec.DeclSpace, Name, true, Location);
-			if (t != null) {
-				isattributeclass = t.IsSubclassOf (TypeManager.attribute_type);
-				if (isattributeclass)
-					return t;
+			// FIXME: Shouldn't do this for quoted attributes: [@A]
+			Type t2 = RootContext.LookupType (ec.DeclSpace, Name + "Attribute", true, Location);
+
+			String err0616 = null;
+
+			if (t1 != null && ! t1.IsSubclassOf (TypeManager.attribute_type)) {
+				t1 = null;
+				err0616 = "'" + Name + "': is not an attribute class";
 			}
-			t = RootContext.LookupType (ec.DeclSpace, Name + "Attribute", true, Location);
-			if (t != null) {
-				if (t.IsSubclassOf (TypeManager.attribute_type))
-					return t;
+			if (t2 != null && ! t2.IsSubclassOf (TypeManager.attribute_type)) {
+				t2 = null;
+				err0616 = (err0616 != null) 
+					? "Neither '" + Name + "' nor '" + Name + "Attribute' is an attribute class"
+					: "'" + Name + "Attribute': is not an attribute class";
 			}
-			if (!isattributeclass) {
-				Report.Error (616, Location, "'" + Name + "': is not an attribute class");
+
+			if (t1 != null && t2 != null) {
+				Report.Error(1614, Location, "'" + Name + "': is ambiguous; " 
+					     + " use either '@" + Name + "' or '" + Name + "Attribute'");
 				return null;
 			}
-			if (t != null) {
-				Report.Error (616, Location, "'" + Name + "Attribute': is not an attribute class");
+			if (t1 != null)
+				return t1;
+			if (t2 != null)
+				return t2;
+
+			if (err0616 != null) {
+				Report.Error (616, Location, err0616);
 				return null;
 			}
+			
 			Report.Error (
 				246, Location, "Could not find attribute '" + Name + "' (are you" +
 				" missing a using directive or an assembly reference ?)");
@@ -258,12 +269,20 @@ namespace Mono.CSharp {
 				field_values = new ArrayList ();
 				prop_values = new ArrayList ();
 			}
+
+			Hashtable seen_names = new Hashtable();
 			
 			for (i = 0; i < named_args.Count; i++) {
 				DictionaryEntry de = (DictionaryEntry) named_args [i];
 				string member_name = (string) de.Key;
 				Argument a  = (Argument) de.Value;
 				Expression e;
+
+				if (seen_names.Contains(member_name)) {
+					Report.Error(643, Location, "'" + member_name + "' duplicate named attribute argument");
+					return null;
+				}				
+				seen_names.Add(member_name, 1);
 				
 				if (!a.Resolve (ec, Location))
 					return null;

@@ -1,3 +1,13 @@
+2004-04-15  Raja R Harinath  <rharinath@novell.com>
+
+	* attribute.cs (Attribute.CheckAttributeType): Check for ambiguous
+	attributes.
+	Fix for #56456.
+
+	* attribute.cs (Attribute.Resolve): Check for duplicate named
+	attributes.
+	Fix for #56463.
+
 2004-04-15  Miguel de Icaza  <miguel@ximian.com>
 
 	* iterators.cs (MarkYield): track whether we are in an exception,
