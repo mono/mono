@@ -1,3 +1,11 @@
+
+Tue Nov 9 17:26:29 CET 2004 Paolo Molaro <lupus@ximian.com>
+
+	* metadata.h, metadata.c, domain-internals.h, marshal.c: include
+	the MonoClass pointer instead of the token in exception clauses.
+	* reflection.c: updates for the above and make the code not depend
+	on the structure of MonoExceptionClause.
+
 2004-11-08  Zoltan Varga  <vargaz@freemail.hu>
 
 	* icall.c (ves_icall_System_Reflection_Assembly_GetModulesInternal): 
