@@ -26,20 +26,20 @@ namespace System.Runtime.Serialization {
 		[MonoTODO]
 		public string AssemblyName {
 			get {
-				return "TODO: IMPLEMENT ME";
+				return type.Assembly.FullName;
 			}
 			
 			set {
 			}
 		}
-
-		[MonoTODO]
+		
 		public string FullTypeName {
 			get {
-				return "TODO: IMLEMENT ME";
+				return type.FullName;
 			}
 			
 			set {
+				type = Type.GetType (value);
 			}
 		}
 		
