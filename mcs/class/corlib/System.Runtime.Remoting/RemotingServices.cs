@@ -129,7 +129,7 @@ namespace System.Runtime.Remoting
 				if (proxy.GetProxiedType().IsContextful && (proxy.ObjectIdentity is ServerIdentity))
 					identity = proxy.ObjectIdentity as ServerIdentity;
 				else
-					throw new ArgumentException ("The obj parameter is a proxy");
+					throw new ArgumentException ("The obj parameter is a proxy.");
 			}
 			else
 				identity = obj.ObjectIdentity;
@@ -214,7 +214,7 @@ namespace System.Runtime.Remoting
 						return cboundIdentity.CreateObjRef(requested_type);
 					}
 					else if (uri != null)
-						throw new RemotingException ("It is not possible marshal a proxy of a remote object");
+						throw new RemotingException ("It is not possible marshal a proxy of a remote object.");
 
 					return proxy.ObjectIdentity.CreateObjRef(requested_type);
 				}
@@ -237,7 +237,10 @@ namespace System.Runtime.Remoting
 					CreateClientActivatedServerIdentity (obj, requested_type, uri);
 			}
 
-			return obj.CreateObjRef(requested_type);
+			if (IsTransparentProxy (obj))
+				return RemotingServices.GetRealProxy(obj).ObjectIdentity.CreateObjRef (requested_type);
+			else
+				return obj.CreateObjRef(requested_type);
 		}
 
 		static string NewUri ()
@@ -248,7 +251,7 @@ namespace System.Runtime.Remoting
 
 		public static RealProxy GetRealProxy (object proxy)
 		{
-			if (!IsTransparentProxy(proxy)) throw new RemotingException("Cannot get the real proxy from an object that is not a transparent proxy");
+			if (!IsTransparentProxy(proxy)) throw new RemotingException("Cannot get the real proxy from an object that is not a transparent proxy.");
 			return (RealProxy)((TransparentProxy)proxy)._rp;
 		}
 
@@ -256,7 +259,7 @@ namespace System.Runtime.Remoting
 		{
 			Type type = Type.GetType (msg.TypeName);
 			if (type == null)
-				throw new RemotingException ("Type '" + msg.TypeName + "' not found!");
+				throw new RemotingException ("Type '" + msg.TypeName + "' not found.");
 
 			BindingFlags bflags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic;
 			if (msg.MethodSignature == null)
@@ -291,7 +294,7 @@ namespace System.Runtime.Remoting
 			if (IsTransparentProxy(obj))
 				return ((ClientIdentity)GetRealProxy (obj).ObjectIdentity).EnvoySink;
 			else
-				throw new ArgumentException ("obj must be a proxy","obj");			
+				throw new ArgumentException ("obj must be a proxy.","obj");			
 		}
 
 		public static void LogRemotingStage (int stage)
@@ -516,7 +519,7 @@ namespace System.Runtime.Remoting
 			lock (uri_hash)
 			{
 				if (uri_hash.ContainsKey (identity.ObjectUri)) 
-					throw new RemotingException ("Uri already in use: " + identity.ObjectUri);
+					throw new RemotingException ("Uri already in use: " + identity.ObjectUri + ".");
 
 				uri_hash[identity.ObjectUri] = identity;
 			}
