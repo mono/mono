@@ -1,5 +1,10 @@
 2004-11-24  Martin Baulig  <martin@ximian.com>
 
+	* minit.c (type_to_eval_stack_type): Set `inst->klass' to the
+	original klass (this only applies for generic instances).
+
+2004-11-24  Martin Baulig  <martin@ximian.com>
+
 	* mini.c (mono_method_to_ir): Use `STACK_OBJ' instead of
 	`ldind_type [CEE_LDIND_REF]' (which would be beyond the end of
 	that array).
