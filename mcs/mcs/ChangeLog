@@ -1,3 +1,16 @@
+2004-07-17  Miguel de Icaza  <miguel@ximian.com>
+
+	* typemanager.cs: Removed an old hack from Gonzalo to get corlib
+	building: IsEnumType should return true only for enums, not for
+	enums or System.Enum itself.  This fixes #61593.
+
+	Likely what happened is that corlib was wrong: mcs depended on
+	this bug in some places.  The bug got fixed, we had to add the
+	hack, which caused bug 61593.
+
+	* expression.cs (ArrayAccess.GetStoreOpCode): Remove an old hack
+	that was a workaround for the older conditions.
+
 2004-07-16  Ben Maurer  <bmaurer@ximian.com>
 
 	* assign.cs: IAssignMethod has a new interface, as documented
