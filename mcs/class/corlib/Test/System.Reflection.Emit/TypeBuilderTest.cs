@@ -991,28 +991,28 @@ public class TypeBuilderTest : Assertion
 	public void TestEnums () {
 		TypeAttributes typeAttrs = TypeAttributes.Class | TypeAttributes.Public | TypeAttributes.Sealed;            
 		TypeBuilder enumToCreate = module.DefineType(genTypeName (), typeAttrs, 
-													 typeof(System.Enum));
+													 typeof(Enum));
 		enumToCreate.SetCustomAttribute (new CustomAttributeBuilder (typeof (FlagsAttribute).GetConstructors ()[0], new Type [0]));
 		// add value__ field, see DefineEnum method of ModuleBuilder
-		enumToCreate.DefineField("value__", typeof(System.Int32), 
+		enumToCreate.DefineField("value__", typeof(Int32), 
 								 FieldAttributes.Public | FieldAttributes.SpecialName | FieldAttributes.RTSpecialName);
         
 		// add enum entries
 		FieldBuilder fb = enumToCreate.DefineField("A", enumToCreate, 
 												   FieldAttributes.Public | FieldAttributes.Static | FieldAttributes.Literal);
-		fb.SetConstant((System.Int32) 0);
+		fb.SetConstant((Int32) 0);
             
 		fb = enumToCreate.DefineField("B", enumToCreate, 
 									  FieldAttributes.Public | FieldAttributes.Static | FieldAttributes.Literal);
-		fb.SetConstant((System.Int32) 1);
+		fb.SetConstant((Int32) 1);
 
 		fb = enumToCreate.DefineField("C", enumToCreate, 
 									  FieldAttributes.Public | FieldAttributes.Static | FieldAttributes.Literal);
-		fb.SetConstant((System.Int32) 2);
+		fb.SetConstant((Int32) 2);
             
 		Type enumType = enumToCreate.CreateType();
             
-		object enumVal = Enum.ToObject(enumType, (System.Int32) 3);
+		object enumVal = Enum.ToObject(enumType, (Int32) 3);
 
 		AssertEquals ("B, C", enumVal.ToString ());
 		AssertEquals (3, (Int32)enumVal);

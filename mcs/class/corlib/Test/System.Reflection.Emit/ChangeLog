@@ -1,3 +1,7 @@
+2004-01-09  Nick Drochak <ndrochak@ieee.org>
+
+	* TypeBuilderTest.cs (TestEnums): Fix build with csc.
+
 2004-01-07  Zoltan Varga  <vargaz@freemail.hu>
 
 	* TypeBuilderTest.cs (IsDefined): Comment out this test, since 
