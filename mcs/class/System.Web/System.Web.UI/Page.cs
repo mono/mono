@@ -87,6 +87,8 @@ public class Page : TemplateControl, IHttpHandler
 #if NET_2_0
 	private const string callbackArgumentID = "__CALLBACKARGUMENT";
 	private const string callbackSourceID = "__CALLBACKTARGET";
+	
+	IPageHeader htmlHeader;
 #endif
 
 	#region Constructor
@@ -1033,6 +1035,15 @@ public class Page : TemplateControl, IHttpHandler
 
 		string callbackArgument = _requestValueCollection [callbackArgumentID];
 		return target.RaiseCallbackEvent (callbackArgument);
+	}
+	
+	public IPageHeader Header {
+		get { return htmlHeader; }
+	}
+	
+	internal void SetHeader (IPageHeader header)
+	{
+		htmlHeader = header;
 	}
 
 	#endif

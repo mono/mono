@@ -30,6 +30,7 @@
 
 #if NET_2_0
 using System;
+using System.Web.UI.WebControls;
 
 namespace System.Web.UI
 {

@@ -56,6 +56,9 @@ namespace System.Web.UI
 			htmlControls.Add ("TH", typeof (HtmlTableCell));
 			htmlControls.Add ("TR", typeof (HtmlTableRow));
 			htmlControls.Add ("TEXTAREA", typeof (HtmlTextArea));
+#if NET_2_0
+			htmlControls.Add ("HEAD", typeof (HtmlHead));
+#endif
 
 			htmlInputControls = new Hashtable (new CaseInsensitiveHashCodeProvider (),
 							   new CaseInsensitiveComparer ());

@@ -80,7 +80,7 @@ namespace System.Web.UI {
 			FillStyle (fullValue.Substring (mark + 1));
 		}
 
-		private string BagToString ()
+		internal string BagToString ()
 		{
 			StringBuilder sb = new StringBuilder ();
 			foreach (string k in style.Keys)
