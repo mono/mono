@@ -198,8 +198,7 @@ namespace System.Windows.Forms {
 		}
 
 		static private void ApplicationFormClosed (object o, EventArgs args)
-		{
-			Win32.PostQuitMessage (0);
+		{			Win32.PostQuitMessage (0);
 		}
 
 		//Compact Framework
@@ -249,8 +248,9 @@ namespace System.Windows.Forms {
 		{
 			applicationContext = context;
 			applicationContext.MainForm.Show ();
-			applicationContext.MainForm.Closed += 
-			    new EventHandler (ApplicationFormClosed);
+			applicationContext.ThreadExit += new EventHandler( ApplicationFormClosed );
+//			applicationContext.MainForm.Closed += //
+//			    new EventHandler (ApplicationFormClosed);
 			Run();
 		}
 
@@ -258,8 +258,7 @@ namespace System.Windows.Forms {
 		public static void Run (Form form)
 		// Documents say this parameter name should be mainform, 
 		// but the verifier says context.
-		{
-			form.CreateControl ();
+		{			form.CreateControl ();
 			ApplicationContext context = new ApplicationContext (
 				form);
 			Run (context);

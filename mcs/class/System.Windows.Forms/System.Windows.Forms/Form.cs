@@ -494,9 +494,7 @@
     
 	  		//Compact Framework
     		public void Close ()
-    		{
-    			Win32.CloseWindow (Handle);
-    		}
+    		{    			Win32.DestroyWindow (Handle);    		}
     
    			[MonoTODO]
     		public void LayoutMdi (MdiLayout value)

@@ -22,7 +22,13 @@ namespace System.Windows.Forms {
 		// --- (public) Properties ---
 		public Form MainForm {
 			get { return mainForm; }
-			set { mainForm = value; }
+			set 
+			{ 
+				if (mainForm != null)
+					mainForm.Closed -= new System.EventHandler( OnMainFormClosed );
+				mainForm = value; 
+				mainForm.Closed += new System.EventHandler( OnMainFormClosed );
+			}
 		}
 		
 		// --- Constructor ---
@@ -33,7 +39,7 @@ namespace System.Windows.Forms {
 		
 		public ApplicationContext(Form mainForm) : this() 
 		{
-			this.mainForm = mainForm;
+			this.MainForm = mainForm;
 		}
 		
 		// --- Methods ---
@@ -53,19 +59,20 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		public void ExitThread() 
 		{
-			//FIXME:
+			if (ThreadExit != null)
+				ThreadExit( this, null );
 		}
 		
 		[MonoTODO]
 		protected virtual void ExitThreadCore() 
 		{
-			//FIXME:
+			ExitThread();
 		}
 		
 		[MonoTODO]
 		protected virtual void OnMainFormClosed(object sender,EventArgs e) 
 		{
-			//FIXME:
+			ExitThreadCore();
 		}
 		
 		// --- Methods: object ---
