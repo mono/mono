@@ -1,3 +1,7 @@
+2003-07-21  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
+
+	* Metafile.cs: Inherits from image (fix for System.Drawing.Design)
+
 2003-06-29 Alexandre Pigolkine
 	* BmpCodec.cs		handle 32bpp images
 	* JPEGCodec.cs		small fix

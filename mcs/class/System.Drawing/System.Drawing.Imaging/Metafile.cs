@@ -12,7 +12,7 @@ using System.Reflection;
 
 namespace System.Drawing.Imaging {
 
-	public sealed class Metafile {// : Image {
+	public sealed class Metafile : Image {
 
 		// constructors
 		[MonoTODO]
