@@ -314,7 +314,7 @@ namespace System.Web.Util
 			if (!dir.EndsWith ("/"))
 				dir += "/";
 
-			return Reduce (GetDirectory (path) + "(" + id + ")/" + GetFile (path));
+			return Reduce (dir + "(" + id + ")/" + GetFile (path));
 		}
 
 		public static string GetSessionId (string path)
