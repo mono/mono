@@ -46,8 +46,9 @@ namespace System.Web.Services.Protocols
 		
 		protected object CreateServerInstance ()
 		{
-			WebService ws = (WebService) Activator.CreateInstance (ServiceType);
-			ws.SetContext (_context);
+			object ws = Activator.CreateInstance (ServiceType);
+			WebService wsi = ws as WebService;
+			if (wsi != null) wsi.SetContext (_context);
 			return ws;
 		}
 

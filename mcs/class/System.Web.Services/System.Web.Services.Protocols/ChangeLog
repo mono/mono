@@ -1,3 +1,7 @@
+2004-01-27  Lluis Sanchez Gual <lluis@ximian.com>
+
+	* WebServiceHandler.cs: inheritance from WebService is not mandatory.
+
 2004-02-05  Alon Gazit <along@mainsoft.com>
 
        * HttpMethodAttribute.cs:
