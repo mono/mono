@@ -185,10 +185,15 @@ namespace Mono.ILASM {
                                         case "quiet":
                                                 quiet = true;
                                                 break;
+                                        case "debug":
+                                        case "deb":
+						if (str[0] != '-')
+							break;
+						debugging_info = true;
+						break;
                                         // Stubs to stay commandline compatible with MS 
                                         case "listing":
                                         case "nologo":
-                                        case "debug":
                                         case "clock":
                                         case "error":
                                         case "subsystem":
@@ -223,11 +228,6 @@ namespace Mono.ILASM {
                                                         break;
                                                 Version ();
                                                 break;
-					case "-debug":
-						if (str[0] != '-')
-							break;
-						debugging_info = true;
-						break;
                                         default:
                                                 if (str [0] == '-')
                                                         break;
@@ -276,6 +276,7 @@ namespace Mono.ILASM {
                                         "   /output:file_name  Specifies output file.\n" +
                                         "   /exe               Compile to executable.\n" +
                                         "   /dll               Compile to library.\n" +
+                                        "   /debug             Include debug information.\n" +
                                         "Options can be of the form -option or /option\n");
                                 Environment.Exit (1);
                         }
