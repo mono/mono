@@ -190,7 +190,7 @@ namespace System {
 
 			NumberFormatInfo nfi;
 			if (fp != null) {
-				Type typeNFI = Type.GetType ("System.Globalization.NumberFormatInfo");
+				Type typeNFI = typeof (System.Globalization.NumberFormatInfo);
 				nfi = (NumberFormatInfo) fp.GetFormat (typeNFI);
 			}
 			else
@@ -313,8 +313,8 @@ namespace System {
 					// Allows decimal point as long as it's only 
 					// followed by zeroes.
 					if (s [pos++] != '0')
-						throw new FormatException ("Input string was not in the " + 
-									   "correct format.");
+						throw new OverflowException ("Value too large or too " +
+									     "small.");
 				}
 				else {
 					nDigits++;

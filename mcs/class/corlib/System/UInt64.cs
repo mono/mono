@@ -145,7 +145,7 @@ namespace System {
 
 			NumberFormatInfo nfi;
 			if (fp != null) {
-				Type typeNFI = Type.GetType ("System.Globalization.NumberFormatInfo");
+				Type typeNFI = typeof (System.Globalization.NumberFormatInfo);
 				nfi = (NumberFormatInfo) fp.GetFormat (typeNFI);
 			}
 			else

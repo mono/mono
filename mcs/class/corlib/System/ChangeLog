@@ -1,5 +1,17 @@
 2002-04-10  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* Int32.cs:
+	* UInt32.cs:
+	* Int64.cs: 
+	* UInt64.cs: changed Type.GetType () by typeof (), as suggested by
+	lupus.
+
+	* Int32.cs:
+	* Int64.cs: throw an OverFlowException when parsing a string 
+	containing a dot followed by any non '0' number.
+
+2002-04-10  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* Byte.cs:
 	* UInt16.cs:
 	* UInt32.cs:
