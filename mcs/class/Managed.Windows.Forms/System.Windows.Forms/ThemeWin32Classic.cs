@@ -25,9 +25,12 @@
 //
 //
 //
-// $Revision: 1.34 $
+// $Revision: 1.35 $
 // $Modtime: $
 // $Log: ThemeWin32Classic.cs,v $
+// Revision 1.35  2004/09/07 17:12:26  jordi
+// GroupBox control
+//
 // Revision 1.34  2004/09/07 09:40:15  jordi
 // LinkLabel fixes, methods, multiple links
 //
@@ -1819,6 +1822,55 @@ namespace System.Windows.Forms
 				DrawToolBarButton (dc, button, control.Font, format, paint_area, buttonArea,
 						   imgRect, image, txtRect, ddRect, flat);
 			}
+		}
+		
+		public override void DrawGroupBox (Graphics dc,  Rectangle area, GroupBox box)
+		{
+			SizeF size;
+			int width, y;
+			Rectangle rect = box.ClientRectangle;
+			Color disabled = ThemeEngine.Current.ColorGrayText;
+			
+			Pen pen_light = ResPool.GetPen (Color.FromArgb (255,255,255,255));
+			Pen pen_dark = ResPool.GetPen (Color.FromArgb (255, 128, 128,128));
+			
+			// TODO: When the Light and Dark methods work this code should be activate it
+			//Pen pen_light = new Pen (ControlPaint.Light (disabled, 1));
+			//Pen pen_dark = new Pen (ControlPaint.Dark (disabled, 0));
+
+			dc.FillRectangle (ResPool.GetSolidBrush (box.BackColor), rect);
+
+			size = dc.MeasureString (box.Text, box.Font);
+			width = (int) size.Width;
+			
+			if (width > box.Width - 16)
+				width = box.Width - 16;
+			
+			y = box.Font.Height / 2;
+			
+			/* Draw group box*/
+			dc.DrawLine (pen_dark, 0, y, 8, y); // top 
+			dc.DrawLine (pen_light, 0, y + 1, 8, y + 1);			
+			dc.DrawLine (pen_dark, 8 + width, y, box.Width, y);			
+			dc.DrawLine (pen_light, 8 + width, y + 1, box.Width, y + 1);
+			
+			dc.DrawLine (pen_dark, 0, y + 1, 0, box.Height); // left
+			dc.DrawLine (pen_light, 1, y + 1, 1, box.Height);			
+			
+			dc.DrawLine (pen_dark, 0, box.Height - 2, box.Width,  box.Height - 2); // bottom
+			dc.DrawLine (pen_light, 0, box.Height - 1, box.Width,  box.Height - 1);
+			
+			dc.DrawLine (pen_dark, box.Width - 2, y,  box.Width - 2, box.Height - 2); // right
+			dc.DrawLine (pen_light, box.Width - 1, y, box.Width - 1, box.Height - 2);
+			
+			
+			/* Text */
+			if (box.Enabled)
+				dc.DrawString (box.Text, box.Font, new SolidBrush (box.ForeColor), 10, 0);
+			else
+				DrawStringDisabled (dc, box.Text, box.Font, box.ForeColor, 
+					new RectangleF (10, 0, width,  box.Font.Height), new StringFormat ());					
+				
 		}
 
 		/*

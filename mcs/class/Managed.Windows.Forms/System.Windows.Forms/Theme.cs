@@ -23,9 +23,12 @@
 //	Jordi Mas i Hernandez, jordi@ximian.com
 //
 //
-// $Revision: 1.7 $
+// $Revision: 1.8 $
 // $Modtime: $
 // $Log: Theme.cs,v $
+// Revision 1.8  2004/09/07 17:12:26  jordi
+// GroupBox control
+//
 // Revision 1.7  2004/09/07 09:40:15  jordi
 // LinkLabel fixes, methods, multiple links
 //
@@ -347,6 +350,8 @@ namespace System.Windows.Forms
 			SolidBrush br_forecolor, StatusBarPanel panel);
 		
 		public abstract void DrawPictureBox (Graphics dc, PictureBox pb);
+		
+		public abstract void DrawGroupBox (Graphics dc,  Rectangle area, GroupBox box);
 		
 	}
 }
