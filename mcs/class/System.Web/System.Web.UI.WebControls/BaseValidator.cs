@@ -408,12 +408,10 @@ namespace System.Web.UI.WebControls
 				
 				if (!valid) {
 					RenderBeginTag (writer);
-					if (Text.Trim ().Length > 0 || HasControls ()) {
+					if (Text.Trim ().Length > 0 || HasControls ())
 						RenderContents (writer);
-						RenderEndTag (writer);
-					} else {
+					else
 						writer.Write (ErrorMessage);
-					}
 					RenderEndTag (writer);
 					return;
 				}

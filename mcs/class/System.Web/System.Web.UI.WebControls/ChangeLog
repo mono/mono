@@ -1,3 +1,8 @@
+2003-09-13  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* BaseValidator.cs: patch by Juraj Skripsky (juraj@hotfeet.ch) that
+	fixes rendering of the end tag.
+
 2003-08-31  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Repeater.cs: fix for Items property provided by yaronsh@mainsoft.com
