@@ -95,6 +95,7 @@ System.Windows.Forms/LinkLabelLinkClickedEventHandler.cs
 System.Windows.Forms/LinkState.cs
 System.Windows.Forms/GroupBox.cs
 System.Windows.Forms/MenuGlyph.cs
+System.Windows.Forms/MenuMerge.cs
 System.Windows.Forms/MessageBoxButtons.cs
 System.Windows.Forms/MessageBox.cs
 System.Windows.Forms/MessageBoxDefaultButton.cs
@@ -124,6 +125,7 @@ System.Windows.Forms/ScrollButton.cs
 System.Windows.Forms/ScrollEventArgs.cs
 System.Windows.Forms/ScrollEventHandler.cs
 System.Windows.Forms/ScrollEventType.cs
+System.Windows.Forms/Shortcut.cs
 System.Windows.Forms/StatusBar.cs
 System.Windows.Forms/StatusBarDrawItemEventArgs.cs
 System.Windows.Forms/StatusBarDrawItemEventHandler.cs
