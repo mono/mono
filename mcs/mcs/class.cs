@@ -2659,7 +2659,7 @@ namespace Mono.CSharp {
 	public abstract class MethodCore : MemberBase {
 		public readonly Parameters Parameters;
 		protected Block block;
-		public DeclSpace ds;
+		public readonly TypeContainer ds;
 		
 		//
 		// Parameters, cached for semantic analysis.
@@ -2677,7 +2677,7 @@ namespace Mono.CSharp {
 
 		static string[] attribute_targets = new string [] { "method", "return" };
 
-		public MethodCore (DeclSpace ds, Expression type, int mod, int allowed_mod,
+		public MethodCore (TypeContainer ds, Expression type, int mod, int allowed_mod,
 				   bool is_interface, string name, Attributes attrs,
 				   Parameters parameters, Location loc)
 			: base (type, mod, allowed_mod, Modifiers.PRIVATE, name, attrs, loc)
@@ -2853,7 +2853,7 @@ namespace Mono.CSharp {
 		//
 		// return_type can be "null" for VOID values.
 		//
-		public Method (DeclSpace ds, Expression return_type, int mod, bool is_iface,
+		public Method (TypeContainer ds, Expression return_type, int mod, bool is_iface,
 			       string name, Parameters parameters, Attributes attrs, Location l)
 			: base (ds, return_type, mod,
 				is_iface ? AllowedInterfaceModifiers : AllowedModifiers,
@@ -3472,7 +3472,7 @@ namespace Mono.CSharp {
 		// The spec claims that static is not permitted, but
 		// my very own code has static constructors.
 		//
-		public Constructor (DeclSpace ds, string name, int mod, Parameters args,
+		public Constructor (TypeContainer ds, string name, int mod, Parameters args,
 				    ConstructorInitializer init, Location l)
 			: base (ds, null, mod, AllowedModifiers, false, name, null, args, l)
 		{
@@ -4138,7 +4138,7 @@ namespace Mono.CSharp {
 
 	public class Destructor : Method {
 
-		public Destructor (DeclSpace ds, Expression return_type, int mod, string name,
+		public Destructor (TypeContainer ds, Expression return_type, int mod, string name,
 				   Parameters parameters, Attributes attrs, Location l)
 			: base (ds, return_type, mod, false, name, parameters, attrs, l)
 		{ }
@@ -5113,7 +5113,7 @@ namespace Mono.CSharp {
 
 		protected EmitContext ec;
 
-		public PropertyBase (DeclSpace ds, Expression type, int mod_flags,
+		public PropertyBase (TypeContainer ds, Expression type, int mod_flags,
 				     int allowed_mod, bool is_iface, string name,
 				     Parameters parameters, Attributes attrs,
 				     Location loc)
@@ -5343,10 +5343,10 @@ namespace Mono.CSharp {
 		const int AllowedInterfaceModifiers =
 			Modifiers.NEW;
 
-		public Property (DeclSpace ds, Expression type, int mod_flags, bool is_iface,
+		public Property (TypeContainer ds, Expression type, int mod, bool is_iface,
 				 string name, Attributes attrs, Accessor get_block,
 				 Accessor set_block, Location loc)
-			: base (ds, type, mod_flags,
+			: base (ds, type, mod,
 				is_iface ? AllowedInterfaceModifiers : AllowedModifiers,
 				is_iface, name, Parameters.EmptyReadOnlyParameters, attrs,
 				loc)
@@ -6055,10 +6055,10 @@ namespace Mono.CSharp {
 		//
 		// Are we implementing an interface ?
 		//
-		public Indexer (DeclSpace ds, Expression type, string int_type, int mod_flags,
+		public Indexer (TypeContainer ds, Expression type, string int_type, int mod,
 				bool is_iface, Parameters parameters, Attributes attrs,
 				Accessor get_block, Accessor set_block, Location loc)
-			: base (ds, type, mod_flags,
+			: base (ds, type, mod,
 				is_iface ? AllowedInterfaceModifiers : AllowedModifiers,
 				is_iface, "", parameters, attrs, loc)
 		{
