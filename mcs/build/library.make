@@ -14,9 +14,14 @@ response = $(depsdir)/$(PROFILE)_$(LIBRARY).response
 else
 response = $(sourcefile)
 endif
+
+ifndef LIBRARY_NAME
+LIBRARY_NAME = $(LIBRARY)
+endif
+
 makefrag = $(depsdir)/$(PROFILE)_$(LIBRARY).makefrag
 stampfile = $(depsdir)/$(PROFILE)_$(LIBRARY).stamp
-the_lib = $(topdir)/class/lib/$(PROFILE)/$(LIBRARY)
+the_lib = $(topdir)/class/lib/$(PROFILE)/$(LIBRARY_NAME)
 the_pdb = $(patsubst %.dll,%.pdb,$(the_lib))
 
 ifndef NO_TEST
