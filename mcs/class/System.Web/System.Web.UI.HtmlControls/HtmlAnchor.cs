@@ -1,18 +1,18 @@
-/* System.Web.Configuration
- * Authors:
- *   Leen Toelen (toelen@hotmail.com)
- *  Copyright (C) 2001 Leen Toelen
+/*	System.Web.UI.HtmlControls
+*	Authors
+*		Leen Toelen (toelen@hotmail.com)
 */
+
 using System;
 using System.Web;
 using System.Web.UI;
 
 namespace System.Web.UI.HtmlControls{
 	
-		public class HtmlAnchor : HtmlContainerControl, IPostBackDataHandler{
+	public class HtmlAnchor : HtmlContainerControl, IPostBackDataHandler{
 		
-		private static object EventServerClick = new Object();
-
+		private static readonly object EventServerChange;
+		
 		public HtmlAnchor(): base("a"){}
 		
 		protected virtual void OnServerClick(EventArgs e){
@@ -22,8 +22,8 @@ namespace System.Web.UI.HtmlControls{
 				handler.Invoke(this, e);
 			}
 		}
-
-		protected override void RenderAttributes(HtmlTextWriter writer){
+		
+		protected override void RenderAttributes(HtmlTextWriter writer);{
 			if ((EventHandler) Events[EventServerClick] != null){
 				Attributes.Remove("href");
 				RenderAttributes(writer);
@@ -34,12 +34,12 @@ namespace System.Web.UI.HtmlControls{
 				RenderAttributes(writer);
 			}
 		}
-
+		
 		//FIXME: not sure about the accessor
 		public void RaisePostBackEvent(string eventArgument){
 			OnServerClick(EventArgs.Empty);
 		}
-
+		
 		public event EventHandler ServerClick{
 			add{
 				Events.AddHandler(EventServerClick, value);
@@ -48,7 +48,7 @@ namespace System.Web.UI.HtmlControls{
 				Events.RemoveHandler(EventServerClick, value);
 			}
 		}
-
+		
 		public int HRef{
 			get{
 				string attr = Attributes["href"];
@@ -62,7 +62,7 @@ namespace System.Web.UI.HtmlControls{
 				Attributes["href"] = MapIntegerAttributeToString(value);
 			}
 		}
-
+		
 		public string Name{
 			get{
 				string attr = Attributes["name"];
@@ -75,7 +75,7 @@ namespace System.Web.UI.HtmlControls{
 				Attributes["name"] = MapStringAttributeToString(value);
 			}
 		}
-
+		
 		public string Target{
 			get{
 				string attr = Attributes["target"];
@@ -88,7 +88,7 @@ namespace System.Web.UI.HtmlControls{
 				Attributes["target"] = MapStringAttributeToString(value);
 			}
 		}
-
+		
 		public string Title{
 			get{
 				string attr = Attributes["title"];
@@ -101,7 +101,7 @@ namespace System.Web.UI.HtmlControls{
 				Attributes["title"] = MapStringAttributeToString(value);
 			}
 		}
-	
+		
 	} // class HtmlAnchor
 } // namespace System.Web.UI.HtmlControls
 

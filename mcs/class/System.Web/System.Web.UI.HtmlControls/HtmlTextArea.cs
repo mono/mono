@@ -1,8 +1,8 @@
-/* System.Web.Configuration
- * Authors:
- *   Leen Toelen (toelen@hotmail.com)
- *  Copyright (C) 2001 Leen Toelen
+/*	System.Web.UI.HtmlControls
+*	Authors
+*		Leen Toelen (toelen@hotmail.com)
 */
+
 using System;
 using System.Web;
 using System.Web.UI;
@@ -12,10 +12,10 @@ using System.Collections.Specialized;
 
 namespace System.Web.UI.HtmlControls{
 	
-		public class HtmlTextArea : HtmlContainerControl, IPostBackDataHandler{
+	public class HtmlTextArea : HtmlContainerControl, IPostBackDataHandler{
 		
-		private static object EventServerChange = new Object();
-
+		private static readonly object EventServerChange;
+		
 		public HtmlTextArea(): base("textarea"){}
 		
 		public int Cols{
@@ -54,7 +54,7 @@ namespace System.Web.UI.HtmlControls{
 				InnerHtml = value;
 			}
 		}
-
+		
 		protected string RenderedNameAttribute{
 			get{
 				return Name;
@@ -97,7 +97,7 @@ namespace System.Web.UI.HtmlControls{
 				return true;
 			}
 			return false;
-
+			
 		}
 		
 		protected override void RenderAttributes(HtmlTextWriter writer){
@@ -110,23 +110,23 @@ namespace System.Web.UI.HtmlControls{
 		public void RaisePostDataChangedEvent(){
 			OnServerChange(EventArgs.Empty);
 		}
-
+		
 		protected override void OnPreRender(EventArgs e){
 			if(Events[EventServerChange]==null || Disabled==true){
 				ViewState.SetItemDirty("value",false);
 			}
 		}
-
+		
 		protected override void AddParsedSubObject(object obj){
-			//TODO: implement "Is Instance Of"
-//			if (obj of type LiteralControl || obj of type DataBoundLiteralControl){
+			//FIXME: not sure about this function
+			if (obj is LiteralControl || obj is DataBoundLiteralControl){
 				AddParsedSubObject(obj);
-//				return;			
-//			}
+				return;
+			}
 			//FormatResourceString accessible constraint is "assembly"
-			throw new HttpException(HttpRuntime.FormatResourceString("Cannot_Have_Children_Of_Type","HtmlTextArea",obj.GetType().Name.ToString()));
+			throw new HttpException(HttpRuntime.FormatResourceString("Cannot_Have_Children_Of_Type","HtmlTextArea",obj.GetType.Name));
 		}
-	
+		
 	} // class HtmlTextArea
 } // namespace System.Web.UI.HtmlControls
 

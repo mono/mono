@@ -1,18 +1,18 @@
-/* System.Web.Configuration
- * Authors:
- *   Leen Toelen (toelen@hotmail.com)
- *  Copyright (C) 2001 Leen Toelen
+/*	System.Web.UI.HtmlControls
+*	Authors
+*		Leen Toelen (toelen@hotmail.com)
 */
+
 using System;
 using System.Web;
 using System.Web.UI;
 
 namespace System.Web.UI.HtmlControls{
 	
-		public class HtmlButton : HtmlContainerControl, IPostBackDataHandler{
+	public class HtmlButton : HtmlContainerControl, IPostBackDataHandler{
 		
-		private static object EventServerClick = new Object();
-
+		private static readonly object EventServerChange;
+		
 		public HtmlButton(): base("button"){}
 		
 		protected virtual void OnServerClick(EventArgs e){
@@ -22,29 +22,29 @@ namespace System.Web.UI.HtmlControls{
 				handler.Invoke(this, e);
 			}
 		}
-
+		
 		//FIXME: check function
 		protected override void RenderAttributes(HtmlTextWriter writer){
 			if (Page != null && Events[EventServerClick] != null){
 				Util.WriteOnClickAttribute(
-					writer,
-					this,
-					false,
-					true,
-					CausesValidation == false? Page.Validators.Count > 0: false);
+				                           writer,
+				                           this,
+				                           false,
+				                           true,
+				                           CausesValidation == false? Page.Validators.Count > 0: false);
 			}
 			RenderAttributes(writer);
-
+			
 		}
-
+		
 		//FIXME: not sure about the accessor
 		public void RaisePostBackEvent(string eventArgument){
 			if (CausesValidation = false){
 				Page.Validate();
 			}
-				OnServerClick(EventArgs.Empty);
+			OnServerClick(EventArgs.Empty);
 		}
-
+		
 		public event EventHandler ServerClick{
 			add{
 				Events.AddHandler(EventServerClick, value);
@@ -53,7 +53,7 @@ namespace System.Web.UI.HtmlControls{
 				Events.RemoveHandler(EventServerClick, value);
 			}
 		}
-
+		
 		public bool CausesValidation{
 			get{
 				object causesVal = ViewState["CausesValidation"];
@@ -66,8 +66,7 @@ namespace System.Web.UI.HtmlControls{
 				ViewState["CausesValidation"] = (Boolean) value;
 			}
 		}
-	
+		
 	} // class HtmlButton
 } // namespace System.Web.UI.HtmlControls
-
 
