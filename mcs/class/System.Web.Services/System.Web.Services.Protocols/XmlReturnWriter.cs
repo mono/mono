@@ -20,8 +20,8 @@ namespace System.Web.Services.Protocols {
 
 		public override object GetInitializer (LogicalMethodInfo methodInfo)
 		{
-			string namesp = WebServiceHelper.GetServiceNamespace (methodInfo.DeclaringType);
-			return new XmlSerializer (methodInfo.ReturnType, namesp);
+			LogicalTypeInfo sti = TypeStubManager.GetLogicalTypeInfo (methodInfo.DeclaringType);
+			return new XmlSerializer (methodInfo.ReturnType, sti.WebServiceLiteralNamespace);
 		}
 		
 		public override object[] GetInitializers (LogicalMethodInfo[] methodInfos)
@@ -35,8 +35,8 @@ namespace System.Web.Services.Protocols {
 					sers[n] = null;
 				else
 				{
-					string namesp = WebServiceHelper.GetServiceNamespace (metinfo.DeclaringType);
-					sers[n] = importer.ImportTypeMapping (methodInfos[n].ReturnType, namesp);
+					LogicalTypeInfo sti = TypeStubManager.GetLogicalTypeInfo (metinfo.DeclaringType);
+					sers[n] = importer.ImportTypeMapping (methodInfos[n].ReturnType, sti.WebServiceLiteralNamespace);
 				}
 			}
 			return XmlSerializer.FromMappings (sers);

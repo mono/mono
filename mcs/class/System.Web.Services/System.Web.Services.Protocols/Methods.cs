@@ -42,23 +42,23 @@ namespace System.Web.Services.Protocols {
 		internal SoapBindingStyle SoapBindingStyle;
 		internal SoapBindingUse Use;
 
-		internal XmlSerializer RequestSerializer;
-		internal XmlSerializer ResponseSerializer;
-
 		internal HeaderInfo[] Headers;
-
 		internal SoapExtensionRuntimeConfig[] SoapExtensions;
 		
-		private XmlMembersMapping[] _membersMapping;
+		internal XmlMembersMapping InputMembersMapping;
+		internal XmlMembersMapping OutputMembersMapping;
 		
-		internal XmlMembersMapping InputMembersMapping
+		private int requestSerializerId;
+		private int responseSerializerId;
+		
+		internal XmlSerializer RequestSerializer
 		{
-			get { return _membersMapping[0]; }
+			get { return TypeStub.GetSerializer (requestSerializerId); }
 		}
-
-		internal XmlMembersMapping OutputMembersMapping
+		
+		internal XmlSerializer ResponseSerializer
 		{
-			get { return _membersMapping[1]; }
+			get { return TypeStub.GetSerializer (responseSerializerId); }
 		}
 
 		//
@@ -73,9 +73,9 @@ namespace System.Web.Services.Protocols {
 			if (kind == null) {
 				Use = parent.Use;
 				RequestName = "";
-				RequestNamespace = parent.WebServiceNamespace;
+				RequestNamespace = "";
 				ResponseName = "";
-				ResponseNamespace = parent.WebServiceNamespace;
+				ResponseNamespace = "";
 				ParameterStyle = parent.ParameterStyle;
 				SoapBindingStyle = parent.SoapBindingStyle;
 				OneWay = false;
@@ -84,8 +84,12 @@ namespace System.Web.Services.Protocols {
 				SoapDocumentMethodAttribute dma = (SoapDocumentMethodAttribute) kind;
 				
 				Use = dma.Use;
-				if (Use == SoapBindingUse.Default)
-					Use = parent.Use;
+				if (Use == SoapBindingUse.Default) {
+					if (parent.SoapBindingStyle == SoapBindingStyle.Document)
+						Use = parent.Use;
+					else
+						Use = SoapBindingUse.Literal;
+				}
 				
 				Action = dma.Action;
 				Binding = dma.Binding;
@@ -124,8 +128,8 @@ namespace System.Web.Services.Protocols {
 					throw new Exception ("OneWay methods should not have out/ref parameters");
 			}
 			
-			if (RequestNamespace == "") RequestNamespace = parent.WebServiceNamespace;
-			if (ResponseNamespace == "") ResponseNamespace = parent.WebServiceNamespace;
+			if (RequestNamespace == "") RequestNamespace = parent.LogicalType.GetWebServiceNamespace (Use);
+			if (ResponseNamespace == "") ResponseNamespace = parent.LogicalType.GetWebServiceNamespace (Use);
 			if (RequestName == "") RequestName = Name;
 			if (ResponseName == "")	ResponseName = Name + "Response";
 			if (Binding == null || Binding == "") Binding = parent.DefaultBinding;
@@ -139,21 +143,17 @@ namespace System.Web.Services.Protocols {
 			XmlReflectionMember [] in_members = BuildRequestReflectionMembers (optional_ns);
 			XmlReflectionMember [] out_members = BuildResponseReflectionMembers (optional_ns);
 
-			_membersMapping = new XmlMembersMapping [2];
-
 			if (Use == SoapBindingUse.Literal) {
-				_membersMapping [0] = xmlImporter.ImportMembersMapping (RequestName, RequestNamespace, in_members, hasWrappingElem);
-				_membersMapping [1] = xmlImporter.ImportMembersMapping (ResponseName, ResponseNamespace, out_members, hasWrappingElem);
+				InputMembersMapping = xmlImporter.ImportMembersMapping (RequestName, RequestNamespace, in_members, hasWrappingElem);
+				OutputMembersMapping = xmlImporter.ImportMembersMapping (ResponseName, ResponseNamespace, out_members, hasWrappingElem);
 			}
 			else {
-				_membersMapping [0] = soapImporter.ImportMembersMapping (RequestName, RequestNamespace, in_members, hasWrappingElem, true);
-				_membersMapping [1] = soapImporter.ImportMembersMapping (ResponseName, ResponseNamespace, out_members, hasWrappingElem, true);
+				InputMembersMapping = soapImporter.ImportMembersMapping (RequestName, RequestNamespace, in_members, hasWrappingElem, true);
+				OutputMembersMapping = soapImporter.ImportMembersMapping (ResponseName, ResponseNamespace, out_members, hasWrappingElem, true);
 			}
 
-			XmlSerializer [] s = null;
-			s = XmlSerializer.FromMappings (_membersMapping);
-			RequestSerializer = s [0];
-			ResponseSerializer = s [1];
+			requestSerializerId = parent.RegisterSerializer (InputMembersMapping);
+			responseSerializerId = parent.RegisterSerializer (OutputMembersMapping);
 
 			object[] o = source.GetCustomAttributes (typeof (SoapHeaderAttribute));
 			Headers = new HeaderInfo[o.Length];
@@ -164,7 +164,7 @@ namespace System.Web.Services.Protocols {
 				
 				Type headerType = (mems[0] is FieldInfo) ? ((FieldInfo)mems[0]).FieldType : ((PropertyInfo)mems[0]).PropertyType;
 				Headers [i] = new HeaderInfo (mems[0], att);
-				parent.RegisterHeaderType (headerType);
+				parent.RegisterHeaderType (headerType, Use);
 			}
 
 			SoapExtensions = SoapExtension.GetMethodExtensions (source);
@@ -291,6 +291,8 @@ namespace System.Web.Services.Protocols {
 		public XmlQualifiedName faultcode;
 		public string faultstring;
 		public string faultactor;
+		
+		[SoapIgnore]
 		public XmlNode detail;
 	}
 	
@@ -300,32 +302,33 @@ namespace System.Web.Services.Protocols {
 	//
 	internal class SoapTypeStubInfo : TypeStubInfo
 	{
-		Hashtable header_serializers = new Hashtable ();
-		Hashtable header_serializers_byname = new Hashtable ();
+		Hashtable[] header_serializers = new Hashtable [3];
+		Hashtable[] header_serializers_byname = new Hashtable [3];
 
 		// Precomputed
 		internal SoapParameterStyle      ParameterStyle;
 		internal SoapServiceRoutingStyle RoutingStyle;
 		internal SoapBindingUse          Use;
-		internal XmlSerializer           FaultSerializer;
+		internal int                     faultSerializerLitId = -1;
+		internal int                     faultSerializerEncId = -1;
 		internal SoapExtensionRuntimeConfig[][] SoapExtensions;
 		internal SoapBindingStyle SoapBindingStyle;
 		internal XmlReflectionImporter 	xmlImporter;
 		internal SoapReflectionImporter soapImporter;
 
-		public SoapTypeStubInfo (Type t)
-		: base (t)
+		public SoapTypeStubInfo (LogicalTypeInfo logicalTypeInfo)
+		: base (logicalTypeInfo)
 		{
 			xmlImporter = new XmlReflectionImporter ();
 			soapImporter = new SoapReflectionImporter ();
 			
 			object [] o;
 
-			o = t.GetCustomAttributes (typeof (WebServiceBindingAttribute), false);
+			o = Type.GetCustomAttributes (typeof (WebServiceBindingAttribute), false);
 			foreach (WebServiceBindingAttribute at in o)
-				Bindings.Add (new BindingInfo (at, WebServiceNamespace));
+				Bindings.Add (new BindingInfo (at, LogicalType.WebServiceNamespace));
 
-			o = t.GetCustomAttributes (typeof (SoapDocumentServiceAttribute), false);
+			o = Type.GetCustomAttributes (typeof (SoapDocumentServiceAttribute), false);
 			if (o.Length == 1){
 				SoapDocumentServiceAttribute a = (SoapDocumentServiceAttribute) o [0];
 
@@ -334,7 +337,7 @@ namespace System.Web.Services.Protocols {
 				Use = a.Use;
 				SoapBindingStyle = SoapBindingStyle.Document;
 			} else {
-				o = t.GetCustomAttributes (typeof (SoapRpcServiceAttribute), false);
+				o = Type.GetCustomAttributes (typeof (SoapRpcServiceAttribute), false);
 				if (o.Length == 1){
 					SoapRpcServiceAttribute srs = (SoapRpcServiceAttribute) o [0];
 					
@@ -353,8 +356,7 @@ namespace System.Web.Services.Protocols {
 			if (ParameterStyle == SoapParameterStyle.Default) ParameterStyle = SoapParameterStyle.Wrapped;
 			if (Use == SoapBindingUse.Default) Use = SoapBindingUse.Literal;
 
-			FaultSerializer = new XmlSerializer (typeof(Fault));
-			SoapExtensions = SoapExtension.GetTypeExtensions (t);
+			SoapExtensions = SoapExtension.GetTypeExtensions (Type);
 		}
 
 		public override XmlReflectionImporter XmlImporter 
@@ -374,38 +376,82 @@ namespace System.Web.Services.Protocols {
 		
 		protected override MethodStubInfo CreateMethodStubInfo (TypeStubInfo parent, LogicalMethodInfo lmi, bool isClientProxy)
 		{
+			SoapMethodStubInfo res = null;
 			object [] ats = lmi.GetCustomAttributes (typeof (SoapDocumentMethodAttribute));
 			if (ats.Length == 0) ats = lmi.GetCustomAttributes (typeof (SoapRpcMethodAttribute));
 
 			if (ats.Length == 0 && isClientProxy)
 				return null;
 			else if (ats.Length == 0)
-				return new SoapMethodStubInfo (parent, lmi, null, xmlImporter, soapImporter);
+				res = new SoapMethodStubInfo (parent, lmi, null, xmlImporter, soapImporter);
 			else
-				return new SoapMethodStubInfo (parent, lmi, ats[0], xmlImporter, soapImporter);
+				res = new SoapMethodStubInfo (parent, lmi, ats[0], xmlImporter, soapImporter);
+				
+			if (faultSerializerEncId == -1 && res.Use == SoapBindingUse.Encoded)
+			{
+				SoapReflectionImporter ri = new SoapReflectionImporter ();
+				XmlTypeMapping tm = ri.ImportTypeMapping (typeof(Fault));
+				faultSerializerEncId = RegisterSerializer (tm);
+			}
+			else if (faultSerializerLitId == -1 && res.Use == SoapBindingUse.Literal)
+			{
+				XmlReflectionImporter ri = new XmlReflectionImporter ();
+				XmlTypeMapping tm = ri.ImportTypeMapping (typeof(Fault));
+				faultSerializerLitId = RegisterSerializer (tm);
+			}
+			return res;
 		}
 		
-		internal void RegisterHeaderType (Type type)
+		public XmlSerializer GetFaultSerializer (SoapBindingUse use)
 		{
-			XmlSerializer s = (XmlSerializer) header_serializers [type];
-			if (s != null) return;
+			if (use == SoapBindingUse.Literal)
+				return GetSerializer (faultSerializerLitId);
+			else
+				return GetSerializer (faultSerializerEncId);
+		}
+		
+		internal void RegisterHeaderType (Type type, SoapBindingUse use)
+		{
+			Hashtable serializers = header_serializers [(int)use];
+			if (serializers == null) {
+				serializers = new Hashtable ();
+				header_serializers [(int)use] = serializers;
+				header_serializers_byname [(int)use] = new Hashtable ();
+			}
+			
+			if (serializers.ContainsKey (type)) 
+				return;
 
-			XmlReflectionImporter ri = new XmlReflectionImporter ();
-			XmlTypeMapping tm = ri.ImportTypeMapping (type, WebServiceAttribute.DefaultNamespace);
-			s = new XmlSerializer (tm);
+			XmlTypeMapping tm;
+			if (use == SoapBindingUse.Literal) {
+				XmlReflectionImporter ri = new XmlReflectionImporter ();
+				tm = ri.ImportTypeMapping (type, WebServiceAttribute.DefaultNamespace);
+			}
+			else {
+				SoapReflectionImporter ri = new SoapReflectionImporter ();
+				tm = ri.ImportTypeMapping (type, WebServiceAttribute.DefaultNamespace);
+			}
+			
+			int sid = RegisterSerializer (tm);
 
-			header_serializers [type] = s;
-			header_serializers_byname [new XmlQualifiedName (tm.ElementName, tm.Namespace)] = s;
+			serializers [type] = sid;
+			header_serializers_byname [(int)use] [new XmlQualifiedName (tm.ElementName, tm.Namespace)] = sid;
 		}
 
-		internal XmlSerializer GetHeaderSerializer (Type type)
+		internal XmlSerializer GetHeaderSerializer (Type type, SoapBindingUse use)
 		{
-			return (XmlSerializer) header_serializers [type];
+			Hashtable table = header_serializers [(int)use];
+			if (table == null) return null;
+				
+			return GetSerializer ((int) table [type]);
 		}
 	
-		internal XmlSerializer GetHeaderSerializer (XmlQualifiedName qname)
+		internal XmlSerializer GetHeaderSerializer (XmlQualifiedName qname, SoapBindingUse use)
 		{
-			return (XmlSerializer) header_serializers_byname [qname];
+			Hashtable table = header_serializers_byname [(int)use];
+			if (table == null) return null;
+				
+			return GetSerializer ((int) table [qname]);
 		}		
 	}
 }

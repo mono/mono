@@ -1,3 +1,19 @@
+2003-10-13  Lluis Sanchez Gual <lluis@ximian.com>
+
+	* HttpGetTypeStubInfo.cs, HttpPostTypeStubInfo.cs, HttpSimpleTypeStubInfo.cs,
+	  HttpSoapWebServiceHandler.cs, Methods.cs, SoapHttpClientProtocol.cs,
+	  TypeStubManager.cs
+	  Added class LogicalTypeInfo, which contains info common to all protocols
+	  through which a web service can be accessed. Also, modified the way
+	  Serializers are created. Instead of creating one by one, they are now
+	  created all at once. This will make serialization creation more efficient
+	  when the serializer code generator is in place.
+	* SoapRpcMethodAttribute.cs: Set the correct default values for the
+	  properties.
+	* WebServiceHelper.cs: Removed unused method GetServiceNamespace().
+	* XmlReturnReader.cs, XmlReturnWriter.cs: Get the namespace for the return
+	  type from LogicalTypeInfo.
+
 2003-10-12  Lluis Sanchez Gual <lluis@ximian.com>
 
 	* SoapHttpClientProtocol.cs: Replaced AsyncInfo by a new 

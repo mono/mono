@@ -120,7 +120,7 @@ namespace System.Web.Services.Protocols
 				// Whatever routing style we used, we should now have the method information.
 				// We can now notify the remaining extensions
 
-				if (methodInfo == null) throw new SoapException ("Method '" + soapAction + "' not defined in the web service '" + _typeStubInfo.WebServiceName + "'", SoapException.ClientFaultCode);
+				if (methodInfo == null) throw new SoapException ("Method '" + soapAction + "' not defined in the web service '" + _typeStubInfo.LogicalType.WebServiceName + "'", SoapException.ClientFaultCode);
 
 				_extensionChainMedPrio = SoapExtension.CreateExtensionChain (methodInfo.SoapExtensions);
 				_extensionChainLowPrio = SoapExtension.CreateExtensionChain (_typeStubInfo.SoapExtensions[1]);
@@ -139,7 +139,7 @@ namespace System.Web.Services.Protocols
 				{
 					object content;
 					SoapHeaderCollection headers;
-					WebServiceHelper.ReadSoapMessage (xmlReader, _typeStubInfo, methodInfo.RequestSerializer, out content, out headers);
+					WebServiceHelper.ReadSoapMessage (xmlReader, _typeStubInfo, methodInfo.Use, methodInfo.RequestSerializer, out content, out headers);
 					message.InParameters = (object []) content;
 					message.SetHeaders (headers);
 				}
@@ -239,11 +239,12 @@ namespace System.Web.Services.Protocols
 				// What a waste of UTF8encoders, but it has to be thread safe.
 				XmlTextWriter xtw = new XmlTextWriter (outStream, new UTF8Encoding (false));
 				xtw.Formatting = Formatting.Indented;	// TODO: remove formatting when code is stable
+				System.Web.Services.Description.SoapBindingUse use = message.MethodStubInfo.Use;
 
 				if (message.Exception == null)
-					WebServiceHelper.WriteSoapMessage (xtw, _typeStubInfo, message.MethodStubInfo.ResponseSerializer, message.OutParameters, message.Headers);
+					WebServiceHelper.WriteSoapMessage (xtw, _typeStubInfo, use, message.MethodStubInfo.ResponseSerializer, message.OutParameters, message.Headers);
 				else
-					WebServiceHelper.WriteSoapMessage (xtw, _typeStubInfo, _typeStubInfo.FaultSerializer, new Fault (message.Exception), null);
+					WebServiceHelper.WriteSoapMessage (xtw, _typeStubInfo, use, _typeStubInfo.GetFaultSerializer(use), new Fault (message.Exception), null);
 
 				if (methodInfo.MethodAttribute.BufferResponse)
 				{

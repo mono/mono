@@ -188,7 +188,7 @@ namespace System.Web.Services.Protocols {
 				XmlTextWriter xtw = new XmlTextWriter (s, new UTF8Encoding (false));
 				xtw.Formatting = Formatting.Indented;
 
-				WebServiceHelper.WriteSoapMessage (xtw, type_info, message.MethodStubInfo.RequestSerializer, message.Parameters, message.Headers);
+				WebServiceHelper.WriteSoapMessage (xtw, type_info, message.MethodStubInfo.Use, message.MethodStubInfo.RequestSerializer, message.Parameters, message.Headers);
 
 				if (extensions != null) {
 					message.SetStage (SoapMessageStage.AfterSerialize);
@@ -237,11 +237,11 @@ namespace System.Web.Services.Protocols {
 			object content;
 
 			if (isSuccessful) {
-				WebServiceHelper.ReadSoapMessage (xml_reader, type_info, msi.ResponseSerializer, out content, out headers);
+				WebServiceHelper.ReadSoapMessage (xml_reader, type_info, msi.Use, msi.ResponseSerializer, out content, out headers);
 				message.OutParameters = (object[]) content;
 			}
 			else {
-				WebServiceHelper.ReadSoapMessage (xml_reader, type_info, type_info.FaultSerializer, out content, out headers);
+				WebServiceHelper.ReadSoapMessage (xml_reader, type_info, msi.Use, type_info.GetFaultSerializer (msi.Use), out content, out headers);
 				Fault fault = (Fault) content;
 				SoapException ex = new SoapException (fault.faultstring, fault.faultcode, fault.faultactor, fault.detail);
 				message.SetException (ex);

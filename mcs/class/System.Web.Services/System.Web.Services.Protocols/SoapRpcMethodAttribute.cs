@@ -27,13 +27,6 @@ namespace System.Web.Services.Protocols {
 
 		public SoapRpcMethodAttribute ()
 		{
-			action = ""; // FIXME
-			binding = ""; // FIXME
-			oneWay = false;
-			requestElementName = ""; // FIXME
-			requestNamespace = WebServiceAttribute.DefaultNamespace;
-			responseElementName = ""; 
-			responseNamespace = WebServiceAttribute.DefaultNamespace;
 		}
 
 		public SoapRpcMethodAttribute (string action)
@@ -47,7 +40,7 @@ namespace System.Web.Services.Protocols {
 		#region Properties
 
 		public string Action {
-			get { return action; }
+			get { return action != null ? action : ""; }
 			set { action = value; }
 		}
 
@@ -62,22 +55,22 @@ namespace System.Web.Services.Protocols {
 		}
 
 		public string RequestElementName {
-			get { return requestElementName; }
+			get { return requestElementName != null ? requestElementName : ""; }
 			set { requestElementName = value; }
 		}
 
 		public string RequestNamespace {
-			get { return requestNamespace; }
+			get { return requestNamespace != null ? requestNamespace : ""; }
 			set { requestNamespace = value; }
 		}
 
 		public string ResponseElementName {
-			get { return responseElementName; }
+			get { return responseElementName != null ? responseElementName : ""; }
 			set { responseElementName = value; }
 		}
 
 		public string ResponseNamespace {
-			get { return responseNamespace; }
+			get { return responseNamespace != null ? responseNamespace : ""; }
 			set { responseNamespace = value; }
 		}
 

@@ -76,11 +76,11 @@ namespace System.Web.Services.Protocols
 
 	internal class HttpSimpleTypeStubInfo : TypeStubInfo
 	{
-		public HttpSimpleTypeStubInfo (Type t): base (t)
+		public HttpSimpleTypeStubInfo (LogicalTypeInfo logicalTypeInfo): base (logicalTypeInfo)
 		{
 		}
 
-		public override void BuildTypeMethods ()
+		protected override void BuildTypeMethods ()
 		{
 			base.BuildTypeMethods ();
 			

@@ -27,6 +27,7 @@ namespace System.Web.Services.Protocols {
 	internal class MethodStubInfo 
 	{
 		internal LogicalMethodInfo MethodInfo;
+		internal TypeStubInfo TypeStub;
 
 		// The name used by the stub class to reference this method.
 		internal string Name;
@@ -37,6 +38,7 @@ namespace System.Web.Services.Protocols {
 		//
 		public MethodStubInfo (TypeStubInfo parent, LogicalMethodInfo source)
 		{
+			TypeStub = parent;
 			MethodInfo = source;
 
 			object [] o = source.GetCustomAttributes (typeof (WebMethodAttribute));
@@ -59,34 +61,34 @@ namespace System.Web.Services.Protocols {
 	{
 		Hashtable name_to_method = new Hashtable ();
 		MethodStubInfo[] methods;
-		LogicalMethodInfo[] logicalMethods;
 		ArrayList bindings = new ArrayList ();
+		LogicalTypeInfo logicalType;
+		string defaultBinding;
+		ArrayList mappings;
+		XmlSerializer[] serializers;
 
-		// Precomputed
-		internal string WebServiceName;
-		internal string WebServiceNamespace;
-		internal string Description;
-		internal string DefaultBinding;
-		internal Type Type;
-
-		public TypeStubInfo (Type t)
+		public TypeStubInfo (LogicalTypeInfo logicalTypeInfo)
 		{
-			this.Type = t;
+			this.logicalType = logicalTypeInfo;
 
-			object [] o = Type.GetCustomAttributes (typeof (WebServiceAttribute), false);
-			if (o.Length == 1){
-				WebServiceAttribute a = (WebServiceAttribute) o [0];
-				WebServiceName = (a.Name != string.Empty) ? a.Name : Type.Name;
-				WebServiceNamespace = (a.Namespace != string.Empty) ? a.Namespace : WebServiceAttribute.DefaultNamespace;
-				Description = a.Description;
-			} else {
-				WebServiceName = Type.Name;
-				WebServiceNamespace = WebServiceAttribute.DefaultNamespace;
-			}
-
-			DefaultBinding = WebServiceName + ProtocolName;
-			BindingInfo binfo = new BindingInfo (DefaultBinding, WebServiceNamespace);
+			defaultBinding = logicalType.WebServiceName + ProtocolName;
+			BindingInfo binfo = new BindingInfo (defaultBinding, logicalType.WebServiceNamespace);
 			Bindings.Add (binfo);
+		}
+		
+		public LogicalTypeInfo LogicalType
+		{
+			get { return logicalType; }
+		}
+		
+		public Type Type
+		{
+			get { return logicalType.Type; }
+		}
+		
+		public string DefaultBinding
+		{
+			get { return defaultBinding; }
 		}
 		
 		public virtual XmlReflectionImporter XmlImporter 
@@ -103,18 +105,39 @@ namespace System.Web.Services.Protocols {
 		{
 			get { return null; }
 		}
+		
+		public XmlSerializer GetSerializer (int n)
+		{
+			return serializers [n];
+		}
+		
+		public int RegisterSerializer (XmlMapping map)
+		{
+			if (mappings == null) mappings = new ArrayList ();
+			return mappings.Add (map);
+		}
 
+		public void Initialize ()
+		{
+			BuildTypeMethods ();
+			
+			if (mappings != null)
+			{
+				// Build all the serializers at once
+				XmlMapping[] maps = (XmlMapping[]) mappings.ToArray(typeof(XmlMapping));
+				serializers = XmlSerializer.FromMappings (maps);
+			}
+		}
+		
 		//
 		// Extract all method information
 		//
-		public virtual void BuildTypeMethods ()
+		protected virtual void BuildTypeMethods ()
 		{
-			MethodInfo [] type_methods = Type.GetMethods (BindingFlags.Instance | BindingFlags.Public);
-			logicalMethods = LogicalMethodInfo.Create (type_methods, LogicalMethodTypes.Sync);
 			bool isClientProxy = typeof(WebClientProtocol).IsAssignableFrom (Type);
 
 			ArrayList metStubs = new ArrayList ();
-			foreach (LogicalMethodInfo mi in logicalMethods)
+			foreach (LogicalMethodInfo mi in logicalType.LogicalMethods)
 			{
 				if (!isClientProxy && mi.CustomAttributeProvider.GetCustomAttributes (typeof(WebMethodAttribute), true).Length == 0)
 					continue;
@@ -151,11 +174,6 @@ namespace System.Web.Services.Protocols {
 			get { return methods; }
 		}
 		
-		public LogicalMethodInfo[] LogicalMethods
-		{
-			get { return logicalMethods; }
-		}
-
 		internal ArrayList Bindings
 		{
 			get { return bindings; }
@@ -190,6 +208,111 @@ namespace System.Web.Services.Protocols {
 		public string Location;
 	}
 
+
+	//
+	// This class has information abou a web service. Through providess
+	// access to the TypeStubInfo instances for each protocol.
+	//
+	internal class LogicalTypeInfo
+	{
+		LogicalMethodInfo[] logicalMethods;
+
+		internal string WebServiceName;
+		internal string WebServiceNamespace;
+		internal string WebServiceLiteralNamespace;
+		internal string WebServiceEncodedNamespace;
+		internal string WebServiceAbstractNamespace;
+		internal string Description;
+		internal Type Type;
+
+		TypeStubInfo soapProtocol;
+		TypeStubInfo httpGetProtocol;
+		TypeStubInfo httpPostProtocol;
+		
+		public LogicalTypeInfo (Type t)
+		{
+			this.Type = t;
+
+			object [] o = Type.GetCustomAttributes (typeof (WebServiceAttribute), false);
+			if (o.Length == 1){
+				WebServiceAttribute a = (WebServiceAttribute) o [0];
+				WebServiceName = (a.Name != string.Empty) ? a.Name : Type.Name;
+				WebServiceNamespace = (a.Namespace != string.Empty) ? a.Namespace : WebServiceAttribute.DefaultNamespace;
+				Description = a.Description;
+			} else {
+				WebServiceName = Type.Name;
+				WebServiceNamespace = WebServiceAttribute.DefaultNamespace;
+			}
+			
+			// Determine the namespaces for literal and encoded schema types
+			
+			bool encoded = false;
+			
+			o = t.GetCustomAttributes (typeof(SoapDocumentServiceAttribute), true);
+			if (o.Length > 0) {
+				SoapDocumentServiceAttribute at = (SoapDocumentServiceAttribute) o[0];
+				encoded = (at.Use == SoapBindingUse.Encoded);
+			}
+			else if (t.GetCustomAttributes (typeof(SoapRpcServiceAttribute), true).Length > 0)
+				encoded = true;
+			
+			string sep = WebServiceNamespace.EndsWith ("/") ? "" : "/";
+			
+			if (encoded) {
+				WebServiceEncodedNamespace = WebServiceNamespace;
+				WebServiceLiteralNamespace = WebServiceNamespace + sep + "literalTypes";
+			}
+			else {
+				WebServiceEncodedNamespace = WebServiceNamespace + sep + "encodedTypes";
+				WebServiceLiteralNamespace = WebServiceNamespace;
+			}
+			
+			WebServiceAbstractNamespace = WebServiceNamespace + sep + "AbstractTypes";
+			
+			MethodInfo [] type_methods = Type.GetMethods (BindingFlags.Instance | BindingFlags.Public);
+			logicalMethods = LogicalMethodInfo.Create (type_methods, LogicalMethodTypes.Sync);
+		}
+		
+		public LogicalMethodInfo[] LogicalMethods
+		{
+			get { return logicalMethods; }
+		}
+		
+		public TypeStubInfo GetTypeStub (string protocolName)
+		{
+			lock (this)
+			{
+				switch (protocolName)
+				{
+					case "Soap": 
+						if (soapProtocol == null) soapProtocol = CreateTypeStubInfo (typeof(SoapTypeStubInfo));
+						return soapProtocol;
+					case "HttpGet":
+						if (httpGetProtocol == null) httpGetProtocol = CreateTypeStubInfo (typeof(HttpGetTypeStubInfo));
+						return httpGetProtocol;
+					case "HttpPost":
+						if (httpPostProtocol == null) httpPostProtocol = CreateTypeStubInfo (typeof(HttpPostTypeStubInfo));
+						return httpPostProtocol;
+				}
+			}
+			throw new InvalidOperationException ("Protocol " + protocolName + " not supported");
+		}
+		
+		TypeStubInfo CreateTypeStubInfo (Type type)
+		{
+			TypeStubInfo tsi = (TypeStubInfo) Activator.CreateInstance (type, new object[] {this});
+			tsi.Initialize ();
+			return tsi;
+		}
+		
+		public string GetWebServiceNamespace (SoapBindingUse use)
+		{
+			if (use == SoapBindingUse.Literal) return WebServiceLiteralNamespace;
+			else return WebServiceEncodedNamespace;
+		}
+		
+	}
+
 	//
 	// Manages type stubs
 	//
@@ -202,32 +325,30 @@ namespace System.Web.Services.Protocols {
 			type_to_manager = new Hashtable ();
 		}
 
+		static internal TypeStubInfo GetTypeStub (Type t, string protocolName)
+		{
+			LogicalTypeInfo tm = GetLogicalTypeInfo (t);
+			return tm.GetTypeStub (protocolName);
+		}
+		
 		//
 		// This needs to be thread safe
 		//
-		static internal TypeStubInfo GetTypeStub (Type t, string protocolName)
+		static internal LogicalTypeInfo GetLogicalTypeInfo (Type t)
 		{
-			string key = t.FullName + " : " + protocolName;
-			TypeStubInfo tm = (TypeStubInfo) type_to_manager [key];
+			LogicalTypeInfo tm = (LogicalTypeInfo) type_to_manager [t];
 
 			if (tm != null)
 				return tm;
 
-			lock (typeof (TypeStubInfo))
+			lock (typeof (LogicalTypeInfo))
 			{
-				tm = (TypeStubInfo) type_to_manager [key];
+				tm = (LogicalTypeInfo) type_to_manager [t];
 
 				if (tm != null)
 					return tm;
-
-				switch (protocolName)
-				{
-					case "Soap": tm = new SoapTypeStubInfo (t); break;
-					case "HttpGet": tm = new HttpGetTypeStubInfo (t); break;
-					case "HttpPost": tm = new HttpPostTypeStubInfo (t); break;
-				}
-
-				tm.BuildTypeMethods ();
+					
+				tm = new LogicalTypeInfo (t);
 				type_to_manager [t] = tm;
 
 				return tm;
