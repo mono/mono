@@ -19,7 +19,6 @@ namespace Mono.Data.TdsClient {
 		#region Fields
 
 		int fieldCount;
-		object[] fields;
 		bool hasRows;
 		bool isClosed;
 		int recordsAffected;
@@ -60,14 +59,12 @@ namespace Mono.Data.TdsClient {
 			get { return isClosed; }
 		}
 
-		[MonoTODO]
 		public object this [int i] {
-			get { throw new NotImplementedException (); }
+			get { return GetValue (i); }
 		}
 
-		[MonoTODO]
 		public object this [string name] {
-			get { throw new NotImplementedException (); }
+			get { return GetValue (GetColumnOrdinal (name)); }
 		}
 	
 		public int RecordsAffected {
@@ -279,10 +276,11 @@ namespace Mono.Data.TdsClient {
 			return command.Tds.ColumnValues[i];
 		}
 
-		[MonoTODO]
 		public int GetValues (object[] values)
 		{
-			throw new NotImplementedException (); 
+			int len = values.Length;
+			command.Tds.ColumnValues.CopyTo (0, values, 0, len);
+			return (len > FieldCount ? len : FieldCount);
 		}
 
 		[MonoTODO]

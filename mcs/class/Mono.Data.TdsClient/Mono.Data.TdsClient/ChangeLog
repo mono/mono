@@ -1,3 +1,13 @@
+2002-10-25  Tim Coleman (tim@timcoleman.com)
+	* TdsConnection.cs:
+	* TdsConnectionPool.cs:
+		Use a different locking mechanism for connection
+		pools.
+		The connection pool now uses a Monitor to have
+		exclusive access.
+	* TdsDataReader.cs:
+		Implement a bit more.
+
 2002-10-24  Tim Coleman (tim@timcoleman.com)
 	* TdsDataAdapter.cs:
 	* TdsRowUpdatedEventArgs.cs:

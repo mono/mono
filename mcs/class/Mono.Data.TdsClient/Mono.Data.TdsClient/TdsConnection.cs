@@ -42,6 +42,7 @@ namespace Mono.Data.TdsClient {
 
 		// This is the collection of connection pools available
 		static Hashtable pools = new Hashtable ();
+		TdsConnectionPool pool;
 
 		// Our TDS object, the real workhorse
 		ITds tds = null;
@@ -148,9 +149,10 @@ namespace Mono.Data.TdsClient {
 				transaction.Rollback ();
 
 			// if we aren't pooling, just close the connection
-			// otherwise, just set the InUse flag to false
+			// otherwise, relinquish the lock that we established in
+			// the connection pool.
 			if (pooling)
-				tds.InUse = false;
+				pool.ReleaseConnection (tds);
 			else
 				tds.Disconnect ();
 
@@ -200,22 +202,19 @@ namespace Mono.Data.TdsClient {
 			if (!pooling)
 				tds = new Tds42 (dataSource, port, packetSize);
 			else {
-				TdsConnectionPool pool = (TdsConnectionPool) pools[connectionString];
+				pool = (TdsConnectionPool) pools[connectionString];
 				if (pool == null) {
 					lock (pools) {
 						pool = new TdsConnectionPool (dataSource, port, packetSize, minPoolSize, maxPoolSize);
 						pools[connectionString] = pool;
 					}
 				}
-				tds = pool.FindAnAvailableTds ();
+				tds = pool.AllocateConnection ();
 			}
 
-			lock (tds) {
-				if (!tds.IsConnected) {
-					tds.Connect (parms);
-					ChangeDatabase (parms.Database);
-				}
-				tds.InUse = true;
+			if (!tds.IsConnected) {
+				tds.Connect (parms);
+				ChangeDatabase (parms.Database);
 			}
 			this.state = ConnectionState.Open;
 		}

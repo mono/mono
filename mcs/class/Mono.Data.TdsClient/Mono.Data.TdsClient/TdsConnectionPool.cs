@@ -10,6 +10,7 @@
 using Mono.Data.TdsClient.Internal;
 using System;
 using System.Collections;
+using System.Threading;
 
 namespace Mono.Data.TdsClient {
         internal class TdsConnectionPool : MarshalByRefObject, IList, ICollection, IEnumerable
@@ -109,29 +110,34 @@ namespace Mono.Data.TdsClient {
 		}
 
 		[MonoTODO]
-		public Tds FindAnAvailableTds ()
+		public ITds AllocateConnection ()
 		{
 			// make sure we have the minimum count (really only useful the first time)
 			lock (list) {
 				for (int i = Count; i < minSize; i += 1)
 					Add (new Tds42 (dataSource, port, packetSize));
-
-				// look for a tds that isn't in use
-				foreach (object o in list) {
-					if (!((Tds) o).InUse)
-						return (Tds) o;
-				}
-
-				// otherwise, try to expand the list, if not at limits
-				if (Count < maxSize) {
-					Tds tds = new Tds42 (dataSource, port, packetSize);
-					Add (tds);
-					return tds;
-				}
 			}
 
-			return null;
+			// Try to obtain a lock
+			foreach (object o in list)
+				if (Monitor.TryEnter (o))
+					return (ITds) o;
+
+			if (Count < maxSize) {
+				Tds tds = new Tds42 (dataSource, port, packetSize);
+				Monitor.Enter (tds);
+				Add (tds);
+				return tds;
+			}
+
 			// else we have to wait for one to be available
+			
+			return null;
+		}
+
+		public void ReleaseConnection (ITds tds)
+		{
+			Monitor.Exit (tds);
 		}
 
 		public int IndexOf (object o)
