@@ -1,3 +1,16 @@
+2002-07-10  Dennis Haney  <davh@davh.dk>
+
+	* shared.c:
+	* handles.c:
+	* daemon.c: Lots of documentation, some added error checking, and
+	code readability improvements.
+
+	* daemon-messages.h: Add the Error request type to improve error
+	checking.
+
+	* daemon-messages.c: Do a bit more error checking on send() and
+	recv(), and log errors with a higher severity level.
+
 2002-07-04  Dick Porter  <dick@ximian.com>
 
 	* daemon.c (process_process_fork): Fix argument handling, due to
