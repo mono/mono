@@ -1,3 +1,21 @@
+2002-05-05  Tim Coleman <tim@timcoleman.com>
+        * System.Data.SqlTypes/SqlBinary.cs:
+        * System.Data.SqlTypes/SqlBoolean.cs:
+        * System.Data.SqlTypes/SqlByte.cs:
+        * System.Data.SqlTypes/SqlDecimal.cs:
+        * System.Data.SqlTypes/SqlDouble.cs:
+        * System.Data.SqlTypes/SqlGuid.cs:
+        * System.Data.SqlTypes/SqlInt16.cs:
+        * System.Data.SqlTypes/SqlInt32.cs:
+        * System.Data.SqlTypes/SqlInt64.cs:
+        * System.Data.SqlTypes/SqlMoney.cs:
+        * System.Data.SqlTypes/SqlSingle.cs:
+        * System.Data.SqlTypes/SqlString.cs:
+                Various fixes, including adding the SqlNullValueException
+                when trying to retrieve the value of a null SqlType,
+                and when casting values, a Null of type A converts to a
+                Null of type B.
+
 2002-05-04  Daniel Morgan <danmorg@sc.rr.com>
 	
 	* System.Data.SqlClient/PostgresLibrary.cs
