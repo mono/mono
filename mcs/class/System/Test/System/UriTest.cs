@@ -196,6 +196,13 @@ namespace MonoTests.System
 		}
 
 		[Test]
+		[ExpectedException (typeof (UriFormatException))]
+		public void InvalidScheme ()
+		{
+			new Uri ("_:/");
+		}
+
+		[Test]
 		public void ConstructorsRejectRelativePath ()
 		{
 			string [] reluris = new string [] {

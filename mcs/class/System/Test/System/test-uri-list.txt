@@ -109,16 +109,16 @@ urn:mono-uri-test:8080
 # But here, it is interpreted as a host name.
 urn://mono-uri-test:8080
 # Scheme cannot start with non-alphabetic character, but MS fails to reject
-ファイル:myserver/foo.txt
-ファイル://myserver/foo.txt
-辭典://cn_to_ja/
+#ファイル:myserver/foo.txt
+#ファイル://myserver/foo.txt
+#辭典://cn_to_ja/
 #
 # still looks TODO (EscapeString)
 #
 http://web.app.com/test.cgi?value=あいうえお
-辭典:cn_to_ja/ファイル
-ファイル:
-辭典:
+#辭典:cn_to_ja/ファイル
+#ファイル:
+#辭典:
 # I think it is not totally retional, but ToString() returns unespaced string.
 file:///test.domain.com/name space
 #

@@ -1,5 +1,11 @@
 2004-06-11  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* UriTest.cs : Added InvalidScheme().
+	* test-uri-list.txt, test-uri-props.txt :
+	  Commented out RFC2396-violent URIs.
+
+2004-06-11  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* test-uri-list.txt,
 	  test-uri-props.txt,
 	  test-uri-props-manual.txt :
