@@ -103,10 +103,11 @@ namespace MonoCasTests.System {
 		}
 
 #if !NET_2_0
+		// note: TypeInformation is obsolete in 2.0
 		[Test]
-		[PermissionSet (SecurityAction.Deny, Unrestricted = true)]
+		[ReflectionPermission (SecurityAction.Deny, TypeInformation = true)]
 		[ExpectedException (typeof (SecurityException))]
-		public void FullRestriction_TargetSite ()
+		public void ReflectionTypeInformationRestriction_TargetSite ()
 		{
 			Exception e = new Exception ("message", new Exception ("inner message"));
 			Assert.IsNull (e.TargetSite, "TargetSite");
