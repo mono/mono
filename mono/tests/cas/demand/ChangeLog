@@ -1,3 +1,8 @@
+2005-03-24  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* pinvoke1-3.cs: Changed RunningOnMono for RunningOnWindows as it's an
+	OS issue not a runtime issue being tested.
+
 2005-03-10  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* pinvoke1-3.cs: New. Tests that P/Invoking unmanaged methods provoke
