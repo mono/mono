@@ -1,3 +1,7 @@
+2004-09-06 Ben Maurer  <bmaurer@users.sourceforge.net>
+
+	* unsafe-10.cs: new test
+
 2004-09-06  Martin Baulig  <martin@ximian.com>
 
 	* Makefile: Enable gen-65.cs (bug #58306).
