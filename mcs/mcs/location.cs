@@ -14,6 +14,27 @@ using System.Diagnostics.SymbolStore;
 
 namespace Mono.CSharp {
 	/// <summary>
+	///   This is one single source file.
+	/// </summary>
+	/// <remarks>
+	///   This is intentionally a class and not a struct since we need
+	///   to pass this by reference.
+	/// </remarks>
+	public sealed class SourceFile {
+		public readonly string Name;
+		public readonly string Path;
+		public readonly int Index;
+		public ISymbolDocumentWriter SymbolDocument;
+
+		public SourceFile (string name, string path, int index)
+		{
+			this.Index = index;
+			this.Name = name;
+			this.Path = path;
+		}
+	}
+
+	/// <summary>
 	///   Keeps track of the location in the program
 	/// </summary>
 	///
@@ -27,41 +48,119 @@ namespace Mono.CSharp {
 	public struct Location {
 		public int token; 
 
-		static Hashtable map;
-		static Hashtable sym_docs;
-		static ArrayList list;
-		static int global_count;
+		static ArrayList source_list;
+		static Hashtable source_files;
+		static int source_bits;
+		static int source_mask;
+		static int source_count;
 		static int module_base;
+		static int current_source;
 
 		public readonly static Location Null;
 		
 		static Location ()
 		{
-			map = new Hashtable ();
-			list = new ArrayList ();
-			sym_docs = new Hashtable ();
-			global_count = 0;
+			source_files = new Hashtable ();
+			source_list = new ArrayList ();
+			current_source = 0;
 			module_base = 0;
-			Null.token = -1;
+			Null.token = 0;
 		}
 
-		static public void Push (string name)
+		// <summary>
+		//   This must be called before parsing/tokenizing any files.
+		// </summary>
+		static public void AddFile (string name)
 		{
-			map.Remove (global_count);
-			map.Add (global_count, name);
-			list.Add (global_count);
-			module_base = global_count;
+			string path = Path.GetFullPath (name);
+
+			if (source_files.Contains (path)){
+				Report.Error (
+					1516,
+					"Source file `" + name + "' specified multiple times");
+				Environment.Exit (1);
+			}
+
+			source_files.Add (path, ++source_count);
+			source_list.Add (new SourceFile (name, path, source_count));
+		}
+
+		static public SourceFile[] SourceFiles {
+			get {
+				SourceFile[] retval = new SourceFile [source_list.Count];
+				source_list.CopyTo (retval, 0);
+				return retval;
+			}
+		}
+
+		static int log2 (int number)
+		{
+			int bits = 0;
+			while (number > 0) {
+				bits++;
+				number /= 2;
+			}
+
+			return bits;
+		}
+
+		// <summary>
+		//   After adding all source files we want to compile with AddFile(), this method
+		//   must be called to `reserve' an appropriate number of bits in the token for the
+		//   source file.  We reserve some extra space for files we encounter via #line
+		//   directives while parsing.
+		// </summary>
+		static public void Initialize ()
+		{
+			source_bits = log2 (source_list.Count) + 2;
+			source_mask = (1 << source_bits) - 1;
+		}
+
+		// <remarks>
+		//   This is used when we encounter a #line preprocessing directive.
+		// </remarks>
+		static public SourceFile LookupFile (string name)
+		{
+			string path = Path.GetFullPath (name);
+
+			if (!source_files.Contains (path)) {
+				if (source_count >= source_bits * 8)
+					return new SourceFile (name, path, 0);
+
+				source_files.Add (path, ++source_count);
+				SourceFile retval = new SourceFile (name, path, source_count);
+				source_list.Add (retval);
+				return retval;
+			}
+
+			int index = (int) source_files [path];
+			return (SourceFile) source_list [index - 1];
+		}
+
+		static public void Push (SourceFile file)
+		{
+			current_source = file.Index;
+			module_base = current_source << source_bits;
+		}
+
+		// <remarks>
+		//   If we're compiling with debugging support, this is called between parsing and
+		//   code generation to register all the source files with the symbol writer.		//
+		// </remarks>
+		static public void DefineSymbolDocuments (ISymbolWriter symwriter)
+		{
+			foreach (SourceFile file in source_list)
+				file.SymbolDocument = symwriter.DefineDocument (
+					file.Path, SymLanguageType.CSharp, SymLanguageVendor.Microsoft,
+					SymDocumentType.Text);
 		}
 		
 		public Location (int row)
 		{
 			if (row < 0)
-				token = -1;
-			else {
-				token = module_base + row;
-				if (global_count < token)
-					global_count = token;
-			}
+				token = 0;
+			else
+				token = current_source + (row << source_bits);
 		}
 
 		public override string ToString ()
@@ -74,36 +173,26 @@ namespace Mono.CSharp {
 		/// </summary>
 		static public bool IsNull (Location l)
 		{
-			return l.token == -1;
+			return l.token == 0;
 		}
 
 		public string Name {
 			get {
-				int best = 0;
-				
-				if (token < 0)
+				int index = token & source_mask;
+				if ((token == 0) || (index == 0))
 					return "Internal";
 
-				foreach (int b in list){
-					if (token > b)
-						best = b;
-				}
-				return (string) map [best];
+				SourceFile file = (SourceFile) source_list [index - 1];
+				return file.Name;
 			}
 		}
 
 		public int Row {
 			get {
-				int best = 0;
-				
-				if (token < 0)
+				if (token == 0)
 					return 1;
-				
-				foreach (int b in list){
-					if (token > b)
-						best = b;
-				}
-				return token - best;
+
+				return token >> source_bits;
 			}
 		}
 
@@ -121,33 +210,11 @@ namespace Mono.CSharp {
 		// If we don't have a symbol writer, this property is always null.
 		public ISymbolDocumentWriter SymbolDocument {
 			get {
-				ISymbolWriter sw = CodeGen.SymbolWriter;
-				ISymbolDocumentWriter doc;
-
-				if (token < 0)
+				int index = token & source_mask;
+				if (index == 0)
 					return null;
-
-				// If we don't have a symbol writer, return null.
-				if (sw == null)
-					return null;
-
-				string path = Path.GetFullPath (Name);
-
-				if (sym_docs.Contains (path))
-					// If we already created an ISymbolDocumentWriter
-					// instance for this document, return it.
-					doc = (ISymbolDocumentWriter) sym_docs [path];
-				else {
-					// Create a new ISymbolDocumentWriter instance and
-					// store it in the hash table.
-					doc = sw.DefineDocument (path, SymLanguageType.CSharp,
-								 SymLanguageVendor.Microsoft,
-								 SymDocumentType.Text);
-
-					sym_docs.Add (path, doc);
-				}
-
-				return doc;
+				SourceFile file = (SourceFile) source_list [index - 1];
+				return file.SymbolDocument;
 			}
 		}
 	}

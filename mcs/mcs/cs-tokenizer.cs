@@ -31,8 +31,8 @@ namespace Mono.CSharp
 	public class Tokenizer : yyParser.yyInput
 	{
 		StreamReader reader;
-		public string file_name;
-		public string ref_name;
+		public SourceFile ref_name;
+		public SourceFile file_name;
 		public int ref_line = 1;
 		public int line = 1;
 		public int col = 1;
@@ -95,7 +95,7 @@ namespace Mono.CSharp
 				if (current_token_name == null)
 					current_token_name = current_token.ToString ();
 
-				return String.Format ("{0} ({1},{2}), Token: {3} {4}", ref_name,
+				return String.Format ("{0} ({1},{2}), Token: {3} {4}", ref_name.Name,
 										       ref_line,
 										       col,
 										       current_token_name,
@@ -329,10 +329,10 @@ namespace Mono.CSharp
 			defines [def] = true;
 		}
 		
-		public Tokenizer (StreamReader input, string fname, ArrayList defs)
+		public Tokenizer (StreamReader input, SourceFile file, ArrayList defs)
 		{
-			this.ref_name = fname;
-			this.file_name = fname;
+			this.ref_name = file;
+			this.file_name = file;
 			reader = input;
 			
 			putback_char = -1;
@@ -347,7 +347,7 @@ namespace Mono.CSharp
 			// FIXME: This could be `Location.Push' but we have to
 			// find out why the MS compiler allows this
 			//
-			Mono.CSharp.Location.Push (fname);
+			Mono.CSharp.Location.Push (file);
 		}
 
 		bool is_identifier_start_character (char c)
@@ -971,7 +971,7 @@ namespace Mono.CSharp
 			if (putback_char != -1){
 				Console.WriteLine ("Col: " + col);
 				Console.WriteLine ("Row: " + line);
-				Console.WriteLine ("Name: " + ref_name);
+				Console.WriteLine ("Name: " + ref_name.Name);
 				Console.WriteLine ("Current [{0}] putting back [{1}]  ", putback_char, c);
 				throw new Exception ("This should not happen putback on putback");
 			}
@@ -1060,8 +1060,8 @@ namespace Mono.CSharp
 				return false;
 
 			if (arg == "default"){
-				ref_name = file_name;
 				ref_line = line;
+				ref_name = file_name;
 				Location.Push (ref_name);
 				return true;
 			}
@@ -1075,7 +1075,8 @@ namespace Mono.CSharp
 					
 					char [] quotes = { '\"' };
 					
-					ref_name = arg.Substring (pos). Trim (quotes);
+					string name = arg.Substring (pos). Trim (quotes);
+					ref_name = Location.LookupFile (name);
 					Location.Push (ref_name);
 				} else {
 					ref_line = System.Int32.Parse (arg);

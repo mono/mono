@@ -2542,7 +2542,7 @@ namespace Mono.CSharp {
 		public readonly Block     Parent;
 		public readonly bool      Implicit;
 		public readonly Location  StartLocation;
-		public Location           EndLocation;
+		public Location           EndLocation = Location.Null;
 
 		//
 		// The statements in this block

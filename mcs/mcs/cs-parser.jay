@@ -77,6 +77,11 @@ namespace Mono.CSharp
 		// Switch stack.
 		//
 		Stack switch_stack;
+
+		//
+		// The current file.
+		//
+		SourceFile file;
 %}
 
 %token EOF
@@ -3918,16 +3923,17 @@ public Tokenizer Lexer {
 	}
 }		   
 
-public CSharpParser (StreamReader reader, string name, ArrayList defines)
+public CSharpParser (StreamReader reader, SourceFile file, ArrayList defines)
 {
 	current_namespace = new Namespace (null, "");
-	this.name = name;
+	this.name = file.Name;
+	this.file = file;
 	current_container = RootContext.Tree.Types;
 	current_container.Namespace = current_namespace;
 	oob_stack = new Stack ();
 	switch_stack = new Stack ();
 
-	lexer = new Tokenizer (reader, name, defines);
+	lexer = new Tokenizer (reader, file, defines);
 }
 
 public override void parse ()

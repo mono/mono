@@ -78,6 +78,8 @@ namespace Mono.CSharp {
 					-18, "Cannot find any symbol writer");
 				return;
 			}
+
+			Location.DefineSymbolDocuments (SymbolWriter);
 		}
 
 		//

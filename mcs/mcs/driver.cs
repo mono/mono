@@ -67,7 +67,6 @@ namespace Mono.CSharp
 		static bool load_default_config = true;
 
 		static Hashtable response_file_list;
-		static Hashtable source_files = new Hashtable ();
 
 		//
 		// A list of resource files
@@ -131,20 +130,20 @@ namespace Mono.CSharp
 				(int) span.TotalSeconds, span.Milliseconds, msg);
 		}	       
 	       
-		static void tokenize_file (string input_file)
+		static void tokenize_file (SourceFile file)
 		{
 			Stream input;
 
 			try {
-				input = File.OpenRead (input_file);
+				input = File.OpenRead (file.Name);
 			} catch {
-				Report.Error (2001, "Source file '" + input_file + "' could not be opened");
+				Report.Error (2001, "Source file '" + file.Name + "' could not be opened");
 				return;
 			}
 
 			using (input){
 				StreamReader reader = new StreamReader (input, encoding, using_default_encoder);
-				Tokenizer lexer = new Tokenizer (reader, input_file, defines);
+				Tokenizer lexer = new Tokenizer (reader, file, defines);
 				int token, tokens = 0, errors = 0;
 
 				while ((token = lexer.token ()) != Token.EOF){
@@ -160,21 +159,21 @@ namespace Mono.CSharp
 		}
 
 		// MonoTODO("Change error code for aborted compilation to something reasonable")]		
-		static void parse (string input_file)
+		static void parse (SourceFile file)
 		{
 			CSharpParser parser;
 			Stream input;
 
 			try {
-				input = File.OpenRead (input_file);
+				input = File.OpenRead (file.Name);
 			} catch {
-				Report.Error (2001, "Source file '" + input_file + "' could not be opened");
+				Report.Error (2001, "Source file '" + file.Name + "' could not be opened");
 				return;
 			}
 
 			StreamReader reader = new StreamReader (input, encoding, using_default_encoder);
 				
-			parser = new CSharpParser (reader, input_file, defines);
+			parser = new CSharpParser (reader, file, defines);
 			parser.yacc_verbose = yacc_verbose;
 			try {
 				parser.parse ();
@@ -423,18 +422,19 @@ namespace Mono.CSharp
 			if (first_source == null)
 				first_source = f;
 
-			if (source_files.Contains (f)){
-				Report.Error (
-					1516,
-					"Source file `" + f + "' specified multiple times");
-				Environment.Exit (1);
-			} else
-				source_files.Add (f, f);
-					
-			if (tokenize) {
-				tokenize_file (f);
-			} else {
-				parse (f);
+			Location.AddFile (f);
+		}
+
+		static void ProcessFiles ()
+		{
+			Location.Initialize ();
+
+			foreach (SourceFile file in Location.SourceFiles) {
+				if (tokenize) {
+					tokenize_file (file);
+				} else {
+					parse (file);
+				}
 			}
 		}
 
@@ -1149,6 +1149,8 @@ namespace Mono.CSharp
 
 				CompileFiles (arg, false); 
 			}
+
+			ProcessFiles ();
 
 			if (tokenize)
 				return true;
