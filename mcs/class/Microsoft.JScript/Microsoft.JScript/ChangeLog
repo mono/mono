@@ -1,3 +1,27 @@
+2004-03-16  Cesar Lopez Nataren  <cesar@ciencias.unam.mx>
+
+	* Convert.cs: added rule for string conversion.
+
+	* Plus.cs: added rule for string addition.
+
+	* PostOrPrefixOperator.cs: added constructor, returned to Microsoft.JScript ns, initial Resolve and
+	Emit (cases where there's no real operator).
+
+	* StringLiteral.cs: now implements Exp as can appear as a simple
+	exp in global code. Added check for Pop generation.
+
+	* expression.cs: added IL generation code for print func call. 
+	Args class added get_element, Size and made Resolve behave as the
+	others (collect the differents Resolve's return values from each
+	of the arguments). Expression class, added default Resolve call
+	for non-Exp implementers.
+
+	* jscript-lexer-parser.g: postfix_expr rule now returns a simple
+	AST, this handles the case where no postOrPrefixOp present; Unary
+	returns an AST too.
+
+	* FormalParameterList.cs: added get_element, retrieves nth element.
+
 2004-03-14  Cesar Lopez Nataren  <cesar@ciencias.unam.mx>
 
 	* ScriptStream.cs: let's print some messages.
