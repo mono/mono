@@ -92,9 +92,6 @@ namespace System.IO {
 				Marshal.Copy ((IntPtr) (base_address + position), buffer, offset, count);
 			}
 			position += count;
-			for (int i = 0; i < count; i++){
-				Console.Write ((char) buffer [i + offset]);
-			}
 			return count;
 		}
 
