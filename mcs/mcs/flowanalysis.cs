@@ -122,8 +122,6 @@ namespace Mono.CSharp
 					return;
 				}
 
-				Report.Debug (4, "AND REACHABILITY", a, b, do_break);
-
 				//
 				// `break' does not "break" in a Switch or a LoopBlock
 				//
@@ -571,7 +569,7 @@ namespace Mono.CSharp
 			{
 				UsageVector result = branching.Merge ();
 
-				Report.Debug (2, "  MERGING RESULT", this, IsDirty,
+				Report.Debug (2, "  MERGING CHILD", this, IsDirty,
 					      result.ParameterVector, result.LocalVector,
 					      result.Reachability, Type);
 
@@ -601,9 +599,6 @@ namespace Mono.CSharp
 				} else if (branching.Type == BranchingType.Switch)
 					reachability.ResetBreaks ();
 
-				Report.Debug (2, "  MERGING CHILDREN DONE", parameters, locals,
-					      reachability, branching.Infinite);
-
 				//
 				// We've now either reached the point after the branching or we will
 				// never get there since we always return or always throw an exception.
@@ -626,7 +621,7 @@ namespace Mono.CSharp
 				if (result.ParameterVector != null)
 					parameters.Or (result.ParameterVector);
 
-				Report.Debug (2, "  MERGING RESULT DONE", this);
+				Report.Debug (2, "  MERGING CHILD DONE", this);
 
 				IsDirty = true;
 
@@ -905,13 +900,13 @@ namespace Mono.CSharp
 
 			Reachability reachability = null;
 
-			Report.Debug (2, "  MERGING CHILDREN", Name);
+			Report.Debug (2, "  MERGING SIBLINGS", this, Name);
 
 			for (UsageVector child = sibling_list; child != null; child = child.Next) {
 				bool do_break = (Type != BranchingType.Switch) &&
 					(Type != BranchingType.LoopBlock);
 
-				Report.Debug (2, "    MERGING CHILD   ", child,
+				Report.Debug (2, "    MERGING SIBLING   ", child,
 					      child.Locals, child.Parameters,
 					      reachability, child.Reachability, do_break);
 
@@ -959,7 +954,7 @@ namespace Mono.CSharp
 					child.Reachability.AlwaysReturns ||
 					child.Reachability.AlwaysHasBarrier;
 
-				Report.Debug (2, "    MERGING CHILD #1", reachability,
+				Report.Debug (2, "    MERGING SIBLING #1", reachability,
 					      Type, child.Type, child.Reachability.IsUnreachable,
 					      do_break_2, unreachable);
 
@@ -976,7 +971,7 @@ namespace Mono.CSharp
 			if (reachability == null)
 				reachability = Reachability.Never ();
 
-			Report.Debug (2, "  MERGING CHILDREN DONE", parameters, locals,
+			Report.Debug (2, "  MERGING SIBLINGS DONE", parameters, locals,
 				      reachability, Infinite);
 
 			return new UsageVector (parameters, locals, reachability, Location);
@@ -990,9 +985,6 @@ namespace Mono.CSharp
 		public Reachability MergeChild (FlowBranching child)
 		{
 			UsageVector result = CurrentUsageVector.MergeChild (child);
-
-			Report.Debug (4, "  MERGE CHILD", Location, child, CurrentUsageVector,
-				      result.Reachability);
 
 			return result.Reachability;
  		}
