@@ -88,8 +88,7 @@ public class DateTimeTest : TestCase
 		AssertEquals("B12", "05:25", t1.ToString ("t"));
 		AssertEquals("B13", "05:25:13", t1.ToString ("T"));
 		AssertEquals("B14", "2002-02-25 05:25:13Z", t1.ToString ("u"));
-		// next one assumes your CurrentTimezone is CET
-		AssertEquals("B15", "Monday, 25 February 2002 04:25:13", t1.ToString ("U"));
+		AssertEquals("B15", "Sunday, 24 February 2002 11:25:13", t1.ToUniversalTime().ToString ("U"));
 		AssertEquals("B16", "2002 February", t1.ToString ("y"));
 		AssertEquals("B17", "2002 February", t1.ToString ("Y"));
 
@@ -119,10 +118,10 @@ public class DateTimeTest : TestCase
 		AssertEquals("C23", "P", t2.ToString ("%t"));
 		AssertEquals("C24", "AM", t1.ToString ("tt"));
 		AssertEquals("C25", "PM", t2.ToString ("tt"));
-		// next three assume your CurrentTimezone is CET
-		AssertEquals("C26", "+1", t1.ToString ("%z"));
-		AssertEquals("C27", "+01", t1.ToString ("zz"));
-		AssertEquals("C28", "+01:00", t1.ToString ("zzz"));
+		long offset = TimeZone.CurrentTimeZone.GetUtcOffset(t1).Ticks / 36000000000;
+		AssertEquals("C26", offset.ToString("+#;-#;0"), t1.ToString ("%z"));
+		AssertEquals("C27", offset.ToString("+00;-00;00"), t1.ToString ("zz"));
+		AssertEquals("C28", offset.ToString("+00;-00;00") + ":00", t1.ToString ("zzz"));
 		AssertEquals("C29", " : ", t1.ToString (" : "));
 		AssertEquals("C30", " / ", t1.ToString (" / "));
 		AssertEquals("C31", " yyy ", t1.ToString (" 'yyy' "));
@@ -300,7 +299,12 @@ public class DateTimeTest : TestCase
 		// Standard patterns
 		DateTime t1 = DateTime.Parse ("02/25/2002");
 		AssertEquals ("H00", myTicks[0], t1.Ticks);
-		t1 = DateTime.Parse ("2002-02-25");
+		try {
+			t1 = DateTime.Parse ("2002-02-25");
+		}
+		catch (Exception e) {
+			Fail ("Unexpected exception. e=" + e);
+		}
 		AssertEquals ("H01", myTicks[0], t1.Ticks);
 		t1 = DateTime.Parse ("Monday, 25 February 2002");
 		AssertEquals ("H02", myTicks[0], t1.Ticks);

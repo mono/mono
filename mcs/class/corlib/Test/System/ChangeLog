@@ -1,3 +1,7 @@
+2002-06-14  Nick Drochak  <ndrochak@gol.com>
+
+	* DateTimeTest.cs: Make some of the tests a bit more timezone neutral.
+
 2002-06-12   Nick Drochak  <ndrochak@gol.com>
 
 	* ConvertTest.cs: Punt bug in DateTime.Parse() over to that test.
