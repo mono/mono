@@ -34,6 +34,8 @@ class Test {
 		if (d.which == 1)
 			return 1;
 
+		Console.WriteLine ("Test passes");
+		
 		return 0;
 	}
 }
