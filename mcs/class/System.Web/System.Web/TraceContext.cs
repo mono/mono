@@ -94,7 +94,7 @@ namespace System.Web {
       }
 
       public void Write(string msg) {
-	 Write(String.Empty, msg, null, true);
+	 Write(String.Empty, msg, null, false);
       }
 
       public void Write(string category, string msg) {

@@ -1,7 +1,12 @@
+2005-02-01 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* TraceContext.cs: writing a message without any other argument is not
+	a warniing. Fixes bug #72017.
+
 2005-01-20 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
-	* HttpApplication.cs: if there are no more handlers, finish the request and
-	ensure we call Complete on it. Now FreeTextBox 3.0 works.
+	* HttpApplication.cs: if there are no more handlers, finish the
+	request and ensure we call Complete on it. Now FreeTextBox 3.0 works.
 
 2004-12-21 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
