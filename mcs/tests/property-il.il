@@ -75,3 +75,38 @@
 		.get instance default string 'Bar'::'Boston' () 
 	}
   } // end of type Bar
+  
+.class public auto ansi beforefieldinit C
+       extends [mscorlib]System.Object
+{
+  .method public hidebysig specialname instance int32 
+          get_Value() cil managed
+  {
+    .maxstack  1
+    .locals init (int32 V_0)
+    IL_0000:  ldc.i4.3
+    IL_0001:  stloc.0
+    IL_0002:  br.s       IL_0004
+
+    IL_0004:  ldloc.0
+    IL_0005:  ret
+  }
+
+  .method public hidebysig specialname instance void 
+          add_Arg(bool arg) cil managed
+  {
+    .maxstack  0
+    IL_0000:  ret
+  }
+
+  .method public hidebysig specialname rtspecialname 
+          instance void  .ctor() cil managed
+  {
+    .maxstack  1
+    IL_0000:  ldarg.0
+    IL_0001:  call       instance void [mscorlib]System.Object::.ctor()
+    IL_0006:  ret
+  }
+
+}
+  

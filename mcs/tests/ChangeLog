@@ -1,3 +1,7 @@
+2004-09-15  Marek Safar <marek.safar@seznam.cz>
+
+	* property-il.il, property-main.cs: Included test for #36804.
+
 2004-09-15  Martin Baulig  <martin@ximian.com>
 
 	* test-294.cs: Is not back in gmcs.
