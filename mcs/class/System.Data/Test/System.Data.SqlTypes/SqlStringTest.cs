@@ -695,6 +695,19 @@ namespace MonoTests.System.Data.SqlTypes
                         String TestString = "Test String";
                         AssertEquals ("#AD01", "Test String", ((SqlString)TestString).Value);                        
                 }                
+		
+		 #if NET_2_0
+                [Test]
+                public void AddSqlString()
+                {
+                        AssertEquals ("#AE01","First TestStringThis is just a test SqlString",(String)(SqlString.Add(Test1, Test2)));
+                        AssertEquals ("#AE02","First TestStringPlainString", (String)(SqlString.Add (Test1, "PlainString")));
+                        Assert ("#AE03",(SqlString.Add (Test1, null)).IsNull);
+                }
+                #endif
+
+
+
         }
 }
 
