@@ -1387,6 +1387,10 @@ public class TypeManager {
 		case TypeCode.String:
 			return TypeManager.string_type;
 		default:
+			if (t == typeof (void))
+				return TypeManager.void_type;
+			if (t == typeof (object))
+				return TypeManager.object_type;
 			return t;
 		}
 	}
