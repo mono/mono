@@ -1565,9 +1565,20 @@ namespace Mono.CSharp
 
 			Timer.ShowTimers ();
 			
-			if (Report.ExpectedError != 0){
-				Console.WriteLine("Failed to report expected error " + Report.ExpectedError);
-				Environment.Exit (1);
+			if (Report.ExpectedError != 0) {
+				if (Report.Errors == 0) {
+					Console.WriteLine ("Failed to report expected error " + Report.ExpectedError + ".\n" +
+						"No other errors reported.");
+					
+					Environment.Exit (2);
+				} else {
+					Console.WriteLine ("Failed to report expected error " + Report.ExpectedError + ".\n" +
+						"However, other errors were reported.");
+					
+					Environment.Exit (1);
+				}
+				
+				
 				return false;
 			}
 

@@ -1,3 +1,9 @@
+2004-03-24 Ben Maurer  <bmaurer@users.sourceforge.net>
+
+	* driver.cs: For --expect-error, report error code `2'
+	if the program compiled with no errors, error code `1' if
+	it compiled with an error other than the one expected.
+
 2004-03-24  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* compiler.csproj: Updated for Visual Studio .NET 2003.
