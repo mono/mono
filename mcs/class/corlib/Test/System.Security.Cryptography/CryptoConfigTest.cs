@@ -5,7 +5,7 @@
 //	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) 2002, 2003 Motus Technologies Inc. (http://www.motus.com)
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -34,20 +34,15 @@ using System.Security.Cryptography;
 namespace MonoTests.System.Security.Cryptography {
 
 [TestFixture]
-public class CryptoConfigTest : Assertion {
-
-        public void AssertEquals (string msg, byte[] array1, byte[] array2)
-	{
-		AllTests.AssertEquals (msg, array1, array2);
-	}
+public class CryptoConfigTest {
 
 	void CreateFromName (string name, string objectname)
 	{
 		object o = CryptoConfig.CreateFromName (name);
 		if (objectname == null)
-			AssertNull (name, o);
+			Assert.IsNull (o, name);
 		else
-			AssertEquals (name, o.ToString(), objectname);
+			Assert.AreEqual (objectname, o.ToString (), name);
 	}
 
 	[Test]
@@ -108,11 +103,30 @@ public class CryptoConfigTest : Assertion {
 		CreateFromName ("System.Security.Cryptography.HMACSHA1", "System.Security.Cryptography.HMACSHA1");
 		CreateFromName ("MACTripleDES", "System.Security.Cryptography.MACTripleDES");
 		CreateFromName ("System.Security.Cryptography.MACTripleDES", "System.Security.Cryptography.MACTripleDES");
+#if NET_2_0
+		// new HMAC - new base class doesn't return anything with it's short name
+		Assert.IsNull (CryptoConfig.CreateFromName ("HMAC"), "HMAC");
+		CreateFromName ("System.Security.Cryptography.HMAC", "System.Security.Cryptography.HMACSHA1");
+		CreateFromName ("HMACMD5", "System.Security.Cryptography.HMACMD5");
+		CreateFromName ("System.Security.Cryptography.HMACMD5", "System.Security.Cryptography.HMACMD5");
+		CreateFromName ("HMACRIPEMD160", "System.Security.Cryptography.HMACRIPEMD160");
+		CreateFromName ("System.Security.Cryptography.HMACRIPEMD160", "System.Security.Cryptography.HMACRIPEMD160");
+		CreateFromName ("HMACSHA256", "System.Security.Cryptography.HMACSHA256");
+		CreateFromName ("System.Security.Cryptography.HMACSHA256", "System.Security.Cryptography.HMACSHA256");
+		CreateFromName ("HMACSHA384", "System.Security.Cryptography.HMACSHA384");
+		CreateFromName ("System.Security.Cryptography.HMACSHA384", "System.Security.Cryptography.HMACSHA384");
+		CreateFromName ("HMACSHA512", "System.Security.Cryptography.HMACSHA512");
+		CreateFromName ("System.Security.Cryptography.HMACSHA512", "System.Security.Cryptography.HMACSHA512");
+		// new hash algorithm
+		CreateFromName ("RIPEMD160", "System.Security.Cryptography.RIPEMD160Managed");
+		CreateFromName ("RIPEMD-160", "System.Security.Cryptography.RIPEMD160Managed");
+		CreateFromName ("System.Security.Cryptography.RIPEMD160", "System.Security.Cryptography.RIPEMD160Managed");
+#endif
 		// note: CryptoConfig can create any object !
 		CreateFromName ("System.Security.Cryptography.CryptoConfig", "System.Security.Cryptography.CryptoConfig");
 		CreateFromName ("System.IO.MemoryStream", "System.IO.MemoryStream");
 		// non existing algo should return null (without exception)
-		AssertNull ("NonExistingAlgorithm", CryptoConfig.CreateFromName("NonExistingAlgorithm"));
+		Assert.IsNull (CryptoConfig.CreateFromName ("NonExistingAlgorithm"), "NonExistingAlgorithm");
 	}
 
 	// additional names (URL) used for XMLDSIG (System.Security.Cryptography.Xml)
@@ -167,11 +181,11 @@ public class CryptoConfigTest : Assertion {
 	public void EncodeOID () 
 	{
 		// OID starts with 0, 1 or 2
-		AssertEquals ("OID starting with 0.", oidETSI, CryptoConfig.EncodeOID ("0.4.0.0"));
-		AssertEquals ("OID starting with 1.", oidSHA1, CryptoConfig.EncodeOID ("1.3.14.3.2.26"));
-		AssertEquals ("OID starting with 2.", oidASN1CharacterModule, CryptoConfig.EncodeOID ("2.1.0.0.0"));
+		Assert.AreEqual (oidETSI, CryptoConfig.EncodeOID ("0.4.0.0"), "OID starting with 0.");
+		Assert.AreEqual (oidSHA1, CryptoConfig.EncodeOID ("1.3.14.3.2.26"), "OID starting with 1.");
+		Assert.AreEqual (oidASN1CharacterModule, CryptoConfig.EncodeOID ("2.1.0.0.0"), "OID starting with 2.");
 		// OID numbers can span multiple bytes
-		AssertEquals ("OID with numbers spanning multiple bytes", oidmd5withRSAEncryption, CryptoConfig.EncodeOID ("1.2.840.113549.1.1.4"));
+		Assert.AreEqual (oidmd5withRSAEncryption, CryptoConfig.EncodeOID ("1.2.840.113549.1.1.4"), "OID with numbers spanning multiple bytes");
 	}
 
 	[Test]
@@ -206,7 +220,7 @@ public class CryptoConfigTest : Assertion {
 		// however it works with MS BCL
 		byte[] oid3 = CryptoConfig.EncodeOID ("3.0");
 		byte[] res3 = { 0x06, 0x01, 0x78 };
-		AssertEquals ("OID: 3.0", res3, oid3);
+		Assert.AreEqual (res3, oid3, "OID: 3.0");
 	}
 
 	[Test]
@@ -224,7 +238,7 @@ public class CryptoConfigTest : Assertion {
 		// however it works with MS BCL
 		byte[] tooBigSecondPartOID = CryptoConfig.EncodeOID ("0.40");
 		byte[] tooBigSecondPartRes = { 0x06, 0x01, 0x28 };
-		AssertEquals ("OID: 0.40", tooBigSecondPartRes, tooBigSecondPartOID);
+		Assert.AreEqual (tooBigSecondPartRes, tooBigSecondPartOID, "OID: 0.40");
 	}
 
 	[Test]
@@ -236,7 +250,7 @@ public class CryptoConfigTest : Assertion {
 
 	private void MapNameToOID (string name, string oid)
 	{
-		AssertEquals ("oid(" + name + ")", oid, CryptoConfig.MapNameToOID (name));
+		Assert.AreEqual (oid, CryptoConfig.MapNameToOID (name), "oid(" + name + ")");
 	}
 
 	// LAMESPEC: doesn't support all names defined in CryptoConfig 
@@ -312,6 +326,20 @@ public class CryptoConfigTest : Assertion {
 		MapNameToOID ("RandomNumberGenerator", null);
 		MapNameToOID ("System.Security.Cryptography.RandomNumberGenerator", null);
 		MapNameToOID ("System.Security.Cryptography.KeyedHashAlgorithm", null);
+#if NET_2_0
+		MapNameToOID ("HMAC", null);
+		MapNameToOID ("System.Security.Cryptography.HMAC", null);
+		MapNameToOID ("HMACMD5", null);
+		MapNameToOID ("System.Security.Cryptography.HMACMD5", null);
+		MapNameToOID ("HMACRIPEMD160", null);
+		MapNameToOID ("System.Security.Cryptography.HMACRIPEMD160", null);
+		MapNameToOID ("HMACSHA256", null);
+		MapNameToOID ("System.Security.Cryptography.HMACSHA256", null);
+		MapNameToOID ("HMACSHA384", null);
+		MapNameToOID ("System.Security.Cryptography.HMACSHA384", null);
+		MapNameToOID ("HMACSHA512", null);
+		MapNameToOID ("System.Security.Cryptography.HMACSHA512", null);
+#endif
 		MapNameToOID ("HMACSHA1", null);
 		MapNameToOID ("System.Security.Cryptography.HMACSHA1", null);
 		MapNameToOID ("MACTripleDES", null);
@@ -326,7 +354,7 @@ public class CryptoConfigTest : Assertion {
 		// under normal circumstance there are no need to create a CryptoConfig object
 		// because all interesting stuff are in static methods
 		CryptoConfig cc = new CryptoConfig ();
-		AssertEquals ("System.Security.Cryptography.CryptoConfig", cc.ToString ());
+		Assert.AreEqual ("System.Security.Cryptography.CryptoConfig", cc.ToString ());
 	}
 }
 

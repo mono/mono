@@ -1,3 +1,9 @@
+2005-01-11  Sebastien Pouliot  <sebastien@ximian.com> 
+
+	* CryptoConfigTest.cs: Added new RIPEMD160 hash algorithm and new HMAC
+	algorithms (HMACMD5, HMACRIPEMD160, HMACSHA256, HMACSHA384 and 
+	HMACSHA512) to the tests.
+
 2005-01-10  Sebastien Pouliot  <sebastien@ximian.com> 
 
 	* CryptoStreamTest.cs, DSACryptoServiceProviderTest.cs,
