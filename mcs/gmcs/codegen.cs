@@ -1041,6 +1041,10 @@ namespace Mono.CSharp {
 			if (OptAttributes == null)
 				return null;
 
+			// Ensure that we only have GlobalAttributes, since the Search below isn't safe with other types.
+			if (!OptAttributes.CheckTargets (this))
+				return null;
+
 			EmitContext temp_ec = new EmitContext (RootContext.Tree.Types, Mono.CSharp.Location.Null, null, null, 0, false);
 			Attribute a = OptAttributes.Search (TypeManager.cls_compliant_attribute_type, temp_ec);
 			if (a != null) {

@@ -269,7 +269,7 @@ namespace Mono.CSharp {
 			return false;
 		}
 		
-		public CustomAttributeBuilder Resolve (EmitContext ec)
+		public virtual CustomAttributeBuilder Resolve (EmitContext ec)
 		{
 			if (resolve_error)
 				return null;
@@ -670,11 +670,10 @@ namespace Mono.CSharp {
 		/// </summary>
 		public string GetIndexerAttributeValue (EmitContext ec)
 		{
-			if (pos_values == null) {
+			if (pos_values == null)
 				// TODO: It is not neccessary to call whole Resolve (ApplyAttribute does it now) we need only ctor args.
 				// But because a lot of attribute class code must be rewritten will be better to wait...
 				Resolve (ec);
-			}
 			
 			return pos_values [0] as string;
 		}
@@ -682,15 +681,12 @@ namespace Mono.CSharp {
 		/// <summary>
 		/// Returns condition of ConditionalAttribute
 		/// </summary>
-		public string GetConditionalAttributeValue (DeclSpace ds)
+		public string GetConditionalAttributeValue (EmitContext ec)
 		{
-			if (pos_values == null) {
-				EmitContext ec = new EmitContext (ds, ds, Location, null, null, 0, false);
-
+			if (pos_values == null)
 				// TODO: It is not neccessary to call whole Resolve (ApplyAttribute does it now) we need only ctor args.
 				// But because a lot of attribute class code must be rewritten will be better to wait...
 				Resolve (ec);
-			}
 
 			// Some error occurred
 			if (pos_values [0] == null)
@@ -702,15 +698,12 @@ namespace Mono.CSharp {
 		/// <summary>
 		/// Creates the instance of ObsoleteAttribute from this attribute instance
 		/// </summary>
-		public ObsoleteAttribute GetObsoleteAttribute (DeclSpace ds)
+		public ObsoleteAttribute GetObsoleteAttribute (EmitContext ec)
 		{
-			if (pos_values == null) {
-				EmitContext ec = new EmitContext (ds, ds, Location, null, null, 0, false);
-
+			if (pos_values == null)
 				// TODO: It is not neccessary to call whole Resolve (ApplyAttribute does it now) we need only ctor args.
 				// But because a lot of attribute class code must be rewritten will be better to wait...
 				Resolve (ec);
-			}
 
 			// Some error occurred
 			if (pos_values == null)
@@ -730,15 +723,12 @@ namespace Mono.CSharp {
 		/// before ApplyAttribute. We need to resolve the arguments.
 		/// This situation occurs when class deps is differs from Emit order.  
 		/// </summary>
-		public bool GetClsCompliantAttributeValue (DeclSpace ds)
+		public bool GetClsCompliantAttributeValue (EmitContext ec)
 		{
-			if (pos_values == null) {
-				EmitContext ec = new EmitContext (ds, ds, Location, null, null, 0, false);
-
+			if (pos_values == null)
 				// TODO: It is not neccessary to call whole Resolve (ApplyAttribute does it now) we need only ctor args.
 				// But because a lot of attribute class code must be rewritten will be better to wait...
 				Resolve (ec);
-			}
 
 			// Some error occurred
 			if (pos_values [0] == null)
@@ -933,7 +923,7 @@ namespace Mono.CSharp {
 		/// <summary>
 		/// Emit attribute for Attributable symbol
 		/// </summary>
-		public virtual void Emit (EmitContext ec, Attributable ias, ListDictionary emitted_attr)
+		public void Emit (EmitContext ec, Attributable ias, ListDictionary emitted_attr)
 		{
 			CustomAttributeBuilder cb = Resolve (ec);
 			if (cb == null)
@@ -1209,7 +1199,7 @@ namespace Mono.CSharp {
 			return retval;
 		}
 
-		public override void Emit (EmitContext ec, Attributable ias, ListDictionary emitted_attr)
+		public override CustomAttributeBuilder Resolve (EmitContext ec)
 		{
 			if (ec.DeclSpace == RootContext.Tree.Types) {
 				NamespaceEntry old = ec.DeclSpace.NamespaceEntry;
@@ -1218,10 +1208,12 @@ namespace Mono.CSharp {
 					throw new InternalErrorException (Location + " non-null NamespaceEntry " + old);
 			}
 
-			base.Emit (ec, ias, emitted_attr);
+			CustomAttributeBuilder retval = base.Resolve (ec);
 
 			if (ec.DeclSpace == RootContext.Tree.Types)
 				ec.DeclSpace.NamespaceEntry = null;
+
+			return retval;
 		}
 	}
 

@@ -4138,7 +4138,7 @@ namespace Mono.CSharp {
 					return false;
 
 				foreach (Attribute a in attrs) {
-					string condition = a.GetConditionalAttributeValue (ds);
+					string condition = a.GetConditionalAttributeValue (Parent.EmitContext);
 					if (RootContext.AllDefines.Contains (condition))
 						return false;
 				}

@@ -358,7 +358,7 @@ namespace Mono.CSharp {
 			if (obsolete_attr == null)
 				return null;
 
-			ObsoleteAttribute obsolete = obsolete_attr.GetObsoleteAttribute (ds);
+			ObsoleteAttribute obsolete = obsolete_attr.GetObsoleteAttribute (ds.EmitContext);
 			if (obsolete == null)
 				return null;
 
@@ -411,7 +411,7 @@ namespace Mono.CSharp {
 					TypeManager.cls_compliant_attribute_type, ds.EmitContext);
 				if (cls_attribute != null) {
 					caching_flags |= Flags.HasClsCompliantAttribute;
-					return cls_attribute.GetClsCompliantAttributeValue (ds);
+					return cls_attribute.GetClsCompliantAttributeValue (ds.EmitContext);
 				}
 			}
 			return ds.GetClsCompliantAttributeValue ();
@@ -1243,7 +1243,7 @@ namespace Mono.CSharp {
 				Attribute cls_attribute = OptAttributes.Search (TypeManager.cls_compliant_attribute_type, ec);
 				if (cls_attribute != null) {
 					caching_flags |= Flags.HasClsCompliantAttribute;
-					if (cls_attribute.GetClsCompliantAttributeValue (this)) {
+					if (cls_attribute.GetClsCompliantAttributeValue (ec)) {
 						caching_flags |= Flags.ClsCompliantAttributeTrue;
 						return true;
 					}

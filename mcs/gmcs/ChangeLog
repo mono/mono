@@ -1,3 +1,17 @@
+2004-12-17  Raja R Harinath  <rharinath@novell.com>
+
+	* codegen.cs (CommonAssemblyModulClass.GetClsCompliantAttribute):
+	Ensure that we only have GlobalAttributes.
+	* attribute.cs (Attribute.Emit): Make non-virtual.
+	(GlobalAttribute.Emit): Remove.
+	(Attribute.Resolve): Make virtual.
+	(GlobalAttribute.Resolve): New.  Set Rootcontext.Tree.Types.NamespaceEntry.
+	(Attribute.GetConditionalAttributeValue): Take an EmitContext as
+	the argument. Don't create one.
+	(Attribute.GetObsoleteAttribute): Likewise.
+	(Attribute.GetClsCompliantAttributeValue): Likewise.
+	* class.cs, decl.cs: Update to changes.
+
 2004-12-17  Marek Safar  <marek.safar@seznam.cz>
 
 	* delegate.cs (NewDelegate.DoResolve): Add error 149 report.
