@@ -1,3 +1,13 @@
+2004-11-2  Geoff Norton  <gnorton@customerdna.com>
+
+        * inssel-ppc.brg (OP_OUTARG_VT (CEE_LDOBJ (base))):
+        The darwin ABI needs some special handling for 1 and 2 byte structs
+        Lets use lbz/lhz instead of lwz everywhere.
+        * mini-ppc.c (calculate_sizes):  The Darwin ABI needs from special handling
+        for 1 and 2 byte structs and struct which are size >= 3 || size % 4 != 0.
+        Use stb/sth for the former, and put the latter always on stack instead of in
+        argument registers.
+
 2004-10-30  Zoltan Varga  <vargaz@freemail.hu>
 
 	* trace.c (is_filenamechar): Add '_'.
