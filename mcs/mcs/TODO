@@ -31,11 +31,6 @@ BUGS
 	Explanation: The reason for the `instance' attribute on
 	indexers is that indexers only apply to instances
 
-* Arrays
-
-	We need to make sure at *compile time* that the arguments in
-	the expression list of an array creation are always positive.
-
 * Indexer bugs:
 
 	the following wont work:

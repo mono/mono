@@ -1,3 +1,8 @@
+2002-06-19  Miguel de Icaza  <miguel@ximian.com>
+
+	* expression.cs (ArrayCreation.ExpressionToArrayArgument): Convert
+	the argument to an int, uint, long or ulong, per the spec.  Also
+	catch negative constants in array creation.
 
 Thu Jun 20 17:56:48 CEST 2002 Paolo Molaro <lupus@ximian.com>
 

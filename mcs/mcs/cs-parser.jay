@@ -2118,8 +2118,7 @@ array_creation_expression
 	  opt_rank_specifier
 	  opt_array_initializer
 	  {
-		$$ = new ArrayCreation ((string) $2, (ArrayList) $4, (string) $6, (ArrayList) $7, 
-					lexer.Location);
+		$$ = new ArrayCreation ((string) $2, (ArrayList) $4, (string) $6, (ArrayList) $7, lexer.Location);
 	  }
 	| NEW type rank_specifiers array_initializer
 	  {
