@@ -2,12 +2,14 @@
 // MakeCert.cs: makecert clone tool
 //
 // Author:
-//	Sebastien Pouliot (spouliot@motus.com)
+//	Sebastien Pouliot <sebastien@ximian.com>
 //
 // (C) 2003 Motus Technologies Inc. (http://www.motus.com)
+// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
 //
 
 using System;
+using System.Globalization;
 using System.IO;
 using System.Reflection;
 using System.Security.Cryptography;
@@ -100,7 +102,6 @@ namespace Mono.Tools {
 				return -1;
 			}
 
-			System.IFormatProvider format =	new System.Globalization.CultureInfo("en-US", true);
 			string fileName = args [args.Length - 1];
 
 			// default values
@@ -108,7 +109,7 @@ namespace Mono.Tools {
 			string subject = defaultSubject;
 			string issuer = defaultIssuer;
 			DateTime notBefore = DateTime.Now;
-			DateTime notAfter =  DateTime.Parse ("12/31/2039 23:59:59Z", format);
+			DateTime notAfter = new DateTime (643445675990000000); // 12/31/2039 23:59:59Z
 
 			RSA issuerKey = (RSA)RSA.Create ();
 			issuerKey.FromXmlString (MonoTestRootAgency);
@@ -169,7 +170,7 @@ namespace Mono.Tools {
 							break;
 						case "-b":
 							// Validity / notBefore
-							notBefore = DateTime.Parse (args [i++] + " 23:59:59", format);
+							notBefore = DateTime.Parse (args [i++] + " 23:59:59", CultureInfo.InvariantCulture);
 							break;
 						case "-cy":
 							// basic constraints - autority or end-entity
@@ -197,7 +198,7 @@ namespace Mono.Tools {
 							break;
 						case "-e":
 							// Validity / notAfter
-							notAfter = DateTime.Parse (args [i++] + " 23:59:59", format);
+							notAfter = DateTime.Parse (args [i++] + " 23:59:59", CultureInfo.InvariantCulture);
 							break;
 						case "-eku":
 							// extendedKeyUsage extension
