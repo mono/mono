@@ -1,4 +1,9 @@
 
+Thu Sep 27 15:34:37 CEST 2001 Paolo Molaro <lupus@ximian.com>
+
+	* x86/x86-codegen.h: in memindex operand you can use X86_NOBASEREG
+	as basereg.
+
 Wed Sep 26 16:29:36 CEST 2001 Paolo Molaro <lupus@ximian.com>
 
 	* x86/x86-codegen.h: added memindex addressing mode encoding
