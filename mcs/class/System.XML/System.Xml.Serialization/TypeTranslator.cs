@@ -83,6 +83,7 @@ namespace System.Xml.Serialization
 			primitiveTypes.Add ("IDREFS", new TypeData (typeof (string[]), "IDREFS", true));
 			primitiveTypes.Add ("NOTATION", new TypeData (typeof (string), "NOTATION", true));
 			primitiveTypes.Add ("token", new TypeData (typeof (string), "token", true));
+			primitiveTypes.Add ("normalizedString", new TypeData (typeof (string), "normalizedString", true));
 		}
 
 		public static TypeData GetTypeData (Type type)

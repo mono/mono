@@ -240,6 +240,7 @@ namespace System.Xml.Serialization {
 				case "IDREF":
 				case "NOTATION":
 				case "token":
+				case "normalizedString":
 				case "string": return value;
 				default: return "((" + value + " != null) ? (" + value + ").ToString() : null)";
 			}

@@ -1,5 +1,10 @@
 2004-02-04  Lluis Sanchez Gual  <lluis@ximian.com>
 
+	* TypeTranslator.cs, XmlCustomFormatter.cs: Added support for the
+	  normalizedString schema type.
+
+2004-02-04  Lluis Sanchez Gual  <lluis@ximian.com>
+
 	* XmlReflectionImporter.cs: Get the class members using the right order.
 	* XmlSerializationWriterInterpreter.cs: Removed unneeded code.
 	  A member with the Any attribute can also contain text. Support this.
