@@ -1,5 +1,10 @@
 2004-07-11 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* debug-helpers.c: undo my previous patch and fixed the real issue in
+	../mini/exceptions-x86.c
+
+2004-07-11 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* debug-helpers.c: prevent SIGSEGV. It happened running xsp on monodoc
 	when no HOME env. variable was set and a NullRef was thrown in a .cctor
 	called from other .cctors.
