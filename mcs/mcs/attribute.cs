@@ -380,7 +380,7 @@ namespace Mono.CSharp {
 						Location);
 
 					if (member != null) {
-						Report.Error (Message.CS0122_is_inaccessible_due_to_its_protection_level, Location, GetFullMemberName (member_name));
+						Report.Error (122, Location, "'{0}' is inaccessible due to its protection level", GetFullMemberName (member_name));
 						return null;
 					}
 				}
@@ -769,7 +769,7 @@ namespace Mono.CSharp {
 
 			AttributeUsageAttribute usage_attr = GetAttributeUsage ();
 			if ((usage_attr.ValidOn & Target) == 0) {
-				Report.Error (Message.CS0592_Attribute_is_not_valid_on_this_declaration_type, Location, Name, GetValidTargets ());
+				Report.Error (592, Location, "Attribute '{0}' is not valid on this declaration type. It is valid on {1} declarations only.", Name, GetValidTargets ());
 				return;
 			}
 
@@ -803,7 +803,7 @@ namespace Mono.CSharp {
 							return;
 
 						if (arg.Type.IsArray) {
-							Report.Error (Message.CS3016_Arrays_as_attribute_arguments_are_not_CLS_compliant, Location);
+							Report.Error (3016, Location, "Arrays as attribute arguments are not CLS-compliant");
 							return;
 						}
 					}
@@ -821,7 +821,7 @@ namespace Mono.CSharp {
 						return;
 
 					if (arg.Type.IsArray) {
-						Report.Error (Message.CS3016_Arrays_as_attribute_arguments_are_not_CLS_compliant, Location);
+						Report.Error (3016, Location, "Arrays as attribute arguments are not CLS-compliant");
 						return;
 					}
 				}
@@ -1069,7 +1069,7 @@ namespace Mono.CSharp {
 					sb.Append (", ");
 				}
 				sb.Remove (sb.Length - 2, 2);
-				Report.Error (Message.CS0657_is_not_a_valid_attribute_location_for_this_declaration, a.Location, a.Target, sb.ToString ());
+				Report.Error (657, a.Location, "'{0}' is not a valid attribute location for this declaration. Valid attribute locations for this declaration are '{1}'", a.Target, sb.ToString ());
 			}
 		}
 
@@ -1207,7 +1207,7 @@ namespace Mono.CSharp {
 
 			foreach (Parameter arg in fixedParameters) {
 				if (!AttributeTester.IsClsCompliant (arg.ParameterType)) {
-					Report.Error (Message.CS3001_Argument_type_is_not_CLS_compliant, loc, arg.GetSignatureForError ());
+					Report.Error (3001, loc, "Argument type '{0}' is not CLS-compliant", arg.GetSignatureForError ());
 					return false;
 				}
 			}
@@ -1255,7 +1255,7 @@ namespace Mono.CSharp {
 			for (int i = 1; i < modules.Length; ++i) {
 				Module module = modules [i];
 				if (!IsClsCompliant (module)) {
-					Report.Error (Message.CS3013_Added_modules_must_be_marked_with_the_CLSCompliant_attribute_to_match_the_assembly, module.Name);
+					Report.Error (3013, "Added modules must be marked with the CLSCompliant attribute to match the assembly", module.Name);
 					return;
 				}
 			}
@@ -1294,7 +1294,7 @@ namespace Mono.CSharp {
 				else
 					Report.SymbolRelatedToPreviousError ((MemberCore)conflict);
 
-				Report.Error (Message.CS3005_Identifier_differing_only_in_case_is_not_CLS_compliant, decl.Location, decl.GetSignatureForError ());
+				Report.Error (3005, decl.Location, "Identifier '{0}' differing only in case is not CLS-compliant", decl.GetSignatureForError ());
 			}
 		}
 
@@ -1392,15 +1392,15 @@ namespace Mono.CSharp {
 		public static void Report_ObsoleteMessage (ObsoleteAttribute oa, string member, Location loc)
 		{
 			if (oa.IsError) {
-				Report.Error (Message.CS0619_error_is_obsolete, loc, member, oa.Message);
+				Report.Error (619, loc, "'{0}' is obsolete: '{1}'", member, oa.Message);
 				return;
 			}
 
 			if (oa.Message == null) {
-				Report.Warning (Message.CS0612_is_obsolete, loc, member);
+				Report.Warning (612, loc, "'{0}' is obsolete", member);
 				return;
 			}
-			Report.Warning (Message.CS0618_warning_is_obsolete, loc, member, oa.Message);
+			Report.Warning (618, loc, "'{0}' is obsolete: '{1}'", member, oa.Message);
 		}
 
 		public static bool IsConditionalMethodExcluded (MethodBase mb)

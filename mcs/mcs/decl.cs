@@ -229,20 +229,20 @@ namespace Mono.CSharp {
 		{
 			if (!IsClsCompliaceRequired (ds)) {
 				if (HasClsCompliantAttribute && !IsExposedFromAssembly (ds)) {
-					Report.Warning (Message.CS3019_CLS_compliance_checking_will_not_be_performed_on_because_it_is_private_or_internal, Location, GetSignatureForError ());
+					Report.Warning (3019, Location, "CLS compliance checking will not be performed on '{0}' because it is private or internal", GetSignatureForError ());
 				}
 				return false;
 			}
 
 			if (!CodeGen.Assembly.IsClsCompliant) {
 				if (HasClsCompliantAttribute) {
-					Report.Error (Message.CS3014_cannot_be_marked_as_CLS_compliant_because_the_assembly_does_not_have_a_CLSCompliant_attribute, Location, GetSignatureForError ());
+					Report.Error (3014, Location, "'{0}' cannot be marked as CLS-compliant because the assembly does not have a CLSCompliant attribute", GetSignatureForError ());
 				}
 			}
 
 			int index = Name.LastIndexOf ('.');
 			if (Name [index > 0 ? index + 1 : 0] == '_') {
-				Report.Error (Message.CS3008_Identifier_is_not_CLS_compliant, Location, GetSignatureForError () );
+				Report.Error (3008, Location, "Identifier '{0}' is not CLS-compliant", GetSignatureForError () );
 			}
 			return true;
 		}
@@ -510,7 +510,7 @@ namespace Mono.CSharp {
 			}
 
 			if (!d.CheckAccessLevel (this)) {
-				Report.Error (Message.CS0122_is_inaccessible_due_to_its_protection_level, loc, d.Name);
+				Report.Error (122, loc, "'{0}' is inaccessible due to its protection level", d.Name);
 				return null;
 			}
 
@@ -1964,7 +1964,7 @@ namespace Mono.CSharp {
 					continue;
  		
  				Report.SymbolRelatedToPreviousError (entry.Member);
- 				Report.Error (Message.CS3006_Overloaded_method_differing_only_in_ref_or_out_or_in_array_rank_is_not_CLS_compliant, method.Location, method.GetSignatureForError ());
+ 				Report.Error (3006, method.Location, "Overloaded method '{0}' differing only in ref or out, or in array rank, is not CLS-compliant", method.GetSignatureForError ());
  			}
   		}
 	}

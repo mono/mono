@@ -187,9 +187,9 @@ namespace Mono.CSharp {
 		/// <summary>
 		///   Utility wrapper routine for Warning, just to beautify the code
 		/// </summary>
-		public void Warning (Message msg, string arg)
+		public void Warning (int code, string format, params object[] args)
 		{
-			Report.Warning (msg, loc, arg);
+			Report.Warning (code, loc, format, args);
 		}
 
 		/// <summary>
@@ -679,12 +679,12 @@ namespace Mono.CSharp {
 			}
 
 			if (qualifier_type != null)
-				Report.Error (Message.CS0122_is_inaccessible_due_to_its_protection_level, loc, TypeManager.CSharpName (qualifier_type) + "." + name);
+				Report.Error (122, loc, "'{0}' is inaccessible due to its protection level", TypeManager.CSharpName (qualifier_type) + "." + name);
 			else if (name == ".ctor") {
 				Report.Error (143, loc, String.Format ("The type {0} has no constructors defined",
 								       TypeManager.CSharpName (queried_type)));
 			} else {
-				Report.Error (Message.CS0122_is_inaccessible_due_to_its_protection_level, loc, name);
+				Report.Error (122, loc, "'{0}' is inaccessible due to its protection level", name);
 			}
 		}
 
@@ -3087,7 +3087,7 @@ namespace Mono.CSharp {
 				is_static = true;
 
 			if (setter == null && getter == null){
-				Report.Error (Message.CS0122_is_inaccessible_due_to_its_protection_level, loc, PropertyInfo.Name);
+				Report.Error (122, loc, "'{0}' is inaccessible due to its protection level", PropertyInfo.Name);
 			}
 		}
 

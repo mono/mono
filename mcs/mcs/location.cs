@@ -84,7 +84,7 @@ namespace Mono.CSharp {
 			string path = Path.GetFullPath (name);
 
 			if (source_files.Contains (path)){
-				Report.Warning (Message.CS2002_Source_file_specified_multiple_times, name);
+				Report.Warning (2002, name, "Source file '{0}' specified multiple times");
 				return;
 			}
 

@@ -36,7 +36,7 @@ namespace Mono.CSharp {
 					builder.SetMarshal (marshal);
 					return;
 				}
-				Report.Warning (Message.CS_24_The_Microsoft_Runtime_cannot_set_this_marshal_info, a.Location);
+				Report.Warning (-24, a.Location, "The Microsoft Runtime cannot set this marshal info. Please use the Mono runtime instead.");
 				return;
 			}
 
@@ -60,7 +60,7 @@ namespace Mono.CSharp {
 				builder = mb.DefineParameter (0, ParameterAttributes.None, "");			
 			}
 			catch (ArgumentOutOfRangeException) {
-				Report.Warning (Message.CS_28_The_Microsoft_NET_Runtime_does_not_permit_setting_custom_attributes_on_the_return_type, location);
+				Report.Warning (-28, location, "The Microsoft .NET Runtime 1.x does not permit setting custom attributes on the return type");
 			}
 		}
 

@@ -337,7 +337,7 @@ namespace Mono.CSharp {
 
 			foreach (UsingEntry old_entry in using_clauses){
 				if (old_entry.Name == ns){
-					Report.Warning (Message.CS0105_The_using_directive_for_appeared_previously_in_this_namespace, loc, ns);
+					Report.Warning (105, loc, "The using directive for '{0}' appeared previously in this namespace", ns);
 					return;
 				}
 			}

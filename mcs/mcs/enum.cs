@@ -37,7 +37,7 @@ namespace Mono.CSharp {
 					builder.SetMarshal (marshal);
 					return;
 				}
-				Report.Warning (Message.CS_24_The_Microsoft_Runtime_cannot_set_this_marshal_info, a.Location);
+				Report.Warning (-24, a.Location, "The Microsoft Runtime cannot set this marshal info. Please use the Mono runtime instead.");
 				return;
 			}
 
@@ -723,7 +723,7 @@ namespace Mono.CSharp {
  				EnumMember conflict = (EnumMember)ht [locase];
  				Report.SymbolRelatedToPreviousError (conflict);
  				conflict = (EnumMember)name_to_member [name];
- 				Report.Error (Message.CS3005_Identifier_differing_only_in_case_is_not_CLS_compliant, conflict.Location, conflict.GetSignatureForError ());
+ 				Report.Error (3005, conflict.Location, "Identifier '{0}' differing only in case is not CLS-compliant", conflict.GetSignatureForError ());
   			}
   		}
 
@@ -735,7 +735,7 @@ namespace Mono.CSharp {
 			VerifyClsName ();
 
 			if (!AttributeTester.IsClsCompliant (UnderlyingType)) {
-				Report.Error (Message.CS3009_base_type_is_not_CLS_compliant, Location, GetSignatureForError (), TypeManager.CSharpName (UnderlyingType));
+				Report.Error (3009, Location, "'{0}': base type '{1}' is not CLS-compliant", GetSignatureForError (), TypeManager.CSharpName (UnderlyingType));
 			}
 
 			return true;

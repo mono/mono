@@ -1594,12 +1594,12 @@ namespace Mono.CSharp
 					if (RootContext.MainClass != null) {
 						object main_cont = RootContext.Tree.Decls [RootContext.MainClass];
 						if (main_cont == null) {
-							Report.Error (Message.CS1555_Could_not_find_specified_for_Main_method, output_file, RootContext.MainClass); 
+							Report.Error (1555, output_file, "Could not find '{0}' specified for Main method", RootContext.MainClass); 
 							return false;
 						}
 
 						if (!(main_cont is ClassOrStruct)) {
-							Report.Error (Message.CS1556_specified_for_Main_method_must_be_a_valid_class_or_struct, output_file, RootContext.MainClass);
+							Report.Error (1556, output_file, "'{0}' specified for Main method must be a valid class or struct", RootContext.MainClass);
 							return false;
 						}
 					}

@@ -1,5 +1,13 @@
 2004-08-23  Martin Baulig  <martin@ximian.com>
 
+	Back to the old error reporting system :-)
+
+	* report.cs (Message): Removed.
+	(Report.MessageData, ErrorData, WarningData): Removed.
+	(Report.Error, Warning): Back to the old system.
+
+2004-08-23  Martin Baulig  <martin@ximian.com>
+
 	* decl.cs (IMemberContainer.Parent): Renamed to ParentContainer.
 
 	* class.cs (TypeContainer.ParentContainer): New public virtual

@@ -1161,10 +1161,10 @@ namespace Mono.CSharp {
 			}
 			
 			if (warning_always_matches)
-				Warning (Message.CS0183_The_given_expression_is_always_of_the_provided_type, TypeManager.CSharpName (probe_type));
+				Warning (183, "The given expression is always of the provided ('{0}') type", TypeManager.CSharpName (probe_type));
 			else if (warning_never_matches){
 				if (!(probe_type.IsInterface || expr.Type.IsInterface))
-					Warning (Message.CS0184_The_given_expression_is_never_of_the_provided_type, TypeManager.CSharpName (probe_type));
+					Warning (184, "The given expression is never of the provided ('{0}') type", TypeManager.CSharpName (probe_type));
 			}
 
 			return this;
@@ -7082,7 +7082,7 @@ namespace Mono.CSharp {
 			Type expr_type = expr.Type;
 			if (expr is TypeExpr){
 				if (!ec.DeclSpace.CheckAccessLevel (expr_type)){
-					Report.Error (Message.CS0122_is_inaccessible_due_to_its_protection_level, loc, expr_type);
+					Report.Error (122, loc, "'{0}' is inaccessible due to its protection level", expr_type);
 					return null;
 				}
 
@@ -8469,7 +8469,7 @@ namespace Mono.CSharp {
 			Constant c = count as Constant;
 			// TODO: because we don't have property IsNegative
 			if (c != null && c.ConvertToUInt () == null) {
-				Report.Error (Message.CS0247_Cannot_use_a_negative_size_with_stackalloc, loc);
+				Report.Error (247, loc, "Cannot use a negative size with stackalloc");
 				return null;
 			}
 
