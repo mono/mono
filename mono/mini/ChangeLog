@@ -1,3 +1,10 @@
+2005-02-10  Zoltan Varga  <vargaz@freemail.hu>
+
+	* aot.c: Break up large methods into smaller ones. Share GOT slots for
+	icalls.
+
+	* mini.h: Bump AOT file format version.	
+
 2005-02-10  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* declsec.c: Added LinkDemand support and it's special cases for ECMA,
