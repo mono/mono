@@ -1,3 +1,8 @@
+2005-04-04  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Evidence.cs: Build the default host evidences requires access to the
+	file system even if running on partial trust (so we assert it).
+
 2005-01-19  Sebastien Pouliot  <sebastien@ximian.com> 
  
 	* PolicyLevel.cs: Fixed RemoveNamedPermissionSet when used with a

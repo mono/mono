@@ -260,6 +260,7 @@ namespace System.Security.Policy {
 		// this avoid us to build all evidences from the runtime
 		// (i.e. multiple unmanaged->managed calls) and also allows
 		// to delay their creation until (if) needed
+		[FileIOPermission (SecurityAction.Assert, Unrestricted = true)]
 		static internal Evidence GetDefaultHostEvidence (Assembly a) 
 		{
 			Evidence e = new Evidence ();
