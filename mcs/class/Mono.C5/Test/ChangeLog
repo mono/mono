@@ -1,3 +1,10 @@
+2005-01-19  Martin Baulig  <martin@ximian.com>
+
+	* trees/RedBlackTreeSetTests.cs: Put the threading tests into a
+	"Threading" category, so we can exclude them when running in the
+	debugger.
+	* arrays/SortedArrayTests.cs: Likewise.
+
 2004-12-04  Martin Baulig  <martin@ximian.com>
 
 	* hashing/HashTableTests.cs: Disabled some tests which make

@@ -1789,6 +1789,7 @@ namespace nunit.arrays.sorted
 	namespace Sync
 	{
 		[TestFixture]
+		[Category ("Threading")]
 		public class SyncRoot
 		{
 			private SortedArray<int> tree;
@@ -1903,6 +1904,7 @@ namespace nunit.arrays.sorted
 		}
 
 		//[TestFixture]
+		[Category ("Threading")]
 		public class ConcurrentQueries
 		{
 			private SortedArray<int> tree;

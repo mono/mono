@@ -2292,9 +2292,9 @@ namespace nunit.trees.TreeSet
 	}
 
 
-
 	namespace Sync
 	{
+		[Category ("Threading")]
 		[TestFixture]
 		public class SyncRoot
 		{
@@ -2410,6 +2410,7 @@ namespace nunit.trees.TreeSet
 		}
 
 		//[TestFixture]
+		[Category ("Threading")]
 		public class ConcurrentQueries
 		{
 			private TreeSet<int> tree;
@@ -2483,7 +2484,6 @@ namespace nunit.trees.TreeSet
 			public void Dispose() { tree = null; }
 		}
 	}
-
 
 	namespace Hashing
 	{
