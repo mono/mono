@@ -1,5 +1,12 @@
 2004-08-11  Bernie Solomon <bernard@ugsolutions.com>
 
+	* mini.c: ovfops_op_map - add STACK_OBJ case for
+	CONV_I 
+	* basic.cs: add test_0_pin_string as test
+	case for above.
+
+2004-08-11  Bernie Solomon <bernard@ugsolutions.com>
+
 	* Makefile.am: build C# if srcdir != builddir
 
 Tue Aug 10 19:23:47 CEST 2004 Paolo Molaro <lupus@ximian.com>
