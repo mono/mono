@@ -73,7 +73,9 @@ namespace System.Data
 		/// Gets or sets the data stored in the column specified by name.
 		/// </summary>
 		public object this[string columnName] {
+			[MonoTODO] //FIXME: will return different values depending on DataRowState
 			get { return this[columnName, DataRowVersion.Current]; }
+			[MonoTODO]
 			set {
 				DataColumn column = table.Columns[columnName];
 				if (column == null) 
@@ -86,7 +88,10 @@ namespace System.Data
 		/// Gets or sets the data stored in specified DataColumn
 		/// </summary>
 		public object this[DataColumn column] {
-			get { return this[column, DataRowVersion.Current]; }
+			[MonoTODO] //FIXME: will return different values depending on DataRowState
+			get { return this[column, DataRowVersion.Current]; } 
+								
+			[MonoTODO]
 			set {
 				bool objIsDBNull = value.Equals(DBNull.Value);
 				if (column == null)
@@ -116,10 +121,12 @@ namespace System.Data
 		/// Gets or sets the data stored in column specified by index.
 		/// </summary>
 		public object this[int columnIndex] {
+			[MonoTODO] //FIXME: not always supposed to return current
 			get { return this[columnIndex, DataRowVersion.Current]; }
+			[MonoTODO]
 			set {
-				DataColumn column = table.Columns[columnIndex];
-				if (column == null) 
+				DataColumn column = table.Columns[columnIndex]; //FIXME: will throw
+				if (column == null)  
 					throw new IndexOutOfRangeException ();
 				this[column] = value;
 			}
@@ -129,8 +136,9 @@ namespace System.Data
 		/// Gets the specified version of data stored in the named column.
 		/// </summary>
 		public object this[string columnName, DataRowVersion version] {
+			[MonoTODO]
 			get {
-				DataColumn column = table.Columns[columnName];
+				DataColumn column = table.Columns[columnName]; //FIXME: will throw
 				if (column == null) 
 					throw new IndexOutOfRangeException ();
 				return this[column, version];
@@ -175,8 +183,9 @@ namespace System.Data
 		/// retrieve.
 		/// </summary>
 		public object this[int columnIndex, DataRowVersion version] {
+			[MonoTODO]
 			get {
-				DataColumn column = table.Columns[columnIndex];
+				DataColumn column = table.Columns[columnIndex]; //FIXME: throws
 				if (column == null) 
 					throw new IndexOutOfRangeException ();
 				return this[column, version];
@@ -186,6 +195,7 @@ namespace System.Data
 		/// <summary>
 		/// Gets or sets all of the values for this row through an array.
 		/// </summary>
+		[MonoTODO]
 		public object[] ItemArray {
 			get { return current; }
 			set {
@@ -206,11 +216,15 @@ namespace System.Data
 						continue;
 					}
 						
+					//FIXME: int strings can be converted to ints
 					if (table.Columns[i].DataType != value[i].GetType())
 						throw new InvalidCastException ();
 				}
 
+				//FIXME: BeginEdit() not correct 
 				BeginEdit ();  // implicitly called
+				//FIXME: this isn't correct.  a shorter array can set the first few values
+				//and not touch the rest.  So not all the values will get replaced
 				proposed = value;
 			}
 		}
@@ -246,6 +260,7 @@ namespace System.Data
 		/// Commits all the changes made to this row since the last time AcceptChanges was
 		/// called.
 		/// </summary>
+		[MonoTODO]
 		public void AcceptChanges () 
 		{
 			this.EndEdit ();
@@ -259,7 +274,7 @@ namespace System.Data
 					rowState = DataRowState.Unchanged;
 					break;
 				case DataRowState.Deleted:
-					table.Rows.Remove (this);
+					table.Rows.Remove (this); //FIXME: this should occur in end edit
 					break;
 			}
 
@@ -269,6 +284,7 @@ namespace System.Data
 		/// <summary>
 		/// Begins an edit operation on a DataRow object.
 		/// </summary>
+		[MonoTODO]
 		public void BeginEdit() 
 		{
 			if (rowState == DataRowState.Deleted)
@@ -279,7 +295,9 @@ namespace System.Data
 				proposed = new object[table.Columns.Count];
 				Array.Copy (current, proposed, table.Columns.Count);
 			}
+			//TODO: Suspend validation
 
+			//FIXME: this doesn't happen on begin edit
 			if (!HasVersion (DataRowVersion.Original))
 			{
 				original = new object[table.Columns.Count];
@@ -290,8 +308,11 @@ namespace System.Data
 		/// <summary>
 		/// Cancels the current edit on the row.
 		/// </summary>
+		[MonoTODO]
 		public void CancelEdit () 
 		{
+			//FIXME: original doesn't get erased on CancelEdit
+			//TODO: Events
 			if (HasVersion (DataRowVersion.Proposed))
 			{
 				original = null;
@@ -313,22 +334,26 @@ namespace System.Data
 		/// <summary>
 		/// Deletes the DataRow.
 		/// </summary>
+		[MonoTODO]
 		public void Delete () 
 		{
 			if (rowState == DataRowState.Deleted)
 				throw new DeletedRowInaccessibleException ();
 
+			//TODO: Events, Constraints
 			rowState = DataRowState.Deleted;
 		}
 
 		/// <summary>
 		/// Ends the edit occurring on the row.
 		/// </summary>
+		[MonoTODO]
 		public void EndEdit () 
 		{
 			if (HasVersion (DataRowVersion.Proposed))
 			{
 				rowState = DataRowState.Modified;
+				//TODO: Validate Constraints, Events
 				Array.Copy (proposed, current, table.Columns.Count);
 				proposed = null;
 			}
