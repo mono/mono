@@ -1,6 +1,11 @@
+2003-03-17  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* BaseCompiler.cs: hacks to work-around our buggy System.Uri.
+
 2003-03-17 George Kodinov <gkodinov@openlinksw.co.uk>
 
-        * BaseCompiler.cs: Removed a FIXME: and added a correct calculation of app's private bin path
+        * BaseCompiler.cs: Removed a FIXME: and added a correct calculation of
+	app's private bin path
 
 2003-03-10  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 

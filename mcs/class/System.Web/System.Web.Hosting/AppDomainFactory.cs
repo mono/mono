@@ -105,7 +105,12 @@ namespace System.Web.Hosting
 			setup.PrivateBinPath = "bin";
 			setup.PrivateBinPathProbe = "*";
 			setup.ShadowCopyFiles = "true";
-			setup.ApplicationBase = new Uri (appPath, true).ToString ();
+			//HACK: we should use Uri (appBase).ToString () once Uri works fine.
+			string uri = "file://" + appPath;
+			if (Path.DirectorySeparatorChar != '/')
+				uri = uri.Replace (Path.DirectorySeparatorChar, '/');
+				
+			setup.ApplicationBase = uri;
 			setup.ApplicationName = appName;
 			string webConfigName = Path.Combine (appPath, "Web.config");
 			if (File.Exists (webConfigName))

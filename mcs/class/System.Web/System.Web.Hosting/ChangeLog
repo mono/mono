@@ -1,6 +1,11 @@
+2003-03-17  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* AppDomainFactory.cs: hacks to work-around our buggy System.Uri.
+
 2003-03-17 George Kodinov <gkodinov@openlinksw.co.uk>
        
-        * AppDomainFactory.cs: place the correct full path for Web.config when in Application host
+	* AppDomainFactory.cs: place the correct full path for Web.config when
+	in Application host
 
 2003-02-17  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 

@@ -64,8 +64,14 @@ namespace System.Web.Compilation
 		public virtual string CompilerOptions {
 			get {
 				string assemblies = default_assemblies;
-				string privatePath = Path.Combine (
-                                  new Uri (AppDomain.CurrentDomain.SetupInformation.ApplicationBase).LocalPath, privatePath);
+				string privatePath = AppDomain.CurrentDomain.SetupInformation.PrivateBinPath;
+				string appBase = AppDomain.CurrentDomain.SetupInformation.ApplicationBase;
+				//HACK: we should use Uri (appBase).LocalPath once Uri works fine.
+				if (appBase.StartsWith ("file://"))
+					appBase = appBase.Substring (7);
+
+				privatePath = Path.Combine (appBase, privatePath);
+
 				if (privatePath != null && Directory.Exists (privatePath)) {
 					StringBuilder sb = new StringBuilder (assemblies);
 					foreach (string fileName in Directory.GetFiles (privatePath, "*.dll"))
