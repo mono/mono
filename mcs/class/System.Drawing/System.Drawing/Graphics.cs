@@ -95,17 +95,19 @@ namespace System.Drawing
 
 		public void DrawBezier (Pen pen, PointF pt1, PointF pt2, PointF pt3, PointF pt4)
 		{
-			DrawBezier (pen, pt1.X, pt1.Y, pt2.X, pt2.Y, pt3.X, pt3.Y, pt4.X, pt4.Y);
+			GDIPlus.GdipDrawBezier (nativeObject, pen.nativeObject, 
+                                        pt1.X, pt1.Y, pt2.X, pt2.Y, pt3.X, pt3.Y, pt4.X, pt4.Y);
 		}
 
 		public void DrawBezier (Pen pen, Point pt1, Point pt2, Point pt3, Point pt4)
 		{
-			DrawBezier (pen, pt1.X, pt1.Y, pt2.X, pt2.Y, pt3.X, pt3.Y, pt4.X, pt4.Y);
+			GDIPlus.GdipDrawBezierI (nativeObject, pen.nativeObject, 
+                                        pt1.X, pt1.Y, pt2.X, pt2.Y, pt3.X, pt3.Y, pt4.X, pt4.Y);
 		}
 
 		public void DrawBezier (Pen pen, float x1, float y1, float x2, float y2, float x3, float y3, float x4, float y4)
 		{
-			throw new NotImplementedException ();
+                        GDIPlus.GdipDrawBezier (nativeObject, pen.nativeObject, x1, y1, x2, y2, x3, y3, x4, y4);
 		}
 
 		[MonoTODO]
@@ -503,9 +505,9 @@ namespace System.Drawing
 		}
 
 		[MonoTODO]
-		public void DrawPie (Pen pen, int x, int y, int width, int height, int startAngle, int sweepAngle)
+		public void DrawPie (Pen pen, int x, int y, int width, int height, float startAngle, float sweepAngle)
 		{
-			GDIPlus.GdipDrawPie (nativeObject, pen.nativeObject, x, y, width, height, startAngle, sweepAngle);
+			GDIPlus.GdipDrawPieI (nativeObject, pen.nativeObject, x, y, width, height, startAngle, sweepAngle);
 		}
 
 		public void DrawPolygon (Pen pen, Point [] points)

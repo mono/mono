@@ -66,6 +66,12 @@ namespace System.Drawing {
 		static internal extern Status GdipRotateWorldTransform(IntPtr graphics, float angle, MatrixOrder order);
 		[DllImport("gdiplus.dll")]
 		static internal extern Status GdipTranslateWorldTransform(IntPtr graphics, float dx, float dy, MatrixOrder order);
+                
+		[DllImport("gdiplus.dll")]
+                static internal extern Status GdipDrawBezier (IntPtr graphics, IntPtr pen, float x1, float y1, float x2, float y2, float x3, float y3, float x4, float y4);
+                
+		[DllImport("gdiplus.dll")]
+                static internal extern Status GdipDrawBezierI (IntPtr graphics, IntPtr pen, int x1, int y1, int x2, int y2, int x3, int y3, int x4, int y4);
 
 		[DllImport("gdiplus.dll")]
                 static internal extern Status GdipDrawEllipseI (IntPtr graphics, IntPtr pen, int x, int y, int width, int height);
@@ -89,7 +95,7 @@ namespace System.Drawing {
                 static internal extern Status GdipDrawPie (IntPtr graphics, IntPtr pen, float x, float y, float width, float height, float startAngle, float sweepAngle);
                 
                 [DllImport ("gdiplus.dll")]
-                static internal extern Status GdipDrawPie (IntPtr graphics, IntPtr pen, int x, int y, int width, int height, float startAngle, float sweepAngle);
+                static internal extern Status GdipDrawPieI (IntPtr graphics, IntPtr pen, int x, int y, int width, int height, float startAngle, float sweepAngle);
 
                 [DllImport ("gdiplus.dll")]
                 static internal extern Status GdipDrawPolygon (IntPtr graphics, IntPtr pen, PointF [] points, int count);

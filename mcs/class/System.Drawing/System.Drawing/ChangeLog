@@ -1,3 +1,9 @@
+2003-11-06  Duncan Mak  <duncan@ximian.com>
+
+	* Graphics.cs (DrawPie): Use DrawPieI instead of DrawPie and fix
+	angle parameters for the integer case.
+	(DrawBezier): Hook it up with GdipDrawBezier.
+
 2003-11-05  Duncan Mak  <duncan@ximian.com>
 
 	* Graphics.cs (DrawPie): 
