@@ -1,3 +1,8 @@
+2004-01-26  Zoltan Varga  <vargaz@freemail.hu>
+
+	* loader.c (mono_lookup_pinvoke_call): Disable trimming of .dll
+	extension since it does not work with libraries named lib<FOO>.dll.so.
+
 2004-01-25  Martin Baulig  <martin@ximian.com>
 
 	* class.c (mono_class_inflate_generic_type): Added support for
