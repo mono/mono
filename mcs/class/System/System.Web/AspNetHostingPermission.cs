@@ -1,10 +1,11 @@
 //
 // System.Web.AspNetHostingPermission.cs
 //
-// Author:
-//   Andreas Nahr (ClassDevelopment@A-SoftTech.com)
+// Authors:
+//	Andreas Nahr (ClassDevelopment@A-SoftTech.com)
+//	Sebastien Pouliot  <sebastien@ximian.com>
 //
-
+// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -31,32 +32,38 @@
 using System.Security;
 using System.Security.Permissions;
 
-namespace System.Web
-{
+namespace System.Web {
+
 	[Serializable]
-	public sealed class AspNetHostingPermission : CodeAccessPermission, IUnrestrictedPermission
-	{
-		AspNetHostingPermissionLevel _level;
+	public sealed class AspNetHostingPermission : CodeAccessPermission, IUnrestrictedPermission {
+
+		private const int version = 1;
+
+		private AspNetHostingPermissionLevel _level;
 
 		public AspNetHostingPermission (AspNetHostingPermissionLevel level)
 		{
-			_level = level;
+			// use the property to get the enum validation
+			Level = level;
 		}
+
 		public AspNetHostingPermission (PermissionState state)
 		{
-			switch (state) {
-				case PermissionState.None:
-					_level = AspNetHostingPermissionLevel.None;
-					break;
-				case PermissionState.Unrestricted:
-					_level = AspNetHostingPermissionLevel.Unrestricted;
-					break;
-			}
+			if (PermissionHelper.CheckPermissionState (state, true) == PermissionState.Unrestricted)
+				_level = AspNetHostingPermissionLevel.Unrestricted;
+			else
+				_level = AspNetHostingPermissionLevel.None;
 		}
 
 		public AspNetHostingPermissionLevel Level {
 			get { return _level; }
-			set { _level = value; }
+			set {
+				if (!Enum.IsDefined (typeof (AspNetHostingPermissionLevel), value)) {
+					string msg = Locale.GetText ("Invalid enum {0}.");
+					throw new ArgumentException (String.Format (msg, value), "Level");
+				}
+				_level = value;
+			}
 		}
 
 		public bool IsUnrestricted ()
@@ -66,37 +73,88 @@ namespace System.Web
 
 		public override IPermission Copy ()
 		{
+			// note: no need to handle unrestricted here
 			return new AspNetHostingPermission (_level);
 		}
 
-		[MonoTODO ("implement")]
 		public override void FromXml (SecurityElement securityElement)
 		{
-			throw new NotImplementedException ();
+			PermissionHelper.CheckSecurityElement (securityElement, "securityElement", version, version);
+			if (securityElement.Tag != "IPermission") {
+				string msg = Locale.GetText ("Invalid tag '{0}' for permission.");
+				throw new ArgumentException (String.Format (msg, securityElement.Tag), "securityElement");
+			}
+			if (securityElement.Attribute ("version") == null) {
+				string msg = Locale.GetText ("Missing version attribute.");
+				throw new ArgumentException (msg, "securityElement");
+			}
+
+			if (PermissionHelper.IsUnrestricted (securityElement)) {
+				// in case it's get fixed later...
+				_level = AspNetHostingPermissionLevel.Unrestricted;
+			}
+			else {
+				string level = securityElement.Attribute ("Level");
+				if (level != null) {
+					_level = (AspNetHostingPermissionLevel) Enum.Parse (
+						typeof (AspNetHostingPermissionLevel), level);
+				}
+				else
+					_level = AspNetHostingPermissionLevel.None;
+			}
 		}
 
-		[MonoTODO ("implement")]
 		public override SecurityElement ToXml ()
 		{
-			throw new NotImplementedException ();
+			SecurityElement se = PermissionHelper.Element (typeof (AspNetHostingPermission), version);
+			// FIXME: attribute "unrestricted" isn't used by this class - reported as FDBK15156
+			se.AddAttribute ("Level", _level.ToString ());
+			return se;
 		}
 
-		[MonoTODO ("implement")]
 		public override IPermission Intersect (IPermission target)
 		{
-			throw new NotImplementedException ();
+			AspNetHostingPermission anhp = Cast (target);
+			if (anhp == null)
+				return null;
+
+			return new AspNetHostingPermission ((_level <= anhp.Level) ? _level : anhp.Level);
 		}
 
-		[MonoTODO ("implement")]
 		public override bool IsSubsetOf (IPermission target)
 		{
-			throw new NotImplementedException ();
+			AspNetHostingPermission anhp = Cast (target);
+			if (anhp == null)
+				return IsEmpty ();
+			return (_level <= anhp._level);
 		}
 
-		[MonoTODO ("implement")]
 		public override IPermission Union (IPermission target)
 		{
-			throw new NotImplementedException ();
+			AspNetHostingPermission anhp = Cast (target);
+			if (anhp == null)
+				return Copy ();
+			return new AspNetHostingPermission ((_level > anhp.Level) ? _level : anhp.Level);
+		}
+
+		// Internal helpers methods
+
+		private bool IsEmpty ()
+		{
+			return (_level == AspNetHostingPermissionLevel.None);
+		}
+
+		private AspNetHostingPermission Cast (IPermission target)
+		{
+			if (target == null)
+				return null;
+
+			AspNetHostingPermission anhp = (target as AspNetHostingPermission);
+			if (anhp == null) {
+				PermissionHelper.ThrowInvalidPermission (target, typeof (AspNetHostingPermission));
+			}
+
+			return anhp;
 		}
 	}
 }

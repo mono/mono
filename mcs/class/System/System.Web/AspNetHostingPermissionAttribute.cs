@@ -1,10 +1,11 @@
 //
 // System.Web.AspNetHostingPermissionAttribute.cs
 //
-// Author:
-//   Andreas Nahr (ClassDevelopment@A-SoftTech.com)
+// Authors:
+//	Andreas Nahr (ClassDevelopment@A-SoftTech.com)
+//	Sebastien Pouliot  <sebastien@ximian.com>
 //
-
+// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -31,13 +32,13 @@
 using System.Security;
 using System.Security.Permissions;
 
-namespace System.Web
-{
+namespace System.Web {
+
 	[Serializable]
 	[AttributeUsage (AttributeTargets.All, AllowMultiple = true, Inherited = false)]
-	public sealed class AspNetHostingPermissionAttribute : CodeAccessSecurityAttribute
-	{
-		AspNetHostingPermissionLevel _level;
+	public sealed class AspNetHostingPermissionAttribute : CodeAccessSecurityAttribute {
+
+		private AspNetHostingPermissionLevel _level;
 
 		public AspNetHostingPermissionAttribute (SecurityAction action)
 			: base (action)
@@ -46,15 +47,23 @@ namespace System.Web
 			_level = AspNetHostingPermissionLevel.None;
 		}
 
-		[MonoTODO("implement")]
 		public override IPermission CreatePermission ()
 		{
-			throw new NotImplementedException ();
+			if (base.Unrestricted)
+				return new AspNetHostingPermission (PermissionState.Unrestricted);
+			else
+				return new AspNetHostingPermission (_level);
 		}
 
 		public AspNetHostingPermissionLevel Level {
 			get { return _level; }
-			set { _level = value; }
+			set {
+				if (!Enum.IsDefined (typeof (AspNetHostingPermissionLevel), value)) {
+					string msg = Locale.GetText ("Invalid enum {0}.");
+					throw new ArgumentException (String.Format (msg, value), "Level");
+				}
+				_level = value;
+			}
 		}
 	}
 }
