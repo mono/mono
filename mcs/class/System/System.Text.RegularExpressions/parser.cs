@@ -723,11 +723,14 @@ namespace System.Text.RegularExpressions.Syntax {
 			/* check syntax */
 
 			ConsumeWhitespace (IsIgnorePatternWhitespace (options));
-			n = ParseNumber (10, 1, 0);
-			if (n < 0)
-				throw NewParseException ("Illegal {x,y} - bad value of x.");
-
-			ConsumeWhitespace (IsIgnorePatternWhitespace (options));
+		    
+			if (pattern[ptr] == ',') {
+                                n = -1;
+			} else {
+                                n = ParseNumber (10, 1, 0);
+                                ConsumeWhitespace (IsIgnorePatternWhitespace (options));
+			}
+			
 			switch (pattern[ptr ++]) {
 			case '}':
 				m = n;

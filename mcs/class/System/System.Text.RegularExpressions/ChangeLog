@@ -1,3 +1,10 @@
+2004-05-25  Jackson Harper  <jackson@ximian.com>
+
+	* parser.cs: Allow creating a regular expression using {,n} as the
+	specified. The min bounds is set to -1, I am not completely sure
+	if that is what it is supposed to be but MS does not set it to 0
+	based on testing. Patch by dave-gnome-bugs@earth.li. Fixes bug #56761.
+
 2004-05-12  Dick Porter  <dick@ximian.com>
 
 	* regex.cs: 
