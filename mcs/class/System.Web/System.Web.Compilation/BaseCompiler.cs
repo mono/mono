@@ -287,6 +287,8 @@ namespace System.Web.Compilation
 							     parser.CompilerOptions;
 
 			compilerParameters.WarningLevel = config.GetWarningLevel (lang);
+			compilerParameters.TempFiles = new TempFileCollection (config.TempDirectory);
+
 			CompilerResults results = CachingCompiler.Compile (this);
 			CheckCompilerErrors (results);
 			if (results.CompiledAssembly == null)
