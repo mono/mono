@@ -163,7 +163,7 @@ namespace Mono.Util {
 			writer.Formatting = Formatting.Indented;
 			writer.Indentation=4;
 			writer.WriteStartDocument();
-			writer.WriteDocType("monodoc", null, "http://www.go-mono.com/monodoc.dtd", null);
+			writer.WriteDocType("monodoc", null, "http://www.go-mono.org/monodoc.dtd", null);
 			writer.WriteStartElement("monodoc");
 			writer.WriteAttributeString("language",language);
 			return writer;
