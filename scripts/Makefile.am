@@ -1,8 +1,8 @@
-EXTRA_DIST = mcs.in mbas.in ilasm.in cilc.in monoresgen.in secutil.in sqlsharp.in xsd.in wsdl.in genxs.in soapsuds.in chktrust.in signcode.in disco.in sn.in al.in
+EXTRA_DIST = mcs.in mbas.in ilasm.in cilc.in monoresgen.in secutil.in sqlsharp.in xsd.in wsdl.in genxs.in soapsuds.in chktrust.in signcode.in disco.in sn.in al.in cert2spc.in setreg.in makecert.in certmgr.in
 
-bin_SCRIPTS = mcs mbas ilasm cilc monoresgen secutil sqlsharp xsd wsdl al genxs soapsuds chktrust signcode disco sn
+bin_SCRIPTS = mcs mbas ilasm cilc monoresgen secutil sqlsharp xsd wsdl al genxs soapsuds chktrust signcode disco sn cert2spc setreg makecert certmgr
 
-CLEANFILES = mcs mbas ilasm cilc monoresgen secutil sqlsharp xsd wsdl al genxs soapsuds chktrust signcode disco sn
+CLEANFILES = mcs mbas ilasm cilc monoresgen secutil sqlsharp xsd wsdl al genxs soapsuds chktrust signcode disco sn cert2spc setreg makecert certmgr
 
 if X86
 MONO_INTERP = mono
@@ -79,3 +79,19 @@ signcode: signcode.in
 sn: sn.in
 	sed -e 's^\@bindir\@^$(bindir)^g' -e 's^\@mono_interp\@^$(MONO_INTERP)^g' -e's^\@plat_bindir\@^$(plat_bindir)^g' < $(srcdir)/sn.in > sn.tmp \
 	&& mv sn.tmp sn
+
+cert2spc: cert2spc.in
+	sed -e 's^\@bindir\@^$(bindir)^g' -e 's^\@mono_interp\@^$(MONO_INTERP)^g' -e's^\@plat_bindir\@^$(plat_bindir)^g' < $(srcdir)/cert2spc.in > cert2spc.tmp \
+	&& mv cert2spc.tmp cert2spc
+
+setreg: setreg.in
+	sed -e 's^\@bindir\@^$(bindir)^g' -e 's^\@mono_interp\@^$(MONO_INTERP)^g' -e's^\@plat_bindir\@^$(plat_bindir)^g' < $(srcdir)/setreg.in > setreg.tmp \
+	&& mv setreg.tmp setreg
+
+makecert: makecert.in
+	sed -e 's^\@bindir\@^$(bindir)^g' -e 's^\@mono_interp\@^$(MONO_INTERP)^g' -e's^\@plat_bindir\@^$(plat_bindir)^g' < $(srcdir)/makecert.in > makecert.tmp \
+	&& mv makecert.tmp makecert
+
+certmgr: certmgr.in
+	sed -e 's^\@bindir\@^$(bindir)^g' -e 's^\@mono_interp\@^$(MONO_INTERP)^g' -e's^\@plat_bindir\@^$(plat_bindir)^g' < $(srcdir)/certmgr.in > certmgr.tmp \
+	&& mv certmgr.tmp certmgr
