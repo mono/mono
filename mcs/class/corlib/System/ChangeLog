@@ -1,3 +1,7 @@
+2004-10-03  Zoltan Varga  <vargaz@freemail.hu>
+
+	* Environment.cs: Bump corlib version.
+
 2004-10-02  Zoltan Varga  <vargaz@freemail.hu>
 
 	* Int32.cs UInt32.cs Byte.cs SByte.cs Int16.cs UInt16.cs Int64.cs UInt64.cs: Implement 2.0 TryParse methods.
