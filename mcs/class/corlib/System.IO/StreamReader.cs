@@ -197,17 +197,52 @@ namespace System.IO {
 			return size;
 		}
 
-		[MonoTODO]
 		public override string ReadLine()
 		{
-			return String.Empty;
+			StringBuilder text = new StringBuilder ();
+
+			while (true) {
+				int c = Read ();
+
+				if (c == -1) {				// end of stream
+					if (text.Length == 0)
+						return null;
+
+					break;
+				}
+
+				if (c == '\n')				// newline
+					break;
+
+				if (c == '\r' && Peek () == '\n') {	// cr, newline
+					Read ();
+					break;
+				}
+
+				text.Append ((char) c);
+			}
+
+			return text.ToString ();
 		}
 
-		[MonoTODO]
                 public override string ReadToEnd()
 		{
-			return String.Empty;
-                }
+			StringBuilder text = new StringBuilder ();
 
+			while (true) {
+				int c = Read ();
+
+				if (c == -1) {
+					if (text.Length == 0)
+						return null;
+
+					break;
+				}
+
+				text.Append ((char) c);
+			}
+
+			return text.ToString ();
+                }
 	}
 }
