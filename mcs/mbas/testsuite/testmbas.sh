@@ -1,8 +1,8 @@
-#!/bin/bash
+#!/bin/sh
 
 TESTSUITEDIR=d:/cygwin/home/Administrator/mcs/mbas/testsuite
-MBAS=d:/cygwin/home/Administrator/mcs/mbas/mbas.exe
-MONO=
+MBAS=mbas
+MONO=mono
 REFS=--reference=./TestUtils.dll
 
 NUMTESTS=0
