@@ -1,3 +1,7 @@
+2001-11-28  Nick Drochak <ndrochak@gol.com>
+
+	* Int16Test.cs Int32Test.cs SByteTest.cs: Surgically removed tests that rely on culture of system.  These need to be crafted a bit differently.
+
 2001-11-27  Nick Drochak  <ndrochak@gol.com>
 
 	* SByteTest.cs: Add messages to Assert()'s so we can tell where the tests fail.

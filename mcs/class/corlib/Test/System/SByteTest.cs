@@ -149,10 +149,14 @@ public class SByteTest : TestCase
 		Assert("MyString2, MySByte2.ToString()", String.Compare(MyString2, MySByte2.ToString()) == 0);
 		Assert("MyString3, MySByte3.ToString()", String.Compare(MyString3, MySByte3.ToString()) == 0);
 		//test ToString(string format)
+		/*
+		TODO: These tests depend on the culture of the system running the test.
+			So, this needs to be tested in a different way.
 		for (int i=0; i < Formats1.Length; i++) {
-			Assert("Results1[i], MySByte2.ToString(Formats1[i])", String.Compare(Results1[i], MySByte2.ToString(Formats1[i])) == 0);
+			Assert("i="+i+", Results1[i]="+Results1[i]+", MySByte2.ToString(Formats1[i])="+MySByte2.ToString(Formats1[i]), String.Compare(Results1[i], MySByte2.ToString(Formats1[i])) == 0);
 			Assert("Results2[i], MySByte3.ToString(Formats2[i])", String.Compare(Results2[i], MySByte3.ToString(Formats2[i])) == 0);
 		}
+		*/
 		//test ToString(string format, IFormatProvider provider);
 		for (int i=0; i < Formats1.Length; i++) {
 			Assert("i="+i+", ResultsNfi1[i]="+ResultsNfi1[i]+", MySByte2.ToString(Formats1[i]="+Formats1[i]+"): Expected "+ResultsNfi1[i]+" but got "+MySByte2.ToString(Formats1[i], Nfi), String.Compare(ResultsNfi1[i], MySByte2.ToString(Formats1[i], Nfi)) == 0);

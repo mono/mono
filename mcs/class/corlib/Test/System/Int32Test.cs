@@ -53,16 +53,16 @@ public class Int32Test : TestCase
 	
 	public void TestCompareTo()
 	{
-		Assert(MyInt32_3.CompareTo(MyInt32_2) > 0);
-		Assert(MyInt32_2.CompareTo(MyInt32_2) == 0);
-		Assert(MyInt32_1.CompareTo((Int32)(-42)) == 0);
-		Assert(MyInt32_2.CompareTo(MyInt32_3) < 0);
+		Assert("MyInt32_3.CompareTo(MyInt32_2) > 0", MyInt32_3.CompareTo(MyInt32_2) > 0);
+		Assert("MyInt32_2.CompareTo(MyInt32_2) == 0", MyInt32_2.CompareTo(MyInt32_2) == 0);
+		Assert("MyInt32_1.CompareTo((Int32)(-42)) == 0", MyInt32_1.CompareTo((Int32)(-42)) == 0);
+		Assert("MyInt32_2.CompareTo(MyInt32_3) < 0", MyInt32_2.CompareTo(MyInt32_3) < 0);
 		try {
 			MyInt32_2.CompareTo((Int16)100);
 			Fail("Should raise a System.ArgumentException");
 		}
 		catch (Exception e) {
-			Assert(typeof(ArgumentException) == e.GetType());
+			Assert("typeof(ArgumentException) == e.GetType()", typeof(ArgumentException) == e.GetType());
 		}
 	}
 
@@ -150,10 +150,14 @@ public class Int32Test : TestCase
 		Assert(String.Compare(MyString2, MyInt32_2.ToString()) == 0);
 		Assert(String.Compare(MyString3, MyInt32_3.ToString()) == 0);
 		//test ToString(string format)
+		/*
+		TODO: These tests are culture sensitive.  Need to find a way to determine the culture
+			of the system to decide the correct expected result.
 		for (int i=0; i < Formats1.Length; i++) {
 			Assert(String.Compare(Results1[i], MyInt32_2.ToString(Formats1[i])) == 0);
 			Assert(String.Compare(Results2[i], MyInt32_3.ToString(Formats2[i])) == 0);
 		}
+		*/
 		//test ToString(string format, IFormatProvider provider);
 		for (int i=0; i < Formats1.Length; i++) {
 			Assert(String.Compare(ResultsNfi1[i], MyInt32_2.ToString(Formats1[i], Nfi)) == 0);
