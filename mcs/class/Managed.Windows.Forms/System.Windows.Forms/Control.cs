@@ -29,9 +29,12 @@
 //	Jaak Simm		jaaksimm@firm.ee
 //	John Sohn		jsohn@columbus.rr.com
 //
-// $Revision: 1.19 $
+// $Revision: 1.20 $
 // $Modtime: $
 // $Log: Control.cs,v $
+// Revision 1.20  2004/08/11 15:13:32  pbartok
+// - Now properly reparents windows
+//
 // Revision 1.19  2004/08/11 14:37:11  pbartok
 // - Duh!
 //
@@ -216,6 +219,7 @@ namespace System.Windows.Forms
 					}
 				}
 				list.Add(value);
+				value.Parent=owner;
 			}
 			
 			public virtual void AddRange(Control[] controls) {
