@@ -433,7 +433,7 @@ namespace System.Xml.XPath
 			m_fThisIsOperator = false;
 			m_objToken = null;
 			m_iToken = ParseToken ();
-			bool fWhitespace = SkipWhitespace ();
+			SkipWhitespace ();
 			m_iTokenPrev = m_iToken;
 			m_fPrevWasOperator = m_fThisIsOperator;
 			return (m_iToken != Token.EOF);

@@ -1,3 +1,9 @@
+2004-11-26  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Expression.cs : warning removal. Added Optimize() which is not
+	  implemented at all.
+	* Tokenizer.cs : warning elimination
+
 2004-11-24  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XPathEditableNavigator.cs, XPathChangeNavigator.cs,

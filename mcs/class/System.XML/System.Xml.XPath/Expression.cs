@@ -57,7 +57,7 @@ namespace System.Xml.XPath
 
 		public CompiledExpression (string raw, Expression expr)
 		{
-			_expr = expr;
+			_expr = expr.Optimize ();
 			rawExpression = raw;
 		}
 		private CompiledExpression (CompiledExpression other)
@@ -383,6 +383,12 @@ namespace System.Xml.XPath
 		}
 		public abstract XPathResultType ReturnType { get; }
 		public virtual XPathResultType GetReturnType (BaseIterator iter) { return ReturnType; }
+
+		public virtual Expression Optimize ()
+		{
+			return this;
+		}
+
 		public abstract object Evaluate (BaseIterator iter);
 
 		public virtual BaseIterator EvaluateNodeSet (BaseIterator iter)
@@ -1316,8 +1322,6 @@ namespace System.Xml.XPath
 					throw new XPathException ("Invalid namespace prefix: "+_name.Namespace);
 			}
 
-			string strURI = nav.NamespaceURI;
-
 			// test the prefixes
 			return strURI1 == nav.NamespaceURI;
 		}
@@ -1460,7 +1464,7 @@ namespace System.Xml.XPath
 			object objResult = var.Evaluate (context);
 			XPathNodeIterator iterResult = objResult as XPathNodeIterator;
 			if (iterResult != null)
-				return new WrapperIterator (iterResult.Clone (), iter.NamespaceManager);
+				return iterResult is BaseIterator ? iterResult : new WrapperIterator (iterResult, iter.NamespaceManager);
 			return objResult;
 		}
 	}
