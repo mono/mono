@@ -629,10 +629,13 @@ namespace System.Windows.Forms {
 						"Only TabPages can be directly added to TabControls.");
 				
 				base.Add (value);
-				if (Count == 1)
+				if (Count == 1) {
 					owner.SelectedIndex = 0;
-				owner.CalcTabRows (owner.Width);
-				
+				} else {
+					// Setting the selected index will calc the tab rows so
+					// we don't need to do it again
+					owner.CalcTabRows (owner.Width);
+				}
 			}
 		}
 
