@@ -120,7 +120,6 @@ public class TypeManager {
 	static public MethodInfo system_int_array_get_lower_bound_int;
 	static public MethodInfo system_int_array_get_upper_bound_int;
 	static public MethodInfo system_void_array_copyto_array_int;
-	static public MethodInfo system_void_set_corlib_type_builders;
 
 	
 	//
@@ -891,7 +890,7 @@ public class TypeManager {
 	///   Returns the MethodInfo for a method named `name' defined
 	///   in type `t' which takes arguments of types `args'
 	/// </summary>
-	static MethodInfo GetMethod (Type t, string name, Type [] args)
+	static MethodInfo GetMethod (Type t, string name, Type [] args, bool report_errors)
 	{
 		MemberList list;
 		Signature sig;
@@ -902,18 +901,26 @@ public class TypeManager {
 		list = FindMembers (t, MemberTypes.Method, instance_and_static | BindingFlags.Public,
 				    signature_filter, sig);
 		if (list.Count == 0) {
-			Report.Error (-19, "Can not find the core function `" + name + "'");
+			if (report_errors)
+				Report.Error (-19, "Can not find the core function `" + name + "'");
 			return null;
 		}
 
 		MethodInfo mi = list [0] as MethodInfo;
 		if (mi == null) {
-			Report.Error (-19, "Can not find the core function `" + name + "'");
+			if (report_errors)
+				Report.Error (-19, "Can not find the core function `" + name + "'");
 			return null;
 		}
 
 		return mi;
 	}
+
+	static MethodInfo GetMethod (Type t, string name, Type [] args)
+	{
+		return GetMethod (t, name, args, true);
+	}
+
 
 	/// <summary>
 	///    Returns the ConstructorInfo for "args"
@@ -1055,21 +1062,40 @@ public class TypeManager {
 			system_void_array_copyto_array_int = GetMethod (
 				system_array_type, "CopyTo", system_array_int_arg);
 
-			Type [] system_type_type_arg = { system_type_type, system_type_type, system_type_type };
+			Type [] system_3_type_arg = {
+				system_type_type, system_type_type, system_type_type };
+			Type [] system_4_type_arg = {
+				system_type_type, system_type_type, system_type_type, system_type_type };
 
-			system_void_set_corlib_type_builders = GetMethod (
+			MethodInfo set_corlib_type_builders = GetMethod (
 				system_assemblybuilder_type, "SetCorlibTypeBuilders",
-				system_type_type_arg);
+				system_4_type_arg, false);
 
-			if (system_void_set_corlib_type_builders != null){
+			if (set_corlib_type_builders != null) {
+				object[] args = new object [4];
+				args [0] = object_type;
+				args [1] = value_type;
+				args [2] = enum_type;
+				args [3] = void_type;
+				
+				set_corlib_type_builders.Invoke (CodeGen.AssemblyBuilder, args);
+			} else {
+				// Compatibility for an older version of the class libs.
+				set_corlib_type_builders = GetMethod (
+					system_assemblybuilder_type, "SetCorlibTypeBuilders",
+					system_3_type_arg, true);
+
+				if (set_corlib_type_builders == null) {
+					Report.Error (-26, "Corlib compilation is not supported in Microsoft.NET due to bugs in it");
+					return;
+				}
+
 				object[] args = new object [3];
 				args [0] = object_type;
 				args [1] = value_type;
 				args [2] = enum_type;
 				
-				system_void_set_corlib_type_builders.Invoke (CodeGen.AssemblyBuilder, args);
-			} else {
-				Report.Error (-26, "Corlib compilation is not supported in Microsoft.NET due to bugs in it");
+				set_corlib_type_builders.Invoke (CodeGen.AssemblyBuilder, args);
 			}
 		}
 	}

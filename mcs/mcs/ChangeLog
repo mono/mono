@@ -1,3 +1,11 @@
+2003-05-18  Martin Baulig  <martin@ximian.com>
+
+	* typemanager.cs (InitCoreTypes): Try calling
+	SetCorlibTypeBuilders() with 4 args; if that fails, fall back to
+	the 3-args-version.  Corlib now also needs our `void_type'.
+	(GetMethod): Added overloaded version which takes an optional
+	`bool report_errors' to allow lookups of optional methods.
+
 2003-05-12  Martin Baulig  <martin@ximian.com>
 
 	* statement.cs (VariableInfo): Renamed to LocalInfo since it's
