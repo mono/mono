@@ -3589,6 +3589,7 @@ namespace Mono.CSharp {
 		{
 			if (local_info == null) {
 				local_info = Block.GetLocalInfo (Name);
+				local_info.Used = lvalue_right_side == EmptyExpression.Null;
 				is_readonly = local_info.ReadOnly;
 			}
 
