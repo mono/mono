@@ -1,3 +1,8 @@
+2004-09-13  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* SqlClientPermissionAttributeTest.cs: New. Unit tests for SqlClient
+	PermissionAttribute.
+
 2004-09-02 Umadevi S <sumadevi@novell.com>
 	* SqlCommandTest.cs - added file. Testing ExecuteNonQuery
 
