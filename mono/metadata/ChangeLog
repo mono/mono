@@ -1,3 +1,13 @@
+2003-02-05  Martin Baulig  <martin@ximian.com>
+
+	* reflection.c (mono_image_build_metadata): Make this public,
+	protect it against being called multiple times, don't create
+	resources and don't build the compressed metadata here.
+	(mono_image_create_pefile): Do this here.
+
+	* icall.c
+	("System.Reflection.Emit.AssemblyBuilder::build_metadata"): Added.
+
 2003-02-06  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* socket-io.c: fixed bug #36322.
