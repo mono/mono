@@ -1,3 +1,9 @@
+2005-03-24  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XslTransformTests.cs : added (extra) test which verifies that
+	  XslTransform.Load() and .Transform() does not hold reference to
+	  stylesheet/instance XPathNavigator inside its internals.
+
 2005-03-23  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XslTransformTests.cs : added test that examines if XSLT rejects
