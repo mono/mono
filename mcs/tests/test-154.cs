@@ -294,7 +294,7 @@ public class X
                 } finally {
                         fin = 1;
                 }
-                return res;
+                return fin;
         }
 
 	// from bug #30487.

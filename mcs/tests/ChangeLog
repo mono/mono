@@ -1,3 +1,7 @@
+2004-01-20  Martin Baulig  <martin@ximian.com>
+
+	* verify-8.cs: New test for #52707.
+
 2004-01-05 Marek Safar <marek.safar@seznam.cz>
 
         * cls-test-0.cs, cls-test-1.cs, cls-test-2.cs, cls-test-3.cs,
