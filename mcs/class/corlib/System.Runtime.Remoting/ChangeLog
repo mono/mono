@@ -1,3 +1,10 @@
+2003-01-29 Lluis Sanchez Gual <lluis@ideary.com>
+
+	* RemotingServices.cs: Added support for WellKnownService objects.
+	* RemotingConfiguration.cs: Implemented most of methods (Configure is not working yet).
+	* ObjRef.cs: Added initialization of channel info in default constructor.
+	* Identity.cs: Added support for WellKnownService objects.
+
 2003-01-28 Patrik Torstensson
 
 	* ObjRef.cs: Fixed Objref marshalling flags

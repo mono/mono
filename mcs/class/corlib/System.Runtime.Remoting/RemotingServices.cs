@@ -16,6 +16,8 @@ using System.Runtime.Remoting.Messaging;
 using System.Runtime.Remoting.Proxies;
 using System.Runtime.Remoting.Channels;
 using System.Runtime.Remoting.Contexts;
+using System.Runtime.Remoting.Activation;
+using System.Runtime.Remoting.Lifetime;
 using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
 
@@ -32,6 +34,8 @@ namespace System.Runtime.Remoting
 		static RemotingServices ()
 		{
 			 app_id = "/" + Guid.NewGuid().ToString().Replace('-', '_') + "/";
+
+			CreateServerIdentity (null, typeof(RemoteActivator), "RemoteActivationService.rem", ServiceType.Singleton);
 		}
 	
 		private RemotingServices () {}
@@ -88,12 +92,9 @@ namespace System.Runtime.Remoting
 
 		public static Type GetServerTypeForUri (string uri)
 		{
-			object svr = GetServerForUri (uri);
-
-			if (svr == null)
-				return null;
-			
-			return svr.GetType ();
+			Identity ident = GetIdentityForUri (uri);
+			if (ident == null) return null;
+			return ident.ObjectType;
 		}
 
 		public static string GetObjectUri (MarshalByRefObject obj)
@@ -139,16 +140,11 @@ namespace System.Runtime.Remoting
 				}
 			}
 
+			if (requested_type == null) requested_type = obj.GetType();
 			if (uri == null) uri = app_id + Environment.TickCount + "_" + next_id++;
 
-			// It creates the identity if not found
-			Identity identity = GetServerIdentity (obj, uri);
-
-			if (obj != identity.RealObject)
-				throw new RemotingException ("uri already in use, " + uri);
-			// already registered
-
-			return identity.CreateObjRef(requested_type);
+			CreateServerIdentity (obj, requested_type, uri, ServiceType.ClientActivated);
+			return obj.CreateObjRef(requested_type);
 		}
 
 		public static RealProxy GetRealProxy (object proxy)
@@ -177,7 +173,7 @@ namespace System.Runtime.Remoting
 			Identity ident = GetObjectIdentity(mbr);
 
 			if (ident != null)
-				oref = ident.CreateObjRef(null);
+				oref = mbr.CreateObjRef(null);
 			else
 				oref = Marshal (mbr);
 
@@ -233,14 +229,6 @@ namespace System.Runtime.Remoting
 
 		#region Internal Methods
 		
-		internal static MarshalByRefObject GetServerForUri (string uri)
-		{
-			lock (uri_hash)
-			{
-				return (MarshalByRefObject)((Identity)uri_hash [uri]).RealObject;
-			}
-		}
-
 		internal static Identity GetIdentityForUri (string uri)
 		{
 			lock (uri_hash)
@@ -290,12 +278,12 @@ namespace System.Runtime.Remoting
 
 				// Creates an identity and a proxy for the remote object
 
-				identity = new Identity(objectUri, null, requiredType);
+				identity = new Identity (objectUri, null, requiredType, ServiceType.ClientProxy);
 				identity.ClientSink = sink;
 
 				RemotingProxy proxy = new RemotingProxy (requiredType, identity);
 
-				identity.RealObject = proxy.GetTransparentProxy();
+				identity.RealObject = (MarshalByRefObject) proxy.GetTransparentProxy();
 
 				// Registers the identity
 				uri_hash [objectUri] = identity;
@@ -303,7 +291,7 @@ namespace System.Runtime.Remoting
 			}
 		}
 
-		private static Identity GetServerIdentity(MarshalByRefObject realObject, string objectUri)
+		internal static Identity CreateServerIdentity(MarshalByRefObject realObject, Type objectType, string objectUri, ServiceType serviceType)
 		{
 			// This method looks for an identity for the given object. 
 			// If an identity is not found, it creates the identity and 
@@ -313,14 +301,23 @@ namespace System.Runtime.Remoting
 			{
 				Identity identity = (Identity)uri_hash [objectUri];
 				if (identity != null) 
-					return identity;	// Object already registered
+				{
+					if (realObject != identity.RealObject)
+						throw new RemotingException ("Uri already in use: " + objectUri);
 
-				identity = new Identity (objectUri, Context.DefaultContext, realObject.GetType());
+					return identity;	// Object already registered
+				}
+
+				identity = new Identity (objectUri, Context.DefaultContext, objectType, serviceType);
 				identity.RealObject = realObject;
 
 				// Registers the identity
 				uri_hash[objectUri] = identity;
-				realObject.ObjectIdentity = identity;
+
+				if (realObject != null)
+					realObject.ObjectIdentity = identity;
+
+				LifetimeServices.TrackLifetime (identity);
 
 				return identity;
 			}
@@ -330,6 +327,16 @@ namespace System.Runtime.Remoting
 		{
 			Identity id = GetClientIdentity(requiredType, url, channelData, remotedObjectUri);
 			return id.RealObject;
+		}
+
+		internal static void DisposeObject (MarshalByRefObject obj)
+		{
+			IDisposable disp = obj as IDisposable;
+			if (disp != null) disp.Dispose ();
+
+			Identity ident = GetObjectIdentity (obj);
+			if (ident == null) return;
+			else uri_hash.Remove (ident.ObjectUri);
 		}
 
 		#endregion

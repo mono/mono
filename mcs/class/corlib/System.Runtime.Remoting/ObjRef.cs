@@ -30,6 +30,7 @@ namespace System.Runtime.Remoting {
 		public ObjRef ()
 		{
 			// no idea why this needs to be public
+			channel_info = new ChannelInfoStore ();
 		}
 		
 		public ObjRef (MarshalByRefObject mbr, Type type)

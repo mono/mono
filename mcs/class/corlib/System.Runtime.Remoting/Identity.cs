@@ -9,9 +9,12 @@
 using System.Runtime.Remoting.Messaging;
 using System.Runtime.Remoting.Proxies;
 using System.Runtime.Remoting.Contexts;
+using System.Runtime.Remoting.Lifetime;
 
 namespace System.Runtime.Remoting
 {
+	enum ServiceType { ClientActivated, SingleCall, Singleton, ClientProxy };
+
 	internal class Identity
 	{
 		// An Identity object holds remoting information about
@@ -23,7 +26,7 @@ namespace System.Runtime.Remoting
 		// The object that this identity represents. Can be a MarshalByRefObject
 		// (if it is a server object) or a transparent proxy (if it is a client
 		// proxy to a remote object).
-		object _realObject;
+		MarshalByRefObject _realObject;
 
 		Type _objectType;
 
@@ -40,21 +43,30 @@ namespace System.Runtime.Remoting
 
 		ObjRef _objRef = null;
 
-		public Identity(string objectUri, Context context, Type objectType)
+		ServiceType _serviceType;
+
+		public Identity(string objectUri, Context context, Type objectType, ServiceType serviceType)
 		{
 			_objectUri = objectUri;
 			_context = context;
 			_objectType = objectType;
+			_serviceType = serviceType;
 		}
 
 		public ObjRef CreateObjRef (Type requestedType)
 		{
-			// fixme: handle requested_type		
 			if (requestedType == null) requestedType = _objectType;
-			ObjRef res = new ObjRef ((MarshalByRefObject)_realObject, requestedType);
+
+			ObjRef res = new ObjRef ();
+			res.TypeInfo = new TypeInfo(requestedType);
 			res.URI = _objectUri;
 			_objRef = res;
 			return res;
+		}
+
+		public ServiceType IdentityServiceType
+		{
+			get { return _serviceType; }
 		}
 
 		public bool IsFromThisAppDomain
@@ -66,10 +78,31 @@ namespace System.Runtime.Remoting
 			}
 		}
 
-		public object RealObject
+		public MarshalByRefObject RealObject
 		{
-			get	{ return _realObject; }
-			set { _realObject = value; }
+			get	
+			{ 
+				if (_realObject != null) return _realObject;
+
+				if (_serviceType == ServiceType.Singleton) {
+					lock (this) 
+					{
+						if (_realObject == null) {
+							_realObject = (MarshalByRefObject) Activator.CreateInstance (_objectType);
+							LifetimeServices.TrackLifetime (this);
+						}
+						return _realObject;
+					}
+				}
+				else if (_serviceType == ServiceType.SingleCall) {
+					return (MarshalByRefObject) Activator.CreateInstance (_objectType);
+				}
+				return null;
+			}
+			set 
+			{ 
+				_realObject = value; 
+			}
 		}
 
 		public string ObjectUri
@@ -83,20 +116,76 @@ namespace System.Runtime.Remoting
 			set { _clientSink = value; }
 		}
 
-		public IMessageSink ServerSink
+		public Type ObjectType
 		{
-			get 
-			{ 
-				if (_serverSink == null) {
-					_serverSink = _context.CreateServerObjectSinkChain((MarshalByRefObject)_realObject);
-				}
-				return _serverSink; 
-			}
+			get { return _objectType; }
 		}
 
 		public Context Context
 		{
 			get { return _context; }
+		}
+
+
+		public IMessage SyncObjectProcessMessage (IMessage msg)
+		{
+			if (_serviceType == ServiceType.SingleCall)
+			{
+				MarshalByRefObject obj = (MarshalByRefObject)RealObject;
+				IMessageSink serverSink = _context.CreateServerObjectSinkChain(obj);
+				IMessage result = serverSink.SyncProcessMessage (msg);
+				if (obj is IDisposable) ((IDisposable)obj).Dispose();
+				return result;
+			}
+			else
+			{
+				if (_serverSink == null) _serverSink = _context.CreateServerObjectSinkChain (RealObject);
+				return _serverSink.SyncProcessMessage (msg);
+			}
+		}
+
+		public IMessageCtrl AsyncObjectProcessMessage (IMessage msg, IMessageSink replySink)
+		{
+			if (_serviceType == ServiceType.SingleCall)
+			{
+				MarshalByRefObject obj = (MarshalByRefObject)Activator.CreateInstance (_objectType);
+				IMessageSink serverSink = _context.CreateServerObjectSinkChain(obj);
+				if (obj is IDisposable) replySink = new DisposerReplySink(replySink, ((IDisposable)obj));
+				return serverSink.AsyncProcessMessage (msg, replySink);
+			}
+			else
+			{
+				if (_serverSink == null) _serverSink = _context.CreateServerObjectSinkChain (RealObject);
+				return _serverSink.AsyncProcessMessage (msg, replySink);
+			}
+		}
+	}
+
+	public class DisposerReplySink : IMessageSink
+	{
+		IMessageSink _next;
+		IDisposable _disposable;
+
+		public DisposerReplySink (IMessageSink next, IDisposable disposable)
+		{
+			_next = next;
+			_disposable = disposable;
+		}
+
+		public IMessage SyncProcessMessage (IMessage msg)
+		{
+			_disposable.Dispose();
+			return _next.SyncProcessMessage (msg);
+		}
+
+		public IMessageCtrl AsyncProcessMessage (IMessage msg, IMessageSink replySink)
+		{
+			throw new NotSupportedException();
+		}
+
+		public IMessageSink NextSink
+		{
+			get { return _next; }
 		}
 	}
 }
