@@ -1,3 +1,9 @@
+2003-01-10  Dietmar Maurer  <dietmar@ximian.com>
+
+	* loader.c (mono_method_get_marshal_info): bug fix
+
+	* marshal.c (mono_marshal_get_ptr_to_struct): don't convert
+	structures with explicit layout
 
 Fri Jan 10 15:58:09 CET 2003 Paolo Molaro <lupus@ximian.com>
 
