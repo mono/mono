@@ -1,3 +1,10 @@
+
+Fri Nov 30 12:01:02 CET 2001 Paolo Molaro <lupus@ximian.com>
+
+	* metadata.h, metadata.c: remove params_size and locals_size and their
+	calculation from the metadata code: they are only usefult to the
+	interp.
+
 2001-11-29  Radek Doulik  <rodo@ximian.com>
 
 	* object.c (mono_ldstr): swap bytes here, it's probably not the

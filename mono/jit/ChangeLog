@@ -1,3 +1,10 @@
+
+Fri Nov 30 12:02:24 CET 2001 Paolo Molaro <lupus@ximian.com>
+
+	* x86.brg: rearrange fields to reduce struct size.
+	* jit.c: use signature->param_count, not signature->params_size.
+	* debug.c: off-by-one error fix.
+
 2001-11-29  Radek Doulik  <rodo@ximian.com>
 
 	* Makefile.am: build mono only for X86 architecture, compilation
