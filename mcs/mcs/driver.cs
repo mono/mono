@@ -221,7 +221,12 @@ namespace Mono.CSharp
 			string total_log = "";
 
 			try {
-				a = Assembly.Load (assembly);
+				char[] path_chars = { '/', '\\', '.' };
+
+				if (assembly.IndexOfAny (path_chars) != -1)
+					a = Assembly.LoadFrom (assembly);
+				else
+					a = Assembly.Load (assembly);
 				TypeManager.AddAssembly (a);
 				return 0;
 			} catch (FileNotFoundException){

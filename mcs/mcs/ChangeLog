@@ -1,5 +1,13 @@
 2002-04-26  Martin Baulig  <martin@gnome.org>
 
+	* driver.cs (LoadAssembly): If `assembly' contains any characters
+	which are only valid in path names and not in assembly names
+	(currently slash, backslash and point), use Assembly.LoadFrom ()
+	instead of Assembly.Load () on the `assembly' (before iteration
+	over the link_paths).
+
+2002-04-26  Martin Baulig  <martin@gnome.org>
+
 	* cs-tokenizer.cs (is_hex): Correctly handle lowercase chars.
 
 2002-04-25  Miguel de Icaza  <miguel@ximian.com>
