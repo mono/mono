@@ -1069,9 +1069,16 @@ Console.WriteLine ("Invalidating {0:x}", (int)handle);
 				}
 			}
 		}
+
 		internal override bool GetFontMetrics(Graphics g, Font font, out int ascent, out int descent) {
 			return GetFontMetrics(g.GetHdc(), font.ToHfont(), out ascent, out descent);
 		}
+
+		[MonoTODO]
+		internal override void ScrollWindow(IntPtr hwnd, int XAmount, int YAmount) {
+			;
+		}
+
 
 		[MonoTODO]
 		internal override int KeyboardSpeed {
