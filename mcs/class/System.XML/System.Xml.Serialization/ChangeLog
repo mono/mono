@@ -1,3 +1,7 @@
+2003-02-16  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
+
+	* XmlSerializer.cs : serializing now works for interface member.
+
 2003-01-26  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
 
 	* XmlSerializer.cs : some fix handling xml node object more correct.

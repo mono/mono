@@ -677,6 +677,9 @@ namespace System.Xml.Serialization {
 				FieldInfo fieldInfo = (member as FieldInfo);
 				PropertyInfo propertyInfo = (member as PropertyInfo);
 
+				if (memberTable [member.Name] != null)
+					continue;
+
 				if (fieldInfo != null) {
 					//If field is readOnly or const, do not serialize it.
 					if (fieldInfo.IsLiteral || fieldInfo.IsInitOnly)
