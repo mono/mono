@@ -1,5 +1,5 @@
 //
-// X509Certificate.cs: Handles X.509 certificates.
+// X509Certificates.cs: Handles X.509 certificates.
 //
 // Author:
 //	Sebastien Pouliot (spouliot@motus.com)
@@ -210,16 +210,16 @@ internal class ASN1 {
 [Serializable]
 public class X509Certificate 
 {
-	protected byte[] m_encodedcert = null;
-	private byte[] m_certhash = null;
+	protected byte[] m_encodedcert;
+	private byte[] m_certhash;
 	protected DateTime m_from;
 	protected DateTime m_until;
-	private string m_issuername = null;
-	private string m_keyalgo = null;
-	private byte[] m_keyalgoparams = null;
-	private string m_subject = null;
-	protected byte[] m_publickey = null;
-	private byte[] m_serialnumber = null;
+	private string m_issuername;
+	private string m_keyalgo;
+	private byte[] m_keyalgoparams;
+	private string m_subject;
+	protected byte[] m_publickey;
+	private byte[] m_serialnumber;
 
 	// almost every byte[] returning function has a string equivalent
 	// sadly the BitConverter insert dash between bytes :-(
@@ -252,6 +252,7 @@ public class X509Certificate
 		byte[] serialNumber = { 0x55, 0x04, 0x05 };
 		byte[] domainComponent = { 0x09, 0x92, 0x26, 0x89, 0x93, 0xF2, 0x2C, 0x64, 0x01, 0x19 };
 		byte[] userid = { 0x09, 0x92, 0x26, 0x89, 0x93, 0xF2, 0x2C, 0x64, 0x01, 0x01 };
+		byte[] email = { 0x2a, 0x86, 0x48, 0x86, 0xf7, 0x0d, 0x01, 0x09, 0x01 };
 
 		StringBuilder sb = new StringBuilder ();
 		for (int i = 0; i < seq.Count; i++) {
@@ -277,15 +278,18 @@ public class X509Certificate
 			else if (poid.CompareValue (localityName))
 				sb.Append ("L=");
 			else if (poid.CompareValue (stateOrProvinceName))
-				sb.Append ("ST=");
+				sb.Append ("S=");	// NOTE: RFC2253 uses ST=
 			else if (poid.CompareValue (streetAddress))
 				sb.Append ("STREET=");
 			else if (poid.CompareValue (domainComponent))
 				sb.Append ("DC=");
 			else if (poid.CompareValue (userid))
 				sb.Append ("UID=");
+			else if (poid.CompareValue (email))
+				sb.Append ("E=");	// NOTE: Not part of RFC2253
 			else {
 				// unknown OID
+				sb.Append ("OID.");	// NOTE: Not present as RFC2253
 				sb.Append (OIDToString (poid.Value));
 				sb.Append ("=");
 			}
@@ -299,8 +303,18 @@ public class X509Certificate
 					sb2.Append ((char) s.Value[j]);
 				sValue = sb2.ToString ();
 			}
-			else
+			else {
 				sValue = System.Text.Encoding.UTF8.GetString (s.Value);
+				// in some cases we must quote (") the value
+				// Note: this doesn't seems to conform to RFC2253
+				char[] specials = { ',', '+', '"', '\\', '<', '>', ';' };
+				if (sValue.IndexOfAny(specials, 0, sValue.Length) > 0)
+					sValue = "\"" + sValue + "\"";
+				else if (sValue.StartsWith (" "))
+					sValue = "\"" + sValue + "\"";
+				else if (sValue.EndsWith (" "))
+					sValue = "\"" + sValue + "\"";
+			}
 
 			sb.Append (sValue);
 
@@ -347,7 +361,19 @@ public class X509Certificate
 	private DateTime UTCToDateTime (ASN1 time)
 	{
 		string t = System.Text.Encoding.ASCII.GetString (time.Value);
-		return DateTime.ParseExact (t, "yyMMddHHmmssZ", null);
+		// to support both UTCTime and GeneralizedTime (and not so common format)
+		string mask = null;
+		switch (t.Length) {
+		case 11: mask = "yyMMddHHmmZ"; // illegal I think ... must check
+			break;
+		case 13: mask = "yyMMddHHmmssZ"; // UTCTime
+			break;
+		case 15: mask = "yyyyMMddHHmmssZ"; // GeneralizedTime
+			break;
+		}
+		DateTime dt = DateTime.ParseExact (t, mask, null);
+		return dt;
+//		return TimeZone.CurrentTimeZone.ToLocalTime (dt);
 	}
 
 	// that's were the real job is!
@@ -395,6 +421,7 @@ public class X509Certificate
 			if (serialnumber == null)
 				throw new CryptographicException (e);
 			m_serialnumber = serialnumber.Value;
+			Array.Reverse(m_serialnumber, 0, m_serialnumber.Length);
 	
 			ASN1 signature = tbsCertificate.Element (tbs++, 0x30); 
 	
@@ -458,7 +485,9 @@ public class X509Certificate
 	{
 		// FIXME: not sure about this method
 		// ??? get cert from CAB, DLL, EXE ???
-		return CreateFromCertFile (filename);
+		// Note: MS throws a COMException for "normal" certificates
+		// It's seems to call some SPC certs.
+		throw new NotSupportedException ("CreateFromSignedFile");
 	}
 
 	// constructors

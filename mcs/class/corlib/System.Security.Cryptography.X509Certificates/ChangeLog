@@ -1,3 +1,10 @@
+2002-11-03  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* X509Certificate.cs: Updated some DN cases and some minor time issues.
+	GetEffectiveDateString and GetExpirationDateString still don't match 
+	MS implementation (however they seems, most of the time, to be on par 
+	with the Windows Certificate Viewer - crtmgr.exe).
+
 2002-11-02  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* ChangeLog: New. First entry ;-)
