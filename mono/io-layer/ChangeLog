@@ -1,5 +1,11 @@
 2004-10-14  Dick Porter  <dick@ximian.com>
 
+	* sockets.c (_wapi_accept): Revert the previous change.  We now
+	set the accepted socket to have the same blocking status as the
+	listening socket in managed code.  This follows MS behaviour.
+	
+2004-10-14  Dick Porter  <dick@ximian.com>
+
 	* sockets.c (_wapi_accept): On Darwin, make sure a newly
 	accept()ed socket is blocking.  Fixes bug 67355, patch by
 	grompf@sublimeintervention.com.
