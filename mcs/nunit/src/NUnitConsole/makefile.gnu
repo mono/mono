@@ -5,7 +5,7 @@ PROGRAM_LIST = list.unix
 PROGRAM_FLAGS =	\
 	-r ../../../class/lib/corlib.dll	\
 	-r ../../../class/lib/System.dll 	\
-	-r ../../../class/lib/NUnitCore_mono.dll
+	-r ../NUnitCore/NUnitCore_mono.dll
 
 include ../../../class/executable.make
 

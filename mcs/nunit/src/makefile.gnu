@@ -1,4 +1,4 @@
-DIRS =	src
+DIRS =	NUnitCore NUnitConsole
 
 default: all
 
