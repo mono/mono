@@ -1,5 +1,7 @@
 2004-09-28  Zoltan Varga  <vargaz@freemail.hu>
 
+	* icall.c: Add GetFunctionPointerForDelegateInternal icall.
+
 	* reflection.c (method_encode_code): Align method headers properly.
 	Fixes #66025.
 
