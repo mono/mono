@@ -1739,16 +1739,20 @@ namespace Mono.CSharp {
 		}
 	}
 
+	/// <summary>
+	///   Local variables
+	/// </summary>
 	public class LocalVariableReference : Expression, IAssignMethod, IMemoryLocation {
 		public readonly string Name;
 		public readonly Block Block;
-
+		Location loc;
 		VariableInfo variable_info;
 		
-		public LocalVariableReference (Block block, string name)
+		public LocalVariableReference (Block block, string name, Location l)
 		{
 			Block = block;
 			Name = name;
+			loc = l;
 			eclass = ExprClass.Variable;
 		}
 
@@ -1774,7 +1778,7 @@ namespace Mono.CSharp {
 				e = Expression.Reduce (ec, e);
 
 				if (!(e is Literal)) {
-					Report.Error (150, vi.Location, "A constant value is expected");
+					Report.Error (150, loc, "A constant value is expected");
 					return null;
 				}
 
@@ -1783,6 +1787,27 @@ namespace Mono.CSharp {
 			}
 
 			type = vi.VariableType;
+			return this;
+		}
+
+		override public Expression DoResolveLValue (EmitContext ec, Expression right_side)
+		{
+			Expression e = DoResolve (ec);
+
+			if (e == null)
+				return null;
+
+			VariableInfo vi = VariableInfo;
+			
+			if (vi.ReadOnly){
+				if (vi.Assigned){
+					Report.Error (
+						1604, loc,
+						"cannot assign to `" + Name + "' because it is readonly");
+					return null;
+				}
+			}
+			
 			return this;
 		}
 

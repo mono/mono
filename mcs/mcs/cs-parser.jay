@@ -2529,7 +2529,7 @@ declaration_statement
 	  {
 		DictionaryEntry de = (DictionaryEntry) $1;
 
-		$$ = declare_local_variables ((string) de.Key, (ArrayList) de.Value);
+		$$ = declare_local_variables ((string) de.Key, (ArrayList) de.Value, lexer.Location);
 	  }
 
 	| local_constant_declaration SEMICOLON
@@ -2764,7 +2764,6 @@ for_statement
 
 		if ($3 is DictionaryEntry){
 			DictionaryEntry de = (DictionaryEntry) $3;
-			$3 = null;
 			
 			string type = (string) de.Key;
 			ArrayList var_declarators = (ArrayList) de.Value;
@@ -2776,6 +2775,7 @@ for_statement
 					"defined in this scope");
 				}
 			}
+			Location l = lexer.Location;
 
 			foreach (VariableDeclaration decl in var_declarators){
 
@@ -2793,8 +2793,11 @@ for_statement
 					expr = new ArrayCreation (base_type, rank, init, decl.Location);
 				}
 
-				Assign a = new Assign (new LocalVariableReference (assign_block, decl.identifier),
-						       expr, decl.Location);
+				LocalVariableReference var;
+				var = new LocalVariableReference (
+					assign_block, decl.identifier, l);
+
+				Assign a = new Assign (var, expr, decl.Location);
 				
 				assign_block.AddStatement (new StatementExpression (a));
 			}
@@ -2865,9 +2868,10 @@ foreach_statement
 	  {
 		Block foreach_block = new Block (current_block, true);
 		LocalVariableReference v;
+		Location l = lexer.Location;
 
-		foreach_block.AddVariable ((string) $3, (string) $4, lexer.Location);
-		v = new LocalVariableReference (foreach_block, (string) $4);
+		foreach_block.AddVariable ((string) $3, (string) $4, l);
+		v = new LocalVariableReference (foreach_block, (string) $4, l);
 
 		current_block.AddStatement (foreach_block);
 		current_block = foreach_block;
@@ -3014,11 +3018,13 @@ catch_clause
 
 			if (id != null){
 				ArrayList one = new ArrayList ();
-				one.Add (new VariableDeclaration (id, null, lexer.Location));
+				Location loc = lexer.Location;
+
+				one.Add (new VariableDeclaration (id, null, loc));
 
 				$1 = current_block;
 				current_block = new Block (current_block);
-				Block b = declare_local_variables (type, one);
+				Block b = declare_local_variables (type, one, loc);
 				current_block = b;
 
 				
@@ -3083,11 +3089,71 @@ lock_statement
 using_statement
 	: USING OPEN_PARENS resource_acquisition CLOSE_PARENS 
 	  {
+		Block assign_block = new Block (current_block);
+		current_block = assign_block;
+
 		oob_stack.Push (lexer.Location);
+		
+		if ($3 is DictionaryEntry){
+			DictionaryEntry de = (DictionaryEntry) $3;
+			$3 = null;
+			Location l = lexer.Location;
+
+			string type = (string) de.Key;
+			ArrayList var_declarators = (ArrayList) de.Value;
+
+			foreach (VariableDeclaration decl in var_declarators){
+				if (!current_block.AddVariable (type, decl.identifier, decl.Location)){
+					Report.Error (128, decl.Location, 
+					"A local variable `" + decl.identifier + "' is already" +
+					"defined in this scope");
+				}
+			}
+
+			ArrayList vars = new ArrayList ();
+
+			foreach (VariableDeclaration decl in var_declarators){
+
+				Expression expr;
+				if (decl.expression_or_array_initializer is Expression){
+					expr = (Expression) decl.expression_or_array_initializer;
+					
+				} else {
+
+					ArrayList init = (ArrayList) decl.expression_or_array_initializer;
+					
+					string base_type = type.Substring (0, type.IndexOf ("["));
+					string rank = type.Substring (type.IndexOf ("["));
+					
+					expr = new ArrayCreation (base_type, rank, init, decl.Location);
+				}
+
+				LocalVariableReference var;
+				VariableInfo vi;
+
+				var = new LocalVariableReference (assign_block, decl.identifier, l);
+				vi = var.VariableInfo;
+				vi.ReadOnly = true;
+
+				// This is so that it is not a warning on using variables
+				vi.Used = true;
+
+				vars.Add (new DictionaryEntry (var, expr));				
+
+				// Assign a = new Assign (var, expr, decl.Location);
+				// assign_block.AddStatement (new StatementExpression (a));
+			}
+			$3 = vars;
+		 }
 	  } 
 	  embedded_statement
 	  {
-		$$ = new Using ($3, (Statement) $6, (Location) oob_stack.Pop ());
+		Using u = new Using ($3, (Statement) $6, (Location) oob_stack.Pop ());
+		current_block.AddStatement (u);
+		while (current_block.Implicit)
+			current_block = current_block.Parent;
+		$$ = current_block;
+		current_block = current_block.Parent;
 	  }
 	; 
 
@@ -3223,7 +3289,7 @@ CheckDef (bool result, string name)
 }
 
 Expression
-SimpleLookup (string name)
+SimpleLookup (string name, Location loc)
 {
 	//
 	// we need to check against current_block not being null
@@ -3232,7 +3298,7 @@ SimpleLookup (string name)
 	//
 	if (current_block != null){
 		if (current_block.IsVariableDefined (name))
-			return new LocalVariableReference (current_block, name);
+			return new LocalVariableReference (current_block, name, loc);
 	}
 
 	if (current_local_parameters != null){
@@ -3245,22 +3311,22 @@ SimpleLookup (string name)
 	return null;
 }
 
-Expression DecomposeQI (string name, Location l)
+Expression DecomposeQI (string name, Location loc)
 {
 	Expression o;
 
 	if (name.IndexOf ('.') == -1){
-	 	o = SimpleLookup (name);
+	 	o = SimpleLookup (name, loc);
 		if (o == null)
-			return new SimpleName (name, l);
+			return new SimpleName (name, loc);
 		return o;
 	} else {
 		int pos = name.LastIndexOf (".");
 		string left = name.Substring (0, pos);
 		string right = name.Substring (pos + 1);
 
-		o = DecomposeQI (left, l);
-		return new MemberAccess (o, right, l);
+		o = DecomposeQI (left, loc);
+		return new MemberAccess (o, right, loc);
 	}
 }
 
@@ -3281,7 +3347,7 @@ string GetQualifiedIdentifier (Expression expr)
 	
 }
 
-Block declare_local_variables (string type, ArrayList variable_declarators)
+Block declare_local_variables (string type, ArrayList variable_declarators, Location loc)
 {
 	Block implicit_block;
 	ArrayList inits = null;
@@ -3339,7 +3405,11 @@ Block declare_local_variables (string type, ArrayList variable_declarators)
 			
 		}
 
-		assign = new Assign (new LocalVariableReference (implicit_block, decl.identifier), expr, decl.Location);
+		LocalVariableReference var;
+		var = new LocalVariableReference (implicit_block, decl.identifier, loc);
+
+		assign = new Assign (var, expr, decl.Location);
+
 		implicit_block.AddStatement (new StatementExpression (assign));
 	}
 	

@@ -1,6 +1,11 @@
 2001-12-06  Miguel de Icaza  <miguel@ximian.com>
 
+	* statement.cs (Using): Implement.
+
+	* expression.cs (LocalVariableReference): Support read only variables.
+
 	* statement.cs: Remove the explicit emit for the Leave opcode.
+	(VariableInfo): Add a readonly field.
 
 2001-12-05  Miguel de Icaza  <miguel@ximian.com>
 

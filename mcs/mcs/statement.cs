@@ -495,7 +495,8 @@ namespace Mono.CSharp {
 		int  idx;
 		public bool Used;
 		public bool Assigned;
-
+		public bool ReadOnly;
+		
 		public VariableInfo (string type, Location l)
 		{
 			Type = type;
@@ -1529,6 +1530,10 @@ namespace Mono.CSharp {
 		}
 	}
 
+	//
+	// FIXME: We still do not support the expression variant of the using
+	// statement.
+	//
 	public class Using : Statement {
 		object expression_or_block;
 		Statement Statement;
@@ -1543,28 +1548,43 @@ namespace Mono.CSharp {
 
 		public override bool Emit (EmitContext ec)
 		{
-			//
-			// Expressions are simple. 
-			// The problem is with blocks, blocks might contain
-			// more than one variable, ie like this:
-			//
-			// using (a = new X (), b = new Y ()) stmt;
-			//
-			// which is turned into:
-			// using (a = new X ()) using (b = new Y ()) stmt;
-			//
-			// The trick is that the block will contain a bunch
-			// of potential Assign expressions
-			//
-			//
-			// We need to signal an error if a variable lacks
-			// an assignment. (210).
-			//
-			// This is one solution.  Another is to set a flag
-			// when we get the USING token, and have declare_local_variables
-			// do something *different* that we can better cope with
-			//
-			throw new Exception ("Implement me!");
+			ILGenerator ig = ec.ig;
+
+			if (expression_or_block is ArrayList){
+				ArrayList var_list = (ArrayList) expression_or_block;
+				foreach (DictionaryEntry e in var_list){
+					LocalVariableReference var = (LocalVariableReference) e.Key;
+					Expression expr = (Expression) e.Value;
+					Expression a;
+
+					a = new Assign (var, expr, loc);
+					a.Resolve (ec);
+					if (a == null)
+						continue;
+					((ExpressionStatement) a).EmitStatement (ec);
+					
+					ig.BeginExceptionBlock ();
+				}
+				Statement.Emit (ec);
+
+				var_list.Reverse ();
+				foreach (DictionaryEntry e in var_list){
+					LocalVariableReference var = (LocalVariableReference) e.Key;
+					Label skip = ig.DefineLabel ();
+					
+					ig.BeginFinallyBlock ();
+
+					var.Emit (ec);
+					ig.Emit (OpCodes.Brfalse, skip);
+					var.Emit (ec);
+					ig.Emit (OpCodes.Callvirt, TypeManager.void_dispose_void);
+					ig.MarkLabel (skip);
+					ig.EndExceptionBlock ();
+				}
+			} else {
+				throw new Exception ("UNIMPLEMENTED");
+			}
+			return false;
 		}
 	}
 

@@ -2005,6 +2005,8 @@ namespace Mono.CSharp {
 			//
 			// Handle destructors specially
 			//
+			// FIXME: This code generates buggy code
+			//
 			if (Name == "Finalize" && type_return_type == TypeManager.void_type){
 				Label end = ig.BeginExceptionBlock ();
 				Label finish = ig.DefineLabel ();
