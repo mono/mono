@@ -1,5 +1,10 @@
 2005-02-05  Atsushi Enomoto <atsushi@ximian.com>
 
+	* RncParser.jay : spec section 4 requires to map "xsd" to xsd-datatypes
+	  by default.
+
+2005-02-05  Atsushi Enomoto <atsushi@ximian.com>
+
 	* RncParser.jay : Mixed and List accepted patterns incorrectly.
 	* RncTokenizer.cs : Handle ~ correctly.
 

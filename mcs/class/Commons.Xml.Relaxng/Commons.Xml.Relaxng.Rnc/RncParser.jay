@@ -65,6 +65,7 @@ namespace Commons.Xml.Relaxng.Rnc
 		{
 			nsmgr = new XmlNamespaceManager (nameTable);
 			dtnsmgr = new XmlNamespaceManager (nameTable);
+			dtnsmgr.AddNamespace ("xsd", "http://www.w3.org/2001/XMLSchema-datatypes");
 			ErrorOutput = System.IO.TextWriter.Null;
 		}
 
