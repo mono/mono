@@ -35,6 +35,7 @@ namespace System.Xml
 		XmlImplementation implementation;
 		bool preserveWhitespace = false;
 		XmlResolver resolver;
+		Hashtable idTable = new Hashtable ();
 
 		#endregion
 
@@ -184,6 +185,10 @@ namespace System.Xml
 		#endregion
 
 		#region Methods
+		internal void AddIdenticalAttribute (XmlAttribute attr)
+		{
+			idTable [attr.Value] = attr;
+		}
 
 		public override XmlNode CloneNode (bool deep)
 		{
@@ -384,9 +389,14 @@ namespace System.Xml
 		}
 
 		[MonoTODO]
+		// FIXME: Currently XmlAttributeCollection.SetNamedItem() does
+		// add to the identity table, but in fact I delayed identity
+		// check on GetIdenticalAttribute. To make such way complete,
+		// we have to use MultiMap, not Hashtable.
 		public virtual XmlElement GetElementById (string elementId)
 		{
-			throw new NotImplementedException ();
+			XmlAttribute attr = GetIdenticalAttribute (elementId);
+			return attr != null ? attr.OwnerElement : null;
 		}
 
 		public virtual XmlNodeList GetElementsByTagName (string name)
@@ -445,6 +455,18 @@ namespace System.Xml
 				default:
 					throw new ArgumentException(String.Format("The string doesn't represent any node type : {0}.", nodeTypeString));
 			}
+		}
+
+		internal XmlAttribute GetIdenticalAttribute (string id)
+		{
+			XmlAttribute attr = this.idTable [id] as XmlAttribute;
+			if (attr == null)
+				return null;
+			if (attr.OwnerElement == null || !attr.OwnerElement.IsRooted) {
+				idTable.Remove (id);
+				return null;
+			}
+			return attr;
 		}
 
 		[MonoTODO("default attributes (of imported doc); Entity; Notation")]
@@ -836,6 +858,11 @@ namespace System.Xml
 				return String.Format ("{0} Line number = {1}, Inline position = {2}.", message, li.LineNumber, li.LinePosition);
 			else
 				return message;
+		}
+
+		internal void RemoveIdenticalAttribute (string id)
+		{
+			idTable.Remove (id);
 		}
 
 		public virtual void Save(Stream outStream)

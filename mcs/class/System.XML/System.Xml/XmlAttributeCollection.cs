@@ -11,16 +11,19 @@
 
 using System;
 using System.Collections;
+using Mono.Xml;
 
 namespace System.Xml
 {
 	public class XmlAttributeCollection : XmlNamedNodeMap, ICollection
 	{
 		XmlElement ownerElement;
+		XmlDocument ownerDocument;
 
 		internal XmlAttributeCollection (XmlNode parent) : base (parent)
 		{
 			ownerElement = parent as XmlElement;
+			ownerDocument = parent.OwnerDocument;
 			if(ownerElement == null)
 				throw new XmlException ("invalid construction for XmlAttributeCollection.");
 		}
@@ -86,10 +89,10 @@ namespace System.Xml
 
 		public virtual XmlAttribute InsertAfter (XmlAttribute newNode, XmlAttribute refNode)
 		{
-			if(newNode.OwnerDocument != this.ownerElement.OwnerDocument)
+			if(newNode.OwnerDocument != this.ownerDocument)
 				throw new ArgumentException ("different document created this newNode.");
 
-			ownerElement.OwnerDocument.onNodeInserting (newNode, null);
+			ownerDocument.onNodeInserting (newNode, null);
 
 			int pos = Nodes.Count + 1;
 			if(refNode != null)
@@ -110,17 +113,17 @@ namespace System.Xml
 				pos = 0;
 			SetNamedItem (newNode, pos);
 
-			ownerElement.OwnerDocument.onNodeInserted (newNode, null);
+			ownerDocument.onNodeInserted (newNode, null);
 
 			return newNode;
 		}
 
 		public virtual XmlAttribute InsertBefore (XmlAttribute newNode, XmlAttribute refNode)
 		{
-			if(newNode.OwnerDocument != this.ownerElement.OwnerDocument)
+			if(newNode.OwnerDocument != ownerDocument)
 				throw new ArgumentException ("different document created this newNode.");
 
-			ownerElement.OwnerDocument.onNodeInserting (newNode, null);
+			ownerDocument.onNodeInserting (newNode, null);
 
 			int pos = Nodes.Count;
 			if(refNode != null)
@@ -139,7 +142,7 @@ namespace System.Xml
 			}
 			SetNamedItem (newNode, pos);
 
-			ownerElement.OwnerDocument.onNodeInserted (newNode, null);
+			ownerDocument.onNodeInserted (newNode, null);
 
 			return newNode;
 		}
@@ -153,7 +156,7 @@ namespace System.Xml
 		{
 			if (node == null)
 				throw new ArgumentException ("Specified node is null.");
-			if (node.OwnerDocument != this.ownerElement.OwnerDocument)
+			if (node.OwnerDocument != ownerDocument)
 				throw new ArgumentException ("Specified node is in a different document.");
 
 			XmlAttribute retAttr = null;
@@ -165,9 +168,10 @@ namespace System.Xml
 			}
 
 			if(retAttr != null) {
-				ownerElement.OwnerDocument.onNodeRemoving (node, null);
+				ownerDocument.onNodeRemoving (node, null);
 				base.RemoveNamedItem (retAttr.LocalName, retAttr.NamespaceURI);
-				ownerElement.OwnerDocument.onNodeRemoved (node, null);
+				RemoveIdenticalAttribute (retAttr);
+				ownerDocument.onNodeRemoved (node, null);
 			}
 			return retAttr;
 		}
@@ -187,16 +191,97 @@ namespace System.Xml
 
 		public override XmlNode SetNamedItem (XmlNode node)
 		{
-			return SetNamedItem(node, -1);
-		}
-
-		[MonoTODO("event handling")]
-		internal new XmlNode SetNamedItem (XmlNode node, int pos)
-		{
 			if(IsReadOnly)
 				throw new XmlException ("this AttributeCollection is read only.");
 
-			return base.SetNamedItem (node, pos);
+			return AdjustIdenticalAttributes (node as XmlAttribute, base.SetNamedItem (node, -1) as XmlAttribute);
+		}
+
+		internal void AddIdenticalAttribute ()
+		{
+			SetIdenticalAttribute (false);
+		}
+
+		internal void RemoveIdenticalAttribute ()
+		{
+			SetIdenticalAttribute (true);
+		}
+
+		private void SetIdenticalAttribute (bool remove)
+		{
+			if (ownerElement == null)
+				return;
+
+			// Check if new attribute's datatype is ID.
+			XmlDocumentType doctype = ownerDocument.DocumentType;
+			if (doctype == null || doctype.DTD == null)
+				return;
+			DTDElementDeclaration elem = doctype.DTD.ElementDecls [ownerElement.Name];
+			foreach (XmlAttribute node in this) {
+				DTDAttributeDefinition attdef = elem == null ? null : elem.Attributes [node.Name];
+				if (attdef == null || attdef.Datatype.TokenizedType != XmlTokenizedType.ID)
+					continue;
+
+				if (remove) {
+					if (ownerDocument.GetIdenticalAttribute (node.Value) != null) {
+						ownerDocument.RemoveIdenticalAttribute (node.Value);
+						return;
+					}
+				} else {
+					// adding new identical attribute, but 
+					// MS.NET is pity for ID support, so I'm wondering how to correct it...
+					if (ownerDocument.GetIdenticalAttribute (node.Value) != null)
+						throw new XmlException (String.Format (
+							"ID value {0} already exists in this document.", node.Value));
+					ownerDocument.AddIdenticalAttribute (node);
+					return;
+				}
+			}
+
+		}
+
+		private XmlNode AdjustIdenticalAttributes (XmlNode node, XmlNode existing)
+		{
+			// If owner element is not appended to the document,
+			// ID table should not be filled.
+			if (ownerElement == null)
+				return existing;
+
+			RemoveIdenticalAttribute (existing);
+
+			// Check if new attribute's datatype is ID.
+			XmlDocumentType doctype = node.OwnerDocument.DocumentType;
+			if (doctype == null || doctype.DTD == null)
+				return existing;
+			DTDElementDeclaration elem = doctype.DTD.ElementDecls [ownerElement.Name];
+			DTDAttributeDefinition attdef = elem == null ? null : elem.Attributes [node.Name];
+			if (attdef == null || attdef.Datatype.TokenizedType != XmlTokenizedType.ID)
+				return existing;
+
+			// adding new identical attribute, but 
+			// MS.NET is pity for ID support, so I'm wondering how to correct it...
+			if (ownerDocument.GetIdenticalAttribute (node.Value) != null)
+				throw new XmlException (String.Format (
+					"ID value {0} already exists in this document.", node.Value));
+			ownerDocument.AddIdenticalAttribute (node as XmlAttribute);
+
+			return existing;
+		}
+
+		private XmlNode RemoveIdenticalAttribute (XmlNode existing)
+		{
+			// If owner element is not appended to the document,
+			// ID table should not be filled.
+			if (ownerElement == null)
+				return existing;
+
+			if (existing != null) {
+				// remove identical attribute (if it is).
+				if (ownerDocument.GetIdenticalAttribute (existing.Value) != null)
+					ownerDocument.RemoveIdenticalAttribute (existing.Value);
+			}
+
+			return existing;
 		}
 	}
 }

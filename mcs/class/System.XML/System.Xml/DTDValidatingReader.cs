@@ -25,6 +25,9 @@ namespace Mono.Xml
 			attributes = new StringCollection ();
 			attributeValues = new NameValueCollection ();
 			this.validatingReader = validatingReader;
+			valueBuilder = new StringBuilder ();
+			idList = new ArrayList ();
+			missingIDReferences = new ArrayList ();
 		}
 
 		XmlReader reader;
@@ -42,6 +45,9 @@ namespace Mono.Xml
 		bool isStandalone;
 		StringCollection attributes;
 		NameValueCollection attributeValues;
+		StringBuilder valueBuilder;
+		ArrayList idList;
+		ArrayList missingIDReferences;
 
 		XmlValidatingReader validatingReader;
 //		ValidationEventHandler handler;
@@ -393,46 +399,66 @@ namespace Mono.Xml
 				throw ex;
 		}
 
-		StringBuilder valueBuilder = new StringBuilder ();
 		private void ValidateAttributes (DTDElementDeclaration decl)
 		{
-			if (reader.MoveToFirstAttribute ()) {
-				do {
-					string attrName = reader.Name;
-					attributes.Add (attrName);
-					bool hasError = false;
-					while (reader.ReadAttributeValue ()) {
-						if (reader.NodeType == XmlNodeType.EntityReference) {
-							DTDEntityDeclaration edecl = DTD.EntityDecls [reader.Name];
-							if (edecl == null) {
-								HandleError (String.Format ("Referenced entity {0} is not declared.", reader.Name),
-									XmlSeverityType.Error);
-								hasError = true;
-								break;
-							}
-							valueBuilder.Append (edecl.EntityValue);
+			while (reader.MoveToNextAttribute ()) {
+				string attrName = reader.Name;
+				attributes.Add (attrName);
+				bool hasError = false;
+				while (reader.ReadAttributeValue ()) {
+					if (reader.NodeType == XmlNodeType.EntityReference) {
+						DTDEntityDeclaration edecl = DTD.EntityDecls [reader.Name];
+						if (edecl == null) {
+							HandleError (String.Format ("Referenced entity {0} is not declared.", reader.Name),
+								XmlSeverityType.Error);
+							hasError = true;
 						}
 						else
-							valueBuilder.Append (reader.Value);
+							valueBuilder.Append (edecl.EntityValue);
 					}
-					reader.MoveToElement ();
-					reader.MoveToAttribute (attrName);
-					if (hasError) {
-						attributeValues.Add (reader.Name, "");
+					else
+						valueBuilder.Append (reader.Value);
+				}
+				reader.MoveToElement ();
+				reader.MoveToAttribute (attrName);
+				string attrValue = valueBuilder.ToString ();
+				valueBuilder.Length = 0;
+				attributeValues.Add (attrName, attrValue);
+
+				DTDAttributeDefinition def = decl.Attributes [reader.Name];
+				if (def == null) {
+					HandleError (String.Format ("Attribute {0} is not declared.", reader.Name),
+						XmlSeverityType.Error);
+					// FIXME: validation recovery code here.
+				} else {
+					// check identity constraint
+					switch (def.Datatype.TokenizedType) {
+					case XmlTokenizedType.ID:
+						if (this.idList.Contains (attrValue)) {
+							HandleError (String.Format ("Node with ID {0} was already appeared.", attrValue),
+								XmlSeverityType.Error);
+							// FIXME: validation recovery code here.
+						} else {
+							if (missingIDReferences.Contains (attrValue))
+								missingIDReferences.Remove (attrValue);
+							idList.Add (attrValue);
+						}
+						break;
+					case XmlTokenizedType.IDREF:
+						if (!idList.Contains (attrValue))
+							missingIDReferences.Add (attrValue);
+						break;
+					case XmlTokenizedType.IDREFS:
+						string [] idrefs = def.Datatype.ParseValue (attrValue, NameTable, null) as string [];
+						foreach (string idref in idrefs)
+							if (!idList.Contains (attrValue))
+								missingIDReferences.Add (attrValue);
 						break;
 					}
-					attributeValues.Add (reader.Name, valueBuilder.ToString ());
-					valueBuilder.Length = 0;
 
-					DTDAttributeDefinition def = decl.Attributes [reader.Name];
-					if (def == null) {
-						HandleError (String.Format ("Attribute {0} is not declared.", reader.Name),
-							XmlSeverityType.Error);
-						// FIXME: validation recovery code here.
-					}
 					switch (def.OccurenceType) {
-					case DTDAttributeOccurenceType.Required:
-						if (reader.Value == String.Empty) {
+						case DTDAttributeOccurenceType.Required:
+						if (attrValue == String.Empty) {
 							HandleError (String.Format ("Required attribute {0} in element {1} not found .",
 								def.Name, decl.Name),
 								XmlSeverityType.Error);
@@ -440,15 +466,15 @@ namespace Mono.Xml
 						}
 						break;
 					case DTDAttributeOccurenceType.Fixed:
-						if (reader.Value != def.DefaultValue) {
+						if (attrValue != def.DefaultValue) {
 							HandleError (String.Format ("Fixed attribute {0} in element {1} has invalid value {2}.",
-								def.Name, decl.Name, reader.Value),
+								def.Name, decl.Name, attrValue),
 								XmlSeverityType.Error);
 							// FIXME: validation recovery code here.
 						}
 						break;
 					}
-				} while (reader.MoveToNextAttribute ());
+				}
 			}
 			// Check if all required attributes exist, and/or
 			// if there is default values, then add them.
@@ -470,9 +496,10 @@ namespace Mono.Xml
 
 		public override bool ReadAttributeValue ()
 		{
-			if (NodeType == XmlNodeType.Attribute) {
-				if (consumedAttribute)
-					return false;
+			if (consumedAttribute)
+				return false;
+			if (NodeType == XmlNodeType.Attribute &&
+					validatingReader.EntityHandling == EntityHandling.ExpandEntities) {
 				consumedAttribute = true;
 				return true;
 			}
@@ -577,15 +604,27 @@ namespace Mono.Xml
 		}
 
 		public override string LocalName {
-			get { return IsDefault ? currentAttribute : reader.LocalName; }
+			get {
+				return IsDefault ?
+					consumedAttribute ? String.Empty : currentAttribute :
+					reader.LocalName;
+			}
 		}
 
 		public override string Name {
-			get { return IsDefault ? currentAttribute : reader.Name; }
+			get {
+				return IsDefault ?
+					consumedAttribute ? String.Empty : currentAttribute :
+					reader.Name;
+			}
 		}
 
 		public override string NamespaceURI {
-			get { return IsDefault ? String.Empty : reader.NamespaceURI; }
+			get {
+				return IsDefault ?
+					consumedAttribute ? String.Empty : String.Empty :
+					reader.NamespaceURI;
+			}
 		}
 
 		public override XmlNameTable NameTable {
@@ -602,7 +641,11 @@ namespace Mono.Xml
 		}
 
 		public override string Prefix {
-			get { return IsDefault ? String.Empty : reader.Prefix; }
+			get {
+				if (currentAttribute != null && NodeType != XmlNodeType.Attribute)
+					return String.Empty;
+				return IsDefault ? String.Empty : reader.Prefix;
+			}
 		}
 		
 		public override char QuoteChar {
@@ -656,6 +699,7 @@ namespace Mono.Xml
 
 		public override string Value {
 			get {
+				// This check also covers value node of default attributes.
 				if (IsDefault) {
 					DTDAttributeDefinition def = 
 						dtd.ElementDecls [currentElement]
@@ -664,8 +708,12 @@ namespace Mono.Xml
 					return sourceTextReader != null && sourceTextReader.Normalization ?
 						def.NormalizedDefaultValue : def.DefaultValue;
 				}
-				else if (NodeType == XmlNodeType.Attribute)
+				// As to this property, MS.NET seems ignorant of EntityHandling...
+				else if (NodeType == XmlNodeType.Attribute)// &&
+					// validatingReader.EntityHandling == EntityHandling.ExpandEntities)
 					return FilterNormalization (attributeValues [currentAttribute]);
+				else if (consumedAttribute)
+					return FilterNormalization (attributeValues [this.currentAttribute]);
 				else
 					return FilterNormalization (reader.Value);
 			}
