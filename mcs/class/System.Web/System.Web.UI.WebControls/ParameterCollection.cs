@@ -5,7 +5,7 @@
 //
 // (C) 2003 Todd Berman
 
-#if NET_1_2
+#if NET_2_0
 
 using System.Web.UI;
 using System.Collections;

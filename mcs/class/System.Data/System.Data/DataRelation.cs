@@ -84,7 +84,7 @@ namespace System.Data
 			throw new NotImplementedException ();
 		}
 
-#if NET_1_2
+#if NET_2_0
 		[MonoTODO]
 		public DataRelation (string relationName, string parentTableName, string parentTableNamespace, string childTableName, string childTableNamespace, string[] parentColumnNames, string[] childColumnNames, bool nested)
 		{

@@ -7,7 +7,7 @@
 // Copyright (C) Tim Coleman, 2003
 //
 
-#if NET_1_2
+#if NET_2_0
 
 using System.Collections;
 using System.Security;
@@ -95,4 +95,4 @@ namespace System.Data.Common {
 	}
 }
 
-#endif // NET_1_2
+#endif // NET_2_0

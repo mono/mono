@@ -7,7 +7,7 @@
 // Copyright (C) Tim Coleman, 2003
 //
 
-#if NET_1_2
+#if NET_2_0
 
 using System.Data.Mapping;
 
@@ -121,4 +121,4 @@ namespace System.Data.ObjectSpaces.Schema {
 	}
 }
 
-#endif // NET_1_2
+#endif // NET_2_0

@@ -7,7 +7,7 @@
 // (C) 2004 Novell, Inc.
 //
 
-#if NET_1_2
+#if NET_2_0
 
 using System.Runtime.InteropServices;
 

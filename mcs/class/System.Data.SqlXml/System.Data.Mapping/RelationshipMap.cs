@@ -7,7 +7,7 @@
 // Copyright (C) Tim Coleman, 2003
 //
 
-#if NET_1_2
+#if NET_2_0
 
 using System.Data.SqlXml;
 
@@ -40,4 +40,4 @@ namespace System.Data.Mapping {
         }
 }
 
-#endif // NET_1_2
+#endif // NET_2_0

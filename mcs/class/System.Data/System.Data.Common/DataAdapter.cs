@@ -27,7 +27,7 @@ namespace System.Data.Common
 		private MissingSchemaAction missingSchemaAction;
 		private DataTableMappingCollection tableMappings;
 
-#if NET_1_2
+#if NET_2_0
 		private bool acceptChangesDuringUpdate;
 		private LoadOption fillLoadOption;
 		private bool returnProviderSpecificTypes;
@@ -58,7 +58,7 @@ namespace System.Data.Common
 			set { acceptChangesDuringFill = value; }
 		}
 
-#if NET_1_2
+#if NET_2_0
 		public bool AcceptChangesDuringUpdate {
 			get { return acceptChangesDuringUpdate; }
 			set { acceptChangesDuringUpdate = value; }
@@ -73,7 +73,7 @@ namespace System.Data.Common
 			set { continueUpdateOnError = value; }
 		}
 
-#if NET_1_2
+#if NET_2_0
 		public LoadOption FillLoadOption {
 			get { return fillLoadOption; }
 			set { fillLoadOption = value; }
@@ -100,7 +100,7 @@ namespace System.Data.Common
 			set { missingSchemaAction = value; }
 		}
 
-#if NET_1_2
+#if NET_2_0
 		public virtual bool ReturnProviderSpecificTypes {
 			get { return returnProviderSpecificTypes; }
 			set { returnProviderSpecificTypes = value; }
@@ -118,7 +118,7 @@ namespace System.Data.Common
 
 		#region Events
 
-#if NET_1_2
+#if NET_2_0
 		public event FillErrorEventHandler FillError;
 #endif
 
@@ -149,7 +149,7 @@ namespace System.Data.Common
 
 		public abstract int Fill (DataSet dataSet);
 
-#if NET_1_2
+#if NET_2_0
 		[MonoTODO]
 		protected virtual int Fill (DataTable dataTable, IDataReader dataReader)
 		{
@@ -183,7 +183,7 @@ namespace System.Data.Common
 
 		public abstract DataTable[] FillSchema (DataSet dataSet, SchemaType schemaType);
 
-#if NET_1_2
+#if NET_2_0
 		[MonoTODO]
 		protected virtual DataTable FillSchema (DataTable dataTable, SchemaType schemaType, IDataReader dataReader)
 		{
@@ -199,7 +199,7 @@ namespace System.Data.Common
 
 		public abstract IDataParameter[] GetFillParameters ();
 
-#if NET_1_2
+#if NET_2_0
 		[MonoTODO]
 		protected bool HasTableMappings ()
 		{

@@ -20,7 +20,7 @@ namespace System.Security.Cryptography {
 		None = 0x1,
 		PKCS7,		// Each byte contains the value of the number of padding bytes.
 		Zeros,		// Append zeros to the message.
-#if NET_1_2
+#if NET_2_0
 		ANSIX923,	//
 		ISO10126	//
 #endif

@@ -35,7 +35,7 @@ namespace System.Data.Common {
 
 		#region Properties
 
-#if NET_1_2
+#if NET_2_0
 		[MonoTODO]
 		protected virtual IDbConnection BaseConnection {
 			get { throw new NotImplementedException (); }
@@ -52,7 +52,7 @@ namespace System.Data.Common {
 			get { return ((IDbDataAdapter) this).DeleteCommand; }
 		}
 
-#if NET_1_2
+#if NET_2_0
 		protected internal CommandBehavior FillCommandBehavior {
 			get { throw new NotImplementedException (); }
 			set { throw new NotImplementedException (); }
@@ -63,7 +63,7 @@ namespace System.Data.Common {
 			get { return ((IDbDataAdapter) this).InsertCommand; }
 		}
 
-#if NET_1_2
+#if NET_2_0
 		[MonoTODO]
 		protected virtual IDbCommand this [[Optional] StatementType statementType] {
 			get { throw new NotImplementedException (); }
@@ -79,7 +79,7 @@ namespace System.Data.Common {
 			get { return ((IDbDataAdapter) this).SelectCommand; }
 		}
 
-#if NET_1_2
+#if NET_2_0
 		[MonoTODO]
 		public IDbTransaction Transaction {
 			get { throw new NotImplementedException (); }
@@ -112,7 +112,7 @@ namespace System.Data.Common {
 
 		#region Methods
 
-#if NET_1_2
+#if NET_2_0
 		[MonoTODO]
 		public virtual void BeginInit ()
 		{
@@ -154,7 +154,7 @@ namespace System.Data.Common {
 			}
 		}
 
-#if NET_1_2
+#if NET_2_0
 		[MonoTODO]
 		public virtual void EndInit ()
 		{
@@ -180,7 +180,7 @@ namespace System.Data.Common {
 			return Fill (dataSet, 0, 0, srcTable, SelectCommand, CommandBehavior.Default);
 		}
 
-#if NET_1_2
+#if NET_2_0
 		protected override int Fill (DataTable dataTable, IDataReader dataReader) 
 #else
 		protected virtual int Fill (DataTable dataTable, IDataReader dataReader) 
@@ -218,7 +218,7 @@ namespace System.Data.Common {
 			return Fill (dataTable, command.ExecuteReader (commandBehavior));
 		}
 
-#if NET_1_2
+#if NET_2_0
 		[MonoTODO]
 		public int Fill (int startRecord, int maxRecords, DataTable[] dataTables)
 		{
@@ -231,7 +231,7 @@ namespace System.Data.Common {
 			return this.Fill (dataSet, startRecord, maxRecords, srcTable, SelectCommand, CommandBehavior.Default);
 		}
 
-#if NET_1_2
+#if NET_2_0
 		[MonoTODO]
 		protected virtual int Fill (DataTable[] dataTables, int startRecord, int maxRecords, IDbCommand command, CommandBehavior behavior)
 		{
@@ -239,7 +239,7 @@ namespace System.Data.Common {
 		}
 #endif
 
-#if NET_1_2
+#if NET_2_0
 		protected override int Fill (DataSet dataSet, string srcTable, IDataReader dataReader, int startRecord, int maxRecords) 
 #else
 		protected virtual int Fill (DataSet dataSet, string srcTable, IDataReader dataReader, int startRecord, int maxRecords) 
@@ -412,7 +412,7 @@ namespace System.Data.Common {
 			return (DataTable[]) output.ToArray (typeof (DataTable));
 		}
 
-#if NET_1_2
+#if NET_2_0
 		[MonoTODO]
 		public DataSet GetDataSet ()
 		{

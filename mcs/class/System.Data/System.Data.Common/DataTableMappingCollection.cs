@@ -122,7 +122,7 @@ namespace System.Data.Common {
 			return mapping;
 		}
 
-#if NET_1_2
+#if NET_2_0
 		[MonoTODO]
 		public void AddRange (Array values)
 		{

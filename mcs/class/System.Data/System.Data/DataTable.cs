@@ -142,7 +142,7 @@ namespace System.Data {
 			loader.Load (xtr);
 		}
 
-#if NET_1_2
+#if NET_2_0
 		public DataTable (string tableName, string tbNamespace)
 			: this (tableName)
 		{
@@ -864,7 +864,7 @@ namespace System.Data {
 			return copyTable;
 		}
 
-#if NET_1_2
+#if NET_2_0
 		[MonoTODO]
 		public DataTableReader GetDataReader ()
 		{
@@ -958,7 +958,7 @@ namespace System.Data {
 			info.AddValue ("XmlDiffGram", sw.ToString(), typeof(string));
 		}
 
-#if NET_1_2
+#if NET_2_0
 		[MonoTODO]
 		public void Load (IDataReader reader)
 		{
@@ -1013,7 +1013,7 @@ namespace System.Data {
 			return row;
 		}
 
-#if NET_1_2
+#if NET_2_0
 		[MonoTODO]
 		public DataRow LoadDataRow (object[] values, LoadOption loadOption)
 		{
@@ -1072,7 +1072,7 @@ namespace System.Data {
 		
 		
 
-#if NET_1_2
+#if NET_2_0
 		[MonoTODO]
 		XmlReadMode ReadXml (Stream stream)
 		{
@@ -1326,7 +1326,7 @@ namespace System.Data {
 			return retVal;
 		}
 
-#if NET_1_2
+#if NET_2_0
 		[MonoTODO]
 		public void WriteXml (Stream stream)
 		{

@@ -87,7 +87,7 @@
 2004-02-18  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* SecurityProtocolType.cs: Added missing [Serializable] to enum. Added 
-	Default and Ssl2 to NET_1_2 profile. Enum is now internal for NET_1_0
+	Default and Ssl2 to NET_2_0 profile. Enum is now internal for NET_1_0
 	profile (as we need it for SslClientStream).
 	* ServicePoint.cs: Added internal SetCertificates(client,server).
 	* ServicePointManager.cs: Added CheckCertificateRevocationList and

@@ -49,7 +49,7 @@ namespace System.Data {
 			}
 		}
 
-#if NET_1_2
+#if NET_2_0
 		[MonoTODO]
 		public DataTable this [string name, string tbNamespace] {
 			get { throw new NotImplementedException (); }
@@ -110,7 +110,7 @@ namespace System.Data {
 			return table;
 		}
 
-#if NET_1_2
+#if NET_2_0
 		public virtual DataTable Add (string name, string tbNamespace)
 		{
 			DataTable table = new DataTable (name, tbNamespace);

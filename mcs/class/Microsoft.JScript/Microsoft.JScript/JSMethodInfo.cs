@@ -44,7 +44,7 @@ namespace Microsoft.JScript.Tmp
 		}
 
 
-#if NET_1_2
+#if NET_2_0
 		public sealed override Type [] GetGenericArguments ()
 		{
 			throw new NotImplementedException ();

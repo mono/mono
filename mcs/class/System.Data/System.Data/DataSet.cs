@@ -466,7 +466,7 @@ namespace System.Data {
 			addedRows.Add (row,row);
 		}
 
-#if NET_1_2
+#if NET_2_0
 		[MonoTODO]
 		public DataTableReader GetDataReader (DataTable[] dataTables)
 		{
@@ -554,7 +554,7 @@ namespace System.Data {
 			}
 		}
 
-#if NET_1_2
+#if NET_2_0
 		[MonoTODO]
 		public void Load (IDataReader reader, LoadOption loadOption, DataTable[] tables)
 		{

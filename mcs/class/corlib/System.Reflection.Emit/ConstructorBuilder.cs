@@ -215,7 +215,7 @@ namespace System.Reflection.Emit {
 				throw not_after_created ();
 		}
 
-#if NET_1_2
+#if NET_2_0
 		public override bool Mono_IsInflatedMethod {
 			get {
 				return false;

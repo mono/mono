@@ -7,7 +7,7 @@
 // (C) 2003 Ben Maurer
 //
 
-#if NET_1_2
+#if NET_2_0
 namespace System.Web.Security {
 	public sealed class AnonymousIdentificationEventArgs : EventArgs {
 		public AnonymousIdentificationEventArgs (HttpContext context)

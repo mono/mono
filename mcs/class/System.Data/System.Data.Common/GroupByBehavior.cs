@@ -7,7 +7,7 @@
 // Copyright (C) Tim Coleman, 2003
 //
 
-#if NET_1_2
+#if NET_2_0
 
 namespace System.Data.Common {
 	public enum GroupByBehavior 

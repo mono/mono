@@ -7,7 +7,7 @@
 // (C) 2003 Ben Maurer
 //
 
-#if NET_1_2
+#if NET_2_0
 using System.Runtime.Serialization;
 
 namespace System.Configuration.Provider {

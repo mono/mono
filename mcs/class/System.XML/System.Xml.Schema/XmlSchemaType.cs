@@ -9,7 +9,7 @@ using System;
 using System.Xml;
 using System.ComponentModel;
 using System.Xml.Serialization;
-#if NET_1_2_in_the_future
+#if NET_2_0_in_the_future
 using MS.Internal.Xml;
 #endif
 
@@ -65,7 +65,7 @@ namespace System.Xml.Schema
 		}
 
 		[XmlIgnore]
-#if NET_1_2
+#if NET_2_0
 		[Obsolete ("This property is going away. Use BaseXmlSchemaType instead")]
 #endif
 		public object BaseSchemaType {
@@ -80,7 +80,7 @@ namespace System.Xml.Schema
 		}
 
 		[XmlIgnore]
-#if NET_1_2
+#if NET_2_0
 		public XmlSchemaType BaseXmlSchemaType {
 #else
 		internal XmlSchemaType BaseXmlSchemaType {
@@ -105,7 +105,7 @@ namespace System.Xml.Schema
 		}
 		#endregion
 
-#if NET_1_2
+#if NET_2_0
 		public static XmlSchemaComplexType GetBuiltInComplexType (XmlQualifiedName qualifiedName)
 #else
 		internal static XmlSchemaComplexType GetBuiltInComplexType (XmlQualifiedName qualifiedName)
@@ -117,7 +117,7 @@ namespace System.Xml.Schema
 			return null;
 		}
 
-#if NET_1_2_in_the_future
+#if NET_2_0_in_the_future
 		public static XmlSchemaSimpleType GetBuiltInSimpleType (XmlQualifiedName qualifiedName)
 		{
 			if (qualifiedName.Name == "anySimpleType" && qualifiedName.Namespace == XmlSchema.Namespace)

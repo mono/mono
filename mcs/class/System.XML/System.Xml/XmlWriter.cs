@@ -13,7 +13,7 @@ using System;
 
 namespace System.Xml
 {
-#if NET_1_2
+#if NET_2_0
 	public abstract class XmlWriter : IDisposable
 #else
 	public abstract class XmlWriter
@@ -39,7 +39,7 @@ namespace System.Xml
 
 		public abstract void Close ();
 
-#if NET_1_2
+#if NET_2_0
 		public virtual void Dispose ()
 		{
 			Close ();

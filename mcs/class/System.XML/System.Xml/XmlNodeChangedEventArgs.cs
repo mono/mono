@@ -49,7 +49,7 @@ namespace System.Xml
 		} 
 
 
-#if NET_1_2
+#if NET_2_0
 		public string OldValue
 		{
 			get

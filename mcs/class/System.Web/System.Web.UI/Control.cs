@@ -697,7 +697,7 @@ namespace System.Web.UI
 
                 public virtual void DataBind() //DIT
                 {
-			#if NET_1_2
+			#if NET_2_0
 			bool foundDataItem = false;
 			
 			if (_isNamingContainer && Page != null) {
@@ -712,7 +712,7 @@ namespace System.Web.UI
 				OnDataBinding (EventArgs.Empty);
 				DataBindChildren();
 			
-			#if NET_1_2
+			#if NET_2_0
 			} finally {
 				if (foundDataItem)
 					Page.PopDataItemContext ();
@@ -720,7 +720,7 @@ namespace System.Web.UI
 			#endif
                 }
 		
-		#if NET_1_2
+		#if NET_2_0
 		protected virtual
 		#endif
 		
@@ -944,7 +944,7 @@ namespace System.Web.UI
 
                 //TODO: I think there are some needed Interface implementations to do here.
 		
-		#if NET_1_2
+		#if NET_2_0
 		protected string GetWebResourceUrl (string resourceName)
 		{
 			return Page.GetWebResourceUrl (GetType(), resourceName); 

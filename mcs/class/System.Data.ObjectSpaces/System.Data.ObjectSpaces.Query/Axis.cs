@@ -7,7 +7,7 @@
 //      Tim Coleman (tim@timcoleman.com)
 //
 
-#if NET_1_2
+#if NET_2_0
 
 using System.Xml;
 

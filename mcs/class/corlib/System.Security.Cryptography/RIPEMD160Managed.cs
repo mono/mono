@@ -10,7 +10,7 @@
 //     - http://www.esat.kuleuven.ac.be/~cosicart/ps/AB-9601/
 //
 
-#if NET_1_2
+#if NET_2_0
 
 using System;
 using System.Runtime.InteropServices;

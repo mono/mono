@@ -7,7 +7,7 @@
 // Copyright (C) Tim Coleman, 2003
 //
 
-#if NET_1_2
+#if NET_2_0
 
 namespace System.Data.ObjectSpaces.Schema {
 	public enum ObjectRelationshipType
@@ -18,4 +18,4 @@ namespace System.Data.ObjectSpaces.Schema {
 	}
 }
 
-#endif // NET_1_2
+#endif // NET_2_0

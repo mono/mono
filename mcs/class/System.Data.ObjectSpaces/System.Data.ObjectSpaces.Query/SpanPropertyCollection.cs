@@ -6,7 +6,7 @@
 //	Richard Thombs (stony@stony.org)
 //
 
-#if NET_1_2
+#if NET_2_0
 
 using System;
 using System.Collections;

@@ -71,7 +71,7 @@ namespace System.Data.Common {
 			return new DataColumn (dataSetColumn, dataType);
 		}
 
-#if NET_1_2
+#if NET_2_0
 		[MonoTODO]
 		public static DataColumn GetDataColumnBySchemaAction (string sourceColumn, string dataSetColumn, DataTable dataTable, Type dataType, MissingSchemaAction schemaAction)
 		{

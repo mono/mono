@@ -18,7 +18,7 @@ using System.Xml.XPath;
 
 namespace System.Xml.Schema
 {
-#if NET_1_2
+#if NET_2_0
 	public class XmlSchemaSet
 #else
 	internal class XmlSchemaSet

@@ -20,14 +20,14 @@ using System.Web.Util;
 namespace System.Web.UI.WebControls
 {
 	[DefaultEvent("SelectedIndexChanged")]
-	#if !NET_1_2
+	#if !NET_2_0
 	[DefaultProperty("DataSource")]
 	#endif
 	[Designer ("System.Web.UI.Design.WebControls.ListControlDesigner, " + Consts.AssemblySystem_Design, typeof (IDesigner))]
 	[DataBindingHandler("System.Web.UI.Design.ListControlDataBindingHandler, " + Consts.AssemblySystem_Design)]
 	[ParseChildren(true, "Items")]
 	public abstract class ListControl : 
-		#if NET_1_2
+		#if NET_2_0
 			DataBoundControl
 		#else
 			WebControl
@@ -35,7 +35,7 @@ namespace System.Web.UI.WebControls
 	{
 		private static readonly object SelectedIndexChangedEvent = new object();
 
-		#if !NET_1_2
+		#if !NET_2_0
 		private object             dataSource;
 		#endif
 		
@@ -44,7 +44,7 @@ namespace System.Web.UI.WebControls
 		private int cachedSelectedIndex = -1;
 		private string cachedSelectedValue;
 
-		#if !NET_1_2
+		#if !NET_2_0
 		public ListControl(): base(HtmlTextWriterTag.Select)
 		{
 		}
@@ -85,7 +85,7 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
-		#if !NET_1_2
+		#if !NET_2_0
 		[DefaultValue (""), WebCategory ("Data")]
 		[WebSysDescription ("The name of the table that is used for binding when a DataSource is specified.")]
 		public virtual string DataMember
@@ -316,7 +316,7 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
-		#if NET_1_2
+		#if NET_2_0
 		protected override void PerformDataBinding ()
 		{
 			base.PerformDataBinding ();

@@ -108,7 +108,7 @@ namespace System.Xml
 			AddNamespace (prefix, uri, false);
 		}
 
-#if NET_1_2
+#if NET_2_0
 		public virtual void AddNamespace (string prefix, string uri, bool atomizedNames)
 #else
 		internal virtual void AddNamespace (string prefix, string uri, bool atomizedNames)
@@ -180,7 +180,7 @@ namespace System.Xml
 			
 			return ht.Keys.GetEnumerator ();
 		}
-#if NET_1_2
+#if NET_2_0
 		[MonoTODO]
 		public virtual StringDictionary GetNamespacesInScope (XmlNamespaceScope scope)
 		{
@@ -206,7 +206,7 @@ namespace System.Xml
 			return LookupNamespace (prefix, false);
 		}
 
-#if NET_1_2
+#if NET_2_0
 		public string LookupNamespace (string prefix, bool atomizedName)
 #else
 		internal string LookupNamespace (string prefix, bool atomizedName)
@@ -244,7 +244,7 @@ namespace System.Xml
 				return s1 == s2;
 		}
 
-#if NET_1_2
+#if NET_2_0
 		public string LookupPrefix (string uri, bool atomizedName)
 #else
 		internal string LookupPrefix (string uri, bool atomizedName)
@@ -304,7 +304,7 @@ namespace System.Xml
 			RemoveNamespace (prefix, uri, false);
 		}
 
-#if NET_1_2
+#if NET_2_0
 		public virtual void RemoveNamespace (string prefix, string uri, bool atomizedNames)
 #else
 		internal virtual void RemoveNamespace (string prefix, string uri, bool atomizedNames)

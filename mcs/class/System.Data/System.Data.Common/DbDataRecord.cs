@@ -25,7 +25,7 @@ namespace System.Data.Common {
 		
 		#region Constructors
 
-#if NET_1_2
+#if NET_2_0
 		[MonoTODO]
 		public DbDataRecord (object[] values, PropertyDescriptorCollection descriptors, FieldNameLookup fieldNameLookup)
 		{
@@ -182,7 +182,7 @@ namespace System.Data.Common {
 			return (string) lookup [i];
 		}
 
-#if NET_1_2
+#if NET_2_0
 		[MonoTODO]
 		public virtual object GetObjectRef (int i)
 		{
@@ -319,7 +319,7 @@ namespace System.Data.Common {
 		{
 			return GetValue (i) == null;
 		}
-#if NET_1_2
+#if NET_2_0
 		public virtual bool IsSetAsDefault (int i)
 		{
 			throw new NotImplementedException ();

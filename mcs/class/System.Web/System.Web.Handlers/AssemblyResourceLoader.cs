@@ -14,7 +14,7 @@ using System.IO;
 
 namespace System.Web.Handlers {
 	[MonoTODO ("Should we cache stuff?")]
-	#if NET_1_2
+	#if NET_2_0
 	public
 	#else
 	internal // since this is in the .config file, we need to support it, since we dont have versoned support.
@@ -33,7 +33,7 @@ namespace System.Web.Handlers {
 		[MonoTODO ("Substitution not implemented")]
 		void System.Web.IHttpHandler.ProcessRequest (HttpContext context)
 		{
-#if NET_1_2
+#if NET_2_0
 			string resourceName = context.Request.QueryString ["resource"];
 			Assembly assembly = Assembly.Load (context.Request.QueryString ["assembly"]);
 			

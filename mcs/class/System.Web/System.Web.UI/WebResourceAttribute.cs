@@ -6,7 +6,7 @@
 //
 // (C) 2003 Ben Maurer
 //
-#if NET_1_2
+#if NET_2_0
 namespace System.Web.UI {
 	public sealed class WebResourceAttribute : Attribute {
 		public WebResourceAttribute (string webResource, string contentType) : this (webResource, contentType, false) {}

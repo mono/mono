@@ -41,7 +41,7 @@ namespace System.Reflection.Emit {
 	private ModuleBuilder pmodule;
 	private int class_size;
 	private PackingSize packing_size;
-#if NET_1_2
+#if NET_2_0
 	private	GenericTypeParameterBuilder[] generic_params;
 #else
         private Object generic_params; /* so offsets don't change */
@@ -357,7 +357,7 @@ namespace System.Reflection.Emit {
 			return DefineConstructor (attributes, callingConvention, parameterTypes, null, null);
 		}
 
-#if NET_1_2
+#if NET_2_0
 		public
 #else
 		internal
@@ -426,7 +426,7 @@ namespace System.Reflection.Emit {
 			return DefineMethod (name, attributes, callingConvention, returnType, null, null, parameterTypes, null, null);
 		}
 
-#if NET_1_2
+#if NET_2_0
 		public
 #else
 		internal
@@ -451,7 +451,7 @@ namespace System.Reflection.Emit {
 			return DefinePInvokeMethod (name, dllName, entryName, attributes, callingConvention, returnType, null, null, parameterTypes, null, null, nativeCallConv, nativeCharSet);
 		}
 
-#if NET_1_2
+#if NET_2_0
 		public
 #else
 		internal
@@ -522,7 +522,7 @@ namespace System.Reflection.Emit {
 			return DefineField (fieldName, type, null, null, attributes);
 		}
 
-#if NET_1_2
+#if NET_2_0
 		public
 #else
 		internal
@@ -1262,7 +1262,7 @@ namespace System.Reflection.Emit {
 				throw new ArgumentException (argName, "Illegal name.");
 		}
 
-#if NET_1_2
+#if NET_2_0
 		public override Type[] GetGenericArguments ()
 		{
 			if (generic_params != null)

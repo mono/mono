@@ -61,7 +61,7 @@ namespace System.Data.Common {
 		#endregion // Properties
 
 		#region // Methods
-#if NET_1_2
+#if NET_2_0
 		[MonoTODO]
 		public bool ShouldSerializeConnectionString ()
 		{

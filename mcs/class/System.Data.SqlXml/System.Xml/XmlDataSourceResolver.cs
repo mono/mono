@@ -6,7 +6,7 @@
 //
 // (C)2003 Novell inc.
 //
-#if NET_1_2
+#if NET_2_0
 
 using System;
 using System.Collections;

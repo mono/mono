@@ -52,7 +52,7 @@ namespace System.Web.UI.WebControls
 
 		public override void DataBind()
 		{
-			#if NET_1_2
+			#if NET_2_0
 			RequiresDataBinding = false;
 			#endif
 			OnDataBinding(EventArgs.Empty);
@@ -274,7 +274,7 @@ namespace System.Web.UI.WebControls
 		protected abstract void PrepareControlHierarchy();
 		protected abstract void CreateControlHierarchy(bool useDataSource);
 		
-		#if NET_1_2
+		#if NET_2_0
 
 			
 			// should be `internal protected' (why, oh WHY did they do that !?!)

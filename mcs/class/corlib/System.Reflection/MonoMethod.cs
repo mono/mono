@@ -165,7 +165,7 @@ namespace System.Reflection {
 			if (ReturnType.IsClass && ReturnType.Namespace != "")
 				return ReturnType.Namespace + "." + ReturnType.Name + " " + Name + "(" + parms + ")";
 			string generic = "";
-#if NET_1_2
+#if NET_2_0
 			if (HasGenericParameters) {
 				Type[] gen_params = GetGenericArguments ();
 				generic = "[";
@@ -187,7 +187,7 @@ namespace System.Reflection {
 			ReflectionSerializationHolder.Serialize ( info, Name, ReflectedType, ToString(), MemberTypes.Method);
 		}
 
-#if NET_1_2
+#if NET_2_0
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		public override extern MethodInfo BindGenericParameters (Type [] types);
 
@@ -314,7 +314,7 @@ namespace System.Reflection {
 			return MonoCustomAttrs.GetCustomAttributes (this, attributeType, inherit);
 		}
 
-#if NET_1_2
+#if NET_2_0
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		extern MethodInfo GetGenericMethodDefinition_impl ();
 

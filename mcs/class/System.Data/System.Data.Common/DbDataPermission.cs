@@ -26,7 +26,7 @@ namespace System.Data.Common {
 
 		#region Constructors
 
-#if NET_1_2
+#if NET_2_0
 		[Obsolete ("use DBDataPermission (PermissionState.None)", true)]
 #endif
 		protected DBDataPermission () 
@@ -34,7 +34,7 @@ namespace System.Data.Common {
 		{
 		}
 
-#if NET_1_2
+#if NET_2_0
 		[MonoTODO]
 		protected DBDataPermission (DbConnectionString constr)
 		{
@@ -46,7 +46,7 @@ namespace System.Data.Common {
 		{
 		}
 
-#if NET_1_2
+#if NET_2_0
 		[Obsolete ("use DBDataPermission (PermissionState.None)", true)]
 #endif
 		public DBDataPermission (PermissionState state, bool allowBlankPassword)
@@ -86,7 +86,7 @@ namespace System.Data.Common {
 		}
 #endif
 
-#if NET_1_2
+#if NET_2_0
 		[MonoTODO]
 		protected void AddConnectionString (DbConnectionString constr)
 		{
@@ -130,7 +130,7 @@ namespace System.Data.Common {
 			return (state == PermissionState.Unrestricted);
 		}
 
-#if NET_1_2
+#if NET_2_0
 		[MonoTODO]
 		protected void SetConnectionString (DbConnectionString constr)
 		{

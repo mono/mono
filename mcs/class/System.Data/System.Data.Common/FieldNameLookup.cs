@@ -11,7 +11,7 @@ using System.Collections;
 using System.Data;
 
 namespace System.Data.Common {
-#if NET_1_2
+#if NET_2_0
 // FIXME: Need to clean this up
 	public sealed class FieldNameLookup
 #else

@@ -122,7 +122,7 @@ namespace System.Data.Common {
 			return mapping;
 		}
 
-#if NET_1_2
+#if NET_2_0
 		[MonoTODO]
 		public void AddRange (Array values)
 		{
@@ -173,7 +173,7 @@ namespace System.Data.Common {
 			return new DataColumnMapping (sourceColumn, sourceColumn);
 		}
 
-#if NET_1_2
+#if NET_2_0
 		[MonoTODO]
 		public static DataColumn GetDataColumn (DataColumnMappingCollection columnMappings, string sourceColumn, Type dataType, DataTable dataTable, MissingMappingAction mappingAction, MissingSchemaAction schemaAction)
 		{

@@ -25,7 +25,7 @@ using System.Runtime.InteropServices;
 #elif (NET_1_1)
 	[assembly: AssemblyVersion ("1.0.5000.0")]
 	[assembly: SatelliteContractVersion ("1.0.5000.0")]
-#elif (NET_1_2)
+#elif (NET_2_0)
 	[assembly: AssemblyVersion ("1.2.3400.0")]
 	[assembly: SatelliteContractVersion ("1.2.3400.0")]
 #endif

@@ -98,7 +98,7 @@ namespace System.Xml {
 			get { return validatingReader == null ? false : validatingReader.EOF; }
 		}
 
-#if NET_1_2
+#if NET_2_0
 		[MonoTODO]
 		public override Evidence [] Evidences {
 			get { throw new NotImplementedException ();

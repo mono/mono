@@ -604,7 +604,7 @@ namespace System.Data.SqlClient {
                                 case "MIN POOL SIZE" :
                                         minPoolSize = Int32.Parse (value);
                                         break;
-#if NET_1_2
+#if NET_2_0
 				case "MULTIPLEACTIVERESULTSETS":
 					break;
 #endif

@@ -21,7 +21,7 @@ using System.Web.Util;
 using System.Diagnostics;
 
 namespace System.Web.UI {
-	#if NET_1_2
+	#if NET_2_0
 		public
 	#else
 		internal

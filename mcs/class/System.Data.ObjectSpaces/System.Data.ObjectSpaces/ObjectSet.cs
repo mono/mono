@@ -7,7 +7,7 @@
 // Copyright (C) Tim Coleman, 2003-2004
 //
 
-#if NET_1_2
+#if NET_2_0
 
 using System.Collections;
 using System.ComponentModel;
@@ -146,4 +146,4 @@ namespace System.Data.ObjectSpaces
         }
 }
 
-#endif // NET_1_2
+#endif // NET_2_0

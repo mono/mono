@@ -16,7 +16,7 @@ using System.Text;
 
 namespace System.Xml
 {
-#if NET_1_2
+#if NET_2_0
 	public abstract class XmlReader : IDisposable, IXmlDataEvidence
 #else
 	public abstract class XmlReader
@@ -48,7 +48,7 @@ namespace System.Xml
 
 		public abstract bool EOF { get; }
 
-#if NET_1_2
+#if NET_2_0
 		[MonoTODO]
 		public virtual Evidence [] Evidences {
 			get { return evidences; }
@@ -103,7 +103,7 @@ namespace System.Xml
 
 		public abstract void Close ();
 
-#if NET_1_2
+#if NET_2_0
 		[MonoTODO]
 		public virtual void Dispose ()
 		{

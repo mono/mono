@@ -190,7 +190,7 @@
 	  XmlSchemaSimpleContentRestriction.cs,
 	  XmlSchemaContent.cs : Added IsExtension. GetXXX() became nonvirtual.
 	* XmlSchemaType.cs : 
-	  - Added NET_1_2 BaseXmlSchemaType (other members are commented out).
+	  - Added NET_2_0 BaseXmlSchemaType (other members are commented out).
 	  - Now BaseSchemaType redirects to new property BaseXmlSchemaType.
 	* XmlSchemaComplexType.cs :
 	  - Now it fully uses BaseXmlSchemaType above.

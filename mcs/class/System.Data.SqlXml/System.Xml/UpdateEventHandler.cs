@@ -6,7 +6,7 @@
 //
 //
 
-#if NET_1_2
+#if NET_2_0
 namespace System.Xml
 {
 	public delegate void UpdateEventHandler (object sender, XmlUpdateEventArgs e);

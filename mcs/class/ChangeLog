@@ -1,3 +1,7 @@
+2004-04-22  Martin Baulig  <martin@ximian.com>
+
+	Renamed the `NET_1_2' conditional to `NET_2_0' in all files.
+
 2004-03-31  Dick Porter  <dick@ximian.com>
 
 	* I18N/CJK/gb2312.table:

@@ -43,7 +43,7 @@ public class CryptoConfig {
 	// LAMESPEC: undocumented classes (also undocumented in CryptoConfig ;-)
 	private const string defaultDSASigDesc = defaultNamespace + "DSASignatureDescription";
 	private const string defaultRSASigDesc = defaultNamespace + "RSAPKCS1SHA1SignatureDescription";
-#if NET_1_2
+#if NET_2_0
 	private const string defaultRIPEMD160 = defaultNamespace + "RIPEMD160Managed";
 #endif
 
@@ -114,7 +114,7 @@ public class CryptoConfig {
 	private const string nameMAC3DESb = "System.Security.Cryptography.MACTripleDES";
 	// LAMESPEC: only documentated in ".NET Framework Security" book
 	private const string name3DESKeyWrap = "TripleDESKeyWrap";
-#if NET_1_2
+#if NET_2_0
 	private const string nameRIPEMD160a = "RIPEMD160";
 	private const string nameRIPEMD160b = "RIPEMD-160";
 	private const string nameRIPEMD160c = "System.Security.Cryptography.RIPEMD160";
@@ -202,7 +202,7 @@ public class CryptoConfig {
 		algorithms.Add (nameHMACb, defaultHMAC);
 		algorithms.Add (nameMAC3DESa, defaultMAC3DES);
 		algorithms.Add (nameMAC3DESb, defaultMAC3DES);
-#if NET_1_2
+#if NET_2_0
 		algorithms.Add (nameRIPEMD160a, defaultRIPEMD160);
 		algorithms.Add (nameRIPEMD160b, defaultRIPEMD160);
 		algorithms.Add (nameRIPEMD160c, defaultRIPEMD160);

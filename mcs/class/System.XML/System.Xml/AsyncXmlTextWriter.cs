@@ -5,7 +5,7 @@
 //	Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
 //
 //
-#if NET_1_2
+#if NET_2_0
 
 using System;
 using System.IO;

@@ -151,7 +151,7 @@ namespace System.Web
 			Execute (path, writer, false);
 		}
 
-#if NET_1_2
+#if NET_2_0
 		public
 #else
 		internal

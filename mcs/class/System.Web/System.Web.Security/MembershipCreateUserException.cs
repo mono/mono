@@ -7,7 +7,7 @@
 // (C) 2003 Ben Maurer
 //
 
-#if NET_1_2
+#if NET_2_0
 namespace System.Web.Security {
 	[MonoTODO ("make strings for the messages")]
 	public class MembershipCreateUserException : HttpException {

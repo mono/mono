@@ -32,7 +32,7 @@ namespace System.Data {
 		{
 		}
 
-#if NET_1_2
+#if NET_2_0
 		public DBConcurrencyException (DataRow[] dataRows, string message, Exception inner)
 			: base (message, inner)
 		{
@@ -47,7 +47,7 @@ namespace System.Data {
 			set { row = value;} // setting the row has no effect
 		}
 
-#if NET_1_2
+#if NET_2_0
 		[MonoTODO]
 		public int RowCount {
 			get { throw new NotImplementedException (); }
@@ -58,7 +58,7 @@ namespace System.Data {
 
 		#region Methods
 
-#if NET_1_2
+#if NET_2_0
 		[MonoTODO]
 		public void CopyToRows (DataRow[] array)
 		{
@@ -66,7 +66,7 @@ namespace System.Data {
 		}
 #endif
 
-#if NET_1_2
+#if NET_2_0
 		[MonoTODO]
 		public void CopyToRows (DataRow[] array, int ArrayIndex)
 		{

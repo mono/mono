@@ -5,7 +5,7 @@
 
 2004-01-10  Atsushi Enomoto  <atsushi@ximian.com>
 
-	* OleDbPermission.cs : NET_1_2 fix not to call obsolete .ctor.
+	* OleDbPermission.cs : NET_2_0 fix not to call obsolete .ctor.
 
 2002-11-01  Daniel Morgan <danmorg@sc.rr.com>
 

@@ -7,7 +7,7 @@
 // (C) BLiNK Software Ltd.  http://www.blinksoftware.co.uk
 //
 
-#if NET_1_2
+#if NET_2_0
 
 using System.Data;
 using System.Data.Mapping;

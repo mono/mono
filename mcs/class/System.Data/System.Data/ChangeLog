@@ -463,10 +463,10 @@
 	* LoadOption.cs OperationAbortedException.cs ResultSetOptions.cs
 	* ResultSetSensitivity.cs StatementCompletedEventArgs.cs 
 	* StatementCompletedEventHandler.cs UpdateOptions.cs:
-		New classes added for NET_1_2
+		New classes added for NET_2_0
 	* DBConcurrencyException.cs DataRelation.cs DataSet.cs DataTable.cs
 	* DataTableCollection.cs DataView.cs ForeignKeyConstraint.cs:
-		Modifications to add new NET_1_2 functions
+		Modifications to add new NET_2_0 functions
 
 2003-11-25  Tim Coleman <tim@timcoleman.com>
 	* IDataSources.cs:

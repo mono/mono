@@ -955,7 +955,7 @@ public class Page : TemplateControl, IHttpHandler
 
 	#endregion
 	
-	#if NET_1_2
+	#if NET_2_0
 	public string GetWebResourceUrl(Type type, string resourceName)
 	{
 		if (type == null)

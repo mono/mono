@@ -84,7 +84,7 @@ namespace System.Data.Common {
 			return DataColumnMappingCollection.GetColumnMappingBySchemaAction (columnMappings, sourceColumn, mappingAction);
 		}
 
-#if NET_1_2
+#if NET_2_0
 		[MonoTODO]
 		public DataColumn GetDataColumn (string sourceColumn, Type dataType, DataTable dataTable, MissingMappingAction mappingAction, MissingSchemaAction schemaAction)
 		{

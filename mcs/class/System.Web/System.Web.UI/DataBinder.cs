@@ -165,7 +165,7 @@ namespace System.Web.UI {
 			return FormatResult (result, format);
 		}
 
-		#if NET_1_2
+		#if NET_2_0
 		public static object GetDataItem (object container, out bool foundDataItem)
 		{	
 			foundDataItem = false;

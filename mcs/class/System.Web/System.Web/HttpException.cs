@@ -18,7 +18,7 @@ using System.Web.Util;
 
 namespace System.Web
 {
-#if NET_1_2
+#if NET_2_0
 	[Serializable]
 #endif
 	public class HttpException : ExternalException
@@ -45,7 +45,7 @@ namespace System.Web
 			http_code = iHttpCode;
 		}
 
-#if NET_1_2
+#if NET_2_0
 		protected HttpException (SerializationInfo info, StreamingContext sc) : base (info, sc)
 		{
 			http_code = info.GetInt32 ("_httpCode");

@@ -265,7 +265,7 @@ namespace System.Reflection.Emit {
 			SetCustomAttribute (new CustomAttributeBuilder (con, binaryAttribute));
 		}
 
-#if NET_1_2
+#if NET_2_0
 		public override Type[] GetGenericArguments ()
 		{
 			throw new NotImplementedException ();

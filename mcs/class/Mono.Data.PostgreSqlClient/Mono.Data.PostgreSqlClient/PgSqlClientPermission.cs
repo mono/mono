@@ -18,12 +18,12 @@ namespace Mono.Data.PostgreSqlClient {
 
 	public sealed class PgSqlClientPermission : DBDataPermission {
 	
-#if NET_1_2
+#if NET_2_0
 		[Obsolete ("use PgSqlClientPermission(PermissionState.None)", true)]
 #endif
 		[MonoTODO]
 		public PgSqlClientPermission() 
-#if NET_1_2
+#if NET_2_0
 			: base (PermissionState.None)
 #endif
 		{
@@ -36,12 +36,12 @@ namespace Mono.Data.PostgreSqlClient {
 			// FIXME: do constructor
 		}
 
-#if NET_1_2
+#if NET_2_0
 		[Obsolete ("use PgSqlClientPermission(PermissionState.None)", true)]
 #endif
 		[MonoTODO]
 		public PgSqlClientPermission(PermissionState state, bool allowBlankPassword) 
-#if NET_1_2
+#if NET_2_0
 			: base (PermissionState.None)
 #endif
 		{ 

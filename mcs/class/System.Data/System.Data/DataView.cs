@@ -318,7 +318,7 @@ namespace System.Data
 			OnListChanged (new ListChangedEventArgs (ListChangedType.ItemDeleted, index));
 		}
 
-#if NET_1_2
+#if NET_2_0
 		[MonoTODO]
 		public virtual bool Equals (DataView dv)
 		{
@@ -474,7 +474,7 @@ namespace System.Data
 			OnListChanged (new ListChangedEventArgs (ListChangedType.Reset, -1));
 		}
 
-#if NET_1_2
+#if NET_2_0
 		[MonoTODO]
 		public DataTable ToTable ()
 		{

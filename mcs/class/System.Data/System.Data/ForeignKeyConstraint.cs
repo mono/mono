@@ -135,7 +135,7 @@ namespace System.Data {
                         _childColumns = childColumns;
 		}
 			
-#if NET_1_2
+#if NET_2_0
 		[MonoTODO]
 		public ForeignKeyConstraint (string constraintName, string parentTableName, string parentTableNamespace, string[] parentColumnNames, string[] childColumnNames, AcceptRejectRule acceptRejectRule, Rule deleteRule, Rule updateRule)
 		{

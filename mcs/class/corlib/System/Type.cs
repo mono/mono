@@ -919,7 +919,7 @@ namespace System {
 			return FullName;
 		}
 
-#if NET_1_2
+#if NET_2_0
 		public abstract Type[] GetGenericArguments ();
 
 		public abstract bool HasGenericArguments {

@@ -148,7 +148,7 @@ namespace System.Xml
 		{
 			get { return parserContext.Encoding; }
 		}
-#if NET_1_2
+#if NET_2_0
 		[MonoTODO]
 		public EntityHandling EntityHandling {
 			get { throw new NotImplementedException (); }
@@ -165,7 +165,7 @@ namespace System.Xml
 			}
 		}
 
-#if NET_1_2
+#if NET_2_0
 		[MonoTODO]
 		public override Evidence [] Evidences {
 			get { return base.Evidences; }
@@ -652,7 +652,7 @@ namespace System.Xml
 			throw new InvalidOperationException ("XmlTextReader cannot resolve external entities.");
 		}
 
-#if NET_1_2
+#if NET_2_0
 		[MonoTODO ("Implement for performance reason")]
 		public override void Skip ()
 		{

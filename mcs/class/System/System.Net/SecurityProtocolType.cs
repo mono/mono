@@ -17,7 +17,7 @@ namespace System.Net {
 #endif
 	enum SecurityProtocolType {
 
-#if NET_1_2
+#if NET_2_0
 		Default = -1073741824,
 		Ssl2 = 12,
 #endif
