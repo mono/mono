@@ -1,7 +1,7 @@
 all: linux
 
 linux:
-	../nant/Nant.exe
+	../nant/NAnt.exe
 
 push:
 	scp lib/*.dll mono-cvs:libs
