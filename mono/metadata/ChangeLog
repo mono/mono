@@ -1,3 +1,11 @@
+2005-01-08  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* appdomain.c: Replaced ves_icall_System_AppDomain_getDomainByID by
+	ves_icall_System_AppDomain_getRootDomain (as it's not required to
+	get an appdomain by it's id and we can't assume the root's id is 0).
+	* domain-internals.h: Change the function prototype to match.
+	* icall.c: Change the icall table for AppDomain.
+
 2005-01-08  Miguel de Icaza  <miguel@ximian.com>
 
 	* locales.c (string_invariant_compare_char): Only compute
