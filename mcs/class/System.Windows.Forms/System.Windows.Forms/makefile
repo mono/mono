@@ -7,6 +7,8 @@ GLIB20_CFLAGS=`pkg-config --cflags glib-2.0` `pkg-config --cflags gmodule-2.0`
 GLIB20_LIBS=`pkg-config --libs glib-2.0` `pkg-config --libs gmodule-2.0`
 MONO_CFLAGS=`pkg-config --cflags mono`
 MONO_LIBS=`pkg-config --libs mono`
+COMPILE_OPTIONS=-g -O2 -Wall
+#COMPILE_OPTIONS=-gstabs+ -Wall
 
 all:	monostub.exe.so
 # These are no longer built here:
@@ -27,17 +29,17 @@ clean:
 monostub.o: monostub.c
 	gcc -c -I. -I$(WINE_INCLUDE) -I$(X11R6_INCLUDE) \
 	$(GLIB20_CFLAGS) $(MONO_CFLAGS) -D_REENTRANT -DWINELIB \
-	-g -O2 -Wall -o monostub.o monostub.c
+	$(COMPILE_OPTIONS) -o monostub.o monostub.c
 
 monosem.o: monosem.c
 	gcc -c -I. -I$(WINE_INCLUDE) -I$(WINDOWS_INCLUDE) -I$(X11R6_INCLUDE) \
 	$(GLIB20_CFLAGS) $(MONO_CFLAGS) -D_REENTRANT -DWINELIB \
-	-g -O2 -Wall -o monosem.o monosem.c
+	$(COMPILE_OPTIONS) -o monosem.o monosem.c
 
 monogc.o: monogc.c
 	gcc -c -I. -I$(WINE_INCLUDE) -I$(WINDOWS_INCLUDE) -I$(X11R6_INCLUDE) \
 	$(GLIB20_CFLAGS) $(MONO_CFLAGS) -D_REENTRANT -DWINELIB \
-	-g -O2 -Wall -o monogc.o monogc.c
+	$(COMPILE_OPTIONS) -o monogc.o monogc.c
 
 monostub.exe.tmp.o: monostub.o monosem.o monogc.o
 	ld -r  monostub.o monosem.o monogc.o -o monostub.exe.tmp.o
