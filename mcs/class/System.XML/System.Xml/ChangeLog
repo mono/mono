@@ -1,5 +1,9 @@
 2003-07-27  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
 
+	* XmlDocument.cs (GetIdenticalAttribute): restored OwnerElement.IsRooted
+
+2003-07-27  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
+
 	* XmlLinkedNode.cs : added internal IsRooted.
 
 2003-07-26  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
@@ -14,7 +18,7 @@
 	* XmlDocument.cs :
 	  - added idTable, AddIdenticalAttribute(), GetIdenticalAttribute() and
 	    RemoveIdenticalAttribute()
-	  - Implemented GetAttributeById().
+	  - Implemented GetElementById().
 	* XmlAttributeCollection.cs :
 	  - added private ownerDocument property and replaced
 	    ownerElement.OwnerDocument with it.
