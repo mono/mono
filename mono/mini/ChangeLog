@@ -1,5 +1,7 @@
 2004-12-30  Zoltan Varga  <vargaz@freemail.hu>
 
+	* aot.c (mono_aot_load_method): Free up patch info if no longer needed.
+	
 	* aot.c (emit_method_info): Increase size of temp buffer.
 
 	* mini-x86.c cpu-pentium.md mini.c: Load fp constants differently in 
