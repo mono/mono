@@ -48,27 +48,18 @@ namespace Mono.CSharp {
 		}
 
 		bool has_ctor_constraint;
-		Type class_constraint;
+		TypeExpr class_constraint;
 		ArrayList iface_constraints;
-		Type[] constraint_types;
+		TypeExpr[] constraint_types;
 		int num_constraints;
 
 		public bool HasConstructorConstraint {
 			get { return has_ctor_constraint; }
 		}
 
-		public Type[] Types {
-			get { return constraint_types; }
-		}
-
 		public bool Resolve (DeclSpace ds)
 		{
 			iface_constraints = new ArrayList ();
-
-			if (constraints == null) {
-				constraint_types = new Type [0];
-				return true;
-			}
 
 			foreach (object obj in constraints) {
 				if (has_ctor_constraint) {
@@ -82,29 +73,38 @@ namespace Mono.CSharp {
 					continue;
 				}
 
-				Expression expr = ds.ResolveTypeExpr ((Expression) obj, false, loc);
+				TypeExpr expr = ds.ResolveTypeExpr ((Expression) obj, false, loc);
 				if (expr == null)
 					return false;
 
-				Type etype = expr.Type;
-				if (etype.IsInterface)
-					iface_constraints.Add (etype);
+				if (expr.IsInterface)
+					iface_constraints.Add (expr);
 				else if (class_constraint != null) {
 					Error ("can have at most one class constraint.");
 					return false;
 				} else
-					class_constraint = etype;
+					class_constraint = expr;
 
 				num_constraints++;
 			}
 
-			constraint_types = new Type [num_constraints];
+			constraint_types = new TypeExpr [num_constraints];
 			int pos = 0;
 			if (class_constraint != null)
 				constraint_types [pos++] = class_constraint;
 			iface_constraints.CopyTo (constraint_types, pos);
 
 			return true;
+		}
+
+		public Type[] ResolveTypes (EmitContext ec)
+		{
+			Type [] types = new Type [constraint_types.Length];
+
+			for (int i = 0; i < constraint_types.Length; i++)
+				types [i] = constraint_types [i].ResolveType (ec);
+
+			return types;
 		}
 	}
 
@@ -158,22 +158,32 @@ namespace Mono.CSharp {
 
 		public Type Define (TypeBuilder tb)
 		{
-			if (constraints != null)
-				type = tb.DefineGenericParameter (name, constraints.Types);
-			else
-				type = tb.DefineGenericParameter (name, new Type [0]);
-
+			type = tb.DefineGenericParameter (name);
 			return type;
 		}
 
 		public Type DefineMethod (MethodBuilder mb)
 		{
-			if (constraints != null)
-				type = mb.DefineGenericParameter (name, constraints.Types);
-			else
-				type = mb.DefineGenericParameter (name, new Type [0]);
-
+			type = mb.DefineGenericParameter (name);
 			return type;
+		}
+
+		public void DefineType (EmitContext ec, TypeBuilder tb)
+		{
+			int index = type.GenericParameterPosition;
+			if (constraints == null)
+				tb.SetGenericParameterConstraints (index, new Type [0]);
+			else
+				tb.SetGenericParameterConstraints (index, constraints.ResolveTypes (ec));
+		}
+
+		public void DefineType (EmitContext ec, MethodBuilder mb)
+		{
+			int index = type.GenericParameterPosition;
+			if (constraints == null)
+				mb.SetGenericParameterConstraints (index, new Type [0]);
+			else
+				mb.SetGenericParameterConstraints (index, constraints.ResolveTypes (ec));
 		}
 
 		public override string ToString ()

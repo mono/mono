@@ -844,6 +844,11 @@ namespace Mono.CSharp {
 				TypeBuilder.SetParent (ptype);
 			}
 
+			if (IsGeneric) {
+				foreach (TypeParameter type_param in TypeParameters)
+					type_param.DefineType (ec, TypeBuilder);
+			}
+
 			//
 			// Structs with no fields need to have at least one byte.
 			// The right thing would be to set the PackingSize in a DefineType

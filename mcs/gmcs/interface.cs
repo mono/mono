@@ -778,6 +778,9 @@ namespace Mono.CSharp {
 			if (IsGeneric) {
 				foreach (TypeParameter type_param in TypeParameters)
 					type_param.Define (TypeBuilder);
+
+				foreach (TypeParameter type_param in TypeParameters)
+					type_param.DefineType (ec, TypeBuilder);
 			}
 
 			if (ifaces != null) {

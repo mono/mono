@@ -1,5 +1,19 @@
 2003-12-08  Martin Baulig  <martin@ximian.com>
 
+	* generics.cs (Constraints.Types): Removed.
+	(Constraints.Resolve): Just resolve everything to TypeExpr's, not
+	to Type's.
+	(Constraints.ResolveTypes): New public method; resolves the
+	TypeExpr's to Type's.
+	(TypeParameter.Define): TypeBuilder.DefineGenericParameter() no
+	longer takes the constraints.
+	(TypeParameter.DefineMethod): Likewise.
+	(TypeParameter.DefineType): New public method.  Calls
+	`TypeBuilder/MethodBuilder.SetGenericParameterConstraints()' to set
+	the constraints.
+
+2003-12-08  Martin Baulig  <martin@ximian.com>
+
 	* convert.cs (Convert.ImplicitConversionStandard): Use
 	`expr_type.Equals (target_type)' instead of `=='.
 
