@@ -1,3 +1,18 @@
+2005-01-27  Raja R Harinath  <rharinath@novell.com>
+
+	Update attribute-handling to use the SimpleName/MemberAccess
+	mechanisms.
+	* cs-parser.jay (attribute): Pass in an expression to the
+	constructors of Attribute and GlobalAttribute.
+	* attribute.cs (Attribute): Take an expression for the name.
+	(Attribute.ResolvePossibleAttributeTypes): New.  Resolves the
+	passed in attribute name expression.
+	(Attribute.CheckAttributeType): Use it.
+	* ecore.cs (FullNamedExpression.ResolveAsTypeStep): New.
+	* expression.cs (MemberAccess.ResolveAsTypeStep): Move body to ...
+	(MemberAccess.ResolveNamespaceOrType): ... here.  Add 'silent'
+	argument to prevent error messages if the lookup fails.
+
 2005-01-27  Marek Safar  <marek.safar@seznam.cz>
 
 	* expression.cs (Indirection): Implemented IVariable interface
