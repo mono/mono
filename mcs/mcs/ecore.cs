@@ -561,11 +561,11 @@ namespace Mono.CSharp {
 
 			int count = mi.Length;
 
-			if (count > 1)
-				return new MethodGroupExpr (mi, loc);
-
 			if (mi [0] is MethodBase)
 				return new MethodGroupExpr (mi, loc);
+
+			if (count > 1)
+				return null;
 
 			return ExprClassFromMemberInfo (ec, mi [0], loc);
 		}
