@@ -74,6 +74,7 @@ namespace Mono.Xml.Xsl
 		bool _canProcessAttributes;
 		bool _insideCData;
 		bool _isVariable;
+		bool _omitXmlDeclaration;
 
 		private GenericOutputter (Hashtable outputs, Encoding encoding)
 		{
@@ -99,6 +100,7 @@ namespace Mono.Xml.Xsl
 			_emitter = new XmlWriterEmitter (writer);
 			_state = writer.WriteState;
 			_isVariable = isVariable;
+			_omitXmlDeclaration = true; // .Net never writes XML declaration via XmlWriter
 		}
 
 		public GenericOutputter (TextWriter writer, Hashtable outputs, Encoding encoding)
@@ -197,7 +199,7 @@ namespace Mono.Xml.Xsl
 			if (_isVariable)
 				return;
 
-			if (!_currentOutput.OmitXmlDeclaration)
+			if (!_omitXmlDeclaration && !_currentOutput.OmitXmlDeclaration)
 				Emitter.WriteStartDocument (_encoding != null ? _encoding : _currentOutput.Encoding, _currentOutput.Standalone);
 			
 			_state = WriteState.Prolog;

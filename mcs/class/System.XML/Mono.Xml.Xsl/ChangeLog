@@ -1,3 +1,8 @@
+2005-02-10  Atsushi Enomoto <atsushi@ximian.com>
+
+	* GenericOutputter.cs : don't output extraneous xml declaration.
+	  fix by Andrew Skiba.
+
 2005-02-09  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XslStylesheet.cs : MS implementation had chosen to recover from 
