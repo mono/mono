@@ -1,3 +1,6 @@
+2004-02-22  Miguel de Icaza  <miguel@ximian.com>
+
+	* driver.c (mono_main): Report some configuratio options on --version.
 
 Fri Feb 20 11:01:44 PST 2004 Paolo Molaro <lupus@ximian.com>
 
