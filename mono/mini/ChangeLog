@@ -1,5 +1,7 @@
 2004-02-24  Zoltan Varga  <vargaz@freemail.hu>
 
+	* basic-calls.cs: New regression tests.
+
 	* mini-sparc.c (mono_sparc_is_virtual_call): New helper function.
 
 	* tramp-sparc.c (create_specific_trampoline): Use g5 register instead
