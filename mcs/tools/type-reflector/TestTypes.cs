@@ -48,10 +48,38 @@ namespace Testing
 		}
 	}
 
-	[CLSCompliant(false)]
+	public class AnotherAttribute : Attribute {
+		private int n;
+
+		public AnotherAttribute (int _n) {
+			n = _n;
+		}
+
+		public int N {
+			get {return n;}
+		}
+	}
+
+	public class TypeAttributes : Attribute {
+		public TypeAttributes () {}
+
+		public char Char = 'a';
+		public decimal Decimal = 42m;
+		public double Double = 17.0;
+		public int Int = 24;
+		public long Long = 57L;
+		public string String = "hello, world!";
+		public float Float = 34.0f;
+		public uint UInt = 10;
+		public ulong ULong = 20;
+	}
+
+	// [CLSCompliant(false)]
 	[MyAttribute ("Hello, world!")]
+	[Serializable]
 	public class TestClass : IFoo, IBar, IBaz {
 
+		[TypeAttributes]
 		public sealed class NestedClass {
 			public static int Foo = 10;
 			public const int Bar = 20;
@@ -73,7 +101,7 @@ namespace Testing
 		private TestClass (int i) {PrivateField = 13;}
 		internal TestClass (float f) {InternalField = 64;}
 
-    [MyAttribute ("Public Property")]
+		[MyAttribute ("Public Property")]
 		public int PublicGetSet {
 			get {return 0;}
 			set {PublicField = value;}
@@ -97,16 +125,22 @@ namespace Testing
 		private event FooEventHandler PrivFoo;
 		internal event FooEventHandler IntFoo;
 
-    public static int msFoo = 42;
-    public const int msBar = 42;
+		public static int msFoo = 42;
+		public const int msBar = 42;
 
-    [MyAttribute ("Some Name")]
-		public short PublicMethod (short s) {PubFoo (); return s;}
+		[MyAttribute ("Some Name")]
+		[return: MyAttribute ("Return Attribute")]
+		public short PublicMethod ([MyAttribute("The parameter")] [AnotherAttribute(42)] short s) 
+		{
+			PubFoo (); return s;
+		}
+
 		private int PrivateMethod (int i) {PrivFoo (); return i;}
 		protected long ProtectedMethod (long l) {ProFoo (); return l;}
 		internal float InternalMethod (float f) {IntFoo (); return f;}
 	}
 
+	[Flags]
 	public enum TestEnum {
 		Foo, 
 		Bar, 

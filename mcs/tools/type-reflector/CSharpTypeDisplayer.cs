@@ -45,12 +45,131 @@ namespace Mono.TypeReflector
 		{
 		}
 
-		private void PrintCustomAttributes (MemberInfo m)
+		private void PrintAttributes (MemberInfo m)
+		{
+			PrintAttributes (m, true);
+		}
+
+		private void PrintAttributes (MemberInfo m, bool newline)
+		{
+			PrintCilAttributes (m, newline);
+			PrintCustomAttributes (m, "", newline);
+		}
+
+		private void PrintCilAttributes (MemberInfo m, bool newline)
+		{
+			PrintCilAttributes (m as Type, newline);
+			PrintCilAttributes (m as MethodBase, newline);
+		}
+
+		private void PrintCilAttributes (MethodBase m, bool newline)
+		{
+			if (m == null)
+				return;
+
+			MethodImplAttributes attr = m.GetMethodImplementationFlags ();
+			if ((attr & MethodImplAttributes.InternalCall) != 0) {
+				Write ("[MethodImplAttribute(MethodImplOptions.InternalCall)]");
+				if (newline)
+					WriteLine ();
+			}
+		}
+
+		private void PrintCilAttributes (Type t, bool newline)
+		{
+			if (t == null)
+				return;
+			if (t.IsSerializable) {
+				Write ("[Serializable]");
+				if (newline)
+					WriteLine ();
+			}
+		}
+
+		private void PrintCustomAttributes (ICustomAttributeProvider m, string attributeType, bool newline)
 		{
 			object[] attrs = m.GetCustomAttributes (true);
-			if (attrs.Length > 0)
-				foreach (object a in attrs)
-					WriteLine ("[{0}]", a);
+			foreach (object a in attrs) {
+				Type type = a.GetType();
+				Write("[{0}{1}", attributeType, type.FullName);
+
+				string p = GetPropertyValues (type.GetProperties(), a);
+				string f = GetFieldValues (type.GetFields(), a);
+
+				if ((p.Length > 0) || (f.Length > 0)) {
+					Write ("(");
+					if (p.Length > 0) {
+						Write (p);
+						if (f.Length > 0)
+							Write (", ");
+					}
+					if (f.Length > 0)
+						Write (f);
+					Write (")");
+				}
+
+				Write ("] ");
+
+				if (newline)
+					WriteLine ();
+			}
+		}
+
+		private string GetPropertyValues (PropertyInfo[] props, object instance)
+		{
+			int len = props.Length;
+			StringBuilder sb = new StringBuilder ();
+			for (int i = 0; i != len; ++i) {
+				sb.Append (props[i].Name);
+				sb.Append ("=");
+				sb.Append (GetEncodedValue (props[i].GetValue (instance, null)));
+				if (i != (len-1))
+					sb.Append (", ");
+			}
+			return sb.ToString();
+		}
+
+		private string GetEncodedValue (object value)
+		{
+			if (value == null)
+				return "null";
+
+			switch (Type.GetTypeCode(value.GetType())) {
+				case TypeCode.Char:
+					return String.Format ("'{0}'", value.ToString());
+				case TypeCode.Decimal:
+					return String.Format ("{0}m", value.ToString());
+				case TypeCode.Double:
+					return String.Format ("{0}d", value.ToString());
+				case TypeCode.Int64:
+					return String.Format ("{0}L", value.ToString());
+				case TypeCode.Single:
+					return String.Format ("{0}f", value.ToString());
+				case TypeCode.String:
+					return String.Format ("\"{0}\"", value.ToString());
+				case TypeCode.UInt32:
+					return String.Format ("{0}U", value.ToString());
+				case TypeCode.UInt64:
+					return String.Format ("{0}UL", value.ToString());
+				case TypeCode.Object:
+					return String.Format ("typeof({0})", value.ToString());
+			}
+			// not special-cased; just return it's value
+			return value.ToString();
+		}
+
+		private string GetFieldValues (FieldInfo[] fields, object instance)
+		{
+			int len = fields.Length;
+			StringBuilder sb = new StringBuilder ();
+			for (int i = 0; i != len; ++i) {
+				sb.Append (fields[i].Name);
+				sb.Append ("=");
+				sb.Append (GetEncodedValue (fields[i].GetValue (instance)));
+				if (i != (len-1))
+					sb.Append (", ");
+			}
+			return sb.ToString();
 		}
 
 		protected override void OnTypeBody (Type t, BindingFlags bf)
@@ -69,7 +188,7 @@ namespace Mono.TypeReflector
 
 		protected override void OnIndentedType (TypeEventArgs e)
 		{
-			PrintCustomAttributes (e.Type);
+			PrintAttributes (e.Type);
 			WriteLine (GetTypeHeader (e.Type));
 		}
 
@@ -104,7 +223,7 @@ namespace Mono.TypeReflector
 
 		protected void PrintFieldInfo (FieldInfo f)
 		{
-			PrintCustomAttributes (f);
+			PrintAttributes (f);
 
 			if (!f.DeclaringType.IsEnum || f.IsSpecialName) {
 				if (f.IsPublic)
@@ -147,7 +266,7 @@ namespace Mono.TypeReflector
 
 		protected void PrintPropertyInfo (PropertyInfo p)
 		{
-			PrintCustomAttributes (p);
+			PrintAttributes (p);
 
 			Write ("{0} {1} {{ ", p.PropertyType, p.Name);
 			if (p.CanRead)
@@ -213,6 +332,7 @@ namespace Mono.TypeReflector
 			if (parms.Length != 0) {
 				int cur = 0;
 				foreach (ParameterInfo pi in parms) {
+					PrintCustomAttributes (pi, "", false);
 					if (pi.IsOut)
 						Write ("out ");
 					Write ("{0} {1}", pi.ParameterType, pi.Name);
@@ -226,7 +346,7 @@ namespace Mono.TypeReflector
 		protected void PrintConstructorInfo (ConstructorInfo c)
 		{
 			if (ShowMonoBroken) {
-				PrintCustomAttributes (c);
+				PrintAttributes (c);
 			}
 			PrintMethodQualifiers (c);
 
@@ -247,7 +367,9 @@ namespace Mono.TypeReflector
 
 		protected void PrintMethodInfo (MethodInfo m)
 		{
-			PrintCustomAttributes (m);
+			PrintAttributes (m);
+			if (m.ReturnTypeCustomAttributes != null)
+				PrintCustomAttributes (m.ReturnTypeCustomAttributes, "return: ", true);
 			PrintMethodQualifiers (m);
 
 			Write ("{0} {1} ", m.ReturnType, m.Name);
