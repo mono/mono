@@ -1,0 +1,5 @@
+2003-08-28  Lluis Sanchez Gual  <lluis@ximian.com>
+
+	* Makefile: added
+	* wsdl.exe.sources: added
+	* MonoWSDL.cs: Added wsdl code by Erik LeBel.
