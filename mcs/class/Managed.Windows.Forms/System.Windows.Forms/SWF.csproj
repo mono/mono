@@ -659,6 +659,16 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "StatusBarPanelClickEventArgs.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "StatusBarPanelClickEventHandler.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "StatusBarPanelStyle.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -680,6 +690,41 @@
                 />
                 <File
                     RelPath = "TODOAttribute.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "ToolBar.cs"
+                    SubType = "Component"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "ToolBarAppearance.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "ToolBarButton.cs"
+                    SubType = "Component"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "ToolBarButtonClickEventArgs.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "ToolBarButtonClickEventHandler.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "ToolBarButtonStyle.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "ToolBarTextAlign.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
