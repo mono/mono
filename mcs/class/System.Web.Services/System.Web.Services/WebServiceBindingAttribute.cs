@@ -8,7 +8,7 @@
 //
 
 namespace System.Web.Services {
-	[AttributeUsage(AttributeTargets.Class)]
+	[AttributeUsage(AttributeTargets.Class, AllowMultiple = true)]
 	public sealed class WebServiceBindingAttribute : Attribute {
 
 		#region Fields

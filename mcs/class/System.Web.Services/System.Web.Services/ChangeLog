@@ -1,3 +1,8 @@
+2004-02-05  Alon Gazit <along@mainsoft.com>
+
+	* WebServiceBindingAttribute.cs: This attribute is multiuse.
+	Changed the AttributeUsage attribute.
+
 2004-01-10  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* WebService.cs: added SetContext ().
