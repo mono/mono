@@ -1,8 +1,18 @@
 2002-07-29  Martin Baulig  <martin@gnome.org>
 
-	* parameter.cs (Parameter.Modifier): Added `ISBYREF = OUT|REF'.
+	* parameter.cs (Parameter.Modifier): Added `ISBYREF = 8'.  This
+	is a flag which specifies that it's either ref or out.
 	(Parameter.GetParameterInfo (DeclSpace, int, out bool)): Changed
-	the out parameter to `out Parameter.Modifier mod'.
+	the out parameter to `out Parameter.Modifier mod', also set the
+	Parameter.Modifier.ISBYREF flag on it if it's either ref or out.
+
+	* support.cs (InternalParameters.ParameterModifier): Distinguish
+	between Parameter.Modifier.OUT and Parameter.Modifier.REF, set the
+	Parameter.Modifier.ISBYREF flag if it's either ref or out.
+
+	* expression.cs (Argument.GetParameterModifier): Distinguish
+	between Parameter.Modifier.OUT and Parameter.Modifier.REF, set the
+	Parameter.Modifier.ISBYREF flag if it's either ref or out.
 
 2002-07-29  Martin Baulig  <martin@gnome.org>
 

@@ -2995,10 +2995,16 @@ namespace Mono.CSharp {
 
 		public Parameter.Modifier GetParameterModifier ()
 		{
-			if (ArgType == AType.Ref || ArgType == AType.Out)
-				return Parameter.Modifier.OUT;
+			switch (ArgType) {
+			case ArgType.Out:
+				return Parameter.Modifier.OUT | Parameter.Modifier.ISBYREF;
 
-			return Parameter.Modifier.NONE;
+			case ArgType.Ref:
+				return Parameter.Modifier.REF | Parameter.Modifier.ISBYREF;
+
+			default:
+				return Parameter.Modifier.NONE;
+			}
 		}
 
 	        public static string FullDesc (Argument a)
@@ -3012,10 +3018,10 @@ namespace Mono.CSharp {
 		{
 			Expr = Expr.Resolve (ec);
 
-			if (ArgType == AType.Expression){
-				if (Expr == null)
-					return false;
+			if (Expr == null)
+				return false;
 
+			if (ArgType == AType.Expression){
 				if ((Expr.eclass == ExprClass.Type) && (Expr is TypeExpr)) {
 					Report.Error (118, loc, "Expression denotes a `type' " +
 						      "where a `variable or value' was expected");
@@ -3043,7 +3049,7 @@ namespace Mono.CSharp {
 				return false;
 			}
 				
-			return Expr != null;
+			return true;
 		}
 
 		public void Emit (EmitContext ec)
@@ -3464,8 +3470,10 @@ namespace Mono.CSharp {
 
 				Argument a = (Argument) arguments [i];
 
-				Parameter.Modifier a_mod = a.GetParameterModifier ();
-				Parameter.Modifier p_mod = pd.ParameterModifier (i);
+				Parameter.Modifier a_mod = a.GetParameterModifier () &
+					~(Parameter.Modifier.OUT | Parameter.Modifier.REF);
+				Parameter.Modifier p_mod = pd.ParameterModifier (i) &
+					~(Parameter.Modifier.OUT | Parameter.Modifier.REF);
 
 				if (a_mod == p_mod) {
 
@@ -3473,8 +3481,7 @@ namespace Mono.CSharp {
 						if (!ImplicitConversionExists (ec, a.Expr, pd.ParameterType (i)))
 							return false;
 										
-					if (a_mod == Parameter.Modifier.REF ||
-					    a_mod == Parameter.Modifier.OUT) {
+					if ((a_mod & Parameter.Modifier.ISBYREF) != 0) {
 						Type pt = pd.ParameterType (i);
 
 						if (!pt.IsByRef)
@@ -3525,8 +3532,10 @@ namespace Mono.CSharp {
 
 				Argument a = (Argument) arguments [i];
 
-				Parameter.Modifier a_mod = a.GetParameterModifier ();
-				Parameter.Modifier p_mod = pd.ParameterModifier (i);
+				Parameter.Modifier a_mod = a.GetParameterModifier () &
+					~(Parameter.Modifier.OUT | Parameter.Modifier.REF);
+				Parameter.Modifier p_mod = pd.ParameterModifier (i) &
+					~(Parameter.Modifier.OUT | Parameter.Modifier.REF);
 
 				if (a_mod == p_mod ||
 				    (a_mod == Parameter.Modifier.NONE && p_mod == Parameter.Modifier.PARAMS)) {
@@ -3534,8 +3543,7 @@ namespace Mono.CSharp {
 						if (!ImplicitConversionExists (ec, a.Expr, pd.ParameterType (i)))
 							return false;
 					
-					if (a_mod == Parameter.Modifier.REF ||
-					    a_mod == Parameter.Modifier.OUT) {
+					if ((a_mod & Parameter.Modifier.ISBYREF) != 0) {
 						Type pt = pd.ParameterType (i);
 
 						if (!pt.IsByRef)
@@ -3726,8 +3734,14 @@ namespace Mono.CSharp {
 					if (a_expr != conv)
 						a.Expr = conv;
 				}
+
+				Parameter.Modifier a_mod = a.GetParameterModifier () &
+					~(Parameter.Modifier.OUT | Parameter.Modifier.REF);
+				Parameter.Modifier p_mod = pd.ParameterModifier (j) &
+					~(Parameter.Modifier.OUT | Parameter.Modifier.REF);
+
 				
-				if (a.GetParameterModifier () != pd.ParameterModifier (j) &&
+				if (a_mod != p_mod &&
 				    pd.ParameterModifier (pd_count - 1) != Parameter.Modifier.PARAMS) {
 					if (!Location.IsNull (loc)) {
 						Console.WriteLine ("A:P: " + a.GetParameterModifier ());

@@ -938,8 +938,8 @@ opt_parameter_modifier
 	;
 
 parameter_modifier
-	: REF			{ $$ = Parameter.Modifier.REF; }
-	| OUT			{ $$ = Parameter.Modifier.OUT; }
+	: REF			{ $$ = Parameter.Modifier.REF | Parameter.Modifier.ISBYREF; }
+	| OUT			{ $$ = Parameter.Modifier.OUT | Parameter.Modifier.ISBYREF; }
 	;
 
 parameter_array

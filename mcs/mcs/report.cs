@@ -1,3 +1,4 @@
+#define DEBUG
 //
 // report.cs: report errors and warnings.
 //
@@ -157,7 +158,7 @@ namespace Mono.CSharp {
                         }
                 }
 
-		public const int DebugFlags = 0;
+		public const int DebugFlags = 1;
 
 		[Conditional ("DEBUG")]
 		static public void Debug (string message, params object[] args)

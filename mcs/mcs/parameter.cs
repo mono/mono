@@ -27,7 +27,8 @@ namespace Mono.CSharp {
 			REF     = 1,
 			OUT     = 2,
 			PARAMS  = 4,
-			ISBYREF = OUT|REF
+			// This is a flag which says that it's either REF or OUT.
+			ISBYREF = 8
 		}
 
 		public readonly Expression TypeName;
@@ -66,7 +67,7 @@ namespace Mono.CSharp {
 		
 		public Type ExternalType (DeclSpace ds, Location l)
 		{
-			if ((ModFlags & (Parameter.Modifier.REF | Parameter.Modifier.OUT)) != 0){
+			if ((ModFlags & Parameter.Modifier.ISBYREF) != 0){
 				string n = parameter_type.FullName + "&";
 
 				Type t = RootContext.LookupType (ds, n, false, l);
@@ -401,6 +402,9 @@ namespace Mono.CSharp {
 			//
 			Parameter p = FixedParameters [idx];
 			mod = p.ModFlags;
+
+			if ((mod & (Parameter.Modifier.REF | Parameter.Modifier.OUT)) != 0)
+				mod |= Parameter.Modifier.ISBYREF;
 
 			return p.ParameterType;
 		}
