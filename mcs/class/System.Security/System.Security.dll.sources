@@ -22,6 +22,7 @@ System.Security.Cryptography.Xml/KeyInfoNode.cs
 System.Security.Cryptography.Xml/KeyInfoRetrievalMethod.cs
 System.Security.Cryptography.Xml/KeyInfoX509Data.cs
 System.Security.Cryptography.Xml/KeyReference.cs
+System.Security.Cryptography.Xml/Manifest.cs
 System.Security.Cryptography.Xml/Reference.cs
 System.Security.Cryptography.Xml/ReferenceList.cs
 System.Security.Cryptography.Xml/RSAKeyValue.cs
