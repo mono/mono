@@ -31,7 +31,8 @@ COMPILER_SOURCES = \
 	rootcontext.cs			\
 	statement.cs			\
 	support.cs			\
-	typemanager.cs
+	typemanager.cs			\
+	symbolwriter.cs
 
 TEST_TOKENIZER_SOURCES = test-token.cs $(COMMON_SOURCES)
 

@@ -12,7 +12,6 @@ using System.IO;
 using System.Collections;
 using System.Reflection;
 using System.Reflection.Emit;
-using System.Diagnostics.SymbolStore;
 
 namespace Mono.CSharp {
 
@@ -24,7 +23,7 @@ namespace Mono.CSharp {
 		public static AssemblyBuilder AssemblyBuilder;
 		public static ModuleBuilder   ModuleBuilder;
 
-		static public ISymbolWriter SymbolWriter;
+		static public SymbolWriter SymbolWriter;
 
 		public static string Basename (string name)
 		{
@@ -68,7 +67,7 @@ namespace Mono.CSharp {
 		//
 		static void InitializeSymbolWriter ()
 		{
-			SymbolWriter = ModuleBuilder.GetSymWriter ();
+			SymbolWriter = SymbolWriter.GetSymbolWriter (ModuleBuilder);
 
 			//
 			// If we got an ISymbolWriter instance, initialize it.
@@ -78,8 +77,6 @@ namespace Mono.CSharp {
 					-18, "Cannot find any symbol writer");
 				return;
 			}
-
-			Location.DefineSymbolDocuments (SymbolWriter);
 		}
 
 		//

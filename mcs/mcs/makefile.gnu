@@ -1,4 +1,5 @@
 MCS = mcs
+MONO = mono
 MCS_FLAGS = /target:exe $(MCS_DEFINES)
 INSTALL = /usr/bin/install
 prefix = /usr
@@ -31,7 +32,8 @@ COMPILER_SOURCES = \
 	rootcontext.cs			\
 	statement.cs			\
 	support.cs			\
-	typemanager.cs
+	typemanager.cs			\
+	symbolwriter.cs
 
 TEST_TOKENIZER_SOURCES = test-token.cs $(COMMON_SOURCES)
 
@@ -40,8 +42,11 @@ all: mcs.exe
 mcs.exe: $(COMPILER_SOURCES) 
 	$(MCS) $(MCS_FLAGS) -o $@ $(COMPILER_SOURCES)
 
+mcs-mono.exe: $(COMPILER_SOURCES)
+	$(MONO) mcs.exe $(MCS_FLAGS) -o $@ $(COMPILER_SOURCES)
+
 mcs-mono2.exe: $(COMPILER_SOURCES)
-	$(MCS) $(MCS_FLAGS) --debug -o $@ $(COMPILER_SOURCES)
+	$(MONO) mcs.exe $(MCS_FLAGS) --debug -o $@ $(COMPILER_SOURCES)
 
 cs-parser.cs: cs-parser.jay
 	../jay/jay -ctv < ../jay/skeleton.cs $^ > $@

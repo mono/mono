@@ -147,12 +147,10 @@ namespace Mono.CSharp {
 		//   If we're compiling with debugging support, this is called between parsing and
 		//   code generation to register all the source files with the symbol writer.		//
 		// </remarks>
-		static public void DefineSymbolDocuments (ISymbolWriter symwriter)
+		static public void DefineSymbolDocuments (SymbolWriter symwriter)
 		{
 			foreach (SourceFile file in source_list)
-				file.SymbolDocument = symwriter.DefineDocument (
-					file.Path, SymLanguageType.CSharp, SymLanguageVendor.Microsoft,
-					SymDocumentType.Text);
+				file.SymbolDocument = symwriter.DefineDocument (file.Path);
 		}
 		
 		public Location (int row)
