@@ -1,3 +1,7 @@
+2004-11-26  Raja R Harinath  <rharinath@novell.com>
+
+	* harness.mk: Fix quoting.
+
 2004-11-26  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* Makefile: test-50.cs is NO_PASS. See bug #69820.

@@ -15,10 +15,10 @@ all-local $(STD_TARGETS:=-local):
 	@f=../$*.cs; options=`sed -n 's,^// Compiler options:,,p' $$f`; \
 	case $$options in *-t:library*) ext=dll ;; *-t:module*) ext=netmodule ;; *) ext=exe ;; esac; \
 	testlogfile="$*.log" ; \
-        echo "*** $(CSCOMPILE) $$options -out:$*.$$ext $$f" > $$testlogfile ; \
+        echo '*** $(CSCOMPILE)' "$$options -out:$*.$$ext $$f" > $$testlogfile ; \
 	if $(CSCOMPILE) $$options -out:$*.$$ext $$f >> $$testlogfile 2>&1 ; then \
 	  if test -f $*.exe; then \
-	    echo '*** $(TEST_RUNTIME) ./$*.exe' >> $$testlogfile ; \
+	    echo '*** $(TEST_RUNTIME) -O=-all ./$*.exe' >> $$testlogfile ; \
 	      if $(TEST_RUNTIME) -O=-all ./$*.exe >> $$testlogfile 2>&1 ; then \
 		echo "PASS: $*" > $@ ; \
 	        rm -f $$testlogfile ; \
