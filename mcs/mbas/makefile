@@ -42,7 +42,7 @@ all: mbas.exe
 parser: mb-parser.cs
 
 test: mbas.exe
-	./mbas testmbas/WriteOk.vb
+	./mbas @testmbas/filelist
 
 mbas.exe: $(COMPILER_SOURCES)
 	$(CSC) $(CSCFLAGS) $(COMPILER_SOURCES)

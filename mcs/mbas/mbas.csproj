@@ -253,6 +253,10 @@
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
+                <File
+                    RelPath = "testmbas\filelist"
+                    BuildAction = "Content"
+                />
             </Include>
         </Files>
     </CSHARP>

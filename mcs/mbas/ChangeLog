@@ -1,4 +1,8 @@
 2002-10-20  Rafael Teixeira <rafaelteixeirabr@hotmail.com>
+	* using Mono.GetOptions preliminar support for response files, 
+	  changed the makefile target 'test' for use o response file testmbas/filelist
+
+2002-10-20  Rafael Teixeira <rafaelteixeirabr@hotmail.com>
 	* merged many sources from mcs/mcs, to resync
 
 2002-10-05  Rafael Teixeira <rafaelteixeirabr@hotmail.com>
