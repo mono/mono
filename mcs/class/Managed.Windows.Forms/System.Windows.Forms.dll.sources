@@ -95,6 +95,7 @@ System.Windows.Forms/StatusBarPanelBorderStyle.cs
 System.Windows.Forms/StatusBarPanelClickEventArgs.cs
 System.Windows.Forms/StatusBarPanelClickEventHandler.cs
 System.Windows.Forms/StatusBarPanelStyle.cs
+System.Windows.Forms/Timer.cs
 System.Windows.Forms/TODOAttribute.cs
 System.Windows.Forms/UICues.cs
 System.Windows.Forms/UICuesEventArgs.cs
