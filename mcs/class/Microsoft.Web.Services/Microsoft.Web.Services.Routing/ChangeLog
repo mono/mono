@@ -1,3 +1,8 @@
+2003-09-06  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* RoutingInputFilter.cs: Stubbed for compilation (configuration).
+	* RoutingOutputFilter.cs: Stubbed for compilation (configuration).
+
 2003-09-04  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* Path.cs: Corrected typos to fix compilation.
