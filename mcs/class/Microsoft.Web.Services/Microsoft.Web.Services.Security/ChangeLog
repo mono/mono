@@ -1,3 +1,18 @@
+2003-10-26  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* AsymmetricDecryptionKey.cs: Added internal property to the 
+	asymmetric keypair.
+	* EncryptedData.cs: Added minimal support for decryption.
+	* EncryptedKey.cs: Added minimal support for decryption.
+	* KeyIdentifier.cs: Added internal properties to get access to 
+	X509Certificate, DecryptionKey and EncryptionKey from the key identifier.
+	* Security.cs: Implemented support for EncryptedData in LoadXml and 
+	implemented part of GetXml.
+	* SecurityInputFilter.cs: Now process incoming security headers (but 
+	not ExtendedSecurity).
+	* SecurityOutputFilter.cs: Now uses Security class to Load/Get the 
+	security headers (code moved into Security.cs).
+
 2003-10-25  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* EncryptedData.cs: Can now encrypt SOAP body message (no decrypt yet).

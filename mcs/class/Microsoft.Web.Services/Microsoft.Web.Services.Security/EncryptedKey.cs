@@ -19,11 +19,13 @@ namespace Microsoft.Web.Services.Security {
 
 	public class EncryptedKey : IXmlElement {
 
+		private DecryptionKey dk;
 		private EncryptionKey ek;
 		private ReferenceList list;
 		private string keyex;
 		private string session;
 		private SymmetricEncryptionKey key;
+		private byte[] decdata;
 
 		internal EncryptedKey ()
 		{
@@ -111,6 +113,9 @@ namespace Microsoft.Web.Services.Security {
 				default:
 					return null;
 			}
+			// for decryption we must use the decrypted key (from the keyexchange)
+			if ((sa != null) && (decdata != null))
+				sa.Key = decdata;
 			return sa;
 		}
 
@@ -176,6 +181,59 @@ namespace Microsoft.Web.Services.Security {
 				throw new ArgumentNullException ("element");
 			if ((element.LocalName != XmlEncryption.ElementNames.EncryptedKey) || (element.NamespaceURI != XmlEncryption.NamespaceURI))
 				throw new System.ArgumentException ("invalid LocalName or NamespaceURI");
+
+			XmlNodeList xnl = element.GetElementsByTagName (XmlEncryption.ElementNames.EncryptionMethod, XmlEncryption.NamespaceURI);
+			if ((xnl != null) && (xnl.Count > 0)) {
+				XmlAttribute ema = xnl [0].Attributes [XmlEncryption.AttributeNames.Algorithm];
+				if (ema != null)
+					keyex = ema.InnerText;
+			}
+
+			xnl = element.GetElementsByTagName (XmlSignature.ElementNames.KeyInfo, XmlSignature.NamespaceURI);
+			if ((xnl != null) && (xnl.Count > 0)) {
+				KeyInfo ki = new KeyInfo ();
+				ki.LoadXml ((XmlElement) xnl [0]);
+				foreach (KeyInfoClause kic in ki) {
+					if (kic is KeyInfoNode) {
+						KeyInfoNode kin = (kic as KeyInfoNode);
+						if ((kin != null) && (kin.Value.LocalName == WSSecurity.ElementNames.SecurityTokenReference)) {
+							SecurityTokenReference str = new SecurityTokenReference (kin.Value);
+							if (str.KeyIdentifier != null)
+								dk = str.KeyIdentifier.DecryptionKey;
+						}
+					}
+				}
+			}
+
+			byte[] encdata = null;
+			xnl = element.GetElementsByTagName (XmlEncryption.ElementNames.CipherData, XmlEncryption.NamespaceURI);
+			if ((xnl != null) && (xnl.Count > 0)) {
+				XmlElement cd = (XmlElement) xnl [0];
+				foreach (XmlNode xn in cd.ChildNodes) {
+					if ((xn.LocalName == XmlEncryption.ElementNames.CipherValue) && (xn.NamespaceURI == XmlEncryption.NamespaceURI)) {
+						encdata = Convert.FromBase64String (xn.InnerText);
+					}
+				}
+			}
+
+			xnl = element.GetElementsByTagName (XmlEncryption.ElementNames.ReferenceList, XmlEncryption.NamespaceURI);
+			if ((xnl != null) && (xnl.Count > 0)) {
+				list.LoadXml ((XmlElement) xnl [0]);
+			}
+
+			AsymmetricDecryptionKey adk = (dk as AsymmetricDecryptionKey);
+			if ((adk != null) && (encdata != null)) {
+				AsymmetricKeyExchangeDeformatter def = null;
+				switch (keyex) {
+					case XmlEncryption.AlgorithmURI.RSA15:
+						def = new RSAPKCS1KeyExchangeDeformatter (adk.Algorithm);
+						decdata = def.DecryptKeyExchange (encdata);
+						break;
+					case XmlEncryption.AlgorithmURI.RSAOAEP:
+						// TODO
+						break;
+				}
+			}
 			// TODO
 		}
 	}

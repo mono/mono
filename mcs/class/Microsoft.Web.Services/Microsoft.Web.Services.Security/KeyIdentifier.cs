@@ -11,6 +11,7 @@ using System;
 using System.Security.Cryptography.Xml;
 using System.Xml;
 using Microsoft.Web.Services;
+using Microsoft.Web.Services.Security.X509;
 #if !WSE1
 using Microsoft.Web.Services.Xml;
 #endif
@@ -85,7 +86,7 @@ namespace Microsoft.Web.Services.Security {
 				throw new ArgumentNullException ("element");
 
 			if ((element.LocalName != WSSecurity.ElementNames.KeyIdentifier) || (element.NamespaceURI != WSSecurity.NamespaceURI))
-				throw new System.ArgumentException ("invalid LocalName or NamespaceURI");
+				throw new ArgumentException ("invalid LocalName or NamespaceURI");
 
 			try {
 				kivalue = Convert.FromBase64String (element.InnerText);
@@ -105,6 +106,43 @@ namespace Microsoft.Web.Services.Security {
 					default:
 						throw new SecurityFormatException ("missing namespace");
 				}
+			}
+		}
+
+		internal X509Certificate Certificate {
+			get {
+				if ((vtype.Name == "X509v3") && (vtype.Namespace == WSSecurity.NamespaceURI)) {
+					// TODO - use microsoft.web.service config in .exe.config for store location
+					X509CertificateStore store = X509CertificateStore.LocalMachineStore (X509CertificateStore.MyStore);
+					if (store.OpenRead ()) {
+						X509CertificateCollection coll = store.FindCertificateByKeyIdentifier (kivalue);
+						if ((coll != null) && (coll.Count > 0)) {
+							return coll [0];
+						}
+						store.Close ();
+					}
+				}
+				return null;
+			}
+		}
+
+		internal DecryptionKey DecryptionKey {
+			get {
+				X509Certificate x509 = Certificate;
+				if (x509 != null) {
+					return new AsymmetricDecryptionKey (x509.Key);
+				}
+				return null;
+			}
+		}
+
+		internal EncryptionKey EncryptionKey {
+			get {
+				X509Certificate x509 = Certificate;
+				if (x509 != null) {
+					return new AsymmetricEncryptionKey (x509.PublicKey);
+				}
+				return null;
 			}
 		}
 	}

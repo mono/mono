@@ -24,5 +24,9 @@ namespace Microsoft.Web.Services.Security {
 			else
 				throw new SecurityFault ("not RSACryptoServiceProvider", null);
 		}
+
+		internal AsymmetricAlgorithm Algorithm {
+			get { return key; }
+		}
 	}
 }

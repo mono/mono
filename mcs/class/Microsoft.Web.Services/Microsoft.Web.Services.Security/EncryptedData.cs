@@ -70,15 +70,8 @@ namespace Microsoft.Web.Services.Security {
 			}
 #endif
 			type = XmlEncryption.TypeURI.Content;
-/*			if (reference == null)
-				type = XmlEncryption.TypeURI.Content;
-			else if (reference [0] == '#')
-				type = XmlEncryption.TypeURI.Element;
-			else
-				throw new ArgumentException ("reference must start with a #");*/
 		}
 
-		[MonoTODO]
 		public EncryptedData (XmlElement element, EncryptedKey encryptedKey) 
 		{
 			this.encryptedKey = encryptedKey;
@@ -124,15 +117,47 @@ namespace Microsoft.Web.Services.Security {
 			}
 		}
 
-		[MonoTODO]
+		[MonoTODO("incomplete - only works for soap:Body")]
 		public XmlElement Decrypt ()
 		{
 			if (target == null)
 				throw new InvalidOperationException ("no document to decrypt");
-			DecryptionKey dk = token.DecryptionKey;
-			if (dk == null)
+			if ((encryptedKey == null) || (encryptedKey.Key == null))
 				throw new InvalidOperationException ("no key to decrypt with");
-			return null;
+			
+			string algo = null;
+			XmlNodeList xnl = target.GetElementsByTagName (XmlEncryption.ElementNames.EncryptionMethod, XmlEncryption.NamespaceURI);
+			if ((xnl != null) && (xnl.Count > 0)) {
+				XmlAttribute ema = xnl [0].Attributes [XmlEncryption.AttributeNames.Algorithm];
+				if (ema != null)
+					algo = ema.InnerText;
+			}
+			if (algo != encryptedKey.SessionAlgorithmURI)
+				throw new Exception ("TODO ???");
+
+			byte[] encdata = null;
+			xnl = target.GetElementsByTagName (XmlEncryption.ElementNames.CipherData, XmlEncryption.NamespaceURI);
+			if ((xnl != null) && (xnl.Count > 0)) {
+				XmlElement cd = (XmlElement) xnl [0];
+				foreach (XmlNode xn in cd.ChildNodes) {
+					if ((xn.LocalName == XmlEncryption.ElementNames.CipherValue) && (xn.NamespaceURI == XmlEncryption.NamespaceURI)) {
+						encdata = Convert.FromBase64String (xn.InnerText);
+					}
+				}
+			}
+
+			// get the IV in front of the encrypted data
+			int ivLength = encryptedKey.Key.Algorithm.IV.Length;
+			byte[] iv = new byte [ivLength];
+			Buffer.BlockCopy (encdata, 0, iv, 0, ivLength);
+			encryptedKey.Key.Algorithm.IV = iv;
+
+			ICryptoTransform ct = encryptedKey.Key.Algorithm.CreateDecryptor ();
+			byte[] decdata = ct.TransformFinalBlock (encdata, ivLength, encdata.Length - ivLength);
+			string xml = Encoding.UTF8.GetString (decdata);
+			target.ParentNode.InnerXml = xml;
+
+			return target;
 		}
 
 		// copied from SoapEnvelope.cs to avoid creating the object
@@ -228,6 +253,15 @@ namespace Microsoft.Web.Services.Security {
 		{
 			if (element == null)
 				throw new ArgumentNullException ("element");
+			if ((element.LocalName != XmlEncryption.ElementNames.EncryptedData) || (element.NamespaceURI != XmlEncryption.NamespaceURI))
+				throw new ArgumentException ("invalid LocalName or NamespaceURI");
+
+			XmlAttribute xa = element.Attributes [XmlEncryption.AttributeNames.Type];
+			if (xa != null) {
+				Type = xa.InnerText;
+			}
+
+			target = element;
 		}
 	}
 }
