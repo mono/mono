@@ -776,7 +776,6 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
-		[MonoTODO]
 		protected override void PrepareControlHierarchy()
 		{
 			if(Controls.Count > 0)
@@ -796,35 +795,139 @@ namespace System.Web.UI.WebControls
 				{
 					int              nCols = Columns.Count;
 					DataGridColumn[] cols = new DataGridColumn[nCols];
-					Style            displayStyle;
+					Style            deployStyle;
 					int              counter;
 					if(nCols > 0)
 					{
 						Columns.CopyTo(cols, 0);
 					}
-					displayStyle = null;
+					deployStyle = null;
 					if(alternatingItemStyle != null)
 					{
-						displayStyle = new TableItemStyle();
-						displayStyle.CopyFrom(itemStyle);
-						displayStyle.CopyFrom(alternatingItemStyle);
+						deployStyle = new TableItemStyle();
+						deployStyle.CopyFrom(itemStyle);
+						deployStyle.CopyFrom(alternatingItemStyle);
 					} else
 					{
-						displayStyle = itemStyle;
+						deployStyle = itemStyle;
 					}
 					for(counter = 0; counter < rows.Count; counter++)
 					{
-						PrepareControlHierarchyForItem((DataGridItem) rows[counter]);
+						PrepareControlHierarchyForItem(cols, (DataGridItem) rows[counter], counter, deployStyle);
 					}
-					throw new NotImplementedException();
 				}
 			}
 		}
 
-		[MonoTODO("Private_Prepare_Control_Hierarchy_For_Item")]
-		private void PrepareControlHierarchyForItem(DataGridItem item)
+		private void PrepareControlHierarchyForItem(DataGridColumn[] cols, DataGridItem item, int index, Style deployStyle)
 		{
-			throw new NotImplementedException();
+			switch(item.ItemType)
+			{
+				case ListItemType.Header: if(!ShowHeader)
+				                          {
+				                          	item.Visible = false;
+				                          	break;
+				                          }
+				                          if(headerStyle != null)
+				                          {
+				                          	item.MergeStyle(headerStyle);
+				                          	goto case ListItemType.Separator;
+				                          }
+				                          break;
+				case ListItemType.Footer: if(!ShowFooter)
+				                          {
+				                          	item.Visible = false;
+				                          	break;
+				                          }
+				                          if(footerStyle != null)
+				                          {
+				                          	item.MergeStyle(footerStyle);
+				                          	goto case ListItemType.Separator;
+				                          }
+				                          break;
+				case ListItemType.Item  : item.MergeStyle(itemStyle);
+				                          goto case ListItemType.Separator;
+				case ListItemType.AlternatingItem:
+				                          item.MergeStyle(deployStyle);
+				                          goto case ListItemType.Separator;
+				case ListItemType.SelectedItem:
+				                          Style selStyle = new TableItemStyle();
+				                          if( (item.ItemIndex % 2) == 0)
+				                          {
+				                          	selStyle.CopyFrom(itemStyle);
+				                          } else
+				                          {
+				                          	selStyle.CopyFrom(deployStyle);
+				                          }
+				                          selStyle.CopyFrom(selectedItemStyle);
+				                          item.MergeStyle(selStyle);
+				                          goto case ListItemType.Separator;
+				case ListItemType.EditItem:
+				                          Style edStyle = new TableItemStyle();
+				                          if( (item.ItemIndex % 2) == 0)
+				                          {
+				                          	edStyle.CopyFrom(itemStyle);
+				                          } else
+				                          {
+				                          	edStyle.CopyFrom(deployStyle);
+				                          }
+				                          edStyle.CopyFrom(editItemStyle);
+				                          item.MergeStyle(edStyle);
+				                          goto case ListItemType.Separator;
+				case ListItemType.Pager : if(pagerStyle == null)
+				                          {
+				                          	break;
+				                          }
+				                          if(!pagerStyle.Visible)
+				                          {
+				                          	item.Visible = false;
+				                          }
+				                          if(index == 0)
+				                          {
+				                          	if(!pagerStyle.IsPagerOnTop)
+				                          	{
+				                          		item.Visible = false;
+				                          		break;
+				                          	}
+				                          } else
+				                          {
+				                          	if(!pagerStyle.IsPagerOnBottom)
+				                          	{
+				                          		item.Visible = false;
+				                          		break;
+				                          	}
+				                          }
+				                          item.MergeStyle(pagerStyle);
+				                          goto case ListItemType.Separator;
+				case ListItemType.Separator:
+				                          TableCellCollection cells = item.Cells;
+				                          int cellCount = cells.Count;
+				                          if(cellCount > 0 && item.ItemType != ListItemType.Pager)
+				                          {
+				                          	for(int i = 0; i < cellCount; i++)
+				                          	{
+				                          		Style colStyle = null;
+				                          		if(cols[i].Visible)
+				                          		{
+				                          			switch (item.ItemTyle)
+				                          			{
+				                          				case ListItemType.Header : colStyle = cols[i].HeaderStyleInternal;
+				                          				                           break;
+				                          				case ListItemType.Footer : colStyle = cols[i].FooterStyleInternal;
+				                          				                           break;
+				                          				default                  : colStyle = cols[i].ItemStyleInternal;
+				                          				                           break;
+				                          			}
+				                          			item.MergeStyle(colStyle);
+				                          		} else
+				                          		{
+				                          			cells[i].Visible = false;
+				                          		}
+				                          	}
+				                          }
+				                          break;
+				default                 : goto case ListItemType.Separator;
+			}
 		}
 
 		[MonoTODO]

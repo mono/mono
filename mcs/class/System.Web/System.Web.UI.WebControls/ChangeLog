@@ -1,3 +1,9 @@
+2002-08-06      Gaurav Vaish <gvaish_mono@lycos.com>
+
+	* DataGridColumn.cs           - Added internal methods to get the
+	                                various styles (needed in DataGrid.cs)
+	* DataGrid.cs                 - Completed the method
+	                                PrepareControlHierarchy()
 
 2002-08-06      Gaurav Vaish <gvaish_mono@lycos.com>
 

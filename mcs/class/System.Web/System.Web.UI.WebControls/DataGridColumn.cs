@@ -35,6 +35,30 @@ namespace System.Web.UI.WebControls
 			viewState = new StateBag();
 		}
 
+		internal TableItemStyle FooterStyleInternal
+		{
+			get
+			{
+				return footerStyle;
+			}
+		}
+
+		internal TableItemStyle HeaderStyleInternal
+		{
+			get
+			{
+				return headerStyle;
+			}
+		}
+
+		internal TableItemStyle ItemStyleInternal
+		{
+			get
+			{
+				return itemStyle;
+			}
+		}
+
 		public virtual TableItemStyle FooterStyle
 		{
 			get
