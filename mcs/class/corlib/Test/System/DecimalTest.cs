@@ -508,32 +508,32 @@ namespace MonoTests.System {
             S.Decimal d;
 
             d = new S.Decimal(-1.2345678f);
-            Assert((decimal)d == -1.234568m);
+            AssertEquals("A#01", -1.234568m, (decimal)d);
 
             d=3;
-            Assert(3.0f == (float)d);
+            AssertEquals("A#02", 3.0f, (float)d);
 
             d = new S.Decimal(0.0f);
-            Assert((decimal)d == 0m);
-            Assert(0.0f == (float)d);
+            AssertEquals("A#03", 0m, (decimal)d);
+            AssertEquals("A#04", 0.0f, (float)d);
 
             d = new S.Decimal(1.0f);
-            Assert((decimal)d == 1m);
-            Assert(1.0f == (float)d);
+            AssertEquals("A#05", 1m, (decimal)d);
+            AssertEquals("A#06", 1.0f, (float)d);
 
             d = new S.Decimal(-1.2345678f);
-            Assert((decimal)d == -1.234568m);
-            Assert(-1.234568f == (float)d);
+            AssertEquals("A#07", -1.234568m, (decimal)d);
+            AssertEquals("A#08", -1.234568f, (float)d);
 
             d = new S.Decimal(1.2345673f);
-            Assert((decimal)d == 1.234567m);
+            AssertEquals("A#09", 1.234567m, (decimal)d);
 
             d = new S.Decimal(1.2345673e7f);
-            Assert((decimal)d == 12345670m);
+            AssertEquals("A#10", 12345670m, (decimal)d);
 
             d = new S.Decimal(1.2345673e-17f);
-            Assert((decimal)d == 0.00000000000000001234567m);
-            Assert(1.234567e-17f == (float)d);
+            AssertEquals("A#11", 0.00000000000000001234567m, (decimal)d);
+            AssertEquals("A#12", 1.234567e-17f, (float)d);
 
             // test exceptions
             try

@@ -1,3 +1,8 @@
+2002-05-29  Nick Drochak  <ndrochak@gol.com>
+
+	* DecimalTest.cs: Use AssertEquals to get nice error report, and mark
+	each one with a unique message string so we know which one failed.
+
 2002-05-29  Lawrence Pit  <loz@cable.a2000.nl>
 
 	* DateTimeTest.cs: Added tests M01 to M03 to TestParseExact, 
