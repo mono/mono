@@ -250,11 +250,16 @@ namespace Mono.CSharp {
 				if (resolved != null)
 					return resolved;
 
-				NamespaceEntry curr_ns = NamespaceEntry;
-
 				string alias = Alias.ToString ();
+
+				// According to section 16.3.1, the namespace-or-type-name is resolved
+				// as if the immediately containing namespace body has no using-directives.
+				resolved = NamespaceEntry.Lookup (null, alias, true, false, Location);
+
+				NamespaceEntry curr_ns = NamespaceEntry.Parent;
+
 				while ((curr_ns != null) && (resolved == null)) {
-					resolved = curr_ns.Lookup (null, alias, false, Location);
+					resolved = curr_ns.Lookup (null, alias, false, false, Location);
 
 					if (resolved == null)
 						curr_ns = curr_ns.Parent;
@@ -395,7 +400,7 @@ namespace Mono.CSharp {
 				return ((Type) resolved).FullName;
 		}
 
-		public object Lookup (DeclSpace ds, string name, bool silent, Location loc)
+		public object Lookup (DeclSpace ds, string name, bool ignore_using, bool silent, Location loc)
 		{
 			object o;
 			Namespace ns;
@@ -408,7 +413,7 @@ namespace Mono.CSharp {
 				string first = name.Substring (0, pos);
 				string last = name.Substring (pos + 1);
 
-				o = Lookup (ds, first, silent, loc);
+				o = Lookup (ds, first, ignore_using, silent, loc);
 				if (o == null)
 					return null;
 
@@ -429,6 +434,9 @@ namespace Mono.CSharp {
 			o = NS.Lookup (ds, name);
 			if (o != null)
 				return o;
+
+			if (ignore_using)
+				return null;
 
 			//
 			// Check aliases.

@@ -1,3 +1,11 @@
+2004-09-13  Raja R Harinath  <rharinath@novell.com>
+
+	Fix bug #55770.
+	* namespace.cs (AliasEntry.Resolve): Implement section 16.3.1.
+	(NamespaceEntry.Lookup): Add new argument to flag if we want the
+	lookup to avoid symbols introduced by 'using'.
+	* rootcontext.cs (NamespaceLookup): Update.
+
 2004-09-12  Marek Safar  <marek.safar@seznam.cz>
 
 	* class.cs (TypeContainer.DoDefineMembers): Do not call

@@ -485,7 +485,7 @@ namespace Mono.CSharp {
 			// Try in the current namespace and all its implicit parents
 			//
 			for (NamespaceEntry ns = ds.NamespaceEntry; ns != null; ns = ns.ImplicitParent) {
-				object result = ns.Lookup (ds, name, silent, loc);
+				object result = ns.Lookup (ds, name, false, silent, loc);
 				if (result == null)
 					continue;
 
