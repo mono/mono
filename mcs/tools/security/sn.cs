@@ -136,14 +136,14 @@ namespace Mono.Tools {
 			return false;
 		}
 
-		static void ReSign (string assemblyName, RSA key) 
+		static bool ReSign (string assemblyName, RSA key) 
 		{
 			// this doesn't load the assembly (well it unloads it ;)
 			// http://weblogs.asp.net/nunitaddin/posts/9991.aspx
 			AssemblyName an = AssemblyName.GetAssemblyName (assemblyName);
 			if (an == null) {
 				Console.WriteLine ("Unable to load assembly: {0}", assemblyName);
-				return;
+				return false;
 			}
 
 			StrongName sign = new StrongName (key);
@@ -161,14 +161,14 @@ namespace Mono.Tools {
 			}
 
 			if (same) {
-				if (sign.Sign (assemblyName))
-					Console.WriteLine ("Assembly {0} signed.", assemblyName);
-				else
-					Console.WriteLine ("Couldn't sign the assembly {0}.", assemblyName);
+				bool signed = sign.Sign (assemblyName);
+				Console.WriteLine (signed ? "Assembly {0} signed." : "Couldn't sign the assembly {0}.", 
+						   assemblyName);
+				return signed;
 			}
-			else {
-				Console.WriteLine ("Couldn't sign the assembly {0} with this key pair.", assemblyName);
-			}
+			
+			Console.WriteLine ("Couldn't sign the assembly {0} with this key pair.", assemblyName);
+			return false;
 		}
 
 		static int Verify (string assemblyName, bool forceVerification) 
@@ -383,13 +383,15 @@ namespace Mono.Tools {
 				case "-R":
 					string filename = args [i++];
 					sn = new StrongName (ReadFromFile (args [i]));
-					ReSign (filename, sn.RSA);
+					if (! ReSign (filename, sn.RSA))
+						return 1;
 					break;
 				case "-Rc":
 					filename = args [i++];
 					csp.KeyContainerName = args [i];
 					rsa = new RSACryptoServiceProvider (csp);
-					ReSign (filename, rsa);
+					if (! ReSign (filename, rsa))
+						return 1;
 					break;
 				case "-t":
 					// Show public key token from file

@@ -1,3 +1,8 @@
+2004-06-21  Raja R Harinath  <rharinath@novell.com>
+
+	* sn.cs (ReSign): Return a bool indicating success or failure.
+	(Main): Return with failure if ReSign() fails.
+
 2004-06-11  Raja R Harinath  <rharinath@novell.com>
 
 	* Makefile (PROGRAM_INSTALL_DIR): New define.
