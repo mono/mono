@@ -25,9 +25,12 @@
 //
 //
 //
-// $Revision: 1.29 $
+// $Revision: 1.30 $
 // $Modtime: $
 // $Log: ThemeWin32Classic.cs,v $
+// Revision 1.30  2004/08/25 18:29:14  jordi
+// new methods, properties, and fixes for progressbar
+//
 // Revision 1.29  2004/08/25 00:43:13  ravindra
 // Fixed wrapping related issues in ToolBar control.
 //
@@ -206,7 +209,7 @@ namespace System.Windows.Forms
 			br_arrow = new SolidBrush (Color.Black);			
 			br_focus = new HatchBrush (HatchStyle.Percent50, ColorButtonFace, Color.Black);
 			pen_arrow = new Pen (Color.Black);
-			br_progressbarblock = new  SolidBrush (Color.FromArgb (255, 49, 106, 197));			
+			br_progressbarblock = new SolidBrush (Color.FromArgb (255, 0, 0, 128));
 
 			br_buttonface = new SolidBrush (ColorButtonFace);
 			br_buttonshadow = new SolidBrush (ColorButtonShadow);
@@ -1506,19 +1509,15 @@ namespace System.Windows.Forms
 			int increment = block_width + space_betweenblocks;
 			int x = client_area.X;
 
-			/* Background*/
-			dc.FillRectangle (br_buttonface, area);
-
-			/* Draw background*/
-
-			while ((x - client_area.X) < barpos_pixels) {
-				dc.FillRectangle (br_progressbarblock, x, client_area.Y, block_width, client_area.Height);
-				x  = x + increment;
-			}
-
 			/* Draw border */
 			DrawBorder3D (dc, area, Border3DStyle.SunkenInner, Border3DSide.All);
 			
+			/* Draw Blocks */
+			while ((x - client_area.X) < barpos_pixels) {
+
+				dc.FillRectangle (br_progressbarblock, x, client_area.Y, block_width, client_area.Height);
+				x  = x + increment;
+			}			
 		}
 		
 

@@ -5,10 +5,10 @@
 // distribute, sublicense, and/or sell copies of the Software, and to
 // permit persons to whom the Software is furnished to do so, subject to
 // the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be
 // included in all copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
 // EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -23,9 +23,12 @@
 //		Jordi Mas i Hernandez	jordi@ximian.com
 //
 //
-// $Revision: 1.6 $
+// $Revision: 1.7 $
 // $Modtime: $
 // $Log: ProgressBar.cs,v $
+// Revision 1.7  2004/08/25 18:29:14  jordi
+// new methods, properties, and fixes for progressbar
+//
 // Revision 1.6  2004/08/10 15:41:50  jackson
 // Allow control to handle buffering
 //
@@ -58,70 +61,224 @@ using System.ComponentModel;
 using System.Drawing.Imaging;
 using System.Drawing.Drawing2D;
 
-namespace System.Windows.Forms 
-{	
-	public sealed class ProgressBar : Control 
-	{	
+namespace System.Windows.Forms
+{
+	public sealed class ProgressBar : Control
+	{
 		#region Local Variables
 		private int maximum;
 		private int minimum;
 		private int step;
-		private int val;	
-		private Rectangle paint_area = new Rectangle ();		
+		private int val;
+		private Rectangle paint_area = new Rectangle ();
 		private Rectangle client_area = new Rectangle ();
 		#endregion	// Local Variables
 
+		#region Events
+		public new event EventHandler BackColorChanged;
+		public new event EventHandler BackgroundImageChanged;
+		public new event EventHandler CausesValidationChanged;
+		public new event EventHandler DoubleClick;
+		public new event EventHandler Enter;
+		public new event EventHandler FontChanged;
+		public new event EventHandler ForeColorChanged;
+		public new event EventHandler ImeModeChanged;
+		public new event KeyEventHandler KeyDown;
+		public new event KeyPressEventHandler KeyPress;
+		public new event KeyEventHandler KeyUp;
+		public new event EventHandler Leave;
+		public new event PaintEventHandler Paint;
+		public new event EventHandler RightToLeftChanged;
+		public new event EventHandler TabStopChanged;
+		public new event EventHandler TextChanged;
+		#endregion Events
+
 		#region Public Constructors
-		public ProgressBar() 
-		{			
+		public ProgressBar()
+		{
 			maximum = 100;
 			minimum = 0;
 			step = 10;
 			val = 0;
-			
+
+			base.Paint += new PaintEventHandler (OnPaintPB);
+			base.Resize += new EventHandler (OnResizeTB);
+
 			SetStyle (ControlStyles.UserPaint | ControlStyles.AllPaintingInWmPaint, true);
 			SetStyle (ControlStyles.ResizeRedraw | ControlStyles.Opaque, true);
 		}
 		#endregion	// Public Constructors
 
 		#region Public Instance Properties
-		public int Maximum {
+
+		public override bool AllowDrop
+		{
+			get { return base.AllowDrop; }
+			set {
+				base.AllowDrop = value;
+			}
+		}
+
+		// Setting this property in MS .Net 1.1 does not have any visual effect and it
+		// does not fires a BackColorChanged event
+		public override Color BackColor
+		{
+			get { return base.BackColor; }
+			set { BackColor = value; }
+		}
+
+		// Setting this property in MS .Net 1.1 does not have any visual effect and it
+		// does not fires a BackgroundImageChanged event
+		public override Image BackgroundImage
+		{
+			get { return base.BackgroundImage; }
+			set {BackgroundImage = value; }
+		}
+
+		public new bool CausesValidation
+		{
+			get { return base.CausesValidation; }
+			set {
+				if (base.CausesValidation == value)
+					return;
+
+				CausesValidation = value;
+				if (CausesValidationChanged != null)
+					CausesValidationChanged (this, new EventArgs ());
+			}
+		}
+
+		protected override CreateParams CreateParams
+		{
+			get { return base.CreateParams;	}
+		}
+
+		protected override ImeMode DefaultImeMode
+		{
+			get { return base.DefaultImeMode; }
+		}
+
+		protected override Size DefaultSize
+		{
+			get { return new Size(100, 23); }
+		}
+
+		// Setting this property in MS .Net 1.1 does not have any visual effect and it
+		// does not fires a FontChanged event
+		public override Font Font
+		{
+			get { return base.Font;	}
+			set { base.Font = value; }
+		}
+
+		// Setting this property in MS .Net 1.1 does not have any visual effect and it
+		// does not fires a FontChanged event
+		public override Color ForeColor
+		{
+			get { return base.ForeColor; }
+			set { base.ForeColor = value; }
+		}
+
+		public new ImeMode ImeMode
+		{
+			get { return base.ImeMode; }
+			set
+			{
+				if (value == base.ImeMode)
+					return;
+
+				base.ImeMode = value;
+				if (ImeModeChanged != null)
+					ImeModeChanged (this, EventArgs.Empty);
+			}
+		}
+
+		public int Maximum
+		{
 			get {
 				return maximum;
 			}
 			set {
 				if (value < 0)
-					throw new ArgumentException( 
+					throw new ArgumentException(
 						string.Format("Value '{0}' must be greater than or equal to 0.", value ));
-						
+
 				maximum = value;
-				Invalidate ();		
+				Refresh ();
 			}
 		}
-		
+
 		public int Minimum {
 			get {
 				return minimum;
 			}
 			set {
 				if (value < 0)
-					throw new ArgumentException( 
+					throw new ArgumentException(
 						string.Format("Value '{0}' must be greater than or equal to 0.", value ));
-						
+
 				minimum = value;
-				Invalidate ();
+				Refresh ();
 			}
 		}
 
-		public int Step {
-			get { 	return step; }
+		public override RightToLeft RightToLeft
+		{
+			get { return base.RightToLeft; }
+			set {
+				if (base.RightToLeft == value)
+					return;
+
+				base.RightToLeft = value;
+
+				if (RightToLeftChanged != null)
+					RightToLeftChanged (this, EventArgs.Empty);
+
+			}
+		}
+
+		public int Step
+		{
+			get { return step; }
 			set {
 				step = value;
-				Invalidate ();
+				Refresh ();
 			}
-		}		
-		
-		public int Value {
+		}
+
+		public new bool TabStop
+		{
+			get { return base.TabStop; }
+			set {
+				if (base.TabStop == value)
+					return;
+
+				base.TabStop = value;
+
+				if (TabStopChanged != null)
+					TabStopChanged (this, EventArgs.Empty);
+
+			}
+		}
+
+		public override string Text
+		{
+			get { return base.Text; }
+			set
+			{
+				if (value == base.Text)
+					return;
+
+				if (TextChanged != null)
+					TextChanged (this, EventArgs.Empty);
+
+				Refresh ();
+			}
+		}
+
+
+		public int Value
+		{
 			get {
 				return val;
 			}
@@ -130,136 +287,110 @@ namespace System.Windows.Forms
 					throw new ArgumentException(
 						string.Format("'{0}' is not a valid value for 'Value'. 'Value' should be between 'Minimum' and 'Maximum'", value));
 
-				val = value; 
-				Invalidate ();
+				val = value;
+				Refresh ();
 			}
 		}
-		#endregion	// Public Instance Properties
 
-		#region Protected Instance Properties
-		protected override CreateParams CreateParams {
-			get {
-				CreateParams createParams = base.CreateParams;
 
-				createParams.ClassName = XplatUI.DefaultClassName;
-
-				createParams.Style = (int) (
-					WindowStyles.WS_CHILD | 
-					WindowStyles.WS_VISIBLE);
-					
-				return createParams;
-			}		
-		}
-
-		protected override ImeMode DefaultImeMode {
-			get {	return ImeMode.Disable;	}
-		}
-
-		protected override Size DefaultSize {
-			get {	return new Size(100, 23); }
-		}
 		#endregion	// Protected Instance Properties
-		
+
 		#region Public Instance Methods
-		public void Increment (int value) 
+
+
+		public void Increment (int value)
 		{
 			int newValue = Value + value;
-			
+
 			if (newValue < Minimum)
 				newValue = Minimum;
-				
+
 			if (newValue > Maximum)
 				newValue = Maximum;
-				
+
 			Value = newValue;
-			Invalidate ();
+			Refresh ();
 		}
 
-		public void PerformStep () {
+		protected override void OnHandleCreated (EventArgs e)
+		{
+			base.OnHandleCreated (e);
+
+			UpdateAreas ();
+
+			CreateBuffers (Width, Height);
+			Draw ();
+		}
+
+		public void PerformStep ()
+		{
 			if (Value >= Maximum)
 				return;
-			
-			Value = Value + Step;			
-			Invalidate ();
+
+			Value = Value + Step;
+			Refresh ();
 		}
+
+		public override string ToString()
+		{
+			return string.Format ("{0}, Minimum: {1}, Maximum: {2}, Value: {3}",
+				GetType().FullName.ToString (),
+				Maximum.ToString (),
+				Minimum.ToString (),
+				Value.ToString () );
+		}
+
 		#endregion	// Public Instance Methods
 
+		#region Private Instance Methods
 		private void UpdateAreas ()
 		{
 			paint_area.X = paint_area.Y = 0;
-			paint_area.Width = Width; 
-			paint_area.Height = Height;						
-			
+			paint_area.Width = Width;
+			paint_area.Height = Height;
+
 			client_area.X = client_area.Y = 2;
-			client_area.Width = Width - 4; 
-			client_area.Height = Height - 4;												
+			client_area.Width = Width - 4;
+			client_area.Height = Height - 4;
 		}
-		
-		protected override void OnResize (EventArgs e) 
+
+		private void OnResizeTB (Object o, EventArgs e)
     		{
-    			//Console.WriteLine ("Onresize");
-    			base.OnResize (e);    
-    			
     			if (Width <= 0 || Height <= 0)
     				return;
-			
+
 			UpdateAreas ();
-			
-			CreateBuffers (Width, Height);							
+			CreateBuffers (Width, Height);
     		}
-		
-		protected override void OnHandleCreated (EventArgs e) 
-		{			
-			base.OnHandleCreated(e);
-			
-			//Console.WriteLine ("OnHandleCreated");
-			
-			UpdateAreas ();
-			
-			CreateBuffers (Width, Height);						
-			Draw ();
-		}
-		
-		public override string ToString() 
-		{
-			return string.Format ("{0}, Minimum: {1}, Maximum: {2}, Value: {3}", 
-						GetType().FullName.ToString (),
-						Maximum.ToString (),
-						Minimum.ToString (),
-						Value.ToString () );
-		}
-		
+
 		/* Disable background painting to avoid flickering, since we do our painting*/
-		protected override void OnPaintBackground (PaintEventArgs pevent) 
+		protected override void OnPaintBackground (PaintEventArgs pevent)
     		{
     			// None
-    		}		
-		
+    		}
+
 		private void Draw ()
-		{	
-			int block_width, barpos_pixels;			
-			int steps = (Maximum - Minimum) / step;			
-			
-			block_width = ((client_area.Height) * 2 ) / 3;			
-			barpos_pixels = ((Value - Minimum) * client_area.Width) / (Maximum - Minimum);									
-			
-			//Console.WriteLine ("draw block witdh:{0} barpos: {1}", block_width, barpos_pixels);
-			//Console.WriteLine ("draw Max {0} Min {1} Value {2}", 
-			//	Maximum, Minimum, Value);
-					
+		{
+			int block_width, barpos_pixels;
+			int steps = (Maximum - Minimum) / step;
+
+			block_width = ((client_area.Height) * 2 ) / 3;
+			barpos_pixels = ((Value - Minimum) * client_area.Width) / (Maximum - Minimum);
+
 			ThemeEngine.Current.DrawProgressBar (DeviceContext, paint_area, client_area, barpos_pixels,
 				block_width);
 		}
-		
-				
-		protected override void OnPaint (PaintEventArgs pevent)
-		{	
+
+		private void OnPaintPB (Object o, PaintEventArgs pevent)
+		{
 			if (Width <= 0 || Height <=  0 || Visible == false)
     				return;
-										
-			/* Copies memory drawing buffer to screen*/		
-			Draw();
-			pevent.Graphics.DrawImage (ImageBuffer, 0, 0);			
-		}	
+
+			/* Copies memory drawing buffer to screen*/
+			Draw ();
+			pevent.Graphics.DrawImage (ImageBuffer, 0, 0);
+		}
+
+		#endregion
 	}
 }
