@@ -16,10 +16,10 @@ namespace System.ComponentModel
 	/// </summary>
 	public class MarshalByValueComponent : IComponent, IDisposable, IServiceProvider
 	{
-		[MonoTODO]
-		public MarshalByValueComponent () {
-			// TODO: need to implement for some component model
-			//        but do not throw a NotImplementedException
+		EventHandlerList eventList;
+
+		public MarshalByValueComponent ()
+		{
 		}
 
 		public void Dispose ()
@@ -77,11 +77,11 @@ namespace System.ComponentModel
 		}
 
 		protected EventHandlerList Events {
-			[MonoTODO]
 			get {
-				// TODO: need to do, but do not
-				// throw a NotImplementedException
-				return null;
+				if (eventList == null)
+					eventList = new EventHandlerList ();
+
+				return eventList;
 			}
 		}
 		

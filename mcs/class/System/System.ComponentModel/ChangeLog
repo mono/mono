@@ -1,3 +1,7 @@
+2003-03-14  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* MarshalByValueComponent.cs: removed a monotodo.
+
 2003-03-13  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Win32Exception.cs: added error code 2.
