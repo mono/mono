@@ -22,121 +22,104 @@ using System.ComponentModel;
 namespace System.Web.UI.WebControls
 {
 	//[Designer("??")]
-	public class RadioButton: CheckBox, IPostBackDataHandler
+	public class RadioButton : CheckBox, IPostBackDataHandler
 	{
-		public RadioButton(): base()
+		public RadioButton () : base ()
 		{
 		}
 
 		public virtual string GroupName
 		{
-			get
-			{
-				object o = ViewState["GroupName"];
-				if(o != null)
-					return (string)o;
-				return String.Empty;
+			get {
+				object o = ViewState ["GroupName"];
+				return (o == null) ? String.Empty : (string) o;
 			}
-			set
-			{
-				ViewState["GroupName"] = value;
-			}
+
+			set { ViewState ["GroupName"] = value; }
 		}
 
-		protected override void OnPreRender(EventArgs e)
+		protected override void OnPreRender (EventArgs e)
 		{
-			base.OnPreRender(e);
-			if(Page != null && Enabled && !Checked)
-			{
-				Page.RegisterRequiresPostBack(this);
-			}
+			base.OnPreRender (e);
+			if (Page != null && Enabled && !Checked)
+				Page.RegisterRequiresPostBack (this);
+
 			if(GroupName.Length == 0)
-			{
 				GroupName = UniqueID;
-			}
 		}
 
-		internal override void RenderInputTag(HtmlTextWriter writer, string id)
+		internal override void RenderInputTag (HtmlTextWriter writer, string id)
 		{
-			writer.AddAttribute(HtmlTextWriterAttribute.Id, id);
-			writer.AddAttribute(HtmlTextWriterAttribute.Type, "radio");
-			writer.AddAttribute(HtmlTextWriterAttribute.Name, UniqueGroupNamePrivate);
-			writer.AddAttribute(HtmlTextWriterAttribute.Value, ValueAttributePrivate);
+			writer.AddAttribute (HtmlTextWriterAttribute.Id, id);
+			writer.AddAttribute (HtmlTextWriterAttribute.Type, "radio");
+			writer.AddAttribute (HtmlTextWriterAttribute.Name, UniqueGroupNamePrivate);
+			writer.AddAttribute (HtmlTextWriterAttribute.Value, ValueAttributePrivate);
 
-			if(Checked)
-			{
-				writer.AddAttribute(HtmlTextWriterAttribute.Checked, "checked");
-			}
-			if(AutoPostBack)
-			{
-				writer.AddAttribute(HtmlTextWriterAttribute.Onclick, Page.GetPostBackClientEvent(this, ""));
-				writer.AddAttribute("language", "javascript");
-			}
+			if (Checked)
+				writer.AddAttribute (HtmlTextWriterAttribute.Checked, "checked");
 
-			if(AccessKey.Length > 0)
-			{
-				writer.AddAttribute(HtmlTextWriterAttribute.Accesskey, AccessKey);
+			if (AutoPostBack){
+				writer.AddAttribute (HtmlTextWriterAttribute.Onclick,
+						     Page.GetPostBackClientEvent (this, ""));
+				writer.AddAttribute ("language", "javascript");
 			}
 
-			if(TabIndex > 0)
-			{
-				writer.AddAttribute(HtmlTextWriterAttribute.Tabindex, TabIndex.ToString(NumberFormatInfo.InvariantInfo));
-			}
+			if (AccessKey.Length > 0)
+				writer.AddAttribute (HtmlTextWriterAttribute.Accesskey, AccessKey);
 
-			writer.RenderBeginTag(System.Web.UI.HtmlTextWriterTag.Input);
-			writer.RenderEndTag();
+			if (TabIndex > 0)
+				writer.AddAttribute (HtmlTextWriterAttribute.Tabindex,
+						     TabIndex.ToString (NumberFormatInfo.InvariantInfo));
+
+			writer.RenderBeginTag (System.Web.UI.HtmlTextWriterTag.Input);
+			writer.RenderEndTag ();
 		}
 
 		private string UniqueGroupNamePrivate
 		{
-			get
-			{
+			get {
 				string retVal = GroupName;
-				if(UniqueID.LastIndexOf(":") >= 0)
-				{
-					retVal += UniqueID.Substring(UniqueID.LastIndexOf(":") + 1);
-				}
+				int unique = UniqueID.LastIndexOf (':');
+				if (unique >= 0)
+					retVal += UniqueID.Substring (unique + 1);
+
 				return retVal;
 			}
 		}
 
 		private string ValueAttributePrivate
 		{
-			get
-			{
-				string retVal = Attributes["value"];
-				if(retVal == null)
-				{
-					retVal = ID;
-				}
-				if(retVal == null)
-				{
-					retVal = UniqueID;
-				}
-				return retVal;
+			get {
+				string retVal = Attributes ["value"];
+				if (retVal != null)
+					return retVal;
+
+				if (ID != null)
+					return ID;
+
+				return UniqueID;
 			}
 		}
 
-		bool IPostBackDataHandler.LoadPostData(string postDataKey, NameValueCollection postCollection)
+		bool IPostBackDataHandler.LoadPostData (string postDataKey,
+						        NameValueCollection postCollection)
 		{
-			if(postCollection[UniqueGroupNamePrivate] != null && postCollection[UniqueGroupNamePrivate] == ValueAttributePrivate)
-			{
-				if(!Checked)
-				{
-					Checked = true;
-				}
+			bool _checked = Checked;
+			if (postCollection [UniqueGroupNamePrivate] == ValueAttributePrivate){
+				if (_checked)
+					return false;
+				Checked = true;
 				return true;
 			}
-			if(Checked)
-			{
+
+			if (_checked)
 				Checked = false;
-			}
 			return true;
 		}
 
-		void IPostBackDataHandler.RaisePostDataChangedEvent()
+		void IPostBackDataHandler.RaisePostDataChangedEvent ()
 		{
-			OnCheckedChanged(EventArgs.Empty);
+			OnCheckedChanged (EventArgs.Empty);
 		}
 	}
 }

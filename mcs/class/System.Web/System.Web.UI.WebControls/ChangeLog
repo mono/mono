@@ -1,5 +1,21 @@
 2002-06-12  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* RadioButton.cs: mono-stylized and some little fixes.
+
+	* TextBox.cs: mono-stylized.
+	(MaxLength): fixed typo.
+
+	(AddAttributesToRender): don't render the text between the tags for
+	SingleLine, use value attribute for it. Don't render the text for
+	Password.
+
+	(OnPreRender): don't throw exception and call base.OnPreRender.
+
+	(Render): for MultiLine, render the text between the opening and
+	closing tags encoded as HTML.
+
+2002-06-12  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* ImageButton.cs:
 	(AddAttributesToRender): fixer another stack overflow.
 
