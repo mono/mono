@@ -106,7 +106,10 @@ public class ClassMain
 		Assert (mi.GetParameters ()[0].GetCustomAttributes (true), false, 4);
 		Assert (mi.GetCustomAttributes (true), false, 5);
 		Assert (mi.ReturnTypeCustomAttributes.GetCustomAttributes (true), true, 6);
-		Assert (typeof (test_delegate).GetCustomAttributes (false), false, 7);
+
+		/* Under net 2.0, SerializableAttribute is returned */
+		if (typeof (test_delegate).GetCustomAttributes (false).Length != 1)
+			Assert (typeof (test_delegate).GetCustomAttributes (false), false, 7);
 
 		PropertyInfo pi = typeof (Test_2).GetProperty ("Test");
 		Assert (pi.GetCustomAttributes (true), false, 31);
