@@ -1,3 +1,10 @@
+2004-03-29  Lluis Sanchez Gual <lluis@ximian.com>
+
+	* Convert.cs: In ToSingle(double), removed checks for Single.MaxValue and
+	  Single.MinValue. MS.NET don't do it. This fixes bug #56005.
+	* Guid.cs: Added support for guid strings in the "N" and "P" formats in
+	  the constructor. This fixes bug #54019.
+
 2004-03-23  Lluis Sanchez Gual <lluis@ximian.com>
 
 	* FloatingPointFormatter.cs: Made the class thread safe. Had to move some

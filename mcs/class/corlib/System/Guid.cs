@@ -201,6 +201,8 @@ namespace System
 			private Guid ParseGuid1 ()
 			{
 				bool openBrace; 
+				bool groups = true;
+				char endChar = '}';
 				int a;
 				short b;
 				short c;
@@ -208,20 +210,30 @@ namespace System
 				int i;
 
 				openBrace = ParseOptChar ('{');
+				if (!openBrace) {
+					openBrace = ParseOptChar ('(');
+					if (openBrace) endChar = ')';
+				}
+				
 				a = (int) ParseHex(8, true);
-				ParseChar('-');
+				
+				if (openBrace) ParseChar('-');
+				else groups = ParseOptChar('-');
+				
 				b = (short) ParseHex(4, true);
-				ParseChar('-');
+				if (groups) ParseChar('-');
+				
 				c = (short) ParseHex(4, true);
-				ParseChar('-');
+				if (groups) ParseChar('-');
+				
 				for (i=0; i<8; ++i) {
 					d[i] = (byte) ParseHex(2, true);
-					if (i == 1) {
+					if (i == 1 && groups) {
 						ParseChar('-');
 					}	
 				}
 	
-				if (openBrace && !ParseOptChar('}')) {
+				if (openBrace && !ParseOptChar(endChar)) {
 					ThrowFormatException ();
 				}
 		

@@ -1546,10 +1546,6 @@ namespace System {
 
 		public static float ToSingle (double value) 
 		{ 
-			if (value > Single.MaxValue || value < Single.MinValue)
-				throw new OverflowException (Locale.GetText (
-					"Value is greater than Single.MaxValue or less than Single.MinValue"));
-
 			return (float)value; 
 		}
 	
