@@ -1,5 +1,11 @@
 2003-10-05  Zoltan Varga  <vargaz@freemail.hu>
 
+	* icall.c (ves_icall_System_CurrentTimeZone_GetTimeZoneData): Finally 
+	fix timezone handling problems on Windows.
+	
+	* icall.c (ves_icall_System_CurrentTimeZone_GetTimeZoneData): Avoid
+	asserts when the year is outside the range handled by ms the functions.
+
 	* class.c (setup_interface_offsets): If the class is an interface,
 	fill out its interface_offsets slot.
 
