@@ -93,7 +93,8 @@ namespace Mono.ILASM {
 %token INSTR_TOK
 %token INSTR_SWITCH
 %token INSTR_PHI
-
+%token INSTR_LOCAL
+%token INSTR_PARAM
 
 
 
@@ -1400,7 +1401,7 @@ impl_attr		: /* EMPTY */                   { $$ = new ImplAttr (); }
 			| impl_attr K_NOINLINING        { $$ = (ImplAttr) $1 | ImplAttr.NoInLining; }
 			;
 
-sig_args		:               { $$ = new ArrayList (); }
+sig_args		: /* EMPTY */
 			| sig_arg_list
 			;
 
@@ -1430,7 +1431,7 @@ sig_arg			: param_attr type
 			| param_attr type K_MARSHAL OPEN_PARENS native_type CLOSE_PARENS id
 			;
 
-type_list               : /* EMPTY */   { $$ = new ArrayList (); }
+type_list               : /* EMPTY */
                         | type
                           {
                                 ArrayList type_list = new ArrayList ();
@@ -1452,14 +1453,18 @@ method_decl		: D_EMITBYTE int32
 			| D_MAXSTACK int32
 			| D_LOCALS OPEN_PARENS local_list CLOSE_PARENS
                           {
-                                codegen.CurrentMethodDef.AddLocals (
-                                        (ArrayList) $3);
+                                if ($3 != null) {
+                                        codegen.CurrentMethodDef.AddLocals (
+                                                (ArrayList) $3);
+                                }
                           }
 			| D_LOCALS K_INIT OPEN_PARENS local_list CLOSE_PARENS
                           {
-                                codegen.CurrentMethodDef.AddLocals (
-                                        (ArrayList) $4);
-                                codegen.CurrentMethodDef.InitLocals ();
+                                if ($4 != null) {
+                                        codegen.CurrentMethodDef.AddLocals (
+                                                (ArrayList) $4);
+                                        codegen.CurrentMethodDef.InitLocals ();
+                                }
                           }
 			| D_ENTRYPOINT
                           {
@@ -1559,16 +1564,39 @@ instr			: INSTR_NONE
                                 codegen.CurrentMethodDef.AddInstr (
                                         new SimpInstr ((Op) $1));
                           }
-			| INSTR_VAR int32
+			| INSTR_LOCAL int32
                           {
-                               
+                                codegen.CurrentMethodDef.AddInstr (
+                                        new IntInstr ((IntOp) $1, (int) $2));        
+                          }
+                        | INSTR_LOCAL id
+                          {
+                                int slot = codegen.CurrentMethodDef.GetNamedLocalSlot ((string) $2);
+                                codegen.CurrentMethodDef.AddInstr (
+                                        new IntInstr ((IntOp) $1, slot));
+                          }
+                        | INSTR_PARAM int32
+                          {
+                                codegen.CurrentMethodDef.AddInstr (
+                                        new IntInstr ((IntOp) $1, (int) $2));
+                          }
+                        | INSTR_PARAM id
+                          {
+                                int pos = codegen.CurrentMethodDef.GetNamedParamPos ((string) $2);
+                                codegen.CurrentMethodDef.AddInstr (
+                                        new IntInstr ((IntOp) $1, pos));
                           }
 			| INSTR_I int32
                           {
                                 codegen.CurrentMethodDef.AddInstr (new
                                         IntInstr ((IntOp) $1, (int) $2));
                           }
-			| INSTR_I id /* Allow variable names */
+			| INSTR_I id
+                          {
+                                int slot = codegen.CurrentMethodDef.GetNamedLocalSlot ((string) $2);
+                                codegen.CurrentMethodDef.AddInstr (new
+                                        IntInstr ((IntOp) $1, slot));
+                          }
 			| INSTR_I8 int64
                           {
                                 codegen.CurrentMethodDef.AddInstr (new
@@ -1645,17 +1673,28 @@ method_ref		: call_conv type type_spec DOUBLE_COLON method_name
                           {
                                 IClassRef owner = (IClassRef) $3;
                                 ArrayList arg_list = (ArrayList) $7;
+                                ITypeRef[] param_list;
+
+                                if (arg_list != null)
+                                        param_list = (ITypeRef[]) arg_list.ToArray (typeof (ITypeRef));
+                                else
+                                        param_list = new ITypeRef[0];
+
                                 
-                                $$ = owner.GetMethodRef ((ITypeRef) $2, (string) $5,
-                                        (ITypeRef[]) arg_list.ToArray (typeof (ITypeRef)));
+                                $$ = owner.GetMethodRef ((ITypeRef) $2, (string) $5, param_list);
                           }
 			| call_conv type method_name 
 			  OPEN_PARENS type_list CLOSE_PARENS
                           {
                                 ArrayList arg_list = (ArrayList) $5;
+                                ITypeRef[] param_list;
+                        
+                                if (arg_list != null)
+                                        param_list = (ITypeRef[]) arg_list.ToArray (typeof (ITypeRef));
+                                else
+                                        param_list = new ITypeRef[0];
 
-                                $$ = new GlobalMethodRef ((ITypeRef) $2, (string) $3,
-                                        (ITypeRef[]) arg_list.ToArray (typeof (ITypeRef)));
+                                $$ = new GlobalMethodRef ((ITypeRef) $2, (string) $3, param_list);
                           }
 			;
 

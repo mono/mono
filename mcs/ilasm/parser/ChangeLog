@@ -1,5 +1,11 @@
 2003-05-11 Jackson Harper <jackson@latitudegeo.com>
 
+	* ILParser.jay: Add tokens for instructions that take param and
+	local args. Do not create empty lists for sig_args and
+	type_lists. Add param and local instructions.
+		
+2003-05-11 Jackson Harper <jackson@latitudegeo.com>
+
 	* ILParser.jay: Set size and packing information for types
 		
 2003-05-10 Jackson Harper <jackson@latitudegeo.com>
