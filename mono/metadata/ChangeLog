@@ -1,3 +1,12 @@
+2004-10-20  Martin Baulig  <martin@ximian.com>
+
+	* mono-debug-debugger.h (MonoDebuggerEvent): Added
+	MONO_DEBUGGER_EVENT_EXCEPTION.
+
+	* mono-debug-debugger.c (mono_debugger_handle_exception): New
+	public function to send the debugger a notification for an
+	exception and inform it about a catch/finally clause.
+
 2004-10-19  Zoltan Varga  <vargaz@freemail.hu>
 
 	* marshal.c, icall.c: Applied patch from Alexandre Rocha Lima e
