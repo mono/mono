@@ -1,9 +1,15 @@
-2005-03-25 Rafael Teixeira <rafaelteixeirabr@hotmail.com>
+2005-03-25:2 Rafael Teixeira <rafaelteixeirabr@hotmail.com>
+	* genericparser.cs: another static Parse overload to support specifying encoding when parsing from a file.
+	* driver.cs: obsoletes --tokenize, record currentEncoding for each source-file to be processed, call the new Parse overload
+		Implement support for a --codepage option similar to mcs. Example: 
+			mono mbas.exe --codepage:1252 WindowsANSI.vb --codepage:utf8 UTF8.vb --codepage:reset currentcharset.vb
+
+2005-03-25:1 Rafael Teixeira <rafaelteixeirabr@hotmail.com>
 	* genericparser.cs: another Parse overload to support specifying encoding when parsing from a file.
 	Preparing to implement support for a /codepage option similar to mcs
 
 2005-03-24 Manjula GHM <mmanjula@novell.com>
-          * mb-tokenizer.cs: To fix parser error for ExternalSource Directives
+	* mb-tokenizer.cs: To fix parser error for ExternalSource Directives
 
 2005-03-24 Satya Sudha K <ksathyasudha@novell.com>
 	* mb-parser.jay : 

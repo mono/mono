@@ -15,6 +15,7 @@ namespace Mono.Languages {
 	using System.Collections;
 	using System.Diagnostics;
 	using System.IO;
+	using System.Text;
 	using System.Globalization;
 	using System.Reflection;
 	using System.Reflection.Emit;
@@ -30,6 +31,22 @@ namespace Mono.Languages {
 		Binary, Text
 	};
 	
+	struct FileToCompile {
+		public string Filename;
+		public Encoding Encoding;
+		
+		public FileToCompile(string filename, Encoding encoding)
+		{
+			this.Filename = filename;
+			this.Encoding = encoding;	
+		}
+		
+		public void Process()
+		{
+			GenericParser.Parse(this.Filename, this.Encoding);
+		}
+	}
+	
 	/// <summary>
 	///    The compiler driver.
 	/// </summary>
@@ -39,7 +56,7 @@ namespace Mono.Languages {
 		[Option("[Mono] Only parses the source file (for debugging the tokenizer)", "parse", SecondLevelHelp = true)]
 		public bool parse_only = false;
 
-		[Option("[Mono] Only tokenizes source files", SecondLevelHelp = true)]
+		[Option("[IGNORED] Only tokenizes source files", SecondLevelHelp = true)]
 		public bool tokenize = false;
 
 		[Option("[Mono] Shows stack trace at Error location", SecondLevelHelp = true)]
@@ -78,6 +95,33 @@ namespace Mono.Languages {
 		{
 			return ReferencePackage(packageName)?WhatToDoNext.GoAhead:WhatToDoNext.AbandonProgram;
 		}
+
+		private Encoding currentEncoding = null;
+		
+		[Option(-1, "Select codepage by {ID} (number, 'utf8' or 'reset') to process following source files", "codepage")]
+		public string CurrentCodepage {
+			set {
+				switch (value.ToLower()) {
+					case "reset": 
+						currentEncoding = null; 
+						break;
+					case "utf8": case "utf-8":
+						currentEncoding = Encoding.UTF8;
+						break;
+					default:
+						try {
+							currentEncoding = Encoding.GetEncoding(int.Parse(value));
+						} catch (NotSupportedException) {
+							Console.WriteLine("Ignoring unsupported codepage number {0}.", value);
+						} catch (Exception) {
+							Console.WriteLine("Ignoring unsupported codepage ID {0}.", value);
+						}
+						break;
+				}					
+			}
+		}
+
+
 
 		[Option("[Mono] Don\'t assume the standard library", "nostdlib", SecondLevelHelp = true)]
 		public bool NoStandardLibraries { set { RootContext.StdLib = !value; } }
@@ -301,6 +345,18 @@ namespace Mono.Languages {
 //		[Option("[NOT IMPLEMENTED YET]Create bug report {file}")]
 		public string bugreport;
 
+		[ArgumentProcessor]
+		public void AddFile(string fileName)
+		{
+			string f = fileName;
+			if (firstSourceFile == null)
+				firstSourceFile = f;
+
+			if (source_files.Contains(f))
+				Report.Error(1516, "Source file '" + f + "' specified multiple times");
+			else
+				source_files.Add(f, new FileToCompile(fileName, currentEncoding));
+		}
 
 		ArrayList defines = new ArrayList();
 		ArrayList references = new ArrayList();
@@ -638,27 +694,6 @@ namespace Mono.Languages {
 					soft_references.Add(def);
 		}
 
-		[ArgumentProcessor]
-		public void AddFile(string fileName)
-		{
-			string f = fileName;
-			if (firstSourceFile == null)
-				firstSourceFile = f;
-
-			if (source_files.Contains(f))
-				Report.Error(1516, "Source file '" + f + "' specified multiple times");
-			else
-				source_files.Add(f, f);
-		}
-
-		void ProcessSourceFile(string filename)
-		{
-			if (tokenize)
-				GenericParser.Tokenize(filename);
-			else
-				GenericParser.Parse(filename);
-		}
-
 		string outputFile_Name = null;
 
 		string outputFileName {
@@ -684,15 +719,13 @@ namespace Mono.Languages {
 
 		bool ParseAll() // Phase 1
 		{
-			if (firstSourceFile == null) {
-				Report.Error(2008, "No files to compile were specified");
+			if (tokenize)
 				return false;
-			}
+				
+			foreach(FileToCompile file in source_files.Values)
+				file.Process();
 
-			foreach(string filename in source_files.Values)
-				ProcessSourceFile(filename);
-
-			if (tokenize || parse_only || (Report.Errors > 0))
+			if (parse_only || (Report.Errors > 0))
 				return false;		
 
 			return true; // everything went well go ahead

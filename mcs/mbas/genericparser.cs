@@ -184,41 +184,11 @@ namespace Mono.Languages
 			return defaultParser;
 		}
 
-		
+
+		[Obsolete]		
 		public static int Tokenize(string fileName)
 		{
-			GenericParser parser = GetSpecificParserFor(fileName);
-						
-			if (parser == null)
-			{
-				Console.WriteLine("Do not know how to compile " + fileName);
-				return 1;
-			}
-
-/*			Stream input;
-
-			try {
-				input = File.OpenRead (input_file);
-
-			} catch {
-				Report.Error (2001, "Source file '" + input_file + "' could not be opened");
-				return 1;
-			}
-
-			using (input){
-				Tokenizer lexer = new Tokenizer (input, input_file, defines);
-				int token, tokens = 0, errors = 0;
-
-				while ((token = lexer.token ()) != Token.EOF){
-					Location l = lexer.Location;
-					tokens++;
-					if (token == Token.ERROR)
-						errors++;
-				}
-				Console.WriteLine ("Tokenized: " + tokens + " found " + errors + " errors");
-			}
-*/			
-			return 0;
+			return 1;
 		}
 
 
@@ -227,8 +197,19 @@ namespace Mono.Languages
 		/// based on the files extension, and parses it using the chosen parser
 		/// </summary>
 		/// <param name="fileName">Name of the file to be parsed</param>
-		/// <param name="context">Context to output the parsed tree</param>
+		[Obsolete]
 		public static int Parse(string fileName)
+		{
+			return Parse(fileName, null);
+		}
+		
+		/// <summary>
+		/// Find the descendant parser that knows how to parse the specified file
+		/// based on the files extension, and parses it using the chosen parser
+		/// </summary>
+		/// <param name="fileName">Name of the file to be parsed</param>
+		/// <param name="encoding">Encoding of the file to be parsed</param>
+		public static int Parse(string fileName, Encoding encoding)
 		{
 			int errors;
 			GenericParser parser = GetSpecificParserFor(fileName);
@@ -239,9 +220,12 @@ namespace Mono.Languages
 				return 1;
 			}
 			
+			if (encoding == null)
+				encoding = Encoding.Default;
+				
 			try 
 			{
-				errors = parser.ParseFile(fileName);
+				errors = parser.ParseFile(fileName, encoding);
 			} 
 			catch (FileNotFoundException)
 			{
