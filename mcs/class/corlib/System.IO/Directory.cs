@@ -290,6 +290,11 @@ namespace System.IO
 			CheckArgument.Path (path, true);
 			CheckPermission.Demand (FileIOPermissionAccess.Read & FileIOPermissionAccess.Write, path);	
 			*/
+			if (path == null)
+				throw new ArgumentNullException ("path");
+			if (path.Trim () == String.Empty)
+				throw new ArgumentException ("path string must not be an empty string or whitespace string");
+
 			MonoIOError error;
 				
 			if (!Exists (path))
