@@ -797,7 +797,7 @@ namespace Mono.MonoBASIC
 						break;
 					val = id;
 					tokens_seen = true;
-					if (is_keyword(id))
+					if (is_keyword(id) && (current_token != Token.DOT))
 						return getKeyword(id);
 					return Token.IDENTIFIER;
 				}
@@ -1251,7 +1251,7 @@ namespace Mono.MonoBASIC
 			bool region_directive = false;
 
 			get_cmd_arg (out cmd, out arg);
-
+			cmd = cmd.ToLower();
 			// Eat any trailing whitespaces and single-line comments
 			if (arg.IndexOf ("//") != -1)
 				arg = arg.Substring (0, arg.IndexOf ("//"));
