@@ -109,9 +109,10 @@ namespace Mono.CSharp {
 
 		public override string ToString ()
 		{
-			Console.WriteLine ("INTERNAL-WARNING: someone is miss-using MemberName.ToString in the compiler.  Please report this bug");
-			Console.WriteLine ("From: " + Environment.StackTrace);
-			return Name;
+			if (Left != null)
+				return Left + "." + Name;
+			else
+				return Name;
 		}
 	}
 

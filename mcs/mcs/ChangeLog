@@ -1,3 +1,7 @@
+2004-12-08  Martin Baulig  <martin@ximian.com>
+
+	* decl.cs (MemberName.ToString): Make this work again.
+
 2004-12-08  Marek Safar  <marek.safar@seznam.cz>
 
 	* attribute.cs (Resolve): Add error 591 detection.
