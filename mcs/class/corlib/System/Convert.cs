@@ -2686,8 +2686,12 @@ namespace System {
 		internal static object ToType (object value, Type conversionType, 
 					       IFormatProvider provider) 
 		{
-			if (value == null)
-				return null;
+			if (value == null) {
+				if ((conversionType != null) && conversionType.IsValueType)
+					throw new InvalidCastException ("Null object can not be converted to a value type.");
+				else
+					return null;
+			}
 
 			if (conversionType == null)
 				throw new InvalidCastException ("Cannot cast to destination type.");
