@@ -1,3 +1,7 @@
+2002-04-01  Kral Ferch  <kral_ferch@hotmail.com>
+
+	* XmlTextWriterTests.cs: Tests for WriteEndDocument and WriteFullEndElement.
+	
 2002-03-31  Kral Ferch <kral_ferch@hotmail.com>
 
 	* XmlTextWriterTests.cs: Tests for LookupPrefix, WriteBase64,

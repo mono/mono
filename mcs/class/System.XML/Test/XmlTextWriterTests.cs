@@ -636,17 +636,65 @@ namespace Ximian.Mono.Tests
 			catch (InvalidOperationException) {}
 		}
 
-		public void TestWriteEndElement ()
+		public void TestWriteEndDocument ()
 		{
+			try {
+				xtw.WriteEndDocument ();
+				Fail ("Expected an ArgumentException.");
+			} catch (ArgumentException) {}
+
+			xtw.WriteStartDocument ();
+
 			try 
 			{
+				xtw.WriteEndDocument ();
+				Fail ("Expected an ArgumentException.");
+			} 
+			catch (ArgumentException) {}
+
+			xtw.WriteStartElement ("foo");
+			xtw.WriteStartAttribute ("bar", null);
+			AssertEquals ("<?xml version='1.0' encoding='utf-16'?><foo bar='", StringWriterText);
+
+			xtw.WriteEndDocument ();
+			AssertEquals ("<?xml version='1.0' encoding='utf-16'?><foo bar='' />", StringWriterText);
+			AssertEquals (WriteState.Start, xtw.WriteState);
+		}
+
+		public void TestWriteEndElement ()
+		{
+			try {
 				xtw.WriteEndElement ();
 				Fail ("Should have thrown an InvalidOperationException.");
+			} catch (InvalidOperationException e) {
+				AssertEquals ("Exception message is incorrect.", "There was no XML start tag open.", e.Message);
 			}
-			catch (InvalidOperationException e) {
-				AssertEquals ("Exception message is incorrect.",
-					"There was no XML start tag open.", e.Message);
-			}
+
+			xtw.WriteStartElement ("foo");
+			xtw.WriteEndElement ();
+			AssertEquals ("<foo />", StringWriterText);
+
+			xtw.WriteStartElement ("bar");
+			xtw.WriteStartAttribute ("baz", null);
+			xtw.WriteEndElement ();
+			AssertEquals ("<foo /><bar baz='' />", StringWriterText);
+		}
+
+		public void TestFullEndElement ()
+		{
+			xtw.WriteStartElement ("foo");
+			xtw.WriteFullEndElement ();
+			AssertEquals ("<foo></foo>", StringWriterText);
+
+			xtw.WriteStartElement ("bar");
+			xtw.WriteAttributeString ("foo", "bar");
+			xtw.WriteFullEndElement ();
+			AssertEquals ("<foo></foo><bar foo='bar'></bar>", StringWriterText);
+
+			xtw.WriteStartElement ("baz");
+			xtw.WriteStartAttribute ("bar", null);
+			xtw.WriteFullEndElement ();
+			AssertEquals ("<foo></foo><bar foo='bar'></bar><baz bar=''></baz>", StringWriterText);
 		}
 
 		public void TestWriteState ()

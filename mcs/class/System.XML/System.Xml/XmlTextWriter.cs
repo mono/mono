@@ -197,19 +197,26 @@ namespace System.Xml
 
 		public override void Close ()
 		{
-			while (openElements.Count > 0) {
-				WriteEndElement();
-			}
+			CloseOpenAttributeAndElements ();
 
 			w.Close();
 			ws = WriteState.Closed;
 			openWriter = false;
 		}
 
+		private void CloseOpenAttributeAndElements ()
+		{
+			if (openAttribute)
+				WriteEndAttribute ();
+
+			while (openElements.Count > 0) {
+				WriteEndElement();
+			}
+		}
+
 		private void CloseStartElement ()
 		{
-			if (openStartElement) 
-			{
+			if (openStartElement) {
 				w.Write(">");
 				ws = WriteState.Content;
 				openStartElement = false;
@@ -322,13 +329,22 @@ namespace System.Xml
 			openAttribute = false;
 		}
 
-		[MonoTODO]
 		public override void WriteEndDocument ()
 		{
-			throw new NotImplementedException ();
+			if ((ws == WriteState.Start) || (ws == WriteState.Prolog))
+				throw new ArgumentException ("This document does not have a root element.");
+
+			CloseOpenAttributeAndElements ();
+
+			ws = WriteState.Start;
 		}
 
 		public override void WriteEndElement ()
+		{
+			WriteEndElementInternal (false);
+		}
+
+		private void WriteEndElementInternal (bool fullEndElement)
 		{
 			if (openElements.Count == 0)
 				throw new InvalidOperationException("There was no XML start tag open.");
@@ -338,11 +354,17 @@ namespace System.Xml
 			CheckState ();
 
 			if (openStartElement) {
-				w.Write (" />");
+				if (openAttribute)
+					WriteEndAttribute ();
+
+				if (fullEndElement)
+					w.Write ("></{0}>", ((XmlTextWriterOpenElement)openElements.Peek ()).Name);
+				else
+					w.Write (" />");
+
 				openElements.Pop ();
 				openStartElement = false;
-			}
-			else {
+			} else {
 				w.Write ("{0}</{1}>", indentFormatting, openElements.Pop ());
 			}
 
@@ -355,10 +377,9 @@ namespace System.Xml
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		public override void WriteFullEndElement ()
 		{
-			throw new NotImplementedException ();
+			WriteEndElementInternal (true);
 		}
 
 		[MonoTODO]
