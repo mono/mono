@@ -14,14 +14,21 @@ namespace System.Threading
 	public struct LockCookie
 	{
 		internal int ThreadId;
-		internal bool IsReader;
-		internal bool IsWriter;
+		internal int ReaderLocks;
+		internal int WriterLocks;
 		
-		internal LockCookie (int thread_id, bool is_reader, bool is_writer)
+		internal LockCookie (int thread_id)
 		{
 			ThreadId = thread_id;
-			IsReader = is_reader;
-			IsWriter = is_writer;
+			ReaderLocks = 0;
+			WriterLocks = 0;
+		}
+		
+		internal LockCookie (int thread_id, int reader_locks, int writer_locks)
+		{
+			ThreadId = thread_id;
+			ReaderLocks = reader_locks;
+			WriterLocks = writer_locks;
 		}
 	}
 }

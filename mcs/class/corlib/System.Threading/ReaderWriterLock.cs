@@ -4,11 +4,13 @@
 // Author:
 //   Dick Porter (dick@ximian.com)
 //   Jackson Harper (jackson@ximian.com)
+//   Lluis Sanchez Gual (lluis@ximian.com)
 //
 // (C) Ximian, Inc.  http://www.ximian.com
 // (C) 2004 Novell, Inc (http://www.novell.com)
 //
 
+using System.Collections;
 
 namespace System.Threading
 {
@@ -17,23 +19,25 @@ namespace System.Threading
 		private int seq_num = 1;
 		private int state = 0;
 		private int readers = 0;
-		private bool writer_queued = false;
-		private int upgrade_id = -1;
 		private LockQueue writer_queue;
+		private Hashtable reader_locks;
+		private int writer_lock_owner;
 
 		public ReaderWriterLock()
 		{
+			writer_queue = new LockQueue (this);
+			reader_locks = new Hashtable ();
 		}
 
 		public bool IsReaderLockHeld {
 			get {
-				lock (this) return (state > 0);
+				lock (this) return reader_locks.ContainsKey (Thread.CurrentThreadId);
 			}
 		}
 
 		public bool IsWriterLockHeld {
 			get {
-				lock (this) return (state < 0);
+				lock (this) return (state < 0 && Thread.CurrentThreadId == writer_lock_owner);
 			}
 		}
 
@@ -43,40 +47,70 @@ namespace System.Threading
 			}
 		}
 
-		public void AcquireReaderLock(int millisecondsTimeout) {
+		public void AcquireReaderLock (int millisecondsTimeout) 
+		{
+			AcquireReaderLock (millisecondsTimeout, 1);
+		}
+		
+		public void AcquireReaderLock (int millisecondsTimeout, int initialLockCount) 
+		{
 			lock (this) {
 				// Wait if there is a write lock
 				readers++;
-				if (state < 0 || writer_queued)
-					Monitor.Wait (this, millisecondsTimeout);
-				readers--;
-				state++;
+				try {
+					if (state < 0 || !writer_queue.IsEmpty) {
+						if (!Monitor.Wait (this, millisecondsTimeout))
+							throw new ApplicationException ("Timeout expited");
+					}
+				}
+				finally {
+					readers--;
+				}
+				
+				object nlocks = reader_locks [Thread.CurrentThreadId];
+				if (nlocks == null) {
+					reader_locks [Thread.CurrentThreadId] = initialLockCount;
+					state += initialLockCount;
+				}
+				else {
+					reader_locks [Thread.CurrentThreadId] = ((int)nlocks) + 1;
+					state++;
+				}
 			}
 		}
 
 		public void AcquireReaderLock(TimeSpan timeout)
 		{
 			int ms = CheckTimeout (timeout);
-			AcquireReaderLock ((int) timeout.TotalMilliseconds);
+			AcquireReaderLock ((int) timeout.TotalMilliseconds, 1);
 		}
 
-		public void AcquireWriterLock(int millisecondsTimeout)
+		public void AcquireWriterLock (int millisecondsTimeout)
+		{
+			AcquireWriterLock (millisecondsTimeout, 1);
+		}
+		
+		void AcquireWriterLock (int millisecondsTimeout, int initialLockCount)
 		{
 			lock (this) {
-				if (writer_queue == null)
-					writer_queue = new LockQueue (this);
-				writer_queued = true;
-				if (state != 0) // wait while there are reader locks or another writer lock
-					writer_queue.Wait (millisecondsTimeout);
-				writer_queued = false;
-				state = -1;
+				if (HasWriterLock ()) {
+					state--;
+					return;
+				}
+				if (state != 0) { // wait while there are reader locks or another writer lock
+					if (!writer_queue.Wait (millisecondsTimeout))
+						throw new ApplicationException ("Timeout expited");
+				}
+
+				state = -initialLockCount;
+				writer_lock_owner = Thread.CurrentThreadId;
+				seq_num++;
 			}
-			Interlocked.Increment (ref seq_num);
 		}
 
 		public void AcquireWriterLock(TimeSpan timeout) {
 			int ms = CheckTimeout (timeout);
-			AcquireWriterLock (ms);
+			AcquireWriterLock (ms, 1);
 		}
 
 		public bool AnyWritersSince(int seqNum) {
@@ -88,10 +122,15 @@ namespace System.Threading
 		public void DowngradeFromWriterLock(ref LockCookie lockCookie)
 		{
 			lock (this) {
-				state = 1;
+				if (!HasWriterLock())
+					throw new ApplicationException ("The thread does not have the writer lock.");
+				
+				state = lockCookie.ReaderLocks;
+				reader_locks [Thread.CurrentThreadId] = state;
 				Monitor.Pulse (this);
-				if (writer_queue != null)
-					writer_queue.Pulse ();
+				
+				// MSDN: A thread does not block when downgrading from the writer lock, 
+				// even if other threads are waiting for the writer lock
 			}
 		}
 
@@ -99,44 +138,76 @@ namespace System.Threading
 		{
 			LockCookie cookie;
 			lock (this) {
-				cookie = new LockCookie (Thread.CurrentThreadId, state < 0, state > 0);
-				ReleaseWriterLock ();
+				cookie = GetLockCookie ();
+				if (cookie.WriterLocks != 0)
+					ReleaseWriterLock (cookie.WriterLocks);
+				else if (cookie.ReaderLocks != 0) {
+					ReleaseReaderLock (cookie.ReaderLocks, cookie.ReaderLocks);
+				}
 			}
 			return cookie;
 		}
-
+		
 		public void ReleaseReaderLock()
 		{
 			lock (this) {
-				int min_state = (upgrade_id == -1 ? 0 : 1);
-				if (upgrade_id != -1 && upgrade_id == Thread.CurrentThreadId) {
-					Monitor.Pulse (this);
-					writer_queue.Pulse ();
+				if (HasWriterLock ()) {
+					ReleaseWriterLock ();
 					return;
 				}
-				if (--state == min_state && writer_queue != null)
-					writer_queue.Pulse ();
+				else if (state > 0) {
+					object read_lock_count = reader_locks [Thread.CurrentThreadId];
+					if (read_lock_count != null) {
+						ReleaseReaderLock ((int)read_lock_count, 1);
+						return;
+					}
+				}
+				throw new ApplicationException ("The thread does not have any reader or writer locks.");
 			}
+		}
+
+		void ReleaseReaderLock (int currentCount, int releaseCount)
+		{
+			int new_count = currentCount - releaseCount;
+			
+			if (new_count == 0)
+				reader_locks.Remove (Thread.CurrentThreadId);
+			else
+				reader_locks [Thread.CurrentThreadId] = new_count;
+				
+			state -= releaseCount;
+			if (state == 0 && !writer_queue.IsEmpty)
+				writer_queue.Pulse ();
 		}
 
 		public void ReleaseWriterLock()
 		{
 			lock (this) {
-				state = 0;
-				if (readers > 0)
-					Monitor.Pulse (this);
-				else if (writer_queue != null)
-					writer_queue.Pulse ();
+				if (!HasWriterLock())
+					throw new ApplicationException ("The thread does not have the writer lock.");
+				
+				ReleaseWriterLock (1);
 			}
 		}
 
+		void ReleaseWriterLock (int releaseCount)
+		{
+			state += releaseCount;
+			if (state == 0) {
+				if (readers > 0)
+					Monitor.Pulse (this);
+				else if (!writer_queue.IsEmpty)
+					writer_queue.Pulse ();
+			}
+		}
+		
 		public void RestoreLock(ref LockCookie lockCookie)
 		{
 			lock (this) {
-				if (lockCookie.IsWriter)
-					AcquireWriterLock (-1);
-				else if (lockCookie.IsReader)
-					AcquireReaderLock (-1);
+				if (lockCookie.WriterLocks != 0)
+					AcquireWriterLock (-1, lockCookie.WriterLocks);
+				else if (lockCookie.ReaderLocks != 0)
+					AcquireReaderLock (-1, lockCookie.ReaderLocks);
 			}
 		}
 
@@ -144,21 +215,15 @@ namespace System.Threading
 		{
 			LockCookie cookie;
 			lock (this) {
-				upgrade_id = Thread.CurrentThreadId;
-				cookie = new LockCookie (upgrade_id, state < 0, state > 0);
+				cookie = GetLockCookie ();
+				if (cookie.WriterLocks != 0) return cookie;
 				
-				if (writer_queue == null)
-					writer_queue = new LockQueue (this);
-				
-				writer_queued = true;
-				if (state != 1) // wait until there is only 1 reader lock
-					writer_queue.Wait (millisecondsTimeout);
-				writer_queued = false;
-				state = -1;
-				upgrade_id = -1;
-				
+				if (cookie.ReaderLocks != 0)
+					ReleaseReaderLock (cookie.ReaderLocks, cookie.ReaderLocks);
 			}
-			Interlocked.Increment (ref seq_num);
+			
+			// Don't do this inside the lock, since it can cause a deadlock.
+			AcquireWriterLock (millisecondsTimeout);
 			return cookie;
 		}
 		
@@ -167,7 +232,25 @@ namespace System.Threading
 			int ms = CheckTimeout (timeout);
 			return UpgradeToWriterLock (ms);
 		}
+		
+		LockCookie GetLockCookie ()
+		{
+			LockCookie cookie = new LockCookie (Thread.CurrentThreadId);
+			
+			if (HasWriterLock())
+				cookie.WriterLocks = -state;
+			else {
+				object locks = reader_locks [Thread.CurrentThreadId];
+				if (locks != null) cookie.ReaderLocks = (int)locks;
+			}
+			return cookie;
+		}
 
+		public bool HasWriterLock ()
+		{
+			return (state < 0 && Thread.CurrentThreadId == writer_lock_owner);
+		}
+		
 		private int CheckTimeout (TimeSpan timeout)
 		{
 			int ms = (int) timeout.TotalMilliseconds;

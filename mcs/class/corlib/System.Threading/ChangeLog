@@ -1,3 +1,16 @@
+2004-04-06  Lluis Sanchez Gual <lluis@ximian.com>
+
+	* LockCookie.cs: Keep in this class the count of reader or writer locks
+	  for a thread, not only whether it has locks or not.
+	* LockQueue.cs: Added property for checking if a thread is waiting in
+	  the queue. Wait now returns a boolean that set to false on timeout 
+	  expiration.
+	* ReaderWriterLock.cs: Started fixing bugs but I had to rewrite a lot of it.
+	  The main change is that now it keeps a reader lock count for each
+	  thread. This is needed since methods like ReleaseLock or 
+	  UpgradeToWriterLock need to return a per-thread status in LockCookie.
+	  Also added support for recursive writer-lock requests.
+
 2004-03-21  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* ThreadAbortException.cs: use same HResult as MS.

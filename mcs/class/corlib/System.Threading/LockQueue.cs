@@ -16,13 +16,14 @@ namespace System.Threading {
 	internal class LockQueue {
 
 		private ReaderWriterLock rwlock;
+		private int lockCount = 0;
 
 		public LockQueue (ReaderWriterLock rwlock)
 		{
-			lock (this) this.rwlock = rwlock;
+			this.rwlock = rwlock;
 		}
 
-		public void Wait (int timeout)
+		public bool Wait (int timeout)
 		{
 			bool _lock = false;
 
@@ -30,12 +31,20 @@ namespace System.Threading {
 				lock (this) {
 					Monitor.Exit (rwlock);
 					_lock = true;
-					Monitor.Wait (this, timeout);
+					lockCount++;
+					return Monitor.Wait (this, timeout);
 				}
 			} finally {
-				if (_lock)
+				if (_lock) {
+					lockCount--;
 					lock (this) Monitor.Enter (rwlock);
+				}
 			}
+		}
+		
+		public bool IsEmpty
+		{
+			get { lock (this) return (lockCount == 0); }
 		}
 
 		public void Pulse ()
