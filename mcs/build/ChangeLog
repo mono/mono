@@ -1,3 +1,7 @@
+2004-06-10  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* library.make: fixed PLATFORM_CHANGE_SEPARATOR_CHAR on windows.
+
 2004-06-09  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* library.make: Added support to fully sign assemblies when doing a

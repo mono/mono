@@ -170,7 +170,7 @@ $(makefrag): $(sourcefile)
 ifdef PLATFORM_CHANGE_SEPARATOR_CMD
 $(response): $(sourcefile)
 	@echo Creating $@ ...
-	@$(PLATFORM_CHANGE_SEPARATOR_CMD) $(sourcefile) >$@
+	@cat $(sourcefile) | $(PLATFORM_CHANGE_SEPARATOR_CMD) >$@
 endif
 
 -include $(makefrag)
