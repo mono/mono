@@ -390,7 +390,12 @@ namespace System.Xml
 
 		public override string LookupNamespace (string prefix)
 		{
-			return parserContext.NamespaceManager.LookupNamespace (prefix);
+			return LookupNamespace (prefix, false);
+		}
+
+		internal string LookupNamespace (string prefix, bool atomizedName)
+		{
+			return parserContext.NamespaceManager.LookupNamespace (prefix, atomizedName);
 		}
 
 		public override void MoveToAttribute (int i)
@@ -824,12 +829,12 @@ namespace System.Xml
 						if (Prefix == string.Empty)
 							NamespaceURI = string.Empty;
 						else
-							NamespaceURI = Reader.LookupNamespace (Prefix);
+							NamespaceURI = Reader.LookupNamespace (Prefix, true);
 						break;
 
 					case XmlNodeType.Element:
 					case XmlNodeType.EndElement:
-						NamespaceURI = Reader.LookupNamespace (Prefix);
+						NamespaceURI = Reader.LookupNamespace (Prefix, true);
 						break;
 					default:
 						NamespaceURI = "";
@@ -1616,7 +1621,7 @@ namespace System.Xml
 				if (currentAttributeToken.Name == "xmlns")
 					parserContext.NamespaceManager.AddNamespace (String.Empty, GetAttribute (currentAttribute));
 				else if (currentAttributeToken.Name.StartsWith ("xmlns:")) {
-					string nsPrefix = NameTable.Add (currentAttributeToken.Name.Substring (6));
+					string nsPrefix = currentAttributeToken.Name.Substring (6);
 					parserContext.NamespaceManager.AddNamespace (nsPrefix, GetAttribute (currentAttribute));
 				}
 

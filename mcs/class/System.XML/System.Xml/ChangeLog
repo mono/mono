@@ -1,5 +1,13 @@
 2004-01-07  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* XmlNamespaceManager.cs : Implemented .NET 1.2 methods that take
+	  atomizedNames argument.
+	* XmlTextReader.cs : Use new namespace manager methods.
+	  Reduced NameTable.Add().
+	* DTDObjectModel.cs : fixed incorrectly commented-out line.
+
+2004-01-07  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* XmlAttribute.cs, XmlDocument.cs, XmlElement.cs :
 	  set_Prefix should atomize to name table.
 	  Avoided extraneous atomization attempt a bit.

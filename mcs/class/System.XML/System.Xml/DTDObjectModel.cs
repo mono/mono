@@ -1057,7 +1057,7 @@ namespace Mono.Xml
 
 			Uri baseUri = null;
 			try {
-//				if (BaseURI != null && BaseURI.Length > 0)
+				if (BaseURI != null && BaseURI.Length > 0)
 					baseUri = new Uri (BaseURI);
 			} catch (UriFormatException) {
 			}

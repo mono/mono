@@ -65,6 +65,8 @@ namespace System.Xml
 		private XmlNameTable nameTable;
 		internal const string XmlnsXml = "http://www.w3.org/XML/1998/namespace";
 		internal const string XmlnsXmlns = "http://www.w3.org/2000/xmlns/";
+		internal const string PrefixXml = "xml";
+		internal const string PrefixXmlns = "xmlns";
 
 		#endregion
 
@@ -75,8 +77,8 @@ namespace System.Xml
 		{
 			this.nameTable = nameTable;
 
-			nameTable.Add ("xmlns");
-			nameTable.Add ("xml");
+			nameTable.Add (PrefixXmlns);
+			nameTable.Add (PrefixXml);
 			nameTable.Add (String.Empty);
 			nameTable.Add (XmlnsXmlns);
 			nameTable.Add (XmlnsXml);
@@ -102,22 +104,32 @@ namespace System.Xml
 
 		public virtual void AddNamespace (string prefix, string uri)
 		{
+			AddNamespace (prefix, uri, false);
+		}
+
+#if NET_1_2
+		public virtual void AddNamespace (string prefix, string uri, bool atomizedNames)
+#else
+		internal virtual void AddNamespace (string prefix, string uri, bool atomizedNames)
+#endif
+		{
 			if (prefix == null)
 				throw new ArgumentNullException ("prefix", "Value cannot be null.");
 
 			if (uri == null)
 				throw new ArgumentNullException ("uri", "Value cannot be null.");
-			
-			prefix = nameTable.Add (prefix);
-			uri = nameTable.Add (uri);
+			if (!atomizedNames) {
+				prefix = nameTable.Add (prefix);
+				uri = nameTable.Add (uri);
+			}
 
 			IsValidDeclaration (prefix, uri, true);
 
-			if (prefix == string.Empty)
+			if (prefix.Length == 0)
 				defaultNamespace = uri;
 			
 			for (int i = declPos; i > declPos - count; i--) {
-				if (decls [i].Prefix == prefix) {
+				if (object.ReferenceEquals (decls [i].Prefix, prefix)) {
 					decls [i].Uri = uri;
 					return;
 				}
@@ -135,7 +147,7 @@ namespace System.Xml
 		internal static string IsValidDeclaration (string prefix, string uri, bool throwException)
 		{
 			string message = null;
-			if (prefix == "xml" && uri != XmlnsXml)
+			if (prefix == PrefixXml && uri != XmlnsXml)
 				message = String.Format ("Prefix \"xml\" is only allowed to the fixed uri \"{0}\"", XmlnsXml);
 			else if (uri == XmlnsXml)
 				message = String.Format ("Namespace URI \"{0}\" can only be declared with the fixed prefix \"xml\"", XmlnsXml);
@@ -162,8 +174,8 @@ namespace System.Xml
 			}
 			
 			ht [string.Empty] = DefaultNamespace;
-			ht ["xml"] = XmlnsXml;
-			ht ["xmlns"] = XmlnsXmlns;
+			ht [PrefixXml] = XmlnsXml;
+			ht [PrefixXmlns] = XmlnsXmlns;
 			
 			return ht.Keys.GetEnumerator ();
 		}
@@ -183,17 +195,28 @@ namespace System.Xml
 
 		public virtual string LookupNamespace (string prefix)
 		{
+			return LookupNamespace (prefix, false);
+		}
+
+#if NET_1_2
+		public string LookupNamespace (string prefix, bool atomizedName)
+#else
+		internal string LookupNamespace (string prefix, bool atomizedName)
+#endif
+		{
 			switch (prefix) {
-			case "xmlns":
+			case PrefixXmlns:
 				return nameTable.Get (XmlnsXmlns);
-			case "xml":
+			case PrefixXml:
 				return nameTable.Get (XmlnsXml);
 			case "":
 				return DefaultNamespace;
+			case null:
+				return null;
 			}
-			
+
 			for (int i = declPos; i >= 0; i--) {
-				if (decls [i].Prefix == prefix && decls [i].Uri != null /* null == flag for removed */)
+				if (CompareString (decls [i].Prefix, prefix, atomizedName) && decls [i].Uri != null /* null == flag for removed */)
 					return decls [i].Uri;
 			}
 			
@@ -202,21 +225,37 @@ namespace System.Xml
 
 		public virtual string LookupPrefix (string uri)
 		{
+			return LookupPrefix (uri, false);
+		}
+
+		private bool CompareString (string s1, string s2, bool atomizedNames)
+		{
+			if (atomizedNames)
+				return object.ReferenceEquals (s1, s2);
+			else
+				return s1 == s2;
+		}
+
+#if NET_1_2
+		public string LookupPrefix (string uri, bool atomizedName)
+#else
+		internal string LookupPrefix (string uri, bool atomizedName)
+#endif
+		{
 			if (uri == null)
 				return null;
-			
-			if (uri == DefaultNamespace)
+
+			if (CompareString (uri, DefaultNamespace, atomizedName))
 				return string.Empty;
-				
-			if (uri == XmlnsXml)
-				return nameTable.Add ("xml");
+
+			if (CompareString (uri, XmlnsXml, atomizedName))
+				return PrefixXml;
 			
-			if (uri == XmlnsXmlns)
-				return nameTable.Add ("xmlns");
-			
-			
+			if (CompareString (uri, XmlnsXmlns, atomizedName))
+				return PrefixXmlns;
+
 			for (int i = declPos; i >= 0; i--) {
-				if (decls [i].Uri == uri && decls [i].Prefix != string.Empty) // we already looked for ""
+				if (CompareString (decls [i].Uri, uri, atomizedName) && decls [i].Prefix.Length > 0) // we already looked for ""
 					return decls [i].Prefix;
 			}
 
@@ -251,7 +290,17 @@ namespace System.Xml
 			count = 0;
 		}
 
+		// It is rarely used, so we don't need NameTable optimization on it.
 		public virtual void RemoveNamespace (string prefix, string uri)
+		{
+			RemoveNamespace (prefix, uri, false);
+		}
+
+#if NET_1_2
+		public virtual void RemoveNamespace (string prefix, string uri, bool atomizedNames)
+#else
+		internal virtual void RemoveNamespace (string prefix, string uri, bool atomizedNames)
+#endif
 		{
 			if (prefix == null)
 				throw new ArgumentNullException ("prefix");
@@ -260,10 +309,10 @@ namespace System.Xml
 				throw new ArgumentNullException ("uri");
 			
 			if (count == 0)
-				return;		
+				return;
 
 			for (int i = declPos; i > declPos - count; i--) {
-				if (decls [i].Prefix == prefix && decls [i].Uri == uri)
+				if (CompareString (decls [i].Prefix, prefix, atomizedNames) && CompareString (decls [i].Uri, uri, atomizedNames))
 					decls [i].Uri = null;
 			}
 		}
