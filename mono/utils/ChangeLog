@@ -1,3 +1,8 @@
+2004-09-25  Zoltan Varga  <vargaz@freemail.hu>
+
+	* mono-codeman.c (new_codechunk): Set malloc'ed code pages as 
+	executable.
+
 2004-09-07  Bernie Solomon  <bernard@ugsolutions.com>
 
 	* mono-sha1.c: Remove uint32 and int32 types completely
