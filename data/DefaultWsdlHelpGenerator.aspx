@@ -316,7 +316,7 @@ string GetTestResult ()
 	{
 		if (fill) {
 			if (qs != "") qs += "&";
-			qs += Request.QueryString.GetKey(n) + "=" + Request.QueryString [n];
+			qs += Request.QueryString.GetKey(n) + "=" + Server.UrlEncode (Request.QueryString [n]);
 		}
 		if (Request.QueryString.GetKey(n) == "ext") fill = true;
 	}
@@ -337,6 +337,7 @@ string GetTestResult ()
 	
 	try
 	{
+		Console.WriteLine (location + "/" + CurrentOperationName + "?" + qs);
 		WebRequest req = WebRequest.Create (location + "/" + CurrentOperationName + "?" + qs);
 		HttpCookieCollection cookies = Request.Cookies;
 		int last = cookies.Count;
