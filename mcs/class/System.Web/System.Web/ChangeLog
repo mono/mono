@@ -1,3 +1,9 @@
+2004-01-27  Jackson Harper <jackson@ximian.com>
+
+	* HttpCachePolicy.cs: varybyparams::GetResponseHeader can return
+	null now, dont hadd the header if it does.
+	* HttpCacheVaryByParams.cs: Return null if there are no items.
+
 2004-01-23  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HttpCachePolicy.cs: it's not public.

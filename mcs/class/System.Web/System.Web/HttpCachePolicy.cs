@@ -293,8 +293,11 @@ namespace System.Web {
 				headers.Add (new HttpResponseHeader ("Last-Modified",
 							     TimeUtil.ToUtcTimeString (lastModified)));
 
-			if (!varyByParams.IgnoreParams)
-				headers.Add (varyByParams.GetResponseHeader ());
+			if (!varyByParams.IgnoreParams) {
+				HttpResponseHeader vb = varyByParams.GetResponseHeader ();
+				if (vb != null)
+					headers.Add (vb);
+			}
 
 		}
 		

@@ -43,6 +43,9 @@ namespace System.Web {
 	      if (_Wildcard)
 		      return new HttpResponseHeader ("Vary", "*");
 
+              if (_Items == null)
+                      return null;
+
 	      StringBuilder builder = new StringBuilder ();
 	      foreach (string item in _Items.Keys) {
 		      if (!(bool) _Items [item])
