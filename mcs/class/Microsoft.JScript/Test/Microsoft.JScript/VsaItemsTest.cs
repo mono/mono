@@ -228,5 +228,29 @@ namespace MonoTests.Microsoft.JScript {
 			items.Remove (3);
 			AssertEquals ("#19", "item5", items [3].Name);
 		}
+
+		[Test]
+		public void CreateItemOnRepeatedName ()
+		{
+			VsaEngine engine = new VsaEngine ();
+			IVsaItems items;
+
+			engine = new VsaEngine ();
+			engine.RootMoniker = "com.foo://path/to/nowhere";
+			engine.Site = new Site ();
+
+			engine.InitNew ();
+			items = engine.Items;
+
+			items.CreateItem ("item2", VsaItemType.AppGlobal, VsaItemFlag.None);
+
+			try {
+				items.CreateItem ("item2", 
+						  VsaItemType.Reference, 
+						  VsaItemFlag.None);
+			} catch (VsaException e) {
+				AssertEquals ("#20", VsaError.ItemNameInUse, e.ErrorCode);
+			}
+		}
 	}
 }

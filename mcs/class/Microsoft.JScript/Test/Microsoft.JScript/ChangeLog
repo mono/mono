@@ -1,5 +1,7 @@
 2003-09-28    <cesar@ciencias.unam.mx>
 
+	* Added test for creation of new IVsaItem with repeated name
+
 	* Add VsaItemsTest.cs test cases.
 
 	* Add this file.
