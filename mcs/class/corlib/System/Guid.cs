@@ -107,7 +107,7 @@ public struct Guid  : IFormattable, IComparable  {
 		
 	};
 
-	private static GuidState _guidState = new GuidState ( false /* use pseudo RNG? */ ); 
+	private static GuidState _guidState = new GuidState ( true /* use pseudo RNG? */ ); 
 
 	private static void CheckNull (object o) {
 		if (o == null) {
@@ -139,6 +139,21 @@ public struct Guid  : IFormattable, IComparable  {
 		_node3 = b[13];
 		_node4 = b[14];
 		_node5 = b[15];
+	}
+
+	[MonoTODO("Implement")]
+	public Guid (string g) {
+		_timeLow = 0;
+		_timeMid = 0;
+		_timeHighAndVersion = 0;
+		_clockSeqHiAndReserved = 0;
+		_clockSeqLow = 0;
+		_node0 = 0;
+		_node1 = 0;
+		_node2 = 0;
+		_node3 = 0;
+		_node4 = 0;
+		_node5 = 0;
 	}
 
 	public Guid (int a, short b, short c, byte[] d) 

@@ -1,3 +1,6 @@
+2002-02-17  Duco Fijma <duco@lorentz.xs4all.nl>
+	* Added System/GuidTest.cs
+
 2002-02-10  Nick Drochak  <ndrochak@gol.com>
 
 	* corlib_test.build: Remove duplicate excludes for 

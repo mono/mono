@@ -1,3 +1,6 @@
+2002-02-17  Duco Fijma  <duco@lorentz.xs4all.nl>
+	* Guid.cs: added stub for Guid(string) ctor
+
 2002-02-17  Duncan Mak  <duncan@ximian.com>
 
 	* Convert.cs: Near-complete implementation of Convert.cs
