@@ -1,3 +1,9 @@
+2003-11-08  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* RIPEMD160Test.cs: New. Unit test using RIPEMD160 test vectors.
+	* RIPEMD160Managed.cs: New. Unit tests running RIPEMD160Test using the
+	RIPEMD160Managed implementation.
+
 2003-10-04  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* CryptoStreamTest.cs: Added test case from bugzilla #49323 from
