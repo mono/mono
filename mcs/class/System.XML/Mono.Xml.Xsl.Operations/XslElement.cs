@@ -48,13 +48,9 @@ namespace Mono.Xml.Xsl.Operations {
 		XslOperation value;
 		XmlQualifiedName [] useAttributeSets;
 
-		XPathNavigator nav;
-		
 		public XslElement (Compiler c) : base (c) {}
 		protected override void Compile (Compiler c)
 		{
-			nav = c.Input.Clone ();
-
 			name = c.ParseAvtAttribute ("name");
 			ns = c.ParseAvtAttribute ("namespace");
 			

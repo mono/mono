@@ -1,3 +1,7 @@
+2004-11-26  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XslElement.cs : warning removal.
+
 2004-11-24  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XslVariable.cs,
