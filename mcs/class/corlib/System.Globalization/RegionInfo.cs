@@ -7,12 +7,7 @@ namespace System.Globalization {
 		int NLS_id;
 
 		public RegionInfo (int culture) {
-
-			if (CultureInfo.IsIDNeutralCulture (culture))
-				throw new ArgumentException ("Culture ID " + culture
-							 + " (0x" + culture.ToString ("X4")
-							 + ") is a neutral culture. A region can not be created from it.");
-
+			
 			switch (culture) {
 			case 0x0401: // ar-SA Arabic (Saudi Arabia)
 				NLS_id = 682;
@@ -404,9 +399,14 @@ namespace System.Globalization {
 			case 0x0465: // div-MV Divehi (Maldives)
 				NLS_id = 462;
 				break;
-			case 0x007F: //  Invariant Language (Invariant Country)
+			case 0x007F: //	 Invariant Language (Invariant Country)
 				throw new ArgumentException ("There is no region associated with the Invariant Culture (Culture ID: 0x7F).");
 			default:
+				if (CultureInfo.IsIDNeutralCulture (culture))
+					throw new ArgumentException ("Culture ID " + culture
+							 + " (0x" + culture.ToString ("X4")
+							 + ") is a neutral culture. A region can not be created from it.");
+
 				throw new ArgumentException ("Culture ID " + culture + " (0x" + culture.ToString ("X4")
 							 + ") is not a supported culture.");
 			}
@@ -1136,7 +1136,7 @@ namespace System.Globalization {
 			}
 		}
 
-                public virtual string CurrencySymbol {
+		public virtual string CurrencySymbol {
 			get {
 				switch (NLS_id) {
 				default:
@@ -1709,11 +1709,11 @@ namespace System.Globalization {
 		//
 		// methods
 
-                public override bool Equals(object value) {
+		public override bool Equals(object value) {
 			return value == this;
 		}
 
-                public override int GetHashCode () {
+		public override int GetHashCode () {
 			return NLS_id.GetHashCode ();
 		}
 

@@ -18,6 +18,7 @@ namespace System.Globalization
 	public class CompareInfo : IDeserializationCallback
 	{
 		private int lcid;
+		private string icu_name;
 		private IntPtr ICU_collator;
 		
 		/* Hide the .ctor() */
@@ -26,10 +27,11 @@ namespace System.Globalization
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		private extern void construct_compareinfo (string locale);
 		
-		internal CompareInfo (int lcid)
+		internal CompareInfo (CultureInfo ci)
 		{
-			this.lcid=lcid;
-			this.construct_compareinfo (CultureInfo.CultureMap.lcid_to_icuname (lcid));
+			this.lcid = ci.LCID;
+			this.icu_name = ci.IcuName;
+			this.construct_compareinfo (icu_name);
 		}
 		
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
@@ -699,7 +701,7 @@ namespace System.Globalization
 			 * the pointer in ICU_collator
 			 */
 			try {
-				this.construct_compareinfo (CultureInfo.CultureMap.lcid_to_icuname (lcid));
+				this.construct_compareinfo (icu_name);
 			} catch {
 				ICU_collator=IntPtr.Zero;
 			}

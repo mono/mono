@@ -1,3 +1,11 @@
+2004-04-07  Jackson Harper  <jackson@ximian.com>
+
+	* CultureInfo.cs: Use new ICUless implementation in the runtime.
+	* CompareInfo.cs: Get ICU name from a cultureinfo object instead
+	of looking it up in the culture map.
+	* RegionInfo.cs: Dont check if the LCID is neutral unless its not
+	found in the switch. Avoids an icall.
+	
 2004-03-24  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* NumberFormatInfo.cs: this fixes bug #56000 for me. And it doesn't
