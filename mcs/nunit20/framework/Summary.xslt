@@ -26,7 +26,7 @@
 <xsl:if test="//test-case[@executed='False']"><xsl:text>Tests not run:
 </xsl:text></xsl:if>
 <xsl:apply-templates select="//test-case[@executed='False']"/>
-<xsl:text disable-output-escaping='yes'>&#xA;</xsl:text>
+<xsl:text disable-output-escaping='yes'>&#xD;&#xA;</xsl:text>
 </xsl:template>
 
 <xsl:template match="test-case">
@@ -34,7 +34,7 @@
 	<xsl:value-of select="@name"/>
 	<xsl:text> : </xsl:text>
 	<xsl:value-of select="child::node()/message"/>
-<xsl:text disable-output-escaping='yes'>&#xA;</xsl:text>
+<xsl:text disable-output-escaping='yes'>&#xD;&#xA;</xsl:text>
 	<xsl:if test="failure">
 		<xsl:value-of select="failure/stack-trace"/>
 <xsl:text>

@@ -37,6 +37,7 @@
 			<xs:element name="reason" type="reasonType" minOccurs="0" />
 		</xs:choice>
 		<xs:attribute name="name" type="xs:string" use="required" />
+		<xs:attribute name="description" type="xs:string" use="optional" />
 		<xs:attribute name="success" type="xs:string" use="optional" />
 		<xs:attribute name="time" type="xs:string" use="optional" />
 		<xs:attribute name="executed" type="xs:string" use="required" />
@@ -46,6 +47,7 @@
 			<xs:element name="results" type="resultsType" />
 		</xs:sequence>
 		<xs:attribute name="name" type="xs:string" use="required" />
+		<xs:attribute name="description" type="xs:string" use="optional" />
 		<xs:attribute name="success" type="xs:string" use="required" />
 		<xs:attribute name="time" type="xs:string" use="required" />
 	</xs:complexType>

@@ -1,8 +1,8 @@
-#region Copyright (c) 2002, James W. Newkirk, Michael C. Two, Alexei A. Vorontsov, Philip A. Craig
+#region Copyright (c) 2002-2003, James W. Newkirk, Michael C. Two, Alexei A. Vorontsov, Charlie Poole, Philip A. Craig
 /************************************************************************************
 '
-' Copyright © 2002 James W. Newkirk, Michael C. Two, Alexei A. Vorontsov
-' Copyright © 2000-2002 Philip A. Craig
+' Copyright © 2002-2003 James W. Newkirk, Michael C. Two, Alexei A. Vorontsov, Charlie Poole
+' Copyright © 2000-2003 Philip A. Craig
 '
 ' This software is provided 'as-is', without any express or implied warranty. In no 
 ' event will the authors be held liable for any damages arising from the use of this 
@@ -16,8 +16,8 @@
 ' you wrote the original software. If you use this software in a product, an 
 ' acknowledgment (see the following) in the product documentation is required.
 '
-' Portions Copyright © 2002 James W. Newkirk, Michael C. Two, Alexei A. Vorontsov 
-' or Copyright © 2000-2002 Philip A. Craig
+' Portions Copyright © 2003 James W. Newkirk, Michael C. Two, Alexei A. Vorontsov, Charlie Poole
+' or Copyright © 2000-2003 Philip A. Craig
 '
 ' 2. Altered source versions must be plainly marked as such, and must not be 
 ' misrepresented as being the original software.
@@ -41,7 +41,7 @@ namespace NUnit.Core
 		{
 			TestCase testCase = null;
 
-			if(HasTestAttribute(method) || HasObsoleteTestName(method))
+			if(HasTestAttribute(method) || HasObsoleteTestName(method) && !HasAnySetUpOrTearDownAttribute(method) )
 			{
 				if(IsTestMethodSignatureCorrect(method))
 				{
@@ -49,20 +49,20 @@ namespace NUnit.Core
 						testCase = new NormalTestCase(fixture, method);
 					else
 					{
-						Type expectedException = GetExpectedExceptions(method);
-						testCase = new ExpectedExceptionTestCase(fixture, method, expectedException);
+						NUnit.Framework.ExpectedExceptionAttribute expectedException = GetExpectedExceptions(method);
+						testCase = new ExpectedExceptionTestCase(fixture, method, expectedException.ExceptionType, expectedException.ExpectedMessage);
 					}
+
 					if(HasIgnoreAttribute(method))
 					{
 						testCase.ShouldRun = false;
 						testCase.IgnoreReason = GetIgnoreReason(method);
 					}
 
+					testCase.Description = GetDescription(method);
 				}
 				else
 				{
-					//					string reason = String.Format("Method: {0}'s signature is not correct", method.Name);
-					//					testCase = new NotRunnableTestCase(method, reason);
 					testCase = new NotRunnableTestCase(method);
 				}
 			}
@@ -89,22 +89,38 @@ namespace NUnit.Core
 			return attributes.Length == 1;
 		}
 
-		private static Type GetExpectedExceptions(MethodInfo method)
+		private static NUnit.Framework.ExpectedExceptionAttribute GetExpectedExceptions(MethodInfo method)
 		{
 			Type exceptionAttr = typeof(NUnit.Framework.ExpectedExceptionAttribute);
 			object[] attributes = method.GetCustomAttributes(exceptionAttr, false);
 
-			Type returnType = null;
+			NUnit.Framework.ExpectedExceptionAttribute expectedAttr = null;
 
 			if(attributes.Length == 1)
 			{
-				NUnit.Framework.ExpectedExceptionAttribute expectedAttr = 
-					(NUnit.Framework.ExpectedExceptionAttribute)attributes[0];
-				returnType = expectedAttr.ExceptionType;
+				expectedAttr = (NUnit.Framework.ExpectedExceptionAttribute)attributes[0];
 			}
 
-			return returnType;
+			return expectedAttr;
 		}
+
+		private static string GetDescription(MethodInfo method)
+		{
+			Type testAttr = typeof(NUnit.Framework.TestAttribute);
+			object[] attributes = method.GetCustomAttributes(testAttr, false);
+
+			string description = null;
+
+			if(attributes.Length == 1)
+			{
+				NUnit.Framework.TestAttribute attribute = 
+					(NUnit.Framework.TestAttribute)attributes[0];
+				description = attribute.Description;
+			}
+
+			return description;
+		}
+
 
 		public static int CountTestCases(object fixture) 
 		{
@@ -131,7 +147,8 @@ namespace NUnit.Core
 		private static bool IsTestMethodSignatureCorrect(MethodInfo methodToCheck)
 		{
 			return 
-				!methodToCheck.IsAbstract
+				!methodToCheck.IsStatic
+				&& !methodToCheck.IsAbstract
 				&& methodToCheck.IsPublic
 				&& methodToCheck.GetParameters().Length == 0
 				&& methodToCheck.ReturnType.Equals(typeof(void));
@@ -145,6 +162,19 @@ namespace NUnit.Core
 		private static bool HasObsoleteTestName(MethodInfo methodToCheck)
 		{
 			return methodToCheck.Name.ToLower().StartsWith("test");
+		}
+
+		private static bool HasAnySetUpOrTearDownAttribute( MethodInfo methodToCheck )
+		{
+			object[] attributes = methodToCheck.GetCustomAttributes( false );
+			foreach( Attribute attribute in attributes )
+				if ( attribute is NUnit.Framework.SetUpAttribute ||
+					 attribute is NUnit.Framework.TestFixtureSetUpAttribute ||
+					 attribute is NUnit.Framework.TearDownAttribute || 
+					 attribute is NUnit.Framework.TestFixtureTearDownAttribute )
+					return true;
+
+			return false;	
 		}
 
 		private static bool HasIgnoreAttribute(MethodInfo methodToCheck)

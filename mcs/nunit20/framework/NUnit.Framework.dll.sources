@@ -1,4 +1,5 @@
 ./AssemblyInfo.cs
+./Assert.cs
 ./Assertion.cs
 ./AssertionException.cs
 ./AssertionFailureMessage.cs
@@ -9,6 +10,7 @@
 ./IgnoreAttribute.cs
 ./InvalidFixture.cs
 ./InvalidSuiteException.cs
+./ITest.cs
 ./InvalidTestFixtureException.cs
 ./LongLivingMarshalByRefObject.cs
 ./NoTestFixturesException.cs
@@ -20,14 +22,17 @@
 ./RemoteTestRunner.cs
 ./ResultSummarizer.cs
 ./ResultVisitor.cs
+./RootTestSuite.cs
 ./SetUpAttribute.cs
 ./StackTraceFilter.cs
+./StringTextWriter.cs
 ./SuiteAttribute.cs
 ./SummaryVisitor.cs
 ./TearDownAttribute.cs
 ./TemplateTestCase.cs
 ./Test.cs
 ./TestAttribute.cs
+./TestAssembly.cs
 ./TestCase.cs
 ./TestCaseBuilder.cs
 ./TestCaseResult.cs

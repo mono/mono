@@ -1,8 +1,8 @@
-#region Copyright (c) 2002, James W. Newkirk, Michael C. Two, Alexei A. Vorontsov, Philip A. Craig
+#region Copyright (c) 2002-2003, James W. Newkirk, Michael C. Two, Alexei A. Vorontsov, Charlie Poole, Philip A. Craig
 /************************************************************************************
 '
-' Copyright © 2002 James W. Newkirk, Michael C. Two, Alexei A. Vorontsov
-' Copyright © 2000-2002 Philip A. Craig
+' Copyright  2002-2003 James W. Newkirk, Michael C. Two, Alexei A. Vorontsov, Charlie Poole
+' Copyright  2000-2002 Philip A. Craig
 '
 ' This software is provided 'as-is', without any express or implied warranty. In no 
 ' event will the authors be held liable for any damages arising from the use of this 
@@ -16,8 +16,8 @@
 ' you wrote the original software. If you use this software in a product, an 
 ' acknowledgment (see the following) in the product documentation is required.
 '
-' Portions Copyright © 2002 James W. Newkirk, Michael C. Two, Alexei A. Vorontsov 
-' or Copyright © 2000-2002 Philip A. Craig
+' Portions Copyright  2002-2003 James W. Newkirk, Michael C. Two, Alexei A. Vorontsov, Charlie Poole
+' or Copyright  2000-2002 Philip A. Craig
 '
 ' 2. Altered source versions must be plainly marked as such, and must not be 
 ' misrepresented as being the original software.
@@ -30,6 +30,9 @@
 namespace NUnit.Util
 {
 	using System;
+	using System.IO;
+	using System.Text;
+	using System.Windows.Forms;
 	using Microsoft.Win32;
 
 	/// <summary>
@@ -38,10 +41,13 @@ namespace NUnit.Util
 	/// </summary>
 	public class NUnitRegistry
 	{
-		private static readonly string KEY = "Software\\Nascent Software\\Nunit\\";
+		private static readonly string KEY = 
+			@"Software\Nascent Software\Nunit\";
 
 		private static bool testMode = false;
-		private static string testKey = "Software\\Nascent Software\\Nunit-Test";
+		private static string testKey = 
+			@"Software\Nascent Software\Nunit-Test";
+
 
 		/// <summary>
 		/// Prevent construction of object
@@ -91,7 +97,7 @@ namespace NUnit.Util
 		public static void ClearTestKeys()
 		{
 			ClearSubKey( Registry.CurrentUser, testKey );
-			ClearSubKey( Registry.LocalMachine, testKey );
+			ClearSubKey( Registry.LocalMachine, testKey );	
 		}
 
 		/// <summary>

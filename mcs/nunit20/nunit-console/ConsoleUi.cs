@@ -1,8 +1,8 @@
-#region Copyright (c) 2002, James W. Newkirk, Michael C. Two, Alexei A. Vorontsov, Philip A. Craig
+#region Copyright (c) 2002-2003, James W. Newkirk, Michael C. Two, Alexei A. Vorontsov, Charlie Poole, Philip A. Craig
 /************************************************************************************
 '
-' Copyright © 2002 James W. Newkirk, Michael C. Two, Alexei A. Vorontsov
-' Copyright © 2000-2002 Philip A. Craig
+' Copyright © 2002-2003 James W. Newkirk, Michael C. Two, Alexei A. Vorontsov, Charlie Poole
+' Copyright © 2000-2003 Philip A. Craig
 '
 ' This software is provided 'as-is', without any express or implied warranty. In no 
 ' event will the authors be held liable for any damages arising from the use of this 
@@ -16,8 +16,8 @@
 ' you wrote the original software. If you use this software in a product, an 
 ' acknowledgment (see the following) in the product documentation is required.
 '
-' Portions Copyright © 2002 James W. Newkirk, Michael C. Two, Alexei A. Vorontsov 
-' or Copyright © 2000-2002 Philip A. Craig
+' Portions Copyright © 2003 James W. Newkirk, Michael C. Two, Alexei A. Vorontsov, Charlie Poole
+' or Copyright © 2000-2003 Philip A. Craig
 '
 ' 2. Altered source versions must be plainly marked as such, and must not be 
 ' misrepresented as being the original software.
@@ -30,6 +30,8 @@
 namespace NUnit.Console
 {
 	using System;
+	using System.Collections;
+	using System.Collections.Specialized;
 	using System.IO;
 	using System.Reflection;
 	using System.Xml;
@@ -37,6 +39,8 @@ namespace NUnit.Console
 	using System.Xml.XPath;
 	using System.Resources;
 	using System.Text;
+	using System.Text.RegularExpressions;
+	using System.Diagnostics;
 	using NUnit.Core;
 	using NUnit.Util;
 	
@@ -46,10 +50,12 @@ namespace NUnit.Console
 	/// </summary>
 	public class ConsoleUi
 	{
-		private NUnit.Framework.TestDomain testDomain;
-		private string outputFile;
+		private NUnit.Core.TestDomain testDomain;
 		private XmlTextReader transformReader;
+		private bool silent;
+		private string xmlOutput;
 
+		[STAThread]
 		public static int Main(string[] args)
 		{
 			int returnCode = 0;
@@ -64,57 +70,67 @@ namespace NUnit.Console
 			}
 			else if(parser.NoArgs) 
 			{
-				Console.Error.WriteLine("\nfatal error: no inputs specified");
+				Console.Error.WriteLine("fatal error: no inputs specified");
 				parser.Help();
 			}
 			else if(!parser.Validate())
 			{
-				Console.Error.WriteLine("\nfatal error: invalid arguments");
+				Console.Error.WriteLine("fatal error: invalid arguments");
 				parser.Help();
 				returnCode = 2;
 			}
 			else
 			{
-				ConsoleWriter outStream = new ConsoleWriter(Console.Out);
-				ConsoleWriter errorStream = new ConsoleWriter(Console.Error);
-				NUnit.Framework.TestDomain domain = new NUnit.Framework.TestDomain(outStream, errorStream);
+				NUnit.Core.TestDomain domain = new NUnit.Core.TestDomain();
 
-				Test test = MakeTestFromCommandLine(domain, parser);
 				try
 				{
+					Test test = MakeTestFromCommandLine(domain, parser);
+
 					if(test == null)
 					{
-						Console.Error.WriteLine("\nfatal error: invalid assembly {0}", parser.Assembly);
+						Console.Error.WriteLine("fatal error: invalid assembly {0}", parser.Parameters[0]);
 						returnCode = 2;
 					}
 					else
 					{
-						Directory.SetCurrentDirectory(new FileInfo(parser.Assembly).DirectoryName);
+						Directory.SetCurrentDirectory(new FileInfo((string)parser.Parameters[0]).DirectoryName);
 						string xmlResult = "TestResult.xml";
 						if(parser.IsXml)
 							xmlResult = parser.xml;
-
+				
 						XmlTextReader reader = GetTransformReader(parser);
 						if(reader != null)
 						{
-							ConsoleUi consoleUi = new ConsoleUi(domain, xmlResult, reader);
+							ConsoleUi consoleUi = new ConsoleUi(domain, reader, parser.xmlConsole);
 							returnCode = consoleUi.Execute();
-							if(parser.wait)
+
+							if (parser.xmlConsole)
+								Console.WriteLine(consoleUi.XmlOutput);
+							using (StreamWriter writer = new StreamWriter(xmlResult)) 
 							{
-								Console.Out.WriteLine("Hit <enter> key to continue");
-								Console.ReadLine();
+								writer.Write(consoleUi.XmlOutput);
 							}
 						}
 						else
 							returnCode = 3;
 					}
 				}
+				catch( Exception ex )
+				{
+					Console.WriteLine( "Unhandled Exception: {0}", ex.ToString() );
+				}
 				finally
 				{
 					domain.Unload();
+
+					if(parser.wait)
+					{
+						Console.Out.WriteLine("\nHit <enter> key to continue");
+						Console.ReadLine();
+					}
 				}
 			}
-
 
 			return returnCode;
 		}
@@ -135,7 +151,7 @@ namespace NUnit.Console
 				FileInfo xsltInfo = new FileInfo(parser.transform);
 				if(!xsltInfo.Exists)
 				{
-					Console.Error.WriteLine("\nTransform file: {0} does not exist", xsltInfo.FullName);
+					Console.Error.WriteLine("Transform file: {0} does not exist", xsltInfo.FullName);
 					reader = null;
 				}
 				else
@@ -160,26 +176,35 @@ namespace NUnit.Console
 
 			Console.WriteLine(String.Format("{0} version {1}", productAttr.Product, version.ToString(3)));
 			Console.WriteLine(copyrightAttr.Copyright);
+			Console.WriteLine();
 		}
 
-		private static Test MakeTestFromCommandLine(NUnit.Framework.TestDomain testDomain, 
+		private static Test MakeTestFromCommandLine(NUnit.Core.TestDomain testDomain, 
 			ConsoleOptions parser)
 		{
-			Test test = null;
-
-			if(!DoesFileExist(parser.Assembly)) return null; 
+			if(!DoAssembliesExist(parser.Parameters)) return null; 
 			
-			if(parser.IsAssembly)
+			NUnitProject project;
+
+			if ( parser.IsTestProject )
 			{
-				test = testDomain.Load(parser.Assembly);
-				if(test == null) Console.WriteLine("\nfatal error: assembly ({0}) is invalid", parser.Assembly);
+				project = NUnitProject.LoadProject( (string)parser.Parameters[0] );
+				string configName = (string) parser.config;
+				if ( configName != null )
+					project.SetActiveConfig( configName );
 			}
-			else if(parser.IsFixture)
-			{
-				test = testDomain.Load(parser.fixture, parser.Assembly);
-				if(test == null) Console.WriteLine("\nfatal error: fixture ({0}) in assembly ({1}) is invalid", parser.fixture, parser.Assembly);
-			}
-			return test;
+			else
+				project = NUnitProject.FromAssemblies( (string[])parser.Parameters.ToArray( typeof( string ) ) );
+
+			return project.LoadTest( testDomain, parser.fixture );
+		}
+
+		private static bool DoAssembliesExist(IList files)
+		{
+			bool exist = true; 
+			foreach(string fileName in files)
+				exist &= DoesFileExist(fileName);
+			return exist;
 		}
 
 		private static bool DoesFileExist(string fileName)
@@ -188,33 +213,43 @@ namespace NUnit.Console
 			return fileInfo.Exists;
 		}
 
-		private static void WriteHelp(TextWriter writer)
-		{
-			writer.WriteLine("\n\n         NUnit console options\n");
-			writer.WriteLine("/assembly:<assembly name>                            Assembly to test");
-			writer.WriteLine("/fixture:<class name> /assembly:<assembly name>      Fixture or Suite to run");
-			writer.WriteLine("\n\n         XML formatting options");
-			writer.WriteLine("/xml:<file>                 XML result file to generate");
-			writer.WriteLine("/transform:<file>           XSL transform file");
-		}
-
-		public ConsoleUi(NUnit.Framework.TestDomain testDomain, string xmlFile, XmlTextReader reader)
+		public ConsoleUi(NUnit.Core.TestDomain testDomain, XmlTextReader reader, bool silent)
 		{
 			this.testDomain = testDomain;
-			outputFile = xmlFile;
 			transformReader = reader;
+			this.silent = silent;
+		}
+
+		public string XmlOutput
+		{
+			get { return xmlOutput; }
 		}
 
 		public int Execute()
 		{
-			EventCollector collector = new EventCollector();
-			TestResult result = testDomain.Run(collector);
+			EventListener collector = null;
+			if (silent)
+				collector = new NullListener();
+			else
+				collector = new EventCollector();
+			ConsoleWriter outStream = new ConsoleWriter(Console.Out);
+			ConsoleWriter errorStream = new ConsoleWriter(Console.Error);
+			
+			string savedDirectory = Environment.CurrentDirectory;
+			TestResult result = testDomain.Run(collector, outStream, errorStream);
+			Directory.SetCurrentDirectory( savedDirectory );
+			
+			Console.WriteLine();
 
-			Console.WriteLine("\n");
-			XmlResultVisitor resultVisitor = new XmlResultVisitor(outputFile, result);
+			StringBuilder builder = new StringBuilder();
+			XmlResultVisitor resultVisitor = new XmlResultVisitor(new StringWriter( builder ), result);
 			result.Accept(resultVisitor);
 			resultVisitor.Write();
-			CreateSummaryDocument();
+
+			xmlOutput = builder.ToString();
+
+			if (!silent)
+				CreateSummaryDocument();
 
 			int resultCode = 0;
 			if(result.IsFailure)
@@ -224,7 +259,7 @@ namespace NUnit.Console
 
 		private void CreateSummaryDocument()
 		{
-			XPathDocument originalXPathDocument = new XPathDocument (outputFile);
+			XPathDocument originalXPathDocument = new XPathDocument(new StringReader(xmlOutput));
 			XslTransform summaryXslTransform = new XslTransform();
 			summaryXslTransform.Load(transformReader);
 			
@@ -233,17 +268,38 @@ namespace NUnit.Console
 
 		private class EventCollector : LongLivingMarshalByRefObject, EventListener
 		{
+			private int level;
+			private int testRunCount;
+			private int testIgnoreCount;
+			private int failureCount;
+			StringCollection messages;
+		
+			private bool debugger = false;
+
+			public EventCollector()
+			{
+				debugger = Debugger.IsAttached;
+				level = 0;
+			}
+
 			public void TestFinished(TestCaseResult testResult)
 			{
 				if(testResult.Executed)
 				{
+					testRunCount++;
 					if(testResult.IsFailure)
 					{	
+						failureCount++;
 						Console.Write("F");
+						if ( debugger )
+							messages.Add( ParseTestCaseResult( testResult ) );
 					}
 				}
 				else
+				{
+					testIgnoreCount++;
 					Console.Write("N");
+				}
 			}
 
 			public void TestStarted(TestCase testCase)
@@ -251,9 +307,68 @@ namespace NUnit.Console
 				Console.Write(".");
 			}
 
-			public void SuiteStarted(TestSuite suite) {}
-			public void SuiteFinished(TestSuiteResult result) {}
-		}
+			public void SuiteStarted(TestSuite suite) 
+			{
+				if ( debugger && level++ == 0 )
+				{
+					messages = new StringCollection();
+					testRunCount = 0;
+					testIgnoreCount = 0;
+					failureCount = 0;
+					Debug.WriteLine( "################################ UNIT TESTS ################################" );
+					Debug.WriteLine( "Running tests in '" + suite.FullName + "'..." );
+				}
+			}
 
+			public void SuiteFinished(TestSuiteResult suiteResult) 
+			{
+				if ( debugger && --level == 0 ) 
+				{
+					Debug.WriteLine( "############################################################################" );
+
+					if (messages.Count == 0) 
+					{
+						Debug.WriteLine( "##############                 S U C C E S S               #################" );
+					}
+					else 
+					{
+						Debug.WriteLine( "##############                F A I L U R E S              #################" );
+						
+						foreach ( string s in messages ) 
+						{
+							Debug.WriteLine(s);
+						}
+					}
+
+					Debug.WriteLine( "############################################################################" );
+					Debug.WriteLine( "Executed tests : " + testRunCount );
+					Debug.WriteLine( "Ignored tests  : " + testIgnoreCount );
+					Debug.WriteLine( "Failed tests   : " + failureCount );
+					Debug.WriteLine( "Total time     : " + suiteResult.Time + " seconds" );
+					Debug.WriteLine( "############################################################################");
+				}
+			}
+
+			private string ParseTestCaseResult( TestCaseResult result ) 
+			{
+				string[] trace = result.StackTrace.Split( System.Environment.NewLine.ToCharArray() );
+			
+				foreach (string s in trace) 
+				{
+					if ( s.IndexOf( result.Test.FullName ) >= 0 ) 
+					{
+						string link = Regex.Replace( s.Trim(), @"at " + result.Test.FullName + @"\(\) in (.*):line (.*)", "$1($2)");
+
+						string message = string.Format("{1}: {0}", 
+							result.Message.Replace(System.Environment.NewLine, "; "), 
+							result.Test.FullName).Trim(' ', ':');
+					
+						return string.Format("{0}: {1}", link, message);
+					}
+				}
+
+				return result.Message;
+			}
+		}
 	}
 }

@@ -1,2 +1,9 @@
+./AssemblyList.cs
+./AssemblyListItem.cs
 ./CommandLineOptions.cs
 ./ConsoleOptions.cs
+./NUnitProject.cs
+./ProjectConfig.cs
+./ProjectConfigCollection.cs
+./ProjectFormatException.cs
+./ProjectPath.cs

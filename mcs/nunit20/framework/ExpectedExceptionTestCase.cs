@@ -1,8 +1,8 @@
-#region Copyright (c) 2002, James W. Newkirk, Michael C. Two, Alexei A. Vorontsov, Philip A. Craig
+#region Copyright (c) 2002-2003, James W. Newkirk, Michael C. Two, Alexei A. Vorontsov, Charlie Poole, Philip A. Craig
 /************************************************************************************
 '
-' Copyright © 2002 James W. Newkirk, Michael C. Two, Alexei A. Vorontsov
-' Copyright © 2000-2002 Philip A. Craig
+' Copyright © 2002-2003 James W. Newkirk, Michael C. Two, Alexei A. Vorontsov, Charlie Poole
+' Copyright © 2000-2003 Philip A. Craig
 '
 ' This software is provided 'as-is', without any express or implied warranty. In no 
 ' event will the authors be held liable for any damages arising from the use of this 
@@ -16,8 +16,8 @@
 ' you wrote the original software. If you use this software in a product, an 
 ' acknowledgment (see the following) in the product documentation is required.
 '
-' Portions Copyright © 2002 James W. Newkirk, Michael C. Two, Alexei A. Vorontsov 
-' or Copyright © 2000-2002 Philip A. Craig
+' Portions Copyright © 2003 James W. Newkirk, Michael C. Two, Alexei A. Vorontsov, Charlie Poole
+' or Copyright © 2000-2003 Philip A. Craig
 '
 ' 2. Altered source versions must be plainly marked as such, and must not be 
 ' misrepresented as being the original software.
@@ -39,18 +39,29 @@ namespace NUnit.Core
 	public class ExpectedExceptionTestCase : TemplateTestCase
 	{
 		private Type expectedException;
+		private string expectedMessage;
 
-		public ExpectedExceptionTestCase(object fixture, MethodInfo info, Type expectedException)
+		public ExpectedExceptionTestCase(object fixture, MethodInfo info, Type expectedException, string expectedMessage)
 			: base(fixture, info)
 		{
 			this.expectedException = expectedException;
+			this.expectedMessage = expectedMessage;
 		}
 
 		protected override internal void ProcessException(Exception exception, TestCaseResult testResult)
 		{
 			if (expectedException.Equals(exception.GetType()))
 			{
-				testResult.Success();
+				if (expectedMessage != null && !expectedMessage.Equals(exception.Message))
+				{
+					string message = string.Format("Expected exception to have message: \" {0} \" but recieved message \" {1}\" ", 
+						expectedMessage, exception.Message);
+					testResult.Failure(message, exception.StackTrace);
+				} 
+				else 
+				{
+					testResult.Success();
+				}
 			}
 			else
 			{

@@ -1,8 +1,8 @@
-#region Copyright (c) 2002, James W. Newkirk, Michael C. Two, Alexei A. Vorontsov, Philip A. Craig
+#region Copyright (c) 2002-2003, James W. Newkirk, Michael C. Two, Alexei A. Vorontsov, Charlie Poole, Philip A. Craig
 /************************************************************************************
 '
-' Copyright © 2002 James W. Newkirk, Michael C. Two, Alexei A. Vorontsov
-' Copyright © 2000-2002 Philip A. Craig
+' Copyright  2002-2003 James W. Newkirk, Michael C. Two, Alexei A. Vorontsov, Charlie Poole
+' Copyright  2000-2002 Philip A. Craig
 '
 ' This software is provided 'as-is', without any express or implied warranty. In no 
 ' event will the authors be held liable for any damages arising from the use of this 
@@ -16,8 +16,8 @@
 ' you wrote the original software. If you use this software in a product, an 
 ' acknowledgment (see the following) in the product documentation is required.
 '
-' Portions Copyright © 2002 James W. Newkirk, Michael C. Two, Alexei A. Vorontsov 
-' or Copyright © 2000-2002 Philip A. Craig
+' Portions Copyright  2002-2003 James W. Newkirk, Michael C. Two, Alexei A. Vorontsov, Charlie Poole
+' or Copyright  2000-2002 Philip A. Craig
 '
 ' 2. Altered source versions must be plainly marked as such, and must not be 
 ' misrepresented as being the original software.
@@ -27,17 +27,18 @@
 '***********************************************************************************/
 #endregion
 
-
 using System;
 using System.IO;
 using System.Text;
 using System.Timers;
+using System.Collections;
+using NUnit.Core;
 
 namespace NUnit.Util
 {
 	/// <summary>
-	/// AssemblyWatcher keeps track of a single assembly to see if
-	/// it has changed. It incorporates a delayed notification
+	/// AssemblyWatcher keeps track of one or more assemblies to 
+	/// see if they have changed. It incorporates a delayed notification
 	/// and uses a standard event to notify any interested parties
 	/// about the change. The path to the assembly is provided as
 	/// an argument to the event handler so that one routine can
@@ -45,54 +46,60 @@ namespace NUnit.Util
 	/// </summary>
 	public class AssemblyWatcher
 	{
-		FileSystemWatcher fileWatcher;
+		FileSystemWatcher[] fileWatcher;
+		FileInfo[] fileInfo;
+
 		protected System.Timers.Timer timer;
-		FileInfo fileInfo;
+		protected string changedAssemblyPath; 
 
 		public delegate void AssemblyChangedHandler(String fullPath);
 		public event AssemblyChangedHandler AssemblyChangedEvent;
 
-		public AssemblyWatcher(int delay, FileInfo file)
-		{
-			fileWatcher = new FileSystemWatcher();
-			fileWatcher.Path = file.DirectoryName;
-			fileWatcher.Filter = file.Name;
-			fileWatcher.NotifyFilter = NotifyFilters.Size | NotifyFilters.LastWrite;
-			fileWatcher.Changed+=new FileSystemEventHandler(OnChanged);
-			fileWatcher.EnableRaisingEvents = false;
+		public AssemblyWatcher( int delay, string assemblyFileName )
+			: this( delay, new string[]{ assemblyFileName } ) { }
 
-			fileInfo = file;
-			
+		public AssemblyWatcher( int delay, IList assemblies )
+		{
+			fileInfo = new FileInfo[assemblies.Count];
+			fileWatcher = new FileSystemWatcher[assemblies.Count];
+
+			for( int i = 0; i < assemblies.Count; i++ )
+			{
+				fileInfo[i] = new FileInfo( (string)assemblies[i] );
+
+				fileWatcher[i] = new FileSystemWatcher();
+				fileWatcher[i].Path = fileInfo[i].DirectoryName;
+				fileWatcher[i].Filter = fileInfo[i].Name;
+				fileWatcher[i].NotifyFilter = NotifyFilters.Size | NotifyFilters.LastWrite;
+				fileWatcher[i].Changed+=new FileSystemEventHandler(OnChanged);
+				fileWatcher[i].EnableRaisingEvents = false;
+			}
+
 			timer = new System.Timers.Timer( delay );
 			timer.AutoReset=false;
 			timer.Enabled=false;
 			timer.Elapsed+=new ElapsedEventHandler(OnTimer);
 		}
 
-		public string Name
+		public FileInfo GetFileInfo( int index )
 		{
-			get { return fileInfo.Name; }
+			return fileInfo[index];
 		}
-
-		public string DirectoryName
-		{
-			get { return fileInfo.DirectoryName; }
-		}
-
-		public string FullName
-		{
-			get { return fileInfo.FullName; }
-		}
-
 
 		public void Start()
 		{
-			fileWatcher.EnableRaisingEvents=true;
+			EnableWatchers( true );
 		}
 
 		public void Stop()
 		{
-			fileWatcher.EnableRaisingEvents=false;
+			EnableWatchers( false );
+		}
+
+		private void EnableWatchers( bool enable )
+		{
+			foreach( FileSystemWatcher watcher in fileWatcher )
+				watcher.EnableRaisingEvents = enable;
 		}
 
 		protected void OnTimer(Object source, ElapsedEventArgs e)
@@ -106,14 +113,13 @@ namespace NUnit.Util
 		
 		protected void OnChanged(object source, FileSystemEventArgs e)
 		{
+			changedAssemblyPath = e.FullPath;
 			if ( timer != null )
 			{
 				lock(this)
 				{
 					if(!timer.Enabled)
-					{
 						timer.Enabled=true;
-					}
 					timer.Start();
 				}
 			}
@@ -126,7 +132,7 @@ namespace NUnit.Util
 		protected void PublishEvent()
 		{
 			if ( AssemblyChangedEvent != null )
-				AssemblyChangedEvent( fileInfo.FullName );
+				AssemblyChangedEvent( changedAssemblyPath );
 		}
 	}
 }

@@ -1,9 +1,9 @@
-#region Copyright (c) 2002, James W. Newkirk, Michael C. Two, Alexei A. Vorontsov, Philip A. Craig, Douglas de la Torre
+#region Copyright (c) 2002-2003, James W. Newkirk, Michael C. Two, Alexei A. Vorontsov, Charlie Poole, Philip A. Craig, Douglas de la Torre
 /************************************************************************************
 '
-' Copyright © 2002 James W. Newkirk, Michael C. Two, Alexei A. Vorontsov
-' Copyright © 2000-2002 Philip A. Craig
-' Copyright © 2001 Douglas de la Torre
+' Copyright  2002-2003 James W. Newkirk, Michael C. Two, Alexei A. Vorontsov, Charlie Poole
+' Copyright  2000-2002 Philip A. Craig
+' Copyright  2001 Douglas de la Torre
 '
 ' This software is provided 'as-is', without any express or implied warranty. In no 
 ' event will the authors be held liable for any damages arising from the use of this 
@@ -17,8 +17,8 @@
 ' you wrote the original software. If you use this software in a product, an 
 ' acknowledgment (see the following) in the product documentation is required.
 '
-' Portions Copyright © 2002 James W. Newkirk, Michael C. Two, Alexei A. Vorontsov 
-' Copyright © 2000-2002 Philip A. Craig, or Copyright © 2001 Douglas de la Torre
+' Portions Copyright  2002 James W. Newkirk, Michael C. Two, Alexei A. Vorontsov 
+' Copyright  2000-2002 Philip A. Craig, or Copyright  2001 Douglas de la Torre
 '
 ' 2. Altered source versions must be plainly marked as such, and must not be 
 ' misrepresented as being the original software.
@@ -110,7 +110,7 @@ namespace NUnit.Framework
         {
             get
             {
-                return "\r\n";
+                return "\r\n\t";
             }
         }
 
@@ -226,13 +226,28 @@ namespace NUnit.Framework
         {
             sbOutput.Append( NewLine );
             sbOutput.Append( ExpectedText() );
-            sbOutput.Append( (expected != null) ? expected : "(null)" );
+            sbOutput.Append( DisplayString( expected ) );
             sbOutput.Append( ">" );
             sbOutput.Append( NewLine );
             sbOutput.Append( ButWasText() );
-            sbOutput.Append( (actual != null) ? actual : "(null)" );
+            sbOutput.Append( DisplayString( actual ) );
             sbOutput.Append( ">" );
         }
+
+		static protected string DisplayString( object  obj )
+		{
+			if ( obj == null ) 
+				return "(null)";
+			else if ( obj is string )
+				return Quoted( (string)obj );
+			else
+				return obj.ToString();
+		}
+
+		static protected string Quoted( string text )
+		{
+			return string.Format( "\"{0}\"", text );
+		}
 
         /// <summary>
         /// Draws a marker under the expected/actual strings that highlights
@@ -439,7 +454,7 @@ namespace NUnit.Framework
             //
             // Same strings
             //
-            Assertion.Assert( sExpected.Equals( sActual ) );
+            Assert.IsTrue( sExpected.Equals( sActual ) );
             return -1;
         }
 
@@ -542,7 +557,7 @@ namespace NUnit.Framework
         /// <param name="expected"></param>
         /// <param name="actual"></param>
         /// <returns></returns>
-        static public string FormatMessageForFailNotEquals(string message, Object expected, Object actual) 
+        static public string FormatMessageForFailNotEquals(Object expected, Object actual, string message) 
         {
             StringBuilder sbOutput = CreateStringBuilder( message );
             if( null != message )

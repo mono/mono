@@ -1,8 +1,8 @@
 <VisualStudioProject>
     <CSHARP
         ProjectType = "Local"
-        ProductVersion = "7.0.9466"
-        SchemaVersion = "1.0"
+        ProductVersion = "7.10.3077"
+        SchemaVersion = "2.0"
         ProjectGuid = "{83DD7E12-A705-4DBA-9D71-09C8973D9382}"
     >
         <Build>
@@ -16,7 +16,10 @@
                 DefaultTargetSchema = "IE50"
                 DelaySign = "false"
                 OutputType = "Library"
+                PreBuildEvent = ""
+                PostBuildEvent = ""
                 RootNamespace = "NUnit.Framework"
+                RunPostBuildEvent = "OnBuildSuccess"
                 StartupObject = ""
             >
                 <Config
@@ -26,10 +29,12 @@
                     CheckForOverflowUnderflow = "false"
                     ConfigurationOverrideFile = ""
                     DefineConstants = "DEBUG;TRACE;NUNIT_LEAKAGE_TEST"
-                    DocumentationFile = ""
+                    DocumentationFile = "bin\Debug\nunit.framework.xml"
                     DebugSymbols = "true"
                     FileAlignment = "4096"
                     IncrementalBuild = "true"
+                    NoStdLib = "false"
+                    NoWarn = ""
                     Optimize = "false"
                     OutputPath = "bin\Debug\"
                     RegisterForComInterop = "false"
@@ -44,10 +49,12 @@
                     CheckForOverflowUnderflow = "false"
                     ConfigurationOverrideFile = ""
                     DefineConstants = "TRACE;StronglyNamedAssembly"
-                    DocumentationFile = ""
+                    DocumentationFile = "bin\Release\nunit.framework.xml"
                     DebugSymbols = "false"
                     FileAlignment = "4096"
                     IncrementalBuild = "false"
+                    NoStdLib = "false"
+                    NoWarn = ""
                     Optimize = "true"
                     OutputPath = "bin\Release\"
                     RegisterForComInterop = "false"
@@ -78,6 +85,11 @@
             <Include>
                 <File
                     RelPath = "AssemblyInfo.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Assert.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -133,6 +145,11 @@
                 />
                 <File
                     RelPath = "InvalidTestFixtureException.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "ITest.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -196,12 +213,22 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "RootTestSuite.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "SetUpAttribute.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
                     RelPath = "StackTraceFilter.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "StringTextWriter.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -231,6 +258,11 @@
                 />
                 <File
                     RelPath = "Test.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "TestAssembly.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -271,11 +303,6 @@
                 />
                 <File
                     RelPath = "TestFixtureTearDownAttribute.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "TestInfo.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />

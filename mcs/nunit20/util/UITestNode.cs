@@ -1,8 +1,8 @@
-#region Copyright (c) 2002, James W. Newkirk, Michael C. Two, Alexei A. Vorontsov, Philip A. Craig
+#region Copyright (c) 2002-2003, James W. Newkirk, Michael C. Two, Alexei A. Vorontsov, Charlie Poole, Philip A. Craig
 /************************************************************************************
 '
-' Copyright © 2002 James W. Newkirk, Michael C. Two, Alexei A. Vorontsov
-' Copyright © 2000-2002 Philip A. Craig
+' Copyright  2002-2003 James W. Newkirk, Michael C. Two, Alexei A. Vorontsov, Charlie Poole
+' Copyright  2000-2002 Philip A. Craig
 '
 ' This software is provided 'as-is', without any express or implied warranty. In no 
 ' event will the authors be held liable for any damages arising from the use of this 
@@ -16,8 +16,8 @@
 ' you wrote the original software. If you use this software in a product, an 
 ' acknowledgment (see the following) in the product documentation is required.
 '
-' Portions Copyright © 2002 James W. Newkirk, Michael C. Two, Alexei A. Vorontsov 
-' or Copyright © 2000-2002 Philip A. Craig
+' Portions Copyright  2002-2003 James W. Newkirk, Michael C. Two, Alexei A. Vorontsov, Charlie Poole
+' or Copyright  2000-2002 Philip A. Craig
 '
 ' 2. Altered source versions must be plainly marked as such, and must not be 
 ' misrepresented as being the original software.
@@ -38,7 +38,7 @@ namespace NUnit.Util
 	/// in the UI, avoiding the remoting issues associated
 	/// with holding an actual Test object.
 	/// </summary>
-	public class UITestNode : TestInfo
+	public class UITestNode : ITest
 	{
 		#region Instance Variables
 
@@ -51,6 +51,11 @@ namespace NUnit.Util
 		/// The test name
 		/// </summary>
 		private string testName;
+
+		/// <summary>
+		/// Used to distinguish tests in multiple assemblies;
+		/// </summary>
+		private int assemblyKey;
 
 		/// <summary>
 		/// True if the test should be run
@@ -83,11 +88,41 @@ namespace NUnit.Util
 		/// object was constructed. Used for deferred 
 		/// population of the object.
 		/// </summary>
-		private TestInfo testSuite;
+		private ITest testSuite;
+
+		/// <summary>
+		/// The test description
+		/// </summary>
+		private string description;
 
 		#endregion
 
 		#region Construction and Conversion
+
+		public UITestNode( string suiteName ) : this( suiteName, 0 ) { }
+
+		public UITestNode( string suiteName, int assemblyKey )
+		{
+			this.fullName = this.testName = suiteName;
+			this.assemblyKey = assemblyKey;
+			this.shouldRun = true;
+			this.isSuite = true;
+			this.testCaseCount = 0;
+			this.tests = new ArrayList();
+		}
+
+		public UITestNode( string pathName, string testName ) 
+			: this( pathName, testName, 0 ) { }
+
+		public UITestNode( string pathName, string testName, int assemblyKey ) 
+		{ 
+			this.fullName = pathName + "." + testName;
+			this.testName = testName;
+			this.assemblyKey = assemblyKey;
+			this.shouldRun = true;
+			this.isSuite = false;
+			this.testCaseCount = 1;
+		}
 
 		/// <summary>
 		/// Construct from a TestInfo interface, which might be
@@ -96,12 +131,14 @@ namespace NUnit.Util
 		/// </summary>
 		/// <param name="test">TestInfo interface from which a UITestNode is to be constructed</param>
 		/// <param name="populate">True if child array is to be populated</param>
-		public UITestNode ( TestInfo test, bool populate )
+		public UITestNode ( ITest test, bool populate )
 		{
 			fullName = test.FullName;
 			testName = test.Name;
+			assemblyKey = test.AssemblyKey;
 			shouldRun = test.ShouldRun;
 			ignoreReason = test.IgnoreReason;
+			description = test.Description;
 			
 			if ( test.IsSuite )
 			{
@@ -124,7 +161,7 @@ namespace NUnit.Util
 		/// Default construction uses lazy population approach
 		/// </summary>
 		/// <param name="test"></param>
-		public UITestNode ( TestInfo test ) : this( test, false ) { }
+		public UITestNode ( ITest test ) : this( test, false ) { }
 
 		/// <summary>
 		/// Populate the arraylist of child Tests recursively.
@@ -160,6 +197,15 @@ namespace NUnit.Util
 		#region Properties
 
 		/// <summary>
+		/// The test description 
+		/// </summary>
+		public string Description
+		{
+			get { return description; }
+			set { description = value; }
+		}
+
+		/// <summary>
 		/// The reason for ignoring a test
 		/// </summary>
 		public string IgnoreReason
@@ -191,6 +237,20 @@ namespace NUnit.Util
 		public string Name
 		{
 			get { return testName; }
+		}
+
+		/// <summary>
+		/// Identifier for assembly containing this test
+		/// </summary>
+		public int AssemblyKey
+		{
+			get { return assemblyKey; }
+			set { assemblyKey = value; }
+		}
+
+		public string UniqueName
+		{
+			get{ return string.Format( "[{0}]{1}", assemblyKey, fullName ); }
 		}
 
 		/// <summary>

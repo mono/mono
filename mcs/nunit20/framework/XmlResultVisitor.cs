@@ -1,8 +1,8 @@
-#region Copyright (c) 2002, James W. Newkirk, Michael C. Two, Alexei A. Vorontsov, Philip A. Craig
+#region Copyright (c) 2002-2003, James W. Newkirk, Michael C. Two, Alexei A. Vorontsov, Charlie Poole, Philip A. Craig
 /************************************************************************************
 '
-' Copyright © 2002 James W. Newkirk, Michael C. Two, Alexei A. Vorontsov
-' Copyright © 2000-2002 Philip A. Craig
+' Copyright © 2002-2003 James W. Newkirk, Michael C. Two, Alexei A. Vorontsov, Charlie Poole
+' Copyright © 2000-2003 Philip A. Craig
 '
 ' This software is provided 'as-is', without any express or implied warranty. In no 
 ' event will the authors be held liable for any damages arising from the use of this 
@@ -16,8 +16,8 @@
 ' you wrote the original software. If you use this software in a product, an 
 ' acknowledgment (see the following) in the product documentation is required.
 '
-' Portions Copyright © 2002 James W. Newkirk, Michael C. Two, Alexei A. Vorontsov 
-' or Copyright © 2000-2002 Philip A. Craig
+' Portions Copyright © 2003 James W. Newkirk, Michael C. Two, Alexei A. Vorontsov, Charlie Poole
+' or Copyright © 2000-2003 Philip A. Craig
 '
 ' 2. Altered source versions must be plainly marked as such, and must not be 
 ' misrepresented as being the original software.
@@ -41,18 +41,26 @@ namespace NUnit.Core
 	public class XmlResultVisitor : ResultVisitor
 	{
 		private XmlTextWriter xmlWriter;
+		private TextWriter writer;
+		private MemoryStream memoryStream;
 
 		public XmlResultVisitor(string fileName, TestResult result)
 		{
+			xmlWriter = new XmlTextWriter( new StreamWriter(fileName, false, System.Text.Encoding.UTF8) );
+			Initialize(result);
+		}
+
+		public XmlResultVisitor( TextWriter writer, TestResult result )
+		{
+			this.memoryStream = new MemoryStream();
+			this.writer = writer;
+			this.xmlWriter = new XmlTextWriter( new StreamWriter( memoryStream, System.Text.Encoding.UTF8 ) );
+			Initialize( result );
+		}
+
+		private void Initialize(TestResult result) 
+		{
 			ResultSummarizer summaryResults = new ResultSummarizer(result);
-			try
-			{
-				xmlWriter = new XmlTextWriter (fileName, null);
-			}
-			catch(Exception e)
-			{
-				Console.Error.WriteLine(e.StackTrace);
-			}
 
 			xmlWriter.Formatting = Formatting.Indented;
 			xmlWriter.WriteStartDocument(false);
@@ -68,13 +76,16 @@ namespace NUnit.Core
 			DateTime now = DateTime.Now;
 			xmlWriter.WriteAttributeString("date", now.ToShortDateString());
 			xmlWriter.WriteAttributeString("time", now.ToShortTimeString());
-
 		}
 
-		public void visit(TestCaseResult caseResult) 
+		public void Visit(TestCaseResult caseResult) 
 		{
 			xmlWriter.WriteStartElement("test-case");
 			xmlWriter.WriteAttributeString("name",caseResult.Name);
+
+			if(caseResult.Description != null)
+				xmlWriter.WriteAttributeString("description", caseResult.Description);
+
 			xmlWriter.WriteAttributeString("executed", caseResult.Executed.ToString());
 			if(caseResult.Executed)
 			{
@@ -90,12 +101,12 @@ namespace NUnit.Core
 						xmlWriter.WriteStartElement("error");
 				
 					xmlWriter.WriteStartElement("message");
-					xmlWriter.WriteCData(caseResult.Message);
+					xmlWriter.WriteCData( EncodeCData( caseResult.Message ) );
 					xmlWriter.WriteEndElement();
 				
 					xmlWriter.WriteStartElement("stack-trace");
 					if(caseResult.StackTrace != null)
-						xmlWriter.WriteCData(StackTraceFilter.Filter(caseResult.StackTrace));
+						xmlWriter.WriteCData( EncodeCData( StackTraceFilter.Filter( caseResult.StackTrace ) ) );
 					xmlWriter.WriteEndElement();
 				
 					xmlWriter.WriteEndElement();
@@ -114,10 +125,21 @@ namespace NUnit.Core
 			xmlWriter.WriteEndElement();
 		}
 
-		public void visit(TestSuiteResult suiteResult) 
+		private string EncodeCData( string text )
+		{
+			if ( text.IndexOf( "]]>" ) < 0 )
+				return text;
+
+			return text.Replace( "]]>", "]]&gt;" );
+		}
+
+		public void Visit(TestSuiteResult suiteResult) 
 		{
 			xmlWriter.WriteStartElement("test-suite");
 			xmlWriter.WriteAttributeString("name",suiteResult.Name);
+			if(suiteResult.Description != null)
+				xmlWriter.WriteAttributeString("description", suiteResult.Description);
+
 			xmlWriter.WriteAttributeString("success", suiteResult.IsSuccess.ToString());
 			xmlWriter.WriteAttributeString("time", suiteResult.Time.ToString());
             
@@ -133,11 +155,27 @@ namespace NUnit.Core
 
 		public void Write()
 		{
-			xmlWriter.WriteEndElement();
+			try 
+			{
+				xmlWriter.WriteEndElement();
+				xmlWriter.WriteEndDocument();
+				xmlWriter.Flush();
 
-			xmlWriter.WriteEndDocument();
-			xmlWriter.Flush();
-			xmlWriter.Close();
+				if ( memoryStream != null && writer != null )
+				{
+					memoryStream.Position = 0;
+					using ( StreamReader rdr = new StreamReader( memoryStream ) )
+					{
+						writer.Write( rdr.ReadToEnd() );
+					}
+				}
+
+				xmlWriter.Close();
+			} 
+			finally 
+			{
+				//writer.Close();
+			}
 		}
 	}
 }

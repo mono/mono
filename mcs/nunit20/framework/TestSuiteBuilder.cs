@@ -1,8 +1,8 @@
-#region Copyright (c) 2002, James W. Newkirk, Michael C. Two, Alexei A. Vorontsov, Philip A. Craig
+#region Copyright (c) 2002-2003, James W. Newkirk, Michael C. Two, Alexei A. Vorontsov, Charlie Poole, Philip A. Craig
 /************************************************************************************
 '
-' Copyright © 2002 James W. Newkirk, Michael C. Two, Alexei A. Vorontsov
-' Copyright © 2000-2002 Philip A. Craig
+' Copyright © 2002-2003 James W. Newkirk, Michael C. Two, Alexei A. Vorontsov, Charlie Poole
+' Copyright © 2000-2003 Philip A. Craig
 '
 ' This software is provided 'as-is', without any express or implied warranty. In no 
 ' event will the authors be held liable for any damages arising from the use of this 
@@ -16,8 +16,8 @@
 ' you wrote the original software. If you use this software in a product, an 
 ' acknowledgment (see the following) in the product documentation is required.
 '
-' Portions Copyright © 2002 James W. Newkirk, Michael C. Two, Alexei A. Vorontsov 
-' or Copyright © 2000-2002 Philip A. Craig
+' Portions Copyright © 2003 James W. Newkirk, Michael C. Two, Alexei A. Vorontsov, Charlie Poole
+' or Copyright © 2000-2003 Philip A. Craig
 '
 ' 2. Altered source versions must be plainly marked as such, and must not be 
 ' misrepresented as being the original software.
@@ -55,52 +55,103 @@ namespace NUnit.Core
 
 		public Assembly Load(string assemblyName)
 		{
-			Assembly assembly = AppDomain.CurrentDomain.Load(TrimPathAndExtension(assemblyName));
-			return assembly;
+			// Change currentDirectory in case assembly references unmanaged dlls
+			string currentDirectory = Environment.CurrentDirectory;
+			string assemblyDirectory = Path.GetDirectoryName( assemblyName );
+			bool swap = assemblyDirectory != null && assemblyDirectory != string.Empty;
+
+			try
+			{
+				if ( swap )
+					Environment.CurrentDirectory = assemblyDirectory;
+
+				return AppDomain.CurrentDomain.Load(TrimPathAndExtension(assemblyName));
+			}
+			finally
+			{
+				if ( swap )
+					Environment.CurrentDirectory = currentDirectory;
+			}
+
+
 		}
 
-		private TestSuite BuildFromNameSpace(string nameSpace)
+		private TestSuite BuildFromNameSpace( string nameSpace, int assemblyKey )
 		{
 			if( nameSpace == null || nameSpace  == "" ) return rootSuite;
 			TestSuite suite = (TestSuite)suites[nameSpace];
 			if(suite!=null) return suite;
+
 			int index = nameSpace.LastIndexOf(".");
-			if(index==-1)
+			string prefix = string.Format( "[{0}]", assemblyKey );
+			if( index == -1 )
 			{
-				suite = new TestSuite(nameSpace);
+				suite = new TestSuite( nameSpace, assemblyKey );
 				rootSuite.Add(suite);
 				suites[nameSpace]=suite;
-				return suite;
 			}
-			string parentNameSpace=nameSpace.Substring( 0,index);
-			TestSuite parent = BuildFromNameSpace(parentNameSpace);
-			string suiteName = nameSpace.Substring(index+1);
-			suite = new TestSuite(parentNameSpace,suiteName);
-			suites[nameSpace]=suite;
-			parent.Add(suite);
+			else
+			{
+				string parentNameSpace = nameSpace.Substring( 0,index );
+				TestSuite parent = BuildFromNameSpace( parentNameSpace, assemblyKey );
+				string suiteName = nameSpace.Substring( index+1 );
+				suite = new TestSuite( parentNameSpace, suiteName, assemblyKey );
+				parent.Add( suite );
+				suites[nameSpace] = suite;
+			}
+
 			return suite;
 		}
 
-		public TestSuite Build(string assemblyName)
+		public TestSuite Build(string projectName, IList assemblies)
+		{
+			RootTestSuite rootSuite = new RootTestSuite( projectName );
+
+			int assemblyKey = 0;
+			foreach(string assembly in assemblies)
+			{
+
+				TestSuite suite = Build( assembly, assemblyKey++ );
+				rootSuite.Add( suite );
+			}
+
+			return rootSuite;
+		}
+
+		public TestSuite Build( string assemblyName )
+		{
+			return Build( assemblyName, 0 );
+		}
+
+		private TestSuite Build( string assemblyName, int assemblyKey )
 		{
 			TestSuiteBuilder builder = new TestSuiteBuilder();
 
-			Assembly assembly = Load(assemblyName);
+			Assembly assembly = Load( assemblyName );
 
-			builder.rootSuite = new TestSuite(assemblyName);
+			builder.rootSuite = new AssemblyTestSuite( assemblyName, assemblyKey );
 			int testFixtureCount = 0;
 			Type[] testTypes = assembly.GetExportedTypes();
 			foreach(Type testType in testTypes)
 			{
+				////////////////////////////////////////////////////////////////////////
+				// Use the second if statement to allow including Suites in the
+				// tree of tests. This causes a problem when the same test is added
+				// in multiple suites so we need to either fix it or prevent it.
+				//
+				// See also the block of code to uncomment in TestSUite.cs
+				////////////////////////////////////////////////////////////////////////
+
 				if(IsTestFixture(testType))
+				//if(IsTestFixture(testType) || IsTestSuiteProperty(testType))
 				{
 					testFixtureCount++;
 					string namespaces = testType.Namespace;
-					TestSuite suite = builder.BuildFromNameSpace(namespaces);
+					TestSuite suite = builder.BuildFromNameSpace( namespaces, assemblyKey );
 
 					try
 					{
-						object fixture = BuildTestFixture(testType);
+						object fixture = BuildTestFixture( testType );
 						suite.Add(fixture);
 					}
 					catch(InvalidTestFixtureException exception)
@@ -112,13 +163,17 @@ namespace NUnit.Core
 			}
 
 			if(testFixtureCount == 0)
-				throw new NoTestFixturesException(assemblyName + " has no TestFixtures");
+			{
+				//throw new NoTestFixturesException(assemblyName + " has no TestFixtures");
+				builder.rootSuite.ShouldRun = false;
+				builder.rootSuite.IgnoreReason = "Has no TestFixtures";
+			}
 
 			return builder.rootSuite;
 		}
 
 
-		public TestSuite Build(string testName, string assemblyName)
+		public TestSuite Build(string assemblyName, string testName )
 		{
 			TestSuite suite = null;
 
@@ -142,6 +197,35 @@ namespace NUnit.Core
 			return suite;
 		}
 
+		public TestSuite Build( IList assemblies, string testName )
+		{
+			TestSuite suite = null;
+
+			foreach(string assemblyName in assemblies)
+			{
+				Assembly assembly = Load(assemblyName);
+				if(assembly != null)
+				{
+					Type testType = assembly.GetType(testName);
+					if(testType != null)
+					{
+						if(IsTestFixture(testType))
+						{
+							suite = MakeSuiteFromTestFixtureType(testType);
+							break;
+						}
+						else if(IsTestSuiteProperty(testType))
+						{
+							suite = MakeSuiteFromProperty(testType);
+							break;
+						}
+					}
+				}
+			}
+
+			return suite;
+		}
+		
 		private bool IsTestFixture(Type type)
 		{
 			if(type.IsAbstract) return false;
@@ -149,7 +233,7 @@ namespace NUnit.Core
 			return type.IsDefined(typeof(NUnit.Framework.TestFixtureAttribute), true);
 		}
 
-		public object BuildTestFixture(Type fixtureType)
+		public object BuildTestFixture( Type fixtureType )
 		{
 			ConstructorInfo ctor = fixtureType.GetConstructor(Type.EmptyTypes);
 			if(ctor == null) throw new InvalidTestFixtureException(fixtureType.FullName + " does not have a valid constructor");
