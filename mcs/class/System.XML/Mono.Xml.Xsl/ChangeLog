@@ -1,5 +1,10 @@
 2005-02-10  Atsushi Enomoto <atsushi@ximian.com>
 
+	* XmlWriterEmitter.cs : String.Replace() was insufficient for
+	  sequential candidates for replacement. Patch by Andrew Skiba.
+
+2005-02-10  Atsushi Enomoto <atsushi@ximian.com>
+
 	* GenericOutputter.cs : don't output extraneous xml declaration.
 	  fix by Andrew Skiba.
 
