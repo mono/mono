@@ -53,63 +53,51 @@ namespace System.Web.Services.Description {
 		#region Properties
 
 		public Binding Binding {
-			[MonoTODO]
-			get { throw new NotImplementedException (); }
+			get { return binding; }
 		}
 
 		public string DefaultNamespace {
-			[MonoTODO]	
-			get { throw new NotImplementedException (); }
+			get { return defaultNamespace; }
 		}
 
 		public MessageCollection HeaderMessages {
-			[MonoTODO]	
-			get { throw new NotImplementedException (); }
+			get { return headerMessages; }
 		}
 
 		public Message InputMessage {
-			[MonoTODO]	
-			get { throw new NotImplementedException (); }
+			get { return inputMessage; }
 		}
 
 		public LogicalMethodInfo Method {
-			[MonoTODO]	
-			get { throw new NotImplementedException (); }
+			get { return method; }
 		}
 
 		public WebMethodAttribute MethodAttribute {
-			[MonoTODO]	
-			get { throw new NotImplementedException (); }
+			get { return methodAttribute; }
 		}
 
 		public LogicalMethodInfo[] Methods {
-			[MonoTODO]	
-			get { throw new NotImplementedException (); }
+			get { return methods; }
 		}
 	
 		public Operation Operation {
-			[MonoTODO]	
-			get { throw new NotImplementedException (); }
+			get { return operation; }
 		}
 
 		public OperationBinding OperationBinding {
-			[MonoTODO]	
-			get { throw new NotImplementedException (); }
+			get { return operationBinding; }
 		}
 
 		public Message OutputMessage {
-			[MonoTODO]	
-			get { throw new NotImplementedException (); }
+			get { return outputMessage; }
 		}
 
 		public Port Port {
-			[MonoTODO]	
-			get { throw new NotImplementedException (); }
+			get { return port; }
 		}
 
 		public PortType PortType {
-			[MonoTODO]	
-			get { throw new NotImplementedException (); }
+			get { return portType; }
 		}
 
 		public abstract string ProtocolName {
@@ -117,43 +105,35 @@ namespace System.Web.Services.Description {
 		}
 
 		public XmlReflectionImporter ReflectionImporter {
-			[MonoTODO]	
-			get { throw new NotImplementedException (); }
+			get { return reflectionImporter; }
 		}
 
 		public XmlSchemaExporter SchemaExporter {
-			[MonoTODO]	
-			get { throw new NotImplementedException (); }
+			get { return schemaExporter; }
 		}
 
 		public XmlSchemas Schemas {
-			[MonoTODO]	
-			get { throw new NotImplementedException (); }
+			get { return schemas; }
 		}
 
 		public Service Service {
-			[MonoTODO]	
-			get { throw new NotImplementedException (); }
+			get { return service; }
 		}
 
 		public ServiceDescription ServiceDescription {
-			[MonoTODO]	
-			get { throw new NotImplementedException (); }
+			get { return serviceDescription; }
 		}
 
 		public ServiceDescriptionCollection ServiceDescriptions {
-			[MonoTODO]	
-			get { throw new NotImplementedException (); }
+			get { return serviceDescriptions; }
 		}
 
 		public Type ServiceType {
-			[MonoTODO]	
-			get { throw new NotImplementedException (); }
+			get { return serviceType; }
 		}
 
 		public string ServiceUrl {
-			[MonoTODO]	
-			get { throw new NotImplementedException (); }
+			get { return serviceUrl; }
 		}
 
 		#endregion // Properties
@@ -172,12 +152,10 @@ namespace System.Web.Services.Description {
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		public ServiceDescription GetServiceDescription (string ns)
 		{
-			throw new NotImplementedException ();
+			return serviceDescriptions [ns];
 		}
-
 
 		protected abstract bool ReflectMethod ();
 

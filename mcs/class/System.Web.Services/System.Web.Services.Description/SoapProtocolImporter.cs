@@ -16,7 +16,6 @@ namespace System.Web.Services.Description {
 
 		#region Fields
 
-		string protocolName;
 		SoapBinding soapBinding;
 		SoapCodeExporter soapExporter;
 		SoapSchemaImporter soapImporter;
@@ -38,7 +37,7 @@ namespace System.Web.Services.Description {
 		#region Properties
 
 		public override string ProtocolName {
-			get { return protocolName; }
+			get { return "Soap"; }
 		}
 
 		public SoapBinding SoapBinding {

@@ -1,3 +1,12 @@
+2002-07-24  Tim Coleman <tim@timcoleman.com>	
+	* ProtocolImporter.cs:
+	* ProtocolReflector.cs:
+		Some implementation of these classes.  MonoTODO's begone!
+	* SoapProtocolImporter.cs:
+		Changed description to literal string "Soap"
+	* SoapProtocolReflector.cs:
+		Added a new class based on guesswork and conjecture.
+
 2002-07-24  Tim Coleman <tim@timcoleman.com>
 	* ServiceDescription.cs:
 		Implement Read/Write methods for serialization/
