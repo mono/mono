@@ -39,7 +39,5 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyInformationalVersion("0.0.0.1")]
 [assembly: NeutralResourcesLanguage("en-US")]
 
-[assembly: AllowPartiallyTrustedCallers]
-
 //[assembly: AssemblyDelaySign(false)]
 //[assembly: AssemblyKeyFile("")]
