@@ -1,3 +1,8 @@
+2002-08-20  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* delegate.cs: fixed build on windows.
+	[FIXME:  Filed as bug #29150: MCS must report these errors.]
+
 2002-08-19  Ravi Pratap  <ravi@ximian.com>
 
 	* ecore.cs (StandardConversionExists): Return a false

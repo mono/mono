@@ -716,13 +716,13 @@ namespace Mono.CSharp {
 			if (!Delegate.VerifyApplicability (ec, del_type, Arguments, loc))
 				return null;
 
-			Expression ml = Expression.MemberLookup (ec, del_type, "Invoke", loc);
-			if (!(ml is MethodGroupExpr)) {
+			Expression lookup = Expression.MemberLookup (ec, del_type, "Invoke", loc);
+			if (!(lookup is MethodGroupExpr)) {
 				Report.Error (-100, loc, "Internal error : could not find Invoke method!");
 				return null;
 			}
 			
-			method = ((MethodGroupExpr) ml).Methods [0];
+			method = ((MethodGroupExpr) lookup).Methods [0];
 			type = ((MethodInfo) method).ReturnType;
 			eclass = ExprClass.Value;
 			
