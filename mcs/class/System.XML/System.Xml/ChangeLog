@@ -1,5 +1,7 @@
 2002-03-19  Duncan Mak  <duncan@ximian.com>
 
+	* XmlNotation.cs: Added to CVS.
+
 	* XmlAttribute.cs (CloneNode): First crack at the CloneNode method.
 
 	* XmlCDataSection.cs (CloneNode): Implemented.
