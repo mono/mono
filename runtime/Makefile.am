@@ -25,8 +25,7 @@ all-local: $(SUPPORT_FILES)
 	d=`pwd`; cd $(mcs_topdir) && $(MAKE) RUNTIME=$$d/mono-wrapper PROFILES='$(build_profiles)' all-profiles
 
 if INSTALL_2_0
-#build_profiles = default net_2_0
-build_profiles = default
+build_profiles = default net_2_0
 else
 build_profiles = default
 endif
