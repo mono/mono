@@ -1,3 +1,8 @@
+2003-07-23  Dick Porter  <dick@ximian.com>
+
+	* handles.c:  Initialise handle mutex and cond.  Fix by
+	Bernie Solomon <bernard@ugsolutions.com>
+
 2003-07-15  Dick Porter  <dick@ximian.com>
 
 	* timed-thread.c (timed_thread_start_routine): Fix virtual memory
