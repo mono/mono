@@ -210,5 +210,36 @@ namespace MonoTests.System.Collections.Specialized {
 			NameValueCollection c = new NameValueCollection ();
 			c.CopyTo (a, 0);
 		}
+
+		[Test]
+		public void Remove () 
+		{
+			string[] items = { "mono", "MoNo", "mOnO", "MONO" };
+			// default constructor is case insensitive
+			NameValueCollection c = new NameValueCollection ();
+			for (int i=0; i < items.Length; i++) {
+				string add = "Add-" + i.ToString () + "-Count";
+
+				c.Add (items [i], add);
+				AssertEquals (add, 1, c.Count);
+				c.Remove (items [0]);
+				AssertEquals ("Remove-0-Count", 0, c.Count);
+
+				c.Add (items [i], add);
+				AssertEquals (add, 1, c.Count);
+				c.Remove (items [1]);
+				AssertEquals ("Remove-1-Count", 0, c.Count);
+
+				c.Add (items [i], add);
+				AssertEquals (add, 1, c.Count);
+				c.Remove (items [2]);
+				AssertEquals ("Remove-2-Count", 0, c.Count);
+
+				c.Add (items [i], add);
+				AssertEquals (add , 1, c.Count);
+				c.Remove (items [3]);
+				AssertEquals ("Remove-3-Count", 0, c.Count);
+			}
+		}
 	}
 }
