@@ -3806,6 +3806,9 @@ namespace Mono.CSharp {
 				return false;
 
 			var_type = texpr.ResolveType (ec);
+
+			Report.Debug (64, "RESOLVE FOREACH", expr, expr.Type, expr.Type.IsArray, type,
+				      texpr, var_type, loc);
 			
 			//
 			// We need an instance variable.  Not sure this is the best
@@ -3851,6 +3854,8 @@ namespace Mono.CSharp {
 			// Although it is not as important in this case, as the type
 			// will not likely be object (what the enumerator will return).
 			//
+			Report.Debug (64, "RESOLVE FOREACH #1", element_type, empty.Type, element_type == empty.Type,
+				      var_type, empty.Type.DeclaringType, var_type.DeclaringType, loc);
 			conv = Convert.ExplicitConversion (ec, empty, var_type, loc);
 			if (conv == null)
 				ok = false;
@@ -3980,6 +3985,8 @@ namespace Mono.CSharp {
 		
 		static bool GetEnumeratorFilter (MemberInfo m, object criteria)
 		{
+			Report.Debug (64, "GET ENUMERATOR FILTER", m, criteria);
+
 			if (m == null)
 				return false;
 			
@@ -4112,9 +4119,15 @@ namespace Mono.CSharp {
 		{
 			ForeachHelperMethods hm = new ForeachHelperMethods (ec);
 
+			Report.Debug (64, "PROBE COLLECTION TYPE", t);
+
 			for (Type tt = t; tt != null && tt != TypeManager.object_type;){
-				if (TryType (tt, hm))
+				Report.Debug (64, "PROBE COLLECTION TYPE #1", t, tt);
+
+				if (TryType (tt, hm)) {
+					Report.Debug (64, "PROBE COLLECTION TYPE #2", t, tt);
 					return hm;
+				}
 				tt = tt.BaseType;
 			}
 
@@ -4124,9 +4137,14 @@ namespace Mono.CSharp {
 			while (t != null){
 				Type [] ifaces = t.GetInterfaces ();
 
+				Report.Debug (64, "PROBE COLLECTION TYPE #3", t, ifaces);
+
 				foreach (Type i in ifaces){
-					if (TryType (i, hm))
+					Report.Debug (64, "PROBE COLLECTION TYPE #4", t, ifaces, i);
+					if (TryType (i, hm)) {
+						Report.Debug (64, "PROBE COLLECTION TYPE #5", t, ifaces, i);
 						return hm;
+					}
 				}
 				
 				//
