@@ -1,3 +1,7 @@
+2004-09-14  Raja R Harinath  <rharinath@novell.com>
+
+	* cs-parser.jay (event_declaration): Re-enable cs0071 error.
+
 2004-09-13  Marek Safar  <marek.safar@seznam.cz>
 
 	* class.cs (MethodCore.CheckBase): Fix bug #65757.

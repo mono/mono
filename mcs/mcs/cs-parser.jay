@@ -1761,10 +1761,10 @@ event_declaration
 			implicit_value_parameter_type = null;
 		}
 	  }
-	| opt_attributes opt_modifiers EVENT type member_name OPEN_PARENS opt_formal_parameter_list CLOSE_PARENS block {
-		string mn = (string) $5;
+	| opt_attributes opt_modifiers EVENT type namespace_or_type_name OPEN_PARENS opt_formal_parameter_list CLOSE_PARENS block {
+		MemberName mn = (MemberName) $5;
 
-		if (mn.IndexOf ('.') != -1)
+		if (mn.Left != null)
 			Report.Error (71, lexer.Location, "Explicit implementation of events requires property syntax");
 		else 
 			Report.Error (71, lexer.Location, "Event declaration should use property syntax");
