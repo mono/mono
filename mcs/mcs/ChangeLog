@@ -1,3 +1,8 @@
+2004-08-22  John Luke  <john.luke@gmail.com>
+ 
+	* driver.cs : check that a resource id is not already used
+	before adding it, report CS1508 if it is, bug #63637
+
 2004-09-19  Miguel de Icaza  <miguel@ximian.com>
 
 	* ecore.cs: Removed dead code.

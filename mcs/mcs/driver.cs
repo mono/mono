@@ -1045,7 +1045,15 @@ namespace Mono.CSharp
 				if (embedded_resources == null)
 					embedded_resources = new ArrayList ();
 				
-				embedded_resources.Add (value);
+				if (embedded_resources.Contains (value)) {
+					Report.Error (1508, String.Format ("The resource identifier '{0}' has already been used in this assembly.", value));
+				}
+				else if (value.IndexOf (',') != -1 && embedded_resources.Contains (value.Split (',')[1])) {
+					Report.Error (1508, String.Format ("The resource identifier '{0}' has already been used in this assembly.", value));
+				}
+				else {
+					embedded_resources.Add (value);
+				}
 				return true;
 				
 			case "/recurse":
