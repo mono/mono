@@ -2549,7 +2549,7 @@ namespace Mono.CSharp {
 			return true;
 		}
 
-		protected bool IsDuplicateImplementation (MethodCore method)
+		protected bool IsDuplicateImplementation (TypeContainer tc, MethodCore method)
 		{
 			if ((method == this) || (method.Name != Name))
 				return false;
@@ -2565,6 +2565,9 @@ namespace Mono.CSharp {
 				if (param_types [i] != ParameterTypes [i])
 					return false;
 
+			Report.Error (111, Location, "Class `{0}' already defines a " +
+				      "member called `{1}' with the same parameter types",
+				      tc.Name, Name);
 			return true;
 		}
 
@@ -2807,16 +2810,8 @@ namespace Mono.CSharp {
 
 					for (int i = 0; i < arLen; i++) {
 						Method m = (Method) ar [i];
- 						if (!IsDuplicateImplementation (m))
- 							continue;
-
- 						Report.Error (
- 							111, Location,
- 							"Class `{0}' already defines a " +
- 							"member called `{1}' with the same " +
- 							"parameter types", container.Name,
-							Name);
-						return false;
+ 						if (IsDuplicateImplementation (container, m))
+ 							return false;
 					}
 				}
 			}
@@ -3140,17 +3135,8 @@ namespace Mono.CSharp {
 					
 			for (int i = 0; i < arLen; i++) {
 				Constructor m = (Constructor) ar [i];
-					if (!IsDuplicateImplementation (m))
-					continue;
-
-				Report.Error (
-					111, Location,
-						"Class `{0}' already defines a " +
-						"member called `{1}' with the same " +
-						"parameter types", container.Name,
-						Name);
-				return false;
-				}
+				if (IsDuplicateImplementation (container, m))
+					return false;
 			}
 			
 			return true;
@@ -4494,16 +4480,8 @@ namespace Mono.CSharp {
 					
 				for (int i = 0; i < arLen; i++) {
 					Property m = (Property) ar [i];
-					if (!IsDuplicateImplementation (m))
-						continue;
-						
-					Report.Error (
-						111, Location,
-						"Class `{0}' already defines a " +
-						"member called `{1}' with the same " +
-						"parameter types", container.Name,
-						Name);
-					return false;
+					if (IsDuplicateImplementation (container, m))
+						return false;
 				}
 			}
 

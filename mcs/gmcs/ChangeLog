@@ -1,5 +1,10 @@
 2004-03-19  Martin Baulig  <martin@ximian.com>
 
+	* class.cs (MemberCore.IsDuplicateImplementation): Report the
+	error here and not in our caller.
+
+2004-03-19  Martin Baulig  <martin@ximian.com>
+
 	* interface.cs: Completely killed this file.
 	(Interface): We're now a TypeContainer and live in class.cs.
 
