@@ -1,3 +1,21 @@
+2004-03-15  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* appdomain.c: upgraded corlib version.
+
+	* file-io.c: implemented new icalls: GetSupportsAIO, BeginRead
+	and BeginWrite. Allow opening files for asynchrnous operations.
+
+	* file-io.h: new struct that maps FileStreamAsyncResult.
+	* icall.c: added new icalls.
+	* process.[ch]: support setting child process environment variables
+	and use the SHELL or COMSPEC when UseShellExecute is true.
+
+	* threadpool.[ch]: fixed warnings, moved ThreadPool icalls here. The
+	callback for async. IO is here and also BindHandle.
+
+	* threads.[ch]: added mono_thread_detach and removed ThreadPool icalls
+	from here.
+
 2004-03-14  Zoltan Varga  <vargaz@freemail.hu>
 
 	* reflection.c (create_custom_attr): Allow len == 0.

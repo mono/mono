@@ -1,3 +1,22 @@
+2004-03-15  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* io-private.h: added new fields for file structure. Declare
+	_wapi_io_add_callback.
+
+	* io.c: added _wapi_get_win32_error, support aio_read/write in
+	file_read/write. Implemented _wapi_io_add_callback, which is where
+	BindHandle ends up.
+	
+	* io.h: added new fields for WapiOverlapped and typedef for the
+	callback.
+
+	* processes.c: fixed off-by-one bug when handling environment variables 
+	passed in.
+
+	* threads.[ch]: implemented BindIoCompletionCallback.
+
+	* uglify.h: added typedef for LPOVERLAPPED_COMPLETION_ROUTINE.
+
 2004-03-14  Zoltan Varga  <vargaz@freemail.hu>
 
 	* socket-wrappers.h: Remove extra semicolon.
