@@ -1,3 +1,8 @@
+2004-02-25  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlTextWriterOpenElement.cs : Reset() should reset _all_ fields.
+	  This fixes indentation bug.
+
 2004-02-19  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlTextWriter.cs : Fixed bugzilla #54554 (incorrent end tag output).

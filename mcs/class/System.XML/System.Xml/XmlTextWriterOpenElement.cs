@@ -38,6 +38,9 @@ namespace System.Xml
 		{
 			this.prefix = prefix;
 			this.localName = localName;
+			this.indentingOverriden = false;
+			this.xmlLang = null;
+			this.XmlSpace = XmlSpace.None;
 		}
 
 		#region Properties
