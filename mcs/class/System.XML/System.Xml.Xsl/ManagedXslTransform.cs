@@ -31,20 +31,13 @@ namespace System.Xml.Xsl {
 			if (s == null)
 				throw new XsltException ("No stylesheet was loaded.", null);
 
-			Outputter outputter = new GenericOutputter(output, s.Outputs);
-			bool wroteStartDocument = false;
-			if (output.WriteState == WriteState.Start) {
-				outputter.WriteStartDocument ();
-				wroteStartDocument = true;
-			}
+			Outputter outputter = new GenericOutputter (output, s.Outputs, null);
 			new XslTransformProcessor (s).Process (input, outputter, args, resolver);
-			if (wroteStartDocument)
-				outputter.WriteEndDocument ();
 			output.Flush ();
 		}
 
 		public override void Transform (XPathNavigator input, XsltArgumentList args, TextWriter output, XmlResolver resolver) {
-			Outputter outputter = new GenericOutputter(output, s.Outputs);			
+			Outputter outputter = new GenericOutputter(output, s.Outputs, output.Encoding);			
 //			outputter.WriteStartDocument();
 			new XslTransformProcessor (s).Process (input, outputter, args, resolver);
 			switch (outputter.WriteState) {
