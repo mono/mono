@@ -16,6 +16,33 @@ using Commons.Xml.Relaxng.Derivative;
 
 namespace Commons.Xml.Relaxng
 {
+	public class RelaxngNameClassList : CollectionBase
+	{
+		public RelaxngNameClassList ()
+		{
+		}
+
+		public void Add (RelaxngNameClass p)
+		{
+			List.Add (p);
+		}
+
+		public RelaxngNameClass this [int i] {
+			get { return this.List [i] as RelaxngNameClass; }
+			set { this.List [i] = value; }
+		}
+
+		public void Insert (int pos, RelaxngNameClass p)
+		{
+			List.Insert (pos, p);
+		}
+
+		public void Remove (RelaxngNameClass p)
+		{
+			List.Remove (p);
+		}
+	}
+
 	public abstract class RelaxngNameClass : RelaxngElementBase
 	{
 		protected RelaxngNameClass ()
@@ -183,13 +210,13 @@ namespace Commons.Xml.Relaxng
 
 	public class RelaxngNameChoice : RelaxngNameClass
 	{
-		ArrayList names = new ArrayList ();
+		RelaxngNameClassList names = new RelaxngNameClassList ();
 
 		public RelaxngNameChoice ()
 		{
 		}
 
-		public ArrayList Children {
+		public RelaxngNameClassList Children {
 			get { return names; }
 			set { names = value; }
 		}
@@ -225,13 +252,13 @@ namespace Commons.Xml.Relaxng
 
 	public class RelaxngExceptNameClass : RelaxngElementBase
 	{
-		ArrayList names = new ArrayList ();
+		RelaxngNameClassList names = new RelaxngNameClassList ();
 
 		public RelaxngExceptNameClass ()
 		{
 		}
 
-		public ArrayList Names {
+		public RelaxngNameClassList Names {
 			get { return names; }
 			set { names = value; }
 		}
