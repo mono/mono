@@ -1,3 +1,7 @@
+2003-06-14  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* list.unix. Added SubjectAltNameExtension.cs
+
 2003-03-06  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* list.unix: New. All C# files required to build the assembly.
