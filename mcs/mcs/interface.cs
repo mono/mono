@@ -545,7 +545,7 @@ namespace Mono.CSharp {
 		Type GetInterfaceTypeByName (object builder, string name)
 		{
 			Interface parent;
-			Type t = RootContext.TypeManager.LookupType (name);
+			Type t = RootContext.LookupType (this, name, false, Location);
 			
 			if (t != null) {
 				if (t.IsInterface)

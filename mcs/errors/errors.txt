@@ -42,3 +42,6 @@ numbers to match the Microsoft numbers:
 -14     Invalid number passed to probe
 
 -15	Can not locate default assembly path
+
+-16	Can not use System.Enum.ToObject (type, ConstantValue) with
+	user defined types.

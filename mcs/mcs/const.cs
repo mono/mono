@@ -136,8 +136,15 @@ namespace Mono.CSharp {
 				//
 				// This sadly does not work for our user-defined enumerations types ;-(
 				//
-				ConstantValue = System.Enum.ToObject (
-					type, ConstantValue);
+				try {
+					ConstantValue = System.Enum.ToObject (
+						type, ConstantValue);
+				} catch (ArgumentException){
+					Report.Error (
+						-16, Location,
+						".NET SDK 1.0 does not permit to create the constant "+
+						" field from a user-defined enumeration");
+				}
 			}
 
 			FieldBuilder.SetConstant (ConstantValue);

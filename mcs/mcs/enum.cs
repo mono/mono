@@ -121,6 +121,7 @@ namespace Mono.CSharp {
 
 			RootContext.TypeManager.AddEnumType (Name, TypeBuilder, this);
 
+			Console.WriteLine ("Enum " + Name + " defined: " + TypeBuilder);
 			return;
 		}
 

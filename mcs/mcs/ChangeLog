@@ -3,6 +3,17 @@
 	* ecore.cs (Expression.ConvertExplicit): Bug fix, thanks for
 	spotting this Paolo.
 
+	(Expression.ImplicitNumericConversion): Perform comparissions of
+	the type using the underlying type in the case of an enumeration
+	rather than using the enumeration type for the compare.
+
+	Cope with the underlying == type case, which is not possible to
+	catch before. 
+
+	(Expression.ConvertNumericExplicit): Perform comparissions of
+	the type using the underlying type in the case of an enumeration
+	rather than using the enumeration type for the compare.
+
 	* driver.cs: If the user does not supply an extension, assume .exe
 
 	* cs-parser.jay (if_statement): Rewrote so that we can track the
