@@ -1,3 +1,6 @@
+2002-07-30  Dietmar Maurer  <dietmar@ximian.com>
+
+	* class.c (mono_class_init): include method override patch from Paolo
 
 Tue Jul 30 15:20:08 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
