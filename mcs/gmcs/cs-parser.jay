@@ -1036,25 +1036,6 @@ method_declaration
 	  }
 	;
 
-opt_error_modifier
-	: /* empty */
-	| modifiers 
-	  {
-		int m = (int) $1;
-		int i = 1;
-
-		while (m != 0){
-			if ((i & m) != 0){
-				Report.Error (
-					1585, lexer.Location, "Member modifier `" + 
-					Modifiers.Name (i) + "' must precede member type and name");
-			}
-			m &= ~i;
-			i = i << 1;
-		}
-	  }
-	;
-
 method_header
 	: opt_attributes
 	  opt_modifiers
@@ -2449,6 +2430,19 @@ delegate_declaration
 	  }
 	;
 
+opt_nullable
+	: /* empty */
+	  {
+		lexer.CheckNullable (false);
+		$$ = false;
+	  }
+	| INTERR
+	  {
+		lexer.CheckNullable (true);
+		$$ = true;
+	  }
+	;
+
 namespace_or_type_name
 	: member_name
 	| namespace_or_type_name DOT IDENTIFIER opt_type_argument_list {
@@ -2494,15 +2488,21 @@ type_arguments
  * gets rid of a shift/reduce couple
  */
 type
-	: namespace_or_type_name
+	: namespace_or_type_name opt_nullable
 	  {
 		$$ = ((MemberName) $1).GetTypeExpression (lexer.Location);
-	  }
-	| builtin_types
-	| array_type
-	| pointer_type	  
-	;
 
+		if ((bool) $2)
+			$$ = new NullableType ((Expression) $$, lexer.Location);
+	  }
+	| builtin_types opt_nullable
+	  {
+		if ((bool) $2)
+			$$ = new NullableType ((Expression) $1, lexer.Location);
+	  }
+	| array_type
+	| pointer_type
+	;
 
 pointer_type
 	: type STAR
@@ -2594,9 +2594,13 @@ integral_type
 	;
 
 array_type
-	: type rank_specifiers
+	: type rank_specifiers opt_nullable
 	  {
-		$$ = new ComposedCast ((Expression) $1, (string) $2, lexer.Location);
+		string rank_specifiers = (string) $2;
+		if ((bool) $3)
+			rank_specifiers += "?";
+
+		$$ = new ComposedCast ((Expression) $1, rank_specifiers, lexer.Location);
 	  }
 	;
 
@@ -2608,8 +2612,7 @@ primary_expression
 	  {
 		// 7.5.1: Literals
 	  }
- 
-	| member_name
+ 	| member_name
 	  {
 		$$ = ((MemberName) $1).GetTypeExpression (lexer.Location);
 	  }
@@ -2935,6 +2938,31 @@ opt_rank_specifier
 	| rank_specifiers
 	  {
 			$$ = $1;
+	  }
+	;
+
+opt_rank_specifier_or_nullable
+	: /* empty */
+	  {
+		$$ = "";
+	  }
+	| INTERR
+	  {
+		$$ = "?";
+	  }
+	| opt_nullable rank_specifiers
+	  {
+		if ((bool) $1)
+			$$ = "?" + $2;
+		else
+			$$ = $2;
+	  }
+	| opt_nullable rank_specifiers INTERR
+	  {
+		if ((bool) $1)
+			$$ = "?" + $2 + "?";
+		else
+			$$ = $2 + "?";
 	  }
 	;
 
@@ -3288,6 +3316,21 @@ shift_expression
 	  }
 	; 
 
+opt_error
+	: /* empty */
+	| error
+	  {
+		lexer.PutbackNullable ();
+	  }
+	;
+
+nullable_type_or_conditional
+	: type opt_error
+	  {
+		$$ = $1;
+	  }
+	;
+
 relational_expression
 	: shift_expression
 	| relational_expression OP_LT shift_expression
@@ -3310,13 +3353,19 @@ relational_expression
 		$$ = new Binary (Binary.Operator.GreaterThanOrEqual, 
 			         (Expression) $1, (Expression) $3, lexer.Location);
 	  }
-	| relational_expression IS type
+	| relational_expression IS
 	  {
-		$$ = new Is ((Expression) $1, (Expression) $3, lexer.Location);
+		yyErrorFlag = 3;
+	  } nullable_type_or_conditional
+	  {
+		$$ = new Is ((Expression) $1, (Expression) $4, lexer.Location);
 	  }
-	| relational_expression AS type
+	| relational_expression AS
 	  {
-		$$ = new As ((Expression) $1, (Expression) $3, lexer.Location);
+		yyErrorFlag = 3;
+	  } nullable_type_or_conditional
+	  {
+		$$ = new As ((Expression) $1, (Expression) $4, lexer.Location);
 	  }
 	;
 
@@ -3384,6 +3433,10 @@ conditional_expression
 	| conditional_or_expression INTERR expression COLON expression 
 	  {
 		$$ = new Conditional ((Expression) $1, (Expression) $3, (Expression) $5, lexer.Location);
+	  }
+	| conditional_or_expression INTERR INTERR expression
+	  {
+		$$ = new NullCoalescingOperator ((Expression) $1, (Expression) $4, lexer.Location);
 	  }
 	;
 
@@ -3677,8 +3730,8 @@ block
 			current_block = new ToplevelBlock ((ToplevelBlock) top_current_block, current_local_parameters, lexer.Location);
 			top_current_block = current_block;
 		} else {
-		current_block = new Block (current_block, current_local_parameters,
-					   lexer.Location, Location.Null);
+			current_block = new Block (current_block, current_local_parameters,
+						   lexer.Location, Location.Null);
 		}
 	  } 
 	  opt_statement_list CLOSE_BRACE 
@@ -3793,7 +3846,7 @@ declaration_statement
  * > The expressions are converted into types during semantic analysis.
  */
 local_variable_type
-	: primary_expression opt_rank_specifier
+	: primary_expression opt_rank_specifier_or_nullable
 	  { 
 		// FIXME: Do something smart here regarding the composition of the type.
 
@@ -3827,7 +3880,7 @@ local_variable_type
 				$$ = new ComposedCast ((Expression) $1, (string) $2, lexer.Location);
 		}
 	  }
-	| builtin_types opt_rank_specifier
+	| builtin_types opt_rank_specifier_or_nullable
 	  {
 		if ((string) $2 == "")
 			$$ = $1;
@@ -3871,7 +3924,7 @@ local_variable_declaration
 		else
 			$$ = null;
 	  }
-        | local_variable_pointer_type opt_rank_specifier variable_declarators
+        | local_variable_pointer_type opt_rank_specifier_or_nullable variable_declarators
 	{
 		if ($1 != null){
 			Expression t;

@@ -1002,6 +1002,12 @@ namespace Mono.CSharp {
 				if (te is TypeParameterExpr)
 					has_type_args = true;
 
+				if (te.Type.IsPointer) {
+					Report.Error (306, Location, "The type `{0}' may not be used " +
+						      "as a type argument.", TypeManager.CSharpName (te.Type));
+					return false;
+				}
+
 				atypes [i] = te.Type;
 			}
 			return ok;
@@ -1545,6 +1551,36 @@ namespace Mono.CSharp {
 				temp_storage.Emit (ec);
 			} else
 				ec.ig.Emit (OpCodes.Ldnull);
+		}
+	}
+
+	public class NullableType : TypeExpr
+	{
+		Expression underlying;
+
+		public NullableType (Expression underlying, Location l)
+		{
+			this.underlying = underlying;
+			loc = l;
+
+			eclass = ExprClass.Type;
+		}
+
+		public override string Name {
+			get { return underlying.ToString (); }
+		}
+
+		public override string FullName {
+			get { return underlying.ToString (); }
+		}
+
+		protected override TypeExpr DoResolveAsTypeStep (EmitContext ec)
+		{
+			TypeArguments args = new TypeArguments (loc);
+			args.Add (underlying);
+
+			ConstructedType ctype = new ConstructedType (TypeManager.generic_nullable_type, args, loc);
+			return ctype.ResolveAsTypeTerminal (ec);
 		}
 	}
 
@@ -2180,6 +2216,29 @@ namespace Mono.CSharp {
 
 			method = method.BindGenericParameters (infered_types);
 			return true;
+		}
+	}
+
+	public class NullCoalescingOperator : Expression
+	{
+		Expression left;
+		Expression right;
+
+		public NullCoalescingOperator (Expression left, Expression right, Location loc)
+		{
+			this.left = left;
+			this.right = right;
+			this.loc = loc;
+		}
+
+		public override Expression DoResolve (EmitContext ec)
+		{
+			Error (-1, "The ?? operator is not yet implemented.");
+			return null;
+		}
+
+		public override void Emit (EmitContext ec)
+		{
 		}
 	}
 }

@@ -499,6 +499,8 @@ namespace Mono.CSharp
 				return true;
 			else if ((the_token == Token.COMMA) || (the_token == Token.DOT))
 				goto start;
+			else if (the_token == Token.INTERR)
+				goto again;
 			else if (the_token == Token.OP_GENERICS_LT) {
 				if (!parse_less_than ())
 					return false;
@@ -745,11 +747,33 @@ namespace Mono.CSharp
 			deambiguate_close_parens++;
 		}
 
+		public void PutbackNullable ()
+		{
+			if (nullable_pos < 0)
+				throw new Exception ();
+
+			current_token = -1;
+			val = null;
+			reader.Position = nullable_pos;
+
+			putback_char = '?';
+		}
+
 		void Error_NumericConstantTooLong ()
 		{
 			Report.Error (1021, Location, "Numeric constant too long");			
 		}
-		
+
+		int nullable_pos = -1;
+
+		public void CheckNullable (bool is_nullable)
+		{
+			if (is_nullable)
+				nullable_pos = reader.Position;
+			else
+				nullable_pos = -1;
+		}
+
 		bool decimal_digits (int c)
 		{
 			int d;

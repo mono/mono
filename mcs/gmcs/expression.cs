@@ -8802,6 +8802,11 @@ namespace Mono.CSharp {
 				return null;
 			}
 
+			if (dim == "?") {
+				NullableType nullable = new NullableType (left, loc);
+				return nullable.ResolveAsTypeTerminal (ec);
+			}
+
 			int pos = 0;
 			while ((pos < dim.Length) && (dim [pos] == '[')) {
 				pos++;
