@@ -1,3 +1,10 @@
+2005-03-27  Raja R Harinath  <harinath@gmail.com>
+
+	* Makefile.am (assembliesdir): Fix.  If it is arch-dependent it
+	has to be in $(exec_prefix).  $(prefix) is for arch-independent
+	stuff, and it would probably use $(prefix)/share rather than
+	$(prefix)/lib.
+
 2005-03-24 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* console-io.c: added 2 includes that might be missing.
