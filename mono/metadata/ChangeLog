@@ -1,3 +1,7 @@
+2004-09-05 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* assembly.c: provide more information when loading an assembly fails.
+
 2004-09-04 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* filewatcher.c: don't expect the development fam package to be
