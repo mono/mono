@@ -126,6 +126,17 @@ namespace MonoTests.System {
 			Assert.IsFalse (d.IsReadOnly, "IsReadOnly");
 			Assert.IsFalse (d.IsSynchronized, "IsSynchronized");
 		}
+
+		[Test]
+		[Category ("NotWorking")] // http://bugzilla.ximian.com/show_bug.cgi?id=71938
+		public void GetCommandLineArgs ()
+		{
+			string[] args = Environment.GetCommandLineArgs ();
+			Assert.IsNotNull (args, "not null");
+			Assert.IsTrue (((args.Length > 0) && (args.Length < 256)), "reasonable");
+			Assert.IsNotNull (args [0], "application");
+		}
+
 #if NET_2_0
 		[Test]
 		[ExpectedException (typeof (ArgumentException))]

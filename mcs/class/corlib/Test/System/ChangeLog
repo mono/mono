@@ -1,3 +1,8 @@
+2005-01-28  Sebastien Pouliot  <sebastien@ximian.com>  
+ 
+	* EnvironmentTest.cs: Added a new unit for GetCommandLineArgs to track
+	bug #71938.
+
 2005-01-28  Sebastien Pouliot  <sebastien@ximian.com> 
 
 	* EnvironmentCas.cs: New. Permission tests for Environment.
