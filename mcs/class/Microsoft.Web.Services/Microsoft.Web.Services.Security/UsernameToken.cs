@@ -27,7 +27,11 @@ namespace Microsoft.Web.Services.Security {
 	//	http://msdn.microsoft.com/library/default.asp?url=/library/en-us/dnglobspec/html/ws-security.asp
 	// b.	Web Services Security Addendum, Version 1.0, August 18, 2002
 	//	http://msdn.microsoft.com/library/en-us/dnglobspec/html/ws-security-addendum.asp
+#if WSE1
 	public sealed class UsernameToken : SecurityToken {
+#else
+	public class UsernameToken : SecurityToken {
+#endif
 
 		static private IPasswordProvider provider;
 
@@ -267,7 +271,7 @@ namespace Microsoft.Web.Services.Security {
 			}
 		}
 
-#if WSE1
+#if WSE1 || WSE2 //The || is only here for a quick compilation fix
 		public override void Verify () {}
 #else
 		public IList AnyElements {
@@ -280,7 +284,7 @@ namespace Microsoft.Web.Services.Security {
 		}
 
 		[MonoTODO ("need to compare results with WSE2")]
-		public override bool Equals (SecurityToken token) 
+		public bool Equals (SecurityToken token) 
 		{
 			if (token is UsernameToken) {
 				UsernameToken t = token as UsernameToken;
@@ -299,7 +303,7 @@ namespace Microsoft.Web.Services.Security {
 			return false;
 		}
 
-		public new virtual bool IsCurrent {
+		public virtual bool IsCurrent {
 			get { return false; }
 		}
 #endif

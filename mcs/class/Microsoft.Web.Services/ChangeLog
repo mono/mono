@@ -1,3 +1,10 @@
+2003-10-05  Todd Berman <tberman@gentoo.org>
+
+	* Microsoft.Web.Services.Security/UsernameToken.cs: small WSE2 build
+	fixes.
+	* Microsoft.Web.Services.Addressing/AttributeUri.cs: implemented.
+	* Microsoft.Web.Services.Addressing/Address.cs: implemented
+
 2003-10-04  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* Microsoft.Web.Services.dll.sources: Added ChainStream to build.
