@@ -1,3 +1,7 @@
+2001-08-22	John Barnette	<jbarn@httcb.net>
+	* ListDictionary.cs:
+		Initial working implementation.
+
 2001-07-17	John Barnette	<jbarn@httcb.net>
 	* StringCollection.cs:
 		Implemented and working according to spec.
