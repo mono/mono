@@ -1,3 +1,8 @@
+2005-03-24  Sureshkumar T  <tsureshkumar@novell.com>
+
+	* OdbcDataReader.cs: Decode only outsize length for
+	SQL_C_TYPE.CHAR type in SQLGetData.
+
 2005-03-22  Sureshkumar T  <tsureshkumar@novell.com>
             Appsamy <appasamy@rediffmail.com>
 

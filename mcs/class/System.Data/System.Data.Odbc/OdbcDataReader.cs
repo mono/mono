@@ -709,7 +709,10 @@ namespace System.Data.Odbc
 						bufsize=255;
 						buffer=new byte[bufsize];
 						ret=libodbc.SQLGetData(hstmt, ColIndex, SQL_C_TYPE.CHAR, buffer, bufsize, ref outsize);
-						DataValue=System.Text.Encoding.Default.GetString(buffer);
+                                                if (outsize != (int) OdbcLengthIndicator.NullData)
+                                                    if (! (ret == OdbcReturn.SuccessWithInfo
+                                                        && outsize == (int) OdbcLengthIndicator.NoTotal))
+                                                            DataValue=System.Text.Encoding.Default.GetString(buffer, 0, outsize);
 						break;
 				}
 
