@@ -1,3 +1,7 @@
+2004-06-03  Gert Driesen <drieseng@users.sourceforge.net>
+
+	* mono-api-info.cs: also check protected internal members
+
 2004-06-03  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* mono-api-info.cs: if we have a TODOAttribute, get the Comment property

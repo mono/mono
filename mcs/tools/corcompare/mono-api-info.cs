@@ -374,7 +374,7 @@ namespace Mono.AssemblyInfo
 					continue;
 
 				// we're only interested in public or protected members
-				if (!field.IsPublic && !field.IsFamily)
+				if (!field.IsPublic && !field.IsFamily && !field.IsFamilyOrAssembly)
 					continue;
 
 				list.Add (field);
@@ -426,7 +426,7 @@ namespace Mono.AssemblyInfo
 					continue;
 
 				// we're only interested in public or protected members
-				if (!method.IsPublic && !method.IsFamily)
+				if (!MustDocumentMethod(method))
 					continue;
 
 				list.Add (method);
@@ -439,11 +439,10 @@ namespace Mono.AssemblyInfo
 		{
 			ArrayList list = new ArrayList ();
 
-			// No .cctor
 			ConstructorInfo[] ctors = type.GetConstructors (flags);
 			foreach (ConstructorInfo constructor in ctors) {
 				// we're only interested in public or protected members
-				if (!constructor.IsPublic && !constructor.IsFamily)
+				if (!constructor.IsPublic && !constructor.IsFamily && !constructor.IsFamilyOrAssembly)
 					continue;
 
 				list.Add (constructor);
