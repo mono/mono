@@ -4,14 +4,14 @@ DIRS=jay nant mcs class nunit20 monoresgen tools mbas ilasm
 INSTALL= /usr/bin/install
 
 all: 
-	if test x$(OS) = xWindows_NT; then make linux; else make -f makefile.gnu; fi
+	if test x$(OS) = xWindows_NT; then make windows; else make -f makefile.gnu; fi
 
 install:
-	if test x$(OS) = xWindows_NT; then make windowsinstall; else make -f makefile.gnu install; fi
+	if test x$(OS) = xWindows_NT; then make windows install; else make -f makefile.gnu install; fi
 
 windows:
 	for i in $(DIRS); do 			\
-		(cd $$i; make linux) || exit 1;	\
+		(cd $$i; make windows) || exit 1;	\
 	done
 
 linux:
