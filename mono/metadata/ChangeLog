@@ -1,3 +1,9 @@
+
+Tue Jul 27 15:58:19 CEST 2004 Paolo Molaro <lupus@ximian.com>
+
+	* debug-mono-symfile.c: fix one more endianess issue, from a patch
+	by Geoff Norton (<gnorton@customerdna.com>).
+
 Tue Jul 27 15:47:17 CEST 2004 Paolo Molaro <lupus@ximian.com>
 
 	* class.c: fix class loads for pointer types (typeof(int) !=
