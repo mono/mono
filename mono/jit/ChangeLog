@@ -1,5 +1,7 @@
 2002-05-11  Dietmar Maurer  <dietmar@ximian.com>
 
+	* jit.c (mono_analyze_flow): always allocate the forest array
+
 	* x86.brg: bug fix in SHR/SHL
 
 	* emit-x86.c (arch_emit_prologue): check if live_in_set != NULL
