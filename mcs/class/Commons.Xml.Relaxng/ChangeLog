@@ -1,3 +1,7 @@
+2004-03-18  Atsushi Enomoto <atsushi@ximian.com>
+
+	* Makefile : path to jay should be supplied.
+
 2004-03-17  Atsushi Enomoto <atsushi@ximian.com>
 
 	* Commons.Xml.Relaxng.dll.sources : Added RncParser.cs and RncTokenizer.cs.
