@@ -1,5 +1,11 @@
 2004-04-29  Martin Baulig  <martin@ximian.com>
 
+	* ecore.cs (Expression.Constantify): If we're an enum and
+	TypeManager.TypeToCoreType() doesn't give us another type, use
+	t.UnderlyingSystemType.  Fixes #56178.	
+
+2004-04-29  Martin Baulig  <martin@ximian.com>
+
 	* decl.cs (MemberCache.SetupCacheForInterface): Look over all our
 	interfaces and for each interface, only add members directly
 	declared in that interface.  Fixes #53255.

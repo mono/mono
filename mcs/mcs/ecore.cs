@@ -466,7 +466,11 @@ namespace Mono.CSharp {
 			else if (t == TypeManager.bool_type)
 				return new BoolConstant ((bool) v);
 			else if (TypeManager.IsEnumType (t)){
-				Constant e = Constantify (v, TypeManager.TypeToCoreType (v.GetType ()));
+				Type real_type = TypeManager.TypeToCoreType (v.GetType ());
+				if (real_type == t)
+					real_type = real_type.UnderlyingSystemType;
+
+				Constant e = Constantify (v, real_type);
 
 				return new EnumConstant (e, t);
 			} else
