@@ -1,3 +1,7 @@
+2004-12-10  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Makefile : added dtd2xsd.
+
 2004-12-07  Raja R Harinath  <rharinath@novell.com>
 
 	* Makefile (run-test-ondotnet-local, uninstall-local): New.
