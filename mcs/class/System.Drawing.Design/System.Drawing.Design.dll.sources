@@ -1,3 +1,6 @@
+Assembly/AssemblyInfo.cs
+Assembly/Locale.cs
+Assembly/TODOAttribute.cs
 System.Drawing.Design/BitmapEditor.cs
 System.Drawing.Design/ColorEditor.cs
 System.Drawing.Design/ContentAlignmentEditor.cs
