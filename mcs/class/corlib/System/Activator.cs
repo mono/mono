@@ -118,8 +118,9 @@ namespace System
 			//Assembly assembly = Assembly.Load (assemblyFile, securityInfo);
 			Assembly assembly = null;
 			if(assemblyName == null)
-				assemblyName = Assembly.GetCallingAssembly().GetName().Name;
-			
+				assembly = Assembly.GetCallingAssembly ();
+			else
+				assembly = Assembly.Load (assemblyName);			
 			assembly = Assembly.Load (assemblyName);
 
 			Type type = assembly.GetType (typeName, true, ignoreCase);
