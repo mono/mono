@@ -1,4 +1,9 @@
 
+Mon Aug 27 21:30:30 CEST 2001 Paolo Molaro <lupus@ximian.com>
+
+	* interp.c: warn and exit when Main () expects the cmdline arguments
+	instead of creashing.
+
 Mon Aug 27 20:16:37 CEST 2001 Paolo Molaro <lupus@ximian.com>
 
 	* interp.c: merge isinst/castclass handling. Hopefully implement
