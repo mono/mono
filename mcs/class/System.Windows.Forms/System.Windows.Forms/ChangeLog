@@ -276,4 +276,12 @@ Added delegates. All delegates in System.Windows.Forms done
 * PrintDialog.cs
 * added new files for paul
 
+2002-6-5 DennisHayes <dennish@raytek.com>
+* StatusBarDrawItemEventArgs.cs
+* StatusBarPanel.cs
+* StatusBarPanelClickEventArgs.cs
+* StatusBarPanelCollection.cs
+* SystemInformation.cs
+* added new files for Richard Baumann (biochem333@nyc.rr.com)
+
 
