@@ -15,7 +15,7 @@ namespace System.Net
 	               | AttributeTargets.Class 
 	               | AttributeTargets.Struct 
 	               | AttributeTargets.Constructor 
-	               | AttributeTargets.Method)
+	               | AttributeTargets.Method, AllowMultiple = true, Inherited = false)
 	]	
 	[Serializable]
 	public sealed class SocketPermissionAttribute : CodeAccessSecurityAttribute

@@ -1,5 +1,10 @@
 2003-07-05  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
 
+	* DnsPermissionAttribute.cs:
+	* SocketPermissionAttribute.cs: Fixed wrong AttributeUsageAttribute
+
+2003-07-05  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
+
 	* WebPermission.cs: Added and partially implemented
 	* WebPermissionAttribute.cs: Added and implemented
 
