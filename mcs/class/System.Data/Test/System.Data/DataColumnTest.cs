@@ -3,9 +3,11 @@
 // Author:
 //   Franklin Wise <gracenote@earthlink.net>
 //   Rodrigo Moya <rodrigo@ximian.com>
+//   Daniel Morgan <danmorg@sc.rr.com>
 //
 // (C) Copyright 2002 Franklin Wise
 // (C) Copyright 2002 Rodrigo Moya
+// (C) Copyright 2003 Daniel Morgan
 //
 
 using NUnit.Framework;
@@ -49,13 +51,13 @@ namespace MonoTests.System.Data
 			try
 			{
 				col = new DataColumn(colName, null);
-				Assertion.Fail("Failed to throw ArgumentNullException.");
+				Assertion.Fail("DC7: Failed to throw ArgumentNullException.");
 			}
 			catch (ArgumentNullException){}
 			catch (AssertionFailedError exc) {throw  exc;}
 			catch (Exception exc)
 			{
-				Assertion.Fail("DataColumnNull. Wrong exception type. Got:" + exc);
+				Assertion.Fail("DC8: DataColumnNull. Wrong exception type. Got:" + exc);
 			}
 
 		}
@@ -76,12 +78,11 @@ namespace MonoTests.System.Data
 			col.AutoIncrement = true;
 			
 			//Check for Correct Default Values
-			Assertion.AssertEquals("Seed default", (long)0, col.AutoIncrementSeed);
-			Assertion.AssertEquals("Step default", (long)1, col.AutoIncrementStep);
+			Assertion.AssertEquals("DC9: Seed default", (long)0, col.AutoIncrementSeed);
+			Assertion.AssertEquals("DC10: Step default", (long)1, col.AutoIncrementStep);
 
 			//Check for auto type convert
-			Assertion.Assert("AutoInc type convert failed." ,col.DataType == typeof (int));
-
+			Assertion.Assert("DC11: AutoInc type convert failed." ,col.DataType == typeof (int));
 		}
 
 		public void TestAutoIncrementExceptions()
@@ -94,13 +95,13 @@ namespace MonoTests.System.Data
 			try 
 			{
 				col.AutoIncrement = true;
-				Assertion.Fail("Failed to throw ArgumentException");
+				Assertion.Fail("DC12: Failed to throw ArgumentException");
 			}
 			catch (ArgumentException){}
 			catch (AssertionFailedError exc) {throw  exc;}
 			catch (Exception exc)
 			{
-				Assertion.Fail("ExprAutoInc. Wrong exception type. Got:" + exc);
+				Assertion.Fail("DC13: ExprAutoInc. Wrong exception type. Got:" + exc);
 			}
 
 
@@ -110,15 +111,15 @@ namespace MonoTests.System.Data
 		{
 			DataColumn col = new DataColumn("ColName");
 			//Caption not set at this point
-			Assertion.AssertEquals("Caption Should Equal Col Name", col.ColumnName, col.Caption);
+			Assertion.AssertEquals("DC14: Caption Should Equal Col Name", col.ColumnName, col.Caption);
 
 			//Set caption
 			col.Caption = "MyCaption";
-			Assertion.AssertEquals("Caption should equal caption.", "MyCaption", col.Caption);
+			Assertion.AssertEquals("DC15: Caption should equal caption.", "MyCaption", col.Caption);
 
 			//Clear caption
 			col.Caption = null;
-			Assertion.AssertEquals("Caption Should Equal Col Name after clear", col.ColumnName, col.Caption);
+			Assertion.AssertEquals("DC16: Caption Should Equal Col Name after clear", col.ColumnName, col.Caption);
 			
 		}
 
@@ -140,13 +141,13 @@ namespace MonoTests.System.Data
 				col2.ColumnName = "abc";
 				_tbl.Columns.Add(col2);
 				AssertEquals( "abc", col2.ColumnName);
-				Assertion.Fail("Failed to throw duplicate name exception.");
+				Assertion.Fail("DC17: Failed to throw duplicate name exception.");
 			}
 			catch (DuplicateNameException){}
 			catch (AssertionFailedError exc) {throw  exc;}
 			catch (Exception exc)
 			{
-				Assertion.Fail("DNE: Wrong exception type. " + exc.ToString());
+				Assertion.Fail("DC18: Wrong exception type. " + exc.ToString());
 			}
 
 			// Make sure case matters in duplicate checks
@@ -164,13 +165,13 @@ namespace MonoTests.System.Data
 			try
 			{
 				tbl.Columns[0].DefaultValue = 2;
-				Assertion.Fail("Failed to throw ArgumentException.");
+				Assertion.Fail("DC19: Failed to throw ArgumentException.");
 			}
 			catch (ArgumentException){}
 			catch (AssertionFailedError exc) {throw  exc;}
 			catch (Exception exc)
 			{
-				Assertion.Fail("WET1: Wrong exception type. " + exc.ToString());
+				Assertion.Fail("DC20: Wrong exception type. " + exc.ToString());
 			}
 
 
@@ -180,13 +181,13 @@ namespace MonoTests.System.Data
 			try
 			{
 				tbl.Columns[0].DefaultValue = "hello";
-				Assertion.Fail("Failed to throw InvalidCastException.");
+				Assertion.Fail("DC21: Failed to throw InvalidCastException.");
 			}
 			catch (InvalidCastException){}
 			catch (AssertionFailedError exc) {throw  exc;}
 			catch (Exception exc)
 			{
-				Assertion.Fail("WET2: Wrong exception type. " + exc.ToString());
+				Assertion.Fail("DC22: Wrong exception type. " + exc.ToString());
 			}
 
 			//TODO: maybe add tests for setting default value for types that can implict
@@ -205,6 +206,68 @@ namespace MonoTests.System.Data
 
 			//AutoInc column dataType supported
 
+		}
+
+		public void TestDefaults1() 
+		{
+			//Check for defaults - ColumnName not set at the beginning
+			DataTable table = new DataTable();		
+			DataColumn column = new DataColumn();
+			
+			Assertion.AssertEquals("DC1: ColumnName default Before Add", column.ColumnName, String.Empty);
+			Assertion.AssertEquals("DC2: DataType default Before Add", column.DataType.ToString(), typeof(string).ToString());
+			
+			table.Columns.Add(column);
+			
+			Assertion.AssertEquals("DC3: ColumnName default After Add", table.Columns[0].ColumnName, "Column1");
+			Assertion.AssertEquals("DC4: DataType default After Add", table.Columns[0].DataType.ToString(), typeof(string).ToString());	
+			
+			DataRow row = table.NewRow();
+			table.Rows.Add(row);
+			DataRow dataRow = table.Rows[0];
+			
+			object v = null;
+			try {
+				v = dataRow.ItemArray[0];
+			}
+			catch(Exception e) {
+				Assertion.Fail("DC5: getting item from dataRow.ItemArray[0] threw Exception: " + e);
+			}
+			
+			Type vType = dataRow.ItemArray[0].GetType();
+			Assertion.AssertEquals("DC6: Value from DataRow.Item", v, DBNull.Value);
+		}
+
+		public void TestDefaults2() 
+		{
+			//Check for defaults - ColumnName set at the beginning
+			string blah = "Blah";
+			//Check for defaults - ColumnName not set at the beginning
+			DataTable table = new DataTable();		
+			DataColumn column = new DataColumn(blah);
+			
+			Assertion.AssertEquals("DC23: ColumnName default Before Add", column.ColumnName,blah);
+			Assertion.AssertEquals("DC24: DataType default Before Add", column.DataType.ToString(), typeof(string).ToString());
+			
+			table.Columns.Add(column);
+			
+			Assertion.AssertEquals("DC25: ColumnName default After Add", table.Columns[0].ColumnName, blah);
+			Assertion.AssertEquals("DC26: DataType default After Add", table.Columns[0].DataType.ToString(), typeof(string).ToString());	
+			
+			DataRow row = table.NewRow();
+			table.Rows.Add(row);
+			DataRow dataRow = table.Rows[0];
+
+			object v = null;
+			try {
+				v = dataRow.ItemArray[0];
+			}
+			catch(Exception e) {
+				Assertion.Fail("DC27: getting item from dataRow.ItemArray[0] threw Exception: " + e);
+			}
+			
+			Type vType = dataRow.ItemArray[0].GetType();
+			Assertion.AssertEquals("DC28: Value from DataRow.Item", v, DBNull.Value);
 		}
 	}
 }

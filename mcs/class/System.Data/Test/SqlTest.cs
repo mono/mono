@@ -690,22 +690,31 @@ namespace Test.Mono.Data.SqlClient {
 
 		[STAThread]
 		static void Main(string[] args) {
+			string connectionString = "";
+						
+			if(args.Length == 3 || args.Length == 4) {
+				if(args.Length == 3) {
+					connectionString = String.Format(
+						"Server={0};" + 
+						"Database={1};" +
+						"User ID={2};",
+						args[0], args[1], args[2]);
+				}
+				else if(args.Length == 4) {
+					connectionString = String.Format(
+						"Server={0};" + 
+						"Database={1};" +
+						"User ID={2};" +
+						"Password={3}",
+						args[0], args[1], args[2], args[3]);
+				}
+			}
+			else {
+				Console.WriteLine("Usage: mono SqlTest.exe sql_server database user_id password");
+				return;
+			}
+
 			SqlConnection cnc = new SqlConnection ();
-
-			/*
-			string connectionString = 
-				"host=hostname;" +
-				"dbname=database;" +
-				"user=userid;" +
-				"password=password";
-			*/
-
-			string connectionString = 
-				"Server=localhost;" + 
-				"Database=test;" +
-				"User ID=sql;" +
-				"Password=";
-
 			cnc.ConnectionString =  connectionString;
 
 			cnc.Open();

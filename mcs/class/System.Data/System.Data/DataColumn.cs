@@ -11,7 +11,6 @@
 // (C) Copyright 2002, Franklin Wise
 // (C) Chris Podurgiel
 // (C) Ximian, Inc 2002
-// (C) Daniel Morgan 2002
 // Copyright (C) Tim Coleman, 2002
 // Copyright (C) Daniel Morgan, 2002, 2003
 //
@@ -295,42 +294,13 @@ namespace System.Data {
 
 				// we want to check that the datatype is supported?
 				TypeCode typeCode = Type.GetTypeCode(value);
-				switch(typeCode) {
-				case TypeCode.Boolean :
-				case TypeCode.Byte  :
-				case TypeCode.Char  :
-				case TypeCode.DateTime  :
-				case TypeCode.Decimal  :
-				case TypeCode.Double  :
-				case TypeCode.Int16  :
-				case TypeCode.Int32  :
-				case TypeCode.Int64  :
-				case TypeCode.SByte  :
-				case TypeCode.Single  :
-				case TypeCode.String  :
-				case TypeCode.UInt16  :
-				case TypeCode.UInt32  :
-				case TypeCode.UInt64  :
-					break;
-				default :
-					switch(value.ToString()) {
-					case "System.TimeSpan" :
-					case "System.Type" :
-					case "System.Object" :
-						break;
-					default:
-						// FIXME: is exception correct?
-						throw new ArgumentException("Type not supported.");
-					}
-					break;
-				}
 				
 				//Check AutoIncrement status, make compatible datatype
 				if(AutoIncrement == true) {
 					if(typeCode != TypeCode.Int16 &&
 					   typeCode != TypeCode.Int32 &&
 					   typeCode != TypeCode.Int64)
-						throw new ArgumentException("AutoIncrement is true, but the value is set to a type a unsupported by AutoIncrement.");
+						throw new ArgumentException("AutoIncrement is true, but the value is set to a type unsupported by AutoIncrement.");
 				}
 				_dataType = value;
 			}

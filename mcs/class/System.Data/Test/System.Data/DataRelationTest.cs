@@ -323,9 +323,9 @@ namespace MonoTests.System.Data
 				AssertEquals ("test#04", typeof (NullReferenceException), e.GetType ());
 			}
 			
-			Set.BeginInit ();
+			//Set.BeginInit ();
 			Set.Relations.AddRange (new DataRelation [] {Relation});
-			Set.EndInit ();
+			//Set.EndInit ();
 			
 			DataRelation Test = null;
 			AssertEquals ("test#01", 1, Mom.ChildRelations.Count);

@@ -1,3 +1,21 @@
+2003-01-26  Daniel Morgan <danmorg@sc.rr.com>
+
+	* System.Data/DataColumn.cs: fix to not check for DataType being set
+	
+	* System.Data/DataRow.cs: misc fixes
+	
+	* Test/SqlTest.cs: accept connection parameters from 
+	command line instead of being hard coded
+	
+	* Test/System.Data_test.build: exclude building SqlTest.cs
+	
+	* Test/System.Data/DataRowTest.cs
+	* Test/System.Data/DataColumnTest.cs: added new tests and numbered
+	all the tests so they can be easily identified
+	
+	* Test/System.Data/DataRelationTest.cs: commented code that calls
+	DataSet's BeginEdit() and EndEdit() which causes a compile error
+
 2003-01-24  Daniel Morgan <danmorg@sc.rr.com>
 
 	* System.Data/DataColumn.cs: fixes to be like .NET - 

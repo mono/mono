@@ -262,35 +262,49 @@ namespace System.Data {
 		private object SetColumnValue (object v, int index) 
 		{		
 			object newval = null;
+			DataColumn col = _table.Columns[index];
 			
-			if (_table.Columns[index].ReadOnly && v != this[index])
+			if (col.ReadOnly && v != this[index])
 				throw new ReadOnlyException ();
 
 			if (v == null) {
-				if(_table.Columns[index].DefaultValue != DBNull.Value) {
-					newval = _table.Columns[index].DefaultValue;
+				if(col.DefaultValue != DBNull.Value) {
+					newval = col.DefaultValue;
 				}
-				else if(_table.Columns[index].AutoIncrement == true) {
-					newval = _table.Columns[index].AutoIncrementValue();
+				else if(col.AutoIncrement == true) {
+					switch(col.DataType.ToString()) {
+					case "System.Int16":
+						newval = (short) col.AutoIncrementValue();
+						break;
+					case "System.Int32":
+						newval = (int) col.AutoIncrementValue();
+						break;
+					case "System.Int64":
+						newval = col.AutoIncrementValue();
+						break;
+					default:
+						newval = col.AutoIncrementValue();
+						break;
+					}
 				}
 				else {
-					if (!_table.Columns[index].AllowDBNull)
+					if (!col.AllowDBNull)
 						throw new NoNullAllowedException ();
 					newval = DBNull.Value;
 				}
 			}
 			else if (v == DBNull.Value) {
-				if (!_table.Columns[index].AllowDBNull)
+				if (!col.AllowDBNull)
 					throw new NoNullAllowedException ();
-				if(_table.Columns[index].AutoIncrement == true) {
-					_table.Columns[index].AutoIncrementValue();
+				if (col.AutoIncrement == true) {
+					col.AutoIncrementValue();
 				}
 				newval = DBNull.Value;
 			}
 			else {	
 				Type vType = v.GetType(); // data type of value
-				Type cType = _table.Columns[index].DataType; // column data type
-				if (_table.Columns[index].DataType != vType) {
+				Type cType = col.DataType; // column data type
+				if (cType != vType) {
 					TypeCode typeCode = Type.GetTypeCode(cType);
 					switch(typeCode) {
 					case TypeCode.Boolean :
@@ -347,7 +361,7 @@ namespace System.Data {
 							v = (System.Type) v;
 							break;
 						case "System.Object" :
-							v = (System.Object) v;
+							//v = (System.Object) v;
 							break;
 						default:
 							// FIXME: is exception correct?
@@ -358,16 +372,12 @@ namespace System.Data {
 					vType = v.GetType();
 				}
 				newval = v;
-				if(_table.Columns[index].AutoIncrement == true) {
-					if(Type.GetTypeCode(vType) == TypeCode.Int16)
-						_table.Columns[index].UpdateAutoIncrementValue ((long) ((short)v));
-					else if(Type.GetTypeCode(vType) == TypeCode.Int32)
-						_table.Columns[index].UpdateAutoIncrementValue ((long) ((int)v));
-					else if(Type.GetTypeCode(vType) == TypeCode.Int64)
-						_table.Columns[index].UpdateAutoIncrementValue ((long)v);
+				if(col.AutoIncrement == true) {
+					long inc = Convert.ToInt64(v);
+					col.UpdateAutoIncrementValue (inc);
 				}
 			}
-			_table.Columns[index].DataHasBeenSet = true;
+			col.DataHasBeenSet = true;
 			return newval;
 		}
 
