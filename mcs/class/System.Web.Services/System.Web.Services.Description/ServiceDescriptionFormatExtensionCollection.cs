@@ -116,7 +116,6 @@ namespace System.Web.Services.Description {
 
 		public void Insert (int index, object extension)
 		{
-			SetParent (extension, parent);
 			List.Insert (index, extension);
 		}
 
