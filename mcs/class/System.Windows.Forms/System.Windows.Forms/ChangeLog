@@ -1,3 +1,8 @@
+2004-03-08  Miguel de Icaza  <miguel@ximian.com>
+
+	* Form.cs: Drop call to SharedWineInit, the runtime does that for
+	us now. 
+
 2004-03-03 Peter Dennis Bartok <pbartok@novell.com>
 	* Form.cs: Changed initialization code to match improved (generalized) Wine patch
 	* win32functions.cs: Changed name of wine shared library

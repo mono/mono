@@ -105,21 +105,6 @@
 				cancelButton = null;
 			}
     		
-			// Initialization for Wine
-			// FIXME - Should not use absolute path
-			[DllImport ("wine-sharedlib.exe.so", EntryPoint="SharedWineInit")]
-			extern static int SharedWineInit();
-
-			internal static void InitializeWine ()
-			{
-				Console.WriteLine ("Am initializing Wine from Form");
-				SharedWineInit();
-			}
-			
-			static Form () {
-				InitializeWine ();
-			}
-    		
 			//  --- Public Properties
 			//
 			[MonoTODO]
