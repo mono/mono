@@ -1,5 +1,20 @@
 2002-05-20  Martin Baulig  <martin@gnome.org>
 
+	* debug.h (mono_debug_format): New global variable.
+	(MonoDebugFormat): Added MONO_DEBUG_FORMAT_NONE.
+
+	* debug-private.h (MonoDebugHandle): Added `objfiles' field which is
+	a whitespace separated list of symbol files.
+	(AssemblyDebugInfo): Added `objfile' filed which is the name of the
+	symbol file.
+
+	* mono.c (main): Pass the assembly file name to mono_debug_open_file().
+
+	* debug.c (mono_debug_make_symbols): Link all symbol files into a big
+	`<assemblyname>.o' symbol file.
+
+2002-05-20  Martin Baulig  <martin@gnome.org>
+
 	* debug.c (debug_load_method_lines): Check whether the assembly file
 	is newer than the IL file and recreate the IL file if necessary.
 
