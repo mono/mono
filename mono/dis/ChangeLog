@@ -1,5 +1,11 @@
 2004-06-19  Jackson Harper  <jackson@ximian.com>
 
+	* dump.c/h: New function to dump the contents of the blob
+	stream. I found it useful for debugging so I will share.
+	* main.c: Add --blob switch to dump the blob stream.
+	
+2004-06-19  Jackson Harper  <jackson@ximian.com>
+
 	* get.c/h: New function to stringify function pointers.
 	
 2004-06-19  Jackson Harper  <jackson@ximian.com>
