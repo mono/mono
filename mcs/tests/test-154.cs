@@ -60,7 +60,7 @@ public class X
 	}
 
 	// try { ... } catch { ... } finally { ... } block
-	static public int test4 (out float f, long d)
+	static public int test5 (out float f, long d)
 	{
                 int a;
 		long b = 8;
@@ -84,13 +84,13 @@ public class X
         }
 
 	// Passing out parameter to method invocation
-	static public int test5 (out float f)
+	static public int test6 (out float f)
 	{
-		return test4 (out f, 50);
+		return test5 (out f, 50);
 	}
 
 	// Loop-variable of foreach() and for() loop.
-	static public long test6 (int[] a, int stop)
+	static public long test7 (int[] a, int stop)
 	{
 		long b = 0;
 		foreach (int i in a)
@@ -103,7 +103,7 @@ public class X
 	}
 
 	// Initializing locals in initialize or test of for block
-	static public long test7 (int stop)
+	static public long test8 (int stop)
 	{
 		int i;
 		long b;
@@ -115,7 +115,7 @@ public class X
 	}
 
 	// Initializing locals in test of while block
-	static public long test8 (int stop)
+	static public long test9 (int stop)
 	{
 		long b;
 		while ((b = stop) > 3) {
@@ -126,7 +126,7 @@ public class X
 	}
 
 	// Return in subblock
-	public static void test9 (int a, out float f)
+	public static void test10 (int a, out float f)
 	{
 		if (a == 5) {
 			f = 8.53F;
@@ -137,7 +137,7 @@ public class X
 	}
 
 	// Switch block
-	public static long test10 (int a)
+	public static long test11 (int a)
 	{
 		long b;
 
@@ -158,7 +158,7 @@ public class X
 	}
 
 	// Try block which rethrows exception.
-	public static void test11 (out float f)
+	public static void test12 (out float f)
 	{
 		try {
 			f = 9.0F;
@@ -168,7 +168,7 @@ public class X
 	}
 
 	// Return in subblock.
-	public static void test12 (int a, out float f)
+	public static void test13 (int a, out float f)
 	{
 		do {
 			if (a == 8) {
@@ -182,7 +182,7 @@ public class X
 	}
 
 	// Switch block with goto case / goto default.
-	public static long test13 (int a, out float f)
+	public static long test14 (int a, out float f)
 	{
 		long b;
 
@@ -208,7 +208,7 @@ public class X
 	}
 
 	// Forward goto, it's ok to set f before the jump.
-	public static int test4 (int b, out float f)
+	public static int test15 (int b, out float f)
 	{
 		long a;
 
@@ -224,6 +224,4 @@ public class X
 
 		return 0;
 	}
-
-
 }
