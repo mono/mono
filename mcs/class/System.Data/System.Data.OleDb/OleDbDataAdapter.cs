@@ -62,6 +62,7 @@ namespace System.Data.OleDb
 		#region Properties
 		
 		[DefaultValue ("")]
+		[DataCategory ("Update")]
 		[DataSysDescriptionAttribute ("Used during Update for deleted rows in DataSet")]
 		[EditorAttribute ("Microsoft.VSDesigner.Data.Design.DBCommandEditor, "+ Consts.AssemblyMicrosoft_VSDesigner, "System.Drawing.Design.UITypeEditor, "+ Consts.AssemblySystem_Drawing )]
 		public OleDbCommand DeleteCommand {
@@ -74,6 +75,7 @@ namespace System.Data.OleDb
 		}
 
 		[DefaultValue ("")]
+		[DataCategory ("Update")]
                 [DataSysDescriptionAttribute ("Used during Update for new rows in DataSet")]
                 [EditorAttribute ("Microsoft.VSDesigner.Data.Design.DBCommandEditor, "+ Consts.AssemblyMicrosoft_VSDesigner, "System.Drawing.Design.UITypeEditor, "+ Consts.AssemblySystem_Drawing )]
 		public OleDbCommand InsertCommand {
@@ -86,6 +88,7 @@ namespace System.Data.OleDb
 		}
 
 		[DefaultValue ("")]
+		[DataCategory ("Fill")]
                 [DataSysDescriptionAttribute ("Used during Fill/FillSchema")]
                 [EditorAttribute ("Microsoft.VSDesigner.Data.Design.DBCommandEditor, "+ Consts.AssemblyMicrosoft_VSDesigner, "System.Drawing.Design.UITypeEditor, "+ Consts.AssemblySystem_Drawing )]
 		public OleDbCommand SelectCommand {
@@ -98,6 +101,7 @@ namespace System.Data.OleDb
 		}
 
 		[DefaultValue ("")]
+		[DataCategory ("Update")]
                 [DataSysDescriptionAttribute ("Used during Update for modified rows in DataSet")]
                 [EditorAttribute ("Microsoft.VSDesigner.Data.Design.DBCommandEditor, "+ Consts.AssemblyMicrosoft_VSDesigner, "System.Drawing.Design.UITypeEditor, "+ Consts.AssemblySystem_Drawing )]
 		public OleDbCommand UpdateCommand {
@@ -216,7 +220,7 @@ namespace System.Data.OleDb
 		}
 
 		[MonoTODO]
-                public int Fill(DataTable datatable, Object adoDBRecordSet, String srcTable) {
+                public int Fill(DataSet dataset, Object adoDBRecordSet, String srcTable) {
                         throw new NotImplementedException ();
                 }
 

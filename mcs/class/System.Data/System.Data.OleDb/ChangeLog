@@ -1,4 +1,7 @@
 2004-05-14 Umadevi S (sumadevi@novell.com)
+        * OleDbAdapter.cs -Implemented attributes, changed method signature for fill
+
+2004-05-14 Umadevi S (sumadevi@novell.com)
         * OleDbCommand.cs - Completed implementing all the attributes
 
 2004-05-14 Umadevi S (sumadevi@novell.com)
