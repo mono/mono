@@ -69,6 +69,10 @@ public class Driver
 		{
 			CheckDiff (GetArg (args,1));
 		}
+		else if (args[0] == "msfix")
+		{
+			MsFix (GetArg (args,1));
+		}
 		
 		SaveInfo ();
 		
@@ -579,7 +583,7 @@ public class Driver
 	{
 		XmlElement ele = err.OwnerDocument.CreateElement ("error");
 		ele.SetAttribute ("ns",ns);
-		XmlText text = err.OwnerDocument.CreateTextNode (error + "<br/>" + detail);
+		XmlText text = err.OwnerDocument.CreateTextNode (error + "\n" + detail);
 		ele.AppendChild (text);
 		err.AppendChild (ele);
 	}
@@ -638,7 +642,7 @@ public class Driver
 	
 	public static void CheckDiff (string diffFile)
 	{
-		int suc=0, tot=0;
+		int suc=0, tot=0, ign=0;
 		XmlDocument doc = new XmlDocument ();
 		doc.Load (diffFile);
 		
@@ -671,27 +675,38 @@ public class Driver
 			foreach (string prot in sd.Protocols)
 			{
 				string ns = sd.Namespace + "." + prot;
-				tot++;
 				
 				XmlElement elem = doc.SelectSingleNode ("assemblies/assembly/namespaces/namespace[@name='" + ns + "']") as XmlElement;
-				XmlElement errelem = errdoc.SelectSingleNode ("/errors/error[@ns='" + ns + "']") as XmlElement;
-				
-				if (errelem != null) {
-					WriteResult (tsres, ns, false, sd.Wsdl + "<br/>" + errelem.InnerText);
-					continue;
-				}
-				
 				if (elem == null) {
-					WriteResult (tsres, ns, false, sd.Wsdl + "<br/>Proxy not generated");
+					ign++;
 					continue;
 				}
-
-				if (elem.GetAttribute ("error") != "" || elem.GetAttribute ("missing") != "" || elem.GetAttribute ("extra") != "") {
-					StringWriter str = new StringWriter ();
-					xsl.Transform (elem, null, str, null);
-					WriteResult (tsres, ns, false, sd.Wsdl + "<br/>" + str.ToString ());
+				
+				if (!File.Exists (GetWsdlFile(sd))) {
+					Console.WriteLine ("WARNING: wsdl file not found: " + GetWsdlFile(sd));
+					ign++;
+					continue;
 				}
-				else {
+				
+				tot++;
+
+				bool extrans = elem.GetAttribute ("presence") == "extra";
+				
+				if ((elem.GetAttribute ("error") != "" || elem.GetAttribute ("missing") != "" || elem.GetAttribute ("extra") != "") && !extrans)
+				{
+					XmlElement errelem = errdoc.SelectSingleNode ("/errors/error[@ns='" + ns + "']") as XmlElement;			
+					if (errelem != null) {
+						WriteResult (tsres, ns, false, sd.Wsdl + "\n" + errelem.InnerText);
+					}
+					else {
+						StringWriter str = new StringWriter ();
+						xsl.Transform (elem, null, str, null);
+						WriteResult (tsres, ns, false, sd.Wsdl + "\n" + str.ToString ());
+					}
+				}
+				else 
+				{
+					if (extrans) Console.WriteLine ("BONUS CLASS: " + ns);
 					suc++;
 					WriteResult (tsres, ns, true, sd.Wsdl);
 				}
@@ -705,7 +720,7 @@ public class Driver
 		res.SetAttribute ("not-run", "0");
 
 		result.Save ("WsdlTestResult.xml");
-		Console.WriteLine ("Total:" + tot + " Sucess:" + suc + " Fail:" + (tot - suc));
+		Console.WriteLine ("Compared:" + tot + " Ignored:" + ign + " Sucess:" + suc + " Fail:" + (tot - suc));
 	}
 	
 	static void WriteResult (XmlElement res, string name, bool success, string msg)
@@ -727,6 +742,23 @@ public class Driver
 			fail.AppendChild (doc.CreateElement ("stack-trace"));
 		}
 		res.AppendChild (test);
+	}
+	
+	static void MsFix (string fileName)
+	{
+		StreamReader sr = new StreamReader ("msfix");
+		XmlDocument doc = new XmlDocument ();
+		doc.Load (fileName);
+		
+		string line;
+		while ((line = sr.ReadLine ()) != null)
+		{
+			string[] ss = line.Split ('/');
+			XmlElement elem = doc.SelectSingleNode ("assemblies/assembly/namespaces/namespace[@name='" + ss[0] + "']/classes/class[@name='" + ss[1] + "']") as XmlElement;
+			if (elem != null) elem.ParentNode.RemoveChild (elem);
+		}
+		doc.Save (fileName);
+		sr.Close ();
 	}
 	
 	static void RegisterFailure (ServiceData sd)

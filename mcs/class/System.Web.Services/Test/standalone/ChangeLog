@@ -1,3 +1,13 @@
+2004-06-10  Lluis Sanchez Gual  <lluis@ximian.com>
+
+	* Makefile: Fix ms.net api file before the comparison.
+	* cormissing.xsl: Removed html encoding. Now generates plain text.
+	* proxies.net.xml.gz: Updated.
+	* services.xml: Updated.
+	* wsdlfiles.tar.gz: Updated.
+	* wstest.cs: Added option for removing wrong extra classes from ms.net
+	  api xml file. Improved checkdiff option.
+
 2004-06-04  Lluis Sanchez Gual  <lluis@ximian.com>
 
 	* Makefile: Changed nunit dll, to make it easier to integrate in the result

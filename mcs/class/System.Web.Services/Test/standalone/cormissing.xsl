@@ -1,7 +1,7 @@
 <?xml version="1.0" ?>
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="1.0">
 
-	<xsl:output method="html" indent="no"/>
+	<xsl:output method="text" indent="no"/>
 	<!--	<xsl:output method="xml"/>-->
 	<xsl:strip-space elements="*"/>
 
@@ -13,14 +13,12 @@
 	</xsl:template>
 
 	<xsl:template match="assemblies/assembly">
-		<DIV>
 			<xsl:call-template name="ELEMENT">
 				<xsl:with-param name="class">y</xsl:with-param>
 			</xsl:call-template>
 			<xsl:if test="not(@presence)">
 				<xsl:apply-templates/>
 			</xsl:if>
-		</DIV>
 	</xsl:template>
 
 
@@ -32,14 +30,12 @@
 	</xsl:template>
 
 	<xsl:template match="namespaces/namespace">
-		<DIV>
 			<xsl:call-template name="ELEMENT">
 				<xsl:with-param name="class">n</xsl:with-param>
 			</xsl:call-template>
 			<xsl:if test="not(@presence)">
 				<xsl:apply-templates/>
 			</xsl:if>
-		</DIV>
 	</xsl:template>
 
 
@@ -64,7 +60,6 @@
 
 	<!-- class -->
 	<xsl:template match="classes/class">
-		<DIV>
 			<xsl:call-template name="ELEMENT">
 				<xsl:with-param name="class">c</xsl:with-param>
 			</xsl:call-template>
@@ -74,20 +69,17 @@
 				<xsl:apply-templates select="constructors"/>
 				<xsl:apply-templates select="./*[local-name() != 'attributes' and local-name() != 'constructors' and local-name() != 'interfaces']"/>
 			</xsl:if>
-		</DIV>
 	</xsl:template>
 
 
 	<!-- struct -->
 	<xsl:template match="classes/struct[@missing_total or @todo_total or @extra_total or @warning_total or @error or @presence]">
-		<DIV>
 			<xsl:call-template name="ELEMENT">
 				<xsl:with-param name="class">s</xsl:with-param>
 			</xsl:call-template>
 			<xsl:if test="not(@presence)">
 				<xsl:apply-templates/>
 			</xsl:if>
-		</DIV>
 	</xsl:template>
 
 
@@ -100,40 +92,34 @@
 	</xsl:template>
 
 	<xsl:template match="interface[@missing_total or @todo_total or @extra_total or @warning_total or @error or @presence]">
-		<DIV>
 			<xsl:call-template name="ELEMENT">
 				<xsl:with-param name="class">i</xsl:with-param>
 			</xsl:call-template>
 			<xsl:if test="not(@presence)">
 				<xsl:apply-templates/>
 			</xsl:if>
-		</DIV>
 	</xsl:template>
 
 
 	<!-- delegate -->
 	<xsl:template match="classes/delegate[@missing_total or @todo_total or @extra_total or @warning_total or @error or @presence]">
-		<DIV>
 			<xsl:call-template name="ELEMENT">
 				<xsl:with-param name="class">d</xsl:with-param>
 			</xsl:call-template>
 			<xsl:if test="not(@presence)">
 				<xsl:apply-templates/>
 			</xsl:if>
-		</DIV>
 	</xsl:template>
 
 
 	<!-- enumeration -->
 	<xsl:template match="classes/enum[@missing_total or @todo_total or @extra_total or @warning_total or @error or @presence]">
-		<DIV>
 			<xsl:call-template name="ELEMENT">
 				<xsl:with-param name="class">en</xsl:with-param>
 			</xsl:call-template>
 			<xsl:if test="not(@presence)">
 				<xsl:apply-templates/>
 			</xsl:if>
-		</DIV>
 	</xsl:template>
 
 
@@ -145,14 +131,12 @@
 	</xsl:template>
 
 	<xsl:template match="methods/method[@missing_total or @todo_total or @extra_total or @warning_total or @error or @presence]">
-		<DIV>
 			<xsl:call-template name="ELEMENT">
 				<xsl:with-param name="class">m</xsl:with-param>
 			</xsl:call-template>
 			<xsl:if test="not(@presence)">
 				<xsl:apply-templates/>
 			</xsl:if>
-		</DIV>
 	</xsl:template>
 
 
@@ -164,14 +148,12 @@
 	</xsl:template>
 
 	<xsl:template match="properties/property[@missing_total or @todo_total or @extra_total or @warning_total or @error or @presence]">
-		<DIV>
 			<xsl:call-template name="ELEMENT">
 				<xsl:with-param name="class">p</xsl:with-param>
 			</xsl:call-template>
 			<xsl:if test="not(@presence)">
 				<xsl:apply-templates/>
 			</xsl:if>
-		</DIV>
 	</xsl:template>
 
 
@@ -183,14 +165,12 @@
 	</xsl:template>
 
 	<xsl:template match="events/event[@missing_total or @todo_total or @extra_total or @warning_total or @error or @presence]">
-		<DIV>
 			<xsl:call-template name="ELEMENT">
 				<xsl:with-param name="class">e</xsl:with-param>
 			</xsl:call-template>
 			<xsl:if test="not(@presence)">
 				<xsl:apply-templates/>
 			</xsl:if>
-		</DIV>
 	</xsl:template>
 
 
@@ -202,7 +182,6 @@
 	</xsl:template>
 
 	<xsl:template match="constructors/constructor[@missing_total or @todo_total or @extra_total or @warning_total or @error or @presence]">
-		<DIV>
 			<xsl:call-template name="ELEMENT">
 				<xsl:with-param name="class">x</xsl:with-param>
 				<xsl:with-param name="image">m</xsl:with-param>
@@ -210,7 +189,6 @@
 			<xsl:if test="not(@presence)">
 				<xsl:apply-templates/>
 			</xsl:if>
-		</DIV>
 	</xsl:template>
 
 
@@ -222,14 +200,12 @@
 	</xsl:template>
 
 	<xsl:template match="fields/field[@missing_total or @todo_total or @extra_total or @warning_total or @error or @presence]">
-		<DIV>
 			<xsl:call-template name="ELEMENT">
 				<xsl:with-param name="class">f</xsl:with-param>
 			</xsl:call-template>
 			<xsl:if test="not(@presence)">
 				<xsl:apply-templates/>
 			</xsl:if>
-		</DIV>
 	</xsl:template>
 
 	<!-- accessor -->
@@ -240,7 +216,6 @@
 	</xsl:template>
 
 	<xsl:template match="property[@missing_total or @todo_total or @extra_total or @warning_total or @error or @presence]/accessors/method[@missing_total or @todo_total or @extra_total or @warning_total or @error or @presence]">
-		<DIV>
 			<xsl:call-template name="ELEMENT">
 				<xsl:with-param name="class">o</xsl:with-param>
 				<xsl:with-param name="image">m</xsl:with-param>
@@ -248,7 +223,6 @@
 			<xsl:if test="not(@presence)">
 				<xsl:apply-templates/>
 			</xsl:if>
-		</DIV>
 	</xsl:template>
 
 
@@ -260,14 +234,12 @@
 	</xsl:template>
 
 	<xsl:template match="attributes/attribute[@missing_total or @todo_total or @extra_total or @warning_total or @error or @presence]">
-		<DIV>
 			<xsl:call-template name="ELEMENT">
 				<xsl:with-param name="class">r</xsl:with-param>
 			</xsl:call-template>
 			<xsl:if test="not(@presence)">
 				<xsl:apply-templates/>
 			</xsl:if>
-		</DIV>
 	</xsl:template>
 
 
@@ -277,44 +249,33 @@
 	<xsl:template name="ELEMENT">
 		<xsl:param name="class"/>
 		<xsl:param name="image"/>
-		<xsl:attribute name="style">padding-left:15px</xsl:attribute>
-		<xsl:call-template name="toggle"/>
+		<xsl:for-each select="ancestor::node()"><xsl:text> </xsl:text></xsl:for-each>
 		<xsl:choose>
-			<xsl:when test="@error != 'todo'">[E]</xsl:when>
-			<xsl:when test="@error = 'todo'">[T]</xsl:when>
-			<xsl:when test="@presence = 'missing'">[M]</xsl:when>
-			<xsl:when test="@presence = 'extra'">[Ex]</xsl:when>
-			<xsl:otherwise>[ ]</xsl:otherwise>
+			<xsl:when test="@error != 'todo'">[E] </xsl:when>
+			<xsl:when test="@error = 'todo'">[T] </xsl:when>
+			<xsl:when test="@presence = 'missing'">[-] </xsl:when>
+			<xsl:when test="@presence = 'extra'">[+] </xsl:when>
+			<xsl:otherwise>[ ] </xsl:otherwise>
 		</xsl:choose>
 		<xsl:value-of select="$image"/>
 		<xsl:call-template name="name"/>
 		<xsl:if test="not(@presence)">
 			<xsl:call-template name="status"/>
 		</xsl:if>
+		<xsl:text>
+</xsl:text>
 	</xsl:template>
 
 	<xsl:template name="status">
 		<xsl:if test="@complete_total and @complete_total != 0">
-				<xsl:text>: </xsl:text>
+				<xsl:text>:</xsl:text>
 				<xsl:value-of select="@complete_total"/>
 				<xsl:text>%</xsl:text>
 		</xsl:if>
-		<xsl:if test="@todo_total">
-				TODO: <xsl:value-of select="@todo_total"/>
-		</xsl:if>
-		<xsl:if test="@missing_total">
-				MISSING: <xsl:value-of select="@missing_total"/>
-		</xsl:if>
-		<xsl:if test="@extra_total">
-				EXTRA: <xsl:value-of select="@extra_total"/>
-		</xsl:if>
-		<xsl:if test="@warning_total">
-				WARNING: <xsl:value-of select="@warning_total"/>
-		</xsl:if>
-	</xsl:template>
-
-	<xsl:template name="toggle">
-		*
+		<xsl:if test="@todo_total"> TODO:<xsl:value-of select="@todo_total"/></xsl:if>
+		<xsl:if test="@missing_total"> MISSING:<xsl:value-of select="@missing_total"/></xsl:if>
+		<xsl:if test="@extra_total"> EXTRA:<xsl:value-of select="@extra_total"/></xsl:if>
+		<xsl:if test="@warning_total"> WARNING:<xsl:value-of select="@warning_total"/></xsl:if>
 	</xsl:template>
 
 	<xsl:template name="name">

@@ -130,8 +130,6 @@
     <serverType>Microsoft-IIS/5.0 # ASP.NET</serverType>
     <protocols>
       <protocol>Soap</protocol>
-      <protocol>HttpGet</protocol>
-      <protocol>HttpPost</protocol>
     </protocols>
     <clientTest>false</clientTest>
   </service>
@@ -1507,8 +1505,6 @@
     <serverType>Microsoft-IIS/5.0 # ASP.NET</serverType>
     <protocols>
       <protocol>Soap</protocol>
-      <protocol>HttpGet</protocol>
-      <protocol>HttpPost</protocol>
     </protocols>
     <clientTest>false</clientTest>
   </service>
@@ -2117,8 +2113,6 @@
     <serverType>Microsoft-IIS/5.0 # ASP.NET</serverType>
     <protocols>
       <protocol>Soap</protocol>
-      <protocol>HttpGet</protocol>
-      <protocol>HttpPost</protocol>
     </protocols>
     <clientTest>false</clientTest>
   </service>
@@ -2528,8 +2522,6 @@
     <serverType>Microsoft-IIS/5.0 # ASP.NET</serverType>
     <protocols>
       <protocol>Soap</protocol>
-      <protocol>HttpGet</protocol>
-      <protocol>HttpPost</protocol>
     </protocols>
     <clientTest>false</clientTest>
   </service>
@@ -3043,8 +3035,6 @@
     <name>namesTest</name>
     <protocols>
       <protocol>Soap</protocol>
-      <protocol>HttpGet</protocol>
-      <protocol>HttpPost</protocol>
     </protocols>
     <clientTest>false</clientTest>
   </service>
