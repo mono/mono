@@ -24,6 +24,9 @@
 //
 //
 // $Log: AccessibleObject.cs,v $
+// Revision 1.3  2004/09/02 20:25:21  pbartok
+// - Added missing methods
+//
 // Revision 1.2  2004/08/11 13:44:33  pbartok
 // - Fixed to match ControlCollection rewrite
 //
@@ -38,6 +41,7 @@ using Accessibility;
 using System.Drawing;
 using System.Globalization;
 using System.Reflection;
+using System.Runtime.InteropServices;
 
 namespace System.Windows.Forms {
 	public class AccessibleObject : MarshalByRefObject, IReflect, IAccessible {
@@ -177,7 +181,258 @@ namespace System.Windows.Forms {
 			}
 			return -1;
 		}
+
+		public virtual AccessibleObject GetFocused() {
+			Control result;
+
+			if (owner.has_focus) {
+				return owner.AccessibilityObject;
+			}
+
+			result = FindFocusControl(owner);
+
+			if (result != null) {
+				return result.AccessibilityObject;
+			}
+
+			return null;
+		}
+
+		[MonoTODO("Integrate help into accessibility system")]
+		public virtual int GetHelpTopic(out string FileName) {
+
+			FileName = null;
+
+			return -1;
+		}
+
+		public virtual AccessibleObject GetSelected() {
+			Control result;
+
+			if (owner.is_selected) {
+				return owner.AccessibilityObject;
+			}
+
+			result = FindSelectedControl(owner);
+
+			if (result != null) {
+				return result.AccessibilityObject;
+			}
+
+			return null;
+		}
+
+		public virtual AccessibleObject HitTest(int x, int y) {
+			Control result;
+
+			result = FindHittestControl(owner, x, y);
+
+			if (result != null) {
+				return result.AccessibilityObject;
+			}
+
+			return null;
+		}
+
+		public virtual AccessibleObject Navigate(AccessibleNavigation navdir) {
+			int	index;
+
+			// I'm not throwing exceptions if an object doesn't exist in the specified direction
+			// Might not be too helpful to a blind dude trying to navigate. Instead we return
+			// our own object
+
+			if (owner.parent != null) {
+				index = owner.parent.child_controls.IndexOf(owner);
+			} else {
+				index = -1;
+			}
+
+			switch (navdir) {
+				// Spatial navigation; limited to siblings
+				case AccessibleNavigation.Up: {
+					if (owner.parent != null) {
+						for (int i=0; i<owner.parent.child_controls.Count; i++) {
+							if ((owner != owner.parent.child_controls[i]) && (owner.parent.child_controls[i].Top<owner.Top)) {
+								return owner.parent.child_controls[i].AccessibilityObject;
+							}
+						}
+						
+					}
+					return owner.AccessibilityObject;
+				}
+
+				case AccessibleNavigation.Down: {
+					if (owner.parent != null) {
+						for (int i=0; i<owner.parent.child_controls.Count; i++) {
+							if ((owner != owner.parent.child_controls[i]) && (owner.parent.child_controls[i].Top>owner.Bottom)) {
+								return owner.parent.child_controls[i].AccessibilityObject;
+							}
+						}
+						
+					}
+					return owner.AccessibilityObject;
+				}
+
+				case AccessibleNavigation.Left: {
+					if (owner.parent != null) {
+						for (int i=0; i<owner.parent.child_controls.Count; i++) {
+							if ((owner != owner.parent.child_controls[i]) && (owner.parent.child_controls[i].Left<owner.Left)) {
+								return owner.parent.child_controls[i].AccessibilityObject;
+							}
+						}
+						
+					}
+					return owner.AccessibilityObject;
+				}
+
+				case AccessibleNavigation.Right: {
+					if (owner.parent != null) {
+						for (int i=0; i<owner.parent.child_controls.Count; i++) {
+							if ((owner != owner.parent.child_controls[i]) && (owner.parent.child_controls[i].Left>owner.Right)) {
+								return owner.parent.child_controls[i].AccessibilityObject;
+							}
+						}
+						
+					}
+					return owner.AccessibilityObject;
+				}
+
+				// Logical navigation
+				case AccessibleNavigation.Next: {
+					if (owner.parent != null) {
+						if ((index+1)<owner.parent.child_controls.Count) {
+							return owner.parent.child_controls[index+1].AccessibilityObject;
+						} else {
+							return owner.parent.child_controls[0].AccessibilityObject;
+						}
+					} else {
+						return owner.AccessibilityObject;
+					}
+				}
+
+				case AccessibleNavigation.Previous: {
+					if (owner.parent != null) {
+						if (index>0) {
+							return owner.parent.child_controls[index-1].AccessibilityObject;
+						} else {
+							return owner.parent.child_controls[owner.parent.child_controls.Count-1].AccessibilityObject;
+						}
+					} else {
+						return owner.AccessibilityObject;
+					}
+				}
+
+				case AccessibleNavigation.FirstChild: {
+					if (owner.child_controls.Count>0) {
+						return owner.child_controls[0].AccessibilityObject;
+					} else {
+						return owner.AccessibilityObject;
+					}
+				}
+
+				case AccessibleNavigation.LastChild: {
+					if (owner.child_controls.Count>0) {
+						return owner.child_controls[owner.child_controls.Count-1].AccessibilityObject;
+					} else {
+						return owner.AccessibilityObject;
+					}
+				}
+			}
+
+			return owner.AccessibilityObject;
+		}
+
+		[MonoTODO("Finish Select when Control.Select is complete")]
+		public virtual void Select(AccessibleSelection flags) {
+			if ((flags & AccessibleSelection.TakeFocus) != 0){
+				owner.has_focus = true;
+			}
+
+			return;
+		}
 		#endregion	// Public Instance Methods
+
+		#region	Protected Instance Methods
+		protected void UseStdAccessibleObjects(IntPtr handle) {
+		}
+
+		protected void UseStdAccessibleObjects(IntPtr handle, int objid) {
+			UseStdAccessibleObjects(handle, 0);
+		}
+		#endregion	// Protected Instance Methods
+
+
+		#region Internal Methods
+		internal static Control FindFocusControl(Control parent) {
+			Control	child;
+
+			for (int i=0; i < parent.child_controls.Count; i++) {
+				child=parent.child_controls[i];
+				if (child.has_focus) {
+					return child;
+				}
+				if (child.child_controls.Count>0) {
+					Control result;
+
+					result = FindFocusControl(child);
+					if (result != null) {
+						return result;
+					}
+				}
+			}
+			return null;
+		}
+
+		internal static Control FindSelectedControl(Control parent) {
+			Control	child;
+
+			for (int i=0; i < parent.child_controls.Count; i++) {
+				child=parent.child_controls[i];
+				if (child.has_focus) {
+					return child;
+				}
+				if (child.child_controls.Count>0) {
+					Control result;
+
+					result = FindSelectedControl(child);
+					if (result != null) {
+						return result;
+					}
+				}
+			}
+			return null;
+		}
+
+		internal static Control FindHittestControl(Control parent, int x, int y) {
+			Control	child;
+			Point	child_point;
+			Point	hittest_point;
+
+			hittest_point = new Point(x, y);
+
+			child_point = parent.PointToClient(hittest_point);
+			if (parent.ClientRectangle.Contains(child_point)) {
+				return parent;
+			}
+
+			for (int i=0; i < parent.child_controls.Count; i++) {
+				child=parent.child_controls[i];
+				child_point = child.PointToClient(hittest_point);
+				if (child.ClientRectangle.Contains(child_point)) {
+					return child;
+				}
+				if (child.child_controls.Count>0) {
+					Control result;
+
+					result = FindHittestControl(child, x, y);
+					if (result != null) {
+						return result;
+					}
+				}
+			}
+			return null;
+		}
+		#endregion	// Internal Methods
 
 		#region	IReflection Methods and Properties
 		FieldInfo IReflect.GetField(String name, BindingFlags bindingAttr) {
