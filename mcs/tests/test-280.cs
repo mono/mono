@@ -16,8 +16,8 @@ namespace AppFramework.Util
            }
            return false;
        }
-   }
 
-  static void Main () {}
+       static void Main () {}
+   }
 }
  
