@@ -1,4 +1,10 @@
 
+Wed Nov 26 20:15:04 CET 2003 Paolo Molaro <lupus@ximian.com>
+
+	* mini-ppc.h, mini-x86.h, mini.c, inssel-ppc.brg, jit-icalls.c:
+	make some opcode emulation and intrinsic ops enabled/disabled 
+	according to the architecture. More fixes.
+
 Wed Nov 26 19:59:09 CET 2003 Paolo Molaro <lupus@ximian.com>
 
 	* mini-ppc.c, mini-sparc.c, cpu-g4.md: more bug fixes.
