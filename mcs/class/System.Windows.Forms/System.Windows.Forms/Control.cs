@@ -858,10 +858,8 @@ namespace System.Windows.Forms {
     			}
     			set {
 				if (parent != value) {
-					Console.WriteLine ("setting parent");
 					parent = value;
 	    
-					Console.WriteLine ("add ourself to the parents control");
 					// add ourself to the parents control
 					if (!parent.Controls.Contains (this))
 						parent.Controls.Add (this);
@@ -872,9 +870,7 @@ namespace System.Windows.Forms {
 							OnParentBackColorChanged (new EventArgs ());
 					}
 
-					Console.WriteLine ("SetParent");
 					if (IsHandleCreated) {
-						Console.WriteLine ("Handle created");
 						Win32.SetParent (Handle, value.Handle);
 					}
 					/*
@@ -1570,7 +1566,6 @@ namespace System.Windows.Forms {
     			IEnumerator cw = childControls.GetEnumerator ();
     
     			while (cw.MoveNext ()) {
-    				Console.WriteLine ("Adding Control");
     				Control control = (Control) cw.Current;
     				control.CreateControl ();
     				control.Show ();
@@ -1663,8 +1658,6 @@ namespace System.Windows.Forms {
     		
     		protected virtual void OnHandleCreated (EventArgs e) 
     		{
-    			Console.WriteLine ("OnHandleCreated");
-
 			//if (font != null) {
 			//	Win32.SendMessage (Handle, Msg.WM_SETFONT, font.ToHfont ().ToInt32 (), 0);
 			//}
@@ -2152,7 +2145,7 @@ namespace System.Windows.Forms {
     		// are big enough to warrant recreating the HWND
     		protected void RecreateHandle () 
     		{
-			statuses [ RECREATING_HANDLE ] = true;
+			statuses [RECREATING_HANDLE] = true;
 			if (IsHandleCreated) {
 				DestroyHandle ();
 				CreateHandle ();

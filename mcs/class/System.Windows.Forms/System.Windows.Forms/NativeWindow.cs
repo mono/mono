@@ -216,17 +216,19 @@ namespace System.Windows.Forms {
 				message.WParam = wParam;
 				message.LParam = lParam;
 	 			message.Result = (IntPtr) 0;
-	
+
+#if false
 				if (msg == Msg.WM_CREATE)
 					Console.WriteLine ("WM_CREATE (static)");
-					
+#endif
+				
 	 			if (window != null) {
 					if (msg == Msg.WM_CREATE) {
-						Console.WriteLine ("WM_CREATE (static != null)");
+						// Console.WriteLine ("WM_CREATE (static != null)");
 					}
 	 				window.WndProc(ref message);
 	 			} else {
-					Console.WriteLine ("no window, defwndproc");
+					// Console.WriteLine ("no window, defwndproc");
 	 				// even though we are not managing the
 	 				// window let the window get the message
 	 				message.Result = Win32.DefWindowProcA (

@@ -30,7 +30,7 @@ namespace System.Windows.Forms {
 		bool tabStop=true;
 		static int init_me;
 		RightToLeft rightToLeft;
-		protected Gtk.VBox vbox = null;
+		Gtk.VBox vbox = null;
 
 		public class ControlCollection : IList, ICollection, IEnumerable, ICloneable 
 		{
@@ -183,13 +183,18 @@ namespace System.Windows.Forms {
 			
 		}
 
-		public Control (string text, int left, int top, int width, int height)
+		public Control (string text, int left, int top, int width, int height) : this (text, left, top, width, height);
 		{
 		}
 
 		public Control (Control parent, string text, int left, int top, int width, int height)
 		{
-			
+			this.parent = parent;
+			this.text = text;
+			this.left = left;
+			this.top = top;
+			this.width = width;
+			this.height = height;
 		}
 
 		internal Widget Widget {

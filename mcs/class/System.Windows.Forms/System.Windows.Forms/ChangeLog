@@ -1,5 +1,11 @@
 2003-07-28  Miguel de Icaza  <miguel@ximian.com>
 
+	* NativeWindow.cs: Remove debugigng messages.
+
+	* Control.cs: Remove debugging messages.
+
+	* Label.cs: Use the border style.
+
 	* win32functions.cs: Set the default to WineLib now on Linux.
 
 2003-07-23  Miguel de Icaza  <miguel@ximian.com>

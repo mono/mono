@@ -15,25 +15,25 @@ namespace System.Windows.Forms {
     	using System.Drawing;
 	
     	public class Label : Control {
-    		Image backgroundImage;
-    		BorderStyle borderStyle;
+    		Image background_image;
+    		BorderStyle border_style;
     		bool autoSize;
     		Image image;
-    		ContentAlignment imageAlign;
-    		ImeMode defaultImeMode;
-    		bool renderTransparent;
-    		FlatStyle flatStyle;
-    		int preferredHeight;
-    		int preferredWidth;
-    		bool tabStop;
-    		ContentAlignment textAlign;
-    		bool useMnemonic;
+    		ContentAlignment image_align;
+    		ImeMode default_ime_mode;
+    		bool render_transparent;
+    		FlatStyle flat_style;
+    		int preferred_height;
+    		int preferred_width;
+    		bool tab_stop;
+    		ContentAlignment text_align;
+    		bool use_mnemonic;
     
     		public Label () : base ()
     		{
 			// Defaults in the Spec
 			autoSize = false;
-			borderStyle = BorderStyle.None;
+			border_style = BorderStyle.None;
 			base.TabStop = false;
 			
 			SubClassWndProc_ = true;
@@ -52,30 +52,35 @@ namespace System.Windows.Forms {
     
     		public override Image BackgroundImage {
     			get {
-    				return backgroundImage;
+    				return background_image;
     			}
     			set {
-    				backgroundImage = value;
-    				// FIXME: force redraw
+    				background_image = value;
+				Refresh ();
     			}
     		}
     
     		public virtual BorderStyle BorderStyle {
     			get {
-    				return borderStyle;
+    				return border_style;
     			}
     			set {
-    				borderStyle = value;
+				if (border_style == value)
+					return;
+				
+    				border_style = value;
+				RecreateHandle ();
     			}
     		}
     
     
     		public FlatStyle FlatStyle {
     			get {
-    				return flatStyle;
+    				return flat_style;
     			}
     			set {
-    				flatStyle = value;
+    				flat_style = value;
+				Refresh ();
     			}
     		}
     
@@ -85,15 +90,16 @@ namespace System.Windows.Forms {
     			}
     			set {
     				image = value;
+				Refresh ();
     			}
     		}
     
     		public ContentAlignment ImageAlign {
     			get {
-    				return imageAlign;
+    				return image_align;
     			}
     			set {
-    				imageAlign = value;
+    				image_align = value;
     			}
     		}
     
@@ -105,7 +111,7 @@ namespace System.Windows.Forms {
     			}
     			set {
 					//FIXME:
-				}
+			}
     		}
     
     		[MonoTODO]
@@ -130,41 +136,41 @@ namespace System.Windows.Forms {
     
     		public int PreferredHeight {
     			get {
-    				return preferredHeight;
+    				return preferred_height;
     			}
     		}
     
     		public int PreferredWidth {
     			get {
-    				return preferredWidth;
+    				return preferred_width;
     			}
     		}
     
     		public new bool TabStop {
     			get {
-    				return tabStop;
+    				return tab_stop;
     			}
     			set {
-    				tabStop = value;
+    				tab_stop = value;
     			}
     		}
     
  		//Compact Framework
     		public virtual ContentAlignment TextAlign {
     			get {
-    				return textAlign;
+    				return text_align;
     			}
     			set {
-    				textAlign = value;
+    				text_align = value;
     			}
     		}
     
     		public bool UseMnemonic {
     			get {
-    				return useMnemonic;
+    				return use_mnemonic;
     			}
     			set {
-    				useMnemonic = value;
+    				use_mnemonic = value;
     			}
     		}
 		
@@ -174,12 +180,20 @@ namespace System.Windows.Forms {
 
 				createParams.ClassName = "Static";
 
+				int bs = 0;
+				if (border_style == BorderStyle.FixedSingle)
+					bs |= (int) WindowStyles.WS_BORDER;
+				else if (border_style == BorderStyle.Fixed3D)
+					bs |= (int) WindowStyles.WS_BORDER | (int) SS_Static_Control_Types.SS_SUNKEN;
+					
+					
 				createParams.Style = (int) (
 					(int)WindowStyles.WS_CHILD | 
 					(int)WindowStyles.WS_VISIBLE | 
 					(int)SS_Static_Control_Types.SS_LEFT |
 					(int)WindowStyles.WS_CLIPCHILDREN |
-					(int)WindowStyles.WS_CLIPSIBLINGS );
+					(int)WindowStyles.WS_CLIPSIBLINGS |
+					bs);
 
 				return createParams;
     			}
@@ -193,17 +207,17 @@ namespace System.Windows.Forms {
     
     		protected virtual bool RenderTransparent {
     			get {
-    				return renderTransparent;
+    				return render_transparent;
     			}
     			set {
 					//FIXME:
-				}
+			}
     		}
     
     		protected override ImeMode DefaultImeMode {
     			get {
-					//FIXME:
-					return defaultImeMode;
+				//FIXME:
+				return default_ime_mode;
     			}
     		}
     
@@ -211,16 +225,9 @@ namespace System.Windows.Forms {
 
 #region Methods
 
-    		public new void Select()
-    		{
-				//FIXME:
-				base.Select ();
-    		}
-    
-  		//Compact Framework
     		public override string ToString()
     		{
-				//FIXME: add name of lable, as well as text. would adding base.ToString work?
+			//FIXME: add name of lable, as well as text. would adding base.ToString work?
     			return "Label: " + base.Text;
     		}
 
@@ -245,7 +252,8 @@ namespace System.Windows.Forms {
 				//FIXME:
 			}
     
-    		protected virtual void OnAutoSizeChanged (EventArgs e) {
+    		protected virtual void OnAutoSizeChanged (EventArgs e)
+		{
     			if (AutoSizeChanged != null) AutoSizeChanged (this, e);
     		}
     
@@ -340,12 +348,11 @@ namespace System.Windows.Forms {
     
     
     		protected new void UpdateBounds (int x, int y, int width,
-    					     int height, int clientWidth,
-    					     int clientHeight)
-    		{
-    			base.UpdateBounds (x, y, width, height, clientWidth, 
-    					   clientHeight);
-    		}
+						 int height, int clientWidth,
+						 int clientHeight)
+		{
+    			base.UpdateBounds (x, y, width, height, clientWidth, clientHeight);
+		}
     
     		protected override void WndProc(ref Message m)
     		{
@@ -357,7 +364,7 @@ namespace System.Windows.Forms {
     		public event EventHandler AutoSizeChanged;
    
     		public event EventHandler TextAlignChanged;
-#endif
+#endregion
 		
     	}
     }
