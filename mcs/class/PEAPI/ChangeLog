@@ -1,3 +1,9 @@
+2003-07-17 Jackson Harper <jackson@latitudegeo.com>
+
+	* PEAPI.cs: Add GenericTypeSpec so generic members can be
+	referenced. Add the ldelem and stelem opcodes (these are part of
+	the new spec).
+	
 2003-07-15 Jackson Harper <jackson@latitudegeo.com>
 
 	* PEAPI.cs: Allow generic constraints to be added, emit generic

@@ -95,6 +95,21 @@ namespace PEAPI
     public TypeSignatureException(string msg) : base(msg) { }
   }
 
+    public class GenericTypeSpec : Type {
+
+            private int index;
+
+            public GenericTypeSpec (int index) : base (0x13) {
+                    this.index = index;
+            }
+
+            internal sealed override void TypeSig(MemoryStream str) {
+                    str.WriteByte(typeIndex);
+                    str.WriteByte ((byte) index);
+            }
+  }
+
+
 	/// <summary>
 	/// The IL Array type
 	/// </summary>
@@ -584,7 +599,8 @@ namespace PEAPI
   public enum TypeOp {cpobj = 0x70, ldobj, castclass = 0x74, isinst, 
                       unbox = 0x79, stobj = 0x81, box = 0x8C, newarr, 
                       ldelema = 0x8F, refanyval = 0xC2, mkrefany = 0xC6, 
-                      ldtoken = 0xD0, initobj = 0xFE15, sizeOf = 0xFE1C }
+                      ldtoken = 0xD0, initobj = 0xFE15, sizeOf = 0xFE1C,
+                      ldelem = 0xA3, stelem = 0xA4 }
 
   /// <summary>
   /// CIL branch instructions
