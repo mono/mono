@@ -1,5 +1,10 @@
 2004-01-14  Jackson Harper <jackson@ximian.com>
 
+	* BasePartialCachingControl.cs: Use varyby attributes in key
+	generation.
+	
+2004-01-14  Jackson Harper <jackson@ximian.com>
+
 	* TemplateParser.cs: Add all the outputcache attribute error
 	messages.
 	

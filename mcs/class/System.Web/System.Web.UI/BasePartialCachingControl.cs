@@ -85,7 +85,7 @@ namespace System.Web.UI
 			Cache cache = HttpRuntime.Cache;
 			string key = CreateKey ();
 			string data = cache [key] as string;
-			
+
 			if (data != null) {
 				output.Write (data);
 				return;
@@ -118,12 +118,47 @@ namespace System.Web.UI
 		private string CreateKey ()
 		{
 			StringBuilder builder = new StringBuilder ();
+			HttpContext context = HttpContext.Current;
 
 			builder.Append ("PartialCachingControl\n");
-			builder.Append ("CID: " + ctrl_id + "\n");
 			builder.Append ("GUID: " + guid + "\n");
+
+			if (varyby_params != null && varyby_params.Length > 0) {
+				string[] prms = varyby_params.Split (';');
+				for (int i=0; i<prms.Length; i++) {
+					string val = context.Request.Params [prms [i]];
+					builder.Append ("VP:");
+					builder.Append (prms [i]);
+					builder.Append ('=');
+					builder.Append (val != null ? val : "__null__");
+					builder.Append ('\n');
+				}
+			}
+
+			if (varyby_controls != null && varyby_params.Length > 0) {
+				string[] prms = varyby_controls.Split (';');
+				for (int i=0; i<prms.Length; i++) {
+					string val = context.Request.Params [prms [i]];
+					builder.Append ("VCN:");
+					builder.Append (prms [i]);
+					builder.Append ('=');
+					builder.Append (val != null ? val : "__null__");
+					builder.Append ('\n');
+				}
+			}
+
+			if (varyby_custom != null) {
+				string val = context.ApplicationInstance.GetVaryByCustomString (context,
+						varyby_custom);
+				builder.Append ("VC:");
+				builder.Append (varyby_custom);
+				builder.Append ('=');
+				builder.Append (val != null ? val : "__null__");
+				builder.Append ('\n');
+			}
 
 			return builder.ToString ();
 		}
 	}
 }
+
