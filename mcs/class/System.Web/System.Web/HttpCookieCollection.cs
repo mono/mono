@@ -7,11 +7,14 @@
 // (C) Bob Smith
 //
 
+using System;
+using System.Collections.Specialized;
+
 namespace System.Web
 {
         public sealed class HttpCookieCollection : NameObjectCollectionBase
         {
-                public HttpCookieCollection();
+                public HttpCookieCollection() {}
                 public string[] AllKeys
                 {
                         get
@@ -23,29 +26,32 @@ namespace System.Web
                 {
                         get
                         {
-                                return this.BaseGet(index);
+                                return (HttpCookie)(this.BaseGet(index));
                         }
                 }
                 public HttpCookie this[string name]
                 {
                         get
                         {
-                                return this.BaseGet(name);
+                                return (HttpCookie)(this.BaseGet(name));
                         }
                 }
                 public void Add(HttpCookie cookie)
                 {
-                        this.BaseAdd(cookie.name, cookie);
+                        this.BaseAdd(cookie.Name, cookie);
                 }
-                public void Clear;
+                public void Clear()
                 {
-                        this.BaseClear;
+                        this.BaseClear();
                 }
                 public void CopyTo(Array dest, int index)
                 {
+                        int i;
+                        HttpCookie cookie;
                         for(i=0; i<this.Count; i++)
                         {
-                                dest[index+i]=this[i];
+                                cookie=this[i];
+                                dest.SetValue(new HttpCookie(cookie.Name, cookie.Value), index+i);
                         }
                 }
                 public string GetKey(int index)
@@ -58,7 +64,7 @@ namespace System.Web
                 }
                 public void Set(HttpCookie cookie)
                 {
-                        this.BaseSet(cookie.name, cookie);
+                        this.BaseSet(cookie.Name, cookie);
                 }
         }
 }

@@ -7,6 +7,9 @@
 // (C) Bob Smith
 //
 
+using System;
+using System.Collections.Specialized;
+
 namespace System.Web
 {
         public sealed class HttpCookie
@@ -49,12 +52,18 @@ namespace System.Web
                         }
                 }
                 public bool HasKeys
+                {
                         get
                         {
-                                return FALSE; //TODO
+                                return false; //TODO
                         }
                }
-               public string this[string key] {get; set;} //TODO: get subcookie.
+               public string this[string key]
+               {
+//TODO: get/set subcookie.
+                        get {return "";}
+                        set {}
+               }
                public string Name
                {
                         get
@@ -99,6 +108,10 @@ namespace System.Web
                                 _value = value;
                         }
                 }
-                public NameValueCollection Values {get;} //TODO
+                public NameValueCollection Values
+                {
+//TODO
+                        get {return null;}
+                }
         }
 }
