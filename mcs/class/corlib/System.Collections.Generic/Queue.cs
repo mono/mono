@@ -70,7 +70,10 @@ namespace System.Collections.Generic
 		
 		public void Clear ()
 		{
-			Array.Clear (data, 0, data.Length);
+			if (data != null)
+				Array.Clear (data, 0, data.Length);
+			
+			head = tail = size = 0;
 		}
 		
 		public bool Contains (T item)
@@ -93,11 +96,14 @@ namespace System.Collections.Generic
 			if (array == null)
 				throw new ArgumentNullException ();
 			
-			if ((uint) idx < (uint) array.Length)
+			if ((uint) idx > (uint) array.Length)
 				throw new ArgumentOutOfRangeException ();
 			
 			if (array.Length - idx < size)
 				throw new ArgumentOutOfRangeException ();
+			
+			if (size == 0)
+				return;
 			
 			int contents_length = data.Length;
 			int length_from_head = contents_length - head;
@@ -200,7 +206,8 @@ namespace System.Collections.Generic
 				CopyTo (new_data, 0);
 			
 			data = new_data;
-			tail = head = 0;
+			tail = size;
+			head = 0;
 			version ++;
 		}
 		

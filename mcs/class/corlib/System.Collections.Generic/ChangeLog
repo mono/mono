@@ -1,3 +1,7 @@
+2005-01-29  Ben Maurer  <bmaurer@ximian.com>
+
+	* Queue.cs: `duh' bugs.
+
 2004-12-27  Ben Maurer  <bmaurer@ximian.com>
 
 	* Stack.cs: Stupid bug fixes.
