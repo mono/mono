@@ -1513,7 +1513,22 @@ instr			: INSTR_NONE
                                 Console.WriteLine ($1);
                           }
 			| INSTR_R float64
+                          {
+                                switch ((MiscInstr) $1) {
+                                case MiscInstr.ldc_r4:
+                                case MiscInstr.ldc_r8:
+                                         codegen.CurrentMethodDef.AddInstr (new LdcInstr ((MiscInstr) $1, (double) $2));
+                                         break;
+                                }
+                          }
 			| INSTR_R int64
+                          {
+                                switch ((MiscInstr) $1) {
+                                        case MiscInstr.ldc_r8:
+                                        codegen.CurrentMethodDef.AddInstr (new LdcInstr ((MiscInstr) $1, (double) $2));
+                                        break;
+                                }
+                          }
 			| INSTR_R OPEN_PARENS bytes CLOSE_PARENS
 			| INSTR_BRTARGET int32
 			| INSTR_BRTARGET id
@@ -1523,7 +1538,7 @@ instr			: INSTR_NONE
 			| INSTR_TYPE type_spec
 			| INSTR_STRING comp_qstring
                           {
-                                if ((string) $1 == "ldstr")
+                                if ((MiscInstr) $1 == MiscInstr.ldstr)
                                         codegen.CurrentMethodDef.AddInstr (new LdstrInstr ((string) $2));
                           }
 			| INSTR_STRING K_BYTEARRAY ASSIGN OPEN_PARENS bytes CLOSE_PARENS
