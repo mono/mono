@@ -350,14 +350,20 @@ namespace System {
 		}
 
 		public int IndexOf(char value, int sindex) {
-			if (sindex < 0 || sindex >= this.length) {
+			if (sindex < 0 || sindex > this.length) {
 				throw new ArgumentOutOfRangeException();
 			}
+
+			if (sindex == this.length)
+				return -1;
 
 			return InternalIndexOf(value, sindex, this.length - sindex);
 		}
 
 		public int IndexOf(String value, int sindex) {
+			if (sindex == this.length)
+				return -1;
+
 			return IndexOf(value, sindex, this.length - sindex);
 		}
 

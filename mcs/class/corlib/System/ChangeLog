@@ -1,3 +1,8 @@
+2002-06-12  Nick Drochak  <ndrochak@gol.com>
+
+	* String.cs (IndexOf): Return -1 if start index is equal to string
+	length.
+
 2002-06-10  Duncan Mak  <duncan@ximian.com>
 
 	* Convert.cs (ToDouble): Remove rounding in ToDouble (float).
