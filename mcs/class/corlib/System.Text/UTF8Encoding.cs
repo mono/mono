@@ -732,7 +732,7 @@ public class UTF8Encoding : Encoding
 
 	// UTF-8 decoder implementation.
 	[Serializable]
-	private sealed class UTF8Decoder : Decoder
+	private class UTF8Decoder : Decoder
 	{
 		private bool throwOnInvalid;
 		private uint leftOverBits;
@@ -763,7 +763,7 @@ public class UTF8Encoding : Encoding
 
 	// UTF-8 encoder implementation.
 	[Serializable]
-	private sealed class UTF8Encoder : Encoder
+	private class UTF8Encoder : Encoder
 	{
 		private bool emitIdentifier;
 		private uint leftOver;
