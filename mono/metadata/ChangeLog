@@ -1,3 +1,15 @@
+
+Tue Jan 22 22:43:47 CET 2002 Paolo Molaro <lupus@ximian.com>
+
+	* class.c: load also nested classes on class init.
+	System.ValueType instance methods gets passed boxed
+	values, unless methods in derived classed that get a pointer to the
+	data.
+	* icall.c: use better name parsing code in GetType().
+	* image.c, image.h: add mono_image_loaded ().
+	* metadata.c, metadata.h: add mono_metadata_nesting_typedef ().
+	* reflection.c, reflection.h: added mono_reflection_parse_type().
+
 2002-01-22  Veronica De Santis <veron78@interfree.it>
 
 	* icall.c : Added mapping of internal calls for Manual and Auto reset events
