@@ -547,7 +547,7 @@ namespace Mono.CSharp
 			} catch {
 				Report.Error (
 					1900,
-					"--wlevel requires an value from 0 to 4");
+					"--wlevel requires a value from 0 to 4");
 				Environment.Exit (1);
 			}
 			if (level < 0 || level > 4){
@@ -765,7 +765,7 @@ namespace Mono.CSharp
 				if ((i + 1) >= args.Length){
 					Report.Error (
 						1900,
-						"--wlevel requires an value from 0 to 4");
+						"--wlevel requires a value from 0 to 4");
 					Environment.Exit (1);
 				}
 
