@@ -1,5 +1,10 @@
 2003-10-13  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
 
+	* XmlNode.cs : GetNamespaceOfPrefix() should check Attributes existence.
+	  And it should throw ArgumentNullException.
+
+2003-10-13  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
+
 	* XmlAttribute.cs : Fixed InnerText that did not removed its content
 	  if there is two or more children.
 	* XmlNode.cs : XmlNode.cs : Fixed bugzilla #49580 (1)to return "",

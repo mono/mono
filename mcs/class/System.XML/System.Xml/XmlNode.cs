@@ -268,6 +268,9 @@ namespace System.Xml
 
 		public virtual string GetNamespaceOfPrefix (string prefix)
 		{
+			if (prefix == null)
+				throw new ArgumentNullException ("prefix");
+
 			XmlNode node;
 			switch (NodeType) {
 			case XmlNodeType.Attribute:
@@ -286,10 +289,14 @@ namespace System.Xml
 			while (node != null) {
 				if (node.Prefix == prefix)
 					return node.NamespaceURI;
-				foreach (XmlAttribute attr in node.Attributes) {
-					if (prefix == attr.LocalName && attr.Prefix == "xmlns"
-						|| attr.Name == "xmlns" && prefix == String.Empty)
-						return attr.Value;
+				if (node.Attributes != null) {
+					int count = node.Attributes.Count;
+					for (int i = 0; i < count; i++) {
+						XmlAttribute attr = node.Attributes [i];
+						if (prefix == attr.LocalName && attr.Prefix == "xmlns"
+							|| attr.Name == "xmlns" && prefix == String.Empty)
+							return attr.Value;
+					}
 				}
 				node = node.ParentNode;
 			}
