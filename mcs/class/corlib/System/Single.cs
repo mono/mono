@@ -94,9 +94,10 @@ namespace System
 			return ((float) o) == m_value;
 		}
 
-		public override int GetHashCode ()
+		public unsafe override int GetHashCode ()
 		{
-			return (int) m_value;
+			float f = m_value;
+			return *((int*)&f);
 		}
 
 		public static bool IsInfinity (float f)

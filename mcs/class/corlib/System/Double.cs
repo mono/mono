@@ -99,9 +99,10 @@ namespace System {
 			return ((double) o) == m_value;
 		}
 
-		public override int GetHashCode ()
+		public override unsafe int GetHashCode ()
 		{
-			return (int) m_value;
+			double d = m_value;
+			return (*((long*)&d)).GetHashCode ();
 		}
 
 		public static bool IsInfinity (double d)
