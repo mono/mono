@@ -550,6 +550,12 @@ namespace System.Drawing.Drawing2D
                 	throw new NotImplementedException ();
                 }  	
                 
+		[MonoTODO]
+		public void CloseFigure()
+		{
+                	throw new NotImplementedException ();
+                } 
+
                 [MonoTODO]
                 public void Flatten ()
                 {
