@@ -61,6 +61,7 @@ System.Web.Caching/CacheDependency.cs
 System.Web.Caching/CacheEntry.cs
 System.Web.Caching/CacheExpires.cs
 System.Web.Caching/ExpiresBuckets.cs
+System.Web.Caching/Watcher.cs
 System.Web.Configuration/AuthConfig.cs
 System.Web.Configuration/AuthenticationConfigHandler.cs
 System.Web.Configuration/AuthenticationMode.cs

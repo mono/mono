@@ -1,3 +1,11 @@
+2003-04-09  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* list: added Watcher.cs
+
+2003-03-31  Stefan Görling <stefan@gorling.se>
+
+	* list: added new files to System.Web.SessionState
+
 2003-03-03  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* list: added SessionConfig.cs and SessionStateSectionHandler.cs

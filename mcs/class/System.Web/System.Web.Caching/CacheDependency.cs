@@ -31,8 +31,19 @@ namespace System.Web.Caching
 
 	public sealed class CacheDependency : IDisposable
 	{
+		static string [] noStrings = new string [0];
+		static CacheDependency noDependency = new CacheDependency ();
 		DateTime start;
 		string [] filenames;
+		bool changed;
+		bool disposed;
+		CacheEntry [] entries;
+		CacheItemRemovedCallback removedDelegate;
+		EventHandler changedDelegate;
+
+		private CacheDependency ()
+		{
+		}
 
 		public CacheDependency (string filename)
 			: this (filename, DateTime.MaxValue)
@@ -69,33 +80,86 @@ namespace System.Web.Caching
 		{
 		}
 
-		[MonoTODO]
 		public CacheDependency (string [] filenames,
 					string [] cachekeys,
 					CacheDependency dependency,
 					DateTime start)
 		{
 			this.start = start;
-		}
+			if (filenames == null)
+				this.filenames = noStrings;
+				
+			foreach (string file in filenames) {
+				if (file == null)
+					throw new ArgumentNullException ("filenames");
+			}
 
-		[MonoTODO]
-		public void Dispose ()
-		{
-			throw new NotImplementedException ();
-		}
+			this.filenames = filenames;
+			
+			if (cachekeys == null)
+				cachekeys = noStrings;
+
+			foreach (string ck in cachekeys) {
+				if (ck == null)
+					throw new ArgumentNullException ("cachekeys");
+			}
+
+			if (dependency == null)
+				dependency = noDependency;
 
 
-		public bool HasChanged
-		{
-			get {
-				return false;
+			this.changed = dependency.changed;
+			if (changed == true)
+				return;
+
+			int nentries = cachekeys.Length + ((dependency.entries == null) ? 0 :
+								  dependency.entries.Length);
+			if (nentries != 0) {
+				this.removedDelegate = new CacheItemRemovedCallback (CacheItemRemoved);
+				this.entries = new CacheEntry [nentries];
+				if (dependency.entries != null) {
+					int i = 0;
+					foreach (CacheEntry entry in dependency.entries) {
+						entry._onRemoved += removedDelegate;
+						i++;
+					}
+				}
+			}
+
+			if (filenames.Length > 0) {
+				this.changedDelegate = new EventHandler (OnChanged);
+				foreach (string s in filenames)
+					Watcher.AddWatch (s, changedDelegate);
 			}
 		}
 
-		[MonoTODO]
+		void CacheItemRemoved (string key, object value, CacheItemRemovedReason reason)
+		{
+			OnChanged (this, EventArgs.Empty);
+		}
+
+		void OnChanged (object sender, EventArgs args)
+		{
+			if (changed || disposed)
+				return;
+
+			changed = true;
+			if (Changed != null)
+				Changed (this, new CacheDependencyChangedArgs (null));
+		}
+
+		public void Dispose ()
+		{
+		}
+
+		public bool HasChanged
+		{
+			get { return changed; }
+		}
+
 		internal CacheEntry [] GetCacheEntries ()
 		{
-			return null;
+			return entries;
 		}
 
 		internal event CacheDependencyChangedHandler Changed;

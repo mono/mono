@@ -1,3 +1,9 @@
+2003-04-09  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* CacheDependency.cs:
+	* CacheEntry.cs:
+	* Watcher.cs: added a FileSystemWatcher-like class for dependency checking.
+
 2003-03-13  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Cache.cs:

@@ -111,11 +111,11 @@ namespace System.Web.Caching
 			_longMinHits = longMinHits;
 		}
 
-		private event CacheItemRemovedCallback _onRemoved;
+		internal event CacheItemRemovedCallback _onRemoved;
 
 		internal void OnChanged (object sender, CacheDependencyChangedArgs objDependency)
 		{
-			_objCache.Remove (objDependency.Key, CacheItemRemovedReason.DependencyChanged);
+			_objCache.Remove (_strKey, CacheItemRemovedReason.DependencyChanged);
 		}
 
 		/// <summary>
