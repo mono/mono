@@ -9,8 +9,17 @@ be supplemented by the class libraries, which are written in C#.  This
 package contains the components written in C#: class libraries,
 compilers and tools.
 
-Build Process for Users.
-========================
+*********************************************************************
+*                                                                   *
+*                            NOTICE                                 *
+*                                                                   *
+*	Unless you are developing the class libraries, you should   *
+*	not need to do any build steps in this directory.           *
+*                                                                   *
+*       Go to ../mono and read the README file to compile and       *
+*       install.                                                    *
+*                                                                   *
+*********************************************************************
 
 If you only want to build a snapshot or a fresh CVS checkout of the
 sources, you should go into the `mono' sibling directory and issue the
@@ -24,8 +33,8 @@ That will build and install the code in a single pass.  The
 compilation is bundled with the build due to dependencies on the class
 libraries on the runtime.
 
-Build Features for Developers.
-==============================
+Build Features for Developers of Mono.
+======================================
 
 These instructions apply to both Linux and Windows. To build this
 package, you must already have a C# compiler installed.  This means
