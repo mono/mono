@@ -1,3 +1,8 @@
+2001-09-14  Ravi Pratap  <ravi@ximian.com>
+
+	* modifiers.cs (TypeAttr, MethodAttr, FieldAttr): Map protected internal to
+	FamORAssem, not FamANDAssem.
+	
 2001-09-14  Miguel de Icaza  <miguel@ximian.com>
 
 	* driver.cs: Added --parse option that only parses its input files

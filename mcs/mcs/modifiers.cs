@@ -77,7 +77,7 @@ namespace CIR {
 				t |= TypeAttributes.NestedPrivate;
 
 			if ((mod_flags & PROTECTED) != 0 && (mod_flags & INTERNAL) != 0 && parent.IsTopLevel == false)
-				t |= TypeAttributes.NestedFamANDAssem;
+				t |= TypeAttributes.NestedFamORAssem;
 			if ((mod_flags & PROTECTED) != 0 && parent.IsTopLevel == false)
 				t |= TypeAttributes.NestedFamily;
 			if ((mod_flags & INTERNAL) != 0 && parent.IsTopLevel == false)
@@ -107,7 +107,7 @@ namespace CIR {
 			if ((mod_flags & PRIVATE) != 0)
 				fa |= FieldAttributes.Private;
 			if ((mod_flags & PROTECTED) != 0 && (mod_flags & INTERNAL) != 0)
-				fa |= FieldAttributes.FamANDAssem;
+				fa |= FieldAttributes.FamORAssem;
 			if ((mod_flags & PROTECTED) != 0)
 				fa |= FieldAttributes.Family;
 			if ((mod_flags & INTERNAL) != 0)
@@ -130,7 +130,7 @@ namespace CIR {
 			if ((mod_flags & PRIVATE) != 0)
 				ma |= MethodAttributes.Private;
 			if ((mod_flags & PROTECTED) != 0 && (mod_flags & INTERNAL) != 0)
-				ma |= MethodAttributes.FamANDAssem;
+				ma |= MethodAttributes.FamORAssem;
 			if ((mod_flags & PROTECTED) != 0)
 				ma |= MethodAttributes.Family;
 			if ((mod_flags & INTERNAL) != 0)
