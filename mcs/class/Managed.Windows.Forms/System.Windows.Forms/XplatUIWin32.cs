@@ -23,9 +23,12 @@
 //	Peter Bartok	pbartok@novell.com
 //
 //
-// $Revision: 1.28 $
+// $Revision: 1.29 $
 // $Modtime: $
 // $Log: XplatUIWin32.cs,v $
+// Revision 1.29  2004/08/24 00:19:36  ravindra
+// Removed the unwanted destructor.
+//
 // Revision 1.28  2004/08/23 19:39:30  pbartok
 // - Added method to move mouse cursor
 //
@@ -509,10 +512,6 @@ namespace System.Windows.Forms {
 			}
 
 			handle_data = new Hashtable ();
-		}
-
-		~XplatUIWin32() {
-			Console.WriteLine("XplatUI Destructor called");
 		}
 		#endregion	// Constructor & Destructor
 
