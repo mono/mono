@@ -18,7 +18,7 @@ namespace System.Data
 {
 	[Serializable]
 	internal delegate void DelegateValidateRemoveConstraint(ConstraintCollection sender,
-			Constraint constraintToRemove, ref bool cancel);
+			Constraint constraintToRemove, ref bool fail,ref string failReason);
 	
 	/// <summary>
 	/// hold collection of constraints for data table
@@ -37,7 +37,8 @@ namespace System.Data
 
 		public virtual Constraint this[string name] {
 			get {
-				int index = IndexOf(name);
+				//If the name is not found we just return null
+				int index = IndexOf(name); //case insensitive
 				if (-1 == index) return null;
 				return this[index];
 			}
@@ -45,6 +46,8 @@ namespace System.Data
 		
 		public virtual Constraint this[int index] {
 			get {
+				if (index < 0 || index >= List.Count)
+					throw new IndexOutOfRangeException();
 				return (Constraint)List[index];
 			}
 		}
@@ -118,10 +121,16 @@ namespace System.Data
 			if (null != constraint.ConstraintCollection) 
 				throw new ArgumentException("Constraint already belongs to another collection.");
 			
-			//check for duplicate
+			//check for duplicate name
 			if (_isDuplicateConstraintName(constraint.ConstraintName,null)  )
 				throw new DuplicateNameException("Constraint name already exists.");
 		
+			//Allow constraint to run validation rules and setup 
+			constraint.AddToConstraintCollectionSetup(this); //may throw if it can't setup
+
+			//Run Constraint to check existing data in table
+			constraint.AssertConstraint();
+
 			//if name is null or empty give it a name
 			if (constraint.ConstraintName == null || 
 				constraint.ConstraintName == "" ) 
@@ -195,13 +204,14 @@ namespace System.Data
 			//spec says nothing about this
 			if (null == constraint) throw new ArgumentNullException("Constraint can't be null.");
 			
-			//if we are not a unique constraint then it's ok to remove
-			UniqueConstraint uc = constraint as UniqueConstraint;
-			if (null == uc) return true;
-
 			//LAMESPEC: spec says return false (which makes sense) and throw exception for False case (?).
+			//TODO: I may want to change how this is done
+			//maybe put a CanRemove on the Constraint class
+			//and have the Constraint fire this event
+
 			//discover if there is a related ForeignKey
-			return _canRemoveConstraint(constraint);
+			string failReason ="";
+			return _canRemoveConstraint(constraint, ref failReason);
 			
 		}
 
@@ -270,6 +280,16 @@ namespace System.Data
 			//not null
 			if (null == constraint) throw new ArgumentNullException();
 
+			string failReason = "";
+			if (! _canRemoveConstraint(constraint, ref failReason) )
+			{
+				if (failReason != null || failReason != "")	
+					throw new ArgumentException(failReason);
+				else
+					throw new ArgumentException("Can't remove constraint.");		
+			}
+				
+			constraint.RemoveFromConstraintCollectionCleanup(this);
 			List.Remove(constraint);
 			OnCollectionChanged( new CollectionChangeEventArgs(CollectionChangeAction.Remove,this));
 		}
@@ -289,6 +309,7 @@ namespace System.Data
 				throw new IndexOutOfRangeException("Index out of range, index = " 
 						+ index.ToString() + ".");
 	
+			this[index].RemoveFromConstraintCollectionCleanup(this);
 			List.RemoveAt(index);
 			OnCollectionChanged( new CollectionChangeEventArgs(CollectionChangeAction.Remove,this));
 		}
@@ -308,13 +329,15 @@ namespace System.Data
 			}
 		}
 
-		private bool _canRemoveConstraint(Constraint constraint )
+		private bool _canRemoveConstraint(Constraint constraint, ref string failReason )
 		{
 			bool cancel = false;
+			string tmp = "";
 			if (null != ValidateRemoveConstraint)
 			{
-				ValidateRemoveConstraint(this, constraint, ref cancel);
+				ValidateRemoveConstraint(this, constraint, ref cancel, ref tmp);
 			}
+			failReason = tmp;
 			return !cancel;
 		}
 	}

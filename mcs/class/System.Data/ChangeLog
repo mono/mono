@@ -1,3 +1,19 @@
+2002-08-15  Franklin Wise <gracenote@earthlink.net>
+	
+	* System.Data/Constraint.cs: Added helper virtual functions
+
+	* System.Data/ConstraintCollection.cs: Improved constraint removal,
+	validation.  Removed specific knowledge of subclasses of 
+	Constraint.
+
+	* System.Data/DataColumn.cs: Added static helper function to compare
+	if two DataColumn arrays are the same.
+
+	* System.Data/ForeignKeyConstraint.cs: Continued to flush out.
+
+	* System.Data/UniqueConstraint.cs: Implemented.  Still some constraint
+	validation to do.
+	
 2002-08-13  Franklin Wise <gracenote@earthlink.net>
 
 	* System.Data/DataRow.cs: Added several fixme tags.

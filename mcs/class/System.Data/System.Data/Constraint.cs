@@ -27,7 +27,12 @@ namespace System.Data
 		internal event DelegateConstraintNameChange 
 					BeforeConstraintNameChange;
 
-		private string _name = null;
+		//if constraintName is not set then a name is 
+		//created when it is added to
+		//the ConstraintCollection
+		//it can not be set to null, empty or duplicate
+		//once it has been added to the collection
+		private string _constraintName = null;
 		private PropertyCollection _properties = null;
 
 		//Used for membership checking
@@ -40,7 +45,7 @@ namespace System.Data
 
 		public virtual string ConstraintName {
 			get{
-				return "" + _name;
+				return "" + _constraintName;
 			} 
 
 			set{
@@ -49,7 +54,7 @@ namespace System.Data
 				//means we should let the ConstraintCollection
 				//handle exceptions when this value changes
 				_onConstraintNameChange(value);
-				_name = value;
+				_constraintName = value;
 			}
 		}
 
@@ -68,7 +73,7 @@ namespace System.Data
 		/// </summary>
 		public override string ToString() 
 		{
-			return "" + _name;
+			return "" + _constraintName;
 		}
 
 		internal ConstraintCollection ConstraintCollection {
@@ -81,7 +86,6 @@ namespace System.Data
 		}
 		
 
-
 		private void _onConstraintNameChange(string newName)
 		{
 			if (null != BeforeConstraintNameChange)
@@ -90,5 +94,20 @@ namespace System.Data
 			}
 		}
 
+		//call once before adding a constraint to a collection
+		//will throw an exception to prevent the add if a rule is broken
+		internal protected abstract void AddToConstraintCollectionSetup(
+				ConstraintCollection collection);
+					
+		//call once before removing a constraint to a collection
+		//can throw an exception to prevent the removal
+		internal protected abstract void RemoveFromConstraintCollectionCleanup( 
+				ConstraintCollection collection);
+
+
+		//Call to Validate the constraint
+		//Will throw if constraint is violated
+		internal abstract void AssertConstraint();
+		
 	}
 }

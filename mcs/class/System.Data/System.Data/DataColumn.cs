@@ -16,11 +16,26 @@ using System.ComponentModel;
 
 namespace System.Data
 {
+	internal delegate void DelegateColumnValueChange(DataColumn column,
+			DataRow row, object proposedValue);
+
+	
 	/// <summary>
 	/// Summary description for DataColumn.
 	/// </summary>
 	public class DataColumn : MarshalByValueComponent
 	{		
+		#region Events
+		[MonoTODO]
+		//used for constraint validation
+		//if an exception is fired during this event the change should be canceled
+		internal event DelegateColumnValueChange ValidateColumnValueChange;
+
+		//used for FK Constraint Cascading rules
+		internal event DelegateColumnValueChange ColumnValueChanging;
+		#endregion //Events
+
+		
 		#region Fields
 
 		private bool allowDBNull = true;
@@ -329,6 +344,31 @@ namespace System.Data
 			// and DataColumnCollection
 		}
 
+		
+		// Returns true if all the same collumns are in columnSet and compareSet
+		internal static bool AreColumnSetsTheSame(DataColumn[] columnSet, DataColumn[] compareSet)
+		{
+			if (null == columnSet && null == compareSet) return true;
+			if (null == columnSet || null == compareSet) return false;
+
+			if (columnSet.Length != compareSet.Length) return false;
+			
+			foreach (DataColumn col in columnSet)
+			{
+				bool matchFound = false;
+				foreach (DataColumn compare in compareSet)
+				{
+					if (col == compare)
+					{
+						matchFound = true;					
+					}
+				}
+				if (! matchFound) return false;
+			}
+			
+			return true;
+		}
+		
 		#endregion // Methods
 
 	}

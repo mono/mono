@@ -25,6 +25,7 @@ namespace MonoTests.System.Data
 			_table = new DataTable("TestTable");
 			_table.Columns.Add("Col1",typeof(int));
 			_table.Columns.Add("Col2",typeof(int));
+			_table.Columns.Add("Col3",typeof(int));
 
 		}  
 
@@ -143,6 +144,13 @@ namespace MonoTests.System.Data
 				      _table.Columns[0], _table.Columns[1]});
 			Assertion.AssertSame ("B2", cst.Table, _table);
 
+			cst = new UniqueConstraint("MyName",_table.Columns[0],true);
+
+			//Test ctor parm set for ConstraintName & IsPrimaryKey
+			Assertion.AssertEquals("ConstraintName not set in ctor.", 
+				"MyName", cst.ConstraintName);
+			Assertion.AssertEquals("IsPrimaryKey not set in ctor.",
+				true, cst.IsPrimaryKey);
 		
 		}
 
@@ -150,17 +158,19 @@ namespace MonoTests.System.Data
 			UniqueConstraint cst = new UniqueConstraint( new DataColumn [] {
 					_table.Columns[0], _table.Columns[1]});
 			UniqueConstraint cst2 = new UniqueConstraint( new DataColumn [] {
-					_table.Columns[0], _table.Columns[1]});
+					 _table.Columns[1], _table.Columns[0]});
 
 			UniqueConstraint cst3 = new UniqueConstraint(_table.Columns[0]);
+			UniqueConstraint cst4 = new UniqueConstraint(_table.Columns[2]);
 			
 			//true
 			Assertion.Assert(cst.Equals(cst2) == true);
 			
 			//false
-			Assertion.Assert(cst.Equals(23) == false);
-			Assertion.Assert(cst.Equals(cst3) == false);
-
+			Assertion.Assert("A1", cst.Equals(23) == false);
+			Assertion.Assert("A2", cst.Equals(cst3) == false);
+			Assertion.Assert("A3", cst3.Equals(cst) == false);
+			Assertion.Assert("A4", cst.Equals(cst4) == false);
 
 		}
 

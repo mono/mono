@@ -116,8 +116,11 @@ namespace MonoTests.System.Data
 		}
 
 		public void TestToString() {
-			//_constraint1.ConstraintName = "Test";
+			_constraint1.ConstraintName = "Test";
 			Assertion.Assert("ToString is the same as constraint name.", _constraint1.ConstraintName.CompareTo( _constraint1.ToString()) == 0);
+			
+			_constraint1.ConstraintName = null;
+			Assertion.AssertNotNull("ToString should return empty.",_constraint1.ToString());
 		}
 
 		public void TestGetExtendedProperties() {

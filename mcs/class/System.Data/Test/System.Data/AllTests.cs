@@ -25,6 +25,7 @@ namespace MonoTests.System.Data
 				suite.AddTest (new TestSuite (typeof (UniqueConstraintTest)));
 				suite.AddTest (new TestSuite (typeof (ConstraintTest)));
 				suite.AddTest (new TestSuite (typeof (ConstraintCollectionTest)));
+				suite.AddTest (new TestSuite (typeof (ForeignKeyConstraintTest)));
 				return suite;
 			}
 		}
