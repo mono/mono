@@ -14,7 +14,7 @@ EXES = Samples/demo.exe \
 		Samples/Demo2.exe \
 		Samples/Demo3.exe \
 		Samples/singlewidget.exe
-		
+
 LIBRARY = System.Windows.Forms.dll 
 
 LIB_MCS_FLAGS = /r:Accessibility /r:glib-sharp.dll /r:gdk-sharp.dll /r:gtk-sharp.dll \
@@ -213,7 +213,7 @@ clean-local:
 
 test-local run-test-local install-local:
 
-DISTFILES = demo.cs Demo2.cs Demo3.cs singlewidget.cs $(LIB_SOURCES)
+DISTFILES = Samples/demo.cs Samples/Demo2.cs Samples/Demo3.cs Samples/singlewidget.cs $(LIB_SOURCES)
 
 dist-local: dist-default
 
