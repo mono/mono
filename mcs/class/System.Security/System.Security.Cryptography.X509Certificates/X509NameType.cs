@@ -2,11 +2,10 @@
 // X509NameType.cs - System.Security.Cryptography.X509NameType
 //
 // Author:
-//	Sebastien Pouliot (spouliot@motus.com)
+//	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) 2003 Motus Technologies Inc. (http://www.motus.com)
-//
-
+// Copyright (C) 2004 Novell Inc. (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -34,14 +33,13 @@ using System;
 
 namespace System.Security.Cryptography.X509Certificates {
 
-	// Note: Match the definition of framework version 1.2.3400.0 on http://longhorn.msdn.microsoft.com
-
+	[Serializable]
 	public enum X509NameType {
-		SimpleName,
-		EmailName,
-		UpnName,
-		DnsName,
-		UrlName
+		SimpleName = 1,
+		EmailName = 2,
+		UpnName = 3,
+		DnsName = 4,
+		UrlName = 5
 	}
 }
 

@@ -2,11 +2,10 @@
 // X509KeyUsageFlags.cs - System.Security.Cryptography.X509Certificates.X509KeyUsageFlags
 //
 // Author:
-//	Sebastien Pouliot (spouliot@motus.com)
+//	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) 2003 Motus Technologies Inc. (http://www.motus.com)
-//
-
+// Copyright (C) 2004 Novell Inc. (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -34,18 +33,18 @@ using System;
 
 namespace System.Security.Cryptography.X509Certificates {
 
-	// Note: Match the definition of framework version 1.2.3400.0 on http://longhorn.msdn.microsoft.com
-
+	[Flags]
+	[Serializable]
 	public enum X509KeyUsageFlags {
-		EncipherOnly,
-		CRLSign,
-		KeyCertSign,
-		KeyAgreement,
-		DataEncipherment,
-		KeyEncipherment,
-		NonRepudiation,
-		DigitalSignature,
-		DecipherOnly
+		EncipherOnly = 1,
+		CRLSign = 2,
+		KeyCertSign = 4,
+		KeyAgreement = 8,
+		DataEncipherment = 16,
+		KeyEncipherment = 32,
+		NonRepudiation = 64,
+		DigitalSignature = 128,
+		DecipherOnly = 32768
 	}
 }
 

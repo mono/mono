@@ -2,11 +2,10 @@
 // X509VerificationFlags.cs - System.Security.Cryptography.X509Certificates.X509VerificationFlags
 //
 // Author:
-//	Sebastien Pouliot (spouliot@motus.com)
+//	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) 2003 Motus Technologies Inc. (http://www.motus.com)
-//
-
+// Copyright (C) 2004 Novell Inc. (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -34,23 +33,27 @@ using System;
 
 namespace System.Security.Cryptography.X509Certificates {
 
-	// Note: Match the definition of framework version 1.2.3400.0 on http://longhorn.msdn.microsoft.com
-
+	[Flags]
+	[Serializable]
 	public enum X509VerificationFlags {
-		NoFlag,
-		IgnoreNotTimeValid,
-		IgnoreCtlNotTimeValid,
-		IgnoreNotTimeNested,
-		IgnoreInvalidBasicConstraints,
-		AllowUnknownCertificateAuthority,
-		IgnoreWrongUsage,
-		IgnoreInvalidName,
-		IgnoreInvalidPolicy,
-		IgnoreEndRevocationUnknown,
-		IgnoreCtlSignerRevocationUnknown,
-		IgnoreCertificateAuthorityRevocationUnknown,
-		IgnoreRootRevocationUnknown,
-		AllFlags
+		NoFlag = 0,
+		IgnoreNotTimeValid = 1,
+		IgnoreCtlNotTimeValid = 2,
+		IgnoreNotTimeNested = 4,
+		IgnoreInvalidBasicConstraints = 8,
+		AllowUnknownCertificateAuthority = 16,
+		IgnoreWrongUsage = 32,
+		IgnoreInvalidName = 64,
+		IgnoreInvalidPolicy = 128,
+		IgnoreEndRevocationUnknown = 256,
+		IgnoreCtlSignerRevocationUnknown = 512,
+		IgnoreCertificateAuthorityRevocationUnknown = 1024,
+		IgnoreRootRevocationUnknown = 2048,
+		AllFlags = IgnoreNotTimeValid | IgnoreCtlNotTimeValid | IgnoreNotTimeNested |
+			IgnoreInvalidBasicConstraints | AllowUnknownCertificateAuthority |
+			IgnoreWrongUsage | IgnoreInvalidName | IgnoreInvalidPolicy | 
+			IgnoreEndRevocationUnknown | IgnoreCtlSignerRevocationUnknown |
+			IgnoreCertificateAuthorityRevocationUnknown | IgnoreRootRevocationUnknown
 	}
 }
 

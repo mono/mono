@@ -1,12 +1,11 @@
 //
-// X509ExtensionCollection.cs - System.Security.Cryptography.X509ExtensionCollection
+// System.Security.Cryptography.X509Certificates.X509ExtensionCollection
 //
 // Author:
-//	Sebastien Pouliot (spouliot@motus.com)
+//	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) 2003 Motus Technologies Inc. (http://www.motus.com)
-//
-
+// Copyright (C) 2004 Novell Inc. (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -35,34 +34,46 @@ using System.Collections;
 
 namespace System.Security.Cryptography.X509Certificates {
 
-	// Note: Match the definition of framework version 1.2.3400.0 on http://longhorn.msdn.microsoft.com
-
 	public sealed class X509ExtensionCollection : ICollection, IEnumerable {
+
+		private ArrayList _list;
+
+		internal X509ExtensionCollection ()
+		{
+			_list = new ArrayList ();
+		}
 
 		// properties
 
 		public int Count {
-			get { return 0; }
+			get { return _list.Count; }
 		}
 
 		public bool IsSynchronized {
-			get { return false; }
+			get { return _list.IsSynchronized; }
 		}
 
 		public object SyncRoot {
-			get { return null; }
+			get { return _list.SyncRoot; }
 		}
 
 		public X509Extension this [int index] {
-			get { return null; }
+			get { return (X509Extension) _list [index]; }
 		}
 
+		[MonoTODO ("iterate to find oid")]
 		public X509Extension this [string oid] {
-			get { return null; }
+			get { return (X509Extension) null; }
 		}
 
 		// methods
 
+		public int Add (X509Extension extension) 
+		{
+			return _list.Add (extension);
+		}
+
+		[MonoTODO]
 		public void CopyTo (X509Extension[] array, int index) 
 		{
 			if (array == null)
@@ -75,6 +86,7 @@ namespace System.Security.Cryptography.X509Certificates {
 
 		void ICollection.CopyTo (Array array, int index)
 		{
+			_list.CopyTo (array, index);
 		}
 
 		public X509ExtensionEnumerator GetEnumerator () 

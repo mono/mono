@@ -1,10 +1,9 @@
 //
-// X509IncludeOption.cs - System.Security.Cryptography.X509IncludeOption
+// System.Security.Cryptography.X509Certificates.X500DistinguishedNameFlags
 //
 // Author:
 //	Sebastien Pouliot  <sebastien@ximian.com>
 //
-// (C) 2003 Motus Technologies Inc. (http://www.motus.com)
 // Copyright (C) 2004 Novell Inc. (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -33,12 +32,18 @@ using System;
 
 namespace System.Security.Cryptography.X509Certificates {
 
+	[Flags]
 	[Serializable]
-	public enum X509IncludeOption {
-		None,
-		ExcludeRoot,
-		EndCertOnly,
-		WholeChain
+	public enum X500DistinguishedNameFlags {
+		None = 0,
+		Reversed = 1,
+		UseSemicolons = 16,
+		DoNotUsePlusSign = 32,
+		DoNotUseQuotes = 64,
+		UseCommas = 128,
+		UseNewLines = 256,
+		UseUTF8Encoding = 4096,
+		UseT61Encoding = 8192
 	}
 }
 

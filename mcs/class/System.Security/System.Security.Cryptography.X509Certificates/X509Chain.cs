@@ -1,13 +1,11 @@
 //
-// X509Chain.cs - System.Security.Cryptography.X509Certificates.X509Chain
+// System.Security.Cryptography.X509Certificates.X509Chain
 //
 // Author:
-//	Sebastien Pouliot (spouliot@motus.com)
+//	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) 2003 Motus Technologies Inc. (http://www.motus.com)
-//
-
-//
+// Copyright (C) 2004 Novell Inc. (http://www.novell.com)//
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
 // "Software"), to deal in the Software without restriction, including
@@ -34,8 +32,6 @@ using System;
 
 namespace System.Security.Cryptography.X509Certificates {
 
-	// Note: Match the definition of framework version 1.2.3400.0 on http://longhorn.msdn.microsoft.com
-
 	public class X509Chain {
 
 		private bool _machineContext;
@@ -45,7 +41,9 @@ namespace System.Security.Cryptography.X509Certificates {
 
 		// constructors
 
-		public X509Chain () : this (false) {}
+		public X509Chain () : this (false)
+		{
+		}
 
 		public X509Chain (bool useMachineContext) 
 		{
@@ -78,6 +76,11 @@ namespace System.Security.Cryptography.X509Certificates {
 		public bool Build (X509CertificateEx certificate)
 		{
 			return false;
+		}
+
+		[MonoTODO]
+		public void Reset () 
+		{
 		}
 
 		// static methods

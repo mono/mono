@@ -1,10 +1,9 @@
 //
-// X509IncludeOption.cs - System.Security.Cryptography.X509IncludeOption
+// System.Security.Cryptography.X509Certificates.X500DistinguishedName
 //
 // Author:
 //	Sebastien Pouliot  <sebastien@ximian.com>
 //
-// (C) 2003 Motus Technologies Inc. (http://www.motus.com)
 // Copyright (C) 2004 Novell Inc. (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -30,15 +29,56 @@
 #if NET_2_0
 
 using System;
+using System.Text;
+
+using MX = Mono.Security.X509;
 
 namespace System.Security.Cryptography.X509Certificates {
 
-	[Serializable]
-	public enum X509IncludeOption {
-		None,
-		ExcludeRoot,
-		EndCertOnly,
-		WholeChain
+	public sealed class X500DistinguishedName : AsnEncodedData {
+
+		[MonoTODO]
+		public X500DistinguishedName (AsnEncodedData encodedDistinguishedName)
+		{
+		}
+
+		[MonoTODO]
+		public X500DistinguishedName (byte[] encodedDistinguishedName)
+		{
+		}
+
+		[MonoTODO]
+		public X500DistinguishedName (string distinguishedName)
+		{
+		}
+
+		[MonoTODO]
+		public X500DistinguishedName (string distinguishedName, X500DistinguishedNameFlags flag)
+		{
+		}
+
+		[MonoTODO]
+		public X500DistinguishedName (X500DistinguishedName distinguishedName)
+		{
+		}
+
+		[MonoTODO]
+		public string Name {
+			get { return null; }
+		}
+
+		[MonoTODO]
+		public string Decode (X500DistinguishedNameFlags flag)
+		{
+			return null;
+		}
+
+		[MonoTODO]
+		public override string Format (bool multiLine)
+		{
+			return null;
+		}
+
 	}
 }
 

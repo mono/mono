@@ -2,11 +2,10 @@
 // X509CertificateEx.cs - System.Security.Cryptography.X509CertificateEx
 //
 // Author:
-//	Sebastien Pouliot (spouliot@motus.com)
+//	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) 2003 Motus Technologies Inc. (http://www.motus.com)
-//
-
+// Copyright (C) 2004 Novell Inc. (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -37,9 +36,7 @@ using MX = Mono.Security.X509;
 
 namespace System.Security.Cryptography.X509Certificates {
 
-	// Note: Match the definition of framework version 1.2.3400.0 on http://longhorn.msdn.microsoft.com
-
-	public sealed class X509CertificateEx : X509Certificate {
+	public class X509CertificateEx : X509Certificate {
 
 		private bool _archived;
 		private X509ExtensionCollection _extensions;
@@ -114,8 +111,9 @@ namespace System.Security.Cryptography.X509Certificates {
 			set { _name = value; }
 		}
 
-		public string Issuer {
-			get { return _cert.IssuerName; }
+		[MonoTODO]
+		public X500DistinguishedName IssuerName {
+			get { return null; }
 		} 
 
 		public DateTime NotAfter {
@@ -162,8 +160,9 @@ namespace System.Security.Cryptography.X509Certificates {
 			get { return null; }
 		} 
 
-		public string Subject {
-			get { return _cert.SubjectName; }
+		[MonoTODO]
+		public X500DistinguishedName SubjectName {
+			get { return null; }
 		} 
 
 		public string Thumbprint {
@@ -176,10 +175,17 @@ namespace System.Security.Cryptography.X509Certificates {
 
 		// methods
 
-		public void Display () {}
+		[MonoTODO]
+		public void Display ()
+		{
+		}
 
-		public void Display (IntPtr hwndParent) {}
+		[MonoTODO]
+		public void Display (IntPtr hwndParent) 
+		{
+		}
 
+		[MonoTODO]
 		public string GetNameInfo (X509NameType nameType, bool forIssuer) 
 		{
 			return null;
@@ -212,11 +218,13 @@ namespace System.Security.Cryptography.X509Certificates {
 			base.Reset ();
 		}
 
+		[MonoTODO]
 		public override string ToString ()
 		{
 			return null;
 		}
 
+		[MonoTODO]
 		public override string ToString (bool verbose)
 		{
 			return null;
@@ -224,11 +232,13 @@ namespace System.Security.Cryptography.X509Certificates {
 
 		// static methods
 
+		[MonoTODO]
 		public static X509ContentType GetCertContentType (byte[] rawData)
 		{
 			return X509ContentType.Unknown;
 		}
 
+		[MonoTODO]
 		public static X509ContentType GetCertContentType (string fileName)
 		{
 			return X509ContentType.Unknown;
