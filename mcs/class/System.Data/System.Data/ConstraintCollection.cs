@@ -32,6 +32,16 @@ namespace System.Data {
 		public event CollectionChangeEventHandler CollectionChanged;
 		internal event DelegateValidateRemoveConstraint ValidateRemoveConstraint;
 		private DataTable table;
+		
+		// Call this to set the "table" property of the UniqueConstraint class
+                // intialized with UniqueConstraint( string, string[], bool );
+                // And also validate that the named columns exist in the "table"
+                private delegate void PostAddRange( DataTable table );
+		
+		// Keep reference to most recent constraints passed to AddRange()
+                // so that they can be added when EndInit() is called.
+                private Constraint [] _mostRecentConstraints;
+
 		//Don't allow public instantiation
 		//Will be instantianted from DataTable
 		internal ConstraintCollection(DataTable table){
@@ -133,7 +143,19 @@ namespace System.Data {
 			//check for duplicate name
 			if (_isDuplicateConstraintName(constraint.ConstraintName,null)  )
 				throw new DuplicateNameException("Constraint name already exists.");
-		
+	
+			// Check whether Constraint is UniqueConstraint and initailized with the special
+                        // constructor - UniqueConstraint( string, string[], bool );
+                        // If yes, It must be added via AddRange() only
+                        // Environment.StackTrace can help us 
+			// FIXME: Is a different mechanism to do this?
+                        if (constraint is UniqueConstraint){
+                                if ((constraint as UniqueConstraint).DataColsNotValidated == true){
+                                        if ( Environment.StackTrace.IndexOf( "AddRange" ) == -1 ){
+                                                throw new ArgumentException(" Some DataColumns are invalid - They may not belong to the table associated with this Constraint Collection" );
+                                        }
+                                }
+                        } 	
 			//Allow constraint to run validation rules and setup 
 			constraint.AddToConstraintCollectionSetup(this); //may throw if it can't setup
 
@@ -203,17 +225,48 @@ namespace System.Data {
 
 		public void AddRange(Constraint[] constraints) {
 
-			//FIXME: When AddRange() occurs after BeginInit,
-			//it does not add any elements to the collection until EndInit is called.
-						
-			 if ( (constraints == null) || (constraints.Length == 0))
-				throw new ArgumentNullException ("Cannot add null");
+			//When AddRange() occurs after BeginInit,
+                        //it does not add any elements to the collection until EndInit is called.
+                        if (this.table.InitStatus == DataTable.initStatus.BeginInit){
+                                // Keep reference so that they can be added when EndInit() is called.
+                                _mostRecentConstraints = constraints;
+                                return;
+                        }
+                        
+                        // Check whether the constraint is UniqueConstraint
+                        // And whether it was initialized with the special ctor
+                        // i.e UniqueConstraint( string, string[], bool );
+                        for (int i = 0; i < constraints.Length; i++){
+                                if (constraints[i] is UniqueConstraint){
+                                        if (( constraints[i] as UniqueConstraint).DataColsNotValidated == true){
+                                                PostAddRange _postAddRange= new PostAddRange ((constraints[i] as UniqueConstraint).PostAddRange);
+                                                // UniqueConstraint.PostAddRange() validates whether all named
+                                                // columns exist in the table associated with this instance of
+                                                // ConstraintCollection.
+                                                _postAddRange (this.table);
+                                                                                                    
+                                        }
+                                }
+                        }
+                                                                                                    
+                        if ( (constraints == null) || (constraints.Length == 0))
+                                throw new ArgumentNullException ("Cannot add null");
+
 			 else {
-				foreach (Constraint constraint in constraints)
-					 Add (constraint);
-			      }
+                                foreach (Constraint constraint in constraints)
+                                         Add (constraint);
+                                       
+                               }
+
 				
 		}
+
+		// Helper AddRange() - Call this function when EndInit is called
+                public void PostEndInit()
+                {
+                        AddRange (_mostRecentConstraints);
+                }
+
 
 		public bool CanRemove(Constraint constraint) 
 		{

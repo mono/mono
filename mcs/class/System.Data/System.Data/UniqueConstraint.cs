@@ -29,6 +29,8 @@ namespace System.Data {
 
 		//TODO:provide helpers for this case
 		private string [] _dataColumnNames; //unique case
+		private bool _dataColsNotValidated;
+
 
 		#region Constructors
 
@@ -73,27 +75,24 @@ namespace System.Data {
 		}
 
 		//Special case.  Can only be added to the Collection with AddRange
-		[MonoTODO]
 		[Browsable (false)]
 		public UniqueConstraint (string name, string[] columnNames, bool isPrimaryKey) 
 		{
-			throw new NotImplementedException(); //need to finish related logic
-			/*
-			base.ConstraintName = name;
-			
-			//set unique
-			//must set unique when added to the collection
+			 _dataColsNotValidated = true;
+                                                                                                    
+                        //keep list of names to resolve later
+                        _dataColumnNames = columnNames;
+                                                                                                    
+                        base.ConstraintName = name;
+                                                                                                    
+                        _isPrimaryKey = isPrimaryKey;
 
-			//keep list of names to resolve later
-			_dataColumnNames = columnNames;
-
-			_isPrimaryKey = isPrimaryKey;
-			*/
 		}
 
 		//helper ctor
 		private void _uniqueConstraint(string name, DataColumn column, bool isPrimaryKey) 
 		{
+			_dataColsNotValidated = false;
 			//validate
 			_validateColumn (column);
 
@@ -114,6 +113,8 @@ namespace System.Data {
 		//helpter ctor	
 		private void _uniqueConstraint(string name, DataColumn[] columns, bool isPrimaryKey) 
 		{
+			_dataColsNotValidated = false;
+			
 			//validate
 			_validateColumns (columns, out _dataTable);
 
@@ -255,6 +256,33 @@ namespace System.Data {
 			}
 			return null;
 		}
+
+		 internal bool DataColsNotValidated {
+                        
+			get { return (_dataColsNotValidated); 
+			}
+                }
+
+		// Helper Special Ctor
+                // Set the _dataTable property to the table to which this instance is bound when AddRange()
+                // is called with the special constructor.
+                // Validate whether the named columns exist in the _dataTable
+                internal void PostAddRange( DataTable _setTable ) {
+                
+			_dataTable = _setTable;
+                        DataColumn []cols = new DataColumn [_dataColumnNames.Length];
+                        int i = 0;
+                        foreach ( string _columnName in _dataColumnNames ){
+                                 if ( _setTable.Columns.Contains (_columnName) ){
+                                        cols [i] = _setTable.Columns [_columnName];
+                                        i++;
+                                        continue;
+                                }
+                                throw( new InvalidConstraintException ( "The named columns must exist in the table" ));
+                        }
+                        _dataColumns = cols;
+                }
+
 			
 		#endregion //Helpers
 

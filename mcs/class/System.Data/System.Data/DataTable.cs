@@ -69,6 +69,21 @@ namespace System.Data {
 		// If CaseSensitive property is changed once it does not anymore follow owner DataSet's 
 		// CaseSensitive property. So when you lost you virginity it's gone for ever
 		private bool _virginCaseSensitive = true;
+		
+		 /// <summary>
+                 /// An enum variable indicating whether BeginInit() or EndInit() is called.
+                /// Delegate to call a function which performs cleanup after EndInit() is called
+                /// </summary>
+                public enum initStatus { NotInitialized, BeginInit, EndInit };
+        
+	        public initStatus _initStatus;
+        
+		private delegate void PostEndInit();
+                
+		internal initStatus InitStatus{
+                        get{ return( _initStatus ); }
+                }
+	
 
 		/// <summary>
 		/// Initializes a new instance of the DataTable class with no arguments.
@@ -569,6 +584,7 @@ namespace System.Data {
 		/// </summary>
 		public virtual void BeginInit () 
 		{
+			_initStatus = initStatus.BeginInit;
 		}
 
 		/// <summary>
@@ -759,6 +775,11 @@ namespace System.Data {
 		[MonoTODO]
 		public virtual void EndInit () 
 		{
+			 _initStatus = initStatus.EndInit;
+                        // Add the constraints
+                        PostEndInit _postEndInit = new PostEndInit (_constraintCollection.PostEndInit);
+                        _postEndInit();
+
 
 		}
 
