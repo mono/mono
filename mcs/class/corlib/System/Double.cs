@@ -10,6 +10,7 @@
 //
 
 using System.Globalization;
+using System.Runtime.CompilerServices;
 
 namespace System {
 	
@@ -185,8 +186,12 @@ namespace System {
 		[MonoTODO]
 		public string ToString (string format, IFormatProvider fp)
 		{
-			throw new NotImplementedException ();
+			// FIXME: Need to pass format and provider info to this call too.
+			return ToStringImpl(value);
 		}
+
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		private static extern string ToStringImpl (double value);
 
 		// =========== IConvertible Methods =========== //
 

@@ -1,3 +1,8 @@
+2002-04-11  Nick Drochak  <ndrochak@gol.com>
+
+	* Double.cs: Use an internal call for ToString(). This is just a simple
+	implementation to get away from throwing a NotImplementedException.
+
 2002-04-10  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Int32.cs:
