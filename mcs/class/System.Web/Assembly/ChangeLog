@@ -1,3 +1,7 @@
+2005-01-10  Lluis Sanchez Gual <lluis@novell.com>
+
+	* AssemblyInfo.cs: More resources.
+
 2004-12-10  Lluis Sanchez Gual <lluis@novell.com>
 
 	* AssemblyInfo.cs: Added resource attribute for menu script.
