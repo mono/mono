@@ -60,13 +60,23 @@ namespace System.Xml
 			set { throw new NotImplementedException (); }
 		}
 
-		[MonoTODO ("Setter.")]
+		[MonoTODO ("Setter is immature")]
 		public override string InnerXml {
 			get {
 				// Not sure why this is an override.  Passing through for now.
 				return base.InnerXml;
 			}
-			set { throw new NotImplementedException (); }
+			set {
+				// How to get xml:lang and xml:space? Create logic as ConstructNamespaceManager()?
+				XmlNameTable nt = this.OwnerDocument.NameTable;
+				XmlNamespaceManager nsmgr = this.ConstructNamespaceManager(); //new XmlNamespaceManager(nt);
+				string lang = "";
+				XmlSpace space = XmlSpace.Default;
+
+				XmlParserContext ctx = new XmlParserContext(nt, nsmgr, lang, space);
+				XmlTextReader xmlReader = new XmlTextReader(value, this.NodeType, ctx);
+				this.ConstructDOM(xmlReader, this);
+			}
 		}
 
 		[MonoTODO]

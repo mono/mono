@@ -121,7 +121,10 @@ namespace System.Xml
 		[MonoTODO]
 		public XmlTextReader (Stream xmlFragment, XmlNodeType fragType, XmlParserContext context)
 		{
-			throw new NotImplementedException ();
+			parserContext = context;
+			reader = new StreamReader(xmlFragment);
+			Init();
+//			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
@@ -809,7 +812,8 @@ namespace System.Xml
 				}
 			}
 
-			return (PeekChar () != -1);
+//			return (PeekChar () != -1);
+			return this.ReadState != ReadState.EndOfFile;
 		}
 
 		private void SetEntityReferenceProperties ()

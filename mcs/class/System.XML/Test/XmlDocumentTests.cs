@@ -793,5 +793,18 @@ namespace MonoTests.System.Xml
 
 			// Whitespace
 		}
+
+		public void TestNameTable()
+		{
+			XmlDocument doc = new XmlDocument();
+			AssertNotNull(doc.NameTable);
+		}
+
+		public void TestSingleEmptyRootDocument()
+		{
+			XmlDocument doc = new XmlDocument();
+			doc.LoadXml("<root />");
+			AssertNotNull(doc.DocumentElement);
+		}
 	}
 }

@@ -394,6 +394,104 @@ namespace System.Xml
 
 		public abstract void WriteTo (XmlWriter w);
 
+		// It parses with XmlReader and then construct DOM of the parsed contents.
+		internal protected void ConstructDOM(XmlReader xmlReader, XmlNode currentNode)
+		{
+			// I am not confident whether this method should be placed in this class or not...
+			// Please verify its validity and then erase this comment;-)
+			XmlNode newNode;
+			XmlDocument doc = currentNode is XmlDocument ? (XmlDocument)currentNode : currentNode.OwnerDocument;
+			// Below are 'almost' copied from XmlDocument.Load(XmlReader xmlReader)
+			while (xmlReader.Read ()) 
+			{
+				switch (xmlReader.NodeType) 
+				{
+
+					case XmlNodeType.CDATA:
+						newNode = doc.CreateCDataSection(xmlReader.Value);
+						currentNode.AppendChild (newNode);
+						break;
+
+					case XmlNodeType.Comment:
+						newNode = doc.CreateComment (xmlReader.Value);
+						currentNode.AppendChild (newNode);
+						break;
+
+					case XmlNodeType.Element:
+						XmlElement element = doc.CreateElement (xmlReader.Prefix, xmlReader.LocalName, xmlReader.NamespaceURI);
+						currentNode.AppendChild (element);
+
+						// set the element's attributes.
+						while (xmlReader.MoveToNextAttribute ()) 
+						{
+							XmlAttribute attribute = doc.CreateAttribute (xmlReader.Prefix, xmlReader.LocalName, xmlReader.NamespaceURI);
+							attribute.Value = xmlReader.Value;
+							element.SetAttributeNode (attribute);
+						}
+
+						xmlReader.MoveToElement ();
+
+						// if this element isn't empty, push it onto our "stack".
+						if (!xmlReader.IsEmptyElement)
+							currentNode = element;
+
+						break;
+
+					case XmlNodeType.EndElement:
+						currentNode = currentNode.ParentNode;
+						break;
+
+					case XmlNodeType.ProcessingInstruction:
+						newNode = doc.CreateProcessingInstruction (xmlReader.Name, xmlReader.Value);
+						currentNode.AppendChild (newNode);
+						break;
+
+					case XmlNodeType.Text:
+						newNode = doc.CreateTextNode (xmlReader.Value);
+						currentNode.AppendChild (newNode);
+						break;
+				}
+			}
+		}
+
+		// It parses this and all the ancestor elements,
+		// find 'xmlns' declarations, stores and then return them.
+		// TODO: tests
+		internal protected XmlNamespaceManager ConstructNamespaceManager()
+		{
+			XmlDocument doc = this is XmlDocument ? (XmlDocument)this : this.OwnerDocument;
+			XmlNamespaceManager nsmgr = new XmlNamespaceManager(doc.NameTable);
+			XmlElement el = null;
+			switch(this.NodeType)
+			{
+				case XmlNodeType.Attribute:
+					el = ((XmlAttribute)this).OwnerElement;
+					break;
+				case XmlNodeType.Element:
+					el = this as XmlElement;
+					break;
+				default:
+					el = this.ParentNode as XmlElement;
+					break;
+			}
+
+			while(el != null)
+			{			
+				foreach(XmlAttribute attr in el.Attributes)
+				{
+					if(attr.Prefix == "xmlns")
+					{
+						if(nsmgr.LookupNamespace(attr.LocalName) == null )
+						{
+							nsmgr.AddNamespace(attr.LocalName, attr.Value);
+						}
+					}
+				}
+				// When reached to document, then it will set null value :)
+				el = el.ParentNode as XmlElement;
+			}
+			return nsmgr;
+		}
 		#endregion
 	}
 }

@@ -1,3 +1,10 @@
+2002-10-21  Duncan Mak  <duncan@ximian.com>
+
+	* XmlTextReaderTests.cs:
+	* XmlElementTests.cs:
+	* XmlDocumentTests.cs: Patches from Atsushi Enomoto
+	<ginga@kit.hi-ho.ne.jp>.
+
 2002-10-18  Duncan Mak  <duncan@ximian.com>
 
 	* XmlDocumentTests.cs: Apply a patch from Atsushi Enomoto

@@ -10,6 +10,7 @@
 using System;
 using System.IO;
 using System.Xml;
+using System.Text;
 
 using NUnit.Framework;
 
@@ -1780,6 +1781,25 @@ namespace MonoTests.System.Xml
 			AssertEquals ("_3", xmlReader.Name);
 
 			Assert (!xmlReader.MoveToNextAttribute ());
+		}
+
+		public void TestFragmentConstructor()
+		{
+			XmlDocument doc = new XmlDocument();
+//			doc.LoadXml("<root/>");
+
+			string xml = @"<foo><bar xmlns=""NSURI"">TEXT NODE</bar></foo>";
+			MemoryStream ms = new MemoryStream(Encoding.Default.GetBytes(xml));
+
+			XmlParserContext ctx = new XmlParserContext(doc.NameTable, new XmlNamespaceManager(doc.NameTable), "", "", "", "",
+				doc.BaseURI, "", XmlSpace.Default, Encoding.Default);
+
+			XmlTextReader xmlReader = new XmlTextReader(ms, XmlNodeType.Element, ctx);
+			AssertNode(xmlReader, XmlNodeType.Element, 0, false, "foo", "", "foo", "", "", 0);
+
+			AssertNode(xmlReader, XmlNodeType.Element, 1, false, "foo", "", "foo", "NSURI", "", 1);
+
+			AssertNode(xmlReader, XmlNodeType.Text, 2, false, "", "", "", "", "TEXT NODE", 0);
 		}
 	}
 }

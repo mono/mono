@@ -33,7 +33,25 @@ namespace System.Xml
 
 		#region Constructors
 
-		public XmlDocument () : base (null) { }
+		public XmlDocument () : base (null)
+		{
+			System.Xml.NameTable nt = new NameTable();
+			// keys below are default of MS .NET Framework
+			nt.Add("#text");
+			nt.Add("xml");
+			nt.Add("xmlns");
+			nt.Add("#entity");
+			nt.Add("#document-fragment");
+			nt.Add("#comment");
+			nt.Add("space");
+			nt.Add("id");
+			nt.Add("#whitespace");
+			nt.Add("http://www.w3.org/2000/xmlns/");
+			nt.Add("#cdata-section");
+			nt.Add("lang");
+
+			nameTable = nt;
+		}
 
 		[MonoTODO]
 		protected internal XmlDocument (XmlImplementation imp) : base (null)
@@ -530,6 +548,10 @@ namespace System.Xml
 			XmlNode currentNode = this;
 			XmlNode newNode;
 
+#if true
+			this.ConstructDOM(xmlReader, currentNode);
+#else
+			// Below are copied to XmlNode.Construct(currentNode, xmlReader)
 			while (xmlReader.Read ()) 
 			{
 				switch (xmlReader.NodeType) {
@@ -578,6 +600,7 @@ namespace System.Xml
 					break;
 				}
 			}
+#endif
 		}
 
 		public virtual void LoadXml (string xml)

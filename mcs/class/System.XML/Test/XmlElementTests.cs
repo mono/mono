@@ -215,5 +215,30 @@ namespace MonoTests.System.Xml
 			AssertEquals ("attribute name not properly created.", true, xmlAttribute.Name.Equals ("attr1"));
 			AssertEquals ("attribute namespace not properly created.", true, xmlAttribute.NamespaceURI.Equals ("namespace1"));
 		}
+
+		public void TestInnerXmlSetter()
+		{
+			XmlDocument doc = new XmlDocument();
+			doc.LoadXml("<root/>");
+			XmlElement el =  doc.DocumentElement;
+			AssertNull("#Simple", el.FirstChild);
+			el.InnerXml = "<foo><bar att='baz'/></foo>";
+			XmlElement child = el.FirstChild as XmlElement;
+			AssertNotNull("#Simple.Child", child);
+			AssertEquals("#Simple.Child.Name", "foo", child.LocalName);
+
+			XmlElement grandchild = child.FirstChild as XmlElement;
+			AssertNotNull("#Simple.GrandChild", grandchild);
+			AssertEquals("#Simple.GrandChild.Name", "bar", grandchild.LocalName);
+			AssertEquals("#Simple.GrandChild.Attr", "baz", grandchild.GetAttribute("att"));
+
+			doc.LoadXml("<root xmlns='NS0' xmlns:ns1='NS1'><foo/><ns1:bar/><ns2:bar xmlns:ns2='NS2' /></root>");
+			el = doc.DocumentElement.FirstChild.NextSibling as XmlElement;	// ns1:bar
+			AssertNull("#Namespaced.Prepare", el.FirstChild);
+			el.InnerXml = "<ns1:baz />";
+			AssertNotNull("#Namespaced.Child", el.FirstChild);
+			AssertEquals("#Namespaced.Child.Name", "baz", el.FirstChild.LocalName);
+			AssertEquals("#Namespaced.Child.NSURI", "NS1", el.FirstChild.NamespaceURI);	// important!
+		}
 	}
 }
