@@ -3325,7 +3325,7 @@ namespace Mono.CSharp {
 	public class LocalVariableReference : Expression, IAssignMethod, IMemoryLocation, IVariable {
 		public readonly string Name;
 		public readonly Block Block;
-		VariableInfo variable_info;
+		LocalInfo variable_info;
 		bool is_readonly;
 		
 		public LocalVariableReference (Block block, string name, Location l)
@@ -3339,17 +3339,17 @@ namespace Mono.CSharp {
 		// Setting `is_readonly' to false will allow you to create a writable
 		// reference to a read-only variable.  This is used by foreach and using.
 		public LocalVariableReference (Block block, string name, Location l,
-					       VariableInfo variable_info, bool is_readonly)
+					       LocalInfo variable_info, bool is_readonly)
 			: this (block, name, l)
 		{
 			this.variable_info = variable_info;
 			this.is_readonly = is_readonly;
 		}
 
-		public VariableInfo VariableInfo {
+		public LocalInfo LocalInfo {
 			get {
 				if (variable_info == null) {
-					variable_info = Block.GetVariableInfo (Name);
+					variable_info = Block.GetLocalInfo (Name);
 					is_readonly = variable_info.ReadOnly;
 				}
 				return variable_info;
@@ -3358,28 +3358,28 @@ namespace Mono.CSharp {
 
 		public bool IsAssigned (EmitContext ec, Location loc)
 		{
-			return VariableInfo.IsAssigned (ec, loc);
+			return LocalInfo.IsAssigned (ec, loc);
 		}
 
 		public bool IsFieldAssigned (EmitContext ec, string name, Location loc)
 		{
-			return VariableInfo.IsFieldAssigned (ec, name, loc);
+			return LocalInfo.IsFieldAssigned (ec, name, loc);
 		}
 
 		public void SetAssigned (EmitContext ec)
 		{
-			VariableInfo.SetAssigned (ec);
+			LocalInfo.SetAssigned (ec);
 		}
 
 		public void SetFieldAssigned (EmitContext ec, string name)
 		{
-			VariableInfo.SetFieldAssigned (ec, name);
+			LocalInfo.SetFieldAssigned (ec, name);
 		}
 
 		public bool IsReadOnly {
 			get {
 				if (variable_info == null) {
-					variable_info = Block.GetVariableInfo (Name);
+					variable_info = Block.GetLocalInfo (Name);
 					is_readonly = variable_info.ReadOnly;
 				}
 				return is_readonly;
@@ -3388,7 +3388,7 @@ namespace Mono.CSharp {
 		
 		public override Expression DoResolve (EmitContext ec)
 		{
-			VariableInfo vi = VariableInfo;
+			LocalInfo vi = LocalInfo;
 			Expression e;
 			
 			e = Block.GetConstantExpression (Name);
@@ -3408,7 +3408,7 @@ namespace Mono.CSharp {
 
 		override public Expression DoResolveLValue (EmitContext ec, Expression right_side)
 		{
-			VariableInfo vi = VariableInfo;
+			LocalInfo vi = LocalInfo;
 
 			if (ec.DoFlowAnalysis)
 				ec.SetVariableAssigned (vi);
@@ -3428,7 +3428,7 @@ namespace Mono.CSharp {
 
 		public override void Emit (EmitContext ec)
 		{
-			VariableInfo vi = VariableInfo;
+			LocalInfo vi = LocalInfo;
 			ILGenerator ig = ec.ig;
 
 			if (vi.LocalBuilder == null){
@@ -3443,7 +3443,7 @@ namespace Mono.CSharp {
 		public void EmitAssign (EmitContext ec, Expression source)
 		{
 			ILGenerator ig = ec.ig;
-			VariableInfo vi = VariableInfo;
+			LocalInfo vi = LocalInfo;
 
 			vi.Assigned = true;
 
@@ -3459,7 +3459,7 @@ namespace Mono.CSharp {
 		
 		public void AddressOf (EmitContext ec, AddressOp mode)
 		{
-			VariableInfo vi = VariableInfo;
+			LocalInfo vi = LocalInfo;
 
 			if (vi.LocalBuilder == null){
 				ec.EmitThis ();
@@ -5909,7 +5909,7 @@ namespace Mono.CSharp {
 	public class This : Expression, IAssignMethod, IMemoryLocation, IVariable {
 
 		Block block;
-		VariableInfo vi;
+		LocalInfo vi;
 		
 		public This (Block block, Location loc)
 		{
@@ -5970,7 +5970,7 @@ namespace Mono.CSharp {
 		{
 			DoResolve (ec);
 
-			VariableInfo vi = ec.CurrentBlock.ThisVariable;
+			LocalInfo vi = ec.CurrentBlock.ThisVariable;
 			if (vi != null)
 				vi.SetAssigned (ec);
 			

@@ -378,7 +378,7 @@ namespace Mono.CSharp {
 		//   If this method returns false, the caller must report an
 		//   error 165.
 		// </summary>
-		public bool IsVariableAssigned (VariableInfo vi)
+		public bool IsVariableAssigned (LocalInfo vi)
 		{
 			if (DoFlowAnalysis)
 				return CurrentBranching.IsVariableAssigned (vi);
@@ -390,7 +390,7 @@ namespace Mono.CSharp {
 		//   Marks the local variable `vi' as being initialized at the current
 		//   current point of the method's control flow.
 		// </summary>
-		public void SetVariableAssigned (VariableInfo vi)
+		public void SetVariableAssigned (LocalInfo vi)
 		{
 			if (DoFlowAnalysis)
 				CurrentBranching.SetVariableAssigned (vi);

@@ -1451,7 +1451,7 @@ namespace Mono.CSharp {
 			// If the local variable is a struct, use a non-zero `field_idx'
 			// to check an individual field in it.
 			//
-			public bool this [VariableInfo vi, int field_idx]
+			public bool this [LocalInfo vi, int field_idx]
 			{
 				get {
 					if (vi.Number == -1)
@@ -2116,7 +2116,7 @@ namespace Mono.CSharp {
 				throw new NotSupportedException ();
 		}
 
-		public bool IsVariableAssigned (VariableInfo vi)
+		public bool IsVariableAssigned (LocalInfo vi)
 		{
 			if (CurrentUsageVector.AlwaysBreaks)
 				return true;
@@ -2124,7 +2124,7 @@ namespace Mono.CSharp {
 				return CurrentUsageVector [vi, 0];
 		}
 
-		public bool IsVariableAssigned (VariableInfo vi, int field_idx)
+		public bool IsVariableAssigned (LocalInfo vi, int field_idx)
 		{
 			if (CurrentUsageVector.AlwaysBreaks)
 				return true;
@@ -2132,7 +2132,7 @@ namespace Mono.CSharp {
 				return CurrentUsageVector [vi, field_idx];
 		}
 
-		public void SetVariableAssigned (VariableInfo vi)
+		public void SetVariableAssigned (LocalInfo vi)
 		{
 			if (CurrentUsageVector.AlwaysBreaks)
 				return;
@@ -2140,7 +2140,7 @@ namespace Mono.CSharp {
 			CurrentUsageVector [vi, 0] = true;
 		}
 
-		public void SetVariableAssigned (VariableInfo vi, int field_idx)
+		public void SetVariableAssigned (LocalInfo vi, int field_idx)
 		{
 			if (CurrentUsageVector.AlwaysBreaks)
 				return;
@@ -2390,7 +2390,7 @@ namespace Mono.CSharp {
 		}
 	}
 	
-	public class VariableInfo : IVariable {
+	public class LocalInfo : IVariable {
 		public Expression Type;
 
 		//
@@ -2414,7 +2414,7 @@ namespace Mono.CSharp {
 		public bool Assigned;
 		public bool ReadOnly;
 		
-		public VariableInfo (Expression type, string name, int block, Location l)
+		public LocalInfo (Expression type, string name, int block, Location l)
 		{
 			Type = type;
 			Name = name;
@@ -2423,7 +2423,7 @@ namespace Mono.CSharp {
 			Location = l;
 		}
 
-		public VariableInfo (TypeContainer tc, int block, Location l)
+		public LocalInfo (TypeContainer tc, int block, Location l)
 		{
 			VariableType = tc.TypeBuilder;
 			struct_info = MyStructInfo.GetStructInfo (tc);
@@ -2530,7 +2530,7 @@ namespace Mono.CSharp {
 
 		public override string ToString ()
 		{
-			return "VariableInfo (" + Number + "," + Type + "," + Location + ")";
+			return "LocalInfo (" + Number + "," + Type + "," + Location + ")";
 		}
 	}
 		
@@ -2716,13 +2716,13 @@ namespace Mono.CSharp {
 			return null;
 		}
 
-		VariableInfo this_variable = null;
+		LocalInfo this_variable = null;
 
 		// <summary>
 		//   Returns the "this" instance variable of this block.
 		//   See AddThisVariable() for more information.
 		// </summary>
-		public VariableInfo ThisVariable {
+		public LocalInfo ThisVariable {
 			get {
 				if (this_variable != null)
 					return this_variable;
@@ -2784,12 +2784,12 @@ namespace Mono.CSharp {
 		//   analysis code to ensure that it's been fully initialized before control
 		//   leaves the constructor.
 		// </summary>
-		public VariableInfo AddThisVariable (TypeContainer tc, Location l)
+		public LocalInfo AddThisVariable (TypeContainer tc, Location l)
 		{
 			if (this_variable != null)
 				return this_variable;
 
-			this_variable = new VariableInfo (tc, ID, l);
+			this_variable = new LocalInfo (tc, ID, l);
 
 			if (variables == null)
 				variables = new Hashtable ();
@@ -2798,12 +2798,12 @@ namespace Mono.CSharp {
 			return this_variable;
 		}
 
-		public VariableInfo AddVariable (Expression type, string name, Parameters pars, Location l)
+		public LocalInfo AddVariable (Expression type, string name, Parameters pars, Location l)
 		{
 			if (variables == null)
 				variables = new Hashtable ();
 
-			VariableInfo vi = GetVariableInfo (name);
+			LocalInfo vi = GetLocalInfo (name);
 			if (vi != null) {
 				if (vi.Block != ID)
 					Report.Error (136, l, "A local variable named `" + name + "' " +
@@ -2839,7 +2839,7 @@ namespace Mono.CSharp {
 				}
 			}
 			
-			vi = new VariableInfo (type, name, ID, l);
+			vi = new LocalInfo (type, name, ID, l);
 
 			variables.Add (name, vi);
 
@@ -2868,26 +2868,26 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public VariableInfo GetVariableInfo (string name)
+		public LocalInfo GetLocalInfo (string name)
 		{
 			if (variables != null) {
 				object temp;
 				temp = variables [name];
 
 				if (temp != null){
-					return (VariableInfo) temp;
+					return (LocalInfo) temp;
 				}
 			}
 
 			if (Parent != null)
-				return Parent.GetVariableInfo (name);
+				return Parent.GetLocalInfo (name);
 
 			return null;
 		}
 		
 		public Expression GetVariableType (string name)
 		{
-			VariableInfo vi = GetVariableInfo (name);
+			LocalInfo vi = GetLocalInfo (name);
 
 			if (vi != null)
 				return vi.Type;
@@ -2971,7 +2971,7 @@ namespace Mono.CSharp {
 		bool variables_initialized = false;
 		int count_variables = 0, first_variable = 0;
 
-		void UpdateVariableInfo (EmitContext ec)
+		void UpdateLocalInfo (EmitContext ec)
 		{
 			DeclSpace ds = ec.DeclSpace;
 
@@ -2982,7 +2982,7 @@ namespace Mono.CSharp {
 
 			count_variables = first_variable;
 			if (variables != null) {
-				foreach (VariableInfo vi in variables.Values) {
+				foreach (LocalInfo vi in variables.Values) {
 					if (!vi.Resolve (ds)) {
 						vi.Number = -1;
 						continue;
@@ -3027,7 +3027,7 @@ namespace Mono.CSharp {
 			ILGenerator ig = ec.ig;
 
 			if (!variables_initialized)
-				UpdateVariableInfo (ec);
+				UpdateLocalInfo (ec);
 
 			bool old_check_state = ec.ConstantCheckState;
 			ec.ConstantCheckState = (flags & Flags.Unchecked) == 0;
@@ -3039,7 +3039,7 @@ namespace Mono.CSharp {
 			if (variables != null){
 				foreach (DictionaryEntry de in variables){
 					string name = (string) de.Key;
-					VariableInfo vi = (VariableInfo) de.Value;
+					LocalInfo vi = (LocalInfo) de.Value;
 					
 					if (vi.VariableType == null)
 						continue;
@@ -3100,7 +3100,7 @@ namespace Mono.CSharp {
 			
 			if (variables != null){
 				foreach (DictionaryEntry de in variables){
-					VariableInfo vi = (VariableInfo) de.Value;
+					LocalInfo vi = (LocalInfo) de.Value;
 					
 					if (vi.Used)
 						continue;
@@ -3138,7 +3138,7 @@ namespace Mono.CSharp {
 			Report.Debug (1, "RESOLVE BLOCK", StartLocation, ec.CurrentBranching);
 
 			if (!variables_initialized)
-				UpdateVariableInfo (ec);
+				UpdateLocalInfo (ec);
 
 			ArrayList new_statements = new ArrayList ();
 			bool unreachable = false, warning_shown = false;
@@ -3218,7 +3218,7 @@ namespace Mono.CSharp {
 				if (variables != null) {
 					foreach (DictionaryEntry de in variables) {
 						string name = (string) de.Key;
-						VariableInfo vi = (VariableInfo) de.Value;
+						LocalInfo vi = (LocalInfo) de.Value;
 
 						if (vi.LocalBuilder == null)
 							continue;
@@ -4223,7 +4223,7 @@ namespace Mono.CSharp {
 
 		struct FixedData {
 			public bool is_object;
-			public VariableInfo vi;
+			public LocalInfo vi;
 			public Expression expr;
 			public Expression converted;
 		}			
@@ -4261,7 +4261,7 @@ namespace Mono.CSharp {
 			
 			int i = 0;
 			foreach (Pair p in declarators){
-				VariableInfo vi = (VariableInfo) p.First;
+				LocalInfo vi = (LocalInfo) p.First;
 				Expression e = (Expression) p.Second;
 
 				vi.Number = -1;
@@ -4371,7 +4371,7 @@ namespace Mono.CSharp {
 			LocalBuilder [] clear_list = new LocalBuilder [data.Length];
 			
 			for (int i = 0; i < data.Length; i++) {
-				VariableInfo vi = data [i].vi;
+				LocalInfo vi = data [i].vi;
 
 				//
 				// Case 1: & object.
@@ -4431,7 +4431,7 @@ namespace Mono.CSharp {
 			// Clear the pinned variable
 			//
 			for (int i = 0; i < data.Length; i++) {
-				VariableInfo vi = data [i].vi;
+				LocalInfo vi = data [i].vi;
 
 				if (data [i].is_object || data [i].expr.Type.IsArray) {
 					ig.Emit (OpCodes.Ldc_I4_0);
@@ -4544,7 +4544,7 @@ namespace Mono.CSharp {
 				Report.Debug (1, "STARTED SIBLING FOR CATCH", ec.CurrentBranching);
 
 				if (c.Name != null) {
-					VariableInfo vi = c.Block.GetVariableInfo (c.Name);
+					LocalInfo vi = c.Block.GetLocalInfo (c.Name);
 					if (vi == null)
 						throw new Exception ();
 
@@ -4645,12 +4645,12 @@ namespace Mono.CSharp {
 			DeclSpace ds = ec.DeclSpace;
 
 			foreach (Catch c in Specific){
-				VariableInfo vi;
+				LocalInfo vi;
 				
 				ig.BeginCatchBlock (c.CatchType);
 
 				if (c.Name != null){
-					vi = c.Block.GetVariableInfo (c.Name);
+					vi = c.Block.GetLocalInfo (c.Name);
 					if (vi == null)
 						throw new Exception ("Variable does not exist in this block");
 

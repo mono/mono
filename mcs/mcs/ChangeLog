@@ -1,3 +1,8 @@
+2003-05-12  Martin Baulig  <martin@ximian.com>
+
+	* statement.cs (VariableInfo): Renamed to LocalInfo since it's
+	only used for locals and not for parameters.
+
 2003-05-12  Miguel de Icaza  <miguel@ximian.com>
 
 	* support.cs (InternalParameters.ParameterType): Return the

@@ -3128,7 +3128,7 @@ for_statement
 
 			foreach (VariableDeclaration decl in var_declarators){
 
-				VariableInfo vi;
+				LocalInfo vi;
 
 				vi = current_block.AddVariable (
 					type, decl.identifier, current_local_parameters, decl.Location);
@@ -3235,7 +3235,7 @@ foreach_statement
 		Block foreach_block = new Block (current_block, Block.Flags.Implicit);
 		LocalVariableReference v = null;
 		Location l = lexer.Location;
-		VariableInfo vi;
+		LocalInfo vi;
 
 		vi = foreach_block.AddVariable ((Expression) $3, (string) $4, current_local_parameters, l);
 		if (vi != null) {
@@ -3512,7 +3512,7 @@ fixed_statement
 
 		for (int i = 0; i < top; i++){
 			Pair p = (Pair) list [i];
-			VariableInfo v;
+			LocalInfo v;
 
 			v = current_block.AddVariable (type, (string) p.First,current_local_parameters, l);
 			if (v == null)
@@ -3589,7 +3589,7 @@ using_statement
 
 			foreach (VariableDeclaration decl in var_declarators){
 
-				VariableInfo vi	= current_block.AddVariable (
+				LocalInfo vi	= current_block.AddVariable (
 					type, decl.identifier, 
 					current_local_parameters, decl.Location);
 				if (vi == null)

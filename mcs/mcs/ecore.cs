@@ -3663,7 +3663,7 @@ namespace Mono.CSharp {
 			//
 			Block current_block = ec.CurrentBlock;
 			if (current_block != null){
-				VariableInfo vi = current_block.GetVariableInfo (Name);
+				LocalInfo vi = current_block.GetLocalInfo (Name);
 				if (vi != null){
 					Expression var;
 					
