@@ -1,5 +1,13 @@
 2004-05-29  Martin Baulig  <martin@ximian.com>
 
+	Committing a patch from Benjamin Jemlich <pcgod@gmx.net>.
+
+	* convert.cs (Convert.ImplicitReferenceConversion): If we're
+	converting from a class type S to an interface type and we already
+	have an object on the stack, don't box it again.  Fixes #52578.
+
+2004-05-29  Martin Baulig  <martin@ximian.com>
+
 	* class.cs (ConstructorInitializer.GetOverloadedConstructor):
 	Added support for `params' parameters.  Fixes #59267.
 

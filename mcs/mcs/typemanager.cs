@@ -63,6 +63,7 @@ public class TypeManager {
 	static public Type ienumerator_type;
 	static public Type ienumerable_type;
 	static public Type idisposable_type;
+	static public Type iconvertible_type;
 	static public Type default_member_type;
 	static public Type iasyncresult_type;
 	static public Type asynccallback_type;
@@ -1036,6 +1037,7 @@ public class TypeManager {
 		ienumerable_type     = CoreLookupType ("System.Collections.IEnumerable");
 		idisposable_type     = CoreLookupType ("System.IDisposable");
 		icloneable_type      = CoreLookupType ("System.ICloneable");
+		iconvertible_type    = CoreLookupType ("System.IConvertible");
 		monitor_type         = CoreLookupType ("System.Threading.Monitor");
 		intptr_type          = CoreLookupType ("System.IntPtr");
 
