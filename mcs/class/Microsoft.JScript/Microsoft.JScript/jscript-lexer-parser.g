@@ -27,7 +27,7 @@ program returns [ScriptBlock prog]
 	;
 
 source_elements [Block elems]
-	: (source_element [elems])+
+	: (source_element [elems])*
 	;
 
 source_element [Block elems]
@@ -57,11 +57,22 @@ function_decl_or_expr returns [AST func]
 }
 	: "function" (id:IDENTIFIER | { is_func_exp = true; } ) 
 	  OPEN_PARENS p = formal_param_list CLOSE_PARENS 
+	  (COLON type_annot:IDENTIFIER | )
 	  OPEN_BRACE body = function_body CLOSE_BRACE
 	  {
 		if (is_func_exp)
-			func = new FunctionExpression (String.Empty, p, body);
-		else func = new FunctionDeclaration (id.getText (), p, body);
+			if (type_annot == null)
+				func = new FunctionExpression (String.Empty, p, null, body);
+			else 
+				func = new FunctionExpression (String.Empty, p,
+							       type_annot.getText (), body);
+		else if (type_annot == null)
+			func = new FunctionDeclaration (id.getText (), p, null,
+							body);
+		     else 
+			func = new FunctionDeclaration (id.getText (), p, 
+							type_annot.getText (),
+						        body);
 	  }
 	;
 
@@ -243,14 +254,20 @@ var_decl returns [VariableDeclaration var_decl]
 	var_decl = null;
 	AST init = null;
 }
-	: id:IDENTIFIER 
+	: id:IDENTIFIER (COLON type_annot:IDENTIFIER | )
 	  (init = initializer
 	   { 
-		  var_decl = new VariableDeclaration (id.getText (), null, init); 
+		  if (type_annot == null)
+		  var_decl = new VariableDeclaration (id.getText (), null , init);
+		  else 
+			  var_decl = new VariableDeclaration (id.getText (), type_annot.getText () , init); 
 	   }
 	  | 
 	   {
-		  var_decl = new VariableDeclaration (id.getText (), null, null);
+		  if (type_annot == null)
+			  var_decl = new VariableDeclaration (id.getText (), null, null);
+		  else
+			  var_decl = new VariableDeclaration (id.getText (), type_annot.getText (), null);
 	   })
 	;
 

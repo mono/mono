@@ -27,17 +27,17 @@ namespace Microsoft.JScript
 		public const int IDENTIFIER = 5;
 		public const int OPEN_PARENS = 6;
 		public const int CLOSE_PARENS = 7;
-		public const int OPEN_BRACE = 8;
-		public const int CLOSE_BRACE = 9;
-		public const int COMMA = 10;
-		public const int SEMI_COLON = 11;
-		public const int LITERAL_try = 12;
-		public const int LITERAL_catch = 13;
-		public const int LITERAL_finally = 14;
-		public const int LITERAL_throw = 15;
-		public const int LITERAL_switch = 16;
-		public const int LITERAL_default = 17;
-		public const int COLON = 18;
+		public const int COLON = 8;
+		public const int OPEN_BRACE = 9;
+		public const int CLOSE_BRACE = 10;
+		public const int COMMA = 11;
+		public const int SEMI_COLON = 12;
+		public const int LITERAL_try = 13;
+		public const int LITERAL_catch = 14;
+		public const int LITERAL_finally = 15;
+		public const int LITERAL_throw = 16;
+		public const int LITERAL_switch = 17;
+		public const int LITERAL_default = 18;
 		public const int LITERAL_case = 19;
 		public const int LITERAL_with = 20;
 		public const int LITERAL_return = 21;
@@ -173,23 +173,21 @@ namespace Microsoft.JScript
 		traceIn("source_elements");
 		try { // debugging
 			
-			{ // ( ... )+
-			int _cnt4=0;
-			for (;;)
-			{
-				if ((tokenSet_0_.member(LA(1))))
+			{    // ( ... )*
+				for (;;)
 				{
-					source_element(elems);
+					if ((tokenSet_0_.member(LA(1))))
+					{
+						source_element(elems);
+					}
+					else
+					{
+						goto _loop4_breakloop;
+					}
+					
 				}
-				else
-				{
-					if (_cnt4 >= 1) { goto _loop4_breakloop; } else { throw new NoViableAltException(LT(1), getFilename());; }
-				}
-				
-				_cnt4++;
-			}
-_loop4_breakloop:			;
-			}    // ( ... )+
+_loop4_breakloop:				;
+			}    // ( ... )*
 		}
 		finally
 		{ // debugging
@@ -394,6 +392,7 @@ _loop4_breakloop:			;
 		traceIn("function_decl_or_expr");
 		try { // debugging
 			Token  id = null;
+			Token  type_annot = null;
 			
 				func = null;
 				bool is_func_exp = false;
@@ -428,6 +427,26 @@ _loop4_breakloop:			;
 			match(OPEN_PARENS);
 			p=formal_param_list();
 			match(CLOSE_PARENS);
+			{
+				switch ( LA(1) )
+				{
+				case COLON:
+				{
+					match(COLON);
+					type_annot = LT(1);
+					match(IDENTIFIER);
+					break;
+				}
+				case OPEN_BRACE:
+				{
+					break;
+				}
+				default:
+				{
+					throw new NoViableAltException(LT(1), getFilename());
+				}
+				 }
+			}
 			match(OPEN_BRACE);
 			body=function_body();
 			match(CLOSE_BRACE);
@@ -435,8 +454,19 @@ _loop4_breakloop:			;
 			{
 				
 						if (is_func_exp)
-							func = new FunctionExpression (String.Empty, p, body);
-						else func = new FunctionDeclaration (id.getText (), p, body);
+							if (type_annot == null)
+								func = new FunctionExpression (String.Empty, p,
+											       null, body);
+							else 
+								func = new FunctionExpression (String.Empty, p,
+											       type_annot.getText (), body);
+						else if (type_annot == null)
+							func = new FunctionDeclaration (id.getText (), p, null,
+											body);
+						     else 
+							func = new FunctionDeclaration (id.getText (), p, 
+											type_annot.getText (),
+										        body);
 					
 			}
 			return func;
@@ -498,11 +528,11 @@ _loop4_breakloop:			;
 					}
 					else
 					{
-						goto _loop12_breakloop;
+						goto _loop13_breakloop;
 					}
 					
 				}
-_loop12_breakloop:				;
+_loop13_breakloop:				;
 			}    // ( ... )*
 			return p;
 		}
@@ -599,11 +629,11 @@ _loop12_breakloop:				;
 			match(CLOSE_PARENS);
 			true_stm=statement();
 			{
-				bool synPredMatched50 = false;
+				bool synPredMatched51 = false;
 				if (((LA(1)==LITERAL_else)))
 				{
-					int _m50 = mark();
-					synPredMatched50 = true;
+					int _m51 = mark();
+					synPredMatched51 = true;
 					inputState.guessing++;
 					try {
 						{
@@ -612,12 +642,12 @@ _loop12_breakloop:				;
 					}
 					catch (RecognitionException)
 					{
-						synPredMatched50 = false;
+						synPredMatched51 = false;
 					}
-					rewind(_m50);
+					rewind(_m51);
 					inputState.guessing--;
 				}
-				if ( synPredMatched50 )
+				if ( synPredMatched51 )
 				{
 					match(LITERAL_else);
 					false_stm=statement();
@@ -1130,11 +1160,11 @@ _loop12_breakloop:				;
 					}
 					else
 					{
-						goto _loop16_breakloop;
+						goto _loop17_breakloop;
 					}
 					
 				}
-_loop16_breakloop:				;
+_loop17_breakloop:				;
 			}    // ( ... )*
 			match(CLOSE_BRACE);
 		}
@@ -1207,11 +1237,11 @@ _loop16_breakloop:				;
 					}
 					else
 					{
-						goto _loop65_breakloop;
+						goto _loop67_breakloop;
 					}
 					
 				}
-_loop65_breakloop:				;
+_loop67_breakloop:				;
 			}    // ( ... )*
 			return e;
 		}
@@ -1254,11 +1284,11 @@ _loop65_breakloop:				;
 					}
 					else
 					{
-						goto _loop29_breakloop;
+						goto _loop30_breakloop;
 					}
 					
 				}
-_loop29_breakloop:				;
+_loop30_breakloop:				;
 			}    // ( ... )*
 		}
 		finally
@@ -1298,11 +1328,11 @@ _loop29_breakloop:				;
 					}
 					else
 					{
-						goto _loop62_breakloop;
+						goto _loop64_breakloop;
 					}
 					
 				}
-_loop62_breakloop:				;
+_loop64_breakloop:				;
 			}    // ( ... )*
 		}
 		finally
@@ -1628,11 +1658,11 @@ _loop62_breakloop:				;
 					}
 					else
 					{
-						goto _loop55_breakloop;
+						goto _loop56_breakloop;
 					}
 					
 				}
-_loop55_breakloop:				;
+_loop56_breakloop:				;
 			}    // ( ... )*
 		}
 		finally
@@ -1648,6 +1678,7 @@ _loop55_breakloop:				;
 		traceIn("var_decl");
 		try { // debugging
 			Token  id = null;
+			Token  type_annot = null;
 			
 				var_decl = null;
 				AST init = null;
@@ -1658,13 +1689,39 @@ _loop55_breakloop:				;
 			{
 				switch ( LA(1) )
 				{
+				case COLON:
+				{
+					match(COLON);
+					type_annot = LT(1);
+					match(IDENTIFIER);
+					break;
+				}
+				case COMMA:
+				case SEMI_COLON:
+				case LITERAL_in:
+				case ASSIGN:
+				{
+					break;
+				}
+				default:
+				{
+					throw new NoViableAltException(LT(1), getFilename());
+				}
+				 }
+			}
+			{
+				switch ( LA(1) )
+				{
 				case ASSIGN:
 				{
 					init=initializer();
 					if (0==inputState.guessing)
 					{
 						
-								  var_decl = new VariableDeclaration (id.getText (), null, init); 
+								  if (type_annot == null)
+								  var_decl = new VariableDeclaration (id.getText (), null , init);
+								  else 
+									  var_decl = new VariableDeclaration (id.getText (), type_annot.getText () , init); 
 							
 					}
 					break;
@@ -1676,7 +1733,10 @@ _loop55_breakloop:				;
 					if (0==inputState.guessing)
 					{
 						
-								  var_decl = new VariableDeclaration (id.getText (), null, null);
+								  if (type_annot == null)
+									  var_decl = new VariableDeclaration (id.getText (), null, null);
+								  else
+									  var_decl = new VariableDeclaration (id.getText (), type_annot.getText (), null);
 							
 					}
 					break;
@@ -1727,11 +1787,11 @@ _loop55_breakloop:				;
 			
 			
 			{
-				bool synPredMatched69 = false;
+				bool synPredMatched71 = false;
 				if (((tokenSet_3_.member(LA(1)))))
 				{
-					int _m69 = mark();
-					synPredMatched69 = true;
+					int _m71 = mark();
+					synPredMatched71 = true;
 					inputState.guessing++;
 					try {
 						{
@@ -1741,12 +1801,12 @@ _loop55_breakloop:				;
 					}
 					catch (RecognitionException)
 					{
-						synPredMatched69 = false;
+						synPredMatched71 = false;
 					}
-					rewind(_m69);
+					rewind(_m71);
 					inputState.guessing--;
 				}
-				if ( synPredMatched69 )
+				if ( synPredMatched71 )
 				{
 					left=left_hand_side_expr();
 					op=assignment_op();
@@ -1957,10 +2017,10 @@ _loop55_breakloop:				;
 				}
 				case IDENTIFIER:
 				case CLOSE_PARENS:
+				case COLON:
 				case CLOSE_BRACE:
 				case COMMA:
 				case SEMI_COLON:
-				case COLON:
 				case LITERAL_in:
 				case CLOSE_BRACKET:
 				case 37:
@@ -2189,10 +2249,10 @@ _loop55_breakloop:				;
 				case IDENTIFIER:
 				case OPEN_PARENS:
 				case CLOSE_PARENS:
+				case COLON:
 				case CLOSE_BRACE:
 				case COMMA:
 				case SEMI_COLON:
-				case COLON:
 				case LITERAL_in:
 				case ASSIGN:
 				case CLOSE_BRACKET:
@@ -2285,11 +2345,11 @@ _loop55_breakloop:				;
 					}
 					else
 					{
-						goto _loop83_breakloop;
+						goto _loop85_breakloop;
 					}
 					
 				}
-_loop83_breakloop:				;
+_loop85_breakloop:				;
 			}    // ( ... )*
 		}
 		finally
@@ -2419,10 +2479,10 @@ _loop83_breakloop:				;
 				}
 				case IDENTIFIER:
 				case CLOSE_PARENS:
+				case COLON:
 				case CLOSE_BRACE:
 				case COMMA:
 				case SEMI_COLON:
-				case COLON:
 				case LITERAL_in:
 				case ASSIGN:
 				case CLOSE_BRACKET:
@@ -2519,10 +2579,10 @@ _loop83_breakloop:				;
 				}
 				case IDENTIFIER:
 				case CLOSE_PARENS:
+				case COLON:
 				case CLOSE_BRACE:
 				case COMMA:
 				case SEMI_COLON:
-				case COLON:
 				case LITERAL_in:
 				case CLOSE_BRACKET:
 				case 37:
@@ -2846,10 +2906,10 @@ _loop83_breakloop:				;
 				}
 				case IDENTIFIER:
 				case CLOSE_PARENS:
+				case COLON:
 				case CLOSE_BRACE:
 				case COMMA:
 				case SEMI_COLON:
-				case COLON:
 				case LITERAL_in:
 				case CLOSE_BRACKET:
 				case 37:
@@ -2987,10 +3047,10 @@ _loop83_breakloop:				;
 				}
 				case IDENTIFIER:
 				case CLOSE_PARENS:
+				case COLON:
 				case CLOSE_BRACE:
 				case COMMA:
 				case SEMI_COLON:
-				case COLON:
 				case LITERAL_in:
 				case CLOSE_BRACKET:
 				case 37:
@@ -3102,10 +3162,10 @@ _loop83_breakloop:				;
 				}
 				case IDENTIFIER:
 				case CLOSE_PARENS:
+				case COLON:
 				case CLOSE_BRACE:
 				case COMMA:
 				case SEMI_COLON:
-				case COLON:
 				case LITERAL_in:
 				case CLOSE_BRACKET:
 				case 37:
@@ -3266,10 +3326,10 @@ _loop83_breakloop:				;
 				}
 				case IDENTIFIER:
 				case CLOSE_PARENS:
+				case COLON:
 				case CLOSE_BRACE:
 				case COMMA:
 				case SEMI_COLON:
-				case COLON:
 				case LITERAL_in:
 				case CLOSE_BRACKET:
 				case 37:
@@ -3443,10 +3503,10 @@ _loop83_breakloop:				;
 				}
 				case IDENTIFIER:
 				case CLOSE_PARENS:
+				case COLON:
 				case CLOSE_BRACE:
 				case COMMA:
 				case SEMI_COLON:
-				case COLON:
 				case LITERAL_in:
 				case CLOSE_BRACKET:
 				case 37:
@@ -3602,10 +3662,10 @@ _loop83_breakloop:				;
 				}
 				case IDENTIFIER:
 				case CLOSE_PARENS:
+				case COLON:
 				case CLOSE_BRACE:
 				case COMMA:
 				case SEMI_COLON:
-				case COLON:
 				case LITERAL_in:
 				case CLOSE_BRACKET:
 				case 37:
@@ -3699,10 +3759,10 @@ _loop83_breakloop:				;
 				}
 				case IDENTIFIER:
 				case CLOSE_PARENS:
+				case COLON:
 				case CLOSE_BRACE:
 				case COMMA:
 				case SEMI_COLON:
-				case COLON:
 				case LITERAL_in:
 				case CLOSE_BRACKET:
 				case 37:
@@ -3795,10 +3855,10 @@ _loop83_breakloop:				;
 				}
 				case IDENTIFIER:
 				case CLOSE_PARENS:
+				case COLON:
 				case CLOSE_BRACE:
 				case COMMA:
 				case SEMI_COLON:
-				case COLON:
 				case LITERAL_in:
 				case CLOSE_BRACKET:
 				case 37:
@@ -3890,10 +3950,10 @@ _loop83_breakloop:				;
 				}
 				case IDENTIFIER:
 				case CLOSE_PARENS:
+				case COLON:
 				case CLOSE_BRACE:
 				case COMMA:
 				case SEMI_COLON:
-				case COLON:
 				case LITERAL_in:
 				case CLOSE_BRACKET:
 				case 37:
@@ -3984,10 +4044,10 @@ _loop83_breakloop:				;
 				}
 				case IDENTIFIER:
 				case CLOSE_PARENS:
+				case COLON:
 				case CLOSE_BRACE:
 				case COMMA:
 				case SEMI_COLON:
-				case COLON:
 				case LITERAL_in:
 				case CLOSE_BRACKET:
 				case 37:
@@ -4021,11 +4081,11 @@ _loop83_breakloop:				;
 			
 			match(OPEN_BRACE);
 			{
-				bool synPredMatched131 = false;
+				bool synPredMatched133 = false;
 				if (((LA(1)==OPEN_BRACE)))
 				{
-					int _m131 = mark();
-					synPredMatched131 = true;
+					int _m133 = mark();
+					synPredMatched133 = true;
 					inputState.guessing++;
 					try {
 						{
@@ -4035,16 +4095,16 @@ _loop83_breakloop:				;
 					}
 					catch (RecognitionException)
 					{
-						synPredMatched131 = false;
+						synPredMatched133 = false;
 					}
-					rewind(_m131);
+					rewind(_m133);
 					inputState.guessing--;
 				}
-				if ( synPredMatched131 )
+				if ( synPredMatched133 )
 				{
 					match(OPEN_BRACE);
 					{ // ( ... )+
-					int _cnt133=0;
+					int _cnt135=0;
 					for (;;)
 					{
 						if ((tokenSet_5_.member(LA(1))))
@@ -4055,12 +4115,12 @@ _loop83_breakloop:				;
 						}
 						else
 						{
-							if (_cnt133 >= 1) { goto _loop133_breakloop; } else { throw new NoViableAltException(LT(1), getFilename());; }
+							if (_cnt135 >= 1) { goto _loop135_breakloop; } else { throw new NoViableAltException(LT(1), getFilename());; }
 						}
 						
-						_cnt133++;
+						_cnt135++;
 					}
-_loop133_breakloop:					;
+_loop135_breakloop:					;
 					}    // ( ... )+
 				}
 				else if ((tokenSet_6_.member(LA(1)))) {
@@ -4073,11 +4133,11 @@ _loop133_breakloop:					;
 							}
 							else
 							{
-								goto _loop135_breakloop;
+								goto _loop137_breakloop;
 							}
 							
 						}
-_loop135_breakloop:						;
+_loop137_breakloop:						;
 					}    // ( ... )*
 				}
 				else
@@ -4199,11 +4259,11 @@ _loop135_breakloop:						;
 							}
 							else
 							{
-								goto _loop145_breakloop;
+								goto _loop147_breakloop;
 							}
 							
 						}
-_loop145_breakloop:						;
+_loop147_breakloop:						;
 					}    // ( ... )*
 					break;
 				}
@@ -4300,7 +4360,7 @@ _loop145_breakloop:						;
 		try { // debugging
 			
 			{ // ( ... )+
-			int _cnt139=0;
+			int _cnt141=0;
 			for (;;)
 			{
 				if ((tokenSet_5_.member(LA(1))))
@@ -4311,12 +4371,12 @@ _loop145_breakloop:						;
 				}
 				else
 				{
-					if (_cnt139 >= 1) { goto _loop139_breakloop; } else { throw new NoViableAltException(LT(1), getFilename());; }
+					if (_cnt141 >= 1) { goto _loop141_breakloop; } else { throw new NoViableAltException(LT(1), getFilename());; }
 				}
 				
-				_cnt139++;
+				_cnt141++;
 			}
-_loop139_breakloop:			;
+_loop141_breakloop:			;
 			}    // ( ... )+
 		}
 		finally
@@ -4423,6 +4483,7 @@ _loop139_breakloop:			;
 		@"""IDENTIFIER""",
 		@"""OPEN_PARENS""",
 		@"""CLOSE_PARENS""",
+		@"""COLON""",
 		@"""OPEN_BRACE""",
 		@"""CLOSE_BRACE""",
 		@"""COMMA""",
@@ -4433,7 +4494,6 @@ _loop139_breakloop:			;
 		@"""throw""",
 		@"""switch""",
 		@"""default""",
-		@"""COLON""",
 		@"""case""",
 		@"""with""",
 		@"""return""",
@@ -4517,31 +4577,31 @@ _loop139_breakloop:			;
 	
 	private static long[] mk_tokenSet_0_()
 	{
-		long[] data = { 1123723162786160L, 16646144L, 0L, 0L};
+		long[] data = { 1123723162890864L, 16646144L, 0L, 0L};
 		return data;
 	}
 	public static readonly BitSet tokenSet_0_ = new BitSet(mk_tokenSet_0_());
 	private static long[] mk_tokenSet_1_()
 	{
-		long[] data = { 1123724237183858L, 16646144L, 0L, 0L};
+		long[] data = { 1123724237420146L, 16646144L, 0L, 0L};
 		return data;
 	}
 	public static readonly BitSet tokenSet_1_ = new BitSet(mk_tokenSet_1_());
 	private static long[] mk_tokenSet_2_()
 	{
-		long[] data = { 1123723162786144L, 16646144L, 0L, 0L};
+		long[] data = { 1123723162890848L, 16646144L, 0L, 0L};
 		return data;
 	}
 	public static readonly BitSet tokenSet_2_ = new BitSet(mk_tokenSet_2_());
 	private static long[] mk_tokenSet_3_()
 	{
-		long[] data = { 21474836832L, 16646144L, 0L, 0L};
+		long[] data = { 21474837088L, 16646144L, 0L, 0L};
 		return data;
 	}
 	public static readonly BitSet tokenSet_3_ = new BitSet(mk_tokenSet_3_());
 	private static long[] mk_tokenSet_4_()
 	{
-		long[] data = { 1123722358423904L, 16646144L, 0L, 0L};
+		long[] data = { 1123722358424160L, 16646144L, 0L, 0L};
 		return data;
 	}
 	public static readonly BitSet tokenSet_4_ = new BitSet(mk_tokenSet_4_());
@@ -4553,7 +4613,7 @@ _loop139_breakloop:			;
 	public static readonly BitSet tokenSet_5_ = new BitSet(mk_tokenSet_5_());
 	private static long[] mk_tokenSet_6_()
 	{
-		long[] data = { 1123723162786656L, 16646144L, 0L, 0L};
+		long[] data = { 1123723162891872L, 16646144L, 0L, 0L};
 		return data;
 	}
 	public static readonly BitSet tokenSet_6_ = new BitSet(mk_tokenSet_6_());

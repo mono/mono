@@ -18,6 +18,7 @@ namespace Microsoft.JScript {
 
 		private string id;
 		private Type type;
+		private string type_annot;
 		private AST val;
 
 		internal VariableDeclaration (string id, string t, AST init)
@@ -26,7 +27,12 @@ namespace Microsoft.JScript {
 
 			if (t == null)
 				this.type = typeof (System.Object);
-			
+			else {
+				this.type_annot = t;
+				// FIXME: resolve the type annotations
+				this.type = typeof (System.Object);
+			}
+
 			this.val = init;
 		}
 
@@ -48,6 +54,7 @@ namespace Microsoft.JScript {
 			StringBuilder sb = new StringBuilder ();
 
 			sb.Append (Id);
+			sb.Append (":" + type_annot);
 			sb.Append (" = ");
 
 			if (val != null)

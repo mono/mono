@@ -35,17 +35,17 @@ namespace Microsoft.JScript
 		public const int IDENTIFIER = 5;
 		public const int OPEN_PARENS = 6;
 		public const int CLOSE_PARENS = 7;
-		public const int OPEN_BRACE = 8;
-		public const int CLOSE_BRACE = 9;
-		public const int COMMA = 10;
-		public const int SEMI_COLON = 11;
-		public const int LITERAL_try = 12;
-		public const int LITERAL_catch = 13;
-		public const int LITERAL_finally = 14;
-		public const int LITERAL_throw = 15;
-		public const int LITERAL_switch = 16;
-		public const int LITERAL_default = 17;
-		public const int COLON = 18;
+		public const int COLON = 8;
+		public const int OPEN_BRACE = 9;
+		public const int CLOSE_BRACE = 10;
+		public const int COMMA = 11;
+		public const int SEMI_COLON = 12;
+		public const int LITERAL_try = 13;
+		public const int LITERAL_catch = 14;
+		public const int LITERAL_finally = 15;
+		public const int LITERAL_throw = 16;
+		public const int LITERAL_switch = 17;
+		public const int LITERAL_default = 18;
 		public const int LITERAL_case = 19;
 		public const int LITERAL_with = 20;
 		public const int LITERAL_return = 21;
@@ -147,21 +147,21 @@ namespace Microsoft.JScript
 			caseSensitiveLiterals = true;
 			setCaseSensitive(true);
 			literals = new Hashtable();
-			literals.Add("switch", 16);
+			literals.Add("switch", 17);
 			literals.Add("case", 19);
 			literals.Add("this", 81);
 			literals.Add("for", 26);
 			literals.Add(")", 37);
 			literals.Add("false", 84);
 			literals.Add("true", 83);
-			literals.Add("try", 12);
-			literals.Add("finally", 14);
+			literals.Add("try", 13);
+			literals.Add("finally", 15);
 			literals.Add("(", 36);
 			literals.Add(".", 33);
 			literals.Add("void", 44);
 			literals.Add("typeof", 45);
 			literals.Add("instanceof", 60);
-			literals.Add("throw", 15);
+			literals.Add("throw", 16);
 			literals.Add("continue", 23);
 			literals.Add("do", 24);
 			literals.Add("in", 28);
@@ -174,10 +174,10 @@ namespace Microsoft.JScript
 			literals.Add("return", 21);
 			literals.Add("delete", 43);
 			literals.Add("if", 29);
-			literals.Add("default", 17);
+			literals.Add("default", 18);
 			literals.Add("else", 30);
 			literals.Add("var", 27);
-			literals.Add("catch", 13);
+			literals.Add("catch", 14);
 			literals.Add("with", 20);
 			literals.Add("[", 38);
 		}
@@ -556,11 +556,11 @@ tryAgain:
 						}
 						else
 						{
-							goto _loop153_breakloop;
+							goto _loop155_breakloop;
 						}
 						
 					}
-_loop153_breakloop:					;
+_loop155_breakloop:					;
 				}    // ( ... )*
 				break;
 			}
@@ -583,11 +583,11 @@ _loop153_breakloop:					;
 						}
 						else
 						{
-							goto _loop156_breakloop;
+							goto _loop158_breakloop;
 						}
 						
 					}
-_loop156_breakloop:					;
+_loop158_breakloop:					;
 				}    // ( ... )*
 			}
 			else {
@@ -643,7 +643,7 @@ _loop156_breakloop:					;
 						 }
 					}
 					{ // ( ... )+
-					int _cnt162=0;
+					int _cnt164=0;
 					for (;;)
 					{
 						if (((LA(1) >= '0' && LA(1) <= '9')))
@@ -652,12 +652,12 @@ _loop156_breakloop:					;
 						}
 						else
 						{
-							if (_cnt162 >= 1) { goto _loop162_breakloop; } else { throw new NoViableAltForCharException((char)LA(1), getFilename(), getLine(), getColumn());; }
+							if (_cnt164 >= 1) { goto _loop164_breakloop; } else { throw new NoViableAltForCharException((char)LA(1), getFilename(), getLine(), getColumn());; }
 						}
 						
-						_cnt162++;
+						_cnt164++;
 					}
-_loop162_breakloop:					;
+_loop164_breakloop:					;
 					}    // ( ... )+
 				}
 			}
@@ -713,7 +713,7 @@ _loop162_breakloop:					;
 			 }
 		}
 		{ // ( ... )+
-		int _cnt166=0;
+		int _cnt168=0;
 		for (;;)
 		{
 			switch ( LA(1) )
@@ -739,12 +739,12 @@ _loop162_breakloop:					;
 			}
 			default:
 			{
-				if (_cnt166 >= 1) { goto _loop166_breakloop; } else { throw new NoViableAltForCharException((char)LA(1), getFilename(), getLine(), getColumn());; }
+				if (_cnt168 >= 1) { goto _loop168_breakloop; } else { throw new NoViableAltForCharException((char)LA(1), getFilename(), getLine(), getColumn());; }
 			}
 			break; }
-			_cnt166++;
+			_cnt168++;
 		}
-_loop166_breakloop:		;
+_loop168_breakloop:		;
 		}    // ( ... )+
 		if (_createToken && (null == _token) && (_ttype != Token.SKIP))
 		{
@@ -771,11 +771,11 @@ _loop166_breakloop:		;
 				}
 				else
 				{
-					goto _loop170_breakloop;
+					goto _loop172_breakloop;
 				}
 				
 			}
-_loop170_breakloop:			;
+_loop172_breakloop:			;
 		}    // ( ... )*
 		match('"');
 		if (_createToken && (null == _token) && (_ttype != Token.SKIP))
@@ -858,11 +858,11 @@ _loop170_breakloop:			;
 				}
 				default:
 				{
-					goto _loop174_breakloop;
+					goto _loop176_breakloop;
 				}
 				 }
 			}
-_loop174_breakloop:			;
+_loop176_breakloop:			;
 		}    // ( ... )*
 		_ttype = testLiteralsTable(_ttype);
 		if (_createToken && (null == _token) && (_ttype != Token.SKIP))
@@ -1534,11 +1534,11 @@ _loop174_breakloop:			;
 				}
 				else
 				{
-					goto _loop225_breakloop;
+					goto _loop227_breakloop;
 				}
 				
 			}
-_loop225_breakloop:			;
+_loop227_breakloop:			;
 		}    // ( ... )*
 		_ttype = Token.SKIP;
 		if (_createToken && (null == _token) && (_ttype != Token.SKIP))

@@ -1,5 +1,15 @@
 2003-10-28  cesar lopez nataren <cesar@ciencias.unam.mx>
 
+	* jscript-lexer-parser.g: allow empty program files. Added type
+	annotations on var decl and function decl.
+	* VariableDeclaration.cs: added return type annotation field.
+	* FunctionExpression.cs: added return type parameter to constructor.
+	* FunctionDeclaration.cs: added return type parameter to
+	constructor. Added Emit method (just creates the static field at
+	the global object, for now).
+	* FunctionObject.cs: added return type to constructor. Changed
+	names to readable ones ;-) 
+
 	* ScriptStream.cs: added WriteLine.
 
 2003-10-24  cesar lopez nataren <cesar@ciencias.unam.mx>

@@ -75,7 +75,6 @@ namespace Microsoft.JScript {
 
 			TypeBuilder type_builder;
 			type_builder = module_builder.DefineType ("JScript 0");
-
 			EmitContext ec = new EmitContext (type_builder);
 
 			prog.Emit (ec);
