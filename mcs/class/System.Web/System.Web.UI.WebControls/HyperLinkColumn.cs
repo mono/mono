@@ -194,9 +194,11 @@ namespace System.Web.UI.WebControls
 
 			if (urlFieldDescriptor != null) {
 				link.NavigateUrl = FormatDataNavigateUrlValue (urlFieldDescriptor.GetValue (item));
-			} else {
-				link.NavigateUrl = "url";
+				return;
 			}
+			
+			if (DataNavigateUrlField.Length != 0 && DesignMode)
+				link.NavigateUrl = "url";
 		}
 
 		protected virtual string FormatDataNavigateUrlValue (object dataUrlValue)

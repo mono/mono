@@ -1,3 +1,8 @@
+2003-12-08  Jackson Harper <jackson@ximian.com>
+
+	* HyperLinkColumn.cs: Fix navigate url rendering. Patch by
+	Benjamin Jemlich. Fixes bug #51823.
+	
 2003-12-07  Alon Gazit <along@mainsoft.com>
 	* Panel.cs: Panel doesn't render nowrap attribute while the Wrap
 	property is set to false. Fixes bug #58120.
