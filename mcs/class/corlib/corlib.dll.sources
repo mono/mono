@@ -57,6 +57,7 @@ System/AppDomainSetup.cs
 System/AppDomainUnloadedException.cs
 System/ApplicationActivator.cs
 System/ApplicationException.cs
+System/ApplicationId.cs
 System/ApplicationIdentity.cs
 System/ArgIterator.cs
 System/ArgumentException.cs
@@ -355,6 +356,7 @@ System.Reflection/EventInfo.cs
 System.Reflection/FieldAttributes.cs
 System.Reflection/FieldInfo.cs
 System.Reflection/ICustomAttributeProvider.cs
+System.Reflection/ImageFileMachine.cs
 System.Reflection/InterfaceMapping.cs
 System.Reflection/InvalidFilterCriteriaException.cs
 System.Reflection/IReflect.cs
@@ -378,6 +380,7 @@ System.Reflection/ParameterAttributes.cs
 System.Reflection/ParameterInfo.cs
 System.Reflection/ParameterModifier.cs
 System.Reflection/Pointer.cs
+System.Reflection/PortableExecutableKind.cs
 System.Reflection/PropertyAttributes.cs
 System.Reflection/PropertyInfo.cs
 System.Reflection/ReflectionTypeLoadException.cs
@@ -980,6 +983,7 @@ System.Security.Policy/ApplicationDefaultCodeGroup.cs
 System.Security.Policy/ApplicationDirectory.cs
 System.Security.Policy/ApplicationDirectoryMembershipCondition.cs
 System.Security.Policy/ApplicationInstallScope.cs
+System.Security.Policy/ApplicationSecurityInfo.cs
 System.Security.Policy/ApplicationTrust.cs
 System.Security.Policy/ApplicationVersionMatch.cs
 System.Security.Policy/CodeConnectAccess.cs
