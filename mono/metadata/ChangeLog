@@ -1,3 +1,9 @@
+2004-03-16  Martin Baulig  <martin@ximian.com>
+
+	* reflection.c (mono_image_get_fieldref_token): Take a
+	`MonoReflectionField *' instead of a `MonoClassField *' and a
+	`MonoClass *'; store the `MonoReflectionField *' in the hash.
+
 2004-03-16  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* appdomain.c: don't add the culture to the filename we're looking for
