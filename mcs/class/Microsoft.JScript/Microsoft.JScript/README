@@ -22,24 +22,6 @@ want to hack on the parser:
 
 	- Add the extensions from MS, like classes, interfaces, etc.
 
-If you want to build and install Microsoft.JScript.dll simply do a 'make install' at
-mcs/class/Microsoft.JScript
-
-If you wanna build mjs (the ECMAScript compiler), do:
-
- mcs -r:Microsoft.JScript.dll driver.cs
-
-
-Copy mjs.exe to $(PREFIX)/lib/mono/1.0/
-
-And copy a shell script named mjs to your PATH, containing:
-
-#!/bin/sh
-exec $(PREFIX)/bin/mono $(PREFIX)/lib/mono/1.0/mjs.exe "$@"
-
-Don't forget to give execution permission to it.
-
-
 - AST
 - ASTList
 - ArrayLiteral
