@@ -22,18 +22,27 @@ namespace System.IO {
 		public SearchPattern2 (string pattern, bool ignore)
 		{
 			this.ignore = ignore;
+			this.pattern = pattern;
 			Compile (pattern);
 		}
 
 		public bool IsMatch (string text)
 		{
+			if (!hasWildcard)
+				return (String.Compare (pattern, text, ignore) == 0);
+
 			return Match (ops, text, 0);
 		}
 
+		public bool HasWildcard {
+			get { return hasWildcard; }
+		}
 		// private
 
-		private Op ops;		// the compiled pattern
-		private bool ignore;	// ignore case
+		Op ops;		// the compiled pattern
+		bool ignore;	// ignore case
+		bool hasWildcard;
+		string pattern;
 
 		private void Compile (string pattern)
 		{
@@ -56,11 +65,13 @@ namespace System.IO {
 				case '?':
 					op = new Op (OpCode.AnyChar);
 					++ ptr;
+					hasWildcard = true;
 					break;
 
 				case '*':
 					op = new Op (OpCode.AnyString);
 					++ ptr;
+					hasWildcard = true;
 					break;
 					
 				default:
