@@ -1,3 +1,8 @@
+2003-11-20  Dick Porter  <dick@ximian.com>
+
+	* io.c: Missed a little-endian UTF16 conversion.  Patch from
+	Jeroen Zwartepoorte (Jeroen@xs4all.nl), fixes bug 51065.
+
 2003-10-29  Dick Porter  <dick@ximian.com>
 
 	* io.c (MoveFile): If the move crosses filesystems, try and fall
