@@ -6,7 +6,6 @@
 
 <project name="System.Data_test" default="build">
 	<property name="debug" value="false"/>
-	<property name="nunit_home" value="..\..\..\nunit"/>
 
 	<target name="build">
 	</target>
@@ -31,10 +30,8 @@
 				<excludes name="TestSqlConnection.cs"/>
 
 			</sources>
-			<references basedir="..\..\..\nunit">
-				<includes name="NUnitCore.dll"/>
-			</references>
 			<arg value="/r:..\..\lib\System.Data.dll"/>
+		    	<arg value="/r:..\..\..\nunit20\NUnit.Framework.dll"/>
 		</csc>
 	</target>
 
@@ -58,9 +55,7 @@
 				<excludes name="TestSqlConnection.cs"/>
 
 			</sources>
-			<references basedir="..\..\..\nunit">
-				<includes name="NUnitBase.dll"/>
-			</references>
+		    	<arg value="/r:..\..\..\nunit20\NUnit.Framework.dll"/>
 			<arg value="/nowarn:1595"/>
 			<arg value="/noconfig"/>
 			<arg value="/r:..\..\lib\System.Data.dll"/>
@@ -69,7 +64,7 @@
 	</target>
 
 	<target name="test" depends="assemblies">
-		<exec program="..\..\..\nunit\NUnitConsole" commandline="MonoTests.System.Data.AllTests,System.Data_test.dll" failonerror="false"/>
+		<exec program="..\..\..\nunit20\nunit-console.exe" commandline="System.Data_test.dll" failonerror="false"/>
 	</target>
 
 	<target name="clean">
