@@ -29,10 +29,15 @@
 //
 
 using System;
+using System.Collections;
 
 namespace System.Xml.XPath
 {
+#if NET_2_0
+	public abstract class XPathNodeIterator : ICloneable, IEnumerable
+#else
 	public abstract class XPathNodeIterator : ICloneable
+#endif
 	{
 		private int _count = -1;
 
@@ -76,6 +81,14 @@ namespace System.Xml.XPath
 		{
 			return Clone ();
 		}
+
+#if NET_2_0
+		public virtual IEnumerator GetEnumerator ()
+		{
+			while (MoveNext ())
+				yield return Current;
+		}
+#endif
 
 		public abstract bool MoveNext ();
 		
