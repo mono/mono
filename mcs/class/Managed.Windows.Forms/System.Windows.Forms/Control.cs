@@ -29,9 +29,12 @@
 //	Jaak Simm		jaaksimm@firm.ee
 //	John Sohn		jsohn@columbus.rr.com
 //
-// $Revision: 1.18 $
+// $Revision: 1.19 $
 // $Modtime: $
 // $Log: Control.cs,v $
+// Revision 1.19  2004/08/11 14:37:11  pbartok
+// - Duh!
+//
 // Revision 1.18  2004/08/11 13:47:22  pbartok
 // - Rewrote the collection stuff. Might not be as fast now, not keeping
 //   the number of children around and accessible directly, but it's more
@@ -690,7 +693,7 @@ namespace System.Windows.Forms
 
 		public ControlCollection Controls {
 			get {
-				return CreateControlsInstance();
+				return this.child_controls;
 			}
 		}
 
