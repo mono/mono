@@ -1,5 +1,11 @@
 2002-09-21  Martin Baulig  <martin@gnome.org>
 
+	* MonoSymbolTable.cs: Set version number to 26.  Removed all the dynamic
+	stuff, this library now just deals with the compiler generated symbol table.
+	The dynamic stuff is private between the JIT and the debugger.
+
+2002-09-21  Martin Baulig  <martin@gnome.org>
+
 	* MonoSymbolTable.cs: Set version number to 25.  Added information about
 	local variables.
 
