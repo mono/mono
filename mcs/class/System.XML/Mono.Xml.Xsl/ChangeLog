@@ -1,3 +1,7 @@
+2003-12-12 Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
+
+	* HtmlEmitter.cs : Fixed incorrect character entity output.
+
 2003-12-11 Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
 
 	* Added ScriptCompilerInfo.cs.

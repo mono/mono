@@ -286,28 +286,33 @@ namespace Mono.Xml.Xsl
 						continue;
 					writer.Write (text.ToCharArray (), start, i - start);
 					writer.Write ("&amp;");
-					start = i;
+					start = i + 1;
 					break;
 				case '<':
 					if (openAttribute)
 						continue;
 					writer.Write (text.ToCharArray (), start, i - start);
 					writer.Write ("&lt;");
-					start = i;
+					start = i + 1;
 					break;
 				case '\'':
+					if (!openAttribute)
+						continue;
 					writer.Write (text.ToCharArray (), start, i - start);
 					writer.Write ("&apos;");
-					start = i;
+					start = i + 1;
 					break;
 				case '\"':
+					if (!openAttribute)
+						continue;
 					writer.Write (text.ToCharArray (), start, i - start);
 					writer.Write ("&quot;");
-					start = i;
+					start = i + 1;
 					break;
 				}
 			}
-			writer.Write (text.ToCharArray (), start, text.Length - start);
+			if (text.Length > start)
+				writer.Write (text.ToCharArray (), start, text.Length - start);
 		}
 
 		public override void WriteRaw (string data)
