@@ -246,6 +246,24 @@ namespace MonoTests.System.Text {
 		sb.Replace (",", "comma-separated", 11, sb.Length-11);
 		AssertEquals ("#02", "This, is, acomma-separated list", sb.ToString ());
 	}
+
+	[Test]
+	public void Insert0 ()
+	{
+		StringBuilder sb = new StringBuilder();
+		sb.Append("testtesttest");
+		sb.Insert(0, '^');
+		AssertEquals ("#01", "^testtesttest", sb.ToString ());
+	}
+
+	[Test]
+	public void AppendToEmpty ()
+	{
+		StringBuilder sb = new StringBuilder();
+		char [] ca = new char [] { 'c' };
+		sb.Append (ca);
+		AssertEquals ("#01", "c", sb.ToString ());
+	}
 }
 
 }
