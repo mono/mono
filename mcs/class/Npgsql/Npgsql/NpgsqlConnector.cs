@@ -33,7 +33,7 @@ namespace Npgsql
     /// <summary>
     /// !!! Helper class, for compilation only.
     /// </summary>
-    
+
     /// <summary>
     /// Connector implements the logic for the Connection Objects to
     /// access the physical connection to the database, and isolate
@@ -46,19 +46,19 @@ namespace Npgsql
 
 
         private Stream _stream;
-        
+
         // This is information about the connection
         // this connector is holding. For while only the server version is used.
         // Change later for a more generic way to keep it. (Hashtable)
         private String _serverVersion;
-        
+
         private Int32 _backendProtocolVersion;
-        
+
         private Encoding _encoding;
-        
-        
+
+
         private Boolean _isInitialized;
-        
+
         private Boolean mPooled;
         private Boolean mOpen;
 
@@ -88,46 +88,46 @@ namespace Npgsql
                 this.mPooled = value;
             }
         }
-        
+
         internal String ServerVersion
         {
             get
             {
                 return _serverVersion;
             }
-            
+
             set
             {
                 _serverVersion = value;
             }
         }
-        
+
         internal Encoding Encoding
         {
             get
             {
                 return _encoding;
             }
-            
+
             set
             {
                 _encoding = value;
             }
         }
-        
+
         internal Int32 BackendProtocolVersion
         {
             get
             {
                 return _backendProtocolVersion;
             }
-            
+
             set
             {
                 _backendProtocolVersion = value;
             }
         }
-        
+
         internal Stream Stream {
             get
             {
@@ -139,16 +139,16 @@ namespace Npgsql
                 _isInitialized = true;
             }
         }
-        
+
         internal Boolean IsInitialized
         {
             get
             {
                 return _isInitialized;
             }
-            
+
         }
-        
+
 
         /// <value>Buffer for the public Shared property</value>
         private bool mShared;
@@ -204,7 +204,7 @@ namespace Npgsql
         // !!! to be fixed
         //private Npgsql.Socket Socket;
 
-        
+
         /// <summary>
         /// Default constructor. Creates a pooled Connector by default.
         /// </summary>
@@ -235,8 +235,8 @@ namespace Npgsql
             //this.Socket.Open(); // !!! to be fixed
             //this.mOpen = true;
         }
-        
-        
+
+
         internal Boolean InUse {
             get
             {
@@ -246,7 +246,7 @@ namespace Npgsql
             {
                 _inUse = value;
             }
-            
+
         }
 
         /// <summary>

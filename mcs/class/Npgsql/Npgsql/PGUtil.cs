@@ -96,6 +96,33 @@ internal enum FormatCode:
         }
 
         ///<summary>
+        /// This method gets a length terminated string from a network stream.
+        /// It returns the resultant string of bytes read.
+        /// This string is sent from backend.
+        /// </summary>
+
+        public static String ReadString(Stream network_stream, Encoding encoding, Int32 length)
+        {
+            NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, "ReadString");
+
+            // [FIXME] Is 512 enough?
+            Byte[] buffer = new Byte[512];
+            Byte b;
+            Int16 counter = 0;
+
+            while(counter < length)
+            {
+                // [FIXME] Is this cast always safe?
+                b = (Byte)network_stream.ReadByte();
+                buffer[counter] = b;
+                counter++;
+            }
+            String string_read = encoding.GetString(buffer, 0, counter);
+            NpgsqlEventLog.LogMsg(resman, "Log_StringRead", LogLevel.Debug, string_read);
+            return string_read;
+        }
+
+        ///<summary>
         /// This method writes a C NULL terminated string to the network stream.
         /// It appends a NULL terminator to the end of the String.
         /// </summary>

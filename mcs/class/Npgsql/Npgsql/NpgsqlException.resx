@@ -100,4 +100,7 @@
 	<data name="Log_ExceptionOccured">
 		<value>An NpgsqlException occured: {0}.</value>
 	</data>
+	<data name="Log_BackendExceptionOccured">
+		<value>An NpgsqlBackendException occured: {0}.</value>
+	</data>
 </root>

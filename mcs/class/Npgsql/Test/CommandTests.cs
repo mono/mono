@@ -722,7 +722,94 @@ namespace NpgsqlTests
 		}
 		
 		
-		
+        [Test]
+		public void MultipleQueriesFirstResultsetEmpty()
+		{
+			_conn.Open();
+			
+			NpgsqlCommand command = new NpgsqlCommand("insert into tablea(field_text) values ('a'); select count(*) from tablea;", _conn);
+            
+            Object result = command.ExecuteScalar();
+                        
+            
+            command.CommandText = "delete from tablea where field_serial > 5";
+            command.ExecuteNonQuery();
+            
+            command.CommandText = "select * from tablea where field_serial = 0";
+            command.ExecuteScalar();
+            
+            
+            Assertion.AssertEquals(6, result);
+            
+            
+		}
+        
+        [Test]
+        [ExpectedException(typeof(NpgsqlException))]
+        public void ConnectionStringWithInvalidParameters()
+        {
+            NpgsqlConnection conn = new NpgsqlConnection("Server=127.0.0.1;User Id=npgsql_tests;Password=j");
+            
+            NpgsqlCommand command = new NpgsqlCommand("select * from tablea", conn);
+            
+            command.Connection.Open();
+            command.ExecuteReader();
+            command.Connection.Close();
+            
+            
+        }
+        
+		[Test]
+        [ExpectedException(typeof(NpgsqlException))]
+        public void InvalidConnectionString()
+        {
+            NpgsqlConnection conn = new NpgsqlConnection("Server=127.0.0.1;User Id=npgsql_tests");
+            
+            NpgsqlCommand command = new NpgsqlCommand("select * from tablea", conn);
+            
+            command.Connection.Open();
+            command.ExecuteReader();
+            command.Connection.Close();
+            
+            
+        }
+        
+        [Test]
+        public void AmbiguousFunctionParameterType()
+        {
+            NpgsqlConnection conn = new NpgsqlConnection("Server=127.0.0.1;User Id=npgsql_tests;Password=npgsql_tests");
+            
+            
+            NpgsqlCommand command = new NpgsqlCommand("ambiguousParameterType(:a, :b, :c, :d, :e, :f)", conn);
+            command.CommandType = CommandType.StoredProcedure;
+            NpgsqlParameter p = new NpgsqlParameter("a", DbType.Int16);
+            p.Value = 2;
+            command.Parameters.Add(p);
+            p = new NpgsqlParameter("b", DbType.Int32);
+            p.Value = 2;
+            command.Parameters.Add(p);
+            p = new NpgsqlParameter("c", DbType.Int64);
+            p.Value = 2;
+            command.Parameters.Add(p);
+            p = new NpgsqlParameter("d", DbType.String);
+            p.Value = "a";
+            command.Parameters.Add(p);
+            p = new NpgsqlParameter("e", DbType.String);
+            p.Value = "a";
+            command.Parameters.Add(p);
+            p = new NpgsqlParameter("f", DbType.String);
+            p.Value = "a";
+            command.Parameters.Add(p);
+            
+            
+            command.Connection.Open();
+            command.Prepare();
+            command.ExecuteScalar();
+            command.Connection.Close();
+            
+            
+        }
+        
 		
 	}
 }

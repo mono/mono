@@ -52,53 +52,47 @@ namespace Npgsql
                 return _instance;
             }
         }
-        
-        
+
+
         public override void Open(NpgsqlConnection context)
         {
 
             NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, "Open");
 
-            try
+            TcpClient tcpc = new TcpClient(context.ServerName, Int32.Parse(context.ServerPort));
+            Stream stream = tcpc.GetStream();
+            // If the PostgreSQL server has SSL connections enabled Open SslClientStream if (response == 'S') {
+            if (context.SSL == "yes")
             {
-                
-                TcpClient tcpc = new TcpClient(context.ServerName, Int32.Parse(context.ServerPort));
-                Stream stream = tcpc.GetStream();
-                // If the PostgreSQL server has SSL connections enabled Open SslClientStream if (response == 'S') {
-                if (context.SSL == "yes")
+                PGUtil.WriteInt32(stream, 8);
+                PGUtil.WriteInt32(stream,80877103);
+                // Receive response
+                Char response = (Char)stream.ReadByte();
+                if (response == 'S')
                 {
-                    PGUtil.WriteInt32(stream, 8);
-                    PGUtil.WriteInt32(stream,80877103);
-                    // Receive response
-                    Char response = (Char)stream.ReadByte();
-                    if (response == 'S')
-                    {
-                        stream = new SslClientStream(tcpc.GetStream(), context.ServerName, true, Mono.Security.Protocol.Tls.SecurityProtocolType.Default);
-                        /*stream = new SslClientStream(
-                            tcpc.GetStream(),
-                            context.ServerName,
-                            true,
-                            Tls.SecurityProtocolType.Tls|
-                            Tls.SecurityProtocolType.Ssl3);*/
-                        
-                            
-                        ((SslClientStream)stream).ServerCertValidationDelegate = context.CertificateValidationCallback;
-                        ((SslClientStream)stream).ClientCertSelectionDelegate = context.CertificateSelectionCallback;
-                        ((SslClientStream)stream).PrivateKeyCertSelectionDelegate = context.PrivateKeySelectionCallback;
+                    stream = new SslClientStream(tcpc.GetStream(),
+                                                 context.ServerName,
+                                                 true,
+                                                 Mono.Security.Protocol.Tls.SecurityProtocolType.Default);
+                    /*stream = new SslClientStream(
+                        tcpc.GetStream(),
+                        context.ServerName,
+                        true,
+                        Tls.SecurityProtocolType.Tls|
+                        Tls.SecurityProtocolType.Ssl3);*/
 
-                    }
+
+                    ((SslClientStream)stream).ServerCertValidationDelegate = context.CertificateValidationCallback;
+                    ((SslClientStream)stream).ClientCertSelectionDelegate = context.CertificateSelectionCallback;
+                    ((SslClientStream)stream).PrivateKeyCertSelectionDelegate = context.PrivateKeySelectionCallback;
+
                 }
-                
-                
-
-                context.Connector.Stream = stream;
-
-
             }
-            catch (TlsException e)
-            {
-                throw new NpgsqlException(e.ToString());
-            }
+
+
+
+            context.Connector.Stream = stream;
+
 
             NpgsqlEventLog.LogMsg(resman, "Log_ConnectedTo", LogLevel.Normal, context.ServerName, context.ServerPort);
             ChangeState(context, NpgsqlConnectedState.Instance);

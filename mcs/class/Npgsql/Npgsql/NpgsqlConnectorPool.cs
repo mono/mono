@@ -33,12 +33,12 @@ namespace Npgsql
         /// <value>Unique static instance of the connector pool
         /// mamager.</value>
         internal static ConnectorPool ConnectorPoolMgr = new Npgsql.ConnectorPool();
-        
+
         public ConnectorPool()
         {
             PooledConnectors = new Hashtable();
         }
-        
+
 
         /// <value>Map of index to unused pooled connectors, avaliable to the
         /// next RequestConnector() call.</value>
@@ -107,8 +107,8 @@ namespace Npgsql
             // point the list to the new head
             this.PooledConnectors = Connector;
         }*/
-        
-        
+
+
         internal Int32 GetPoolSize(String connectionString)
         {
             ArrayList pool = (ArrayList)PooledConnectors[connectionString];
@@ -116,8 +116,8 @@ namespace Npgsql
                 return 0;
             else
                 return pool.Count;
-            
-                       
+
+
         }
 
         /// <summary>
@@ -130,9 +130,9 @@ namespace Npgsql
         /// on a single connector. </param>
         /// <returns>A pooled connector object.</returns>
         internal Npgsql.Connector RequestConnector (String connectionString,
-                                                    Int32 maxPoolSize,
-                                                    Int32 timeout,
-                                                    Boolean shared )
+                Int32 maxPoolSize,
+                Int32 timeout,
+                Boolean shared )
         {
             Connector connector;
             ArrayList connectorPool = null;
@@ -152,7 +152,7 @@ namespace Npgsql
                         return Connector;
                     }
                 }*/
-                
+
                 return null;
             }
             else
@@ -160,42 +160,42 @@ namespace Npgsql
                 // if a shared connector could not be found or a
                 // nonshared connector is requested, then the pooled
                 // (unused) connectors are beeing searched.
-                
-                
+
+
                 connectorPool = (ArrayList)PooledConnectors[connectionString];
-                
+
                 if (connectorPool == null)
                 {
                     connectorPool = new ArrayList();
                     PooledConnectors[connectionString] = connectorPool;
                 }
-                
-                
+
+
                 // Now look for an available connector.
-                
+
                 Connector freeConnector = FindFreeConnector(connectorPool);
                 if (freeConnector != null)
                     return freeConnector;
-                
+
                 // No suitable connector could be found, so create new one
                 // if there is room available.
-                
+
                 if (connectorPool.Count < maxPoolSize)
                 {
                     connector = new Npgsql.Connector(connectionString, shared);
 
                     connectorPool.Add(connector);
-            
+
 
                     // and then returned to the caller
-                    return connector;                
+                    return connector;
                 }
                 else
                 {
                     // keep checking in the pool until some connector is available or
                     // a timeout occurs.
                     Int32 timeoutMilliseconds = timeout * 1000;
-                    
+
                     while (timeoutMilliseconds > 0)
                     {
                         Connector freeConnector2 = FindFreeConnector(connectorPool);
@@ -205,15 +205,15 @@ namespace Npgsql
                             Thread.Sleep((timeoutMilliseconds > 900) ? 900 : timeoutMilliseconds);
                         timeoutMilliseconds -= 900;
                     }
-                    
+
                     throw new NpgsqlException("Timeout while getting a connection from pool.");
-                    
+
                 }
-                
+
             }
 
         }
-        
+
         private Connector FindFreeConnector(ArrayList connectorPool)
         {
             foreach (Connector c in connectorPool)
@@ -221,7 +221,7 @@ namespace Npgsql
                 if (!c.InUse)
                     return c;
             }
-            
+
             return null;
         }
     }

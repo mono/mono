@@ -46,7 +46,7 @@ namespace Npgsql
         private DataTable			_currentResultsetSchema;
         private CommandBehavior     _behavior;
         private Boolean             _isClosed;
-        
+
 
 
         // Logging related values
@@ -59,10 +59,10 @@ namespace Npgsql
             _connection = connection;
             _rowIndex = -1;
             _resultsetIndex = 0;
-            
+
             if (_resultsets.Count > 0)
                 _currentResultset = (NpgsqlResultSet)_resultsets[_resultsetIndex];
-                
+
             _behavior = behavior;
             _isClosed = false;
 
@@ -73,8 +73,8 @@ namespace Npgsql
             //NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, "CanRead");
             /*if (_currentResultset == null)
             	return false;*/
-            return ((_currentResultset != null) && 
-                    (_currentResultset.Count > 0) && 
+            return ((_currentResultset != null) &&
+                    (_currentResultset.Count > 0) &&
                     (_rowIndex < _currentResultset.Count));
 
         }
@@ -89,7 +89,7 @@ namespace Npgsql
         {
             Dispose(true);
         }
-        
+
         /// <summary>
         /// Releases the resources used by the <see cref="Npgsql.NpgsqlCommand">NpgsqlCommand</see>.
         /// </summary>
@@ -125,7 +125,7 @@ namespace Npgsql
             {
                 NpgsqlEventLog.LogPropertyGet(LogLevel.Debug, CLASSNAME, "RecordsAffected");
 
-            
+
                 if (CanRead())
                     return -1;
 
@@ -138,7 +138,7 @@ namespace Npgsql
 
         public void Close()
         {
-           if ((_behavior & CommandBehavior.CloseConnection) == CommandBehavior.CloseConnection)
+            if ((_behavior & CommandBehavior.CloseConnection) == CommandBehavior.CloseConnection)
             {
                 _connection.Close();
                 _isClosed = true;
@@ -149,7 +149,7 @@ namespace Npgsql
         public Boolean NextResult()
         {
             NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, "NextResult");
-            
+
             if((_resultsetIndex + 1) < _resultsets.Count)
             {
                 _resultsetIndex++;
@@ -167,7 +167,7 @@ namespace Npgsql
             NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, "Read");
 
             _rowIndex++;
-            
+
             if (!CanRead())
                 return false;
             else
@@ -193,7 +193,7 @@ namespace Npgsql
             {
 
                 NpgsqlEventLog.LogPropertyGet(LogLevel.Debug, CLASSNAME, "FieldCount");
-                
+
                 if (_currentResultset == null) //Executed a non return rows query.
                     return -1;
                 else
@@ -375,14 +375,14 @@ namespace Npgsql
         public Single GetFloat(Int32 i)
         {
             NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, "GetFloat");
-            
+
             return (Single) GetValue(i);
         }
 
         public Double GetDouble(Int32 i)
         {
             NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, "GetDouble");
-            
+
             return (Double) GetValue(i);
         }
 

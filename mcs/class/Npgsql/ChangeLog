@@ -1,3 +1,22 @@
+2004-04-21  Francisco Figueiredo Jr.  <fxjrlists@yahoo.com.br>
+	* Npgsql/NpgsqlDataAdapter.cs: Changed RowUpdated and RowUpdating prefix to Npgsql.
+	* Npgsql/NpgsqlClosedState.cs: Removed dependency in TlsException. Carlos Guzman will change this excpetion to internal.
+
+	* Npgsql/NpgsqlCommand.cs
+	* Npgsql/NpgsqlCommand.resx
+	* Npgsql/NpgsqlConnection.cs
+	* Npgsql/NpgsqlConnection.resx
+	* Npgsql/NpgsqlDataAdapter.cs
+	* Npgsql/NpgsqlError.cs
+	* Npgsql/NpgsqlException.cs
+	* Npgsql/NpgsqlException.resx
+	* Npgsql/NpgsqlMediator.cs
+	* Npgsql/NpgsqlState.cs
+	* Npgsql/NpgsqlState.resx
+	* Npgsql/PGUtil.cs : Added initial error handling code improvements. Thanks Glen Parker (glenebob@nwlink.com) for the patch. NpgsqlException now gives aceess to error collection through the Errors property. This property return a collection of NpgsqlErrors objects. Also it gives access to error message, hint, severity and code. This fixes the feature request 689 in gborg.
+
+
+
 2004-04-09  Francisco Figueiredo Jr.  <fxjrlists@yahoo.com.br>
 	* Npgsql/NpgsqlDataAdapter.cs: Fixed DataAdapter to raise the RowUpdating and RowUpdated events. This also fixes some issues in gborg 710 bug. This modification may have broken CommandBuilder support. Working on that.
 

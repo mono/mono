@@ -133,7 +133,7 @@ namespace Npgsql
 
                 // Database name.
                 PGUtil.WriteString(database_name, output_stream, encoding);
-                
+
                 // DateStyle.
                 PGUtil.WriteString("DateStyle", output_stream, encoding);
 

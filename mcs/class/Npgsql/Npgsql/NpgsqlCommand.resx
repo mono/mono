@@ -109,6 +109,9 @@
 	<data name="Exception_CommandTypeTableDirect">
 		<value>Only Text and StoredProcedure types supported!</value>
 	</data>
+	<data name="Exception_BackendErrors">
+		<value>There have been errors reported by the backend.</value>
+	</data>
 	<data name="Exception_MediatorErrors">
 		<value>There have been errors on {0}():</value>
 	</data>

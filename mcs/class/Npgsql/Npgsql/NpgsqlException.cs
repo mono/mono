@@ -25,12 +25,17 @@
 
 using System;
 using System.Resources;
+using System.IO;
+using System.Text;
+using System.Collections;
 
 namespace Npgsql
 {
     [Serializable]
     public class NpgsqlException : Exception
     {
+        private IList errors;
+
 
         // Logging related values
         private static readonly String CLASSNAME = "NpgsqlException";
@@ -52,5 +57,61 @@ namespace Npgsql
         {
             NpgsqlEventLog.LogMsg(resman, "Log_ExceptionOccured", LogLevel.Normal, message + " (" + inner.Message + ")");
         }
+
+        public NpgsqlException(String message, IList errors) : base(message)
+        {
+            NpgsqlEventLog.LogMsg(resman, "Log_ExceptionOccured", LogLevel.Normal, message);
+            this.errors = errors;
+        }
+
+        public String Severity
+        {
+            get
+            {
+                return (errors != null) ? ((NpgsqlError)errors[0]).Severity : String.Empty;
+            }
+        }
+
+        public String Code
+        {
+            get
+            {
+                return (errors != null) ? ((NpgsqlError)errors[0]).Code : String.Empty;
+            }
+        }
+
+        public override String Message
+        {
+            get
+            {
+                return (errors != null) ? ((NpgsqlError)errors[0]).Message : String.Empty;
+            }
+        }
+
+        public String Hint
+        {
+            get
+            {
+                return (errors != null) ? ((NpgsqlError)errors[0]).Hint : String.Empty;
+            }
+        }
+
+        public IList Errors
+        {
+            get
+            {
+                return errors;
+            }
+
+        }
+
+        public override String ToString()
+        {
+            return String.Format(base.Message + "Severity: {0} \nCode: {1} \nMessage: {2} \nHint: {3}", Severity, Code, Message, Hint);
+        }
+
     }
+
+
+
 }

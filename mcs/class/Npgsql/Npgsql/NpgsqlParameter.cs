@@ -97,13 +97,13 @@ namespace Npgsql
         {
             resman = new System.Resources.ResourceManager(this.GetType());
             NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, CLASSNAME, parameterName, value);
-            
-            
+
+
             this.value = value;
 
             this.ParameterName = parameterName;
-            
-            
+
+
             // Set db_type according to:
             // http://msdn.microsoft.com/library/en-us/cpguide/html/cpconusingparameterswithdataadapters.asp
             // Should this be in this.Value.set{}?
@@ -192,7 +192,7 @@ namespace Npgsql
                 throw new InvalidCastException(String.Format(resman.GetString("Exception_ImpossibleToCast"), type.ToString()));
             }
 
-            
+
 
         }
 

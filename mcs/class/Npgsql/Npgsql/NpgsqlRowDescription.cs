@@ -165,19 +165,19 @@ namespace Npgsql
         public Int16 FieldIndex(String fieldName)
         {
             Int16 result = 0;
-                       
+
             foreach (String name in fields_index)
             {
-                
+
                 if (name.Equals(fieldName))
                 {
                     return result;
                 }
                 result++;
             }
-            
-            return -1;            
-            
+
+            return -1;
+
         }
 
     }

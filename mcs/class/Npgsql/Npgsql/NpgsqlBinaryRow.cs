@@ -80,7 +80,7 @@ namespace Npgsql
                 if (IsBackendNull(null_map_array, field_count))
                 {
                     // Field is null just keep next field.
-                   
+
                     data.Add(DBNull.Value);
                     continue;
                 }

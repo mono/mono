@@ -100,6 +100,9 @@
 	<data name="Log_ErrorResponse">
 		<value>ErrorResponse message from Server: {0}.</value>
 	</data>
+	<data name="Log_NoticeResponse">
+		<value>NoticeResponse message from Server: {0}.</value>
+	</data>
     <data name="Log_AuthenticationOk">
         <value>AAuthenticationOK received.</value>
     </data>

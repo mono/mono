@@ -38,7 +38,8 @@ namespace Npgsql
 
     internal sealed class NpgsqlMediator
     {
-        private ArrayList							_errorMessages;
+        private ArrayList							_errors;
+        private ArrayList							_notices;
         private	ArrayList							_resultSets;
         private ArrayList							_responses;
         private ArrayList             _notifications;
@@ -49,7 +50,8 @@ namespace Npgsql
 
         public NpgsqlMediator()
         {
-            _errorMessages = new ArrayList();
+            _errors = new ArrayList();
+            _notices = new ArrayList();
             _resultSets = new ArrayList();
             _responses = new ArrayList();
             _notifications = new ArrayList();
@@ -57,7 +59,8 @@ namespace Npgsql
 
         public void Reset()
         {
-            _errorMessages.Clear();
+            _errors.Clear();
+            _notices.Clear();
             _resultSets.Clear();
             _responses.Clear();
             _notifications.Clear();
@@ -68,7 +71,15 @@ namespace Npgsql
         {
             get
             {
-                return _errorMessages;
+                return _errors;
+            }
+        }
+
+        public ArrayList Notices
+        {
+            get
+            {
+                return _notices;
             }
         }
 

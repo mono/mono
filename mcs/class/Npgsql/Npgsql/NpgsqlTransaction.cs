@@ -50,8 +50,7 @@ namespace Npgsql
 
 
         internal NpgsqlTransaction(NpgsqlConnection conn) : this(conn, IsolationLevel.ReadCommitted)
-        {
-        }
+        {}
 
         internal NpgsqlTransaction(NpgsqlConnection conn, IsolationLevel isolation)
         {

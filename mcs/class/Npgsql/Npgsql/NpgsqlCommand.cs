@@ -343,16 +343,8 @@ namespace Npgsql
 
             // Check if there were any errors.
             if (connection.Mediator.Errors.Count > 0)
-            {
-                StringWriter sw = new StringWriter();
-                sw.WriteLine(String.Format(resman.GetString("Exception_MediatorErrors"), "ExecuteNonQuery"));
-                uint i = 1;
-                foreach(string error in connection.Mediator.Errors)
-                {
-                    sw.WriteLine("{0}. {1}", i++, error);
-                }
-                throw new NpgsqlException(sw.ToString());
-            }
+                throw new NpgsqlException(resman.GetString("Exception_BackendErrors"), connection.Mediator.Errors);
+
 
             CheckNotification();
 
@@ -364,13 +356,13 @@ namespace Npgsql
             if(connection.Mediator.GetCompletedResponses().Count == 0)
                 return -1;
 
-            
+
             // Check if the response is available.
             String firstCompletedResponse = (String)connection.Mediator.GetCompletedResponses()[0];
-            
+
             if (firstCompletedResponse == null)
                 return -1;
-                                                                                                      
+
             String[] ret_string_tokens = firstCompletedResponse.Split(null);        // whitespace separator.
 
 
@@ -378,8 +370,8 @@ namespace Npgsql
             // Only theses commands return rows affected.
             // [FIXME] Is there a better way to check this??
             if ((String.Compare(ret_string_tokens[0], "INSERT", true) == 0) ||
-                (String.Compare(ret_string_tokens[0], "UPDATE", true) == 0) ||
-                (String.Compare(ret_string_tokens[0], "DELETE", true) == 0))
+                    (String.Compare(ret_string_tokens[0], "UPDATE", true) == 0) ||
+                    (String.Compare(ret_string_tokens[0], "DELETE", true) == 0))
 
                 // The number of rows affected is in the third token for insert queries
                 // and in the second token for update and delete queries.
@@ -458,20 +450,12 @@ namespace Npgsql
 
             // Check if there were any errors.
             if (connection.Mediator.Errors.Count > 0)
-            {
-                StringWriter sw = new StringWriter();
-                sw.WriteLine(String.Format(resman.GetString("Exception_MediatorErrors_1P"), "ExecuteReader", cb));
-                uint i = 1;
-                foreach(string error in connection.Mediator.Errors)
-                {
-                    sw.WriteLine("{0}. {1}", i++, error);
-                }
-                throw new NpgsqlException(sw.ToString());
-            }
+                throw new NpgsqlException(resman.GetString("Exception_BackendErrors"), connection.Mediator.Errors);
+
 
             CheckNotification();
 
-            
+
             // Get the resultsets and create a Datareader with them.
             return new NpgsqlDataReader(connection.Mediator.GetResultSets(), connection.Mediator.GetCompletedResponses(), connection, cb);
         }
@@ -531,16 +515,9 @@ namespace Npgsql
             // Check if there were any errors.
             // [FIXME] Just check the first error.
             if (connection.Mediator.Errors.Count > 0)
-            {
-                StringWriter sw = new StringWriter();
-                sw.WriteLine(String.Format(resman.GetString("Exception_MediatorErrors"), "ExecuteScalar"));
-                uint i = 1;
-                foreach(string error in connection.Mediator.Errors)
-                {
-                    sw.WriteLine("{0}. {1}", i++, error);
-                }
-                throw new NpgsqlException(sw.ToString());
-            }
+                throw new NpgsqlException(resman.GetString("Exception_BackendErrors"), connection.Mediator.Errors);
+
+
 
             CheckNotification();
 
@@ -554,9 +531,9 @@ namespace Npgsql
             // First data is the RowDescription object.
             // Check all resultsets as insert commands could have been sent along
             // with resultset queries. The insert commands return null and and some queries
-            // may return empty resultsets, so, if we find one of these, skip to next resultset. 
+            // may return empty resultsets, so, if we find one of these, skip to next resultset.
             // If no resultset is found, return null as per specification.
-            
+
             NpgsqlAsciiRow ascii_row = null;
             foreach( NpgsqlResultSet nrs in resultSets )
             {
@@ -566,8 +543,8 @@ namespace Npgsql
                     return ascii_row[0];
                 }
             }
-            
-            
+
+
             return null;
 
 

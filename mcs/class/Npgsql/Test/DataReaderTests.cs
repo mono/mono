@@ -452,6 +452,50 @@ namespace NpgsqlTests
 			
 		}
 		
+        
+        [Test]
+        [ExpectedException(typeof(InvalidOperationException))]
+		public void ReadPastDataReaderEnd()
+		{
+            _conn.Open();
+            NpgsqlCommand command = new NpgsqlCommand("select * from tablea;", _conn);
+			
+			NpgsqlDataReader dr = command.ExecuteReader();
+            
+            while (dr.Read());
+            
+            Object o = dr[0];
+            
+        }
+        
+        [Test]
+        public void IsDBNull()
+        {
+            _conn.Open();
+            NpgsqlCommand command = new NpgsqlCommand("select field_text from tablea;", _conn);
+			
+			NpgsqlDataReader dr = command.ExecuteReader();
+            
+            dr.Read();
+            Assertion.AssertEquals(false, dr.IsDBNull(0));
+            dr.Read();
+            Assertion.AssertEquals(true, dr.IsDBNull(0));
+            
+                
+        }
+        
+        [Test]
+        public void IsDBNullFromScalar()
+        {
+            _conn.Open();
+            NpgsqlCommand command = new NpgsqlCommand("select max(field_serial) from tablea;", _conn);
+			
+			NpgsqlDataReader dr = command.ExecuteReader();
+            
+            dr.Read();
+            Assertion.AssertEquals(false, dr.IsDBNull(0));
+            
+        }
 		
 		
 		

@@ -190,7 +190,7 @@ namespace Npgsql
         // We only need to do this for version 2 protocol.
         private static Boolean IsBackendNull(Byte[] null_map_array, Int32 index)
         {
-            
+
             // Get the byte that holds the bit index position.
             Byte test_byte = null_map_array[index/8];
 
@@ -221,7 +221,7 @@ namespace Npgsql
 
                 if ((index < 0) || (index >= row_desc.NumFields))
                     throw new ArgumentOutOfRangeException("this[] index value");
-                
+
                 return data[index];
 
 
