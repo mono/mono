@@ -1,3 +1,7 @@
+2004-05-19  Boris Kirzner  <borisk@mainsoft.com>
+	* Datacontainer.cs : CompareValues reviewed. set_Item and get_Item of null and DBNull values in case of DataContainers
+	for primitive types reviewed. Added check for null values when reading from IDataRecord.
+	
 2004-05-19  Boris Kirzner <borisk@mainsoft.com>
 	* RecordCache.cs - added. Each instance of record cache belongs to specific table
 	and manages pool of records ( indexes into data containers) to be used by data rows.

@@ -116,7 +116,23 @@ namespace System.Data.Common
 			_nullValues[toIndex] = _nullValues[fromIndex];
 		}
 
-		internal abstract void SetItemFromDataRecord(int index, IDataRecord record, int field);
+		internal virtual void SetItemFromDataRecord(int index, IDataRecord record, int field)
+		{
+			SetNull(index,record.IsDBNull(field));
+		}
+
+		protected int CompareNulls(int index1, int index2)
+		{
+			bool null1 = IsNull(index1);
+			bool null2 = IsNull(index2);
+
+			if ( null1 ^ null2 ) {
+				return null1 ? -1 : 1;
+			}
+			else {
+				return 0;
+			}
+		}
 
 		internal abstract int CompareValues(int index1, int index2);
 
@@ -134,18 +150,25 @@ namespace System.Data.Common
 
 			internal override object this[int index] {
 				get {
-					return _values[index];
+					if (IsNull(index)) {
+						return DBNull.Value;
+					}
+					else {
+						return _values[index];
+					}
 				}
 				set {
-					if (value == null || value ==  DBNull.Value) {
+					bool isDbNull = (value ==  DBNull.Value);
+					if (value == null || isDbNull) {
 						SetValue(index,0);
 					}
-					else if( value is int ) {
+					else if( value is short ) {
 						SetValue(index,(short)value);
 					}
 					else {
 						SetValue(index,Convert.ToInt16(value));
 					}
+					SetNull(index,isDbNull);
 				}
 			}
 
@@ -170,7 +193,6 @@ namespace System.Data.Common
 			private void SetValue(int index, short value)
 			{
 				_values[index] = value;
-				SetNull(index,value == 0);
 			}
 
 			internal override void SetItemFromDataRecord(int index, IDataRecord record, int field)
@@ -178,6 +200,7 @@ namespace System.Data.Common
 				// if exception thrown, it should be caught 
 				// in the  caller method
 				SetValue(index,record.GetInt16(field));
+				base.SetItemFromDataRecord(index,record,field);
 			}
 
 			internal override void CopyValue(int fromIndex, int toIndex)
@@ -194,7 +217,29 @@ namespace System.Data.Common
 
 			internal override int CompareValues(int index1, int index2)
 			{
-				return (_values[index1] - _values[index2]);
+				short s1 = _values[index1];
+				short s2 = _values[index2];
+
+				if ( s1 == 0 && s2 == 0 ) {
+					int cn = CompareNulls(index1, index2);
+					return cn;
+				}
+
+				bool b1 = IsNull(index1);
+				bool b2 = IsNull(index2);
+				
+				if ( s1 == 0 && b1 ) {
+					return -1;
+				}
+
+				if ( s2 == 0 && b2 ) {
+					return 1;
+				}
+
+				if ( s1 <= s2 ) {
+					return ( s1 != s2 ) ? -1 : 0;
+				}
+				return 1;
 			}
 
 			#endregion //Methods
@@ -212,10 +257,16 @@ namespace System.Data.Common
 
 			internal override object this[int index] {
 				get {
-					return _values[index];
+					if (IsNull(index)) {
+						return DBNull.Value;
+					}
+					else {
+						return _values[index];
+					}
 				}
 				set {
-					if (value == null || value ==  DBNull.Value) {
+					bool isDbNull = (value ==  DBNull.Value);
+					if (value == null || isDbNull) {
 						SetValue(index,0);
 					}
 					else if( value is int ) {
@@ -224,6 +275,7 @@ namespace System.Data.Common
 					else {
 						SetValue(index,Convert.ToInt32(value));
 					}
+					SetNull(index,isDbNull);
 				}
 			}
 
@@ -248,7 +300,6 @@ namespace System.Data.Common
 			private void SetValue(int index, int value)
 			{
 				_values[index] = value;
-				SetNull(index,value == 0);
 			}
 
 			internal override void SetItemFromDataRecord(int index, IDataRecord record, int field)
@@ -256,6 +307,7 @@ namespace System.Data.Common
 				// if exception thrown, it should be caught 
 				// in the  caller method
 				SetValue(index,record.GetInt32(field));
+				base.SetItemFromDataRecord(index,record,field);
 			}
 
 			internal override void CopyValue(int fromIndex, int toIndex)
@@ -275,10 +327,26 @@ namespace System.Data.Common
 				int i1 = _values[index1];
 				int i2 = _values[index2];
 
-				if (i1 == i2) {
-					return 0;
+				if ( i1 == 0 && i2 == 0 ) {
+					int cn = CompareNulls(index1, index2);
+					return cn;
 				}
-				return (i1 > i2) ? 1 : -1;
+
+				bool b1 = IsNull(index1);
+				bool b2 = IsNull(index2);
+				
+				if ( i1 == 0 && b1 ) {
+					return -1;
+				}
+
+				if ( i2 == 0 && b2 ) {
+					return 1;
+				}
+
+				if ( i1 <= i2 ) {
+					return ( i1 != i2 ) ? -1 : 0;
+				}
+				return 1;
 			}
 
 			#endregion //Methods
@@ -296,10 +364,16 @@ namespace System.Data.Common
 
 			internal override object this[int index] {
 				get {
-					return _values[index];
+					if (IsNull(index)) {
+						return DBNull.Value;
+					}
+					else {
+						return _values[index];
+					}
 				}
 				set {
-					if (value == null || value ==  DBNull.Value) {
+					bool isDbNull = (value ==  DBNull.Value);
+					if (value == null || isDbNull) {
 						SetValue(index,0);
 					}
 					else if( value is long ) {
@@ -308,6 +382,7 @@ namespace System.Data.Common
 					else {
 						SetValue(index,Convert.ToInt64(value));
 					}
+					SetNull(index,isDbNull);
 				}
 			}
 
@@ -332,7 +407,6 @@ namespace System.Data.Common
 			private void SetValue(int index, long value)
 			{
 				_values[index] = value;
-				SetNull(index,value == 0);
 			}
 
 			internal override void SetItemFromDataRecord(int index, IDataRecord record, int field)
@@ -340,6 +414,7 @@ namespace System.Data.Common
 				// if exception thrown, it should be caught 
 				// in the  caller method
 				SetValue(index,record.GetInt64(field));
+				base.SetItemFromDataRecord(index,record,field);
 			}
 
 			internal override void CopyValue(int fromIndex, int toIndex)
@@ -359,10 +434,17 @@ namespace System.Data.Common
 				long l1 = _values[index1];
 				long l2 = _values[index2];
 
-				if (l1 == l2) {
-					return 0;
+				if ( l1 == 0 || l2 == 0 ) {
+					int cn = CompareNulls(index1, index2);
+					if (cn != 0) {
+						return cn;
+					}
 				}
-				return (l1 > l2) ? 1 : -1;
+
+				if ( l1 <= l2 ) {
+					return ( l1 != l2 ) ? -1 : 0;
+				}
+				return 1;
 			}
 
 			#endregion //Methods
@@ -380,10 +462,16 @@ namespace System.Data.Common
 
 			internal override object this[int index] {
 				get {
-					return _values[index];
+					if (IsNull(index)) {
+						return DBNull.Value;
+					}
+					else {
+						return _values[index];
+					}
 				}
 				set {
-					if (value == null || value ==  DBNull.Value) {
+					bool isDbNull = (value ==  DBNull.Value);
+					if (value == null || isDbNull) {
 						SetValue(index,0);
 					}
 					else if( value is float ) {
@@ -392,6 +480,7 @@ namespace System.Data.Common
 					else {
 						SetValue(index,Convert.ToSingle(value));
 					}
+					SetNull(index,isDbNull);
 				}
 			}
 
@@ -416,7 +505,6 @@ namespace System.Data.Common
 			private void SetValue(int index, float value)
 			{
 				_values[index] = value;
-				SetNull(index,value == 0);
 			}
 
 			internal override void SetItemFromDataRecord(int index, IDataRecord record, int field)
@@ -424,6 +512,7 @@ namespace System.Data.Common
 				// if exception thrown, it should be caught 
 				// in the  caller method
 				SetValue(index,record.GetFloat(field));
+				base.SetItemFromDataRecord(index,record,field);
 			}
 
 			internal override void CopyValue(int fromIndex, int toIndex)
@@ -440,7 +529,20 @@ namespace System.Data.Common
 
 			internal override int CompareValues(int index1, int index2)
 			{
-				return (int)(_values[index1] - _values[index2]);
+				float f1 = _values[index1];
+				float f2 = _values[index2];
+
+				if ( f1 == 0 || f2 == 0 ) {
+					int cn = CompareNulls(index1, index2);
+					if (cn != 0) {
+						return cn;
+					}
+				}
+
+				if ( f1 <= f2 ) {
+					return ( f1 != f2 ) ? -1 : 0;
+				}
+				return 1;
 			}
 
 			#endregion //Methods
@@ -458,10 +560,16 @@ namespace System.Data.Common
 
 			internal override object this[int index] {
 				get {
-					return _values[index];
+					if (IsNull(index)) {
+						return DBNull.Value;
+					}
+					else {
+						return _values[index];
+					}
 				}
 				set {
-					if (value == null || value ==  DBNull.Value) {
+					bool isDbNull = (value ==  DBNull.Value);
+					if (value == null || isDbNull) {
 						SetValue(index,0);
 					}
 					else if( value is double ) {
@@ -470,6 +578,7 @@ namespace System.Data.Common
 					else {
 						SetValue(index,Convert.ToDouble(value));
 					}
+					SetNull(index,isDbNull);
 				}
 			}
 
@@ -494,7 +603,6 @@ namespace System.Data.Common
 			private void SetValue(int index, double value)
 			{
 				_values[index] = value;
-				SetNull(index,value == 0);
 			}
 
 			internal override void SetItemFromDataRecord(int index, IDataRecord record, int field)
@@ -502,6 +610,7 @@ namespace System.Data.Common
 				// if exception thrown, it should be caught 
 				// in the  caller method
 				SetValue(index,record.GetDouble(field));
+				base.SetItemFromDataRecord(index,record,field);
 			}
 
 			internal override void CopyValue(int fromIndex, int toIndex)
@@ -518,7 +627,20 @@ namespace System.Data.Common
 
 			internal override int CompareValues(int index1, int index2)
 			{
-				return (int)(_values[index1] - _values[index2]);
+				double d1 = _values[index1];
+				double d2 = _values[index2];
+
+				if ( d1 == 0 || d2 == 0 ) {
+					int cn = CompareNulls(index1, index2);
+					if (cn != 0) {
+						return cn;
+					}
+				}
+
+				if ( d1 <= d2 ) {
+					return ( d1 != d2 ) ? -1 : 0;
+				}
+				return 1;
 			}
 
 			#endregion //Methods
@@ -536,10 +658,16 @@ namespace System.Data.Common
 
 			internal override object this[int index] {
 				get {
-					return _values[index];
+					if (IsNull(index)) {
+						return DBNull.Value;
+					}
+					else {
+						return _values[index];
+					}
 				}
 				set {
-					if (value == null || value ==  DBNull.Value) {
+					bool isDbNull = (value ==  DBNull.Value);
+					if (value == null || isDbNull) {
 						SetValue(index,0);
 					}
 					else if( value is byte ) {
@@ -548,6 +676,7 @@ namespace System.Data.Common
 					else {
 						SetValue(index,Convert.ToByte(value));
 					}
+					SetNull(index,isDbNull);
 				}
 			}
 
@@ -572,7 +701,6 @@ namespace System.Data.Common
 			private void SetValue(int index, byte value)
 			{
 				_values[index] = value;
-				SetNull(index,value == 0);
 			}
 
 			internal override void SetItemFromDataRecord(int index, IDataRecord record, int field)
@@ -580,6 +708,7 @@ namespace System.Data.Common
 				// if exception thrown, it should be caught 
 				// in the  caller method
 				SetValue(index,record.GetByte(field));
+				base.SetItemFromDataRecord(index,record,field);
 			}
 
 			internal override void CopyValue(int fromIndex, int toIndex)
@@ -596,7 +725,20 @@ namespace System.Data.Common
 
 			internal override int CompareValues(int index1, int index2)
 			{
-				return (_values[index1] - _values[index2]);
+				byte b1 = _values[index1];
+				byte b2 = _values[index2];
+
+				if ( b1 == 0 || b2 == 0 ) {
+					int cn = CompareNulls(index1, index2);
+					if (cn != 0) {
+						return cn;
+					}
+				}
+
+				if ( b1 <= b2 ) {
+					return ( b1 != b2 ) ? -1 : 0;
+				}
+				return 1;
 			}
 
 			#endregion //Methods
@@ -606,7 +748,7 @@ namespace System.Data.Common
 		{
 			#region Fields
 		
-			// we don't need _values - using _nullValues instead
+			bool[] _values;
 
 			#endregion //Fields
 
@@ -614,10 +756,17 @@ namespace System.Data.Common
 
 			internal override object this[int index] {
 				get {
-					return !IsNull(index);
+					bool isNull = IsNull(index);
+					if (isNull) {
+						return DBNull.Value;
+					}
+					else {
+						return !isNull;
+					}
 				}
 				set {
-					if (value == null || value ==  DBNull.Value) {
+					bool isDbNull = (value ==  DBNull.Value);
+					if (value == null || isDbNull) {
 						SetValue(index,false);
 					}
 					else if( value is bool ) {
@@ -626,12 +775,21 @@ namespace System.Data.Common
 					else {
 						SetValue(index,Convert.ToBoolean(value));
 					}
+					SetNull(index,isDbNull);
 				}
 			}
 
 			internal override int Capacity {
 				set {
 					base.Capacity = value;
+					if (_values == null) {
+						_values = new bool[value];
+					}
+					else {
+						bool[] tmp = new bool[value];
+						Array.Copy(_values,0,tmp,0,_values.Length);
+						_values = tmp;
+					}
 				}
 			}
 
@@ -641,7 +799,7 @@ namespace System.Data.Common
 			
 			private void SetValue(int index, bool value)
 			{
-				SetNull(index,!value);
+				_values[index] = value;
 			}
 
 			internal override void SetItemFromDataRecord(int index, IDataRecord record, int field)
@@ -658,7 +816,18 @@ namespace System.Data.Common
 
 			internal override int CompareValues(int index1, int index2)
 			{
-				return ((int)this[index1] - (int)this[index2]);
+				bool b1 = _values[index1];
+				bool b2 = _values[index2];
+
+				if ( b1 ^ b2 ) {
+					return b1 ? 1 : -1;
+				}
+				
+				if ( b1 ) {
+					return 0;
+				}
+
+				return CompareNulls(index1, index2);	
 			}
 
 			#endregion //Methods
@@ -680,6 +849,7 @@ namespace System.Data.Common
 				}
 				set {
 					SetValue(index,value);
+					SetNull(index,value == DBNull.Value);
 				}
 			}
 
@@ -704,10 +874,9 @@ namespace System.Data.Common
 			protected virtual void SetValue(int index, object value)
 			{
 				if(value == null) {
-					value = DBNull.Value;
+					value = Column.DefaultValue;
 				}
 				_values[index] = value;
-				SetNull(index,value == DBNull.Value);
 			}
 
 			internal override void SetItemFromDataRecord(int index, IDataRecord record, int field)
@@ -715,6 +884,7 @@ namespace System.Data.Common
 				// if exception thrown, it should be caught 
 				// in the  caller method
 				SetValue(index,record.GetValue(field));
+				base.SetItemFromDataRecord(index,record,field);
 			}
 
 			internal override void CopyValue(int fromIndex, int toIndex)
@@ -784,6 +954,7 @@ namespace System.Data.Common
 				// if exception thrown, it should be caught 
 				// in the  caller method
 				SetValue(index,record.GetString(field));
+				base.SetItemFromDataRecord(index,record,field);
 			}
 
 			internal override int CompareValues(int index1, int index2)
@@ -823,6 +994,7 @@ namespace System.Data.Common
 				// if exception thrown, it should be caught 
 				// in the  caller method
 				base.SetValue(index,record.GetDateTime(field));
+				base.SetItemFromDataRecord(index,record,field);
 			}
 
 			internal override int CompareValues(int index1, int index2)
