@@ -1,4 +1,13 @@
 2002-8-1  DennisHayes <dennish@raytek.com>
+* MonthCalendar.cs
+* ButtonBase.cs
+* Form.cs
+* MonthCalendar commented out, stubbs need work
+* GTK references removed from Buttonbase and form, to make compile easier.
+* Replace GTK references as soon as build works on Windows and Linux.
+* With this, SWF should compile uder visual studio
+
+2002-8-1  DennisHayes <dennish@raytek.com>
 * TODOAttribute.cs
 * ComVisible.cs
 * added so the namespace can compile, remove when replaced with mono equivalents.
