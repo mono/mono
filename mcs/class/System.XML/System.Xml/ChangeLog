@@ -1,3 +1,13 @@
+2003-07-24  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
+
+	* XmlTextReader.cs :
+	  Read() now handles parser context stuff (BaseURI, XmlLang and 
+	  XmlSpace) correctly for an empty element.
+	  Normalization property now doesn't throw an error. Will be used soon.
+	* XmlValidatingReader.cs : added ValidationType.None support (wait for
+	  the next DTDValidatingReader update for "not firing event handler).
+	* XmlNodeReader.cs : jun. 30th commit seems wrong. It keeps its state.
+
 2003-07-19  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
 
 	* DTDValidatingReader.cs :

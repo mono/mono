@@ -241,8 +241,8 @@ namespace System.Xml
 		[MonoTODO]
 		public bool Normalization
 		{
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+			get { return normalization; }
+			set { normalization = value; }
 		}
 
 		public override string Prefix
@@ -1086,6 +1086,21 @@ namespace System.Xml
 			if (XmlConstructs.IsNameStart (PeekChar ()))
 				ReadAttributes (false);
 
+			string baseUri = GetAttribute ("xml:base");
+			if (baseUri != null)
+				parserContext.BaseURI = baseUri;
+			string xmlLang = GetAttribute ("xml:lang");
+			if (xmlLang != null)
+				parserContext.XmlLang = xmlLang;
+			string xmlSpaceAttr = GetAttribute ("xml:space");
+			if (xmlSpaceAttr != null) {
+				if (xmlSpaceAttr == "preserve")
+					parserContext.XmlSpace = XmlSpace.Preserve;
+				else if (xmlSpaceAttr == "default")
+					parserContext.XmlSpace = XmlSpace.Default;
+				else
+					throw new XmlException (this as IXmlLineInfo,String.Format ("Invalid xml:space value: {0}", xmlSpaceAttr));
+			}
 			if (PeekChar () == '/') {
 				ReadChar ();
 				isEmptyElement = true;
@@ -1094,21 +1109,6 @@ namespace System.Xml
 			else {
 				depthUp = true;
 				elementStack.Push (name);
-				string baseUri = GetAttribute ("xml:base");
-				if (baseUri != null)
-					parserContext.BaseURI = baseUri;
-				string xmlLang = GetAttribute ("xml:lang");
-				if (xmlLang != null)
-					parserContext.XmlLang = xmlLang;
-				string xmlSpaceAttr = GetAttribute ("xml:space");
-				if (xmlSpaceAttr != null) {
-					if (xmlSpaceAttr == "preserve")
-						parserContext.XmlSpace = XmlSpace.Preserve;
-					else if (xmlSpaceAttr == "default")
-						parserContext.XmlSpace = XmlSpace.Default;
-					else
-						throw new XmlException (this as IXmlLineInfo,String.Format ("Invalid xml:space value: {0}", xmlSpaceAttr));
-				}
 				parserContext.PushScope ();
 			}
 

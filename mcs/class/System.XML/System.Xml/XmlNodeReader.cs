@@ -609,10 +609,8 @@ namespace System.Xml
 		// Its traversal behavior is almost same as Read().
 		public override string ReadInnerXml ()
 		{
-			if (this.state != ReadState.Interactive) {
-				state = ReadState.Error;
+			if (this.state != ReadState.Interactive)
 				return String.Empty;
-			}
 
 			XmlNode initial = current;
 			// Almost copied from XmlTextReader.

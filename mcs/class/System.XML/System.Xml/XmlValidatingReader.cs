@@ -79,10 +79,7 @@ namespace System.Xml {
 		[MonoTODO]
 		public EntityHandling EntityHandling {
 			get { return entityHandling; }
-			set {
-				throw new NotImplementedException ();
-//				entityHandling = value;
-			}
+			set { entityHandling = value; }
 		}
 
 		public override bool EOF { 
@@ -220,9 +217,9 @@ namespace System.Xml {
 				switch (validationType) {
 				case ValidationType.Auto:
 				case ValidationType.DTD:
+				case ValidationType.None:
 					validationType = value; 
 					break;
-				case ValidationType.None:
 				case ValidationType.Schema:
 				case ValidationType.XDR:
 					throw new NotImplementedException ();
@@ -237,7 +234,7 @@ namespace System.Xml {
 
 		public override string XmlLang {
 			[MonoTODO]
-			get { return validatingReader == null ? null : validatingReader.XmlLang; }
+			get { return validatingReader == null ? String.Empty : validatingReader.XmlLang; }
 		}
 
 		public XmlResolver XmlResolver {
@@ -332,11 +329,16 @@ namespace System.Xml {
 			if (ReadState == ReadState.Initial) {
 				switch (ValidationType) {
 				case ValidationType.Auto:
+				case ValidationType.None:
+					validatingReader = // new XmlSchemaValidatingReader (
+						new DTDValidatingReader (sourceReader, this);
+					break;
 				case ValidationType.DTD:
 					validatingReader = new DTDValidatingReader (sourceReader, this);
 					break;
-				case ValidationType.None:
 				case ValidationType.Schema:
+//					validatingReader = new XmlSchemaValidatingReader (sourceReader, this);
+//					break;
 				case ValidationType.XDR:
 					throw new NotImplementedException ();
 				}
@@ -387,7 +389,7 @@ namespace System.Xml {
 		{
 			if (ValidationEventHandler != null)
 				ValidationEventHandler (o, e);
-			else
+			else if (ValidationType != ValidationType.None)
 				throw e.Exception;
 		}
 		#endregion // Methods
