@@ -1440,8 +1440,10 @@ namespace Mono.CSharp {
 			if (TypeBuilder.BaseType != null)
 				parent_container = TypeManager.LookupMemberContainer (TypeBuilder.BaseType);
 
-			if (TypeBuilder.IsInterface)
-				parent_container = TypeManager.LookupInterfaceContainer (ifaces);
+			// TODO:
+			//if (TypeBuilder.IsInterface) {
+			//	parent_container = TypeManager.LookupInterfaceContainer (base_inteface_types);
+			//}
 
  			if (IsTopLevel) {
  				if ((ModFlags & Modifiers.NEW) != 0)
@@ -1529,7 +1531,7 @@ namespace Mono.CSharp {
 
 #if CACHE
 			if (!(this is ClassPart))
-			member_cache = new MemberCache (this, false);
+				member_cache = new MemberCache (this);
 #endif
 
 			if (parts != null) {
@@ -3147,7 +3149,7 @@ namespace Mono.CSharp {
 						return false;
 					}
 				} else {
-					if (parent_method.IsAbstract && !IsInterface) {
+					if (parent_method.IsAbstract) {
 						Report.SymbolRelatedToPreviousError (parent_method);
 						Report.Error (533, Location, "'{0}' hides inherited abstract member", GetSignatureForError (Parent));
 						return false;

@@ -445,19 +445,6 @@
 	used as a fencepost to test against the anonymous-methodness of an
 	expression. 
 	
-2004-10-24  Marek Safar  <marek.safar@seznam.cz>
-
-	Fixed bugs #63705, #67130
-	* decl.cs (MemberCache.MemberCache): Add parameter to distinguish
-	imported and defined interfaces.
-	(CacheEntry, EntryType): Changed to protected internal.
-
-	* class.cs (TypeContainer.DoDefineMembers): Setup cache for
-	interfaces too.
-
-	* typemanager.cs (LookupInterfaceContainer): New method.
-	Fills member container from base interfaces.
-
 2004-10-20  Marek Safar  <marek.safar@seznam.cz>
 
 	* class.cs (MethodCore.CheckBase): Add errors 505, 533, 544,
