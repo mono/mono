@@ -1,3 +1,7 @@
+2003-10-13 Jackson Harper <jackson@ximian.com>
+
+	* get.c: stringify nested types properly ie Outer/Inner.
+	
 2003-10-10 Jackson Harper <jackson@ximian.com>
 
 	* dump.c: When dumping methodspecs dump the full methodspec with
