@@ -296,28 +296,34 @@ namespace MonoTests.System.Data
 
 			//PrintTableOrView(dataView, "ItemAdded");
 			AssertEquals ("test#01",ListChangedType.ItemAdded,listChangedArgs.ListChangedType);
-			
+			listChangedArgs = null;
+
 			dr ["itemId"] = "aitem 0";
 			// PrintTableOrView(dataView, "ItemChanged");
 			AssertEquals ("test#02",ListChangedType.ItemChanged,listChangedArgs.ListChangedType);
-			
+			listChangedArgs = null;
+
 			dr ["itemId"] = "zitem 0";
 			// PrintTableOrView(dataView, "ItemMoved");
 			AssertEquals ("test#03",ListChangedType.ItemMoved,listChangedArgs.ListChangedType);
-			
+			listChangedArgs = null;
+
 			dataTable.Rows.Remove (dr);
 			// PrintTableOrView(dataView, "ItemDeleted");
 			AssertEquals ("test#04",ListChangedType.ItemDeleted,listChangedArgs.ListChangedType);
 			
+			listChangedArgs = null;
 			DataColumn dc5 = new DataColumn ("itemDesc");
 			dataTable.Columns.Add (dc5);
 			// PrintTableOrView(dataView, "PropertyDescriptorAdded");
 			AssertEquals ("test#05",ListChangedType.PropertyDescriptorAdded,listChangedArgs.ListChangedType);
 			
+			listChangedArgs = null;
 			dc5.ColumnName = "itemDescription";
 			// PrintTableOrView(dataView, "PropertyDescriptorChanged");
 			// AssertEquals ("test#06",ListChangedType.PropertyDescriptorChanged,listChangedArgs.ListChangedType);
 			
+			listChangedArgs = null;
 			dataTable.Columns.Remove (dc5);
 			// PrintTableOrView(dataView, "PropertyDescriptorDeleted");
 			AssertEquals ("test#07",ListChangedType.PropertyDescriptorDeleted,listChangedArgs.ListChangedType);

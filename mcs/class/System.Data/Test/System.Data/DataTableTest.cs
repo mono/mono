@@ -1288,6 +1288,39 @@ namespace MonoTests.System.Data
 			dt.Rows.Add (new object [] {DBNull.Value, 3});
 		}
 
+		void RowChanging (object o, DataRowChangeEventArgs e)
+		{
+			AssertEquals ("changing.Action", rowChangingExpectedAction, e.Action);
+			rowChangingRowChanging = true;
+		}
+
+		void RowChanged (object o, DataRowChangeEventArgs e)
+		{
+			AssertEquals ("changed.Action", rowChangingExpectedAction, e.Action);
+			rowChangingRowChanged = true;
+		}
+
+		bool rowChangingRowChanging, rowChangingRowChanged;
+		DataRowAction rowChangingExpectedAction;
+
+		[Test]
+		public void RowChanging ()
+		{
+			DataTable dt = new DataTable ("table");
+			dt.Columns.Add ("col1");
+			dt.Columns.Add ("col2");
+			dt.RowChanging += new DataRowChangeEventHandler (RowChanging);
+			dt.RowChanged += new DataRowChangeEventHandler (RowChanged);
+			rowChangingExpectedAction = DataRowAction.Add;
+			dt.Rows.Add (new object [] {1, 2});
+			Assert ("changing,Added", rowChangingRowChanging);
+			Assert ("changed,Added", rowChangingRowChanged);
+			rowChangingExpectedAction = DataRowAction.Change;
+			dt.Rows [0] [0] = 2;
+			Assert ("changing,Changed", rowChangingRowChanging);
+			Assert ("changed,Changed", rowChangingRowChanged);
+		}
+
 		 [Test]
                 public void CloneSubClassTest()
                 {

@@ -1,3 +1,8 @@
+2005-02-01  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* DataTableTest.cs : added RowChanging event test.
+	* DataViewTest.cs : make sure to clear event args.
+
 2005-01-31  Sureshkumar T  <tsureshkumar@novell.com>
 
 	* DataRowTest.cs: Added case for SetparentRow: create
