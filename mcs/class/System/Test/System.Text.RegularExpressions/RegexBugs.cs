@@ -138,6 +138,21 @@ namespace MonoTests.System.Text.RegularExpressions
 			rex += "type\\s*=\\s*[\"']?text/xml[\"']?\\s*href\\s*=\\s*(?:\"(?<1>[^\"]*)\"|'(?<1>[^']*)'|(?<1>\\S+))";
 			Regex rob = new Regex (rex, RegexOptions.IgnoreCase);
 		}
+		
+		[Test]
+		public void UndefinedGroup () // bug 52890
+		{
+			Regex regex = new Regex( "[A-Za-z_0-9]" );
+			Match m = regex.Match( "123456789abc" );
+			Group g = m.Groups["not_defined"];
+			AssertNotNull ("#0", g);
+			AssertEquals ("#1", 0, g.Index);
+			AssertEquals ("#2", 0, g.Length);
+			AssertEquals ("#3", "", g.Value);
+			Assert ("#4", !g.Success);
+			AssertNotNull ("#5", g.Captures);
+			AssertEquals ("#6", 0, g.Captures.Count);
+		}
 	}
 }
 
