@@ -66,7 +66,8 @@ namespace Mono.CSharp {
                                 return null;
 
                         args.Add (a);
-			method = Invocation.OverloadResolve (ec, (MethodGroupExpr) mg, args, loc);
+			method = Invocation.OverloadResolve (
+				ec, (MethodGroupExpr) mg, args, false, loc);
 
 			if (method == null)
 				return null;
@@ -2315,7 +2316,9 @@ namespace Mono.CSharp {
 					args.Add (new Argument (left, Argument.AType.Expression));
 					args.Add (new Argument (right, Argument.AType.Expression));
 					
-					MethodBase method = Invocation.OverloadResolve (ec, union, args, Location.Null);
+					MethodBase method = Invocation.OverloadResolve (
+						ec, union, args, true, Location.Null);
+
 					if (method != null) {
 						MethodInfo mi = (MethodInfo) method;
 						
@@ -3264,7 +3267,9 @@ namespace Mono.CSharp {
 			ArrayList arguments = new ArrayList ();
 			arguments.Add (new Argument (left, Argument.AType.Expression));
 			arguments.Add (new Argument (right, Argument.AType.Expression));
-			method = Invocation.OverloadResolve (ec, (MethodGroupExpr) operator_group, arguments, loc) as MethodInfo;
+			method = Invocation.OverloadResolve (
+				ec, (MethodGroupExpr) operator_group, arguments, false, loc)
+				as MethodInfo;
 			if ((method == null) || (method.ReturnType != type)) {
 				Error19 ();
 				return null;
@@ -4571,7 +4576,8 @@ namespace Mono.CSharp {
 		///
 		/// </summary>
 		public static MethodBase OverloadResolve (EmitContext ec, MethodGroupExpr me,
-							  ArrayList Arguments, Location loc)
+							  ArrayList Arguments, bool may_fail,
+							  Location loc)
 		{
 			MethodBase method = null;
 			Type applicable_type = null;
@@ -4714,7 +4720,7 @@ namespace Mono.CSharp {
                                         break;
 				}
 
-                                if (errors == Report.Errors)
+                                if (!may_fail && (errors == Report.Errors))
                                         Error_WrongNumArguments (loc, report_name,
 								 argument_count);
                                 
@@ -5100,7 +5106,7 @@ namespace Mono.CSharp {
 			}
 
 			MethodGroupExpr mg = (MethodGroupExpr) expr;
-			method = OverloadResolve (ec, mg, Arguments, loc);
+			method = OverloadResolve (ec, mg, Arguments, false, loc);
 
 			if (method == null)
 				return null;
@@ -5637,7 +5643,8 @@ namespace Mono.CSharp {
 					}
 				}
 
-				method = Invocation.OverloadResolve (ec, (MethodGroupExpr) ml, Arguments, loc);
+				method = Invocation.OverloadResolve (
+					ec, (MethodGroupExpr) ml, Arguments, false, loc);
 				
 			}
 
@@ -6140,7 +6147,8 @@ namespace Mono.CSharp {
 					return null;
 				}
 				
-				new_method = Invocation.OverloadResolve (ec, (MethodGroupExpr) ml, arguments, loc);
+				new_method = Invocation.OverloadResolve (
+					ec, (MethodGroupExpr) ml, arguments, false, loc);
 
 				if (new_method == null) {
 					Error (-6, "New invocation: Can not find a constructor for " +
@@ -7944,7 +7952,8 @@ namespace Mono.CSharp {
 			if (AllGetters.Count > 0) {
 				found_any_getters = true;
 				get = (MethodInfo) Invocation.OverloadResolve (
-					ec, new MethodGroupExpr (AllGetters, loc), arguments, loc);
+					ec, new MethodGroupExpr (AllGetters, loc),
+					arguments, false, loc);
 			}
 
 			if (!found_any) {
@@ -8008,7 +8017,7 @@ namespace Mono.CSharp {
 				set_arguments.Add (new Argument (right_side, Argument.AType.Expression));
 				set = (MethodInfo) Invocation.OverloadResolve (
 					ec, new MethodGroupExpr (AllSetters, loc),
-					set_arguments, loc);
+					set_arguments, false, loc);
 			}
 
 			if (!found_any) {
