@@ -26,16 +26,9 @@ namespace MonoTests.Microsoft.VisualBasic.CompilerServices
 			string[] source = new string[] { "First", "Second", "Third" };
 			string[] destination = new string[2];
 			string[] result = (string[])Utils.CopyArray(source, destination);
-			AssertEquals ("CopyArrayOneDimensionalShrinkingFirst", source[0], destination[0]);
-			AssertEquals ("CopyArrayOneDimensionalShrinkingSecond", source[1], destination[1]);
-			AssertEquals ("CopyArrayOneDimensionalShrinkingResultRank", destination.Rank, result.Rank);
-#if NET_1_1
-			AssertEquals ("CopyArrayOneDimensionalShrinkingResultLength", destination.LongLength, result.LongLength);
-#else
-			AssertEquals ("CopyArrayOneDimensionalShrinkingResultLength", destination.Length, result.Length);
-#endif
-			AssertEquals ("CopyArrayOneDimensionalShrinkingFirstOnResult", source[0], result[0]);
-			AssertEquals ("CopyArrayOneDimensionalShrinkingSecondOnResult", source[1], result[1]);
+			AssertEquals ("ResultIsDestination", destination, result);
+			AssertEquals ("First", source[0], destination[0]);
+			AssertEquals ("Second", source[1], destination[1]);
 		}
 
 		[Test]
@@ -43,18 +36,42 @@ namespace MonoTests.Microsoft.VisualBasic.CompilerServices
 			string[] source = new string[] { "First", "Second" };
 			string[] destination = new string[3];
 			string[] result = (string[])Utils.CopyArray(source, destination);
-			AssertEquals ("CopyArrayOneDimensionalExpandingFirst", source[0], destination[0]);
-			AssertEquals ("CopyArrayOneDimensionalExpandingSecond", source[1], destination[1]);
-			AssertEquals ("CopyArrayOneDimensionalExpandingEmptyThird", null, destination[2]);
-			AssertEquals ("CopyArrayOneDimensionalExpandingResultRank", destination.Rank, result.Rank);
-#if NET_1_1
-			AssertEquals ("CopyArrayOneDimensionalExpandingResultLength", destination.LongLength, result.LongLength);
-#else
-			AssertEquals ("CopyArrayOneDimensionalExpandingResultLength", destination.Length, result.Length);
-#endif
-			AssertEquals ("CopyArrayOneDimensionalExpandingFirstOnResult", source[0], result[0]);
-			AssertEquals ("CopyArrayOneDimensionalExpandingSecondOnResult", source[1], result[1]);
-			AssertEquals ("CopyArrayOneDimensionalExpandingEmptyThirdOnResult", null, result[2]);
+			AssertEquals ("ResultIsDestination", destination, result);
+			AssertEquals ("First", source[0], destination[0]);
+			AssertEquals ("Second", source[1], destination[1]);
+			AssertEquals ("EmptyThird", null, destination[2]);
+		}
+	
+		[Test]
+		public void TestCopyArrayBiDimensionalShrinking() {
+			string[,] source = new string[2,2];
+			source[0,0] = "First";
+			source[0,1] = "Second";
+			source[1,0] = "Third";
+			source[1,1] = "Fourth";
+			string[,] destination = new string[2,1];
+			string[,] result = (string[,])Utils.CopyArray(source, destination);
+			AssertEquals ("ResultIsDestination", destination, result);
+			AssertEquals ("First", source[0,0], destination[0,0]);
+			AssertEquals ("Third", source[1,0], destination[1,0]);
+		}
+
+		[Test]
+		public void TestCopyArrayBiDimensionalExpanding() {
+			string[,] source = new string[2,2];
+			source[0,0] = "First";
+			source[0,1] = "Second";
+			source[1,0] = "Third";
+			source[1,1] = "Fourth";
+			string[,] destination = new string[2,3];
+			string[,] result = (string[,])Utils.CopyArray(source, destination);
+			AssertEquals ("ResultIsDestination", destination, result);
+			AssertEquals ("First", source[0,0], destination[0,0]);
+			AssertEquals ("Second", source[0,1], destination[0,1]);
+			AssertEquals ("Third", source[1,0], destination[1,0]);
+			AssertEquals ("Fourth", source[1,1], destination[1,1]);
+			AssertEquals ("EmptyFifth", null, destination[0,2]);
+			AssertEquals ("EmptySixth", null, destination[1,2]);
 		}
 	
 		// An nice way to test for exceptions the class under test should 
