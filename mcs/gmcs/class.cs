@@ -878,8 +878,10 @@ namespace Mono.CSharp {
 				
 			} else {
 				TypeBuilder builder = Parent.DefineType ();
-				if (builder == null)
+				if (builder == null) {
+					error = true;
 					return null;
+				}
 				
 				TypeBuilder = builder.DefineNestedType (
 					Basename, type_attributes, ptype, null);
@@ -897,15 +899,21 @@ namespace Mono.CSharp {
 
 			if (constructed != null) {
 				ptype = constructed.ResolveType (ec);
-				if (ptype == null)
+				if (ptype == null) {
+					error = true;
 					return null;
+				}
 
 				TypeBuilder.SetParent (ptype);
 			}
 
 			if (IsGeneric) {
 				foreach (TypeParameter type_param in TypeParameters)
-					type_param.DefineType (ec, TypeBuilder);
+					if (!type_param.DefineType (ec, TypeBuilder))
+						error = true;
+
+				if (error)
+					return null;
 			}
 
 			//

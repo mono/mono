@@ -221,22 +221,38 @@ namespace Mono.CSharp {
 			return type;
 		}
 
-		public void DefineType (EmitContext ec, TypeBuilder tb)
+		public bool DefineType (EmitContext ec, TypeBuilder tb)
 		{
 			int index = type.GenericParameterPosition;
 			if (constraints == null)
-				tb.SetGenericParameterConstraints (index, new Type [0]);
-			else
-				tb.SetGenericParameterConstraints (index, constraints.ResolveTypes (ec));
+				tb.SetGenericParameterConstraints (index, new Type [0], false);
+			else {
+				Type[] types = constraints.ResolveTypes (ec);
+				if (types == null)
+					return false;
+
+				tb.SetGenericParameterConstraints (
+					index, types, constraints.HasConstructorConstraint);
+			}
+
+			return true;
 		}
 
-		public void DefineType (EmitContext ec, MethodBuilder mb)
+		public bool DefineType (EmitContext ec, MethodBuilder mb)
 		{
 			int index = type.GenericParameterPosition;
 			if (constraints == null)
-				mb.SetGenericParameterConstraints (index, new Type [0]);
-			else
-				mb.SetGenericParameterConstraints (index, constraints.ResolveTypes (ec));
+				mb.SetGenericParameterConstraints (index, new Type [0], false);
+			else {
+				Type[] types = constraints.ResolveTypes (ec);
+				if (types == null)
+					return false;
+
+				mb.SetGenericParameterConstraints (
+					index, types, constraints.HasConstructorConstraint);
+			}
+
+			return true;
 		}
 
 		public override string ToString ()
@@ -692,7 +708,8 @@ namespace Mono.CSharp {
 		public bool DefineType (EmitContext ec, MethodBuilder mb)
 		{
 			for (int i = 0; i < TypeParameters.Length; i++)
-				TypeParameters [i].DefineType (ec, mb);
+				if (!TypeParameters [i].DefineType (ec, mb))
+					return false;
 
 			return true;
 		}

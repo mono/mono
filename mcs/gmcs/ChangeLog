@@ -1,5 +1,14 @@
 2004-03-30  Martin Baulig  <martin@ximian.com>
 
+	* generic.cs (TypeParameter.DefineType): Return a boolean and use
+	the new API to actually define the constructor constraint.
+
+	* typemanager.cs
+	(TypeManager.new_constraint_attr_type): New static field.
+	(TypeManager.InitCoreTypes): Initialize it.
+
+2004-03-30  Martin Baulig  <martin@ximian.com>
+
 	* generic.cs (Constraints): Completed error checking, use correct
 	error numbers.
 

@@ -75,6 +75,7 @@ public class TypeManager {
 	static public Type unverifiable_code_type;
 	static public Type methodimpl_attr_type;
 	static public Type marshal_as_attr_type;
+	static public Type new_constraint_attr_type;
 	static public Type param_array_type;
 	static public Type guid_attr_type;
 	static public Type void_ptr_type;
@@ -1021,6 +1022,7 @@ public class TypeManager {
 		dllimport_type       = CoreLookupType ("System.Runtime.InteropServices.DllImportAttribute");
 		methodimpl_attr_type = CoreLookupType ("System.Runtime.CompilerServices.MethodImplAttribute");
 		marshal_as_attr_type = CoreLookupType ("System.Runtime.InteropServices.MarshalAsAttribute");
+		new_constraint_attr_type = CoreLookupType ("System.Runtime.CompilerServices.NewConstraintAttribute");
 		param_array_type     = CoreLookupType ("System.ParamArrayAttribute");
 		in_attribute_type    = CoreLookupType ("System.Runtime.InteropServices.InAttribute");
 
