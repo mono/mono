@@ -362,7 +362,10 @@ public class UnicodeEncoding : Encoding
 	{
 		get {
 			if (bigEndian) {
-				return "unicodeFFFE";
+				// unicodeFFFE is MS compliant, but it is not 
+				// valid IANA name.
+//				return "unicodeFFFE";
+				return "utf-16be";
 			} else {
 				return "utf-16";
 			}
