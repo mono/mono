@@ -57,21 +57,9 @@ namespace System.Xml
 			using (s) {
 				WebClient wc = new WebClient ();
 				wc.Credentials = credential;
-				s = wc.OpenRead (absoluteUri.ToString ());
-
-				// Returned stream does not keep connection, so
-				// it should read up all the stream content.
-				MemoryStream ms = new MemoryStream ();
-				byte [] data = new byte [10000];
-				int length = 0;
-				do {
-					length = s.Read (data, 0, 10000);
-					if (length > 0)
-						ms.Write (data, 0, length);
-				} while (length == 10000);
-				s.Close ();
-				ms.Close ();
-				return new MemoryStream (ms.GetBuffer (), 0, (int) ms.Length);
+				byte [] data = wc.DownloadData (absoluteUri.ToString ());
+				wc.Dispose ();
+				return new MemoryStream (data, 0, data.Length);
 			}
 		}
 

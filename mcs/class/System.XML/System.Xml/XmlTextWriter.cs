@@ -908,7 +908,7 @@ namespace System.Xml
 			}
 
 			w.Write ("&#x");
-			w.Write (((int) ((highChar - 0xD800) * 0x400 + (lowChar - 0xDC00) + 0x10000)).ToString ("x"));
+			w.Write (((int) ((highChar - 0xD800) * 0x400 + (lowChar - 0xDC00) + 0x10000)).ToString ("X"));
 			w.Write (';');
 		}
 

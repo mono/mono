@@ -1,3 +1,10 @@
+2004-01-03  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlTextWriter.cs : trivial character-case fix
+	* XmlUrlResolver.cs : It downloads network stream content at 
+	  GetEntity() call. You can try like below:
+	    for (int i=0;i<100;i++) u.GetEntity(url, null, typeof(Stream));
+
 2003-12-23  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XmlNamedNodeMap.cs : Fixed internal SetNamedItem(node, pos) to set
