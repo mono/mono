@@ -1,3 +1,9 @@
+2003-02-16  Daniel Morgan <danmorg@sc.rr.com>
+
+	* SqlSharpCli.cs: fix typos and when the
+	provider is set to oracle, it should default
+	to not using the simple reader
+
 2003-01-26  Daniel Morgan <danmorg@sc.rr.com>
 
 	* SqlSharpCli.cs: fixes contributed by

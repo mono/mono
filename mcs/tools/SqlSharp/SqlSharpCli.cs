@@ -437,7 +437,8 @@ namespace Mono.Data.SqlSharp {
 				row++;
 				Console.WriteLine("Row: " + row);
 				for(int col = 0; col < reader.FieldCount; col++) {
-					Console.WriteLine("  Field: " + col + 1);
+					int co = col + 1;
+					Console.WriteLine("  Field: " + co);
 					
 					string dname = (string) reader.GetName(col);
 					if(dname == null)
@@ -750,7 +751,7 @@ namespace Mono.Data.SqlSharp {
 			Console.WriteLine(@"Type:  \Q to quit");
 			Console.WriteLine(@"       \ConnectionString to set the ConnectionString");
 			Console.WriteLine(@"       \Provider to set the Provider:");
-			Console.WriteLine(@"                 {OleDb,SqlClient,MySql,MySqlNetOdbc,DB2,");
+			Console.WriteLine(@"                 {OleDb,SqlClient,MySql,MySqlNet,Odbc,DB2,");
 			Console.WriteLine(@"                  Oracle,PostgreSql,Npgsql,Sqlite,Sybase,Tds}");
 			Console.WriteLine(@"       \Open to open the connection");
 			Console.WriteLine(@"       \Close to close the connection");
@@ -892,7 +893,7 @@ namespace Mono.Data.SqlSharp {
 								     "System.Data.OracleClient.OracleConnection"};
 					SetupExternalProvider(extp);
 					UseParameters = false;
-					UseSimpleReader = true;
+					UseSimpleReader = false;
 					break;
 				case "DB2":
 					extp = new string[3] {
