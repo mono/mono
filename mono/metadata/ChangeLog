@@ -1,4 +1,8 @@
 
+Thu Sep 27 21:45:55 CEST 2001 Paolo Molaro <lupus@ximian.com>
+
+	* rawbuffer.c: disable mmap on cygwin since it seems to be broken there.
+
 Thu Sep 27 19:52:11 CEST 2001 Paolo Molaro <lupus@ximian.com>
 
 	* class.c, loader.c: warn and return NULL instead of erroring out.
