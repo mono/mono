@@ -489,19 +489,12 @@ namespace Mono.CSharp {
 
 		static Type NamespaceLookup (DeclSpace ds, string name, Location loc)
 		{
-			//
-			// Try in the current namespace and all its implicit parents
-			//
-			for (NamespaceEntry ns = ds.NamespaceEntry; ns != null; ns = ns.ImplicitParent) {
-				object result = ns.Lookup (ds, name, false, loc);
-				if (result == null)
-					continue;
-
-				if (result is Type)
-					return (Type) result;
-
+			object result = ds.NamespaceEntry.LookupNamespaceOrType (ds, name, loc);
+			if (result == null)
 				return null;
-			}
+
+			if (result is Type)
+				return (Type) result;
 
 			return null;
 		}

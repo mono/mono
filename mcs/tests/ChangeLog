@@ -1,5 +1,7 @@
 2004-12-03  Raja R Harinath  <rharinath@novell.com>
 
+	* Makefile (NEW_TEST_SOURCES_common): Add test-327 and test-328.
+
 	* test-326.cs (Main): Set return type to int, not void.
 
 2004-12-02  Marek Safar <marek.safar@seznam.cz>
