@@ -1,3 +1,7 @@
+2004-03-31  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XPathNavigatorTests.cs : Added PropertiesOnNamespace().
+
 2004-03-24  Atsushi Enomoto <atsushi@ximian.com>
 
 	* SelectNodesTests.cs : Added test for 1) not selecting previously-

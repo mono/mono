@@ -87,6 +87,14 @@ namespace MonoTests.System.Xml
 		}
 
 		[Test]
+		public void PropertiesOnNamespace ()
+		{
+			document.LoadXml ("<root xmlns='urn:foo' />");
+			navigator = document.DocumentElement.Attributes [0].CreateNavigator ();
+			AssertEquals (XPathNodeType.Namespace, navigator.NodeType);
+		}
+
+		[Test]
 		public void Navigation ()
 		{
 			document.LoadXml ("<foo><bar /><baz /></foo>");
