@@ -465,8 +465,11 @@ namespace System.Data.SqlClient {
 		private SqlTransaction TransactionBegin (IsolationLevel il) {
 			// FIXME: need to keep track of 
 			// transaction in-progress
-			TransactionBegin();
+			trans = new SqlTransaction ();
+			// using internal methods of SqlTransaction
+			trans.SetConnection (this);
 			trans.SetIsolationLevel (il);
+			trans.Begin();
 			
 			return trans;
 		}

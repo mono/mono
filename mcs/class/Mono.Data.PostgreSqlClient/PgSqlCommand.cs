@@ -810,7 +810,7 @@ namespace System.Data.SqlClient {
 				dataTableSchema.Columns.Add ("BaseColumnName", typeof (string));
 				dataTableSchema.Columns.Add ("BaseSchemaName", typeof (string));
 				dataTableSchema.Columns.Add ("BaseTableName", typeof (string));
-				dataTableSchema.Columns.Add ("DataType", typeof(string));
+				dataTableSchema.Columns.Add ("DataType", typeof(Type));
 				dataTableSchema.Columns.Add ("AllowDBNull", typeof (bool));
 				dataTableSchema.Columns.Add ("ProviderType", typeof (int));
 				dataTableSchema.Columns.Add ("IsAliased", typeof (bool));
@@ -881,7 +881,7 @@ namespace System.Data.SqlClient {
 				
 					typ = PostgresHelper.DbTypeToSystemType (dbType);
 					string st = typ.ToString();
-					schemaRow["DataType"] = st;
+					schemaRow["DataType"] = typ;
 
 					schemaRow["AllowDBNull"] = false;
 					schemaRow["ProviderType"] = oid;

@@ -35,7 +35,7 @@ using System;
 using System.Collections;
 using System.Data;
 using System.Data.Common;
-using System.Data.Odbc;
+//using System.Data.Odbc;
 using System.Data.OleDb;
 using System.Data.SqlClient;
 using System.IO;
@@ -108,6 +108,7 @@ namespace Mono.Data.SqlSharp {
 			char underlineChar = '='; // an equal sign
 
 			string dataType; // .NET Type
+			Type theType; 
 			string dataTypeName; // native Database type
 			DataRow row; // schema row
 
@@ -129,7 +130,8 @@ namespace Mono.Data.SqlSharp {
 					
 				// spacing
 				columnSize = (int) schemaRow["ColumnSize"];
-				dataType = (string) schemaRow["DataType"];
+				theType = (Type) schemaRow["DataType"];
+				dataType = theType.ToString();
 				dataTypeName = reader.GetDataTypeName(c);
 				
 				if(dataType.Equals("System.DateTime"))
@@ -190,7 +192,8 @@ namespace Mono.Data.SqlSharp {
 						colhdr = colhdr.Substring(0, 32);
 
 					columnSize = (int) row["ColumnSize"];
-					dataType = (string) row["DataType"];
+					theType = (Type) row["DataType"];
+					dataType = theType.ToString();
 					dataTypeName = reader.GetDataTypeName(c);
 
 					if(dataType.Equals("System.DateTime"))
@@ -692,7 +695,7 @@ namespace Mono.Data.SqlSharp {
 			try {
 				switch(provider) {
 				case "ODBC":
-					conn = new OdbcConnection();
+					//conn = new OdbcConnection();
 					break;
 				case "OLEDB":
 					conn = new OleDbConnection();
