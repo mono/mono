@@ -13,7 +13,7 @@ using System.Xml;
 
 using NUnit.Framework;
 
-namespace MonoTests.System.Xml
+namespace MonoTests.System.Xml.XPath
 {
 	[TestFixture]
 	public class SelectNodesTests
