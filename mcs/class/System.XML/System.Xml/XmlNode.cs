@@ -102,20 +102,15 @@ namespace System.Xml
 
 		public virtual string InnerText {
 			get {
-				string ret = null;
-				StringBuilder builder = null;
-				AppendChildValues (this, ref builder, ref ret);
-				
-				if (builder != null)
-					return builder.ToString ();
-				else
-					return ret;
+				StringBuilder builder = new StringBuilder ();
+				AppendChildValues (this, builder);
+				return builder.ToString ();
 			}
 
 			set { throw new InvalidOperationException ("This node is read only. Cannot be modified."); }
 		}
 
-		private void AppendChildValues (XmlNode parent, ref StringBuilder builder, ref string ret)
+		private void AppendChildValues (XmlNode parent, StringBuilder builder)
 		{
 			XmlNode node = parent.FirstChild;
 
@@ -125,19 +120,10 @@ namespace System.Xml
 				case XmlNodeType.CDATA:
 				case XmlNodeType.SignificantWhitespace:
 				case XmlNodeType.Whitespace:
-					string v = node.Value;
-					if (builder == null) {
-						if (ret == null)
-							ret = v;
-						else {
-							builder = new StringBuilder (ret.Length + v.Length);
-							builder.Append (ret).Append (v);
-						}
-					} else		
-						builder.Append (v);
+ 					builder.Append (node.Value);
 					break;
 				}
-				AppendChildValues (node, ref builder, ref ret);
+				AppendChildValues (node, builder);
 				node = node.NextSibling;
 			}
 		}

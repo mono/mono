@@ -227,7 +227,7 @@ namespace System.Xml
 
 		private string BuildChildValue (XmlNodeList list)
 		{
-			string ret = null;
+			string ret = String.Empty;
 			for (int i = 0; i < list.Count; i++) {
 				if (list [i].NodeType == XmlNodeType.EntityReference)
 					ret += BuildChildValue (list [i].ChildNodes);
