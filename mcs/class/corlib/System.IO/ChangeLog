@@ -1,3 +1,9 @@
+
+2003-05-04  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* StreamReader.cs:
+	(.ctor): fixed parameters passed to FileNotFoundException.
+
 2003-04-25  Dietmar Maurer  <dietmar@ximian.com>
 
 	* BinaryReader.cs (Read): make sure the buffer is big enough (fix

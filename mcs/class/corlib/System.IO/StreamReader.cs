@@ -141,7 +141,7 @@ namespace System.IO {
 			if (DirName != String.Empty && !Directory.Exists(DirName))
 				throw new DirectoryNotFoundException ("Directory '" + DirName + "' not found.");
 			if (!File.Exists(path))
-				throw new FileNotFoundException(path);
+				throw new FileNotFoundException("File not found.", path);
 
 			Stream stream = (Stream) File.OpenRead (path);
 			Initialize (stream, encoding, detect_encoding_from_bytemarks, buffer_size);
