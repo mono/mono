@@ -1,3 +1,8 @@
+2003-12-10  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Process.cs: if there's an error when starting the process, the 'pid'
+	field contains the GetLastError code. Use that for the Win32Exception.
+
 2003-12-06  Martin Baulig  <martin@ximian.com>
 
 	* DefaultTraceListener: Don't use `where' in variable names.

@@ -27,7 +27,7 @@ namespace System.Diagnostics {
 		{
 			public IntPtr process_handle;
 			public IntPtr thread_handle;
-			public int pid;
+			public int pid; // Contains -GetLastError () on failure.
 			public int tid;
 		};
 		
@@ -690,7 +690,7 @@ namespace System.Diagnostics {
 				if (startInfo.RedirectStandardError == true)
 					MonoIO.Close (stderr_wr, out error);
 
-				throw new Win32Exception ();
+				throw new Win32Exception (-proc_info.pid);
 			}
 			
 			process.process_handle=proc_info.process_handle;
