@@ -1,5 +1,9 @@
 2004-06-01  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* DataRow.cs : ColumnsChanged event is not required in .ctor().
+
+2004-06-01  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* XmlDataReader.cs : type change is required before setting value
 	  string to row item.
 

@@ -80,7 +80,6 @@ namespace System.Data {
 				DataColumn dc = _table.Columns[col];
 				this [dc] = dc.AutoIncrementValue();
 			}
-			_table.Columns.CollectionChanged += new System.ComponentModel.CollectionChangeEventHandler(CollectionChanged);
 
 			// create mapped XmlDataElement
 			DataSet ds = _table.DataSet;
