@@ -582,8 +582,8 @@ namespace System.Data.Common {
 
 					foreach (IDataParameter parameter in command.Parameters) {
 						string dsColumnName = parameter.SourceColumn;
-						DataColumnMapping mapping = columnMappings [parameter.SourceColumn];
-						if (mapping != null) dsColumnName = mapping.DataSetColumn;
+						if (columnMappings.Contains(parameter.SourceColumn))
+							dsColumnName = columnMappings [parameter.SourceColumn].DataSetColumn;
 						DataRowVersion rowVersion = DataRowVersion.Default;
 
 						// Parameter version is ignored for non-update commands
