@@ -499,26 +499,18 @@ namespace Mono.CSharp {
 
 		static Type NamespaceLookup (DeclSpace ds, string name, int num_type_args, Location loc)
 		{
-			//
-			// Try in the current namespace and all its implicit parents
-			//
-			for (NamespaceEntry ns = ds.NamespaceEntry; ns != null; ns = ns.ImplicitParent) {
-				IAlias result = ns.Lookup (ds, name, num_type_args, false, loc);
+			IAlias result = ds.NamespaceEntry.LookupNamespaceOrType (ds, name, loc);
+			if (result == null)
+				return null;
 
-				if (result == null)
-					continue;
+			if (!result.IsType)
+				return null;
 
-				if (!result.IsType)
-					return null;
+			TypeExpr texpr = result.ResolveAsType (ds.EmitContext);
+			if (texpr == null)
+				return null;
 
-				TypeExpr texpr = result.ResolveAsType (ds.EmitContext);
-				if (texpr == null)
-					return null;
-
-				return texpr.Type;
-			}
-
-			return null;
+			return texpr.Type;
 		}
 		
 		static public Type LookupType (DeclSpace ds, string name, bool silent, Location loc)

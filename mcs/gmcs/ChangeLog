@@ -1,3 +1,16 @@
+2004-12-03  Raja R Harinath  <rharinath@novell.com>
+
+	Fix test-327.cs, test-328.cs, and put in early infrastructure
+	for eventually fixing #52697.
+	* namespace.cs (NamespaceEntry.LookupForUsing): New method.
+	(NamespaceEntry.LookupNamespaceOrType): New method, refactored
+	from other methods.
+	(NamespaceEntry.Lookup): Remove 'ignore_using' flag.
+	(AliasEntry.Resolve, UsingEntry.Resolve): Use 'LookupForUsing'.
+	(VerifyUsing, error246): Update.
+	* rootcontext.cs (RootContext.NamespaceLookup): Just use
+	'NamespaceEntry.LookupNamespaceOrType'.
+
 2004-12-07  Martin Baulig  <martin@ximian.com>
 
 	* driver.cs: Call it "BETA SOFTWARE" :-)

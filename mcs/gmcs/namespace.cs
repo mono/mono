@@ -226,14 +226,8 @@ namespace Mono.CSharp {
 				if (resolved_ns != null)
 					return resolved_ns;
 
-				Namespace curr_ns = NamespaceEntry.NS;
-				while ((curr_ns != null) && (resolved_ns == null)) {
-					resolved_ns = curr_ns.GetNamespace (Name, false);
-
-					if (resolved_ns == null)
-						curr_ns = curr_ns.Parent;
-				}
-
+				object resolved = NamespaceEntry.LookupForUsing (Name, Location);
+				resolved_ns = resolved as Namespace;
 				return resolved_ns;
 			}
 		}
@@ -266,22 +260,7 @@ namespace Mono.CSharp {
 				
 				string alias = Alias.GetTypeName ();
 
-				// According to section 16.3.1, the namespace-or-type-name is resolved
-				// as if the immediately containing namespace body has no using-directives.
-				resolved = NamespaceEntry.Lookup (
-					null, alias, Alias.CountTypeArguments, true, Location);
-
-				NamespaceEntry curr_ns = NamespaceEntry.Parent;
-
-				while ((curr_ns != null) && (resolved == null)) {
-					resolved = curr_ns.Lookup (
-						null, alias, Alias.CountTypeArguments,
-						false, Location);
-
-					if (resolved == null)
-						curr_ns = curr_ns.Parent;
-				}
-
+				resolved = NamespaceEntry.LookupForUsing (alias, Location);
 				if (resolved == null)
 					return null;
 
@@ -417,8 +396,52 @@ namespace Mono.CSharp {
 			return entry.Resolve ();
 		}
 
-		public IAlias Lookup (DeclSpace ds, string name, int num_type_params,
-				      bool ignore_using, Location loc)
+		//
+		// According to section 16.3.1 (using-alias-directive), the namespace-or-type-name is 
+		// resolved as if the immediately containing namespace body has no using-directives.
+		//
+		// Section 16.3.2 says that the same rule is applied when resolving the namespace-name
+		// in the using-namespace-directive.
+		//
+		public IAlias LookupForUsing (string dotted_name, Location loc)
+		{
+			int pos = dotted_name.IndexOf ('.');
+			string simple_name = dotted_name;
+			string rest = null;
+			if (pos >= 0) {
+				simple_name = dotted_name.Substring (0, pos);
+				rest = dotted_name.Substring (pos + 1);
+			}
+
+			IAlias o = NS.Lookup (null, simple_name, loc);
+			if (o == null && ImplicitParent != null)
+				o = ImplicitParent.LookupNamespaceOrType (null, simple_name, loc);
+
+			if (o == null || rest == null)
+				return o;
+
+			Namespace ns = o as Namespace;
+			if (ns != null)
+				return ns.Lookup (null, rest, loc);
+			
+			Type nested = TypeManager.LookupType (o.Name + "." + rest);
+			if (nested == null)
+				return null;
+
+			return new TypeExpression (nested, loc);
+		}
+
+		public IAlias LookupNamespaceOrType (DeclSpace ds, string name, Location loc)
+		{
+			IAlias resolved = null;
+			for (NamespaceEntry curr_ns = this; curr_ns != null; curr_ns = curr_ns.ImplicitParent) {
+				if ((resolved = curr_ns.Lookup (ds, name, loc)) != null)
+					break;
+			}
+			return resolved;
+		}
+
+		private IAlias Lookup (DeclSpace ds, string name, Location loc)
 		{
 			IAlias o;
 			Namespace ns;
@@ -426,12 +449,17 @@ namespace Mono.CSharp {
 			//
 			// If name is of the form `N.I', first lookup `N', then search a member `I' in it.
 			//
+			// FIXME: Remove this block.  Only simple names should come here.
+			//        The bug: The loop in LookupNamespaceOrType continues if 
+			//        the lookup for N succeeds but the nested lookup for I fails.
+			//        This is one part of #52697.
+			//
 			int pos = name.IndexOf ('.');
 			if (pos >= 0) {
 				string first = name.Substring (0, pos);
 				string last = name.Substring (pos + 1);
 
-				o = Lookup (ds, first, 0, ignore_using, loc);
+				o = Lookup (ds, first, loc);
 				if (o == null)
 					return null;
 
@@ -449,14 +477,11 @@ namespace Mono.CSharp {
 			}
 
 			//
-			// Check whether it's a namespace.
+			// Check whether it's in the namespace.
 			//
 			o = NS.Lookup (ds, name, loc);
 			if (o != null)
 				return o;
-
-			if (ignore_using)
-				return null;
 
 			//
 			// Check aliases.
@@ -557,46 +582,29 @@ namespace Mono.CSharp {
 
 		protected void error246 (Location loc, string name)
 		{
-			if (TypeManager.LookupType (name) != null)
-				Report.Error (138, loc, "The using keyword only lets you specify a namespace, " +
-					      "`" + name + "' is a class not a namespace.");
-			else {
-				Report.Error (246, loc, "The namespace `" + name +
-					      "' can not be found (missing assembly reference?)");
+			Report.Error (246, loc, "The namespace `" + name +
+				      "' can not be found (missing assembly reference?)");
 
-				switch (name){
-				case "Gtk": case "GtkSharp":
-					MsgtryPkg ("gtk-sharp");
-					break;
+			switch (name) {
+			case "Gtk": case "GtkSharp":
+				MsgtryPkg ("gtk-sharp");
+				break;
 
-				case "Gdk": case "GdkSharp":
-					MsgtryPkg ("gdk-sharp");
-					break;
+			case "Gdk": case "GdkSharp":
+				MsgtryPkg ("gdk-sharp");
+				break;
 
-				case "Glade": case "GladeSharp":
-					MsgtryPkg ("glade-sharp");
-					break;
-							
-				case "System.Drawing":
-					MsgtryRef ("System.Drawing");
-					break;
-							
-				case "System.Web.Services":
-					MsgtryRef ("System.Web.Services");
-					break;
+			case "Glade": case "GladeSharp":
+				MsgtryPkg ("glade-sharp");
+				break;
 
-				case "System.Web":
-					MsgtryRef ("System.Web");
-					break;
-							
-				case "System.Data":
-					MsgtryRef ("System.Data");
-					break;
-
-				case "System.Windows.Forms":
-					MsgtryRef ("System.Windows.Forms");
-					break;
-				}
+			case "System.Drawing":
+			case "System.Web.Services":
+			case "System.Web":
+			case "System.Data":
+			case "System.Windows.Forms":
+				MsgtryRef (name);
+				break;
 			}
 		}
 
@@ -615,7 +623,12 @@ namespace Mono.CSharp {
 					if (ue.Resolve () != null)
 						continue;
 
-					error246 (ue.Location, ue.Name);
+					if (LookupForUsing (ue.Name, ue.Location) == null)
+						error246 (ue.Location, ue.Name);
+					else
+						Report.Error (138, ue.Location, "The using keyword only lets you specify a namespace, " +
+							      "`" + ue.Name + "' is a class not a namespace.");
+
 				}
 			}
 
