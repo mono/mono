@@ -1,4 +1,8 @@
 
+Thu Jun 10 16:06:42 CEST 2004 Paolo Molaro <lupus@ximian.com>
+
+	* mini.c, aot.c: memory leak fixes.
+
 Tue Jun 8 16:37:15 CEST 2004 Paolo Molaro <lupus@ximian.com>
 
 	* inssel-long32.brg: implemented a few missing ulong cast opcodes.
