@@ -17,8 +17,8 @@ namespace System.Xml.Schema
 		{
 		}
 
-		[XmlElement("restriction",typeof(XmlSchemaSimpleContentRestriction),Namespace="http://www.w3.org/2001/XMLSchema")]
-		[XmlElement("extension",typeof(XmlSchemaSimpleContentExtension),Namespace="http://www.w3.org/2001/XMLSchema")]
+		[XmlElement("restriction",typeof(XmlSchemaSimpleContentRestriction),Namespace=XmlSchema.Namespace)]
+		[XmlElement("extension",typeof(XmlSchemaSimpleContentExtension),Namespace=XmlSchema.Namespace)]
 		public override XmlSchemaContent Content 
 		{
 			get{ return  content; } 
@@ -29,8 +29,12 @@ namespace System.Xml.Schema
 		/// 1. Content must be present and one of restriction or extention
 		///</remarks>
 		[MonoTODO]
-		internal int Compile(ValidationEventHandler h, XmlSchemaInfo info)
+		internal int Compile(ValidationEventHandler h, XmlSchema schema)
 		{
+			// If this is already compiled this time, simply skip.
+			if (this.IsComplied (schema.CompilationId))
+				return 0;
+
 			if(Content == null)
 			{
 				error(h, "Content must be present in a simpleContent");
@@ -40,18 +44,19 @@ namespace System.Xml.Schema
 				if(Content is XmlSchemaSimpleContentRestriction)
 				{
 					XmlSchemaSimpleContentRestriction xscr = (XmlSchemaSimpleContentRestriction) Content;
-					errorCount += xscr.Compile(h,info);
+					errorCount += xscr.Compile(h, schema);
 				}
 				else if(Content is XmlSchemaSimpleContentExtension)
 				{
 					XmlSchemaSimpleContentExtension xsce = (XmlSchemaSimpleContentExtension) Content;
-					errorCount += xsce.Compile(h,info);
+					errorCount += xsce.Compile(h, schema);
 				}
 				else
 					error(h,"simpleContent can't have any value other than restriction or extention");
 			}
 			
-			XmlSchemaUtil.CompileID(Id,this,info.IDCollection,h);
+			XmlSchemaUtil.CompileID(Id,this, schema.IDCollection,h);
+			this.CompilationId = schema.CompilationId;
 			return errorCount;
 		}
 		

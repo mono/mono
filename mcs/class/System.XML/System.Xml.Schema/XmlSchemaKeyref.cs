@@ -31,9 +31,13 @@ namespace System.Xml.Schema
 		/// 3. refer must be present
 		/// </remarks>
 		[MonoTODO]
-		internal new int Compile(ValidationEventHandler h, XmlSchemaInfo info)
+		internal new int Compile(ValidationEventHandler h, XmlSchema schema)
 		{
-			errorCount += base.Compile(h,info);
+			// If this is already compiled this time, simply skip.
+			if (this.IsComplied (schema.CompilationId))
+				return 0;
+
+			errorCount += base.Compile(h, schema);
 			if(refer == null || refer.IsEmpty)
 				error(h,"refer must be present");
 			else if(!XmlSchemaUtil.CheckQName(refer))

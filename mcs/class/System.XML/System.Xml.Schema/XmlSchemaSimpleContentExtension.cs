@@ -30,14 +30,14 @@ namespace System.Xml.Schema
 			set{ baseTypeName = value; }
 		}
 
-		[XmlElement("attribute",typeof(XmlSchemaAttribute),Namespace="http://www.w3.org/2001/XMLSchema")]
-		[XmlElement("attributeGroup",typeof(XmlSchemaAttributeGroupRef),Namespace="http://www.w3.org/2001/XMLSchema")]
+		[XmlElement("attribute",typeof(XmlSchemaAttribute),Namespace=XmlSchema.Namespace)]
+		[XmlElement("attributeGroup",typeof(XmlSchemaAttributeGroupRef),Namespace=XmlSchema.Namespace)]
 		public XmlSchemaObjectCollection Attributes 
 		{
 			get{ return attributes; }
 		}
 
-		[XmlElement("anyAttribute",Namespace="http://www.w3.org/2001/XMLSchema")]
+		[XmlElement("anyAttribute",Namespace=XmlSchema.Namespace)]
 		public XmlSchemaAnyAttribute AnyAttribute 
 		{
 			get{ return  any; }
@@ -48,8 +48,12 @@ namespace System.Xml.Schema
 		/// 1. Base must be present and a QName
 		///</remarks>
 		[MonoTODO]
-		internal int Compile(ValidationEventHandler h, XmlSchemaInfo info)
+		internal int Compile(ValidationEventHandler h, XmlSchema schema)
 		{
+			// If this is already compiled this time, simply skip.
+			if (this.IsComplied (schema.CompilationId))
+				return 0;
+
 			if(BaseTypeName == null || BaseTypeName.IsEmpty)
 			{
 				error(h, "base must be present and a QName");
@@ -59,7 +63,7 @@ namespace System.Xml.Schema
 
 			if(this.AnyAttribute != null)
 			{
-				errorCount += AnyAttribute.Compile(h,info);
+				errorCount += AnyAttribute.Compile(h,schema);
 			}
 
 			foreach(XmlSchemaObject obj in Attributes)
@@ -67,19 +71,20 @@ namespace System.Xml.Schema
 				if(obj is XmlSchemaAttribute)
 				{
 					XmlSchemaAttribute attr = (XmlSchemaAttribute) obj;
-					errorCount += attr.Compile(h,info);
+					errorCount += attr.Compile(h,schema);
 				}
 				else if(obj is XmlSchemaAttributeGroupRef)
 				{
 					XmlSchemaAttributeGroupRef atgrp = (XmlSchemaAttributeGroupRef) obj;
-					errorCount += atgrp.Compile(h,info);
+					errorCount += atgrp.Compile(h,schema);
 				}
 				else
 					error(h,obj.GetType() +" is not valid in this place::SimpleConentExtension");
 			}
 			
-			XmlSchemaUtil.CompileID(Id,this,info.IDCollection,h);
+			XmlSchemaUtil.CompileID(Id,this,schema.IDCollection,h);
 
+			this.CompilationId = schema.CompilationId;
 			return errorCount;
 		}
 		

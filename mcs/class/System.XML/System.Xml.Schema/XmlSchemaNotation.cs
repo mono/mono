@@ -48,14 +48,18 @@ namespace System.Xml.Schema
 		// 1. name and public must be present
 		// public and system must be anyURI
 		[MonoTODO]
-		internal int Compile(ValidationEventHandler h, XmlSchemaInfo info)
+		internal int Compile(ValidationEventHandler h, XmlSchema schema)
 		{
+			// If this is already compiled this time, simply skip.
+			if (this.IsComplied (schema.CompilationId))
+				return 0;
+
 			if(Name == null)
 				error(h,"Required attribute name must be present");
 			else if(!XmlSchemaUtil.CheckNCName(this.name)) 
 				error(h,"attribute name must be NCName");
 			else
-				qualifiedName = new XmlQualifiedName(Name,info.TargetNamespace);
+				qualifiedName = new XmlQualifiedName(Name,schema.TargetNamespace);
 
 			if(Public==null)
 				error(h,"public must be present");
@@ -65,7 +69,7 @@ namespace System.Xml.Schema
 			if(system != null && !XmlSchemaUtil.CheckAnyUri(system))
 				error(h,"system must be present and of Type anyURI");
 			
-			XmlSchemaUtil.CompileID(Id,this,info.IDCollection,h);
+			XmlSchemaUtil.CompileID(Id,this,schema.IDCollection,h);
 
 			return errorCount;
 		}

@@ -33,38 +33,38 @@ namespace System.Xml.Schema
 			set{ baseTypeName = value; }
 		}
 
-		[XmlElement("simpleType",Namespace="http://www.w3.org/2001/XMLSchema")]
+		[XmlElement("simpleType",Namespace=XmlSchema.Namespace)]
 		public XmlSchemaSimpleType BaseType 
 		{ 
 			get{ return  baseType; } 
 			set{ baseType = value; } 
 		}
 		
-		[XmlElement("minExclusive",typeof(XmlSchemaMinExclusiveFacet),Namespace="http://www.w3.org/2001/XMLSchema")]
-		[XmlElement("minInclusive",typeof(XmlSchemaMinInclusiveFacet),Namespace="http://www.w3.org/2001/XMLSchema")] 
-		[XmlElement("maxExclusive",typeof(XmlSchemaMaxExclusiveFacet),Namespace="http://www.w3.org/2001/XMLSchema")]
-		[XmlElement("maxInclusive",typeof(XmlSchemaMaxInclusiveFacet),Namespace="http://www.w3.org/2001/XMLSchema")]
-		[XmlElement("totalDigits",typeof(XmlSchemaTotalDigitsFacet),Namespace="http://www.w3.org/2001/XMLSchema")]
-		[XmlElement("fractionDigits",typeof(XmlSchemaFractionDigitsFacet),Namespace="http://www.w3.org/2001/XMLSchema")]
-		[XmlElement("length",typeof(XmlSchemaLengthFacet),Namespace="http://www.w3.org/2001/XMLSchema")]
-		[XmlElement("minLength",typeof(XmlSchemaMinLengthFacet),Namespace="http://www.w3.org/2001/XMLSchema")]
-		[XmlElement("maxLength",typeof(XmlSchemaMaxLengthFacet),Namespace="http://www.w3.org/2001/XMLSchema")]
-		[XmlElement("enumeration",typeof(XmlSchemaEnumerationFacet),Namespace="http://www.w3.org/2001/XMLSchema")]
-		[XmlElement("whiteSpace",typeof(XmlSchemaWhiteSpaceFacet),Namespace="http://www.w3.org/2001/XMLSchema")]
-		[XmlElement("pattern",typeof(XmlSchemaPatternFacet),Namespace="http://www.w3.org/2001/XMLSchema")]
+		[XmlElement("minExclusive",typeof(XmlSchemaMinExclusiveFacet),Namespace=XmlSchema.Namespace)]
+		[XmlElement("minInclusive",typeof(XmlSchemaMinInclusiveFacet),Namespace=XmlSchema.Namespace)] 
+		[XmlElement("maxExclusive",typeof(XmlSchemaMaxExclusiveFacet),Namespace=XmlSchema.Namespace)]
+		[XmlElement("maxInclusive",typeof(XmlSchemaMaxInclusiveFacet),Namespace=XmlSchema.Namespace)]
+		[XmlElement("totalDigits",typeof(XmlSchemaTotalDigitsFacet),Namespace=XmlSchema.Namespace)]
+		[XmlElement("fractionDigits",typeof(XmlSchemaFractionDigitsFacet),Namespace=XmlSchema.Namespace)]
+		[XmlElement("length",typeof(XmlSchemaLengthFacet),Namespace=XmlSchema.Namespace)]
+		[XmlElement("minLength",typeof(XmlSchemaMinLengthFacet),Namespace=XmlSchema.Namespace)]
+		[XmlElement("maxLength",typeof(XmlSchemaMaxLengthFacet),Namespace=XmlSchema.Namespace)]
+		[XmlElement("enumeration",typeof(XmlSchemaEnumerationFacet),Namespace=XmlSchema.Namespace)]
+		[XmlElement("whiteSpace",typeof(XmlSchemaWhiteSpaceFacet),Namespace=XmlSchema.Namespace)]
+		[XmlElement("pattern",typeof(XmlSchemaPatternFacet),Namespace=XmlSchema.Namespace)]
 		public XmlSchemaObjectCollection Facets 
 		{ 
 			get{ return facets; } 
 		}
 
-		[XmlElement("attribute",typeof(XmlSchemaAttribute),Namespace="http://www.w3.org/2001/XMLSchema")]
-		[XmlElement("attributeGroup",typeof(XmlSchemaAttributeGroupRef),Namespace="http://www.w3.org/2001/XMLSchema")]
+		[XmlElement("attribute",typeof(XmlSchemaAttribute),Namespace=XmlSchema.Namespace)]
+		[XmlElement("attributeGroup",typeof(XmlSchemaAttributeGroupRef),Namespace=XmlSchema.Namespace)]
 		public XmlSchemaObjectCollection Attributes 
 		{
 			get{ return attributes; }
 		}
 
-		[XmlElement("anyAttribute",Namespace="http://www.w3.org/2001/XMLSchema")]
+		[XmlElement("anyAttribute",Namespace=XmlSchema.Namespace)]
 		public XmlSchemaAnyAttribute AnyAttribute 
 		{
 			get{ return  any; }
@@ -75,8 +75,12 @@ namespace System.Xml.Schema
 		/// 1. Base must be present and a QName
 		///</remarks>
 		[MonoTODO]
-		internal int Compile(ValidationEventHandler h, XmlSchemaInfo info)
+		internal int Compile(ValidationEventHandler h, XmlSchema schema)
 		{
+			// If this is already compiled this time, simply skip.
+			if (this.IsComplied (schema.CompilationId))
+				return 0;
+
 			if(BaseTypeName == null || BaseTypeName.IsEmpty)
 			{
 				error(h, "base must be present and a QName");
@@ -86,12 +90,12 @@ namespace System.Xml.Schema
 
 			if(BaseType != null)
 			{
-				errorCount += BaseType.Compile(h,info);
+				errorCount += BaseType.Compile(h,schema);
 			}
 
 			if(this.AnyAttribute != null)
 			{
-				errorCount += AnyAttribute.Compile(h,info);
+				errorCount += AnyAttribute.Compile(h,schema);
 			}
 
 			foreach(XmlSchemaObject obj in Attributes)
@@ -99,12 +103,12 @@ namespace System.Xml.Schema
 				if(obj is XmlSchemaAttribute)
 				{
 					XmlSchemaAttribute attr = (XmlSchemaAttribute) obj;
-					errorCount += attr.Compile(h,info);
+					errorCount += attr.Compile(h,schema);
 				}
 				else if(obj is XmlSchemaAttributeGroupRef)
 				{
 					XmlSchemaAttributeGroupRef atgrp = (XmlSchemaAttributeGroupRef) obj;
-					errorCount += atgrp.Compile(h,info);
+					errorCount += atgrp.Compile(h,schema);
 				}
 				else
 					error(h,obj.GetType() +" is not valid in this place::SimpleContentRestriction");
@@ -113,7 +117,8 @@ namespace System.Xml.Schema
 			//TODO: Compile Facets: Looks like they are a part of datatypes. So we'll do them with the datatypes
 
 			
-			XmlSchemaUtil.CompileID(Id,this,info.IDCollection,h);
+			XmlSchemaUtil.CompileID(Id,this,schema.IDCollection,h);
+			this.CompilationId = schema.CompilationId;
 			return errorCount;
 		}
 		

@@ -16,6 +16,7 @@ namespace System.Xml.Schema
 		private XmlSchemaObjectCollection items;
 		private XmlAttribute[] unhandledAttributes;
 		private static string xmlname = "annotation";
+
 		public XmlSchemaAnnotation()
 		{
 			items = new XmlSchemaObjectCollection();
@@ -28,8 +29,8 @@ namespace System.Xml.Schema
 			set{ id = value; }
 		}
 		
-		[XmlElement("appinfo",typeof(XmlSchemaAppInfo),Namespace="http://www.w3.org/2001/XMLSchema")]
-		[XmlElement("documentation",typeof(XmlSchemaDocumentation),Namespace="http://www.w3.org/2001/XMLSchema")]
+		[XmlElement("appinfo",typeof(XmlSchemaAppInfo),Namespace=XmlSchema.Namespace)]
+		[XmlElement("documentation",typeof(XmlSchemaDocumentation),Namespace=XmlSchema.Namespace)]
 		public XmlSchemaObjectCollection Items
 		{
 			get{ return items; }
@@ -55,8 +56,13 @@ namespace System.Xml.Schema
 		}
 
 		[MonoTODO]
-		internal int Compile(ValidationEventHandler h, XmlSchemaInfo info)
+		internal int Compile(ValidationEventHandler h, XmlSchema schema)
 		{
+			// If this is already compiled this time, simply skip.
+			if (this.IsComplied (schema.CompilationId))
+				return 0;
+
+			this.CompilationId = schema.CompilationId;
 			return 0;
 		}
 		

@@ -25,12 +25,12 @@ namespace System.Xml.Schema
 			schemaTypes = new XmlSchemaObjectTable();
 		}
 		
-		[XmlElement("annotation",typeof(XmlSchemaAnnotation),Namespace="http://www.w3.org/2001/XMLSchema")]
-		[XmlElement("simpleType",typeof(XmlSchemaSimpleType),Namespace="http://www.w3.org/2001/XMLSchema")]
-		[XmlElement("complexType",typeof(XmlSchemaComplexType),Namespace="http://www.w3.org/2001/XMLSchema")]
-		[XmlElement("group",typeof(XmlSchemaGroup),Namespace="http://www.w3.org/2001/XMLSchema")]
+		[XmlElement("annotation",typeof(XmlSchemaAnnotation),Namespace=XmlSchema.Namespace)]
+		[XmlElement("simpleType",typeof(XmlSchemaSimpleType),Namespace=XmlSchema.Namespace)]
+		[XmlElement("complexType",typeof(XmlSchemaComplexType),Namespace=XmlSchema.Namespace)]
+		[XmlElement("group",typeof(XmlSchemaGroup),Namespace=XmlSchema.Namespace)]
 			//NOTE: AttributeGroup and not AttributeGroupRef
-		[XmlElement("attributeGroup",typeof(XmlSchemaAttributeGroup),Namespace="http://www.w3.org/2001/XMLSchema")]
+		[XmlElement("attributeGroup",typeof(XmlSchemaAttributeGroup),Namespace=XmlSchema.Namespace)]
 		public XmlSchemaObjectCollection Items 
 		{
 			get{ return items; }

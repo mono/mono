@@ -30,14 +30,14 @@ namespace System.Xml.Schema
 			set{ name = value;}
 		}
 
-		[XmlElement("attribute",typeof(XmlSchemaAttribute),Namespace="http://www.w3.org/2001/XMLSchema")]
-		[XmlElement("attributeGroup",typeof(XmlSchemaAttributeGroupRef),Namespace="http://www.w3.org/2001/XMLSchema")]
+		[XmlElement("attribute",typeof(XmlSchemaAttribute),Namespace=XmlSchema.Namespace)]
+		[XmlElement("attributeGroup",typeof(XmlSchemaAttributeGroupRef),Namespace=XmlSchema.Namespace)]
 		public XmlSchemaObjectCollection Attributes 
 		{
 			get{ return attributes;}
 		}
 
-		[XmlElement("anyAttribute",Namespace="http://www.w3.org/2001/XMLSchema")]
+		[XmlElement("anyAttribute",Namespace=XmlSchema.Namespace)]
 		public XmlSchemaAnyAttribute AnyAttribute 
 		{
 			get{ return any;}
@@ -63,22 +63,26 @@ namespace System.Xml.Schema
 		///  1. Name must be present
 		/// </remarks>
 		[MonoTODO]
-		internal int Compile(ValidationEventHandler h, XmlSchemaInfo info)
+		internal int Compile(ValidationEventHandler h, XmlSchema schema)
 		{
+			// If this is already compiled this time, simply skip.
+			if (this.IsComplied (schema.CompilationId))
+				return 0;
+
 			errorCount = 0;
 
-			XmlSchemaUtil.CompileID(Id,this,info.IDCollection,h);
+			XmlSchemaUtil.CompileID(Id,this, schema.IDCollection,h);
 
 			if(this.Name == null) //1
 				error(h,"Name is required in top level simpletype");
 			else if(!XmlSchemaUtil.CheckNCName(this.Name)) // b.1.2
 				error(h,"name attribute of a simpleType must be NCName");
 			else
-				this.qualifiedName = new XmlQualifiedName(this.Name,info.TargetNamespace);
+				this.qualifiedName = new XmlQualifiedName(this.Name, schema.TargetNamespace);
 			
 			if(this.AnyAttribute != null)
 			{
-				errorCount += this.AnyAttribute.Compile(h,info);
+				errorCount += this.AnyAttribute.Compile(h, schema);
 			}
 			
 			foreach(XmlSchemaObject obj in Attributes)
@@ -86,18 +90,19 @@ namespace System.Xml.Schema
 				if(obj is XmlSchemaAttribute)
 				{
 					XmlSchemaAttribute attr = (XmlSchemaAttribute) obj;
-					errorCount += attr.Compile(h, info);
+					errorCount += attr.Compile(h, schema);
 				}
 				else if(obj is XmlSchemaAttributeGroupRef)
 				{
 					XmlSchemaAttributeGroupRef gref = (XmlSchemaAttributeGroupRef) obj;
-					errorCount += gref.Compile(h, info);
+					errorCount += gref.Compile(h, schema);
 				}
 				else
 				{
 					error(h,"invalid type of object in Attributes property");
 				}
 			}
+			this.CompilationId = schema.CompilationId;
 			return errorCount;
 		}
 		

@@ -13,6 +13,7 @@ namespace System.Xml.Schema
 	{
 		private XmlQualifiedName refName;
 		private static string xmlname = "attributeGroup";
+
 		public XmlSchemaAttributeGroupRef()
 		{
 			refName = XmlQualifiedName.Empty;
@@ -30,19 +31,24 @@ namespace System.Xml.Schema
 		/// 2. The element must be empty. ?? FIXME: Is this correct or annotation is permitted?
 		/// </remarks>
 		[MonoTODO]
-		internal int Compile(ValidationEventHandler h, XmlSchemaInfo info)
+		internal int Compile(ValidationEventHandler h, XmlSchema schema)
 		{
+			// If this is already compiled this time, simply skip.
+			if (this.IsComplied (schema.CompilationId))
+				return 0;
+
 			errorCount = 0;
 			if(RefName == null || RefName.IsEmpty)
 				error(h, "ref must be present");
 			else if(!XmlSchemaUtil.CheckQName(RefName))
 				error(h, "ref must be a valid qname");
 
-			XmlSchemaUtil.CompileID(Id,this,info.IDCollection,h);
+			XmlSchemaUtil.CompileID(Id,this, schema.IDCollection,h);
 
 //			if(this.Annotation != null)
 //				error(h, "attributegroup with a ref can't have any content");
 			
+			this.CompilationId = schema.CompilationId;
 			return errorCount;
 		}
 		

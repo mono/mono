@@ -20,9 +20,9 @@ namespace System.Xml.Schema
 		{
 		}
 
-		[XmlElement("restriction",typeof(XmlSchemaSimpleTypeRestriction),Namespace="http://www.w3.org/2001/XMLSchema")]
-		[XmlElement("list",typeof(XmlSchemaSimpleTypeList),Namespace="http://www.w3.org/2001/XMLSchema")]
-		[XmlElement("union",typeof(XmlSchemaSimpleTypeUnion),Namespace="http://www.w3.org/2001/XMLSchema")]
+		[XmlElement("restriction",typeof(XmlSchemaSimpleTypeRestriction),Namespace=XmlSchema.Namespace)]
+		[XmlElement("list",typeof(XmlSchemaSimpleTypeList),Namespace=XmlSchema.Namespace)]
+		[XmlElement("union",typeof(XmlSchemaSimpleTypeUnion),Namespace=XmlSchema.Namespace)]
 		public XmlSchemaSimpleTypeContent Content
 		{
 			get{ return  content; } 
@@ -49,8 +49,12 @@ namespace System.Xml.Schema
 		///				4.2 otherwise simple ur-type
 		/// </remarks>
 		[MonoTODO]
-		internal int Compile(ValidationEventHandler h, XmlSchemaInfo info)
+		internal int Compile(ValidationEventHandler h, XmlSchema schema)
 		{
+			// If this is already compiled this time, simply skip.
+			if (this.IsComplied (schema.CompilationId))
+				return 0;
+
 			errorCount = 0;
 
 			if(this.islocal) // a
@@ -67,7 +71,7 @@ namespace System.Xml.Schema
 				else if(!XmlSchemaUtil.CheckNCName(this.Name)) // b.1.2
 					error(h,"name attribute of a simpleType must be NCName");
 				else
-					this.qName = new XmlQualifiedName(this.Name,info.TargetNamespace);
+					this.qName = new XmlQualifiedName(this.Name,schema.TargetNamespace);
 				
 				//NOTE: Although the FinalResolved can be Empty, it is not a valid value for Final
 				//DEVIATION: If an error occurs, the finaldefault is always consulted. This deviates
@@ -91,36 +95,41 @@ namespace System.Xml.Schema
 						goto case XmlSchemaDerivationMethod.None;
 						// use assignment from finaldefault on schema.
 					case XmlSchemaDerivationMethod.None: // b.5
-						if(info.FinalDefault == XmlSchemaDerivationMethod.All)
+						XmlSchemaDerivationMethod flags = 
+							(XmlSchemaDerivationMethod.Restriction | XmlSchemaDerivationMethod.List |
+							XmlSchemaDerivationMethod.Extension | XmlSchemaDerivationMethod.Union );
+						if(schema.FinalDefault == XmlSchemaDerivationMethod.All)
 							finalResolved = XmlSchemaDerivationMethod.All;
+						else if(schema.FinalDefault == XmlSchemaDerivationMethod.None)
+							finalResolved = flags;
 						else 
-							finalResolved = info.FinalDefault & (XmlSchemaDerivationMethod.Restriction | XmlSchemaDerivationMethod.List |
-								XmlSchemaDerivationMethod.Extension | XmlSchemaDerivationMethod.Union );
+							finalResolved = schema.FinalDefault & flags;
 						break;
 				}
 			}
 
-			XmlSchemaUtil.CompileID(Id,this,info.IDCollection,h);
+			XmlSchemaUtil.CompileID(Id,this,schema.IDCollection,h);
 
 			if(this.Content == null) //a.3,b.2
 				error(h,"Content is required in a simpletype");
 			else if(Content is XmlSchemaSimpleTypeRestriction)
 			{
-				errorCount += ((XmlSchemaSimpleTypeRestriction)Content).Compile(h,info);
+				errorCount += ((XmlSchemaSimpleTypeRestriction)Content).Compile(h,schema);
 			}
 			else if(Content is XmlSchemaSimpleTypeList)
 			{
-				errorCount += ((XmlSchemaSimpleTypeList)Content).Compile(h,info);
+				errorCount += ((XmlSchemaSimpleTypeList)Content).Compile(h,schema);
 			}
 			else if(Content is XmlSchemaSimpleTypeUnion)
 			{
-				errorCount += ((XmlSchemaSimpleTypeUnion)Content).Compile(h,info);
+				errorCount += ((XmlSchemaSimpleTypeUnion)Content).Compile(h,schema);
 			}
+			this.CompilationId = schema.CompilationId;
 			return errorCount;
 		}
 		
 		[MonoTODO]
-		internal int Validate(ValidationEventHandler h, XmlSchemaInfo info)
+		internal int Validate(ValidationEventHandler h, XmlSchema schema)
 		{
 			if(isCompiled)
 				return errorCount;

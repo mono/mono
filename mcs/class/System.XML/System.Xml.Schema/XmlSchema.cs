@@ -1,5 +1,10 @@
-// Author: Dwivedi, Ajay kumar
-//            Adwiv@Yahoo.com
+//
+// System.Xml.Schema.XmlSchema.cs
+//
+// Author:
+//	Dwivedi, Ajay kumar  Adwiv@Yahoo.com
+//	Atsushi Enomoto  ginga@kit.hi-ho.ne.jp
+//
 using System;
 using System.Collections;
 using System.Xml;
@@ -12,7 +17,7 @@ namespace System.Xml.Schema
         /// <summary>
         /// Summary description for XmlSchema.
         /// </summary>
-        [XmlRoot("schema",Namespace="http://www.w3.org/2001/XMLSchema")]
+        [XmlRoot("schema",Namespace=XmlSchema.Namespace)]
         public class XmlSchema : XmlSchemaObject
         {
                 //public constants
@@ -38,8 +43,10 @@ namespace System.Xml.Schema
                 private string version;
                 private string language;
 
+		// post schema compilation infoset
+		private Hashtable idCollection;
+
                 // Compiler specific things
-                private XmlSchemaInfo info;
                 private static string xmlname = "schema";
 
                 public XmlSchema()
@@ -57,6 +64,8 @@ namespace System.Xml.Schema
                         groups                          = new XmlSchemaObjectTable();
                         notations                       = new XmlSchemaObjectTable();
                         schemaTypes                     = new XmlSchemaObjectTable();
+			idCollection                    = new Hashtable ();
+
                 }
 
                 #region Properties
@@ -206,6 +215,33 @@ namespace System.Xml.Schema
                         set{ language = value; }
                 }
 
+		internal Hashtable IDCollection
+		{
+			get { return idCollection; }
+		}
+
+		/*
+		internal XmlSchemaForm ElementFormDefaultCompiled
+		{
+			get { return elementFormDefaultCompiled; }
+		}
+
+		internal XmlSchemaForm AttributeFormDefaultCompiled
+		{
+			get { return attributeFormDefaultCompiled; }
+		}
+
+		internal XmlSchemaDerivationMethod BlockDefaultCompiled
+		{
+			get { return blockDefaultCompiled; }
+		}
+
+		internal XmlSchemaDerivationMethod FinalDefaultCompiled
+		{
+			get { return finalDefaultCompiled; }
+		}
+		*/
+
                 #endregion
 
                 #region Compile
@@ -228,10 +264,9 @@ namespace System.Xml.Schema
                 [MonoTODO]
                 public void Compile(ValidationEventHandler handler)
                 {
-                        // Create the xmlschemainfo object which we use to pass variables like targetnamespace;
-                        info = new XmlSchemaInfo();
+			CompilationId = Guid.NewGuid ();
 
-                        //1. Union and List are not allowed in block default
+			//1. Union and List are not allowed in block default
                         if(BlockDefault != XmlSchemaDerivationMethod.All)
                         {
                                 if((BlockDefault & XmlSchemaDerivationMethod.List)!=0 )
@@ -248,15 +283,13 @@ namespace System.Xml.Schema
                         }
 
                         //3. id must be of type ID
-                        XmlSchemaUtil.CompileID(Id, this, info.IDCollection, handler);
+                        XmlSchemaUtil.CompileID(Id, this, this.IDCollection, handler);
 
                         //4. targetNamespace should be of type anyURI or absent
                         if(TargetNamespace != null)
                         {
                                 if(!XmlSchemaUtil.CheckAnyUri(TargetNamespace))
                                         error(handler, TargetNamespace+" is not a valid value for targetNamespace attribute of schema");
-                                else
-                                        info.TargetNamespace = TargetNamespace;
                         }
 
                         //5. version should be of type normalizedString
@@ -266,29 +299,6 @@ namespace System.Xml.Schema
                         //6. xml:lang must be a language
                         if(!XmlSchemaUtil.CheckLanguage(Language))
                                 error(handler, Language + " is not a valid language");
-
-                        // elementFormDefault defaults to UnQualified
-                        if(ElementFormDefault != XmlSchemaForm.Qualified)
-                                info.ElementFormDefault = XmlSchemaForm.Unqualified;
-                        else
-                                info.ElementFormDefault = XmlSchemaForm.Qualified;
-
-                        // attributeFormDefault defaults to UnQualified
-                        if(AttributeFormDefault != XmlSchemaForm.Qualified)
-                                info.AttributeFormDefault = XmlSchemaForm.Unqualified;
-                        else
-                                info.AttributeFormDefault = XmlSchemaForm.Qualified;
-
-                        if(FinalDefault == XmlSchemaDerivationMethod.All)
-                                info.FinalDefault = XmlSchemaDerivationMethod.All;
-                        else // If finalDefault is None, info's finalDefault is set to empty
-                                info.FinalDefault = (FinalDefault & (XmlSchemaDerivationMethod.Extension | XmlSchemaDerivationMethod.Restriction));
-
-                        if(BlockDefault == XmlSchemaDerivationMethod.All)
-                                info.BlockDefault = XmlSchemaDerivationMethod.All;
-                        else // If finalDefault is None, info's blockDefault is set to empty
-                                info.BlockDefault = (blockDefault & (XmlSchemaDerivationMethod.Extension |
-                                        XmlSchemaDerivationMethod.Restriction | XmlSchemaDerivationMethod.Substitution));
 
                         // Compile the content of this schema
                         foreach(XmlSchemaObject obj in Includes)
@@ -302,43 +312,14 @@ namespace System.Xml.Schema
                                         error(handler,"Object of Type "+obj.GetType().Name+" is not valid in Includes Property of XmlSchema");
                                 }
                         }
-                        foreach(XmlSchemaObject obj in Items)
-                        {
-                                if(obj is XmlSchemaAnnotation)
-                                {
-                                        int numerr = ((XmlSchemaAnnotation)obj).Compile(handler,info);
-                                        errorCount += numerr;
-                                        if( numerr == 0)
-                                        {
-                                                //FIXME: What PSVI set do we add this to?
-                                        }
-                                }
-                                else if(obj is XmlSchemaAttribute)
-                                {
-                                        XmlSchemaAttribute attr = (XmlSchemaAttribute) obj;
-                                        attr.parentIsSchema = true;
-                                        int numerr = attr.Compile(handler,info);
-                                        errorCount += numerr;
-                                        if(numerr == 0)
-                                        {
-                                                Attributes.Add(attr.QualifiedName, attr);
-                                        }
-                                }
-                                else if(obj is XmlSchemaAttributeGroup)
-                                {
-                                        XmlSchemaAttributeGroup attrgrp = (XmlSchemaAttributeGroup) obj;
-                                        int numerr = attrgrp.Compile(handler,info);
-                                        errorCount += numerr;
-                                        if(numerr == 0)
-                                        {
-                                                AttributeGroups.Add(attrgrp.QualifiedName, attrgrp);
-                                        }
-                                }
-                                else if(obj is XmlSchemaComplexType)
+			// It is hack, but types are required before element/attributes.
+			foreach (XmlSchemaObject obj in Items)
+			{
+                                if(obj is XmlSchemaComplexType)
                                 {
                                         XmlSchemaComplexType ctype = (XmlSchemaComplexType) obj;
                                         ctype.istoplevel = true;
-                                        int numerr = ctype.Compile(handler,info);
+                                        int numerr = ctype.Compile(handler, this);
                                         errorCount += numerr;
                                         if(numerr == 0)
                                         {
@@ -349,18 +330,60 @@ namespace System.Xml.Schema
                                 {
                                         XmlSchemaSimpleType stype = (XmlSchemaSimpleType) obj;
                                         stype.islocal = false; //This simple type is toplevel
-                                        int numerr = stype.Compile(handler,info);
+                                        int numerr = stype.Compile(handler, this);
                                         errorCount += numerr;
                                         if(numerr == 0)
                                         {
                                                 SchemaTypes.Add(stype.QualifiedName, stype);
                                         }
                                 }
+			}
+
+			foreach(XmlSchemaObject obj in Items)
+                        {
+                                if(obj is XmlSchemaAnnotation)
+                                {
+                                        int numerr = ((XmlSchemaAnnotation)obj).Compile(handler, this);
+                                        errorCount += numerr;
+                                        if( numerr == 0)
+                                        {
+                                                //FIXME: What PSVI set do we add this to?
+                                        }
+                                }
+                                else if(obj is XmlSchemaAttribute)
+                                {
+                                        XmlSchemaAttribute attr = (XmlSchemaAttribute) obj;
+                                        attr.parentIsSchema = true;
+                                        int numerr = attr.Compile(handler, this);
+                                        errorCount += numerr;
+                                        if(numerr == 0)
+                                        {
+                                                Attributes.Add(attr.QualifiedName, attr);
+                                        }
+                                }
+                                else if(obj is XmlSchemaAttributeGroup)
+                                {
+                                        XmlSchemaAttributeGroup attrgrp = (XmlSchemaAttributeGroup) obj;
+                                        int numerr = attrgrp.Compile(handler, this);
+                                        errorCount += numerr;
+                                        if(numerr == 0)
+                                        {
+                                                AttributeGroups.Add(attrgrp.QualifiedName, attrgrp);
+                                        }
+                                }
+                                else if(obj is XmlSchemaComplexType)
+                                {
+					// Do nothing here.
+                                }
+                                else if(obj is XmlSchemaSimpleType)
+                                {
+					// Do nothing here.
+                                }
                                 else if(obj is XmlSchemaElement)
                                 {
                                         XmlSchemaElement elem = (XmlSchemaElement) obj;
                                         elem.parentIsSchema = true;
-                                        int numerr = elem.Compile(handler,info);
+                                        int numerr = elem.Compile(handler, this);
                                         errorCount += numerr;
                                         if(numerr == 0)
                                         {
@@ -370,7 +393,7 @@ namespace System.Xml.Schema
                                 else if(obj is XmlSchemaGroup)
                                 {
                                         XmlSchemaGroup grp = (XmlSchemaGroup) obj;
-                                        int numerr = grp.Compile(handler,info);
+                                        int numerr = grp.Compile(handler, this);
                                         errorCount += numerr;
                                         if(numerr == 0)
                                         {
@@ -380,7 +403,7 @@ namespace System.Xml.Schema
                                 else if(obj is XmlSchemaNotation)
                                 {
                                         XmlSchemaNotation ntn = (XmlSchemaNotation) obj;
-                                        int numerr = ntn.Compile(handler,info);
+                                        int numerr = ntn.Compile(handler, this);
                                         errorCount += numerr;
                                         if(numerr == 0)
                                         {
@@ -401,11 +424,9 @@ namespace System.Xml.Schema
                 [MonoTODO]
                 private void Validate(ValidationEventHandler handler)
                 {
-                        info.SchemaTypes = SchemaTypes;
-
                         foreach(XmlSchemaAttribute attr in Attributes.Values)
                         {
-                                attr.Validate(handler, info);
+                                attr.Validate(handler, this);
                         }
                         foreach(XmlSchemaAttributeGroup attrgrp in AttributeGroups.Values)
                         {
@@ -418,7 +439,7 @@ namespace System.Xml.Schema
                                         ((XmlSchemaComplexType)type).Validate(handler);
                                 }
                                 else
-                                        ((XmlSchemaSimpleType)type).Validate(handler, info);
+                                        ((XmlSchemaSimpleType)type).Validate(handler, this);
                         }
                         foreach(XmlSchemaElement elem in Elements.Values)
                         {

@@ -17,7 +17,7 @@ namespace System.Xml.Schema
 		public XmlSchemaInclude()
 		{
 		}
-		[XmlElement("annotation",Namespace="http://www.w3.org/2001/XMLSchema")]
+		[XmlElement("annotation",Namespace=XmlSchema.Namespace)]
 		public XmlSchemaAnnotation Annotation 
 		{
 			get{ return  annotation; } 

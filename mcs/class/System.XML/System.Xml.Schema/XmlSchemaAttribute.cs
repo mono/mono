@@ -99,7 +99,7 @@ namespace System.Xml.Schema
 			set{ schemaTypeName = value;}
 		}
 
-		[XmlElement("simpleType",Namespace="http://www.w3.org/2001/XMLSchema")]
+		[XmlElement("simpleType",Namespace=XmlSchema.Namespace)]
 		public XmlSchemaSimpleType SchemaType 
 		{
 			get{ return schemaType;}
@@ -168,8 +168,12 @@ namespace System.Xml.Schema
 		///     4. If default and use are both present, use must have the ·actual value· optional.
 		/// </remarks>
 		[MonoTODO]
-		internal int Compile(ValidationEventHandler h, XmlSchemaInfo info)
+		internal int Compile(ValidationEventHandler h, XmlSchema schema)
 		{
+			// If this is already compiled this time, simply skip.
+			if (this.IsComplied (schema.CompilationId))
+				return 0;
+
 			errorCount = 0;
 			
 			if(parentIsSchema)//a
@@ -184,7 +188,7 @@ namespace System.Xml.Schema
 					error(h,"use must be absent in the top level <attribute>");
 
 				// TODO: a.10, a.11, a.12, a.13
-				CompileCommon(h,info, true);
+				CompileCommon(h, schema, true);
 			}
 			else // local
 			{
@@ -192,7 +196,7 @@ namespace System.Xml.Schema
 				if(RefName == null || RefName.IsEmpty)
 				{
 					//TODO: b.8
-					CompileCommon(h,info, true);
+					CompileCommon(h, schema, true);
 				}
 				else
 				{
@@ -204,14 +208,15 @@ namespace System.Xml.Schema
 						error(h,"simpletype must be absent if ref is present");
 					if(this.schemaTypeName != null && !this.schemaTypeName.IsEmpty)
 						error(h,"type must be absent if ref is present");
-					CompileCommon(h,info,false);
+					CompileCommon(h, schema, false);
 				}
 			}
 
+			this.CompilationId = schema.CompilationId;
 			return errorCount;
 		}
 		
-		private void CompileCommon(ValidationEventHandler h, XmlSchemaInfo info, bool refIsNotPresent)
+		private void CompileCommon(ValidationEventHandler h, XmlSchema schema, bool refIsNotPresent)
 		{
 			if(refIsNotPresent)
 			{
@@ -222,14 +227,14 @@ namespace System.Xml.Schema
 				else if(Name == "xmlns") // a.14 , b5
 					error(h,"attribute name must not be xmlns");
 				else
-					qualifiedName = new XmlQualifiedName(Name, info.TargetNamespace);	
+					qualifiedName = new XmlQualifiedName(Name, schema.TargetNamespace);	
 
 				if(SchemaType != null)
 				{
 					if(SchemaTypeName != null && !SchemaTypeName.IsEmpty) // a.8
 						error(h,"attribute can't have both a type and <simpleType> content");
 
-					errorCount += SchemaType.Compile(h,info); 
+					errorCount += SchemaType.Compile(h, schema); 
 				}
 
 				if(SchemaTypeName != null && !XmlSchemaUtil.CheckQName(SchemaTypeName))
@@ -243,7 +248,7 @@ namespace System.Xml.Schema
 					qualifiedName = RefName;
 			}
 
-			if(info.TargetNamespace == XmlSchema.InstanceNamespace && Name != "nil" && Name != "type" 
+			if(schema.TargetNamespace == XmlSchema.InstanceNamespace && Name != "nil" && Name != "type" 
 				&& Name != "schemaLocation" && Name != "noNamespaceSchemaLocation") // a.15, a.16
 				error(h,"targetNamespace can't be " + XmlSchema.InstanceNamespace);
 
@@ -253,7 +258,7 @@ namespace System.Xml.Schema
 			if(DefaultValue != null && Use != XmlSchemaUse.None && Use != XmlSchemaUse.Optional)
 				error(h,"if default is present, use must be optional");
 
-			XmlSchemaUtil.CompileID(Id, this, info.IDCollection, h);
+			XmlSchemaUtil.CompileID(Id, this, schema.IDCollection, h);
 		}
 
 		/// <summary>
@@ -261,7 +266,7 @@ namespace System.Xml.Schema
 		///			QName, SimpleType, Scope, Default|Fixed, annotation
 		/// </summary>
 		[MonoTODO]
-		internal int Validate(ValidationEventHandler h, XmlSchemaInfo info)
+		internal int Validate(ValidationEventHandler h, XmlSchema schema)
 		{
 			if(isCompiled)
 				return errorCount;
@@ -271,25 +276,25 @@ namespace System.Xml.Schema
 			{
 				if(SchemaType != null)
 				{
-					errorCount += SchemaType.Validate(h, info);
+					errorCount += SchemaType.Validate(h, schema);
 					attributeType = SchemaType;
 				}
 				else if(SchemaTypeName != null && !SchemaTypeName.IsEmpty)
 				{
 					//First Try to get a Inbuilt DataType
-					XmlSchemaDatatype dtype = XmlSchemaDatatype.GetType(SchemaTypeName);
+					XmlSchemaDatatype dtype = XmlSchemaDatatype.FromName(SchemaTypeName);
 					if(dtype != null)
 					{
 						attributeType = dtype;
 					}
 					else
 					{
-						XmlSchemaObject obj = info.SchemaTypes[SchemaTypeName];
+						XmlSchemaObject obj = schema.SchemaTypes[SchemaTypeName];
 
 						if(obj is XmlSchemaSimpleType)
 						{
 							XmlSchemaSimpleType stype = (XmlSchemaSimpleType) obj;
-							errorCount += stype.Validate(h, info);
+							errorCount += stype.Validate(h, schema);
 							attributeType = stype;
 						}
 						else if(attributeType == null)

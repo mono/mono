@@ -19,48 +19,53 @@ namespace System.Xml.Schema
 			items = new XmlSchemaObjectCollection();
 		}
 
-		[XmlElement("element",typeof(XmlSchemaElement),Namespace="http://www.w3.org/2001/XMLSchema")]
-		[XmlElement("group",typeof(XmlSchemaGroupRef),Namespace="http://www.w3.org/2001/XMLSchema")]
-		[XmlElement("choice",typeof(XmlSchemaChoice),Namespace="http://www.w3.org/2001/XMLSchema")]
-		[XmlElement("sequence",typeof(XmlSchemaSequence),Namespace="http://www.w3.org/2001/XMLSchema")]
-		[XmlElement("any",typeof(XmlSchemaAny),Namespace="http://www.w3.org/2001/XMLSchema")]
+		[XmlElement("element",typeof(XmlSchemaElement),Namespace=XmlSchema.Namespace)]
+		[XmlElement("group",typeof(XmlSchemaGroupRef),Namespace=XmlSchema.Namespace)]
+		[XmlElement("choice",typeof(XmlSchemaChoice),Namespace=XmlSchema.Namespace)]
+		[XmlElement("sequence",typeof(XmlSchemaSequence),Namespace=XmlSchema.Namespace)]
+		[XmlElement("any",typeof(XmlSchemaAny),Namespace=XmlSchema.Namespace)]
 		public override XmlSchemaObjectCollection Items 
 		{
 			get{ return items; }
 		}
 
 		[MonoTODO]
-		internal int Compile(ValidationEventHandler h, XmlSchemaInfo info)
+		internal int Compile(ValidationEventHandler h, XmlSchema schema)
 		{
+			// If this is already compiled this time, simply skip.
+			if (this.IsComplied (schema.CompilationId))
+				return 0;
+
 			//FIXME: Should we reset the values
 			if(MinOccurs > MaxOccurs)
 				error(h,"minOccurs must be less than or equal to maxOccurs");
 
-			XmlSchemaUtil.CompileID(Id, this, info.IDCollection, h);
+			XmlSchemaUtil.CompileID(Id, this, schema.IDCollection, h);
 
 			foreach(XmlSchemaObject obj in Items)
 			{
 				if(obj is XmlSchemaElement)
 				{
-					errorCount += ((XmlSchemaElement)obj).Compile(h,info);
+					errorCount += ((XmlSchemaElement)obj).Compile(h, schema);
 				}
 				else if(obj is XmlSchemaGroupRef)
 				{
-					errorCount += ((XmlSchemaGroupRef)obj).Compile(h,info);
+					errorCount += ((XmlSchemaGroupRef)obj).Compile(h,schema);
 				}
 				else if(obj is XmlSchemaChoice)
 				{
-					errorCount += ((XmlSchemaChoice)obj).Compile(h,info);
+					errorCount += ((XmlSchemaChoice)obj).Compile(h,schema);
 				}
 				else if(obj is XmlSchemaSequence)
 				{
-					errorCount += ((XmlSchemaSequence)obj).Compile(h,info);
+					errorCount += ((XmlSchemaSequence)obj).Compile(h,schema);
 				}
 				else if(obj is XmlSchemaAny)
 				{
-					errorCount += ((XmlSchemaAny)obj).Compile(h,info);
+					errorCount += ((XmlSchemaAny)obj).Compile(h,schema);
 				}
 			}
+			this.CompilationId = schema.CompilationId;
 			return errorCount;
 		}
 		

@@ -25,8 +25,8 @@ namespace System.Xml.Schema
 			set{ isMixed = value; }
 		}
 
-		[XmlElement("restriction",typeof(XmlSchemaComplexContentRestriction),Namespace="http://www.w3.org/2001/XMLSchema")]
-		[XmlElement("extension",typeof(XmlSchemaComplexContentExtension),Namespace="http://www.w3.org/2001/XMLSchema")]
+		[XmlElement("restriction",typeof(XmlSchemaComplexContentRestriction),Namespace=XmlSchema.Namespace)]
+		[XmlElement("extension",typeof(XmlSchemaComplexContentExtension),Namespace=XmlSchema.Namespace)]
 		public override XmlSchemaContent Content 
 		{
 			get{ return  content; } 
@@ -37,8 +37,12 @@ namespace System.Xml.Schema
 		/// 1. Content must be present
 		/// </remarks>
 		[MonoTODO]
-		internal int Compile(ValidationEventHandler h, XmlSchemaInfo info)
+		internal int Compile(ValidationEventHandler h, XmlSchema schema)
 		{
+			// If this is already compiled this time, simply skip.
+			if (this.IsComplied (schema.CompilationId))
+				return 0;
+
 			if(Content == null)
 			{
 				error(h, "Content must be present in a complexContent");
@@ -48,19 +52,20 @@ namespace System.Xml.Schema
 				if(Content is XmlSchemaComplexContentRestriction)
 				{
 					XmlSchemaComplexContentRestriction xscr = (XmlSchemaComplexContentRestriction) Content;
-					errorCount += xscr.Compile(h,info);
+					errorCount += xscr.Compile(h, schema);
 				}
 				else if(Content is XmlSchemaComplexContentExtension)
 				{
 					XmlSchemaComplexContentExtension xsce = (XmlSchemaComplexContentExtension) Content;
-					errorCount += xsce.Compile(h,info);
+					errorCount += xsce.Compile(h, schema);
 				}
 				else
 					error(h,"complexContent can't have any value other than restriction or extention");
 			}
 
-			XmlSchemaUtil.CompileID(Id,this,info.IDCollection,h);
+			XmlSchemaUtil.CompileID(Id,this, schema.IDCollection,h);
 
+			this.CompilationId = schema.CompilationId;
 			return errorCount;
 		}
 		

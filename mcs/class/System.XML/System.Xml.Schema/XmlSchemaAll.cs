@@ -19,7 +19,7 @@ namespace System.Xml.Schema
 			items = new XmlSchemaObjectCollection();
 		}
 
-		[XmlElement("element",typeof(XmlSchemaElement),Namespace="http://www.w3.org/2001/XMLSchema")]
+		[XmlElement("element",typeof(XmlSchemaElement),Namespace=XmlSchema.Namespace)]
 		public override XmlSchemaObjectCollection Items 
 		{
 			get{ return items; }
@@ -30,15 +30,19 @@ namespace System.Xml.Schema
 		/// 2. MinOccurs must be zero or one.
 		/// </remarks>
 		[MonoTODO]
-		internal int Compile(ValidationEventHandler h, XmlSchemaInfo info)
+		internal int Compile(ValidationEventHandler h, XmlSchema schema)
 		{
+			// If this is already compiled this time, simply skip.
+			if (this.IsComplied (schema.CompilationId))
+				return 0;
+
 			//FIXME: Should we reset the values on error??
 			if(MaxOccurs != Decimal.One)
 				error(h,"maxOccurs must be 1");
 			if(MinOccurs != Decimal.One && MinOccurs != Decimal.Zero)
 				error(h,"minOccurs must be 0 or 1");
 
-			XmlSchemaUtil.CompileID(Id, this, info.IDCollection, h);
+			XmlSchemaUtil.CompileID(Id, this, schema.IDCollection, h);
 
 			foreach(XmlSchemaObject obj in Items)
 			{
@@ -49,7 +53,7 @@ namespace System.Xml.Schema
 					{
 						elem.error(h,"The {max occurs} of all the elements of 'all' must be 0 or 1. ");
 					}
-					errorCount += elem.Compile(h,info);
+					errorCount += elem.Compile(h, schema);
 				}
 				else
 				{
@@ -57,6 +61,7 @@ namespace System.Xml.Schema
 				}
 			}
 
+			this.CompilationId = schema.CompilationId;
 			return errorCount;
 		}
 

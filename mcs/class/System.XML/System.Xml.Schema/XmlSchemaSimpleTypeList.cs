@@ -31,7 +31,7 @@ namespace System.Xml.Schema
 			}
 		}
 
-		[XmlElement("simpleType",Namespace="http://www.w3.org/2001/XMLSchema")]
+		[XmlElement("simpleType",Namespace=XmlSchema.Namespace)]
 		public XmlSchemaSimpleType ItemType 
 		{
 			get{ return itemType; } 
@@ -45,8 +45,12 @@ namespace System.Xml.Schema
 		/// 2. id must be of type ID
 		/// </remarks>
 		[MonoTODO]
-		internal int Compile(ValidationEventHandler h, XmlSchemaInfo info)
+		internal int Compile(ValidationEventHandler h, XmlSchema schema)
 		{
+			// If this is already compiled this time, simply skip.
+			if (this.IsComplied (schema.CompilationId))
+				return 0;
+
 			errorCount = 0;
 
 			if(ItemType != null && !ItemTypeName.IsEmpty)
@@ -55,13 +59,14 @@ namespace System.Xml.Schema
 				error(h, "one of itemType or simpletype must be present");
 			if(ItemType != null)
 			{
-				errorCount += ItemType.Compile(h,info);
+				errorCount += ItemType.Compile(h,schema);
 			}
 			if(!XmlSchemaUtil.CheckQName(ItemTypeName))
 				error(h,"BaseTypeName must be a XmlQualifiedName");
 			
-			XmlSchemaUtil.CompileID(Id,this,info.IDCollection,h);
+			XmlSchemaUtil.CompileID(Id,this,schema.IDCollection,h);
 
+			this.CompilationId = schema.CompilationId;
 			return errorCount;
 		}
 		

@@ -201,8 +201,12 @@ namespace System.Xml.Schema
 		///		6. default and fixed must not both be present.(Actually both are absent)
 		/// </remarks>	
 		[MonoTODO]
-		internal int Compile(ValidationEventHandler h, XmlSchemaInfo info)
+		internal int Compile(ValidationEventHandler h, XmlSchema schema)
 		{
+			// If this is already compiled this time, simply skip.
+			if (this.IsComplied (schema.CompilationId))
+				return 0;
+
 			if(this.defaultValue != null && this.fixedValue != null)
 				error(h,"both default and fixed can't be present");
 
@@ -216,7 +220,7 @@ namespace System.Xml.Schema
 				else if(!XmlSchemaUtil.CheckNCName(this.name)) // b1.2
 					error(h,"attribute name must be NCName");
 				else
-					this.qName = new XmlQualifiedName(this.name, info.TargetNamespace);
+					this.qName = new XmlQualifiedName(this.name, schema.TargetNamespace);
 				
 				if(form != XmlSchemaForm.None)
 					error(h,"form must be absent");
@@ -229,7 +233,7 @@ namespace System.Xml.Schema
 				if(final == XmlSchemaDerivationMethod.All)
 					finalResolved = allfinal;
 				else if(final == XmlSchemaDerivationMethod.None)
-					finalResolved = info.BlockDefault & allfinal;
+					finalResolved = allfinal;
 				else 
 				{
 					if((final & ~allfinal) != 0)
@@ -243,7 +247,7 @@ namespace System.Xml.Schema
 				if(block == XmlSchemaDerivationMethod.All)
 					blockResolved = allblock;
 				else if(block == XmlSchemaDerivationMethod.None)
-					blockResolved = info.BlockDefault & allblock;
+					blockResolved = allblock;
 				else
 				{
 					if((block & ~allblock) != 0)
@@ -261,11 +265,11 @@ namespace System.Xml.Schema
 				{
 					if(schemaType is XmlSchemaSimpleType)
 					{
-						errorCount += ((XmlSchemaSimpleType)schemaType).Compile(h,info);
+						errorCount += ((XmlSchemaSimpleType)schemaType).Compile(h,schema);
 					}
 					else if(schemaType is XmlSchemaComplexType)
 					{
-						errorCount += ((XmlSchemaComplexType)schemaType).Compile(h,info);
+						errorCount += ((XmlSchemaComplexType)schemaType).Compile(h,schema);
 					}
 					else
 						error(h,"only simpletype or complextype is allowed");
@@ -284,14 +288,12 @@ namespace System.Xml.Schema
 				foreach(XmlSchemaObject obj in constraints)
 				{
 					if(obj is XmlSchemaUnique)
-						errorCount += ((XmlSchemaUnique)obj).Compile(h,info);
+						errorCount += ((XmlSchemaUnique)obj).Compile(h,schema);
 					else if(obj is XmlSchemaKey)
-						errorCount += ((XmlSchemaKey)obj).Compile(h,info);
+						errorCount += ((XmlSchemaKey)obj).Compile(h,schema);
 					else if(obj is XmlSchemaKeyref)
-						errorCount += ((XmlSchemaKeyref)obj).Compile(h,info);
+						errorCount += ((XmlSchemaKeyref)obj).Compile(h,schema);
 				}
-
-
 			}
 			else
 			{
@@ -308,8 +310,8 @@ namespace System.Xml.Schema
 
 				if(refName == null || RefName.IsEmpty)
 				{
-					if(form == XmlSchemaForm.Qualified || (form == XmlSchemaForm.None && info.ElementFormDefault == XmlSchemaForm.Qualified))
-						this.targetNamespace = info.TargetNamespace;
+					if(form == XmlSchemaForm.Qualified || (form == XmlSchemaForm.None && schema.ElementFormDefault == XmlSchemaForm.Qualified))
+						this.targetNamespace = schema.TargetNamespace;
 					else
 						this.targetNamespace = string.Empty;
 
@@ -326,7 +328,7 @@ namespace System.Xml.Schema
 					if(block == XmlSchemaDerivationMethod.All)
 						blockResolved = allblock;
 					else if(block == XmlSchemaDerivationMethod.None)
-						blockResolved = info.BlockDefault & allblock;
+						blockResolved = allblock;
 					else
 					{
 						if((block & ~allblock) != 0)
@@ -344,11 +346,11 @@ namespace System.Xml.Schema
 					{
 						if(schemaType is XmlSchemaSimpleType)
 						{
-							errorCount += ((XmlSchemaSimpleType)schemaType).Compile(h,info);
+							errorCount += ((XmlSchemaSimpleType)schemaType).Compile(h,schema);
 						}
 						else if(schemaType is XmlSchemaComplexType)
 						{
-							errorCount += ((XmlSchemaComplexType)schemaType).Compile(h,info);
+							errorCount += ((XmlSchemaComplexType)schemaType).Compile(h,schema);
 						}
 						else
 							error(h,"only simpletype or complextype is allowed");
@@ -367,11 +369,11 @@ namespace System.Xml.Schema
 					foreach(XmlSchemaObject obj in constraints)
 					{
 						if(obj is XmlSchemaUnique)
-							errorCount += ((XmlSchemaUnique)obj).Compile(h,info);
+							errorCount += ((XmlSchemaUnique)obj).Compile(h,schema);
 						else if(obj is XmlSchemaKey)
-							errorCount += ((XmlSchemaKey)obj).Compile(h,info);
+							errorCount += ((XmlSchemaKey)obj).Compile(h,schema);
 						else if(obj is XmlSchemaKeyref)
-							errorCount += ((XmlSchemaKeyref)obj).Compile(h,info);
+							errorCount += ((XmlSchemaKeyref)obj).Compile(h,schema);
 					}
 				}
 				else
@@ -399,9 +401,23 @@ namespace System.Xml.Schema
 						error(h,"simpleType or complexType must be absent");
 				}
 			}
-			
-			XmlSchemaUtil.CompileID(Id,this,info.IDCollection,h);
 
+			// PSVI contribution for XmlSchemaElement
+			if(refName == null || RefName.IsEmpty) {
+				if (this.schemaType != null)
+					this.elementType = schemaType;
+				else {
+					XmlSchemaType xsType = schema.SchemaTypes [schemaTypeName] as XmlSchemaType;
+					if (xsType != null)
+						this.elementType = xsType;
+					else
+						this.elementType = XmlSchemaDatatype.FromName (schemaTypeName);
+				}
+			}
+		
+			XmlSchemaUtil.CompileID(Id,this,schema.IDCollection,h);
+
+			this.CompilationId = schema.CompilationId;
 			return errorCount;
 		}
 		

@@ -102,7 +102,20 @@ namespace System.Xml.Schema
 		[XmlIgnore]
 		public XmlSchemaContentType ContentType 
 		{
-			get{ return contentType; }
+			get{
+				XmlSchemaComplexContent xcc = 
+					ContentModel as XmlSchemaComplexContent;
+				if (xcc != null && xcc.IsMixed)
+					return XmlSchemaContentType.Mixed;
+
+				XmlSchemaSimpleContent xsc = ContentModel as XmlSchemaSimpleContent;
+				if (xsc != null)
+					return XmlSchemaContentType.TextOnly;
+
+				return ContentTypeParticle != null ?
+					XmlSchemaContentType.ElementOnly :
+					XmlSchemaContentType.Empty;
+			}
 		}
 		[XmlIgnore]
 		public XmlSchemaParticle ContentTypeParticle 
@@ -141,8 +154,12 @@ namespace System.Xml.Schema
 		///		
 		/// </remarks>
 		[MonoTODO]
-		internal int Compile(ValidationEventHandler h, XmlSchemaInfo info)
+		internal int Compile(ValidationEventHandler h, XmlSchema schema)
 		{
+			// If this is already compiled this time, simply skip.
+			if (this.IsComplied (schema.CompilationId))
+				return 0;
+
 			if(istoplevel)
 			{
 				if(this.Name == null || this.Name == string.Empty)
@@ -150,7 +167,7 @@ namespace System.Xml.Schema
 				else if(!XmlSchemaUtil.CheckNCName(Name))
 					error(h,"name must be a NCName");
 				else
-					this.qName = new XmlQualifiedName(Name,info.TargetNamespace);
+					this.qName = new XmlQualifiedName(Name, schema.TargetNamespace);
 				
 				if(Block != XmlSchemaDerivationMethod.None)
 				{
@@ -166,12 +183,17 @@ namespace System.Xml.Schema
 				}
 				else
 				{
-					if(info.BlockDefault == XmlSchemaDerivationMethod.All)
-					{
+					switch (schema.BlockDefault) {
+					case XmlSchemaDerivationMethod.All:
 						blockResolved = XmlSchemaDerivationMethod.All;
+						break;
+					case XmlSchemaDerivationMethod.None:
+						blockResolved = XmlSchemaDerivationMethod.Extension | XmlSchemaDerivationMethod.Restriction;
+						break;
+					default:
+						blockResolved = schema.BlockDefault & (XmlSchemaDerivationMethod.Extension | XmlSchemaDerivationMethod.Restriction);
+						break;
 					}
-					else
-						blockResolved = info.BlockDefault & (XmlSchemaDerivationMethod.Extension | XmlSchemaDerivationMethod.Restriction);
 				}
 				if(Final != XmlSchemaDerivationMethod.None)
 				{
@@ -187,13 +209,16 @@ namespace System.Xml.Schema
 				}
 				else
 				{
-					if(info.FinalDefault == XmlSchemaDerivationMethod.All)
-					{
+					switch (schema.FinalDefault) {
+					case XmlSchemaDerivationMethod.All:
 						finalResolved = XmlSchemaDerivationMethod.All;
-					}
-					else
-					{
-						finalResolved = info.BlockDefault & (XmlSchemaDerivationMethod.Extension | XmlSchemaDerivationMethod.Restriction);
+						break;
+					case XmlSchemaDerivationMethod.None:
+						finalResolved = XmlSchemaDerivationMethod.Extension | XmlSchemaDerivationMethod.Restriction;
+						break;
+					default:
+						finalResolved = schema.FinalDefault & (XmlSchemaDerivationMethod.Extension | XmlSchemaDerivationMethod.Restriction);
+						break;
 					}
 				}
 			}
@@ -217,12 +242,12 @@ namespace System.Xml.Schema
 				if(ContentModel is XmlSchemaSimpleContent)
 				{
 					XmlSchemaSimpleContent smodel = (XmlSchemaSimpleContent)ContentModel;
-					errorCount += smodel.Compile(h,info);
+					errorCount += smodel.Compile(h,schema);
 				}
 				else if(ContentModel is XmlSchemaComplexContent)
 				{
 					XmlSchemaComplexContent cmodel = (XmlSchemaComplexContent)ContentModel;
-					errorCount += cmodel.Compile(h,info);
+					errorCount += cmodel.Compile(h,schema);
 				}
 			}
 			else
@@ -230,46 +255,47 @@ namespace System.Xml.Schema
 				if(Particle is XmlSchemaGroupRef)
 				{
 					XmlSchemaGroupRef xsgr = (XmlSchemaGroupRef)Particle;
-					errorCount += xsgr.Compile(h,info);
+					errorCount += xsgr.Compile(h,schema);
 				}
 				else if(Particle is XmlSchemaAll)
 				{
 					XmlSchemaAll xsa = (XmlSchemaAll)Particle;
-					errorCount += xsa.Compile(h,info);
+					errorCount += xsa.Compile(h,schema);
 				}
 				else if(Particle is XmlSchemaChoice)
 				{
 					XmlSchemaChoice xsc = (XmlSchemaChoice)Particle;
-					errorCount += xsc.Compile(h,info);
+					errorCount += xsc.Compile(h,schema);
 				}
 				else if(Particle is XmlSchemaSequence)
 				{
 					XmlSchemaSequence xss = (XmlSchemaSequence)Particle;
-					errorCount += xss.Compile(h,info);
+					errorCount += xss.Compile(h,schema);
 				}
 
 				if(this.anyAttribute != null)
 				{
-					AnyAttribute.Compile(h,info);
+					AnyAttribute.Compile(h,schema);
 				}
 				foreach(XmlSchemaObject obj in Attributes)
 				{
 					if(obj is XmlSchemaAttribute)
 					{
 						XmlSchemaAttribute attr = (XmlSchemaAttribute) obj;
-						errorCount += attr.Compile(h,info);
+						errorCount += attr.Compile(h,schema);
 					}
 					else if(obj is XmlSchemaAttributeGroupRef)
 					{
 						XmlSchemaAttributeGroupRef atgrp = (XmlSchemaAttributeGroupRef) obj;
-						errorCount += atgrp.Compile(h,info);
+						errorCount += atgrp.Compile(h,schema);
 					}
 					else
 						error(h,obj.GetType() +" is not valid in this place::ComplexType");
 				}
 			}
 
-			XmlSchemaUtil.CompileID(Id, this, info.IDCollection, h);
+			XmlSchemaUtil.CompileID(Id, this, schema.IDCollection, h);
+			this.CompilationId = schema.CompilationId;
 			return errorCount;
 		}
 		

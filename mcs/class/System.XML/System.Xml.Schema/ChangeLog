@@ -1,5 +1,36 @@
 2003-07-19  Atsushi Enomoto  <ginga@kit.hi-ho.ne.jp>
 
+	* XmlSchema.cs, XmlSchemaAll.cs, XmlSchemaAnnotated.cs,
+	  XmlSchemaAnnotation.cs, XmlSchemaAny.cs, XmlSchemaAnyAttribute.cs,
+	  XmlSchemaAttribute.cs, XmlSchemaAttributeGroup.cs,
+	  XmlSchemaAttributeGroupRef.cs, XmlSchemaChoice.cs,
+	  XmlSchemaComplexContent.cs, XmlSchemaComplexContentExtension.cs,
+	  XmlSchemaComplexContentRestriction.cs, XmlSchemaComplexType.cs,
+	  XmlSchemaElement.cs, XmlSchemaGroup.cs, XmlSchemaGroupRef.cs,
+	  XmlSchemaIdentityConstraint.cs, XmlSchemaImport.cs,
+	  XmlSchemaInclude.cs, XmlSchemaKey.cs, XmlSchemaKeyref.cs,
+	  XmlSchemaNotation.cs, XmlSchemaObject.cs, XmlSchemaRedefine.cs,
+	  XmlSchemaSequence.cs, XmlSchemaSimpleContent.cs,
+	  XmlSchemaSimpleContentExtension.cs,
+	  XmlSchemaSimpleContentRestriction.cs, XmlSchemaSimpleType.cs,
+	  XmlSchemaSimpleTypeList.cs, XmlSchemaSimpleTypeRestriction.cs,
+	  XmlSchemaSimpleTypeUnion.cs, XmlSchemaUnique.cs,
+	  XmlSchemaXPath.cs, 
+	  As to Compile() and Validate(),
+	  - Added CompilationId and check it while compiling schema components.
+	  - Code refactory. Replaced literal xmlns with XmlSchema.Namespace
+	  - Replaced XmlSchemaInfo with compiling XmlSchema itself (XmlSchema
+	    also has PSVI components inside it, so passing itself seems enough).
+	  - Related to above change, IDCollection was moved to XmlSchema, and
+	    blockDefault/finalDefault/blockResolved/finalResolved resolution
+	    was changed to reference only to schema.BlockDefault/FinalDefault.
+	  - The similar change has done against XmlSchemaForm related stuff.
+	  - Changed compilation order of schema type definitions (it is
+	    workaround). First it compiles types, and then it compiles others.
+	* XmlSchemaElement.cs : added ElementType PSVI contribution support.
+
+2003-07-19  Atsushi Enomoto  <ginga@kit.hi-ho.ne.jp>
+
 	* BuiltInDatatypes.cs, XmlSchemaDatatype.cs :
 	  Added decimal and its derived datatypes.
 	  Added abstract XsdAnySimpleType.

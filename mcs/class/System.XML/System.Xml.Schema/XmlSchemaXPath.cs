@@ -25,9 +25,14 @@ namespace System.Xml.Schema
 			set{ xpath = value; }
 		}
 
-		internal int Compile(ValidationEventHandler h, XmlSchemaInfo info)
+		internal int Compile(ValidationEventHandler h, XmlSchema schema)
 		{
-			XmlSchemaUtil.CompileID(Id, this, info.IDCollection, h);
+			// If this is already compiled this time, simply skip.
+			if (this.IsComplied (schema.CompilationId))
+				return 0;
+
+			XmlSchemaUtil.CompileID(Id, this, schema.IDCollection, h);
+			this.CompilationId = schema.CompilationId;
 			return errorCount;
 		}
 

@@ -34,13 +34,17 @@ namespace System.Xml.Schema
 		/// 1. RefName must be present
 		/// </remarks>
 		[MonoTODO]
-		internal int Compile(ValidationEventHandler h, XmlSchemaInfo info)
+		internal int Compile(ValidationEventHandler h, XmlSchema schema)
 		{
+			// If this is already compiled this time, simply skip.
+			if (this.IsComplied (schema.CompilationId))
+				return 0;
+
 			//FIXME: Should we reset the values
 			if(MinOccurs > MaxOccurs)
 				error(h,"minOccurs must be less than or equal to maxOccurs");
 
-			XmlSchemaUtil.CompileID(Id,this,info.IDCollection,h);
+			XmlSchemaUtil.CompileID(Id,this,schema.IDCollection,h);
 
 			if(refName == null || refName.IsEmpty)
 			{
@@ -49,6 +53,7 @@ namespace System.Xml.Schema
 			else if(!XmlSchemaUtil.CheckQName(RefName))
 				error(h, "RefName must be a valid XmlQualifiedName");
 
+			this.CompilationId = schema.CompilationId;
 			return errorCount;
 		}
 		

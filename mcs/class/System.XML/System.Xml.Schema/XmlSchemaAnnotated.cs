@@ -27,7 +27,7 @@ namespace System.Xml.Schema
 			set{ id = value; } 
 		}
 		
-		[XmlElement("annotation",Namespace="http://www.w3.org/2001/XMLSchema")]
+		[XmlElement("annotation",Namespace=XmlSchema.Namespace)]
 		public XmlSchemaAnnotation Annotation 
 		{ 
 			get{ return  annotation; } 

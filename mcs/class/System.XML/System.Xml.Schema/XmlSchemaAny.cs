@@ -42,11 +42,15 @@ namespace System.Xml.Schema
 		///		b) list of anyURI and ##targetNamespace and ##local
 		/// </remarks>
 		[MonoTODO]
-		internal int Compile(ValidationEventHandler h, XmlSchemaInfo info)
+		internal int Compile(ValidationEventHandler h, XmlSchema schema)
 		{
+			// If this is already compiled this time, simply skip.
+			if (this.IsComplied (schema.CompilationId))
+				return 0;
+
 			errorCount = 0;
 
-			XmlSchemaUtil.CompileID(Id,this,info.IDCollection,h);
+			XmlSchemaUtil.CompileID(Id,this, schema.IDCollection,h);
 
 			//define ##any=1,##other=2,##targetNamespace=4,##local=8,anyURI=16
 			int nscount = 0;
@@ -80,6 +84,7 @@ namespace System.Xml.Schema
 			if((nscount&2) == 2 && nscount != 2)
 				error(h,"##other if present must be the only namespace attribute");
 			
+			this.CompilationId = schema.CompilationId;
 			return errorCount;
 		}
 		

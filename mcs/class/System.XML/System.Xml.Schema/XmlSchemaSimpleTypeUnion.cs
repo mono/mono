@@ -20,7 +20,7 @@ namespace System.Xml.Schema
 			baseTypes = new XmlSchemaObjectCollection();
 		}
 
-		[XmlElement("simpleType",typeof(XmlSchemaSimpleType),Namespace="http://www.w3.org/2001/XMLSchema")]
+		[XmlElement("simpleType",typeof(XmlSchemaSimpleType),Namespace=XmlSchema.Namespace)]
 		public XmlSchemaObjectCollection BaseTypes 
 		{
 			get{ return baseTypes; }
@@ -37,8 +37,12 @@ namespace System.Xml.Schema
 		/// 2. id must be a valid ID
 		/// </remarks>
 		[MonoTODO]
-		internal int Compile(ValidationEventHandler h, XmlSchemaInfo info)
+		internal int Compile(ValidationEventHandler h, XmlSchema schema)
 		{
+			// If this is already compiled this time, simply skip.
+			if (this.IsComplied (schema.CompilationId))
+				return 0;
+
 			errorCount = 0;
 
 			int count = BaseTypes.Count;
@@ -48,7 +52,7 @@ namespace System.Xml.Schema
 				if(obj != null && obj is XmlSchemaSimpleType)
 				{
 					XmlSchemaSimpleType stype = (XmlSchemaSimpleType) obj;
-					errorCount += stype.Compile(h,info);
+					errorCount += stype.Compile(h, schema);
 				}
 				else
 				{
@@ -75,8 +79,9 @@ namespace System.Xml.Schema
 			if(count == 0)
 				error(h, "Atleast one simpletype or membertype must be present");
 
-			XmlSchemaUtil.CompileID(Id,this,info.IDCollection,h);
+			XmlSchemaUtil.CompileID(Id,this,schema.IDCollection,h);
 
+			this.CompilationId = schema.CompilationId;
 			return errorCount;
 		}
 		

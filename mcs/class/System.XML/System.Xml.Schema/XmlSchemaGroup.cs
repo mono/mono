@@ -28,9 +28,9 @@ namespace System.Xml.Schema
 			set{ name = value; }
 		}
 
-		[XmlElement("all",typeof(XmlSchemaAll),Namespace="http://www.w3.org/2001/XMLSchema")]
-		[XmlElement("choice",typeof(XmlSchemaChoice),Namespace="http://www.w3.org/2001/XMLSchema")]
-		[XmlElement("sequence",typeof(XmlSchemaSequence),Namespace="http://www.w3.org/2001/XMLSchema")]
+		[XmlElement("all",typeof(XmlSchemaAll),Namespace=XmlSchema.Namespace)]
+		[XmlElement("choice",typeof(XmlSchemaChoice),Namespace=XmlSchema.Namespace)]
+		[XmlElement("sequence",typeof(XmlSchemaSequence),Namespace=XmlSchema.Namespace)]
 		public XmlSchemaGroupBase Particle
 		{
 			get{ return  particle; }
@@ -46,14 +46,18 @@ namespace System.Xml.Schema
 		// 1. name must be present
 		// 2. MinOccurs & MaxOccurs of the Particle must be absent
 		[MonoTODO]
-		internal int Compile(ValidationEventHandler h, XmlSchemaInfo info)
+		internal int Compile(ValidationEventHandler h, XmlSchema schema)
 		{
+			// If this is already compiled this time, simply skip.
+			if (this.IsComplied (schema.CompilationId))
+				return 0;
+
 			if(Name == null)
 				error(h,"Required attribute name must be present");
 			else if(!XmlSchemaUtil.CheckNCName(this.name)) 
 				error(h,"attribute name must be NCName");
 			else
-				qualifiedName = new XmlQualifiedName(Name,info.TargetNamespace);
+				qualifiedName = new XmlQualifiedName(Name,schema.TargetNamespace);
 
 			if(Particle == null)
 			{
@@ -68,15 +72,15 @@ namespace System.Xml.Schema
 			
 				if(Particle is XmlSchemaChoice)
 				{
-					errorCount += ((XmlSchemaChoice)Particle).Compile(h,info);
+					errorCount += ((XmlSchemaChoice)Particle).Compile(h,schema);
 				}
 				else if(Particle is XmlSchemaSequence)
 				{
-					errorCount += ((XmlSchemaSequence)Particle).Compile(h,info);
+					errorCount += ((XmlSchemaSequence)Particle).Compile(h,schema);
 				}
 				else if(Particle is XmlSchemaAll)
 				{
-					errorCount += ((XmlSchemaAll)Particle).Compile(h,info);
+					errorCount += ((XmlSchemaAll)Particle).Compile(h,schema);
 				}
 				else
 				{
@@ -84,8 +88,9 @@ namespace System.Xml.Schema
 				}
 			}
 			
-			XmlSchemaUtil.CompileID(Id,this,info.IDCollection,h);
+			XmlSchemaUtil.CompileID(Id,this,schema.IDCollection,h);
 
+			this.CompilationId = schema.CompilationId;
 			return errorCount;
 		}
 		

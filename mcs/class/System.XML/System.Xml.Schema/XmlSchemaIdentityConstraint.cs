@@ -29,14 +29,14 @@ namespace System.Xml.Schema
 			set{ name = value; }
 		}
 
-		[XmlElement("selector",typeof(XmlSchemaXPath),Namespace="http://www.w3.org/2001/XMLSchema")]
+		[XmlElement("selector",typeof(XmlSchemaXPath),Namespace=XmlSchema.Namespace)]
 		public XmlSchemaXPath Selector 
 		{
 			get{ return  selector; } 
 			set{ selector = value; }
 		}
 
-		[XmlElement("field",typeof(XmlSchemaXPath),Namespace="http://www.w3.org/2001/XMLSchema")]
+		[XmlElement("field",typeof(XmlSchemaXPath),Namespace=XmlSchema.Namespace)]
 		public XmlSchemaObjectCollection Fields 
 		{
 			get{ return fields; }
@@ -52,20 +52,24 @@ namespace System.Xml.Schema
 		/// 2. selector and field must be present
 		/// </remarks>
 		[MonoTODO]
-		internal int Compile(ValidationEventHandler h, XmlSchemaInfo info)
+		internal int Compile(ValidationEventHandler h, XmlSchema schema)
 		{
+			// If this is already compiled this time, simply skip.
+			if (this.IsComplied (schema.CompilationId))
+				return 0;
+
 			if(Name == null)
 				error(h,"Required attribute name must be present");
 			else if(!XmlSchemaUtil.CheckNCName(this.name)) 
 				error(h,"attribute name must be NCName");
 			else
-				this.qName = new XmlQualifiedName(Name,info.TargetNamespace);
+				this.qName = new XmlQualifiedName(Name,schema.TargetNamespace);
 
 			if(Selector == null)
 				error(h,"selector must be present");
 			else
 			{
-				errorCount += Selector.Compile(h,info);
+				errorCount += Selector.Compile(h,schema);
 			}
 
 			if(Fields.Count == 0)
@@ -77,14 +81,15 @@ namespace System.Xml.Schema
 					if(obj is XmlSchemaXPath)
 					{
 						XmlSchemaXPath field = (XmlSchemaXPath)obj;
-						errorCount += field.Compile(h,info);
+						errorCount += field.Compile(h,schema);
 					}
 					else
 						error(h,"Object of type "+obj.GetType()+" is invalid in the Fields Collection");
 				}
 			}
-			XmlSchemaUtil.CompileID(Id,this,info.IDCollection,h);
+			XmlSchemaUtil.CompileID(Id,this,schema.IDCollection,h);
 
+			this.CompilationId = schema.CompilationId;
 			return errorCount;
 		}
 	}

@@ -20,9 +20,14 @@ namespace System.Xml.Schema
 		/// 2. selector and field must be present
 		/// </remarks>
 		[MonoTODO]
-		internal new int Compile(ValidationEventHandler h, XmlSchemaInfo info)
+		internal new int Compile(ValidationEventHandler h, XmlSchema schema)
 		{
-			return base.Compile(h,info);
+			// If this is already compiled this time, simply skip.
+			if (this.IsComplied (schema.CompilationId))
+				return 0;
+
+			this.CompilationId = schema.CompilationId;
+			return base.Compile(h,schema);
 		}
 		
 		[MonoTODO]

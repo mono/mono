@@ -19,6 +19,7 @@ namespace System.Xml.Schema
 		internal ArrayList unhandledAttributeList ;
 		internal bool isCompiled = false;
 		internal int errorCount = 0;
+		internal Guid CompilationId;
 
 		protected XmlSchemaObject()
 		{
@@ -70,6 +71,11 @@ namespace System.Xml.Schema
 		internal static void warn(ValidationEventHandler handle, string message, Exception innerException)
 		{
 			ValidationHandler.RaiseValidationWarning(handle,message, innerException);
+		}
+
+		internal bool IsComplied (Guid CompilationId)
+		{
+			return this.CompilationId == CompilationId;
 		}
 	}
 }
