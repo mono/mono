@@ -1,3 +1,31 @@
+2002-11-01  Daniel Morgan <danmorg@sc.rr.com>
+
+	* Mono.Data.MySql/MySqlDataAdapter.cs
+	* Mono.Data.MySql/MySqlRowUpdatedEventArgs.cs
+	* Mono.Data.MySql/MySqlRowUpdatedEventHandler.cs
+	* Mono.Data.MySql/MySqlRowUpdatingEventArgs.cs
+	* Mono.Data.MySql/MySqlRowUpdatingEventHandler.cs: added new
+	 files for the Data Adapter for the MySQL data provider
+	
+	* list: added new files to Linux build
+	
+	* Mono.Data.MySql/MySqlCommand.cs: implement the
+	interfaces correctly and Dispose().  Allow the provider to 
+	execute multiple queries for a reader
+	
+	* Mono.Data.MySql/MySqlTransaction.cs
+	* Mono.Data.MySql/MySqlConnection.cs: implement the 
+	interfaces correctly and Dispose
+	
+	* Mono.Data.MySql/MySqlDataReader.cs: implement the
+	interfaces correctly and Dispose().  Allow the provider to 
+	execute multiple queries for a reader.  Implement
+	IEnumerable.GetEnumerator() to return a DbEnumerator
+	which can be used to do a 
+	foreach (DbDataRecord rec in myDataReader) { ... }
+	and allows a IDataReader to be "data binded" to a DataGrid.
+	Thanks goes to Tim Coleman (I copied this from his SqlDataReader).
+
 2002-10-26  Daniel Morgan <danmorg@sc.rr.com>
 
 	* Mono.Data.MySql/MySqlError.cs

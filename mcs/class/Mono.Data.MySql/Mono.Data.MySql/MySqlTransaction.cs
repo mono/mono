@@ -8,10 +8,6 @@
 // (C) Ximian, Inc. 2002
 //
 
-// use #define DEBUG_MySqlTransaction if you want to spew debug messages
-// #define DEBUG_MySqlTransaction
-
-
 using System;
 using System.Data;
 using System.Data.Common;
@@ -21,9 +17,8 @@ namespace Mono.Data.MySql
 	/// <summary>
 	/// Represents a transaction to be performed on a SQL database.
 	/// </summary>
-	// public sealed class MySqlTransaction : MarshalByRefObject,
-	//	IDbTransaction, IDisposable
-	public sealed class MySqlTransaction : IDbTransaction
+	public sealed class MySqlTransaction : MarshalByRefObject,
+		IDbTransaction, IDisposable
 	{
 		#region Fields
 
@@ -33,6 +28,8 @@ namespace Mono.Data.MySql
 			IsolationLevel.ReadCommitted;
 		// FIXME: What is the default isolation level for MySQL?
 		
+		private bool disposed = false;
+
 		#endregion
                
 		#region Public Methods
@@ -168,21 +165,27 @@ namespace Mono.Data.MySql
 
 		// Destructors aka Finalize and Dispose
 
-		[MonoTODO]
-		public void Dispose()
-		{
-			// FIXME: need to properly release resources
-			// Dispose(true);
+		private void Dispose(bool disposing) {
+			if(!this.disposed) {
+				if(disposing) {
+					// release any managed resources
+					conn = null;
+				}
+				// release any unmanaged resources
+
+				// close any handles									
+				this.disposed = true;
+			}
 		}
 
-		// Destructor 
-		// [Serializable]
-		// [ClassInterface(ClassInterfaceType.AutoDual)]
-		//~SqlTransaction() {
-			// FIXME: need to properly release resources
-			// Dispose(false);
-		//}
+		void IDisposable.Dispose() {
+			Dispose(true);
+		}
 
+		// aka Finalize
+		~MySqlTransaction() {
+			Dispose (false);
+		}
 		#endregion // Destructors
 
 	}

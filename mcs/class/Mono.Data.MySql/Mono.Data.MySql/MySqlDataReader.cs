@@ -9,13 +9,11 @@
 // (C) Daniel Morgan 2002
 //
 
-// *** uncomment #define to get debug messages, comment for production ***
-//#define DEBUG_MySqlDataReader
-
 using System;
 using System.Collections;
 using System.ComponentModel;
 using System.Data;
+using System.Data.Common;
 using System.Runtime.InteropServices;
 
 namespace Mono.Data.MySql {
@@ -24,23 +22,20 @@ namespace Mono.Data.MySql {
 	/// of result sets obtained by executing a command 
 	/// at a SQL database.
 	/// </summary>
-	//public sealed class MySqlDataReader : MarshalByRefObject,
-	//	IEnumerable, IDataReader, IDisposable, IDataRecord
-	public sealed class MySqlDataReader : IEnumerable, 
-		IDataReader, IDataRecord {
+	public sealed class MySqlDataReader : MarshalByRefObject,
+		IEnumerable, IDataReader, IDisposable, IDataRecord {
 		
 		#region Fields
 
 		private MySqlCommand cmd;
-		private DataTable table = null;
-
+		
 		// field meta data
-		string[] fieldName;
-		int[] fieldType; // MySQL data type
-		DbType[] fieldDbType; // DbType translated from MySQL type
-		uint[] fieldLength;
-		uint[] fieldMaxLength;
-		uint[] fieldFlags;
+		private string[] fieldName;
+		private int[] fieldType; // MySQL data type
+		private DbType[] fieldDbType; // DbType translated from MySQL type
+		private uint[] fieldLength;
+		private uint[] fieldMaxLength;
+		private uint[] fieldFlags;
 		// field data value
 		private object[] dataValue;
 						
@@ -50,12 +45,15 @@ namespace Mono.Data.MySql {
 		private int currentQuery = 0;
 
 		private int currentRow = -1;
-		IntPtr res;
+		private IntPtr res = IntPtr.Zero;
+		private IntPtr row = IntPtr.Zero;
 
 		private int numFields;
 		private int numRows;
 
 		private CommandBehavior cmdBehavior;
+
+		private bool disposed = false;
 
 		#endregion // Fields
 
@@ -83,14 +81,9 @@ namespace Mono.Data.MySql {
 
 			// TODO: get parameters from result
 
-			// clear unmanaged MySQL result set
-			if(res != IntPtr.Zero) {
-				MySql.FreeResult(res);
-				res = IntPtr.Zero;
-			}
+			Dispose(true);
 		}
 
-		[MonoTODO]
 		public DataTable GetSchemaTable() {	
 
 			DataTable dataTableSchema = null;
@@ -182,46 +175,50 @@ namespace Mono.Data.MySql {
 					
 					dataTableSchema.Rows.Add (schemaRow);
 				}
-				
-#if DEBUG_MySqlCommand
-				Console.WriteLine("********** DEBUG Table Schema BEGIN ************");
-				foreach (DataRow myRow in dataTableSchema.Rows) {
-					foreach (DataColumn myCol in dataTableSchema.Columns)
-						Console.WriteLine(myCol.ColumnName + " = " + myRow[myCol]);
-					Console.WriteLine();
-				}
-				Console.WriteLine("********** DEBUG Table Schema END ************");
-#endif // DEBUG_MySqlCommand
-
 			}
 			
 			return dataTableSchema;
 		}
 
-		[MonoTODO]
-		public bool NextResult() {
-			currentRow = -1;
-			bool resultReturned = false;		
+		private void ClearFields () {
+			numRows = 0;
+			numFields = 0;
+			fieldName = null;
+			fieldType = null;
+			fieldLength = null;
+			fieldMaxLength = null;
+			fieldFlags = null;
+			dataValue = null;
+		}
 
-			// reset
-			table = null;
-			recordsAffected = -1;
+		public bool NextResult () {
 			
-			// store the result set
-			res = MySql.StoreResult(cmd.Connection.NativeMySqlInitStruct);
+			// reset
+			recordsAffected = -1;
+			currentRow = -1;
+			
+			bool resultReturned;
+			res = cmd.NextResult (out resultReturned);
+                        if (resultReturned == false)
+				return false; // no result returned
 
-			if(res.Equals(IntPtr.Zero)) {
+			if ((cmdBehavior & CommandBehavior.SingleResult) == CommandBehavior.SingleResult)
+				if (currentQuery > 0) {
+					if(res == IntPtr.Zero)						
+						recordsAffected = (int) MySql.AffectedRows(cmd.Connection.NativeMySqlInitStruct);
+					ClearFields();
+					return true; // result returned
+				}
+
+			if((cmdBehavior & CommandBehavior.SchemaOnly) == CommandBehavior.SchemaOnly) {
+				ClearFields ();
+				return false; // no result returned
+			}
+
+			if(res == IntPtr.Zero) {
 				// no result set returned
-				recordsAffected = (int) MySql.AffectedRows(cmd.Connection.NativeMySqlInitStruct);
-
-				numRows = 0;
-				numFields = 0;
-				fieldName = null;
-				fieldType = null;
-				fieldLength = null;
-				fieldMaxLength = null;
-				fieldFlags = null;
-				dataValue = null;
+				recordsAffected = (int) MySql.AffectedRows (cmd.Connection.NativeMySqlInitStruct);
+				ClearFields();
 			}
 			else {
 				dataValue = null;
@@ -255,45 +252,29 @@ namespace Mono.Data.MySql {
 
 					fieldDbType[i] = MySqlHelper.MySqlTypeToDbType((MySqlEnumFieldTypes)fieldType[i]);
 				}
-
-				// TODO: for CommandBehavior.SingleRow
-				//       use IRow, otherwise, IRowset
-				if(numFields > 0)
-					if((cmdBehavior & CommandBehavior.SingleRow) == CommandBehavior.SingleRow)
-						numFields = 1;
-
-				// TODO: for CommandBehavior.SchemaInfo
-				if((cmdBehavior & CommandBehavior.SchemaOnly) == CommandBehavior.SchemaOnly)
-					numFields = 0;
-
-				// TODO: for CommandBehavior.SingleResult
-				if((cmdBehavior & CommandBehavior.SingleResult) == CommandBehavior.SingleResult)
-					if(currentQuery > 0)
-						numFields = 0;
-
-				// TODO: for CommandBehavior.SequentialAccess - used for reading Large OBjects
-				//if((cmdBehavior & CommandBehavior.SequentialAccess) == CommandBehavior.SequentialAccess) {
-				//}
-
 			}
-			return resultReturned;
+			return true; // result returned
 		}
 
-		[MonoTODO]
-		public bool Read() {		
-			
+		public bool Read() {
+	
+			dataValue = null;
+						
 			if(currentRow < numRows - 1)  {
 				
 				currentRow++;
 
-				dataValue = null;
+				if(numFields > 0 && currentRow > 0)
+					if((cmdBehavior & CommandBehavior.SingleRow) == CommandBehavior.SingleRow) {
+						currentRow = numRows - 1;
+						return false; // EOF
+					}
 
-				dataValue = new object[numFields];
-									
-				IntPtr row;
-				row = MySql.FetchRow(res);
-				if(row.Equals(IntPtr.Zero)) {
-					MySql.FreeResult(res);
+				dataValue = new object[numFields];						
+				
+				row = MySql.FetchRow (res);
+				if (row == IntPtr.Zero) {
+					MySql.FreeResult (res);
 					res = IntPtr.Zero;
 					return false; // EOF
 				}
@@ -305,20 +286,25 @@ namespace Mono.Data.MySql {
 						// tranlate from native MySql c type
 						// to a .NET type here
 						dataValue[i] = MySqlHelper.ConvertDbTypeToSystem (fieldDbType[i], objValue);
+						
+						// TODO: for CommandBehavior.SequentialAccess - used for reading Large OBjects
+						//if((cmdBehavior & CommandBehavior.SequentialAccess) == CommandBehavior.SequentialAccess) {
+						//}
 					}
 				}
-				return true;
+				return true; // not EOF
 			}
-			return false;
+			return false; // EOF
 		}
 
 		[MonoTODO]
-		public byte GetByte(int i) {
+		public byte GetByte (int i) {
 			throw new NotImplementedException ();
 		}
 
+		// TODO: CommandBehavior.SequentialAccess
 		[MonoTODO]
-		public long GetBytes(int i, long fieldOffset, 
+		public long GetBytes (int i, long fieldOffset, 
 			byte[] buffer, int bufferOffset, 
 			int length) {
 
@@ -326,12 +312,13 @@ namespace Mono.Data.MySql {
 		}
 
 		[MonoTODO]
-		public char GetChar(int i) {
+		public char GetChar (int i) {
 			throw new NotImplementedException ();
 		}
 
+		// TODO: CommandBehavior.SequentialAccess
 		[MonoTODO]
-		public long GetChars(int i, long fieldOffset, 
+		public long GetChars (int i, long fieldOffset, 
 			char[] buffer, int bufferOffset, 
 			int length) {
 
@@ -339,80 +326,68 @@ namespace Mono.Data.MySql {
 		}
 
 		[MonoTODO]
-		public IDataReader GetData(int i) {
+		public IDataReader GetData (int i) {
 			throw new NotImplementedException ();
 		}
-
-		[MonoTODO]
-		public string GetDataTypeName(int i) {
-			return MySqlHelper.GetMySqlTypeName((MySqlEnumFieldTypes)fieldType[i]);
+		
+		public string GetDataTypeName (int i) {
+			return MySqlHelper.GetMySqlTypeName ((MySqlEnumFieldTypes)fieldType[i]);
 		}
 
-		[MonoTODO]
 		public DateTime GetDateTime(int i) {
 			return (DateTime) dataValue[i];
 		}
 
-		[MonoTODO]
 		public decimal GetDecimal(int i) {
 			return (decimal) dataValue[i];
 		}
 
-		[MonoTODO]
 		public double GetDouble(int i) {
 			return (double) dataValue[i];
 		}
 
-		[MonoTODO]
 		public Type GetFieldType(int i) {
 			MySqlEnumFieldTypes fieldEnum;
 			DbType dbType;
 			Type typ;
 
 			fieldEnum = (MySqlEnumFieldTypes) fieldType[i];		
-			dbType = MySqlHelper.MySqlTypeToDbType(fieldEnum);
+			dbType = MySqlHelper.MySqlTypeToDbType (fieldEnum);
 			typ = MySqlHelper.DbTypeToSystemType (dbType);
 
 			return typ;
 		}
 
-		[MonoTODO]
 		public float GetFloat(int i) {
 			return (float) dataValue[i];
 		}
 
-		[MonoTODO]
 		public Guid GetGuid(int i) {
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		public short GetInt16(int i) {
 			return (short) dataValue[i];
 		}
 
-		[MonoTODO]
 		public int GetInt32(int i) {
 			return (int) dataValue[i];
 		}
 
-		[MonoTODO]
 		public long GetInt64(int i) {
 			return (long) dataValue[i];
 		}
 
-		[MonoTODO]
 		public string GetName(int i) {
 			return fieldName[i];
 		}
 
-		[MonoTODO]
-		public int GetOrdinal(string name) {
+		public int GetOrdinal (string name) {
 
 			int i;
 			
 			for(i = 0; i < numFields; i++) {
-				if(fieldName[i].Equals(name))
+				if(fieldName[i].Equals (name))
 					return i;
 			}
 
@@ -420,72 +395,91 @@ namespace Mono.Data.MySql {
 				string ta;
 				string n;
 								
-				ta = fieldName[i].ToUpper();
-				n = name.ToUpper();
+				ta = fieldName[i].ToUpper ();
+				n = name.ToUpper ();
 						
-				if(ta.Equals(n)) {
+				if(ta.Equals (n)) {
 					return i;
 				}
 			}
 			
-			throw new MissingFieldException("Missing field: " + name);
+			throw new MissingFieldException ("Missing field: " + name);
 		}
 
-		[MonoTODO]
-		public string GetString(int i) {
+		public string GetString (int i) {
 			return (string) dataValue[i];
 		}
 
-		[MonoTODO]
-		public object GetValue(int i) {
-			// FIXME: this returns a native type
-			//        need to return a .NET type
+		public object GetValue (int i) {
 			if(MySqlFieldHelper.IsNotNull(fieldFlags[i]) == true)
 				return dataValue[i];
 			else
 				return DBNull.Value;
 		}
 
-		[MonoTODO]
 		public int GetValues(object[] values) 
 		{
 			Array.Copy (dataValue, values, dataValue.Length);
 			return dataValue.Length;
 		}
 
-		[MonoTODO]
 		public bool IsDBNull(int i) {
 			return !MySqlFieldHelper.IsNotNull(fieldFlags[i]);
 		}
-
-		[MonoTODO]
+		
 		public bool GetBoolean(int i) {
 			return (bool) dataValue[i];
 		}
-
-		[MonoTODO]
-		public IEnumerator GetEnumerator() {
-			throw new NotImplementedException ();
+		
+		IEnumerator IEnumerable.GetEnumerator () {
+			return new DbEnumerator (this);
 		}
 
 		#endregion // Public Methods
 
 		#region Destructors
 
-		[MonoTODO]
-		public void Dispose () {
+		private void Dispose(bool disposing) {
+			if(!this.disposed) {
+				if(disposing) {
+					// release any managed resources
+					cmd = null;
+					fieldName = null;
+					fieldType = null;
+					fieldDbType = null;
+					fieldLength = null;
+					fieldMaxLength = null;
+					fieldFlags = null;
+					dataValue = null;
+				}
+				// release any unmanaged resources
+
+				// clear unmanaged MySQL result set
+				row = IntPtr.Zero;
+				if(res != IntPtr.Zero) {
+					MySql.FreeResult(res);
+					res = IntPtr.Zero;
+				}
+
+				// close any handles
+				this.disposed = true;
+			}
 		}
 
-		//[MonoTODO]
-		//~MySqlDataReader() {
-		//}
+		void IDisposable.Dispose() {
+			Dispose(true);
+		}
+
+		// aka Finalize
+		~MySqlDataReader() {
+			Dispose (false);
+		}
 
 		#endregion // Destructors
 
 		#region Properties
 
 		public int Depth {
-			[MonoTODO]
 			get { 
 				return 0; // always return zero, unless
 				          // this provider will allow
@@ -494,7 +488,6 @@ namespace Mono.Data.MySql {
 		}
 
 		public bool IsClosed {
-			[MonoTODO]
 			get {
 				if(open == false)
 					return true;
@@ -504,21 +497,18 @@ namespace Mono.Data.MySql {
 		}
 
 		public int RecordsAffected {
-			[MonoTODO]
 			get { 
 				return recordsAffected;
 			}
 		}
 	
 		public int FieldCount {
-			[MonoTODO]
 			get { 
 				return numFields;
 			}
 		}
 
 		public object this[string name] {
-			[MonoTODO]
 			get { 
 				int i;
 				
@@ -544,7 +534,6 @@ namespace Mono.Data.MySql {
 		}
 
 		public object this[int i] {
-			[MonoTODO]
 			get { 
 				return dataValue[i];
 			}

@@ -17,9 +17,8 @@ using System.Text;
 using System.Xml;
 
 namespace Mono.Data.MySql {
-	// public sealed class MySqlCommand : Component, IDbCommand, ICloneable
-	public sealed class MySqlCommand : IDbCommand {
-
+	public sealed class MySqlCommand : Component, IDbCommand, ICloneable {
+	
 		#region Fields
 
 		private string sql = "";
@@ -36,9 +35,11 @@ namespace Mono.Data.MySql {
 
 		// MySqlDataReader state data for ExecuteReader()
 		//private MySqlDataReader dataReader = null;
-		private string[] queries = null;
+		private string[] commands = null;
 		private int currentQuery = -1;
 		private CommandBehavior cmdBehavior = CommandBehavior.Default;
+
+		private bool disposed = false;
 
 		//private ParmUtil parmUtil = null;
 		
@@ -90,26 +91,22 @@ namespace Mono.Data.MySql {
 		}
 		*/
 
-		[MonoTODO]
 		public int ExecuteNonQuery () {	
 			int rowsAffected = -1;
-			string msg = "";
-			//TODO: need to do this correctly
-			//      this is just something quick
-			//      thrown together to see if we can
-			//      execute a SQL Command
-			int rcq = MySql.Query(conn.NativeMySqlInitStruct, sql);
-			if (rcq != 0) {
-				msg = 
-					"MySql Error: " + 
-					"Could not execute command [" + 
-					sql + 
-					"] on server because: " +
-					MySql.Error(conn.NativeMySqlInitStruct);
-				throw new MySqlException(msg);
+			
+			IntPtr res = ExecuteSQL (sql);
+
+			if(res.Equals(IntPtr.Zero)) {
+				// no result set returned, get records affected
+				rowsAffected = (int) MySql.AffectedRows(conn.NativeMySqlInitStruct);
 			}
-			// TODO: need to return the number of rows affected for an INSERT, UPDATE, or DELETE
-			//       otherwise, it is -1
+
+			MySql.FreeResult(res);
+			res = IntPtr.Zero;
+
+			// >= 0 of the number of rows affected by
+			//    INSERT, UPDATE, DELETE
+			// otherwise, -1
 			return rowsAffected;
 		}
 		
@@ -134,46 +131,39 @@ namespace Mono.Data.MySql {
 		public MySqlDataReader ExecuteReader (CommandBehavior behavior) {	
 
 			MySqlDataReader reader = null;
-			string msg = "";
-
-			// TODO: check to see if you everything you need
-			//       and the connection is open, etc...
-			//       and through any exceptions if not
 			
-			// execute query
-			int rcq = MySql.Query(conn.NativeMySqlInitStruct, sql);
-			if (rcq != 0) {
-				msg = "MySql Error: " +
-					"Could not execute [" +
-					sql +
-					"] on server because: " +
-					MySql.Error(conn.NativeMySqlInitStruct);
-				throw new MySqlException(msg);
-			}
-
+			currentQuery = -1;
+			
+			commands = sql.Split(new Char[] {';'});			
 			reader = new MySqlDataReader(this, behavior);
 			reader.NextResult();
 
 			return reader;
 		}
-		
-		[MonoTODO]
-		public object ExecuteScalar () {
-			object obj = null;
-			string msg = "";
+
+		// called by an MySqlDataReader's NextResult()
+		internal IntPtr NextResult (out bool result) {
 			
-			int rcq = MySql.Query(conn.NativeMySqlInitStruct, sql);
-			if (rcq != 0) {
-				msg = "MySqlError: Could not execute [" +
-					sql +
-					"] on server because: " +
-					MySql.Error(conn.NativeMySqlInitStruct);
-				throw new MySqlException(msg);
+			IntPtr mysqlResult = IntPtr.Zero;		
+			result = false;
+
+			currentQuery++;
+			if(currentQuery < commands.Length) {
+				string query = commands[currentQuery];
+				mysqlResult = ExecuteSQL (query);
+				result = true; // has result
 			}
 
-			IntPtr res = MySql.StoreResult(conn.NativeMySqlInitStruct);
-			int numRows = MySql.NumRows(res);
-			
+			return mysqlResult;
+		}
+				
+		public object ExecuteScalar () {
+
+			object obj = null;
+						
+			IntPtr res = ExecuteSQL (sql);
+
+			int numRows = MySql.NumRows(res);		
 			int numFields = MySql.NumFields(res);
 						
 			MySqlMarshalledField fd;
@@ -182,8 +172,6 @@ namespace Mono.Data.MySql {
 			string fieldName = fd.Name;
 			int fieldType = fd.FieldType; 
 			DbType fieldDbType = MySqlHelper.MySqlTypeToDbType((MySqlEnumFieldTypes)fieldType);
-
-			//Console.WriteLine("*** DEBUG: MySql FieldType: " + fieldType);
 						
 			IntPtr row;
 			row = MySql.FetchRow(res);
@@ -195,11 +183,48 @@ namespace Mono.Data.MySql {
 				// only get first column/first row
 				string objValue = GetColumnData(row, 0);
 				obj = MySqlHelper.ConvertDbTypeToSystem (fieldDbType, objValue);
+				row = IntPtr.Zero;
 			}
 			MySql.FreeResult(res);
 			res = IntPtr.Zero;
 
 			return obj;
+		}
+
+		// command: string in - SQL command
+		//          IntPtr (MySqlResult) return - the result
+		//          Use of this function needs to check to see if
+		//          if the return equal to IntPtr.Zero
+		// Example: IntPtr res = ExecuteSQL ("SELECT * FROM DB");
+		//          if (res == IntPtr.Zero) { // do something }
+		//
+		internal IntPtr ExecuteSQL (string command) {
+			string msg = "";
+
+			if (conn == null)
+				throw new InvalidOperationException(
+					"Connection is null");
+
+			if (conn.State != ConnectionState.Open)
+				throw new InvalidOperationException(
+					"ConnectionState is not Open");
+
+			if (sql.Equals (String.Empty)) 
+				throw new InvalidOperationException(
+					"CommandText is Empty");
+			
+			int rcq = MySql.Query(conn.NativeMySqlInitStruct, sql);
+			if (rcq != 0) {
+				msg = 
+					"MySql Error: " + 
+					"Could not execute command [" + 
+					sql + 
+					"] on server because: " +
+					MySql.Error(conn.NativeMySqlInitStruct);
+				throw new MySqlException(msg);
+			}
+			IntPtr result = MySql.StoreResult(conn.NativeMySqlInitStruct);
+			return result;
 		}
 
 		[MonoTODO]
@@ -213,8 +238,7 @@ namespace Mono.Data.MySql {
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
-		public MySqlCommand Clone () {
+		object ICloneable.Clone() {
 			throw new NotImplementedException ();
 		}
 
@@ -376,16 +400,25 @@ namespace Mono.Data.MySql {
 
 		#region Destructors
 
-		[MonoTODO]
-		public void Dispose() {
-			// FIXME: need proper way to release resources
-			// Dispose(true);
+		protected override void Dispose(bool disposing) {
+			if(!this.disposed)
+				try {
+					if(disposing) {
+						// release any managed resources
+					}
+					// release any unmanaged resources
+					// close any handles
+										
+					this.disposed = true;
+				}
+				finally {
+					base.Dispose(disposing);
+				}
 		}
-
-		[MonoTODO]
-		~MySqlCommand() {
-			// FIXME: need proper way to release resources
-			// Dispose(false);
+	
+		// aka Finalize()
+		~MySqlCommand () {
+			Dispose (false);
 		}
 
 		#endregion //Destructors

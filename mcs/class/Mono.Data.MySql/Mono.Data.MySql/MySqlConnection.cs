@@ -71,14 +71,29 @@ namespace Mono.Data.MySql {
 		#endregion // Constructors
 
 		#region Destructors
+
+		protected override void Dispose(bool disposing) {
+			if(!this.disposed)
+				try {
+					if(disposing) {
+						// release any managed resources
+						trans = null;
+					}
+					// release any unmanaged resources
+					mysqlInitStruct = IntPtr.Zero;
+					IntPtr mysqlConn = IntPtr.Zero;    		
+
+					// close any handles
+										
+					this.disposed = true;
+				}
+				finally {
+					base.Dispose(disposing);
+				}			
+		}
 	
 		// aka Finalize
-		// [ClassInterface(ClassInterfaceType.AutoDual)]
-		//[MonoTODO]
 		~MySqlConnection() {
-			// FIXME: this class need 
-			//        a destructor to release resources
-			//        Also, take a look at Dispose
 			Dispose (false);
 		}
 		
@@ -212,23 +227,6 @@ namespace Mono.Data.MySql {
 		#endregion // Public Methods
 
 		#region Protected Methods
-		
-		[MonoTODO]
-		protected override void Dispose(bool disposing) {
-			if(!this.disposed)
-				try {
-					if(disposing) {
-						// release any managed resources
-					}
-					// release any unmanaged resources
-					// close any handles
-										
-					this.disposed = true;
-				}
-				finally {
-					base.Dispose(disposing);
-				}
-		}
 
 		#endregion
 
