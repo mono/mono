@@ -502,7 +502,7 @@ attribute_target
 attribute_list
 	: attribute
 	  {
-		ArrayList attrs = new ArrayList ();
+		ArrayList attrs = new ArrayList (4);
 		attrs.Add ($1);
 
 		$$ = attrs;
@@ -547,7 +547,7 @@ attribute_arguments
 		if ($1 == null)
 			$$ = null;
 		else {
-			ArrayList args = new ArrayList ();
+			ArrayList args = new ArrayList (4);
 			args.Add ($1);
 		
 			$$ = args;
@@ -555,7 +555,7 @@ attribute_arguments
 	  }
         | positional_argument_list COMMA named_argument_list
 	  {
-		ArrayList args = new ArrayList ();
+		ArrayList args = new ArrayList (4);
 		args.Add ($1);
 		args.Add ($3);
 
@@ -563,7 +563,7 @@ attribute_arguments
 	  }
         | named_argument_list
 	  {
-		ArrayList args = new ArrayList ();
+		ArrayList args = new ArrayList (4);
 		args.Add (null);
 		args.Add ($1);
 		
@@ -580,7 +580,7 @@ opt_positional_argument_list
 positional_argument_list
 	: expression
 	  {
-		ArrayList args = new ArrayList ();
+		ArrayList args = new ArrayList (4);
 		args.Add (new Argument ((Expression) $1, Argument.AType.Expression));
 
 		$$ = args;
@@ -597,7 +597,7 @@ positional_argument_list
 named_argument_list
 	: named_argument
 	  {
-		ArrayList args = new ArrayList ();
+		ArrayList args = new ArrayList (4);
 		args.Add ($1);
 
 		$$ = args;
@@ -734,7 +734,7 @@ constant_declaration
 constant_declarators
 	: constant_declarator 
 	  {
-		ArrayList constants = new ArrayList ();
+		ArrayList constants = new ArrayList (4);
 		constants.Add ($1);
 		$$ = constants;
 	  }
@@ -785,7 +785,7 @@ field_declaration
 variable_declarators
 	: variable_declarator 
 	  {
-		ArrayList decl = new ArrayList ();
+		ArrayList decl = new ArrayList (4);
 		decl.Add ($1);
 		$$ = decl;
 	  }
@@ -940,7 +940,7 @@ formal_parameter_list
 fixed_parameters
 	: fixed_parameter	
 	  {
-		ArrayList pars = new ArrayList ();
+		ArrayList pars = new ArrayList (4);
 
 		pars.Add ($1);
 		$$ = pars;
@@ -1144,7 +1144,7 @@ interface_base
 interface_type_list
 	: interface_type
 	  {
-		ArrayList interfaces = new ArrayList ();
+		ArrayList interfaces = new ArrayList (4);
 
 		interfaces.Add ($1);
 		$$ = interfaces;
@@ -1746,14 +1746,14 @@ enum_body
 	;
 
 opt_enum_member_declarations
-	: /* empty */			{ $$ = new ArrayList (); }
+	: /* empty */			{ $$ = new ArrayList (4); }
 	| enum_member_declarations opt_comma { $$ = $1; }
 	;
 
 enum_member_declarations
 	: enum_member_declaration 
 	  {
-		ArrayList l = new ArrayList ();
+		ArrayList l = new ArrayList (4);
 
 		l.Add ($1);
 		$$ = l;
@@ -1895,7 +1895,7 @@ non_expression_type
 type_list
 	: type
 	  {
-		ArrayList types = new ArrayList ();
+		ArrayList types = new ArrayList (4);
 
 		types.Add ($1);
 		$$ = types;
@@ -2060,7 +2060,7 @@ opt_argument_list
 argument_list
 	: argument		
 	  { 
-		ArrayList list = new ArrayList ();
+		ArrayList list = new ArrayList (4);
 		list.Add ($1);
 		$$ = list;
 	  }
@@ -2124,7 +2124,7 @@ element_access
 expression_list
 	: expression
 	  {
-		ArrayList list = new ArrayList ();
+		ArrayList list = new ArrayList (4);
 		list.Add ($1);
 		$$ = list;
 	  }
@@ -2260,7 +2260,7 @@ opt_array_initializer
 array_initializer
 	: OPEN_BRACE CLOSE_BRACE
 	  {
-		ArrayList list = new ArrayList ();
+		ArrayList list = new ArrayList (4);
 		$$ = list;
 	  }
 	| OPEN_BRACE variable_initializer_list opt_comma CLOSE_BRACE
@@ -2272,7 +2272,7 @@ array_initializer
 variable_initializer_list
 	: variable_initializer
 	  {
-		ArrayList list = new ArrayList ();
+		ArrayList list = new ArrayList (4);
 		list.Add ($1);
 		$$ = list;
 	  }
@@ -2366,7 +2366,7 @@ opt_anonymous_method_parameter_list
 anonymous_method_parameter_list
 	: anonymous_method_parameter 
 	  {
-		ArrayList a = new ArrayList ();
+		ArrayList a = new ArrayList (4);
 		a.Add ($1);
 		$$ = a;
 	  }
@@ -3101,7 +3101,7 @@ opt_switch_sections
 switch_sections
 	: switch_section 
 	  {
-		ArrayList sections = new ArrayList ();
+		ArrayList sections = new ArrayList (4);
 
 		sections.Add ($1);
 		$$ = sections;
@@ -3133,7 +3133,7 @@ switch_section
 switch_labels
 	: switch_label 
 	  {
-		ArrayList labels = new ArrayList ();
+		ArrayList labels = new ArrayList (4);
 
 		labels.Add ($1);
 		$$ = labels;
@@ -3432,7 +3432,7 @@ try_statement
 	: TRY block catch_clauses 
 	{
 		Catch g = null;
-		ArrayList s = new ArrayList ();
+		ArrayList s = new ArrayList (4);
 		
 		foreach (Catch cc in (ArrayList) $3) {
 			if (cc.IsGeneral)
@@ -3449,7 +3449,7 @@ try_statement
 	| TRY block opt_catch_clauses FINALLY block
 	  {
 		Catch g = null;
-		ArrayList s = new ArrayList ();
+		ArrayList s = new ArrayList (4);
 		ArrayList catch_list = (ArrayList) $3;
 
 		if (catch_list != null){
@@ -3477,7 +3477,7 @@ opt_catch_clauses
 catch_clauses
 	: catch_clause 
 	  {
-		ArrayList l = new ArrayList ();
+		ArrayList l = new ArrayList (4);
 
 		l.Add ($1);
 		$$ = l;
@@ -3508,7 +3508,7 @@ catch_clause
 			id   = (string) cc.Value;
 
 			if (id != null){
-				ArrayList one = new ArrayList ();
+				ArrayList one = new ArrayList (4);
 				Location loc = lexer.Location;
 
 				one.Add (new VariableDeclaration (id, null, loc));
@@ -3621,7 +3621,7 @@ fixed_statement
 
 fixed_pointer_declarators
 	: fixed_pointer_declarator	{ 
-	   	ArrayList declarators = new ArrayList (); 
+	   	ArrayList declarators = new ArrayList (4); 
 		declarators.Add ($1);
 		$$ = declarators;
 	  }
@@ -3666,7 +3666,7 @@ using_statement
 			Expression type = (Expression) de.Key;
 			ArrayList var_declarators = (ArrayList) de.Value;
 
-			ArrayList vars = new ArrayList ();
+			ArrayList vars = new ArrayList (4);
 
 			foreach (VariableDeclaration decl in var_declarators){
 
@@ -3930,7 +3930,7 @@ Block declare_local_variables (Expression type, ArrayList variable_declarators, 
 		if (implicit_block.AddVariable (type, decl.identifier, current_local_parameters, decl.Location) != null) {
 			if (decl.expression_or_array_initializer != null){
 				if (inits == null)
-					inits = new ArrayList ();
+					inits = new ArrayList (4);
 				inits.Add (decl);
 			}
 		}
