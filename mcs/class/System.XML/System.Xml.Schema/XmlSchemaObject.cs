@@ -1,6 +1,7 @@
 // Author: Dwivedi, Ajay kumar
 //            Adwiv@Yahoo.com
 using System;
+using System.Collections;
 using System.Xml.Serialization;
 using System.Xml;
 
@@ -15,8 +16,9 @@ namespace System.Xml.Schema
 		private int linePosition;
 		private string sourceUri;
 		private XmlSerializerNamespaces namespaces;
+		internal ArrayList unhandledAttributeList ;
 
-		internal protected int errorCount = 0;
+		internal int errorCount = 0;
 
 		protected XmlSchemaObject()
 		{

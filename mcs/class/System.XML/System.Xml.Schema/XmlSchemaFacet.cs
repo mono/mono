@@ -18,6 +18,13 @@ namespace System.Xml.Schema
 		protected XmlSchemaFacet()
 		{
 		}
+		
+		[System.Xml.Serialization.XmlAttribute("value")]
+		public string Value
+		{
+			get{ return  val; } 
+			set{ val = value; }
+		}
 
 		[DefaultValue(false)]
 		[System.Xml.Serialization.XmlAttribute("fixed")]
@@ -25,13 +32,6 @@ namespace System.Xml.Schema
 		{
 			get{ return  isFixed; }
 			set{ isFixed = value; }
-		}
-		
-		[System.Xml.Serialization.XmlAttribute("value")]
-		public string Value
-		{
-			get{ return  val; } 
-			set{ val = value; }
 		}
 	}
 }

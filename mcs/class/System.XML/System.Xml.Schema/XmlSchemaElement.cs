@@ -44,7 +44,6 @@ namespace System.Xml.Schema
 			refName = XmlQualifiedName.Empty;
 			schemaTypeName = XmlQualifiedName.Empty;
 			substitutionGroup = XmlQualifiedName.Empty;
-			hash = ""+new Random().Next();
 			substitutionGroup = XmlQualifiedName.Empty;
 		}
 
@@ -97,6 +96,14 @@ namespace System.Xml.Schema
 			set{ form = value; }
 		}
 
+		[DefaultValue(null)]
+		[System.Xml.Serialization.XmlAttribute("name")]
+		public string Name 
+		{
+			get{ return  name; }
+			set{ name = value; }
+		}
+
 		[DefaultValue(false)]
 		[System.Xml.Serialization.XmlAttribute("nillable")]
 		public bool IsNillable 
@@ -105,18 +112,18 @@ namespace System.Xml.Schema
 			set{ isNillable = value; }
 		}
 
-		[DefaultValue(null)]
-		[System.Xml.Serialization.XmlAttribute("name")]
-		public string Name 
-		{
-			get{ return  name; }
-			set{ name = value; }
-		}
 		[System.Xml.Serialization.XmlAttribute("ref")]
 		public XmlQualifiedName RefName 
 		{
 			get{ return  refName; }
 			set{ refName = value;}
+		}
+
+		[System.Xml.Serialization.XmlAttribute("substitutionGroup")]
+		public XmlQualifiedName SubstitutionGroup
+		{
+			get{ return  substitutionGroup; }
+			set{ substitutionGroup = value; }
 		}
 		
 		[System.Xml.Serialization.XmlAttribute("type")]
@@ -126,18 +133,14 @@ namespace System.Xml.Schema
 			set{ schemaTypeName = value; }
 		}
 
-		[System.Xml.Serialization.XmlAttribute("substitutionGroup")]
-		public XmlQualifiedName SubstitutionGroup
+		[XmlElement("simpleType",typeof(XmlSchemaSimpleType),Namespace="http://www.w3.org/2001/XMLSchema")]
+		[XmlElement("complexType",typeof(XmlSchemaComplexType),Namespace="http://www.w3.org/2001/XMLSchema")]
+		public XmlSchemaType SchemaType 
 		{
-			get{ return  substitutionGroup; }
-			set{ substitutionGroup = value; }
+			get{ return  schemaType; }
+			set{ schemaType = value; }
 		}
 
-
-		#endregion
-
-		#region Elements
-		
 		[XmlElement("unique",typeof(XmlSchemaUnique),Namespace="http://www.w3.org/2001/XMLSchema")]
 		[XmlElement("key",typeof(XmlSchemaKey),Namespace="http://www.w3.org/2001/XMLSchema")]
 		[XmlElement("keyref",typeof(XmlSchemaKeyref),Namespace="http://www.w3.org/2001/XMLSchema")]
@@ -146,21 +149,10 @@ namespace System.Xml.Schema
 			get{ return constraints; }
 		}
 
-		[XmlElement("simpleType",typeof(XmlSchemaSimpleType),Namespace="http://www.w3.org/2001/XMLSchema")]
-		[XmlElement("complexType",typeof(XmlSchemaComplexType),Namespace="http://www.w3.org/2001/XMLSchema")]
-		public XmlSchemaType SchemaType 
-		{
-			get{ return  schemaType; }
-			set{ schemaType = value; }
-		}
-		
-		#endregion
-
-		#region XmlIgnore
 		[XmlIgnore]
-		public XmlSchemaDerivationMethod BlockResolved 
+		public XmlQualifiedName QualifiedName 
 		{
-			get{ return blockResolved; }
+			get{ return qName; }
 		}
 
 		[XmlIgnore]
@@ -170,17 +162,16 @@ namespace System.Xml.Schema
 		}
 		
 		[XmlIgnore]
+		public XmlSchemaDerivationMethod BlockResolved 
+		{
+			get{ return blockResolved; }
+		}
+		
+		[XmlIgnore]
 		public XmlSchemaDerivationMethod FinalResolved 
 		{
 			get{ return finalResolved; }
 		}
-
-		[XmlIgnore]
-		public XmlQualifiedName QualifiedName 
-		{
-			get{ return qName; }
-		}
-
 
 		#endregion
 
@@ -544,17 +535,13 @@ namespace System.Xml.Schema
 					if(innerex != null)
 						error(h, reader.Value + " is not a valid value for type attribute",innerex);
 				}
-				else if(reader.NamespaceURI == "" || reader.NamespaceURI == XmlSchema.Namespace)
+				else if((reader.NamespaceURI == "" && reader.Name != "xmlns") || reader.NamespaceURI == XmlSchema.Namespace)
 				{
 					error(h,reader.Name + " is not a valid attribute for element",null);
 				}
 				else
 				{
-					if(reader.Prefix == "xmlns")
-						element.Namespaces.Add(reader.LocalName, reader.Value);
-					else if(reader.Name == "xmlns")
-						element.Namespaces.Add("",reader.Value);
-					//TODO: Add to Unhandled attributes
+					XmlSchemaUtil.ReadUnhandledAttribute(reader,element);
 				}
 			}
 			

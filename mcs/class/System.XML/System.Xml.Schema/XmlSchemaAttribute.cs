@@ -38,11 +38,7 @@ namespace System.Xml.Schema
 		}
 
 		// Properties
-		[XmlIgnore]
-		public object AttributeType 
-		{ //FIXME: This is not correct. Is it?
-			get{ return attributeType; }
-		}
+		#region Properties
 
 		[DefaultValue(null)]
 		[System.Xml.Serialization.XmlAttribute("default")]
@@ -85,11 +81,6 @@ namespace System.Xml.Schema
 				name  = value;
 			}
 		}
-		[XmlIgnore]
-		public XmlQualifiedName QualifiedName 
-		{
-			get{ return qualifiedName;}
-		}
 
 		[System.Xml.Serialization.XmlAttribute("ref")]
 		public XmlQualifiedName RefName 
@@ -100,19 +91,19 @@ namespace System.Xml.Schema
 				refName = value; 
 			}
 		}
-
-		[XmlElement("simpleType",Namespace="http://www.w3.org/2001/XMLSchema")]
-		public XmlSchemaSimpleType SchemaType 
-		{
-			get{ return schemaType;}
-			set{ schemaType = value;}
-		}
 		
 		[System.Xml.Serialization.XmlAttribute("type")]
 		public XmlQualifiedName SchemaTypeName 
 		{
 			get{ return schemaTypeName;}
 			set{ schemaTypeName = value;}
+		}
+
+		[XmlElement("simpleType",Namespace="http://www.w3.org/2001/XMLSchema")]
+		public XmlSchemaSimpleType SchemaType 
+		{
+			get{ return schemaType;}
+			set{ schemaType = value;}
 		}
 
 		[DefaultValue(XmlSchemaUse.None)]
@@ -122,6 +113,21 @@ namespace System.Xml.Schema
 			get{ return use;}
 			set{ use = value;}
 		}
+
+		[XmlIgnore]
+		public XmlQualifiedName QualifiedName 
+		{
+			get{ return qualifiedName;}
+		}
+
+		[XmlIgnore]
+		public object AttributeType 
+		{ //FIXME: This is not correct. Is it?
+			get{ return attributeType; }
+		}
+
+		#endregion
+
 		/// <remarks>
 		/// For an attribute:
 		///  a) If the parent is schema 
@@ -329,17 +335,13 @@ namespace System.Xml.Schema
 					if(innerex != null)
 						error(h, reader.Value + " is not a valid value for use attribute", innerex);
 				}
-				else if(reader.NamespaceURI == "" || reader.NamespaceURI == XmlSchema.Namespace)
+				else if((reader.NamespaceURI == "" && reader.Name != "xmlns") || reader.NamespaceURI == XmlSchema.Namespace)
 				{
 					error(h,reader.Name + " is not a valid attribute for attribute",null);
 				}
 				else
 				{
-					if(reader.Prefix == "xmlns")
-						attribute.Namespaces.Add(reader.LocalName, reader.Value);
-					else if(reader.Name == "xmlns")
-						attribute.Namespaces.Add("",reader.Value);
-					//TODO: Add to Unhandled attributes
+					XmlSchemaUtil.ReadUnhandledAttribute(reader,attribute);
 				}
 			}
 			

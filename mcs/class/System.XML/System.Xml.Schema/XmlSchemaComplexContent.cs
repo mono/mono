@@ -18,19 +18,19 @@ namespace System.Xml.Schema
 		public XmlSchemaComplexContent()
 		{}
 
+		[System.Xml.Serialization.XmlAttribute("mixed")]
+		public bool IsMixed 
+		{
+			get{ return  isMixed; } 
+			set{ isMixed = value; }
+		}
+
 		[XmlElement("restriction",typeof(XmlSchemaComplexContentRestriction),Namespace="http://www.w3.org/2001/XMLSchema")]
 		[XmlElement("extension",typeof(XmlSchemaComplexContentExtension),Namespace="http://www.w3.org/2001/XMLSchema")]
 		public override XmlSchemaContent Content 
 		{
 			get{ return  content; } 
 			set{ content = value; }
-		}
-
-		[System.Xml.Serialization.XmlAttribute("mixed")]
-		public bool IsMixed 
-		{
-			get{ return  isMixed; } 
-			set{ isMixed = value; }
 		}
 
 		/// <remarks>
@@ -104,17 +104,13 @@ namespace System.Xml.Schema
 					if(innerex != null)
 						error(h,reader.Value + " is an invalid value for mixed",innerex);
 				}
-				else if(reader.NamespaceURI == "" || reader.NamespaceURI == XmlSchema.Namespace)
+				else if((reader.NamespaceURI == "" && reader.Name != "xmlns") || reader.NamespaceURI == XmlSchema.Namespace)
 				{
 					error(h,reader.Name + " is not a valid attribute for complexContent",null);
 				}
 				else
 				{
-					if(reader.Prefix == "xmlns")
-						complex.Namespaces.Add(reader.LocalName, reader.Value);
-					else if(reader.Name == "xmlns")
-						complex.Namespaces.Add("",reader.Value);
-					//TODO: Add to Unhandled attributes
+					XmlSchemaUtil.ReadUnhandledAttribute(reader,complex);
 				}
 			}
 			

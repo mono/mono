@@ -21,11 +21,12 @@ namespace System.Xml.Schema
 			fields = new XmlSchemaObjectCollection();
 			qName = XmlQualifiedName.Empty;
 		}
-
-		[XmlElement("field",typeof(XmlSchemaXPath),Namespace="http://www.w3.org/2001/XMLSchema")]
-		public XmlSchemaObjectCollection Fields 
+		
+		[System.Xml.Serialization.XmlAttribute("name")]
+		public string Name 
 		{
-			get{ return fields; }
+			get{ return  name; } 
+			set{ name = value; }
 		}
 
 		[XmlElement("selector",typeof(XmlSchemaXPath),Namespace="http://www.w3.org/2001/XMLSchema")]
@@ -34,12 +35,11 @@ namespace System.Xml.Schema
 			get{ return  selector; } 
 			set{ selector = value; }
 		}
-		
-		[System.Xml.Serialization.XmlAttribute("name")]
-		public string Name 
+
+		[XmlElement("field",typeof(XmlSchemaXPath),Namespace="http://www.w3.org/2001/XMLSchema")]
+		public XmlSchemaObjectCollection Fields 
 		{
-			get{ return  name; } 
-			set{ name = value; }
+			get{ return fields; }
 		}
 		
 		[XmlIgnore]

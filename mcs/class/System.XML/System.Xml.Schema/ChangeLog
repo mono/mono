@@ -1,3 +1,16 @@
+2002-06-18  Dwivedi, Ajay kumar <adwiv@yahoo.com>
+	* XmlSchema: The Read and Write methods are no more [MonoTODO] :)
+	
+	* XmlSchemaAppInfo: Xml Markup is now being read.
+	
+	* XmlSchemaDocumentation: Xml Markup is now being read.
+
+	* All: Unhandled attributes are being handled properly.
+	       
+	* All: Reordered the properties in all cs files to match with MS
+	       Implementation. This was required since the order is importatnt
+	       for the XmlSerializer.
+	
 2002-06-14  Dwivedi, Ajay kumar <adwiv@yahoo.com>
 	* General: Fixed a few more Bugs
 

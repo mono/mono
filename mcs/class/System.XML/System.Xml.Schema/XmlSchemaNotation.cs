@@ -118,17 +118,13 @@ namespace System.Xml.Schema
 				{
 					notation.system = reader.Value;
 				}
-				else if(reader.NamespaceURI == "" || reader.NamespaceURI == XmlSchema.Namespace)
+				else if((reader.NamespaceURI == "" && reader.Name != "xmlns") || reader.NamespaceURI == XmlSchema.Namespace)
 				{
 					error(h,reader.Name + " is not a valid attribute for notation",null);
 				}
 				else
 				{
-					if(reader.Prefix == "xmlns")
-						notation.Namespaces.Add(reader.LocalName, reader.Value);
-					else if(reader.Name == "xmlns")
-						notation.Namespaces.Add("",reader.Value);
-					//TODO: Add to Unhandled attributes
+					XmlSchemaUtil.ReadUnhandledAttribute(reader,notation);
 				}
 			}
 

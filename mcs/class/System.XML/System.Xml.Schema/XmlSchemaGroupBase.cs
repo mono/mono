@@ -13,6 +13,7 @@ namespace System.Xml.Schema
 		protected XmlSchemaGroupBase()
 		{
 		}
+
 		[XmlIgnore]
 		public abstract XmlSchemaObjectCollection Items { get; }
 	}

@@ -120,17 +120,13 @@ namespace System.Xml.Schema
 						error(h,reader.Value + " is an invalid value for minOccurs",e);
 					}
 				}
-				else if(reader.NamespaceURI == "" || reader.NamespaceURI == XmlSchema.Namespace)
+				else if((reader.NamespaceURI == "" && reader.Name != "xmlns") || reader.NamespaceURI == XmlSchema.Namespace)
 				{
 					error(h,reader.Name + " is not a valid attribute for choice",null);
 				}
 				else
 				{
-					if(reader.Prefix == "xmlns")
-						choice.Namespaces.Add(reader.LocalName, reader.Value);
-					else if(reader.Name == "xmlns")
-						choice.Namespaces.Add("",reader.Value);
-					//TODO: Add to Unhandled attributes
+					XmlSchemaUtil.ReadUnhandledAttribute(reader,choice);
 				}
 			}
 			

@@ -93,17 +93,13 @@ namespace System.Xml.Schema
 					if(innerex != null)
 						error(h, reader.Value + " is not a valid value for refer attribute",innerex);
 				}
-				else if(reader.NamespaceURI == "" || reader.NamespaceURI == XmlSchema.Namespace)
+				else if((reader.NamespaceURI == "" && reader.Name != "xmlns") || reader.NamespaceURI == XmlSchema.Namespace)
 				{
 					error(h,reader.Name + " is not a valid attribute for keyref",null);
 				}
 				else
 				{
-					if(reader.Prefix == "xmlns")
-						keyref.Namespaces.Add(reader.LocalName, reader.Value);
-					else if(reader.Name == "xmlns")
-						keyref.Namespaces.Add("",reader.Value);
-					//TODO: Add to Unhandled attributes
+					XmlSchemaUtil.ReadUnhandledAttribute(reader,keyref);
 				}
 			}
 			

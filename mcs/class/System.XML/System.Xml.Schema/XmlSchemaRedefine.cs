@@ -24,30 +24,34 @@ namespace System.Xml.Schema
 			items = new XmlSchemaObjectCollection(this);
 			schemaTypes = new XmlSchemaObjectTable();
 		}
-		[XmlIgnore]
-		public XmlSchemaObjectTable AttributeGroups 
-		{
-			get{ return attributeGroups; }
-		}
-		[XmlIgnore]
-		public XmlSchemaObjectTable Groups 
-		{
-			get{ return groups; }
-		}
+		
 		[XmlElement("annotation",typeof(XmlSchemaAnnotation),Namespace="http://www.w3.org/2001/XMLSchema")]
 		[XmlElement("simpleType",typeof(XmlSchemaSimpleType),Namespace="http://www.w3.org/2001/XMLSchema")]
 		[XmlElement("complexType",typeof(XmlSchemaComplexType),Namespace="http://www.w3.org/2001/XMLSchema")]
 		[XmlElement("group",typeof(XmlSchemaGroup),Namespace="http://www.w3.org/2001/XMLSchema")]
-		//NOTE: AttributeGroup and not AttributeGroupRef
+			//NOTE: AttributeGroup and not AttributeGroupRef
 		[XmlElement("attributeGroup",typeof(XmlSchemaAttributeGroup),Namespace="http://www.w3.org/2001/XMLSchema")]
 		public XmlSchemaObjectCollection Items 
 		{
 			get{ return items; }
 		}
+
+		[XmlIgnore]
+		public XmlSchemaObjectTable AttributeGroups 
+		{
+			get{ return attributeGroups; }
+		}
+		
 		[XmlIgnore]
 		public XmlSchemaObjectTable SchemaTypes 
 		{
 			get{ return schemaTypes; }
+		}
+
+		[XmlIgnore]
+		public XmlSchemaObjectTable Groups 
+		{
+			get{ return groups; }
 		}
 //<redefine 
 //  id = ID 
@@ -81,17 +85,13 @@ namespace System.Xml.Schema
 				{
 					redefine.SchemaLocation = reader.Value;
 				}
-				else if(reader.NamespaceURI == "" || reader.NamespaceURI == XmlSchema.Namespace)
+				else if((reader.NamespaceURI == "" && reader.Name != "xmlns") || reader.NamespaceURI == XmlSchema.Namespace)
 				{
 					error(h,reader.Name + " is not a valid attribute for redefine",null);
 				}
 				else
 				{
-					if(reader.Prefix == "xmlns")
-						redefine.Namespaces.Add(reader.LocalName, reader.Value);
-					else if(reader.Name == "xmlns")
-						redefine.Namespaces.Add("",reader.Value);
-					//TODO: Add to Unhandled attributes
+					XmlSchemaUtil.ReadUnhandledAttribute(reader,redefine);
 				}
 			}
 

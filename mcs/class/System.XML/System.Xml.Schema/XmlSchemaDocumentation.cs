@@ -46,8 +46,9 @@ namespace System.Xml.Schema
 		//  xml:lang = language>
 		//  Content: ({any})*
 		//</documentation>
-		internal static XmlSchemaDocumentation Read(XmlSchemaReader reader, ValidationEventHandler h)
+		internal static XmlSchemaDocumentation Read(XmlSchemaReader reader, ValidationEventHandler h, out bool skip)
 		{
+			skip = false;
 			XmlSchemaDocumentation doc = new XmlSchemaDocumentation();
 
 			reader.MoveToElement();
@@ -83,13 +84,19 @@ namespace System.Xml.Schema
 				return doc;
 
 			//Content {any}*
-			//FIXME: How to handle {any}* content
-			while(reader.Read())
+			XmlDocument xmldoc = new XmlDocument();
+			xmldoc.AppendChild(xmldoc.ReadNode(reader));
+			XmlNode root = xmldoc.FirstChild;
+			if(root != null && root.ChildNodes != null)
 			{
-				if(reader.NodeType == XmlNodeType.EndElement && reader.NamespaceURI == XmlSchema.Namespace && 
-					reader.LocalName == "documentation")
-					break;
+				doc.Markup = new XmlNode[root.ChildNodes.Count];
+				for(int i=0;i<root.ChildNodes.Count;i++)
+				{
+					doc.Markup[i] = root.ChildNodes[i];
+				}
 			}
+			if(reader.NodeType == XmlNodeType.Element || reader.NodeType == XmlNodeType.EndElement)
+				skip = true;
 
 			return doc;
 		}

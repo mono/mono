@@ -12,7 +12,7 @@ namespace System.Xml.Schema
 	public class XmlSchemaInclude : XmlSchemaExternal
 	{
 		private XmlSchemaAnnotation annotation;
-		public static string xmlname = "include";
+		private static string xmlname = "include";
 
 		public XmlSchemaInclude()
 		{
@@ -23,12 +23,13 @@ namespace System.Xml.Schema
 			get{ return  annotation; } 
 			set{ annotation = value; }
 		}
-//<include 
-//  id = ID 
-//  schemaLocation = anyURI 
-//  {any attributes with non-schema namespace . . .}>
-//  Content: (annotation?)
-//</include>
+
+		//<include 
+		//  id = ID 
+		//  schemaLocation = anyURI 
+		//  {any attributes with non-schema namespace . . .}>
+		//  Content: (annotation?)
+		//</include>
 		internal static XmlSchemaInclude Read(XmlSchemaReader reader, ValidationEventHandler h)
 		{
 			XmlSchemaInclude include = new XmlSchemaInclude();
@@ -55,17 +56,13 @@ namespace System.Xml.Schema
 				{
 					include.SchemaLocation = reader.Value;
 				}
-				else if(reader.NamespaceURI == "" || reader.NamespaceURI == XmlSchema.Namespace)
+				else if((reader.NamespaceURI == "" && reader.Name != "xmlns") || reader.NamespaceURI == XmlSchema.Namespace)
 				{
 					error(h,reader.Name + " is not a valid attribute for include",null);
 				}
 				else
 				{
-					if(reader.Prefix == "xmlns")
-						include.Namespaces.Add(reader.LocalName, reader.Value);
-					else if(reader.Name == "xmlns")
-						include.Namespaces.Add("",reader.Value);
-					//TODO: Add to Unhandled attributes
+					XmlSchemaUtil.ReadUnhandledAttribute(reader,include);
 				}
 			}
 

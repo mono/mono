@@ -3,7 +3,7 @@
 using System;
 using System.Xml;
 using System.Xml.Serialization;
-
+using System.Collections;
 namespace System.Xml.Schema
 {
 	/// <summary>
@@ -18,12 +18,12 @@ namespace System.Xml.Schema
 
 		protected XmlSchemaExternal()
 		{}
-
-		[System.Xml.Serialization.XmlAttribute("id")]
-		public string Id 
+		
+		[System.Xml.Serialization.XmlAttribute("schemaLocation")]
+		public string SchemaLocation 
 		{
-			get{ return  id; }
-			set{ id = value; }
+			get{ return  location; } 
+			set{ location = value; }
 		}
 
 		[XmlIgnore]
@@ -32,18 +32,31 @@ namespace System.Xml.Schema
 			get{ return  schema; }
 			set{ schema = value; }
 		}
-		
-		[System.Xml.Serialization.XmlAttribute("schemaLocation")]
-		public string SchemaLocation 
+
+		[System.Xml.Serialization.XmlAttribute("id")]
+		public string Id 
 		{
-			get{ return  location; } 
-			set{ location = value; }
+			get{ return  id; }
+			set{ id = value; }
 		}
+
 		[XmlAnyAttribute]
 		public XmlAttribute[] UnhandledAttributes 
 		{
-			get{ return  unhandledAttributes; }
-			set{ unhandledAttributes = value; }
+			get
+			{
+				if(unhandledAttributeList != null)
+				{
+					unhandledAttributes = (XmlAttribute[]) unhandledAttributeList.ToArray(typeof(XmlAttribute));
+					unhandledAttributeList = null;
+				}
+				return unhandledAttributes;
+			}
+			set
+			{ 
+				unhandledAttributes = value; 
+				unhandledAttributeList = null;
+			}
 		}
 	}
 }

@@ -165,17 +165,13 @@ namespace System.Xml.Schema
 				{
 					stype.Name = reader.Value;
 				}
-				else if(reader.NamespaceURI == "" || reader.NamespaceURI == XmlSchema.Namespace)
+				else if((reader.NamespaceURI == "" && reader.Name != "xmlns") || reader.NamespaceURI == XmlSchema.Namespace)
 				{
 					error(h,reader.Name + " is not a valid attribute for simpleType",null);
 				}
 				else
 				{
-					if(reader.Prefix == "xmlns")
-						stype.Namespaces.Add(reader.LocalName, reader.Value);
-					else if(reader.Name == "xmlns")
-						stype.Namespaces.Add("",reader.Value);
-					//TODO: Add to Unhandled attributes
+					XmlSchemaUtil.ReadUnhandledAttribute(reader,stype);
 				}
 			}
 			

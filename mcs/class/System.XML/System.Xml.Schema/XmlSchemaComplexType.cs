@@ -37,19 +37,19 @@ namespace System.Xml.Schema
 
 		#region Attributes
 
-		[DefaultValue(XmlSchemaDerivationMethod.None)]
-		[System.Xml.Serialization.XmlAttribute("block")]
-		public XmlSchemaDerivationMethod Block
-		{
-			get{ return  block; }
-			set{ block = value; }
-		}
 		[DefaultValue(false)]
 		[System.Xml.Serialization.XmlAttribute("abstract")]
 		public bool IsAbstract 
 		{
 			get{ return  isAbstract; }
 			set{ isAbstract = value; }
+		}
+		[DefaultValue(XmlSchemaDerivationMethod.None)]
+		[System.Xml.Serialization.XmlAttribute("block")]
+		public XmlSchemaDerivationMethod Block
+		{
+			get{ return  block; }
+			set{ block = value; }
 		}
 		[DefaultValue(false)]
 		[System.Xml.Serialization.XmlAttribute("mixed")]
@@ -62,20 +62,7 @@ namespace System.Xml.Schema
 		#endregion
 		
 		#region Elements
-		[XmlElement("anyAttribute",Namespace="http://www.w3.org/2001/XMLSchema")]
-		public XmlSchemaAnyAttribute AnyAttribute 
-		{
-			get{ return  anyAttribute; }
-			set{ anyAttribute = value; }
-		}
-
-		[XmlElement("attribute",typeof(XmlSchemaAttribute),Namespace="http://www.w3.org/2001/XMLSchema")]
-		[XmlElement("attributeGroup",typeof(XmlSchemaAttributeGroupRef),Namespace="http://www.w3.org/2001/XMLSchema")]
-		public XmlSchemaObjectCollection Attributes 
-		{
-			get{ return attributes; }
-		}
-		
+				
 		[XmlElement("simpleContent",typeof(XmlSchemaSimpleContent),Namespace="http://www.w3.org/2001/XMLSchema")]
 		[XmlElement("complexContent",typeof(XmlSchemaComplexContent),Namespace="http://www.w3.org/2001/XMLSchema")]
 		public XmlSchemaContentModel ContentModel 
@@ -95,24 +82,23 @@ namespace System.Xml.Schema
 			set{ particle = value; }
 		}
 
+		[XmlElement("attribute",typeof(XmlSchemaAttribute),Namespace="http://www.w3.org/2001/XMLSchema")]
+		[XmlElement("attributeGroup",typeof(XmlSchemaAttributeGroupRef),Namespace="http://www.w3.org/2001/XMLSchema")]
+		public XmlSchemaObjectCollection Attributes 
+		{
+			get{ return attributes; }
+		}
+
+		[XmlElement("anyAttribute",Namespace="http://www.w3.org/2001/XMLSchema")]
+		public XmlSchemaAnyAttribute AnyAttribute 
+		{
+			get{ return  anyAttribute; }
+			set{ anyAttribute = value; }
+		}
+
 		#endregion
 
 		#region XmlIgnore
-		[XmlIgnore]
-		public XmlSchemaObjectTable AttributeUses 
-		{
-			get{ return attributeUses; }
-		}
-		[XmlIgnore]
-		public XmlSchemaAnyAttribute AttributeWildcard 
-		{
-			get{ return attributeWildcard; }
-		}
-		[XmlIgnore]
-		public XmlSchemaDerivationMethod BlockResolved 
-		{
-			get{ return blockResolved; }
-		}
 		[XmlIgnore]
 		public XmlSchemaContentType ContentType 
 		{
@@ -122,6 +108,21 @@ namespace System.Xml.Schema
 		public XmlSchemaParticle ContentTypeParticle 
 		{
 			get{ return contentTypeParticle; }
+		}
+		[XmlIgnore]
+		public XmlSchemaDerivationMethod BlockResolved 
+		{
+			get{ return blockResolved; }
+		}
+		[XmlIgnore]
+		public XmlSchemaObjectTable AttributeUses 
+		{
+			get{ return attributeUses; }
+		}
+		[XmlIgnore]
+		public XmlSchemaAnyAttribute AttributeWildcard 
+		{
+			get{ return attributeWildcard; }
 		}
 		#endregion
 
@@ -339,17 +340,13 @@ namespace System.Xml.Schema
 				{
 					ctype.Name = reader.Value;
 				}
-				else if(reader.NamespaceURI == "" || reader.NamespaceURI == XmlSchema.Namespace)
+				else if((reader.NamespaceURI == "" && reader.Name != "xmlns") || reader.NamespaceURI == XmlSchema.Namespace)
 				{
 					error(h,reader.Name + " is not a valid attribute for complexType",null);
 				}
 				else
 				{
-					if(reader.Prefix == "xmlns")
-						ctype.Namespaces.Add(reader.LocalName, reader.Value);
-					else if(reader.Name == "xmlns")
-						ctype.Namespaces.Add("",reader.Value);
-					//TODO: Add to Unhandled attributes
+					XmlSchemaUtil.ReadUnhandledAttribute(reader,ctype);
 				}
 			}
 			

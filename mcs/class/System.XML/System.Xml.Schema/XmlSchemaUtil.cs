@@ -103,18 +103,19 @@ namespace System.Xml.Schema
 			return retarr;
 		}
 
-		public static bool ReadIntAttribute(XmlReader reader, ref int val, out Exception innerExcpetion)
+		public static void ReadUnhandledAttribute(XmlReader reader, XmlSchemaObject xso)
 		{
-			innerExcpetion = null;
-			try
+			if(reader.Prefix == "xmlns")
+				xso.Namespaces.Add(reader.LocalName, reader.Value);
+			else if(reader.Name == "xmlns")
+				xso.Namespaces.Add("",reader.Value);
+			else
 			{
-				val = int.Parse(reader.Value);
-				return true;
-			}
-			catch(Exception ex)
-			{
-				innerExcpetion = ex;
-				return false;
+				if(xso.unhandledAttributeList == null)
+					xso.unhandledAttributeList = new System.Collections.ArrayList();
+				XmlAttribute attr = new XmlDocument().CreateAttribute(reader.LocalName,reader.NamespaceURI);
+				attr.Value = reader.Value;
+				xso.unhandledAttributeList.Add(attr);
 			}
 		}
 

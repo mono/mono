@@ -19,16 +19,16 @@ namespace System.Xml.Schema
 		{
 			refName = XmlQualifiedName.Empty;
 		}
-		[XmlIgnore]
-		public XmlSchemaGroupBase Particle 
-		{
-			get{ return particle; }
-		}
 		[System.Xml.Serialization.XmlAttribute("ref")]
 		public XmlQualifiedName RefName 
 		{
 			get{ return  refName; } 
 			set{ refName = value; }
+		}
+		[XmlIgnore]
+		public XmlSchemaGroupBase Particle 
+		{
+			get{ return particle; }
 		}
 		/// <remarks>
 		/// 1. RefName must be present
@@ -116,17 +116,13 @@ namespace System.Xml.Schema
 						error(h,reader.Value + " is an invalid value for minOccurs", e);
 					}
 				}
-				else if(reader.NamespaceURI == "" || reader.NamespaceURI == XmlSchema.Namespace)
+				else if((reader.NamespaceURI == "" && reader.Name != "xmlns") || reader.NamespaceURI == XmlSchema.Namespace)
 				{
 					error(h,reader.Name + " is not a valid attribute for group",null);
 				}
 				else
 				{
-					if(reader.Prefix == "xmlns")
-						groupref.Namespaces.Add(reader.LocalName, reader.Value);
-					else if(reader.Name == "xmlns")
-						groupref.Namespaces.Add("",reader.Value);
-					//TODO: Add to Unhandled attributes
+					XmlSchemaUtil.ReadUnhandledAttribute(reader,groupref);
 				}
 			}
 			

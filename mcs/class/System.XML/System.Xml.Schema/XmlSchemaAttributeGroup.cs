@@ -23,11 +23,11 @@ namespace System.Xml.Schema
 			attributes  = new XmlSchemaObjectCollection();
 		}
 
-		[XmlElement("anyAttribute",Namespace="http://www.w3.org/2001/XMLSchema")]
-		public XmlSchemaAnyAttribute AnyAttribute 
+		[System.Xml.Serialization.XmlAttribute("name")]
+		public string Name 
 		{
-			get{ return any;}
-			set{ any = value;}
+			get{ return name;}
+			set{ name = value;}
 		}
 
 		[XmlElement("attribute",typeof(XmlSchemaAttribute),Namespace="http://www.w3.org/2001/XMLSchema")]
@@ -37,11 +37,11 @@ namespace System.Xml.Schema
 			get{ return attributes;}
 		}
 
-		[System.Xml.Serialization.XmlAttribute("name")]
-		public string Name 
+		[XmlElement("anyAttribute",Namespace="http://www.w3.org/2001/XMLSchema")]
+		public XmlSchemaAnyAttribute AnyAttribute 
 		{
-			get{ return name;}
-			set{ name = value;}
+			get{ return any;}
+			set{ any = value;}
 		}
 
 		//Undocumented property
@@ -140,17 +140,13 @@ namespace System.Xml.Schema
 				{
 					attrgrp.name = reader.Value;
 				}
-				else if(reader.NamespaceURI == "" || reader.NamespaceURI == XmlSchema.Namespace)
+				else if((reader.NamespaceURI == "" && reader.Name != "xmlns") || reader.NamespaceURI == XmlSchema.Namespace)
 				{
 					error(h,reader.Name + " is not a valid attribute for attributeGroup in this context",null);
 				}
 				else
 				{
-					if(reader.Prefix == "xmlns")
-						attrgrp.Namespaces.Add(reader.LocalName, reader.Value);
-					else if(reader.Name == "xmlns")
-						attrgrp.Namespaces.Add("",reader.Value);
-					//TODO: Add to Unhandled attributes
+					XmlSchemaUtil.ReadUnhandledAttribute(reader,attrgrp);
 				}
 			}
 			

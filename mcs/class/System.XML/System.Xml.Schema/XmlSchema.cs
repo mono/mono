@@ -1,6 +1,7 @@
 // Author: Dwivedi, Ajay kumar
 //            Adwiv@Yahoo.com
 using System;
+using System.Collections;
 using System.Xml;
 using System.IO;
 using System.Xml.Serialization;
@@ -15,8 +16,8 @@ namespace System.Xml.Schema
 	public class XmlSchema : XmlSchemaObject
 	{
 		//public constants
-		public const string InstanceNamespace = "http://www.w3.org/2001/XMLSchema-instance";
 		public const string Namespace = "http://www.w3.org/2001/XMLSchema";
+		public const string InstanceNamespace = "http://www.w3.org/2001/XMLSchema-instance";
 
 		//private fields
 		private XmlSchemaForm attributeFormDefault ;
@@ -68,18 +69,6 @@ namespace System.Xml.Schema
 			get{ return attributeFormDefault; }
 			set{ this.attributeFormDefault = value;}
 		}
-
-		[XmlIgnore]
-		public XmlSchemaObjectTable AttributeGroups 
-		{
-			get{ return attributeGroups; }
-		}
-		
-		[XmlIgnore]
-		public XmlSchemaObjectTable Attributes 
-		{
-			get{ return attributes;}
-		}
 		
 		[DefaultValue(XmlSchemaDerivationMethod.None)]
 		[System.Xml.Serialization.XmlAttribute("blockDefault")]
@@ -87,20 +76,6 @@ namespace System.Xml.Schema
 		{
 			get{ return blockDefault;}
 			set{ blockDefault = value;}
-		}
-		
-		[DefaultValue(XmlSchemaForm.None)]
-		[System.Xml.Serialization.XmlAttribute("elementFormDefault")]
-		public XmlSchemaForm ElementFormDefault 
-		{
-			get{ return elementFormDefault;}
-			set{ elementFormDefault = value;}
-		}
-
-		[XmlIgnore]
-		public XmlSchemaObjectTable Elements 
-		{
-			get{ return elements;}
 		}
 
 		[DefaultValue(XmlSchemaDerivationMethod.None)]
@@ -110,18 +85,27 @@ namespace System.Xml.Schema
 			get{ return finalDefault;}
 			set{ finalDefault = value;}
 		}
-
-		[XmlIgnore]
-		public XmlSchemaObjectTable Groups 
+		
+		[DefaultValue(XmlSchemaForm.None)]
+		[System.Xml.Serialization.XmlAttribute("elementFormDefault")]
+		public XmlSchemaForm ElementFormDefault 
 		{
-			get{ return groups;}
+			get{ return elementFormDefault;}
+			set{ elementFormDefault = value;}
 		}
-
-		[System.Xml.Serialization.XmlAttribute("id")]
-		public string Id 
+		
+		[System.Xml.Serialization.XmlAttribute("targetNamespace")]
+		public string TargetNamespace 
 		{
-			get{ return id;}
-			set{ id = value;}
+			get{ return targetNamespace;}
+			set{ targetNamespace = value;}
+		}
+		
+		[System.Xml.Serialization.XmlAttribute("version")]
+		public string Version 
+		{
+			get{ return version;}
+			set{ version = value;}
 		}
 		
 		[XmlElement("include",typeof(XmlSchemaInclude),Namespace="http://www.w3.org/2001/XMLSchema")]
@@ -130,12 +114,6 @@ namespace System.Xml.Schema
 		public XmlSchemaObjectCollection Includes 
 		{
 			get{ return includes;}
-		}
-		
-		[XmlIgnore]
-		public bool IsCompiled 
-		{
-			get{ return isCompiled;}
 		}
 		
 		[XmlElement("simpleType",typeof(XmlSchemaSimpleType),Namespace="http://www.w3.org/2001/XMLSchema")]
@@ -152,11 +130,23 @@ namespace System.Xml.Schema
 		{
 			get{ return items;}
 		}
-		
+
 		[XmlIgnore]
-		public XmlSchemaObjectTable Notations 
+		public bool IsCompiled 
 		{
-			get{ return notations;}
+			get{ return isCompiled;}
+		}
+
+		[XmlIgnore]
+		public XmlSchemaObjectTable Attributes 
+		{
+			get{ return attributes;}
+		}
+
+		[XmlIgnore]
+		public XmlSchemaObjectTable AttributeGroups 
+		{
+			get{ return attributeGroups; }
 		}
 		
 		[XmlIgnore]
@@ -164,26 +154,49 @@ namespace System.Xml.Schema
 		{
 			get{ return schemaTypes; }
 		}
-		
-		[System.Xml.Serialization.XmlAttribute("targetNamespace")]
-		public string TargetNamespace 
+
+		[XmlIgnore]
+		public XmlSchemaObjectTable Elements 
 		{
-			get{ return targetNamespace;}
-			set{ targetNamespace = value;}
+			get{ return elements;}
+		}
+
+		[System.Xml.Serialization.XmlAttribute("id")]
+		public string Id 
+		{
+			get{ return id;}
+			set{ id = value;}
 		}
 		
 		[XmlAnyAttribute]
 		public XmlAttribute[] UnhandledAttributes 
 		{
-			get{ return unhandledAttributes;}
-			set{ unhandledAttributes = value;}
+			get
+			{
+				if(unhandledAttributeList != null)
+				{
+					unhandledAttributes = (XmlAttribute[]) unhandledAttributeList.ToArray(typeof(XmlAttribute));
+					unhandledAttributeList = null;
+				}
+				return unhandledAttributes;
+			}
+			set
+			{ 
+				unhandledAttributes = value; 
+				unhandledAttributeList = null;
+			}
+		}
+
+		[XmlIgnore]
+		public XmlSchemaObjectTable Groups 
+		{
+			get{ return groups;}
 		}
 		
-		[System.Xml.Serialization.XmlAttribute("version")]
-		public string Version 
+		[XmlIgnore]
+		public XmlSchemaObjectTable Notations 
 		{
-			get{ return version;}
-			set{ version = value;}
+			get{ return notations;}
 		}
 
 		// New attribute defined in W3C schema element
@@ -195,6 +208,8 @@ namespace System.Xml.Schema
 		}
 
 		#endregion
+
+		#region Compile
 
 		// Methods
 		/// <summary>
@@ -382,19 +397,11 @@ namespace System.Xml.Schema
 			Validate(handler);
 		}
 
+		#endregion
+
 		[MonoTODO]
-		protected void Validate(ValidationEventHandler handler)
+		private void Validate(ValidationEventHandler handler)
 		{
-
-			foreach(XmlSchemaObject obj in Includes)
-			{
-				
-			}
-
-			//				foreach(XmlSchemaAnnotation ann in ??????)
-			//				{
-			//					ann.Validate(handler);
-			//				}
 			foreach(XmlSchemaAttribute attr in Attributes.Values)
 			{
 				attr.Validate(handler);
@@ -425,6 +432,9 @@ namespace System.Xml.Schema
 				ntn.Validate(handler);
 			}
 		}
+
+
+		#region Read 
 
 		public static XmlSchema Read(TextReader reader, ValidationEventHandler validationEventHandler)
 		{
@@ -479,8 +489,8 @@ namespace System.Xml.Schema
 
 		private static void ReadAttributes(XmlSchema schema, XmlSchemaReader reader, ValidationEventHandler h)
 		{
-			Exception ex; 
-			
+			Exception ex;
+
 			reader.MoveToElement();
 			while(reader.MoveToNextAttribute())
 			{
@@ -519,15 +529,12 @@ namespace System.Xml.Schema
 						schema.language = reader.Value;
 						break;
 					default:
-						if(reader.Prefix == "xmlns")
-							schema.Namespaces.Add(reader.LocalName, reader.Value);
-						else if(reader.Name == "xmlns")
-							schema.Namespaces.Add("",reader.Value);
-						else if(reader.Prefix == "" || reader.NamespaceURI == XmlSchema.Namespace)
+						if((reader.NamespaceURI == "" && reader.Name != "xmlns") || reader.NamespaceURI == XmlSchema.Namespace)
 							error(h, reader.Name + " attribute is not allowed in schema element",null);
-//					FIXME: There is no public constructor for XmlAttribute. Nor is there a way to access the XmlNode
-//						else
-//							unknown.Add(new XmlAttibute());
+						else
+						{
+							XmlSchemaUtil.ReadUnhandledAttribute(reader,schema);
+						}
 						break;
 				}
 			}
@@ -644,6 +651,9 @@ namespace System.Xml.Schema
 				reader.RaiseInvalidElementError();
 			}
 		}
+		#endregion
+
+		#region write
 
 		public void Write(System.IO.Stream stream)
 		{
@@ -667,7 +677,6 @@ namespace System.Xml.Schema
 			xwriter.Formatting = Formatting.Indented;
 			Write(xwriter,namespaceManager);
 		}
-		[MonoTODO]
 		public void Write(System.Xml.XmlWriter writer, System.Xml.XmlNamespaceManager namespaceManager)
 		{
 			if(Namespaces == null)
@@ -690,5 +699,6 @@ namespace System.Xml.Schema
 			xser.Serialize(writer,this,Namespaces);
 			writer.Flush();
 		}
+		#endregion
 	}
 }

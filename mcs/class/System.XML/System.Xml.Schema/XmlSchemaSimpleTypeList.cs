@@ -21,16 +21,6 @@ namespace System.Xml.Schema
 			this.ItemTypeName = XmlQualifiedName.Empty;
 		}
 
-		[XmlElement("simpleType",Namespace="http://www.w3.org/2001/XMLSchema")]
-		public XmlSchemaSimpleType ItemType 
-		{
-			get{ return itemType; } 
-			set
-			{
-				itemType = value;
-			}
-		}
-
 		[System.Xml.Serialization.XmlAttribute("itemType")]
 		public XmlQualifiedName ItemTypeName
 		{
@@ -38,6 +28,16 @@ namespace System.Xml.Schema
 			set
 			{
 				itemTypeName = value;
+			}
+		}
+
+		[XmlElement("simpleType",Namespace="http://www.w3.org/2001/XMLSchema")]
+		public XmlSchemaSimpleType ItemType 
+		{
+			get{ return itemType; } 
+			set
+			{
+				itemType = value;
 			}
 		}
 		/// <remarks>
@@ -105,17 +105,13 @@ namespace System.Xml.Schema
 					if(innerex != null)
 						error(h, reader.Value + " is not a valid value for itemType attribute",innerex);
 				}
-				else if(reader.NamespaceURI == "" || reader.NamespaceURI == XmlSchema.Namespace)
+				else if((reader.NamespaceURI == "" && reader.Name != "xmlns") || reader.NamespaceURI == XmlSchema.Namespace)
 				{
 					error(h,reader.Name + " is not a valid attribute for list",null);
 				}
 				else
 				{
-					if(reader.Prefix == "xmlns")
-						list.Namespaces.Add(reader.LocalName, reader.Value);
-					else if(reader.Name == "xmlns")
-						list.Namespaces.Add("",reader.Value);
-					//TODO: Add to Unhandled attributes
+					XmlSchemaUtil.ReadUnhandledAttribute(reader,list);
 				}
 			}
 			

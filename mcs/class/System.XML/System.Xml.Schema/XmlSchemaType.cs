@@ -16,10 +16,10 @@ namespace System.Xml.Schema
 		private XmlSchemaDatatype datatype;
 		private XmlSchemaDerivationMethod derivedBy;
 		private XmlSchemaDerivationMethod final;
-		protected XmlSchemaDerivationMethod finalResolved;
+		internal XmlSchemaDerivationMethod finalResolved;
 		private bool isMixed;
 		private string name;
-		protected XmlQualifiedName qName;
+		internal XmlQualifiedName qName;
 
 		public XmlSchemaType()
 		{
@@ -41,23 +41,10 @@ namespace System.Xml.Schema
 			get{ return  final; }
 			set{ final = value; }
 		}
-		#endregion
-
-		#region XmlIgnore
 		[XmlIgnore]
-		public object BaseSchemaType 
+		public XmlQualifiedName QualifiedName 
 		{
-			get{ return  baseSchemaType; }
-		}
-		[XmlIgnore]
-		public XmlSchemaDatatype Datatype 
-		{
-			get{ return datatype; }
-		}
-		[XmlIgnore]
-		public XmlSchemaDerivationMethod DerivedBy 
-		{
-			get{ return derivedBy; }
+			get{ return qName; }
 		}
 		[XmlIgnore]
 		public XmlSchemaDerivationMethod FinalResolved 
@@ -65,16 +52,30 @@ namespace System.Xml.Schema
 			get{ return finalResolved; }
 		}
 		[XmlIgnore]
+		public object BaseSchemaType 
+		{
+			get{ return  baseSchemaType; }
+		}
+		[XmlIgnore]
+		public XmlSchemaDerivationMethod DerivedBy 
+		{
+			get{ return derivedBy; }
+		}
+		[XmlIgnore]
+		public XmlSchemaDatatype Datatype 
+		{
+			get{ return datatype; }
+		}
+		#endregion
+
+		#region XmlIgnore
+		[XmlIgnore]
 		public virtual bool IsMixed 
 		{  
 			get{ return  isMixed; }
 			set{ isMixed = value; } 
 		}
-		[XmlIgnore]
-		public XmlQualifiedName QualifiedName 
-		{
-			get{ return qName; }
-		}
 		#endregion
+
 	}
 }

@@ -30,11 +30,14 @@ namespace System.Xml.Schema
 			set{ baseTypeName = value; }
 		}
 
-		[XmlElement("anyAttribute",Namespace="http://www.w3.org/2001/XMLSchema")]
-		public XmlSchemaAnyAttribute AnyAttribute 
+		[XmlElement("group",typeof(XmlSchemaGroupRef),Namespace="http://www.w3.org/2001/XMLSchema")]
+		[XmlElement("all",typeof(XmlSchemaAll),Namespace="http://www.w3.org/2001/XMLSchema")]
+		[XmlElement("choice",typeof(XmlSchemaChoice),Namespace="http://www.w3.org/2001/XMLSchema")]
+		[XmlElement("sequence",typeof(XmlSchemaSequence),Namespace="http://www.w3.org/2001/XMLSchema")]
+		public XmlSchemaParticle Particle
 		{
-			get{ return any; }
-			set{ any = value;}
+			get{ return  particle; }
+			set{ particle = value; }
 		}
 
 		[XmlElement("attribute",typeof(XmlSchemaAttribute),Namespace="http://www.w3.org/2001/XMLSchema")]
@@ -44,14 +47,11 @@ namespace System.Xml.Schema
 			get{ return attributes; }
 		}
 
-		[XmlElement("group",typeof(XmlSchemaGroupRef),Namespace="http://www.w3.org/2001/XMLSchema")]
-		[XmlElement("all",typeof(XmlSchemaAll),Namespace="http://www.w3.org/2001/XMLSchema")]
-		[XmlElement("choice",typeof(XmlSchemaChoice),Namespace="http://www.w3.org/2001/XMLSchema")]
-		[XmlElement("sequence",typeof(XmlSchemaSequence),Namespace="http://www.w3.org/2001/XMLSchema")]
-		public XmlSchemaParticle Particle
+		[XmlElement("anyAttribute",Namespace="http://www.w3.org/2001/XMLSchema")]
+		public XmlSchemaAnyAttribute AnyAttribute 
 		{
-			get{ return  particle; }
-			set{ particle = value; }
+			get{ return any; }
+			set{ any = value;}
 		}
 
 		/// <remarks>
@@ -152,17 +152,13 @@ namespace System.Xml.Schema
 				{
 					extension.Id = reader.Value;
 				}
-				else if(reader.NamespaceURI == "" || reader.NamespaceURI == XmlSchema.Namespace)
+				else if((reader.NamespaceURI == "" && reader.Name != "xmlns") || reader.NamespaceURI == XmlSchema.Namespace)
 				{
 					error(h,reader.Name + " is not a valid attribute for extension",null);
 				}
 				else
 				{
-					if(reader.Prefix == "xmlns")
-						extension.Namespaces.Add(reader.LocalName, reader.Value);
-					else if(reader.Name == "xmlns")
-						extension.Namespaces.Add("",reader.Value);
-					//TODO: Add to Unhandled attributes
+					XmlSchemaUtil.ReadUnhandledAttribute(reader,extension);
 				}
 			}
 			

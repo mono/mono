@@ -23,18 +23,18 @@ namespace System.Xml.Schema
 			facets = new XmlSchemaObjectCollection();
 		}
 
-		[XmlElement("simpleType",Namespace="http://www.w3.org/2001/XMLSchema")]
-		public XmlSchemaSimpleType BaseType 
-		{
-			get{ return  baseType; } 
-			set{ baseType = value; }
-		}
-
 		[System.Xml.Serialization.XmlAttribute("base")]
 		public XmlQualifiedName BaseTypeName 
 		{
 			get{ return  baseTypeName; } 
 			set{ baseTypeName = value; }
+		}
+
+		[XmlElement("simpleType",Namespace="http://www.w3.org/2001/XMLSchema")]
+		public XmlSchemaSimpleType BaseType 
+		{
+			get{ return  baseType; } 
+			set{ baseType = value; }
 		}
 
 		[XmlElement("minExclusive",typeof(XmlSchemaMinExclusiveFacet),Namespace="http://www.w3.org/2001/XMLSchema")]
@@ -120,17 +120,13 @@ namespace System.Xml.Schema
 					if(innerex != null)
 						error(h, reader.Value + " is not a valid value for base attribute",innerex);
 				}
-				else if(reader.NamespaceURI == "" || reader.NamespaceURI == XmlSchema.Namespace)
+				else if((reader.NamespaceURI == "" && reader.Name != "xmlns") || reader.NamespaceURI == XmlSchema.Namespace)
 				{
 					error(h,reader.Name + " is not a valid attribute for restriction",null);
 				}
 				else
 				{
-					if(reader.Prefix == "xmlns")
-						restriction.Namespaces.Add(reader.LocalName, reader.Value);
-					else if(reader.Name == "xmlns")
-						restriction.Namespaces.Add("",reader.Value);
-					//TODO: Add to Unhandled attributes
+					XmlSchemaUtil.ReadUnhandledAttribute(reader,restriction);
 				}
 			}
 			

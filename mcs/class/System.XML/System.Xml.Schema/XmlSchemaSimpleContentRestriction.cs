@@ -33,27 +33,12 @@ namespace System.Xml.Schema
 			set{ baseTypeName = value; }
 		}
 
-		[XmlElement("anyAttribute",Namespace="http://www.w3.org/2001/XMLSchema")]
-		public XmlSchemaAnyAttribute AnyAttribute 
-		{
-			get{ return  any; }
-			set{ any = value; }
-		}
-
-		[XmlElement("attribute",typeof(XmlSchemaAttribute),Namespace="http://www.w3.org/2001/XMLSchema")]
-		[XmlElement("attributeGroup",typeof(XmlSchemaAttributeGroupRef),Namespace="http://www.w3.org/2001/XMLSchema")]
-		public XmlSchemaObjectCollection Attributes 
-		{
-			get{ return attributes; }
-		}
-
 		[XmlElement("simpleType",Namespace="http://www.w3.org/2001/XMLSchema")]
 		public XmlSchemaSimpleType BaseType 
 		{ 
 			get{ return  baseType; } 
 			set{ baseType = value; } 
 		}
-		
 		
 		[XmlElement("minExclusive",typeof(XmlSchemaMinExclusiveFacet),Namespace="http://www.w3.org/2001/XMLSchema")]
 		[XmlElement("minInclusive",typeof(XmlSchemaMinInclusiveFacet),Namespace="http://www.w3.org/2001/XMLSchema")] 
@@ -71,6 +56,21 @@ namespace System.Xml.Schema
 		{ 
 			get{ return facets; } 
 		}
+
+		[XmlElement("attribute",typeof(XmlSchemaAttribute),Namespace="http://www.w3.org/2001/XMLSchema")]
+		[XmlElement("attributeGroup",typeof(XmlSchemaAttributeGroupRef),Namespace="http://www.w3.org/2001/XMLSchema")]
+		public XmlSchemaObjectCollection Attributes 
+		{
+			get{ return attributes; }
+		}
+
+		[XmlElement("anyAttribute",Namespace="http://www.w3.org/2001/XMLSchema")]
+		public XmlSchemaAnyAttribute AnyAttribute 
+		{
+			get{ return  any; }
+			set{ any = value; }
+		}
+		
 		///<remarks>
 		/// 1. Base must be present and a QName
 		///</remarks>
@@ -158,17 +158,13 @@ namespace System.Xml.Schema
 				{
 					restriction.Id = reader.Value;
 				}
-				else if(reader.NamespaceURI == "" || reader.NamespaceURI == XmlSchema.Namespace)
+				else if((reader.NamespaceURI == "" && reader.Name != "xmlns") || reader.NamespaceURI == XmlSchema.Namespace)
 				{
 					error(h,reader.Name + " is not a valid attribute for restriction",null);
 				}
 				else
 				{
-					if(reader.Prefix == "xmlns")
-						restriction.Namespaces.Add(reader.LocalName, reader.Value);
-					else if(reader.Name == "xmlns")
-						restriction.Namespaces.Add("",reader.Value);
-					//TODO: Add to Unhandled attributes
+					XmlSchemaUtil.ReadUnhandledAttribute(reader,restriction);
 				}
 			}
 			

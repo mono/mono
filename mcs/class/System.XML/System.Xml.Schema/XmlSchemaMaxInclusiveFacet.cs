@@ -56,17 +56,13 @@ namespace System.Xml.Schema
 				{
 					maxi.Value = reader.Value;
 				}
-				else if(reader.NamespaceURI == "" || reader.NamespaceURI == XmlSchema.Namespace)
+				else if((reader.NamespaceURI == "" && reader.Name != "xmlns") || reader.NamespaceURI == XmlSchema.Namespace)
 				{
 					error(h,reader.Name + " is not a valid attribute for "+xmlname,null);
 				}
 				else
 				{
-					if(reader.Prefix == "xmlns")
-						maxi.Namespaces.Add(reader.LocalName, reader.Value);
-					else if(reader.Name == "xmlns")
-						maxi.Namespaces.Add("",reader.Value);
-					//TODO: Add to Unhandled attributes
+					XmlSchemaUtil.ReadUnhandledAttribute(reader,maxi);
 				}
 			}
 			

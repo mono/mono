@@ -18,11 +18,13 @@ namespace System.Xml.Schema
 		{
 			items = new XmlSchemaObjectCollection();
 		}
+
 		[XmlElement("element",typeof(XmlSchemaElement),Namespace="http://www.w3.org/2001/XMLSchema")]
 		public override XmlSchemaObjectCollection Items 
 		{
 			get{ return items; }
 		}
+
 		/// <remarks>
 		/// 1. MaxOccurs must be one. (default is also one)
 		/// 2. MinOccurs must be zero or one.
@@ -115,17 +117,13 @@ namespace System.Xml.Schema
 						error(h,reader.Value + " is an invalid value for minOccurs",e);
 					}
 				}
-				else if(reader.NamespaceURI == "" || reader.NamespaceURI == XmlSchema.Namespace)
+				else if((reader.NamespaceURI == "" && reader.Name != "xmlns") || reader.NamespaceURI == XmlSchema.Namespace)
 				{
 					error(h,reader.Name + " is not a valid attribute for all",null);
 				}
 				else
 				{
-					if(reader.Prefix == "xmlns")
-						all.Namespaces.Add(reader.LocalName, reader.Value);
-					else if(reader.Name == "xmlns")
-						all.Namespaces.Add("",reader.Value);
-					//TODO: Add to Unhandled attributes
+					XmlSchemaUtil.ReadUnhandledAttribute(reader,all);
 				}
 			}
 			

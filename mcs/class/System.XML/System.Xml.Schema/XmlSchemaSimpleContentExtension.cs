@@ -23,11 +23,11 @@ namespace System.Xml.Schema
 			attributes	 = new XmlSchemaObjectCollection();
 		}
 
-		[XmlElement("anyAttribute",Namespace="http://www.w3.org/2001/XMLSchema")]
-		public XmlSchemaAnyAttribute AnyAttribute 
+		[System.Xml.Serialization.XmlAttribute("base")]
+		public XmlQualifiedName BaseTypeName 
 		{
-			get{ return  any; }
-			set{ any = value; }
+			get{ return  baseTypeName; }
+			set{ baseTypeName = value; }
 		}
 
 		[XmlElement("attribute",typeof(XmlSchemaAttribute),Namespace="http://www.w3.org/2001/XMLSchema")]
@@ -37,12 +37,13 @@ namespace System.Xml.Schema
 			get{ return attributes; }
 		}
 
-		[System.Xml.Serialization.XmlAttribute("base")]
-		public XmlQualifiedName BaseTypeName 
+		[XmlElement("anyAttribute",Namespace="http://www.w3.org/2001/XMLSchema")]
+		public XmlSchemaAnyAttribute AnyAttribute 
 		{
-			get{ return  baseTypeName; }
-			set{ baseTypeName = value; }
+			get{ return  any; }
+			set{ any = value; }
 		}
+
 		///<remarks>
 		/// 1. Base must be present and a QName
 		///</remarks>
@@ -122,17 +123,13 @@ namespace System.Xml.Schema
 				{
 					extension.Id = reader.Value;
 				}
-				else if(reader.NamespaceURI == "" || reader.NamespaceURI == XmlSchema.Namespace)
+				else if((reader.NamespaceURI == "" && reader.Name != "xmlns") || reader.NamespaceURI == XmlSchema.Namespace)
 				{
 					error(h,reader.Name + " is not a valid attribute for extension in this context",null);
 				}
 				else
 				{
-					if(reader.Prefix == "xmlns")
-						extension.Namespaces.Add(reader.LocalName, reader.Value);
-					else if(reader.Name == "xmlns")
-						extension.Namespaces.Add("",reader.Value);
-					//TODO: Add to Unhandled attributes
+					XmlSchemaUtil.ReadUnhandledAttribute(reader,extension);
 				}
 			}
 			

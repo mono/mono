@@ -21,6 +21,26 @@ namespace System.Xml.Schema
 
 		#region Attributes
 
+		[System.Xml.Serialization.XmlAttribute("minOccurs")]
+		public string MinOccursString
+		{
+			get{ return minstr; }
+			set
+			{
+				decimal val = decimal.Parse(value);
+				if(val >= 0 && (val == Decimal.Truncate(val)))
+				{
+					minOccurs = val;
+					minstr	 = val.ToString();
+				}
+				else
+				{
+					throw new XmlSchemaException
+						("MinOccursString must be a non-negative number",null); 					
+				}
+			}
+		}
+
 		[System.Xml.Serialization.XmlAttribute("maxOccurs")]
 		public string MaxOccursString
 		{
@@ -49,29 +69,19 @@ namespace System.Xml.Schema
 			}
 		}
 
-		[System.Xml.Serialization.XmlAttribute("minOccurs")]
-		public string MinOccursString
-		{
-			get{ return minstr; }
-			set
-			{
-				decimal val = decimal.Parse(value);
-				if(val >= 0 && (val == Decimal.Truncate(val)))
-				{
-					minOccurs = val;
-					minstr	 = val.ToString();
-				}
-				else
-				{
-					throw new XmlSchemaException
-						("MinOccursString must be a non-negative number",null); 					
-				}
-			}
-		}
-
 		#endregion
 
 		#region XmlIgnore
+
+		[XmlIgnore]
+		public decimal MinOccurs
+		{
+			get{ return  minOccurs; }
+			set
+			{
+				MinOccursString = value.ToString();
+			}
+		}
 
 		[XmlIgnore]
 		public decimal MaxOccurs 
@@ -83,15 +93,6 @@ namespace System.Xml.Schema
 			}
 		}
 
-		[XmlIgnore]
-		public decimal MinOccurs
-		{
-			get{ return  minOccurs; }
-			set
-			{
-				MinOccursString = value.ToString();
-			}
-		}
 		#endregion
 	}
 }

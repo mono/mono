@@ -18,6 +18,13 @@ namespace System.Xml.Schema
 		{
 		}
 
+		[System.Xml.Serialization.XmlAttribute("source")]
+		public string Source 
+		{
+			get{ return  source; } 
+			set{ source = value; }
+		}
+
 		[XmlAnyElement]
 		[XmlText]
 		public XmlNode[] Markup 
@@ -26,19 +33,13 @@ namespace System.Xml.Schema
 			set{ markup = value; }
 		}
 
-		[System.Xml.Serialization.XmlAttribute("source")]
-		public string Source 
-		{
-			get{ return  source; } 
-			set{ source = value; }
-		}
-
 		//<appinfo
 		//  source = anyURI>
 		//  Content: ({any})*
 		//</appinfo>
-		internal static XmlSchemaAppInfo Read(XmlSchemaReader reader, ValidationEventHandler h)
+		internal static XmlSchemaAppInfo Read(XmlSchemaReader reader, ValidationEventHandler h, out bool skip)
 		{
+			skip = false;
 			XmlSchemaAppInfo appinfo = new XmlSchemaAppInfo();
 			reader.MoveToElement();
 
@@ -70,13 +71,20 @@ namespace System.Xml.Schema
 				return appinfo;
 
 			//Content {any}*
-			//FIXME: How to handle {any}* content
-			while(reader.Read())
+			//FIXME: This is a pure Quick Hack; There must be a another method;
+			XmlDocument xmldoc = new XmlDocument();
+			xmldoc.AppendChild(xmldoc.ReadNode(reader));
+			XmlNode root = xmldoc.FirstChild;
+			if(root != null && root.ChildNodes != null)
 			{
-				if(reader.NodeType == XmlNodeType.EndElement && reader.NamespaceURI == XmlSchema.Namespace && 
-					reader.LocalName == "appinfo")
-					break;
+				appinfo.Markup = new XmlNode[root.ChildNodes.Count];
+				for(int i=0;i<root.ChildNodes.Count;i++)
+				{
+					appinfo.Markup[i] = root.ChildNodes[i];
+				}
 			}
+			if(reader.NodeType == XmlNodeType.Element || reader.NodeType == XmlNodeType.EndElement)
+				skip = true;
 			return appinfo;
 		}
 	}

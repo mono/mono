@@ -1,6 +1,7 @@
 // Author: Dwivedi, Ajay kumar
 //            Adwiv@Yahoo.com
 using System;
+using System.Collections;
 using System.Xml;
 using System.Xml.Serialization;
 
@@ -37,8 +38,20 @@ namespace System.Xml.Schema
 		[XmlAnyAttribute]
 		public XmlAttribute[] UnhandledAttributes 
 		{
-			get{ return  unhandledAttributes; } 
-			set{ unhandledAttributes = value; }
+			get
+			{
+				if(unhandledAttributeList != null)
+				{
+					unhandledAttributes = (XmlAttribute[]) unhandledAttributeList.ToArray(typeof(XmlAttribute));
+					unhandledAttributeList = null;
+				}
+				return unhandledAttributes;
+			}
+			set
+			{ 
+				unhandledAttributes = value; 
+				unhandledAttributeList = null;
+			}
 		}
 
 		[MonoTODO]
@@ -81,17 +94,13 @@ namespace System.Xml.Schema
 				{
 					annotation.Id = reader.Value;
 				}
-				else if(reader.NamespaceURI == "" || reader.NamespaceURI == XmlSchema.Namespace)
+				else if((reader.NamespaceURI == "" && reader.Name != "xmlns") || reader.NamespaceURI == XmlSchema.Namespace)
 				{
 					error(h,reader.Name + " is not a valid attribute for annotation",null);
 				}
 				else
 				{
-											if(reader.Prefix == "xmlns")
-												annotation.Namespaces.Add(reader.LocalName, reader.Value);
-											else if(reader.Name == "xmlns")
-												annotation.Namespaces.Add("",reader.Value);
-						//TODO: Add to Unhandled attributes
+					XmlSchemaUtil.ReadUnhandledAttribute(reader,annotation);
 				}
 			}
 			
@@ -100,8 +109,14 @@ namespace System.Xml.Schema
 				return annotation;
 
 			//Content: (appinfo | documentation)*
-			while(reader.ReadNextElement())
+			bool skip = false;
+			while(!reader.EOF)
 			{
+				if(skip) 
+					skip=false;
+				else 
+					reader.ReadNextElement();
+
 				if(reader.NodeType == XmlNodeType.EndElement)
 				{
 					if(reader.LocalName != xmlname)
@@ -110,14 +125,14 @@ namespace System.Xml.Schema
 				}
 				if(reader.LocalName == "appinfo")
 				{
-					XmlSchemaAppInfo appinfo = XmlSchemaAppInfo.Read(reader,h);
+					XmlSchemaAppInfo appinfo = XmlSchemaAppInfo.Read(reader,h,out skip);
 					if(appinfo != null)
 						annotation.items.Add(appinfo);
 					continue;
 				}
 				if(reader.LocalName == "documentation")
 				{
-					XmlSchemaDocumentation documentation = XmlSchemaDocumentation.Read(reader,h);
+					XmlSchemaDocumentation documentation = XmlSchemaDocumentation.Read(reader,h, out skip);
 					if(documentation != null)
 						annotation.items.Add(documentation);
 					continue;

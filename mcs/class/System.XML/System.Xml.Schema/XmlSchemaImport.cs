@@ -18,19 +18,19 @@ namespace System.Xml.Schema
 		public XmlSchemaImport()
 		{
 		}
-
-		[XmlElement("annotation",Namespace="http://www.w3.org/2001/XMLSchema")]
-		public XmlSchemaAnnotation Annotation 
-		{
-			get{ return  annotation; } 
-			set{ annotation = value; }
-		}
 		
 		[System.Xml.Serialization.XmlAttribute("namespace")]
 		public string Namespace 
 		{
 			get{ return  nameSpace; } 
 			set{ nameSpace = value; }
+		}
+
+		[XmlElement("annotation",Namespace="http://www.w3.org/2001/XMLSchema")]
+		public XmlSchemaAnnotation Annotation 
+		{
+			get{ return  annotation; } 
+			set{ annotation = value; }
 		}
 		//<import 
 		//  id = ID 
@@ -69,17 +69,13 @@ namespace System.Xml.Schema
 				{
 					import.SchemaLocation = reader.Value;
 				}
-				else if(reader.NamespaceURI == "" || reader.NamespaceURI == XmlSchema.Namespace)
+				else if((reader.NamespaceURI == "" && reader.Name != "xmlns") || reader.NamespaceURI == XmlSchema.Namespace)
 				{
 					error(h,reader.Name + " is not a valid attribute for import",null);
 				}
 				else
 				{
-					if(reader.Prefix == "xmlns")
-						import.Namespaces.Add(reader.LocalName, reader.Value);
-					else if(reader.Name == "xmlns")
-						import.Namespaces.Add("",reader.Value);
-					//TODO: Add to Unhandled attributes
+					XmlSchemaUtil.ReadUnhandledAttribute(reader,import);
 				}
 			}
 

@@ -36,18 +36,18 @@ namespace System.Xml.Schema
 				return this.htable.Count; 
 			}
 		}
-		public XmlSchema this[ string ns ] 
-		{ 
-			get
-			{
-				return (XmlSchema) this.htable[ns];
-			}
-		}
 		public XmlNameTable NameTable 
 		{ 
 			get
 			{
 				return this.ntable;
+			}
+		}
+		public XmlSchema this[ string ns ] 
+		{ 
+			get
+			{
+				return (XmlSchema) this.htable[ns];
 			}
 		}
 

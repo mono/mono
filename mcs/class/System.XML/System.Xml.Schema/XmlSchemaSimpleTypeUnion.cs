@@ -126,17 +126,13 @@ namespace System.Xml.Schema
 							error(h,"'"+names[i] + "' is not a valid memberType",innerEx);
 					}
 				}
-				else if(reader.NamespaceURI == "" || reader.NamespaceURI == XmlSchema.Namespace)
+				else if((reader.NamespaceURI == "" && reader.Name != "xmlns") || reader.NamespaceURI == XmlSchema.Namespace)
 				{
 					error(h,reader.Name + " is not a valid attribute for union",null);
 				}
 				else
 				{
-					if(reader.Prefix == "xmlns")
-						union.Namespaces.Add(reader.LocalName, reader.Value);
-					else if(reader.Name == "xmlns")
-						union.Namespaces.Add("",reader.Value);
-					//TODO: Add to Unhandled attributes
+					XmlSchemaUtil.ReadUnhandledAttribute(reader,union);
 				}
 			}
 			

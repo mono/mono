@@ -1,6 +1,7 @@
 // Author: Dwivedi, Ajay kumar
 //            Adwiv@Yahoo.com
 using System;
+using System.Collections;
 using System.Xml;
 using System.Xml.Serialization;
 
@@ -19,13 +20,6 @@ namespace System.Xml.Schema
 		public XmlSchemaAnnotated()
 		{}
 		
-		[XmlElement("annotation",Namespace="http://www.w3.org/2001/XMLSchema")]
-		public XmlSchemaAnnotation Annotation 
-		{ 
-			get{ return  annotation; } 
-			set{ annotation = value; } 
-		}
-		
 		[System.Xml.Serialization.XmlAttribute("id")]
 		public string Id 
 		{ 
@@ -33,11 +27,30 @@ namespace System.Xml.Schema
 			set{ id = value; } 
 		}
 		
+		[XmlElement("annotation",Namespace="http://www.w3.org/2001/XMLSchema")]
+		public XmlSchemaAnnotation Annotation 
+		{ 
+			get{ return  annotation; } 
+			set{ annotation = value; } 
+		}
+		
 		[XmlAnyAttribute]
 		public XmlAttribute[] UnhandledAttributes 
 		{ 
-			get{ return unhandledAttributes; } 
-			set{ unhandledAttributes = value; } 
+			get
+			{
+				if(unhandledAttributeList != null)
+				{
+					unhandledAttributes = (XmlAttribute[]) unhandledAttributeList.ToArray(typeof(XmlAttribute));
+					unhandledAttributeList = null;
+				}
+				return unhandledAttributes;
+			}
+			set
+			{ 
+				unhandledAttributes = value; 
+				unhandledAttributeList = null;
+			}
 		}
 	}
 }
