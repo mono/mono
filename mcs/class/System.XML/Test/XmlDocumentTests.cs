@@ -16,7 +16,27 @@ namespace Ximian.Mono.Tests
 		{
 			document = new XmlDocument ();
 		}
-		
+
+		public void TestLoadProcessingInstruction ()
+		{
+			document.LoadXml (@"<?foo bar='baaz' quux='quuux'?><quuuux></quuuux>");
+			// Not sure where this goes in a doc yet...
+		}
+
+		public void TestLoadCDATA ()
+		{
+			document.LoadXml ("<foo><![CDATA[bar]]></foo>");
+			Assert (document.DocumentElement.ChildNodes [0].NodeType == XmlNodeType.CDATA);
+			AssertEquals ("bar", document.DocumentElement.ChildNodes [0].Value);
+		}
+
+		public void TestLoadComment()
+		{
+			document.LoadXml ("<foo><!--Comment--></foo>");
+			Assert (document.DocumentElement.ChildNodes [0].NodeType == XmlNodeType.Comment);
+			AssertEquals ("Comment", document.DocumentElement.ChildNodes [0].Value);
+		}
+
 		public void TestLoadXmlSingleElement ()
 		{
 			AssertNull (document.DocumentElement);

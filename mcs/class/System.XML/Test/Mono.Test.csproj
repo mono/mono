@@ -63,14 +63,14 @@
                     HintPath = "..\..\..\..\..\..\..\..\WINDOWS\Microsoft.NET\Framework\v1.0.3705\System.dll"
                 />
                 <Reference
-                    Name = "NUnitCore"
-                    AssemblyName = "NUnitCore"
-                    HintPath = "..\NUnitCore.dll"
-                />
-                <Reference
                     Name = "Mono.System.XML"
                     Project = "{0CB7FB41-3C0F-40E8-ACD3-8C5B8BC35B2C}"
                     Package = "{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}"
+                />
+                <Reference
+                    Name = "NUnitCore"
+                    AssemblyName = "NUnitCore"
+                    HintPath = "..\..\..\nunit\NUnitCore.dll"
                 />
                 <Reference
                     Name = "System.Data"

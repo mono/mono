@@ -1,3 +1,19 @@
+2002-03-02  Kral Ferch <kral_ferch@hotmail.com>
+
+	* XmlProcessingInstructions.cs: Class was empty.  Implemented
+	constructor, properties, and CloneNode() method.  Put in
+	MonoToDo attrib for remaining methods.
+
+	* XmlComment.cs: Reformatted and put in MonoToDo attribs.
+	Got rid of helper methods and fields since they were no
+	longer needed.
+
+	* XmlLinkedNode.cs: Reformatted and put in MonoToDo attribs.
+
+	* XmlDocument.cs: Added code to Load(XmlReader) to create XmlComment,
+	XmlCDataSection, and XmlProcessingInstruction nodes. Implemented
+	Createxxx() methods for those three node types.
+
 2002-03-02  Jason Diamond <jason@injektilo.org>
 
 	* XmlDocument.cs: Implemented the remaining CreateElement and

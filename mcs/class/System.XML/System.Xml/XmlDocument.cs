@@ -200,16 +200,14 @@ namespace System.Xml
 			return new XmlAttribute (prefix, localName, namespaceURI, this);
 		}
 
-		[MonoTODO]
 		public virtual XmlCDataSection CreateCDataSection (string data)
 		{
-			throw new NotImplementedException ();
+			return new XmlCDataSection (data, this);
 		}
 
-		[MonoTODO]
 		public virtual XmlComment CreateComment (string data)
 		{
-			throw new NotImplementedException ();
+			return new XmlComment(data, this);
 		}
 
 		[MonoTODO]
@@ -311,16 +309,15 @@ namespace System.Xml
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		public virtual XmlProcessingInstruction CreateProcessingInstruction (
 			string target,
 			string data)
 		{
-			throw new NotImplementedException();
+			return new XmlProcessingInstruction (target, data, this);
 		}
 
 		[MonoTODO]
-		public virtual XmlSignificantWhitespace CreateSignificantWhitespace (string text	)
+		public virtual XmlSignificantWhitespace CreateSignificantWhitespace (string text)
 		{
 			throw new NotImplementedException ();
 		}
@@ -401,6 +398,16 @@ namespace System.Xml
 			{
 				switch (xmlReader.NodeType) {
 
+				case XmlNodeType.CDATA:
+					XmlCDataSection cdataSection = CreateCDataSection(xmlReader.Value);
+					currentNode.AppendChild (cdataSection);
+					break;
+
+				case XmlNodeType.Comment:
+					XmlComment comment = CreateComment (xmlReader.Value);
+					currentNode.AppendChild (comment);
+					break;
+
 				case XmlNodeType.Element:
 					XmlElement element = CreateElement (xmlReader.Name, xmlReader.LocalName, xmlReader.NamespaceURI);
 					currentNode.AppendChild (element);
@@ -415,13 +422,19 @@ namespace System.Xml
 
 					break;
 
+				case XmlNodeType.EndElement:
+					currentNode = currentNode.ParentNode;
+					break;
+
+				case XmlNodeType.ProcessingInstruction:
+					XmlProcessingInstruction processingInstruction = CreateProcessingInstruction (xmlReader.Name, xmlReader.Value);
+					// Where does a processing instruction go in the doc?
+					// I think we need to just hold on to them in an internal array in doc.
+					break;
+
 				case XmlNodeType.Text:
 					XmlText text = CreateTextNode (xmlReader.Value);
 					currentNode.AppendChild (text);
-					break;
-
-				case XmlNodeType.EndElement:
-					currentNode = currentNode.ParentNode;
 					break;
 				}
 			}
