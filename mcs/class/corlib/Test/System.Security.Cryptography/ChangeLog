@@ -1,3 +1,9 @@
+2003-10-04  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* CryptoStreamTest.cs: Added test case from bugzilla #49323 from
+	Carlos Guzmán Álvarez and some small tests for empty stream with
+	different PaddingMode (as found by Lluis Sanchez Gual).
+
 2003-08-05  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* CryptoStreamTest.cs: Added test case from bugzilla #40689 from 

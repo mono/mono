@@ -149,7 +149,7 @@ namespace MonoTests.System.Security.Cryptography {
 		{
 			byte[] encrypted;
 	                using (MemoryStream mem1 = new MemoryStream ()) {
-		                byte[] toEncrypt = Encoding.Unicode.GetBytes ("Please encode me!");
+				byte[] toEncrypt = Encoding.Unicode.GetBytes ("Please encode me!");
 				using (CryptoStream crypt = new CryptoStream (mem1, aes.CreateEncryptor (), CryptoStreamMode.Write)) {
 					crypt.Write (toEncrypt, 0, toEncrypt.Length);
 					crypt.FlushFinalBlock ();
@@ -252,6 +252,70 @@ namespace MonoTests.System.Security.Cryptography {
 						break;
 				}
 			}
+		}
+
+		private byte[] EmptyStream (PaddingMode mode) 
+		{
+			SymmetricAlgorithm algo = Rijndael.Create ();
+			algo.Key = new byte[] { 0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E, 0x0F };
+			algo.IV = new byte[] { 0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E, 0x0F };
+			algo.Padding = mode;
+			MemoryStream ms = new MemoryStream ();
+			CryptoStream cs = new CryptoStream (ms, algo.CreateEncryptor(), CryptoStreamMode.Write);
+			cs.Write (ms.GetBuffer (), 0, (int) ms.Length);
+			cs.FlushFinalBlock ();
+			cs.Flush ();
+			return ms.ToArray ();
+		}
+
+		[Test]
+		public void EmptyStreamWithPaddingNone () 
+		{
+			byte[] result = EmptyStream (PaddingMode.None);
+			AssertEquals ("Result Length", 0, result.Length);
+		}
+
+		[Test]
+		public void EmptyStreamWithPaddingPKCS7 () 
+		{
+			byte[] expected = { 0x07, 0xFE, 0xEF, 0x74, 0xE1, 0xD5, 0x03, 0x6E, 0x90, 0x0E, 0xEE, 0x11, 0x8E, 0x94, 0x92, 0x93 };
+			byte[] result = EmptyStream (PaddingMode.PKCS7);
+			AssertEquals ("Result Length", 16, result.Length);
+			AssertEquals ("Result", expected, result);
+		}
+
+		[Test]
+		public void EmptyStreamWithPaddingZeros () 
+		{
+			byte[] result = EmptyStream (PaddingMode.Zeros);
+			AssertEquals ("Result Length", 0, result.Length);
+		}
+
+		// bugzilla: 49323 (adapted from test case by Carlos Guzmán Álvarez)
+		[Test]
+		public void MultiblocksWithPartial () 
+		{
+			SymmetricAlgorithm tdes = new TripleDESCryptoServiceProvider ();
+			tdes.Key = new byte[] {161, 54, 179, 213, 89, 75, 130, 4, 186, 99, 158, 127, 19, 195, 175, 143, 79, 109, 25, 202, 237, 235, 62, 170};
+			tdes.IV	= new byte[] {193, 227, 54, 132, 68, 172, 55, 91};
+
+			byte[] fragment = new byte[] {20, 0, 0, 12, 181, 134, 8, 230, 185, 75, 19, 129, 101, 142, 118, 190};
+			byte[] mac = new byte[] {42, 148, 229, 58, 185, 249, 154, 131, 157, 79, 176, 168, 143, 71, 0, 118, 5, 10, 95, 8};
+																								  
+			// Encryption ( fragment + mac [+ padding + padding_length] )
+			MemoryStream ms = new MemoryStream ();
+			CryptoStream cs = new CryptoStream (ms, tdes.CreateEncryptor (), CryptoStreamMode.Write);
+			cs.Write (fragment, 0, fragment.Length);
+			cs.Write (mac, 0, mac.Length);
+			// Calculate padding_length
+			int fragmentLength = fragment.Length + mac.Length + 1;
+			int padding = (((fragmentLength / 8) * 8) + 8) - fragmentLength;
+			// Write padding length byte
+			cs.WriteByte ((byte)padding);
+			cs.Close ();
+			byte[] encrypted = ms.ToArray ();
+			byte[] expected = new byte[] { 0x9c, 0x99, 0x56, 0x8e, 0x75, 0x3e, 0x02, 0x95, 0x5b, 0x5c, 0x46, 0x8b, 0xcf, 0xf8, 0x27, 0x21, 0x53, 0x5f, 0x3d, 0xd8, 0x16, 0x95, 0x82, 0x3d, 0x88, 0x9b, 0x9a, 0x47, 0xda, 0x97, 0x90, 0x86, 0x50, 0x0e, 0x48, 0xee, 0xe7, 0x9b, 0x25, 0x41 };
+			AssertEquals ("MultiblocksWithPartial", expected, encrypted);
 		}
 
 		// TODO: Test with Hash object
