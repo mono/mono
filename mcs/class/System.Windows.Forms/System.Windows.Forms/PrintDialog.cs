@@ -132,7 +132,7 @@ namespace System.Windows.Forms {
 			IntPtr lfBuffer = Marshal.AllocHGlobal(Marshal.SizeOf(pdlg));
       		Marshal.StructureToPtr(pdlg, lfBuffer, false);			
 			
-			if (Win32_WineLess.PrintDlg(lfBuffer)){
+			if (Win32.PrintDlg(lfBuffer)){
 				
 				pdlg = (PRINTDLG)Marshal.PtrToStructure (lfBuffer, typeof (PRINTDLG));
 				
