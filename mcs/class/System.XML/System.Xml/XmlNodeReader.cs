@@ -889,7 +889,7 @@ namespace System.Xml
 			if (ctx == null) {
 				ctx = new XmlParserContext (document.NameTable,
 					current.ConstructNamespaceManager (),
-					document.DocumentType.DTD,
+					document.DocumentType != null ? document.DocumentType.DTD : null,
 					BaseURI, XmlLang, XmlSpace, Encoding.Unicode);
 			}
 			entityReader = new XmlTextReader (replacementText, xmlReaderNodeType, ctx);

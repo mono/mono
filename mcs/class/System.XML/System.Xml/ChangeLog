@@ -1,3 +1,13 @@
+2003-08-05  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
+
+	* DTDValidatingReader.cs :
+	  Added full ExpandEntities support for text node and entity reference
+	  node (although require many usage tests). Almost all methods and
+	  properties now have currentTextValue != null check, that field means
+	  that there are cached (entity-resolved) text.
+	  Implemented default attribute aware XmlLang and XmlSpace.
+	* XmlNodeReader.cs : ResolveEntity() should not require DTD.
+
 2003-08-03  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
 
 	* DTDValidatingReader.cs,

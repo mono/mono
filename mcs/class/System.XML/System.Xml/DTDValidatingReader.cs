@@ -43,6 +43,8 @@ namespace Mono.Xml
 		Stack automataStack;
 		string currentElement;
 		string currentAttribute;
+		string currentTextValue;
+		bool shouldResetCurrentTextValue;
 		bool consumedAttribute;
 		bool insideContent;
 		DTDAutomata currentAutomata;
@@ -69,6 +71,9 @@ namespace Mono.Xml
 		// We had already done attribute validation, so can ignore name.
 		public override string GetAttribute (int i)
 		{
+			if (currentTextValue != null)
+				throw new IndexOutOfRangeException ("Specified index is out of range: " + i);
+
 			if (dtd == null)
 				return reader.GetAttribute (i);
 
@@ -80,6 +85,9 @@ namespace Mono.Xml
 
 		public override string GetAttribute (string name)
 		{
+			if (currentTextValue != null)
+				return null;
+
 			if (dtd == null)
 				return reader.GetAttribute (name);
 
@@ -88,6 +96,9 @@ namespace Mono.Xml
 
 		public override string GetAttribute (string name, string ns)
 		{
+			if (currentTextValue != null)
+				return null;
+
 			if (dtd == null)
 				return reader.GetAttribute (name, ns);
 
@@ -115,6 +126,9 @@ namespace Mono.Xml
 
 		public override void MoveToAttribute (int i)
 		{
+			if (currentTextValue != null)
+				throw new IndexOutOfRangeException ("The index is out of range.");
+
 			if (dtd == null) {
 				reader.MoveToAttribute (i);
 				currentAttribute = reader.Name;
@@ -135,6 +149,9 @@ namespace Mono.Xml
 
 		public override bool MoveToAttribute (string name)
 		{
+			if (currentTextValue != null)
+				return false;
+
 			if (dtd == null) {
 				bool b = reader.MoveToAttribute (name);
 				if (b) {
@@ -158,6 +175,9 @@ namespace Mono.Xml
 
 		public override bool MoveToAttribute (string name, string ns)
 		{
+			if (currentTextValue != null)
+				return false;
+
 			if (dtd == null) {
 				bool b = reader.MoveToAttribute (name, ns);
 				if (b) {
@@ -180,6 +200,9 @@ namespace Mono.Xml
 
 		public override bool MoveToElement ()
 		{
+			if (currentTextValue != null)
+				return false;
+
 			bool b = reader.MoveToElement ();
 			if (!b)
 				return false;
@@ -190,6 +213,9 @@ namespace Mono.Xml
 
 		public override bool MoveToFirstAttribute ()
 		{
+			if (currentTextValue != null)
+				return false;
+
 			if (dtd == null) {
 				bool b = reader.MoveToFirstAttribute ();
 				if (b) {
@@ -213,6 +239,9 @@ namespace Mono.Xml
 
 		public override bool MoveToNextAttribute ()
 		{
+			if (currentTextValue != null)
+				return false;
+
 			if (dtd == null) {
 				bool b = reader.MoveToNextAttribute ();
 				if (b) {
@@ -235,11 +264,24 @@ namespace Mono.Xml
 				return false;
 		}
 
-		[MonoTODO]
 		public override bool Read ()
 		{
+			if (currentTextValue != null)
+				shouldResetCurrentTextValue = true;
+
 			MoveToElement ();
 
+			currentElement = null;
+			currentAttribute = null;
+			consumedAttribute = false;
+			attributes.Clear ();
+			attributeValues.Clear ();
+
+			return ReadContent () || currentTextValue != null;
+		}
+
+		private bool ReadContent ()
+		{
 			if (nextEntityReader != null) {
 				if (DTD == null || DTD.EntityDecls [Name] == null)
 					throw new XmlException ("Entity '" + Name + "' was not declared.");
@@ -248,21 +290,22 @@ namespace Mono.Xml
 				entityReaderDepthStack.Push (Depth);
 				reader = sourceTextReader = nextEntityReader;
 				nextEntityReader = null;
-				return Read ();
+				return ReadContent ();
 			} else if (NodeType == XmlNodeType.EndEntity) {
 				reader = entityReaderStack.Pop () as XmlReader;
 				entityReaderNameStack.Pop ();
 				entityReaderDepthStack.Pop ();
 				sourceTextReader = reader as XmlTextReader;
-				return Read ();
+				return ReadContent ();
 			}
 
-			bool b = reader.Read ();
-			currentElement = null;
-			currentAttribute = null;
-			consumedAttribute = false;
-			attributes.Clear ();
-			attributeValues.Clear ();
+			bool b = !reader.EOF;
+			if (shouldResetCurrentTextValue) {
+				currentTextValue = null;
+				shouldResetCurrentTextValue = false;
+			}
+			else
+				b = reader.Read ();
 
 			if (!insideContent && reader.NodeType == XmlNodeType.Element) {
 				insideContent = true;
@@ -297,10 +340,16 @@ namespace Mono.Xml
 				this.dtd = xmlTextReader.DTD;
 				break;
 
-			case XmlNodeType.Element:	// startElementDeriv
+			case XmlNodeType.Element:
+				if (currentTextValue != null)
+					return true;
+				elementStack.Push (reader.Name);
+				// startElementDeriv
 				// If no schema specification, then skip validation.
 				if (currentAutomata == null) {
 					SetupValidityIgnorantAttributes ();
+					if (reader.IsEmptyElement)
+						goto case XmlNodeType.EndElement;
 					break;
 				}
 
@@ -321,7 +370,6 @@ namespace Mono.Xml
 				}
 
 				currentElement = Name;
-				elementStack.Push (reader.Name);
 				automataStack.Push (currentAutomata);
 				if (decl != null)	// i.e. not invalid
 					currentAutomata = decl.ContentModel.GetAutomata ();
@@ -345,7 +393,11 @@ namespace Mono.Xml
 					goto case XmlNodeType.EndElement;
 				break;
 
-			case XmlNodeType.EndElement:	// endElementDeriv
+			case XmlNodeType.EndElement:
+				if (currentTextValue != null)
+					return true;
+				elementStack.Pop ();
+				// endElementDeriv
 				// If no schema specification, then skip validation.
 				if (currentAutomata == null)
 					break;
@@ -367,11 +419,13 @@ namespace Mono.Xml
 					currentAutomata = previousAutomata;
 				}
 
-				elementStack.Pop ();
 				currentAutomata = automataStack.Pop () as DTDAutomata;
 				break;
 
 			case XmlNodeType.CDATA:
+				if (currentTextValue != null)
+					return true;
+				goto case XmlNodeType.Text;
 			case XmlNodeType.SignificantWhitespace:
 			case XmlNodeType.Text:
 				// If no schema specification, then skip validation.
@@ -387,11 +441,15 @@ namespace Mono.Xml
 					// FIXME: validation recovery code here.
 					currentAutomata = previousAutomata;
 				}
+				if (validatingReader.EntityHandling == EntityHandling.ExpandEntities) {
+					currentTextValue += reader.Value;
+					return ReadContent ();
+				}
 				break;
 			case XmlNodeType.EntityReference:
 				if (validatingReader.EntityHandling == EntityHandling.ExpandEntities) {
 					ResolveEntity ();
-					return Read ();
+					return ReadContent ();
 				}
 				break;
 			}
@@ -593,6 +651,9 @@ namespace Mono.Xml
 
 		public override int AttributeCount {
 			get {
+				if (currentTextValue != null)
+					return 0;
+
 				if (dtd == null || !insideContent)
 					return reader.AttributeCount;
 
@@ -600,7 +661,6 @@ namespace Mono.Xml
 			}
 		}
 
-		[MonoTODO ("Should consider general entities.")]
 		public override string BaseURI {
 			get {
 				return reader.BaseURI;
@@ -628,11 +688,16 @@ namespace Mono.Xml
 		}
 
 		public override bool HasValue {
-			get { return IsDefault ? true : reader.HasValue; }
+			get {
+				return IsDefault ? true :
+					currentTextValue != null ? true :
+					reader.HasValue; }
 		}
 
 		public override bool IsDefault {
 			get {
+				if (currentTextValue != null)
+					return false;
 				if (currentAttribute == null)
 					return false;
 				return reader.GetAttribute (currentAttribute) == null;
@@ -640,7 +705,11 @@ namespace Mono.Xml
 		}
 
 		public override bool IsEmptyElement {
-			get { return reader.IsEmptyElement; }
+			get {
+				if (currentTextValue != null)
+					return false;
+				return reader.IsEmptyElement;
+			}
 		}
 
 		public override string this [int i] {
@@ -671,6 +740,8 @@ namespace Mono.Xml
 
 		public override string LocalName {
 			get {
+				if (currentTextValue != null)
+					return String.Empty;
 				return IsDefault ?
 					consumedAttribute ? String.Empty : currentAttribute :
 					reader.LocalName;
@@ -679,6 +750,8 @@ namespace Mono.Xml
 
 		public override string Name {
 			get {
+				if (currentTextValue != null)
+					return String.Empty;
 				return IsDefault ?
 					consumedAttribute ? String.Empty : currentAttribute :
 					reader.Name;
@@ -687,6 +760,8 @@ namespace Mono.Xml
 
 		public override string NamespaceURI {
 			get {
+				if (currentTextValue != null)
+					return String.Empty;
 				return IsDefault ?
 					consumedAttribute ? String.Empty : String.Empty :
 					reader.NamespaceURI;
@@ -699,6 +774,9 @@ namespace Mono.Xml
 
 		public override XmlNodeType NodeType {
 			get {
+				if (currentTextValue != null)
+					return XmlNodeType.Text;
+
 				if (entityReaderStack.Count > 0 && reader.EOF)
 					return XmlNodeType.EndEntity;
 
@@ -711,6 +789,8 @@ namespace Mono.Xml
 
 		public override string Prefix {
 			get {
+				if (currentTextValue != null)
+					return String.Empty;
 				if (currentAttribute != null && NodeType != XmlNodeType.Attribute)
 					return String.Empty;
 				return IsDefault ? String.Empty : reader.Prefix;
@@ -727,6 +807,8 @@ namespace Mono.Xml
 
 		public override ReadState ReadState {
 			get {
+				if (reader.ReadState == ReadState.EndOfFile && currentTextValue != null)
+					return ReadState.Interactive;
 				return reader.ReadState;
 			}
 		}
@@ -766,6 +848,8 @@ namespace Mono.Xml
 
 		public override string Value {
 			get {
+				if (currentTextValue != null)
+					return currentTextValue;
 				// This check also covers value node of default attributes.
 				if (IsDefault) {
 					DTDAttributeDefinition def = 
@@ -784,14 +868,25 @@ namespace Mono.Xml
 			}
 		}
 
-		[MonoTODO ("Should consider default xml:lang values.")]
 		public override string XmlLang {
-			get { return reader.XmlLang; }
+			get {
+				string val = this ["xml:lang"];
+				return val != null ? val : reader.XmlLang;
+			}
 		}
 
-		[MonoTODO ("Should consider default xml:space values.")]
 		public override XmlSpace XmlSpace {
-			get { return reader.XmlSpace; }
+			get {
+				string val = this ["xml:space"];
+				switch (val) {
+				case "preserve":
+					return XmlSpace.Preserve;
+				case "default":
+					return XmlSpace.Default;
+				default:
+					return reader.XmlSpace;
+				}
+			}
 		}
 
 	}
