@@ -1,5 +1,5 @@
 //
-// Ximian.Mono.Tests.TextWriterTraceListenerTest.cs
+// MonoTests.System.Diagnostics.TextWriterTraceListenerTest.cs
 //
 // Author:
 //	John R. Hicks (angryjohn69@nc.rr.com)
@@ -12,7 +12,7 @@ using System.Text;
 using System.Diagnostics;
 using NUnit.Framework;
 
-namespace MonoTests
+namespace MonoTests.System.Diagnostics
 {
 	
 	public class TextWriterTraceListenerTest
