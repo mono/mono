@@ -148,7 +148,7 @@ namespace Npgsql
             set
             {
                 if (value < 0)
-                    throw new ArgumentException(resman.GetString("Exception_CommandTimeoutLessZero"));
+                    throw new ArgumentOutOfRangeException(resman.GetString("Exception_CommandTimeoutLessZero"));
 
                 timeout = value;
                 NpgsqlEventLog.LogPropertySet(LogLevel.Debug, CLASSNAME, "CommandTimeout", value);
@@ -243,7 +243,7 @@ namespace Npgsql
             get
             {
                 NpgsqlEventLog.LogPropertyGet(LogLevel.Debug, CLASSNAME, "Transaction");
-                //throw new NotImplementedException();
+
                 if (this.transaction != null && this.transaction.Connection == null)
                 {
                     this.transaction = null;
@@ -254,10 +254,7 @@ namespace Npgsql
             set
             {
                 NpgsqlEventLog.LogPropertySet(LogLevel.Debug, CLASSNAME, "Transaction" ,value);
-                //throw new NotImplementedException();
-                /*if (this.connection != null && this.connection.InTransaction == true){
-                	throw new NpgsqlException(resman.GetString("Exception_SetTransactionInTransaction"));
-                }*/
+
                 this.transaction = (NpgsqlTransaction) value;
             }
         }
@@ -274,9 +271,7 @@ namespace Npgsql
             {
 
                 NpgsqlEventLog.LogPropertyGet(LogLevel.Debug, CLASSNAME, "UpdatedRowSource");
-                // [FIXME] Strange, the line below doesn't appears in the stack trace.
 
-                //throw new NotImplementedException();
                 return UpdateRowSource.Both;
             }
 
@@ -829,7 +824,7 @@ namespace Npgsql
 
             }//while
             if(!found)
-                throw new Exception(String.Format(resman.GetString("Exception_ParamNotInQuery"), parameterName));
+                throw new IndexOutOfRangeException (String.Format(resman.GetString("Exception_ParamNotInQuery"), parameterName));
 
             return result;
         }//ReplaceParameterValue

@@ -59,7 +59,7 @@ namespace Npgsql
             NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, CLASSNAME);
             if ((isolation != IsolationLevel.ReadCommitted) &&
                     (isolation != IsolationLevel.Serializable))
-                throw new ArgumentException(resman.GetString("Exception_UnsopportedIsolationLevel"), "isolation");
+                throw new ArgumentOutOfRangeException(resman.GetString("Exception_UnsopportedIsolationLevel"), "isolation");
 
             _conn = conn;
             _isolation = isolation;

@@ -32,7 +32,7 @@ using System.Collections;
 namespace Npgsql
 {
     [Serializable]
-    public class NpgsqlException : Exception
+    public sealed class NpgsqlException : Exception
     {
         private IList errors;
 
@@ -41,35 +41,25 @@ namespace Npgsql
         private static readonly String CLASSNAME = "NpgsqlException";
         private static ResourceManager resman = new ResourceManager(typeof(NpgsqlException));
 
+        /// <summary>
+        /// Don't ever allow this to be called.
+        /// </summary>
         private NpgsqlException()
         {
             NpgsqlEventLog.LogMsg(resman, "Log_ExceptionOccured", LogLevel.Normal, "<no message>");
-
         }
         
+        /// <summary>
+        /// Construct a backend error exception based on a list of one or more
+        /// backend errors.  The basic Exception.Message will be built from the
+        /// first (usually the only) error in the list.
+        /// </summary>
         internal NpgsqlException(IList errors) : base(((NpgsqlError)errors[0]).ToString())
         {
             NpgsqlEventLog.LogMsg(resman, "Log_ExceptionOccured", LogLevel.Normal, Message);
             this.errors = errors;
         }
 
-        /*internal NpgsqlException(String message) : base(message)
-        {
-            NpgsqlEventLog.LogMsg(resman, "Log_ExceptionOccured", LogLevel.Normal, message);
-        }*/
-
-        internal NpgsqlException(String message, Exception inner)
-                : base(message, inner)
-        {
-            NpgsqlEventLog.LogMsg(resman, "Log_ExceptionOccured", LogLevel.Normal, message + " (" + inner.Message + ")");
-        }
-
-        internal NpgsqlException(String message, IList errors) : base(message)
-        {
-            NpgsqlEventLog.LogMsg(resman, "Log_ExceptionOccured", LogLevel.Normal, message);
-            this.errors = errors;
-        }
-        
         /// <summary>
         /// Provide access to the entire list of errors provided by the PostgreSQL backend.
         /// </summary>
@@ -79,7 +69,7 @@ namespace Npgsql
             {
                 return (NpgsqlError)errors[Index];
             }
-        }
+        }   
         
         
         /// <summary>
@@ -89,7 +79,7 @@ namespace Npgsql
         {
             get
             {
-                return (errors != null) ? this[0].Severity : String.Empty;
+                return this[0].Severity;
             }
         }
 
@@ -100,7 +90,18 @@ namespace Npgsql
         {
             get
             {
-                return (errors != null) ? this[0].Code : String.Empty;
+                return this[0].Code;
+            }
+        }
+
+        /// <summary>
+        /// Basic error message.  All versions.
+        /// </summary>
+        public String BaseMessage
+        {
+            get
+            {
+                return this[0].Message;
             }
         }
 
@@ -111,7 +112,7 @@ namespace Npgsql
         {
             get
             {
-                return (errors != null) ? this[0].Detail : String.Empty;
+                return this[0].Detail;
             }
         }
 
@@ -122,7 +123,7 @@ namespace Npgsql
         {
             get
             {
-                return (errors != null) ? this[0].Hint : String.Empty;
+                return this[0].Hint;
             }
         }
 
@@ -133,7 +134,7 @@ namespace Npgsql
         {
             get
             {
-                return (errors != null) ? this[0].Position : String.Empty;
+                return this[0].Position;
             }
         }
 
@@ -144,7 +145,7 @@ namespace Npgsql
         {
             get
             {
-                return (errors != null) ? this[0].Where : String.Empty;
+                return this[0].Where;
             }
         }
 
@@ -155,7 +156,7 @@ namespace Npgsql
         {
             get
             {
-                return (errors != null) ? this[0].File : String.Empty;
+                return this[0].File;
             }
         }
 
@@ -166,7 +167,7 @@ namespace Npgsql
         {
             get
             {
-                return (errors != null) ? this[0].Line : String.Empty;
+                return this[0].Line;
             }
         }
 
@@ -177,7 +178,7 @@ namespace Npgsql
         {
             get
             {
-                return (errors != null) ? this[0].Routine : String.Empty;
+                return this[0].Routine;
             }
         }
         
@@ -191,14 +192,11 @@ namespace Npgsql
                 return errors;
             }
         }
-        
-        private void AppendString(StringWriter Stream, string Format, string Str)
-        {
-            if (Str.Length > 0) {
-                Stream.WriteLine(Format, Str);
-            }
-				}
 
+        /// <summary>
+        /// Format a .NET style exception string.
+        /// Include all errors in the list, including any hints.
+        /// </summary>
         public override String ToString()
         {
             StringWriter    S = new StringWriter();
@@ -211,16 +209,23 @@ namespace Npgsql
                 AppendString(S, "Severity: {0}", PgError.Severity);
                 AppendString(S, "Code: {0}", PgError.Code);
                 AppendString(S, "Hint: {0}", PgError.Hint);
-			}
+            }
 
             S.Write(StackTrace);
 
             return S.ToString();
             
         }
+        /// <summary>
+        /// Append a line to the given Stream, first checking for zero-length.
+        /// </summary>
+        private static void AppendString(StringWriter Stream, string Format, string Str)
+        {
+            if (Str.Length > 0) {
+                Stream.WriteLine(Format, Str);
+            }
+				}
 
     }
-
-
 
 }

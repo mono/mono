@@ -61,7 +61,7 @@ namespace Npgsql
             {
                 if (data_adapter != null)
                 {
-                    throw new Exception ("DataAdapter is already set");
+                    throw new InvalidOperationException ("DataAdapter is already set");
                 }
                 data_adapter = value;
                 string select_text = data_adapter.SelectCommand.CommandText;

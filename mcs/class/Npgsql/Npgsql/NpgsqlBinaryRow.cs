@@ -127,7 +127,7 @@ namespace Npgsql
 
             // Check valid index range.
             if ((index < 0) || (index >= row_desc.NumFields))
-                throw new ArgumentOutOfRangeException("index");
+                throw new IndexOutOfRangeException("index");
 
             return (this.data[index] == DBNull.Value);
         }
@@ -138,7 +138,7 @@ namespace Npgsql
             {
                 NpgsqlEventLog.LogIndexerGet(LogLevel.Debug, CLASSNAME, index);
                 if ((index < 0) || (index >= row_desc.NumFields))
-                    throw new ArgumentOutOfRangeException("this[] index value");
+                    throw new IndexOutOfRangeException("this[] index value");
                 return data[index];
 
 

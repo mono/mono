@@ -95,6 +95,7 @@ namespace Npgsql
         {
             NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, "Sync");
             _syncMessage.WriteToStream(context.Stream, context.Encoding);
+            context.Stream.Flush();
             ProcessBackendResponses(context);
         }
 

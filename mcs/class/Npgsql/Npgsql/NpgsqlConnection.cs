@@ -245,7 +245,7 @@ namespace Npgsql
         IDbTransaction IDbConnection.BeginTransaction()
         {
             NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, "IDbConnection.BeginTransaction");
-            //throw new NotImplementedException();
+
             return BeginTransaction();
         }
 
@@ -262,7 +262,7 @@ namespace Npgsql
         IDbTransaction IDbConnection.BeginTransaction(IsolationLevel level)
         {
             NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, "IDbConnection.BeginTransaction", level);
-            //throw new NotImplementedException();
+
             return BeginTransaction(level);
         }
 
@@ -321,13 +321,12 @@ namespace Npgsql
         public void ChangeDatabase(String dbName)
         {
             NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, "ChangeDatabase", dbName);
-            //throw new NotImplementedException();
 
             if (dbName == null)
                 throw new ArgumentNullException("dbName");
 
             if (dbName == String.Empty)
-                throw new ArgumentException(String.Format(resman.GetString("Exception_InvalidDbName"), dbName), "dbName");
+                throw new ArgumentOutOfRangeException(String.Format(resman.GetString("Exception_InvalidDbName"), dbName), "dbName");
 
             if(this.connection_state != ConnectionState.Open)
                 throw new InvalidOperationException(resman.GetString("Exception_ChangeDatabaseOnOpenConn"));
@@ -481,9 +480,9 @@ namespace Npgsql
                 // This exception was thrown by StartupPacket handling functions.
                 // So, close the connection and throw the exception.
                 // [TODO] Better exception handling. :)
+                
                 Close();
 
-                //throw new NpgsqlException(resman.GetString("Exception_OpenError"), e);
                 throw e;
             }
 

@@ -56,11 +56,11 @@ namespace Npgsql
 
         public override void Open(NpgsqlConnection context)
         {
-
             NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, "Open");
-
+            
             TcpClient tcpc = new TcpClient(context.ServerName, Int32.Parse(context.ServerPort));
             Stream stream = tcpc.GetStream();
+            
             // If the PostgreSQL server has SSL connections enabled Open SslClientStream if (response == 'S') {
             if (context.SSL == "yes")
             {
