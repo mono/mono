@@ -1,4 +1,8 @@
 
+Tue Jan 7 18:32:24 CET 2003 Paolo Molaro <lupus@ximian.com>
+
+	* enum.cs: create the enum static fields using the enum type.
+
 Tue Jan 7 18:23:44 CET 2003 Paolo Molaro <lupus@ximian.com>
 
 	* class.cs: don't try to create the ParamBuilder for the return
