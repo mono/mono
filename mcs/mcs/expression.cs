@@ -7082,7 +7082,7 @@ namespace Mono.CSharp {
 			Type expr_type = expr.Type;
 			if (expr is TypeExpr){
 				if (!ec.DeclSpace.CheckAccessLevel (expr_type)){
-					Report.Error_T (Message.CS0122_is_inaccessible_due_to_its_protection_level, loc, expr_type);
+					Report.Error (Message.CS0122_is_inaccessible_due_to_its_protection_level, loc, expr_type);
 					return null;
 				}
 
@@ -8469,7 +8469,7 @@ namespace Mono.CSharp {
 			Constant c = count as Constant;
 			// TODO: because we don't have property IsNegative
 			if (c != null && c.ConvertToUInt () == null) {
-				Report.Error_T (Message.CS0247_Cannot_use_a_negative_size_with_stackalloc, loc);
+				Report.Error (Message.CS0247_Cannot_use_a_negative_size_with_stackalloc, loc);
 				return null;
 			}
 

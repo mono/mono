@@ -178,7 +178,7 @@ namespace Mono.CSharp {
 					}
 
 					if (i.IndexerName != class_indexer_name)
-						Report.Error_T (Message.CS0668_Two_indexers_have_different_names, i.Location);
+						Report.Error (Message.CS0668_Two_indexers_have_different_names, i.Location);
 				}
 
 				if (class_indexer_name != null)
@@ -2147,7 +2147,7 @@ namespace Mono.CSharp {
 						has_compliant_args = c.HasCompliantArgs;
 					}
 					if (!has_compliant_args)
-						Report.Error_T (Message.CS3015_has_no_accessible_constructors_which_use_only_CLS_compliant_types, Location, GetSignatureForError ());
+						Report.Error (Message.CS3015_has_no_accessible_constructors_which_use_only_CLS_compliant_types, Location, GetSignatureForError ());
 				} else {
 					foreach (Constructor c in instance_constructors)
 						c.Emit ();
@@ -2385,7 +2385,7 @@ namespace Mono.CSharp {
 
 			// parent_container is null for System.Object
 			if (parent_container != null && !AttributeTester.IsClsCompliant (parent_container.Type)) {
-				Report.Error_T (Message.CS3009_base_type_is_not_CLS_compliant, Location, GetSignatureForError (), TypeManager.CSharpName (parent_container.Type));
+				Report.Error (Message.CS3009_base_type_is_not_CLS_compliant, Location, GetSignatureForError (), TypeManager.CSharpName (parent_container.Type));
 			}
 			return true;
 		}
@@ -2731,7 +2731,7 @@ namespace Mono.CSharp {
 
 			this.ModFlags = Modifiers.Check (AllowedModifiers, mod, accmods, l);
 			if ((ModFlags & (Modifiers.ABSTRACT | Modifiers.SEALED)) == (Modifiers.ABSTRACT | Modifiers.SEALED)) {
-				Report.Error_T (Message.CS0502_cannot_be_both_abstract_and_sealed, Location, GetSignatureForError ());
+				Report.Error (Message.CS0502_cannot_be_both_abstract_and_sealed, Location, GetSignatureForError ());
 			}
 
 			attribute_usage = new AttributeUsageAttribute (AttributeTargets.All);
@@ -3005,7 +3005,7 @@ namespace Mono.CSharp {
 			}
 
 			if ((ModFlags & Modifiers.OVERRIDE) != 0) {
-				Report.Error_T (Message.CS0115_No_suitable_methods_found_to_override, Location, GetSignatureForError (Parent));
+				Report.Error (Message.CS0115_No_suitable_methods_found_to_override, Location, GetSignatureForError (Parent));
 				return false;
 			}
 
@@ -3191,19 +3191,19 @@ namespace Mono.CSharp {
 		{
 			if (!base.VerifyClsCompliance (ds)) {
 				if ((ModFlags & Modifiers.ABSTRACT) != 0 && IsExposedFromAssembly (ds) && ds.IsClsCompliaceRequired (ds)) {
-					Report.Error_T (Message.CS3011_only_CLS_compliant_members_can_be_abstract, Location, GetSignatureForError ());
+					Report.Error (Message.CS3011_only_CLS_compliant_members_can_be_abstract, Location, GetSignatureForError ());
 				}
 				return false;
 			}
 
 			if (Parameters.HasArglist) {
-				Report.Error_T (Message.CS3000_Methods_with_variable_arguments_are_not_CLS_compliant, Location);
+				Report.Error (Message.CS3000_Methods_with_variable_arguments_are_not_CLS_compliant, Location);
 			}
 
 			AttributeTester.AreParametersCompliant (Parameters.FixedParameters, Location);
 
 			if (!AttributeTester.IsClsCompliant (MemberType)) {
-				Report.Error_T (Message.CS3002_Return_type_of_is_not_CLS_compliant, Location, GetSignatureForError ());
+				Report.Error (Message.CS3002_Return_type_of_is_not_CLS_compliant, Location, GetSignatureForError ());
 			}
 
 			return true;
@@ -3238,7 +3238,7 @@ namespace Mono.CSharp {
 			}
 
 			Report.SymbolRelatedToPreviousError (method);
-			Report.Error_T (Message.CS0111_Type_already_defines_member_with_the_same_parameter_types, Location, Parent.Name, Name);
+			Report.Error (Message.CS0111_Type_already_defines_member_with_the_same_parameter_types, Location, Parent.Name, Name);
 			return true;
 		}
 
@@ -3461,7 +3461,7 @@ namespace Mono.CSharp {
 			if (a.Type == TypeManager.dllimport_type) {
 				const int extern_static = Modifiers.EXTERN | Modifiers.STATIC;
 				if ((ModFlags & extern_static) != extern_static) {
-					Report.Error_T (Message.CS0601_The_DllImport_attribute_must_be_specified_on_a_method_marked_static_and_extern, a.Location);
+					Report.Error (Message.CS0601_The_DllImport_attribute_must_be_specified_on_a_method_marked_static_and_extern, a.Location);
 				}
 
 				return;
@@ -3469,27 +3469,27 @@ namespace Mono.CSharp {
 
 			if (a.Type == TypeManager.conditional_attribute_type) {
 				if (IsOperator || IsExplicitImpl) {
-					Report.Error_T (Message.CS0577_Conditional_not_valid_on_because_it_is_a_destructor, Location, GetSignatureForError ());
+					Report.Error (Message.CS0577_Conditional_not_valid_on_because_it_is_a_destructor, Location, GetSignatureForError ());
 					return;
 				}
 
 				if (ReturnType != TypeManager.void_type) {
-					Report.Error_T (Message.CS0578_Conditional_not_valid_on_because_its_return_type_is_not_void, Location, GetSignatureForError ());
+					Report.Error (Message.CS0578_Conditional_not_valid_on_because_its_return_type_is_not_void, Location, GetSignatureForError ());
 					return;
 				}
 
 				if ((ModFlags & Modifiers.OVERRIDE) != 0) {
-					Report.Error_T (Message.CS0243_Conditional_not_valid_on_because_it_is_an_override_method, Location, GetSignatureForError ());
+					Report.Error (Message.CS0243_Conditional_not_valid_on_because_it_is_an_override_method, Location, GetSignatureForError ());
 					return;
 				}
 
 				if (IsInterface) {
-					Report.Error_T (Message.CS0582_Conditional_not_valid_on_interface_members, Location);
+					Report.Error (Message.CS0582_Conditional_not_valid_on_interface_members, Location);
 					return;
 				}
 
 				if (MethodData.IsImplementing) {
-					Report.Error_T (Message.CS0629_Conditional_member_cannot_implement_interface_member, Location, GetSignatureForError ());
+					Report.Error (Message.CS0629_Conditional_member_cannot_implement_interface_member, Location, GetSignatureForError ());
 					return;
 				}
 			}
@@ -4164,7 +4164,7 @@ namespace Mono.CSharp {
 					continue;
 				
 				if (!AttributeTester.AreOverloadedMethodParamsClsCompliant (parameter_types, c.ParameterTypes)) {
-					Report.Error_T (Message.CS3006_Overloaded_method_differing_only_in_ref_or_out_or_in_array_rank_is_not_CLS_compliant, Location, GetSignatureForError ());
+					Report.Error (Message.CS3006_Overloaded_method_differing_only_in_ref_or_out_or_in_array_rank_is_not_CLS_compliant, Location, GetSignatureForError ());
 					return false;
 				}
 			}
@@ -4187,7 +4187,7 @@ namespace Mono.CSharp {
 					continue;
 
 				if (!AttributeTester.AreOverloadedMethodParamsClsCompliant (parameter_types, TypeManager.GetArgumentTypes (ci))) {
-					Report.Error_T (Message.CS3006_Overloaded_method_differing_only_in_ref_or_out_or_in_array_rank_is_not_CLS_compliant, Location, GetSignatureForError ());
+					Report.Error (Message.CS3006_Overloaded_method_differing_only_in_ref_or_out_or_in_array_rank_is_not_CLS_compliant, Location, GetSignatureForError ());
 					return false;
 				}
 			}
@@ -4446,7 +4446,7 @@ namespace Mono.CSharp {
 				// We are more strict than Microsoft and report CS0626 like error
 				if (method.OptAttributes == null ||
 					!method.OptAttributes.Contains (TypeManager.methodimpl_attr_type, ec)) {
-					Report.Error_T (Message.CS0626_Method_operator_or_accessor_is_marked_external_and_has_no_attributes_on_it, method.Location, method.GetSignatureForError (container));
+					Report.Error (Message.CS0626_Method_operator_or_accessor_is_marked_external_and_has_no_attributes_on_it, method.Location, method.GetSignatureForError (container));
 					return;
 				}
 			}
@@ -4577,7 +4577,7 @@ namespace Mono.CSharp {
 		public override void ApplyAttributeBuilder(Attribute a, CustomAttributeBuilder cb)
 		{
 			if (a.Type == TypeManager.conditional_attribute_type) {
-				Report.Error_T (Message.CS0577_Conditional_not_valid_on_because_it_is_a_destructor, Location, GetSignatureForError ());
+				Report.Error (Message.CS0577_Conditional_not_valid_on_because_it_is_a_destructor, Location, GetSignatureForError ());
 				return;
 			}
 
@@ -4829,7 +4829,7 @@ namespace Mono.CSharp {
 			}
 
 			if (IsInterface && HasClsCompliantAttribute && ds.IsClsCompliaceRequired (ds)) {
-				Report.Error_T (Message.CS3010_CLS_compliant_interfaces_must_have_only_CLScompliant_members, Location, GetSignatureForError ());
+				Report.Error (Message.CS3010_CLS_compliant_interfaces_must_have_only_CLScompliant_members, Location, GetSignatureForError ());
 			}
 			return false;
 		}
@@ -4967,7 +4967,7 @@ namespace Mono.CSharp {
 			}
 
 			if (MemberType == TypeManager.arg_iterator_type || MemberType == TypeManager.typed_reference_type) {
-				Report.Error_T (Message.CS0610_Field_or_property_cannot_be_of_type, Location, TypeManager.CSharpName (MemberType));
+				Report.Error (Message.CS0610_Field_or_property_cannot_be_of_type, Location, TypeManager.CSharpName (MemberType));
 				return false;
 			}
 
@@ -4995,7 +4995,7 @@ namespace Mono.CSharp {
 			}
 
 			if (!AttributeTester.IsClsCompliant (FieldBuilder.FieldType)) {
-				Report.Error_T (Message.CS3003_Type_is_not_CLS_compliant, Location, GetSignatureForError ());
+				Report.Error (Message.CS3003_Type_is_not_CLS_compliant, Location, GetSignatureForError ());
 			}
 			return true;
 		}
@@ -5211,7 +5211,7 @@ namespace Mono.CSharp {
 		{
 			if (a.Type == TypeManager.cls_compliant_attribute_type || a.Type == TypeManager.obsolete_attribute_type ||
 					a.Type == TypeManager.conditional_attribute_type) {
-				Report.Error_T (Message.CS1667_is_not_valid_on_property_or_event_accessors, a.Location, TypeManager.CSharpName (a.Type), a.GetValidTargets ());
+				Report.Error (Message.CS1667_is_not_valid_on_property_or_event_accessors, a.Location, TypeManager.CSharpName (a.Type), a.GetValidTargets ());
 				return;
 			}
 
@@ -5460,7 +5460,7 @@ namespace Mono.CSharp {
 				return false;
 
 			if (MemberType == TypeManager.arg_iterator_type || MemberType == TypeManager.typed_reference_type) {
-				Report.Error_T (Message.CS0610_Field_or_property_cannot_be_of_type, Location, TypeManager.CSharpName (MemberType));
+				Report.Error (Message.CS0610_Field_or_property_cannot_be_of_type, Location, TypeManager.CSharpName (MemberType));
 				return false;
 			}
 
@@ -6177,7 +6177,7 @@ namespace Mono.CSharp {
  			if (conflict_symbol != null && (ModFlags & Modifiers.NEW) == 0) {
  				if (!(conflict_symbol is EventInfo)) {
  					Report.SymbolRelatedToPreviousError (conflict_symbol);
- 					Report.Error_T (Message.CS0072_Event_can_override_only_event, Location, GetSignatureForError (Parent));
+ 					Report.Error (Message.CS0072_Event_can_override_only_event, Location, GetSignatureForError (Parent));
  					return false;
  				}
  			}
@@ -6340,17 +6340,17 @@ namespace Mono.CSharp {
 					IndexerName = indexer_attr.GetIndexerAttributeValue (ec);
 
 					if (IsExplicitImpl) {
-						Report.Error_T (Message.CS0415_The_IndexerName_attribute_is_valid_only_on_an_indexer_that_is_not_an_explicit_interface_member_declaration, indexer_attr.Location);
+						Report.Error (Message.CS0415_The_IndexerName_attribute_is_valid_only_on_an_indexer_that_is_not_an_explicit_interface_member_declaration, indexer_attr.Location);
 						return false;
 					}
 
 					if ((ModFlags & Modifiers.OVERRIDE) != 0) {
-						Report.Error_T (Message.CS0609_Cannot_set_the_IndexerName_attribute_on_an_indexer_marked_override, indexer_attr.Location);
+						Report.Error (Message.CS0609_Cannot_set_the_IndexerName_attribute_on_an_indexer_marked_override, indexer_attr.Location);
 						return false;
 					}
 
 					if (!Tokenizer.IsValidIdentifier (IndexerName)) {
-						Report.Error_T (Message.CS0633_The_argument_to_the_IndexerName_attribute_must_be_a_valid_identifier, indexer_attr.Location);
+						Report.Error (Message.CS0633_The_argument_to_the_IndexerName_attribute_must_be_a_valid_identifier, indexer_attr.Location);
 						return false;
 					}
 				}
@@ -6674,10 +6674,10 @@ namespace Mono.CSharp {
 				if (first_arg_type.IsSubclassOf (return_type)
 					|| return_type.IsSubclassOf (first_arg_type)){
 					if (declaring_type.IsSubclassOf (return_type)) {
-						Report.Error_T (Message.CS0553_user_defined_conversion_to_from_base_class, Location, GetSignatureForError ());
+						Report.Error (Message.CS0553_user_defined_conversion_to_from_base_class, Location, GetSignatureForError ());
 						return false;
 					}
-					Report.Error_T (Message.CS0554_user_defined_conversion_to_from_derived_class, Location, GetSignatureForError ());
+					Report.Error (Message.CS0554_user_defined_conversion_to_from_derived_class, Location, GetSignatureForError ());
 					return false;
 				}
 			} else if (SecondArgType == null) {

@@ -463,20 +463,20 @@ namespace Mono.CSharp {
 		}
 
 		/// <summary>
-		/// Reports error message.
+		/// Reports error message. This is preferred method because it future localization
 		/// </summary>
-		static public void Error_T (Message msg, Location loc, params object[] args)
+		static public void Error (Message msg, Location loc, params object[] args)
 		{
-			Error_T (msg, String.Format ("{0}({1})", loc.Name, loc.Row), args);
+			Error (msg, String.Format ("{0}({1})", loc.Name, loc.Row), args);
 		}
 
-		static public void Error_T (Message msg, string location, params object[] args)
+		static public void Error (Message msg, string location, params object[] args)
 		{
 			MessageData md = GetErrorMsg (msg);
 			md.Print (msg, location, args);
 		}
 
-		//[Obsolete ("Use Error_T")]
+		//[Obsolete ("Use Error with Message parameter")]
 		static public void Error (int code, Location l, string text)
 		{
 			if (code < 0)
@@ -536,7 +536,7 @@ namespace Mono.CSharp {
 			Warning (code, Location.Null, text);
 		}
 
-		//[Obsolete ("Use Error_T")]
+		//[Obsolete ("Use Error with Message parameter")]
 		static public void Error (int code, string text)
 		{
 			if (code < 0)
@@ -549,7 +549,7 @@ namespace Mono.CSharp {
 			Check (code);
 		}
 
-		//[Obsolete ("Use Error_T")]
+		//[Obsolete ("Use Error with Message parameter")]
 		static public void Error (int code, Location loc, string format, params object[] args)
 		{
 			Error (code, loc, String.Format (format, args));

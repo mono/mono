@@ -3308,7 +3308,7 @@ namespace Mono.CSharp {
 				Type resolvedType = c.CatchType;
 				for (int ii = 0; ii < last_index; ++ii) {
 					if (resolvedType.IsSubclassOf (prevCatches [ii])) {
-						Report.Error_T (Message.CS0160_A_previous_catch_clause_already_catches_all_exceptions_of_this_or_a_super_type, c.loc, prevCatches [ii].FullName);
+						Report.Error (Message.CS0160_A_previous_catch_clause_already_catches_all_exceptions_of_this_or_a_super_type, c.loc, prevCatches [ii].FullName);
 						return false;
 					}
 				}

@@ -380,7 +380,7 @@ namespace Mono.CSharp {
 						Location);
 
 					if (member != null) {
-						Report.Error_T (Message.CS0122_is_inaccessible_due_to_its_protection_level, Location, GetFullMemberName (member_name));
+						Report.Error (Message.CS0122_is_inaccessible_due_to_its_protection_level, Location, GetFullMemberName (member_name));
 						return null;
 					}
 				}
@@ -769,7 +769,7 @@ namespace Mono.CSharp {
 
 			AttributeUsageAttribute usage_attr = GetAttributeUsage ();
 			if ((usage_attr.ValidOn & Target) == 0) {
-				Report.Error_T (Message.CS0592_Attribute_is_not_valid_on_this_declaration_type, Location, Name, GetValidTargets ());
+				Report.Error (Message.CS0592_Attribute_is_not_valid_on_this_declaration_type, Location, Name, GetValidTargets ());
 				return;
 			}
 
@@ -800,7 +800,7 @@ namespace Mono.CSharp {
 							return;
 
 						if (arg.Type.IsArray) {
-							Report.Error_T (Message.CS3016_Arrays_as_attribute_arguments_are_not_CLS_compliant, Location);
+							Report.Error (Message.CS3016_Arrays_as_attribute_arguments_are_not_CLS_compliant, Location);
 							return;
 						}
 					}
@@ -818,7 +818,7 @@ namespace Mono.CSharp {
 						return;
 
 					if (arg.Type.IsArray) {
-						Report.Error_T (Message.CS3016_Arrays_as_attribute_arguments_are_not_CLS_compliant, Location);
+						Report.Error (Message.CS3016_Arrays_as_attribute_arguments_are_not_CLS_compliant, Location);
 						return;
 					}
 				}
@@ -1066,7 +1066,7 @@ namespace Mono.CSharp {
 					sb.Append (", ");
 				}
 				sb.Remove (sb.Length - 2, 2);
-				Report.Error_T (Message.CS0657_is_not_a_valid_attribute_location_for_this_declaration, a.Location, a.Target, sb.ToString ());
+				Report.Error (Message.CS0657_is_not_a_valid_attribute_location_for_this_declaration, a.Location, a.Target, sb.ToString ());
 			}
 		}
 
@@ -1204,7 +1204,7 @@ namespace Mono.CSharp {
 
 			foreach (Parameter arg in fixedParameters) {
 				if (!AttributeTester.IsClsCompliant (arg.ParameterType)) {
-					Report.Error_T (Message.CS3001_Argument_type_is_not_CLS_compliant, loc, arg.GetSignatureForError ());
+					Report.Error (Message.CS3001_Argument_type_is_not_CLS_compliant, loc, arg.GetSignatureForError ());
 					return false;
 				}
 			}
@@ -1276,7 +1276,7 @@ namespace Mono.CSharp {
 			for (int i = 1; i < modules.Length; ++i) {
 				Module module = modules [i];
 				if (!IsClsCompliant (module)) {
-					Report.Error_T (Message.CS3013_Added_modules_must_be_marked_with_the_CLSCompliant_attribute_to_match_the_assembly, module.Name);
+					Report.Error (Message.CS3013_Added_modules_must_be_marked_with_the_CLSCompliant_attribute_to_match_the_assembly, module.Name);
 					return;
 				}
 			}
@@ -1376,7 +1376,7 @@ namespace Mono.CSharp {
 		public static void Report_ObsoleteMessage (ObsoleteAttribute oa, string member, Location loc)
 		{
 			if (oa.IsError) {
-				Report.Error_T (Message.CS0619_error_is_obsolete, loc, member, oa.Message);
+				Report.Error (Message.CS0619_error_is_obsolete, loc, member, oa.Message);
 				return;
 			}
 

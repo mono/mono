@@ -278,7 +278,7 @@ namespace Mono.CSharp {
 				}
 
 				if (error3006)
-					Report.Error_T (Message.CS3006_Overloaded_method_differing_only_in_ref_or_out_or_in_array_rank_is_not_CLS_compliant, Location, GetSignatureForError ());
+					Report.Error (Message.CS3006_Overloaded_method_differing_only_in_ref_or_out_or_in_array_rank_is_not_CLS_compliant, Location, GetSignatureForError ());
 
 				return error3006;
 
@@ -303,17 +303,17 @@ namespace Mono.CSharp {
 
 			if (!CodeGen.Assembly.IsClsCompliant) {
 				if (HasClsCompliantAttribute) {
-					Report.Error_T (Message.CS3014_cannot_be_marked_as_CLS_compliant_because_the_assembly_does_not_have_a_CLSCompliant_attribute, Location, GetSignatureForError ());
+					Report.Error (Message.CS3014_cannot_be_marked_as_CLS_compliant_because_the_assembly_does_not_have_a_CLSCompliant_attribute, Location, GetSignatureForError ());
 				}
 			}
 
 			int index = Name.LastIndexOf ('.');
 			if (Name [index > 0 ? index + 1 : 0] == '_') {
-				Report.Error_T (Message.CS3008_Identifier_is_not_CLS_compliant, Location, GetSignatureForError () );
+				Report.Error (Message.CS3008_Identifier_is_not_CLS_compliant, Location, GetSignatureForError () );
 			}
 
 			if (!IsIdentifierClsCompliant (ds)) {
-				Report.Error_T (Message.CS3005_Identifier_differing_only_in_case_is_not_CLS_compliant, Location, GetSignatureForError ());
+				Report.Error (Message.CS3005_Identifier_differing_only_in_case_is_not_CLS_compliant, Location, GetSignatureForError ());
 			}
 
 			return true;
@@ -582,7 +582,7 @@ namespace Mono.CSharp {
 			}
 
 			if (!d.CheckAccessLevel (this)) {
-				Report.Error_T (Message.CS0122_is_inaccessible_due_to_its_protection_level, loc, d.Name);
+				Report.Error (Message.CS0122_is_inaccessible_due_to_its_protection_level, loc, d.Name);
 				return null;
 			}
 
