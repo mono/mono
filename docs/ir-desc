@@ -27,4 +27,28 @@ Operation: OP_CALL_HANDLER.
 
 	This instruction must call the target basic block.
 	
-	
+Operation: OP_CISINST
+
+	Implements the CEE_MONO_CISINST opcode that is decoded from
+	the CIL stream.
+
+	This opcode takes as input an object reference and a class,
+	and leaves on the assigned register:
+
+		0. if the object is an instance of the class,
+		1. if the object is not instance of the class,
+		2. if the object is a proxy whose type cannot be determined.
+
+Operation: OP_CCASTCLASS
+
+	Implements the CEE_MONO_CCASTCLASS opcode that is decoded from
+	the CIL stream.
+
+	This opcode takes as input an object reference and a class,
+	and leaves on the assigned register:
+
+		0. if the object is an instance of the class,
+		1. if the object is a proxy whose type cannot be determined
+
+		throws an InvalidCastException exception otherwise.
+
