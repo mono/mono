@@ -1,5 +1,13 @@
 2002-03-05  Miguel de Icaza  <miguel@ximian.com>
 
+	* expression.cs (Is.DoResolve): If either side of the `is' is an
+	interface, do not flag the warning.
+
+	* ecore.cs (ImplicitReferenceConversion): We need a separate test
+	for interfaces
+
+	* report.cs: Allow for --fatal to be used with --probe.
+	
 	* typemanager.cs (NoTypes): Move the definition for the empty Type
 	array here. 
 

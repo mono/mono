@@ -559,7 +559,7 @@ namespace Mono.CSharp {
 
 				if (expr_type.IsValueType)
 					return new BoxedCast (expr);
-				if (expr_type.IsClass)
+				if (expr_type.IsClass || expr_type.IsInterface)
 					return new EmptyCast (expr, target_type);
 			} else if (expr_type.IsSubclassOf (target_type)) {
 				return new EmptyCast (expr, target_type);

@@ -891,7 +891,7 @@ namespace Mono.CSharp {
 				}
 
 				if (expr.Type != probe_type && !probe_type.IsSubclassOf (expr.Type)){
-					if (!probe_type.IsInterface)
+					if (!(probe_type.IsInterface || expr.Type.IsInterface))
 						Report.Warning (
 							184, loc,
 							"The expression is never of type `" +

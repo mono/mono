@@ -59,7 +59,10 @@ namespace Mono.CSharp {
 		
 		static void Check (int code)
 		{
-			if (code ==  probe_error){
+			if (code == probe_error){
+				if (Fatal)
+					throw new Exception ();
+				
 				Environment.Exit (123);
 			}
 		}
