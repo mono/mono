@@ -1,5 +1,7 @@
 2004-11-25  Zoltan Varga  <vargaz@freemail.hu>
 
+	* aot.c: Rename MonoAOTModule->cleanup to out_of_date.
+
 	* mini-amd64.c aot.c: Switch to PIC relative AOT code. References to 
 	runtime data/code are now stored in a table similar to the GOT in ELF. 
 	This allows the code itself to be position independent.
