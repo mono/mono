@@ -1,5 +1,8 @@
 2003-11-26  Zoltan Varga  <vargaz@freemail.hu>
 
+	* assembly.h (mono_assembly_load_from): Split the second part of 
+	assembly loading into a new public function.
+
 	* exception.h (mono_get_exception_bad_image_format): New function.
 
 2003-11-24  Zoltan Varga  <vargaz@freemail.hu>
