@@ -286,8 +286,8 @@ namespace Mono.MonoBASIC {
 				default_static_constructor = c;
 			} else {
 				if (c.IsDefault ()){
-					if (default_constructor != null)
-						return AdditionResult.MethodExists;
+					/*if (default_constructor != null)
+						return AdditionResult.MethodExists;*/
 					default_constructor = c;
 				}
 				
@@ -735,8 +735,8 @@ namespace Mono.MonoBASIC {
 
 				if (t.IsClass) {
 					if (parent != null){
-						Report.Error (527, "In Class `" + Name + "', type `"+
-							      name+"' is not an interface");
+						Report.Error (30121, Name + ": A class cannot inherit " +
+							"more than one class");
 						error = true;
 						return null;
 					}
@@ -816,7 +816,6 @@ namespace Mono.MonoBASIC {
 					Report.Error (31047, Location,
 						"Only internal classes can be declared as 'Protected'");
 			}
-
 			
 			TypeAttributes type_attributes = TypeAttr;
 
@@ -2528,6 +2527,7 @@ namespace Mono.MonoBASIC {
 		ConstructorInfo parent_constructor;
 		Parameters parameters;
 		Location loc;
+		public bool implicit_initialization;
 		
 		public ConstructorInitializer (ArrayList argument_list, Parameters parameters,
 					       Location loc)
@@ -2535,6 +2535,7 @@ namespace Mono.MonoBASIC {
 			this.argument_list = argument_list;
 			this.parameters = parameters;
 			this.loc = loc;
+			this.implicit_initialization = false;
 		}
 
 		public ArrayList Arguments {
@@ -2543,6 +2544,14 @@ namespace Mono.MonoBASIC {
 			}
 		}
 
+		public ConstructorInfo ParentConstructor
+		{
+			get
+			{
+				return parent_constructor;
+			}
+		}
+	
 		public bool Resolve (EmitContext ec)
 		{
 			Expression parent_constructor_group;
@@ -2564,14 +2573,15 @@ namespace Mono.MonoBASIC {
 					return true;
 
 				t = ec.ContainerType.BaseType;
-				if (ec.ContainerType.IsValueType) {
+				if (ec.ContainerType.IsValueType){
 					Report.Error (522, loc,
 						"structs cannot call base class constructors");
 					return false;
 				}
-			} else
+			}
+			else
 				t = ec.ContainerType;
-
+			
 			parent_constructor_group = Expression.MemberLookup (
 				ec, t, t, ".ctor", 
 				MemberTypes.Constructor,
@@ -2579,20 +2589,24 @@ namespace Mono.MonoBASIC {
 				loc);
 			
 			if (parent_constructor_group == null){
-				string s = String.Format ("'{0}': Can not find a constructor for this argument list", t);
-				Report.Error (1501, loc, s);
+				Report.Error (30455, loc, "Class '" + t + "' can not find a constructor for this argument list" );
 				return false;
 			}
 
 			parent_constructor = (ConstructorInfo) Invocation.OverloadResolve (ec, 
 				(MethodGroupExpr) parent_constructor_group, argument_list, loc);
-			
-			if (parent_constructor == null){
-				string s = String.Format ("'{0}': Can not find a constructor for this argument list", t);
-				Report.Error (1501, loc, s);
+
+			if (parent_constructor == null) {
+				if (this.implicit_initialization)
+					Report.Error (30148, loc, "Must declare 'MyBase.New' in the constructor " +
+					"of the class '" + ec.TypeContainer.Name + "' with appropriate arguments, since the base class '" +
+						t.FullName + "' does not contain a definition of 'New' without any parameter");
+				else
+					Report.Error (30455, loc, "Class '" + t + "' can not find a constructor for this argument list" );
+
 				return false;
 			}
-			
+
 			return true;
 		}
 
@@ -2605,6 +2619,8 @@ namespace Mono.MonoBASIC {
 					Invocation.EmitCall (ec, true, false, ec.This, parent_constructor, argument_list, loc);
 			}
 		}
+
+
 	}
 
 	public class ConstructorBaseInitializer : ConstructorInitializer {
@@ -2730,10 +2746,11 @@ namespace Mono.MonoBASIC {
 			EmitContext ec = new EmitContext (parent, Location, ig, null, ModFlags, true);
 
 			if ((ModFlags & Modifiers.STATIC) == 0){
-				if (parent is Class && Initializer == null)
+				if (parent is Class && Initializer == null) {
 					Initializer = new ConstructorBaseInitializer (
 						null, Parameters.EmptyReadOnlyParameters, parent.Location);
-
+					Initializer.implicit_initialization = true;
+				}
 
 				//
 				// Spec mandates that Initializers will not have
@@ -2754,6 +2771,12 @@ namespace Mono.MonoBASIC {
 				if ((ModFlags & Modifiers.STATIC) == 0)
 					parent.EmitFieldInitializers (ec);
 			}
+
+			if (this.ConstructorBuilder.Equals (Initializer.ParentConstructor))
+				Report.Error (
+					30297, Location,
+					"A constructor can not call itself" );
+
 			if (Initializer != null)
 				Initializer.Emit (ec);
 			

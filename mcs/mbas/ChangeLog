@@ -1,4 +1,7 @@
 2004-04-13 Anirban Bhattacharjee <banirban@novell.com>
+	* class.cs: Couple of negative scenario handling
+
+2004-04-13 Anirban Bhattacharjee <banirban@novell.com>
 	* mb-parser.jay: Few clean-up
 
 2004-04-12 Anirban Bhattacharjee <banirban@novell.com>
