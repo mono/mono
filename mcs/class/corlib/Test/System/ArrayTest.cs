@@ -1,7 +1,8 @@
 // ArrayTest.cs - NUnit Test Cases for the System.Array class
 //
 // David Brandt (bucky@keystreams.com)
-//
+// Eduardo Garcia (kiwnix@yahoo.es)
+// 
 // (C) Ximian, Inc.  http://www.ximian.com
 // 
 
@@ -13,6 +14,27 @@ using System.Globalization;
 namespace MonoTests.System
 {
 
+
+	//Auxiliary Things
+	enum enua  {hola,adios,mas,menos};
+
+	class AClass
+	{
+		bool init;
+		public AClass()
+		{
+			init = true;
+		}
+	}
+
+	struct AStruct
+	{
+		public string s;
+		public string a;
+	}
+	//End Auxiliary Things
+
+[TestFixture]
 public class ArrayTest : TestCase
 {
 	public ArrayTest() {}
@@ -25,21 +47,25 @@ public class ArrayTest : TestCase
 	{
 	}
 
+	[Test]
 	public void TestIsFixedSize() {
 		char[] a1 = {'a'};
 		Assert("All arrays are fixed", a1.IsFixedSize);
 	}
-
+	
+	[Test]
 	public void TestIsReadOnly() {
 		char[] a1 = {'a'};
 		Assert("No array is readonly", !a1.IsReadOnly);
 	}
 
+	[Test]
 	public void TestIsSynchronized() {
 		char[] a1 = {'a'};
 		Assert("No array is synchronized", !a1.IsSynchronized);
 	}
 
+	[Test]
 	public void TestLength() {
 		{
 			char[] a1 = { };
@@ -55,6 +81,7 @@ public class ArrayTest : TestCase
 		}
 	}
 
+	[Test]
 	public void TestRank() {
 		char[] a1 = { 'c', 'd', 'e' };
 		AssertEquals("Rank one", 1, a1.Rank);
@@ -66,6 +93,7 @@ public class ArrayTest : TestCase
 		AssertEquals("Rank three", 3, a3.Rank);
 	}
 
+	[Test]
 	public void TestBinarySearch1() {
 		bool errorThrown = false;
 		try {
@@ -101,6 +129,8 @@ public class ArrayTest : TestCase
 				     -9, Array.BinarySearch(arr, 'e'));
 		}
 	}
+
+	[Test]
 	public void TestBinarySearch2() {
 		bool errorThrown = false;
 		try {
@@ -163,6 +193,7 @@ public class ArrayTest : TestCase
 
 	// TODO - testBinarySearch with explicit IComparer args
 
+	[Test]
 	public void TestClear() {
 		bool errorThrown = false;
 		try {
@@ -215,6 +246,7 @@ public class ArrayTest : TestCase
 		}
 	}
 
+	[Test]
 	public void TestClone() {
 		char[] c1 = {'a', 'b', 'c'};
 		char[] c2 = (char[])c1.Clone();
@@ -235,6 +267,7 @@ public class ArrayTest : TestCase
 		AssertEquals("#D07", d1[0], d2[0]);
 	}
 
+	[Test]
 	public void TestCopy() {
 		{
 			bool errorThrown = false;
@@ -342,6 +375,8 @@ public class ArrayTest : TestCase
 		Assert("#E13", orig[2] != copy[2]);
 		Assert("#E14", orig[3] != copy[3]);
 	}
+
+	[Test]
 	public void TestCopy2() {
 		{
 			bool errorThrown = false;
@@ -382,6 +417,7 @@ public class ArrayTest : TestCase
 		Assert("#E38", copy[3] != orig[3]);
 	}
 
+	[Test]
 	public void TestCopyTo() {
 		{
 			bool errorThrown = false;
@@ -507,6 +543,7 @@ public class ArrayTest : TestCase
 		}
 	}
 
+	[Test]
 	public void TestCreateInstance() {
 		{
 			bool errorThrown = false;
@@ -592,7 +629,8 @@ public class ArrayTest : TestCase
 		}
 
 	}
-
+	
+	[Test]
 	public void TestGetEnumerator() {
 		String[] s1 = {"this", "is", "a", "test"};
 		IEnumerator en = s1.GetEnumerator ();
@@ -618,6 +656,7 @@ public class ArrayTest : TestCase
 		AssertEquals ("#G14", "change", en.Current);
 	}
 
+	[Test]
 	public void TestGetEnumeratorMultipleDimension() {
 		String[,] s1 = {{"this", "is"}, {"a", "test"}};
 		IEnumerator en = s1.GetEnumerator ();
@@ -644,6 +683,7 @@ public class ArrayTest : TestCase
 		AssertEquals ("#AA14", "change", en.Current);
 	}
 
+	[Test]
 	public void TestGetEnumeratorNonZeroLowerBounds() {
 		int[] myLengthsArray = new int[2] { 3, 5 };
 		int[] myBoundsArray = new int[2] { 2, 3 };
@@ -671,6 +711,7 @@ public class ArrayTest : TestCase
 		AssertEquals ("#AB06", "47", lastElement);
 	}
 
+	[Test]
 	public void TestIList_Add () {
 		int[] myLengthsArray = new int[2] { 3, 5 };
 		int[] myBoundsArray = new int[2] { 2, 3 };
@@ -690,6 +731,7 @@ public class ArrayTest : TestCase
 		Fail("IList.Add shouldn't get this far");
 	}
 
+	[Test]
 	public void TestIList_Insert () {
 		int[] myLengthsArray = new int[2] { 3, 5 };
 		int[] myBoundsArray = new int[2] { 2, 3 };
@@ -709,6 +751,7 @@ public class ArrayTest : TestCase
 		Fail("IList.Insert shouldn't get this far");
 	}
 
+	[Test]
 	public void TestIList_Remove () {
 		int[] myLengthsArray = new int[2] { 3, 5 };
 		int[] myBoundsArray = new int[2] { 2, 3 };
@@ -728,6 +771,7 @@ public class ArrayTest : TestCase
 		Fail("IList.Remove shouldn't get this far");
 	}
 
+	[Test]
 	public void TestIList_RemoveAt () {
 		int[] myLengthsArray = new int[2] { 3, 5 };
 		int[] myBoundsArray = new int[2] { 2, 3 };
@@ -747,6 +791,7 @@ public class ArrayTest : TestCase
 		Fail("IList.RemoveAt shouldn't get this far");
 	}
 
+	[Test]
 	public void TestIList_Contains () {
 		int[] myLengthsArray = new int[2] { 3, 5 };
 		int[] myBoundsArray = new int[2] { 2, 3 };
@@ -771,6 +816,7 @@ public class ArrayTest : TestCase
 		Fail("Should not get here");
 	}
 
+	[Test]
 	public void TestIList_IndexOf () {
 		int[] myLengthsArray = new int[2] { 3, 5 };
 		int[] myBoundsArray = new int[2] { 2, 3 };
@@ -803,6 +849,7 @@ public class ArrayTest : TestCase
 
 	}
 
+	[Test]
 	public void TestGetLength() {
 		{
 			bool errorThrown = false;
@@ -836,6 +883,7 @@ public class ArrayTest : TestCase
 			     7, c3.GetLength(1));
 	}
 
+	[Test]
 	public void TestGetLowerBound() {
 		{
 			bool errorThrown = false;
@@ -869,6 +917,7 @@ public class ArrayTest : TestCase
 			     0, c2.GetLowerBound(1));
 	}
 
+	[Test]
 	public void TestGetUpperBound() {
 		{
 			bool errorThrown = false;
@@ -902,6 +951,7 @@ public class ArrayTest : TestCase
 			     5, c2.GetUpperBound(1));
 	}
 
+	[Test]
 	public void TestGetValue1() {
 		{
 			bool errorThrown = false;
@@ -939,6 +989,8 @@ public class ArrayTest : TestCase
 			AssertEquals("#I04(" + i + ")", c1[i], c1.GetValue(i));
 		}
 	}
+
+	[Test]
 	public void TestGetValue2() {
 		{
 			bool errorThrown = false;
@@ -984,6 +1036,8 @@ public class ArrayTest : TestCase
 			}
 		}
 	}
+
+	[Test]
 	public void TestGetValue3() {
 		{
 			bool errorThrown = false;
@@ -1033,6 +1087,8 @@ public class ArrayTest : TestCase
 			}
 		}
 	}
+
+	[Test]
 	public void TestGetValueN() {
 		{
 			bool errorThrown = false;
@@ -1093,6 +1149,7 @@ public class ArrayTest : TestCase
 		}
 	}
 
+	[Test]
 	public void TestIndexOf1() {
 		{
 			bool errorThrown = false;
@@ -1120,6 +1177,8 @@ public class ArrayTest : TestCase
 		AssertEquals("#J05", 0, Array.IndexOf(s1, "this"));
 		AssertEquals("#J06", 3, Array.IndexOf(s1, "test"));
 	}
+
+	[Test]
 	public void TestIndexOf2() {
 		{
 			bool errorThrown = false;
@@ -1158,6 +1217,8 @@ public class ArrayTest : TestCase
 		AssertEquals("#J27", 1, Array.IndexOf(s1, "is", 1));
 		AssertEquals("#J28", 4, Array.IndexOf(s1, "test", 1));
 	}
+
+	[Test]
 	public void TestIndexOf3() {
 		{
 			bool errorThrown = false;
@@ -1208,6 +1269,7 @@ public class ArrayTest : TestCase
 		AssertEquals("#J50", 3, Array.IndexOf(s1, "a", 1, 3));
 	}
 	
+	[Test]
 	public void TestLastIndexOf1() {
 		{
 			bool errorThrown = false;
@@ -1236,6 +1298,8 @@ public class ArrayTest : TestCase
 		AssertEquals("#K06", 4, Array.LastIndexOf(s1, "test"));
 		AssertEquals("#K07", 3, Array.LastIndexOf(s1, "a"));
 	}
+
+	[Test]
 	public void TestLastIndexOf2() {
 		{
 			bool errorThrown = false;
@@ -1274,6 +1338,8 @@ public class ArrayTest : TestCase
 		AssertEquals("#K27", 3, Array.LastIndexOf(s1, "a", 3));
 		AssertEquals("#K28", 0, Array.LastIndexOf(s1, "this", 3));
 	}
+
+	[Test]
 	public void TestLastIndexOf3() {
 		{
 			bool errorThrown = false;
@@ -1330,6 +1396,7 @@ public class ArrayTest : TestCase
 			     3, Array.LastIndexOf(s1, "a", 3, 3));
 	}
 
+	[Test]
 	public void TestReverse() {
 		{
 			bool errorThrown = false;
@@ -1406,6 +1473,7 @@ public class ArrayTest : TestCase
 		AssertEquals("#L14", 'd', c2[3]);
 	}
 
+	[Test]
 	public void TestSetValue1() {
 		{
 			bool errorThrown = false;
@@ -1479,6 +1547,7 @@ public class ArrayTest : TestCase
 		// Assert ("#M06(" + i + ")", c5[i] == c6[i]);
 	}
 
+	[Test]
 	public void TestSetValue2() {
 		{
 			bool errorThrown = false;
@@ -1526,6 +1595,8 @@ public class ArrayTest : TestCase
 			}
 		}
 	}
+
+	[Test]
 	public void TestSetValue3() {
 		{
 			bool errorThrown = false;
@@ -1577,6 +1648,8 @@ public class ArrayTest : TestCase
 			}
 		}
 	}
+
+	[Test]
 	public void TestSetValueN() {
 		{
 			bool errorThrown = false;
@@ -1639,6 +1712,7 @@ public class ArrayTest : TestCase
 		}
 	}
 
+	[Test]
 	public void TestSetValue4() {
 		{
 			int[] c1 = { 1, 2, 3 };
@@ -1887,7 +1961,7 @@ public class ArrayTest : TestCase
 		}
 	}
 
-
+	[Test]
 	public void TestSort() {
 		{
 			bool errorThrown = false;
@@ -1987,8 +2061,203 @@ public class ArrayTest : TestCase
 		}
 	}
 
+	[Test]
+	public void TestInitializeEmpty()
+	{
+		bool catched=false;
+		int[] a = {};
+		try
+		{
+			a.Initialize();
+		}
+		catch(Exception)
+		{
+			catched=true;
+		}
+		Assert("#TI01",!catched);
+	}
+
+	[Test]
+	public void TestInitializeInt()
+	{
+		int[] a = {1,2,0};
+		a.Initialize();
+		int[] b = {1,2,0};
+		for(int i=a.GetLowerBound(0);i<=a.GetUpperBound(0);i++)
+		{
+			AssertEquals("#TI02 " + i ,a[i],b[i]);
+		}
+	}
+
+	[Test]
+	public void TestInitializeDouble()
+	{
+		double[] a = {1.0,2.0,0.0};
+		a.Initialize();
+		double[] b = {1.0,2.0,0.0};
+		for(int i=a.GetLowerBound(0);i<=a.GetUpperBound(0);i++)
+		{
+			AssertEquals("#TI03 " + i ,a[i],b[i]);
+		}
+	}
+
+	[Test]
+	public void TestInitializeFloat()
+	{
+		float[] a = {1.0F,2.0F,0.0F};
+		a.Initialize();
+		float[] b = {1.0F,2.0F,0.0F};
+		for(int i=a.GetLowerBound(0);i<=a.GetUpperBound(0);i++)
+		{
+			AssertEquals("#TI04 " + i ,a[i],b[i]);
+		}
+	}
+
+	[Test]
+	public void TestInitializeChar()
+	{
+		char[] a = {'1','.','0','F','2','.','0','F'};
+		a.Initialize();
+		char[] b = {'1','.','0','F','2','.','0','F'};
+		for(int i=a.GetLowerBound(0);i<=a.GetUpperBound(0);i++)
+		{
+			AssertEquals("#TI05 " + i ,a[i],b[i]);
+		}
+	}
+
+	[Test]
+	public void TestInitializeString()
+	{
+		string[] a = {"hola","adios","menos","mas"};
+		a.Initialize();
+		string[] b = {"hola","adios","menos","mas"};
+		for(int i=a.GetLowerBound(0);i<=a.GetUpperBound(0);i++)
+		{
+			AssertEquals("#TI06 " + i ,a[i],b[i]);
+		}
+	}
+
+	[Test]
+	public void TestInitializeEnum()
+	{
+		enua[] a = {enua.hola,enua.adios,enua.menos,enua.mas};
+		a.Initialize();
+		enua[] b = {enua.hola,enua.adios,enua.menos,enua.mas};
+		for(int i=a.GetLowerBound(0);i<=a.GetUpperBound(0);i++)
+		{
+			AssertEquals("#TI07 " + i ,a[i],b[i]);
+		}
+	}
+	
+	[Test]
+	public void TestInitializeIntNI()
+	{
+		int[] a = new int[20];
+		a.Initialize();
+		foreach(int b in a)
+		{
+			AssertEquals("#TI08",b,0);
+		}
+	}
+	
+	[Test]
+	public void TestInitializeCharNI()
+	{
+		char[] a = new char[20];
+		a.Initialize();
+		foreach(char b in a)
+		{
+			AssertEquals("#TI09",b,0);
+		}
+	}
+	
+	[Test]
+	public void TestInitializeDoubleNI()
+	{
+		double[] a = new double[20];
+		a.Initialize();
+		foreach(double b in a)
+		{
+			AssertEquals("#TI09",b,0.0);
+		}
+	}
+	
+	[Test]
+	public void TestInitializeStringNI()
+	{
+		string[] a = new string[20];
+		a.Initialize();
+		foreach(string b in a)
+		{
+			AssertEquals("#TI10",b,null);
+		}
+	}
+	
+	[Test]
+	public void TestInitializeObjectNI()
+	{
+		object[] a = new object[20];
+		a.Initialize();
+		foreach(object b in a)
+		{
+			AssertEquals("#TI11",b,null);
+		}
+	}
+
+	[Test]
+	public void TestInitializeAClassNI()
+	{
+		AClass[] a = new AClass[20];
+		a.Initialize();
+		foreach(AClass b in a)
+		{
+			AssertEquals("#TI12",b,null);
+		}
+	}
+
+
+	[Test]
+	public void TestInitializeAStructNI()
+	{
+		AStruct[] a = new AStruct[20];
+		a.Initialize();
+		foreach(AStruct b in a)
+		{
+			AssertEquals("#TI14",b,new AStruct());
+		}
+	}
+
+	[Test]
+	public void TestInitializeAStruct()
+	{
+		AStruct[] a = new AStruct[3];
+		a[1].a = "ADIOS";
+		a[1].s = "HOLA";
+		a.Initialize();
+		AStruct[] b = new AStruct[3];
+		b[1].a = "ADIOS";
+		b[1].s = "HOLA";
+		for(int i=a.GetLowerBound(0);i<=a.GetUpperBound(0);i++)
+		{
+			AssertEquals("#TI15 " + i ,a[i],b[i]);
+		}
+	}
+
+	[Test]
+	public void TestInitializeDateTimeNI()
+	{
+		DateTime[] a = new DateTime[20];
+		a.Initialize();
+		foreach(DateTime b in a)
+		{
+			AssertEquals("#TI16",b,new DateTime());
+		}
+	}
+	
+
 	// TODO - TestSort passed-in IComparable versions
 
+	
 }
 
 }

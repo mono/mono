@@ -1,3 +1,8 @@
+2003-04-18  Eduardo Garcia Cebollero <kiwnix@yahoo.es>
+
+	* ArrayTest.cs: added a few more tests to test Array.Initialize()
+	and added some [Test] atributes to the tests.
+
 2003-04-17  Nick Drochak  <ndrochak@gol.com>
 
 	* DoubleTest.cs: Output some more debug info.
