@@ -280,12 +280,15 @@ namespace System.Data.SqlTypes
 
 		public static explicit operator SqlSingle (SqlDouble x)
 		{
-			checked {
-				if (x.IsNull)
-					return Null;
+			if (x.IsNull)
+				return Null;
+
+			float f = (float)x.Value;
+
+			if (Single.IsInfinity (f))
+				throw new OverflowException ();
 				
-				return new SqlSingle((float)x.Value);
-			}
+			return new SqlSingle(f);
 		}
 
 		public static explicit operator float (SqlSingle x)

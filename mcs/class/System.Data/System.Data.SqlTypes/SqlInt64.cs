@@ -355,12 +355,13 @@ namespace System.Data.SqlTypes
 
 		public static explicit operator SqlInt64 (SqlDouble x)
 		{
-			//checked {
-				if (x.IsNull) 
-					return SqlInt64.Null;
-				else
+			if (x.IsNull) 
+				return SqlInt64.Null;
+			else {
+				checked {
 					return new SqlInt64 ((long)x.Value);
-				//}
+				}
+			}
 		}
 
 		public static explicit operator long (SqlInt64 x)

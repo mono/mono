@@ -196,16 +196,25 @@ namespace System.Data.SqlTypes
 
 		public static SqlDouble operator + (SqlDouble x, SqlDouble y)
 		{
-			checked {
-				return new SqlDouble (x.Value + y.Value);
-			}
+			double d = 0;
+			d = x.Value + y.Value;
+			
+			if (Double.IsInfinity (d)) 
+				throw new OverflowException ();
+
+			return new SqlDouble (d);
 		}
 
 		public static SqlDouble operator / (SqlDouble x, SqlDouble y)
 		{
-			checked {
-				return new SqlDouble (x.Value / y.Value);
+			double d = x.Value / y.Value;
+
+			if (Double.IsInfinity (d)) {
+				if (y.Value == 0) 
+					throw new DivideByZeroException ();
 			}
+				
+			return new SqlDouble (d);
 		}
 
 		public static SqlBoolean operator == (SqlDouble x, SqlDouble y)
@@ -258,16 +267,23 @@ namespace System.Data.SqlTypes
 
 		public static SqlDouble operator * (SqlDouble x, SqlDouble y)
 		{
-			checked {
-				return new SqlDouble (x.Value * y.Value);
-			}
+			double d = x.Value * y.Value;
+			
+			if (Double.IsInfinity (d))
+				throw new OverflowException ();
+
+			return new SqlDouble (d);
+
 		}
 
 		public static SqlDouble operator - (SqlDouble x, SqlDouble y)
 		{
-			checked {
-				return new SqlDouble (x.Value - y.Value);
-			}
+			double d = x.Value - y.Value;
+			
+			if (Double.IsInfinity (d))
+				throw new OverflowException ();
+
+			return new SqlDouble (d);
 		}
 
 		public static SqlDouble operator - (SqlDouble n)
