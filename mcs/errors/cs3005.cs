@@ -1,10 +1,10 @@
 // cs3005: Identifier foo differing only in case is not CLS-Compliant.
-// Line: 13 
-
+// Line: 9
 
 using System;
+[assembly: CLSCompliant (true)]
 
-class ErrorCS3005 {
+public class ErrorCS3005 {
 	public int FOO = 0;
 	public int foo = 1;
 

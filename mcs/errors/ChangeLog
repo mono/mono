@@ -1,21 +1,35 @@
+2004-02-16 Marek Safar <marek.safar@seznam.cz>
+
+	* cs3001-{7,8}.cs,
+	  cs3005-(1-22}.cs,
+	  cs3006-{1-6}.cs,
+	  cs3012.cs,
+	  cs3013.cs New error tests for CLS-compliance.
+
+	* cs186-2.cs,
+	  cs0579-2.cs New error tests.
+
+	* makefile: Added CS3005-16-lib.cs and CS3013-module.cs as helpers for errors cs3005-16.cs and cs3013.cs.
+
+
 2004-02-10 Marek Safar <marek.safar@seznam.cz>
 
 	* cs0111-2.cs: Fixed error message.
-          cs0111-5.cs,
+	  cs0111-5.cs,
 	  cs0528-2.cs: New error tests.
 
 2004-02-03 Marek Safar <marek.safar@seznam.cz>
 
 	* cs0102-{2,3,4,5}.cs,
-          cs0111-{3,4}.cs,
-          cs0547-2.cs: New error tests.
+	  cs0111-{3,4}.cs,
+	  cs0547-2.cs: New error tests.
 
 2004-01-21 Marek Safar <marek.safar@seznam.cz>
 
 	* cs0102.cs,
-          cs0111-2.cs,
-          cs246-{2,3,4}.cs,
-          cs663.cs: New tests.
+	  cs0111-2.cs,
+	  cs246-{2,3,4}.cs,
+	  cs663.cs: New tests.
 
 2004-01-05 Marek Safar <marek.safar@seznam.cz>
 
@@ -64,21 +78,21 @@
 	  cs3016-1.cs,
 	  cs3016-2.cs,
 	  cs3016-3.cs: New tests for CLS-compliance.
-          
-        * cs108-2.cs,
-          cs116-2.cs,
-          cs592-4.cs,
-          cs592-5.cs,
-          cs592-6.cs: New tests.
-        
+
+	* cs108-2.cs,
+	  cs116-2.cs,
+	  cs592-4.cs,
+	  cs592-5.cs,
+	  cs592-6.cs: New tests.
+
 2004-01-04 Ben Maurer  <bmaurer@users.sourceforge.net>
 
 	* cs157-{2,3,4}: test cases we fail.
 
 2003-11-01  Marek Safar <marek.safar@seznam.cz>
 
-        * makefile: Added "// Compiler options:" handling.
-        
+	* makefile: Added "// Compiler options:" handling.
+
 2003-09-22  Martin Baulig  <martin@ximian.com>
 
 	* errors.txt: Added -219.

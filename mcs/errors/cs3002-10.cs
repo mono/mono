@@ -1,7 +1,7 @@
-// cs3002-2.cs: Return type of 'I.Error()' is not CLS-compliant
-// Line: 13
+// cs3002.cs: Return type of 'I.Error()' is not CLS-compliant
+// Line: 8
 
-[assembly:System.CLSCompliant (true)]
+[assembly:System.CLSCompliant(true)]
 
 public interface I 
 {
