@@ -54,7 +54,7 @@ namespace Mono.Data.SqliteClient
 		{
 			db_file = null;
 			db_mode = 0644;
-			db_version = 3;
+			db_version = 2;
 			state = ConnectionState.Closed;
 			sqlite_handle = IntPtr.Zero;
 		}
