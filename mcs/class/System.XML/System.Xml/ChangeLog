@@ -1,3 +1,9 @@
+2003-02-28  Alan Tam <Tam@SiuLung.com>
+
+	* XmlConvert.cs: fixed the most ToXXX(string) and ToString(XXX)
+	methods to make them compatible with the XML Schema Spec from W3C
+	ToString(TimeSpan) is still outstanding
+
 2003-02-18  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* XmlDocument.cs:

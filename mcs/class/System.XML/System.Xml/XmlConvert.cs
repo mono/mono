@@ -4,6 +4,7 @@
 // Authors:
 //      Dwivedi, Ajay kumar (Adwiv@Yahoo.com)
 //	Gonzalo Paniagua Javier (gonzalo@ximian.com)
+//      Alan Tam Siu Lung (Tam@SiuLung.com)
 //
 // (C) 2002 Ximian, Inc (http://www.ximian.com)
 //
@@ -139,9 +140,80 @@ namespace System.Xml {
 
 		public static DateTime ToDateTime(string s)
 		{
-			return DateTime.Parse(s);
+			return ToDateTime(s, new string[] {
+			  // dateTime
+			  "yyyy-MM-ddTHH:mm:ss",
+			  "yyyy-MM-ddTHH:mm:ss.f",
+			  "yyyy-MM-ddTHH:mm:ss.ff",
+			  "yyyy-MM-ddTHH:mm:ss.fff",
+			  "yyyy-MM-ddTHH:mm:ss.ffff",
+			  "yyyy-MM-ddTHH:mm:ss.fffff",
+			  "yyyy-MM-ddTHH:mm:ss.ffffff",
+			  "yyyy-MM-ddTHH:mm:ss.fffffff",
+			  "yyyy-MM-ddTHH:mm:sszzz",
+			  "yyyy-MM-ddTHH:mm:ss.fzzz",
+			  "yyyy-MM-ddTHH:mm:ss.ffzzz",
+			  "yyyy-MM-ddTHH:mm:ss.fffzzz",
+			  "yyyy-MM-ddTHH:mm:ss.ffffzzz",
+			  "yyyy-MM-ddTHH:mm:ss.fffffzzz",
+			  "yyyy-MM-ddTHH:mm:ss.ffffffzzz",
+			  "yyyy-MM-ddTHH:mm:ss.fffffffzzz",
+			  "yyyy-MM-ddTHH:mm:ssZ",
+			  "yyyy-MM-ddTHH:mm:ss.fZ",
+			  "yyyy-MM-ddTHH:mm:ss.ffZ",
+			  "yyyy-MM-ddTHH:mm:ss.fffZ",
+			  "yyyy-MM-ddTHH:mm:ss.ffffZ",
+			  "yyyy-MM-ddTHH:mm:ss.fffffZ",
+			  "yyyy-MM-ddTHH:mm:ss.ffffffZ",
+			  "yyyy-MM-ddTHH:mm:ss.fffffffZ",
+			  // time
+			  "HH:mm:ss",
+			  "HH:mm:ss.f",
+			  "HH:mm:ss.ff",
+			  "HH:mm:ss.fff",
+			  "HH:mm:ss.ffff",
+			  "HH:mm:ss.fffff",
+			  "HH:mm:ss.ffffff",
+			  "HH:mm:ss.fffffff",
+			  "HH:mm:sszzz",
+			  "HH:mm:ss.fzzz",
+			  "HH:mm:ss.ffzzz",
+			  "HH:mm:ss.fffzzz",
+			  "HH:mm:ss.ffffzzz",
+			  "HH:mm:ss.fffffzzz",
+			  "HH:mm:ss.ffffffzzz",
+			  "HH:mm:ss.fffffffzzz",
+			  "HH:mm:ssZ",
+			  "HH:mm:ss.fZ",
+			  "HH:mm:ss.ffZ",
+			  "HH:mm:ss.fffZ",
+			  "HH:mm:ss.ffffZ",
+			  "HH:mm:ss.fffffZ",
+			  "HH:mm:ss.ffffffZ",
+			  "HH:mm:ss.fffffffZ",
+			  // date
+			  "yyyy-MM-dd",
+			  "yyyy-MM-ddzzz",
+			  "yyyy-MM-ddZ",
+			  // gYearMonth
+			  "yyyy-MM",
+			  "yyyy-MMzzz",
+			  "yyyy-MMZ",
+			  // gYear
+			  "yyyy",
+			  "yyyyzzz",
+			  "yyyyZ",
+			  // gMonthDay
+			  "--MM-dd",
+			  "--MM-ddzzz",
+			  "--MM-ddZ",
+			  // gDay
+			  "---dd",
+			  "---ddzzz",
+			  "---ddZ",
+			});
 		}
-
+		
 		public static DateTime ToDateTime(string s, string format)
 		{
 			DateTimeFormatInfo d = new DateTimeFormatInfo();
@@ -163,6 +235,9 @@ namespace System.Xml {
 		
 		public static double ToDouble(string s)
 		{
+			if (s == "INF") return System.Double.PositiveInfinity;
+			if (s == "-INF") return System.Double.NegativeInfinity;
+			if (s == "NaN") return System.Double.NaN;
 			return Double.Parse(s, CultureInfo.InvariantCulture);
 		}
 
@@ -194,6 +269,9 @@ namespace System.Xml {
 
 		public static float ToSingle(string s)
 		{
+			if (s == "INF") return System.Single.PositiveInfinity;
+			if (s == "-INF") return System.Single.NegativeInfinity;
+			if (s == "NaN") return System.Single.NaN;
 			return Single.Parse(s, CultureInfo.InvariantCulture);
 		}
 
@@ -229,7 +307,8 @@ namespace System.Xml {
 
 		public static string ToString(bool value)
 		{
-			return value.ToString(CultureInfo.InvariantCulture);
+			if (value) return "true";
+			return "false";
 		}
 
 		[CLSCompliant (false)]
@@ -237,6 +316,7 @@ namespace System.Xml {
 		{
 			return value.ToString(CultureInfo.InvariantCulture);
 		}
+
 		public static string ToString(Decimal value)
 		{
 			return value.ToString(CultureInfo.InvariantCulture);
@@ -247,16 +327,42 @@ namespace System.Xml {
 		{
 			return value.ToString(CultureInfo.InvariantCulture);
 		}
+
 		public static string ToString(TimeSpan value)
 		{
-			return value.ToString();
+			StringBuilder builder = new StringBuilder();
+			if (value.Ticks < 0) {
+				builder.Append('-');
+				value = value.Negate();
+			}
+			builder.Append('P');
+			if (value.Days > 0) builder.Append(value.Days).Append('D');
+			if (value.Days > 0 || value.Minutes > 0 || value.Seconds > 0 || value.Milliseconds > 0) {
+				builder.Append('T');
+				if (value.Hours > 0) builder.Append(value.Hours).Append('D');
+				if (value.Minutes > 0) builder.Append(value.Minutes).Append('M');
+				if (value.Seconds > 0 || value.Milliseconds > 0) {
+					builder.Append(value.Seconds);
+					if (value.Milliseconds > 0) builder.Append('.').Append(String.Format("{0:000}", value.Milliseconds));
+					builder.Append('S');
+				}
+			}
+			return builder.ToString();
 		}
+
 		public static string ToString(double value)
 		{
+			if (Double.IsNegativeInfinity(value)) return "-INF";
+			if (Double.IsPositiveInfinity(value)) return "INF";
+			if (Double.IsNaN(value)) return "INF";
 			return value.ToString(CultureInfo.InvariantCulture);
 		}
+
 		public static string ToString(float value)
 		{
+			if (Single.IsNegativeInfinity(value)) return "-INF";
+			if (Single.IsPositiveInfinity(value)) return "INF";
+			if (Single.IsNaN(value)) return "INF";
 			return value.ToString(CultureInfo.InvariantCulture);
 		}
 
@@ -271,17 +377,21 @@ namespace System.Xml {
 		{
 			return value.ToString(CultureInfo.InvariantCulture);
 		}
+
 		public static string ToString(DateTime value)
 		{
-			return value.ToString(CultureInfo.InvariantCulture);
+			return value.ToString("yyyy-MM-ddTHH:mm:sszzz", CultureInfo.InvariantCulture);
 		}
+
 		public static string ToString(DateTime value, string format)
 		{
 			return value.ToString(format, CultureInfo.InvariantCulture);
 		}
+
+		[MonoTODO]
 		public static TimeSpan ToTimeSpan(string s)
 		{
-			return TimeSpan.Parse(s);
+			return TimeSpan.Parse(s); // FIXME: Should Parse according to XML Schema spec
 		}
 
 		[CLSCompliant (false)]
