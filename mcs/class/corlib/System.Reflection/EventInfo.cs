@@ -42,5 +42,32 @@ namespace System.Reflection {
 		public void RemoveEventHandler( object target, Delegate handler) {
 		}
 
+		public override bool IsDefined (Type attributeType, bool inherit) {
+			return MonoCustomAttrs.IsDefined (this, attributeType, inherit);
+		}
+
+		public override object[] GetCustomAttributes( bool inherit) {
+			return MonoCustomAttrs.GetCustomAttributes (this, inherit);
+		}
+		public override object[] GetCustomAttributes( Type attributeType, bool inherit) {
+			return MonoCustomAttrs.GetCustomAttributes (this, attributeType, inherit);
+		}
+		public override Type ReflectedType {
+			get {
+				return null;
+			}
+		}
+		public override Type DeclaringType {
+			get {
+				return null;
+			}
+		}
+
+		public override String Name {
+			get {
+				return "Eventname";
+			}
+		}
+
 	}
 }

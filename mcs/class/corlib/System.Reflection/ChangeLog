@@ -1,3 +1,9 @@
+
+Thu Mar 7 17:14:20 CET 2002 Paolo Molaro <lupus@ximian.com>
+
+	* EventInfo.cs: add compiler needed methods.
+	* MonoMethod.cs: make ToString() return the return type name, too.
+
 2002-03-07  Nick Drochak  <ndrochak@gol.com>
 
 	* BindingFlags.cs: Add missing enum values.  Thanks CorCompare.

@@ -124,7 +124,7 @@ namespace System.Reflection {
 					parms = parms + ", ";
 				parms = parms + p [i].ParameterType.Name;
 			}
-			return Name+"("+parms+")";
+			return ReturnType.Name+" "+Name+"("+parms+")";
 		}
 	}
 	
