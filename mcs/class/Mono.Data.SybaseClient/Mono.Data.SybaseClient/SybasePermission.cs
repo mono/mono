@@ -16,9 +16,14 @@ using System.Security.Permissions;
 namespace Mono.Data.SybaseClient {
 	public sealed class SybasePermission : DBDataPermission 
 	{
+#if NET_1_2
+		[Obsolete ("Use SybasePermission(PermissionState.None)", true)]
+#endif
 		[MonoTODO]
 		public SybasePermission () 
-			: this (PermissionState.None)
+#if NET_1_2
+			: base (PermissionState.None)
+#endif
 		{
 			// FIXME: do constructor
 		}
@@ -29,8 +34,14 @@ namespace Mono.Data.SybaseClient {
 			// FIXME: do constructor
 		}
 
+#if NET_1_2
+		[Obsolete ("Use SybasePermission(PermissionState.None)", true)]
+#endif
 		[MonoTODO]
 		public SybasePermission (PermissionState state, bool allowBlankPassword) 
+#if NET_1_2
+			: base (PermissionState.None)
+#endif
 		{ 
 			throw new NotImplementedException ();
 		}
