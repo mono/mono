@@ -7,6 +7,7 @@
 
 using NUnit.Framework;
 using System;
+using System.Threading;
 using System.Globalization;
 
 namespace MonoTests.System
@@ -40,8 +41,19 @@ public class UInt16Test : TestCase
 	public UInt16Test() : base ("MonoTests.System.UInt16Test testcase") {}
 	public UInt16Test(string name) : base(name) {}
 
+	private CultureInfo old_culture;
+
 	protected override void SetUp() 
 	{
+		old_culture = Thread.CurrentThread.CurrentCulture;
+
+		// Set culture to en-US and don't let the user override.
+		Thread.CurrentThread.CurrentCulture = new CultureInfo ("en-US", false);
+	}
+
+	protected override void TearDown()
+	{
+		Thread.CurrentThread.CurrentCulture = old_culture;
 	}
 
 	public static ITest Suite {

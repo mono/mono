@@ -1,3 +1,11 @@
+2002-03-09  Martin Baulig  <martin@gnome.org>
+
+	* Int16Test.cs, Int32Tests.cs, UInt16Tests.cs: Use "en-US" culture and
+	don't let the user override.
+
+	* Int32Tests.cs: Cleanup. Use unique names in Assert()s, use AssertEquals()
+	where appropriate etc.
+
 2002-03-08  Martin Baulig  <martin@gnome.org>
 
 	* StringTest.cs: More String.Split tests.

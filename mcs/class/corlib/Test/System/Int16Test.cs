@@ -7,6 +7,7 @@
 
 using NUnit.Framework;
 using System;
+using System.Threading;
 using System.Globalization;
 
 namespace MonoTests.System
@@ -22,9 +23,9 @@ public class Int16Test : TestCase
 	private const string MyString3 = "32767";
 	private string[] Formats1 = {"c", "d", "e", "f", "g", "n", "p", "x" };
 	private string[] Formats2 = {"c5", "d5", "e5", "f5", "g5", "n5", "p5", "x5" };
-	private string[] Results1 = {"("+NumberFormatInfo.CurrentInfo.CurrencySymbol+"32,768.00)", "-32768", "-3.276800e+004", "-32768.00",
+	private string[] Results1 = {null, "-32768", "-3.276800e+004", "-32768.00",
 	                                  "-32768", "-32,768.00", "-3,276,800.00 %", "8000"};
-	private string[] Results2 = {NumberFormatInfo.CurrentInfo.CurrencySymbol+"32,767.00000", "32767", "3.27670e+004", "32767.00000",
+	private string[] Results2 = {null, "32767", "3.27670e+004", "32767.00000",
 	                                  "32767", "32,767.00000", "3,276,700.00000 %", "07fff"};
 	private string[] ResultsNfi1 = {"("+NumberFormatInfo.InvariantInfo.CurrencySymbol+"32,768.00)", "-32768", "-3.276800e+004", "-32768.00",
 	                                  "-32768", "-32,768.00", "-3,276,800.00 %", "8000"};
@@ -35,8 +36,23 @@ public class Int16Test : TestCase
 	public Int16Test() : base ("MonoTests.System.Int16Test testcase") {}
 	public Int16Test(string name) : base(name) {}
 
+	private CultureInfo old_culture;
+
 	protected override void SetUp() 
 	{
+		old_culture = Thread.CurrentThread.CurrentCulture;
+
+		// Set culture to en-US and don't let the user override.
+		Thread.CurrentThread.CurrentCulture = new CultureInfo ("en-US", false);
+
+		// We can't initialize this until we set the culture.
+		Results1 [0] = "("+NumberFormatInfo.CurrentInfo.CurrencySymbol+"32,768.00)";
+		Results2 [0] = NumberFormatInfo.CurrentInfo.CurrencySymbol+"32,767.00000";
+	}
+
+	protected override void TearDown()
+	{
+		Thread.CurrentThread.CurrentCulture = old_culture;
 	}
 
 	public static ITest Suite {

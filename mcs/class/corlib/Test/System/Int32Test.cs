@@ -7,6 +7,7 @@
 
 using NUnit.Framework;
 using System;
+using System.Threading;
 using System.Globalization;
 
 namespace MonoTests.System
@@ -22,10 +23,10 @@ public class Int32Test : TestCase
 	private const string MyString3 = "2147483647";
 	private string[] Formats1 = {"c", "d", "e", "f", "g", "n", "p", "x" };
 	private string[] Formats2 = {"c5", "d5", "e5", "f5", "g5", "n5", "p5", "x5" };
-	private string[] Results1 = {"("+NumberFormatInfo.CurrentInfo.CurrencySymbol+"2,147,483,648.00)",
+	private string[] Results1 = {null,
 					"-2147483648", "-2.147484e+009", "-2147483648.00",
 					"-2147483648", "-2,147,483,648.00", "-214,748,364,800.00 %", "80000000"};
-	private string[] Results2 = {NumberFormatInfo.CurrentInfo.CurrencySymbol+"2,147,483,647.00000",
+	private string[] Results2 = {null,
 					"2147483647", "2.14748e+009", "2147483647.00000",
 					"2.1475e+09", "2,147,483,647.00000", "214,748,364,700.00000 %", "7fffffff"};
 	private string[] ResultsNfi1 = {"("+NumberFormatInfo.InvariantInfo.CurrencySymbol+"2,147,483,648.00)",
@@ -39,8 +40,23 @@ public class Int32Test : TestCase
 	public Int32Test() : base ("MonoTests.System.Int32Test testcase") {}
 	public Int32Test(string name) : base(name) {}
 
+	private CultureInfo old_culture;
+
 	protected override void SetUp() 
 	{
+		old_culture = Thread.CurrentThread.CurrentCulture;
+
+		// Set culture to en-US and don't let the user override.
+		Thread.CurrentThread.CurrentCulture = new CultureInfo ("en-US", false);
+
+		// We can't initialize this until we set the culture.
+		Results1 [0] = "("+NumberFormatInfo.CurrentInfo.CurrencySymbol+"2,147,483,648.00)";
+		Results2 [0] = NumberFormatInfo.CurrentInfo.CurrencySymbol+"2,147,483,647.00000";
+	}
+
+	protected override void TearDown()
+	{
+		Thread.CurrentThread.CurrentCulture = old_culture;
 	}
 
 	public static ITest Suite {
@@ -52,8 +68,8 @@ public class Int32Test : TestCase
 	public void TestMinMax()
 	{
 		
-		AssertEquals(Int32.MinValue, MyInt32_2);
-		AssertEquals(Int32.MaxValue, MyInt32_3);
+		AssertEquals("#A01", Int32.MinValue, MyInt32_2);
+		AssertEquals("#A02", Int32.MaxValue, MyInt32_3);
 	}
 	
 	public void TestCompareTo()
@@ -73,10 +89,10 @@ public class Int32Test : TestCase
 
 	public void TestEquals()
 	{
-		Assert(MyInt32_1.Equals(MyInt32_1));
-		Assert(MyInt32_1.Equals((Int32)(-42)));
-		Assert(MyInt32_1.Equals((SByte)(-42)) == false);
-		Assert(MyInt32_1.Equals(MyInt32_2) == false);
+		Assert ("#B01", MyInt32_1.Equals (MyInt32_1));
+		Assert ("#B02", MyInt32_1.Equals ((Int32)(-42)));
+		Assert ("#B03", MyInt32_1.Equals ((SByte)(-42)) == false);
+		Assert ("#B04", MyInt32_1.Equals (MyInt32_2) == false);
 	}
 	
 	public void TestGetHashCode()
@@ -94,122 +110,128 @@ public class Int32Test : TestCase
 	public void TestParse()
 	{
 		//test Parse(string s)
-		Assert(MyInt32_1 == Int32.Parse(MyString1));
-		Assert(MyInt32_2 == Int32.Parse(MyString2));
-		Assert(MyInt32_3 == Int32.Parse(MyString3));
+		AssertEquals ("#C01", MyInt32_1, Int32.Parse (MyString1));
+		AssertEquals ("#C02", MyInt32_2, Int32.Parse (MyString2));
+		AssertEquals ("#C03", MyInt32_3, Int32.Parse (MyString3));
 
-		Assert (1 == Int32.Parse ("1"));
-		Assert (1 == Int32.Parse (" 1"));
-		Assert (1 == Int32.Parse ("     1"));
-		Assert (1 == Int32.Parse ("1    "));
-		Assert (1 == Int32.Parse ("+1"));
-		Assert (-1 == Int32.Parse ("-1"));
-		Assert (-1 == Int32.Parse ("  -1"));
-		Assert (-1 == Int32.Parse ("  -1  "));
-		Assert (-1 == Int32.Parse ("  -1  "));
+		AssertEquals ("#C04", 1, Int32.Parse ("1"));
+		AssertEquals ("#C05", 1, Int32.Parse (" 1"));
+		AssertEquals ("#C06", 1, Int32.Parse ("     1"));
+		AssertEquals ("#C07", 1, Int32.Parse ("1    "));
+		AssertEquals ("#C08", 1, Int32.Parse ("+1"));
+		AssertEquals ("#C09", -1, Int32.Parse ("-1"));
+		AssertEquals ("#C10", -1, Int32.Parse ("  -1"));
+		AssertEquals ("#C11", -1, Int32.Parse ("  -1  "));
+		AssertEquals ("#C12", -1, Int32.Parse ("  -1  "));
 
 		try {
 			Int32.Parse(null);
-			Fail("Should raise a System.ArgumentNullException");
+			Fail ("#C13: Should raise a System.ArgumentNullException");
 		}
 		catch (Exception e) {
-			Assert(typeof(ArgumentNullException) == e.GetType());
+			Assert ("#C14", typeof (ArgumentNullException) == e.GetType());
 		}
 		try {
 			Int32.Parse("not-a-number");
-			Fail("Should raise a System.FormatException");
+			Fail ("#C15: Should raise a System.FormatException");
 		}
 		catch (Exception e) {
-			Assert(typeof(FormatException) == e.GetType());
+			Assert ("#C16", typeof (FormatException) == e.GetType());
 		}
 		try {
 			double OverInt = (double)Int32.MaxValue + 1;
 			Int32.Parse(OverInt.ToString());
-			Fail("Should raise a System.OverflowException");
+			Fail ("#C17: Should raise a System.OverflowException");
 		}
 		catch (Exception e) {
-			Assert(typeof(OverflowException) == e.GetType());
+			Assert ("#C18", typeof (OverflowException) == e.GetType());
 		}
 		//test Parse(string s, NumberStyles style)
-		Assert(42 == Int32.Parse(" $42 ", NumberStyles.Currency));
+		AssertEquals ("#C19", 42, Int32.Parse (" $42 ", NumberStyles.Currency));
 		try {
 			Int32.Parse("$42", NumberStyles.Integer);
-			Fail("Should raise a System.FormatException");
+			Fail ("#C20: Should raise a System.FormatException");
 		}
 		catch (Exception e) {
-			Assert(typeof(FormatException) == e.GetType());
+			Assert ("#C21", typeof (FormatException) == e.GetType());
 		}
 		//test Parse(string s, IFormatProvider provider)
-		Assert(-42 == Int32.Parse(" -42 ", Nfi));
+		AssertEquals ("#C22", -42, Int32.Parse (" -42 ", Nfi));
 		try {
 			Int32.Parse("%42", Nfi);
-			Fail("Should raise a System.FormatException");
+			Fail ("#C23: Should raise a System.FormatException");
 		}
 		catch (Exception e) {
-			Assert(typeof(FormatException) == e.GetType());
+			Assert ("#C24", typeof (FormatException) == e.GetType());
 		}
 		//test Parse(string s, NumberStyles style, IFormatProvider provider)
-		Assert(16 == Int32.Parse(" 10 ", NumberStyles.HexNumber, Nfi));
+		AssertEquals ("#C25", 16, Int32.Parse (" 10 ", NumberStyles.HexNumber, Nfi));
 		try {
 			Int32.Parse("$42", NumberStyles.Integer, Nfi);
-			Fail("Should raise a System.FormatException");
+			Fail ("#C26: Should raise a System.FormatException");
 		}
 		catch (Exception e) {
-			Assert(typeof(FormatException) == e.GetType());
+			Assert("#C27", typeof (FormatException) == e.GetType());
 		}
 
 		try {
 			Int32.Parse (" - 1 ");
-			Fail ("Should raise FormatException");
+			Fail ("#C28: Should raise FormatException");
 		} catch (Exception e){
-			Assert (typeof (FormatException) == e.GetType ());
+			Assert ("#C29", typeof (FormatException) == e.GetType ());
 		}
 
 		try {
 			Int32.Parse (" - ");
-			Fail ("Should raise FormatException");
+			Fail ("#C30: Should raise FormatException");
 		} catch (Exception e){
-			Assert (typeof (FormatException) == e.GetType ());
+			Assert ("#C31", typeof (FormatException) == e.GetType ());
 		}
 	}
 	
 	public void TestToString()
 	{
 		//test ToString()
-		Assert(String.Compare(MyString1, MyInt32_1.ToString()) == 0);
-		Assert(String.Compare(MyString2, MyInt32_2.ToString()) == 0);
-		Assert(String.Compare(MyString3, MyInt32_3.ToString()) == 0);
-		//test ToString(string format)
-		/*
-		TODO: These tests are culture sensitive.  Need to find a way to determine the culture
-			of the system to decide the correct expected result.
-		for (int i=0; i < Formats1.Length; i++) {
-			Assert(String.Compare(Results1[i], MyInt32_2.ToString(Formats1[i])) == 0);
-			Assert(String.Compare(Results2[i], MyInt32_3.ToString(Formats2[i])) == 0);
-		}
-		*/
+		AssertEquals ("#D01", MyString1, MyInt32_1.ToString ());
+		AssertEquals ("#D02", MyString2, MyInt32_2.ToString ());
+		AssertEquals ("#D03", MyString3, MyInt32_3.ToString ());
+
 		//test ToString(string format, IFormatProvider provider);
 		for (int i=0; i < Formats1.Length; i++) {
-			Assert(String.Compare(ResultsNfi1[i], MyInt32_2.ToString(Formats1[i], Nfi)) == 0);
-			Assert(String.Compare(ResultsNfi2[i], MyInt32_3.ToString(Formats2[i], Nfi)) == 0);
+			AssertEquals ("#D04(" + i + "," + Formats1 [i] + ")",
+				      ResultsNfi1 [i], MyInt32_2.ToString (Formats1 [i], Nfi));
+			AssertEquals ("#D05(" + i + "," + Formats2 [i] + ")",
+				      ResultsNfi2 [i], MyInt32_3.ToString (Formats2 [i], Nfi));
 		}
+
+		//test ToString(string format)
+		for (int i=0; i < Formats1.Length; i++) {
+			AssertEquals ("#D06(" + i + ")", Results1 [i],
+				      MyInt32_2.ToString(Formats1[i]));
+			AssertEquals ("#D07(" + i + ")", Results2 [i],
+				      MyInt32_3.ToString(Formats2[i]));
+		}
+
 		try {
 			MyInt32_1.ToString("z");
-			Fail("Should raise a System.FormatException");
+			Fail ("#D08: Should raise a System.FormatException");
 		}
 		catch (Exception e) {
-			Assert(typeof(FormatException) == e.GetType());
+			Assert ("#D09", typeof (FormatException) == e.GetType());
 		}
 	}
 
 	public void TestCustomToString()
 	{
+		// FIXME: Not yet implemented.
+		return;
+
 		// culture sensitive?
 
 		int i = 123;
 
-		Assert ("Custom format string 00000", i.ToString ("00000") == "00123");
-		Assert ("Custom format string ####", i.ToString ("####") == "123");
+		AssertEquals ("Custom format string 00000", "00123", i.ToString ("00000"));
+		AssertEquals ("Custom format string ####", "123", i.ToString ("####"));
 	}
 }
 
