@@ -17,6 +17,160 @@ namespace Ximian.Mono.Tests
 			document = new XmlDocument ();
 		}
 
+		public void TestCreateNodeNodeTypeNameEmptyParams ()
+		{
+			XmlNode node;
+
+			try {
+				node = document.CreateNode (null, null, null);
+				Fail ("Expected an ArgumentException to be thrown.");
+			} catch (ArgumentException) {}
+
+			try {
+				node = document.CreateNode ("attribute", null, null);
+				Fail ("Expected a NullReferenceException to be thrown.");
+			} catch (NullReferenceException) {}
+
+			try {
+				node = document.CreateNode ("attribute", "", null);
+				Fail ("Expected an ArgumentException to be thrown.");
+			} catch (ArgumentException) {}
+
+			try {
+				node = document.CreateNode ("element", null, null);
+				Fail ("Expected a NullReferenceException to be thrown.");
+			} catch (NullReferenceException) {}
+
+			try {
+				node = document.CreateNode ("element", "", null);
+				Fail ("Expected an ArgumentException to be thrown.");
+			} catch (ArgumentException) {}
+
+			try {
+				node = document.CreateNode ("entityreference", null, null);
+				Fail ("Expected a NullReferenceException to be thrown.");
+			} catch (NullReferenceException) {}
+		}
+
+		public void TestCreateNodeInvalidXmlNodeType ()
+		{
+			XmlNode node;
+
+			try {
+				node = document.CreateNode (XmlNodeType.EndElement, null, null);
+				Fail ("Expected an ArgumentOutOfRangeException to be thrown.");
+			} catch (ArgumentOutOfRangeException) {}
+
+			try {
+				node = document.CreateNode (XmlNodeType.EndEntity, null, null);
+				Fail ("Expected an ArgumentOutOfRangeException to be thrown.");
+			} catch (ArgumentOutOfRangeException) {}
+
+			try {
+				node = document.CreateNode (XmlNodeType.Entity, null, null);
+				Fail ("Expected an ArgumentOutOfRangeException to be thrown.");
+			} catch (ArgumentOutOfRangeException) {}
+
+			try {
+				node = document.CreateNode (XmlNodeType.None, null, null);
+				Fail ("Expected an ArgumentOutOfRangeException to be thrown.");
+			} catch (ArgumentOutOfRangeException) {}
+
+			try {
+				node = document.CreateNode (XmlNodeType.Notation, null, null);
+				Fail ("Expected an ArgumentOutOfRangeException to be thrown.");
+			} catch (ArgumentOutOfRangeException) {}
+
+			// TODO:  undocumented allowable type.
+			node = document.CreateNode (XmlNodeType.XmlDeclaration, null, null);
+			AssertEquals (XmlNodeType.XmlDeclaration, node.NodeType);
+		}
+
+		public void TestCreateNodeWhichParamIsUsed ()
+		{
+			XmlNode node;
+
+			// No constructor params for Document, DocumentFragment.
+
+			node = document.CreateNode (XmlNodeType.CDATA, "a", "b", "c");
+			AssertEquals (String.Empty, ((XmlCDataSection)node).Value);
+
+			node = document.CreateNode (XmlNodeType.Comment, "a", "b", "c");
+			AssertEquals (String.Empty, ((XmlComment)node).Value);
+
+			node = document.CreateNode (XmlNodeType.DocumentType, "a", "b", "c");
+			AssertNull (((XmlDocumentType)node).Value);
+
+// TODO: add this back in to test when it's implemented.
+//			node = document.CreateNode (XmlNodeType.EntityReference, "a", "b", "c");
+//			AssertNull (((XmlEntityReference)node).Value);
+
+			node = document.CreateNode (XmlNodeType.ProcessingInstruction, "a", "b", "c");
+			AssertEquals (String.Empty, ((XmlProcessingInstruction)node).Value);
+
+			node = document.CreateNode (XmlNodeType.SignificantWhitespace, "a", "b", "c");
+			AssertEquals (String.Empty, ((XmlSignificantWhitespace)node).Value);
+
+			node = document.CreateNode (XmlNodeType.Text, "a", "b", "c");
+			AssertEquals (String.Empty, ((XmlText)node).Value);
+
+			node = document.CreateNode (XmlNodeType.Whitespace, "a", "b", "c");
+			AssertEquals (String.Empty, ((XmlWhitespace)node).Value);
+
+			node = document.CreateNode (XmlNodeType.XmlDeclaration, "a", "b", "c");
+			AssertEquals ("version=\"1.0\"", ((XmlDeclaration)node).Value);
+		}
+
+		public void TestCreateNodeNodeTypeName ()
+		{
+			XmlNode node;
+
+			try {
+				node = document.CreateNode ("foo", null, null);
+				Fail ("Expected an ArgumentException to be thrown.");
+			} catch (ArgumentException) {}
+
+			node = document.CreateNode("attribute", "foo", null);
+			AssertEquals (XmlNodeType.Attribute, node.NodeType);
+
+			node = document.CreateNode("cdatasection", null, null);
+			AssertEquals (XmlNodeType.CDATA, node.NodeType);
+
+			node = document.CreateNode("comment", null, null);
+			AssertEquals (XmlNodeType.Comment, node.NodeType);
+
+			node = document.CreateNode("document", null, null);
+			AssertEquals (XmlNodeType.Document, node.NodeType);
+			// TODO: test which constructor this ended up calling,
+			// i.e. reuse underlying NameTable or not?
+
+// TODO: add this back in to test when it's implemented.
+//			node = document.CreateNode("documentfragment", null, null);
+//			AssertEquals (XmlNodeType.DocumentFragment, node.NodeType);
+
+			node = document.CreateNode("documenttype", null, null);
+			AssertEquals (XmlNodeType.DocumentType, node.NodeType);
+
+			node = document.CreateNode("element", "foo", null);
+			AssertEquals (XmlNodeType.Element, node.NodeType);
+
+// TODO: add this back in to test when it's implemented.
+//			node = document.CreateNode("entityreference", "foo", null);
+//			AssertEquals (XmlNodeType.EntityReference, node.NodeType);
+
+			node = document.CreateNode("processinginstruction", null, null);
+			AssertEquals (XmlNodeType.ProcessingInstruction, node.NodeType);
+
+			node = document.CreateNode("significantwhitespace", null, null);
+			AssertEquals (XmlNodeType.SignificantWhitespace, node.NodeType);
+
+			node = document.CreateNode("text", null, null);
+			AssertEquals (XmlNodeType.Text, node.NodeType);
+
+			node = document.CreateNode("whitespace", null, null);
+			AssertEquals (XmlNodeType.Whitespace, node.NodeType);
+		}
+
 		public void TestDocumentElement ()
 		{
 			AssertNull (document.DocumentElement);

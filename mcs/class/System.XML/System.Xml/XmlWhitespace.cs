@@ -34,7 +34,7 @@ namespace System.Xml
 
 		[MonoTODO]
 		public override string Value {
-			get { return null; }
+			get { return Data; }
 			set {}
 		}
 

@@ -150,33 +150,25 @@ namespace System.Xml
 		[MonoTODO]
 		public XmlAttribute CreateAttribute (string name)
 		{
-			int indexOfColon = name.IndexOf (':');
-			
-			if (indexOfColon == -1)
-				return CreateAttribute (String.Empty, name, String.Empty);
-
-			string prefix = name.Substring (0, indexOfColon);
-			string localName = name.Substring (indexOfColon + 1);
-
-			return CreateAttribute (prefix, localName, String.Empty);
+			return CreateAttribute (name, String.Empty);
 		}
 
 		[MonoTODO]
 		public XmlAttribute CreateAttribute (string qualifiedName, string namespaceURI)
 		{
-			int indexOfColon = qualifiedName.IndexOf (':');
-			
-			if (indexOfColon == -1)
-				return CreateAttribute (String.Empty, qualifiedName, String.Empty);
+			string prefix;
+			string localName;
 
-			string prefix = qualifiedName.Substring (0, indexOfColon);
-			string localName = qualifiedName.Substring (indexOfColon + 1);
+			ParseName (qualifiedName, out prefix, out localName);
 
-			return CreateAttribute (prefix, localName, String.Empty);
+			return CreateAttribute (prefix, localName, namespaceURI);
 		}
 
 		public virtual XmlAttribute CreateAttribute (string prefix, string localName, string namespaceURI)
 		{
+			if ((localName == null) || (localName == String.Empty))
+				throw new ArgumentException ("The attribute local name cannot be empty.");
+
 			return new XmlAttribute (prefix, localName, namespaceURI, this);
 		}
 
@@ -210,29 +202,17 @@ namespace System.Xml
 
 		public XmlElement CreateElement (string name)
 		{
-			int indexOfColon = name.IndexOf (':');
-			
-			if (indexOfColon == -1)
-				return CreateElement (String.Empty, name, String.Empty);
-
-			string prefix = name.Substring (0, indexOfColon);
-			string localName = name.Substring (indexOfColon + 1);
-
-			return CreateElement (prefix, localName, String.Empty);
+			return CreateElement (name, String.Empty);
 		}
 
-		[MonoTODO]
 		public XmlElement CreateElement (
 			string qualifiedName, 
 			string namespaceURI)
 		{
-			int indexOfColon = qualifiedName.IndexOf (':');
-			
-			if (indexOfColon == -1)
-				return CreateElement (String.Empty, qualifiedName, namespaceURI);
+			string prefix;
+			string localName;
 
-			string prefix = qualifiedName.Substring (0, indexOfColon);
-			string localName = qualifiedName.Substring (indexOfColon + 1);
+			ParseName (qualifiedName, out prefix, out localName);
 
 			return CreateElement (prefix, localName, namespaceURI);
 		}
@@ -242,6 +222,9 @@ namespace System.Xml
 			string localName,
 			string namespaceURI)
 		{
+			if ((localName == null) || (localName == String.Empty))
+				throw new ArgumentException ("The local name for elements or attributes cannot be null or an empty string.");
+
 			return new XmlElement (prefix, localName, namespaceURI, this);
 		}
 
@@ -257,32 +240,51 @@ namespace System.Xml
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		public virtual XmlNode CreateNode (
 			string nodeTypeString,
 			string name,
 			string namespaceURI)
 		{
-			throw new NotImplementedException ();
+			return CreateNode (GetNodeTypeFromString (nodeTypeString), name, namespaceURI);
 		}
 
-		[MonoTODO]
 		public virtual XmlNode CreateNode (
 			XmlNodeType type,
 			string name,
 			string namespaceURI)
 		{
-			throw new NotImplementedException ();
+			string prefix = null;
+			string localName = name;
+
+			if ((type == XmlNodeType.Attribute) || (type == XmlNodeType.Element) || (type == XmlNodeType.EntityReference))
+				ParseName (name, out prefix, out localName);
+			
+			return CreateNode (type, prefix, localName, namespaceURI);
 		}
 
-		[MonoTODO]
 		public virtual XmlNode CreateNode (
 			XmlNodeType type,
 			string prefix,
 			string name,
 			string namespaceURI)
 		{
-			throw new NotImplementedException ();
+			switch (type) {
+				case XmlNodeType.Attribute: return CreateAttribute (prefix, name, namespaceURI);
+				case XmlNodeType.CDATA: return CreateCDataSection (null);
+				case XmlNodeType.Comment: return CreateComment (null);
+				case XmlNodeType.Document: return new XmlDocument (); // TODO - test to see which constructor to use, i.e. use existing NameTable or not.
+				case XmlNodeType.DocumentFragment: return CreateDocumentFragment ();
+				case XmlNodeType.DocumentType: return CreateDocumentType (null, null, null, null);
+				case XmlNodeType.Element: return CreateElement (prefix, name, namespaceURI);
+				case XmlNodeType.EntityReference: return CreateEntityReference (null);
+				case XmlNodeType.ProcessingInstruction: return CreateProcessingInstruction (null, null);
+				case XmlNodeType.SignificantWhitespace: return CreateSignificantWhitespace (String.Empty);
+				case XmlNodeType.Text: return CreateTextNode (null);
+				case XmlNodeType.Whitespace: return CreateWhitespace (String.Empty);
+				case XmlNodeType.XmlDeclaration: return CreateXmlDeclaration ("1.0", null, null);
+				default: throw new ArgumentOutOfRangeException(String.Format("{0}\nParameter name: {1}",
+							 "Specified argument was out of the range of valid values", type.ToString ()));
+			}
 		}
 
 		public virtual XmlProcessingInstruction CreateProcessingInstruction (
@@ -343,6 +345,26 @@ namespace System.Xml
 		public virtual XmlNodeList GetElementsByTagName (string localName, string namespaceURI)
 		{
 			throw new NotImplementedException();
+		}
+
+		private XmlNodeType GetNodeTypeFromString (string nodeTypeString)
+		{
+			switch (nodeTypeString) {
+				case "attribute": return XmlNodeType.Attribute;
+				case "cdatasection": return XmlNodeType.CDATA;
+				case "comment": return XmlNodeType.Comment;
+				case "document": return XmlNodeType.Document;
+				case "documentfragment": return XmlNodeType.DocumentFragment;
+				case "documenttype": return XmlNodeType.DocumentType;
+				case "element": return XmlNodeType.Element;
+				case "entityreference": return XmlNodeType.EntityReference;
+				case "processinginstruction": return XmlNodeType.ProcessingInstruction;
+				case "significantwhitespace": return XmlNodeType.SignificantWhitespace;
+				case "text": return XmlNodeType.Text;
+				case "whitespace": return XmlNodeType.Whitespace;
+				default:
+					throw new ArgumentException(String.Format("The string doesn't represent any node type : {0}.", nodeTypeString));
+			}
 		}
 
 		[MonoTODO]
@@ -479,6 +501,19 @@ namespace System.Xml
 				NodeRemoving (node, new XmlNodeChangedEventArgs
 					(XmlNodeChangedAction.Remove,
 					node, oldParent, null));
+		}
+
+		private void ParseName (string name, out string prefix, out string localName)
+		{
+			int indexOfColon = name.IndexOf (':');
+			
+			if (indexOfColon != -1) {
+				prefix = name.Substring (0, indexOfColon);
+				localName = name.Substring (indexOfColon + 1);
+			} else {
+				prefix = "";
+				localName = name;
+			}
 		}
 
 		[MonoTODO]

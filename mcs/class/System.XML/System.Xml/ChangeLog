@@ -1,3 +1,22 @@
+2002-04-05  Kral Ferch  <kral_ferch@hotmail.com>
+
+	* XmlAttributes.cs: Added reminder MonoTODO to set NamespaceURI
+	if prefix in constructor is one of the default ones.
+	
+	* XmlCharacterData.cs: Returns String.Empty for Value and Data
+	even when constructed with null.
+	
+	* XmlDeclaration.cs: Value doesn't put encoding or standalone
+	in if they are empty.
+	
+	* XmlDocument.cs: Implemented CreateNode methods and this caused
+	the changes in the other files in this checkin.
+	
+	* XmlProcessingInstruction.cs: Returns String.Empty for Value and Data
+	even when constructed with null.
+	
+	* XmlWhitespace.cs: Changed Value 'get' to return Data.
+
 2002-04-01  Kral Ferch  <kral_ferch@hotmail.com>
 
 	* XmlTextWriter.cs: Impls for WriteEndDocument and WriteFullEndElement.

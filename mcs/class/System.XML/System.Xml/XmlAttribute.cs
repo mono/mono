@@ -25,6 +25,7 @@ namespace System.Xml
 
 		#region Constructor
 
+		[MonoTODO("need to set namespaceURI if prefix is recognized built-in ones like xmlns")]
 		protected internal XmlAttribute (
 			string prefix, 
 			string localName, 

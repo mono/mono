@@ -1,3 +1,7 @@
+2002-04-05  Kral Ferch  <kral_ferch@hotmail.com>
+
+	* XmlDocumentTests.cs: CreateNode tests.
+
 2002-04-01  Kral Ferch  <kral_ferch@hotmail.com>
 
 	* XmlTextWriterTests.cs: Tests for WriteEndDocument and WriteFullEndElement.

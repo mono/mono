@@ -14,27 +14,27 @@ namespace System.Xml
 	public class XmlDeclaration : XmlLinkedNode
 	{
 		string encoding = "UTF-8"; // defaults to UTF-8
-		string standAlone;
+		string standalone;
 		string version;
 
 		protected internal XmlDeclaration (string version, string encoding,
-						   string standAlone, XmlDocument doc)
+						   string standalone, XmlDocument doc)
 			: base (doc)
 		{
+			if (encoding == null)
+				encoding = "";
+
+			if (standalone == null)
+				standalone = "";
+
 			this.version = version;
 			this.encoding = encoding;
-			this.standAlone = standAlone;
+			this.standalone = standalone;
 		}
 
 		public string Encoding  {
-			get {
-				if (encoding == null)
-					return String.Empty;
-				else
-					return encoding;
-			} 
-
-			set { encoding = value ; } // Note: MS' doesn't check this string, should we?
+			get { return encoding; } 
+			set { encoding = (value == null) ? String.Empty : value; }
 		}
 
 		public override string InnerText {
@@ -55,24 +55,28 @@ namespace System.Xml
 		}
 
 		public string Standalone {
-			get {
-				if (standAlone == null)
-					return String.Empty;
-				else
-					return standAlone;
-			}
-
+			get { return standalone; }
 			set {
 				if (value.ToUpper() == "YES")
-					standAlone = "yes";
+					standalone = "yes";
 				if (value.ToUpper() == "NO")
-					standAlone = "no";
+					standalone = "no";
 			}
 		}
 
 		public override string Value {
-			get { return String.Format ("version=\"{0}\" encoding=\"{1}\" standalone=\"{2}\"",
-						    Version, Encoding, Standalone); }
+			get {
+				string formatEncoding = "";
+				string formatStandalone = "";
+
+				if (encoding != String.Empty)
+					formatEncoding = String.Format (" encoding=\"{0}\"", encoding);
+
+				if (standalone != String.Empty)
+					formatStandalone = String.Format (" standalone=\"{0}\"", standalone);
+
+				return String.Format ("version=\"{0}\"{1}{2}", Version, formatEncoding, formatStandalone);
+			}
 			set { ParseInput (value); }
 		}
 
@@ -82,7 +86,7 @@ namespace System.Xml
 
 		public override XmlNode CloneNode (bool deep)
 		{
-			return new XmlDeclaration (Version, Encoding, standAlone, OwnerDocument);
+			return new XmlDeclaration (Version, Encoding, standalone, OwnerDocument);
 		}
 
 		public override void WriteContentTo (XmlWriter w)

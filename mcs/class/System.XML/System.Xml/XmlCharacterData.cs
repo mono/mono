@@ -20,6 +20,9 @@ namespace System.Xml
 		protected internal XmlCharacterData (string data, XmlDocument doc)
 			: base (doc)
 		{
+			if (data == null)
+				data = String.Empty;
+
 			this.data = data;
 		}
 
