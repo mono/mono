@@ -149,6 +149,11 @@ namespace System.Web
 		/// <param name="writer">The TextWriter to capture the output. </param>
 		public void Execute (string path, TextWriter writer)
 		{
+			Execute (path, writer, false);
+		}
+		
+		public void Execute (string path, TextWriter writer, bool preserveQuery)
+		{
 			if (path == null)
 				throw new ArgumentNullException ("path");
 
@@ -177,7 +182,8 @@ namespace System.Web
 			string oldFilePath = request.FilePath;
 			request.SetFilePath (path);
 			string oldQuery = request.QueryStringRaw;
-			request.QueryStringRaw = query;
+			
+			if (!preserveQuery)	request.QueryStringRaw = query;
 			IHttpHandler handler = _Context.ApplicationInstance.CreateHttpHandler (_Context,
 											       request.RequestType,
 											       path,
@@ -292,7 +298,7 @@ namespace System.Web
 				_Context.Request.SetForm (new HttpValueCollection ());
 			}
 
-			Execute (path);
+			Execute (path, null, preserveForm);
 			if (!preserveForm)
 				_Context.Request.SetForm (oldForm);
 
@@ -363,4 +369,3 @@ namespace System.Web
 		}
 	}
 }
-

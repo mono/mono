@@ -1,3 +1,8 @@
+2003-09-04  Lluis Sanchez Gual <lluis@ximian.com>
+
+	* HttpServerUtility.cs: In Transfer(), preserve the query string if
+	  told to do so.
+
 2003-08-29  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HttpApplication.cs: ensure we do all the EndRequest steps. Don't
