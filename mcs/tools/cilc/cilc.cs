@@ -61,9 +61,43 @@ class cilc
 
 	static void AssemblyGen (Assembly a)
 	{
+		//TODO: parse given .h files here and register the type names
+		
 		Type[] types = a.GetTypes ();
+		Hashtable ns_types = new Hashtable ();
 
-		ns = types[0].Namespace;
+		foreach (Type t in types) {
+			if (t.IsNotPublic) {
+				Console.WriteLine ("Ignoring non-public type: " + t.Name);
+				continue;
+			}
+
+			if (!t.IsClass) {
+				Console.WriteLine ("Ignoring unrecognised type: " + t.Name);
+				continue;
+			}
+
+			RegisterCsType (t);
+
+			if (!ns_types.Contains (t.Namespace))
+				ns_types[t.Namespace] = new ArrayList ();
+
+			((ArrayList) ns_types[t.Namespace]).Add (t);
+		}
+
+		namespaces = (string[]) (new ArrayList (ns_types.Keys)).ToArray (typeof (string));
+
+		foreach (DictionaryEntry de in ns_types)
+			NamespaceGen ((string) de.Key, (Type[]) ((ArrayList) de.Value).ToArray (typeof (Type)));
+	}
+
+	static string[] namespaces;
+
+	static void NamespaceGen (string given_ns, Type[] types)
+	{
+		//ns = types[0].Namespace;
+		ns = given_ns;
+		
 		Hindex = new CodeWriter (target_dir + NsToFlat (ns).ToLower () + ".h");
 		Hdecls = new CodeWriter (target_dir + NsToFlat (ns).ToLower () + "-decls.h");
 		Cindex = new CodeWriter (target_dir + NsToFlat (ns).ToLower () + ".c");
@@ -102,23 +136,8 @@ class cilc
 		Cindex.WriteLine ("return assembly;");
 		Cindex.WriteLine ("}");
 
-		//TODO: parse given .h files here and register the type names
 
-		foreach (Type t in types) {
-			if (t.IsNotPublic) {
-				Console.WriteLine ("Ignoring non-public type: " + t.Name);
-				continue;
-			}
-
-			if (!t.IsClass) {
-				Console.WriteLine ("Ignoring unrecognised type: " + t.Name);
-				continue;
-			}
-
-			RegisterCsType (t);
-		}
-
-		foreach (Type t in registered_types)
+		foreach (Type t in types)
 			TypeGen (t);
 
 		Hindex.WriteLine ();
@@ -164,10 +183,12 @@ class cilc
 		H.WriteLine ("#include <mono/metadata/appdomain.h>");
 		H.WriteLine ();
 		
-		if (t.BaseType.Namespace == t.Namespace)
+		if (IsRegistered (t.BaseType))
 			H.WriteLine ("#include \"" + NsToFlat (t.BaseType.Namespace).ToLower () + t.BaseType.Name.ToLower () + ".h\"");
-		
-		H.WriteLine ("#include \"" + NsToFlat (t.Namespace).ToLower () + "-decls.h\"");
+
+		//H.WriteLine ("#include \"" + NsToFlat (t.Namespace).ToLower () + "-decls.h\"");
+		foreach (string ext_ns in namespaces)
+			H.WriteLine ("#include \"" + NsToFlat (ext_ns).ToLower () + "-decls.h\"");
 
 		H.WriteLine ();
 

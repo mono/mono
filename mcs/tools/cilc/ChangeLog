@@ -7,6 +7,7 @@
 	Generate forward type declarations.
 	Use the real type, not MonoObject, for function parameters.
 	Ignore non-public types for now.
+	Handle multiple namespaces in a single assembly.
 
 2004-12-08  Alp Toker  <alp@atoker.com>
 
