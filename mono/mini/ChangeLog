@@ -1,3 +1,13 @@
+
+Tue May 20 16:02:52 CEST 2003 Paolo Molaro <lupus@ximian.com>
+
+	* mini-x86.c, mini.h: introduce a new patching method
+	to support CEE_JMP and tail calls.
+	* mini.c: obey tail.call. Don't precompile methods target
+	of CEE_JMP.
+	* tramp-x86.c: new trampoline code to handle methods
+	reached through a jump.
+
 2003-05-20  Dietmar Maurer  <dietmar@ximian.com>
 
 	* mini-x86.c (mono_arch_get_allocatable_int_vars): allocate 8/16
