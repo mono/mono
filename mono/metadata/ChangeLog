@@ -1,3 +1,8 @@
+2005-03-16  Zoltan Varga  <vargaz@freemail.hu>
+
+	* reflection.c (mono_image_get_method_info): Encode best_fit_mapping
+	and throw_on_unmappable_char attributes.
+
 2005-03-13  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* process.c: Fix buffer length in ves_icall_System_Diagnostics_Process
