@@ -290,23 +290,19 @@ namespace MonoTests.System.IO
                 	}                	
 		}
 
-		[Test]
-#if (!NET_1_1)
-		[ExpectedException (typeof (IOException))]
-#endif
+		[Test, ExpectedException (typeof (IOException))]
 		public void CtorIOException2 ()
 		{
 			FileStream stream = null;
                 	try {
-                		stream = new FileStream (new IntPtr (12), FileAccess.Read);
+                		stream = new FileStream (new IntPtr (Int32.MaxValue), FileAccess.Read);
                 	} finally {
 				if (stream != null)
 					stream.Close ();
                 	}
 		}
 
-		[Test]
-		[ExpectedException(typeof(IOException))]
+		[Test, ExpectedException(typeof(IOException))]
 		public void CtorIOException ()
 		{			
 			string path = TempFolder + "/CTorIOException.Test";

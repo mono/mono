@@ -1,3 +1,8 @@
+2003-12-17  Nick Drochak <ndrochak@gol.com>
+
+	* FileStreamTest.cs: Ok, it wasn't a 1.1 thing.  The test simply would
+	fail randomly because location 12 was sometimes a file handle.
+
 2003-12-16  Nick Drochak <ndrochak@gol.com>
 
 	* FileStreamTest.cs: Exception not thrown in .NET 1.1.
