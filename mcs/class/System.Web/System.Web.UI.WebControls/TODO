@@ -35,7 +35,7 @@ All Classes, Interfaces, Structures, Delegates and Enumerations
 CustomValidator
 & DataGrid
 DataGridColumn
-DataGridColumnCollection
+* DataGridColumnCollection
 * DataGridCommandEventArgs
 & DataGridItem
 * DataGridItemCollection
@@ -47,7 +47,7 @@ DataKeyCollection
 & DataList
 * DataListCommandEventArgs
 DataListItem
-DataListItemCollecton
+* DataListItemCollecton
 * DataListItemEventArgs
 * DayRenderEventArgs
 * DropDownList
@@ -72,22 +72,22 @@ EditCommandColumn
 * Literal
 * LiteralControlBuilder
 * MonthChangedEventArgs
-PagedDataSource
+* PagedDataSource
 * Panel
 * PlaceHolder
 * PlaceHolderControlBuilder
 * RadioButton
 & RadioButtonList
-RangeValidator
-RegularExpressionValidator
+* RangeValidator
+* RegularExpressionValidator
 Repeater
 * RepeaterCommandEventArgs
 & RepeaterItem
-RepeaterItemCollection
+* RepeaterItemCollection
 * RepeaterItemEventArgs
 & RepeatInfo
 * RequiredFieldValidator
-SelectedDatesCollection
+* SelectedDatesCollection
 * ServerValidateEventArgs
 * Style
 * Table

@@ -1,3 +1,27 @@
+2002-03-03      Gaurav Vaish <gvaish@iitk.ac.in>
+
+	* SelectedDatesCollection.cs  - Completed.
+	* PagedDataSource.cs          - Completed. Pathetically nice class.
+	* RegularExpressionValidator.cs
+	                              - Completed. Ridiculously small and
+	            annoyinglyc crazy-driving class, basically the method
+	            EvaluateIsValid().
+	* RangeValidator.cs           - Completed.
+
+2002-03-02      Gaurav Vaish <gvaish@iitk.ac.in>
+
+	* RepeaterItemCollection.cs   - Completed.
+	            I love *Collection classes. I am planning to make a
+	            program that will generate a *Collection class. It's so
+	            simple and the same. ;-)
+	* DataGridColumnCollection.cs - Completed.
+	            ... except probably for *ColumnCollection classes, where
+	            you have to put in some more effort. Still, these class
+	            generation can be automated.
+	* DataListItemCollection.cs   - Completed.
+	            See, how easily, in less than a quarter of a minute, I
+	            completed this class - manually. Copy-Paste/Cut-Replace.
+
 2002-02-21      Gaurav Vaish <gvaish@iitk.ac.in>
 
 	* DataGrid.cs                 - Following methods implemented:
@@ -9,8 +33,8 @@
 
 2002-02-08      Gaurav Vaish <gvaish@iitk.ac.in>
 
-	* DataGrid.cs                 - Initial Implementation. Worked primarily
-	            with some properties.
+	* DataGrid.cs                 - Initial Implementation. Worked
+	            primarily with some properties.
 
 2002-02-07      Gaurav Vaish <gvaish@iitk.ac.in>
 
@@ -26,7 +50,8 @@
 2002-02-02      Gaurav Vaish <gvaish@iitk.ac.in>
 
 	* ListBox.cs                  - Supports the following properties:
-	           BorderColor, BorderStyle, BorderWidth, Rows, SelectionMode, ToolTip,
+	           BorderColor, BorderStyle, BorderWidth, Rows, SelectionMode,
+	           ToolTip.
 	          Methods:
 	           AddAttributesToRender(HtmlTextWriter), OnPreRender(EventArgs),
 	           RenderContents(HtmlTextWriter)
@@ -36,24 +61,28 @@
 
 	* TargetConverter.cs          - Completed
 	* TemplateColumn.cs           - Completed
-	* DataList.cs                 - Corrected the get-er methods for the *Style objects.
-	         Corrected the get/set-er methods for ViewState related objects.
+	* DataList.cs                 - Corrected the get-er methods for the
+	         *Style objects. Corrected the get/set-er methods for ViewState
+	           related objects.
 	         Addded support for properties:
 	           GridLines, HeaderStyle, HeaderTemplate, ItemStyle, ItemTemplate,
-	           RepeatColumns, RepeatDirection, RepeatLayout, SelectedIndex, SelectedItem,
-	           SelectedItemStyle, SelectedItemTemplate, SeparatorStyle, SeparatorItemTemplate.
+	           RepeatColumns, RepeatDirection, RepeatLayout, SelectedIndex,
+	           SelectedItem, SelectedItemStyle, SelectedItemTemplate,
+	           SeparatorStyle, SeparatorItemTemplate.
 	         Events:
-	           CancelCommand, DeleteCommand, EditCommand, ItemCommand, ItemCreated,
-	           ItemDataBound, UpdateCommand.
+	           CancelCommand, DeleteCommand, EditCommand, ItemCommand,
+	           ItemCreated, ItemDataBound, UpdateCommand.
 	         Methods:
-	           CreateControlStyle(), LoadViewState(object), SaveViewState(), TrackViewState
+	           CreateControlStyle(), LoadViewState(object),
+	           SaveViewState(), TrackViewState
 	         Event handlers:
-	           OnBubbleEvent, OnCancelCommand, OnDeleteCommand, OnEditCommand, OnItemCommand,
-	           OnItemCreated, OnItemDataBound, OnUpdateCommand
+	           OnBubbleEvent, OnCancelCommand, OnDeleteCommand,
+	           OnEditCommand, OnItemCommand, OnItemCreated,
+	           OnItemDataBound, OnUpdateCommand
 	         Added dummy methods for some undocumented methods:
 	           CreateControlHierarchy(bool), CreateItem(int, ListItemType),
-	           CreateItem(int, ListItemType, bool, object), PrepareControlHierarchy(),
-	           InitializeItem(DataListItem)
+	           CreateItem(int, ListItemType, bool, object),
+	           PrepareControlHierarchy(), InitializeItem(DataListItem)
 	* ListBox.cs                  - Started working.
 
 
@@ -151,7 +180,8 @@
 	* ListItem.cs                 - Completed
 	* ListItemCollection.cs       - Completed
 
-  Made the first successful build of System.Web.dll that included System.Web.UI.WebControls!
+  Made the first successful build of System.Web.dll that included
+  System.Web.UI.WebControls!
 
 2001-12-20	Gaurav Vaish <gvaish@iitk.ac.in>
 
@@ -163,7 +193,8 @@
 	ListItem.cs                 - Initial Implementation
 	Style.cs                    - Initial Implementation
 
-  Right now I am in a total mood to do a successful build. Creating so many classes, completing classes in System.Web System.Web.UI namespaces.
+  Right now I am in a total mood to do a successful build. Creating so many
+  classes, completing classes in System.Web System.Web.UI namespaces.
 
 2001-12-18	Gaurav Vaish <gvaish@iitk.ac.in>
 
@@ -270,4 +301,4 @@
 
 
 
-// File Created 2001:11:13
+// File Created 2001-11-13
