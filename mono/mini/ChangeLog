@@ -1,5 +1,12 @@
 2004-11-08  Zoltan Varga  <vargaz@freemail.hu>
 
+	* exceptions-x86.c (throw_exception): Fix warnings.
+
+	* mini-x86.h mini-x86.c cpu-pentium.md exceptions-x86.c: Add support 
+	for OP_RETHROW.
+
+2004-11-08  Zoltan Varga  <vargaz@freemail.hu>
+
 	* exceptions-sparc.c (get_throw_exception): Really fix this.
 
 2004-11-07  Ben Maurer  <bmaurer@ximian.com>
