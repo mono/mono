@@ -18,17 +18,14 @@ namespace System.CodeDom.Compiler {
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		protected abstract string CompilerName {
 			get;
 		}
 	
-		[MonoTODO]
 		protected abstract string FileExtension {
 			get;
 		}
 
-		[MonoTODO]
 		protected abstract string CmdArgsFromParameters (
 			CompilerParameters options);
 
@@ -133,7 +130,6 @@ namespace System.CodeDom.Compiler {
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		protected abstract void ProcessCompilerOutputLine(
 			CompilerResults results, string line);
 
