@@ -4,30 +4,27 @@
 // Author:
 //	Sebastien Pouliot (spouliot@motus.com)
 //
-// (C) 2002 Motus Technologies Inc. (http://www.motus.com)
+// (C) 2002, 2003 Motus Technologies Inc. (http://www.motus.com)
 //
 
 using NUnit.Framework;
 using System;
 using System.Security.Cryptography;
 
-namespace MonoTests.System.Security.Cryptography
-{
+namespace MonoTests.System.Security.Cryptography {
 
 // References:
 // a.	PKCS#5: Password-Based Cryptography Standard 
 //	http://www.rsasecurity.com/rsalabs/pkcs/pkcs-5/index.html
 
-public class PasswordDeriveBytesTest : TestCase 
-{
-	protected override void SetUp () {}
-
-	protected override void TearDown () {}
+public class PasswordDeriveBytesTest : TestCase {
 
 	public void AssertEquals (string msg, byte[] array1, byte[] array2)
 	{
 		AllTests.AssertEquals (msg, array1, array2);
 	}
+
+	static byte[] salt = { 0xDE, 0xAD, 0xC0, 0xDE };
 
 	// generate the key up to HashSize and reset between operations
 	public void ShortRun(string msg, PasswordDeriveBytes pd, byte[] finalKey)
@@ -57,6 +54,212 @@ public class PasswordDeriveBytesTest : TestCase
 			pass = pd.GetBytes (bloc);
 		}
 		AssertEquals (msg, pass, finalKey);
+	}
+
+	public void Run (string password, byte[] salt, string hashname, int iterations, int getbytes, int lastFourBytes) 
+	{
+		PasswordDeriveBytes pd = new PasswordDeriveBytes (password, salt, hashname, iterations);
+		byte[] key = pd.GetBytes (getbytes);
+		string msg = "[pwd=" + password;
+		msg += ", salt=" + ((salt == null) ? "null" : salt.Length.ToString ());
+		msg += ", hash=" + hashname;
+		msg += ", iter=" + iterations;
+		msg += ", get=" + getbytes + "]";
+		AssertEquals (msg, lastFourBytes, BitConverter.ToInt32 (key, key.Length - 4));
+	}
+
+	public void TestTooShort () 
+	{
+		PasswordDeriveBytes pd = new PasswordDeriveBytes ("password", null, "SHA1", 1);
+		try {
+			byte[] key = pd.GetBytes (0);
+			Fail ("Expected IndexOutOfRangeException but got none");
+		}
+		catch (IndexOutOfRangeException) {
+		}
+		catch (Exception e) {
+			Fail ("Expected IndexOutOfRangeException but got: " + e.ToString ());
+		}
+	}
+
+	public void TooLong (string hashName, int size, int lastFourBytes) 
+	{
+		PasswordDeriveBytes pd = new PasswordDeriveBytes ("toolong", null, hashName, 1);
+		
+		// this should work (we check the last four devired bytes to be sure)
+		byte[] key = pd.GetBytes (size);
+		AssertEquals ("Last 4 bytes", lastFourBytes, BitConverter.ToInt32 (key, size - 4));
+
+		// but we can't get another byte from it!
+		try {
+			key = pd.GetBytes (1);
+			Fail ("Expected CryptographicException but got none");
+		}
+		catch (CryptographicException) {
+			// LAMESPEC: not limit is documented
+		}
+		catch (Exception e) {
+			Fail ("Expected CryptographicException but got " + e.ToString ());
+		}
+	}
+
+	public void TestTooLong () 
+	{
+		// 1000 times hash length is the maximum
+		TooLong ("MD5",    16000, 1135777886);
+		TooLong ("SHA1",   20000, -1167918035);
+		TooLong ("SHA256", 32000, -358766048);
+		TooLong ("SHA384", 48000, 1426370534);
+		TooLong ("SHA512", 64000, -1763233543);
+	}
+
+	public void TestOneIteration () 
+	{
+		// (1) size of hash, (2) size of 2 hash
+		Run ("password", salt, "MD5",    1, 16, 986357363);
+		Run ("monomono", null, "MD5",    1, 32, -1092059875);
+		Run ("password", salt, "SHA1",   1, 20, -1251929751);
+		Run ("monomono", null, "SHA1",   1, 40, -1148594972);
+		Run ("password", salt, "SHA256", 1, 32, -1106908309);
+		Run ("monomono", null, "SHA256", 1, 64, 1243724695);
+		Run ("password", salt, "SHA384", 1, 48, 1338639872);
+		Run ("monomono", null, "SHA384", 1, 96, -1974067932);
+		Run ("password", salt, "SHA512", 1, 64, 998927776);
+		Run ("monomono", null, "SHA512", 1, 128, -1082987985);
+	}
+
+	public void TestSalt () 
+	{
+		Run ("password", salt, "MD5",  10, 10, -1174247292);
+		Run ("monomono", salt, "SHA1", 20, 20, 622814236);
+		Run ("password", salt, "MD5",  30, 30, 1491759020);
+		Run ("monomono", salt, "SHA1", 40, 40, 1186751819);
+		Run ("password", salt, "MD5",  50, 50, -1416348895);
+		Run ("monomono", salt, "SHA1", 60, 60, -1167799882);
+		Run ("password", salt, "MD5",  70, 70, -695745351);
+		Run ("monomono", salt, "SHA1", 80, 80, 598766793);
+		Run ("password", salt, "MD5",  90, 90, -906351079);
+		Run ("monomono", salt, "SHA1", 100, 100, 1247157997);
+	}
+
+	public void TestNoSalt () 
+	{
+		Run ("password", null, "MD5",  10, 10, -385488886);
+		Run ("password", null, "SHA1", 20, 20, -385953596);
+		Run ("password", null, "MD5",  30, 30, -669295228);
+		Run ("password", null, "SHA1", 40, 40, -1921654064);
+		Run ("password", null, "MD5",  50, 50, -1664099354);
+		Run ("monomono", null, "SHA1", 60, 60, -1988511363);
+		Run ("monomono", null, "MD5",  70, 70, -1326415479);
+		Run ("monomono", null, "SHA1", 80, 80, 158880373);
+		Run ("monomono", null, "MD5",  90, 90,  532527918);
+		Run ("monomono", null, "SHA1", 100, 100, 769250758);
+	}
+
+	public void TestMD5 () 
+	{
+		const string hashName = "MD5";
+		// getbytes less than hash size
+		Run ("password", null, hashName, 10, 10, -385488886);
+		// getbytes equal to hash size
+		Run ("password", salt, hashName, 20, 16, -470982134);
+		// getbytes more than hash size
+		Run ("password", null, hashName, 30, 30, -669295228);
+		Run ("password", salt, hashName, 40, 40, 892279589);
+		Run ("password", null, hashName, 50, 50, -1664099354);
+		Run ("monomono", salt, hashName, 60, 60, -2050574033);
+		Run ("monomono", null, hashName, 70, 70, -1326415479);
+		Run ("monomono", salt, hashName, 80, 80, 2047895994);
+		Run ("monomono", null, hashName, 90, 90, 532527918);
+		Run ("monomono", salt, hashName, 100, 100, 1522243696);
+	}
+
+	public void TestSHA1 () 
+	{
+		const string hashName = "SHA1";
+		// getbytes less than hash size
+		Run ("password", null, hashName, 10, 10, -852142057);
+		// getbytes equal to hash size
+		Run ("password", salt, hashName, 20, 20, -1096621819);
+		// getbytes more than hash size
+		Run ("password", null, hashName, 30, 30, 1748347042);
+		Run ("password", salt, hashName, 40, 40, 900690664);
+		Run ("password", null, hashName, 50, 50, 2125027038);
+		Run ("monomono", salt, hashName, 60, 60, -1167799882);
+		Run ("monomono", null, hashName, 70, 70, -1967623713);
+		Run ("monomono", salt, hashName, 80, 80, 598766793);
+		Run ("monomono", null, hashName, 90, 90, -1754629926);
+		Run ("monomono", salt, hashName, 100, 100, 1247157997);
+	}
+
+	public void TestSHA256 () 
+	{
+		const string hashName = "SHA256";
+		// getbytes less than hash size
+		Run ("password", null, hashName, 10, 10, -1636557322);
+		Run ("password", salt, hashName, 20, 20, -1403130075);
+		// getbytes equal to hash size
+		Run ("password", null, hashName, 30, 32, -1013167039);
+		// getbytes more than hash size
+		Run ("password", salt, hashName, 40, 40, 379553148);
+		Run ("password", null, hashName, 50, 50, 1031928292);
+		Run ("monomono", salt, hashName, 60, 60, 1933836953);
+		Run ("monomono", null, hashName, 70, 70, -956782587);
+		Run ("monomono", salt, hashName, 80, 80, 1239391711);
+		Run ("monomono", null, hashName, 90, 90, -872090432);
+		Run ("monomono", salt, hashName, 100, 100, -591569127);
+	}
+
+	public void TestSHA384 () 
+	{
+		const string hashName = "SHA384";
+		// getbytes less than hash size
+		Run ("password", null, hashName, 10, 10, 323393534);
+		Run ("password", salt, hashName, 20, 20, -2034683704);
+		Run ("password", null, hashName, 30, 32, 167978389);
+		Run ("password", salt, hashName, 40, 40, 2123410525);
+		// getbytes equal to hash size
+		Run ("password", null, hashName, 50, 48, -47538843);
+		// getbytes more than hash size
+		Run ("monomono", salt, hashName, 60, 60, -118610774);
+		Run ("monomono", null, hashName, 70, 70, 772360425);
+		Run ("monomono", salt, hashName, 80, 80, -1018881215);
+		Run ("monomono", null, hashName, 90, 90, -1585583772);
+		Run ("monomono", salt, hashName, 100, 100, -821501990);
+	}
+
+	public void TestSHA512 () 
+	{
+		const string hashName = "SHA512";
+		// getbytes less than hash size
+		Run ("password", null, hashName, 10, 10, 708870265);
+		Run ("password", salt, hashName, 20, 20, 23889227);
+		Run ("password", null, hashName, 30, 32, 1718904507);
+		Run ("password", salt, hashName, 40, 40, 979228711);
+		Run ("password", null, hashName, 50, 48, 1554003653);
+		// getbytes equal to hash size
+		Run ("monomono", salt, hashName, 60, 64, 1251099126);
+		// getbytes more than hash size
+		Run ("monomono", null, hashName, 70, 70, 1021441810);
+		Run ("monomono", salt, hashName, 80, 80, 640059310);
+		Run ("monomono", null, hashName, 90, 90, 1178147201);
+		Run ("monomono", salt, hashName, 100, 100, 206423887);
+	}
+
+	// get one block after the other
+	public void TestOneByOne () 
+	{
+		byte[] key = { 0x91, 0xDA, 0xF9, 0x9D, 0x7C, 0xA9, 0xB4, 0x42, 0xB8, 0xD9, 0x45, 0xAB, 0x69, 0xEE, 0x12, 0xBC, 0x48, 0xDD, 0x38, 0x74 };
+		PasswordDeriveBytes pd = new PasswordDeriveBytes ("password", salt, "SHA1", 1);
+		string msg = "PKCS#5-Long password salt SHA1 (1)";
+
+		int bloc = key.Length;
+		int iter = (int) ((1000 + bloc - 1) / bloc);
+		byte[] pass = null;
+		for (int i=0; i < iter; i++) {
+			pass = pd.GetBytes (bloc);
+		}
+		AssertEquals (msg, pass, key);
 	}
 
 	public void TestSHA1SaltShortRun ()

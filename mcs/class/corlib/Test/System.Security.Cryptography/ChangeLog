@@ -1,3 +1,10 @@
+2003-02-03  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* PasswordDeriveBytesTest.cs: Added some new tests to complete 
+	coverage.
+	* RSAPKCS1SignatureDeformatterTest.cs: Added test for null and 
+	invalid	hash algorithm.
+
 2003-01-19  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* HMACSHA1Test.cs: Added tests for constructors.

@@ -4,7 +4,7 @@
 // Author:
 //	Sebastien Pouliot (spouliot@motus.com)
 //
-// (C) 2002 Motus Technologies Inc. (http://www.motus.com)
+// (C) 2002, 2003 Motus Technologies Inc. (http://www.motus.com)
 //
 
 using NUnit.Framework;
@@ -84,6 +84,27 @@ public class RSAPKCS1SignatureDeformatterTest : TestCase {
 		RSAPKCS1SignatureDeformatter fmt;
 		fmt = new RSAPKCS1SignatureDeformatter ();
 
+		// null hash
+		try {
+			fmt.SetHashAlgorithm (null);
+			Fail ("Expected ArgumentNullException but got none");
+		}
+		catch (ArgumentNullException) {
+			// this was expected
+		}
+		catch (Exception e) {
+			Fail ("Expected ArgumentNullException but got: " + e.ToString ());
+		}
+
+		// invalid hash algo
+		try {
+			fmt.SetHashAlgorithm ("MD3");
+		}
+		catch (Exception e) {
+			Fail ("Unexpected exception: " + e.ToString ());
+		}
+
+		// support hash algorithms
 		try {
 			fmt.SetHashAlgorithm ("SHA1");
 		}
