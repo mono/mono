@@ -168,6 +168,68 @@ namespace MonoTests.System.Text.RegularExpressions {
 				"And eating curds and whey\n" +
 				"Until an evil sorcer came along\n" +
 				"And chased my dragon friends away";
+
+		[Test]
+		public void Matches7 ()
+		{
+			Regex nonwhite = new Regex ("(?<nonwhite>\\S+)");
+
+			MatchCollection mc = nonwhite.Matches ("ab 12 cde 456 fghi .,\niou");
+
+			AssertEquals ("#m01", 7, mc.Count);
+			AssertEquals ("#m02", "ab", mc [0].Value);
+			AssertEquals ("#m03", "12", mc [1].Value);
+			AssertEquals ("#m04", "cde", mc [2].Value);
+			AssertEquals ("#m05", "456", mc [3].Value);
+			AssertEquals ("#m06", "fghi", mc [4].Value);
+			AssertEquals ("#m07", ".,", mc [5].Value);
+			AssertEquals ("#m08", "iou", mc [6].Value);
+		}
+
+		[Test]
+		public void Matches8 ()
+		{
+			Regex nonwhite = new Regex ("(?<nonwhite>\\S+)", RegexOptions.RightToLeft);
+
+			MatchCollection mc = nonwhite.Matches ("ab 12 cde 456 fghi .,\niou");
+
+			AssertEquals ("#m01", 7, mc.Count);
+			AssertEquals ("#m02", "ab", mc [6].Value);
+			AssertEquals ("#m03", "12", mc [5].Value);
+			AssertEquals ("#m04", "cde", mc [4].Value);
+			AssertEquals ("#m05", "456", mc [3].Value);
+			AssertEquals ("#m06", "fghi", mc [2].Value);
+			AssertEquals ("#m07", ".,", mc [1].Value);
+			AssertEquals ("#m08", "iou", mc [0].Value);
+		}
+
+		[Test]
+		public void Matches9 ()
+		{
+			Regex nondigit = new Regex ("(?<nondigit>\\D+)");
+
+			MatchCollection mc = nondigit.Matches ("ab0cd1ef2");
+
+			AssertEquals ("#m01", 3, mc.Count);
+			AssertEquals ("#m02", "ab", mc [0].Value);
+			AssertEquals ("#m02", "cd", mc [1].Value);
+			AssertEquals ("#m02", "ef", mc [2].Value);
+			
+		}
+
+		[Test]
+		public void Matches10 ()
+		{
+			Regex nondigit = new Regex ("(?<nondigit>\\D+)", RegexOptions.RightToLeft);
+
+			MatchCollection mc = nondigit.Matches ("ab0cd1ef2");
+
+			AssertEquals ("#m01", 3, mc.Count);
+			AssertEquals ("#m02", "ab", mc [2].Value);
+			AssertEquals ("#m02", "cd", mc [1].Value);
+			AssertEquals ("#m02", "ef", mc [0].Value);
+			
+		}
 	}
 }
 
