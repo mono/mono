@@ -57,6 +57,7 @@ namespace Mono.Security.Cryptography {
 		private int FeedBackByte;
 		private int FeedBackIter;
 		private bool m_disposed = false;
+		private bool lastBlock;
 
 		public SymmetricTransform (SymmetricAlgorithm symmAlgo, bool encryption, byte[] rgbIV) 
 		{
@@ -252,7 +253,19 @@ namespace Mono.Security.Cryptography {
 			else
 				full = 1;
 
+			if (!encrypt)
+				full--;
+
 			int total = 0;
+
+			if (lastBlock) {
+				Transform (workBuff, workout);
+				Buffer.BlockCopy (workout, 0, outputBuffer, outputOffset, BlockSizeByte);
+				outputOffset += BlockSizeByte;
+				total += BlockSizeByte;
+				lastBlock = false;
+			}
+
 			for (int i = 0; i < full; i++) {
 				Buffer.BlockCopy (inputBuffer, offs, workBuff, 0, BlockSizeByte);
 				Transform (workBuff, workout);
@@ -260,6 +273,11 @@ namespace Mono.Security.Cryptography {
 				offs += BlockSizeByte;
 				outputOffset += BlockSizeByte;
 				total += BlockSizeByte;
+			}
+
+			if (!encrypt) {
+				Buffer.BlockCopy (inputBuffer, offs, workBuff, 0, BlockSizeByte);
+				lastBlock = true;
 			}
 
 			return total;
@@ -324,13 +342,24 @@ namespace Mono.Security.Cryptography {
 				throw new CryptographicException ("Invalid input block size.");
 
 			int total = inputCount;
+			if (lastBlock)
+				total += BlockSizeByte;
+
 			byte[] res = new byte [total];
 			int outputOffset = 0;
+
 			while (inputCount > 0) {
-				InternalTransformBlock (inputBuffer, inputOffset, BlockSizeByte, res, outputOffset);
+				int len = InternalTransformBlock (inputBuffer, inputOffset, BlockSizeByte, res, outputOffset);
 				inputOffset += BlockSizeByte;
-				outputOffset += BlockSizeByte;
+				outputOffset += len;
 				inputCount -= BlockSizeByte;
+			}
+
+			if (lastBlock) {
+				Transform (workBuff, workout);
+				Buffer.BlockCopy (workout, 0, res, outputOffset, BlockSizeByte);
+				outputOffset += BlockSizeByte;
+				lastBlock = false;
 			}
 
 			switch (algo.Padding) {

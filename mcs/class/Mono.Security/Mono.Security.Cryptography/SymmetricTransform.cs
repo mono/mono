@@ -9,6 +9,29 @@
 // (C) 2004 Novell (http://www.novell.com)
 //
 
+//
+// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+//
+// Permission is hereby granted, free of charge, to any person obtaining
+// a copy of this software and associated documentation files (the
+// "Software"), to deal in the Software without restriction, including
+// without limitation the rights to use, copy, modify, merge, publish,
+// distribute, sublicense, and/or sell copies of the Software, and to
+// permit persons to whom the Software is furnished to do so, subject to
+// the following conditions:
+// 
+// The above copyright notice and this permission notice shall be
+// included in all copies or substantial portions of the Software.
+// 
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+// NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+// LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+// OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+//
+
 using System;
 using System.Security.Cryptography;
 
@@ -34,6 +57,7 @@ namespace Mono.Security.Cryptography {
 		private int FeedBackByte;
 		private int FeedBackIter;
 		private bool m_disposed = false;
+		private bool lastBlock;
 
 		public SymmetricTransform (SymmetricAlgorithm symmAlgo, bool encryption, byte[] rgbIV) 
 		{
@@ -229,7 +253,19 @@ namespace Mono.Security.Cryptography {
 			else
 				full = 1;
 
+			if (!encrypt)
+				full--;
+
 			int total = 0;
+
+			if (lastBlock) {
+				Transform (workBuff, workout);
+				Buffer.BlockCopy (workout, 0, outputBuffer, outputOffset, BlockSizeByte);
+				outputOffset += BlockSizeByte;
+				total += BlockSizeByte;
+				lastBlock = false;
+			}
+
 			for (int i = 0; i < full; i++) {
 				Buffer.BlockCopy (inputBuffer, offs, workBuff, 0, BlockSizeByte);
 				Transform (workBuff, workout);
@@ -237,6 +273,11 @@ namespace Mono.Security.Cryptography {
 				offs += BlockSizeByte;
 				outputOffset += BlockSizeByte;
 				total += BlockSizeByte;
+			}
+
+			if (!encrypt) {
+				Buffer.BlockCopy (inputBuffer, offs, workBuff, 0, BlockSizeByte);
+				lastBlock = true;
 			}
 
 			return total;
@@ -301,13 +342,24 @@ namespace Mono.Security.Cryptography {
 				throw new CryptographicException ("Invalid input block size.");
 
 			int total = inputCount;
+			if (lastBlock)
+				total += BlockSizeByte;
+
 			byte[] res = new byte [total];
 			int outputOffset = 0;
+
 			while (inputCount > 0) {
-				InternalTransformBlock (inputBuffer, inputOffset, BlockSizeByte, res, outputOffset);
+				int len = InternalTransformBlock (inputBuffer, inputOffset, BlockSizeByte, res, outputOffset);
 				inputOffset += BlockSizeByte;
-				outputOffset += BlockSizeByte;
+				outputOffset += len;
 				inputCount -= BlockSizeByte;
+			}
+
+			if (lastBlock) {
+				Transform (workBuff, workout);
+				Buffer.BlockCopy (workout, 0, res, outputOffset, BlockSizeByte);
+				outputOffset += BlockSizeByte;
+				lastBlock = false;
 			}
 
 			switch (algo.Padding) {

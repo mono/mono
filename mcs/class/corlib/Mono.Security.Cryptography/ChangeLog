@@ -1,3 +1,10 @@
+2004-06-23  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* SymmetricTransform.cs: Reduce by one the number of block when 
+	decrypting. This operation was in CryptoStream before but is only
+	required for decryption (which CryptoStream can't know). 
+	Fix bug #60573.
+
 2004-05-27  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* SymmetricTransform.cs: Fixed possible integer overflow. Added 
