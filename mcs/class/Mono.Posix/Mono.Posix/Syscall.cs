@@ -205,6 +205,9 @@ namespace Mono.Posix {
 		[DllImport ("libc", SetLastError=true)]
 		public static extern int unlink (string path);
 
+		[DllImport ("libc", SetLastError=true)]
+		public static extern int symlink (string oldpath, string newpath);
+		
 		// TODO: execve
 
 		[DllImport ("libc", SetLastError=true)]
