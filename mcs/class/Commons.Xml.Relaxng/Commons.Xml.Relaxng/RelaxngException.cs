@@ -40,7 +40,7 @@ namespace Commons.Xml.Relaxng
 {
 	public class RelaxngException : Exception
 	{
-		string debugXml;
+//		string debugXml;
 
 		public RelaxngException () : base () {}
 		public RelaxngException (string message) : base (message) {}
@@ -49,7 +49,7 @@ namespace Commons.Xml.Relaxng
 		internal RelaxngException (string message, RdpPattern invalidatedPattern)
 			: base (message)
 		{
-			debugXml = RdpUtil.DebugRdpPattern (invalidatedPattern, new Hashtable ());
+//			debugXml = RdpUtil.DebugRdpPattern (invalidatedPattern, new Hashtable ());
 		}
 	}
 
