@@ -12,7 +12,7 @@ using System;
 using System.IO;
 using System.Reflection;
 using System.Collections;
-using System.Security.Cryptography;
+using Mono.Xml;
 
 namespace System.Runtime.Remoting
 {	

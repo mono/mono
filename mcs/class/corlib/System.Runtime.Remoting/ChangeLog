@@ -1,3 +1,7 @@
+2003-02-08  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* RemotingConfiguration.cs: Changed using to Mono.Xml for MiniParser.
+
 2003-02-07 Patrik Torstensson
 
 	* RemotingServices.cs: Always marshal an object in GetObjectData
