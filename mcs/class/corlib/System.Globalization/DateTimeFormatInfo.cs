@@ -495,41 +495,51 @@ namespace System.Globalization
 		}
 		
 		// LAMESPEC: this is not in ECMA specs
-		[MonoTODO ("Not complete depending on GetAllDateTimePatterns(char); Order of the values are not confirmed")]
+		[MonoTODO ("Not complete depending on GetAllDateTimePatterns(char)")]
 		public string[] GetAllDateTimePatterns()
 		{
-			Hashtable table = new Hashtable ();
-			foreach (string s in GetAllDateTimePatterns ('G'))
-				table [s] = s;
-			foreach (string s in GetAllDateTimePatterns ('g'))
-				table [s] = s;
-			foreach (string s in GetAllDateTimePatterns ('F'))
-				table [s] = s;
-			foreach (string s in GetAllDateTimePatterns ('f'))
-				table [s] = s;
-			foreach (string s in GetAllDateTimePatterns ('D'))
-				table [s] = s;
+			ArrayList al = new ArrayList ();
 			foreach (string s in GetAllDateTimePatterns ('d'))
-				table [s] = s;
-			foreach (string s in GetAllDateTimePatterns ('T'))
-				table [s] = s;
-			foreach (string s in GetAllDateTimePatterns ('t'))
-				table [s] = s;
+				al.Add (s);
+			foreach (string s in GetAllDateTimePatterns ('D'))
+				al.Add (s);
+			foreach (string s in GetAllDateTimePatterns ('g'))
+				al.Add (s);
+			foreach (string s in GetAllDateTimePatterns ('G'))
+				al.Add (s);
+			foreach (string s in GetAllDateTimePatterns ('f'))
+				al.Add (s);
+			foreach (string s in GetAllDateTimePatterns ('F'))
+				al.Add (s);
+			// Yes, that is very meaningless, but that is what MS
+			// is doing (LAMESPEC: Since it is documented that
+			// 'M' and 'm' are equal, they should not cosider
+			// that there is a possibility that 'M' and 'm' are
+			// different.)
+			foreach (string s in GetAllDateTimePatterns ('m'))
+				al.Add (s);
 			foreach (string s in GetAllDateTimePatterns ('M'))
-				table [s] = s;
-			foreach (string s in GetAllDateTimePatterns ('Y'))
-				table [s] = s;
+				al.Add (s);
+			foreach (string s in GetAllDateTimePatterns ('r'))
+				al.Add (s);
 			foreach (string s in GetAllDateTimePatterns ('R'))
-				table [s] = s;
+				al.Add (s);
 			foreach (string s in GetAllDateTimePatterns ('s'))
-				table [s] = s;
+				al.Add (s);
+			foreach (string s in GetAllDateTimePatterns ('t'))
+				al.Add (s);
+			foreach (string s in GetAllDateTimePatterns ('T'))
+				al.Add (s);
 			foreach (string s in GetAllDateTimePatterns ('u'))
-				table [s] = s;
-			// For 'U' cases, the patterns always matches with 'F'
-			// (Differs in that 'U' assumes UTC while 'F' doesn't)
-			string [] ret = new string [table.Count];
-			table.Values.CopyTo (ret, 0);
-			return ret;
+				al.Add (s);
+			foreach (string s in GetAllDateTimePatterns ('U'))
+				al.Add (s);
+			foreach (string s in GetAllDateTimePatterns ('y'))
+				al.Add (s);
+			foreach (string s in GetAllDateTimePatterns ('Y'))
+				al.Add (s);
+
+			return al.ToArray (typeof (string)) as string [];
 		}
 
 		// LAMESPEC: this is not in ECMA specs

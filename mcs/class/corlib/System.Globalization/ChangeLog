@@ -1,3 +1,9 @@
+2004-05-28  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* DateTimeFormatInfo.cs : In fact GetAllDateTimePatterns() returns
+	  non-unique results.  Just reordered return values looking at MS
+	  invariant behavior.
+
 2004-05-27  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* DateTimeFormatInfo.cs : 'U' is in fact the same as 'F' for pattern
