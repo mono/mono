@@ -29,8 +29,8 @@ namespace Mono.Util.CorCompare {
 			get { return "property"; }
 		}
 
-		MissingMethod mmGet;
-		MissingMethod mmSet;
+		protected MissingMethod mmGet;
+		protected MissingMethod mmSet;
 
 		/// <summary>
 		/// a place holder for the method used to get the value of this property
@@ -40,13 +40,11 @@ namespace Mono.Util.CorCompare {
 			get { return mmGet; }
 			set
 			{
+				if (mmGet != null)
+					m_nodeStatus.SubChildren (mmGet.Status);
 				mmGet = value;
-				if (mInfoMono != null &&
-					mmGet != null &&
-					mmGet.Completion != CompletionTypes.Complete)
-				{
-					completion = CompletionTypes.Todo;
-				}
+				if (mmGet != null)
+					m_nodeStatus.AddChildren (mmGet.Status);
 			}
 		}
 
@@ -58,26 +56,23 @@ namespace Mono.Util.CorCompare {
 			get { return mmSet; }
 			set
 			{
+				if (mmSet != null)
+					m_nodeStatus.SubChildren (mmSet.Status);
 				mmSet = value;
-				if (mInfoMono != null &&
-					mmSet != null &&
-					mmSet.Completion != CompletionTypes.Complete)
-				{
-					completion = CompletionTypes.Todo;
-				}
+				if (mmSet != null)
+					m_nodeStatus.AddChildren (mmSet.Status);
 			}
 		}
-
 		public override XmlElement CreateXML (XmlDocument doc)
 		{
-			XmlElement eltProperty = base.CreateXML (doc);
+			XmlElement eltMember = base.CreateXML (doc);
 
 			if (mInfoMono != null)	// missing
 			{
 				if (mmGet != null || mmSet != null)
 				{
 					XmlElement eltAccessors = doc.CreateElement ("accessors");
-					eltProperty.AppendChild (eltAccessors);
+					eltMember.AppendChild (eltAccessors);
 
 					if (mmGet != null)
 					{
@@ -91,7 +86,7 @@ namespace Mono.Util.CorCompare {
 					}
 				}
 			}
-			return eltProperty;
+			return eltMember;
 		}
 	}
 }

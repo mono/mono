@@ -26,6 +26,19 @@ namespace Mono.Util.CorCompare {
 				return "field";
 			}
 		}
-	}
 
+		public override NodeStatus Analyze ()
+		{
+			base.Analyze ();
+
+			if (mInfoMono != null && mInfoMS != null)
+			{
+				FieldInfo fiMono = (FieldInfo) mInfoMono;
+				FieldInfo fiMS   = (FieldInfo) mInfoMS;
+
+				AddFakeAttribute (fiMono.IsNotSerialized, fiMS.IsNotSerialized, "System.NonSerializedAttribute");
+			}
+			return m_nodeStatus;
+		}
+	}
 }

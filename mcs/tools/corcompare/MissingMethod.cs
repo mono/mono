@@ -37,5 +37,4 @@ namespace Mono.Util.CorCompare {
 			}
 		}
 	}
-
 }

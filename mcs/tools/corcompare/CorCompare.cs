@@ -59,7 +59,7 @@ namespace Mono.Util.CorCompare {
 			if (strXML == null)
 				strXML = strFriendly + ".xml";
 
-			ToDoAssembly td = new ToDoAssembly(strMono, strFriendly, strMS);
+			ToDoAssembly td = ToDoAssembly.Load (strMono, strFriendly, strMS);
 
 			if (fList)
 				Console.WriteLine(td.CreateClassListReport());

@@ -20,6 +20,10 @@ namespace Mono.Util.CorCompare
 	/// </remarks>
 	public abstract class MissingBase
 	{
+		protected NodeStatus m_nodeStatus;
+		protected ArrayList rgAttributes;
+		protected NodeStatus nsAttributes;
+
 		/// <summary>
 		/// The name of the element (eg "System.Xml")
 		/// </summary>
@@ -39,61 +43,54 @@ namespace Mono.Util.CorCompare
 		{
 			XmlElement eltMissing = doc.CreateElement (Type);
 			eltMissing.SetAttribute ("name", Name);
-			eltMissing.SetAttribute ("status", Status);
+			//Status.status.SetAttributes (eltMissing);
+			Status.SetAttributes (eltMissing);
+
+			XmlElement eltAttributes = MissingBase.CreateMemberCollectionElement ("attributes", rgAttributes, nsAttributes, doc);
+			if (eltAttributes != null)
+				eltMissing.AppendChild (eltAttributes);
+
 			return eltMissing;
 		}
-		/// <summary>
-		/// The CompletionType of this element (eg Missing)
-		/// </summary>
-		public virtual CompletionTypes Completion
+
+		public virtual NodeStatus Status
 		{
-			get { return CompletionTypes.Missing; }
+			get { return m_nodeStatus; }
 		}
 
-		/// <summary>
-		/// A textual representation of this element's completion
-		/// </summary>
-		public virtual string Status
-		{
-			get 
-			{
-				switch (Completion)
-				{
-					case CompletionTypes.Missing:
-						return "missing";
-					case CompletionTypes.Todo:
-						return "todo";
-					case CompletionTypes.Complete:
-						return "complete";
-					default:
-						throw new Exception ("Invalid CompletionType: "+Completion.ToString ());
-				}
-			}
-		}
+		public abstract NodeStatus Analyze ();
 
 		/// <summary>
 		/// Creates an XmlElement grouping together a set of sub-elements
 		/// </summary>
 		/// <param name="name">the name of the element to create</param>
 		/// <param name="rgMembers">a list of sub-elements</param>
-		/// <param name="ci">the completion info (unused)</param>
 		/// <param name="doc">the document in which to create the element</param>
 		/// <returns></returns>
-		public static XmlElement CreateMemberCollectionElement (string name, ArrayList rgMembers, CompletionInfo ci, XmlDocument doc) 
+		public static XmlElement CreateMemberCollectionElement (string name, ArrayList rgMembers, NodeStatus ns, XmlDocument doc)
 		{
 			XmlElement element = null;
 			if (rgMembers != null && rgMembers.Count > 0)
 			{
 				element = doc.CreateElement(name);
-				CompletionInfo ciMember = new CompletionInfo ();
 				foreach (MissingBase mm in rgMembers)
-				{
 					element.AppendChild (mm.CreateXML (doc));
-					ciMember.Add (mm.Completion);
-				}
-				ciMember.SetAttributes (element);
+
+				//ns.SetAttributes (element);
 			}
 			return element;
+		}
+		protected void AddFakeAttribute (bool fMono, bool fMS, string strName)
+		{
+			if (fMono || fMS)
+			{
+				MissingAttribute ma = new MissingAttribute (
+					(fMono) ? strName : null,
+					(fMS) ? strName : null);
+				ma.Analyze ();
+				rgAttributes.Add (ma);
+				nsAttributes.AddChildren (ma.Status);
+			}
 		}
 	}
 }

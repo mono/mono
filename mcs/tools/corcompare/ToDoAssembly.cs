@@ -25,23 +25,47 @@ namespace Mono.Util.CorCompare {
 	{
 		// these types are in mono corlib, but not in the dll we are going to examine.
 		ArrayList MissingTypes = new ArrayList();
-		string assemblyToCompare, assemblyToCompareWith;
-		bool analyzed = false;
 		ArrayList rgNamespaces = new ArrayList();
-		string name;
+		string strName;
+		Type [] rgTypesMono;
+		Type [] rgTypesMS;
 
-		CompletionInfo ci;
+		protected static Hashtable htGhostTypes;
+		private static string[] rgstrGhostTypes = {"System.Object", "System.ValueType", "System.Delegate", "System.Enum"};
 
-		public ToDoAssembly(string fileName, string friendlyName, string strMSName)
+
+		static ToDoAssembly ()
 		{
-			assemblyToCompare = fileName;
-			name = friendlyName;
-			assemblyToCompareWith = strMSName;
+			htGhostTypes = new Hashtable ();
+
+			foreach (string strGhostType in rgstrGhostTypes)
+			{
+				htGhostTypes.Add (strGhostType, null);
+			}
+		}
+
+		public static ToDoAssembly Load (string strFileMono, string strName, string strNameMS)
+		{
+			Assembly assemblyMono = Assembly.LoadFrom (strFileMono);
+			Type [] rgTypesMono = assemblyMono.GetTypes ();
+
+			Assembly assemblyMS = Assembly.LoadWithPartialName (strNameMS);
+			Type [] rgTypesMS = assemblyMS.GetTypes ();
+
+			return new ToDoAssembly (strName, rgTypesMono, rgTypesMS);
+		}
+
+		public ToDoAssembly (string _strName, Type [] _rgTypesMono, Type [] _rgTypesMS)
+		{
+			strName = _strName;
+			rgTypesMono = _rgTypesMono;
+			rgTypesMS = _rgTypesMS;
+			m_nodeStatus = new NodeStatus (_rgTypesMono, _rgTypesMS);
 		}
 
 		public override string Name {
 			get {
-				return name;
+				return strName;
 			}
 		}
 
@@ -50,98 +74,70 @@ namespace Mono.Util.CorCompare {
 			get { return "assembly"; }
 		}
 
-		public override CompletionTypes Completion
+		private Hashtable GetNamespaceMap (Type [] rgTypes)
 		{
-			get { return CompletionTypes.Todo; }
-		}
-
-		public CompletionInfo Analyze ()
-		{
-			if (analyzed)
-				return ci;
-
-			Type[] mscorlibTypes = GetReferenceTypes();
-			if (mscorlibTypes == null)
-				throw new Exception ("Could not find corlib file: " + name);
-
-			Type[] monocorlibTypes = GetMonoTypes();
-			if (monocorlibTypes == null)
-				throw new Exception ("Failed to load Mono assembly: " + assemblyToCompare);
-
-			ArrayList rgNamespacesMono = ToDoNameSpace.GetNamespaces(monocorlibTypes);
-			if (rgNamespacesMono == null)
-				throw new Exception ("Failed to get namespaces from Mono assembly: " + assemblyToCompare);
-
-			foreach(string ns in rgNamespacesMono) {
-				if (ns != null && ns.Length != 0)
-				{
-					ToDoNameSpace tdns = new ToDoNameSpace(ns, mscorlibTypes, monocorlibTypes);
-					rgNamespaces.Add (tdns);
-					CompletionInfo ciNS = tdns.Analyze ();
-					ci.cComplete += ciNS.cComplete;
-					ci.cMissing += ciNS.cMissing;
-					ci.cTodo += ciNS.cTodo;
-				}
-			}
-
-			ArrayList rgNamespacesMS = ToDoNameSpace.GetNamespaces(mscorlibTypes);
-			if (rgNamespacesMS == null)
-				throw new Exception ("Failed to get namespaces from Microsoft assembly: " + assemblyToCompareWith);
-
-			foreach (string nsMS in rgNamespacesMS)
+			Hashtable mapTypes = new Hashtable ();
+			foreach (Type t in rgTypes)
 			{
-				if (nsMS != null && nsMS.Length != 0)
+				if (t != null)
 				{
-					bool fMissing = true;
-					foreach (string nsMono in rgNamespacesMono)
+					string strName = t.FullName;
+					string strNamespace = t.Namespace;
+					if (strNamespace != null && strNamespace.Length > 0 &&
+						strName != null && strName.Length > 0 &&
+						!strNamespace.StartsWith ("Microsoft.") &&
+						!htGhostTypes.Contains (strName))
 					{
-						if (nsMono == nsMS)
+						ArrayList rgContainedTypes = (ArrayList) mapTypes [strNamespace];
+						if (rgContainedTypes == null)
 						{
-							fMissing = false;
-							break;
+							rgContainedTypes = new ArrayList ();
+							mapTypes [strNamespace] = rgContainedTypes;
 						}
-					}
-					if (fMissing && !nsMS.StartsWith ("Microsoft."))
-					{
-						MissingNameSpace mns = new MissingNameSpace (nsMS, mscorlibTypes);
-						rgNamespaces.Add (mns);
+						rgContainedTypes.Add (t);
 					}
 				}
 			}
-
-			analyzed = true;
-			return ci;
+			return mapTypes;
 		}
 
-		public Type[] GetReferenceTypes()
+		public override NodeStatus Analyze ()
 		{
-			// get the types in the corlib we are running with
-			//Assembly msAsmbl = Assembly.GetAssembly(typeof (System.Object));
-			Assembly assembly = Assembly.LoadWithPartialName (assemblyToCompareWith);
-			Type[] mscorlibTypes = assembly.GetTypes();
-			return mscorlibTypes;
+			Hashtable mapTypesMono = GetNamespaceMap (rgTypesMono);
+			Hashtable mapTypesMS = GetNamespaceMap (rgTypesMS);
+
+			foreach (string strNamespaceMS in mapTypesMS.Keys)
+			{
+				if (strNamespaceMS != null)
+				{
+					ArrayList rgContainedTypesMS = (ArrayList) mapTypesMS [strNamespaceMS];
+					ArrayList rgContainedTypesMono = (ArrayList) mapTypesMono [strNamespaceMS];
+					MissingNameSpace mns = new MissingNameSpace (strNamespaceMS, rgContainedTypesMono, rgContainedTypesMS);
+					NodeStatus nsNamespace = mns.Analyze ();
+					m_nodeStatus.AddChildren (nsNamespace);
+					if (rgTypesMono != null)
+						mapTypesMono.Remove (strNamespaceMS);
+					rgNamespaces.Add (mns);
+				}
+			}
+			foreach (string strNamespaceMono in mapTypesMono.Keys)
+			{
+				if (strNamespaceMono != null)
+				{
+					ArrayList rgContainedTypesMono = (ArrayList) mapTypesMono [strNamespaceMono];
+					MissingNameSpace mns = new MissingNameSpace (strNamespaceMono, rgContainedTypesMono, null);
+					NodeStatus nsNamespace = mns.Analyze ();
+					m_nodeStatus.AddChildren (nsNamespace);
+					rgNamespaces.Add (mns);
+				}
+			}
+
+			return m_nodeStatus;
 		}
 
-		public Type[] GetMonoTypes()
-		{
-			Type[] monocorlibTypes;
-			Assembly monoAsmbl = null;
-			try
-			{
-				monoAsmbl = Assembly.LoadFrom(assemblyToCompare);
-			}
-			catch(FileNotFoundException)
-			{
-				return null;
-			}
-
-			monocorlibTypes = monoAsmbl.GetTypes();
-
-			return monocorlibTypes;
-		}
 
 		public string CreateClassListReport() {
-			Analyze ();	// TODO: catch exception
+			Analyze ();
 			if (rgNamespaces.Count == 0) return "";
 
 			StringBuilder output = new StringBuilder();
@@ -159,7 +155,7 @@ namespace Mono.Util.CorCompare {
 		public override XmlElement CreateXML (XmlDocument doc)
 		{
 			XmlElement assemblyElem = base.CreateXML (doc);
-			ci.SetAttributes (assemblyElem);
+//			m_nodeStatus.SetAttributes (assemblyElem);
 
 			if (rgNamespaces.Count > 0)
 			{
@@ -177,7 +173,7 @@ namespace Mono.Util.CorCompare {
 		}
 
 		public void CreateXMLReport(string filename) {
-			Analyze();	// TODO: catch exception
+			Analyze();
 
 			XmlDocument outDoc;
 			outDoc = new XmlDocument();

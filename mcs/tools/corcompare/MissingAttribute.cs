@@ -22,21 +22,35 @@ namespace Mono.Util.CorCompare
 	class MissingAttribute : MissingBase
 	{
 		// e.g. <attribute name="Equals" status="missing"/>
-		Object attribute;
+		Object attributeMono;
+		Object attributeMS;
 
-		public MissingAttribute (Object _attribute) 
+		public MissingAttribute (Object _attributeMono, Object _attributeMS) 
 		{
-			attribute = _attribute;
+			attributeMono = _attributeMono;
+			attributeMS = _attributeMS;
+			m_nodeStatus = new NodeStatus (attributeMono, attributeMS);
 		}
 
 		public override string Name 
 		{
-			get { return attribute.ToString (); }
+			get { return Attribute.ToString (); }
 		}
 
 		public override string Type
 		{
 			get { return "attribute"; }
+		}
+
+		public override NodeStatus Analyze ()
+		{
+			return m_nodeStatus;
+		}
+
+
+		public Object Attribute
+		{
+			get { return (attributeMono != null) ? attributeMono : attributeMS; }
 		}
 
 		/// <summary>
@@ -68,9 +82,9 @@ namespace Mono.Util.CorCompare
 		/// <param name="rgAttributesMS">microsoft attributes</param>
 		/// <param name="rgAttributes">where the results are put</param>
 		/// <returns>completion info for the whole set</returns>
-		public static CompletionInfo AnalyzeAttributes (Object [] rgAttributesMono, Object [] rgAttributesMS, ArrayList rgAttributes)
+		public static NodeStatus AnalyzeAttributes (Object [] rgAttributesMono, Object [] rgAttributesMS, ArrayList rgAttributes)
 		{
-			CompletionInfo ci = new CompletionInfo ();
+			NodeStatus nodeStatus = new NodeStatus ();
 
 			Hashtable mapAttributesMono = (rgAttributesMono == null) ? new Hashtable () : MissingAttribute.GetAttributeMap (rgAttributesMono);
 			Hashtable mapAttributesMS   = (rgAttributesMS   == null) ? new Hashtable () : MissingAttribute.GetAttributeMap (rgAttributesMS);
@@ -79,41 +93,32 @@ namespace Mono.Util.CorCompare
 			{
 				string strAttribute = attribute.ToString ();
 				Object attributeMono = mapAttributesMono [strAttribute];
-				if (attributeMono == null)
-				{
-					rgAttributes.Add (new MissingAttribute (attribute));
-					ci.cMissing ++;
-				}
-				else
-				{
-					rgAttributes.Add (new CompleteAttribute (attributeMono));
+				MissingAttribute ma = new MissingAttribute (attributeMono, attribute);
+				rgAttributes.Add (ma);
+				NodeStatus nsAttribute = ma.Analyze ();
+				nodeStatus.AddChildren (nsAttribute);
+
+				if (attributeMono != null)
 					mapAttributesMono.Remove (strAttribute);
-					ci.cComplete ++;
-				}
 			}
 			foreach (Object attribute in mapAttributesMono.Values)
 			{
-				if (attribute.ToString () == "System.MonoTODOAttribute")
+				if (attribute.ToString ().EndsWith ("MonoTODOAttribute"))
 				{
-					ci.cTodo ++;
+					nodeStatus.SetError (ErrorTypes.Todo);
+					//nodeStatus.statusCountsChildren.errorCounts.Add (ErrorTypes.Todo);
+					//nodeStatus.statusCountsTotal.errorCounts.Add (ErrorTypes.Todo);
+					//nodeStatus.cTodo ++;	// this is where ALL the 'todo's come from
 				}
 				else
 				{
-					rgAttributes.Add (new CompleteAttribute (attribute));
-					ci.cComplete ++;
+					MissingAttribute ma = new MissingAttribute (attribute, null);
+					rgAttributes.Add (ma);
+					NodeStatus nsAttribute = ma.Analyze ();
+					nodeStatus.AddChildren (nsAttribute);
 				}
 			}
-			return ci;
-		}
-	}
-
-	class CompleteAttribute : MissingAttribute
-	{
-		public CompleteAttribute (Object _attribute) : base (_attribute) {}
-
-		public override CompletionTypes Completion
-		{
-			get { return CompletionTypes.Complete; }
+			return nodeStatus;
 		}
 	}
 }
