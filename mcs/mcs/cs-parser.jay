@@ -30,14 +30,13 @@ using System;
 namespace CSC
 {
 	using System.Collections;
-	using Compiler;
 	using CSC;
 	using CIR;
 
 	/// <summary>
 	///    The C# Parser
 	/// </summary>
-	public class CSharpParser : Parser {
+	public class CSharpParser {
 		static int global_errors;
 
 		Namespace     current_namespace;
@@ -79,6 +78,13 @@ namespace CSC
 		//   Used to record all types defined
 		// </summary>
 		CIR.Tree tree;
+
+		// Name of the file we are parsing
+		public string name;
+
+		// Input stream to parse from.
+		public System.IO.Stream input;
+
 %}
 
 %token EOF
@@ -471,7 +477,7 @@ struct_declaration
 		new_struct = new Struct (current_container, full_struct_name, (int) $2);
 		current_container = new_struct;
 		current_container.Namespace = current_namespace;
-		tree.RecordType (full_class_name, new_struct);
+		tree.RecordType (full_struct_name, new_struct);
 	  }
 	  opt_struct_interfaces
 	  struct_body
@@ -823,7 +829,7 @@ interface_declaration
 		if (current_interface != null)
 			error (-2, "Internal compiler error: interface inside interface");
 		current_interface = new_interface;
-		tree.RecordType (full_class_name, new_interface);
+		tree.RecordType (full_interface_name, new_interface);
 	  }
 	  opt_interface_base
 	  interface_body
@@ -2698,18 +2704,19 @@ TypeRef type (string type_name)
 Tokenizer lexer;
 
 public CSharpParser(CIR.Tree tree, string name, System.IO.Stream input) 
-	: base (tree, name, input)
 {
 	current_namespace = new Namespace (null, "");
 	this.tree = tree;
+	this.name = name;
+	this.input = input;
 	current_container = tree.Types;
 	current_container.Namespace = current_namespace;
 
 	lexer = new Tokenizer (input, name);
-	type_references = tree.TypeRefManager; 
+	type_references = new TypeRefManager (); 
 }
 
-public override int parse ()
+public int parse ()
 {
 	StringBuilder value = new StringBuilder ();
 

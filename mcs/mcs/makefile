@@ -1,6 +1,6 @@
 VERSION=0.13
 
-COMMON_SOURCES = cs-parser.cs cs-tokenizer.cs parser.cs  errors.cs tree.cs  
+COMMON_SOURCES = cs-parser.cs cs-tokenizer.cs errors.cs tree.cs  
 
 COMPILER_SOURCES = \
 	assign.cs			\
@@ -43,6 +43,9 @@ bison:
 
 parser:
 	./jay -tv cs-parser.jay > cs-parser.cs
+
+migparser:
+	jay -tv cs-parser.jay > cs-parser.cs
 
 parsernoline:
 	jay -tv cs-parser.jay | grep -v '^#line' > cs-parser.cs

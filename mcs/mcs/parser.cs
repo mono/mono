@@ -5,7 +5,6 @@ namespace Compiler {
 	abstract public class Parser {
 		public string name;
 		public System.IO.Stream input;
-		public CIR.Tree tree;
 		
 		public Parser (CIR.Tree tree, string name, System.IO.Stream stream) 
 		{

@@ -107,15 +107,23 @@ namespace CSC
 			Assembly a;
 
 			foreach (string dir in link_paths){
-				string full_path = dir + "\\" + assembly;
+				string full_path = dir + "/" + assembly;
 
 				try {
-					a = Assembly.Load (full_path);
-				} catch (FileNotFoundException) {
+					a = Assembly.Load (assembly);
+				} catch (FileNotFoundException f) {
 					error ("// File not found: " + full_path);
+					error ("Log: " + f.FusionLog);
 					return 1;
 				} catch (BadImageFormatException) {
 					error ("// Bad file format: " + full_path);
+					return 1;
+				} catch (FileLoadException f){
+					error ("// File Load Exception: " + full_path);
+					error ("Log: " + f.FusionLog);
+					return 1;
+				} catch (ArgumentNullException){
+					error ("// Argument Null exception " + full_path);
 					return 1;
 				}
 
@@ -149,8 +157,8 @@ namespace CSC
 			//
 			// Setup defaults
 			//
-			references.Add ("mscorlib.dll");
-			link_paths.Add ("C://WINNT/Microsoft.Net/Framework/v1.0.2204");
+			references.Add ("mscorlib");
+			link_paths.Add ("file:///C:/WINNT/Microsoft.NET/Framework/v1.0.2914");
 			
 			for (i = 0; i < args.Length; i++){
 				string arg = args [i];
