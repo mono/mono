@@ -119,6 +119,8 @@ System.Drawing.Imaging/ColorPalette.cs
 System.Drawing.Imaging/EmfPlusRecordType.cs
 System.Drawing.Imaging/EmfType.cs
 System.Drawing.Imaging/Encoder.cs
+System.Drawing.Imaging/EncoderParameter.cs
+System.Drawing.Imaging/EncoderParameters.cs
 System.Drawing.Imaging/EncoderParameterValueType.cs
 System.Drawing.Imaging/EncoderValue.cs
 System.Drawing.Imaging/FrameDimension.cs

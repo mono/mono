@@ -1,3 +1,7 @@
+2004-02-11  Ravindra <rkumar@novell.com>
+	* System.Drawing.dll.sources: Added EncoderParameter.cs
+	and EncoderParameters.cs.
+
 2004-02-07  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
 
 	* System.Drawing.dll.sources:
