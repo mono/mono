@@ -1,5 +1,9 @@
 2004-07-08  Lluis Sanchez Gual  <lluis@ximian.com>
 
+	* XmlSerializer.cs: Fix fix.
+
+2004-07-08  Lluis Sanchez Gual  <lluis@ximian.com>
+
 	* IXmlSerializerImplementation.cs: Compile as internal in NET_1_1.
 	* ReflectionHelper.cs: New method for generating map keys.
 	* SerializationCodeGenerator.cs: Added support for generating the serializer

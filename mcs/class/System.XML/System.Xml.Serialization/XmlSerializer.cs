@@ -718,7 +718,7 @@ namespace System.Xml.Serialization
 #if NET_2_0
 		GenerationBatch LoadFromSatelliteAssembly (GenerationBatch batch)
 		{
-			
+			return batch;
 		}
 #else
 		GenerationBatch LoadFromSatelliteAssembly (GenerationBatch batch)
