@@ -1,5 +1,7 @@
 2003-11-24  Zoltan Varga  <vargaz@freemail.hu>
 
+	* DynamicMethod.cs: New class.
+
 	* ILGenerator.cs MethodBuilder.cs ConstructorBuilder.cs: Retrieve 
 	tokens from a token generator object instead of from the ModuleBuilder,
 	to support the implementation of DynamicMethod. Also get rid of the 
