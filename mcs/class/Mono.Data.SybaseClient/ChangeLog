@@ -1,3 +1,7 @@
+2002-11-12  Tim Coleman <tim@timcoleman.com>
+	* list:
+		Remove Mono.Data.TdsClient.Internal/TdsContext.cs
+
 2002-11-09  Tim Coleman <tim@timcoleman.com>
 	* list:
 		Add new internal tds classes

@@ -1,4 +1,6 @@
 2002-11-12  Tim Coleman <tim@timcoleman.com>
+	* list:
+		Remove Mono.Data.TdsClient.Internal/TdsContext.cs
 	* System.Data.SqlClient/SqlRowUpdatedEventArgs.cs:
 	* System.Data.SqlClient/SqlRowUpdatingEventArgs.cs:
 		Complete these classes
