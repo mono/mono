@@ -11,6 +11,9 @@
 			<arg value="/unsafe"/>
 			<sources>
 				<includes name="**/*.cs"/> 
+				<excludes name="System.Data/Constraint.cs"/>
+				<excludes name="System.Data/ConstraintCollection.cs"/>
+				<excludes name="System.Data/InternalDataCollectionBase.cs"/>
 				<excludes name="System.Data/DataColumn.cs"/>
 				<excludes name="System.Data/DataRow.cs"/>
 				<excludes name="System.Data/DataTableRelationCollection.cs"/>

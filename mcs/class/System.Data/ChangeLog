@@ -1,3 +1,18 @@
+2002-04-23  Daniel Morgan <danmorg@sc.rr.com>
+
+	* System.Data.build: modified - added new
+	files to exclude from build 
+	
+	* System.Data/Constraint.cs
+	* System.Data/ConstraintCollection.cs
+	* System.Data/InternalDataCollectionBase.cs: added -
+	stubs which are needed to build DataTable.cs
+	
+	* TODO: modified - added more classes TODO and
+	added more stuff TODO, such as, create script
+	to create test database monotestdb for testing
+	classes in System.Data
+
 2002-04-23  Rodrigo Moya <rodrigo@ximian.com>
 
 	* System.Data.Common/DataAdapter.cs:
