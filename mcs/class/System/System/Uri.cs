@@ -39,6 +39,8 @@ namespace System
 		private string query = String.Empty;
 		private string fragment = String.Empty;
 		private string userinfo = String.Empty;
+
+		private string [] segments;
 		
 		private bool userEscaped = false;
 		private string cachedAbsoluteUri = null;
@@ -316,15 +318,39 @@ namespace System
 
 		public string [] Segments { 
 			get { 
-				string p = path.EndsWith ("/") 
-				         ? path.Remove (path.Length - 1, 1)
-				         : path;
-				string [] segments = p.Split ('/');
-				int len = segments.Length - 1;
-				for (int i = 0; i < len; i++) 
-					segments [i] += '/';
-				if (path.EndsWith ("/"))
-					segments [len] += '/';
+				if (segments != null)
+					return segments;
+
+				if (path == "") {
+					segments = new string [0];
+					return segments;
+				}
+
+				string [] parts = path.Split ('/');
+				segments = parts;
+				bool endSlash = path.EndsWith ("/");
+				if (parts.Length > 0 && endSlash) {
+					string [] newParts = new string [parts.Length - 1];
+					Array.Copy (parts, 0, newParts, 0, parts.Length - 1);
+					parts = newParts;
+				}
+
+				int i = 0;
+				if (IsFile && path.Length > 1 && path [1] == ':') {
+					string [] newParts = new string [parts.Length + 1];
+					Array.Copy (parts, 1, newParts, 2, parts.Length - 1);
+					parts = newParts;
+					parts [0] = path.Substring (0, 2);
+					parts [1] = "";
+					i++;
+				}
+				
+				int end = parts.Length;
+				for (; i < end; i++) 
+					if (i != end - 1 || endSlash)
+						parts [i] += '/';
+
+				segments = parts;
 				return segments;
 			} 
 		}
@@ -569,7 +595,7 @@ namespace System
 			string [] segments2 = toUri.Segments;
 			
 			int k = 0;
-			int max = Math.Max (segments.Length, segments2.Length);
+			int max = Math.Min (segments.Length, segments2.Length);
 			for (; k < max; k++)
 				if (segments [k] != segments2 [k]) 
 					break;
@@ -771,6 +797,8 @@ namespace System
 				// windows filepath
 				path = host + path;
 				host = String.Empty;
+			} else if (host.Length == 0) {
+				throw new UriFormatException ("Invalid URI: The hostname could not be parsed");
 			}
 		}
 

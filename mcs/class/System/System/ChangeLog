@@ -1,5 +1,10 @@
 2003-03-19  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* Uri.cs: reworked Segment. Small fix in MakeRelative. Throw exception
+	in Parse when host length is 0 and the Uri is not a file.
+
+2003-03-19  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* Uri.cs:
 	(CheckSchemeName): fixed bug #28549. Thanks to Eric Runquist.
 
