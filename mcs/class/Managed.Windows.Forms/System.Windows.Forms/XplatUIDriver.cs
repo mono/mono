@@ -23,9 +23,13 @@
 //	Peter Bartok	pbartok@novell.com
 //
 //
-// $Revision: 1.16 $
+// $Revision: 1.17 $
 // $Modtime: $
 // $Log: XplatUIDriver.cs,v $
+// Revision 1.17  2004/08/21 20:23:56  pbartok
+// - Added method to query current grab state
+// - Added argument to allow confining a grab to a window
+//
 // Revision 1.16  2004/08/20 20:03:20  pbartok
 // - Added method for setting the window background
 //
@@ -175,7 +179,8 @@ namespace System.Windows.Forms {
 		internal abstract void GetCursorPos(IntPtr handle, out int x, out int y);
 		internal abstract void ScreenToClient(IntPtr handle, ref int x, ref int y);
 
-		internal abstract void GrabWindow(IntPtr hWnd);
+		internal abstract void GrabWindow(IntPtr hWnd, IntPtr ConfineToHwnd);
+		internal abstract void GrabInfo(ref IntPtr hWnd, ref bool GrabConfined, ref Rectangle GrabArea);
 		internal abstract void ReleaseWindow(IntPtr hWnd);
 
 		internal abstract void SendAsyncMethod (AsyncMethodData method);

@@ -52,6 +52,9 @@ namespace System.Windows.Forms {
 		internal static Keys		key_state;
 		internal static MouseButtons	mouse_state;
 		internal static Point		mouse_position;
+		internal static bool		grab_confined;		// Is the current grab (if any) confined to grab_area?
+		internal static IntPtr		grab_hwnd;		// The window that is grabbed
+		internal static Rectangle	grab_area;		// The area the current grab is confined to
 		internal static	bool		is_visible;
 
 		private static Hashtable	handle_data;
@@ -790,18 +793,39 @@ namespace System.Windows.Forms {
 			return Parent;
 		}
 
-		internal override void GrabWindow(IntPtr hWnd) {
+		internal override void GrabWindow(IntPtr hWnd, IntPtr confine_hwnd) {
+			if (confine_hwnd != IntPtr.Zero) {
+				XWindowAttributes	attributes = new XWindowAttributes();
+
+				lock (this) {
+					XGetWindowAttributes(DisplayHandle, confine_hwnd, ref attributes);
+				}
+				grab_area.X = attributes.x;
+				grab_area.Y = attributes.y;
+				grab_area.Width = attributes.width;
+				grab_area.Height = attributes.height;
+				grab_confined = true;
+			}
+			grab_hwnd = hWnd;
 			lock (this) {
 				XGrabPointer(DisplayHandle, hWnd, false,
-						EventMask.ButtonPressMask | EventMask.ButtonMotionMask |
-						EventMask.ButtonReleaseMask | EventMask.PointerMotionMask,
-						GrabMode.GrabModeAsync, GrabMode.GrabModeAsync, IntPtr.Zero, 0, 0);
+					EventMask.ButtonPressMask | EventMask.ButtonMotionMask |
+					EventMask.ButtonReleaseMask | EventMask.PointerMotionMask,
+					GrabMode.GrabModeAsync, GrabMode.GrabModeAsync, confine_hwnd, 0, 0);
 			}
+		}
+
+		internal override void GrabInfo(ref IntPtr hWnd, ref bool GrabConfined, ref Rectangle GrabArea) {
+			hWnd = grab_hwnd;
+			GrabConfined = grab_confined;
+			GrabArea = grab_area;
 		}
 
 		internal override void ReleaseWindow(IntPtr hWnd) {
 			lock (this) {
 				XUngrabPointer(DisplayHandle, 0);
+				grab_hwnd = IntPtr.Zero;
+				grab_confined = false;
 			}
 		}
 

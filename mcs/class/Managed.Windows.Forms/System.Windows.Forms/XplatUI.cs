@@ -23,9 +23,13 @@
 //	Peter Bartok	pbartok@novell.com
 //
 //
-// $Revision: 1.16 $
+// $Revision: 1.17 $
 // $Modtime: $
 // $Log: XplatUI.cs,v $
+// Revision 1.17  2004/08/21 20:23:56  pbartok
+// - Added method to query current grab state
+// - Added argument to allow confining a grab to a window
+//
 // Revision 1.16  2004/08/20 20:03:20  pbartok
 // - Added method for setting the window background
 //
@@ -280,8 +284,12 @@ namespace System.Windows.Forms {
 			return driver.DispatchMessage(ref msg);
 		}
 
-		internal static void GrabWindow(IntPtr hWnd) {
-			driver.GrabWindow(hWnd);
+		internal static void GrabWindow(IntPtr hWnd, IntPtr ConfineToHwnd) {
+			driver.GrabWindow(hWnd, ConfineToHwnd);
+		}
+
+		internal static void GrabInfo(ref IntPtr hWnd, ref bool GrabConfined, ref Rectangle GrabArea) {
+			driver.GrabInfo(ref hWnd, ref GrabConfined, ref GrabArea);
 		}
 
 		internal static void ReleaseWindow(IntPtr hWnd) {

@@ -23,9 +23,13 @@
 //	Peter Bartok	pbartok@novell.com
 //
 //
-// $Revision: 1.25 $
+// $Revision: 1.26 $
 // $Modtime: $
 // $Log: XplatUIWin32.cs,v $
+// Revision 1.26  2004/08/21 20:23:56  pbartok
+// - Added method to query current grab state
+// - Added argument to allow confining a grab to a window
+//
 // Revision 1.25  2004/08/21 18:35:38  pbartok
 // - Fixed bug with Async message handling
 // - Implemented getting the ModifierKeys
@@ -131,6 +135,9 @@ namespace System.Windows.Forms {
 
 		internal static MouseButtons	mouse_state;
 		internal static Point		mouse_position;
+		internal static bool		grab_confined;
+		internal static IntPtr		grab_hwnd;
+		internal static Rectangle	grab_area;
 		internal static WndProc		wnd_proc;
 		internal static IntPtr		prev_mouse_hwnd;
 
@@ -933,12 +940,20 @@ namespace System.Windows.Forms {
 			return Win32GetParent(handle);
 		}
 
-		internal override void GrabWindow(IntPtr hWnd) {
+		internal override void GrabWindow(IntPtr hWnd, IntPtr ConfineToHwnd) {
+			grab_hwnd = hWnd;
 			Win32SetCapture(hWnd);
+		}
+
+		internal override void GrabInfo(ref IntPtr hWnd, ref bool GrabConfined, ref Rectangle GrabArea) {
+			hWnd = grab_hwnd;
+			GrabConfined = grab_confined;
+			GrabArea = grab_area;
 		}
 
 		internal override void ReleaseWindow(IntPtr hWnd) {
 			Win32ReleaseCapture();
+			grab_hwnd = IntPtr.Zero;
 		}
 
 		internal override bool CalculateWindowRect(IntPtr hWnd, ref Rectangle ClientRect, int Style, bool HasMenu, out Rectangle WindowRect) {
