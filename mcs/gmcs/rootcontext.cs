@@ -315,8 +315,8 @@ namespace Mono.CSharp {
 				//
 				// Generic types
 				//
-				"System.Collections.Generic.IEnumerator!1",
-				"System.Collections.Generic.IEnumerable!1"
+				"System.Collections.Generic.IEnumerator`1",
+				"System.Collections.Generic.IEnumerable`1"
 			};
 
 			foreach (string iname in interfaces_first_stage)

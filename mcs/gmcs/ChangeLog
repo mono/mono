@@ -17,8 +17,7 @@
 
 2004-07-17  Martin Baulig  <martin@ximian.com>
 
-	* decl.cs (MemberName.MakeName): Create the "class`1" names here;
-	use an exclamation mark (!) instead of backticks (`) again.
+	* decl.cs (MemberName.MakeName): Create the "class`1" names here.
 
 2004-07-16  Martin Baulig  <martin@ximian.com>
 

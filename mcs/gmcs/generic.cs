@@ -861,7 +861,7 @@ namespace Mono.CSharp {
 
 		public string Basename {
 			get {
-				int pos = name.LastIndexOf ('!');
+				int pos = name.LastIndexOf ('`');
 				if (pos >= 0)
 					return name.Substring (0, pos);
 				else
