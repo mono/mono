@@ -73,10 +73,10 @@ namespace System.Web {
 			    pi [1].ParameterType != typeof (EventArgs))
 				return false;
 				
-			if (!m.Name.EndsWith ("Application_OnStart") &&
-			    !m.Name.EndsWith ("Application_OnEnd") &&
-			    !m.Name.EndsWith ("Session_OnStart") &&
-			    !m.Name.EndsWith ("Session_OnEnd"))
+			if (m.Name != "Application_OnStart" &&
+			    m.Name != "Application_OnEnd" &&
+			    m.Name != "Session_OnStart" &&
+			    m.Name != "Session_OnEnd")
 				return false;
 
 			return true;
