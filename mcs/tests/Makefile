@@ -111,7 +111,7 @@ TEST_SOURCES_net_2_0 = \
 	gen-81  gen-82  gen-83  gen-84  gen-85  gen-86  gen-87  gen-88  gen-89  gen-90  \
 	gen-91  gen-92  gen-93  gen-94  gen-95  gen-96  gen-97                  gen-100 \
 	gen-101 gen-102 gen-103 gen-104 gen-105 gen-106 gen-107 gen-108 gen-109 gen-110 \
-	gen-111 gen-112 gen-113 gen-114 gen-115 gen-116 gen-117 gen-118
+	gen-111 gen-112 gen-113 gen-114 gen-115 gen-116 gen-117
 
 TEST_EXCLUDES_net_2_0 = $(NEW_TEST_SOURCES_common)
 
