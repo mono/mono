@@ -1,3 +1,9 @@
+2004-08-16  Duncan Mak  <duncan@ximian.com>
+
+	* AttributeUsageAttribute.cs: Change the AttributeUsage to
+	AttributeTargets.Class, from AttributeTargets.All, fixes Zoltan's
+	bug #62895.
+
 2004-08-11  Marek Safar  <marek.safar@seznam.cz>
 
 	* AppDomain.cs: Fixed typo of DefineDynamicAssembly argument.

@@ -32,8 +32,7 @@
 
 namespace System
 {
-	[Serializable]
-	[AttributeUsage(AttributeTargets.All)]
+	[Serializable, AttributeUsage (AttributeTargets.Class)]
 	public sealed class AttributeUsageAttribute : Attribute
 	{
 		AttributeTargets valid_on;
