@@ -1,3 +1,12 @@
+2004-08-18  Dick Porter  <dick@ximian.com>
+
+	* sockets.c: 
+	* io.c: Check that new fds fit in the table, return error if not
+
+	* daemon.c (_wapi_daemon_main): 
+	* handles.c (shared_init): Have all processes agree on a size for
+	the fd table.
+
 2004-08-17  Dick Porter  <dick@ximian.com>
 
 	* daemon.c (process_new): 
