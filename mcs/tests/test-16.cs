@@ -41,7 +41,9 @@ namespace Mine {
 			
 			int k = tmp;
 
+			Console.WriteLine ("Convert from Foo to float");
 			float f = tmp;
+			Console.WriteLine ("Converted");
 
 			// The following will not work till we fix our UserCast::Emit
 			// to convert the return value on the stack.

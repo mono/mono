@@ -28,7 +28,10 @@ class Greeter {
 class Room {
     public event PersonArrivedHandler PersonArrived;
 
-    public Room () {}
+    public Room () {
+	    // Assign a value to it, this also used to crash the compiler.
+	    PersonArrived = null;
+    }
 
     public void AddPerson (string name) {
 	PersonArrived(this, null); //(this, PersonArrivedArgs(name));
