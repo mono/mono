@@ -13,6 +13,7 @@ linux:
 	done
 
 test:
+	(cd nunit; make)
 	(cd class; make test)
 
 clean:

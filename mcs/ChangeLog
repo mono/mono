@@ -1,3 +1,8 @@
 2002-01-20 Nick Drochak  <ndrochak@gol.com>
 
+	* on the 'test' target, make sure NUnit is built first before building
+	and running tests
+
+2002-01-20 Nick Drochak  <ndrochak@gol.com>
+
 	* add nunit directory to the list of dirs to build in
