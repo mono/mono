@@ -173,7 +173,7 @@ namespace System.Xml.Serialization {
 			if (type.IsValueType) throw CreateStructException (type);
 			if (type == typeof (object)) defaultNamespace = XmlSchema.Namespace;
 
-			ReflectionHelper.CheckSerializableType (type);
+			ReflectionHelper.CheckSerializableType (type, false);
 				
 			TypeData typeData = TypeTranslator.GetTypeData (type);
 			XmlTypeMapping map = helper.GetRegisteredClrType (type, GetTypeNamespace (typeData, defaultNamespace));
@@ -333,7 +333,7 @@ namespace System.Xml.Serialization {
 			XmlTypeMapping map = helper.GetRegisteredClrType (type, GetTypeNamespace (typeData, defaultNamespace));
 			if (map != null) return map;
 			
-			ReflectionHelper.CheckSerializableType (type);
+			ReflectionHelper.CheckSerializableType (type, false);
 				
 			map = CreateTypeMapping (typeData, null, defaultNamespace);
 			helper.RegisterClrType (map, type, map.Namespace);

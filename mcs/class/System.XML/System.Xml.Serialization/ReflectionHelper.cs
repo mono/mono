@@ -71,11 +71,11 @@ namespace System.Xml.Serialization
 			return new InvalidOperationException ("There was an error reflecting '" + map.TypeFullName + "': " + message);
 		}
 		
-		public static void CheckSerializableType (Type type)
+		public static void CheckSerializableType (Type type, bool allowPrivateConstructors)
 		{
 			if (type.IsArray) return;
 			
-			if (type.GetConstructor (Type.EmptyTypes) == null && !type.IsAbstract && !type.IsValueType)
+			if (!allowPrivateConstructors && type.GetConstructor (Type.EmptyTypes) == null && !type.IsAbstract && !type.IsValueType)
 				throw new InvalidOperationException (type.FullName + " cannot be serialized because it does not have a default public constructor");
 				
 			if (type.IsInterface)

@@ -316,7 +316,7 @@ namespace System.Xml.Serialization
 				indexes = new int[map.FlatLists.Count];
 				flatLists = new object[map.FlatLists.Count];
 				foreach (XmlTypeMapMemberExpandable mem in map.FlatLists)
-					if (IsReadOnly (mem, ob, isValueList)) flatLists[mem.FlatArrayIndex] = mem.GetValue (ob);
+					if (IsReadOnly (mem, mem.TypeData, ob, isValueList)) flatLists[mem.FlatArrayIndex] = mem.GetValue (ob);
 			}
 			
 			if (_format == SerializationFormat.Encoded && map.ElementMembers != null)
@@ -351,12 +351,12 @@ namespace System.Xml.Serialization
 								object list = ReadReferencingElement (out fixup.Ids[info.Member.Index]);
 								if (fixup.Ids[info.Member.Index] == null)	// Already read
 								{
-									if (IsReadOnly (info.Member, ob, isValueList)) throw CreateReadOnlyCollectionException (info.TypeData.FullTypeName);
+									if (IsReadOnly (info.Member, info.TypeData, ob, isValueList)) throw CreateReadOnlyCollectionException (info.TypeData.FullTypeName);
 									else SetMemberValue (info.Member, ob, list, isValueList);
 								}
 								else if (!info.MappedType.TypeData.Type.IsArray)
 								{
-									if (IsReadOnly (info.Member, ob, isValueList)) 
+									if (IsReadOnly (info.Member, info.TypeData, ob, isValueList)) 
 										list = GetMemberValue (info.Member, ob, isValueList);
 									else { 
 										list = CreateList (info.MappedType.TypeData.Type);
@@ -368,7 +368,7 @@ namespace System.Xml.Serialization
 							}
 							else
 							{
-								if (IsReadOnly (info.Member, ob, isValueList)) ReadListElement (info.MappedType, info.IsNullable, GetMemberValue (info.Member, ob, isValueList), false);
+								if (IsReadOnly (info.Member, info.TypeData, ob, isValueList)) ReadListElement (info.MappedType, info.IsNullable, GetMemberValue (info.Member, ob, isValueList), false);
 								else SetMemberValue (info.Member, ob, ReadListElement (info.MappedType, info.IsNullable, null, true), isValueList);
 							}
 							readFlag[info.Member.Index] = true;
@@ -376,7 +376,7 @@ namespace System.Xml.Serialization
 						else if (info.Member.GetType() == typeof (XmlTypeMapMemberFlatList))
 						{
 							XmlTypeMapMemberFlatList mem = (XmlTypeMapMemberFlatList)info.Member;
-							AddListValue (mem.TypeData, ref flatLists[mem.FlatArrayIndex], indexes[mem.FlatArrayIndex]++, ReadObjectElement (info), !IsReadOnly (info.Member, ob, isValueList));
+							AddListValue (mem.TypeData, ref flatLists[mem.FlatArrayIndex], indexes[mem.FlatArrayIndex]++, ReadObjectElement (info), !IsReadOnly (info.Member, info.TypeData, ob, isValueList));
 						}
 						else if (info.Member.GetType() == typeof (XmlTypeMapMemberAnyElement))
 						{
@@ -447,7 +447,7 @@ namespace System.Xml.Serialization
 					Object list = flatLists[mem.FlatArrayIndex];
 					if (mem.TypeData.Type.IsArray)
 						list = ShrinkArray ((Array)list, indexes[mem.FlatArrayIndex], mem.TypeData.Type.GetElementType(), true);
-					if (!IsReadOnly (mem, ob, isValueList))
+					if (!IsReadOnly (mem, mem.TypeData, ob, isValueList))
 						SetMemberValue (mem, ob, list, isValueList);
 				}
 			}		
@@ -475,10 +475,10 @@ namespace System.Xml.Serialization
 			UnknownNode (target);
 		}
 
-		bool IsReadOnly (XmlTypeMapMember member, object ob, bool isValueList)
+		bool IsReadOnly (XmlTypeMapMember member, TypeData memType, object ob, bool isValueList)
 		{
-			if (isValueList) return false;
-			else return member.IsReadOnly (ob.GetType());
+			if (isValueList) return !memType.HasPublicConstructor;
+			else return member.IsReadOnly (ob.GetType()) || !memType.HasPublicConstructor;
 		}
 
 		void SetMemberValue (XmlTypeMapMember member, object ob, object value, bool isValueList)
@@ -566,7 +566,7 @@ namespace System.Xml.Serialization
 			if (ReadNull()) return null;
 
 			if (list == null) {
-				if (canCreateInstance) list = CreateList (listType);
+				if (canCreateInstance && typeMap.TypeData.HasPublicConstructor) list = CreateList (listType);
 				else throw CreateReadOnlyCollectionException (typeMap.TypeFullName);
 			}
 

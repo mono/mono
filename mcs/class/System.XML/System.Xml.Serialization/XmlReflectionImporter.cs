@@ -256,7 +256,7 @@ namespace System.Xml.Serialization {
 			if (map != null) return map;
 
 			if (!allowPrivateTypes)
-				ReflectionHelper.CheckSerializableType (type);
+				ReflectionHelper.CheckSerializableType (type, false);
 			
 			map = CreateTypeMapping (typeData, root, null, defaultNamespace);
 			helper.RegisterClrType (map, type, map.XmlTypeNamespace);
@@ -380,7 +380,7 @@ namespace System.Xml.Serialization {
 			ListMap obmap = new ListMap ();
 
 			if (!allowPrivateTypes)
-				ReflectionHelper.CheckSerializableType (type);
+				ReflectionHelper.CheckSerializableType (type, true);
 			
 			if (atts == null) atts = new XmlAttributes();
 			Type itemType = typeData.ListItemType;
@@ -528,7 +528,7 @@ namespace System.Xml.Serialization {
 			if (map != null) return map;
 			
 			if (!allowPrivateTypes)
-				ReflectionHelper.CheckSerializableType (type);
+				ReflectionHelper.CheckSerializableType (type, false);
 				
 			map = CreateTypeMapping (typeData, root, null, defaultNamespace);
 			helper.RegisterClrType (map, type, map.XmlTypeNamespace);
@@ -560,7 +560,7 @@ namespace System.Xml.Serialization {
 			if (map != null) return map;
 			
 			if (!allowPrivateTypes)
-				ReflectionHelper.CheckSerializableType (type);
+				ReflectionHelper.CheckSerializableType (type, false);
 				
 			map = CreateTypeMapping (typeData, root, null, defaultNamespace);
 			helper.RegisterClrType (map, type, map.XmlTypeNamespace);

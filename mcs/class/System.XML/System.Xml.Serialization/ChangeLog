@@ -1,3 +1,13 @@
+2004-09-02  Lluis Sanchez Gual  <lluis@novell.com>
+
+	* ReflectionHelper.cs, SoapReflectionImporter.cs, XmlReflectionImporter.cs: 
+	  In CheckSerializableType, add the option of ignoring types with private
+	  constructors. Some kind of lists can be deserialized
+	  even if the constructor is private. See bug #61464.
+	* SerializationCodeGenerator.cs, XmlSerializationReaderInterpreter.cs:
+	  Before creating a list, check that it has a public constructor.
+	* TypeData.cs: Added HasPublicConstructor property.
+
 2004-09-01  Lluis Sanchez Gual  <lluis@novell.com>
 
 	* SerializationCodeGenerator.cs: Generate correct "HasValue" check for

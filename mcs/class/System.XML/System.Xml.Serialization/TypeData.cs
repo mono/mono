@@ -45,6 +45,7 @@ namespace System.Xml.Serialization
 		string fullTypeName;
 		TypeData listItemTypeData;
 		TypeData listTypeData;
+		bool hasPublicConstructor = true;
 
 		public TypeData (Type type, string elementName, bool isPrimitive)
 		{
@@ -72,6 +73,10 @@ namespace System.Xml.Serialization
 				this.elementName = TypeTranslator.GetArrayName (ListItemTypeData.XmlType);
 			else
 				this.elementName = elementName;
+
+			if (sType == SchemaTypes.Array || sType == SchemaTypes.Class) {
+				hasPublicConstructor = (type.IsArray || type.GetConstructor (Type.EmptyTypes) != null || type.IsAbstract || type.IsValueType);
+			}
 		}
 
 		internal TypeData (string typeName, string fullTypeName, string xmlType, SchemaTypes schemaType, TypeData listItemTypeData)
@@ -81,6 +86,7 @@ namespace System.Xml.Serialization
 			this.fullTypeName = fullTypeName.Replace ('+', '.');
 			this.listItemTypeData = listItemTypeData;
 			this.sType = schemaType;
+			this.hasPublicConstructor = true;
 		}
 
 		public string TypeName
@@ -205,6 +211,11 @@ namespace System.Xml.Serialization
 
 				return listTypeData;
 			}
+		}
+		
+		public bool HasPublicConstructor
+		{
+			get { return hasPublicConstructor; }
 		}
 
 

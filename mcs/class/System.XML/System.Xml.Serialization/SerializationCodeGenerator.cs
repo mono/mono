@@ -1622,7 +1622,7 @@ namespace System.Xml.Serialization
 						if (!MemberHasReadReplaceHook (xmlMapType, mem)) {
 							flatLists[n] = GetObTempVar ();
 							string rval = "null";
-							if (IsReadOnly (typeMap, mem, isValueList)) rval = ob + ".@" + mem.Name;
+							if (IsReadOnly (typeMap, mem, mem.TypeData, isValueList)) rval = ob + ".@" + mem.Name;
 							WriteLine (mem.TypeData.FullTypeName + " " + flatLists[n] + " = " + rval + ";");
 						}
 					}
@@ -1685,7 +1685,7 @@ namespace System.Xml.Serialization
 							RegisterReferencingMap (info.MappedType);
 
 							WriteLineInd ("if (fixup.Ids[" + info.Member.Index + "] == null) {");	// Already read
-							if (IsReadOnly (typeMap, info.Member, isValueList)) 
+							if (IsReadOnly (typeMap, info.Member, info.TypeData, isValueList)) 
 								WriteLine ("throw CreateReadOnlyCollectionException (" + GetLiteral(info.TypeData.FullTypeName) + ");");
 							else 
 								GenerateSetMemberValue (info.Member, ob, GetCast (info.Member.TypeData,list), isValueList);
@@ -1694,7 +1694,7 @@ namespace System.Xml.Serialization
 							if (!info.MappedType.TypeData.Type.IsArray)
 							{
 								WriteLineInd ("else {");
-								if (IsReadOnly (typeMap, info.Member, isValueList)) 
+								if (IsReadOnly (typeMap, info.Member, info.TypeData, isValueList)) 
 									WriteLine (list + " = " + GenerateGetMemberValue (info.Member, ob, isValueList) + ";");
 								else { 
 									WriteLine (list + " = " + GenerateCreateList (info.MappedType.TypeData.Type) + ";");
@@ -1708,7 +1708,7 @@ namespace System.Xml.Serialization
 						else
 						{
 							if (!GenerateReadMemberHook (xmlMapType, info.Member)) {
-								if (IsReadOnly (typeMap, info.Member, isValueList)) GenerateReadListElement (info.MappedType, GenerateGetMemberValue (info.Member, ob, isValueList), GetLiteral(info.IsNullable), false);
+								if (IsReadOnly (typeMap, info.Member, info.TypeData, isValueList)) GenerateReadListElement (info.MappedType, GenerateGetMemberValue (info.Member, ob, isValueList), GetLiteral(info.IsNullable), false);
 								else GenerateSetMemberValue (info.Member, ob, GenerateReadListElement (info.MappedType, null, GetLiteral(info.IsNullable), true), isValueList);
 								GenerateEndHook ();
 							}
@@ -1720,7 +1720,7 @@ namespace System.Xml.Serialization
 					{
 						XmlTypeMapMemberFlatList mem = (XmlTypeMapMemberFlatList)info.Member;
 						if (!GenerateReadArrayMemberHook (xmlMapType, info.Member, indexes[mem.FlatArrayIndex])) {
-							GenerateAddListValue (mem.TypeData, flatLists[mem.FlatArrayIndex], indexes[mem.FlatArrayIndex], GenerateReadObjectElement (info), !IsReadOnly (typeMap, info.Member, isValueList));
+							GenerateAddListValue (mem.TypeData, flatLists[mem.FlatArrayIndex], indexes[mem.FlatArrayIndex], GenerateReadObjectElement (info), !IsReadOnly (typeMap, info.Member, info.TypeData, isValueList));
 							GenerateEndHook ();
 						}
 						WriteLine (indexes[mem.FlatArrayIndex] + "++;");
@@ -1853,7 +1853,7 @@ namespace System.Xml.Serialization
 						string list = flatLists[mem.FlatArrayIndex];
 						if (mem.TypeData.Type.IsArray)
 							WriteLine (list + " = (" + mem.TypeData.FullTypeName + ") ShrinkArray (" + list + ", " + indexes[mem.FlatArrayIndex] + ", " + GetTypeOf(mem.TypeData.Type.GetElementType()) + ", true);");
-						if (!IsReadOnly (typeMap, mem, isValueList))
+						if (!IsReadOnly (typeMap, mem, mem.TypeData, isValueList))
 							GenerateSetMemberValue (mem, ob, list, isValueList);
 					}
 				}
@@ -1867,10 +1867,10 @@ namespace System.Xml.Serialization
 			}
 		}
 		
-		bool IsReadOnly (XmlTypeMapping map, XmlTypeMapMember member, bool isValueList)
+		bool IsReadOnly (XmlTypeMapping map, XmlTypeMapMember member, TypeData memType, bool isValueList)
 		{
-			if (isValueList) return false;
-			else return member.IsReadOnly (map.TypeData.Type);
+			if (isValueList) return !memType.HasPublicConstructor;
+			else return member.IsReadOnly (map.TypeData.Type) || !memType.HasPublicConstructor;
 		}
 
 		void GenerateSetMemberValue (XmlTypeMapMember member, string ob, string value, bool isValueList)
@@ -1954,7 +1954,7 @@ namespace System.Xml.Serialization
 			Type listType = typeMap.TypeData.Type;
 			ListMap listMap = (ListMap)typeMap.ObjectMap;
 
-			if (canCreateInstance) 
+			if (canCreateInstance && typeMap.TypeData.HasPublicConstructor) 
 			{
 				list = GetObTempVar ();
 				WriteLine (typeMap.TypeFullName + " " + list + " = null;");
@@ -1963,10 +1963,20 @@ namespace System.Xml.Serialization
 			}
 			else
 			{
-				WriteLineInd ("if (" + list + " == null)");
-				WriteLine ("throw CreateReadOnlyCollectionException (" + GetLiteral (typeMap.TypeFullName) + ");");
-				Unindent ();
-				WriteLineInd ("if (!ReadNull()) {");
+				if (list != null) {
+					WriteLineInd ("if (" + list + " == null)");
+					WriteLine ("throw CreateReadOnlyCollectionException (" + GetLiteral (typeMap.TypeFullName) + ");");
+					Unindent ();
+					WriteLineInd ("if (!ReadNull()) {");
+				}
+				else {
+					list = GetObTempVar ();
+					WriteLine (typeMap.TypeFullName + " " + list + " = null;");
+					WriteLineInd ("if (" + list + " == null)");
+					WriteLine ("throw CreateReadOnlyCollectionException (" + GetLiteral (typeMap.TypeFullName) + ");");
+					Unindent ();
+					return list;
+				}
 			}
 				
 			WriteLineInd ("if (Reader.IsEmptyElement) {");
