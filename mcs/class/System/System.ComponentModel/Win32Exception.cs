@@ -64,6 +64,9 @@ namespace System.ComponentModel
 			case 2:
 				message = Locale.GetText ("Cannot find the specified file");
 				break;
+			case 3:
+				message = Locale.GetText ("Cannot find the specified file");
+				break;
 			case 10004:
 				message = Locale.GetText ("interrupted");
 				break;

@@ -1,3 +1,8 @@
+2004-03-19  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Win32Exception.cs: added ERROR_PATH_NOT_FOUND that reports the same
+	message as ERROR_FILE_NOT_FOUND.
+
 2004-03-17  Ivan Hamilton <ivan@chimerical.com.au>
 
 	* LicenseManager.cs: Completed TODO.
