@@ -162,7 +162,7 @@ namespace Mono.Security.Cryptography {
 		public bool Load () 
 		{
 			// see NOTES
-			new FileIOPermission (FileIOPermissionAccess.Read, this.Filename).Assert ();
+// FIXME		new FileIOPermission (FileIOPermissionAccess.Read, this.Filename).Assert ();
 
 			bool result = File.Exists (this.Filename);
 			if (result) {
@@ -176,7 +176,7 @@ namespace Mono.Security.Cryptography {
 		public void Save () 
 		{
 			// see NOTES
-			new FileIOPermission (FileIOPermissionAccess.Write, this.Filename).Assert ();
+// FIXME		new FileIOPermission (FileIOPermissionAccess.Write, this.Filename).Assert ();
 
 			using (FileStream fs = File.Open (this.Filename, FileMode.Create)) {
 				StreamWriter sw = new StreamWriter (fs, Encoding.UTF8);
@@ -193,7 +193,7 @@ namespace Mono.Security.Cryptography {
 		public void Remove () 
 		{
 			// see NOTES
-			new FileIOPermission (FileIOPermissionAccess.Write, this.Filename).Assert ();
+// FIXME		new FileIOPermission (FileIOPermissionAccess.Write, this.Filename).Assert ();
 
 			File.Delete (this.Filename);
 			// it's now possible to change the keypair un the container
