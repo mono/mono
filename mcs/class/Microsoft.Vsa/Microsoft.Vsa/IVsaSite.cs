@@ -17,27 +17,22 @@ namespace Microsoft.Vsa
 		// public methods
 
 		//[Guid ("")]
-		[InterfaceType (ComInterfaceType.InterfaceIsIUnknown)]
 		void GetCompiledState (out byte [] pe, out byte [] debugInfo);
 
 		
 		//[Guid ("")]
-		[InterfaceType (ComInterfaceType.InterfaceIsIUnknown)]
 		object GetEventSourceInstance (string itemName, string eventSourceName);
 
 
 		//[Guid ("")]
-		[InterfaceType (ComInterfaceType.InterfaceIsIUnknown)]
 		object GetGlobalInstance (string name);
 
 
 		//[Guid ("")]
-		[InterfaceType (ComInterfaceType.InterfaceIsIUnknown)]
 		void Notify (string notify, object info);
 
 
 		//[Guid ("")]
-		[InterfaceType (ComInterfaceType.InterfaceIsIUnknown)]
 		bool OnCompilerError (IVsaError error);
 	}
 }		

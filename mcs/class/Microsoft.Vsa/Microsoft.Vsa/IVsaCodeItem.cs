@@ -16,14 +16,12 @@ namespace Microsoft.Vsa
         public interface IVsaCodeItem : IVsaItem
 	{
 		//[Guid ("")]
-		[InterfaceType (ComInterfaceType.InterfaceIsIUnknown)]
 		CodeObject CodeDOM {
 			get;
 		}
 
 
 		//[Guid ("")]
-		[InterfaceType (ComInterfaceType.InterfaceIsIUnknown)]
 		string SourceText {
 			get;
 			set;
@@ -31,18 +29,15 @@ namespace Microsoft.Vsa
 
 
 		//[Guid ("")]
-		[InterfaceType (ComInterfaceType.InterfaceIsIUnknown)]
 		void AddEventSource (string eventSourceName, string eventSourceType);
 
 
 
 		//[Guid ("")]
-		[InterfaceType (ComInterfaceType.InterfaceIsIUnknown)]
 		void AppendSourceText (string text);
 
 		
 		//[Guid("")]
-		[InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 		void RemoveEventSource (string eventSourceName);
 	}
 }

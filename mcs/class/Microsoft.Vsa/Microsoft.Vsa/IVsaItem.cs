@@ -17,17 +17,14 @@ namespace Microsoft.Vsa
 		// public properties
 
 		//[Guid ("")]
-		[InterfaceType (ComInterfaceType.InterfaceIsIUnknown)]
 		bool IsDirty { get; }
 
 
 		//[Guid ("")]
-		[InterfaceType (ComInterfaceType.InterfaceIsIUnknown)]
 		VsaItemType ItemType { get; }
 
 		
 		//[Guid ("")]
-		[InterfaceType (ComInterfaceType.InterfaceIsIUnknown)]
 		string Name { 
 			get;
 			set;
@@ -37,12 +34,10 @@ namespace Microsoft.Vsa
 		// public methods
 
 		//[Guid ("")]
-		[InterfaceType (ComInterfaceType.InterfaceIsIUnknown)]
 		object GetOption (string name);
 				       
 		
 		//[Guid ("")]
-		[InterfaceType (ComInterfaceType.InterfaceIsIUnknown)]
 		void SetOption (string name, object value);
 	}
 }

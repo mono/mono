@@ -17,12 +17,10 @@ namespace Microsoft.Vsa
 		// public methods
 
 		//[Guid ("")]
-		[InterfaceType (ComInterfaceType.InterfaceIsIUnknown)]
 		string LoadElement (string name);
 
 
 		//[Guid ("")]
-		[InterfaceType (ComInterfaceType.InterfaceIsIUnknown)]
 		void SaveElement (string name, string source);
 	}
 }

@@ -15,7 +15,6 @@ namespace Microsoft.Vsa
 	public interface IVsaGlobalItem : IVsaItem
 	{
 		//[Guid ("")]
-		[InterfaceType (ComInterfaceType.InterfaceIsIUnknown)]
 		bool ExposeMembers {
 			get;
 			set;
@@ -23,7 +22,6 @@ namespace Microsoft.Vsa
 
 
 		//[Guid ("")]
-		[InterfaceType (ComInterfaceType.InterfaceIsIUnknown)]
 		string TypeString { set; }
 	}
 }

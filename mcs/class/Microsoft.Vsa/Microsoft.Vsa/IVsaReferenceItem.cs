@@ -17,7 +17,6 @@ namespace Microsoft.Vsa
 		// public property
 	
 		//[Guid ("")]
-		[InterfaceType (ComInterfaceType.InterfaceIsIUnknown)]
 		string AssemblyName {
 			get;
 			set;

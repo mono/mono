@@ -1,3 +1,10 @@
+2003-07-22  Lluis Sanchez Gual  <lluis@ximian.com>
+
+	* IVsaCodeItem.cs, IVsaEngine.cs, IVsaError.cs, IVsaGlobalItem.cs
+	  IVsaItem.cs, IVsaItems.cs, IVsaPersistSite.cs, IVsaReferenceItem.cs,
+	  IVsaSite.cs: InterfaceTypeAttribute can only be applied to interfaces,
+	  no to interface members. Build failed on windows.
+
 2003-03-21  Cesar Octavio Lopez Nataren  <cesar@ciencias.unam.mx>
 
 	* mcs/class/Microsoft.Vsa: Added this ChangeLog file, and also
