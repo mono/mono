@@ -1,3 +1,12 @@
+2001-08-23  Dietmar Maurer  <dietmar@ximian.com>
+
+	* *: use MonoClass pointers instead of <type_tokens>
+	
+	* class.h: new flag: metadata_inited.
+
+	* class.c (mono_class_metadata_init): impl.
+	(mono_class_instance_size): impl.
+	(mono_class_data_size): impl.
 
 Wed Aug 22 16:27:30 CEST 2001 Paolo Molaro <lupus@ximian.com>
 
