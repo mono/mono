@@ -280,6 +280,9 @@ namespace Mono.CSharp {
 					has_type_args = true;
 				args [i] = e;
 				atypes [i] = e.ResolveType (ec);
+
+				if (atypes [i] == null)
+					ok = false;
 			}
 			return ok;
 		}
@@ -361,8 +364,11 @@ namespace Mono.CSharp {
 			//
 			// Resolve the arguments.
 			//
-			if (args.Resolve (ec) == false)
+			if (args.Resolve (ec) == false) {
+				Report.Error (-220, loc, "Failed to resolve constructed type `{0}'",
+					      full_name);
 				return null;
+			}
 
 			gen_params = gt.GetGenericArguments ();
 			atypes = args.Arguments;

@@ -1,5 +1,12 @@
 2003-11-16  Martin Baulig  <martin@ximian.com>
 
+	* codegen.cs (EmitContext.IsGeneric): Removed.
+
+	* ecore.cs (SimpleName.ResolveAsTypeStep): Always call
+	ResolveGeneric() on the DeclSpace.
+
+2003-11-16  Martin Baulig  <martin@ximian.com>
+
 	* generic.cs (TypeArguments.Resolve):
 	`Expression.ResolveAsTypeTerminal()' returns a TypeExpr; call
 	`ResolveType()' on it to get the Type.
