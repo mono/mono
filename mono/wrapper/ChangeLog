@@ -1,3 +1,10 @@
+2002-01-23  Miguel de Icaza  <miguel@ximian.com>
+
+	* genwrapper.pl: Added support for flagging non-CLS compliant
+	classes and structs with CLSCompliant(false).
+
+	Added mkdir, rmdir and rename wrappers.
+
 2001-09-20  Dietmar Maurer  <dietmar@ximian.com>
 
 	* wrapper.c: added declaration of environ
