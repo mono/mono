@@ -13,7 +13,7 @@ using System.Globalization;
 
 namespace System {
 	
-	public struct Double : IComparable, IFormattable { //, IConvertible {
+	public struct Double : IComparable, IFormattable, IConvertible {
 		public const double Epsilon = 4.9406564584124650e-324;
 		public const double MaxValue =  1.7976931348623157e308;
 		public const double MinValue = -1.7976931348623157e308;
@@ -169,6 +169,91 @@ namespace System {
 		public TypeCode GetTypeCode ()
 		{
 			return TypeCode.Double;
+		}
+
+		public object ToType (Type conversionType, IFormatProvider provider)
+		{
+			return System.Convert.ToType(value, conversionType, provider);
+		}
+		
+		public bool ToBoolean (IFormatProvider provider)
+		{
+			return System.Convert.ToBoolean(value);
+		}
+		
+		public byte ToByte (IFormatProvider provider)
+		{
+			return System.Convert.ToByte(value);
+		}
+		
+		public char ToChar (IFormatProvider provider)
+		{
+			throw new InvalidCastException();
+		}
+		
+		[CLSCompliant(false)]
+		public DateTime ToDateTime (IFormatProvider provider)
+		{
+			throw new InvalidCastException();
+		}
+		
+		public decimal ToDecimal (IFormatProvider provider)
+		{
+			return System.Convert.ToDecimal(value);
+		}
+		
+		public double ToDouble (IFormatProvider provider)
+		{
+			return System.Convert.ToDouble(value);
+		}
+		
+		public short ToInt16 (IFormatProvider provider)
+		{
+			return System.Convert.ToInt16(value);
+		}
+		
+		public int ToInt32 (IFormatProvider provider)
+		{
+			return System.Convert.ToInt32(value);
+		}
+		
+		public long ToInt64 (IFormatProvider provider)
+		{
+			return System.Convert.ToInt64(value);
+		}
+		
+		[CLSCompliant(false)] 
+		public sbyte ToSByte (IFormatProvider provider)
+		{
+			return System.Convert.ToSByte(value);
+		}
+		
+		public float ToSingle (IFormatProvider provider)
+		{
+			return System.Convert.ToSingle(value);
+		}
+		
+		string IConvertible.ToString (IFormatProvider provider)
+		{
+			return ToString(provider);
+		}
+
+		[CLSCompliant(false)]
+		public ushort ToUInt16 (IFormatProvider provider)
+		{
+			return System.Convert.ToUInt16(value);
+		}
+		
+		[CLSCompliant(false)]
+		public uint ToUInt32 (IFormatProvider provider)
+		{
+			return System.Convert.ToUInt32(value);
+		}
+		
+		[CLSCompliant(false)]
+		public ulong ToUInt64 (IFormatProvider provider)
+		{
+			return System.Convert.ToUInt64(value);
 		}
 	}
 }
