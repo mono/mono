@@ -1,3 +1,8 @@
+2003-04-30 Jackson Harper <jackson@latitudegeo.com>
+
+	* ILParser.jay: Implement non marshalled methodheads, method
+	attributes, impl attributes, imit simple int and ldstr instructions.
+		
 2003-04-17 Jackson Harper <jackson@latitudegeo.com>
 
 	* ILParser.jay: Define data, fix repeat_opt allways being set.

@@ -1330,29 +1330,35 @@ method_all		: method_head OPEN_BRACE method_decls CLOSE_BRACE
 
 method_head		: D_METHOD meth_attr call_conv param_attr type method_name
                           typars_clause OPEN_PARENS sig_args CLOSE_PARENS impl_attr
+                          {
+                                MethodDef methdef = new MethodDef ((MethAttr) $2,
+                                        (ImplAttr) $11, (string) $6, (ITypeRef) $5,
+                                        (ArrayList) $9);
+                                codegen.BeginMethodDef (methdef);
+                          }
 			| D_METHOD meth_attr call_conv param_attr type 
 			  K_MARSHAL OPEN_PARENS native_type CLOSE_PARENS method_name
 			  OPEN_PARENS sig_args CLOSE_PARENS impl_attr
 			;
 
-meth_attr		: /* EMPTY */
-			| meth_attr K_STATIC
-			| meth_attr K_PUBLIC
-			| meth_attr K_PRIVATE
-			| meth_attr K_FAMILY
-			| meth_attr K_ASSEMBLY
-			| meth_attr K_FAMANDASSEM
-			| meth_attr K_FAMORASSEM
-			| meth_attr K_PRIVATESCOPE
-			| meth_attr K_FINAL
-			| meth_attr K_VIRTUAL
-			| meth_attr K_ABSTRACT
-			| meth_attr K_HIDEBYSIG
-			| meth_attr K_NEWSLOT
-			| meth_attr K_REQSECOBJ
-			| meth_attr K_SPECIALNAME
-			| meth_attr K_RTSPECIALNAME
-			| meth_attr K_UNMANAGEDEXP
+meth_attr		: /* EMPTY */                   { $$ = new MethAttr (); }
+			| meth_attr K_STATIC            { $$ = (MethAttr) $1 | MethAttr.Static; }
+			| meth_attr K_PUBLIC            { $$ = (MethAttr) $1 | MethAttr.Public; }
+			| meth_attr K_PRIVATE           { $$ = (MethAttr) $1 | MethAttr.Private; }
+			| meth_attr K_FAMILY            { $$ = (MethAttr) $1 | MethAttr.Family; }
+			| meth_attr K_ASSEMBLY          { $$ = (MethAttr) $1 | MethAttr.Assembly; }
+			| meth_attr K_FAMANDASSEM       { $$ = (MethAttr) $1 | MethAttr.FamAndAssem; } 
+			| meth_attr K_FAMORASSEM        { $$ = (MethAttr) $1 | MethAttr.FamOrAssem; } 
+			| meth_attr K_PRIVATESCOPE      { /* CHECK HEADERS */ }
+			| meth_attr K_FINAL             { $$ = (MethAttr) $1 | MethAttr.Final; } 
+			| meth_attr K_VIRTUAL           { $$ = (MethAttr) $1 | MethAttr.Virtual; }
+			| meth_attr K_ABSTRACT          { $$ = (MethAttr) $1 | MethAttr.Abstract; }
+			| meth_attr K_HIDEBYSIG         { $$ = (MethAttr) $1 | MethAttr.HideBySig; }
+			| meth_attr K_NEWSLOT           { $$ = (MethAttr) $1 | MethAttr.NewSlot; }
+			| meth_attr K_REQSECOBJ         { $$ = (MethAttr) $1 | MethAttr.RequireSecObject; }
+			| meth_attr K_SPECIALNAME       { $$ = (MethAttr) $1 | MethAttr.SpecialName; }
+			| meth_attr K_RTSPECIALNAME     { $$ = (MethAttr) $1 | MethAttr.RTSpecialName; }
+			| meth_attr K_UNMANAGEDEXP      
 			| meth_attr K_PINVOKEIMPL OPEN_PARENS comp_qstring K_AS
 				comp_qstring pinv_attr CLOSE_PARENS
 			| meth_attr K_PINVOKEIMPL OPEN_PARENS comp_qstring pinv_attr CLOSE_PARENS
@@ -1377,36 +1383,52 @@ method_name		: D_CTOR
 			| comp_name
 			;
 
-param_attr		: /* EMPTY */
-			| param_attr OPEN_BRACKET K_IN CLOSE_BRACKET
-			| param_attr OPEN_BRACKET K_OUT CLOSE_BRACKET
-			| param_attr OPEN_BRACKET K_OPT CLOSE_BRACKET
+param_attr		: /* EMPTY */                                   { $$ = new ParamAttr (); }
+			| param_attr OPEN_BRACKET K_IN CLOSE_BRACKET    { $$ = (ParamAttr) $1 | ParamAttr.In; }
+			| param_attr OPEN_BRACKET K_OUT CLOSE_BRACKET   { $$ = (ParamAttr) $1 | ParamAttr.Out; }
+			| param_attr OPEN_BRACKET K_OPT CLOSE_BRACKET   { $$ = (ParamAttr) $1 | ParamAttr.Opt; }
 			;
 
-impl_attr		: /* EMPTY */
-			| impl_attr K_NATIVE
-			| impl_attr K_CIL
-			| impl_attr K_OPTIL
-			| impl_attr K_MANAGED
-			| impl_attr K_UNMANAGED
-			| impl_attr K_FORWARDREF
-			| impl_attr K_PRESERVESIG
-			| impl_attr K_RUNTIME
-			| impl_attr K_INTERNALCALL
-			| impl_attr K_SYNCHRONIZED
-			| impl_attr K_NOINLINING
+impl_attr		: /* EMPTY */                   { $$ = new ImplAttr (); }
+			| impl_attr K_NATIVE            { $$ = (ImplAttr) $1 | ImplAttr.Native; }
+			| impl_attr K_CIL               { $$ = (ImplAttr) $1 | ImplAttr.IL; }
+			| impl_attr K_OPTIL             { $$ = (ImplAttr) $1 | ImplAttr.Optil; }
+			| impl_attr K_MANAGED           { /* should this reset? */ }
+			| impl_attr K_UNMANAGED         { $$ = (ImplAttr) $1 | ImplAttr.Unmanaged; }
+			| impl_attr K_FORWARDREF        { $$ = (ImplAttr) $1 | ImplAttr.ForwardRef; }
+			| impl_attr K_PRESERVESIG       { $$ = (ImplAttr) $1 | ImplAttr.PreserveSig; }
+			| impl_attr K_RUNTIME           { $$ = (ImplAttr) $1 | ImplAttr.Runtime; }
+			| impl_attr K_INTERNALCALL      { $$ = (ImplAttr) $1 | ImplAttr.InternalCall; }
+			| impl_attr K_SYNCHRONIZED      { $$ = (ImplAttr) $1 | ImplAttr.Synchronised; }
+			| impl_attr K_NOINLINING        { $$ = (ImplAttr) $1 | ImplAttr.NoInLining; }
 			;
 
-sig_args		: /* EMPTY */
+sig_args		:               { $$ = new ArrayList (); }
 			| sig_arg_list
 			;
 
-sig_arg_list		: sig_arg
+sig_arg_list 		: sig_arg
+                          {
+                                ArrayList sig_list = new ArrayList ();
+                                sig_list.Add ($1);
+                                $$ = sig_list;
+                          }
 			| sig_arg_list COMMA sig_arg
+                          {
+                                ArrayList sig_list = (ArrayList) $1;
+                                sig_list.Add ($3);
+                                $$ = sig_list;
+                          }
 			;
 
 sig_arg			: param_attr type
+                          {
+                                $$ = new ParamDef ((ParamAttr) $1, null, (ITypeRef) $2);
+                          }
 			| param_attr type id
+                          {
+                                $$ = new ParamDef ((ParamAttr) $1, (string) $3, (ITypeRef) $2);
+                          }
 			| param_attr type K_MARSHAL OPEN_PARENS native_type CLOSE_PARENS
 			| param_attr type K_MARSHAL OPEN_PARENS native_type CLOSE_PARENS id
 			;
@@ -1475,9 +1497,17 @@ handler_block		: scope_block
 			;
 
 instr			: INSTR_NONE
+                          {
+                                codegen.CurrentMethodDef.AddInstr (
+                                        new SimpInstr ((Op) $1));
+                          }
 			| INSTR_VAR int32
 			| INSTR_I int32
-			| INSTR_I id /* Allow variable names :p */
+                          {
+                                codegen.CurrentMethodDef.AddInstr (new
+                                        IntInstr ((IntOp) $1, (int) $2));
+                          }
+			| INSTR_I id /* Allow variable names */
 			| INSTR_I8 int64
 			| INSTR_R float64
 			| INSTR_R int64
@@ -1491,6 +1521,10 @@ instr			: INSTR_NONE
 			| INSTR_TYPE K_FIELD type id						// ****** ADDED
 			| INSTR_TYPE type_spec
 			| INSTR_STRING comp_qstring
+                          {
+                                if ((string) $1 == "ldstr")
+                                        codegen.CurrentMethodDef.AddInstr (new LdstrInstr ((string) $2));
+                          }
 			| INSTR_STRING K_BYTEARRAY ASSIGN OPEN_PARENS bytes CLOSE_PARENS
 			| INSTR_STRING K_BYTEARRAY OPEN_PARENS bytes CLOSE_PARENS		// ****** ADDED
 			| INSTR_SIG call_conv type OPEN_PARENS sig_args CLOSE_PARENS
