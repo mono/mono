@@ -428,15 +428,8 @@ namespace Mono.CSharp {
 					return null;
 				}
 				
-				//
-				// This construct is needed because dynamic types
-				// are not known by Type.GetType, so we have to try then to use
-				// ModuleBuilder.GetType.
-				//
 				string ptr_type_name = Expr.Type.FullName + "*";
-				type = Type.GetType (ptr_type_name);
-				if (type == null)
-					type = CodeGen.ModuleBuilder.GetType (ptr_type_name);
+				type = TypeManager.LookupType (ptr_type_name);
 				
 				return this;
 			}

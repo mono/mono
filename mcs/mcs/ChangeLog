@@ -1,3 +1,8 @@
+2002-06-14  Rachel Hestilow  <hestilow@ximian.com>
+
+	* expression.cs (Unary.ResolveOperator): Use TypeManager
+	to resolve the type.
+	
 2002-06-13  Ravi Pratap  <ravi@ximian.com>
 
 	* cs-parser.jay (enum_member_declaration): Pass in the attributes
