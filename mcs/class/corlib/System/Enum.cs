@@ -440,11 +440,9 @@ namespace System {
 				)
 				throw new FormatException("Format String can be only \"G\",\"g\",\"X\",\"x\",\"F\",\"f\",\"D\" or \"d\".");
 
-			// FIXME: Need to re-include this when mono/mint can handle the array
-			//	cast properly.  Bugzilla bug submitted #23123
-			//if ((format == "G" || format == "g") 
-			//	&& Attribute.IsDefined(enumType, typeof(FlagsAttribute)))
-			//	format = "F";
+			if ((format == "G" || format == "g") 
+				&& Attribute.IsDefined(enumType, typeof(FlagsAttribute)))
+				format = "F";
 
 			string retVal = "";
 			switch (format) {

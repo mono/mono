@@ -319,18 +319,52 @@ namespace System
 		
 		public static int BinarySearch (Array array, object value)
 		{
+			if (array == null)
+				throw new ArgumentNullException("array");
+
+			if (array.Rank > 1)
+				throw new RankException();
+
+			if (!(value is IComparable))
+				throw new ArgumentException("value does not support IComparable");
+
 			return BinarySearch (array, array.GetLowerBound (0), array.GetLength (0),
 					     value, null);
 		}
 
 		public static int BinarySearch (Array array, object value, IComparer comparer)
 		{
+			if (array == null)
+				throw new ArgumentNullException("array");
+
+			if (array.Rank > 1)
+				throw new RankException();
+
+			if ((comparer == null) && !(value is IComparable))
+				throw new ArgumentException("comparer is null and value does not support IComparable");
+
 			return BinarySearch (array, array.GetLowerBound (0), array.GetLength (0),
 					     value, comparer);
 		}
 
 		public static int BinarySearch (Array array, int index, int length, object value)
 		{
+			if (array == null)
+				throw new ArgumentNullException("array");
+
+			if (array.Rank > 1)
+				throw new RankException();
+
+			if (index < array.GetLowerBound (0))
+				throw new ArgumentOutOfRangeException("index is less than the lower bound of array.");
+			if (length < 0)
+				throw new ArgumentOutOfRangeException("length is less than zero.");
+
+			if (index + length > array.GetLowerBound (0) + array.GetLength (0))
+				throw new ArgumentException("index and length do not specify a valid range in array.");
+			if (!(value is IComparable))
+				throw new ArgumentException("value does not support IComparable");
+
 			return BinarySearch (array, index, length, value, null);
 		}
 
@@ -344,11 +378,16 @@ namespace System
 			if (array.Rank > 1)
 				throw new RankException ();
 
-			if (index < array.GetLowerBound (0) || length < 0)
-				throw new ArgumentOutOfRangeException ("index");
+			if (index < array.GetLowerBound (0))
+				throw new ArgumentOutOfRangeException("index is less than the lower bound of array.");
+			if (length < 0)
+				throw new ArgumentOutOfRangeException("length is less than zero.");
 
-			if (index + length > array.GetUpperBound (0) + 1)
-				throw new ArgumentException ("length");
+			if (index + length > array.GetLowerBound (0) + array.GetLength (0))
+				throw new ArgumentException("index and length do not specify a valid range in array.");
+
+			if ((comparer == null) && !(value is IComparable))
+				throw new ArgumentException("comparer is null and value does not support IComparable");
 
 			// cache this in case we need it
 			IComparable valueCompare = value as IComparable;
@@ -422,6 +461,14 @@ namespace System
 
 		public static void Copy (Array source, Array dest, int length)
 		{
+			// need these checks here because we are going to use
+			// GetLowerBound() on source and dest.
+			if (source == null)
+				throw new ArgumentNullException ("null");
+
+			if (dest == null)
+				throw new ArgumentNullException ("dest");
+
 			Copy (source, source.GetLowerBound (0), dest, dest.GetLowerBound (0), length);			
 		}
 

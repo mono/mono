@@ -1,3 +1,10 @@
+2002-04-09  Nick Drochak  <ndrochak@gol.com>
+
+	* Array.cs (BinarySearch): Add checks on paramters before using them
+	and throw exceptions as needed.
+
+	* Enum.cs (Format): Check if [Flags] is applied to enum and convert
+	"G" format to "F" if so.
 
 Tue Apr 9 13:12:09 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
