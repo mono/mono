@@ -118,24 +118,38 @@ namespace System.Web.Services.Protocols {
 				m.IsReturnValue = false;
 				m.MemberName = input [i].Name;
 				m.MemberType = input [i].ParameterType;
+				if (m.MemberType.IsByRef)
+					m.MemberType = m.MemberType.GetElementType ();
 
 				in_members [i] = m;
 			}
 
 			XmlMembersMapping [] members = new XmlMembersMapping [1];
-			members [0] = importer.ImportMembersMapping (RequestName, RequestNamespace, in_members, true);
-			XmlSerializer [] s = XmlSerializer.FromMappings (members);
-			RequestSerializer = s [0];
+			try {
+				members [0] = importer.ImportMembersMapping (RequestName, RequestNamespace, in_members, true);
+				XmlSerializer [] s = null;
+				s = XmlSerializer.FromMappings (members);
+				RequestSerializer = s [0];
+			} catch {
+				Console.WriteLine ("Got exception while creating serializer");
+				Console.WriteLine ("Method name: " + RequestName + " parameters are:");
+
+				for (int i = 0; i < input.Length; i++){
+					Console.WriteLine ("    {0}: {1} {2}", i, in_members [i].MemberName, in_members [i].MemberType);
+				}
+				throw;
+			}
 		}
 
 		void MakeResponseSerializer (XmlReflectionImporter importer)
 		{
 			ParameterInfo [] output = MethodInfo.OutParameters;
-			XmlReflectionMember [] out_members = new XmlReflectionMember [(OneWay ? 0 : 1) + output.Length];
+			bool has_return_value = !(OneWay || MethodInfo.ReturnType == typeof (void));
+			XmlReflectionMember [] out_members = new XmlReflectionMember [(has_return_value ? 1 : 0) + output.Length];
 			XmlReflectionMember m;
 			int idx = 0;
 
-			if (!OneWay){
+			if (has_return_value){
 				m = new XmlReflectionMember ();
 				m.IsReturnValue = true;
 				m.MemberName = RequestName + "Result";
@@ -155,10 +169,20 @@ namespace System.Web.Services.Protocols {
 				out_members [i + idx] = m;
 			}
 
-			XmlMembersMapping [] members = new XmlMembersMapping [1];
-			members [0] = importer.ImportMembersMapping (RequestName, RequestNamespace, out_members, true);
-			XmlSerializer [] s = XmlSerializer.FromMappings (members);
-			ResponseSerializer = s [0];
+			try {
+				XmlMembersMapping [] members = new XmlMembersMapping [1];
+				members [0] = importer.ImportMembersMapping (ResponseName, ResponseNamespace, out_members, true);
+				XmlSerializer [] s = XmlSerializer.FromMappings (members);
+				ResponseSerializer = s [0];
+			} catch {
+				Console.WriteLine ("Got exception while creating serializer");
+				Console.WriteLine ("Method name: " + ResponseName + " parameters are:");
+
+				for (int i = 0; i < out_members.Length; i++){
+					Console.WriteLine ("    {0}: {1} {2}", i, out_members [i].MemberName, out_members [i].MemberType);
+				}
+				throw;
+			}
 		}
 	}
 

@@ -1,6 +1,16 @@
 2003-05-30  Miguel de Icaza  <miguel@ximian.com>
 
-	* Methods.cs (MakeResponseSerializer): DUH.  Use the
+	* Methods.cs (MakeResponseSerializer): OneWay is not the only
+	condition to catch;  Also void return types are not required to
+	have a response.
+
+	(MakeRequestSerializer): InParameters *might* be ref parameters,
+	deal with that here too.
+
+	Add some debugging code for tracking down missing implementation
+	details in serialization creation.
+
+	(MakeResponseSerializer): DUH.  Use the
 	ResponseName/ResponseNamespace for the member import, not the
 	RequestName and RequestNamespace.  The bugs of cut-and-paste.
 

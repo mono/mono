@@ -163,7 +163,7 @@ namespace System.Web.Services.Protocols {
 			XmlTextReader xml_reader = new XmlTextReader (reader);
 
 			//
-			// Handle faults somewhere
+			// Handle faults/errors somewhere
 			//
 			xml_reader.MoveToContent ();
 			xml_reader.ReadStartElement ("Envelope", soap_envelope);
