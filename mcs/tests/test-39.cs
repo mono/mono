@@ -14,7 +14,6 @@ using System;
 [Simple ("Dummy")]
 	public class Blah {
 
-		[Simple ("Dummy")]
 		public static int Main ()
 		{
 			Console.WriteLine ("A dummy app which tests attribute emission");
