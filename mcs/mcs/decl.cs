@@ -1248,18 +1248,16 @@ namespace Mono.CSharp {
 			// If we have a base class (we have a base class unless we're
 			// TypeManager.object_type), we deep-copy its MemberCache here.
 			if (Container.BaseCache != null)
-				member_hash = DeepCopy (Container.BaseCache.member_hash);
+				member_hash = SetupCache (Container.BaseCache);
 			else
 				member_hash = new Hashtable ();
 
 			// If this is neither a dynamic type nor an interface, create a special
 			// method cache with all declared and inherited methods.
 			Type type = container.Type;
-			if (!(type is TypeBuilder) && !type.IsInterface) {
-				if (Container.BaseCache != null)
-					method_hash = DeepCopy (Container.BaseCache.method_hash);
-				else
-					method_hash = new Hashtable ();
+			if (!(type is TypeBuilder) && !type.IsInterface &&
+			    (Container.BaseCache == null || Container.BaseCache.method_hash != null)) {
+				method_hash = new Hashtable ();
 				AddMethods (type);
 			}
 
@@ -1286,16 +1284,16 @@ namespace Mono.CSharp {
 		}
 
 		/// <summary>
-		///   Return a a deep-copy of the hashtable @other.
+		///   Bootstrap this member cache by doing a deep-copy of our base.
 		/// </summary>
-		Hashtable DeepCopy (Hashtable other)
+		Hashtable SetupCache (MemberCache base_class)
 		{
 			Hashtable hash = new Hashtable ();
 
-			if (other == null)
+			if (base_class == null)
 				return hash;
 
-			IDictionaryEnumerator it = other.GetEnumerator ();
+			IDictionaryEnumerator it = base_class.member_hash.GetEnumerator ();
 			while (it.MoveNext ()) {
 				hash [it.Key] = ((ArrayList) it.Value).Clone ();
 			 }
@@ -1420,26 +1418,59 @@ namespace Mono.CSharp {
 					method_hash.Add (name, list);
 				}
 
-				Type declaring_type = member.DeclaringType;
-				if (declaring_type == type) {
-					list.Add (new CacheEntry (Container, member, MemberTypes.Method, bf | BindingFlags.DeclaredOnly));
-					continue;
-				}
+				if (member.IsVirtual &&
+				    (member.Attributes & MethodAttributes.NewSlot) == 0) {
+					MethodInfo base_method = ((MethodInfo) member).GetBaseDefinition ();
 
-				int n = list.Count;
-				while (n-- > 0) {
-					CacheEntry entry = (CacheEntry) list [n];
-					MethodBase old = entry.Member as MethodBase;
-
-					if (member.MethodHandle.Value == old.MethodHandle.Value && 
-					    declaring_type == old.DeclaringType) {
-						list [n] = new CacheEntry (entry, member);
-						break;
+					if (base_method == member) {
+						//
+						// Both mcs and CSC 1.1 seem to emit a somewhat broken
+						// ...Invoke () function for delegates: it's missing a 'newslot'.
+						// CSC 2.0 emits a 'newslot' for a delegate's Invoke.
+						//
+						if (member.Name != "Invoke" ||
+						    !type.IsSubclassOf (TypeManager.multicast_delegate_type)) {
+							Report.SymbolRelatedToPreviousError (base_method);
+							Report.Warning (-28, 
+								"{0} contains a method '{1}' that is marked " + 
+								" virtual, but doesn't appear to have a slot." + 
+								"  The method may be ignored during overload resolution", 
+								type, base_method);
+						}
+						goto skip;
 					}
-				}
 
-				if (n < 0)
-					throw new InternalErrorException ("cannot find inherited member " + member + " in base classes of " + type);
+					for (;;) {
+						list.Add (new CacheEntry (null, base_method, MemberTypes.Method, bf));
+						if ((base_method.Attributes & MethodAttributes.NewSlot) != 0)
+							break;
+
+						//
+						// Shouldn't get here.  Mono appears to be buggy.
+						//
+						MethodInfo new_base_method = base_method.GetBaseDefinition ();
+						if (new_base_method == base_method) {
+							Report.SymbolRelatedToPreviousError (base_method);
+							Report.Warning (-28, 
+								"{0} contains a method '{1}' that is marked " + 
+								" virtual, but doesn't appear to have a slot." + 
+								"  The method may be ignored during overload resolution", 
+								type, base_method);
+						}
+						base_method = new_base_method;
+					}
+
+
+				}
+			skip:
+
+				// Unfortunately, the elements returned by Type.GetMethods() aren't
+				// sorted so we need to do this check for every member.
+				BindingFlags new_bf = bf;
+				if (member.DeclaringType == type)
+					new_bf |= BindingFlags.DeclaredOnly;
+
+				list.Add (new CacheEntry (Container, member, MemberTypes.Method, new_bf));
 			}
 		}
 
@@ -1539,13 +1570,6 @@ namespace Mono.CSharp {
 				this.Container = container;
 				this.Member = member;
 				this.EntryType = GetEntryType (mt, bf);
-			}
-
-			public CacheEntry (CacheEntry other, MemberInfo update)
-			{
-				this.Container = other.Container;
-				this.EntryType = other.EntryType & ~EntryType.Declared;
-				this.Member = update;
 			}
 
 			public override string ToString ()

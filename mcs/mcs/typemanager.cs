@@ -2797,7 +2797,7 @@ public class TypeManager {
 ///   There is exactly one instance of this class per type.
 /// </summary>
 public sealed class TypeHandle : IMemberContainer {
-	public readonly TypeHandle BaseType;
+	public readonly IMemberContainer BaseType;
 
 	readonly int id = ++next_id;
 	static int next_id = 0;
@@ -2880,8 +2880,8 @@ public sealed class TypeHandle : IMemberContainer {
 	{
 		this.type = type;
 		if (type.BaseType != null) {
-			BaseType = GetTypeHandle (type.BaseType);
-			base_cache = BaseType.MemberCache;
+			base_cache = TypeManager.LookupMemberCache (type.BaseType);
+			BaseType = base_cache.Container;
 		} else if (type.IsInterface)
 			base_cache = TypeManager.LookupBaseInterfacesCache (type);
 		this.is_interface = type.IsInterface;

@@ -1,5 +1,18 @@
 2005-03-28  Raja R Harinath  <rharinath@novell.com>
 
+	* typemanager.cs (TypeHandle.BaseType): Make into an IMemberContainer.
+	(TypeHandle.TypeHandle): Use LookupMemberCache rather than
+	GetTypeHandle.  It is possible for a reflected type to derive from
+	a TypeBuilder (e.g., int[] derives from the TypeBuilder
+	System.Array during mscorlib compilation).
+	* decl.cs (MemberCache.MemberCache): If the base cache doesn't
+	contain a method_hash, don't create one either.  Don't create a
+	deep copy of the base cache's method_hash.
+	(MemberCache.SetupCache): Rename back from DeepCopy.
+	(MemberCache.AddMethods): Rewrite, now that method_hash isn't
+	already initialized.  If we see an override function, add its
+	underlying base virtual function to the member_hash too.
+
 	* enum.cs (Enum.LookupEnumValue): Remove debugging code.
 
 2005-03-26  Raja R Harinath  <harinath@acm.org>
