@@ -84,6 +84,10 @@ namespace NpgsqlTypes
 					return "text";
 				case DbType.DateTime:
 					return "timestamp";
+			  case DbType.Date:
+			    return "date";
+			  case DbType.Time:
+			    return "time";
 				default:
 					throw new NpgsqlException(String.Format("This type {0} isn't supported yet.", dbType));
 				
@@ -106,17 +110,21 @@ namespace NpgsqlTypes
 				case DbType.Int16:
 					return parameter.Value.ToString();
 				
+				case DbType.Date:
+				  return "'" + ((DateTime)parameter.Value).ToString("yyyy-MM-dd") + "'";
+					
+				case DbType.DateTime:
+				  return "'" + ((DateTime)parameter.Value).ToString("yyyy-MM-dd HH:mm:ss.fff") + "'";
+					
 				case DbType.Decimal:
-						return ((Decimal)parameter.Value).ToString(NumberFormatInfo.InvariantInfo);
+					return ((Decimal)parameter.Value).ToString(NumberFormatInfo.InvariantInfo);
 				
 				case DbType.String:
-						return "'" + parameter.Value.ToString().Replace("'", "\\'") + "'";
+					return "'" + parameter.Value.ToString().Replace("'", "\\'") + "'";
 				
-				case DbType.DateTime:
-				{
-					return "'" + ((DateTime)parameter.Value).ToString("yyyy-MM-dd HH:mm:ss.fff") + "'";
+				case DbType.Time:
+				  return "'" + ((DateTime)parameter.Value).ToString("HH:mm:ss.ffff") + "'";
 					
-				}
 				default:
 					// This should not happen!
 					throw new NpgsqlException(String.Format("This type {0} isn't supported yet.", parameter.DbType));
@@ -125,9 +133,6 @@ namespace NpgsqlTypes
 			}
 			
 		}
-		
-		
-		
 		
 		
 		///<summary>
@@ -173,7 +178,19 @@ namespace NpgsqlTypes
 					                           new String[] {"yyyy-MM-dd HH:mm:ss.fff", "yyyy-MM-dd HH:mm:ss.ff", "yyyy-MM-dd HH:mm:ss.f", "yyyy-MM-dd HH:mm:ss"}, 
 					                           DateTimeFormatInfo.InvariantInfo,
 					                           DateTimeStyles.NoCurrentDateDefault | DateTimeStyles.AllowWhiteSpaces);
-					                        
+				
+				case DbType.Date:
+				  return DateTime.ParseExact(data,
+					                           "yyyy-MM-dd", 
+					                           DateTimeFormatInfo.InvariantInfo,
+					                           DateTimeStyles.AllowWhiteSpaces);
+				
+				case DbType.Time:
+				  
+				  return DateTime.ParseExact(data,
+					                           new String[] {"HH:mm:ss.ffff", "HH:mm:ss.fff", "HH:mm:ss.ff", "HH:mm:ss.f", "HH:mm:ss"}, 
+					                           DateTimeFormatInfo.InvariantInfo,
+					                           DateTimeStyles.NoCurrentDateDefault | DateTimeStyles.AllowWhiteSpaces);
 				case DbType.String:
 					return data;
 				default:
@@ -218,6 +235,8 @@ namespace NpgsqlTypes
 				case DbType.Decimal:
 					return Type.GetType("System.Decimal");
 				case DbType.DateTime:
+				case DbType.Date:
+				case DbType.Time:
 					return Type.GetType("System.DateTime");
 				case DbType.String:
 					return Type.GetType("System.String");
@@ -257,7 +276,7 @@ namespace NpgsqlTypes
 				// Bootstrap value as the datareader below will use ConvertStringToNpgsqlType above.
 				//oidToNameMapping.Add(26, "oid");
 								
-				NpgsqlCommand command = new NpgsqlCommand("select oid, typname from pg_type where typname in ('bool', 'int2', 'int4', 'int8', 'numeric', 'text', 'timestamp');", conn);
+				NpgsqlCommand command = new NpgsqlCommand("select oid, typname from pg_type where typname in ('bool', 'date', 'int2', 'int4', 'int8', 'numeric', 'text', 'time', 'timestamp');", conn);
 				
 				NpgsqlDataReader dr = command.ExecuteReader();
 				
@@ -278,6 +297,9 @@ namespace NpgsqlTypes
 						case "bool":
 							type = DbType.Boolean;
 							break;
+					  case "date":
+					    type = DbType.Date;
+					    break;
 						case "int2":
 							type = DbType.Int16;
 							break;
@@ -290,6 +312,9 @@ namespace NpgsqlTypes
 						case "numeric":
 							type = DbType.Decimal;
 							break;
+					  case "time":
+					    type = DbType.Time;
+					    break;
 						case "timestamp":
 							type = DbType.DateTime;
 							break;
