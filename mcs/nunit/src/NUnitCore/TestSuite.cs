@@ -36,9 +36,10 @@ namespace NUnit.Framework
 		/// <summary>Constructs an empty TestSuite with a name.</summary>
 		public TestSuite(string name) 
 		{
-			if(name==null)
-				this.fName=String.Empty;
-			this.fName = name;
+			if(name == null)
+				this.fName = String.Empty;
+			else
+				this.fName = name;
 		}
 
 		/// <summary>Constructs an empty TestSuite with no name.</summary>
