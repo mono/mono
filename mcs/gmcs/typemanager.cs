@@ -554,18 +554,23 @@ public class TypeManager {
 
 	public static bool HasConstructorConstraint (Type t)
 	{
+		GenericConstraints gc = GetTypeParameterConstraints (t);
+		if (gc == null)
+			return false;
+
+		return (gc.Attributes & GenericParameterAttributes.DefaultConstructorConstraint) != 0;
+	}
+
+	public static GenericConstraints GetTypeParameterConstraints (Type t)
+	{
 		if (!t.IsGenericParameter)
 			throw new InvalidOperationException ();
 
 		TypeParameter tparam = LookupTypeParameter (t);
 		if (tparam != null)
-			return tparam.HasConstructorConstraint;
-		else {
-			object[] attrs = t.GetCustomAttributes (
-				TypeManager.new_constraint_attr_type, false);
+			return tparam.Constraints;
 
-			return attrs.Length > 0;
-		}
+		return new ReflectionConstraints (t);
 	}
 	
 	/// <summary>

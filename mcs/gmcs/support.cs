@@ -167,39 +167,6 @@ namespace Mono.CSharp {
 				return is_varargs ? pi.Length + 1 : pi.Length;
 			}
 		}
-
-		protected class ReflectionConstraints : GenericConstraints
-		{
-			GenericParameterAttributes attrs;
-			Type class_constraint;
-			Type[] iface_constraints;
-
-			public ReflectionConstraints (Type t)
-			{
-				iface_constraints = t.GetInterfaces ();
-				if (iface_constraints ==  null)
-					iface_constraints = Type.EmptyTypes;
-				if (t.BaseType != TypeManager.object_type)
-					class_constraint = t.BaseType;
-				attrs = t.GenericParameterAttributes;
-			}
-
-			public GenericParameterAttributes Attributes {
-				get { return attrs; }
-			}
-
-			public bool HasClassConstraint {
-				get { return class_constraint != null; }
-			}
-
-			public Type ClassConstraint {
-				get { return class_constraint; }
-			}
-
-			public Type[] InterfaceConstraints {
-				get { return iface_constraints; }
-			}
-		}
 	}
 
 	public class InternalParameters : ParameterData {
@@ -320,6 +287,39 @@ namespace Mono.CSharp {
 			return mod;
 		}
 		
+	}
+
+	public class ReflectionConstraints : GenericConstraints
+	{
+		GenericParameterAttributes attrs;
+		Type class_constraint;
+		Type[] iface_constraints;
+
+		public ReflectionConstraints (Type t)
+		{
+			iface_constraints = t.GetInterfaces ();
+			if (iface_constraints ==  null)
+				iface_constraints = Type.EmptyTypes;
+			if (t.BaseType != TypeManager.object_type)
+				class_constraint = t.BaseType;
+			attrs = t.GenericParameterAttributes;
+		}
+
+		public GenericParameterAttributes Attributes {
+			get { return attrs; }
+		}
+
+		public bool HasClassConstraint {
+			get { return class_constraint != null; }
+		}
+
+		public Type ClassConstraint {
+			get { return class_constraint; }
+		}
+
+		public Type[] InterfaceConstraints {
+			get { return iface_constraints; }
+		}
 	}
 
 	class PtrHashtable : Hashtable {

@@ -1,5 +1,14 @@
 2004-09-24  Martin Baulig  <martin@ximian.com>
 
+	* support.cs
+	(ReflectionConstraints): Un-nested this class and made it public.
+
+	* typemanager.cs
+	(TypeManager.GetTypeParameterConstraints): New public method.
+	(TypeManager.HasConstructorConstraint): Use the attributes.
+
+2004-09-24  Martin Baulig  <martin@ximian.com>
+
 	* support.cs (GenericConstraints): Replaced `HasConstructor',
 	`IsReferenceType' and `IsValueType' with `Attributes'.
 	(ReflectionParameters.ReflectionConstraints): Removed the Create()
