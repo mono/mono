@@ -1,3 +1,14 @@
+2002-05-17  Lawrence Pit <loz@cable.a2000.nl>
+	* UdpClient.cs and TcpClient.cs: modified disposable routines, added
+	checks for disposed state.
+	* UdpClient.cs: commented out GetHashCode and Equals as it's not
+	overriden in ms.net implementation.
+
+2002-05-17  Jaroslaw Kowalski <jarek@atm.com.pl>
+	* TcpClient.cs: fixed SetTcpClient so that
+	TcpListener.AcceptTcpClient works and allows
+	you to call GetStream() on its result
+
 2002-04-24  Dick Porter  <dick@ximian.com>
 
 	* Socket.cs (Poll): Give correct argument to Select(), as spotted

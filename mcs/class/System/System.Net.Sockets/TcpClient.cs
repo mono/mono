@@ -88,11 +88,10 @@ namespace System.Net.Sockets
 		/// <summary>
 		/// The socket that all network comms passes through
 		/// </summary>
-		[MonoTODO]
 		protected Socket Client
 		{
 			get { return client; }
-			set { client = value; } //TODO: should we be able to set the socket like this?
+			set { client = value; }
 		}
 
 		/// <summary>
@@ -103,7 +102,8 @@ namespace System.Net.Sockets
 		/// <param name="s"></param>
 		internal void SetTcpClient (Socket s) 
 		{
-			Client = s; // client or Client?  They are the same at the moment
+			client = s;
+			stream = new NetworkStream (client, true);
 		}
 		
 		/// <summary>
@@ -227,7 +227,7 @@ namespace System.Net.Sockets
 		/// </summary>
 		public void Close ()
 		{
-			Dispose(true);
+			Dispose();
 		}
 		
 		/// <summary>
@@ -239,9 +239,13 @@ namespace System.Net.Sockets
 		/// <param name="remote_end_point">The aforementioned endpoint</param>
 		public void Connect (IPEndPoint remote_end_point)
 		{
-			client.Connect(remote_end_point);
-			stream = new NetworkStream(client, true);
-			active = true;
+			try {
+				client.Connect(remote_end_point);
+				stream = new NetworkStream(client, true);
+				active = true;
+			} finally {
+				CheckDisposed ();
+			}
 		}
 		
 		/// <summary>
@@ -269,10 +273,14 @@ namespace System.Net.Sockets
 		[MonoTODO]
 		public void Connect (string hostname, int port)
 		{
-			IPHostEntry host = Dns.GetHostByName(hostname);
-			/* TODO: This will connect to the first IP address returned
-			from GetHostByName.  Is that right? */
-			Connect(new IPEndPoint(host.AddressList[0], port));
+			try {
+				IPHostEntry host = Dns.GetHostByName(hostname);
+				/* TODO: This will connect to the first IP address returned
+				from GetHostByName.  Is that right? */
+				Connect(new IPEndPoint(host.AddressList[0], port));
+			} finally {
+				CheckDisposed ();
+			}
 		}
 		
 		/// <summary>
@@ -291,14 +299,20 @@ namespace System.Net.Sockets
 		/// managed resources as well</param>
 		protected virtual void Dispose (bool disposing)
 		{
-			if (disposed == false) {
-				if (active) {
-					// This closes the socket as well, as the NetworkStream
-					// owns the socket.
-					stream.Close();
-					active = false;
-				}
-				disposed = true;
+			if (disposed)
+				return;
+			disposed = true;
+				
+			// release unmanaged resources
+			NetworkStream s = stream;
+			stream = null;
+			if (s != null) {
+				// This closes the socket as well, as the NetworkStream
+				// owns the socket.
+				s.Close();
+				active = false;
+				s = null;
+				client = null;
 			}
 		}
 		
@@ -314,8 +328,14 @@ namespace System.Net.Sockets
 		/// connection socket</returns>
 		public NetworkStream GetStream()
 		{
-			return stream;
+			try { return stream; }
+			finally { CheckDisposed (); }
 		}
-
+		
+		private void CheckDisposed ()
+		{
+			if (disposed)
+				throw new ObjectDisposedException (GetType().FullName);
+		}		
 	}
 }

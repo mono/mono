@@ -69,14 +69,18 @@ namespace System.Net.Sockets
 #region Close
 		public void Close ()
 		{
-			socket.Close ();	
+			this.Dispose ();	
 		}
 #endregion
 #region Connect
 		public void Connect (IPEndPoint endPoint)
 		{
-			socket.Connect (endPoint);
-			active = true;
+			try {
+				socket.Connect (endPoint);
+				active = true;
+			} finally {
+				CheckDisposed ();
+			}
 		}
 
 		public void Connect (IPAddress addr, int port)
@@ -92,70 +96,94 @@ namespace System.Net.Sockets
 #region Multicast methods
 		public void DropMulticastGroup(IPAddress multicastAddr)
 		{
-			socket.SetSocketOption (SocketOptionLevel.IP, SocketOptionName.DropMembership,
-						new MulticastOption (multicastAddr));
+			try {
+				socket.SetSocketOption (SocketOptionLevel.IP, SocketOptionName.DropMembership,
+							new MulticastOption (multicastAddr));
+			} finally {
+				CheckDisposed ();
+			}
 		}
 
 		public void JoinMulticastGroup(IPAddress multicastAddr)
 		{
-			socket.SetSocketOption (SocketOptionLevel.IP, SocketOptionName.AddMembership,
-						new MulticastOption (multicastAddr));
+			try {
+				socket.SetSocketOption (SocketOptionLevel.IP, SocketOptionName.AddMembership,
+							new MulticastOption (multicastAddr));
+			} finally {
+				CheckDisposed ();
+			}
 		}
 
 		public void JoinMulticastGroup(IPAddress multicastAddr, int timeToLive)
 		{
-			JoinMulticastGroup (multicastAddr);
-			socket.SetSocketOption (SocketOptionLevel.IP, SocketOptionName.MulticastTimeToLive,
-						timeToLive);
+			try {
+				JoinMulticastGroup (multicastAddr);
+				socket.SetSocketOption (SocketOptionLevel.IP, SocketOptionName.MulticastTimeToLive,
+							timeToLive);
+			} finally {
+				CheckDisposed ();
+			}
 		}
 #endregion
 #region Data I/O
 		public byte [] Receive (ref IPEndPoint remoteEP)
 		{
-			if (remoteEP == null)
-				throw new ArgumentNullException ("remoteEP cannot be null");
+			try {
+				if (remoteEP == null)
+					throw new ArgumentNullException ("remoteEP cannot be null");
 
-			// Length of the array for receiving data??
-			byte [] recBuffer;
-			int available = socket.Available;
-			
-			recBuffer = new byte [1024]; // FIXME: any suggestions?
-			EndPoint endPoint = (EndPoint) remoteEP;
-			int dataRead = socket.ReceiveFrom (recBuffer, ref endPoint);
-			if (dataRead < recBuffer.Length)
-				return CutArray (recBuffer, dataRead);
+				// Length of the array for receiving data??
+				byte [] recBuffer;
+				int available = socket.Available;
 
-			return recBuffer;
+				recBuffer = new byte [1024]; // FIXME: any suggestions?
+				EndPoint endPoint = (EndPoint) remoteEP;
+				int dataRead = socket.ReceiveFrom (recBuffer, ref endPoint);
+				if (dataRead < recBuffer.Length)
+					return CutArray (recBuffer, dataRead);
+
+				return recBuffer;
+			} finally {
+				CheckDisposed ();
+			}
 		}
 
 		public int Send (byte [] dgram, int bytes)
 		{
-			if (dgram == null)
-				throw new ArgumentNullException ("dgram is null");
+			try {
+				if (dgram == null)
+					throw new ArgumentNullException ("dgram is null");
 
-			byte [] realDgram;
-			if (dgram.Length <= bytes)
-				realDgram = dgram;
-			else
-				realDgram = CutArray (dgram, (bytes >= dgram.Length) ? bytes : dgram.Length);
-			
-			// the socket should be connected already, so I use Send instead of SendTo
-			return socket.Send (realDgram);
+				byte [] realDgram;
+				if (dgram.Length <= bytes)
+					realDgram = dgram;
+				else
+					realDgram = CutArray (dgram, (bytes >= dgram.Length) ? bytes : dgram.Length);
+
+				// the socket should be connected already, so I use Send instead of SendTo
+				return socket.Send (realDgram);
+			} finally {
+				CheckDisposed ();
+			}
 		}
 
 		public int Send (byte [] dgram, int bytes, IPEndPoint endPoint)
 		{
-			if (dgram == null)
-				throw new ArgumentNullException ("dgram is null");
+			try {
+				if (dgram == null)
+					throw new ArgumentNullException ("dgram is null");
 
-			byte [] realDgram;
-			if (dgram.Length <= bytes)
-				realDgram = dgram;
-			else
-				realDgram = CutArray (dgram, (bytes >= dgram.Length) ? bytes : dgram.Length);
-			
-			// the socket should not be connected
-			return socket.SendTo (realDgram, endPoint);
+				byte [] realDgram;
+				if (dgram.Length <= bytes)
+					realDgram = dgram;
+				else
+					realDgram = CutArray (dgram, (bytes >= dgram.Length) ? bytes : dgram.Length);
+
+				// the socket should not be connected
+				return socket.SendTo (realDgram, endPoint);
+			} finally {
+				CheckDisposed ();
+			}
 		}
 
 		public int Send (byte [] dgram, int bytes, string hostname, int port)
@@ -183,6 +211,9 @@ namespace System.Net.Sockets
 			set { socket = value; }
 		}
 #endregion
+
+/* 
+// commented because in the ms.net implementation these are not overriden. -- LP
 #region Overrides
 		public override bool Equals (object obj)
 		{
@@ -198,6 +229,8 @@ namespace System.Net.Sockets
 			return (socket.GetHashCode () + localEP.GetHashCode () + (active ? 1 : 0));
 		}
 #endregion
+*/
+
 #region Disposing
 		public void Dispose()
 		{
@@ -207,16 +240,30 @@ namespace System.Net.Sockets
 
 		protected virtual void Dispose (bool disposing)
 		{
-			if (disposed == false) {
-				disposed = true;
-				socket.Close ();
-			}
+			if (disposed) 
+				return;
+			disposed = true;
+			if (disposing) {
+				// release managed resources
+				localEP = null;
+			}			
+			// release unmanaged resources
+			Socket s = socket;
+			socket = null;
+			if (s != null)
+				s.Close ();
 		}
 		
 		~UdpClient ()
 		{
 			Dispose (false);
 		}
+		
+		private void CheckDisposed ()
+		{
+			if (disposed)
+				throw new ObjectDisposedException (GetType().FullName);
+		}		
 #endregion
 #endregion
 	}
