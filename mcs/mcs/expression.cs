@@ -8501,9 +8501,9 @@ namespace Mono.CSharp {
 					return null;
 			}
 
-			Constant c = (Constant)count;
+			Constant c = count as Constant;
 			// TODO: because we don't have property IsNegative
-			if (c.ConvertToUInt () == null) {
+			if (c != null && c.ConvertToUInt () == null) {
                                 // "Cannot use a negative size with stackalloc"
 				Report.Error_T (247, loc);
 				return null;
