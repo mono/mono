@@ -4853,6 +4853,15 @@ namespace Mono.CSharp {
 			return String.Concat (tc.Name, '.', base.GetSignatureForError (tc));
 		}
 
+		protected bool IsTypePermitted ()
+		{
+			if (MemberType == TypeManager.arg_iterator_type || MemberType == TypeManager.typed_reference_type) {
+				Report.Error (610, Location, "Field or property cannot be of type '{0}'", TypeManager.CSharpName (MemberType));
+				return false;
+			}
+			return true;
+		}
+
 		protected override bool VerifyClsCompliance(DeclSpace ds)
 		{
 			if (base.VerifyClsCompliance (ds)) {
@@ -4996,12 +5005,6 @@ namespace Mono.CSharp {
 					      "Keyword 'void' cannot be used in this context");
 				return false;
 			}
-
-			if (MemberType == TypeManager.arg_iterator_type || MemberType == TypeManager.typed_reference_type) {
-				Report.Error (610, Location, "Field or property cannot be of type '{0}'", TypeManager.CSharpName (MemberType));
-				return false;
-			}
-
 			return true;
 		}
 
@@ -5088,6 +5091,9 @@ namespace Mono.CSharp {
 					"accessible than field `" + Name + "'");
 				return false;
 			}
+
+			if (!IsTypePermitted ())
+				return false;
 
 			if (MemberType.IsPointer && !UnsafeOK (Parent))
 				return false;
@@ -5603,15 +5609,21 @@ namespace Mono.CSharp {
 			}
 		}
 
+		public override bool Define ()
+		{
+			if (!DoDefine ())
+				return false;
+
+			if (!IsTypePermitted ())
+				return false;
+
+			return true;
+		}
+
 		protected override bool DoDefine ()
 		{
 			if (!base.DoDefine ())
 				return false;
-
-			if (MemberType == TypeManager.arg_iterator_type || MemberType == TypeManager.typed_reference_type) {
-				Report.Error (610, Location, "Field or property cannot be of type '{0}'", TypeManager.CSharpName (MemberType));
-				return false;
-			}
 
 			if (MemberType.IsAbstract && MemberType.IsSealed) {
 				Report.Error (722, Location, Error722, TypeManager.CSharpName (MemberType));
@@ -5760,7 +5772,7 @@ namespace Mono.CSharp {
 
 		public override bool Define ()
 		{
-			if (!DoDefine ())
+			if (!base.Define ())
 				return false;
 
 			if (!CheckBase ())
@@ -6473,7 +6485,7 @@ namespace Mono.CSharp {
 				PropertyAttributes.RTSpecialName |
 				PropertyAttributes.SpecialName;
 			
-			if (!DoDefine ())
+			if (!base.Define ())
 				return false;
 
 			if (OptAttributes != null) {

@@ -1,5 +1,10 @@
 2004-09-22  Marek Safar  <marek.safar@seznam.cz>
 
+	* class.cs (MemberBase.IsTypePermitted): New protected
+	method for checking error CS0610.
+
+2004-09-22  Marek Safar  <marek.safar@seznam.cz>
+
 	* class.cs (TypeContainer.HasExplicitLayout): New property
 	Returns whether container has StructLayout attribute set Explicit.
 	(FieldMember): New abstract class for consts and fields.
