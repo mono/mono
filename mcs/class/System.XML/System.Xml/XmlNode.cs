@@ -336,14 +336,11 @@ namespace System.Xml
 			if (nsmgr != null)
 				expr.SetContext (nsmgr);
 			XPathNodeIterator iter = nav.Select (expr);
-			if (!iter.MoveNext ())
-				return null;
 			ArrayList rgNodes = new ArrayList ();
-			do
+			while (iter.MoveNext ())
 			{
 				rgNodes.Add (((XmlDocumentNavigator) iter.Current).Node);
 			}
-			while (iter.MoveNext ());
 			return new XmlNodeArrayList (rgNodes);
 		}
 

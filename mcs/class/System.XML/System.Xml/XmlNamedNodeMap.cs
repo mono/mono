@@ -100,5 +100,7 @@ namespace System.Xml
 			nodeList.Add (node);
 			return null;
 		}
+
+		internal ArrayList Nodes { get { return nodeList; } }
 	}
 }

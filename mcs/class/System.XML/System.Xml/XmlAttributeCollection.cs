@@ -28,7 +28,7 @@ namespace System.Xml
 		[System.Runtime.CompilerServices.IndexerName ("ItemOf")]
 		public virtual XmlAttribute this [string name] {
 			get {
-				throw new NotImplementedException ();
+				return (XmlAttribute) GetNamedItem (name);
 			}
 		}
 
@@ -36,7 +36,7 @@ namespace System.Xml
 		[System.Runtime.CompilerServices.IndexerName ("ItemOf")]
 		public virtual XmlAttribute this [int i] {
 			get {
-				throw new NotImplementedException ();
+				return (XmlAttribute) Nodes [i];
 			}
 		}
 

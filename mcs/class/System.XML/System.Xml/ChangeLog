@@ -1,3 +1,9 @@
+2002-07-12	Piers Haken <piersh@friksit.com>
+
+	* XmlAttributeCollection.cs: implement some ItemOf indexers
+	* XmlNamedNodeMap.cs: add internal 'Nodes' accessor for the nodeList field
+	* XmlNode.cs: SelectNodes: return empty XmlNodeList, not null
+
 2002-07-06  Ajay kumar Dwivedi <adwiv@yahoo.com>
 
 	* XmlTextWriter: Fixed Indentation. IndentationOverridden should
