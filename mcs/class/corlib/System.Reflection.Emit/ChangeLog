@@ -1,4 +1,9 @@
 
+Sat Jul 13 17:30:51 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* AssemblyBuilder.cs: add also the enum_type for compiling corlib.
+	* TypeBuilder.cs: complete IsValueType.
+
 Sat Jul 13 15:08:12 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
 	* TypeBuilder.cs: better IsValueType.

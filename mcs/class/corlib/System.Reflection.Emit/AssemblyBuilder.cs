@@ -28,6 +28,7 @@ namespace System.Reflection.Emit {
 		private CustomAttributeBuilder[] cattrs;
 		internal Type corlib_object_type = typeof (System.Object);
 		internal Type corlib_value_type = typeof (System.ValueType);
+		internal Type corlib_enum_type = typeof (System.Enum);
 		private int[] table_indexes;
 		internal ArrayList methods;
 
@@ -241,9 +242,10 @@ namespace System.Reflection.Emit {
 			SetCustomAttribute (new CustomAttributeBuilder (con, binaryAttribute));
 		}
 
-		public void SetCorlibTypeBuilders (Type corlib_object_type, Type corlib_value_type) {
+		public void SetCorlibTypeBuilders (Type corlib_object_type, Type corlib_value_type, Type corlib_enum_type) {
 			this.corlib_object_type = corlib_object_type;
 			this.corlib_value_type = corlib_value_type;
+			this.corlib_enum_type = corlib_enum_type;
 		}
 	}
 }
