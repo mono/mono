@@ -32,6 +32,8 @@ all-local: CS0571-3-lib.dll CS0618-2-lib.dll \
 
 test-local:
 
+run-test-ondotnet-local:
+
 # again, run-test is when the tests actually happen, so
 # don't compile on make test.
 

@@ -54,8 +54,6 @@ HAVE_CS_TESTS = $(plattestlib).sources
 TEST_COMPILE = $(INTERNAL_MCS) $(USE_MCS_FLAGS)
 endif
 
-run-test-ondotnet-local: run-plattest-ondotnet
-
 ifdef PLATFORM_MONO_NATIVE
 run-monotest: run-test
 else
@@ -66,9 +64,6 @@ run-monotest:
 run-plattest:
 	$(MAKE) test_lib=$(plattestlib) test_against='$(PLATFORM_CORLIB)' run-test
 endif
-
-run-plattest-ondotnet: $(plattestlib)
-	$(TEST_HARNESS) /exclude=NotDotNet $(plattestlib)
 
 EXTRA_DISTFILES = \
 	corlib.dll.win32-excludes corlib_cmp.dll.excludes corlib_res.dll.excludes \

@@ -12,6 +12,6 @@ DISTFILES = \
 	tools/ucm2cp.c	\
 	tools/uni2tab.c
 
-all-local install-local clean-local test-local run-test-local uninstall-local:
+all-local install-local clean-local test-local run-test-local run-test-ondotnet-local uninstall-local:
 
 dist-local: dist-default

@@ -168,6 +168,9 @@ test-local:
 
 run-test-local: ilasm test-harness test-casts
 
+# do nothing for this target
+run-test-ondotnet-local:
+
 test-everything:
 	$(MAKE) PROFILE=default run-test
 	$(MAKE) PROFILE=net_2_0 run-test

@@ -15,7 +15,7 @@ test-local:
 
 # ??? What do we run here?
 
-run-test-local:
+run-test-local run-test-ondotnet-local:
 
 clean-local:
 	rm -f *.exe

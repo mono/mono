@@ -43,7 +43,7 @@ uninstall-local:
 
 test-local:
 
-run-test-local:
+run-test-local run-test-ondotnet-local:
 
 clean-local:
 	rm -f *.exe *.pdb
