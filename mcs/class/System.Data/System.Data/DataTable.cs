@@ -531,8 +531,10 @@ namespace System.Data {
 
 			if (indx != null) { // lookup for a row in index			
 				rowsExist = (indx.FindSimple (values, false) != null);
-			} else { // no index we have to perform full-table scan
-				// check that there is a parent for this row.
+			}
+                       if(indx == null || rowsExist == false) { 
+				// no index or rowExist= false, we have to perform full-table scan
+ 				// check that there is a parent for this row.
 				foreach (DataRow thisRow in this.Rows) {
 					if (thisRow.RowState != DataRowState.Deleted) {
 						bool match = true;

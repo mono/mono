@@ -235,12 +235,12 @@ namespace System.Data {
 		[DataSysDescription ("Indicates the XML uri namespace for the root element pointed at by this DataSet.")]
 		[DefaultValue ("")]
 		public string Namespace {
-			[MonoTODO]
 			get { return _namespace; } 
-			[MonoTODO]
 			set {
 				//TODO - trigger an event if this happens?
-				_namespace = value;
+				 if (value != this._namespace)
+                                        RaisePropertyChanging ("Namespace");
+ 				_namespace = value;
 			}
 		}
 
@@ -248,11 +248,14 @@ namespace System.Data {
 		[DataSysDescription ("Indicates the prefix of the namespace used for this DataSet.")]
 		[DefaultValue ("")]
 		public string Prefix {
-			[MonoTODO]
 			get { return prefix; } 
-			[MonoTODO]
 			set {
-				//TODO - trigger an event if this happens?
+                              // Prefix cannot contain any special characters other than '_' and ':'
+                               for (int i = 0; i < value.Length; i++) {
+                                       if (!(Char.IsLetterOrDigit (value [i])) && (value [i] != '_') && (value [i] != ':'))
+                                               throw new DataException ("Prefix '" + value + "' is not valid, because it contains special characters.");
+                               }
+
 
 				if (value == null)
 					value = string.Empty;
@@ -346,7 +349,6 @@ namespace System.Data {
 			return Copy;
 		}
 
-		[MonoTODO]
 		private void CopyProperties (DataSet Copy)
 		{
 			Copy.CaseSensitive = CaseSensitive;
@@ -355,12 +357,15 @@ namespace System.Data {
 			//Copy.DefaultViewManager
 			//Copy.DesignMode
 			Copy.EnforceConstraints = EnforceConstraints;
-			//Copy.ExtendedProperties 
-			//Copy.HasErrors
-			//Copy.Locale = Locale;
+                       //  Cannot copy extended properties directly as the property does not have a set accessor
+                       Array tgtArray = Array.CreateInstance( typeof (object), ExtendedProperties.Count);
+                       ExtendedProperties.Keys.CopyTo (tgtArray, 0);
+                       for (int i=0; i < ExtendedProperties.Count; i++)
+                               Copy.ExtendedProperties.Add (tgtArray.GetValue (i), ExtendedProperties[tgtArray.GetValue (i)]);
+                        Copy.Locale = Locale;
 			Copy.Namespace = Namespace;
 			Copy.Prefix = Prefix;			
-			//Copy.Site = Site;
+			//Copy.Site = Site; // FIXME : Not sure of this.
 
 		}
 		

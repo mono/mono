@@ -1,3 +1,11 @@
+2004-04-15 Umadevi S (sumadevi@novell.com)
+	*  Updated Clone/Copy methods in DataSet along with Testcase
+	*  ForeignKeyConstraint.cs - special ctor implemented 
+	    Logic : ParentTable in the ctor - Since only name is given (not the DataTable object), we cannot associate any DataTable or DataSet right now.  So, only possible way is to do it when AddRange() is called. The ParentTable is searched in the DataSet  to which the calling DataTable belongs. And make the calling DataTable as ChildTable. In the PostAddRange() method check is addedd to perform the assignment of parent and child data columns once the information becomes available (When AddRange is called).
+	* Changes in  ConstraintCollection.cs for the above
+        Add (Constraint) - A check is performed to see if the constraint is ForeignKeyConstraint and whether data columns  are validated.  If no, whether it is called with AddRange(), If no, an Exception is thrown. AddRange() - PostAddRange() is called on the ForeignKeyConstraint object with the "table" as argument. Thanks to Deepak for the patch.
+	
+
 2004-04-15  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XmlSchemaMapper.cs : set parent key and foreign key info to 

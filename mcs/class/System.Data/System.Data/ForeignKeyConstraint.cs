@@ -27,7 +27,12 @@ namespace System.Data {
 		private Rule _deleteRule = Rule.Cascade;
 		private Rule _updateRule = Rule.Cascade;
 		private AcceptRejectRule _acceptRejectRule = AcceptRejectRule.None;
-		
+	        private string _parentTableName;
+                private string _childTableName;
+                private string [] _parentColumnNames;
+                private string [] _childColumnNames;
+                private bool _dataColsNotValidated = false;
+			
 		#region Constructors
 
 		public ForeignKeyConstraint(DataColumn parentColumn, DataColumn childColumn) 
@@ -36,7 +41,6 @@ namespace System.Data {
 				throw new ArgumentNullException("Neither parentColumn or" +
 					" childColumn can be null.");
 			}
-
 			_foreignKeyConstraint(null, new DataColumn[] {parentColumn},
 					new DataColumn[] {childColumn});
 		}
@@ -63,12 +67,74 @@ namespace System.Data {
 		}
 		
 		//special case
-		[MonoTODO]
 		[Browsable (false)]
 		public ForeignKeyConstraint(string constraintName, string parentTableName, string[] parentColumnNames, string[] childColumnNames, AcceptRejectRule acceptRejectRule, Rule deleteRule, Rule updateRule) 
 		{
+			_dataColsNotValidated = true;
+                        base.ConstraintName = constraintName;
+                                                                                                    
+                        // "parentTableName" is searched in the "DataSet" to which the "DataTable"
+                        // from which AddRange() is called
+                        // childTable is the "DataTable" which calls AddRange()
+                                                                                                    
+                        // Keep reference to parentTableName to resolve later
+                        _parentTableName = parentTableName;
+                                                                                                    
+                        // Keep reference to parentColumnNames to resolve later
+                        _parentColumnNames = parentColumnNames;
+                                                                                                    
+                        // Keep reference to childColumnNames to resolve later
+                        _childColumnNames = childColumnNames;
+                                                                                                    
+                        _acceptRejectRule = acceptRejectRule;
+                        _deleteRule = deleteRule;
+                        _updateRule = updateRule;
+
 		}
 
+		 internal void postAddRange (DataTable childTable)
+                {
+                        // LAMESPEC - Does not say that this is mandatory
+                        // Check whether childTable belongs to a DataSet
+                        if (childTable.DataSet == null)
+                                throw new InvalidConstraintException ("ChildTable : " + childTable.TableName + " does not belong to any DataSet");
+                        DataSet dataSet = childTable.DataSet;
+                        _childTableName = childTable.TableName;
+                        // Search for the parentTable in the childTable's DataSet
+                        if (!dataSet.Tables.Contains (_parentTableName))
+                                throw new InvalidConstraintException ("Table : " + _parentTableName + "does not exist in DataSet : " + dataSet);
+                                                                                                    
+                        // Keep reference to parentTable
+                        DataTable parentTable = dataSet.Tables [_parentTableName];
+                                                                                                    
+                        int i = 0, j = 0;
+                                                                                                    
+                        // LAMESPEC - Does not say which Exception is thrown
+                        if (_parentColumnNames.Length < 0 || _childColumnNames.Length < 0)
+                                throw new InvalidConstraintException ("Neither parent nor child columns can be zero length");
+                        // LAMESPEC - Does not say which Exception is thrown
+                        if (_parentColumnNames.Length != _childColumnNames.Length)
+			                  throw new InvalidConstraintException ("Both parent and child columns must be of same length");                                                                                                    
+                        DataColumn []parentColumns = new DataColumn [_parentColumnNames.Length];
+                        DataColumn []childColumns = new DataColumn [_childColumnNames.Length];
+                                                                                                    
+                        // Search for the parentColumns in parentTable
+                        foreach (string parentCol in _parentColumnNames){
+                                if (!parentTable.Columns.Contains (parentCol))
+                                        throw new InvalidConstraintException ("Table : " + _parentTableName + "does not contain the column :" + parentCol);
+                                parentColumns [i++] = parentTable. Columns [parentCol];
+                        }
+                        // Search for the childColumns in childTable
+                        foreach (string childCol in _childColumnNames){
+                                if (!childTable.Columns.Contains (childCol))
+                                        throw new InvalidConstraintException ("Table : " + _childTableName + "does not contain the column : " + childCol);
+                                childColumns [j++] = childTable.Columns [childCol];
+                        }
+                        _validateColumns (parentColumns, childColumns);
+                        _parentColumns = parentColumns;
+                        _childColumns = childColumns;
+		}
+			
 #if NET_1_2
 		[MonoTODO]
 		public ForeignKeyConstraint (string constraintName, string parentTableName, string parentTableNamespace, string[] parentColumnNames, string[] childColumnNames, AcceptRejectRule acceptRejectRule, Rule deleteRule, Rule updateRule)
@@ -279,6 +345,11 @@ namespace System.Data {
 				return null;
 			}
 		}
+
+		internal bool DataColsNotValidated{
+                        get{ return (_dataColsNotValidated); }
+                }
+
 
 		#endregion // Properties
 

@@ -155,7 +155,16 @@ namespace System.Data {
                                                 throw new ArgumentException(" Some DataColumns are invalid - They may not belong to the table associated with this Constraint Collection" );
                                         }
                                 }
-                        } 	
+                        }
+
+			  if (constraint is ForeignKeyConstraint){
+                                if ((constraint as ForeignKeyConstraint).DataColsNotValidated == true){
+                                        if ( Environment.StackTrace.IndexOf( "AddRange" ) == -1 ){
+                                                throw new ArgumentException(" Some DataColumns are invalid - They may not belong to the table associated with this Constraint Collection" );
+                                        }
+                                }
+                        }
+ 	
 			//Allow constraint to run validation rules and setup 
 			constraint.AddToConstraintCollectionSetup(this); //may throw if it can't setup
 
@@ -247,6 +256,12 @@ namespace System.Data {
                                                                                                     
                                         }
                                 }
+				else if (constraints [i] is ForeignKeyConstraint){
+                                        if (( constraints [i] as ForeignKeyConstraint).DataColsNotValidated == true){
+                                                (constraints [i] as ForeignKeyConstraint).postAddRange (this.table);
+                                        }
+                                }
+	
                         }
                                                                                                     
                         if ( (constraints == null) || (constraints.Length == 0))
