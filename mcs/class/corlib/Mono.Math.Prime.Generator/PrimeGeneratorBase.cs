@@ -31,7 +31,7 @@ namespace Mono.Math.Prime.Generator {
 
 		public virtual Prime.PrimalityTest PrimalityTest {
 			get {
-				return new Prime.PrimalityTest (PrimalityTests.SmallPrimeSppTest);
+				return new Prime.PrimalityTest (PrimalityTests.RabinMillerTest);
 			}
 		}
 

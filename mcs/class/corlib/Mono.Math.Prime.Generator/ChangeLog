@@ -1,3 +1,8 @@
+2004-02-13  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* PrimeGeneratorBase.cs: Changed primality test to Rabin Miller to
+	fix issues #51229 (bug), #54262 (very long in same cases).
+
 2003-04-22  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* NextPrimeFinder.cs: New. Prime Generator.
