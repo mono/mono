@@ -16,7 +16,7 @@ using System.Runtime.Serialization;
 namespace System.Runtime.Remoting.Messaging {
 
 	[Serializable] [CLSCompliant (false)]
-	public class MethodResponse : IMethodReturnMessage, ISerializable, IInternalMessage
+	public class MethodResponse : IMethodReturnMessage, ISerializable, IInternalMessage, ISerializationRootObject
 	{
 		string _methodName;
 		string _uri;

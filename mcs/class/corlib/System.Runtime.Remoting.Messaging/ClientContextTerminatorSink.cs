@@ -13,7 +13,7 @@ using System.Runtime.Remoting.Contexts;
 
 namespace System.Runtime.Remoting.Messaging
 {
-	public class ClientContextTerminatorSink: IMessageSink
+	internal class ClientContextTerminatorSink: IMessageSink
 	{
 		Context _context;
 

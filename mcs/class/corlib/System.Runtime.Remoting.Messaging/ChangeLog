@@ -1,3 +1,11 @@
+2003-11-18  Lluis Sanchez Gual <lluis@ximian.com>
+
+	* ArgInfo.cs, ClientContextTerminatorSink.cs, ErrorMessage.cs, MethodCall.cs,
+	  MethodResponse.cs, MonoMethodMessage.cs, ServerContextTerminatorSink.cs,
+	  StackBuilderSink.cs: Fixed class visibility.
+	* CADMessages.cs: Added null reference check in SaveLogicalCallContext.
+	* ISerializationRootObject.cs: Added.
+
 2003-11-17  Lluis Sanchez Gual <lluis@ximian.com>
 
 	* StackBuilderSink.cs: Implemented AsyncProcessMessage().

@@ -15,7 +15,7 @@ namespace System.Runtime.Remoting.Messaging
 	// The final sink of the Server Context Sink Chain.
 	// It forwards the message to the object's context sink chain.
 
-	public class ServerContextTerminatorSink: IMessageSink
+	internal class ServerContextTerminatorSink: IMessageSink
 	{
 		public IMessage SyncProcessMessage (IMessage msg)
 		{

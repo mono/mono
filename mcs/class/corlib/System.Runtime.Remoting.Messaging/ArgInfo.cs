@@ -11,9 +11,9 @@ using System.Reflection;
 
 namespace System.Runtime.Remoting.Messaging
 {
-	public enum ArgInfoType : byte { In, Out };
+	internal enum ArgInfoType : byte { In, Out };
 
-	public class ArgInfo
+	internal class ArgInfo
 	{
 		int[] _paramMap;
 		int _inoutArgCount;

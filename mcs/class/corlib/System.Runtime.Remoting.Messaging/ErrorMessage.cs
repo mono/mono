@@ -15,7 +15,7 @@ namespace System.Runtime.Remoting.Messaging {
 
     // simple message to avoid serialization of crap data
     [Serializable]
-    public class ErrorMessage : IMethodCallMessage
+    internal class ErrorMessage : IMethodCallMessage
     {
 		string _uri = "Exception";
 		

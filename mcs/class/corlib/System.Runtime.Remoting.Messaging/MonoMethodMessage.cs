@@ -16,7 +16,7 @@ using System.Runtime.CompilerServices;
 namespace System.Runtime.Remoting.Messaging {
 	
 	[Serializable]
-	public class MonoMethodMessage : IMethodCallMessage, IMethodReturnMessage, IInternalMessage {
+	internal class MonoMethodMessage : IMethodCallMessage, IMethodReturnMessage, IInternalMessage {
 
 		MonoMethod method;
 

@@ -233,7 +233,7 @@ namespace System.Runtime.Remoting.Messaging {
 		
 		protected void SaveLogicalCallContext (IMethodMessage msg, ref ArrayList serializeList)
 		{
-			if (msg.LogicalCallContext.HasInfo) 
+			if (msg.LogicalCallContext != null && msg.LogicalCallContext.HasInfo) 
 			{
 				if (serializeList == null)
 					serializeList = new ArrayList();

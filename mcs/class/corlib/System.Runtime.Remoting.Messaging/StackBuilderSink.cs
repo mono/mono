@@ -14,7 +14,7 @@ namespace System.Runtime.Remoting.Messaging
 {
 	// Sink that calls the real method of the object
 
-	public class StackBuilderSink: IMessageSink
+	internal class StackBuilderSink: IMessageSink
 	{
 		MarshalByRefObject _target;
 
