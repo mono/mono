@@ -98,6 +98,8 @@ namespace System.Runtime.Serialization
 		{
 			if (name == null)
 				throw new ArgumentNullException ("name is null.");
+			if (type == null)
+				throw new ArgumentNullException ("type");
 			if (!serialized.ContainsKey (name))
 				throw new SerializationException ("No element named " + name + " could be found.");
                         			
