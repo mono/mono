@@ -203,6 +203,7 @@ System.ComponentModel/CollectionChangeAction.cs
 System.ComponentModel/CollectionChangeEventArgs.cs
 System.ComponentModel/CollectionChangeEventHandler.cs
 System.ComponentModel/DerivedPropertyDescriptor.cs
+System.ComponentModel/DesignTimeVisibleAttribute.cs
 System.ComponentModel/EnumConverter.cs
 System.ComponentModel/IListSource.cs
 System.ComponentModel/ISupportInitialize.cs

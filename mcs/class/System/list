@@ -26,6 +26,7 @@ System.ComponentModel\DescriptionAttribute.cs
 System.ComponentModel\DesignerSerializationVisibility.cs
 System.ComponentModel\DesignerSerializationVisibilityAttribute.cs
 System.ComponentModel\DesignOnlyAttribute.cs
+System.ComponentModel\DesignTimeVisibleAttribute.cs
 System.ComponentModel\EnumConverter.cs
 System.ComponentModel\EventHandlerList.cs
 System.ComponentModel\IBindingList.cs
