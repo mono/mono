@@ -68,9 +68,9 @@ namespace System.Windows.Forms {
 				Win32.WndProc wp = new Win32.WndProc (WndProc);
 				if (Win32.MonoRegisterClass(
 				//if (Win32.RegisterClass(
-					(int) (Win32.CS_OWNDC | 
-					 Win32.CS_VREDRAW | 
-					 Win32.CS_HREDRAW), 
+					(int) (CS_.CS_OWNDC | 
+					 CS_.CS_VREDRAW | 
+					 CS_.CS_HREDRAW), 
 					 wp, 0, 0, (IntPtr) 0, (IntPtr) 0,
 					(IntPtr) 0, (IntPtr) 6, "", 
 					"mono_native_window") != 0) {
@@ -182,7 +182,7 @@ namespace System.Windows.Forms {
 
 		protected virtual void WndProc (ref Message m) 
 		{
-			if (m.Msg == Win32.WM_CREATE)
+			if (m.Msg == (int)Msg.WM_CREATE)
 				Console.WriteLine ("NW WndProc WM_CREATE");
 			DefWndProc (ref m);
 		}
@@ -211,11 +211,11 @@ namespace System.Windows.Forms {
 			message.LParam = lParam;
  			message.Result = (IntPtr) 0;
 
-			if (msg == Win32.WM_CREATE)
+			if (msg == (int)Msg.WM_CREATE)
 				Console.WriteLine ("WM_CREATE (static)");
 
  			if (window != null) {
-			if (msg == Win32.WM_CREATE)
+			if (msg == (int)Msg.WM_CREATE)
 				Console.WriteLine ("WM_CREATE (static != null)");
  				window.WndProc(ref message);
  			} else {

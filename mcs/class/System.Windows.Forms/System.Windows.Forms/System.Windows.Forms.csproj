@@ -92,11 +92,6 @@
                     AssemblyName = "System.Drawing.Design"
                     HintPath = "..\..\..\..\..\WINNT\Microsoft.NET\Framework\v1.0.3705\System.Drawing.Design.dll"
                 />
-                <Reference
-                    Name = "System.Windows.Forms.Design"
-                    Project = "{A38C110F-63F4-4B53-A67E-9A46681C768E}"
-                    Package = "{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}"
-                />
             </References>
         </Build>
         <Files>
@@ -1222,6 +1217,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "PropertyTab.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "PropertyTabChangedEventArgs.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -1677,7 +1677,32 @@
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "Win32.cs"
+                    RelPath = "win32Enums.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "win32functions.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "win32Handles.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "win32Interfaces.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "win32RegistryUtil.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "win32Structs.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />

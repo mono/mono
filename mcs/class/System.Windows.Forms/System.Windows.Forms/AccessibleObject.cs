@@ -26,7 +26,6 @@ namespace System.Windows.Forms {
 	/// MSDN gives little info on the members of IAccessible: "This member supports the .NET Framework infrastructure and is not intended to be used directly from your code."
 	/// </summary>
 	[MonoTODO]
-	[ComVisible(true)]
 	public class AccessibleObject : MarshalByRefObject, IReflect, IAccessible {
 		private string defaultAction;
 		private string description;
@@ -50,108 +49,87 @@ namespace System.Windows.Forms {
 
 		// --- Properties ---
 
-		[ComVisible(true)]
+	
 		public virtual Rectangle Bounds {
-
 			get { return Rectangle.Empty; } // As per spec for default. Expect override.
 		}
 
-		[ComVisible(true)]
 		public virtual string DefaultAction {
-
 			get {return null; }// As per spec for default. Expect override.
 		}
     
-		[ComVisible(true)]
 		public virtual string Description {
-
 			get {return null; }// As per spec for default. Expect override.
 		}
-
-		[ComVisible(true)]
+	
 		public virtual string Help {
-
 			get {return null; }// As per spec for default. Expect override.
 		}
-
-		[ComVisible(true)]
+	
 		public virtual string KeyboardShortcut {
-
 			get {return null; }// As per spec for default. Expect override.
 		}
-
-		[ComVisible(true)]
+	
 		public virtual string Name {
 			get { return name; }
 			set { name = value; }
 		}
-
-		[ComVisible(true)]
+	
 		public virtual string Value {
 			get { return this.value; }
 			set { this.value = value; }
 		}
-
-		[ComVisible(true)]
+	
 		public virtual AccessibleObject Parent {
 			get { return parent; }
 			set { parent = value; }
 		}
 		
-		[ComVisible(true)]
 		public virtual AccessibleRole Role {
 			get { return role; }
 			set { role = value; }
 		}
-		
-		[ComVisible(true)]
+	
 		public virtual AccessibleStates State {
 			get { return state; }
 			set { state = value; }
 		}
 
 		// --- Methods ---
-		[ComVisible(true)]
+	
 		public virtual void DoDefaultAction() {
 			return; //default action is "" and cannot be changed, must be overridden.
 		}
 		
 		[MonoTODO]
-		[ComVisible(true)]
 		public virtual AccessibleObject GetChild(int index) {
 			return null;
 		}
 		
 		[MonoTODO]
-		[ComVisible(true)]
 		public virtual int GetChildCount() {
 			return -1; //as per spec
 		}
 		
 		[MonoTODO]
-		[ComVisible(true)]
 		public virtual AccessibleObject GetFocused() {
 			return null;//FIXME: not quite to spec.
 		}
-
-		[ComVisible(true)]
+	
 		public virtual int GetHelpTopic(out string fileName) {
 			fileName = "";
 			return -1;//no help
 		}
 		
-		[ComVisible(true)]
 		public virtual AccessibleObject GetSelected() {
 			return null;
 		}
 		
 		[MonoTODO]
-		[ComVisible(true)]
 		public virtual AccessibleObject HitTest(int x,int y) {
 			return null;		}
 		
 		[MonoTODO]
-		[ComVisible(true)]
 		public virtual AccessibleObject Navigate(AccessibleNavigation navdir) {
 			//by default, navagate back to here. Does this work? 
 			//not to spec, but better than execption FIXME:
@@ -159,7 +137,6 @@ namespace System.Windows.Forms {
 		}
 
 		[MonoTODO]
-		[ComVisible(true)]
 		public virtual void Select(AccessibleSelection flags) {
 			return;//FIXME: Not to spec. should be over ridden anyway.
 		}
@@ -171,7 +148,6 @@ namespace System.Windows.Forms {
 		//{
 		//	throw new NotImplementedException ();
 		//}
-
 
 		// --- Methods: IReflect ---
 		[MonoTODO]

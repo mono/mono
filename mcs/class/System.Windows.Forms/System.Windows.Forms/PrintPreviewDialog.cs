@@ -275,7 +275,7 @@ namespace System.Windows.Forms {
 			set { maximumSize=value; }
 		}
 		
-		public MainMenu Menu {
+		public new MainMenu Menu {
 			get { return menu; }
 			set { menu=value; }
 		}

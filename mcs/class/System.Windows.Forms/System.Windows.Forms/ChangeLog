@@ -1,9 +1,76 @@
+  2002-11-17  DennisHayes <dennish@raytek.com>	
+
+	* AccessibleObject.cs
+
+	* Removed COMvisible. Docs say yes, but verifer says no
+
+  2002-11-17  DennisHayes <dennish@raytek.com>	
+
+	* Application.cs
+	* Button.cs
+	* Control.cs
+	* Form.cs
+	* Label.cs
+	* ListBox.cs
+	* Menu.cs
+	* MessageBox.cs
+	* NativeWindow.cs
+	* PrintPreviewDialog.cs
+	* ScrollableControl.cs
+	* ScrollBar.cs
+	* VScrollBar.cs
+
+	* Made changes releated to the new win32 stuff
+
+  2002-11-17  DennisHayes <dennish@raytek.com>	
+	* Win32Enums.cs
+	* Win32Handles.cs
+	* Win32Interfaces.cs
+	* Win32RegistryUtil.cs
+	* Win32Structs.cs
+
+	* Completed merging files from  Carlos Harvey Perez
+	* Moved all parts of Win32.cs to these files
+	* eliminated Win32.cs.
+	*
+	* many things moved from win32.cs still commented out.
+	* Also needs to be mono styled.
+
+	* Win32.cs - removed
+
+  2002-11-12  DennisHayes <dennish@raytek.com>	
+
+	* Win32Enums.cs
+	* Win32Handles.cs
+	* Win32Interfaces.cs
+	* Win32RegistryUtil.cs
+	* Win32Structs.cs
+
+	* Added files from  Carlos Harvey Perez
+	** Thanks Carlos! **
+	* Moved all parts of Win32.cs to these files
+	* Execpt for functions. Will merge functions
+	* and eliminate remove Win32.cs soon.
+	*
+	* most things moved from win32.cs still commented out.
+	* Also needs to be mono styled.
+
+	* Win32.cs
+	* Moved stuff from win32.cs to files from Carlos.2002-11-12  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 2002-11-12  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* ListBox.cs: added ItemHeight and DrawMode properties. Fixes the build
 	in unix.
 
-  2002-10-29  DennisHayes <dennish@raytek.com>	
+	* ListBox.cs: added ItemHeight and DrawMode properties. Fixes the build
+	in unix.
+
+2002-11-02  Miguel de Icaza  <miguel@ximian.com>
+
+	* Win32.cs: Added IsMenu, CreateMenu, AppendMenuA, DestroyMenu entry points.
+	
+2002-10-29  DennisHayes <dennish@raytek.com>	
 
 	* AmbientProperties.cs
 	* Application.cs
@@ -31,10 +98,7 @@
 	* Win32.cs
 
 	* minor formating, bug fixes, and implmentation
-2002-11-02  Miguel de Icaza  <miguel@ximian.com>
 
-	* Win32.cs: Added IsMenu, CreateMenu, AppendMenuA, DestroyMenu entry points.
-	
 
   2002-10-29  DennisHayes <dennish@raytek.com>	
 	* checkin for Alexandre Pigolkine (pigolkine@gmx.de)

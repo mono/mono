@@ -30,26 +30,26 @@ namespace System.Windows.Forms {
 		public static DialogResult Show(string text) 
 		{
 			return (DialogResult) 
-			    Win32.MessageBoxA ((IntPtr) 0, text, "", Win32.MB_OK);
+			    Win32.MessageBoxA ((IntPtr) 0, text, "", (uint)WB_MessageBox_Types.MB_OK);
 		}
                 
 		public static DialogResult Show (IWin32Window w, string text) 
 		{
 			return (DialogResult) 
-			    Win32.MessageBoxA (w.Handle, text, "", Win32.MB_OK);
+			    Win32.MessageBoxA (w.Handle, text, "", (uint)WB_MessageBox_Types.MB_OK);
 		}
                 
 		//Compact Framework
 		public static DialogResult Show (string text, string caption) 
 		{
 			return (DialogResult) 
-			    Win32.MessageBoxA ((IntPtr) 0, text, caption, Win32.MB_OK);
+			    Win32.MessageBoxA ((IntPtr) 0, text, caption, (uint)WB_MessageBox_Types.MB_OK);
 		}
                 
 		public static DialogResult Show (IWin32Window w, string text, string caption)
 		{
 			return (DialogResult) 
-			    Win32.MessageBoxA (w.Handle, text, caption, Win32.MB_OK);
+			    Win32.MessageBoxA (w.Handle, text, caption, (uint)WB_MessageBox_Types.MB_OK);
 		}
                 
 		public static DialogResult Show (string text, string caption, 

@@ -125,10 +125,10 @@ namespace System.Windows.Forms {
 		//Compact Framework	
 		public static void DoEvents () 
 		{
-			Win32.MSG msg = new Win32.MSG();
+			MSG msg = new MSG();
 
 			while (Win32.PeekMessageA (ref msg, (IntPtr) 0,  0, 0,
-						   Win32.PM_REMOVE) != 0);
+						   (uint)PeekMessageFlags.PM_REMOVE) != 0);
 		}
 
 		//Compact Framework	
@@ -167,7 +167,7 @@ namespace System.Windows.Forms {
 		//Compact Framework
 		static public void Run ()
 		{
-			Win32.MSG msg = new Win32.MSG();
+			MSG msg = new MSG();
 
 			messageLoopStarted = true;
 

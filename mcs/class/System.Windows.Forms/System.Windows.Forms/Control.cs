@@ -115,13 +115,13 @@
     		public Control (string text) : this() 
     		{
     			Text = text;
-    			// Win32.SetWindowTextA (Handle, text);
+    			// SetWindowTextA (Handle, text);
     		}
     		
     		public Control (Control parent, string text) : this (text) 
     		{
     			Parent = parent;
-    			// Win32.SetParent (Handle, parent.Handle);
+    			// SetParent (Handle, parent.Handle);
     		}
     		
     		public Control (string text, int left, int top, 
@@ -131,7 +131,7 @@
     			Top = top;
     			Width = width;
     			Height = height;
-    			//Win32.SetWindowPos (Handle, (IntPtr) 0, left, top,
+    			//SetWindowPos (Handle, (IntPtr) 0, left, top,
     			//	    width, height, 0);
     		}
     		
@@ -142,7 +142,7 @@
     			Top = top;
     			Width = width;
     			Height = height;
-    			// Win32.SetWindowPos (Handle, (IntPtr) 0, left, top,
+    			// SetWindowPos (Handle, (IntPtr) 0, left, top,
     			//		    width, height, 0);
     		}
     
@@ -275,7 +275,7 @@
     		public Rectangle Bounds {
     			get {
     				if (IsHandleCreated) {
-    					Win32.RECT rect = new Win32.RECT();
+    					RECT rect = new RECT();
     					Win32.GetWindowRect (Handle, ref rect);
     					return new Rectangle ((int) rect.left, 
     							      (int) rect.top,
@@ -354,7 +354,7 @@
     		public Rectangle ClientRectangle {
     			get {
     				if (IsHandleCreated) {
-    					Win32.RECT rect = new Win32.RECT();
+    					RECT rect = new RECT();
     					Win32.GetClientRect (Handle, ref rect);
     					return new Rectangle ((int) rect.left, 
     							      (int) rect.top,
@@ -373,7 +373,7 @@
 			public Size ClientSize {
 				get {
 					if (IsHandleCreated) {
-						Win32.RECT rect = new Win32.RECT();
+						RECT rect = new RECT();
 						Win32.GetClientRect (Handle, ref rect);
 						return new Size (
 							(int) rect.right, 
@@ -451,7 +451,7 @@
   					else 
   						createParams.Parent = (IntPtr) 0;
 	  
-  					createParams.Style = (int) Win32.WS_OVERLAPPEDWINDOW;
+  					createParams.Style = (int) WindowStyles.WS_OVERLAPPEDWINDOW;
 	  
     				return createParams;
     			}
@@ -557,13 +557,13 @@
     		public virtual Font Font {
 				get {
 					throw new NotImplementedException ();
-					//uint ReturnValue = Win32.SendMessage(Handle, Win32.WM_GETFONT, IntPtr.Zero, IntPtr.Zero);
+					//uint ReturnValue = SendMessage(Handle, WM_GETFONT, IntPtr.Zero, IntPtr.Zero);
 					//if(ReturnValue != 0)throw new Exception("Could not get Font",null);
 					//return Handle;
 				}
     			set {
 					throw new NotImplementedException ();
-					//uint ReturnValue = Win32.SendMessage(Handle, Win32.WM_SETFONT, value, (IntPtr)1 );
+					//uint ReturnValue = SendMessage(Handle, WM_SETFONT, value, (IntPtr)1 );
 					//if(ReturnValue != 0)throw new Exception("Could not set Font",null);
 				}
     		}
@@ -701,7 +701,7 @@
  			//Compact Framework
     		public static Point MousePosition {
     			get {
-    				Win32.POINT point = new Win32.POINT();
+    				POINT point = new POINT();
     				Win32.GetCursorPos (ref point);
     				return new Point ( (int) point.x, (int) point.y);
     			}
@@ -721,7 +721,7 @@
     		public Control Parent {
     			get {
     				return parent;
-    				//IntPtr parent = Win32.GetParent (Handle);
+    				//IntPtr parent = GetParent (Handle);
     				//return FromHandle (parent);
     			}
     			set {
@@ -917,10 +917,10 @@
     			set {
     				if (value)
     					Win32.ShowWindow (
-    						Handle, Win32.SW_SHOW);
+    						Handle, ShowWindowStyles.SW_SHOW);
     				else
     					Win32.ShowWindow (
-    						Handle, Win32.SW_HIDE);
+    						Handle, ShowWindowStyles.SW_HIDE);
     			}
     		}
     		
@@ -1084,7 +1084,7 @@
     		public void Hide ()
      		{
     			if (IsHandleCreated)
-    				Win32.ShowWindow (Handle, Win32.SW_HIDE);
+    				Win32.ShowWindow (Handle, ShowWindowStyles.SW_HIDE);
     		}
     		
     		[MonoTODO]
@@ -1098,8 +1098,8 @@
     		{
     			if (IsHandleCreated) {
 					//FIXME: 
-    				//Win32.RECT rect = (Win32.RECT) null;
-    				//Win32.InvalidateRect (Handle, ref rect, true);
+    				//RECT rect = (RECT) null;
+    				//InvalidateRect (Handle, ref rect, true);
     			}
     		}
     		
@@ -1113,7 +1113,7 @@
     		public void Invalidate (Rectangle rc) 
     		{
     			if (IsHandleCreated) {
-    				Win32.RECT rect = new Win32.RECT();
+    				RECT rect = new RECT();
     				rect.left = rc.Left;
     				rect.top = rc.Top;
     				rect.right = rc.Right;
@@ -1740,8 +1740,8 @@
  			//Compact Framework
     		public virtual void Refresh () 
     		{
-    			//Win32.RECT rect = (Win32.RECT) null;
-    			//Win32.InvalidateRect (Handle, ref rect, true);
+    			//RECT rect = (RECT) null;
+    			//InvalidateRect (Handle, ref rect, true);
     			Win32.UpdateWindow (Handle);
     		}
     		
@@ -1925,12 +1925,12 @@
     				// FIXME: verify on whether this is supposed
     				// to activate/deactive the window
     				Win32.SetWindowPos (Handle, 
-    						    (IntPtr) Win32.HWND_NOTOPMOST,
+    						    (IntPtr) SetWindowPosZOrder.HWND_NOTOPMOST,
     						    0, 0, 0, 0, 0);
     			else
     				// FIXME: this does not make sense but
     				// the docs say the window is hidden
-    				Win32.ShowWindow (Handle, Win32.SW_HIDE);
+    				Win32.ShowWindow (Handle, ShowWindowStyles.SW_HIDE);
     		}
     		
     		[MonoTODO]
@@ -1942,7 +1942,7 @@
  			//Compact Framework
     		public void Show () 
     		{
-    			Win32.ShowWindow (Handle, Win32.SW_SHOW);
+    			Win32.ShowWindow (Handle, ShowWindowStyles.SW_SHOW);
     		}
     		
     		[MonoTODO]
@@ -2049,11 +2049,11 @@
     
     			switch (m.Msg) {
     
-    			case (int)Win32.WM_CREATE:
+    			case (int)Msg.WM_CREATE:
     				Console.WriteLine ("WM_CREATE");
     				OnHandleCreated (eventArgs);
     				break;
-    			case (int)Win32.WM_LBUTTONDBLCLK:
+    			case (int)Msg.WM_LBUTTONDBLCLK:
     				OnDoubleClick (eventArgs);
     				break;
     				// OnDragDrop
@@ -2061,88 +2061,88 @@
     				// OnDragLeave
     				// OnDragOver
     				// OnQueryContinueDrag
-    			case (int)Win32.WM_ENABLE:
+    			case (int)Msg.WM_ENABLE:
     				OnEnabledChanged (eventArgs);
     				break;
-    			case (int)Win32.WM_SETFOCUS:
+    			case (int)Msg.WM_SETFOCUS:
     				OnEnter (eventArgs);
     				OnGotFocus (eventArgs);
     				break;
-    			case (int)Win32.WM_FONTCHANGE:
+    			case (int)Msg.WM_FONTCHANGE:
     				OnFontChanged (eventArgs);
     				break;
-    			case (int)Win32.WM_DESTROY:
+    			case (int)Msg.WM_DESTROY:
     				OnHandleDestroyed (eventArgs);
     				break;
-    			case (int)Win32.WM_HELP:
+    			case (int)Msg.WM_HELP:
     				// FIXME:
     				//OnHelpRequested (eventArgs);
     				break;
-    			case (int)Win32.WM_KEYDOWN:
+    			case (int)Msg.WM_KEYDOWN:
     				// FIXME:
     				// OnKeyDown (eventArgs);
     				break;
-    			case (int)Win32.WM_CHAR:
+    			case (int)Msg.WM_CHAR:
     				// FIXME:
     				// OnKeyPress (eventArgs);
     				break;
-    			case (int)Win32.WM_KEYUP:
+    			case (int)Msg.WM_KEYUP:
     				// FIXME:
     				// OnKeyUp (eventArgs);
     				break;
-    			case (int)Win32.WM_KILLFOCUS:
+    			case (int)Msg.WM_KILLFOCUS:
     				OnLeave (eventArgs);
     				OnLostFocus (eventArgs);
     				break;
-    			case (int)Win32.WM_LBUTTONDOWN:
+    			case (int)Msg.WM_LBUTTONDOWN:
     				// FIXME:
     				// OnMouseDown (eventArgs);
     				break;
-    			case (int)Win32.WM_MOUSEACTIVATE:
+    			case (int)Msg.WM_MOUSEACTIVATE:
     				OnMouseEnter (eventArgs);
     				break;
-    			case Win32.WM_MOUSEHOVER: // called by TrackMouseEvent
+    			case (int)Msg.WM_MOUSEHOVER: // called by TrackMouseEvent
     				OnMouseHover (eventArgs);
     				break;
-    			case Win32.WM_MOUSELEAVE: // called by TrackMouseEvent
+    			case (int)Msg.WM_MOUSELEAVE: // called by TrackMouseEvent
     				OnMouseLeave (eventArgs);
     				break;
-    			case (int)Win32.WM_MOUSEMOVE:
+    			case (int)Msg.WM_MOUSEMOVE:
     				// FIXME:
     				// OnMouseMove (eventArgs);
     				break;
-    			case (int)Win32.WM_LBUTTONUP:
+    			case (int)Msg.WM_LBUTTONUP:
     				// FIXME:
     				// OnMouseUp (eventArgs);
     				break;
-    			case (int)Win32.WM_MOUSEWHEEL:
+    			case (int)Msg.WM_MOUSEWHEEL:
     				// FIXME:
     				// OnMouseWheel (eventArgs);
     				break;
-    			case (int)Win32.WM_MOVE:
+    			case (int)Msg.WM_MOVE:
     				OnMove (eventArgs);
     				break;
-    			case (int)Win32.WM_NOTIFY:
+    			case (int)Msg.WM_NOTIFY:
     				// FIXME: get NM_CLICKED msg from pnmh
     				// OnClick (eventArgs);
     				// OnNotifyMessage (eventArgs);
-    			case (int)Win32.WM_PAINT:
+    			case (int)Msg.WM_PAINT:
     				//OnPaint (paintEventArgs);
     				break;
-    			case (int)Win32.WM_SIZE:
+    			case (int)Msg.WM_SIZE:
     				OnResize (eventArgs);
     				OnSizeChanged (eventArgs);
     				break;
-    			case (int)Win32.WM_STYLECHANGED:
+    			case (int)Msg.WM_STYLECHANGED:
     				OnStyleChanged (eventArgs);
     				break;
-    			case (int)Win32.WM_SYSCOLORCHANGE:
+    			case (int)Msg.WM_SYSCOLORCHANGE:
     				OnSystemColorsChanged (eventArgs);
     				break;
-    			case (int)Win32.WM_SETTEXT:
+    			case (int)Msg.WM_SETTEXT:
     				OnTextChanged (eventArgs);
     				break;
-    			case (int)Win32.WM_SHOWWINDOW:
+    			case (int)Msg.WM_SHOWWINDOW:
     				OnVisibleChanged (eventArgs);
     				break;
     // 			default:

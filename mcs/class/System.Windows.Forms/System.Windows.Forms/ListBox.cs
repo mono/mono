@@ -36,6 +36,7 @@ namespace System.Windows.Forms {
 		//
 		//  --- Public Properties
 		//
+
 		[MonoTODO]
 		public override Color BackColor {
 			get {
@@ -284,23 +285,9 @@ namespace System.Windows.Forms {
 		//  --- Public Events
 		//
 		[MonoTODO]
-		public event DrawItemEventHandler DrawItem {
-			add {
-				throw new NotImplementedException ();
-			}
-			remove {
-				throw new NotImplementedException ();
-			}
-		}
+		public event DrawItemEventHandler DrawItem;
 		[MonoTODO]
-		public event MeasureItemEventHandler MeasureItem {
-			add {
-				throw new NotImplementedException ();
-			}
-			remove {
-				throw new NotImplementedException ();
-			}
-		}
+		public event MeasureItemEventHandler MeasureItem;
 
 		//
 		//  --- Protected Properties

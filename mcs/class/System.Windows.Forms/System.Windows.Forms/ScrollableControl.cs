@@ -105,7 +105,7 @@ namespace System.Windows.Forms {
 				//else 
 					createParams.Parent = (IntPtr) 0;
 	  
-				createParams.Style = (int) Win32.WS_OVERLAPPEDWINDOW;
+				createParams.Style = (int) WindowStyles.WS_OVERLAPPEDWINDOW;
 	  
 				return createParams;
 			}

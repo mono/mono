@@ -44,8 +44,8 @@ namespace System.Windows.Forms {
 				createParams.Param = 0;
 				createParams.Parent = Parent.Handle;
 				createParams.Style = (int) (
-					Win32.WS_CHILD | 
-					Win32.WS_VISIBLE);
+					WindowStyles.WS_CHILD | 
+					WindowStyles.WS_VISIBLE);
 				window.CreateHandle (createParams);
 				return createParams;
 			}

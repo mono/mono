@@ -208,8 +208,8 @@
  				createParams.Param = 0;
  				createParams.Parent = Parent.Handle;
  				createParams.Style = (int) (
- 					Win32.WS_CHILD | 
- 					Win32.WS_VISIBLE | Win32.SS_LEFT );
+ 					(int)WindowStyles.WS_CHILD | 
+ 					(int)WindowStyles.WS_VISIBLE | (int)SS_Static_Control_Types.SS_LEFT );
  				window.CreateHandle (createParams);
     				return createParams;
     			}

@@ -224,11 +224,11 @@ namespace System.Windows.Forms  {
 					//System.Console.WriteLine("Adding menuItem {0}, parent {1}", mi.Text, mi.IsParent);
 					if( parentMenu_ != null) {
 						if( mi.IsParent){
-							Win32.AppendMenuA( parentMenu_.Handle, Win32.MF_ENABLED | Win32.MF_STRING | Win32.MF_POPUP,
+							Win32.AppendMenuA( parentMenu_.Handle, (int)MF_.MF_ENABLED | (int)MF_.MF_STRING | (int)MF_.MF_POPUP,
 																mi.Handle, mi.Text);
 						}
 						else {
-							Win32.AppendMenuA( parentMenu_.Handle, Win32.MF_ENABLED | Win32.MF_STRING,
+							Win32.AppendMenuA( parentMenu_.Handle, (int)MF_.MF_ENABLED | (int)MF_.MF_STRING,
 									   (IntPtr) parentMenu_.GetIDByMenuItem(mi), mi.Text);
 						}
 					}

@@ -42,7 +42,7 @@
     		
     		static Form ()
     		{
-    
+
     		}
     		
     		//  --- Public Properties
@@ -130,7 +130,7 @@
     		}
     
   			//Compact Framework
-			//FIXME: 
+			//FIXME:
 			// In .NET this can be changed at any time.
 			// In WIN32 this is fixed when the window is created.
 			// In WIN32 to change this after the window is created,
@@ -284,15 +284,36 @@
     
  			//Compact Framework
  			//[MonoTODO]
-    		//public MainMenu Menu {
-    		//	get {
-    		//		throw new NotImplementedException ();
-    		//	}
-    		//	set {
-    		//		throw new NotImplementedException ();
-    		//	}
-    		//}
-    
+				private MainMenu mainMenu_ = null;
+
+				private void assignMenu()
+				{
+					if( Handle != IntPtr.Zero ) {
+					// FIXME: If Form's window has no style for menu,  probably, better to add it
+					// if menu have to be removed, remove the style.
+					// Attention to the repainting.
+//						if( mainMenu_ != null) {
+//							//long myStyle = Win32.GetWindowLongA( Handle, Win32.GWL_STYLE);
+//							//myStyle |= (long)Win32.WS_OVERLAPPEDWINDOW;
+//							//Win32.SetWindowLongA( Handle, Win32.GWL_STYLE, myStyle);
+//							SetMenu( Handle, mainMenu_.Handle);
+//						}
+//						else {
+//							SetMenu( Handle, IntPtr.Zero);
+//						}
+					}
+				}
+
+    		public MainMenu Menu {
+    			get {
+    				return mainMenu_;
+    			}
+    			set {
+    				mainMenu_ = value;
+						assignMenu();
+    			}
+    		}
+
     		//[MonoTODO]
     		//public MainMenu MergedMenu {
     		//	get {
@@ -430,7 +451,7 @@
     		[MonoTODO]
     		public FormWindowState WindowState {
     			get {
-					Win32.WINDOWPLACEMENT placement = new Win32.WINDOWPLACEMENT();
+					WINDOWPLACEMENT placement = new WINDOWPLACEMENT();
 
     				//bool ReturnValue = Win32.GetWindowPlacement(Handle, ref placement ) ;
 					//if(placement.showCmd == SW_MINIMIZE){
@@ -547,8 +568,8 @@
     		{
     			Win32.SetWindowPos ((IntPtr) Handle, (IntPtr) 0, 
     					    x, y, 0, 0, 
-    					    (int) (Win32.SWP_NOSIZE | 
-    					    Win32.SWP_NOZORDER));
+    					    (int) (SetWindowPosFlags.SWP_NOSIZE | 
+    					    SetWindowPosFlags.SWP_NOZORDER));
     		}
     
     		//inherited from control
@@ -560,7 +581,7 @@
     		[MonoTODO]
     		public DialogResult ShowDialog ()
     		{
-				Win32.ShowWindow (Handle, (int) Win32.SW_SHOW);
+				Win32.ShowWindow (Handle, (int) ShowWindowStyles.SW_SHOW);
 				return new DialogResult();
 			}
     
@@ -695,6 +716,7 @@
     		protected override void OnHandleCreated (EventArgs e)
     		{
     			Console.WriteLine ("OnHandleCreated");
+					assignMenu();
     			base.OnHandleCreated (e);
     		}
     
@@ -786,9 +808,41 @@
     		{
     			base.OnVisibleChanged (e);
     		}
-    
- 			protected override bool ProcessCmdKey (
- 			ref Message msg, Keys keyData)
+
+    		protected virtual IntPtr OnMenuCommand (uint id)
+    		{
+    			//base.OnVisibleChanged (e);
+					System.Console.WriteLine("Form on command {0}", id);
+					if(Menu != null) {
+						MenuItem mi = Menu.GetMenuItemByID( id);
+						if( mi != null) {
+							mi.PerformClick();
+						}
+					}
+					return IntPtr.Zero;
+    		}
+
+ 				protected virtual IntPtr OnWmCommand (ref Message m)
+				{
+					uint wNotifyCode = (uint) ( ((uint)m.WParam.ToInt32() & 0xFFFF0000) >> 16);
+					uint wID = (uint)(m.WParam.ToInt32() & 0x0000FFFFL);
+					if( m.LParam.ToInt32() == 0) {
+						if( wNotifyCode == 0) {
+							// Menu
+							return OnMenuCommand(wID);
+						}
+						else if( wNotifyCode == 1) {
+							// Accelerator
+						}
+					}
+					else {
+							// Control notification
+							System.Console.WriteLine("Control notification Code {0} Id {1} Hwnd {2}", wNotifyCode, wID, m.LParam.ToInt32());
+					}
+					return new IntPtr(1);
+				}
+
+ 				protected override bool ProcessCmdKey (	ref Message msg, Keys keyData)
     		{
     			return base.ProcessCmdKey (ref msg, keyData);
     		}
@@ -802,7 +856,7 @@
     		{
     			return base.ProcessKeyPreview (ref m);
     		}
-    
+
     		protected override bool ProcessTabKey (bool forward)
     		{
     			return base.ProcessTabKey (forward);
@@ -829,12 +883,12 @@
     		{
     			base.SetVisibleCore (value);
     		}
-    
+
      		//public void Select(bool b1, bool b2)
     		//{
     		//		throw new NotImplementedException ();
     		//}
-    
+
    			//protected void UpdateBounds()
     		//{
     		//		throw new NotImplementedException ();
@@ -845,31 +899,31 @@
     			base.WndProc (ref m);
     
     			switch (m.Msg) {
-    			case (int)Win32.WM_CLOSE:
+    			case (int)Msg.WM_CLOSE:
     				EventArgs closeArgs = new EventArgs();
     				OnClosed (closeArgs);
     				break;
     				//case ?:
     				//OnCreateControl()
     				//break;
-    			case (int)Win32.WM_FONTCHANGE:
+    			case (int)Msg.WM_FONTCHANGE:
     				EventArgs fontChangedArgs = new EventArgs();
     				OnFontChanged (fontChangedArgs);
     				break;
-    			case (int)Win32.WM_CREATE:
+    			case (int)Msg.WM_CREATE:
     				EventArgs handleCreatedArgs = new EventArgs(); 
     				OnHandleCreated (handleCreatedArgs);
     				break;
-    			case (int)Win32.WM_DESTROY:
+    			case (int)Msg.WM_DESTROY:
     				EventArgs destroyArgs = new EventArgs();
     				OnHandleDestroyed (destroyArgs);
     				break;
-    			case (int)Win32.WM_INPUTLANGCHANGE:
+    			case (int)Msg.WM_INPUTLANGCHANGE:
     				//InputLanguageChangedEventArgs ilChangedArgs =
     				//	new InputLanguageChangedEventArgs();
     				//OnInputLanguageChanged (ilChangedArgs);
     				break;
-    			case (int)Win32.WM_INPUTLANGCHANGEREQUEST:
+    			case (int)Msg.WM_INPUTLANGCHANGEREQUEST:
     				//InputLanguageChangingEventArgs ilChangingArgs =
     				//	new InputLanguageChangingEventArgs();
     				//OnInputLanguagedChanging (ilChangingArgs);
@@ -886,43 +940,46 @@
     				// case ?:
     				// OnMaximumSizedChanged(EventArgs e)
     				//break;
-    			case (int)Win32.WM_MDIACTIVATE:
+    			case (int)Msg.WM_MDIACTIVATE:
     				EventArgs mdiActivateArgs = new EventArgs();
     				OnMdiChildActivate (mdiActivateArgs);
     				break;
-    			case (int)Win32.WM_EXITMENULOOP:
+    			case (int)Msg.WM_EXITMENULOOP:
     				EventArgs menuCompleteArgs = new EventArgs();
     				OnMenuComplete (menuCompleteArgs);
     				break;
-    			case (int)Win32.WM_ENTERMENULOOP:
+    			case (int)Msg.WM_ENTERMENULOOP:
     				EventArgs enterMenuLoopArgs = new EventArgs();
     				OnMenuStart (enterMenuLoopArgs);
     				break;
     				// case ?:
     				// OnMinimumSizeChanged(EventArgs e)
     				// break;
-    			case (int)Win32.WM_PAINT:
+    			case (int)Msg.WM_PAINT:
     				//PaintEventArgs paintArgs = new PaintEventArgs();
     				//OnPaint (paintArgs);
     				break;
-    			case (int)Win32.WM_SIZE:
+    			case (int)Msg.WM_SIZE:
     				EventArgs resizeArgs = new EventArgs();
     				OnResize (resizeArgs);
     				break;
     				//case ?:
     				//OnStyleChanged(EventArgs e)
     				//break;
-    			case (int)Win32.WM_SETTEXT:
+    			case (int)Msg.WM_SETTEXT:
     				EventArgs textChangedArgs = new EventArgs();
     				OnTextChanged (textChangedArgs);
     				break;
-    			case (int)Win32.WM_SHOWWINDOW:
+    			case (int)Msg.WM_SHOWWINDOW:
     				EventArgs visibleChangedArgs = new EventArgs();
     				OnVisibleChanged (visibleChangedArgs);
     				break;
+    			case (int)Msg.WM_COMMAND:
+    				OnWmCommand (ref m);
+    				break;
     			}
     		}
-    
+
     		//sub class
     		//System.Windows.Forms.Form.ControlCollection.cs
     		//
@@ -963,7 +1020,7 @@
     			//public static bool Equals(object o1, object o2) {
     			//	throw new NotImplementedException ();
     			//}
-    
+
     			public override int GetHashCode () {
     				//FIXME add our proprities
     				return base.GetHashCode ();
