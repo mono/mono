@@ -20,6 +20,7 @@ using System.Web.UI;
 
 namespace System.Web.UI.WebControls
 {
+	[ControlBuilder (typeof (TextBoxControlBuilder))]
 	[DefaultEvent("TextChanged")]
 	[DefaultProperty("Text")]
 	[ParseChildren(false)]
