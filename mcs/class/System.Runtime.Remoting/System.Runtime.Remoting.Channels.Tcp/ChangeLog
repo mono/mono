@@ -1,3 +1,7 @@
+2003-12-19  Lluis Sanchez Gual <lluis@ximian.com>
+
+	* TcpServerChannel.cs: Fixes in channel initialization.
+
 2003-12-12  Lluis Sanchez Gual  <lluis@ximian.com>
 
 	* TcpChannel.cs: Added null check.

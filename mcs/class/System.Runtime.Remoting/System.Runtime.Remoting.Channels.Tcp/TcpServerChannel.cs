@@ -53,16 +53,9 @@ namespace System.Runtime.Remoting.Channels.Tcp
 					host = Dns.GetHostByName(Dns.GetHostName()).HostName;
 			}
 			
-			string [] uris = null;
-			
-			if (port != 0) {
-				uris = new String [1];
-				uris [0] = GetChannelUri ();
-			}
-
 			// Gets channel data from the chain of channel providers
 
-			channel_data = new ChannelDataStore (uris);
+			channel_data = new ChannelDataStore (null);
 			IServerChannelSinkProvider provider = serverSinkProvider;
 			while (provider != null)
 			{
@@ -222,11 +215,14 @@ namespace System.Runtime.Remoting.Channels.Tcp
 			if (server_thread == null) 
 			{
 				listener.Start ();
-				if (port == 0) {
+				
+				if (port == 0)
 					port = ((IPEndPoint)listener.LocalEndpoint).Port;
-					channel_data.ChannelUris = new String [1];
-					channel_data.ChannelUris [0] = GetChannelUri ();
-				}
+
+				string[] uris = new String [1];
+				uris = new String [1];
+				uris [0] = GetChannelUri ();
+				channel_data.ChannelUris = uris;
 
 				server_thread = new Thread (new ThreadStart (WaitForConnections));
 				server_thread.IsBackground = true;
@@ -304,7 +300,7 @@ namespace System.Runtime.Remoting.Channels.Tcp
 			}
 			catch (Exception ex)
 			{
-				Console.WriteLine (ex);
+//				Console.WriteLine (ex);
 			}
 
 			_stream.Close();
