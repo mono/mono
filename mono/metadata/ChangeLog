@@ -1,6 +1,7 @@
 2002-07-18  Dietmar Maurer  <dietmar@ximian.com>
 
 	* marshal.c (mono_marshal_get_runtime_invoke): use exception filters
+	(mono_marshal_get_native_wrapper): we an now return value types
 
 Wed Jul 17 18:21:29 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
