@@ -16,7 +16,7 @@ using System.Data;
 namespace MonoTests.System.Data
 {
 	[TestFixture]
-        public class DataRelationTest
+        public class DataRelationTest : Assertion
         {
 		private DataSet Set = null;
         	private DataTable Mom = null;
@@ -73,12 +73,12 @@ namespace MonoTests.System.Data
                 	Row [1] = 56;
                 	Child.Rows.Add (Row);
                 	
-                	Assertion.AssertEquals ("test#01", 2, Child.Rows.Count);
+                	AssertEquals ("test#01", 2, Child.Rows.Count);
                 	
                 	Row = Mom.Rows [0];
                 	Row.Delete ();
                 	
-                	Assertion.AssertEquals ("test#02", 1, Child.Rows.Count);
+                	AssertEquals ("test#02", 1, Child.Rows.Count);
                 	
                 	Row = Mom.NewRow ();
                 	Row [0] = "Teresa";
@@ -86,17 +86,17 @@ namespace MonoTests.System.Data
                 	
                 	try {
                 		Mom.Rows.Add (Row);
-                		Assertion.Fail ("test#03");
+                		Fail ("test#03");
                 	} catch (Exception e) {
-                		Assertion.AssertEquals ("test#04", typeof (ConstraintException), e.GetType ());
-                		Assertion.AssertEquals ("test#05", "Column 'ChildName' is constrained to be unique.  Value 'Dick' is already present.", e.Message);
+                		AssertEquals ("test#04", typeof (ConstraintException), e.GetType ());
+                		AssertEquals ("test#05", "Column 'ChildName' is constrained to be unique.  Value 'Dick' is already present.", e.Message);
                 	}                	
 
 			Row = Mom.NewRow ();                                 
                         Row [0] = "Teresa";                                  
                         Row [1] = "Mich";                                    
                         Mom.Rows.Add (Row);                                  
-                        Assertion.AssertEquals ("test#06", 1, Child.Rows.Count);       
+                        AssertEquals ("test#06", 1, Child.Rows.Count);       
 			
                         Row = Child.NewRow ();                               
                         Row [0] = "Jack";                                    
@@ -104,10 +104,10 @@ namespace MonoTests.System.Data
 			
                         try {                                                
                                 Child.Rows.Add (Row);                               
-                                Assertion.Fail ("test#07");                                   
+                                Fail ("test#07");                                   
                         } catch (Exception e) {                              
-                                Assertion.AssertEquals ("test#08", typeof (InvalidConstraintException), e.GetType ());
-                                Assertion.AssertEquals ("test#09", "ForeignKeyConstraint Rel requires the child key values (Jack) to exist in the parent table.", e.Message);                                                                      
+                                AssertEquals ("test#08", typeof (InvalidConstraintException), e.GetType ());
+                                AssertEquals ("test#09", "ForeignKeyConstraint Rel requires the child key values (Jack) to exist in the parent table.", e.Message);                                                                      
                         }                                                    
 
                 }
@@ -119,10 +119,10 @@ namespace MonoTests.System.Data
 			DataRelation Relation = null;
 			try {
 				Relation = new DataRelation ("Rel", Mom.Columns [1], Child.Columns [1], true);
-				Assertion.Fail ("test#01");
+				Fail ("test#01");
 			} catch (Exception e) {
-				Assertion.AssertEquals ("test#02", typeof (InvalidConstraintException), e.GetType ());
-				Assertion.AssertEquals ("test#03", "Parent Columns and Child Columns don't have type-matching columns.", e.Message);
+				AssertEquals ("test#02", typeof (InvalidConstraintException), e.GetType ());
+				AssertEquals ("test#03", "Parent Columns and Child Columns don't have type-matching columns.", e.Message);
 			}
 			
 			Child.Columns [1].DataType = Mom.Columns [1].DataType;
@@ -132,10 +132,10 @@ namespace MonoTests.System.Data
 			
 			try {
 				Child.Columns [1].DataType = Type.GetType ("System.Double");
-				Assertion.Fail ("test#04");
+				Fail ("test#04");
 			} catch (Exception e) {
-				Assertion.AssertEquals ("test#05", typeof (InvalidConstraintException), e.GetType ());
-				Assertion.AssertEquals ("test#06", "Parent Columns and Child Columns don't have type-matching columns.", e.Message);
+				AssertEquals ("test#05", typeof (InvalidConstraintException), e.GetType ());
+				AssertEquals ("test#06", "Parent Columns and Child Columns don't have type-matching columns.", e.Message);
 			}									
 		}
 		
@@ -143,42 +143,42 @@ namespace MonoTests.System.Data
 		public void DataSetRelations ()
 		{
 			DataRelation Relation;
-			Assertion.AssertEquals ("test#01", 0, Set.Relations.Count);
-			Assertion.AssertEquals ("test#02", 0, Mom.ParentRelations.Count);
-			Assertion.AssertEquals ("test#03", 0, Mom.ChildRelations.Count);
-			Assertion.AssertEquals ("test#04", 0, Child.ParentRelations.Count);
-			Assertion.AssertEquals ("test#05", 0, Child.ChildRelations.Count);
+			AssertEquals ("test#01", 0, Set.Relations.Count);
+			AssertEquals ("test#02", 0, Mom.ParentRelations.Count);
+			AssertEquals ("test#03", 0, Mom.ChildRelations.Count);
+			AssertEquals ("test#04", 0, Child.ParentRelations.Count);
+			AssertEquals ("test#05", 0, Child.ChildRelations.Count);
 			
 			Relation = new DataRelation ("Rel", Mom.Columns [1], Child.Columns [0]);
 			Set.Relations.Add (Relation);
 			
-			Assertion.AssertEquals ("test#06", 1, Set.Relations.Count);
-			Assertion.AssertEquals ("test#07", 0, Mom.ParentRelations.Count);
-			Assertion.AssertEquals ("test#08", 1, Mom.ChildRelations.Count);
-			Assertion.AssertEquals ("test#09", 1, Child.ParentRelations.Count);
-			Assertion.AssertEquals ("test#10", 0, Child.ChildRelations.Count);
+			AssertEquals ("test#06", 1, Set.Relations.Count);
+			AssertEquals ("test#07", 0, Mom.ParentRelations.Count);
+			AssertEquals ("test#08", 1, Mom.ChildRelations.Count);
+			AssertEquals ("test#09", 1, Child.ParentRelations.Count);
+			AssertEquals ("test#10", 0, Child.ChildRelations.Count);
 						
 			Relation = Set.Relations [0];
-			Assertion.AssertEquals ("test#11", 1, Relation.ParentColumns.Length);
-			Assertion.AssertEquals ("test#12", 1, Relation.ChildColumns.Length);
-			Assertion.AssertEquals ("test#13", "Rel", Relation.ChildKeyConstraint.ConstraintName);
-			Assertion.AssertEquals ("test#14", "Constraint1", Relation.ParentKeyConstraint.ConstraintName);
+			AssertEquals ("test#11", 1, Relation.ParentColumns.Length);
+			AssertEquals ("test#12", 1, Relation.ChildColumns.Length);
+			AssertEquals ("test#13", "Rel", Relation.ChildKeyConstraint.ConstraintName);
+			AssertEquals ("test#14", "Constraint1", Relation.ParentKeyConstraint.ConstraintName);
 		}
 		
 		[Test]
 		public void Constraints ()
 		{
 				
-			Assertion.AssertEquals ("test#01", 0, Mom.Constraints.Count);
-			Assertion.AssertEquals ("test#02", 0, Child.Constraints.Count);
+			AssertEquals ("test#01", 0, Mom.Constraints.Count);
+			AssertEquals ("test#02", 0, Child.Constraints.Count);
 
 			DataRelation Relation = new DataRelation ("Rel", Mom.Columns [1], Child.Columns [0]);
 			Set.Relations.Add (Relation);
 			
-			Assertion.AssertEquals ("test#03", 1, Mom.Constraints.Count);
-			Assertion.AssertEquals ("test#04", 1, Child.Constraints.Count);
-			Assertion.AssertEquals ("test#05", typeof (ForeignKeyConstraint), Child.Constraints [0].GetType ());
-			Assertion.AssertEquals ("test#05", typeof (UniqueConstraint), Mom.Constraints [0].GetType ());
+			AssertEquals ("test#03", 1, Mom.Constraints.Count);
+			AssertEquals ("test#04", 1, Child.Constraints.Count);
+			AssertEquals ("test#05", typeof (ForeignKeyConstraint), Child.Constraints [0].GetType ());
+			AssertEquals ("test#05", typeof (UniqueConstraint), Mom.Constraints [0].GetType ());
 			
 		}
 
@@ -189,23 +189,23 @@ namespace MonoTests.System.Data
 			DataRelation Relation = new DataRelation ("Rel", Mom.Columns [1], Child.Columns [0]);
 			Set.Relations.Add (Relation);
 			DataRelation Test = null;
-			Assertion.AssertEquals ("test#01", 1, Mom.ChildRelations.Count);
-			Assertion.AssertEquals ("test#02", 0, Child.ChildRelations.Count);
-			Assertion.AssertEquals ("test#03", 0, Mom.ParentRelations.Count);
-			Assertion.AssertEquals ("test#04", 1, Child.ParentRelations.Count);
+			AssertEquals ("test#01", 1, Mom.ChildRelations.Count);
+			AssertEquals ("test#02", 0, Child.ChildRelations.Count);
+			AssertEquals ("test#03", 0, Mom.ParentRelations.Count);
+			AssertEquals ("test#04", 1, Child.ParentRelations.Count);
 				
 			Test = Child.ParentRelations [0];
-			Assertion.AssertEquals ("test#05", "Rel", Test.ToString ());
-			Assertion.AssertEquals ("test#06", "Rel", Test.RelationName);
-			Assertion.AssertEquals ("test#07", "Mom", Test.ParentTable.TableName);
-			Assertion.AssertEquals ("test#08", 1, Test.ParentKeyConstraint.Columns.Length);
-			Assertion.AssertEquals ("test#09", false, Test.ParentKeyConstraint.IsPrimaryKey);
-			Assertion.AssertEquals ("test#10", 1, Test.ParentColumns.Length);
-			Assertion.AssertEquals ("test#11", false, Test.Nested);
-			Assertion.AssertEquals ("test#12", 0, Test.ExtendedProperties.Count);
-			Assertion.AssertEquals ("test#13", "Child", Test.ChildTable.TableName);
-			Assertion.AssertEquals ("test#14", "Rel", Test.ChildKeyConstraint.ConstraintName);
-			Assertion.AssertEquals ("test#15", 1, Test.ChildColumns.Length);
+			AssertEquals ("test#05", "Rel", Test.ToString ());
+			AssertEquals ("test#06", "Rel", Test.RelationName);
+			AssertEquals ("test#07", "Mom", Test.ParentTable.TableName);
+			AssertEquals ("test#08", 1, Test.ParentKeyConstraint.Columns.Length);
+			AssertEquals ("test#09", false, Test.ParentKeyConstraint.IsPrimaryKey);
+			AssertEquals ("test#10", 1, Test.ParentColumns.Length);
+			AssertEquals ("test#11", false, Test.Nested);
+			AssertEquals ("test#12", 0, Test.ExtendedProperties.Count);
+			AssertEquals ("test#13", "Child", Test.ChildTable.TableName);
+			AssertEquals ("test#14", "Rel", Test.ChildKeyConstraint.ConstraintName);
+			AssertEquals ("test#15", 1, Test.ChildColumns.Length);
 		}
 		
 		[Test]
@@ -250,10 +250,10 @@ namespace MonoTests.System.Data
 			DataRelation Relation = null;
 			try {
 				Relation = new DataRelation ("Rel", Parents, Childs);
-				Assertion.Fail ("test#01");
+				Fail ("test#01");
 			} catch (Exception e) {
-				Assertion.AssertEquals ("test#02", typeof (InvalidConstraintException), e.GetType ());				
-				Assertion.AssertEquals ("test#03", "Cannot create a Key from Columns that belong to different tables.", e.Message);
+				AssertEquals ("test#02", typeof (InvalidConstraintException), e.GetType ());				
+				AssertEquals ("test#03", "Cannot create a Key from Columns that belong to different tables.", e.Message);
 			}
 			
 			Childs [1] = Col6;
@@ -262,27 +262,27 @@ namespace MonoTests.System.Data
 			Set.Relations.Add (Relation);
 			
 			DataRelation Test = null;
-			Assertion.AssertEquals ("test#01", 1, Mom2.ChildRelations.Count);
-			Assertion.AssertEquals ("test#02", 0, Child2.ChildRelations.Count);
-			Assertion.AssertEquals ("test#03", 0, Mom2.ParentRelations.Count);
-			Assertion.AssertEquals ("test#04", 1, Child2.ParentRelations.Count);
+			AssertEquals ("test#01", 1, Mom2.ChildRelations.Count);
+			AssertEquals ("test#02", 0, Child2.ChildRelations.Count);
+			AssertEquals ("test#03", 0, Mom2.ParentRelations.Count);
+			AssertEquals ("test#04", 1, Child2.ParentRelations.Count);
 				
 			Test = Child2.ParentRelations [0];
-			Assertion.AssertEquals ("test#05", "Rel", Test.ToString ());
-			Assertion.AssertEquals ("test#06", "Rel", Test.RelationName);
-			Assertion.AssertEquals ("test#07", "Mom", Test.ParentTable.TableName);
-			Assertion.AssertEquals ("test#08", 2, Test.ParentKeyConstraint.Columns.Length);
-			Assertion.AssertEquals ("test#09", false, Test.ParentKeyConstraint.IsPrimaryKey);
-			Assertion.AssertEquals ("test#10", 2, Test.ParentColumns.Length);
-			Assertion.AssertEquals ("test#11", false, Test.Nested);
-			Assertion.AssertEquals ("test#12", 0, Test.ExtendedProperties.Count);
-			Assertion.AssertEquals ("test#13", "Child", Test.ChildTable.TableName);
-			Assertion.AssertEquals ("test#14", "Rel", Test.ChildKeyConstraint.ConstraintName);
-			Assertion.AssertEquals ("test#15", 2, Test.ChildColumns.Length);
-			Assertion.AssertEquals ("test#16", 1, Mom2.Constraints.Count);
-			Assertion.AssertEquals ("test#17", "Constraint1", Mom2.Constraints [0].ToString ());
-			Assertion.AssertEquals ("test#18", 1, Child2.Constraints.Count);			
-			Assertion.AssertEquals ("test#19", 0, Hubby.Constraints.Count);
+			AssertEquals ("test#05", "Rel", Test.ToString ());
+			AssertEquals ("test#06", "Rel", Test.RelationName);
+			AssertEquals ("test#07", "Mom", Test.ParentTable.TableName);
+			AssertEquals ("test#08", 2, Test.ParentKeyConstraint.Columns.Length);
+			AssertEquals ("test#09", false, Test.ParentKeyConstraint.IsPrimaryKey);
+			AssertEquals ("test#10", 2, Test.ParentColumns.Length);
+			AssertEquals ("test#11", false, Test.Nested);
+			AssertEquals ("test#12", 0, Test.ExtendedProperties.Count);
+			AssertEquals ("test#13", "Child", Test.ChildTable.TableName);
+			AssertEquals ("test#14", "Rel", Test.ChildKeyConstraint.ConstraintName);
+			AssertEquals ("test#15", 2, Test.ChildColumns.Length);
+			AssertEquals ("test#16", 1, Mom2.Constraints.Count);
+			AssertEquals ("test#17", "Constraint1", Mom2.Constraints [0].ToString ());
+			AssertEquals ("test#18", 1, Child2.Constraints.Count);			
+			AssertEquals ("test#19", 0, Hubby.Constraints.Count);
 		}
 		
 		[Test]
@@ -293,31 +293,31 @@ namespace MonoTests.System.Data
 			Set.Relations.Add (Relation);
 			DataRelation Test = null;
 	
-			Assertion.AssertEquals ("test#01", 1, Mom.ChildRelations.Count);
-			Assertion.AssertEquals ("test#02", 0, Child.ChildRelations.Count);
-			Assertion.AssertEquals ("test#03", 0, Mom.ParentRelations.Count);
-			Assertion.AssertEquals ("test#04", 1, Child.ParentRelations.Count);
+			AssertEquals ("test#01", 1, Mom.ChildRelations.Count);
+			AssertEquals ("test#02", 0, Child.ChildRelations.Count);
+			AssertEquals ("test#03", 0, Mom.ParentRelations.Count);
+			AssertEquals ("test#04", 1, Child.ParentRelations.Count);
 				
 			Test = Child.ParentRelations [0];
 			
-			Assertion.AssertEquals ("test#05", "Rel", Test.ToString ());
+			AssertEquals ("test#05", "Rel", Test.ToString ());
 			
-			Assertion.AssertEquals ("test#06", "Rel", Test.RelationName);
-			Assertion.AssertEquals ("test#07", "Mom", Test.ParentTable.TableName);
+			AssertEquals ("test#06", "Rel", Test.RelationName);
+			AssertEquals ("test#07", "Mom", Test.ParentTable.TableName);
 			
-			Assertion.Assert ("test#08", Test.ParentKeyConstraint == null);
+			Assert ("test#08", Test.ParentKeyConstraint == null);
 			
-			Assertion.Assert ("test#09", Test.ParentKeyConstraint == null);
+			Assert ("test#09", Test.ParentKeyConstraint == null);
 			
-			Assertion.AssertEquals ("test#10", 1, Test.ParentColumns.Length);
-			Assertion.AssertEquals ("test#11", false, Test.Nested);
-			Assertion.AssertEquals ("test#12", 0, Test.ExtendedProperties.Count);
-			Assertion.AssertEquals ("test#13", "Child", Test.ChildTable.TableName);
+			AssertEquals ("test#10", 1, Test.ParentColumns.Length);
+			AssertEquals ("test#11", false, Test.Nested);
+			AssertEquals ("test#12", 0, Test.ExtendedProperties.Count);
+			AssertEquals ("test#13", "Child", Test.ChildTable.TableName);
 			
-			Assertion.Assert ("test#14", Test.ChildKeyConstraint == null);
-			Assertion.AssertEquals ("test#15", 1, Test.ChildColumns.Length);
-			Assertion.AssertEquals ("test#16", 0, Mom.Constraints.Count);			
-			Assertion.AssertEquals ("test#17", 0, Child.Constraints.Count);			
+			Assert ("test#14", Test.ChildKeyConstraint == null);
+			AssertEquals ("test#15", 1, Test.ChildColumns.Length);
+			AssertEquals ("test#16", 0, Mom.Constraints.Count);			
+			AssertEquals ("test#17", 0, Child.Constraints.Count);			
 
 		}
 
@@ -331,16 +331,16 @@ namespace MonoTests.System.Data
 			
 			try {
 				Set.Relations.Add (Relation);
-				Assertion.Fail ("test#01");
+				Fail ("test#01");
 			} catch (Exception e) {
-				Assertion.AssertEquals ("test#02", typeof (NullReferenceException), e.GetType ());
+				AssertEquals ("test#02", typeof (NullReferenceException), e.GetType ());
 			}
 			
 			try {
 				Set.Relations.AddRange (new DataRelation [] {Relation});
-				Assertion.Fail ("test#03");
+				Fail ("test#03");
 			} catch (Exception e) {
-				Assertion.AssertEquals ("test#04", typeof (NullReferenceException), e.GetType ());
+				AssertEquals ("test#04", typeof (NullReferenceException), e.GetType ());
 			}
 			
 			//Set.BeginInit ();
@@ -348,24 +348,24 @@ namespace MonoTests.System.Data
 			//Set.EndInit ();
 			
 			DataRelation Test = null;
-			Assertion.AssertEquals ("test#01", 1, Mom.ChildRelations.Count);
-			Assertion.AssertEquals ("test#02", 0, Child.ChildRelations.Count);
-			Assertion.AssertEquals ("test#03", 0, Mom.ParentRelations.Count);
-			Assertion.AssertEquals ("test#04", 1, Child.ParentRelations.Count);
+			AssertEquals ("test#01", 1, Mom.ChildRelations.Count);
+			AssertEquals ("test#02", 0, Child.ChildRelations.Count);
+			AssertEquals ("test#03", 0, Mom.ParentRelations.Count);
+			AssertEquals ("test#04", 1, Child.ParentRelations.Count);
 				
 			Test = Child.ParentRelations [0];
-			Assertion.AssertEquals ("test#05", "Rel", Test.ToString ());
-			Assertion.AssertEquals ("test#06", "Rel", Test.RelationName);
-			Assertion.AssertEquals ("test#07", "Mom", Test.ParentTable.TableName);
+			AssertEquals ("test#05", "Rel", Test.ToString ());
+			AssertEquals ("test#06", "Rel", Test.RelationName);
+			AssertEquals ("test#07", "Mom", Test.ParentTable.TableName);
 			
-			Assertion.AssertEquals ("test#08", true, Test.ParentKeyConstraint == null);
+			AssertEquals ("test#08", true, Test.ParentKeyConstraint == null);
 						
-			Assertion.AssertEquals ("test#10", 1, Test.ParentColumns.Length);
-			Assertion.AssertEquals ("test#11", true, Test.Nested);
-			Assertion.AssertEquals ("test#12", 0, Test.ExtendedProperties.Count);
-			Assertion.AssertEquals ("test#13", "Child", Test.ChildTable.TableName);
-			Assertion.AssertEquals ("test#14", true, Test.ChildKeyConstraint == null);
-			Assertion.AssertEquals ("test#15", 1, Test.ChildColumns.Length);
+			AssertEquals ("test#10", 1, Test.ParentColumns.Length);
+			AssertEquals ("test#11", true, Test.Nested);
+			AssertEquals ("test#12", 0, Test.ExtendedProperties.Count);
+			AssertEquals ("test#13", "Child", Test.ChildTable.TableName);
+			AssertEquals ("test#14", true, Test.ChildKeyConstraint == null);
+			AssertEquals ("test#15", 1, Test.ChildColumns.Length);
 			
 		}
 
@@ -376,61 +376,61 @@ namespace MonoTests.System.Data
 			Set.ReadXmlSchema ("System.Data/store.xsd");
 			DataTable Table = Set.Tables [0];
 			
-			Assertion.AssertEquals ("test#01", false, Table.CaseSensitive);
-			Assertion.AssertEquals ("test#02", 1, Table.ChildRelations.Count);
-			Assertion.AssertEquals ("test#03", 0, Table.ParentRelations.Count);
-			Assertion.AssertEquals ("test#04", 1, Table.Constraints.Count);
-			Assertion.AssertEquals ("test#05", 1, Table.PrimaryKey.Length);
-			Assertion.AssertEquals ("test#06", 0, Table.Rows.Count);
-			Assertion.AssertEquals ("test#07", "bookstore", Table.TableName);
-			Assertion.AssertEquals ("test#08", 1, Table.Columns.Count);
+			AssertEquals ("test#01", false, Table.CaseSensitive);
+			AssertEquals ("test#02", 1, Table.ChildRelations.Count);
+			AssertEquals ("test#03", 0, Table.ParentRelations.Count);
+			AssertEquals ("test#04", 1, Table.Constraints.Count);
+			AssertEquals ("test#05", 1, Table.PrimaryKey.Length);
+			AssertEquals ("test#06", 0, Table.Rows.Count);
+			AssertEquals ("test#07", "bookstore", Table.TableName);
+			AssertEquals ("test#08", 1, Table.Columns.Count);
 						
 			DataRelation Relation = Table.ChildRelations [0];
-			Assertion.AssertEquals ("test#09", 1, Relation.ChildColumns.Length);
-			Assertion.AssertEquals ("test#10", "bookstore_book", Relation.ChildKeyConstraint.ConstraintName);
-			Assertion.AssertEquals ("test#11", 1, Relation.ChildKeyConstraint.Columns.Length);
-			Assertion.AssertEquals ("test#12", "book", Relation.ChildTable.TableName);
-			Assertion.AssertEquals ("test#13", "NewDataSet", Relation.DataSet.DataSetName);
-			Assertion.AssertEquals ("test#14", 0, Relation.ExtendedProperties.Count);
-			Assertion.AssertEquals ("test#15", true, Relation.Nested);
-			Assertion.AssertEquals ("test#16", 1, Relation.ParentColumns.Length);
-			Assertion.AssertEquals ("test#17", "Constraint1", Relation.ParentKeyConstraint.ConstraintName);
-			Assertion.AssertEquals ("test#18", "bookstore", Relation.ParentTable.TableName);
-			Assertion.AssertEquals ("test#19", "bookstore_book", Relation.RelationName);
+			AssertEquals ("test#09", 1, Relation.ChildColumns.Length);
+			AssertEquals ("test#10", "bookstore_book", Relation.ChildKeyConstraint.ConstraintName);
+			AssertEquals ("test#11", 1, Relation.ChildKeyConstraint.Columns.Length);
+			AssertEquals ("test#12", "book", Relation.ChildTable.TableName);
+			AssertEquals ("test#13", "NewDataSet", Relation.DataSet.DataSetName);
+			AssertEquals ("test#14", 0, Relation.ExtendedProperties.Count);
+			AssertEquals ("test#15", true, Relation.Nested);
+			AssertEquals ("test#16", 1, Relation.ParentColumns.Length);
+			AssertEquals ("test#17", "Constraint1", Relation.ParentKeyConstraint.ConstraintName);
+			AssertEquals ("test#18", "bookstore", Relation.ParentTable.TableName);
+			AssertEquals ("test#19", "bookstore_book", Relation.RelationName);
 
 			Table = Set.Tables [1];
 			
-			Assertion.AssertEquals ("test#20", false, Table.CaseSensitive);
-			Assertion.AssertEquals ("test#21", 1, Table.ChildRelations.Count);
-			Assertion.AssertEquals ("test#22", 1, Table.ParentRelations.Count);
-			Assertion.AssertEquals ("test#23", 2, Table.Constraints.Count);
-			Assertion.AssertEquals ("test#24", 1, Table.PrimaryKey.Length);
-			Assertion.AssertEquals ("test#25", 0, Table.Rows.Count);
-			Assertion.AssertEquals ("test#26", "book", Table.TableName);
-			Assertion.AssertEquals ("test#27", 5, Table.Columns.Count);
+			AssertEquals ("test#20", false, Table.CaseSensitive);
+			AssertEquals ("test#21", 1, Table.ChildRelations.Count);
+			AssertEquals ("test#22", 1, Table.ParentRelations.Count);
+			AssertEquals ("test#23", 2, Table.Constraints.Count);
+			AssertEquals ("test#24", 1, Table.PrimaryKey.Length);
+			AssertEquals ("test#25", 0, Table.Rows.Count);
+			AssertEquals ("test#26", "book", Table.TableName);
+			AssertEquals ("test#27", 5, Table.Columns.Count);
 		
 			Relation = Table.ChildRelations [0];
-			Assertion.AssertEquals ("test#28", 1, Relation.ChildColumns.Length);
-			Assertion.AssertEquals ("test#29", "book_author", Relation.ChildKeyConstraint.ConstraintName);
-			Assertion.AssertEquals ("test#30", 1, Relation.ChildKeyConstraint.Columns.Length);
-			Assertion.AssertEquals ("test#31", "author", Relation.ChildTable.TableName);
-			Assertion.AssertEquals ("test#32", "NewDataSet", Relation.DataSet.DataSetName);
-			Assertion.AssertEquals ("test#33", 0, Relation.ExtendedProperties.Count);
-			Assertion.AssertEquals ("test#34", true, Relation.Nested);
-			Assertion.AssertEquals ("test#35", 1, Relation.ParentColumns.Length);
-			Assertion.AssertEquals ("test#36", "Constraint1", Relation.ParentKeyConstraint.ConstraintName);
-			Assertion.AssertEquals ("test#37", "book", Relation.ParentTable.TableName);
-			Assertion.AssertEquals ("test#38", "book_author", Relation.RelationName);
+			AssertEquals ("test#28", 1, Relation.ChildColumns.Length);
+			AssertEquals ("test#29", "book_author", Relation.ChildKeyConstraint.ConstraintName);
+			AssertEquals ("test#30", 1, Relation.ChildKeyConstraint.Columns.Length);
+			AssertEquals ("test#31", "author", Relation.ChildTable.TableName);
+			AssertEquals ("test#32", "NewDataSet", Relation.DataSet.DataSetName);
+			AssertEquals ("test#33", 0, Relation.ExtendedProperties.Count);
+			AssertEquals ("test#34", true, Relation.Nested);
+			AssertEquals ("test#35", 1, Relation.ParentColumns.Length);
+			AssertEquals ("test#36", "Constraint1", Relation.ParentKeyConstraint.ConstraintName);
+			AssertEquals ("test#37", "book", Relation.ParentTable.TableName);
+			AssertEquals ("test#38", "book_author", Relation.RelationName);
 			
 			Table = Set.Tables [2];
-			Assertion.AssertEquals ("test#39", false, Table.CaseSensitive);
-			Assertion.AssertEquals ("test#40", 0, Table.ChildRelations.Count);
-			Assertion.AssertEquals ("test#41", 1, Table.ParentRelations.Count);
-			Assertion.AssertEquals ("test#42", 1, Table.Constraints.Count);
-			Assertion.AssertEquals ("test#43", 0, Table.PrimaryKey.Length);
-			Assertion.AssertEquals ("test#44", 0, Table.Rows.Count);
-			Assertion.AssertEquals ("test#45", "author", Table.TableName);
-			Assertion.AssertEquals ("test#46", 3, Table.Columns.Count);
+			AssertEquals ("test#39", false, Table.CaseSensitive);
+			AssertEquals ("test#40", 0, Table.ChildRelations.Count);
+			AssertEquals ("test#41", 1, Table.ParentRelations.Count);
+			AssertEquals ("test#42", 1, Table.Constraints.Count);
+			AssertEquals ("test#43", 0, Table.PrimaryKey.Length);
+			AssertEquals ("test#44", 0, Table.Rows.Count);
+			AssertEquals ("test#45", "author", Table.TableName);
+			AssertEquals ("test#46", 3, Table.Columns.Count);
 		}
 		
 		[Test]
@@ -462,16 +462,16 @@ namespace MonoTests.System.Data
 			
 			DataRow Row = Mom.Rows [1];			
 			TempRow = Row.GetChildRows ("Rel") [0];
-			Assertion.AssertEquals ("test#01", "Dick", TempRow [0]);
-			Assertion.AssertEquals ("test#02", "10", TempRow [1].ToString ());
+			AssertEquals ("test#01", "Dick", TempRow [0]);
+			AssertEquals ("test#02", "10", TempRow [1].ToString ());
 			TempRow = TempRow.GetParentRow ("Rel");
-			Assertion.AssertEquals ("test#03", "teresa", TempRow [0]);
-			Assertion.AssertEquals ("test#04", "Dick", TempRow [1]);
+			AssertEquals ("test#03", "teresa", TempRow [0]);
+			AssertEquals ("test#04", "Dick", TempRow [1]);
 			
 			Row = Child.Rows [0];
 			TempRow = Row.GetParentRows ("Rel") [0];
-			Assertion.AssertEquals ("test#05", "teresa", TempRow [0]);
-			Assertion.AssertEquals ("test#06", "john", TempRow [1]);						
+			AssertEquals ("test#05", "teresa", TempRow [0]);
+			AssertEquals ("test#06", "john", TempRow [1]);						
 		}
 
         }

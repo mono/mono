@@ -16,7 +16,7 @@ using System.Data.SqlTypes;
 namespace MonoTests.System.Data.SqlTypes
 {
 	[TestFixture]
-        public class SqlGuidTest {
+        public class SqlGuidTest : Assertion {
 
 		// 00000a01-0000-0000-0000-000000000000
 		private SqlGuid Test1;
@@ -74,7 +74,7 @@ namespace MonoTests.System.Data.SqlTypes
                 		Test = new SqlGuid (10, 1, 2, 13, 14, 15, 16, 17, 19, 20 ,21);
 
                 	} catch (Exception e) {
-                		Assertion.Fail ("#A01 " + e);
+                		Fail ("#A01 " + e);
                 	}
                 }
 
@@ -82,7 +82,7 @@ namespace MonoTests.System.Data.SqlTypes
 		[Test]
                 public void PublicFields()
                 {
-                        Assertion.Assert ("#B01", SqlGuid.Null.IsNull);
+                        Assert ("#B01", SqlGuid.Null.IsNull);
                 }
 
                 // Test properties
@@ -90,9 +90,9 @@ namespace MonoTests.System.Data.SqlTypes
                 public void Properties()
                 {
                 	Guid ResultGuid = new Guid ("00000f64-0000-0000-0000-000000000000");		       
-			Assertion.Assert ("#C01", !Test1.IsNull);
-                	Assertion.Assert ("#C02", SqlGuid.Null.IsNull);
-                	Assertion.AssertEquals ("#C03", ResultGuid, Test2.Value);
+			Assert ("#C01", !Test1.IsNull);
+                	Assert ("#C02", SqlGuid.Null.IsNull);
+                	AssertEquals ("#C03", ResultGuid, Test2.Value);
                 }
 
                 // PUBLIC METHODS
@@ -100,83 +100,83 @@ namespace MonoTests.System.Data.SqlTypes
                 public void CompareTo()
                 {
 			String TestString = "This is a test string";
-                        Assertion.Assert ("#D01", Test1.CompareTo (Test3) < 0);
-                        Assertion.Assert ("#D02", Test4.CompareTo (Test1) > 0);
-                        Assertion.Assert ("#D03", Test3.CompareTo (Test2) == 0);
-                        Assertion.Assert ("#D04", Test4.CompareTo (SqlGuid.Null) > 0);
+                        Assert ("#D01", Test1.CompareTo (Test3) < 0);
+                        Assert ("#D02", Test4.CompareTo (Test1) > 0);
+                        Assert ("#D03", Test3.CompareTo (Test2) == 0);
+                        Assert ("#D04", Test4.CompareTo (SqlGuid.Null) > 0);
 
                         try {
                                 Test1.CompareTo (TestString);
-                                Assertion.Fail("#D05");
+                                Fail("#D05");
                         } catch(Exception e) {
-                                Assertion.AssertEquals ("#D06", typeof (ArgumentException), e.GetType ());
+                                AssertEquals ("#D06", typeof (ArgumentException), e.GetType ());
                         }
                 }
 
 		[Test]
                 public void EqualsMethods()
                 {
-                        Assertion.Assert ("#E01", !Test1.Equals (Test2));
-                        Assertion.Assert ("#E02", !Test2.Equals (Test4));
-                        Assertion.Assert ("#E03", !Test2.Equals (new SqlString ("TEST")));
-                        Assertion.Assert ("#E04", Test2.Equals (Test3));
+                        Assert ("#E01", !Test1.Equals (Test2));
+                        Assert ("#E02", !Test2.Equals (Test4));
+                        Assert ("#E03", !Test2.Equals (new SqlString ("TEST")));
+                        Assert ("#E04", Test2.Equals (Test3));
 
                         // Static Equals()-method
-                        Assertion.Assert ("#E05", SqlGuid.Equals (Test2, Test3).Value);
-                        Assertion.Assert ("#E06", !SqlGuid.Equals (Test1, Test2).Value);
+                        Assert ("#E05", SqlGuid.Equals (Test2, Test3).Value);
+                        Assert ("#E06", !SqlGuid.Equals (Test1, Test2).Value);
                 }
 
 		[Test]
                 public void GetHashCodeTest()
                 {
-                        Assertion.AssertEquals ("#F01", Test1.GetHashCode (), Test1.GetHashCode ());
-                	Assertion.Assert ("#F02", Test1.GetHashCode () != Test2.GetHashCode ());
-                        Assertion.AssertEquals ("#F02", Test3.GetHashCode (), Test2.GetHashCode ());
+                        AssertEquals ("#F01", Test1.GetHashCode (), Test1.GetHashCode ());
+                	Assert ("#F02", Test1.GetHashCode () != Test2.GetHashCode ());
+                        AssertEquals ("#F02", Test3.GetHashCode (), Test2.GetHashCode ());
                 }
 
 		[Test]
                 public void GetTypeTest()
                 {
-                        Assertion.AssertEquals ("#G01", "System.Data.SqlTypes.SqlGuid", Test1.GetType ().ToString ());
-                        Assertion.AssertEquals ("#G02", "System.Guid", Test3.Value.GetType ().ToString ());
+                        AssertEquals ("#G01", "System.Data.SqlTypes.SqlGuid", Test1.GetType ().ToString ());
+                        AssertEquals ("#G02", "System.Guid", Test3.Value.GetType ().ToString ());
                 }
 
 		[Test]
                 public void Greaters()
                 {
                         // GreateThan ()
-                        Assertion.Assert ("#H01", !SqlGuid.GreaterThan (Test1, Test2).Value);
-                        Assertion.Assert ("#H02", SqlGuid.GreaterThan (Test2, Test1).Value);
-                        Assertion.Assert ("#H03", !SqlGuid.GreaterThan (Test2, Test3).Value);
+                        Assert ("#H01", !SqlGuid.GreaterThan (Test1, Test2).Value);
+                        Assert ("#H02", SqlGuid.GreaterThan (Test2, Test1).Value);
+                        Assert ("#H03", !SqlGuid.GreaterThan (Test2, Test3).Value);
                         // GreaterTharOrEqual ()
-                        Assertion.Assert ("#H04", !SqlGuid.GreaterThanOrEqual (Test1, Test2).Value);
-                        Assertion.Assert ("#H05", SqlGuid.GreaterThanOrEqual (Test2, Test1).Value);
-                        Assertion.Assert ("#H06", SqlGuid.GreaterThanOrEqual (Test2, Test3).Value);
+                        Assert ("#H04", !SqlGuid.GreaterThanOrEqual (Test1, Test2).Value);
+                        Assert ("#H05", SqlGuid.GreaterThanOrEqual (Test2, Test1).Value);
+                        Assert ("#H06", SqlGuid.GreaterThanOrEqual (Test2, Test3).Value);
                 }
 
 		[Test]
                 public void Lessers()
                 {
                         // LessThan()
-                        Assertion.Assert ("#I01", !SqlGuid.LessThan (Test2, Test3).Value);
-                        Assertion.Assert ("#I02", !SqlGuid.LessThan (Test2, Test1).Value);
-                        Assertion.Assert ("#I03", SqlGuid.LessThan (Test1, Test2).Value);
+                        Assert ("#I01", !SqlGuid.LessThan (Test2, Test3).Value);
+                        Assert ("#I02", !SqlGuid.LessThan (Test2, Test1).Value);
+                        Assert ("#I03", SqlGuid.LessThan (Test1, Test2).Value);
 
                         // LessThanOrEqual ()
-                        Assertion.Assert ("#I04", SqlGuid.LessThanOrEqual (Test1, Test2).Value);
-                        Assertion.Assert ("#I05", !SqlGuid.LessThanOrEqual (Test2, Test1).Value);
-                        Assertion.Assert ("#I06", SqlGuid.LessThanOrEqual (Test2, Test3).Value);
-                        Assertion.Assert ("#I07", SqlGuid.LessThanOrEqual (Test4, SqlGuid.Null).IsNull);
+                        Assert ("#I04", SqlGuid.LessThanOrEqual (Test1, Test2).Value);
+                        Assert ("#I05", !SqlGuid.LessThanOrEqual (Test2, Test1).Value);
+                        Assert ("#I06", SqlGuid.LessThanOrEqual (Test2, Test3).Value);
+                        Assert ("#I07", SqlGuid.LessThanOrEqual (Test4, SqlGuid.Null).IsNull);
                 }
 
 		[Test]
                 public void NotEquals()
                 {
-                        Assertion.Assert ("#J01", SqlGuid.NotEquals (Test1, Test2).Value);
-                        Assertion.Assert ("#J02", SqlGuid.NotEquals (Test2, Test1).Value);
-                        Assertion.Assert ("#J03", SqlGuid.NotEquals (Test3, Test1).Value);
-                        Assertion.Assert ("#J04", !SqlGuid.NotEquals (Test3, Test2).Value);                      
-                        Assertion.Assert ("#J05", SqlGuid.NotEquals (SqlGuid.Null, Test2).IsNull);
+                        Assert ("#J01", SqlGuid.NotEquals (Test1, Test2).Value);
+                        Assert ("#J02", SqlGuid.NotEquals (Test2, Test1).Value);
+                        Assert ("#J03", SqlGuid.NotEquals (Test3, Test1).Value);
+                        Assert ("#J04", !SqlGuid.NotEquals (Test3, Test2).Value);                      
+                        Assert ("#J05", SqlGuid.NotEquals (SqlGuid.Null, Test2).IsNull);
                 }
 
 		[Test]
@@ -184,26 +184,26 @@ namespace MonoTests.System.Data.SqlTypes
                 {
                         try {
                                 SqlGuid.Parse (null);
-                                Assertion.Fail ("#K01");
+                                Fail ("#K01");
                         } catch (Exception e) {
-                                Assertion.AssertEquals ("#K02", typeof (ArgumentNullException), e.GetType ());
+                                AssertEquals ("#K02", typeof (ArgumentNullException), e.GetType ());
                         }
 
                         try {
                                 SqlGuid.Parse ("not-a-number");
-                                Assertion.Fail ("#K03");
+                                Fail ("#K03");
                         } catch (Exception e) {
-                                Assertion.AssertEquals ("#K04", typeof (FormatException), e.GetType ());
+                                AssertEquals ("#K04", typeof (FormatException), e.GetType ());
                         }
 
                          try {
                                 SqlGuid.Parse ("9e400");
-                                Assertion.Fail ("#K05");
+                                Fail ("#K05");
                         } catch (Exception e) {
-                                Assertion.AssertEquals ("#K06", typeof (FormatException), e.GetType ());
+                                AssertEquals ("#K06", typeof (FormatException), e.GetType ());
                         }
 
-                        Assertion.AssertEquals("#K07", new Guid("87654321-0000-0000-0000-000000000000"), 
+                        AssertEquals("#K07", new Guid("87654321-0000-0000-0000-000000000000"), 
                                      SqlGuid.Parse ("87654321-0000-0000-0000-000000000000").Value);
                 }
 
@@ -211,26 +211,26 @@ namespace MonoTests.System.Data.SqlTypes
                 public void Conversions()
                 {
 			// ToByteArray ()
-			Assertion.AssertEquals ("#L01", (byte)1, Test1.ToByteArray () [0]);
-			Assertion.AssertEquals ("#L02", (byte)15, Test2.ToByteArray () [1]);
+			AssertEquals ("#L01", (byte)1, Test1.ToByteArray () [0]);
+			AssertEquals ("#L02", (byte)15, Test2.ToByteArray () [1]);
 
 			// ToSqlBinary ()
 			byte [] b = new byte [2]; 
                 	b [0] = 100;
                 	b [1] = 15;
 		       
-                        Assertion.AssertEquals ("#L03", new SqlBinary (b), Test3.ToSqlBinary ());
+                        AssertEquals ("#L03", new SqlBinary (b), Test3.ToSqlBinary ());
 
                         // ToSqlString ()
-                        Assertion.AssertEquals ("#L04", "00000a01-0000-0000-0000-000000000000",  
+                        AssertEquals ("#L04", "00000a01-0000-0000-0000-000000000000",  
 				      Test1.ToSqlString ().Value);
-                        Assertion.AssertEquals ("#L05", "0000fafa-0000-0000-0000-000000000000", 
+                        AssertEquals ("#L05", "0000fafa-0000-0000-0000-000000000000", 
                                       Test4.ToSqlString ().Value);
 
                         // ToString ()
-                        Assertion.AssertEquals ("#L06", "00000a01-0000-0000-0000-000000000000", 
+                        AssertEquals ("#L06", "00000a01-0000-0000-0000-000000000000", 
                                       Test1.ToString ());
-                        Assertion.AssertEquals ("#L07", "0000fafa-0000-0000-0000-000000000000", 
+                        AssertEquals ("#L07", "0000fafa-0000-0000-0000-000000000000", 
                                       Test4.ToString ());
                 }
 
@@ -240,38 +240,38 @@ namespace MonoTests.System.Data.SqlTypes
                 public void ThanOrEqualOperators()
                 {
                         // == -operator
-                        Assertion.Assert ("#M01", (Test3 == Test2).Value);
-                        Assertion.Assert ("#M02", !(Test1 == Test2).Value);
-                        Assertion.Assert ("#M03", (Test1 == SqlGuid.Null).IsNull);
+                        Assert ("#M01", (Test3 == Test2).Value);
+                        Assert ("#M02", !(Test1 == Test2).Value);
+                        Assert ("#M03", (Test1 == SqlGuid.Null).IsNull);
                         
                         // != -operator
-                        Assertion.Assert ("#M04", !(Test2 != Test3).Value);
-                        Assertion.Assert ("#M05", (Test1 != Test3).Value);
-                        Assertion.Assert ("#M06", (Test1 != SqlGuid.Null).IsNull);
+                        Assert ("#M04", !(Test2 != Test3).Value);
+                        Assert ("#M05", (Test1 != Test3).Value);
+                        Assert ("#M06", (Test1 != SqlGuid.Null).IsNull);
 
                         // > -operator
-                        Assertion.Assert ("#M07", (Test2 > Test1).Value);
-                        Assertion.Assert ("#M08", !(Test1 > Test3).Value);
-                        Assertion.Assert ("#M09", !(Test3 > Test2).Value);
-                        Assertion.Assert ("#M10", (Test1 > SqlGuid.Null).IsNull);
+                        Assert ("#M07", (Test2 > Test1).Value);
+                        Assert ("#M08", !(Test1 > Test3).Value);
+                        Assert ("#M09", !(Test3 > Test2).Value);
+                        Assert ("#M10", (Test1 > SqlGuid.Null).IsNull);
 
                         // >=  -operator
-                        Assertion.Assert ("#M12", !(Test1 >= Test3).Value);
-                        Assertion.Assert ("#M13", (Test3 >= Test1).Value);
-                        Assertion.Assert ("#M14", (Test3 >= Test2).Value);
-                        Assertion.Assert ("#M15", (Test1 >= SqlGuid.Null).IsNull);
+                        Assert ("#M12", !(Test1 >= Test3).Value);
+                        Assert ("#M13", (Test3 >= Test1).Value);
+                        Assert ("#M14", (Test3 >= Test2).Value);
+                        Assert ("#M15", (Test1 >= SqlGuid.Null).IsNull);
 
                         // < -operator
-                        Assertion.Assert ("#M16", !(Test2 < Test1).Value);
-                        Assertion.Assert ("#M17", (Test1 < Test3).Value);
-                        Assertion.Assert ("#M18", !(Test2 < Test3).Value);
-                        Assertion.Assert ("#M19", (Test1 < SqlGuid.Null).IsNull);
+                        Assert ("#M16", !(Test2 < Test1).Value);
+                        Assert ("#M17", (Test1 < Test3).Value);
+                        Assert ("#M18", !(Test2 < Test3).Value);
+                        Assert ("#M19", (Test1 < SqlGuid.Null).IsNull);
 
                         // <= -operator
-                        Assertion.Assert ("#M20", (Test1 <= Test3).Value);
-                        Assertion.Assert ("#M21", !(Test3 <= Test1).Value);
-                        Assertion.Assert ("#M22", (Test2 <= Test3).Value);
-                        Assertion.Assert ("#M23", (Test1 <= SqlGuid.Null).IsNull);
+                        Assert ("#M20", (Test1 <= Test3).Value);
+                        Assert ("#M21", !(Test3 <= Test1).Value);
+                        Assert ("#M22", (Test2 <= Test3).Value);
+                        Assert ("#M23", (Test1 <= SqlGuid.Null).IsNull);
                 }
 
 		[Test]
@@ -282,16 +282,16 @@ namespace MonoTests.System.Data.SqlTypes
 			b [1] = 200;
 			SqlBinary TestBinary = new SqlBinary (b);
 			
-			Assertion.AssertEquals ("#N01", new Guid("0000c864-0000-0000-0000-000000000000"), 
+			AssertEquals ("#N01", new Guid("0000c864-0000-0000-0000-000000000000"), 
 				      ((SqlGuid)TestBinary).Value);
 		}
 
 		[Test]
 		public void SqlGuidToGuid()
 		{
-			Assertion.AssertEquals ("#O01", new Guid("00000a01-0000-0000-0000-000000000000"), 
+			AssertEquals ("#O01", new Guid("00000a01-0000-0000-0000-000000000000"), 
 			              (Guid)Test1);
-			Assertion.AssertEquals ("#O02", new Guid("00000f64-0000-0000-0000-000000000000"), 
+			AssertEquals ("#O02", new Guid("00000f64-0000-0000-0000-000000000000"), 
 			              (Guid)Test2);
 		}		
 
@@ -301,14 +301,14 @@ namespace MonoTests.System.Data.SqlTypes
                         SqlString TestString = new SqlString ("Test string");
                         SqlString TestString100 = new SqlString ("0000c864-0000-0000-0000-000000000000");
 
-                        Assertion.AssertEquals ("#P01", new Guid("0000c864-0000-0000-0000-000000000000"), 
+                        AssertEquals ("#P01", new Guid("0000c864-0000-0000-0000-000000000000"), 
                                       ((SqlGuid)TestString100).Value);
 
                         try {
                                 SqlGuid test = (SqlGuid)TestString;
-                                Assertion.Fail ("#P02");
+                                Fail ("#P02");
                         } catch(Exception e) {
-                                Assertion.AssertEquals ("#P03", typeof (FormatException), e.GetType ());
+                                AssertEquals ("#P03", typeof (FormatException), e.GetType ());
                         }
                 }
 		
@@ -316,7 +316,7 @@ namespace MonoTests.System.Data.SqlTypes
 		public void GuidToSqlGuid()
 		{
 			Guid TestGuid = new Guid("0000c864-0000-0000-0000-000007650000");
-			Assertion.AssertEquals ("#Q01", new SqlGuid("0000c864-0000-0000-0000-000007650000"), 
+			AssertEquals ("#Q01", new SqlGuid("0000c864-0000-0000-0000-000007650000"), 
 				      (SqlGuid)TestGuid);
 		}
         }

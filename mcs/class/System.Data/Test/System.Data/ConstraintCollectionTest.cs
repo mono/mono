@@ -17,7 +17,7 @@ using System.Data;
 namespace MonoTests.System.Data
 {
 	[TestFixture]
-	public class ConstraintCollectionTest {
+	public class ConstraintCollectionTest : Assertion {
 		private DataTable _table;
 		private DataTable _table2;
 		private Constraint _constraint1;
@@ -53,7 +53,7 @@ namespace MonoTests.System.Data
 			col.Add(_constraint1);
 			col.Add(_constraint2);
 
-			Assertion.AssertEquals("Count doesn't equal added.",2, col.Count);
+			AssertEquals("Count doesn't equal added.",2, col.Count);
 		}
 
 		[Test]
@@ -65,13 +65,13 @@ namespace MonoTests.System.Data
 			try 
 			{
 				col.Add(null);
-				Assertion.Fail("B1: Failed to throw ArgumentNullException.");
+				Fail("B1: Failed to throw ArgumentNullException.");
 			}
 			catch (ArgumentNullException) {}
 			catch (AssertionException exc) {throw exc;}
 			catch 
 			{
-				Assertion.Fail("A1: Wrong exception type");
+				Fail("A1: Wrong exception type");
 			}
 
 			//duplicate name
@@ -81,26 +81,26 @@ namespace MonoTests.System.Data
 				_constraint2.ConstraintName = "dog"; //case insensitive
 				col.Add(_constraint1);
 				col.Add(_constraint2);
-				Assertion.Fail("Failed to throw Duplicate name exception.");
+				Fail("Failed to throw Duplicate name exception.");
 			}
 			catch (DuplicateNameException) {}
 			catch (AssertionException exc) {throw exc;}
 			catch (Exception exc)
 			{
-				Assertion.Fail("A2: Wrong exception type. " + exc.ToString());
+				Fail("A2: Wrong exception type. " + exc.ToString());
 			}
 
 			//Constraint Already exists
 			try 
 			{
 				col.Add(_constraint1);
-				Assertion.Fail("B2: Failed to throw ArgumentException.");
+				Fail("B2: Failed to throw ArgumentException.");
 			}
 			catch (ArgumentException) {}
 			catch (AssertionException exc) {throw exc;}
 			catch 
 			{
-				Assertion.Fail("A3: Wrong exception type");
+				Fail("A3: Wrong exception type");
 			}
 		}
 
@@ -117,11 +117,11 @@ namespace MonoTests.System.Data
 			_table.Constraints.Add(c1);
 			_table.Constraints.Add(c2);
 
-			Assertion.AssertSame("A1", c1, _table.Constraints[0]); 
-			Assertion.AssertSame("A2", c2, _table.Constraints[1]);
+			AssertSame("A1", c1, _table.Constraints[0]); 
+			AssertSame("A2", c2, _table.Constraints[1]);
 
-			Assertion.AssertSame("A3", c1, _table.Constraints["first"]);
-			Assertion.AssertSame("A4", c2, _table.Constraints["sEcond"]); //case insensitive
+			AssertSame("A3", c1, _table.Constraints["first"]);
+			AssertSame("A4", c2, _table.Constraints["sEcond"]); //case insensitive
 
 		}
 
@@ -137,10 +137,10 @@ namespace MonoTests.System.Data
 			_table.Constraints.Add(c1);
 			_table.Constraints.Add(c2);
 
-			Assertion.AssertEquals("A1", 0, _table.Constraints.IndexOf(c1));
-			Assertion.AssertEquals("A2", 1, _table.Constraints.IndexOf(c2));
-			Assertion.AssertEquals("A3", 0, _table.Constraints.IndexOf("first"));
-			Assertion.AssertEquals("A4", 1, _table.Constraints.IndexOf("second"));
+			AssertEquals("A1", 0, _table.Constraints.IndexOf(c1));
+			AssertEquals("A2", 1, _table.Constraints.IndexOf(c2));
+			AssertEquals("A3", 0, _table.Constraints.IndexOf("first"));
+			AssertEquals("A4", 1, _table.Constraints.IndexOf("second"));
 		}
 
 		[Test]
@@ -154,8 +154,8 @@ namespace MonoTests.System.Data
 
 			_table.Constraints.Add(c1);
 
-			Assertion.Assert("A1", _table.Constraints.Contains(c1.ConstraintName)); //true
-			Assertion.Assert("A2", _table.Constraints.Contains(c2.ConstraintName) == false); //doesn't contain
+			Assert("A1", _table.Constraints.Contains(c1.ConstraintName)); //true
+			Assert("A2", _table.Constraints.Contains(c2.ConstraintName) == false); //doesn't contain
 		}
 
 		[Test]
@@ -164,32 +164,32 @@ namespace MonoTests.System.Data
 			_table.Constraints.Add(new UniqueConstraint(_table.Columns[0]));
 
 			//This doesn't throw
-			Assertion.AssertNull(_table.Constraints["notInCollection"]);
+			AssertNull(_table.Constraints["notInCollection"]);
 			
 			//Index too high
 			try 
 			{
 				Constraint c = _table.Constraints[_table.Constraints.Count];
-				Assertion.Fail("B1: Failed to throw IndexOutOfRangeException.");
+				Fail("B1: Failed to throw IndexOutOfRangeException.");
 			}
 			catch (IndexOutOfRangeException) {}
 			catch (AssertionException exc) {throw exc;}
 			catch 
 			{
-				Assertion.Fail("A1: Wrong exception type");
+				Fail("A1: Wrong exception type");
 			}
 
 			//Index too low
 			try 
 			{
 				Constraint c = _table.Constraints[-1];
-				Assertion.Fail("B2: Failed to throw IndexOutOfRangeException.");
+				Fail("B2: Failed to throw IndexOutOfRangeException.");
 			}
 			catch (IndexOutOfRangeException) {}
 			catch (AssertionException exc) {throw exc;}
 			catch 
 			{
-				Assertion.Fail("A2: Wrong exception type");
+				Fail("A2: Wrong exception type");
 			}	
 
 		}
@@ -212,13 +212,13 @@ namespace MonoTests.System.Data
 //											_table2.Columns[0]);
 //				
 //				_table2.Constraints.Add(fkc);	//should throw			
-//				Assertion.Fail("B1: Failed to throw ArgumentException.");
+//				Fail("B1: Failed to throw ArgumentException.");
 //			}
 //			catch (ArgumentException) {}
 //			catch (AssertionException exc) {throw exc;}
 //			catch (Exception exc)
 //			{
-//				Assertion.Fail("A1: Wrong Exception type. " + exc.ToString());
+//				Fail("A1: Wrong Exception type. " + exc.ToString());
 //			}
 //
 //
@@ -249,13 +249,13 @@ namespace MonoTests.System.Data
 //					_table2.Columns[0]);
 //				
 //				_table2.Constraints.Add(fkc);	//should throw			
-//				Assertion.Fail("B1: Failed to throw ArgumentException.");
+//				Fail("B1: Failed to throw ArgumentException.");
 //			}
 //			catch (ArgumentException) {}
 //			catch (AssertionException exc) {throw exc;}
 //			catch (Exception exc)
 //			{
-//				Assertion.Fail("A1: Wrong Exception type. " + exc.ToString());
+//				Fail("A1: Wrong Exception type. " + exc.ToString());
 //			}
 //
 //
@@ -276,13 +276,13 @@ namespace MonoTests.System.Data
 //				UniqueConstraint uc = new UniqueConstraint( _table.Columns[0]);
 //				
 //				_table.Constraints.Add(uc);	//should throw			
-//				Assertion.Fail("B1: Failed to throw ArgumentException.");
+//				Fail("B1: Failed to throw ArgumentException.");
 //			}
 //			catch (ArgumentException) {}
 //			catch (AssertionException exc) {throw exc;}
 //			catch (Exception exc)
 //			{
-//				Assertion.Fail("A1: Wrong Exception type. " + exc.ToString());
+//				Fail("A1: Wrong Exception type. " + exc.ToString());
 //			}
 //		}
 

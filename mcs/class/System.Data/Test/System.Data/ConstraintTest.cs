@@ -32,7 +32,7 @@ namespace MonoTests.System.Data
 //	}
 
 	[TestFixture]
-	public class ConstraintTest
+	public class ConstraintTest : Assertion
 	{
 		private DataTable _table;
 		private Constraint _constraint1;
@@ -81,10 +81,10 @@ namespace MonoTests.System.Data
 					exceptionCaught = true;
 				}
 				catch {
-					Assertion.Fail("Wrong exception type thrown.");
+					Fail("Wrong exception type thrown.");
 				}
 				
-				Assertion.Assert("Failed to throw exception.",
+				Assert("Failed to throw exception.",
 					true == exceptionCaught);
 			}	
 		}
@@ -101,13 +101,13 @@ namespace MonoTests.System.Data
 				//Should throw DuplicateNameException
 				_constraint2.ConstraintName = "Dog";
 			
-				Assertion.Fail("Failed to throw " + 
+				Fail("Failed to throw " + 
 					" DuplicateNameException exception.");
 			}	
 			catch (DuplicateNameException) {}
 			catch (AssertionException exc) {throw exc;}
 			catch {
-				Assertion.Fail("Wrong exception type thrown.");
+				Fail("Wrong exception type thrown.");
 			}
 		
 		}
@@ -115,10 +115,10 @@ namespace MonoTests.System.Data
 		[Test]
 		public void ToStringTest() {
 			_constraint1.ConstraintName = "Test";
-			Assertion.Assert("ToString is the same as constraint name.", _constraint1.ConstraintName.CompareTo( _constraint1.ToString()) == 0);
+			Assert("ToString is the same as constraint name.", _constraint1.ConstraintName.CompareTo( _constraint1.ToString()) == 0);
 			
 			_constraint1.ConstraintName = null;
-			Assertion.AssertNotNull("ToString should return empty.",_constraint1.ToString());
+			AssertNotNull("ToString should return empty.",_constraint1.ToString());
 		}
 
 		[Test]
@@ -126,7 +126,7 @@ namespace MonoTests.System.Data
 			PropertyCollection col = _constraint1.ExtendedProperties as
 				PropertyCollection;
 
-			Assertion.AssertNotNull("ExtendedProperties returned null or didn't " +
+			AssertNotNull("ExtendedProperties returned null or didn't " +
 				"return the correct type", col);
 		}
 	}

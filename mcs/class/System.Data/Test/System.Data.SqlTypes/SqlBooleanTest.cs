@@ -15,7 +15,7 @@ namespace MonoTests.System.Data.SqlTypes
 {
 
 	[TestFixture]
-        public class SqlBooleanTest {
+        public class SqlBooleanTest : Assertion {
 		private SqlBoolean SqlTrue;
 		private SqlBoolean SqlFalse;
 
@@ -32,10 +32,10 @@ namespace MonoTests.System.Data.SqlTypes
 				SqlBoolean SqlTrue2 = new SqlBoolean(1);
 				SqlBoolean SqlFalse2 = new SqlBoolean(0);
 
-				Assertion.Assert("Creation of SqlBoolean failed", SqlTrue.Value);
-				Assertion.Assert("Creation of SqlBoolean failed", SqlTrue2.Value);
-				Assertion.Assert("Creation of SqlBoolean failed", !SqlFalse.Value);
-				Assertion.Assert("Creation of SqlBoolean failed", !SqlFalse2.Value);
+				Assert("Creation of SqlBoolean failed", SqlTrue.Value);
+				Assert("Creation of SqlBoolean failed", SqlTrue2.Value);
+				Assert("Creation of SqlBoolean failed", !SqlFalse.Value);
+				Assert("Creation of SqlBoolean failed", !SqlFalse2.Value);
 
 			}
 
@@ -55,22 +55,22 @@ namespace MonoTests.System.Data.SqlTypes
 
 			// true && false
 			sqlResult = SqlBoolean.And(SqlTrue, SqlFalse);
-			Assertion.Assert("And method does not work correctly (true && false)", !sqlResult.Value);
+			Assert("And method does not work correctly (true && false)", !sqlResult.Value);
 			sqlResult = SqlBoolean.And(SqlFalse, SqlTrue);
-			Assertion.Assert("And method does not work correctly (false && true)", !sqlResult.Value);
+			Assert("And method does not work correctly (false && true)", !sqlResult.Value);
 
 			// true && true
 			sqlResult = SqlBoolean.And(SqlTrue, SqlTrue2);
-			Assertion.Assert("And method does not work correctly (true && true)", sqlResult.Value);
+			Assert("And method does not work correctly (true && true)", sqlResult.Value);
 
 			sqlResult = SqlBoolean.And(SqlTrue, SqlTrue);
-			Assertion.Assert("And method does not work correctly (true && true2)", sqlResult.Value);
+			Assert("And method does not work correctly (true && true2)", sqlResult.Value);
 
 			// false && false
 			sqlResult = SqlBoolean.And(SqlFalse, SqlFalse2);
-			Assertion.Assert("And method does not work correctly (false && false)", !sqlResult.Value);
+			Assert("And method does not work correctly (false && false)", !sqlResult.Value);
 			sqlResult = SqlBoolean.And(SqlFalse, SqlFalse);
-			Assertion.Assert("And method does not work correctly (false && false2)", !sqlResult.Value);
+			Assert("And method does not work correctly (false && false2)", !sqlResult.Value);
 
 		}
 
@@ -85,27 +85,27 @@ namespace MonoTests.System.Data.SqlTypes
 
 			// true != false
 			SqlResult = SqlBoolean.NotEquals(SqlTrue, SqlFalse);
-			Assertion.Assert("NotEquals method does not work correctly (true != false)", SqlResult.Value);
+			Assert("NotEquals method does not work correctly (true != false)", SqlResult.Value);
 			SqlResult = SqlBoolean.NotEquals(SqlFalse, SqlTrue);
-			Assertion.Assert("NotEquals method does not work correctly (false != true)", SqlResult.Value);
+			Assert("NotEquals method does not work correctly (false != true)", SqlResult.Value);
 
 
 			// true != true
 			SqlResult = SqlBoolean.NotEquals(SqlTrue, SqlTrue);
-			Assertion.Assert("NotEquals method does not work correctly (true != true)", !SqlResult.Value);
+			Assert("NotEquals method does not work correctly (true != true)", !SqlResult.Value);
 			SqlResult = SqlBoolean.NotEquals(SqlTrue, SqlTrue2);
-			Assertion.Assert("NotEquals method does not work correctly (true != true2)", !SqlResult.Value);
+			Assert("NotEquals method does not work correctly (true != true2)", !SqlResult.Value);
 			// false != false
 			SqlResult = SqlBoolean.NotEquals(SqlFalse, SqlFalse);
-			Assertion.Assert("NotEquals method does not work correctly (false != false)", !SqlResult.Value);
+			Assert("NotEquals method does not work correctly (false != false)", !SqlResult.Value);
 			SqlResult = SqlBoolean.NotEquals(SqlTrue, SqlTrue2);
-			Assertion.Assert("NotEquals method does not work correctly (false != false2)", !SqlResult.Value);
+			Assert("NotEquals method does not work correctly (false != false2)", !SqlResult.Value);
 
 			// If either instance of SqlBoolean is null, the Value of the SqlBoolean will be Null.
 			SqlResult = SqlBoolean.NotEquals(SqlBoolean.Null, SqlFalse);
-			Assertion.Assert("NotEquals method does not work correctly (Null != false)", SqlResult.IsNull);
+			Assert("NotEquals method does not work correctly (Null != false)", SqlResult.IsNull);
 			SqlResult = SqlBoolean.NotEquals(SqlTrue, SqlBoolean.Null);
-			Assertion.Assert("NotEquals method does not work correctly (false != Null)", SqlResult.IsNull);
+			Assert("NotEquals method does not work correctly (false != Null)", SqlResult.IsNull);
 
 		}
 
@@ -114,10 +114,10 @@ namespace MonoTests.System.Data.SqlTypes
 		public void OnesComplement() {
 
 			SqlBoolean SqlFalse2 = SqlBoolean.OnesComplement(SqlTrue);
-			Assertion.Assert("OnesComplement method does not work correctly", !SqlFalse2.Value);
+			Assert("OnesComplement method does not work correctly", !SqlFalse2.Value);
 
 			SqlBoolean SqlTrue2 = SqlBoolean.OnesComplement(SqlFalse);
-			Assertion.Assert("OnesComplement method does not work correctly", SqlTrue2.Value);
+			Assert("OnesComplement method does not work correctly", SqlTrue2.Value);
 
 		}
 
@@ -132,21 +132,21 @@ namespace MonoTests.System.Data.SqlTypes
 
 			// true || false
 			SqlResult = SqlBoolean.Or(SqlTrue, SqlFalse);
-			Assertion.Assert("Or method does not work correctly (true || false)", SqlResult.Value);
+			Assert("Or method does not work correctly (true || false)", SqlResult.Value);
 			SqlResult = SqlBoolean.Or(SqlFalse, SqlTrue);
-			Assertion.Assert("Or method does not work correctly (false || true)", SqlResult.Value);
+			Assert("Or method does not work correctly (false || true)", SqlResult.Value);
 
 			// true || true
 			SqlResult = SqlBoolean.Or(SqlTrue, SqlTrue);
-			Assertion.Assert("Or method does not work correctly (true || true)", SqlResult.Value);
+			Assert("Or method does not work correctly (true || true)", SqlResult.Value);
 			SqlResult = SqlBoolean.Or(SqlTrue, SqlTrue2);
-			Assertion.Assert("Or method does not work correctly (true || true2)", SqlResult.Value);
+			Assert("Or method does not work correctly (true || true2)", SqlResult.Value);
 
 			// false || false
 			SqlResult = SqlBoolean.Or(SqlFalse, SqlFalse);
-			Assertion.Assert("Or method does not work correctly (false || false)", !SqlResult.Value);
+			Assert("Or method does not work correctly (false || false)", !SqlResult.Value);
 			SqlResult = SqlBoolean.Or(SqlFalse, SqlFalse2);
-			Assertion.Assert("Or method does not work correctly (false || false2)", !SqlResult.Value);
+			Assert("Or method does not work correctly (false || false2)", !SqlResult.Value);
 
 		}
 
@@ -157,14 +157,14 @@ namespace MonoTests.System.Data.SqlTypes
 
 			String error = "Parse method does not work correctly ";
                                                                          
-			Assertion.Assert(error + "(\"True\")", SqlBoolean.Parse("True").Value);
-			Assertion.Assert(error + "(\" True\")", SqlBoolean.Parse(" True").Value);
-			Assertion.Assert(error + "(\"True \")", SqlBoolean.Parse("True ").Value);
-			Assertion.Assert(error + "(\"tRue\")", SqlBoolean.Parse("tRuE").Value);
-			Assertion.Assert(error + "(\"False\")", !SqlBoolean.Parse("False").Value);
-			Assertion.Assert(error + "(\" False\")", !SqlBoolean.Parse(" False").Value);
-			Assertion.Assert(error + "(\"False \")", !SqlBoolean.Parse("False ").Value);
-			Assertion.Assert(error + "(\"fAlSe\")", !SqlBoolean.Parse("fAlSe").Value);
+			Assert(error + "(\"True\")", SqlBoolean.Parse("True").Value);
+			Assert(error + "(\" True\")", SqlBoolean.Parse(" True").Value);
+			Assert(error + "(\"True \")", SqlBoolean.Parse("True ").Value);
+			Assert(error + "(\"tRue\")", SqlBoolean.Parse("tRuE").Value);
+			Assert(error + "(\"False\")", !SqlBoolean.Parse("False").Value);
+			Assert(error + "(\" False\")", !SqlBoolean.Parse(" False").Value);
+			Assert(error + "(\"False \")", !SqlBoolean.Parse("False ").Value);
+			Assert(error + "(\"fAlSe\")", !SqlBoolean.Parse("fAlSe").Value);
 
 		}
 
@@ -179,17 +179,17 @@ namespace MonoTests.System.Data.SqlTypes
 
 			// true ^ false
 			SqlResult = SqlBoolean.Xor(SqlTrue, SqlFalse);
-			Assertion.Assert("Xor method does not work correctly (true ^ false)", SqlResult.Value);
+			Assert("Xor method does not work correctly (true ^ false)", SqlResult.Value);
 			SqlResult = SqlBoolean.Xor(SqlFalse, SqlTrue);
-			Assertion.Assert("Xor method does not work correctly (false ^ true)", SqlResult.Value);
+			Assert("Xor method does not work correctly (false ^ true)", SqlResult.Value);
 
 			// true ^ true
 			SqlResult = SqlBoolean.Xor(SqlTrue, SqlTrue2);
-			Assertion.Assert("Xor method does not work correctly (true ^ true)", !SqlResult.Value);
+			Assert("Xor method does not work correctly (true ^ true)", !SqlResult.Value);
 
 			// false ^ false
 			SqlResult = SqlBoolean.Xor(SqlFalse, SqlFalse2);
-			Assertion.Assert("Xor method does not work correctly (false ^ false)", !SqlResult.Value);
+			Assert("Xor method does not work correctly (false ^ false)", !SqlResult.Value);
 
 		}
 
@@ -201,14 +201,14 @@ namespace MonoTests.System.Data.SqlTypes
 			SqlBoolean SqlFalse2 = new SqlBoolean(false);
 			String error = "Static Equals method does not work correctly ";
 
-			Assertion.Assert(error +  "(true == true)", SqlBoolean.Equals(SqlTrue, SqlTrue2).Value);
-			Assertion.Assert(error +  "(false == false)", SqlBoolean.Equals(SqlFalse, SqlFalse2).Value);
+			Assert(error +  "(true == true)", SqlBoolean.Equals(SqlTrue, SqlTrue2).Value);
+			Assert(error +  "(false == false)", SqlBoolean.Equals(SqlFalse, SqlFalse2).Value);
 
-			Assertion.Assert(error +  "(true == false)", !SqlBoolean.Equals(SqlTrue, SqlFalse).Value);
-			Assertion.Assert(error +  "(false == true)", !SqlBoolean.Equals(SqlFalse, SqlTrue).Value);
+			Assert(error +  "(true == false)", !SqlBoolean.Equals(SqlTrue, SqlFalse).Value);
+			Assert(error +  "(false == true)", !SqlBoolean.Equals(SqlFalse, SqlTrue).Value);
 
-			Assertion.AssertEquals(error +  "(null == false)", SqlBoolean.Null, SqlBoolean.Equals(SqlBoolean.Null, SqlFalse));
-			Assertion.AssertEquals(error +  "(true == null)", SqlBoolean.Null, SqlBoolean.Equals(SqlTrue, SqlBoolean.Null));
+			AssertEquals(error +  "(null == false)", SqlBoolean.Null, SqlBoolean.Equals(SqlBoolean.Null, SqlFalse));
+			AssertEquals(error +  "(true == null)", SqlBoolean.Null, SqlBoolean.Equals(SqlTrue, SqlBoolean.Null));
 
 		}
 
@@ -226,10 +226,10 @@ namespace MonoTests.System.Data.SqlTypes
 
 			String error = "CompareTo method does not work correctly";
 
-			Assertion.Assert(error, (SqlTrue.CompareTo(SqlBoolean.Null) > 0));
-			Assertion.Assert(error, (SqlTrue.CompareTo(SqlFalse) > 0));
-			Assertion.Assert(error, (SqlFalse.CompareTo(SqlTrue) < 0));
-			Assertion.Assert(error, (SqlFalse.CompareTo(SqlFalse) == 0));
+			Assert(error, (SqlTrue.CompareTo(SqlBoolean.Null) > 0));
+			Assert(error, (SqlTrue.CompareTo(SqlFalse) > 0));
+			Assert(error, (SqlFalse.CompareTo(SqlTrue) < 0));
+			Assert(error, (SqlFalse.CompareTo(SqlFalse) == 0));
 
 		}
 
@@ -242,23 +242,23 @@ namespace MonoTests.System.Data.SqlTypes
 
 			String error = "Equals method does not work correctly ";
 
-			Assertion.Assert(error + "(true == true)", SqlTrue.Equals(SqlTrue2));
-			Assertion.Assert(error + "(false == false)", SqlFalse.Equals(SqlFalse2));
+			Assert(error + "(true == true)", SqlTrue.Equals(SqlTrue2));
+			Assert(error + "(false == false)", SqlFalse.Equals(SqlFalse2));
 
-			Assertion.Assert(error + "(true == false)", !SqlTrue.Equals(SqlFalse));
-			Assertion.Assert(error + "(false == true)", !SqlFalse.Equals(SqlTrue));
+			Assert(error + "(true == false)", !SqlTrue.Equals(SqlFalse));
+			Assert(error + "(false == true)", !SqlFalse.Equals(SqlTrue));
 
-			Assertion.Assert(error + "(true == false)", !SqlTrue.Equals(null));
+			Assert(error + "(true == false)", !SqlTrue.Equals(null));
 
 		}
 
 		[Test]
 		public void GetHashCodeTest() {
 
-			Assertion.AssertEquals("GetHashCode method does not work correctly",
+			AssertEquals("GetHashCode method does not work correctly",
 				     1, SqlTrue.GetHashCode());
 
-			Assertion.AssertEquals("GetHashCode method does not work correctly",
+			AssertEquals("GetHashCode method does not work correctly",
 				     0, SqlFalse.GetHashCode());
 
 		}
@@ -267,7 +267,7 @@ namespace MonoTests.System.Data.SqlTypes
 		[Test]
 		public void GetTypeTest() {
 
-			Assertion.AssertEquals("GetType method does not work correctly",
+			AssertEquals("GetType method does not work correctly",
 				     SqlTrue.GetType().ToString(), "System.Data.SqlTypes.SqlBoolean");
 		}
 
@@ -280,10 +280,10 @@ namespace MonoTests.System.Data.SqlTypes
 			String error = "ToSqlByte method does not work correctly ";
 
 			SqlTestByte = SqlTrue.ToSqlByte();
-			Assertion.AssertEquals(error, (byte)1,SqlTestByte.Value);
+			AssertEquals(error, (byte)1,SqlTestByte.Value);
 
 			SqlTestByte = SqlFalse.ToSqlByte();
-			Assertion.AssertEquals(error, (byte)0, SqlTestByte.Value);
+			AssertEquals(error, (byte)0, SqlTestByte.Value);
 
 		}
 
@@ -297,10 +297,10 @@ namespace MonoTests.System.Data.SqlTypes
 
 			SqlTestDecimal = SqlTrue.ToSqlDecimal();
 
-			Assertion.AssertEquals(error, (decimal)1, SqlTestDecimal.Value);
+			AssertEquals(error, (decimal)1, SqlTestDecimal.Value);
 
 			SqlTestDecimal = SqlFalse.ToSqlDecimal();
-			Assertion.AssertEquals(error, (decimal)0, SqlTestDecimal.Value);
+			AssertEquals(error, (decimal)0, SqlTestDecimal.Value);
 		}
 
 		// ToSqlDouble
@@ -312,10 +312,10 @@ namespace MonoTests.System.Data.SqlTypes
 			String error = "ToSqlDouble method does not work correctly ";
 
 			SqlTestDouble = SqlTrue.ToSqlDouble();
-			Assertion.AssertEquals(error, (double)1, SqlTestDouble.Value);
+			AssertEquals(error, (double)1, SqlTestDouble.Value);
 
 			SqlTestDouble = SqlFalse.ToSqlDouble();
-			Assertion.AssertEquals(error, (double)0, SqlTestDouble.Value);
+			AssertEquals(error, (double)0, SqlTestDouble.Value);
 		}
 
 		// ToSqlInt16
@@ -327,10 +327,10 @@ namespace MonoTests.System.Data.SqlTypes
 			String error = "ToSqlInt16 method does not work correctly ";
 
 			SqlTestInt16 = SqlTrue.ToSqlInt16();
-			Assertion.AssertEquals(error, (short)1, SqlTestInt16.Value);
+			AssertEquals(error, (short)1, SqlTestInt16.Value);
 
 			SqlTestInt16 = SqlFalse.ToSqlInt16();
-			Assertion.AssertEquals(error, (short)0, SqlTestInt16.Value);
+			AssertEquals(error, (short)0, SqlTestInt16.Value);
 
 		}
 
@@ -343,10 +343,10 @@ namespace MonoTests.System.Data.SqlTypes
 			String error = "ToSqlInt32 method does not work correctly ";
 
 			SqlTestInt32 = SqlTrue.ToSqlInt32();
-			Assertion.AssertEquals(error, (int)1, SqlTestInt32.Value);
+			AssertEquals(error, (int)1, SqlTestInt32.Value);
 
 			SqlTestInt32 = SqlFalse.ToSqlInt32();
-			Assertion.AssertEquals(error, (int)0, SqlTestInt32.Value);
+			AssertEquals(error, (int)0, SqlTestInt32.Value);
 
 		}
 
@@ -359,10 +359,10 @@ namespace MonoTests.System.Data.SqlTypes
 			String error = "ToSqlInt64 method does not work correctly ";
 
 			SqlTestInt64 = SqlTrue.ToSqlInt64();
-			Assertion.AssertEquals(error, (long)1, SqlTestInt64.Value);
+			AssertEquals(error, (long)1, SqlTestInt64.Value);
 
 			SqlTestInt64 = SqlFalse.ToSqlInt64();
-			Assertion.AssertEquals(error, (long)0, SqlTestInt64.Value);
+			AssertEquals(error, (long)0, SqlTestInt64.Value);
 
 		}
 
@@ -375,10 +375,10 @@ namespace MonoTests.System.Data.SqlTypes
 			String error = "ToSqlMoney method does not work correctly ";
 
 			SqlTestMoney = SqlTrue.ToSqlMoney();
-			Assertion.AssertEquals(error, (decimal)1, SqlTestMoney.Value);
+			AssertEquals(error, (decimal)1, SqlTestMoney.Value);
 
 			SqlTestMoney = SqlFalse.ToSqlMoney();
-			Assertion.AssertEquals(error, (decimal)0, SqlTestMoney.Value);
+			AssertEquals(error, (decimal)0, SqlTestMoney.Value);
 
 		}
 
@@ -391,10 +391,10 @@ namespace MonoTests.System.Data.SqlTypes
 			String error = "ToSqlSingle method does not work correctly ";
 
 			SqlTestSingle = SqlTrue.ToSqlSingle();
-			Assertion.AssertEquals(error, (float)1, SqlTestSingle.Value);
+			AssertEquals(error, (float)1, SqlTestSingle.Value);
 
 			SqlTestSingle = SqlFalse.ToSqlSingle();
-			Assertion.AssertEquals(error, (float)0, SqlTestSingle.Value);
+			AssertEquals(error, (float)0, SqlTestSingle.Value);
 
 		}
 
@@ -407,10 +407,10 @@ namespace MonoTests.System.Data.SqlTypes
 			String error = "ToSqlString method does not work correctly ";
 
 			SqlTestString = SqlTrue.ToSqlString();
-			Assertion.AssertEquals(error, "True", SqlTestString.Value);
+			AssertEquals(error, "True", SqlTestString.Value);
 
 			SqlTestString = SqlFalse.ToSqlString();
-			Assertion.AssertEquals(error, "False", SqlTestString.Value);
+			AssertEquals(error, "False", SqlTestString.Value);
 
 		}
 
@@ -423,10 +423,10 @@ namespace MonoTests.System.Data.SqlTypes
 			String error = "ToString method does not work correctly ";
 
 			TestString = SqlTrue.ToString();
-			Assertion.AssertEquals(error, "True", TestString.Value);
+			AssertEquals(error, "True", TestString.Value);
 
 			TestString = SqlFalse.ToSqlString();
-			Assertion.AssertEquals(error, "False", TestString.Value);
+			AssertEquals(error, "False", TestString.Value);
 
 		}
 
@@ -447,15 +447,15 @@ namespace MonoTests.System.Data.SqlTypes
 			String error = "BitwiseAnd operator does not work correctly ";
 
 			SqlResult = SqlTrue & SqlFalse;
-			Assertion.Assert(error + "(true & false)", !SqlResult.Value);
+			Assert(error + "(true & false)", !SqlResult.Value);
 			SqlResult = SqlFalse & SqlTrue;
-			Assertion.Assert(error + "(false & true)", !SqlResult.Value);
+			Assert(error + "(false & true)", !SqlResult.Value);
 
 			SqlResult = SqlTrue & SqlTrue2;
-			Assertion.Assert(error + "(true & true)", SqlResult.Value);
+			Assert(error + "(true & true)", SqlResult.Value);
 
 			SqlResult = SqlFalse & SqlFalse2;
-			Assertion.Assert(error + "(false & false)", !SqlResult.Value);
+			Assert(error + "(false & false)", !SqlResult.Value);
 
 
 		}
@@ -471,16 +471,16 @@ namespace MonoTests.System.Data.SqlTypes
 			String error = "BitwiseOr operator does not work correctly ";
 
 			SqlResult = SqlTrue | SqlFalse;
-			Assertion.Assert(error + "(true | false)", SqlResult.Value);
+			Assert(error + "(true | false)", SqlResult.Value);
 			SqlResult = SqlFalse | SqlTrue;
 
-			Assertion.Assert(error + "(false | true)", SqlResult.Value);
+			Assert(error + "(false | true)", SqlResult.Value);
 
 			SqlResult = SqlTrue | SqlTrue2;
-			Assertion.Assert(error + "(true | true)", SqlResult.Value);
+			Assert(error + "(true | true)", SqlResult.Value);
 
 			SqlResult = SqlFalse | SqlFalse2;
-			Assertion.Assert(error + "(false | false)", !SqlResult.Value);
+			Assert(error + "(false | false)", !SqlResult.Value);
 
 		}
 
@@ -495,20 +495,20 @@ namespace MonoTests.System.Data.SqlTypes
 			String error = "Equality operator does not work correctly ";
 
 			SqlResult = SqlTrue == SqlFalse;
-			Assertion.Assert(error + "(true == false)", !SqlResult.Value);
+			Assert(error + "(true == false)", !SqlResult.Value);
 			SqlResult = SqlFalse == SqlTrue;
-			Assertion.Assert(error + "(false == true)", !SqlResult.Value);
+			Assert(error + "(false == true)", !SqlResult.Value);
 
 			SqlResult = SqlTrue == SqlTrue2;
-			Assertion.Assert(error + "(true == true)", SqlResult.Value);
+			Assert(error + "(true == true)", SqlResult.Value);
 
 			SqlResult = SqlFalse == SqlFalse2;
-			Assertion.Assert(error + "(false == false)", SqlResult.Value);
+			Assert(error + "(false == false)", SqlResult.Value);
 
 			SqlResult = SqlFalse == SqlBoolean.Null;
-			Assertion.Assert(error + "(false == Null)", SqlResult.IsNull);
+			Assert(error + "(false == Null)", SqlResult.IsNull);
 			SqlResult = SqlBoolean.Null == SqlBoolean.Null;
-			Assertion.Assert(error + "(Null == true)", SqlResult.IsNull);
+			Assert(error + "(Null == true)", SqlResult.IsNull);
 
 		}
 
@@ -523,15 +523,15 @@ namespace MonoTests.System.Data.SqlTypes
 			String error = "ExclusiveOr operator does not work correctly ";
 
 			SqlResult = SqlTrue ^ SqlFalse;
-			Assertion.Assert(error + "(true ^ false)", SqlResult.Value);
+			Assert(error + "(true ^ false)", SqlResult.Value);
 			SqlResult = SqlFalse | SqlTrue;
-			Assertion.Assert(error + "(false ^ true)", SqlResult.Value);
+			Assert(error + "(false ^ true)", SqlResult.Value);
 
 			SqlResult = SqlTrue ^ SqlTrue2;
-			Assertion.Assert(error + "(true ^ true)", !SqlResult.Value);
+			Assert(error + "(true ^ true)", !SqlResult.Value);
 
 			SqlResult = SqlFalse ^ SqlFalse2;
-			Assertion.Assert(error + "(false ^ false)", !SqlResult.Value);
+			Assert(error + "(false ^ false)", !SqlResult.Value);
 
 		}
 
@@ -541,8 +541,8 @@ namespace MonoTests.System.Data.SqlTypes
 
 			String error = "false operator does not work correctly ";
 
-			Assertion.AssertEquals(error + "(true)", SqlBoolean.False, (!SqlTrue));
-			Assertion.AssertEquals(error + "(false)", SqlBoolean.True, (!SqlFalse));
+			AssertEquals(error + "(true)", SqlBoolean.False, (!SqlTrue));
+			AssertEquals(error + "(false)", SqlBoolean.True, (!SqlFalse));
 
 		}
 
@@ -555,14 +555,14 @@ namespace MonoTests.System.Data.SqlTypes
 
 			String error = "Inequality operator does not work correctly" ;
 
-			Assertion.AssertEquals(error + "(true != true)",   SqlBoolean.False, SqlTrue != SqlTrue);
-			Assertion.AssertEquals(error + "(true != true)",   SqlBoolean.False, SqlTrue != SqlTrue2);
-			Assertion.AssertEquals(error + "(false != false)", SqlBoolean.False, SqlFalse != SqlFalse);
-			Assertion.AssertEquals(error + "(false != false)", SqlBoolean.False, SqlFalse != SqlFalse2);
-			Assertion.AssertEquals(error + "(true != false)",  SqlBoolean.True, SqlTrue != SqlFalse);
-			Assertion.AssertEquals(error + "(false != true)",  SqlBoolean.True, SqlFalse != SqlTrue);
-			Assertion.AssertEquals(error + "(null != true)",   SqlBoolean.Null, SqlBoolean.Null != SqlTrue);
-			Assertion.AssertEquals(error + "(false != null)",  SqlBoolean.Null, SqlFalse != SqlBoolean.Null);
+			AssertEquals(error + "(true != true)",   SqlBoolean.False, SqlTrue != SqlTrue);
+			AssertEquals(error + "(true != true)",   SqlBoolean.False, SqlTrue != SqlTrue2);
+			AssertEquals(error + "(false != false)", SqlBoolean.False, SqlFalse != SqlFalse);
+			AssertEquals(error + "(false != false)", SqlBoolean.False, SqlFalse != SqlFalse2);
+			AssertEquals(error + "(true != false)",  SqlBoolean.True, SqlTrue != SqlFalse);
+			AssertEquals(error + "(false != true)",  SqlBoolean.True, SqlFalse != SqlTrue);
+			AssertEquals(error + "(null != true)",   SqlBoolean.Null, SqlBoolean.Null != SqlTrue);
+			AssertEquals(error + "(false != null)",  SqlBoolean.Null, SqlFalse != SqlBoolean.Null);
 
 		}
 
@@ -572,8 +572,8 @@ namespace MonoTests.System.Data.SqlTypes
 
 			String error = "Logical Not operator does not work correctly" ;
 
-			Assertion.AssertEquals(error + "(true)", SqlBoolean.False, !SqlTrue);
-			Assertion.AssertEquals(error + "(false)", SqlBoolean.True, !SqlFalse);
+			AssertEquals(error + "(true)", SqlBoolean.False, !SqlTrue);
+			AssertEquals(error + "(false)", SqlBoolean.True, !SqlFalse);
 
 		}
 
@@ -586,9 +586,9 @@ namespace MonoTests.System.Data.SqlTypes
 			SqlBoolean SqlResult;
 
 			SqlResult = ~SqlTrue;
-			Assertion.Assert(error + "(true)", !SqlResult.Value);
+			Assert(error + "(true)", !SqlResult.Value);
 			SqlResult = ~SqlFalse;
-			Assertion.Assert(error + "(false)", SqlResult.Value);
+			Assert(error + "(false)", SqlResult.Value);
 
 		}
 
@@ -599,8 +599,8 @@ namespace MonoTests.System.Data.SqlTypes
 
 			String error = "true operator does not work correctly ";
 
-			Assertion.AssertEquals(error + "(true)", SqlBoolean.True, (SqlTrue));
-			Assertion.AssertEquals(error + "(false)", SqlBoolean.False, (SqlFalse));
+			AssertEquals(error + "(true)", SqlBoolean.True, (SqlTrue));
+			AssertEquals(error + "(false)", SqlBoolean.False, (SqlFalse));
 
 		}
 
@@ -611,9 +611,9 @@ namespace MonoTests.System.Data.SqlTypes
 			String error = "SqlBooleanToBoolean operator does not work correctly ";
 
 			Boolean TestBoolean = (Boolean)SqlTrue;
-			Assertion.Assert(error + "(true)",  TestBoolean);
+			Assert(error + "(true)",  TestBoolean);
 			TestBoolean = (Boolean)SqlFalse;
-			Assertion.Assert(error + "(false)",  !TestBoolean);
+			Assert(error + "(false)",  !TestBoolean);
 
 		}
 
@@ -627,15 +627,15 @@ namespace MonoTests.System.Data.SqlTypes
 
 			SqlTestByte = new SqlByte(1);
 			SqlTestBoolean = (SqlBoolean)SqlTestByte;
-			Assertion.Assert(error + "(true)", SqlTestBoolean.Value);
+			Assert(error + "(true)", SqlTestBoolean.Value);
 
 			SqlTestByte = new SqlByte(2);
 			SqlTestBoolean = (SqlBoolean)SqlTestByte;
-			Assertion.Assert(error + "(true)", SqlTestBoolean.Value);
+			Assert(error + "(true)", SqlTestBoolean.Value);
 
 			SqlTestByte = new SqlByte(0);
 			SqlTestBoolean = (SqlBoolean)SqlTestByte;
-			Assertion.Assert(error + "(false)", !SqlTestBoolean.Value);
+			Assert(error + "(false)", !SqlTestBoolean.Value);
 
 		}
 
@@ -649,15 +649,15 @@ namespace MonoTests.System.Data.SqlTypes
 
 			SqlTest = new SqlDecimal(1);
 			SqlTestBoolean = (SqlBoolean)SqlTest;
-			Assertion.Assert(error + "(true)", SqlTestBoolean.Value);
+			Assert(error + "(true)", SqlTestBoolean.Value);
 
 			SqlTest = new SqlDecimal(19);
 			SqlTestBoolean = (SqlBoolean)SqlTest;
-			Assertion.Assert(error + "(true)", SqlTestBoolean.Value);
+			Assert(error + "(true)", SqlTestBoolean.Value);
 
 			SqlTest = new SqlDecimal(0);
 			SqlTestBoolean = (SqlBoolean)SqlTest;
-			Assertion.Assert(error + "(false)", !SqlTestBoolean.Value);
+			Assert(error + "(false)", !SqlTestBoolean.Value);
 
 		}
 
@@ -671,15 +671,15 @@ namespace MonoTests.System.Data.SqlTypes
 
 			SqlTest = new SqlDouble(1);
 			SqlTestBoolean = (SqlBoolean)SqlTest;
-			Assertion.Assert(error + "(true)", SqlTestBoolean.Value);
+			Assert(error + "(true)", SqlTestBoolean.Value);
 
 			SqlTest = new SqlDouble(-19.8);
 			SqlTestBoolean = (SqlBoolean)SqlTest;
-			Assertion.Assert(error + "(true)", SqlTestBoolean.Value);
+			Assert(error + "(true)", SqlTestBoolean.Value);
 
 			SqlTest = new SqlDouble(0);
 			SqlTestBoolean = (SqlBoolean)SqlTest;
-			Assertion.Assert(error + "(false)", !SqlTestBoolean.Value);
+			Assert(error + "(false)", !SqlTestBoolean.Value);
 
 		}
 
@@ -693,15 +693,15 @@ namespace MonoTests.System.Data.SqlTypes
 
 			SqlTest = new SqlInt16(1);
 			SqlTestBoolean = (SqlBoolean)SqlTest;
-			Assertion.Assert(error + "(true)", SqlTestBoolean.Value);
+			Assert(error + "(true)", SqlTestBoolean.Value);
 
 			SqlTest = new SqlInt16(-143);
 			SqlTestBoolean = (SqlBoolean)SqlTest;
-			Assertion.Assert(error + "(true)", SqlTestBoolean.Value);
+			Assert(error + "(true)", SqlTestBoolean.Value);
 
 			SqlTest = new SqlInt16(0);
 			SqlTestBoolean = (SqlBoolean)SqlTest;
-			Assertion.Assert(error + "(false)", !SqlTestBoolean.Value);
+			Assert(error + "(false)", !SqlTestBoolean.Value);
 
 		}
 
@@ -715,15 +715,15 @@ namespace MonoTests.System.Data.SqlTypes
 
 			SqlTest = new SqlInt32(1);
 			SqlTestBoolean = (SqlBoolean)SqlTest;
-			Assertion.Assert(error + "(true)", SqlTestBoolean.Value);
+			Assert(error + "(true)", SqlTestBoolean.Value);
 
 			SqlTest = new SqlInt32(1430);
 			SqlTestBoolean = (SqlBoolean)SqlTest;
-			Assertion.Assert(error + "(true)", SqlTestBoolean.Value);
+			Assert(error + "(true)", SqlTestBoolean.Value);
 
 			SqlTest = new SqlInt32(0);
 			SqlTestBoolean = (SqlBoolean)SqlTest;
-			Assertion.Assert(error + "(false)", !SqlTestBoolean.Value);
+			Assert(error + "(false)", !SqlTestBoolean.Value);
 		}
 
 		// SqlInt64 to SqlBoolean
@@ -736,15 +736,15 @@ namespace MonoTests.System.Data.SqlTypes
 
 			SqlTest = new SqlInt64(1);
 			SqlTestBoolean = (SqlBoolean)SqlTest;
-			Assertion.Assert(error + "(true)", SqlTestBoolean.Value);
+			Assert(error + "(true)", SqlTestBoolean.Value);
 
 			SqlTest = new SqlInt64(-14305);
 			SqlTestBoolean = (SqlBoolean)SqlTest;
-			Assertion.Assert(error + "(true)", SqlTestBoolean.Value);
+			Assert(error + "(true)", SqlTestBoolean.Value);
 
 			SqlTest = new SqlInt64(0);
 			SqlTestBoolean = (SqlBoolean)SqlTest;
-			Assertion.Assert(error + "(false)", !SqlTestBoolean.Value);
+			Assert(error + "(false)", !SqlTestBoolean.Value);
 
 		}
 
@@ -758,15 +758,15 @@ namespace MonoTests.System.Data.SqlTypes
 
 			SqlTest = new SqlMoney(1);
 			SqlTestBoolean = (SqlBoolean)SqlTest;
-			Assertion.Assert(error + "(true)", SqlTestBoolean.Value);
+			Assert(error + "(true)", SqlTestBoolean.Value);
 
 			SqlTest = new SqlMoney(1305);
 			SqlTestBoolean = (SqlBoolean)SqlTest;
-			Assertion.Assert(error + "(true)", SqlTestBoolean.Value);
+			Assert(error + "(true)", SqlTestBoolean.Value);
 
 			SqlTest = new SqlMoney(0);
 			SqlTestBoolean = (SqlBoolean)SqlTest;
-			Assertion.Assert(error + "(false)", !SqlTestBoolean.Value);
+			Assert(error + "(false)", !SqlTestBoolean.Value);
 
 		}
 
@@ -780,19 +780,19 @@ namespace MonoTests.System.Data.SqlTypes
 
 			SqlTest = new SqlSingle(1);
 			SqlTestBoolean = (SqlBoolean)SqlTest;
-			Assertion.Assert(error + "(true)", SqlTestBoolean.Value);
+			Assert(error + "(true)", SqlTestBoolean.Value);
 
 			SqlTest = new SqlSingle(1305);
 			SqlTestBoolean = (SqlBoolean)SqlTest;
-			Assertion.Assert(error + "(true)", SqlTestBoolean.Value);
+			Assert(error + "(true)", SqlTestBoolean.Value);
 
 			SqlTest = new SqlSingle(-305.3);
 			SqlTestBoolean = (SqlBoolean)SqlTest;
-			Assertion.Assert(error + "(true)", SqlTestBoolean.Value);
+			Assert(error + "(true)", SqlTestBoolean.Value);
 
 			SqlTest = new SqlSingle(0);
 			SqlTestBoolean = (SqlBoolean)SqlTest;
-			Assertion.Assert(error + "(false)", !SqlTestBoolean.Value);
+			Assert(error + "(false)", !SqlTestBoolean.Value);
 
 		}
 
@@ -806,19 +806,19 @@ namespace MonoTests.System.Data.SqlTypes
 
 			SqlTest = new SqlString("true");
 			SqlTestBoolean = (SqlBoolean)SqlTest;
-			Assertion.Assert(error + "(true)", SqlTestBoolean.Value);
+			Assert(error + "(true)", SqlTestBoolean.Value);
 
 			SqlTest = new SqlString("TRUE");
 			SqlTestBoolean = (SqlBoolean)SqlTest;
-			Assertion.Assert(error + "(true)", SqlTestBoolean.Value);
+			Assert(error + "(true)", SqlTestBoolean.Value);
 
 			SqlTest = new SqlString("True");
 			SqlTestBoolean = (SqlBoolean)SqlTest;
-			Assertion.Assert(error + "(true)", SqlTestBoolean.Value);
+			Assert(error + "(true)", SqlTestBoolean.Value);
 
 			SqlTest = new SqlString("false");
 			SqlTestBoolean = (SqlBoolean)SqlTest;
-			Assertion.Assert(error + "(false)", !SqlTestBoolean.Value);
+			Assert(error + "(false)", !SqlTestBoolean.Value);
 
 		}
 
@@ -833,16 +833,16 @@ namespace MonoTests.System.Data.SqlTypes
 
 			Boolean SqlTest = true;
 			SqlTestBoolean = (SqlBoolean)SqlTest;
-			Assertion.Assert(error + "(true)", SqlTestBoolean.Value);
+			Assert(error + "(true)", SqlTestBoolean.Value);
 			SqlTestBoolean = (SqlBoolean)btrue;
-			Assertion.Assert(error + "(true)", SqlTestBoolean.Value);
+			Assert(error + "(true)", SqlTestBoolean.Value);
 
 
 			SqlTest = false;
 			SqlTestBoolean = (SqlBoolean)SqlTest;
-			Assertion.Assert(error + "(false)", !SqlTestBoolean.Value);
+			Assert(error + "(false)", !SqlTestBoolean.Value);
 			SqlTestBoolean = (SqlBoolean)bfalse;
-			Assertion.Assert(error + "(false)", !SqlTestBoolean.Value);
+			Assert(error + "(false)", !SqlTestBoolean.Value);
 
 		}
 
@@ -858,8 +858,8 @@ namespace MonoTests.System.Data.SqlTypes
 
 			String error = "ByteValue property does not work correctly ";
 
-			Assertion.AssertEquals(error + "(true)", (byte)1, SqlTrue.ByteValue);
-			Assertion.AssertEquals(error + "(false)", (byte)0, SqlFalse.ByteValue);
+			AssertEquals(error + "(true)", (byte)1, SqlTrue.ByteValue);
+			AssertEquals(error + "(false)", (byte)0, SqlFalse.ByteValue);
 
 		}
 
@@ -869,8 +869,8 @@ namespace MonoTests.System.Data.SqlTypes
 
 			String error = "IsFalse property does not work correctly ";
 
-			Assertion.Assert(error + "(true)", !SqlTrue.IsFalse);
-			Assertion.Assert(error + "(false)", SqlFalse.IsFalse);
+			Assert(error + "(true)", !SqlTrue.IsFalse);
+			Assert(error + "(false)", SqlFalse.IsFalse);
 
 		}
 
@@ -880,9 +880,9 @@ namespace MonoTests.System.Data.SqlTypes
 
 			String error = "IsNull property does not work correctly ";
 
-			Assertion.Assert(error + "(true)", !SqlTrue.IsNull);
-			Assertion.Assert(error + "(false)", !SqlFalse.IsNull);
-			Assertion.Assert(error + "(Null)", SqlBoolean.Null.IsNull);
+			Assert(error + "(true)", !SqlTrue.IsNull);
+			Assert(error + "(false)", !SqlFalse.IsNull);
+			Assert(error + "(Null)", SqlBoolean.Null.IsNull);
 
 		}
 
@@ -892,8 +892,8 @@ namespace MonoTests.System.Data.SqlTypes
 
 			String error = "IsTrue property does not work correctly ";
 
-			Assertion.Assert(error + "(true)", SqlTrue.IsTrue);
-			Assertion.Assert(error + "(false)", !SqlFalse.IsTrue);
+			Assert(error + "(true)", SqlTrue.IsTrue);
+			Assert(error + "(false)", !SqlFalse.IsTrue);
 
 		}
 
@@ -903,8 +903,8 @@ namespace MonoTests.System.Data.SqlTypes
 
 			String error = "Value property does not work correctly ";
 
-			Assertion.Assert(error + "(true)", SqlTrue.Value);
-			Assertion.Assert(error + "(false)", !SqlFalse.Value);
+			Assert(error + "(true)", SqlTrue.Value);
+			Assert(error + "(false)", !SqlFalse.Value);
 
 		}
 
@@ -917,7 +917,7 @@ namespace MonoTests.System.Data.SqlTypes
 		[Test]
 		public void FalseField() {
 
-			Assertion.Assert("False field does not work correctly",
+			Assert("False field does not work correctly",
 			       !SqlBoolean.False.Value);
 
 		}
@@ -925,7 +925,7 @@ namespace MonoTests.System.Data.SqlTypes
 		[Test]
 		public void NullField() {
 
-			Assertion.Assert("Null field does not work correctly",
+			Assert("Null field does not work correctly",
 			       SqlBoolean.Null.IsNull);
 
 		}
@@ -933,14 +933,14 @@ namespace MonoTests.System.Data.SqlTypes
 		[Test]
 		public void OneField() {
 
-			Assertion.AssertEquals("One field does not work correctly",
+			AssertEquals("One field does not work correctly",
 				     (byte)1, SqlBoolean.One.ByteValue);
 		}
 
 		[Test]
 		public void TrueField() {
 
-			Assertion.Assert("True field does not work correctly",
+			Assert("True field does not work correctly",
 			       SqlBoolean.True.Value);
 
 		}
@@ -948,7 +948,7 @@ namespace MonoTests.System.Data.SqlTypes
 		[Test]
 		public void ZeroField() {
 
-			Assertion.AssertEquals("Zero field does not work correctly",
+			AssertEquals("Zero field does not work correctly",
 				     (byte)0, SqlBoolean.Zero.ByteValue);
 
 		}

@@ -16,7 +16,7 @@ using System.Data.SqlTypes;
 namespace MonoTests.System.Data.SqlTypes
 {
 	[TestFixture]
-        public class SqlBinaryTest {
+        public class SqlBinaryTest : Assertion {
 	
 		SqlBinary Test1;
 		SqlBinary Test2;
@@ -48,14 +48,14 @@ namespace MonoTests.System.Data.SqlTypes
 		{
 			byte [] b = new byte [3];                        
 			SqlBinary Test = new SqlBinary (b);
-                        Assertion.Assert ("#A01", !(Test.IsNull)); 
+                        Assert ("#A01", !(Test.IsNull)); 
 		}
 
 		// Test public fields
 		[Test]
 		public void PublicFields()
 		{
-			Assertion.Assert ("#B01", SqlBinary.Null.IsNull);
+			Assert ("#B01", SqlBinary.Null.IsNull);
 		}
 
 		// Test properties
@@ -69,50 +69,50 @@ namespace MonoTests.System.Data.SqlTypes
 			SqlBinary TestBinary = new SqlBinary (b);
 
 			// IsNull
-			Assertion.Assert ("#C01", SqlBinary.Null.IsNull);
+			Assert ("#C01", SqlBinary.Null.IsNull);
 
 			// Item
-                        Assertion.AssertEquals ("#C02", (byte)128, TestBinary [1]);
-                        Assertion.AssertEquals ("#C03", (byte)64, TestBinary [0]);
+                        AssertEquals ("#C02", (byte)128, TestBinary [1]);
+                        AssertEquals ("#C03", (byte)64, TestBinary [0]);
 
                         // FIXME: MSDN says that should throw SqlNullValueException
                         // but throws IndexOutOfRangeException
                         try {
                                 byte test = TestBinary [TestBinary.Length];
-				Assertion.Fail ("#C04");
+				Fail ("#C04");
 			} catch (Exception e) {
-				Assertion.AssertEquals ("#C05", typeof (SqlNullValueException),
+				AssertEquals ("#C05", typeof (SqlNullValueException),
 					    e.GetType ());
 			}
                  
 			try {
 				byte test = SqlBinary.Null [2];
-				Assertion.Fail ("#C06");
+				Fail ("#C06");
 			} catch (Exception e) {
-				Assertion.AssertEquals ("#C07", typeof (SqlNullValueException),
+				AssertEquals ("#C07", typeof (SqlNullValueException),
 					    e.GetType ());
 			}
 
 			// Length
-                        Assertion.AssertEquals ("#C08", 2, TestBinary.Length);    
+                        AssertEquals ("#C08", 2, TestBinary.Length);    
 
 			try {
 				int test = SqlBinary.Null.Length;
-				Assertion.Fail ("#C09");
+				Fail ("#C09");
 			} catch (Exception e) {
-				Assertion.AssertEquals ("#C10", typeof (SqlNullValueException),
+				AssertEquals ("#C10", typeof (SqlNullValueException),
 					    e.GetType ());
 			}
 
 			// Value
-                        Assertion.AssertEquals ("#C11", (byte)128, TestBinary [1]);
-                        Assertion.AssertEquals ("#C12", (byte)64, TestBinary [0]);               
+                        AssertEquals ("#C11", (byte)128, TestBinary [1]);
+                        AssertEquals ("#C12", (byte)64, TestBinary [0]);               
 
 			try {
                                 Byte [] test = SqlBinary.Null.Value;
-				Assertion.Fail ("#C13");
+				Fail ("#C13");
 			} catch (Exception e) {
-				Assertion.AssertEquals ("#C14", typeof (SqlNullValueException),
+				AssertEquals ("#C14", typeof (SqlNullValueException),
 					    e.GetType ());
 			}
 		}
@@ -122,34 +122,34 @@ namespace MonoTests.System.Data.SqlTypes
 		public void ComparisonMethods()
 		{
 			// GreaterThan
-			Assertion.Assert ("#D01", SqlBinary.GreaterThan (Test1, Test2).Value);
-                        Assertion.Assert ("#D02", SqlBinary.GreaterThan (Test3, Test2).Value);
-			Assertion.Assert ("#D03", !SqlBinary.GreaterThan (Test2, Test1).Value);
+			Assert ("#D01", SqlBinary.GreaterThan (Test1, Test2).Value);
+                        Assert ("#D02", SqlBinary.GreaterThan (Test3, Test2).Value);
+			Assert ("#D03", !SqlBinary.GreaterThan (Test2, Test1).Value);
 			
 			// GreaterThanOrEqual
-			Assertion.Assert ("#D04", SqlBinary.GreaterThanOrEqual (Test1, Test2).Value);
-                        Assertion.Assert ("#D05", SqlBinary.GreaterThanOrEqual (Test1, Test2).Value);
-			Assertion.Assert ("#D06", !SqlBinary.GreaterThanOrEqual (Test2, Test1).Value);
+			Assert ("#D04", SqlBinary.GreaterThanOrEqual (Test1, Test2).Value);
+                        Assert ("#D05", SqlBinary.GreaterThanOrEqual (Test1, Test2).Value);
+			Assert ("#D06", !SqlBinary.GreaterThanOrEqual (Test2, Test1).Value);
 
 			// LessThan
-			Assertion.Assert ("#D07", !SqlBinary.LessThan (Test1, Test2).Value);
-			Assertion.Assert ("#D08", !SqlBinary.LessThan (Test3, Test2).Value);
-			Assertion.Assert ("#D09", SqlBinary.LessThan (Test2, Test1).Value);
+			Assert ("#D07", !SqlBinary.LessThan (Test1, Test2).Value);
+			Assert ("#D08", !SqlBinary.LessThan (Test3, Test2).Value);
+			Assert ("#D09", SqlBinary.LessThan (Test2, Test1).Value);
 
 			// LessThanOrEqual
-			Assertion.Assert ("#D10", !SqlBinary.LessThanOrEqual (Test1, Test2).Value);
-                        Assertion.Assert ("#D11", SqlBinary.LessThanOrEqual (Test3, Test1).Value);
-                        Assertion.Assert ("#D12", SqlBinary.LessThanOrEqual (Test2, Test1).Value);
+			Assert ("#D10", !SqlBinary.LessThanOrEqual (Test1, Test2).Value);
+                        Assert ("#D11", SqlBinary.LessThanOrEqual (Test3, Test1).Value);
+                        Assert ("#D12", SqlBinary.LessThanOrEqual (Test2, Test1).Value);
 
 			// Equals
-                        Assertion.Assert ("#D13", !Test1.Equals (Test2));
-                        Assertion.Assert ("#D14", !Test3.Equals (Test2));
-                        Assertion.Assert ("#D15", Test3.Equals (Test1));
+                        Assert ("#D13", !Test1.Equals (Test2));
+                        Assert ("#D14", !Test3.Equals (Test2));
+                        Assert ("#D15", Test3.Equals (Test1));
 
 			// NotEquals
-			Assertion.Assert ("#D16", SqlBinary.NotEquals (Test1, Test2).Value);
-                        Assertion.Assert ("#D17", !SqlBinary.NotEquals (Test3, Test1).Value);
-			Assertion.Assert ("#D18", SqlBinary.NotEquals (Test2, Test1).Value);
+			Assert ("#D16", SqlBinary.NotEquals (Test1, Test2).Value);
+                        Assert ("#D17", !SqlBinary.NotEquals (Test3, Test1).Value);
+			Assert ("#D18", SqlBinary.NotEquals (Test2, Test1).Value);
 		}
 
 		[Test]
@@ -157,29 +157,29 @@ namespace MonoTests.System.Data.SqlTypes
 		{
                         SqlString TestString = new SqlString ("This is a test");
 			
-                        Assertion.Assert ("#E01", Test1.CompareTo(Test2) > 0);
-                        Assertion.Assert ("#E02", Test2.CompareTo(Test1) < 0);
-                        Assertion.Assert ("#E03", Test1.CompareTo(Test3) == 0);
+                        Assert ("#E01", Test1.CompareTo(Test2) > 0);
+                        Assert ("#E02", Test2.CompareTo(Test1) < 0);
+                        Assert ("#E03", Test1.CompareTo(Test3) == 0);
 			
 			try {
                                 Test1.CompareTo (TestString);
-                                Assertion.Fail ("#E04");
+                                Fail ("#E04");
 			} catch(Exception e) {
-                                Assertion.AssertEquals ("#E05", typeof (ArgumentException), e.GetType ());
+                                AssertEquals ("#E05", typeof (ArgumentException), e.GetType ());
 			}			
 		}
 
 		[Test]
 		public void GetHashCodeTest()
 		{
-			Assertion.AssertEquals ("#F01", Test1.GetHashCode (), Test1.GetHashCode ());
-			Assertion.Assert ("#F02", Test2.GetHashCode () !=  Test1.GetHashCode ());
+			AssertEquals ("#F01", Test1.GetHashCode (), Test1.GetHashCode ());
+			Assert ("#F02", Test2.GetHashCode () !=  Test1.GetHashCode ());
 		}
 
 		[Test]
 		public void GetTypeTest()
 		{
-			Assertion.AssertEquals("#G01", "System.Data.SqlTypes.SqlBinary", 
+			AssertEquals("#G01", "System.Data.SqlTypes.SqlBinary", 
 				     Test1.GetType().ToString());			
 		}
 
@@ -189,11 +189,11 @@ namespace MonoTests.System.Data.SqlTypes
 			SqlBinary TestBinary;
 
 			TestBinary = SqlBinary.Concat (Test2, Test3);
-                        Assertion.AssertEquals ("H01", (byte)15, TestBinary [4]);
+                        AssertEquals ("H01", (byte)15, TestBinary [4]);
 
 			TestBinary = SqlBinary.Concat (Test1, Test2);
-                        Assertion.AssertEquals ("#H02", (byte)240, TestBinary [0]);
-                        Assertion.AssertEquals ("#H03", (byte)15, TestBinary [1]);
+                        AssertEquals ("#H02", (byte)240, TestBinary [0]);
+                        AssertEquals ("#H03", (byte)15, TestBinary [1]);
 		}
 
 		[Test]
@@ -201,14 +201,14 @@ namespace MonoTests.System.Data.SqlTypes
 		{
                         SqlBinary TestBinary = new SqlBinary (new byte [16]);
                         SqlGuid TestGuid = TestBinary.ToSqlGuid ();
-                        Assertion.Assert ("#I01", !TestGuid.IsNull);
+                        Assert ("#I01", !TestGuid.IsNull);
 		}
 
 		[Test]
 		public void ToStringTest()
 		{
-                        Assertion.AssertEquals ("#J01", "SqlBinary(3)", Test2.ToString ());
-                        Assertion.AssertEquals ("#J02", "SqlBinary(2)", Test1.ToString ());              
+                        AssertEquals ("#J01", "SqlBinary(3)", Test2.ToString ());
+                        AssertEquals ("#J02", "SqlBinary(2)", Test1.ToString ());              
 		}
 
 		// OPERATORS
@@ -216,43 +216,43 @@ namespace MonoTests.System.Data.SqlTypes
 		public void AdditionOperator()
 		{
 			SqlBinary TestBinary = Test1 + Test2;
-                        Assertion.AssertEquals ("#K01", (byte)240, TestBinary [0]);
-                        Assertion.AssertEquals ("#K02", (byte)15, TestBinary [1]);
+                        AssertEquals ("#K01", (byte)240, TestBinary [0]);
+                        AssertEquals ("#K02", (byte)15, TestBinary [1]);
 		}
 
 		[Test]
 		public void ComparisonOperators()
 		{
 			// Equality
-                        Assertion.Assert ("#L01", !(Test1 == Test2).Value);
-                        Assertion.Assert ("#L02", (Test3 == Test1).Value);
+                        Assert ("#L01", !(Test1 == Test2).Value);
+                        Assert ("#L02", (Test3 == Test1).Value);
 
 			// Greater than
-                        Assertion.Assert ("#L03", (Test1 > Test2).Value);
-                        Assertion.Assert ("#L04", !(Test3 > Test1).Value);
+                        Assert ("#L03", (Test1 > Test2).Value);
+                        Assert ("#L04", !(Test3 > Test1).Value);
 
 			// Greater than or equal
-                        Assertion.Assert ("#L05", (Test1 >= Test2).Value);
-                        Assertion.Assert ("#L06", (Test3 >= Test2).Value);
+                        Assert ("#L05", (Test1 >= Test2).Value);
+                        Assert ("#L06", (Test3 >= Test2).Value);
 
 			// Inequality
-                        Assertion.Assert ("#L07", (Test1 != Test2).Value);
-                        Assertion.Assert ("#L08", !(Test3 != Test1).Value);
+                        Assert ("#L07", (Test1 != Test2).Value);
+                        Assert ("#L08", !(Test3 != Test1).Value);
 
 			// Less than
-                        Assertion.Assert ("#L09", !(Test1 < Test2).Value);
-                        Assertion.Assert ("#L10", !(Test3 < Test2).Value);
+                        Assert ("#L09", !(Test1 < Test2).Value);
+                        Assert ("#L10", !(Test3 < Test2).Value);
 
 			// Less than or equal
-                        Assertion.Assert ("#L11", !(Test1 <= Test2).Value);
-                        Assertion.Assert ("#L12", (Test3 <= Test1).Value);
+                        Assert ("#L11", !(Test1 <= Test2).Value);
+                        Assert ("#L12", (Test3 <= Test1).Value);
 		}
 
 		[Test]
 		public void SqlBinaryToByteArray() 
 		{
 			byte [] TestByteArray = (Byte[])Test1;
-			Assertion.AssertEquals ("#M01", (byte)240, TestByteArray[0]);			
+			AssertEquals ("#M01", (byte)240, TestByteArray[0]);			
 		}
 
 		[Test]
@@ -264,7 +264,7 @@ namespace MonoTests.System.Data.SqlTypes
 			SqlGuid TestGuid = new SqlGuid (TestByteArray);
 			
 			SqlBinary TestBinary = (SqlBinary)TestGuid;
-                        Assertion.AssertEquals ("#N01", (byte)15, TestBinary [0]);
+                        AssertEquals ("#N01", (byte)15, TestBinary [0]);
 		}
 
 		[Test]
@@ -274,7 +274,7 @@ namespace MonoTests.System.Data.SqlTypes
 			TestByteArray [0] = 15;
 			TestByteArray [1] = 200;
 			SqlBinary TestBinary = (SqlBinary)TestByteArray;
-                        Assertion.AssertEquals ("#O1", (byte)15, TestBinary [0]);
+                        AssertEquals ("#O1", (byte)15, TestBinary [0]);
 		}
 	}
 }
