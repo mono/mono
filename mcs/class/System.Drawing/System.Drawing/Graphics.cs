@@ -18,10 +18,10 @@ namespace System.Drawing
 	[ComVisible(false)]
 	public sealed class Graphics : MarshalByRefObject, IDisposable
 	{
-		internal System.Drawing.IGraphics implementation;
-		internal static System.Drawing.IGraphicsFactory	graphics_factory = Factories.GetGraphicsFactory();
+		internal IntPtr	nativeObject;
+		
 		internal Matrix transform = new Matrix();
-
+		
 		public delegate bool EnumerateMetafileProc (EmfPlusRecordType recordType,
 							    int flags,
 							    int dataSize,
@@ -32,7 +32,7 @@ namespace System.Drawing
 
 		private Graphics (IntPtr nativeGraphics)
 		{
-			implementation = graphics_factory.Graphics(nativeGraphics);
+			nativeObject = nativeGraphics;
 		}
 
 		[MonoTODO]
@@ -44,7 +44,7 @@ namespace System.Drawing
 		[MonoTODO]
 		public GraphicsContainer BeginContainer ()
 		{
-			return implementation.BeginContainer();
+			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
@@ -62,13 +62,12 @@ namespace System.Drawing
 		[MonoTODO]
 		public void Clear (Color color)
 		{
-			implementation.Clear (color);
+			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
 		public void Dispose ()
 		{
-			implementation.Dispose ();
 		}
 
 		[MonoTODO]
@@ -106,7 +105,7 @@ namespace System.Drawing
 
 		public void DrawBezier (Pen pen, float x1, float y1, float x2, float y2, float x3, float y3, float x4, float y4)
 		{
-			implementation.DrawBezier (pen, x1, y1, x2, y2, x3, y3, x4, y4);
+			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
@@ -201,12 +200,12 @@ namespace System.Drawing
 
 		public void DrawEllipse (Pen pen, int x, int y, int width, int height)
 		{
-			implementation.DrawEllipse (pen, x, y, width, height);
+			throw new NotImplementedException ();
 		}
 
 		public void DrawEllipse (Pen pen, float x, float y, float width, float height)
 		{
-			implementation.DrawEllipse (pen, x, y, width, height);
+			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
@@ -230,139 +229,139 @@ namespace System.Drawing
 		[MonoTODO]
 		public void DrawImage (Image image, RectangleF rect)
 		{
-			implementation.DrawImage(image, rect);
+			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
 		public void DrawImage (Image image, PointF point)
 		{
-			implementation.DrawImage(image, point);
+			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
 		public void DrawImage (Image image, Point [] destPoints)
 		{
-			implementation.DrawImage(image, destPoints);
+			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
 		public void DrawImage (Image image, Point point)
 		{
-			implementation.DrawImage(image, point);
+			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
 		public void DrawImage (Image image, Rectangle rect)
 		{
-			implementation.DrawImage(image, rect);
+			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
 		public void DrawImage (Image image, PointF [] destPoints)
 		{
-			implementation.DrawImage(image, destPoints);
+			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
 		public void DrawImage (Image image, int x, int y)
 		{
-			implementation.DrawImage(image, x, y, image.Width, image.Height);
+			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
 		public void DrawImage (Image image, float x, float y)
 		{
-			implementation.DrawImage(image, x, y);
+			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
 		public void DrawImage (Image image, Rectangle destRect, Rectangle srcRect, GraphicsUnit srcUnit)
 		{
-			implementation.DrawImage(image, destRect, srcRect, srcUnit);
+			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
 		public void DrawImage (Image image, RectangleF destRect, RectangleF srcRect, GraphicsUnit srcUnit)
 		{
-			implementation.DrawImage(image, destRect, srcRect, srcUnit);
+			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
 		public void DrawImage (Image image, Point [] destPoints, Rectangle srcRect, GraphicsUnit srcUnit)
 		{
-			implementation.DrawImage(image, destPoints, srcRect, srcUnit);
+			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
 		public void DrawImage (Image image, PointF [] destPoints, RectangleF srcRect, GraphicsUnit srcUnit)
 		{
-			implementation.DrawImage(image, destPoints, srcRect, srcUnit);
+			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
 		public void DrawImage (Image image, Point [] destPoints, Rectangle srcRect, GraphicsUnit srcUnit, ImageAttributes imageAttr)
 		{
-			implementation.DrawImage(image, destPoints, srcRect, srcUnit, imageAttr);
+			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
 		public void DrawImage (Image image, float x, float y, float width, float height)
 		{
-			implementation.DrawImage(image, x, y, width, height);
+			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
 		public void DrawImage (Image image, PointF [] destPoints, RectangleF srcRect, GraphicsUnit srcUnit, ImageAttributes imageAttr)
 		{
-			implementation.DrawImage(image, destPoints, srcRect, srcUnit, imageAttr);
+			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
 		public void DrawImage (Image image, int x, int y, Rectangle srcRect, GraphicsUnit srcUnit)
 		{
-			implementation.DrawImage(image, x, y, srcRect, srcUnit);
+			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
 		public void DrawImage (Image image, int x, int y, int width, int height)
 		{
-			implementation.DrawImage(image, x, y, width, height);
+			GDIPlus.GdipDrawImageRectI (nativeObject, image.nativeObject, x, y, width, height);
 		}
 
 		[MonoTODO]
 		public void DrawImage (Image image, float x, float y, RectangleF srcRect, GraphicsUnit srcUnit)
 		{
-			implementation.DrawImage(image, x, y, srcRect, srcUnit);
+			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
 		public void DrawImage (Image image, PointF [] destPoints, RectangleF srcRect, GraphicsUnit srcUnit, ImageAttributes imageAttr, DrawImageAbort callback)
 		{
-			implementation.DrawImage(image, destPoints, srcRect, srcUnit, imageAttr, callback);
+			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
 		public void DrawImage (Image image, Point [] destPoints, Rectangle srcRect, GraphicsUnit srcUnit, ImageAttributes imageAttr, DrawImageAbort callback)
 		{
-			implementation.DrawImage(image, destPoints, srcRect, srcUnit, imageAttr, callback);
+			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
 		public void DrawImage (Image image, Point [] destPoints, Rectangle srcRect, GraphicsUnit srcUnit, ImageAttributes imageAttr, DrawImageAbort callback, int callbackData)
 		{
-			implementation.DrawImage(image, destPoints, srcRect, srcUnit, imageAttr, callback, callbackData);
+			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
 		public void DrawImage (Image image, Rectangle destRect, float srcX, float srcY, float srcWidth, float srcHeight, GraphicsUnit srcUnit)
 		{
-			implementation.DrawImage(image, destRect, srcX, srcY, srcWidth, srcHeight, srcUnit);
+			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
 		public void DrawImage (Image image, PointF [] destPoints, RectangleF srcRect, GraphicsUnit srcUnit, ImageAttributes imageAttr, DrawImageAbort callback, int callbackData)
 		{
-			implementation.DrawImage(image, destPoints, srcRect, srcUnit, imageAttr, callback, callbackData);
+			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
@@ -410,25 +409,25 @@ namespace System.Drawing
 		[MonoTODO]
 		public void DrawImageUnscaled (Image image, Point point)
 		{
-			implementation.DrawImageUnscaled(image, point);
+			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
 		public void DrawImageUnscaled (Image image, Rectangle rect)
 		{
-			implementation.DrawImageUnscaled(image, rect);
+			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
 		public void DrawImageUnscaled (Image image, int x, int y)
 		{
-			implementation.DrawImageUnscaled(image, x, y);
+			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
 		public void DrawImageUnscaled (Image image, int x, int y, int width, int height)
 		{
-			implementation.DrawImageUnscaled(image, x, y, width, height);
+			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
@@ -438,7 +437,7 @@ namespace System.Drawing
 			pts[0] = pt1;
 			pts[1] = pt2;
 			transform.TransformPoints(pts);
-			implementation.DrawLine(pen, pts[0], pts[1]);
+			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
@@ -448,7 +447,7 @@ namespace System.Drawing
 			pts[0] = pt1;
 			pts[1] = pt2;
 			transform.TransformPoints(pts);
-			implementation.DrawLine(pen, pts[0], pts[1]);
+			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
@@ -460,7 +459,7 @@ namespace System.Drawing
 		[MonoTODO]
 		public void DrawLine (Pen pen, float x1, float y1, float x2, float y2)
 		{
-			DrawLine(pen, new PointF(x1, y1), new PointF(x2, y2));
+			GDIPlus.GdipDrawLine (nativeObject, pen.nativeObject, x1, y1, x2, y2);
 		}
 
 		[MonoTODO]
@@ -469,7 +468,7 @@ namespace System.Drawing
 			PointF[] pts = new PointF[points.Length];
 			Array.Copy( points, pts, points.Length);
 			transform.TransformPoints(pts);
-			implementation.DrawLines( pen, pts);
+			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
@@ -478,7 +477,7 @@ namespace System.Drawing
 			Point[] pts = new Point[points.Length];
 			Array.Copy( points, pts, points.Length);
 			transform.TransformPoints(pts);
-			implementation.DrawLines( pen, pts);
+			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
@@ -513,13 +512,13 @@ namespace System.Drawing
 
 		public void DrawPolygon (Pen pen, Point [] points)
 		{
-			implementation.DrawPolygon (pen, points);
+			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
 		public void DrawPolygon (Pen pen, PointF [] points)
 		{
-			implementation.DrawPolygon (pen, points);
+			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
@@ -537,7 +536,7 @@ namespace System.Drawing
 		[MonoTODO]
 		public void DrawRectangle (Pen pen, int x, int y, int width, int height)
 		{
-			implementation.DrawRectangle(pen, x, y, width, height);
+			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
@@ -577,13 +576,13 @@ namespace System.Drawing
 		[MonoTODO]
 		public void DrawString (string s, Font font, Brush brush, RectangleF layoutRectangle, StringFormat format)
 		{
-			implementation.DrawString(s, font, brush, layoutRectangle, format);
+			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
 		public void DrawString (string s, Font font, Brush brush, float x, float y)
 		{
-			implementation.DrawString(s, font, brush, x, y);
+			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
@@ -595,7 +594,7 @@ namespace System.Drawing
 		[MonoTODO]
 		public void EndContainer (GraphicsContainer container)
 		{
-			implementation.EndContainer(container);
+			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
@@ -874,12 +873,12 @@ namespace System.Drawing
 
 		public void FillEllipse (Brush brush, float x, float y, float width, float height)
 		{
-			implementation.FillEllipse (brush, x, y, width, height);
+			throw new NotImplementedException ();
 		}
 
 		public void FillEllipse (Brush brush, int x, int y, int width, int height)
 		{
-			implementation.FillEllipse (brush, x, y, width, height);
+			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
@@ -945,22 +944,22 @@ namespace System.Drawing
 		[MonoTODO]
 		public void FillRectangle (Brush brush, int x, int y, int width, int height)
 		{
-			implementation.FillRectangle(brush, x, y, width, height);
+			GDIPlus.GdipFillRectangle (nativeObject, brush.nativeObject, (float)x, (float)y, (float)width, (float)height);
 		}
 
 		[MonoTODO]
 		public void FillRectangle (Brush brush, float x, float y, float width, float height)
 		{
-		    implementation.FillRectangle( brush, x, y, width, height);
+			GDIPlus.GdipFillRectangle (nativeObject, brush.nativeObject, x, y, width, height);
 		}
 
 		[MonoTODO]
 		public void FillRectangles (Brush brush, Rectangle [] rects)
 		{
 		    if(rects != null) {
-			foreach( Rectangle rc in rects) {
-			    FillRectangle(brush, rc);
-			}
+				foreach( Rectangle rc in rects) {
+				    FillRectangle(brush, rc);
+				}
 		    }
 		}
 
@@ -989,13 +988,15 @@ namespace System.Drawing
 		[MonoTODO]
 		public void Flush (FlushIntention intention)
 		{
-			implementation.Flush(intention);
+			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
 		public static Graphics FromHdc (IntPtr hdc)
 		{
-			Graphics result = new Graphics(hdc);
+			int graphics;
+			GDIPlus.GdipCreateFromHDC (hdc, out graphics);
+			Graphics result = new Graphics ((IntPtr)graphics);
 			return result;
 		}
 
@@ -1015,7 +1016,6 @@ namespace System.Drawing
 		public static Graphics FromHwnd (IntPtr hwnd)
 		{
 			Graphics result = new Graphics(IntPtr.Zero);
-			result.implementation = graphics_factory.FromHwnd(hwnd);
 			return result;
 		}
 
@@ -1028,8 +1028,10 @@ namespace System.Drawing
 		[MonoTODO]
 		public static Graphics FromImage (Image image)
 		{
-			Graphics result = new Graphics(IntPtr.Zero);
-			result.implementation = graphics_factory.FromImage(image);
+			if (image == null) throw new ArgumentException ();
+			int graphics;
+			GDIPlus.GdipGetImageGraphicsContext (image.nativeObject, out graphics);
+			Graphics result = new Graphics ((IntPtr)graphics);
 			return result;
 		}
 
@@ -1042,7 +1044,9 @@ namespace System.Drawing
 		[MonoTODO]
 		public IntPtr GetHdc ()
 		{
-			return implementation.GetHdc();
+			int hdc;
+			GDIPlus.GdipGetDC (nativeObject, out hdc);
+			return (IntPtr)hdc;
 		}
 
 		[MonoTODO]
@@ -1126,7 +1130,7 @@ namespace System.Drawing
 		[MonoTODO]
 		public SizeF MeasureString (string text, Font font)
 		{
-			return implementation.MeasureString(text, font);
+			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
@@ -1180,6 +1184,7 @@ namespace System.Drawing
 		[MonoTODO]
 		public void ReleaseHdc (IntPtr hdc)
 		{
+			GDIPlus.GdipReleaseDC (nativeObject, hdc);
 		}
 
 		[MonoTODO]
@@ -1204,6 +1209,7 @@ namespace System.Drawing
 		public void Restore (GraphicsState gstate)
 		{
 			transform = gstate.matrix.Clone();
+			GDIPlus.GdipRestoreGraphics (nativeObject, gstate.nativeState);
 		}
 
 		[MonoTODO]
@@ -1215,7 +1221,8 @@ namespace System.Drawing
 		[MonoTODO]
 		public void RotateTransform (float angle, MatrixOrder order)
 		{
-			transform.Rotate(angle, order);
+			//transform.Rotate(angle, order);
+			GDIPlus.GdipRotateWorldTransform (nativeObject, angle, order);
 		}
 
 		[MonoTODO]
@@ -1224,6 +1231,7 @@ namespace System.Drawing
 			//return implementation.Save();
 			GraphicsState state = new GraphicsState();
 			state.matrix = transform.Clone();
+			GDIPlus.GdipSaveGraphics (nativeObject, out state.nativeState);
 			return state;
 		}
 
@@ -1326,7 +1334,8 @@ namespace System.Drawing
 		[MonoTODO]
 		public void TranslateTransform (float dx, float dy, MatrixOrder order)
 		{
-			transform.Translate(dx, dy, order);
+			//transform.Translate(dx, dy, order);
+			GDIPlus.GdipTranslateWorldTransform (nativeObject, dx, dy, order);
 		}
 
 		public Region Clip

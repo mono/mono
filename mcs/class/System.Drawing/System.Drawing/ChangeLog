@@ -1,3 +1,14 @@
+2003-10-12  Alexandre Pigolkine <pigolkine@gmx.de>
+	* Bitmap.cs
+	* Brush.cs
+	* Font.cs
+	* FontFamily.cs
+	* Graphics.cs
+	* Image.cs
+	* Pen.cs
+	* SolidBrush.cs
+						implementation changed to gdi+
+
 2003-09-08  Duncan Mak  <duncan@ximian.com>
 
 	* Factories.cs (DefaultImplementationNamespace): Change it from

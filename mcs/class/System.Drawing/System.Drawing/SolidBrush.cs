@@ -14,11 +14,12 @@ namespace System.Drawing
 	public class SolidBrush	: Brush {
 		
 		Color color;
-		internal ISolidBrushFactory factory = Factories.GetSolidBrushFactory();
 
 		public SolidBrush( Color color ) {
-			implementation = factory.SolidBrush(color);
 			this.Color = color;
+			int brush;
+			GDIPlus.GdipCreateSolidFill (color.ToArgb (), out brush);
+			nativeObject = (IntPtr)brush;
 		}
 
 		public Color Color {
@@ -27,7 +28,6 @@ namespace System.Drawing
 			}
 			set {
 			    color = value;
-				((ISolidBrush)implementation).Color = value;
 			}
 		}
 		

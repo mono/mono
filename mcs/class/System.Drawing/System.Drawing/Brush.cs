@@ -13,9 +13,8 @@ namespace System.Drawing {
 
 	public abstract class Brush : MarshalByRefObject, ICloneable, IDisposable {
 
+		internal IntPtr nativeObject;
 		abstract public object Clone ();
-        
-		internal System.Drawing.IBrush	implementation = null;
         
 		internal Brush()
 		{
@@ -23,7 +22,6 @@ namespace System.Drawing {
 
 		public void Dispose ()
 		{
-			implementation.Dispose();
 			Dispose (true);
 			System.GC.SuppressFinalize (this);
 		}
@@ -37,7 +35,6 @@ namespace System.Drawing {
 		{
 			Dispose (false);
 		}
-		
 	}
 }
 

@@ -13,8 +13,6 @@ using System.Drawing.Text;
 namespace System.Drawing {
 
 	public class FontFamily : MarshalByRefObject, IDisposable {
-		internal IFontFamily implementation;
-		internal static IFontFamilyFactory factory = Factories.GetFontFamilyFactory();
 		
 		static FontFamily genericMonospace;
 		static FontFamily genericSansSerif;
@@ -23,17 +21,14 @@ namespace System.Drawing {
 		string name;
 		
 		public FontFamily(GenericFontFamilies genericFamily) {
-			implementation = factory.FontFamily(genericFamily);
 		}
 		
 		public FontFamily(string familyName) {
 			name = familyName;
-			implementation = factory.FontFamily(familyName);
 		}
 		
 		public FontFamily(string familyName, FontCollection collection) {
 			name = familyName;
-			implementation = factory.FontFamily(familyName, collection);
 		}
 		
 		public string Name {
@@ -70,27 +65,26 @@ namespace System.Drawing {
 		}
 		
 		public int GetCellAscent (FontStyle style) {
-			return implementation.GetCellAscent(style);
+			throw new NotImplementedException ();
 		}
 		
 		public int GetCellDescent (FontStyle style) {
-			return implementation.GetCellDescent(style);
+			throw new NotImplementedException ();
 		}
 		
 		public int GetEmHeight (FontStyle style) {
-			return implementation.GetEmHeight(style);
+			throw new NotImplementedException ();
 		}
 		
 		public int GetLineSpacing (FontStyle style) {
-			return implementation.GetLineSpacing(style);
+			throw new NotImplementedException ();
 		}
 		
 		public bool IsStyleAvailable (FontStyle style){
-			return implementation.IsStyleAvailable(style);
+			throw new NotImplementedException ();
 		}
 		
 		public void Dispose() {
-			implementation.Dispose();
 		}
 	}
 }

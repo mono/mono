@@ -9,58 +9,52 @@
 //
 
 using System;
-using System.Drawing.Drawing2D;
 
 namespace System.Drawing {
 
-	public sealed class Pen : MarshalByRefObject, ICloneable, IDisposable {
+	public sealed class Pen : MarshalByRefObject { //, ICloneable, IDisposable {
 		Brush brush;
 		Color color;
 		float width;
+		internal IntPtr nativeObject;
 
-		internal IPen implementation;
-		internal static IPenFactory factory = Factories.GetPenFactory();
-
-		public Pen (Brush brush)
+		//PenAlignment alignment;
+		
+		public Pen (Brush brush) : this (brush, 1.0F)
 		{
-			implementation = factory.Pen(brush, 1);
-			this.brush = brush;
-			width = 1;
 		}
 
-		public Pen (Color color)
+		public Pen (Color color) : this (color, 1.0F)
 		{
-			implementation = factory.Pen(color, 1);
-			this.color = color;
-			width = 1;
 		}
 
 		public Pen (Brush brush, float width)
 		{
-			implementation = factory.Pen(brush, width);
 			this.width = width;
 			this.brush = brush;
 		}
 
 		public Pen (Color color, float width)
 		{
-			implementation = factory.Pen(color, width);
 			this.width = width;
 			this.color = color;
+			int pen;
+			GDIPlus.GdipCreatePen1 (color.ToArgb (), width, Unit.UnitWorld, out pen);
+			nativeObject = (IntPtr)pen;
 		}
 
 		//
 		// Properties
 		//
-		public PenAlignment Alignment {
-			get {
-				return implementation.Alignment;
-			}
-
-			set {
-				implementation.Alignment = value;
-			}
-		}
+//		public PenAlignment Alignment {
+//			get {
+//				return alignment;
+//			}
+//
+//			set {
+//				alignment = value;
+//			}
+//		}
 
 		public Brush Brush {
 			get {
@@ -90,11 +84,16 @@ namespace System.Drawing {
 				width = value;
 			}
 		}
-		
-		public object Clone ()
-		{
-			return implementation.Clone ();
-		}
+
+//		public object Clone ()
+//		{
+//			Pen p = new Pen (brush, width);
+//			
+//			p.color = color;
+//			p.alignment = alignment;
+//
+//			return p;
+//		}
 
 		public void Dispose ()
 		{
@@ -104,7 +103,6 @@ namespace System.Drawing {
 
 		void Dispose (bool disposing)
 		{
-			implementation.Dispose();
 		}
 
 		~Pen ()

@@ -5,10 +5,7 @@ namespace System.Drawing {
 	[Serializable]
 	public sealed class Font : MarshalByRefObject, ISerializable, ICloneable, IDisposable
 	{
-		internal IFont implementation;
-		internal static IFontFactory factory = Factories.GetFontFactory();
-
-        	private Font (SerializationInfo info, StreamingContext context)
+       	private Font (SerializationInfo info, StreamingContext context)
 		{
 		}
 
@@ -18,18 +15,16 @@ namespace System.Drawing {
 
 		public void Dispose ()
 		{
-			implementation.Dispose();
 		}
 
 		public static Font FromHfont(IntPtr font)
 		{
 			// FIXME: 
 			Font result = new Font("Arial", (float)12.0, FontStyle.Regular);
-			result.implementation = factory.FromHfont(font);
 			return result;
 		}
 
-		public IntPtr ToHfont () { return implementation.ToHfont(); }
+		public IntPtr ToHfont () { 	/*throw new NotImplementedException ();*/ return (IntPtr)100; }
 
 		public Font(Font original, FontStyle style)
 		{
@@ -58,7 +53,6 @@ namespace System.Drawing {
 
 		public Font(FontFamily family, float emSize, FontStyle style, GraphicsUnit unit, byte charSet, bool isVertical)
 		{
-			implementation = factory.Font(family, emSize, style, unit, charSet, isVertical);
 		}
 
 		public Font(string familyName, float emSize)
@@ -83,7 +77,7 @@ namespace System.Drawing {
 		
 		public Font(string familyName, float emSize, FontStyle style, GraphicsUnit unit, byte charSet, bool isVertical)
 		{
-			implementation = factory.Font(familyName, emSize, style, unit, charSet, isVertical);
+			//throw new NotImplementedException ();
 		}
 		
 		object ICloneable.Clone()
@@ -93,81 +87,80 @@ namespace System.Drawing {
 		
 		public bool Bold {
 			get {
-				return implementation.Bold;
+				throw new NotImplementedException ();
 			}
 		}
 		
 		public FontFamily FontFamily {
 			get {
-				return implementation.FontFamily;
+				throw new NotImplementedException ();
 			}
 		}
 		
 		public byte GdiCharSet {
 			get {
-				return implementation.GdiCharSet;
+				throw new NotImplementedException ();
 			}
 		}
 		
 		public bool GdiVerticalFont {
 			get {
-				return implementation.GdiVerticalFont;
+				throw new NotImplementedException ();
 			}
 		}
 		
 		public int Height {
 			get {
-				return implementation.Height;
+				throw new NotImplementedException ();
 			}
 		}
 
 		public bool Italic {
 			get {
-				return implementation.Italic;
+				throw new NotImplementedException ();
 			}
 		}
 
 		public string Name {
 			get {
-				return implementation.Name;
+				throw new NotImplementedException ();
 			}
 		}
 
 		public float Size {
 			get {
-				return implementation.Size;
+				throw new NotImplementedException ();
 			}
 		}
 
 		public float SizeInPoints {
 			get {
-				return implementation.SizeInPoints;
+				throw new NotImplementedException ();
 			}
 		}
 
 		public bool Strikeout {
 			get {
-				return implementation.Strikeout;
+				throw new NotImplementedException ();
 			}
 		}
 		
 		public FontStyle Style {
 			get {
-				return implementation.Style;
+				throw new NotImplementedException ();
 			}
 		}
 
 		public bool Underline {
 			get {
-				return implementation.Underline;
+				throw new NotImplementedException ();
 			}
 		}
 
 		public GraphicsUnit Unit {
 			get {
-				return implementation.Unit;
+				throw new NotImplementedException ();
 			}
 		}
-		
 	}
 }
