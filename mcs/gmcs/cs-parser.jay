@@ -1215,11 +1215,12 @@ property_declaration
 		Accessor get_block = (Accessor) pair.First;
 		Accessor set_block = (Accessor) pair.Second;
 
+		Location loc = (Location) $6;
 		MemberName name = (MemberName) $4;
+
 		if (name.TypeArguments != null)
 			syntax_error (lexer.Location, "a property can't have type arguments");
 
-		Location loc = (Location) $6;
 		prop = new Property (current_container, (Expression) $3, (int) $2, false,
 				     name, (Attributes) $1, get_block, set_block, loc);
 		if (SimpleIteratorContainer.Simple.Yields)
@@ -1812,14 +1813,6 @@ destructor_declaration
 			current_container.AddMethod (d);
 		}
 	  }
-	| opt_attributes opt_modifiers EVENT type member_name OPEN_PARENS opt_formal_parameter_list CLOSE_PARENS block {
-		string mn = (string) $5;
-
-		if (mn.IndexOf ('.') != -1)
-			Report.Error (71, lexer.Location, "Explicit implementation of events requires property syntax");
-		else 
-			Report.Error (71, lexer.Location, "Event declaration should use property syntax");
-	  }
 	;
 
 event_declaration
@@ -1980,7 +1973,8 @@ indexer_declaration
 
 		MemberName name;
 		if (decl.interface_type != null)
-			name = new MemberName (decl.interface_type, "", null);
+			name = new MemberName (decl.interface_type,
+					       TypeContainer.DefaultIndexerName, null);
 		else
 			name = new MemberName (TypeContainer.DefaultIndexerName);
 
@@ -2042,14 +2036,12 @@ enum_declaration
 				   full_name, (Attributes) $1, enum_location);
 		
 		foreach (VariableDeclaration ev in (ArrayList) $6) {
-			Location loc = (Location) ev.Location;
-
 			e.AddEnumMember (ev.identifier, 
 					 (Expression) ev.expression_or_array_initializer,
-					 loc, ev.OptAttributes);
+					 ev.Location, ev.OptAttributes);
 		}
 
-		string name = full_name.GetName (false);
+		string name = full_name.GetName ();
 		current_container.AddEnum (e);
 		RootContext.Tree.RecordDecl (name, e);
 
@@ -2113,11 +2105,12 @@ delegate_declaration
 	  OPEN_PARENS opt_formal_parameter_list CLOSE_PARENS
 	  {
 		Location l = lexer.Location;
-		Delegate del = new Delegate (
-			current_namespace, current_container, (Expression) $4, (int) $2,
-			MakeName ((MemberName) $5), (Parameters) $7, (Attributes) $1, l);
-		  
+		MemberName name = MakeName ((MemberName) $5);
+		Delegate del = new Delegate (current_namespace, current_container, (Expression) $4,
+					     (int) $2, name, (Parameters) $7, (Attributes) $1, l);
+
 		current_container.AddDelegate (del);
+		RootContext.Tree.RecordDecl (name.GetName (true), del);
 
 		current_delegate = del;
 
@@ -2139,12 +2132,14 @@ delegate_declaration
 	  OPEN_PARENS opt_formal_parameter_list CLOSE_PARENS 
 	  {
 		Location l = lexer.Location;
+		MemberName name = MakeName ((MemberName) $5);
 		Delegate del = new Delegate (
 			current_namespace, current_container,
-			TypeManager.system_void_expr, (int) $2, MakeName ((MemberName) $5), 
+			TypeManager.system_void_expr, (int) $2, name,
 			(Parameters) $7, (Attributes) $1, l);
 
 		current_container.AddDelegate (del);
+		RootContext.Tree.RecordDecl (name.GetName (true), del);
 
 		current_delegate = del;
 
