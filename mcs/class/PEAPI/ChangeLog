@@ -1,3 +1,9 @@
+2004-07-13  Jackson Harper  <jackson@ximian.com>
+
+	* PEAPI.cs: Use a byte array hash code provider and comprarer, so
+	checking the byte hashtable for duplicate entries actually
+	works. Old method was valid but created larger then needed binaries.
+	
 2004-07-09  Jackson Harper  <jackson@ximian.com>
 
 	* PEAPI.cs: Don't build custom attributes twice.

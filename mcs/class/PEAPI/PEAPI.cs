@@ -4934,7 +4934,7 @@ if (rsrc != null)
     uint sizeOfHeader;
     char[] name;
     Hashtable htable = new Hashtable();
-                Hashtable btable = new Hashtable ();
+    Hashtable btable = new Hashtable (new ByteArrayHashCodeProvider (), new ByteArrayComparer ());
 
     internal MetaDataStream(char[] name, bool addInitByte) : base(new MemoryStream()) {
       if (addInitByte) { Write((byte)0); size = 1; }
@@ -6731,7 +6731,39 @@ if (rsrc != null)
 
   }
 
+          class ByteArrayComparer : IComparer {
 
+                public int Compare (object x, object y)
+                {
+                        byte [] a = (byte []) x;
+                        byte [] b = (byte []) y;
+                        int len = a.Length;
+
+                        if (b.Length != len)
+                                return 1;
+
+                        for (int i = 0; i < len; ++i)
+                                if (a [i] != b [i])
+                                        return 1;
+                        return 0;
+                }
+        }
+
+        class ByteArrayHashCodeProvider : IHashCodeProvider {
+
+		public int GetHashCode (Object key)
+		{
+			byte [] arr = (byte []) key;
+                        int len = arr.Length;
+			int h = 0;
+
+			for (int i = 0; i < len; ++i)
+				h = (h << 5) - h + arr [i];
+
+			return h;
+		}
+
+	}
 }
 
 
