@@ -1,3 +1,8 @@
+2003-03-03  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* System.Security_test.build: Updated build file to stop linking 
+	with MS assemblies (and like with Mono's corlib instead).
+
 2003-02-19  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* AllTests.cs: Removed. No more required with NUnit2.

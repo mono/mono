@@ -23,6 +23,7 @@
 				<includes name="..\class\lib\System.Security.dll"/>
 			</references>
 		</csc>
+		<copy file="../../lib/corlib.dll" tofile="corlib.dll"/>
 		<copy file="../../lib/System.Security.dll" tofile="System.Security.dll"/>
 		<copy file="../../lib/System.XML.dll" tofile="System.XML.dll"/>
 	</target>
@@ -32,6 +33,7 @@
 	</target>
 
 	<target name="clean">
+		<delete file="corlib.dll" failonerror="false"/>
 		<delete file="System.Security_test.dll" failonerror="false"/>
 		<delete file="System.Security.dll" failonerror="false"/>
 		<delete file="System.XML.dll" failonerror="false"/>
