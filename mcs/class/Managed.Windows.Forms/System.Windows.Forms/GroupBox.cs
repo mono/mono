@@ -47,11 +47,11 @@ namespace System.Windows.Forms
 		public new event EventHandler Click;
 		public new event EventHandler DoubleClick;
 		public new event KeyEventHandler KeyDown;
-		public new event KeyEventHandler KeyPress;
+		public new event KeyPressEventHandler KeyPress;
 		public new event KeyEventHandler KeyUp;
 		public new event MouseEventHandler MouseDown;
-		public new event MouseEventHandler MouseEnter;
-		public new event MouseEventHandler MouseLeave;
+		public new event EventHandler MouseEnter;
+		public new event EventHandler MouseLeave;
 		public new event MouseEventHandler MouseMove;
 		public new event MouseEventHandler MouseUp;
 		public new event EventHandler TabStopChanged;
