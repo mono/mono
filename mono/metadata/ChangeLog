@@ -1,4 +1,9 @@
 
+Sat Sep 7 10:12:19 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* icall.c: removed some unused icalls. Start of map of glib charsets
+	to corlib names. Implemented RuntimeMethod::GetFunctionPointer ().
+
 Fri Sep 6 16:08:44 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
 	* debug-helpers.c: break infinite loop (found and fixed by
