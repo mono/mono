@@ -358,7 +358,7 @@ namespace System.Web.UI.WebControls
 			string textDecoration = String.Empty;
 			if(Font.Strikeout)
 			{
-				textDecoration += " strikeout";
+				textDecoration += " line-through";
 			}
 			if(Font.Underline)
 			{
