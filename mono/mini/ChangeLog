@@ -1,5 +1,7 @@
 2004-03-01  Zoltan Varga  <vargaz@freemail.hu>
 
+	* basic-calls.cs basic-float.cs: New regression tests.
+
 	* mini-sparc.c inssel-sparc.brg mini-ops.h: Access local variables at 
 	negative offsets from %fp. Implement localloc. Fix local register 
 	allocation. Fix the case when the this argument needs to be saved to
