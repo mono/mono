@@ -87,8 +87,6 @@ SN = MONO_PATH="$(topdir)/class/lib/net_1_1_bootstrap/$(PLATFORM_PATH_SEPARATOR)
 SNFLAGS = -q -R
 endif
 
-libdir = $(prefix)/lib
-
 ifeq ($(PLATFORM), win32)
 GACDIR = `cygpath -w $(libdir)`
 GACROOT = `cygpath -w $(DESTDIR)$(libdir)`

@@ -1,3 +1,7 @@
+2005-02-21  Michal Moskal  <malekith@pld-linux.org>
+
+	* Makefile (PROGRAM_INSTALL_DIR): Define in terms of $(libdir).
+
 2005-02-11  Marek Safar <marek.safar@seznam.cz>
 
 	* mono-api-diff.cs : Fixed collision in the sealed/static detection.

@@ -1,3 +1,11 @@
+2005-02-21  Michal Moskal  <malekith@pld-linux.org>
+	    Raja R Harinath  <rharinath@novell.com>
+
+	* config-default.make (exec_prefix, libdir): New.
+	* library.make (libdir): Remove.
+	* executable.make (PROGRAM_INSTALL_DIR): Define in terms of
+	$(libdir).
+
 2005-02-15  Raja R Harinath  <rharinath@novell.com>
 
 	* platforms/win32.make (RESGEN): Point to in-tree version of
