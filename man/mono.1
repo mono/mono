@@ -146,6 +146,10 @@ processes.  This option is only available on Unix.
 If set, this variable overrides the default system configuration directory
 ($PREFIX/etc). It's used to locate machine.config file.
 .TP
+.I "GC_DONT_GC"
+Turns off the garbage collection in Mono.  This should be only used
+for debugging purposes
+.TP
 .I "MONO_CONFIG"
 If set, this variable overrides the default runtime configuration file
 ($PREFIX/etc/mono/config). The --config command line options overrides the
