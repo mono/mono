@@ -1,4 +1,8 @@
 
+Thu Jun 5 20:18:55 CEST 2003 Paolo Molaro <lupus@ximian.com>
+
+	* AssemblyBuilder.cs: implemented DefineResource ().
+
 Thu Jun 5 12:36:34 CEST 2003 Paolo Molaro <lupus@ximian.com>
 
 	* OpCode.cs: implemented Equals/GetHashCode.

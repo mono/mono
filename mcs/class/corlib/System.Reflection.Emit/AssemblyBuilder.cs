@@ -49,6 +49,7 @@ namespace System.Reflection.Emit {
 		internal Type corlib_void_type = typeof (void);
 		private int[] table_indexes;
 		Hashtable us_string_cache = new Hashtable ();
+		ArrayList resource_writers = null;
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private static extern void basic_init (AssemblyBuilder ab);
@@ -195,7 +196,15 @@ namespace System.Reflection.Emit {
 		public IResourceWriter DefineResource (string name, string description,
 						       string fileName, ResourceAttributes attribute)
 		{
-			return null;
+			IResourceWriter writer;
+
+			// description seems to be ignored
+			AddResourceFile (name, fileName, attribute);
+			writer = new ResourceWriter (fileName);
+			if (resource_writers == null)
+				resource_writers = new ArrayList ();
+			resource_writers.Add (writer);
+			return writer;
 		}
 
 		public void DefineUnmanagedResource (byte[] resource)
@@ -298,6 +307,13 @@ namespace System.Reflection.Emit {
 			byte[] buf = new byte [65536];
 			FileStream file;
 			int count, offset;
+
+			if (resource_writers != null) {
+				foreach (IResourceWriter writer in resource_writers) {
+					writer.Generate ();
+					writer.Close ();
+				}
+			}
 
 			build_metadata (this);
 
