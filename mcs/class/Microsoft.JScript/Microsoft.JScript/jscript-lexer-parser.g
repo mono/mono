@@ -40,21 +40,43 @@ source_element [Block elems]
 					     stm.ToString ());
 		  }
 	  }
-	| function_decl_or_expr
+	| stm = function_decl_or_expr
+          {
+		  if (stm != null)
+			  elems.Add (stm);
+			  Console.WriteLine ("DEBUG:src_elem::Add (function)");
+	  }
 	;
 
-function_decl_or_expr
-	: "function" (IDENTIFIER | ) 
-	  OPEN_PARENS formal_param_list CLOSE_PARENS 
-	  OPEN_BRACE function_body CLOSE_BRACE
+function_decl_or_expr returns [AST func]
+{
+	func = null;
+	bool is_func_exp = false;
+	FormalParameterList p = null;
+	Block body = null;
+}
+	: "function" (id:IDENTIFIER | { is_func_exp = true; } ) 
+	  OPEN_PARENS p = formal_param_list CLOSE_PARENS 
+	  OPEN_BRACE body = function_body CLOSE_BRACE
+	  {
+		if (is_func_exp)
+			func = new FunctionExpression (String.Empty, p, body);
+		else func = new FunctionDeclaration (id.getText (), p, body);
+	  }
 	;
 
-function_body
-	: source_elements [null]
+function_body returns [Block elems]
+{
+	elems = new Block ();
+}
+	: source_elements [elems]
 	;
 
-formal_param_list
-	: (IDENTIFIER | ) (COMMA IDENTIFIER)*
+formal_param_list returns [FormalParameterList p]
+{
+	p = new FormalParameterList ();
+}
+	: (i:IDENTIFIER { p.Add (i.getText ()); } | ) (COMMA g:IDENTIFIER { p.Add (g.getText ()); } )*
 	;
 
 //
