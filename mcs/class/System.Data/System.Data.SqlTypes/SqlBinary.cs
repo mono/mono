@@ -51,7 +51,7 @@ namespace System.Data.SqlTypes
 				if (this.IsNull)
 					throw new SqlNullValueException ("The property contains Null.");
 				else if (index >= this.Length)
-					throw new SqlNullValueException ("The index parameter indicates a position beyond the length of the byte array.");
+					throw new IndexOutOfRangeException ("The index parameter indicates a position beyond the length of the byte array.");
 				else
 					return value [index]; 
 			}

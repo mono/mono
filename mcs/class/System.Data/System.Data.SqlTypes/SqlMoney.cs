@@ -315,32 +315,35 @@ namespace System.Data.SqlTypes
 		}
 
 		public static explicit operator SqlMoney (SqlBoolean x)
-		{
-			checked {
-				if (x.IsNull) 
-					return Null;
-				else
+		{			
+			if (x.IsNull) 
+				return Null;
+			else {
+				checked {
 					return new SqlMoney ((decimal)x.ByteValue);
+				}
 			}
 		}
 
 		public static explicit operator SqlMoney (SqlDecimal x)
 		{
-			checked {
-				if (x.IsNull) 
-					return Null;
-				else
+			if (x.IsNull) 
+				return Null;
+			else {
+				checked {
 					return new SqlMoney (x.Value);
+				}
 			}
 		}
 
 		public static explicit operator SqlMoney (SqlDouble x)
 		{
-			checked {
-				if (x.IsNull) 
-					return Null;
-				else
+			if (x.IsNull) 
+				return Null;
+			else {
+				checked {
 					return new SqlMoney ((decimal)x.Value);
+				}
 			}
 		}
 
@@ -351,11 +354,12 @@ namespace System.Data.SqlTypes
 
 		public static explicit operator SqlMoney (SqlSingle x)
 		{
-			checked {
-				if (x.IsNull) 
-					return Null;
-				else
+			if (x.IsNull) 
+				return Null;
+			else {
+				checked {
 					return new SqlMoney ((decimal)x.Value);
+				}
 			}
 		}
 
@@ -392,7 +396,7 @@ namespace System.Data.SqlTypes
 			if (x.IsNull) 
 				return Null;
 			else
-				return new SqlMoney ((decimal)x.Value);
+				return new SqlMoney (x.Value);
 		}
 
 		public static implicit operator SqlMoney (SqlInt64 x)
