@@ -10,7 +10,7 @@ LIBRARY_USE_INTERMEDIATE_FILE = yes
 # 2nd pass - build System.dll with System.Xml.dll reference
 
 LIB_MCS_FLAGS = /r:$(corlib)
-TEST_MCS_FLAGS = /nowarn:1595 /nowarn:0618
+TEST_MCS_FLAGS = -nowarn:1595 -nowarn:0618 -nowarn:219 -nowarn:67
 
 CYCLIC_DEP := System.Xml.dll
 CYCLIC_DEP_FILE := $(wildcard ../lib/$(PROFILE)/$(CYCLIC_DEP))

@@ -173,8 +173,10 @@ namespace System
 			// Note that in relative constructor, file URI cannot handle '#' as a filename character, but just regarded as a fragment identifier.
 			pos = relativeUri.IndexOf ('#');
 			if (pos != -1) {
-				fragment = relativeUri.Substring (pos);
-				// fragment is not escaped.
+				if (userEscaped)
+					fragment = relativeUri.Substring (pos);
+				else
+					fragment = "#" + EscapeString (relativeUri.Substring (pos+1));
 				relativeUri = relativeUri.Substring (0, pos);
 			}
 
@@ -978,7 +980,11 @@ namespace System
 			// 8 fragment
 			pos = uriString.IndexOf ('#');
 			if (!IsUnc && pos != -1) {
-				fragment = uriString.Substring (pos);
+				if (userEscaped)
+					fragment = uriString.Substring (pos);
+				else
+					fragment = "#" + EscapeString (uriString.Substring (pos+1));
+
 				uriString = uriString.Substring (0, pos);
 			}
 
@@ -1136,7 +1142,7 @@ namespace System
 			new UriScheme (UriSchemeFtp, SchemeDelimiter, 21),
 			new UriScheme (UriSchemeFile, SchemeDelimiter, -1),
 			new UriScheme (UriSchemeMailto, ":", 25),
-			new UriScheme (UriSchemeNews, ":", -1),
+			new UriScheme (UriSchemeNews, ":", 119),
 			new UriScheme (UriSchemeNntp, SchemeDelimiter, 119),
 			new UriScheme (UriSchemeGopher, SchemeDelimiter, 70),
 		};

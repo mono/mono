@@ -1,3 +1,7 @@
+2005-01-20  Miguel de Icaza  <miguel@ximian.com>
+
+	* UriTest.cs: Add test for bugs 71050 and 71051.
+	
 2005-01-19  Jonathan Pryor  <jonpryor@vt.edu>
 
 	* UriTest.cs: Update UnixLocalPath_WTF.  Category("NotWorking") is

@@ -469,7 +469,33 @@ namespace MonoTests.System
 			AssertEquals ("#24", "http://www.contoso.com:8080", uri.GetLeftPart (UriPartial.Authority));
 			AssertEquals ("#25", "http://www.contoso.com:8080/index.htm", uri.GetLeftPart (UriPartial.Path));
 		}
-		
+
+		[Test]
+		public void NewsDefaultPort ()
+		{
+			Uri uri = new Uri("news://localhost:119/");
+			AssertEquals ("#1", uri.IsDefaultPort, true);
+		}
+
+		[Test]
+		public void FragmentEscape ()
+		{
+			Uri u = new Uri("http://localhost/index.asp#main#start", false);
+			AssertEquals ("#1", u.Fragment, "#main%23start");
+
+			u = new Uri("http://localhost/index.asp#main#start", true);
+			AssertEquals ("#2", u.Fragment, "#main#start");
+
+			// The other code path uses a BaseUri
+
+			Uri b = new Uri ("http://www.gnome.org");
+			Uri n = new Uri (b, "blah#main#start");
+			AssertEquals ("#3", n.Fragment, "#main%23start");
+			
+			n = new Uri (b, "blah#main#start", true);
+			AssertEquals ("#3", n.Fragment, "#main#start");
+		}
+			
 		[Test]
 		[Ignore("Known to fail under MS runtime")]
 		public void GetLeftPart2 ()
