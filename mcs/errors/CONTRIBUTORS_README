@@ -69,3 +69,11 @@ Mono MCS Errors.
 	
 	If you fix a bug and thus remove a regression, be sure to remove the file
 	from the failures list!
+
+* Errors not suported by Mono compiler
+
+	Here is a list of errors reported by csc 1.0, 1.1 and not supported by Mono.
+        Please add comment for every error.
+        
+        CS0580: Included in error CS1501 (not supported by csc 2.0)
+        CS0581: Included in error CS0117 (not supported by csc 2.0)

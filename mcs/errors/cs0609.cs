@@ -1,5 +1,6 @@
-// cs0609.cs: Cannot set the name attribute on an indexer marked override
-// Line: 14
+// cs0609.cs: Cannot set the 'IndexerName' attribute on an indexer marked override
+// Line: 15
+
 using System.Runtime.CompilerServices;
 
 class BaseClass {
@@ -12,12 +13,10 @@ class BaseClass {
 
 class DerivedClass: BaseClass {
         [IndexerName("Error")]
-        protected override int this[int index] {
+        protected override bool this[int index] {
                 get {
                         return false;
                 }
         }
-            
-        static void Main() {}
 }
 
