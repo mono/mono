@@ -17,7 +17,8 @@
 	using System.Threading;
 	using System.Text;
     using System.Runtime.InteropServices;
-    
+    using System.Collections.Specialized;
+
     namespace System.Windows.Forms {
     
     	/// <summary>
@@ -83,11 +84,18 @@
     		bool tabStop;
     		string text;
     		bool visible;
-		bool isDisposed;
+
+		int clientWidth;
+		int clientHeight;
+
+		BitVector32 statuses;
+		private static readonly int LAYOUT_SUSPENDED = BitVector32.CreateMask();
+		private static readonly int LAYOUT_PENDING   = BitVector32.CreateMask( LAYOUT_SUSPENDED );
+		private static readonly int DISPOSED	     = BitVector32.CreateMask( LAYOUT_PENDING );
+		private static readonly int RECREATING_HANDLE= BitVector32.CreateMask( DISPOSED );
 
 			object tag;
 			protected bool mouseIsInside_;
-			bool recreatingHandle;
 
 			// BeginInvoke() etc. helpers
 			static int InvokeMessage = Win32.RegisterWindowMessage("mono_control_invoke_helper");
@@ -168,7 +176,9 @@
     		public Control ()
     		{
     			CreateControlsInstance ();
-    
+
+			statuses = new BitVector32(); 
+			
     			accessibleDefaultActionDescription = null;
     			accessibleDescription = null;
     			accessibleName = null;
@@ -195,13 +205,11 @@
     			text = "";
     			visible = true;
     			parent = null;
-			isDisposed = false;
 
 			bounds.Width = DefaultSize.Width;
 			bounds.Height= DefaultSize.Height;
 
 			mouseIsInside_ = false;
-				recreatingHandle = false;
 				// Do not create Handle here, only in CreateHandle
     			// CreateHandle();//sets window handle. FIXME: No it does not
     		}
@@ -791,10 +799,7 @@
     		}
     		
     		public bool IsDisposed {
-    			get {	return isDisposed; }
-    				//if (Handle == (IntPtr) 0)
-    				//	return true;
-    				//return false;
+    			get {	return statuses [ DISPOSED ]; }
     		}
     		
     		public bool IsHandleCreated {
@@ -938,7 +943,7 @@
     		[MonoTODO]
     		public bool RecreatingHandle {
     			get {
-    				return recreatingHandle;
+    				return statuses [ RECREATING_HANDLE ] ;
     			}
     		}
     		
@@ -1242,7 +1247,7 @@
     	
     		protected override void Dispose (bool disposing) 
     		{
-			isDisposed = true;
+			statuses [ DISPOSED ] = true;
 				//FIXME: 
     			base.Dispose(disposing);
     		}
@@ -1648,6 +1653,7 @@
     		
     		protected virtual void OnLayout (LayoutEventArgs e) 
     		{
+			DoDockAndAnchorLayout ( e );
     			if (Layout != null)
     				Layout (this, e);
     		}
@@ -1872,6 +1878,8 @@
     		{
     			if (Resize != null)
     				Resize (this, e);
+
+			PerformLayout ( );
     		}
     		
     		protected virtual void OnRightToLeftChanged (EventArgs e) 
@@ -1940,6 +1948,8 @@
     		{
     			if (VisibleChanged != null)
     				VisibleChanged (this, e);
+
+			PerformLayout ( );
     		}
     		// --- end of methods for events ---
     		
@@ -1947,15 +1957,18 @@
     		[MonoTODO]
     		public void PerformLayout () 
     		{
-				//FIXME:
-			}
+			PerformLayout ( null, null );
+		}
     		
     		[MonoTODO]
     		public void PerformLayout (Control affectedControl,
     					   string affectedProperty) 
     		{
-				//FIXME:
-			}
+			if ( !statuses [ LAYOUT_SUSPENDED ] )
+				OnLayout ( new LayoutEventArgs ( affectedControl, affectedProperty ) );
+			else
+				statuses [ LAYOUT_PENDING ] = true;
+		}
     		
  			//Compact Framework
     		[MonoTODO]
@@ -2025,13 +2038,13 @@
     		// are big enough to warrant recreating the HWND
     		protected void RecreateHandle() 
     		{
-				recreatingHandle = true;
-				if( IsHandleCreated) {
-					DestroyHandle ();
-					CreateHandle ();
-				}
-				recreatingHandle = false;
+			statuses [ RECREATING_HANDLE ] = true;
+			if( IsHandleCreated) {
+				DestroyHandle ();
+				CreateHandle ();
 			}
+			statuses [ RECREATING_HANDLE ] = false;
+		}
     		
  			//Compact Framework
     		[MonoTODO]
@@ -2125,14 +2138,22 @@
     		[MonoTODO]
     		public void ResumeLayout () 
     		{
-				//FIXME:
+			statuses [ LAYOUT_SUSPENDED ] = false;
+			if ( statuses [ LAYOUT_PENDING ] ) {
+				PerformLayout ( );
+				statuses [ LAYOUT_PENDING ] = false;
 			}
+		}
     		
     		[MonoTODO]
     		public void ResumeLayout (bool performLayout) 
     		{
-				//FIXME:
+			statuses [ LAYOUT_SUSPENDED ] = false;
+			if ( performLayout && statuses [ LAYOUT_PENDING ] ) {
+				PerformLayout ( );
+				statuses [ LAYOUT_PENDING ] = false;
 			}
+		}
     		
     		[MonoTODO]
     		protected ContentAlignment RtlTranslateAlignment (
@@ -2304,11 +2325,10 @@
 	    			Win32.ShowWindow (Handle, ShowWindowStyles.SW_SHOW);
     		}
     		
-    		[MonoTODO]
     		public void SuspendLayout () 
     		{
-				//FIXME:
-			}
+			statuses [ LAYOUT_SUSPENDED ] = true;
+		}
     		
  			//Compact Framework
     		public void Update () 
@@ -2318,23 +2338,50 @@
     		
     		[MonoTODO]
     		protected void UpdateBounds () 
-    		{
-				//FIXME:
+    		{	// update control bounds with current size and position
+
+			// currently, this function is called in responce to
+			// window events, so I assume that all window handles
+			// are created
+			RECT rect = new RECT ( );
+			Win32.GetWindowRect ( Handle, ref rect );
+
+			IntPtr parent = Win32.GetParent ( Handle );
+			if ( parent != IntPtr.Zero ) {
+				Win32.ScreenToClient( parent, ref rect );
 			}
+
+			UpdateBounds ( rect.left, rect.top, rect.right - rect.left, rect.bottom - rect.top );
+		}
     		
     		[MonoTODO]
     		protected void UpdateBounds (int x, int y, int width, int height) 
     		{
-				//FIXME:
-			}
+			UpdateBounds ( x , y, width, height, 0, 0 );
+			//FIXME: provide correct client width and height
+		}
     		
     		[MonoTODO]
     		protected void UpdateBounds (
     			int x, int y, int width, int height, int clientWidth,
     			int clientHeight)
     		{
-				//FIXME:
-			}
+			bool bLocationChanged = ( bounds.X != x ) || ( bounds.Y != y );
+			bounds.X = x;
+			bounds.Y = y;
+			
+			bool bSizeChanged = ( bounds.Width  != width ) || ( bounds.Height != height );
+			bounds.Width  = width;
+			bounds.Height = height;
+
+			clientWidth   = clientWidth;
+			clientHeight  = clientHeight;
+
+			if ( bLocationChanged )
+				OnLocationChanged ( EventArgs.Empty );
+			if ( bSizeChanged )
+				OnSizeChanged ( EventArgs.Empty );
+		}
     		
     		[MonoTODO]
     		protected void UpdateStyles () 
@@ -2541,8 +2588,9 @@
 					break;
     			case Msg.WM_MOVE:
     				OnMove (eventArgs);
-					CallControlWndProc(ref m);
-					break;
+				UpdateBounds ( );
+				CallControlWndProc(ref m);
+				break;
 				case Msg.WM_NOTIFY:
 					NMHDR nmhdr = (NMHDR)Marshal.PtrToStructure ( m.LParam,
 									typeof ( NMHDR ) );
@@ -2577,9 +2625,9 @@
 					break;
     			case Msg.WM_SIZE:
     				OnResize (eventArgs);
-    				OnSizeChanged (eventArgs);
-					CallControlWndProc(ref m);
-					break;
+				UpdateBounds ( );
+				CallControlWndProc(ref m);
+				break;
     			case Msg.WM_WINDOWPOSCHANGED:
     				//OnResize (eventArgs);
     				CallControlWndProc(ref m);
@@ -2634,6 +2682,17 @@
      				break;
     			}
     		}
+
+		private void DoDockAndAnchorLayout ( LayoutEventArgs e ) {
+			/*
+			IEnumerator cw = childControls.GetEnumerator();
+			while ( cw.MoveNext() ) {
+				Control control = (Control) cw.Current;
+				if ( control.Dock == DockStyle.Bottom ) {
+					control.Width = ClientSize.Width;
+				}				
+			}*/
+		}
     		
     		/// --- Control: events ---
     		public event EventHandler BackColorChanged;

@@ -1,4 +1,8 @@
 2003-04-11 Aleksey Ryabchuk <ryabchuk@yahoo.com>
+	* Control.cs : some new functions implemented, using BitVector32
+			instead of declaring separate boolean varibales for every control status
+			
+2003-04-11 Aleksey Ryabchuk <ryabchuk@yahoo.com>
 	* Control.cs
 	* Form.cs
 	* MainMenu.cs
