@@ -57,9 +57,12 @@
 	</xsl:template>
 
 	<xsl:template match="assemblies/assembly">
-		<xsl:call-template name="ELEMENT">
-			<xsl:with-param name="class">y</xsl:with-param>
-		</xsl:call-template>
+		<DIV>
+			<xsl:call-template name="ELEMENT">
+				<xsl:with-param name="class">y</xsl:with-param>
+			</xsl:call-template>
+			<xsl:apply-templates/>
+		</DIV>
 	</xsl:template>
 
 
@@ -71,9 +74,12 @@
 	</xsl:template>
 
 	<xsl:template match="namespaces/namespace">
-		<xsl:call-template name="ELEMENT">
-			<xsl:with-param name="class">n</xsl:with-param>
-		</xsl:call-template>
+		<DIV>
+			<xsl:call-template name="ELEMENT">
+				<xsl:with-param name="class">n</xsl:with-param>
+			</xsl:call-template>
+			<xsl:apply-templates/>
+		</DIV>
 	</xsl:template>
 
 
@@ -85,9 +91,13 @@
 	</xsl:template>
 
 	<xsl:template match="classes/class">
-		<xsl:call-template name="ELEMENT">
-			<xsl:with-param name="class">c</xsl:with-param>
-		</xsl:call-template>
+		<DIV>
+			<xsl:call-template name="ELEMENT">
+				<xsl:with-param name="class">c</xsl:with-param>
+			</xsl:call-template>
+			<xsl:apply-templates select="constructors"/>
+			<xsl:apply-templates select="./*[local-name() != 'constructors']"/>
+		</DIV>
 	</xsl:template>
 
 
@@ -99,9 +109,12 @@
 	</xsl:template>
 
 	<xsl:template match="structs/struct">
-		<xsl:call-template name="ELEMENT">
-			<xsl:with-param name="class">s</xsl:with-param>
-		</xsl:call-template>
+		<DIV>
+			<xsl:call-template name="ELEMENT">
+				<xsl:with-param name="class">s</xsl:with-param>
+			</xsl:call-template>
+			<xsl:apply-templates/>
+		</DIV>
 	</xsl:template>
 
 
@@ -113,9 +126,12 @@
 	</xsl:template>
 
 	<xsl:template match="delegates/delegate">
-		<xsl:call-template name="ELEMENT">
-			<xsl:with-param name="class">d</xsl:with-param>
-		</xsl:call-template>
+		<DIV>
+			<xsl:call-template name="ELEMENT">
+				<xsl:with-param name="class">d</xsl:with-param>
+			</xsl:call-template>
+			<xsl:apply-templates/>
+		</DIV>
 	</xsl:template>
 
 
@@ -127,90 +143,98 @@
 	</xsl:template>
 
 	<xsl:template match="enumerations/enumeration">
-		<xsl:call-template name="ELEMENT">
-			<xsl:with-param name="class">en</xsl:with-param>
-		</xsl:call-template>
+		<DIV>
+			<xsl:call-template name="ELEMENT">
+				<xsl:with-param name="class">en</xsl:with-param>
+			</xsl:call-template>
+			<xsl:apply-templates/>
+		</DIV>
 	</xsl:template>
 
 
 	<!-- method -->
 	<xsl:template match="class/methods">
-		<DIV class="ms">
-			<xsl:apply-templates select="method">
-				<xsl:sort select="@name"/>
-			</xsl:apply-templates>
-		</DIV>
+		<xsl:apply-templates select="method">
+			<xsl:sort select="@name"/>
+		</xsl:apply-templates>
 	</xsl:template>
 
 	<xsl:template match="methods/method">
-		<xsl:call-template name="ELEMENT">
-			<xsl:with-param name="class">m</xsl:with-param>
-		</xsl:call-template>
+		<DIV>
+			<xsl:call-template name="ELEMENT">
+				<xsl:with-param name="class">m</xsl:with-param>
+			</xsl:call-template>
+			<xsl:apply-templates/>
+		</DIV>
 	</xsl:template>
 
 
 	<!-- property -->
 	<xsl:template match="class/properties">
-		<DIV class="ps">
-			<xsl:apply-templates select="property">
-				<xsl:sort select="@name"/>
-			</xsl:apply-templates>
-		</DIV>
+		<xsl:apply-templates select="property">
+			<xsl:sort select="@name"/>
+		</xsl:apply-templates>
 	</xsl:template>
 
 	<xsl:template match="properties/property">
-		<xsl:call-template name="ELEMENT">
-			<xsl:with-param name="class">p</xsl:with-param>
-		</xsl:call-template>
+		<DIV>
+			<xsl:call-template name="ELEMENT">
+				<xsl:with-param name="class">p</xsl:with-param>
+			</xsl:call-template>
+			<xsl:apply-templates/>
+		</DIV>
 	</xsl:template>
 
 
 	<!-- event -->
 	<xsl:template match="class/events">
-		<DIV class="es">
-			<xsl:apply-templates select="event">
-				<xsl:sort select="@name"/>
-			</xsl:apply-templates>
-		</DIV>
+		<xsl:apply-templates select="event">
+			<xsl:sort select="@name"/>
+		</xsl:apply-templates>
 	</xsl:template>
 
 	<xsl:template match="events/event">
-		<xsl:call-template name="ELEMENT">
-			<xsl:with-param name="class">e</xsl:with-param>
-		</xsl:call-template>
+		<DIV>
+			<xsl:call-template name="ELEMENT">
+				<xsl:with-param name="class">e</xsl:with-param>
+			</xsl:call-template>
+			<xsl:apply-templates/>
+		</DIV>
 	</xsl:template>
 
 
 	<!-- constructor -->
 	<xsl:template match="class/constructors">
-		<DIV class="xs">
-			<xsl:apply-templates select="constructor">
-				<xsl:sort select="@name"/>
-			</xsl:apply-templates>
-		</DIV>
+		<xsl:apply-templates select="constructor">
+			<xsl:sort select="@name"/>
+		</xsl:apply-templates>
 	</xsl:template>
 
 	<xsl:template match="constructors/constructor">
-		<xsl:call-template name="ELEMENT">
-			<xsl:with-param name="class">x</xsl:with-param>
-			<xsl:with-param name="image">m</xsl:with-param>
-		</xsl:call-template>
+		<DIV>
+			<xsl:call-template name="ELEMENT">
+				<xsl:with-param name="class">x</xsl:with-param>
+				<xsl:with-param name="image">m</xsl:with-param>
+			</xsl:call-template>
+			<xsl:apply-templates/>
+		</DIV>
 	</xsl:template>
 
 
 	<!-- field -->
 	<xsl:template match="class/fields">
-		<DIV class="fs">
-			<xsl:apply-templates select="field">
-				<xsl:sort select="@name"/>
-			</xsl:apply-templates>
-		</DIV>
+		<xsl:apply-templates select="field">
+			<xsl:sort select="@name"/>
+		</xsl:apply-templates>
 	</xsl:template>
 
 	<xsl:template match="fields/field">
-		<xsl:call-template name="ELEMENT">
-			<xsl:with-param name="class">f</xsl:with-param>
-		</xsl:call-template>
+		<DIV>
+			<xsl:call-template name="ELEMENT">
+				<xsl:with-param name="class">f</xsl:with-param>
+			</xsl:call-template>
+			<xsl:apply-templates/>
+		</DIV>
 	</xsl:template>
 
 
@@ -220,7 +244,6 @@
 	<xsl:template name="ELEMENT">
 		<xsl:param name="class"/>
 		<xsl:param name="image"/>
-		<DIV>
 			<xsl:attribute name="class">
 				<xsl:value-of select="$class"/>
 				<xsl:if test="./node() and local-name() != 'assembly'">_</xsl:if>
@@ -249,8 +272,6 @@
 			</xsl:choose>
 			<xsl:call-template name="name"/>
 			<xsl:call-template name="status"/>
-			<xsl:apply-templates/>
-		</DIV>
 	</xsl:template>
 
 	<xsl:template name="status">
