@@ -43,6 +43,7 @@ namespace System.Data {
 		private PropertyCollection properties;
 		private DataViewManager defaultView;
 		private CultureInfo locale = System.Threading.Thread.CurrentThread.CurrentCulture;
+		internal XmlDataDocument _xmlDataDocument = null;
 		
 		#region Constructors
 
@@ -304,8 +305,8 @@ namespace System.Data {
 
 		public void Clear ()
 		{
-			// TODO: if currently bound to a XmlDataDocument
-			//       throw a NotSupportedException
+			if (_xmlDataDocument != null)
+				throw new NotSupportedException ("Clear function on dataset and datatable is not supported on XmlDataDocument.");
 			for (int t = 0; t < tableCollection.Count; t++) {
 				tableCollection[t].Clear ();
 			}

@@ -49,6 +49,7 @@ namespace System.Xml {
 		public XmlDataDocument() {
 
 			dataSet = new DataSet();
+			dataSet._xmlDataDocument = this;
 			dataSet.Tables.CollectionChanged += new CollectionChangeEventHandler (OnDataTableChanged);
 			
 			this.NodeChanged += new XmlNodeChangedEventHandler (OnNodeChanged);
@@ -62,6 +63,7 @@ namespace System.Xml {
 		public XmlDataDocument(DataSet dataset) {
 
 			this.dataSet = dataset;
+			this.dataSet._xmlDataDocument = this;
 
 			XmlReader xmlReader = new XmlTextReader (new StringReader (dataSet.GetXml ()));
 
@@ -95,6 +97,7 @@ namespace System.Xml {
 		private XmlDataDocument (DataSet dataset, bool clone)
 		{
 			this.dataSet = dataset;
+			this.dataSet._xmlDataDocument = this;
 
 			foreach (DataTable Table in DataSet.Tables) {
 				
