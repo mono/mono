@@ -11,6 +11,7 @@
 
 using System;
 using System.Collections;
+using System.IO;
 using System.Xml;
 using System.Xml.XPath;
 using System.Xml.Xsl;
@@ -33,12 +34,16 @@ namespace Mono.Xml.Xsl.Operations {
 			}
 		}
 		
-		[MonoTODO ("Evaluate content")]
 		public override void Evaluate (XslTransformProcessor p)
 		{
-//			if (value != null) value.Evaluate (p);
-
-			p.Out.WriteComment (nav.Value);
+			StringWriter s = new StringWriter ();
+			XmlWriter w = new XmlTextWriter (s);
+			
+			p.PushOutput (w);
+			value.Evaluate (p);
+			p.PopOutput ();
+			
+			p.Out.WriteComment (s.ToString ());
 		}
 	}
 }

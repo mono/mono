@@ -1,3 +1,7 @@
+2003-08-14  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* XslComment.cs: patch by BenM that implements Evaluate.
+
 2003-08-14 Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
 
 	* XslCallTemplates.cs : Forgot to commit ;-)
