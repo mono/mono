@@ -1,3 +1,14 @@
+2003-07-14  Ravi Pratap M  <ravi@ximian.com>
+
+	* attribute.cs (Attribute.Resolve): While doing a Member lookup
+	for .ctors, ensure that we only ask for members declared in the
+	attribute type (BindingFlags.DeclaredOnly).
+
+	Fixes bug #43632.
+
+	* expression.cs (Error_WrongNumArguments): Report error 1501
+	correctly the way CSC does.
+
 2003-07-13  Martin Baulig  <martin@ximian.com>
 
 	* expression.cs (MemberAccess.ResolveAsTypeStep): Try to do a type

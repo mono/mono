@@ -4275,6 +4275,7 @@ namespace Mono.CSharp {
 			else
 				arg_count = arguments.Count;
 
+
 			ParameterData pd = GetParameterData (candidate);
 
 			int pd_count = pd.Count;
@@ -4410,7 +4411,13 @@ namespace Mono.CSharp {
 					VerifyArgumentsCompat (ec, Arguments, argument_count, c, false,
 							       null, loc);
 				}
-				
+
+                                string report_name = me.Name;
+                                if (report_name == ".ctor")
+                                        report_name = me.DeclaringType.ToString ();
+                                
+                                Error_WrongNumArguments (loc, report_name, argument_count);
+                                                                        
 				return null;
 			}
 
@@ -4454,6 +4461,13 @@ namespace Mono.CSharp {
 
 			return method;
 		}
+
+                static void Error_WrongNumArguments (Location loc, String name, int arg_count)
+                {
+                        Report.Error (1501, loc,
+                                      "No overload for method `" + name + "' takes `" +
+                                      arg_count + "' arguments");
+                }
 
 		static void Error_InvalidArguments (Location loc, int idx, MethodBase method,
                                                     Type delegate_type, string arg_sig, string par_desc)

@@ -72,9 +72,8 @@ namespace Mono.CSharp {
 
 		static void Error_AttributeConstructorMismatch (Location loc)
 		{
-			Report.Error (
-					-6, loc,
-					"Could not find a constructor for this argument list.");
+			Report.Error (-6, loc,
+                                      "Could not find a constructor for this argument list.");
 		}
 		
 		private Type CheckAttributeType (EmitContext ec) {
@@ -323,7 +322,8 @@ namespace Mono.CSharp {
 
 			Expression mg = Expression.MemberLookup (
 				ec, Type, ".ctor", MemberTypes.Constructor,
-				BindingFlags.Public | BindingFlags.Instance, Location);
+				BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly,
+                                Location);
 
 			if (mg == null) {
 				Error_AttributeConstructorMismatch (Location);
