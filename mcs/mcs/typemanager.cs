@@ -65,6 +65,7 @@ public class TypeManager {
 	//
 	static public MethodInfo string_concat_string_string;
 	static public MethodInfo string_concat_object_object;
+	static public MethodInfo string_isinterneted_string;
 	static public MethodInfo system_type_get_type_from_handle;
 	static public MethodInfo object_getcurrent_void;
 	static public MethodInfo bool_movenext_void;
@@ -416,6 +417,10 @@ public class TypeManager {
 		string_concat_object_object = GetMethod (
 			string_type, "Concat", object_object);
 
+		Type [] string_ = { string_type };
+		string_isinterneted_string = GetMethod (
+			string_type, "IsInterned", string_);
+		
 		Type [] runtime_type_handle = { runtime_handle_type };
 		system_type_get_type_from_handle = GetMethod (
 			type_type, "GetTypeFromHandle", runtime_type_handle);

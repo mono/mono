@@ -18,8 +18,7 @@ namespace Mono.CSharp {
 	public abstract class Statement {
 
 		/// <summary>
-		///   Return value indicates whether the last instruction
-		///   was a return instruction
+		///   Return value indicates whether all code paths emitted return.
 		/// </summary>
 		public abstract bool Emit (EmitContext ec);
 
@@ -376,7 +375,7 @@ namespace Mono.CSharp {
 			e.Emit (ec);
 			ec.ig.Emit (OpCodes.Throw);
 
-			return false;
+			return true;
 		}
 	}
 
@@ -866,11 +865,12 @@ namespace Mono.CSharp {
 				return false;
 			}
 
-			if (label is StringLiteral)
+			if (label is StringLiteral || label is NullLiteral){
 				if (required_type == TypeManager.string_type){
 					converted = (Literal) label;
 					return true;
 				}
+			}
 
 			converted = Expression.ConvertIntLiteral ((Literal) label, required_type, loc);
 			if (converted == null)
@@ -1047,12 +1047,21 @@ namespace Mono.CSharp {
 						else
 							elements.Add (v, key);
 					} else if (switch_type == TypeManager.string_type){
-						string s = ((StringLiteral) key).Value;
+						if (key is NullLiteral){
+							if (elements.Contains (NullLiteral.Null))
+								lname = "null";
+							else
+								elements.Add (NullLiteral.Null, null);
+						} else {
+							string s;
+							
+							s = ((StringLiteral) key).Value;
 
-						if (elements.Contains (s))
-							lname = s;
-						else
-							elements.Add (s, key);
+							if (elements.Contains (s))
+								lname = s;
+							else
+								elements.Add (s, key);
+						}
 					} else {
 						int v = ((IntLiteral) key).Value;
 
@@ -1079,23 +1088,46 @@ namespace Mono.CSharp {
 		// `switch' opcode.  The swithc opcode uses a jump table that we are not
 		// computing at this point
 		//
-		bool SimpleSwitchEmit (EmitContext ec, LocalBuilder val, Type switch_type)
+		bool SimpleSwitchEmit (EmitContext ec, LocalBuilder val, Type switch_type, Hashtable el)
 		{
 			ILGenerator ig = ec.ig;
 			Label default_target = ig.DefineLabel ();
 			Label end_of_switch = ig.DefineLabel ();
 			Label next_test = ig.DefineLabel ();
+			Label null_target = ig.DefineLabel ();
 			bool default_found = false;
 			bool first_test = true;
 			bool pending_goto_end = false;
-			bool last_is_ret = false;
+			bool all_return = true;
+			bool is_string = false;
+			bool null_found;
+			
+			//
+			// Special processing for strings: we cant compare
+			// against null.
+			//
+			if (switch_type == TypeManager.string_type){
+				ig.Emit (OpCodes.Ldloc, val);
+				is_string = true;
+				
+				if (el.Contains (NullLiteral.Null)){
+					ig.Emit (OpCodes.Brfalse, null_target);
+				} else
+					ig.Emit (OpCodes.Brfalse, default_target);
 
+				ig.Emit (OpCodes.Ldloc, val);
+				ig.Emit (OpCodes.Call, TypeManager.string_isinterneted_string);
+				ig.Emit (OpCodes.Stloc, val);
+			}
+			
 			foreach (SwitchSection ss in sections){
 				Label sec_begin = ig.DefineLabel ();
 
 				if (pending_goto_end)
 					ig.Emit (OpCodes.Br, end_of_switch);
 
+				int label_count = ss.Labels.Count;
+				null_found = false;
 				foreach (SwitchLabel sl in ss.Labels){
 					if (!first_test){
 						ig.MarkLabel (next_test);
@@ -1108,23 +1140,55 @@ namespace Mono.CSharp {
 						ig.MarkLabel (default_target);
 						default_found = true;
 					} else {
-						ig.Emit (OpCodes.Ldloc, val);
-						sl.Converted.Emit (ec);
-						ig.Emit (OpCodes.Ceq);
-						ig.Emit (OpCodes.Brtrue, sec_begin);
-						ig.Emit (OpCodes.Br, next_test);
+						Literal lit = sl.Converted;
+
+						if (lit is NullLiteral){
+							null_found = true;
+							if (label_count == 1)
+								ig.Emit (OpCodes.Br, next_test);
+							continue;
+									      
+						}
+						if (is_string){
+							StringLiteral str = (StringLiteral) lit;
+
+							ig.Emit (OpCodes.Ldloc, val);
+							ig.Emit (OpCodes.Ldstr, str.Value);
+							if (label_count == 1)
+								ig.Emit (OpCodes.Bne_Un, next_test);
+							else
+								ig.Emit (OpCodes.Beq, sec_begin);
+						} else {
+							ig.Emit (OpCodes.Ldloc, val);
+							lit.Emit (ec);
+							ig.Emit (OpCodes.Ceq);
+							if (label_count == 1)
+								ig.Emit (OpCodes.Brfalse, next_test);
+							else
+								ig.Emit (OpCodes.Brtrue, sec_begin);
+						}
 					}
 				}
+				if (label_count != 1)
+					ig.Emit (OpCodes.Br, next_test);
+				
+				if (null_found)
+					ig.MarkLabel (null_target);
 				ig.MarkLabel (sec_begin);
-				last_is_ret = ss.Block.Emit (ec);
-				pending_goto_end = true;
+				if (ss.Block.Emit (ec))
+					pending_goto_end = false;
+				else {
+					all_return = false;
+					pending_goto_end = true;
+				}
 				first_test = false;
 			}
 			if (!default_found)
 				ig.MarkLabel (default_target);
 			ig.MarkLabel (next_test);
 			ig.MarkLabel (end_of_switch);
-			return last_is_ret;
+			
+			return all_return;
 		}
 		
 		public override bool Emit (EmitContext ec)
@@ -1142,7 +1206,9 @@ namespace Mono.CSharp {
 			// Validate switch.
 			
 			Type switch_type = new_expr.Type;
-			if (CheckSwitch (ec, switch_type) == null)
+			Hashtable elements = CheckSwitch (ec, switch_type);
+
+			if (elements == null)
 				return false;
 
 			// Store variable for comparission purposes
@@ -1157,14 +1223,25 @@ namespace Mono.CSharp {
 			bool old_in_switch = ec.InSwitch;
 
 			// Emit Code.
-			bool ret_at_end =  SimpleSwitchEmit (ec, value, switch_type);
+			bool all_return =  SimpleSwitchEmit (ec, value, switch_type, elements);
 
 			// Restore context state. 
 			ig.MarkLabel (ec.LoopEnd);
+
+			//
+			// FIXME: I am emitting a nop, because the switch performs
+			// no analysis on whether something ever reaches the end
+			//
+			// try: b (int a) { switch (a) { default: return 0; }  }
+			ig.Emit (OpCodes.Nop);
+			
 			ec.InSwitch = old_in_switch;
 			ec.LoopEnd = old_end;
-			
-			return ret_at_end;
+
+			//
+			// Because we have a nop at the end
+			//
+			return false;
 		}
 	}
 
@@ -1301,9 +1378,10 @@ namespace Mono.CSharp {
 			ILGenerator ig = ec.ig;
 			Label end;
 			Label finish = ig.DefineLabel ();;
-
+			bool returns;
+			
 			end = ig.BeginExceptionBlock ();
-			Block.Emit (ec);
+			returns = Block.Emit (ec);
 			ig.Emit (OpCodes.Leave, finish);
 			
 			foreach (Catch c in Specific){
@@ -1342,6 +1420,11 @@ namespace Mono.CSharp {
 			
 			ig.EndExceptionBlock ();
 
+			//
+			// FIXME: Is this correct?
+			// Replace with `returns' and check test-18, maybe we can
+			// perform an optimization here.
+			//
 			return false;
 		}
 	}
@@ -1384,7 +1467,10 @@ namespace Mono.CSharp {
 			throw new Exception ("Implement me!");
 		}
 	}
-	
+
+	/// <summary>
+	///   Implementation of the foreach C# statement
+	/// </summary>
 	public class Foreach : Statement {
 		string type;
 		LocalVariableReference variable;
@@ -1503,15 +1589,14 @@ namespace Mono.CSharp {
 			ec.LoopEnd = ig.DefineLabel ();
 			ec.InLoop = true;
 			
-			//
-			// FIXME: This code does not work for cases like:
-			// foreach (int a in ValueTypeVariable){
-			// }
-			//
-			// The code should emit an ldarga instruction
-			// for the ValueTypeVariable rather than a ldarg
-			//
 			if (expr.Type.IsValueType){
+				if (expr is IMemoryLocation){
+					IMemoryLocation ml = (IMemoryLocation) expr;
+
+					ml.AddressOf (ec);
+				} else
+					throw new Exception ("Expr " + expr + " of type " + expr.Type +
+							     " does not implement IMemoryLocation");
 				ig.Emit (OpCodes.Call, get_enum);
 			} else {
 				expr.Emit (ec);

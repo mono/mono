@@ -34,7 +34,8 @@ namespace Mono.CSharp {
 
 		Hashtable member_to_location;
 		ArrayList field_builders;
-
+		Location loc;
+		
 		public const int AllowedModifiers =
 			Modifiers.NEW |
 			Modifiers.PUBLIC |
@@ -50,6 +51,8 @@ namespace Mono.CSharp {
 			this.EnumName = name;
 			this.mod_flags = Modifiers.Check (AllowedModifiers, mod_flags, Modifiers.PUBLIC);
 			OptAttributes = attrs;
+			loc = l;
+
 			ordered_enums = new ArrayList ();
 			member_to_location = new Hashtable ();
 			field_builders = new ArrayList ();
@@ -78,12 +81,17 @@ namespace Mono.CSharp {
 
 			UnderlyingType = RootContext.TypeManager.LookupType (BaseType);
 
-			if (UnderlyingType != TypeManager.int32_type && UnderlyingType != TypeManager.uint32_type &&
-			    UnderlyingType != TypeManager.int64_type && UnderlyingType != TypeManager.uint64_type &&
-			    UnderlyingType != TypeManager.short_type && UnderlyingType != TypeManager.ushort_type &&
-			    UnderlyingType != TypeManager.byte_type  && UnderlyingType != TypeManager.sbyte_type) {
+			if (UnderlyingType != TypeManager.int32_type &&
+			    UnderlyingType != TypeManager.uint32_type &&
+			    UnderlyingType != TypeManager.int64_type &&
+			    UnderlyingType != TypeManager.uint64_type &&
+			    UnderlyingType != TypeManager.short_type &&
+			    UnderlyingType != TypeManager.ushort_type &&
+			    UnderlyingType != TypeManager.byte_type  &&
+			    UnderlyingType != TypeManager.sbyte_type) {
 				Report.Error (1008, Location,
-					      "Type byte, sbyte, short, ushort, int, uint, long, or ulong expected");
+					      "Type byte, sbyte, short, ushort, int, uint, " +
+					      "long, or ulong expected");
 				return;
 			}
 
@@ -203,11 +211,10 @@ namespace Mono.CSharp {
 			//
 			// If there was an error during DefineEnum, return
 			//
-			if (EnumBuilder == null){
+			if (EnumBuilder == null)
 				return;
-			}
 			
-			EmitContext ec = new EmitContext (tc, null, UnderlyingType, ModFlags);
+			EmitContext ec = new EmitContext (tc, Location, null, UnderlyingType, ModFlags);
 			
 			object default_value = 0;
 			

@@ -643,6 +643,12 @@ struct_member_declaration
 	| operator_declaration
 	| constructor_declaration
 	| type_declaration
+
+	/*
+	 * This is only included so we can flag error 575: 
+	 * destructors only allowed on class types
+	 */
+	| destructor_declaration 
 	;
 
 constant_declaration
@@ -1342,21 +1348,18 @@ constructor_initializer
 destructor_declaration
 	: opt_attributes TILDE IDENTIFIER OPEN_PARENS CLOSE_PARENS block
 	  {
-		//
-		// FIXME: The destructor needs to generate special code:
-		//
-		// ~X ()
-		// { balh (); }
-		//
-		//
-		// void Finalize () { 
-		// try { code } finally { base.Finalize (); }
-		//
-		Method d = new Method ("System.Void", 0, "Finalize", 
-				       new Parameters (null, null), (Attributes) $1, lexer.Location);
+		if ((string) $3 != current_container.Name){
+			Report.Error (574, lexer.Location, "Name of destructor must match name of class");
+		} else if (!(current_container is Class)){
+			Report.Error (575, lexer.Location, "Destructors are only allowed in class types");
+		} else {
+			Method d = new Method (
+				"System.Void", 0, "Finalize", 
+				new Parameters (null, null), (Attributes) $1, lexer.Location);
 		  
-		d.Block = (Block) $6;
-		CheckDef (current_container.AddMethod (d), d.Name);
+			d.Block = (Block) $6;
+			CheckDef (current_container.AddMethod (d), d.Name);
+		}
 	  }
 	;
 
@@ -1715,7 +1718,7 @@ literal
 	| real_literal
 	| LITERAL_CHARACTER     { $$ = new CharLiteral ((char) lexer.Value); }
 	| LITERAL_STRING        { $$ = new StringLiteral ((string) lexer.Value); }
-	| NULL			{ $$ = new NullLiteral (); }
+	| NULL			{ $$ = NullLiteral.Null; }
 	;
 
 real_literal
@@ -2626,6 +2629,9 @@ statement_expression
 	| post_decrement_expression	{ $$ = new StatementExpression ((ExpressionStatement) $1); }
 	| pre_increment_expression	{ $$ = new StatementExpression ((ExpressionStatement) $1); }
 	| pre_decrement_expression	{ $$ = new StatementExpression ((ExpressionStatement) $1); }
+	| error {
+		Report.Error (1002, lexer.Location, "Expecting `;'");
+	  }
 	;
 
 object_creation_expression

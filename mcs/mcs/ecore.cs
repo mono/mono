@@ -2265,8 +2265,11 @@ namespace Mono.CSharp {
 			if (e is FieldExpr){
 				FieldExpr fe = (FieldExpr) e;
 				
-				if (!fe.FieldInfo.IsStatic)
-					fe.InstanceExpression = new This (Location.Null);
+				if (!fe.FieldInfo.IsStatic){
+					This t = new This (Location.Null);
+
+					fe.InstanceExpression = t.DoResolve (ec);
+				}
 			} 				
 
 			if (ec.IsStatic)
@@ -2430,8 +2433,13 @@ namespace Mono.CSharp {
 			return this;
 		}
 
-		public Expression DoResolveLValue (EmitContext ec)
+		override public Expression DoResolveLValue (EmitContext ec, Expression right_side)
 		{
+			Expression e = DoResolve (ec);
+
+			if (e == null)
+				return null;
+			
 			if (!FieldInfo.IsInitOnly)
 				return this;
 
@@ -2466,15 +2474,28 @@ namespace Mono.CSharp {
 		{
 			bool is_static = FieldInfo.IsStatic;
 
-			if (!is_static)
-				InstanceExpression.Emit (ec);
+			if (!is_static){
+				Expression instance = InstanceExpression;
+
+				if (instance.Type.IsValueType){
+					if (instance is IMemoryLocation){
+						IMemoryLocation ml = (IMemoryLocation) instance;
+
+						ml.AddressOf (ec);
+					} else
+						throw new Exception ("The " + instance + " of type " + Type+
+								     "represents a ValueType and does not " +
+								     "implement IMemoryLocation");
+				} else
+					instance.Emit (ec);
+			}
 			source.Emit (ec);
 			
 			if (is_static)
 				ec.ig.Emit (OpCodes.Stsfld, FieldInfo);
-			else
+			else {
 				ec.ig.Emit (OpCodes.Stfld, FieldInfo);
-			
+			}
 		}
 		
 		public void AddressOf (EmitContext ec)

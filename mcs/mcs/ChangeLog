@@ -1,3 +1,28 @@
+2001-11-27  Miguel de Icaza  <miguel@ximian.com>
+
+	* expression.cs (This): Fix prototype for DoResolveLValue to
+	override the base class DoResolveLValue.
+
+	* cs-parser.cs: Report errors cs574 and cs575 (destructor
+	declarations) 
+
+	* ecore.cs (FieldExpr.EmitAssign): Handle value types specially
+	(we need to load the address of the field here).  This fixes
+	test-22. 
+	
+	(FieldExpr.DoResolveLValue): Call the DoResolve
+	function to initialize the Instance expression.
+	
+	* statement.cs (Foreach.Emit): Fix the bug where we did not invoke
+	correctly the GetEnumerator operation on a value type.
+
+	* cs-parser.jay: Add more simple parsing error catches.
+
+	* statement.cs (Switch): Add support for string switches.
+	Handle null specially.
+
+	* literal.cs (NullLiteral): Make NullLiteral objects singletons. 
+
 2001-11-28  Ravi Pratap  <ravi@ximian.com>
 
 	* cs-parser.jay (local_constant_declaration): Use declare_local_constant.
@@ -29,7 +54,7 @@
 
 2001-11-26  Miguel de Icaza  <miguel@ximian.com>
 
-	* statement.cs (Switch): Catch double defaults
+	* statement.cs (Switch): Catch double defaults.
 
 	(Switch): More work on the switch() statement
 	implementation.  It works for integral values now, need to finish

@@ -118,9 +118,11 @@ namespace Mono.CSharp {
 		public Hashtable temporary_storage;
 
 		public Block CurrentBlock;
+
+		Location loc;
 		
-		public EmitContext (TypeContainer parent, ILGenerator ig, Type return_type,
-				    int code_flags, bool is_constructor)
+		public EmitContext (TypeContainer parent, Location l, ILGenerator ig,
+				    Type return_type, int code_flags, bool is_constructor)
 		{
 			this.ig = ig;
 
@@ -130,13 +132,15 @@ namespace Mono.CSharp {
 			ReturnType = return_type;
 			IsConstructor = is_constructor;
 			CurrentBlock = null;
+			loc = l;
 			
 			if (ReturnType == TypeManager.void_type)
 				ReturnType = null;
 		}
 
-		public EmitContext (TypeContainer parent, ILGenerator ig, Type return_type, int code_flags)
-			: this (parent, ig, return_type, code_flags, false)
+		public EmitContext (TypeContainer parent, Location l, ILGenerator ig,
+				    Type return_type, int code_flags)
+			: this (parent, l, ig, return_type, code_flags, false)
 		{
 		}
 
@@ -157,10 +161,27 @@ namespace Mono.CSharp {
 				}
 			}
 
+			//
+			// FIXME: We need to use the flow analysis information
+			// here to correctly implement this
+			//
 			if (!has_ret){
-				Statement s = new Return (null, Location.Null);
-
-				s.Emit (this);
+				//
+				// For void functions, we just emit a ret.
+				//
+				if (ReturnType == null){
+					Statement s = new Return (null, Location.Null);
+					s.Emit (this);
+				} else {
+					//
+					// We cant figure whether all code paths
+					// have returned or not, and we can not really
+					// generate a ret, so warn the user
+					//
+					Report.Warning (-13, loc,
+							"This function might be missing a return " +
+							"statement");
+				}
 			}
 		}
 

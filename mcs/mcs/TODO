@@ -59,23 +59,6 @@ BUGS
 	Need to use FindMembers to lookup the member for reporting
 	whether a new is needed or not.  
 
-* Foreach on structure returns does not work
-
-	I am generating invalid code instead of calling ldarga for the
-	structure, I am calling ldarg:
-
-	struct X {
-		public IEnumerator GetEnumerator ();
-	}
-
-	X x;
-
-	foreach (object a in x){
-		...
-	}
-
-	I need to get the address of that bad boy
-
 * Handle destructors specially
 
 	Turn ~X () { a () } into:
@@ -134,6 +117,8 @@ PENDING TASKS
 	* Implement Goto.
 
 	* Unsafe code.
+
+	* Implement `base' (BaseAccess class)
 
 * Function Declarations
 
@@ -280,3 +265,8 @@ RECOMMENDATIONS
 	resolve this during semantic analysis.
 
 
+* Try/Catch
+
+	Investigate what is  the right value to return  from `Emit' in
+	there (ie, for the `all code paths return')
+	

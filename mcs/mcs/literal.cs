@@ -74,8 +74,17 @@ namespace Mono.CSharp {
 	}
 
 	public class NullLiteral : Literal {
+		public static readonly NullLiteral Null;
+		
+		static NullLiteral ()
+		{
+			Null = new NullLiteral ();
+		}
+			
 		public NullLiteral ()
 		{
+			if (Null != null)
+				throw new Exception ("More than one null has been created!");
 		}
 		
 		override public string AsString ()

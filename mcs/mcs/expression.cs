@@ -3526,7 +3526,7 @@ namespace Mono.CSharp {
 			return this;
 		}
 
-		public Expression DoResolveLValue (EmitContext ec)
+		override public Expression DoResolveLValue (EmitContext ec, Expression right_side)
 		{
 			DoResolve (ec);
 			
@@ -3551,7 +3551,16 @@ namespace Mono.CSharp {
 
 		public void AddressOf (EmitContext ec)
 		{
-			ec.ig.Emit (OpCodes.Ldarga_S, (byte) 0);
+			ec.ig.Emit (OpCodes.Ldarg_0);
+
+			// FIMXE
+			// FIGURE OUT WHY LDARG_S does not work
+			//
+			// consider: struct X { int val; int P { set { val = value; }}}
+			//
+			// Yes, this looks very bad. Look at `NOTAS' for
+			// an explanation.
+			// ec.ig.Emit (OpCodes.Ldarga_S, (byte) 0);
 		}
 	}
 

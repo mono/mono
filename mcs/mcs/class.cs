@@ -1384,7 +1384,8 @@ namespace Mono.CSharp {
 				VerifyPendingMethods ();
 
 			if (OptAttributes != null) {
-				EmitContext ec = new EmitContext (this, null, null, ModFlags, false);
+				EmitContext ec = new EmitContext (this, Location.Null, null, null,
+								  ModFlags, false);
 				
 				if (OptAttributes.AttributeSections != null) {
 					foreach (AttributeSection asec in OptAttributes.AttributeSections) {
@@ -1629,8 +1630,10 @@ namespace Mono.CSharp {
 			Modifiers.OVERRIDE |
 			Modifiers.ABSTRACT |
 			Modifiers.EXTERN;
-		
+
+		//
 		// return_type can be "null" for VOID values.
+		//
 		public Method (string return_type, int mod, string name, Parameters parameters,
 			       Attributes attrs, Location l)
 			: base (name, parameters, l)
@@ -1931,7 +1934,8 @@ namespace Mono.CSharp {
 		public void Emit (TypeContainer parent)
 		{
 			ILGenerator ig = MethodBuilder.GetILGenerator ();
-			EmitContext ec = new EmitContext (parent, ig, GetReturnType (parent), ModFlags);
+			EmitContext ec = new EmitContext (parent, Location, ig,
+							  GetReturnType (parent), ModFlags);
 
 			if (OptAttributes != null && OptAttributes.AttributeSections != null) {
 				foreach (AttributeSection asec in OptAttributes.AttributeSections) {
@@ -1952,8 +1956,24 @@ namespace Mono.CSharp {
 					}
 				}
 			}
-			
-			ec.EmitTopBlock (Block);
+
+			//
+			// Handle destructors specially
+			//
+			if (Name == "Finalize" && type_return_type == TypeManager.void_type){
+				Label end = ig.BeginExceptionBlock ();
+				Label finish = ig.DefineLabel ();
+				
+				ec.EmitTopBlock (Block);
+				ig.Emit (OpCodes.Leave, finish);
+				ig.BeginFinallyBlock ();
+
+//				throw new Exception ("IMPLEMENT BASE ACCESS!");
+				Console.WriteLine ("Implement base access here");
+
+				ig.EndExceptionBlock ();
+			} else 
+				ec.EmitTopBlock (Block);
 		}
 	}
 
@@ -2112,7 +2132,7 @@ namespace Mono.CSharp {
 		public void Emit (TypeContainer parent)
 		{
 			ILGenerator ig = ConstructorBuilder.GetILGenerator ();
-			EmitContext ec = new EmitContext (parent, ig, null, ModFlags, true);
+			EmitContext ec = new EmitContext (parent, Location, ig, null, ModFlags, true);
 
 			if (parent is Class){
 				if (Initializer == null)
@@ -2205,7 +2225,7 @@ namespace Mono.CSharp {
 
 		public void Emit (TypeContainer tc)
 		{
-			EmitContext ec = new EmitContext (tc, null, FieldBuilder.FieldType, ModFlags);
+			EmitContext ec = new EmitContext (tc, Location, null, FieldBuilder.FieldType, ModFlags);
 			
 			if (OptAttributes == null)
 				return;
@@ -2358,7 +2378,7 @@ namespace Mono.CSharp {
 			EmitContext ec;
 
 			if (OptAttributes != null) {
-				ec = new EmitContext (tc, null, PropertyType, ModFlags);
+				ec = new EmitContext (tc, Location, null, PropertyType, ModFlags);
 
 				if (OptAttributes.AttributeSections != null) {
 					foreach (AttributeSection asec in OptAttributes.AttributeSections) {
@@ -2383,14 +2403,14 @@ namespace Mono.CSharp {
 			
 			if (Get != null){
 				ig = GetBuilder.GetILGenerator ();
-				ec = new EmitContext (tc, ig, PropertyType, ModFlags);
+				ec = new EmitContext (tc, Location, ig, PropertyType, ModFlags);
 				
 				ec.EmitTopBlock (Get);
 			}
 
 			if (Set != null){
 				ig = SetBuilder.GetILGenerator ();
-				ec = new EmitContext (tc, ig, null, ModFlags);
+				ec = new EmitContext (tc, Location, ig, null, ModFlags);
 				
 				ec.EmitTopBlock (Set);
 			}
@@ -2491,7 +2511,7 @@ namespace Mono.CSharp {
 
 		public void Emit (TypeContainer tc)
 		{
-			EmitContext ec = new EmitContext (tc, null, EventType, ModFlags);
+			EmitContext ec = new EmitContext (tc, Location, null, EventType, ModFlags);
 
 			if (OptAttributes == null)
 				return;
@@ -2668,7 +2688,7 @@ namespace Mono.CSharp {
 			EmitContext ec;
 
 			if (OptAttributes != null) {
-				ec = new EmitContext (tc, null, IndexerType, ModFlags);
+				ec = new EmitContext (tc, Location, null, IndexerType, ModFlags);
 				if (OptAttributes.AttributeSections != null) {
 					foreach (AttributeSection asec in OptAttributes.AttributeSections) {
 						if (asec.Attributes == null)
@@ -2692,14 +2712,14 @@ namespace Mono.CSharp {
 
 			if (Get != null){
 				ig = GetBuilder.GetILGenerator ();
-				ec = new EmitContext (tc, ig, IndexerType, ModFlags);
+				ec = new EmitContext (tc, Location, ig, IndexerType, ModFlags);
 				
 				ec.EmitTopBlock (Get);
 			}
 
 			if (Set != null){
 				ig = SetBuilder.GetILGenerator ();
-				ec = new EmitContext (tc, ig, null, ModFlags);
+				ec = new EmitContext (tc, Location, ig, null, ModFlags);
 				
 				ec.EmitTopBlock (Set);
 			}
@@ -2891,7 +2911,7 @@ namespace Mono.CSharp {
 		public void Emit (TypeContainer parent)
 		{
 			if (OptAttributes != null) {
-				EmitContext ec = new EmitContext (parent, null, null, ModFlags);
+				EmitContext ec = new EmitContext (parent, Location, null, null, ModFlags);
 
 				if (OptAttributes.AttributeSections != null) {
 					foreach (AttributeSection asec in OptAttributes.AttributeSections) {

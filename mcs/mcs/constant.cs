@@ -95,7 +95,7 @@ namespace Mono.CSharp {
 			if (FieldBuilder == null)
 				return;
 			
-			EmitContext ec = new EmitContext (parent, null, type, ModFlags);
+			EmitContext ec = new EmitContext (parent, Location, null, type, ModFlags);
 
 			Expr = Expression.Reduce (ec, Expr);
 
