@@ -9,6 +9,7 @@
 // Copyright (C) Tim Coleman, 2002
 //
 
+using System.ComponentModel;
 using System.Data;
 using System.Data.Common;
 using System.Runtime.InteropServices;
@@ -20,7 +21,7 @@ namespace System.Data.OleDb
 	public sealed class OleDbException : ExternalException
 	{
 		private OleDbConnection connection;
-		
+	 	
 		#region Constructors
 
 		internal OleDbException (OleDbConnection cnc)
@@ -31,7 +32,8 @@ namespace System.Data.OleDb
 		#endregion // Constructors
 		
 		#region Properties
-
+		// FIXME : On .NET the string is System.Data.OleDb.OleDbException+ErrorConverter 
+		[TypeConverterAttribute (typeof (OleDbException))]
 		public override int ErrorCode {	
 			get {
 				GdaList glist;
@@ -46,7 +48,8 @@ namespace System.Data.OleDb
 				return -1;
 			}
 		}
-
+		
+		[ DesignerSerializationVisibilityAttribute (DesignerSerializationVisibility.Content)]
 		public OleDbErrorCollection Errors {
 			get {
 				GdaList glist;
@@ -112,9 +115,13 @@ namespace System.Data.OleDb
 
 		#region Methods
 
-		[MonoTODO]
 		public override void GetObjectData (SerializationInfo si, StreamingContext context)
 		{
+			if (si == null)
+				throw new ArgumentNullException ("si");
+
+			si.AddValue ("connection", connection);
+			base.GetObjectData (si, context);
 			throw new NotImplementedException ();
 		}
 
