@@ -24,15 +24,19 @@ using System.Runtime.InteropServices;
 	[assembly: AssemblyVersion ("1.0.5000.0")]
 	[assembly: SatelliteContractVersion ("1.0.5000.0")]
 #endif
-
-[assembly: AssemblyTitle ("System.Security.dll")]
-[assembly: AssemblyDescription ("System.Security.dll")]
-[assembly: AssemblyCompany ("MONO development team")]
-[assembly: AssemblyProduct ("MONO CLI")]
-[assembly: AssemblyCopyright ("(c) 2003-2004 Various Authors")]
+#if (NET_1_2)
+	[assembly: AssemblyVersion ("1.2.3400.0")]
+	[assembly: SatelliteContractVersion ("1.2.3400.0")]
+	[assembly: AssemblyCompany ("MONO development team")]
+	[assembly: AssemblyCopyright ("(c) 2003-2004 Various Authors")]
+	[assembly: AssemblyDescription ("System.Security.dll")]
+	[assembly: AssemblyProduct ("MONO CLI")]
+	[assembly: AssemblyTitle ("System.Security.dll")]
+#endif
 
 [assembly: CLSCompliant (true)]
+[assembly: ComVisible (false)]
 [assembly: NeutralResourcesLanguage ("en-US")]
 
-//[assembly: AssemblyDelaySign (false)]
+//[assembly: AssemblyDelaySign (true)]
 //[assembly: AssemblyKeyFile ("")]
