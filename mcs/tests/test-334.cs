@@ -1,8 +1,8 @@
 namespace Test {
-	using Directory = Foo.Store.Directory;
+	using Bar = Foo.Store.Directory;
 	namespace Foo {
 		namespace Index {
-			public class CompoundFileReader : Directory {
+			public class CompoundFileReader : Bar {
 				static void Main () { }
 			}
 		}

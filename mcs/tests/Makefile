@@ -4,7 +4,7 @@
 # *** make sure you add multi-file tests to TEST_ORDERING if necessary
 
 thisdir = tests
-SUBDIRS = 
+SUBDIRS =
 include ../build/rules.make
 
 DISTFILES = README.tests harness.mk $(wildcard *.cs) $(wildcard *.il) $(wildcard *.xml) $(wildcard *.inc)
@@ -28,7 +28,7 @@ USE_MCS_FLAGS :=
 # He may also move some to TEST_EXCLUDE_net_2_0 if some of the merges are inappropriate for GMCS.
 #
 NEW_TEST_SOURCES_common = xml-033 xml-034 xml-035 test-329 2test-16 test-330 a-parameter5 test-331 test-332 \
-			  test-333 test-311 test-335 test-336 test-337 test-287 test-338 test-339
+			  test-333 test-311 test-335 test-336 test-337 test-287 test-338 test-339 test-341
 
 #
 # Please do _not_ add any tests here - all new tests should go into NEW_TEST_SOURCES_common
@@ -68,8 +68,9 @@ TEST_SOURCES_common = \
 	test-281 test-282 test-283 test-284 test-285 test-286          test-288 test-289 test-290 \
 	test-291 test-292 test-293 test-294 test-295 test-296 test-297 test-298 test-299 test-300 \
 	test-301 test-302 test-303 test-304 test-305 test-306 test-307          test-309 test-310 \
-	         test-312 test-313 test-314 test-315 test-316 test-317 test-318          test-320 \
-	test-321          test-323 test-324 test-325 test-326 test-327 test-328 \
+		 test-312 test-313 test-314 test-315 test-316 test-317 test-318          test-320 \
+	test-321          test-323 test-324 test-325 test-326 test-327 test-328		  \
+											 test-340 \
 	cls-test-0 cls-test-1 cls-test-2 cls-test-3 cls-test-5 cls-test-6 cls-test-7 cls-test-10  \
 	cls-test-11 cls-test-12 cls-test-14 cls-test-15 cls-test-16 \
 	2test-1  2test-2  2test-3  2test-4  2test-5  2test-6  2test-7  2test-8  2test-9  2test-10 \
@@ -87,10 +88,10 @@ TEST_SOURCES_common = \
 	module-1 module-2 module-3 \
 	pi pp pu-ip pu-pi \
 	a-call		a-capture5    a-instance	a-parameter2			\
-	a-capture10	a-capture6    a-nested-anon2  	a-parameter4 			\
-	a-capture1	a-capture7    a-nested-anon3    				\
-	a-capture2	a-capture8    a-nested-anon4  					\
-	a-capture3	a-capture9    a-nested-anon   	a-simple2			\
+	a-capture10	a-capture6    a-nested-anon2	a-parameter4			\
+	a-capture1	a-capture7    a-nested-anon3				\
+	a-capture2	a-capture8    a-nested-anon4					\
+	a-capture3	a-capture9    a-nested-anon	a-simple2			\
 	a-capture4	a-event       a-nested		a-simple			\
 	acc-modifiers	acc-modifiers2							\
 	$(TEST_SOURCES_XML)								\
@@ -99,12 +100,12 @@ TEST_SOURCES_common = \
 TEST_EXCLUDES_common = test-50 test-120 a-parameter4
 
 TEST_SOURCES_net_2_0 = \
-	gen-13-dll gen-13-exe gen-17-dll gen-17-exe gen-31-dll gen-31-exe 		\
-	gen-47-dll gen-47-exe gen-98-dll gen-98-exe 					\
+	gen-13-dll gen-13-exe gen-17-dll gen-17-exe gen-31-dll gen-31-exe		\
+	gen-47-dll gen-47-exe gen-98-dll gen-98-exe					\
 	gen-1   gen-2   gen-3   gen-4   gen-5   gen-6   gen-7   gen-8   gen-9   gen-10  \
 	gen-11  gen-12          gen-14  gen-15  gen-16          gen-18  gen-19  gen-20  \
 	gen-21  gen-22  gen-23  gen-24  gen-25  gen-26  gen-27  gen-28  gen-29  gen-30  \
-	        gen-32  gen-33  gen-34  gen-35  gen-36  gen-37  gen-38  gen-39  gen-40  \
+		gen-32  gen-33  gen-34  gen-35  gen-36  gen-37  gen-38  gen-39  gen-40  \
 	gen-41  gen-42  gen-43  gen-44  gen-45  gen-46          gen-48  gen-49  gen-50  \
 	gen-51  gen-52  gen-53  gen-54  gen-55  gen-56          gen-58  gen-59  gen-60  \
 	gen-61  gen-62  gen-63  gen-64          gen-66  gen-67  gen-68  gen-69  gen-70  \
@@ -166,10 +167,10 @@ mcs-casts.out: casts-mcs.exe
 test-casts: boot-casts.out mcs-casts.out
 	cmp $^
 
-# compilation is part of the testing too, so we don't actually 
+# compilation is part of the testing too, so we don't actually
 # do anything in test-local.
 
-test-local: 
+test-local:
 
 run-test-local: ilasm test-harness test-casts
 
@@ -236,7 +237,7 @@ endif
 TEST_SOURCES_XML = \
 	xml-001 xml-002 xml-003 xml-004 xml-005 xml-006 xml-007 xml-008 xml-009 xml-010 \
 	xml-011 xml-012 xml-013 xml-014 xml-015 xml-016 xml-017 xml-018 xml-019 xml-020 \
-	xml-021         xml-023 xml-024 xml-025 xml-026 	        xml-029 xml-030 \
+	xml-021         xml-023 xml-024 xml-025 xml-026	        xml-029 xml-030 \
 	xml-031 xml-032
 
 # currently no formalization on 'cref' attribute was found, so there are some
