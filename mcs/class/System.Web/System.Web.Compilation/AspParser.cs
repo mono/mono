@@ -280,8 +280,10 @@ namespace System.Web.Compilation
 				if (Eat ('=')){
 					if (Eat (Token.ATTVALUE)){
 						attributes.Add (id, tokenizer.Value);
+					} else if (Eat ('<') && Eat ('%')) {
+						attributes.Add (id, "<%" +
+								GetVerbatim (tokenizer.get_token (), "%>"));
 					} else {
-						//TODO: support data binding syntax without quotes
 						OnError ("expected ATTVALUE");
 						return null;
 					}

@@ -1,7 +1,10 @@
+2003-10-19  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* AspParser.cs: fixed bug #49627.
+
 2003-10-14  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
-	* System.Web.Compilation/BaseCompiler.cs: now gets the CodeCompiler
-	from configuration files.
+	* BaseCompiler.cs: now gets the CodeCompiler from configuration files.
 
 2003-10-13  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
