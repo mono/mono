@@ -1,5 +1,17 @@
 2002-05-21  Martin Baulig  <martin@gnome.org>
 
+	* jit.c (mono_debug_handle): Removed this global variable.
+
+	* debug.c (mono_debug_close): Removed.
+	(mono_debug_cleanup): New global function.
+	(mono_debug_add_image): New global function.
+	(mono_debug_handle_from_class): New global function.
+	(mono_debug_write_symbols): New global function.
+	(mono_debug_add_type): Removed `MonoDebugHandle *' argument.
+	(mono_debug_add_method): Likewise.
+
+2002-05-21  Martin Baulig  <martin@gnome.org>
+
 	Work around a hard-to-fix bug in GDB and create a single dwarf/stabs
 	file for all assemblies.  Currently, the JIT doesn't put all methods
 	from a single assembly into a continuous region of memory.  We were
