@@ -14,8 +14,6 @@ namespace System.Data.SqlClient
 	/// </summary>
 	public class SqlConnection : IDBConnection
 	{
-		#region methods
-		
 		public SqlTransaction BeginTransaction()
 		{
 			return new SqlTransaction (this);
@@ -25,7 +23,7 @@ namespace System.Data.SqlClient
 		{
 			SqlTransaction xaction = new SqlTransaction (cnc);
 			xaction.IsolationLevel = il;
-
+			
 			return xaction;
 		}
 
@@ -53,10 +51,6 @@ namespace System.Data.SqlClient
 			throw new NotImplementedException ();
 		}
 
-		#endregion
-
-		#region properties
-
 		[MonoTODO]
 		public string ConnectionString
 		{
@@ -81,7 +75,5 @@ namespace System.Data.SqlClient
 		{
 			get { throw new NotImplementedException (); }
 		}
-
-		#endregion
 	}
 }
