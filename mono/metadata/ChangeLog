@@ -1,3 +1,8 @@
+2003-12-13  Patrik Torstensson <p@rxc.se>
+
+	* marshal.c (mono_remoting_wrapper): Fix bug 48015, using TP as this 
+	instead of unwrapped server.
+
 2003-12-12  Zoltan Varga  <vargaz@freemail.hu>
 
 	* verify.c (check_corlib): Fix field index.
