@@ -1,12 +1,31 @@
+2003-11-11  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* CorCompare.exe.sources: not needed now.
+	 
+	* Makefile: updated to build the 3 exes we have now.
+
+	* mono-api-info.cs: new program. Given an assembly name, it generates
+	an xml file with its public data.
+
+	* mono-api-diff.cs: compares 2 xml files generated with mono-api-info
+	and outputs an xml file suitable for building class status pages with
+	mono-api.xsl.
+
+	* mono-api.xsl: small modifications to corcompare.xsl to match the new
+	file format.
+
 2003-07-12  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
 
-	* cormissing.xsl: Change percentage to display percentage for all sub-members, not just direct members
+	* cormissing.xsl: Change percentage to display percentage for all
+	sub-members, not just direct members
 
 2003-07-12  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
 
-	* MissingNameSpace.cs: Fixed the case where a private/ internal class that per chance has a class with the same name
-				in the compared assembly gets compared -> now only public classes are compared.
-	* MissingType: Internal nested types were always compared -> internal nested types are never compared
+	* MissingNameSpace.cs: Fixed the case where a private/ internal class
+	that per chance has a class with the same name in the compared
+	assembly gets compared -> now only public classes are compared.
+	* MissingType: Internal nested types were always compared -> internal
+	nested types are never compared
 
 2002-02-25  Nick Drochak  <ndrochak@gol.com>
 
@@ -14,3 +33,4 @@
 	* ToDoNamespace.cs: using BindingFlags for GetMembers
 	* ToDoType.cs: throw exception if we encounter a member type
 	that we didn't expect. Also remove unused property.
+
