@@ -1,3 +1,13 @@
+2003-04-06  Martin Baulig  <martin@ximian.com>
+
+	* typemanager.cs (IsNestedChildOf): Make this work if it's a
+	nested child, but also deriving from the outer class.  See
+	test-190.cs.
+	(FilterWithClosure): We may access private members of the outer
+	class if we're a nested child and deriving from the outer class.
+	(RealMemberLookup): Only set "`closure_private_ok' if the
+	`original_bf' contained BindingFlags.NonPublic.
+
 2003-04-05  Martin Baulig  <martin@ximian.com>
 
 	* statement.cs (FlowBranching.UsageVector.MergeChildren): Fix bug #40670.
