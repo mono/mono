@@ -38,8 +38,6 @@ using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
 
 namespace System.Reflection {
-
-	[Serializable]
 	[CLSCompliant(false)]
 	public unsafe sealed class Pointer : ISerializable {
 
@@ -51,7 +49,6 @@ namespace System.Reflection {
 		
 		public static object Box (void *ptr, Type type) 
 		{
-
 			if (type == null)
 				throw new ArgumentNullException ("type");
 			if (!type.IsPointer)

@@ -1,4 +1,8 @@
 2004-06-17  Gert Driesen <drieseng@users.sourceforge.net>
+
+	* Pointer.cs: remove serializable attribute to match MS.NET
+
+2004-06-17  Gert Driesen <drieseng@users.sourceforge.net>
 	
 	* ParameterModifier.cs: marked serializable, renamed field to match
 	MS.NET, throw ArgumentException when parameter count is less than or
