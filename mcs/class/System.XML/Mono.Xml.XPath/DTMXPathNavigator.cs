@@ -15,7 +15,12 @@ using System.Xml.XPath;
 
 namespace Mono.Xml.XPath
 {
-	public class DTMXPathNavigator : XPathNavigator, IXmlLineInfo
+#if OUTSIDE_SYSTEM_XML
+	public
+#else
+	internal
+#endif
+		class DTMXPathNavigator : XPathNavigator, IXmlLineInfo
 	{
 
 #region Copy of XPathDocument
@@ -207,7 +212,8 @@ namespace Mono.Xml.XPath
 					valueBuilder.Length = 0;
 				
 				int iter = nodes [currentNode].FirstChild;
-				while (iter != 0 && iter < nodes.Length && nodes [iter].Depth > nodes [currentNode].Depth) {
+				int depth = nodes [currentNode].Depth;
+				while (iter < nodes.Length && nodes [iter].Depth > depth) {
 					switch (nodes [iter].NodeType) {
 					case XPathNodeType.Comment:
 					case XPathNodeType.ProcessingInstruction:
@@ -561,7 +567,8 @@ namespace Mono.Xml.XPath
 
 #endregion
 
-		public string Debug {
+		/*
+		public string DebugDump {
 			get {
 				StringBuilder sb = new StringBuilder ();
 
@@ -585,10 +592,11 @@ namespace Mono.Xml.XPath
 				return sb.ToString ();
 			}
 		}
+		*/
 
 	}
 
-	public class XmlNamespaces
+	internal class XmlNamespaces
 	{
 		public const string XML = "http://www.w3.org/XML/1998/namespace";
 		public const string XMLNS = "http://www.w3.org/2000/xmlns/";

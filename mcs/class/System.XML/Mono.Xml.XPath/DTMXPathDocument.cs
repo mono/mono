@@ -13,8 +13,12 @@ using System.Xml.XPath;
 
 namespace Mono.Xml.XPath
 {
-
-	public class DTMXPathDocument : IXPathNavigable
+#if OUTSIDE_SYSTEM_XML
+	public
+#else
+	internal
+#endif
+		class DTMXPathDocument : IXPathNavigable
 	{
 
 #region ctor.

@@ -1,3 +1,15 @@
+2004-02-16  Atsushi Enomoto <atsushi@ximian.com>
+
+	* DTMXPathDocument.cs,
+	  DTMXPathDocumentBuilder.cs,
+	  DTMXPathDocumentWriter.cs,
+	  DTMXPathNavigator.cs,
+	  DTMXPathNode.cs :
+	    Made classes internal by default (still publicly available with
+	    OUTSIDE_SYSTEM_XML switch). Removed unused "position" field.
+	    Optimized DTMXPathNavigator.Value a bit.
+	* LocationPathPattern.cs : Modified some fields to private.
+
 2004-02-13  Atsushi Enomoto <atsushi@ximian.com>
 
 	* Added DTMXPathDocumentWriter.cs. It supports DTMXPathNavigator as

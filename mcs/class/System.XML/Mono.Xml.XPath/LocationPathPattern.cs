@@ -18,9 +18,9 @@ using System.Xml.Xsl;
 namespace Mono.Xml.XPath {
 	internal class LocationPathPattern : Pattern {
 		
-		internal LocationPathPattern patternPrevious;
-		internal bool isAncestor;
-		internal NodeTest nodeTest;
+		LocationPathPattern patternPrevious;
+		bool isAncestor;
+		NodeTest nodeTest;
 		ExprFilter filter;
 		
 		public LocationPathPattern (NodeTest nodeTest)

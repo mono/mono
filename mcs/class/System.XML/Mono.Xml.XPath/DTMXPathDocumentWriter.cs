@@ -15,7 +15,12 @@ using System.Xml.XPath;
 
 namespace Mono.Xml.XPath
 {
-	public class DTMXPathDocumentWriter : XmlWriter
+#if OUTSIDE_SYSTEM_XML
+	public
+#else
+	internal
+#endif
+		class DTMXPathDocumentWriter : XmlWriter
 	{
 		public DTMXPathDocumentWriter (XmlNameTable nt, int defaultCapacity)
 		{
@@ -60,9 +65,7 @@ namespace Mono.Xml.XPath
 		int nsIndexAtStart;
 
 		int prevSibling;
-		int position;
 		int lastNsInScope;
-		bool skipRead = false;
 
 		// They are only used in Writer
 		int writerDepth;
@@ -84,7 +87,7 @@ namespace Mono.Xml.XPath
 			// index 0 is dummy. No node (including Root) is assigned to this index
 			// So that we can easily compare index != 0 instead of index < 0.
 			// (Difference between jnz or jbe in 80x86.)
-			AddNode (0, 0, 0, 0, 0, XPathNodeType.All, "", false, "", "", "", "", "", 0, 0, 0);
+			AddNode (0, 0, 0, 0, XPathNodeType.All, "", false, "", "", "", "", "", 0, 0, 0);
 			nodeIndex++;
 			AddAttribute (0, null, null, null, null, null, 0, 0);
 			AddNsNode (0, null, null, 0);
@@ -92,7 +95,7 @@ namespace Mono.Xml.XPath
 			AddNsNode (1, "xml", XmlNamespaces.XML, 0);
 
 			// add root.
-			AddNode (0, 0, 0, -1, 0, XPathNodeType.Root, null, false, "", "", "", "", "", 1, 0, 0);
+			AddNode (0, 0, 0, -1, XPathNodeType.Root, null, false, "", "", "", "", "", 1, 0, 0);
 
 			this.nodeIndex = 1;
 			this.lastNsInScope = 1;
@@ -126,19 +129,10 @@ namespace Mono.Xml.XPath
 			return prevSibling;
 		}
 
-		private int GetPosition (int prevSibling)
-		{
-			if (prevSibling != 0)
-				return nodes [prevSibling].Position + 1;
-			else
-				return 0;
-		}
-
 		private void UpdateTreeForAddition ()
 		{
 			int parent = GetParentIndex ();
 			prevSibling = GetPreviousSiblingIndex ();
-			position = GetPosition (prevSibling);
 
 			nodeIndex++;
 
@@ -191,7 +185,7 @@ namespace Mono.Xml.XPath
 		}
 
 		// Here followings are skipped: firstChild, nextSibling, 
-		public void AddNode (int parent, int firstAttribute, int previousSibling, int depth, int position, XPathNodeType nodeType, string baseUri, bool isEmptyElement, string localName, string ns, string prefix, string value, string xmlLang, int namespaceNode, int lineNumber, int linePosition)
+		public void AddNode (int parent, int firstAttribute, int previousSibling, int depth, XPathNodeType nodeType, string baseUri, bool isEmptyElement, string localName, string ns, string prefix, string value, string xmlLang, int namespaceNode, int lineNumber, int linePosition)
 		{
 			if (nodes.Length < nodeIndex + 1) {
 				nodeCapacity *= 4;
@@ -207,7 +201,6 @@ namespace Mono.Xml.XPath
 			nodes [nodeIndex].PreviousSibling = previousSibling;
 			nodes [nodeIndex].NextSibling = 0;	// dummy
 			nodes [nodeIndex].Depth = depth;
-			nodes [nodeIndex].Position = position;
 			nodes [nodeIndex].NodeType = nodeType;
 			nodes [nodeIndex].BaseURI = baseUri;
 			nodes [nodeIndex].IsEmptyElement = isEmptyElement;
@@ -314,7 +307,7 @@ namespace Mono.Xml.XPath
 				case XPathNodeType.Text:
 				case XPathNodeType.SignificantWhitespace:
 					nodes [nodeIndex].Value += data;
-					if (XmlChar.IsWhitespace (data))
+					if (IsWhitespace (data))
 						nodes [nodeIndex].NodeType = XPathNodeType.SignificantWhitespace;
 					else
 						nodes [nodeIndex].NodeType = XPathNodeType.Text;
@@ -329,7 +322,6 @@ namespace Mono.Xml.XPath
 				0, // attribute
 				prevSibling,
 				writerDepth,
-				position,
 				XPathNodeType.Text,
 				null,
 				false,
@@ -369,7 +361,6 @@ namespace Mono.Xml.XPath
 				0, // attribute
 				prevSibling,
 				writerDepth,
-				position,
 				XPathNodeType.Comment,
 				null,
 				false,
@@ -394,7 +385,6 @@ namespace Mono.Xml.XPath
 				0, // attribute
 				prevSibling,
 				writerDepth,
-				position,
 				XPathNodeType.ProcessingInstruction,
 				null,
 				false,
@@ -419,7 +409,6 @@ namespace Mono.Xml.XPath
 				0, // attribute
 				prevSibling,
 				writerDepth,
-				position,
 				XPathNodeType.Whitespace,
 				null,
 				false,
@@ -465,11 +454,11 @@ namespace Mono.Xml.XPath
 			int parent = GetParentIndex ();
 			UpdateTreeForAddition ();
 
-			WriteStartElement (parent, prevSibling, position, prefix, localName, ns);
+			WriteStartElement (parent, prevSibling, prefix, localName, ns);
 			state = WriteState.Element;
 		}
 
-		private void WriteStartElement (int parent, int previousSibling, int position, string prefix, string localName, string ns)
+		private void WriteStartElement (int parent, int previousSibling, string prefix, string localName, string ns)
 		{
 			PrepareStartElement (previousSibling);
 
@@ -477,7 +466,6 @@ namespace Mono.Xml.XPath
 				0, // dummy:firstAttribute
 				previousSibling,
 				writerDepth,
-				position,
 				XPathNodeType.Element,
 				null,
 				false,
@@ -658,6 +646,22 @@ namespace Mono.Xml.XPath
 		public override void WriteSurrogateCharEntity (char high, char low)
 		{
 			throw new NotSupportedException ();
+		}
+
+		private bool IsWhitespace (string data)
+		{
+			for (int i = 0; i < data.Length; i++) {
+				switch (data [i]) {
+				case ' ':
+				case '\r':
+				case '\n':
+				case '\t':
+					continue;
+				default:
+					return false;
+				}
+			}
+			return true;
 		}
 		#endregion
 	}
