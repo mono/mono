@@ -560,9 +560,6 @@ namespace Mono.CSharp {
 					if (delegate_instance_expr.Type.IsValueType)
 						delegate_instance_expr = new BoxedCast (delegate_instance_expr);
 				
-				DictionaryEntry de = new DictionaryEntry (delegate_method, delegate_instance_expr);
-				TypeManager.RegisterDelegateData (type, de);
-				
 				eclass = ExprClass.Value;
 				return this;
 			}
@@ -584,10 +581,18 @@ namespace Mono.CSharp {
 				return null;
 			}
 
-			DictionaryEntry d = TypeManager.GetDelegateData (e_type);
+			Expression invoke_method = Expression.MemberLookup (ec, e_type, "Invoke", false,
+									    MemberTypes.Method,
+									    Expression.AllBindingFlags,
+									    Location);
 
-			delegate_instance_expr = (Expression) d.Value;
-			delegate_method        = (MethodBase) d.Key;
+			if (invoke_method == null) {
+				Report.Error (-200, Location, "Internal error ! COuld not find Invoke method!");
+				return null;
+			}
+				
+			delegate_instance_expr = e;
+			delegate_method        = ((MethodGroupExpr) invoke_method).Methods [0];
 			
 			eclass = ExprClass.Value;
 			return this;

@@ -1,3 +1,17 @@
+2001-12-24  Ravi Pratap  <ravi@ximian.com>
+
+	* typemanager.cs (RegisterDelegateData, GetDelegateData): Get rid
+	of these as the workaround is unnecessary.
+
+	* delegate.cs (NewDelegate.DoResolve): Get rid of bits which registered
+	delegate data - none of that is needed at all.
+
+	Re-write bits to extract the instance expression and the delegate method
+	correctly.
+
+	* expression.cs (Binary.ResolveOperator): Handle the '-' binary operator 
+	on delegates too.
+
 2001-12-23  Miguel de Icaza  <miguel@ximian.com>
 
 	* expression.cs (IsParamsMethodApplicable): if there are not

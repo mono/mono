@@ -594,23 +594,6 @@ public class TypeManager {
 		return (Const) builder_to_constant [fb];
 	}
 	
-
-	static Hashtable delegate_to_data;
-	
-	public static void RegisterDelegateData (Type del_type, DictionaryEntry de)
-	{
-		if (delegate_to_data == null)
-			delegate_to_data = new PtrHashtable ();
-
-		delegate_to_data.Add (del_type, de);
-	}
-	
-	public static DictionaryEntry GetDelegateData (Type t)
-	{
-		return (DictionaryEntry) delegate_to_data [t];
-	}
-
-	
 	//
 	// Gigantic work around for stupidity in System.Reflection.Emit follows
 	//

@@ -1486,18 +1486,23 @@ namespace Mono.CSharp {
 
 					return this;
 				}
+			}
 
+			if (oper == Operator.Addition || oper == Operator.Subtraction) {
 				if (l.IsSubclassOf (TypeManager.delegate_type) &&
 				    r.IsSubclassOf (TypeManager.delegate_type)) {
-
+					
 					Arguments = new ArrayList ();
 					Arguments.Add (new Argument (left, Argument.AType.Expression));
 					Arguments.Add (new Argument (right, Argument.AType.Expression));
 					
-					method = TypeManager.delegate_combine_delegate_delegate;
-
+					if (oper == Operator.Addition)
+						method = TypeManager.delegate_combine_delegate_delegate;
+					else
+						method = TypeManager.delegate_remove_delegate_delegate;
+					
 					type = l;
-
+					
 					return this;
 				}
 			}
