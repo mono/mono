@@ -43,6 +43,68 @@ namespace Mono.CSharp {
 		public abstract Type[] InterfaceConstraints {
 			get;
 		}
+
+		// <summary>
+		//   Returns whether the type parameter is "known to be a reference type".
+		// </summary>
+		public virtual bool IsReferenceType {
+			get {
+				if (HasReferenceTypeConstraint)
+					return true;
+				if (HasValueTypeConstraint)
+					return false;
+
+				if (ClassConstraint != null) {
+					if (ClassConstraint.IsValueType)
+						return false;
+
+					if (ClassConstraint != TypeManager.object_type)
+						return true;
+				}
+
+				foreach (Type t in InterfaceConstraints) {
+					if (!t.IsGenericParameter)
+						continue;
+
+					GenericConstraints gc = TypeManager.GetTypeParameterConstraints (t);
+					if ((gc != null) && gc.IsReferenceType)
+						return true;
+				}
+
+				return false;
+			}
+		}
+
+		// <summary>
+		//   Returns whether the type parameter is "known to be a value type".
+		// </summary>
+		public virtual bool IsValueType {
+			get {
+				if (HasValueTypeConstraint)
+					return true;
+				if (HasReferenceTypeConstraint)
+					return false;
+
+				if (ClassConstraint != null) {
+					if (!ClassConstraint.IsValueType)
+						return false;
+
+					if (ClassConstraint != TypeManager.value_type)
+						return true;
+				}
+
+				foreach (Type t in InterfaceConstraints) {
+					if (!t.IsGenericParameter)
+						continue;
+
+					GenericConstraints gc = TypeManager.GetTypeParameterConstraints (t);
+					if ((gc != null) && gc.IsValueType)
+						return true;
+				}
+
+				return false;
+			}
+		}
 	}
 
 	public enum SpecialConstraint

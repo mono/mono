@@ -1,9 +1,17 @@
 2004-09-24  Martin Baulig  <martin@ximian.com>
 
-	* generic.cs (ReflectionConstraints): Moved here and made it an
+	* generic.cs (GenericConstraints): Added `IsReferenceType' and
+	`IsValueType' properties.
+
+	* support.cs (ReflectionConstraints): Use
+	Type.GetGenericParameterConstraints() instead of the old hack.
+
+2004-09-24  Martin Baulig  <martin@ximian.com>
+
+	* generic.cs (GenericConstraints): Moved here and made it an
 	abstract class.
 
-	* support.cs (ReflectionConstraints): Moved to generic.cs.
+	* support.cs (GenericConstraints): Moved to generic.cs.
 
 2004-09-24  Martin Baulig  <martin@ximian.com>
 

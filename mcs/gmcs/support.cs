@@ -290,11 +290,13 @@ namespace Mono.CSharp {
 
 		public ReflectionConstraints (Type t)
 		{
-			iface_constraints = t.GetInterfaces ();
-			if (iface_constraints ==  null)
-				iface_constraints = Type.EmptyTypes;
-			if (t.BaseType != TypeManager.object_type)
-				class_constraint = t.BaseType;
+			Type[] constraints = t.GetGenericParameterConstraints ();
+			if ((constraints.Length > 0) && !constraints [0].IsInterface) {
+				class_constraint = constraints [0];
+				iface_constraints = new Type [constraints.Length - 1];
+				Array.Copy (constraints, 1, iface_constraints, 0, constraints.Length - 1);
+			} else
+				iface_constraints = constraints;
 			attrs = t.GenericParameterAttributes;
 		}
 
