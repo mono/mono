@@ -1,5 +1,11 @@
 2004-09-09 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* HttpStaticObjectsCollection.cs: don't share static session objects
+	declared in the application file across the application, but on a
+	per-session basis. Fixes bug #65446.
+
+2004-09-09 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* HttpServerUtility.cs: in Transfer(path), don't keep form data if
 	the transfer is done from inside a page that received a postback.
 	Fixes bug #65613.

@@ -1,3 +1,9 @@
+2004-09-09 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpSessionState.cs: don't share static session objects declared in
+	the application file across the application, but on a per-session
+	basis. Fixes bug #65446.
+
 2004-08-31  Sanjay Gupta <gsanjay@novell.com>
 
 	* SessionStateItemExpireCallback.cs: Explicit modifier "sealed" not 
