@@ -1,3 +1,7 @@
+//
+// Stress test properties and the various modes of 
+// declarations (virtual, overrides, abstract, new)
+//
 using System;
 
 interface I {
