@@ -1,3 +1,8 @@
+2004-01-20  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* loader.c: don't trim ".dll" before looking up in the config file.
+	Don't leak orig_scope. Reopened bug #22532 in the meanwhile.
+
 2004-01-19  Zoltan Varga  <vargaz@freemail.hu>
 
 	* image.c (mono_image_addref): New public function.
