@@ -64,7 +64,7 @@ namespace Mono.Xml.XPath {
 			if (e is ExprSLASH2)
 			{
 				if (((ExprSLASH2)e).right is ExprRoot)
-					return Compile (((ExprSLASH2)e).right);
+					return Compile (((ExprSLASH2)e).left);
 				
 				Pattern p0 = Compile (((ExprSLASH2)e).left);
 				LocationPathPattern p1

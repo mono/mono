@@ -18,7 +18,7 @@ using System.Xml.Xsl;
 namespace Mono.Xml.XPath {
 	internal class LocationPathPattern : Pattern {
 		
-		internal Pattern patternPrevious;
+		internal LocationPathPattern patternPrevious;
 		internal bool isAncestor;
 		internal NodeTest nodeTest;
 		ExprFilter filter;
@@ -28,14 +28,21 @@ namespace Mono.Xml.XPath {
 			this.nodeTest = nodeTest;
 		}
 		
-		public LocationPathPattern (ExprFilter filter) : this ((NodeTest)filter.expr)
+		public LocationPathPattern (ExprFilter filter)
 		{
 			this.filter = filter;
+			
+			while (! (filter.expr is NodeTest))
+				filter = (ExprFilter)filter.expr;
+			
+			this.nodeTest = (NodeTest)filter.expr;
 		}
 
 		internal void SetPreviousPattern (Pattern prev, bool isAncestor)
 		{
-			this.patternPrevious = prev;
+			LocationPathPattern toSet = LastPathPattern;
+			toSet.patternPrevious = (LocationPathPattern)prev;
+			toSet.isAncestor = isAncestor;
 		}
 		
 		public override double DefaultPriority { 
@@ -113,6 +120,17 @@ namespace Mono.Xml.XPath {
 			else ret += nodeTest.ToString ();
 			
 			return ret;
+		}
+		
+		public LocationPathPattern LastPathPattern {
+			get {
+				LocationPathPattern ret = this;
+				
+				while (ret.patternPrevious != null)
+					ret = ret.patternPrevious;
+				
+				return ret;
+			}
 		}
 	}
 }
