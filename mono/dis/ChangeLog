@@ -1,3 +1,10 @@
+2001-07-02  Miguel de Icaza  <miguel@ximian.com>
+
+	* dis-cil.c (get_encoded_user_string): Return a string from the
+	#US heap. o
+
+	* get.c (get_blob_encoded_size): Implement 23.1.4 decoding.
+
 2001-07-01  Miguel de Icaza  <miguel@ximian.com>
 
 	* dis-cil.c: New file.  CIL opcode dissasembler.
