@@ -457,7 +457,7 @@ namespace System {
 		}
 
 		public int IndexOf(String value, int sindex) {
-			return IndexOf(value, sindex, value.length - sindex);
+			return IndexOf(value, sindex, this.length - sindex);
 		}
 
 		public int IndexOf(char value, int sindex, int count) {
