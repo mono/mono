@@ -35,6 +35,10 @@ using System.Security;
 using System.Reflection;
 using System.Threading;
 
+#if NET_2_0
+using System.Runtime.ConstrainedExecution;
+#endif
+
 namespace System.Runtime.InteropServices
 {
 	[SuppressUnmanagedCodeSecurity ()]
@@ -467,37 +471,64 @@ namespace System.Runtime.InteropServices
 			throw new NotImplementedException ();
 		}
 
+#if NET_2_0
+		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, CER.Success)]
+#endif
 		public static int ReadInt32 (IntPtr ptr) {
 			return ReadInt32 (ptr, 0);
 		}
 
+#if NET_2_0
+		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, CER.Success)]
+#endif
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		public extern static int ReadInt32 (IntPtr ptr, int ofs);
 
+#if NET_2_0
+		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, CER.Success)]
+#endif
 		[MonoTODO]
 		public static int ReadInt32 ([In, MarshalAs(UnmanagedType.AsAny)] object ptr, int ofs) {
 			throw new NotImplementedException ();
 		}
 
+#if NET_2_0
+		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, CER.Success)]
+#endif
 		public static long ReadInt64 (IntPtr ptr) {
 			return ReadInt64 (ptr, 0);
 		}
 
+#if NET_2_0
+		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, CER.Success)]
+#endif
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		public extern static long ReadInt64 (IntPtr ptr, int ofs);
 
+#if NET_2_0
+		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, CER.Success)]
+#endif
 		[MonoTODO]
 		public static long ReadInt64 ([In, MarshalAs (UnmanagedType.AsAny)] object ptr, int ofs) {
 			throw new NotImplementedException ();
 		}
 
+#if NET_2_0
+		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, CER.Success)]
+#endif
 		public static IntPtr ReadIntPtr (IntPtr ptr) {
 			return ReadIntPtr (ptr, 0);
 		}
 		
+#if NET_2_0
+		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, CER.Success)]
+#endif
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		public extern static IntPtr ReadIntPtr (IntPtr ptr, int ofs);
 
+#if NET_2_0
+		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, CER.Success)]
+#endif
 		[MonoTODO]
 		public static IntPtr ReadIntPtr ([In, MarshalAs (UnmanagedType.AsAny)] object ptr, int ofs) {
 			throw new NotImplementedException ();
@@ -511,6 +542,9 @@ namespace System.Runtime.InteropServices
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		public extern static IntPtr ReAllocHGlobal (IntPtr pv, IntPtr cb);
 
+#if NET_2_0
+		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, CER.Success)]
+#endif
 		[MonoTODO]
 		public static int Release (IntPtr pUnk) {
 			throw new NotImplementedException ();
@@ -612,6 +646,9 @@ namespace System.Runtime.InteropServices
 		}
 #endif
 
+#if NET_2_0
+		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, CER.MayFail)]
+#endif
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		public extern static void StructureToPtr (object structure, IntPtr ptr, bool fDeleteOld);
 
