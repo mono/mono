@@ -64,6 +64,7 @@ namespace Mono.CSharp
 		// after a token has been seen.
 		//
 		bool any_token_seen = false;
+
 		static Hashtable tokenValues;
 
 		private static Hashtable TokenValueName
@@ -1877,6 +1878,9 @@ namespace Mono.CSharp
 			bool doread = false;
 			int c;
 
+			// Whether we have seen comments on the current line
+			bool comments_seen = false;
+			
 			val = null;
 			// optimization: eliminate col and implement #directive semantic correctly.
 			for (;(c = getChar ()) != -1; col++) {
@@ -1955,7 +1959,7 @@ namespace Mono.CSharp
 							if (d == '*' && peekChar () == '/'){
 								getChar ();
 								col++;
-								tokens_seen = true;
+								comments_seen = true;
 								break;
 							}
 							if (docAppend)
@@ -1999,6 +2003,7 @@ namespace Mono.CSharp
 					col = 0;
 					any_token_seen |= tokens_seen;
 					tokens_seen = false;
+					comments_seen = false;
 					continue;
 				}
 
@@ -2018,8 +2023,17 @@ namespace Mono.CSharp
 				/* For now, ignore pre-processor commands */
 				// FIXME: In C# the '#' is not limited to appear
 				// on the first column.
-				if (c == '#' && !tokens_seen){
+				if (c == '#') {
 					bool cont = true;
+					
+					if (tokens_seen || comments_seen) {
+                                               error_details = "Preprocessor directives must appear as the first non-whitespace " +
+                                                       "character on a line.";
+
+                                               Report.Error (1040, Location, error_details);
+
+                                               return Token.ERROR;
+                                       }
 					
 				start_again:
 					
@@ -2100,15 +2114,6 @@ namespace Mono.CSharp
 					} else {
 						Report.Error (1033, Location, "'@' must be followed by string constant or identifier");
 					}
-				}
-
-				if (c == '#') {
-					error_details = "Preprocessor directives must appear as the first non-whitespace " +
-						"character on a line.";
-
-					Report.Error (1040, Location, error_details);
-
-					return Token.ERROR;
 				}
 
 				error_details = ((char)c).ToString ();

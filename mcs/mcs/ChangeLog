@@ -1,3 +1,13 @@
+2005-01-06  Duncan Mak  <duncan@ximian.com>
+
+	* cs-tokenizer.cs (xtoken): Redo the work for signaling CS1040
+	because the previous change led to incorrect reporting of CS1032
+	("Cannot define/undefine preprocessor symbols after first token in
+	file"). Instead of using `tokens_seen' as the only flag that
+	triggers CS1040, introduce `comments_seen'. This new flag is used
+	to signify having seen comments on the current line, so it is
+	unset after a newline.
+
 2005-01-06  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* doc.cs : When searching for a type, find nested type too.
@@ -12,8 +22,8 @@
 	    Fixed bug #71042.
 
 2005-01-06  Duncan Mak  <duncan@ximian.com>
- 
- 	* cs-tokenizer.cs (xtoken): After handling traditional C-style
+
+	* cs-tokenizer.cs (xtoken): After handling traditional C-style
  	comments, set `tokens_seen' to true. This allows us to detect
  	misplaced preprocessor directives (i.e. not at the beginning of
  	the a line, nor after whitespaces). In that case, report error
