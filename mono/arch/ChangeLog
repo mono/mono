@@ -1,4 +1,9 @@
 
+Thu Oct 4 19:09:13 CEST 2001 Paolo Molaro <lupus@ximian.com>
+
+	* x86/tramp.c: allow marshalling valuetypes if they are
+	4 bytes long.
+
 Mon Oct 1 18:48:27 CEST 2001 Paolo Molaro <lupus@ximian.com>
 
 	* x86/tramp.c: fix thinko (s/SUB/ADD/) in stack adjustment

@@ -1,3 +1,24 @@
+
+Thu Oct 4 19:10:30 CEST 2001 Paolo Molaro <lupus@ximian.com>
+
+	* class.c: MonoTypes stored in MonoClass are stored as
+	fundamental MonoTypes when the class represents a
+	fundamental type (System.Int32, ...).
+	The TypeHandle return by ldtoken is a MonoType*.
+	* icall.c: ves_icall_get_data_chunk () write out all the
+	PE/COFF stuff. Implement ves_icall_define_method (),
+	ves_icall_set_method_body (), ves_icall_type_from_handle ().
+	* image.c: properly skip unknown streams.
+	* loader.h, loader.c: add type_class to mono_defaults.
+	* metadata.c, metadata.h: export compute_size () as
+	mono_metadata_compute_size () with a better interface.
+	Typo and C&P fixes.
+	* pedump.c: don't try to print the entry point RVA if there is no entry point.
+	* reflection.c, reflection.h: many cleanups, fixes, output method
+	signatures and headers, typedef and typeref info, compress the metadata
+	tables, output all the heap streams, cli header etc.
+	* row-indexes.h: typo fixes.
+
 2001-10-04  Dick Porter  <dick@ximian.com>
 
 	* object.h: Add a synchronisation mutex struct to MonoObject

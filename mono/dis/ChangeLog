@@ -1,3 +1,10 @@
+
+Thu Oct 4 19:05:56 CEST 2001 Paolo Molaro <lupus@ximian.com>
+
+	* dis-cil.c: fix printing of exception stuff.
+	* dump.c: display some more info in the typedef table dump.
+	* main.c: typo fix and method list fix.
+
 2001-10-04  Dick Porter  <dick@ximian.com>
 
 	* meta.h: include mono-endian.h not endian.h
