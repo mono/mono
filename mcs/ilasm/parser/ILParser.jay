@@ -6,6 +6,7 @@
 using System;
 using System.Reflection;
 using System.Reflection.Emit;
+using System.Collections;
 
 namespace Mono.ILASM {
 
@@ -715,9 +716,15 @@ methodDecl              : D_EMITBYTE int32
 			| sehBlock 
 			| D_MAXSTACK int32 	
 			| localsHead OPEN_PARENS sigArgs0 CLOSE_PARENS 
-			| localsHead K_INIT OPEN_PARENS sigArgs0 CLOSE_PARENS  
+			| localsHead K_INIT OPEN_PARENS named_arg_list CLOSE_PARENS  
 				{
-					method.AddLocal ((string)$4);
+					ArrayList arg_list = $4 as ArrayList;
+					
+					if (arg_list != null) {
+						foreach (DictionaryEntry local in arg_list) {
+							method.AddLocal (local);
+						}
+					}
 				}
 			| D_ENTRYPOINT          {method.IsEntryPoint = true;}
 			| D_ZEROINIT 
@@ -881,17 +888,17 @@ instr                   : INSTR_NONE		{currentInstr = new InstrNone ((OpCode) $1
 			| instr_r_head bytes CLOSE_PARENS 
 			| INSTR_BRTARGET int32  
 			| INSTR_BRTARGET id 
-			| INSTR_METHOD binding_flags type assembly_name name1 DOUBLE_COLON call_name OPEN_PARENS signature_args CLOSE_PARENS 
-						{
-							if (OpCodes.Call.Equals ((OpCode)$1) || OpCodes.Callvirt.Equals ((OpCode)$1)) {
-								currentInstr = new InstrCall ((OpCode) $1, (string)$2, (string)$3, (string)$4,  
-									(string)$5, (string)$7, (string)$9);
-							} else if (OpCodes.Newobj.Equals ((OpCode)$1)) {
-								currentInstr = new InstrNewobj ((OpCode) $1, (string)$2, (string)$3, (string)$4, 
-									(string)$5, (string)$7, (string)$9);
-							}
+			| INSTR_METHOD binding_flags type assembly_name name1 DOUBLE_COLON call_name OPEN_PARENS arg_list CLOSE_PARENS 
+			  {
+				if (OpCodes.Call.Equals ((OpCode)$1) || OpCodes.Callvirt.Equals ((OpCode)$1)) {
+					currentInstr = new InstrCall ((OpCode) $1, (string)$2, (string)$3, (string)$4,  
+						(string)$5, (string)$7, $9 as ArrayList);
+				} else if (OpCodes.Newobj.Equals ((OpCode)$1)) {
+					currentInstr = new InstrNewobj ((OpCode) $1, (string)$2, (string)$3, (string)$4, 
+						(string)$5, (string)$7, $9 as ArrayList);
+				}
 								
-						}
+			  }
 
 					
 			| INSTR_METHOD callConv type methodName OPEN_PARENS sigArgs0 CLOSE_PARENS 
@@ -922,6 +929,50 @@ instr                   : INSTR_NONE		{currentInstr = new InstrNone ((OpCode) $1
 			| INSTR_PHI int16s 
 			;
 
+arg_list 
+	: /* EMPTY */
+	| type
+	  {
+		ArrayList arg_list = new ArrayList ();
+		arg_list.Add ($1);
+		
+		$$ = arg_list;
+	  }
+	| arg_list COMMA type 
+	  {
+		ArrayList arg_list = (ArrayList) $1;
+		arg_list.Add ($3);
+		
+		$$ = arg_list;
+	  }
+	;
+
+named_arg
+	: type ID
+	  {
+		$$ = new DictionaryEntry ((string) $1, (string) $2);
+	  }
+	;
+
+named_arg_list		
+	: /* EMPTY */
+	| named_arg
+	  {
+		ArrayList arg_list = new ArrayList ();
+		arg_list.Add ($1);
+
+		$$ = arg_list;					
+	  }
+	| named_arg_list COMMA named_arg 
+	  {
+		ArrayList arg_list = (ArrayList) $1;
+		arg_list.Add ($3);
+				
+		$$ = arg_list;
+	  }
+	;           
+
+	
 signature_args		: /* EMPTY */
 			| type
 			| type COMMA signature_args
@@ -936,12 +987,12 @@ sigArgs0                : /* EMPTY */
 			;
 
 sigArgs1                : sigArg 
-			| sigArgs1 COMMA sigArg
+			| sigArgs1 COMMA sigArg { $$ = String.Format ("{0},{1}", $1, $2); }
 			;
 
 sigArg                  : ELLIPSIS 
 			| paramAttr type 
-			| paramAttr type id { $$ = $2; }
+			| paramAttr type id { $$ = String.Format ("{0} {1}", $2, $3); }
 			| paramAttr type K_MARSHAL OPEN_PARENS nativeType CLOSE_PARENS 
 			| paramAttr type K_MARSHAL OPEN_PARENS nativeType CLOSE_PARENS id 
 sint			;
