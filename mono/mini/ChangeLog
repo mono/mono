@@ -1,3 +1,8 @@
+2005-01-04  Zoltan Varga  <vargaz@freemail.hu>
+
+	* mini-amd64.c (mono_arch_local_regalloc): Port some regalloc fixes 
+	related to global registers from the amd64 port.
+
 2005-01-03  Zoltan Varga  <vargaz@freemail.hu>
 
 	* mini.c (mono_method_to_ir): Handle MONO_CLASSCONST.
