@@ -618,9 +618,6 @@ namespace System.Web
 			}
 			
 			set {
-				if (_bHeadersSent)
-					throw new HttpException ("Headers has been sent to the client");
-
 				_bSuppressContent = true;
 			}
 		}
@@ -845,6 +842,9 @@ namespace System.Web
 
 				if (!_bSuppressContent && Request.HttpMethod == "HEAD")
 					_bSuppressContent = true;
+
+				if (_bSuppressContent)
+					_Writer.Clear ();
 
 				if (!_bSuppressContent) {
 					_bClientDisconnected = false;
