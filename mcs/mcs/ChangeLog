@@ -9,6 +9,9 @@
 	* expression.cs (Cast.DoResolve): Don't access the TypeExpr's
 	`Type' directly, but call ResolveType() on it.
 	(Probe.DoResolve): Likewise.
+	(ArrayCreation.LookupType): Likewise.
+	(TypeOf.DoResolve): Likewise.
+	(SizeOf.DoResolve): Likewise.
 
 2004-10-18  Martin Baulig  <martin@ximian.com>
 

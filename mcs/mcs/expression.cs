@@ -6060,13 +6060,13 @@ namespace Mono.CSharp {
 			//
 			// Lookup the type
 			//
-			Expression array_type_expr;
+			TypeExpr array_type_expr;
 			array_type_expr = new ComposedCast (requested_base_type, array_qualifier.ToString (), loc);
 			array_type_expr = array_type_expr.ResolveAsTypeTerminal (ec, false);
 			if (array_type_expr == null)
 				return false;
 
-			type = array_type_expr.Type;
+			type = array_type_expr.ResolveType (ec);
 			
 			if (!type.IsArray) {
 				Error (622, "Can only use array initializer expressions to assign to array types. Try using a new expression instead.");
@@ -6774,11 +6774,11 @@ namespace Mono.CSharp {
 
 		public override Expression DoResolve (EmitContext ec)
 		{
-			QueriedType = QueriedType.ResolveAsTypeTerminal (ec, false);
-			if (QueriedType == null)
+			TypeExpr texpr = QueriedType.ResolveAsTypeTerminal (ec, false);
+			if (texpr == null)
 				return null;
 
-			typearg = QueriedType.Type;
+			typearg = texpr.ResolveType (ec);
 
 			if (typearg == TypeManager.void_type) {
 				Error (673, "System.Void cannot be used from C# - " +
@@ -6848,11 +6848,11 @@ namespace Mono.CSharp {
 				return null;
 			}
 
-			QueriedType = QueriedType.ResolveAsTypeTerminal (ec, false);
-			if (QueriedType == null)
+			TypeExpr texpr = QueriedType.ResolveAsTypeTerminal (ec, false);
+			if (texpr == null)
 				return null;
 
-			type_queried = QueriedType.Type;
+			type_queried = texpr.ResolveType (ec);
 
 			CheckObsoleteAttribute (type_queried);
 
@@ -8549,11 +8549,11 @@ namespace Mono.CSharp {
 				return null;
 			}
 
-			t = t.ResolveAsTypeTerminal (ec, false);
-			if (t == null)
+			TypeExpr texpr = t.ResolveAsTypeTerminal (ec, false);
+			if (texpr == null)
 				return null;
 
-			otype = t.Type;
+			otype = texpr.ResolveType (ec);
 
 			if (!TypeManager.VerifyUnManaged (otype, loc))
 				return null;
