@@ -1720,7 +1720,7 @@ handler_block		: scope_block
                           }
 			| K_HANDLER int32 K_TO int32
 			  {
-				$$ = new HandlerBlock ((int) $2, (int) $4);
+				$$ = new HandlerBlock ((int) $2, (int) $4, true);
 			  }
 			;
 
