@@ -1,3 +1,7 @@
+2004-09-01  Lluis Sanchez Gual  <lluis@novell.com>
+
+	* DiscoveryClientProtocol.cs: Added support for "file://" urls.
+
 2004-08-24  Lluis Sanchez Gual  <lluis@novell.com>
 
 	* ContractReference.cs, DiscoveryClientProtocol.cs: Set the url from which

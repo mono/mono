@@ -203,6 +203,13 @@ namespace System.Web.Services.Discovery {
 				contentType = resp.ContentType;
 				return resp.GetResponseStream ();
 			}
+			else if (url.StartsWith ("file://"))
+			{
+				WebRequest request = WebRequest.Create (new Uri (url));
+				WebResponse resp = request.GetResponse ();
+				contentType = resp.ContentType;
+				return resp.GetResponseStream ();
+			}
 			else
 			{
 				string ext = Path.GetExtension (url).ToLower();
