@@ -68,11 +68,6 @@ namespace System.Web.UI
 				throw new ParseException (parser.Location, "Unknown attribute");
 		}
 
-		public override bool HasBody ()
-		{
-			return false;
-		}
-
 		internal Type Type {
 			get { return type; }
 		}

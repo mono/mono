@@ -388,7 +388,7 @@ namespace System.Web.Compilation
 
 			builder.location = location;
 			builder.ID = htable ["id"] as string;
-			if (builder.HasBody ()) {
+			if (builder.HasBody () && !(builder is ObjectTagBuilder)) {
 				if (builder is TemplateBuilder) {
 				//	push the id list
 				}

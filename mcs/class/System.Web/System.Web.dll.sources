@@ -220,6 +220,7 @@ System.Web.UI/HtmlTextWriter.cs
 System.Web.UI/HtmlTextWriterAttribute.cs
 System.Web.UI/HtmlTextWriterStyle.cs
 System.Web.UI/HtmlTextWriterTag.cs
+System.Web.UI/Html32TextWriter.cs
 System.Web.UI/IAttributeAccessor.cs
 System.Web.UI/IDataBindingsAccessor.cs
 System.Web.UI/IgnoreUnknownContentAttribute.cs
