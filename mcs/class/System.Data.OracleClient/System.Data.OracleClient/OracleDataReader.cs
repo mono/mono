@@ -318,53 +318,14 @@ namespace System.Data.OracleClient {
 			return (TimeSpan) value;
 		}
 
-		[MonoTODO]
 		public object GetValue (int i)
 		{
 			OciDefineHandle defineHandle = (OciDefineHandle) command.StatementHandle.Values [i];
-			object tmp;
 
-			if (defineHandle.IsNull)
+			if (IsDBNull (i))
 				return DBNull.Value;
 
-			switch (defineHandle.DataType) {
-			case OciDataType.VarChar2:
-			case OciDataType.String:
-			case OciDataType.VarChar:
-			case OciDataType.Char:
-			case OciDataType.CharZ:
-			case OciDataType.OciString:
-				tmp = Marshal.PtrToStringAnsi (defineHandle.Value, defineHandle.Size);
-				if (tmp != null)
-					return String.Copy ((string) tmp);
-				break;
-			case OciDataType.Integer:
-				tmp = Marshal.PtrToStringAnsi (defineHandle.Value, defineHandle.Size);
-				if (tmp != null) 
-					return Int32.Parse (String.Copy ((string) tmp));
-				break;
-			case OciDataType.Number:
-				tmp = Marshal.PtrToStringAnsi (defineHandle.Value, defineHandle.Size);
-				if (tmp != null) {
-					if (defineHandle.Scale == 0) 
-						return Int32.Parse (String.Copy ((string) tmp));
-					else
-						return Decimal.Parse (String.Copy ((string) tmp));
-				}
-				break;
-			case OciDataType.Float:
-				tmp = Marshal.PtrToStringAnsi (defineHandle.Value, defineHandle.Size);
-				if (tmp != null) 
-					return Double.Parse (String.Copy ((string) tmp));
-				break;
-			case OciDataType.Date:
-				tmp = Marshal.PtrToStringAnsi (defineHandle.Value, defineHandle.Size);
-				if (tmp != null)
-					return DateTime.Parse ((string) tmp);
-				break;
-			}
-
-			return DBNull.Value;
+			return defineHandle.GetValue ();
 		}
 
 		public int GetValues (object[] values)
@@ -391,7 +352,7 @@ namespace System.Data.OracleClient {
 
 		public bool IsDBNull (int i)
 		{
-			return GetValue (i) == null;
+			return ((OciDefineHandle) command.StatementHandle.Values [i]).IsNull;
 		}
 
 		[MonoTODO]

@@ -153,6 +153,112 @@ namespace Test.OracleClient
 			}
 		}
 
+		static void RollbackTest (OracleConnection connection)
+		{
+			OracleTransaction transaction = connection.BeginTransaction ();
+
+			OracleCommand insert = connection.CreateCommand ();
+			insert.Transaction = transaction;
+			insert.CommandText = "INSERT INTO EMP (EMPNO, ENAME, JOB) VALUES (8787, 'T Coleman', 'Monoist')";
+
+			Console.WriteLine ("Inserting record ...");
+
+			insert.ExecuteNonQuery ();
+
+			OracleCommand select = connection.CreateCommand ();
+			select.CommandText = "SELECT COUNT(*) FROM EMP WHERE EMPNO = 8787";
+			select.Transaction = transaction;
+			OracleDataReader reader = select.ExecuteReader ();
+			reader.Read ();
+
+			Console.WriteLine ("Row count SHOULD BE 1, VALUE IS {0}", reader.GetValue (0));
+			reader.Close ();
+
+			Console.WriteLine ("Rolling back transaction ...");
+
+			transaction.Rollback ();
+
+			select = connection.CreateCommand ();
+			select.CommandText = "SELECT COUNT(*) FROM EMP WHERE EMPNO = 8787";
+
+			reader = select.ExecuteReader ();
+			reader.Read ();
+			Console.WriteLine ("Row count SHOULD BE 0, VALUE IS {0}", reader.GetValue (0));
+			reader.Close ();
+		}
+		
+		static void CommitTest (OracleConnection connection)
+		{
+			OracleTransaction transaction = connection.BeginTransaction ();
+
+			OracleCommand insert = connection.CreateCommand ();
+			insert.Transaction = transaction;
+			insert.CommandText = "INSERT INTO EMP (EMPNO, ENAME, JOB) VALUES (8787, 'T Coleman', 'Monoist')";
+
+			Console.WriteLine ("Inserting record ...");
+
+			insert.ExecuteNonQuery ();
+
+			OracleCommand select = connection.CreateCommand ();
+			select.CommandText = "SELECT COUNT(*) FROM EMP WHERE EMPNO = 8787";
+			select.Transaction = transaction;
+
+			Console.WriteLine ("Row count SHOULD BE 1, VALUE IS {0}", select.ExecuteScalar ());
+
+			Console.WriteLine ("Committing transaction ...");
+
+			transaction.Commit ();
+
+			select = connection.CreateCommand ();
+			select.CommandText = "SELECT COUNT(*) FROM EMP WHERE EMPNO = 8787";
+
+			Console.WriteLine ("Row count SHOULD BE 1, VALUE IS {0}", select.ExecuteScalar ());
+			transaction = connection.BeginTransaction ();
+			OracleCommand delete = connection.CreateCommand ();
+			delete.Transaction = transaction;
+			delete.CommandText = "DELETE FROM EMP WHERE EMPNO = 8787";
+			delete.ExecuteNonQuery ();
+			transaction.Commit ();
+		}
+
+		public static void ParameterTest (OracleConnection connection)
+		{
+			OracleTransaction transaction = connection.BeginTransaction ();
+			OracleCommand insert = connection.CreateCommand ();
+			insert.Transaction = transaction;
+
+			insert.CommandText = "INSERT INTO EMP (EMPNO, ENAME, JOB) VALUES (:P1, :P2, :P3)";
+			insert.Parameters.Add (":P1", 8888);
+			insert.Parameters.Add (":P2", "danmorg");
+			insert.Parameters.Add (":P3", "Monoist");
+
+			Console.WriteLine ("INSERTING DATA WITH PARAMETERS...");
+			Console.WriteLine (insert.CommandText);
+			insert.ExecuteNonQuery ();
+
+			OracleCommand select = connection.CreateCommand ();
+			select.Transaction = transaction;
+
+			select.CommandText = "SELECT ENAME, JOB FROM EMP WHERE EMPNO=:P1";
+			select.Parameters.Add (":P1", 8888);
+
+			Console.WriteLine ("VERIFYING RESULTS ...");
+
+			OracleDataReader reader = select.ExecuteReader ();
+			if (!reader.Read ())
+				Console.WriteLine ("ERROR: RECORD NOT FOUND");
+
+			Console.WriteLine ("ENAME - SHOULD BE danmorg, is {0}", reader.GetValue (0));
+			Console.WriteLine ("JOB - SHOULD BE Monoist, is {0}", reader.GetValue (1));
+
+			reader.Close ();
+
+			Console.WriteLine ("ROLLBACK TRANSACTION...");
+
+			transaction.Rollback ();
+		}
+
+
 		static void Wait(string msg) 
 		{
 			//Console.WriteLine(msg);
@@ -209,6 +315,18 @@ namespace Test.OracleClient
 			Console.WriteLine ("DataAdapter Test BEGIN...");
                         DataAdapterTest(con1);
 			Console.WriteLine ("DataAdapter Test END.");
+
+			Console.WriteLine ("Rollback Test BEGIN...");
+                        RollbackTest(con1);
+			Console.WriteLine ("Rollback Test END.");
+
+			Console.WriteLine ("Commit Test BEGIN...");
+                        CommitTest(con1);
+			Console.WriteLine ("Commit Test END.");
+
+			Console.WriteLine ("Parameter Test BEGIN...");
+                        ParameterTest(con1);
+			Console.WriteLine ("Parameter Test END.");
 
 			Wait("Verify Proper Results.");
 						

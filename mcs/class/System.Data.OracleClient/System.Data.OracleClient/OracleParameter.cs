@@ -26,48 +26,67 @@ namespace System.Data.OracleClient {
 	{
 		#region Fields
 
-		DbType dbType = DbType.AnsiString;
-		ParameterDirection direction = ParameterDirection.Input;
-		bool isNullable = false;
-		int offset = 0;
-		OracleType oracleType = OracleType.VarChar;
 		string name;
-		byte precision = 0x0;
-		byte scale = 0x0;
-		int size = 0;
+		OracleType oracleType = OracleType.VarChar;
+		int size;
+		ParameterDirection direction;
+		bool isNullable;
+		byte precision;
+		byte scale;
+		string srcColumn;
+		DataRowVersion srcVersion;
+		DbType dbType = DbType.AnsiString;
+		int offset = 0;
 		bool sizeSet = false;
-		string srcColumn = String.Empty;
-		DataRowVersion srcVersion = DataRowVersion.Current;
 		object value = null;
 
 		OracleParameterCollection container = null;
+		OciBindHandle bindHandle;
 
 		#endregion // Fields
 
 		#region Constructors
 
 		public OracleParameter ()
+			: this (String.Empty, OracleType.VarChar, 0, ParameterDirection.Input, false, 0, 0, String.Empty, DataRowVersion.Current, null)
 		{
 		}
 
 		public OracleParameter (string name, object value)
 		{
+			bindHandle = new OciBindHandle (name);
+			this.name = name;
+			this.value = value;
+			SourceVersion = DataRowVersion.Current;
+			InferOracleType (value);
 		}
 
 		public OracleParameter (string name, OracleType dataType)
+			: this (name, dataType, 0, ParameterDirection.Input, false, 0, 0, String.Empty, DataRowVersion.Current, null)
 		{
 		}
 
 		public OracleParameter (string name, OracleType dataType, int size)
+			: this (name, dataType, size, ParameterDirection.Input, false, 0, 0, String.Empty, DataRowVersion.Current, null)
 		{
 		}
 
 		public OracleParameter (string name, OracleType dataType, int size, string srcColumn)
+			: this (name, dataType, size, ParameterDirection.Input, false, 0, 0, srcColumn, DataRowVersion.Current, null)
 		{
 		}
 
 		public OracleParameter (string name, OracleType dataType, int size, ParameterDirection direction, bool isNullable, byte precision, byte scale, string srcColumn, DataRowVersion srcVersion, object value)
 		{
+			bindHandle = new OciBindHandle (name);
+			this.name = name;
+			this.size = size;
+			this.value = value;
+
+			OracleType = dataType;
+			Direction = direction;
+			SourceColumn = srcColumn;
+			SourceVersion = srcVersion;
 		}
 
 		#endregion // Constructors
@@ -105,8 +124,8 @@ namespace System.Data.OracleClient {
 		}
 		
 		public string ParameterName {
-			get { return name; }
-			set { name = value; }
+			get { return bindHandle.Name; }
+			set { bindHandle.Name = value; }
 		}
 
 		public byte Precision {
@@ -115,7 +134,7 @@ namespace System.Data.OracleClient {
 		}
 
 		public byte Scale {
-			get { return precision; }
+			get { return scale; }
 			set { /* NO EFFECT*/ }
 		}
 
@@ -146,25 +165,219 @@ namespace System.Data.OracleClient {
 
 		#region Methods
 
+		internal void Bind (OciStatementHandle handle)
+		{
+			bindHandle.Bind (handle, value);
+		}
+
 		[MonoTODO]
 		object ICloneable.Clone ()
 		{
 			throw new NotImplementedException ();
 		}
 
+		private void InferOracleType (object value)
+		{
+			Type type = value.GetType ();
+			string exception = String.Format ("The parameter data type of {0} is invalid.", type.Name);
+			switch (type.FullName) {
+			case "System.Int64":
+				SetOracleType (OracleType.Number);
+				break;
+			case "System.Boolean":
+			case "System.Byte":
+				SetOracleType (OracleType.Byte);
+				break;
+			case "System.String":
+				SetOracleType (OracleType.VarChar);
+				break;
+			case "System.DataType":
+				SetOracleType (OracleType.DateTime);
+				break;
+			case "System.Decimal":
+				SetOracleType (OracleType.Number);
+				//scale = ((decimal) value).Scale;
+				break;
+			case "System.Double":
+				SetOracleType (OracleType.Double);
+				break;
+			case "System.Byte[]":
+			case "System.Guid":
+				SetOracleType (OracleType.Raw);
+				break;
+			case "System.Int32":
+				SetOracleType (OracleType.Int32);
+				break;
+			case "System.Single":
+				SetOracleType (OracleType.Float);
+				break;
+			case "System.Int16":
+				SetOracleType (OracleType.Int16);
+				break;
+			default:
+				throw new ArgumentException (exception);
+			}
+		}
+
+		public void SetDbType (DbType type)
+		{
+			string exception = String.Format ("No mapping exists from DbType {0} to a known OracleType.", type);
+			switch (type) {
+			case DbType.AnsiString:
+				oracleType = OracleType.VarChar;
+				bindHandle.Type = OciDataType.VarChar;
+				break;
+			case DbType.AnsiStringFixedLength:
+				oracleType = OracleType.Char;
+				bindHandle.Type = OciDataType.Char;
+				break;
+			case DbType.Binary:
+			case DbType.Guid:
+				oracleType = OracleType.Raw;
+				bindHandle.Type = OciDataType.Raw;
+				break;
+			case DbType.Boolean:
+			case DbType.Byte:
+				oracleType = OracleType.Byte;
+				bindHandle.Type = OciDataType.Integer;
+				break;
+			case DbType.Currency:
+			case DbType.Decimal:
+			case DbType.Int64:
+				oracleType = OracleType.Number;
+				bindHandle.Type = OciDataType.Number;
+				break;
+			case DbType.Date:
+			case DbType.DateTime:
+			case DbType.Time:
+				oracleType = OracleType.DateTime;
+				bindHandle.Type = OciDataType.Char;
+				break;
+			case DbType.Double:
+				oracleType = OracleType.Double;
+				bindHandle.Type = OciDataType.Float;
+				break;
+			case DbType.Int16:
+				oracleType = OracleType.Int16;
+				bindHandle.Type = OciDataType.Integer;
+				break;
+			case DbType.Int32:
+				oracleType = OracleType.Int32;
+				bindHandle.Type = OciDataType.Integer;
+				break;
+			case DbType.Object:
+				oracleType = OracleType.Blob;
+				bindHandle.Type = OciDataType.Blob;
+				break;
+			case DbType.Single:
+				oracleType = OracleType.Float;
+				bindHandle.Type = OciDataType.Float;
+				break;
+			case DbType.String:
+				oracleType = OracleType.NVarChar;
+				bindHandle.Type = OciDataType.VarChar;
+				break;
+			case DbType.StringFixedLength:
+				oracleType = OracleType.NChar;
+				bindHandle.Type = OciDataType.Char;
+				break;
+			default:
+				throw new ArgumentException (exception);
+			}
+			dbType = type;
+
+		}
+
+		public void SetOracleType (OracleType type)
+		{
+			string exception = String.Format ("No mapping exists from OracleType {0} to a known DbType.", type);
+			switch (type) {
+			case OracleType.BFile:
+			case OracleType.Blob:
+			case OracleType.LongRaw:
+			case OracleType.Raw:
+				dbType = DbType.Binary;
+				bindHandle.Type = OciDataType.Raw;
+				break;
+			case OracleType.Byte:
+				dbType = DbType.Byte;
+				bindHandle.Type = OciDataType.Integer;
+				break;
+			case OracleType.Char:
+				dbType = DbType.AnsiStringFixedLength;
+				bindHandle.Type = OciDataType.Char;
+				break;
+			case OracleType.Clob:
+			case OracleType.LongVarChar:
+			case OracleType.RowId:
+			case OracleType.VarChar:
+				dbType = DbType.AnsiString;
+				bindHandle.Type = OciDataType.VarChar;
+				break;
+			case OracleType.Cursor:
+			case OracleType.IntervalDayToSecond:
+				dbType = DbType.Object;
+				bindHandle.Type = OciDataType.Blob;
+				break;
+			case OracleType.DateTime:
+			case OracleType.Timestamp:
+			case OracleType.TimestampLocal:
+			case OracleType.TimestampWithTZ:
+				dbType = DbType.DateTime;
+				bindHandle.Type = OciDataType.Char;
+				break;
+			case OracleType.Double:
+				dbType = DbType.Double;
+				bindHandle.Type = OciDataType.Float;
+				break;
+			case OracleType.Float:
+				dbType = DbType.Single;
+				bindHandle.Type = OciDataType.Float;
+				break;
+			case OracleType.Int16:
+				dbType = DbType.Int16;
+				bindHandle.Type = OciDataType.Integer;
+				break;
+			case OracleType.Int32:
+			case OracleType.IntervalYearToMonth:
+				dbType = DbType.Int32;
+				bindHandle.Type = OciDataType.Integer;
+				break;
+			case OracleType.NChar:
+				dbType = DbType.StringFixedLength;
+				bindHandle.Type = OciDataType.Char;
+				break;
+			case OracleType.NClob:
+			case OracleType.NVarChar:
+				dbType = DbType.String;
+				bindHandle.Type = OciDataType.VarChar;
+				break;
+			case OracleType.Number:
+				dbType = DbType.VarNumeric;
+				bindHandle.Type = OciDataType.Number;
+				break;
+			case OracleType.SByte:
+				dbType = DbType.SByte;
+				bindHandle.Type = OciDataType.Integer;
+				break;
+			case OracleType.UInt16:
+				dbType = DbType.UInt16;
+				bindHandle.Type = OciDataType.Integer;
+				break;
+			case OracleType.UInt32:
+				dbType = DbType.UInt32;
+				bindHandle.Type = OciDataType.Integer;
+				break;
+			default:
+				throw new ArgumentException (exception);
+			}
+
+			oracleType = type;
+		}
+
 		public override string ToString ()
 		{
 			return ParameterName;
-		}
-
-		void SetDbType (DbType dbType)
-		{
-			this.dbType = dbType;
-		}
-
-		void SetOracleType (OracleType oracleType)
-		{
-			this.oracleType = oracleType;
 		}
 
 		#endregion // Methods

@@ -28,7 +28,9 @@ namespace System.Data.OracleClient.Oci {
 		OciStatementMode mode;
 		OciServiceHandle serviceHandle;
 		OciErrorHandle errorHandle;
+
 		ArrayList values;
+		ArrayList parameters;
 
 		bool moreResults;
 		int columnCount;
@@ -40,6 +42,7 @@ namespace System.Data.OracleClient.Oci {
 		public OciStatementHandle (OciEnvironmentHandle environment, IntPtr handle)
 			: base (OciHandleType.Statement, environment, handle)
 		{
+			parameters = new ArrayList ();
 			language = OciStatementLanguage.NTV;
 			mode = OciStatementMode.Default;
 			moreResults = false;
@@ -129,6 +132,17 @@ namespace System.Data.OracleClient.Oci {
 			}
 
 			return handle;
+		}
+
+		public void FreeBindHandle (IntPtr handle)
+		{
+			int status = 0;
+
+			//status = OCIDescriptorFree (handle, OciDescriptorType.Parameter);
+			if (status != 0) {
+				OciErrorInfo info = ErrorHandle.HandleError ();
+				throw new OracleException (info.ErrorCode, info.ErrorMessage);
+			}
 		}
 
 		public void FreeParameterHandle (IntPtr handle)

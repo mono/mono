@@ -1,11 +1,29 @@
 2003-02-18  Tim Coleman <tim@timcoleman.com>
+	* System.Data.OracleClient/OciBindHandle.cs:
+	* list:
+		Add new class
 	* System.Data.OracleClient/OracleCommand.cs:
+		Add transaction logic for rollback/commit,
+		attaching to oracle service context, and a
+		couple of test cases.
+		Add Parameter handling
+	* System.Data.OracleClient/OracleDataReader.cs:
+		Change GetValue call
+	* System.Data.OracleClient/OracleParameter.cs:
+		Make this work
+	* System.Data.OracleClient/OracleType.cs:
+		Add values to enum
+	* System.Data.OracleClient.Oci/OciDefineHandle.cs:
+		Add GetValue call which is used by data reader
+	* System.Data.OracleClient.Oci/OciStatementHandle.cs:
+		Add parameter logic
+	* Test/TestOracleClient.cs:
+		Add some new test cases.
 	* System.Data.OracleClient/OracleTransaction.cs:
 	* System.Data.OracleClient.Oci/OciTransactionHandle.cs:
 	* Test/TestOracleClient.cs:
 		Add transaction logic for rollback/commit,
-		attaching to oracle service context, and a
-		couple of test cases.
+		attaching to oracle service context
 
 
 2003-02-17  Tim Coleman <tim@timcoleman.com>

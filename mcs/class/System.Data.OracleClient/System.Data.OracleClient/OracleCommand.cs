@@ -143,6 +143,12 @@ namespace System.Data.OracleClient {
 
 		#region Methods
 
+		public void BindParameters ()
+		{
+			foreach (OracleParameter p in Parameters) 
+				p.Bind (statement);
+		}
+
 		[MonoTODO]
 		public void Cancel ()
 		{
@@ -190,12 +196,14 @@ namespace System.Data.OracleClient {
 		{
 			int rowsAffected = -1;
 
+			statement = Connection.Oci.CreateStatement ();
 			ValidateCommand ("ExecuteNonQuery");
 			if (Transaction != null) 
 				Transaction.AttachToServiceContext ();
 
-			statement = Connection.Oci.CreateStatement ();
 			statement.Prepare (CommandText);
+			BindParameters ();
+
 			statement.ExecuteNonQuery ();
 
 			return rowsAffected;
@@ -220,19 +228,30 @@ namespace System.Data.OracleClient {
 
 		public OracleDataReader ExecuteReader (CommandBehavior behavior)
 		{
+			statement = Connection.Oci.CreateStatement ();
 			ValidateCommand ("ExecuteNonQuery");
 			if (Transaction != null) 
 				Transaction.AttachToServiceContext ();
-			statement = Connection.Oci.CreateStatement ();
 			statement.Prepare (CommandText);
+			BindParameters ();
+
 			statement.ExecuteQuery ();
 			return new OracleDataReader (this);
 		}
 
-		[MonoTODO]
 		public object ExecuteScalar ()
 		{
-			throw new NotImplementedException ();
+			statement = Connection.Oci.CreateStatement ();
+			ValidateCommand ("ExecuteNonQuery");
+			if (Transaction != null) 
+				Transaction.AttachToServiceContext ();
+			statement.Prepare (CommandText);
+			BindParameters ();
+
+			statement.ExecuteQuery ();
+			if (statement.Fetch ()) 
+				return ((OciDefineHandle) StatementHandle.Values [0]).GetValue ();
+			return DBNull.Value;
 		}
 
 		IDbDataParameter IDbCommand.CreateParameter ()

@@ -173,6 +173,50 @@ namespace System.Data.OracleClient.Oci {
 			Marshal.FreeHGlobal (value);
 		}
 
+		public object GetValue ()
+		{
+			object tmp;
+
+			switch (DataType) {
+			case OciDataType.VarChar2:
+			case OciDataType.String:
+			case OciDataType.VarChar:
+			case OciDataType.Char:
+			case OciDataType.CharZ:
+			case OciDataType.OciString:
+				tmp = Marshal.PtrToStringAnsi (Value, Size);
+				if (tmp != null)
+					return String.Copy ((string) tmp);
+				break;
+			case OciDataType.Integer:
+				tmp = Marshal.PtrToStringAnsi (Value, Size);
+				if (tmp != null)
+					return Int32.Parse (String.Copy ((string) tmp));
+				break;
+			case OciDataType.Number:
+				tmp = Marshal.PtrToStringAnsi (Value, Size);
+				if (tmp != null) {
+					if (Scale == 0)
+						return Int32.Parse (String.Copy ((string) tmp));
+					else
+						return Decimal.Parse (String.Copy ((string) tmp));
+				}
+				break;
+			case OciDataType.Float:
+				tmp = Marshal.PtrToStringAnsi (Value, Size);
+				if (tmp != null)
+					return Double.Parse (String.Copy ((string) tmp));
+				break;
+			case OciDataType.Date:
+				tmp = Marshal.PtrToStringAnsi (Value, Size);
+				if (tmp != null)
+					return DateTime.Parse ((string) tmp);
+				break;
+			}
+
+			return DBNull.Value;
+		}
+
 		#endregion // Methods
 	}
 }
