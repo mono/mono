@@ -494,13 +494,20 @@ public class TypeManager {
 	/// 
 	private static void AddStandardModule(Type type)
 	{
-		int top = standardModules != null ? standardModules.Length : 0;
-		StandardModule [] n = new StandardModule [top + 1];
+	    object[] attributes = type.GetCustomAttributes(false);
+	    for (int i = 0; i < attributes.Length; i ++) {
+			if (attributes[i].ToString() == "Microsoft.VisualBasic.CompilerServices.StandardModuleAttribute") {
+				int top = standardModules != null ? standardModules.Length : 0;
+				StandardModule [] n = new StandardModule [top + 1];
 
-		if (standardModules != null)
-			standardModules.CopyTo (n, 0);
-		n [top] = new StandardModule(type.Namespace, type.Name) ;
-		standardModules = n;
+				if (standardModules != null)
+					standardModules.CopyTo (n, 0);
+				n [top] = new StandardModule(type.Namespace, type.Name) ;
+				standardModules = n;
+
+				return;
+			}
+        }
 	}
 
 	//

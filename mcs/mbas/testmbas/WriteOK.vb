@@ -40,6 +40,9 @@ Module WriteOK
 		WriteOK5.ModuleSub("Qualified") ' 122
 		ModuleSub("Unqualified") ' 103
 		
+		Another.WriteOK6.ModuleSub("Qualified") ' 122
+		Another.ModuleSub("SemiQualified") ' 103
+
 		Console.WriteLine(Strings.ChrW(64))
 
 		Console.Write("Positive cases for IsNumeric: ")
@@ -82,3 +85,13 @@ Public Module WriteOK5
         Console.WriteLine("ModuleSub:OK! (" & Parm & ")")
     End Sub
 End Module
+
+Namespace Another
+
+Public Module WriteOK6
+    Public Sub ModuleSub(Parm As String)
+        Console.WriteLine("Another.ModuleSub:OK! (" & Parm & ")")
+    End Sub
+End Module
+
+End Namespace
