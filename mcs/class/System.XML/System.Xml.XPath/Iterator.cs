@@ -34,6 +34,21 @@ namespace System.Xml.XPath
 			set { _nsm = value; }
 		}
 		
+		public virtual bool ReverseAxis {
+			get { return false; }
+		}
+
+		public virtual int ComparablePosition {
+			get {
+				if (ReverseAxis) {
+					int diff = Count - CurrentPosition + 1;
+					return diff < 1 ? 1 : diff;
+				}
+				else
+					return CurrentPosition;
+			}
+		}
+
 		public override string ToString ()
 		{
 			if (Current != null)
@@ -193,54 +208,168 @@ namespace System.Xml.XPath
 
 	internal class PrecedingSiblingIterator : SimpleIterator
 	{
-		public PrecedingSiblingIterator (BaseIterator iter) : base (iter) {}
-		protected PrecedingSiblingIterator (PrecedingIterator other) : base (other) {}
+		bool finished;
+		bool started;
+		XPathNavigator startPosition;
+
+		public PrecedingSiblingIterator (BaseIterator iter) : base (iter)
+		{
+			startPosition = iter.Current.Clone ();
+		}
+		protected PrecedingSiblingIterator (PrecedingSiblingIterator other) : base (other) 
+		{
+			startPosition = other.startPosition;
+			started = other.started;
+			finished = other.finished;
+		}
+
 		public override XPathNodeIterator Clone () { return new PrecedingSiblingIterator (this); }
 		public override bool MoveNext ()
 		{
-			if (_nav.MoveToPrevious ())
-			{
+			if (finished)
+				return false;
+			if (!started) {
+				started = true;
+				_nav.MoveToFirst ();
+				if (_nav.ComparePosition (startPosition) == XmlNodeOrder.Same) {
+					_pos++;
+					return true;
+				}
+			} else {
+				if (!_nav.MoveToNext ()) {
+					finished = true;
+					return false;
+				}
+			}
+			if (_nav.ComparePosition (startPosition) != XmlNodeOrder.Before) {
+				// Note that if _nav contains only 1 node, it won't be Same.
+				finished = true;
+				return false;
+			} else {
 				_pos ++;
 				return true;
 			}
-			return false;
+		}
+		public override bool ReverseAxis {
+			get { return true; }
 		}
 	}
 
 	internal class AncestorIterator : SimpleIterator
 	{
-		public AncestorIterator (BaseIterator iter) : base (iter) {}
-		protected AncestorIterator (AncestorIterator other) : base (other) {}
+		bool finished;
+		bool started;
+		ArrayList positions = new ArrayList ();
+		XPathNavigator startPosition;
+		int nextDepth;
+		public AncestorIterator (BaseIterator iter) : base (iter)
+		{
+			startPosition = iter.Current.Clone ();
+		}
+		protected AncestorIterator (AncestorIterator other) : base (other)
+		{
+			startPosition = other.startPosition;
+			started = other.started;
+			finished = other.finished;
+			positions = other.positions;
+			nextDepth = other.nextDepth;
+		}
 		public override XPathNodeIterator Clone () { return new AncestorIterator (this); }
 		public override bool MoveNext ()
 		{
-			if (_nav.MoveToParent ())
-			{
-				_pos ++;
+			if (finished)
+				return false;
+			if (!started) {
+				started = true;
+				XPathNavigator ancestors = startPosition.Clone ();
+				ancestors.MoveToParent ();
+				_nav.MoveToParent ();
+				do {
+					int i = 0;
+					_nav.MoveToFirst ();
+					while (_nav.ComparePosition (ancestors) == XmlNodeOrder.Before) {
+						_nav.MoveToNext ();
+						i++;
+					}
+					positions.Add (i);
+					ancestors.MoveToParent ();
+					_nav.MoveToParent ();
+				} while (ancestors.NodeType != XPathNodeType.Root);
+				positions.Reverse ();
+			}
+			if (nextDepth < positions.Count) {
+				int thisTimePos = (int) positions [nextDepth];
+				_nav.MoveToFirstChild ();
+				for (int i = 0; i < thisTimePos; i++)
+					_nav.MoveToNext ();
+				nextDepth++;
+				_pos++;
 				return true;
 			}
+			finished = true;
 			return false;
+		}
+
+		public override bool ReverseAxis {
+			get { return true; }
 		}
 	}
 
 	internal class AncestorOrSelfIterator : SimpleIterator
 	{
-		public AncestorOrSelfIterator (BaseIterator iter) : base (iter) {}
-		protected AncestorOrSelfIterator (AncestorOrSelfIterator other) : base (other) {}
+		bool finished;
+		bool started;
+		ArrayList positions = new ArrayList ();
+		XPathNavigator startPosition;
+		int nextDepth;
+		public AncestorOrSelfIterator (BaseIterator iter) : base (iter)
+		{
+			startPosition = iter.Current.Clone ();
+		}
+		protected AncestorOrSelfIterator (AncestorOrSelfIterator other) : base (other) 
+		{
+			startPosition = other.startPosition;
+			started = other.started;
+			finished = other.finished;
+			positions = other.positions;
+			nextDepth = other.nextDepth;
+		}
 		public override XPathNodeIterator Clone () { return new AncestorOrSelfIterator (this); }
 		public override bool MoveNext ()
 		{
-			if (_pos == 0)
-			{
-				_pos ++;
+			if (finished)
+				return false;
+			if (!started) {
+				started = true;
+				XPathNavigator ancestors = startPosition.Clone ();
+				do {
+					int i = 0;
+					_nav.MoveToFirst ();
+					while (_nav.ComparePosition (ancestors) == XmlNodeOrder.Before) {
+						_nav.MoveToNext ();
+						i++;
+					}
+					positions.Add (i);
+					ancestors.MoveToParent ();
+					_nav.MoveToParent ();
+				} while (ancestors.NodeType != XPathNodeType.Root);
+				positions.Reverse ();
+			}
+			if (nextDepth < positions.Count) {
+				int thisTimePos = (int) positions [nextDepth];
+				_nav.MoveToFirstChild ();
+				for (int i = 0; i < thisTimePos; i++)
+					_nav.MoveToNext ();
+				nextDepth++;
+				_pos++;
 				return true;
 			}
-			if (_nav.MoveToParent ())
-			{
-				_pos ++;
-				return true;
-			}
+			finished = true;
 			return false;
+		}
+
+		public override bool ReverseAxis {
+			get { return true; }
 		}
 	}
 
@@ -376,39 +505,51 @@ namespace System.Xml.XPath
 
 	internal class PrecedingIterator : SimpleIterator
 	{
-		public PrecedingIterator (BaseIterator iter) : base (iter) {}
-		protected PrecedingIterator (PrecedingIterator other) : base (other) {}
+		bool finished;
+		bool started;
+		XPathNavigator startPosition;
+
+		public PrecedingIterator (BaseIterator iter) : base (iter) 
+		{
+			startPosition = iter.Current.Clone ();
+		}
+		protected PrecedingIterator (PrecedingIterator other) : base (other) 
+		{
+			startPosition = other.startPosition;
+			started = other.started;
+			finished = other.finished;
+		}
 		public override XPathNodeIterator Clone () { return new PrecedingIterator (this); }
 		public override bool MoveNext ()
 		{
-			if (_pos == 0)
-			{
-				if (_nav.MoveToPrevious ())
-				{
-					_pos ++;
+			if (finished)
+				return false;
+			if (!started) {
+				started = true;
+				_nav.MoveToRoot ();
+				_nav.MoveToFirstChild ();
+				if (_nav.ComparePosition (startPosition) == XmlNodeOrder.Same) {
+					_pos++;
 					return true;
 				}
-			}
-			else
-			{
-				if (_nav.MoveToFirstChild ())
-				{
-					while (_nav.MoveToNext ())
-						;
-					_pos ++;
-					return true;
+			} else {
+				while (!_nav.MoveToFirstChild ()) {
+					while (!_nav.MoveToNext ())
+						_nav.MoveToParent (); // Should not finish, at least before startPosition.
+					break;
 				}
-				do
-				{
-					if (_nav.MoveToPrevious ())
-					{
-						_pos ++;
-						return true;
-					}
-				}
-				while (_nav.MoveToParent ());
 			}
-			return false;
+			if (_nav.ComparePosition (startPosition) != XmlNodeOrder.Before) {
+				// Note that if _nav contains only 1 node, it won't be Same.
+				finished = true;
+				return false;
+			} else {
+				_pos ++;
+				return true;
+			}
+		}
+		public override bool ReverseAxis {
+			get { return true; }
 		}
 	}
 
@@ -506,6 +647,7 @@ namespace System.Xml.XPath
 		}
 		public override XPathNavigator Current { get { return _iter.Current; }}
 		public override int CurrentPosition { get { return _pos; }}
+		public override int ComparablePosition { get { return _iter.ComparablePosition; } }
 		
 		bool Match ()
 		{
@@ -595,14 +737,14 @@ namespace System.Xml.XPath
 				
 				switch (resType) {
 					case XPathResultType.Number:
-						if (_pred.EvaluateNumber (_iter) != _iter.CurrentPosition)
+						if (_pred.EvaluateNumber (_iter) != _iter.ComparablePosition)
 							continue;
 						break;
 					case XPathResultType.Any: {
 						object result = _pred.Evaluate (_iter);
 						if (result is double)
 						{
-							if ((double) result != _iter.CurrentPosition)
+							if ((double) result != _iter.ComparablePosition)
 								continue;
 						}
 						else if (!XPathFunctions.ToBoolean (result))

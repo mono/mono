@@ -1,3 +1,12 @@
+2003-11-04  Atsushi Enomoto  <ginga@kit.hi-ho.ne.jp>
+
+	* Iterator.cs : Added bool ReverseAxis property to identify whether
+	  the iterator is in reverse order or not.  Added ComparablePosition
+	  for correct position comparison for PredicateIterator and reverse-
+	  order-axes.  Modified AncestorIterator, AncestorOrSelfIterator,
+	  PrecedingIterator and PrecedingSiblingIterator to make MoveNext()
+	  return their nodes in document order. This fixes bugzilla #39079.
+
 2003-10-15  Atsushi Enomoto  <ginga@kit.hi-ho.ne.jp>
 
 	* Iterator.cs : DescendantIterator and FollowingIterator also should
