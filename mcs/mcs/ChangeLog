@@ -1,5 +1,14 @@
 2002-07-24  Martin Baulig  <martin@gnome.org>
 
+	* cs-tokenizer.cs: Eat up trailing whitespaces and one-line comments in
+	preprocessor directives, ensure that the argument to #define/#undef is
+	exactly one identifier and that it's actually an identifier.
+
+	Some weeks ago I did a `#define DEBUG 1' myself and wondered why this
+	did not work ....
+
+2002-07-24  Martin Baulig  <martin@gnome.org>
+
 	* statement.cs (Foreach.ForeachHelperMethods): Added `Type element_type',
 	initialize it to TypeManager.object_type in the constructor.
 	(Foreach.GetEnumeratorFilter): Set `hm.element_type' to the return type

@@ -988,6 +988,19 @@ namespace Mono.CSharp
 				return;
 			}
 
+			char[] whitespace = { ' ', '\t' };
+			if (arg.IndexOfAny (whitespace) != -1){
+				Report.Error(1025, Location, "Single-line comment or end-of-line expected");
+				return;
+			}
+
+			foreach (char c in arg){
+				if (!Char.IsLetter (c) && (c != '_')){
+					Report.Error(1001, Location, "Identifier expected");
+					return;
+				}
+			}
+
 			if (is_define){
 				if (defines == null)
 					defines = new Hashtable ();
@@ -1193,6 +1206,11 @@ namespace Mono.CSharp
 			string cmd, arg;
 			
 			get_cmd_arg (out cmd, out arg);
+
+			// Eat any trailing whitespaces and single-line comments
+			if (arg.IndexOf ("//") != -1)
+				arg = arg.Substring (0, arg.IndexOf ("//"));
+			arg = arg.TrimEnd (' ', '\t');
 
 			//
 			// The first group of pre-processing instructions is always processed
