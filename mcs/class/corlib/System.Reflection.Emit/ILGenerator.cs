@@ -311,7 +311,7 @@ namespace System.Reflection.Emit {
 				scopes.Push (sym_writer.OpenScope (code_len));
 		}
 		public LocalBuilder DeclareLocal (Type localType) {
-			LocalBuilder res = new LocalBuilder (module, localType);
+			LocalBuilder res = new LocalBuilder (module, localType, this);
 			if (locals != null) {
 				LocalBuilder[] new_l = new LocalBuilder [locals.Length + 1];
 				System.Array.Copy (locals, new_l, locals.Length);
@@ -445,6 +445,10 @@ namespace System.Reflection.Emit {
 			bool load_addr = false;
 			bool is_store = false;
 			make_room (6);
+
+			if (lbuilder.ilgen != this)
+				throw new Exception ("Trying to emit a local from a different ILGenerator.");
+
 			/* inline the code from ll_emit () to optimize il code size */
 			if (opcode.StackBehaviourPop == StackBehaviour.Pop1) {
 				cur_stack --;

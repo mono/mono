@@ -32,11 +32,13 @@ namespace System.Reflection.Emit {
 		//
 		private ModuleBuilder module;
 		internal uint position;
+		internal ILGenerator ilgen;
 
-		internal LocalBuilder (ModuleBuilder m, Type t)
+		internal LocalBuilder (ModuleBuilder m, Type t, ILGenerator ilgen)
 		{
 			this.module = m;
 			this.type = t;
+			this.ilgen = ilgen;
 		}
 		public void SetLocalSymInfo (string lname, int startOffset, int endOffset)
 		{

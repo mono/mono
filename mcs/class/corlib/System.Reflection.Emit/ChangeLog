@@ -1,3 +1,10 @@
+2002-07-19  Martin Baulig  <martin@gnome.org>
+
+	* ILGenerator.cs (Emit (OpCode, LocalBuilder)): Throw an exception
+	when trying to emit a local that was defined in a different ILGenerator.
+
+	* LocalBuilder.cs (LocalBuilder): Added `ILGenetator' argument to
+	the constructor.
 
 Tue Jul 16 19:32:08 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
