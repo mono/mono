@@ -195,15 +195,6 @@ namespace System.Data {
 			}
 		}
 
-		internal bool VirginCaseSensitive {
-			get { return _virginCaseSensitive; }
-			set { _virginCaseSensitive = value; }
-		}
-
-		internal ArrayList Indexes{
-			get { return _indexes; }
-		}
-
 		internal void ChangedDataColumn (DataRow dr, DataColumn dc, object pv) 
 		{
 			DataColumnChangeEventArgs e = new DataColumnChangeEventArgs (dr, dc, pv);
@@ -750,7 +741,7 @@ namespace System.Data {
 		{
 					
 			Copy.CaseSensitive = CaseSensitive;
-			Copy.VirginCaseSensitive = VirginCaseSensitive;
+			Copy._virginCaseSensitive = _virginCaseSensitive;
 
 			// Copy.ChildRelations
 			// Copy.Constraints
@@ -1285,7 +1276,15 @@ namespace System.Data {
 				Parser parser = new Parser ();
 				filter = parser.Compile (filterExpression);
 			}
+			SortableColumn[] sortableColumns = null;
+			if (sort != null && !sort.Equals(String.Empty))
+				sortableColumns = SortableColumn.ParseSortString (this, sort, true);
 
+			return Select (filter, sortableColumns, recordStates);
+		}
+
+		internal DataRow [] Select (IExpression filter, SortableColumn [] sortableColumns, DataViewRowState recordStates)
+		{
 			ArrayList rowList = new ArrayList();
 			int recordStateFilter = GetRowStateFilter(recordStates);
 			foreach (DataRow row in Rows) {
@@ -1298,16 +1297,7 @@ namespace System.Data {
 
 			DataRow[] dataRows = (DataRow[])rowList.ToArray(typeof(DataRow));
 
-			if (sort != null && !sort.Equals(String.Empty)) 
-			{
-				SortableColumn[] sortableColumns = null;
-
-				sortableColumns = ParseTheSortString (sort);
-				if (sortableColumns == null)
-					throw new Exception ("sort expression result is null");
-				if (sortableColumns.Length == 0)
-					throw new Exception("sort expression result is 0");
-
+			if (sortableColumns != null) {
 				RowSorter rowSorter = new RowSorter (this, dataRows, sortableColumns);
 				dataRows = rowSorter.SortRows ();
 
@@ -1315,7 +1305,6 @@ namespace System.Data {
 				rowSorter = null;
 			}
 
-			
 			return dataRows;
 		}
 
@@ -1673,82 +1662,6 @@ namespace System.Data {
 			UniqueConstraint.SetAsPrimaryKey(this.Constraints, null);
 		}
 
-		// to parse the sort string for DataTable:Select(expression,sort)
-		// into sortable columns (think ORDER BY, 
-		// such as, "customer ASC, price DESC" )
-		internal SortableColumn[] ParseTheSortString (string sort) 
-		{
-			SortableColumn[] sortColumns = null;
-			ArrayList columns = null;
-		
-			if (sort != null && !sort.Equals ("")) {
-				columns = new ArrayList ();
-				string[] columnExpression = sort.Trim ().Split (new char[1] {','});
-			
-				for (int c = 0; c < columnExpression.Length; c++) {
-					string[] columnSortInfo = columnExpression[c].Trim ().Split (new char[1] {' '});
-				
-					string columnName = columnSortInfo[0].Trim ();
-					string sortOrder = "ASC";
-					if (columnSortInfo.Length > 1) 
-						sortOrder = columnSortInfo[1].Trim ().ToUpper (Locale);
-					
-					ListSortDirection sortDirection = ListSortDirection.Ascending;
-					switch (sortOrder) {
-					case "ASC":
-						sortDirection = ListSortDirection.Ascending;
-						break;
-					case "DESC":
-						sortDirection = ListSortDirection.Descending;
-						break;
-					default:
-						throw new IndexOutOfRangeException ("Could not find column: " + columnExpression[c]);
-					}
-					Int32 ord = 0;
-					try {
-						ord = Int32.Parse (columnName);
-					}
-					catch (FormatException) {
-						ord = -1;
-					}
-					DataColumn dc = null;
-					if (ord == -1)				
-						dc = _columnCollection[columnName];
-					else
-						dc = _columnCollection[ord];
-					SortableColumn sortCol = new SortableColumn (dc,sortDirection);
-					columns.Add (sortCol);
-				}	
-				sortColumns = (SortableColumn[]) columns.ToArray (typeof (SortableColumn));
-			}		
-			return sortColumns;
-		}
-	
-		internal class SortableColumn 
-		{
-			private DataColumn col;
-			private ListSortDirection dir;
-
-			internal SortableColumn (DataColumn column, 
-						ListSortDirection direction) 
-			{
-				col = column;
-				dir = direction;
-			}
-
-			public DataColumn Column {
-				get {
-					return col;
-				}
-			}
-
-			public ListSortDirection SortDirection {
-				get {
-					return dir;
-				}
-			}
-		}
-
 		private class RowSorter : IComparer 
 		{
 			private DataTable table;
@@ -1912,4 +1825,88 @@ namespace System.Data {
 			}
 		}
 	}
+
+	// to parse the sort string for DataTable:Select(expression,sort)
+	// into sortable columns (think ORDER BY, 
+	// such as, "customer ASC, price DESC" ), as well as DataView.Sort.
+	internal class SortableColumn 
+	{
+		private DataColumn col;
+		private ListSortDirection dir;
+
+		internal SortableColumn (DataColumn column, 
+					ListSortDirection direction) 
+		{
+			col = column;
+			dir = direction;
+		}
+
+		public DataColumn Column {
+			get {
+				return col;
+			}
+		}
+
+		public ListSortDirection SortDirection {
+			get {
+				return dir;
+			}
+		}
+
+		internal static SortableColumn[] ParseSortString (DataTable table, string sort, bool rejectNoResult)
+		{
+			SortableColumn[] sortColumns = null;
+			ArrayList columns = null;
+		
+			if (sort != null && !sort.Equals ("")) {
+				columns = new ArrayList ();
+				string[] columnExpression = sort.Trim ().Split (new char[1] {','});
+			
+				for (int c = 0; c < columnExpression.Length; c++) {
+					string[] columnSortInfo = columnExpression[c].Trim ().Split (new char[1] {' '});
+				
+					string columnName = columnSortInfo[0].Trim ();
+					string sortOrder = "ASC";
+					if (columnSortInfo.Length > 1) 
+						sortOrder = columnSortInfo[1].Trim ().ToUpper (table.Locale);
+					
+					ListSortDirection sortDirection = ListSortDirection.Ascending;
+					switch (sortOrder) {
+					case "ASC":
+						sortDirection = ListSortDirection.Ascending;
+						break;
+					case "DESC":
+						sortDirection = ListSortDirection.Descending;
+						break;
+					default:
+						throw new IndexOutOfRangeException ("Could not find column: " + columnExpression[c]);
+					}
+					Int32 ord = 0;
+					try {
+						ord = Int32.Parse (columnName);
+					}
+					catch (FormatException) {
+						ord = -1;
+					}
+					DataColumn dc = null;
+					if (ord == -1)				
+						dc = table.Columns [columnName];
+					else
+						dc = table.Columns [ord];
+					SortableColumn sortCol = new SortableColumn (dc,sortDirection);
+					columns.Add (sortCol);
+				}	
+				sortColumns = (SortableColumn[]) columns.ToArray (typeof (SortableColumn));
+			}		
+
+			if (rejectNoResult) {
+				if (sortColumns == null)
+					throw new Exception ("sort expression result is null");
+				if (sortColumns.Length == 0)
+					throw new Exception("sort expression result is 0");
+			}
+			return sortColumns;
+		}
+	}
+
 }

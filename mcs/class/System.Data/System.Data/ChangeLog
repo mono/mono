@@ -1,5 +1,13 @@
 2005-01-24  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* DataTable.cs, DataView.cs :
+	  Optimized DataView to compile only once RowFilter and Sort when 
+	  those properties are set. To make it possible, extracted 
+	  SortableColumn out of DataTable and added internal DataTable.Select()
+	  that accepts precompiled IExpression and SortableColumns[].
+
+2005-01-24  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* DataColumn.cs : set_MaxLength is not allowed when it is mapped to
 	  SimpleContent. (However, it is weird but it never fails when we set
 	  ColumnMapping = MappingType.SimpleContent when we have MaxLength.)

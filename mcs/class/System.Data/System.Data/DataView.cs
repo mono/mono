@@ -13,6 +13,7 @@ using System;
 using System.Collections;
 using System.ComponentModel;
 using System.Reflection;
+using Mono.Data.SqlExpressions;
 
 namespace System.Data 
 {
@@ -31,11 +32,12 @@ namespace System.Data
 	{
 		DataTable dataTable = null;
 		string rowFilter = "";
+		IExpression rowFilterExpr;
 		string sort = "";
+		SortableColumn [] sortedColumns = null;
 		DataViewRowState rowState;
 		DataRowView[] rowCache = new DataRowView[0];
-		
-		
+
 		bool allowNew = true; 
 		bool allowEdit = true;
 		bool allowDelete = true;
@@ -67,8 +69,8 @@ namespace System.Data
 		{
 			dataTable = table;
 			rowState = DataViewRowState.CurrentRows;
-			rowFilter = RowFilter;
-			sort = Sort;
+			this.RowFilter = RowFilter;
+			this.Sort = Sort;
 			rowState = RowState;
 			Open();
 		}
@@ -127,7 +129,8 @@ namespace System.Data
 				if (applyDefaultSort == true && (sort == null || sort == string.Empty)) {
 					foreach (Constraint c in dataTable.Constraints)	{
 						if (c is UniqueConstraint) {
-							sort = GetSortString ((UniqueConstraint) c);
+							// FIXME: Compute SortableColumns[] directly.
+							Sort = GetSortString ((UniqueConstraint) c);
 							break;
 						}
 					}
@@ -178,6 +181,14 @@ namespace System.Data
 			
 			[MonoTODO]
 			set {
+				if (value == null)
+					value = String.Empty;
+				if (value == String.Empty) 
+					rowFilterExpr = null;
+				else {
+					Parser parser = new Parser ();
+					rowFilterExpr = parser.Compile (value);
+				}
 				rowFilter = value;
 				UpdateIndex ();
 				OnListChanged (new ListChangedEventArgs (ListChangedType.Reset, - 1, -1));
@@ -219,7 +230,8 @@ namespace System.Data
 					if (ApplyDefaultSort == true) {
 						foreach (Constraint c in dataTable.Constraints) {
 							if (c is UniqueConstraint) {
-								sort = GetSortString ((UniqueConstraint)c);
+								// FIXME: Compute SortableColumns[] directly.
+								Sort = GetSortString ((UniqueConstraint)c);
 								break;
 							}
 						}
@@ -231,6 +243,7 @@ namespace System.Data
 					/* sort is set to value specified */
 					useDefaultSort = false;
 					sort = value;
+					sortedColumns = SortableColumn.ParseSortString (dataTable, value, true);
 				}
 				UpdateIndex ();
 				OnListChanged (new ListChangedEventArgs (ListChangedType.Reset, - 1, -1));
@@ -344,8 +357,7 @@ namespace System.Data
 			if (sort == null || sort == string.Empty)
 				throw new ArgumentException ("Find finds a row based on a Sort order, and no Sort order is specified");
 			else {
-				DataTable.SortableColumn [] sortedColumns = null;
-				sortedColumns = dataTable.ParseTheSortString (sort);
+				// FIXME: maybe some of those thecks could be removel.
 				if (sortedColumns == null)
 					throw new Exception ("sort expression result is null");
 				if (sortedColumns.Length == 0)
@@ -604,7 +616,7 @@ namespace System.Data
 			DataRowView[] newRowCache = null;
 			DataRow[] rows = null;
 			
-			rows = dataTable.Select (RowFilter, Sort, RowStateFilter);
+			rows = dataTable.Select (rowFilterExpr, sortedColumns, RowStateFilter);
 
 			newRowCache = new DataRowView[rows.Length];
 			for (int r = 0; r < rows.Length; r++) {
@@ -857,13 +869,11 @@ namespace System.Data
 		
 		private object [] GetSearchKey (DataRow dr)
 		{
-			DataTable.SortableColumn [] sortedColumns = null;
-			sortedColumns = dataTable.ParseTheSortString (sort);
 			if (sortedColumns == null) 
 				return null;
 			object [] keys = new object [sortedColumns.Length];
 			int i = 0;
-			foreach (DataTable.SortableColumn sc in sortedColumns) {
+			foreach (SortableColumn sc in sortedColumns) {
 				keys [i] = dr [sc.Column];
 				i++;
 			}
@@ -908,15 +918,15 @@ namespace System.Data
 		
 		private class RowComparer : IComparer 
 		{
-			private DataTable.SortableColumn [] sortColumns;
+			private SortableColumn [] sortColumns;
 			private DataTable table;
-			public RowComparer(DataTable table, DataTable.SortableColumn[] sortColumns) 
+			public RowComparer(DataTable table, SortableColumn[] sortColumns) 
 			{
 				this.table = table;			
 				this.sortColumns = sortColumns;
 			}
 
-			public DataTable.SortableColumn[] SortedColumns {
+			public SortableColumn[] SortedColumns {
 				get {
 					return sortColumns;
 				}
@@ -931,7 +941,7 @@ namespace System.Data
 				DataRowView rowView = (DataRowView) y;
 				object [] keys = (object [])x;
 				for(int i = 0; i < sortColumns.Length; i++) {
-					DataTable.SortableColumn sortColumn = sortColumns [i];
+					SortableColumn sortColumn = sortColumns [i];
 					DataColumn dc = sortColumn.Column;
 
 					IComparable row = (IComparable) rowView.Row [dc];
