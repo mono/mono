@@ -1,5 +1,12 @@
 2002-04-12  Ravi Pratap  <ravi@ximian.com>
 
+	* expression.cs (VerifyArgumentsCompat): Implement Miguel's suggestion
+	and get rid of is_delegate parameter.
+
+	* everywhere : update.
+	
+2002-04-12  Ravi Pratap  <ravi@ximian.com>
+
 	* cs-parser.jay (compilation_unit): Revamp completely to use
 	some new ideas that I got from Rhys' grammar to solve the problems
 	with assembly level attributes.

@@ -3437,7 +3437,7 @@ namespace Mono.CSharp {
 			//
 
 			if (VerifyArgumentsCompat (ec, Arguments, argument_count, method,
-						   chose_params_expanded, false, null, loc))
+						   chose_params_expanded, null, loc))
 				return method;
 			else
 				return null;
@@ -3447,7 +3447,7 @@ namespace Mono.CSharp {
 							  int argument_count,
 							  MethodBase method, 
 							  bool chose_params_expanded,
-							  bool is_delegate, Type delegate_type,
+							  Type delegate_type,
 							  Location loc)
 		{
 			ParameterData pd = GetParameterData (method);
@@ -3468,7 +3468,7 @@ namespace Mono.CSharp {
 
 					if (conv == null) {
 						if (!Location.IsNull (loc)) {
-							if (!is_delegate) 
+							if (delegate_type == null) 
 								Error (1502, loc,
 								       "The best overloaded match for method '" +
 								       FullMethodDesc (method) +

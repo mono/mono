@@ -378,7 +378,7 @@ namespace Mono.CSharp {
 			}
 
 			return Invocation.VerifyArgumentsCompat (ec, args, arg_count, mb, !not_params_method,
-								 true, delegate_type, loc);
+								 delegate_type, loc);
 		}
 		
 		/// <summary>
