@@ -72,6 +72,7 @@ namespace Mono.CSharp
 		// A list of resource files
 		//
 		static ArrayList resources;
+		static ArrayList embedded_resources;
 		
 		//
 		// An array of the defines from the command line
@@ -172,6 +173,7 @@ namespace Mono.CSharp
 				"   --expect-error X Expect that error X will be encountered\n" +
 				"   --recurse SPEC   Recursively compiles the files in SPEC ([dir]/file)\n" + 
 				"   --linkres FILE   Links FILE as a resource\n" + 
+				"   --resource FILE  Embed FILE as a resource\n" + 
 				"   --stacktrace     Shows stack trace at error location\n" +
 				"   --target KIND    Specifies the target (KIND is one of: exe, winexe, " +
 				                     "library, module)\n" +
@@ -559,6 +561,7 @@ namespace Mono.CSharp
 				Report.Stacktrace = true;
 				return true;
 				
+			case "--linkresource":
 			case "--linkres":
 				if ((i + 1) >= args.Length){
 					Usage ();
@@ -569,6 +572,19 @@ namespace Mono.CSharp
 					resources = new ArrayList ();
 				
 				resources.Add (args [++i]);
+				return true;
+				
+			case "--resource":
+			case "--res":
+				if ((i + 1) >= args.Length){
+					Usage ();
+					Console.WriteLine("Missing argument to --resource"); 
+					Environment.Exit (1);
+				}
+				if (embedded_resources == null)
+					embedded_resources = new ArrayList ();
+				
+				embedded_resources.Add (args [++i]);
 				return true;
 				
 			case "--target":
@@ -798,14 +814,27 @@ namespace Mono.CSharp
 			}
 
 			case "/linkres":
+			case "/linkresource":
 				if (value == ""){
-					Console.WriteLine ("/recurse requires an argument");
+					Console.WriteLine ("{0} requires an argument", arg);
 					Environment.Exit (1);
 				}
 				if (resources == null)
 					resources = new ArrayList ();
 				
 				resources.Add (value);
+				return true;
+				
+			case "/res":
+			case "/resource":
+				if (value == ""){
+					Console.WriteLine ("{0} requires an argument", arg);
+					Environment.Exit (1);
+				}
+				if (embedded_resources == null)
+					embedded_resources = new ArrayList ();
+				
+				embedded_resources.Add (value);
 				return true;
 				
 			case "/recurse":
@@ -1158,6 +1187,21 @@ namespace Mono.CSharp
 			if (resources != null){
 				foreach (string file in resources)
 					CodeGen.AssemblyBuilder.AddResourceFile (file, file);
+			}
+			
+			if (embedded_resources != null){
+				object[] margs = new object [2];
+				Type[] argst = new Type [2];
+				argst [0] = argst [1] = typeof (string);
+				MethodInfo embed_res = typeof (AssemblyBuilder).GetMethod ("EmbedResourceFile", argst);
+				if (embed_res == null) {
+					Report.Warning (0, new Location (-1), "Cannot embed resources on this runtime: try the Mono runtime instead.");
+				} else {
+					foreach (string file in embedded_resources) {
+						margs [0] = margs [1] = file;
+						embed_res.Invoke (CodeGen.AssemblyBuilder, margs);
+					}
+				}
 			}
 			
 			CodeGen.Save (output_file);

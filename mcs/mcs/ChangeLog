@@ -1,3 +1,8 @@
+
+Thu Aug 8 10:28:07 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* driver.cs: implemented /resource option to embed managed resources.
+
 2002-08-07  Martin Baulig  <martin@gnome.org>
 
 	* class.cs (FieldBase.Initializer): Renamed to `init' and made private.
