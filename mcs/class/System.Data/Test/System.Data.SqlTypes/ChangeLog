@@ -1,0 +1,3 @@
+2002/11/08  Nick Drochak <ndrochak@gol.com>
+
+	* SqlSingleTest.cs : Remove debug statement that was breaking the build
