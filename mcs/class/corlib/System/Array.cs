@@ -367,14 +367,11 @@ namespace System
 			if (length < 0)
 				throw new ArgumentOutOfRangeException ();
 
-			if (source == null || dest == null)
-				throw new ArgumentNullException ();
-
-			if (source_idx < source.GetLowerBound (0) || dest_idx < dest.GetLowerBound (0))
-				throw new ArgumentException ();
-
 			int source_pos = source_idx - source.GetLowerBound (0);
 			int dest_pos = dest_idx - dest.GetLowerBound (0);
+
+			if (source_idx < 0 || dest_idx < 0)
+				throw new ArgumentException ();
 
 			if (source_pos + length > source.Length || dest_pos + length > dest.Length)
 				throw new ArgumentException ();
@@ -385,7 +382,7 @@ namespace System
 			Type src_type = source.GetType ().GetElementType ();
 			Type dst_type = dest.GetType ().GetElementType ();
 
-			if (src_type.IsValueType && dst_type.IsValueType && (src_type == dst_type)) {
+			if (src_type.IsValueType && (src_type == dst_type)) {
 				FastCopy (source, source_pos, dest, dest_pos, length);
 				return;
 			}
