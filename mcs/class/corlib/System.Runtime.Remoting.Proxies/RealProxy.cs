@@ -26,7 +26,7 @@ namespace System.Runtime.Remoting.Proxies
 	public abstract class RealProxy {
 
 		Type class_to_proxy;
-		Identity _objectIdentity;
+		internal Identity _objectIdentity;
 		Object _objTP;
 
 		protected RealProxy ()
@@ -38,7 +38,7 @@ namespace System.Runtime.Remoting.Proxies
 		{
 		}
 
-		internal RealProxy (Type classToProxy, Identity identity) : this(classToProxy, (IntPtr) 0, null)
+		internal RealProxy (Type classToProxy, ClientIdentity identity) : this(classToProxy, (IntPtr) 0, null)
 		{
 			_objectIdentity = identity;
 		}
@@ -99,7 +99,6 @@ namespace System.Runtime.Remoting.Proxies
 		public virtual object GetTransparentProxy () 
 		{
 			return _objTP;
-		}	
+		}
 	}
-
 }

@@ -466,6 +466,7 @@ System.Runtime.InteropServices/UnmanagedType.cs
 System.Runtime.InteropServices/VarEnum.cs
 System.Runtime.Remoting/ActivatedClientTypeEntry.cs
 System.Runtime.Remoting/ActivatedServiceTypeEntry.cs
+System.Runtime.Remoting/EnvoyInfo.cs
 System.Runtime.Remoting/IObjectHandle.cs
 System.Runtime.Remoting/IChannelInfo.cs
 System.Runtime.Remoting/Identity.cs
@@ -484,6 +485,7 @@ System.Runtime.Remoting/TypeInfo.cs
 System.Runtime.Remoting/WellKnownObjectMode.cs
 System.Runtime.Remoting/WellKnownClientTypeEntry.cs
 System.Runtime.Remoting/WellKnownServiceTypeEntry.cs
+System.Runtime.Remoting.Activation/ActivationServices.cs
 System.Runtime.Remoting.Activation/ActivatorLevel.cs
 System.Runtime.Remoting.Activation/IActivator.cs
 System.Runtime.Remoting.Activation/IConstructionCallMessage.cs
@@ -522,6 +524,7 @@ System.Runtime.Remoting.Channels/TransportHeaders.cs
 System.Runtime.Remoting.Channels/CrossAppDomainChannel.cs
 System.Runtime.Remoting.Contexts/Context.cs
 System.Runtime.Remoting.Contexts/ContextProperty.cs
+System.Runtime.Remoting.Contexts/CrossContextChannel.cs
 System.Runtime.Remoting.Contexts/CrossContextDelegate.cs
 System.Runtime.Remoting.Contexts/IContextAttribute.cs
 System.Runtime.Remoting.Contexts/IContextProperty.cs
@@ -540,9 +543,15 @@ System.Runtime.Remoting.Lifetime/LifetimeServices.cs
 System.Runtime.Remoting.Messaging/ArgInfo.cs
 System.Runtime.Remoting.Messaging/AsyncResult.cs
 System.Runtime.Remoting.Messaging/CallContext.cs
+System.Runtime.Remoting.Messaging/ClientContextTerminatorSink.cs
+System.Runtime.Remoting.Messaging/ConstructionCall.cs
+System.Runtime.Remoting.Messaging/ConstructionCallDictionary.cs
+System.Runtime.Remoting.Messaging/ConstructionResponse.cs
+System.Runtime.Remoting.Messaging/EnvoyTerminatorSink.cs
 System.Runtime.Remoting.Messaging/Header.cs
 System.Runtime.Remoting.Messaging/HeaderHandler.cs
 System.Runtime.Remoting.Messaging/ErrorMessage.cs
+System.Runtime.Remoting.Messaging/IInternalMessage.cs
 System.Runtime.Remoting.Messaging/IMessage.cs
 System.Runtime.Remoting.Messaging/IMessageCtrl.cs
 System.Runtime.Remoting.Messaging/IMessageSink.cs

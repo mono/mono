@@ -1,3 +1,9 @@
+2003-02-18  Lluis Sanchez Gual <lluis@ideary.com>
+
+	* RealProxy.cs: Changed constructor to allow only ClientIdentity instances. 
+	* RemotingProxy.cs: Added new constructor for client activated objects.
+	  Added method that handles construction messages.
+
 2003-02-03 Patrik Torstensson
 
 	* RealProxy.cs: changed excption behavior and added serialization helpers, 
@@ -10,7 +16,7 @@
 
 	* RealProxy.cs: fixed compilation by adding missing GetObjectData ().
 
-2002-12-20  Lluis Sanchez Gual <lsg@ctv.es>
+2002-12-20  Lluis Sanchez Gual <lluis@ideary.com>
 
 	* RealProxy.cs: Added ObjectIdentity property. 
 	  Implemented CrateObjRef.
