@@ -65,14 +65,18 @@ public class HijriCalendar : Calendar {
 		}
 	}
 
-	[MonoTODO]
-	public override int TwoDigitYearMax
+	int twoDigitYearMax = 1451;
+	
+	[MonoTODO ("Add call into operating system")]
+	public override int TwoDigitYearMax 
 	{
 		get {
-			throw new NotImplementedException();
+			return twoDigitYearMax;
 		}
 		set {
-			throw new NotImplementedException();
+			M_ArgumentInRange ("value", value, 100, M_MaxYear);
+
+			twoDigitYearMax = value;
 		}
 	}
 

@@ -69,14 +69,17 @@ public class HebrewCalendar : Calendar {
 		}
 	}
 
-	[MonoTODO]
-	public override int TwoDigitYearMax
+	int twoDigitYearMax = 5790;
+	
+	public override int TwoDigitYearMax 
 	{
 		get {
-			throw new NotImplementedException();
+			return twoDigitYearMax;
 		}
 		set {
-			throw new NotImplementedException();
+			M_ArgumentInRange ("value", value, 100, M_MaxYear);
+
+			twoDigitYearMax = value;
 		}
 	}
 

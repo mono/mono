@@ -58,14 +58,17 @@ public class ThaiBuddhistCalendar : Calendar {
 		}
 	}
 
-	[MonoTODO]
-	public override int TwoDigitYearMax
+	int twoDigitYearMax = 2572;
+	
+	public override int TwoDigitYearMax 
 	{
 		get {
-			throw new NotImplementedException();
+			return twoDigitYearMax;
 		}
 		set {
-			throw new NotImplementedException();
+			M_ArgumentInRange ("value", value, 100, M_MaxYear);
+
+			twoDigitYearMax = value;
 		}
 	}
 
