@@ -132,7 +132,7 @@ namespace Mono.Data.SqliteClient
 
                 public SqliteParameter Add (SqliteParameter param)
                 {
-                        Add (param);
+                        Add ((object)param);
                         return param;
                 }
 
