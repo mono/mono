@@ -15,7 +15,9 @@
 	`builder_to_ifaces' hash.
 	(TypeManager.LookupMemberContainer): For
 	GenericTypeParameterBuilders, get the TypeParameter from the
-	`builder_to_type_param'.	
+	`builder_to_type_param'.
+	(TypeManager.FindMembers): For GenericTypeParameterBuilders, get
+	the TypeParameter and call FindMembers on it.
 
 2004-04-07  Martin Baulig  <martin@ximian.com>
 
