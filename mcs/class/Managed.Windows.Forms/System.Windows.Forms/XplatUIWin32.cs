@@ -68,7 +68,9 @@ namespace System.Windows.Forms {
 			internal IntPtr		hIcon;
 			internal IntPtr		hCursor;
 			internal IntPtr		hbrBackground;
+			[MarshalAs(UnmanagedType.LPWStr)]
 			internal string		lpszMenuName;
+			[MarshalAs(UnmanagedType.LPWStr)]
 			internal string		lpszClassName;
 		}
 
