@@ -1,8 +1,11 @@
 2004-11-05  Zoltan Varga  <vargaz@freemail.hu>
 
+	(ves_icall_get_enum_info): Avoid crash when called on a non-finished
+	EnumBuilder.
+
 	* icall.c (ves_icall_System_Reflection_Assembly_GetEntryAssembly): 
 	Return NULL when the domain does not have entry_assembly set.
-	
+
 	* icall.c (ves_icall_System_Reflection_Assembly_GetFilesInternal): 
 	Add a 'resource_modules' argument.
 	(ves_icall_type_GetTypeCode): Fix typecode of byref types.
