@@ -90,4 +90,5 @@ namespace System.ComponentModel {
 			{
 				return base.GetHashCode ();
 			}
+		}
 }
