@@ -1,5 +1,5 @@
 2003-06-08  Ben Maurer <bmaurer@users.sourceforge.net>
-	ArrayList.cs, Hashtable.cs, SortedList.cs: Enumerator fixes, error
+	* ArrayList.cs, Hashtable.cs, SortedList.cs: Enumerator fixes, error
 	checking
 
 2003-06-07  Ben Maurer <bmaurer@users.sourceforge.net>
