@@ -8,6 +8,8 @@ Major tasks:
 BUGS
 ----
 
+* Add test case for destructors
+
 * Do not declare a .property on things that are just implementations, that
   comes from the parent, just do the method.
 
@@ -47,14 +49,6 @@ BUGS
 
 	Explanation: The reason for the `instance' attribute on
 	indexers is that indexers only apply to instances
-
-* Handle destructors specially
-
-	Turn ~X () { a () } into:
-	void Finalize () { try { a (); } finally { base.Finalize (); } }
-
-	The code is mostly done, but `base' is missing.  The reason it is 
-	missing is because we have to implement visibility first.
 
 * Arrays
 
@@ -267,3 +261,4 @@ class Y : X, I {
 
 
 *************
+

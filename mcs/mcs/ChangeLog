@@ -1,3 +1,15 @@
+2002-01-12  Miguel de Icaza  <miguel@ximian.com>
+
+	* class.cs (Method.EmitDestructor): Implement calling our base
+	destructor. 
+
+	* statement.cs (Try.Emit): Fix to reset the InFinally to the old
+	value of InFinally.
+
+	* codegen.cs (EmitContext.EmitTopBlock): Destructors will call
+	this routine and will wrap the call in a try/catch block.  Deal
+	with the case.
+
 2002-01-11  Miguel de Icaza  <miguel@ximian.com>
 
 	* ecore.cs (Expression.MemberLookup): instead of taking a

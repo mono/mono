@@ -1713,7 +1713,7 @@ namespace Mono.CSharp {
 				bool old_in_finally = ec.InFinally;
 				ec.InFinally = true;
 				Fini.Emit (ec);
-				ec.InFinally = false;
+				ec.InFinally = old_in_finally;
 			}
 			
 			ig.EndExceptionBlock ();

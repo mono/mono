@@ -221,8 +221,10 @@ namespace Mono.CSharp {
 				ig.Emit (OpCodes.Ldloc, return_value);
 				ig.Emit (OpCodes.Ret);
 			} else {
-				if (!has_ret)
-					ig.Emit (OpCodes.Ret);
+				if (!has_ret){
+					if (!InTry)
+						ig.Emit (OpCodes.Ret);
+				}
 			}
 		}
 

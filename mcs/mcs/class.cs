@@ -2210,26 +2210,46 @@ namespace Mono.CSharp {
 			//
 			// FIXME: This code generates buggy code
 			//
-			if (Name == "Finalize" && type_return_type == TypeManager.void_type){
-				Label end = ig.BeginExceptionBlock ();
-				Label finish = ig.DefineLabel ();
-				bool old_in_try = ec.InTry;
-				ec.InTry = true;
+			if (Name == "Finalize" && type_return_type == TypeManager.void_type)
+				EmitDestructor (ec);
+			else
 				ec.EmitTopBlock (Block, Location);
-				ig.Emit (OpCodes.Leave, finish);
-				ec.InTry = old_in_try;
+		}
 
-				bool old_in_finally = ec.InFinally;
-				ec.InFinally = true;
-				ig.BeginFinallyBlock ();
-//				throw new Exception ("IMPLEMENT BASE ACCESS!");
-				// DONT FORGET TO SET THE EC VARIABLES.
-				Console.WriteLine ("Implement base access here");
+		void EmitDestructor (EmitContext ec)
+		{
+			ILGenerator ig = ec.ig;
+			
+			Label finish = ig.DefineLabel ();
+			bool old_in_try = ec.InTry;
+			Expression member_lookup;
+			
+			ig.BeginExceptionBlock ();
+			ec.InTry = true;
+			ec.ReturnLabel = finish;
+			ec.EmitTopBlock (Block, Location);
+			ec.InTry = old_in_try;
+			
+			ig.MarkLabel (finish);
+			bool old_in_finally = ec.InFinally;
+			ec.InFinally = true;
+			ig.BeginFinallyBlock ();
+			
+			member_lookup = Expression.MemberLookup (
+				ec, ec.TypeContainer.TypeBuilder.BaseType, "Finalize",
+				MemberTypes.Method, Expression.AllBindingFlags, Location);
 
-				ec.InFinally = old_in_finally;
-				ig.EndExceptionBlock ();
-			} else
-				ec.EmitTopBlock (Block, Location);
+			if (member_lookup != null){
+				MethodGroupExpr parent_destructor = ((MethodGroupExpr) member_lookup);
+				
+				ig.Emit (OpCodes.Ldarg_0);
+				ig.Emit (OpCodes.Call, (MethodInfo) parent_destructor.Methods [0]);
+			}
+			ec.InFinally = old_in_finally;
+			
+			ig.EndExceptionBlock ();
+			//ig.MarkLabel (ec.ReturnLabel);
+			ig.Emit (OpCodes.Ret);
 		}
 	}
 
