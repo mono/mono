@@ -1,3 +1,9 @@
+2001-08-06 Garrett Rooney <rooneg@electricjellyfish.net>
+
+	* Uri.cs: Initial Implementation.  Parsing needs to be fixed to take 
+	into account IPv6 addresses, url encoding needs to be implemented, and 
+	various minor methods need to be written, but this is a decent start.
+
 2001-08-06  Dietmar Maurer  <dietmar@ximian.com>
 
 	* common.src: added Object.cs
