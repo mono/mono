@@ -8,14 +8,14 @@
 // (C) 2003, Cesar Octavio Lopez Nataren, <cesar@ciencias.unam.mx>
 //
 
-namespace Microsoft.JScript.Tmp
-{
-	using System.Collections;
-	using System.Text;
-	using System;
+using System.Collections;
+using System.Text;
+using System;
 
-	public class ASTList : AST
-	{
+namespace Microsoft.JScript.Tmp {
+
+	public class ASTList : AST {
+
 		internal ArrayList elems;
 
 		internal ASTList ()
@@ -28,12 +28,6 @@ namespace Microsoft.JScript.Tmp
 		{
 			elems.Add (elem);
 			return this;
-		}
-
-		
-		internal override object Visit (Visitor v, object args)
-		{
-			return v.VisitASTList (this, args);
 		}
 
 

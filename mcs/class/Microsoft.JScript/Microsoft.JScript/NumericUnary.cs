@@ -7,12 +7,12 @@
 // (C) 2003, Cesar Lopez Nataren
 //
 
-namespace Microsoft.JScript.Tmp
-{
-	using System;
+using System;
 
-	public sealed class NumericUnary : UnaryOp
-	{
+namespace Microsoft.JScript.Tmp {
+
+	public sealed class NumericUnary : UnaryOp {
+
 		public NumericUnary (int operatorTok)
 		{
 			throw new NotImplementedException ();
@@ -20,12 +20,6 @@ namespace Microsoft.JScript.Tmp
 
 
 		public object EvaluateUnary (object v)
-		{
-			throw new NotImplementedException ();
-		}
-
-
-		internal override object Visit (Visitor v, object args)
 		{
 			throw new NotImplementedException ();
 		}

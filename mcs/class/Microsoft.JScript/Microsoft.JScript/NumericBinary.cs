@@ -7,12 +7,12 @@
 // (C) 2003, Cesar Lopez Nataren
 //
 
-namespace Microsoft.JScript.Tmp
-{
-	using System;
+using System;
 
-	public sealed class NumericBinary : BinaryOp
-	{
+namespace Microsoft.JScript.Tmp {
+
+	public sealed class NumericBinary : BinaryOp {
+
 		public NumericBinary (int operatorTok)
 		{
 			throw new NotImplementedException ();
@@ -26,11 +26,6 @@ namespace Microsoft.JScript.Tmp
 
 
 		public static object DoOp (object v1, object v2, JSToken operatorTok)
-		{
-			throw new NotImplementedException ();
-		}
-
-		internal override object Visit (Visitor v, object args)
 		{
 			throw new NotImplementedException ();
 		}

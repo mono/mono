@@ -7,18 +7,15 @@
 // (C) 2003, Cesar Octavio Lopez Nataren, <cesar@ciencias.unam.mx>
 //
 
-namespace Microsoft.JScript.Tmp
-{
-	using System;
-	using System.Text;
-	using Microsoft.JScript.Vsa;
+using System;
+using System.Text;
+using Microsoft.JScript.Vsa;
 
-	public class FunctionDeclaration : AST
-	{
-		internal string id;
-		internal string returnType;	    
-		internal FormalParameterList parameters;
-		internal ASTList funcBody;
+namespace Microsoft.JScript.Tmp {
+
+	public class FunctionDeclaration : AST {
+
+		internal FunctionObject Function;
 	
 		public static Closure JScriptFunctionDeclaration (RuntimeTypeHandle handle, string name, 
 								  string methodName, string [] formalParameters,
@@ -32,26 +29,13 @@ namespace Microsoft.JScript.Tmp
 		
 		internal FunctionDeclaration ()
 		{
-			parameters = new FormalParameterList ();
-			funcBody = new ASTList ();
-		}
-
-		
-		internal override object Visit (Visitor v, object args)
-		{
-			return v.VisitFunctionDeclaration (this, args);
+			Function = new FunctionObject ();
 		}
 
 
 		public override string ToString ()
 		{
-			StringBuilder sb = new StringBuilder ();
-
-			sb.Append ("id: " + id + "\n");
-			sb.Append ("parameters: " + parameters.ToString () + "\n");
-			sb.Append ("functionBody: " + funcBody.ToString ());
-			
-			return sb.ToString ();
+			return Function.ToString ();
 		}		
 	}
 }

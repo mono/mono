@@ -7,12 +7,12 @@
 // (C) 2003, Cesar Lopez Nataren
 //
 
-namespace Microsoft.JScript.Tmp
-{
-	using System;
+using System;
 
-	public sealed class BitwiseBinary : BinaryOp
-	{
+namespace Microsoft.JScript.Tmp {
+
+	public sealed class BitwiseBinary : BinaryOp {
+
 		public BitwiseBinary (Context context, AST operand1, AST operand2,
 				      JSToken operatorTok)
 		{
@@ -21,12 +21,6 @@ namespace Microsoft.JScript.Tmp
 
 
 		public object EvaluateBitwiseBinary (object v1, object v2)
-		{
-			throw new NotImplementedException ();
-		}
-
-		
-		internal override object Visit (Visitor v, object obj)
 		{
 			throw new NotImplementedException ();
 		}

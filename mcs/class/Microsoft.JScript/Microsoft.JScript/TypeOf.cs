@@ -7,19 +7,13 @@
 // (C) 2003, Cesar Lopez Nataren
 //
 
-namespace Microsoft.JScript.Tmp
-{
-	using System;
+using System;
 
-	public sealed class TypeOf : UnaryOp
-	{
+namespace Microsoft.JScript.Tmp {
+
+	public sealed class TypeOf : UnaryOp {
+
 		public static string JScriptTypeOf (object value)
-		{
-			throw new NotImplementedException ();
-		}
-
-
-		internal override object Visit (Visitor v, object obj)
 		{
 			throw new NotImplementedException ();
 		}

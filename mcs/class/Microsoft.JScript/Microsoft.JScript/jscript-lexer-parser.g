@@ -17,16 +17,16 @@ options {
 class JScriptParser extends Parser;
 
 // Program, see section 14 from Ecma-262, page 75.
-program [ASTList astList]
+program [ScriptBlock prog]
     : 
-        source_elements [astList]
+        source_elements [prog]
     ;
 
 
-source_elements	[ASTList astList]
+source_elements	[ScriptBlock elems]
 { AST ast = null; }
     : 
-	ast = source_element { if (ast != null) astList.Add (ast); } (source_elements [astList] | )
+	ast = source_element { if (ast != null) elems.Add (ast); } (source_elements [elems] | )
     ;
 
 
@@ -52,10 +52,10 @@ global_function_declaration returns [FunctionDeclaration fd]
 { fd = new FunctionDeclaration (); }
     :
 	"function" 
-	id:IDENTIFIER { fd.id = id.getText (); }
-   	LPAREN (formal_parameter_list [fd.parameters] | ) RPAREN 
-   	(COLON rType:IDENTIFIER { fd.returnType = rType.getText (); } | ) 
-   	LBRACE (function_body [fd.funcBody] | ) RBRACE
+	id:IDENTIFIER { fd.Function.Name = id.getText (); }
+   	LPAREN (formal_parameter_list [fd.Function.Params] | ) RPAREN 
+   	(COLON rType:IDENTIFIER { fd.Function.ReturnType = rType.getText (); } | ) 
+   	LBRACE (function_body [fd.Function.Body] | ) RBRACE
        ;
 
 	
@@ -158,10 +158,10 @@ type_function_declaration returns [FunctionDeclaration fd]
       :
    	"function"
    	("get" | "set" | ) // If present, denotes a property declaration.
-   	functionName:IDENTIFIER { fd.id = functionName.getText (); }
-   	LPAREN (formal_parameter_list [fd.parameters] | ) RPAREN
-   	(COLON type:IDENTIFIER | )
-	(LBRACE (function_body [fd.funcBody] | ) RBRACE | SEMI_COLON)
+   	functionName:IDENTIFIER { fd.Function.Name = functionName.getText (); }
+   	LPAREN (formal_parameter_list [fd.Function.Params] | ) RPAREN
+   	(COLON type:IDENTIFIER { fd.Function.ReturnType = type.getText (); } | )
+	(LBRACE (function_body [fd.Function.Body] | ) RBRACE | SEMI_COLON)
    	;
 
 debugger_statement: "debugger" ;
@@ -640,9 +640,10 @@ formal_parameter_list [FormalParameterList param]
     ;
 
 
-function_body [ASTList funcBody]
+function_body [Block funcBody]
+{ ScriptBlock body = new ScriptBlock (); }
     :
-        source_elements [funcBody]
+	source_elements [body] { funcBody = body.SrcElems; }
     ;
 
 

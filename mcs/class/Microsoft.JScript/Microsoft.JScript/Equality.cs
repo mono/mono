@@ -7,12 +7,12 @@
 // (C) 2003, Cesar Lopez Nataren
 //
 
-namespace Microsoft.JScript.Tmp
-{
-	using System;
+using System;
 
-	public class Equality : BinaryOp
-	{
+namespace Microsoft.JScript.Tmp {
+
+	public class Equality : BinaryOp {
+
 		public Equality (Context context, AST oper1, AST oper2, JSToken operatorTok)
 		{
 			throw new NotImplementedException ();
@@ -26,12 +26,6 @@ namespace Microsoft.JScript.Tmp
 
 
 		public static bool JScriptEquals (object v1, object v2)
-		{
-			throw new NotImplementedException ();
-		}
-
-
-		internal override object Visit (Visitor v, object obj)
 		{
 			throw new NotImplementedException ();
 		}

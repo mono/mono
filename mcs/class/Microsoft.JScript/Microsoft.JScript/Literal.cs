@@ -7,18 +7,13 @@
 // (C) Cesar Lopez Nataren 
 //
 
-namespace Microsoft.JScript.Tmp
-{
-	using System;
+using System;
 
-	public class Literal : AST
-	{
+namespace Microsoft.JScript.Tmp {
+
+	public class Literal : AST {
+
 		public Literal ()
 		{}
-
-		internal override object Visit (Visitor v, object args)
-		{
-			return null;
-		}
 	}
 }

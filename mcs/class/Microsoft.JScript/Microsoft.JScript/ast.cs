@@ -6,10 +6,8 @@
 // (C) 2003, Cesar Octavio Lopez Nataren, <cesar@ciencias.unam.mx>
 //
 
-namespace Microsoft.JScript.Tmp
-{
-	public abstract class AST
-	{
-		internal abstract object Visit (Visitor v, object obj);
+namespace Microsoft.JScript.Tmp {
+
+	public abstract class AST {
 	}
 }

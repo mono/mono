@@ -6,13 +6,20 @@
 // (C) Cesar Octavio Lopez Nataren, <cesar@ciencias.unam.mx>
 //
 
-namespace Microsoft.JScript.Tmp
-{
-	public class ScriptBlock : AST
-	{
-		internal override object Visit (Visitor v, object args)
+namespace Microsoft.JScript.Tmp {
+
+	public class ScriptBlock : AST {
+
+		internal Block SrcElems;
+
+		internal ScriptBlock ()
 		{
-			return v.VisitScriptBlock (this, args);
+			SrcElems = new Block ();
+		}
+
+		internal void Add (AST e)
+		{
+			SrcElems.Add (e);
 		}
 	}
 }

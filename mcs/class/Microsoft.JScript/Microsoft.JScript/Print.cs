@@ -7,12 +7,12 @@
 // (C) 2003, Cesar Lopez Nataren
 //
 
-namespace Microsoft.JScript.Tmp
-{
-	using System;
+using System;
 
-	public class Print : Statement
-	{
+namespace Microsoft.JScript.Tmp {
+
+	public class Print : Statement {
+
 		internal AST exp;
 
 		public AST Exp {
@@ -23,12 +23,6 @@ namespace Microsoft.JScript.Tmp
 
 		internal Print ()
 		{}
-
-
-		internal override object Visit (Visitor v, object args)
-		{
-			return v.VisitPrint (this, args);
-		}
 
 
 		public override string ToString ()

@@ -7,12 +7,12 @@
 // (C) 2003, Cesar Lopez Nataren
 //
 
-namespace Microsoft.JScript.Tmp
-{
-	using System;
+using System;
 
-	public class PostOrPrefixOperator : UnaryOp
-	{
+namespace Microsoft.JScript.Tmp {
+
+	public class PostOrPrefixOperator : UnaryOp {
+
 		public PostOrPrefixOperator (int operatorTok)
 		{
 			throw new NotImplementedException ();
@@ -20,12 +20,6 @@ namespace Microsoft.JScript.Tmp
 
 
 		public object EvaluatePostOrPrefix (ref object v)
-		{
-			throw new NotImplementedException ();
-		}
-
-
-		internal override object Visit (Visitor v, object obj)
 		{
 			throw new NotImplementedException ();
 		}

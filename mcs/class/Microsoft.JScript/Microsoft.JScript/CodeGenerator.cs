@@ -7,16 +7,16 @@
 // (C) 2003, Cesar Lopez Nataren
 //
 
-namespace Microsoft.JScript.Tmp
-{
-	using System;
-	using System.Reflection;
-	using System.Reflection.Emit;
-	using System.Runtime.CompilerServices;
-	using Microsoft.JScript.Vsa;
+using System;
+using System.Reflection;
+using System.Reflection.Emit;
+using System.Runtime.CompilerServices;
+using Microsoft.JScript.Vsa;
 
-	internal sealed class CodeGenerator : Visitor
-	{
+namespace Microsoft.JScript.Tmp {
+
+	internal sealed class CodeGenerator {
+
 		internal AssemblyName assemblyName;
 		internal AssemblyBuilder assemblyBuilder;
 		internal ModuleBuilder moduleBuilder;
@@ -99,7 +99,7 @@ namespace Microsoft.JScript.Tmp
 					 typeof (Microsoft.JScript.Vsa.VsaEngine).GetMethod ("PushScriptObject", new Type [] {typeof (Microsoft.JScript.ScriptObject)}));
 
 
-			program.Visit (this, null);
+			// program.Visit (this, null);
 			
 			
 			this.ilGen.Emit (OpCodes.Ldsfld, 
@@ -225,8 +225,8 @@ namespace Microsoft.JScript.Tmp
 		{
 			int size = prog.elems.Count;
 
-			for (int i = 0; i < size; i++)
-				((AST) prog.elems [i]).Visit (this, obj);
+			// for (int i = 0; i < size; i++)
+				// ((AST) prog.elems [i]).Visit (this, obj);
 
 			return null;
 		}
@@ -311,7 +311,7 @@ namespace Microsoft.JScript.Tmp
 		{
 			StringLiteral sl = p.Exp as StringLiteral;
 
-			sl.Visit (this, args);
+			// sl.Visit (this, args);
 
 			this.ilGen.Emit (OpCodes.Call,
 					 typeof (Microsoft.JScript.ScriptStream).GetMethod ("WriteLine", new Type [] {typeof (string)}));

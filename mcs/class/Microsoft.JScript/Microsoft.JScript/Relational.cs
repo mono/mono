@@ -7,12 +7,12 @@
 // (C) 2003, Cesar Lopez Nataren
 //
 
-namespace Microsoft.JScript.Tmp
-{
-	using System;
+using System;
 
-	public class Relational : BinaryOp
-	{
+namespace Microsoft.JScript.Tmp {
+
+	public class Relational : BinaryOp {
+
 		public Relational (int operatorTok)
 		{}
 
@@ -23,12 +23,6 @@ namespace Microsoft.JScript.Tmp
 
 
 		public static double JScriptCompare (object v1, object v2)
-		{
-			throw new NotImplementedException ();
-		}
-
-
-		internal override object Visit (Visitor v, object arg)
 		{
 			throw new NotImplementedException ();
 		}

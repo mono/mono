@@ -1,3 +1,24 @@
+2003-09-20    <cesar@ciencias.unam.mx>
+
+	* ASTList.cs, ArrayLiteral.cs, BitwiseBinary.cs, Block.cs,
+	DebugBreak.cs, Enum.cs, Equality.cs, Eval.cs, ForIn.cs,
+	FunctionExpression.cs, Import.cs, In.cs, InstanceOf.cs,
+	Literal.cs, NumericBinary.cs, NumericUnary.cs, Package.cs,
+	Plus.cs, PostOrPrefixOperator.cs, Print.cs, Relational.cs,
+	Statement.cs, StrictEquality.cs, StringLiteral.cs, Throw.cs,
+	Try.cs, TypeOf.cs, VariableDeclaration.cs, With.cs, ast.cs, 
+	: erased Visit method and made some mono indentation style changes.
+
+	* CodeGenerator.cs: commented some function calls.
+	* FunctionDeclaration.cs: moved function attributes to
+	FunctionObject class, erased Visit method.
+	* FunctionObject.cs: Here is where we store a function
+	expression/declaration info, erased Visit method.
+	* ScriptBlock.cs: Added a Block field, Block will contain the
+	source elements.
+	* jscript-lexer-parser.g: updated the grammar to build the program
+	representation based on ScriptBlock.
+
 2003-09-19    <cesar@ciencias.unam.mx>
 
 	* JSToken.cs: public API compliance.

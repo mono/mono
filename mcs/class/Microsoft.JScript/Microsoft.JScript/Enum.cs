@@ -7,14 +7,14 @@
 // (C) 2003, Cesar Lopez Nataren
 //
 
-namespace Microsoft.JScript.Tmp
-{
-	using System;
-	using System.Text;
-	using System.Collections;
+using System;
+using System.Text;
+using System.Collections;
 
-	public class Enum : Statement
-	{
+namespace Microsoft.JScript.Tmp {
+
+	public class Enum : Statement {
+
 		private ArrayList modifiers;
 		private string name;
 		private string type;		
@@ -47,12 +47,6 @@ namespace Microsoft.JScript.Tmp
 		internal ArrayList Pairs {
 			get { return pairs; }
 			set { pairs = value; }
-		}
-
-
-		internal override object Visit (Visitor v, object args)
-		{
-			throw new NotImplementedException ();
 		}
 
 

@@ -7,12 +7,12 @@
 // (C) 2003, Cesar Octavio Lopez Nataren, <cesar@ciencias.unam.mx>
 //
 
-namespace Microsoft.JScript.Tmp
-{
-	using System.Text;
+using System.Text;
 
-	public class VariableDeclaration : Statement
-	{
+namespace Microsoft.JScript.Tmp {
+
+	public class VariableDeclaration : Statement {
+
 		private string id;
 		private string type;
 		private AST assignExp;
@@ -30,12 +30,6 @@ namespace Microsoft.JScript.Tmp
 		public string Type {
 			get { return type; }
 			set { type = value; }
-		}
-
-
-		internal new object Visit (Visitor v, object args)
-		{
-			return v.VisitVariableDeclaration (this, args);
 		}
 
 
