@@ -8,6 +8,7 @@ Mono.Xml.Schema/XsdValidatingReader.cs
 Mono.Xml.Schema/XsdWildcard.cs
 Mono.Xml.XPath/DTMXPathDocument.cs
 Mono.Xml.XPath/DTMXPathDocumentBuilder.cs
+Mono.Xml.XPath/DTMXPathDocumentWriter.cs
 Mono.Xml.XPath/DTMXPathNavigator.cs
 Mono.Xml.XPath/DTMXPathNode.cs
 Mono.Xml.XPath/IdPattern.cs

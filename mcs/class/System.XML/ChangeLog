@@ -1,3 +1,7 @@
+2004-02-13  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* System.Xml.dll.sources : added DTMXPathDocumentWriter.cs.
+
 2004-02-11  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* Mono.System.XML.csproj : updated.
