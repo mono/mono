@@ -1395,6 +1395,16 @@ public class TypeManager {
 
 	public static bool AreMultipleAllowed (Type attr_type)
 	{
+		if (!(attr_type is TypeBuilder)) {
+			System.Attribute [] attrs = System.Attribute.GetCustomAttributes (attr_type);
+
+			foreach (System.Attribute tmp in attrs)
+				if (tmp is AttributeUsageAttribute)
+					return ((AttributeUsageAttribute) tmp).AllowMultiple;
+
+			return false;
+		}
+		
 		if (attr_to_allowmult == null)
 			return false;
 

@@ -1,3 +1,9 @@
+2002-12-09  Ravi Pratap  <ravi@ximian.com>
+
+	* typemanager.cs (AreMultipleAllowed): Take care of the most
+	obvious case where attribute type is not in the current assembly -
+	stupid me ;-)
+
 2002-12-08  Miguel de Icaza  <miguel@ximian.com>
 
 	* ecore.cs (SimpleName.DoResolve): First perform lookups on using
