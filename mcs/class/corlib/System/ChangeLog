@@ -1,4 +1,8 @@
 
+Sat Apr 6 20:08:41 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* ValueType.cs: make Equals() an internalcall.
+
 Fri Apr 5 15:38:54 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
 	* Type.cs: also look for nested types in FindMembers.

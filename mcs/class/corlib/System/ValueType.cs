@@ -24,21 +24,8 @@ namespace System {
 		//   True if this instance and o represent the same type
 		//   and have the same value.
 		// </summary>
-		[MonoTODO]
-		public override bool Equals (object o)
-		{
-			if (o == null)
-				throw new ArgumentNullException ();
-
-			if (o.GetType() != this.GetType())
-				return false;
-
-			// TODO:
-			//   Now implement bit compare here.
-			
-			// TODO: Implement me!
-			return false;
-		}
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		public extern override bool Equals (object o);
 
 		// <summary>
 		//   Gets a hashcode for this value type using the
