@@ -432,8 +432,11 @@ namespace System.Web.UI.WebControls
 
 			if (saved.Second != null)
 			{
-				attributeState = new StateBag(true);
-				attributeState.TrackViewState();
+				if (attributeState == null)
+				{
+					attributeState = new StateBag(true);
+					attributeState.TrackViewState();
+				}
 				attributeState.LoadViewState (saved.Second);
 			}
 			
