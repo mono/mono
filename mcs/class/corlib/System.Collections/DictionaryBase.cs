@@ -59,7 +59,7 @@ namespace System.Collections {
 		/// </summary>
 		protected IDictionary Dictionary {
 			get {
-				return dictionary;
+				return this;
 			}
 		}
 
@@ -288,22 +288,21 @@ namespace System.Collections {
 
 		object IDictionary.this [object key] {
 			get {
+				OnGet (key, dictionary[key]);
 				object value = dictionary [key];
-
-				OnGet (key, value);
 				return value;
 			}
 
 			set {
-				if (dictionary.ContainsKey (key)){
-					object current_value = dictionary [key];
-					OnSet (key, current_value, value);
-					dictionary [key] = value;
+				OnValidate (key, value);
+				object current_value = dictionary [key];
+				OnSet (key, current_value, value);
+				dictionary [key] = value;
+				try {
 					OnSetComplete (key, current_value, value);
-				} else {
-					OnInsert (key, value);
-					dictionary [key] = value;
-					OnInsertComplete (key, value);
+				} catch {
+					dictionary [key] = current_value;
+					throw;
 				}
 			}
 		}
@@ -325,9 +324,15 @@ namespace System.Collections {
 		/// </summary>
 		void IDictionary.Add (object key, object value)
 		{
+			OnValidate (key, value);
 			OnInsert (key, value);
 			dictionary.Add (key, value);
-			OnInsertComplete (key, value);
+			try {
+				OnInsertComplete (key, value);
+			} catch {
+				dictionary.Remove(key);
+				throw;
+			}
 		}
 
 		/// <summary>
@@ -335,10 +340,8 @@ namespace System.Collections {
 		/// </summary>
 		void IDictionary.Remove (object key)
 		{
-			if (! dictionary.ContainsKey (key))
-				return;
-
 			object value = dictionary [key];
+			OnValidate (key, value);
 			OnRemove (key, value);
 			dictionary.Remove (key);
 			OnRemoveComplete (key, value);

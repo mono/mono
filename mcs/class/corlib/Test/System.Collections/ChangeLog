@@ -1,3 +1,8 @@
+2003-08-11  Duncan Mak  <duncan@ximian.com>
+
+	* DictionaryBaseTest.cs: added new test provided by Carlos Barcenilla
+	(barce@frlp.utn.edu.ar).
+
 2003-08-10  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* CollectionBaseTest.cs: added new test provided by Carlos Barcenilla

@@ -1,3 +1,23 @@
+2003-08-11  Duncan Mak  <duncan@ximian.com>
+
+	* DictionaryBase.cs: Applied patch from Carlos Barcenilla
+	(barce@frlp.utn.edu.ar).
+	
+	(Idictionary.Add): Added OnValidate, and undo the transaction if
+	OnInsertCompleteFails.
+
+	(Indexer set): MS Implementation does not call OnInsert and undoes
+	if OnSetComplete throws an exception
+	(Indexer get): return value is obtained after calling OnGet.
+
+	(IDictionary.Remove): Call to OnValidate added. If key does not
+	exists calls OnValidate, OnRemove and OnRemoveComplete.
+
+	(protected IDictionary Dictionary get): Should return itself, not
+	the inner hashtable.
+
+	This fixes bug #47460.
+
 2003-08-10  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* CollectionBase.cs: applied patch from Carlos Barcenilla
