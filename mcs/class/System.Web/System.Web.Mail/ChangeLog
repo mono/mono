@@ -1,4 +1,10 @@
 2004-08-18  Sanjay Gupta <gsanjay@novell.com>
+	
+	* MailEncoding.cs:
+	* MailFormat.cs:
+	* MailPriority.cs: Added NET_2_0 attribute.
+
+2004-08-18  Sanjay Gupta <gsanjay@novell.com>
 
 	* MailMessage.cs: Added new property RelatedBodyParts.
 	* RelatedBodyPart.cs: Added new file.
