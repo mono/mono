@@ -1,5 +1,7 @@
 2004-03-08  Zoltan Varga  <vargaz@freemail.hu>
 
+	* inssel-long32.brg: Fix OP_LSUB_OVF_UN rule.
+
 	* jit-icalls.c: Emulate truncl by aintl on solaris.
 
 	* jit-icalls.c (mono_lconv_to_r8_un): New icall emulation function.
