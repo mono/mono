@@ -1,3 +1,7 @@
+2004-01-25  Cesar Lopez Nataren  <cesar@ciencias.unam.mx>
+
+	* Relational.cs: Initial generation of CIL for relational operators.
+
 2004-01-23  Cesar Lopez Nataren  <cesar@ciencias.unam.mx>
 
 	* jscript-lexer-parser.g: formal_param_list receives a parent too.
