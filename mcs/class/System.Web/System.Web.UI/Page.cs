@@ -454,6 +454,7 @@ public class Page : TemplateControl, IHttpHandler
 		case OutputCacheLocation.None:
 			break;
 		}
+		cache.Duration = duration;
 		cache.SetExpires (_context.Timestamp.AddSeconds (duration));
 	}
 
