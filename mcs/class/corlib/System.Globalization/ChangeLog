@@ -1,5 +1,9 @@
 2004-05-27  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* DateTimeFormatInfo.cs : Fixed longtimes and shorttimes (exchanged).
+
+2004-05-27  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* DateTimeFormatInfo.cs : Added some string[] fields for
 	  GetAllDateTimePatterns(char). The fields will be filled in metadata
 	  and culture info table. Added improved patterns for 

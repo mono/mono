@@ -630,8 +630,8 @@ namespace System.Globalization
 		{
 			_ShortDatePatterns = new string [] {"MM/dd/yyyy"};
 			_LongDatePatterns = new string [] {"dddd, dd MMMM yyyy"};
-			_ShortTimePatterns = new string [] {"HH:mm:ss"};
-			_LongTimePatterns = new string [] {
+			_LongTimePatterns = new string [] {"HH:mm:ss"};
+			_ShortTimePatterns = new string [] {
 				"HH:mm",
 				"hh:mm tt",
 				"H:mm",
