@@ -29,8 +29,10 @@ public class ModuleBuilderTest : Assertion
 
 	[SetUp]
 	public void SetUp () {
+		Random AutoRand = new Random ( );
+		string TempPath = TempFolder;
 		while (Directory.Exists (TempFolder))
-			TempFolder = Path.Combine (TempFolder, "2");
+			TempFolder = Path.Combine (TempPath, AutoRand.Next ().ToString());
 		Directory.CreateDirectory (TempFolder);
 	}		
 

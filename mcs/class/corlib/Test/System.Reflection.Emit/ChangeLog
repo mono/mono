@@ -1,3 +1,7 @@
+2004-01-30  Nick Drochak <ndrochak@ieee.org>
+
+	* ModuleBuilderTest.cs: Avoid path length exceptions on Windows.
+
 2004-11-22  Zoltan Varga  <vargaz@freemail.hu>
 
 	* AssemblyBuilderTest.cs: Add regression test for bug #69780.
