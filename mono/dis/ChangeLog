@@ -1,3 +1,9 @@
+
+Fri Sep 13 15:39:41 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* main.c: dump public key.
+	* get.c, util.h, util.c: prettyfy data dumps.
+
 2002-08-28  Dick Porter  <dick@ximian.com>
 
 	* Makefile.am: Export HOST_CC for w32 builds
