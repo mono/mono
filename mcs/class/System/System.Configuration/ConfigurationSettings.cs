@@ -131,7 +131,7 @@ namespace System.Configuration
 		*/
 
 		// Remove when uncomment the previous comment
-			string assemblyName = Assembly.GetEntryAssembly ().FullName;
+			string assemblyName = Assembly.GetEntryAssembly ().Location;
 			string appBase = Path.GetDirectoryName (assemblyName);
 			string configFile = Path.GetFileName (assemblyName) + ".exe.config";
 		// End remove

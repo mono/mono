@@ -1,3 +1,8 @@
+2002-10-14  Martin Baulig  <martin@gnome.org>
+
+	* ConfigurationSettings.cs (DefaultConfig.GetAppConfigPath): Use
+	Assembly.Location, not Assembly.FullName to get its filename.
+
 2002-10-10  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* ConfigHelper.cs: workaround for a bug in NameValueCollection.
