@@ -106,6 +106,8 @@ namespace Commons.Xml.Relaxng.Rnc
 				w.Write ("empty");
 				break;
 			case 1:
+				parens = (l [0] is RelaxngBinaryContentPattern 
+					|| l [0] is RelaxngData && ((RelaxngData) l [0]).Except != null);
 				if (parens)
 					w.Write ('(');
 				l [0].WriteRnc (this);
@@ -117,6 +119,8 @@ namespace Commons.Xml.Relaxng.Rnc
 					w.Write ('(');
 				l [0].WriteRnc (this);
 				for (int i = 1; i < l.Count; i++) {
+					if (sep != ',')
+						w.Write (' ');
 					w.Write (sep);
 					w.Write (' ');
 					l [i].WriteRnc (this);
@@ -277,12 +281,11 @@ namespace Commons.Xml.Relaxng.Rnc
 		public void WriteData (RelaxngData data)
 		{
 			WriteQName (data.Type, data.DatatypeLibrary);
-			w.Write (' ');
 			if (data.ParamList.Count > 0) {
-				w.Write ('{');
+				w.Write (" { ");
 				foreach (RelaxngParam p in data.ParamList)
 					p.WriteRnc (this);
-				w.Write ("} ");
+				w.Write (" }");
 			}
 			if (data.Except != null)
 				data.Except.WriteRnc (this);
@@ -293,48 +296,46 @@ namespace Commons.Xml.Relaxng.Rnc
 			WriteQName (v.Type, v.DatatypeLibrary);
 			w.Write (' ');
 			WriteLiteral (v.Value);
-			w.Write (' ');
 		}
 
 		public void WriteList (RelaxngList p)
 		{
-			w.Write ("list { ");
+			w.Write ("list {");
 			WritePatterns (p.Patterns, false);
-			w.Write ("} ");
+			w.Write ("}");
 		}
 
 		public void WriteMixed (RelaxngMixed p)
 		{
-			w.Write ("mixed { ");
+			w.Write ("mixed {");
 			WritePatterns (p.Patterns, false);
-			w.Write ("} ");
+			w.Write ("}");
 		}
 
 		public void WriteElement (RelaxngElement element)
 		{
 			w.Write ("element ");
 			element.NameClass.WriteRnc (this);
-			w.Write (" { ");
+			w.Write (" {");
 			WritePatterns (element.Patterns, false);
-			w.Write ("} ");
+			w.Write ("}");
 		}
 
 		public void WriteAttribute (RelaxngAttribute attribute)
 		{
 			w.Write ("attribute ");
 			attribute.NameClass.WriteRnc (this);
-			w.Write (" { ");
+			w.Write (" {");
 			if (attribute.Pattern == null)
 				w.Write ("empty");
 			else
 				attribute.Pattern.WriteRnc (this);
-			w.Write (" } ");
+			w.Write (" }");
 		}
 
 		public void WriteRef (RelaxngRef r)
 		{
 			w.Write (r.Name);
-			w.Write (' ');
 		}
 
 		public void WriteParentRef (RelaxngParentRef r)
@@ -394,7 +395,7 @@ namespace Commons.Xml.Relaxng.Rnc
 
 		public void WriteDataExcept (RelaxngExcept e)
 		{
-			w.Write ("- ");
+			w.Write (" - ");
 			WritePatterns (e.Patterns, true);
 		}
 
@@ -432,7 +433,7 @@ namespace Commons.Xml.Relaxng.Rnc
 
 		public void WriteNameExcept (RelaxngExceptNameClass e)
 		{
-			w.Write ("- ");
+			w.Write (" - ");
 			WriteNames (e.Names, true);
 		}
 		#endregion

@@ -1,5 +1,10 @@
 2005-02-05  Atsushi Enomoto <atsushi@ximian.com>
 
+	* RncParser.jay : handle default namespace.
+	* RncWriter.cs : changed output format a bit.
+
+2005-02-05  Atsushi Enomoto <atsushi@ximian.com>
+
 	* RncParser.jay : spec section 4 requires to map "xsd" to xsd-datatypes
 	  by default.
 

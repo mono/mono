@@ -314,6 +314,8 @@ TopLevelBody /* returns RelaxngPattern */
 	| Grammar
 	{
 		RelaxngGrammar g = new RelaxngGrammar ();
+		if (nsmgr.DefaultNamespace != String.Empty)
+			g.DefaultNamespace = nsmgr.DefaultNamespace;
 		RelaxngGrammarContentList list = (RelaxngGrammarContentList) $1;
 		FillGrammarContent (list, g.Starts, g.Defines, g.Divs, g.Includes);
 		$$ = g;
