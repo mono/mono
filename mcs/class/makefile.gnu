@@ -11,12 +11,12 @@ DIRS =	corlib				\
 	System.Security			\
 	System.Data			\
 	Mono.GetOptions			\
-	System.Management		\
 	System.Web			\
 	System.Web.Services		\
 	System.Runtime.Remoting		\
 	System.Runtime.Serialization.Formatters.Soap \
 	System.Configuration.Install 	\
+	System.Management		\
 	Mono.CSharp.Debugger		\
 	Mono.Data.DB2Client		\
 	Mono.Data.MySql			\

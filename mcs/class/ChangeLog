@@ -1,3 +1,7 @@
+2003-03-20  Piers Haken  <piersh@friskit.com>
+
+	* makefile.gnu: really fix the System.Management build problems
+
 2003-03-11  Cesar Octavio Lopez Nataren  <cesar@ciencias.unam.mx>
 
 	* mcs/class: Added the directories Microsoft.JScript and Microsoft.Vsa that
