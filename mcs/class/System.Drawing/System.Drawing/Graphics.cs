@@ -60,10 +60,7 @@ namespace System.Drawing
 		
 		public void Clear (Color color)
 		{			
- 			Status status = GDIPlus.GdipGraphicsClear(nativeObject, color.ToArgb());
- 			
- 			if (status != Status.Ok)
-				throw new ArgumentException ("Error calling GDIPlus.GdipGraphicsClear:" +status);
+ 			GDIPlus.GdipGraphicsClear(nativeObject, color.ToArgb()); 			
 		}
 
 		[MonoTODO]
@@ -86,47 +83,34 @@ namespace System.Drawing
 		
 		public void DrawArc (Pen pen, float x, float y, float width, float height, float startAngle, float sweepAngle)
 		{
-			Status status = GDIPlus.GdipDrawArc (nativeObject, pen.nativeObject,
-                                        x, y, width, height, startAngle, sweepAngle);
-                                        
-			if (status != Status.Ok)
-				throw new ArgumentException ("Error calling GDIPlus.GdipGraphicsClear:" +status);                                        
+			GDIPlus.GdipDrawArc (nativeObject, pen.nativeObject,
+                                        x, y, width, height, startAngle, sweepAngle);                        
 		}
 
 		public void DrawArc (Pen pen, int x, int y, int width, int height, float startAngle, float sweepAngle)
 		{			
-			Status status = GDIPlus.GdipDrawArcI (nativeObject, pen.nativeObject,
+			GDIPlus.GdipDrawArcI (nativeObject, pen.nativeObject,
                                         x, y, width, height, startAngle, sweepAngle);
                                                     
-            if (status != Status.Ok)                            
-				throw new ArgumentException ("Error calling GDIPlus.GdipGraphicsClear:" +status);                                        
-		                                        
 		}
 
 		public void DrawBezier (Pen pen, PointF pt1, PointF pt2, PointF pt3, PointF pt4)
 		{
-			Status status = GDIPlus.GdipDrawBezier (nativeObject, pen.nativeObject, 
-                                        pt1.X, pt1.Y, pt2.X, pt2.Y, pt3.X, pt3.Y, pt4.X, pt4.Y);
-                                        
-			if (status != Status.Ok)                            
-				throw new ArgumentException ("Error calling GDIPlus.DrawBezier:" +status);                                                                                
+			GDIPlus.GdipDrawBezier (nativeObject, pen.nativeObject, 
+                                        pt1.X, pt1.Y, pt2.X, pt2.Y, pt3.X, pt3.Y, pt4.X, pt4.Y);                                     
+			
 		}
 
 		public void DrawBezier (Pen pen, Point pt1, Point pt2, Point pt3, Point pt4)
 		{
-			Status status = GDIPlus.GdipDrawBezierI (nativeObject, pen.nativeObject, 
-                                        pt1.X, pt1.Y, pt2.X, pt2.Y, pt3.X, pt3.Y, pt4.X, pt4.Y);
-                                        
-			if (status != Status.Ok)                            
-				throw new ArgumentException ("Error calling GDIPlus.GdipDrawBezierI:" +status);                                                                                                                        
+			GDIPlus.GdipDrawBezierI (nativeObject, pen.nativeObject, 
+                                        pt1.X, pt1.Y, pt2.X, pt2.Y, pt3.X, pt3.Y, pt4.X, pt4.Y);                                        
+		
 		}
 
 		public void DrawBezier (Pen pen, float x1, float y1, float x2, float y2, float x3, float y3, float x4, float y4)
 		{
-			Status status = GDIPlus.GdipDrawBezier (nativeObject, pen.nativeObject, x1, y1, x2, y2, x3, y3, x4, y4);
-			
-			if (status != Status.Ok)                            
-				throw new ArgumentException ("Error calling GDIPlus.GdipDrawBezier:" +status);                                                                                                                        
+			GDIPlus.GdipDrawBezier (nativeObject, pen.nativeObject, x1, y1, x2, y2, x3, y3, x4, y4);
 		}
 
         [MonoTODO]
@@ -172,69 +156,48 @@ namespace System.Drawing
 		
 		public void DrawClosedCurve (Pen pen, PointF [] points)
 		{
-	 		Status status =  GDIPlus.GdipDrawClosedCurve(nativeObject, pen.nativeObject,  points, points.Length);
-	 		
-			if (status != Status.Ok)                            
-				throw new ArgumentException ("Error calling GDIPlus.GdipDrawClosedCurve:" +status);                                                                                                                        
+	 		GDIPlus.GdipDrawClosedCurve(nativeObject, pen.nativeObject,  points, points.Length); 					
 		}
 
 		
 		public void DrawClosedCurve (Pen pen, Point [] points)
 		{
-			Status status =  GDIPlus.GdipDrawClosedCurveI(nativeObject, pen.nativeObject,  points, points.Length);
-	 		
-			if (status != Status.Ok)                            
-				throw new ArgumentException ("Error calling GDIPlus.GdipDrawClosedCurveI:" +status);                                                                                                                        
+			GDIPlus.GdipDrawClosedCurveI(nativeObject, pen.nativeObject,  points, points.Length);	 		
 		}
  			
 		public void DrawClosedCurve (Pen pen, Point [] points, float tension, FillMode fillmode)
 		{
-			Status status =  GDIPlus.GdipDrawClosedCurve2I(nativeObject, pen.nativeObject,  points, points.Length, tension);
-	 		
-			if (status != Status.Ok)                            
-				throw new ArgumentException ("Error calling GDIPlus.GdipDrawClosedCurve2I:" +status);                                                                                                                        
+			GDIPlus.GdipDrawClosedCurve2I(nativeObject, pen.nativeObject,  points, points.Length, tension); 					
 		}
 
 		
 		public void DrawClosedCurve (Pen pen, PointF [] points, float tension, FillMode fillmode)
 		{
-			Status status =  GDIPlus.GdipDrawClosedCurve2(nativeObject, pen.nativeObject,  points, points.Length, tension);
-	 		
-			if (status != Status.Ok)                            
-				throw new ArgumentException ("Error calling GDIPlus.GdipDrawClosedCurve2:" +status);                                                                                                                        
+			GDIPlus.GdipDrawClosedCurve2(nativeObject, pen.nativeObject,  points, points.Length, tension);
 			
 		}
 		
 		public void DrawCurve (Pen pen, Point [] points)
 		{
-			Status status =  GDIPlus.GdipDrawCurveI(nativeObject, pen.nativeObject,  points, points.Length);
-	 		
-			if (status != Status.Ok)                            
-				throw new ArgumentException ("Error calling GDIPlus.GdipDrawCurveI:" +status);                                                                                                                        
+			GDIPlus.GdipDrawCurveI(nativeObject, pen.nativeObject,  points, points.Length);	 		
 		}
 		
 		public void DrawCurve (Pen pen, PointF [] points)
 		{
-			Status status =  GDIPlus.GdipDrawCurve(nativeObject, pen.nativeObject,  points, points.Length); 		
-	 		
-			if (status != Status.Ok)                            
-				throw new ArgumentException ("Error calling GDIPlus.GdipDrawCurve:" +status);                                                                                                                        
+			GDIPlus.GdipDrawCurve(nativeObject, pen.nativeObject,  points, points.Length); 				
+			
 		}
 		
 		public void DrawCurve (Pen pen, PointF [] points, float tension)
 		{			
-			Status status =  GDIPlus.GdipDrawCurve2(nativeObject, pen.nativeObject,  points, points.Length, tension);
-	 		
-			if (status != Status.Ok)                            
-				throw new ArgumentException ("Error calling GDIPlus.GdipDrawCurve2:" +status);                                                                                                                        
+			GDIPlus.GdipDrawCurve2(nativeObject, pen.nativeObject,  points, points.Length, tension); 		
+			
 		}
 		
 		public void DrawCurve (Pen pen, Point [] points, float tension)
 		{
-			Status status =  GDIPlus.GdipDrawCurve2I(nativeObject, pen.nativeObject,  points, points.Length, tension);
-	 		
-			if (status != Status.Ok)                            
-				throw new ArgumentException ("Error calling GDIPlus.GdipDrawCurve2I:" +status);                                                                                                                        
+			GDIPlus.GdipDrawCurve2I(nativeObject, pen.nativeObject,  points, points.Length, tension);		
+			
 		}
 		
 		[MonoTODO]
@@ -245,19 +208,13 @@ namespace System.Drawing
 
 		public void DrawCurve (Pen pen, Point [] points, int offset, int numberOfSegments, float tension)
 		{
-			Status status =  GDIPlus.GdipDrawCurve3I(nativeObject, pen.nativeObject, points, points.Length, offset,  numberOfSegments, tension);
-	 		
-			if (status != Status.Ok)                            
-				throw new ArgumentException ("Error calling GDIPlus.GdipDrawCurve3:" +status);                                                                                                                        
+			GDIPlus.GdipDrawCurve3I(nativeObject, pen.nativeObject, points, points.Length, offset,  numberOfSegments, tension);	 					
 		}
 
 		
 		public void DrawCurve (Pen pen, PointF [] points, int offset, int numberOfSegments, float tension)
 		{
-			Status status =  GDIPlus.GdipDrawCurve3(nativeObject, pen.nativeObject, points, points.Length, offset,  numberOfSegments, tension);
-	 		
-			if (status != Status.Ok)                            
-				throw new ArgumentException ("Error calling GDIPlus.GdipDrawCurve3:" +status);                                                                                                                        
+			GDIPlus.GdipDrawCurve3(nativeObject, pen.nativeObject, points, points.Length, offset,  numberOfSegments, tension); 					
 		}
 
 		public void DrawEllipse (Pen pen, Rectangle rect)
@@ -307,46 +264,43 @@ namespace System.Drawing
 		
 		public void DrawImage (Image image, PointF point)
 		{
-			Status status = GDIPlus.GdipDrawImage(nativeObject, image.NativeObject, point.X, point.Y);
- 			
- 			if (status != Status.Ok)
-				throw new ArgumentException ("Error calling GDIPlus.DrawImage (Image image, PointF point):" +status);					
+			GDIPlus.GdipDrawImage(nativeObject, image.NativeObject, point.X, point.Y); 			
 		}
 
-		[MonoTODO]
+		
 		public void DrawImage (Image image, Point [] destPoints)
 		{
-			throw new NotImplementedException ();
+			GDIPlus.GdipDrawImagePointsI(nativeObject, image.NativeObject, destPoints, destPoints.Length);                                                           
 		}
 
-		[MonoTODO]
+		
 		public void DrawImage (Image image, Point point)
 		{
-			throw new NotImplementedException ();
+			DrawImage(image, point.X, point.Y);
 		}
 
-		[MonoTODO]
+		
 		public void DrawImage (Image image, Rectangle rect)
 		{
-			throw new NotImplementedException ();
+			DrawImage(image, rect.X, rect.Y, rect.Width, rect.Height);
 		}
 
-		[MonoTODO]
+		
 		public void DrawImage (Image image, PointF [] destPoints)
 		{
-			throw new NotImplementedException ();
+			GDIPlus.GdipDrawImagePoints(nativeObject, image.NativeObject, destPoints, destPoints.Length);
 		}
 
-		[MonoTODO]
+		
 		public void DrawImage (Image image, int x, int y)
 		{
-			throw new NotImplementedException ();
+			GDIPlus.GdipDrawImageI(nativeObject, image.NativeObject, x, y);
 		}
 
-		[MonoTODO]
+		
 		public void DrawImage (Image image, float x, float y)
 		{
-			throw new NotImplementedException ();
+			GDIPlus.GdipDrawImage(nativeObject, image.NativeObject, x, y);
 		}
 
 		[MonoTODO]
@@ -453,13 +407,11 @@ namespace System.Drawing
 		
 		public void DrawImage (Image image, Rectangle destRect, int srcX, int srcY, int srcWidth, int srcHeight, GraphicsUnit srcUnit, ImageAttributes imageAttr)
 		{			
-			Status status =  GDIPlus.GdipDrawImageRectRectI(nativeObject, image.NativeObject, //aki
+			GDIPlus.GdipDrawImageRectRectI(nativeObject, image.NativeObject, //aki
 								destRect.X, destRect.Y, destRect.Width, destRect.Height,
 								srcX, srcY, srcWidth, srcHeight,
-								srcUnit, imageAttr.NativeObject, IntPtr.Zero, 0);
-								 			
- 			if (status != Status.Ok)
-				throw new ArgumentException ("Error calling GDIPlus.DrawImage(Image image, Rectangle destRect, int srcX, int srcY, int srcWidth, int srcHeight, GraphicsUnit srcUnit, ImageAttributes imageAttr)" +status);		
+								srcUnit, imageAttr.NativeObject, IntPtr.Zero, 0);				 			
+ 			
 		}
 
 		[MonoTODO]
@@ -513,56 +465,41 @@ namespace System.Drawing
 		public void DrawLine (Pen pen, PointF pt1, PointF pt2)
 		{
 			
-                Status status = GDIPlus.GdipDrawLine (
+                GDIPlus.GdipDrawLine (
                                 nativeObject, pen.nativeObject,
                                 pt1.X, pt1.Y,
-                                pt2.X, pt2.Y);
-                                
-				if (status != Status.Ok)
-					throw new ArgumentException ("Error calling GDIPlus.GdipDrawLine:" +status);                                
+                                pt2.X, pt2.Y);                             
+				
 		}
 
 		public void DrawLine (Pen pen, Point pt1, Point pt2)
 		{
-            Status status =  GDIPlus.GdipDrawLineI (
+            GDIPlus.GdipDrawLineI (
                                 nativeObject, pen.nativeObject,
                                 pt1.X, pt1.Y,
-                                pt2.X, pt2.Y);
-                                
-			if (status != Status.Ok)
-				throw new ArgumentException ("Error calling GDIPlus.GdipDrawLineI:" +status);                                
+                                pt2.X, pt2.Y);                           
 		}
 
 		public void DrawLine (Pen pen, int x1, int y1, int x2, int y2)
 		{
-			Status status = GDIPlus.GdipDrawLineI (nativeObject, pen.nativeObject, x1, y1, x2, y2);
-			
-			if (status != Status.Ok)
-				throw new ArgumentException ("Error calling GDIPlus.GdipDrawLineI:" +status);                                
+			GDIPlus.GdipDrawLineI (nativeObject, pen.nativeObject, x1, y1, x2, y2);			
 		}
 
 		public void DrawLine (Pen pen, float x1, float y1, float x2, float y2)
 		{
-			Status status = GDIPlus.GdipDrawLine (nativeObject, pen.nativeObject, x1, y1, x2, y2);
+			GDIPlus.GdipDrawLine (nativeObject, pen.nativeObject, x1, y1, x2, y2);	
 			
-			if (status != Status.Ok)
-				throw new ArgumentException ("Error calling GDIPlus.GdipDrawLine:" +status);                                
 		}
 
 		public void DrawLines (Pen pen, PointF [] points)
 		{
-			Status status = GDIPlus.GdipDrawLines (nativeObject, pen.nativeObject, points, points.Length);
+			GDIPlus.GdipDrawLines (nativeObject, pen.nativeObject, points, points.Length);	
 			
-			if (status != Status.Ok)
-				throw new ArgumentException ("Error calling GDIPlus.GdipDrawLines:" +status);                                
 		}
 
 		public void DrawLines (Pen pen, Point [] points)
 		{
-			Status status = GDIPlus.GdipDrawLinesI (nativeObject, pen.nativeObject, points, points.Length);
-			
-			if (status != Status.Ok)
-				throw new ArgumentException ("Error calling GDIPlus.GdipDrawLinesI:" +status);                                
+			GDIPlus.GdipDrawLinesI (nativeObject, pen.nativeObject, points, points.Length);			
 		}
 
 		public void DrawPath (Pen pen, GraphicsPath path)
@@ -621,14 +558,7 @@ namespace System.Drawing
 
 		public void DrawRectangle (Pen pen, int x, int y, int width, int height)
 		{
-			Console.WriteLine(" DrawRectangle (Pen pen, int x, int y, int width, int height)");
-			
-			Console.WriteLine("Native->" + nativeObject);
-			
-			Status status = GDIPlus.GdipDrawRectangleI (nativeObject, pen.nativeObject, x, y, width, height);
-			
-			if (status != Status.Ok)
-				throw new ArgumentException ("Error calling GDIPlus.DrawRectangle:" +status);
+			GDIPlus.GdipDrawRectangleI (nativeObject, pen.nativeObject, x, y, width, height);					
 		}
 
 		public void DrawRectangles (Pen pen, RectangleF [] rects)
@@ -675,11 +605,8 @@ namespace System.Drawing
 			Console.WriteLine("DrawString!");
 			RectangleF rc = new RectangleF (x, y, 0, 0);
 			
-			Status status = GDIPlus.GdipDrawString (nativeObject, s, s.Length, IntPtr.Zero, 
-				ref rc, IntPtr.Zero, brush.nativeObject);
-			
-			if (status != Status.Ok)				
-				throw new ArgumentException ("Error calling GDIPlus.GdipDrawString(string s, Font font, Brush brush, float x, float y):" +s);
+			GDIPlus.GdipDrawString (nativeObject, s, s.Length, IntPtr.Zero, 
+				ref rc, IntPtr.Zero, brush.nativeObject);			
 		}
 
 		[MonoTODO]
@@ -1097,11 +1024,8 @@ namespace System.Drawing
 		{
 			IntPtr graphics;
 			
-			Status status = GDIPlus.GdipCreateFromHWND(hwnd, out graphics);
+			GDIPlus.GdipCreateFromHWND(hwnd, out graphics); 			
  			
- 			if (status != Status.Ok)
-				throw new ArgumentException ("Error calling GDIPlus.GdipCreateFromHWND:" +status);				
-			
 			return new Graphics(graphics);			
 		}
 

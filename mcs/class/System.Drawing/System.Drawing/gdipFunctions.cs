@@ -294,6 +294,13 @@ namespace System.Drawing {
 		internal static extern Status GdipDrawImage(IntPtr graphics, IntPtr image, float x, float y);
 		
 		[DllImport("gdiplus.dll")]
+		internal static extern Status GdipDrawImagePoints(IntPtr graphics, IntPtr image, PointF [] destPoints, int count);
+
+		
+		[DllImport("gdiplus.dll")]
+		internal static extern Status GdipDrawImagePointsI(IntPtr graphics, IntPtr image,  Point [] destPoints, int count);
+		
+		[DllImport("gdiplus.dll")]
 		internal static extern Status GdipDrawImageRectRectI(IntPtr graphics, IntPtr image,
 							int dstx, int dsty, int dstwidth, int dstheight,
                        		int srcx, int srcy, int srcwidth, int srcheight,
