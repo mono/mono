@@ -22,7 +22,7 @@ namespace System.Drawing
 	public sealed class Graphics : MarshalByRefObject, IDisposable
 	{
 		internal IntPtr nativeObject = IntPtr.Zero;
-
+		private bool disposed = false;
 		private static float defDpiX = 0;
 		private static float defDpiY = 0;
 	
@@ -120,9 +120,14 @@ namespace System.Drawing
  			status = GDIPlus.GdipGraphicsClear (nativeObject, color.ToArgb ()); 				GDIPlus.CheckStatus (status);
 		}
 
-		[MonoTODO]
 		public void Dispose ()
 		{
+			Status status;
+			if (! disposed) {
+				status = GDIPlus.GdipDeleteGraphics (nativeObject);
+				GDIPlus.CheckStatus (status);
+				disposed = true;
+			}
 		}
 
 		
@@ -740,17 +745,16 @@ namespace System.Drawing
 
 		public void DrawRectangles (Pen pen, RectangleF [] rects)
 		{
-			foreach (RectangleF rc in rects)
-				DrawRectangle (pen, rc.Left, rc.Top, rc.Width, rc.Height);
+			Status status = GDIPlus.GdipDrawRectangles (nativeObject, pen.nativeObject, rects, rects.Length);
+			GDIPlus.CheckStatus (status);
 		}
 
 		public void DrawRectangles (Pen pen, Rectangle [] rects)
 		{
-			foreach (RectangleF rc in rects)
-				DrawRectangle(pen, rc.Left, rc.Top, rc.Width, rc.Height);
+			Status status = GDIPlus.GdipDrawRectanglesI (nativeObject, pen.nativeObject, rects, rects.Length);
+			GDIPlus.CheckStatus (status);
 		}
 
-		
 		public void DrawString (string s, Font font, Brush brush, RectangleF layoutRectangle)
 		{			
 			Status status = GDIPlus.GdipDrawString (nativeObject, s, s.Length, font.NativeObject, ref layoutRectangle, IntPtr.Zero, brush.nativeObject);
@@ -1149,7 +1153,7 @@ namespace System.Drawing
 
 		public void FillRectangle (Brush brush, int x, int y, int width, int height)
 		{
-			Status status = GDIPlus.GdipFillRectangle (nativeObject, brush.nativeObject, (float)x, (float)y, (float)width, (float)height);
+			Status status = GDIPlus.GdipFillRectangleI (nativeObject, brush.nativeObject, x, y, width, height);
 			GDIPlus.CheckStatus (status);
 		}
 
@@ -1161,14 +1165,14 @@ namespace System.Drawing
 
 		public void FillRectangles (Brush brush, Rectangle [] rects)
 		{
-                        foreach (Rectangle rc in rects)
-                                FillRectangle(brush, rc);
+			Status status = GDIPlus.GdipFillRectanglesI (nativeObject, brush.nativeObject, rects, rects.Length);
+			GDIPlus.CheckStatus (status);
 		}
 
 		public void FillRectangles (Brush brush, RectangleF [] rects)
 		{
-			foreach (RectangleF rc in rects)
-                                FillRectangle(brush, rc);
+			Status status = GDIPlus.GdipFillRectangles (nativeObject, brush.nativeObject, rects, rects.Length);
+			GDIPlus.CheckStatus (status);
 		}
 
 		

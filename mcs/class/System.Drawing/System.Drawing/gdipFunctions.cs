@@ -466,6 +466,10 @@ namespace System.Drawing
                 static internal extern Status GdipDrawRectangle (IntPtr graphics, IntPtr pen, float x, float y, float width, float height);
                 [DllImport ("gdiplus.dll")]
                 static internal extern Status GdipDrawRectangleI (IntPtr graphics, IntPtr pen, int x, int y, int width, int height);
+                [DllImport ("gdiplus.dll")]
+                static internal extern Status GdipDrawRectangles (IntPtr graphics, IntPtr pen, RectangleF [] rects, int count);
+                [DllImport ("gdiplus.dll")]
+                static internal extern Status GdipDrawRectanglesI (IntPtr graphics, IntPtr pen, Rectangle [] rects, int count);
 		[DllImport("gdiplus.dll")]
                 static internal extern Status GdipFillEllipseI (IntPtr graphics, IntPtr pen, int x, int y, int width, int height);
 		[DllImport("gdiplus.dll")]
@@ -479,7 +483,13 @@ namespace System.Drawing
                 [DllImport ("gdiplus.dll")]
                 static internal extern  Status GdipFillPolygon2I (IntPtr graphics, IntPtr brush, Point [] points, int count);
                 [DllImport("gdiplus.dll")]
-		static internal extern Status GdipFillRectangle (IntPtr graphics, IntPtr brush, float x1, float y1, float x2, float y2);		
+		static internal extern Status GdipFillRectangle (IntPtr graphics, IntPtr brush, float x1, float y1, float x2, float y2);
+                [DllImport("gdiplus.dll")]
+		static internal extern Status GdipFillRectangleI (IntPtr graphics, IntPtr brush, int x1, int y1, int x2, int y2);
+                [DllImport("gdiplus.dll")]
+		static internal extern Status GdipFillRectangles (IntPtr graphics, IntPtr brush, RectangleF [] rects, int count);
+                [DllImport("gdiplus.dll")]
+		static internal extern Status GdipFillRectanglesI (IntPtr graphics, IntPtr brush, Rectangle [] rects, int count);
 		[DllImport("gdiplus.dll", CharSet=CharSet.Unicode)]
 		static internal extern Status GdipDrawString (IntPtr graphics, string text, int len, IntPtr font, ref RectangleF rc, IntPtr format, IntPtr brush);
 		[DllImport("gdiplus.dll")]

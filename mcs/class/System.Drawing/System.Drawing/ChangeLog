@@ -1,3 +1,11 @@
+2004-05-28  Ravindra <rkumar@novell.com>
+
+	* gdipFunctions.cs: Added some P/Invoke calls for Draw/Fill
+	rectangles.
+	* Graphics.cs: Implemented Dispose method and changed Draw/Fill
+	rectangles implementation (This is basically done to avoid lots
+	of brush and pen setup happening in libgdiplus.)
+
 2004-05-27  Ravindra <rkumar@novell.com>
 
 	* Color.cs: Changed Color.Green to what MS.NET has. Conforming to MS.
