@@ -188,6 +188,7 @@ namespace Mono.CSharp
 %token VOID	
 %token VOLATILE
 %token WHILE	
+%token ARGLIST
 
 /* C# keywords which are not really keywords */
 %token GET           "get"
@@ -1001,9 +1002,22 @@ formal_parameter_list
 
 		$$ = new Parameters (pars, (Parameter) $3, lexer.Location); 
 	  }
+	| fixed_parameters COMMA ARGLIST
+	  {
+		ArrayList pars_list = (ArrayList) $1;
+
+		Parameter [] pars = new Parameter [pars_list.Count];
+		pars_list.CopyTo (pars);
+
+		$$ = new Parameters (pars, true, lexer.Location);
+	  }
 	| parameter_array 
 	  {
 		$$ = new Parameters (null, (Parameter) $1, lexer.Location);
+	  }
+	| ARGLIST
+	  {
+		$$ = new Parameters (null, true, lexer.Location);
 	  }
 	;
 
@@ -2187,7 +2201,7 @@ opt_argument_list
 	;
 
 argument_list
-	: argument		
+	: argument
 	  { 
 		ArrayList list = new ArrayList (4);
 		list.Add ($1);
@@ -2216,6 +2230,19 @@ argument
 	| OUT variable_reference 
 	  { 
 		$$ = new Argument ((Expression) $2, Argument.AType.Out);
+	  }
+	| ARGLIST OPEN_PARENS argument_list CLOSE_PARENS
+	  {
+		ArrayList list = (ArrayList) $3;
+		Argument[] args = new Argument [list.Count];
+		list.CopyTo (args, 0);
+
+		Expression expr = new Arglist (args, lexer.Location);
+		$$ = new Argument (expr, Argument.AType.Expression);
+	  }
+	| ARGLIST
+	  {
+		$$ = new Argument (new ArglistAccess (lexer.Location), Argument.AType.ArgList);
 	  }
 	;
 

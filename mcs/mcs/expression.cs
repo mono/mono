@@ -3969,7 +3969,8 @@ namespace Mono.CSharp {
 		public enum AType : byte {
 			Expression,
 			Ref,
-			Out
+			Out,
+			ArgList
 		};
 
 		public readonly AType ArgType;
@@ -4006,6 +4007,9 @@ namespace Mono.CSharp {
 
 	        public static string FullDesc (Argument a)
 		{
+			if (a.ArgType == AType.ArgList)
+				return "__arglist";
+
 			return (a.ArgType == AType.Ref ? "ref " :
 				(a.ArgType == AType.Out ? "out " : "")) +
 				TypeManager.CSharpName (a.Expr.Type);
@@ -4167,8 +4171,7 @@ namespace Mono.CSharp {
 
 				return (ParameterData) ip;
 			} else {
-				ParameterInfo [] pi = mb.GetParameters ();
-				ReflectionParameters rp = new ReflectionParameters (pi);
+				ReflectionParameters rp = new ReflectionParameters (mb);
 				method_parameter_cache [mb] = rp;
 
 				return (ParameterData) rp;
@@ -4395,7 +4398,8 @@ namespace Mono.CSharp {
 			if (cand_count == 0 && argument_count == 0)
 				return best == null || best_params ? 1 : 0;
 
-			if (candidate_pd.ParameterModifier (cand_count - 1) != Parameter.Modifier.PARAMS)
+			if ((candidate_pd.ParameterModifier (cand_count - 1) != Parameter.Modifier.PARAMS) &&
+			    (candidate_pd.ParameterModifier (cand_count - 1) != Parameter.Modifier.ARGLIST))
 				if (cand_count != argument_count)
 					return 0;
 
@@ -4565,16 +4569,20 @@ namespace Mono.CSharp {
 				arg_count = arguments.Count;
 			
 			ParameterData pd = GetParameterData (candidate);
-			
-			int pd_count = pd.Count;
 
+			int pd_count = pd.Count;
 			if (pd_count == 0)
 				return false;
-			
-			if (pd.ParameterModifier (pd_count - 1) != Parameter.Modifier.PARAMS)
+
+			int count = pd_count - 1;
+
+			bool is_varargs = false;
+			if (pd.ParameterModifier (count) == Parameter.Modifier.ARGLIST)
+				is_varargs = true;
+			else if (pd.ParameterModifier (count) != Parameter.Modifier.PARAMS)
 				return false;
 			
-			if (pd_count - 1 > arg_count)
+			if (count > arg_count)
 				return false;
 			
 			if (pd_count == 1 && arg_count == 0)
@@ -4585,7 +4593,7 @@ namespace Mono.CSharp {
 			// remains is when the number of parameters is
 			// less than or equal to the argument count.
 			//
-			for (int i = 0; i < pd_count - 1; ++i) {
+			for (int i = 0; i < count; ++i) {
 
 				Argument a = (Argument) arguments [i];
 
@@ -4615,6 +4623,9 @@ namespace Mono.CSharp {
 					return false;
 				
 			}
+
+			if (is_varargs)
+				return true;
 
 			Type element_type = TypeManager.GetElementType (pd.ParameterType (pd_count - 1));
 
@@ -4914,7 +4925,7 @@ namespace Mono.CSharp {
 		{
 			ParameterData pd = GetParameterData (method);
 			int pd_count = pd.Count;
-			
+
 			for (int j = 0; j < argument_count; j++) {
 				Argument a = (Argument) Arguments [j];
 				Expression a_expr = a.Expr;
@@ -4932,6 +4943,8 @@ namespace Mono.CSharp {
 
 					if (chose_params_expanded)
 						parameter_type = TypeManager.GetElementType (parameter_type);
+				} else if (pm == Parameter.Modifier.ARGLIST){
+					continue;
 				} else {
 					//
 					// Check modifiers
@@ -5078,6 +5091,12 @@ namespace Mono.CSharp {
 			if ((method.Attributes & MethodAttributes.SpecialName) != 0){
 				if (TypeManager.IsSpecialMethod (method))
 					Report.Error (571, loc, method.Name + ": can not call operator or accessor");
+			}
+
+			if (method.CallingConvention == CallingConventions.VarArgs) {
+				Report.Error (-27, loc, method.Name + ": calling varargs " +
+					      "methods is not yet supported.");
+				return null;
 			}
 			
 			eclass = ExprClass.Value;
@@ -6620,6 +6639,76 @@ namespace Mono.CSharp {
 			// Yes, this looks very bad. Look at `NOTAS' for
 			// an explanation.
 			// ec.ig.Emit (OpCodes.Ldarga_S, (byte) 0);
+		}
+	}
+
+	/// <summary>
+	///   Represents the `__arglist' construct
+	/// </summary>
+	public class ArglistAccess : Expression
+	{
+		public ArglistAccess (Location loc)
+		{
+			this.loc = loc;
+		}
+
+		public bool ResolveBase (EmitContext ec)
+		{
+			eclass = ExprClass.Variable;
+			type = TypeManager.runtime_argument_handle_type;
+			return true;
+		}
+
+		public override Expression DoResolve (EmitContext ec)
+		{
+			if (!ResolveBase (ec))
+				return null;
+
+			if (ec.IsFieldInitializer || !ec.CurrentBlock.HasVarargs) {
+				Error (190, "The __arglist construct is valid only within " +
+				       "a variable argument method.");
+				return null;
+			}
+
+			return this;
+		}
+
+		public override void Emit (EmitContext ec)
+		{
+			ec.ig.Emit (OpCodes.Arglist);
+		}
+	}
+
+	/// <summary>
+	///   Represents the `__arglist (....)' construct
+	/// </summary>
+	public class Arglist : Expression
+	{
+		public readonly Argument[] Arguments;
+
+		public Arglist (Argument[] args, Location l)
+		{
+			Arguments = args;
+			loc = l;
+		}
+
+		public override Expression DoResolve (EmitContext ec)
+		{
+			eclass = ExprClass.Variable;
+			type = TypeManager.runtime_argument_handle_type;
+
+			foreach (Argument arg in Arguments) {
+				if (!arg.Resolve (ec, loc))
+					return null;
+			}
+
+			return this;
+		}
+
+		public override void Emit (EmitContext ec)
+		{
+			foreach (Argument arg in Arguments)
+				arg.Emit (ec);
 		}
 	}
 

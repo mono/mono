@@ -1,3 +1,4 @@
+// -*- coding: dos -*-
 //
 // cs-tokenizer.cs: The Tokenizer for the C# compiler
 //                  This also implements the preprocessor
@@ -1715,6 +1716,8 @@ namespace Mono.CSharp
 			if (identifiers [pos] != null) {
 				val = identifiers [pos][id_builder];
 				if (val != null) {
+					if (val.Equals ("__arglist"))
+						return Token.ARGLIST;
 					return Token.IDENTIFIER;
 				}
 			}
@@ -1722,6 +1725,8 @@ namespace Mono.CSharp
 				identifiers [pos] = new CharArrayHashtable (pos);
 
 			val = new String (id_builder, 0, pos);
+			if (val.Equals ("__arglist"))
+				return Token.ARGLIST;
 
 			char [] chars = new char [pos];
 			Array.Copy (id_builder, chars, pos);

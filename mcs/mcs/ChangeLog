@@ -1,3 +1,27 @@
+2004-06-07  Martin Baulig  <martin@ximian.com>
+
+	Added support for varargs methods.
+
+	* cs-tokenizer.cs (Token.ARGLIST): New token for the `__arglist'
+	keyword.
+
+	* cs-parser.jay: Added support for `__arglist'.
+
+	* decl.cs (MemberCache.AddMethods): Don't ignore varargs methods.
+
+	* expression.cs (Argument.AType): Added `ArgList'.
+	(Invocation): Added support for varargs methods.
+	(ArglistAccess): New public class.
+	(Arglist): New public class.
+
+	* parameter.cs (Parameter.Modifier): Added `ARGLIST'.
+
+	* statement.cs (Block.Flags): Added `HasVarargs'.  We set this on
+	a method's top-level block if the method has varargs.
+
+	* support.cs (ReflectionParameters, InternalParameters): Added
+	support for varargs methods.	
+
 2004-06-07  Miguel de Icaza  <miguel@ximian.com>
 
 	* class.cs: Provide location in indexer error report.

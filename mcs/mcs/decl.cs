@@ -1535,13 +1535,9 @@ namespace Mono.CSharp {
 			MemberInfo [] members = type.GetMethods (bf);
 
                         Array.Reverse (members);
-                        
+
 			foreach (MethodBase member in members) {
 				string name = member.Name;
-
-				// Varargs methods aren't allowed in C# code.
-				if ((member.CallingConvention & CallingConventions.VarArgs) != 0)
-					continue;
 
 				// We use a name-based hash table of ArrayList's.
 				ArrayList list = (ArrayList) method_hash [name];
@@ -1709,7 +1705,7 @@ namespace Mono.CSharp {
 		static MemberInfo [] emptyMemberInfo = new MemberInfo [0];
 		
 		public MemberInfo [] FindMembers (MemberTypes mt, BindingFlags bf, string name,
-					       MemberFilter filter, object criteria)
+						  MemberFilter filter, object criteria)
 		{
 			if (using_global)
 				throw new Exception ();

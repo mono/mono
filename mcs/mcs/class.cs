@@ -3010,6 +3010,8 @@ namespace Mono.CSharp {
 		public CallingConventions CallingConventions {
 			get {
 				CallingConventions cc = Parameters.GetCallingConvention ();
+				if (Parameters.HasArglist)
+					block.HasVarargs = true;
 
 				if (!IsInterface)
 					if ((ModFlags & Modifiers.STATIC) == 0)
