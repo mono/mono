@@ -122,7 +122,9 @@ namespace System
 #if NET_2_0
 		public int CompareTo (bool value)
 		{
-			return (m_value == value) ? 0 : -1;
+			if (m_value == value)
+				return 0;
+			return m_value ? -1 : 1;
 		}
 
 		public bool Equals (bool value)
