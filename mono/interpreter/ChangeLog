@@ -1,4 +1,8 @@
 
+Wed Jun 19 17:01:37 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* interp.c: un-broke after stack trace changes.
+
 Fri May 31 16:17:20 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
 	* interp.c, hacks.h: compiler compatibility fixes.
