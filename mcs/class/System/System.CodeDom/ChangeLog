@@ -1,3 +1,8 @@
+2002-10-11  Ravi Pratap  <ravi@ximian.com>
+
+	* CodeMethodInvokeExpression.cs : Fix second constructor so that
+	the last argument is params - that is what the docs say.
+
 2002-09-11  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* CodeBinaryOperatorType.cs:

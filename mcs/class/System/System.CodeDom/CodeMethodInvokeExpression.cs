@@ -34,9 +34,9 @@ namespace System.CodeDom
 			this.Parameters.AddRange( parameters );
 		}
 
-		public CodeMethodInvokeExpression ( CodeExpression targetObject,
-						    string methodName,
-						    CodeExpression [] parameters)
+		public CodeMethodInvokeExpression (CodeExpression targetObject,
+						   string methodName,
+						   params CodeExpression [] parameters)
 		{
 			this.method = new CodeMethodReferenceExpression( targetObject, methodName );
 			this.Parameters.AddRange (parameters);
