@@ -13,12 +13,12 @@ using System.Reflection;
 using System.Reflection.Emit;
 
 namespace Microsoft.JScript {
-
+	
 	public abstract class Decl : AST {
 		internal FieldInfo field_info;
 		internal LocalBuilder local_builder;
 	}
-
+	
 	public class VariableDeclaration : Decl {
 
 		internal string id;
@@ -57,24 +57,22 @@ namespace Microsoft.JScript {
 
 		internal override void Emit (EmitContext ec)
 		{
-			if (parent == null) {
-				FieldBuilder field;
+			ILGenerator ig = ec.ig;
+
+			if (parent == null) {				
+				FieldBuilder field_builder;
 				TypeBuilder type  = ec.type_builder;
 				
-				field = type.DefineField (id, this.type,
-							  FieldAttributes.Public |
-							  FieldAttributes.Static);
-				
-				field_info = CodeGenerator.assembly_builder.GetType ("JScript 0").GetField (id);
+				field_builder = type.DefineField (id, this.type, FieldAttributes.Public | FieldAttributes.Static);
+				field_info = field_builder;
 
 				if (val != null) {
 					val.Emit (ec);
-					ec.gc_ig.Emit (OpCodes.Stsfld, field);
+					ig.Emit (OpCodes.Stsfld, field_builder);
 				}
 			} else {
-				ILGenerator ig = ec.ig;
 				local_builder = ig.DeclareLocal (type);
-
+				
 				if (val != null) {
 					val.Emit (ec);
 					ig.Emit (OpCodes.Stloc, local_builder);
@@ -86,10 +84,7 @@ namespace Microsoft.JScript {
 		{
 			bool r = true;
 			if (val != null)
-				if (val is Exp) 
-					r = ((Exp) val).Resolve (context, false);
-				else
-					r = val.Resolve (context);
+				r = val.Resolve (context);
 			context.Enter (id, this);
 			return r;
 		}
