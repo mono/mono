@@ -1,5 +1,9 @@
 2003-01-12  Nick Drochak  <ndrochak@gol.com>
 
+	* makefile(s): Only build if source changes. Naive implementation.
+
+2003-01-12  Nick Drochak  <ndrochak@gol.com>
+
 	* TestResult.xml: Generated result file. Shouldn't be in CVS.
 
 2002-12-15  Nick Drochak  <ndrochak@gol.com>

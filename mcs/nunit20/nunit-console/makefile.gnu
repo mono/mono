@@ -5,8 +5,10 @@
 #   Jackson Harper (Jackson@LatitudeGeo.com)
 #
 
-all:
-	mcs *.cs /r:../NUnit.Framework.dll /r:../NUnit.Util.dll /out:../nunit-console.exe
+all: nunit-console.exe
 
+nunit-console.exe: *.cs
+	mcs *.cs /r:../NUnit.Framework.dll /r:../NUnit.Util.dll /out:nunit-console.exe
+	cp nunit-console.exe ..
 clean:
-	rm -f ../nunit-console.exe
+	rm -f ../nunit-console.exe nunit-console.exe
