@@ -7,7 +7,9 @@
 // (C) Ximian, Inc.  http://www.ximian.com
 //
 
+using System.IO;
 using System.Reflection;
+using System.Runtime.Serialization;
 
 namespace System.Runtime.Remoting.Messaging {
 
