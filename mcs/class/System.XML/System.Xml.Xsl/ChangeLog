@@ -1,3 +1,6 @@
+2003-05-27  Ben Maurer <bmaurer@users.sourceforge.net>
+	* XslTransform.cs: unsafe classes need unsafe!
+
 2003-05-11  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* XslTransform.cs: fixed bug #42739.

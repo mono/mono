@@ -18,7 +18,7 @@ using BF = System.Reflection.BindingFlags;
 
 namespace System.Xml.Xsl
 {
-	public sealed class XslTransform
+	public unsafe sealed class XslTransform
 	{
 
 		#region Fields
