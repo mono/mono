@@ -16,8 +16,46 @@ namespace MonoTests.System
 {
 
 [TestFixture]
-public class DateTimeTest : TestCase
+public class DateTimeTest : Assertion
 {
+	[Flags]
+	internal enum Resolution : ushort {
+		Year = 64,
+		Month = 96,
+		Day = 112,
+		Hour = 120,
+		Minute = 124,
+		Second = 126,
+		Millisecond = 127,
+		_Month = 32,
+		_Day = 16,
+		_Hour = 8,
+		_Minute = 4,
+		_Second = 2,
+		_Millisecond = 1
+	}
+		
+	internal void DTAssertEquals (DateTime actual, DateTime expected, Resolution resolution) {
+		DTAssertEquals ("", actual, expected, resolution);
+	}
+
+	internal void DTAssertEquals (string message, DateTime expected, DateTime actual, Resolution resolution) {
+		if ((resolution & Resolution.Year) != 0)
+			AssertEquals (message, expected.Year, actual.Year);
+		if ((resolution & Resolution._Month) != 0)
+			AssertEquals (message, expected.Month, actual.Month);
+		if ((resolution & Resolution._Day) != 0)
+			AssertEquals (message, expected.Day, actual.Day);
+		if ((resolution & Resolution._Hour) != 0)
+			AssertEquals (message, expected.Hour, actual.Hour);
+		if ((resolution & Resolution._Minute) != 0)
+			AssertEquals (message, expected.Minute, actual.Minute);
+		if ((resolution & Resolution._Second) != 0)
+			AssertEquals (message, expected.Second, actual.Second);
+		if ((resolution & Resolution._Millisecond) != 0)
+			AssertEquals (message, expected.Millisecond, actual.Millisecond);
+	}
+
 	private CultureInfo oldcult;
 	
 	long[] myTicks = {
@@ -32,14 +70,16 @@ public class DateTimeTest : TestCase
 
 	public DateTimeTest() {}
 
-	protected override void SetUp() 
+	[SetUp]
+	public void SetUp() 
 	{
 		// the current culture determines the result of formatting
 		oldcult = Thread.CurrentThread.CurrentCulture;
 		Thread.CurrentThread.CurrentCulture = new CultureInfo ("");
 	}
 	
-	protected override void TearDown ()
+	[TearDown]
+	public void TearDown ()
 	{
 		Thread.CurrentThread.CurrentCulture = oldcult;		
 	}
@@ -560,7 +600,7 @@ public class DateTimeTest : TestCase
 	{
 		double number=5000.41443;
 		DateTime d = DateTime.FromOADate(number);
-		AssertEquals ("I01", d.ToString(), "09/08/1913 9:56:46");
+		DTAssertEquals ("I01", d, new DateTime(1913, 9, 8, 9, 56, 46, 0), Resolution.Second);
 		AssertEquals ("I02", d.ToOADate(), number);
 	}
 }

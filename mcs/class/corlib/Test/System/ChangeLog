@@ -1,3 +1,9 @@
+2003-06-23  Nick Drochak <ndrochak@gol.com>
+
+	* DateTimeTest.cs (TestOA): Compare DateTime values instead of strings
+	to avoid "culture shock".  Made a new AssertEquals() that is more
+	DateTime-friedly.
+
 2003-06-19  Nick Drochak <ndrochak@gol.com>
 
 	* ArrayTest.cs: Cleanup unused bits. Also get tests passing on .NET 1.1
