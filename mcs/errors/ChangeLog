@@ -1,3 +1,7 @@
+2004-12-06  Martin Baulig  <martin@ximian.com>
+
+	* gmcs-expect-*: Updated from mcs-expect-*.
+
 2004-12-06  Raja R Harinath  <rharinath@novell.com>
 
 	* Makefile (test-multi-local): Fix compile command.

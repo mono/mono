@@ -7,24 +7,14 @@
 # the file should be removed.
 #
 
+cs0029-3.cs
 cs0121-3.cs
 cs0164.cs
 cs0186.cs
 cs0229.cs
 cs0576.cs
-cs0580.cs
 
-#
-# These bugs are new in gmcs
-#
-
-cs0161-2.cs
-cs1540-3.cs
-cs1540-5.cs
-cs8201.cs
 cs0182.cs
-
-cs0029-3.cs
 
 cs0035.cs
 cs0108-3.cs
@@ -38,24 +28,16 @@ cs0652.cs
 cs1035.cs
 cs1040.cs
 cs2023.cs
-cs1570-10.cs
-cs1570-11.cs
-cs1570-2.cs
-cs1570-3.cs
-cs1570-4.cs
-cs1570-6.cs
-cs1570-7.cs
-cs1570-8.cs
-cs1570-9.cs
-cs1570.cs
-cs1571.cs
-cs1589.cs
-cs1590-2.cs
-cs1590-3.cs
-cs1650.cs
-cs1660.cs
-cs1690-2.cs
-cs1690-3.cs
-cs1690.cs
-cs0122-8.cs
+
+#
+# The following are new in GMCS
+#
+
 cs0122-7.cs
+cs0122-8.cs
+cs0161-2.cs
+cs1540-3.cs
+cs1540-5.cs
+cs1570-4.cs
+cs8201.cs
+
