@@ -1,4 +1,11 @@
 
+Sun Aug 26 11:34:24 CEST 2001 Paolo Molaro <lupus@ximian.com>
+
+	* class.h, class.c, loader.h, loader.c: export mono_class_from_mono_type ()
+	and add a couple more types to it and mono_defaults. Give an hint on
+	classes that need implementing in our corlib and are referenced
+	in mscorlib.
+
 Sat Aug 25 12:52:54 CEST 2001 Paolo Molaro <lupus@ximian.com>
 
 	* class.h, class.c: keep track if a class is also an Enum.
