@@ -37,12 +37,12 @@ namespace System.Xml
 		}
 		
 		// Methods
-		[MonoTODO("This implementation is bad because the spec explicitly forbids parameter Uri representing non-absolute.")]
+		[MonoTODO("Use Credentials; Uri must be absolute.")]
 		public override object GetEntity (Uri absoluteUri, string role, Type ofObjectToReturn)
 		{
 			// (MS documentation says) parameter role isn't used yet.
 			Stream s = null;
-			webClient.Credentials = credential;
+//			webClient.Credentials = credential;
 			s = new XmlInputStream (webClient.OpenRead (absoluteUri.ToString ()));
 			if (s.GetType ().IsSubclassOf (ofObjectToReturn))
 				return s;

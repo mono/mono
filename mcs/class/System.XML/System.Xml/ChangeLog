@@ -1,5 +1,9 @@
 2003-02-16  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
 
+	* XmlUrlResolver.cs : WebClient.Credentials was not implemented yet.
+
+2003-02-16  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
+
 	* XmlInputStream.cs : added (also contains internal XmlStreamReader).
 	* XmlDocument.cs : Load () now can specify URL using XmlUrlResolver,
 		and can read non-UTF-8 stream.
