@@ -36,9 +36,18 @@ using System.Runtime.CompilerServices;
 
 namespace System.Threading
 {
-	public sealed class Interlocked 
+	public
+#if NET_2_0
+	static
+#else
+	sealed
+#endif
+	class Interlocked 
 	{
+
+#if !NET_2_0
 		private Interlocked () {}
+#endif
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		public extern static int CompareExchange(ref int location1, int value, int comparand);

@@ -1,3 +1,7 @@
+2004-09-08  Marek Safar  <marek.safar@seznam.cz>
+
+	* Interlocked.cs: Class is static in NET_2_0.
+
 2004-09-04  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Thread.cs: Changed an imperative security demand to declarative
