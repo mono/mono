@@ -8,6 +8,7 @@
 //   Stuart Caborn <stuart.caborn@virgin.net>
 //   Tim Coleman (tim@timcoleman.com)
 //   Ville Palo <vi64pa@koti.soon.fi>
+//   Atsushi Enomoto <atsushi@ximian.com>
 //
 // (C) Ximian, Inc. 2002
 // Copyright (C) Tim Coleman, 2002, 2003
@@ -478,7 +479,7 @@ namespace System.Data {
 			StringWriter Writer = new StringWriter ();
 
 			// Sending false for not printing the Processing instruction
-			WriteXml (Writer, XmlWriteMode.IgnoreSchema, false);
+			WriteXml (Writer, XmlWriteMode.IgnoreSchema);
 			return Writer.ToString ();
 		}
 
@@ -522,6 +523,7 @@ namespace System.Data {
 		[MonoTODO]
 		public void InferXmlSchema (XmlReader reader, string[] nsArray)
 		{
+			throw new NotImplementedException ();
 		}
 
 		public void InferXmlSchema (Stream stream, string[] nsArray)
@@ -604,11 +606,12 @@ namespace System.Data {
 		{
 			XmlTextWriter writer = new XmlTextWriter (fileName, null);
 			writer.Formatting = Formatting.Indented;
-			
+			writer.WriteStartDocument ();
 			try {
 				WriteXml (writer);
 			}
 			finally {
+				writer.WriteEndDocument ();
 				writer.Close ();
 			}
 		}
@@ -622,18 +625,20 @@ namespace System.Data {
 
 		public void WriteXml (XmlWriter writer)
 		{
-			WriteXml (writer, XmlWriteMode.IgnoreSchema, true);
+			WriteXml (writer, XmlWriteMode.IgnoreSchema);
 		}
 
 		public void WriteXml (string filename, XmlWriteMode mode)
 		{
 			XmlTextWriter writer = new XmlTextWriter (filename, null);
 			writer.Formatting = Formatting.Indented;
+			writer.WriteStartDocument ();
 			
 			try {
-				WriteXml (writer, mode, true);
+				WriteXml (writer, mode);
 			}
 			finally {
+				writer.WriteEndDocument ();
 				writer.Close ();
 			}
 		}
@@ -642,67 +647,26 @@ namespace System.Data {
 		{
 			XmlTextWriter writer = new XmlTextWriter (stream, null);
 			writer.Formatting = Formatting.Indented;
-			WriteXml (writer, mode, true);
+			WriteXml (writer, mode);
 		}
 
 		public void WriteXml (TextWriter writer, XmlWriteMode mode)
 		{
 			XmlTextWriter xwriter = new XmlTextWriter (writer);
 			xwriter.Formatting = Formatting.Indented;
-			WriteXml (xwriter, mode, true);
+			WriteXml (xwriter, mode);
 		}
 
 		public void WriteXml (XmlWriter writer, XmlWriteMode mode)
 		{
-			WriteXml (writer, mode, true);
-		}
-		
-		internal void WriteXml (Stream stream, XmlWriteMode mode, bool writePI)
-		{
-			XmlTextWriter writer = new XmlTextWriter (stream, null);
-			writer.Formatting = Formatting.Indented;
-			WriteXml (writer, mode, writePI);
-		}
-
-		internal void WriteXml (string fileName, XmlWriteMode mode, bool writePI)
-		{
-			XmlTextWriter writer = new XmlTextWriter (fileName, null);
-			writer.Formatting = Formatting.Indented;
-			
-			try {
-				WriteXml (writer, mode, writePI);
-			}
-			finally {
-				writer.Close ();
-			}
-		}
-
-		internal void WriteXml (TextWriter writer, XmlWriteMode mode, bool writePI)
-		{
-			XmlTextWriter xwriter = new XmlTextWriter (writer);
-			xwriter.Formatting = Formatting.Indented;
-			WriteXml (xwriter, mode, writePI);
-		}
-
-		internal void WriteXml (XmlWriter writer, XmlWriteMode mode, bool writePI)
-		{
-			if (writePI && (writer.WriteState == WriteState.Start))
-				writer.WriteStartDocument (true);
-
 			if (mode == XmlWriteMode.DiffGram) {
 				SetRowsID();
 				WriteDiffGramElement(writer);
 			}
-			
-			WriteStartElement (writer, mode, Namespace, Prefix, XmlConvert.EncodeName (DataSetName));
-			
-			/*********************************************************
-			 * This is a patch for interoperability with ms.net.     *
-			 * Because in web services the .net client expects this  *
-			 * atrribute even if namespace is an empty string        *
-			 ********************************************************/
-			if (Namespace == null || Namespace.Length == 0)
-				WriteAttributeString (writer, mode, null, null, "xmlns", Namespace);
+
+			string ns = Namespace == null ? String.Empty : Namespace;
+
+			WriteStartElement (writer, mode, ns, Prefix, XmlConvert.EncodeName (DataSetName));
 			
 			if (mode == XmlWriteMode.WriteSchema) {
 				DoWriteXmlSchema (writer);
@@ -733,10 +697,12 @@ namespace System.Data {
 		{
 			XmlTextWriter writer = new XmlTextWriter (fileName, null);
 			writer.Formatting = Formatting.Indented;
+			writer.WriteStartDocument ();
 			try {
 				WriteXmlSchema (writer);
 			}
 			finally {
+				writer.WriteEndDocument ();
 				writer.Close ();
 			}
 		}
@@ -752,10 +718,7 @@ namespace System.Data {
 		{
 			//Create a skeleton doc and then write the schema 
 			//proper which is common to the WriteXml method in schema mode
-			writer.WriteStartDocument ();
 			DoWriteXmlSchema (writer);
-			
-			writer.WriteEndDocument ();
 		}
 
 		public void ReadXmlSchema (Stream stream)
@@ -810,15 +773,12 @@ namespace System.Data {
 
 		public XmlReadMode ReadXml (XmlReader r)
 		{
-			XmlDataLoader Loader = new XmlDataLoader (this);
 			// FIXME: somekinda exception?
 			if (!r.Read ())
 				return XmlReadMode.Auto; // FIXME
-			
-			// Check if the curent element is the process instruction (PI).
-			// if it is move to next element.
-			if (r.LocalName == "xml")
-				r.MoveToContent();
+
+			// Skip XML declaration and prolog
+			r.MoveToContent();
 
 			// The document can be diffgram if :
 			// 1. The first element is diffgram.
@@ -875,6 +835,7 @@ namespace System.Data {
 			// Read the data of the dataset with inferschema.
 			return ReadXml (r, XmlReadMode.InferSchema, false);
 
+			// FIXME: Consume to End of the started level element
 		}
 
 		public XmlReadMode ReadXml (Stream stream, XmlReadMode mode)
@@ -904,18 +865,18 @@ namespace System.Data {
 			// we have to initiate the reader.
 			if (reader.ReadState == ReadState.Initial)
 				reader.Read();
-			
-			// Check if the curent element is the process instruction (PI).
-			// if it is move to next element.
-			if (reader.LocalName == "xml")
-				reader.MoveToContent();
+
+			// Skip XML declaration and prolog
+			reader.MoveToContent();
 
 			XmlReadMode Result = XmlReadMode.Auto;
 
 			if (mode == XmlReadMode.DiffGram) {
+#if false
 				if (reader.LocalName != "diffgram"){
 					reader.MoveToContent ();
 					reader.ReadStartElement ();	// <DataSet>
+					DataSetName = reader.LocalName;
 
 					reader.MoveToContent ();
 					if (reader.LocalName == "schema")
@@ -926,6 +887,15 @@ namespace System.Data {
 				XmlDiffLoader DiffLoader = new XmlDiffLoader (this);
 				DiffLoader.Load (reader);
 				Result =  XmlReadMode.DiffGram;
+#else
+				if (reader.LocalName == "diffgram" && reader.NamespaceURI == XmlConstants.DiffgrNamespace) {
+					XmlDiffLoader DiffLoader = new XmlDiffLoader (this);
+					DiffLoader.Load (reader);
+					Result =  XmlReadMode.DiffGram;
+				}
+				else
+					Result = ReadXml (reader, XmlReadMode.Auto, true);
+#endif
 			}
 			else 
 				Result = ReadXml(reader, mode, true);
@@ -1030,7 +1000,7 @@ namespace System.Data {
 		void IXmlSerializable.WriteXml (XmlWriter writer)
 		{
 			DoWriteXmlSchema (writer);
-			WriteXml (writer, XmlWriteMode.DiffGram, true);
+			WriteXml (writer, XmlWriteMode.DiffGram);
 		}
 
 		protected virtual bool ShouldSerializeRelations ()
@@ -1244,15 +1214,7 @@ namespace System.Data {
 		    
 		private void WriteStartElement (XmlWriter writer, XmlWriteMode mode, string nspc, string prefix, string name)
 		{
-			if (nspc == null || nspc == "") {
-				writer.WriteStartElement (name);
-			}
-			else if (prefix != null) {
-				writer.WriteStartElement (prefix, name, nspc);
-			}
-			else {
-				writer.WriteStartElement (writer.LookupPrefix (nspc), name, nspc);
-			}
+			writer.WriteStartElement (prefix, name, nspc);
 		}
 		
 		private void WriteAttributeString (XmlWriter writer, XmlWriteMode mode, string nspc, string prefix, string name, string stringValue)

@@ -1,3 +1,17 @@
+2004-04-13  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* DataSet.cs :
+	  - InferXmlSchema(): Throw explicit NotImplementedException now.
+	  - Don't put XML declaration everywhere. Write just for filename arg.
+	  - xmlns="" should not be written. Maybe WebService problem is 
+	    because default namespace is overwritten. This patch will keep
+	    the WS problem away and actually fixes some unit tests (i.e. use
+	    explicit String.Empty for null namespace in WriteStartElement()).
+	  - MoveToContent() should always be called, not only when 
+	    LocalName="xml". It will ignore prolog (DTD, PI, comment etc.).
+	  - Even XmlReadMode is DiffGram, reader might not be "diffgram"
+	    element. As to MSDN, diffgram does not contain schema.
+
 2004-04-13  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* DataTable.cs: made _initStatus private so that System.Data is CLS
