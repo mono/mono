@@ -114,11 +114,8 @@ namespace System {
 			int code = _name.GetHashCode () ^ _version.GetHashCode ();
 			for (int i=0; i < _token.Length; i++)
 				code ^= _token [i];
-/* not used in MS implementation (bug?)
-			if (_proc != null)
-				code ^= _proc.GetHashCode ();
-			if (_culture != null)
-				code ^= _culture.GetHashCode ();*/
+			// ProcessorArchitecture and Culture aren't part of the hash code
+			// Confirmed by Microsoft in FDBK13339
 			return code;
 		}
 

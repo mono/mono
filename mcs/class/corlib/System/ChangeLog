@@ -1,3 +1,8 @@
+2004-08-26  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* ApplicationId.cs: Completed GetHashCode using information from MS
+	(FDBK13339).
+
 2004-08-23  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Boolean.cs: Added TryParse static method for NET_2_0 profile.
