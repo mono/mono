@@ -1,3 +1,13 @@
+2004-08-13  John Luke  <john.luke@gmail.com>
+
+	* outline.cs: remove unused isPointer 
+	* monop.cs: show information about the assembly that is being used
+	- remove unused IndentedTextWriter
+	- rework how Assemblies are being loaded, so that it works by trying
+	in order fromfile, fullname, partialname which fixes loading
+	from relative paths and generally should be more correct
+	* TODO: update
+
 2004-08-06  John Luke  <john.luke@gmail.com>
 
 	* outline.cs: add field support

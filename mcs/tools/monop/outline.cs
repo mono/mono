@@ -199,7 +199,6 @@ public class Outline {
 	{
 		int i = 0;
 		foreach (ParameterInfo p in pi) {
-			bool isPointer = false;
 			if (p.ParameterType.IsByRef) {
 				o.Write (p.IsOut ? "out " : "ref ");
 				o.Write (FormatType (p.ParameterType.GetElementType ()));

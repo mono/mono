@@ -59,29 +59,30 @@ class MonoP {
 
 	static Assembly GetAssembly (string assembly, bool exit)
 	{
-		Assembly a;
+		Assembly a = null;
 
 		try {
-			// if is starts with / use the full path
-			// otherwise try to load from the GAC
-			if (assembly.StartsWith ("/"))
+			// if it exists try to use LoadFrom
+			if (File.Exists (assembly))
 				a = Assembly.LoadFrom (assembly);
-			else
-				a = Assembly.LoadWithPartialName (assembly);
-
-			// if the above failed try Load
-			if (a == null)
+			// if it looks like a fullname try that
+			else if (assembly.Split (',').Length == 4)
 				a = Assembly.Load (assembly);
+		} catch {
+			// ignore exception it gets handled below
+		}
 
-			return a;
+		// last try partial name
+		// this (apparently) is exception safe
+		if (a == null)
+			a = Assembly.LoadWithPartialName (assembly);
+
+		if (a == null && exit) {
+			Console.WriteLine ("Could not load {0}", MonoP.assembly);
+			Environment.Exit (1);
 		}
-		catch {
-			if (exit) {
-				Console.WriteLine ("Could not load {0}", MonoP.assembly);
-				Environment.Exit (1);
-			}
-			return null;
-		}
+
+		return a;
 	}
 
 	static Type GetType (string tname)
@@ -92,6 +93,14 @@ class MonoP {
 	static void PrintTypes (string assembly)
 	{
 		Assembly a = GetAssembly (assembly, true);
+
+		Console.WriteLine ();
+		Console.WriteLine ("Assembly Information:");
+
+		foreach (string ai in a.ToString ().Split (','))
+			Console.WriteLine (ai.Trim ());
+
+		Console.WriteLine ();
 		Type [] types = a.GetExportedTypes ();
 
 		foreach (Type t in types)
@@ -167,8 +176,6 @@ class MonoP {
 
 		}
 		
-		IndentedTextWriter o = new IndentedTextWriter (Console.Out, "    ");
-
 		int i = 0;
 		if (args [0].StartsWith ("-r:") || args [0].StartsWith ("/r:")){
 			i++;
@@ -190,7 +197,7 @@ class MonoP {
 				i++;
 		}
 
-		if (args.Length < i+1){
+		if (args.Length < i + 1) {
 			PrintUsage ();
 			return;
 		}
