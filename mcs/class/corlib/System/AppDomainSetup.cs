@@ -52,7 +52,11 @@ namespace System {
 					appBase = appBase.Replace ('/', Path.DirectorySeparatorChar);
 
 			} else if (appBase.IndexOf (':') == -1) {
-				appBase = Path.GetFullPath (appBase);
+				if (!Path.IsPathRooted (appBase))
+					appBase = Path.Combine (Path.GetTempPath (),
+							appBase);
+				else
+					appBase = Path.GetFullPath (appBase);
 			}
 
 			return appBase;
