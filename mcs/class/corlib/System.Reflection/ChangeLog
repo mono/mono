@@ -1,3 +1,7 @@
+2004-09-18  Zoltan Varga  <vargaz@freemail.hu>
+
+	* Module.cs: Add net 2.0 Mvid property.
+
 2004-08-30  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Assembly.cs: Added internal Demand(PermissionSet) for CAS.

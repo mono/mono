@@ -214,6 +214,17 @@ namespace System.Reflection {
 			return name;
 		}
 
+#if NET_2_0 || BOOTSTRAP_NET_2_0
+		public
+#else
+		internal
+#endif
+		Guid Mvid {
+			get {
+				return Mono_GetGuid (this);
+			}
+		}
+
 		// Mono Extension: returns the GUID of this module
 		internal static Guid Mono_GetGuid (Module module)
 		{
