@@ -1,3 +1,7 @@
+2003-08-11  Duncan Mak  <duncan@ximian.com>
+
+	* Makefile (SUBDIRS): Add Mono.Cairo.dll
+
 2003-07-24  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Makefile: only build Mono.CSharp.Debugger under linux.

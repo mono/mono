@@ -50,7 +50,8 @@ SUBDIRS = \
 	System.ServiceProcess \
 	System.Drawing.Design		\
 	Mono.Http			\
-	Microsoft.Vsa			
+	Microsoft.Vsa			\
+	Mono.Cairo
 #	Microsoft.JScript		\
 
 # Starting with Microsoft.Vsa, the libraries above weren't in the
