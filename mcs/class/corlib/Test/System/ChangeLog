@@ -1,3 +1,11 @@
+2003-06-01  Pedro Martínez Juliá  <yoros@wanadoo.es>
+
+	* DoubleFormatterTest.cs: added the last changes from the author of
+	this test (Patrick Kalkman <kalkman@cistron.nl>).
+
+	* SingleFormatterTest.cs: added the first release of this test from
+	the same author: Patrick Kalkman <kalkman@cistron.nl>.
+
 2003-05-29  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* ArrayTest.cs: added more tests for bug 43783.

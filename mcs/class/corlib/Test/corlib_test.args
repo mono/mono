@@ -42,6 +42,7 @@ System/ObjectTest.cs
 System/RandomTest.cs
 System/ResolveEventArgsTest.cs
 System/SByteTest.cs
+System/SingleFormatterTest.cs
 System/StringTest.cs
 System/TimeSpanTest.cs
 System/TimeZoneTest.cs
