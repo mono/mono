@@ -1,4 +1,4 @@
-REM LineNo: 13
+REM LineNo: 19
 REM ExpectedError: BC30512
 REM ErrorMessage: Option Strict On disallows implicit conversions from 'Double' to 'Long'.
 

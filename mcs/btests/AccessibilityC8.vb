@@ -10,10 +10,13 @@ Class C1
 	End Sub
 End Class
 
-Class C2
-	Inherits C1
-	Public Sub S1()
-		S()
+Class C3
+	Public Sub S()
+		Dim myC As New C1()
+		myC.S()
 	End Sub
 End Class
-
+Module Accessibility
+	Sub Main()
+	End Sub
+End Module

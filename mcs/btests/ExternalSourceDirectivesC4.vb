@@ -1,19 +1,14 @@
-REM LineNo: 214
+REM LineNo: 202
 REM ExpectedError: BC30002
 REM ErrorMessage: Type 'Int' is not defined.
 
-REM LineNo: 114
+REM LineNo: 102
 REM ExpectedError: BC30002
 REM ErrorMessage: Type 'Int' is not defined.
 
-REM LineNo: 41
+REM LineNo: 36
 REM ExpectedError: BC30002
 REM ErrorMessage: Type 'Int' is not defined.
-
-'Line 202, BC30002: Undefined type 'Int'
-'Line 102, BC30002: Undefined type 'Int'
-'Line 24,  BC30002: Undefined type 'Int'
-
 
 ' Force an error to visually examine whether errors within #ExternalSource directives are properly reported
 

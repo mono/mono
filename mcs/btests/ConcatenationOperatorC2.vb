@@ -10,7 +10,7 @@ Module ConcatenationOperatorC1
         Dim b As String = "World"
 
         Dim c As String
-        c = a & 
+        c = & b
 
         c = a & b
         If c <> "Hello World" Then
