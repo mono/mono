@@ -381,17 +381,25 @@ namespace System.Reflection {
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		private static extern Assembly load_with_partial_name (string name, Evidence e);
+
+		/**
+		 * LAMESPEC: It is possible for this method to throw exceptions IF the name supplied
+		 * is a valid gac name and contains filesystem entry charachters at the end of the name
+		 * ie System/// will throw an exception. However ////System will not as that is canocolized
+		 * out of the name.
+		 */
 		public static Assembly LoadWithPartialName (string partialName, Evidence securityEvidence)
 		{
-			try {
-				return AppDomain.CurrentDomain.Load (partialName, securityEvidence);
-			}
-			catch (Exception) {
-				// According to MSDN, this should return null instead of
-				// throwing an exception
-				return null;
-			}
+			if (partialName == null)
+				throw new NullReferenceException ();
+
+			int ci = partialName.IndexOf (',');
+			if (ci > 0)
+				partialName = partialName.Substring (0, ci);
+
+			return load_with_partial_name (partialName, securityEvidence);
 		}
 
 		public Object CreateInstance (String typeName) 

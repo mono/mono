@@ -1,3 +1,8 @@
+2004-05-03  Jackson Harper  <jackson@ximian.com>
+
+	* Assembly.cs: Implement LoadWithPartialName. The bulk of this
+	method is done in the runtime.
+	
 2004-04-29  Lluis Sanchez Gual  <lluis@ximian.com>
 
 	* MonoProperty.cs: Property.GetGetMethod() does not return the method if it
