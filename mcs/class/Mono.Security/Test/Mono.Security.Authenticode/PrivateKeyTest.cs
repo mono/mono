@@ -3,6 +3,7 @@
 //
 // Author:
 //	Sebastien Pouliot (sebastien@ximian.com)
+//	Bernie Solomon
 //
 // (C) 2003 Motus Technologies Inc. (http://www.motus.com)
 // Copyright (C) 2004 Novell (http://www.novell.com)
@@ -17,6 +18,51 @@ using Mono.Security.Authenticode;
 using NUnit.Framework;
 
 namespace MonoTests.Mono.Security.Authenticode {
+
+	// partial copy of /mcs/class/Mono.Security/Mono.Security/BitConverterLE.cs
+	internal sealed class BitConverterLE {
+
+		private BitConverterLE ()
+		{
+		}
+
+		unsafe private static byte[] GetUIntBytes (byte *bytes)
+		{
+			if (BitConverter.IsLittleEndian)
+				return new byte [] { bytes [0], bytes [1], bytes [2], bytes [3] };
+			else
+				return new byte [] { bytes [3], bytes [2], bytes [1], bytes [0] };
+		}
+
+		unsafe internal static byte[] GetBytes (int value)
+		{
+			return GetUIntBytes ((byte *) &value);
+		}
+
+		unsafe private static void UIntFromBytes (byte *dst, byte[] src, int startIndex)
+		{
+			if (BitConverter.IsLittleEndian) {
+				dst [0] = src [startIndex];
+				dst [1] = src [startIndex + 1];
+				dst [2] = src [startIndex + 2];
+				dst [3] = src [startIndex + 3];
+			} else {
+				dst [0] = src [startIndex + 3];
+				dst [1] = src [startIndex + 2];
+				dst [2] = src [startIndex + 1];
+				dst [3] = src [startIndex];
+			}
+		}
+
+		unsafe internal static int ToInt32 (byte[] value, int startIndex)
+		{
+			int ret;
+
+			UIntFromBytes ((byte *) &ret, value, startIndex);
+
+			return ret;
+		}
+	}
 
 // HOWTO create a PVK file (on Windows using MS tools)
 // makecert -n "CN=PVK1" -sv 1.pvk 1.cer
@@ -249,15 +295,15 @@ public class PrivateKeyTest : Assertion {
 	public void SaltWithoutPassword () 
 	{
 		byte[] bad = (byte[]) nopwd.Clone ();
-		int saltlen = BitConverter.ToInt32 (bad, 16);
-		int keylen = BitConverter.ToInt32 (bad, 20);
+		int saltlen = BitConverterLE.ToInt32 (bad, 16);
+		int keylen = BitConverterLE.ToInt32 (bad, 20);
 		// preserve total length
 		saltlen += 8;
 		keylen -= 8;
 		// modify blob
-		byte[] data = BitConverter.GetBytes (saltlen);
+		byte[] data = BitConverterLE.GetBytes (saltlen);
 		Buffer.BlockCopy (data, 0, bad, 16, data.Length); 
-		data = BitConverter.GetBytes (keylen);
+		data = BitConverterLE.GetBytes (keylen);
 		Buffer.BlockCopy (data, 0, bad, 20, data.Length); 
 		// save-n-load		
 		WriteBuffer (bad);

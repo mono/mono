@@ -1,3 +1,7 @@
+2004-11-05  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* PrivateKeyTest.cs: Merge endian fix from HEAD.
+
 2004-09-07  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* AuthenticodeDeformatterTest.cs: Merge new unit tests from HEAD.
