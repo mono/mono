@@ -845,6 +845,7 @@ namespace System.Xml.XPath
 		{
 			_iterLeft = iter;
 			_expr = expr;
+
 			if (_iterLeft.RequireSorting || _expr.RequireSorting)
 				CollectResults ();
 		}
@@ -898,17 +899,8 @@ namespace System.Xml.XPath
 				while (!_iterRight.MoveNext ()) {
 					if (_iterList.Count > 0) {
 						int last = _iterList.Count - 1;
-						BaseIterator tmpIter = (BaseIterator) _iterList.GetByIndex (last);
+						_iterRight = (BaseIterator) _iterList.GetByIndex (last);
 						_iterList.RemoveAt (last);
-						switch (tmpIter.Current.ComparePosition (_iterRight.Current)) {
-						case XmlNodeOrder.Same:
-						case XmlNodeOrder.Before:
-							_iterRight = tmpIter;
-							continue;
-						default:
-							_iterRight = tmpIter;
-							break;
-						}
 						break;
 					} else if (_nextIterRight != null) {
 						_iterRight = _nextIterRight;
@@ -940,7 +932,7 @@ namespace System.Xml.XPath
 					if (_nextIterRight != null) {
 						switch (_iterRight.Current.ComparePosition (_nextIterRight.Current)) {
 						case XmlNodeOrder.After:
-							_iterList.Add (_iterList.Count, _iterRight);
+							_iterList [_iterRight] = _iterRight;
 							_iterRight = _nextIterRight;
 							_nextIterRight = null;
 							loop = true;
@@ -951,8 +943,8 @@ namespace System.Xml.XPath
 
 							else {
 								int last = _iterList.Count;
-								if (last > 0) {
-									_iterList.Add (last, _nextIterRight);
+								_iterList [_nextIterRight] = _nextIterRight;
+								if (last != _iterList.Count) {
 									_nextIterRight = (BaseIterator) _iterList.GetByIndex (last);
 									_iterList.RemoveAt (last);
 								}
