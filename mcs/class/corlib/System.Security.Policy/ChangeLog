@@ -1,3 +1,18 @@
+2004-01-02  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* ApplicationDirectory.cs: Added to build. Commented IBuildInEvidence 
+	(not implemented).
+	* Evidence.cs: Synchronised collections (IsSynchronized is always true).
+	Add Locked property and Security exceptions.
+	* Publisher.cs: Now use SecurityElement in ToString. Removed TODO for
+	CreateIdentityPermission (Evidence is useless).
+	* StrongNameMembershipCondition.cs: Added IConstantMembershipCondition 
+	interface. Implemented Check method.
+	* Url.cs: Implemented CreateIdentityPermission.
+	* UrlMembershipCondition.cs: Added IConstantMembershipCondition interface.
+	* ZoneMembershipCondition.cs: Added IConstantMembershipCondition 
+	interface. Implemented Check method.
+
 2004-01-01  Nick Drochak  <ndrochak@gol.com>
 
 	* PermissionRequestEvidence.cs: New File

@@ -11,7 +11,7 @@ namespace System.Security.Policy {
 
 	[MonoTODO("This class should use a URLString like class instead of just a string")]
 	[Serializable]
-	public sealed class ApplicationDirectory : IBuiltinEvidence {
+	public sealed class ApplicationDirectory /*: IBuiltInEvidence*/ {
 		
 		private string directory;
 
@@ -19,10 +19,10 @@ namespace System.Security.Policy {
 		// Public Constructors
 		//
 		
-		public ApplicationDirectory(string name)
+		public ApplicationDirectory (string name)
 		{
 			if (null == name)
-				throw new ArgumentNullException ();		
+				throw new ArgumentNullException ("name");		
 			directory = name;
 		}
 
@@ -38,17 +38,17 @@ namespace System.Security.Policy {
 		// Public Methods
 		//
 		
-		public object Copy()
+		public object Copy ()
 		{	
 			return new ApplicationDirectory (Directory);
 		}
 		
 		[MonoTODO("This needs to check for security subsets")]
-		public override bool Equals(object other)
+		public override bool Equals (object other)
 		{
 			if (null != other && (other is ApplicationDirectory)) {
-				ApplicationDirectory compare = (ApplicationDirectory)other;
-				return compare.directory.Equals(directory);
+				ApplicationDirectory compare = (ApplicationDirectory) other;
+				return compare.directory.Equals (directory);
 			}
 			return false;
 		}
@@ -56,17 +56,17 @@ namespace System.Security.Policy {
 		/// <summary>
 		///   This does not return the exact same results as the MS version
 		/// </summary>
-		public override int GetHashCode()
+		public override int GetHashCode ()
 		{
 			return directory.GetHashCode ();
 		}
 		
-		public override string ToString()
+		public override string ToString ()
 		{
 			return ToXml ().ToString ();
 		}
 
-		private SecurityElement ToXml()
+		private SecurityElement ToXml ()
 		{
 			SecurityElement element = new SecurityElement (GetType().FullName);
 			element.AddAttribute ("version", "1");
@@ -74,7 +74,6 @@ namespace System.Security.Policy {
 
 			return element;
 		}
-
 	}
 }
 

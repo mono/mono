@@ -13,7 +13,7 @@ using System.Globalization;
 namespace System.Security.Policy {
 
         public sealed class UrlMembershipCondition
-                : IMembershipCondition, ISecurityEncodable, ISecurityPolicyEncodable
+                : IMembershipCondition, ISecurityEncodable, ISecurityPolicyEncodable, IConstantMembershipCondition
         {
                 string url;
                 
@@ -45,7 +45,6 @@ namespace System.Security.Policy {
                 {
                         if (o is UrlMembershipCondition == false)
                                 return false;
-
                         else
                                 return ((UrlMembershipCondition) o).Url == url;
                 }

@@ -1,35 +1,42 @@
+//
 // System.Security.Policy.Evidence
 //
 // Authors:
-//  Sean MacIsaac (macisaac@ximian.com)
-//  Nick Drochak (ndrochak@gol.com)
-//  Jackson Harper (Jackson@LatitudeGeo.com)
+//	Sean MacIsaac (macisaac@ximian.com)
+//	Nick Drochak (ndrochak@gol.com)
+//	Jackson Harper (Jackson@LatitudeGeo.com)
+//	Sebastien Pouliot (spouliot@motus.com)
 //
 // (C) 2001 Ximian, Inc.
+// Portions (C) 2003, 2004 Motus Technologies Inc. (http://www.motus.com)
+//
 
 using System;
 using System.Collections;
+using System.Security.Permissions;
 
 namespace System.Security.Policy {
 
-	[MonoTODO]
 	[Serializable]
 	public sealed class Evidence : ICollection, IEnumerable {
 	
-		private ArrayList hostEvidenceList = new ArrayList ();	
-		private ArrayList assemblyEvidenceList = new ArrayList ();
+		private bool _locked;
+		private ArrayList hostEvidenceList;	
+		private ArrayList assemblyEvidenceList;
 		
 		public Evidence () 
 		{
+			hostEvidenceList = ArrayList.Synchronized (new ArrayList ());
+			assemblyEvidenceList = ArrayList.Synchronized (new ArrayList ());
 		}
 
-		public Evidence (Evidence evidence) 
+		public Evidence (Evidence evidence) : this ()
 		{
 			if (evidence != null)
 				Merge (evidence);	
 		}
 
-		public Evidence (object[] hostEvidence, object[] assemblyEvidence ) 
+		public Evidence (object[] hostEvidence, object[] assemblyEvidence) : this ()
 		{
 			if (null != hostEvidence)
 				hostEvidenceList.AddRange (hostEvidence);
@@ -51,17 +58,16 @@ namespace System.Security.Policy {
 			get{ return false; }
 		}
 		
+		// LAMESPEC: Always TRUE (not FALSE)
 		public bool IsSynchronized {
-			get { return false; }
+			get { return true; }
 		}
 
-		[MonoTODO]
 		public bool Locked {
-			get {
-				throw new NotImplementedException ();
-			}
-			set {
-				throw new NotImplementedException ();
+			get { return _locked; }
+			set { 
+				new SecurityPermission (SecurityPermissionFlag.ControlEvidence).Demand ();
+				_locked = value; 
 			}
 		}	
 
@@ -78,18 +84,20 @@ namespace System.Security.Policy {
 			assemblyEvidenceList.Add (id);
 		}
 
-		[MonoTODO("If Locked is true and the code that calls this method does not have SecurityPermissionFlag.ControlEvidence a SecurityException should be thrown")]
 		public void AddHost (object id) 
 		{
+			if (_locked) {
+				new SecurityPermission (SecurityPermissionFlag.ControlEvidence).Demand ();
+			}
 			hostEvidenceList.Add (id);
 		}
 
 		public void CopyTo (Array array, int index) 
 		{
 			if (hostEvidenceList.Count > 0) 
-				hostEvidenceList.CopyTo (array,index);
+				hostEvidenceList.CopyTo (array, index);
 			if (assemblyEvidenceList.Count > 0) 
-				assemblyEvidenceList.CopyTo (array,index + hostEvidenceList.Count);
+				assemblyEvidenceList.CopyTo (array, index + hostEvidenceList.Count);
 		}
 
 		public IEnumerator GetEnumerator () 

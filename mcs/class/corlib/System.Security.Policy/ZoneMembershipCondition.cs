@@ -13,7 +13,7 @@ using System.Globalization;
 namespace System.Security.Policy {
 
         public sealed class ZoneMembershipCondition
-                : IMembershipCondition, ISecurityEncodable, ISecurityPolicyEncodable
+                : IMembershipCondition, ISecurityEncodable, ISecurityPolicyEncodable, IConstantMembershipCondition
         {
                 SecurityZone zone;
                 
@@ -27,9 +27,18 @@ namespace System.Security.Policy {
                         get { return zone; }
                 }
 
-                [MonoTODO]
                 public bool Check (Evidence evidence)
                 {
+			if (evidence == null)
+				return false;
+
+			foreach (object o in evidence) {
+				if (o is Zone) {
+					Zone z = (o as Zone);
+					if (z.SecurityZone == zone)
+						return true;
+				}
+			}
                         return false;
                 }
 
@@ -42,7 +51,6 @@ namespace System.Security.Policy {
                 {
                         if (o is ZoneMembershipCondition == false)
                                 return false;
-
                         else
                                 return ((ZoneMembershipCondition) o).SecurityZone == zone;
                 }

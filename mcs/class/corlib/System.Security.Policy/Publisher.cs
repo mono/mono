@@ -4,10 +4,11 @@
 // Author:
 //	Sebastien Pouliot (spouliot@motus.com)
 //
-// (C) 2002 Motus Technologies Inc. (http://www.motus.com)
+// (C) 2002, 2003 Motus Technologies Inc. (http://www.motus.com)
 //
 
 using System;
+using System.Security;
 using System.Security.Cryptography.X509Certificates;
 using System.Security.Permissions;
 using System.Text;
@@ -36,7 +37,7 @@ public sealed class Publisher : IIdentityPermissionFactory {
 	public X509Certificate Certificate { 
 		get { 
 			// needed to match MS implementation
-			if (x509.GetRawCertData() == null)
+			if (x509.GetRawCertData () == null)
 				throw new NullReferenceException ("x509");
 			return x509; 
 		}
@@ -47,7 +48,6 @@ public sealed class Publisher : IIdentityPermissionFactory {
 		return (object) new Publisher (x509);
 	}
 
-	[MonoTODO("What should we do with the evidence ? nothing?")]
 	public IPermission CreateIdentityPermission (Evidence evidence) 
 	{
 		return new PublisherIdentityPermission (x509);
@@ -67,18 +67,14 @@ public sealed class Publisher : IIdentityPermissionFactory {
 
 	public override string ToString ()
 	{
-		StringBuilder sb = new StringBuilder ();
-		sb.Append ("<System.Security.Policy.Publisher version=\"1\">\r\n   <X509v3Certificate");
-		string cert = x509.GetRawCertDataString ();
-		if (cert == null)
-			sb.Append ("/>\r\n");
-		else {
-			sb.Append (">");
-			sb.Append (cert);
-			sb.Append ("</X509v3Certificate>\r\n");
-		}
-		sb.Append ("</System.Security.Policy.Publisher>\r\n");
-		return sb.ToString ();
+		SecurityElement se = new SecurityElement ("System.Security.Policy.Publisher");
+		se.AddAttribute ("version", "1");
+		SecurityElement cert = new SecurityElement ("X509v3Certificate");
+		string data = x509.GetRawCertDataString ();
+		if (data != null)
+			cert.Text = data;
+		se.AddChild (cert);
+		return se.ToString ();
 	}
 }
 

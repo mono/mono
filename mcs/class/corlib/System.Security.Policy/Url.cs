@@ -15,8 +15,8 @@ using System.Security.Policy;
 namespace System.Security.Policy {
 
         [Serializable]
-        public sealed class Url: IIdentityPermissionFactory
-        {
+        public sealed class Url: IIdentityPermissionFactory {
+
                 string origin_url;
                 SecurityElement element;
                 
@@ -44,10 +44,9 @@ namespace System.Security.Policy {
                         return new Url (origin_url, element);
                 }
 
-                [MonoTODO]
                 public IPermission CreateIdentityPermission (Evidence evidence)
                 {
-                        return null;
+                        return new UrlIdentityPermission (origin_url);
                 }
 
                 public override bool Equals (object o)

@@ -7,7 +7,6 @@
 // (C) 2003 Duncan Mak, Ximian Inc.
 //
 
-
 using System;
 using System.Globalization;
 using System.Security.Permissions;
@@ -15,9 +14,8 @@ using System.Security.Permissions;
 namespace System.Security.Policy {
 
         public sealed class StrongNameMembershipCondition
-                : IMembershipCondition, ISecurityEncodable, ISecurityPolicyEncodable
+                : IMembershipCondition, ISecurityEncodable, ISecurityPolicyEncodable, IConstantMembershipCondition
         {
-
                 StrongNamePublicKeyBlob blob;
                 string name;
                 Version version;
@@ -25,10 +23,8 @@ namespace System.Security.Policy {
                 public StrongNameMembershipCondition (
                         StrongNamePublicKeyBlob blob, string name, Version version)
                 {
-
                         if (blob == null)
-                                throw new ArgumentNullException (
-                                        Locale.GetText ("The argument is null."));
+                                throw new ArgumentNullException ("blob");
 
                         this.blob = blob;
                         this.name = name;
@@ -62,9 +58,18 @@ namespace System.Security.Policy {
 			}
 		}
 
-		[MonoTODO ("How do you check for StrongName from an Evidence?")]
 		public bool Check (Evidence evidence)
 		{
+			if (evidence == null)
+				return false;
+
+			foreach (object o in evidence) {
+				if (o is StrongName) {
+					StrongName sn = (o as StrongName);
+					if (sn.PublicKey.Equals (blob) && (sn.Name == name) && (sn.Version.Equals (version)))
+						return true;
+				}
+			}
 			return false;
 		}
 
@@ -77,7 +82,6 @@ namespace System.Security.Policy {
 		{	 
 			if (o is StrongName == false)
 				return false;
-
 			else {
 				StrongName sn = (StrongName) o;
 				return (sn.Name == Name && sn.Version == Version && sn.PublicKey == PublicKey);
