@@ -1,3 +1,7 @@
+2004-11-09  Zoltan Varga  <vargaz@freemail.hu>
+
+	* assembly.c (mono_assembly_names_equal): Reenable the comparison of
+	assembly versions and public key tokens. Fixes #69113.
 
 Tue Nov 9 17:34:05 CET 2004 Paolo Molaro <lupus@ximian.com>
 
