@@ -1,5 +1,7 @@
 2005-01-11  Zoltan Varga  <vargaz@freemail.hu>
 
+	* mini-x86.c: Fix warnings.
+
 	* Makefile.am (common_sources): Move mini-exceptions.c here as it is
 	used by all the ports now.
 
