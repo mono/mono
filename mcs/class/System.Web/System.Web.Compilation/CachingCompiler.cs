@@ -30,6 +30,14 @@ namespace System.Web.Compilation
 			this.reference = DateTime.Now;
 		}
 
+		public CompilationCacheItem (CompilerResults result, string file)
+		{
+			this.result = result;
+			this.dependencies = new ArrayList (1);
+			dependencies.Add (file);
+			this.reference = DateTime.Now;
+		}
+
 		public bool CheckDependencies (string key)
 		{
 			if (dependencies == null)
@@ -148,7 +156,7 @@ namespace System.Web.Compilation
 				CompilerParameters options = GetOptions (assemblies);
 				//TODO: support for other languages
 				results = CSCompiler.Compiler.CompileAssemblyFromFile (options, file);
-				cache [file] = new CompilationCacheItem (results, null);
+				cache [file] = new CompilationCacheItem (results, file);
 			}
 
 			return results;
