@@ -1,3 +1,13 @@
+2003-02-07  Martin Baulig  <martin@ximian.com>
+
+	* driver.cs: Removed the `--debug-args' command line argument.
+
+	* codegen.cs (CodeGen.SaveSymbols): Removed, this is now done
+	automatically by the AsssemblyBuilder.
+	(CodeGen.InitializeSymbolWriter): We don't need to call any
+	initialization function on the symbol writer anymore.  This method
+	doesn't take any arguments.
+
 2003-02-03  Miguel de Icaza  <miguel@ximian.com>
 
 	* driver.cs: (AddAssemblyAndDeps, LoadAssembly): Enter the types
