@@ -1,3 +1,9 @@
+2005-01-20  Dick Porter  <dick@ximian.com>
+
+	* support.cs: SeekableStreamReader fix from Sandor Dobos
+	(dobos_s@ibcnet.hu) to cope with Position setting when multibyte
+	chars are read.  Fixes bug 70369.
+
 2005-01-20  Raja R Harinath  <rharinath@novell.com>
 
 	* cs-parser.jay (catch_clause): Simplify current_block handling
