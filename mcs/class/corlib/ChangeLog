@@ -1,5 +1,10 @@
 2003-02-03  Patrik Torstensson
 
+	* corlib.build: fixes so corlib_cmp and corlib_res builds, need to
+	  check if we need the libs and if they still are correct.
+
+2003-02-03  Patrik Torstensson
+
 	* unix.args: added CADMessages.cs
 
 2003-01-26  Lluis Sanchez Gual <lluis@ideary.com>
