@@ -48,8 +48,8 @@ using System.Xml.Serialization;
 namespace Mono.Xml.XPath
 {
 	public class XPathEditableDocument
-		: IXPathNavigable, IXPathEditable,
-		IRevertibleChangeTracking, IChangeTracking, IXmlSerializable
+		: IXPathNavigable//, IXPathEditable,
+//		IRevertibleChangeTracking, IChangeTracking, IXmlSerializable
 	{
 		/*
 		public static void Main ()
@@ -101,18 +101,22 @@ namespace Mono.Xml.XPath
 		}
 		*/
 
-		XmlDocument document;
+		XmlNode node;
 
 		ArrayList changes = new ArrayList ();
 
-		public XPathEditableDocument (XmlDocument doc)
+		public XPathEditableDocument (XmlNode node)
 		{
-			document = doc;
+			this.node = node;
+		}
+
+		public virtual bool CanEdit {
+			get { return true; }
 		}
 
 		public XPathNavigator CreateNavigator ()
 		{
-			return document.CreateNavigator ();
+			return node.CreateNavigator ();
 		}
 
 		public XPathEditableNavigator CreateEditor ()
@@ -728,22 +732,6 @@ namespace Mono.Xml.XPath
 			return navigator.MoveToPrevious ();
 		}
 
-		public override void Validate (XmlSchemaSet schemas, ValidationEventHandler handler)
-		{
-			throw new NotImplementedException ();
-/*
-			// FIXME: use handler
-			XmlReaderSettings settings = new XmlReaderSettings ();
-			settings.Schemas.Add (schemas);
-			settings.NameTable = this.NameTable;
-			settings.XsdValidate = true;
-			settings.DtdValidate = false;
-			XmlReader xvr = XmlReader.Create (new XPathNavigatorReader (this), settings);
-			while (!xvr.EOF)
-				xvr.Read ();
-*/
-		}
-
 		public override XmlWriter AppendChild ()
 		{
 			XmlNode n = ((IHasXmlNode) navigator).GetNode ();
@@ -764,7 +752,7 @@ namespace Mono.Xml.XPath
 			return document.CreateInsertionWriter (n, null);
 		}
 
-		public override bool DeleteCurrent ()
+		public override bool DeleteSelf ()
 		{
 			XmlNode n = ((IHasXmlNode) navigator).GetNode ();
 			if (!navigator.MoveToNext ())
@@ -772,7 +760,7 @@ namespace Mono.Xml.XPath
 			return document.DeleteNode (n);
 		}
 
-		public override void SetValue (object value)
+		public override void SetValue (string value)
 		{
 			XmlNode n = ((IHasXmlNode) navigator).GetNode ();
 			foreach (XmlNode c in n.ChildNodes)
