@@ -1,3 +1,7 @@
+2002-10-09  Rodrigo Moya <rodrigo@ximian.com>
+
+	* class/makefile.gnu: added System.Data.Odbc directory.
+
 2002-09-14  Piers Haken <piersh@friskit.com>
 
 	* */makefile.gnu:
