@@ -1,3 +1,8 @@
+2003-07-14  Ravi Pratap M  <ravi@ximian.com>
+
+	* expression.cs (OverloadResolve): Report error only if Location
+	is not 'Null' which means that there was a probe going on.
+
 2003-07-14  Martin Baulig  <martin@ximian.com>
 
 	* expression.cs (ConditionalLogicalOperator): New public class to

@@ -4520,12 +4520,14 @@ namespace Mono.CSharp {
 							       null, loc);
 				}
 
-                                string report_name = me.Name;
-                                if (report_name == ".ctor")
-                                        report_name = me.DeclaringType.ToString ();
+                                if (!Location.IsNull (loc)) {
+                                        string report_name = me.Name;
+                                        if (report_name == ".ctor")
+                                                report_name = me.DeclaringType.ToString ();
+                                        
+                                        Error_WrongNumArguments (loc, report_name, argument_count);
+                                }
                                 
-                                Error_WrongNumArguments (loc, report_name, argument_count);
-                                                                        
 				return null;
 			}
 
