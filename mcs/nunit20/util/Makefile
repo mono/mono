@@ -11,7 +11,7 @@ LIBRARY_SNK = $(topdir)/nunit.key
 LOCAL_MCS_FLAGS= \
 	/resource:Transform.resources,NUnit.Util.Transform.resources \
 	-r:nunit.framework.dll -r:nunit.core.dll -r:System.dll \
-	-r:System.Xml.dll /d:MONO /d:StronglyNamedAssembly
+	-r:System.Xml.dll /d:MONO /d:StronglyNamedAssembly -debug
 NO_TEST = yo
 
 EXTRA_DISTFILES = \
