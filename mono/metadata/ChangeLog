@@ -1,4 +1,32 @@
+2003-01-27  Zoltan Varga  <vargaz@freemail.hu>
 
+	First part of changes to get IKVM.NET running under mono.
+	
+	* appdomain.h, appdomain.c: added new function 
+	mono_domain_try_type_resolve() which will emit TypeResolve events. 
+	This function will call AppDomain::DoTypeResolve to do the actual work.
+
+	* class.h, class.c, loader.c, object.c, reflection.h, reflection.c: 
+	moved existing code dealing with dynamic tokens to a new function 
+	called mono_reflection_lookup_dynamic_token (). This function will 
+	raise TypeResolve events when appropriate. Since reflection.c is not 
+	part of libmetadata, a new hook function called 
+	mono_lookup_dynamic_token() is added to class.c which will call this.
+
+	* assembly.h assembly.c: make the invoke_load_hook function public,
+	so it can be called for dynamic assemblies.
+
+	* icall.c (ves_icall_System_Runtime_CompilerServices_RuntimeHelpers_RunClassConstructor): skip interfaces since they do not have initializers.
+
+	* icall.c (ves_icall_type_from_name): emit a TypeResolve event if the 
+	type isn't found.
+
+	* reflection.c reflection.h: change MonoDynamicAssembly.tokens to a 
+	MonoGHashTable, since it contains pointers to objects which the GC 
+	needs to track.
+
+	* assembly.c (search_loaded): remove unused variable.
+	
 Mon Jan 27 12:18:45 CET 2003 Paolo Molaro <lupus@ximian.com>
 
 	* object.c: fixed issue exposed by gcc-generated IL programs
