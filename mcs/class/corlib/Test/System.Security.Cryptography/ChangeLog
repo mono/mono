@@ -1,3 +1,9 @@
+2004-12-06  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* RSACryptoServiceProviderTest.cs: Adjusted unit tests to show that 
+	RSACryptoServiceProvider doesn't support private keys without CRT
+	parameters available - except to import the keys.
+
 2004-11-09  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* PasswordDeriveBytesTest.cs: Removed test for 69036. This is a MS

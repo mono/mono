@@ -422,6 +422,21 @@ public class RSACryptoServiceProviderTest : Assertion {
 	string CapiXml2048 = "<RSAKeyValue><Modulus>9TFEYeTahPGOXtcRZrLQu1gHm875jv1jgxy0R9V3E/vDyEhNbsRK76rvEs3ljw6spQBQE1zd5wfUvFnhVETOuS0z9aXSAljxSIbyhkL/jT7/4vHEHe/GnBQZPdvJ9PtPr0ssLROy8xcsUEBDwxNRPNHSpmub3FHZzHsoMlJV0cOGmn0qqeMuMrP8zVDycXhXZNsn8v5RPC38qk6VDHdCqGz/90IRYonpFr5my9LaguJHVNCq8BRVa1oJkDtNUFhFXjVHnmxmhS9Mqm2obEpTp/jUk+bRqnygKB3up9OGYdLO1rAv2IoH/K2sxcvnedDzieRmPE/9Y9JBP/UvM+VULw==</Modulus><Exponent>AQAB</Exponent><P>//j7DyPW0E5t1/xvT9iojXQZfu9t/t0bdJMkRQVAYzJL5+UUILOA+70hMtPIvrU4gdeK0CPKfbbkY0UmD4QTb9nFq4aOsHruMZgWIeqHLlEo+VOYX3+hLv+p/aXX+Wj5PvQWLYZBH1sdOLE21nEVHFXZIVev3PcIYU+P0L8R3JE=</P><Q>9Tf9pWu4aWF16h2/nCmY8HAOPNMgcHoC6jtVuJJX+8pio6VLbA862e6ptB7fZdCDDXB2y/52tmG6uAcmOIqUDZB4eLHcOWxnYctcWrvjODMIABno7EuhR7zemelN89ME97zuY7nQSnVRroWD7l3oU5pN3yIe9Y5bnMKgr1nnhL8=</Q><DP>e4AhgZiFGFP+42rEOf4KtNUDSB81LvZ3PLORmEuEWVf3D5eTMoPpA4yo6+EKxhihfuQD8ZCTLjyDzPGb/3h1+E1V9gAh8DwfmIYMh6ikOFCoOEOBDPKDTi3EUsElhwyC1UDnQme4G+zWGHhIQQambNluvYuVKkN2I51Dgi/t6kE=</DP><DQ>ZIzd9Au0pXlyOVqTbDxeWxEHtYc5AQX21gcYgkN30mZNhh7MS3X/QserTJFwNzaF1mfsPn+MPALc5oL/+CVSyjEYRR1hWSaLSb1ylD4A0NWUDT6SlPn6GwlmGaRh833uxorxEXFq6G0s3iwfSgm1rzpRfhJmsXf7Ns9TxjNOTM8=</DQ><InverseQ>uGCs/TRjtVGBXsTV/9fPMMel0L+WbrdqIPu1GBSIiXk8tWWi+P1lACSTf0iCJ6SIKB26N57zAE9r7zaocVX0R/3NJ3+eDDztV9i6AOsK6X/AitxXetPQDIflbbjAEzeZUUJf2onSAITIw6TaAs620a8HpPw3W7Yd0Oe/lt2M+GA=</InverseQ><D>ao8oyuqs1U4ts6YAWAOql2DgnaRL7QrObrLQ3s802yh1o9tYW6VPc+1zzVZSR+P2wBbsth2MCtXqbJkbRoZI2U194WpZZM/GvOB5EkSXz4jrqHOt6dzFEhviBHI6yQ9XSDWBU23WPbN6fL4RNPx2N9pwlAb8S7n+z9FOXOBPj8NyMMtykGqgPyHEAQnuhfLuf/J6OGrHX8dzsZAo6o/bnk49Rv0C6nijE74TeAwJ36UuI9Lw+h6hwtSerEN6o1vy6mIjrjdDM07mKKUMFwkEhKJc6ckBb0xVp/3VRlJb1ocYQHbfjCAPjecR8OVfjaIy9WPMj8WXHegJpiBugWK9wQ==</D></RSAKeyValue>";
 	// limit to 2048 bits (else key won't fit in a line for Visual Studio)
 
+	// same keypairs but without CRT
+	string CapiXml384woCRT = "<RSAKeyValue><Modulus>vWi7cHIntTcrwIoD0zj/fxoJCDfUHtC5xkMe8pJri7G+T6nKs4zRcLDWRDA0cNhf</Modulus><Exponent>AQAB</Exponent><D>o1Ku5cwZf0IegPzBRZ5NeYy6oxJ430V8n4BLZ8G8/N6kRHnXe70OyzwAylPtxjGh</D></RSAKeyValue>";
+	string CapiXml448woCRT = "<RSAKeyValue><Modulus>slPik6EfNCiN2MwhFHngEOqqRlSXeBjmKoLyMVgLCPIQJQqe/BMcyA1gQg4mgionngIgXCMuSOU=</Modulus><Exponent>AQAB</Exponent><D>UTV8SEimoiUZu7HyGpYJ4QpMsqyRMgL8xj1Nt0JLKBObONObUBEPAPQKknuE98cM9j/2ufRlrx0=</D></RSAKeyValue>";
+	string CapiXml512woCRT = "<RSAKeyValue><Modulus>0ci216d7QTTKkh2Zknwbqlp/Eva1IfzzIA6JZKSI4lcYWMWKAadU7cJtJ5JKGe1aeMi3Y1CDWCpr8fUL28QEkQ==</Modulus><Exponent>AQAB</Exponent><D>i+23mA0Mt6fA3smDoCPMSEroq/uHQk541Q8dMdZVv7JmKBJKk1PCppwISyv7fWKVmRTsnGuEnxZFl4N9IR/qyQ==</D></RSAKeyValue>";
+	string CapiXml576woCRT = "<RSAKeyValue><Modulus>si995MicOWrr2/VlH1rUAhyFMPVLj5PvYHU8P8I8R77kh1ePn66zuJ0jRsMCpenUzYGuVtqgn0VDjiaYjo7cE2PZYESLkKJl</Modulus><Exponent>AQAB</Exponent><D>QZ9L9h4Lqvm9s1xEya9htQVb6BPuqAoLdrK2ZaTbHnEnKNEN7oLMr1Ca5zh/E6xXKCmwClWyULeKiYq7vYLUXhaemtT1rN9h</D></RSAKeyValue>";
+	string CapiXml640woCRT = "<RSAKeyValue><Modulus>vqS9CNxiRdSc6x3nJOWnPi7gVA4Vsnhd8cTAaMBKuvI0FRhhDsTRsjr8PeH4Y7yMg8XSucr3I8jkYgapBW8s5hmSvdWZhPHRGEe1MiEIeMM=</Modulus><Exponent>AQAB</Exponent><D>JhKALeTVO1zaeZnfL18tpx11b1PgwWOIX2ALjN/aDLuR6ySTPX/Q4I6zBOzVa/KB6VMNNk4abIKUvOp6MBNYIMRMK8veaIJxYrn+JAOShwE=</D></RSAKeyValue>";
+	string CapiXml704woCRT = "<RSAKeyValue><Modulus>wbclY53TAIx2E6uPkYeYNVFPYnHgLDJGO1ZoSQcUm6ccySsJvVWAP9TWLIOTjJh2zaQn5gore87ONk50L/+FMZ5uaNrbxxPCxORBLzBofFaEbFxEfu9g6w==</Modulus><Exponent>AQAB</Exponent><D>Wfgbz2Zvp2OVO5GEvoyBbtHy0sAc46n94HVDPhehxKEax3vLrDnXtM2/IzCxXibWqBBmF8tw156Yo4Av2/EpGxvolidOpTXVxNX4aCb3dy05VQ/6WEem0Q==</D></RSAKeyValue>";
+	string CapiXml768woCRT = "<RSAKeyValue><Modulus>3VQEd4kKl0vQG/OzLDTVcgVqaBG9KAz6NzJOu5a6mlHOYSIG5ybYwOJJpXDzZuXewBChqQNpmxgGAae/SuTy+EDQNzAQ+mzeYrEaD6C8vqwMYVanRcbNYtDC9cxAH6Ef</Modulus><Exponent>AQAB</Exponent><D>RK5ayIFFQRfsl4/zTMeEaOKXV34Rtcj5KIG6/ulSNKsoIOo/PCHI52oRMn6veYHhHrKclBeqtAlqOJG0xrEy/ZjorBJnCB/ZSoPPuS4h7budjF2zYiBHJkRwZcxhe+nx</D></RSAKeyValue>";
+	string CapiXml832woCRT = "<RSAKeyValue><Modulus>wv35yrTrD3gjLxJEJ6HMOJsUfshcCZKGLwlxZO42TlAHK90vJPT0Q7SekeHqSVi1DJ7AAB7XW7MqoSE4SKVVioQQZSFz/HkA1fklTOaubfwRwv0vy/A3js1xPhwTs/SbDpNlXMoiEAM=</Modulus><Exponent>AQAB</Exponent><D>YuJPUbfr2J1xIkbeH0cS/MXQX/cVjZkrySC9y5RuH8q/yEPTy6cZVFh9bbemi2mb7vl2nfWO+VXLN+3OStN0SU3/2XQXfhZm4dqk5iU+R5n5g9kjPBNLH8DIWYjGVgCvBqH59DHhLAE=</D></RSAKeyValue>";
+	string CapiXml896woCRT = "<RSAKeyValue><Modulus>nNiWWLAg2htBUkoBD7DTDIALapuiIt45qHJdPVbRQE5PXTcJUJ2SAEHCtQYtIeQam0WL2D78PIfAf8hGFx/72Ghn9b+NcZ8b7UHTdna+5O6aBOHyaD80FOmyfEjAjI1jS95XnGlqoD0QaDpkk4xnMQ==</Modulus><Exponent>AQAB</Exponent><D>LGd9GRq0EkuJELz20/Rhq7ZMhSAOpQR5GmFWWFlN4IDLIz7DmlkhzoTPlORsvp2Pksn7r3sVeiUbL3S1rXfIpwEjeseHfBYR54d6EqmPABqPj9UoADXDoYA1VYz+Ni2uFYlMC7Wh4kzlT0zYRc1XKQ==</D></RSAKeyValue>";
+	string CapiXml960woCRT = "<RSAKeyValue><Modulus>3nb1VtiEuSii1rnDR+yrarcAHDlvbgLUTJGUvuVEMcvQ3vYNNabwBsM46X8ab78Ac2ZBk2jI2S4736KL2S8C2e8rXva7Jb/j+fyVt6N+NrI3dkNE2NoWZ8VM+rUEdKNvPANbf6n7hvDVfJLCvdCctdtEYACkujsb</Modulus><Exponent>AQAB</Exponent><D>jrmHQYZ78Ebv4g8gCD8A4uAxg+odYVkTV2R3J9nzXHdEtCbr5qYJjG0nUDapgVPrOB48qBQr95o/84RWPdIz3I+Jzpme1c4FpWs1/iXAbA/+xnzDGtXVTnJrMfkOsXt2MYBF7+f7zWGNlOGs+zkt/fP/jeOu76Nh</D></RSAKeyValue>";
+	string CapiXml1024woCRT = "<RSAKeyValue><Modulus>uNXUqvMdjnmd36IS0Gr/lTAp63mZqoayYcN/YHnGs82eVrEWS5vAYqPWx1488BhUBh7kHvVhP5kkKh+i6pfLKAEssy5jnw9h09lgCClBHyntqFT82AlmiaFK8uVkV8rCjDol2nBpvVgNonF+JhQyexWTEI94Phjwvj/6yZRqaLM=</Modulus><Exponent>AQAB</Exponent><D>NVIqaa58xk87RfphZxKW7JjaXv3TYKg+6YkWQ+Sdd91HYkbv4Zvq4gnVuenrtm+uPZ3HvU6YYVpyXlyGCRsFFeXMwJ8Y7zrF6KEs+6hJ4jqBELWUoEPrzU4889v8aIoS+BCMYptpkmzvxjfEWdTPbqjd/tJ25ObbavggoST6ScE=</D></RSAKeyValue>";
+	string CapiXml1536woCRT = "<RSAKeyValue><Modulus>1bkuWuGsKLkvSvrYYhOPVD37bARRUw0U5/yRCjam50+gLGKmxAjzaRjhGQUaaeC2S5DioGckqiqr1zkfSLyQ7KQte5oynxkTdT0QCXHJeVWgOWAknX8sNrAVNt97LOrMXXYZ2JsYMmYiVNqJRTaURWXxdJ5XibXMCRL1pfHbwnL4iqUge1tuiQbFod//7pjl90TukIutHVEyf8BFn5LRQJI4xroQdMJg0/vvRSp8jgy0LoeJ8LkTG+RjUe3XsgmT</Modulus><Exponent>AQAB</Exponent><D>rtTUab3QImQSnuiCmABeMFCf2qXRjPnXj0qZr1wzvmbxpT1yJE0aKXATu27kQ5ZyKXC1IvgdEyLi/aWZxNuURjCrkD/8hw9xTmeMNd2iLaJw9l6CtV/x4C68u+2nCoBq/Gv/ht9RqYRS6ODUTk1aOL1mPNSHT/MeFNK+06lyQNSaf95fMxGPIcnnJ1vtdkHgk2vi5ALSQf5tGIgVY1EFr55M9ABTg1p98XwIQgjIxCZcL4BygfMk1YbESaQFvzth</D></RSAKeyValue>";
+	string CapiXml2048woCRT = "<RSAKeyValue><Modulus>9TFEYeTahPGOXtcRZrLQu1gHm875jv1jgxy0R9V3E/vDyEhNbsRK76rvEs3ljw6spQBQE1zd5wfUvFnhVETOuS0z9aXSAljxSIbyhkL/jT7/4vHEHe/GnBQZPdvJ9PtPr0ssLROy8xcsUEBDwxNRPNHSpmub3FHZzHsoMlJV0cOGmn0qqeMuMrP8zVDycXhXZNsn8v5RPC38qk6VDHdCqGz/90IRYonpFr5my9LaguJHVNCq8BRVa1oJkDtNUFhFXjVHnmxmhS9Mqm2obEpTp/jUk+bRqnygKB3up9OGYdLO1rAv2IoH/K2sxcvnedDzieRmPE/9Y9JBP/UvM+VULw==</Modulus><Exponent>AQAB</Exponent><D>ao8oyuqs1U4ts6YAWAOql2DgnaRL7QrObrLQ3s802yh1o9tYW6VPc+1zzVZSR+P2wBbsth2MCtXqbJkbRoZI2U194WpZZM/GvOB5EkSXz4jrqHOt6dzFEhviBHI6yQ9XSDWBU23WPbN6fL4RNPx2N9pwlAb8S7n+z9FOXOBPj8NyMMtykGqgPyHEAQnuhfLuf/J6OGrHX8dzsZAo6o/bnk49Rv0C6nijE74TeAwJ36UuI9Lw+h6hwtSerEN6o1vy6mIjrjdDM07mKKUMFwkEhKJc6ckBb0xVp/3VRlJb1ocYQHbfjCAPjecR8OVfjaIy9WPMj8WXHegJpiBugWK9wQ==</D></RSAKeyValue>";
+
 	// import/export XML keypairs
 	// so we know that Mono can use keypairs generated by CryptoAPI
 	[Test]
@@ -467,6 +482,25 @@ public class RSACryptoServiceProviderTest : Assertion {
 
 		rsa.FromXmlString (CapiXml2048);
 		AssertEquals ("Capi-Xml2048", CapiXml2048, rsa.ToXmlString (true));
+	}
+
+	[Test]
+	public void CapiXmlImportWithoutCRT () 
+	{
+		rsa = new RSACryptoServiceProvider ();
+		rsa.FromXmlString (CapiXml384woCRT);
+		rsa.FromXmlString (CapiXml448woCRT);
+		rsa.FromXmlString (CapiXml512woCRT);
+		rsa.FromXmlString (CapiXml576woCRT);
+		rsa.FromXmlString (CapiXml640woCRT);
+		rsa.FromXmlString (CapiXml704woCRT);
+		rsa.FromXmlString (CapiXml768woCRT);
+		rsa.FromXmlString (CapiXml832woCRT);
+		rsa.FromXmlString (CapiXml896woCRT);
+		rsa.FromXmlString (CapiXml960woCRT);
+		rsa.FromXmlString (CapiXml1024woCRT);
+		rsa.FromXmlString (CapiXml1536woCRT);
+		rsa.FromXmlString (CapiXml2048woCRT);
 	}
 
 	// LAMESPEC: SignHash and VerifyHash need an OID string (not the algorithm)
@@ -532,6 +566,21 @@ public class RSACryptoServiceProviderTest : Assertion {
 
 		rsa.FromXmlString (CapiXml2048);
 		SignAndVerify ("Capi-2048", rsa);
+	}
+
+	// The .NET framework can import keypairs with private key BUT without
+	// CRT but once imported they cannot be used or exported back
+	[Test]
+	[ExpectedException (typeof (CryptographicException))]
+	public void SignatureWithoutCRT () 
+	{
+		try {
+			rsa = new RSACryptoServiceProvider ();
+			rsa.FromXmlString (CapiXml384woCRT);
+		}
+		catch {}
+		// exception is HERE
+		SignAndVerify ("Capi-384-WithoutCRT", rsa);
 	}
 
 	// Validate that we can verify a signature made with CAPI
@@ -637,6 +686,21 @@ public class RSACryptoServiceProviderTest : Assertion {
 	string MonoXml1536 = "<RSAKeyValue><Modulus>jzYjq6zGOWfmpnzDf5SNrSifeYbFFgbh0/tO2UkLWBpbFqHdLo8CZJt1j3UtSN82ZuV6IBMJnmIsxOH3JQ677IPb76Hz/F0V07jCM88kcz3RRtCahXj/14p2EwTY3297yylWx8+zGmpQDPOxejbaGyjn2TyPx6Nq54SVSAfBUgcXuwwpksogwv/neZLyOlu/JBG5Ej11FOfJ8vi7gb/OCqK1EdzRthf9e4FS5KoxC81TiTUXyfesYpSsHI6fQ5i1</Modulus><Exponent>EQ==</Exponent><P>r0edPMfgFzP3gOrrFIS83DteP5B9l0Y0c9ONSdM3il1Gm/NtU1YTmEHAdAaNHS/p8xqO2ojnYLTK7EUADQeeEUnl3f+BYcYkVSOy6Fq8KKJlDP/PUNF97Yp42TgUL2bD</P><Q>0SngrKVGg1QV5paow1TV6IBTaxVflPcHRdkk7H3WkzSz8XGmpVWYumRWQoDT7NwdsMZnvXImlavUX4v0fNqTvHwN1HwTU8g64RFqfePZK48fN3EjIZDKcTSEQxrFdDsn</Q><DP>e7oUo1/pecpUWwAtd+U6BN6c4ZMredc0FYZFnYYJFl/1m0JrSeJoLz14yl76Mrho59aC9Jzfj46tW3wACTKNsdnPb4cuJuY3w6C6heWx/pC/zPDOk2azPkOgmVTC9EiJ</DP><DQ>uI5c1JHUzjsiYgx2yngICWIrfJpjZVJv1DgRhV/5kPJEa6CD+0uGwpTElQhChbMpQaABLrAD7Xl/JyEjBMDctV5mjk9cWPv3t4fWbxRWNX5IuHLiw0OFcvIaWVPbZo6L</DQ><InverseQ>p52gqtyki7MRn0fFTOkSCee/2QQAZyM2cYt3DtgDQbRcqrMT6Q9WXgyXOGdadqFFvUpGxysCQ/rppLttCG9S8wG8lD9I6hulda3TkiKCsYNuNLco0epmjXpWc0YmCcys</InverseQ><D>OvgszjgVYu6MJm+byx8NKS7YQRlgNj8RsaO3Di0iyey8GGDEfJU9OHw/d05d8NRhseYFHEQTBPs/nF0LaZynu73TCFG+0VOBdUwTuvrw5CiDWWT0VRO0pAvWRBEOAaZfiC2ViL8qyz8MYj4MM8wOUMOOx+Oy9LGa9MJOcLSkJKixqWLqxv17PVIoyMiHE+SW2m5uMleT32TVU+Mzz3lec2n1RWRGS4P14EyOf1l8WqmRlMk8jXm/xVf8w9xgbwtF</D></RSAKeyValue>";
 	string MonoXml2048 = "<RSAKeyValue><Modulus>ppiz9wru8QdjxD1IZ8Ouc4rpKMjR51jDq/mPu7gILbto1sD+01r/P84zFd2n9Jbv+vHJ8ClTr/9vh3dy6OzN/ASUoAMzmGnHQPsFHyaZ7TxDmF2EaF45F0rDbsPsOxlHUKkc33EuHwzXRZRdD4c2vCY8D+qrdpldkC4KH4oWjBHPk2MlqM1mPGJIvzz9nANhEl9YHHHZmAV2auZIWMWyO9zPHoE0YYMeFTHIuOZmxbu6iKX0pWcHzukx6FCqxN9zOAz5xl9D0f//0vhsiZUINM4y4ypS9C+jF8WAUthj29R3s1Hxr5I32kr3+nhtkHu7ljqLzYqCBq6hixZEhHlUlQ==</Modulus><Exponent>EQ==</Exponent><P>w5gi5/IS9jFz8tAVpUgmCBBvUCMWG6VmzvrKxf+Z6VQ/Uz3iirTDyMHbjfThlRLik39EbCs2woN9HYeIbEoQRKvbPVewvQZzV6nD5vAIR/wMzL/T14kStaMI7oYUXTBsTrfz/YwNFXPgANV1QEjFMT+S7zGacduP9PG3Kx5dqu8=</P><Q>2gv5mTL6RDAitvOdFoI8Ke/PrQFne1Gx8oKrMBVoRUL9Jzzp4oWlNoDjU4N4USET3KsuR8OBgH8KH/caJC1NuDG+CQ/Bkf/iB82LuoOvaBSAKFCXRMng6LyoDFxb1ptwFavFogTrxPs3GpHYzIq4quhuP18X9bjHkiNzZ3qqCLs=</Q><DP>ihEJlKrgNVAVnFal3hTPjTjHC2QPmwtXoSmAE0sDO0qHDZUYYekCq9QiglKBHe82hju30+JExYn99roF8hYpmeK44AGp7tdgeh17OZpgMtAJCP/g1GDB6aBCikCG2F5qketC0ReQw9lS02l/8SRO9ZZJmcipQU+w6SMX4jONaZk=</DP><DQ>TPUq6sayrqeTyBm++OKr0pDf4rUzlO+oN3lpmIAGrwiVlWDLBKejuOIyHXmx/oQlILTjKGMepdJ8C0gnWA/9UBGOXY0XJHht5KLmBZfjjiVaaJTqGEdAUiR3i+Rcphi+JcQnophTNnbIJ37E/OWqlqxjJWzbR6qgyiqhM5S0e40=</DQ><InverseQ>dYOYJxCnJUZLastml8Fu9/HoW+DoX3OQ/I2b3aRBYByh7dpeRPaMdtycHgSNtMAocYDXMypl+f92vHFXENc4WFtEVAQSkxgD2IWTgQEj92kmaCA8Jrs8boH3eXfLb6ZlHf1fas5lIreq5Gzj/0IC0zDlYKBWOQf/3d+mxI9kbyw=</InverseQ><D>f2W2y/lNTueIhwGv1uDu0NOjPU5GKWH/CwoinpvKBNqbdwwOKSd35X+QeiH46Dcv/CJPIRCLSlnr4BAMlABhSD+88tVFkqs+BIO4n1nBALWdGillQMCGAsCzkPAtHiJjtib39ilfgSfv6ensz6OiU6TEhKRlAFcpbkFTCQ8+axtxer2M3TiaAarE3njI65lgOwmu+djnqDyKWzfGcA37QafIQPOnWiMIgtBWfKetnKXtk1ReqdDw2IckUNBud4EeRStM7jy7MlVNc0TXiTDK7ow+Vd2EIPGpQXkav167V4F4Lc7VYrGDrFTV2fM66uBBcmgaH3gUOVGq0qUttAuZLQ==</D></RSAKeyValue>";
 
+	// same keypairs but without CRT
+	string MonoXml384woCRT = "<RSAKeyValue><Modulus>i9COhlY/aGJD+B0fjUtOR+bbDkKyrwDzXzvwbBE8TJmtFYNrjfLHOj/gjdKCEcqb</Modulus><Exponent>EQ==</Exponent><D>GKxVYwApTqft4H2cJ/46/aE1tzjyWx5IzfYoG1Qmnzr+u1/rf+EGkyIzGWIEcyXR</D></RSAKeyValue>";
+	string MonoXml448woCRT = "<RSAKeyValue><Modulus>rGhbXQawiO5muvnbq7FuVZc3QuFp2CZNqHekmRA/fdUzmUP6jFH7usaVh1kZ+Fk0em0fJzjOYgU=</Modulus><Exponent>EQ==</Exponent><D>ZWqQGJqF9jHiE6IIv1lP9hy3GEhcYQd4+a/KOvAKrWm95W6eF+aDWFgzao9lR1/BLP86HhcucSk=</D></RSAKeyValue>";
+	string MonoXml512woCRT = "<RSAKeyValue><Modulus>jq1Bst+LWM5ScL29w+C/GVULDAebcT0Kl9ERGp/I2A2qJ4jHuzr7ltoQqtVGRquQwwDZQ/o1fH99bWraz5Fi7w==</Modulus><Exponent>EQ==</Exponent><D>bRsUH1+my3CZZUXNWY2/T5tizPbCKWrp+5/f5y7k4XK2d7xCN+qSZxn+nT0patdhewBMFOI9/xp5zD4U/seSIQ==</D></RSAKeyValue>";
+	string MonoXml576woCRT = "<RSAKeyValue><Modulus>h18QgR8YiVXKVmcTRuPfHljm9Yz5vPt9UXg25GU2WztihEihEyZYMJaRzEb8/iS7eGg7jLXW8SrxhyLUnXfgWvtn/9uNGinj</Modulus><Exponent>EQ==</Exponent><D>b3t3AOxujzeXknMA0Pfk69C+M6FGIyl2Qxe0vBcdtItCEpYpGKlxv+l1rPu1/VOy4F8Q3u+5dMuhc2OlLfX7F6WkL5+dN7pB</D></RSAKeyValue>";
+	string MonoXml640woCRT = "<RSAKeyValue><Modulus>4YELOUiQPs7Nw6AM2m14LxuKDk1dXGYhvKczD6mB2//U4sitp+MFReJ0ot840hQNwwCssw8hyyniFqIvSjKJknv+HFL4Lc3AyCP3pL5iFf0=</Modulus><Exponent>EQ==</Exponent><D>rHG9SewyEelwLC8Y40SnMxUPOB0LKIpWCLwX/OsI84dmj04qcVNAQxB0O5hmt5GXswJd1VPOdRmf/YrMiLZhIHFbLgdrQP+gyWGCSu3koz0=</D></RSAKeyValue>";
+	string MonoXml704woCRT = "<RSAKeyValue><Modulus>mUDm0P3S9oPB06NJT5oDFS5+Xy/ACBvGdkvNjCiZo9bOLvVpOsiih9ipWZw9zQInjfP0uhGqDBkl9jw61yEHIqed151b9hkO2cmfb2o3GvPkbXkoMcoxBQ==</Modulus><Exponent>EQ==</Exponent><D>WiYta+CaNqfbbW8cELTywSpodDo0uXnACVnENFQeJCQA0FQfyDnJBJ2Qy0vuhbaAbz2qNXZcYp6QxbeBQQZGEB//nahkNns7KxKXDEFMMU1ghU9eoubr8Q==</D></RSAKeyValue>";
+	string MonoXml768woCRT = "<RSAKeyValue><Modulus>pnVBGKuCV1sdnZP7yHMKlMnyc+4MZicSRDu6ESWPKUx/Ab2fbwwOoHDE5pSW/wCGziaEA2Agfwt6YKAr/JyPmcBcHichUjhzjDvExBrdd3jmQ1WjjNzV829+qSEq0kUl</Modulus><Exponent>EQ==</Exponent><D>kt/uJNORH+b8A4KS3gsndDm3z7Ps0prx//h3ABIU6DRwEJhBYfuUb3KPnkbflbUqONprCS1FlC0mo+Hxald/r99a5PE3JWiVTN4GHuZ3zYEviEvRtNsOG7XYKydTUO3F</D></RSAKeyValue>";
+	string MonoXml832woCRT = "<RSAKeyValue><Modulus>3dVclQYr1ks5x8VXLcO0H0BRNlmg/XT01IFso0aQY5AwU/kFbDUwTSrmSZCuRBk2blp14BYvpwpviuP9WkIcjhTSuPwPD1XWSl33WHSWEc6uYEHxjn0gieHK3SiyVAgOrcVXtOaNJck=</Modulus><Exponent>EQ==</Exponent><D>aGRnzaiNGYzP5YoK6FwYhy1TZN7iWSf6vlsF8nuPPemAJ4Q+yYJxFUFdT8udTTkKjkiv8BrhBpTUlAjP9ge+BNftSibZ4zp8wd1pxewIPFYnhimAVIFasWv/1NnIP8QwH0bQQOshCxE=</D></RSAKeyValue>";
+	string MonoXml896woCRT = "<RSAKeyValue><Modulus>8SR9zUf+X33JO4Gen620JE7yqQhvP0RSnU+XGE5fSHTPmy/HtuP5/IsCbfDsKOa5aAa4uj6PpxsG/6GgrbgmkxSfJmj8OfYP7Eo7wjXheJmv87Iw8y0rJ3PhkKbF82GFU/CmYQO3A77QVK74v9NMRw==</Modulus><Exponent>EQ==</Exponent><D>Ko34FSrSiVJuzkQM7wCJM5V2HdRP3fz/hSwpuP7FhUHKSI/2ETdKO6APfNAprN1sA0x687Cv8E+4mTmZ7zr/6qhiXIxKO1CYJIssptb/IfAC9McjnXeRfvn7XtHwprzmFRCfTE06ZPWD4QXJG22WIQ==</D></RSAKeyValue>";
+	string MonoXml960woCRT = "<RSAKeyValue><Modulus>tsPl3wQ+EYH4tuzDokt/CknZUVNZMr9AEwZCGMzpXORmkHaBA5Dh5N24OtQwO1YQ4gXCosU9YpdQujIvki48txiL+r6/KtK1hIOm4h/LCZRZ0ztYZvufH2ysv6Sv22iEbv8/ABOmaAu7A0RueGI1dX8aZ+dIlqzz</Modulus><Exponent>EQ==</Exponent><D>rAOrLEA6atSt2VdOtt2kvmOfW5m9XPA8TiQB+TlUGzFReOgA9Ewf5nZTCjEeVfamel/GPtfBTbuXRdTf41eV1Ci1WHuXJ2/ZiN8ob06O0UAjJTlva1RGhOVVBZyI2tJOA2vJ/zPPovcdiReyOeSu3neqYqr3IUVx</D></RSAKeyValue>";
+	string MonoXml1024woCRT = "<RSAKeyValue><Modulus>i+O73a/wy4fMi6V9dF9Us4oyAUvNwrJcOS69r7edDjw0MDd5vz8PcaAdL3BOwMEmItI1i8Z39HxqvuuwdB0GGCNKGh4Ft680nIAgsLugztJ4Shjm+xgFM3cFSGxJpSWkWlTpXs2ARhOSIbr5/+UwON4EvpkYxC5GbRIsrqDHHV8=</Modulus><Exponent>EQ==</Exponent><D>OZoCD/0m6mUX/UQkmVRuK89+AIigBOAH2097SFqqFOudBMuMe+zKH7pmXtPkMUB5HWWdk+hPgsnRmeiT85N6+kB7xMfgGI5AsJga19OAi2yI3RnXlTq0FMcYHZCvRE8AXUxVQTO7/n3iq3r8TEDaPmcTpn6eooXvGoA6jRCHLYk=</D></RSAKeyValue>";
+	string MonoXml1536woCRT = "<RSAKeyValue><Modulus>jzYjq6zGOWfmpnzDf5SNrSifeYbFFgbh0/tO2UkLWBpbFqHdLo8CZJt1j3UtSN82ZuV6IBMJnmIsxOH3JQ677IPb76Hz/F0V07jCM88kcz3RRtCahXj/14p2EwTY3297yylWx8+zGmpQDPOxejbaGyjn2TyPx6Nq54SVSAfBUgcXuwwpksogwv/neZLyOlu/JBG5Ej11FOfJ8vi7gb/OCqK1EdzRthf9e4FS5KoxC81TiTUXyfesYpSsHI6fQ5i1</Modulus><Exponent>EQ==</Exponent><D>OvgszjgVYu6MJm+byx8NKS7YQRlgNj8RsaO3Di0iyey8GGDEfJU9OHw/d05d8NRhseYFHEQTBPs/nF0LaZynu73TCFG+0VOBdUwTuvrw5CiDWWT0VRO0pAvWRBEOAaZfiC2ViL8qyz8MYj4MM8wOUMOOx+Oy9LGa9MJOcLSkJKixqWLqxv17PVIoyMiHE+SW2m5uMleT32TVU+Mzz3lec2n1RWRGS4P14EyOf1l8WqmRlMk8jXm/xVf8w9xgbwtF</D></RSAKeyValue>";
+	string MonoXml2048woCRT = "<RSAKeyValue><Modulus>ppiz9wru8QdjxD1IZ8Ouc4rpKMjR51jDq/mPu7gILbto1sD+01r/P84zFd2n9Jbv+vHJ8ClTr/9vh3dy6OzN/ASUoAMzmGnHQPsFHyaZ7TxDmF2EaF45F0rDbsPsOxlHUKkc33EuHwzXRZRdD4c2vCY8D+qrdpldkC4KH4oWjBHPk2MlqM1mPGJIvzz9nANhEl9YHHHZmAV2auZIWMWyO9zPHoE0YYMeFTHIuOZmxbu6iKX0pWcHzukx6FCqxN9zOAz5xl9D0f//0vhsiZUINM4y4ypS9C+jF8WAUthj29R3s1Hxr5I32kr3+nhtkHu7ljqLzYqCBq6hixZEhHlUlQ==</Modulus><Exponent>EQ==</Exponent><D>f2W2y/lNTueIhwGv1uDu0NOjPU5GKWH/CwoinpvKBNqbdwwOKSd35X+QeiH46Dcv/CJPIRCLSlnr4BAMlABhSD+88tVFkqs+BIO4n1nBALWdGillQMCGAsCzkPAtHiJjtib39ilfgSfv6ensz6OiU6TEhKRlAFcpbkFTCQ8+axtxer2M3TiaAarE3njI65lgOwmu+djnqDyKWzfGcA37QafIQPOnWiMIgtBWfKetnKXtk1ReqdDw2IckUNBud4EeRStM7jy7MlVNc0TXiTDK7ow+Vd2EIPGpQXkav167V4F4Lc7VYrGDrFTV2fM66uBBcmgaH3gUOVGq0qUttAuZLQ==</D></RSAKeyValue>";
+
 	// import/export XML keypairs
 	// so we know that Windows (original MS Framework) can use keypairs generated by Mono
 	[Test]
@@ -682,6 +746,41 @@ public class RSACryptoServiceProviderTest : Assertion {
 
 		rsa.FromXmlString (MonoXml2048);
 		AssertEquals ("Mono-Xml2048", MonoXml2048, rsa.ToXmlString (true));
+	}
+
+	[Test]
+	public void MonoXmlImportWithoutCRT () 
+	{
+		rsa = new RSACryptoServiceProvider ();
+		rsa.FromXmlString (MonoXml384woCRT);
+		rsa.FromXmlString (MonoXml448woCRT);
+		rsa.FromXmlString (MonoXml512woCRT);
+		rsa.FromXmlString (MonoXml576woCRT);
+		rsa.FromXmlString (MonoXml640woCRT);
+		rsa.FromXmlString (MonoXml704woCRT);
+		rsa.FromXmlString (MonoXml768woCRT);
+		rsa.FromXmlString (MonoXml832woCRT);
+		rsa.FromXmlString (MonoXml896woCRT);
+		rsa.FromXmlString (MonoXml960woCRT);
+		rsa.FromXmlString (MonoXml1024woCRT);
+		rsa.FromXmlString (MonoXml1536woCRT);
+		rsa.FromXmlString (MonoXml2048woCRT);
+	}
+
+	// The .NET framework can import keypairs with private key BUT without
+	// CRT but once imported they cannot be used or exported back
+	[Test]
+	[ExpectedException (typeof (CryptographicException))]
+	public void ExportWithoutCRT () 
+	{
+		try {
+			rsa = new RSACryptoServiceProvider ();
+			rsa.FromXmlString (MonoXml384woCRT);
+		}
+		catch {
+		}
+		// exception is HERE!
+		rsa.ToXmlString (true);
 	}
 
 	// Validate that we can sign with every keypair and verify the signature
