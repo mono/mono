@@ -1,3 +1,7 @@
+2005-03-11  Lluis Sanchez Gual <lluis@novell.com>
+
+	* AssemblyInfo.cs: Registered GridView.js script.
+
 2005-02-05  Lluis Sanchez Gual <lluis@novell.com>
 
 	* AssemblyInfo.cs: Registered webform.js script.
