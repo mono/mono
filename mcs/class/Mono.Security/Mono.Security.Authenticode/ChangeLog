@@ -1,0 +1,6 @@
+2003-03-06  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* SoftwarePublisherCertificate.cs: New. Class to load or create
+	SPC files (which are PKCS#7 files containing only certificates 
+	and CRL).
+
