@@ -109,13 +109,14 @@ namespace Mono.ILASM {
                                 ArrayList impl_list, Location location)
                 {
                         TypeDef outer = null;
+                        string cache_name = CacheName (name);
 
                         if (typedef_stack.Count > 0) {
                                 outer = (TypeDef) typedef_stack.Peek ();
-                                name = outer.Name + '/' + name;
+                                cache_name = CacheName (outer.Name + '/' + name);
                         }
 
-                        TypeDef typedef = type_manager[name];
+                        TypeDef typedef = type_manager[cache_name];
 
                         if (typedef != null) {
                                 // Class head is allready defined, we are just reopening the class
@@ -130,7 +131,7 @@ namespace Mono.ILASM {
                         if (outer != null)
                                 typedef.OuterType = outer;
 
-                        type_manager[typedef.FullName] = typedef;
+                        type_manager[cache_name] = typedef;
                         current_typedef = typedef;
                         typedef_stack.Push (typedef);
                 }
@@ -229,6 +230,14 @@ namespace Mono.ILASM {
                         return fielddef.Resolve (this);
                 }
 
+                private string CacheName (string name)
+                {
+                        if (current_namespace != null &&
+                                        current_namespace != String.Empty)
+                                return name;
+
+                        return current_namespace + "." + name;
+                }
         }
 
 }

@@ -1,5 +1,10 @@
 2003-06-14 Jackson Harper <jackson@latitudegeo.com>
 
+	* CodeGen.cs: When creating nested types cache their names using
+	the parent/type method but emit their short name.
+		
+2003-06-14 Jackson Harper <jackson@latitudegeo.com>
+
 	* CodeGen.cs: Add methods for setting corflags, subsystem, and corflags.
 	
 2003-06-14 Jackson Harper <jackson@latitudegeo.com>
