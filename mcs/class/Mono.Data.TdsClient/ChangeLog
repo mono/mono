@@ -1,3 +1,7 @@
+2002-10-18  Tim Coleman (tim@timcoleman.com)
+	* list:
+		Add Mono.Data.TdsClient.Internal/TdsCommInternal.cs
+
 2002-10-17  Tim Coleman (tim@timcoleman.com)
         * list:
                 Add files from Mono.Data.TdsClient.Internal

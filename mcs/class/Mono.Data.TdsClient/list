@@ -9,3 +9,4 @@ Mono.Data.TdsClient.Internal/TdsPacketTypeInternal.cs
 Mono.Data.TdsClient.Internal/TdsServerTypeInternal.cs
 Mono.Data.TdsClient.Internal/TdsTransactionInternal.cs
 Mono.Data.TdsClient.Internal/TdsVersionInternal.cs
+Mono.Data.TdsClient.Internal/TdsCommInternal.cs
