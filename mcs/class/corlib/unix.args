@@ -678,6 +678,7 @@ System.Security.Cryptography/ToBase64Transform.cs
 System.Security.Cryptography/TripleDES.cs
 System.Security.Cryptography/TripleDESCryptoServiceProvider.cs
 System.Security.Cryptography.X509Certificates/X509Certificate.cs
+System.Security.Cryptography.X509Certificates/ASN1.cs
 System.Security.Permissions/CodeAccessSecurityAttribute.cs
 System.Security.Permissions/EnvironmentPermission.cs
 System.Security.Permissions/EnvironmentPermissionAccess.cs
