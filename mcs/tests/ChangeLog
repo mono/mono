@@ -1,3 +1,7 @@
+2003-04-02  Zoltan Varga  <vargaz@freemail.hu>
+
+	* README.tests test-188.cs makefile: Added test-188.cs.
+
 2003-02-25  Miguel de Icaza  <miguel@ximian.com>
 
 	* makefile (all): Make it so that doing `make' will run the
