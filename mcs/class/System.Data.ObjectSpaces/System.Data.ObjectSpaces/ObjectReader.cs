@@ -6,7 +6,7 @@
 //   Tim Coleman (tim@timcoleman.com)
 //
 // (C) BLiNK Software Ltd.  http://www.blinksoftware.co.uk
-// Copyright (C) Tim Coleman, 2003
+// Copyright (C) Tim Coleman, 2003-2004
 //
 
 #if NET_1_2
@@ -17,11 +17,14 @@ namespace System.Data.ObjectSpaces
 {
         public abstract class ObjectReader : IDisposable,  IEnumerable
         {
-                //Inform listeners when a ValueRecord is being merged
-                public event ValueRecordMergeEventHandler ValueMerging; 
-                
+		#region Fields
+
                 bool isClosed = true; 
 		bool disposed;
+
+		#endregion // Fields
+
+		#region Properties
 
                 [MonoTODO]
                 public object Current { 
@@ -53,6 +56,17 @@ namespace System.Data.ObjectSpaces
                 { 
                         this.isClosed = true;
                 }     
+
+		#endregion // Properties
+
+		#region Events and Delegates
+
+                //Inform listeners when a ValueRecord is being merged
+                public event ValueRecordMergeEventHandler ValueMerging; 
+
+		#endregion // Events and Delegates
+
+		#region Methods
 
                 protected virtual void Dispose (bool disposing) 
 		{
@@ -89,6 +103,8 @@ namespace System.Data.ObjectSpaces
                 {
                         return false;       
                 }
+
+		#endregion // Methods
         }
 }
 

@@ -3,8 +3,10 @@
 //
 // Author:
 //   Mark Easton (mark.easton@blinksoftware.co.uk)
+//   Tim Coleman (tim@timcoleman.com)
 //
 // (C) BLiNK Software Ltd.  http://www.blinksoftware.co.uk
+// Copyright (C) Tim Coleman, 2003-2004
 //
 
 #if NET_1_2
@@ -18,17 +20,19 @@ namespace System.Data.ObjectSpaces
         public class DynamicAssembly
         {
                 private Type type;              //The underlying type
-                        
                 protected FieldInfo fInfo;
                 protected PropertyInfo pInfo;
-                
+               
                 [MonoTODO]
                 protected DynamicAssembly (Type type) 
                 {
-                        this.type = type;        
+			ConstructorInfo ci = type.GetConstructor (Type.EmptyTypes);
+			if (ci == null)
+				throw new ObjectException (String.Format ("Cannot find suitable constructor in type '{0}'", type.FullName));
+			this.type = type;
                 }
-                
-                public Type UnderLyingType {
+
+                public Type UnderlyingType {
                         get { return this.type; }
                 }
                 
@@ -41,6 +45,11 @@ namespace System.Data.ObjectSpaces
                 {
                         return null;        
                 }
+
+		internal static DynamicAssembly GetDynamicAssembly (Type type)
+		{
+			return new DynamicAssembly (type);
+		}
 
                 [MonoTODO]
                 public FieldInfo[] GetFields() 

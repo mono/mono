@@ -4,7 +4,7 @@
 // Author:
 //   Tim Coleman (tim@timcoleman.com)
 //
-// Copyright (C) Tim Coleman, 2003
+// Copyright (C) Tim Coleman, 2003-2004
 //
 
 #if NET_1_2
@@ -12,25 +12,34 @@
 namespace System.Data.ObjectSpaces {
         public class PersistenceOptions
         {
+		#region Fields
+
+		Depth depth;
+		PersistenceErrorBehavior errorBehavior;
+		static readonly PersistenceOptions DefaultPersistenceOptions = new PersistenceOptions ();
+
+		#endregion // Fields
+
 		#region Constructors
 
-		[MonoTODO]
 		public PersistenceOptions (Depth depth, PersistenceErrorBehavior errorBehavior)
 		{
+			this.depth = depth;
+			this.errorBehavior = errorBehavior;
 		}
 
-		[MonoTODO]
 		public PersistenceOptions (PersistenceErrorBehavior errorBehavior)
+			: this (Depth.ObjectGraph, errorBehavior)
 		{
 		}
 
-		[MonoTODO]
 		public PersistenceOptions (Depth depth)
+			: this (depth, PersistenceErrorBehavior.ThrowAtFirstError)
 		{
 		}
 
-		[MonoTODO]
 		public PersistenceOptions ()
+			: this (Depth.ObjectGraph, PersistenceErrorBehavior.ThrowAtFirstError)
 		{
 		}
 
@@ -38,19 +47,16 @@ namespace System.Data.ObjectSpaces {
 
 		#region Properties
 
-		[MonoTODO]
 		public static PersistenceOptions Default {
-			get { throw new NotImplementedException (); }
+			get { return DefaultPersistenceOptions; }
 		}
 
-		[MonoTODO]
 		public Depth Depth {
-			get { throw new NotImplementedException (); }
+			get { return depth; }
 		}
 		
-		[MonoTODO]
 		public PersistenceErrorBehavior ErrorBehavior {
-			get { throw new NotImplementedException (); }
+			get { return errorBehavior; }
 		}
 
 		#endregion // Properties

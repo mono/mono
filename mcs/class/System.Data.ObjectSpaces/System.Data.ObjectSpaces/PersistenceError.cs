@@ -4,7 +4,7 @@
 // Author:
 //   Tim Coleman (tim@timcoleman.com)
 //
-// Copyright (C) Tim Coleman, 2003
+// Copyright (C) Tim Coleman, 2003-2004
 //
 
 #if NET_1_2
@@ -12,21 +12,39 @@
 namespace System.Data.ObjectSpaces {
 	public class PersistenceError 
 	{
+		#region Fields
+
+		object errorObject;
+		PersistenceErrorType errorType;
+		Exception innerException;
+
+		#endregion // Fields
+
+		#region Constructors
+
+		internal PersistenceError (object errorObject, PersistenceErrorType errorType, Exception innerException)
+			: base ()
+		{
+			this.errorObject = errorObject;
+			this.errorType = errorType;
+			this.innerException = innerException;
+		}
+
+		#endregion // Constructors
+
 		#region Properties
 
-		[MonoTODO]
 		public object ErrorObject {
-			get { throw new NotImplementedException (); }
+			get { return errorObject; }
 		}
 
-		[MonoTODO]	
 		public PersistenceErrorType ErrorType {
-			get { throw new NotImplementedException (); }
+			get { return errorType; }
 		}
 
-		[MonoTODO]	
 		public Exception InnerException {
-			get { throw new NotImplementedException (); }
+			get { return innerException; }
+				
 		}
 			
 		#endregion // Properties

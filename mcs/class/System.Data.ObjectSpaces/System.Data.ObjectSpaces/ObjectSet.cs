@@ -4,7 +4,7 @@
 // Author:
 //   Tim Coleman (tim@timcoleman.com)
 //
-// Copyright (C) Tim Coleman, 2003
+// Copyright (C) Tim Coleman, 2003-2004
 //
 
 #if NET_1_2
@@ -22,22 +22,24 @@ namespace System.Data.ObjectSpaces
         {        
 		#region Fields
 
+		DynamicAssembly da;
 		ObjectContext context;
+		ObjectSchema os;
 
 		#endregion // Fields
 
 		#region Constructors
 
-                [MonoTODO]                
 		public ObjectSet (Type t, ObjectSchema oschema)
 		{
-			throw new NotImplementedException();
+			da = DynamicAssembly.GetDynamicAssembly (t);
+			os = oschema;
+			context = new CommonObjectContext (oschema);
 		}
 
-		[MonoTODO]
 		public ObjectSet ()
+			: this (typeof (object), new ObjectSchema ())
 		{
-			throw new NotImplementedException ();
 		}
 
 		#endregion // Constructors
@@ -46,8 +48,8 @@ namespace System.Data.ObjectSpaces
 
 		[MonoTODO]
 		public object this [int i] {
-			get { throw new NotImplementedException(); }
-			set { throw new NotImplementedException(); }
+			get { return InnerList [i]; }
+			set { InnerList [i] = value; }
 		}
 
 		[MonoTODO]
@@ -63,22 +65,28 @@ namespace System.Data.ObjectSpaces
 
 		#region Methods
 
-                [MonoTODO]
 		public void Add (object o)
 		{
-			throw new NotImplementedException ();
+			Type t = o.GetType ();
+			if (t != da.UnderlyingType)
+				throw new ObjectException (String.Format (Locale.GetText ("Wrong Object type '{0}' added to ObjectSet.  ObjectSet type is '{1}'"), t.FullName, da.UnderlyingType.FullName));
+			context.Add (o, ObjectState.Inserted);
+			InnerList.Add (o);
 		}
 
-                [MonoTODO]
 		public void Add (ICollection c)
 		{
-			throw new NotImplementedException ();
+			foreach (object o in c)
+				Add (o);
 		}
 
-                [MonoTODO]
 		public void Add (object o, ObjectState state)
 		{
-			throw new NotImplementedException ();
+			Type t = o.GetType ();
+			if (t != da.UnderlyingType)
+				throw new ObjectException (String.Format (Locale.GetText ("Wrong Object type '{0}' added to ObjectSet.  ObjectSet type is '{1}'"), t.FullName, da.UnderlyingType.FullName));
+			context.Add (o, state);
+			InnerList.Add (o);
 		}
 
                 [MonoTODO]
@@ -87,10 +95,9 @@ namespace System.Data.ObjectSpaces
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		IList IListSource.GetList ()
 		{
-			throw new NotImplementedException ();
+			return List;
 		}
 
 		[MonoTODO]

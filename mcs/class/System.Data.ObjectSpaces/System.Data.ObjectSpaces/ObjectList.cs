@@ -6,104 +6,138 @@
 //   Tim Coleman (tim@timcoleman.com)
 //
 // (C) BLiNK Software Ltd.  http://www.blinksoftware.co.uk
-// Copyright (C) Tim Coleman, 2003
+// Copyright (C) Tim Coleman, 2003-2004
 //
 
 #if NET_1_2
 
 using System.Collections;
+using System.Reflection;
 
 namespace System.Data.ObjectSpaces
 {
         [MonoTODO]
         public class ObjectList : ICollection, IEnumerable, IList
         {
-                
-                [MonoTODO]
-                public ObjectList () : this (typeof (ArrayList), null) {}
+		#region Fields
 
-                [MonoTODO]
+               	IList list;
+
+		#endregion // Fields
+
+		#region Constructors
+
+                public ObjectList () 
+			: this (typeof (ArrayList), null) 
+		{
+		}
+
                 public ObjectList (Type type, object[] parameters)
                 {
-                        if (type == null || !(type is IList))
+			if (type == null)
+				throw new ObjectException ();
+
+			bool isIList = false;
+			foreach (Type t in type.GetInterfaces ())
+				if (t.Equals (typeof (IList))) {
+					isIList = true;
+					break;
+				}
+
+			if (!isIList)
                                 throw new ObjectException ();
+
+			Type[] types = Type.EmptyTypes;
+			if (parameters != null)
+				types = Type.GetTypeArray (parameters);
+
+			ConstructorInfo ci = type.GetConstructor (types);
+			list = (IList) ci.Invoke (parameters);
                 }
 
-                [MonoTODO]
+		#endregion // Constructors
+
+		#region Properties
+
                 public int Count {
-                        get { return 0; }
+                        get { return InnerList.Count; }
                 }     
 
-		[MonoTODO]
-		bool ICollection.IsSynchronized {
-			get { throw new NotImplementedException (); }
+		bool ICollection.IsSynchronized {	
+			get { return InnerList.IsSynchronized; }
 		}
 
-		[MonoTODO]
 		object ICollection.SyncRoot {
-			get { throw new NotImplementedException (); }
+			get { return InnerList.SyncRoot; }
 		}
                 
-                [MonoTODO]
                 public IList InnerList {
-                        get { return null; }
+			get { return list; }
                 }        
                 
-                [MonoTODO]
                 public bool IsFixedSize {
-                        get { return false; }
+			get { return InnerList.IsFixedSize; }
                 }  
 
-                [MonoTODO]
                 public bool IsReadOnly {
-                        get { return false; }
+			get { return InnerList.IsReadOnly; }
                 }
                 
-                [MonoTODO]
-                public object this[int index] {
-                        get { throw new NotImplementedException (); }       
-                        set { throw new NotImplementedException (); }       
+                public object this [int index] {
+			get { return InnerList [index]; }
+			set { InnerList [index] = value; }
                 }
+
+		#endregion // Properties
+
+		#region Methods
                 
-                [MonoTODO]
                 public int Add (object value)
                 {
-                        return 0;        
+			return InnerList.Add (value);
                 }
                 
-                [MonoTODO]
-                public void Clear () {}
+                public void Clear () 
+		{
+			InnerList.Clear ();
+		}
                 
-                [MonoTODO]
                 public bool Contains (object value)
                 {
-                        return false;
+			return InnerList.Contains (value);
                 }
                 
-                [MonoTODO]
-                public void CopyTo (Array array, int index) {}
-               
+                public void CopyTo (Array array, int index) 
+		{
+			InnerList.CopyTo (array, index);
+		}
                 
-                [MonoTODO]
                 public IEnumerator GetEnumerator ()
                 {
-                        return null;
+			return InnerList.GetEnumerator (); 
                 }
                 
-                [MonoTODO]
                 public int IndexOf (object value)
                 {
-                        return 0;        
+			return InnerList.IndexOf (value);
                 }
                 
-                [MonoTODO]
-                public void Insert (int index, object value) {}
+                public void Insert (int index, object value) 
+		{
+			InnerList.Insert (index, value);
+		}
                 
-                [MonoTODO]
-                public void Remove (object value) {}
+                public void Remove (object value) 
+		{
+			InnerList.Remove (value);
+		}
                 
-                [MonoTODO]
-                public void RemoveAt (int index) {}
+                public void RemoveAt (int index) 
+		{
+			InnerList.RemoveAt (index);
+		}
+
+		#endregion // Methods
         }
 }
 

@@ -4,7 +4,7 @@
 // Author:
 //   Tim Coleman (tim@timcoleman.com)
 //
-// Copyright (C) Tim Coleman, 2003
+// Copyright (C) Tim Coleman, 2003-2004
 //
 
 #if NET_1_2
@@ -14,69 +14,64 @@ using System.Collections;
 namespace System.Data.ObjectSpaces {
         public class ObjectSources : IDataSources, IEnumerable
         {
+		Hashtable table;
+
 		#region Constructors
 
 		public ObjectSources ()
 		{
+			table = new Hashtable ();
 		}
 
 		#endregion // Constructors
 
 		#region Properties 
 
-		[MonoTODO]
 		public int Count {
-			get { throw new NotImplementedException (); }
+			get { return table.Count; }
 		}
 
 		public object this [string name] {
-			get { throw new NotImplementedException (); }
+			get { return table [name]; }
 		}
 
 		#endregion // Properties
                 
 		#region Methods
 
-		[MonoTODO]
 		public void Add (string name, IDbConnection connection)
 		{
-			throw new NotImplementedException ();
+			table.Add (name, connection);
 		}
 
-		[MonoTODO]
 		public void Add (string name, IDbTransaction transaction)
 		{
-			throw new NotImplementedException ();
+			table.Add (name, transaction);
 		}
 
-		[MonoTODO]
 		public void Clear ()
 		{
-			throw new NotImplementedException ();
+			table.Clear ();
 		}
 
-		[MonoTODO]
 		public bool Contains (string name)
 		{
-			throw new NotImplementedException ();
+			return table.Contains (name);
 		}
 
-		[MonoTODO]
 		public void Remove (string name)
 		{
-			throw new NotImplementedException ();
+			table.Remove (name);
 		}
 
-		[MonoTODO]
 		public virtual IDictionaryEnumerator GetEnumerator ()
 		{
-			throw new NotImplementedException ();
+			return table.GetEnumerator ();
 		}
 
-		[MonoTODO]
 		IEnumerator IEnumerable.GetEnumerator ()
 		{
-			throw new NotImplementedException ();
+			return GetEnumerator ();
 		}
 
 		#endregion // Methods
