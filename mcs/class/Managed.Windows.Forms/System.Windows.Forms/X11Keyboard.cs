@@ -339,8 +339,6 @@ namespace System.Windows.Forms {
 			int keysym = 0;
 			int [] ckey = new int [] { 0, 0, 0, 0 };
 
-			VirtualKeys oem_key = VirtualKeys.VK_OEM_7;
-			
 			e2.KeyEvent.display = display;
 			e2.KeyEvent.state = 0;
 
@@ -505,7 +503,6 @@ namespace System.Windows.Forms {
 			KeyboardLayout layout = null;
 			int max_score = 0;
 			int max_seq = 0;
-			bool ismatch = false;
 			
 			foreach (KeyboardLayout current in KeyboardLayouts.Layouts) {
 				int ok = 0;
@@ -560,7 +557,6 @@ namespace System.Windows.Forms {
 					layout = current;
 					max_score = score;
 					max_seq = seq;
-					ismatch = !mismatch;
 				}
 			}
 

@@ -1,3 +1,8 @@
+2005-01-03  Jackson Harper  <jackson@ximian.com>
+
+	* ThemeWin32Classic.cs:
+	* X11Keyboard.cs: Remove unused vars.
+
 2005-01-03  Peter Bartok  <pbartok@novell.com>
 
 	* TextBox.cs:

@@ -2134,7 +2134,6 @@ namespace System.Windows.Forms
 			if (panel.Icon != null) {
 				left += 2;
 				int size = area.Height - border_size;
-				Rectangle ia = new Rectangle (left, border_size, size, size);
 				dc.DrawIcon (panel.Icon, left, area.Top);
 				left += panel.Icon.Width;
 			}
