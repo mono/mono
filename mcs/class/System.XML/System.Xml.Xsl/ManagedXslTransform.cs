@@ -37,13 +37,15 @@ namespace System.Xml.Xsl {
 			new XslTransformProcessor (s).Process (input, outputter, args, resolver);
 			if (wroteStartDocument)
 				outputter.WriteEndDocument ();
+			output.Flush ();
 		}
 
 		public override void Transform (XPathNavigator input, XsltArgumentList args, TextWriter output, XmlResolver resolver) {
 			Outputter outputter = new GenericOutputter(output, s.Outputs);			
 			outputter.WriteStartDocument();
 			new XslTransformProcessor (s).Process (input, outputter, args, resolver);
-			outputter.WriteEndDocument();			
+			outputter.WriteEndDocument();
+			output.Flush ();
 		}
 		
 		public override void Transform (XPathNavigator input, XsltArgumentList args, Stream output, XmlResolver resolver)
