@@ -229,16 +229,17 @@ public class StringTest : TestCase
 
 	public void TestFormat ()
 	{
-		AssertEquals ("Empty format string.", String.Format ("", 0), "");
-		AssertEquals ("Single argument.", String.Format ("{0}", 100), "100");
-		AssertEquals ("Single argument, right justified.", String.Format ("X{0,5}X", 37), "X   37X");
-		AssertEquals ("Single argument, left justified.", String.Format ("X{0,-5}X", 37), "X37   X");
-		AssertEquals ("Two arguments.", String.Format ("The {0} wise {1}.", 3, "men"), "The 3 wise men.");
-		AssertEquals ("Three arguments.", String.Format ("{0} re {1} fa {2}.", "do", "me", "so"), "do re me fa so.");
-		AssertEquals ("Formatted argument.", String.Format ("###{0:x8}#", 0xc0ffee), "###00c0ffee#");
-		AssertEquals ("Formatted argument, right justified.", String.Format ("#{0,5:x3}#", 0x33), "#  033#");
-		AssertEquals ("Formatted argument, left justified.", String.Format ("#{0,-5:x3}#", 0x33), "#033  #");
-		AssertEquals ("Escaped bracket", String.Format ("typedef struct _{0} {{ ... }} MonoObject;", "MonoObject"), "typedef struct _MonoObject { ... } MonoObject;");
+		AssertEquals ("Empty format string.", "", String.Format ("", 0));
+		AssertEquals ("Single argument.", "100", String.Format ("{0}", 100));
+		AssertEquals ("Single argument, right justified.", "X   37X", String.Format ("X{0,5}X", 37));
+		AssertEquals ("Single argument, left justified.", "X37   X", String.Format ("X{0,-5}X", 37));
+		AssertEquals ("Two arguments.", "The 3 wise men.", String.Format ("The {0} wise {1}.", 3, "men"));
+		AssertEquals ("Three arguments.", "do re me fa so.", String.Format ("{0} re {1} fa {2}.", "do", "me", "so"));
+		AssertEquals ("Formatted argument.", "###00c0ffee#", String.Format ("###{0:x8}#", 0xc0ffee));
+		AssertEquals ("Formatted argument, right justified.", "#  033#", String.Format ("#{0,5:x3}#", 0x33));
+		AssertEquals ("Formatted argument, left justified.", "#033  #", String.Format ("#{0,-5:x3}#", 0x33));
+		AssertEquals ("Escaped bracket", "typedef struct _MonoObject { ... } MonoObject;", String.Format ("typedef struct _{0} {{ ... }} MonoObject;", "MonoObject"));
+
 
 		// TODO test format exceptions
 
