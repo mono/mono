@@ -5,10 +5,6 @@
 //	Andrew Birkett (andy@nobugs.org)
 //	Sebastien Pouliot (sebastien@ximian.com)
 //
-// (C) 2004 Novell (http://www.novell.com)
-//          
-
-//
 // Copyright (C) 2004 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -77,7 +73,7 @@ namespace System.Security.Cryptography {
 		{
 			KeySizeValue = 128;
 			BlockSizeValue = 64;
-			FeedbackSizeValue = 64;
+			FeedbackSizeValue = 8;
 
 			// The RFC allows keys of 1 to 128 bytes, but MS impl only supports
 			// 40 to 128 bits, sigh.
