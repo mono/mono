@@ -1,3 +1,9 @@
+2004-04-02  Zoltan Varga  <vargaz@freemail.hu>
+
+	* inssel-sparc.brg: Add more optimizations.
+
+	* mini-sparc.c: Replace multiply/divide with shifts if possible.
+
 2004-04-01  Martin Baulig  <martin@ximian.com>
 
 	* mini.c (handle_box): New static function; moved the
