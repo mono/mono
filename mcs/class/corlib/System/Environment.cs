@@ -341,38 +341,93 @@ namespace System
 			return vars;
 		}
 
+
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		private extern static string GetWindowsFolderPath (int folder);
+
 		/// <summary>
 		/// Returns the fully qualified path of the
 		/// folder specified by the "folder" parameter
 		/// </summary>
 		public static string GetFolderPath (SpecialFolder folder)
 		{
-                        string path;
+			if ((int) Platform != 128)
+				return GetWindowsFolderPath ((int) folder);
+
+			// we can do this in managed code for non-Windows environments
+			string path = String.Empty;
+
+			// http://freedesktop.org/Standards/basedir-spec/basedir-spec-0.6.html
+			string data = GetEnvironmentVariable ("XDG_DATA_HOME");
+			if ((data == null) || (data == String.Empty)) {
+				data = Path.Combine (GetEnvironmentVariable ("HOME"), ".local");
+				data = Path.Combine (data, "share");
+			}
+
+			string config = GetEnvironmentVariable ("XDG_CONFIG_HOME");
+			if ((config == null) || (config == String.Empty)) {
+				config = Path.Combine (GetEnvironmentVariable ("HOME"), ".config");
+			}
+
+			string cache = GetEnvironmentVariable ("XDG_CACHE_HOME");
+			if ((cache == null) || (cache == String.Empty)) {
+				cache = Path.Combine (GetEnvironmentVariable ("HOME"), ".cache");
+			}
 
                         switch (folder) {
-
-#if NET_1_1                                
+#if NET_1_1
                         case SpecialFolder.MyComputer: // MyComputer is a virtual directory
                                 path = "";
                                 break;
-                                
-                        case SpecialFolder.Desktop:
 #endif                                
-                        case SpecialFolder.DesktopDirectory:
-                                path = Path.Combine (GetEnvironmentVariable ("HOME"), "Desktop");
-                                break;
-                                
-                         case SpecialFolder.ApplicationData:
-                         case SpecialFolder.Personal:
-                                 path = GetEnvironmentVariable ("HOME");
-                                 break;
 
-                        default:
-                                path = "";
-                                break;
+			// data related
+			case SpecialFolder.ApplicationData:
+			case SpecialFolder.LocalApplicationData:
+			case SpecialFolder.MyMusic:
+			case SpecialFolder.MyPictures:
+                        case SpecialFolder.Personal:
+			case SpecialFolder.Templates:
+				path = data;
+                         	break;
+
+			// configuration related
+#if NET_1_1
+			case SpecialFolder.Desktop:
+#endif
+			case SpecialFolder.DesktopDirectory:
+			case SpecialFolder.Favorites:
+			case SpecialFolder.Programs:
+			case SpecialFolder.SendTo:
+			case SpecialFolder.StartMenu:
+			case SpecialFolder.Startup:
+				path = config;
+				break;
+
+			// cache related (could disappear)
+			case SpecialFolder.Cookies:
+			case SpecialFolder.History:
+			case SpecialFolder.InternetCache:
+			case SpecialFolder.Recent:
+				path = cache;
+				break;
+
+			// programs
+			case SpecialFolder.CommonProgramFiles:
+			case SpecialFolder.ProgramFiles:
+			case SpecialFolder.System:
+				break;
+
+			// Directories shared by all users
+			case SpecialFolder.CommonApplicationData:
+				path = Path.GetDirectoryName (GetMachineConfigPath ());
+				break;
+
+			default:
+				throw new ArgumentException ("Invalid SpecialFolder");
                         }
 
-                        return path;
+			return path;
                 }
 
 		/// <summary>

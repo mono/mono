@@ -1,3 +1,8 @@
+2004-04-23  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Environment.cs: Better support for GetFolderPath (same results as MS 
+	on Windows).
+
 2004-04-22  Lluis Sanchez Gual  <lluis@ximian.com>
 
 	* Activator.cs: Removed TODOs for finished methods.
