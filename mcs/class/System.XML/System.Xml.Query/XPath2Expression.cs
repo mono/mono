@@ -1191,9 +1191,25 @@ namespace Mono.Xml.XPath2
 			get { return SequenceType.Boolean; }
 		}
 
+		public override XPathSequence Evaluate (XPathSequence iter)
+		{
+			bool isEmpty;
+			bool result = EvaluateAsBoolean (iter, out isEmpty);
+			if (isEmpty)
+				return new XPathEmptySequence (iter.Context);
+			return new SingleItemIterator (result ? AtomicTrue : AtomicFalse, iter.Context);
+		}
+
 		public override bool EvaluateAsBoolean (XPathSequence iter)
 		{
+			bool isEmpty;
+			return EvaluateAsBoolean (iter, out isEmpty);
+		}
+
+		private bool EvaluateAsBoolean (XPathSequence iter, out bool isEmpty)
+		{
 			XPathSequence lseq, rseq;
+			isEmpty = false;
 
 			switch (Operation) {
 			// FIXME: it is curious but currently gmcs requires full typename.
@@ -1203,34 +1219,39 @@ namespace Mono.Xml.XPath2
 			case Mono.Xml.XPath2.ComparisonOperator.ValueLE:
 			case Mono.Xml.XPath2.ComparisonOperator.ValueGT:
 			case Mono.Xml.XPath2.ComparisonOperator.ValueGE:
+				XPathItem itemVL = ExamineOneItem (Left.Evaluate (iter));
+				XPathItem itemVR = ExamineOneItem (Right.Evaluate (iter));
+				if (itemVL == null || itemVR == null) {
+					isEmpty = true;
+					return false;
+				}
+				return CompareAtomic (itemVL, itemVR);
+
 			case Mono.Xml.XPath2.ComparisonOperator.GeneralEQ:
 			case Mono.Xml.XPath2.ComparisonOperator.GeneralNE:
 			case Mono.Xml.XPath2.ComparisonOperator.GeneralLT:
 			case Mono.Xml.XPath2.ComparisonOperator.GeneralLE:
 			case Mono.Xml.XPath2.ComparisonOperator.GeneralGT:
 			case Mono.Xml.XPath2.ComparisonOperator.GeneralGE:
-				throw new NotImplementedException ();
+				lseq = Left.Evaluate (iter);
+				rseq = Right.Evaluate (iter);
+				foreach (XPathItem itemGL in lseq) {
+					foreach (XPathItem itemGR in rseq.Clone ()) {
+						if (CompareAtomic (itemGL, itemGR))
+							return true;
+					}
+				}
+				return false;
 
 			case Mono.Xml.XPath2.ComparisonOperator.NodeIs:
 			case Mono.Xml.XPath2.ComparisonOperator.NodeFWD:
 			case Mono.Xml.XPath2.ComparisonOperator.NodeBWD:
-				lseq = Left.Evaluate (iter);
-				// FIXME: return empty sequence
-				if (!lseq.MoveNext ())
-//					return new XPathEmptySequence (iter.Context);
+				XPathNavigator lnav = ExamineOneNode (Left.Evaluate (iter));
+				XPathNavigator rnav = ExamineOneNode (Right.Evaluate (iter));
+				if (lnav == null || rnav == null) {
+					isEmpty = true;
 					return false;
-				rseq = Right.Evaluate (iter);
-				// FIXME: return empty sequence
-				if (!rseq.MoveNext ())
-//					return new XPathEmptySequence (iter.Context);
-					return false;
-				XPathNavigator lnav = lseq.Current as XPathNavigator;
-				XPathNavigator rnav = rseq.Current as XPathNavigator;
-				if (lnav == null ||
-					rnav == null ||
-					lseq.MoveNext () ||
-					rseq.MoveNext ())
-					throw new XmlQueryException ("Node comparison operand must be evaluated as a single node.");
+				}
 				switch (Operation) {
 				case Mono.Xml.XPath2.ComparisonOperator.NodeIs:
 					return lnav.IsSamePosition (rnav);
@@ -1244,9 +1265,52 @@ namespace Mono.Xml.XPath2
 			throw new SystemException ("XQuery internal error: should not happen.");
 		}
 
-		public override XPathSequence Evaluate (XPathSequence iter)
+		// returns null if sequence was empty
+		private XPathItem ExamineOneItem (XPathSequence seq)
 		{
-			return new SingleItemIterator (EvaluateAsBoolean (iter) ? AtomicTrue : AtomicFalse, iter.Context);
+			if (!seq.MoveNext ())
+				return null;
+			XPathItem item = seq.Current;
+			if (seq.MoveNext ())
+				throw new XmlQueryException ("Operand of value comparison expression must be evaluated as a sequence that contains exactly one item.");
+			return item;
+		}
+
+		// returns null if sequence was empty
+		private XPathNavigator ExamineOneNode (XPathSequence seq)
+		{
+			if (!seq.MoveNext ())
+				return null;
+			XPathNavigator nav = seq.Current as XPathNavigator;
+			if (nav == null || seq.MoveNext ())
+				throw new XmlQueryException ("Operand of node comparison expression must be evaluated as a sequence that contains exactly one node.");
+			return nav;
+		}
+
+		private bool CompareAtomic (XPathItem itemL, XPathItem itemR)
+		{
+			switch (Operation) {
+			// FIXME: it is curious but currently gmcs requires full typename.
+			case Mono.Xml.XPath2.ComparisonOperator.ValueEQ:
+			case Mono.Xml.XPath2.ComparisonOperator.GeneralEQ:
+				return XQueryComparisonOperator.ValueEQ (Atomize (itemL), Atomize (itemR));
+			case Mono.Xml.XPath2.ComparisonOperator.ValueNE:
+			case Mono.Xml.XPath2.ComparisonOperator.GeneralNE:
+				return XQueryComparisonOperator.ValueNE (Atomize (itemL), Atomize (itemR));
+			case Mono.Xml.XPath2.ComparisonOperator.ValueLT:
+			case Mono.Xml.XPath2.ComparisonOperator.GeneralLT:
+				return XQueryComparisonOperator.ValueLT (Atomize (itemL), Atomize (itemR));
+			case Mono.Xml.XPath2.ComparisonOperator.ValueLE:
+			case Mono.Xml.XPath2.ComparisonOperator.GeneralLE:
+				return XQueryComparisonOperator.ValueLE (Atomize (itemL), Atomize (itemR));
+			case Mono.Xml.XPath2.ComparisonOperator.ValueGT:
+			case Mono.Xml.XPath2.ComparisonOperator.GeneralGT:
+				return XQueryComparisonOperator.ValueGT (Atomize (itemL), Atomize (itemR));
+			case Mono.Xml.XPath2.ComparisonOperator.ValueGE:
+			case Mono.Xml.XPath2.ComparisonOperator.GeneralGE:
+				return  XQueryComparisonOperator.ValueGE (Atomize (itemL), Atomize (itemR));
+			}
+			return false; // should not happen
 		}
 #endregion
 	}

@@ -1,6 +1,13 @@
 2004-08-31  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XPath2Expression.cs :
+	  Implemented the whole ComparisonExpr.Evaluate(). It now handles
+	  empty sequence expectedly.
+	* XQueryComparisonOperator.cs : added.
+
+2004-08-31  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XPath2Expression.cs :
 	  Revised some parameters for XPathSequence classes ctor().
 	  Don't require XPathSequence while they are not required.
 	  AxisIterator need to accept only current node as its input.
