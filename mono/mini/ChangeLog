@@ -1,3 +1,19 @@
+2003-09-10  Zoltan Varga  <vargaz@freemail.hu>
+
+	* aot.c: Added mono_aot_verbose variable and made all debugging
+	output depend on the value of this variable.
+
+	* aot.c (mono_aot_get_method_inner): Avoid dynamic allocation of
+	method_label and info_label.
+
+	* mini.h mini-x86.c aot.c: Added a new relocation type 
+	MONO_PATCH_INFO_IID for klass->interface_id.
+
+	* mini.h mini.c driver.c aot.c: Changed mono_aot_get_method to return
+	the MonoJitInfo structure.
+
+	* mini.c (mono_jit_compile_method): Avoid using non-shared AOT in
+	a non-root appdomain in shared mode.
 
 Tue Sep 9 16:33:07 CEST 2003 Paolo Molaro <lupus@ximian.com>
 
