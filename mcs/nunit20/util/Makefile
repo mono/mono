@@ -12,7 +12,11 @@ NO_TEST = yo
 
 EXTRA_DISTFILES = \
 	nunit.util.dll.csproj	\
-	Transform.resources	\
-	Transform.resx		\
+	Transform.resx
+
+%.resources: %.resx
+	MONO_PATH=$(topdir)/class/lib/$(PROFILE):$$MONO_PATH $(INTERNAL_RESGEN) $<
 
 include ../../build/library.make
+
+$(the_lib): Transform.resources
