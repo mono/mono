@@ -62,10 +62,16 @@ gac_assemblies_list = \
 	System.Windows.Forms				\
 	System.Xml
 
+if PLATFORM_WIN32
+gac_assemblies = 
+local_mscorlib =
+else
 gac_assemblies = $(gac_assemblies_list:=.dll)
+local_mscorlib = mscorlib.dll
+endif
 
 corlibdir = $(libdir)/mono/2.0
-corlib_DATA = mscorlib.dll
+corlib_DATA = $(local_mscorlib)
 
 EXTRA_DIST = $(gac_assemblies) $(corlib_DATA)
 MAINTAINERCLEANFILES = $(EXTRA_DIST)
@@ -75,8 +81,10 @@ MAINTAINERCLEANFILES = $(EXTRA_DIST)
 #
 assembliesdir = $(libdir)
 
-mscorlib.dll $(gac_assemblies):
+dummy $(local_mscorlib) $(gac_assemblies):
 	cp -f $(mcs_topdir)/class/lib/net_2_0/$@ $(srcdir)
+
+dummy:
 
 all-local: $(gac_assemblies)
 
