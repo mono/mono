@@ -1,3 +1,9 @@
+2002-04-10  Nick Drochak  <ndrochak@gol.com>
+
+	* icall.c (ves_icall_System_CurrentTimeZone_GetTimeZoneData) :
+		return true even if it's not Daylight Savings time.
+		Only return false for the case where the function isn't
+		implemented for a plaform (read Windows).
 
 Tue Apr 9 13:05:56 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
