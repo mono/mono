@@ -1,5 +1,8 @@
 2003-02-14  Miguel de Icaza  <miguel@ximian.com>
 
+	* delegate.cs: The signature for EndInvoke should contain any ref
+	or out parameters as well.  We were not doing this in the past. 
+
 	* class.cs (Field.Define): Do not overwrite the type definition
 	inside the `volatile' group.  Turns out that volatile enumerations
 	were changing the type here to perform a validity test, which
