@@ -1,3 +1,8 @@
+2003-11-20  Joerg Rosenkranz <joergr@voelcker.com>
+	
+	* Mono.Data.Tds/TdsMetaParameter.cs: Fixed Prepare to allow string
+	and binary parameters with Length == 0	
+
 2002-12-22  Tim Coleman <tim@timcoleman.com>
 	* Mono.Data.Tds.Protocol/TdsComm.cs:
 		Change GetString to NOT explicitly add a NUL

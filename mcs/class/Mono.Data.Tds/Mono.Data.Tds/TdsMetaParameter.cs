@@ -111,13 +111,13 @@ namespace Mono.Data.Tds {
 			case "varchar":
 			case "nvarchar":
 			case "varbinary":
-				result.Append (String.Format ("({0})", Size));
+				result.Append (String.Format ("({0})", Size > 0 ? Size : 1));
 				break;
 			case "char":
 			case "nchar":
 			case "binary":
 				if (isSizeSet && Size > 0)
-					result.Append (String.Format ("({0})", Size));
+					result.Append (String.Format ("({0})", Size > 0 ? Size : 1));
 				break;
 			}
 			return result.ToString ();
