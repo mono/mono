@@ -90,7 +90,7 @@ namespace System.Windows.Forms{
 		public new event EventHandler DoubleClick;
 
 		internal override Gtk.Widget CreateWidget (){
-			Gtk.RadioButton rb = new Gtk.RadioButton (null, "");
+			Gtk.RadioButton rb = new Gtk.RadioButton ("");
 			rb.Toggled += new EventHandler (GtkToggled);
 			return rb;
 		}
