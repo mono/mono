@@ -1,35 +1,38 @@
 Object and VTable layout
 ========================
 
-The first pointer inside an Object points to a MonoClass structure. Objects
+The first pointer inside an Object points to a MonoVtable structure. Objects
 also contains a MonoThreadsSync structure which is used by the mono Thread
 implementation. 
  
 typedef struct {
-	MonoClass *class;
+	MonoVTable *vtable;
 	MonoThreadsSync synchronisation;
 	
 	/* object specific data goes here */
 } MonoObject;
 
-The MonoClass contains all Class infos, the VTable and a pointer to static
-class data.
+The MonoVtable contains the vtable, interface offsets and a pointer to static
+class data. Each object/vtable belongs to exactly one AppDomain.
+
+typedef struct {
+	MonoClass  *klass;
+	MonoDomain *domain;  
+        gpointer   *interface_offsets;   
+	/* a pointer to static data */
+        gpointer    data;
+	/* the variable sized vtable is included at the end */
+        gpointer    vtable [0];	
+} MonoVTable;
+
+The MonoClass contains domain independent Class infos.
 
 typedef struct {
 	/* various class infos */
 	MonoClass  *parent;
 	const char *name;
 	const char *name_space;
-
 	...
-
-	/* interface offset table */
-	gint  *interface_offsets;
-
-	gpointer data; /* a pointer to static data */
-
-	/* the variable sized vtable is included at the end */
-	gpointer vtable [vtable_size];
 } MonoClass;
 
 
@@ -40,7 +43,7 @@ Each MonoMethod (if virtual) has an associated slot, which is an index into the
 VTable. So we can use the following code to compute the address of a virtual
 function: 
  
-method_addr = object->class->vtable [method->slot];
+method_addr = object->vtable->vtable [method->slot];
 
 
 Calling interface methods:
@@ -49,8 +52,7 @@ Calling interface methods:
 Each interface class is associated with an unique ID. The following code
 computes the address of an interface function:
 
-offset_into_vtable = object->class->interface_offsets [interface_id];
-method_addr = object->class->vtable [offset_into_vtable + method->slot];
+method_addr = *(object->vtable->interface_offsets [interface_id] + method->slot*4);
 
 
 
