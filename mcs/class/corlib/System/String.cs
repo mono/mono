@@ -57,7 +57,7 @@ namespace System {
 			int i;
 
 			// FIXME: value.Length includes the terminating null char?
-			this.length = value ? strlen (value): 0;
+			this.length = value != null ? strlen (value): 0;
 			this.c_str = new char [this.length + 1];
 			for (i = 0; i < this.length; i++)
 				this.c_str[i] = value[i];
@@ -79,7 +79,7 @@ namespace System {
 
 			this.c_str = new char [this.length + 1];
 			for (i = 0; i < this.length; i++)
-				this.c_str[i] = *(value + i);
+				this.c_str[i] = (char) *(value + i);
 			this.c_str[i] = '\0';
 		}
 
@@ -142,7 +142,7 @@ namespace System {
 			this.length = length;
 			this.c_str = new char [length + 1];
 			for (i = 0; i < length; i++)
-				this.c_str[i] = *(value + startIndex + i);
+				this.c_str[i] = (char) *(value + startIndex + i);
 			this.c_str[i] = '\0';
 		}
 
@@ -154,7 +154,7 @@ namespace System {
 		~String ()
 		{
 			// FIXME: is there anything we need to do here?
-			base.Finalize ();
+			/*base.Finalize ();*/
 		}
 
 		protected override string MemberwiseClone ()
@@ -171,7 +171,7 @@ namespace System {
 		}
 
 		// FIXME: is this correct syntax??
-		public char Chars (int index) {
+		public char Chars [int index] {
 			get {
 				if (index > this.length)
 					throw new ArgumentOutOfRangeException ();
@@ -181,31 +181,31 @@ namespace System {
 		}
 
 		// Private helper methods
-		private int strlen (char[] str)
+		private static int strlen (char[] str)
 		{
 			// FIXME: if str.Length includes terminating null char, then return (str.Length - 1)
 			return str.Length;
 		}
 
-		private char tolower (char c)
+		private static char tolower (char c)
 		{
 			// FIXME: make me unicode aware
-			return c >= 'A' && c <= 'Z' ? c + 33 : c;
+			return c >= 'A' && c <= 'Z' ? c + (char) 33 : c;
 		}
 
-		private char toupper (char c)
+		private static char toupper (char c)
 		{
 			// FIXME: make me unicode aware
-			return c >= 'a' && c <= 'z' ? c - 33 : c;
+			return c >= 'a' && c <= 'z' ? c - (char) 33 : c;
 		}
 
-		private char tolowerordinal (char c)
+		private static char tolowerordinal (char c)
 		{
 			// FIXME: implement me
 			return c;
 		}
 
-		private bool is_lwsp (char c)
+		private static bool is_lwsp (char c)
 		{
 			/* this comes from the msdn docs for String.Trim() */
 			if ((c >= '\x9' && c <= '\xD') || c == '\x20' || c == '\xA0' ||
@@ -215,7 +215,7 @@ namespace System {
 				return false;
 		}
 
-		private int BoyerMoore (char[] haystack, char[] needle, int startIndex, int count)
+		private static int BoyerMoore (char[] haystack, char[] needle, int startIndex, int count)
 		{
 			/* (hopefully) Unicode-safe Boyer-Moore implementation */
 			char skiptable[65536];  /* our unicode-safe skip-table */
@@ -478,7 +478,7 @@ namespace System {
 
 		public int CompareTo (object obj)
 		{
-			return Compare (this, obj == null ? null : obj.ToString);
+			return Compare (this, obj == null ? null : obj.ToString ());
 		}
 
 		public int CompareTo (string str)
@@ -488,12 +488,13 @@ namespace System {
 
 		public static string Concat (object arg)
 		{
-			return Concat (this, arg ? arg.ToString () : this.Empty);
+			return Concat (this, arg ? arg.ToString () : String.Empty);
 		}
 
 		public static string Concat (params object[] args)
 		{
-			string strings[], str;
+			string[] strings;
+			string str;
 			int len, i;
 
 			if (args == null)
@@ -504,14 +505,14 @@ namespace System {
 			foreach (object arg in args) {
 				/* use Empty for each null argument */
 				if (arg == null)
-					strings[i] = this.Empty;
+					strings[i] = String.Empty;
 				else
 					strings[i] = arg.ToString ();
 				len += strings[i].Length;
 			}
 
 			if (len == 0)
-				return this.Empty;
+				return String.Empty;
 
 			str = new string [len + 1];
 			i = 0;
@@ -536,7 +537,7 @@ namespace System {
 				len += value ? value.Length : 0;
 
 			if (len == 0)
-				return this.Empty;
+				return String.Empty;
 
 			str = new string [len + 1];
 			i = 0;
@@ -554,8 +555,8 @@ namespace System {
 
 		public static string Concat (object arg0, object arg1)
 		{
-			string str0 = arg0 ? arg0.ToString () : this.Empty;
-			string str1 = arg1 ? arg1.ToString () : this.Empty;
+			string str0 = arg0 ? arg0.ToString () : String.Empty;
+			string str1 = arg1 ? arg1.ToString () : String.Empty;
 
 			return Concat (str0, str1);
 		}
@@ -566,13 +567,13 @@ namespace System {
 			int i, j, len;
 
 			if (str0 == null)
-				str0 = this.Empty;
+				str0 = String.Empty;
 			if (str1 == null)
-				str1 == this.Empty;
+				str1 == String.Empty;
 
 			len = str0.Length + str1.Length;
 			if (len == 0)
-				return this.Empty;
+				return String.Empty;
 
 			concat = new string [len + 1];
 			for (i = 0; i < str0.Length; i++)
@@ -586,9 +587,9 @@ namespace System {
 
 		public static string Concat (object arg0, object arg1, object arg2)
 		{
-			string str0 = arg0 ? arg0.ToString () : this.Empty;
-			string str1 = arg1 ? arg1.ToString () : this.Empty;
-			string str2 = arg2 ? arg2.ToString () : this.Empty;
+			string str0 = arg0 ? arg0.ToString () : String.Empty;
+			string str1 = arg1 ? arg1.ToString () : String.Empty;
+			string str2 = arg2 ? arg2.ToString () : String.Empty;
 
 			return Concat (str0, str1, str2);
 		}
@@ -599,15 +600,15 @@ namespace System {
 			int i, j, k, len;
 
 			if (str0 == null)
-				str0 = this.Empty;
+				str0 = String.Empty;
 			if (str1 == null)
-				str1 = this.Empty;
+				str1 = String.Empty;
 			if (str2 == null)
-				str2 = this.Empty;
+				str2 = String.Empty;
 
 			len = str0.Length + str1.Length + str2.Length;
 			if (len == 0)
-				return this.Empty;
+				return String.Empty;
 
 			concat = new string [len + 1];
 			for (i = 0; i < str0.Length; i++)
@@ -627,17 +628,17 @@ namespace System {
 			int i, j, k, l, len;
 
 			if (str0 == null)
-				str0 = this.Empty;
+				str0 = String.Empty;
 			if (str1 == null)
-				str1 = this.Empty;
+				str1 = String.Empty;
 			if (str2 == null)
-				str2 = this.Empty;
+				str2 = String.Empty;
 			if (str3 == null)
-				str3 = this.Empty;
+				str3 = String.Empty;
 
 			len = str0.Length + str1.Length + str2.Length + str3.Length;
 			if (len == 0)
-				return this.Empty;
+				return String.Empty;
 
 			concat = new string [len + 1];
 			for (i = 0; i < str0.Length; i++)
@@ -664,7 +665,7 @@ namespace System {
 		public void CopyTo (int sourceIndex, char[] destination, int destinationIndex, int count)
 		{
 			// LAMESPEC: should I null-terminate?
-			int i, len;
+			int i;
 
 			if (destination == null)
 				throw new ArgumentNullException ();
@@ -708,12 +709,12 @@ namespace System {
 			return this == (String) obj;
 		}
 
-		public new bool Equals (string value)
+		public bool Equals (string value)
 		{
 			return this == value;
 		}
 
-		public static new bool Equals (string a, string b)
+		public static bool Equals (string a, string b)
 		{
 			return a == b;
 		}
@@ -760,7 +761,7 @@ namespace System {
 			return 0;
 		}
 
-		public Type GetType ()
+		public new Type GetType ()
 		{
 			// FIXME: implement me
 			return null;
@@ -852,7 +853,7 @@ namespace System {
 			if (startIndex < 0 || count < 0 || startIndex + count > this.length)
 				throw new ArgumentOutOfRangeException ();
 
-			for (int i = startIndex; i < startIndex + count, i++) {
+			for (int i = startIndex; i < startIndex + count; i++) {
 				for (int j = 0; j < strlen (values); j++) {
 					if (this.c_str[i] == values[j])
 						return i;
@@ -928,7 +929,7 @@ namespace System {
 
 			// We have no elements to join?
 			if (i == startIndex)
-				return this.Empty;
+				return String.Empty;
 
 			str = new string [len + 1];
 			for (i = 0; i < value[startIndex].Length; i++)
@@ -1013,7 +1014,7 @@ namespace System {
 			if (count < 0 || startIndex - count < 0)
 				throw new ArgumentOutOfRangeException ();
 
-			if (value == this.Empty)
+			if (value == String.Empty)
 				return startIndex;
 
 			if (startIndex + value.Length > this.length) {
@@ -1133,7 +1134,7 @@ namespace System {
 
 			len = this.length - count;
 			if (len == 0)
-				return this.Empty;
+				return String.Empty;
 
 			str = new string [len + 1];
 			for (i = 0; i < startIndex; i++)
@@ -1180,7 +1181,7 @@ namespace System {
 
 			len = this.length - oldValue.Length + newValue.Length;
 			if (len == 0)
-				return this.Empty;
+				return String.Empty;
 
 			str = new string [len + 1];
 			for (i = 0; i < index; i++)
@@ -1197,7 +1198,7 @@ namespace System {
 		private int splitme (char[] separators, int startIndex)
 		{
 			/* this is basically a customized IndexOfAny() for the Split() methods */
-			for (int i = startIndex; i < this.length, i++) {
+			for (int i = startIndex; i < this.length; i++) {
 				if (separators != null) {
 					foreach (char sep in separators) {
 						if (this.c_str[i] == sep)
@@ -1228,7 +1229,7 @@ namespace System {
 			 * adjacent.
 			 **/
 			// FIXME: would using a Queue be better?
-			string strings[];
+			string[] strings;
 			ArrayList list;
 			int index, len;
 
@@ -1237,7 +1238,7 @@ namespace System {
 				len = splitme (separator, index);
 				len = len > -1 ? len : this.length - index;
 				if (len == 0) {
-					list.Add (this.Empty);
+					list.Add (String.Empty);
 				} else {
 					string str;
 					int i;
@@ -1257,7 +1258,7 @@ namespace System {
 				strings[0] = this;
 			} else {
 				for (index = 0; index < list.Count; index++)
-					strings[index] = list[index];
+					strings[index] = (string) list[index];
 			}
 
 			return strings;
@@ -1267,7 +1268,7 @@ namespace System {
 		{
 			// FIXME: what to do if maxCount <= 0?
 			// FIXME: would using Queue be better than ArrayList?
-			string strings[];
+			string[] strings;
 			ArrayList list;
 			int index, len, used;
 
@@ -1277,7 +1278,7 @@ namespace System {
 				len = splitme (separator, index);
 				len = len > -1 ? len : this.length - index;
 				if (len == 0) {
-					list.Add (this.Empty);
+					list.Add (String.Empty);
 				} else {
 					string str;
 					int i;
@@ -1311,7 +1312,7 @@ namespace System {
 				strings[0] = this;
 			} else {
 				for (index = 0; index < list.Count; index++)
-					strings[index] = list[index];
+					strings[index] = (string) list[index];
 			}
 
 			return strings;
@@ -1344,7 +1345,7 @@ namespace System {
 
 			len = this.length - startIndex;
 			if (len == 0)
-				return this.Empty;
+				return String.Empty;
 
 			str = new string [len + 1];
 			for (i = startIndex; i < this.length; i++)
@@ -1363,7 +1364,7 @@ namespace System {
 				throw new ArgumentOutOfRangeException ();
 
 			if (length == 0)
-				return this.Empty;
+				return String.Empty;
 
 			str = new string [length + 1];
 			for (i = startIndex; i < startIndex + length; i++)
@@ -1373,19 +1374,19 @@ namespace System {
 			return str;
 		}
 
-		public override bool ToBoolean (IFormatProvider provider)
+		public bool ToBoolean (IFormatProvider provider)
 		{
 			// FIXME: implement me
 			return false;
 		}
 
-		public override byte ToByte (IFormatProvider provider)
+		public byte ToByte (IFormatProvider provider)
 		{
 			// FIXME: implement me
 			return '\0';
 		}
 
-		public override char ToChar (IFormatProvider provider)
+		public char ToChar (IFormatProvider provider)
 		{
 			// FIXME: implement me
 			return '\0';
@@ -1413,37 +1414,37 @@ namespace System {
 			return chars;
 		}
 
-		public override DateTime ToDateTime (IFormatProvider provider)
+		public DateTime ToDateTime (IFormatProvider provider)
 		{
 			// FIXME: implement me
 			return null;
 		}
 
-		public override decimal ToDecimal (IFormatProvider provider)
+		public decimal ToDecimal (IFormatProvider provider)
+		{
+			// FIXME: implement me
+			return 0.0D;
+		}
+
+		public double ToDouble (IFormatProvider provider)
 		{
 			// FIXME: implement me
 			return 0.0;
 		}
 
-		public override double ToDouble (IFormatProvider provider)
-		{
-			// FIXME: implement me
-			return 0.0;
-		}
-
-		public override short ToInt16 (IFormatProvider)
+		public short ToInt16 (IFormatProvider provider)
 		{
 			// FIXME: implement me
 			return 0;
 		}
 
-		public override int ToInt32 (IFormatProvider)
+		public int ToInt32 (IFormatProvider provider)
 		{
 			// FIXME: implement me
 			return 0;
 		}
 
-		public override long ToInt64 (IFormatProvider)
+		public long ToInt64 (IFormatProvider provider)
 		{
 			// FIXME: implement me
 			return 0;
@@ -1468,16 +1469,16 @@ namespace System {
 			return null;
 		}
 
-		public override sbyte ToSByte (IFormatProvider)
+		public sbyte ToSByte (IFormatProvider provider)
 		{
 			// FIXME: implement me
 			return 0;
 		}
 
-		public override float ToSingle (IFormatProvider)
+		public float ToSingle (IFormatProvider provider)
 		{
 			// FIXME: implement me
-			return 0.0;
+			return 0.0F;
 		}
 
 		public override string ToString ()
@@ -1491,25 +1492,25 @@ namespace System {
 			return null;
 		}
 
-		public override object ToType (Type conversionType, IFormatProvider provider)
+		public object ToType (Type conversionType, IFormatProvider provider)
 		{
 			// FIXME: implement me
 			return null;
 		}
 
-		public override ushort ToUInt16 (IFormatProvider provider)
+		public ushort ToUInt16 (IFormatProvider provider)
 		{
 			// FIXME: implement me
 			return 0;
 		}
 
-		public override uint ToUInt32 (IFormatProvider provider)
+		public uint ToUInt32 (IFormatProvider provider)
 		{
 			// FIXME: implement me
 			return 0;
 		}
 
-		public override ulong ToUInt64 (IFormatProvider provider)
+		public ulong ToUInt64 (IFormatProvider provider)
 		{
 			// FIXME: implement me
 			return 0;
@@ -1567,7 +1568,7 @@ namespace System {
 			}
 
 			if (begin == end)
-				return this.Empty;
+				return String.Empty;
 
 			return Substring (begin, end - begin);
 		}
@@ -1588,7 +1589,7 @@ namespace System {
 			}
 
 			if (end == 0)
-				return this.Empty;
+				return String.Empty;
 
 			return Substring (0, end);
 		}
@@ -1609,7 +1610,7 @@ namespace System {
 			}
 
 			if (begin == this.length)
-				return this.Empty;
+				return String.Empty;
 
 			return Substring (begin, this.length - begin);
 		}

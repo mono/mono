@@ -1,5 +1,12 @@
 2001-07-14  Jeffrey Stedfast  <fejj@ximian.com>
 
+	* String.cs: A tom of compile fixes, although we still don't compile.
+
+	* IConvertible.cs: The To*Int64() methods return *Int64's, not
+	*Int32's. Also, it's ToDateTime() not ToDateType().
+
+2001-07-14  Jeffrey Stedfast  <fejj@ximian.com>
+
 	* String.cs: Apparently I needed to at least write stubs for the
 	IConvertible interfaces. *sigh*
 

@@ -1,3 +1,4 @@
+// -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*-
 //
 // System.Text.UnicodeEncoding.cs
 //
@@ -43,4 +44,3 @@ namespace System.Text {
                 }
         }
 }
-
