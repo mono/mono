@@ -24,9 +24,11 @@ MPH_SOURCE = \
 	sys-mount.c \
 	sys-sendfile.c \
 	sys-stat.c \
+	sys-time.c \
 	sys-wait.c \
 	time.c \
-	unistd.c
+	unistd.c \
+	utime.c
 
 if HAVE_ZLIB
 libMonoPosixHelper_la_SOURCES = \

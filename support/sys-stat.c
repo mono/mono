@@ -111,6 +111,14 @@ Mono_Posix_Syscall_lstat (const char *file_name, struct Mono_Posix_Syscall_Stat 
 	return r;
 }
 
+gint32
+Mono_Posix_Syscall_mknod (const char *pathname, guint32 mode, mph_dev_t dev)
+{
+	if (Mono_Posix_FromFilePermissions (mode, &mode) == -1)
+		return -1;
+	return mknod (pathname, mode, dev);
+}
+
 G_END_DECLS
 
 /*
