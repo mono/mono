@@ -1,6 +1,7 @@
 2004-05-22  Sebastien Pouliot  <sebastien@ximian.com>
 
-	* ArrayTest.cs: Added a new test to clear a jagged array.
+	* ArrayTest.cs: Added a new test to clear a jagged array and a 
+	multidimentional array.
 	* IntPtrTest.cs: New. Tests for 32/64 bits behaviour of IntPtr.
 	* SingleTest.cs: Added tests to compare positive 0 and negative 0.
 	* UIntPtrTest.cs: New. Tests for 32/64 bits behaviour of UIntPtr.

@@ -2472,6 +2472,17 @@ public class ArrayTest : Assertion
 			AssertNull (i.ToString (), matrix [i]);
 		}
 	}
+
+	[Test]
+	public void ClearMultidimentionalArray () 
+	{
+		byte[,] matrix = new byte [2,2] { {1, 1}, {2, 2} };
+		Array.Clear (matrix, 0, 2);
+		AssertEquals ("0,0", 0, matrix [0,0]);
+		AssertEquals ("0,1", 0, matrix [0,1]);
+		AssertEquals ("1,0", 2, matrix [1,0]);
+		AssertEquals ("1,1", 2, matrix [1,1]);
+	}
 }
 
 }
