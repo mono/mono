@@ -2,6 +2,8 @@
 
 	* loader.c (mono_get_string_class_info): do a strcmp to check
 	if it is System.String instead of using magic numbers.
+	(mono_map_dll): impl.
+	(mono_get_method): bug fix: pass index - 1 to fill_pinvoke_info
 
 	* class.c (mono_class_create_from_typedef): do a strcmp to check
 	if it is System.Object instead of using magic numbers.

@@ -1,3 +1,9 @@
+2001-08-02  Dietmar Maurer  <dietmar@ximian.com>
+
+	* interp.c (ves_exec_method): found a way to do unordered
+	compares, implemented CEE_BNE_UN_S, CEE_BGE_UN_S, CEE_BGT_UN_S, 
+	CEE_BLE_UN_S, CEE_BLT_UN_S
+	
 Wed Aug 1 22:51:38 CEST 2001 Paolo Molaro <lupus@ximian.com>
 
 	* interp.c: handle also MONO_TYPE_CLASS to/from the stack.
