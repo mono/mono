@@ -1,3 +1,11 @@
+2002-12-02  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* icall.c:
+	(ves_icall_type_from_name): it now has throwOnError and ignoreCase
+	parameters. If no assembly specified, try getting the type from all
+	the assemblies in the current domain, else, load the assembly and get
+	the type from it.
+
 2002-11-30  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* marshal.c: applied patch from Aleksey Demakov that fixes
