@@ -272,10 +272,22 @@ namespace Mono.CSharp {
 				break;
 
 			case Binary.Operator.Addition:
-				if (left is StringConstant && right is StringConstant)
-					return new StringConstant (
-						((StringConstant) left).Value +
-						((StringConstant) right).Value);
+				bool left_is_string = left is StringConstant;
+				bool right_is_string = right is StringConstant;
+
+				//
+				// If both sides are strings, then concatenate, if
+				// one is a string, and the other is not, then defer
+				// to runtime concatenation
+				//
+				if (left_is_string || right_is_string){
+					if (left_is_string && right_is_string)
+						return new StringConstant (
+							((StringConstant) left).Value +
+							((StringConstant) right).Value);
+					
+					return null;
+				}
 
 				DoConstantNumericPromotions (oper, ref left, ref right, loc);
 				if (left == null || right == null)

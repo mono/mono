@@ -1,3 +1,11 @@
+2002-03-05  Miguel de Icaza  <miguel@ximian.com>
+
+	* cfold.cs (ConstantFold.Binary): Special case: perform constant
+	folding of string concatenation, but if either side is a string,
+	and the other is not, then return null, and let the runtime use
+	the concatenation on the string plus the object (using
+	`Object.ToString'). 
+
 2002-03-04  Miguel de Icaza  <miguel@ximian.com>
 
 	Constant Folding has been implemented now.
