@@ -58,7 +58,17 @@ namespace Mono.Security.X509 {
 		}
 
 		public X509CertificateCollection TrustAnchors {
-			get { return ((roots == null) ? GetTrustAnchors () : roots); }
+			get { 
+				if (roots == null) {
+					roots = new X509CertificateCollection ();
+					roots.AddRange (X509StoreManager.TrustedRootCertificates);
+					// TEMP (old method)
+					ITrustAnchors trust = (ITrustAnchors) new TrustAnchors ();
+					roots.AddRange (trust.Anchors);
+					return roots;
+				}
+				return roots;
+			}
 			set { roots = value; }
 		}
 
@@ -143,13 +153,6 @@ namespace Mono.Security.X509 {
 				}
 			}
 			return (_status == X509ChainStatusFlags.NoError);
-		}
-
-		private X509CertificateCollection GetTrustAnchors () 
-		{
-			// TODO - Load from machine.config
-			ITrustAnchors trust = (ITrustAnchors) new TestAnchors ();
-			return trust.Anchors;
 		}
 
 		//
