@@ -17,7 +17,6 @@ namespace System.Xml
 	{
 		#region Fields
 
-		string msg; 	//  Cache message here because SystemException doesn't expose it
 		int lineNumber;
 		int linePosition;
 
@@ -28,7 +27,6 @@ namespace System.Xml
 		public XmlException (string message, Exception innerException) 
 			: base (message, innerException)
 		{
-			msg = message;
 		}
 
 		protected XmlException (SerializationInfo info, StreamingContext context)
@@ -41,9 +39,16 @@ namespace System.Xml
 		internal XmlException (string message)
 			: base (message)
 		{
-			msg = message;
 		}
 
+		internal XmlException (IXmlLineInfo li, string message) : base (message)
+		{
+			if (li != null) {
+				this.lineNumber = li.LineNumber;
+				this.linePosition = li.LinePosition;
+			}
+		}
+		
 		internal XmlException (string message, int lineNumber, int linePosition) : base (message)
 		{
 			this.lineNumber = lineNumber;
@@ -63,7 +68,13 @@ namespace System.Xml
 		}
 
 		public override string Message {
-			get { return msg; }
+			get {
+				if (lineNumber == 0)
+					return base.Message;
+
+				return String.Format ("{0} Line {1}, position {2}.",
+						      base.Message, lineNumber, linePosition);
+			}
 		}
 
 		#endregion

@@ -1,10 +1,12 @@
 //
 // XmlReader.cs
 //
-// Author:
-//   Jason Diamond (jason@injektilo.org)
+// Authors:
+// 	Jason Diamond (jason@injektilo.org)
+// 	Gonzalo Paniagua Javier (gonzalo@ximian.com)
 //
 // (C) 2001, 2002 Jason Diamond  http://injektilo.org/
+// (c) 2002 Ximian, Inc. (http://www.ximian.com)
 //
 
 namespace System.Xml
@@ -130,24 +132,25 @@ namespace System.Xml
 			return result;
 		}
 
-		[MonoTODO]
 		public virtual bool IsStartElement ()
 		{
-			throw new NotImplementedException ();
+			return (MoveToContent () == XmlNodeType.Element);
 		}
 
-		[MonoTODO]
 		public virtual bool IsStartElement (string name)
 		{
-			throw new NotImplementedException ();
+			if (!IsStartElement ())
+				return false;
+
+			return (Name == name);
 		}
 
-		[MonoTODO]
-		public virtual bool IsStartElement (
-			string localName,
-			string namespaceName)
+		public virtual bool IsStartElement (string localName, string namespaceName)
 		{
-			throw new NotImplementedException ();
+			if (!IsStartElement ())
+				return false;
+
+			return (LocalName == localName && NamespaceURI == namespaceName);
 		}
 
 		public abstract string LookupNamespace (string prefix);
@@ -160,10 +163,38 @@ namespace System.Xml
 			string localName,
 			string namespaceName);
 
-		[MonoTODO]
+		private bool IsContent (XmlNodeType nodeType)
+		{
+			/* MS doc says:
+			 * (non-white space text, CDATA, Element, EndElement, EntityReference, or EndEntity)
+			 */
+			switch (nodeType) {
+			case XmlNodeType.Text:
+				return true;
+			case XmlNodeType.CDATA:
+				return true;
+			case XmlNodeType.Element:
+				return true;
+			case XmlNodeType.EndElement:
+				return true;
+			case XmlNodeType.EntityReference:
+				return true;
+			case XmlNodeType.EndEntity:
+				return true;
+			}
+
+			return false;
+		}
+
 		public virtual XmlNodeType MoveToContent ()
 		{
-			throw new NotImplementedException ();
+			do {
+				XmlNodeType nodeType = NodeType;
+				if (IsContent (nodeType))
+					return nodeType;
+			} while (Read ());
+			
+			return XmlNodeType.None;
 		}
 
 		public abstract bool MoveToElement ();
@@ -176,64 +207,166 @@ namespace System.Xml
 
 		public abstract bool ReadAttributeValue ();
 
-		[MonoTODO]
 		public virtual string ReadElementString ()
 		{
-			throw new NotImplementedException ();
+			if (MoveToContent () != XmlNodeType.Element) {
+				string error = String.Format ("'{0}' is an invalid node type.",
+							      NodeType.ToString ());
+				throw new XmlException (this as IXmlLineInfo, error);
+			}
+
+			string result = String.Empty;
+			if (!IsEmptyElement) {
+				Read ();
+				result = ReadString ();
+				if (NodeType != XmlNodeType.EndElement) {
+					string error = String.Format ("'{0}' is an invalid node type.",
+								      NodeType.ToString ());
+					throw new XmlException (this as IXmlLineInfo, error);
+				}
+			}
+
+			Read ();
+			return result;
 		}
 
-		[MonoTODO]
 		public virtual string ReadElementString (string name)
 		{
-			throw new NotImplementedException ();
+			if (MoveToContent () != XmlNodeType.Element) {
+				string error = String.Format ("'{0}' is an invalid node type.",
+							      NodeType.ToString ());
+				throw new XmlException (this as IXmlLineInfo, error);
+			}
+
+			if (name != Name) {
+				string error = String.Format ("The {0} tag from namespace {1} is expected.",
+							      Name, NamespaceURI);
+				throw new XmlException (this as IXmlLineInfo, error);
+			}
+
+			string result = String.Empty;
+			if (!IsEmptyElement) {
+				Read ();
+				result = ReadString ();
+				if (NodeType != XmlNodeType.EndElement) {
+					string error = String.Format ("'{0}' is an invalid node type.",
+								      NodeType.ToString ());
+					throw new XmlException (this as IXmlLineInfo, error);
+				}
+			}
+
+			Read ();
+			return result;
 		}
 
-		[MonoTODO]
-		public virtual string ReadElementString (
-			string localName,
-			string namespaceName)
+		public virtual string ReadElementString (string localName, string namespaceName)
 		{
-			throw new NotImplementedException ();
+			if (MoveToContent () != XmlNodeType.Element) {
+				string error = String.Format ("'{0}' is an invalid node type.",
+							      NodeType.ToString ());
+				throw new XmlException (this as IXmlLineInfo, error);
+			}
+
+			if (localName != LocalName || NamespaceURI != namespaceName) {
+				string error = String.Format ("The {0} tag from namespace {1} is expected.",
+							      LocalName, NamespaceURI);
+				throw new XmlException (this as IXmlLineInfo, error);
+			}
+
+			string result = String.Empty;
+			if (!IsEmptyElement) {
+				Read ();
+				result = ReadString ();
+				if (NodeType != XmlNodeType.EndElement) {
+					string error = String.Format ("'{0}' is an invalid node type.",
+								      NodeType.ToString ());
+					throw new XmlException (this as IXmlLineInfo, error);
+				}
+			}
+
+			Read ();
+			return result;
 		}
 
-		[MonoTODO]
 		public virtual void ReadEndElement ()
 		{
-			throw new NotImplementedException ();
+			if (MoveToContent () != XmlNodeType.EndElement) {
+				string error = String.Format ("'{0}' is an invalid node type.",
+							      NodeType.ToString ());
+				throw new XmlException (this as IXmlLineInfo, error);
+			}
+
+			Read ();
 		}
 
 		public abstract string ReadInnerXml ();
 
 		public abstract string ReadOuterXml ();
 
-		[MonoTODO]
 		public virtual void ReadStartElement ()
 		{
-			throw new NotImplementedException ();
+			if (MoveToContent () != XmlNodeType.Element) {
+				string error = String.Format ("'{0}' is an invalid node type.",
+							      NodeType.ToString ());
+				throw new XmlException (this as IXmlLineInfo, error);
+			}
+
+			Read ();
 		}
 
-		[MonoTODO]
 		public virtual void ReadStartElement (string name)
 		{
-			throw new NotImplementedException ();
+			if (MoveToContent () != XmlNodeType.Element) {
+				string error = String.Format ("'{0}' is an invalid node type.",
+							      NodeType.ToString ());
+				throw new XmlException (this as IXmlLineInfo, error);
+			}
+
+			if (name != Name) {
+				string error = String.Format ("The {0} tag from namespace {1} is expected.",
+							      Name, NamespaceURI);
+				throw new XmlException (this as IXmlLineInfo, error);
+			}
+
+			Read ();
 		}
 
-		[MonoTODO]
-		public virtual void ReadStartElement (
-			string localName,
-			string namespaceName)
+		public virtual void ReadStartElement (string localName, string namespaceName)
 		{
-			throw new NotImplementedException ();
+			if (MoveToContent () != XmlNodeType.Element) {
+				string error = String.Format ("'{0}' is an invalid node type.",
+							      NodeType.ToString ());
+				throw new XmlException (this as IXmlLineInfo, error);
+			}
+
+			if (localName != LocalName || NamespaceURI != namespaceName) {
+				string error = String.Format ("The {0} tag from namespace {1} is expected.",
+							      LocalName, NamespaceURI);
+				throw new XmlException (this as IXmlLineInfo, error);
+			}
+
+			Read ();
 		}
 
 		public abstract string ReadString ();
 
 		public abstract void ResolveEntity ();
 
-		[MonoTODO]
 		public virtual void Skip ()
 		{
-			throw new NotImplementedException ();
+			if (ReadState != ReadState.Interactive)
+				return;
+
+			MoveToElement ();
+			if (NodeType != XmlNodeType.Element || IsEmptyElement) {
+				Read ();
+				return;
+			}
+				
+			int depth = Depth;
+			while (Read() && depth < Depth);
+			if (NodeType == XmlNodeType.EndElement)
+				Read ();
 		}
 
 		#endregion
