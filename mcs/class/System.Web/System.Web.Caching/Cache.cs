@@ -428,6 +428,16 @@ namespace System.Web.Caching
 			return objEntry.Item;
 		}
 
+		internal CacheEntry GetEntry (string strKey)
+		{
+			CacheEntry objEntry = UpdateCache (strKey, null, false, CacheItemRemovedReason.Expired);
+
+			if (objEntry == null)
+				return null;
+
+			return objEntry;
+		}
+
 		/// <summary>
 		/// Internal method used for removing, updating and adding CacheEntries into the cache.
 		/// </summary>
