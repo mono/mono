@@ -103,6 +103,8 @@ public class Manager
 					return null;
 				}
 
+				string orgName = name;
+
 				// Normalize the encoding name.
 				name = Normalize(name);
 
@@ -121,6 +123,11 @@ public class Manager
 					}
 				}
 
+				// e.g. Neither euc_jp nor shift-jis not allowed (Normalize() badness)
+				if (orgName.IndexOf ('_') > 0 && e.WebName.IndexOf ('-') > 0)
+					return null;
+				if (orgName.IndexOf ('-') > 0 && e.WebName.IndexOf ('_') > 0)
+					return null;
 				return e;
 			}
 	
