@@ -28,7 +28,7 @@ namespace Mono.CSharp {
 		//
 		// The list of global attributes (those that target the assembly)
 		//
-		static Attributes global_attributes;
+		static Hashtable global_attributes = new Hashtable ();
 		
 		//
 		// Whether we are being linked against the standard libraries.
@@ -636,14 +636,20 @@ namespace Mono.CSharp {
 			// Because of the strange way in which we do things, global
 			// attributes must be processed first.
 			//
-			if (global_attributes != null){
-				EmitContext ec = new EmitContext (
-					tree.Types, Mono.CSharp.Location.Null, null, null, 0, false);
+			if (global_attributes.Count > 0){
 				AssemblyBuilder ab = CodeGen.AssemblyBuilder;
-
-				Attribute.ApplyAttributes (ec, ab, ab, global_attributes,
-							   global_attributes.Location);
-			} 
+				TypeContainer dummy = new TypeContainer (null, "", new Location (-1));
+				EmitContext temp_ec = new EmitContext (
+					dummy, Mono.CSharp.Location.Null, null, null, 0, false);
+			
+				foreach (DictionaryEntry de in global_attributes){
+					Namespace ns = (Namespace) de.Key;
+					Attributes attrs = (Attributes) de.Value;
+					
+					dummy.Namespace = ns;
+					Attribute.ApplyAttributes (temp_ec, ab, ab, attrs, attrs.Location);
+				}
+			}
 			
 			if (attribute_types != null)
 				foreach (TypeContainer tc in attribute_types)
@@ -716,12 +722,20 @@ namespace Mono.CSharp {
 			return fb;
 		}
 
-		static public void AddGlobalAttribute (AttributeSection attr, Location loc)
+		//
+		// Adds a global attribute that was declared in `container', 
+		// the attribute is in `attr', and it was defined at `loc'
+		//
+		static public void AddGlobalAttribute (TypeContainer container,
+						       AttributeSection attr, Location loc)
 		{
-			if (global_attributes == null)
-				global_attributes = new Attributes (attr, loc);
+			Namespace ns = container.Namespace;
+			Attributes a = (Attributes) global_attributes [ns];
+
+			if (a == null)
+				global_attributes [ns] = new Attributes (attr, loc);
 			else
-				global_attributes.AddAttribute (attr);
+				a.AddAttribute (attr);
 		}
 	}
 }

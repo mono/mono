@@ -318,7 +318,8 @@ namespace_declaration
 		if (attrs != null) {
 			foreach (AttributeSection asec in attrs.AttributeSections)
 				if (asec.Target == "assembly")
-					RootContext.AddGlobalAttribute (asec, lexer.Location);
+					RootContext.AddGlobalAttribute (
+						current_container, asec, lexer.Location);
 		}
 
 		current_namespace = RootContext.Tree.RecordNamespace (current_namespace, name, (string) $3);
@@ -430,7 +431,7 @@ attribute_sections
 		AttributeSection sect = (AttributeSection) $1;
 
 		if (sect.Target == "assembly")
-			RootContext.AddGlobalAttribute (sect, lexer.Location);
+			RootContext.AddGlobalAttribute (current_container, sect, lexer.Location);
 		  
 	        $$ = new Attributes ((AttributeSection) $1, lexer.Location);
           }
@@ -440,7 +441,7 @@ attribute_sections
 		AttributeSection sect = (AttributeSection) $2;
 
 		if (sect.Target == "assembly")
-			RootContext.AddGlobalAttribute (sect, lexer.Location);
+			RootContext.AddGlobalAttribute (current_container, sect, lexer.Location);
 
 		if ($1 != null) {
 			attrs = (Attributes) $1;
@@ -648,30 +649,19 @@ struct_declaration
 		current_container.Namespace = current_namespace;
 		RootContext.Tree.RecordDecl (full_struct_name, new_struct);
 	  }
-	  opt_struct_interfaces
+	  opt_class_base
 	  struct_body
 	  opt_semicolon
 	  {
 		Struct new_struct = (Struct) current_container;
 
+		if ($6 != null)
+			new_struct.Bases = (ArrayList) $6;
+
 		current_container = current_container.Parent;
 		CheckDef (current_container.AddStruct (new_struct), new_struct.Name, new_struct.Location);
 		$$ = new_struct;
 	  }
-	;
-
-opt_struct_interfaces
-	: /* empty */
-	| struct_interfaces
-	;
-
-struct_interfaces
-	: struct_interface
-	| struct_interfaces struct_interface
-	; 
-
-struct_interface
-	: COLON type_list
 	;
 
 struct_body

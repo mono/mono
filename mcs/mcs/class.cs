@@ -803,7 +803,7 @@ namespace Mono.CSharp {
 			for (i = start, j = 0; i < count; i++, j++){
 				string name = (string) bases [i];
 				Type t = FindType (name);
-				
+
 				if (t == null){
 					error = true;
 					return null;

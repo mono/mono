@@ -1,3 +1,18 @@
+2002-05-06  Miguel de Icaza  <miguel@ximian.com>
+
+	* rootcontext.cs (AddGlobalAttributes): Track attributes on the
+	typecontainer that they are declared, because the
+	typecontainer/namespace will have the list of using clauses that
+	need to be applied.
+
+	Assembly Attributes were escaping the normal registration
+	mechanism. 
+
+	(EmitCode): Apply attributes within an EmitContext that represents
+	the container they were declared on.
+	
+	* cs-parser.jay: Track bases for structs.  How did I get this wrong?
+
 2002-05-06  Ravi Pratap  <ravi@ximian.com>
 
 	* ecore.cs (FindMostEncompassingType, FindMostEncompassedType):
