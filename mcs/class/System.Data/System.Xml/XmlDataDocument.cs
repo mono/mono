@@ -63,24 +63,11 @@ namespace System.Xml {
 
 			this.dataSet = dataset;
 
-			// Read DataSet in as document if there is data in tables
-			bool HaveRows = false;
-			foreach (DataTable T in dataSet.Tables) {
+			XmlReader xmlReader = new XmlTextReader (new StringReader (dataSet.GetXml ()));
 
-				if (T.Rows.Count > 0) {
-					HaveRows = true;
-					break;
-				}
-			}
-
-			if (HaveRows) {
-
-				XmlReader xmlReader = new XmlTextReader (new StringReader (dataSet.GetXml ()));
-
-				// Load DataSet's xml-data
-				base.Load (xmlReader);
-				xmlReader.Close ();
-			}
+			// Load DataSet's xml-data
+			base.Load (xmlReader);
+			xmlReader.Close ();
 
 			foreach (DataTable Table in DataSet.Tables) {
 				

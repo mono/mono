@@ -1,3 +1,8 @@
+2003-03-12  Alan Tam <Tam@SiuLung.com>
+
+	* XmlDataDocument.cs: Still need to print tag for the DataSet if there
+	is no data at all.
+	
 2003-01-27  Ville Palo <vi64pa@koti.soon.fi>
 
 	* ChangeLog: Added this file.
