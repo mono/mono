@@ -82,7 +82,6 @@ namespace System.Web.UI
 				throw new ArgumentNullException ("input");
 
 			string real_input = Encoding.UTF8.GetString (Convert.FromBase64String (input));
-			Console.WriteLine (real_input);
 			return DeserializeObject (real_input);
 		}
 
@@ -121,7 +120,6 @@ namespace System.Web.UI
 			}
 
 			result.Length--;
-			Console.WriteLine ("\t\tenclosed: " + result);
 			return result.ToString ();
 		}
 		
@@ -130,7 +128,6 @@ namespace System.Web.UI
 			if (input == null || input.Length == 0)
 				return new string [0];
 
-			Console.WriteLine ("Recibo: " + input);
 			int length = input.Length;
 			bool escaped = false;
 			int opened = 0;
@@ -159,8 +156,6 @@ namespace System.Web.UI
 
 			string [] result = new string [list.Count];
 			list.CopyTo (result, 0);
-			foreach (string s in result)
-				Console.WriteLine ("\t->" + s);
 			return result;
 		}
 
