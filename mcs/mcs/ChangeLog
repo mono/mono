@@ -1,3 +1,9 @@
+2003-04-27  Miguel de Icaza  <miguel@ximian.com>
+
+	* expression.cs (ArrayCreation.CheckIndices): warn if the user has
+	more nested levels of expressions, but there are no more
+	dimensions specified.  Avoids crash on bug 41906.
+
 2003-04-26  Miguel de Icaza  <miguel@ximian.com>
 
 	* statement.cs (Block): replace Implicit bool, for a generic

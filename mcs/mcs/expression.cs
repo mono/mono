@@ -5135,6 +5135,11 @@ namespace Mono.CSharp {
 						Error_IncorrectArrayInitializer ();
 						return false;
 					}
+					if (specified_dims && (idx + 1 >= arguments.Count)){
+						Error (623, "Array initializers can only be used in a variable or field initializer, try using the new expression");
+						return false;
+					}
+					
 					bool ret = CheckIndices (ec, (ArrayList) o, idx + 1, specified_dims);
 					if (!ret)
 						return false;
@@ -6280,7 +6285,7 @@ namespace Mono.CSharp {
 			}
 
 			Type expr_type = new_expr.Type;
-			
+		      
 			if (expr_type.IsPointer){
 				Error (23, "The `.' operator can not be applied to pointer operands (" +
 				       TypeManager.CSharpName (expr_type) + ")");
