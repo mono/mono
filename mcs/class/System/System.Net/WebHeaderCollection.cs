@@ -165,13 +165,16 @@ namespace System.Net
 			if (values == null || values.Length == 0)
 				return null;
 
+			/*
 			if (IsMultiValue (header)) {
 				values = GetMultipleValues (values);
 			}
+			*/
 
 			return values;
 		}
 
+		/* Now i wonder why this is here...
 		static string [] GetMultipleValues (string [] values)
 		{
 			ArrayList mvalues = new ArrayList (values.Length);
@@ -207,6 +210,7 @@ namespace System.Net
 
 			return (string []) mvalues.ToArray (typeof (string));
 		}
+		*/
 
 		public static bool IsRestricted (string headerName)
 		{

@@ -1,3 +1,13 @@
+2005-03-10 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpWebResponse.cs: moved cookie parsing into its own class.
+	* WebHeaderCollection.cs: remove (probably bogus) GetMultipleValues
+	call.
+	* HttpWebRequest.cs: don't let exception raised in the ctor of
+	HttpWebResponse vanish.
+
+	Fixes bug #73275.
+
 2005-03-01 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* WebHeaderCollection.cs: handle commas inside quotes when splitting
