@@ -164,7 +164,11 @@ namespace System {
 
 		public bool IsClass {
 			get {
-				if (this == typeof (System.Enum) || this == typeof (System.ValueType))
+				//
+				// This code used to probe for "this == typeof (System.Enum)", but in
+				// The .NET Framework 1.0, the above test return false
+				//
+				if (this == typeof (System.ValueType))
 					return true;
 				if (IsInterface)
 					return false;
