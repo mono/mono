@@ -1,4 +1,8 @@
 
+Fri May 31 15:34:18 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* monobitset.c, monobitset.h: fixes. added mono_bitset_foreach().
+
 Wed May 22 12:42:06 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
 	* monobitset.c: use our own bit_nth_lsf since the glib one is buggy.
