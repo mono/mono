@@ -126,6 +126,17 @@ namespace System.Drawing {
 		static internal extern Status GdipGetTextureWrapMode (IntPtr texture, out WrapMode wrapMode);
 		[DllImport("gdiplus.dll")]
 		static internal extern Status GdipSetTextureWrapMode (IntPtr texture, WrapMode wrapMode);
+		[DllImport("gdiplus.dll")]
+		static internal extern Status GdipMultiplyTextureTransform (IntPtr texture, IntPtr matrix, MatrixOrder order);
+		[DllImport("gdiplus.dll")]
+		static internal extern Status GdipResetTextureTransform (IntPtr texture);
+		[DllImport("gdiplus.dll")]
+		static internal extern Status GdipRotateTextureTransform (IntPtr texture, float angle, MatrixOrder order);
+		[DllImport("gdiplus.dll")]
+		static internal extern Status GdipScaleTextureTransform (IntPtr texture, float sx, float sy, MatrixOrder order);
+		[DllImport("gdiplus.dll")]
+		static internal extern Status GdipTranslateTextureTransform (IntPtr texture, float dx, float dy, MatrixOrder order);
+
 		// Graphics functions
 		[DllImport("gdiplus.dll")]
 		static internal extern Status GdipCreateFromHDC(IntPtr hDC, out int graphics);

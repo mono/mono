@@ -166,6 +166,61 @@ namespace System.Drawing
 			return new TextureBrush (nativeObject);
 		}
 
+		public void MultiplyTransform (Matrix matrix)
+		{
+			MultiplyTransform (matrix, MatrixOrder.Prepend);
+		}
+
+		public void MultiplyTransform (Matrix matrix, MatrixOrder order)
+		{
+			Status status = GDIPlus.GdipMultiplyTextureTransform (nativeObject, matrix.nativeMatrix, order);
+			if (status != Status.Ok)
+				throw GetException (status);
+		}
+
+		public void ResetTransform ()
+		{
+			Status status = GDIPlus.GdipResetTextureTransform (nativeObject);
+			if (status != Status.Ok)
+				throw GetException (status);
+		}
+
+		public void RotateTransform (float angle)
+		{
+			RotateTransform (angle, MatrixOrder.Prepend);
+		}
+
+		public void RotateTransform (float angle, MatrixOrder order)
+		{
+			Status status = GDIPlus.GdipRotateTextureTransform (nativeObject, angle, order);
+			if (status != Status.Ok)
+				throw GetException (status);
+		}
+
+		public void ScaleTransform (float sx, float sy)
+		{
+			ScaleTransform (sx, sy, MatrixOrder.Prepend);
+		}
+
+		public void ScaleTransform (float sx, float sy, MatrixOrder order)
+		{
+			Status status = GDIPlus.GdipScaleTextureTransform (nativeObject, sx, sy, order);
+			if (status != Status.Ok)
+				throw GetException (status);
+		}
+
+		public void TranslateTransform (float dx, float dy)
+		{
+			TranslateTransform (dx, dy, MatrixOrder.Prepend);
+		}
+
+		public void TranslateTransform (float dx, float dy, MatrixOrder order)
+		{
+			Status status = GDIPlus.GdipTranslateTextureTransform (nativeObject, dx, dy, order);
+			if (status != Status.Ok)
+				throw GetException (status);
+		}
+
 		Exception GetException (Status status)
 		{
 			String message;
