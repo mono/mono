@@ -1,3 +1,9 @@
+2004-06-03  Ravindra <rkumar@novell.com>
+
+	* Makefile: Updated. We don't need to define the flag
+	DECLARE_CDECL_DELEGATES anymore. As we have moved all the
+	codecs to libgdiplus.
+
 2004-05-26  Ravindra <rkumar@novell.com>
 
 	* System.Drawing_test.dll.sources: Added TestColor.cs to the test sources list.
