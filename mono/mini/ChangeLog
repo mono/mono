@@ -1,3 +1,9 @@
+2005-03-19  Zoltan Varga  <vargaz@freemail.hu>
+
+	* mini.h mini.c: Add mono_get_jit_tls_key ().
+
+	* mini-x86.c: Enable fast TLS support on windows.
+
 2005-03-17  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* declsec.c: Renamed aptc to allowpartiallytrustedcallers.
