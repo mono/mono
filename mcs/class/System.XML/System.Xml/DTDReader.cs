@@ -959,7 +959,7 @@ namespace System.Xml
 			switch(PeekChar ()) {
 			case 'C':	// CDATA
 				Expect ("CDATA");
-				def.Datatype = XmlSchemaDatatype.FromName ("normalizedString");
+				def.Datatype = XmlSchemaDatatype.FromName ("normalizedString", XmlSchema.Namespace);
 				break;
 			case 'I':	// ID, IDREF, IDREFS
 				Expect ("ID");
@@ -968,23 +968,23 @@ namespace System.Xml
 					if(PeekChar () == 'S') {
 						// IDREFS
 						ReadChar ();
-						def.Datatype = XmlSchemaDatatype.FromName ("IDREFS");
+						def.Datatype = XmlSchemaDatatype.FromName ("IDREFS", XmlSchema.Namespace);
 					}
 					else	// IDREF
-						def.Datatype = XmlSchemaDatatype.FromName ("IDREF");
+						def.Datatype = XmlSchemaDatatype.FromName ("IDREF", XmlSchema.Namespace);
 				}
 				else	// ID
-					def.Datatype = XmlSchemaDatatype.FromName ("ID");
+					def.Datatype = XmlSchemaDatatype.FromName ("ID", XmlSchema.Namespace);
 				break;
 			case 'E':	// ENTITY, ENTITIES
 				Expect ("ENTIT");
 				switch(ReadChar ()) {
 					case 'Y':	// ENTITY
-						def.Datatype = XmlSchemaDatatype.FromName ("ENTITY");
+						def.Datatype = XmlSchemaDatatype.FromName ("ENTITY", XmlSchema.Namespace);
 						break;
 					case 'I':	// ENTITIES
 						Expect ("ES");
-						def.Datatype = XmlSchemaDatatype.FromName ("ENTITIES");
+						def.Datatype = XmlSchemaDatatype.FromName ("ENTITIES", XmlSchema.Namespace);
 						break;
 				}
 				break;
@@ -995,14 +995,14 @@ namespace System.Xml
 					Expect ("MTOKEN");
 					if(PeekChar ()=='S') {	// NMTOKENS
 						ReadChar ();
-						def.Datatype = XmlSchemaDatatype.FromName ("NMTOKENS");
+						def.Datatype = XmlSchemaDatatype.FromName ("NMTOKENS", XmlSchema.Namespace);
 					}
 					else	// NMTOKEN
-						def.Datatype = XmlSchemaDatatype.FromName ("NMTOKEN");
+						def.Datatype = XmlSchemaDatatype.FromName ("NMTOKEN", XmlSchema.Namespace);
 					break;
 				case 'O':
 					Expect ("OTATION");
-					def.Datatype = XmlSchemaDatatype.FromName ("NOTATION");
+					def.Datatype = XmlSchemaDatatype.FromName ("NOTATION", XmlSchema.Namespace);
 					if (!SkipWhitespace ())
 						throw new XmlException (this as IXmlLineInfo,
 							"Whitespace is required between name and content in DTD attribute definition.");
@@ -1023,7 +1023,7 @@ namespace System.Xml
 				}
 				break;
 			default:	// Enumerated Values
-				def.Datatype = XmlSchemaDatatype.FromName ("NMTOKEN");
+				def.Datatype = XmlSchemaDatatype.FromName ("NMTOKEN", XmlSchema.Namespace);
 				TryExpandPERef ();
 				Expect ('(');
 				SkipWhitespace ();
