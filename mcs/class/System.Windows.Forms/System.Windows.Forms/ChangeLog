@@ -1,3 +1,10 @@
+2003-07-31 Alexandre Pigolkine <pigolkine@gmx.de>
+	* Control.cs : do not keep oldBounds if LAYOUT_SUSPENDED is true, 
+					call OnMouseDown/Up functions
+	* Button.cs
+	* ButtonBase.cs		painting moved inside OnPaint function
+	* NativeWindow.cs	(commented) debug output added
+
 2003-07-31 Aleksey Ryabchuk <ryabchuk@yahoo.com>
 	* Control.cs : anchoring algorithm was fixed to avoid inaccuracies caused by rounding
 	* TextBoxBase.cs : set FixedHeight style for single line edit boxes

@@ -31,6 +31,7 @@ namespace System.Windows.Forms {
 		ImeMode imeMode;
 		bool isDefault;
 		Label label;
+		bool isPushed;
 
 //		
 //		// --- Constructor ---
@@ -43,6 +44,7 @@ namespace System.Windows.Forms {
 			textAlign = ContentAlignment.MiddleCenter;
 			imeMode = ImeMode.Inherit;
 			isDefault = false;
+			isPushed = false;
 		}
 
 		// --- Properties ---
@@ -119,6 +121,12 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		internal bool Pushed {
+			get {
+				return isPushed;
+			}
+		}
+
 		[MonoTODO]
 		public virtual ContentAlignment TextAlign {
 			get { 
@@ -173,6 +181,11 @@ namespace System.Windows.Forms {
 		
 		protected override void OnMouseDown (MouseEventArgs mevent) 
 		{
+			if ((mevent.Button & MouseButtons.Left) == MouseButtons.Left) {
+				isPushed = true;
+				Invalidate(); 
+			}
+
 			base.OnMouseDown (mevent);
 		}
 		
@@ -199,6 +212,8 @@ namespace System.Windows.Forms {
 		
 		protected override void OnMouseUp (MouseEventArgs mevent) 
 		{
+			isPushed = false;
+			Invalidate(); 
 			base.OnMouseUp (mevent);
 		}
 		

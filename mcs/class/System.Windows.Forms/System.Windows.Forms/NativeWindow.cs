@@ -239,6 +239,7 @@ namespace System.Windows.Forms {
 				if( window != null)
 					window.OnThreadException(ex);
 			}
+			//Console.WriteLine("NativeWindow.Message {0}, result {1}", msg, message.Result);
  			return message.Result;
  		}
  		

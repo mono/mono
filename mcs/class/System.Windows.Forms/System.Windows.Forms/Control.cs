@@ -2535,6 +2535,14 @@ namespace System.Windows.Forms {
 			this.clientWidth   = clientWidth;
 			this.clientHeight  = clientHeight;
 
+			// FIXME: not sure whether this is correct
+			if (statuses [ LAYOUT_SUSPENDED ]) {
+				oldBounds.X = bounds.X;
+				oldBounds.Y = bounds.Y;
+				oldBounds.Width = bounds.Width;
+				oldBounds.Height = bounds.Height;
+			}
+
 			if (bLocationChanged)
 				OnLocationChanged (EventArgs.Empty);
 			if (bSizeChanged)
@@ -2744,12 +2752,12 @@ namespace System.Windows.Forms {
 					break;
 				case Msg.WM_LBUTTONDOWN:
 					// FIXME:
-					//OnMouseDown (eventArgs);
+					OnMouseDown (Msg2MouseEventArgs(ref m));
 					CallControlWndProc (ref m);
 					break;
 				case Msg.WM_LBUTTONUP:
     				// FIXME:
-    				//OnMouseUp (eventArgs);
+    				OnMouseUp (Msg2MouseEventArgs(ref m));
 					CallControlWndProc (ref m);
 					break;
     			case Msg.WM_MOUSEWHEEL:

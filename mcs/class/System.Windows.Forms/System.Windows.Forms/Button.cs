@@ -32,6 +32,7 @@ namespace System.Windows.Forms {
 			dialogResult = DialogResult.None;
 			MouseIsOver_ = false;
 			SubClassWndProc_ = true;
+			SetStyle (ControlStyles.UserPaint | ControlStyles.AllPaintingInWmPaint, true);
 		}
 		
 		// --- Properties ---
@@ -45,9 +46,6 @@ namespace System.Windows.Forms {
 					WindowStyles.WS_CHILD | 
 					WindowStyles.WS_VISIBLE |
 					WindowStyles.WS_CLIPSIBLINGS );
-				if(FlatStyle != FlatStyle.System) {
-					createParams.Style |= (int) ButtonStyles.BS_OWNERDRAW;
-				}
 				createParams.Style |= (int)Win32.ContentAlignment2SystemButtonStyle(TextAlign);
 				// CHECKME : this call is commented because (IMHO) Control.CreateHandle suppose to do this
 				// and this function is CreateParams, not CreateHandle
@@ -123,32 +121,30 @@ namespace System.Windows.Forms {
 
 		protected override void OnMouseEnter (EventArgs mevent) {
 			base.OnMouseEnter(mevent);
-			if( FlatStyle == FlatStyle.Flat || FlatStyle == FlatStyle.Popup) {
-				Invalidate();
-			}
 		}
     
 		protected override void OnMouseLeave (EventArgs mevent) {
 			base.OnMouseLeave(mevent);
-			if( FlatStyle == FlatStyle.Flat || FlatStyle == FlatStyle.Popup) {
-				Invalidate();
-			}
 		}
 
-		internal void OnDrawItem(DrawItemEventArgs e) {
+		protected override void OnPaint (PaintEventArgs e) {
 
-			Bitmap bmp = new Bitmap( e.Bounds.Width, e.Bounds.Height,e.Graphics);
+			Rectangle paintBounds = ClientRectangle;
+			Bitmap bmp = new Bitmap( paintBounds.Width, paintBounds.Height,e.Graphics);
 			Graphics paintOn = Graphics.FromImage(bmp);
 			
 			Color controlColor = BackColor; //SystemColors.Control;
 			Color textColor = ForeColor; // SystemColors.ControlText;
+			if (BackColor == System.Drawing.Color.Red) {
+				Color t = System.Drawing.Color.Red;
+			}
 			//Graphics paintOn = e.Graphics;
-			Rectangle rc = e.Bounds;
-			Rectangle rcImageClip = e.Bounds;
+			Rectangle rc = paintBounds;
+			Rectangle rcImageClip = paintBounds;
 			rcImageClip.Inflate(-2,-2);
 
 			if( FlatStyle == FlatStyle.Flat) {
-				if( (e.State & DrawItemState.Selected) != 0) {
+				if( Pushed) {
 					SolidBrush sb = new SolidBrush(ControlPaint.Light(controlColor));
 					paintOn.FillRectangle(sb, rc);
 					sb.Dispose();
@@ -169,7 +165,7 @@ namespace System.Windows.Forms {
 				ControlPaint.DrawBorder(paintOn, rc, textColor, ButtonBorderStyle.Solid);
 				rc.Inflate(-1,-1);
 
-				if( (e.State & DrawItemState.Focus) != 0) {
+				if( Focused) {
 					ControlPaint.DrawBorder(paintOn, rc, textColor, ButtonBorderStyle.Solid);
 				}
 				else {
@@ -178,14 +174,14 @@ namespace System.Windows.Forms {
 				rc.Inflate(-3,-3);
 			}
 			else if( FlatStyle == FlatStyle.Popup) {
-				if( (e.State & DrawItemState.Selected) != 0) {
+				if( Pushed) {
 					ControlPaint.DrawBorder(paintOn, rc, textColor, ButtonBorderStyle.Solid);
 					rc.Inflate(-1,-1);
 					ControlPaint.DrawBorder(paintOn, rc, textColor, ButtonBorderStyle.Solid);
 					rc.Inflate(-1,-1);
 				}
 				else {
-					if( (e.State & DrawItemState.Focus) != 0) {
+					if( Focused) {
 						ControlPaint.DrawBorder(paintOn, rc, textColor, ButtonBorderStyle.Solid);
 						rc.Inflate(-1,-1);
 					}
@@ -210,7 +206,7 @@ namespace System.Windows.Forms {
 			else {
 				ButtonState	btnState = ButtonState.Normal;
 
-				if( (e.State & DrawItemState.Selected) != 0) {
+				if( Pushed) {
 					btnState = ButtonState.Pushed;
 				}
 
@@ -222,7 +218,7 @@ namespace System.Windows.Forms {
 			// Do not place Text and Images on the borders 
 			paintOn.Clip = new Region(rcImageClip);
 			if( BackgroundImage != null) {
-				paintOn.DrawImage(BackgroundImage, e.Bounds.X, e.Bounds.Y, BackgroundImage.Width, BackgroundImage.Height);
+				paintOn.DrawImage(BackgroundImage, 0, 0, BackgroundImage.Width, BackgroundImage.Height);
 			}
 
 			// Make "Focus" rectangle
@@ -257,7 +253,7 @@ namespace System.Windows.Forms {
 				paintOn.DrawImage(Image, X, Y, Image.Width, Image.Height);
 			}
 
-			if( (e.State & DrawItemState.Selected) != 0) {
+			if( Pushed) {
 				// FlatStyle.Flat uses color and not text offset to show state
 				// FIXME: use SysMetrics to determine offset values ?
 				if( FlatStyle != FlatStyle.Flat) {
@@ -273,27 +269,21 @@ namespace System.Windows.Forms {
 				ControlPaint.DrawStringDisabled(paintOn, Text, Font, textColor, rc, Win32.ContentAlignment2StringFormat(TextAlign));
 			}
 
-			if( (e.State & DrawItemState.Focus) != 0) {
+			if( Focused) {
 				// FIXME: Draw focus rectangle in different colors
 				ControlPaint.DrawFocusRectangle( paintOn, focusRC);
 			}
-			e.Graphics.DrawImage(bmp, e.Bounds.X, e.Bounds.Y, e.Bounds.Width, e.Bounds.Height);
+			e.Graphics.DrawImage(bmp, 0, 0, paintBounds.Width, paintBounds.Height);
 			bmp.Dispose();
 		}
 
 		protected override void WndProc (ref Message m) {
 			switch (m.Msg) {
 				case Msg.WM_DRAWITEM: {
-					DRAWITEMSTRUCT dis = new DRAWITEMSTRUCT();
-					dis = (DRAWITEMSTRUCT)Marshal.PtrToStructure(m.LParam, dis.GetType());
-					Rectangle	rect = new Rectangle(dis.rcItem.left, dis.rcItem.top, dis.rcItem.right - dis.rcItem.left, dis.rcItem.bottom - dis.rcItem.top);
-					DrawItemEventArgs args = new DrawItemEventArgs(Graphics.FromHdc(dis.hDC), Font,
-						rect, dis.itemID, (DrawItemState)dis.itemState);
-					OnDrawItem( args);
-					//Marshal.StructureToPtr(dis, m.LParam, false);
 					m.Result = (IntPtr)1;
 				}
 					break;
+/*			
 				case Msg.WM_ERASEBKGND:
 					if( FlatStyle != FlatStyle.System) {
 						m.Result = (IntPtr)1;
@@ -302,6 +292,7 @@ namespace System.Windows.Forms {
 						base.WndProc (ref m);
 					}
 					break;
+*/			
 				default:
 					base.WndProc (ref m);
 					break;
