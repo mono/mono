@@ -1,3 +1,8 @@
+2004-09-19  Miguel de Icaza  <miguel@ximian.com>
+
+	* cs-parser.jay: Do not report the stack trace, it is useless
+	anyways for the production compiler.
+
 2004-09-15  Raja R Harinath  <rharinath@novell.com>
 
 	* cs-parser.jay (fixed_statement): Introduce a scope for the

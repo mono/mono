@@ -4350,7 +4350,7 @@ public override void parse ()
 		// Please do not remove this, it is used during debugging
 		// of the grammar
 		//
-		Console.WriteLine (e);
+		//	Console.WriteLine (e);
 		Report.Error (-25, lexer.Location, "Parsing error");
 		if (Driver.parser_verbose)
 			Console.WriteLine (e);
