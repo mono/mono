@@ -70,7 +70,7 @@ namespace System.Web.Util
 		public static bool IsRelativeUrl(string url)
 		{
 			if (url.IndexOf(':') == -1)
-				return IsRooted(url);
+				return !IsRooted(url);
 
 			return false;
 		}
