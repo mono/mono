@@ -48,6 +48,7 @@ System.Drawing/SystemBrushes.cs
 System.Drawing/SystemColors.cs
 System.Drawing/SystemIcons.cs
 System.Drawing/SystemPens.cs
+System.Drawing/TextureBrush.cs
 System.Drawing/ToolboxBitmapAttribute.cs
 System.Drawing.Design/UITypeEditorEditStyle.cs
 System.Drawing.Design/IPropertyValueUIService.cs
@@ -115,8 +116,8 @@ System.Drawing.Imaging/ColorMode.cs
 System.Drawing.Imaging/ColorPalette.cs
 System.Drawing.Imaging/EmfPlusRecordType.cs
 System.Drawing.Imaging/EmfType.cs
-System.Drawing.Imaging/EncoderParameterValueType.cs
 System.Drawing.Imaging/Encoder.cs
+System.Drawing.Imaging/EncoderParameterValueType.cs
 System.Drawing.Imaging/EncoderValue.cs
 System.Drawing.Imaging/FrameDimension.cs
 System.Drawing.Imaging/ImageAttributes.cs

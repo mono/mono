@@ -1,4 +1,7 @@
 2004-01-26  Ravindra <rkumar@novell.com>
+	* System.Drawing.dll.sources: Added TextureBrush.cs.
+
+2004-01-26  Ravindra <rkumar@novell.com>
 	* System.Drawing_test.dll.sources: Added to create 
 	System.Drawing_test.dll.
 
