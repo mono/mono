@@ -1,3 +1,8 @@
+2003-12-15  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* SymmetricAlgorithm.cs: Fixed padding for None and Zeros modes. Unit
+	tests for padding modes are now in PaddingModeTest.cs.
+
 2003-12-10  Zoltan Varga  <vargaz@freemail.hu>
 
 	* HMAC.cs: Fix compilation warnings.

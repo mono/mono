@@ -216,21 +216,33 @@ namespace System.Security.Cryptography {
 			return total;
 		}
 
-		private byte[] FinalEncrypt (byte [] inputBuffer, int inputOffset, int inputCount) 
+		private byte[] FinalEncrypt (byte[] inputBuffer, int inputOffset, int inputCount) 
 		{
-			if ((inputCount == 0) && (algo.Padding != PaddingMode.PKCS7))
-				return new byte[0];
-
 			// are there still full block to process ?
 			int full = (inputCount / BlockSizeByte) * BlockSizeByte;
 			int rem = inputCount - full;
 			int total = full;
 
-			// we need to add an extra block if...
-			// a. the last block isn't complate (partial);
-			// b. the last block is complete but we use padding
-			if ((rem > 0) || (algo.Padding != PaddingMode.None))
+			if (algo.Padding != PaddingMode.PKCS7) {
+				if (inputCount == 0)
+					return new byte [0];
+				if (rem != 0) {
+					if (algo.Padding == PaddingMode.None)
+						throw new CryptographicException ("invalid block length");
+					// zero padding the input (by adding a block for the partial data)
+					byte[] paddedInput = new byte [full + BlockSizeByte];
+					Buffer.BlockCopy (inputBuffer, inputOffset, paddedInput, 0, inputCount);
+					inputBuffer = paddedInput;
+					inputOffset = 0;
+					inputCount = paddedInput.Length;
+					total = inputCount;
+				}
+			}
+			else {
+				// we need to add an extra block for padding
 				total += BlockSizeByte;
+			}
+
 			byte[] res = new byte [total];
 
 			// process all blocks except the last (final) block
@@ -241,23 +253,17 @@ namespace System.Security.Cryptography {
 			}
 
 			// now we only have a single last block to encrypt
-			int padding = BlockSizeByte - rem;
-			switch (algo.Padding) {
-				case PaddingMode.None:
-					break;
-				case PaddingMode.PKCS7:
-					for (int i = res.Length; --i >= (res.Length - padding);) 
-						res [i] = (byte) padding;
-					break;
-				case PaddingMode.Zeros:
-					for (int i = res.Length; --i >= (res.Length - padding);)
-						res [i] = 0;
-					break;
+			if (algo.Padding == PaddingMode.PKCS7) {
+				byte padding = (byte) (BlockSizeByte - rem);
+				for (int i = res.Length; --i >= (res.Length - padding);) 
+					res [i] = padding;
+				Array.Copy (inputBuffer, inputOffset, res, full, rem);
+				// the last padded block will be transformed in-place
+				TransformBlock (res, full, BlockSizeByte, res, full);
 			}
-			Array.Copy (inputBuffer, inputOffset, res, full, rem);
+			else
+				TransformBlock (inputBuffer, inputOffset, BlockSizeByte, res, inputOffset);
 
-			// the last padded block will be transformed in-place
-			TransformBlock (res, full, BlockSizeByte, res, full);
 			return res;
 		}
 
@@ -268,22 +274,18 @@ namespace System.Security.Cryptography {
 
 			int total = inputCount;
 			byte[] res = new byte [total];
-			int nres = 0;
- 			while (inputCount > 0) {
-				TransformBlock (inputBuffer, inputOffset, BlockSizeByte, res, nres);
- 				inputOffset += BlockSizeByte;
-				nres += BlockSizeByte;
+			while (inputCount > 0) {
+				TransformBlock (inputBuffer, inputOffset, BlockSizeByte, res, inputOffset);
+				inputOffset += BlockSizeByte;
 				inputCount -= BlockSizeByte;
 			}
 
 			switch (algo.Padding) {
-				case PaddingMode.None:
+				case PaddingMode.None:	// nothing to do - it's a multiple of block size
+				case PaddingMode.Zeros:	// nothing to do - user must unpad himself
 					break;
 				case PaddingMode.PKCS7:
 					total -= res [total - 1];
-					break;
-				case PaddingMode.Zeros:
-					// TODO
 					break;
 			}
 
@@ -383,7 +385,7 @@ namespace System.Security.Cryptography {
 				if (KeySizes.IsLegalKeySize (this.LegalBlockSizesValue, value))
 					this.BlockSizeValue = value;
 				else
-					throw new CryptographicException ("block size not supported by algorithm");
+					throw new CryptographicException("block size not supported by algorithm");
 			}
 		}
 
@@ -394,7 +396,7 @@ namespace System.Security.Cryptography {
 			get { return this.FeedbackSizeValue; }
 			set {
 				if (value > this.BlockSizeValue)
-					throw new CryptographicException ("feedback size larger than block size");
+					throw new CryptographicException("feedback size larger than block size");
 				else
 					this.FeedbackSizeValue = value;
 			}
@@ -406,18 +408,19 @@ namespace System.Security.Cryptography {
 		public virtual byte[] IV {
 			get {
 				if (this.IVValue == null)
-					GenerateIV ();
+					GenerateIV();
 
 				return this.IVValue;
 			}
 			set {
 				if (value == null)
-					throw new ArgumentNullException ("value");
-				// compare bytes with bits
-				if ((value.Length << 3) > this.BlockSizeValue)
-					throw new CryptographicException ("IV length can't be greater than block size");
+					throw new ArgumentNullException ("tried setting initial vector to null");
+					
+				if (value.Length * 8 != this.BlockSizeValue)
+					throw new CryptographicException ("IV length must match block size");
 				
-				this.IVValue = (byte[]) value.Clone ();
+				this.IVValue = new byte [value.Length];
+				Array.Copy (value, 0, this.IVValue, 0, value.Length);
 			}
 		}
 
@@ -427,21 +430,20 @@ namespace System.Security.Cryptography {
 		public virtual byte[] Key {
 			get {
 				if (this.KeyValue == null)
-					GenerateKey ();
+					GenerateKey();
 
 				return this.KeyValue;
 			}
 			set {
 				if (value == null)
-					throw new ArgumentNullException ("value");
-				// compare bytes with bits
-				int length = (value.Length << 3);
+					throw new ArgumentNullException ("tried setting key to null");
 
-				if (!KeySizes.IsLegalKeySize (this.LegalKeySizesValue, length))
+				if (!KeySizes.IsLegalKeySize (this.LegalKeySizesValue, value.Length * 8))
 					throw new CryptographicException ("key size not supported by algorithm");
 
-				this.KeySizeValue = length;
-				this.KeyValue = (byte[]) value.Clone ();
+				this.KeySizeValue = value.Length * 8;
+				this.KeyValue = new byte [value.Length];
+				Array.Copy (value, 0, this.KeyValue, 0, value.Length);
 			}
 		}
 		
@@ -479,7 +481,7 @@ namespace System.Security.Cryptography {
 		public virtual CipherMode Mode {
 			get { return this.ModeValue; }
 			set {
-				if (Enum.IsDefined (ModeValue.GetType (), value))
+				if (Enum.IsDefined( ModeValue.GetType (), value))
 					this.ModeValue = value;
 				else
 					throw new CryptographicException ("padding mode not available");
@@ -563,4 +565,3 @@ namespace System.Security.Cryptography {
 		}
 	}
 }
-
