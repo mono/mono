@@ -258,7 +258,7 @@ namespace Mono.MonoBASIC
 			// are not broken.
 
 			public void HandleToken(IfElseStateMachine.Token tok)
-			{
+			{	
 				err = (int) errTable[(int)state, (int)tok];
 
 				if(err != 0)
@@ -1603,27 +1603,21 @@ interface_declaration
 
 opt_interface_base
 	: /* empty */			  { $$ = null; }
-	| interface_base
+	| interface_bases
+	;
+
+interface_bases
+	: interface_base
+	| interface_bases interface_base
+	  {
+		ArrayList bases = (ArrayList) $1;
+		bases.AddRange ((ArrayList) $2);
+		$$ = bases;
+	  }
 	;
 
 interface_base
-	: INHERITS interface_type_list	  { $$ = $2; }
-	;
-
-interface_type_list
-	: interface_type
-	  {
-		ArrayList interfaces = new ArrayList ();
-
-		interfaces.Add ($1);
-		$$ = interfaces;
-	  }
-	| interface_type_list COMMA interface_type
-	  {
-		ArrayList interfaces = (ArrayList) $1;
-		interfaces.Add ($3);
-		$$ = interfaces;
-	  }
+	: INHERITS type_list logical_end_of_line  { $$ = $2; }
 	;
 
 interface_body
@@ -4183,10 +4177,6 @@ floating_point_type
 	| DOUBLE	{ $$ = TypeManager.system_double_expr; }
 	;
 
-interface_type
-	: namespace_or_type_name
-	;
-	
 pp_directive
 	: HASH IDENTIFIER OPEN_PARENS LITERAL_STRING COMMA LITERAL_INTEGER CLOSE_PARENS EOL
 	  { 

@@ -1,3 +1,6 @@
+2004-08-11 Anirban Bhattacharjee <banirban@novell.com>
+	* mb-parser.jay: Interface inheritance made better
+
 2004-08-09  Jambunathan K  <kjambunathan@novell.com>
 	* mb-parser.jay: Sanitized parser's generic error message 
 
