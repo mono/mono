@@ -1,3 +1,10 @@
+2004-06-08  Dick Porter  <dick@ximian.com>
+
+	* locales.c
+	(ves_icall_System_Globalization_CompareInfo_internal_index_char):
+	Fix memory leak and segfault-causing typo.  No idea how this one
+	lasted so long without being noticed.
+
 2004-06-09  Zoltan Varga  <vargaz@freemail.hu>
 
 	* icall.c (ves_icall_Type_GetEvents_internal): Handle events without
