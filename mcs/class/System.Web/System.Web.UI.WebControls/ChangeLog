@@ -16,7 +16,8 @@
 	* DataListItemEventArgs.cs,
 	* MonthChangedEventArgs.cs,
 	* RepeaterItemEventArgs.cs,
-	* ServerValidateEventArgs.cs
+	* ServerValidateEventArgs.cs,
+	* DataGridPageChangedEventArgs.cs
 	                              - Damn, I marked them "*", while they
 	            did not exist.
 
