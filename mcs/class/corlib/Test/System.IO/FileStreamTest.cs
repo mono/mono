@@ -158,9 +158,7 @@ namespace MonoTests.System.IO
                 	}                	
 		}
 
-                [Test]
-		[ExpectedException (typeof (DirectoryNotFoundException))]
-		public void CtorDirectoryNotFoundException ()
+		private void CtorDirectoryNotFoundException (FileMode mode)
 		{
 			string path = TempFolder + DSC + "thisDirectoryShouldNotExists";
 			if (Directory.Exists (path))
@@ -168,7 +166,7 @@ namespace MonoTests.System.IO
 
 			FileStream stream = null;				
                 	try {
-                		stream = new FileStream (path + DSC + "eitherthisfile.test", FileMode.CreateNew);
+                		stream = new FileStream (path + DSC + "eitherthisfile.test", mode);
                 	} finally {
 
 				if (stream != null)
@@ -177,6 +175,48 @@ namespace MonoTests.System.IO
 				if (Directory.Exists (path))
 					Directory.Delete (path, true);
                 	}                		
+		}
+
+		[Test]
+		[ExpectedException (typeof (DirectoryNotFoundException))]
+		public void CtorDirectoryNotFoundException_CreateNew ()
+		{
+			CtorDirectoryNotFoundException (FileMode.CreateNew);
+		}
+
+		[Test]
+		[ExpectedException (typeof (DirectoryNotFoundException))]
+		public void CtorDirectoryNotFoundException_Create ()
+		{
+			CtorDirectoryNotFoundException (FileMode.Create);
+		}
+
+		[Test]
+		[ExpectedException (typeof (DirectoryNotFoundException))]
+		public void CtorDirectoryNotFoundException_Open ()
+		{
+			CtorDirectoryNotFoundException (FileMode.Open);
+		}
+
+		[Test]
+		[ExpectedException (typeof (DirectoryNotFoundException))]
+		public void CtorDirectoryNotFoundException_OpenOrCreate ()
+		{
+			CtorDirectoryNotFoundException (FileMode.OpenOrCreate);
+		}
+
+		[Test]
+		[ExpectedException (typeof (DirectoryNotFoundException))]
+		public void CtorDirectoryNotFoundException_Truncate ()
+		{
+			CtorDirectoryNotFoundException (FileMode.Truncate);
+		}
+
+		[Test]
+		[ExpectedException (typeof (DirectoryNotFoundException))]
+		public void CtorDirectoryNotFoundException_Append ()
+		{
+			CtorDirectoryNotFoundException (FileMode.Append);
 		}
 
 		[Test]
@@ -388,6 +428,19 @@ namespace MonoTests.System.IO
 				if (File.Exists (fn))
 					File.Delete (fn);
 			}
+		}
+
+		[Test]
+		[ExpectedException (typeof (UnauthorizedAccessException))]
+		public void CtorReadDirectoryAsFile ()
+		{
+			FileStream stream = null;
+			try {
+				stream = new FileStream (TempFolder, FileMode.Open, FileAccess.Read);
+                	} finally {
+				if (stream != null)
+					stream.Close ();
+                	}
 		}
 
 		[Test]

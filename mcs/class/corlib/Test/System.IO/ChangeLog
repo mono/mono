@@ -1,3 +1,9 @@
+2005-03-15  Sebastien Pouliot  <sebastien@ximian.com> 
+
+	* FileStreamTest.cs: Added tests for all FileMode when a directory
+	doesn't exists. Added a test for UnauthorizedAccessException when a
+	directory is opened as a file.
+
 2005-01-28  Sebastien Pouliot  <sebastien@ximian.com> 
 
 	* FileLoadExceptionCas.cs: Fixed failures under MS for NET_1_1.
