@@ -89,12 +89,14 @@ public class TypeManager {
 	static public Type obsolete_attribute_type;
 	static public Type conditional_attribute_type;
 	static public Type in_attribute_type;
+	static public Type anonymous_method_type;
 	static public Type cls_compliant_attribute_type;
 	static public Type typed_reference_type;
 	static public Type arg_iterator_type;
 	static public Type mbr_type;
 	static public Type struct_layout_attribute_type;
 	static public Type field_offset_attribute_type;
+	static public Type security_attr_type;
 
 	static public Type generic_ienumerator_type;
 	static public Type generic_ienumerable_type;
@@ -121,6 +123,7 @@ public class TypeManager {
 	static public TypeExpr system_asynccallback_expr;
 	static public TypeExpr system_iasyncresult_expr;
 	static public TypeExpr system_valuetype_expr;
+	static public TypeExpr system_intptr_expr;
 
 	//
 	// This is only used when compiling corlib
@@ -361,6 +364,7 @@ public class TypeManager {
 		system_asynccallback_expr = new TypeLookupExpression ("System.AsyncCallback");
 		system_iasyncresult_expr = new TypeLookupExpression ("System.IAsyncResult");
 		system_valuetype_expr  = new TypeLookupExpression ("System.ValueType");
+		system_intptr_expr  = new TypeLookupExpression ("System.IntPtr");
 	}
 
 	static TypeManager ()
@@ -505,6 +509,54 @@ public class TypeManager {
 		return LookupTypeContainer (t);
 	}
 	
+	/// <summary>
+	/// Fills member container from base interfaces
+	/// </summary>
+	public static IMemberContainer LookupInterfaceContainer (Type[] types)
+	{
+		if (types == null)
+			return null;
+
+		IMemberContainer complete = null;
+		foreach (Type t in types) {
+			IMemberContainer one_type_cont = null;
+			if (t is TypeBuilder) {
+				one_type_cont = builder_to_declspace [t] as IMemberContainer;
+			} else
+				one_type_cont = TypeHandle.GetTypeHandle (t);
+
+			if (complete == null) {
+				complete = one_type_cont;
+				continue;
+			}
+
+			// We need to avoid including same member more than once
+			foreach (DictionaryEntry de in one_type_cont.MemberCache.Members) {
+				object o = complete.MemberCache.Members [de.Key];
+				if (o == null) {
+					complete.MemberCache.Members.Add (de.Key, de.Value);
+					continue;
+				}
+
+				ArrayList al_old = (ArrayList)o;
+				ArrayList al_new = (ArrayList)de.Value;
+
+				foreach (MemberCache.CacheEntry ce in al_new) {
+					bool exist = false;
+					foreach (MemberCache.CacheEntry ce_old in al_old) {
+						if (ce.Member == ce_old.Member) {
+							exist = true;
+							break;
+						}
+					}
+					if (!exist)
+						al_old.Add (ce);
+				}
+			}
+		}
+		return complete;
+	}
+
 	public static IMemberContainer LookupMemberContainer (Type t)
 	{
 		if (t is TypeBuilder) {
@@ -1177,6 +1229,7 @@ public class TypeManager {
 		cls_compliant_attribute_type = CoreLookupType ("System.CLSCompliantAttribute");
 		struct_layout_attribute_type = CoreLookupType ("System.Runtime.InteropServices.StructLayoutAttribute");
 		field_offset_attribute_type = CoreLookupType ("System.Runtime.InteropServices.FieldOffsetAttribute");
+		security_attr_type = CoreLookupType ("System.Security.Permissions.SecurityAttribute");
 
 		//
 		// Generic types
@@ -1270,6 +1323,11 @@ public class TypeManager {
 		system_asynccallback_expr.Type = asynccallback_type;
 		system_iasyncresult_expr.Type = iasyncresult_type;
 		system_valuetype_expr.Type = value_type;
+
+		//
+		// These are only used for compare purposes
+		//
+		anonymous_method_type = typeof (AnonymousMethod);
 	}
 
 	//
@@ -1940,6 +1998,48 @@ public class TypeManager {
 
 			type = type.BaseType;
 		} while (type != null);
+
+		return false;
+	}
+
+	public static bool IsPrivateAccessible (Type type, Type parent)
+	{
+		if (type.Equals (parent))
+			return true;
+
+		if ((type is TypeBuilder) && type.IsGenericTypeDefinition && parent.IsGenericInstance) {
+			//
+			// `a' is a generic type definition's TypeBuilder and `b' is a
+			// generic instance of the same type.
+			//
+			// Example:
+			//
+			// class Stack<T>
+			// {
+			//     void Test (Stack<T> stack) { }
+			// }
+			//
+			// The first argument of `Test' will be the generic instance
+			// "Stack<!0>" - which is the same type than the "Stack" TypeBuilder.
+			//
+			//
+			// We hit this via Closure.Filter() for gen-82.cs.
+			//
+			if (type != parent.GetGenericTypeDefinition ())
+				return false;
+
+			return true;
+		}
+
+		if (type.IsGenericInstance && parent.IsGenericInstance) {
+			Type tdef = type.GetGenericTypeDefinition ();
+			Type pdef = parent.GetGenericTypeDefinition ();
+
+			if (type.GetGenericTypeDefinition () != parent.GetGenericTypeDefinition ())
+				return false;
+
+			return true;
+		}
 
 		return false;
 	}
@@ -2832,7 +2932,7 @@ public class TypeManager {
 
 			if (ma == MethodAttributes.Private)
 				return private_ok ||
-					IsEqual (invocation_type, mb.DeclaringType) ||
+					IsPrivateAccessible (invocation_type, mb.DeclaringType) ||
 					IsNestedChildOf (invocation_type, mb.DeclaringType);
 
 			//
@@ -2883,7 +2983,7 @@ public class TypeManager {
 
 			if (fa == FieldAttributes.Private)
 				return private_ok ||
-					IsEqual (invocation_type, fi.DeclaringType) ||
+					IsPrivateAccessible (invocation_type, fi.DeclaringType) ||
 					IsNestedChildOf (invocation_type, fi.DeclaringType);
 
 			//
@@ -2944,7 +3044,7 @@ public class TypeManager {
 
 			if (((qualifier_type == null) || (qualifier_type == invocation_type)) &&
 			    (invocation_type != null) &&
-			    IsEqual (m.DeclaringType, invocation_type))
+			    IsPrivateAccessible (m.DeclaringType, invocation_type))
 				return true;
 
 			//
@@ -3106,8 +3206,10 @@ public class TypeManager {
 				// This happens with interfaces, they have a null
 				// basetype.  Look members up in the Object class.
 				//
-				if (current_type == null)
+				if (current_type == null) {
 					current_type = TypeManager.object_type;
+					searching = true;
+				}
 			}
 			
 			if (list.Length == 0)
@@ -3312,7 +3414,7 @@ public sealed class TypeHandle : IMemberContainer {
 		if (type.BaseType != null)
 			BaseType = GetTypeHandle (type.BaseType);
 		this.is_interface = type.IsInterface || type.IsGenericParameter;
-		this.member_cache = new MemberCache (this);
+		this.member_cache = new MemberCache (this, true);
 	}
 
 	// IMemberContainer methods

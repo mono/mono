@@ -51,9 +51,8 @@ namespace Mono.CSharp {
 					      "catch clause");
 				return false;
 			}
-			if (ec.InAnonymousMethod){
-				Report.Error (1621, loc, "yield statement can not appear " +
-					      "inside an anonymoud method");
+			if (ec.CurrentAnonymousMethod != null){
+				Report.Error (1621, loc, "yield statement can not appear inside an anonymoud method");
 				return false;
 			}
 
@@ -112,9 +111,9 @@ namespace Mono.CSharp {
 	}
 
 	public class Iterator : Class {
+		ToplevelBlock original_block;
+		ToplevelBlock block;
 		string original_name;
-		Block original_block;
-		Block block;
 
 		Type iterator_type;
 		TypeExpr iterator_type_expr;
@@ -134,6 +133,8 @@ namespace Mono.CSharp {
 		// Context from the original method
 		//
 		TypeContainer container;
+		TypeExpr current_type;
+		Type this_type;
 		Type return_type;
 		Type [] param_types;
 		InternalParameters parameters;
@@ -223,6 +224,7 @@ namespace Mono.CSharp {
 			Label dispatcher = ig.DefineLabel ();
 			ig.Emit (OpCodes.Br, dispatcher);
 
+			ec.RemapToProxy = true;
 			Label [] labels = new Label [resume_points.Count];
 			for (int i = 0; i < labels.Length; i++) {
 				ResumePoint point = (ResumePoint) resume_points [i];
@@ -246,6 +248,7 @@ namespace Mono.CSharp {
 				ig.EndExceptionBlock ();
 				ig.Emit (OpCodes.Br, end);
 			}
+			ec.RemapToProxy = false;
 
 			ig.MarkLabel (dispatcher);
 			ig.Emit (OpCodes.Ldarg_0);
@@ -355,7 +358,7 @@ namespace Mono.CSharp {
 		//
 		public Iterator (TypeContainer container, string name, Type return_type,
 				 Type [] param_types, InternalParameters parameters,
-				 int modifiers, Block block, Location loc)
+				 int modifiers, ToplevelBlock block, Location loc)
 			: base (container.NamespaceEntry, container, MakeProxyName (name),
 				Modifiers.PRIVATE, null, loc)
 		{
@@ -365,7 +368,7 @@ namespace Mono.CSharp {
 			this.parameters = parameters;
 			this.original_name = name;
 			this.original_block = block;
-			this.block = new Block (null);
+			this.block = new ToplevelBlock (loc);
 
 			fields = new Hashtable ();
 
@@ -374,6 +377,8 @@ namespace Mono.CSharp {
 
 		public bool DefineIterator ()
 		{
+			ec = new EmitContext (this, Mono.CSharp.Location.Null, null, null, ModFlags);
+
 			if (!CheckType (return_type)) {
 				Report.Error (
 					1624, Location,
@@ -392,6 +397,11 @@ namespace Mono.CSharp {
 					return false;
 				}
 			}
+
+			if (container.CurrentType != null)
+				this_type = container.CurrentType.ResolveType (ec);
+			else
+				this_type = container.TypeBuilder;
 
 			generic_args = new TypeArguments (Location);
 			generic_args.Add (new TypeExpression (iterator_type, Location));
@@ -432,6 +442,11 @@ namespace Mono.CSharp {
 		//
 		protected override bool DefineNestedTypes ()
 		{
+			if (CurrentType != null)
+				current_type = CurrentType;
+			else
+				current_type = new TypeExpression (TypeBuilder, Location);
+
 			Define_Fields ();
 			Define_Constructor ();
 			Define_Current (false);
@@ -464,7 +479,7 @@ namespace Mono.CSharp {
 
 			ArrayList args = new ArrayList ();
 			if (!is_static) {
-				Type t = container.TypeBuilder;
+				Type t = this_type;
 				args.Add (new Argument (
 					new ThisParameterReference (t, 0, Location)));
 			}
@@ -477,8 +492,7 @@ namespace Mono.CSharp {
 					new SimpleParameterReference (t, first + i, Location)));
 			}
 
-			Expression new_expr = new New (
-				new TypeExpression (TypeBuilder, Location), args, Location);
+			Expression new_expr = new New (current_type, args, Location);
 
 			block.AddStatement (new NoCheckReturn (new_expr, Location));
 		}
@@ -499,8 +513,7 @@ namespace Mono.CSharp {
 
 			if (!is_static) {
 				this_field = new Field (
-					this,
-					new TypeExpression (container.TypeBuilder, Location),
+					this, new TypeExpression (this_type, loc),
 					Modifiers.PRIVATE, "this", null, null, loc);
 				AddField (this_field);
 			}
@@ -526,7 +539,7 @@ namespace Mono.CSharp {
 
 			if (!is_static)
 				list.Add (new Parameter (
-					new TypeExpression (container.TypeBuilder, Location),
+					new TypeExpression (this_type, Location),
 					"this", Parameter.Modifier.NONE, null));
 			list.Add (new Parameter (
 				TypeManager.system_boolean_expr, "initialized",
@@ -550,10 +563,10 @@ namespace Mono.CSharp {
 				Location);
 			AddConstructor (ctor);
 
-			Block block = ctor.Block = new Block (null);
+			ToplevelBlock block = ctor.Block = new ToplevelBlock (Location);
 
 			if (!is_static) {
-				Type t = container.TypeBuilder;
+				Type t = this_type;
 
 				Assign assign = new Assign (
 					new FieldExpression (this_field),
@@ -618,7 +631,7 @@ namespace Mono.CSharp {
 
 			MemberName name = new MemberName (left, "Current", null);
 
-			Block get_block = new Block (null);
+			ToplevelBlock get_block = new ToplevelBlock (Location);
 
 			get_block.AddStatement (new If (
 				new Binary (
@@ -630,7 +643,7 @@ namespace Mono.CSharp {
 					new FieldExpression (current_field), Location),
 				Location));
 
-			Accessor getter = new Accessor (get_block, null, Location);
+			Accessor getter = new Accessor (get_block, 0, null, Location);
 
 			Property current = new Property (
 				this, type, 0, false, name, null, getter, null, Location);
@@ -646,7 +659,7 @@ namespace Mono.CSharp {
 				Location.Null);
 			AddMethod (move_next);
 
-			Block block = move_next.Block = new Block (null);
+			ToplevelBlock block = move_next.Block = new ToplevelBlock (Location);
 
 			MoveNextMethod inline = new MoveNextMethod (this, Location);
 			block.AddStatement (inline);
@@ -674,7 +687,7 @@ namespace Mono.CSharp {
 				Location.Null);
 			AddMethod (get_enumerator);
 
-			get_enumerator.Block = new Block (null);
+			get_enumerator.Block = new ToplevelBlock (Location);
 
 			Expression ce = new MemberAccess (
 				new SimpleName ("System.Threading.Interlocked", Location),
@@ -707,8 +720,7 @@ namespace Mono.CSharp {
 				args.Add (new Argument (
 						  new FieldExpression (parameter_fields [i])));
 
-			Expression new_expr = new New (
-				new TypeExpression (TypeBuilder, Location), args, Location);
+			Expression new_expr = new New (current_type, args, Location);
 			get_enumerator.Block.AddStatement (new Return (new_expr, Location));
 		}
 
@@ -891,7 +903,7 @@ namespace Mono.CSharp {
 				Parameters.EmptyReadOnlyParameters, null, Location);
 			AddMethod (reset);
 
-			reset.Block = new Block (null);
+			reset.Block = new ToplevelBlock (Location);
 			reset.Block.AddStatement (Create_ThrowNotSupported ());
 		}
 
@@ -903,11 +915,11 @@ namespace Mono.CSharp {
 				Parameters.EmptyReadOnlyParameters, null, Location);
 			AddMethod (dispose);
 
-			dispose.Block = new Block (null);
+			dispose.Block = new ToplevelBlock (Location);
 			dispose.Block.AddStatement (new DisposeMethod (this, Location));
 		}
 
-		public Block Block {
+		public ToplevelBlock Block {
 			get { return block; }
 		}
 

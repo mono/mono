@@ -144,6 +144,9 @@ namespace Mono.CSharp {
 			else if (is_varargs && pos >= pi.Length)
 				return Parameter.Modifier.ARGLIST;
 			
+			if (gpd != null)
+				return gpd.ParameterModifier (pos);
+
 			Type t = pi [pos].ParameterType;
 			if (t.IsByRef){
 				if ((pi [pos].Attributes & ParameterAttributes.Out) != 0)
@@ -174,11 +177,7 @@ namespace Mono.CSharp {
 		{
 			this.param_types = param_types;
 			this.Parameters = parameters;
-		}
 
-		public InternalParameters (DeclSpace ds, Parameters parameters)
-			: this (parameters.GetParameterInfo (ds), parameters)
-		{
 			has_varargs = parameters.HasArglist;
 
 			if (param_types == null)
@@ -187,9 +186,9 @@ namespace Mono.CSharp {
 				count = param_types.Length;
 		}
 
-		public InternalParameters (DeclSpace ds, Parameters parameters,
+		public InternalParameters (Type [] param_types, Parameters parameters,
 					   TypeParameter [] type_params)
-			: this (ds, parameters)
+			: this (param_types, parameters)
 		{
 			this.TypeParameters = type_params;
 		}

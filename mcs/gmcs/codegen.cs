@@ -4,16 +4,20 @@
 // Author:
 //   Miguel de Icaza (miguel@ximian.com)
 //
-// (C) 2001 Ximian, Inc.
+// (C) 2001, 2002, 2003 Ximian, Inc.
+// (C) 2004 Novell, Inc.
 //
-
+//#define PRODUCTION
 using System;
 using System.IO;
 using System.Collections;
+using System.Collections.Specialized;
 using System.Reflection;
 using System.Reflection.Emit;
 using System.Runtime.InteropServices;
+using System.Security;
 using System.Security.Cryptography;
+using System.Security.Permissions;
 
 using Mono.Security.Cryptography;
 
@@ -367,7 +371,7 @@ namespace Mono.CSharp {
 		/// <summary>
 		///  Whether we are inside an anonymous method.
 		/// </summary>
-		public bool InAnonymousMethod;
+		public AnonymousMethod CurrentAnonymousMethod;
 		
 		/// <summary>
 		///   Location for this EmitContext
@@ -392,13 +396,34 @@ namespace Mono.CSharp {
 		public bool InEnumContext;
 
 		/// <summary>
+		///   Anonymous methods can capture local variables and fields,
+		///   this object tracks it.  It is copied from the TopLevelBlock
+		///   field.
+		/// </summary>
+		public CaptureContext capture_context;
+
+		/// <summary>
 		/// Trace when method is called and is obsolete then this member suppress message
 		/// when call is inside next [Obsolete] method or type.
 		/// </summary>
 		public bool TestObsoleteMethodUsage = true;
 
+		/// <summary>
+		///    The current iterator
+		/// </summary>
 		public Iterator CurrentIterator;
 
+		/// <summary>
+		///    Whether we are in the resolving stage or not
+		/// </summary>
+		enum Phase {
+			Created,
+			Resolving,
+			Emitting
+		}
+		
+		Phase current_phase;
+		
 		FlowBranching current_flow_branching;
 		
 		public EmitContext (DeclSpace parent, DeclSpace ds, Location l, ILGenerator ig,
@@ -418,6 +443,7 @@ namespace Mono.CSharp {
 			IsConstructor = is_constructor;
 			CurrentBlock = null;
 			CurrentFile = 0;
+			current_phase = Phase.Created;
 			
 			if (parent != null){
 				// Can only be null for the ResolveType contexts.
@@ -448,6 +474,12 @@ namespace Mono.CSharp {
 		public FlowBranching CurrentBranching {
 			get {
 				return current_flow_branching;
+			}
+		}
+
+		public bool HaveCaptureInfo {
+			get {
+				return capture_context != null;
 			}
 		}
 
@@ -517,30 +549,141 @@ namespace Mono.CSharp {
 			current_flow_branching = current_flow_branching.Parent;
 		}
 
-		public void EmitTopBlock (Block block, InternalParameters ip, Location loc)
+		public void CaptureVariable (LocalInfo li)
 		{
-			bool unreachable = false;
+			capture_context.AddLocal (CurrentAnonymousMethod, li);
+			li.IsCaptured = true;
+		}
+
+		public void CaptureParameter (string name, Type t, int idx)
+		{
+			
+			capture_context.AddParameter (this, CurrentAnonymousMethod, name, t, idx);
+		}
+		
+		//
+		// Use to register a field as captured
+		//
+		public void CaptureField (FieldExpr fe)
+		{
+			capture_context.AddField (fe);
+		}
+
+		//
+		// Whether anonymous methods have captured variables
+		//
+		public bool HaveCapturedVariables ()
+		{
+			if (capture_context != null)
+				return capture_context.HaveCapturedVariables;
+			return false;
+		}
+
+		//
+		// Whether anonymous methods have captured fields or this.
+		//
+		public bool HaveCapturedFields ()
+		{
+			if (capture_context != null)
+				return capture_context.HaveCapturedFields;
+			return false;
+		}
+
+		//
+		// Emits the instance pointer for the host method
+		//
+		public void EmitMethodHostInstance (EmitContext target, AnonymousMethod am)
+		{
+			if (capture_context != null)
+				capture_context.EmitMethodHostInstance (target, am);
+			else if (IsStatic)
+				target.ig.Emit (OpCodes.Ldnull);
+			else
+				target.ig.Emit (OpCodes.Ldarg_0);
+		}
+
+		//
+		// Returns whether the `local' variable has been captured by an anonymous
+		// method
+		//
+		public bool IsCaptured (LocalInfo local)
+		{
+			return capture_context.IsCaptured (local);
+		}
+
+		public bool IsParameterCaptured (string name)
+		{
+			if (capture_context != null)
+				return capture_context.IsParameterCaptured (name);
+			return false;
+		}
+		
+		public void EmitMeta (ToplevelBlock b, InternalParameters ip)
+		{
+			if (capture_context != null)
+				capture_context.EmitHelperClasses (this);
+			b.EmitMeta (this);
+
+			if (HasReturnLabel)
+				ReturnLabel = ig.DefineLabel ();
+		}
+
+		//
+		// Here until we can fix the problem with Mono.CSharp.Switch, which
+		// currently can not cope with ig == null during resolve (which must
+		// be fixed for switch statements to work on anonymous methods).
+		//
+		public void EmitTopBlock (ToplevelBlock block, InternalParameters ip, Location loc)
+		{
+			if (block == null)
+				return;
+			
+			bool unreachable;
+			
+			if (ResolveTopBlock (null, block, ip, loc, out unreachable)){
+				EmitMeta (block, ip);
+
+				current_phase = Phase.Emitting;
+				EmitResolvedTopBlock (block, unreachable);
+			}
+		}
+
+		public bool ResolveTopBlock (EmitContext anonymous_method_host, ToplevelBlock block,
+					     InternalParameters ip, Location loc, out bool unreachable)
+		{
+			current_phase = Phase.Resolving;
+			
+			unreachable = false;
+
+			capture_context = block.CaptureContext;
 
 			if (!Location.IsNull (loc))
 				CurrentFile = loc.File;
 
-			if (block != null){
+#if PRODUCTION
 			    try {
+#endif
 				int errors = Report.Errors;
 
-				block.EmitMeta (this, ip);
+				block.ResolveMeta (block, this, ip);
+
 
 				if (Report.Errors == errors){
 					bool old_do_flow_analysis = DoFlowAnalysis;
 					DoFlowAnalysis = true;
 
+					if (anonymous_method_host != null)
+						current_flow_branching = FlowBranching.CreateBranching (
+						anonymous_method_host.CurrentBranching, FlowBranching.BranchingType.Block,
+						block, loc);
+					else 
 					current_flow_branching = FlowBranching.CreateBranching (
 						null, FlowBranching.BranchingType.Block, block, loc);
 
 					if (!block.Resolve (this)) {
 						current_flow_branching = null;
 						DoFlowAnalysis = old_do_flow_analysis;
-						return;
+						return false;
 					}
 
 					FlowBranching.Reachability reachability = current_flow_branching.MergeTopBlock ();
@@ -548,14 +691,12 @@ namespace Mono.CSharp {
 
 					DoFlowAnalysis = old_do_flow_analysis;
 
-					block.Emit (this);
-
 					if (reachability.AlwaysReturns ||
 					    reachability.AlwaysThrows ||
 					    reachability.IsUnreachable)
 						unreachable = true;
 					}
-#if FIXME
+#if PRODUCTION
 			    } catch (Exception e) {
 					Console.WriteLine ("Exception caught by the compiler while compiling:");
 					Console.WriteLine ("   Block that caused the problem begin at: " + loc);
@@ -565,24 +706,35 @@ namespace Mono.CSharp {
 								   CurrentBlock.StartLocation, CurrentBlock.EndLocation);
 					}
 					Console.WriteLine (e.GetType ().FullName + ": " + e.Message);
-					Console.WriteLine (Report.FriendlyStackTrace (e));
-					
-					Environment.Exit (1);
-#else
-			    } finally {
-#endif
-			    }
+				throw;
 			}
+#endif
 
 			if (ReturnType != null && !unreachable){
 				if (!InIterator){
+					if (CurrentAnonymousMethod != null){
+						Report.Error (1643, loc, "Not all code paths return a value in anonymous method of type `{0}'",
+							      CurrentAnonymousMethod.Type);
+					} else {
 					Report.Error (161, loc, "Not all code paths return a value");
-					return;
+					}
+
+					return false;
 				}
 			}
+			block.CompleteContexts ();
+
+			return true;
+		}
+
+		public void EmitResolvedTopBlock (ToplevelBlock block, bool unreachable)
+		{
+			if (block != null)
+				block.Emit (this);
 
 			if (HasReturnLabel)
 				ig.MarkLabel (ReturnLabel);
+
 			if (return_value != null){
 				ig.Emit (OpCodes.Ldloc, return_value);
 				ig.Emit (OpCodes.Ret);
@@ -608,6 +760,12 @@ namespace Mono.CSharp {
 					ig.Emit (OpCodes.Ret);
 				}
 			}
+
+			//
+			// Close pending helper classes if we are the toplevel
+			//
+			if (capture_context != null && capture_context.ParentToplevel == null)
+				capture_context.CloseHelperClasses ();
 		}
 
 		/// <summary>
@@ -714,25 +872,43 @@ namespace Mono.CSharp {
 		///   return value from the function.  By default this is not
 		///   used.  This is only required when returns are found inside
 		///   Try or Catch statements.
+		///
+		///   This method is typically invoked from the Emit phase, so
+		///   we allow the creation of a return label if it was not
+		///   requested during the resolution phase.   Could be cleaned
+		///   up, but it would replicate a lot of logic in the Emit phase
+		///   of the code that uses it.
 		/// </summary>
 		public LocalBuilder TemporaryReturn ()
 		{
 			if (return_value == null){
 				return_value = ig.DeclareLocal (ReturnType);
+				if (!HasReturnLabel){
 				ReturnLabel = ig.DefineLabel ();
 				HasReturnLabel = true;
+			}
 			}
 
 			return return_value;
 		}
 
+		/// <summary>
+		///   This method is used during the Resolution phase to flag the
+		///   need to define the ReturnLabel
+		/// </summary>
 		public void NeedReturnLabel ()
 		{
-			if (!InIterator && !HasReturnLabel) {
-				ReturnLabel = ig.DefineLabel ();
+			if (current_phase != Phase.Resolving){
+				//
+				// The reason is that the `ReturnLabel' is declared between
+				// resolution and emission
+				// 
+				throw new Exception ("NeedReturnLabel called from Emit phase, should only be called during Resolve");
+			}
+			
+			if (!InIterator && !HasReturnLabel) 
 				HasReturnLabel = true;
 			}
-		}
 
 		//
 		// Creates a field `name' with the type `t' on the proxy class
@@ -743,24 +919,6 @@ namespace Mono.CSharp {
 				return CurrentIterator.MapVariable ("v_", name, t);
 
 			throw new Exception ("MapVariable for an unknown state");
-		}
-
-		//
-		// Invoke this routine to remap a VariableInfo into the
-		// proper MemberAccess expression
-		//
-		public Expression RemapLocal (LocalInfo local_info)
-		{
-			FieldExpr fe = new FieldExpr (local_info.FieldBuilder, loc);
-			fe.InstanceExpression = new ProxyInstance ();
-			return fe.DoResolve (this);
-		}
-
-		public Expression RemapLocalLValue (LocalInfo local_info, Expression right_side)
-		{
-			FieldExpr fe = new FieldExpr (local_info.FieldBuilder, loc);
-			fe.InstanceExpression = new ProxyInstance ();
-			return fe.DoResolveLValue (this, right_side);
 		}
 
 		public Expression RemapParameter (int idx)
@@ -784,13 +942,58 @@ namespace Mono.CSharp {
 		public void EmitThis ()
 		{
 			ig.Emit (OpCodes.Ldarg_0);
-			if (InIterator && !IsStatic){
+			if (InIterator){
+				if (!IsStatic){
 				FieldBuilder this_field = CurrentIterator.this_field.FieldBuilder;
 				if (TypeManager.IsValueType (this_field.FieldType))
 					ig.Emit (OpCodes.Ldflda, this_field);
 				else
 					ig.Emit (OpCodes.Ldfld, this_field);
 			}
+			} else if (capture_context != null && CurrentAnonymousMethod != null){
+				ScopeInfo si = CurrentAnonymousMethod.Scope;
+				while (si != null){
+					if (si.ParentLink != null)
+						ig.Emit (OpCodes.Ldfld, si.ParentLink);
+					if (si.THIS != null){
+						ig.Emit (OpCodes.Ldfld, si.THIS);
+						break;
+					}
+					si = si.ParentScope;
+				}
+			} 
+		}
+
+		//
+		// Emits the code necessary to load the instance required
+		// to access the captured LocalInfo
+		//
+		public void EmitCapturedVariableInstance (LocalInfo li)
+		{
+			if (RemapToProxy){
+				ig.Emit (OpCodes.Ldarg_0);
+				return;
+			}
+			
+			if (capture_context == null)
+				throw new Exception ("Calling EmitCapturedContext when there is no capture_context");
+			
+			capture_context.EmitCapturedVariableInstance (this, li, CurrentAnonymousMethod);
+		}
+
+		public void EmitParameter (string name)
+		{
+			capture_context.EmitParameter (this, name);
+		}
+
+		public void EmitAssignParameter (string name, Expression source, bool leave_copy, bool prepare_for_load)
+		{
+			capture_context.EmitAssignParameter (this, name, source, leave_copy, prepare_for_load);
+		}
+
+		public void EmitAddressOfParameter (string name)
+		{
+			capture_context.EmitAddressOfParameter (this, name);
 		}
 
 		public Expression GetThis (Location loc)
@@ -853,6 +1056,8 @@ namespace Mono.CSharp {
 		public AssemblyBuilder Builder;
                     
 		bool is_cls_compliant;
+
+		ListDictionary declarative_security;
 
 		static string[] attribute_targets = new string [] { "assembly" };
 
@@ -1032,7 +1237,45 @@ namespace Mono.CSharp {
 
 		public override void ApplyAttributeBuilder (Attribute a, CustomAttributeBuilder customBuilder)
 		{
+			if (a.Type.IsSubclassOf (TypeManager.security_attr_type) && a.CheckSecurityActionValidity (true)) {
+				if (declarative_security == null)
+					declarative_security = new ListDictionary ();
+
+				a.ExtractSecurityPermissionSet (declarative_security);
+				return;
+			}
+
 			Builder.SetCustomAttribute (customBuilder);
+		}
+
+		public override void Emit (TypeContainer tc)
+		{
+			base.Emit (tc);
+
+			if (declarative_security != null) {
+
+				MethodInfo add_permission = typeof (AssemblyBuilder).GetMethod ("AddPermissionRequests", BindingFlags.Instance | BindingFlags.NonPublic);
+				object builder_instance = Builder;
+
+				try {
+					// Microsoft runtime hacking
+					if (add_permission == null) {
+						Type assembly_builder = typeof (AssemblyBuilder).Assembly.GetType ("System.Reflection.Emit.AssemblyBuilderData");
+						add_permission = assembly_builder.GetMethod ("AddPermissionRequests", BindingFlags.Instance | BindingFlags.NonPublic);
+
+						FieldInfo fi = typeof (AssemblyBuilder).GetField ("m_assemblyData", BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.GetField);
+						builder_instance = fi.GetValue (Builder);
+					}
+
+					object[] args = new object [] { declarative_security [SecurityAction.RequestMinimum],
+												  declarative_security [SecurityAction.RequestOptional],
+												  declarative_security [SecurityAction.RequestRefuse] };
+					add_permission.Invoke (builder_instance, args);
+				}
+				catch {
+					Report.RuntimeMissingSupport (Location.Null, "assembly permission setting");
+				}
+			}
 		}
 
 		public override string[] ValidAttributeTargets {
@@ -1084,7 +1327,6 @@ namespace Mono.CSharp {
 		{
 			if (a != null && a.Type == TypeManager.cls_compliant_attribute_type) {
 				Report.Warning (3012, a.Location, "You must specify the CLSCompliant attribute on the assembly, not the module, to enable CLS compliance checking");
-				return;
 			}
 
 			Builder.SetCustomAttribute (customBuilder);

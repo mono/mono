@@ -372,8 +372,8 @@ namespace Mono.CSharp {
 				Type t2 = constraints.ClassConstraint;
 				TypeExpr e2 = constraints.class_constraint;
 
-				if (!Convert.ImplicitReferenceConversionExists (e1, t2) &&
-				    !Convert.ImplicitReferenceConversionExists (e2, t1)) {
+				if (!Convert.ImplicitReferenceConversionExists (ec, e1, t2) &&
+				    !Convert.ImplicitReferenceConversionExists (ec, e2, t1)) {
 					Report.Error (455, loc,
 						      "Type parameter `{0}' inherits " +
 						      "conflicting constraints `{1}' and `{2}'",
@@ -533,10 +533,13 @@ namespace Mono.CSharp {
 				throw new InvalidOperationException ();
 
 			this.type = type;
-			Type[] ifaces = null;
+			TypeManager.AddTypeParameter (type, this);
+		}
+
+		public void DefineConstraints ()
+		{
 			if (constraints != null)
 				constraints.Define (type);
-			TypeManager.AddTypeParameter (type, this);
 		}
 
 		public bool DefineType (EmitContext ec)
@@ -834,6 +837,11 @@ namespace Mono.CSharp {
 			get { return false; }
 		}
 
+		public override bool CheckAccessLevel (DeclSpace ds)
+		{
+			return true;
+		}
+
 		public void Error_CannotUseAsUnmanagedType (Location loc)
 		{
 			Report.Error (-203, loc, "Can not use type parameter as unamanged type");
@@ -946,8 +954,7 @@ namespace Mono.CSharp {
 			atypes = new Type [count];
 
 			for (int i = 0; i < count; i++){
-				TypeExpr te = ds.ResolveTypeExpr (
-					(Expression) args [i], false, Location);
+				TypeExpr te = ((Expression) args [i]).ResolveAsTypeTerminal (ec, false);
 				if (te == null) {
 					ok = false;
 					continue;
@@ -1070,7 +1077,7 @@ namespace Mono.CSharp {
 					return false;
 			}
 
-			return Convert.ImplicitStandardConversionExists (expr, ctype);
+			return Convert.ImplicitStandardConversionExists (ec, expr, ctype);
 		}
 
 		protected bool CheckConstraints (EmitContext ec, int index)
@@ -1169,8 +1176,10 @@ namespace Mono.CSharp {
 
 		public override TypeExpr DoResolveAsTypeStep (EmitContext ec)
 		{
-			if (gt != null)
+			if (type != null)
 				return this;
+			if (gt != null)
+				return DoResolveType (ec);
 
 			//
 			// First, resolve the generic type.
@@ -1188,14 +1197,14 @@ namespace Mono.CSharp {
 				new_args.Add (args);
 
 				args = new_args;
-				return this;
+				return DoResolveType (ec);
 			}
 
 			Type t;
 			int num_args;
 
 			SimpleName sn = new SimpleName (name, loc);
-			TypeExpr resolved = sn.ResolveAsTypeTerminal (ec);
+			TypeExpr resolved = sn.ResolveAsTypeTerminal (ec, true);
 			if ((resolved == null) || (resolved.Type == null)) {
 				Report.Error (246, loc,
 					      "The type or namespace name `{0}<...>' "+
@@ -1220,16 +1229,11 @@ namespace Mono.CSharp {
 			}
 
 			gt = t.GetGenericTypeDefinition ();
-			return this;
+			return DoResolveType (ec);
 		}
 
-		public override Type ResolveType (EmitContext ec)
+		TypeExpr DoResolveType (EmitContext ec)
 		{
-			if (type != null)
-				return type;
-			if (DoResolveAsTypeStep (ec) == null)
-				return null;
-
 			//
 			// Resolve the arguments.
 			//
@@ -1257,7 +1261,7 @@ namespace Mono.CSharp {
 			// Now bind the parameters.
 			//
 			type = gt.BindGenericParameters (atypes);
-			return type;
+			return this;
 		}
 
 		public Expression GetSimpleName (EmitContext ec)
@@ -1345,7 +1349,7 @@ namespace Mono.CSharp {
 			return true;
 		}
 
-		public bool Define (MethodBuilder mb)
+		public bool Define (MethodBuilder mb, Type return_type)
 		{
 			if (!Define ())
 				return false;
@@ -1355,6 +1359,9 @@ namespace Mono.CSharp {
 			gen_params = mb.DefineGenericParameters (names);
 			for (int i = 0; i < TypeParameters.Length; i++)
 				TypeParameters [i].Define (gen_params [i]);
+
+			ec = new EmitContext (
+				this, this, Location, null, return_type, ModFlags, false);
 
 			return true;
 		}

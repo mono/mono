@@ -36,12 +36,15 @@ namespace Mono.CSharp {
 		public override void ApplyAttributeBuilder(Attribute a, CustomAttributeBuilder cb)
 		{
 			if (a.Type == TypeManager.marshal_as_attr_type) {
-				UnmanagedMarshal marshal = a.GetMarshal ();
+				UnmanagedMarshal marshal = a.GetMarshal (this);
 				if (marshal != null) {
 					builder.SetMarshal (marshal);
+				}
 					return;
 				}
-				Report.Warning (-24, a.Location, "The Microsoft Runtime cannot set this marshal info. Please use the Mono runtime instead.");
+
+			if (a.Type.IsSubclassOf (TypeManager.security_attr_type)) {
+				a.Error_InvalidSecurityParent ();
 				return;
 			}
 
@@ -615,9 +618,7 @@ namespace Mono.CSharp {
 			if (TypeBuilder == null)
 				return false;
 
-			EmitContext ec = new EmitContext (this, this, Location, null,
-							  UnderlyingType, ModFlags, false);
-
+			ec = new EmitContext (this, this, Location, null, UnderlyingType, ModFlags, false);
 			
 			object default_value = 0;
 			
@@ -676,9 +677,6 @@ namespace Mono.CSharp {
 
 		public override void Emit ()
 		{
-			EmitContext ec = new EmitContext (
-				Parent, this, Location, null, null, ModFlags, false);
-
 			if (OptAttributes != null) {
 				OptAttributes.Emit (ec, this);
 			}

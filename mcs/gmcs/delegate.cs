@@ -142,8 +142,7 @@ namespace Mono.CSharp {
 		{
 			MethodAttributes mattr;
 			int i;
-			EmitContext ec = new EmitContext (this, this, Location, null,
-							  null, ModFlags, false);
+			ec = new EmitContext (this, this, Location, null, null, ModFlags, false);
 
 			if (IsGeneric) {
 				foreach (TypeParameter type_param in TypeParameters)
@@ -171,8 +170,10 @@ namespace Mono.CSharp {
 			//
 			// FIXME: POSSIBLY make these static, as they are always the same
 			Parameter [] fixed_pars = new Parameter [2];
-			fixed_pars [0] = new Parameter (null, null, Parameter.Modifier.NONE, null);
-			fixed_pars [1] = new Parameter (null, null, Parameter.Modifier.NONE, null);
+			fixed_pars [0] = new Parameter (TypeManager.system_object_expr, "object",
+							Parameter.Modifier.NONE, null);
+			fixed_pars [1] = new Parameter (TypeManager.system_intptr_expr, "method", 
+							Parameter.Modifier.NONE, null);
 			Parameters const_parameters = new Parameters (fixed_pars, null, Location);
 			
 			TypeManager.RegisterMethod (
@@ -189,10 +190,10 @@ namespace Mono.CSharp {
 			// First, call the `out of band' special method for
 			// defining recursively any types we need:
 			
-			if (!Parameters.ComputeAndDefineParameterTypes (this))
+			if (!Parameters.ComputeAndDefineParameterTypes (ec))
 				return false;
 			
- 			param_types = Parameters.GetParameterInfo (this);
+ 			param_types = Parameters.GetParameterInfo (ec);
 			if (param_types == null)
 				return false;
 
@@ -213,7 +214,7 @@ namespace Mono.CSharp {
 					return false;
 			}
 			
- 			ReturnType = ResolveTypeExpr (ReturnType, false, Location);
+ 			ReturnType = ReturnType.ResolveAsTypeTerminal (ec, false);
                         if (ReturnType == null)
                             return false;
                         
@@ -272,7 +273,7 @@ namespace Mono.CSharp {
 			InvokeBuilder.SetImplementationFlags (MethodImplAttributes.Runtime);
 
 			TypeManager.RegisterMethod (InvokeBuilder,
-						    new InternalParameters (Parent, Parameters),
+						    new InternalParameters (param_types, Parameters),
 						    param_types);
 
 			//
@@ -335,11 +336,10 @@ namespace Mono.CSharp {
 								   Parameter.Modifier.NONE, null);
 
 			Parameters async_parameters = new Parameters (async_params, null, Location);
-			async_parameters.ComputeAndDefineParameterTypes (this);
+			async_parameters.ComputeAndDefineParameterTypes (ec);
 			
-			async_parameters.ComputeAndDefineParameterTypes (this);
 			TypeManager.RegisterMethod (BeginInvokeBuilder,
-						    new InternalParameters (Parent, async_parameters),
+						    new InternalParameters (async_param_types, async_parameters),
 						    async_param_types);
 
 			//
@@ -380,11 +380,11 @@ namespace Mono.CSharp {
 			}
 
 			Parameters end_parameters = new Parameters (end_params, null, Location);
-			end_parameters.ComputeAndDefineParameterTypes (this);
+			end_parameters.ComputeAndDefineParameterTypes (ec);
 
 			TypeManager.RegisterMethod (
 				EndInvokeBuilder,
-				new InternalParameters (Parent, end_parameters),
+				new InternalParameters (end_param_types, end_parameters),
 				end_param_types);
 
 			return true;
@@ -393,8 +393,6 @@ namespace Mono.CSharp {
 		public override void Emit ()
 		{
 			if (OptAttributes != null) {
-				EmitContext ec = new EmitContext (
-					Parent, this, Location, null, null, ModFlags, false);
 				Parameters.LabelParameters (ec, InvokeBuilder, Location);
 				OptAttributes.Emit (ec, this);
 			}
@@ -423,6 +421,25 @@ namespace Mono.CSharp {
 			return true;
 		}
 
+		//
+		// Returns the MethodBase for "Invoke" from a delegate type, this is used
+		// to extract the signature of a delegate.
+		//
+		public static MethodGroupExpr GetInvokeMethod (EmitContext ec, Type delegate_type,
+						       Location loc)
+		{
+			Expression ml = Expression.MemberLookup (
+				ec, delegate_type, "Invoke", loc);
+
+			MethodGroupExpr mg = ml as MethodGroupExpr;
+			if (mg == null) {
+				Report.Error (-100, loc, "Internal error: could not find Invoke method!");
+				return null;
+			}
+
+			return mg;
+		}
+		
 		/// <summary>
 		///  Verifies whether the method in question is compatible with the delegate
 		///  Returns the method itself if okay and null if not.
@@ -430,19 +447,14 @@ namespace Mono.CSharp {
 		public static MethodBase VerifyMethod (EmitContext ec, Type delegate_type, MethodBase mb,
 						       Location loc)
 		{
-			Expression ml = Expression.MemberLookup (
-				ec, delegate_type, "Invoke", loc);
-
-			if (!(ml is MethodGroupExpr)) {
-				Report.Error (-100, loc, "Internal error: could not find Invoke method!");
+			MethodGroupExpr mg = GetInvokeMethod (ec, delegate_type, loc);
+			if (mg == null)
 				return null;
-			}
 
-			MethodBase invoke_mb = ((MethodGroupExpr) ml).Methods [0];
-
+			MethodBase invoke_mb = mg.Methods [0];
 			ParameterData invoke_pd = Invocation.GetParameterData (invoke_mb);
 
-			if (!((MethodGroupExpr) ml).HasTypeArguments &&
+			if (!mg.HasTypeArguments &&
 			    !Invocation.InferTypeArguments (ec, invoke_pd, ref mb))
 				return null;
 
@@ -501,8 +513,8 @@ namespace Mono.CSharp {
 
 			if (!params_method && pd_count != arg_count) {
 				Report.Error (1593, loc,
-					      "Delegate '" + delegate_type.ToString ()
-					      + "' does not take '" + arg_count + "' arguments");
+					      "Delegate '{0}' does not take {1} arguments",
+					      delegate_type.ToString (), arg_count);
 				return false;
 			}
 

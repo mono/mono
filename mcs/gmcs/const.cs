@@ -82,8 +82,7 @@ namespace Mono.CSharp {
 			while (ttype.IsArray)
 			    ttype = TypeManager.GetElementType (ttype);
 			
-			if (!TypeManager.IsBuiltinType (ttype) &&
-			    (!ttype.IsSubclassOf (TypeManager.enum_type))) {
+			if (!TypeManager.IsBuiltinType (ttype) && (!ttype.IsSubclassOf (TypeManager.enum_type)) && !(Expr is NullLiteral)) {
 				Report.Error (
 					-3, Location,
 					"Constant type is not valid (only system types are allowed)");
@@ -112,7 +111,7 @@ namespace Mono.CSharp {
 			if (expr is NullLiteral && !type.IsValueType && !TypeManager.IsEnumType (type))
 				return NullLiteral.Null;
 
-			if (!Convert.ImplicitStandardConversionExists (expr, type)){
+			if (!Convert.ImplicitStandardConversionExists (Convert.ConstantEC, expr, type)){
 				Convert.Error_CannotImplicitConversion (loc, expr.Type, type);
 				return null;
 			}

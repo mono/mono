@@ -40,13 +40,7 @@ namespace Mono.CSharp
 		///   Current block is used to add statements as we find
 		///   them.  
 		/// </summary>
-		Block      current_block;
-
-		/// <summary>
-                ///   If true, creates a toplevel block in the block production
-                ///   This is flagged by the delegate creation
-                /// </summary>
-                bool       create_toplevel_block;
+		Block      current_block, top_current_block;
 
 		Delegate   current_delegate;
 
@@ -693,6 +687,11 @@ named_argument_list
 
 		$$ = args;
 	  }
+	  | named_argument_list COMMA expression
+	    {
+		  Report.Error (1016, lexer.Location, "Named attribute argument expected");
+		  $$ = null;
+		}
         ;
 
 named_argument
@@ -941,6 +940,11 @@ variable_initializer
 	  {
 		$$ = new StackAlloc ((Expression) $2, (Expression) $4, lexer.Location);
 	  }
+	| STACKALLOC type
+	  {
+		Report.Error (1575, lexer.Location, "A stackalloc expression requires [] after type");
+                $$ = null;
+	  }
 	;
 
 method_declaration
@@ -967,7 +971,7 @@ method_declaration
 			}
 		}
 
-		method.Block = (Block) $3;
+		method.Block = (ToplevelBlock) $3;
 		current_container.AddMethod (method);
 
 		current_local_parameters = null;
@@ -1157,6 +1161,13 @@ fixed_parameter
 	| opt_attributes
 	  opt_parameter_modifier
 	  type
+	  {
+		Report.Error (1001, lexer.Location, "Identifier expected");
+		$$ = null;
+	  }
+	| opt_attributes
+	  opt_parameter_modifier
+	  type
 	  error {
 		CheckIdentifierToken (yyToken);
 		$$ = null;
@@ -1188,6 +1199,11 @@ parameter_array
 	  { 
 		$$ = new Parameter ((Expression) $3, (string) $4, Parameter.Modifier.PARAMS, (Attributes) $1);
 		note ("type must be a single-dimension array type"); 
+	  }
+	| opt_attributes PARAMS parameter_modifier type IDENTIFIER 
+	  {
+		Report.Error (1611, lexer.Location, "The params parameter cannot be declared as ref or out");
+                $$ = null;
 	  }
 	| opt_attributes PARAMS type error {
 		CheckIdentifierToken (yyToken);
@@ -1259,7 +1275,7 @@ opt_set_accessor_declaration
 	;
 
 get_accessor_declaration
-	: opt_attributes GET
+	: opt_attributes opt_modifiers GET
 	  {
 		// If this is not the case, then current_local_parameters has already
 		// been set in indexer_declaration
@@ -1271,14 +1287,14 @@ get_accessor_declaration
 	  }
           accessor_body
 	  {
-		$$ = new Accessor ((Block) $4, (Attributes) $1, lexer.Location);
+		$$ = new Accessor ((ToplevelBlock) $5, (int) $2, (Attributes) $1, lexer.Location);
 		current_local_parameters = null;
 		lexer.PropertyParsing = true;
 	  }
 	;
 
 set_accessor_declaration
-	: opt_attributes SET 
+	: opt_attributes opt_modifiers SET 
 	  {
 		Parameter [] args;
 		Parameter implicit_value_parameter = new Parameter (
@@ -1308,7 +1324,7 @@ set_accessor_declaration
 	  }
 	  accessor_body
 	  {
-		$$ = new Accessor ((Block) $4, (Attributes) $1, lexer.Location);
+		$$ = new Accessor ((ToplevelBlock) $5, (int) $2, (Attributes) $1, lexer.Location);
 		current_local_parameters = null;
 		lexer.PropertyParsing = true;
 	  }
@@ -1570,7 +1586,7 @@ operator_declaration
 		Operator op = new Operator (
 			current_class, decl.optype, decl.ret_type, (int) $2, 
 			new Parameters (param_list, null, decl.location),
-			(Block) $5, (Attributes) $1, decl.location);
+			(ToplevelBlock) $5, (Attributes) $1, decl.location);
 
 		if (SimpleIteratorContainer.Simple.Yields)
 			op.SetYields ();
@@ -1699,7 +1715,7 @@ constructor_declaration
 	  constructor_body
 	  { 
 		Constructor c = (Constructor) $3;
-		c.Block = (Block) $4;
+		c.Block = (ToplevelBlock) $4;
 		c.OptAttributes = (Attributes) $1;
 		c.ModFlags = (int) $2;
 	
@@ -1814,7 +1830,7 @@ destructor_declaration
 				current_class, TypeManager.system_void_expr, m, "Finalize", 
 				new Parameters (null, null, l), (Attributes) $1, l);
 		  
-			d.Block = (Block) $7;
+			d.Block = (ToplevelBlock) $7;
 			current_container.AddMethod (d);
 		}
 	  }
@@ -1896,6 +1912,12 @@ event_accessor_declarations
 	}	
 	| add_accessor_declaration  { $$ = null; } 
 	| remove_accessor_declaration { $$ = null; } 
+	| error
+	{ 
+		Report.Error (1055, lexer.Location, "An add or remove accessor expected");
+		$$ = null;
+	}
+	| { $$ = null; }
 	;
 
 add_accessor_declaration
@@ -1913,7 +1935,7 @@ add_accessor_declaration
 	  }
           block
 	  {
-		$$ = new Accessor ((Block) $4, (Attributes) $1, lexer.Location);
+		$$ = new Accessor ((ToplevelBlock) $4, 0, (Attributes) $1, lexer.Location);
 		lexer.EventParsing = true;
 	  }
 	| opt_attributes ADD error {
@@ -1937,7 +1959,7 @@ remove_accessor_declaration
 	  }
           block
 	  {
-		$$ = new Accessor ((Block) $4, (Attributes) $1, lexer.Location);
+		$$ = new Accessor ((ToplevelBlock) $4, 0, (Attributes) $1, lexer.Location);
 		lexer.EventParsing = true;
 	  }
 	| opt_attributes REMOVE error {
@@ -2566,7 +2588,7 @@ base_access
 		$$ = new BaseIndexerAccess ((ArrayList) $3, lexer.Location);
 	  }
 	| BASE error {
-		Report.Error (175, "Use of keyword `base' is not valid in this context");
+		Report.Error (175, lexer.Location, "Use of keyword `base' is not valid in this context");
 		$$ = null;
 	  }
 	;
@@ -2610,6 +2632,11 @@ array_creation_expression
 	  {
 		$$ = new ArrayCreation ((Expression) $2, (string) $3, (ArrayList) $4, lexer.Location);
 	  }
+	| NEW error
+	  {
+		Report.Error (1031, lexer.Location, "Type expected");
+                $$ = null;
+	  }          
 	| NEW type error 
 	  {
 		Report.Error (1526, lexer.Location, "new expression requires () or [] after type");
@@ -2751,25 +2778,32 @@ anonymous_method_expression
 	: DELEGATE opt_anonymous_method_signature {
 		oob_stack.Push (current_local_parameters);
 		current_local_parameters = (Parameters)$2;
-		create_toplevel_block = true;
+
+		// Force the next block to be created as a ToplevelBlock
+		oob_stack.Push (current_block);
+		oob_stack.Push (top_current_block);
+		oob_stack.Push (lexer.Location);
+		current_block = null;
 	  } block {
-		if (true){
-			Report.Error (-213, lexer.Location, "Anonymous methods are not supported in this branch");
-			$$ = null;
-		} else {
-			create_toplevel_block = false;
+		Location loc = (Location) oob_stack.Pop ();
+		top_current_block = (Block) oob_stack.Pop ();
+		current_block = (Block) oob_stack.Pop ();
 			if (RootContext.Version == LanguageVersion.ISO_1){
 				Report.FeatureIsNotStandardized (lexer.Location, "anonymous methods");
 				$$ = null;
-			} else 
-				$$ = new AnonymousMethod ((Parameters) $2, (Block) $4, lexer.Location);
+		} else  {
+			ToplevelBlock anon_block = (ToplevelBlock) $4;
+
+			anon_block.Parent = current_block;
+			$$ = new AnonymousMethod ((Parameters) $2, (ToplevelBlock) top_current_block, 
+				anon_block, loc);
+		}
 			current_local_parameters = (Parameters) oob_stack.Pop ();
 		}
-	  }
 	;
 
 opt_anonymous_method_signature
-	: /* empty */			{ $$ = Parameters.EmptyReadOnlyParameters; }
+	: /* empty */			{ $$ = null; } 
 	| anonymous_method_signature
 	;
 
@@ -2809,7 +2843,11 @@ anonymous_method_parameter_list
 
 anonymous_method_parameter
 	: opt_parameter_modifier type IDENTIFIER {
-		$$ = new Parameter ((Expression) $2, (string) $2, (Parameter.Modifier) $1, null);
+		$$ = new Parameter ((Expression) $2, (string) $3, (Parameter.Modifier) $1, null);
+	  }
+	| PARAMS type IDENTIFIER {
+		Report.Error (-221, lexer.Location, "params modifier not allowed in anonymous method declaration");
+		$$ = null;
 	  }
 	;
 
@@ -3325,8 +3363,9 @@ type_parameter_constraint
 block
 	: OPEN_BRACE 
 	  {
-		if (current_block == null || create_toplevel_block){
-			current_block = new ToplevelBlock (current_local_parameters, lexer.Location);
+		if (current_block == null){
+			current_block = new ToplevelBlock ((ToplevelBlock) top_current_block, current_local_parameters, lexer.Location);
+			top_current_block = current_block;
 		} else {
 		current_block = new Block (current_block, current_local_parameters,
 					   lexer.Location, Location.Null);
@@ -3339,6 +3378,8 @@ block
 		$$ = current_block;
 		current_block.SetEndLocation (lexer.Location);
 		current_block = current_block.Parent;
+		if (current_block == null)
+			top_current_block = null;
 	  }
 	;
 
@@ -4016,7 +4057,7 @@ try_statement
 		// Now s contains the list of specific catch clauses
 		// and g contains the general one.
 		
-		$$ = new Try ((Block) $2, c, g, null, lexer.Location);
+		$$ = new Try ((Block) $2, c, g, null, ((Block) $2).loc);
 	}
 	| TRY block opt_catch_clauses FINALLY block
 	  {
@@ -4033,7 +4074,7 @@ try_statement
 			}
 		}
 
-		$$ = new Try ((Block) $2, s, g, (Block) $5, lexer.Location);
+		$$ = new Try ((Block) $2, s, g, (Block) $5, ((Block) $2).loc);
 	  }
 	| TRY block error 
 	  {
@@ -4110,7 +4151,7 @@ catch_clause
 		}
 
 
-		$$ = new Catch (type, id , (Block) $4, lexer.Location);
+		$$ = new Catch (type, id , (Block) $4, ((Block) $4).loc);
 	}
         ;
 
@@ -4344,9 +4385,9 @@ public class InterfaceAccessorInfo {
                                       Attributes get_attrs, Attributes set_attrs, Location get_loc, Location set_loc)
         {
 		if (has_get)
-			Get = new Accessor (null, get_attrs, get_loc);
+			Get = new Accessor (null, 0, get_attrs, get_loc);
 		if (has_set)
-			Set = new Accessor (null, set_attrs, set_loc);
+			Set = new Accessor (null, 0, set_attrs, set_loc);
         }
 }
 
