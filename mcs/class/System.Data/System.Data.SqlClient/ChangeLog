@@ -1,3 +1,7 @@
+2004-10-14 Umadevi S <sumadevi@novell.com>
+	* SqlCommand.cs - Implemented the clone method correctly.
+	 (fixed bug 67301)
+
 2004-10-06 Umadevi S <sumadevi@novell.com>
 	* ISqlNoticationReceiver.cs - changed namespace
 	* Added files SqlNotificationType.cs, SqlNotificationInfo.cs, SqlNotificationSource.cs

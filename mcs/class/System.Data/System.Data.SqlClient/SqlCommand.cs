@@ -100,6 +100,19 @@ namespace System.Data.SqlClient {
 			parameters = new SqlParameterCollection (this);
 		}
 
+		private SqlCommand(string commandText, SqlConnection connection, SqlTransaction transaction, CommandType commandType, UpdateRowSource updatedRowSource, bool designTimeVisible, int commandTimeout, SqlParameterCollection parameters)
+		{
+			this.commandText = commandText;
+			this.connection = connection;
+			this.transaction = transaction;
+			this.commandType = commandType;
+			this.updatedRowSource = updatedRowSource;
+			this.designTimeVisible = designTimeVisible;
+			this.commandTimeout = commandTimeout;
+			this.parameters = new SqlParameterCollection(this);
+			for (int i = 0;i < parameters.Count;i++)
+			      this.parameters.Add(((ICloneable)parameters[i]).Clone());	
+		}
 		#endregion // Constructors
 
 		#region Properties
@@ -405,7 +418,8 @@ namespace System.Data.SqlClient {
 
 		object ICloneable.Clone ()
 		{
-			return new SqlCommand (commandText, Connection);
+			return new SqlCommand (commandText, connection, transaction, commandType, updatedRowSource, designTimeVisible, commandTimeout,  parameters);
+
 		}
 
 		IDbDataParameter IDbCommand.CreateParameter ()
