@@ -1,3 +1,10 @@
+2004-04-22  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* ChallengeResponse.cs: FxCop-ized. 
+	* NtlmFlags.cs: FxCop-ized. CLS compliance.
+	* Type1Message.cs: FxCop-ized.
+	* Type3Message.cs: FxCop-ized.
+
 2004-04-20  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* NtlmFlags.cs: Changed enum to int for CLS compliance.

@@ -2,9 +2,10 @@
 // Mono.Security.Protocol.Ntlm.Type1Message - Negotiation
 //
 // Author:
-//	Sebastien Pouliot (spouliot@motus.com)
+//	Sebastien Pouliot <sebastien@ximian.com>
 //
-// Copyright (C) 2003 Motus Technologies Inc. (http://www.motus.com)
+// (C) 2003 Motus Technologies Inc. (http://www.motus.com)
+// (C) 2004 Novell (http://www.novell.com)
 //
 // References
 // a.	NTLM Authentication Scheme for HTTP, Ronald Tschalär
@@ -14,13 +15,12 @@
 //
 
 using System;
+using System.Globalization;
 using System.Text;
 
 namespace Mono.Security.Protocol.Ntlm {
 
 	public class Type1Message : MessageBase {
-
-		//static private byte[] header = { 0x4e, 0x54, 0x4c, 0x4d, 0x53, 0x53, 0x50, 0x00, 0x01, 0x00, 0x00, 0x00, 0x03, 0xb2, 0x00, 0x00 };
 
 		private string _host;
 		private string _domain;
@@ -94,10 +94,10 @@ namespace Mono.Security.Protocol.Ntlm {
 			data [28] = 0x20;
 			data [29] = 0x00;
 
-			byte[] host = Encoding.ASCII.GetBytes (_host.ToUpper ());
+			byte[] host = Encoding.ASCII.GetBytes (_host.ToUpper (CultureInfo.InvariantCulture));
 			Buffer.BlockCopy (host, 0, data, 32, host.Length);
 
-			byte[] domain = Encoding.ASCII.GetBytes (_domain.ToUpper ());
+			byte[] domain = Encoding.ASCII.GetBytes (_domain.ToUpper (CultureInfo.InvariantCulture));
 			Buffer.BlockCopy (domain, 0, data, dom_off, domain.Length);
 
 			return data;

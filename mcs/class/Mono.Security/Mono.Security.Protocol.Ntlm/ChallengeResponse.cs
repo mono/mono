@@ -3,9 +3,10 @@
 //	Implements Challenge Response for NTLM v1
 //
 // Author:
-//	Sebastien Pouliot (spouliot@motus.com)
+//	Sebastien Pouliot <sebastien@ximian.com>
 //
-// Copyright (C) 2003 Motus Technologies Inc. (http://www.motus.com)
+// (C) 2003 Motus Technologies Inc. (http://www.motus.com)
+// (C) 2004 Novell (http://www.novell.com)
 //
 // References
 // a.	NTLM Authentication Scheme for HTTP, Ronald Tschalär
@@ -15,6 +16,7 @@
 //
 
 using System;
+using System.Globalization;
 using System.Security.Cryptography;
 using System.Text;
 
@@ -59,6 +61,7 @@ namespace Mono.Security.Protocol.Ntlm {
 		// properties
 
 		public string Password {
+			get { return null; }
 			set { 
 				if (_disposed)
 					throw new ObjectDisposedException ("too late");
@@ -103,6 +106,7 @@ namespace Mono.Security.Protocol.Ntlm {
 		}
 
 		public byte[] Challenge {
+			get { return null; }
 			set {
 				if (value == null)
 					throw new ArgumentNullException ("Challenge");
@@ -189,7 +193,7 @@ namespace Mono.Security.Protocol.Ntlm {
 		{
 			byte[] key7 = new byte [7];
 			int len = System.Math.Min (password.Length - position, 7);
-			Encoding.ASCII.GetBytes (password.ToUpper (), position, len, key7, 0);
+			Encoding.ASCII.GetBytes (password.ToUpper (CultureInfo.CurrentCulture), position, len, key7, 0);
 			byte[] key8 = PrepareDESKey (key7, 0);
 			// cleanup intermediate key material
 			Array.Clear (key7, 0, key7.Length);

@@ -2,9 +2,10 @@
 // Mono.Security.Protocol.Ntlm.Type3Message - Authentication
 //
 // Author:
-//	Sebastien Pouliot (spouliot@motus.com)
+//	Sebastien Pouliot <sebastien@ximian.com>
 //
-// Copyright (C) 2003 Motus Technologies Inc. (http://www.motus.com)
+// (C) 2003 Motus Technologies Inc. (http://www.motus.com)
+// (C) 2004 Novell (http://www.novell.com)
 //
 // References
 // a.	NTLM Authentication Scheme for HTTP, Ronald Tschalär
@@ -14,6 +15,7 @@
 //
 
 using System;
+using System.Globalization;
 using System.Text;
 
 namespace Mono.Security.Protocol.Ntlm {
@@ -133,9 +135,9 @@ namespace Mono.Security.Protocol.Ntlm {
 
 		public override byte[] GetBytes () 
 		{
-			byte[] domain = Encoding.Unicode.GetBytes (_domain.ToUpper ());
+			byte[] domain = Encoding.Unicode.GetBytes (_domain.ToUpper (CultureInfo.InvariantCulture));
 			byte[] user = Encoding.Unicode.GetBytes (_username);
-			byte[] host = Encoding.Unicode.GetBytes (_host.ToUpper ());
+			byte[] host = Encoding.Unicode.GetBytes (_host.ToUpper (CultureInfo.InvariantCulture));
 
 			byte[] data = PrepareMessage (64 + domain.Length + user.Length + host.Length + 24 + 24);
 
