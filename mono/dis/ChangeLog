@@ -1,3 +1,8 @@
+2004-01-17  Zoltan Varga  <vargaz@freemail.hu>
+
+	* main.c get.c: Add support for dumping the custom attributes of
+	modules.
+
 2004-01-09  Jackson Harper  <jackson@ximian.com>
 
 	* monodis.1: Add --show-method-tokens switch
