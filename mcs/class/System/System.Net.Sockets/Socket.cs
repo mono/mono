@@ -186,10 +186,20 @@ namespace System.Net.Sockets
 			{
 				lock (result) {
 					try {
-						if (!result.Sock.blocking)
-							result.Sock.Poll (-1, SelectMode.SelectWrite);
-
 						result.Sock.Connect (result.EndPoint);
+					} catch (SocketException se) {
+						if (result.Sock.blocking || se.ErrorCode != 10036) {
+							result.Complete (se);
+							return;
+						}
+						
+						try {
+							result.Sock.Poll (-1, SelectMode.SelectWrite);
+							result.Sock.Connect (result.EndPoint);
+						} catch (Exception k) {
+							result.Complete (k);
+							return;
+						}
 					} catch (Exception e) {
 						result.Complete (e);
 						return;
