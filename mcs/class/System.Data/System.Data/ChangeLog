@@ -1,3 +1,7 @@
+2004-08-06  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* DataSet.cs : DataSet's ExtendedProperties were not XmlConverted.
+
 2004-08-05  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XmlConstants.cs : Added constants for "msprop" support.

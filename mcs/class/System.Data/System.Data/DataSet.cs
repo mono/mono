@@ -1416,14 +1416,9 @@ namespace System.Data {
 			attr.Value = locale.Name;
 			atts.Add (attr);
 
-			// Extended properties
-			foreach (DictionaryEntry de in ExtendedProperties) {
-				attr = doc.CreateAttribute (XmlConstants.MspropPrefix, de.Key.ToString (), XmlConstants.MspropNamespace);
-				attr.Value = de.Value != null ? de.Value.ToString () : String.Empty;
-				atts.Add (attr);
-			}
-
 			elem.UnhandledAttributes = atts.ToArray (typeof (XmlAttribute)) as XmlAttribute [];
+
+			AddExtendedPropertyAttributes (elem, ExtendedProperties, doc);
 
 			XmlSchemaComplexType complex = new XmlSchemaComplexType ();
 			elem.SchemaType = complex;
