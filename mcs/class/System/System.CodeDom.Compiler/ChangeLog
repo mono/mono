@@ -1,3 +1,8 @@
+2004-06-13  Gert Driesen <drieseng@users.sourceforge.net>
+
+	* IndentedTextWriter.cs: have DefaultTabString correspond with
+	MS.NET (meaning four spaces)
+
 2004-05-14  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* TempFileCollection.cs: don't create a Random object on every call to

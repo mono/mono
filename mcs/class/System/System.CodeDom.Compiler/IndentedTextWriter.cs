@@ -41,7 +41,7 @@ namespace System.CodeDom.Compiler {
 		//
 		// Fields
 		//
-		public const string DefaultTabString = " ";
+		public const string DefaultTabString = "    ";
 
 		//
 		// Properties
