@@ -8,6 +8,7 @@
 // (C) 2002/3 Ximian, Inc
 //
 using System.Drawing;
+using System.Drawing.Text;
 using System.ComponentModel;
 
 namespace System.Windows.Forms {
@@ -18,22 +19,23 @@ namespace System.Windows.Forms {
 
     public class RadioButton : ButtonBase {
 
-		Appearance appearance;
-		bool       autoCheck;
-		ContentAlignment checkAlign;
-		bool       checked_;
+		Appearance		appearance;
+		bool			autoCheck;
+		ContentAlignment	checkAlign;
+		ContentAlignment	_textAlign;
+		bool			_checked;
 
 		public RadioButton()
 		{
 			SubClassWndProc_ = true;
 			SetStyle (ControlStyles.UserPaint | ControlStyles.AllPaintingInWmPaint, true);
-			callWinControlProcMask &= ~(CallWinControlProcMask.MOUSE_MESSAGES | CallWinControlProcMask.KEYBOARD_MESSAGES);
+			//callWinControlProcMask &= ~(CallWinControlProcMask.MOUSE_MESSAGES | CallWinControlProcMask.KEYBOARD_MESSAGES);
 			
 			appearance = Appearance.Normal;
-			autoCheck  = true;
 			checkAlign = ContentAlignment.MiddleLeft;
-			checked_   = false;
 			TextAlign  = ContentAlignment.MiddleLeft;
+			autoCheck = true;
+			_checked = false;
 		}
 
 		public Appearance Appearance {
@@ -86,10 +88,10 @@ namespace System.Windows.Forms {
 		}
 
 		public bool Checked {
-			get {	return checked_; }
+			get {	return _checked; }
 			set {
-				if ( checked_ != value ) {
-					checked_ = value;
+				if ( _checked != value ) {
+					_checked = value;
 					OnCheckedChanged ( EventArgs.Empty );
 					Invalidate ();
 				}
@@ -98,8 +100,8 @@ namespace System.Windows.Forms {
 
 		[MonoTODO]
 		public override ContentAlignment TextAlign {
-			get {	return base.TextAlign;	}
-			set {	base.TextAlign = value;	}
+			get {	return _textAlign;	}
+			set {	_textAlign = value;	}
 		}
 
 		public void PerformClick()
@@ -124,10 +126,12 @@ namespace System.Windows.Forms {
 
 				createParams.Style = (int) (
 					(int)WindowStyles.WS_CHILD | 
-					(int)WindowStyles.WS_VISIBLE );
+					(int)WindowStyles.WS_VISIBLE |
+					(int)WindowStyles.WS_CLIPSIBLINGS);
 
 				createParams.Style |= AutoCheckStyle | AppearanceStyle;
-				createParams.Style |= (int)Win32.ContentAlignment2SystemButtonStyle( TextAlign );
+				createParams.Style |= (int)Win32.ContentAlignment2SystemButtonStyle( _textAlign );
+				createParams.Style |= (int)ButtonStyles.BS_OWNERDRAW;
 
 				return createParams;
 			}
@@ -171,8 +175,9 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		protected override void OnEnter(EventArgs e)
 		{
-			throw new NotImplementedException ();
+//FIXME			throw new NotImplementedException ();
 		}
+
 		[MonoTODO]
 		protected override void OnHandleCreated(EventArgs e)
 		{
@@ -201,20 +206,25 @@ namespace System.Windows.Forms {
 			get { return (int) ( Appearance == Appearance.Normal ? 0 : ButtonStyles.BS_PUSHLIKE ); }
 		}
 
-		internal override void ButtonPaint (PaintEventArgs e) 
+		internal override void ButtonPaint (PaintEventArgs pevent) 
 		{
-			Rectangle paintBounds = ClientRectangle;
-			Bitmap bmp = new Bitmap( paintBounds.Width, paintBounds.Height,e.Graphics);
-			Graphics paintOn = Graphics.FromImage(bmp);
+			Rectangle 	paintBounds 	= ClientRectangle;
+			Bitmap 		bmp 		= new Bitmap( paintBounds.Width, paintBounds.Height, pevent.Graphics);
+			Graphics 	paintOn 	= Graphics.FromImage(bmp);
+			int 		CheckSize 	= 12;		// Might not be correct
+			Rectangle 	checkRect;
+			Rectangle	textRect;
+			ButtonState	buttonState 	= ButtonState.Normal;
 			
+			// Clear the radiobutton background
 			SolidBrush sb = new SolidBrush (BackColor);
-			paintOn.FillRectangle (sb, paintBounds);
+			paintOn.FillRectangle (sb, pevent.ClipRectangle);
 			sb.Dispose ();
 			
-			// FIXME: Width/Heigth of radiobutton are not correct
-			int CheckSize = 12;
-			Rectangle checkRect = new Rectangle (paintBounds.Left, paintBounds.Top, CheckSize, CheckSize);
-			Rectangle textRect = new Rectangle (checkRect.Right + 3, paintBounds.Top, paintBounds.Width - checkRect.Width - 4, paintBounds.Height);
+			// Location of button and text
+			checkRect = new Rectangle (paintBounds.Left, paintBounds.Top, CheckSize, CheckSize);
+			textRect = new Rectangle (checkRect.Right + 3, paintBounds.Top, paintBounds.Width - checkRect.Width - 4, paintBounds.Height);
+
 			if (0 != (CheckAlign & (ContentAlignment.BottomLeft | ContentAlignment.BottomCenter | ContentAlignment.BottomRight))) {
 				checkRect.Y = paintBounds.Bottom - CheckSize;
 			}
@@ -232,24 +242,25 @@ namespace System.Windows.Forms {
 				textRect.Width = paintBounds.Width;
 			}
 			
-			ButtonState state = ButtonState.Normal;
 			if (FlatStyle == FlatStyle.Flat) {
-				state |= ButtonState.Flat;
+				buttonState |= ButtonState.Flat;
 			}
 			
 			if (Checked) {
-				state |= ButtonState.Checked;
+				buttonState |= ButtonState.Checked;
 			}
 			
-			ControlPaint.DrawRadioButton (paintOn, checkRect, state);
+			ControlPaint.DrawRadioButton (paintOn, checkRect, buttonState);
 			
-			Win32.DrawText(paintOn, Text, Font, ForeColor, textRect, TextAlign);
+			sb=new SolidBrush(ForeColor);
+			paintOn.DrawString(Text, Font, sb, textRect, Win32.ContentAlignment2StringFormat(_textAlign, HotkeyPrefix.Show));
+			sb.Dispose();
 			
 			if (Focused) {
 				ControlPaint.DrawFocusRectangle (paintOn, textRect);
 			}
 			
-			e.Graphics.DrawImage(bmp, 0, 0, paintBounds.Width, paintBounds.Height);
+			pevent.Graphics.DrawImage(bmp, 0, 0, paintBounds.Width, paintBounds.Height);
 			paintOn.Dispose ();
 			bmp.Dispose();
 		}
