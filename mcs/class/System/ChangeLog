@@ -1,4 +1,12 @@
-2002-07-20  Tim Coleman <tim@timcoleman.com>
+2002-07-22  Tim Coleman <tim@timcoleman.com>
+	* list.unix: Added files to the build for linux
+		System.ComponentModel.BindableAttribute.cs,
+		System.ComponentModel.BindableSupport.cs,
+		System.ComponentModel.ExpandableObjectConverter.cs,
+		System.ComponentModel.NotifyParentPropertyAttribute.cs,
+		System.ComponentModel.ToolboxItemAttribute.cs,
+
+2002-07-22  Tim Coleman <tim@timcoleman.com>
 	* list.unix: Added System.ComponentModel/DefaultEventAttribute.cs
 		and System.ComponentModel.DefaultProperty.cs to build
 

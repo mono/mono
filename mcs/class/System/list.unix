@@ -169,8 +169,11 @@ System.ComponentModel/ComponentCollection.cs
 System.ComponentModel/DefaultEventAttribute.cs
 System.ComponentModel/DefaultPropertyAttribute.cs
 System.ComponentModel/IContainer.cs
+System.ComponentModel/BindableAttribute.cs
+System.ComponentModel/BindableSupport.cs
 System.ComponentModel/BrowsableAttribute.cs
 System.ComponentModel/DescriptionAttribute.cs
+System.ComponentModel/ExpandableObjectConverter.cs
 System.ComponentModel/IBindingList.cs
 System.ComponentModel/DesignerSerializationVisibility.cs
 System.ComponentModel/PropertyChangedEventArgs.cs
@@ -179,6 +182,7 @@ System.ComponentModel/ListChangedEventArgs.cs
 System.ComponentModel/ListChangedEventHandler.cs
 System.ComponentModel/ListChangedType.cs
 System.ComponentModel/ListSortDirection.cs
+System.ComponentModel/NotifyParentPropertyAttribute.cs
 System.ComponentModel/AttributeCollection.cs
 System.ComponentModel/DesignerSerializationVisibilityAttribute.cs
 System.ComponentModel/PropertyDescriptor.cs
@@ -208,6 +212,7 @@ System.ComponentModel/MarshalByValueComponent.cs
 System.ComponentModel/ReadOnlyAttribute.cs
 System.ComponentModel/Win32Exception.cs
 System.ComponentModel/ITypeDescriptorContext.cs
+System.ComponentModel/ToolboxItemAttribute.cs
 System.ComponentModel/TypeConverter.cs
 System.ComponentModel/TypeConverterAttribute.cs
 System.ComponentModel/TypeDescriptor.cs
