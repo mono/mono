@@ -908,98 +908,64 @@ namespace System
 	    return TypeCode.Decimal;
 	}
 
-	[MonoTODO]
-	public static byte ToByte(decimal value)
+	public static byte ToByte (decimal value)
 	{
-		if(value < Byte.MinValue || value > Byte.MaxValue) {
-			throw new OverflowException("Invalid value");
-		}
-		throw new NotImplementedException();
+		return Convert.ToByte (value);
+	}
+
+	public static double ToDouble (decimal value)
+	{
+		return Convert.ToDouble (value);
+	}
+
+	public static short ToInt16 (decimal value)
+	{
+		return Convert.ToInt16 (value);
+	}
+
+	public static int ToInt32 (decimal value)
+	{
+		return Convert.ToInt32 (value);
+	}
+	
+	public static long ToInt64 (decimal value)
+	{
+		return Convert.ToInt64 (value);
 	}
 
 	[MonoTODO]
-	public static double ToDouble(decimal d)
+	public static long ToOACurrency (decimal value)
 	{
-		throw new NotImplementedException();
+		throw new NotImplementedException ();
 	}
 
-	[MonoTODO]
-	public static short ToInt16(decimal value)
-	{
-		if(value < Int16.MinValue || value > Int16.MaxValue) {
-			throw new OverflowException("Invalid value");
-		}
-		throw new NotImplementedException();
-	}
-
-	[MonoTODO]
-	public static int ToInt32(decimal d)
-	{
-		if(d < Int32.MinValue || d > Int32.MaxValue) {
-			throw new OverflowException("Invalid value");
-		}
-		throw new NotImplementedException();
-	}
-
-	[MonoTODO]
-	public static long ToInt64(decimal d)
-	{
-		if(d < Int64.MinValue || d > Int64.MaxValue) {
-			throw new OverflowException("Invalid value");
-		}
-		throw new NotImplementedException();
-	}
-
-	[MonoTODO]
-	public static long ToOACurrency(decimal value)
-	{
-		throw new NotImplementedException();
-	}
-
-	[MonoTODO]
 	[CLSCompliant(false)]
-	public static sbyte ToSByte(decimal value)
+	public static sbyte ToSByte (decimal value)
 	{
-		if(value < SByte.MinValue || value > SByte.MaxValue) {
-			throw new OverflowException("Invalid value");
-		}
-		throw new NotImplementedException();
+		return Convert.ToSByte (value);
+	}
+	
+	public static float ToSingle (decimal value)
+	{
+		return Convert.ToSingle (value);
 	}
 
-	[MonoTODO]
-	public static float ToSingle(decimal d)
-	{
-		throw new NotImplementedException();
-	}
-
-	[MonoTODO]
 	[CLSCompliant(false)]
-	public static ushort ToUInt16(decimal value)
+	public static ushort ToUInt16 (decimal value)
 	{
-		if(value < UInt16.MinValue || value > UInt16.MaxValue) {
-			throw new OverflowException("Invalid value");
-		}
-		throw new NotImplementedException();
+		return Convert.ToUInt16 (value);
 	}
 
-	[MonoTODO]
 	[CLSCompliant(false)]
-	public static uint ToUInt32(decimal d)
+	public static uint ToUInt32 (decimal value)
 	{
-		if(d < 0 || d > UInt32.MaxValue) {
-			throw new OverflowException("Invalid value");
-		}
-		throw new NotImplementedException();
+		return Convert.ToUInt32 (value);
 	}
 
-	[MonoTODO]
 	[CLSCompliant(false)]
-	public static ulong ToUInt64(decimal d)
+	public static ulong ToUInt64 (decimal value)
 	{
-		if(d < 0 || d > UInt64.MaxValue) {
-			throw new OverflowException("Invalid value");
-		}
-		throw new NotImplementedException();
+		return Convert.ToUInt64 (value);
 	}
 		
 	object IConvertible.ToType (Type conversionType, IFormatProvider provider)
