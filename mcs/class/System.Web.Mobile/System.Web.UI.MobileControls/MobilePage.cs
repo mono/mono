@@ -40,5 +40,13 @@ namespace System.Web.UI.MobileControls
 		{
 			throw new NotImplementedException();
 		}
+		
+		public IPageAdapter Adapter
+		{
+			get
+			{
+				throw new NotImplementedException();
+			}
+		}
 	}
 }

@@ -1,4 +1,8 @@
 
+2003-04-29	Gaurav Vaish <gvaish_mono AT lycos.com>
+
+	* MobilePage.cs          : Adapter { get; }           - Stubbed.
+
 2003-04-08	Gaurav Vaish <gvaish_mono AT lycos.com>
 
 	* Style.cs               : Implements interfaces now.
