@@ -1,3 +1,18 @@
+2002-12-14  Eduardo Garcia Cebollero <kiwnix@yahoo.es>
+
+	* Directory.cs: Some fixes related to correct some exceptions thrown
+
+2002-12-11  Eduardo Garcia Cebollero <kiwnix@yahoo.es>
+
+	* Directory.cs: Some Exceptions added, fixed GetParent(),
+	CreateDirectory() should work with unix, native windows and
+	windows samba shares. Converted end-lines from dos-mode to unix-mode
+
+2002-12-08  Eduardo Garcia Cebollero <kiwnix@yahoo.es>
+
+	* Directory.cs: CreateDirectory  works now with Absolute paths
+	too, not only with relative ones.
+
 2002-12-07  Peter Williams  <peterw@ximian.com>
 
 	* Directory.cs: Don't use the uninitialized pathsumm here.
