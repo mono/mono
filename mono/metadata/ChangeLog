@@ -1,4 +1,15 @@
+2004-02-11  Zoltan Varga  <vargaz@freemail.hu>
 
+	* reflection.h (MonoReflectionMethodAux): Add 'param_cattr' field.
+
+	* reflection.c (mono_custom_attrs_from_param): Add support for dynamic
+	types.
+
+	* reflection.c (reflection_methodbuilder_to_mono_method): Save
+	custom attributes to the method_aux struct. Also fix array indexes etc.
+
+	* loader.c (mono_method_get_param_names): Make dynamic case work again.
+	
 Tue Feb 10 17:03:04 CET 2004 Paolo Molaro <lupus@ximian.com>
 
 	* icall.c, loader.c: icall cleanup: we save quite a bit of memory
