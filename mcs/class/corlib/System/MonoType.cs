@@ -191,7 +191,12 @@ namespace System
 		public extern override Type[] GetNestedTypes (BindingFlags bindingAttr);
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		public extern override PropertyInfo[] GetProperties( BindingFlags bindingAttr);
+		internal extern PropertyInfo[] GetPropertiesByName (string name, BindingFlags bindingAttr, bool icase);
+
+		public override PropertyInfo [] GetProperties (BindingFlags bindingAttr)
+		{
+			return GetPropertiesByName (null, bindingAttr, false);
+		}
 
 		[MonoTODO]
 		protected override PropertyInfo GetPropertyImpl (string name, BindingFlags bindingAttr,
@@ -204,8 +209,8 @@ namespace System
 				throw new ArgumentNullException ();
 			
 			PropertyInfo ret = null;
-			PropertyInfo [] props = GetProperties(bindingAttr);
 			bool ignoreCase = ((bindingAttr & BindingFlags.IgnoreCase) != 0);
+			PropertyInfo [] props = GetPropertiesByName (name, bindingAttr, ignoreCase);
 
 			foreach (PropertyInfo info in props) {
 					if (String.Compare (info.Name, name, ignoreCase, CultureInfo.InvariantCulture) != 0) 
@@ -362,7 +367,7 @@ namespace System
 				/* try SetProperty */
 			}
 			if ((invokeAttr & BindingFlags.GetProperty) != 0) {
-				PropertyInfo[] properties = GetProperties (invokeAttr);
+				PropertyInfo[] properties = GetPropertiesByName (name, invokeAttr, ignoreCase);
 				object state = null;
 				int i, count = 0;
 				for (i = 0; i < properties.Length; ++i) {

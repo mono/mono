@@ -1,7 +1,13 @@
+2004-01-11  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* MonoType.cs: GetProperties renamed to GetPropetiesByName. It takes a
+	new parameter with the property name and a boolean for ignoring case.
+	Fixes bug #52753.
+
 2004-01-11  David Sheldon <dave-mono@earth.li>
 
- * DateTime.cs: Correct processing of formats with multiple '-'s, fixing bug
-  52274
+	* DateTime.cs: Correct processing of formats with multiple '-'s, fixing
+	bug 52274.
 
 2004-01-10  Zoltan Varga  <vargaz@freemail.hu>
 
