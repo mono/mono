@@ -44,13 +44,21 @@ public class AllTests : TestCase {
 	public static ITest Suite { 
 		get {
 			TestSuite suite =  new TestSuite ();
+			suite.AddTest (DataObjectTest.Suite);
 			suite.AddTest (DSAKeyValueTest.Suite);
 			suite.AddTest (KeyInfoNameTest.Suite);
 			suite.AddTest (KeyInfoNodeTest.Suite);
 			suite.AddTest (KeyInfoRetrievalMethodTest.Suite);
+			suite.AddTest (KeyInfoTest.Suite);
 			suite.AddTest (KeyInfoX509DataTest.Suite);
 			suite.AddTest (ReferenceTest.Suite);
 			suite.AddTest (RSAKeyValueTest.Suite);
+			suite.AddTest (SignatureTest.Suite);
+			suite.AddTest (SignedInfoTest.Suite);
+			suite.AddTest (SignedXmlTest.Suite);
+			suite.AddTest (TransformChainTest.Suite);
+			suite.AddTest (XmlDsigBase64TransformTest.Suite);
+			suite.AddTest (XmlDsigXsltTransformTest.Suite);
 			return suite;
 		}
 	}
