@@ -449,7 +449,12 @@ classHead               : D_CLASS type_attr id extendsClause implClause
 				} else {
 					codegen.AddClass ((TypeAttr)$2, (string) $3, null);
 				}
-				// TODO: extends/implements
+				
+				ArrayList impl_list = (ArrayList) $5;
+				if (impl_list != null) {
+					foreach (Class klass in impl_list)
+						codegen.CurrentClass.AddImplementedInterface (klass);
+				}
 			}
 			;
 
@@ -510,11 +515,20 @@ extendsClause           : /* EMPTY */
 			;
 
 implClause              : /* EMPTY */
-			| K_IMPLEMENTS classNames
+			| K_IMPLEMENTS classNames	{$$ = $2; }
 			;
 
-classNames              : classNames COMMA className 
-			| className 
+classNames              : classNames COMMA type_ref
+			  {
+				ArrayList class_list = (ArrayList) $1;
+				class_list.Add ($3);
+	  		  }
+			| type_ref
+			  {
+				ArrayList class_list = new ArrayList ();
+				class_list.Add ($1);
+				$$ = class_list;
+			  }
 			;
 
 classDecls              : /* EMPTY */
