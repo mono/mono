@@ -1,3 +1,10 @@
+2005-01-06  Sebastien Pouliot  <sebastien@ximian.com> 
+
+	* DESTest.cs: Updated weak key and semi-weak key tests with more 
+	exhaustive versions.
+	* TripleDESTest.cs: Added tests when including a DES weak key into
+	a 2DES or 3DES key.
+
 2005-01-04  Sebastien Pouliot  <sebastien@ximian.com> 
 
 	* CryptoStreamTest.cs: Undo some previous fixes that have changed from
