@@ -1,3 +1,7 @@
+2002-11-12  Tim Coleman <tim@timcoleman.com>
+	* System.Data.Common/DbDataAdapter.cs:
+		Experimental support for FillSchema ()
+
 2002-11-11  Tim Coleman <tim@timcoleman.com>
         * System.Data/ResDescriptionAttribute.cs:
         * list
