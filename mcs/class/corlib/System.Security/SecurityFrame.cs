@@ -38,6 +38,7 @@ namespace System.Security {
 	internal struct RuntimeDeclSecurityEntry {
 		public IntPtr blob;
 		public int size;
+		public int index;
 	}
 
 	// Must match MonoSecurityFrame in /mono/mini/declsec.h

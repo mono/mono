@@ -1,3 +1,8 @@
+2005-01-22  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* SecurityFrame.cs: Keep RuntimeDeclSecurityEntry enum in sync with
+	runtime (added index to allow AOT to work with declarative security).
+
 2005-01-19  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* SecurityManager.cs: Fix the regressions on NET_1_1 introduced by my
