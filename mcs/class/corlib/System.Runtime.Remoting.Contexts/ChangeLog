@@ -1,3 +1,7 @@
+2003-02-03 Patrik Torstensson
+	
+	* Contexts.cs : Changed order of fields to match the runtime implementation.
+
 2003-01-29  Lluis Sanchez Gual <lluis@ideary.com>
 
 	* Context.cs: Object sinks must be created for each object

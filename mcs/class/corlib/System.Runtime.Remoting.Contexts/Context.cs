@@ -4,6 +4,7 @@
 // Author:
 //   Miguel de Icaza (miguel@ximian.com)
 //   Lluis Sanchez Gual (lsg@ctv.es)
+//   Patrik Torstensson
 //
 // (C) Ximian, Inc.  http://www.ximian.com
 //
@@ -14,7 +15,12 @@ using System.Runtime.Remoting.Lifetime;
 
 namespace System.Runtime.Remoting.Contexts {
 
-	public class Context {
+	public class Context 
+	{
+		int domain_id;
+		int context_id;
+		int process_id;
+		
 		static Context default_context;
 		static ArrayList domain_contexts = new ArrayList();
 
@@ -25,7 +31,6 @@ namespace System.Runtime.Remoting.Contexts {
 		IMessageSink server_context_sink_chain = null;
 
 		ArrayList context_properties;
-		int context_id;
 		bool frozen;
 		static int global_count;
 		
