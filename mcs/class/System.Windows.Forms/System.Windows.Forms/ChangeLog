@@ -1,4 +1,12 @@
 2002-7-2  DennisHayes <dennish@raytek.com>
+* Button.cs
+* ButtonBase.cs
+* ContainerControl.cs
+* Label.cs
+* ScrollableControl.cs
+* Copied changes made by miguel and hestilow in gkt# to system.windows.forms
+
+2002-7-2  DennisHayes <dennish@raytek.com>
 *  Checked in for Richard Baumann (biochem333@nyc.rr.com)
 * DataGridTextBoxColumn.cs
 * DataObject.cs
