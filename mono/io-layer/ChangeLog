@@ -1,3 +1,8 @@
+2004-06-30  Zoltan Varga  <vargaz@freemail.hu>
+
+	* mono-mutex.h atomic.h: Add G_GNUC_UNUSED to static inline functions
+	to prevent warnings.
+
 2004-06-24  Dick Porter  <dick@ximian.com>
 
 	* mutexes.c: Indicate when a named mutex was reused
