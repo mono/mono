@@ -23,6 +23,7 @@ SOURCES = \
 	RadioButton.cs	\
 	GroupBox.cs	\
 	ProgressBar.cs	\
+	PictureBox.cs	\
 	ScrollableControl.cs
 
 all: demo.exe
