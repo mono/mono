@@ -1,3 +1,39 @@
+2003-10-30  Martin Baulig  <martin@ximian.com>
+
+	* class.c (inflate_generic_type): Take just one `MonoGenericInst *'
+	argument instead of two.
+	(mono_class_inflate_generic_signature): Likewise.
+	(inflate_generic_header): Likewise.
+	(mono_class_inflate_generic_method): Likewise.  In addition, if
+	`ginst->klass' is set, it becomes the new `method->klass'.
+
+	* class.h (MonoGenericInst): Removed the `gpointer mbuilder'
+	field.
+
+	* reflection.c (encode_generic_method_sig): Write a 0xa as the
+	first byte. [FIXME]
+	(method_encode_methodspec): If we have generic parameters, create
+	a MethodSpec instead of a MethodRef.
+	(fixup_method): Added support for "MonoInflatedMethod" and
+	"MonoInflatedCtor".
+	(mono_image_create_token): Added support for "MonoInflatedMethod"
+	and "MonoInflatedCtor".
+	(inflated_method_get_object): New static function; returns a
+	managed "System.Reflection.MonoInflatedMethod" object.
+	(mono_reflection_bind_generic_method_parameters): Return a
+	`MonoReflectionInflatedMethod' instead of a `MonoReflectionMethod'.
+	(mono_reflection_inflate_method_or_ctor): Likewise.
+	(mono_image_get_generic_method_param_info): Initialize unused
+	fields to zero.
+	(mono_image_get_generic_param_info): Likewise.
+
+	* reflection.h (MonoReflectionInflatedMethod): New public
+	typedef.  Corresponds to the managed "S.R.MonoInflatedMethod" and
+	"S.R.MonoInflatedCtor" classes.
+
+	* loader.c (method_from_memberref): If we're a TypeSpec and it
+	resolves to a generic instance, inflate the method.
+
 2003-10-28  Dick Porter  <dick@ximian.com>
 
 	* object.c (mono_runtime_run_main): Convert command-line arguments
