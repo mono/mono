@@ -1,6 +1,8 @@
 2002-05-16  Radek Doulik  <rodo@ximian.com>
 
-	* interp.c (ves_exec_method): use data.i instead of data.l in i32 case
+	* interp.c (ves_exec_method): use data.i instead of data.l in i32
+	case
+	(ves_exec_method): set type in I64 <--> I32 conversions
 
 2002-05-15  Radek Doulik  <rodo@ximian.com>
 
