@@ -3,6 +3,7 @@
 //
 // Author:
 //   stubbed out by Daniel Carrera (dcarrera@math.toronto.edu)
+//	Partially completed by Dennis Hayes (dennish@raytek.com)
 //
 // (C) 2002 Ximian, Inc
 //
@@ -10,55 +11,57 @@
 namespace System.Windows.Forms {
 
 	// <summary>
-	//	This is only a template.  Nothing is implemented yet.
-	//
 	// </summary>
 
-        //[ComVisible(true)]
-		//public class SplitterEventArgs : EventArgs {
-
+    [ComVisible(true)]
+	public class SplitterEventArgs : EventArgs {
+		private int x;
+		private int y;
+		private int splitx;
+		private int splity;
 		//
 		//  --- Constructor
 		//
-		//[MonoTODO]
-		//public SplitterEventArgs(int x, int y, int splitX, int splitY)
-		//{
-		//	throw new NotImplementedException ();
-		//}
-
+		public SplitterEventArgs(int x, int y, int splitX, int splitY)
+		{
+			this.x = x;
+			this.y = y;
+			splitx = splitX;
+			splity = splitY;
+		}
 		//
 		//  --- Public Properties
 		//
-		//[MonoTODO]
-		//[ComVisible(true)] public int SplitX {
-		//	get {
-		//		throw new NotImplementedException ();
-		//	}
-		//	set {
-		//		throw new NotImplementedException ();
-		//	}
-		//}
-		//[MonoTODO]
-		//[ComVisible(true)] public int SplitY {
-		//	get {
-		//		throw new NotImplementedException ();
-		//	}
-		//	set {
-		//		throw new NotImplementedException ();
-		//	}
-		//}
-		//[MonoTODO]
-		//[ComVisible(true)] public int X {
-		//	get {
-		//		throw new NotImplementedException ();
-		//	}
-		//}
-		//[MonoTODO]
-		//[ComVisible(true)] public int Y {
-		//	get {
-		//		throw new NotImplementedException ();
-		//	}
-		//}
+		[ComVisible(true)]
+		public int SplitX {
+			get {
+				return splitx;
+			}
+			set {
+				splitx = value;
+			}
+		}
+		[ComVisible(true)]
+		public int SplitY {
+			get {
+				return splity;
+			}
+			set {
+				splity = value;
+			}
+		}
+		[ComVisible(true)]
+		public int X {
+			get {
+				return x;
+			}
+		}
+		[ComVisible(true)]
+		public int Y {
+			get {
+				return y;
+			}
+		}
 
 		//
 		//  --- Public Methods
@@ -73,5 +76,5 @@ namespace System.Windows.Forms {
 		//{
 		//	throw new NotImplementedException ();
 		//}
-	// }
+	 }
 }

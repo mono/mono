@@ -13,9 +13,9 @@ namespace System.Windows.Forms
 	//	This is only a template. Nothing is implemented yet.
 	//	Represents a panel in a StatusBar control.
 	// </summary>
-
-	//public class StatusBarPanel : Component, ISupportInitialize
-	//{
+using System.ComponentModel;
+	public class StatusBarPanel : Component, ISupportInitialize
+	{
 		//
 		//  --- Public Methods
 		//
@@ -117,5 +117,5 @@ namespace System.Windows.Forms
 		//	get{ throw new NotImplementedException (); }
 		//	set{ throw new NotImplementedException (); }
 		//}
-	//}
+	}
 }

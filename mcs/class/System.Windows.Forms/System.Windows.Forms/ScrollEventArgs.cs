@@ -14,7 +14,7 @@ namespace System.Windows.Forms {
 	//
 	// </summary>
 
-        //public class ScrollEventArgs : EventArgs {
+    public class ScrollEventArgs : EventArgs {
 
 		//
 		//  --- Constructor
@@ -57,5 +57,5 @@ namespace System.Windows.Forms {
 		//{
 		//	throw new NotImplementedException ();
 		//}
-	// }
+	 }
 }

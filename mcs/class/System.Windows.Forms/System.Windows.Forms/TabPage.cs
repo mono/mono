@@ -6,7 +6,7 @@
 //
 // (C) 2002 Ximian, Inc
 //
-
+using System.ComponentModel;
 namespace System.Windows.Forms {
 
 	// <summary>
@@ -14,7 +14,7 @@ namespace System.Windows.Forms {
 	//
 	// </summary>
 
-        //public class TabPage : Panel {
+        public class TabPage : Panel {
 
 		//
 		//  --- Public Constructor
@@ -108,7 +108,7 @@ namespace System.Windows.Forms {
 		//{
 		//	throw new NotImplementedException ();
 		//}
-		//public class TabPageControlCollection : Control.ControlCollection {
+		public class TabPageControlCollection : Control.ControlCollection {
 			//
 			// --- Public Methods
 			//
@@ -116,6 +116,6 @@ namespace System.Windows.Forms {
 			//{
 			//	throw new NotImplementedException ();
 			//}
-		//}
-	//}
+		}
+	}
 }

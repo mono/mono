@@ -14,7 +14,7 @@ namespace System.Windows.Forms {
 	//
 	// </summary>
 
-        //public class TextBox : TextBoxBase {
+     public class TextBox : TextBoxBase {
 
 		//
 		//  --- Public Constructor
@@ -132,5 +132,5 @@ namespace System.Windows.Forms {
 		//{
 		//	throw new NotImplementedException ();
 		//}
-	//}
+	}
 }

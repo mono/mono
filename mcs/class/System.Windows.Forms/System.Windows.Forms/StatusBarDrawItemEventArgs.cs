@@ -3,6 +3,7 @@
 //
 // Author:
 //   stubbed out by Richard Baumann (biochem333@nyc.rr.com)
+//	Partially completed by Dennis Hayes (dennish@raytek.com)
 //
 // (C) Ximian, Inc., 2002
 //
@@ -21,7 +22,6 @@ namespace System.Windows.Forms
 		: base(g, font, r, itemId, itemState) {
 			this.panel = panel;
 		}
-
 		/// --- Properties ---
 		public StatusBarPanel Panel {
 			get {
@@ -29,7 +29,6 @@ namespace System.Windows.Forms
 			}
 		}
 
-		// add. remove comment after modifing for this class
 		/// <summary>
 		///	Equality Operator
 		/// </summary>
@@ -79,11 +78,13 @@ namespace System.Windows.Forms
 		///
 		/// <remarks>
 		///	Calculates a hashing value.
+		///	Returns DrawItemEventArgs.GetHashCode().
 		/// </remarks>
-		//[MonoTODO]
-		//public override int GetHashCode () {
-		//	throw new NotImplementedException();
-		//}
+		public override int GetHashCode () {
+			// FIXME: In a perfect world, get hashcode would include
+			//		  Panel, but this shouldbe good enough.
+			return base.GetHashCode;
+		}
 
 		/// <summary>
 		///	ToString Method
@@ -92,12 +93,8 @@ namespace System.Windows.Forms
 		/// <remarks>
 		///	Formats the StatusBarDrawItemEventArgs as a string.
 		/// </remarks>
-		//[MonoTODO]
-		//public override string ToString () {
-		//	throw new NotImplementedException();
-		//}
-  
-		//end add. remove comment after modifing for this class
-
+		public override string ToString () {
+			return base.ToString() + panel.ToString();
+		}
 	}
 }

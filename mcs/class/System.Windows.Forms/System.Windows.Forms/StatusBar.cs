@@ -14,7 +14,7 @@ namespace System.Windows.Forms {
 	//
 	// </summary>
 
-        //public class StatusBar : Control {
+        public class StatusBar : Control {
 
 		//
 		//  --- Constructor
@@ -338,5 +338,5 @@ namespace System.Windows.Forms {
 		//{
 		//	throw new NotImplementedException ();
 		//}
-	// }
+	 }
 }

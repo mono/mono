@@ -14,8 +14,8 @@ namespace System.Windows.Forms
 	//	Represents the collection of panels in a StatusBar control.
 	// </summary>
 
-	//public class StatusBarPanelCollection : IList, ICollection, IEnumerable
-	//{
+	public class StatusBarPanelCollection : IList, ICollection, IEnumerable
+	{
 		//
 		//  --- Public Methods
 		//
@@ -106,5 +106,5 @@ namespace System.Windows.Forms
 		//	get{ throw new NotImplementedException (); }
 		//	set{ throw new NotImplementedException (); }
 		//}
-	//}
+	}
 }

@@ -3,6 +3,7 @@
 //
 // Author:
 //   stubbed out by Daniel Carrera (dcarrera@math.toronto.edu)
+//	Partially completed by Dennis Hayes (dennish@raytek.com)
 //
 // (C) 2002 Ximian, Inc
 //
@@ -10,36 +11,34 @@
 namespace System.Windows.Forms {
 
 	// <summary>
-	//	This is only a template.  Nothing is implemented yet.
-	//
 	// </summary>
 
-        //public class SelectedGridItemChangedEventArgs : EventArgs {
+        public class SelectedGridItemChangedEventArgs : EventArgs {
+			GridItem old;
+			GridItem newGridItem;
 
 		//
 		//  --- Constructor
 		//
-		//[MonoTODO]
-		//public SelectedGridItemChangedEventArgs(GridItem old, GridItem new)
-		//{
-		//	throw new NotImplementedException ();
-		//}
+		public SelectedGridItemChangedEventArgs(GridItem old, GridItem newGridItem)
+		{
+			this.newGridItem = newGridItem;
+			this.old = old;
+		}
 
 		//
 		//  --- Public Properties
 		//
-		//[MonoTODO]
-		//public GridItem NewSelection {
-		//	get {
-		//		throw new NotImplementedException ();
-		//	}
-		//}
-		//[MonoTODO]
-		//public GridItem OldSelection {
-		//	get {
-		//		throw new NotImplementedException ();
-		//	}
-		//}
+		public GridItem NewSelection {
+			get {
+				return newGridItem;
+			}
+		}
+		public GridItem OldSelection {
+			get {
+				return old;
+			}
+		}
 
 		//
 		//  --- Public Methods
@@ -54,5 +53,5 @@ namespace System.Windows.Forms {
 		//{
 		//	throw new NotImplementedException ();
 		//}
-	// }
+	 }
 }

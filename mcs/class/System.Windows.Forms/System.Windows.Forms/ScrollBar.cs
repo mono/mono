@@ -14,7 +14,7 @@ namespace System.Windows.Forms {
 	//
 	// </summary>
 
-        //public class ScrollBar : Control {
+     public class ScrollBar : Control {
 
 		//
 		//  --- Constructor
@@ -329,5 +329,5 @@ namespace System.Windows.Forms {
 		//{
 		//	throw new NotImplementedException ();
 		//}
-	// }
+	 }
 }

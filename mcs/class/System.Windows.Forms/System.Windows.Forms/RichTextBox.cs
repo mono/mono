@@ -14,7 +14,7 @@ namespace System.Windows.Forms {
 	//
 	// </summary>
 
-        //public class RichTextBox : TextBoxBase {
+    public class RichTextBox : TextBoxBase {
 
 		//
 		//  --- Constructor
@@ -744,5 +744,5 @@ namespace System.Windows.Forms {
 		//{
 		//	throw new NotImplementedException ();
 		//}
-	// }
+	 }
 }

@@ -14,7 +14,7 @@ namespace System.Windows.Forms {
 	//
 	// </summary>
 
-        //public class TextBoxBase : Control {
+        public class TextBoxBase : Control {
 
 		//
 		//  --- Public Properties
@@ -400,6 +400,6 @@ namespace System.Windows.Forms {
 		//{
 		//	throw new NotImplementedException ();
 		//}
-	//}
+	}
 }
 

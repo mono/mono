@@ -14,7 +14,7 @@ namespace System.Windows.Forms {
 	//
 	// </summary>
 
-        //public class ThreadExceptionDialog : Form {
+    public class ThreadExceptionDialog : Form {
 
 		//
 		//  --- Public Constructor
@@ -24,5 +24,5 @@ namespace System.Windows.Forms {
 		//{
 		//	throw new NotImplementedException ();
 		//}
-	//}
+	}
 }

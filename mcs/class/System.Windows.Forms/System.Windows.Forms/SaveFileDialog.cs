@@ -14,7 +14,7 @@ namespace System.Windows.Forms {
 	//
 	// </summary>
 
-        //public sealed class SaveFileDialog : FileDialog {
+    public sealed class SaveFileDialog : FileDialog {
 
 		//
 		//  --- Constructor
@@ -79,5 +79,5 @@ namespace System.Windows.Forms {
 		//{
 		//	throw new NotImplementedException ();
 		//}
-	// }
+	 }
 }

@@ -14,7 +14,7 @@ namespace System.Windows.Forms {
 	//
 	// </summary>
 
-        //public class Splitter : Control, IMessageFilter {
+    public class Splitter : Control, IMessageFilter {
 
 		//
 		//  --- Constructor
@@ -341,5 +341,5 @@ namespace System.Windows.Forms {
 		//{
 		//	throw new NotImplementedException ();
 		//}
-	// }
+	 }
 }

@@ -6,7 +6,7 @@
 //
 // (C) 2002 Ximian, Inc
 //
-
+using System.ComponentModel;
 namespace System.Windows.Forms {
 
 	// <summary>
@@ -14,7 +14,7 @@ namespace System.Windows.Forms {
 	//
 	// </summary>
 
-        //public class TabControl : Control  {
+        public class TabControl : Control  {
 
 
 		//
@@ -337,7 +337,7 @@ namespace System.Windows.Forms {
 		//{
 		//	throw new NotImplementedException ();
 		//}
-   		//public class ControlCollection : Control.ControlCollection {
+   		public class ControlCollection : Control.ControlCollection {
 			//
 			// --- Public Methods
 			//
@@ -351,8 +351,8 @@ namespace System.Windows.Forms {
 			//{
 			//	throw new NotImplementedException ();
 			//}
-		//}
-		//public class TabPageCollection : IList, ICollection, IEnumerable {
+		}
+		public class TabPageCollection : IList, ICollection, IEnumerable {
 			//
 			// --- Public Contructor
 			//
@@ -432,7 +432,7 @@ namespace System.Windows.Forms {
 			//{
 			//	throw new NotImplementedException ();
 			//}
-		//}
-   //}
+		}
+   }
 }
 

@@ -14,8 +14,8 @@ namespace System.Windows.Forms
 	//	Provides information about the operating system.
 	// </summary>
 
-	//public class SystemInformation
-	//{
+	public class SystemInformation
+	{
 		//
 		//  --- Protected Methods
 		//
@@ -328,5 +328,5 @@ namespace System.Windows.Forms
 		//{
 		//	get{ throw new NotImplementedException (); }
 		//}
-	//}
+	}
 }

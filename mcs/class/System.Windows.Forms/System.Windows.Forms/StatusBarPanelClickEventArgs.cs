@@ -3,6 +3,7 @@
 //
 // Author:
 //   stubbed out by Richard Baumann (biochem333@nyc.rr.com)
+//	Partially completed by Dennis Hayes (dennish@raytek.com)
 //
 // (C) Ximian, Inc., 2002
 //
@@ -28,7 +29,6 @@ namespace System.Windows.Forms
 			}
 		}
 
-		// add. remove comment after modifing for this class
 		/// <summary>
 		///	Equality Operator
 		/// </summary>
@@ -78,10 +78,9 @@ namespace System.Windows.Forms
 		/// <remarks>
 		///	Calculates a hashing value.
 		/// </remarks>
-		//[MonoTODO]
-		//public override int GetHashCode () {
-		//	throw new NotImplementedException();
-		//}
+		public override int GetHashCode () {
+			return unchecked(panel.GetHashCode() * base.GetHashCode());
+		}
 
 		/// <summary>
 		///	ToString Method
@@ -94,8 +93,5 @@ namespace System.Windows.Forms
 		//public override string ToString () {
 		//	throw new NotImplementedException();
 		//}
-  
-		//end add. remove comment after modifing for this class
-
 	}
 }
