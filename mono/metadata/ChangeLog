@@ -1,3 +1,7 @@
+2004-08-23  Zoltan Varga  <vargaz@freemail.hu>
+ 
+ 	* metadata.c (mono_metadata_parse_type): Alloc pinned, byref and
+ 	custom modifiers to be in any order. Fixes #61990.
 
 Thu Aug 5 17:11:44 CEST 2004 Paolo Molaro <lupus@ximian.com>
 
