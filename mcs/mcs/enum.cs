@@ -204,6 +204,13 @@ namespace Mono.CSharp {
 
 			attr |= TypeAttributes.Class | TypeAttributes.Sealed;
 
+			if (!(BaseType is TypeLookupExpression)) {
+				Report.Error (1008, Location,
+					      "Type byte, sbyte, short, ushort, int, uint, " +
+					      "long, or ulong expected (got: `{0}')", BaseType);
+				return null;
+			}
+
 			UnderlyingType = ResolveType (BaseType, false, Location);
 
 			if (UnderlyingType != TypeManager.int32_type &&
@@ -604,7 +611,7 @@ namespace Mono.CSharp {
 			//
 			if (TypeBuilder == null)
 				return false;
-			
+
 			EmitContext ec = new EmitContext (this, this, Location, null,
 							  UnderlyingType, ModFlags, false);
 

@@ -1,5 +1,10 @@
 2004-05-24  Martin Baulig  <martin@ximian.com>
 
+	* enum.cs (Enum.DefineType): For the `BaseType' to be a
+	TypeLookupExpression; otherwise, report a CS1008.  Fixes #58571.
+
+2004-05-24  Martin Baulig  <martin@ximian.com>
+
 	* decl.cs (DeclSpace.FindType): Try doing an alias lookup before
 	walking the `using' list.  Fixes #53921.
 
