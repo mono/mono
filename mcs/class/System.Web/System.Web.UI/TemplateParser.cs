@@ -276,6 +276,9 @@ namespace System.Web.UI
 				return null;
 
 			// Load from bin
+			if (!Directory.Exists (PrivateBinPath))
+				return null;
+
 			string [] binDlls = Directory.GetFiles (PrivateBinPath, "*.dll");
 			foreach (string s in binDlls) {
 				Assembly binA = Assembly.LoadFrom (s);
