@@ -1,19 +1,19 @@
 /*
  *	Firebird ADO.NET Data provider for .NET	and	Mono 
  * 
- *	   The contents	of this	file are subject to	the	Initial	
+ *	   The contents of this file are subject to the Initial 
  *	   Developer's Public License Version 1.0 (the "License"); 
- *	   you may not use this	file except	in compliance with the 
- *	   License.	You	may	obtain a copy of the License at	
+ *	   you may not use this file except in compliance with the 
+ *	   License. You may obtain a copy of the License at 
  *	   http://www.firebirdsql.org/index.php?op=doc&id=idpl
  *
- *	   Software	distributed	under the License is distributed on	
+ *	   Software distributed under the License is distributed on 
  *	   an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either 
- *	   express or implied.	See	the	License	for	the	specific 
- *	   language	governing rights and limitations under the License.
+ *	   express or implied. See the License for the specific 
+ *	   language governing rights and limitations under the License.
  * 
- *	Copyright (c) 2002,	2004 Carlos	Guzman Alvarez
- *	All	Rights Reserved.
+ *	Copyright (c) 2002, 2005 Carlos Guzman Alvarez
+ *	All Rights Reserved.
  */
 
 using System;
@@ -27,89 +27,89 @@ using FirebirdSql.Data.Common;
 
 namespace FirebirdSql.Data.Embedded
 {
-	internal sealed	class FesDatabase :	IDatabase
+	internal sealed class FesDatabase : IDatabase
 	{
-		#region	Callbacks
+		#region Callbacks
 
 		public WarningMessageCallback WarningMessage
 		{
-			get	{ return this.warningMessage; }
-			set	{ this.warningMessage =	value; }
+			get { return this.warningMessage; }
+			set { this.warningMessage = value; }
 		}
 
 		#endregion
 
-		#region	Fields
-		
-		private	WarningMessageCallback warningMessage;
+		#region Fields
 
-		private	int		handle;
-		private	int		transactionCount;
-		private	string	serverVersion;
-		private	Charset	charset;
-		private	short	packetSize;
-		private	short	dialect;
-		private	bool	disposed;
+		private WarningMessageCallback warningMessage;
+
+		private int		handle;
+		private int		transactionCount;
+		private string	serverVersion;
+		private Charset charset;
+		private short	packetSize;
+		private short	dialect;
+		private bool	disposed;
 
 		#endregion
 
-		#region	Properties
+		#region Properties
 
 		public int Handle
 		{
-			get	{ return this.handle; }
+			get { return this.handle; }
 		}
 
 		public int TransactionCount
 		{
-			get	{ return this.transactionCount;	}
-			set	{ this.transactionCount	= value; }
+			get { return this.transactionCount; }
+			set { this.transactionCount = value; }
 		}
 
 		public string ServerVersion
 		{
-			get	{ return this.serverVersion; }
+			get { return this.serverVersion; }
 		}
 
 		public Charset Charset
 		{
-			get	{ return this.charset; }
-			set	{ this.charset = value;	}
+			get { return this.charset; }
+			set { this.charset = value; }
 		}
 
 		public short PacketSize
 		{
-			get	{ return this.packetSize; }
-			set	{ this.packetSize =	value; }
+			get { return this.packetSize; }
+			set { this.packetSize = value; }
 		}
 
 		public short Dialect
 		{
-			get	{ return this.dialect; }
-			set	{ this.dialect = value;	}
+			get { return this.dialect; }
+			set { this.dialect = value; }
 		}
 
-		public bool	HasRemoteEventSupport
+		public bool HasRemoteEventSupport
 		{
-			get	{ return false;	}
+			get { return false; }
 		}
 
 		#endregion
 
-		#region	Constructors
+		#region Constructors
 
 		public FesDatabase()
 		{
 			this.charset	= Charset.DefaultCharset;
 			this.dialect	= 3;
-			this.packetSize	= 8192;
+			this.packetSize = 8192;
 
 			GC.SuppressFinalize(this);
 		}
 
 		#endregion
 
-		#region	Finalizer
+		#region Finalizer
 
 		~FesDatabase()
 		{
@@ -118,15 +118,15 @@ namespace FirebirdSql.Data.Embedded
 
 		#endregion
 
-		#region	IDisposable	methods
+		#region IDisposable	methods
 
-		public void	Dispose()
+		public void Dispose()
 		{
 			this.Dispose(true);
 			GC.SuppressFinalize(this);
 		}
 
-		private	void Dispose(bool disposing)
+		private void Dispose(bool disposing)
 		{
 			lock (this)
 			{
@@ -140,18 +140,18 @@ namespace FirebirdSql.Data.Embedded
 						// release any managed resources
 						if (disposing)
 						{
+							this.warningMessage = null;
 							this.charset		= null;
 							this.serverVersion	= null;
+							this.transactionCount = 0;
 							this.dialect		= 0;
 							this.handle			= 0;
 							this.packetSize		= 0;
-							this.transactionCount =	0;
-							this.warningMessage	= null;
 						}
 					}
 					finally
 					{
-						this.disposed =	true;
+						this.disposed = true;
 					}
 				}
 			}
@@ -159,14 +159,14 @@ namespace FirebirdSql.Data.Embedded
 
 		#endregion
 
-		#region	Database Methods
+		#region Database Methods
 
-		public void	CreateDatabase(DatabaseParameterBuffer dpb,	string dataSource, int port, string	database)
+		public void CreateDatabase(DatabaseParameterBuffer dpb, string dataSource, int port, string database)
 		{
 			lock (this)
 			{
-				int[]	statusVector = FesConnection.GetNewStatusVector();
-				int		dbHandle	 = this.Handle;
+				int[] statusVector = FesConnection.GetNewStatusVector();
+				int dbHandle = this.Handle;
 
 				FbClient.isc_create_database(
 					statusVector,
@@ -179,37 +179,37 @@ namespace FirebirdSql.Data.Embedded
 
 				this.ParseStatusVector(statusVector);
 
-				this.handle	= dbHandle;
+				this.handle = dbHandle;
 
 				this.Detach();
 			}
 		}
 
-		public void	DropDatabase()
+		public void DropDatabase()
 		{
 			lock (this)
 			{
-				int[]	statusVector	= FesConnection.GetNewStatusVector();
-				int		dbHandle		= this.Handle;
+				int[] statusVector = FesConnection.GetNewStatusVector();
+				int	dbHandle = this.Handle;
 
 				FbClient.isc_drop_database(statusVector, ref dbHandle);
 
 				this.ParseStatusVector(statusVector);
 
-				this.handle	= 0;
+				this.handle = 0;
 			}
 		}
 
 		#endregion
 
-		#region	Remote Events Methods
+		#region Remote Events Methods
 
 		void IDatabase.CloseEventManager()
 		{
 			throw new NotSupportedException();
 		}
 
-		RemoteEvent	IDatabase.CreateEvent()
+		RemoteEvent IDatabase.CreateEvent()
 		{
 			throw new NotSupportedException();
 		}
@@ -219,22 +219,22 @@ namespace FirebirdSql.Data.Embedded
 			throw new NotSupportedException();
 		}
 
-		void IDatabase.CancelEvents(RemoteEvent	events)
+		void IDatabase.CancelEvents(RemoteEvent events)
 		{
 			throw new NotSupportedException();
 		}
 
 		#endregion
 
-		#region	Methods
+		#region Methods
 
-		public void	Attach(DatabaseParameterBuffer dpb,	string dataSource, int port, string	database)
+		public void Attach(DatabaseParameterBuffer dpb, string dataSource, int port, string database)
 		{
 			lock (this)
 			{
-				int[]	statusVector = FesConnection.GetNewStatusVector();
-				int		dbHandle	 = 0;
-				
+				int[] statusVector = FesConnection.GetNewStatusVector();
+				int dbHandle = 0;
+
 				FbClient.isc_attach_database(
 					statusVector,
 					(short)database.Length,
@@ -243,40 +243,40 @@ namespace FirebirdSql.Data.Embedded
 					(short)dpb.Length,
 					dpb.ToArray());
 
-				this.handle	= dbHandle;
-					
+				this.handle = dbHandle;
+
 				this.ParseStatusVector(statusVector);
 
 				// Get server version
 				this.serverVersion = this.GetServerVersion();
-			}			
+			}
 		}
 
-		public void	Detach()
+		public void Detach()
 		{
-			lock (this)	
+			lock (this)
 			{
-				if (this.TransactionCount >	0) 
+				if (this.TransactionCount > 0)
 				{
-					throw new IscException(IscCodes.isc_open_trans,	this.TransactionCount);
+					throw new IscException(IscCodes.isc_open_trans, this.TransactionCount);
 				}
 
-				int[]	statusVector	= FesConnection.GetNewStatusVector();
-				int		dbHandle		= this.Handle;
+				int[] statusVector = FesConnection.GetNewStatusVector();
+				int dbHandle = this.Handle;
 
 				FbClient.isc_detach_database(statusVector, ref dbHandle);
 
-				this.handle	= dbHandle;
-					
-				FesConnection.ParseStatusVector(statusVector);			
+				this.handle = dbHandle;
+
+				FesConnection.ParseStatusVector(statusVector);
 			}
 		}
 
 		#endregion
 
-		#region	Transaction	methods
+		#region Transaction	methods
 
-		public ITransaction	BeginTransaction(TransactionParameterBuffer	tpb)
+		public ITransaction BeginTransaction(TransactionParameterBuffer tpb)
 		{
 			FesTransaction transaction = new FesTransaction(this);
 			transaction.BeginTransaction(tpb);
@@ -286,7 +286,7 @@ namespace FirebirdSql.Data.Embedded
 
 		#endregion
 
-		#region	Statement creation methods
+		#region Statement creation methods
 
 		public StatementBase CreateStatement()
 		{
@@ -300,7 +300,7 @@ namespace FirebirdSql.Data.Embedded
 
 		#endregion
 
-		#region	Parameter Buffer Creation methods
+		#region Parameter Buffer Creation methods
 
 		public BlobParameterBuffer CreateBlobParameterBuffer()
 		{
@@ -312,7 +312,7 @@ namespace FirebirdSql.Data.Embedded
 			return new DatabaseParameterBuffer(BitConverter.IsLittleEndian);
 		}
 
-		public EventParameterBuffer	CreateEventParameterBuffer()
+		public EventParameterBuffer CreateEventParameterBuffer()
 		{
 			return new EventParameterBuffer();
 		}
@@ -324,7 +324,7 @@ namespace FirebirdSql.Data.Embedded
 
 		#endregion
 
-		#region	Database information methods
+		#region Database information methods
 
 		public string GetServerVersion()
 		{
@@ -337,14 +337,14 @@ namespace FirebirdSql.Data.Embedded
 			return this.GetDatabaseInfo(items, 50)[0].ToString();
 		}
 
-		public ArrayList GetDatabaseInfo(byte[]	items)
+		public ArrayList GetDatabaseInfo(byte[] items)
 		{
 			return this.GetDatabaseInfo(items, IscCodes.MAX_BUFFER_SIZE);
 		}
 
-		public ArrayList GetDatabaseInfo(byte[]	items, int bufferLength)
+		public ArrayList GetDatabaseInfo(byte[] items, int bufferLength)
 		{
-			byte[] buffer =	new	byte[bufferLength];
+			byte[] buffer = new byte[bufferLength];
 
 			this.DatabaseInfo(items, buffer, buffer.Length);
 
@@ -353,11 +353,11 @@ namespace FirebirdSql.Data.Embedded
 
 		#endregion
 
-		#region	Internal methods
+		#region Internal methods
 
 		internal void ParseStatusVector(int[] statusVector)
 		{
-			IscException ex	= FesConnection.ParseStatusVector(statusVector);
+			IscException ex = FesConnection.ParseStatusVector(statusVector);
 
 			if (ex != null)
 			{
@@ -374,14 +374,14 @@ namespace FirebirdSql.Data.Embedded
 
 		#endregion
 
-		#region	Private	Methods
+		#region Private	Methods
 
-		private	void DatabaseInfo(byte[] items,	byte[] buffer, int bufferLength)
-		{		
-			lock (this)	
-			{			
-				int[]	statusVector	= FesConnection.GetNewStatusVector();
-				int		dbHandle		= this.Handle;
+		private void DatabaseInfo(byte[] items, byte[] buffer, int bufferLength)
+		{
+			lock (this)
+			{
+				int[] statusVector = FesConnection.GetNewStatusVector();
+				int dbHandle = this.Handle;
 
 				FbClient.isc_database_info(
 					statusVector,
@@ -390,7 +390,7 @@ namespace FirebirdSql.Data.Embedded
 					items,
 					(short)bufferLength,
 					buffer);
-					
+
 				this.ParseStatusVector(statusVector);
 			}
 		}

@@ -12,7 +12,7 @@
  *     express or implied.  See the License for the specific 
  *     language governing rights and limitations under the License.
  * 
- *  Copyright (c) 2002, 2004 Carlos Guzman Alvarez
+ *  Copyright (c) 2002, 2005 Carlos Guzman Alvarez
  *  All Rights Reserved.
  */
 
@@ -77,10 +77,10 @@ namespace FirebirdSql.Data.Common
 			set;
 		}
 
-        bool HasRemoteEventSupport
-        {
-            get;
-        }
+		bool HasRemoteEventSupport
+		{
+			get;
+		}
 
 		#endregion
 
@@ -97,15 +97,15 @@ namespace FirebirdSql.Data.Common
 		StatementBase CreateStatement();
 		StatementBase CreateStatement(ITransaction transaction);
 
-		BlobParameterBuffer		CreateBlobParameterBuffer();
+		BlobParameterBuffer CreateBlobParameterBuffer();
 		DatabaseParameterBuffer CreateDatabaseParameterBuffer();
-		EventParameterBuffer	CreateEventParameterBuffer();
+		EventParameterBuffer CreateEventParameterBuffer();
 		TransactionParameterBuffer CreateTransactionParameterBuffer();
 
 		ArrayList GetDatabaseInfo(byte[] items);
 		ArrayList GetDatabaseInfo(byte[] items, int bufferLength);
 
-        void CloseEventManager();
+		void CloseEventManager();
 		RemoteEvent CreateEvent();
 		void QueueEvents(RemoteEvent events);
 		void CancelEvents(RemoteEvent events);

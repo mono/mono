@@ -12,7 +12,7 @@
  *     express or implied.  See the License for the specific 
  *     language governing rights and limitations under the License.
  * 
- *  Copyright (c) 2002, 2004 Carlos Guzman Alvarez
+ *  Copyright (c) 2002, 2005 Carlos Guzman Alvarez
  *  All Rights Reserved.
  */
 
@@ -79,10 +79,7 @@ namespace FirebirdSql.Data.Common
 			string	systemCharset)
 		{
 			Charset charSet = new Charset(
-				id,
-				charset,
-				bytesPerCharacter,
-				systemCharset);
+				id, charset, bytesPerCharacter, systemCharset);
 
 			return this.Add(charSet);
 		}

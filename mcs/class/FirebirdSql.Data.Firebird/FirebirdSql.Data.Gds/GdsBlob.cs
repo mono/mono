@@ -1,19 +1,19 @@
 /*
  *	Firebird ADO.NET Data provider for .NET	and	Mono 
  * 
- *	   The contents	of this	file are subject to	the	Initial	
+ *	   The contents of this file are subject to the Initial 
  *	   Developer's Public License Version 1.0 (the "License"); 
- *	   you may not use this	file except	in compliance with the 
- *	   License.	You	may	obtain a copy of the License at	
+ *	   you may not use this file except in compliance with the 
+ *	   License. You may obtain a copy of the License at 
  *	   http://www.firebirdsql.org/index.php?op=doc&id=idpl
  *
- *	   Software	distributed	under the License is distributed on	
+ *	   Software distributed under the License is distributed on 
  *	   an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either 
- *	   express or implied.	See	the	License	for	the	specific 
- *	   language	governing rights and limitations under the License.
+ *	   express or implied. See the License for the specific 
+ *	   language governing rights and limitations under the License.
  * 
- *	Copyright (c) 2002,	2004 Carlos	Guzman Alvarez
- *	All	Rights Reserved.
+ *	Copyright (c) 2002, 2005 Carlos Guzman Alvarez
+ *	All Rights Reserved.
  */
 
 using System;
@@ -23,39 +23,38 @@ using FirebirdSql.Data.Common;
 
 namespace FirebirdSql.Data.Gds
 {
-	internal sealed	class GdsBlob :	BlobBase
+	internal sealed class GdsBlob : BlobBase
 	{
-		#region	Fields
+		#region Fields
 
-		private	GdsDatabase	db;
+		private GdsDatabase db;
 
 		#endregion
 
-		#region	Properties
+		#region Properties
 
-		public override	IDatabase DB
+		public override IDatabase DB
 		{
-			get	{ return this.db; }
+			get { return this.db; }
 		}
 
 		#endregion
 
-		#region	Constructors
+		#region Constructors
 
-		public GdsBlob(IDatabase db, ITransaction transaction) 
-			: this(db, transaction,	0)
+		public GdsBlob(IDatabase db, ITransaction transaction) : this(db, transaction, 0)
 		{
 		}
 
-		public GdsBlob(IDatabase db, ITransaction transaction, long	blobId)	: base(db)
+		public GdsBlob(IDatabase db, ITransaction transaction, long blobId) : base(db)
 		{
-			if (!(db is	GdsDatabase))
+			if (!(db is GdsDatabase))
 			{
-				throw new ArgumentException("Specified argument	is not of GdsDatabase type.");
+				throw new ArgumentException("Specified argument is not of GdsDatabase type.");
 			}
 			if (!(transaction is GdsTransaction))
 			{
-				throw new ArgumentException("Specified argument	is not of GdsTransaction type.");
+				throw new ArgumentException("Specified argument is not of GdsTransaction type.");
 			}
 
 			this.db				= (GdsDatabase)db;
@@ -67,9 +66,9 @@ namespace FirebirdSql.Data.Gds
 
 		#endregion
 
-		#region	Protected Methods
+		#region Protected Methods
 
-		protected override void	Create()
+		protected override void Create()
 		{
 			try
 			{
@@ -82,7 +81,7 @@ namespace FirebirdSql.Data.Gds
 			}
 		}
 
-		protected override void	Open()
+		protected override void Open()
 		{
 			try
 			{
@@ -96,7 +95,7 @@ namespace FirebirdSql.Data.Gds
 
 		protected override byte[] GetSegment()
 		{
-			int	requested =	this.SegmentSize;
+			int requested = this.SegmentSize;
 
 			lock (this.db)
 			{
@@ -104,44 +103,45 @@ namespace FirebirdSql.Data.Gds
 				{
 					this.db.Send.Write(IscCodes.op_get_segment);
 					this.db.Send.Write(this.blobHandle);
-					this.db.Send.Write((requested +	2 <	short.MaxValue)	? requested	+ 2	: short.MaxValue);
+					this.db.Send.Write((requested + 2 < short.MaxValue) ? requested + 2 : short.MaxValue);
 					this.db.Send.Write((int)0);	// Data	segment
 					this.db.Send.Flush();
 
-					GdsResponse	r =	this.db.ReadGenericResponse();
+					GdsResponse r = this.db.ReadGenericResponse();
 
 					this.RblRemoveValue(IscCodes.RBL_segment);
 					if (r.ObjectHandle == 1)
 					{
 						this.RblAddValue(IscCodes.RBL_segment);
 					}
-					else if	(r.ObjectHandle	== 2)
+					else if (r.ObjectHandle == 2)
 					{
 						this.RblAddValue(IscCodes.RBL_eof_pending);
 					}
-					byte[] buffer =	r.Data;
-					
+
+					byte[] buffer = r.Data;
+
 					if (buffer.Length == 0)
 					{
 						// previous	segment	was	last, this has no data
 						return buffer;
 					}
 
-					int	len		= 0;
-					int	srcpos	= 0;
-					int	destpos	= 0;
-					while (srcpos <	buffer.Length)
+					int len = 0;
+					int srcpos = 0;
+					int destpos = 0;
+					while (srcpos < buffer.Length)
 					{
-						len	= IscHelper.VaxInteger(buffer, srcpos, 2);
+						len = IscHelper.VaxInteger(buffer, srcpos, 2);
 						srcpos += 2;
 
 						Buffer.BlockCopy(buffer, srcpos, buffer, destpos, len);
 						srcpos	+= len;
-						destpos	+= len;
+						destpos += len;
 					}
 
-					byte[] result =	new	byte[destpos];
-					Buffer.BlockCopy(buffer, 0,	result,	0, destpos);
+					byte[] result = new byte[destpos];
+					Buffer.BlockCopy(buffer, 0, result, 0, destpos);
 
 					return result;
 				}
@@ -152,7 +152,7 @@ namespace FirebirdSql.Data.Gds
 			}
 		}
 
-		protected override void	PutSegment(byte[] buffer)
+		protected override void PutSegment(byte[] buffer)
 		{
 			lock (this.db)
 			{
@@ -172,7 +172,7 @@ namespace FirebirdSql.Data.Gds
 			}
 		}
 
-		protected override void	Seek(int position)
+		protected override void Seek(int position)
 		{
 			lock (this.db)
 			{
@@ -184,9 +184,9 @@ namespace FirebirdSql.Data.Gds
 					this.db.Send.Write(position);			// Seek	offset
 					this.db.Send.Flush();
 
-					GdsResponse	r =	db.ReadGenericResponse();
+					GdsResponse r = db.ReadGenericResponse();
 
-					this.position =	r.ObjectHandle;
+					this.position = r.ObjectHandle;
 				}
 				catch (IOException)
 				{
@@ -195,46 +195,44 @@ namespace FirebirdSql.Data.Gds
 			}
 		}
 
-		protected override void	GetBlobInfo()
+		protected override void GetBlobInfo()
 		{
 			throw new NotSupportedException();
 		}
 
-		protected override void	Close()
+		protected override void Close()
 		{
 			this.db.ReleaseObject(IscCodes.op_close_blob, this.blobHandle);
 		}
 
-		protected override void	Cancel()
+		protected override void Cancel()
 		{
 			this.db.ReleaseObject(IscCodes.op_cancel_blob, this.blobHandle);
 		}
 
 		#endregion
 
-		#region	Private	API	Methods
+		#region Private	API	Methods
 
-		private	void CreateOrOpen(int op, BlobParameterBuffer bpb)
+		private void CreateOrOpen(int op, BlobParameterBuffer bpb)
 		{
 			lock (this.db)
 			{
 				try
 				{
 					this.db.Send.Write(op);
-					if (bpb	!= null)
+					if (bpb != null)
 					{
-						this.db.Send.WriteTyped(
-							IscCodes.isc_bpb_version1,
-							bpb.ToArray());
+						this.db.Send.WriteTyped(IscCodes.isc_bpb_version1, bpb.ToArray());
 					}
 					this.db.Send.Write(this.transaction.Handle);
 					this.db.Send.Write(this.blobId);
 					this.db.Send.Flush();
 
-					GdsResponse	r =	this.db.ReadGenericResponse();
+					GdsResponse r = this.db.ReadGenericResponse();
 
-					this.blobId		= r.BlobId;
-					this.blobHandle	= r.ObjectHandle;
+					this.blobId = r.BlobId;
+					this.blobHandle = r.ObjectHandle;
 				}
 				catch (IOException)
 				{

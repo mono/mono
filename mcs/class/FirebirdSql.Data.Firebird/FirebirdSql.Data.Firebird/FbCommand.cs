@@ -1,19 +1,19 @@
 /*
  *	Firebird ADO.NET Data provider for .NET	and	Mono 
  * 
- *	   The contents	of this	file are subject to	the	Initial	
+ *	   The contents of this file are subject to the Initial 
  *	   Developer's Public License Version 1.0 (the "License"); 
- *	   you may not use this	file except	in compliance with the 
- *	   License.	You	may	obtain a copy of the License at	
+ *	   you may not use this file except in compliance with the 
+ *	   License. You may obtain a copy of the License at 
  *	   http://www.firebirdsql.org/index.php?op=doc&id=idpl
  *
- *	   Software	distributed	under the License is distributed on	
+ *	   Software distributed under the License is distributed on 
  *	   an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either 
- *	   express or implied.	See	the	License	for	the	specific 
- *	   language	governing rights and limitations under the License.
+ *	   express or implied. See the License for the specific 
+ *	   language governing rights and limitations under the License.
  * 
- *	Copyright (c) 2002,	2004 Carlos	Guzman Alvarez
- *	All	Rights Reserved.
+ *	Copyright (c) 2002, 2005 Carlos Guzman Alvarez
+ *	All Rights Reserved.
  */
 
 using System;
@@ -27,51 +27,47 @@ using System.Text;
 using System.Text.RegularExpressions;
 
 using FirebirdSql.Data.Common;
-#if	(NET)
-using FirebirdSql.Data.Firebird.Design;
-using System.ComponentModel.Design;
-#endif
 
 namespace FirebirdSql.Data.Firebird
 {
-	///	<include file='Doc/en_EN/FbCommand.xml'	path='doc/class[@name="FbCommand"]/overview/*'/>
+	/// <include file='Doc/en_EN/FbCommand.xml'	path='doc/class[@name="FbCommand"]/overview/*'/>
 #if	(NET)
 	[ToolboxItem(true)]
 	[ToolboxBitmap(typeof(FbCommand), "Resources.FbCommand.bmp")]
-	[Designer(typeof(FbCommandDesigner), typeof(IDesigner))]
+	[Designer(typeof(Design.FbCommandDesigner), typeof(System.ComponentModel.Design.IDesigner))]
 #endif
-	public sealed class	FbCommand :	Component, IDbCommand, ICloneable
+	public sealed class FbCommand : Component, IDbCommand, ICloneable
 	{
-		#region	Private	static fields
+		#region Private	static fields
 
-		private	static Regex namedRegex	= new Regex(
+		private static Regex namedRegex = new Regex(
 			@"(('[^']*?\@[^']*')*[^'@]*?)*(?<param>@\w+)*([^'@]*?('[^']*?\@*[^']*'))*",
-			RegexOptions.Compiled |	RegexOptions.ExplicitCapture);
+			RegexOptions.Compiled | RegexOptions.ExplicitCapture);
 
 		#endregion
 
-		#region	Fields
+		#region Fields
 
-		private	CommandType				commandType;
-		private	UpdateRowSource			updatedRowSource;
-		private	FbConnection			connection;
-		private	FbTransaction			transaction;
-		private	FbParameterCollection	parameters;
-		private	StatementBase			statement;
-		private	FbDataReader			activeReader;
-		private	string					commandText;
-		private	bool					disposed;
-		private	bool					designTimeVisible;
-		private	bool					implicitTransaction;
-		private	int						commandTimeout;
-		private	StringCollection		namedParameters;
-		private	int						fetchSize;
+		private CommandType				commandType;
+		private UpdateRowSource			updatedRowSource;
+		private FbConnection			connection;
+		private FbTransaction			transaction;
+		private FbParameterCollection	parameters;
+		private StatementBase			statement;
+		private FbDataReader			activeReader;
+		private StringCollection		namedParameters;
+		private string					commandText;
+		private bool					disposed;
+		private bool					designTimeVisible;
+		private bool					implicitTransaction;
+		private int						commandTimeout;
+		private int						fetchSize;
 
 		#endregion
 
-		#region	Properties
+		#region Properties
 
-		///	<include file='Doc/en_EN/FbCommand.xml'	path='doc/class[@name="FbCommand"]/property[@name="CommandText"]/*'/>
+		/// <include file='Doc/en_EN/FbCommand.xml'	path='doc/class[@name="FbCommand"]/property[@name="CommandText"]/*'/>
 #if	(NET)
 		[Category("Data")]
 		[DefaultValue("")]
@@ -80,15 +76,15 @@ namespace FirebirdSql.Data.Firebird
 #endif
 		public string CommandText
 		{
-			get	{ return this.commandText; }
+			get { return this.commandText; }
 			set
 			{
 				lock (this)
 				{
 					if (this.statement != null &&
-						this.commandText !=	null &&
-						this.commandText !=	value &&
-						this.commandText.Length	!= 0)
+						this.commandText != null &&
+						this.commandText != value &&
+						this.commandText.Length != 0)
 					{
 						this.Release();
 					}
@@ -98,31 +94,31 @@ namespace FirebirdSql.Data.Firebird
 			}
 		}
 
-		///	<include file='Doc/en_EN/FbCommand.xml'	path='doc/class[@name="FbCommand"]/property[@name="CommandType"]/*'/>
+		/// <include file='Doc/en_EN/FbCommand.xml'	path='doc/class[@name="FbCommand"]/property[@name="CommandType"]/*'/>
 #if	(!NETCF)
 		[Category("Data"), DefaultValue(CommandType.Text), RefreshProperties(RefreshProperties.All)]
 #endif
 		public CommandType CommandType
 		{
-			get	{ return this.commandType; }
-			set	{ this.commandType = value;	}
+			get { return this.commandType; }
+			set { this.commandType = value; }
 		}
 
-		int	IDbCommand.CommandTimeout
+		int IDbCommand.CommandTimeout
 		{
-			get	{ return this.commandTimeout; }
+			get { return this.commandTimeout; }
 			set
 			{
-				if (value <	0)
+				if (value < 0)
 				{
-					throw new ArgumentException("The property value	assigned is	less than 0.");
+					throw new ArgumentException("The property value assigned is less than 0.");
 				}
 
-				this.commandTimeout	= value;
+				this.commandTimeout = value;
 			}
 		}
 
-		///	<include file='Doc/en_EN/FbCommand.xml'	path='doc/class[@name="FbCommand"]/property[@name="CommandPlan"]/*'/>
+		/// <include file='Doc/en_EN/FbCommand.xml'	path='doc/class[@name="FbCommand"]/property[@name="CommandPlan"]/*'/>
 #if	(!NETCF)
 		[Browsable(false)]
 #endif
@@ -140,78 +136,78 @@ namespace FirebirdSql.Data.Firebird
 
 		IDbConnection IDbCommand.Connection
 		{
-			get	{ return this.Connection; }
-			set	{ this.Connection =	(FbConnection)value; }
+			get { return this.Connection; }
+			set { this.Connection = (FbConnection)value; }
 		}
 
-		///	<include file='Doc/en_EN/FbCommand.xml'	path='doc/class[@name="FbCommand"]/property[@name="Connection"]/*'/>
+		/// <include file='Doc/en_EN/FbCommand.xml'	path='doc/class[@name="FbCommand"]/property[@name="Connection"]/*'/>
 #if	(!NETCF)
 		[Category("Behavior"), DefaultValue(null)]
 #endif
-		public FbConnection	Connection
+		public FbConnection Connection
 		{
-			get	{ return this.connection; }
+			get { return this.connection; }
 			set
 			{
 				lock (this)
 				{
 					if (this.activeReader != null)
 					{
-						throw new InvalidOperationException("There is already an open DataReader associated	with this Command which	must be	closed first.");
+						throw new InvalidOperationException("There is already an open DataReader associated with this Command which must be closed first.");
 					}
 
-					if (this.transaction !=	null &&	this.transaction.IsUpdated)
+					if (this.transaction != null && this.transaction.IsUpdated)
 					{
 						this.transaction = null;
 					}
 
-					if (this.connection	!= null	&& 
-						this.connection	!= value &&	
+					if (this.connection != null &&
+						this.connection != value &&
 						this.connection.State == ConnectionState.Open)
 					{
 						this.Release();
 					}
 
-					this.connection	= value;
+					this.connection = value;
 				}
 			}
 		}
 
 		IDataParameterCollection IDbCommand.Parameters
 		{
-			get	{ return this.Parameters; }
+			get { return this.Parameters; }
 		}
 
-		///	<include file='Doc/en_EN/FbCommand.xml'	path='doc/class[@name="FbCommand"]/property[@name="Parameters"]/*'/>
+		/// <include file='Doc/en_EN/FbCommand.xml'	path='doc/class[@name="FbCommand"]/property[@name="Parameters"]/*'/>
 #if	(!NETCF)
 		[Category("Data")]
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Content)]
 #endif
 		public FbParameterCollection Parameters
 		{
-			get	{ return this.parameters; }
+			get { return this.parameters; }
 		}
 
 		IDbTransaction IDbCommand.Transaction
 		{
-			get	{ return this.Transaction; }
-			set	{ this.Transaction = (FbTransaction)value; }
+			get { return this.Transaction; }
+			set { this.Transaction = (FbTransaction)value; }
 		}
 
-		///	<include file='Doc/en_EN/FbCommand.xml'	path='doc/class[@name="FbCommand"]/property[@name="Transaction"]/*'/>
+		/// <include file='Doc/en_EN/FbCommand.xml'	path='doc/class[@name="FbCommand"]/property[@name="Transaction"]/*'/>
 #if	(!NETCF)
 		[Browsable(false), DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 #endif
 		public FbTransaction Transaction
 		{
-			get	{ return this.implicitTransaction ?	null : this.transaction; }
+			get { return this.implicitTransaction ? null : this.transaction; }
 			set
 			{
 				lock (this)
 				{
 					if (this.activeReader != null)
 					{
-						throw new InvalidOperationException("There is already an open DataReader associated	with this Command which	must be	closed first.");
+						throw new InvalidOperationException("There is already an open DataReader associated with this Command which must be closed first.");
 					}
 
 					this.RollbackImplicitTransaction();
@@ -220,7 +216,7 @@ namespace FirebirdSql.Data.Firebird
 
 					if (this.statement != null)
 					{
-						if (this.transaction !=	null)
+						if (this.transaction != null)
 						{
 							this.statement.Transaction = this.transaction.Transaction;
 						}
@@ -233,28 +229,28 @@ namespace FirebirdSql.Data.Firebird
 			}
 		}
 
-		///	<include file='Doc/en_EN/FbCommand.xml'	path='doc/class[@name="FbCommand"]/property[@name="UpdatedRowSource"]/*'/>
+		/// <include file='Doc/en_EN/FbCommand.xml'	path='doc/class[@name="FbCommand"]/property[@name="UpdatedRowSource"]/*'/>
 #if	(!NETCF)
 		[Category("Behavior"), DefaultValue(UpdateRowSource.Both)]
 #endif
 		public UpdateRowSource UpdatedRowSource
 		{
-			get	{ return this.updatedRowSource;	}
-			set	{ this.updatedRowSource	= value; }
+			get { return this.updatedRowSource; }
+			set { this.updatedRowSource = value; }
 		}
 
-		///	<include file='Doc/en_EN/FbCommand.xml'	path='doc/class[@name="FbCommand"]/property[@name="FetchSize"]/*'/>
+		/// <include file='Doc/en_EN/FbCommand.xml'	path='doc/class[@name="FbCommand"]/property[@name="FetchSize"]/*'/>
 #if	(!NETCF)
 		[Category("Behavior"), DefaultValue(200)]
 #endif
 		public int FetchSize
 		{
-			get	{ return this.fetchSize; }
+			get { return this.fetchSize; }
 			set
 			{
 				if (this.activeReader != null)
 				{
-					throw new InvalidOperationException("There is already an open DataReader associated	with this Command which	must be	closed first.");
+					throw new InvalidOperationException("There is already an open DataReader associated with this Command which must be closed first.");
 				}
 				this.fetchSize = value;
 			}
@@ -262,18 +258,18 @@ namespace FirebirdSql.Data.Firebird
 
 		#endregion
 
-		#region	Design-Time	properties
+		#region Design-Time	properties
 
-		///	<include file='Doc/en_EN/FbCommand.xml'	path='doc/class[@name="FbCommand"]/property[@name="DesignTimeVisible"]/*'/>
+		/// <include file='Doc/en_EN/FbCommand.xml'	path='doc/class[@name="FbCommand"]/property[@name="DesignTimeVisible"]/*'/>
 #if	(!NETCF)
 		[Browsable(false), DesignOnly(true), DefaultValue(true)]
 #endif
-		public bool	DesignTimeVisible
+		public bool DesignTimeVisible
 		{
-			get	{ return this.designTimeVisible; }
-			set	
-			{ 
-				this.designTimeVisible = value;	
+			get { return this.designTimeVisible; }
+			set
+			{
+				this.designTimeVisible = value;
 #if	(!NETCF)
 				TypeDescriptor.Refresh(this);
 #endif
@@ -282,7 +278,7 @@ namespace FirebirdSql.Data.Firebird
 
 		#endregion
 
-		#region	Internal Properties
+		#region Internal Properties
 
 		internal int RecordsAffected
 		{
@@ -298,18 +294,18 @@ namespace FirebirdSql.Data.Firebird
 
 		internal bool IsDisposed
 		{
-			get	{ return this.disposed;	}
+			get { return this.disposed; }
 		}
 
 		internal FbDataReader ActiveReader
 		{
-			get	{ return this.activeReader;	}
-			set	{ this.activeReader	= value; }
+			get { return this.activeReader; }
+			set { this.activeReader = value; }
 		}
 
 		internal FbTransaction ActiveTransaction
 		{
-			get	{ return this.transaction; }
+			get { return this.transaction; }
 		}
 
 		internal bool HasImplicitTransaction
@@ -326,35 +322,35 @@ namespace FirebirdSql.Data.Firebird
 
 		#endregion
 
-		#region	Constructors
+		#region Constructors
 
-		///	<include file='Doc/en_EN/FbCommand.xml'	path='doc/class[@name="FbCommand"]/constructor[@name="ctor"]/*'/>
-		public FbCommand() : this(null,	null, null)
+		/// <include file='Doc/en_EN/FbCommand.xml'	path='doc/class[@name="FbCommand"]/constructor[@name="ctor"]/*'/>
+		public FbCommand() : this(null, null, null)
 		{
 		}
 
-		///	<include file='Doc/en_EN/FbCommand.xml'	path='doc/class[@name="FbCommand"]/constructor[@name="ctor(System.String)"]/*'/>
-		public FbCommand(string	cmdText) : this(cmdText, null, null)
+		/// <include file='Doc/en_EN/FbCommand.xml'	path='doc/class[@name="FbCommand"]/constructor[@name="ctor(System.String)"]/*'/>
+		public FbCommand(string cmdText) : this(cmdText, null, null)
 		{
 		}
 
-		///	<include file='Doc/en_EN/FbCommand.xml'	path='doc/class[@name="FbCommand"]/constructor[@name="ctor(System.String,FbConnection)"]/*'/>
-		public FbCommand(string	cmdText, FbConnection connection) 
-			: this(cmdText,	connection,	null)
+		/// <include file='Doc/en_EN/FbCommand.xml'	path='doc/class[@name="FbCommand"]/constructor[@name="ctor(System.String,FbConnection)"]/*'/>
+		public FbCommand(string cmdText, FbConnection connection)
+			: this(cmdText, connection, null)
 		{
 		}
 
-		///	<include file='Doc/en_EN/FbCommand.xml'	path='doc/class[@name="FbCommand"]/constructor[@name="ctor(System.String,FbConnection,Transaction)"]/*'/>
-		public FbCommand(string	cmdText, FbConnection connection, FbTransaction	transaction) 
+		/// <include file='Doc/en_EN/FbCommand.xml'	path='doc/class[@name="FbCommand"]/constructor[@name="ctor(System.String,FbConnection,Transaction)"]/*'/>
+		public FbCommand(string cmdText, FbConnection connection, FbTransaction transaction)
 			: base()
 		{
-			this.designTimeVisible	= true;
 			this.parameters			= new FbParameterCollection();
+			this.namedParameters	= new StringCollection();
 			this.updatedRowSource	= UpdateRowSource.Both;
 			this.commandType		= CommandType.Text;
 			this.designTimeVisible	= true;
+			this.designTimeVisible	= true;
 			this.commandTimeout		= 30;
-			this.namedParameters	= new StringCollection();
 			this.fetchSize			= 200;
 			this.commandText		= "";
 
@@ -363,20 +359,21 @@ namespace FirebirdSql.Data.Firebird
 				this.fetchSize = connection.ConnectionOptions.FetchSize;
 			}
 
-			if (cmdText	!= null)
+			if (cmdText != null)
 			{
 				this.CommandText = cmdText;
 			}
-			this.Connection		= connection;
-			this.transaction	= transaction;
+
+			this.Connection	 = connection;
+			this.transaction = transaction;
 		}
 
 		#endregion
 
-		#region	IDisposable	Methods
+		#region IDisposable	Methods
 
-		///	<include file='Doc/en_EN/FbCommand.xml'	path='doc/class[@name="FbCommand"]/method[@name="Dispose(System.Boolean)"]/*'/>
-		protected override void	Dispose(bool disposing)
+		/// <include file='Doc/en_EN/FbCommand.xml'	path='doc/class[@name="FbCommand"]/method[@name="Dispose(System.Boolean)"]/*'/>
+		protected override void Dispose(bool disposing)
 		{
 			lock (this)
 			{
@@ -393,18 +390,18 @@ namespace FirebirdSql.Data.Firebird
 						// release any managed resources
 						if (disposing)
 						{
-							this.commandText			= null;
-							this.commandTimeout			= 0;
-							this.implicitTransaction	= false;
-							this.connection				= null;
-							this.transaction			= null;
-							this.parameters				= null;
-							
+							this.implicitTransaction = false;
+							this.commandText		= null;
+							this.commandTimeout		= 0;
+							this.connection			= null;
+							this.transaction		= null;
+							this.parameters			= null;
+
 							this.namedParameters.Clear();
-							this.namedParameters		= null;
+							this.namedParameters = null;
 						}
 
-						this.disposed =	true;
+						this.disposed = true;
 					}
 					finally
 					{
@@ -416,19 +413,19 @@ namespace FirebirdSql.Data.Firebird
 
 		#endregion
 
-		#region	ICloneable Methods
+		#region ICloneable Methods
 
 		object ICloneable.Clone()
 		{
-			FbCommand command =	new	FbCommand();
+			FbCommand command = new FbCommand();
 
-			command.CommandText			= this.commandText;
-			command.Connection			= this.connection;
-			command.Transaction			= this.transaction;
-			command.CommandType			= this.CommandType;
-			command.UpdatedRowSource	= this.UpdatedRowSource;
+			command.CommandText	= this.commandText;
+			command.Connection	= this.connection;
+			command.Transaction = this.transaction;
+			command.CommandType = this.CommandType;
+			command.UpdatedRowSource = this.UpdatedRowSource;
 
-			for	(int i = 0;	i <	this.Parameters.Count; i++)
+			for (int i = 0; i < this.Parameters.Count; i++)
 			{
 				command.Parameters.Add(((ICloneable)this.Parameters[i]).Clone());
 			}
@@ -438,10 +435,10 @@ namespace FirebirdSql.Data.Firebird
 
 		#endregion
 
-		#region	Methods
+		#region Methods
 
-		///	<include file='Doc/en_EN/FbCommand.xml'	path='doc/class[@name="FbCommand"]/method[@name="Cancel"]/*'/>
-		public void	Cancel()
+		/// <include file='Doc/en_EN/FbCommand.xml'	path='doc/class[@name="FbCommand"]/method[@name="Cancel"]/*'/>
+		public void Cancel()
 		{
 			throw new NotSupportedException();
 		}
@@ -451,14 +448,14 @@ namespace FirebirdSql.Data.Firebird
 			return CreateParameter();
 		}
 
-		///	<include file='Doc/en_EN/FbCommand.xml'	path='doc/class[@name="FbCommand"]/method[@name="CreateParameter"]/*'/>
+		/// <include file='Doc/en_EN/FbCommand.xml'	path='doc/class[@name="FbCommand"]/method[@name="CreateParameter"]/*'/>
 		public FbParameter CreateParameter()
 		{
 			return new FbParameter();
 		}
 
-		///	<include file='Doc/en_EN/FbCommand.xml'	path='doc/class[@name="FbCommand"]/method[@name="Prepare"]/*'/>
-		public void	Prepare()
+		/// <include file='Doc/en_EN/FbCommand.xml'	path='doc/class[@name="FbCommand"]/method[@name="Prepare"]/*'/>
+		public void Prepare()
 		{
 			lock (this)
 			{
@@ -468,7 +465,7 @@ namespace FirebirdSql.Data.Firebird
 				{
 					this.Prepare(false);
 				}
-				catch (IscException	ex)
+				catch (IscException ex)
 				{
 					if (this.HasImplicitTransaction)
 					{
@@ -489,7 +486,7 @@ namespace FirebirdSql.Data.Firebird
 			}
 		}
 
-		///	<include file='Doc/en_EN/FbCommand.xml'	path='doc/class[@name="FbCommand"]/method[@name="ExecuteNonQuery"]/*'/>
+		/// <include file='Doc/en_EN/FbCommand.xml'	path='doc/class[@name="FbCommand"]/method[@name="ExecuteNonQuery"]/*'/>
 		public int ExecuteNonQuery()
 		{
 			lock (this)
@@ -500,7 +497,7 @@ namespace FirebirdSql.Data.Firebird
 				{
 					this.ExecuteCommand(CommandBehavior.Default, false);
 
-					if (this.CommandType ==	CommandType.StoredProcedure)
+					if (this.CommandType == CommandType.StoredProcedure)
 					{
 						this.SetOutputParameters();
 					}
@@ -510,7 +507,7 @@ namespace FirebirdSql.Data.Firebird
 						this.CommitImplicitTransaction();
 					}
 				}
-				catch (IscException	ex)
+				catch (IscException ex)
 				{
 					if (this.HasImplicitTransaction)
 					{
@@ -533,24 +530,24 @@ namespace FirebirdSql.Data.Firebird
 			return this.statement.RecordsAffected;
 		}
 
-		IDataReader	IDbCommand.ExecuteReader()
+		IDataReader IDbCommand.ExecuteReader()
 		{
 			return this.ExecuteReader();
 		}
 
-		///	<include file='Doc/en_EN/FbCommand.xml'	path='doc/class[@name="FbCommand"]/method[@name="ExecuteReader"]/*'/>
-		public FbDataReader	ExecuteReader()
+		/// <include file='Doc/en_EN/FbCommand.xml'	path='doc/class[@name="FbCommand"]/method[@name="ExecuteReader"]/*'/>
+		public FbDataReader ExecuteReader()
 		{
 			return this.ExecuteReader(CommandBehavior.Default);
 		}
 
-		IDataReader	IDbCommand.ExecuteReader(CommandBehavior behavior)
+		IDataReader IDbCommand.ExecuteReader(CommandBehavior behavior)
 		{
 			return this.ExecuteReader(behavior);
 		}
 
-		///	<include file='Doc/en_EN/FbCommand.xml'	path='doc/class[@name="FbCommand"]/method[@name="ExecuteReader(System.Data.CommandBehavior)"]/*'/>
-		public FbDataReader	ExecuteReader(CommandBehavior behavior)
+		/// <include file='Doc/en_EN/FbCommand.xml'	path='doc/class[@name="FbCommand"]/method[@name="ExecuteReader(System.Data.CommandBehavior)"]/*'/>
+		public FbDataReader ExecuteReader(CommandBehavior behavior)
 		{
 			lock (this)
 			{
@@ -560,7 +557,7 @@ namespace FirebirdSql.Data.Firebird
 				{
 					this.ExecuteCommand(behavior, true);
 				}
-				catch (IscException	ex)
+				catch (IscException ex)
 				{
 					if (this.HasImplicitTransaction)
 					{
@@ -580,12 +577,12 @@ namespace FirebirdSql.Data.Firebird
 				}
 			}
 
-			this.activeReader =	new	FbDataReader(this, this.connection,	behavior);
+			this.activeReader = new FbDataReader(this, this.connection, behavior);
 
 			return this.activeReader;
 		}
 
-		///	<include file='Doc/en_EN/FbCommand.xml'	path='doc/class[@name="FbCommand"]/method[@name="ExecuteScalar"]/*'/>
+		/// <include file='Doc/en_EN/FbCommand.xml'	path='doc/class[@name="FbCommand"]/method[@name="ExecuteScalar"]/*'/>
 		public object ExecuteScalar()
 		{
 			object val = null;
@@ -596,18 +593,16 @@ namespace FirebirdSql.Data.Firebird
 
 				try
 				{
-					bool returnsSet	= !(this.CommandType ==	CommandType.StoredProcedure);
-
-					this.ExecuteCommand(CommandBehavior.Default, returnsSet);
+					this.ExecuteCommand(CommandBehavior.Default, true);
 
 					// Gets	only the values	of the first row
 					DbValue[] values = this.statement.Fetch();
-					if (values != null && values.Length	> 0)
+					if (values != null && values.Length > 0)
 					{
-						val	= values[0].Value;
+						val = values[0].Value;
 					}
 
-					if (this.CommandType ==	CommandType.StoredProcedure)
+					if (this.CommandType == CommandType.StoredProcedure)
 					{
 						this.SetOutputParameters();
 					}
@@ -617,7 +612,7 @@ namespace FirebirdSql.Data.Firebird
 						this.CommitImplicitTransaction();
 					}
 				}
-				catch (IscException	ex)
+				catch (IscException ex)
 				{
 					if (this.HasImplicitTransaction)
 					{
@@ -629,7 +624,7 @@ namespace FirebirdSql.Data.Firebird
 				catch (Exception)
 				{
 					if (this.implicitTransaction &&
-						this.transaction !=	null)
+						this.transaction != null)
 					{
 						this.RollbackImplicitTransaction();
 					}
@@ -643,14 +638,14 @@ namespace FirebirdSql.Data.Firebird
 
 		#endregion
 
-		#region	Internal Methods
+		#region Internal Methods
 
 		internal void CloseReader()
 		{
 			if (this.activeReader != null)
 			{
 				this.activeReader.Close();
-				this.activeReader =	null;
+				this.activeReader = null;
 			}
 		}
 
@@ -664,7 +659,7 @@ namespace FirebirdSql.Data.Firebird
 					return this.statement.Fetch();
 				}
 			}
-			catch (IscException	ex)
+			catch (IscException ex)
 			{
 				throw new FbException(ex.Message, ex);
 			}
@@ -672,7 +667,7 @@ namespace FirebirdSql.Data.Firebird
 			return null;
 		}
 
-		internal Descriptor	GetFieldsDescriptor()
+		internal Descriptor GetFieldsDescriptor()
 		{
 			if (this.statement != null)
 			{
@@ -684,27 +679,27 @@ namespace FirebirdSql.Data.Firebird
 
 		internal void SetOutputParameters()
 		{
-			if (this.parameters.Count >	0 && this.statement	!= null)
+			if (this.parameters.Count > 0 && this.statement != null)
 			{
-				IEnumerator	paramEnumerator	= this.parameters.GetEnumerator();
-				int	i =	0;
+				IEnumerator paramEnumerator = this.parameters.GetEnumerator();
+				int i = 0;
 
 				if (this.statement != null &&
-					this.statement.StatementType ==	DbStatementType.StoredProcedure)
+					this.statement.StatementType == DbStatementType.StoredProcedure)
 				{
 					DbValue[] values = (DbValue[])this.statement.GetOuputParameters();
 
-					if (values != null && values.Length	> 0)
+					if (values != null && values.Length > 0)
 					{
 						while (paramEnumerator.MoveNext())
 						{
-							FbParameter	parameter =	(FbParameter)paramEnumerator.Current;
+							FbParameter parameter = (FbParameter)paramEnumerator.Current;
 
-							if (parameter.Direction	== ParameterDirection.Output ||
-								parameter.Direction	== ParameterDirection.InputOutput ||
-								parameter.Direction	== ParameterDirection.ReturnValue)
+							if (parameter.Direction == ParameterDirection.Output ||
+								parameter.Direction == ParameterDirection.InputOutput ||
+								parameter.Direction == ParameterDirection.ReturnValue)
 							{
-								parameter.Value	= values[i].Value;
+								parameter.Value = values[i].Value;
 								i++;
 							}
 						}
@@ -715,7 +710,7 @@ namespace FirebirdSql.Data.Firebird
 
 		internal void CommitImplicitTransaction()
 		{
-			if (this.transaction !=	null &&	this.implicitTransaction)
+			if (this.transaction != null && this.implicitTransaction)
 			{
 				try
 				{
@@ -741,7 +736,7 @@ namespace FirebirdSql.Data.Firebird
 
 		internal void RollbackImplicitTransaction()
 		{
-			if (this.transaction !=	null &&	this.implicitTransaction)
+			if (this.transaction != null && this.implicitTransaction)
 			{
 				try
 				{
@@ -774,7 +769,7 @@ namespace FirebirdSql.Data.Firebird
 		{
 			this.RollbackImplicitTransaction();
 
-			if (this.connection	!= null	&& this.connection.State ==	ConnectionState.Open)
+			if (this.connection != null && this.connection.State == ConnectionState.Open)
 			{
 				this.connection.InnerConnection.RemovePreparedCommand(this);
 			}
@@ -788,22 +783,22 @@ namespace FirebirdSql.Data.Firebird
 
 		internal bool IsDDLCommand()
 		{
-			return this.statement.StatementType	== DbStatementType.DDL;
+			return this.statement.StatementType == DbStatementType.DDL;
 		}
 
 		#endregion
 
-		#region	Input parameter	descriptor generation methods
+		#region Input parameter	descriptor generation methods
 
-		private	Descriptor BuildParametersDescriptor()
+		private Descriptor BuildParametersDescriptor()
 		{
-			short count	= this.ValidateInputParameters();
+			short count = this.ValidateInputParameters();
 
-			if (count >	0)
+			if (count > 0)
 			{
 				if (this.namedParameters.Count > 0)
 				{
-					count =	(short)this.namedParameters.Count;
+					count = (short)this.namedParameters.Count;
 					return this.BuildNamedParametersDescriptor(count);
 				}
 				else
@@ -815,17 +810,17 @@ namespace FirebirdSql.Data.Firebird
 			return null;
 		}
 
-		private	Descriptor BuildNamedParametersDescriptor(short	count)
+		private Descriptor BuildNamedParametersDescriptor(short count)
 		{
-			Descriptor descriptor =	new	Descriptor(count);
-			int	index =	0;
+			Descriptor descriptor = new Descriptor(count);
+			int index = 0;
 
-			for	(int i = 0;	i <	this.namedParameters.Count;	i++)
+			for (int i = 0; i < this.namedParameters.Count; i++)
 			{
-				FbParameter	parameter =	this.parameters[this.namedParameters[i]];
+				FbParameter parameter = this.parameters[this.namedParameters[i]];
 
-				if (parameter.Direction	== ParameterDirection.Input	||
-					parameter.Direction	== ParameterDirection.InputOutput)
+				if (parameter.Direction == ParameterDirection.Input ||
+					parameter.Direction == ParameterDirection.InputOutput)
 				{
 					if (!this.BuildParameterDescriptor(descriptor, parameter, index++))
 					{
@@ -837,17 +832,17 @@ namespace FirebirdSql.Data.Firebird
 			return descriptor;
 		}
 
-		private	Descriptor BuildPlaceHoldersDescriptor(short count)
+		private Descriptor BuildPlaceHoldersDescriptor(short count)
 		{
-			Descriptor descriptor =	new	Descriptor(count);
-			int	index =	0;
+			Descriptor descriptor = new Descriptor(count);
+			int index = 0;
 
-			for	(int i = 0;	i <	this.parameters.Count; i++)
+			for (int i = 0; i < this.parameters.Count; i++)
 			{
-				FbParameter	parameter =	this.parameters[i];
+				FbParameter parameter = this.parameters[i];
 
-				if (parameter.Direction	== ParameterDirection.Input	||
-					parameter.Direction	== ParameterDirection.InputOutput)
+				if (parameter.Direction == ParameterDirection.Input ||
+					parameter.Direction == ParameterDirection.InputOutput)
 				{
 					if (!this.BuildParameterDescriptor(descriptor, parameter, index++))
 					{
@@ -859,61 +854,58 @@ namespace FirebirdSql.Data.Firebird
 			return descriptor;
 		}
 
-		private	bool BuildParameterDescriptor(
-			Descriptor	descriptor,	
-			FbParameter	parameter, 
-			int			index)
+		private bool BuildParameterDescriptor(
+			Descriptor descriptor, FbParameter parameter, int index)
 		{
-			Charset	charset	= this.connection.InnerConnection.Database.Charset;
-			FbDbType type =	parameter.FbDbType;
+			Charset charset = this.connection.InnerConnection.Database.Charset;
+			FbDbType type = parameter.FbDbType;
 
 			// Check the parameter character set
 			if (parameter.Charset != FbCharset.Default)
 			{
-				int	idx	= Charset.SupportedCharsets.IndexOf((int)parameter.Charset);
-				charset	= Charset.SupportedCharsets[idx];
+				int idx = Charset.SupportedCharsets.IndexOf((int)parameter.Charset);
+				charset = Charset.SupportedCharsets[idx];
 			}
 			else
 			{
-				if (type ==	FbDbType.Guid)
+				if (type == FbDbType.Guid)
 				{
-					charset	= Charset.SupportedCharsets["OCTETS"];
+					charset = Charset.SupportedCharsets["OCTETS"];
 				}
 			}
 
 			// Set parameter Data Type
-			descriptor[index].DataType = (short)TypeHelper.GetFbType(
-				(DbDataType)type,
-				parameter.IsNullable);
+			descriptor[index].DataType = 
+				(short)TypeHelper.GetFbType((DbDataType)type, parameter.IsNullable);
 
 			// Set parameter Sub Type
 			switch (type)
 			{
 				case FbDbType.Binary:
-					descriptor[index].SubType =	0;
+					descriptor[index].SubType = 0;
 					break;
 
 				case FbDbType.Text:
-					descriptor[index].SubType =	1;
+					descriptor[index].SubType = 1;
 					break;
 
 				case FbDbType.Guid:
-					descriptor[index].SubType =	(short)charset.ID;
+					descriptor[index].SubType = (short)charset.ID;
 					break;
 
 				case FbDbType.Char:
 				case FbDbType.VarChar:
-					descriptor[index].SubType =	(short)charset.ID;
+					descriptor[index].SubType = (short)charset.ID;
 					if (parameter.Size > 0)
 					{
-						short len =	(short)(parameter.Size * charset.BytesPerCharacter);
+						short len = (short)(parameter.Size * charset.BytesPerCharacter);
 						descriptor[index].Length = len;
 					}
 					break;
 			}
 
 			// Set parameter length
-			if (descriptor[index].Length ==	0)
+			if (descriptor[index].Length == 0)
 			{
 				descriptor[index].Length = TypeHelper.GetSize((DbDataType)type);
 			}
@@ -927,20 +919,19 @@ namespace FirebirdSql.Data.Firebird
 			return true;
 		}
 
-		private	short ValidateInputParameters()
+		private short ValidateInputParameters()
 		{
-			short count	= 0;
+			short count = 0;
 
-			for	(int i = 0;	i <	this.parameters.Count; i++)
+			for (int i = 0; i < this.parameters.Count; i++)
 			{
-				if (this.parameters[i].Direction ==	ParameterDirection.Input ||
-					this.parameters[i].Direction ==	ParameterDirection.InputOutput)
+				if (this.parameters[i].Direction == ParameterDirection.Input ||
+					this.parameters[i].Direction == ParameterDirection.InputOutput)
 				{
-					FbDbType type =	this.parameters[i].FbDbType;
+					FbDbType type = this.parameters[i].FbDbType;
 
-					if (type ==	FbDbType.Array ||
-						type ==	FbDbType.Decimal ||
-						type ==	FbDbType.Numeric)
+					if (type == FbDbType.Array || type == FbDbType.Decimal ||
+						type == FbDbType.Numeric)
 					{
 						return -1;
 					}
@@ -956,33 +947,33 @@ namespace FirebirdSql.Data.Firebird
 
 		#endregion
 
-		#region	Private	Methods
+		#region Private	Methods
 
-		private	void DescribeInput()
+		private void DescribeInput()
 		{
-			if (this.parameters.Count >	0)
+			if (this.parameters.Count > 0)
 			{
-				Descriptor descriptor =	this.BuildParametersDescriptor();
+				Descriptor descriptor = this.BuildParametersDescriptor();
 				if (descriptor == null)
 				{
 					this.statement.DescribeParameters();
 				}
 				else
 				{
-					this.statement.Parameters =	descriptor;
+					this.statement.Parameters = descriptor;
 				}
 			}
 		}
 
-		private	void Prepare(bool returnsSet)
+		private void Prepare(bool returnsSet)
 		{
 			FbConnectionInternal innerConn = this.connection.InnerConnection;
 
 			// Check if	we have	a valid	transaction
-			if (this.transaction ==	null)
+			if (this.transaction == null)
 			{
 				this.implicitTransaction = true;
-				IsolationLevel il =	this.connection.ConnectionOptions.IsolationLevel;
+				IsolationLevel il = this.connection.ConnectionOptions.IsolationLevel;
 
 				this.transaction = new FbTransaction(this.connection, il);
 				this.transaction.BeginTransaction();
@@ -1005,9 +996,9 @@ namespace FirebirdSql.Data.Firebird
 			{
 				string sql = this.commandText;
 
-				if (this.commandType ==	CommandType.StoredProcedure)
+				if (this.commandType == CommandType.StoredProcedure)
 				{
-					sql	= this.BuildStoredProcedureSql(sql,	returnsSet);
+					sql = this.BuildStoredProcedureSql(sql, returnsSet);
 				}
 
 				this.statement.Prepare(this.ParseNamedParameters(sql));
@@ -1024,22 +1015,22 @@ namespace FirebirdSql.Data.Firebird
 			}
 		}
 
-		private	void ExecuteCommand(CommandBehavior	behavior, bool returnsSet)
+		private void ExecuteCommand(CommandBehavior behavior, bool returnsSet)
 		{
 			// Prepare statement
 			this.Prepare(returnsSet);
 
-			if ((behavior &	CommandBehavior.SequentialAccess) == CommandBehavior.SequentialAccess ||
-				(behavior &	CommandBehavior.SingleResult) == CommandBehavior.SingleResult ||
-				(behavior &	CommandBehavior.SingleRow) == CommandBehavior.SingleRow	||
-				(behavior &	CommandBehavior.CloseConnection) ==	CommandBehavior.CloseConnection	||
-				behavior ==	CommandBehavior.Default)
+			if ((behavior & CommandBehavior.SequentialAccess) == CommandBehavior.SequentialAccess ||
+				(behavior & CommandBehavior.SingleResult) == CommandBehavior.SingleResult ||
+				(behavior & CommandBehavior.SingleRow) == CommandBehavior.SingleRow ||
+				(behavior & CommandBehavior.CloseConnection) == CommandBehavior.CloseConnection ||
+				behavior == CommandBehavior.Default)
 			{
 				// Set the fetch size
 				this.statement.FetchSize = this.fetchSize;
 
-				// Update input	parameter values
-				if (this.parameters.Count >	0)
+				// Update input parameter values
+				if (this.parameters.Count > 0)
 				{
 					if (this.statement.Parameters == null)
 					{
@@ -1053,12 +1044,13 @@ namespace FirebirdSql.Data.Firebird
 			}
 		}
 
-		private	string BuildStoredProcedureSql(string spName, bool returnsSet)
+		private string BuildStoredProcedureSql(string spName, bool returnsSet)
 		{
-			string sql = spName	== null	? "" : spName.ToLower(CultureInfo.CurrentCulture);
+			string sql = spName == null ? "" : spName.Trim();
 
 			if (sql.Length > 0 &&
-				!sql.StartsWith("execute procedure ") && !sql.StartsWith("select "))
+				!sql.ToLower(CultureInfo.CurrentCulture).StartsWith("execute procedure ") &&
+				!sql.ToLower(CultureInfo.CurrentCulture).StartsWith("select "))
 			{
 				StringBuilder paramsText = new StringBuilder();
 
@@ -1067,14 +1059,14 @@ namespace FirebirdSql.Data.Firebird
 				if (parameters.Count > 0)
 				{
 					paramsText.Append("(");
-					for	(int i = 0;	i <	this.parameters.Count; i++)
+					for (int i = 0; i < this.parameters.Count; i++)
 					{
-						if (this.parameters[i].Direction ==	ParameterDirection.Input ||
-							this.parameters[i].Direction ==	ParameterDirection.InputOutput)
+						if (this.parameters[i].Direction == ParameterDirection.Input ||
+							this.parameters[i].Direction == ParameterDirection.InputOutput)
 						{
-							// Append parameter	name to	parameter list
+							// Append parameter	name to parameter list
 							paramsText.Append(this.parameters[i].ParameterName);
-							if (i != parameters.Count -	1)
+							if (i != parameters.Count - 1)
 							{
 								paramsText = paramsText.Append(",");
 							}
@@ -1087,42 +1079,42 @@ namespace FirebirdSql.Data.Firebird
 
 				if (returnsSet)
 				{
-					sql	= "select *	from " + paramsText.ToString();
+					sql = "select * from " + paramsText.ToString();
 				}
 				else
 				{
-					sql	= "execute procedure " + paramsText.ToString();
+					sql = "execute procedure " + paramsText.ToString();
 				}
 			}
 
 			return sql;
 		}
 
-		private	string ParseNamedParameters(string sql)
+		private string ParseNamedParameters(string sql)
 		{
 			this.namedParameters.Clear();
 
-			if (sql.IndexOf("@") !=	-1)
+			if (sql.IndexOf("@") != -1)
 			{
-				MatchEvaluator me =	new	MatchEvaluator(NamedParametersEvaluator);
+				MatchEvaluator me = new MatchEvaluator(NamedParametersEvaluator);
 
-				sql	= namedRegex.Replace(sql, me);
+				sql = namedRegex.Replace(sql, me);
 			}
 
 			return sql;
 		}
 
-		private	string NamedParametersEvaluator(Match match)
+		private string NamedParametersEvaluator(Match match)
 		{
 			string input = match.Value;
 
 			if (match.Groups["param"].Success)
 			{
-				Group g	= match.Groups["param"];
+				Group g = match.Groups["param"];
 
 				this.namedParameters.Add(g.Value);
 
-				return Regex.Replace(input,	g.Value, "?");
+				return Regex.Replace(input, g.Value, "?");
 			}
 			else
 			{
@@ -1130,26 +1122,27 @@ namespace FirebirdSql.Data.Firebird
 			}
 		}
 
-		private	void UpdateParameterValues()
+		private void UpdateParameterValues()
 		{
-			int	index =	-1;
+			int index = -1;
 
-			for	(int i = 0;	i <	this.statement.Parameters.Count; i++)
+			for (int i = 0; i < this.statement.Parameters.Count; i++)
 			{
-				index =	i;
+				index = i;
 
 				if (this.namedParameters.Count > 0)
 				{
-					index =	this.parameters.IndexOf(this.namedParameters[i]);
+					index = this.parameters.IndexOf(this.namedParameters[i]);
 				}
 
 				if (index != -1)
 				{
-					if (this.parameters[index].Value ==	DBNull.Value ||
-						this.parameters[index].Value ==	null)
+					if (this.parameters[index].Value == DBNull.Value ||
+						this.parameters[index].Value == null)
 					{
-						this.statement.Parameters[i].NullFlag =	-1;
+						this.statement.Parameters[i].NullFlag = -1;
 						this.statement.Parameters[i].Value = DBNull.Value;
+
 						if (!this.statement.Parameters[i].AllowDBNull())
 						{
 							this.statement.Parameters[i].DataType++;
@@ -1158,13 +1151,13 @@ namespace FirebirdSql.Data.Firebird
 					else
 					{
 						// Parameter value is not null
-						this.statement.Parameters[i].NullFlag =	0;
+						this.statement.Parameters[i].NullFlag = 0;
 
 						switch (this.statement.Parameters[i].DbDataType)
 						{
 							case DbDataType.Binary:
 								{
-									BlobBase blob =	this.statement.CreateBlob();
+									BlobBase blob = this.statement.CreateBlob();
 									blob.Write((byte[])this.parameters[index].Value);
 									this.statement.Parameters[i].Value = blob.Id;
 								}
@@ -1172,7 +1165,7 @@ namespace FirebirdSql.Data.Firebird
 
 							case DbDataType.Text:
 								{
-									BlobBase blob =	this.statement.CreateBlob();
+									BlobBase blob = this.statement.CreateBlob();
 									blob.Write((string)this.parameters[index].Value);
 									this.statement.Parameters[i].Value = blob.Id;
 								}
@@ -1180,7 +1173,7 @@ namespace FirebirdSql.Data.Firebird
 
 							case DbDataType.Array:
 								{
-									if (this.statement.Parameters[i].ArrayHandle ==	null)
+									if (this.statement.Parameters[i].ArrayHandle == null)
 									{
 										this.statement.Parameters[i].ArrayHandle =
 										this.statement.CreateArray(
@@ -1189,21 +1182,21 @@ namespace FirebirdSql.Data.Firebird
 									}
 									else
 									{
-										this.statement.Parameters[i].ArrayHandle.DB	= this.statement.DB;
+										this.statement.Parameters[i].ArrayHandle.DB = this.statement.DB;
 										this.statement.Parameters[i].ArrayHandle.Transaction = this.statement.Transaction;
 									}
 
-									this.statement.Parameters[i].ArrayHandle.Handle	= 0;
+									this.statement.Parameters[i].ArrayHandle.Handle = 0;
 									this.statement.Parameters[i].ArrayHandle.Write((System.Array)this.parameters[index].Value);
 									this.statement.Parameters[i].Value = this.statement.Parameters[i].ArrayHandle.Handle;
 								}
 								break;
 
 							case DbDataType.Guid:
-								if (!(this.parameters[index].Value is Guid)	&&
+								if (!(this.parameters[index].Value is Guid) &&
 									!(this.parameters[index].Value is byte[]))
 								{
-									throw new InvalidOperationException("Incorrect Guid	value.");
+									throw new InvalidOperationException("Incorrect Guid value.");
 								}
 								this.statement.Parameters[i].Value = this.parameters[index].Value;
 								break;
@@ -1217,39 +1210,39 @@ namespace FirebirdSql.Data.Firebird
 			}
 		}
 
-		private	void CheckCommand()
+		private void CheckCommand()
 		{
-			if (this.transaction !=	null &&	this.transaction.IsUpdated)
+			if (this.transaction != null && this.transaction.IsUpdated)
 			{
 				this.transaction = null;
 			}
 
-			if (this.connection	== null	||
+			if (this.connection == null || 
 				this.connection.State != ConnectionState.Open)
 			{
-				throw new InvalidOperationException("Connection	must valid and open");
+				throw new InvalidOperationException("Connection must valid and open");
 			}
 
 			if (this.activeReader != null)
 			{
-				throw new InvalidOperationException("There is already an open DataReader associated	with this Command which	must be	closed first.");
+				throw new InvalidOperationException("There is already an open DataReader associated with this Command which must be closed first.");
 			}
 
-			if (this.transaction ==	null &&	
+			if (this.transaction == null &&
 				this.connection.InnerConnection.HasActiveTransaction)
 			{
-				throw new InvalidOperationException("Execute requires the Command object to	have a Transaction object when the Connection object assigned to the command is	in a pending local transaction.	 The Transaction property of the Command has not been initialized.");
+				throw new InvalidOperationException("Execute requires the Command object to have a Transaction object when the Connection object assigned to the command is in a pending local transaction. The Transaction property of the Command has not been initialized.");
 			}
 
-			if (this.transaction !=	null &&	!this.transaction.IsUpdated	&&
+			if (this.transaction != null && !this.transaction.IsUpdated &&
 				!this.connection.Equals(transaction.Connection))
 			{
-				throw new InvalidOperationException("Command Connection	is not equal to	Transaction	Connection.");
+				throw new InvalidOperationException("Command Connection is not equal to Transaction Connection.");
 			}
 
-			if (this.commandText ==	null ||	this.commandText.Length	== 0)
+			if (this.commandText == null || this.commandText.Length == 0)
 			{
-				throw new InvalidOperationException("The command text for this Command has not been	set.");
+				throw new InvalidOperationException("The command text for this Command has not been set.");
 			}
 		}
 

@@ -12,7 +12,7 @@
  *     express or implied.  See the License for the specific 
  *     language governing rights and limitations under the License.
  * 
- *  Copyright (c) 2002, 2004 Carlos Guzman Alvarez
+ *  Copyright (c) 2002, 2005 Carlos Guzman Alvarez
  *  All Rights Reserved.
  */
 
@@ -32,10 +32,10 @@ namespace FirebirdSql.Data.Common
 	{
 		#region Fields
 
-		private short		version;
-		private short		count;
-		private short		actualCount;
-		private DbField[]	fields;
+		private short version;
+		private short count;
+		private short actualCount;
+		private DbField[] fields;
 
 		#endregion
 
@@ -43,8 +43,14 @@ namespace FirebirdSql.Data.Common
 
 		public short Version
 		{
-			get { return this.version; }
-			set { this.version = value; }
+			get
+			{
+				return this.version;
+			}
+			set
+			{
+				this.version = value;
+			}
 		}
 
 		public short Count
@@ -90,21 +96,21 @@ namespace FirebirdSql.Data.Common
 
 		public object Clone()
 		{
-			Descriptor descriptor	= new Descriptor(this.Count);
-			descriptor.Version		= this.version;
+			Descriptor descriptor = new Descriptor(this.Count);
+			descriptor.Version = this.version;
 
 			for (int i = 0; i < descriptor.Count; i++)
 			{
-				descriptor[i].DataType		= this.fields[i].DataType;
-				descriptor[i].NumericScale	= this.fields[i].NumericScale;
-				descriptor[i].SubType		= this.fields[i].SubType;
-				descriptor[i].Length		= this.fields[i].Length;
-				descriptor[i].Value			= this.fields[i].Value;
-				descriptor[i].NullFlag		= this.fields[i].NullFlag;
-				descriptor[i].Name			= this.fields[i].Name;
-				descriptor[i].Relation		= this.fields[i].Relation;
-				descriptor[i].Owner			= this.fields[i].Owner;
-				descriptor[i].Alias			= this.fields[i].Alias;
+				descriptor[i].DataType	= this.fields[i].DataType;
+				descriptor[i].NumericScale = this.fields[i].NumericScale;
+				descriptor[i].SubType	= this.fields[i].SubType;
+				descriptor[i].Length	= this.fields[i].Length;
+				descriptor[i].Value		= this.fields[i].Value;
+				descriptor[i].NullFlag	= this.fields[i].NullFlag;
+				descriptor[i].Name		= this.fields[i].Name;
+				descriptor[i].Relation	= this.fields[i].Relation;
+				descriptor[i].Owner		= this.fields[i].Owner;
+				descriptor[i].Alias		= this.fields[i].Alias;
 			}
 
 			return descriptor;

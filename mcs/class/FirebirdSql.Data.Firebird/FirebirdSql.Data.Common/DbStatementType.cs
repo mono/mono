@@ -12,7 +12,7 @@
  *     express or implied.  See the License for the specific 
  *     language governing rights and limitations under the License.
  * 
- *  Copyright (c) 2002, 2004 Carlos Guzman Alvarez
+ *  Copyright (c) 2002, 2005 Carlos Guzman Alvarez
  *  All Rights Reserved.
  */
 
@@ -22,20 +22,20 @@ namespace FirebirdSql.Data.Common
 {
 	internal enum DbStatementType : int
 	{
-		None			= 0,
-		Select			= IscCodes.isc_info_sql_stmt_select,
-		Insert			= IscCodes.isc_info_sql_stmt_insert,
-		Update			= IscCodes.isc_info_sql_stmt_update,
-		Delete			= IscCodes.isc_info_sql_stmt_delete,
-		DDL				= IscCodes.isc_info_sql_stmt_ddl,
-		GetSegment		= IscCodes.isc_info_sql_stmt_get_segment,
-		PutSegment		= IscCodes.isc_info_sql_stmt_put_segment,
+		None		= 0,
+		Select		= IscCodes.isc_info_sql_stmt_select,
+		Insert		= IscCodes.isc_info_sql_stmt_insert,
+		Update		= IscCodes.isc_info_sql_stmt_update,
+		Delete		= IscCodes.isc_info_sql_stmt_delete,
+		DDL			= IscCodes.isc_info_sql_stmt_ddl,
+		GetSegment	= IscCodes.isc_info_sql_stmt_get_segment,
+		PutSegment	= IscCodes.isc_info_sql_stmt_put_segment,
 		StoredProcedure = IscCodes.isc_info_sql_stmt_exec_procedure,
-		StartTrans		= IscCodes.isc_info_sql_stmt_start_trans,
-		Commit			= IscCodes.isc_info_sql_stmt_commit,
-		Rollback		= IscCodes.isc_info_sql_stmt_rollback,
-		SelectForUpdate	= IscCodes.isc_info_sql_stmt_select_for_upd,
-		SetGenerator	= IscCodes.isc_info_sql_stmt_set_generator,
-		SavePoint		= IscCodes.isc_info_sql_stmt_savepoint
+		StartTrans	= IscCodes.isc_info_sql_stmt_start_trans,
+		Commit		= IscCodes.isc_info_sql_stmt_commit,
+		Rollback	= IscCodes.isc_info_sql_stmt_rollback,
+		SelectForUpdate = IscCodes.isc_info_sql_stmt_select_for_upd,
+		SetGenerator = IscCodes.isc_info_sql_stmt_set_generator,
+		SavePoint	= IscCodes.isc_info_sql_stmt_savepoint
 	}
 }

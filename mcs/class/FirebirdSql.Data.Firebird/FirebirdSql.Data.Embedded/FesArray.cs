@@ -1,19 +1,19 @@
 /*
  *	Firebird ADO.NET Data provider for .NET	and	Mono 
  * 
- *	   The contents	of this	file are subject to	the	Initial	
+ *	   The contents of this file are subject to the Initial 
  *	   Developer's Public License Version 1.0 (the "License"); 
- *	   you may not use this	file except	in compliance with the 
- *	   License.	You	may	obtain a copy of the License at	
+ *	   you may not use this file except in compliance with the 
+ *	   License. You may obtain a copy of the License at 
  *	   http://www.firebirdsql.org/index.php?op=doc&id=idpl
  *
- *	   Software	distributed	under the License is distributed on	
+ *	   Software distributed under the License is distributed on 
  *	   an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either 
- *	   express or implied.	See	the	License	for	the	specific 
- *	   language	governing rights and limitations under the License.
+ *	   express or implied. See the License for the specific 
+ *	   language governing rights and limitations under the License.
  * 
- *	Copyright (c) 2002,	2004 Carlos	Guzman Alvarez
- *	All	Rights Reserved.
+ *	Copyright (c) 2002, 2005 Carlos Guzman Alvarez
+ *	All Rights Reserved.
  */
 
 using System;
@@ -30,7 +30,7 @@ namespace FirebirdSql.Data.Embedded
 {
 	internal sealed	class FesArray : ArrayBase
 	{
-		#region	Fields
+		#region Fields
 
 		private	long			handle;
 		private	FesDatabase		db;
@@ -38,18 +38,18 @@ namespace FirebirdSql.Data.Embedded
 
 		#endregion
 
-		#region	Properties
+		#region Properties
 
 		public override	long Handle
 		{
 			get	{ return this.handle; }
-			set	{ this.handle =	value; }
+			set	{ this.handle = value; }
 		}
 
 		public override	IDatabase DB
 		{
 			get	{ return this.db; }
-			set	{ this.db =	(FesDatabase)value;	}
+			set	{ this.db = (FesDatabase)value;	}
 		}
 
 		public override	ITransaction Transaction
@@ -60,7 +60,7 @@ namespace FirebirdSql.Data.Embedded
 
 		#endregion
 
-		#region	Constructors
+		#region Constructors
 
 		public FesArray(ArrayDesc descriptor) :	base(descriptor)
 		{
@@ -83,22 +83,22 @@ namespace FirebirdSql.Data.Embedded
 		{
 			if (!(db is	FesDatabase))
 			{
-				throw new ArgumentException("Specified argument	is not of GdsDatabase type.");
+				throw new ArgumentException("Specified argument is not of GdsDatabase type.");
 			}
 			if (!(transaction is FesTransaction))
 			{
-				throw new ArgumentException("Specified argument	is not of GdsTransaction type.");
+				throw new ArgumentException("Specified argument is not of GdsTransaction type.");
 			}
-			this.db				= (FesDatabase)db;
-			this.transaction	= (FesTransaction)transaction;
-			this.handle			= handle;
+			this.db			 = (FesDatabase)db;
+			this.transaction = (FesTransaction)transaction;
+			this.handle		 = handle;
 
 			this.LookupBounds();
 		}
 
 		#endregion
 
-		#region	Methods
+		#region Methods
 
 		public override	byte[] GetSlice(int	sliceLength)
 		{
@@ -111,7 +111,7 @@ namespace FirebirdSql.Data.Embedded
 
 			IntPtr arrayDesc = marshaler.MarshalManagedToNative(this.Descriptor);
 
-			byte[] buffer =	new	byte[sliceLength];
+			byte[] buffer = new	byte[sliceLength];
 
 			FbClient.isc_array_get_slice(
 				statusVector,
@@ -143,9 +143,9 @@ namespace FirebirdSql.Data.Embedded
 
 			// Obtain the System of	type of	Array elements and
 			// Fill	buffer
-			Type systemType	= this.GetSystemType();
+			Type systemType = this.GetSystemType();
 
-			byte[] buffer =	new	byte[sliceLength];
+			byte[] buffer = new	byte[sliceLength];
 			if (systemType.IsPrimitive)
 			{
 				Buffer.BlockCopy(sourceArray, 0, buffer, 0,	buffer.Length);
@@ -172,34 +172,39 @@ namespace FirebirdSql.Data.Embedded
 
 		#endregion
 
-		#region	Protected Methods
+		#region Protected Methods
 
 		protected override System.Array	DecodeSlice(byte[] slice)
 		{
-			Array		sliceData		= null;
-			int			slicePosition	= 0;
-			int			type			= 0;
-			DbDataType	dbType			= DbDataType.Array;
-			Type		systemType		= this.GetSystemType();
-			Charset		charset			= this.db.Charset;
-			int[]		lengths			= new int[this.Descriptor.Dimensions];
-			int[]		lowerBounds		= new int[this.Descriptor.Dimensions];			
+			Array		sliceData	 = null;
+			int			slicePosition = 0;
+			int			type		 = 0;
+			DbDataType	dbType		 = DbDataType.Array;
+			Type		systemType	 = this.GetSystemType();
+			Charset		charset		 = this.db.Charset;
+			int[]		lengths		 = new int[this.Descriptor.Dimensions];
+			int[]		lowerBounds	 = new int[this.Descriptor.Dimensions];			
 
 			// Get upper and lower bounds of each dimension
 			for	(int i = 0;	i <	this.Descriptor.Dimensions;	i++)
 			{
 				lowerBounds[i]	= this.Descriptor.Bounds[i].LowerBound;
 				lengths[i]		= this.Descriptor.Bounds[i].UpperBound;
+
+				if (lowerBounds[i] == 0)
+				{
+					lengths[i]++;
+				}
 			}
 			
 			// Create slice	arrays
-			sliceData =	Array.CreateInstance(systemType, lengths, lowerBounds);
+			sliceData = Array.CreateInstance(systemType, lengths, lowerBounds);
 
 			Array tempData = Array.CreateInstance(systemType, sliceData.Length);
 
 			// Infer data types
-			type	= TypeHelper.GetFbType(this.Descriptor.DataType);
-			dbType	= TypeHelper.GetDbDataType(this.Descriptor.DataType, 0,	this.Descriptor.Scale);
+			type = TypeHelper.GetFbType(this.Descriptor.DataType);
+			dbType = TypeHelper.GetDbDataType(this.Descriptor.DataType, 0,	this.Descriptor.Scale);
 
 			int	itemLength = this.Descriptor.Length;
 
@@ -218,8 +223,8 @@ namespace FirebirdSql.Data.Embedded
 
 					case DbDataType.VarChar:
 					{
-						int	index =	slicePosition;
-						int	count =	0;
+						int	index = slicePosition;
+						int	count = 0;
 						while (slice[index++] != 0)
 						{
 							count ++;
@@ -245,7 +250,7 @@ namespace FirebirdSql.Data.Embedded
 					case DbDataType.Decimal:
 					case DbDataType.Numeric:
 					{
-						object evalue =	null;
+						object evalue = null;
 
 						switch (type)
 						{
@@ -279,9 +284,9 @@ namespace FirebirdSql.Data.Embedded
 
 					case DbDataType.Date:
 					{
-						int	idate =	BitConverter.ToInt32(slice,	slicePosition);
+						int	idate = BitConverter.ToInt32(slice,	slicePosition);
 
-						DateTime date =	TypeDecoder.DecodeDate(idate);
+						DateTime date = TypeDecoder.DecodeDate(idate);
 						
 						tempData.SetValue(date,	i);
 					}
@@ -289,9 +294,9 @@ namespace FirebirdSql.Data.Embedded
 					
 					case DbDataType.Time:
 					{
-						int	itime =	BitConverter.ToInt32(slice,	slicePosition);
+						int	itime = BitConverter.ToInt32(slice,	slicePosition);
 					
-						DateTime time =	TypeDecoder.DecodeTime(itime);					
+						DateTime time = TypeDecoder.DecodeTime(itime);					
 						
 						tempData.SetValue(time,	i);
 					}
@@ -299,11 +304,11 @@ namespace FirebirdSql.Data.Embedded
 										
 					case DbDataType.TimeStamp:
 					{
-						int	idate =	BitConverter.ToInt32(slice,	slicePosition);
-						int	itime =	BitConverter.ToInt32(slice,	slicePosition +	4);
+						int	idate = BitConverter.ToInt32(slice,	slicePosition);
+						int	itime = BitConverter.ToInt32(slice,	slicePosition +	4);
 					
-						DateTime date =	TypeDecoder.DecodeDate(idate);
-						DateTime time =	TypeDecoder.DecodeTime(itime);
+						DateTime date = TypeDecoder.DecodeDate(idate);
+						DateTime time = TypeDecoder.DecodeTime(itime);
 
 						DateTime timestamp = new System.DateTime(
 							date.Year, date.Month, date.Day,
@@ -324,7 +329,7 @@ namespace FirebirdSql.Data.Embedded
 			}
 			else
 			{
-				sliceData =	tempData;	
+				sliceData = tempData;	
 			}
 			
 			return sliceData;
@@ -332,19 +337,19 @@ namespace FirebirdSql.Data.Embedded
 
 		#endregion
 
-		#region	Private	Metods
+		#region Private	Metods
 
 		private	byte[] EncodeSlice(ArrayDesc desc, Array sourceArray, int length)
 		{
-			BinaryWriter	writer	= new BinaryWriter(new MemoryStream());
-			IEnumerator		i		= sourceArray.GetEnumerator();
-			Charset			charset	= this.db.Charset;
-			DbDataType		dbType	= DbDataType.Array;
-			int				type	= 0;
+			BinaryWriter	writer = new BinaryWriter(new MemoryStream());
+			IEnumerator		i	 = sourceArray.GetEnumerator();
+			Charset			charset = this.db.Charset;
+			DbDataType		dbType = DbDataType.Array;
+			int				type = 0;
 
 			// Infer data types
-			type	= TypeHelper.GetFbType(this.Descriptor.DataType);
-			dbType	= TypeHelper.GetDbDataType(this.Descriptor.DataType, 0,	this.Descriptor.Scale);
+			type = TypeHelper.GetFbType(this.Descriptor.DataType);
+			dbType = TypeHelper.GetDbDataType(this.Descriptor.DataType, 0,	this.Descriptor.Scale);
 
 			while (i.MoveNext())
 			{
@@ -352,8 +357,8 @@ namespace FirebirdSql.Data.Embedded
 				{
 					case DbDataType.Char:
 					{
-						string value  =	i.Current != null ?	(string)i.Current :	String.Empty;
-						byte[] buffer =	charset.GetBytes(value);
+						string value  = i.Current != null ?	(string)i.Current :	String.Empty;
+						byte[] buffer = charset.GetBytes(value);
 
 						writer.Write(buffer);
 
@@ -371,9 +376,9 @@ namespace FirebirdSql.Data.Embedded
 					{
 						string value = i.Current !=	null ? (string)i.Current : String.Empty;
 
-						value =	value.TrimEnd();
+						value = value.TrimEnd();
 
-						byte[] buffer =	charset.GetBytes(value);
+						byte[] buffer = charset.GetBytes(value);
 						writer.Write(buffer);
 
 						if (desc.Length	> buffer.Length)

@@ -12,7 +12,7 @@
  *     express or implied.  See the License for the specific 
  *     language governing rights and limitations under the License.
  * 
- *  Copyright (c) 2002, 2004 Carlos Guzman Alvarez
+ *  Copyright (c) 2002, 2005 Carlos Guzman Alvarez
  *  All Rights Reserved.
  */
 
@@ -36,10 +36,10 @@ namespace FirebirdSql.Data.Common
 
 		#region Protected Fields
 
-		protected long			blobId;
-		protected int			blobHandle;
-		protected int			position;
-		protected ITransaction	transaction;
+		protected long	blobId;
+		protected int	blobHandle;
+		protected int	position;
+		protected ITransaction transaction;
 
 		#endregion
 
@@ -84,8 +84,8 @@ namespace FirebirdSql.Data.Common
 
 		protected BlobBase(IDatabase db)
 		{
-			this.segmentSize	= db.PacketSize;
-			this.charset		= db.Charset;
+			this.segmentSize = db.PacketSize;
+			this.charset = db.Charset;
 		}
 
 		#endregion
@@ -156,9 +156,9 @@ namespace FirebirdSql.Data.Common
 
 				byte[] tmpBuffer = null;
 
-				int length = count;
-				int offset = index;
-				int chunk = length >= this.segmentSize ? this.segmentSize : length;
+				int length	= count;
+				int offset	= index;
+				int chunk	= length >= this.segmentSize ? this.segmentSize : length;
 
 				tmpBuffer = new byte[chunk];
 
@@ -169,7 +169,8 @@ namespace FirebirdSql.Data.Common
 						chunk = (int)length;
 						tmpBuffer = new byte[chunk];
 					}
-					System.Array.Copy(buffer, offset, tmpBuffer, 0, chunk);
+
+					Array.Copy(buffer, offset, tmpBuffer, 0, chunk);
 					this.PutSegment(tmpBuffer);
 
 					offset += chunk;

@@ -12,7 +12,7 @@
  *     express or implied.  See the License for the specific 
  *     language governing rights and limitations under the License.
  * 
- *  Copyright (c) 2002, 2004 Carlos Guzman Alvarez
+ *  Copyright (c) 2002, 2005 Carlos Guzman Alvarez
  *  All Rights Reserved.
  */
 
@@ -37,15 +37,15 @@ namespace FirebirdSql.Data.Firebird.DbSchema
 
 		protected override StringBuilder GetCommandText(object[] restrictions)
 		{
-			StringBuilder sql	= new StringBuilder();
+			StringBuilder sql = new StringBuilder();
 			StringBuilder where = new StringBuilder();
 
 			sql.Append(
 				@"SELECT " +
-                    "null AS PROCEDURE_CATALOG, " +
-                    "null AS PROCEDURE_SCHEMA, " +
-                    "rdb$relation_name AS PROCEDURE_NAME, " +
-                    "rdb$user AS GRANTEE, " +
+					"null AS PROCEDURE_CATALOG, " +
+					"null AS PROCEDURE_SCHEMA, " +
+					"rdb$relation_name AS PROCEDURE_NAME, " +
+					"rdb$user AS GRANTEE, " +
 					"rdb$grantor AS GRANTOR, " +
 					"rdb$privilege AS PRIVILEGE, " +
 					"rdb$grant_option AS WITH_GRANT " +
@@ -58,39 +58,39 @@ namespace FirebirdSql.Data.Firebird.DbSchema
 			{
 				int index = 0;
 
-                /* PROCEDURE_CATALOG */
-                if (restrictions.Length >= 1 && restrictions[0] != null)
-                {
-                }
-
-                /* PROCEDURE_SCHEMA */
-                if (restrictions.Length >= 2 && restrictions[1] != null)
-                {
-                }
-
-                /* PROCEDURE_NAME */
-                if (restrictions.Length >= 3 && restrictions[2] != null)
+				/* PROCEDURE_CATALOG */
+				if (restrictions.Length >= 1 && restrictions[0] != null)
 				{
-                    where.AppendFormat(CultureInfo.CurrentUICulture, " AND rdb$relation_name = @p{0}", index++);
-                }
+				}
 
-                /* GRANTOR */
-                if (restrictions.Length >= 5 && restrictions[4] != null)
-                {
-                    where.AppendFormat(CultureInfo.CurrentUICulture, " AND rdb$grantor = @p{0}", index++);
-                }
+				/* PROCEDURE_SCHEMA */
+				if (restrictions.Length >= 2 && restrictions[1] != null)
+				{
+				}
 
-                /* GRANTEE */
+				/* PROCEDURE_NAME */
+				if (restrictions.Length >= 3 && restrictions[2] != null)
+				{
+					where.AppendFormat(CultureInfo.CurrentUICulture, " AND rdb$relation_name = @p{0}", index++);
+				}
+
+				/* GRANTOR */
+				if (restrictions.Length >= 5 && restrictions[4] != null)
+				{
+					where.AppendFormat(CultureInfo.CurrentUICulture, " AND rdb$grantor = @p{0}", index++);
+				}
+
+				/* GRANTEE */
 				if (restrictions.Length >= 4 && restrictions[3] != null)
 				{
-                    where.AppendFormat(CultureInfo.CurrentUICulture, " AND rdb$user = @p{0}", index++);
-                }
+					where.AppendFormat(CultureInfo.CurrentUICulture, " AND rdb$user = @p{0}", index++);
+				}
 			}
 
 			if (where.Length > 0)
 			{
-                sql.AppendFormat(CultureInfo.CurrentUICulture, " WHERE {0} ", where.ToString());
-            }
+				sql.AppendFormat(CultureInfo.CurrentUICulture, " WHERE {0} ", where.ToString());
+			}
 
 			sql.Append(" ORDER BY rdb$relation_name");
 

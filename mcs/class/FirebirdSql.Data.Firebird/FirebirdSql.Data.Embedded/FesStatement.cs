@@ -1,19 +1,19 @@
 /*
  *	Firebird ADO.NET Data provider for .NET	and	Mono 
  * 
- *	   The contents	of this	file are subject to	the	Initial	
+ *	   The contents of this file are subject to the Initial 
  *	   Developer's Public License Version 1.0 (the "License"); 
- *	   you may not use this	file except	in compliance with the 
- *	   License.	You	may	obtain a copy of the License at	
+ *	   you may not use this file except in compliance with the 
+ *	   License. You may obtain a copy of the License at 
  *	   http://www.firebirdsql.org/index.php?op=doc&id=idpl
  *
- *	   Software	distributed	under the License is distributed on	
+ *	   Software distributed under the License is distributed on 
  *	   an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either 
- *	   express or implied.	See	the	License	for	the	specific 
- *	   language	governing rights and limitations under the License.
+ *	   express or implied. See the License for the specific 
+ *	   language governing rights and limitations under the License.
  * 
- *	Copyright (c) 2002,	2004 Carlos	Guzman Alvarez
- *	All	Rights Reserved.
+ *	Copyright (c) 2002, 2005 Carlos Guzman Alvarez
+ *	All Rights Reserved.
  */
 
 using System;
@@ -24,34 +24,34 @@ using FirebirdSql.Data.Common;
 
 namespace FirebirdSql.Data.Embedded
 {
-	internal sealed	class FesStatement : StatementBase
+	internal sealed class FesStatement : StatementBase
 	{
-		#region	Fields
+		#region Fields
 
-		private	int				handle;
-		private	FesDatabase		db;
-		private	FesTransaction	transaction;
-		private	Descriptor		parameters;
-		private	Descriptor		fields;
-		private	StatementState	state;
-		private	DbStatementType	statementType;
-		private	bool			allRowsFetched;
-		private	Queue			outputParams;
-		private	int				recordsAffected;
-		
+		private int				handle;
+		private FesDatabase		db;
+		private FesTransaction	transaction;
+		private Descriptor		parameters;
+		private Descriptor		fields;
+		private StatementState	state;
+		private DbStatementType statementType;
+		private bool			allRowsFetched;
+		private Queue			outputParams;
+		private int				recordsAffected;
+
 		#endregion
 
-		#region	Properties
+		#region Properties
 
-		public override	IDatabase DB
+		public override IDatabase DB
 		{
-			get	{ return this.db; }
-			set	{ this.db =	(FesDatabase)value;	}
+			get { return this.db; }
+			set { this.db = (FesDatabase)value; }
 		}
 
-		public override	ITransaction Transaction
+		public override ITransaction Transaction
 		{
-			get	{ return this.transaction; }
+			get { return this.transaction; }
 			set
 			{
 				if (value == null)
@@ -60,15 +60,16 @@ namespace FirebirdSql.Data.Embedded
 				}
 				else
 				{
-					bool addHandler	= false;
-					if (this.transaction !=	value)
+					bool addHandler = false;
+
+					if (this.transaction != value)
 					{
 						if (this.TransactionUpdate != null && this.Transaction != null)
 						{
-							this.Transaction.Update	-= this.TransactionUpdate ;
-							this.TransactionUpdate	= null;
+							this.Transaction.Update -= this.TransactionUpdate;
+							this.TransactionUpdate = null;
 						}
-					
+
 						// Add event handler for transaction updates
 						this.TransactionUpdate = new TransactionUpdateEventHandler(this.TransactionUpdated);
 
@@ -79,31 +80,31 @@ namespace FirebirdSql.Data.Embedded
 
 					if (addHandler)
 					{
-						this.transaction.Update	+= this.TransactionUpdate;
+						this.transaction.Update += this.TransactionUpdate;
 					}
 				}
 			}
 		}
-		
-		public override	Descriptor Parameters
+
+		public override Descriptor Parameters
 		{
-			get	{ return this.parameters; }
-			set	{ this.parameters =	value; }
+			get { return this.parameters; }
+			set { this.parameters = value; }
 		}
 
-		public override	Descriptor Fields
+		public override Descriptor Fields
 		{
-			get	{ return this.fields; }
+			get { return this.fields; }
 		}
 
-		public override	int	RecordsAffected
+		public override int RecordsAffected
 		{
-			get	{ return this.recordsAffected; }
+			get { return this.recordsAffected; }
 		}
 
-		public override	bool IsPrepared
+		public override bool IsPrepared
 		{
-			get	
+			get
 			{
 				if (this.state == StatementState.Deallocated ||
 					this.state == StatementState.Error)
@@ -117,44 +118,44 @@ namespace FirebirdSql.Data.Embedded
 			}
 		}
 
-		public override	DbStatementType	StatementType
+		public override DbStatementType StatementType
 		{
-			get	{ return this.statementType; }
-			set	{ this.statementType = value; }
+			get { return this.statementType; }
+			set { this.statementType = value; }
 		}
 
-		public override	StatementState State
+		public override StatementState State
 		{
-			get	{ return this.state; }
-			set	{ this.state = value; }
+			get { return this.state; }
+			set { this.state = value; }
 		}
 
-		public override	int	FetchSize
+		public override int FetchSize
 		{
-			get	{ return 200; }
-			set	{ ;	}
+			get { return 200; }
+			set { ;	}
 		}
 
 		#endregion
 
-		#region	Constructors
+		#region Constructors
 
-		public FesStatement(IDatabase db) :	this(db, null)
+		public FesStatement(IDatabase db) : this(db, null)
 		{
 		}
 
 		public FesStatement(IDatabase db, ITransaction transaction)
 		{
-			if (!(db is	FesDatabase))
+			if (!(db is FesDatabase))
 			{
-				throw new ArgumentException("Specified argument	is not of FesDatabase type.");
+				throw new ArgumentException("Specified argument is not of FesDatabase type.");
 			}
 
 			this.recordsAffected = -1;
-			this.db				 = (FesDatabase)db;
-			this.outputParams	 = new Queue();
+			this.db = (FesDatabase)db;
+			this.outputParams = new Queue();
 
-			if (transaction	!= null)
+			if (transaction != null)
 			{
 				this.Transaction = transaction;
 			}
@@ -164,9 +165,9 @@ namespace FirebirdSql.Data.Embedded
 
 		#endregion
 
-		#region	IDisposable	Methods
+		#region IDisposable	Methods
 
-		protected override void	Dispose(bool disposing)
+		protected override void Dispose(bool disposing)
 		{
 			if (!this.IsDisposed)
 			{
@@ -179,15 +180,16 @@ namespace FirebirdSql.Data.Embedded
 					if (disposing)
 					{
 						this.Clear();
-						this.db					= null;
-						this.fields				= null;
-						this.parameters			= null;
-						this.transaction		= null;
-						this.outputParams		= null;
-						this.allRowsFetched		= false;
-						this.recordsAffected	= 0;
-						this.state				= StatementState.Deallocated;
-						this.handle				= 0;
+
+						this.db				= null;
+						this.fields			= null;
+						this.parameters		= null;
+						this.transaction	= null;
+						this.outputParams	= null;
+						this.allRowsFetched	= false;
+						this.recordsAffected = 0;
+						this.state	= StatementState.Deallocated;
+						this.handle = 0;
 					}
 				}
 				finally
@@ -199,47 +201,47 @@ namespace FirebirdSql.Data.Embedded
 
 		#endregion
 
-		#region	Blob Creation Metods
+		#region Blob Creation Metods
 
-		public override	BlobBase CreateBlob()
+		public override BlobBase CreateBlob()
 		{
-			return new FesBlob(this.db,	this.transaction);
+			return new FesBlob(this.db, this.transaction);
 		}
 
-		public override	BlobBase CreateBlob(long blobId)
+		public override BlobBase CreateBlob(long blobId)
 		{
-			return new FesBlob(this.db,	this.transaction, blobId);
+			return new FesBlob(this.db, this.transaction, blobId);
 		}
 
 		#endregion
 
-		#region	Array Creation Methods
+		#region Array Creation Methods
 
-		public override	ArrayBase CreateArray(ArrayDesc	descriptor)
+		public override ArrayBase CreateArray(ArrayDesc descriptor)
 		{
 			return new FesArray(descriptor);
 		}
 
-		public override	ArrayBase CreateArray(string tableName,	string fieldName)
+		public override ArrayBase CreateArray(string tableName, string fieldName)
 		{
 			return new FesArray(this.db, this.transaction, tableName, fieldName);
 		}
 
-		public override	ArrayBase CreateArray(long handle, string tableName, string	fieldName)
+		public override ArrayBase CreateArray(long handle, string tableName, string fieldName)
 		{
 			return new FesArray(this.db, this.transaction, handle, tableName, fieldName);
 		}
 
 		#endregion
 
-		#region	Methods
+		#region Methods
 
-		public override	void Prepare(string	commandText)
+		public override void Prepare(string commandText)
 		{
 			// Clear data
 			this.Clear();
-			this.parameters		= null;
-			this.fields			= null;
+			this.parameters = null;
+			this.fields		= null;
 
 			lock (this.db)
 			{
@@ -250,18 +252,18 @@ namespace FirebirdSql.Data.Embedded
 				}
 
 				// Marshal structures to pointer
-				XsqldaMarshaler	marshaler =	XsqldaMarshaler.GetInstance();
+				XsqldaMarshaler marshaler = XsqldaMarshaler.GetInstance();
 
 				// Setup fields	structure
-				this.fields	= new Descriptor(1);
+				this.fields = new Descriptor(1);
 
 				IntPtr sqlda = marshaler.MarshalManagedToNative(this.db.Charset, this.fields);
 
-				int[]	statusVector	= FesConnection.GetNewStatusVector();
-				int		trHandle		= this.transaction.Handle;
-				int		stmtHandle		= this.handle;
+				int[] statusVector = FesConnection.GetNewStatusVector();
+				int trHandle = this.transaction.Handle;
+				int stmtHandle = this.handle;
 
-				byte[] buffer =	this.db.Charset.GetBytes(commandText);
+				byte[] buffer = this.db.Charset.GetBytes(commandText);
 
 				FbClient.isc_dsql_prepare(
 					statusVector,
@@ -273,7 +275,7 @@ namespace FirebirdSql.Data.Embedded
 					sqlda);
 
 				// Marshal Pointer
-				Descriptor descriptor =	marshaler.MarshalNativeToManaged(this.db.Charset, sqlda);
+				Descriptor descriptor = marshaler.MarshalNativeToManaged(this.db.Charset, sqlda);
 
 				// Free	memory
 				marshaler.CleanUpNativeData(ref	sqlda);
@@ -282,17 +284,17 @@ namespace FirebirdSql.Data.Embedded
 				this.db.ParseStatusVector(statusVector);
 
 				// Describe	fields
-				this.fields	= descriptor;
-				if (this.fields.ActualCount	> 0	&&
-					this.fields.ActualCount	!= this.fields.Count)
+				this.fields = descriptor;
+				if (this.fields.ActualCount > 0 &&
+					this.fields.ActualCount != this.fields.Count)
 				{
 					this.Describe();
 				}
 				else
 				{
-					if (this.fields.ActualCount	== 0)
+					if (this.fields.ActualCount == 0)
 					{
-						this.fields	= new Descriptor(0);
+						this.fields = new Descriptor(0);
 					}
 				}
 
@@ -307,24 +309,24 @@ namespace FirebirdSql.Data.Embedded
 			}
 		}
 
-		public override	void Execute()
+		public override void Execute()
 		{
 			if (this.state == StatementState.Deallocated)
 			{
 				throw new InvalidOperationException("Statment is not correctly created.");
 			}
-			
-			lock (this.db) 
+
+			lock (this.db)
 			{
 				// Marshal structures to pointer
-				XsqldaMarshaler	marshaler =	XsqldaMarshaler.GetInstance();
+				XsqldaMarshaler marshaler = XsqldaMarshaler.GetInstance();
 
-				IntPtr inSqlda	= IntPtr.Zero;
-				IntPtr outSqlda	= IntPtr.Zero;
+				IntPtr inSqlda = IntPtr.Zero;
+				IntPtr outSqlda = IntPtr.Zero;
 
-				if (this.parameters	!= null)
+				if (this.parameters != null)
 				{
-					inSqlda	= marshaler.MarshalManagedToNative(this.db.Charset,	this.parameters);
+					inSqlda = marshaler.MarshalManagedToNative(this.db.Charset, this.parameters);
 				}
 				if (this.statementType == DbStatementType.StoredProcedure)
 				{
@@ -332,9 +334,9 @@ namespace FirebirdSql.Data.Embedded
 					outSqlda = marshaler.MarshalManagedToNative(this.db.Charset, this.fields);
 				}
 
-				int[]	statusVector	= FesConnection.GetNewStatusVector();
-				int		trHandle		= this.transaction.Handle;
-				int		stmtHandle		= this.handle;
+				int[] statusVector = FesConnection.GetNewStatusVector();
+				int trHandle = this.transaction.Handle;
+				int stmtHandle = this.handle;
 
 				FbClient.isc_dsql_execute2(
 					statusVector,
@@ -344,16 +346,16 @@ namespace FirebirdSql.Data.Embedded
 					inSqlda,
 					outSqlda);
 
-				if (outSqlda !=	IntPtr.Zero)
+				if (outSqlda != IntPtr.Zero)
 				{
-					Descriptor descriptor =	marshaler.MarshalNativeToManaged(this.db.Charset, outSqlda);
+					Descriptor descriptor = marshaler.MarshalNativeToManaged(this.db.Charset, outSqlda);
 
 					// This	would be an	Execute	procedure
 					DbValue[] values = new DbValue[descriptor.Count];
 
-					for	(int i = 0;	i <	values.Length; i++)
+					for (int i = 0; i < values.Length; i++)
 					{
-						values[i] =	new	DbValue(this, descriptor[i]);
+						values[i] = new DbValue(this, descriptor[i]);
 					}
 
 					this.outputParams.Enqueue(values);
@@ -371,15 +373,15 @@ namespace FirebirdSql.Data.Embedded
 			}
 		}
 
-		public override	DbValue[] Fetch()
+		public override DbValue[] Fetch()
 		{
-			DbValue[] row =	null;
+			DbValue[] row = null;
 
 			if (this.state == StatementState.Deallocated)
 			{
 				throw new InvalidOperationException("Statment is not correctly created.");
 			}
-			if (this.statementType != DbStatementType.Select		 &&
+			if (this.statementType != DbStatementType.Select &&
 				this.statementType != DbStatementType.SelectForUpdate)
 			{
 				return null;
@@ -390,40 +392,40 @@ namespace FirebirdSql.Data.Embedded
 				if (!this.allRowsFetched)
 				{
 					// Marshal structures to pointer
-					XsqldaMarshaler	marshaler =	XsqldaMarshaler.GetInstance();
+					XsqldaMarshaler marshaler = XsqldaMarshaler.GetInstance();
 
 					// Reset actual	field values
 					this.fields.ResetValues();
 
 					IntPtr sqlda = marshaler.MarshalManagedToNative(this.db.Charset, fields);
 
-					int[]	statusVector	= FesConnection.GetNewStatusVector();
-					int		stmtHandle		= this.handle;
+					int[] statusVector = FesConnection.GetNewStatusVector();
+					int stmtHandle = this.handle;
 
-					int	status = FbClient.isc_dsql_fetch(
+					int status = FbClient.isc_dsql_fetch(
 						statusVector,
 						ref	stmtHandle,
 						IscCodes.SQLDA_VERSION1,
 						sqlda);
 
 					// Obtain values
-					this.fields	= marshaler.MarshalNativeToManaged(this.db.Charset,	sqlda);
+					this.fields = marshaler.MarshalNativeToManaged(this.db.Charset, sqlda);
 
 					// Free	memory
 					marshaler.CleanUpNativeData(ref	sqlda);
-			
+
 					// Parse status	vector
 					this.db.ParseStatusVector(statusVector);
-			
+
 					if (status == 100)
 					{
-						this.allRowsFetched	= true;
+						this.allRowsFetched = true;
 					}
 					else
 					{
 						// set row values
-						row	= new DbValue[this.fields.ActualCount];
-						for	(int i = 0;	i <	row.Length;	i++)
+						row = new DbValue[this.fields.ActualCount];
+						for (int i = 0; i < row.Length; i++)
 						{
 							row[i] = new DbValue(this, this.fields[i]);
 						}
@@ -434,30 +436,30 @@ namespace FirebirdSql.Data.Embedded
 			return row;
 		}
 
-		public override	DbValue[] GetOuputParameters()
+		public override DbValue[] GetOuputParameters()
 		{
 			if (this.outputParams != null && this.outputParams.Count > 0)
 			{
 				return (DbValue[])this.outputParams.Dequeue();
 			}
-			
+
 			return null;
 		}
 
-		public override	void Describe()
+		public override void Describe()
 		{
-			lock (this.db) 
+			lock (this.db)
 			{
 				// Update structure
-				this.fields	= new Descriptor(this.fields.ActualCount);
+				this.fields = new Descriptor(this.fields.ActualCount);
 
 				// Marshal structures to pointer
-				XsqldaMarshaler	marshaler =	XsqldaMarshaler.GetInstance();
+				XsqldaMarshaler marshaler = XsqldaMarshaler.GetInstance();
 
 				IntPtr sqlda = marshaler.MarshalManagedToNative(this.db.Charset, fields);
 
-				int[]	statusVector	= FesConnection.GetNewStatusVector();
-				int		stmtHandle		= this.handle;
+				int[] statusVector = FesConnection.GetNewStatusVector();
+				int stmtHandle = this.handle;
 
 				FbClient.isc_dsql_describe(
 					statusVector,
@@ -466,7 +468,7 @@ namespace FirebirdSql.Data.Embedded
 					sqlda);
 
 				// Marshal Pointer
-				Descriptor descriptor =	marshaler.MarshalNativeToManaged(this.db.Charset, sqlda);
+				Descriptor descriptor = marshaler.MarshalNativeToManaged(this.db.Charset, sqlda);
 
 				// Free	memory
 				marshaler.CleanUpNativeData(ref	sqlda);
@@ -475,23 +477,23 @@ namespace FirebirdSql.Data.Embedded
 				this.db.ParseStatusVector(statusVector);
 
 				// Update field	descriptor
-				this.fields	= descriptor;
+				this.fields = descriptor;
 			}
 		}
 
-		public override	void DescribeParameters()
+		public override void DescribeParameters()
 		{
-			lock (this.db) 
+			lock (this.db)
 			{
 				// Marshal structures to pointer
-				XsqldaMarshaler	marshaler =	XsqldaMarshaler.GetInstance();
+				XsqldaMarshaler marshaler = XsqldaMarshaler.GetInstance();
 
-				this.parameters	= new Descriptor(1);
+				this.parameters = new Descriptor(1);
 
 				IntPtr sqlda = marshaler.MarshalManagedToNative(this.db.Charset, parameters);
 
-				int[]	statusVector	= FesConnection.GetNewStatusVector();
-				int		stmtHandle		= this.handle;
+				int[] statusVector = FesConnection.GetNewStatusVector();
+				int stmtHandle = this.handle;
 
 				FbClient.isc_dsql_describe_bind(
 					statusVector,
@@ -499,22 +501,22 @@ namespace FirebirdSql.Data.Embedded
 					IscCodes.SQLDA_VERSION1,
 					sqlda);
 
-				Descriptor descriptor =	marshaler.MarshalNativeToManaged(this.db.Charset, sqlda);
+				Descriptor descriptor = marshaler.MarshalNativeToManaged(this.db.Charset, sqlda);
 
 				// Parse status	vector
 				this.db.ParseStatusVector(statusVector);
-				
-				if (descriptor.ActualCount != 0	&&
-					descriptor.Count !=	descriptor.ActualCount)
+
+				if (descriptor.ActualCount != 0 &&
+					descriptor.Count != descriptor.ActualCount)
 				{
-					short n	= descriptor.ActualCount;
+					short n = descriptor.ActualCount;
 					descriptor = new Descriptor(n);
 
 					// Fre memory
 					marshaler.CleanUpNativeData(ref	sqlda);
 
 					// Marshal new structure
-					sqlda =	marshaler.MarshalManagedToNative(this.db.Charset, descriptor);
+					sqlda = marshaler.MarshalManagedToNative(this.db.Charset, descriptor);
 
 					FbClient.isc_dsql_describe_bind(
 						statusVector,
@@ -545,13 +547,13 @@ namespace FirebirdSql.Data.Embedded
 				}
 
 				// Update parameter	descriptor
-				this.parameters	= descriptor;
+				this.parameters = descriptor;
 			}
 		}
 
-		public override	byte[] GetSqlInfo(byte[] items,	int	bufferLength)
+		public override byte[] GetSqlInfo(byte[] items, int bufferLength)
 		{
-			lock (this.db) 
+			lock (this.db)
 			{
 				byte[]	buffer			= new byte[bufferLength];
 				int[]	statusVector	= FesConnection.GetNewStatusVector();
@@ -573,64 +575,64 @@ namespace FirebirdSql.Data.Embedded
 
 		#endregion
 
-		#region	Protected Methods
+		#region Protected Methods
 
-		protected override void	Free(int option)
+		protected override void Free(int option)
 		{
 			// Does	not	seem to	be possible	or necessary to	close
 			// an execute procedure	statement.
-			if (this.StatementType == DbStatementType.StoredProcedure && 
-				option == IscCodes.DSQL_close) 
+			if (this.StatementType == DbStatementType.StoredProcedure &&
+				option == IscCodes.DSQL_close)
 			{
-				return;		   
+				return;
 			}
-			
-			lock (this.db) 
+
+			lock (this.db)
 			{
-				int[]	statusVector	= FesConnection.GetNewStatusVector();
-				int		stmtHandle		= this.handle;
+				int[] statusVector = FesConnection.GetNewStatusVector();
+				int stmtHandle = this.handle;
 
 				FbClient.isc_dsql_free_statement(
 					statusVector,
 					ref	stmtHandle,
 					(short)option);
 
-				this.handle	= stmtHandle;
+				this.handle = stmtHandle;
 
 				// Reset statement information
-				if (option == IscCodes.DSQL_drop) 
+				if (option == IscCodes.DSQL_drop)
 				{
-					this.parameters	= null;
-					this.fields		= null;
+					this.parameters = null;
+					this.fields = null;
 				}
 
 				this.Clear();
-				this.allRowsFetched	= false;
+				this.allRowsFetched = false;
 
 				this.db.ParseStatusVector(statusVector);
 			}
 		}
 
-		protected override void	TransactionUpdated(object sender, EventArgs	e)
+		protected override void TransactionUpdated(object sender, EventArgs e)
 		{
 			lock (this)
 			{
-				if (this.Transaction !=	null &&	this.TransactionUpdate != null)
+				if (this.Transaction != null && this.TransactionUpdate != null)
 				{
-					this.Transaction.Update	-= this.TransactionUpdate;
+					this.Transaction.Update -= this.TransactionUpdate;
 				}
 				this.Clear();
-				this.State				= StatementState.Closed;
-				this.TransactionUpdate	= null;
-				this.allRowsFetched		= false;
+				this.State = StatementState.Closed;
+				this.TransactionUpdate = null;
+				this.allRowsFetched = false;
 			}
 		}
 
 		#endregion
 
-		#region	Private	Methods
+		#region Private	Methods
 
-		private	void Clear()
+		private void Clear()
 		{
 			if (this.outputParams != null && this.outputParams.Count > 0)
 			{
@@ -638,13 +640,13 @@ namespace FirebirdSql.Data.Embedded
 			}
 		}
 
-		private	void Allocate()
+		private void Allocate()
 		{
-			lock (this.db) 
+			lock (this.db)
 			{
-				int[]	statusVector	= FesConnection.GetNewStatusVector();
-				int		dbHandle		= this.db.Handle;
-				int		stmtHandle		= this.handle;
+				int[] statusVector = FesConnection.GetNewStatusVector();
+				int dbHandle = this.db.Handle;
+				int stmtHandle = this.handle;
 
 				FbClient.isc_dsql_allocate_statement(
 					statusVector,
@@ -653,14 +655,14 @@ namespace FirebirdSql.Data.Embedded
 
 				this.db.ParseStatusVector(statusVector);
 
-				this.handle			= stmtHandle;
-				this.allRowsFetched	= false;				
-				this.state			= StatementState.Allocated;
-				this.statementType	= DbStatementType.None;
+				this.handle = stmtHandle;
+				this.allRowsFetched = false;
+				this.state = StatementState.Allocated;
+				this.statementType = DbStatementType.None;
 			}
 		}
 
-		private	void UpdateRecordsAffected()
+		private void UpdateRecordsAffected()
 		{
 			if (this.StatementType == DbStatementType.Insert ||
 				this.StatementType == DbStatementType.Delete ||

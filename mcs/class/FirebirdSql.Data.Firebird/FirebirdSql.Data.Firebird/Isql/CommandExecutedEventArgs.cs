@@ -37,9 +37,9 @@ namespace FirebirdSql.Data.Firebird.Isql
 	{
 		#region Fields
 
-		private string				commandText;
-		private FbDataReader		dataReader;
-		private int					rowsAffected;
+		private string		commandText;
+		private FbDataReader	dataReader;
+		private int		rowsAffected;
 
 		#endregion
 
@@ -82,13 +82,13 @@ namespace FirebirdSql.Data.Firebird.Isql
 		/// <param name="commandText">The CommandText of the <see cref="FbCommand"/> that was executed.</param>
 		/// <param name="rowsAffected"></param>
 		public CommandExecutedEventArgs(
-			FbDataReader		dataReader,
-			string				commandText,
-			int					rowsAffected)
+			FbDataReader	dataReader,
+			string		commandText,
+			int		rowsAffected)
 		{
-			this.dataReader		= dataReader;
-			this.commandText	= commandText;
-			this.rowsAffected	= rowsAffected;
+			this.dataReader	 = dataReader;
+			this.commandText = commandText;
+			this.rowsAffected = rowsAffected;
 		}
 
 		#endregion

@@ -12,7 +12,7 @@
  *     express or implied.  See the License for the specific 
  *     language governing rights and limitations under the License.
  * 
- *  Copyright (c) 2002, 2004 Carlos Guzman Alvarez
+ *  Copyright (c) 2002, 2005 Carlos Guzman Alvarez
  *  All Rights Reserved.
  */
 
@@ -36,7 +36,7 @@ namespace FirebirdSql.Data.Common
 		public static bool CultureAwareCompare(string strA, string strB)
 		{
 			return CultureInfo.CurrentCulture.CompareInfo.Compare(
-				strA, 
+				strA,
 				strB,
 				CompareOptions.IgnoreKanaType | CompareOptions.IgnoreWidth |
 				CompareOptions.IgnoreCase) == 0 ? true : false;

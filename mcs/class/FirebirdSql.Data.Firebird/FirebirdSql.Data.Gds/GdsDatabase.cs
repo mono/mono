@@ -1,19 +1,19 @@
 /*
  *	Firebird ADO.NET Data provider for .NET	and	Mono 
  * 
- *	   The contents	of this	file are subject to	the	Initial	
+ *	   The contents of this file are subject to the Initial 
  *	   Developer's Public License Version 1.0 (the "License"); 
- *	   you may not use this	file except	in compliance with the 
- *	   License.	You	may	obtain a copy of the License at	
+ *	   you may not use this file except in compliance with the 
+ *	   License. You may obtain a copy of the License at 
  *	   http://www.firebirdsql.org/index.php?op=doc&id=idpl
  *
- *	   Software	distributed	under the License is distributed on	
+ *	   Software distributed under the License is distributed on 
  *	   an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either 
- *	   express or implied.	See	the	License	for	the	specific 
- *	   language	governing rights and limitations under the License.
+ *	   express or implied. See the License for the specific 
+ *	   language governing rights and limitations under the License.
  * 
- *	Copyright (c) 2002,	2004 Carlos	Guzman Alvarez
- *	All	Rights Reserved.
+ *	Copyright (c) 2002, 2005 Carlos Guzman Alvarez
+ *	All Rights Reserved.
  */
 
 using System;
@@ -29,107 +29,107 @@ using FirebirdSql.Data.Common;
 
 namespace FirebirdSql.Data.Gds
 {
-	internal sealed	class GdsDatabase :	IDatabase
+	internal sealed class GdsDatabase : IDatabase
 	{
-		#region	Callbacks
+		#region Callbacks
 
 		public WarningMessageCallback WarningMessage
 		{
-			get	{ return this.warningMessage; }
-			set	{ this.warningMessage =	value; }
+			get { return this.warningMessage; }
+			set { this.warningMessage = value; }
 		}
 
 		#endregion
 
-		#region	Fields
+		#region Fields
 
-		private	WarningMessageCallback warningMessage;
+		private WarningMessageCallback warningMessage;
 
-		private	GdsConnection	connection;
-		private	GdsEventManager	eventManager;
-		private	Charset			charset;
-		private	int				handle;
-		private	int				transactionCount;
-		private	string			serverVersion;
-		private	short			packetSize;
-		private	short			dialect;
-		private	int				eventsId;
-		private	bool			disposed;
+		private GdsConnection	connection;
+		private GdsEventManager eventManager;
+		private Charset			charset;
+		private int				handle;
+		private int				transactionCount;
+		private string			serverVersion;
+		private short			packetSize;
+		private short			dialect;
+		private int				eventsId;
+		private bool			disposed;
 
 		#endregion
 
-		#region	Properties
+		#region Properties
 
 		public int Handle
 		{
-			get	{ return this.handle; }
+			get { return this.handle; }
 		}
 
 		public int TransactionCount
 		{
-			get	{ return this.transactionCount;	}
-			set	{ this.transactionCount	= value; }
+			get { return this.transactionCount; }
+			set { this.transactionCount = value; }
 		}
 
 		public string ServerVersion
 		{
-			get	{ return this.serverVersion; }
+			get { return this.serverVersion; }
 		}
 
 		public Charset Charset
 		{
-			get	{ return this.charset; }
-			set	{ this.charset = value;	}
+			get { return this.charset; }
+			set { this.charset = value; }
 		}
 
 		public short PacketSize
 		{
-			get	{ return this.packetSize; }
-			set	{ this.packetSize =	value; }
+			get { return this.packetSize; }
+			set { this.packetSize = value; }
 		}
 
 		public short Dialect
 		{
-			get	{ return this.dialect; }
-			set	{ this.dialect = value;	}
+			get { return this.dialect; }
+			set { this.dialect = value; }
 		}
 
-		public bool	HasRemoteEventSupport
+		public bool HasRemoteEventSupport
 		{
-			get	{ return true; }
+			get { return true; }
 		}
 
 		#endregion
 
-		#region	Internal properties
+		#region Internal properties
 
 		internal XdrStream Send
 		{
-			get	{ return this.connection.Send; }
+			get { return this.connection.Send; }
 		}
 
 		internal XdrStream Receive
 		{
-			get	{ return this.connection.Receive; }
+			get { return this.connection.Receive; }
 		}
 
 		#endregion
 
-		#region	Constructors
+		#region Constructors
 
 		public GdsDatabase()
 		{
-			this.connection	= new GdsConnection();
-			this.charset	= Charset.DefaultCharset;
-			this.dialect	= 3;
-			this.packetSize	= 8192;
+			this.connection		= new GdsConnection();
+			this.charset		= Charset.DefaultCharset;
+			this.dialect		= 3;
+			this.packetSize		= 8192;
 
 			GC.SuppressFinalize(this);
 		}
 
 		#endregion
 
-		#region	Finalizer
+		#region Finalizer
 
 		~GdsDatabase()
 		{
@@ -138,15 +138,15 @@ namespace FirebirdSql.Data.Gds
 
 		#endregion
 
-		#region	IDisposable	methods
+		#region IDisposable	methods
 
-		public void	Dispose()
+		public void Dispose()
 		{
 			this.Dispose(true);
 			GC.SuppressFinalize(this);
 		}
 
-		private	void Dispose(bool disposing)
+		private void Dispose(bool disposing)
 		{
 			lock (this)
 			{
@@ -168,30 +168,30 @@ namespace FirebirdSql.Data.Gds
 							this.eventsId		= 0;
 							this.handle			= 0;
 							this.packetSize		= 0;
-							this.warningMessage	= null;
-							this.transactionCount =	0;
+							this.warningMessage = null;
+							this.transactionCount = 0;
 						}
 					}
 					finally
 					{
 					}
 
-					this.disposed =	true;
+					this.disposed = true;
 				}
 			}
 		}
 
 		#endregion
 
-		#region	Database Methods
+		#region Database Methods
 
-		public void	CreateDatabase(DatabaseParameterBuffer dpb,	string dataSource, int port, string	database)
+		public void CreateDatabase(DatabaseParameterBuffer dpb, string dataSource, int port, string database)
 		{
 			lock (this)
 			{
 				try
 				{
-					this.connection.Connect(dataSource,	port, this.packetSize, this.charset);
+					this.connection.Connect(dataSource, port, this.packetSize, this.charset);
 					this.Send.Write(IscCodes.op_create);
 					this.Send.Write((int)0);
 					this.Send.Write(database);
@@ -200,7 +200,7 @@ namespace FirebirdSql.Data.Gds
 
 					try
 					{
-						this.handle	= this.ReadGenericResponse().ObjectHandle;
+						this.handle = this.ReadGenericResponse().ObjectHandle;
 						this.Detach();
 					}
 					catch (IscException)
@@ -223,7 +223,7 @@ namespace FirebirdSql.Data.Gds
 			}
 		}
 
-		public void	DropDatabase()
+		public void DropDatabase()
 		{
 			lock (this)
 			{
@@ -235,7 +235,7 @@ namespace FirebirdSql.Data.Gds
 
 					this.ReadGenericResponse();
 
-					this.handle	= 0;
+					this.handle = 0;
 				}
 				catch (IOException)
 				{
@@ -256,9 +256,9 @@ namespace FirebirdSql.Data.Gds
 
 		#endregion
 
-		#region	Auxiliary connection
+		#region Auxiliary connection
 
-		public void	ConnectionRequest(out int auxHandle, out string	ipAddress, out int portNumber)
+		public void ConnectionRequest(out int auxHandle, out string ipAddress, out int portNumber)
 		{
 			lock (this)
 			{
@@ -273,7 +273,7 @@ namespace FirebirdSql.Data.Gds
 
 					this.ReadOperation();
 
-					auxHandle =	this.Receive.ReadInt32();
+					auxHandle = this.Receive.ReadInt32();
 
 					// socketaddr_in (non XDR encoded)
 
@@ -284,10 +284,10 @@ namespace FirebirdSql.Data.Gds
 					this.Receive.ReadBytes(2);
 
 					// sin_addr
-					byte[] buffer =	this.Receive.ReadBytes(4);
-					ipAddress =	String.Format(
+					byte[] buffer = this.Receive.ReadBytes(4);
+					ipAddress = String.Format(
 						CultureInfo.InvariantCulture,
-						"{0}.{1}.{2}.{3}", 
+						"{0}.{1}.{2}.{3}",
 						buffer[3], buffer[2], buffer[1], buffer[0]);
 
 					// sin_zero	+ garbage
@@ -305,23 +305,16 @@ namespace FirebirdSql.Data.Gds
 
 		#endregion
 
-		#region	Remote Events Methods
+		#region Remote Events Methods
 
-		public void	CloseEventManager()
+		public void CloseEventManager()
 		{
 			lock (this)
 			{
 				if (this.eventManager != null)
 				{
-					// Cancel all pending events
-					IDictionaryEnumerator e	= this.eventManager.EventList.GetEnumerator();
-					while (e.MoveNext())
-					{
-						this.CancelEvents((RemoteEvent)e.Value);
-					}
-
 					this.eventManager.Close();
-					this.eventManager =	null;
+					this.eventManager = null;
 				}
 			}
 		}
@@ -331,7 +324,7 @@ namespace FirebirdSql.Data.Gds
 			return new RemoteEvent(this);
 		}
 
-		public void	QueueEvents(RemoteEvent	events)
+		public void QueueEvents(RemoteEvent events)
 		{
 			if (this.eventManager == null)
 			{
@@ -341,7 +334,7 @@ namespace FirebirdSql.Data.Gds
 
 				this.ConnectionRequest(out auxHandle, out ipAddress, out portNumber);
 
-				this.eventManager =	new	GdsEventManager(auxHandle, ipAddress, portNumber);
+				this.eventManager = new GdsEventManager(auxHandle, ipAddress, portNumber);
 			}
 
 			lock (this)
@@ -362,7 +355,7 @@ namespace FirebirdSql.Data.Gds
 					this.Send.Flush();
 
 					// Update event	Remote event ID
-					events.RemoteId	= this.ReadGenericResponse().ObjectHandle;
+					events.RemoteId = this.ReadGenericResponse().ObjectHandle;
 
 					// Enqueue events in the event manager
 					this.eventManager.QueueEvents(events);
@@ -374,7 +367,7 @@ namespace FirebirdSql.Data.Gds
 			}
 		}
 
-		public void	CancelEvents(RemoteEvent events)
+		public void CancelEvents(RemoteEvent events)
 		{
 			lock (this)
 			{
@@ -399,15 +392,15 @@ namespace FirebirdSql.Data.Gds
 
 		#endregion
 
-		#region	Methods
+		#region Methods
 
-		public void	Attach(DatabaseParameterBuffer dpb,	string dataSource, int port, string	database)
+		public void Attach(DatabaseParameterBuffer dpb, string dataSource, int port, string database)
 		{
 			lock (this)
 			{
 				try
 				{
-					this.connection.Connect(dataSource,	port, this.packetSize, this.charset);
+					this.connection.Connect(dataSource, port, this.packetSize, this.charset);
 
 					this.Identify(database);
 
@@ -419,7 +412,7 @@ namespace FirebirdSql.Data.Gds
 
 					try
 					{
-						this.handle	= this.ReadGenericResponse().ObjectHandle;
+						this.handle = this.ReadGenericResponse().ObjectHandle;
 					}
 					catch (IscException)
 					{
@@ -445,13 +438,13 @@ namespace FirebirdSql.Data.Gds
 			}
 		}
 
-		public void	Detach()
+		public void Detach()
 		{
 			lock (this)
 			{
-				if (this.TransactionCount >	0)
+				if (this.TransactionCount > 0)
 				{
-					throw new IscException(IscCodes.isc_open_trans,	this.TransactionCount);
+					throw new IscException(IscCodes.isc_open_trans, this.TransactionCount);
 				}
 
 				try
@@ -494,9 +487,9 @@ namespace FirebirdSql.Data.Gds
 
 		#endregion
 
-		#region	Transaction	methods
+		#region Transaction	methods
 
-		public ITransaction	BeginTransaction(TransactionParameterBuffer	tpb)
+		public ITransaction BeginTransaction(TransactionParameterBuffer tpb)
 		{
 			GdsTransaction transaction = new GdsTransaction(this);
 
@@ -507,7 +500,7 @@ namespace FirebirdSql.Data.Gds
 
 		#endregion
 
-		#region	Statement creation methods
+		#region Statement creation methods
 
 		public StatementBase CreateStatement()
 		{
@@ -521,7 +514,7 @@ namespace FirebirdSql.Data.Gds
 
 		#endregion
 
-		#region	Parameter Buffer creation methods
+		#region Parameter Buffer creation methods
 
 		public BlobParameterBuffer CreateBlobParameterBuffer()
 		{
@@ -533,7 +526,7 @@ namespace FirebirdSql.Data.Gds
 			return new DatabaseParameterBuffer(false);
 		}
 
-		public EventParameterBuffer	CreateEventParameterBuffer()
+		public EventParameterBuffer CreateEventParameterBuffer()
 		{
 			return new EventParameterBuffer();
 		}
@@ -545,7 +538,7 @@ namespace FirebirdSql.Data.Gds
 
 		#endregion
 
-		#region	Database Information methods
+		#region Database Information methods
 
 		public string GetServerVersion()
 		{
@@ -558,14 +551,14 @@ namespace FirebirdSql.Data.Gds
 			return this.GetDatabaseInfo(items, IscCodes.BUFFER_SIZE_128)[0].ToString();
 		}
 
-		public ArrayList GetDatabaseInfo(byte[]	items)
+		public ArrayList GetDatabaseInfo(byte[] items)
 		{
 			return this.GetDatabaseInfo(items, IscCodes.MAX_BUFFER_SIZE);
 		}
 
-		public ArrayList GetDatabaseInfo(byte[]	items, int bufferLength)
+		public ArrayList GetDatabaseInfo(byte[] items, int bufferLength)
 		{
-			byte[] buffer =	new	byte[bufferLength];
+			byte[] buffer = new byte[bufferLength];
 
 			this.DatabaseInfo(items, buffer, buffer.Length);
 
@@ -574,9 +567,9 @@ namespace FirebirdSql.Data.Gds
 
 		#endregion
 
-		#region	Internal Methods
+		#region Internal Methods
 
-		internal void ReleaseObject(int	op,	int	id)
+		internal void ReleaseObject(int op, int id)
 		{
 			lock (this)
 			{
@@ -597,11 +590,11 @@ namespace FirebirdSql.Data.Gds
 
 		internal GdsResponse ReadGenericResponse()
 		{
-			GdsResponse	response = this.connection.ReadGenericResponse();
+			GdsResponse response = this.connection.ReadGenericResponse();
 
-			if (response !=	null &&	response.Warning !=	null)
+			if (response != null && response.Warning != null)
 			{
-				if (this.warningMessage	!= null)
+				if (this.warningMessage != null)
 				{
 					this.warningMessage(response.Warning);
 				}
@@ -627,20 +620,20 @@ namespace FirebirdSql.Data.Gds
 
 		#endregion
 
-		#region	Private	Methods
+		#region Private	Methods
 
-		private	void Identify(string database)
+		private void Identify(string database)
 		{
 			try
 			{
 				// Here	we identify	the	user to	the	engine.	 
 				// This	may	or may not be used as login	info to	a database.				
 #if	(!NETCF)
-				byte[] user	= Encoding.Default.GetBytes(System.Environment.UserName);
-				byte[] host	= Encoding.Default.GetBytes(System.Net.Dns.GetHostName());
+				byte[] user = Encoding.Default.GetBytes(System.Environment.UserName);
+				byte[] host = Encoding.Default.GetBytes(System.Net.Dns.GetHostName());
 #else
-				byte[] user	= Encoding.Default.GetBytes("fbnetcf");
-				byte[] host	= Encoding.Default.GetBytes(System.Net.Dns.GetHostName());
+				byte[] user = Encoding.Default.GetBytes("fbnetcf");
+				byte[] host = Encoding.Default.GetBytes(System.Net.Dns.GetHostName());
 #endif
 
 				MemoryStream user_id = new MemoryStream();
@@ -648,11 +641,11 @@ namespace FirebirdSql.Data.Gds
 				/* User	Name */
 				user_id.WriteByte(1);
 				user_id.WriteByte((byte)user.Length);
-				user_id.Write(user,	0, user.Length);
+				user_id.Write(user, 0, user.Length);
 				/* Host	name */
 				user_id.WriteByte(4);
 				user_id.WriteByte((byte)host.Length);
-				user_id.Write(host,	0, host.Length);
+				user_id.Write(host, 0, host.Length);
 				/* Attach/create using this	connection 
 				 * will	use	user verification
 				 */
@@ -676,7 +669,7 @@ namespace FirebirdSql.Data.Gds
 
 				this.Send.Flush();
 
-				if (this.ReadOperation() ==	IscCodes.op_accept)
+				if (this.ReadOperation() == IscCodes.op_accept)
 				{
 					this.Receive.ReadInt32();	// Protocol	version
 					this.Receive.ReadInt32();	// Architecture	for	protocol
@@ -704,10 +697,10 @@ namespace FirebirdSql.Data.Gds
 			}
 		}
 
-		///	<summary>
-		///	isc_database_info
-		///	</summary>
-		private	void DatabaseInfo(byte[] items,	byte[] buffer, int bufferLength)
+		/// <summary>
+		/// isc_database_info
+		/// </summary>
+		private void DatabaseInfo(byte[] items, byte[] buffer, int bufferLength)
 		{
 			lock (this)
 			{
@@ -722,9 +715,9 @@ namespace FirebirdSql.Data.Gds
 
 					this.Send.Flush();
 
-					GdsResponse	r =	this.ReadGenericResponse();
+					GdsResponse r = this.ReadGenericResponse();
 
-					Buffer.BlockCopy(r.Data, 0,	buffer,	0, bufferLength);
+					Buffer.BlockCopy(r.Data, 0, buffer, 0, bufferLength);
 				}
 				catch (IOException)
 				{

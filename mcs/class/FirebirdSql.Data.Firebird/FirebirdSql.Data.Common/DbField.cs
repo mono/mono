@@ -12,7 +12,7 @@
  *     express or implied.  See the License for the specific 
  *     language governing rights and limitations under the License.
  * 
- *  Copyright (c) 2002, 2004 Carlos Guzman Alvarez
+ *  Copyright (c) 2002, 2005 Carlos Guzman Alvarez
  *  All Rights Reserved.
  */
 
@@ -348,11 +348,13 @@ namespace FirebirdSql.Data.Common
 						else
 						{
 							string s = this.Charset.GetString(buffer, 0, buffer.Length);
+
 							if ((this.Length % this.Charset.BytesPerCharacter) == 0 &&
 								s.Length > this.CharCount)
 							{
 								s = s.Substring(0, this.CharCount);
 							}
+
 							this.Value = s;
 						}
 						break;
@@ -445,8 +447,11 @@ namespace FirebirdSql.Data.Common
 				{
 					case DbDataType.Char:
 					case DbDataType.VarChar:
-					case DbDataType.Guid:
 						this.Value = String.Empty;
+						break;
+
+					case DbDataType.Guid:
+						this.Value = Guid.Empty;
 						break;
 
 					case DbDataType.SmallInt:
@@ -526,6 +531,8 @@ namespace FirebirdSql.Data.Common
 					return Type.GetType("System.DateTime");
 
 				case DbDataType.Binary:
+					return typeof(byte[]);
+
 				case DbDataType.Array:
 					return Type.GetType("System.Array");
 
@@ -624,7 +631,7 @@ namespace FirebirdSql.Data.Common
 				case IscCodes.SQL_INT64:
 					if (this.numericScale < 0)
 					{
-					if (this.subType == 2)
+						if (this.subType == 2)
 						{
 							return DbDataType.Decimal;
 						}

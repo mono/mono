@@ -1,19 +1,19 @@
 /*
  *	Firebird ADO.NET Data provider for .NET	and	Mono 
  * 
- *	   The contents	of this	file are subject to	the	Initial	
+ *	   The contents of this file are subject to the Initial 
  *	   Developer's Public License Version 1.0 (the "License"); 
- *	   you may not use this	file except	in compliance with the 
- *	   License.	You	may	obtain a copy of the License at	
+ *	   you may not use this file except in compliance with the 
+ *	   License. You may obtain a copy of the License at 
  *	   http://www.firebirdsql.org/index.php?op=doc&id=idpl
  *
- *	   Software	distributed	under the License is distributed on	
+ *	   Software distributed under the License is distributed on 
  *	   an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either 
- *	   express or implied.	See	the	License	for	the	specific 
- *	   language	governing rights and limitations under the License.
+ *	   express or implied. See the License for the specific 
+ *	   language governing rights and limitations under the License.
  * 
- *	Copyright (c) 2002,	2004 Carlos	Guzman Alvarez
- *	All	Rights Reserved.
+ *	Copyright (c) 2002, 2005 Carlos Guzman Alvarez
+ *	All Rights Reserved.
  */
 
 using System;
@@ -27,45 +27,45 @@ namespace FirebirdSql.Data.Gds
 {
 	internal class GdsEventManager
 	{
-		#region	Fields
+		#region Fields
 
-		private	GdsConnection	connection;
-		private	int				handle;
-		private	Thread			thread;
-		private	Hashtable		events;
+		private GdsConnection	connection;
+		private Thread			thread;
+		private Hashtable		events;
+		private int				handle;
 
 		#endregion
 
-		#region	Properties
+		#region Properties
 
 		public Hashtable EventList
 		{
-			get	{ return this.events; }
+			get { return this.events; }
 		}
 
 		#endregion
 
-		#region	Constructors
+		#region Constructors
 
 		public GdsEventManager(int handle, string ipAddress, int portNumber)
 		{
-			this.events	= new Hashtable();
-			this.events	= Hashtable.Synchronized(this.events);
-			this.handle	= handle;
+			this.events = new Hashtable();
+			this.events = Hashtable.Synchronized(this.events);
+			this.handle = handle;
 
 			// Initialize the connection
-			if (this.connection	== null)
+			if (this.connection == null)
 			{
-				this.connection	= new GdsConnection();
+				this.connection = new GdsConnection();
 				this.connection.Connect(ipAddress, portNumber);
 			}
 		}
 
 		#endregion
 
-		#region	Methods
+		#region Methods
 
-		public void	QueueEvents(RemoteEvent	remoteEvent)
+		public void QueueEvents(RemoteEvent remoteEvent)
 		{
 			lock (this)
 			{
@@ -78,20 +78,20 @@ namespace FirebirdSql.Data.Gds
 				}
 
 #if	(!NETCF)
-				if (this.thread	== null	||
-					(this.thread.ThreadState !=	ThreadState.Running	&& this.thread.ThreadState != ThreadState.Background))
+				if (this.thread == null ||
+					(this.thread.ThreadState != ThreadState.Running && this.thread.ThreadState != ThreadState.Background))
 #else
-				if (this.thread	== null)
+				if (this.thread == null)
 #endif
 				{
-					this.thread	= new Thread(new ThreadStart(ThreadHandler));
+					this.thread = new Thread(new ThreadStart(ThreadHandler));
 					this.thread.Start();
 					this.thread.IsBackground = true;
 				}
 			}
 		}
 
-		public void	CancelEvents(RemoteEvent remoteEvent)
+		public void CancelEvents(RemoteEvent remoteEvent)
 		{
 			lock (this.events.SyncRoot)
 			{
@@ -99,42 +99,42 @@ namespace FirebirdSql.Data.Gds
 			}
 		}
 
-		public void	Close()
+		public void Close()
 		{
 			lock (this)
 			{
-				if (this.connection	!= null)
+				if (this.connection != null)
 				{
 					this.connection.Disconnect();
 				}
 
-				if (this.thread	!= null)
+				if (this.thread != null)
 				{
 					this.thread.Abort();
 					this.thread.Join();
 
-					this.thread	= null;
+					this.thread = null;
 				}
 			}
 		}
 
 		#endregion
 
-		#region	Private	Methods
+		#region Private	Methods
 
-		private	void ThreadHandler()
+		private void ThreadHandler()
 		{
-			int		operation	= -1;
-			int		dbHandle	= 0;
-			int		eventId		= 0;
-			byte[]	buffer		= null;
-			byte[]	ast			= null;
+			int		operation = -1;
+			int		dbHandle = 0;
+			int		eventId = 0;
+			byte[]	buffer	= null;
+			byte[]	ast		= null;
 
 			while (this.events.Count > 0)
 			{
 				try
 				{
-					operation =	this.connection.NextOperation();
+					operation = this.connection.NextOperation();
 
 					switch (operation)
 					{
@@ -148,14 +148,14 @@ namespace FirebirdSql.Data.Gds
 							return;
 
 						case IscCodes.op_event:
-							dbHandle= this.connection.Receive.ReadInt32();
-							buffer	= this.connection.Receive.ReadBuffer();
-							ast		= this.connection.Receive.ReadBytes(8);
-							eventId	= this.connection.Receive.ReadInt32();
+							dbHandle	= this.connection.Receive.ReadInt32();
+							buffer		= this.connection.Receive.ReadBuffer();
+							ast			= this.connection.Receive.ReadBytes(8);
+							eventId		= this.connection.Receive.ReadInt32();
 
 							if (this.events.ContainsKey(eventId))
 							{
-								RemoteEvent	currentEvent = (RemoteEvent)this.events[eventId];
+								RemoteEvent currentEvent = (RemoteEvent)this.events[eventId];
 
 								lock (this.events.SyncRoot)
 								{

@@ -12,7 +12,7 @@
  *     express or implied.  See the License for the specific 
  *     language governing rights and limitations under the License.
  * 
- *  Copyright (c) 2002, 2004 Carlos Guzman Alvarez
+ *  Copyright (c) 2002, 2005 Carlos Guzman Alvarez
  *  All Rights Reserved.
  */
 
@@ -66,12 +66,12 @@ namespace FirebirdSql.Data.Common
 
 		#region Constructors
 
-        protected ArrayBase(ArrayDesc descriptor)
-        {
-            this.tableName = descriptor.RelationName;
-            this.fieldName = descriptor.FieldName;
-            this.descriptor = descriptor;
-        }
+		protected ArrayBase(ArrayDesc descriptor)
+		{
+			this.tableName	= descriptor.RelationName;
+			this.fieldName	= descriptor.FieldName;
+			this.descriptor = descriptor;
+		}
 
 		protected ArrayBase(string tableName, string fieldName)
 		{
@@ -85,8 +85,8 @@ namespace FirebirdSql.Data.Common
 		#region Abstract Methods
 
 		public abstract byte[] GetSlice(int slice_length);
-		public abstract void PutSlice(System.Array source_array, int slice_length);		
-		
+		public abstract void PutSlice(System.Array source_array, int slice_length);
+
 		#endregion
 
 		#region Protected Abstract Methods
@@ -97,10 +97,10 @@ namespace FirebirdSql.Data.Common
 
 		#region Methods
 
-		public System.Array Read()
+		public Array Read()
 		{
 			byte[] slice = this.GetSlice(this.GetSliceLength(true));
-			
+
 			return this.DecodeSlice(slice);
 		}
 
@@ -112,7 +112,7 @@ namespace FirebirdSql.Data.Common
 
 		public void SetDesc(System.Array sourceArray)
 		{
-			this.descriptor.Dimensions	= (short)sourceArray.Rank;
+			this.descriptor.Dimensions = (short)sourceArray.Rank;
 
 			for (int i = 0; i < sourceArray.Rank; i++)
 			{
@@ -136,23 +136,23 @@ namespace FirebirdSql.Data.Common
 			this.descriptor.Bounds = new ArrayBound[16];
 			DbValue[] values;
 
-			while((values = lookup.Fetch()) != null)
+			while ((values = lookup.Fetch()) != null)
 			{
 				this.descriptor.Bounds[i].LowerBound = values[0].GetInt32();
 				this.descriptor.Bounds[i].UpperBound = values[1].GetInt32();
 
 				i++;
 			}
-			
+
 			lookup.Release();
 			lookup = null;
 		}
-	
+
 		public void LookupDesc()
 		{
 			// Initializa array descriptor information
 			this.descriptor = new ArrayDesc();
-			
+
 			// Create statement for retrieve information
 			StatementBase lookup = this.DB.CreateStatement(this.Transaction);
 
@@ -160,8 +160,8 @@ namespace FirebirdSql.Data.Common
 			lookup.Execute();
 
 			DbValue[] values = lookup.Fetch();
-			if(values != null && values.Length > 0)
-			{								
+			if (values != null && values.Length > 0)
+			{
 				this.descriptor.RelationName	= tableName;
 				this.descriptor.FieldName		= fieldName;
 				this.descriptor.DataType		= values[0].GetByte();
@@ -171,12 +171,12 @@ namespace FirebirdSql.Data.Common
 				this.descriptor.Flags			= 0;
 
 				this.rdbFieldName = values[4].GetString().Trim();
-			}			
+			}
 			else
 			{
 				throw new InvalidOperationException();
 			}
-			
+
 			lookup.Release();
 			lookup = null;
 		}
@@ -187,17 +187,17 @@ namespace FirebirdSql.Data.Common
 
 		protected int GetSliceLength(bool read)
 		{
-			int 		length 			= 0;
-			int			elements		= 0;
+			int length = 0;
+			int elements = 0;
 
 			for (int i = 0; i < this.descriptor.Dimensions; i++)
 			{
 				ArrayBound bound = this.descriptor.Bounds[i];
-				
+
 				elements += (bound.UpperBound - bound.LowerBound) + 1;
 			}
 
-			length =  elements * this.descriptor.Length;
+			length = elements * this.descriptor.Length;
 
 			switch (this.descriptor.DataType)
 			{
@@ -206,7 +206,7 @@ namespace FirebirdSql.Data.Common
 					length += elements * 2;
 					break;
 			}
-			
+
 			return length;
 		}
 
@@ -253,18 +253,18 @@ namespace FirebirdSql.Data.Common
 						systemType = typeof(System.Int32);
 					}
 					break;
-				
+
 				case IscCodes.blr_float:
 					// Float
 					systemType = typeof(System.Single);
 					break;
-									
+
 				case IscCodes.blr_double:
 				case IscCodes.blr_d_float:
 					// Double
 					systemType = typeof(System.Double);
 					break;
-												
+
 				case IscCodes.blr_quad:
 				case IscCodes.blr_int64:
 					// Long/Quad
@@ -277,22 +277,22 @@ namespace FirebirdSql.Data.Common
 						systemType = typeof(System.Int64);
 					}
 					break;
-				
+
 				case IscCodes.blr_timestamp:
 					// Timestamp
 					systemType = typeof(System.DateTime);
 					break;
 
-				case IscCodes.blr_sql_time:			
+				case IscCodes.blr_sql_time:
 					// Time
 					systemType = typeof(System.DateTime);
 					break;
 
-				case IscCodes.blr_sql_date:				
+				case IscCodes.blr_sql_date:
 					// Date
 					systemType = typeof(System.DateTime);
 					break;
-				
+
 				default:
 					throw new NotSupportedException("Unknown data type");
 			}
@@ -316,15 +316,15 @@ namespace FirebirdSql.Data.Common
 			if (this.tableName != null && this.tableName.Length != 0)
 			{
 				sql.AppendFormat(
-                    CultureInfo.CurrentUICulture, " AND X.RDB$RELATION_NAME = '{0}'", tableName);
+					CultureInfo.CurrentUICulture, " AND X.RDB$RELATION_NAME = '{0}'", tableName);
 			}
-					
+
 			if (this.fieldName != null && this.fieldName.Length != 0)
 			{
 				sql.AppendFormat(
-                    CultureInfo.CurrentUICulture, " AND X.RDB$FIELD_NAME = '{0}'", fieldName);
+					CultureInfo.CurrentUICulture, " AND X.RDB$FIELD_NAME = '{0}'", fieldName);
 			}
-									
+
 			return sql.ToString();
 		}
 
@@ -332,12 +332,12 @@ namespace FirebirdSql.Data.Common
 		{
 			StringBuilder sql = new StringBuilder();
 
-			sql.Append("SELECT X.RDB$LOWER_BOUND, X.RDB$UPPER_BOUND FROM RDB$FIELD_DIMENSIONS X ");				
-					
+			sql.Append("SELECT X.RDB$LOWER_BOUND, X.RDB$UPPER_BOUND FROM RDB$FIELD_DIMENSIONS X ");
+
 			if (this.fieldName != null && this.fieldName.Length != 0)
 			{
 				sql.AppendFormat(
-                    CultureInfo.CurrentUICulture, "WHERE X.RDB$FIELD_NAME = '{0}'", rdbFieldName);
+					CultureInfo.CurrentUICulture, "WHERE X.RDB$FIELD_NAME = '{0}'", rdbFieldName);
 			}
 
 			sql.Append(" ORDER BY X.RDB$DIMENSION");

@@ -1,19 +1,19 @@
 /*
  *	Firebird ADO.NET Data provider for .NET	and	Mono 
  * 
- *	   The contents	of this	file are subject to	the	Initial	
+ *	   The contents of this file are subject to the Initial 
  *	   Developer's Public License Version 1.0 (the "License"); 
- *	   you may not use this	file except	in compliance with the 
- *	   License.	You	may	obtain a copy of the License at	
+ *	   you may not use this file except in compliance with the 
+ *	   License. You may obtain a copy of the License at 
  *	   http://www.firebirdsql.org/index.php?op=doc&id=idpl
  *
- *	   Software	distributed	under the License is distributed on	
+ *	   Software distributed under the License is distributed on 
  *	   an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either 
- *	   express or implied.	See	the	License	for	the	specific 
- *	   language	governing rights and limitations under the License.
+ *	   express or implied. See the License for the specific 
+ *	   language governing rights and limitations under the License.
  * 
- *	Copyright (c) 2002,	2004 Carlos	Guzman Alvarez
- *	All	Rights Reserved.
+ *	Copyright (c) 2002, 2005 Carlos Guzman Alvarez
+ *	All Rights Reserved.
  */
 
 using System;
@@ -25,33 +25,33 @@ using FirebirdSql.Data.Common;
 
 namespace FirebirdSql.Data.Gds
 {
-	internal sealed	class GdsConnection
+	internal sealed class GdsConnection
 	{
-		#region	Fields
+		#region Fields
 
-		private	Socket			socket;
-		private	NetworkStream	networkStream;
-		private	XdrStream		send;
-		private	XdrStream		receive;
-		private	int				operation;
+		private Socket			socket;
+		private NetworkStream	networkStream;
+		private XdrStream		send;
+		private XdrStream		receive;
+		private int				operation;
 
 		#endregion
 
-		#region	Internal Properties
+		#region Internal Properties
 
 		internal XdrStream Receive
 		{
-			get	{ return this.receive; }
+			get { return this.receive; }
 		}
 
 		internal XdrStream Send
 		{
-			get	{ return this.send;	}
+			get { return this.send; }
 		}
 
 		#endregion
 
-		#region	Constructors
+		#region Constructors
 
 		public GdsConnection()
 		{
@@ -62,21 +62,21 @@ namespace FirebirdSql.Data.Gds
 
 		#endregion
 
-		#region	Methods
+		#region Methods
 
-		public void	Connect(string dataSource, int port)
+		public void Connect(string dataSource, int port)
 		{
 			this.Connect(dataSource, port, 8192, Charset.DefaultCharset);
 		}
 
-		public void	Connect(string dataSource, int port, int packetSize, Charset charset)
+		public void Connect(string dataSource, int port, int packetSize, Charset charset)
 		{
 			try
 			{
-				IPAddress hostadd =	Dns.Resolve(dataSource).AddressList[0];
-				IPEndPoint EPhost =	new	IPEndPoint(hostadd,	port);
+				IPAddress hostadd = Dns.Resolve(dataSource).AddressList[0];
+				IPEndPoint EPhost = new IPEndPoint(hostadd, port);
 
-				this.socket	= new Socket(
+				this.socket = new Socket(
 					AddressFamily.InterNetwork,
 					SocketType.Stream,
 					ProtocolType.IP);
@@ -104,13 +104,13 @@ namespace FirebirdSql.Data.Gds
 
 				// Make	the	socket to connect to the Server
 				this.socket.Connect(EPhost);
-				this.networkStream = new NetworkStream(this.socket,	true);
+				this.networkStream = new NetworkStream(this.socket, true);
 
 #if	(NETCF)
 				this.send	 = new XdrStream(this.networkStream, charset);
 				this.receive = new XdrStream(this.networkStream, charset);
 #else
-				this.send	 = new XdrStream(new BufferedStream(this.networkStream), charset);
+				this.send = new XdrStream(new BufferedStream(this.networkStream), charset);
 				this.receive = new XdrStream(new BufferedStream(this.networkStream), charset);
 #endif
 
@@ -125,11 +125,11 @@ namespace FirebirdSql.Data.Gds
 			}
 		}
 
-		public void	Disconnect()
+		public void Disconnect()
 		{
 			try
 			{
-				if (this.receive !=	null)
+				if (this.receive != null)
 				{
 					this.receive.Close();
 				}
@@ -141,7 +141,7 @@ namespace FirebirdSql.Data.Gds
 				{
 					this.networkStream.Close();
 				}
-				if (this.socket	!= null)
+				if (this.socket != null)
 				{
 					this.socket.Close();
 				}
@@ -159,11 +159,11 @@ namespace FirebirdSql.Data.Gds
 
 		#endregion
 
-		#region	Internal Methods
+		#region Internal Methods
 
 		internal int ReadOperation()
 		{
-			int	op = (this.operation >=	0) ? this.operation	: this.NextOperation();
+			int op = (this.operation >= 0) ? this.operation : this.NextOperation();
 			this.operation = -1;
 
 			return op;
@@ -180,7 +180,7 @@ namespace FirebirdSql.Data.Gds
 				 * this	routine	is called 
 				 */
 				this.operation = this.receive.ReadInt32();
-			} while	(this.operation	== IscCodes.op_dummy);
+			} while (this.operation == IscCodes.op_dummy);
 
 			return this.operation;
 		}
@@ -189,14 +189,14 @@ namespace FirebirdSql.Data.Gds
 		{
 			try
 			{
-				if (this.ReadOperation() ==	IscCodes.op_response)
+				if (this.ReadOperation() == IscCodes.op_response)
 				{
-					GdsResponse	r =	new	GdsResponse(
+					GdsResponse r = new GdsResponse(
 						this.receive.ReadInt32(),
 						this.receive.ReadInt64(),
 						this.receive.ReadBuffer());
 
-					r.Warning =	this.ReadStatusVector();
+					r.Warning = this.ReadStatusVector();
 
 					return r;
 				}
@@ -220,28 +220,28 @@ namespace FirebirdSql.Data.Gds
 			{
 				while (!eof)
 				{
-					int	arg	= this.receive.ReadInt32();
+					int arg = this.receive.ReadInt32();
 
 					switch (arg)
 					{
 						case IscCodes.isc_arg_gds:
-							int	er = this.receive.ReadInt32();
+							int er = this.receive.ReadInt32();
 							if (er != 0)
 							{
 								if (exception == null)
 								{
-									exception =	new	IscException();
+									exception = new IscException();
 								}
 								exception.Errors.Add(arg, er);
 							}
 							break;
 
 						case IscCodes.isc_arg_end:
-							if (exception != null && exception.Errors.Count	!= 0)
+							if (exception != null && exception.Errors.Count != 0)
 							{
 								exception.BuildExceptionMessage();
 							}
-							eof	= true;
+							eof = true;
 							break;
 
 						case IscCodes.isc_arg_interpreted:
@@ -255,12 +255,12 @@ namespace FirebirdSql.Data.Gds
 
 						default:
 							{
-								int	e =	this.receive.ReadInt32();
+								int e = this.receive.ReadInt32();
 								if (e != 0)
 								{
 									if (exception == null)
 									{
-										exception =	new	IscException();
+										exception = new IscException();
 									}
 									exception.Errors.Add(arg, e);
 								}

@@ -1,19 +1,19 @@
 /*
  *	Firebird ADO.NET Data provider for .NET	and	Mono 
  * 
- *	   The contents	of this	file are subject to	the	Initial	
+ *	   The contents of this file are subject to the Initial 
  *	   Developer's Public License Version 1.0 (the "License"); 
- *	   you may not use this	file except	in compliance with the 
- *	   License.	You	may	obtain a copy of the License at	
+ *	   you may not use this file except in compliance with the 
+ *	   License. You may obtain a copy of the License at 
  *	   http://www.firebirdsql.org/index.php?op=doc&id=idpl
  *
- *	   Software	distributed	under the License is distributed on	
+ *	   Software distributed under the License is distributed on 
  *	   an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either 
- *	   express or implied.	See	the	License	for	the	specific 
- *	   language	governing rights and limitations under the License.
+ *	   express or implied. See the License for the specific 
+ *	   language governing rights and limitations under the License.
  * 
- *	Copyright (c) 2002,	2004 Carlos	Guzman Alvarez
- *	All	Rights Reserved.
+ *	Copyright (c) 2002, 2005 Carlos Guzman Alvarez
+ *	All Rights Reserved.
  */
 
 using System;
@@ -24,44 +24,44 @@ using FirebirdSql.Data.Common;
 
 namespace FirebirdSql.Data.Gds
 {
-	internal sealed	class GdsTransaction : ITransaction, IDisposable
+	internal sealed class GdsTransaction : ITransaction, IDisposable
 	{
-		#region	Events
+		#region Events
 
 		public event TransactionUpdateEventHandler Update;
 
 		#endregion
 
-		#region	Fields
+		#region Fields
 
-		private	int					handle;
-		private	GdsDatabase			db;
-		private	TransactionState	state;
-		private	bool				disposed;
+		private int					handle;
+		private bool				disposed;
+		private GdsDatabase			db;
+		private TransactionState	state;
 
 		#endregion
 
-		#region	Properties
+		#region Properties
 
 		public int Handle
 		{
-			get	{ return this.handle; }
+			get { return this.handle; }
 		}
 
-		public TransactionState	State
+		public TransactionState State
 		{
-			get	{ return this.state; }
+			get { return this.state; }
 		}
 
 		#endregion
 
-		#region	Constructors
+		#region Constructors
 
-		public GdsTransaction(IDatabase	db)
+		public GdsTransaction(IDatabase db)
 		{
-			if (!(db is	GdsDatabase))
+			if (!(db is GdsDatabase))
 			{
-				throw new ArgumentException("Specified argument	is not of GdsDatabase type.");
+				throw new ArgumentException("Specified argument is not of GdsDatabase type.");
 			}
 
 			this.db		= (GdsDatabase)db;
@@ -72,7 +72,7 @@ namespace FirebirdSql.Data.Gds
 
 		#endregion
 
-		#region	Finalizer
+		#region Finalizer
 
 		~GdsTransaction()
 		{
@@ -81,15 +81,15 @@ namespace FirebirdSql.Data.Gds
 
 		#endregion
 
-		#region	IDisposable	methods
+		#region IDisposable	methods
 
-		public void	Dispose()
+		public void Dispose()
 		{
 			this.Dispose(true);
 			GC.SuppressFinalize(this);
 		}
 
-		private	void Dispose(bool disposing)
+		private void Dispose(bool disposing)
 		{
 			lock (this)
 			{
@@ -104,13 +104,13 @@ namespace FirebirdSql.Data.Gds
 						if (disposing)
 						{
 							this.db		= null;
-							this.handle	= 0;
+							this.handle = 0;
 							this.state	= TransactionState.NoTransaction;
 						}
 					}
 					finally
 					{
-						this.disposed =	true;
+						this.disposed = true;
 					}
 				}
 			}
@@ -118,9 +118,9 @@ namespace FirebirdSql.Data.Gds
 
 		#endregion
 
-		#region	Methods
+		#region Methods
 
-		public void	BeginTransaction(TransactionParameterBuffer	tpb)
+		public void BeginTransaction(TransactionParameterBuffer tpb)
 		{
 			lock (this.db)
 			{
@@ -130,7 +130,7 @@ namespace FirebirdSql.Data.Gds
 						IscCodes.isc_arg_gds,
 						IscCodes.isc_tra_state,
 						this.handle,
-						"no	valid");
+						"no valid");
 				}
 
 				this.state = TransactionState.TrasactionStarting;
@@ -142,8 +142,8 @@ namespace FirebirdSql.Data.Gds
 					this.db.Send.WriteBuffer(tpb.ToArray());
 					this.db.Send.Flush();
 
-					this.handle	= db.ReadGenericResponse().ObjectHandle;
-					this.state	= TransactionState.TransactionStarted;
+					this.handle = db.ReadGenericResponse().ObjectHandle;
+					this.state = TransactionState.TransactionStarted;
 
 					this.db.TransactionCount++;
 				}
@@ -154,7 +154,7 @@ namespace FirebirdSql.Data.Gds
 			}
 		}
 
-		public void	Commit()
+		public void Commit()
 		{
 			lock (this.db)
 			{
@@ -165,7 +165,7 @@ namespace FirebirdSql.Data.Gds
 						IscCodes.isc_arg_gds,
 						IscCodes.isc_tra_state,
 						this.handle,
-						"no	valid");
+						"no valid");
 				}
 
 				this.state = TransactionState.TransactionCommiting;
@@ -180,7 +180,7 @@ namespace FirebirdSql.Data.Gds
 
 					this.db.TransactionCount--;
 
-					if (this.Update	!= null)
+					if (this.Update != null)
 					{
 						this.Update(this, new EventArgs());
 					}
@@ -194,7 +194,7 @@ namespace FirebirdSql.Data.Gds
 			}
 		}
 
-		public void	Rollback()
+		public void Rollback()
 		{
 			lock (this.db)
 			{
@@ -204,7 +204,7 @@ namespace FirebirdSql.Data.Gds
 						IscCodes.isc_arg_gds,
 						IscCodes.isc_tra_state,
 						this.handle,
-						"no	valid");
+						"no valid");
 				}
 
 				this.state = TransactionState.TransactionRollbacking;
@@ -219,7 +219,7 @@ namespace FirebirdSql.Data.Gds
 
 					this.db.TransactionCount--;
 
-					if (this.Update	!= null)
+					if (this.Update != null)
 					{
 						this.Update(this, new EventArgs());
 					}
@@ -233,7 +233,7 @@ namespace FirebirdSql.Data.Gds
 			}
 		}
 
-		public void	CommitRetaining()
+		public void CommitRetaining()
 		{
 			lock (this.db)
 			{
@@ -244,7 +244,7 @@ namespace FirebirdSql.Data.Gds
 						IscCodes.isc_arg_gds,
 						IscCodes.isc_tra_state,
 						this.handle,
-						"no	valid");
+						"no valid");
 				}
 
 				this.state = TransactionState.TransactionCommiting;
@@ -266,7 +266,7 @@ namespace FirebirdSql.Data.Gds
 			}
 		}
 
-		public void	RollbackRetaining()
+		public void RollbackRetaining()
 		{
 			lock (this.db)
 			{
@@ -277,7 +277,7 @@ namespace FirebirdSql.Data.Gds
 						IscCodes.isc_arg_gds,
 						IscCodes.isc_tra_state,
 						this.handle,
-						"no	valid");
+						"no valid");
 				}
 
 				this.state = TransactionState.TransactionRollbacking;
@@ -299,6 +299,7 @@ namespace FirebirdSql.Data.Gds
 			}
 		}
 
+		/*
 		public void	Prepare()
 		{
 			lock (this.db)
@@ -309,7 +310,7 @@ namespace FirebirdSql.Data.Gds
 						IscCodes.isc_arg_gds,
 						IscCodes.isc_tra_state,
 						this.handle,
-						"no	valid");
+						"no valid");
 				}
 
 				this.state = TransactionState.TransactionPreparing;
@@ -341,7 +342,7 @@ namespace FirebirdSql.Data.Gds
 						IscCodes.isc_arg_gds,
 						IscCodes.isc_tra_state,
 						this.handle,
-						"no	valid");
+						"no valid");
 				}
 
 				this.state = TransactionState.TransactionPreparing;
@@ -363,6 +364,7 @@ namespace FirebirdSql.Data.Gds
 				}
 			}
 		}
+		*/
 
 		#endregion
 	}

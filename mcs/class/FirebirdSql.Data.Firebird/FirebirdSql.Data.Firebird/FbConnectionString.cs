@@ -1,19 +1,19 @@
 /*
  *	Firebird ADO.NET Data provider for .NET	and	Mono 
  * 
- *	   The contents	of this	file are subject to	the	Initial	
+ *	   The contents of this file are subject to the Initial 
  *	   Developer's Public License Version 1.0 (the "License"); 
- *	   you may not use this	file except	in compliance with the 
- *	   License.	You	may	obtain a copy of the License at	
+ *	   you may not use this file except in compliance with the 
+ *	   License. You may obtain a copy of the License at 
  *	   http://www.firebirdsql.org/index.php?op=doc&id=idpl
  *
- *	   Software	distributed	under the License is distributed on	
+ *	   Software distributed under the License is distributed on 
  *	   an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either 
- *	   express or implied.	See	the	License	for	the	specific 
- *	   language	governing rights and limitations under the License.
+ *	   express or implied. See the License for the specific 
+ *	   language governing rights and limitations under the License.
  * 
- *	Copyright (c) 2004 Carlos Guzman Alvarez
- *	All	Rights Reserved.
+ *	Copyright (c) 2004-2005 Carlos Guzman Alvarez
+ *	All Rights Reserved.
  */
 
 using System;
@@ -26,161 +26,162 @@ using FirebirdSql.Data.Common;
 
 namespace FirebirdSql.Data.Firebird
 {
-	internal sealed	class FbConnectionString
+	internal sealed class FbConnectionString
 	{
-		#region	Static Fields
+		#region Static Fields
 
-		public static readonly Hashtable Synonyms =	GetSynonyms();
+		public static readonly Hashtable Synonyms = GetSynonyms();
 
 		#endregion
 
-		#region	Static Methods
+		#region Static Methods
 
 		// This	is somethig	that should	be needed in .NET 2.0
 		// for use with	the	DbConnectionOptions	or DbConnectionString classes.
-		private	static Hashtable GetSynonyms()
+		private static Hashtable GetSynonyms()
 		{
 			Hashtable synonyms = new Hashtable();
 
-			synonyms.Add("data source",	"data source");
+			synonyms.Add("data source", "data source");
 			synonyms.Add("server", "data source");
 			synonyms.Add("host", "data source");
 			synonyms.Add("port", "port number");
-			synonyms.Add("port number",	"port number");
+			synonyms.Add("port number", "port number");
 			synonyms.Add("database", "database");
-			synonyms.Add("user id",	"user id");
-			synonyms.Add("uid",	"user id");
+			synonyms.Add("user id", "user id");
+			synonyms.Add("uid", "user id");
 			synonyms.Add("user", "user id");
-			synonyms.Add("user name", "user	id");
+			synonyms.Add("user name", "user id");
 			synonyms.Add("password", "password");
 			synonyms.Add("user password", "password");
-			synonyms.Add("dialect",	"dialect");
-			synonyms.Add("charset",	"charset");
-			synonyms.Add("pooling",	"pooling");
-			synonyms.Add("max pool size", "max pool	size");
-			synonyms.Add("min pool size", "min pool	size");
-			synonyms.Add("character	set", "charset");
-			synonyms.Add("connection lifetime",	"connection	lifetime");
-			synonyms.Add("timeout",	"connection	timeout");
+			synonyms.Add("dialect", "dialect");
+			synonyms.Add("charset", "charset");
+			synonyms.Add("pooling", "pooling");
+			synonyms.Add("max pool size", "max pool size");
+			synonyms.Add("min pool size", "min pool size");
+			synonyms.Add("character set", "charset");
+			synonyms.Add("connection lifetime", "connection lifetime");
+			synonyms.Add("timeout", "connection timeout");
 			synonyms.Add("connection timeout", "connection timeout");
-			synonyms.Add("packet size",	"packet	size");
+			synonyms.Add("packet size", "packet size");
 			synonyms.Add("role", "role name");
-			synonyms.Add("role name", "role	name");
-			synonyms.Add("fetch	size", "fetch size");
+			synonyms.Add("role name", "role name");
+			synonyms.Add("fetch size", "fetch size");
 			synonyms.Add("fetchsize", "fetch size");
-			synonyms.Add("server type",	"server	type");
+			synonyms.Add("server type", "server type");
 			synonyms.Add("servertype", "server type");
-			synonyms.Add("isolation	level",	"isolation level");
+			synonyms.Add("isolation level", "isolation level");
 
 			return synonyms;
 		}
 
 		#endregion
 
-		#region	Private	fields
+		#region Private	fields
 
-		private	Hashtable	options;
-		private	bool		isServiceConnectionString;
+		private Hashtable options;
+		private bool isServiceConnectionString;
 
 		#endregion
 
-		#region	Properties
+		#region Properties
 
 		public string UserID
 		{
-			get	{ return this.GetString("user id");	}
+			get { return this.GetString("user id"); }
 		}
 
 		public string Password
 		{
-			get	{ return this.GetString("password"); }
+			get { return this.GetString("password"); }
 		}
 
 		public string DataSource
 		{
-			get	{ return this.GetString("data source");	}
+			get { return this.GetString("data source"); }
 		}
 
 		public int Port
 		{
-			get	{ return this.GetInt32("port number"); }
+			get { return this.GetInt32("port number"); }
 		}
 
 		public string Database
 		{
-			get	{ return this.GetString("database"); }
+			get { return this.GetString("database"); }
 		}
 
 		public short PacketSize
 		{
-			get	{ return this.GetInt16("packet size"); }
+			get { return this.GetInt16("packet size"); }
 		}
 
 		public string Role
 		{
-			get	{ return this.GetString("role name"); }
+			get { return this.GetString("role name"); }
 		}
 
-		public byte	Dialect
+		public byte Dialect
 		{
-			get	{ return this.GetByte("dialect"); }
+			get { return this.GetByte("dialect"); }
 		}
 
 		public string Charset
 		{
-			get	{ return this.GetString("charset");	}
+			get { return this.GetString("charset"); }
 		}
 
 		public int ConnectionTimeout
 		{
-			get	{ return this.GetInt32("connection timeout"); }
+			get { return this.GetInt32("connection timeout"); }
 		}
 
-		public bool	Pooling
+		public bool Pooling
 		{
-			get	{ return this.GetBoolean("pooling"); }
+			get { return this.GetBoolean("pooling"); }
 		}
 
-		public long	ConnectionLifeTime
+		public long ConnectionLifeTime
 		{
-			get	{ return this.GetInt64("connection lifetime"); }
+			get { return this.GetInt64("connection lifetime"); }
 		}
 
 		public int MinPoolSize
 		{
-			get	{ return this.GetInt32("min	pool size"); }
+			get { return this.GetInt32("min pool size"); }
 		}
 
 		public int MaxPoolSize
 		{
-			get	{ return this.GetInt32("max	pool size"); }
+			get { return this.GetInt32("max pool size"); }
 		}
 
 		public int FetchSize
 		{
-			get	{ return this.GetInt32("fetch size"); }
+			get { return this.GetInt32("fetch size"); }
 		}
 
 		public int ServerType
 		{
-			get	{ return this.GetInt32("server type"); }
+			get { return this.GetInt32("server type"); }
 		}
 
 		public IsolationLevel IsolationLevel
 		{
-			get	{ return this.GetIsolationLevel("isolation level");	}
+			get { return this.GetIsolationLevel("isolation level"); }
 		}
 
 		#endregion
 
-		#region	Constructors
+		#region Constructors
 
 		public FbConnectionString()
 		{
 			this.SetDefaultOptions();
 		}
 
-		public FbConnectionString(FbConnectionStringBuilder	csb) : this(csb.ToString())
+		public FbConnectionString(FbConnectionStringBuilder csb)
+			: this(csb.ToString())
 		{
 		}
 
@@ -197,71 +198,71 @@ namespace FirebirdSql.Data.Firebird
 
 		#endregion
 
-		#region	Public methods
+		#region Public methods
 
-		public void	Load(string	connectionString)
+		public void Load(string connectionString)
 		{
 			this.SetDefaultOptions();
 
-			if (connectionString !=	null &&	connectionString.Length	> 0)
+			if (connectionString != null && connectionString.Length > 0)
 			{
-				Hashtable		synonyms = GetSynonyms();
-				MatchCollection	keyPairs = Regex.Matches(connectionString, @"([\w\s\d]*)\s*=\s*([^;]*)");
+				Hashtable synonyms = GetSynonyms();
+				MatchCollection keyPairs = Regex.Matches(connectionString, @"([\w\s\d]*)\s*=\s*([^;]*)");
 
-				foreach	(Match keyPair in keyPairs)
+				foreach (Match keyPair in keyPairs)
 				{
-					if (keyPair.Groups.Count ==	3)
+					if (keyPair.Groups.Count == 3)
 					{
-						string[] values	= new string[] 
+						string[] values = new string[] 
 						{
 							keyPair.Groups[1].Value.Trim(),
 							keyPair.Groups[2].Value.Trim()
 						};
 
 						if (values.Length == 2 &&
-							values[0] != null && values[0].Length >	0 &&
-							values[1] != null && values[1].Length >	0)
+							values[0] != null && values[0].Length > 0 &&
+							values[1] != null && values[1].Length > 0)
 						{
-							values[0] =	values[0].ToLower(CultureInfo.CurrentCulture);
+							values[0] = values[0].ToLower(CultureInfo.CurrentCulture);
 
 							if (synonyms.Contains(values[0]))
 							{
 								string key = (string)synonyms[values[0]];
-								this.options[key] =	values[1].Trim();
+								this.options[key] = values[1].Trim();
 							}
 						}
 					}
 				}
 
-				if (this.Database != null && this.Database.Length >	0)
+				if (this.Database != null && this.Database.Length > 0)
 				{
 					this.ParseConnectionInfo(this.Database);
 				}
 			}
 		}
 
-		public void	Validate()
+		public void Validate()
 		{
-			if ((this.UserID ==	null ||	this.UserID.Length == 0) ||
+			if ((this.UserID == null || this.UserID.Length == 0) ||
 				(this.Password == null || this.Password.Length == 0) ||
-				((this.Database	== null	|| this.Database.Length	== 0) && !this.isServiceConnectionString) ||
-				((this.DataSource == null || this.DataSource.Length	== 0) && this.ServerType !=	1) ||
-				(this.Charset == null || this.Charset.Length ==	0) ||
+				((this.Database == null || this.Database.Length == 0) && !this.isServiceConnectionString) ||
+				((this.DataSource == null || this.DataSource.Length == 0) && this.ServerType != 1) ||
+				(this.Charset == null || this.Charset.Length == 0) ||
 				this.Port == 0 ||
-				(this.ServerType !=	0 && this.ServerType !=	1) ||
-				(this.MinPoolSize >	this.MaxPoolSize))
+				(this.ServerType != 0 && this.ServerType != 1) ||
+				(this.MinPoolSize > this.MaxPoolSize))
 			{
-				throw new ArgumentException("An	invalid	connection string argument has been	supplied or	a required connection string argument has not been supplied.");
+				throw new ArgumentException("An invalid connection string argument has been supplied or a required connection string argument has not been supplied.");
 			}
 			else
 			{
-				if (this.Dialect < 1 ||	this.Dialect > 3)
+				if (this.Dialect < 1 || this.Dialect > 3)
 				{
-					throw new ArgumentException("Incorrect database	dialect	it should be 1,	2, or 3.");
+					throw new ArgumentException("Incorrect database dialect it should be 1, 2, or 3.");
 				}
-				if (this.PacketSize	< 512 || this.PacketSize > 32767)
+				if (this.PacketSize < 512 || this.PacketSize > 32767)
 				{
-					throw new ArgumentException(String.Format(CultureInfo.CurrentUICulture,	"'Packet Size' value of	{0}	is not valid.\r\nThe value should be an	integer	>= 512 and <= 32767.", this.PacketSize));
+					throw new ArgumentException(String.Format(CultureInfo.CurrentUICulture, "'Packet Size' value of {0} is not valid.\r\nThe value should be an integer >= 512 and <= 32767.", this.PacketSize));
 				}
 
 				this.CheckIsolationLevel();
@@ -270,11 +271,11 @@ namespace FirebirdSql.Data.Firebird
 
 		#endregion
 
-		#region	Private	Methods
+		#region Private	Methods
 
-		private	void SetDefaultOptions()
+		private void SetDefaultOptions()
 		{
-			if (this.options ==	null)
+			if (this.options == null)
 			{
 				this.options = new Hashtable();
 			}
@@ -282,72 +283,72 @@ namespace FirebirdSql.Data.Firebird
 			this.options.Clear();
 
 			// Add default key pairs values
-			this.options.Add("data source",	"");
-			this.options.Add("port number",	3050);
-			this.options.Add("user id",	"SYSDBA");
+			this.options.Add("data source", "");
+			this.options.Add("port number", 3050);
+			this.options.Add("user id", "SYSDBA");
 			this.options.Add("password", "masterkey");
 			this.options.Add("role name", String.Empty);
 			this.options.Add("database", String.Empty);
-			this.options.Add("charset",	"None");
-			this.options.Add("dialect",	3);
-			this.options.Add("packet size",	8192);
-			this.options.Add("pooling",	true);
-			this.options.Add("connection lifetime",	0);
+			this.options.Add("charset", "None");
+			this.options.Add("dialect", 3);
+			this.options.Add("packet size", 8192);
+			this.options.Add("pooling", true);
+			this.options.Add("connection lifetime", 0);
 			this.options.Add("min pool size", 0);
 			this.options.Add("max pool size", 100);
 			this.options.Add("connection timeout", 15);
-			this.options.Add("fetch	size", 200);
-			this.options.Add("server type",	0);
-			this.options.Add("isolation	level",	IsolationLevel.ReadCommitted.ToString());
+			this.options.Add("fetch size", 200);
+			this.options.Add("server type", 0);
+			this.options.Add("isolation level", IsolationLevel.ReadCommitted.ToString());
 		}
 
-		private	void ParseConnectionInfo(string	connectInfo)
+		private void ParseConnectionInfo(string connectInfo)
 		{
-			string	database	= null;
-			string	dataSource	= null;
-			int		portNumber	= -1;
+			string database = null;
+			string dataSource = null;
+			int portNumber = -1;
 
 			// allows standard syntax //host:port/....
 			// and old fb syntax host/port:....
-			connectInfo	= connectInfo.Trim();
+			connectInfo = connectInfo.Trim();
 			char hostSepChar;
 			char portSepChar;
 
 			if (connectInfo.StartsWith("//"))
 			{
-				connectInfo	= connectInfo.Substring(2);
-				hostSepChar	= '/';
-				portSepChar	= ':';
+				connectInfo = connectInfo.Substring(2);
+				hostSepChar = '/';
+				portSepChar = ':';
 			}
 			else
 			{
-				hostSepChar	= ':';
-				portSepChar	= '/';
+				hostSepChar = ':';
+				portSepChar = '/';
 			}
 
-			int	sep	= connectInfo.IndexOf(hostSepChar);
-			if (sep	== 0 ||	sep	== connectInfo.Length -	1)
+			int sep = connectInfo.IndexOf(hostSepChar);
+			if (sep == 0 || sep == connectInfo.Length - 1)
 			{
-				throw new ArgumentException("An	invalid	connection string argument has been	supplied or	a required connection string argument has not been supplied.");
+				throw new ArgumentException("An invalid connection string argument has been supplied or a required connection string argument has not been supplied.");
 			}
-			else if	(sep > 0)
+			else if (sep > 0)
 			{
-				dataSource	= connectInfo.Substring(0, sep);
-				database	= connectInfo.Substring(sep	+ 1);
-				int	portSep	= dataSource.IndexOf(portSepChar);
+				dataSource = connectInfo.Substring(0, sep);
+				database = connectInfo.Substring(sep + 1);
+				int portSep = dataSource.IndexOf(portSepChar);
 
-				if (portSep	== 0 ||	portSep	== dataSource.Length - 1)
+				if (portSep == 0 || portSep == dataSource.Length - 1)
 				{
-					throw new ArgumentException("An	invalid	connection string argument has been	supplied or	a required connection string argument has not been supplied.");
+					throw new ArgumentException("An invalid connection string argument has been supplied or a required connection string argument has not been supplied.");
 				}
-				else if	(portSep > 0)
+				else if (portSep > 0)
 				{
-					portNumber = Int32.Parse(dataSource.Substring(portSep +	1),	CultureInfo.InvariantCulture);
+					portNumber = Int32.Parse(dataSource.Substring(portSep + 1), CultureInfo.InvariantCulture);
 					dataSource = dataSource.Substring(0, portSep);
 				}
-				else if	(portSep < 0 &&	dataSource.Length == 1)
+				else if (portSep < 0 && dataSource.Length == 1)
 				{
-					if (this.DataSource	== null	|| this.DataSource.Length == 0)
+					if (this.DataSource == null || this.DataSource.Length == 0)
 					{
 						dataSource = "localhost";
 					}
@@ -359,7 +360,7 @@ namespace FirebirdSql.Data.Firebird
 					database = connectInfo;
 				}
 			}
-			else if	(sep ==	-1)
+			else if (sep == -1)
 			{
 				database = connectInfo;
 			}
@@ -367,7 +368,7 @@ namespace FirebirdSql.Data.Firebird
 			this.options["database"] = database;
 			if (dataSource != null)
 			{
-				this.options["data source"]	= dataSource;
+				this.options["data source"] = dataSource;
 			}
 			if (portNumber != -1)
 			{
@@ -375,7 +376,7 @@ namespace FirebirdSql.Data.Firebird
 			}
 		}
 
-		private	string GetString(string	key)
+		private string GetString(string key)
 		{
 			if (this.options.Contains(key))
 			{
@@ -384,7 +385,7 @@ namespace FirebirdSql.Data.Firebird
 			return null;
 		}
 
-		private	bool GetBoolean(string key)
+		private bool GetBoolean(string key)
 		{
 			if (this.options.Contains(key))
 			{
@@ -393,7 +394,7 @@ namespace FirebirdSql.Data.Firebird
 			return false;
 		}
 
-		private	byte GetByte(string	key)
+		private byte GetByte(string key)
 		{
 			if (this.options.Contains(key))
 			{
@@ -402,7 +403,7 @@ namespace FirebirdSql.Data.Firebird
 			return 0;
 		}
 
-		private	short GetInt16(string key)
+		private short GetInt16(string key)
 		{
 			if (this.options.Contains(key))
 			{
@@ -411,7 +412,7 @@ namespace FirebirdSql.Data.Firebird
 			return 0;
 		}
 
-		private	int	GetInt32(string	key)
+		private int GetInt32(string key)
 		{
 			if (this.options.Contains(key))
 			{
@@ -420,7 +421,7 @@ namespace FirebirdSql.Data.Firebird
 			return 0;
 		}
 
-		private	long GetInt64(string key)
+		private long GetInt64(string key)
 		{
 			if (this.options.Contains(key))
 			{
@@ -429,11 +430,11 @@ namespace FirebirdSql.Data.Firebird
 			return 0;
 		}
 
-		private	IsolationLevel GetIsolationLevel(string	key)
+		private IsolationLevel GetIsolationLevel(string key)
 		{
 			if (this.options.Contains(key))
 			{
-				string il =	this.options[key].ToString().ToLower(CultureInfo.CurrentUICulture);
+				string il = this.options[key].ToString().ToLower(CultureInfo.CurrentUICulture);
 				switch (il)
 				{
 					case "readcommitted":
@@ -459,9 +460,9 @@ namespace FirebirdSql.Data.Firebird
 			return IsolationLevel.ReadCommitted;
 		}
 
-		private	void CheckIsolationLevel()
+		private void CheckIsolationLevel()
 		{
-			string il =	this.options["isolation	level"].ToString().ToLower(CultureInfo.CurrentUICulture);
+			string il = this.options["isolation level"].ToString().ToLower(CultureInfo.CurrentUICulture);
 			switch (il)
 			{
 				case "readcommitted":

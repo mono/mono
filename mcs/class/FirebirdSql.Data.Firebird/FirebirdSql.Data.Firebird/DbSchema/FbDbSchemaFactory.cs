@@ -1,19 +1,19 @@
 /*
  *	Firebird ADO.NET Data provider for .NET	and	Mono 
  * 
- *	   The contents	of this	file are subject to	the	Initial	
+ *	   The contents of this file are subject to the Initial 
  *	   Developer's Public License Version 1.0 (the "License"); 
- *	   you may not use this	file except	in compliance with the 
- *	   License.	You	may	obtain a copy of the License at	
+ *	   you may not use this file except in compliance with the 
+ *	   License. You may obtain a copy of the License at 
  *	   http://www.firebirdsql.org/index.php?op=doc&id=idpl
  *
- *	   Software	distributed	under the License is distributed on	
+ *	   Software distributed under the License is distributed on 
  *	   an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either 
- *	   express or implied.	See	the	License	for	the	specific 
- *	   language	governing rights and limitations under the License.
+ *	   express or implied. See the License for the specific 
+ *	   language governing rights and limitations under the License.
  * 
- *	Copyright (c) 2002,	2004 Carlos	Guzman Alvarez
- *	All	Rights Reserved.
+ *	Copyright (c) 2002, 2005 Carlos Guzman Alvarez
+ *	All Rights Reserved.
  */
 
 using System;
@@ -24,22 +24,22 @@ namespace FirebirdSql.Data.Firebird.DbSchema
 {
 	internal class FbDbSchemaFactory
 	{
-		#region	Constructors
+		#region Constructors
 
-		private	FbDbSchemaFactory()
+		private FbDbSchemaFactory()
 		{
 		}
 
 		#endregion
 
-		#region	Methods
+		#region Methods
 
-		public static DataTable	GetSchema(
-			FbConnection	connection,	
-			string			collectionName,
-			object[]		restrictions)
+		public static DataTable GetSchema(
+			FbConnection connection,
+			string collectionName,
+			object[] restrictions)
 		{
-			FbDbSchema returnSchema	= null;
+			FbDbSchema returnSchema = null;
 
 			switch (collectionName.ToLower(CultureInfo.CurrentUICulture))
 			{
@@ -93,7 +93,7 @@ namespace FirebirdSql.Data.Firebird.DbSchema
 				case "metadatacollections":
 					return FbMetaDataCollections.GetSchema();
 
-				case "primarykeys":	
+				case "primarykeys":
 					returnSchema = new FbPrimaryKeys();
 					break;
 
@@ -101,7 +101,7 @@ namespace FirebirdSql.Data.Firebird.DbSchema
 					returnSchema = new FbProcedures();
 					break;
 
-				case "procedureparameters":	
+				case "procedureparameters":
 					returnSchema = new FbProcedureParameters();
 					break;
 
@@ -116,7 +116,7 @@ namespace FirebirdSql.Data.Firebird.DbSchema
 					returnSchema = new FbRoles();
 					break;
 
-				case "tables": 
+				case "tables":
 					returnSchema = new FbTables();
 					break;
 
@@ -125,10 +125,10 @@ namespace FirebirdSql.Data.Firebird.DbSchema
 					break;
 
 				case "tableprivileges":
-					returnSchema = new FbTablePrivileges();					
+					returnSchema = new FbTablePrivileges();
 					break;
 
-				case "triggers": 
+				case "triggers":
 					returnSchema = new FbTriggers();
 					break;
 
@@ -149,7 +149,7 @@ namespace FirebirdSql.Data.Firebird.DbSchema
 					break;
 
 				default:
-					throw new NotSupportedException("The specified metadata	collection is not supported.");
+					throw new NotSupportedException("The specified metadata collection is not supported.");
 			}
 
 			return returnSchema.GetSchema(connection, restrictions);

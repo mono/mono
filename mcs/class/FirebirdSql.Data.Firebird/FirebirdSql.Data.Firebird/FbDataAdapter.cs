@@ -1,19 +1,19 @@
 /*
  *	Firebird ADO.NET Data provider for .NET	and	Mono 
  * 
- *	   The contents	of this	file are subject to	the	Initial	
+ *	   The contents of this file are subject to the Initial 
  *	   Developer's Public License Version 1.0 (the "License"); 
- *	   you may not use this	file except	in compliance with the 
- *	   License.	You	may	obtain a copy of the License at	
+ *	   you may not use this file except in compliance with the 
+ *	   License. You may obtain a copy of the License at 
  *	   http://www.firebirdsql.org/index.php?op=doc&id=idpl
  *
- *	   Software	distributed	under the License is distributed on	
+ *	   Software distributed under the License is distributed on 
  *	   an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either 
- *	   express or implied.	See	the	License	for	the	specific 
- *	   language	governing rights and limitations under the License.
+ *	   express or implied. See the License for the specific 
+ *	   language governing rights and limitations under the License.
  * 
- *	Copyright (c) 2002,	2004 Carlos	Guzman Alvarez
- *	All	Rights Reserved.
+ *	Copyright (c) 2002, 2005 Carlos Guzman Alvarez
+ *	All Rights Reserved.
  */
 
 using System;
@@ -23,46 +23,34 @@ using System.Data;
 using System.Data.Common;
 using System.Drawing;
 
-#if	(NET)
-using System.ComponentModel.Design;
-using FirebirdSql.Data.Firebird.Design;
-#endif
-
 namespace FirebirdSql.Data.Firebird
 {
-	///	<include file='Doc/en_EN/FbDataAdapter.xml'	path='doc/class[@name="FbDataAdapter"]/overview/*'/>
+	/// <include file='Doc/en_EN/FbDataAdapter.xml'	path='doc/class[@name="FbDataAdapter"]/overview/*'/>
 #if	(NET)
 	[ToolboxItem(true)]
 	[ToolboxBitmap(typeof(FbDataAdapter), "Resources.FbDataAdapter.bmp")]
 	[DefaultEvent("RowUpdated")]
-	[DesignerAttribute(typeof(FbDataAdapterDesigner), typeof(IDesigner))]
-#endif	
-	public sealed class	FbDataAdapter :	DbDataAdapter, IDbDataAdapter
+	[DesignerAttribute(typeof(Design.FbDataAdapterDesigner), typeof(System.ComponentModel.Design.IDesigner))]
+#endif
+	public sealed class FbDataAdapter : DbDataAdapter, IDbDataAdapter
 	{
-		#region	Static Fields
+		#region Static Fields
 
-		private	static readonly	object EventRowUpdated = new object();
-		private	static readonly	object EventRowUpdating	= new object();
+		private static readonly object EventRowUpdated = new object();
+		private static readonly object EventRowUpdating = new object();
 
 		#endregion
 
-		#region	Events
+		#region Events
 
-		///	<include file='Doc/en_EN/FbDataAdapter.xml'	path='doc/class[@name="FbDataAdapter"]/event[@name="RowUpdated"]/*'/>
+		/// <include file='Doc/en_EN/FbDataAdapter.xml'	path='doc/class[@name="FbDataAdapter"]/event[@name="RowUpdated"]/*'/>
 		public event FbRowUpdatedEventHandler RowUpdated
 		{
-			add
-			{
-				base.Events.AddHandler(EventRowUpdated,	value);
-			}
-
-			remove
-			{
-				base.Events.RemoveHandler(EventRowUpdated, value);
-			}
+			add { base.Events.AddHandler(EventRowUpdated, value); }
+			remove { base.Events.RemoveHandler(EventRowUpdated, value); }
 		}
 
-		///	<include file='Doc/en_EN/FbDataAdapter.xml'	path='doc/class[@name="FbDataAdapter"]/event[@name="RowUpdating"]/*'/>
+		/// <include file='Doc/en_EN/FbDataAdapter.xml'	path='doc/class[@name="FbDataAdapter"]/event[@name="RowUpdating"]/*'/>
 		public event FbRowUpdatingEventHandler RowUpdating
 		{
 			add
@@ -72,123 +60,125 @@ namespace FirebirdSql.Data.Firebird
 
 			remove
 			{
-				base.Events.RemoveHandler(EventRowUpdating,	value);
+				base.Events.RemoveHandler(EventRowUpdating, value);
 			}
 		}
 
 		#endregion
 
-		#region	Fields
+		#region Fields
 
-		private	FbCommand selectCommand;
-		private	FbCommand insertCommand;
-		private	FbCommand updateCommand;
-		private	FbCommand deleteCommand;
+		private FbCommand selectCommand;
+		private FbCommand insertCommand;
+		private FbCommand updateCommand;
+		private FbCommand deleteCommand;
 
-		private	bool disposed;
+		private bool disposed;
 
 		#endregion
 
-		#region	Properties
+		#region Properties
 
 		IDbCommand IDbDataAdapter.SelectCommand
 		{
-			get	{ return this.selectCommand; }
-			set	{ this.selectCommand = (FbCommand)value; }
+			get { return this.selectCommand; }
+			set { this.selectCommand = (FbCommand)value; }
 		}
 
-		///	<include file='Doc/en_EN/FbDataAdapter.xml'	path='doc/class[@name="FbDataAdapter"]/property[@name="SelectCommand"]/*'/>
+		/// <include file='Doc/en_EN/FbDataAdapter.xml'	path='doc/class[@name="FbDataAdapter"]/property[@name="SelectCommand"]/*'/>
 #if	(!NETCF)
 		[Category("Fill"), DefaultValue(null)]
 #endif
 		public FbCommand SelectCommand
 		{
-			get	{ return this.selectCommand; }
-			set	{ this.selectCommand = value; }
+			get { return this.selectCommand; }
+			set { this.selectCommand = value; }
 		}
 
 		IDbCommand IDbDataAdapter.InsertCommand
 		{
-			get	{ return this.insertCommand; }
-			set	{ this.insertCommand = (FbCommand)value; }
+			get { return this.insertCommand; }
+			set { this.insertCommand = (FbCommand)value; }
 		}
 
-		///	<include file='Doc/en_EN/FbDataAdapter.xml'	path='doc/class[@name="FbDataAdapter"]/property[@name="InsertCommand"]/*'/>
-#if	(!NETCF)		
+		/// <include file='Doc/en_EN/FbDataAdapter.xml'	path='doc/class[@name="FbDataAdapter"]/property[@name="InsertCommand"]/*'/>
+#if	(!NETCF)
 		[Category("Update"), DefaultValue(null)]
 #endif
 		public FbCommand InsertCommand
 		{
-			get	{ return this.insertCommand; }
-			set	{ this.insertCommand = value; }
+			get { return this.insertCommand; }
+			set { this.insertCommand = value; }
 		}
 
 		IDbCommand IDbDataAdapter.UpdateCommand
 		{
-			get	{ return this.updateCommand; }
-			set	{ this.updateCommand = (FbCommand)value; }
+			get { return this.updateCommand; }
+			set { this.updateCommand = (FbCommand)value; }
 		}
 
-		///	<include file='Doc/en_EN/FbDataAdapter.xml'	path='doc/class[@name="FbDataAdapter"]/property[@name="UpdateCommand"]/*'/>		
+		/// <include file='Doc/en_EN/FbDataAdapter.xml'	path='doc/class[@name="FbDataAdapter"]/property[@name="UpdateCommand"]/*'/>		
 #if	(!NETCF)
 		[Category("Update"), DefaultValue(null)]
 #endif
 		public FbCommand UpdateCommand
 		{
-			get	{ return this.updateCommand; }
-			set	{ this.updateCommand = value; }
+			get { return this.updateCommand; }
+			set { this.updateCommand = value; }
 		}
 
 		IDbCommand IDbDataAdapter.DeleteCommand
 		{
-			get	{ return this.deleteCommand; }
-			set	{ this.deleteCommand = (FbCommand)value; }
+			get { return this.deleteCommand; }
+			set { this.deleteCommand = (FbCommand)value; }
 		}
 
-		///	<include file='Doc/en_EN/FbDataAdapter.xml'	path='doc/class[@name="FbDataAdapter"]/property[@name="DeleteCommand"]/*'/>
+		/// <include file='Doc/en_EN/FbDataAdapter.xml'	path='doc/class[@name="FbDataAdapter"]/property[@name="DeleteCommand"]/*'/>
 #if	(!NETCF)
 		[Category("Update"), DefaultValue(null)]
 #endif
 		public FbCommand DeleteCommand
 		{
-			get	{ return this.deleteCommand; }
-			set	{ this.deleteCommand = value; }
+			get { return this.deleteCommand; }
+			set { this.deleteCommand = value; }
 		}
 
 		#endregion
 
-		#region	Constructors
+		#region Constructors
 
-		///	<include file='Doc/en_EN/FbDataAdapter.xml'	path='doc/class[@name="FbDataAdapter"]/constructor[@name="ctor"]/*'/>
+		/// <include file='Doc/en_EN/FbDataAdapter.xml'	path='doc/class[@name="FbDataAdapter"]/constructor[@name="ctor"]/*'/>
 		public FbDataAdapter() : base()
 		{
 		}
 
-		///	<include file='Doc/en_EN/FbDataAdapter.xml'	path='doc/class[@name="FbDataAdapter"]/constructor[@name="ctor(FbCommand)"]/*'/>
-		public FbDataAdapter(FbCommand selectCommand) :	base()
+		/// <include file='Doc/en_EN/FbDataAdapter.xml'	path='doc/class[@name="FbDataAdapter"]/constructor[@name="ctor(FbCommand)"]/*'/>
+		public FbDataAdapter(FbCommand selectCommand) : base()
 		{
 			this.SelectCommand = selectCommand;
 		}
 
-		///	<include file='Doc/en_EN/FbDataAdapter.xml'	path='doc/class[@name="FbDataAdapter"]/constructor[@name="ctor(System.String,FbConnection)"]/*'/>		
-		public FbDataAdapter(string	selectCommandText, FbConnection	selectConnection) :	base()
+		/// <include file='Doc/en_EN/FbDataAdapter.xml'	path='doc/class[@name="FbDataAdapter"]/constructor[@name="ctor(System.String,FbConnection)"]/*'/>		
+		public FbDataAdapter(string selectCommandText, FbConnection selectConnection)
+			: base()
 		{
 			this.SelectCommand = new FbCommand(selectCommandText, selectConnection);
 		}
 
-		///	<include file='Doc/en_EN/FbDataAdapter.xml'	path='doc/class[@name="FbDataAdapter"]/constructor[@name="ctor(System.String,System.String)"]/*'/>
-		public FbDataAdapter(string	selectCommandText, string selectConnectionString) :	base()
+		/// <include file='Doc/en_EN/FbDataAdapter.xml'	path='doc/class[@name="FbDataAdapter"]/constructor[@name="ctor(System.String,System.String)"]/*'/>
+		public FbDataAdapter(string selectCommandText, string selectConnectionString)
+			: base()
 		{
-			FbConnection connection	= new FbConnection(selectConnectionString);
+			FbConnection connection = new FbConnection(selectConnectionString);
 			this.SelectCommand = new FbCommand(selectCommandText, connection);
 		}
 
 		#endregion
 
-		#region	IDisposable	Methods
+		#region IDisposable	Methods
 
-		///	<include file='Doc/en_EN/FbDataAdapter.xml'	path='doc/class[@name="FbDataAdapter"]/method[@name="Dispose(System.Boolean)"]/*'/>
-		protected override void	Dispose(bool disposing)
+		/// <include file='Doc/en_EN/FbDataAdapter.xml'	path='doc/class[@name="FbDataAdapter"]/method[@name="Dispose(System.Boolean)"]/*'/>
+		protected override void Dispose(bool disposing)
 		{
 			lock (this)
 			{
@@ -215,7 +205,7 @@ namespace FirebirdSql.Data.Firebird
 
 						// release any unmanaged resources
 
-						this.disposed =	true;
+						this.disposed = true;
 					}
 					finally
 					{
@@ -227,34 +217,28 @@ namespace FirebirdSql.Data.Firebird
 
 		#endregion
 
-		#region	Protected Methods
+		#region Protected Methods
 
-		///	<include file='Doc/en_EN/FbDataAdapter.xml'	path='doc/class[@name="FbDataAdapter"]/method[@name="CreateRowUpdatingEvent(System.Data.DataRow,System.Data.IDbCommand,System.Data.StatementType,System.Data.Common.DataTableMapping)"]/*'/>
-		protected override RowUpdatingEventArgs	CreateRowUpdatingEvent(
-			DataRow				dataRow,
-			IDbCommand			command,
-			StatementType		statementType,
-			DataTableMapping	tableMapping)
+		/// <include file='Doc/en_EN/FbDataAdapter.xml'	path='doc/class[@name="FbDataAdapter"]/method[@name="CreateRowUpdatingEvent(System.Data.DataRow,System.Data.IDbCommand,System.Data.StatementType,System.Data.Common.DataTableMapping)"]/*'/>
+		protected override RowUpdatingEventArgs CreateRowUpdatingEvent(
+			DataRow dataRow, IDbCommand command, StatementType statementType, DataTableMapping tableMapping)
 		{
-			return new FbRowUpdatingEventArgs(dataRow, command,	statementType, tableMapping);
+			return new FbRowUpdatingEventArgs(dataRow, command, statementType, tableMapping);
 		}
 
-		///	<include file='Doc/en_EN/FbDataAdapter.xml'	path='doc/class[@name="FbDataAdapter"]/method[@name="CreateRowUpdatedEvent(System.Data.DataRow,System.Data.IDbCommand,System.Data.StatementType,System.Data.Common.DataTableMapping)"]/*'/>
+		/// <include file='Doc/en_EN/FbDataAdapter.xml'	path='doc/class[@name="FbDataAdapter"]/method[@name="CreateRowUpdatedEvent(System.Data.DataRow,System.Data.IDbCommand,System.Data.StatementType,System.Data.Common.DataTableMapping)"]/*'/>
 		protected override RowUpdatedEventArgs CreateRowUpdatedEvent(
-			DataRow				dataRow,
-			IDbCommand			command,
-			StatementType		statementType,
-			DataTableMapping	tableMapping)
+			DataRow dataRow, IDbCommand command, StatementType statementType, DataTableMapping tableMapping)
 		{
 			return new FbRowUpdatedEventArgs(dataRow, command, statementType, tableMapping);
 		}
 
-		///	<include file='Doc/en_EN/FbDataAdapter.xml'	path='doc/class[@name="FbDataAdapter"]/method[@name="OnRowUpdating(System.Data.Common.RowUpdatingEventArgs)"]/*'/>
-		protected override void	OnRowUpdating(RowUpdatingEventArgs value)
+		/// <include file='Doc/en_EN/FbDataAdapter.xml'	path='doc/class[@name="FbDataAdapter"]/method[@name="OnRowUpdating(System.Data.Common.RowUpdatingEventArgs)"]/*'/>
+		protected override void OnRowUpdating(RowUpdatingEventArgs value)
 		{
-			FbRowUpdatingEventHandler handler =	null;
+			FbRowUpdatingEventHandler handler = null;
 
-			handler	= (FbRowUpdatingEventHandler)base.Events[EventRowUpdating];
+			handler = (FbRowUpdatingEventHandler)base.Events[EventRowUpdating];
 
 			if ((null != handler) &&
 				(value is FbRowUpdatingEventArgs) &&
@@ -264,14 +248,14 @@ namespace FirebirdSql.Data.Firebird
 			}
 		}
 
-		///	<include file='Doc/en_EN/FbDataAdapter.xml'	path='doc/class[@name="FbDataAdapter"]/method[@name="OnRowUpdated(System.Data.Common.RowUpdatedEventArgs)"]/*'/>
-		protected override void	OnRowUpdated(RowUpdatedEventArgs value)
+		/// <include file='Doc/en_EN/FbDataAdapter.xml'	path='doc/class[@name="FbDataAdapter"]/method[@name="OnRowUpdated(System.Data.Common.RowUpdatedEventArgs)"]/*'/>
+		protected override void OnRowUpdated(RowUpdatedEventArgs value)
 		{
 			FbRowUpdatedEventHandler handler = null;
 
-			handler	= (FbRowUpdatedEventHandler)base.Events[EventRowUpdated];
+			handler = (FbRowUpdatedEventHandler)base.Events[EventRowUpdated];
 
-			if ((handler !=	null) &&
+			if ((handler != null) &&
 				(value is FbRowUpdatedEventArgs) &&
 				(value != null))
 			{
@@ -281,22 +265,22 @@ namespace FirebirdSql.Data.Firebird
 
 		#endregion
 
-		#region	Update DataRow Collection
+		#region Update DataRow Collection
 
-		///	<summary>
-		///	Review .NET	Framework documentation.
-		///	</summary>
-		protected override int Update(DataRow[]	dataRows, DataTableMapping tableMapping)
+		/// <summary>
+		/// Review .NET	Framework documentation.
+		/// </summary>
+		protected override int Update(DataRow[] dataRows, DataTableMapping tableMapping)
 		{
-			int			  updated		= 0;
-			IDbCommand	  command		= null;
-			StatementType statementType	= StatementType.Insert;
-			ArrayList	  connections	= new ArrayList();
+			int				updated			= 0;
+			IDbCommand		command			= null;
+			StatementType	statementType	= StatementType.Insert;
+			ArrayList		connections		= new ArrayList();
 
-			foreach	(DataRow row in	dataRows)
+			foreach (DataRow row in dataRows)
 			{
-				if (row.RowState ==	DataRowState.Detached ||
-					row.RowState ==	DataRowState.Unchanged)
+				if (row.RowState == DataRowState.Detached ||
+					row.RowState == DataRowState.Unchanged)
 				{
 					continue;
 				}
@@ -304,18 +288,18 @@ namespace FirebirdSql.Data.Firebird
 				switch (row.RowState)
 				{
 					case DataRowState.Added:
-						command		  =	this.insertCommand;
-						statementType =	StatementType.Insert;
+						command = this.insertCommand;
+						statementType = StatementType.Insert;
 						break;
 
 					case DataRowState.Modified:
-						command		  =	this.updateCommand;
-						statementType =	StatementType.Update;
+						command = this.updateCommand;
+						statementType = StatementType.Update;
 						break;
 
 					case DataRowState.Deleted:
-						command		  =	this.deleteCommand;
-						statementType =	StatementType.Delete;
+						command = this.deleteCommand;
+						statementType = StatementType.Delete;
 						break;
 				}
 
@@ -337,37 +321,37 @@ namespace FirebirdSql.Data.Firebird
 					 *
 					 * Only	input parameters should	be updated.
 					 */
-					if (command	!= null	&& command.Parameters.Count	> 0)
+					if (command != null && command.Parameters.Count > 0)
 					{
-						this.UpdateParameterValues(command,	statementType, row,	tableMapping);
+						this.UpdateParameterValues(command, statementType, row, tableMapping);
 					}
 
 					// 2. Raise	RowUpdating	event
-					RowUpdatingEventArgs updatingArgs =	this.CreateRowUpdatingEvent(row, command, statementType, tableMapping);
+					RowUpdatingEventArgs updatingArgs = this.CreateRowUpdatingEvent(row, command, statementType, tableMapping);
 					this.OnRowUpdating(updatingArgs);
 
-					if (updatingArgs.Status	== UpdateStatus.SkipAllRemainingRows)
+					if (updatingArgs.Status == UpdateStatus.SkipAllRemainingRows)
 					{
 						break;
 					}
-					else if	(updatingArgs.Status ==	UpdateStatus.ErrorsOccurred)
+					else if (updatingArgs.Status == UpdateStatus.ErrorsOccurred)
 					{
-						if (updatingArgs.Errors	== null)
+						if (updatingArgs.Errors == null)
 						{
-							throw new InvalidOperationException("RowUpdatingEvent: Errors occurred;	no additional is information available.");
+							throw new InvalidOperationException("RowUpdatingEvent: Errors occurred; no additional is information available.");
 						}
 						throw updatingArgs.Errors;
 					}
-					else if	(updatingArgs.Status ==	UpdateStatus.SkipCurrentRow)
+					else if (updatingArgs.Status == UpdateStatus.SkipCurrentRow)
 					{
 					}
-					else if	(updatingArgs.Status ==	UpdateStatus.Continue)
+					else if (updatingArgs.Status == UpdateStatus.Continue)
 					{
-						if (command	!= updatingArgs.Command)
+						if (command != updatingArgs.Command)
 						{
-							command	= updatingArgs.Command;
+							command = updatingArgs.Command;
 						}
-						if (command	== null)
+						if (command == null)
 						{
 							/* Samples of exceptions thrown	by DbDataAdapter class
 							 *
@@ -380,17 +364,17 @@ namespace FirebirdSql.Data.Firebird
 						}
 
 						// 3. Execute the command
-						if (command.Connection.State ==	ConnectionState.Closed)
+						if (command.Connection.State == ConnectionState.Closed)
 						{
 							command.Connection.Open();
 							// Track command connection
 							connections.Add(command.Connection);
 						}
 
-						int	rowsAffected = command.ExecuteNonQuery();
-						if (rowsAffected ==	0)
+						int rowsAffected = command.ExecuteNonQuery();
+						if (rowsAffected == 0)
 						{
-							throw new DBConcurrencyException("An attempt to	execute	an INSERT, UPDATE, or DELETE statement resulted	in zero	records	affected.");
+							throw new DBConcurrencyException("An attempt to execute an INSERT, UPDATE, or DELETE statement resulted in zero records affected.");
 						}
 
 						updated++;
@@ -407,21 +391,21 @@ namespace FirebirdSql.Data.Firebird
 						 *
 						 * Only	output paraneters should be	updated
 						 */
-						if (command.UpdatedRowSource ==	UpdateRowSource.OutputParameters ||
-							command.UpdatedRowSource ==	UpdateRowSource.Both)
+						if (command.UpdatedRowSource == UpdateRowSource.OutputParameters ||
+							command.UpdatedRowSource == UpdateRowSource.Both)
 						{
 							// Process output parameters
-							foreach	(IDataParameter	parameter in command.Parameters)
+							foreach (IDataParameter parameter in command.Parameters)
 							{
-								if ((parameter.Direction ==	ParameterDirection.Output ||
-									parameter.Direction	== ParameterDirection.ReturnValue ||
-									parameter.Direction	== ParameterDirection.InputOutput) &&
+								if ((parameter.Direction == ParameterDirection.Output ||
+									parameter.Direction == ParameterDirection.ReturnValue ||
+									parameter.Direction == ParameterDirection.InputOutput) &&
 									parameter.SourceColumn != null &&
-									parameter.SourceColumn.Length >	0)
+									parameter.SourceColumn.Length > 0)
 								{
-									DataColumn column =	null;
+									DataColumn column = null;
 
-									DataColumnMapping columnMapping	= tableMapping.GetColumnMappingBySchemaAction(
+									DataColumnMapping columnMapping = tableMapping.GetColumnMappingBySchemaAction(
 										parameter.SourceColumn,
 										this.MissingMappingAction);
 
@@ -434,7 +418,7 @@ namespace FirebirdSql.Data.Firebird
 
 										if (column != null)
 										{
-											row[column]	= parameter.Value;
+											row[column] = parameter.Value;
 										}
 									}
 								}
@@ -442,25 +426,25 @@ namespace FirebirdSql.Data.Firebird
 						}
 
 						// 6. Raise	RowUpdated event
-						RowUpdatedEventArgs	updatedArgs	= this.CreateRowUpdatedEvent(row, command, statementType, tableMapping);
+						RowUpdatedEventArgs updatedArgs = this.CreateRowUpdatedEvent(row, command, statementType, tableMapping);
 						this.OnRowUpdated(updatedArgs);
 
 						if (updatedArgs.Status == UpdateStatus.SkipAllRemainingRows)
 						{
 							break;
 						}
-						else if	(updatedArgs.Status	== UpdateStatus.ErrorsOccurred)
+						else if (updatedArgs.Status == UpdateStatus.ErrorsOccurred)
 						{
-							if (updatingArgs.Errors	== null)
+							if (updatingArgs.Errors == null)
 							{
-								throw new InvalidOperationException("RowUpdatedEvent: Errors occurred; no additional is	information	available.");
+								throw new InvalidOperationException("RowUpdatedEvent: Errors occurred; no additional information available.");
 							}
 							throw updatedArgs.Errors;
 						}
-						else if	(updatedArgs.Status	== UpdateStatus.SkipCurrentRow)
+						else if (updatedArgs.Status == UpdateStatus.SkipCurrentRow)
 						{
 						}
-						else if	(updatingArgs.Status ==	UpdateStatus.Continue)
+						else if (updatingArgs.Status == UpdateStatus.Continue)
 						{
 							// 7. Call AcceptChanges
 							row.AcceptChanges();
@@ -489,15 +473,15 @@ namespace FirebirdSql.Data.Firebird
 
 		#endregion
 
-		#region	Private	Methods
+		#region Private	Methods
 
-		private	string CreateExceptionMessage(StatementType	statementType)
+		private string CreateExceptionMessage(StatementType statementType)
 		{
 			System.Text.StringBuilder sb = new System.Text.StringBuilder();
 
 			sb.Append("Update requires a valid ");
 			sb.Append(statementType.ToString());
-			sb.Append("Command when	passed DataRow collection with ");
+			sb.Append("Command when passed DataRow collection with ");
 
 			switch (statementType)
 			{
@@ -514,32 +498,32 @@ namespace FirebirdSql.Data.Firebird
 					break;
 			}
 
-			sb.Append("	rows.");
+			sb.Append(" rows.");
 
 			return sb.ToString();
 		}
 
-		private	void UpdateParameterValues(
-			IDbCommand			command,
-			StatementType		statementType,
-			DataRow				row, 
-			DataTableMapping	tableMapping)
+		private void UpdateParameterValues(
+			IDbCommand command,
+			StatementType statementType,
+			DataRow row,
+			DataTableMapping tableMapping)
 		{
-			foreach	(IDataParameter	parameter in command.Parameters)
+			foreach (IDataParameter parameter in command.Parameters)
 			{
 				// Process only	input parameters
-				if (parameter.Direction	!= ParameterDirection.Input	&&
-					parameter.Direction	!= ParameterDirection.InputOutput)
+				if (parameter.Direction != ParameterDirection.Input &&
+					parameter.Direction != ParameterDirection.InputOutput)
 				{
 					continue;
 				}
 
-				DataColumn column =	null;
+				DataColumn column = null;
 
 				/* Get the DataColumnMapping that matches the given
 				 * column name
 				 */
-				DataColumnMapping columnMapping	= tableMapping.GetColumnMappingBySchemaAction(
+				DataColumnMapping columnMapping = tableMapping.GetColumnMappingBySchemaAction(
 					parameter.SourceColumn,
 					this.MissingMappingAction);
 
@@ -552,30 +536,30 @@ namespace FirebirdSql.Data.Firebird
 
 					if (column != null)
 					{
-						DataRowVersion dataRowVersion =	DataRowVersion.Default;
+						DataRowVersion dataRowVersion = DataRowVersion.Default;
 
 						if (statementType == StatementType.Insert)
 						{
 							dataRowVersion = DataRowVersion.Current;
 						}
-						else if	(statementType == StatementType.Update)
+						else if (statementType == StatementType.Update)
 						{
 							dataRowVersion = parameter.SourceVersion;
 						}
-						else if	(statementType == StatementType.Delete)
+						else if (statementType == StatementType.Delete)
 						{
 							dataRowVersion = DataRowVersion.Original;
 						}
 
-						parameter.Value	= row[column, dataRowVersion];
+						parameter.Value = row[column, dataRowVersion];
 					}
 				}
 			}
 		}
 
-		private	void CloseConnections(ArrayList	connections)
+		private void CloseConnections(ArrayList connections)
 		{
-			foreach	(IDbConnection c in	connections)
+			foreach (IDbConnection c in connections)
 			{
 				c.Close();
 			}

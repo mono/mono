@@ -1,19 +1,19 @@
 /*
  *	Firebird ADO.NET Data provider for .NET	and	Mono 
  * 
- *	   The contents	of this	file are subject to	the	Initial	
+ *	   The contents of this file are subject to the Initial 
  *	   Developer's Public License Version 1.0 (the "License"); 
- *	   you may not use this	file except	in compliance with the 
- *	   License.	You	may	obtain a copy of the License at	
+ *	   you may not use this file except in compliance with the 
+ *	   License. You may obtain a copy of the License at 
  *	   http://www.firebirdsql.org/index.php?op=doc&id=idpl
  *
- *	   Software	distributed	under the License is distributed on	
+ *	   Software distributed under the License is distributed on 
  *	   an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either 
- *	   express or implied.	See	the	License	for	the	specific 
- *	   language	governing rights and limitations under the License.
+ *	   express or implied. See the License for the specific 
+ *	   language governing rights and limitations under the License.
  * 
- *	Copyright (c) 2002,	2004 Carlos	Guzman Alvarez
- *	All	Rights Reserved.
+ *	Copyright (c) 2002, 2005 Carlos Guzman Alvarez
+ *	All Rights Reserved.
  */
 
 using System;
@@ -25,48 +25,48 @@ using FirebirdSql.Data.Common;
 using FirebirdSql.Data.Firebird.DbSchema;
 
 namespace FirebirdSql.Data.Firebird
-{	
-	internal class FbConnectionInternal	: MarshalByRefObject
+{
+	internal class FbConnectionInternal : MarshalByRefObject
 	{
-		#region	Fields
+		#region Fields
 
-		private	IDatabase			db;
-		private	long				created;
-		private	long				lifetime;
-		private	bool				pooled;
-		private	FbTransaction		activeTransaction;
-		private	ArrayList			preparedCommands;
-		private	FbConnectionString	options;
-		private	FbConnection		owningConnection;
+		private IDatabase			db;
+		private FbTransaction		activeTransaction;
+		private ArrayList			preparedCommands;
+		private FbConnectionString	options;
+		private FbConnection		owningConnection;
+		private long				created;
+		private long				lifetime;
+		private bool				pooled;
 
 		#endregion
 
-		#region	Properties
+		#region Properties
 
 		public IDatabase Database
 		{
-			get	{ return this.db; }
+			get { return this.db; }
 		}
 
-		public long	Lifetime
+		public long Lifetime
 		{
-			get	{ return this.lifetime;	}
-			set	{ this.lifetime	= value; }
+			get { return this.lifetime; }
+			set { this.lifetime = value; }
 		}
 
-		public long	Created
+		public long Created
 		{
-			get	{ return this.created; }
-			set	{ this.created = value;	}
-		}
-		
-		public bool	Pooled
-		{
-			get	{ return this.pooled; }
-			set	{ this.pooled =	value; }
+			get { return this.created; }
+			set { this.created = value; }
 		}
 
-		public bool	HasActiveTransaction
+		public bool Pooled
+		{
+			get { return this.pooled; }
+			set { this.pooled = value; }
+		}
+
+		public bool HasActiveTransaction
 		{
 			get
 			{
@@ -80,97 +80,98 @@ namespace FirebirdSql.Data.Firebird
 			{
 				if (this.preparedCommands == null)
 				{
-					this.preparedCommands =	new	ArrayList();
+					this.preparedCommands = new ArrayList();
 				}
-				
+
 				return this.preparedCommands;
 			}
 		}
 
 		public FbTransaction ActiveTransaction
 		{
-			get	{ return this.activeTransaction; }
+			get { return this.activeTransaction; }
 		}
 
 		public FbConnectionString ConnectionOptions
 		{
-			get	{ return this.options; }
+			get { return this.options; }
 		}
 
-		public FbConnection	OwningConnection
+		public FbConnection OwningConnection
 		{
-			get	{ return this.owningConnection;	}
-			set	{ this.owningConnection	= value; }
-		}
-
-		#endregion
-
-		#region	Constructors
-
-		public FbConnectionInternal(FbConnectionString options)	: this(options,	null)
-		{
-		}
-
-		public FbConnectionInternal(FbConnectionString options,	FbConnection owningConnection)
-		{
-			this.options			= options;
-			this.owningConnection	= owningConnection;
+			get { return this.owningConnection; }
+			set { this.owningConnection = value; }
 		}
 
 		#endregion
 
-		#region	Create and Drop	database methods
+		#region Constructors
 
-		public void	CreateDatabase(DatabaseParameterBuffer dpb)
+		public FbConnectionInternal(FbConnectionString options) : this(options, null)
 		{
-			IDatabase db = ClientFactory.CreateDatabase(this.options.ServerType);
-			db.CreateDatabase(dpb, this.options.DataSource,	this.options.Port, this.options.Database);
 		}
 
-		public void	DropDatabase()
+		public FbConnectionInternal(FbConnectionString options, FbConnection owningConnection)
+		{
+			this.options = options;
+			this.owningConnection = owningConnection;
+		}
+
+		#endregion
+
+		#region Create and Drop	database methods
+
+		public void CreateDatabase(DatabaseParameterBuffer dpb)
 		{
 			IDatabase db = ClientFactory.CreateDatabase(this.options.ServerType);
-			db.Attach(this.BuildDpb(db,	this.options), this.options.DataSource,	this.options.Port, this.options.Database);
+			db.CreateDatabase(dpb, this.options.DataSource, this.options.Port, this.options.Database);
+		}
+
+		public void DropDatabase()
+		{
+			IDatabase db = ClientFactory.CreateDatabase(this.options.ServerType);
+			db.Attach(this.BuildDpb(db, this.options), this.options.DataSource, this.options.Port, this.options.Database);
 			db.DropDatabase();
 		}
 
 		#endregion
 
-		#region	Connect	and	Disconenct methods
+		#region Connect	and	Disconenct methods
 
-		public void	Connect()
-		{							
+		public void Connect()
+		{
 			try
 			{
-				this.db				= ClientFactory.CreateDatabase(this.options.ServerType);
-				this.db.Charset		= Charset.SupportedCharsets[this.options.Charset];
-				this.db.Dialect		= this.options.Dialect;
-				this.db.PacketSize	= this.options.PacketSize;
+				this.db = ClientFactory.CreateDatabase(this.options.ServerType);
+				this.db.Charset = Charset.SupportedCharsets[this.options.Charset];
+				this.db.Dialect = this.options.Dialect;
+				this.db.PacketSize = this.options.PacketSize;
 
-				DatabaseParameterBuffer	dpb	= this.BuildDpb(this.db, options);
+				DatabaseParameterBuffer dpb = this.BuildDpb(this.db, options);
 
-				this.db.Attach(dpb,	this.options.DataSource, this.options.Port,	this.options.Database);
+				this.db.Attach(dpb, this.options.DataSource, this.options.Port, this.options.Database);
 			}
-			catch (IscException	ex)
+			catch (IscException ex)
 			{
 				throw new FbException(ex.Message, ex);
 			}
 		}
-		
-		public void	Disconnect()
-		{	
+
+		public void Disconnect()
+		{
 			try
 			{
 				this.db.Dispose();
+
 				this.owningConnection	= null;
 				this.options			= null;
 				this.lifetime			= 0;
 				this.pooled				= false;
 				this.db					= null;
-				
+
 				this.DisposePreparedCommands();
 			}
-			catch (IscException	ex)
+			catch (IscException ex)
 			{
 				throw new FbException(ex.Message, ex);
 			}
@@ -178,15 +179,15 @@ namespace FirebirdSql.Data.Firebird
 
 		#endregion
 
-		#region	Transaction	Methods
+		#region Transaction	Methods
 
-		public FbTransaction BeginTransaction(IsolationLevel level,	string transactionName)
+		public FbTransaction BeginTransaction(IsolationLevel level, string transactionName)
 		{
 			lock (this)
 			{
 				if (this.HasActiveTransaction)
 				{
-					throw new InvalidOperationException("A transaction is currently	active.	Parallel transactions are not supported.");
+					throw new InvalidOperationException("A transaction is currently active. Parallel transactions are not supported.");
 				}
 
 				try
@@ -194,12 +195,12 @@ namespace FirebirdSql.Data.Firebird
 					this.activeTransaction = new FbTransaction(this.owningConnection, level);
 					this.activeTransaction.BeginTransaction();
 
-					if (transactionName	!= null)
+					if (transactionName != null)
 					{
 						this.activeTransaction.Save(transactionName);
 					}
 				}
-				catch (IscException	ex)
+				catch (IscException ex)
 				{
 					throw new FbException(ex.Message, ex);
 				}
@@ -208,28 +209,28 @@ namespace FirebirdSql.Data.Firebird
 			return this.activeTransaction;
 		}
 
-		public FbTransaction BeginTransaction(FbTransactionOptions options,	string transactionName)
+		public FbTransaction BeginTransaction(FbTransactionOptions options, string transactionName)
 		{
 			lock (this)
 			{
 				if (this.HasActiveTransaction)
 				{
-					throw new InvalidOperationException("A transaction is currently	active.	Parallel transactions are not supported.");
+					throw new InvalidOperationException("A transaction is currently active. Parallel transactions are not supported.");
 				}
 
 				try
 				{
 					this.activeTransaction = new FbTransaction(
-						this.owningConnection, 
-						IsolationLevel.Unspecified);
+						this.owningConnection, IsolationLevel.Unspecified);
+
 					this.activeTransaction.BeginTransaction(options);
 
-					if (transactionName	!= null)
+					if (transactionName != null)
 					{
 						this.activeTransaction.Save(transactionName);
 					}
 				}
-				catch (IscException	ex)
+				catch (IscException ex)
 				{
 					throw new FbException(ex.Message, ex);
 				}
@@ -238,7 +239,7 @@ namespace FirebirdSql.Data.Firebird
 			return this.activeTransaction;
 		}
 
-		public void	DisposeTransaction()
+		public void DisposeTransaction()
 		{
 			if (this.activeTransaction != null)
 			{
@@ -247,24 +248,24 @@ namespace FirebirdSql.Data.Firebird
 			}
 		}
 
-		public void	TransactionUpdated()
+		public void TransactionUpdated()
 		{
-			for	(int i = 0;	i <	this.PreparedCommands.Count; i++)
+			for (int i = 0; i < this.PreparedCommands.Count; i++)
 			{
-				FbCommand command =	(FbCommand)this.PreparedCommands[i];
-				
-				if (command.Transaction	!= null)
+				FbCommand command = (FbCommand)this.PreparedCommands[i];
+
+				if (command.Transaction != null)
 				{
 					command.CloseReader();
-					command.Transaction	= null;
+					command.Transaction = null;
 				}
 			}
 		}
 
 		#endregion
 
-		#region	Schema Methods
-				
+		#region Schema Methods
+
 		public DataTable GetSchema(string collectionName, string[] restrictions)
 		{
 			return FbDbSchemaFactory.GetSchema(this.owningConnection, collectionName, restrictions);
@@ -278,9 +279,9 @@ namespace FirebirdSql.Data.Firebird
 
 		#endregion
 
-		#region	Prepared Commands Methods
+		#region Prepared Commands Methods
 
-		public void	AddPreparedCommand(FbCommand command)
+		public void AddPreparedCommand(FbCommand command)
 		{
 			if (!this.PreparedCommands.Contains(command))
 			{
@@ -288,20 +289,20 @@ namespace FirebirdSql.Data.Firebird
 			}
 		}
 
-		public void	RemovePreparedCommand(FbCommand	command)
+		public void RemovePreparedCommand(FbCommand command)
 		{
 			this.PreparedCommands.Remove(command);
 		}
 
-		public void	DisposePreparedCommands()
+		public void DisposePreparedCommands()
 		{
 			if (this.preparedCommands != null)
 			{
-				if (this.PreparedCommands.Count	> 0)
+				if (this.PreparedCommands.Count > 0)
 				{
-					FbCommand[]	commands = (FbCommand[])this.PreparedCommands.ToArray(typeof(FbCommand));
+					FbCommand[] commands = (FbCommand[])this.PreparedCommands.ToArray(typeof(FbCommand));
 
-					for	(int i = 0;	i <	commands.Length; i++ )
+					for (int i = 0; i < commands.Length; i++)
 					{
 						// Release statement handle
 						commands[i].Release();
@@ -309,15 +310,15 @@ namespace FirebirdSql.Data.Firebird
 				}
 
 				this.PreparedCommands.Clear();
-				this.preparedCommands =	null;
+				this.preparedCommands = null;
 			}
 		}
 
 		#endregion
 
-		#region	Firebird Events	Methods
+		#region Firebird Events	Methods
 
-		public void	CloseEventManager()
+		public void CloseEventManager()
 		{
 			if (this.db.HasRemoteEventSupport)
 			{
@@ -330,17 +331,17 @@ namespace FirebirdSql.Data.Firebird
 
 		#endregion
 
-		#region	Connection Verification
+		#region Connection Verification
 
-		public bool	Verify()
+		public bool Verify()
 		{
 			// Do not actually ask for any information
-			byte[] items  =	new	byte[]
+			byte[] items = new byte[]
 			{
 				IscCodes.isc_info_end
 			};
 
-			try	
+			try
 			{
 				this.db.GetDatabaseInfo(items, 16);
 
@@ -354,19 +355,19 @@ namespace FirebirdSql.Data.Firebird
 
 		#endregion
 
-		#region	Private	Methods
+		#region Private	Methods
 
-		private	DatabaseParameterBuffer	BuildDpb(IDatabase db, FbConnectionString options)
+		private DatabaseParameterBuffer BuildDpb(IDatabase db, FbConnectionString options)
 		{
-			DatabaseParameterBuffer	dpb	= db.CreateDatabaseParameterBuffer();
+			DatabaseParameterBuffer dpb = db.CreateDatabaseParameterBuffer();
 
 			dpb.Append(IscCodes.isc_dpb_version1);
 			dpb.Append(IscCodes.isc_dpb_dummy_packet_interval,
-				new	byte[] { 120, 10, 0, 0 });
+				new byte[] { 120, 10, 0, 0 });
 			dpb.Append(IscCodes.isc_dpb_sql_dialect,
-				new	byte[] { Convert.ToByte(options.Dialect), 0, 0,	0 });
+				new byte[] { Convert.ToByte(options.Dialect), 0, 0, 0 });
 			dpb.Append(IscCodes.isc_dpb_lc_ctype, options.Charset);
-			if (options.Role !=	null &&	options.Role.Length	> 0)
+			if (options.Role != null && options.Role.Length > 0)
 			{
 				dpb.Append(IscCodes.isc_dpb_sql_role_name, options.Role);
 			}

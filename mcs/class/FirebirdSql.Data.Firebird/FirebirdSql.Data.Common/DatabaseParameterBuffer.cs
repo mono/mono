@@ -12,7 +12,7 @@
  *     express or implied.  See the License for the specific 
  *     language governing rights and limitations under the License.
  * 
- *  Copyright (c) 2002, 2004 Carlos Guzman Alvarez
+ *  Copyright (c) 2002, 2005 Carlos Guzman Alvarez
  *  All Rights Reserved.
  */
 
@@ -24,30 +24,30 @@ using System.Net;
 namespace FirebirdSql.Data.Common
 {
 	internal sealed class DatabaseParameterBuffer : ParameterBuffer
-	{			
+	{
 		#region Constructors
 
 		public DatabaseParameterBuffer() : base()
 		{
 		}
-		
+
 		public DatabaseParameterBuffer(bool isLittleEndian) : base(isLittleEndian)
 		{
 		}
 
 		#endregion
-		
+
 		#region Methods
 
 		public void Append(int type, byte value)
-		{						
+		{
 			this.WriteByte(type);
 			this.WriteByte(1);
 			this.Write(value);
 		}
 
 		public void Append(int type, short value)
-		{						
+		{
 			this.WriteByte(type);
 			this.WriteByte(2);
 			this.Write(value);
@@ -66,7 +66,7 @@ namespace FirebirdSql.Data.Common
 		}
 
 		public void Append(int type, byte[] buffer)
-		{						
+		{
 			this.WriteByte(type);
 			this.WriteByte(buffer.Length);
 			this.Write(buffer);

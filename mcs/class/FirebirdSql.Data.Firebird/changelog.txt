@@ -2,11 +2,82 @@ Firebird ADO.NET Data provider for .NET and Mono
 ================================================
 
 
-2005-01-20 Carlos Guzman Alvarez  <carlosga@telefonica.net>
+------------------ Release Candidate 1 ----------------------
+
+2005-02-04 Carlos Guzman Alvarez  <carlosga@telefonica.net>
+
+	* FirebirdSql.Data.Firebird/FbCommand.cs:
+
+		- Fixed SP execution on ExecuteScalar method (Thanks to Alessandro Petrelli for his feddback)
+
+	* FirebirdSql.Data.Firebird/FbParameter.cs:
+	* FirebirdSql.Data.Common./DbField.cs:
+
+		- Fixed null Guid handling.
+
+2005-01-30 Carlos Guzman Alvarez  <carlosga@telefonica.net>
+
+	* FirebirdSql.Data.Embedded/FesArray.cs:
+
+		- Fixed problem with 0 lowerbound arrays.
+
+2005-01-30 Carlos Guzman Alvarez  <carlosga@telefonica.net>
+
+	* FirebirdSql.Data.Firebird/FbCommand.cs:
+
+		- Fixed sqal generation for strored procedure names (Thanks to Andrzej Kaczmarczyk for his feedback).
+
+2005-01-28 Carlos Guzman Alvarez  <carlosga@telefonica.net>
+
+	* FirebirdSql.Data.Common/DbField.cs:
+
+		- Fixed incorrect mapping (Thanks to Frans Bouma for his feedback.)
+
+2005-01-27 Carlos Guzman Alvarez  <carlosga@telefonica.net>
+	
+    	- Reformatted the source code.
+
+	* FirebirdSql.Data.Gds/XdrStream.cs:
+
+		- Fixed problem with system field values, now checks are done using the
+		field character set (Thanks to Phaidros for his feedback).
+
+    	* FirebirdSql.Data.Common/ITransaction.cs:
+    	* FirebirdSql.Data.Embedded/FesTransaction.cs:	
+    	* FirebirdSql.Data.Gds/GdsTransaction.cs:	
+	
+        	- Commented Prepare method overloads.
+
+    	* FirebirdSql.Data.Embedded/FesTransaction.cs:	
+
+        	- Commented PInvoke funcition definitions that aren't used.
+
+2005-01-24 Carlos Guzman Alvarez  <carlosga@telefonica.net>
+
+	* FirebirdSql.Data.Gds/GdsDatabase.cs:
+
+		- Fixed problem on Event manager close.
+
+2005-01-21 Carlos Guzman Alvarez  <carlosga@telefonica.net>
+
+	* FirebirdSql.Data.Firebird/Design/DataAdapter/Designer/FbDataAdapterConfigurationStep1.cs
+	* FirebirdSql.Data.Firebird/Design/DataAdapter/Designer/FbDataAdapterConfigurationStep2.cs
+	* FirebirdSql.Data.Firebird/Design/DataAdapter/Designer/FbDataAdapterConfigurationStep3.cs
+	* FirebirdSql.Data.Firebird/Design/DataAdapter/Designer/FbDataAdapterConfigurationStep4.cs
+	* FirebirdSql.Data.Firebird/Design/DataAdapter/Designer/FbDataAdapterConfigurationStep5.cs
+	* FirebirdSql.Data.Firebird/Design/DataAdapter/Designer/FbDataAdapterConfigurationStep6.cs
+
+		- Minor changes on label's text.
+
+	* FirebirdSql.Data.Firebird/Design/DataAdapter/Designer/FbDataAdapterConfigurationStep7.cs
+
+		- Changes to show information abot the errors got on data adapter configuration.
+
+	* Updated license headers.
 
 	* FirebirdSql.Data.Common/StatementBase.cs:
 
-		- Fix ClearArrayHandles method by check for Array Fields.
+		- Fix ClearArrayHandles method by checking for array fields.
 
 2005-01-19 Carlos Guzman Alvarez  <carlosga@telefonica.net>
 
@@ -15,6 +86,12 @@ Firebird ADO.NET Data provider for .NET and Mono
 	* FirebirdSql.Data.Gds/GdsStatement.cs:
 
 		- Try to fix performance problems with array fields on select statements.
+
+2005-01-18 Carlos Guzman Alvarez  <carlosga@telefonica.net>
+
+	* FirebirdSql.Data.Firebird/Isql/FbScript.cs:
+
+		- Changes for better handling of comment removal (Andreas Sandner)
 
 2005-01-14 Carlos Guzman Alvarez  <carlosga@telefonica.net>
 
@@ -34,8 +111,6 @@ Firebird ADO.NET Data provider for .NET and Mono
 	* FirebirdSql.Data.Gds/GdsTransaction.cs:
 
 		- Cleanup.
-
------------------- Release Candaidate 1 ----------------------
 
 2005-01-02 Carlos Guzman Alvarez  <carlosga@telefonica.net>
 
@@ -67,9 +142,6 @@ Firebird ADO.NET Data provider for .NET and Mono
 	* FirebirdSql.Data.Firebird/Design/DataAdapter/Designer/FbDataAdapterDesigner.cs
 
 		- Show a MessageBox with the exception deatils.
-
-
-
 
 -------------------------- Beta 3 ----------------------------
 
@@ -360,7 +432,6 @@ Firebird ADO.NET Data provider for .NET and Mono
 		(No terminado)
 
 2004-11-11 Carlos Guzman Alvarez  <carlosga@telefonica.net>
-
 
 	* FirebirdSql.Data.Firebird/Design/DataAdapter/Designer/DataSetGenerator.cs:
 

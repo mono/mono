@@ -1,19 +1,19 @@
 /*
  *	Firebird ADO.NET Data provider for .NET	and	Mono 
  * 
- *	   The contents	of this	file are subject to	the	Initial	
+ *	   The contents of this file are subject to the Initial 
  *	   Developer's Public License Version 1.0 (the "License"); 
- *	   you may not use this	file except	in compliance with the 
- *	   License.	You	may	obtain a copy of the License at	
+ *	   you may not use this file except in compliance with the 
+ *	   License. You may obtain a copy of the License at 
  *	   http://www.firebirdsql.org/index.php?op=doc&id=idpl
  *
- *	   Software	distributed	under the License is distributed on	
+ *	   Software distributed under the License is distributed on 
  *	   an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either 
- *	   express or implied.	See	the	License	for	the	specific 
- *	   language	governing rights and limitations under the License.
+ *	   express or implied. See the License for the specific 
+ *	   language governing rights and limitations under the License.
  * 
- *	Copyright (c) 2002,	2004 Carlos	Guzman Alvarez
- *	All	Rights Reserved.
+ *	Copyright (c) 2002, 2005 Carlos Guzman Alvarez
+ *	All Rights Reserved.
  */
 
 using System;
@@ -26,13 +26,13 @@ namespace FirebirdSql.Data.Embedded
 {
 	internal sealed	class XsqldaMarshaler
 	{
-		#region	Static Fields
+		#region Static Fields
 
 		private	static XsqldaMarshaler instance;
 
 		#endregion
 
-		#region	Constructors
+		#region Constructors
 
 		private	XsqldaMarshaler()
 		{
@@ -40,7 +40,7 @@ namespace FirebirdSql.Data.Embedded
 
 		#endregion
 
-		#region	Methods
+		#region Methods
 
 		public static XsqldaMarshaler GetInstance()
 		{
@@ -57,7 +57,7 @@ namespace FirebirdSql.Data.Embedded
 			if (pNativeData	!= IntPtr.Zero)
 			{
 				// Obtain XSQLDA information
-				XSQLDA xsqlda =	new	XSQLDA();
+				XSQLDA xsqlda = new	XSQLDA();
 			
 				xsqlda = (XSQLDA)Marshal.PtrToStructure(pNativeData, typeof(XSQLDA));
 
@@ -79,7 +79,7 @@ namespace FirebirdSql.Data.Embedded
 					if (sqlvar.sqlind != IntPtr.Zero)
 					{
 						Marshal.FreeHGlobal(sqlvar.sqlind);
-						sqlvar.sqlind =	IntPtr.Zero;
+						sqlvar.sqlind = IntPtr.Zero;
 					}
 
 					Marshal.DestroyStructure(
@@ -89,58 +89,58 @@ namespace FirebirdSql.Data.Embedded
 				// Free	pointer	memory
 				Marshal.FreeHGlobal(pNativeData);
 
-				pNativeData	= IntPtr.Zero;
+				pNativeData = IntPtr.Zero;
 			}
 		}
 
 		public IntPtr MarshalManagedToNative(Charset charset, Descriptor descriptor)
 		{
 			// Set up XSQLDA structure
-			XSQLDA xsqlda	= new XSQLDA();
+			XSQLDA xsqlda = new XSQLDA();
 
-			xsqlda.version	= descriptor.Version;
-			xsqlda.sqln		= descriptor.Count;
-			xsqlda.sqld		= descriptor.ActualCount;
+			xsqlda.version = descriptor.Version;
+			xsqlda.sqln	 = descriptor.Count;
+			xsqlda.sqld	 = descriptor.ActualCount;
 			
-			XSQLVAR[] xsqlvar =	new	XSQLVAR[descriptor.Count];
+			XSQLVAR[] xsqlvar = new	XSQLVAR[descriptor.Count];
 
 			for	(int i = 0;	i <	xsqlvar.Length;	i++)
 			{
 				// Create a	new	XSQLVAR	structure and fill it
 				xsqlvar[i] = new XSQLVAR();
 
-				xsqlvar[i].sqltype		= descriptor[i].DataType;
-				xsqlvar[i].sqlscale		= descriptor[i].NumericScale;
-				xsqlvar[i].sqlsubtype	= descriptor[i].SubType;
-				xsqlvar[i].sqllen		= descriptor[i].Length;
+				xsqlvar[i].sqltype	 = descriptor[i].DataType;
+				xsqlvar[i].sqlscale	 = descriptor[i].NumericScale;
+				xsqlvar[i].sqlsubtype = descriptor[i].SubType;
+				xsqlvar[i].sqllen	 = descriptor[i].Length;
 
 				// Create a	new	pointer	for	the	xsqlvar	data
-				byte[] buffer =	this.GetBytes(descriptor[i]);
-				if (buffer.Length >	0)
+				byte[] buffer = this.GetBytes(descriptor[i]);
+				if (buffer.Length > 0)
 				{
 					xsqlvar[i].sqldata = Marshal.AllocHGlobal(buffer.Length);
 					Marshal.Copy(buffer, 0,	xsqlvar[i].sqldata,	buffer.Length);
 				}
 
 				// Create a	new	pointer	for	the	sqlind value
-				xsqlvar[i].sqlind =	Marshal.AllocHGlobal(Marshal.SizeOf(typeof(Int16)));
+				xsqlvar[i].sqlind = Marshal.AllocHGlobal(Marshal.SizeOf(typeof(Int16)));
 				Marshal.WriteInt16(xsqlvar[i].sqlind, descriptor[i].NullFlag);				  
 
 				// Name
-				xsqlvar[i].sqlname			= this.GetStringBuffer(charset,	descriptor[i].Name);
-				xsqlvar[i].sqlname_length	= (short)xsqlvar[i].sqlname.Length;
+				xsqlvar[i].sqlname		 = this.GetStringBuffer(charset,	descriptor[i].Name);
+				xsqlvar[i].sqlname_length = (short)xsqlvar[i].sqlname.Length;
 
 				// Relation	Name
-				xsqlvar[i].relname			= this.GetStringBuffer(charset,	descriptor[i].Relation);
-				xsqlvar[i].relname_length	= (short)xsqlvar[i].relname.Length;
+				xsqlvar[i].relname		 = this.GetStringBuffer(charset,	descriptor[i].Relation);
+				xsqlvar[i].relname_length = (short)xsqlvar[i].relname.Length;
 
 				// Owner name
-				xsqlvar[i].ownername		= this.GetStringBuffer(charset,	descriptor[i].Owner);
-				xsqlvar[i].ownername_length	= (short)xsqlvar[i].ownername.Length;
+				xsqlvar[i].ownername	 = this.GetStringBuffer(charset,	descriptor[i].Owner);
+				xsqlvar[i].ownername_length = (short)xsqlvar[i].ownername.Length;
 
 				// Alias name
-				xsqlvar[i].aliasname		= this.GetStringBuffer(charset,	descriptor[i].Alias);
-				xsqlvar[i].aliasname_length	= (short)xsqlvar[i].aliasname.Length;
+				xsqlvar[i].aliasname	 = this.GetStringBuffer(charset,	descriptor[i].Alias);
+				xsqlvar[i].aliasname_length = (short)xsqlvar[i].aliasname.Length;
 			}
 
 			return this.MarshalManagedToNative(xsqlda, xsqlvar);
@@ -165,16 +165,16 @@ namespace FirebirdSql.Data.Embedded
 		public Descriptor MarshalNativeToManaged(Charset charset, IntPtr pNativeData)
 		{
 			// Obtain XSQLDA information
-			XSQLDA xsqlda =	new	XSQLDA();
+			XSQLDA xsqlda = new	XSQLDA();
 			
 			xsqlda = (XSQLDA)Marshal.PtrToStructure(pNativeData, typeof(XSQLDA));
 
 			// Create a	new	Descriptor
-			Descriptor descriptor	= new Descriptor(xsqlda.sqln);
-			descriptor.ActualCount	= xsqlda.sqld;
+			Descriptor descriptor = new Descriptor(xsqlda.sqln);
+			descriptor.ActualCount = xsqlda.sqld;
 			
 			// Obtain XSQLVAR members information
-			XSQLVAR[] xsqlvar =	new	XSQLVAR[xsqlda.sqln];
+			XSQLVAR[] xsqlvar = new	XSQLVAR[xsqlda.sqln];
 			
 			for	(int i = 0;	i <	xsqlvar.Length;	i++)
 			{
@@ -182,10 +182,10 @@ namespace FirebirdSql.Data.Embedded
 					this.GetIntPtr(pNativeData,	this.ComputeLength(i)),	typeof(XSQLVAR));
 
 				// Map XSQLVAR information to Descriptor
-				descriptor[i].DataType		= xsqlvar[i].sqltype;
-				descriptor[i].NumericScale	= xsqlvar[i].sqlscale;
-				descriptor[i].SubType		= xsqlvar[i].sqlsubtype;
-				descriptor[i].Length		= xsqlvar[i].sqllen;
+				descriptor[i].DataType	 = xsqlvar[i].sqltype;
+				descriptor[i].NumericScale = xsqlvar[i].sqlscale;
+				descriptor[i].SubType	 = xsqlvar[i].sqlsubtype;
+				descriptor[i].Length	 = xsqlvar[i].sqllen;
 
 				// Decode sqlind value
 				if (xsqlvar[i].sqlind == IntPtr.Zero)
@@ -203,10 +203,10 @@ namespace FirebirdSql.Data.Embedded
 					descriptor[i].SetValue(this.GetBytes(xsqlvar[i]));
 				}
 				
-				descriptor[i].Name		= this.GetString(charset, xsqlvar[i].sqlname);
-				descriptor[i].Relation	= this.GetString(charset, xsqlvar[i].relname);
-				descriptor[i].Owner		= this.GetString(charset, xsqlvar[i].ownername);
-				descriptor[i].Alias		= this.GetString(charset, xsqlvar[i].aliasname);
+				descriptor[i].Name	 = this.GetString(charset, xsqlvar[i].sqlname);
+				descriptor[i].Relation = this.GetString(charset, xsqlvar[i].relname);
+				descriptor[i].Owner	 = this.GetString(charset, xsqlvar[i].ownername);
+				descriptor[i].Alias	 = this.GetString(charset, xsqlvar[i].aliasname);
 			}
 
 			return descriptor;
@@ -214,7 +214,7 @@ namespace FirebirdSql.Data.Embedded
 
 		#endregion
 
-		#region	Private	methods
+		#region Private	methods
 
 		private	IntPtr GetIntPtr(IntPtr	ptr, int offset)
 		{
@@ -233,7 +233,7 @@ namespace FirebirdSql.Data.Embedded
 				return null;
 			}
 
-			byte[] buffer =	new	byte[xsqlvar.sqllen];
+			byte[] buffer = new	byte[xsqlvar.sqllen];
 
 			switch (xsqlvar.sqltype	& ~1)
 			{
@@ -289,32 +289,32 @@ namespace FirebirdSql.Data.Embedded
 			{
 				case DbDataType.Char:
 				{
-					string svalue =	field.DbValue.GetString();
+					string svalue = field.DbValue.GetString();
 
-					if ((field.Length %	field.Charset.BytesPerCharacter) ==	0 &&
+					if ((field.Length %	field.Charset.BytesPerCharacter) == 0 &&
 						svalue.Length >	field.CharCount)
 					{	 
 						throw new IscException(335544321);	 
 					}
 
-					byte[] buffer =	new	byte[field.Length];
+					byte[] buffer = new	byte[field.Length];
 					for	(int i = 0;	i <	buffer.Length; i++)
 					{
-						buffer[i] =	32;
+						buffer[i] = 32;
 					}
 
 					byte[] bytes = field.Charset.GetBytes(svalue);
 
-					Buffer.BlockCopy(bytes,	0, buffer, 0, bytes.Length);
+					Buffer.BlockCopy(bytes, 0, buffer, 0, bytes.Length);
 
 					return buffer;
 				}
 				
 				case DbDataType.VarChar:
 				{
-					string svalue =	field.Value.ToString();
+					string svalue = field.Value.ToString();
 
-					if ((field.Length %	field.Charset.BytesPerCharacter) ==	0 &&
+					if ((field.Length %	field.Charset.BytesPerCharacter) == 0 &&
 						svalue.Length >	field.CharCount)
 					{	 
 						throw new IscException(335544321);	 
@@ -322,12 +322,12 @@ namespace FirebirdSql.Data.Embedded
 
 					byte[] sbuffer = field.Charset.GetBytes(svalue);
 
-					byte[] buffer =	new	byte[field.Length +	2];
+					byte[] buffer = new	byte[field.Length +	2];
 
 					// Copy	length
 					Buffer.BlockCopy(
 						BitConverter.GetBytes((short)sbuffer.Length), 
-						0, buffer, 0, 2);
+					 0, buffer, 0, 2);
 					
 					// Copy	string value
 					Buffer.BlockCopy(sbuffer, 0, buffer, 2,	sbuffer.Length);
@@ -366,13 +366,13 @@ namespace FirebirdSql.Data.Embedded
 						TypeEncoder.EncodeTime(field.DbValue.GetDateTime()));
 				
 				case DbDataType.TimeStamp:
-					byte[] date	= BitConverter.GetBytes(
+					byte[] date = BitConverter.GetBytes(
 						TypeEncoder.EncodeDate(field.DbValue.GetDateTime()));
 					
-					byte[] time	= BitConverter.GetBytes(
+					byte[] time = BitConverter.GetBytes(
 						TypeEncoder.EncodeTime(field.DbValue.GetDateTime()));
 					
-					byte[] result =	new	byte[8];
+					byte[] result = new	byte[8];
 
 					Buffer.BlockCopy(date, 0, result, 0, date.Length);
 					Buffer.BlockCopy(time, 0, result, 4, time.Length);
@@ -389,8 +389,8 @@ namespace FirebirdSql.Data.Embedded
 
 		private	byte[] GetNumericBytes(DbField field)
 		{
-			decimal	value	= field.DbValue.GetDecimal();
-			object	numeric	= TypeEncoder.EncodeDecimal(value, field.NumericScale, field.DataType);
+			decimal	value = field.DbValue.GetDecimal();
+			object	numeric = TypeEncoder.EncodeDecimal(value, field.NumericScale, field.DataType);
 
 			switch (field.SqlType)
 			{
@@ -414,9 +414,9 @@ namespace FirebirdSql.Data.Embedded
 
 		private	byte[] GetStringBuffer(Charset charset,	string value)
 		{
-			byte[] buffer =	new	byte[32];
+			byte[] buffer = new	byte[32];
 			
-			charset.GetBytes(value,	0, value.Length, buffer, 0);
+			charset.GetBytes(value, 0, value.Length, buffer, 0);
 
 			return buffer;
 		}

@@ -12,7 +12,7 @@
  *     express or implied.  See the License for the specific 
  *     language governing rights and limitations under the License.
  * 
- *  Copyright (c) 2002, 2004 Carlos Guzman Alvarez
+ *  Copyright (c) 2002, 2005 Carlos Guzman Alvarez
  *  All Rights Reserved.
  */
 
@@ -54,9 +54,9 @@ namespace FirebirdSql.Data.Common
 		#region Fields
 
 		private int		id;
+		private int		bytesPerCharacter;
 		private string	name;
 		private string	systemName;
-		private int		bytesPerCharacter;
 
 		#endregion
 
@@ -82,27 +82,17 @@ namespace FirebirdSql.Data.Common
 		#region Constructors
 
 		public Charset(
-			int		id,
-			string	name,
-			int		bytesPerCharacter,
-			string	systemName)
+			int id, string name, int bytesPerCharacter, string systemName)
 		{
-			this.id                 = id;
-			this.name               = name;
-			this.bytesPerCharacter  = bytesPerCharacter;
-			this.systemName         = systemName;
+			this.id					= id;
+			this.name				= name;
+			this.bytesPerCharacter	= bytesPerCharacter;
+			this.systemName			= systemName;
 		}
 
 		#endregion
 
 		#region Methods
-
-		/*
-		public int GetByteCount(string s)
-		{
-			return this.encoding.GetByteCount(s);
-		}
-		*/
 
 		public byte[] GetBytes(string s)
 		{
@@ -112,7 +102,7 @@ namespace FirebirdSql.Data.Common
 		public int GetBytes(string s, int charIndex, int charCount, byte[] bytes, int byteIndex)
 		{
 			return this.GetEncoding().GetBytes(s, charIndex, charCount, bytes, byteIndex);
-		}	
+		}
 
 		public string GetString(byte[] buffer)
 		{
@@ -140,7 +130,7 @@ namespace FirebirdSql.Data.Common
 
 				default:
 					return Encoding.GetEncoding(this.systemName);
-			}			
+			}
 		}
 
 		#endregion
@@ -152,64 +142,61 @@ namespace FirebirdSql.Data.Common
 			Charset.supportedCharsets = new CharsetCollection();
 
 			// NONE
-			Charset.AddCharset(0, "NONE", 1, "NONE");
+			Charset.Add(0, "NONE", 1, "NONE");
 			// OCTETS
-			Charset.AddCharset(1, "OCTETS", 1, "OCTETS");
+			Charset.Add(1, "OCTETS", 1, "OCTETS");
 			// American Standard Code for Information Interchange	
-			Charset.AddCharset(2, "ASCII", 1, "ascii");
+			Charset.Add(2, "ASCII", 1, "ascii");
 			// Eight-bit Unicode Transformation Format
-			Charset.AddCharset(3, "UNICODE_FSS", 3, "UTF-8");
+			Charset.Add(3, "UNICODE_FSS", 3, "UTF-8");
 			// Shift-JIS, Japanese
-			Charset.AddCharset(5, "SJIS_0208", 2, "shift_jis");
+			Charset.Add(5, "SJIS_0208", 2, "shift_jis");
 			// JIS X 0201, 0208, 0212, EUC encoding, Japanese
-			Charset.AddCharset(6, "EUCJ_0208", 2, "euc-jp");
+			Charset.Add(6, "EUCJ_0208", 2, "euc-jp");
 			// Windows Japanese	
-			Charset.AddCharset(7, "ISO2022-JP", 2, "iso-2022-jp");
+			Charset.Add(7, "ISO2022-JP", 2, "iso-2022-jp");
 			// MS-DOS United States, Australia, New Zealand, South Africa	
-			Charset.AddCharset(10, "DOS437", 1, "IBM437");
+			Charset.Add(10, "DOS437", 1, "IBM437");
 			// MS-DOS Latin-1				
-			Charset.AddCharset(11, "DOS850", 1, "ibm850");
+			Charset.Add(11, "DOS850", 1, "ibm850");
 			// MS-DOS Nordic	
-			Charset.AddCharset(12, "DOS865", 1, "IBM865");
+			Charset.Add(12, "DOS865", 1, "IBM865");
 			// MS-DOS Portuguese	
-			Charset.AddCharset(13, "DOS860", 1, "IBM860");
+			Charset.Add(13, "DOS860", 1, "IBM860");
 			// MS-DOS Canadian French	
-			Charset.AddCharset(14, "DOS863", 1, "IBM863");
+			Charset.Add(14, "DOS863", 1, "IBM863");
 			// ISO 8859-1, Latin alphabet No. 1
-			Charset.AddCharset(21, "ISO8859_1", 1, "iso-8859-1");
+			Charset.Add(21, "ISO8859_1", 1, "iso-8859-1");
 			// ISO 8859-2, Latin alphabet No. 2
-			Charset.AddCharset(22, "ISO8859_2", 1, "iso-8859-2");
+			Charset.Add(22, "ISO8859_2", 1, "iso-8859-2");
 			// Windows Korean	
-			Charset.AddCharset(44, "KSC_5601", 2, "ks_c_5601-1987");
+			Charset.Add(44, "KSC_5601", 2, "ks_c_5601-1987");
 			// MS-DOS Icelandic	
-			Charset.AddCharset(47, "DOS861", 1, "ibm861");
+			Charset.Add(47, "DOS861", 1, "ibm861");
 			// Windows Eastern European
-			Charset.AddCharset(51, "WIN1250", 1, "windows-1250");
+			Charset.Add(51, "WIN1250", 1, "windows-1250");
 			// Windows Cyrillic
-			Charset.AddCharset(52, "WIN1251", 1, "windows-1251");
+			Charset.Add(52, "WIN1251", 1, "windows-1251");
 			// Windows Latin-1
-			Charset.AddCharset(53, "WIN1252", 1, "windows-1252");
+			Charset.Add(53, "WIN1252", 1, "windows-1252");
 			// Windows Greek
-			Charset.AddCharset(54, "WIN1253", 1, "windows-1253");
+			Charset.Add(54, "WIN1253", 1, "windows-1253");
 			// Windows Turkish
-			Charset.AddCharset(55, "WIN1254", 1, "windows-1254");
+			Charset.Add(55, "WIN1254", 1, "windows-1254");
 			// Big5, Traditional Chinese
-			Charset.AddCharset(56, "BIG_5", 2, "big5");
+			Charset.Add(56, "BIG_5", 2, "big5");
 			// GB2312, EUC encoding, Simplified Chinese	
-			Charset.AddCharset(57, "GB_2312", 2, "gb2312");
+			Charset.Add(57, "GB_2312", 2, "gb2312");
 			// Windows Hebrew
-			Charset.AddCharset(58, "WIN1255", 1, "windows-1255");
+			Charset.Add(58, "WIN1255", 1, "windows-1255");
 			// Windows Arabic	
-			Charset.AddCharset(59, "WIN1256", 1, "windows-1256");
+			Charset.Add(59, "WIN1256", 1, "windows-1256");
 			// Windows Baltic	
-			Charset.AddCharset(60, "WIN1257", 1, "windows-1257");
+			Charset.Add(60, "WIN1257", 1, "windows-1257");
 		}
 
-		private static void AddCharset(
-			int		id,
-			string	charset,
-			int		bytesPerCharacter,
-			string	systemName)
+		private static void Add(
+			int id, string charset, int bytesPerCharacter, string systemName)
 		{
 			Charset.SupportedCharsets.Add(
 					id,

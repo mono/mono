@@ -12,7 +12,7 @@
  *     express or implied.  See the License for the specific 
  *     language governing rights and limitations under the License.
  * 
- *  Copyright (c) 2002, 2004 Carlos Guzman Alvarez
+ *  Copyright (c) 2002, 2005 Carlos Guzman Alvarez
  *  All Rights Reserved.
  */
 
@@ -51,21 +51,21 @@ namespace FirebirdSql.Data.Common
 		public DbValue(DbField field, object value)
 		{
 			this.field = field;
-			this.value = value == null ? System.DBNull.Value : value;
+			this.value = (value == null) ? System.DBNull.Value : value;
 		}
 
 		public DbValue(StatementBase statement, DbField field)
 		{
-			this.statement = statement;
-			this.field = field;
-			this.value = field.Value;
+			this.statement	= statement;
+			this.field		= field;
+			this.value		= field.Value;
 		}
 
 		public DbValue(StatementBase statement, DbField field, object value)
 		{
-			this.statement = statement;
-			this.field = field;
-			this.value = value == null ? System.DBNull.Value : value;
+			this.statement	= statement;
+			this.field		= field;
+			this.value		= (value == null) ? System.DBNull.Value : value;
 		}
 
 		#endregion
@@ -88,9 +88,9 @@ namespace FirebirdSql.Data.Common
 		{
 			if (this.Field.DbDataType == DbDataType.Text)
 			{
-				// This is for ascii blobs
 				this.value = this.GetClobData((long)this.value);
 			}
+
 			return this.value.ToString();
 		}
 
@@ -164,6 +164,7 @@ namespace FirebirdSql.Data.Common
 			{
 				this.value = this.GetArrayData((long)this.value);
 			}
+
 			return (Array)this.value;
 		}
 
@@ -250,15 +251,16 @@ namespace FirebirdSql.Data.Common
 
 		private Array GetArrayData(long handle)
 		{
-            if (this.field.ArrayHandle == null)
-            {
-                this.field.ArrayHandle = this.statement.CreateArray(handle, this.Field.Relation, this.Field.Name);
-            }
-            
-            ArrayBase gdsArray      = this.statement.CreateArray(this.field.ArrayHandle.Descriptor);
-            gdsArray.Handle         = handle;
-            gdsArray.DB             = this.statement.DB;
-            gdsArray.Transaction    = this.statement.Transaction;
+			if (this.field.ArrayHandle == null)
+			{
+				this.field.ArrayHandle = this.statement.CreateArray(handle, this.Field.Relation, this.Field.Name);
+			}
+
+			ArrayBase gdsArray = this.statement.CreateArray(this.field.ArrayHandle.Descriptor);
+			
+			gdsArray.Handle			= handle;
+			gdsArray.DB				= this.statement.DB;
+			gdsArray.Transaction	= this.statement.Transaction;
 
 			return gdsArray.Read();
 		}

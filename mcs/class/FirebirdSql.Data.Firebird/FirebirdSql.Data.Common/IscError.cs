@@ -1,19 +1,19 @@
 /*
  *	Firebird ADO.NET Data provider for .NET	and	Mono 
  * 
- *	   The contents	of this	file are subject to	the	Initial	
+ *	   The contents of this file are subject to the Initial 
  *	   Developer's Public License Version 1.0 (the "License"); 
- *	   you may not use this	file except	in compliance with the 
- *	   License.	You	may	obtain a copy of the License at	
+ *	   you may not use this file except in compliance with the 
+ *	   License. You may obtain a copy of the License at 
  *	   http://www.firebirdsql.org/index.php?op=doc&id=idpl
  *
- *	   Software	distributed	under the License is distributed on	
+ *	   Software distributed under the License is distributed on 
  *	   an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either 
- *	   express or implied.	See	the	License	for	the	specific 
- *	   language	governing rights and limitations under the License.
+ *	   express or implied. See the License for the specific 
+ *	   language governing rights and limitations under the License.
  * 
- *	Copyright (c) 2002,	2004 Carlos	Guzman Alvarez
- *	All	Rights Reserved.
+ *	Copyright (c) 2002, 2005 Carlos Guzman Alvarez
+ *	All Rights Reserved.
  */
 
 using System;
@@ -21,28 +21,28 @@ using System.Globalization;
 
 namespace FirebirdSql.Data.Common
 {
-	internal sealed	class IscError
+	internal sealed class IscError
 	{
-		#region	Fields
+		#region Fields
 
-		private	string	message;
-		private	int		type;
-		private	int		errorCode;
-		private	string	strParam;
-		
+		private string	message;
+		private int		type;
+		private int		errorCode;
+		private string	strParam;
+
 		#endregion
 
-		#region	Properties
-		
+		#region Properties
+
 		public string Message
 		{
-			get	{ return this.message; }
-			set	{ this.message = value;	}
+			get { return this.message; }
+			set { this.message = value; }
 		}
 
 		public int ErrorCode
 		{
-			get	{ return this.errorCode; }
+			get { return this.errorCode; }
 		}
 
 		public string StrParam
@@ -67,10 +67,10 @@ namespace FirebirdSql.Data.Common
 
 		public int Type
 		{
-			get	{ return this.type;	}
+			get { return this.type; }
 		}
 
-		public bool	IsArgument
+		public bool IsArgument
 		{
 			get
 			{
@@ -88,27 +88,27 @@ namespace FirebirdSql.Data.Common
 			}
 		}
 
-		public bool	IsWarning
+		public bool IsWarning
 		{
-			get	{ return this.type == IscCodes.isc_arg_warning;	}
+			get { return this.type == IscCodes.isc_arg_warning; }
 		}
 
 		#endregion
 
-		#region	Constructors
+		#region Constructors
 
 		internal IscError(int errorCode)
-		{						
+		{
 			this.errorCode = errorCode;
 		}
 
-		internal IscError(int type,	string strParam)
+		internal IscError(int type, string strParam)
 		{
 			this.type		= type;
 			this.strParam	= strParam;
 		}
 
-		internal IscError(int type,	int	errorCode)
+		internal IscError(int type, int errorCode)
 		{
 			this.type		= type;
 			this.errorCode	= errorCode;

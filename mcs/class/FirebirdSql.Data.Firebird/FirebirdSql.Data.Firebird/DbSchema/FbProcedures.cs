@@ -1,19 +1,19 @@
 /*
  *	Firebird ADO.NET Data provider for .NET	and	Mono 
  * 
- *	   The contents	of this	file are subject to	the	Initial	
+ *	   The contents of this file are subject to the Initial 
  *	   Developer's Public License Version 1.0 (the "License"); 
- *	   you may not use this	file except	in compliance with the 
- *	   License.	You	may	obtain a copy of the License at	
+ *	   you may not use this file except in compliance with the 
+ *	   License. You may obtain a copy of the License at 
  *	   http://www.firebirdsql.org/index.php?op=doc&id=idpl
  *
- *	   Software	distributed	under the License is distributed on	
+ *	   Software distributed under the License is distributed on 
  *	   an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either 
- *	   express or implied.	See	the	License	for	the	specific 
- *	   language	governing rights and limitations under the License.
+ *	   express or implied. See the License for the specific 
+ *	   language governing rights and limitations under the License.
  * 
- *	Copyright (c) 2002,	2004 Carlos	Guzman Alvarez
- *	All	Rights Reserved.
+ *	Copyright (c) 2002, 2005 Carlos Guzman Alvarez
+ *	All Rights Reserved.
  */
 
 using System;
@@ -23,50 +23,50 @@ using System.Text;
 
 namespace FirebirdSql.Data.Firebird.DbSchema
 {
-	internal class FbProcedures	: FbDbSchema
+	internal class FbProcedures : FbDbSchema
 	{
-		#region	Constructors
+		#region Constructors
 
-		public FbProcedures() :	base("Procedures")
+		public FbProcedures() : base("Procedures")
 		{
 		}
 
 		#endregion
 
-		#region	Protected Methods
+		#region Protected Methods
 
 		protected override StringBuilder GetCommandText(object[] restrictions)
 		{
-			StringBuilder sql	= new StringBuilder();
-			StringBuilder where	= new StringBuilder();
+			StringBuilder sql = new StringBuilder();
+			StringBuilder where = new StringBuilder();
 
 			sql.Append(
 				@"SELECT " +
-					"null AS PROCEDURE_CATALOG,	" +
+					"null AS PROCEDURE_CATALOG, " +
 					"null AS PROCEDURE_SCHEMA, " +
-					"rdb$procedure_name	AS PROCEDURE_NAME, " +
+					"rdb$procedure_name AS PROCEDURE_NAME, " +
 					"rdb$procedure_inputs AS INPUTS, " +
 					"rdb$procedure_outputs AS OUTPUTS, " +
-					"rdb$description AS	DESCRIPTION	" +
-				"FROM "	+
+					"rdb$description AS DESCRIPTION " +
+				"FROM " +
 					"rdb$procedures");
 
-			if (restrictions !=	null)
+			if (restrictions != null)
 			{
-				int	index =	0;
+				int index = 0;
 
 				/* PROCEDURE_CATALOG */
-				if (restrictions.Length	>= 1 &&	restrictions[0]	!= null)
+				if (restrictions.Length >= 1 && restrictions[0] != null)
 				{
 				}
 
 				/* PROCEDURE_SCHEMA	*/
-				if (restrictions.Length	>= 2 &&	restrictions[1]	!= null)
+				if (restrictions.Length >= 2 && restrictions[1] != null)
 				{
 				}
 
 				/* PROCEDURE_NAME */
-				if (restrictions.Length	>= 3 &&	restrictions[2]	!= null)
+				if (restrictions.Length >= 3 && restrictions[2] != null)
 				{
 					where.AppendFormat(CultureInfo.CurrentUICulture, "rdb$procedure_name = @p{0}", index++);
 				}
@@ -86,11 +86,11 @@ namespace FirebirdSql.Data.Firebird.DbSchema
 		{
 			schema.BeginLoadData();
 
-			foreach	(DataRow row in	schema.Rows)
+			foreach (DataRow row in schema.Rows)
 			{
 				if (row["INPUTS"] == DBNull.Value)
 				{
-					row["INPUTS"] =	0;
+					row["INPUTS"] = 0;
 				}
 				if (row["OUTPUTS"] == DBNull.Value)
 				{
@@ -100,7 +100,7 @@ namespace FirebirdSql.Data.Firebird.DbSchema
 
 			schema.EndLoadData();
 			schema.AcceptChanges();
-			
+
 			return schema;
 		}
 

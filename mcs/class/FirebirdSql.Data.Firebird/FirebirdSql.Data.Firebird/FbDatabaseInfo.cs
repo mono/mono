@@ -1,19 +1,19 @@
 /*
  *	Firebird ADO.NET Data provider for .NET	and	Mono 
  * 
- *	   The contents	of this	file are subject to	the	Initial	
+ *	   The contents of this file are subject to the Initial 
  *	   Developer's Public License Version 1.0 (the "License"); 
- *	   you may not use this	file except	in compliance with the 
- *	   License.	You	may	obtain a copy of the License at	
+ *	   you may not use this file except in compliance with the 
+ *	   License. You may obtain a copy of the License at 
  *	   http://www.firebirdsql.org/index.php?op=doc&id=idpl
  *
- *	   Software	distributed	under the License is distributed on	
+ *	   Software distributed under the License is distributed on 
  *	   an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either 
- *	   express or implied.	See	the	License	for	the	specific 
- *	   language	governing rights and limitations under the License.
+ *	   express or implied. See the License for the specific 
+ *	   language governing rights and limitations under the License.
  * 
- *	Copyright (c) 2002,	2004 Carlos	Guzman Alvarez
- *	All	Rights Reserved.
+ *	Copyright (c) 2002, 2005 Carlos Guzman Alvarez
+ *	All Rights Reserved.
  */
 
 using System;
@@ -25,253 +25,253 @@ using FirebirdSql.Data.Common;
 
 namespace FirebirdSql.Data.Firebird
 {
-	///	<include file='Doc/en_EN/FbDatabaseInfo.xml' path='doc/class[@name="FbDatabaseInfo"]/overview/*'/>
-	public sealed class	FbDatabaseInfo
+	/// <include file='Doc/en_EN/FbDatabaseInfo.xml' path='doc/class[@name="FbDatabaseInfo"]/overview/*'/>
+	public sealed class FbDatabaseInfo
 	{
-		#region	Fields
+		#region Fields
 
-		private	FbConnection connection;
+		private FbConnection connection;
 
 		#endregion
 
-		#region	Properties
+		#region Properties
 
-		///	<include file='Doc/en_EN/FbDatabaseInfo.xml' path='doc/class[@name="FbDatabaseInfo"]/property[@name="Connection"]/*'/>
-		public FbConnection	Connection
+		/// <include file='Doc/en_EN/FbDatabaseInfo.xml' path='doc/class[@name="FbDatabaseInfo"]/property[@name="Connection"]/*'/>
+		public FbConnection Connection
 		{
-			get	{ return this.connection; }
-			set	{ this.connection =	value;}
+			get { return this.connection; }
+			set { this.connection = value; }
 		}
 
-		///	<include file='Doc/en_EN/FbDatabaseInfo.xml' path='doc/class[@name="FbDatabaseInfo"]/property[@name="IscVersion"]/*'/>
+		/// <include file='Doc/en_EN/FbDatabaseInfo.xml' path='doc/class[@name="FbDatabaseInfo"]/property[@name="IscVersion"]/*'/>
 		public string IscVersion
 		{
-			get	{ return this.GetString(IscCodes.isc_info_isc_version);	}
+			get { return this.GetString(IscCodes.isc_info_isc_version); }
 		}
 
-		///	<include file='Doc/en_EN/FbDatabaseInfo.xml' path='doc/class[@name="FbDatabaseInfo"]/property[@name="ServerVersion"]/*'/>
+		/// <include file='Doc/en_EN/FbDatabaseInfo.xml' path='doc/class[@name="FbDatabaseInfo"]/property[@name="ServerVersion"]/*'/>
 		public string ServerVersion
 		{
-			get	{ return this.GetString(IscCodes.isc_info_firebird_version); }
+			get { return this.GetString(IscCodes.isc_info_firebird_version); }
 		}
 
-		///	<include file='Doc/en_EN/FbDatabaseInfo.xml' path='doc/class[@name="FbDatabaseInfo"]/property[@name="ServerClass"]/*'/>
+		/// <include file='Doc/en_EN/FbDatabaseInfo.xml' path='doc/class[@name="FbDatabaseInfo"]/property[@name="ServerClass"]/*'/>
 		public string ServerClass
 		{
-			get	{ return this.GetString(IscCodes.isc_info_db_class); }
+			get { return this.GetString(IscCodes.isc_info_db_class); }
 		}
 
-		///	<include file='Doc/en_EN/FbDatabaseInfo.xml' path='doc/class[@name="FbDatabaseInfo"]/property[@name="PageSize"]/*'/>
+		/// <include file='Doc/en_EN/FbDatabaseInfo.xml' path='doc/class[@name="FbDatabaseInfo"]/property[@name="PageSize"]/*'/>
 		public int PageSize
 		{
-			get	{ return this.GetInt32(IscCodes.isc_info_page_size); }
+			get { return this.GetInt32(IscCodes.isc_info_page_size); }
 		}
 
-		///	<include file='Doc/en_EN/FbDatabaseInfo.xml' path='doc/class[@name="FbDatabaseInfo"]/property[@name="AllocationPages"]/*'/>
+		/// <include file='Doc/en_EN/FbDatabaseInfo.xml' path='doc/class[@name="FbDatabaseInfo"]/property[@name="AllocationPages"]/*'/>
 		public int AllocationPages
 		{
-			get	{ return this.GetInt32(IscCodes.isc_info_allocation); }
+			get { return this.GetInt32(IscCodes.isc_info_allocation); }
 		}
 
-		///	<include file='Doc/en_EN/FbDatabaseInfo.xml' path='doc/class[@name="FbDatabaseInfo"]/property[@name="BaseLevel"]/*'/>
+		/// <include file='Doc/en_EN/FbDatabaseInfo.xml' path='doc/class[@name="FbDatabaseInfo"]/property[@name="BaseLevel"]/*'/>
 		public string BaseLevel
 		{
-			get	{ return this.GetString(IscCodes.isc_info_base_level); }
+			get { return this.GetString(IscCodes.isc_info_base_level); }
 		}
 
-		///	<include file='Doc/en_EN/FbDatabaseInfo.xml' path='doc/class[@name="FbDatabaseInfo"]/property[@name="DbId"]/*'/>
+		/// <include file='Doc/en_EN/FbDatabaseInfo.xml' path='doc/class[@name="FbDatabaseInfo"]/property[@name="DbId"]/*'/>
 		public string DbId
 		{
-			get	{ return this.GetString(IscCodes.isc_info_db_id); }
+			get { return this.GetString(IscCodes.isc_info_db_id); }
 		}
 
-		///	<include file='Doc/en_EN/FbDatabaseInfo.xml' path='doc/class[@name="FbDatabaseInfo"]/property[@name="Implementation"]/*'/>
+		/// <include file='Doc/en_EN/FbDatabaseInfo.xml' path='doc/class[@name="FbDatabaseInfo"]/property[@name="Implementation"]/*'/>
 		public string Implementation
 		{
-			get	{ return this.GetString(IscCodes.isc_info_implementation); }
+			get { return this.GetString(IscCodes.isc_info_implementation); }
 		}
 
-		///	<include file='Doc/en_EN/FbDatabaseInfo.xml' path='doc/class[@name="FbDatabaseInfo"]/property[@name="NoReserve"]/*'/>
-		public bool	NoReserve
+		/// <include file='Doc/en_EN/FbDatabaseInfo.xml' path='doc/class[@name="FbDatabaseInfo"]/property[@name="NoReserve"]/*'/>
+		public bool NoReserve
 		{
-			get	{ return this.GetBoolean(IscCodes.isc_info_no_reserve);	}
+			get { return this.GetBoolean(IscCodes.isc_info_no_reserve); }
 		}
 
-		///	<include file='Doc/en_EN/FbDatabaseInfo.xml' path='doc/class[@name="FbDatabaseInfo"]/property[@name="OdsVersion"]/*'/>
+		/// <include file='Doc/en_EN/FbDatabaseInfo.xml' path='doc/class[@name="FbDatabaseInfo"]/property[@name="OdsVersion"]/*'/>
 		public int OdsVersion
 		{
-			get	{ return this.GetInt32(IscCodes.isc_info_ods_version); }
+			get { return this.GetInt32(IscCodes.isc_info_ods_version); }
 		}
 
-		///	<include file='Doc/en_EN/FbDatabaseInfo.xml' path='doc/class[@name="FbDatabaseInfo"]/property[@name="OdsMinorVersion"]/*'/>
+		/// <include file='Doc/en_EN/FbDatabaseInfo.xml' path='doc/class[@name="FbDatabaseInfo"]/property[@name="OdsMinorVersion"]/*'/>
 		public int OdsMinorVersion
 		{
-			get	{ return this.GetInt32(IscCodes.isc_info_ods_minor_version); }
+			get { return this.GetInt32(IscCodes.isc_info_ods_minor_version); }
 		}
 
-		///	<include file='Doc/en_EN/FbDatabaseInfo.xml' path='doc/class[@name="FbDatabaseInfo"]/property[@name="MaxMemory"]/*'/>
+		/// <include file='Doc/en_EN/FbDatabaseInfo.xml' path='doc/class[@name="FbDatabaseInfo"]/property[@name="MaxMemory"]/*'/>
 		public int MaxMemory
 		{
-			get	{ return this.GetInt32(IscCodes.isc_info_max_memory); }
+			get { return this.GetInt32(IscCodes.isc_info_max_memory); }
 		}
 
-		///	<include file='Doc/en_EN/FbDatabaseInfo.xml' path='doc/class[@name="FbDatabaseInfo"]/property[@name="CurrentMemory"]/*'/>
+		/// <include file='Doc/en_EN/FbDatabaseInfo.xml' path='doc/class[@name="FbDatabaseInfo"]/property[@name="CurrentMemory"]/*'/>
 		public int CurrentMemory
 		{
-			get	{ return this.GetInt32(IscCodes.isc_info_current_memory); }
+			get { return this.GetInt32(IscCodes.isc_info_current_memory); }
 		}
 
-		///	<include file='Doc/en_EN/FbDatabaseInfo.xml' path='doc/class[@name="FbDatabaseInfo"]/property[@name="ForcedWrites"]/*'/>
-		public bool	ForcedWrites
+		/// <include file='Doc/en_EN/FbDatabaseInfo.xml' path='doc/class[@name="FbDatabaseInfo"]/property[@name="ForcedWrites"]/*'/>
+		public bool ForcedWrites
 		{
-			get	{ return this.GetBoolean(IscCodes.isc_info_forced_writes); }
+			get { return this.GetBoolean(IscCodes.isc_info_forced_writes); }
 		}
 
-		///	<include file='Doc/en_EN/FbDatabaseInfo.xml' path='doc/class[@name="FbDatabaseInfo"]/property[@name="NumBuffers"]/*'/>
+		/// <include file='Doc/en_EN/FbDatabaseInfo.xml' path='doc/class[@name="FbDatabaseInfo"]/property[@name="NumBuffers"]/*'/>
 		public int NumBuffers
 		{
-			get	{ return this.GetInt32(IscCodes.isc_info_num_buffers); }
+			get { return this.GetInt32(IscCodes.isc_info_num_buffers); }
 		}
 
-		///	<include file='Doc/en_EN/FbDatabaseInfo.xml' path='doc/class[@name="FbDatabaseInfo"]/property[@name="SweepInterval"]/*'/>
+		/// <include file='Doc/en_EN/FbDatabaseInfo.xml' path='doc/class[@name="FbDatabaseInfo"]/property[@name="SweepInterval"]/*'/>
 		public int SweepInterval
 		{
-			get	{ return this.GetInt32(IscCodes.isc_info_sweep_interval); }
+			get { return this.GetInt32(IscCodes.isc_info_sweep_interval); }
 		}
 
-		///	<include file='Doc/en_EN/FbDatabaseInfo.xml' path='doc/class[@name="FbDatabaseInfo"]/property[@name="ReadOnly"]/*'/>
-		public bool	ReadOnly
+		/// <include file='Doc/en_EN/FbDatabaseInfo.xml' path='doc/class[@name="FbDatabaseInfo"]/property[@name="ReadOnly"]/*'/>
+		public bool ReadOnly
 		{
-			get	{ return this.GetBoolean(IscCodes.isc_info_db_read_only); }
+			get { return this.GetBoolean(IscCodes.isc_info_db_read_only); }
 		}
 
-		///	<include file='Doc/en_EN/FbDatabaseInfo.xml' path='doc/class[@name="FbDatabaseInfo"]/property[@name="Fetches"]/*'/>
+		/// <include file='Doc/en_EN/FbDatabaseInfo.xml' path='doc/class[@name="FbDatabaseInfo"]/property[@name="Fetches"]/*'/>
 		public int Fetches
 		{
-			get	{ return this.GetInt32(IscCodes.isc_info_fetches); }
+			get { return this.GetInt32(IscCodes.isc_info_fetches); }
 		}
 
-		///	<include file='Doc/en_EN/FbDatabaseInfo.xml' path='doc/class[@name="FbDatabaseInfo"]/property[@name="Marks"]/*'/>
+		/// <include file='Doc/en_EN/FbDatabaseInfo.xml' path='doc/class[@name="FbDatabaseInfo"]/property[@name="Marks"]/*'/>
 		public int Marks
 		{
-			get	{ return this.GetInt32(IscCodes.isc_info_marks); }
+			get { return this.GetInt32(IscCodes.isc_info_marks); }
 		}
 
-		///	<include file='Doc/en_EN/FbDatabaseInfo.xml' path='doc/class[@name="FbDatabaseInfo"]/property[@name="Reads"]/*'/>
+		/// <include file='Doc/en_EN/FbDatabaseInfo.xml' path='doc/class[@name="FbDatabaseInfo"]/property[@name="Reads"]/*'/>
 		public int Reads
 		{
-			get	{ return this.GetInt32(IscCodes.isc_info_reads); }
+			get { return this.GetInt32(IscCodes.isc_info_reads); }
 		}
 
-		///	<include file='Doc/en_EN/FbDatabaseInfo.xml' path='doc/class[@name="FbDatabaseInfo"]/property[@name="Writes"]/*'/>
+		/// <include file='Doc/en_EN/FbDatabaseInfo.xml' path='doc/class[@name="FbDatabaseInfo"]/property[@name="Writes"]/*'/>
 		public int Writes
 		{
-			get	{ return this.GetInt32(IscCodes.isc_info_writes); }
+			get { return this.GetInt32(IscCodes.isc_info_writes); }
 		}
 
-		///	<include file='Doc/en_EN/FbDatabaseInfo.xml' path='doc/class[@name="FbDatabaseInfo"]/property[@name="BackoutCount"]/*'/>
+		/// <include file='Doc/en_EN/FbDatabaseInfo.xml' path='doc/class[@name="FbDatabaseInfo"]/property[@name="BackoutCount"]/*'/>
 		public int BackoutCount
 		{
-			get	{ return this.GetInt32(IscCodes.isc_info_backout_count); }
+			get { return this.GetInt32(IscCodes.isc_info_backout_count); }
 		}
 
-		///	<include file='Doc/en_EN/FbDatabaseInfo.xml' path='doc/class[@name="FbDatabaseInfo"]/property[@name="DeleteCount"]/*'/>
+		/// <include file='Doc/en_EN/FbDatabaseInfo.xml' path='doc/class[@name="FbDatabaseInfo"]/property[@name="DeleteCount"]/*'/>
 		public int DeleteCount
 		{
-			get	{ return this.GetInt32(IscCodes.isc_info_delete_count);	}
+			get { return this.GetInt32(IscCodes.isc_info_delete_count); }
 		}
 
-		///	<include file='Doc/en_EN/FbDatabaseInfo.xml' path='doc/class[@name="FbDatabaseInfo"]/property[@name="ExpungeCount"]/*'/>
+		/// <include file='Doc/en_EN/FbDatabaseInfo.xml' path='doc/class[@name="FbDatabaseInfo"]/property[@name="ExpungeCount"]/*'/>
 		public int ExpungeCount
 		{
-			get	{ return this.GetInt32(IscCodes.isc_info_expunge_count); }
+			get { return this.GetInt32(IscCodes.isc_info_expunge_count); }
 		}
 
-		///	<include file='Doc/en_EN/FbDatabaseInfo.xml' path='doc/class[@name="FbDatabaseInfo"]/property[@name="InsertCount"]/*'/>
+		/// <include file='Doc/en_EN/FbDatabaseInfo.xml' path='doc/class[@name="FbDatabaseInfo"]/property[@name="InsertCount"]/*'/>
 		public int InsertCount
 		{
-			get	{ return this.GetInt32(IscCodes.isc_info_insert_count);	}
+			get { return this.GetInt32(IscCodes.isc_info_insert_count); }
 		}
 
-		///	<include file='Doc/en_EN/FbDatabaseInfo.xml' path='doc/class[@name="FbDatabaseInfo"]/property[@name="PurgeCount"]/*'/>
+		/// <include file='Doc/en_EN/FbDatabaseInfo.xml' path='doc/class[@name="FbDatabaseInfo"]/property[@name="PurgeCount"]/*'/>
 		public int PurgeCount
 		{
-			get	{ return this.GetInt32(IscCodes.isc_info_purge_count); }
+			get { return this.GetInt32(IscCodes.isc_info_purge_count); }
 		}
 
-		///	<include file='Doc/en_EN/FbDatabaseInfo.xml' path='doc/class[@name="FbDatabaseInfo"]/property[@name="ReadIdxCount"]/*'/>
+		/// <include file='Doc/en_EN/FbDatabaseInfo.xml' path='doc/class[@name="FbDatabaseInfo"]/property[@name="ReadIdxCount"]/*'/>
 		public int ReadIdxCount
 		{
-			get	{ return this.GetInt32(IscCodes.isc_info_read_idx_count); }
+			get { return this.GetInt32(IscCodes.isc_info_read_idx_count); }
 		}
 
-		///	<include file='Doc/en_EN/FbDatabaseInfo.xml' path='doc/class[@name="FbDatabaseInfo"]/property[@name="ReadSeqCount"]/*'/>
+		/// <include file='Doc/en_EN/FbDatabaseInfo.xml' path='doc/class[@name="FbDatabaseInfo"]/property[@name="ReadSeqCount"]/*'/>
 		public int ReadSeqCount
 		{
-			get	{ return this.GetInt32(IscCodes.isc_info_read_seq_count); }
+			get { return this.GetInt32(IscCodes.isc_info_read_seq_count); }
 		}
 
-		///	<include file='Doc/en_EN/FbDatabaseInfo.xml' path='doc/class[@name="FbDatabaseInfo"]/property[@name="UpdateCount"]/*'/>
+		/// <include file='Doc/en_EN/FbDatabaseInfo.xml' path='doc/class[@name="FbDatabaseInfo"]/property[@name="UpdateCount"]/*'/>
 		public int UpdateCount
 		{
-			get	{ return this.GetInt32(IscCodes.isc_info_update_count);	}
+			get { return this.GetInt32(IscCodes.isc_info_update_count); }
 		}
 
-		///	<include file='Doc/en_EN/FbDatabaseInfo.xml' path='doc/class[@name="FbDatabaseInfo"]/property[@name="DatabaseSizeInPages"]/*'/>
+		/// <include file='Doc/en_EN/FbDatabaseInfo.xml' path='doc/class[@name="FbDatabaseInfo"]/property[@name="DatabaseSizeInPages"]/*'/>
 		public int DatabaseSizeInPages
 		{
-			get	{ return this.GetInt32(IscCodes.isc_info_db_size_in_pages);	}
+			get { return this.GetInt32(IscCodes.isc_info_db_size_in_pages); }
 		}
-		///	<include file='Doc/en_EN/FbDatabaseInfo.xml' path='doc/class[@name="FbDatabaseInfo"]/property[@name="OldestTransaction"]/*'/>
+		/// <include file='Doc/en_EN/FbDatabaseInfo.xml' path='doc/class[@name="FbDatabaseInfo"]/property[@name="OldestTransaction"]/*'/>
 		public int OldestTransaction
 		{
-			get	{ return this.GetInt32(IscCodes.isc_info_oldest_transaction); }
+			get { return this.GetInt32(IscCodes.isc_info_oldest_transaction); }
 		}
 
-		///	<include file='Doc/en_EN/FbDatabaseInfo.xml' path='doc/class[@name="FbDatabaseInfo"]/property[@name="OldestActiveTransaction"]/*'/>
+		/// <include file='Doc/en_EN/FbDatabaseInfo.xml' path='doc/class[@name="FbDatabaseInfo"]/property[@name="OldestActiveTransaction"]/*'/>
 		public int OldestActiveTransaction
 		{
-			get	{ return this.GetInt32(IscCodes.isc_info_oldest_active); }
+			get { return this.GetInt32(IscCodes.isc_info_oldest_active); }
 		}
 
-		///	<include file='Doc/en_EN/FbDatabaseInfo.xml' path='doc/class[@name="FbDatabaseInfo"]/property[@name="OldestActiveSnapshot"]/*'/>
+		/// <include file='Doc/en_EN/FbDatabaseInfo.xml' path='doc/class[@name="FbDatabaseInfo"]/property[@name="OldestActiveSnapshot"]/*'/>
 		public int OldestActiveSnapshot
 		{
-			get	{ return this.GetInt32(IscCodes.isc_info_oldest_snapshot); }
+			get { return this.GetInt32(IscCodes.isc_info_oldest_snapshot); }
 		}
 
-		///	<include file='Doc/en_EN/FbDatabaseInfo.xml' path='doc/class[@name="FbDatabaseInfo"]/property[@name="NextTransaction"]/*'/>
+		/// <include file='Doc/en_EN/FbDatabaseInfo.xml' path='doc/class[@name="FbDatabaseInfo"]/property[@name="NextTransaction"]/*'/>
 		public int NextTransaction
 		{
-			get	{ return this.GetInt32(IscCodes.isc_info_next_transaction);	}
+			get { return this.GetInt32(IscCodes.isc_info_next_transaction); }
 		}
 
-		///	<include file='Doc/en_EN/FbDatabaseInfo.xml' path='doc/class[@name="FbDatabaseInfo"]/property[@name="ActiveTransactions"]/*'/>
+		/// <include file='Doc/en_EN/FbDatabaseInfo.xml' path='doc/class[@name="FbDatabaseInfo"]/property[@name="ActiveTransactions"]/*'/>
 		public int ActiveTransactions
 		{
-			get	{ return this.GetInt32(IscCodes.isc_info_active_transactions); }
+			get { return this.GetInt32(IscCodes.isc_info_active_transactions); }
 		}
 
 		#endregion
 
-		#region	Constructors
+		#region Constructors
 
-		///	<include file='Doc/en_EN/FbDatabaseInfo.xml' path='doc/class[@name="FbDatabaseInfo"]/constructor[@name="ctor"]/*'/>
+		/// <include file='Doc/en_EN/FbDatabaseInfo.xml' path='doc/class[@name="FbDatabaseInfo"]/constructor[@name="ctor"]/*'/>
 		public FbDatabaseInfo()
 		{
 		}
 
-		///	<include file='Doc/en_EN/FbDatabaseInfo.xml' path='doc/class[@name="FbDatabaseInfo"]/constructor[@name="ctor(FbConnection)"]/*'/>
+		/// <include file='Doc/en_EN/FbDatabaseInfo.xml' path='doc/class[@name="FbDatabaseInfo"]/constructor[@name="ctor(FbConnection)"]/*'/>
 		public FbDatabaseInfo(FbConnection connection)
 		{
-			this.connection	= connection;
+			this.connection = connection;
 		}
 
 		#endregion
 
-		#region	Private	Methods
+		#region Private	Methods
 
-		private	string GetString(byte item)
+		private string GetString(byte item)
 		{
 			this.CheckConnection();
 
@@ -285,7 +285,7 @@ namespace FirebirdSql.Data.Firebird
 			return (string)db.GetDatabaseInfo(items)[0];
 		}
 
-		private	int	GetInt32(byte item)
+		private int GetInt32(byte item)
 		{
 			this.CheckConnection();
 
@@ -298,10 +298,10 @@ namespace FirebirdSql.Data.Firebird
 
 			ArrayList info = db.GetDatabaseInfo(items);
 
-			return (info.Count > 0 ? (int)info[0] :	0);
+			return (info.Count > 0 ? (int)info[0] : 0);
 		}
 
-		private	bool GetBoolean(byte item)
+		private bool GetBoolean(byte item)
 		{
 			this.CheckConnection();
 
@@ -317,13 +317,13 @@ namespace FirebirdSql.Data.Firebird
 			return (info.Count > 0 ? (bool)info[0] : false);
 		}
 
-		private	void CheckConnection()
+		private void CheckConnection()
 		{
-			if (this.connection	== null	|| 
+			if (this.connection == null ||
 				this.connection.State == ConnectionState.Closed)
 			{
-				throw new InvalidOperationException("Connection	must valid and open");
-			}			
+				throw new InvalidOperationException("Connection must valid and open");
+			}
 		}
 
 		#endregion
