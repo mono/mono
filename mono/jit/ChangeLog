@@ -1,4 +1,16 @@
+2001-12-11  Dietmar Maurer  <dietmar@ximian.com>
+
+	* x86.brg: use position indepentent code if possible. 
+
+	* x86.brg (EMIT_COND_EXCEPTION): new macro.
+
+	* emit-x86.c (mono_emit_cfg): impl. variable code buffer size
+
 2001-12-10  Dietmar Maurer  <dietmar@ximian.com>
+
+	* jit.c (mono_analyze_flow): use g_malloc0 o allocate large bcinfo
+	blocks.
+	(mono_analyze_flow): use g_malloc0 o allocate large bblocks array.
 
 	* x86.brg (stmt): added opt. for STIND_R4/STIND_R8
 
