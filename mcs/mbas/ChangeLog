@@ -2,6 +2,9 @@
 	* class.cs (FindMembers): filter on modflags
 	for constructors & constructors are never inherited
 
+	* decl.cs (SetupCache): constructors are not
+	inherited
+
 2004-08-27 Anirban Bhattacharjee <banirban@novell.com>
 	* driver.cs: bug fixing - #63580
 

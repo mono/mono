@@ -885,7 +885,10 @@ namespace Mono.MonoBASIC {
 
 			IDictionaryEnumerator it = parent.member_hash.GetEnumerator ();
 			while (it.MoveNext ()) {
-				hash [it.Key] = ((ArrayList) it.Value).Clone ();
+				ArrayList al = (ArrayList) it.Value;
+				// Constructors are never inherited and all have the same key
+				if ((((CacheEntry)al [0]).EntryType & EntryType.Constructor) == 0)
+					hash [it.Key] = ((ArrayList) it.Value).Clone ();
 			}
 
 			return hash;
