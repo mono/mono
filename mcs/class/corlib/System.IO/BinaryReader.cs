@@ -141,6 +141,7 @@ namespace System.IO {
 		}
 
 		public virtual int Read(char[] buffer, int index, int count) {
+
 			if(m_stream==null) {
 
 				if (m_disposed)
@@ -166,7 +167,7 @@ namespace System.IO {
 			int bytes_read=0;
 			
 			while(chars_read < count) {
-				CheckBuffer(bytes_read);
+				CheckBuffer(bytes_read + 1);
 
 				int read_byte=m_stream.ReadByte();
 				if(read_byte==-1) {
@@ -176,7 +177,7 @@ namespace System.IO {
 
 				m_buffer[bytes_read]=(byte)read_byte;
 				bytes_read++;
-				
+
 				chars_read=m_encoding.GetChars(m_buffer, 0,
 							       bytes_read,
 							       buffer, index);
