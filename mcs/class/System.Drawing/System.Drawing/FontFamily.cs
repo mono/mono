@@ -42,6 +42,12 @@ namespace System.Drawing {
 		{
 										
 		}
+		
+		
+		~FontFamily()
+		{	
+			Dispose ();
+		}
 
 		internal IntPtr NativeObject
 		{            

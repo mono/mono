@@ -38,10 +38,13 @@ namespace System.Drawing
 		
 		private Graphics (IntPtr nativeGraphics)
 		{
-			if (nativeGraphics == IntPtr.Zero)
-				Console.WriteLine ("Here: " + Environment.StackTrace);
 			nativeObject = nativeGraphics;
 		}
+		
+		~Graphics ()
+		{
+			Dispose ();			
+		}		
 		
 		static internal float systemDpiX {
 			get {					
