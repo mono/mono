@@ -2390,7 +2390,7 @@ public class TypeManager {
 			
 			if (list.Count == 0)
 				continue;
-			
+
 			//
 			// Events and types are returned by both `static' and `instance'
 			// searches, which means that our above FindMembers will
@@ -2406,6 +2406,18 @@ public class TypeManager {
 			//
 			if (list [0] is PropertyInfo)
 				return (MemberInfo []) list;
+
+			//
+			// We found an event: the cache lookup returns both the event and
+			// its private field.
+			//
+			if (list [0] is EventInfo) {
+				if ((list.Count == 2) && (list [1] is FieldInfo))
+					return new MemberInfo [] { list [0] };
+
+				// Oooops
+				return null;
+			}
 
 			//
 			// We found methods, turn the search into "method scan"
