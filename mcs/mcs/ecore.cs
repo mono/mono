@@ -1605,6 +1605,7 @@ namespace Mono.CSharp {
 
 			int count = 0;
 
+			
 			foreach (MethodBase mb in union.Methods){
 				ParameterData pd = Invocation.GetParameterData (mb);
 				MethodInfo mi = (MethodInfo) mb;
@@ -3969,9 +3970,12 @@ namespace Mono.CSharp {
 		{
 			if (!FieldInfo.IsStatic){
 				if (instance_expr == null){
-					throw new Exception ("non-static FieldExpr without instance var\n" +
-							     "You have to assign the Instance variable\n" +
-							     "Of the FieldExpr to set this\n");
+					//
+					// This can happen when referencing an instance field using
+					// a fully qualified type expression: TypeName.InstanceField = xxx
+					// 
+					SimpleName.Error_ObjectRefRequired (ec, loc, FieldInfo.Name);
+					return null;
 				}
 
 				// Resolve the field's instance expression while flow analysis is turned

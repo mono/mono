@@ -60,6 +60,7 @@ namespace Mono.CSharp
 
 		static bool parse_only = false;
 		static bool timestamps = false;
+		static bool pause = false;
 
 		//
 		// Whether to load the initial config file (what CSC.RSP has by default)
@@ -112,6 +113,9 @@ namespace Mono.CSharp
 			Console.WriteLine (
 				"[{0:00}:{1:000}] {2}",
 				(int) span.TotalSeconds, span.Milliseconds, msg);
+
+			if (pause)
+				Console.ReadLine ();
 		}
 
 		public static void ShowTotalTime (string msg)
@@ -775,6 +779,10 @@ namespace Mono.CSharp
 				timestamps = true;
 				last_time = first_time = DateTime.Now;
 				debug_arglist.Add ("timestamp");
+				return true;
+
+			case "--pause":
+				pause = true;
 				return true;
 				
 			case "--debug": case "-g":
