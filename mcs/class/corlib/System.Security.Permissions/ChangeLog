@@ -1,3 +1,9 @@
+2004-10-05  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* PrincipalPermission.cs: Fixed bug where a change to a permission
+	(e.g. Copy, Union) could affect multiple instances. Fixed FromXml
+	to clear existing entries.
+
 2004-09-16  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* SiteIdentityPermission.cs: Fixed warning (l4) for unused variable.

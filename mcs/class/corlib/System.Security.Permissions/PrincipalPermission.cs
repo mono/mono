@@ -90,7 +90,7 @@ namespace System.Security.Permissions {
 
 		internal PrincipalPermission (ArrayList principals) 
 		{
-			this.principals = principals;
+			this.principals = (ArrayList) principals.Clone ();
 		}
 
 		// Properties
@@ -135,14 +135,22 @@ namespace System.Security.Permissions {
 			// Note: we do not (yet) care about the return value 
 			// as we only accept version 1 (min/max values)
 
+			principals.Clear ();
 			// Children is null, not empty, when no child is present
 			if (esd.Children != null) {
 				foreach (SecurityElement se in esd.Children) {
 					if (se.Tag != "Identity")
 						throw new ArgumentException ("not IPermission/Identity");
-					string name = (se.Attributes ["Name"] as string);
-					string role = (se.Attributes ["Role"] as string);
-					bool isAuthenticated = ((se.Attributes ["Authenticated"] as string) == "true");
+					string name = se.Attribute ("Name");
+					string role = se.Attribute ("Role");
+					string auth = se.Attribute ("Authenticated");
+					bool isAuthenticated = false;
+					if (auth != null) {
+						try {
+							isAuthenticated = Boolean.Parse (auth);
+						}
+						catch {}
+					}
 					PrincipalInfo pi = new PrincipalInfo (name, role, isAuthenticated);
 					principals.Add (pi);
 				}
@@ -253,7 +261,7 @@ namespace System.Security.Permissions {
 
 			PrincipalPermission union = new PrincipalPermission (principals);
 			foreach (PrincipalInfo pi in pp.principals)
-				principals.Add (pi);
+				union.principals.Add (pi);
 
 			return union;
 		}
