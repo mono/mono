@@ -45,7 +45,6 @@ using System;
 using System.Collections;
 using System.Data;
 using System.Data.Common;
-using System.Data.Odbc;
 using System.Data.OleDb;
 using System.Data.SqlClient;
 using System.IO;
@@ -688,7 +687,7 @@ namespace Mono.Data.SqlSharp {
 
 			switch(provider) {
 			case "ODBC":
-				adapter = (DbDataAdapter) new OdbcDataAdapter ();
+				//adapter = (DbDataAdapter) new OdbcDataAdapter ();
 				break;
 			case "OLEDB":
 				adapter = (DbDataAdapter) new OleDbDataAdapter ();
@@ -751,7 +750,7 @@ namespace Mono.Data.SqlSharp {
 			Console.WriteLine(@"Type:  \Q to quit");
 			Console.WriteLine(@"       \ConnectionString to set the ConnectionString");
 			Console.WriteLine(@"       \Provider to set the Provider:");
-			Console.WriteLine(@"                 {OleDb,SqlClient,MySql,MySqlNet,Odbc,DB2,");
+			Console.WriteLine(@"                 {OleDb,SqlClient,MySql,MySqlNet,Odbc,MSODBC,DB2,");
 			Console.WriteLine(@"                  Oracle,PostgreSql,Npgsql,Sqlite,Sybase,Tds}");
 			Console.WriteLine(@"       \Open to open the connection");
 			Console.WriteLine(@"       \Close to close the connection");
@@ -821,9 +820,6 @@ namespace Mono.Data.SqlSharp {
 
 			try {
 				switch(provider) {
-				case "ODBC":
-					conn = new OdbcConnection();
-					break;
 				case "OLEDB":
 					conn = new OleDbConnection();
 					break;
@@ -955,9 +951,22 @@ namespace Mono.Data.SqlSharp {
 					provider = parm;
 					break;
 				case "ODBC":
+					extp = new string[3] {
+											 "\\loadextprovider",
+											 "System.Data",
+											 "System.Data.Odbc.OdbcConnection"};
+					SetupExternalProvider(extp);
 					UseParameters = false;
 					UseSimpleReader = false;
-					provider = parm;
+					break;
+				case "MSODBC":
+					extp = new string[3] {
+												"\\loadextprovider",
+												@"Microsoft.Data.Odbc, Culture=neutral, PublicKeyToken=b77a5c561934e089, Version=1.0.3300.0",
+												"Microsoft.Data.Odbc.OdbcConnection"};
+					SetupExternalProvider(extp);
+					UseParameters = false;
+					UseSimpleReader = false;
 					break;
 				case "OLEDB":
 					UseParameters = false;

@@ -1,3 +1,8 @@
+2003-09-28  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* SqlSharpCli.cs: changes by Daniel Morgan to make this build with MS
+	runtime 1.0 and 1.1 .
+
 2003-02-16  Daniel Morgan <danmorg@sc.rr.com>
 
 	* SqlSharpCli.cs: fix typos and when the
