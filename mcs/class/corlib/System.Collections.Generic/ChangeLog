@@ -1,5 +1,7 @@
 2004-12-27  Ben Maurer  <bmaurer@ximian.com>
 
+	* Stack.cs: Stupid bug fixes.
+
 	* List.cs: My new (mostly untested ;-) impl of List
 	<T>. Implements most of the API.
 

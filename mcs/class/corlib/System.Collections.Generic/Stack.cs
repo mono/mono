@@ -85,7 +85,7 @@ namespace System.Collections.Generic
 		}
 		
 		public bool Contains (T t)
-		{
+		{		
 			return data != null && Array.IndexOf (data, t, 0, size) != -1;
 		}
 		
@@ -93,7 +93,7 @@ namespace System.Collections.Generic
 		{
 			// this gets copied in the order that it is poped
 			if (data != null) {
-				data.CopyTo (dest, idx);
+				Array.Copy (data, 0, dest, idx, size);
 				Array.Reverse (dest, idx, size);
 			}
 		}
@@ -125,7 +125,7 @@ namespace System.Collections.Generic
 			
 			ver ++;
 			
-			data [++ size] = t;
+			data [size++] = t;
 		}
 		
 		public T [] ToArray ()
