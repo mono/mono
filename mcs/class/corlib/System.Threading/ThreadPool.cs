@@ -7,9 +7,12 @@
 //   Maurer Dietmar (dietmar@ximian.com)
 //
 // (C) Ximian, Inc.  http://www.ximian.com
+// Copyright (C) 2004 Novell (http://www.novell.com)
 //
+
 using System;
 using System.Collections;
+using System.Globalization;
 using System.Runtime.CompilerServices;
 
 namespace System.Threading {
@@ -116,6 +119,38 @@ namespace System.Threading {
 				return false;
 			return true;
 		}
+		
+		[MonoTODO]
+		public static RegisteredWaitHandle UnsafeRegisterWaitForSingleObject (WaitHandle waitObject,
+			WaitOrTimerCallback callBack, object state, int millisecondsTimeOutInterval,
+			bool executeOnlyOnce) 
+		{
+			throw new NotImplementedException ();
+		}
+		
+		[MonoTODO]
+		public static RegisteredWaitHandle UnsafeRegisterWaitForSingleObject (WaitHandle waitObject,
+			WaitOrTimerCallback callBack, object state, long millisecondsTimeOutInterval,
+			bool executeOnlyOnce) 
+		{
+			throw new NotImplementedException ();
+		}
 
+		[MonoTODO]
+		public static RegisteredWaitHandle UnsafeRegisterWaitForSingleObject (WaitHandle waitObject,
+			WaitOrTimerCallback callBack, object state, TimeSpan timeout,
+			bool executeOnlyOnce) 
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		[CLSCompliant (false)]
+		public static RegisteredWaitHandle UnsafeRegisterWaitForSingleObject (WaitHandle waitObject,
+			WaitOrTimerCallback callBack, object state, uint millisecondsTimeOutInterval,
+			bool executeOnlyOnce) 
+		{
+			throw new NotImplementedException ();
+		}
 	}
 }

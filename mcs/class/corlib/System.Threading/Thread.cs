@@ -5,6 +5,7 @@
 //   Dick Porter (dick@ximian.com)
 //
 // (C) Ximian, Inc.  http://www.ximian.com
+// Copyright (C) 2004 Novell (http://www.novell.com)
 //
 
 using System.Runtime.Remoting.Contexts;
@@ -492,8 +493,22 @@ namespace System.Threading
 			return(ret);
 		}
 
+#if NET_1_1
+		[MonoTODO ("seems required for multi-processors systems like Itanium")]
+		public static void MemoryBarrier ()
+		{
+			throw new NotImplementedException ();
+		}
+#endif
 		[MonoTODO]
-		public void Resume() {
+		public void Resume () 
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public static void SpinWait (int iterations) 
+		{
 			throw new NotImplementedException ();
 		}
 
