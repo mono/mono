@@ -1,4 +1,4 @@
-﻿//
+//
 // StringsTest.cs
 //
 // Authors:
@@ -1064,9 +1064,6 @@ namespace MonoTests.Microsoft.VisualBasic
 			NUnit.Framework.Assertion.AssertEquals ("JW#Len/122", 2, Strings.Len(MyChar1));
 			NUnit.Framework.Assertion.AssertEquals ("JW#Len/123", 2, Strings.Len(MyChar1a));
 			NUnit.Framework.Assertion.AssertEquals ("JW#Len/124", 2, Strings.Len(MyChar2));
-			/*
-			return 2; //sizeof(short)
-			*/
 		}
 		
 		public void Len_Float()
@@ -1079,9 +1076,6 @@ namespace MonoTests.Microsoft.VisualBasic
 			NUnit.Framework.Assertion.AssertEquals ("JW#Len/132", 4, Strings.Len(MyChar1));
 			NUnit.Framework.Assertion.AssertEquals ("JW#Len/133", 4, Strings.Len(MyChar1a));
 			NUnit.Framework.Assertion.AssertEquals ("JW#Len/134", 4, Strings.Len(MyChar2));
-			/*
-			return 4; //sizeof(Single)
-			*/
 		}
 		
 		public void Len_String()
@@ -1089,9 +1083,6 @@ namespace MonoTests.Microsoft.VisualBasic
 			NUnit.Framework.Assertion.AssertEquals ("JW#Len/161", 0, Strings.Len(TextStringEmpty));
 			NUnit.Framework.Assertion.AssertEquals ("JW#Len/162", 0, Strings.Len(TextStringUninitialized));
 			NUnit.Framework.Assertion.AssertEquals ("JW#Len/163", 525, Strings.Len(TextStringOfMultipleLanguages));
-			/*
-			return Expression.Length; //length of the string
-			*/
 		}
 		
 		public void Len_DateTime()
@@ -1104,9 +1095,6 @@ namespace MonoTests.Microsoft.VisualBasic
 			NUnit.Framework.Assertion.AssertEquals ("JW#Len/142", 8, Strings.Len(MyChar1));
 			NUnit.Framework.Assertion.AssertEquals ("JW#Len/143", 8, Strings.Len(MyChar1a));
 			NUnit.Framework.Assertion.AssertEquals ("JW#Len/144", 8, Strings.Len(MyChar2));
-			/*
-			return 8; //sizeof(DateTime)
-			*/
 		}
 		
 		public void Len_Decimal()
@@ -1119,9 +1107,6 @@ namespace MonoTests.Microsoft.VisualBasic
 			NUnit.Framework.Assertion.AssertEquals ("JW#Len/152", 8, Strings.Len(MyChar1));
 			NUnit.Framework.Assertion.AssertEquals ("JW#Len/153", 8, Strings.Len(MyChar1a));
 			NUnit.Framework.Assertion.AssertEquals ("JW#Len/154", 8, Strings.Len(MyChar2));
-			/*
-			return 16; //sizeof(decimal)
-			*/
 		}
 
 		[Test]
@@ -1256,7 +1241,6 @@ namespace MonoTests.Microsoft.VisualBasic
 			NUnit.Framework.Assertion.AssertEquals ("JW#Mid/88", "ل الحقوق محفوظة ليديعوت إنترنت", Strings.Mid(ArabynetComWebSiteContent_Arabic,2));
 		}
 
-/* TODO: reenable when Mono supports compilation of these lines
 		[Test]
 		public void Replace()
 		{
@@ -1380,7 +1364,6 @@ namespace MonoTests.Microsoft.VisualBasic
 			NUnit.Framework.Assertion.AssertEquals ("JW#Replace/89a", "", Strings.Replace(buffer, "보안 캠페인 - 스스로 지킨 당신의 PC! 더욱 안전해집니다!", "",1,-1,CompareMethod.Text));
 			NUnit.Framework.Assertion.AssertEquals ("JW#Replace/89b", String.Empty, Strings.Replace(buffer, "보안 캠페인 - 스스로 지킨 당신의 PC! 더욱 안전해집니다!", "",1,-1,CompareMethod.Text));
 		}
-*/ 
 		
 		[Test]
 		public void Right()
@@ -1647,7 +1630,6 @@ namespace MonoTests.Microsoft.VisualBasic
 		{
 			string aString = "Wow! What a string!";
 			object aObject = new object();
-			string myString ;
 			aObject = "This is a String contained within an Object";
 			NUnit.Framework.Assertion.AssertEquals ("JW*StrDup#01", "PPPPP", Strings.StrDup(5, (char)Strings.Asc("P")));
 			NUnit.Framework.Assertion.AssertEquals ("JW*StrDup#01", "WWWWWWWWWW", Strings.StrDup(10, aString));
