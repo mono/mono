@@ -30,9 +30,12 @@
 //	- Change the cursor to a hand cursor when you are over a link (when cursors are available)
 //
 //
-// $Revision: 1.3 $
+// $Revision: 1.4 $
 // $Modtime: $
 // $Log: LinkLabel.cs,v $
+// Revision 1.4  2004/08/07 23:31:15  jordi
+// fixes label bug and draw method name
+//
 // Revision 1.3  2004/08/07 19:16:31  jordi
 // throw exceptions, fixes events, missing methods
 //
@@ -450,7 +453,7 @@ namespace System.Windows.Forms
 			}
 		}
 
-		protected override void draw ()
+		protected override void Draw ()
 		{
 			Color color;
 

@@ -454,7 +454,7 @@ namespace System.Windows.Forms
     		 	Console.WriteLine ("CalcAutoSize () after " + Size);
     		}
 
-    		protected virtual void draw ()
+    		protected virtual void Draw ()
 		{
 			ThemeEngine.Current.DrawLabel (dc_mem, paint_area, BorderStyle, Text, 
 				ForeColor, BackColor, Font, string_format, Enabled);
@@ -478,7 +478,7 @@ namespace System.Windows.Forms
 
 			/* Copies memory drawing buffer to screen*/
 			UpdateArea ();
-			draw();
+			Draw ();
 			pevent.Graphics.DrawImage (bmp_mem, 0, 0);
 
 		}

@@ -25,9 +25,12 @@
 //
 //
 //
-// $Revision: 1.3 $
+// $Revision: 1.4 $
 // $Modtime: $
 // $Log: ThemeWin32Classic.cs,v $
+// Revision 1.4  2004/08/07 23:31:15  jordi
+// fixes label bug and draw method name
+//
 // Revision 1.3  2004/08/07 19:05:44  jordi
 // Theme colour support and GetSysColor defines
 //
@@ -1404,10 +1407,10 @@ namespace System.Windows.Forms
 			Color fore_color, Color back_color, Font font, StringFormat string_format, bool Enabled)
 
 		{	
-			if (label_br_fore_color.Color != fore_color) 
+			if (label_br_fore_color == null || label_br_fore_color.Color != fore_color) 
 				label_br_fore_color = new SolidBrush (fore_color);
 
-			if (label_br_back_color.Color != back_color) 
+			if (label_br_back_color == null || label_br_back_color.Color != back_color) 
 				label_br_back_color = new SolidBrush (back_color);
 
 			dc.FillRectangle (label_br_back_color, area);						
