@@ -391,7 +391,6 @@ Thu Apr 15 14:24:49 CEST 2004 Paolo Molaro <lupus@ximian.com>
 	in the GenericParam, MethodSpec or GenericParamConstraint tables,
 	set the header version to 1.1.
 
->>>>>>> 1.1497
 2004-04-06  Martin Baulig  <martin@ximian.com>
 
 	* class.c (mono_class_init): If we're a generic instance,
