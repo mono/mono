@@ -1,3 +1,6 @@
+2004-07-29 Umadevi S (sumadevi@novell.com)
+	* OdbcCommand.cs - Fixed bug 62046. ExecuteNonQuery implemented correctly
+
 2004-07-28 Umadevi S (sumadevi@novell.com)
 	* OdbcParameter.cs - fixed bug 61968. String values passed with quotes
 

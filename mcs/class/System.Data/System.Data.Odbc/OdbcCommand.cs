@@ -302,7 +302,20 @@ namespace System.Data.Odbc
 
 //			if (!prepared)
 //				libodbc.SQLFreeHandle( (ushort) OdbcHandleType.Stmt, hstmt);
-			return 0;
+
+			 // .NET documentation says that except for INSERT, UPDATE and
+                         // DELETE  where the return value is the number of rows affected
+                         // for the rest of the commands the return value is -1.
+                                if ((CommandText.ToUpper().IndexOf("UPDATE")!=-1) ||
+                                    (CommandText.ToUpper().IndexOf("INSERT")!=-1) ||
+                                    (CommandText.ToUpper().IndexOf("DELETE")!=-1)) {
+			
+					int numrows = 0;
+                                        OdbcReturn ret = libodbc.SQLRowCount(hstmt,ref numrows);
+            	                        return numrows;					
+	               		}
+                                else
+                                        return -1; 
 		}
 
 		public void Prepare()
