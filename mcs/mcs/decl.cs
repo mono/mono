@@ -1348,6 +1348,13 @@ namespace Mono.CSharp {
 			if (applicable == null)
 				return MemberList.Empty;
 
+			//
+			// 32  slots gives 53 rss/54 size
+			// 2/4 slots gives 55 rss
+			//
+			// Strange: from 25,000 calls, only 1,800
+			// are above 2.  Why does this impact it?
+			//
 			ArrayList list = new ArrayList ();
 
 			Timer.StartTimer (TimerType.CachedLookup);

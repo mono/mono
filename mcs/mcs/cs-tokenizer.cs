@@ -1568,6 +1568,10 @@ namespace Mono.CSharp
 
 			string ids = new String (id_builder, 0, pos);
 
+			//
+			// Optimization: avoids doing the keyword lookup
+			// on uppercase letters and _
+			//
 			if (s >= 'a'){
 				int keyword = GetKeyword (ids);
 				if (keyword == -1 || quoted){

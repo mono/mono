@@ -1,3 +1,11 @@
+2003-07-18  Miguel de Icaza  <miguel@ximian.com>
+
+	* namespace.cs (Namespace, Name): Do not compute the namespace
+	name dynamically, compute it in the constructor.  This reduced
+	memory usage by 1697 KB.
+
+	* driver.cs: Use --pause to pause at the end.
+
 2003-07-17  Peter Williams  <peter@newton.cx>
 
 	* Makefile: Change the name of the test target so that it doesn't

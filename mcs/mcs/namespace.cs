@@ -19,7 +19,7 @@ namespace Mono.CSharp {
 		static ArrayList all_namespaces = new ArrayList ();
 		
 		Namespace parent;
-		string name;
+		string name, fullname;
 		ArrayList entries;
 		Hashtable namespaces;
 
@@ -32,6 +32,13 @@ namespace Mono.CSharp {
 		{
 			this.name = name;
 			this.parent = parent;
+
+			string pname = parent != null ? parent.Name : "";
+				
+			if (pname == "")
+				fullname = name;
+			else
+				fullname = parent.Name + "." + name;
 
 			entries = new ArrayList ();
 			namespaces = new Hashtable ();
@@ -88,12 +95,7 @@ namespace Mono.CSharp {
 		/// </summary>
 		public string Name {
 			get {
-				string pname = parent != null ? parent.Name : "";
-				
-				if (pname == "")
-					return name;
-				else
-					return String.Concat (parent.Name, ".", name);
+				return fullname;
 			}
 		}
 
