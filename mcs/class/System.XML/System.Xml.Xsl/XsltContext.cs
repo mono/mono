@@ -1,5 +1,5 @@
 // System.Xml.Xsl.XsltContext
-// 
+//
 // Author: Tim Coleman <tim@timcoleman.com>
 // (C) Copyright 2002 Tim Coleman
 
@@ -13,15 +13,15 @@ namespace System.Xml.Xsl
 	{
 		#region Constructors
 
-		// should this really be calling new NameTable() in the 
+		// should this really be calling new NameTable() in the
 		// base() call?
-		public XsltContext()
-			: base( new NameTable() )
+		public XsltContext ()
+			: base (new NameTable ())
 		{
 		}
 
-		public XsltContext( NameTable table )
-			: base( table )
+		public XsltContext (NameTable table)
+			: base (table)
 		{
 		}
 
@@ -33,20 +33,11 @@ namespace System.Xml.Xsl
 
 		#endregion
 
-		#region Methods 
+		#region Methods
 
-		public abstract int CompareDocument(
-			string baseUri,
-			string nextbaseUri );
-
-		public abstract IXsltContextFunction ResolveFunction(
-			string prefix,
-			string name,
-			XPathResultType[] ArgTypes );
-
-		public abstract IXsltContextVariable ResolveVariable(
-			string prefix,
-			string name );
+		public abstract int CompareDocument (string baseUri, string nextbaseUri);
+		public abstract IXsltContextFunction ResolveFunction (string prefix, string name, XPathResultType [] ArgTypes);
+		public abstract IXsltContextVariable ResolveVariable (string prefix, string name);
 
 		#endregion
 	}

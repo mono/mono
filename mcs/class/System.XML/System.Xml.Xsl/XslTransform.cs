@@ -1,5 +1,5 @@
 // System.Xml.Xsl.XslTransform
-// 
+//
 // Author: Tim Coleman <tim@timcoleman.com>
 // (C) Copyright 2002 Tim Coleman
 
@@ -12,15 +12,15 @@ namespace System.Xml.Xsl
 	public class XslTransform
 	{
 		#region Fields
-		
-		XmlResolver _xmlResolver;
+
+		XmlResolver xmlResolver;
 
 		#endregion
 
 		#region Constructors
 
 		[MonoTODO]
-		public XslTransform()
+		public XslTransform ()
 		{
 		}
 
@@ -29,7 +29,7 @@ namespace System.Xml.Xsl
 		#region Properties
 
 		XmlResolver XmlResolver {
-			set { _xmlResolver = value; }
+			set { xmlResolver = value; }
 		}
 
 		#endregion
@@ -38,146 +38,114 @@ namespace System.Xml.Xsl
 
 		[MonoTODO]
 		// Loads the XSLT stylesheet contained in the IXPathNavigable.
-		public void Load( IXPathNavigable stylesheet )
+		public void Load (IXPathNavigable stylesheet)
 		{
 		}
 
 		[MonoTODO]
 		// Loads the XSLT stylesheet specified by a URL.
-		public void Load( string url )
+		public void Load (string url)
 		{
 		}
 
 		[MonoTODO]
 		// Loads the XSLT stylesheet contained in the XmlReader
-		public void Load( XmlReader stylesheet )
+		public void Load (XmlReader stylesheet)
 		{
 		}
 
 		[MonoTODO]
 		// Loads the XSLT stylesheet contained in the XPathNavigator
-		public void Load( XPathNavigator stylesheet )
+		public void Load (XPathNavigator stylesheet)
 		{
 		}
 
 		[MonoTODO]
 		// Loads the XSLT stylesheet contained in the IXPathNavigable.
-		public void Load( 	
-			IXPathNavigable stylesheet, 
-			XmlResolver resolver )
+		public void Load (IXPathNavigable stylesheet, XmlResolver resolver)
 		{
 		}
 
 		[MonoTODO]
 		// Loads the XSLT stylesheet specified by a URL.
-		public void Load( 	
-			string url, 
-			XmlResolver resolver )
+		public void Load (string url, XmlResolver resolver)
 		{
 		}
 
 		[MonoTODO]
 		// Loads the XSLT stylesheet contained in the XmlReader
-		public void Load( 
-			XmlReader stylesheet,
-			XmlResolver resolver )
+		public void Load (XmlReader stylesheet, XmlResolver resolver)
 		{
 		}
 
 		[MonoTODO]
 		// Loads the XSLT stylesheet contained in the XPathNavigator
-		public void Load( 
-			XPathNavigator stylesheet,
-			XmlResolver resolver )
+		public void Load (XPathNavigator stylesheet, XmlResolver resolver)
 		{
 		}
 
 		[MonoTODO]
-		// Transforms the XML data in the IXPathNavigable using 
+		// Transforms the XML data in the IXPathNavigable using
 		// the specified args and outputs the result to an XmlReader.
-		public XmlReader Transform(
-			IXPathNavigable input,
-			XsltArgumentList args )
+		public XmlReader Transform (IXPathNavigable input, XsltArgumentList args)
 		{
 			return null;
 		}
 
 		[MonoTODO]
-		// Transforms the XML data in the input file and outputs 
+		// Transforms the XML data in the input file and outputs
 		// the result to an output file.
-		public void Transform(
-			string inputfile,
-			string outputfile )
+		public void Transform (string inputfile, string outputfile)
 		{
 		}
 
 		[MonoTODO]
-		// Transforms the XML data in the XPathNavigator using 
+		// Transforms the XML data in the XPathNavigator using
 		// the specified args and outputs the result to an XmlReader.
-		public XmlReader Transform(
-			XPathNavigator input,
-			XsltArgumentList args )
+		public XmlReader Transform (XPathNavigator input, XsltArgumentList args)
 		{
 			return null;
 		}
-		
+
 		[MonoTODO]
-		// Transforms the XML data in the IXPathNavigable using 
+		// Transforms the XML data in the IXPathNavigable using
 		// the specified args and outputs the result to a Stream.
-		public void Transform(
-			IXPathNavigable input,
-			XsltArgumentList args,
-			Stream output )
+		public void Transform (IXPathNavigable input, XsltArgumentList args, Stream output)
 		{
 		}
 
 		[MonoTODO]
-		// Transforms the XML data in the IXPathNavigable using 
+		// Transforms the XML data in the IXPathNavigable using
 		// the specified args and outputs the result to a TextWriter.
-		public void Transform(
-			IXPathNavigable input,
-			XsltArgumentList args,
-			TextWriter output )
+		public void Transform (IXPathNavigable input, XsltArgumentList args, TextWriter output)
 		{
 		}
 
 		[MonoTODO]
-		// Transforms the XML data in the IXPathNavigable using 
+		// Transforms the XML data in the IXPathNavigable using
 		// the specified args and outputs the result to an XmlWriter.
-		public void Transform(
-			IXPathNavigable input,
-			XsltArgumentList args,
-			XmlWriter output )
+		public void Transform (IXPathNavigable input, XsltArgumentList args, XmlWriter output)
 		{
 		}
 
 		[MonoTODO]
-		// Transforms the XML data in the XPathNavigator using 
+		// Transforms the XML data in the XPathNavigator using
 		// the specified args and outputs the result to a Stream.
-		public void Transform(
-			XPathNavigator input,
-			XsltArgumentList args,
-			Stream output )
+		public void Transform (XPathNavigator input, XsltArgumentList args, Stream output)
 		{
 		}
 
 		[MonoTODO]
-		// Transforms the XML data in the XPathNavigator using 
+		// Transforms the XML data in the XPathNavigator using
 		// the specified args and outputs the result to a TextWriter.
-		public void Transform(
-			XPathNavigator input,
-			XsltArgumentList args,
-			TextWriter output )
+		public void Transform (XPathNavigator input, XsltArgumentList args, TextWriter output)
 		{
 		}
 
 		[MonoTODO]
-		// Transforms the XML data in the XPathNavigator using 
+		// Transforms the XML data in the XPathNavigator using
 		// the specified args and outputs the result to an XmlWriter.
-		public void Transform(
-			XPathNavigator input,
-			XsltArgumentList args,
-			XmlWriter output )
+		public void Transform (XPathNavigator input, XsltArgumentList args, XmlWriter output)
 		{
 		}
 

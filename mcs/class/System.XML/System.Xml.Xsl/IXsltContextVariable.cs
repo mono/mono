@@ -1,5 +1,5 @@
 // System.Xml.Xsl.IXsltContextVariable
-// 
+//
 // Author: Tim Coleman <tim@timcoleman.com>
 // (C) Copyright 2002 Tim Coleman
 
@@ -20,7 +20,7 @@ namespace System.Xml.Xsl
 
 		#region Methods
 
-		object Evaluate( XsltContext xsltContext );
+		object Evaluate (XsltContext xsltContext);
 
 		#endregion
 	}

@@ -1,5 +1,5 @@
 // System.Xml.Xsl.IXsltContextFunction
-// 
+//
 // Author: Tim Coleman <tim@timcoleman.com>
 // (C) Copyright 2002 Tim Coleman
 
@@ -12,7 +12,7 @@ namespace System.Xml.Xsl
 	{
 		#region Properties
 
-		XPathResultType[] ArgTypes { get; }
+		XPathResultType [] ArgTypes { get; }
 		int Maxargs { get; }
 		int Minargs { get; }
 		XPathResultType ReturnType { get; }
@@ -21,10 +21,7 @@ namespace System.Xml.Xsl
 
 		#region Methods
 
-		object Invoke(
-			XsltContext xsltContext,
-			object[] args,
-			XPathNavigator docContext);
+		object Invoke (XsltContext xsltContext, object [] args, XPathNavigator docContext);
 
 		#endregion
 	}

@@ -1,5 +1,5 @@
 // System.Xml.Xsl.XsltCompileException
-// 
+//
 // Author: Tim Coleman <tim@timcoleman.com>
 // (C) Copyright 2002 Tim Coleman
 
@@ -13,27 +13,23 @@ namespace System.Xml.Xsl
 	{
 		#region Fields
 
-		string _message;
+		string message;
 
 		#endregion
 
 		#region Constructors
 
 		[MonoTODO]
-		protected XsltCompileException(	
-			SerializationInfo info, 
-			StreamingContext context ) : base( info, context )
+		protected XsltCompileException (SerializationInfo info, StreamingContext context )
+			: base (info, context)
 		{
 		}
 
 		[MonoTODO]
 		// I don't think this base() call is right, but what
 		// should the message be for XsltException?
-		public XsltCompileException(	
-			Exception inner, 
-			String sourceUri, 	
-			int lineNumber, 
-			int linePosition ) : base( sourceUri, inner )
+		public XsltCompileException (Exception inner, String sourceUri, int lineNumber, int linePosition)
+			: base (sourceUri, inner)
 		{
 		}
 
@@ -42,17 +38,15 @@ namespace System.Xml.Xsl
 
 		#region Properties
 
-		public override string Message { 
-			get { return _message; }
+		public override string Message {
+			get { return message; }
 		}
 
 		#endregion
 
 		#region Methods
 
-		public override void GetObjectData(
-			SerializationInfo info,
-			StreamingContext context )
+		public override void GetObjectData (SerializationInfo info, StreamingContext context)
 		{
 			base.GetObjectData (info, context);
 		}
