@@ -507,10 +507,10 @@ namespace System.Xml.XPath
 		public override XPathResultType ReturnType { get { return XPathResultType.Boolean; }}
 		public override int Minargs { get { return 1; }}
 		public override int Maxargs { get { return 1; }}
-		public override XPathResultType [] ArgTypes { get { return new XPathResultType [] { XPathResultType.Boolean }; }}
+		public override XPathResultType [] ArgTypes { get { return new XPathResultType [] { XPathResultType.Any }; }}
 		public override object TypesafeInvoke (XsltContext xsltContext, object[] args, XPathNavigator docContext)
 		{
-			return !((bool) args [0]);
+			return !(XPathFunctions.ToBoolean (args [0]));
 		}
 		public override string Name { get { return "not"; }}
 	}

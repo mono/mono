@@ -976,6 +976,7 @@ namespace System.Xml.XPath
 			}
 
 			XPathResultType [] rgTypes = GetArgTypes (iter);
+			//FIXME: what if func == null after next line?
 			IXsltContextFunction func = iter.Context.ResolveFunction (_name.Prefix, _name.Local, rgTypes);
 			object [] rgArgs = new object [_args.Count];
 			for (int iArg = 0; iArg < _args.Count; iArg ++)

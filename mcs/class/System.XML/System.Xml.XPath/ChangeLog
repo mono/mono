@@ -1,3 +1,8 @@
+2002-09-03  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* DefaultContext.cs: fixed bug #28840.
+	* Expression.cs: added FIXME.
+
 2002-08-17  Jason Diamond <jason@injektilo.org>
 
 	* XPathNavigator.cs: Fixed matching on patterns that look like
