@@ -423,6 +423,12 @@ namespace System.Windows.Forms
 		#region Control
 		#endregion	// Control
 
+		#region DateTimePicker
+
+		public abstract void DrawDateTimePicker(Graphics dc, Rectangle clip_rectangle, DateTimePicker dtp);
+
+		#endregion 	// DateTimePicker
+
 		#region GroupBox
 		// Drawing
 		public abstract void DrawGroupBox (Graphics dc,  Rectangle clip_area, GroupBox box);

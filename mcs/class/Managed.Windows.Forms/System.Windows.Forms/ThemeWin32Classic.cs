@@ -745,6 +745,47 @@ namespace System.Windows.Forms
 		}
 		
 		#endregion ComboBox
+		
+		#region DateTimePicker
+	
+		public override void DrawDateTimePicker (Graphics dc,  Rectangle clip_rectangle, DateTimePicker dtp) {
+			// if not showing the numeric updown control then render border
+			if (!dtp.ShowUpDown && clip_rectangle.IntersectsWith (dtp.ClientRectangle)) {
+				// draw the outer border
+				Rectangle button_bounds = dtp.ClientRectangle;
+				this.CPDrawBorder3D (dc, button_bounds, Border3DStyle.Sunken, Border3DSide.All, dtp.BackColor);
+				
+				// deflate by the border width
+				if (clip_rectangle.IntersectsWith (dtp.drop_down_arrow_rect)) {
+					button_bounds.Inflate (-2,-2);
+					ButtonState state = dtp.is_drop_down_visible ? ButtonState.Pushed : ButtonState.Normal;
+					this.CPDrawComboButton ( 
+					  dc, 
+					  dtp.drop_down_arrow_rect, 
+					  state);
+				}
+			}
+
+			// render the date part
+			if (clip_rectangle.IntersectsWith (dtp.date_area_rect)) {
+				// fill the background
+				dc.FillRectangle (ResPool.GetSolidBrush (ThemeEngine.Current.ColorWindow), dtp.date_area_rect);
+				
+				// fill the currently highlighted area
+				if (dtp.hilight_date_area != Rectangle.Empty) {
+					dc.FillRectangle (ResPool.GetSolidBrush (ThemeEngine.Current.ColorHilight), dtp.hilight_date_area);
+				}
+				
+				// draw the text part
+				// TODO: if date format is CUstom then we need to draw the dates as separate parts
+				StringFormat text_format = new StringFormat();
+				text_format.LineAlignment = StringAlignment.Center;
+				text_format.Alignment = StringAlignment.Near;					
+				dc.DrawString (dtp.Text, dtp.Font, ResPool.GetSolidBrush (dtp.ForeColor), Rectangle.Inflate(dtp.date_area_rect, -1, -1), text_format);
+			}
+		}
+		
+		#endregion // DateTimePicker
 
 		#region GroupBox
 		public override void DrawGroupBox (Graphics dc,  Rectangle area, GroupBox box) {

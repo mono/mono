@@ -65,6 +65,7 @@ namespace System.Windows.Forms {
 		
 		// internal variables used
 		internal DateTime 		current_month;			// the month that is being displayed in top left corner of the grid		
+		internal DateTimePicker	owner;					// used if this control is popped up
 		internal int 			button_x_offset;
 		internal Size 			button_size;
 		internal Size			title_size;
@@ -98,10 +99,9 @@ namespace System.Windows.Forms {
 
 		#region Public Constructors
 
-		public MonthCalendar() {
+		public MonthCalendar () {
 			// set up the control painting
-			SetStyle (ControlStyles.UserPaint, true);
-			SetStyle (ControlStyles.AllPaintingInWmPaint, true);
+			SetStyle (ControlStyles.UserPaint | ControlStyles.AllPaintingInWmPaint, true);
 			
 			// mouse down timer
 			timer = new Timer ();
@@ -172,6 +172,11 @@ namespace System.Windows.Forms {
 			KeyUp += new KeyEventHandler (KeyUpHandler);
 			Paint += new PaintEventHandler (PaintHandler);
 			
+		}
+		
+		public MonthCalendar (DateTimePicker owner) : this () {	
+			this.owner = owner;		
+			SetStyle (ControlStyles.ResizeRedraw | ControlStyles.Opaque, true);
 		}
 
 		#endregion	// Public Constructors
@@ -641,14 +646,20 @@ namespace System.Windows.Forms {
 
 		#region Protected Instance Properties
 
-		// not sure what to put in here - just doing a base() call - jba
+		// overloaded to allow controll to be windowed for drop down
 		protected override CreateParams CreateParams {
 			get {
-				return base.CreateParams;
+				if (this.owner == null) {
+					return base.CreateParams;
+				} else {
+					CreateParams cp = base.CreateParams;					
+					cp.Style = unchecked ((int)(WindowStyles.WS_POPUP | WindowStyles.WS_VISIBLE | WindowStyles.WS_CLIPSIBLINGS | WindowStyles.WS_CLIPCHILDREN));
+					cp.ExStyle |= (int)WindowStyles.WS_EX_TOOLWINDOW;
+					return cp;
+				}
 			}
 		}
-
-
+	
 		// not sure what to put in here - just doing a base() call - jba
 		protected override ImeMode DefaultImeMode {
 			get {

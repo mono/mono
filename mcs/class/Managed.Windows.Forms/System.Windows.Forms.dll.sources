@@ -72,6 +72,8 @@ System.Windows.Forms/DataGridParentRowsLabelStyle.cs
 System.Windows.Forms/DataGridTableStyle.cs
 System.Windows.Forms/DateRangeEventArgs.cs
 System.Windows.Forms/DateRangeEventHandler.cs
+System.Windows.Forms/DateTimePicker.cs
+System.Windows.Forms/DateTimePickerFormat.cs
 System.Windows.Forms/Day.cs
 System.Windows.Forms/DialogResult.cs
 System.Windows.Forms/DockStyle.cs
