@@ -152,11 +152,11 @@ public class StringTest : Assertion
 	{
 		string needle = "ab";
 		string haystack = "abbcbacab";
-		AssertEquals("basic substring check #9", 1, 
+		AssertEquals("basic substring check #9", 0, 
 			     String.Compare(needle, 0, haystack, 0, 2, false));
 		for (int i = 1; i <= (haystack.Length - needle.Length); i++) {
 			if (i != 7) {
-				AssertEquals("loop substring check #8/" + i, 1, String.Compare(needle, 0, haystack, i, 2, false));
+				AssertEquals("loop substring check #8/" + i, -1, String.Compare(needle, 0, haystack, i, 2, false));
 			}
 		}
 	}
