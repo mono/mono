@@ -19,5 +19,20 @@ namespace System.Runtime.InteropServices
 		public static extern IntPtr ReadIntPtr (IntPtr ptr);		
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		public static extern int GetLastWin32Error();
+
+		[MonoTODO]
+		public static IntPtr AllocHGlobal (IntPtr cb) {
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public static IntPtr AllocHGlobal (int cb) {
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public static void FreeHGlobal (IntPtr hglobal) {
+			throw new NotImplementedException ();
+		}
 	}
 }
