@@ -1,3 +1,7 @@
+2004-12-16  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XPathNavigatorReader.cs : added SchemaInfo.
+
 2004-12-04  Atsushi Enomoto <atsushi@ximian.com>
 
 	* DTMXPathNavigator.cs : added more constant fields to utility class.

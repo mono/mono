@@ -221,6 +221,12 @@ namespace Mono.Xml.XPath
 			get { return '\"'; }
 		}
 
+#if NET_2_0
+		public override IXmlSchemaInfo SchemaInfo {
+			get { return current.SchemaInfo; }
+		}
+#endif
+
 		public override string XmlLang {
 			get { return current.XmlLang; }
 		}
