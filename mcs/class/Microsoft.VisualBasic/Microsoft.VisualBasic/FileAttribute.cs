@@ -33,7 +33,7 @@ using System;
 
 namespace Microsoft.VisualBasic {
 	[Flags] 
-	[System.SerializableAttribute]
+	[System.Serializable]
 	public enum FileAttribute : int {
 		Normal = 0,
 		ReadOnly = 1,

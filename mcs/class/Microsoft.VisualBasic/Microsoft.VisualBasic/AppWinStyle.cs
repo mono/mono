@@ -30,7 +30,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 namespace Microsoft.VisualBasic {
-	[System.SerializableAttribute]
+	[System.Serializable]
 	public enum AppWinStyle : short {
 		Hide = 0,
 		NormalFocus = 1,

@@ -39,8 +39,8 @@ namespace Microsoft.VisualBasic
 	/// When you call the StrConv function, you can use the following enumeration 
 	/// members in your code in place of the actual values.
 	/// </summary>
-	[System.FlagsAttribute] 
-	[System.SerializableAttribute]
+	[System.Flags] 
+	[System.Serializable]
 	public enum VbStrConv : int {
 		/// <summary>
 		/// Performs no conversion 
