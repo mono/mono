@@ -51,12 +51,9 @@ namespace System.Web.Compilation
 			foundries.Add (foundryName, foundry);
 		}
 
-		public AspComponentFoundry LookupFoundry (string foundryName)
+		public bool LookupFoundry (string foundryName)
 		{
-			if (!foundries.Contains (foundryName))
-				return null;
-
-			return this;
+			return foundries.Contains (foundryName);
 		}
 
 		class InternalFoundry
