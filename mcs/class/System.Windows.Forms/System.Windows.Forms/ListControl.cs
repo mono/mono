@@ -4,7 +4,6 @@
 // Author:
 //   stubbed out by Daniel Carrera (dcarrera@math.toronto.edu)
 //	Dennis Hayes (dennish@raytek.com)
-//
 // (C) 2002 Ximian, Inc
 //
 using System;
@@ -214,11 +213,11 @@ namespace System.Windows.Forms {
 		//
 		//  --- Protected Methods
 		//
-		[MonoTODO]
-		protected override void Dispose(bool val)
-		{
-			throw new NotImplementedException ();
-		}
+		//inherited
+		//protected override void Dispose(bool val)
+		//{
+		//	throw new NotImplementedException ();
+		//}
 		[MonoTODO]
 		protected override bool IsInputKey(Keys keyData)
 		{

@@ -4,7 +4,6 @@
 // Author:
 //   stubbed out by Daniel Carrera (dcarrera@math.toronto.edu)
 //	Dennis Hayes (dennish@raytek.com)
-//
 // (C) 2002 Ximian, Inc
 //
 
@@ -124,10 +123,10 @@ namespace System.Windows.Forms {
 		//  --- Protected Methods
 		//
 
-		[MonoTODO]
-		protected override void Dispose(bool val) {
-			throw new NotImplementedException ();
-		}
+		
+		//protected override void Dispose(bool disposing) {
+		//	throw new NotImplementedException ();
+		//}
 		bool IExtenderProvider.CanExtend(object extendee){
 			throw new NotImplementedException ();
 		}	

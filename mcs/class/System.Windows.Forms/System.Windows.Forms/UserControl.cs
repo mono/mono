@@ -1,11 +1,11 @@
 //
-// System.Windows.Forms.ToolBar
+// System.Windows.Forms.UpDownEventHandler.cs
 //
-// Author:
-//   stubbed out by ?
-//	Dennis Hayes (dennish@raytek.com)
+// Authors:
+//	//unknown
+//   Dennis Hayes (dennish@Raytek.com)
 //
-// (C) 2002 Ximian, Inc
+// (C) 2002 Ximian, Inc.  http://www.ximian.com
 //
 using System;
 using System.Drawing;

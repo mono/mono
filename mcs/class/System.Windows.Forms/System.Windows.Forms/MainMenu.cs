@@ -72,13 +72,14 @@ namespace System.Windows.Forms {
 		public override int GetHashCode() {
 			//FIXME add our proprities
 			return base.GetHashCode();
-		}		//inherited
+		}		
+		//inherited
 		//public override void Dispose() 
 		//{
 		//	throw new NotImplementedException();
 		//}
 		//
-		//protected override void Dispose(bool b) 
+		//protected override void Dispose(bool disposing) 
 		//{
 		//	throw new NotImplementedException();
 		//}
@@ -129,7 +130,7 @@ namespace System.Windows.Forms {
 		//{
 		//	throw new NotImplementedException();
 		//}
-		//protected override void Dispose(bool b) 
+		//protected override void Dispose(bool disposing) 
 		//{
 		//	throw new NotImplementedException();
 		//}

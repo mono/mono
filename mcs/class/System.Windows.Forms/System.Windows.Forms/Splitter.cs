@@ -264,11 +264,11 @@ namespace System.Windows.Forms {
 		//
 		//  --- Protected Methods
 		//
-		[MonoTODO]
-		protected override void Dispose(bool val)
-		{
-			throw new NotImplementedException ();
-		}
+		//inherited
+		//protected override void Dispose(bool val)
+		//{
+		//	throw new NotImplementedException ();
+		//}
 		[MonoTODO]
 		protected override void OnKeyDown(KeyEventArgs e)
 		{

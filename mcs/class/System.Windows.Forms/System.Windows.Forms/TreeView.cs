@@ -385,11 +385,12 @@ namespace System.Windows.Forms {
 		{
 			throw new NotImplementedException ();	
 		}
-		[MonoTODO]
-		protected override void Dispose(bool disposing)
-		{
-			throw new NotImplementedException ();
-		}
+
+		//inherited
+		//protected override void Dispose(bool disposing)
+		//{
+		//	throw new NotImplementedException ();
+		//}
 		[MonoTODO]
 		protected override bool IsInputKey(Keys keyData)
 		{

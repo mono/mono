@@ -79,6 +79,8 @@ namespace System.Windows.Forms {
 		//
 		//  --- Public Methods
 		//
+
+		//inherited
 		//public IAsyncResult BeginInvoke(Delegate del)
 		//{
 		//	throw new NotImplementedException ();
@@ -233,11 +235,11 @@ namespace System.Windows.Forms {
 		{
 			throw new NotImplementedException ();
 		}
-		[MonoTODO]
-		protected override void Dispose(bool val)
-		{
-			throw new NotImplementedException ();
-		}
+		//inherited
+		//protected override void Dispose(bool disposing)
+		//{
+		//	throw new NotImplementedException ();
+		//}
 		[MonoTODO]
 		protected virtual void OnCheckedChanged(EventArgs e)
 		{

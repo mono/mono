@@ -103,10 +103,11 @@ namespace System.Windows.Forms {
 		//
 		// --- Protected Methods
 		//
-		[MonoTODO]
-		protected override void Dispose(bool disposing) {
-			throw new NotImplementedException ();
-		}
+
+		//inherited
+		//protected override void Dispose(bool disposing) {
+		//	throw new NotImplementedException ();
+		//}
 		[MonoTODO]
 		~ToolTip() {
 			throw new NotImplementedException ();

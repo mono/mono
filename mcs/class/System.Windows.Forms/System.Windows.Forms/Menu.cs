@@ -29,7 +29,7 @@ namespace System.Windows.Forms  {
 		//
 		// -- Public Methods
 		//
-
+		//inherited
 		//public virtual ObjRef CreateObjRef(Type t) {
 		//	throw new NotImplementedException();
 		//}
@@ -38,7 +38,7 @@ namespace System.Windows.Forms  {
 		//	throw new NotImplementedException();
 		//}
 		//
-		//protected virtual void Dispose(bool b) {
+		//protected virtual void Dispose(bool disposing) {
 		//	throw new NotImplementedException();
 		//}
 
@@ -90,15 +90,6 @@ namespace System.Windows.Forms  {
 			throw new NotImplementedException();
 		}
 
-		//protected override void Dispose(bool b)
-		//{
-		//	throw new NotImplementedException();
-		//}
-
-		//public void Dispose()
-		//{
-		//	throw new NotImplementedException();
-		//}
 
 		~Menu() {
 			throw new NotImplementedException();

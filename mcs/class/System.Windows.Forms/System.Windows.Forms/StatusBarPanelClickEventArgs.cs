@@ -69,10 +69,10 @@ namespace System.Windows.Forms {
 		///	StatusBarPanelClickEventArgs and another
 		///	object.
 		/// </remarks>
-		public override bool Equals (object o) 
+		public override bool Equals (object obj) 
 		{
-			if (!(o is StatusBarPanelClickEventArgs))return false;
-			return (this == (StatusBarPanelClickEventArgs) o);
+			if (!(obj is StatusBarPanelClickEventArgs))return false;
+			return (this == (StatusBarPanelClickEventArgs) obj);
 		}
 
 		/// <summary>

@@ -3,7 +3,7 @@
 //
 // Author:
 //   stubbed out by Paul Osman (paul.osman@sympatico.ca)
-//	Dennis Hayes (dennish@raytek.com)
+//   Dennis Hayes (dennish@Raytek.com)
 //
 // (C) 2002 Ximian, Inc
 //

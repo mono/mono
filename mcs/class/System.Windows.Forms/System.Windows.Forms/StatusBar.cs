@@ -4,7 +4,7 @@
 // Author:
 //   stubbed out by Daniel Carrera (dcarrera@math.toronto.edu)
 //   stubbed out by Richard Baumann (biochem333@nyc.rr.com)
-//	Dennis Hayes (dennish@raytek.com)
+//   Dennis Hayes (dennish@Raytek.com)
 //
 // (C) 2002 Ximian, Inc
 //
@@ -57,11 +57,12 @@ namespace System.Windows.Forms {
 		{
 			throw new NotImplementedException ();
 		}
-		[MonoTODO]
-		protected override void Dispose(bool disposing)
-		{
-			throw new NotImplementedException ();
-		}
+
+		//inherited
+		//protected override void Dispose(bool disposing)
+		//{
+		//	throw new NotImplementedException ();
+		//}
 		[MonoTODO]
 		protected virtual void OnDrawItem(StatusBarDrawItemEventArgs e)
 		{

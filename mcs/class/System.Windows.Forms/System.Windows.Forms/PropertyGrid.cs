@@ -3,6 +3,7 @@
 //
 // Author:
 //   stubbed out by Jaak Simm (jaaksimm@firm.ee)
+//	Dennis Hayes (dennish@raytek.com)
 //
 // (C) Ximian, Inc., 2002
 //
@@ -255,11 +256,11 @@ namespace System.Windows.Forms {
 //			throw new NotImplementedException ();
 //		}
 		
-		[MonoTODO]
-		protected override void Dispose(bool disposing) 
-		{
-			throw new NotImplementedException ();
-		}
+		//inherited
+		//protected override void Dispose(bool disposing) 
+		//{
+		//	throw new NotImplementedException ();
+		//}
 		
 		[MonoTODO]
 		public void ExpandAllGridItems() 

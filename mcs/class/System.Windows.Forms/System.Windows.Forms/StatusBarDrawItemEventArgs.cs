@@ -69,10 +69,10 @@ namespace System.Windows.Forms {
 		///	Checks equivalence of this
 		///	StatusBarDrawItemEventArgs and another object.
 		/// </remarks>
-		public override bool Equals (object o) 
+		public override bool Equals (object obj) 
 		{
-			if (!(o is StatusBarDrawItemEventArgs))return false;
-			return (this == (StatusBarDrawItemEventArgs) o);
+			if (!(obj is StatusBarDrawItemEventArgs))return false;
+			return (this == (StatusBarDrawItemEventArgs) obj);
 		}
 
 		/// <summary>

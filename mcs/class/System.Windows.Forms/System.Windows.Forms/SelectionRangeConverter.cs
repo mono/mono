@@ -3,7 +3,7 @@
 //
 // Author:
 //   stubbed out by Daniel Carrera (dcarrera@math.toronto.edu)
-//	Dennis Hayes (dennish@raytek.com)
+//   Dennis Hayes (dennish@Raytek.com)
 //
 // (C) 2002 Ximian, Inc
 //

@@ -130,7 +130,7 @@ namespace System.Windows.Forms {
 		{
 			throw new NotImplementedException ();
 		}
-
+		//inherited
 		//public virtual ObjRef CreateObjRef(Type requestedType)
 		//{
 		//	throw new NotImplementedException ();

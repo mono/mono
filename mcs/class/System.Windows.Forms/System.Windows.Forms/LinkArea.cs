@@ -109,12 +109,12 @@ namespace System.Windows.Forms {
 		///	Checks equivalence of this LinkArea and another object.
 		/// </remarks>
 		
-		public override bool Equals (object o)
+		public override bool Equals (object obj)
 		{
-			if (!(o is LinkArea))
+			if (!(obj is LinkArea))
 				return false;
 
-			return (this == (LinkArea) o);
+			return (this == (LinkArea) obj);
 		}
 
 		/// <summary>

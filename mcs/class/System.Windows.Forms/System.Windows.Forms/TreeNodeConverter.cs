@@ -3,6 +3,7 @@
 //
 // Author:
 //   stubbed out by Jackson Harper (jackson@latitudegeo.com)
+//   Dennis Hayes (dennish@Raytek.com)
 //
 // (C) 2002 Ximian, Inc
 //

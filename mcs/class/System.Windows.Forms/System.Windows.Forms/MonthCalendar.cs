@@ -3,6 +3,7 @@
 //
 // Author:
 //   stubbed out by Paul Osman (paul.osman@sympatico.ca)
+//	Dennis Hayes (dennish@raytek.com)
 //
 // (C) 2002 Ximian, Inc
 //
@@ -43,11 +44,11 @@ namespace System.Windows.Forms {
 		{
 			throw new NotImplementedException ();
 		}
-		[MonoTODO]
-		public void Dispose()
-		{
-			throw new NotImplementedException ();
-		}
+		//inherited
+		//public void Dispose()
+		//{
+		//	throw new NotImplementedException ();
+		//}
 		[MonoTODO]
 		public void RemoveAllAnnuallyBoldedDates()
 		{
@@ -1142,11 +1143,10 @@ namespace System.Windows.Forms {
 		{
 			throw new NotImplementedException ();
 		}
-		[MonoTODO]
-		protected virtual void Dispose(bool b)
-		{
-			throw new NotImplementedException ();
-		}
+		//protected virtual void Dispose(bool disposed)
+		//{
+		//	throw new NotImplementedException ();
+		//}
 		[MonoTODO]
 		protected virtual void InitLayout()
 		{

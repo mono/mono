@@ -13,6 +13,5 @@ namespace System.Windows.Forms {
 	/// <summary>
 	/// Represents a method that will handle the ChangeUICues event of a Control.
 	/// </summary>
-	[Serializable]
 	public delegate void UICuesEventHandler(object sender, UICuesEventArgs e);
 }

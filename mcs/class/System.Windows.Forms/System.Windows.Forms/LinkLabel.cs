@@ -5,7 +5,6 @@
 //   stubbed out by Daniel Carrera (dcarrera@math.toronto.edu)
 //   stub ammended by Jaak Simm (jaaksimm@firm.ee)
 //	Dennis Hayes (dennish@raytek.com)
-//
 // (C) 2002 Ximian, Inc
 //
 using System.Collections;
@@ -264,13 +263,13 @@ namespace System.Windows.Forms {
 		{
 			throw new NotImplementedException ();
 		}
-		/*
-		[MonoTODO]
-		protected override virtual void Dispose(bool val)
-		{
-			throw new NotImplementedException ();
-		}
-		*/
+
+		//inherited
+		//protected override virtual void Dispose(bool val)
+		//{
+		//	throw new NotImplementedException ();
+		//}
+
 
 		[MonoTODO]
 		protected override void OnEnabledChanged(EventArgs e)

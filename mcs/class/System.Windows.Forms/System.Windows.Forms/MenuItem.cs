@@ -61,13 +61,13 @@ namespace System.Windows.Forms {
 		public override ObjRef CreateObjRef(Type t) {
 			throw new NotImplementedException ();
 		}
-                
+        //inherited
 		//public void Dispose()
 		//{
 		//        throw new NotImplementedException ();
 		//}
 		//
-		//public override void Dispose(bool b)
+		//public override void Dispose(bool disposing)
 		//{
 		//        throw new NotImplementedException ();
 		//}
@@ -143,7 +143,7 @@ namespace System.Windows.Forms {
 		//	throw new NotImplementedException ();
 		//}
                 
-		//protected override void Dispose(bool b)
+		//protected override void Dispose(bool disposing)
 		//{
 		//        throw new NotImplementedException ();
 		//}

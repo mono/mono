@@ -14,6 +14,6 @@ namespace System.Windows.Forms {
 	/// This type supports the .NET Framework infrastructure 
 	/// and is not intended to be used directly from your code.
 	/// </summary>
-	[Serializable]
+	//[Serializable]
 	public delegate void UpDownEventHandler(object sender, UpDownEventArgs e);
 }

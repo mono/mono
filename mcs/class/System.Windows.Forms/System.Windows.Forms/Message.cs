@@ -130,12 +130,12 @@ namespace System.Windows.Forms {
 		///	Checks equivalence of this Message and another object.
 		/// </remarks>
 		
-		public override bool Equals (object o)
+		public override bool Equals (object obj)
 		{
-			if (!(o is Message))
+			if (!(obj is Message))
 				return false;
 
-			return (this == (Message) o);
+			return (this == (Message) obj);
 		}
 
 		/// <summary>

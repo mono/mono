@@ -46,7 +46,6 @@ namespace System.Windows.Forms {
 		//
 		//  --- Public Methods
 		//
-		[MonoTODO]
 		public void Dispose()
 		{
 			throw new NotImplementedException ();
@@ -80,11 +79,11 @@ namespace System.Windows.Forms {
 		//
 		//  --- Protected Methods
 		//
-		[MonoTODO]
-		protected virtual void Dispose(bool disposing)
-		{
-			throw new NotImplementedException ();
-		}
+		//inherited
+		//protected virtual void Dispose(bool disposing)
+		//{
+		//	throw new NotImplementedException ();
+		//}
 		//protected object MemberwiseClone()
 		//{
 		//	throw new NotImplementedException ();

@@ -3,6 +3,7 @@
 //
 // Author:
 //	 stubbed out by Stefan Warnke (StefanW@POBox.com)
+//   Dennis Hayes (dennish@Raytek.com)
 //
 // (C) Ximian, Inc., 2002
 //

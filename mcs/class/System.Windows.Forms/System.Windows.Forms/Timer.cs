@@ -3,6 +3,7 @@
 //
 // Author:
 //   stubbed out by Jackson Harper (jackson@latitudegeo.com)
+//	Dennis Hayes (dennish@raytek.com)
 //
 // (C) 2002 Ximian, Inc
 //
@@ -76,11 +77,12 @@ using System.ComponentModel;
 		//
 		// --- Protected Methods
 		//
-		[MonoTODO]
-		protected override void Dispose(bool disposing) 
-		{
-			throw new NotImplementedException ();
-		}
+
+		//inherited
+		//protected override void Dispose(bool disposing) 
+		//{
+		//	throw new NotImplementedException ();
+		//}
 		[MonoTODO]
 		protected virtual void OnTick(EventArgs e) 
 		{

@@ -3,6 +3,7 @@
 //
 // Author:
 //   John Rebbeck <john@rebent.com>
+//   Dennis Hayes (dennish@Raytek.com)
 // (C) 2002 Ximian, Inc.  http://www.ximian.com
 //
 using System;

@@ -4,7 +4,6 @@
 // Author:
 //   stubbed out by Daniel Carrera (dcarrera@math.toronto.edu)
 //	Dennis Hayes (dennish@raytek.com)
-//
 // (C) 2002 Ximian, Inc
 //
 using System.Collections;
@@ -416,10 +415,9 @@ namespace System.Windows.Forms {
 		protected override void CreateHandle() {
 			throw new NotImplementedException ();
 		}
-		[MonoTODO]
-		protected override void Dispose(bool b) {
-			throw new NotImplementedException ();
-		}
+		//protected override void Dispose(bool disposing) {
+		//	throw new NotImplementedException ();
+		//}
 		[MonoTODO]
 		protected override bool IsInputKey(Keys keyData) {
 			throw new NotImplementedException ();

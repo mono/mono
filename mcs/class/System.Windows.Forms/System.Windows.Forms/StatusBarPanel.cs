@@ -3,6 +3,7 @@
 //
 // Author:
 //   stubbed out by Richard Baumann (biochem333@nyc.rr.com)
+//   Dennis Hayes (dennish@Raytek.com)
 //
 // (C) Ximian, Inc., 2002
 //
@@ -68,11 +69,12 @@ namespace System.Windows.Forms {
 		//
 		//  --- Protected Methods
 		//
-		[MonoTODO]
-		protected override void Dispose(bool disposing)
-		{
-			throw new NotImplementedException ();
-		}
+
+		//inherited
+		//protected override void Dispose(bool disposing)
+		//{
+		//	throw new NotImplementedException ();
+		//}
 
 		//
 		//  --- Public Properties
