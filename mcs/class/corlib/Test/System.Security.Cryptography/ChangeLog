@@ -1,3 +1,9 @@
+2004-03-26  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* DESTest.cs: New. Unit tests for DES including checks for weak and
+	semi-weak keys (with and without parity applied on keys). Completes
+	coverage for DES class.
+
 2004-04-02  Bernie Solomon  <bernard@ugsolutions.com>
 
 	* PasswordDeriveBytesTest.cs: Add ToInt32LE so
