@@ -88,6 +88,8 @@ namespace System.Web.UI.WebControls
 			{
 				if(dayHeaderStyle==null)
 					dayHeaderStyle = new TableItemStyle();
+				if(IsTrackingViewState)
+					dayHeaderStyle.TrackViewState();
 				return dayHeaderStyle;
 			}
 		}
@@ -115,6 +117,8 @@ namespace System.Web.UI.WebControls
 			{
 				if(dayStyle==null)
 					dayStyle = new TableItemStyle();
+				if(IsTrackingViewState)
+					dayStyle.TrackViewState();
 				return dayStyle;
 			}
 		}
@@ -174,6 +178,8 @@ namespace System.Web.UI.WebControls
 			{
 				if(nextPrevStyle == null)
 					nextPrevStyle = new TableItemStyle();
+				if(IsTrackingViewState)
+					nextPrevStyle.TrackViewState();
 				return nextPrevStyle;
 			}
 		}
@@ -184,6 +190,8 @@ namespace System.Web.UI.WebControls
 			{
 				if(otherMonthDayStyle == null)
 					otherMonthDayStyle = new TableItemStyle();
+				if(IsTrackingViewState)
+					otherMonthDayStyle.TrackViewState();
 				return otherMonthDayStyle;
 			}
 		}
@@ -205,23 +213,23 @@ namespace System.Web.UI.WebControls
 		
 		public DateTime SelectedDate
 		{
-			// TODO: Am I right here? I got confused with the "Remarks" written in the documentation
-			/*
-			 * Looks like I have to first do something with SelectionMode,
-			 * then with SelectedDates,
-			 * Update when SelectionChanged is called => Link to the function.
-			 * Pretty confused at this point
-			*/
 			get
 			{
-				object o = ViewState["SelectedDate"];
-				if(o!=null)
-					return (DateTime)o;
+				if(SelectedDates.Count > 0)
+				{
+					return SelectedDates[0];
+				}
 				return DateTime.MinValue;
 			}
 			set
 			{
-				ViewState["SelectedDate"] = value;
+				if(value == DateTime.MinValue)
+				{
+					SelectedDates.Clear();
+				} else
+				{
+					SelectedDates.SelectRange(value, value);
+				}
 			}
 		}
 		
@@ -245,6 +253,8 @@ namespace System.Web.UI.WebControls
 			{
 				if(selectedDayStyle==null)
 					selectedDayStyle = new TableItemStyle();
+				if(IsTrackingViewState)
+					selectedDayDtyle.TrackViewState();
 				return selectedDayStyle;
 			}
 		}
@@ -291,18 +301,18 @@ namespace System.Web.UI.WebControls
 			}
 		}
 		
-		public string SelectedWeekText
+		public string SelectWeekText
 		{
 			get
 			{
-				object o = ViewState["SelectedWeekText"];
+				object o = ViewState["SelectWeekText"];
 				if(o!=null)
 					return (string)o;
 				return "&gt;";
 			}
 			set
 			{
-				ViewState["SelectedWeekText"] = value;
+				ViewState["SelectWeekText"] = value;
 			}
 		}
 		
@@ -389,6 +399,8 @@ namespace System.Web.UI.WebControls
 			{
 				if(titleStyle==null)
 					titleStyle = new TableItemStyle();
+				if(IsTrackingViewState)
+					titleStyle.TrackViewState();
 				return titleStyle;
 			}
 		}
@@ -399,6 +411,8 @@ namespace System.Web.UI.WebControls
 			{
 				if(todayDayStyle==null)
 					todayDayStyle = new TableItemStyle();
+				if(IsTrackingViewState)
+					todayDayStyle.TrackViewState();
 				return todayDayStyle;
 			}
 		}
@@ -439,6 +453,10 @@ namespace System.Web.UI.WebControls
 			{
 				if(weekendDayStyle == null)
 					weekendDayStyle = new TableItemStyle();
+				if(IsTrackingViewState)
+				{
+					weekendDayStyle.TrackViewState();
+				}
 				return weekendDayStyle;
 			}
 		}
@@ -508,12 +526,64 @@ namespace System.Web.UI.WebControls
 					mceh(this, new MonthChangedEventArgs(newDate, prevDate));
 			}
 		}
-		
+
+		/// <remarks>
+		/// See test6.aspx in Tests directory for verification
+		/// </remarks>
 		void IPostBackEventHandler.RaisePostBackEvent(string eventArgument)
 		{
-			//TODO: Implement Me
-			// Written to keep compile get going
-			throw new NotImplementedException();
+			globCal = DateTimeFormatInfo.CurrentInfo.Calendar;
+			DateTime visDate = GetEffectiveVisibleDate();
+			//FIXME: Should it be String.Compare(eventArgument, "nextMonth", false);
+			if(eventArgument == "nextMonth")
+			{
+				VisibleDate = globCal.AddMonths(visDate, 1);
+				OnVisibleDateChanged(VisibleDate, visDate);
+				return;
+			}
+			if(eventArgument == "prevMonth")
+			{
+				VisibleDate = globCal.AddMonths(visDate, -1);
+				OnVisibleDateChanged(VisibleDate, visDate);
+				return;
+			}
+			if(eventArgument == "selectMonth")
+			{
+				DateTime oldDate = new DateTime(globCal.GetYear(visDate), globCal.GetMonth(visDate), 1, globCal);
+				SelectRangeInternal(oldDate, globCal.AddDays(gloCal.AddMonths(oldDate, 1), -1), visDate);
+				return;
+			}
+			if(String.Compare(eventArgument, 0, "selectWeek", 0, "selectWeek".Length)==0)
+			{
+				int week = -1;
+				try
+				{
+					week = Int32.Parse(eventArgument.Substring("selectWeek".Length));
+				} catch(Exception e)
+				{
+				}
+				if(week >= 0 && week <= 5)
+				{
+					DateTime weekStart = globCal.AddDays(GetFirstCalendarDay(visDate), week * 7);
+					SelectRangeInternal(weekStart, globCal.AddDays(weekStart, 6), visDate);
+				}
+				return;
+			}
+			if(String.Compare(eventArgument, 0, "selectDay", 0, "selectDay".Length)==0)
+			{
+				int day = -1;
+				try
+				{
+					day = Int32.Parse(eventArgument.Substring("selectDay".Length);
+				} catch(Exception e)
+				{
+				}
+				if(day >= 0 && day <= 42)
+				{
+					DateTime dayStart = globCal.AddDays(GetFirstCalendarDay(visDate), day);
+					SelectRangeInternal(dayStart, dayStart, visDate);
+				}
+			}
 		}
 		
 		protected override void Render(HtmlTextWriter writer)
@@ -521,7 +591,9 @@ namespace System.Web.UI.WebControls
 			//TODO: Implement me
 			throw new NotImplementedException();
 			globCal = DateTimeFormatInfo.CurrentInfo.Calendar;
-			SetFirstCalendarDay(GetEffectiveVisibleDate());
+			DateTime visDate   = GetEffectiveVisibleDate()
+			DateTime firstDate = GetFirstCalendarDay(visDate);
+			
 			/*
 			 * ForeColor else defaultTextColor
 			 * Draw a table
@@ -549,23 +621,57 @@ namespace System.Web.UI.WebControls
 		{
 			if(savedState!=null)
 			{
-				//TODO: Implement me
-				//object[] states = (object[]) savedState;
-				//loadViewState of all the states/styles
+				if(ViewState["_CalendarSelectedDates"] != null)
+					SelectedDates = (SelectedDatesCollection)ViewState["_CalendarSelectedDates"];
+
+				object[] states = (object[]) savedState;
+				if(states[0] != null)
+					base.LoadViewState(states[0]);
+				if(states[1] != null)
+					DayHeaderStyle.LoadViewState(states[1]);
+				if(states[2] != null)
+					DayStyle.LoadViewState(states[2]);
+				if(states[3] != null)
+					NextPrevStyle.LoadViewState(states[3]);
+				if(states[4] != null)
+					OtherMonthStyle.LoadViewState(states[4]);
+				if(states[5] != null)
+					SelectedDayStyle.LoadViewState(states[5]);
+				if(states[6] != null)
+					SelectorStyle.LoadViewState(states[6]);
+				if(states[7] != null)
+					TitleStyle.LoadViewState(states[7]);
+				if(states[8] != null)
+					TodayDayStyle.LoadViewState(states[8]);
+				if(states[9] != null)
+					WeekendDayStyle.LoadViewState(states[9]);
 			}
-			throw new NotImplementedException();
 		}
 		
 		protected override object SaveViewState()
 		{
-			//TODO: Implement me
-			// SaveViewState of all the styles
-			throw new NotImplementedException();
+			ViewState["_CalendarSelectedDates"] = (SelectedDates.Count > 0 ? selectedDates : null);
+			object[] states = new object[11];
+			states[0] = base.SaveViewState();
+			states[1] = (dayHeaderStyle == null ? null : dayHeaderStyle.SaveViewStyle());
+			states[2] = (dayStyle == null ? null : dayStyle.SaveViewStyle());
+			states[3] = (nextPrevStyle == null ? null : nextPrevStyle.SaveViewStyle());
+			states[4] = (otherMonthDayStyle == null ? null : otherMonthDayStyle.SaveViewStyle());
+			states[5] = (selectedDayStyle == null ? null : selectedDayStyle.SaveViewStyle());
+			states[6] = (selectorStyle == null ? null : selectorStyle.SaveViewStyle());
+			states[7] = (titleStyle == null ? null : titleStyle.SaveViewStyle());
+			states[8] = (todayDayStyle == null ? null : todayDayStyle.SaveViewStyle());
+			states[9] = (weekendDayStyle == null ? null : weekendDayStyle.SaveViewStyle());
+			for(int i=0; i < states.Length)
+			{
+				if(states[i]!=null)
+					return states;
+			}
+			return null;
 		}
 		
-		protected override void TrackViewState()
+		protected override void TrackViewState(): TrackViewState()
 		{
-			base.TrackViewState();
 			if(titleStyle!=null)
 			{
 				titleStyle.TrackViewState();
@@ -603,8 +709,6 @@ namespace System.Web.UI.WebControls
 				selectorStyle.TrackViewState();
 			}
 		}
-		
-		//TODO: Recheck, I am through with all the functions?
 		
 		private void RenderAllDays(HtmlTextWriter writer, DateTime firstDay, DateTime activeDate, CalendarSelectionMode mode, bool isActive, bool isDownLevel)
 		{
@@ -677,10 +781,16 @@ namespace System.Web.UI.WebControls
 			cell.RenderEndTag(writer);
 		}
 		
-		private DateTime SetFirstCalendarDay(DateTime visibleDate)
+		private DateTime GetFirstCalendarDay(DateTime visibleDate)
 		{
-			throw new NotImplementedException();
-			//TODO: Implement me
+			DayOfWeek firstDay = ( FirstDayOfWeek == FirstDayOfWeek.Default ? DateTimeFormatInfo.CurrentInfo.FirstDayOfWeek : FirstDayOfWeek);
+			//FIXME: is (int)(Enum) correct?
+			int days = (int)globCal.GetDayOfWeek(visibleDate) - (int)firstDay;
+			if(days < 0)
+			{
+				days += 7;
+			}
+			return globCal.AddDays(visibleDate, -days);
 		}
 		
 		private DateTime GetEffectiveVisibleDate()
@@ -693,10 +803,10 @@ namespace System.Web.UI.WebControls
 			return new DateTime(globCal.GetYear(dt), globCal.GetMonth(dt), globCal.GetDayOfMonth(dt), globCal);
 		}
 		
-		/*
-		 * Creates text to be displayed, with all attributes if to be
-		 * shown as a hyperlink
-		 */
+		/// <summary>
+		/// Creates text to be displayed, with all attributes if to be
+		/// shown as a hyperlink
+		/// </summary>
 		private string GetCalendarText(string eventArg, string text, Color foreground, bool isLink)
 		{
 			if(isLink)
@@ -727,10 +837,25 @@ namespace System.Web.UI.WebControls
 			RenderBeginTag(htw);
 			if(showLinks)
 			{
-				//sw.Write(GetCalendarText(,,true, ForeColor));
+				//sw.Write(GetCalendarText(,,ForeColor, true));
 				//TODO: Implement me
 			}
 			throw new NotImplementedException();
+		}
+		
+		internal DateTime SelectRangeInternal(DateTime fromDate, DateTime toDate, DateTime visibleDate)
+		{
+			TimeSpan span = fromDate - toDate;
+			if(SelectedDates.Count != span.Days || SelectedDates[SelectedDate.Count - 1]!= toDate)
+			{
+				SelectedDates.SelectRange(fromDate, toDate);
+				OnSelectionChanged();
+			}
+			if(globCal.GetMonth(fromDate) == globCal.GetMonth(fromDate) && globCal.GetMonth(fromDate) != globCal.GetMonth(visibleDate)
+			{
+				VisibleDate = new DateTime(globCal.GetYear(fromDate), globCal.getMonth(fromDate), 1, globCal);
+				OnVisibleMonthChanged(VisibleDate, visibleDate);
+			}
 		}
 	}
 }
