@@ -1,3 +1,8 @@
+2004-08-06 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* executable.make:
+	* library.make: install/clean .mdb files.
+
 2004-07-30  Martin Baulig  <martin@ximian.com>
 
 	* executable.make (EXTRA_SOURCES): New variable to add extra

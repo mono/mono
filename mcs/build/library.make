@@ -19,7 +19,7 @@ endif
 
 ifndef response
 response = $(depsdir)/$(PROFILE)_$(LIBRARY).response
-library_CLEAN_FILES += $(response)
+library_CLEAN_FILES += $(response) $(LIBRARY).mdb
 endif
 
 ifndef LIBRARY_NAME
@@ -30,7 +30,9 @@ makefrag = $(depsdir)/$(PROFILE)_$(LIBRARY).makefrag
 the_lib = $(topdir)/class/lib/$(PROFILE)/$(LIBRARY_NAME)
 the_lib_signature_stamp = $(makefrag:.makefrag=.was_signed)
 the_pdb = $(the_lib:.dll=.pdb)
-library_CLEAN_FILES += $(makefrag) $(the_lib) $(the_pdb) $(the_lib_signature_stamp)
+the_mdb = $(the_lib:.dll=.mdb)
+library_CLEAN_FILES += $(makefrag) $(the_lib) $(the_pdb) \
+			$(the_mdb) $(the_lib_signature_stamp)
 
 ifndef NO_TEST
 test_nunit_lib = nunit.framework.dll nunit.core.dll nunit.util.dll
@@ -93,9 +95,10 @@ ifdef LIBRARY_INSTALL_DIR
 install-local:
 	$(MKINSTALLDIRS) $(DESTDIR)$(LIBRARY_INSTALL_DIR)
 	$(INSTALL_LIB) $(the_lib) $(DESTDIR)$(LIBRARY_INSTALL_DIR)/$(LIBRARY_NAME)
+	-$(INSTALL_LIB) $(the_lib).mdb $(DESTDIR)$(LIBRARY_INSTALL_DIR)/$(LIBRARY_NAME).mdb
 
 uninstall-local:
-	-rm -f $(DESTDIR)$(LIBRARY_INSTALL_DIR)/$(LIBRARY_NAME)
+	-rm -f $(DESTDIR)$(LIBRARY_INSTALL_DIR)/$(LIBRARY_NAME) $(DESTDIR)$(LIBRARY_INSTALL_DIR)/$(LIBRARY_NAME).mdb
 
 else
 
@@ -202,6 +205,7 @@ $(the_lib): $(response)
 ifdef LIBRARY_USE_INTERMEDIATE_FILE
 	$(LIBRARY_COMPILE) $(LIBRARY_FLAGS) $(LIB_MCS_FLAGS) /target:library /out:$(@F) @$(response)
 	mv $(@F) $@
+	-mv $(@F).mdb $@.mdb
 else
 	$(LIBRARY_COMPILE) $(LIBRARY_FLAGS) $(LIB_MCS_FLAGS) /target:library /out:$@ @$(response)
 endif
