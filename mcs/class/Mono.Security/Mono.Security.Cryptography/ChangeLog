@@ -1,5 +1,15 @@
 2004-09-17  Sebastien Pouliot  <sebastien@ximian.com>
 
+	* CryptoConvert.cs: In synch with corlib version. Fixed all level 4 
+	compilation warnings.
+	* KeyPairPersistence.cs: In synch with corlib version. Fixed all level
+	4 compilation warnings.
+	* PKCS1.cs: In synch with corlib version. Fixed all level 4 
+	compilation warnings.
+	* SHA224Managed.cs: Fixed all level 4 compilation warnings.
+
+2004-09-17  Sebastien Pouliot  <sebastien@ximian.com>
+
 	* SHA224.cs: New. Abstract class for all SHA224 implementations.
 	* SHA224Managed.cs: New. Managed implementation of SHA224 (a SHA256
 	derivate) as specified in RFC3874 and FIPS 180-2 Change Notice.

@@ -9,6 +9,8 @@
 //
 
 //
+// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+//
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
 // "Software"), to deal in the Software without restriction, including
@@ -103,7 +105,7 @@ namespace Mono.Security.Cryptography {
 					throw new CryptographicException ("Invalid blob header");
 				
 				// ALGID (CALG_RSA_SIGN, CALG_RSA_KEYX, ...)
-				int algId = ToInt32LE (blob, offset+4);
+				// int algId = ToInt32LE (blob, offset+4);
 
 				// DWORD bitlen
 				int bitLen = ToInt32LE (blob, offset+12);
@@ -266,7 +268,7 @@ namespace Mono.Security.Cryptography {
 					throw new CryptographicException ("Invalid blob header");
 
 				// ALGID (CALG_RSA_SIGN, CALG_RSA_KEYX, ...)
-				int algId = ToInt32LE (blob, offset+4);
+				// int algId = ToInt32LE (blob, offset+4);
 
 				// DWORD bitlen
 				int bitLen = ToInt32LE (blob, offset+12);
@@ -377,7 +379,6 @@ namespace Mono.Security.Cryptography {
 			if (rsa == null)
 				throw new ArgumentNullException ("rsa");
 
-			RSAParameters p = rsa.ExportParameters (includePrivateKey);
 			if (includePrivateKey)
 				return ToCapiPrivateKeyBlob (rsa);
 			else
