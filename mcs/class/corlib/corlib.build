@@ -21,6 +21,7 @@
 
 			<sources>
 				<includes name="**/*.cs"/>
+
 				<excludes name="Test/**"/>
 				<excludes name="Windows/**"/>
 				<excludes name="System.Security.Permissions/SecurityPermissionAttribute.cs"/>	<!-- custom security attributes problem -->
@@ -41,6 +42,7 @@
 			
 			<sources>
 				<includes name="**/*.cs"/>
+
 				<excludes name="Test/**"/>
 				<excludes name="Windows/**"/>
 				<excludes name="System.Security.Permissions/SecurityPermissionAttribute.cs"/>
@@ -50,7 +52,8 @@
 				<excludes name="System/ValueType.cs"/>
 				<excludes name="System/Enum.cs"/>
 				<excludes name="System/Delegate.cs"/>
-				<excludes name="System/MulticastDelegate.cs" />
+				<excludes name="System/MulticastDelegate.cs"/>
+				<excludes name="System/Exception.cs"/>
 			</sources>
 		</csc>
 		<!-- NUnit can only run under windows right now, so build for windows
@@ -62,11 +65,19 @@
 			<arg value="/unsafe"/>
 			<sources>
 				<includes name="**/*.cs"/>
+
 				<excludes name="Test/**"/>
 				<excludes name="Linux/**"/>
+				<excludes name="System.Security.Permissions/SecurityPermissionAttribute.cs"/>
+				<excludes name="System.PAL/IOperatingSystem.cs"/>
+
 				<excludes name="System/Object.cs"/>
 				<excludes name="System/ValueType.cs"/>
 				<excludes name="System/Enum.cs"/>
+				<excludes name="System/Delegate.cs"/>
+				<excludes name="System/MulticastDelegate.cs"/>
+				<excludes name="System/Exception.cs"/>
+
 				<excludes name="System/Type.cs"/>
 				<excludes name="System/MonoType.cs"/>
 				<excludes name="System/Array.cs"/>
@@ -75,9 +86,7 @@
 				<excludes name="System/AppDomain.cs"/>
 				<excludes name="System.Reflection.Emit/**"/>
 				<excludes name="System/RuntimeTypeHandle.cs"/>
-				<excludes name="System.PAL/IOperatingSystem.cs"/>
 				<excludes name="System.Collections/Queue.cs"/>
-				<excludes name="System.Security.Permissions/SecurityPermissionAttribute.cs"/>
 			</sources>
 		</csc>
 		<nant basedir="Test" target="build"/>
