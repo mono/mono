@@ -4976,11 +4976,9 @@ namespace Mono.CSharp {
 		}
 
 		static bool InferParamsTypeArguments (EmitContext ec, ArrayList arguments,
-						      ref MethodBase candidate)
+						      ref MethodBase method)
 		{
-			MethodInfo method = candidate as MethodInfo;
-			if ((arguments == null) || (method == null) ||
-			    !TypeManager.IsGenericMethod (method))
+			if ((arguments == null) || !TypeManager.IsGenericMethod (method))
 				return true;
 
 			int arg_count;
@@ -5043,7 +5041,7 @@ namespace Mono.CSharp {
 				if (infered_types [i] == null)
 					return false;
 
-			candidate = method.BindGenericParameters (infered_types);
+			method = method.BindGenericParameters (infered_types);
 			return true;
 		}
 
@@ -5067,11 +5065,9 @@ namespace Mono.CSharp {
 		}
 
 		static bool InferTypeArguments (EmitContext ec, ArrayList arguments,
-						ref MethodBase candidate)
+						ref MethodBase method)
 		{
-			MethodInfo method = candidate as MethodInfo;
-			if ((arguments == null) || (method == null) ||
-			    !TypeManager.IsGenericMethod (method))
+			if ((arguments == null) || !TypeManager.IsGenericMethod (method))
 				return true;
 
 			ParameterData pd = GetParameterData (method);
@@ -5097,7 +5093,7 @@ namespace Mono.CSharp {
 			if (!InferTypeArguments (param_types, arg_types, ref infered_types))
 				return false;
 
-			candidate = method.BindGenericParameters (infered_types);
+			method = method.BindGenericParameters (infered_types);
 			return true;
 		}
 

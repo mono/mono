@@ -2495,7 +2495,7 @@ public class TypeManager {
 		ShouldIgnore = 1 << 2
 	}
 
-	static public bool IsGenericMethod (MethodInfo mb)
+	static public bool IsGenericMethod (MethodBase mb)
 	{
 		if (mb.DeclaringType is TypeBuilder) {
 			MethodData method = (MethodData) builder_to_method [mb];
