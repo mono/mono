@@ -1,3 +1,8 @@
+2004-08-10  Jackson Harper  <jackson@ximian.com>
+
+	* SystemColors.cs: Make Highlight colour match colour from windows
+	classic color scheme.
+
 2004-07-30 Ravindra <rkumar@novell.com>
 
 	* Font.cs: Fixed Height property implementation and implemented

@@ -129,7 +129,7 @@ namespace System.Drawing {
 		static public Color Highlight
 		{	
 			get {
-				return Color.FromArgbSystem (255, 79, 101, 125, "Highlight", KnownColor.Highlight);
+				return Color.FromArgbSystem (255, 0, 0, 128, "Highlight", KnownColor.Highlight);
 			}
 		}
 
