@@ -1,3 +1,11 @@
+2002-03-09  Miguel de Icaza  <miguel@ximian.com>
+
+	* class.cs: Optimizing slightly by removing redundant code after
+	we switched to the `NoTypes' return value.
+	(Property.DefineMethod): use NoTypes here too.
+
+	This fixes the bug I introduced in my last batch of changes.
+
 2002-03-05  Ravi Pratap  <ravi@ximian.com>
 
 	* tree.cs (RecordEnum): Add. We now keep track of enums too.

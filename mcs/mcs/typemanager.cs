@@ -514,7 +514,10 @@ public class TypeManager {
 	}
 
 	const BindingFlags instance_and_static = BindingFlags.Static | BindingFlags.Instance;
-	
+
+	//
+	// FIXME: This can be optimized easily.  speedup by having a single builder mapping
+	//
 	public MemberInfo [] FindMembers (Type t, MemberTypes mt, BindingFlags bf,
 					  MemberFilter filter, object criteria)
 	{

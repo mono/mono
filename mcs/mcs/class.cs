@@ -1460,7 +1460,7 @@ namespace Mono.CSharp {
 		{
 			return null;
 		}
-		
+
 		/// <summary>
 		///   Whether the specified method is an interface method implementation
 		/// </summary>
@@ -1478,6 +1478,8 @@ namespace Mono.CSharp {
 		public MethodInfo IsInterfaceMethod (Type t, string Name, Type ret_type, Type [] args,
 						     bool clear)
 		{
+			int arg_len = args.Length;
+
 			if (pending_implementations == null)
 				return null;
 
@@ -1498,39 +1500,22 @@ namespace Mono.CSharp {
 					}
 
 					if (ret_type != m.ReturnType){
-						i++;
-						continue;
-					}
-
-					if (args == null){
-						if (tm.args [i] == null || tm.args [i].Length == 0){
-							if (clear)
-								tm.methods [i] = null;
-							tm.found [i] = true;
-							return m;
-						} 
-						i++;
-						continue;
-					}
-
-					if (tm.args == null){
-						Console.WriteLine ("Type:    " + tm.type);
-						Console.WriteLine ("method:  " + tm.methods [i]);
-					}
-					
-					if (tm.args [i] == null){
-						i++;
-						continue;
+						if (!((ret_type == null && m.ReturnType == TypeManager.void_type) ||
+						      (m.ReturnType == null && ret_type == TypeManager.void_type)))
+						{
+							i++;
+							continue;
+						}
 					}
 
 					//
 					// Check if we have the same parameters
 					//
-					if (tm.args [i].Length != args.Length){
+					if (tm.args [i].Length != arg_len){
 						i++;
 						continue;
 					}
-					
+
 					int j, top = args.Length;
 					bool fail = false;
 					
@@ -2923,14 +2908,14 @@ namespace Mono.CSharp {
 		bool DefineMethod (TypeContainer parent, Type iface_type, string short_name, bool is_get)
 		{
 			MethodAttributes flags = Modifiers.MethodAttr (ModFlags);
-			Type [] parameters = null;
+			Type [] parameters = TypeManager.NoTypes;
 			MethodInfo implementing;
 			Type fn_type;
 			string name;
 
 			flags |= MethodAttributes.HideBySig |
 				MethodAttributes.SpecialName;
-			
+
 			if (is_get){
 				fn_type = PropertyType;
 				name = "get_" + short_name;

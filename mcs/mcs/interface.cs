@@ -257,6 +257,16 @@ namespace Mono.CSharp {
 				                members.Add (pb);
 			}
 
+			if ((bf & BindingFlags.DeclaredOnly) == 0){
+				MemberInfo [] parent_mi;
+				
+				parent_mi = TypeContainer.FindMembers (
+					TypeBuilder.BaseType, mt, bf, filter, criteria);
+
+				if (parent_mi != null)
+					members.AddRange (parent_mi);
+			}
+			
 			// The rest of the cases, if any, are unhandled at present.
 
 			int count = members.Count;
