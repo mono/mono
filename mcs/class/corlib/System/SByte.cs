@@ -54,7 +54,7 @@ namespace System {
 
 		public static sbyte Parse (string s)
 		{
-			sbyte val = 0;
+			int ival = 0;
 			int len;
 			int i;
 			bool neg = false;
@@ -87,7 +87,7 @@ namespace System {
 				c = s [i];
 
 				if (c >= '0' && c <= '9'){
-					val = checked ((sbyte) (val * 10 + (c - '0')));
+					ival = checked (ival * 10 - (int) (c - '0'));
 					digits_seen = true;
 				} else {
 					if (Char.IsWhiteSpace (c)){
@@ -103,10 +103,11 @@ namespace System {
 			if (!digits_seen)
 				throw new FormatException ();
 			
-			if (neg)
-				val = checked ((sbyte) -val);
+			ival = neg ? ival : -ival;
+			if (ival < SByte.MinValue || ival > SByte.MaxValue)
+				throw new OverflowException ();
 
-			return val;
+			return (sbyte) ival;
 		}
 
 		public static sbyte Parse (string s, IFormatProvider fp)
