@@ -160,7 +160,7 @@ namespace System.Web.Services.Configuration
 				ThrowException ("Unexpected element", child);
 			}
 
-			return null;
+			return config;
 		}
 
 		static void ConfigProtocols (XmlNode section, WSConfig config)
