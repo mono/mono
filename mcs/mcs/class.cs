@@ -2309,6 +2309,8 @@ namespace Mono.CSharp {
 						      "with the same parameter types");
 					return false;
 				}
+			} else {
+				flags |= MethodAttributes.SpecialName | MethodAttributes.HideBySig;
 			}
 
 			//

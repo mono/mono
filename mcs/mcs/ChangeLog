@@ -1,3 +1,8 @@
+2002-12-28  Miguel de Icaza  <miguel@ximian.com>
+
+	* class.cs (Method.Define): If we are an operator (because it
+	reuses our code), then set the SpecialName and HideBySig.  #36128
+
 2002-12-22  Miguel de Icaza  <miguel@ximian.com>
 
 	* ecore.cs (FieldExpr.DoResolve): Instead of throwing an
