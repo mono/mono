@@ -1,7 +1,7 @@
 2003-05-14  Nick Drochak  <ndrochak@gol.com>
 
-	* UTF7EncodingTest.cs: added
-	* UTF8EncodingTest.cs: added
+	* UTF7EncodingTest.cs: 
+	* UTF8EncodingTest.cs: added from Patrick Kalkman <kalkman@cistron.nl>
 
 2003-05-10  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
