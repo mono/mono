@@ -1,8 +1,8 @@
 <VisualStudioProject>
     <CSHARP
         ProjectType = "Local"
-        ProductVersion = "7.0.9466"
-        SchemaVersion = "1.0"
+        ProductVersion = "7.10.3077"
+        SchemaVersion = "2.0"
         ProjectGuid = "{D9868C8B-B8C9-43E0-8702-F33AD49F1CC3}"
     >
         <Build>
@@ -16,7 +16,10 @@
                 DefaultTargetSchema = "IE50"
                 DelaySign = "false"
                 OutputType = "Exe"
+                PreBuildEvent = ""
+                PostBuildEvent = ""
                 RootNamespace = "Mono.Languages"
+                RunPostBuildEvent = "OnBuildSuccess"
                 StartupObject = ""
             >
                 <Config
@@ -30,8 +33,10 @@
                     DebugSymbols = "true"
                     FileAlignment = "4096"
                     IncrementalBuild = "true"
+                    NoStdLib = "false"
+                    NoWarn = ""
                     Optimize = "false"
-                    OutputPath = ".\"
+                    OutputPath = "E:\mbas-out\"
                     RegisterForComInterop = "false"
                     RemoveIntegerChecks = "false"
                     TreatWarningsAsErrors = "false"
@@ -48,6 +53,8 @@
                     DebugSymbols = "false"
                     FileAlignment = "4096"
                     IncrementalBuild = "false"
+                    NoStdLib = "false"
+                    NoWarn = ""
                     Optimize = "true"
                     OutputPath = "bin\Release\"
                     RegisterForComInterop = "false"
@@ -74,13 +81,23 @@
                 />
                 <Reference
                     Name = "Mono.GetOptions"
-                    Project = "{8D3008AB-7C0F-4DBE-A305-752926C366A7}"
+                    Project = "{88BF59CF-3127-46E8-A61D-613E333FFAC7}"
+                    Package = "{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}"
+                />
+                <Reference
+                    Name = "Microsoft.VisualBasic"
+                    Project = "{8A34E0CD-E436-4969-8103-0B66F5FC82EA}"
                     Package = "{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}"
                 />
             </References>
         </Build>
         <Files>
             <Include>
+                <File
+                    RelPath = "argument.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
                 <File
                     RelPath = "AssemblyInfo.cs"
                     SubType = "Code"
@@ -127,6 +144,11 @@
                 />
                 <File
                     RelPath = "decl.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "defaultparserattribute.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -225,6 +247,11 @@
                 />
                 <File
                     RelPath = "rootcontext.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "sourcebeingcompiled.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
