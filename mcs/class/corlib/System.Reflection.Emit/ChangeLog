@@ -1,5 +1,10 @@
 2003-02-09  Martin Baulig  <martin@ximian.com>
 
+	* AssemblyBuilder.cs (AssemblyBuilder.methods): Removed.  This was
+	a hack for the symbol writer which is no longer needed.
+
+2003-02-09  Martin Baulig  <martin@ximian.com>
+
 	* IMonoSymbolWriter.cs (DefineNamespace, OpenMethod): New methods.
 
 2003-02-09  Martin Baulig  <martin@ximian.com>

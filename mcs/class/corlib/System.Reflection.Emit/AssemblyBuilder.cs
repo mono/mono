@@ -45,7 +45,6 @@ namespace System.Reflection.Emit {
 		internal Type corlib_value_type = typeof (System.ValueType);
 		internal Type corlib_enum_type = typeof (System.Enum);
 		private int[] table_indexes;
-		internal ArrayList methods;
 		Hashtable us_string_cache = new Hashtable ();
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
@@ -66,11 +65,8 @@ namespace System.Reflection.Emit {
 				table_indexes [0x02] = 2;
 			}
 			// Console.WriteLine ("getindex for table "+table.ToString()+" got "+table_indexes [table].ToString());
-			if (inc) {
-				if ((table == 0x06) && (methods != null))
-					methods.Add (obj);
+			if (inc)
 				return table_indexes [table]++;
-			}
 			return table_indexes [table];
 		}
 
