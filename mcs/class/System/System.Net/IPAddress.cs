@@ -16,6 +16,8 @@ namespace System.Net {
 	/// </remarks>
 	[Serializable]
 	public class IPAddress {
+		// Don't change the name of this field without also
+		// changing socket-io.c in the runtime
 		private long address;
 
 		public static readonly IPAddress Any=new IPAddress(0);
