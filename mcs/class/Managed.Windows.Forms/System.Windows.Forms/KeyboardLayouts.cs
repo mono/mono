@@ -515,7 +515,7 @@ namespace System.Windows.Forms {
 			0, 0, 0, 0, 0, 0, 0, 0,					    /* FF00 */
 			/* special keys */
 			(int) VirtualKeys.VK_BACK, (int) VirtualKeys.VK_TAB, 0, (int) VirtualKeys.VK_CLEAR, 0, (int) VirtualKeys.VK_RETURN, 0, 0,	    /* FF08 */
-			0, 0, 0, (int) VirtualKeys.VK_PAUSE, (int) VirtualKeys.VK_SCROLL_LOCK, 0, 0, 0,			     /* FF10 */
+			0, 0, 0, (int) VirtualKeys.VK_PAUSE, (int) VirtualKeys.VK_SCROLL, 0, 0, 0,			     /* FF10 */
 			0, 0, 0, (int) VirtualKeys.VK_ESCAPE, 0, 0, 0, 0,			      /* FF18 */
 			/* unused */
 			0, 0, 0, 0, 0, 0, 0, 0,					    /* FF20 */

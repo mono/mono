@@ -1,5 +1,10 @@
 2004-12-17  Jackson Harper  <jackson@ximian.com>
 
+	* XplatUIStructs.cs: Updated set of virtual keycodes.
+	* KeyboardLayouts.cs: SCROLL_LOCK is now SCROLL
+
+2004-12-17  Jackson Harper  <jackson@ximian.com>
+
 	* XplatUIX11.cs: Prune old keyboard code.
 
 2004-12-17  Jackson Harper  <jackson@ximian.com>
