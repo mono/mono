@@ -1,3 +1,15 @@
+2001-12-15  Ravi Pratap  <ravi@ximian.com>
+
+	* makefile : Include test-52.cs in the suite, it works fine!
+
+	(NO_PASS): It's test-51 which doesn't seem to pass.
+
+	* test-50.cs : Augment some more to set named arguments on
+	the DllImport attribute.
+
+	* test-57.cs : Add. This tests support for Events and does not
+	pass yet.
+
 2001-12-14  Ravi Pratap  <ravi@ximian.com>
 
 	* test-45.cs : Update for float and double initialization.
