@@ -34,14 +34,15 @@ using System.Collections.Specialized;
 using System.Xml;
 using System.Xml.Query;
 using System.Xml.Schema;
-using Mono.Xml.XPath2;
+using Mono.Xml.XQuery;
 
-namespace Mono.Xml.XQuery.SyntaxTree
+namespace Mono.Xml.XPath2
 {
-	public abstract class XQueryModule
+	internal abstract class XQueryModule
 	{
 		string version;
 		Prolog prolog;
+		IXmlNamespaceResolver nsResolver;
 
 		public string Version {
 			get { return version; }
@@ -52,9 +53,14 @@ namespace Mono.Xml.XQuery.SyntaxTree
 			get { return prolog; }
 			set { prolog = value; }
 		}
+
+		public IXmlNamespaceResolver NSResolver {
+			get { return nsResolver; }
+			set { nsResolver = value; }
+		}
 	}
 
-	public class XQueryMainModule : XQueryModule
+	internal class XQueryMainModule : XQueryModule
 	{
 		ExprSequence queryBody;
 
@@ -64,7 +70,7 @@ namespace Mono.Xml.XQuery.SyntaxTree
 		}
 	}
 
-	public class XQueryLibraryModule : XQueryModule
+	internal class XQueryLibraryModule : XQueryModule
 	{
 		ModuleDecl moduleDecl;
 
@@ -74,7 +80,7 @@ namespace Mono.Xml.XQuery.SyntaxTree
 		}
 	}
 
-	public class ModuleDecl
+	internal class ModuleDecl
 	{
 		string prefix;
 		string ns;
@@ -90,14 +96,14 @@ namespace Mono.Xml.XQuery.SyntaxTree
 		}
 	}
 
-	public class Prolog
+	internal class Prolog
 	{
 		public Prolog ()
 		{
 			namespaceDecls = new StringDictionary ();
 			schemaImports = new SchemaImportCollection ();
 			moduleImports = new ModuleImportCollection ();
-			variables = new VariableDeclarationCollection ();
+			variables = new XQueryVariableTable ();
 			functions = new FunctionCollection ();
 		}
 
@@ -112,7 +118,7 @@ namespace Mono.Xml.XQuery.SyntaxTree
 		bool defaultOrdered; // false by default
 		SchemaImportCollection schemaImports;
 		ModuleImportCollection moduleImports;
-		VariableDeclarationCollection variables;
+		XQueryVariableTable variables;
 		XmlSchemaContentProcessing validationType;
 		FunctionCollection functions;
 
@@ -168,7 +174,7 @@ namespace Mono.Xml.XQuery.SyntaxTree
 			get { return moduleImports; }
 		}
 
-		public VariableDeclarationCollection Variables {
+		public XQueryVariableTable Variables {
 			get { return variables; }
 		}
 
@@ -215,8 +221,9 @@ namespace Mono.Xml.XQuery.SyntaxTree
 				SchemaImports.Add (item as SchemaImport);
 			} else if (item is ModuleImport) {
 				ModuleImports.Add (item as ModuleImport);
-			} else if (item is VariableDeclaration) {
-				Variables.Add (item as VariableDeclaration);
+			} else if (item is XQueryVariable) {
+				XQueryVariable var = item  as XQueryVariable;
+				Variables.Add (var);
 			} else if (item is XmlSchemaContentProcessing) {
 				ValidationType = (XmlSchemaContentProcessing) item;
 			} else if (item is FunctionDeclaration) {
@@ -298,6 +305,8 @@ namespace Mono.Xml.XQuery.SyntaxTree
 			this.prefix = prefix;
 			this.ns = ns;
 			this.locations = locations;
+			if (locations == null)
+				this.locations = new ArrayList (); // empty list
 		}
 
 		string prefix, ns;
@@ -315,7 +324,7 @@ namespace Mono.Xml.XQuery.SyntaxTree
 
 		public ICollection Locations {
 			get { return locations; }
-			set { locations = value; }
+			set { locations = value != null ? value : new ArrayList (); }
 		}
 	}
 
@@ -325,8 +334,8 @@ namespace Mono.Xml.XQuery.SyntaxTree
 			: base (prefix == "default element namespace" ? String.Empty : prefix, ns, schemaLocations)
 		{
 			// Prefix might 1) String.Empty for non-specified prefix,
-			// 2) "default element namespace" that is as is specified
-			// in xquery.
+			// 2) "default element namespace" that is as is 
+			// specified in xquery.
 			if (prefix == "default element namespace")
 				useDefaultElementNamespace = true;
 		}
@@ -347,17 +356,29 @@ namespace Mono.Xml.XQuery.SyntaxTree
 		}
 	}
 
-	public class VariableDeclarationCollection : CollectionBase
+	public class XQueryVariableTable : DictionaryBase
 	{
-		public void Add (VariableDeclaration decl)
+		public void Add (XQueryVariable decl)
 		{
-			List.Add (decl);
+			Dictionary.Add (decl.Name, decl);
+		}
+
+		public ICollection Keys {
+			get { return Dictionary.Keys; }
+		}
+
+		public ICollection Values {
+			get { return Dictionary.Values; }
+		}
+
+		public XQueryVariable this [XmlQualifiedName name] {
+			get { return Dictionary [name] as XQueryVariable; }
 		}
 	}
 
-	public class VariableDeclaration
+	public class XQueryVariable
 	{
-		public VariableDeclaration (XmlQualifiedName name, SequenceType type, ExprSequence varBody)
+		public XQueryVariable (XmlQualifiedName name, SequenceType type, ExprSequence varBody)
 		{
 			this.name = name;
 			this.type = type;
@@ -385,15 +406,27 @@ namespace Mono.Xml.XQuery.SyntaxTree
 		}
 	}
 
-	public class FunctionCollection : CollectionBase
+	internal class FunctionCollection : DictionaryBase
 	{
 		public void Add (FunctionDeclaration decl)
 		{
-			List.Add (decl);
+			Dictionary.Add (decl.Name, decl);
+		}
+
+		public ICollection Keys {
+			get { return Dictionary.Keys; }
+		}
+
+		public ICollection Values {
+			get { return Dictionary.Values; }
+		}
+
+		public FunctionDeclaration this [XmlQualifiedName name] {
+			get { return Dictionary [name] as FunctionDeclaration; }
 		}
 	}
 
-	public class FunctionDeclaration
+	internal class FunctionDeclaration
 	{
 		public FunctionDeclaration (XmlQualifiedName name,
 			FunctionParamList parameters,
@@ -432,18 +465,20 @@ namespace Mono.Xml.XQuery.SyntaxTree
 		}
 	}
 
-	public class FunctionParamList
+	public class FunctionParamList : CollectionBase
 	{
-		ArrayList list = new ArrayList ();
-
 		public void Add (FunctionParam p)
 		{
-			list.Add (p);
+			List.Add (p);
 		}
 
 		public void Insert (int pos, FunctionParam p)
 		{
-			list.Insert (pos, p);
+			List.Insert (pos, p);
+		}
+
+		public FunctionParam this [int i] {
+			get { return (FunctionParam) List [i]; }
 		}
 	}
 
@@ -456,6 +491,14 @@ namespace Mono.Xml.XQuery.SyntaxTree
 		{
 			this.name = name;
 			this.type = type;
+		}
+
+		public XmlQualifiedName Name {
+			get { return name; }
+		}
+
+		public SequenceType Type {
+			get { return type; }
 		}
 	}
 

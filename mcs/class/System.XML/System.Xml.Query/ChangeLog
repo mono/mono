@@ -1,5 +1,11 @@
 2004-08-20  Atsushi Enomoto <atsushi@ximian.com>
 
+	* XPath2Expression.cs, XQueryConvert.cs, XQueryExpression.cs,
+	  XQueryModuleProlog.cs, XQueryParser.jay, XQueryTokenizer.cs :
+	  several changes for XQueryCommand.Execute() implementation.
+
+2004-08-20  Atsushi Enomoto <atsushi@ximian.com>
+
 	* XQueryContext.cs, XQueryStaticContext.cs, SequenceType.cs,
 	  XPathSequence.cs, XQueryFunction.cs, XQueryFunctionTable.cs,
 	  XQueryCliFunction.cs, XQueryCompileContext.cs, XQueryASTCompiler.cs,

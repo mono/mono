@@ -907,6 +907,12 @@ namespace MS.Internal.Xml
 		}
 
 		[MonoTODO]
+		public static XPathItem ItemToItem (XPathItem value, XmlSchemaType schemaTypeDest)
+		{
+			return new XPathAtomicValue (value.Value, schemaTypeDest);
+		}
+
+		[MonoTODO]
 		public static decimal ItemToNonNegativeInteger (XPathItem value)
 		{
 			return XmlConvert.ToDecimal (value.Value);
@@ -916,6 +922,22 @@ namespace MS.Internal.Xml
 		public static decimal ItemToNonPositiveInteger (XPathItem value)
 		{
 			return XmlConvert.ToDecimal (value.Value);
+		}
+
+		[MonoTODO]
+		public static XmlQualifiedName ItemToQName (XPathItem value)
+		{
+			return (XmlQualifiedName) value.TypedValue;
+		}
+
+		[MonoTODO]
+		public static string ItemToString (XPathItem value)
+		{
+			if (value.ValueType == typeof (DateTime))
+				return XmlConvert.ToString ((DateTime) value.TypedValue);
+			if (value.TypedValue is XmlQualifiedName)
+				throw new ArgumentException ("Invalid cast from schema QName type to string type.");
+			return value.Value;
 		}
 
 		[MonoTODO]

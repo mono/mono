@@ -26,6 +26,13 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
+
+//
+// FIXME:
+//	attribute value template
+//	handle double literal
+//
+
 #if NET_2_0
 
 using System;
@@ -36,13 +43,12 @@ using System.Xml.Query;
 using System.Xml.Schema;
 using System.Xml.XPath;
 using System.Security.Policy;
-using Mono.Xml.XQuery.SyntaxTree;
 using Mono.Xml.XPath2;
 using Mono.Xml.XQuery;
 
 namespace Mono.Xml.XQuery.Parser
 {
-	public class XQueryParser
+	internal class XQueryParser
 	{
 		// FIXME: Wait for recommendation
 		public const string XdtNamespace = "http://www.w3.org/2003/11/xpath-datatypes";
@@ -67,19 +73,28 @@ namespace Mono.Xml.XQuery.Parser
 			reservedFunctionNames.Add ("typeswitch", "typeswitch");
 		}
 
+		public static XQueryModule Parse (TextReader reader)
+		{
+			return new XQueryParser ().RunParse (reader);
+		}
+
 		private XQueryTokenizer tokenizer;
 
-		public XQueryParser ()
+		private XQueryParser ()
 		{
 		}
 
-		public XQueryModule Parse (TextReader source, Evidence evidence)
+		// FIXME: we don't need Evidence here at all. It is used only
+		// to generate runnable IL (on loading resulting Assembly).
+		public XQueryModule RunParse (TextReader source)
 		{
 			tokenizer = null;
 			try {
 //				debug = new yydebug.yyDebugSimple ();
-				tokenizer = new XQueryTokenizer (source, evidence);
-				return (XQueryModule) yyparse (tokenizer);
+				tokenizer = new XQueryTokenizer (source);
+				XQueryModule mod = (XQueryModule) yyparse (tokenizer);
+				mod.NSResolver = tokenizer.NSResolver;
+				return mod;
 			} catch (yyParser.yyException ex) {
 				throw new XmlQueryCompileException (String.Format ("Tokenizer error at line {0}, column {1}: {2}", tokenizer.LineNumber, tokenizer.LinePosition, ex.Message), ex);
 			}
@@ -338,7 +353,8 @@ namespace Mono.Xml.XQuery.Parser
 %token WILD_PREFIX
 
 %token STRING_LITERAL
-%token NUMERIC_LITERAL
+%token DECIMAL_LITERAL
+%token DOUBLE_LITERAL
 
 %token PRAGMA_CONTENTS // characters until "::)"
 
@@ -591,6 +607,7 @@ DefaultNamespaceDecl // returns SimplePrologContent
 		tokenizer.State = ParseState.Default;
 	  }
 	{
+		tokenizer.DefaultFunctionNamespace = (string) $5;
 		$$ = new SimplePrologContent (PrologContentType.DefaultFunctionNamespace, (string) $5);
 	}
 	;
@@ -736,7 +753,7 @@ VarDecl // returns VariableDeclaration
 		tokenizer.State = ParseState.Operator;
 	  } OptionalTypeDeclaration VarDeclBody
 	{
-		$$ = new VariableDeclaration ((XmlQualifiedName) $4, (SequenceType) $5, (ExprSequence) $6);
+		$$ = new XQueryVariable ((XmlQualifiedName) $4, (SequenceType) $5, (ExprSequence) $6);
 	}
 	;
 
@@ -809,13 +826,13 @@ FunctionBody // returns EnclosedExpr or null
 SequenceType // returns SequenceType 
 	: ItemType OptionalOccurenceIndicator
 	{
-		$$ = new SequenceType ((NodeKindTestExpr) $1, (Occurence) $2);
+		$$ = new SequenceType ((ItemType) $1, (Occurence) $2);
 	}
 	| EMPTY OPEN_PAREN CLOSE_PAREN {
 		tokenizer.State = ParseState.Operator;
 	  }
 	{
-		$$ = new SequenceType (null, Occurence.ZeroOrMore);
+		$$ = SequenceType.Create (XmlTypeCode.None, Occurence.One);
 	}
 	;
 
@@ -886,7 +903,6 @@ Expr // returns ExprSequence
 	: ExprSequence
 	{
 		ExprSequence seq = (ExprSequence) $1;
-		seq.Reverse ();
 		$$ = seq;
 	}
 	;
@@ -901,7 +917,7 @@ ExprSequence // returns ExprSequence
 	| ExprSingle COMMA ExprSequence
 	{
 		ExprSequence seq = (ExprSequence) $3;
-		seq.Add ((ExprSingle) $1);
+		seq.Insert (0, (ExprSingle) $1);
 		$$ = seq;
 	}
 	;
@@ -924,7 +940,6 @@ FLWORExpr // returns FLWORExpr
 	  } ExprSingle
 	{
 		ForLetClauseCollection col = (ForLetClauseCollection) $1;
-		col.Reverse ();
 		$$ = new FLWORExpr (col, (ExprSequence) $2, (OrderSpecList) $3, (ExprSingle) $5);
 	}
 	;
@@ -939,7 +954,7 @@ RepeatedForLetClause // returns ForLetClauseCollection
 	| ForLetClause RepeatedForLetClause
 	{
 		ForLetClauseCollection col = (ForLetClauseCollection) $2;
-		col.Add ((ForLetClause) $1);
+		col.Insert (0, (ForLetClause) $1);
 		$$ = col;
 	}
 	;
@@ -969,7 +984,6 @@ ForClause // returns ForClause
 	: FOR ForBody
 	{
 		ForClause fc = (ForClause) $2;
-		fc.Reverse ();
 		$$ = fc;
 	}
 	;
@@ -984,7 +998,7 @@ ForBody
 	| ForSingleBody COMMA ForBody
 	{
 		ForClause fc = (ForClause) $3;
-		fc.Add ((ForSingleBody) $1);
+		fc.Insert (0, (ForSingleBody) $1);
 		$$ = fc;
 	}
 	;
@@ -1006,7 +1020,6 @@ LetClause
 	: LET LetBody
 	{
 		LetClause let = (LetClause) $2;
-		let.Reverse ();
 		$$ = let;
 	}
 	;
@@ -1021,7 +1034,7 @@ LetBody
 	| LetSingleBody COMMA LetBody
 	{
 		LetClause let = (LetClause) $3;
-		let.Add ((LetSingleBody) $1);
+		let.Insert (0, (LetSingleBody) $1);
 		$$ = let;
 	}
 
@@ -1074,7 +1087,6 @@ OrderByClause // returns OrderSpecList
 	  } OrderSpecList
 	{
 		OrderSpecList l = (OrderSpecList) $4;
-		l.Reverse ();
 		$$ = l;
 	}
 	| STABLE ORDER BY {
@@ -1083,7 +1095,6 @@ OrderByClause // returns OrderSpecList
 	{
 		OrderSpecList l = (OrderSpecList) $5;
 		l.IsStable = true;
-		l.Reverse ();
 		$$ = l;
 	}
 	;
@@ -1098,7 +1109,7 @@ OrderSpecList // returns OrderSpecList
 	| OrderSpec COMMA OrderSpecList
 	{
 		OrderSpecList l = (OrderSpecList) $3;
-		l.Add ((OrderSpec) $1);
+		l.Insert (0, (OrderSpec) $1);
 		$$ = l;
 	}
 	;
@@ -1167,13 +1178,11 @@ QuantifiedExpr
 	: SOME QuantifiedExprBody SATISFIES ExprSingle
 	{
 		QuantifiedExprBodyList l = (QuantifiedExprBodyList) $2;
-		l.Reverse ();
 		$$ = new QuantifiedExpr (false, l, (ExprSingle) $4);
 	}
 	| EVERY QuantifiedExprBody SATISFIES ExprSingle
 	{
 		QuantifiedExprBodyList l = (QuantifiedExprBodyList) $2;
-		l.Reverse ();
 		$$ = new QuantifiedExpr (true, l, (ExprSingle) $4);
 	}
 	;
@@ -1188,7 +1197,7 @@ QuantifiedExprBody
 	| SingleQuantifiedExprBody COMMA QuantifiedExprBody
 	{
 		QuantifiedExprBodyList l = (QuantifiedExprBodyList) $3;
-		l.Add ((QuantifiedExprBody) $1);
+		l.Insert (0, (QuantifiedExprBody) $1);
 		$$ = l;
 	}
 	;
@@ -1536,13 +1545,13 @@ UnionExpr
 		tokenizer.State = ParseState.Default;
 	  } UnionExpr
 	{
-		$$ = new UnionExpr ((ExprSingle) $1, (ExprSingle) $4);
+		$$ = new GroupExpr ((ExprSingle) $1, (ExprSingle) $4, AggregationType.Union);
 	}
 	| IntersectExceptExpr BAR {
 		tokenizer.State = ParseState.Default;
 	  } UnionExpr
 	{
-		$$ = new UnionExpr ((ExprSingle) $1, (ExprSingle) $4);
+		$$ = new GroupExpr ((ExprSingle) $1, (ExprSingle) $4, AggregationType.Union);
 	}
 	;
 
@@ -1552,13 +1561,13 @@ IntersectExceptExpr
 		tokenizer.State = ParseState.Default;
 	  } IntersectExceptExpr
 	{
-		$$ = new IntersectExpr ((ExprSingle) $1, (ExprSingle) $4);
+		$$ = new GroupExpr ((ExprSingle) $1, (ExprSingle) $4, AggregationType.Intersect);
 	}
 	| ValueExpr EXCEPT {
 		tokenizer.State = ParseState.Default;
 	  } IntersectExceptExpr
 	{
-		$$ = new ExceptExpr ((ExprSingle) $1, (ExprSingle) $4);
+		$$ = new GroupExpr ((ExprSingle) $1, (ExprSingle) $4, AggregationType.Except);
 	}
 	;
 
@@ -1605,15 +1614,15 @@ OptionalValidationMode // returns XmlSchemaContentProcessing
 PathExpr // returns PathExpr 
 	: Slash
 	{
-		$$ = new PathExprRoot ();
+		$$ = new PathRootExpr ();
 	}
 	| Slash RelativePathExpr
 	{
-		$$ = new PathExprChild (new PathExprRoot (), (ExprSingle) $2);
+		$$ = new PathChildExpr (new PathRootExpr (), (ExprSingle) $2);
 	}
 	| Slash2 RelativePathExpr
 	{
-		$$ = new PathExprDescendant (new PathExprRoot (), (ExprSingle) $2);
+		$$ = new PathDescendantExpr (new PathRootExpr (), (ExprSingle) $2);
 	}
 	| RelativePathExpr
 	;
@@ -1622,11 +1631,11 @@ RelativePathExpr // returns PathExpr
 	: StepExpr
 	| StepExpr Slash RelativePathExpr
 	{
-		$$ = new PathExprChild ((ExprSingle) $1, (ExprSingle) $3);
+		$$ = new PathChildExpr ((ExprSingle) $1, (ExprSingle) $3);
 	}
 	| StepExpr Slash2 RelativePathExpr
 	{
-		$$ = new PathExprDescendant ((ExprSingle) $1, (ExprSingle) $3);
+		$$ = new PathDescendantExpr ((ExprSingle) $1, (ExprSingle) $3);
 	}
 	;
 
@@ -1638,11 +1647,11 @@ StepExpr // returns ExprSingle
 AxisStep // returns PathExpr 
 	: ForwardOrReverseStep Predicates
 	{
-		ExprSequenceList p = (ExprSequenceList) $2;
+		PredicateList p = (PredicateList) $2;
 		if (p == null)
 			$$ = $1;
 		else
-			$$ = new FilterStepExpr ((ExprSingle) $1, (ExprSequenceList) $2);
+			$$ = new FilterStepExpr ((ExprSingle) $1, (PredicateList) $2);
 	}
 	;
 
@@ -1657,20 +1666,23 @@ FilterStep // returns ExprSingle
 		if ($2 == null)
 			$$ = (ExprSingle) $1;
 		else
-			$$ = new FilterStepExpr ((ExprSingle) $1, (ExprSequenceList) $2);
+			$$ = new FilterStepExpr ((ExprSingle) $1, (PredicateList) $2);
 	}
 	;
 
-ForwardStep // returns NodeTestExpr 
+ForwardStep // returns AxisStepExpr
 	: ForwardAxis NodeTest
 	{
-		$$ = new AxisStepExpr ((XPathAxis) $1, (NodeTestExpr) $2);
+		$$ = new AxisStepExpr ((XPathAxis) $1, (XPath2NodeTest) $2);
 	}
 	| AbbrevForwardStep
 	;
 
-ReverseStep // returns NodeTestExpr 
+ReverseStep // returns AxisStepExpr
 	: ReverseAxis NodeTest
+	{
+		$$ = new AxisStepExpr ((XPathAxis) $1, (XPath2NodeTest) $2);
+	}
 	| AbbrevReverseStep
 	;
 
@@ -1732,20 +1744,23 @@ ReverseAxis // returns XPathAxis
 // should not appear after AT. (imagine @processing-instruction::(name)).
 AbbrevForwardStep // returns NodeTestExpr 
 	: NodeTest
+	{
+		$$ = new AxisStepExpr (XPathAxis.Child, (XPath2NodeTest) $1);
+	}
 	| AT NameTest
 	{
-		$$ = new AttributeTestExpr ((XmlQualifiedName) $2);
+		$$ = new AxisStepExpr (XPathAxis.Attribute, new XPath2NodeTest ((XmlQualifiedName) $2));
 	}
 	;
 
-AbbrevReverseStep // returns NodeTestExpr 
+AbbrevReverseStep // returns AxisStepExpr
 	: DOT2
 	{
 		$$ = AxisStepExpr.ParentStep;
 	}
 	;
 
-Predicates // returns ExprSequenceList or null 
+Predicates // returns PredicateList or null 
 	: // empty
 	{
 		$$ = null;
@@ -1754,19 +1769,22 @@ Predicates // returns ExprSequenceList or null
 		tokenizer.State = ParseState.Operator;
 	  } Predicates
 	{
-		ExprSequenceList l = (ExprSequenceList) $5;
+		PredicateList l = (PredicateList) $5;
 		if (l == null)
-			l = new ExprSequenceList ();
+			l = new PredicateList ();
 		l.Insert (0, (ExprSequence) $2);
 		$$ = l;
 	}
 	;
 
-NodeTest // returns NodeTestExpr 
+NodeTest // returns NodeTest
 	: KindTest
+	{
+		$$ = new XPath2NodeTest ((KindTest) $1);
+	}
 	| NameTest
 	{
-		$$ = new AxisStepExpr (XPathAxis.Child, new NodeNameTestExpr ((XmlQualifiedName) $1));
+		$$ = new XPath2NodeTest ((XmlQualifiedName) $1);
 	}
 	;
 
@@ -1799,23 +1817,23 @@ AtomicType // returns XmlTypeCode
 	}
 	;
 
-ItemType // returns NodeTestExpr 
+ItemType // returns ItemType
 	: AtomicType {
 		tokenizer.State = ParseState.OccurenceIndicator;
 	  }
 	{
-		$$ = new NodeKindTestExpr ((XmlTypeCode) $1);
+		$$ = new ItemType ((XmlTypeCode) $1);
 	}
 	| KindTest
 	| ITEM OPEN_PAREN CLOSE_PAREN {
 		tokenizer.State = ParseState.OccurenceIndicator;
 	  }
 	{
-		$$ = new NodeKindTestExpr (XmlTypeCode.Item);
+		$$ = new ItemType (XmlTypeCode.Item);
 	}
 	;
 
-KindTest // returns NodeTestExpr 
+KindTest // returns KindTest
 	: DocumentTest
 	| ElementTest
 	| AttributeTest
@@ -1840,18 +1858,18 @@ PITest
 	}
 	;
 
-PITestContent // returns NodeKindTestExpr 
+PITestContent // returns KindTest
 	: // empty
 	{
-		$$ = new NodeKindTestExpr (XmlTypeCode.ProcessingInstruction);
+		$$ = new KindTest (XmlTypeCode.ProcessingInstruction);
 	}
 	| NCName
 	{
-		$$ = new XmlPITestExpr ((string) $1);
+		$$ = new XmlPITest ((string) $1);
 	}
 	| STRING_LITERAL
 	{
-		$$ = new XmlPITestExpr ((string) $1);
+		$$ = new XmlPITest ((string) $1);
 	}
 	;
 
@@ -1863,7 +1881,7 @@ CommentTest
 	  	tokenizer.PopState ();
 	  }
 	{
-		$$ = new NodeKindTestExpr (XmlTypeCode.Comment);
+		$$ = new KindTest (XmlTypeCode.Comment);
 	}
 	;
 
@@ -1875,7 +1893,7 @@ TextTest
 	  	tokenizer.PopState ();
 	  }
 	{
-		$$ = new NodeKindTestExpr (XmlTypeCode.Text);
+		$$ = new KindTest (XmlTypeCode.Text);
 	}
 	;
 
@@ -1887,11 +1905,11 @@ AnyKindTest
 	  	tokenizer.PopState ();
 	  }
 	{
-		$$ = new NodeKindTestExpr (XmlTypeCode.Node);
+		$$ = new KindTest (XmlTypeCode.Node);
 	}
 	;
 
-DocumentTest // returns DocumentTestExpr 
+DocumentTest // returns DocumentTest
 	: DOCUMENT_NODE OPEN_PAREN {
 		tokenizer.PushState (ParseState.OccurenceIndicator);
 		tokenizer.State = ParseState.KindTest;
@@ -1903,18 +1921,18 @@ DocumentTest // returns DocumentTestExpr
 	}
 	;
 
-DocumentTestContent // returns DocumentTestExpr 
+DocumentTestContent // returns DocumentTest
 	: // empty
 	{
-		$$ = new DocumentTestExpr (null);
+		$$ = new KindTest (XmlTypeCode.Document);
 	}
 	| ElementTest
 	{
-		$$ = new DocumentTestExpr ((ElementTestExpr) $1);
+		$$ = new DocumentTest ((ElementTest) $1);
 	}
 	;
 
-ElementTest // returns ElementTestExpr 
+ElementTest // returns ElementTest
 	: ELEMENT OPEN_PAREN {
 		tokenizer.PushState (ParseState.OccurenceIndicator);
 		tokenizer.State = ParseState.KindTest;
@@ -1926,18 +1944,18 @@ ElementTest // returns ElementTestExpr
 	}
 	;
 
-ElementTestContent // returns ElementTestExpr 
+ElementTestContent // returns ElementTest
 	: // empty
 	{
-		$$ = null;
+		$$ = new KindTest (XmlTypeCode.Element);
 	}
 	| ElementNameOrWildcard
 	{
-		$$ = new ElementTestExpr ((XmlQualifiedName) $1);
+		$$ = new ElementTest ((XmlQualifiedName) $1);
 	}
 	| ElementNameOrWildcard COMMA TypeName OptionalQuestion
 	{
-		$$ = new ElementTestExpr ((XmlQualifiedName) $1, (XmlQualifiedName) $3, (bool) $4);
+		$$ = new ElementTest ((XmlQualifiedName) $1, (XmlQualifiedName) $3, (bool) $4);
 	}
 	;
 
@@ -1952,7 +1970,7 @@ OptionalQuestion // returns bool
 	}
 	;
 
-AttributeTest // returns AttributeTestExpr 
+AttributeTest // returns AttributeTest
 	: ATTRIBUTE OPEN_PAREN {
 		tokenizer.PushState (ParseState.OccurenceIndicator);
 		tokenizer.State = ParseState.KindTest;
@@ -1964,18 +1982,18 @@ AttributeTest // returns AttributeTestExpr
 	}
 	;
 
-AttributeTestContent // returns AttributeTestExpr 
+AttributeTestContent // returns AttributeTest
 	: // empty
 	{
-		$$ = AttributeTestExpr.AnyAttribute;
+		$$ = AttributeTest.AnyAttribute;
 	}
 	| AttributeNameOrWildcard
 	{
-		$$ = new AttributeTestExpr ((XmlQualifiedName) $1);
+		$$ = new AttributeTest ((XmlQualifiedName) $1);
 	}
 	| AttributeNameOrWildcard COMMA TypeNameOrWildcard
 	{
-		$$ = new AttributeTestExpr ((XmlQualifiedName) $1, (XmlQualifiedName) $3);
+		$$ = new AttributeTest ((XmlQualifiedName) $1, (XmlQualifiedName) $3);
 	}
 	;
 
@@ -2028,12 +2046,18 @@ PrimaryExpr // returns ExprSingle
 	| ContextItemExpr
 	| FunctionCall
 	| Constructor
+	| OrderedExpr
+	| UnorderedExpr
 	;
 
 Literal
-	: NUMERIC_LITERAL
+	: DECIMAL_LITERAL
 	{
-		$$ = new NumberLiteralExpr ((decimal) $1);
+		$$ = new DecimalLiteralExpr ((decimal) $1);
+	}
+	| DOUBLE_LITERAL
+	{
+		$$ = new DoubleLiteralExpr ((double) $1);
 	}
 	| STRING_LITERAL
 	{
@@ -2159,6 +2183,8 @@ FunctionCall
 	  }
 	{
 		XmlQualifiedName name = (XmlQualifiedName) $1;
+		if (name.Namespace == "")
+			name = new XmlQualifiedName (name.Name, tokenizer.DefaultFunctionNamespace);
 		if (name.Namespace != ""
 				&& name.Namespace != XmlSchema.XdtNamespace
 				&& reservedFunctionNames [name.Name] != null)
@@ -2167,6 +2193,26 @@ FunctionCall
 		$$ = new FunctionCallExpr (name, (ExprSequence) $4);
 	}
 	;
+
+OrderedExpr
+	: ORDERED OPEN_BRACKET Expr CLOSE_BRACKET
+	{
+		$$ = new OrderSpecifiedExpr ((ExprSequence) $3, true);
+	}
+	;
+
+UnorderedExpr
+	: UNORDERED OPEN_BRACKET {
+		tokenizer.PushState (ParseState.Operator);
+		tokenizer.State = ParseState.Default;
+	  } Expr CLOSE_BRACKET {
+	  	tokenizer.PopState ();
+	  }
+	{
+		$$ = new OrderSpecifiedExpr ((ExprSequence) $4, false);
+	}
+	;
+
 
 /* -----------------
  Constructors
@@ -2181,7 +2227,7 @@ Constructor // returns ExprSingle
 	| XmlCData
 	;
 
-DirElemConstructor // returns ElementConstructor 
+DirElemConstructor // returns XmlElemConstructor 
 	: LESSER {
 		if (tokenizer.State == ParseState.ElementContent)
 			tokenizer.PushState (tokenizer.State);
@@ -2195,7 +2241,10 @@ DirElemConstructor // returns ElementConstructor
 		tokenizer.PopState ();
 	  }
 	{
-		$$ = new ElementConstructor ((XmlQualifiedName) $3, (AttributeConstructorList) $4, (ExprSequence) $5);
+		ExprSequence expr = new ExprSequence ();
+		expr.AddRange ((ICollection) $4);
+		expr.AddRange ((ICollection) $5);
+		$$ = new XmlElemConstructor ((XmlQualifiedName) $3, expr);
 	}
 	;
 
@@ -2229,23 +2278,23 @@ ElementContentList // returns ExprSequence
 	}
 	;
 
-AttributeList // returns AttributeConstructorList 
+AttributeList // returns XmlAttrConstructorList 
 	: // empty
 	{
-		$$ = new AttributeConstructorList ();
+		$$ = new XmlAttrConstructorList ();
 	}
 	| /* space */ Attribute AttributeList
 	{
-		AttributeConstructorList al = (AttributeConstructorList) $2;
-		al.Insert (0, (AttributeConstructor) $1);
+		XmlAttrConstructorList al = (XmlAttrConstructorList) $2;
+		al.Insert (0, (XmlAttrConstructor) $1);
 		$$ = al;
 	}
 	;
 
-Attribute // returns AttributeConstructor 
+Attribute // returns XmlAttrConstructor
 	: QName EQUAL AttributeValue /* note: whitespace handling */
 	{
-		$$ = new AttributeConstructor ((XmlQualifiedName) $1, (ExprSequence) $3);
+		$$ = new XmlAttrConstructor ((XmlQualifiedName) $1, (ExprSequence) $3);
 	}
 	;
 

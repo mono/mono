@@ -36,7 +36,7 @@ using System.Xml;
 using System.Xml.Query;
 using System.Xml.Schema;
 using System.Xml.XPath;
-using Mono.Xml.XQuery.SyntaxTree;
+using Mono.Xml.XQuery;
 using Mono.Xml.XPath2;
 
 namespace Mono.Xml.XQuery.Parser
@@ -51,8 +51,7 @@ namespace Mono.Xml.XQuery.Parser
 
 		// namespace resolver
 		XmlNamespaceManager nsResolver;
-
-		Evidence evidence;
+		string defaultFunctionNamespace = XQueryFunction.Namespace;
 
 		// input source
 		TextReader source;
@@ -71,10 +70,9 @@ namespace Mono.Xml.XQuery.Parser
 		ParseState state = ParseState.Default;
 		Stack stateStack;
 
-		public XQueryTokenizer (TextReader reader, Evidence evidence)
+		public XQueryTokenizer (TextReader reader)
 		{
 			this.source = reader;
-			this.evidence = evidence;
 
 			stateStack = new Stack ();
 
@@ -85,6 +83,15 @@ namespace Mono.Xml.XQuery.Parser
 			nsResolver.AddNamespace ("xsi", XmlSchema.InstanceNamespace);
 			nsResolver.AddNamespace ("fn", "http://www.w3.org/2003/11/xpath-functions");
 			nsResolver.AddNamespace ("local", "http://www.w3.org/2003/11/xquery-local-functions");
+		}
+
+		internal IXmlNamespaceResolver NSResolver {
+			get { return nsResolver; }
+		}
+
+		internal string DefaultFunctionNamespace {
+			get { return defaultFunctionNamespace; }
+			set { defaultFunctionNamespace = value; }
 		}
 
 		public void AddNamespace (string prefix, string ns)
@@ -180,9 +187,10 @@ namespace Mono.Xml.XQuery.Parser
 			if (c < 0)
 				return -1;
 
+			// FIXME: consider DOUBLE_LITERAL
 			if (Char.IsNumber ((char) c)) {
 				tokenValue = ReadDecimal (false);
-				return Token.NUMERIC_LITERAL;
+				return Token.DECIMAL_LITERAL;
 			}
 
 			switch (state) {
@@ -325,8 +333,9 @@ namespace Mono.Xml.XQuery.Parser
 			case '$':
 				return Token.DOLLAR;
 			case '\'':
-				if (false) { // FIXME: remove in the future
-//				if (state == ParseState.StartTag) {
+				// FIXME: consider in the future
+/*
+				if (state == ParseState.StartTag) {
 					if (PeekChar () == '\'') {
 						// FIXME: this code is VERY inefficient
 						ReadChar ();
@@ -335,11 +344,13 @@ namespace Mono.Xml.XQuery.Parser
 					}
 					return Token.APOS;
 				}
+*/
 				tokenValue = ReadQuoted ('\'');
 				return Token.STRING_LITERAL;
 			case '"':
-				if (false) { // FIXME: remove in the future
-//				if (state == ParseState.StartTag) {
+				// FIXME: consider in the future
+/*
+				if (state == ParseState.StartTag) {
 					if (PeekChar () == '"') {
 						// FIXME: this code is VERY inefficient
 						ReadChar ();
@@ -348,6 +359,7 @@ namespace Mono.Xml.XQuery.Parser
 					}
 					return Token.QUOT;
 				}
+*/
 				tokenValue = ReadQuoted ('"');
 				return Token.STRING_LITERAL;
 			case '=':
