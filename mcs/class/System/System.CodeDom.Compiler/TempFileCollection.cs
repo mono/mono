@@ -113,10 +113,9 @@ namespace System.CodeDom.Compiler
 			filehash.Keys.CopyTo(array, start);
 		}
 
-		[MonoTODO("What goes here?")]
 		object ICollection.SyncRoot {
 			get {
-				return(null);
+				return filehash.SyncRoot;
 			}
 		}
 
