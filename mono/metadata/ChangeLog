@@ -1,3 +1,9 @@
+
+Fri Aug 16 21:42:57 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* marshal.c: fix unaligned store issue and a few wrong
+	opcode argument types.
+
 2002-08-16  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* icall.c: added GetUninitializedObjectInternal internal call.
