@@ -91,10 +91,15 @@ namespace Mono.CSharp {
 
 		Parameters parameters;
 		
-		public InternalParameters (TypeContainer tc, Parameters parameters)
+		public InternalParameters (Type [] param_types, Parameters parameters)
 		{
-			this.param_types = parameters.GetParameterInfo (tc);
+			this.param_types = param_types;
 			this.parameters = parameters;
+		}
+
+		public InternalParameters (TypeContainer tc, Parameters parameters)
+			: this (parameters.GetParameterInfo (tc), parameters)
+		{
 		}
 
 		public int Count {

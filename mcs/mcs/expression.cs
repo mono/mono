@@ -2184,7 +2184,7 @@ namespace Mono.CSharp {
 				return (ParameterData) pd;
 
 			
-			ip = TypeContainer.LookupParametersByBuilder (mb);
+			ip = TypeManager.LookupParametersByBuilder (mb);
 			if (ip != null){
 				method_parameter_cache [mb] = ip;
 

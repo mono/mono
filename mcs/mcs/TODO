@@ -163,6 +163,11 @@ PENDING TASKS
 		case 4: ...
 	}
 
+* Code cleanup
+
+	The information when registering a method in InternalParameters
+	is duplicated, you can always get the types from the InternalParameters
+
 OPTIMIZATIONS
 -------------
 

@@ -64,9 +64,6 @@ namespace Mono.CSharp {
 		// Holds the operators
 		ArrayList operators;
 
-		// Maps MethodBuilders to Methods
-		static Hashtable method_builders_to_parameters;
-		
 		//
 		// Pointers to the default constructor and the default static constructor
 		//
@@ -950,23 +947,12 @@ namespace Mono.CSharp {
 			
 			ArrayList remove_list = new ArrayList ();
 
-			if (constructors != null || methods != null ||
-			    properties != null || operators != null){
-				if (method_builders_to_parameters == null)
-					method_builders_to_parameters = new Hashtable ();
-			}
-			
 			if (constructors != null){
 				foreach (Constructor c in constructors){
 					MethodBase builder = c.Define (this);
 					
 					if (builder == null)
 						remove_list.Add (c);
-					else {
-						InternalParameters ip = c.ParameterInfo;
-						
-						method_builders_to_parameters.Add (MakeKey (builder), ip);
-					}
 				}
 
 				foreach (object o in remove_list)
@@ -988,10 +974,6 @@ namespace Mono.CSharp {
 					
 					if (key == null)
 						remove_list.Add (m);
-					else {
-						InternalParameters ip = m.ParameterInfo;
-						method_builders_to_parameters.Add (MakeKey (key), ip);
-					}
 				}
 				foreach (object o in remove_list)
 					methods.Remove (o);
@@ -1015,14 +997,8 @@ namespace Mono.CSharp {
 			}
 
 			if (Operators != null) {
-				foreach (Operator o in Operators) {
+				foreach (Operator o in Operators) 
 					o.Define (this);
-
-					InternalParameters ip = o.OperatorMethod.ParameterInfo;
-					
-					method_builders_to_parameters.Add (
-						MakeKey (o.OperatorMethodBuilder), ip);
-				}
 			}
 
 			if (Enums != null)
@@ -1040,26 +1016,6 @@ namespace Mono.CSharp {
 			}
 
 		
-		}
-
-		/// <summary>
-		///   Since System.Reflection.Emit can not retrieve parameter information
-		///   from methods that are dynamically defined, we have to look those
-		///   up ourselves using this
-		/// </summary>
-		static public ParameterData LookupParametersByBuilder (MethodBase mb)
-		{
-			return (ParameterData) method_builders_to_parameters [MakeKey (mb)];
-		}
-
-		/// <summary>
-		///   Indexers and properties can register more than one method at once,
-		///   so we need to provide a mechanism for those to register their
-		///   various methods to parameter info mappers.
-		/// </summary>
-		static public void RegisterParameterForBuilder (MethodBase mb, InternalParameters pi)
-		{
-			method_builders_to_parameters.Add (MakeKey (mb), pi);
 		}
 
 		public Type LookupType (string name, bool silent)
@@ -1812,9 +1768,14 @@ namespace Mono.CSharp {
 			//
 			flags = Modifiers.MethodAttr (ModFlags);
 
-			if (parent.IsInterfaceMethod (Name, ret_type, parameters))
-				flags |= MethodAttributes.Virtual | MethodAttributes.Final |
+			if (parent.IsInterfaceMethod (Name, ret_type, parameters)){
+				flags |= MethodAttributes.Virtual |
 					 MethodAttributes.NewSlot | MethodAttributes.HideBySig;
+
+				// If not abstract, then we can set Final.
+				if ((flags & MethodAttributes.Abstract) == 0)
+					flags |= MethodAttributes.Final;
+			}
 
 			//
 			// Catch invalid uses of virtual and abtract modifiers
@@ -1908,11 +1869,13 @@ namespace Mono.CSharp {
 
 			if (MethodBuilder == null)
 				return null;
-			
+
 			//
 			// HACK because System.Reflection.Emit is lame
 			//
-			if (!TypeManager.RegisterMethod (MethodBuilder, parameters)) {
+			ParameterInfo = new InternalParameters (parent, Parameters);
+
+			if (!TypeManager.RegisterMethod (MethodBuilder, ParameterInfo, parameters)) {
 				Report.Error (
 					111, Location,
 					"Class `" + parent.Name + "' already contains a definition with " +
@@ -1921,8 +1884,6 @@ namespace Mono.CSharp {
 				return null;
 			}
 			
-			ParameterInfo = new InternalParameters (parent, Parameters);
-
 			//
 			// This is used to track the Entry Point,
 			//
@@ -1977,7 +1938,7 @@ namespace Mono.CSharp {
 		{
 			if (IsPInvoke)
 				return;
-			
+
 			ILGenerator ig = MethodBuilder.GetILGenerator ();
 			EmitContext ec = new EmitContext (parent, Location, ig,
 							  GetReturnType (parent), ModFlags);
@@ -2020,7 +1981,7 @@ namespace Mono.CSharp {
 				Console.WriteLine ("Implement base access here");
 
 				ig.EndExceptionBlock ();
-			} else 
+			} else
 				ec.EmitTopBlock (Block);
 		}
 	}
@@ -2156,21 +2117,20 @@ namespace Mono.CSharp {
 			}
 
 			ConstructorBuilder = parent.TypeBuilder.DefineConstructor (
-				ca, GetCallingConvention (parent is Class),
-				parameters);
+				ca, GetCallingConvention (parent is Class), parameters);
+
 			//
 			// HACK because System.Reflection.Emit is lame
 			//
-			if (!TypeManager.RegisterMethod (ConstructorBuilder, parameters)) {
+			ParameterInfo = new InternalParameters (parent, Parameters);
+
+			if (!TypeManager.RegisterMethod (ConstructorBuilder, ParameterInfo, parameters)) {
 				Report.Error (111, Location,
 					      "Class `" + parent.Name + "' already contains a definition with the " +
 					      "same return value and parameter types for constructor `" + Name + "'");
 				return null;
 			}
 				
-
-			ParameterInfo = new InternalParameters (parent, Parameters);
-
 			return ConstructorBuilder;
 		}
 
@@ -2360,64 +2320,61 @@ namespace Mono.CSharp {
 			PropertyBuilder = parent.TypeBuilder.DefineProperty (
 				Name, prop_attr, PropertyType, null);
 
-			if (Get != null)
-			{
+			if (Get != null){
 				GetBuilder = parent.TypeBuilder.DefineMethod (
 					"get_" + Name, method_attr, PropertyType, null);
 				PropertyBuilder.SetGetMethod (GetBuilder);
+
 				//
 				// HACK because System.Reflection.Emit is lame
 				//
-				if (!TypeManager.RegisterMethod (GetBuilder, null)) {
+				InternalParameters ip = new InternalParameters (
+					parent, Parameters.GetEmptyReadOnlyParameters ());
+				
+				if (!TypeManager.RegisterMethod (GetBuilder, ip, null)) {
 					Report.Error (111, Location,
-					       "Class `" + parent.Name + "' already contains a definition with the " +
-					       "same return value and parameter types as the " +
-					       "'get' method of property `" + Name + "'");
+					       "Class `" + parent.Name +
+						      "' already contains a definition with the " +
+						      "same return value and parameter types as the " +
+						      "'get' method of property `" + Name + "'");
 					return;
 				}
-
-				TypeContainer.RegisterParameterForBuilder (GetBuilder,
-					      new InternalParameters (
-						      parent, Parameters.GetEmptyReadOnlyParameters ()));
 			}
 			
-			if (Set != null)
-			{
+			
+			if (Set != null){
 				SetBuilder = parent.TypeBuilder.DefineMethod (
 					"set_" + Name, method_attr, null, parameters);
 				SetBuilder.DefineParameter (1, ParameterAttributes.None, "value"); 
 				PropertyBuilder.SetSetMethod (SetBuilder);
+
 				//
 				// HACK because System.Reflection.Emit is lame
 				//
-				if (!TypeManager.RegisterMethod (SetBuilder, parameters)) {
+				Parameter [] parms = new Parameter [1];
+				parms [0] = new Parameter (Type, "value", Parameter.Modifier.NONE, null);
+				InternalParameters ip = new InternalParameters (
+					parent, new Parameters (parms, null));
+
+				if (!TypeManager.RegisterMethod (SetBuilder, ip, parameters)) {
 					Report.Error (111, Location,
 					       "Class `" + parent.Name + "' already contains a definition with the " +
 					       "same return value and parameter types as the " +
 					       "'set' method of property `" + Name + "'");
 					return;
 				}
-				
-				//
-				// HACK for the reasons exposed above
-				//
-				if (!TypeManager.RegisterProperty (PropertyBuilder, GetBuilder, SetBuilder)) {
-					Report.Error (111, Location,
-					       "Class `" + parent.Name + "' already contains a definition for the " +
-					       " property `" + Name + "'");
-					return;
-				}
-
-				Parameter [] parms = new Parameter [1];
-
-				parms [0] = new Parameter (Type, "value", Parameter.Modifier.NONE, null);
-
-				TypeContainer.RegisterParameterForBuilder (SetBuilder,
-					      new InternalParameters (parent, new Parameters (parms, null))); 
-					
 			}
 
-			TypeManager.RegisterProperty (PropertyBuilder, GetBuilder, SetBuilder);
+			//
+			// HACK for the reasons exposed above
+			//
+			if (!TypeManager.RegisterProperty (PropertyBuilder, GetBuilder, SetBuilder)) {
+				Report.Error (
+					111, Location,
+					"Class `" + parent.Name + "' already contains a definition for the " +
+					" property `" + Name + "'");
+				return;
+			}
 		}
 		
 		public void Emit (TypeContainer tc)
@@ -2527,7 +2484,12 @@ namespace Mono.CSharp {
 				//
 				// HACK because System.Reflection.Emit is lame
 				//
-				if (!TypeManager.RegisterMethod (mb, parameters)) {
+				Parameter [] parms = new Parameter [1];
+				parms [0] = new Parameter (Type, "value", Parameter.Modifier.NONE, null);
+				InternalParameters ip = new InternalParameters (
+					parent, new Parameters (parms, null)); 
+				
+				if (!TypeManager.RegisterMethod (mb, ip, parameters)) {
 					Report.Error (111, Location,
 					       "Class `" + parent.Name + "' already contains a definition with the " +
 					       "same return value and parameter types for the " +
@@ -2545,7 +2507,12 @@ namespace Mono.CSharp {
 				//
 				// HACK because System.Reflection.Emit is lame
 				//
-				if (!TypeManager.RegisterMethod (mb, parameters)) {
+				Parameter [] parms = new Parameter [1];
+				parms [0] = new Parameter (Type, "value", Parameter.Modifier.NONE, null);
+				InternalParameters ip = new InternalParameters (
+					parent, new Parameters (parms, null));
+				
+				if (!TypeManager.RegisterMethod (mb, ip, parameters)) {
 					Report.Error (111, Location,	
 				       "Class `" + parent.Name + "' already contains a definition with the " +
 					       "same return value and parameter types for the " +
@@ -2553,8 +2520,6 @@ namespace Mono.CSharp {
 					return;
 				}
 			}
-
-		
 		}
 
 		public void Emit (TypeContainer tc)
@@ -2575,7 +2540,7 @@ namespace Mono.CSharp {
 					CustomAttributeBuilder cb = a.Resolve (ec);
 					if (cb == null)
 						continue;
-
+					
 					if (!Attribute.CheckAttribute (a, this)) {
 						Attribute.Error592 (a, Location);
 						return;
@@ -2651,21 +2616,20 @@ namespace Mono.CSharp {
 			PropertyBuilder = parent.TypeBuilder.DefineProperty (
 				TypeManager.IndexerPropertyName (parent.TypeBuilder),
 				prop_attr, IndexerType, parameters);
-				
+
 			if (Get != null){
 				GetBuilder = parent.TypeBuilder.DefineMethod (
 					"get_Item", attr, IndexerType, parameters);
 
-				if (!TypeManager.RegisterMethod (GetBuilder, parameters)) {
+                                InternalParameters pi = new InternalParameters (parent, FormalParameters);
+				if (!TypeManager.RegisterMethod (GetBuilder, pi, parameters)) {
 					Report.Error (111, Location,
-					       "Class `" + parent.Name + "' already contains a definition with the " +
-					       "same return value and parameter types for the " +
-					       "'get' indexer");
+						      "Class `" + parent.Name +
+						      "' already contains a definition with the " +
+						      "same return value and parameter types for the " +
+						      "'get' indexer");
 					return;
 				}
-					
-				TypeContainer.RegisterParameterForBuilder (
-					      GetBuilder, new InternalParameters (parent, FormalParameters));
 			}
 			
 			if (Set != null){
@@ -2685,17 +2649,15 @@ namespace Mono.CSharp {
 				
 				SetBuilder = parent.TypeBuilder.DefineMethod (
 					"set_Item", attr, null, set_pars);
-
-				if (!TypeManager.RegisterMethod (SetBuilder, set_pars)) {
+				InternalParameters ip = new InternalParameters (parent, set_formal_params);
+				
+				if (!TypeManager.RegisterMethod (SetBuilder, ip, set_pars)) {
 					Report.Error (111, Location,
 					       "Class `" + parent.Name + "' already contains a definition with the " +
 					       "same return value and parameter types for the " +
 					       "'set' indexer");
 					return;
 				}
-
-				TypeContainer.RegisterParameterForBuilder (
-					SetBuilder, new InternalParameters (parent, set_formal_params));
 			}
 
 			PropertyBuilder.SetGetMethod (GetBuilder);

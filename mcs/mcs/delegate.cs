@@ -108,6 +108,9 @@ namespace Mono.CSharp {
 			
 			// Here the various methods like Invoke, BeginInvoke etc are defined
 
+			//
+			// Invoke method
+			//
  			param_types = Parameters.GetParameterInfo (parent);
   			ret_type = parent.LookupType (ReturnType, false);
   			CallingConventions cc = Parameters.GetCallingConvention ();
@@ -128,9 +131,13 @@ namespace Mono.CSharp {
 			
 			InvokeBuilder.SetImplementationFlags (MethodImplAttributes.Runtime);
 
-			TypeContainer.RegisterParameterForBuilder (InvokeBuilder,
-								   new InternalParameters (parent, Parameters)); 
+			TypeManager.RegisterMethod (InvokeBuilder,
+						    new InternalParameters (parent, Parameters),
+						    param_types);
 
+			//
+			// BeginInvoke
+			//
 			int params_num = param_types.Length;
 			Type [] async_param_types = new Type [params_num + 2];
 
@@ -166,10 +173,16 @@ namespace Mono.CSharp {
 								   Parameter.Modifier.NONE, null);
 			async_params [params_num + 1] = new Parameter ("System.IAsyncResult", "object",
 								   Parameter.Modifier.NONE, null);
-			
-			TypeContainer.RegisterParameterForBuilder (BeginInvokeBuilder,
-					new InternalParameters (parent, new Parameters (async_params, null))); 
 
+			TypeManager.RegisterMethod (BeginInvokeBuilder,
+						    new InternalParameters (
+							    parent,
+							    new Parameters (async_params, null)),
+						    async_param_types);
+
+			//
+			// EndInvoke
+			//
 			Type [] end_param_types = new Type [1];
 			end_param_types [0] = TypeManager.iasyncresult_type;
 			
@@ -186,9 +199,10 @@ namespace Mono.CSharp {
 			end_params [0] = new Parameter ("System.IAsyncResult", "result",
 							Parameter.Modifier.NONE, null);
 
-			TypeContainer.RegisterParameterForBuilder (EndInvokeBuilder,
-					new InternalParameters (parent, new Parameters (end_params, null))); 
-			
+			TypeManager.RegisterMethod (EndInvokeBuilder,
+						    new InternalParameters (
+							    parent, new Parameters (end_params, null)),
+						    end_param_types);
 		}
 
 		/// <summary>

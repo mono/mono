@@ -1,3 +1,16 @@
+2001-12-12  Miguel de Icaza  <miguel@ximian.com>
+
+	* typemanager.cs: Keep track of the parameters here instead of
+	being a feature of the TypeContainer.
+
+	* class.cs: Drop the registration of parameters here, as
+	InterfaceMethods are also interface declarations.
+
+	* delegate.cs: Register methods with the TypeManager not only with
+	the TypeContainer.  This code was buggy.
+
+	* interface.cs: Full registation here.
+
 2001-12-11  Miguel de Icaza  <miguel@ximian.com>
 
 	* expression.cs: Remove reducer for binary expressions, it can not

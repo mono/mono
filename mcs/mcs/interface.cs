@@ -233,9 +233,9 @@ namespace Mono.CSharp {
 				"same return value and parameter types for member `" + ib.Name + "'");
 		}
 
-		bool RegisterMethod (MethodBase mb, Type [] types)
+		bool RegisterMethod (MethodBase mb, InternalParameters ip, Type [] types)
 		{
-			if (!TypeManager.RegisterMethod (mb, types))
+			if (!TypeManager.RegisterMethod (mb, ip, types))
 				return false;
 
 			method_builders.Add (mb);
@@ -300,12 +300,14 @@ namespace Mono.CSharp {
 			mb = TypeBuilder.DefineMethod (
 				im.Name, interface_method_attributes,
 				return_type, arg_types);
+
+			InternalParameters ip = new InternalParameters (arg_types, im.Parameters);
 			
-			if (!RegisterMethod (mb, arg_types)) {
+			if (!RegisterMethod (mb, ip, arg_types)) {
 				Error111 (im);
 				return;
 			}
-			
+
 			//
 			// Define each type attribute (in/out/ref) and
 			// the argument names.
@@ -348,7 +350,10 @@ namespace Mono.CSharp {
 				//
 				// HACK because System.Reflection.Emit is lame
 				//
-				if (!RegisterMethod (mb, null)) {
+				InternalParameters inp = new InternalParameters
+					((Type [])null, Parameters.GetEmptyReadOnlyParameters ());
+				
+				if (!RegisterMethod (mb, inp, null)) {
 					Error111 (ip);
 					return;
 				}
@@ -369,7 +374,12 @@ namespace Mono.CSharp {
 				//
 				// HACK because System.Reflection.Emit is lame
 				//
-				if (!RegisterMethod (mb, setter_args)) {
+				Parameter [] parms = new Parameter [1];
+				parms [0] = new Parameter (ip.Type, "value", Parameter.Modifier.NONE, null);
+				InternalParameters ipp = new InternalParameters (
+					parent, new Parameters (parms, null));
+					
+				if (!RegisterMethod (mb, ipp, setter_args)) {
 					Error111 (ip);
 					return;
 				}
@@ -428,7 +438,10 @@ namespace Mono.CSharp {
 				//
 				// HACK because System.Reflection.Emit is lame
 				//
-				if (!RegisterMethod (get_item, arg_types)) {
+				InternalParameters ip = new InternalParameters (
+					arg_types, ii.Parameters);
+				
+				if (!RegisterMethod (get_item, ip, arg_types)) {
 					Error111 (ii);
 					return;
 				}
@@ -452,7 +465,9 @@ namespace Mono.CSharp {
 				//
 				// HACK because System.Reflection.Emit is lame
 				//
-				if (!RegisterMethod (set_item, value_arg_types)) {
+				InternalParameters ip = new InternalParameters (
+					value_arg_types, ii.Parameters);
+				if (!RegisterMethod (set_item, ip, value_arg_types)) {
 					Error111 (ii);
 					return;
 				}

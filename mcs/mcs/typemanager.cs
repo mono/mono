@@ -123,6 +123,12 @@ public class TypeManager {
 	// </remarks>
 	static Hashtable method_arguments;
 
+	// <remarks>
+	//   Maybe `method_arguments' should be replaced and only
+	//   method_internal_params should be kept?
+	// <remarks>
+	static Hashtable method_internal_params;
+
 	static Hashtable builder_to_interface;
 
 	// <remarks>
@@ -159,6 +165,7 @@ public class TypeManager {
 	static TypeManager ()
 	{
 		method_arguments = new Hashtable ();
+		method_internal_params = new Hashtable ();
 		builder_to_container = new Hashtable ();
 		type_interface_cache = new Hashtable ();
 	}
@@ -601,7 +608,7 @@ public class TypeManager {
 	// for anything which is dynamic, and we need this in a number of places,
 	// we register this information here, and use it afterwards.
 	//
-	static public bool RegisterMethod (MethodBase mb, Type [] args)
+	static public bool RegisterMethod (MethodBase mb, InternalParameters ip, Type [] args)
 	{
 		string s;
 		
@@ -611,7 +618,23 @@ public class TypeManager {
 			return false;
 		
 		method_arguments.Add (s, args);
+		method_internal_params.Add (s, ip);
+		
 		return true;
+	}
+
+	static public InternalParameters LookupParametersByBuilder (MethodBase mb)
+	{
+		string sig = GetSig (mb);
+		object o = method_arguments [sig];
+
+		if (! (mb is ConstructorBuilder || mb is MethodBuilder))
+			return null;
+		
+		if (method_arguments.Contains (sig))
+			return (InternalParameters) method_internal_params [sig];
+		else
+			throw new Exception ("Argument for Method not registered" + mb);
 	}
 
 	/// <summary>
