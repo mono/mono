@@ -2614,12 +2614,17 @@ namespace Mono.CSharp {
 
 			VariableInfo vi = VariableInfo;
 
+#if BROKEN
+			//
+			// Sigh:  this breaks `using' and `fixed'.  Need to review that
+			//
 			if (vi.ReadOnly){
 				Report.Error (
 					1604, loc,
 					"cannot assign to `" + Name + "' because it is readonly");
 				return null;
 			}
+#endif
 			
 			return this;
 		}
