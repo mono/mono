@@ -81,6 +81,7 @@ System.Windows.Forms/InvalidateEventArgs.cs
 System.Windows.Forms/InvalidateEventHandler.cs
 System.Windows.Forms/ItemBoundsPortion.cs
 System.Windows.Forms/IWin32Window.cs
+System.Windows.Forms/IWindowTarget.cs
 System.Windows.Forms/KeyEventArgs.cs
 System.Windows.Forms/KeyEventHandler.cs
 System.Windows.Forms/KeyPressEventArgs.cs
