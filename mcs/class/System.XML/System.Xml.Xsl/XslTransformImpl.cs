@@ -32,12 +32,12 @@ namespace System.Xml.Xsl {
 
 		public abstract void Transform (XPathNavigator input, XsltArgumentList args, XmlWriter output, XmlResolver resolver);
 
+		public abstract void Transform (XPathNavigator input, XsltArgumentList args, TextWriter output, XmlResolver resolver);
+
 		public virtual void Transform (string inputfile, string outputfile, XmlResolver resolver)
 		{
-			using (FileStream fs =  new FileStream (outputfile, FileMode.Create, FileAccess.ReadWrite)) {
-				XmlTextWriter t = new XmlTextWriter (fs, null);
-				Transform(new XPathDocument (inputfile).CreateNavigator (), null, t, resolver);
-				t.Close ();
+			using (StreamWriter w = new StreamWriter (outputfile)) {
+				Transform(new XPathDocument (inputfile).CreateNavigator (), null, w, resolver);
 			}
 		}
 	}

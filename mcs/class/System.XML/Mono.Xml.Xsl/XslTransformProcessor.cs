@@ -20,7 +20,8 @@ using Mono.Xml.Xsl.Operations;
 using QName = System.Xml.XmlQualifiedName;
 
 namespace Mono.Xml.Xsl {
-	public class XslTransformProcessor {
+	public class XslTransformProcessor 
+	{
 		CompiledStylesheet compiledStyle;
 		
 		XslStylesheet style;
@@ -41,7 +42,7 @@ namespace Mono.Xml.Xsl {
 			this.style = style.Style;
 		}
 
-		public void Process (XPathNavigator root, XmlWriter output, XsltArgumentList args, XmlResolver resolver)
+		public void Process (XPathNavigator root, Outputter outputtter, XsltArgumentList args, XmlResolver resolver)
 		{
 			foreach (XslGlobalVariable v in CompiledStyle.Variables.Values)	{
 				if (v is XslGlobalParam) {
@@ -54,7 +55,7 @@ namespace Mono.Xml.Xsl {
 			this.args = args;
 			this.root = root;
 			this.resolver = resolver != null ? resolver : new XmlUrlResolver ();
-			this.outputStack.Push (output);
+			this.outputStack.Push (outputtter);
 			this.ApplyTemplates (root.Select ("."), QName.Empty, null);
 		}
 		
@@ -69,16 +70,16 @@ namespace Mono.Xml.Xsl {
 		#region Output
 		Stack outputStack = new Stack ();
 		
-		public XmlWriter Out { get { return (XmlWriter)outputStack.Peek(); }}
+		public Outputter Out { get { return (Outputter)outputStack.Peek(); }}
 		
-		public void PushOutput (XmlWriter newOutput)
+		public void PushOutput (Outputter newOutput)
 		{
 			this.outputStack.Push (newOutput);
 		}
 		
-		public XmlWriter PopOutput ()
+		public Outputter PopOutput ()
 		{
-			return (XmlWriter)this.outputStack.Pop ();
+			return (Outputter)this.outputStack.Pop ();
 		}
 		#endregion
 		

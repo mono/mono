@@ -46,7 +46,9 @@ namespace Mono.Xml.Xsl.Operations {
 				return p.Evaluate (select);
 			} else if (content != null) {
 				XmlNodeWriter w = new XmlNodeWriter ();
-				p.PushOutput (w);
+				//TODO: which outputter should be used here?
+				Outputter outputter = new XmlOutputter(w, p.CompiledStyle.Style.Outputs);
+				p.PushOutput (outputter);
 				content.Evaluate (p);
 				p.PopOutput ();
 				return w.Document.CreateNavigator ().SelectChildren (XPathNodeType.All);

@@ -4,9 +4,11 @@
 // Authors:
 //	Ben Maurer (bmaurer@users.sourceforge.net)
 //	Atsushi Enomoto (ginga@kit.hi-ho.ne.jp)
+//	Oleg Tkachenko (oleg@tkachenko.com)
 //	
 // (C) 2003 Ben Maurer
 // (C) 2003 Atsushi Enomoto
+// (C) 2003 Oleg Tkachenko
 //
 
 using System;
@@ -21,10 +23,18 @@ namespace Mono.Xml.Xsl
 {
 	using QName = System.Xml.XmlQualifiedName;
 
+	public enum OutputMethod {
+		XML,
+		HTML,
+		Text,
+		Custom
+	}
+	
 	public class XslOutput	// also usable for xsl:result-document
 	{
 		string uri;
-		QName method;
+		QName customMethod;
+		OutputMethod method = OutputMethod.XML; 
 		string version;
 		string encoding;
 		bool omitXmlDeclaration;
@@ -48,9 +58,8 @@ namespace Mono.Xml.Xsl
 			this.uri = uri;
 		}
 
-		public QName Method {
-			get { return method; }
-		}
+		public OutputMethod Method { get { return method; }}
+		public QName CustomMethod { get { return customMethod; }}
 
 		public string Version {
 			get { return version; }
@@ -128,39 +137,59 @@ namespace Mono.Xml.Xsl
 		//		cdSectsList.AddRange (XslNameUtil.ParseQNames (att, nav));
 
 			att = nav.GetAttribute ("method", "");
-			if (att != null)
-				this.method = XslNameUtil.FromString (att, nav);
+
+			if (att != String.Empty) {
+				switch (att) {
+					case "xml":
+						method = OutputMethod.XML;
+						break;
+					case "html":
+						method = OutputMethod.HTML;
+						break;
+					case "text":
+						method = OutputMethod.Text;
+						break;
+					default:
+						method = OutputMethod.Custom;
+						customMethod = XslNameUtil.FromString (att, nav);
+						if (customMethod.Namespace == String.Empty)
+							//TODO: how to get current line number and position?
+							throw new XsltCompileException(new ArgumentException("Invalid output method value: '" + att + 
+							"'. It must be either 'xml' or 'html' or 'text' or QName."), nav.BaseURI, 1, 1);
+						break;
+				}
+			}
 
 			att = nav.GetAttribute ("version", "");
-			if (att != null)
+			if (att != String.Empty)
 				this.version = att;
 
 			att = nav.GetAttribute ("encoding", "");
-			if (att != null)
+			if (att != String.Empty)
 				this.encoding = att;
 
 			att = nav.GetAttribute ("standalone", "");
-			if (att != null)
+			if (att != String.Empty)
 				this.standalone = att;
 
 			att = nav.GetAttribute ("doctype-public", "");
-			if (att != null)
+			if (att != String.Empty)
 				this.doctypePublic = att;
 
 			att = nav.GetAttribute ("doctype-system", "");
-			if (att != null)
+			if (att != String.Empty)
 				this.doctypeSystem = att;
 
 			att = nav.GetAttribute ("media-type", "");
-			if (att != null)
+			if (att != String.Empty)
 				this.mediaType = att;
 
 			att = nav.GetAttribute ("omit-xml-declaration", "");
-			if (att != null)
+			if (att != String.Empty)
 				this.omitXmlDeclaration = att == "yes";
 
 			att = nav.GetAttribute ("indent", "");
-			if (att != null)
+			if (att != String.Empty)
 				this.indent = att == "yes";
 		}
 	}

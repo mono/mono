@@ -76,7 +76,7 @@ namespace System.Xml.Xsl {
 
 		public void Transform(XPathNavigator input, XsltArgumentList args, TextWriter output)
 		{
-			impl.Transform (input, args, new XmlTextWriter (output), xmlResolver);
+			impl.Transform (input, args, output, xmlResolver);
 		}
 		
 		public void Transform (string inputfile, string outputfile)

@@ -34,7 +34,8 @@ namespace Mono.Xml.Xsl.Operations {
 		public override void Evaluate (XslTransformProcessor p)
 		{
 			if (children != null) {
-				p.PushOutput (new XmlTextWriter (Console.Error));
+				//TODO: Which outputter to use here?
+				p.PushOutput (new TextOutputter(Console.Error));
 				children.Evaluate (p);
 				p.PopOutput ();
 			}

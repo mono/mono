@@ -1,3 +1,7 @@
+2003-08-18 Ben Maurer  <bmaurer@users.sourceforge.net>
+
+	* *.cs: Support for xsl:output. (Oleg)
+
 2003-08-17 Ben Maurer  <bmaurer@users.sourceforge.net>
 
 	* XslCopyOf.cs: handle default ns

@@ -279,6 +279,10 @@ namespace System.Xml.Xsl
 			output.WriteRaw (writer.GetStringBuilder ().ToString ());
 			output.Flush ();
 		}
+		public override void Transform (XPathNavigator input, XsltArgumentList args, TextWriter output, XmlResolver resolver) 
+		{
+			Transform(input, args, new XmlTextWriter(output), resolver);
+		}
 
 		public override void Transform(string inputfile, string outputfile, XmlResolver resolver)
 		{

@@ -25,25 +25,25 @@ namespace Mono.Xml.Xsl.Operations {
 			select = c.CompileExpression (c.GetAttribute ("select"));
 		}
 			
-		void CopyNode (XmlWriter w, XPathNavigator nav)
+		void CopyNode (Outputter outputter, XPathNavigator nav)
 		{
 			switch (nav.NodeType) {
 			case XPathNodeType.Root:
 				XPathNodeIterator itr = nav.SelectChildren (XPathNodeType.All);
 				while (itr.MoveNext ())
-					CopyNode (w, itr.Current);
+					CopyNode (outputter, itr.Current);
 				break;
 				
 			case XPathNodeType.Element:
-				w.WriteStartElement (nav.Prefix, nav.LocalName, nav.NamespaceURI);
+				outputter.WriteStartElement (nav.Prefix, nav.LocalName, nav.NamespaceURI);
 				
 				if (nav.MoveToFirstNamespace (XPathNamespaceScope.Local))
 				{
 					do {
 						if (nav.Name != "")
-							w.WriteAttributeString ("xmlns", nav.Name, null, nav.Value);
+							outputter.WriteAttributeString ("xmlns", nav.Name, null, nav.Value);
 						else 
-							w.WriteAttributeString ("xmlns", nav.Value);
+							outputter.WriteAttributeString ("xmlns", nav.Value);
 					} while (nav.MoveToNextNamespace (XPathNamespaceScope.Local));
 					nav.MoveToParent ();
 				}
@@ -51,33 +51,33 @@ namespace Mono.Xml.Xsl.Operations {
 				if (nav.MoveToFirstAttribute())
 				{
 					do {
-						w.WriteStartAttribute (nav.Prefix, nav.LocalName, nav.NamespaceURI);
-						w.WriteString (nav.Value);
-						w.WriteEndAttribute (); 
+						outputter.WriteStartAttribute (nav.Prefix, nav.LocalName, nav.NamespaceURI);
+						outputter.WriteString (nav.Value);
+						outputter.WriteEndAttribute (); 
 					} while (nav.MoveToNextAttribute ());
 					nav.MoveToParent();
 				}
 				
 				if (nav.MoveToFirstChild ()) {
 					do {
-						CopyNode (w, nav);
+						CopyNode (outputter, nav);
 					} while (nav.MoveToNext ());
 					nav.MoveToParent ();
 				}
 				
-				w.WriteEndElement ();
+				outputter.WriteEndElement ();
 				break;
 			case XPathNodeType.Whitespace:                                                     
 
 			case XPathNodeType.SignificantWhitespace:
 			case XPathNodeType.Text:
-				w.WriteString (nav.Value);
+				outputter.WriteString (nav.Value);
 				break;
 			case XPathNodeType.ProcessingInstruction:
-				w.WriteProcessingInstruction (nav.Name, nav.Value);
+				outputter.WriteProcessingInstruction (nav.Name, nav.Value);
 				break;
 			case XPathNodeType.Comment:
-				w.WriteComment (nav.Value);
+				outputter.WriteComment (nav.Value);
 				break;
 			}			
 		}

@@ -28,14 +28,36 @@ namespace System.Xml.Xsl {
 
 		public override void Transform (XPathNavigator input, XsltArgumentList args, XmlWriter output, XmlResolver resolver)
 		{
+			Outputter outputter = new XmlOutputter(output, s.Style.Outputs);
 			bool wroteStartDocument = false;
 			if (output.WriteState == WriteState.Start) {
-				output.WriteStartDocument ();
+				outputter.WriteStartDocument ();
 				wroteStartDocument = true;
 			}
-			new XslTransformProcessor (s).Process (input, output, args, resolver);
+			new XslTransformProcessor (s).Process (input, outputter, args, resolver);
 			if (wroteStartDocument)
-				output.WriteEndDocument ();
+				outputter.WriteEndDocument ();
+		}
+
+		public override void Transform (XPathNavigator input, XsltArgumentList args, TextWriter output, XmlResolver resolver) {
+			XslOutput xslOutput = (XslOutput)s.Style.Outputs[String.Empty];
+			if (xslOutput == null) {
+				//No xsl:output - subject to output method autodetection, XML for a while
+				Transform(input, args, new XmlTextWriter(output), resolver);
+				return;
+			}				
+			switch (xslOutput.Method) {
+				case OutputMethod.XML:
+					Transform(input, args, new XmlTextWriter(output), resolver);
+					break;
+				case OutputMethod.HTML:
+					throw new NotImplementedException("HTML output method is not implemented yet.");
+				case OutputMethod.Text:
+					new XslTransformProcessor (s).Process (input, new TextOutputter(output), args, resolver);
+					break;
+				case OutputMethod.Custom:
+					throw new NotImplementedException("Custom output method is not implemented yet.");
+			}
 		}
 	}
 }
