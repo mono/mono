@@ -1,6 +1,13 @@
 
 2003-01-10	Gaurav Vaish <gvaish_mono AT lycos.com>
 
+	* IObjectListFieldCollection.cs,
+	* IPageAdapter.cs,
+	* ITemplateable.cs                    : Added interface.
+	* ObjectListField.cs                  : Dummy implementation.
+
+2003-01-10	Gaurav Vaish <gvaish_mono AT lycos.com>
+
 	* MobileListItemType.cs,
 	* ObjectListViewMode.cs,
 	* WmlListFieldType.cs,    // Failed to locate enumeration!
