@@ -11,9 +11,13 @@
 //------------------------------------------------------------------------------
 
 using System;
+using System.IO.Private;
+using System.Security.Permissions;
 
 namespace System.IO
 {
+
+
 	/// <summary>
 	/// 
 	/// </summary>
@@ -77,8 +81,12 @@ namespace System.IO
 		/// Returns the date and time the directory specified by path was created
 		/// </summary>
 		public static string GetCurrentDirectory()
-		{	// TODO: Implement
-			return null;
+		{	// Implementation complete 08/25/2001 14:24 except for
+			// LAMESPEC: documentation specifies invalid exceptions (i think)
+			//           also shouldn't need Write to getcurrrent should we?
+			string str = Environment.CurrentDirectory;
+			CheckPermission.Demand(FileIOPermissionAccess.Read & FileIOPermissionAccess.Write, str);
+			return str;	
 		}
 		
 		/// <summary>
@@ -188,7 +196,15 @@ namespace System.IO
 		/// Sets the current directory to the directory specified by path
 		/// </summary>
 		public static void SetCurrentDirectory(string path)
-		{	// TODO: Implement
+		{	// Implementation complete 08/25/2001 14:24 except for
+			// LAMESPEC: documentation specifies invalid exceptions IOException (i think)
+			CheckArgument.Path(path, true);
+			CheckPermission.Demand(FileIOPermissionAccess.Read & FileIOPermissionAccess.Write, path);	
+			if(!Exists(path))
+			{
+				throw new DirectoryNotFoundException("Directory \"" + path + "\" not found.");
+			}
+			Environment.CurrentDirectory = path;
 		}
 		
 		/// <summary>

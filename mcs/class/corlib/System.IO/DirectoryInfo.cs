@@ -24,7 +24,8 @@ namespace System.IO
 			if(path == null) throw new ArgumentNullException();
 			if(path.IndexOfAny(Path.InvalidPathChars) > -1)
 				throw new ArgumentException("Invalid path characters");
-			if(!Directory.Exists(path)) throw new DirectoryNotFoundException();
+			//LAMESPEC: If we throw here how could we ever Create or check existence?	
+			//if(!Directory.Exists(path)) throw new DirectoryNotFoundException();
 		}
 
 		public override bool Exists

@@ -10,6 +10,7 @@
 //------------------------------------------------------------------------------
 
 using System;
+using System.IO.Private;
 
 namespace System.IO
 {
@@ -59,7 +60,7 @@ namespace System.IO
 				return null;
 			}
 
-			throwEmptyIf(path2);
+			CheckArgument.Empty(path2);
 
 			// TODO: Check for invalid DirectoryInfo characters
 			//       although I don't think it is necesary for linux
@@ -96,21 +97,20 @@ namespace System.IO
 
 		public static string GetDirectoryName(string path)
 		{
-			if(path == null)
+			if(path != null)
 			{
-				return null;
-			}
-			throwEmptyIf(path);
-			throwWhiteSpaceOnlyIf(path);
-			throwInvalidPathCharsIf(path);
+				CheckArgument.Empty(path);
+				CheckArgument.WhitespaceOnly(path);
+				CheckArgument.PathChars(path);
 
-			if(path.Length > 2)
-			{
-				int nLast = path.LastIndexOfAny(PathSeparatorChars, path.Length - 2);
-
-				if(nLast > 0)
+				if(path.Length > 2)
 				{
-					return path.Substring(0, nLast);
+					int nLast = path.LastIndexOfAny(PathSeparatorChars, path.Length - 2);
+
+					if(nLast > 0)
+					{
+						return path.Substring(0, nLast);
+					}
 				}
 			}
 			return path;
@@ -123,8 +123,8 @@ namespace System.IO
 				return string.Empty;
 			}
 
-			throwEmptyIf(path);
-			throwWhiteSpaceOnlyIf(path);
+			CheckArgument.Empty(path);
+			CheckArgument.WhitespaceOnly(path);
 			
 			int iExt = findExtension(path);
 			int iLastSep = path.LastIndexOfAny( PathSeparatorChars );
@@ -143,8 +143,8 @@ namespace System.IO
 				return string.Empty;
 			}
 
-			throwEmptyIf(path);
-			throwWhiteSpaceOnlyIf(path);
+			CheckArgument.Empty(path);
+			CheckArgument.WhitespaceOnly(path);
 
 			int nLast = path.LastIndexOfAny(PathSeparatorChars);
 
@@ -199,9 +199,9 @@ namespace System.IO
 
 		public static bool HasExtension(string path)
 		{  
-			throwNullIf(path);
-			throwEmptyIf(path);
-			throwWhiteSpaceOnlyIf(path);
+			CheckArgument.Null(path);
+			CheckArgument.Empty(path);
+			CheckArgument.WhitespaceOnly(path);
 			
 			return findExtension(path) > -1;
 		}
@@ -227,43 +227,6 @@ namespace System.IO
 				}
 			}
 			return -1;
-		}
-
-		private static void throwNullIf(string path)
-		{
-			if(path == null)
-			{
-				throw new ArgumentNullException();
-			}
-		}
-
-		private static void throwEmptyIf(string path)
-		{
-			if(path != null && path.Length == 0)
-			{
-				throw new ArgumentException("Empty string");
-			}
-		}
-
-		private static void throwWhiteSpaceOnlyIf(string path)
-		{
-			if(path != null)
-			{
-				string temp = path;
-				temp.Trim();
-				if(temp.Length == 0)
-				{
-					throw new ArgumentException("Whitespace only string");
-				}
-			}
-		}
-		
-		private static void throwInvalidPathCharsIf(string path)
-		{
-			if(path != null && path.IndexOfAny(InvalidPathChars) > -1)
-			{
-				throw new ArgumentException("Invalid path characters");
-			}
 		}
 	}
 }
