@@ -1,3 +1,8 @@
+2004-02-10  Zoltan Varga  <vargaz@freemail.hu>
+
+	* AppDomain.cs (Load): Check that assemblyRef.Name is not empty, to
+	avoid an assert in the runtime.
+
 2004-02-08  Duncan Mak  <duncan@ximian.com>
 
 	* Convert.cs (ToType): Always let a Convert.ChangeType call

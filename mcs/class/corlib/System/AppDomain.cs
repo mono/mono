@@ -491,6 +491,9 @@ namespace System {
 			if (assemblyRef == null)
 				throw new ArgumentNullException ("assemblyRef");
 
+			if (assemblyRef.Name == null || assemblyRef.Name == String.Empty)
+				throw new ArgumentException ("assemblyRef.Name cannot be empty.", "assemblyRef");
+
 			return LoadAssembly (assemblyRef.FullName, assemblySecurity);
 		}
 
