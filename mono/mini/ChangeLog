@@ -1,4 +1,9 @@
 
+Mon Jun 21 19:26:40 CEST 2004 Paolo Molaro <lupus@ximian.com>
+
+	* mini-ppc.c: prefer the use of relative branches so
+	they won't need to be patched in aot code (patch from Patrick Beard).
+
 Mon Jun 21 19:03:18 CEST 2004 Paolo Molaro <lupus@ximian.com>
 
 	* aot.c: patch from Patrick Beard to make the output assembly
