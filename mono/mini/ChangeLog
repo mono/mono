@@ -20,6 +20,30 @@ Fri May 14 15:13:06 CEST 2004 Paolo Molaro <lupus@ximian.com>
 
 	* Makefile.am: fix make dist as well...
 
+
+2004-05-14  Massimiliano Mantione  <massi@ximian.com>
+
+	* cfold.c: Made so that conversions from pointer to int4 are no-ops
+	on archs where pointers are 4 bytes long.
+
+	* Makefile.am: Added abcremoval.c source file.
+
+	* abcremoval.c: Added abcremoval.c.
+
+	* abcremoval.h: Added abcremoval.h.
+
+	* build_relations_propagation_table.pl: Added build_relations_propagation_table.pl.
+
+	* inssel.brg: Enabled bounds check removal.
+
+	* mini.c: Added support for abcrem optimization.
+
+	* mini.h: Added abcrem optimization label.
+
+	* driver.c: Added support for abcrem optimization.
+
+	* propagated_relations_table.def: Added propagated_relations_table.def.
+
 Fri May 14 14:30:13 CEST 2004 Paolo Molaro <lupus@ximian.com>
 
 	* mini.c, cfold.c: fix style.
