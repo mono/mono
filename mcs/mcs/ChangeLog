@@ -1,5 +1,11 @@
 2004-06-14  Marek Safar  <marek.safar@seznam.cz>
 
+	Fix bug #58254 & cs1555.cs, cs1556.cs
+
+	* driver.cs (MainDriver): Added tests for errors CS1555, CS1556.
+
+2004-06-14  Marek Safar  <marek.safar@seznam.cz>
+
 	* cs-parser.jay: Added error CS1669 test for indexers.
 
 2004-06-13  Martin Baulig  <martin@ximian.com>

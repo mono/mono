@@ -101,6 +101,8 @@ namespace Mono.CSharp {
 				case 0626: return "Method, operator, or accessor '{0}' is marked external and has no attributes on it. Consider adding a DllImport attribute to specify the external implementation";
  				case 0629: return "Conditional member '{0}' cannot implement interface member";
 				case 0657: return "'{0}' is not a valid attribute location for this declaration. Valid attribute locations for this declaration are '{1}'";
+				case 1555: return "Could not find '{0}' specified for Main method";
+				case 1556: return "'{0}' specified for Main method must be a valid class or struct";                                    
  				case 1618: return "Cannot create delegate with '{0}' because it has a Conditional attribute";
 				case 1667: return "'{0}' is not valid on property or event accessors. It is valid on '{1}' declarations only";
 				case 1669: return "__arglist is not valid in this context";                                    
