@@ -1,5 +1,9 @@
 2004-07-13  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* Added MonoFIXAttribute.cs
+
+2004-07-13  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* XmlWriter.cs : Added Create() stubs.
 	* XmlWriterSettings.cs : Added missing property setters.
 	* XmlValidatingReader.cs : added internal schemas setter.
