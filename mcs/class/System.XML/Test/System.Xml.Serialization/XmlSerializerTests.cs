@@ -483,17 +483,17 @@ namespace MonoTests.System.XmlSerialization
 			
 			SimpleClass simple = new SimpleClass();;
 			Serialize(simple, overrides);
-			AssertEquals(Infoset("<SimpleClass xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' />"), WriterText);
+			AssertEquals("#1", Infoset("<SimpleClass xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' />"), WriterText);
 			
 			// regular
 			simple.something = "hello";
 			Serialize(simple, overrides);
-			AssertEquals (Infoset("<SimpleClass xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' something='hello' />"), WriterText);
+			AssertEquals ("#2", Infoset("<SimpleClass xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' something='hello' />"), WriterText);
 			
 			// AttributeName
 			attr.XmlAttribute.AttributeName = "somethingelse";
 			Serialize(simple, overrides);
-			AssertEquals (Infoset("<SimpleClass xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' somethingelse='hello' />"), WriterText);
+			AssertEquals ("#3", Infoset("<SimpleClass xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' somethingelse='hello' />"), WriterText);
 			
 			// Type
 			// FIXME this should work, shouldnt it?
@@ -504,7 +504,7 @@ namespace MonoTests.System.XmlSerialization
 			// Namespace
 			attr.XmlAttribute.Namespace = "some:urn";
 			Serialize(simple, overrides);
-			AssertEquals (Infoset("<SimpleClass xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' d1p1:somethingelse='hello' xmlns:d1p1='some:urn' />"), WriterText);
+			AssertEquals ("#4", Infoset("<SimpleClass xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' d1p1:somethingelse='hello' xmlns:d1p1='some:urn' />"), WriterText);
 			
 			// FIXME DataType
 			// FIXME XmlSchemaForm Form
@@ -660,11 +660,19 @@ namespace MonoTests.System.XmlSerialization
 			return sb.ToString ();
 		}
 		
+		public static string Infoset (XmlNode nod)
+		{
+			StringBuilder sb = new StringBuilder ();
+			GetInfoset (nod, sb);
+			return sb.ToString ();
+		}
+		
 		static void GetInfoset (XmlNode nod, StringBuilder sb)
 		{
 			switch (nod.NodeType)
 			{
 				case XmlNodeType.Attribute:
+					if (nod.LocalName == "xmlns" && nod.NamespaceURI == "http://www.w3.org/2000/xmlns/") return;
 					sb.Append (" " + nod.NamespaceURI + ":" + nod.LocalName + "='" + nod.Value + "'");
 					break;
 					

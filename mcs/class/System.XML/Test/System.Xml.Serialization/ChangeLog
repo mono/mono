@@ -1,3 +1,10 @@
+2004-03-24  Lluis Sanchez Gual <lluis@ximian.com>
+
+	* XmlSerializerTests.cs: Added some identifiers for AssertEquals.
+	  Minor fixes in Infoset method.
+	* ComplexDataStructure.cs: New set of tests for testing complex object
+	  serialization.
+
 2004-03-13  David Sheldon <dave-mono@earth.li>
 
   * XmlReflectionImporterTests.cs: Switched the AssertEquals around 
