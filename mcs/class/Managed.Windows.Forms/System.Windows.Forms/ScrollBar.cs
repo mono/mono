@@ -26,9 +26,13 @@
 //	Jordi Mas i Hernandez	jordi@ximian.com
 //
 //
-// $Revision: 1.20 $
+// $Revision: 1.21 $
 // $Modtime: $
 // $Log: ScrollBar.cs,v $
+// Revision 1.21  2004/09/17 16:43:27  pbartok
+// - Fixed behaviour of arrow buttons. Now properly behaves like Buttons (and
+//   like Microsoft's scrollbar arrow buttons)
+//
 // Revision 1.20  2004/09/17 16:14:36  pbartok
 // - Added missing release of keyboard/mouse capture
 //
@@ -114,6 +118,8 @@ namespace System.Windows.Forms
 		private Rectangle thumb_area = new Rectangle ();
 		private ButtonState firstbutton_state = ButtonState.Normal;
 		private ButtonState secondbutton_state = ButtonState.Normal;
+		private bool firstbutton_pressed = false;
+		private bool secondbutton_pressed = false;
 		private bool thumb_pressed = false;
 		private float pixel_per_pos = 0;
 		private Timer timer = new Timer ();
@@ -599,22 +605,27 @@ namespace System.Windows.Forms
 
     		private void OnMouseMoveSB (object sender, MouseEventArgs e)
     		{
-    			if (!first_arrow_area.Contains (e.X, e.Y) &&
-    				((firstbutton_state & ButtonState.Pushed) == ButtonState.Pushed)) {
-				firstbutton_state = ButtonState.Normal;
-				this.Capture = false;
-				Refresh ();
-			}
-
-			if (!second_arrow_area.Contains (e.X, e.Y) &&
-    				((secondbutton_state & ButtonState.Pushed) == ButtonState.Pushed)) {
-				secondbutton_state = ButtonState.Normal;
-				this.Capture = false;
-				Refresh ();
-			}
-
-			if (thumb_pressed == true) {
-
+			if (firstbutton_pressed) {
+    				if (!first_arrow_area.Contains (e.X, e.Y) && ((firstbutton_state & ButtonState.Pushed) == ButtonState.Pushed)) {
+					firstbutton_state = ButtonState.Normal;
+					Refresh ();
+					return;
+				} else if (first_arrow_area.Contains (e.X, e.Y) && ((firstbutton_state & ButtonState.Normal) == ButtonState.Normal)) {
+					firstbutton_state = ButtonState.Pushed;
+					Refresh ();
+					return;
+				}
+			} else if (secondbutton_pressed) {
+				if (!second_arrow_area.Contains (e.X, e.Y) && ((secondbutton_state & ButtonState.Pushed) == ButtonState.Pushed)) {
+					secondbutton_state = ButtonState.Normal;
+					Refresh ();
+					return;
+				} else if (second_arrow_area.Contains (e.X, e.Y) && ((secondbutton_state & ButtonState.Normal) == ButtonState.Normal)) {
+					secondbutton_state = ButtonState.Pushed;
+					Refresh ();
+					return;
+				}
+			} else if (thumb_pressed == true) {
     				int pixel_pos;
 
 				if (vert) {
@@ -698,12 +709,14 @@ namespace System.Windows.Forms
     			if (firstbutton_state != ButtonState.Inactive && first_arrow_area.Contains (e.X, e.Y)) {
 				this.Capture = true;				
 				firstbutton_state = ButtonState.Pushed;
+				firstbutton_pressed = true;
 				Refresh ();				
 			}
 
 			if (secondbutton_state != ButtonState.Inactive && second_arrow_area.Contains (e.X, e.Y)) {
 				this.Capture = true;				
 				secondbutton_state = ButtonState.Pushed;
+				secondbutton_pressed = true;
 				Refresh ();
 			}
 
@@ -779,29 +792,28 @@ namespace System.Windows.Forms
     				Refresh ();
     			}    			
 
-    			if (firstbutton_state != ButtonState.Inactive && first_arrow_area.Contains (e.X, e.Y)) {
+			this.Capture = false;
 
+			if (firstbutton_pressed) {
 				firstbutton_state = ButtonState.Normal;
-				this.Capture = false;
-				SmallDecrement ();
-			}
-
-			if (secondbutton_state != ButtonState.Inactive && second_arrow_area.Contains (e.X, e.Y)) {
-
+				if (first_arrow_area.Contains (e.X, e.Y)) {
+					SmallDecrement ();
+				}
+				firstbutton_pressed = false;
+				return;
+			} else if (secondbutton_pressed) {
 				secondbutton_state = ButtonState.Normal;
-				this.Capture = false;
-				SmallIncrement ();
-			}
-
-			if (thumb_pressed == true) {
+				if (second_arrow_area.Contains (e.X, e.Y)) {
+					SmallIncrement ();
+				}
+				secondbutton_pressed = false;
+				return;
+			} else if (thumb_pressed == true) {
 				OnScroll (new ScrollEventArgs (ScrollEventType.ThumbPosition, position));
 				OnScroll (new ScrollEventArgs (ScrollEventType.EndScroll, position));
-				this.Capture = false;
-				thumb_pressed = false;				
+				thumb_pressed = false;
 				Refresh ();
 			}
-
-
     		}
 
     		private void OnKeyDownSB (Object o, KeyEventArgs key)
