@@ -1,3 +1,7 @@
+2002-02-19  Dietmar Maurer  <dietmar@ximian.com>
+
+	* emit-x86.c (arch_compile_method): add shared code to mono_root_domain
+
 2002-02-18  Dietmar Maurer  <dietmar@ximian.com>
 
 	* jit.c (mono_analyze_stack): optimize LDSFLD/STSFLD for domain

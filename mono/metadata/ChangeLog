@@ -1,5 +1,8 @@
 2002-02-19  Dietmar Maurer  <dietmar@ximian.com>
 
+	* class.c (mono_class_vtable): runtime init the class when we
+	allocate static class data.
+
 	* icall.c (ves_icall_System_Array_SetValue): check for null values.
 
 	* appdomain.c (mono_domain_transfer_object): impl. hack for Arrays
