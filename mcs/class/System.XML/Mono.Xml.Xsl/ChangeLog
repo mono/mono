@@ -1,3 +1,10 @@
+2003-12-11 Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
+
+	* Added ScriptCompilerInfo.cs.
+	* MSXslScriptManager.cs : Fixed *true* author's name.
+	  Implemented basic msxsl:script support.
+	* Compiler.cs : Added Evidence member.
+
 2003-12-07 Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
 
 	* Compiler.cs : Check stylesheet recursion. Check decimal-format name.

@@ -98,7 +98,8 @@ namespace Mono.Xml.Xsl {
 		XmlNamespaceManager nsMgr = new XmlNamespaceManager (new NameTable ());
 				
 		XmlResolver res;
-		
+		Evidence evidence;
+
 		XslStylesheet rootStyle;
 		Hashtable outputs = new Hashtable ();
 				
@@ -108,6 +109,7 @@ namespace Mono.Xml.Xsl {
 			this.res = res;
 			if (res == null)
 				this.res = new XmlUrlResolver ();
+			this.evidence = evidence;
 
 			if (!nav.MoveToFirstChild ()) throw new Exception ("WTF?");
 				
@@ -132,7 +134,10 @@ namespace Mono.Xml.Xsl {
 		public MSXslScriptManager ScriptManager {
 			get { return msScripts; }
 		}
-		
+
+		public Evidence Evidence {
+			get { return evidence; }
+		}
 		
 #region Input
 		public XPathNavigator Input {
