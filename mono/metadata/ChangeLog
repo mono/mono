@@ -1,5 +1,10 @@
 2004-02-23  Martin Baulig  <martin@ximian.com>
 
+	* icall.c: I must have been really stupid - make it actually work
+	this time ;-)
+
+2004-02-23  Martin Baulig  <martin@ximian.com>
+
 	* loader.c (method_from_memberref): Only inflate the method if
 	it's in another klass.
 
