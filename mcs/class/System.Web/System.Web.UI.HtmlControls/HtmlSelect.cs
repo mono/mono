@@ -59,7 +59,7 @@ namespace System.Web.UI.HtmlControls{
 		
 		protected override void OnDataBinding(EventArgs e){
 			base.OnDataBinding(e);
-			IEnumerable resolvedDataSource = System.Web.Utils.DataSourceHelper.GetResolvedDataSource(DataSource, DataMember);
+			IEnumerable resolvedDataSource = System.Web.Util.DataSourceHelper.GetResolvedDataSource(DataSource, DataMember);
 			if ( resolvedDataSource != null){
 				string text = DataTextField;
 				string value = DataValueField;

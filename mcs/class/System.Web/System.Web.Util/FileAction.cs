@@ -1,5 +1,5 @@
 /**
- * Namespace: System.Web.Utils
+ * Namespace: System.Web.Util
  * Class:     FileAction
  *
  * Author:  Gaurav Vaish
@@ -11,7 +11,7 @@
  * (C) Gaurav Vaish (2001)
  */
 
-namespace System.Web.Utils
+namespace System.Web.Util
 {
 	public enum FileAction
 	{

@@ -16,7 +16,7 @@ using System;
 using System.Collections;
 using System.Web;
 using System.Web.UI;
-using System.Web.Utils;
+using System.Web.Util;
 using System.ComponentModel;
 
 namespace System.Web.UI.WebControls

@@ -87,7 +87,7 @@ namespace System.Web.UI.HtmlControls{
 						attr = attr.Substring(lastSlash + 1);
 				}
 				else{
-					attr = System.Web.Utils.UrlUtils.MakeRelative(filePath,executionFilePath);
+					attr = System.Web.Util.UrlUtils.MakeRelative(filePath,executionFilePath);
 				}
 				string queryString = Context.Request.QueryStringRaw;
 				if (queryString != null && queryString.Length > 0)

@@ -1,5 +1,5 @@
 /**
- * Namespace: System.Web.Utils
+ * Namespace: System.Web.Util
  * Class:     ApacheVersionInfo
  * 
  * Author:  Gaurav Vaish
@@ -11,7 +11,7 @@
  * (C) Gaurav Vaish (2001)
  */
 
-namespace System.Web.Utils
+namespace System.Web.Util
 {
 	/// <summary>
 	/// Versions of the modules related to Apache
@@ -20,7 +20,7 @@ namespace System.Web.Utils
 	/// At present I don't know what modules are to be loaded and how
 	/// </remarks>
 	/// <see>
-	/// System.Web.Utils.IISVersionInfo
+	/// System.Web.Util.IISVersionInfo
 	/// </see>
 	internal class ApacheVersionInfo
 	{

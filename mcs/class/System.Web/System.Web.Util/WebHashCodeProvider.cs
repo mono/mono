@@ -1,6 +1,6 @@
 /**
 
- * Namespace: System.Web.Utils
+ * Namespace: System.Web.Util
  * Class:     WebHashCodeProvider
  *
 
@@ -24,7 +24,7 @@
 using System.Collections;
 using System.Globalization;
 
-namespace System.Web.Utils
+namespace System.Web.Util
 {
 	public class WebHashCodeProvider : IHashCodeProvider
 	{

@@ -1,5 +1,5 @@
 /**
- * Namespace: System.Web.UI.Utils
+ * Namespace: System.Web.UI.Util
  * Class:     DataSourceHelper
  *
  * Author:  Gaurav Vaish
@@ -14,7 +14,7 @@ using System;
 using System.Collections;
 using System.ComponentModel;
 
-namespace System.Web.Utils
+namespace System.Web.Util
 {
 	internal class DataSourceHelper
 	{

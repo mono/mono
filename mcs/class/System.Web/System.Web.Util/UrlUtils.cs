@@ -1,5 +1,5 @@
 /**
- * Namespace: System.Web.UI.Utils
+ * Namespace: System.Web.UI.Util
  * Class:     UrlUtils
  * 
  * Author:  Gaurav Vaish
@@ -13,7 +13,7 @@ using System;
 using System.Collections;
 using System.Text;
 
-namespace System.Web.Utils
+namespace System.Web.Util
 {
 	internal class UrlUtils
 	{

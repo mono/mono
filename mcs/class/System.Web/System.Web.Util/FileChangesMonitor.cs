@@ -1,6 +1,6 @@
 /**
  * 
- * Namespace: System.Web.Utils
+ * Namespace: System.Web.Util
  * Class:     FileChangesMonitor
  * 
  * Author:  Gaurav Vaish
@@ -20,7 +20,7 @@ using System.Runtime.InteropServices;
 using System.Collections;
 using System.Threading;
 
-namespace System.Web.Utils
+namespace System.Web.Util
 {
 	internal class FileChangesMonitor
 	{

@@ -1,5 +1,5 @@
 /**
- * Namespace: System.Web.Utils
+ * Namespace: System.Web.Util
  * Class:     WebEqualComparer
  *
  * Author:  Gaurav Vaish
@@ -15,7 +15,7 @@ using System;
 using System.Globalization;
 using System.Collections;
 
-namespace System.Web.Utils
+namespace System.Web.Util
 {
 	public class WebEqualComparer : IComparer
 	{

@@ -1,6 +1,6 @@
 /**
 
- * Namespace: System.Web.Utils
+ * Namespace: System.Web.Util
  * Class:     IISVersionInfo
  * 
  * Author:  Gaurav Vaish
@@ -19,9 +19,8 @@
 using System;
 using System.Diagnostics;
 using System.Web;
-using System.Web.Utils;
 
-namespace System.Web.Utils
+namespace System.Web.Util
 {
 	//FIXME: This is highly Windows/IIS specific code. What about Apache related stuff?
 	internal class IISVersionInfo

@@ -1,5 +1,5 @@
 /**
- * Namespace: System.Web.Utils
+ * Namespace: System.Web.Util
  * Class:     FilePathParser
  *
  * Author:  Gaurav Vaish
@@ -12,7 +12,7 @@
  */
 using System.IO;
 
-namespace System.Web.Utils
+namespace System.Web.Util
 {
 	internal class FilePathParser
 	{
