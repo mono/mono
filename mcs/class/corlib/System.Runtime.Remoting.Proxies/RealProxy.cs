@@ -170,7 +170,7 @@ namespace System.Runtime.Remoting.Proxies
 				
 				if (rti != null) {
 					name = rti.TypeName;
-					if (name == typeof(MarshalByRefObject).AssemblyQualifiedName)
+					if (name == null || name == typeof(MarshalByRefObject).AssemblyQualifiedName)
 						name = class_to_proxy.AssemblyQualifiedName;
 				}
 				else

@@ -1,3 +1,7 @@
+2004-04-13  Lluis Sanchez Gual  <lluis@ximian.com>
+
+	* RealProxy.cs: IRemotingTypeInfo.TypeName can return null, beware of that.
+
 2004-04-01  Lluis Sanchez Gual  <lluis@ximian.com>
 
 	* RemotingProxy.cs: Changed the rules for casting WKO proxies, to match
