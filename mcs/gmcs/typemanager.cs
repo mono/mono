@@ -1409,6 +1409,33 @@ public class TypeManager {
 
 		return ds.IsGeneric;
 	}
+
+	public static bool CheckGeneric (Type t, int num_type_args)
+	{
+		DeclSpace tc = LookupDeclSpace (t);
+
+		if (tc != null) {
+			if (!tc.IsGeneric)
+				return num_type_args == 0;
+
+			if (num_type_args == 0)
+				return false;
+
+			if (num_type_args != tc.CountTypeParameters)
+				return false;
+		} else {
+			if (!t.HasGenericArguments)
+				return num_type_args == 0;
+
+			if (num_type_args == 0)
+				return false;
+
+			if (num_type_args != t.GetGenericArguments ().Length)
+				return false;
+		}
+
+		return true;
+	}
 	
 	//
 	// Whether a type is unmanaged.  This is used by the unsafe code (25.2)

@@ -1891,6 +1891,7 @@ namespace Mono.CSharp {
 	/// </remarks>
 	public class SimpleName : Expression {
 		public string Name;
+		public int NumTypeParameters;
 
 		//
 		// If true, then we are a simple name, not composed with a ".
@@ -1907,6 +1908,14 @@ namespace Mono.CSharp {
 		public SimpleName (string name, Location l)
 		{
 			Name = name;
+			loc = l;
+			is_base = true;
+		}
+
+		public SimpleName (string name, int num_type_params, Location l)
+		{
+			Name = name;
+			NumTypeParameters = num_type_params;
 			loc = l;
 			is_base = true;
 		}
@@ -1977,7 +1986,7 @@ namespace Mono.CSharp {
 
 			if (ec.ResolvingTypeTree){
 				int errors = Report.Errors;
-				Type dt = ds.FindType (loc, Name);
+				Type dt = ds.FindType (loc, Name, NumTypeParameters);
 				
 				if (Report.Errors != errors)
 					return null;
@@ -1986,7 +1995,7 @@ namespace Mono.CSharp {
 					return new TypeExpression (dt, loc);
 
 				if (alias_value != null){
-					if ((t = RootContext.LookupType (ds, alias_value, true, loc)) != null)
+					if ((t = RootContext.LookupType (ds, alias_value, true, NumTypeParameters, loc)) != null)
 						return new TypeExpression (t, loc);
 				}
 			}
@@ -2011,7 +2020,7 @@ namespace Mono.CSharp {
 			// or a namespace.
 			//
 
-			if ((t = RootContext.LookupType (ds, Name, true, loc)) != null)
+			if ((t = RootContext.LookupType (ds, Name, true, NumTypeParameters, loc)) != null)
 				return new TypeExpression (t, loc);
 				
 			// No match, maybe our parent can compose us

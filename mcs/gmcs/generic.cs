@@ -262,6 +262,12 @@ namespace Mono.CSharp {
 			}
 		}
 
+		public int Count {
+			get {
+				return args.Count;
+			}
+		}
+
 		public override string ToString ()
 		{
 			StringBuilder s = new StringBuilder ();
@@ -391,7 +397,21 @@ namespace Mono.CSharp {
 			//
 			// First, resolve the generic type.
 			//
-			SimpleName sn = new SimpleName (name, loc);
+			DeclSpace ds;
+			Type nested = ec.DeclSpace.FindNestedType (loc, name, out ds);
+			if (nested != null) {
+				gt = nested.GetGenericTypeDefinition ();
+
+				TypeArguments new_args = new TypeArguments ();
+				foreach (TypeParameter param in ds.TypeParameters)
+					new_args.Add (new TypeParameterExpr (param, loc));
+				new_args.Add (args);
+
+				args = new_args;
+				return this;
+			}
+
+			SimpleName sn = new SimpleName (name, args.Count, loc);
 			TypeExpr resolved = sn.ResolveAsTypeTerminal (ec);
 			if (resolved == null)
 				return null;
@@ -423,29 +443,7 @@ namespace Mono.CSharp {
 			}
 
 			gen_params = gt.GetGenericArguments ();
-
-			DeclSpace decl = ec.DeclSpace, parent = null;
-			while (decl != null) {
-				if (TypeManager.IsNestedChildOf (gt, decl.TypeBuilder)) {
-					parent = decl;
-					break;
-				}
-				decl = decl.Parent;
-			}
-
-			if (parent != null) {
-				TypeParameter[] pparams = parent.TypeParameters;
-
-				atypes = new Type [args.Arguments.Length + pparams.Length];
-				for (int i = 0; i < pparams.Length; i++) {
-					TypeParameter pparam = pparams [i];
-					if (pparam.Type == null)
-						throw new Exception ();
-					atypes [i] = pparam.Type;
-				}
-				args.Arguments.CopyTo (atypes, pparams.Length);
-			} else
-				atypes = args.Arguments;
+			atypes = args.Arguments;
 
 			if (atypes.Length != gen_params.Length) {
 				Report.Error (-217, loc, "Generic type `{0}' takes {1} " +

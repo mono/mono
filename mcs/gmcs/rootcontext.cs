@@ -468,7 +468,8 @@ namespace Mono.CSharp {
 			return ns.Substring (0, i);
 		}
 
-		static Type NamespaceLookup (DeclSpace ds, string name, Location loc)
+		static Type NamespaceLookup (DeclSpace ds, string name,
+					     int num_type_args, Location loc)
 		{
 			//
 			// Try in the current namespace and all its implicit parents
@@ -478,8 +479,13 @@ namespace Mono.CSharp {
 				if (result == null)
 					continue;
 
-				if (result is Type)
-					return (Type) result;
+				Type t = result as Type;
+				if (t != null) {
+					if (TypeManager.CheckGeneric (t, num_type_args))
+						return t;
+					else
+						continue;
+				}
 
 				return null;
 			}
@@ -487,6 +493,12 @@ namespace Mono.CSharp {
 			return null;
 		}
 		
+		static public Type LookupType (DeclSpace ds, string name, bool silent,
+					       Location loc)
+		{
+			return LookupType (ds, name, silent, 0, loc);
+		}
+
 		//
 		// Public function used to locate types, this can only
 		// be used after the ResolveTree function has been invoked.
@@ -495,7 +507,8 @@ namespace Mono.CSharp {
 		//
 		// Come to think of it, this should be a DeclSpace
 		//
-		static public Type LookupType (DeclSpace ds, string name, bool silent, Location loc)
+		static public Type LookupType (DeclSpace ds, string name, bool silent,
+					       int num_type_params, Location loc)
 		{
 			Type t;
 
@@ -528,7 +541,7 @@ namespace Mono.CSharp {
 					containing_ds = containing_ds.Parent;
 				}
 				
-				t = NamespaceLookup (ds, name, loc);
+				t = NamespaceLookup (ds, name, num_type_params, loc);
 				if (t != null){
 					ds.Cache [name] = t;
 					return t;

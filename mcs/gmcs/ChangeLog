@@ -1,5 +1,35 @@
 2004-03-13  Martin Baulig  <martin@ximian.com>
 
+	* class.cs (TypeContainer.DefineType): Call
+	TypeManager.AddUserType() immediately after creating the
+	TypeBuilder; pass all type parameters when creating the
+	CurrentType.
+
+	* decl.cs (DeclSpace.FindNestedType): New public method.
+	(DeclSpace.FindType): Added `int num_type_args' argument; only
+	return types with the correct number of type parameters.
+	(DeclSpace.CountTypeParams): New public property.
+
+	* ecore.cs (SimpleName.ctor): Added overloaded version which takes
+	the number of type parameters; defaults to zero.
+
+	* generic.cs (TypeArguments.Count): New public property.
+	(ConstructedType.DoResolveAsTypeStep): First call
+	ds.FindNestedType() to find out whether we're nested in the
+	current generic type; in this case, we inherit all type parameters
+	from the current class.
+
+	* rootcontext.cs (RootContext.NamespaceLookup): Added `int
+	num_type_args' argument.
+	(RootContext.LookupType): Added overloaded version which takes the
+	number of type arguments; only return types with the correct
+	number of type arguments.
+
+	* typemanager.cs (TypeManager.CheckGeneric): New public function;
+	checks whether `Type t' has `int num_type_args'.
+
+2004-03-13  Martin Baulig  <martin@ximian.com>
+
 	* generic.cs (GenericMethod.DefineType): New method; calls
 	DefineType() on all the type parameters.
 

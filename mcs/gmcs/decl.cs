@@ -381,7 +381,7 @@ namespace Mono.CSharp {
 			TypeContainer tc = TypeManager.LookupTypeContainer (t);
 			if ((tc != null) && tc.IsGeneric) {
 				ConstructedType ctype = new ConstructedType (
-					t, new TypeArguments (), loc);
+					t, TypeParameters, loc);
 
 				t = ctype.ResolveType (type_resolve_ec);
 			}
@@ -679,6 +679,35 @@ namespace Mono.CSharp {
 						     t1.FullName, t2.FullName));
 		}
 
+		public Type FindNestedType (Location loc, string name,
+					    out DeclSpace containing_ds)
+		{
+			Type t;
+			bool error;
+
+			containing_ds = this;
+			while (containing_ds != null){
+				Type container_type = containing_ds.TypeBuilder;
+				Type current_type = container_type;
+
+				while (current_type != null && current_type != TypeManager.object_type) {
+					string pre = current_type.FullName;
+
+					t = LookupInterfaceOrClass (pre, name, out error);
+					if (error)
+						return null;
+
+					if ((t != null) && containing_ds.CheckAccessLevel (t))
+						return t;
+
+					current_type = current_type.BaseType;
+				}
+				containing_ds = containing_ds.Parent;
+			}
+
+			return null;
+		}
+
 		/// <summary>
 		///   GetType is used to resolve type names at the DeclSpace level.
 		///   Use this to lookup class/struct bases, interface bases or 
@@ -691,7 +720,7 @@ namespace Mono.CSharp {
 		///   during the tree resolution process and potentially define
 		///   recursively the type
 		/// </remarks>
-		public Type FindType (Location loc, string name)
+		public Type FindType (Location loc, string name, int num_type_args)
 		{
 			Type t;
 			bool error;
@@ -712,8 +741,10 @@ namespace Mono.CSharp {
 					t = LookupInterfaceOrClass (pre, name, out error);
 					if (error)
 						return null;
-				
-					if ((t != null) && containing_ds.CheckAccessLevel (t))
+
+					if ((t != null) &&
+					    containing_ds.CheckAccessLevel (t) &&
+					    TypeManager.CheckGeneric (t, num_type_args))
 						return t;
 
 					current_type = current_type.BaseType;
@@ -729,7 +760,7 @@ namespace Mono.CSharp {
 				if (error)
 					return null;
 				
-				if (t != null) 
+				if ((t != null) && TypeManager.CheckGeneric (t, num_type_args))
 					return t;
 			}
 			
@@ -935,6 +966,17 @@ namespace Mono.CSharp {
 					return type_params;
 				else
 					return new TypeParameter [0];
+			}
+		}
+
+		public int CountTypeParameters {
+			get {
+				if (!IsGeneric)
+					return 0;
+				if (type_param_list == null)
+					initialize_type_params ();
+
+				return type_param_list.Length;
 			}
 		}
 

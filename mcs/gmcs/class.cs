@@ -847,9 +847,11 @@ namespace Mono.CSharp {
 					Basename, type_attributes, ptype, null);
 			}
 
+			TypeManager.AddUserType (Name, TypeBuilder, this, ifaces);
+
 			if (IsGeneric) {
 				CurrentType = new ConstructedType (
-					Name, CurrentTypeParameters, Location);
+					Name, TypeParameters, Location);
 
 				foreach (TypeParameter type_param in TypeParameters)
 					type_param.Define (TypeBuilder);
@@ -892,8 +894,6 @@ namespace Mono.CSharp {
 			// Finish the setup for the EmitContext
 			//
 			ec.ContainerType = TypeBuilder;
-
-			TypeManager.AddUserType (Name, TypeBuilder, this, ifaces);
 
 			if ((parent != null) && parent.IsAttribute) {
 				RootContext.RegisterAttribute (this);
