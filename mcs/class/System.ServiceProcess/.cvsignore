@@ -1,9 +1,0 @@
-*.csproj.user
-*.dll
-*.mdb
-*.pdb
-*~
-.makefrag
-.response
-TestResult.xml
-library-deps.stamp

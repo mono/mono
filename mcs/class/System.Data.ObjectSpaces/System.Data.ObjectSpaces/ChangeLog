@@ -1,6 +1,0 @@
-2004-01-02  Tim Coleman <tim@timcoleman.com>
-	* ChangeLog:
-		Start ChangeLog in this directory
-	* DynamicAssembly.cs ObjectList.cs ObjectReader.cs ObjectSet.cs
-	* ObjectSources.cs PersistenceError.cs PersistenceOptions.cs:
-		More implementation of these classes

@@ -1,4 +1,0 @@
-2004-09-20  Gert Driesen <drieseng@users.sourceforge.net>
-
-	* ReadOnlyCollection.cs: Moved over from corlib
-	* Collection.cs: Moved over from corlib

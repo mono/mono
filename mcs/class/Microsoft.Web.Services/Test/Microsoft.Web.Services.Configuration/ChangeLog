@@ -1,6 +1,0 @@
-2003-09-14  Sebastien Pouliot  <spouliot@videotron.ca>
-
-	* ConfigurationBaseTest.cs: New. Test all WSE1 static protected methods.
-	* FilterConfigurationTest.cs: New. Test presence of default input/output
-	SOAP filters.
-	* WebServicesConfigurationTest.cs: New. Test FilterConfiguration.

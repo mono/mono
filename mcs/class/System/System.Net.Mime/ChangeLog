@@ -1,7 +1,0 @@
-2004-09-09  Tim Coleman <tim@timcoleman.com>
-	* ContentType.cs: Changes to MIME headers
-
-2004-09-04 Tim Coleman  <tim@timcoleman.com>
-	* ContentDisposition.cs ContentType.cs DispositionTypeNames.cs
-	* MediaTypeNames.cs TransferEncoding.cs:
-		New class stubs for 2.0

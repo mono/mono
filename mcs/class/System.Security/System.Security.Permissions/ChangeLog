@@ -1,9 +1,0 @@
-2004-07-08  Sebastien Pouliot  <sebastien@ximian.com>
-
-	* StorePermissionFlags.cs: Fixed flags values. Added [Serializable]
-	attribute.
-
-2004-07-07  Sebastien Pouliot  <sebastien@ximian.com>
-
-	* StorePermissionFlags.cs: New. CAS-related enum for StorePermission.
-	Adding it "creates" the namespace for corcompare.
