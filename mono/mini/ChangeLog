@@ -1,7 +1,8 @@
 2004-10-02  Massimiliano Mantione  <massi@ximian.com>
 
 	* ssa.c: Fixed casts to unsigned where the value was of 64 bits in
-	simulate_long_compare.
+	simulate_long_compare, patch by will@exomi.com (Ville-Pertti Keinonen),
+	see bug 67324.
 	
 2004-10-02  Zoltan Varga  <vargaz@freemail.hu>
 

@@ -1,7 +1,8 @@
 2004-10-02  Massimiliano Mantione  <massi@ximian.com>
 
-	* process.c: Fixed alignments to 32 bits (casting to unsigned is unsafe on
-	64 bits platforms).
+	* process.c: Fixed alignments to 32 bits as casting to unsigned is unsafe
+	on 64 bits platforms, patch by will@exomi.com (Ville-Pertti Keinonen), see
+	bug 67324).
 	
 2004-09-30  Zoltan Varga  <vargaz@freemail.hu>
 
