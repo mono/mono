@@ -8,3 +8,4 @@ corlib_plattest.pdb
 corlib_test.dll
 corlib_test.pdb
 library-deps.stamp
+*.mdb
