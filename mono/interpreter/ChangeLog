@@ -1,3 +1,6 @@
+2001-08-21  Dietmar Maurer  <dietmar@ximian.com>
+
+	* interp.c (get_named_exception): use the right constructor.
 
 Mon Aug 20 18:58:36 CEST 2001 Paolo Molaro <lupus@ximian.com>
 

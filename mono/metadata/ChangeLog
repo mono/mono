@@ -1,3 +1,8 @@
+2001-08-21  Dietmar Maurer  <dietmar@ximian.com>
+
+	* class.h: cleanup of MonoArrayClass, use a MonoClass pointer to
+	identify the type of elements.
+
 Mon Aug 20 19:39:00 CEST 2001 Paolo Molaro <lupus@ximian.com>
 
 	* blob.h: fix MONO_TYPE_TYPEDBYREF value.
