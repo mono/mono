@@ -1,3 +1,8 @@
+2003-12-14  Tim Coleman <tim@timcoleman.com>
+	* System.Data.SqlXml.dll.sources:
+		Remove some files from System.Xml.Query that
+		were in the wrong assembly.
+
 2003-11-25  Tim Coleman <tim@timcoleman.com>
 	* Makefile:
 	* System.Data.Mapping/*.cs:

@@ -10,14 +10,9 @@ System.Data.SqlXml/XmlRowsetAdapterException.cs
 System.Data.SqlXml/FillStatus.cs
 System.Xml.Query/SqlQueryOptions.cs
 System.Xml.Query/SqlQueryPlan.cs
-System.Xml.Query/XmlCommand.cs
-System.Xml.Query/XmlQueryArgumentList.cs
-System.Xml.Query/XmlQueryCompileException.cs
-System.Xml.Query/XmlQueryException.cs
 System.Xml.Query/XmlViewSchema.cs
 System.Xml.Query/XmlViewSchemaDictionary.cs
 System.Xml.Query/XQueryProcessor.cs
-System.Xml.Query/XsltProcessor.cs
 System.Data.Mapping/ConditionCollection.cs
 System.Data.Mapping/Condition.cs
 System.Data.Mapping/DataSourceCollection.cs
