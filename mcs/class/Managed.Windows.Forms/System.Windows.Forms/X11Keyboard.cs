@@ -404,7 +404,7 @@ namespace System.Windows.Forms {
 						}
 					}
 
-					for (int i = 0; (i < keysyms_per_keycode) && (vkey != 0); i++) {
+					for (int i = 0; (i < keysyms_per_keycode) && (vkey == 0); i++) {
 						keysym = (int) XLookupKeysym (ref e2, i);
 						switch ((char) keysym) {
 						case ';':
