@@ -1,3 +1,8 @@
+2004-05-25  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpApplication.cs: set culture/uiculture from configuration and
+	restore it after each step. Fixes bug #52851.
+
 2004-05-18  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HttpUtility.cs: use lower case in UrlEncode like MS does. Delay

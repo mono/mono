@@ -37,11 +37,13 @@ namespace System.Web.Configuration
 		static public GlobalizationConfiguration GetInstance (HttpContext context)
 		{
 			GlobalizationConfiguration config;
-			if (context == null)
-				context = HttpContext.Context;
-
 			try {
-				config = context.GetConfig ("system.web/globalization") as GlobalizationConfiguration;
+				if (context == null)
+					config = HttpContext.GetAppConfig ("system.web/globalization")
+						 as GlobalizationConfiguration;
+				else
+					config = context.GetConfig ("system.web/globalization")
+						 as GlobalizationConfiguration;
 			} catch {
 				return null;
 			}

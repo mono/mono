@@ -6,9 +6,13 @@
 // 	Tim Coleman (tim@timcoleman.com)
 // 	Gonzalo Paniagua Javier (gonzalo@ximian.com)
 //
+// (c) Copyright 2002-2003 Ximian, Inc. (http://www.ximian.com)
+// (c) Copyright 2004 Novell, Inc. (http://www.novell.com)
+//
 using System;
 using System.Collections;
 using System.ComponentModel;
+using System.Globalization;
 using System.IO;
 using System.Threading;
 using System.Security.Principal;
@@ -733,6 +737,11 @@ namespace System.Web
 		ArrayList _recycleHandlers;
 
 		bool _InPreRequestResponseMode;
+
+		CultureInfo appCulture;
+		CultureInfo appUICulture;
+		CultureInfo prevAppCulture;
+		CultureInfo prevAppUICulture;
 #endregion
 
 #region Constructor
@@ -814,13 +823,46 @@ namespace System.Web
 
 		internal void InitCulture ()
 		{
-			// TODO: Read culture info from globalization from config
+			GlobalizationConfiguration cfg = GlobalizationConfiguration.GetInstance (null);
+			if (cfg != null) {
+				appCulture = cfg.Culture;
+				appUICulture = cfg.UICulture;
+			}
+		}
+
+		void SaveThreadCulture ()
+		{
+			Thread th = Thread.CurrentThread;
+
+			if (appCulture != null) {
+				prevAppCulture = th.CurrentCulture;
+				th.CurrentCulture = appCulture;
+			}
+
+			if (appUICulture != null) {
+				prevAppUICulture = th.CurrentUICulture;
+				th.CurrentUICulture = appUICulture;
+			}
+		}
+
+		void RestoreThreadCulture ()
+		{
+			Thread th = Thread.CurrentThread;
+
+			if (prevAppCulture != null) {
+				th.CurrentCulture = prevAppCulture;
+				prevAppCulture = null;
+			}
+
+			if (prevAppUICulture != null) {
+				th.CurrentUICulture = prevAppUICulture;
+				prevAppUICulture = null;
+			}
 		}
 
 		internal void OnStateExecuteEnter ()
 		{
-			// TODO: Set correct culture for the thread
-
+			SaveThreadCulture ();
 			_savedContext = HttpContext.Context;
 			HttpContext.Context = _Context;
 			HttpRuntime.TimeoutManager.Add (_Context);
@@ -831,8 +873,7 @@ namespace System.Web
 
 		internal void OnStateExecuteLeave ()
 		{
-			// TODO: Restore culture for the thread
-
+			RestoreThreadCulture ();
 			HttpRuntime.TimeoutManager.Remove (_Context);
 			HttpContext.Context = _savedContext;
 			if (null != _savedUser)  {

@@ -1,3 +1,8 @@
+2004-05-25  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* GlobalizationConfiguration.cs: if we have no context, use
+	GetAppConfig instead of GetConfig.
+
 2004-05-14  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* CompilationConfiguration.cs: a null value is ok for TempDirectory.
