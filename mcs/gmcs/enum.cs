@@ -166,7 +166,7 @@ namespace Mono.CSharp {
 
 			EnumMember em = new EnumMember (this, expr, name, loc, opt_attrs);
 			em.DocComment = documentation;
-			if (!AddToContainer (em, false, name, ""))
+			if (!AddToContainer (em, name, ""))
 				return;
 
 

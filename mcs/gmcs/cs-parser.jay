@@ -91,9 +91,7 @@ namespace Mono.CSharp
 		///
 		string tmpComment;
 		string enumTypeComment;
-
-		
-		
+	       		
 		/// Current attribute target
 		string current_attr_target;
 		
@@ -1504,6 +1502,10 @@ interface_member_declaration
 	  { 
 		Method m = (Method) $1;
 
+		if (m.IsExplicitImpl)
+		        Report.Error (541, lexer.Location, 
+				"Explicit interface declaration can only be declared in a class or struct");
+
 		current_container.AddMethod (m);
 
 		if (RootContext.Documentation != null)
@@ -1512,6 +1514,10 @@ interface_member_declaration
 	| interface_property_declaration	
 	  { 
 		Property p = (Property) $1;
+
+		if (p.IsExplicitImpl)
+		        Report.Error (541, lexer.Location, 
+				"Explicit interface declaration can only be declared in a class or struct");
 
 		current_container.AddProperty (p);
 
@@ -1522,6 +1528,11 @@ interface_member_declaration
           { 
 		if ($1 != null){
 			Event e = (Event) $1;
+
+			if (e.IsExplicitImpl)
+				Report.Error (541, lexer.Location, 
+				    "Explicit interface declaration can only be declared in a class or struct");
+			
 			current_container.AddEvent (e);
 		}
 
@@ -1531,6 +1542,10 @@ interface_member_declaration
 	| interface_indexer_declaration
 	  { 
 		Indexer i = (Indexer) $1;
+
+		if (i.IsExplicitImpl)
+			Report.Error (541, lexer.Location, 
+				"Explicit interface declaration can only be declared in a class or struct");
 
 		current_container.AddIndexer (i);
 

@@ -469,19 +469,19 @@ namespace Mono.CSharp {
 			base_class_name = null;
 		}
 
-		public bool AddToMemberContainer (MemberCore symbol, bool is_method)
+		public bool AddToMemberContainer (MemberCore symbol)
 		{
-			return AddToContainer (symbol, is_method, String.Concat (Name, '.', symbol.Name), symbol.Name);
+			return AddToContainer (symbol, String.Concat (Name, '.', symbol.Name), symbol.Name);
 		}
 
 		bool AddToTypeContainer (DeclSpace ds)
 		{
-			return AddToContainer (ds, false, ds.Name, ds.Basename);
+			return AddToContainer (ds, ds.Name, ds.Basename);
 		}
 
 		public void AddConstant (Const constant)
 		{
-			if (!AddToMemberContainer (constant, false))
+			if (!AddToMemberContainer (constant))
 				return;
 
 			if (constants == null)
@@ -522,7 +522,7 @@ namespace Mono.CSharp {
 
 		public void AddMethod (Method method)
 		{
-			if (!AddToMemberContainer (method, true))
+			if (!AddToMemberContainer (method))
 				return;
 
 			if (methods == null)
@@ -583,7 +583,7 @@ namespace Mono.CSharp {
 
 		public void AddField (Field field)
 		{
-			if (!AddToMemberContainer (field, false))
+			if (!AddToMemberContainer (field))
 				return;
 
 			if (fields == null)
@@ -612,8 +612,8 @@ namespace Mono.CSharp {
 
 		public void AddProperty (Property prop)
 		{
-			if (!AddToMemberContainer (prop, false) || 
-			    !AddToMemberContainer (prop.Get, true) || !AddToMemberContainer (prop.Set, true))
+			if (!AddToMemberContainer (prop) || 
+				!AddToMemberContainer (prop.Get) || !AddToMemberContainer (prop.Set))
 				return;
 
 			if (properties == null)
@@ -627,14 +627,14 @@ namespace Mono.CSharp {
 
 		public void AddEvent (Event e)
 		{
-			if (!AddToMemberContainer (e, false))
+			if (!AddToMemberContainer (e))
 				return;
 
 			if (e is EventProperty) {
-				if (!AddToMemberContainer (e.Add, true))
+				if (!AddToMemberContainer (e.Add))
 					return;
 
-				if (!AddToMemberContainer (e.Remove, true))
+				if (!AddToMemberContainer (e.Remove))
 					return;
 			}
 
@@ -660,7 +660,7 @@ namespace Mono.CSharp {
 
 		public void AddOperator (Operator op)
 		{
-			if (!AddToMemberContainer (op, true))
+			if (!AddToMemberContainer (op))
 				return;
 
 			if (operators == null)
@@ -4051,6 +4051,12 @@ namespace Mono.CSharp {
 			return mi;
 		}
 	
+		public override bool MarkForDuplicationCheck ()
+		{
+			caching_flags |= Flags.TestMethodDuplication;
+			return true;
+		}
+
 		protected override bool VerifyClsCompliance(DeclSpace ds)
 		{
 			if (!base.VerifyClsCompliance (ds))
@@ -6106,11 +6112,16 @@ namespace Mono.CSharp {
 				Parameter [] parms = new Parameter [1];
 				parms [0] = new Parameter (method.Type, "value", Parameter.Modifier.NONE, null);
 				Parameters parameters = new Parameters (parms, null, method.Location);
+
+				bool old_unsafe = ec.InUnsafe;
+				ec.InUnsafe = InUnsafe;
 				Type [] types = parameters.GetParameterInfo (ec);
+				ec.InUnsafe = old_unsafe;
+
 				return new InternalParameters (types, parameters);
 			}
 
-			public override MethodBuilder Define(TypeContainer container)
+			public override MethodBuilder Define (TypeContainer container)
 			{
 				if (container.EmitContext == null)
 					throw new InternalErrorException ("SetMethod.Define called too early");
@@ -6159,12 +6170,14 @@ namespace Mono.CSharp {
 				: base (method, prefix)
 			{
 				this.method = method;
+				Parent = method.Parent;
 			}
 
 			public PropertyMethod (MethodCore method, Accessor accessor, string prefix)
 				: base (method, accessor, prefix)
 			{
 				this.method = method;
+				Parent = method.Parent;
 				this.ModFlags = accessor.ModFlags;
 
 				if (accessor.ModFlags != 0 && RootContext.Version == LanguageVersion.ISO_1) {
@@ -6255,6 +6268,12 @@ namespace Mono.CSharp {
 					Report.Error (273, Location, "{0}: accessibility modifier must be more restrictive than the property or indexer",
 						GetSignatureForError (container));
 			}
+
+			public override bool MarkForDuplicationCheck ()
+			{
+				caching_flags |= Flags.TestMethodDuplication;
+				return true;
+			}
 		}
 
 		public PropertyMethod Get, Set;
@@ -6337,7 +6356,6 @@ namespace Mono.CSharp {
 
 			return TypeManager.CSharpSignature (PropertyBuilder, false);
 		}
-
 
 		protected override bool CheckForDuplications ()
 		{
@@ -7313,8 +7331,8 @@ namespace Mono.CSharp {
 				UpdateMemberName ();
 			}
 
-			if (!Parent.AddToMemberContainer (this, true) ||
-			    !Parent.AddToMemberContainer (Get, true) || !Parent.AddToMemberContainer (Set, true))
+			if (!Parent.AddToMemberContainer (this) ||
+				!Parent.AddToMemberContainer (Get) || !Parent.AddToMemberContainer (Set))
 				return false;
 
 			if (!CheckBase ())
@@ -7393,6 +7411,13 @@ namespace Mono.CSharp {
 		{
 			return String.Concat (tc.Name, ".this[", Parameters.FixedParameters [0].TypeName.ToString (), ']');
 		}
+
+		public override bool MarkForDuplicationCheck ()
+		{
+			caching_flags |= Flags.TestMethodDuplication;
+			return true;
+		}
+
 	}
 
 	public class Operator : MethodCore, IIteratorContainer {
@@ -7736,6 +7761,12 @@ namespace Mono.CSharp {
 			return ToString ();
 		}
 		
+		public override bool MarkForDuplicationCheck ()
+		{
+			caching_flags |= Flags.TestMethodDuplication;
+			return true;
+		}
+
 		public override string ToString ()
 		{
 			if (OperatorMethod == null)

@@ -117,13 +117,18 @@ namespace Mono.CSharp {
 				      Name);
 		}
 
-		static void Error_AttributeArgumentNotValid (Location loc)
+		static void Error_AttributeArgumentNotValid (string extra, Location loc)
 		{
 			Report.Error (182, loc,
 				      "An attribute argument must be a constant expression, typeof " +
-				      "expression or array creation expression");
+				      "expression or array creation expression" + extra);
 		}
 
+		static void Error_AttributeArgumentNotValid (Location loc)
+		{
+			Error_AttributeArgumentNotValid ("", loc);
+		}
+		
 		static void Error_TypeParameterInAttribute (Location loc)
 		{
 			Report.Error (
@@ -1032,10 +1037,14 @@ namespace Mono.CSharp {
 			if (tmp.Expr is Constant)
 				dll_name = (string) ((Constant) tmp.Expr).GetValue ();
 			else { 
-				Error_AttributeArgumentNotValid (Location);
+				Error_AttributeArgumentNotValid ("", Location);
 				return null;
 			}
-
+			if (dll_name == null || dll_name == ""){
+				Error_AttributeArgumentNotValid (": DllImport requires a non-empty string", Location);
+				return null;
+			}
+			
 			// Now we process the named arguments
 			CallingConvention cc = CallingConvention.Winapi;
 			CharSet charset = CharSet.Ansi;

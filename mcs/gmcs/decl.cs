@@ -218,7 +218,7 @@ namespace Mono.CSharp {
 		/// </summary>
 		public int ModFlags;
 
-		public readonly TypeContainer Parent;
+		public /*readonly*/ TypeContainer Parent;
 
 		/// <summary>
 		///   Location where this declaration happens
@@ -427,6 +427,14 @@ namespace Mono.CSharp {
 		}
 
 		/// <summary>
+		/// It helps to handle error 102 & 111 detection
+		/// </summary>
+		public virtual bool MarkForDuplicationCheck ()
+		{
+			return false;
+		}
+
+		/// <summary>
 		/// The main virtual method for CLS-Compliant verifications.
 		/// The method returns true if member is CLS-Compliant and false if member is not
 		/// CLS-Compliant which means that CLS-Compliant tests are not necessary. A descendants override it
@@ -568,7 +576,7 @@ namespace Mono.CSharp {
 		/// <summary>
 		/// Adds the member to defined_names table. It tests for duplications and enclosing name conflicts
 		/// </summary>
-		protected bool AddToContainer (MemberCore symbol, bool is_method, string fullname, string basename)
+		protected bool AddToContainer (MemberCore symbol, string fullname, string basename)
 		{
 			if (basename == Basename && !(this is Interface)) {
 				if (symbol is TypeParameter)
@@ -584,26 +592,23 @@ namespace Mono.CSharp {
 
 			MemberCore mc = (MemberCore)defined_names [fullname];
 
-			if (is_method && (mc is MethodCore || mc is IMethodData)) {
-				symbol.caching_flags |= Flags.TestMethodDuplication;
-				mc.caching_flags |= Flags.TestMethodDuplication;
+			if (mc == null) {
+				defined_names.Add (fullname, symbol);
 				return true;
 			}
 
-			if (mc != null) {
-				if (symbol is TypeParameter)
-					Report.Error (692, symbol.Location, "Duplicate type parameter `{0}'", basename);
-				else {
-					Report.SymbolRelatedToPreviousError (mc);
-					Report.Error (102, symbol.Location,
-						      "The type '{0}' already contains a definition for '{1}'",
-						      GetSignatureForError (), basename);
-				}
-				return false;
-			}
+			if (symbol.MarkForDuplicationCheck () && mc.MarkForDuplicationCheck ())
+				return true;
 
-			defined_names.Add (fullname, symbol);
-			return true;
+			if (symbol is TypeParameter)
+				Report.Error (692, symbol.Location, "Duplicate type parameter `{0}'", basename);
+			else {
+				Report.SymbolRelatedToPreviousError (mc);
+				Report.Error (102, symbol.Location,
+					      "The type '{0}' already contains a definition for '{1}'",
+					      GetSignatureForError (), basename);
+			}
+			return false;
 		}
 
 		public void RecordDecl ()
@@ -1374,7 +1379,7 @@ namespace Mono.CSharp {
 				type_params [i] = new TypeParameter (Parent, name, constraints, Location);
 
 				string full_name = Name + "." + name;
-				AddToContainer (type_params [i], false, full_name, name);
+				AddToContainer (type_params [i], full_name, name);
 			}
 		}
 
