@@ -114,6 +114,14 @@ openElements [openElementCount - 1]).IndentingOverriden;
 			}
 		}
 
+		private bool ParentIndentingOverriden {
+			get {
+				if (openElementCount < 2)
+					return false;
+				return ((XmlTextWriterOpenElement) openElements [openElementCount - 2]).IndentingOverriden;
+			}
+		}
+
 		public int Indentation {
 			get { return indentation; }
 			set {
@@ -522,7 +530,8 @@ openElements [openElementCount - 1]).IndentingOverriden;
 					WriteEndAttribute ();
 				if (fullEndElement) {
 					w.Write ('>');
-					w.Write (indentFormatting);
+					if (!ParentIndentingOverriden)
+						w.Write (indentFormatting);
 					w.Write ("</");
 					XmlTextWriterOpenElement el = (XmlTextWriterOpenElement) openElements [openElementCount - 1];
 					if (el.Prefix != String.Empty) {

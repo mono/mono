@@ -1,5 +1,10 @@
 2004-06-06  Atsushi Enomoto <atsushi@ximian.com>
 
+	* XmlTextWriter.cs : Improved indenting. For children of a mixed 
+	  content element, it won't be indented.
+
+2004-06-06  Atsushi Enomoto <atsushi@ximian.com>
+
 	* DTDObjectModel.cs,
 	  XmlDocument.cs : Close stream always.
 	* XmlNodeReader.cs : don't expect atomized name in LookupNamespace().
