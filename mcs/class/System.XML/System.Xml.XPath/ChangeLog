@@ -1,3 +1,12 @@
+2004-02-23  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Iterator.cs :
+	  In FollowingIterator, attribute and namespace nodes should be 
+	  considered to have following nodes. See XPath 1.0 section 5 (esp.
+	  the description on "document order").
+	  On fixing @*/following::*, attribute nodes are regarded as to be
+	  RequireSorting = true (which might result in duplicate).
+
 2004-02-18  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* Expression.cs : string() function expects "Infinity" and "-Infinity"

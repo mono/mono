@@ -610,22 +610,33 @@ namespace System.Xml.XPath
 		{
 			if (_finished)
 				return false;
+			bool checkChildren = true;
 			if (CurrentPosition == 0)
 			{
-				if (_nav.MoveToNext ())
-				{
-					_current = null;
-					return true;
-				} else {
-					while (_nav.MoveToParent ()) {
-						if (_nav.MoveToNext ()) {
-							_current = null;
-							return true;
+				checkChildren = false;
+				switch (_nav.NodeType) {
+				case XPathNodeType.Attribute:
+				case XPathNodeType.Namespace:
+					_nav.MoveToParent ();
+					checkChildren = true;
+					break;
+				default:
+					if (_nav.MoveToNext ())
+					{
+						_current = null;
+						return true;
+					} else {
+						while (_nav.MoveToParent ()) {
+							if (_nav.MoveToNext ()) {
+								_current = null;
+								return true;
+							}
 						}
 					}
+					break;
 				}
 			}
-			else
+			if (checkChildren)
 			{
 				if (_nav.MoveToFirstChild ())
 				{
@@ -756,7 +767,7 @@ namespace System.Xml.XPath
 			return false;			
 		}
 
-		public override bool RequireSorting { get { return false; } }
+		public override bool RequireSorting { get { return true; } }
 	}
 
 	internal class AxisIterator : BaseIterator
