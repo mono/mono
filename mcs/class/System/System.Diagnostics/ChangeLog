@@ -1,3 +1,8 @@
+2004-06-24  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Process.cs : quick fix for UseShellExecute=false on windows. See
+	  the code comment.
+
 2004-06-17  Lluis Sanchez Gual  <lluis@ximian.com>
 
 	* Process.cs: Added missing check in HasExited property.
