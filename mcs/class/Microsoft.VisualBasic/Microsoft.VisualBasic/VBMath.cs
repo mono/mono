@@ -2,22 +2,28 @@
 // VBMath.cs
 //
 // Author:
-//   Chris J Breisch (cjbreisch@altavista.net)
+//   Chris J Breisch (cjbreisch@altavista.net) 
 //
 // (C) 2002 Chris J Breisch
 //
+
+using System;
+
 namespace Microsoft.VisualBasic {
 	[Microsoft.VisualBasic.CompilerServices.StandardModuleAttribute] 
-	[System.Runtime.InteropServices.StructLayoutAttribute(System.Runtime.InteropServices.LayoutKind.Auto)] 
 	sealed public class VBMath {
 		// Declarations
 		// Constructors
 		// Properties
 		// Methods
-		public static System.Single Rnd () { return 0;}
-		public static System.Single Rnd (System.Single Number) { return 0;}
-		public static void Randomize () { }
-		public static void Randomize (System.Double Number) { }
+		[MonoTODO]
+		public static System.Single Rnd () { throw new NotImplementedException (); }
+		[MonoTODO]
+		public static System.Single Rnd (System.Single Number) { throw new NotImplementedException (); }
+		[MonoTODO]
+		public static void Randomize () { throw new NotImplementedException (); }
+		[MonoTODO]
+		public static void Randomize (System.Double Number) { throw new NotImplementedException (); }
 		// Events
 	};
 }

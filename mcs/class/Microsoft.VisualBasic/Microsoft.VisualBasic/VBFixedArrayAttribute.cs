@@ -2,21 +2,28 @@
 // VBFixedArrayAttribute.cs
 //
 // Author:
-//   Chris J Breisch (cjbreisch@altavista.net)
+//   Chris J Breisch (cjbreisch@altavista.net) 
 //
 // (C) 2002 Chris J Breisch
 //
-namespace Microsoft.VisualBasic {
+
+using System;
+
+namespace Microsoft.VisualBasic 
+{
 	[System.AttributeUsageAttribute(System.AttributeTargets.Field)] 
-	[System.Runtime.InteropServices.StructLayoutAttribute(System.Runtime.InteropServices.LayoutKind.Auto)] 
 	sealed public class VBFixedArrayAttribute : System.Attribute {
 		// Declarations
 		// Constructors
-		VBFixedArrayAttribute(System.Int32 UpperBound1) {}
-		VBFixedArrayAttribute(System.Int32 UpperBound1, System.Int32 UpperBound2) {}
+		[MonoTODO]
+		VBFixedArrayAttribute(System.Int32 UpperBound1) { throw new NotImplementedException (); }
+		[MonoTODO]
+		VBFixedArrayAttribute(System.Int32 UpperBound1, System.Int32 UpperBound2) { throw new NotImplementedException (); }
 		// Properties
-		public System.Int32 Length { get {return 0;} }
-		public System.Int32[] Bounds { get {return null;} }
+		[MonoTODO]
+		public System.Int32 Length { get { throw new NotImplementedException (); } }
+		[MonoTODO]
+		public System.Int32[] Bounds { get { throw new NotImplementedException (); } }
 		// Methods
 		// Events
 	};

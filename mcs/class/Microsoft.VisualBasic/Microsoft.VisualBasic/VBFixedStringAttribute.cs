@@ -2,19 +2,24 @@
 // VBFixedStringAttribute.cs
 //
 // Author:
-//   Chris J Breisch (cjbreisch@altavista.net)
+//   Chris J Breisch (cjbreisch@altavista.net) 
 //
 // (C) 2002 Chris J Breisch
 //
-namespace Microsoft.VisualBasic {
+
+using System;
+
+namespace Microsoft.VisualBasic 
+{
 	[System.AttributeUsageAttribute(System.AttributeTargets.Field)] 
-	[System.Runtime.InteropServices.StructLayoutAttribute(System.Runtime.InteropServices.LayoutKind.Auto)] 
 	sealed public class VBFixedStringAttribute : System.Attribute {
 		// Declarations
 		// Constructors
-		VBFixedStringAttribute(System.Int32 Length) {}
+		[MonoTODO]
+		VBFixedStringAttribute(System.Int32 Length) { throw new NotImplementedException (); }
 		// Properties
-		public System.Int32 Length { get {return 0;} }
+		[MonoTODO]
+		public System.Int32 Length { get { throw new NotImplementedException (); } }
 		// Methods
 		// Events
 	};
