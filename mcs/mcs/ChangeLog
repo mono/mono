@@ -1,3 +1,8 @@
+2004-06-11  Marek Safar  <marek.safar@seznam.cz>
+
+	* class.cs (Event.GetSignatureForError): Implemented.
+	Fixed crash in error test cs3010.cs
+
 2004-06-10  Miguel de Icaza  <miguel@ximian.com>
 
 	* cs-tokenizer.cs: Change the way we track __arglist to be

@@ -5802,6 +5802,11 @@ namespace Mono.CSharp {
 
 			base.Emit (tc);
 		}
+
+		public override string GetSignatureForError ()
+		{
+			return TypeManager.GetFullNameSignature (EventBuilder);
+		}
 	}
 
 	//
