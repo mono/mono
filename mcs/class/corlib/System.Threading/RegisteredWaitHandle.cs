@@ -63,7 +63,8 @@ namespace System.Threading
 
 		private void DoCallBack (object timedOut)
 		{
-			_callback (_state, (bool)timedOut); 
+			if (_callback != null)
+				_callback (_state, (bool)timedOut); 
 
 			lock (this) 
 			{

@@ -107,11 +107,10 @@ namespace System.Threading {
 		}
 
 		internal void AddItem(ref ThreadPoolWorkItem Item) {
+			_RequestQueue.Enqueue(Item);
 			if (Interlocked.Increment(ref _RequestInQueue) == 1) {
 				_DataInQueue.Set();
 			}
-
-			_RequestQueue.Enqueue(Item);
 		}
 
 		// Work Thread main function
@@ -127,6 +126,7 @@ namespace System.Threading {
 							RemoveThread();
 							return;
 						}
+						continue;
 					}
 				}
 
@@ -203,40 +203,61 @@ namespace System.Threading {
 			return _Threadpool.QueueUserWorkItemInternal(callback, state);
 		}
 
-		public static RegisteredWaitHandle RegisterWaitForSingleObject(WaitHandle waitObject, WaitOrTimerCallback callback, object state, int millisecondsTimeOutInterval, bool executeOnlyOnce) {
-			if (millisecondsTimeOutInterval < -1) {
-				throw new ArgumentOutOfRangeException("timeout < -1");
-			}
-			return RegisterWaitForSingleObject (waitObject, callback, state, TimeSpan.FromMilliseconds (Convert.ToDouble(millisecondsTimeOutInterval)), executeOnlyOnce);
+		static TimeSpan GetTSFromMS (long ms)
+		{
+			if (ms < -1)
+				throw new ArgumentOutOfRangeException ("millisecondsTimeOutInterval", "timeout < -1");
+
+			return new TimeSpan (ms);
 		}
 
-		public static RegisteredWaitHandle RegisterWaitForSingleObject(WaitHandle waitObject, WaitOrTimerCallback callback, object state, long millisecondsTimeOutInterval, bool executeOnlyOnce) {
-			if (millisecondsTimeOutInterval < -1) {
-				throw new ArgumentOutOfRangeException("timeout < -1");
-			}
-		
-			return RegisterWaitForSingleObject (waitObject, callback, state, TimeSpan.FromMilliseconds (Convert.ToDouble(millisecondsTimeOutInterval)), executeOnlyOnce);
+		public static RegisteredWaitHandle RegisterWaitForSingleObject (WaitHandle waitObject,
+										WaitOrTimerCallback callback,
+										object state,
+										int millisecondsTimeOutInterval,
+										bool executeOnlyOnce)
+		{
+			TimeSpan ts = GetTSFromMS ((long) millisecondsTimeOutInterval);
+			return RegisterWaitForSingleObject (waitObject, callback, state, ts, executeOnlyOnce);
 		}
 
-		public static RegisteredWaitHandle RegisterWaitForSingleObject(WaitHandle waitObject, WaitOrTimerCallback callback, object state, TimeSpan timeout, bool executeOnlyOnce) {
-			// LAMESPEC: I assume it means "timeout" when it says "millisecondsTimeOutInterval"
-			int ms=Convert.ToInt32(timeout.TotalMilliseconds);
-			
-			if (ms < -1) {
-				throw new ArgumentOutOfRangeException("timeout < -1");
-			}
-			if (ms > Int32.MaxValue) {
-				throw new NotSupportedException("timeout too large");
-			}
+		public static RegisteredWaitHandle RegisterWaitForSingleObject (WaitHandle waitObject,
+										WaitOrTimerCallback callback,
+										object state,
+										long millisecondsTimeOutInterval,
+										bool executeOnlyOnce)
+		{
+			TimeSpan ts = GetTSFromMS (millisecondsTimeOutInterval);
+			return RegisterWaitForSingleObject (waitObject, callback, state, ts, executeOnlyOnce);
+		}
+
+		public static RegisteredWaitHandle RegisterWaitForSingleObject (WaitHandle waitObject,
+										WaitOrTimerCallback callback,
+										object state,
+										TimeSpan timeout,
+										bool executeOnlyOnce)
+		{
+			long ms = (long) timeout.TotalMilliseconds;
+			if (ms < -1)
+				throw new ArgumentOutOfRangeException ("timeout", "timeout < -1");
+
+			if (ms > Int32.MaxValue)
+				throw new NotSupportedException ("Timeout is too big. Maximum is Int32.MaxValue");
 
 			RegisteredWaitHandle waiter = new RegisteredWaitHandle (waitObject, callback, state, timeout, executeOnlyOnce);
-			_Threadpool.QueueUserWorkItemInternal (new WaitCallback(waiter.Wait), null);
+			_Threadpool.QueueUserWorkItemInternal (new WaitCallback (waiter.Wait), null);
 			return waiter;
 		}
 
 		[CLSCompliant(false)]
-		public static RegisteredWaitHandle RegisterWaitForSingleObject(WaitHandle waitObject, WaitOrTimerCallback callback, object state, uint millisecondsTimeOutInterval, bool executeOnlyOnce) {
-			return RegisterWaitForSingleObject (waitObject, callback, state, TimeSpan.FromMilliseconds (Convert.ToDouble(millisecondsTimeOutInterval)), executeOnlyOnce);
+		public static RegisteredWaitHandle RegisterWaitForSingleObject (WaitHandle waitObject,
+										WaitOrTimerCallback callback,
+										object state,
+										uint millisecondsTimeOutInterval,
+										bool executeOnlyOnce)
+		{
+			TimeSpan ts = GetTSFromMS ((long) millisecondsTimeOutInterval);
+			return RegisterWaitForSingleObject (waitObject, callback, state, ts, executeOnlyOnce);
 		}
 
 		[MonoTODO]

@@ -1,4 +1,14 @@
 
+2003-05-31  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* RegisteredWaitHandle.cs: check that the callback is not null before
+	invoking.
+
+	* ThreadPool.cs: fixed timeout -> TimeSpan conversions (closes bug
+	#43963). Queue the item before setting the handle. If there's a timeout,
+	avoid trying to Dequeue, getting the exception et al, just continue the
+	loop.
+
 Mon May 19 09:07:45 CEST 2003 Paolo Molaro <lupus@ximian.com>
 
 	* Monitor.cs: removed test_owner, the check is already done in the
