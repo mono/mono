@@ -168,7 +168,7 @@ namespace System.Web.UI.WebControls
 				return dataSource;
 			}
 			set {
-				if (value == null && (value is IListSource || value is IEnumerable) ) {
+				if (value == null || value is IListSource || value is IEnumerable) {
 					dataSource = value;
 				} else {
 					throw new ArgumentException (HttpRuntime.FormatResourceString (

@@ -1,3 +1,8 @@
+2003-11-26  Jackson Harper <jackson@ximian.com>
+
+	* BaseDataList.cs: Change && to || We will call that a typo so no
+	one gets embarrased.
+	
 2003-11-24  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* BaseDataList.cs: allow setting null as Datasource.
