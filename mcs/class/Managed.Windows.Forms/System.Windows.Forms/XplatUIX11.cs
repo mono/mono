@@ -23,9 +23,12 @@
 //	Peter Bartok	pbartok@novell.com
 //
 //
-// $Revision: 1.4 $
+// $Revision: 1.5 $
 // $Modtime: $
 // $Log: XplatUIX11.cs,v $
+// Revision 1.5  2004/08/06 15:53:39  jordi
+// X11 keyboard navigation
+//
 // Revision 1.4  2004/08/06 14:02:33  pbartok
 // - Fixed reparenting
 // - Fixed window border creation
@@ -338,6 +341,37 @@ Console.WriteLine("Moving window to {0}:{1} {2}x{3}", x, y, width, height);
 			return true;
 		}
 
+		private void CreateKeyBoardMsg (XEvent xevent, ref MSG msg)
+		{
+			IntPtr	buffer = Marshal.AllocHGlobal(24);
+			XKeySym	keysym;
+			string	keys;
+			int	len;
+			
+			len = XLookupString(ref xevent, buffer, 24, out keysym, IntPtr.Zero);
+			if (len>0) {
+				char[] keychars;
+
+				keys=Marshal.PtrToStringAuto(buffer);
+				keychars=keys.ToCharArray(0, 1);
+				msg.wParam=(IntPtr)keychars[0];
+				Console.WriteLine("Got key {0} {1:x} ", keysym, keysym);
+			} else {
+				Console.WriteLine("Got special key {0} {1:x} ", keysym, keysym);
+
+				for (int i = 0; i < KeyMapping.Length; i++) {
+					if (KeyMapping[i].X11Key == keysym) {
+						msg.wParam = (IntPtr) KeyMapping[i].Win32Key;
+						break;
+					}							
+				}					
+
+			}
+
+			Marshal.FreeHGlobal (buffer);
+			msg.lParam = (IntPtr) 1;
+		}
+
 		internal override bool GetMessage(ref MSG msg, IntPtr hWnd, int wFilterMin, int wFilterMax) {
 			XEvent	xevent = new XEvent();
 
@@ -346,29 +380,14 @@ Console.WriteLine("Moving window to {0}:{1} {2}x{3}", x, y, width, height);
 
 			switch(xevent.type) {
 				case XEventName.KeyPress: {
-					IntPtr	buffer = Marshal.AllocHGlobal(24);
-					XKeySym	keysym;
-					string	keys;
-					int	len;
-
-					len=XLookupString(ref xevent, buffer, 24, out keysym, IntPtr.Zero);
-					if (len>0) {
-						char[] keychars;
-
-						keys=Marshal.PtrToStringAuto(buffer);
-						keychars=keys.ToCharArray(0, 1);
-						msg.message=Msg.WM_KEYDOWN;
-						msg.wParam=(IntPtr)keychars[0];
-						Console.WriteLine("Got char {0}", keys);
-					} else {
-						Console.WriteLine("Got special key {0}", keysym);
-					}
-					Marshal.FreeHGlobal(buffer);
+					msg.message = Msg.WM_KEYDOWN;
+					CreateKeyBoardMsg (xevent, ref msg);
 					break;
 				}
 
 				case XEventName.KeyRelease: {
 					msg.message=Msg.WM_KEYUP;
+					CreateKeyBoardMsg (xevent, ref msg);
 					break;
 				}
 
@@ -515,8 +534,49 @@ Console.WriteLine("Setting parent for window {0} to {1}, border width of window:
 				}
 			}
 		}
-
 		#endregion	// Public Static Methods
+
+		internal struct X11ToWin32KeyMapping {
+			internal XKeySym			X11Key;
+			internal XplatUIWin32.VirtualKeys	Win32Key;	
+
+			internal X11ToWin32KeyMapping (XKeySym x11, XplatUIWin32.VirtualKeys win32)
+			{
+				X11Key = x11;
+				Win32Key = win32;
+			} 
+		}
+
+		/* X11 to Win32 VK mapping */
+		static readonly X11ToWin32KeyMapping[] KeyMapping = new X11ToWin32KeyMapping[] 
+		{
+			/* Cursor navigation*/
+			new X11ToWin32KeyMapping (XKeySym.XK_Left, XplatUIWin32.VirtualKeys.VK_LEFT),
+			new X11ToWin32KeyMapping (XKeySym.XK_Right, XplatUIWin32.VirtualKeys.VK_RIGHT),
+			new X11ToWin32KeyMapping (XKeySym.XK_Up, XplatUIWin32.VirtualKeys.VK_UP),
+			new X11ToWin32KeyMapping (XKeySym.XK_Down, XplatUIWin32.VirtualKeys.VK_DOWN),
+
+			new X11ToWin32KeyMapping (XKeySym.XK_Page_Up, XplatUIWin32.VirtualKeys.VK_PRIOR),
+			new X11ToWin32KeyMapping (XKeySym.XK_Page_Down, XplatUIWin32.VirtualKeys.VK_NEXT),
+			new X11ToWin32KeyMapping (XKeySym.XK_End, XplatUIWin32.VirtualKeys.VK_END),
+			new X11ToWin32KeyMapping (XKeySym.XK_Home, XplatUIWin32.VirtualKeys.VK_HOME),
+
+			/* Modifiers*/
+			new X11ToWin32KeyMapping (XKeySym.XK_Shift_R, XplatUIWin32.VirtualKeys.VK_SHIFT),
+			new X11ToWin32KeyMapping (XKeySym.XK_Shift_L, XplatUIWin32.VirtualKeys.VK_SHIFT),
+			new X11ToWin32KeyMapping (XKeySym.XK_Control_R, XplatUIWin32.VirtualKeys.VK_CONTROL),
+			new X11ToWin32KeyMapping (XKeySym.XK_Control_L, XplatUIWin32.VirtualKeys.VK_CONTROL),			
+
+			/* Others */
+			new X11ToWin32KeyMapping (XKeySym.XK_Return, XplatUIWin32.VirtualKeys.VK_RETURN),
+			new X11ToWin32KeyMapping (XKeySym.XK_Tab, XplatUIWin32.VirtualKeys.VK_TAB),
+			new X11ToWin32KeyMapping (XKeySym.XK_Menu, XplatUIWin32.VirtualKeys.VK_MENU),
+			new X11ToWin32KeyMapping (XKeySym.XK_BackSpace, XplatUIWin32.VirtualKeys.VK_BACK),
+			new X11ToWin32KeyMapping (XKeySym.XK_Clear, XplatUIWin32.VirtualKeys.VK_CLEAR),
+			
+		};
+
+		
 
 		#region X11 Imports
 		[DllImport ("libX11.so", EntryPoint="XOpenDisplay")]

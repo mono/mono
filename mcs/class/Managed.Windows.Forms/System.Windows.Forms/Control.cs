@@ -29,9 +29,12 @@
 //	Jaak Simm		jaaksimm@firm.ee
 //	John Sohn		jsohn@columbus.rr.com
 //
-// $Revision: 1.9 $
+// $Revision: 1.10 $
 // $Modtime: $
 // $Log: Control.cs,v $
+// Revision 1.10  2004/08/06 15:53:39  jordi
+// X11 keyboard navigation
+//
 // Revision 1.9  2004/08/04 21:14:26  pbartok
 // - Fixed Invalidation bug (calculated wrong client area)
 // - Added ClientSize setter
@@ -1339,6 +1342,22 @@ namespace System.Windows.Forms
 					DefWndProc(ref m);	
 					break;				
 				}
+
+				case Msg.WM_KEYDOWN: {
+
+					if (!ProcessKeyEventArgs (ref m))
+						DefWndProc (ref m);
+
+					break;					
+				}
+
+				case Msg.WM_KEYUP: {
+
+					if (!ProcessKeyEventArgs (ref m))
+						DefWndProc (ref m);
+
+					break;					
+				}		
 				
 
 #if notyet				
@@ -1400,15 +1419,47 @@ namespace System.Windows.Forms
 			}
 		}
 
+		protected virtual bool ProcessKeyEventArgs (ref Message msg)
+		{
+			KeyEventArgs key_event;
+
+			switch (msg.Msg) {
+			case (int)Msg.WM_KEYDOWN: {
+				key_event = new KeyEventArgs ((Keys)msg.WParam.ToInt32 ());
+				OnKeyDown (key_event);
+				return key_event.Handled;
+			}
+			case (int)Msg.WM_KEYUP: {
+				key_event = new KeyEventArgs ((Keys)msg.WParam.ToInt32 ());
+				OnKeyUp (key_event);
+				return key_event.Handled;
+			}
+
+			default:
+				break;
+			}
+
+			return false;
+		}
+
+		protected virtual bool IsInputKey (Keys keyData) 
+		{
+			return false;
+		}
+
+		protected virtual bool ProcessDialogKey (Keys keyData)
+		{
+			if (parent != null)
+				return Parent.ProcessDialogKey (keyData);
+
+    			return false;
+		}
+
 		protected bool GetStyle(ControlStyles flag) {
 			return (control_style & flag) != 0;
 		}
 
 		protected virtual bool ProcessDialogChar(char charCode) {
-			throw new NotImplementedException();
-		}
-
-		protected virtual bool ProcessDialogKey(Keys keyData) {
 			throw new NotImplementedException();
 		}
 

@@ -23,9 +23,12 @@
 //	Peter Bartok	pbartok@novell.com
 //
 //
-// $Revision: 1.2 $
+// $Revision: 1.3 $
 // $Modtime: $
 // $Log: X11Structs.cs,v $
+// Revision 1.3  2004/08/06 15:53:39  jordi
+// X11 keyboard navigation
+//
 // Revision 1.2  2004/08/06 14:02:33  pbartok
 // - Fixed reparenting
 // - Fixed window border creation
@@ -640,13 +643,26 @@ namespace System.Windows.Forms {
 	}
 
 	internal enum XKeySym {
+		XK_BackSpace	= 0xFF08,
+		XK_Tab		= 0xFF09,
+		XK_Clear	= 0xFF0B,
+		XK_Return	= 0xFF0D,
+		XK_Home		= 0xFF50,
+		XK_Left		= 0xFF51,
+		XK_Up		= 0xFF52,
+		XK_Right	= 0xFF53,
+		XK_Down		= 0xFF54,
+		XK_Page_Up	= 0xFF55,
+		XK_Page_Down	= 0xFF56,
+		XK_End		= 0xFF57,
+		XK_Begin	= 0xFF58,
+		XK_Menu		= 0xFF67,
 		XK_Shift_L	= 0xFFE1,
 		XK_Shift_R	= 0xFFE2,
 		XK_Control_L	= 0xFFE3,
 		XK_Control_R	= 0xFFE4,
 		XK_Caps_Lock	= 0xFFE5,
-		XK_Shift_Lock	= 0xFFE6,
-
+		XK_Shift_Lock	= 0xFFE6,	
 		XK_Meta_L	= 0xFFE7,
 		XK_Meta_R	= 0xFFE8,
 		XK_Alt_L	= 0xFFE9,
@@ -655,6 +671,7 @@ namespace System.Windows.Forms {
 		XK_Super_R	= 0xFFEC,
 		XK_Hyper_L	= 0xFFED,
 		XK_Hyper_R	= 0xFFEE,
+
 	}
 	#endregion
 }
