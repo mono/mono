@@ -58,6 +58,8 @@ namespace Mono.Xml.Xsl.Operations {
 			
 			if (calcName != null) {
 				int colonAt = calcName.IndexOf (':');
+				if (colonAt == 0)
+					throw new XsltCompileException ("Invalid name attribute.", null, c.Input);
 				calcPrefix = colonAt < 0 ? String.Empty : calcName.Substring (0, colonAt);
 				calcName = colonAt < 0 ? calcName : calcName.Substring (colonAt + 1, calcName.Length - colonAt - 1);
 				if (ns == null)
@@ -68,7 +70,7 @@ namespace Mono.Xml.Xsl.Operations {
 					if (calcPrefix != String.Empty)
 						XmlConvert.VerifyNCName (calcPrefix);
 				} catch (XmlException ex) {
-					throw new XsltCompileException ("Invalid attribute name.", ex, c.Input);
+					throw new XsltCompileException ("Invalid name attribute.", ex, c.Input);
 				}
 			} else if (ns != null)
 				calcNs = XslAvt.AttemptPreCalc (ref ns);
@@ -100,29 +102,19 @@ namespace Mono.Xml.Xsl.Operations {
 				int colonAt = nm.IndexOf (':');
 				if (colonAt > 0)
 					calcPrefix = nm.Substring (0, colonAt);
+				else if (colonAt == 0)
+					// raises an error
+					XmlConvert.VerifyNCName (String.Empty);
 			}
 			prefix = calcPrefix != null ? calcPrefix : String.Empty;
 
-#if false
-			if (calcPrefix == String.Empty) {
-				if (nav.MoveToFirstNamespace (XPathNamespaceScope.ExcludeXml)) {
-					do {
-						if (nav.Value == nmsp) {
-//							prefix = nav.Name;
-							break;
-						}
-					} while (nav.MoveToNextNamespace (XPathNamespaceScope.ExcludeXml));
-					nav.MoveToParent ();
-				}
-			}
-#endif
-
-			XmlConvert.VerifyName (nm);
+			if (prefix != String.Empty)
+				XmlConvert.VerifyNCName (prefix);
+			XmlConvert.VerifyNCName (localName);
 
 			bool isCData = p.InsideCDataElement;
 			p.PushElementState (prefix, localName, nmsp, false);
 			p.Out.WriteStartElement (prefix, localName, nmsp);
-//			p.TryElementNamespacesOutput (null, null, null);
 
 			if (useAttributeSets != null)
 				foreach (XmlQualifiedName s in useAttributeSets)

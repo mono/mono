@@ -1,5 +1,11 @@
 2005-03-02  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* XslElement.cs : We throw exception when element name is resolved as
+	  invalid cname, so it should not ignore such name like ":foo".
+	  Fixed ambiguous error message. Removed unused code.
+
+2005-03-02  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* XslElement.cs, XslCopyOf.cs, XslLiteralElement.cs, XslCopy.cs :
 	  According to errata E25, those namespaces 1) that has the same
 	  name as current element's prefix, or an empty name when current
