@@ -51,12 +51,10 @@ test-everything:
 run-mcs-tests:
 	-rm -f $(TEST_PROFILE).log
 	@./do-tests.pl $(TEST_PROFILE) "$(CSCOMPILE)" "cs*.cs" 2>&1 | tee $(TEST_PROFILE).log
-	@rm -f $(TEST_PROFILE)*.junk
 
 run-generics-tests:
 	-rm -f generics.log
-	@ ./do-tests.pl generics "$(GENERICS_COMPILE)" "gcs*.cs" 2>&1 | tee generics.log
-	@rm -f generics*.junk
+	@./do-tests.pl generics "$(GENERICS_COMPILE)" "gcs*.cs" 2>&1 | tee generics.log
 
 test-multi-local:
 	@ failed=false; \
@@ -83,11 +81,7 @@ test-multi-local:
 	fi
 
 clean-local:
-	rm -f *.exe
-	rm -f *.dll
-	rm -f *.log
-	rm -f *.mdb
-	rm -f dummy.xml
+	rm -f *.exe *.dll *.log *.mdb dummy.xml *.junk
 
 dist-local: dist-default
 
