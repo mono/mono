@@ -1,3 +1,17 @@
+2001-07-18  Miguel de Icaza  <miguel@ximian.com>
+
+	* IDictionary.cs (Collections): IDictionary implements ICollection
+	as well.  Thanks Sergey!
+
+2001-07-18  Garrett Rooney  <rooneg@electricjellyfish.net>
+
+	* Stack.cs Removed unnecessary locking from many methods of 
+	SyncStack, removed SyncEnumerator because it was unnecessary, 
+	added a modCount member to Stack and Stack.Enumerator, to 
+	ensure that the Stack has not been modified out form under the 
+	Enumerator, and changed the Enumerator to use a reference to the 
+	stack rather than copying over the contents array.
+
 2001-07-17  David Menestrina  <dmenest@yahoo.com>
 
         * Added implementation of BitArray.

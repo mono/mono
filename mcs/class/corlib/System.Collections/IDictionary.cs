@@ -12,7 +12,7 @@ using System;
 
 namespace System.Collections {
 
-	public interface IDictionary {
+	public interface IDictionary : ICollection {
 		// properties
 
 		bool IsFixedSize { get; }

@@ -17,16 +17,12 @@ namespace System.Collections {
 		private int current = -1;
 		private int count = 0;
 		private int capacity = 16;
-
-		private bool readOnly = false;
-		private bool synchronized = false;
+		private int modCount = 0;
 
 		private void Resize(int ncapacity) {
 			object[] ncontents = new object[ncapacity];
 
-			for (int i = 0; i < capacity; i++) {
-				ncontents[i] = contents[i];
-			}
+			Array.Copy(contents, ncontents, count);
 
 			capacity = ncapacity;
 			contents = ncontents;
@@ -42,10 +38,7 @@ namespace System.Collections {
 			current = capacity - 1;
 			count = capacity;
 
-			int i = 0;
-			foreach (object o in collection) {
-				contents[i++] = o;
-			}
+			collection.CopyTo(contents, 0);
 		}
 
 		public Stack(int c) {
@@ -53,103 +46,76 @@ namespace System.Collections {
 			contents = new object[capacity];
 		}
 
-		// The Synchronized version of Stack uses lock(this) to make 
-		// it thread safe.  This should be ok, even though we wrap an 
-		// Array, which is a Collection, since there is no way for the 
-		// outside world to get a reference to the Array.  If I'm 
-		// wrong about this, then we should change lock(this) to 
-		// lock(contents.SyncRoot).
 		private class SyncStack : Stack {
 
+			Stack stack;
+
 			public SyncStack(Stack s) {
-				contents = s.contents;
-				current = s.current;
-				count = s.count;
-				capacity = s.capacity;
-				readOnly = s.readOnly;
-				synchronized = true;
+				stack = s;
 			}
 			
 			public override int Count {
-				get { lock(this) { return count; } }
+				get { 
+					lock (stack) {
+						return stack.Count; 
+					}
+				}
 			}
 			
 			public override bool IsReadOnly {
-				get { lock(this) { return readOnly; } }
+				get { return false; }
 			}
 
 			public override bool IsSynchronized {
-				get { lock(this) { return synchronized; } }
+				get { return true; }
 			}
 			
 			public override object SyncRoot {
-				get { lock(this) { return this; } }
+				get { return stack.SyncRoot; }
 			}
 
 			public override void Clear() {
-				lock(this) { base.Clear(); }
+				lock(stack) { stack.Clear(); }
 			}
 
 			public override object Clone() {
-				lock (this) { return base.Clone(); }
+				lock (stack) { 
+					return Stack.Synchronized((Stack)stack.Clone()); 
+				}
 			}
 
 			public override bool Contains(object obj) {
-				lock (this) { return base.Contains(obj); }
+				lock (stack) { return stack.Contains(obj); }
 			}
 
 			public override void CopyTo(Array array, int index) {
-				lock (this) { base.CopyTo(array, index); }
+				lock (stack) { stack.CopyTo(array, index); }
 			}
 
-			// As noted above, this uses lock(this), and if that 
-			// turns out to be unsafe, it should be changed to 
-			// lock(contents.SyncRoot).
-			private class SyncEnumerator : Enumerator {
-
-				internal SyncEnumerator(Stack s) : base(s) {}
-
-				public override object Current {
-					get {
-						lock (this) {
-							return base.Current; 
-						}
-					}
-				}
-
-				public override bool MoveNext() {
-					lock (this) { return base.MoveNext(); }
-				}
-
-				public override void Reset() {
-					lock (this) { base.Reset(); }
-				}
-			}
-			
 			public override IEnumerator GetEnumerator() {
-				lock (this) { 
-					return new SyncEnumerator(this); 
+				lock (stack) { 
+					return new Enumerator(stack); 
 				}
 			}
 
 			public override object Peek() {
-				lock (this) { return base.Peek(); }
+				lock (stack) { return stack.Peek(); }
 			}
 
 			public override object Pop() {
-				lock (this) { return base.Pop(); }
+				lock (stack) { return stack.Pop(); }
 			}
 
 			public override void Push(object obj) {
-				lock (this) { base.Push(obj); }
+				lock (stack) { stack.Push(obj); }
 			}
 
 			public override object[] ToArray() {
-				lock (this) { return base.ToArray(); }
+				lock (stack) { return stack.ToArray(); }
 			}
 		}
 
-		public static Stack Syncronized(Stack s) {
+		public static Stack Synchronized(Stack s) {
 			if (s == null) {
 				throw new ArgumentNullException();
 			}
@@ -162,20 +128,20 @@ namespace System.Collections {
 		}
 
 		public virtual bool IsReadOnly {
-			get { return readOnly; }
+			get { return false; }
 		}
 
 		public virtual bool IsSynchronized {
-			get { return synchronized; }
+			get { return false; }
 		}
 
-		// If using this for the SyncRoot is unsafe, we should use 
-		// contents.SyncRoot instead.  I think this is ok though.
 		public virtual object SyncRoot {
 			get { return this; }
 		}
 
 		public virtual void Clear() {
+			modCount++;
+
 			for (int i = 0; i < count; i++) {
 				contents[i] = null;
 			}
@@ -187,15 +153,13 @@ namespace System.Collections {
 		public virtual object Clone() {
 			Stack stack;
 
-			if (synchronized == false) {
+			if (IsSynchronized) {
 				stack = new Stack();
 
 				stack.current = current;
 				stack.contents = contents;
 				stack.count = count;
 				stack.capacity = capacity;
-				stack.readOnly = readOnly;
-				stack.synchronized = synchronized;
 			} else {
 				stack = new SyncStack(this);
 			}
@@ -236,44 +200,35 @@ namespace System.Collections {
 			}
 		}
 
-		// I made several methods of this class virtual, so that they 
-		// could be overriden by a thread safe version of the 
-		// Enumerator for use by SyncStack.  I don't know if MS does 
-		// that in their implimentation, but it seemed like one should 
-                // reasonably be able to expect a thread safe Collection to 
-		// return a thread safe Enumerator.  If this is a problem, it 
-		// could be ripped out.  Realistically speaking, I doubt if 
-		// many people would ever notice if the Enumerator was thread 
-		// safe, as I cannot concieve of a situation where an 
-		// Enumerator would be accessed by more than one thread.
 		private class Enumerator : IEnumerator {
 
-			private Array contents;
+			Stack stack;
+			private int modCount;
 			private int current;
-			private int count;
-			private int begin;
 
 			internal Enumerator(Stack s) {
 				// this is odd.  it seems that you need to 
 				// start one further ahead than current, since 
 				// MoveNext() gets called first when using an 
 				// Enumeration...
-				begin = s.current + 1;
-				current = begin;
-				count = s.count;
-				contents = (Array) s.contents.Clone();
+				stack = s;
+				modCount = s.modCount;
+				current = s.current + 1;
 			}
 
 			public virtual object Current {
 				get {
-					if (current == -1 || current > count)
+					if (modCount != stack.modCount 
+					    || current == -1 
+					    || current > stack.count)
 						throw new InvalidOperationException();
-					return contents.GetValue(current);
+					return stack.contents[current];
 				}
 			}
 
 			public virtual bool MoveNext() {
-				if (current == -1) {
+				if (modCount != stack.modCount 
+				    || current == -1) {
 					throw new InvalidOperationException();
 				}
 
@@ -287,9 +242,13 @@ namespace System.Collections {
 			}
 
 			public virtual void Reset() {
+				if (modCount != stack.modCount) {
+					throw new InvalidOperationException();
+				}
+
 				// start one ahead of stack.current, so the 
 				// first MoveNext() will put us at the top
-				current = begin;
+				current = stack.current + 1;
 			}
 		}
 
@@ -309,6 +268,8 @@ namespace System.Collections {
 			if (current == -1) {
 				throw new InvalidOperationException();
 			} else {
+				modCount++;
+
 				object ret = contents[current];
 		
 				count--;
@@ -322,6 +283,8 @@ namespace System.Collections {
 		// resizing.  After a certain point, doubling isn't that smart.
 		// We just need to find out what that point is...
 		public virtual void Push(Object o) {
+			modCount++;
+
 			if (capacity == count) {
 				Resize(capacity * 2);
 			}
