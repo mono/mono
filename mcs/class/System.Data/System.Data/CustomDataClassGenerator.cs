@@ -693,6 +693,7 @@ namespace System.Data
 
 			bool fkcExists = false;
 			bool ucExists = false;
+			// First the UniqueConstraints
 			foreach (DataTable dt in ds.Tables) {
 				string tname = "__table" + opts.TableMemberName (dt.TableName, gen);
 				foreach (Constraint c in dt.Constraints) {
@@ -703,19 +704,25 @@ namespace System.Data
 							ucExists = true;
 						}
 						CreateUniqueKeyStatements (m, uc, tname);
-						continue;
 					}
+				}
+			}
+			// Then the ForeignKeyConstraints
+			foreach (DataTable dt in ds.Tables) {
+				string tname = "__table" + opts.TableMemberName (dt.TableName, gen);
+				foreach (Constraint c in dt.Constraints) {
 					ForeignKeyConstraint fkc = c as ForeignKeyConstraint;
 					if (fkc != null) {
 						if (!fkcExists) {
 							m.Statements.Add (VarDecl (typeof (ForeignKeyConstraint), "fkc", null));
 							fkcExists = true;
 						}
-						CreateForeignKeyStatements (m, fkc, tname);
+						string rtname = "__table" + opts.TableMemberName (fkc.RelatedTable.TableName, gen);
+						CreateForeignKeyStatements (m, fkc, tname, rtname);
 					}
-					// What if other cases? dunno. Just ignore ;-)
 				}
 			}
+			// What if other cases? dunno. Just ignore ;-)
 			foreach (DataRelation rel in ds.Relations) {
 				string relName = opts.RelationName (rel.RelationName, gen);
 				ArrayList pcols = new ArrayList ();
@@ -756,15 +763,15 @@ namespace System.Data
 			m.Statements.Add (MethodInvoke (PropRef (FieldRef (tableField), "Constraints"), "Add", Local ("uc")));
 		}
 
-		private void CreateForeignKeyStatements (CodeMemberMethod m,ForeignKeyConstraint fkc, string tableField)
+		private void CreateForeignKeyStatements (CodeMemberMethod m,ForeignKeyConstraint fkc, string tableField, string rtableField)
 		{
 			ArrayList pcols = new ArrayList ();
-			foreach (DataColumn col in fkc.Columns)
-				pcols.Add (IndexerRef (PropRef (FieldRef (tableField), "Columns"), Const (col.ColumnName)));
+			foreach (DataColumn col in fkc.RelatedColumns)
+				pcols.Add (IndexerRef (PropRef (FieldRef (rtableField), "Columns"), Const (col.ColumnName)));
 
 			ArrayList ccols = new ArrayList ();
-			foreach (DataColumn col in fkc.RelatedColumns)
-				pcols.Add (IndexerRef (PropRef (FieldRef (tableField), "Columns"), Const (col.ColumnName)));
+			foreach (DataColumn col in fkc.Columns)
+				ccols.Add (IndexerRef (PropRef (FieldRef (tableField), "Columns"), Const (col.ColumnName)));
 
 			m.Statements.Add (Let (Local ("fkc"), New (
 				typeof (ForeignKeyConstraint),
