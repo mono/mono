@@ -1,5 +1,10 @@
 2003-01-24  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* CharEnumerator.cs: fix to Current by crainaj@hotmail.com. Closes
+	bug #37113.
+
+2003-01-24  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* Enum.cs: added caching to GetInfo.
 
 2003-01-23  Dick Porter  <dick@ximian.com>

@@ -32,7 +32,7 @@ namespace System
 		public char Current
 		{
 			get {
-				if (index == -1 || index == length)
+				if (index == -1 || index >= length)
 					throw new InvalidOperationException
 						("The position is not valid.");
 
