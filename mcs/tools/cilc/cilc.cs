@@ -5,12 +5,15 @@
 using System;
 using System.IO;
 using System.Reflection;
+using System.Collections;
 
 class cilc
 {
 	public static CodeWriter C, H, Cindex, Hindex;
 	static string ns, dllname;
 	static string cur_class;
+
+	static ArrayList funcs_done;
 
 	public static void Main(string[] args)
 	{
@@ -33,10 +36,13 @@ class cilc
 		Hindex = new CodeWriter (ns.ToLower () + ".h");
 		Cindex = new CodeWriter (ns.ToLower () + ".c");
 
+		string Hindex_id = "__" + ns.ToUpper () + "_H__";
+		Hindex.WriteLine ("#ifndef " + Hindex_id);
+		Hindex.WriteLine ("#define " + Hindex_id);
+		Hindex.LineBreak ();
+
 		Cindex.WriteLine ("#include <glib.h>");
-		Cindex.WriteLine ("#include <mono/metadata/object.h>");
-		Cindex.WriteLine ("#include <mono/metadata/debug-helpers.h>");
-		//Cindex.WriteLine ("#include \"" + CamelToC (ns) + ".h\"");
+		Cindex.WriteLine ("#include <mono/jit/jit.h>");
 		Cindex.LineBreak ();
 
 		Cindex.WriteLine ("MonoDomain *" + CamelToC (ns) + "_get_mono_domain (void)");
@@ -46,7 +52,7 @@ class cilc
 		Cindex.WriteLine ("if (domain != NULL) return domain;");
 		Cindex.WriteLine ("domain = mono_jit_init (\"cilc\");");
 		Cindex.LineBreak ();
-		
+
 		Cindex.WriteLine ("return domain;");
 		Cindex.Outdent ();
 		Cindex.WriteLine ("}");
@@ -58,18 +64,25 @@ class cilc
 		Cindex.WriteLine ("static MonoAssembly *assembly = NULL;");
 		Cindex.WriteLine ("assembly = mono_domain_assembly_open (" + CamelToC (ns) + "_get_mono_domain (), \"" + dllname + "\");");
 		Cindex.LineBreak ();
-		
+
 		Cindex.WriteLine ("return assembly;");
 		Cindex.Outdent ();
 		Cindex.WriteLine ("}");
 
 		foreach (Type t in types) TypeGen (t);
+
+		Hindex.LineBreak ();
+		Hindex.WriteLine ("#endif /* " + Hindex_id + " */");
+
 		Cindex.Close ();
 		Hindex.Close ();
 	}
 
 	static void TypeGen (Type t)
 	{
+		//TODO: we only handle ordinary classes for now
+		if (!t.IsClass) return;
+
 		//ns = t.Namespace;
 		string fname = ns.ToLower () + t.Name.ToLower ();
 		C = new CodeWriter (fname + ".c");
@@ -77,42 +90,48 @@ class cilc
 		Hindex.WriteLine ("#include <" + fname + ".h" + ">");
 
 
-		H.WriteComment ("begin header, " + ns + " " + t.Name);
+		string H_id = "__" + ns.ToUpper () + "_" + t.Name.ToUpper () + "_H__";
+		H.WriteLine ("#ifndef " + H_id);
+		H.WriteLine ("#define " + H_id);
 		H.LineBreak ();
+
 		H.WriteLine ("#include <glib.h>");
 		H.WriteLine ("#include <mono/metadata/object.h>");
 		H.WriteLine ("#include <mono/metadata/debug-helpers.h>");
+		H.WriteLine ("#include <mono/metadata/appdomain.h>");
 		H.LineBreak ();
+
 		H.WriteLine ("#ifdef __cplusplus");
 		H.WriteLine ("extern \"C\" {");
 		H.WriteLine ("#endif /* __cplusplus */");
 		H.LineBreak ();
+
 		H.WriteLine ("typedef MonoObject " + ns + t.Name + ";");
 		H.LineBreak ();
 
-		C.WriteComment ("begin file " + ns + CamelToC (t.Name));
-		C.LineBreak ();
+
 		C.WriteLine ("#include \"" + fname + ".h" + "\"");
 		C.LineBreak ();
 
 		cur_class = CamelToC (ns) + "_" + CamelToC (t.Name);
-
 		C.WriteLine ("static MonoClass *" + cur_class + "_get_mono_class (void)");
 		C.WriteLine ("{");
 		C.Indent ();
 		C.WriteLine ("MonoAssembly *assembly;");
-		C.WriteLine ("static MonoClass *class;");
+		C.WriteLine ("static MonoClass *class = NULL;");
 		C.WriteLine ("if (class != NULL) return class;");
-		
-		C.WriteLine ("assembly = " + CamelToC (ns) + "_get_mono_assembly ();");
-		C.WriteLine ("class = mono_class_from_name (assembly->image" + ", \"" + ns + "\", \"" + t.Name + "\");");
+
+		C.WriteLine ("assembly = (MonoAssembly*) " + CamelToC (ns) + "_get_mono_assembly ();");
+		C.WriteLine ("class = (MonoClass*) mono_class_from_name (assembly->image" + ", \"" + ns + "\", \"" + t.Name + "\");");
 
 		C.WriteLine ("mono_class_init (class);");
 		C.LineBreak ();
-		
+
 		C.WriteLine ("return class;");
 		C.Outdent ();
 		C.WriteLine ("}");
+
+		funcs_done = new ArrayList ();
 
 		ConstructorInfo[] constructors;
 		constructors = t.GetConstructors ();
@@ -125,12 +144,15 @@ class cilc
 		methods = t.GetMethods (BindingFlags.Public|BindingFlags.Instance|BindingFlags.DeclaredOnly);
 		foreach (MethodInfo m in methods) MethodGen (m, t);
 
-		C.Close ();
-
 		H.LineBreak ();
 		H.WriteLine ("#ifdef __cplusplus");
 		H.WriteLine ("}");
 		H.WriteLine ("#endif /* __cplusplus */");
+		H.LineBreak ();
+
+		H.WriteLine ("#endif /* " + H_id + " */");
+
+		C.Close ();
 		H.Close ();
 	}
 
@@ -156,16 +178,16 @@ class cilc
 	static void ConstructorGen (ConstructorInfo c, Type t)
 	{
 		ParameterInfo[] parameters = c.GetParameters ();
-		FunctionGen (parameters, (MethodBase) c, t, true);
+		FunctionGen (parameters, (MethodBase) c, t, null, true);
 	}
 
 	static void MethodGen (MethodInfo m, Type t)
 	{
 		ParameterInfo[] parameters = m.GetParameters ();
-		FunctionGen (parameters, (MethodBase) m, t, false);
+		FunctionGen (parameters, (MethodBase) m, t, m.ReturnType, false);
 	}
 
-	static void FunctionGen (ParameterInfo[] parameters, MethodBase m, Type t, bool ctor)
+	static void FunctionGen (ParameterInfo[] parameters, MethodBase m, Type t, Type ret_type, bool ctor)
 	{
 		string myargs = "";
 
@@ -180,8 +202,16 @@ class cilc
 		}
 
 		string mytype;
-
 		mytype = ns + t.Name + " *";
+
+		/*
+		   Console.WriteLine (ret_type);
+		   if (ret_type != null && ret_type != typeof (Void)) {
+		   has_return = true;
+		//TODO: return simple gint or gchar if possible
+		mytype = "MonoObject *";
+		}
+		 */
 
 		//TODO: also check, !static
 		if (inst) {
@@ -195,11 +225,22 @@ class cilc
 		if (ctor) myname += "new";
 		else myname += CamelToC (m.Name);
 
-		//construct args
+		//TODO: handle polymorphism / method overloading. this workaround ignores it. often we miss out on the useful form of a method
+		if (funcs_done.Contains (myname)) return;
+		funcs_done.Add (myname);
+
+		//handle the parameters
+		string param_assign = "";
+		string mycsargs = "";
+
 		for (int i = 0 ; i < parameters.Length ; i++) {
 			ParameterInfo p = parameters[i];
+			mycsargs += GetMonoType (Type.GetTypeCode (p.ParameterType));
 			myargs += CsTypeToC (p.ParameterType.ToString ()) + p.Name;
-			if (i != parameters.Length - 1) myargs += ", ";
+			if (i != parameters.Length - 1) {
+				mycsargs += ",";
+				myargs += ", ";
+			}
 		}
 
 		if (myargs == "") myargs = "void";
@@ -217,21 +258,16 @@ class cilc
 		C.Indent ();
 
 		C.WriteLine ("static MonoMethod *method = NULL;");
-		C.WriteLine ("void **params = g_new (void *, 1);");
-		if (ctor) C.WriteLine ("MonoObject *" + CamelToC (t.Name) + " = NULL;");
+		if (parameters.Length != 0) C.WriteLine ("gpointer params[" + parameters.Length + "];");
+		if (ctor) C.WriteLine ("MonoObject *" + CamelToC (t.Name) + ";");
 		C.LineBreak ();
-		
+
 		C.WriteLine ("if (method == NULL) {");
 		C.Indent ();
-		
-		if (ctor) C.WriteLine ("MonoMethodDesc *desc = mono_method_desc_new (\":.ctor()\", 0);");
+
+		if (ctor) C.WriteLine ("MonoMethodDesc *desc = mono_method_desc_new (\":.ctor()\", FALSE);");
 		else {
-			string csproto = m.ToString ();
-			int i = csproto.IndexOf(' ');
-			string rettype = csproto.Substring (0, i);
-			//TODO: if there's a return type, use it
-			string meth_id = csproto.Substring (i + 1, csproto.Length - i - 1);
-			C.WriteLine ("MonoMethodDesc *desc = mono_method_desc_new (\":" + meth_id + "\", 0);");
+			C.WriteLine ("MonoMethodDesc *desc = mono_method_desc_new (\":" + m.Name + "(" + mycsargs + ")" + "\", FALSE);");
 		}
 
 		C.WriteLine ("method = mono_method_desc_search_in_class (desc, " + cur_class + "_get_mono_class ());");
@@ -239,15 +275,24 @@ class cilc
 		C.Outdent ();
 		C.WriteLine ("}");
 		C.LineBreak ();
-		
-		C.WriteLine ("//params[0] = msg;");
-		
-		if (ctor) C.WriteLine (CamelToC (t.Name) + " = mono_object_new (" + CamelToC (ns) + "_get_mono_domain ()" + ", " + cur_class + "_get_mono_class ());");
-		
-		//FIXME: TODO: pass arguments
-		if (stat) C.WriteLine ("mono_runtime_invoke (method, 0, 0, 0);");
-		else
-			C.WriteLine ("mono_runtime_invoke (method, " + CamelToC (t.Name) + ", 0, 0);");
+
+		//assign the parameters
+		for (int i = 0 ; i < parameters.Length ; i++) {
+			ParameterInfo p = parameters[i];
+			C.WriteLine  ("params[" + i + "] = " + GetMonoVal (p.Name, p.ParameterType.ToString ()) + ";");
+		}
+		if (parameters.Length != 0) C.LineBreak ();
+
+		if (ctor) C.WriteLine (CamelToC (t.Name) + " = (MonoObject*) mono_object_new ((MonoDomain*) " + CamelToC (ns) + "_get_mono_domain ()" + ", " + cur_class + "_get_mono_class ());");
+
+		//invoke the method
+		string params_arg = "NULL";
+		if (parameters.Length != 0) params_arg = "params";
+
+		string instance_arg = "NULL";
+		if (!stat) instance_arg = CamelToC (t.Name);
+
+		C.WriteLine ("mono_runtime_invoke (method, " + instance_arg + ", " + params_arg + ", NULL);");
 
 		if (ctor) C.WriteLine ("return " + CamelToC (t.Name) + ";");
 
@@ -255,9 +300,41 @@ class cilc
 		C.WriteLine ("}");
 	}
 
+	static string GetMonoType (TypeCode tc)
+	{
+		//see mcs/class/corlib/System/TypeCode.cs
+		//see mono/mono/dis/get.c
+
+		switch (tc)
+		{
+			case TypeCode.Int32:
+				return "int";
+
+			case TypeCode.String:
+				return "string";
+
+			default:
+				return tc.ToString ();
+		}
+	}
+
+	static string GetMonoVal (string name, string type)
+	{
+		switch (type) {
+			case "System.String":
+				return "(gpointer*) mono_string_new ((MonoDomain*) mono_domain_get (), " + name + ")";
+
+			case "System.Int32":
+				return "&" + name;
+
+			default:
+			return "&" + name;
+		}
+	}
+
 	static string CamelToC (string s)
 	{
-		//convert camel case to c-style
+		//converts camel case to c-style
 
 		string o = "";
 

@@ -1,3 +1,8 @@
+2003-05-01  Alp Toker  <alp@atoker.com>
+
+	* cilc.cs: Support arguments, clean up some gcc warnings
+	* Test.cs, demo.c: More extensive test
+
 2003-04-25  Alp Toker  <alp@atoker.com>
 
 	* Initial release of cilc

@@ -4,8 +4,8 @@ test: cilc.exe Test.dll
 	rm -rf generated
 	mkdir generated
 	mono cilc.exe Test.dll
-	gcc -fpic -shared `pkg-config --cflags --libs glib-2.0 mono` -lpthread generated/*.c -o generated/libtest.so
-	gcc `pkg-config --cflags --libs glib-2.0 mono` -Igenerated -Lgenerated -ltest demo.c -o generated/demo
+	gcc -Wall -fpic -shared `pkg-config --cflags --libs glib-2.0 mono` -lpthread generated/*.c -o generated/libtest.so
+	gcc -Wall `pkg-config --cflags --libs glib-2.0 mono` -Igenerated -Lgenerated -ltest demo.c -o generated/demo
 	cp Test.dll generated
 
 cilc.exe: cilc.cs
