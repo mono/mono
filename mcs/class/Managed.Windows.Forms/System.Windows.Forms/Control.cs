@@ -1551,6 +1551,10 @@ namespace System.Windows.Forms
 			}
 
 			set {
+				if (value == this) {
+					throw new ArgumentException("A circular control reference has been made. A control cannot be owned or parented to itself.");
+				}
+
 				if (parent!=value) {
 					if (parent!=null) {
 						parent.Controls.Remove(this);
@@ -3091,7 +3095,6 @@ namespace System.Windows.Forms
 		protected virtual void OnInvalidated(InvalidateEventArgs e) {
 			if (Invalidated!=null) Invalidated(this, e);
 		}
-
 
 		protected virtual void OnKeyDown(KeyEventArgs e) {			
 			if (KeyDown!=null) KeyDown(this, e);
