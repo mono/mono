@@ -74,6 +74,46 @@ class D : Base
 	}
 }
 
+class E : Base
+{
+	public E (long value)
+		: base (9)
+	{
+		Console.WriteLine ("Long");
+	}
+
+	public E (E e)
+		: base (10)
+	{
+		Console.WriteLine ("E");
+	}
+
+	public static implicit operator E (long value) 
+	{
+		return (new E (value));
+	}
+}
+
+class F : Base
+{
+	public F (int value)
+		: base (11)
+	{
+		Console.WriteLine ("Int");
+	}
+
+	public F (F f)
+		: base (12)
+	{
+		Console.WriteLine ("F");
+	}
+
+	public static implicit operator F (int value) 
+	{
+		return (new F (value));
+	}
+}
+
 class X
 {
 	static int Test ()
@@ -112,6 +152,16 @@ class X
 			D d = new D (4);
 			if (d.Value != 7)
 				return 8;
+		}
+
+		{
+			E e = new E (4);
+			if (e.Value != 9)
+				return 9;
+
+			F f = new F (4);
+			if (f.Value != 11)
+				return 10;
 		}
 
 		return 0;
