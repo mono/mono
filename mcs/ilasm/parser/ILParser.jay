@@ -703,13 +703,13 @@ type			: K_CLASS class_ref
 			| K_NATIVE K_INT
                           {
                                 // TODO: Is this the proper full name
-                                $$ = new TypeRef (PrimitiveType.NativeInt, "native int");
+                                $$ = new TypeRef (PrimitiveType.NativeInt, "System.IntPtr");
                           }
                         
 			| K_NATIVE K_UNSIGNED K_INT
                           {
                                 // TODO: Is this the proper full name
-                                $$ = new TypeRef (PrimitiveType.NativeUInt, "native uint");
+                                $$ = new TypeRef (PrimitiveType.NativeUInt, "System.UIntPtr");
                           }
 			;
 
