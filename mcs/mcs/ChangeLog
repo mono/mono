@@ -1,3 +1,8 @@
+2004-05-24  Raja R Harinath  <rharinath@novell.com>
+
+	* Makefile: Simplify.  Use executable.make.
+	* mcs.exe.sources: New file.  List of sources of mcs.exe.
+
 2004-05-24  Anders Carlsson  <andersca@gnome.org>
 
 	* decl.cs:

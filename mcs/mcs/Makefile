@@ -2,46 +2,9 @@ thisdir := mcs
 SUBDIRS := 
 include ../build/rules.make
 
-COMPILER_SOURCES = \
-	AssemblyInfo.cs			\
-	anonymous.cs			\
-	assign.cs			\
-	attribute.cs			\
-	driver.cs		 	\
-	cs-tokenizer.cs			\
-	cfold.cs			\
-	class.cs 			\
-	codegen.cs			\
-	const.cs			\
-	constant.cs			\
-	convert.cs			\
-	decl.cs				\
-	delegate.cs			\
-	enum.cs				\
-	ecore.cs			\
-	expression.cs 			\
-	flowanalysis.cs			\
-	genericparser.cs		\
-	iterators.cs			\
-	literal.cs			\
-	location.cs			\
-	modifiers.cs 			\
-	namespace.cs			\
-	parameter.cs			\
-	pending.cs			\
-	report.cs			\
-	rootcontext.cs			\
-	statement.cs			\
-	support.cs			\
-	typemanager.cs			\
-	symbolwriter.cs			\
-	tree.cs				\
-	CryptoConvert.cs
+BUILT_SOURCES = cs-parser.cs
 
-all_sources = $(COMPILER_SOURCES) cs-parser.cs
-
-DISTFILES = \
-	$(COMPILER_SOURCES)	\
+EXTRA_DISTFILES = \
 	compiler.csproj		\
 	compiler.doc		\
 	compiler.sln		\
@@ -50,27 +13,16 @@ DISTFILES = \
 	NOTES			\
 	TODO
 
-all-local: mcs.exe
+PROGRAM = mcs.exe
+PROGRAM_COMPILE = $(BOOT_COMPILE)
+PROGRAM_INSTALL_DIR = $(prefix)/lib/mono/1.0
 
-install-local: mcs.exe
-	$(MKINSTALLDIRS) $(DESTDIR)$(prefix)/lib/mono/1.0
-	$(INSTALL_BIN) mcs.exe $(DESTDIR)$(prefix)/lib/mono/1.0
-
-uninstall-local:
-	-rm -f $(DESTDIR)$(prefix)/lib/mono/1.0/mcs.exe
-
-test-local run-test-local:
-
-clean-local:
-	rm -f *.exe *.pdb cs-parser.cs y.output
-
-dist-local: dist-default
-
-mcs.exe: $(all_sources)
-	$(BOOT_COMPILE) /target:exe /out:$@ $^
+CLEAN_FILES = y.output
 
 cs-parser.cs: cs-parser.jay $(topdir)/jay/skeleton.cs
 	$(topdir)/jay/jay -ctv < $(topdir)/jay/skeleton.cs $< > jay-tmp.out && mv jay-tmp.out $@
+
+include ../build/executable.make
 
 # Testing targets
 
@@ -83,39 +35,36 @@ btest: mcs2.exe mcs3.exe
 	ls -l mcs2.exe mcs3.exe
 
 mcs2.exe: mcs.exe
-	$(TIME) $(RUNTIME) ./mcs.exe $(USE_MCS_FLAGS) /target:exe /out:$@ $(all_sources)
+	$(TIME) $(RUNTIME) ./mcs.exe $(USE_MCS_FLAGS) /target:exe /out:$@ $(BUILT_SOURCES) @$(response)
 
 mcs3.exe: mcs2.exe
-	$(TIME) $(RUNTIME) ./mcs2.exe $(USE_MCS_FLAGS) /target:exe /out:$@ $(all_sources)
+	$(TIME) $(RUNTIME) ./mcs2.exe $(USE_MCS_FLAGS) /target:exe /out:$@ $(BUILT_SOURCES) @$(response)
 
 wc:
-	wc -l $(all_sources)
+	wc -l $(BUILT_SOURCES) `cat $(sourcefile)`
 
 ctest: 
 	rm -f mcs2.exe mcs3.exe
-	make btest USE_MCS_FLAGS= 
+	$(MAKE) USE_MCS_FLAGS= btest
 
 # we need this because bash tries to use its own crappy timer
 FRIENDLY_TIME = $(shell which time) -f'%U seconds'
 
 do-time : mcs.exe
 	@ echo -n "Run 1:   "
-	 $(FRIENDLY_TIME) $(RUNTIME) ./mcs.exe $(USE_MCS_FLAGS) /target:exe /out:mcs2.exe $(all_sources) > /dev/null || (echo FAILED; exit 1)
+	@ rm -f mcs2.exe
+	@ $(MAKE) TIME="$(FRIENDLY_TIME)" mcs2.exe > /dev/null || (echo FAILED; exit 1)
 	@ echo -n "Run 2:   "
-	@ $(FRIENDLY_TIME) $(RUNTIME) ./mcs2.exe $(USE_MCS_FLAGS) /target:exe /out:mcs3.exe $(all_sources) > /dev/null || (echo FAILED; exit 1)
-	@ echo -n "corlib:  "
-	@ rm -f ../class/lib/mscorlib.dll
-	@ (cd ../class/corlib ; make BOOTSTRAP_MCS="$(FRIENDLY_TIME) mono ../../mcs/mcs.exe" > /dev/null ) || (echo FAILED; exit 1)
+	@ rm -f mcs3.exe
+	@ $(MAKE) TIME="$(FRIENDLY_TIME)" mcs3.exe > /dev/null || (echo FAILED; exit 1)
+	@ $(MAKE) do-corlib
 
 do-corlib:
 	@ echo -n "corlib:  "
 	@ rm -f ../class/lib/mscorlib.dll
-	@ (cd ../class/corlib ; make BOOTSTRAP_MCS="$(FRIENDLY_TIME) mono ../../mcs/mcs.exe" > /dev/null ) || (echo FAILED; exit 1)
+	@ cd ../class/corlib ; $(MAKE) BOOTSTRAP_MCS="$(FRIENDLY_TIME) mono ../../mcs/mcs.exe" > /dev/null || (echo FAILED; exit 1)
 
 PROFILER=default
 
 profile : mcs.exe
-	$(RUNTIME) --profile=$(PROFILER) ./mcs.exe $(USE_MCS_FLAGS) /target:exe /out:mcs2.exe $(all_sources)
-
-response:
-	echo $(all_sources) > res
+	$(RUNTIME) --profile=$(PROFILER) ./mcs.exe $(USE_MCS_FLAGS) /target:exe /out:mcs2.exe $(BUILT_SOURCES) @$(response)
