@@ -6,9 +6,9 @@
 
 using System;
 using System.Reflection;
-using System.Diagnostics;
 using System.Collections;
 using System.Text;
+using System.IO;
 
 namespace Mono.CorCompare
 {
@@ -41,10 +41,18 @@ namespace Mono.CorCompare
 				Console.WriteLine ("Usage: CorCompare assembly_to_compare");
 				return;
 			}
+			Assembly monoAsmbl = null;
+			try{
+				monoAsmbl = Assembly.LoadFrom(args[0]);
+			}
+			catch(FileNotFoundException)
+			{
+				Console.WriteLine("Could not find corlib file: {0}", args[0]);
+				return;
+			}
 
 			Assembly msAsmbl = Assembly.GetAssembly(typeof (System.Object));
 			Type[] mscorlibTypes = msAsmbl.GetTypes();
-			Assembly monoAsmbl = Assembly.LoadFrom(args[0]);
 			Type[] monocorlibTypes;
 			monocorlibTypes = monoAsmbl.GetTypes();
 			ArrayList TypesList = new ArrayList();
