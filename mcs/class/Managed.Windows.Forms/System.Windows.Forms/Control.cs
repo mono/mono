@@ -29,9 +29,12 @@
 //	Jaak Simm		jaaksimm@firm.ee
 //	John Sohn		jsohn@columbus.rr.com
 //
-// $Revision: 1.50 $
+// $Revision: 1.51 $
 // $Modtime: $
 // $Log: Control.cs,v $
+// Revision 1.51  2004/08/25 18:32:15  pbartok
+// - Fixed generation of MouseUp message
+//
 // Revision 1.50  2004/08/24 18:24:25  jordi
 // fire OnEnabledChanged event
 //
@@ -1712,7 +1715,7 @@ namespace System.Windows.Forms
 				case Msg.WM_LBUTTONUP: {					
 					int clicks = 1;
 					
-					OnMouseUp (new MouseEventArgs (FromParamToMouseButtons ((int) m.WParam.ToInt32()), 
+					OnMouseUp (new MouseEventArgs (FromParamToMouseButtons ((int) m.WParam.ToInt32()) | MouseButtons.Left, 
 							clicks, 
 							LowOrder ((int) m.LParam.ToInt32 ()), HighOrder ((int) m.LParam.ToInt32 ()), 
 							0));
