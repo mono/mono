@@ -1,3 +1,11 @@
+2004-07-06  Martin Baulig  <martin@ximian.com>
+
+	* debug-mini.c (mono_debug_init_method): Allow
+	MONO_WRAPPER_MANAGED_TO_NATIVE wrappers.
+	(mono_debug_add_icall_wrapper): New method.
+
+	* mini.c (mono_icall_get_wrapper): Call mono_debug_add_icall_wrapper().
+
 2004-07-05  Zoltan Varga  <vargaz@freemail.hu>
 
 	* mini.c (optimize_branches): Fix linking of bblocks in branch->branch
