@@ -35,6 +35,13 @@ namespace MonoTests.System {
 	[TestFixture]
 	public class RandomTest : Assertion {
 
+#if false
+		//
+		// This test will fail, given enough runs.
+		//
+		// It is an ad-hoc test for distribution, and does not work
+		// 100% of the time.
+		//
 		[Test]
 		public void NextDouble ()
 		{
@@ -46,6 +53,8 @@ namespace MonoTests.System {
 			c/=i;
 			Assert (c.ToString () + " is out of range.", c < .7 && c > .3);
 		}
+
+#endif
 
 		[Test]
 		public void CompareStreamWithSameSeed ()

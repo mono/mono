@@ -1,3 +1,7 @@
+2005-02-19  Ben Maurer  <bmaurer@ximian.com>
+
+	* RandomTest.cs (NextDouble): Disable. See comment.
+
 2005-02-14  Zoltan Varga  <vargaz@freemail.hu>
 
 	* TypeTest.cs: Add tests for byref types.
