@@ -1,4 +1,4 @@
-//
+// 
 // Statement.cs:
 //
 // Author:
@@ -100,68 +100,78 @@ namespace Microsoft.JScript {
 		}
  	}
 
-	internal class Continue : AST {
-		
-		internal string label;
+	abstract class Jump : AST {
+		protected string label = String.Empty;
+		protected object binding;
 
-		internal Continue (AST parent, string label, int line_number)
+		bool IsLabel (object binding)
 		{
-			this.parent = parent;
-			this.label = label;
-			this.line_number = line_number;
-		}
+			return binding.GetType () == typeof (Labelled);
+		}		
 
-		public override string ToString ()
+		protected bool ValidLabel ()
 		{
-			return label;
-		}
-
-		internal override bool Resolve (IdentificationTable context)
-		{
-
-			if (!InLoop && label == string.Empty)
-				throw new Exception ("A continue can't be outside a iteration stm");
-			return true;
-		}
-
-		internal override void Emit (EmitContext ec)
-		{
-			ec.ig.Emit (OpCodes.Br, ec.LoopBegin);
+			binding = SemanticAnalyser.GetLabel (label);
+			if (binding == null || !IsLabel (binding))
+				throw new Exception ("error JS1026: Label not found");
+                        return true;
 		}
 	}
 
-	internal class Break : AST {
-
-		internal string label;
-
-		internal Break ()
+	internal class Continue : Jump {
+		internal Continue (AST parent, string label, int line_number)
 		{
-		}
-
-		internal Break (string label, int line_number)
-		{
-			this.label = label;
+			this.parent = parent;
+			Console.WriteLine ("Continue.parent = {0}", this.parent);
+			this.label += label;
 			this.line_number = line_number;
 		}
 
-		public override string ToString ()
-		{
-			return label;
-		}
-
 		internal override bool Resolve (IdentificationTable context)
-		{
-                        if ((!InLoop && !InSwitch) && label == string.Empty)
-                                throw new Exception ("A break statement can't be outside a switch or iteration stm");
-                        // FIXME: when we have label_stm on the grammar, we
-                        // must check that the target label is defined.
-                        return true;
-
-		}
+                {
+                        if (!InLoop)
+                                throw new Exception ("A continue can't be outside a iteration stm");
+			if (label != String.Empty)
+				return ValidLabel ();
+			return true;
+                }
 
 		internal override void Emit (EmitContext ec)
 		{
-			ec.ig.Emit (OpCodes.Br, ec.LoopEnd);
+			if (label == String.Empty) {
+				ec.ig.Emit (OpCodes.Br, ec.LoopBegin);
+				return;
+			}
+			ec.ig.Emit (OpCodes.Br, (binding as Labelled).InitAddrs);
+		}
+	}
+
+	internal class Break : Jump {
+
+		internal Break (AST parent, string label, int line_number)
+		{
+			this.parent = parent;
+			Console.WriteLine ("Break.parent = {0}", this.parent);
+			this.label += label;
+			this.line_number = line_number;
+		}
+
+		 internal override bool Resolve (IdentificationTable context)
+                {
+                        if (!InLoop && !InSwitch)
+				throw new Exception ("A break statement can't be outside a switch or iteration stm");
+			if (label != String.Empty)
+				return ValidLabel ();
+			return true;
+                }
+
+		internal override void Emit (EmitContext ec)
+		{
+			if (label == String.Empty) {
+				ec.ig.Emit (OpCodes.Br, ec.LoopEnd);
+				return;
+			}
+			ec.ig.Emit (OpCodes.Br, (binding as Labelled).EndAddrs);
 		}
 	}
 
@@ -181,7 +191,7 @@ namespace Microsoft.JScript {
 			if (expression != null)
 				return expression.ToString ();
 			else 
-				return string.Empty;
+				return String.Empty;
 		}
 
 		internal override bool Resolve (IdentificationTable context)
@@ -204,9 +214,10 @@ namespace Microsoft.JScript {
 
 		AST stm, exp;
 		
-		internal DoWhile (AST parent, AST stm, AST exp, int line_number)
+		internal void Init (AST parent, AST stm, AST exp, int line_number)
 		{
 			this.parent = parent;
+			Console.WriteLine ("DoWhile.parent = {0}", this.parent);
 			this.stm = stm;
 			this.exp = exp;
 			this.line_number = line_number;
@@ -226,6 +237,8 @@ namespace Microsoft.JScript {
 		internal override void Emit (EmitContext ec)
 		{
 			ILGenerator ig = ec.ig;
+			Label old_begin = ec.LoopBegin;
+			Label old_end = ec.LoopEnd;
 			Label body_label = ig.DefineLabel ();
 
 			ec.LoopBegin = ig.DefineLabel ();
@@ -237,17 +250,23 @@ namespace Microsoft.JScript {
 				stm.Emit (ec);
 
 			ig.MarkLabel (ec.LoopBegin);
+
+			if (parent.GetType () == typeof (Labelled))
+				ig.MarkLabel ((parent as Labelled).InitAddrs);
+
 			CodeGenerator.fall_false (ec, exp, body_label);
 			ig.MarkLabel (ec.LoopEnd);
-		}
+
+			ec.LoopBegin = old_begin;
+			ec.LoopEnd = old_end;
+		}	       
 	}
 
 
-	internal class While : AST {
-		
+	internal class While : AST {		
 		AST exp, stm;
 
-		internal While (AST parent, AST exp, AST stm, int line_number)
+		internal void Init (AST parent, AST exp, AST stm, int line_number)
 		{
 			this.parent = parent;
 			this.exp = exp;
@@ -258,7 +277,6 @@ namespace Microsoft.JScript {
 		internal override bool Resolve (IdentificationTable context)
 		{
 			bool r = true;
-
 			if (exp != null)
 				if (exp is Exp)
 					r &= ((Exp) exp).Resolve (context, false);
@@ -272,21 +290,35 @@ namespace Microsoft.JScript {
 		internal override void Emit (EmitContext ec)
 		{
 			ILGenerator ig = ec.ig;
-			Label body_label = ig.DefineLabel ();			
-			Label cond_label = ig.DefineLabel ();
+			Label old_begin = ec.LoopBegin;
+			Label old_end = ec.LoopEnd;
 
-			ec.LoopBegin = cond_label;
+			ec.LoopBegin = ig.DefineLabel ();
                         ec.LoopEnd = ig.DefineLabel ();
 
-			ig.Emit (OpCodes.Br, cond_label);
-			ig.MarkLabel (body_label);
+			Label body_label = ig.DefineLabel ();
 
+			ig.Emit (OpCodes.Br, ec.LoopBegin);
+			ig.MarkLabel (body_label);
+			
 			if (stm != null)
 				stm.Emit (ec);
+			
+			ig.MarkLabel (ec.LoopBegin);
+			
+			if (parent.GetType () == typeof (Labelled))
+				ig.MarkLabel ((parent as Labelled).InitAddrs);
 
-			ig.MarkLabel (cond_label);
 			CodeGenerator.fall_false (ec, exp, body_label);
 			ig.MarkLabel (ec.LoopEnd);
+
+			ec.LoopBegin = old_begin;
+			ec.LoopEnd = old_end;
+		}
+
+		public override string ToString ()
+		{
+			return "while";
 		}
 	}
 
@@ -320,16 +352,22 @@ namespace Microsoft.JScript {
 		{
 			AST tmp;
 			ILGenerator ig = ec.ig;
+			Label old_begin = ec.LoopBegin;
+			Label old_end = ec.LoopEnd;
 			Label back = ig.DefineLabel ();
 			Label forward = ig.DefineLabel ();
-                        ec.LoopBegin = ig.DefineLabel ();
-                        ec.LoopEnd = forward;
+
 
 			/* emit init expr */
 			tmp = exprs [0];
 			if (tmp != null)
 				tmp.Emit (ec);
+
+                        ec.LoopBegin = ig.DefineLabel ();
+			ec.LoopEnd = ig.DefineLabel ();
+			
 			ig.MarkLabel (back);
+			ig.MarkLabel (ec.LoopBegin);
 
 			/* emit condition */
 			tmp = exprs [1];
@@ -351,14 +389,20 @@ namespace Microsoft.JScript {
 			if (stms != null)
 				stms.Emit (ec);
 
+			if (parent.GetType () == typeof (Labelled))
+				ig.MarkLabel ((parent as Labelled).InitAddrs);
+
 			tmp = exprs [2];
-			ig.MarkLabel (ec.LoopBegin);
 			/* emit increment */
 			if (tmp != null)
 				tmp.Emit (ec);
-			
+
 			ig.Emit (OpCodes.Br, back);
 			ig.MarkLabel (forward);
+			ig.MarkLabel (ec.LoopEnd);
+
+			ec.LoopBegin = old_begin;
+			ec.LoopEnd = old_end;
 		}
 	}
 
@@ -555,23 +599,68 @@ namespace Microsoft.JScript {
 	}
 
 	internal class Labelled : AST {
-		internal string name;
+		string name;
+		Label init_addrs; 
+		Label end_addrs;
+		AST stm;
 
-		internal Labelled (string name, int line_number)
+		internal Label InitAddrs {
+			set { init_addrs = value; }
+			get { return init_addrs; }
+		}
+		
+		internal Label EndAddrs {
+			set { end_addrs = value; }
+			get { return end_addrs; }
+		}
+
+		internal void Init (AST parent, string name, AST stm, int line_number)
 		{
 			this.parent = parent;
+			Console.WriteLine ("labelled.parent = {0}", this.parent);
 			this.name = name;
+			this.stm = stm;
 			this.line_number = line_number;
 		}
 
 		internal override bool Resolve (IdentificationTable context)
 		{
-			throw new NotImplementedException ();
+			try {
+				SemanticAnalyser.AddLabel (name, this);
+			} catch (ArgumentException e) {
+				throw new Exception ("error JS1025: Label redefined");
+			}
+			if (stm != null)
+				stm.Resolve (context);
+			SemanticAnalyser.RemoveLabel (name);
+			return true;
 		}
 
 		internal override void Emit (EmitContext ec)
 		{
-			throw new NotImplementedException ();
+			ILGenerator ig = ec.ig;
+
+			init_addrs = ig.DefineLabel ();
+			end_addrs = ig.DefineLabel ();
+
+			if (!IsLoop (stm))
+				ig.MarkLabel (init_addrs);
+
+			stm.Emit (ec);
+
+			ig.MarkLabel (end_addrs);
+		}
+
+		bool IsLoop (AST ast)
+		{
+			Type t = ast.GetType ();
+			return t == typeof (For) || t == typeof (While) || t == typeof (DoWhile) || t == typeof (ForIn);
+		}
+
+		public override string ToString ()
+		{
+			return "Labelled";
 		}
 	}
 }
+
