@@ -1,3 +1,7 @@
+2004-01-12  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* interp.c: call setlocale (). Fixes bug #52100.
+
 2003-12-19  Bernie Solomon  <bernard@ugsolutions.com>
 
 	* embed.h, main.c: new files to enable embedding
