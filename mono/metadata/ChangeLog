@@ -1,5 +1,8 @@
 2004-10-07  Zoltan Varga  <vargaz@freemail.hu>
 
+	* threads.c (mono_thread_attach): Initialize synch_lock field so
+	mono_thread_detach works again.
+
 	* loader.c (mono_lookup_pinvoke_call): Try the dllname prefixed with
 	'lib' too. Fixes #63130.
 
