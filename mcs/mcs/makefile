@@ -7,6 +7,7 @@ COMMON_SOURCES = cs-parser.cs cs-tokenizer.cs tree.cs location.cs
 
 COMPILER_SOURCES = \
 	AssemblyInfo.cs			\
+	anonymous.cs			\
 	assign.cs			\
 	attribute.cs			\
 	driver.cs $(COMMON_SOURCES) 	\
