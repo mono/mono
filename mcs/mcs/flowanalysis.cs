@@ -371,6 +371,9 @@ namespace Mono.CSharp
 			case BranchingType.Block:
 				return new FlowBranchingBlock (parent, type, SiblingType.Block, block, loc);
 
+			case BranchingType.Loop:
+				return new FlowBranchingLoop (parent, block, loc);
+
 			default:
 				return new FlowBranchingBlock (parent, type, SiblingType.Conditional, block, loc);
 			}
@@ -714,18 +717,19 @@ namespace Mono.CSharp
 			//      8     Console.WriteLine (a);
 			//
 			// </summary>
-			public void MergeJumpOrigins (ICollection origin_vectors)
+			public void MergeJumpOrigins (UsageVector o_vectors)
 			{
 				Report.Debug (1, "  MERGING JUMP ORIGINS", this);
 
 				reachability = Reachability.Never ();
 
-				if (origin_vectors == null)
+				if (o_vectors == null)
 					return;
 
 				bool first = true;
 
-				foreach (UsageVector vector in origin_vectors) {
+				for (UsageVector vector = o_vectors; vector != null;
+				     vector = vector.Next) {
 					Report.Debug (1, "    MERGING JUMP ORIGIN", vector);
 
 					if (first) {
@@ -768,6 +772,37 @@ namespace Mono.CSharp
 				}
 
 				Report.Debug (1, "  MERGING FINALLY ORIGIN DONE", this);
+			}
+
+			public void MergeBreakOrigins (UsageVector o_vectors)
+			{
+				Report.Debug (1, "  MERGING BREAK ORIGINS", this);
+
+				if (o_vectors == null)
+					return;
+
+				bool first = true;
+
+				for (UsageVector vector = o_vectors; vector != null;
+				     vector = vector.Next) {
+					Report.Debug (1, "    MERGING BREAK ORIGIN", vector);
+
+					if (first) {
+						if (locals != null && vector.Locals != null)
+							locals.Or (vector.locals);
+						
+						if (parameters != null)
+							parameters.Or (vector.parameters);
+						first = false;
+					} else {
+						if (locals != null && vector.Locals != null)
+							locals.And (vector.locals);
+						if (parameters != null)
+							parameters.And (vector.parameters);
+					}
+				}
+
+				Report.Debug (1, "  MERGING BREAK ORIGINS DONE", this);
 			}
 
 			public void CheckOutParameters (FlowBranching branching)
@@ -921,7 +956,7 @@ namespace Mono.CSharp
 
 		protected abstract void AddSibling (UsageVector uv);
 
-		public abstract void Label (ArrayList origin_vectors);
+		public abstract void Label (UsageVector origin_vectors);
 
 		// <summary>
 		//   Check whether all `out' parameters have been assigned.
@@ -1143,6 +1178,14 @@ namespace Mono.CSharp
 				throw new NotSupportedException ();
 		}
 
+		public virtual void AddBreakVector (UsageVector vector)
+		{
+			if (Parent != null)
+				Parent.AddBreakVector (vector);
+			else if ((Block == null) || !Block.IsDestructor)
+				throw new NotSupportedException ();
+		}
+
 		public bool IsAssigned (VariableInfo vi)
 		{
 			return CurrentUsageVector.IsAssigned (vi);
@@ -1216,12 +1259,12 @@ namespace Mono.CSharp
 			sibling_list = sibling;
 		}
 
-		public override void Label (ArrayList origin_vectors)
+		public override void Label (UsageVector origin_vectors)
 		{
 			if (!CurrentUsageVector.Reachability.IsUnreachable) {
-				if (origin_vectors == null)
-					origin_vectors = new ArrayList (1);
-				origin_vectors.Add (CurrentUsageVector.Clone ());
+				UsageVector vector = CurrentUsageVector.Clone ();
+				vector.Next = origin_vectors;
+				origin_vectors = vector;
 			}
 
 			CurrentUsageVector.MergeJumpOrigins (origin_vectors);
@@ -1230,6 +1273,31 @@ namespace Mono.CSharp
 		protected override UsageVector Merge ()
 		{
 			return Merge (sibling_list);
+		}
+	}
+
+	public class FlowBranchingLoop : FlowBranchingBlock
+	{
+		UsageVector break_origins;
+
+		public FlowBranchingLoop (FlowBranching parent, Block block, Location loc)
+			: base (parent, BranchingType.Loop, SiblingType.Conditional, block, loc)
+		{ }
+
+		public override void AddBreakVector (UsageVector vector)
+		{
+			vector = vector.Clone ();
+			vector.Next = break_origins;
+			break_origins = vector;
+		}
+
+		protected override UsageVector Merge ()
+		{
+			UsageVector vector = base.Merge ();
+
+			vector.MergeBreakOrigins (break_origins);
+
+			return vector;
 		}
 	}
 
@@ -1296,7 +1364,7 @@ namespace Mono.CSharp
 			finally_origins = vector;
 		}
 
-		public override void Label (ArrayList origin_vectors)
+		public override void Label (UsageVector origin_vectors)
 		{
 			CurrentUsageVector.MergeJumpOrigins (origin_vectors);
 		}

@@ -668,7 +668,7 @@ namespace Mono.CSharp {
 		bool referenced;
 		Label label;
 
-		ArrayList vectors;
+		FlowBranching.UsageVector vectors;
 		
 		public LabeledStatement (string label_name, Location l)
 		{
@@ -699,10 +699,9 @@ namespace Mono.CSharp {
 
 		public void AddUsageVector (FlowBranching.UsageVector vector)
 		{
-			if (vectors == null)
-				vectors = new ArrayList ();
-
-			vectors.Add (vector.Clone ());
+			vector = vector.Clone ();
+			vector.Next = vectors;
+			vectors = vector;
 		}
 
 		public override bool Resolve (EmitContext ec)
@@ -886,7 +885,11 @@ namespace Mono.CSharp {
 				Error (157, "Control can not leave the body of the finally block");
 				return false;
 			} else if (ec.CurrentBranching.InTryOrCatch (false))
-				ec.CurrentBranching.AddFinallyVector (ec.CurrentBranching.CurrentUsageVector);
+				ec.CurrentBranching.AddFinallyVector (
+					ec.CurrentBranching.CurrentUsageVector);
+			else if (ec.CurrentBranching.InLoop ())
+				ec.CurrentBranching.AddBreakVector (
+					ec.CurrentBranching.CurrentUsageVector);
 
 			crossing_exc = ec.CurrentBranching.BreakCrossesTryCatchBoundary ();
 
