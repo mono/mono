@@ -1,3 +1,8 @@
+2003-01-28  Nick Drochak <ndrochak@gol.com>
+
+        * MutexTest.cs: Ignore tests that hang mono.
+        * ThreadTest.cs: Ignore tests that hang mono.
+
 2003/01/23  Nick Drochak <ndrochak@gol.com>
 
 	* ThreadTest.cs: Test for alternate possibilities

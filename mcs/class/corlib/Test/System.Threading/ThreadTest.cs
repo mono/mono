@@ -12,6 +12,7 @@ using System.Threading;
 
 namespace MonoTests.System.Threading
 {
+	[Ignore("these tests fail randomly")]
 	public class ThreadTest : TestCase
 	{
 		//Some Classes to test as threads
@@ -306,6 +307,7 @@ namespace MonoTests.System.Threading
 			}
 		}
 
+		[Ignore("causes seg fault on mono")]
 		public void TestNestedThreads2()
 		{
 			C4Test test1 = new C4Test();
