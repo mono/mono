@@ -1,3 +1,9 @@
+
+Mon Feb 18 15:49:20 CET 2002 Paolo Molaro <lupus@ximian.com>
+
+	* interp.c: fix alignment code. Make sure to init classes
+	in more cases. Command-line arguments are interned.
+
 2002-02-16  Radek Doulik  <rodo@ximian.com>
 
 	* interp.c (ves_exec_method): test type of sp [-1] instead of sp
