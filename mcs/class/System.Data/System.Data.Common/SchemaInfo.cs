@@ -7,6 +7,8 @@
 // Copyright (C) Tim Coleman, 2002
 //
 
+using System;
+
 namespace System.Data.Common {
 	internal class SchemaInfo
 	{
@@ -16,8 +18,8 @@ namespace System.Data.Common {
 		string tableName;
 		string dataTypeName;
 		object value;
-		bool nullable;
-		bool writable;
+		bool allowDBNull;
+		bool isReadOnly;
 		int ordinal;
 		int size;
 		byte precision;
@@ -36,14 +38,34 @@ namespace System.Data.Common {
 
 		#region Properties
 
-		public string TableName {
-			get { return tableName; }
-			set { tableName = value; }
+		public bool AllowDBNull {
+			get { return allowDBNull; }
+			set { allowDBNull = value; }
+		}
+
+		public string ColumnName {
+			get { return columnName; }
+			set { columnName = value; }
 		}
 
 		public int ColumnOrdinal {
 			get { return ordinal; }
 			set { ordinal = value; }
+		}
+
+		public int ColumnSize {
+			get { return size; }
+			set { size = value; }
+		}
+
+		public String DataTypeName {
+			get { return dataTypeName; }
+			set { dataTypeName = value; }
+		}
+
+		public Type FieldType {
+			get { return fieldType; }
+			set { fieldType = value; }
 		}
 
 		public byte NumericPrecision {
@@ -56,34 +78,14 @@ namespace System.Data.Common {
 			set { scale = value; }
 		}
 
-		public int ColumnSize {
-			get { return size; }
-			set { size = value; }
-		}
-
-		public string ColumnName {
-			get { return columnName; }
-			set { columnName = value; }
-		}
-
-		public String DataTypeName {
-			get { return dataTypeName; }
-			set { dataTypeName = value; }
-		}
-
-		public bool AllowDBNull {
-			get { return nullable; }
-			set { nullable = value; }
+		public string TableName {
+			get { return tableName; }
+			set { tableName = value; }
 		}
 
 		public bool IsReadOnly {
-			get { return writable; }
-			set { writable = value; }
-		}
-
-		public Type FieldType {
-			get { return fieldType; }
-			set { fieldType = value; }
+			get { return isReadOnly; }
+			set { isReadOnly = value; }
 		}
 		
 		#endregion // Properties
