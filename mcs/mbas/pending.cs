@@ -546,9 +546,9 @@ namespace Mono.MonoBASIC {
 							type.FullName + "." + mi.Name + "'" + extra);
 					} else {
 						Report.Error (
-							534, container.Location,
+							30610, container.Location,
 							"`" + container.Name + "' does not implement " +
-							"inherited abstract member `" +
+							"inherited 'MustOverride' member `" +
 							type.FullName + "." + mi.Name + "'");
 					}
 					errors = true;

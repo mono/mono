@@ -4525,8 +4525,8 @@ namespace Mono.MonoBASIC {
 
 			if (type.IsInterface || type.IsAbstract){
 				Error (
-					144, "It is not possible to create instances of interfaces " +
-					"or abstract classes");
+					30376, "It is not possible to create instances of Interfaces " +
+					"or classes marked as MustInherit");
 				return null;
 			}
 			

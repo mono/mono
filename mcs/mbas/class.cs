@@ -685,6 +685,11 @@ namespace Mono.MonoBASIC {
 					start = 0;
 				}
 
+				if (parent.IsSealed )
+					Report.Error (30299, Location,
+								"Class " + Name + " cannot inherit " +
+								"'NotInheritable' class " + TypeManager.MonoBASIC_Name (parent));
+					
 				if (!AsAccessible (parent, ModFlags))
 					Report.Error (60, Location,
 						      "Inconsistent accessibility: base class `" +
@@ -703,7 +708,7 @@ namespace Mono.MonoBASIC {
 				Expression resolved = ResolveTypeExpr (name, false, Location);
 				bases [i] = resolved;
 				Type t = resolved.Type;
-
+                
 				if (t == null){
 					error = true;
 					return null;
@@ -715,7 +720,7 @@ namespace Mono.MonoBASIC {
 					error = true;
 					return null;
 				}
-				
+			
 				if (t.IsSealed) {
 					string detail = "";
 					
@@ -775,6 +780,12 @@ namespace Mono.MonoBASIC {
 				is_class = false;
 
 			ec = new EmitContext (this, Mono.MonoBASIC.Location.Null, null, null, ModFlags);
+
+			if (((ModFlags & Modifiers.ABSTRACT ) != 0) && 
+						((ModFlags & Modifiers.SEALED) != 0)){
+				Report.Error (31408, Location,
+					"Class declared as 'MustInherit' cannot be declared as 'NotInheritable'");
+			}
 
 			ifaces = GetClassBases (is_class, out parent, out error); 
 			
@@ -1687,10 +1698,18 @@ namespace Mono.MonoBASIC {
 					ok = false;
 				}
 
-				if ((ModFlags & Modifiers.ABSTRACT) == 0){
+				if((ModFlags & Modifiers.SEALED) != 0){
 					Report.Error (
-						513, loc, name +
-						" is abstract but its container class is not");
+						30607, loc, 
+						"Class declared as 'NotInheritable' " +
+						"cannot have a 'MustOverride' member");
+					ok = false;
+				}
+				else if ((ModFlags & Modifiers.ABSTRACT) == 0){
+					Report.Error (
+						31411, loc, name +
+						" is declared as 'MustOverride', hence its container " +
+						"class should be declared as 'MustInherit'");
 					ok = false;
 
 				}

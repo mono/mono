@@ -106,10 +106,8 @@ namespace Mono.MonoBASIC {
 				}
 			}
 
-			if ((ModFlags & ( Modifiers.NEW | Modifiers.SHADOWS | Modifiers.OVERRIDE )) == 0) 
-			{
-				if ((ModFlags & Modifiers.NONVIRTUAL) != 0)
-				{
+			if ((ModFlags & ( Modifiers.NEW | Modifiers.SHADOWS | Modifiers.OVERRIDE )) == 0) {
+				if ((ModFlags & Modifiers.NONVIRTUAL) != 0)	{
 					Report.Error (31088, Location,
 						parent.MakeName (Name) + " cannot " +
 						"be declared NotOverridable since this method is " +
@@ -117,7 +115,18 @@ namespace Mono.MonoBASIC {
 				}
 			}
 
-			if (mb.IsVirtual || mb.IsAbstract){
+			if (mb.IsAbstract) {
+				if ((ModFlags & (Modifiers.OVERRIDE)) == 0)	{
+					if (Name != "Finalize") {
+						Report.Error (
+							31404, Location, 
+							name + " cannot Shadows the method " +
+							parent.MakeName (Name) + " since it is declared " +
+							"'MustOverride' in base class");
+					}
+				}
+			}
+			else if (mb.IsVirtual){
 				if ((ModFlags & (Modifiers.NEW | Modifiers.OVERRIDE | Modifiers.SHADOWS)) == 0){
 					if (Name != "Finalize"){
 						Report.Warning (
@@ -128,10 +137,10 @@ namespace Mono.MonoBASIC {
 						ModFlags |= Modifiers.SHADOWS;
 					}
 				}
-			} else {
+			} 
+			else {
 				if ((ModFlags & (Modifiers.NEW | Modifiers.OVERRIDE | 
-					Modifiers.SHADOWS)) == 0)
-				{
+					Modifiers.SHADOWS)) == 0){
 					if (Name != "Finalize"){
 						Report.Warning (
 							40004, 1, Location, "The keyword Shadows is required on " +

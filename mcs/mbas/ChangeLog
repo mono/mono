@@ -1,3 +1,10 @@
+2004-04-05 Anirban Bhattacharjee <banirban@novell.com>
+	* class.cs:
+	* decl.cs:
+	* expression.cs:
+	* pending.cs: 
+	Several error messages and numbers are changed in all the above four classes
+
 2004-04-04 AnirbanBhattacharjee <banirban@novell.com>
 	* delegate.cs: changed default access modifier
 	* enum.cs: changed default access modifier
