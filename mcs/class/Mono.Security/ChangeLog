@@ -1,7 +1,8 @@
 2004-02-06  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Mono.Security.dll.sources: Added KeyPairPersistence and it's 
-	dependencies in Mono.Xml (MiniParser and SecurityParser).
+	dependencies in Mono.Xml (MiniParser and SecurityParser). Also 
+	added CryptoTools and SymmetricTransforms in Mono.Sec.Crypt.
 	* Mono.Security_test.dll.sources: Added unit tests for 
 	KeyPairPersistence.
 
