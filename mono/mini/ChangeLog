@@ -1,3 +1,8 @@
+2004-08-18  Zoltan Varga  <vargaz@freemail.hu>
+
+	* mini-amd64.c (mono_arch_is_int_overflow): Handle all possible 
+	registers.
+
 2004-08-18 Ben Maurer  <bmaurer@users.sourceforge.net>
 
 	* mini.h: new arch functions for TLS intrinsics.
