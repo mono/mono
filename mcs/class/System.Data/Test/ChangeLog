@@ -1,3 +1,12 @@
+2002-10-04  Daniel Morgan <danmorg@sc.rr.com>
+
+	* SqlSharpCli.cs: modified 
+	  - fix compile errors due to mcs has better error checking
+	  - fix exection of query with semicolon at end which resulted in an exception
+	  - added support for ? postioned parameters
+	  - added support for [] delimited named parameters
+	  - misc. tidbits
+
 2002-10-03  ville <vi64pa@koti.soon.fi>
 
 	* System.Data.SqlClient/AllTests.cs:

@@ -339,9 +339,9 @@ namespace Mono.Data.SqlSharp {
 		public void BuildParameters(IDbCommand cmd) {
 			ParametersBuilder parmsBuilder = 
 				new ParametersBuilder(cmd, 
-				BindVariableCharacter.Semicolon);
+				BindVariableCharacter.Colon);
 			
-			Console.WriteLine("GetParms...");
+			Console.WriteLine("Get Parameters (if any)...");
 			parmsBuilder.ParseParameters();
 			IList parms = (IList) cmd.Parameters;
 		
@@ -354,15 +354,24 @@ namespace Mono.Data.SqlSharp {
 				
 				string inValue = "";
 				bool found;
-				found = GetInternalVariable(theParmName, out inValue);
-				if(found == true) {
+				if(parmsBuilder.ParameterMarkerCharacter == '?') {
+					Console.Write("Enter Parameter " + 
+						(p + 1).ToString() +
+						": ");
+					inValue = Console.ReadLine();
 					prm.Value = inValue;
 				}
 				else {
-					Console.Write("Enter Parameter " + (p + 1).ToString() +
-						": " + theParmName + ": ");
-					inValue = Console.ReadLine();
-					prm.Value = inValue;
+					found = GetInternalVariable(theParmName, out inValue);
+					if(found == true) {
+						prm.Value = inValue;
+					}
+					else {
+						Console.Write("Enter Parameter " + (p + 1).ToString() +
+							": " + theParmName + ": ");
+						inValue = Console.ReadLine();
+						prm.Value = inValue;
+					}
 				}
 			}
 			parmsBuilder = null;
@@ -437,7 +446,7 @@ namespace Mono.Data.SqlSharp {
 		}
 
 		public void ExecuteSqlScalar(string sql) {
-			Console.WriteLine("Execute SQL Non Query: " + sql);
+			Console.WriteLine("Execute SQL Scalar: " + sql);
 
 			IDbCommand cmd = null;
 			string retrievedValue = "";
@@ -546,6 +555,12 @@ namespace Mono.Data.SqlSharp {
 					conn = new OleDbConnection();
 					break;
 				case "POSTGRESQL":
+					// FIXME: System.Data.SqlClient should
+					//        be used for MS SQL Server 7/2000
+					//        and move the PostgreSQL provider
+					//        to Mono.Data.PostgreSQL
+					//        and use a connection class
+					//        PgSqlConnection
 					conn = new SqlConnection();
 					break;
 				case "LOADEXTPROVIDER":
@@ -642,9 +657,6 @@ namespace Mono.Data.SqlSharp {
 				connectionString = entry.Substring(18, entry.Length - 18);
 			else
 				connectionString = "";
-		}
-
-		public void ReadCommandsFromFile(StreamReader inCmds) {
 		}
 
 		public void SetupOutputResultsFile(string[] parms) {
@@ -991,7 +1003,8 @@ namespace Mono.Data.SqlSharp {
 				if(build == null)
 					Console.WriteLine("SQL Buffer is empty.");
 				else
-					Console.WriteLine("SQL Bufer\n" + buff);
+					Console.WriteLine("SQL Bufer:\n" + buff);
+				break;
 			default:
 				// Error
 				Console.WriteLine("Error: Unknown user command.");
@@ -1089,7 +1102,7 @@ namespace Mono.Data.SqlSharp {
 							build = new StringBuilder();
 						}
 						build.Append(entry);
-						build.Append("\n");
+						//build.Append("\n");
 						buff = build.ToString();
 						ExecuteSql(buff);
 						build = null;
@@ -1111,10 +1124,11 @@ namespace Mono.Data.SqlSharp {
 		}
 	}
 
-	enum BindVariableCharacter {
-		Semicolon,    // ';'
-		At,           // '@'
-		QuestionMark  // '?'
+	public enum BindVariableCharacter {
+		Colon,         // ':'  - named parameter - :name
+		At,            // '@'  - named parameter - @name
+		QuestionMark,  // '?'  - positioned parameter - ?
+		SquareBrackets // '[]' - delimited named parameter - [name]
 	}
 
 	public class ParametersBuilder {
@@ -1127,11 +1141,14 @@ namespace Mono.Data.SqlSharp {
 			
 		private void SetBindCharacter() {
 			switch(bindCharSetting) {
-			case BindVariableCharacter.Semicolon:
+			case BindVariableCharacter.Colon:
 				bindChar = ':';
 				break;
 			case BindVariableCharacter.At:
 				bindChar = '@';
+				break;
+			case BindVariableCharacter.SquareBrackets:
+				bindChar = '[';
 				break;
 			case BindVariableCharacter.QuestionMark:
 				bindChar = '?';
@@ -1146,6 +1163,12 @@ namespace Mono.Data.SqlSharp {
 			bindCharSetting = bindVarChar;
 			SetBindCharacter();
 		}	
+
+		public char ParameterMarkerCharacter {
+			get {
+				return bindChar;
+			}
+		}
 
 		public int ParseParameters() {	
 
@@ -1165,28 +1188,64 @@ namespace Mono.Data.SqlSharp {
 				}
 				else if(chars[i] == bindChar && 
 					bStringConstFound == false) {
-					StringBuilder parm = new StringBuilder();
-					i++;
-					while(i <= chars.Length) {
-						char ch;
-						if(i == chars.Length)
-							ch = ' '; // a space
-						else
-							ch = chars[i];
+					if(bindChar != '?') {
+						StringBuilder parm = new StringBuilder();
+						i++;
+						if(bindChar.Equals('[')) {
+							bool endingBracketFound = false;
+							while(i <= chars.Length) {
+								char ch;
+								if(i == chars.Length)
+									ch = ' '; // a space
+								else
+									ch = chars[i];
 
-						if(Char.IsLetterOrDigit(ch)) {
-							parm.Append(ch);
+								if(Char.IsLetterOrDigit(ch) || ch == ' ') {
+									parm.Append(ch);
+								}
+								else if (ch == ']') {
+									endingBracketFound = true;
+									string p = parm.ToString();
+									AddParameter(p);
+									numParms ++;
+									break;
+								}
+								else throw new Exception("SQL Parser Error: Invalid character in parameter name");
+								i++;
+							}
+							i--;
+							if(endingBracketFound == false)
+								throw new Exception("SQL Parser Error: Ending bracket not found for parameter");
 						}
 						else {
+							while(i <= chars.Length) {
+								char ch;
+								if(i == chars.Length)
+									ch = ' '; // a space
+								else
+									ch = chars[i];
 
-							string p = parm.ToString();
-							AddParameter(p);
-							numParms ++;
-							break;
+								if(Char.IsLetterOrDigit(ch)) {
+									parm.Append(ch);
+								}
+								else {
+
+									string p = parm.ToString();
+									AddParameter(p);
+									numParms ++;
+									break;
+								}
+								i++;
+							}
+							i--;
 						}
-						i++;
 					}
-					i--;
+					else {
+						// placeholder paramaeter for ?
+						string p = numParms.ToString();
+						AddParameter(p);
+						numParms ++;
+					}
 				}			
 			}
 			return numParms;
