@@ -818,6 +818,37 @@ namespace System
 				if (schemes [i].scheme == scheme)
 					return schemes [i].defaultPort;
 			return -1;			
-		}				
+		}
+
+		protected virtual bool IsBadFileSystemCharacter (char ch)
+		{
+			foreach (char c in System.IO.Path.InvalidPathChars)
+				if (c == ch)
+					return true;
+			return false;
+		}
+
+		
+		protected static bool IsExcludedCharacter (char ch)
+		{
+			if (ch <= 32 || ch >= 127)
+				return true;
+			
+			if (ch == '"' || ch == '#' || ch == '%' || ch == '<' ||
+			    ch == '>' || ch == '[' || ch == '\\' || ch == ']' ||
+			    ch == '^' || ch == '`' || ch == '{' || ch == '|' ||
+			    ch == '}')
+				return true;
+			return false;
+		}
+
+		protected virtual bool IsReservedCharacter (char ch)
+		{
+			if (ch == '$' || ch == '&' || ch == '+' || ch == ',' ||
+			    ch == '/' || ch == ':' || ch == ';' || ch == '=' ||
+			    ch == '@')
+				return true;
+			return false;
+		}
 	}
 }

@@ -1,3 +1,6 @@
+2002-09-16  Miguel de Icaza  <miguel@ximian.com>
+
+	* Uri.cs: Implemented a few of the protected methods. 
 
 Mon Jun 17 15:05:05 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
