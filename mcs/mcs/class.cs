@@ -5785,7 +5785,7 @@ namespace Mono.CSharp {
 
 		public virtual void Emit (TypeContainer container)
 		{
-			method_data.Emit (container, this);
+			EmitMethod (container);
 
 			if (declarative_security != null) {
 				foreach (DictionaryEntry de in declarative_security) {
@@ -5794,6 +5794,11 @@ namespace Mono.CSharp {
 			}
 
 			block = null;
+		}
+
+		protected virtual void EmitMethod (TypeContainer container)
+		{
+			method_data.Emit (container, this);
 		}
 
 		public override bool IsClsCompliaceRequired(DeclSpace ds)
@@ -6736,10 +6741,10 @@ namespace Mono.CSharp {
 			}
 
 
-			public override void Emit (TypeContainer tc)
+			protected override void EmitMethod (TypeContainer tc)
 			{
 				if (block != null) {
-					base.Emit (tc);
+					base.EmitMethod (tc);
 					return;
 				}
 
