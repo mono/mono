@@ -42,8 +42,31 @@ namespace Microsoft.JScript {
 		[JSFunctionAttribute (JSFunctionAttributeEnum.HasVarArgs)]
 		public new StringObject CreateInstance (params Object [] args)
 		{
-			throw new NotImplementedException ();
+			if (args == null || args.Length == 0)
+				return new StringObject ();
+
+			object tmp = args [0];
+
+			if (tmp == null)
+				return new StringObject ("undefined");
+
+			IConvertible ic = tmp as IConvertible;			       
+			TypeCode tc = ic.GetTypeCode ();
+
+			switch (tc) {
+			case TypeCode.Empty:
+				return new StringObject ("null");
+			case TypeCode.Double:
+			case TypeCode.String:
+				return new StringObject (ic.ToString (null));
+			case TypeCode.DBNull:
+				return new StringObject ("null");
+			default:
+				Console.WriteLine ("tc = {0}", tc);
+				throw new Exception ("unknown TypeCode");
+			}
 		}
+
 
 		public string Invoke (Object arg)
 		{
