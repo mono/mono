@@ -145,7 +145,7 @@ namespace System.Runtime.Remoting.Channels.Http
 
 		public virtual IMessageSink CreateMessageSink(String url, Object remoteChannelData, out String objectURI)
 		{
-			if (url == null && remoteChannelData != null && remoteChannelData as IChannelDataStore != null )
+			if ((url == null || !HttpHelper.StartsWithHttp (url)) && remoteChannelData != null && remoteChannelData as IChannelDataStore != null )
 			{
 				IChannelDataStore ds = (IChannelDataStore) remoteChannelData;
 				url = ds.ChannelUris[0];

@@ -1,3 +1,9 @@
+2004-10-22  Lluis Sanchez Gual <lluis@ximian.com>
+
+	* HttpClientChannel.cs: In CreateMessageSink, process the remote channel
+	  data if the provided url does not have the expected format. This fixes
+	  a regression from the fix for bug #66768 and fixes #68669.
+
 2004-09-27  Lluis Sanchez Gual <lluis@ximian.com>
 
 	* HttpClientChannel.cs: Throw an http exception if the response is a 500,
