@@ -1,4 +1,4 @@
-thisdir = monoresgen
+thisdir = tools/resgen
 SUBDIRS =
 include ../../build/rules.make
 
