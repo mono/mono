@@ -1,3 +1,32 @@
+2001-12-13  Miguel de Icaza  <miguel@ximian.com>
+
+	* support.cs (PtrHashtable): A hashtable that avoid comparing with
+	the object stupid Equals method (because, that like fails all over
+	the place).  We still do not use it.
+
+	* class.cs (TypeContainer.SetRequiredInterface,
+	TypeContainer.RequireMethods): Killed these two routines and moved
+	all the functionality to RegisterRequiredImplementations.
+
+	(TypeContainer.RegisterRequiredImplementations): This routine now
+	registers all the implementations required in an array for the
+	interfaces and abstract methods.  We use an array of structures
+	which can be computed ahead of time to reduce memory usage and we
+	also assume that lookups are cheap as most classes will not
+	implement too many interfaces.
+
+	We also avoid creating too many MethodSignatures.
+
+	(TypeContainer.IsInterfaceMethod): Update and optionally does not
+	clear the "pending" bit if we find that there are problems with
+	the declaration.
+
+	(TypeContainer.VerifyPendingMethods): Update to report errors of
+	methods that look like implementations but are not.
+
+	(TypeContainer.Define): Add support for explicit interface method
+	implementation. 
+	
 2001-12-12  Miguel de Icaza  <miguel@ximian.com>
 
 	* typemanager.cs: Keep track of the parameters here instead of

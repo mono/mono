@@ -8,10 +8,11 @@
 // (C) 2001 Ximian, Inc (http://www.ximian.com)
 //
 
-using System.Reflection.Emit;
-using System.Reflection;
 using System;
 using System.Text;
+using System.Reflection;
+using System.Collections;
+using System.Reflection.Emit;
 
 namespace Mono.CSharp {
 
@@ -164,5 +165,22 @@ namespace Mono.CSharp {
 				return parameters.FixedParameters [pos].ModFlags;
 		}
 		
+	}
+
+	class PtrHashtable : Hashtable {
+		class PtrComparer : IComparer {
+			public int Compare (object x, object y)
+			{
+				if (x == y)
+					return 0;
+				else
+					return 1;
+			}
+		}
+		
+		public PtrHashtable ()
+		{
+			comparer = new PtrComparer ();
+		}
 	}
 }

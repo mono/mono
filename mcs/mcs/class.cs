@@ -577,13 +577,75 @@ namespace Mono.CSharp {
 			}
 		}
 
+		struct TypeAndMethods {
+			public Type          type;
+			public MethodInfo [] methods;
+
+			// Far from ideal, but we want to avoid creating a copy
+			// of methods above.
+			public Type [][]     args;
+
+			//
+			// This flag on the method says `We found a match, but
+			// because it was private, we could not use the match
+			//
+			public bool []       found;
+		}
+
+		//
+		// This array keeps track of the pending implementations
+		// 
+		TypeAndMethods [] pending_implementations;
+		
+		//
+		// Registers the required method implementations for this class
+		//
+		// Register method implementations are either abstract methods
+		// flagged as such on the base class or interface methods
+		//
 		public void RegisterRequiredImplementations ()
 		{
 			Type [] ifaces = TypeBuilder.GetInterfaces ();
 			Type b = TypeBuilder.BaseType;
+			int icount = 0;
 			
 			if (ifaces != null)
-				SetRequiredInterfaces (ifaces);
+				icount = ifaces.Length;
+
+			if (icount == 0)
+				return;
+			
+			pending_implementations = new TypeAndMethods [icount + (b.IsAbstract ? 1 : 0)];
+			
+			int i = 0;
+			if (ifaces != null){
+				foreach (Type t in ifaces){
+					MethodInfo [] mi;
+
+					if (t is TypeBuilder){
+						Interface iface;
+
+						iface = RootContext.TypeManager.LookupInterface (t);
+						
+						mi = iface.GetMethods ();
+					} else
+						mi = t.GetMethods ();
+
+					int count = mi.Length;
+					pending_implementations [i].type = t;
+					pending_implementations [i].methods = mi;
+					pending_implementations [i].args = new Type [count][];
+					pending_implementations [i].found = new bool [count];
+					
+					int j = 0;
+					foreach (MethodInfo m in mi){
+						Type [] types = TypeManager.GetArgumentTypes (m);
+						pending_implementations [i].args [j] = types;
+						j++;
+					}
+					i++;
+				}
+			}
 
 			if (b.IsAbstract){
 				MemberInfo [] abstract_methods;
@@ -594,10 +656,11 @@ namespace Mono.CSharp {
 					abstract_method_filter, null);
 
 				if (abstract_methods != null){
-					MethodInfo [] mi = new MethodInfo [abstract_methods.Length];
-
-					abstract_methods.CopyTo (mi, 0);
-					RequireMethods (mi, b);
+					pending_implementations [i].methods = new
+						MethodInfo [abstract_methods.Length];
+					
+					abstract_methods.CopyTo (pending_implementations [i].methods, 0);
+					pending_implementations [i].type = TypeBuilder;
 				}
 			}
 			
@@ -1199,109 +1262,133 @@ namespace Mono.CSharp {
 				return t.FindMembers (mt, bf, filter, criteria);
 		}
 		
-
-		Hashtable pending_implementations;
-		
-		/// <summary>
-		///   Requires that the methods in `mi' be implemented for this
-		///   class
-		/// </summary>
-		public void RequireMethods (MethodInfo [] mi, object data)
-		{
-			if (pending_implementations == null)
-				pending_implementations = new Hashtable ();
-
-			foreach (MethodInfo m in mi){
-				Type [] types = TypeManager.GetArgumentTypes (m);
-
-				pending_implementations.Add (
-					new MethodSignature 
-						(m.Name, m.ReturnType, types), data);
-			}
-		}
-
-		/// <summary>
-		///   Used to set the list of interfaces that this typecontainer
-		///   must implement.
-		/// </summary>
-		///
-		/// <remarks>
-		///   For each element exposed by the type, we create a MethodSignature
-		///   struct that we will label as `implemented' as we define the various
-		///   methods.
-		/// </remarks>
-		public void SetRequiredInterfaces (Type [] ifaces)
-		{
-			foreach (Type t in ifaces){
-				MethodInfo [] mi;
-
-				if (t is TypeBuilder){
-					Interface iface = RootContext.TypeManager.LookupInterface (t);
-
-					mi = iface.GetMethods ();
-				} else
-					mi = t.GetMethods ();
-
-				RequireMethods (mi, t);
-			}
-		}
-
 		/// <summary>
 		///   Whether the specified method is an interface method implementation
 		/// </summary>
 		///
 		/// <remarks>
-		///   If a method with name `Name', return type `ret_type' and
+		///   If a method in Type `t' (or null to look in all interfaces
+		///   and the base abstract class) with name `Name', return type `ret_type' and
 		///   arguments `args' implements an interface, this method will
-		///   return true.
+		///   return the MethodInfo that this method implements.
 		///
 		///   This will remove the method from the list of "pending" methods
 		///   that are required to be implemented for this class as a side effect.
 		/// 
 		/// </remarks>
-		public bool IsInterfaceMethod (string Name, Type ret_type, Type [] args)
+		public MethodInfo IsInterfaceMethod (Type t, string Name, Type ret_type, Type [] args,
+						     bool clear)
 		{
-			MethodSignature query;
-
 			if (pending_implementations == null)
-				return false;
+				return null;
+			
+			foreach (TypeAndMethods tm in pending_implementations){
+				if (!(t == null || tm.type == t))
+					continue;
 
-			query = new MethodSignature (Name, ret_type, args);
+				int i = 0;
+				foreach (MethodInfo m in tm.methods){
+					if (m == null){
+						i++;
+						continue;
+					}
+					
+					if (Name != m.Name){
+						i++;
+						continue;
+					}
+					
+					if (ret_type != m.ReturnType){
+						i++;
+						continue;
+					}
+					
+					if (args == null){
+						if (tm.args [i] == null || tm.args [i].Length == 0){
+							if (clear)
+								tm.methods [i] = null;
+							tm.found [i] = true;
+							return m;
+						} 
+						i++;
+						continue;
+					}
+					
+					if (tm.args [i] == null){
+						i++;
+						continue;
+					}
 
-			if (pending_implementations.Contains (query)){
-				pending_implementations.Remove (query);
-				return true;
+					//
+					// Check if we have the same parameters
+					//
+					if (tm.args [i].Length != args.Length){
+						i++;
+						continue;
+					}
+					
+					int j;
+						
+					for (j = 0; j < args.Length; j++){
+						if (tm.args [i][j] != args[i]){
+							i++;
+							continue;
+						}
+					}
+
+					if (clear)
+						tm.methods [i] = null;
+					tm.found [i] = true;
+					return m;
+				}
+
+				// If a specific type was requested, we can stop now.
+				if (tm.type == t)
+					return null;
 			}
-
-			return false;
+			return null;
 		}
 
 		/// <summary>
 		///   Verifies that any pending abstract methods or interface methods
 		///   were implemented.
 		/// </summary>
-		void VerifyPendingMethods ()
+		bool VerifyPendingMethods ()
 		{
-			int pending = 0;
+			int top = pending_implementations.Length;
+			bool errors = false;
+			int i;
 			
-			foreach (object m in pending_implementations){
-				DictionaryEntry de = (DictionaryEntry) m;
-				Type t = (Type) de.Value;
-				pending++;
+			for (i = 0; i < top; i++){
+				Type type = pending_implementations [i].type;
+				int j = 0;
+				
+				foreach (MethodInfo mi in pending_implementations [i].methods){
+					if (mi == null)
+						continue;
 
-				MethodSignature method = (MethodSignature) de.Key;
-
-				if (t.IsInterface)
-					Report.Error (
-						536, Location,
-						"`" + Name + "' does not implement interface member `" +
-						t.FullName + "." + method.Name + "'");
-				else
-					Report.Error (
-						534, Location,
-						"`" + Name + "' does not implement inherited abstract " +
-						"member `" + t.FullName + "." + method.Name + "'");
+					if (type.IsInterface){
+						string extra = "";
+						
+						if (pending_implementations [i].found [j])
+							extra = ".  (method might be private or static)";
+						Report.Error (
+							536, Location,
+							"`" + mi.Name + "' does not implement " +
+							"interface member `" +
+							type.FullName + "." + mi.Name + "'" + extra);
+					} else {
+						Report.Error (
+							534, Location,
+							"`" + mi.Name + "' does not implement " +
+							"inherited abstract member `" +
+							type.FullName + "." + mi.Name + "'");
+					}
+					errors = true;
+					j++;
+				}
 			}
+			return errors;
 		}
 		
 		/// <summary>
@@ -1343,7 +1430,8 @@ namespace Mono.CSharp {
 					e.Emit (this);
 			
 			if (pending_implementations != null)
-				VerifyPendingMethods ();
+				if (!VerifyPendingMethods ())
+					return;
 
 			if (OptAttributes != null) {
 				EmitContext ec = new EmitContext (this, Location.Null, null, null,
@@ -1503,7 +1591,7 @@ namespace Mono.CSharp {
 
 	public class MethodCore {
 		public readonly Parameters Parameters;
-		public readonly string Name;
+		public string Name;
 		public int ModFlags;
 		Block block;
 		public readonly Location Location;
@@ -1722,6 +1810,8 @@ namespace Mono.CSharp {
 
 			return true;
 		}
+
+		static Hashtable mine;
 		
 		//
 		// Creates the type
@@ -1732,6 +1822,9 @@ namespace Mono.CSharp {
 			Type [] parameters = ParameterTypes (parent);
 			MethodAttributes flags;
 			bool error = false;
+			MethodInfo implementing;
+			Type iface_type = null;
+			string iface = "";
 			
 			//
 			// Verify if the parent has a type with the same name, and then
@@ -1764,17 +1857,72 @@ namespace Mono.CSharp {
 				WarningNotHiding (parent);
 
 			//
-			// If we implement an interface, then set the proper flags.
+			// If we implement an interface, extract the interface name.
 			//
 			flags = Modifiers.MethodAttr (ModFlags);
 
-			if (parent.IsInterfaceMethod (Name, ret_type, parameters)){
+			if (Name.IndexOf (".") != -1){
+				int pos = Name.LastIndexOf (".");
+				iface = Name.Substring (0, pos);
+				Name = Name.Substring (pos + 1);
+
+				iface_type = parent.LookupType (iface, false);
+
+				//
+				// FIXME: Should we return here if iface_type == null?
+				//
+			}
+
+			//
+			// Check if we are an implementation of an interface method or
+			// a method
+			//
+			implementing = parent.IsInterfaceMethod (
+				iface_type, Name, ret_type, parameters, false);
+				
+			//
+			// For implicit implementations, make sure we are public, for
+			// explicit implementations, make sure we are private.
+			//
+			if (implementing != null){
+				if (iface_type == null){
+					if ((ModFlags & Modifiers.PUBLIC) == 0){
+						//
+						// This forces a 536 (not impl) with extra information.
+						//
+						implementing = null;
+					}
+					if ((ModFlags & Modifiers.STATIC) != 0){
+						//
+						// This forces a 536 (not impl) with extra information.
+						//
+						implementing = null;
+					}
+					
+				} else {
+					if ((ModFlags & (Modifiers.PUBLIC | Modifiers.ABSTRACT)) != 0){
+						Report.Error (
+							106, Location, "`public' or `abstract' modifiers "+
+							"are not allowed in explicit interface declarations"
+							);
+						implementing = null;
+					}
+				}
+			}
+			
+			//
+			// If implementing is still valid, set flags
+			//
+			if (implementing != null){
 				flags |= MethodAttributes.Virtual |
 					 MethodAttributes.NewSlot | MethodAttributes.HideBySig;
 
 				// If not abstract, then we can set Final.
 				if ((flags & MethodAttributes.Abstract) == 0)
 					flags |= MethodAttributes.Final;
+				
+				parent.IsInterfaceMethod (
+					iface_type, Name, ret_type, parameters, true);
 			}
 
 			//
@@ -1862,20 +2010,27 @@ namespace Mono.CSharp {
 					Name, flags, ret_type, parameters);
 			} else {
 				MethodBuilder = parent.TypeBuilder.DefineMethod (
-								      Name, flags,
-								      GetCallingConvention (parent is Class),
-								      ret_type, parameters);
+					Name, flags,
+					GetCallingConvention (parent is Class),
+					ret_type, parameters);
+
+				if (implementing != null){
+					parent.TypeBuilder.DefineMethodOverride (
+						MethodBuilder, implementing);
+				}
 			}
 
 			if (MethodBuilder == null)
 				return null;
+
 
 			//
 			// HACK because System.Reflection.Emit is lame
 			//
 			ParameterInfo = new InternalParameters (parent, Parameters);
 
-			if (!TypeManager.RegisterMethod (MethodBuilder, ParameterInfo, parameters)) {
+			if (!TypeManager.RegisterMethod (MethodBuilder, ParameterInfo,
+							 parameters)) {
 				Report.Error (
 					111, Location,
 					"Class `" + parent.Name + "' already contains a definition with " +

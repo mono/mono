@@ -1,10 +1,10 @@
+Major tasks:
+------------
+
+	Apply the method verification process to indexers and properties as well.
+
 BUGS
 ----
-
-* While reworking the return system
-
-	I might have dropped a few features from EmitTopBlock return
-	code path.
 
 * Adding variables.
 
@@ -101,6 +101,19 @@ BUGS
 	I am not using the checked state while doing type casts,
 	they should result in conv.ovf.XXX
 
+* Method Registration and error CS111
+
+	The way we use the method registration to signal 111 is wrong.
+	
+	Method registration should only be used to register methodbuilders,
+	we need an alternate method of checking for duplicates.
+
+* Mapping of methods
+
+	Currently various hashtables fail because the Equals implementation
+	for MethodBuilders is not complete enough.  We could work around this
+	by having our own Hashtable implementation.
+	
 *
 > // CSC sets beforefieldinit
 > class X {
@@ -114,8 +127,6 @@ PENDING TASKS
 -------------
 
 	* Implement Goto.
-
-	* Implement explicit interface implemenation.
 
 	* Unsafe code.
 		Making the parser accept unsafe code.

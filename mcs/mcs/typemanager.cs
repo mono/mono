@@ -559,7 +559,7 @@ public class TypeManager {
 	static string GetSig (MethodBase mb)
 	{
 		if (mb is MethodBuilder || mb is ConstructorBuilder)
-			return mb.ReflectedType.FullName + ":" + mb;
+			return mb.ReflectedType.FullName + ":" + ":" + mb;
 		else
 			return mb.MethodHandle.ToString ();
 	}
@@ -600,6 +600,7 @@ public class TypeManager {
 	{
 		return (DictionaryEntry) delegate_to_data [t];
 	}
+
 	
 	//
 	// Gigantic work around for stupidity in System.Reflection.Emit follows
@@ -622,7 +623,7 @@ public class TypeManager {
 		
 		return true;
 	}
-
+	
 	static public InternalParameters LookupParametersByBuilder (MethodBase mb)
 	{
 		string sig = GetSig (mb);
