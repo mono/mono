@@ -42,7 +42,7 @@ namespace System.Security.Permissions {
 		Sign = 256,
 		Decrypt = 512,
 		ViewAcl = 1024,
-		ChangeAcl = 2048
+		ChangeAcl = 2048,
 		AllFlags = Create | Decrypt | Delete | Export | Import | Open | Sign | ViewAcl | ChangeAcl
 	}
 }
