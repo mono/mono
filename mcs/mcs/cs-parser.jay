@@ -1166,7 +1166,7 @@ constructor_declaration
 			}
 		} else {
 			if (c.Initializer == null)
-				c.Initializer = new ConstructorBaseInitializer (null);
+				c.Initializer = new ConstructorBaseInitializer (null, lexer.Location);
 		}
 		CheckDef (current_container.AddConstructor (c), c.Name);
 
@@ -1193,11 +1193,11 @@ opt_constructor_initializer
 constructor_initializer
 	: COLON BASE OPEN_PARENS opt_argument_list CLOSE_PARENS
 	  {
-		$$ = new ConstructorBaseInitializer ((ArrayList) $4);
+		$$ = new ConstructorBaseInitializer ((ArrayList) $4, lexer.Location);
 	  }
 	| COLON THIS OPEN_PARENS opt_argument_list CLOSE_PARENS
 	  {
-		$$ = new ConstructorThisInitializer ((ArrayList) $4);
+		$$ = new ConstructorThisInitializer ((ArrayList) $4, lexer.Location);
 	  }
 	;
 
@@ -1674,14 +1674,14 @@ base_access
 post_increment_expression
 	: primary_expression OP_INC
 	  {
-		$$ = new Unary (Unary.Operator.PostIncrement, (Expression) $1);
+		$$ = new Unary (Unary.Operator.PostIncrement, (Expression) $1, lexer.Location);
 	  }
 	;
 
 post_decrement_expression
 	: primary_expression OP_DEC
 	  {
-		$$ = new Unary (Unary.Operator.PostDecrement, (Expression) $1);
+		$$ = new Unary (Unary.Operator.PostDecrement, (Expression) $1, lexer.Location);
 	  }
 	;
 
@@ -1693,7 +1693,7 @@ new_expression
 object_or_delegate_creation_expression
 	: NEW type OPEN_PARENS opt_argument_list CLOSE_PARENS
 	  {
-		$$ = new New ((string) $2, (ArrayList) $4);
+		$$ = new New ((string) $2, (ArrayList) $4, lexer.Location);
 	  }
 	;
 
@@ -1702,7 +1702,7 @@ array_creation_expression
 	  opt_rank_specifier
 	  opt_array_initializer
 	  {
-		$$ = new New ((string) $2, (ArrayList) $4, (string) $6, (ArrayList) $7);
+		$$ = new New ((string) $2, (ArrayList) $4, (string) $6, (ArrayList) $7, lexer.Location);
 	  }
 	;
 
@@ -1828,35 +1828,35 @@ unchecked_expression
 unary_expression
 	: primary_expression
 	| PLUS unary_expression		{ 
-	  	$$ = new Unary (Unary.Operator.Add, (Expression) $2);
+	  	$$ = new Unary (Unary.Operator.Add, (Expression) $2, lexer.Location);
 	  } 
 	| MINUS unary_expression 
 	  { 
-		$$ = new Unary (Unary.Operator.Subtract, (Expression) $2);
+		$$ = new Unary (Unary.Operator.Subtract, (Expression) $2, lexer.Location);
 	  }
 	| BANG unary_expression 
 	  {
-		$$ = new Unary (Unary.Operator.Negate, (Expression) $2);
+		$$ = new Unary (Unary.Operator.Negate, (Expression) $2, lexer.Location);
 	  }
 	| TILDE unary_expression
 	  {
-		$$ = new Unary (Unary.Operator.BitComplement, (Expression) $2);
+		$$ = new Unary (Unary.Operator.BitComplement, (Expression) $2, lexer.Location);
 	  }
 	| STAR unary_expression
 	  {
-		$$ = new Unary (Unary.Operator.Indirection, (Expression) $2);
+		$$ = new Unary (Unary.Operator.Indirection, (Expression) $2, lexer.Location);
 	  }
 	| BITWISE_AND unary_expression
 	  {
-		$$ = new Unary (Unary.Operator.AddressOf, (Expression) $2);
+		$$ = new Unary (Unary.Operator.AddressOf, (Expression) $2, lexer.Location);
 	  }
 	| OP_INC unary_expression 
 	  {
-		$$ = new Unary (Unary.Operator.PreIncrement, (Expression) $2);
+		$$ = new Unary (Unary.Operator.PreIncrement, (Expression) $2, lexer.Location);
 	  }
 	| OP_DEC unary_expression 
 	  {
-		$$ = new Unary (Unary.Operator.PreDecrement, (Expression) $2);
+		$$ = new Unary (Unary.Operator.PreDecrement, (Expression) $2, lexer.Location);
 	  }
         | cast_expression 
 	/*
@@ -1869,14 +1869,14 @@ unary_expression
 pre_increment_expression
 	: OP_INC unary_expression 
 	  {
-		$$ = new Unary (Unary.Operator.PreIncrement, (Expression) $2);
+		$$ = new Unary (Unary.Operator.PreIncrement, (Expression) $2, lexer.Location);
 	  }
 	;
 
 pre_decrement_expression
 	: OP_DEC unary_expression 
 	  {
-		$$ = new Unary (Unary.Operator.PreDecrement, (Expression) $2);
+		$$ = new Unary (Unary.Operator.PreDecrement, (Expression) $2, lexer.Location);
 	  }
 	;
 
@@ -1904,17 +1904,17 @@ multiplicative_expression
 	| multiplicative_expression STAR unary_expression
 	  {
 		$$ = new Binary (Binary.Operator.Multiply, 
-			         (Expression) $1, (Expression) $3);
+			         (Expression) $1, (Expression) $3, lexer.Location);
 	  }
 	| multiplicative_expression DIV unary_expression
 	  {
 		$$ = new Binary (Binary.Operator.Divide, 
-			         (Expression) $1, (Expression) $3);
+			         (Expression) $1, (Expression) $3, lexer.Location);
 	  }
 	| multiplicative_expression PERCENT unary_expression 
 	  {
 		$$ = new Binary (Binary.Operator.Modulo, 
-			         (Expression) $1, (Expression) $3);
+			         (Expression) $1, (Expression) $3, lexer.Location);
 	  }
 	;
 
@@ -1923,12 +1923,12 @@ additive_expression
 	| additive_expression PLUS multiplicative_expression 
 	  {
 		$$ = new Binary (Binary.Operator.Add, 
-			         (Expression) $1, (Expression) $3);
+			         (Expression) $1, (Expression) $3, lexer.Location);
 	  }
 	| additive_expression MINUS multiplicative_expression
 	  {
 		$$ = new Binary (Binary.Operator.Subtract, 
-			         (Expression) $1, (Expression) $3);
+			         (Expression) $1, (Expression) $3, lexer.Location);
 	  }
 	;
 
@@ -1937,12 +1937,12 @@ shift_expression
 	| shift_expression OP_SHIFT_LEFT additive_expression
 	  {
 		$$ = new Binary (Binary.Operator.ShiftLeft, 
-			         (Expression) $1, (Expression) $3);
+			         (Expression) $1, (Expression) $3, lexer.Location);
 	  }
 	| shift_expression OP_SHIFT_RIGHT additive_expression
 	  {
 		$$ = new Binary (Binary.Operator.ShiftRight, 
-			         (Expression) $1, (Expression) $3);
+			         (Expression) $1, (Expression) $3, lexer.Location);
 	  }
 	; 
 
@@ -1951,22 +1951,22 @@ relational_expression
 	| relational_expression OP_LT shift_expression
 	  {
 		$$ = new Binary (Binary.Operator.LessThan, 
-			         (Expression) $1, (Expression) $3);
+			         (Expression) $1, (Expression) $3, lexer.Location);
 	  }
 	| relational_expression OP_GT shift_expression
 	  {
 		$$ = new Binary (Binary.Operator.GreaterThan, 
-			         (Expression) $1, (Expression) $3);
+			         (Expression) $1, (Expression) $3, lexer.Location);
 	  }
 	| relational_expression OP_LE shift_expression
 	  {
 		$$ = new Binary (Binary.Operator.LessOrEqual, 
-			         (Expression) $1, (Expression) $3);
+			         (Expression) $1, (Expression) $3, lexer.Location);
 	  }
 	| relational_expression OP_GE shift_expression
 	  {
 		$$ = new Binary (Binary.Operator.GreaterOrEqual, 
-			         (Expression) $1, (Expression) $3);
+			         (Expression) $1, (Expression) $3, lexer.Location);
 	  }
 	| relational_expression IS type
 	  {
@@ -1985,12 +1985,12 @@ equality_expression
 	| equality_expression OP_EQ relational_expression
 	  {
 		$$ = new Binary (Binary.Operator.Equal, 
-			         (Expression) $1, (Expression) $3);
+			         (Expression) $1, (Expression) $3, lexer.Location);
 	  }
 	| equality_expression OP_NE relational_expression
 	  {
 		$$ = new Binary (Binary.Operator.NotEqual, 
-			         (Expression) $1, (Expression) $3);
+			         (Expression) $1, (Expression) $3, lexer.Location);
 	  }
 	; 
 
@@ -1999,7 +1999,7 @@ and_expression
 	| and_expression BITWISE_AND equality_expression
 	  {
 		$$ = new Binary (Binary.Operator.BitwiseAnd, 
-			         (Expression) $1, (Expression) $3);
+			         (Expression) $1, (Expression) $3, lexer.Location);
 	  }
 	;
 
@@ -2008,7 +2008,7 @@ exclusive_or_expression
 	| exclusive_or_expression CARRET and_expression
 	  {
 		$$ = new Binary (Binary.Operator.ExclusiveOr, 
-			         (Expression) $1, (Expression) $3);
+			         (Expression) $1, (Expression) $3, lexer.Location);
 	  }
 	;
 
@@ -2017,7 +2017,7 @@ inclusive_or_expression
 	| inclusive_or_expression BITWISE_OR exclusive_or_expression
 	  {
 		$$ = new Binary (Binary.Operator.BitwiseOr, 
-			         (Expression) $1, (Expression) $3);
+			         (Expression) $1, (Expression) $3, lexer.Location);
 	  }
 	;
 
@@ -2026,7 +2026,7 @@ conditional_and_expression
 	| conditional_and_expression OP_AND inclusive_or_expression
 	  {
 		$$ = new Binary (Binary.Operator.LogicalAnd, 
-			         (Expression) $1, (Expression) $3);
+			         (Expression) $1, (Expression) $3, lexer.Location);
 	  }
 	;
 
@@ -2035,7 +2035,7 @@ conditional_or_expression
 	| conditional_or_expression OP_OR conditional_and_expression
 	  {
 		$$ = new Binary (Binary.Operator.LogicalOr, 
-			         (Expression) $1, (Expression) $3);
+			         (Expression) $1, (Expression) $3, lexer.Location);
 	  }
 	;
 
@@ -2057,70 +2057,70 @@ assignment_expression
 		$$ = new Assign ((Expression) $1,
 				 new Binary (Binary.Operator.Multiply, 
 					     (Expression) $1,
-					     (Expression) $3));
+					     (Expression) $3, lexer.Location));
 	  }
 	| unary_expression OP_DIV_ASSIGN expression
 	  {
 		$$ = new Assign ((Expression) $1,
 				 new Binary (Binary.Operator.Divide, 
 					     (Expression) $1,
-					     (Expression) $3));
+					     (Expression) $3, lexer.Location));
 	  }
 	| unary_expression OP_MOD_ASSIGN expression
 	  {
 		$$ = new Assign ((Expression) $1,
 				 new Binary (Binary.Operator.Modulo, 
 					     (Expression) $1,
-					     (Expression) $3));
+					     (Expression) $3, lexer.Location));
 	  }
 	| unary_expression OP_ADD_ASSIGN expression
 	  {
 		$$ = new Assign ((Expression) $1,
 				 new Binary (Binary.Operator.Add, 
 					     (Expression) $1,
-					     (Expression) $3));
+					     (Expression) $3, lexer.Location));
 	  }
 	| unary_expression OP_SUB_ASSIGN expression
 	  {
 		$$ = new Assign ((Expression) $1,
 				 new Binary (Binary.Operator.Subtract, 
 					     (Expression) $1,
-					     (Expression) $3));
+					     (Expression) $3, lexer.Location));
 	  }
 	| unary_expression OP_SHIFT_LEFT_ASSIGN expression
 	  {
 		$$ = new Assign ((Expression) $1,
 				 new Binary (Binary.Operator.ShiftLeft, 
 					     (Expression) $1,
-					     (Expression) $3));
+					     (Expression) $3, lexer.Location));
 	  }
 	| unary_expression OP_SHIFT_RIGHT_ASSIGN expression
 	  {
 		$$ = new Assign ((Expression) $1,
 				 new Binary (Binary.Operator.ShiftRight, 
 					     (Expression) $1,
-					     (Expression) $3));
+					     (Expression) $3, lexer.Location));
 	  }
 	| unary_expression OP_AND_ASSIGN expression
 	  {
 		$$ = new Assign ((Expression) $1,
 				 new Binary (Binary.Operator.BitwiseAnd, 
 					     (Expression) $1,
-					     (Expression) $3));
+					     (Expression) $3, lexer.Location));
 	  }
 	| unary_expression OP_OR_ASSIGN expression
 	  {
 		$$ = new Assign ((Expression) $1,
 				 new Binary (Binary.Operator.BitwiseOr, 
 					     (Expression) $1,
-					     (Expression) $3));
+					     (Expression) $3, lexer.Location));
 	  }
 	| unary_expression OP_XOR_ASSIGN expression
 	  {
 		$$ = new Assign ((Expression) $1,
 				 new Binary (Binary.Operator.ExclusiveOr, 
 					     (Expression) $1,
-					     (Expression) $3));
+					     (Expression) $3, lexer.Location));
 	  }
 	;
 

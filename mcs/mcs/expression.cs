@@ -578,11 +578,13 @@ namespace CIR {
 		Expression expr;
 		ArrayList  Arguments;
 		MethodBase method;
+		Location   location;
 		
-		public Unary (Operator op, Expression expr)
+		public Unary (Operator op, Expression expr, Location loc)
 		{
 			this.oper = op;
 			this.expr = expr;
+			this.location = loc;
 		}
 
 		public Expression Expr {
@@ -691,7 +693,7 @@ namespace CIR {
 				Arguments = new ArrayList ();
 				Arguments.Add (new Argument (expr, Argument.AType.Expression));
 				
-				method = Invocation.OverloadResolve ((MethodGroupExpr) mg, Arguments, tc);
+				method = Invocation.OverloadResolve ((MethodGroupExpr) mg, Arguments, tc, location);
 				if (method != null)
 					return this;
 			}
@@ -1015,13 +1017,15 @@ namespace CIR {
 		Expression left, right;
 		MethodBase method;
 		ArrayList  Arguments;
+		Location   location;
 		
 
-		public Binary (Operator oper, Expression left, Expression right)
+		public Binary (Operator oper, Expression left, Expression right, Location loc)
 		{
 			this.oper = oper;
 			this.left = left;
 			this.right = right;
+			this.location = loc;
 		}
 
 		public Operator Oper {
@@ -1288,7 +1292,7 @@ namespace CIR {
 				Arguments.Add (new Argument (right, Argument.AType.Expression));
 
 			
-				method = Invocation.OverloadResolve (union, Arguments, tc);
+				method = Invocation.OverloadResolve (union, Arguments, tc, location);
 				if (method != null) 
 					return this;
 			}
@@ -2299,7 +2303,8 @@ namespace CIR {
 		//            that is the best match of me on Arguments.
 		//
 		// </summary>
-		public static MethodBase OverloadResolve (MethodGroupExpr me, ArrayList Arguments, TypeContainer tc)
+		public static MethodBase OverloadResolve (MethodGroupExpr me, ArrayList Arguments,
+							  TypeContainer tc, Location loc)
 		{
 			ArrayList afm = new ArrayList ();
 			int best_match_idx = -1;
@@ -2361,10 +2366,11 @@ namespace CIR {
 				Expression conv = ConvertImplicit (a.Expr, pd.ParameterType (j));
 
 				if (conv == null) {
-					tc.RootContext.Report.Error (1502,
+					tc.RootContext.Report.Error (1502, loc,
 					       "The best overloaded match for method '" + FullMethodDesc (method) +
 					       "' has some invalid arguments");
-					tc.RootContext.Report.Error (1503, "Argument " + (j+1) +
+					tc.RootContext.Report.Error (1503, loc,
+					       "Argument " + (j+1) +
 					       " : Cannot convert from '" + TypeManager.CSharpName (a.Expr.Type)
 					       + "' to '" + TypeManager.CSharpName (pd.ParameterType (j)) + "'");
 					return null;
@@ -2403,7 +2409,7 @@ namespace CIR {
 				}
 			}
 
-			method = OverloadResolve ((MethodGroupExpr) this.expr, Arguments, tc);
+			method = OverloadResolve ((MethodGroupExpr) this.expr, Arguments, tc, Location);
 
 			if (method == null){
 				tc.RootContext.Report.Error (-6, Location,
@@ -2489,23 +2495,26 @@ namespace CIR {
 		public readonly string    Rank;
 		public readonly ArrayList Indices;
 		public readonly ArrayList Initializers;
-		
+
+		Location Location;
 		MethodBase method = null;
 
-		public New (string requested_type, ArrayList arguments)
+		public New (string requested_type, ArrayList arguments, Location loc)
 		{
 			RequestedType = requested_type;
 			Arguments = arguments;
 			NewType = NType.Object;
+			Location = loc;
 		}
 
-		public New (string requested_type, ArrayList exprs, string rank, ArrayList initializers)
+		public New (string requested_type, ArrayList exprs, string rank, ArrayList initializers, Location loc)
 		{
 			RequestedType = requested_type;
 			Indices       = exprs;
 			Rank          = rank;
 			Initializers  = initializers;
 			NewType       = NType.Array;
+			Location      = loc;
 		}
 		
 		public override Expression Resolve (TypeContainer tc)
@@ -2538,7 +2547,7 @@ namespace CIR {
 				}
 			}
 
-			method = Invocation.OverloadResolve ((MethodGroupExpr) ml, Arguments, tc);
+			method = Invocation.OverloadResolve ((MethodGroupExpr) ml, Arguments, tc, Location);
 
 			if (method == null) {
 				tc.RootContext.Report.Error (-6,

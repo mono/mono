@@ -1,5 +1,21 @@
 2001-09-24  Ravi Pratap  <ravi@ximian.com>
 
+	* class.cs (ConstructorInitializer): Take a Location argument.
+	(ConstructorBaseInitializer): Same here.
+	(ConstructorThisInitializer): Same here.
+
+	* cs-parser.jay : Update all calls accordingly.
+
+	* expression.cs (Unary, Binary, New): Take location argument.
+	Update accordingly everywhere.
+
+	* cs-parser.jay : Update all calls to the above to take a location
+	argument.
+
+	* class.cs : Ditto.
+
+2001-09-24  Ravi Pratap  <ravi@ximian.com>
+
 	* expression.cs (Invocation::BetterFunction): Take TypeContainer argument
 	(Invocation::BetterConversion): Same here
 	(Invocation::ConversionExists): Ditto.

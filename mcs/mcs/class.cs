@@ -539,7 +539,7 @@ namespace CIR {
 			int mods = 0;
 
 			c = new Constructor (Name, new Parameters (null, null),
-					     new ConstructorBaseInitializer (null));
+					     new ConstructorBaseInitializer (null, new Location ("", 0, 0)));
 			AddConstructor (c);
 			c.Block = new Block (null);
 			
@@ -1014,10 +1014,12 @@ namespace CIR {
 	public abstract class ConstructorInitializer {
 		ArrayList argument_list;
 		ConstructorInfo parent_constructor;
-
-		public ConstructorInitializer (ArrayList argument_list)
+		Location location;
+		
+		public ConstructorInitializer (ArrayList argument_list, Location location)
 		{
 			this.argument_list = argument_list;
+			this.location = location;
 		}
 
 		public ArrayList Arguments {
@@ -1052,7 +1054,7 @@ namespace CIR {
 			}
 			
 			parent_constructor = (ConstructorInfo) Invocation.OverloadResolve (
-				(MethodGroupExpr) parent_constructor_group, argument_list, tc);
+				(MethodGroupExpr) parent_constructor_group, argument_list, tc, location);
 			
 			if (parent_constructor == null)
 				return false;
@@ -1070,13 +1072,13 @@ namespace CIR {
 	}
 
 	public class ConstructorBaseInitializer : ConstructorInitializer {
-		public ConstructorBaseInitializer (ArrayList argument_list) : base (argument_list)
+		public ConstructorBaseInitializer (ArrayList argument_list, Location l) : base (argument_list, l)
 		{
 		}
 	}
 
 	public class ConstructorThisInitializer : ConstructorInitializer {
-		public ConstructorThisInitializer (ArrayList argument_list) : base (argument_list)
+		public ConstructorThisInitializer (ArrayList argument_list, Location l) : base (argument_list, l)
 		{
 		}
 	}
