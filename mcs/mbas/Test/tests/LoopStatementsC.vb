@@ -12,8 +12,8 @@ Module Test
             i = i + 1
 		x = x - 1
         Loop
-	  if i <> 4 then 
-		Throw new System.Exception("While not working properly. Expected 4 but got "&i)
+	  if i <> 2 then 
+		Throw new System.Exception("While not working properly. Expected 2 but got "&i)
 	  End if 
     End Sub
 End Module

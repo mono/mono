@@ -1,3 +1,8 @@
+2005-03-17 Manjula GHM <mmanjula@novell.com>
+	* LoopStatementB.vb 
+	* LoopStatementC.vb
+	 	Minor fix in the LoopStatement test cases
+
 2005-03-14 Ritvik Mayank <mritvik@novell.com>
 	Added the following test cases
 	* ExpressionStringB.vb
