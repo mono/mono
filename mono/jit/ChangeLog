@@ -1,3 +1,9 @@
+
+Mon Mar 25 13:03:35 CET 2002 Paolo Molaro <lupus@ximian.com>
+
+	* jit.c: do not set the glib mem vtable anymore.
+	* Makefile.am: link to libmonoutils.
+
 2002-03-25  Martin Baulig  <martin@gnome.org>
 
 	* debug.h (mono_debug_make_symbols): Documented this function.
