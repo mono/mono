@@ -1,3 +1,7 @@
+2005-01-13  Cesar Lopez Nataren  <cnataren@novell.com>
+
+	* Makefile (SUBDIRS): added Microsoft.JScript to the default build.
+
 2005-01-04  Raja R Harinath  <rharinath@novell.com>
 
 	* Makefile (DIST_ONLY_SUBDIRS): Remove Managed.Windows.Forms.
