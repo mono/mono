@@ -1,3 +1,8 @@
+2004-08-07  Jackson Harper  <jackson@ximian.com>
+
+	* AssemblyBuilder.cs: "neutral" culture is invariant culture
+	(String.Empty).
+
 2004-08-07  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* OpCodes.cs : csc complains CS1034 Line cannot exceed 2046 characters.

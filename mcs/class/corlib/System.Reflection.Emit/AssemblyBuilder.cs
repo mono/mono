@@ -404,7 +404,7 @@ namespace System.Reflection.Emit {
 					else if (attrname == "System.Reflection.AssemblyTrademarkAttribute")
 						version_res.LegalTrademarks = cb.string_arg ();
 					else if (attrname == "System.Reflection.AssemblyCultureAttribute")
-						version_res.FileLanguage = new CultureInfo (cb.string_arg ()).LCID;
+						version_res.FileLanguage = new CultureInfo (GetCultureString (cb.string_arg ())).LCID;
 					else if (attrname == "System.Reflection.AssemblyFileVersionAttribute")
 						version_res.FileVersion = cb.string_arg ();
 					else if (attrname == "System.Reflection.AssemblyInformationalVersionAttribute")
@@ -639,7 +639,7 @@ namespace System.Reflection.Emit {
 				version = create_assembly_version (customBuilder.string_arg ());
 				return;
 			} else if (attrname == "System.Reflection.AssemblyCultureAttribute") {
-				culture = customBuilder.string_arg ();
+				culture = GetCultureString (customBuilder.string_arg ());
 			} else if (attrname == "System.Reflection.AssemblyAlgorithmIdAttribute") {
 				data = customBuilder.Data;
 				pos = 2;
@@ -769,6 +769,11 @@ namespace System.Reflection.Emit {
 			}
 
 			return ver [0] + "." + ver [1] + "." + ver [2] + "." + ver [3];
+		}
+
+		private string GetCultureString (string str)
+		{
+			return (str == "neutral" ? String.Empty : str);
 		}
 	}
 }
