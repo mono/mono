@@ -31,8 +31,11 @@ public class graphicsUI
 		
 		Rectangle rect2 = new Rectangle (100,100, 75, 75);		
 		dc.DrawPie (bluePen, rect2, 100, 75);
+
+		Rectangle rect2a = new Rectangle (100, 200, 75, 75); 
+		dc.DrawPie (bluePen, rect2a, 100, 400);
 		
-		Rectangle rect3 = new Rectangle (100, 0, 75, 75);		
+		Rectangle rect3 = new Rectangle (100, 0, 75, 75); 
 		dc.FillPie (yellowBrush, rect3, 0, 300);
 		
 		Rectangle rect4 = new Rectangle (0, 100, 75, 75);		

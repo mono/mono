@@ -1,3 +1,8 @@
+2004-04-07  Duncan Mak  <duncan@ximian.com>
+
+	* pie.cs: Added a case where the sweep angle is greater than 360
+	degrees.
+
 2004-04-06  Duncan Mak  <duncan@ximian.com>
 
 	* pie.cs: Save to PNG, instead of BMP.
