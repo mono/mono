@@ -24,3 +24,5 @@ gmcs
 monop
 resgen
 gacutil
+mono-find-provides
+mono-find-requires
