@@ -27,6 +27,8 @@ public class Outline {
 
 	public void OutlineType (BindingFlags flags)
         {
+		bool first;
+		
 		OutlineAttributes ();
 		o.Write (GetTypeVisibility (t));
 		
@@ -61,7 +63,7 @@ public class Outline {
 		
 		o.Write (t.Name);
 		if (((parent != null && parent != typeof (object) && parent != typeof (ValueType)) || interfaces.Length != 0) && ! t.IsEnum) {
-			bool first = true;
+			first = true;
 			o.Write (" : ");
 			
 			if (parent != null && parent != typeof (object) && parent != typeof (ValueType)) {
@@ -94,50 +96,83 @@ public class Outline {
 			return;
 		}
 		
+		first = true;
+		
 		foreach (ConstructorInfo ci in t.GetConstructors (flags)) {
+			if (first)
+				o.WriteLine ();
+			first = false;
+			
 			OutlineConstructor (ci);
 			
 			o.WriteLine ();
 		}
 		
-		o.WriteLine ();
+
+		first = true;
 		
 		foreach (MethodInfo m in Comparer.Sort (t.GetMethods (flags))) {
 			if ((m.Attributes & MethodAttributes.SpecialName) != 0)
 				continue;
+			
+			if (first)
+				o.WriteLine ();
+			first = false;
 			
 			OutlineMethod (m);
 			
 			o.WriteLine ();
 		}
 		
-		o.WriteLine ();
+		first = true;
 		
 		foreach (PropertyInfo pi in Comparer.Sort (t.GetProperties (flags))) {
+			
+			if (first)
+				o.WriteLine ();
+			first = false;
+			
 			OutlineProperty (pi);
 			
 			o.WriteLine ();
 		}
 		
-		o.WriteLine ();
+		first = true;
 
-		foreach (FieldInfo fi in t.GetFields (flags))
-		{
+		foreach (FieldInfo fi in t.GetFields (flags)) {
+			
+			if (first)
+				o.WriteLine ();
+			first = false;
+			
 			OutlineField (fi);
+			
+			o.WriteLine ();
 		}
 
-		o.WriteLine ();
+		first = true;
 		
 		foreach (EventInfo ei in Comparer.Sort (t.GetEvents (flags))) {
+			
+			if (first)
+				o.WriteLine ();
+			first = false;
+			
 			OutlineEvent (ei);
 			
 			o.WriteLine ();
 		}
 
-		o.WriteLine ();
+		first = true;
 
-		foreach (Type ntype in Comparer.Sort (t.GetNestedTypes (flags)))
+		foreach (Type ntype in Comparer.Sort (t.GetNestedTypes (flags))) {
+			
+			if (first)
+				o.WriteLine ();
+			first = false;
+			
 			new Outline (ntype, o).OutlineType (flags);
+		}
 		
 		o.Indent--; o.WriteLine ("}");
 	}
@@ -254,7 +289,7 @@ public class Outline {
 			o.Write (" = ");
 			o.Write (fi.GetValue (this));
 		}
-		o.WriteLine (";");
+		o.Write (";");
 	}
 
 	static string GetMethodVisibility (MethodBase m)

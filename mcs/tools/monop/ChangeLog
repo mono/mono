@@ -1,5 +1,7 @@
 2004-11-08  Ben Maurer  <bmaurer@ximian.com>
 
+	* outline.cs: Cut the extra whitespace.
+	
 	* outline.cs: Report sealed and abstract
 
 2004-10-27  John Luke  <john.luke@gmail.com>
