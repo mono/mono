@@ -1,3 +1,15 @@
+2001-10-11  Thomas Neidhart <tome@sbox.tugraz.at>
+
+	* CryptoAPITransform.cs: Initial version
+	* CryptoStream.cs: Initial version
+	* CspParameter.cs: Initial version
+	* CspProviderFlags.cs: Initial version
+	* DSA.cs: Initial version
+	* DSAParameters.cs: Initial version
+	* DSASignatureDeformatter.cs: Initial version
+	* DSASignatureFormatter.cs: Initial version
+	* DeriveBytes.cs: Initial version
+
 2001-10-06  Thomas Neidhart <tome@sbox.tugraz.at>
 
     * AsymmetricAlgorithm.cs: Inital version
