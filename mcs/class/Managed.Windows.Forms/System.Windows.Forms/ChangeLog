@@ -1,5 +1,9 @@
 2005-02-17  Peter Bartok  <pbartok@novell.com>
 
+	* Application.cs: Fixed message_filter check
+
+2005-02-17  Peter Bartok  <pbartok@novell.com>
+
 	* Application.cs: Now calls registered message filters
 	* DockStyle.cs: Fixed attribute
 	* Form.cs: Fixed attribute

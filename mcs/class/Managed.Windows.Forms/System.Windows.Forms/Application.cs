@@ -84,7 +84,7 @@ namespace System.Windows.Forms {
 			form.CreateControl();
 
 			while (!exiting && !form.end_modal && XplatUI.GetMessage(ref msg, IntPtr.Zero, 0, 0)) {
-				if (message_filters.Count > 0) {
+				if ((message_filters != null) && (message_filters.Count > 0)) {
 					Message	m;
 					bool	drop;
 
@@ -333,7 +333,7 @@ namespace System.Windows.Forms {
 			messageloop_started = true;
 
 			while (!exiting && XplatUI.GetMessage(ref msg, IntPtr.Zero, 0, 0)) {
-				if (message_filters.Count > 0) {
+				if ((message_filters != null) && (message_filters.Count > 0)) {
 					Message	m;
 					bool	drop;
 
