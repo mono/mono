@@ -286,9 +286,7 @@ namespace Mono.Xml.Xsl
 				
 				if (attr.LocalName == localName && attr.Namespace == nsURI) {
 					pendingAttributes [i].Value = value;
-					//Keep prefix (e.g. when literal attribute is overriden by xsl:attribute)
-					if (attr.Prefix == String.Empty && prefix != String.Empty)
-						pendingAttributes [i].Prefix = prefix;
+					pendingAttributes [i].Prefix = prefix;
 					return;
 				}
 			}
