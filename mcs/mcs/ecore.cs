@@ -1238,13 +1238,6 @@ namespace Mono.CSharp {
 				return 0;
 		}
 
-		//
-		// Default implementation of IAssignMethod.CacheTemporaries
-		//
-		public virtual void CacheTemporaries (EmitContext ec)
-		{
-		}
-
 		static void Error_NegativeArrayIndex (Location loc)
 		{
 			Report.Error (284, loc, "Can not create array with a negative size");
@@ -2561,9 +2554,8 @@ namespace Mono.CSharp {
 		Expression instance_expr;
 		VariableInfo variable_info;
 
-		LocalTemporary temporary;
-		IMemoryLocation instance_ml;
-		bool have_temporary;
+		LocalTemporary temp;
+		bool prepared;
 		
 		public FieldExpr (FieldInfo fi, Location l)
 		{
@@ -2724,37 +2716,8 @@ namespace Mono.CSharp {
 
 			return true;
 		}
-
-		public override void CacheTemporaries (EmitContext ec)
-		{
-			if (!FieldInfo.IsStatic && (temporary == null))
-				temporary = new LocalTemporary (ec, instance_expr.Type);
-		}
-
-		void EmitInstance (EmitContext ec)
-		{
-			if (instance_expr.Type.IsValueType)
-				CacheTemporaries (ec);
-
-			if ((temporary == null) || have_temporary)
-				return;
-
-			if (instance_expr.Type.IsValueType) {
-				instance_ml = instance_expr as IMemoryLocation;
-				if (instance_ml == null) {
-					instance_expr.Emit (ec);
-					temporary.Store (ec);
-					instance_ml = temporary;
-				}
-			} else {
-				instance_expr.Emit (ec);
-				temporary.Store (ec);
-			}
-
-			have_temporary = true;
-		}
-
-		override public void Emit (EmitContext ec)
+		
+		public void Emit (EmitContext ec, bool leave_copy)
 		{
 			ILGenerator ig = ec.ig;
 			bool is_volatile = false;
@@ -2774,46 +2737,52 @@ namespace Mono.CSharp {
 					ig.Emit (OpCodes.Volatile);
 				
 				ig.Emit (OpCodes.Ldsfld, FieldInfo);
-				return;
+			} else {
+				if (!prepared)
+					EmitInstance (ec);
+				
+				if (is_volatile)
+					ig.Emit (OpCodes.Volatile);
+				
+				ig.Emit (OpCodes.Ldfld, FieldInfo);
 			}
-
-			EmitInstance (ec);
-			if (instance_ml != null)
-				instance_ml.AddressOf (ec, AddressOp.Load);
-			else if (temporary != null)
-				temporary.Emit (ec);
-			else
-				instance_expr.Emit (ec);
-
-			if (is_volatile)
-				ig.Emit (OpCodes.Volatile);
 			
-			ig.Emit (OpCodes.Ldfld, FieldInfo);
+			if (leave_copy) {	
+				ec.ig.Emit (OpCodes.Dup);
+				if (!FieldInfo.IsStatic) {
+					temp = new LocalTemporary (ec, this.Type);
+					temp.Store (ec);
+				}
+			}
 		}
-
-		public void EmitAssign (EmitContext ec, Expression source)
+		
+		public void EmitAssign (EmitContext ec, Expression source, bool leave_copy, bool prepare_for_load)
 		{
 			FieldAttributes fa = FieldInfo.Attributes;
 			bool is_static = (fa & FieldAttributes.Static) != 0;
 			bool is_readonly = (fa & FieldAttributes.InitOnly) != 0;
 			ILGenerator ig = ec.ig;
+			prepared = prepare_for_load;
 
 			if (is_readonly && !ec.IsConstructor){
 				Report_AssignToReadonly (!is_static);
 				return;
 			}
 
-			if (!is_static){
+			if (!is_static) {
 				EmitInstance (ec);
-				if (instance_ml != null)
-					instance_ml.AddressOf (ec, AddressOp.Store);
-				else if (temporary != null)
-					temporary.Emit (ec);
-				else
-					instance_expr.Emit (ec);
+				if (prepare_for_load)
+					ig.Emit (OpCodes.Dup);
 			}
 
 			source.Emit (ec);
+			if (leave_copy) {
+				ec.ig.Emit (OpCodes.Dup);
+				if (!FieldInfo.IsStatic) {
+					temp = new LocalTemporary (ec, this.Type);
+					temp.Store (ec);
+				}
+			}
 
 			if (FieldInfo is FieldBuilder){
 				FieldBase f = TypeManager.GetField (FieldInfo);
@@ -2829,6 +2798,29 @@ namespace Mono.CSharp {
 				ig.Emit (OpCodes.Stsfld, FieldInfo);
 			else 
 				ig.Emit (OpCodes.Stfld, FieldInfo);
+			
+			if (temp != null)
+				temp.Emit (ec);
+		}
+
+		void EmitInstance (EmitContext ec)
+		{
+			if (instance_expr.Type.IsValueType) {
+				if (instance_expr is IMemoryLocation) {
+					((IMemoryLocation) instance_expr).AddressOf (ec, AddressOp.LoadStore);
+				} else {
+					LocalTemporary t = new LocalTemporary (ec, instance_expr.Type);
+					instance_expr.Emit (ec);
+					t.Store (ec);
+					t.AddressOf (ec, AddressOp.Store);
+				}
+			} else
+				instance_expr.Emit (ec);
+		}
+
+		public override void Emit (EmitContext ec)
+		{
+			Emit (ec, false);
 		}
 		
 		public void AddressOf (EmitContext ec, AddressOp mode)
@@ -2880,20 +2872,7 @@ namespace Mono.CSharp {
 			if (FieldInfo.IsStatic){
 				ig.Emit (OpCodes.Ldsflda, FieldInfo);
 			} else {
-				//
-				// In the case of `This', we call the AddressOf method, which will
-				// only load the pointer, and not perform an Ldobj immediately after
-				// the value has been loaded into the stack.
-				//
 				EmitInstance (ec);
-				if (instance_ml != null)
-					instance_ml.AddressOf (ec, AddressOp.LoadStore);
-				else if (temporary != null)
-					temporary.Emit (ec);
-				else if (instance_expr is This)
-					((This)instance_expr).AddressOf (ec, AddressOp.LoadStore);
-				else
-					instance_expr.Emit (ec);
 				ig.Emit (OpCodes.Ldflda, FieldInfo);
 			}
 		}
@@ -2932,8 +2911,8 @@ namespace Mono.CSharp {
 		bool must_do_cs1540_check;
 		
 		Expression instance_expr;
-		LocalTemporary temporary;
-		bool have_temporary;
+		LocalTemporary temp;
+		bool prepared;
 
 		public PropertyExpr (EmitContext ec, PropertyInfo pi, Location l)
 		{
@@ -3240,38 +3219,40 @@ namespace Mono.CSharp {
 			return this;
 		}
 
-		public override void CacheTemporaries (EmitContext ec)
-		{
-			if (!is_static){
-				// we need to do indirection on the pointer
-				bool need_address = instance_expr.Type.IsValueType;
-				temporary = new LocalTemporary (ec, instance_expr.Type, need_address);
-			}
-		}
 
-		Expression EmitInstance (EmitContext ec)
+		
+		public override void Emit (EmitContext ec)
 		{
-			if (temporary != null){
-				if (!have_temporary){
-					if (temporary.PointsToAddress){
-						// must store the managed pointer
-						IMemoryLocation loc = instance_expr as IMemoryLocation;
-						loc.AddressOf (ec, AddressOp.LoadStore);
-					} else 
-						instance_expr.Emit (ec);
-					temporary.Store (ec);
-						
-					have_temporary = true;
+			Emit (ec, false);
+		}
+		
+		void EmitInstance (EmitContext ec)
+		{
+			if (is_static)
+				return;
+
+			if (instance_expr.Type.IsValueType) {
+				if (instance_expr is IMemoryLocation) {
+					((IMemoryLocation) instance_expr).AddressOf (ec, AddressOp.LoadStore);
+				} else {
+					LocalTemporary t = new LocalTemporary (ec, instance_expr.Type);
+					instance_expr.Emit (ec);
+					t.Store (ec);
+					t.AddressOf (ec, AddressOp.Store);
 				}
-				return temporary;
 			} else
-				return instance_expr;
+				instance_expr.Emit (ec);
+			
+			if (prepared)
+				ec.ig.Emit (OpCodes.Dup);
 		}
 
-		override public void Emit (EmitContext ec)
+		
+		public void Emit (EmitContext ec, bool leave_copy)
 		{
-			Expression expr = EmitInstance (ec);
-
+			if (!prepared)
+				EmitInstance (ec);
+			
 			//
 			// Special case: length of single dimension array property is turned into ldlen
 			//
@@ -3283,30 +3264,50 @@ namespace Mono.CSharp {
 				// System.Array.Length can be called, but the Type does not
 				// support invoking GetArrayRank, so test for that case first
 				//
-				if (iet != TypeManager.array_type && (iet.GetArrayRank () == 1)){
-					expr.Emit (ec);
+				if (iet != TypeManager.array_type && (iet.GetArrayRank () == 1)) {
 					ec.ig.Emit (OpCodes.Ldlen);
 					ec.ig.Emit (OpCodes.Conv_I4);
 					return;
 				}
 			}
 
-			Invocation.EmitCall (ec, IsBase, IsStatic, expr, getter, null, loc);
+			Invocation.EmitCall (ec, IsBase, IsStatic, new EmptyAddressOf (), getter, null, loc);
 			
+			if (!leave_copy)
+				return;
+			
+			ec.ig.Emit (OpCodes.Dup);
+			if (!is_static) {
+				temp = new LocalTemporary (ec, this.Type);
+				temp.Store (ec);
+			}
 		}
 
 		//
 		// Implements the IAssignMethod interface for assignments
 		//
-		public void EmitAssign (EmitContext ec, Expression source)
+		public void EmitAssign (EmitContext ec, Expression source, bool leave_copy, bool prepare_for_load)
 		{
-			Expression expr = EmitInstance (ec);
+			prepared = prepare_for_load;
+			
+			EmitInstance (ec);
 
-			Argument arg = new Argument (source, Argument.AType.Expression);
-			ArrayList args = new ArrayList ();
-
-			args.Add (arg);
-			Invocation.EmitCall (ec, IsBase, IsStatic, expr, setter, args, loc);
+			source.Emit (ec);
+			if (leave_copy) {
+				ec.ig.Emit (OpCodes.Dup);
+				if (!is_static) {
+					temp = new LocalTemporary (ec, this.Type);
+					temp.Store (ec);
+				}
+			}
+			
+			ArrayList args = new ArrayList (1);
+			args.Add (new Argument (new EmptyAddressOf (), Argument.AType.Expression));
+			
+			Invocation.EmitCall (ec, IsBase, IsStatic, new EmptyAddressOf (), setter, args, loc);
+			
+			if (temp != null)
+				temp.Emit (ec);
 		}
 
 		override public void EmitStatement (EmitContext ec)

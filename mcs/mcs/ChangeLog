@@ -1,3 +1,17 @@
+2004-07-16  Ben Maurer  <bmaurer@ximian.com>
+
+	* assign.cs: IAssignMethod has a new interface, as documented
+	inline. All assignment code now uses this new api.
+
+	* ecore.cs, expression.cs: All classes which implement
+	IAssignMethod now use the new interface.
+
+	* expression.cs (Invocation): add a hack to EmitCall so that
+	IndexerAccess can be the target of a compound assignment without
+	evaluating its arguments twice.
+
+	* statement.cs: Handle changes in Invocation api.
+
 2004-07-12  Martin Baulig  <martin@ximian.com>
 
 	Merged latest changes into gmcs.  Please keep this comment in

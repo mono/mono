@@ -4029,7 +4029,7 @@ namespace Mono.CSharp {
 				conv.Emit (ec);
 				ig.Emit (OpCodes.Stfld, ((FieldExpr) variable).FieldInfo);
 			} else 
-				((IAssignMethod)variable).EmitAssign (ec, conv);
+				((IAssignMethod)variable).EmitAssign (ec, conv, false, false);
 				
 			statement.Emit (ec);
 			ig.Emit (OpCodes.Br, ec.LoopBegin);
@@ -4116,7 +4116,7 @@ namespace Mono.CSharp {
 					conv.Emit (ec);
 					ig.Emit (OpCodes.Stfld, ((FieldExpr) variable).FieldInfo);
 				} else 
-					((IAssignMethod)variable).EmitAssign (ec, conv);
+					((IAssignMethod)variable).EmitAssign (ec, conv, false, false);
 
 				statement.Emit (ec);
 
@@ -4196,7 +4196,7 @@ namespace Mono.CSharp {
 					conv.Emit (ec);
 					ig.Emit (OpCodes.Stfld, ((FieldExpr) variable).FieldInfo);
 				} else 
-					((IAssignMethod)variable).EmitAssign (ec, conv);
+					((IAssignMethod)variable).EmitAssign (ec, conv, false, false);
 				statement.Emit (ec);
 				ig.MarkLabel (ec.LoopBegin);
 				for (dim = rank - 1; dim >= 0; dim--){
