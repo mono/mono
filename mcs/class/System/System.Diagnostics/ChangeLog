@@ -1,3 +1,13 @@
+2005-01-13 Jonathan Pryor  <jonpryor@vt.edu>
+
+	* DiagnosticsConfigurationHandler.cs: Make DiagnosticsConfiguration.Settings
+	  thread-safe (double-checked locking isn't thread safe on .NET without
+	  using a volatile variable, and setting the variable in the static
+	  constructor is easier anyway).
+	* Switch.cs (GetConfigFileSetting): If the setting is non-numeric, set the
+	  attribute value to the string "0".  This is apparently what .NET 1.1 does,
+	  and allows the SwitchTest NUnit test to work w/o failures.
+
 2004-12-06 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Process.cs: always pass the same arguments to the runtime.

@@ -91,14 +91,16 @@ namespace System.Diagnostics
 
 		private void GetConfigFileSetting ()
 		{
+			IDictionary d = (IDictionary) DiagnosticsConfiguration.Settings ["switches"];
 			try {
 				
 				// Load up the specified switch
-				IDictionary d = (IDictionary) DiagnosticsConfiguration.Settings ["switches"];
 				if (d != null)
 					switchSetting = int.Parse (d [name].ToString());
 			} catch {
 				switchSetting = 0;
+				if (d != null)
+					d [name] = "0";
 			}
 		}
 

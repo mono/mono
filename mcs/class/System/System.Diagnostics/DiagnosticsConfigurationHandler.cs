@@ -8,7 +8,7 @@
 //	John R. Hicks <angryjohn69@nc.rr.com>
 //	Jonathan Pryor <jonpryor@vt.edu>
 //
-// (C) 2002
+// (C) 2002, 2005
 //
 
 //
@@ -41,19 +41,11 @@ namespace System.Diagnostics
 {
 	internal sealed class DiagnosticsConfiguration
 	{
-		private static IDictionary settings = null;
+		private static IDictionary settings = 
+			(IDictionary) ConfigurationSettings.GetConfig ("system.diagnostics");
 
 		public static IDictionary Settings {
 			get {
-				// TODO: Does anybody know if this is actually thread-safe under .NET?
-				// I've heard that this construct isn't safe under Java, but it's used
-				// reasonably often under C++, so I'm not sure about .NET.
-				if (settings == null) {
-					lock (typeof(DiagnosticsConfiguration)) {
-						if (settings == null)
-							settings = (IDictionary) ConfigurationSettings.GetConfig ("system.diagnostics");
-					}
-				}
 				return settings;
 			}
 		}
