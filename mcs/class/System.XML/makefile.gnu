@@ -4,7 +4,7 @@ TEST_DIR = Test
 LIBRARY = $(topdir)/class/lib/System.Xml.dll
 
 LIB_LIST = list.unix
-LIB_FLAGS = -r corlib -r System
+LIB_FLAGS = -r corlib -r System -unsafe
 
 SOURCES_INCLUDE=*.cs
 SOURCES_EXCLUDE=\

@@ -1,3 +1,13 @@
+2003-05-27  Joshua Tauberer <tauberer@for.net>
+
+	* XslTransform.cs: Initial support for extension objects.
+		Known issues:
+			Extension method signatures must match exactly to the
+			types of parameters that the method is called with from the stylesheet.
+			Node set parameters are converted to an ArrayList of strings.
+	* makefule.gnu: Added -unsafe flag, required by the above stuff.
+	* System.XML.build: Added -unsafe flag.  Hope this is the right place.
+
 2003-05-26  Lluis Sanchez Gual <lluis@ximian.com>
 	
 	* XmlSerializationWriterInterpreter.cs, XmlSerializationReaderInterpreter.cs
