@@ -1,6 +1,7 @@
 2002-02-19  Dietmar Maurer  <dietmar@ximian.com>
 
 	* emit-x86.c (arch_compile_method): add shared code to mono_root_domain
+	(arch_create_jit_trampoline): cache trampoline code
 
 2002-02-18  Dietmar Maurer  <dietmar@ximian.com>
 
