@@ -52,6 +52,7 @@ mcs3.exe: mcs2.exe
 	./mcs2 --target exe -o mcs3.exe $(COMPILER_SOURCES)
 
 test: mcs3.exe
+	-rm mcs2.exe mcs3.exe
 	ls -l mcs2.exe mcs3.exe
 
 docs: cs-parser.cs

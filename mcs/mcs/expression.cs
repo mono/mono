@@ -4683,8 +4683,13 @@ namespace Mono.CSharp {
 
 			member_lookup = MemberLookup (ec, expr_type, Identifier, loc);
 
-			if (member_lookup == null)
+			if (member_lookup == null){
+				Report.Warning (117, loc, "`" + expr_type + "' does not contain a " +
+					      "definition for `" + Identifier + "'");
+				Report.Warning (117, loc, "THIS SHOULD BE AN ERROR");
+					      
 				return null;
+			}
 
 			return ResolveMemberAccess (ec, member_lookup, expr, loc, original);
 		}

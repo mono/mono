@@ -87,9 +87,9 @@ t  }
 .      @return result of the last reduction, if any.
 .      @throws yyException on irrecoverable parse error.
 .    */
-.  public Object yyparse (yyParser.yyInput yyLex, Object yydebug)
+.  public Object yyparse (yyParser.yyInput yyLex, Object yyd)
 .				 {
-t    this.yydebug = (yydebug.yyDebug)yydebug;
+t    this.yydebug = (yydebug.yyDebug)yyd;
 .    return yyparse(yyLex);
 .  }
 .
