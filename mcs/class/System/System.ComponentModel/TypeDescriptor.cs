@@ -489,6 +489,7 @@ public sealed class TypeDescriptor
 		bool _gotDefaultEvent;
 		PropertyDescriptor _defaultProperty;
 		bool _gotDefaultProperty;
+		AttributeCollection _attributes;
 		
 		public Info (Type infoType)
 		{
@@ -551,12 +552,34 @@ public sealed class TypeDescriptor
 			_gotDefaultProperty = true;
 			return _defaultProperty;
 		}
+		
+		protected AttributeCollection GetAttributes (IComponent comp)
+		{
+			if (_attributes != null) return _attributes;
+			
+			bool cache = true;
+			object[] ats = _infoType.GetCustomAttributes (true);
+			Hashtable t = new Hashtable ();
+			foreach (Attribute at in ats)
+				t [at.TypeId] = at;
+					
+			if (comp != null && comp.Site != null) 
+			{
+				ITypeDescriptorFilterService filter = (ITypeDescriptorFilterService) comp.Site.GetService (typeof(ITypeDescriptorFilterService));
+				cache = filter.FilterAttributes (comp, t);
+			}
+			
+			ArrayList atts = new ArrayList ();
+			atts.AddRange (t.Values);
+			AttributeCollection attCol = new AttributeCollection (atts);
+			if (cache) _attributes = attCol;
+			return attCol;
+		}
 	}
 
 	internal class ComponentInfo : Info
 	{
 		IComponent _component;
-		AttributeCollection _attributes;
 		EventDescriptorCollection _events;
 		PropertyDescriptorCollection _properties;
 		
@@ -567,25 +590,7 @@ public sealed class TypeDescriptor
 		
 		public override AttributeCollection GetAttributes ()
 		{
-			if (_attributes != null) return _attributes;
-			
-			bool cache = true;
-			object[] ats = _component.GetType().GetCustomAttributes (true);
-			Hashtable t = new Hashtable ();
-			foreach (Attribute at in ats)
-				t [at.TypeId] = at;
-					
-			if (_component.Site != null) 
-			{
-				ITypeDescriptorFilterService filter = (ITypeDescriptorFilterService) _component.Site.GetService (typeof(ITypeDescriptorFilterService));
-				cache = filter.FilterAttributes (_component, t);
-			}
-			
-			ArrayList atts = new ArrayList ();
-			atts.AddRange (t.Values);
-			AttributeCollection attCol = new AttributeCollection (atts);
-			if (cache) _attributes = attCol;
-			return attCol;
+			return base.GetAttributes (_component);
 		}
 		
 		public override EventDescriptorCollection GetEvents ()
@@ -637,7 +642,6 @@ public sealed class TypeDescriptor
 	
 	internal class TypeInfo : Info
 	{
-		AttributeCollection _attributes;
 		EventDescriptorCollection _events;
 		PropertyDescriptorCollection _properties;
 		
@@ -647,11 +651,7 @@ public sealed class TypeDescriptor
 		
 		public override AttributeCollection GetAttributes ()
 		{
-			if (_attributes != null) return _attributes;
-			
-			object[] atts = InfoType.GetCustomAttributes (true);
-			_attributes = new AttributeCollection ((Attribute[]) atts);
-			return _attributes;
+			return base.GetAttributes (null);
 		}
 		
 		public override EventDescriptorCollection GetEvents ()
