@@ -42,13 +42,7 @@ namespace System
 		
 		object IEnumerator.Current
 		{
-			get {
-				if (index == -1 || index == length)
-					throw new InvalidOperationException
-						("The position is not valid");
-
-				return str [index];
-			}
+			return Current;
 		}
 		
 		// Methods
