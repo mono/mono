@@ -1,11 +1,19 @@
 2002-07-31  Duncan Mak  <duncan@ximian.com>
 
+	* MethodCallMessageWrapper.cs:
+	* MethodReturnMessageWrapper.cs: Remove reference to
+	InternalMessageWrapper. It's probably an MS private class, even
+	though it's visible in the documentation.
+
+2002-07-31  Duncan Mak  <duncan@ximian.com>
+
 	* InternalMessageWrapper.cs: 
 	* MessageSurrogateFilter.cs: 
 	* MethodCall.cs: 
 	* MethodCallMessageWrapper.cs: 
 	* MethodResponse.cs: 
 	* MethodReturnMessageWrapper.cs: 
+
 	* RemoteSurrogateSelector.cs: Added to CVS. 
 
 	* MonoMethodMessage.cs: 
