@@ -1,5 +1,15 @@
 2004-09-04  Marek Safar  <marek.safar@seznam.cz>
 
+	Fixed cs0619-37.cs, cs0619-38.cs
+
+	* enum.cs (GetObsoleteAttribute): Removed.
+
+	* expression.cs (MemberAccess.DoResolve): Test for [Obsolete]
+	on Enum member is double staged. The first is tested member
+	and then enum.
+
+2004-09-04  Marek Safar  <marek.safar@seznam.cz>
+
 	Fixed #56986, #63631, #65231
 
 	* class.cs: (TypeContainer.AddToMemberContainer): New method,

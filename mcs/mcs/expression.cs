@@ -7128,7 +7128,12 @@ namespace Mono.CSharp {
 						object value = en.LookupEnumValue (ec, Identifier, loc);
 						
 						if (value != null){
-							ObsoleteAttribute oa = en.GetObsoleteAttribute (ec, Identifier);
+							MemberCore mc = en.GetDefinition (Identifier);
+							ObsoleteAttribute oa = mc.GetObsoleteAttribute (en);
+							if (oa != null) {
+								AttributeTester.Report_ObsoleteMessage (oa, mc.GetSignatureForError (), Location);
+							}
+							oa = en.GetObsoleteAttribute (en);
 							if (oa != null) {
 								AttributeTester.Report_ObsoleteMessage (oa, en.GetSignatureForError (), Location);
 							}
