@@ -6535,23 +6535,52 @@ namespace Mono.CSharp {
 
 		public override Expression DoResolve (EmitContext ec)
 		{
+			Expression c = CommonResolve (ec);
+
+			if (c == null)
+				return null;
+
+			//
+			// MethodGroups use this opportunity to flag an error on lacking ()
+			//
+			if (!(c is MethodGroupExpr))
+				return c.Resolve (ec);
+			return c;
+		}
+
+		public override Expression DoResolveLValue (EmitContext ec, Expression right_side)
+		{
+			Expression c = CommonResolve (ec);
+
+			if (c == null)
+				return null;
+
+			//
+			// MethodGroups use this opportunity to flag an error on lacking ()
+			//
+			if (! (c is MethodGroupExpr))
+				return c.DoResolveLValue (ec, right_side);
+
+			return c;
+		}
+
+		Expression CommonResolve (EmitContext ec)
+		{
 			Expression member_lookup;
 			Type current_type = ec.ContainerType;
 			Type base_type = current_type.BaseType;
 			Expression e;
 
 			if (ec.IsStatic){
-				Error (1511,
-					      "Keyword base is not allowed in static method");
+				Error (1511, "Keyword base is not allowed in static method");
 				return null;
 			}
 			
 			member_lookup = MemberLookup (ec, base_type, base_type, member,
 						      AllMemberTypes, AllBindingFlags, loc);
 			if (member_lookup == null) {
-				Error (117,
-					      TypeManager.CSharpName (base_type) + " does not " +
-					      "contain a definition for `" + member + "'");
+				Error (117, TypeManager.CSharpName (base_type) + " does not " +
+				       "contain a definition for `" + member + "'");
 				return null;
 			}
 

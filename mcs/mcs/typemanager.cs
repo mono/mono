@@ -2007,7 +2007,8 @@ public class TypeManager {
 		}
 
 		//
-		// EventInfos and PropertyInfos, return true
+		// EventInfos and PropertyInfos, return true because they lack permission
+		// informaiton, so we need to check later on the methods.
 		//
 		return true;
 	}
@@ -2086,14 +2087,11 @@ public class TypeManager {
 			//
 			if (invocation_type != null){
 				if (invocation_type == current_type){
-					private_ok = (bf & BindingFlags.NonPublic) != 0;
+					private_ok = true;
 				} else
 					private_ok = always_ok_flag;
 
 				if (invocation_type.IsSubclassOf (current_type))
-					private_ok = true;
-				
-				if (private_ok)
 					bf = original_bf | BindingFlags.NonPublic;
 			} else {
 				private_ok = false;

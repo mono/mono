@@ -1,5 +1,50 @@
 2002-10-24  Miguel de Icaza  <miguel@ximian.com>
 
+	* typemanager.cs (RealMemberLookup): when we deal with a subclass,
+	we should set on the Bindingflags.NonPublic, but not turn on
+	private_ok.  private_ok controls whether a Private member is
+	returned (this is chekced on the filter routine), while the
+	BindingFlags.NonPublic just controls whether private/protected
+	will be allowed.   This fixes the problem part of the problem of
+	private properties being allowed to be used in derived classes.
+
+	* expression.cs (BaseAccess): Provide an DoResolveLValue method,
+	so we can call the children DoResolveLValue method (this will
+	properly signal errors on lvalue assignments to base properties)
+	
+	* ecore.cs (PropertyExpr.ResolveAccessors): If both setter and
+	getter are null, and we have a property info, we know that this
+	happened because the lookup failed, so we report an error 122 for
+	protection level violation.
+
+	We also silently return if setter and getter are null in the
+	resolve functions, this condition only happens if we have flagged
+	the error before.  This is the other half of the problem. 
+
+	(PropertyExpr.ResolveAccessors): Turns out that PropertyInfo does
+	not have accessibility information, that is why we were returning
+	true in the filter function in typemanager.cs.
+
+	To properly report 122 (property is inaccessible because of its
+	protection level) correctly, we report this error in ResolveAccess
+	by failing if both the setter and the getter are lacking (ie, the
+	lookup failed). 
+
+	DoResolve and DoLResolve have been modified to check for both
+	setter/getter being null and returning silently, the reason being
+	that I did not want to put the knowledge about this error in upper
+	layers, like:
+
+	int old = Report.Errors;
+	x = new PropertyExpr (...);
+	if (old != Report.Errors)
+		return null;
+	else
+	        return x;
+
+	So the property expr is returned, but it is invalid, so the error
+	will be flagged during the resolve process. 
+
 	* class.cs: Remove InheritablePropertySignatureCompare from the
 	class, as we no longer depend on the property signature to compute
 	whether it is possible to implement a method or not.

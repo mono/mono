@@ -4170,13 +4170,17 @@ namespace Mono.CSharp {
 			return true;
 		}
 
+		//
+		// We also perform the permission checking here, as the PropertyInfo does not
+		// hold the information for the accessibility of its setter/getter
+		//
 		void ResolveAccessors (EmitContext ec)
 		{
 			BindingFlags flags = BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance;
 			MemberInfo [] group;
 			
 			group = TypeManager.MemberLookup (ec.ContainerType, PropertyInfo.DeclaringType,
-							      MemberTypes.Method, flags, "get_" + PropertyInfo.Name);
+							  MemberTypes.Method, flags, "get_" + PropertyInfo.Name);
 
 			//
 			// The first method is the closest to us
@@ -4198,11 +4202,26 @@ namespace Mono.CSharp {
 				if (setter.IsStatic)
 					is_static = true;
 			}
+
+			if (setter == null && getter == null){
+				Error (122, "`" + PropertyInfo.Name + "' " +
+				       "is inaccessible because of its protection level");
+				
+			}
 		}
 
 		override public Expression DoResolve (EmitContext ec)
 		{
 			if (getter == null){
+				//
+				// The following condition happens if the PropertyExpr was
+				// created, but is invalid (ie, the property is inaccessible),
+				// and we did not want to embed the knowledge about this in
+				// the caller routine.  This only avoids double error reporting.
+				//
+				if (setter == null)
+					return null;
+				
 				Report.Error (154, loc, 
 					      "The property `" + PropertyInfo.Name +
 					      "' can not be used in " +
@@ -4227,6 +4246,15 @@ namespace Mono.CSharp {
 		override public Expression DoResolveLValue (EmitContext ec, Expression right_side)
 		{
 			if (setter == null){
+				//
+				// The following condition happens if the PropertyExpr was
+				// created, but is invalid (ie, the property is inaccessible),
+				// and we did not want to embed the knowledge about this in
+				// the caller routine.  This only avoids double error reporting.
+				//
+				if (getter == null)
+					return null;
+				
 				Report.Error (154, loc, 
 					      "The property `" + PropertyInfo.Name +
 					      "' can not be used in " +
