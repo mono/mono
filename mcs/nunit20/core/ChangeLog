@@ -1,3 +1,7 @@
+2005-01-13  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ConsoleWriter.cs : Flush() should call that of input writer.
+
 2004-11-23  Raja R Harinath  <rharinath@novell.com>
 
 	* Makefile (NO_INSTALL) [PROFILE=net_2_0]: Don't install dll.
