@@ -1,13 +1,27 @@
-namespace NUnit.Framework {
+namespace NUnit.Framework 
+{
+	using System;
+	using System.Runtime.Serialization;
 
-  using System;
-  
-  /// <summary cref="System.Exception">Thrown when an assertion failed.</summary>
-  public class AssertionFailedError: Exception {
-	  /// <summary>
-	  /// 
-	  /// </summary>
-	  /// <param name="message"></param>
-    public AssertionFailedError (string message) : base(message) {}
-  }
+	/// <summary>
+	/// Thrown when an assertion failed.
+	/// </summary>
+	[Serializable]
+	public class AssertionFailedError : ApplicationException//NUnitException
+	{
+		/// <summary>
+		/// Serialization Constructor
+		/// </summary>
+		protected AssertionFailedError(SerializationInfo info, 
+			StreamingContext context) : base(info,context){}
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="message"></param>
+		public AssertionFailedError (string message) : base(message) {}
+//		public override bool IsAssertionFailure 
+//		{
+//			get{return true;}
+//		}
+	}
 }

@@ -1,37 +1,42 @@
-namespace NUnit.Runner {
-  using System;
-/// <summary>
-/// 
-/// </summary>
-  public class TestCaseClassLoader : StandardTestSuiteLoader {
-	  /// <summary>
-	  /// 
-	  /// </summary>
-	  /// <param name="name"></param>
-	  /// <param name="resolve"></param>
-	  /// <returns></returns>
-    public Type LoadClass(string name, bool resolve) {
-      return Load(name);
-    }
-/// <summary>
-/// 
-/// </summary>
-/// <param name="name"></param>
-/// <returns></returns>
-    public bool IsExcluded(string name) {
-      return false;
-    }
-  }
+namespace NUnit.Runner 
+{
+	using System;
+
+	/// <summary>
+	/// 
+	/// </summary>
+	[Obsolete("Use StandardLoader or UnloadingLoader")]
+	public class TestCaseClassLoader : StandardTestSuiteLoader 
+	{
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="name"></param>
+		/// <param name="resolve"></param>
+		/// <returns></returns>
+		public Type LoadClass(string name, bool resolve) 
+		{
+			return Load(name);
+		}
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="name"></param>
+		/// <returns></returns>
+		public bool IsExcluded(string name) 
+		{
+			return false;
+		}
+	}
 }
 
 
 #if false
-
 // commented out till figure out .net class reloading
 
 namespace NUnit.Runner {
 
-  /**
+ /**
  * A custom class loader which enables the reloading
  * of classes for each test run. The class loader
  * can be configured with a list of package paths that
@@ -200,5 +205,4 @@ namespace NUnit.Runner {
       return excluded;
     }
   }
-
 #endif

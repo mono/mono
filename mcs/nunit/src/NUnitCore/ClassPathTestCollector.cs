@@ -1,37 +1,37 @@
 namespace NUnit.Runner 
 {
-
 	using System;
 	using System.Collections;
+	using System.Collections.Specialized;
 	using System.IO;
 
 	/// <summary>
-	/// An implementation of a TestCollector that consults the
+	/// A TestCollector that consults the
 	/// class path. It considers all classes on the class path
 	/// excluding classes in JARs. It leaves it up to subclasses
 	/// to decide whether a class is a runnable Test.
-	///
 	/// <see cref="ITestCollector"/>
 	/// </summary>
-	public abstract class ClassPathTestCollector: ITestCollector 
+	[Obsolete("Use StandardLoader or UnloadingLoader")]
+	public abstract class ClassPathTestCollector : ITestCollector 
 	{
 		/// <summary>
 		/// 
 		/// </summary>
-		public ClassPathTestCollector() 
-		{
-		}
+		public ClassPathTestCollector() {}
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <returns></returns>
-		public Hashtable CollectTests() 
+		public string[] CollectTestsClassNames()
 		{
-			string classPath= Environment.GetEnvironmentVariable("Path");
+			string classPath = Environment.GetEnvironmentVariable("Path");
 			char separator= Path.PathSeparator;
-			Hashtable result= new Hashtable(100);
+			ArrayList result = new ArrayList();
 			CollectFilesInRoots(classPath.Split(separator), result);
-			return result;
+			string[] retVal = new string[result.Count];
+			result.CopyTo(retVal);
+			return retVal;
 		}
 		/// <summary>
 		/// 
@@ -42,7 +42,8 @@ namespace NUnit.Runner
 		{
 			return classFileName;
 		}
-		void CollectFilesInRoots(string[] roots, Hashtable result)
+
+		private void CollectFilesInRoots(string[] roots, IList result)
 		{
 			foreach (string directory in roots)
 			{
@@ -55,7 +56,7 @@ namespace NUnit.Runner
 						if (IsTestClass(file))
 						{
 							string className=ClassNameFromFile(file);
-							result.Add(className, className);
+							result.Add(className);
 						}
 					}
 				}
@@ -69,8 +70,9 @@ namespace NUnit.Runner
 		protected virtual bool IsTestClass(string classFileName) 
 		{
 			return 
-				(classFileName.EndsWith(".dll") || classFileName.EndsWith(".exe")) && 
-				classFileName.IndexOf("Test") > 0;
+				(  classFileName.EndsWith(".dll")
+					|| classFileName.EndsWith(".exe"))
+				&& classFileName.IndexOf("Test") > 0;
 		}
 	}
 }
