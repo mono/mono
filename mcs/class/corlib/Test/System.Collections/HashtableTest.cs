@@ -141,11 +141,16 @@ public class HashtableTest : Assertion {
 	}
 
         [Test]        
-	public void TestIsSynchronized() {
-		Hashtable h = new Hashtable();
-		Assert("hashtable not synced by default", !h.IsSynchronized);
-		Hashtable h2 = Hashtable.Synchronized(h);
-		Assert("hashtable should by synced", h2.IsSynchronized);
+	public void TestIsSynchronized ()
+	{
+		Hashtable h = new Hashtable ();
+		Assert ("hashtable not synched by default", !h.IsSynchronized);
+
+		Hashtable h2 = Hashtable.Synchronized (h);
+		Assert ("hashtable should by synched", h2.IsSynchronized);
+
+		Hashtable h3 = (Hashtable) h2.Clone ();
+		Assert ("Cloned Hashtable should by synched", h3.IsSynchronized);
 	}
 
         [Test]
