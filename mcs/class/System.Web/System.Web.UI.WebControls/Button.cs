@@ -70,7 +70,7 @@ namespace System.Web.UI.WebControls
 			}
 			set
 			{
-				ViewState["CommandArgument"] = value;
+				ViewState["CommandName"] = value;
 			}
 		}
 
