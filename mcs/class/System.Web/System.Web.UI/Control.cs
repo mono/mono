@@ -81,8 +81,9 @@
 
 using System;
 using System.Collections;
-using System.Web;
 using System.ComponentModel;
+using System.Web;
+using System.Web.Utils;
 
 namespace System.Web.UI
 {
@@ -349,8 +350,12 @@ namespace System.Web.UI
 
                 protected virtual void AddParsedSubObject(object obj) //DIT
                 {
-                        Control c = (Control)obj;
+			WebTrace.PushContext ("Control.AddParsedSubobject ()");
+                        Control c = obj as Control;
+			WebTrace.WriteLine ("Start: {0} -> {1}", obj, (c != null) ? c.ID : String.Empty);
                         if (c != null) Controls.Add(c);
+			WebTrace.WriteLine ("End");
+			WebTrace.PopContext ();
                 }
                 protected void BuildProfileTree(string parentId, bool calcViewState)
                 {
@@ -610,7 +615,11 @@ namespace System.Web.UI
 
                 public void SetRenderMethodDelegate(RenderMethod renderMethod) //DIT
                 {
+			WebTrace.PushContext ("Control.AddParsedSubobject ()");
+			WebTrace.WriteLine ("Start");
                         _renderMethodDelegate = renderMethod;
+			WebTrace.WriteLine ("End");
+			WebTrace.PopContext ();
                 }
 
                 protected void LoadRecursive()

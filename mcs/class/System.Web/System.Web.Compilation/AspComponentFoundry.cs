@@ -63,7 +63,7 @@ namespace System.Web.Compilation
 			string typeName;
 			Assembly assembly;
 
-			public InternalFoundry (string assemblyName, string nameSpave, string typeName)
+			public InternalFoundry (string assemblyName, string nameSpace, string typeName)
 			{
 				this.assemblyName = assemblyName;
 				this.nameSpace = nameSpace;

@@ -203,12 +203,12 @@ namespace System.Web {
 
       [MonoTODO()]
       public void AddFileDependencies(ArrayList filenames) {
-         throw new NotImplementedException();
+         //throw new NotImplementedException();
       }
 
       [MonoTODO()]
       public void AddFileDependency(string filename) {
-         throw new NotImplementedException();
+         //throw new NotImplementedException();
       }
 
       public void AddHeader(string name, string value) {

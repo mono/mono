@@ -8,6 +8,10 @@
 	<target name="build">
 		<mkdir dir="../lib"/>
 		<csc target="library" output="../lib/System.Web.dll" debug="${debug}">
+			<!-- Used to activate tracing
+			<arg value="/d:TRACE"/>
+			<arg value="/d:WEBTRACE"/>
+			-->
 			<arg value="/nowarn:1595"/>
 			<arg value="/nowarn:0169"/>
 			<arg value="/nowarn:0649"/> <!-- always default value -->

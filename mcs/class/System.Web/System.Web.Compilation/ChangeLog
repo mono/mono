@@ -1,3 +1,9 @@
+2002-10-23  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* AspComponentFoundry.cs: fixed typo.
+	* TemplateFactory.cs: use csc style options.
+	* AspGenerator.cs: don't use FileDependencies property of base class.
+
 2002-09-28  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* System.Web.Compilation/AspElements.cs:

@@ -1,3 +1,8 @@
+2002-10-24  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Page.cs: set the context in ProcessRequest. Added a few trace calls.
+	* Control.cs: added some trace information.
+
 2002-10-08  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* SimpleHandlerFactory.cs: new handler for .ashx files.

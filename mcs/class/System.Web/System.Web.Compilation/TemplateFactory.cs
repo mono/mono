@@ -36,10 +36,7 @@ namespace System.Web.Compilation
 				csFileName = fileName;
 
 				cscOptions = new StringBuilder ();
-				cscOptions.Append ("--target library ");
-				cscOptions.Append ("-L . ");
-				AddReference ("corlib");
-				AddReference ("System");
+				cscOptions.Append ("/target:library ");
 				AddReference ("System.Data");
 				AddReference ("System.Web");
 				AddReference ("System.Drawing");
@@ -127,7 +124,7 @@ namespace System.Web.Compilation
 
 			private void AddReference (string reference)
 			{
-				string arg = String.Format ("/r:{0} ", reference);
+				string arg = String.Format ("/r:{0}.dll ", reference);
 				cscOptions.Append (arg);
 			}
 			

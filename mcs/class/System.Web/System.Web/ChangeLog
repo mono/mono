@@ -1,3 +1,8 @@
+2002-10-24  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpResponse.cs: don't throw exception in a couple of
+	methods not yet implemented.
+
 2002-10-08  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HttpApplication.cs: fixed type and handle factories when creating

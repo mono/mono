@@ -1,3 +1,7 @@
+2002-10-24  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* System.Web.build: added options (commented out) to activate tracing.
+
 2002-10-06  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* list: added new file in System.Web.Handlers.

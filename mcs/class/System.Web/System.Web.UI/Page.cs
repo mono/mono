@@ -18,6 +18,7 @@ using System.Text;
 using System.Web;
 using System.Web.Caching;
 using System.Web.SessionState;
+using System.Web.Utils;
 
 namespace System.Web.UI
 {
@@ -526,6 +527,9 @@ public class Page : TemplateControl, IHttpHandler
 	private bool init_done;
 	public void ProcessRequest (HttpContext context)
 	{
+		_context = context;
+		WebTrace.PushContext ("Page.ProcessRequest ()");
+		WebTrace.WriteLine ("Entering");
 		if (!init_done){
 			init_done = true;
 			// These should depend on AutoEventWireUp in Page directive. Defaults to true.
@@ -535,10 +539,14 @@ public class Page : TemplateControl, IHttpHandler
 			PreRender += new EventHandler (_Page_PreRender);
 			Disposed += new EventHandler (_Page_Dispose);
 			Error += new EventHandler (_Page_Error);
+			WebTrace.WriteLine ("Finished init");
 		}
 		//-- Control execution lifecycle in the docs
+		WebTrace.WriteLine ("Controls.Clear");
 		Controls.Clear ();
+		WebTrace.WriteLine ("FrameworkInitialize");
 		FrameworkInitialize ();
+		WebTrace.WriteLine ("InitRecursive");
 		InitRecursive (null);
 		got_state = false;
 		renderingForm = false;	
@@ -549,21 +557,27 @@ public class Page : TemplateControl, IHttpHandler
 			ProcessPostData (DeterminePostBackMode (), false);
 		}
 
+		WebTrace.WriteLine ("LoadRecursive");
 		LoadRecursive ();
 		if (IsPostBack) {
 			ProcessPostData (secondPostData, true);
 			RaiseChangedEvents ();
 			RaisePostBackEvents ();
 		}
+		WebTrace.WriteLine ("PreRenderRecursiveInternal");
 		PreRenderRecursiveInternal ();
 
+		WebTrace.WriteLine ("SavePageViewState");
 		SavePageViewState ();
 		//--
 		StringBuilder sb = new StringBuilder ();
 		StringWriter sr = new StringWriter (sb);
 		HtmlTextWriter output = new HtmlTextWriter (context.Response.Output);
+		WebTrace.WriteLine ("RenderControl");
 		RenderControl (output);
 		_context = null;
+		WebTrace.WriteLine ("End");
+		WebTrace.PopContext ();
 	}
 
 	internal void RaisePostBackEvents ()
