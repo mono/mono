@@ -340,3 +340,9 @@ Added delegates. All delegates in System.Windows.Forms done
 * TabControl.cs
 * TabPage.cs
 * Added sub classes
+
+2002-6-24 DennisHayes <dennish@raytek.com>
+* AccessibleStates.cs
+* ArrangeDirection.cs
+* AccessibleEvents.cs
+* Added values for enums

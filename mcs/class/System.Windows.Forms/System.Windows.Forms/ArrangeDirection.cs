@@ -17,8 +17,8 @@ namespace System.Windows.Forms {
 	//[MonoTodo]
 	public enum ArrangeDirection {
 		Down = 4,
-		//Left = ,
+		Left = 0,
 		Right = 0,
-		//Up = 
+		Up = 4
 	}
 }
