@@ -1,3 +1,7 @@
+2004-01-15  Cesar Lopez Nataren  <cesar@ciencias.unam.mx>
+
+	* CodeGenerator.cs: small fixes to generate same things that ms.
+
 2004-01-13  Cesar Lopez Nataren  <cesar@ciencias.unam.mx>
 
 	* VariableDeclaration.cs: get the this.type which is a Type not a TypeBuilder.

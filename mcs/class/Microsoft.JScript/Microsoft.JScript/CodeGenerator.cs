@@ -60,6 +60,11 @@ namespace Microsoft.JScript {
 					     assembly_name,
 					     AssemblyBuilderAccess.RunAndSave);
 
+			ConstructorInfo ctr_info = typeof (Microsoft.JScript.ReferenceAttribute).GetConstructor (new Type [] { typeof (string) });
+			// FIXME: find out which is the blob.
+			byte [] blob  = new byte [] {};
+			assembly_builder.SetCustomAttribute (ctr_info, blob); 
+
 			module_builder = assembly_builder.DefineDynamicModule (
 						mod_name,
 						assembly_name.Name + ".exe", 
@@ -87,7 +92,7 @@ namespace Microsoft.JScript {
 				return;
 
 			TypeBuilder type_builder;
-			type_builder = module_builder.DefineType ("JScript 0");
+			type_builder = module_builder.DefineType ("JScript 0", TypeAttributes.Public);
 
 			type_builder.SetParent (typeof (GlobalScope));
 			type_builder.SetCustomAttribute (new CustomAttributeBuilder
