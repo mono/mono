@@ -13,8 +13,8 @@ namespace System.Web.Services.Description {
 		#region Constructors
 
 		internal FaultBindingCollection (OperationBinding operationBinding) 
+			: base (operationBinding)
 		{
-			parent = operationBinding;
 		}
 
 		#endregion // Constructors

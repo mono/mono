@@ -17,8 +17,8 @@ namespace System.Web.Services.Description {
 		#region Constructors
 	
 		public ServiceDescriptionFormatExtensionCollection (object parent) 
+			: base (parent)
 		{
-			this.parent = parent;
 		}
 
 		#endregion // Constructors

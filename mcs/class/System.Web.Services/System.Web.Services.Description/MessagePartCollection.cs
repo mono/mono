@@ -13,8 +13,8 @@ namespace System.Web.Services.Description {
 		#region Constructors
 
 		internal MessagePartCollection (Message message)
+			: base (message)
 		{
-			parent = message;
 		}	
 
 		#endregion

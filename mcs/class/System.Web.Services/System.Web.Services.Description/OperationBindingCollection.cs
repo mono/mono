@@ -13,8 +13,8 @@ namespace System.Web.Services.Description {
 		#region Constructors
 
 		internal OperationBindingCollection (Binding binding)
+			: base (binding)
 		{
-			parent = binding;
 		}
 
 		#endregion // Constructors

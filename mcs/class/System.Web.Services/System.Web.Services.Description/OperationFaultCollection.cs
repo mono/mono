@@ -13,8 +13,8 @@ namespace System.Web.Services.Description {
 		#region Constructors
 
 		internal OperationFaultCollection (Operation operation) 
+			: base (operation)
 		{
-			parent = operation;
 		}
 
 		#endregion // Constructors

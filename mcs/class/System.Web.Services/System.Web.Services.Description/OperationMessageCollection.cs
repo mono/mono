@@ -15,8 +15,8 @@ namespace System.Web.Services.Description {
 		#region Constructors
 
 		internal OperationMessageCollection (Operation operation)
+			: base (operation)
 		{
-			parent = operation; 
 		}
 
 		#endregion // Constructors
@@ -24,7 +24,6 @@ namespace System.Web.Services.Description {
 		#region Properties
 
 		public OperationFlow Flow {
-			[MonoTODO ("Verify default return value.")]
 			get { 
 				switch (Count) {
 				case 1: 
@@ -32,15 +31,13 @@ namespace System.Web.Services.Description {
 						return OperationFlow.OneWay;
 					else
 						return OperationFlow.Notification;
-					break;
 				case 2:
 					if (this[0] is OperationInput)
 						return OperationFlow.RequestResponse;
 					else
 						return OperationFlow.SolicitResponse;
-					break;
 				}
-				return OperationFlow.None; // .NET says default is SolicitResponse.  Verify this.
+				return OperationFlow.None;
 			}
 		}
 

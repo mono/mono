@@ -13,8 +13,8 @@ namespace System.Web.Services.Description {
 		#region Constructors
 
 		internal OperationCollection (PortType portType) 
+			: base (portType)
 		{
-			parent = portType;
 		}
 
 		#endregion // Constructors

@@ -16,8 +16,8 @@ namespace System.Web.Services.Description {
 		#region Constructors
 	
 		public ServiceDescriptionCollection () 
+			: base (null)
 		{
-			parent = this;
 		}
 
 		#endregion // Constructors
@@ -116,11 +116,6 @@ namespace System.Web.Services.Description {
 			List.Remove (serviceDescription);
 		}
 
-		protected override void SetParent (object value, object parent)
-		{
-			((ServiceDescription) value).SetParent ((ServiceDescriptionCollection) parent);
-		}
-			
 		#endregion // Methods
 	}
 }

@@ -1,3 +1,28 @@
+2002-08-19  Tim Coleman <tim@timcoleman.com>
+	* BindingCollection.cs:
+		Use base constructor, remove SetParent call
+	* FaultBindingCollection.cs:
+	* ImportCollection.cs:
+	* MessageCollection.cs:
+	* MessagePartCollection.cs:
+	* OperationBindingCollection.cs:
+	* OperationCollection.cs:
+	* OperationFaultCollection.cs:
+	* PortCollection.cs:
+	* PortTypeCollection.cs:
+	* ServiceCollection.cs:
+	* ServiceDescriptionFormatExtensionCollection.cs:
+		Use base constructor
+	* ServiceDescriptionCollection.cs:
+		Use base constructor, Remove SetParent method
+	* ServiceDescriptionBaseCollection.cs:
+		Make parent object private as according to
+		class status page.
+	* OperationMessageCollection.cs:
+		Use base constructor
+		Remove excess break's to avoid compiler warning
+		Remove TODO attribute (confirmed default retval)
+
 2002-08-15  Tim Coleman <tim@timcoleman.com>
 	* FaultBindingCollection.cs:
 	* ImportCollection.cs:

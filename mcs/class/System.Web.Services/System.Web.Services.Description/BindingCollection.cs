@@ -19,8 +19,8 @@ namespace System.Web.Services.Description {
 		#region Constructors
 	
 		internal BindingCollection (ServiceDescription serviceDescription) 
+			: base (serviceDescription)
 		{
-			this.serviceDescription = serviceDescription;
 		}
 
 		#endregion // Constructors
@@ -74,7 +74,6 @@ namespace System.Web.Services.Description {
 
 		public void Insert (int index, Binding binding)
 		{
-			SetParent (binding, serviceDescription);
 			List.Insert (index, binding);
 		}
 	
