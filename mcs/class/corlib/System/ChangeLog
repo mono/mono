@@ -1,3 +1,8 @@
+2002-03-05  Duncan Mak  <duncan@ximian.com>
+
+	* CharEnumerator.cs: Renamed to variables to be clearer and
+	changed some of the tests to conform to the 1.0 spec.
+
 2002-03-06  Martin Baulig  <martin@gnome.org>
 
 	* Array.cs (Copy): Calculate absolute array position here and use

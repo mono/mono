@@ -14,33 +14,37 @@ namespace System
 	public sealed class CharEnumerator : IEnumerator, ICloneable
 	{
 		private string str;
-		private int idx;
-		private int len;
+		private int index;
+		private int length;
 		
 		// Constructor
 		internal CharEnumerator (string s)
 		{
 			 str = s;
-			 idx = -1;
-			 len = s.Length;
+			 index = -1;
+			 length = s.Length;
 		}
 		
 		// Property
 		public char Current
 		{
-			get { if (idx == -1)
-				throw new InvalidOperationException ("The position is not valid.");
+			get {
+				if (index == -1)
+					throw new InvalidOperationException
+						("The position is not valid.");
 
-			return str [idx];
+				return str [index];
 			}
 		}
 		
 		object IEnumerator.Current
 		{
-			get { if (idx == -1)
-				throw new InvalidOperationException ("The position is not valid");
+			get {
+				if (index == -1)
+					throw new InvalidOperationException
+						("The position is not valid");
 
-			return str [idx];
+				return str [index];
 			}
 		}
 		
@@ -48,29 +52,26 @@ namespace System
 		public object Clone ()
 		{
 			CharEnumerator x = new CharEnumerator (str);
-			x.idx = idx;
+			x.index = index;
 			return x;
 		}
 		
 		public bool MoveNext ()
 		{
-			if (len < 0)
+			if (length == 0)
+				return false;			
+
+			index ++;
+			
+			if (index == length) 				
 				return false;
-			
-			idx++;
-			
-			if (idx >= len) {
-				idx = -1;
-				return false;
-			}
-			
-			return true;
+			else
+				return true;
 		}
 		
 		public void Reset ()
 		{
-			idx = -1;
-
+			index = -1;
 		}
 	}
 }
