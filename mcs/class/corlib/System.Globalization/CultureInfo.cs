@@ -84,7 +84,7 @@ namespace System.Globalization
 				return InvariantCulture;
 
 			CultureInfo ci = new CultureInfo ();
-			if (!construct_internal_locale_from_specific_name (ci, name))
+			if (!construct_internal_locale_from_specific_name (ci, name.ToLowerInvariant ()))
 				throw new ArgumentException ("Culture name " + name +
 						" is not supported.", name);
 
