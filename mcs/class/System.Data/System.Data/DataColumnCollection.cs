@@ -53,8 +53,8 @@ namespace System.Data {
 			get
 			{
 				foreach (DataColumn column in base.List)
-				{
-					if (column.ColumnName == name)
+				{					
+					if (String.Compare (column.ColumnName, name, !column.Table.CaseSensitive) == 0)
 					{
 						return column;
 					}
