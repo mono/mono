@@ -1,4 +1,8 @@
 
+Thu Jun 19 11:03:42 CEST 2003 Paolo Molaro <lupus@ximian.com>
+
+	* icall.c: return members in metadata order.
+
 Wed Jun 18 15:26:58 CEST 2003 Paolo Molaro <lupus@ximian.com>
 
 	* icall.c: avoid infinite loop in GetTimeZoneData.
