@@ -52,6 +52,7 @@ namespace Mono.ILASM {
                 private string signature;
                 private ITypeRef ret_type;
                 private ArrayList param_list;
+                private Hashtable named_param_table;
                 private ArrayList inst_list;
                 private Hashtable label_table;
                 private PEAPI.MethodDef methoddef;
@@ -76,6 +77,7 @@ namespace Mono.ILASM {
                         label_table = new Hashtable ();
                         local_list = new ArrayList ();
                         named_local_table = new Hashtable ();
+                        named_param_table = new Hashtable ();
                         entry_point = false;
                         init_locals = false;
                         max_stack = -1;
@@ -83,6 +85,7 @@ namespace Mono.ILASM {
                         is_defined = false;
                         is_resolved = false;
                         CreateSignature ();
+                        CreateNamedParamTable ();
                 }
 
                 public string Name {
@@ -119,6 +122,20 @@ namespace Mono.ILASM {
                         return (Local) named_local_table[name];
                 }
 
+                public int GetNamedLocalSlot (string name)
+                {
+                        Local local = (Local) named_local_table[name];
+
+                        return local.Slot;
+                }
+
+                public int GetNamedParamPos (string name)
+                {
+                        int pos = (int) named_param_table[name];
+
+                        return pos;
+                }
+
                 public void InitLocals ()
                 {
                         init_locals = true;
@@ -139,14 +156,22 @@ namespace Mono.ILASM {
                         if (is_resolved)
                                 return methoddef;
 
-                        PEAPI.Param[] param_array = new PEAPI.Param[param_list.Count];
-                        int count = 0;
-                        ret_type.Resolve (code_gen);
+                        PEAPI.Param[] param_array;
 
-                        foreach (ParamDef paramdef in param_list) {
-                                paramdef.Define (code_gen);
-                                param_array[count++] = paramdef.PeapiParam;
+                        if (param_list != null) {
+                                param_array = new PEAPI.Param[param_list.Count];
+                                int count = 0;
+                                ret_type.Resolve (code_gen);
+
+                                foreach (ParamDef paramdef in param_list) {
+                                        paramdef.Define (code_gen);
+                                        param_array[count++] = paramdef.PeapiParam;
+                                }
+                        } else {
+                                param_array = new PEAPI.Param[0];
                         }
+
+                        FixAttributes ();
 
                         methoddef = code_gen.PEFile.AddMethod (meth_attr, impl_attr,
                                         name, ret_type.PeapiType, param_array);
@@ -161,14 +186,22 @@ namespace Mono.ILASM {
                         if (is_resolved)
                                 return methoddef;
 
-                        PEAPI.Param[] param_array = new PEAPI.Param[param_list.Count];
-                        int count = 0;
-                        ret_type.Resolve (code_gen);
+                        PEAPI.Param[] param_array;
 
-                        foreach (ParamDef paramdef in param_list) {
-                                paramdef.Define (code_gen);
-                                param_array[count++] = paramdef.PeapiParam;
+                        if (param_list != null) {
+                                param_array = new PEAPI.Param[param_list.Count];
+                                int count = 0;
+                                ret_type.Resolve (code_gen);
+
+                                foreach (ParamDef paramdef in param_list) {
+                                        paramdef.Define (code_gen);
+                                        param_array[count++] = paramdef.PeapiParam;
+                                }
+                        } else {
+                                param_array = new PEAPI.Param[0];
                         }
+
+                        FixAttributes ();
 
                         methoddef = classdef.AddMethod (meth_attr, impl_attr,
                                         name, ret_type.PeapiType, param_array);
@@ -285,23 +318,65 @@ namespace Mono.ILASM {
                         signature = CreateSignature (name, param_list);
                 }
 
-                public static string CreateSignature (string name, ICollection param_list)
+                public static string CreateSignature (string name, IList param_list)
                 {
                         StringBuilder builder = new StringBuilder ();
 
                         builder.Append (name);
                         builder.Append ('(');
 
-                        bool first = true;
-                        foreach (ParamDef paramdef in param_list) {
-                                if (!first)
-                                        builder.Append (',');
-                                builder.Append (paramdef.TypeName);
+                        if (param_list != null) {
+                                bool first = true;
+                                foreach (ParamDef paramdef in param_list) {
+                                        if (!first)
+                                                builder.Append (',');
+                                        builder.Append (paramdef.TypeName);
+                                }
                         }
                         builder.Append (')');
 
 
                         return builder.ToString ();
+                }
+
+                public static string CreateSignature (string name, ITypeRef[] param_list)
+                {
+                        StringBuilder builder = new StringBuilder ();
+
+                        builder.Append (name);
+                        builder.Append ('(');
+
+                        if (param_list != null) {
+                                bool first = true;
+                                foreach (ITypeRef param in param_list) {
+                                        if (!first)
+                                                builder.Append (',');
+                                        builder.Append (param.FullName);
+                                }
+                        }
+                        builder.Append (')');
+
+
+                        return builder.ToString ();
+                }
+
+                private void CreateNamedParamTable ()
+                {
+                        if (param_list == null)
+                                return;
+
+                        int count = 0;
+                        foreach (ParamDef param in param_list) {
+                                if (param.Name != null)
+                                        named_param_table.Add (param.Name, count);
+                                count++;
+                        }
+                }
+
+                private void FixAttributes ()
+                {
+                        if (name == ".ctor" || name == ".cctor")
+                                meth_attr |= PEAPI.MethAttr.SpecialName | PEAPI.MethAttr.RTSpecialName;
                 }
         }
 

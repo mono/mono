@@ -1,6 +1,6 @@
 2003-05-11 Jackson Harper <jackson@latitudegeo.com>
 
-	* TypeDef.cs: Add named param table and methods to get named param
+	* MethodDef.cs: Add named param table and methods to get named param
 	positions. Add method to get named local variables slot
 	number. Make sure param_lists aren't null when defining them. Add
 	specialname and rtspecialname attributes if the method being
