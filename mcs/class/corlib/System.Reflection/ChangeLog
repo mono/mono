@@ -1,3 +1,7 @@
+2004-12-08  Zoltan Varga  <vargaz@freemail.hu>
+
+	* Assembly.cs: Move corlib_internal field to AssemblyBuilder.
+
 2004-12-06  Zoltan Varga  <vargaz@freemail.hu>
 
 	* Assembly.cs: Add corlib_internal field.

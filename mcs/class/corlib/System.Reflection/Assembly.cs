@@ -61,7 +61,6 @@ namespace System.Reflection {
 		internal PermissionSet _refuse;		// for SecurityAction.RequestRefuse
 		private PermissionSet _granted;		// for the resolved assembly granted permissions
 		private PermissionSet _denied;		// for the resolved assembly denied permissions
-		private bool corlib_internal;
 		
 		internal Assembly () 
 		{
@@ -795,16 +794,6 @@ namespace System.Reflection {
 			}
 
 			return ps.IsSubsetOf (GrantedPermissionSet);
-		}
-
-		// Used by the serialization code
-		internal bool CorlibInternal {
-			get {
-				return corlib_internal;
-			}
-			set {
-				corlib_internal = value;
-			}
 		}
 	}
 }
