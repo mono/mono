@@ -63,7 +63,20 @@ namespace Mono.Xml.Xsl.Operations {
 		public object Evaluate (XslTransformProcessor p)
 		{
 			if (select != null) {
-				return p.Evaluate (select);
+				object o = p.Evaluate (select);
+				// To resolve variable references correctly, we
+				// have to collect all the target nodes here.
+				// (otherwise, variables might be resolved with
+				// different level of variable stack in
+				// XslTransformProcessor).
+				if (o is XPathNodeIterator) {
+					ArrayList al = new ArrayList ();
+					XPathNodeIterator iter = (XPathNodeIterator) o;
+					while (iter.MoveNext ())
+						al.Add (iter.Current);
+					o = new ListIterator (al, p.XPathContext, false);
+				}
+				return o;
 			} else if (content != null) {
 //				XmlNodeWriter w = new XmlNodeWriter (false);
 				DTMXPathDocumentWriter w = new DTMXPathDocumentWriter (p.CurrentNode.NameTable, 200);

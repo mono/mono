@@ -1,3 +1,10 @@
+2004-04-01 Atsushi Enomoto <atsushi@ximian.com>
+
+	* XslVariable.cs : When evaluated variable was BaseIterator, its
+	  iterated nodes must be collected in prior. Otherwise, it might be
+	  evaluated later with inconsistent level of variable stack in
+	  XslTransformProcessor. This fixes bug #55876.
+
 2004-03-22 Atsushi Enomoto <atsushi@ximian.com>
 
 	* XslApplyTemplates.cs,
