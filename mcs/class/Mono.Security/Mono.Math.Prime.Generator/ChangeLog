@@ -1,3 +1,8 @@
+2004-02-13  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* PrimeGeneratorBase.cs: Changed primality test to Rabin Miller to
+	fix issues #51229 (bug), #54262 (very long in same cases).
+
 2004-02-09  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* NextPrimeFinder.cs: New. Copied from corlib. Required for PKCS1 and
