@@ -1,4 +1,10 @@
 
+Fri May 30 12:56:29 CEST 2003 Paolo Molaro <lupus@ximian.com>
+
+	* class.c, domain.c, icall.c, metadata.h, object.h: support for
+	handling TypedReference and ArgIterator.
+	* loader.c, loader.h: added function to get signature at call site.
+
 Thu May 29 11:34:55 CEST 2003 Paolo Molaro <lupus@ximian.com>
 
 	* metadata.c, metadata.h, private.h, tokentype.h, loader.c: make more 
