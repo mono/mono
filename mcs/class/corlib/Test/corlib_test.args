@@ -118,3 +118,4 @@ System.Threading/MutexTest.cs
 System.Reflection/AssemblyNameTest.cs
 System.Reflection/StrongNameKeyPairTest.cs
 System.Reflection.Emit/MethodBuilderTest.cs
+System.Reflection.Emit/TypeBuilderTest.cs
