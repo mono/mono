@@ -179,6 +179,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "ColorDepth.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "ContainerControl.cs"
                     SubType = "Component"
                     BuildAction = "Compile"
@@ -289,12 +294,27 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "HScrollBar.cs"
+                    SubType = "Component"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "IContainerControl.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
                     RelPath = "IDataObject.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "ImageList.cs"
+                    SubType = "Component"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "ImageListStreamer.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -424,6 +444,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Orientation.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "PaintEventArgs.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -504,6 +529,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "TickStyle.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "TODOAttribute.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -521,6 +551,11 @@
                 <File
                     RelPath = "UICuesEventHandler.cs"
                     SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "VScrollBar.cs"
+                    SubType = "Component"
                     BuildAction = "Compile"
                 />
                 <File
