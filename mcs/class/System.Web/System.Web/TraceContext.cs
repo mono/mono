@@ -100,6 +100,7 @@ namespace System.Web {
 
 	   private void SetRequestDetails ()
 	   {
+		   data.RequestPath = _Context.Request.FilePath;
 		   data.SessionID = _Context.Session.SessionID;
 		   data.RequestType = _Context.Request.RequestType;
 		   data.RequestTime = _Context.Timestamp;

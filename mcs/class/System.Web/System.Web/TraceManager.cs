@@ -60,6 +60,10 @@ namespace System.Web {
 			get { return mode; }
 			set { mode = value; }
 		}
+
+		public TraceData[] TraceData {
+			get { return data; }
+		}
 		
 		public void AddTraceData (TraceData item)
 		{
@@ -70,6 +74,15 @@ namespace System.Web {
 			data [cur_item++] = item;
 		}
 
+		public void Clear ()
+		{
+			if (data == null)
+				return;
+			
+			Array.Clear (data, 0, data.Length);
+			cur_item = 0;
+		}
+		
 		public int ItemCount {
 			get { return cur_item; }
 		}

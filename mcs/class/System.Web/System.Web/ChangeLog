@@ -1,5 +1,13 @@
 2004-01-10  Jackson Harper <jackson@ximian.com>
 
+	* TraceContext.cs: Save the request path in the trace data.
+	* TraceData.cs: Add RequestPath property, make some rendering
+	methods internal static so the TraceHandler can use them.
+	* TraceManager.cs: Expose trace data, add a method for clearing
+	trace data.
+	
+2004-01-10  Jackson Harper <jackson@ximian.com>
+
 	* HttpRuntime.cs: Add trace manager
 	* TraceManager.cs: New class for handling trace configuration and
 	storing trace data objects.

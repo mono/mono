@@ -28,6 +28,7 @@ namespace System.Web {
 		private DataTable header_data;
 		private DataTable servervar_data;
 
+		private string request_path;
 		private string session_id;
 		private DateTime request_time;
 		private Encoding request_encoding;
@@ -66,6 +67,11 @@ namespace System.Web {
 			is_first_time = true;
 		}
 
+		public string RequestPath {
+			get { return request_path; }
+			set { request_path = value; }
+		}
+		
 		public string SessionID {
 			get { return session_id; }
 			set { session_id = value; }
@@ -281,7 +287,7 @@ namespace System.Web {
 			table.RenderControl (output);
 		}
 		
-		private TableRow AltRow (string title)
+		internal static TableRow AltRow (string title)
 		{
 			TableRow row = new TableRow ();
 			TableHeaderCell header = new TableHeaderCell ();
@@ -318,7 +324,7 @@ namespace System.Web {
 					open + (string) r ["Message"] + close, t1, t2);
 		}
 	   
-		private TableRow SubHeadRow (params string[] cells)
+		internal static TableRow SubHeadRow (params string[] cells)
 		{
 			TableRow row = new TableRow ();
 			foreach (string s in cells) {
@@ -333,7 +339,7 @@ namespace System.Web {
 			return row;
 		}
 		
-		private TableRow RenderAltRow (Table table, int pos, params string[] cells)
+		internal static TableRow RenderAltRow (Table table, int pos, params string[] cells)
 		{
 			TableRow row = new TableRow ();
 			foreach (string s in cells) {
@@ -372,7 +378,7 @@ namespace System.Web {
 			return row;
 		}
 		
-		private Table CreateTable ()
+		internal static Table CreateTable ()
 		{
 			Table table = new Table ();
 			
@@ -383,7 +389,7 @@ namespace System.Web {
 			return table;
 		}
 		
-		private void RenderStyleSheet (HtmlTextWriter o)
+		internal static void RenderStyleSheet (HtmlTextWriter o)
 		{
 			o.WriteLine ("<style type=\"text/css\">");
 			o.Write ("span.tracecontent { background-color:white; ");
