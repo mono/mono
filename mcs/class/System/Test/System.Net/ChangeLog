@@ -1,3 +1,7 @@
+2005-01-28  Nick Drochak  <ndrochak@ieee.org>
+
+	* DnsTest.cs: Pick a URL we can most likely fail against.
+
 2005-01-24  Nick Drochak  <ndrochak@ieee.org>
 
 	* ServicePointManagerTest.cs: Make sure we have some Service Points

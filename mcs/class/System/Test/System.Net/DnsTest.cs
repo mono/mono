@@ -31,7 +31,7 @@ public class DnsTest : Assertion {
                 site1Dot = "64.14.94.188",
                 site2Name = "info.diku.dk",
                 site2Dot = "130.225.96.4",
-                noneExistingSite = "www.hopefullydoesnotexist.dk";
+                noneExistingSite = "www.unlikely.novell.com";
         private uint site1IP = 2180692201, site2IP = 2195808260; // Big-Endian
         
         private void Callback(IAsyncResult ar) { 
