@@ -193,13 +193,11 @@ namespace System.Data.SqlClient {
 		
 		public int IndexOf (string parameterName)
 		{
-			int i=0;
-			for( ; i < list.Count; i++ ) {
-				if (((SqlParameter )list[i]).ParameterName.Equals (parameterName))
-					break;
-			}
+			for (int i = 0; i < Count; i += 1)
+                                if (this [i].ParameterName.Equals (parameterName))
+                                        return i;
+                        return -1;
 
-			return i;
 		}
 
 		public void Insert (int index, object value)
