@@ -1,3 +1,7 @@
+2004-12-06  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* corlib_test.dll.sources : added TextWriterTest.cs.
+
 2004-11-28  Zoltan Varga  <vargaz@freemail.hu>
 
 	* corlib.dll.sources: Added some missing 2.0 exception classes.

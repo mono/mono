@@ -67,6 +67,7 @@ System.IO/StreamReaderTest.cs
 System.IO/StreamWriterTest.cs
 System.IO/StringReaderTest.cs
 System.IO/StringWriterTest.cs
+System.IO/TextWriterTest.cs
 System/MathTest.cs
 System/MulticastDelegate.cs
 System/ObjectTest.cs
