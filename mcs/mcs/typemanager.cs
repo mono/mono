@@ -113,6 +113,7 @@ public class TypeManager {
 	{
 		method_arguments = new Hashtable ();
 		builder_to_container = new Hashtable ();
+		type_interface_cache = new Hashtable ();
 	}
 	
 	public void AddUserType (string name, TypeBuilder t)
@@ -447,6 +448,32 @@ public class TypeManager {
 		} else
 			return pi.GetAccessors ();
 	}
+
+	// <remarks>
+	//  The following is used to check if a given type implements an interface.
+	//  The cache helps us reduce the expense of hitting Type.GetInterfaces everytime.
+	// </remarks>
+
+	static Hashtable type_interface_cache;
+
+	public static bool ImplementsInterface (Type t, Type iface)
+	{
+		Type [] interfaces = (Type []) type_interface_cache [t];
+
+		if (interfaces == null) {
+			interfaces = t.GetInterfaces ();
+			type_interface_cache [t] = interfaces;
+		}
+
+		for (int i = interfaces.Length; i > 0; ) {
+			i--;
+			if (interfaces [i] == iface)
+				return true;
+		}
+
+		return false;
+	}
+	
 
 	// <summary>
 	//   Returns the name of the indexer in a given type.  The default

@@ -81,22 +81,22 @@ namespace Generator {
 			int prec = 0;
 			
 			switch (u.Oper){
-			case Unary.Operator.Addition:
+			case Unary.Operator.UnaryPlus:
 				prec = 10;
 				s = "+";
 				break;
 				
-			case Unary.Operator.Subtraction:
+			case Unary.Operator.UnaryNegation:
 				prec = 10;
 				s = "-";
 				break;
 				
-			case Unary.Operator.Negate:
+			case Unary.Operator.LogicalNot:
 				s = "!";
 				prec = 10;
 				break;
 				
-			case Unary.Operator.BitComplement:
+			case Unary.Operator.OnesComplement:
 				prec = 10;
 				s = "~";
 				break;

@@ -1,3 +1,34 @@
+2001-10-22  Ravi Pratap  <ravi@ximian.com>
+
+	* typemanager.cs (ImplementsInterface): New method to determine if a type
+	implements a given interface. Provides a nice cache too.
+
+	* expression.cs (ImplicitReferenceConversion): Update checks to use the above
+	method.
+
+	(ConvertReferenceExplicit): Ditto.
+
+	* delegate.cs (Delegate::Populate): Update to define the parameters on the 
+	various methods, with correct names etc.
+
+	* class.cs (Operator::OpType): New members Operator.UnaryPlus and 
+	Operator.UnaryNegation.
+
+	* cs-parser.jay (operator_declarator): Be a little clever in the case where
+	we have a unary plus or minus operator.
+
+	* expression.cs (Unary): Rename memebers of Operator enum to UnaryPlus and 
+	UnaryMinus.
+
+	* everywhere : update accordingly.
+
+	* everywhere : Change Negate and BitComplement to LogicalNot and OnesComplement
+	respectively.
+
+	* class.cs (Method::Define): For the case where we are implementing a method
+	inherited from an interface, we need to set the MethodAttributes.Final flag too. 
+	Also set MethodAttributes.NewSlot and MethodAttributes.HideBySig.
+	
 2001-10-21  Ravi Pratap  <ravi@ximian.com>
 
 	* interface.cs (FindMembers): Implement to work around S.R.E

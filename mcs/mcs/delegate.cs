@@ -87,6 +87,7 @@ namespace CIR {
 		{
 
 			MethodAttributes mattr;
+			int i;
 			
 			Type [] const_arg_types = new Type [2];
 
@@ -115,6 +116,12 @@ namespace CIR {
  								  cc,
  								  ret_type,		     
  								  param_types);
+
+			for (i = 0 ; i < param_types.Length; i++) {
+				Parameter p = Parameters.FixedParameters [i];
+				string name = p.Name;
+				ParameterBuilder pb = InvokeBuilder.DefineParameter (i+1, p.Attributes, name); 
+			}
 			
 			InvokeBuilder.SetImplementationFlags (MethodImplAttributes.Runtime);
 
@@ -134,6 +141,15 @@ namespace CIR {
 								       cc,
 								       TypeManager.iasyncresult_type,
 								       async_param_types);
+
+			for (i = 0 ; i < param_types.Length; i++) {
+				Parameter p = Parameters.FixedParameters [i];
+				string name = p.Name;
+				BeginInvokeBuilder.DefineParameter (i + 1, p.Attributes, name); 
+			}
+			
+			BeginInvokeBuilder.DefineParameter (i + 1, ParameterAttributes.None, "callback");
+			BeginInvokeBuilder.DefineParameter (i + 2, ParameterAttributes.None, "object");
 			
 			BeginInvokeBuilder.SetImplementationFlags (MethodImplAttributes.Runtime);
 
@@ -146,7 +162,8 @@ namespace CIR {
 								     cc,
 								     ret_type,
 								     end_param_types);
-
+			EndInvokeBuilder.DefineParameter (1, ParameterAttributes.None, "result");
+			
 			EndInvokeBuilder.SetImplementationFlags (MethodImplAttributes.Runtime);
 			
 		}

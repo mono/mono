@@ -387,29 +387,19 @@ namespace CIR {
 				// from any class-type S to any interface-type T.
 				if (expr_type.IsClass && target_type.IsInterface) {
 
-					Type [] ifaces = expr_type.GetInterfaces ();
-
-					for (int i = ifaces.Length; i > 0;) {
-						i--;
-						if (ifaces [i] == target_type)
-							return new EmptyCast (expr, target_type);
-					}
-
-					return null;
+					if (TypeManager.ImplementsInterface (expr_type, target_type))
+						return new EmptyCast (expr, target_type);
+					else
+						return null;
 				}
 
 				// from any interface type S to interface-type T.
 				if (expr_type.IsInterface && target_type.IsInterface) {
 
-					Type [] ifaces = expr_type.GetInterfaces ();
-
-					for (int i = ifaces.Length; i > 0;) {
-						i--;
-						if (ifaces [i] == target_type)
-							return new EmptyCast (expr, target_type);
-					}
-
-					return null;
+					if (TypeManager.ImplementsInterface (expr_type, target_type))
+						return new EmptyCast (expr, target_type);
+					else
+						return null;
 				}
 				
 				// from an array-type S to an array-type of type T
@@ -1472,16 +1462,10 @@ namespace CIR {
 			//
 			if (source_type.IsInterface && target_type.IsInterface){
 
-				Type [] ifaces = source_type.GetInterfaces ();
-
-				for (int i = ifaces.Length; i > 0; ) {
-					i--;
-
-					if (ifaces [i] == target_type)
-						return null;
-				}	
-				
-				return new ClassCast (source, target_type);
+				if (TypeManager.ImplementsInterface (source_type, target_type))
+					return null;
+				else
+					return new ClassCast (source, target_type);
 			}
 			    
 			//
@@ -1489,17 +1473,12 @@ namespace CIR {
 			// and provided S does not implement T.
 			//
 			if (target_type.IsInterface && !source_type.IsSealed) {
-
-				Type [] ifaces = source_type.GetInterfaces ();
 				
-				for (int i = ifaces.Length; i > 0; ) {
-					i--;
-					
-					if (ifaces [i] == target_type)
-						return null;
-				}	
+				if (TypeManager.ImplementsInterface (source_type, target_type))
+					return null;
+				else
+					return new ClassCast (source, target_type);
 				
-				return new ClassCast (source, target_type);
 			}
 
 			//
@@ -1511,16 +1490,10 @@ namespace CIR {
 				if (target_type.IsSealed)
 					return null;
 				
-				Type [] ifaces = target_type.GetInterfaces ();
-				
-				for (int i = ifaces.Length; i > 0; ) {
-					i--;
-					
-					if (ifaces [i] == source_type)
-						return new ClassCast (source, target_type);
-				}	
-				
-				return null;
+				if (TypeManager.ImplementsInterface (target_type, source_type))
+					return new ClassCast (source, target_type);
+				else
+					return null;
 			}
 			
 			// From an array type S with an element type Se to an array type T with an 
@@ -1832,9 +1805,9 @@ namespace CIR {
 	// </remarks>
 	public class Unary : ExpressionStatement {
 		public enum Operator {
-			Addition, Subtraction, Negate, BitComplement,
+			UnaryPlus, UnaryNegation, LogicalNot, OnesComplement,
 			Indirection, AddressOf, PreIncrement,
-			PreDecrement, PostIncrement, PostDecrement
+			PreDecrement, PostIncrement, PostDecrement 
 		}
 
 		Operator   oper;
@@ -1876,13 +1849,13 @@ namespace CIR {
 		string OperName ()
 		{
 			switch (oper){
-			case Operator.Addition:
+			case Operator.UnaryPlus:
 				return "+";
-			case Operator.Subtraction:
+			case Operator.UnaryNegation:
 				return "-";
-			case Operator.Negate:
+			case Operator.LogicalNot:
 				return "!";
-			case Operator.BitComplement:
+			case Operator.OnesComplement:
 				return "~";
 			case Operator.AddressOf:
 				return "&";
@@ -1984,7 +1957,7 @@ namespace CIR {
 			if (expr_type == null)
 				return null;
 			
-			if (oper == Operator.Negate){
+			if (oper == Operator.LogicalNot){
 				if (expr_type != TypeManager.bool_type) {
 					error23 (expr.Type);
 					return null;
@@ -1994,7 +1967,7 @@ namespace CIR {
 				return this;
 			}
 
-			if (oper == Operator.BitComplement) {
+			if (oper == Operator.OnesComplement) {
 				if (!((expr_type == TypeManager.int32_type) ||
 				      (expr_type == TypeManager.uint32_type) ||
 				      (expr_type == TypeManager.int64_type) ||
@@ -2007,7 +1980,7 @@ namespace CIR {
 				return this;
 			}
 
-			if (oper == Operator.Addition) {
+			if (oper == Operator.UnaryPlus) {
 				//
 				// A plus in front of something is just a no-op, so return the child.
 				//
@@ -2022,7 +1995,7 @@ namespace CIR {
 			// double  operator- (double d)
 			// decimal operator- (decimal d)
 			//
-			if (oper == Operator.Subtraction){
+			if (oper == Operator.UnaryNegation){
 				//
 				// Fold a "- Constant" into a negative constant
 				//
@@ -2200,21 +2173,21 @@ namespace CIR {
 			}
 			
 			switch (oper) {
-			case Operator.Addition:
+			case Operator.UnaryPlus:
 				throw new Exception ("This should be caught by Resolve");
 				
-			case Operator.Subtraction:
+			case Operator.UnaryNegation:
 				expr.Emit (ec);
 				ig.Emit (OpCodes.Neg);
 				break;
 				
-			case Operator.Negate:
+			case Operator.LogicalNot:
 				expr.Emit (ec);
 				ig.Emit (OpCodes.Ldc_I4_0);
 				ig.Emit (OpCodes.Ceq);
 				break;
 				
-			case Operator.BitComplement:
+			case Operator.OnesComplement:
 				expr.Emit (ec);
 				ig.Emit (OpCodes.Not);
 				break;

@@ -1693,7 +1693,8 @@ namespace CIR {
 			flags = Modifiers.MethodAttr (ModFlags);
 
 			if (parent.IsInterfaceMethod (Name, ret_type, parameters))
-				flags |= MethodAttributes.Virtual;
+				flags |= MethodAttributes.Virtual | MethodAttributes.Final |
+					 MethodAttributes.NewSlot | MethodAttributes.HideBySig;
 
 			//
 			// Catch invalid uses of virtual and abtract modifiers
@@ -2347,8 +2348,8 @@ namespace CIR {
 		public enum OpType {
 
 			// Unary operators
-			Negate,
-			BitComplement,
+			LogicalNot,
+			OnesComplement,
 			Increment,
 			Decrement,
 			True,
@@ -2357,6 +2358,9 @@ namespace CIR {
 			// Unary and Binary operators
 			Addition,
 			Subtraction,
+
+			UnaryPlus,
+			UnaryNegation,
 			
 			// Binary operators
 			Multiply,

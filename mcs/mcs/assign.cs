@@ -81,7 +81,7 @@ namespace CIR {
 
 				return this;
 			}
-			
+
 			if (source is New && target_type.IsSubclassOf (TypeManager.value_type)){
 				New n = (New) source;
 

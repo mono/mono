@@ -1095,9 +1095,16 @@ operator_declarator
 	: type OPERATOR overloadable_operator 
 	  OPEN_PARENS type IDENTIFIER CLOSE_PARENS
 	{
-		CheckUnaryOperator ((Operator.OpType) $3);
+		Operator.OpType op = (Operator.OpType) $3;
+		CheckUnaryOperator (op);
 
-		$$ = new OperatorDeclaration ((Operator.OpType) $3, (string) $1, (string) $5, (string) $6,
+		if (op == Operator.OpType.Addition)
+			op = Operator.OpType.UnaryPlus;
+
+		if (op == Operator.OpType.Subtraction)
+			op = Operator.OpType.UnaryNegation;
+
+		$$ = new OperatorDeclaration (op, (string) $1, (string) $5, (string) $6,
 					      null, null, lexer.Location);
 	}
 	| type OPERATOR overloadable_operator
@@ -1116,8 +1123,8 @@ operator_declarator
 
 overloadable_operator
 // Unary operators:
-	: BANG   { $$ = Operator.OpType.Negate; }
-        | TILDE  { $$ = Operator.OpType.BitComplement; }  
+	: BANG   { $$ = Operator.OpType.LogicalNot; }
+        | TILDE  { $$ = Operator.OpType.OnesComplement; }  
         | OP_INC { $$ = Operator.OpType.Increment; }
         | OP_DEC { $$ = Operator.OpType.Decrement; }
         | TRUE   { $$ = Operator.OpType.True; }
@@ -1866,19 +1873,19 @@ unary_expression
 	: primary_expression
 	| PLUS unary_expression
 	  { 
-	  	$$ = new Unary (Unary.Operator.Addition, (Expression) $2, lexer.Location);
+	  	$$ = new Unary (Unary.Operator.UnaryPlus, (Expression) $2, lexer.Location);
 	  } 
 	| MINUS unary_expression 
 	  { 
-		$$ = new Unary (Unary.Operator.Subtraction, (Expression) $2, lexer.Location);
+		$$ = new Unary (Unary.Operator.UnaryNegation, (Expression) $2, lexer.Location);
 	  }
 	| BANG unary_expression 
 	  {
-		$$ = new Unary (Unary.Operator.Negate, (Expression) $2, lexer.Location);
+		$$ = new Unary (Unary.Operator.LogicalNot, (Expression) $2, lexer.Location);
 	  }
 	| TILDE unary_expression
 	  {
-		$$ = new Unary (Unary.Operator.BitComplement, (Expression) $2, lexer.Location);
+		$$ = new Unary (Unary.Operator.OnesComplement, (Expression) $2, lexer.Location);
 	  }
 	| STAR unary_expression
 	  {
@@ -3105,8 +3112,8 @@ void CheckUnaryOperator (Operator.OpType op)
 {
 	switch (op) {
 		
-	case Operator.OpType.Negate: 
-	case Operator.OpType.BitComplement: 
+	case Operator.OpType.LogicalNot: 
+	case Operator.OpType.OnesComplement: 
 	case Operator.OpType.Increment:
 	case Operator.OpType.Decrement:
 	case Operator.OpType.True: 
