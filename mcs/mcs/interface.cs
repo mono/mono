@@ -169,18 +169,39 @@ namespace CIR {
 			}
 		}
 
+		public bool IsTopLevel {
+			get {
+				if (parent != null){
+					if (parent.Parent == null)
+						return true;
+				}
+				return false;
+			}
+		}
+
 		public virtual TypeAttributes InterfaceAttr {
 			get {
 				TypeAttributes x = 0;
-
-				// FIXME: Figure out exactly how private, public and protected
-				// map to the TypeAttribute flags.
 
 				if ((mod_flags & Modifiers.PUBLIC) != 0)
 					x |= TypeAttributes.Public;
 
 				if ((mod_flags & Modifiers.PRIVATE) != 0)
 					x |= TypeAttributes.NotPublic;
+
+				if (IsTopLevel == false) {
+					
+					if ((mod_flags & Modifiers.PROTECTED) != 0
+					    && (mod_flags & Modifiers.INTERNAL) != 0)
+						x |= TypeAttributes.NestedFamORAssem;
+					
+					if ((mod_flags & Modifiers.PROTECTED) != 0)
+						x |= TypeAttributes.NestedFamily;
+					
+					if ((mod_flags & Modifiers.INTERNAL) != 0)
+						x |= TypeAttributes.NestedAssembly;
+					
+				}
 				
 				if ((mod_flags & Modifiers.ABSTRACT) != 0)
 					x |= TypeAttributes.Abstract;

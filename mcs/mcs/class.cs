@@ -475,7 +475,7 @@ namespace CIR {
 		public bool IsTopLevel {
 			get {
 				if (parent != null){
-					if (parent.parent == null)
+					if (parent.Parent == null)
 						return true;
 				}
 				return false;
@@ -497,32 +497,23 @@ namespace CIR {
 		//
 		// Emits the class field initializers
 		//
-		void EmitStaticFieldInitializers (ConstructorBuilder cb)
+		public void EmitStaticFieldInitializers (ConstructorBuilder cb)
 		{
+			if (initialized_static_fields == null)
+				return;
+			
 			// FIXME: Implement
 		}
 
 		//
 		// Emits the instance field initializers
 		//
-		void EmitFieldInitializers (ConstructorBuilder cb)
+		public void EmitFieldInitializers (ConstructorBuilder cb)
 		{
+			if (initialized_fields == null)
+				return;
+			
 			// FIXME: Implement
-		}
-
-		//
-		// Emits a constructor
-		//
-		void EmitConstructor (Constructor c)
-		{
-			if ((c.ModFlags & Modifiers.STATIC) != 0){
-				if (initialized_static_fields != null)
-					EmitStaticFieldInitializers (c.ConstructorBuilder);
-			} else {
-				if (initialized_fields != null)
-					EmitFieldInitializers (c.ConstructorBuilder);
-			}
-
 		}
 
 		//
@@ -645,7 +636,7 @@ namespace CIR {
 
 			if (Constructors != null)
 				foreach (Constructor c in Constructors)
-					c.Emit ();
+					c.Emit (this);
 			
 			if (Methods != null)
 				foreach (Method m in Methods)
@@ -1095,11 +1086,20 @@ namespace CIR {
 		//
 		// Emits the code
 		//
-		public void Emit ()
+		public void Emit (TypeContainer parent)
 		{
+			if ((ModFlags & Modifiers.STATIC) != 0) 
+				parent.EmitStaticFieldInitializers (this.ConstructorBuilder);
+			else 
+				parent.EmitFieldInitializers (this.ConstructorBuilder);
+
+			ILGenerator ig = ConstructorBuilder.GetILGenerator ();
+			EmitContext ec = new EmitContext (parent, ig);
+
+			ec.EmitTopBlock (Block);
 		}
 	}
-
+	
 	public class Field {
 		public readonly string Type;
 		public readonly Object Initializer;

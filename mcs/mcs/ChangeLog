@@ -1,3 +1,19 @@
+2001-09-16  Ravi Pratap  <ravi@ximian.com>
+
+	* class.cs (EmitStaticFieldInitializers, EmitFieldInitializers): Make public.
+	(TypeContainer::EmitConstructor): Remove and move code into Contructor::Emit.
+	(Constructor::Emit): Implement.
+	(EmitStaticFieldInitializers, EmitFieldInitializers): Ensure we return immediately
+	if we have no work to do. 
+	(TypeContainer::Emit): Pass in TypeContainer as argument to the constructor's 
+	Emit method.
+
+	* interface.cs (Interface::InterfaceAttr): Re-write to be more correct and complete.
+	(Interface::IsTopLevel): Add. Same as TypeContainer::IsTopLevel.
+
+	* class.cs (TypeContainer::IsTopLevel): Modify to use parent.Parent instead
+	of parent.parent.
+
 2001-09-15  Ravi Pratap  <ravi@ximian.com>
 
 	* tree.cs (Tree::namespaces): New hashtable to keep track of namespaces
