@@ -20,10 +20,8 @@ namespace System.ComponentModel {
 	// </remarks>
 	public class Component : MarshalByRefObject, IComponent, IDisposable {
 
-		IContainer       icontainer;
-		bool             design_mode;
 		EventHandlerList event_handlers;
-		ISite            isite;
+		ISite            mySite;
 
 		// <summary>
 		//   Component Constructor
@@ -37,38 +35,57 @@ namespace System.ComponentModel {
 		// </summary>
 		public IContainer Container {
 			get {
-				return icontainer;
+				return mySite.Container;
 			}
 		}
 
 		protected bool DesignMode {
 			get {
-				return design_mode;
+				return mySite.DesignMode;
 			}
 		}
 
 		protected EventHandlerList Events {
 			get {
+				// Note: space vs. time tradeoff
+				// We create the object here if it's never be accessed before.  This potentially 
+				// saves space. However, we must check each time the propery is accessed to
+				// determine whether we need to create the object, which increases overhead.
+				// We could put the creation in the contructor, but that would waste space
+				// if it were never used.  However, accessing this property would be faster.
+				if (null == event_handlers)
+				{
+					event_handlers = new EventHandlerList();
+				}
 				return event_handlers;
 			}
 		}
 
 		public virtual ISite Site {
 			get {
-				return isite;
+				return mySite;
 			}
 
 			set {
-				isite = value;
+				mySite = value;
 			}
 		}
 
+		~Component() 
+		{
+			// FIXME: Not sure this is correct.
+			Dispose(true);
+			Disposed(this, EventArgs.Empty);
+		}
 
 		// <summary>
 		//   Dispose resources used by this component
 		// </summary>
 		public virtual void Dispose ()
 		{
+			// FIXME: Not sure this is correct.
+			Dispose(false);
+			Disposed(this, EventArgs.Empty);
 		}
 
 		// <summary>

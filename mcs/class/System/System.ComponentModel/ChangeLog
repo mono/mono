@@ -1,3 +1,9 @@
+2001-08-21  Nick Drochak <ndrochak@gol.com>
+
+	* Component.cs: Eliminated compile errors by removing redundant fields and
+	using the ISite member instead.  Also raised the Disposed event, but not
+	sure if it's correct now.  Look for FIXME in the comments.
+
 2001-08-02  Miguel de Icaza  <miguel@ximian.com>
 
 	* EventHandlerList.cs: New file.
