@@ -568,7 +568,7 @@ public class TypeManager {
 
 		TypeParameter tparam = LookupTypeParameter (t);
 		if (tparam != null)
-			return tparam.Constraints;
+			return tparam.GenericConstraints;
 
 		return new ReflectionConstraints (t);
 	}

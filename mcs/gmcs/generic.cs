@@ -32,7 +32,7 @@ namespace Mono.CSharp {
 			get { return (Attributes & GenericParameterAttributes.ValueTypeConstraint) != 0; }
 		}
 
-		public bool HasClassConstraint {
+		public virtual bool HasClassConstraint {
 			get { return ClassConstraint != null; }
 		}
 
@@ -41,6 +41,10 @@ namespace Mono.CSharp {
 		}
 
 		public abstract Type[] InterfaceConstraints {
+			get;
+		}
+
+		public abstract Type EffectiveBaseClass {
 			get;
 		}
 
@@ -147,6 +151,7 @@ namespace Mono.CSharp {
 		int num_constraints, first_constraint;
 		Type class_constraint_type;
 		Type[] iface_constraint_types;
+		Type effective_base_type;
 
 		public bool Resolve (DeclSpace ds)
 		{
@@ -327,10 +332,12 @@ namespace Mono.CSharp {
 				}
 			}
 
-			if (HasReferenceTypeConstraint)
-				class_constraint_type = TypeManager.object_type;
+			if (class_constraint_type != null)
+				effective_base_type = class_constraint_type;
 			else if (HasValueTypeConstraint)
-				class_constraint_type = TypeManager.value_type;
+				effective_base_type = TypeManager.value_type;
+			else
+				effective_base_type = TypeManager.object_type;
 
 			return true;
 		}
@@ -395,12 +402,20 @@ namespace Mono.CSharp {
 			get { return attrs; }
 		}
 
+		public override bool HasClassConstraint {
+			get { return class_constraint != null; }
+		}
+
 		public override Type ClassConstraint {
 			get { return class_constraint_type; }
 		}
 
 		public override Type[] InterfaceConstraints {
 			get { return iface_constraint_types; }
+		}
+
+		public override Type EffectiveBaseClass {
+			get { return effective_base_type; }
 		}
 
 		internal bool IsSubclassOf (Type t)
@@ -428,6 +443,8 @@ namespace Mono.CSharp {
 			if (gc.Attributes != attrs)
 				return false;
 
+			if (HasClassConstraint != gc.HasClassConstraint)
+				return false;
 			if (HasClassConstraint && !gc.ClassConstraint.Equals (ClassConstraint))
 				return false;
 
@@ -461,6 +478,7 @@ namespace Mono.CSharp {
 	//
 	public class TypeParameter : MemberCore, IMemberContainer {
 		string name;
+		GenericConstraints gc;
 		Constraints constraints;
 		Location loc;
 		GenericTypeParameterBuilder type;
@@ -472,6 +490,12 @@ namespace Mono.CSharp {
 			this.name = name;
 			this.constraints = constraints;
 			this.loc = loc;
+		}
+
+		public GenericConstraints GenericConstraints {
+			get {
+				return gc != null ? gc : constraints;
+			}
 		}
 
 		public Constraints Constraints {
@@ -520,8 +544,6 @@ namespace Mono.CSharp {
 		public bool DefineType (EmitContext ec, MethodBuilder builder,
 					MethodInfo implementing, bool is_override)
 		{
-			GenericConstraints gc;
-
 			if (implementing != null) {
 				if (is_override && (constraints != null)) {
 					Report.Error (
@@ -977,41 +999,39 @@ namespace Mono.CSharp {
 
 			Expression aexpr = new EmptyExpression (atype);
 
-			Type parent = ptype.BaseType;
+			GenericConstraints gc = TypeManager.GetTypeParameterConstraints (ptype);
+			if (gc == null)
+				return true;
 
 			//
 			// First, check the `class' and `struct' constraints.
 			//
-			if (parent == TypeManager.object_type) {
-				if (!atype.IsClass) {
-					Report.Error (452, loc, "The type `{0}' must be " +
-						      "a reference type in order to use it " +
-						      "as type parameter `{1}' in the " +
-						      "generic type or method `{2}'.",
-						      atype, ptype, DeclarationName);
-					return false;
-				}
-			} else if (parent == TypeManager.value_type) {
-				if (!atype.IsValueType) {
-					Report.Error (453, loc, "The type `{0}' must be " +
-						      "a value type in order to use it " +
-						      "as type parameter `{1}' in the " +
-						      "generic type or method `{2}'.",
-						      atype, ptype, DeclarationName);
-					return false;
-				}
+			if (gc.HasReferenceTypeConstraint && !atype.IsClass) {
+				Report.Error (452, loc, "The type `{0}' must be " +
+					      "a reference type in order to use it " +
+					      "as type parameter `{1}' in the " +
+					      "generic type or method `{2}'.",
+					      atype, ptype, DeclarationName);
+				return false;
+			} else if (gc.HasValueTypeConstraint && !atype.IsValueType) {
+				Report.Error (453, loc, "The type `{0}' must be " +
+					      "a value type in order to use it " +
+					      "as type parameter `{1}' in the " +
+					      "generic type or method `{2}'.",
+					      atype, ptype, DeclarationName);
+				return false;
 			}
 
 			//
 			// The class constraint comes next.
 			//
-			if ((parent != null) && (parent != TypeManager.object_type)) {
-				if (!CheckConstraint (ec, ptype, aexpr, parent)) {
+			if (gc.HasClassConstraint) {
+				if (!CheckConstraint (ec, ptype, aexpr, gc.ClassConstraint)) {
 					Report.Error (309, loc, "The type `{0}' must be " +
 						      "convertible to `{1}' in order to " +
 						      "use it as parameter `{2}' in the " +
 						      "generic type or method `{3}'",
-						      atype, parent, ptype, DeclarationName);
+						      atype, gc.ClassConstraint, ptype, DeclarationName);
 					return false;
 				}
 			}
@@ -1019,7 +1039,7 @@ namespace Mono.CSharp {
 			//
 			// Now, check the interface constraints.
 			//
-			foreach (Type it in TypeManager.GetInterfaces (ptype)) {
+			foreach (Type it in gc.InterfaceConstraints) {
 				Type itype;
 				if (it.IsGenericParameter)
 					itype = atypes [it.GenericParameterPosition];
@@ -1040,7 +1060,7 @@ namespace Mono.CSharp {
 			// Finally, check the constructor constraint.
 			//
 
-			if (!TypeManager.HasConstructorConstraint (ptype))
+			if (!gc.HasConstructorConstraint)
 				return true;
 
 			if (TypeManager.IsBuiltinType (atype))

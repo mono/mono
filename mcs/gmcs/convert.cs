@@ -50,6 +50,78 @@ namespace Mono.CSharp {
 			return true;
 		}
 
+		static Type TypeParam_EffectiveBaseType (Type t)
+		{
+			GenericConstraints gc = TypeManager.GetTypeParameterConstraints (t);
+			if (gc == null)
+				return TypeManager.object_type;
+
+			return TypeParam_EffectiveBaseType (gc);
+		}
+
+		static Type TypeParam_EffectiveBaseType (GenericConstraints gc)
+		{
+			ArrayList list = new ArrayList ();
+			list.Add (gc.EffectiveBaseClass);
+			foreach (Type t in gc.InterfaceConstraints) {
+				if (!t.IsGenericParameter)
+					continue;
+
+				GenericConstraints new_gc = TypeManager.GetTypeParameterConstraints (t);
+				if (new_gc != null)
+					list.Add (TypeParam_EffectiveBaseType (new_gc));
+			}
+			return FindMostEncompassedType (list);
+		}
+
+		static Expression TypeParameterConversion (Expression expr, bool is_reference, Type target_type)
+		{
+			if (is_reference)
+				return new EmptyCast (expr, target_type);
+			else
+				return new BoxedCast (expr, target_type);
+		}
+
+		static Expression ImplicitTypeParameterConversion (Expression expr, Type target_type)
+		{
+			Type expr_type = expr.Type;
+
+			GenericConstraints gc = TypeManager.GetTypeParameterConstraints (expr_type);
+
+			if (gc == null) {
+				if (target_type == TypeManager.object_type)
+					return new BoxedCast (expr);
+
+				return null;
+			}
+
+			// We're converting from a type parameter which is known to be a reference type.
+			bool is_reference = gc.IsReferenceType;
+			Type base_type = TypeParam_EffectiveBaseType (gc);
+
+			if (TypeManager.IsSubclassOf (base_type, target_type))
+				return TypeParameterConversion (expr, is_reference, target_type);
+
+			if (target_type.IsInterface) {
+				if (TypeManager.ImplementsInterface (base_type, target_type))
+					return TypeParameterConversion (expr, is_reference, target_type);
+
+				foreach (Type t in gc.InterfaceConstraints) {
+					if (TypeManager.IsSubclassOf (t, target_type))
+						return TypeParameterConversion (expr, is_reference, target_type);
+				}
+			}
+
+			foreach (Type t in gc.InterfaceConstraints) {
+				if (!t.IsGenericParameter)
+					continue;
+				if (TypeManager.IsSubclassOf (t, target_type))
+					return TypeParameterConversion (expr, is_reference, target_type);
+			}
+
+			return null;
+		}
+
 		static EmptyExpression MyEmptyExpr;
 		static public Expression ImplicitReferenceConversion (Expression expr, Type target_type)
 		{
@@ -64,6 +136,9 @@ namespace Mono.CSharp {
 			if (expr_type == TypeManager.void_type)
 				return null;
 
+			if (expr_type.IsGenericParameter)
+				return ImplicitTypeParameterConversion (expr, target_type);
+				
 			//
 			// notice that it is possible to write "ValueType v = 1", the ValueType here
 			// is an abstract class, and not really a value type, so we apply the same rules.
@@ -180,23 +255,6 @@ namespace Mono.CSharp {
 			if (TypeManager.IsEqualGenericType (expr_type, target_type))
 				return new EmptyCast (expr, target_type);
 
-			if (expr_type.IsGenericParameter) {
-				GenericConstraints gc = TypeManager.GetTypeParameterConstraints (expr_type);
-
-				// We're converting from a type parameter which is known to be a reference type.
-				if ((gc != null) && gc.IsReferenceType) {
-					if (gc.HasClassConstraint && gc.ClassConstraint.IsSubclassOf (target_type))
-						return new EmptyCast (expr, target_type);
-
-					if (target_type.IsInterface) {
-						foreach (Type t in gc.InterfaceConstraints) {
-							if (TypeManager.ImplementsInterface (t, target_type))
-								return new EmptyCast (expr, target_type);
-						}
-					}
-				}
-			}
-				
 			return null;
 		}
 
@@ -207,6 +265,9 @@ namespace Mono.CSharp {
 		public static bool ImplicitReferenceConversionExists (Expression expr, Type target_type)
 		{
 			Type expr_type = expr.Type;
+
+			if (expr_type.IsGenericParameter)
+				return ImplicitTypeParameterConversion (expr, target_type) != null;
 
 			//
 			// This is the boxed case.
@@ -276,23 +337,6 @@ namespace Mono.CSharp {
 			// from a generic type definition to a generic instance.
 			if (TypeManager.IsEqualGenericType (expr_type, target_type))
 				return true;
-
-			if (expr_type.IsGenericParameter) {
-				GenericConstraints gc = TypeManager.GetTypeParameterConstraints (expr_type);
-
-				// We're converting from a type parameter which is known to be a reference type.
-				if ((gc != null) && gc.IsReferenceType) {
-					if (gc.HasClassConstraint && gc.ClassConstraint.IsSubclassOf (target_type))
-						return true;
-
-					if (target_type.IsInterface) {
-						foreach (Type t in gc.InterfaceConstraints) {
-							if (TypeManager.ImplementsInterface (t, target_type))
-								return true;
-						}
-					}
-				}
-			}
 
 			return false;
 		}

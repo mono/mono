@@ -1,3 +1,15 @@
+2004-09-28  Martin Baulig  <martin@ximian.com>
+
+	* generic.cs
+	(GenericConstraints.EffectiveBaseClass): New public property.
+	(TypeParameter.GenericConstraints): New public property.
+	(ConstructedType.CheckConstraints): Improved.
+
+	* convert.cs (Convert.TypeParam_EffectiveBaseType): New private method.
+	(Convert.TypeParameterConversion): New private method; use this in
+	ImplicitReferenceConversion() and ImplicitReferenceConversionExists()
+	for all conversions related to type parameters.
+
 2004-09-24  Martin Baulig  <martin@ximian.com>
 
 	* convert.cs (Convert.ImplicitReferenceConversion): Added implicit

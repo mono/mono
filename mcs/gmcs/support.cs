@@ -285,6 +285,7 @@ namespace Mono.CSharp {
 	public class ReflectionConstraints : GenericConstraints
 	{
 		GenericParameterAttributes attrs;
+		Type base_type;
 		Type class_constraint;
 		Type[] iface_constraints;
 
@@ -298,6 +299,13 @@ namespace Mono.CSharp {
 			} else
 				iface_constraints = constraints;
 			attrs = t.GenericParameterAttributes;
+
+			if (HasValueTypeConstraint)
+				base_type = TypeManager.value_type;
+			else if (class_constraint != null)
+				base_type = class_constraint;
+			else
+				base_type = TypeManager.object_type;
 		}
 
 		public override GenericParameterAttributes Attributes {
@@ -306,6 +314,10 @@ namespace Mono.CSharp {
 
 		public override Type ClassConstraint {
 			get { return class_constraint; }
+		}
+
+		public override Type EffectiveBaseClass {
+			get { return base_type; }
 		}
 
 		public override Type[] InterfaceConstraints {
