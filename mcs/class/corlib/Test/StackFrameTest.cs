@@ -184,7 +184,7 @@ namespace Ximian.Mono.Tests {
                                      frame1.GetFileLineNumber());
                                      
                         AssertEquals("Line number (2)",
-                                     151,
+                                     154,
                                      frame2.GetFileLineNumber());
                                      
                         AssertEquals("Line number (3)",
@@ -309,7 +309,7 @@ namespace Ximian.Mono.Tests {
                                      frame1.GetFileLineNumber());
                                      
                         AssertEquals("Line number (2)",
-                                     274,
+                                     277,
                                      frame2.GetFileLineNumber());
                 }
                 

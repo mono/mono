@@ -20,7 +20,9 @@ all:
 	@echo "'make unix' is broken for now."
 
 windows: make-list
-	$(CSC) /unsafe /target:library /out:corlib.dll /nowarn:1595 @list
+	$(CSC) /unsafe /target:library /out:corlib.dll /nowarn:1595 @list;	\
+	cd Test;	\
+	make windows
 
 monolib: make-list
 	$(CSC) /unsafe /nostdlib /target:library /out:corlib.dll /nowarn:1595 @listmono
@@ -41,7 +43,10 @@ clean:
 		rm list;  \
 	fi;	\
 		\
-		
+		\
 	if test -e corlib.dll; then \
 		rm corlib.dll;  \
-	fi;
+	fi;	\
+		\
+  cd Test;	\
+  make clean
