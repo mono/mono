@@ -91,16 +91,24 @@ namespace System.Xml.Serialization
 		{
 			this.schemas = schemas;
 			this.options = options;
-			typeIdentifiers = context.TypeIdentifiers;
-			InitSharedData (context);
+			if (context != null) {
+				typeIdentifiers = context.TypeIdentifiers;
+				InitSharedData (context);
+			}
+			else
+				typeIdentifiers = new CodeIdentifiers ();
 		}
 		
 		public XmlSchemaImporter (XmlSchemas schemas, CodeGenerationOptions options, ImportContext context)
 		{
 			this.schemas = schemas;
 			this.options = options;
-			typeIdentifiers = context.TypeIdentifiers;
-			InitSharedData (context);
+			if (context != null) {
+				typeIdentifiers = context.TypeIdentifiers;
+				InitSharedData (context);
+			}
+			else
+				typeIdentifiers = new CodeIdentifiers ();
 		}
 		
 

@@ -1126,7 +1126,7 @@ namespace System.Xml.Serialization
 		string GenerateMemberHasValueCondition (XmlTypeMapMember member, string ob, bool isValueList)
 		{
 			if (isValueList) {
-				return null; //member.Index + " < " + ob + ".Length";
+				return ob + ".Length > " + member.Index;
 			}
 			else if (member.DefaultValue != System.DBNull.Value) {
 				string mem = ob + ".@" + member.Name;

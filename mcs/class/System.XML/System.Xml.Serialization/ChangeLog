@@ -1,3 +1,9 @@
+2004-09-01  Lluis Sanchez Gual  <lluis@novell.com>
+
+	* SerializationCodeGenerator.cs: Generate correct "HasValue" check for
+	  value list serialization.
+	* XmlSchemaImporter.cs: Added some null checks.
+
 2004-08-25  Lluis Sanchez Gual  <lluis@novell.com>
 
 	* SerializationCodeGenerator.cs, XmlSerializationReaderInterpreter.cs: 
