@@ -1,3 +1,7 @@
+2004-02-11  Miguel de Icaza  <miguel@ximian.com>
+
+	* interface.cs: If the emit context is null, then create one
+
 2004-02-09  Marek Safar  <marek.safar@seznam.cz>
 
         * decl.cs (GetSignatureForError): New virtual method to get full name
