@@ -22,7 +22,8 @@ namespace Font1Sample {
 				Console.WriteLine(ffm.Name);
 			}
 		
-			Font f = new Font(ifc.Families[0],12);
+			
+			Font f = new Font("Arial",12);
 			Console.WriteLine("Height: {0}", f.Height);
 			
 			Bitmap bmp = new Bitmap((int)width, (int)height);

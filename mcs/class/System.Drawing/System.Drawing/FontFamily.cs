@@ -9,6 +9,8 @@
 //
 using System;
 using System.Drawing.Text;
+using System.Text;
+using System.Runtime.InteropServices;
 
 namespace System.Drawing {
 
@@ -23,15 +25,24 @@ namespace System.Drawing {
 
 		internal IntPtr nativeFontFamily = IntPtr.Zero;
 				
-		internal FontFamily ( IntPtr ptr )
+		internal FontFamily ( IntPtr fntfamily )
 		{
-			nativeFontFamily = ptr;
+			nativeFontFamily = fntfamily;		
+			int language = 0;
+			
+    		// Temporal until we fix bug 53700
+			IntPtr dest = Marshal.AllocHGlobal (GDIPlus.FACESIZE * UnicodeEncoding.CharSize);            
+			Status status = GDIPlus.GdipGetFamilyName (fntfamily, dest, language);
+			byte[] marshalled = new byte[GDIPlus.FACESIZE* UnicodeEncoding.CharSize];    		
+			Marshal.Copy (dest, marshalled, 0, GDIPlus.FACESIZE* UnicodeEncoding.CharSize);     		
+			UnicodeEncoding enc = new UnicodeEncoding (false, true);           
+			name = enc.GetString (marshalled);    		
 		}
 		
 		//Need to come back here, is Arial the right thing to do
 		internal FontFamily () : this ( "Arial", null )
 		{
-			//FIXME								
+										
 		}
 
 		internal IntPtr NativeObject

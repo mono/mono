@@ -16,11 +16,11 @@ namespace System.Drawing.Imaging
 	[StructLayout(LayoutKind.Sequential)]
 	public sealed class BitmapData {
 		internal int width, height, stride;
-		internal PixelFormat pixel_format;
-		internal bool own_scan0;
+		internal PixelFormat pixel_format;		
 		internal IntPtr address;
 		internal int reserved;
 		private	 bool bAllocated = false;
+		internal bool own_scan0;		
 		
 		~BitmapData()
 		{			

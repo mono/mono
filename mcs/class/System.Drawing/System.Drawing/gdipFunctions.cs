@@ -20,6 +20,8 @@ namespace System.Drawing {
 	/// </summary>
 	public class GDIPlus {
 		
+		public const int FACESIZE = 32;
+		
 		#region gdiplus.dll functions
 
 		// startup / shutdown
@@ -730,9 +732,9 @@ namespace System.Drawing {
 		internal static extern Status GdipCreateFontFamilyFromName (
                         [MarshalAs(UnmanagedType.LPWStr)] string fName, IntPtr collection, out IntPtr fontFamily);
 
-		/*[DllImport ("gdiplus.dll", CharSet=CharSet.Auto)]
-		internal static extern Status GdipGetFamilyName(IntPtr fontFamily,  );
-		GpStatus WINGDIPAPI GdipGetFamilyName( GDIPCONST GpFontFamily *family, WCHAR name[LF_FACESIZE], LANGID language )*/
+		// We should be using StringBuilder. See bug http://bugzilla.ximian.com/show_bug.cgi?id=53700
+		[DllImport ("gdiplus.dll", CharSet=CharSet.Unicode)]
+		internal static extern Status GdipGetFamilyName(IntPtr family, IntPtr fName, int language);
 
 		[DllImport ("gdiplus.dll")]
 		internal static extern Status GdipGetGenericFontFamilySansSerif (out IntPtr fontFamily);
