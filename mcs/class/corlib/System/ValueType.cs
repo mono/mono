@@ -7,6 +7,8 @@
 // (C) Ximian, Inc.  http://www.ximian.com
 //
 
+using System.Runtime.CompilerServices;
+
 namespace System {
 	
 	public abstract class ValueType {
@@ -42,17 +44,8 @@ namespace System {
 		//   Gets a hashcode for this value type using the
 		//   bits in the structure
 		// </summary>
-		[MonoTODO]
-		public override int GetHashCode ()
-		{
-			if (this == null)
-				return 0;
-
-			// TODO: compute a hashcode based on the actual
-			// contents.
-
-			return 0;
-		}
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		public extern override int GetHashCode ();
 
 		// <summary>
 		//   Stringified representation of this ValueType.

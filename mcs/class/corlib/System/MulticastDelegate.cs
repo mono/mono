@@ -3,36 +3,40 @@
 //
 // Author:
 //   Miguel de Icaza (miguel@ximian.com)
+//   Daniel Stodden (stodden@in.tum.de)
 //
 // (C) Ximian, Inc.  http://www.ximian.com
 //
-// TODO: Mucho left to implement.
+// TODO: Remove Missing
 //
 
 using System.Globalization;
+
 namespace System {
 
-	public abstract class MulticastDelegate : Delegate {
+	public abstract class MulticastDelegate : Delegate
+	{
+		private MulticastDelegate prev;
 
-		Delegate [] invocation_list;
-		
 		protected MulticastDelegate (object target, string method)
 			: base (target, method)
 		{
-			invocation_list = null;
+			prev = null;
 		}
 
 		protected MulticastDelegate (Type target_type, string method)
 			: base (target_type, method)
 		{
-			invocation_list = null;
+			prev = null;
 		}
 
+#if NOTYET
 		private MulticastDelegate (Type target_type, string method, Delegate [] list)
 			: base (target_type, method)
 		{
 			invocation_list = (Delegate[])list.Clone ();
 		}
+#endif
 		
 #if NOTYET
 		public MethodInfo Method {
@@ -42,37 +46,37 @@ namespace System {
 		}
 #endif
 
+		public override object DynamicInvokeImpl( object[] args )
+		{
+			if ( prev != null )
+				prev.DynamicInvokeImpl( args );
+
+			return base.DynamicInvokeImpl( args );
+		}
+
 		// <remarks>
 		//   Equals: two multicast delegates are equal if their base is equal
 		//   and their invocations list is equal.
 		// </remarks>
 		public override bool Equals (object o)
 		{
-			if (o == null)
+			if ( ! base.Equals( o ) )
 				return false;
 
-			if (!(o is System.MulticastDelegate))
-				return false;
-
-			if (!base.Equals (o))
-				return false;
-
-			MulticastDelegate d = (MulticastDelegate) o;
-
-			if (d.invocation_list == null){
-				if (invocation_list == null)
-					return true;
-				return false;
-			} else if (invocation_list == null)
-				return false;
-
-			int i = 0;
-			foreach (Delegate del in invocation_list){
-				if (del != d.invocation_list [i++])
+			MulticastDelegate d = this;
+			MulticastDelegate c = (MulticastDelegate) o;
+			do {
+				if ( d != c )
 					return false;
-			}
-			
-			return true;
+				
+				c = c.prev;
+				d = d.prev;
+			} while ( (object)d != null );
+		
+			if ( (object)c == null )
+				return true;
+
+			return false;
 		}
 
 		//
@@ -82,35 +86,53 @@ namespace System {
 		{
 			return base.GetHashCode ();
 		}
+		
+		// <summary>
+		//   Return, in order of invocation, the invocation list
+		//   of a MulticastDelegate
+		// </summary>
+		public override Delegate[] GetInvocationList()
+		{
+			throw new NotImplementedException();
+		}
 
 		// <summary>
-		//   Combines this MulticastDelegate with the Delegate `follow'.
-		//   This can combine MulticastDelegates and Delegates
+		//   Combines this MulticastDelegate with the (Multicast)Delegate `follow'.
+		//   This does _not_ combine with Delegates. ECMA states the whole delegate
+		//   thing should have better been a simple System.Delegate class.
+		//   Compiler generated delegates are always MulticastDelegates.
 		// </summary>
-		[MonoTODO]
-		protected override Delegate CombineImpl (Delegate follow)
+		protected override Delegate CombineImpl( Delegate follow )
 		{
+			MulticastDelegate combined, orig, clone;
 			
-			throw new NotImplementedException ();
+			if ( this.GetType() != follow.GetType() )
+				throw new ArgumentException( Locale.GetText("Incompatible Delegate Types") );
 
-			// FIXME: Implement me.
-			// This is not as simple to implement, as we can
-			// not create an instance of MulticastDelegate.
-			//
-			// Got to think more about this.
-		}
+			combined = (MulticastDelegate)follow.Clone();
 
-		public static bool operator == (MulticastDelegate a, MulticastDelegate b) {
-			if ((object)a == null) {
-				if ((object)b == null)
-					return false;
-				return false;
+			for ( clone = combined, orig = ((MulticastDelegate)follow).prev;
+			      (object)orig != null; orig = orig.prev ) {
+
+				clone.prev = (MulticastDelegate)orig.Clone();
+				clone = clone.prev;
 			}
-			return a.Equals (b);
+
+			clone.prev = (MulticastDelegate)this.Clone();
+
+			for ( clone = clone.prev, orig = this.prev;
+			      (object)orig != null; orig = orig.prev ) {
+
+				clone.prev = (MulticastDelegate)orig.Clone();
+				clone = clone.prev;
+			}
+
+			return combined;
 		}
 
-		public static bool operator != (MulticastDelegate a, MulticastDelegate b) {
-			return !(a == b);
+		protected override Delegate RemoveImpl( Delegate value )
+		{
+			throw new NotImplementedException();
 		}
 	}
 }

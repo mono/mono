@@ -61,10 +61,8 @@ namespace System {
 		//   class should return a hash code that makes sense
 		//   for that particular implementation of the object.
 		// </summary>
-		public virtual int GetHashCode ()
-		{
-			return ((int)obj_address ()) >> 2;
-		}
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		public extern virtual int GetHashCode ();
 
 		// <summary>
 		//   Returns the Type associated with the object.
@@ -98,8 +96,5 @@ namespace System {
 		{
 			return (a == b);
 		}
-
-		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		internal extern IntPtr obj_address ();
 	}
 }
