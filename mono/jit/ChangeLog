@@ -1,5 +1,8 @@
 2002-08-23  Martin Baulig  <martin@gnome.org>
 
+	* jit.c (match_debug_method): Don't include runtime invoke methods
+	in the search.
+
 	* mono.c (main): Accept `Main' as argument to --break to insert a
 	breakpoint on the application's main method.
 
