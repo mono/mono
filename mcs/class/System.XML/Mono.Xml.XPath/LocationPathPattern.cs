@@ -99,9 +99,15 @@ namespace Mono.Xml.XPath {
 						
 			if (filter == null)
 				return true;
-			
+
+			// Optimization for non-positional predicate
+			if (!filter.IsPositional && !(filter.expr is ExprFilter)) {
+				return filter.pred.EvaluateBoolean (new NullIterator (node, ctx));
+			}
+
 			XPathNavigator p = node.Clone ();
 			p.MoveToParent ();
+
 			BaseIterator matches = filter.EvaluateNodeSet (new NullIterator (p, ctx));
 			
 			while (matches.MoveNext ()) {
