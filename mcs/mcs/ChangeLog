@@ -1,5 +1,9 @@
 2004-03-10  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* doc.cs : commented out the latest change. It breaks xml-030.cs
+
+2004-03-10  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* doc.cs : When TypeBuilder did not create Type yet, GetEvents() will
 	  fail. So invoke CreateType() in FindDocumentedType().
 
