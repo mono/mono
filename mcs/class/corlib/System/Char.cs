@@ -444,12 +444,9 @@ namespace System
 			return str [0];
 		}
 
-		[MonoTODO ("Fix FIXME")]
 		public static char ToLower (char c)
 		{
-			// FIXME: needs to call line below, but that would probably break a lot of things right now
-			// return InternalToLower (c, CultureInfo.CurrentCulture);
-			return ToLowerInvariant (c);
+			return InternalToLower (c, CultureInfo.CurrentCulture);
 		}
 
 		internal static char ToLowerInvariant (char c)
@@ -476,12 +473,9 @@ namespace System
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		private static extern char InternalToLower (char c, CultureInfo culture);
 
-		[MonoTODO ("Fix FIXME")]
 		public static char ToUpper (char c)
 		{
-			// FIXME: needs to call line below, but that would probably break a lot of things right now
-			// return InternalToUpper (c, CultureInfo.CurrentCulture);
-			return ToUpperInvariant (c);
+			return InternalToUpper (c, CultureInfo.CurrentCulture);
 		}
 
 		internal static char ToUpperInvariant (char c)
