@@ -72,7 +72,11 @@ namespace System.Data.Common {
 		}
 
 		public Exception Errors {
-			get { return errors; }
+			get { 
+                                if (errors == null)
+                                        errors =  new DataException ("RowUpdatedEvent: No additional information is available!");
+                                return errors; 
+                        }
 			set { errors = value; }
 		}
 
