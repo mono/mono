@@ -83,7 +83,6 @@ namespace System.Xml.Xsl
 			}
 				
 			result = xsltParseStylesheetDoc (xmlDoc);
-			xmlFreeDoc (xmlDoc);
 			Cleanup ();
 			if (result == IntPtr.Zero)
 				throw new XmlException ("Error creating stylesheet");
@@ -105,6 +104,9 @@ namespace System.Xml.Xsl
 			doc.Save (writer);
 
 			this.stylesheet = GetStylesheetFromString (sr.GetStringBuilder ().ToString ());
+			Cleanup ();
+			if (this.stylesheet == IntPtr.Zero)
+				throw new XmlException ("Error creating stylesheet");
 		}
 
 		// Loads the XSLT stylesheet contained in the XPathNavigator
@@ -114,6 +116,9 @@ namespace System.Xml.Xsl
 			StringWriter sr = new UTF8StringWriter ();
 			Save (stylesheet, sr);
 			this.stylesheet = GetStylesheetFromString (sr.GetStringBuilder ().ToString ());
+			Cleanup ();
+			if (this.stylesheet == IntPtr.Zero)
+				throw new XmlException ("Error creating stylesheet");
 		}
 
 		[MonoTODO("use the resolver")]
@@ -404,6 +409,8 @@ namespace System.Xml.Xsl
 				navigator.MoveToParent ();
 				if (navigator.NodeType != XPathNodeType.Root)
 					writer.WriteEndElement ();
+			} else if (navigator.NodeType == XPathNodeType.Element) {
+				writer.WriteEndElement ();
 			}
 		}
 
@@ -478,9 +485,6 @@ namespace System.Xml.Xsl
 
 		[DllImport ("xml2")]
 		static extern IntPtr xmlParseDoc (string document);
-
-		[DllImport ("xml2", EntryPoint="xmlParseDoc")]
-		static extern IntPtr xmlParseDocUTF16 ([MarshalAs(UnmanagedType.LPWStr)] string document);
 
 		[DllImport ("xml2")]
 		static extern void xmlFreeDoc (IntPtr doc);

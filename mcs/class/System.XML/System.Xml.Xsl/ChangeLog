@@ -1,3 +1,9 @@
+2003-01-24  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* XslTransform.cs: don't free the xml document used for the style sheet.
+	xmlFreeStylesheet already does it. Correctly close the element tag for
+	elements that don't have children. Added a couple of checks more.
+
 2003-01-23  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* XslTransform.cs: fixed a couple of Transform overloads and changed the
