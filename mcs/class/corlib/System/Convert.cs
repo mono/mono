@@ -2299,24 +2299,24 @@ namespace System {
 		// type, and uses hardcoded array indexes.
 		private static Type[] conversionTable = {
 			// Valid ICovnertible Types
-			typeof (Boolean),  //  0 TypeCode.Boolean
-			typeof (Byte),     //  1 TypeCode.Byte
-			typeof (Char),     //  2 TypeCode.Char
-			typeof (DateTime), //  3 TypeCode.DateTime
-			typeof (Decimal),  //  4 TypeCode.Decimal
-			typeof (Double),   //  5 TypeCode.Double
-			typeof (Int16),    //  6 TypeCode.Int16
-			typeof (Int32),    //  7 TypeCode.Int32
-			typeof (Int64),    //  8 TypeCode.Int64
-			typeof (SByte),    //  9 TypeCode.Sbyte
-			typeof (Single),   // 10 TypeCode.Single
-			typeof (String),   // 11 TypeCode.String
-			typeof (UInt16),   // 12 TypeCode.UInt16
-			typeof (UInt32),   // 13 TypeCode.UInt32
-			typeof (UInt64),   // 14 TypeCode.UInt64
-	  
-			// Invalid IConvertible Interface Types
-			typeof (Object)    // 15 TypeCode.Object
+			null,              //  0 empty
+			typeof (object),   //  1 TypeCode.Object
+			typeof (DBNull),   //  2 TypeCode.DBNull
+			typeof (Boolean),  //  3 TypeCode.Boolean
+			typeof (Char),     //  4 TypeCode.Char
+			typeof (SByte),    //  5 TypeCode.SByte
+			typeof (Byte),     //  6 TypeCode.Byte
+			typeof (Int16),    //  7 TypeCode.Int16
+			typeof (UInt16),   //  8 TypeCode.UInt16
+			typeof (Int32),    //  9 TypeCode.Int32
+			typeof (UInt32),   // 10 TypeCode.UInt32
+			typeof (Int64),    // 11 TypeCode.Int64
+			typeof (UInt64),   // 12 TypeCode.UInt64
+			typeof (Single),   // 13 TypeCode.Single
+			typeof (Double),   // 14 TypeCode.Double
+			typeof (Decimal),  // 15 TypeCode.Decimal
+			typeof (DateTime), // 16 TypeCode.DateTime
+			typeof (String),   // 18 TypeCode.String
 		};
 
 		// Function to convert an object to another type and return
@@ -2331,86 +2331,67 @@ namespace System {
 					"Invalid conversion from null value"));
 
 			if (value is IConvertible) {
-				IConvertible convertValue = (IConvertible)value;
+				IConvertible convertValue = (IConvertible) value;
 
-				if (conversionType == conversionTable[0]) {
-					// 0 TypeCode.Boolean
-					return (object)(convertValue.ToBoolean (provider));
+				if (conversionType == conversionTable[0]) // 0 Empty
+					return null;
+				
+				else if (conversionType == conversionTable[1]) // 1 TypeCode.Object
+					return (object) value;
+					
+				// else if (conversionType == conversionTable[2]) // 2 TypeCode.DBNull
+				//	return null;                           // It's not IConvertible
+		  
+				else if (conversionType == conversionTable[3]) // 3 TypeCode.Boolean
+					return (object) convertValue.ToBoolean (provider);
+					
+				else if (conversionType == conversionTable[4]) // 4 TypeCode.Char
+					return (object) convertValue.ToChar (provider);
+		  
+				else if (conversionType == conversionTable[5]) // 5 TypeCode.SByte
+					return (object) convertValue.ToSByte (provider);
 
-				} else if (conversionType == conversionTable[1]) {
-					// 1 TypeCode.Byte
-					return (object)(convertValue.ToByte (provider));
+				else if (conversionType == conversionTable[6]) // 6 TypeCode.Byte
+					return (object) convertValue.ToByte (provider);
+				
+				else if (conversionType == conversionTable[7]) // 7 TypeCode.Int16
+					return (object) convertValue.ToInt16 (provider);
+					
+				else if (conversionType == conversionTable[8]) // 8 TypeCode.UInt16
+					return (object) convertValue.ToUInt16 (provider);
 		  
-				} else if (conversionType == conversionTable[2]) {
-					// 2 TypeCode.Char
-					return (object)(convertValue.ToChar (provider));
+				else if (conversionType == conversionTable[9]) // 9 TypeCode.Int32
+					return (object) convertValue.ToInt32 (provider);
+			
+				else if (conversionType == conversionTable[10]) // 10 TypeCode.UInt32
+					return (object) convertValue.ToUInt32 (provider);
 		  
-				} else if (conversionType == conversionTable[3]) {
-					// 3 TypeCode.DateTime
-					return (object)(convertValue.ToDateTime (provider));
+				else if (conversionType == conversionTable[11]) // 11 TypeCode.Int64
+					return (object) convertValue.ToInt64 (provider);
 		  
-				} else if (conversionType == conversionTable[4]) {
-					// 4 TypeCode.Decimal
-					return (object)(convertValue.ToDecimal (provider));
+				else if (conversionType == conversionTable[12]) // 12 TypeCode.UInt64
+					return (object) convertValue.ToUInt64 (provider);
 		  
-				} else if (conversionType == conversionTable[5]) {
-					// 5 TypeCode.Double
-					return (object)(convertValue.ToDouble (provider));
+				else if (conversionType == conversionTable[13]) // 13 TypeCode.Single
+					return (object) convertValue.ToSingle (provider);
+		  
+				else if (conversionType == conversionTable[14]) // 14 TypeCode.Double
+					return (object) convertValue.ToDouble (provider);
 
-				} else if (conversionType == conversionTable[6]) {
-					// 6 TypeCode.Int16
-					return (object)(convertValue.ToInt16 (provider));
-		  
-				} else if (conversionType == conversionTable[7]) {
-					// 7 TypeCode.Int32
-					return (object)(convertValue.ToInt32 (provider));
-		  
-				} else if (conversionType == conversionTable[8]) {
-					// 8 TypeCode.Int64
-					return (object)(convertValue.ToInt64 (provider));
-		  
-				} else if (conversionType == conversionTable[9]) {
-					// 9 TypeCode.Sbyte
-					return (object)(convertValue.ToSByte (provider));
-		  
-				} else if (conversionType == conversionTable[10]) {
-					// 10 TypeCode.Single
-					return (object)(convertValue.ToSingle (provider));
-		  
-				} else if (conversionType == conversionTable[11]) {
-					// 11 TypeCode.String
-					return (object)(convertValue.ToString (provider));
-		  
-				} else if (conversionType == conversionTable[12]) {  
-					// 12 TypeCode.UInt16
-					return (object)(convertValue.ToUInt16 (provider));
-		  
-				} else if (conversionType == conversionTable[13]) {
-					// 13 TypeCode.UInt32
-					return (object)(convertValue.ToUInt32 (provider));
-		  
-				} else if (conversionType == conversionTable[14]) {
-					// 14 TypeCode.UInt64
-					return (object)(convertValue.ToUInt64 (provider));
+				else if (conversionType == conversionTable[15]) // 15 TypeCode.Decimal
+					return (object) convertValue.ToDecimal (provider);
 
-				} else if (conversionType == conversionTable[15]) {
-					// 15 TypeCode.Object
-					return (object)(value);
-
-				} else 	{ 		
-					// Not in the conversion table
-					throw new InvalidCastException (Locale.GetText (
-						"Unknown target conversion type"));
-				}
-			} else {
-				// Value is not IConvertible
-				throw new ArgumentException (Locale.GetText (
-					"Value is not a convertible object: "+ value.GetType().ToString()+" to "+conversionType.ToString()));
-			}
+				else if (conversionType == conversionTable[16]) // 16 TypeCode.DateTime
+					return (object) convertValue.ToDateTime (provider);
+				
+				else if (conversionType == conversionTable[18]) // 18 TypeCode.String
+					return (object) convertValue.ToString (provider);
+				else
+					throw new InvalidCastException (Locale.GetText ("Unknown target conversion type"));
+			} else
+				// Not in the conversion table
+				throw new ArgumentException ((Locale.GetText (
+					"Value is not a convertible object: " + value.GetType().ToString() + " to " + conversionType.ToString())));
 		}
 	}
 }
-
-
-
-
