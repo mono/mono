@@ -1,3 +1,8 @@
+
+Thu Mar 21 17:38:19 CET 2002 Paolo Molaro <lupus@ximian.com>
+
+	* StringBuilder.cs: no need to intern the string returned by ToString().
+
 2002-03-17  Mike Kestner  <mkestner@speakeasy.net>
 
 	* ASCIIEncoding.cs: Implement all the overridden methods. No longer
