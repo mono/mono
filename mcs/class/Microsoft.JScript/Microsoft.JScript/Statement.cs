@@ -79,8 +79,13 @@ namespace Microsoft.JScript {
  	}
 
 	internal class Continue : AST {
-
+		
 		internal string identifier;
+
+		internal Continue (AST parent)
+		{
+			this.parent = parent;
+		}
 
 		public override string ToString ()
 		{
@@ -89,12 +94,21 @@ namespace Microsoft.JScript {
 
 		internal override bool Resolve (IdentificationTable context)
 		{
-			throw new NotImplementedException ();
+			if ((parent == null || (!parent_is_itr_stm ())) && identifier == string.Empty)
+				throw new Exception ("A continue can't be outside a iteration stm");
+			return false;
 		}
 
 		internal override void Emit (EmitContext ec)
 		{
 			throw new NotImplementedException ();
+		}
+
+		private bool parent_is_itr_stm ()
+		{
+			if (parent is DoWhile || parent is While || parent is For || parent is ForIn)
+				return true;
+			return false;
 		}
 	}
 
