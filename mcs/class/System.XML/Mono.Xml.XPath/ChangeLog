@@ -1,3 +1,8 @@
+2004-02-18  Atsushi Enomoto <atsushi@ximian.com>
+
+	* LocationPathPattern.cs : Implemented easy XPathNavigator cache on
+	  predicate evaluation in Matches().
+
 2004-02-17  Atsushi Enomoto <atsushi@ximian.com>
 
 	* KeyPattern.cs, Pattern.cs : removed using decls.

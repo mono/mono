@@ -22,6 +22,7 @@ namespace Mono.Xml.XPath {
 		bool isAncestor;
 		NodeTest nodeTest;
 		ExprFilter filter;
+		XPathNavigator previousNavigator;
 		
 		public LocationPathPattern (NodeTest nodeTest)
 		{
@@ -105,7 +106,14 @@ namespace Mono.Xml.XPath {
 				return filter.pred.EvaluateBoolean (new NullIterator (node, ctx));
 			}
 
-			XPathNavigator p = node.Clone ();
+			XPathNavigator p = null;
+			if (previousNavigator == node) {
+				p = previousNavigator;
+				p.MoveTo (node);
+			} else {
+				p = node.Clone ();
+				previousNavigator = p;
+			}
 			p.MoveToParent ();
 
 			BaseIterator matches = filter.EvaluateNodeSet (new NullIterator (p, ctx));
