@@ -157,7 +157,15 @@ namespace System.Reflection {
 		}
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		public extern Type GetType (String name, Boolean throwOnError, Boolean ignoreCase);
+		extern Type InternalGetType (String name, Boolean throwOnError, Boolean ignoreCase);
+
+		public Type GetType (string name, bool throwOnError, bool ignoreCase)
+		{
+			if (name == null)
+				throw new ArgumentNullException (name);
+
+			return InternalGetType (name, throwOnError, ignoreCase);
+		}
 		
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		static extern void FillName (Assembly ass, AssemblyName aname);
