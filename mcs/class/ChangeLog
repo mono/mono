@@ -1,3 +1,10 @@
+2003-10-21  Pedro Martínez Juliá  <yoros@wanadoo.es>
+
+	* Makefile: Removed Mono.Security.Tls.
+
+	* Mono.Security.Tls: Removed directory, now TLS support is in
+	Mono.Security assembly.
+
 2003-10-16  Pedro Martínez Juliá  <yoros@wanadoo.es>
 
 	* Makefile: Add Mono.Security.Tls assembly.
