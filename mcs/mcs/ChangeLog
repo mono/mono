@@ -1,4 +1,10 @@
+2003-04-20  Miguel de Icaza  <miguel@ximian.com>
+
+	* driver.cs: Use CodePage not WindowsCodePage.
+
 2003-04-19  Miguel de Icaza  <miguel@ximian.com>
+
+	* decl.cs (ResolveTypeExpr): Mirror check acess here too.
 
 	* delegate.cs (NewDelegate.Resolve): Test whether an instance
 	method is being referenced in the method group from a static
