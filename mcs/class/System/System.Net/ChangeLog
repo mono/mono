@@ -1,6 +1,6 @@
 2003-12-02  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
-	* DigestClient.cs: initial Digest autothentication. Works with apache
+	* DigestClient.cs: initial Digest authentication. Works with apache
 	mod_digest.
 
 2003-11-27  Gonzalo Paniagua Javier <gonzalo@ximian.com>
