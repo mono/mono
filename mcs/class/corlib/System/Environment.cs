@@ -294,8 +294,8 @@ namespace System
 			PlatformID platform = Platform;
 			StringBuilder result = new StringBuilder ();
 			result.Append (name, 0, off1);
+			Hashtable tbl = null;
 			do {
-				Hashtable tbl = null;
 				string var = name.Substring (off1 + 1, off2 - off1 - 1);
 				string value = GetEnvironmentVariable (var);
 				if (value == null && (int) platform != 128) {
