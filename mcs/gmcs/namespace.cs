@@ -598,12 +598,11 @@ namespace Mono.CSharp {
 					AliasEntry entry = (AliasEntry) de.Value;
 
 					IAlias alias = entry.Resolve ();
-					if ((alias != null) && alias.IsType) {
-						TypeExpr texpr = alias.Type;
+					if (alias != null) {
+						if (alias.IsType)
+							alias.Type.ResolveType (ec);
 
-						Type t = texpr.ResolveType (ec);
-						if (t == null)
-							continue;
+						continue;
 					}
 
 					error246 (entry.Location, entry.Alias.ToString ());
