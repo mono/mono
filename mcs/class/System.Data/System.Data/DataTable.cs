@@ -132,7 +132,16 @@ namespace System.Data {
 		{
 			string schema = info.GetString ("XmlSchema");
 			string data = info.GetString ("XmlDiffGram");
-			
+
+			DataSet ds = new DataSet ();
+			ds.ReadXmlSchema (new StringReader (schema));
+			ds.Tables [0].CopyProperties (this);
+			ds = new DataSet ();
+			ds.Tables.Add (this);
+			ds.ReadXml (new StringReader (data), XmlReadMode.IgnoreSchema);
+			ds.Tables.Remove (this);
+/* keeping for a while. With the change above, we shouldn't have to consider 
+ * DataTable mode in schema inference/read.
 			XmlSchemaMapper mapper = new XmlSchemaMapper (this);
 			XmlTextReader xtr = new XmlTextReader(new StringReader (schema));
 			mapper.Read (xtr);
@@ -140,6 +149,7 @@ namespace System.Data {
 			XmlDiffLoader loader = new XmlDiffLoader (this);
 			xtr = new XmlTextReader(new StringReader (data));
 			loader.Load (xtr);
+*/
 		}
 
 #if NET_2_0
@@ -1207,7 +1217,7 @@ namespace System.Data {
 				if (sortableColumns.Length == 0)
 					throw new Exception("sort expression result is 0");
 
-				RowSorter rowSorter = new RowSorter (dataRows, sortableColumns);
+				RowSorter rowSorter = new RowSorter (this, dataRows, sortableColumns);
 				dataRows = rowSorter.SortRows ();
 
 				sortableColumns = null;
@@ -1588,7 +1598,7 @@ namespace System.Data {
 					string columnName = columnSortInfo[0].Trim ();
 					string sortOrder = "ASC";
 					if (columnSortInfo.Length > 1) 
-						sortOrder = columnSortInfo[1].Trim ().ToUpper ();
+						sortOrder = columnSortInfo[1].Trim ().ToUpper (Locale);
 					
 					ListSortDirection sortDirection = ListSortDirection.Ascending;
 					switch (sortOrder) {
@@ -1648,12 +1658,15 @@ namespace System.Data {
 
 		private class RowSorter : IComparer 
 		{
+			private DataTable table;
 			private SortableColumn[] sortColumns;
 			private DataRow[] rowsToSort;
 			
-			internal RowSorter(DataRow[] unsortedRows, 
+			internal RowSorter(DataTable table,
+					DataRow[] unsortedRows, 
 					SortableColumn[] sortColumns) 
 			{
+				this.table = table;
 				this.sortColumns = sortColumns;
 				this.rowsToSort = unsortedRows;
 			}
@@ -1718,8 +1731,8 @@ namespace System.Data {
 					return 1;
 
 				if((a is string) && (b is string)) {
-					a = ((string) a).ToUpper ();
-					b = ((string) b).ToUpper ();			
+					a = ((string) a).ToUpper (table.Locale);
+					b = ((string) b).ToUpper (table.Locale);			
 				}
 
 				if (a is IComparable)

@@ -1,5 +1,12 @@
 2004-05-05  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* DataTable.cs :
+	  We had better reuse DataSet's ReadXmlSchema() and ReadXml() in
+	  serialization .ctor() (thus schema read/inference should be easier).
+	  DataRowSorter should consider Table's Locale.
+
+2004-05-05  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* DataColumnCollection.cs : We already had AutoIncrementValue(), so
 	  use it instead of duplicating logic.
 
