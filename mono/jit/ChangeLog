@@ -1,3 +1,8 @@
+2002-02-18  Dietmar Maurer  <dietmar@ximian.com>
+
+	* x86.brg: do not encode exception objects into the instruction
+	stream, because they are domain dependend. Use
+	arch_get_throw_exception_by_name() instead;
 
 Mon Feb 18 15:51:40 CET 2002 Paolo Molaro <lupus@ximian.com>
 
@@ -8,6 +13,7 @@ Mon Feb 18 15:51:40 CET 2002 Paolo Molaro <lupus@ximian.com>
 	* jit.c (mono_analyze_stack): use the magic trampoline for all
 	calls (since we cant store the address of compiled code in
 	method->addr).
+	(mono_analyze_stack): imp. LDSTR for shared code
 
 	* emit-x86.c (x86_magic_trampoline): handle x86_call_code().
 	(arch_compile_method): add a cache for compiled methods to avoid
