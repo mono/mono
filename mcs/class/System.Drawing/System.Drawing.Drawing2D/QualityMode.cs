@@ -1,5 +1,5 @@
 //
-// System.Drawing.QualityMode.cs
+// System.Drawing.Drawing2D.QualityMode.cs
 //
 // Author:
 //   Stefan Maierhofer <sm@cg.tuwien.ac.at>
@@ -9,7 +9,7 @@
 //
 using System;
 
-namespace System.Drawing.Drawing2d {
+namespace System.Drawing.Drawing2D {
 	/// <summary>
 	/// Summary description for QualityMode.
 	/// </summary>

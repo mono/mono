@@ -3,6 +3,7 @@
 //
 // Author:
 //   Stefan Maierhofer <sm@cg.tuwien.ac.at>
+//   Dennis Hayes (dennish@Raytek.com)
 //
 // (C) Ximian, Inc.  http://www.ximian.com
 //

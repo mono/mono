@@ -3,13 +3,13 @@
 //
 // Author:
 //   Miguel de Icaza (miguel@ximian.com)
-//
+//   Dennis Hayes (dennish@Raytek.com)
 // (C) Ximian, Inc.  http://www.ximian.com
 //
 
 using System;
 
-namespace System.Drawing {
+namespace System.Drawing.Drawing2D {
 
 	public enum PenAlignment {
 		Center = 0,

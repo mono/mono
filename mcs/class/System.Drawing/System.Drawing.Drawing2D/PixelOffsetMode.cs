@@ -1,5 +1,5 @@
 //
-// System.Drawing.PixelOffsetMode.cs
+// System.Drawing.Drawing2D.PixelOffsetMode.cs
 //
 // Author:
 //   Stefan Maierhofer <sm@cg.tuwien.ac.at>
@@ -9,7 +9,7 @@
 //
 using System;
 
-namespace System.Drawing.Drawing2d {
+namespace System.Drawing.Drawing2D {
 	/// <summary>
 	/// Summary description for PixelOffsetMode.
 	/// </summary>

@@ -1,5 +1,5 @@
 //
-// System.Drawing.WarpMode.cs
+// System.Drawing.Drawing2D.WarpMode.cs
 //
 // Author:
 //   Stefan Maierhofer <sm@cg.tuwien.ac.at>
@@ -9,7 +9,7 @@
 //
 using System;
 
-namespace System.Drawing.Drawing2d {
+namespace System.Drawing.Drawing2D {
 	/// <summary>
 	/// Summary description for WarpMode.
 	/// </summary>

@@ -1,5 +1,5 @@
 //
-// System.Drawing.MatrixOrder.cs
+// System.Drawing.Drawing2D.MatrixOrder.cs
 //
 // Author:
 //   Stefan Maierhofer <sm@cg.tuwien.ac.at>
