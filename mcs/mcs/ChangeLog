@@ -1,3 +1,8 @@
+2004-04-06  Bernie Solomon  <bernard@ugsolutions.com>
+
+	* CryptoConvert.cs: update from corlib version
+	with endian fixes.
+
 2004-04-05  Miguel de Icaza  <miguel@ximian.com>
 
 	* class.cs (Indexer.Define): Check indexername declaration

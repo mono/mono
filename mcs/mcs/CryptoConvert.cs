@@ -21,6 +21,26 @@ namespace Mono.Security.Cryptography {
 #endif
 	class CryptoConvert {
 
+		static private int ToInt32LE (byte [] bytes, int offset)
+		{
+			return (bytes [offset+3] << 24) | (bytes [offset+2] << 16) | (bytes [offset+1] << 8) | bytes [offset];
+		}
+
+		static private uint ToUInt32LE (byte [] bytes, int offset)
+		{
+			return (uint)((bytes [offset+3] << 24) | (bytes [offset+2] << 16) | (bytes [offset+1] << 8) | bytes [offset]);
+		}
+
+		static private byte [] GetBytesLE (int val)
+		{
+			return new byte [] { 
+				(byte) (val & 0xff), 
+				(byte) ((val >> 8) & 0xff), 
+				(byte) ((val >> 16) & 0xff), 
+				(byte) ((val >> 24) & 0xff)
+			};
+                }
+
 		static private byte[] Trim (byte[] array) 
 		{
 			for (int i=0; i < array.Length; i++) {
@@ -53,14 +73,14 @@ namespace Mono.Security.Cryptography {
 				    (blob [offset+1] != 0x02) ||				// Version (0x02)
 				    (blob [offset+2] != 0x00) ||				// Reserved (word)
 				    (blob [offset+3] != 0x00) ||
-				    (BitConverter.ToUInt32 (blob, offset+8) != 0x32415352))	// DWORD magic = RSA2
+				    (ToUInt32LE (blob, offset+8) != 0x32415352))	// DWORD magic = RSA2
 					throw new CryptographicException ("Invalid blob header");
 				
 				// ALGID (CALG_RSA_SIGN, CALG_RSA_KEYX, ...)
-				int algId = BitConverter.ToInt32 (blob, offset+4);
+				int algId = ToInt32LE (blob, offset+4);
 
 				// DWORD bitlen
-				int bitLen = BitConverter.ToInt32 (blob, offset+12);
+				int bitLen = ToInt32LE (blob, offset+12);
 
 				// DWORD public exponent
 				RSAParameters rsap = new RSAParameters ();
@@ -137,7 +157,7 @@ namespace Mono.Security.Cryptography {
 			blob [10] = 0x41;
 			blob [11] = 0x32;
 
-			byte[] bitlen = BitConverter.GetBytes (keyLength << 3);
+			byte[] bitlen = GetBytesLE (keyLength << 3);
 			blob [12] = bitlen [0];	// bitlen
 			blob [13] = bitlen [1];	
 			blob [14] = bitlen [2];	
@@ -211,14 +231,14 @@ namespace Mono.Security.Cryptography {
 				    (blob [offset+1] != 0x02) ||				// Version (0x02)
 				    (blob [offset+2] != 0x00) ||				// Reserved (word)
 				    (blob [offset+3] != 0x00) || 
-				    (BitConverter.ToUInt32 (blob, offset+8) != 0x31415352))	// DWORD magic = RSA1
+				    (ToUInt32LE (blob, offset+8) != 0x31415352))	// DWORD magic = RSA1
 					throw new CryptographicException ("Invalid blob header");
 
 				// ALGID (CALG_RSA_SIGN, CALG_RSA_KEYX, ...)
-				int algId = BitConverter.ToInt32 (blob, offset+4);
+				int algId = ToInt32LE (blob, offset+4);
 
 				// DWORD bitlen
-				int bitLen = BitConverter.ToInt32 (blob, offset+12);
+				int bitLen = ToInt32LE (blob, offset+12);
 
 				// DWORD public exponent
 				RSAParameters rsap = new RSAParameters ();
@@ -258,7 +278,7 @@ namespace Mono.Security.Cryptography {
 			blob [10] = 0x41;
 			blob [11] = 0x31;
 
-			byte[] bitlen = BitConverter.GetBytes (keyLength << 3);
+			byte[] bitlen = GetBytesLE (keyLength << 3);
 			blob [12] = bitlen [0];	// bitlen
 			blob [13] = bitlen [1];	
 			blob [14] = bitlen [2];	
