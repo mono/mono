@@ -306,6 +306,11 @@ managed implementation on error.
 .I "MONO_CODEDOM_NODELETE"
 If set to any value, the C# CodeDom compiler will not remove the temporary
 source files generated.
+.TP
+.I "MONO_EGD_SOCKET"
+For platforms that do not otherwise have a way of obtaining random bytes
+this can be set to the name of a file system socket on which an egd or
+prngd daemon is listening.
 .SH FILES
 On Unix assemblies are loaded from the installation lib directory.  If you set
 `prefix' to /usr, the assemblies will be located in /usr/lib.  On
