@@ -105,8 +105,8 @@ namespace System.Data.OracleClient {
 		}
 
 		int IDbCommand.CommandTimeout {
-			get { throw new InvalidOperationException (); }
-			set { throw new InvalidOperationException (); }
+			get { return 0; }
+			set { }
 		}
 
 		IDbConnection IDbCommand.Connection {

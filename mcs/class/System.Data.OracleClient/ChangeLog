@@ -1,3 +1,8 @@
+2003-12-16  Joerg Rosenkranz  <joergr@voelcker.com>
+
+	* System.Data.OracleClient/OracleCommand.cs:
+	  Fix for bug #52223 (CommandTimeout throws exception).
+
 2003-04-17  Nick Drochak  <ndrochak@gol.com>
 
 	* makefile.gnu: The Test dir does not contain a unit test.
