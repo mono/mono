@@ -1,3 +1,15 @@
+2002-05-08  Dick Porter  <dick@ximian.com>
+
+	* shared.c: Better error messages, and report when daemon
+	connection fails rather than blocking forever.  Do some more
+	shared memory sanity checking.
+
+	* handles.c: Better error messages when connecting to shared
+	memory and the handle daemon.  Fall back to non-shared handles if
+	an error occurs.  Set the default back to 'shared handles'.  Fix a
+	crashing bug in scratch space allocation that mangled the block
+	headers.
+
 2002-05-07  Miguel de Icaza  <miguel@ximian.com>
 
 	* handles.c (shared_init): Disable SHM for now, people have too
