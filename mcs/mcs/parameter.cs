@@ -272,7 +272,7 @@ namespace Mono.CSharp {
 
 		public string GetSignatureForError ()
 		{
-			string typeName;
+			string type_name;
 			if (parameter_type != null)
 				type_name = TypeManager.CSharpName (parameter_type);
 			else if (TypeName.Type != null)
