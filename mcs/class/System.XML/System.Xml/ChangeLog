@@ -1,5 +1,11 @@
 2004-11-04  Atsushi Enomoto <atsushi@ximian.com>
 
+	* XmlTextReader.cs : Manually expanded some of AppendValueChar() and
+	  XmlChar.IsWhitespace() which are on critical points on performance
+	  (marked as FIXME, but it depends on JIT).
+
+2004-11-04  Atsushi Enomoto <atsushi@ximian.com>
+
 	* XmlTextReader.cs : Search xml:* attributes more efficiently.
 
 2004-11-04  Atsushi Enomoto <atsushi@ximian.com>

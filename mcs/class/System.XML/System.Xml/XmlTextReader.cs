@@ -1244,7 +1244,6 @@ namespace System.Xml
 			string value,
 			bool clearAttributes)
 		{
-			token.Clear ();
 			token.NodeType = nodeType;
 			token.Name = name;
 			token.Prefix = prefix;
@@ -1477,6 +1476,7 @@ namespace System.Xml
 			}
 
 			Expect ('>');
+
 			SetProperties (
 				XmlNodeType.Element, // nodeType
 				name, // name
@@ -1705,7 +1705,16 @@ namespace System.Xml
 					ch = ReadChar ();
 				}
 
-				AppendValueChar (ch);
+				// FIXME: it might be optimized by the JIT later,
+//				AppendValueChar (ch);
+				{
+					if (valueLength == valueCapacity)
+						ExpandValueCapacity ();
+					if (ch < Char.MaxValue)
+						valueBuffer [valueLength++] = (char) ch;
+					else
+						AppendSurrogatePairValueChar (ch);
+				}
 
 				// Block "]]>"
 				if (ch == ']') {
@@ -1993,9 +2002,20 @@ namespace System.Xml
 						AppendValueChar (predefined);
 					break;
 				default:
+					// FIXME: this should be done by the JIT
 					if (CharacterChecking && XmlChar.IsInvalid (ch))
+//					if (checkCharacters && normalization && XmlChar.IsInvalid (ch))
 						throw new XmlException (this, "Invalid character was found.");
-					AppendValueChar (ch);
+					// FIXME: it might be optimized by the JIT later,
+//					AppendValueChar (ch);
+					{
+						if (valueLength == valueCapacity)
+							ExpandValueCapacity ();
+						if (ch < Char.MaxValue)
+							valueBuffer [valueLength++] = (char) ch;
+						else
+							AppendSurrogatePairValueChar (ch);
+					}
 					break;
 				}
 
@@ -2321,7 +2341,16 @@ namespace System.Xml
 				if (CharacterChecking && XmlChar.IsInvalid (ch))
 					throw new XmlException (this, "Invalid character was found.");
 
-				AppendValueChar (ch);
+				// FIXME: it might be optimized by the JIT later,
+//				AppendValueChar (ch);
+				{
+					if (valueLength == valueCapacity)
+						ExpandValueCapacity ();
+					if (ch < Char.MaxValue)
+						valueBuffer [valueLength++] = (char) ch;
+					else
+						AppendSurrogatePairValueChar (ch);
+				}
 			}
 
 			SetProperties (
@@ -2750,11 +2779,17 @@ namespace System.Xml
 		// Does not consume the first non-whitespace character.
 		private bool SkipWhitespace ()
 		{
-			bool skipped = XmlChar.IsWhitespace (PeekChar ());
+			// FIXME: It should be inlined by the JIT.
+//			bool skipped = XmlChar.IsWhitespace (PeekChar ());
+			int ch = PeekChar ();
+			bool skipped = (ch == 0x20 || ch == 0x9 || ch == 0xA || ch == 0xD);
 			if (!skipped)
 				return false;
 			ReadChar ();
-			while (XmlChar.IsWhitespace (PeekChar ()))
+			// FIXME: It should be inlined by the JIT.
+//			while (XmlChar.IsWhitespace (PeekChar ()))
+//				ReadChar ();
+			while ((ch = PeekChar ()) == 0x20 || ch == 0x9 || ch == 0xA || ch == 0xD)
 				ReadChar ();
 			return skipped;
 		}
@@ -2767,8 +2802,21 @@ namespace System.Xml
 			ClearValueBuffer ();
 			int ch = PeekChar ();
 			do {
-				AppendValueChar (ReadChar ());
-			} while ((ch = PeekChar ()) != -1 && XmlChar.IsWhitespace (ch));
+				// FIXME: it might be optimized by the JIT later,
+//				AppendValueChar (ReadChar ());
+				{
+					ch = ReadChar ();
+					if (valueLength == valueCapacity)
+						ExpandValueCapacity ();
+					if (ch < Char.MaxValue)
+						valueBuffer [valueLength++] = (char) ch;
+					else
+						AppendSurrogatePairValueChar (ch);
+				}
+			// FIXME: It should be inlined by the JIT.
+//			} while ((ch = PeekChar ()) != -1 && XmlChar.IsWhitespace (ch));
+				ch = PeekChar ();
+			} while (ch == 0x20 || ch == 0x9 || ch == 0xA || ch == 0xD);
 
 			if (currentState == XmlNodeType.Element && ch != -1 && ch != '<')
 				ReadText (false);
