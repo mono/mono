@@ -1,4 +1,9 @@
 
+Wed Dec 4 11:02:30 CET 2002 Paolo Molaro <lupus@ximian.com>
+
+	* gc.c: disable the finalizer thread for now, untill all the issues
+	with it are resolved.
+
 Wed Dec 4 10:44:01 CET 2002 Paolo Molaro <lupus@ximian.com>
 
 	* string-icalls.c: handle embedded nulls in string ctor when the
