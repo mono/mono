@@ -18,12 +18,6 @@ namespace System.Xml.Xsl
 	[Serializable]
 	public class XsltCompileException : XsltException
 	{
-		#region Fields
-
-		string message;
-
-		#endregion
-
 		#region Constructors
 
 		protected XsltCompileException (SerializationInfo info, StreamingContext context )
@@ -45,7 +39,7 @@ namespace System.Xml.Xsl
 		#region Properties
 
 		public override string Message {
-			get { return message; }
+			get { return base.Message; }
 		}
 
 		#endregion

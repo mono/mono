@@ -1,3 +1,8 @@
+2004-03-22  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XsltException.cs, XsltCompileException.cs : They had used 
+	  message field which were never set.
+
 2004-01-16  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* Multiplexer.cs : Pass stream parameters as is (to handle

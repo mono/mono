@@ -20,7 +20,6 @@ namespace System.Xml.Xsl
 	{
 		#region Fields
 
-		string message;
 		int lineNumber;
 		int linePosition;
 		string sourceUri;
@@ -32,7 +31,7 @@ namespace System.Xml.Xsl
 		public XsltException (string message, Exception innerException)
 			: base (message, innerException)
 		{
-			this.message = message;
+//			this.message = message;
 		}
 
 		protected XsltException (SerializationInfo info, StreamingContext context)
@@ -72,7 +71,16 @@ namespace System.Xml.Xsl
 		}
 
 		public override string Message {
-			get { return message; }
+			get {
+				string msg = base.Message;
+				if (sourceUri != null)
+					msg += " " + sourceUri;
+				if (lineNumber != 0)
+					msg += " line " + lineNumber;
+				if (linePosition != 0)
+					msg += ", position " + linePosition;
+				return msg;
+			}
 		}
 
 		public string SourceUri {
