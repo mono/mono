@@ -1,3 +1,7 @@
+2004-10-03  Marek Safar <marek.safar@seznam.cz>
+
+	* test-297.cs: Incorporated test for #67108
+
 2004-10-01  Raja R Harinath  <rharinath@novell.com>
 
 	* Makefile (NEW_TEST_SOURCES_common): Add test-300.

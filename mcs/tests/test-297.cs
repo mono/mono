@@ -26,8 +26,17 @@ class T {
 				return 5;
 			
 		}
+                
+		object[] ats = typeof(ConverterService).GetMethod("Login").GetCustomAttributes (typeof(MyAttribute), true);
+		MyAttribute at = (MyAttribute) ats[0];
+                if (at.Val != "a")
+                    return 6;
+                
 		return 0;
 	}
+        
+	[MyAttribute(Val=AnEnum.a)]
+	public void Login(string a)	{}        
 }
 
 [AttributeUsage(AttributeTargets.All,AllowMultiple=true)]
@@ -36,4 +45,11 @@ class My : Attribute {
 	public My (object o) {
 		obj = o;
 	}
+        
+	public AnEnum Val; 
+}
+
+public enum AnEnum
+{
+	a,b,c
 }
