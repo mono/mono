@@ -1,3 +1,9 @@
+
+Mon May 10 17:21:00 CEST 2004 Paolo Molaro <lupus@ximian.com>
+
+	* mini-ppc.c, cpu-g4.md: fixes to handle large stack frames
+	and large offsets in load/store.
+
 2004-05-07  Zoltan Varga  <vargaz@freemail.hu>
 
 	* mini-x86.c (mono_arch_local_regalloc): Remove the previous fix, since
