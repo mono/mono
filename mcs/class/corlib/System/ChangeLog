@@ -1,7 +1,7 @@
 2003-04-14  Miguel de Icaza  <miguel@ximian.com>
 
 	* Delegate.cs (Delegate): Seems like a typo, we were checking the
-	wrong variable.
+	a field rather than the argument 
 
 	* MonoType.cs: Make GetNestedType an external method implementation.
 
