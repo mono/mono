@@ -79,6 +79,11 @@ namespace System
 			this.method_name = method;
 		}
 
+		~Delegate () {
+			if (delegate_trampoline != IntPtr.Zero)
+				FreeTrampoline ();
+		}
+
 		public MethodInfo Method {
 			get {
 				return method_info;
@@ -97,6 +102,9 @@ namespace System
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		internal static extern Delegate CreateDelegate_internal (Type type, object target, MethodInfo info);
+
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		internal extern void FreeTrampoline ();
 
 		public static Delegate CreateDelegate (Type type, MethodInfo method)
 		{

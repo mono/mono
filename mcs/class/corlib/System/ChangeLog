@@ -1,3 +1,7 @@
+2004-09-02  Zoltan Varga  <vargaz@freemail.hu>
+
+	* Delegate.cs: Free the delegate trampoline in the finalizer.
+
 2004-08-26  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* ApplicationId.cs: Completed GetHashCode using information from MS
