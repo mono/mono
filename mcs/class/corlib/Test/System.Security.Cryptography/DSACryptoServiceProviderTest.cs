@@ -4,7 +4,7 @@
 // Author:
 //	Sebastien Pouliot (spouliot@motus.com)
 //
-// (C) 2002 Motus Technologies Inc. (http://www.motus.com)
+// (C) 2002, 2003 Motus Technologies Inc. (http://www.motus.com)
 //
 
 using NUnit.Framework;
@@ -13,15 +13,25 @@ using System.Security.Cryptography;
 
 namespace MonoTests.System.Security.Cryptography {
 
-public class DSACryptoServiceProviderTest : TestCase {
-	protected DSA dsa;
+[TestFixture]
+public class DSACryptoServiceProviderTest : Assertion {
+
+	protected DSACryptoServiceProvider dsa;
+	protected DSACryptoServiceProvider disposed;
 
 //	static string xmlPrivate = "<DSAKeyValue><P>s/Oc0t4gj0NRqkCKi4ynJnOAEukNhjkHJPOzNsHP69kyHMUwZ3AzOkLGYOWlOo2zlYKzSbZygDDI5dCWA5gQF2ZGHEUlWJMgUyHmkybOi44cyHaX9yeGfbnoc3xF9sYgkA3vPUZaJuYMOsBp3pyPdeN8/mLU8n0ivURyP+3Ge9M=</P><Q>qkcTW+Ce0L5k8OGTUMkRoGKDc1E=</Q><G>PU/MeGp6I/FBduuwD9UPeCFzg8Ib9H5osku5nT8AhHTY8zGqetuvHhxbESt4lLz8aXzX0oIiMsusBr6E/aBdooBI36fHwW8WndCmwkB1kv7mhRIB4302UrfvC2KWQuBypfl0++a1whBMCh5VTJYH1sBkFIaVNeUbt5Q6/UdiZVY=</G><Y>shJRUdGxEYxSKM5JVol9HAdQwIK+wF9X4n9SAD++vfZOMOYi+M1yuvQAlQvnSlTTWr7CZPRVAICLgDBbqi9iN+Id60ccJ+hw3pGDfLpJ7IdFPszJEeUO+SZBwf8njGXULqSODs/NTciiX7E07rm+KflxFOg0qtWAhmYLxIkDx7s=</Y><J>AAAAAQ6LSuRiYdsocZ6rgyqIOpE1/uCO1PfEn758Lg2VW6OHJTYHNC30s0gSTG/Jt3oHYX+S8vrtNYb8kRJ/ipgcofGq2Qo/cYKP7RX2K6EJwSfWInhsNMr1JmzuK0lUKkXXXVo15fL8O2/16uEWMg==</J><Seed>uYM5b20luvbuyevi9TXHwekbr5s=</Seed><PgenCounter>4A==</PgenCounter><X>fAOytZttUZFzt/AvwRinmvYKL7E=</X></DSAKeyValue>";
 //	static string xmlPublic = "<DSAKeyValue><P>s/Oc0t4gj0NRqkCKi4ynJnOAEukNhjkHJPOzNsHP69kyHMUwZ3AzOkLGYOWlOo2zlYKzSbZygDDI5dCWA5gQF2ZGHEUlWJMgUyHmkybOi44cyHaX9yeGfbnoc3xF9sYgkA3vPUZaJuYMOsBp3pyPdeN8/mLU8n0ivURyP+3Ge9M=</P><Q>qkcTW+Ce0L5k8OGTUMkRoGKDc1E=</Q><G>PU/MeGp6I/FBduuwD9UPeCFzg8Ib9H5osku5nT8AhHTY8zGqetuvHhxbESt4lLz8aXzX0oIiMsusBr6E/aBdooBI36fHwW8WndCmwkB1kv7mhRIB4302UrfvC2KWQuBypfl0++a1whBMCh5VTJYH1sBkFIaVNeUbt5Q6/UdiZVY=</G><Y>shJRUdGxEYxSKM5JVol9HAdQwIK+wF9X4n9SAD++vfZOMOYi+M1yuvQAlQvnSlTTWr7CZPRVAICLgDBbqi9iN+Id60ccJ+hw3pGDfLpJ7IdFPszJEeUO+SZBwf8njGXULqSODs/NTciiX7E07rm+KflxFOg0qtWAhmYLxIkDx7s=</Y><J>AAAAAQ6LSuRiYdsocZ6rgyqIOpE1/uCO1PfEn758Lg2VW6OHJTYHNC30s0gSTG/Jt3oHYX+S8vrtNYb8kRJ/ipgcofGq2Qo/cYKP7RX2K6EJwSfWInhsNMr1JmzuK0lUKkXXXVo15fL8O2/16uEWMg==</J><Seed>uYM5b20luvbuyevi9TXHwekbr5s=</Seed><PgenCounter>4A==</PgenCounter></DSAKeyValue>";
 
-	protected override void SetUp () {}
+	static int minKeySize = 512;
 
-	protected override void TearDown () {}
+	[SetUp]
+	void Setup () 
+	{
+		if (disposed == null) {
+			disposed = new DSACryptoServiceProvider (minKeySize);
+			disposed.Clear ();
+		}
+	}
 
 	public void AssertEquals (string msg, byte[] array1, byte[] array2) 
 	{
@@ -42,47 +52,276 @@ public class DSACryptoServiceProviderTest : TestCase {
 			AssertEquals (message + " X", expectedKey.X, actualKey.X);
 	}
 
-	public void TestConstructors () 
+	[Test]
+	public void ConstructorEmpty () 
 	{
-		CspParameters csp = new CspParameters ();
-		DSACryptoServiceProvider dsa1 = new DSACryptoServiceProvider ();
-		DSACryptoServiceProvider dsa2 = new DSACryptoServiceProvider (512);
-//		DSACryptoServiceProvider dsa3 = new DSACryptoServiceProvider (csp);
-//		DSACryptoServiceProvider dsa4 = new DSACryptoServiceProvider (1024, csp);
+		// under Mono:: a new key pair isn't generated
+		dsa = new DSACryptoServiceProvider ();
+		// test default key size
+		AssertEquals ("DSA ConstructorEmpty", 1024, dsa.KeySize);
 	}
 
-	public void TestKeyGeneration () 
+	[Test]
+	public void ConstructorKeySize () 
 	{
-		DSACryptoServiceProvider dsa = new DSACryptoServiceProvider ();
+		dsa = new DSACryptoServiceProvider (minKeySize);
+		// test default key size
+		AssertEquals ("DSA ConstructorKeySize", minKeySize, dsa.KeySize);
+	}
+
+	[Test]
+	public void ConstructorCspParameters () 
+	{
+		CspParameters csp = new CspParameters (13, null, "Mono1024");
+		// under MS a new keypair will only be generated the first time
+		dsa = new DSACryptoServiceProvider (csp);
+		// test default key size
+		AssertEquals ("DSA ConstructorCspParameters", 1024, dsa.KeySize);
+	}
+
+	[Test]
+	public void ConstructorKeySizeCspParameters () 
+	{
+		CspParameters csp = new CspParameters (13, null, "Mono512");
+		dsa = new DSACryptoServiceProvider (minKeySize, csp);
+		AssertEquals ("DSA ConstructorCspParameters", minKeySize, dsa.KeySize);
+	}
+
+	[Test]
+	[Ignore ("Much too long (with MS as Mono doesn't generates the keypair unless it need it)")]
+	public void KeyGeneration () 
+	{
 		// Test every valid key size
-		KeySizes LegalKeySize = dsa.LegalKeySizes[0];
-/* TOO LONG
+		KeySizes LegalKeySize = dsa.LegalKeySizes [0];
 		for (int i = LegalKeySize.MinSize; i <= LegalKeySize.MaxSize; i += LegalKeySize.SkipSize) {
-			DSACryptoServiceProvider key = new DSACryptoServiceProvider (i);
-			AssertEquals ("KeySize", i, key.KeySize);
-		}*/
-		// Test invalid keypair (too small)
-		try {
-			DSACryptoServiceProvider tooSmallKeyPair = new DSACryptoServiceProvider (384);
-			Fail ("Expected CryptographicException but got none");
+			dsa = new DSACryptoServiceProvider (i);
+			AssertEquals ("DSA.KeySize", i, dsa.KeySize);
 		}
-		catch (CryptographicException) {
-			// this is what we expect
+	}
+
+	[Test]
+	public void LimitedKeyGeneration () 
+	{
+		// Test smallest valid key size (performance issue)
+		using (dsa = new DSACryptoServiceProvider (minKeySize)) {	// MS generates keypair here
+			AssertEquals ("BeforeMonoKeyGeneration.KeySize", minKeySize, dsa.KeySize);
+			byte[] hash = new byte [20];
+			dsa.CreateSignature (hash);				// mono generates keypair here
+			AssertEquals ("AfterMonoKeyGeneration.KeySize", minKeySize, dsa.KeySize);
 		}
-		catch (Exception e) {
-			Fail ("Expected CryptographicException but got: " + e.ToString ());
-		}
-		// Test invalid keypair (too big)
-		try {
-			DSACryptoServiceProvider tooBigKeyPair = new DSACryptoServiceProvider (2048);
-			Fail ("Expected CryptographicException but got none");
-		}
-		catch (CryptographicException) {
-			// this is what we expect
-		}
-		catch (Exception e) {
-			Fail ("Expected CryptographicException but got: " + e.ToString ());
-		}
+		// here Dispose is called (with true)
+	}
+
+	[Test]
+	[ExpectedException (typeof (CryptographicException))]
+	public void TooSmallKeyPair () 
+	{
+		dsa = new DSACryptoServiceProvider (384);
+	}
+
+	[Test]
+	[ExpectedException (typeof (CryptographicException))]
+	public void TooBigKeyPair () 
+	{
+		dsa = new DSACryptoServiceProvider (2048);
+	}
+
+	[Test]
+	public void Properties () 
+	{
+		dsa = new DSACryptoServiceProvider (minKeySize);
+		AssertEquals ("LegalKeySize", 1, dsa.LegalKeySizes.Length);
+		AssertEquals ("LegalKeySize.MinSize", minKeySize, dsa.LegalKeySizes [0].MinSize);
+		AssertEquals ("LegalKeySize.MaxSize", 1024, dsa.LegalKeySizes [0].MaxSize);
+		AssertEquals ("LegalKeySize.SkipSize", 64, dsa.LegalKeySizes [0].SkipSize);
+		AssertNull ("KeyExchangeAlgorithm", dsa.KeyExchangeAlgorithm);
+		AssertEquals ("SignatureAlgorithm", "http://www.w3.org/2000/09/xmldsig#dsa-sha1", dsa.SignatureAlgorithm);
+		dsa.Clear ();
+		AssertEquals ("LegalKeySize(disposed)", 1, dsa.LegalKeySizes.Length);
+		AssertEquals ("LegalKeySize.MinSize(disposed)", minKeySize, dsa.LegalKeySizes [0].MinSize);
+		AssertEquals ("LegalKeySize.MaxSize(disposed)", 1024, dsa.LegalKeySizes [0].MaxSize);
+		AssertEquals ("LegalKeySize.SkipSize(disposed)", 64, dsa.LegalKeySizes [0].SkipSize);
+		AssertNull ("KeyExchangeAlgorithm(disposed)", dsa.KeyExchangeAlgorithm);
+		AssertEquals ("SignatureAlgorithm(disposed)", "http://www.w3.org/2000/09/xmldsig#dsa-sha1", dsa.SignatureAlgorithm);
+	}
+
+	[Test]
+	[ExpectedException (typeof (ObjectDisposedException))]
+	public void CreateSignatureDisposed () 
+	{
+		byte[] hash = new byte [20];
+		disposed.CreateSignature (hash);
+	}
+
+	[Test]
+	[ExpectedException (typeof (CryptographicException))]
+	public void CreateSignatureInvalidHashLength () 
+	{
+		// Small because MS will generate a new keypair
+		dsa = new DSACryptoServiceProvider (minKeySize);
+		byte[] hash = new byte [19];
+		dsa.CreateSignature (hash);
+	}
+
+	[Test]
+	public void CreateSignature () 
+	{
+		// Small because MS will generate a new keypair
+		dsa = new DSACryptoServiceProvider (minKeySize);
+		byte[] hash = new byte [20];
+		// for Mono, no keypair has yet been generated before calling CreateSignature
+		dsa.CreateSignature (hash);
+	}
+
+	[Test]
+	[ExpectedException (typeof (ObjectDisposedException))]
+	public void SignDataDisposed () 
+	{
+		byte[] data = new byte [20];
+		disposed.SignData (data);
+	}
+
+	[Test]
+	[ExpectedException (typeof (ObjectDisposedException))]
+	public void SignHashDisposed () 
+	{
+		byte[] hash = new byte [20];
+		disposed.SignHash (hash, "SHA1");
+	}
+
+	[Test]
+	[ExpectedException (typeof (ObjectDisposedException))]
+	public void VerifyDataDisposed () 
+	{
+		byte[] data = new byte [20];
+		byte[] sign = new byte [40];
+		disposed.VerifyData (data, sign);
+	}
+
+	[Test]
+	[ExpectedException (typeof (ObjectDisposedException))]
+	public void VerifyHashDisposed () 
+	{
+		byte[] hash = new byte [20];
+		byte[] sign = new byte [40];
+		disposed.VerifyHash (hash, "SHA1", sign);
+	}
+
+	[Test]
+	[ExpectedException (typeof (ObjectDisposedException))]
+	public void VerifySignatureDisposed () 
+	{
+		byte[] hash = new byte [20];
+		byte[] sign = new byte [40];
+		disposed.VerifySignature (hash, sign);
+	}
+
+	[Test]
+	[ExpectedException (typeof (CryptographicException))]
+	public void VerifySignatureInvalidHashLength () 
+	{
+		// Small because MS will generate a new keypair
+		dsa = new DSACryptoServiceProvider (minKeySize);
+		byte[] hash = new byte [19];
+		byte[] sign = new byte [40];
+		dsa.VerifySignature (hash, sign);
+	}
+
+	[Test]
+	[ExpectedException (typeof (CryptographicException))]
+	public void VerifySignatureInvalidSignatureLength () 
+	{
+		dsa = new DSACryptoServiceProvider (minKeySize);
+		byte[] hash = new byte [20];
+		byte[] sign = new byte [39];
+		dsa.VerifySignature (hash, sign);
+	}
+
+	[Test]
+	[Ignore ("Running this test breaks all further DSA tests on MS runtime!")]
+	public void VerifySignatureWithoutKey () 
+	{
+		dsa = new DSACryptoServiceProvider (minKeySize);
+		byte[] hash = new byte [20];
+		byte[] sign = new byte [40];
+		// Mono hasn't generated a keypair - but it's impossible to 
+		// verify a signature based on a new just generated keypair
+		Assert ("VerifySignature(WithoutKey)", !dsa.VerifySignature (hash, sign));
+	}
+
+	[Test]
+	[ExpectedException (typeof (ObjectDisposedException))]
+	public void ImportDisposed () 
+	{
+		disposed.ImportParameters (AllTests.GetKey (false));
+	}
+
+	[Test]
+	[ExpectedException (typeof (ObjectDisposedException))]
+	public void ExportDisposed () 
+	{
+		DSAParameters param = disposed.ExportParameters (false);
+	}
+
+	[Test]
+	[ExpectedException (typeof (CryptographicException))]
+	public void DSAImportMissingP () 
+	{
+		DSAParameters input = AllTests.GetKey (false);
+		input.P = null;
+		dsa = new DSACryptoServiceProvider (1024);
+		dsa.ImportParameters (input);
+	}
+
+	[Test]
+	[ExpectedException (typeof (CryptographicException))]
+	public void DSAImportMissingQ () 
+	{
+		DSAParameters input = AllTests.GetKey (false);
+		input.Q = null;
+		dsa = new DSACryptoServiceProvider (1024);
+		dsa.ImportParameters (input);
+	}
+
+	[Test]
+	[ExpectedException (typeof (CryptographicException))]
+	public void DSAImportMissingG () 
+	{
+		DSAParameters input = AllTests.GetKey (false);
+		input.G = null;
+		dsa = new DSACryptoServiceProvider (1024);
+		dsa.ImportParameters (input);
+	}
+
+	[Test]
+	[ExpectedException (typeof (CryptographicException))]
+	[Ignore ("MS runtime throws a System.ExecutionEngineException then exit the application")]
+	public void DSAImportMissingY () 
+	{
+		DSAParameters input = AllTests.GetKey (false);
+		input.Y = null;
+		dsa = new DSACryptoServiceProvider (1024);
+		dsa.ImportParameters (input);
+	}
+
+	[Test]
+	public void DSAImportMissingJ () 
+	{
+		DSAParameters input = AllTests.GetKey (false);
+		input.J = null;
+		dsa = new DSACryptoServiceProvider (1024);
+		dsa.ImportParameters (input);
+		AssertEquals ("MissingJ.KeySize", 1024, dsa.KeySize);
+	}
+
+	[Test]
+	public void DSAImportMissingSeed () 
+	{
+		DSAParameters input = AllTests.GetKey (false);
+		input.Seed = null;
+		dsa = new DSACryptoServiceProvider (1024);
+		dsa.ImportParameters (input);
+		AssertEquals ("MissingSeed.KeySize", 1024, dsa.KeySize);
 	}
 
 	// all keypairs generated by CryptoAPI on Windows
@@ -98,7 +337,8 @@ public class DSACryptoServiceProviderTest : TestCase {
 
 	// import/export XML keypairs
 	// so we know that Mono can use keypairs generated by CryptoAPI
-	public void TestCapiXmlImportExport () 
+	[Test]
+	public void CapiXmlImportExport () 
 	{
 		DSACryptoServiceProvider dsa = new DSACryptoServiceProvider ();
 
@@ -147,7 +387,8 @@ public class DSACryptoServiceProviderTest : TestCase {
 	// Validate that we can sign with every keypair and verify the signature
 	// With Mono this means that we can use CAPI keypair to sign and verify.
 	// For Windows this doesn't mean much.
-	public void TestCapiSignature () 
+	[Test]
+	public void CapiSignature () 
 	{
 		DSACryptoServiceProvider dsa = new DSACryptoServiceProvider ();
 
@@ -182,7 +423,8 @@ public class DSACryptoServiceProviderTest : TestCase {
 	// Validate that we can verify a signature made with CAPI
 	// With Mono this means that we can verify CAPI signatures.
 	// For Windows this doesn't mean much.
-	public void TestCapiVerify () 
+	[Test]
+	public void CapiVerify () 
 	{
 		byte[] hash = { 0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f, 0x10, 0x11, 0x12, 0x13 };
 		DSACryptoServiceProvider dsa = new DSACryptoServiceProvider ();
@@ -255,7 +497,8 @@ public class DSACryptoServiceProviderTest : TestCase {
 
 	// import/export XML keypairs
 	// so we know that Windows (original MS Framework) can use keypairs generated by Mono
-	public void TestMonoXmlImportExport () 
+	[Test]
+	public void MonoXmlImportExport () 
 	{
 		DSACryptoServiceProvider dsa = new DSACryptoServiceProvider ();
 
@@ -290,7 +533,8 @@ public class DSACryptoServiceProviderTest : TestCase {
 	// Validate that we can sign with every keypair and verify the signature
 	// With Windows this means that we can use Mono keypairs to sign and verify.
 	// For Mono this doesn't mean much.
-	public void TestMonoSignature () 
+	[Test]
+	public void MonoSignature () 
 	{
 		DSACryptoServiceProvider dsa = new DSACryptoServiceProvider ();
 
@@ -325,7 +569,8 @@ public class DSACryptoServiceProviderTest : TestCase {
 	// Validate that we can verify a signature made with Mono
 	// With Windows this means that we can verify Mono signatures.
 	// For Mono this doesn't mean much.
-	public void TestMonoVerify () 
+	[Test]
+	public void MonoVerify () 
 	{
 		byte[] hash = { 0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f, 0x10, 0x11, 0x12, 0x13 };
 		DSACryptoServiceProvider dsa = new DSACryptoServiceProvider ();

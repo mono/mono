@@ -57,15 +57,30 @@ public class NonAbstractRSAForUnitTests : RSA {
 	// basic implementation for tests
 	public override void ImportParameters (RSAParameters parameters) 
 	{
-		rsaParams = parameters;
+		rsaParams = new RSAParameters ();
+		if (parameters.D != null)
+			rsaParams.D = (byte[]) parameters.D.Clone ();
+		if (parameters.DP != null)
+			rsaParams.DP = (byte[]) parameters.DP.Clone ();
+		if (parameters.DQ != null)
+			rsaParams.DQ = (byte[]) parameters.DQ.Clone ();
+		if (parameters.P != null)
+			rsaParams.P = (byte[]) parameters.P.Clone ();
+		if (parameters.Q != null)
+			rsaParams.Q = (byte[]) parameters.Q.Clone ();
+		if (parameters.InverseQ != null)
+			rsaParams.InverseQ = (byte[]) parameters.InverseQ.Clone ();
+		// public key
+		rsaParams.Exponent = (byte[]) parameters.Exponent.Clone ();
+		rsaParams.Modulus = (byte[]) parameters.Modulus.Clone ();
 	}
 
 	// not tested here - but we must implemented all abstract methods
 	protected override void Dispose (bool disposing) {}
 }
 
-
-public class RSATest : TestCase {
+[TestFixture]
+public class RSATest : Assertion {
 	protected RSA rsa;
 
 	static byte[] rsaModulus =  { 0xbb, 0xf8, 0x2f, 0x09, 0x06, 0x82, 0xce, 0x9c, 0x23, 0x38, 0xac, 0x2b, 0x9d, 0xa8, 0x71, 0xf7, 
@@ -110,12 +125,11 @@ public class RSATest : TestCase {
 
 	static string xmlPublic = "<RSAKeyValue><Modulus>u/gvCQaCzpwjOKwrnahx9zaNB+7UEEOkQNa28HRU9R+437qvA1wCq2HqSM7rb81Idu1SDWDh7EYZcZ2KW4uAf6+44KPfxzdyPua0t9k6JYTuamSdBglTdIg0skVFmDlO4KqxLXthpR9SeppB9sFof+JTcpjKKo9ZRvjl/Qkdvcs=</Modulus><Exponent>EQ==</Exponent></RSAKeyValue>";
 
-	protected override void SetUp () 
+	[SetUp]
+	void SetUp () 
 	{
 		rsa = new NonAbstractRSAForUnitTests ();
 	}
-
-	protected override void TearDown () {}
 
 	public void AssertEquals (string msg, byte[] array1, byte[] array2) 
 	{
@@ -162,7 +176,8 @@ public class RSATest : TestCase {
 	}
 
 	// importing RSA keypair and exporting a RSA keypair 
-	public void TestRSAImportPrivateExportPrivate() 
+	[Test]
+	public void RSAImportPrivateExportPrivate () 
 	{
 		RSAParameters input = GetKey (true);
 		rsa.ImportParameters (input);
@@ -174,7 +189,8 @@ public class RSATest : TestCase {
 	}
 
 	// importing RSA keypair and exporting a RSA public key 
-	public void TestRSAImportPrivateExportPublic() 
+	[Test]
+	public void RSAImportPrivateExportPublic () 
 	{
 		RSAParameters input = GetKey (true);
 		rsa.ImportParameters (input);
@@ -186,29 +202,21 @@ public class RSATest : TestCase {
 	}
 
 	// importing RSA public key and exporting a RSA keypair (including private key!)
-	public void TestRSAImportPublicExportPrivate() 
+	[Test]
+	[ExpectedException (typeof (ArgumentNullException))]
+	public void RSAImportPublicExportPrivate () 
 	{
 		RSAParameters input = GetKey (false);
 		rsa.ImportParameters (input);
-		string xmlRSA = null;
-		try {
-			xmlRSA = rsa.ToXmlString (true);
-			Fail ("Expected ArgumentNullException but got no exception");
-		}
-		catch (ArgumentNullException) {
-			// expected as we cannot get a private key 
-			// from a public key (at least not in our lifetime)
-		}
-		catch (Exception e) {
-			Fail ("Expected ArgumentNullException but got " + e.ToString ());
-		}
+		string xmlRSA = rsa.ToXmlString (true);
 		//rsa.FromXmlString (xmlRSA);
 		//RSAParameters output = rsa.ExportParameters (true);
 		//AssertEquals ("RSA Import Public Export Private", input, output, true);
 	}
 
 	// importing RSA public key and exporting a RSA public key 
-	public void TestRSAImportPublicExportPublic() 
+	[Test]
+	public void RSAImportPublicExportPublic () 
 	{
 		RSAParameters input = GetKey (false);
 		rsa.ImportParameters (input);
@@ -217,6 +225,13 @@ public class RSATest : TestCase {
 		AssertEquals ("RSA Import Public Export Public (xml)", xmlPublic, xmlRSA);
 		RSAParameters output = rsa.ExportParameters (false);
 		AssertEquals ("RSA Import Public Export Public (binary)", input, output, true);
+	}
+
+	[Test]
+	[ExpectedException (typeof (ArgumentNullException))]
+	public void FromXmlStringNull () 
+	{
+		rsa.FromXmlString (null);
 	}
 }
 

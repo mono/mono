@@ -9,6 +9,7 @@
 
 using NUnit.Framework;
 using System;
+using System.IO;
 using System.Security.Cryptography;
 
 namespace MonoTests.System.Security.Cryptography {
@@ -17,12 +18,20 @@ namespace MonoTests.System.Security.Cryptography {
 public class RSACryptoServiceProviderTest : Assertion {
 
 	protected RSACryptoServiceProvider rsa;
+	protected RSACryptoServiceProvider disposed;
 	private string sha1OID;
 
-	// one-time initialization
-	public RSACryptoServiceProviderTest () : base ()
+	static int minKeySize = 384;
+
+	[SetUp]
+	void Setup () 
 	{
-		sha1OID = CryptoConfig.MapNameToOID ("SHA1");
+		if (disposed == null) {
+			sha1OID = CryptoConfig.MapNameToOID ("SHA1");
+			disposed = new RSACryptoServiceProvider (minKeySize);
+			disposed.FromXmlString ("<RSAKeyValue><Modulus>vtXAf62+o50prNCTiVGTMzdhm4sMjK0QVDkKQLFGu2fJQCULt9NZBab14PiWfG1t</Modulus><Exponent>AQAB</Exponent><P>5y2AHOzIhTChIFzLsgZQAGfy3U8OPwFh</P><Q>01NUVJJv+hhIsnbFiSi24FLRrfr/qYuN</Q><DP>HKLAOdUCyazKaK3V9Yleo448wTkntJpB</DP><DQ>AH5MTxo8arAN02TVlzliG+n1lVtlp2at</DQ><InverseQ>ZpgJwTxSYpT81sQCuVUvX0AYrvSziNIw</InverseQ><D>CStiJYBmsZvincAj5qw5w3M8yGmE/9ls4yv7wenozzC4kZshpI2MuON0d2Z8f4aB</D></RSAKeyValue>");
+			disposed.Clear ();
+		}
 	}
 
 	public void AssertEquals (string msg, byte[] array1, byte[] array2) 
@@ -57,10 +66,9 @@ public class RSACryptoServiceProviderTest : Assertion {
 	[Test]
 	public void ConstructorKeySize () 
 	{
-		int minimalKeySize = 384;
-		rsa = new RSACryptoServiceProvider (minimalKeySize);
+		rsa = new RSACryptoServiceProvider (minKeySize);
 		// test default key size
-		AssertEquals ("ConstructorKeySize", minimalKeySize, rsa.KeySize);
+		AssertEquals ("ConstructorKeySize", minKeySize, rsa.KeySize);
 	}
 
 	[Test]
@@ -95,6 +103,15 @@ public class RSACryptoServiceProviderTest : Assertion {
 	}
 
 	[Test]
+	public void LimitedKeyGeneration () 
+	{
+		// Test smallest valid key size
+		rsa = new RSACryptoServiceProvider (384);	// MS generates keypair here
+		byte[] hash = new byte [20];
+		rsa.SignData (hash, SHA1.Create ());		// mono generates keypair here
+	}
+
+	[Test]
 	[ExpectedException (typeof (CryptographicException))]
 	public void TooSmallKeyPair () 
 	{
@@ -111,13 +128,194 @@ public class RSACryptoServiceProviderTest : Assertion {
 	[Test]
 	public void Properties () 
 	{
-		rsa = new RSACryptoServiceProvider ();
+		rsa = new RSACryptoServiceProvider (minKeySize);
 		AssertEquals ("LegalKeySize", 1, rsa.LegalKeySizes.Length);
-		AssertEquals ("LegalKeySize.MinSize", 384, rsa.LegalKeySizes [0].MinSize);
+		AssertEquals ("LegalKeySize.MinSize", minKeySize, rsa.LegalKeySizes [0].MinSize);
 		AssertEquals ("LegalKeySize.MaxSize", 16384, rsa.LegalKeySizes [0].MaxSize);
 		AssertEquals ("LegalKeySize.SkipSize", 8, rsa.LegalKeySizes [0].SkipSize);
 		AssertEquals ("KeyExchangeAlgorithm", "RSA-PKCS1-KeyEx", rsa.KeyExchangeAlgorithm);
 		AssertEquals ("SignatureAlgorithm", "http://www.w3.org/2000/09/xmldsig#rsa-sha1", rsa.SignatureAlgorithm);
+		rsa.Clear ();
+		AssertEquals ("LegalKeySize(disposed)", 1, rsa.LegalKeySizes.Length);
+		AssertEquals ("LegalKeySize.MinSize(disposed)", minKeySize, rsa.LegalKeySizes [0].MinSize);
+		AssertEquals ("LegalKeySize.MaxSize(disposed)", 16384, rsa.LegalKeySizes [0].MaxSize);
+		AssertEquals ("LegalKeySize.SkipSize(disposed)", 8, rsa.LegalKeySizes [0].SkipSize);
+		AssertEquals ("KeyExchangeAlgorithm(disposed)", "RSA-PKCS1-KeyEx", rsa.KeyExchangeAlgorithm);
+		AssertEquals ("SignatureAlgorithm(disposed)", "http://www.w3.org/2000/09/xmldsig#rsa-sha1", rsa.SignatureAlgorithm);
+	}
+
+	[Test]
+	//[ExpectedException (typeof (ObjectDisposedException))]
+	// LAMESPEC/BUG: Disposed object can still be used (but original keypair seems lost)
+	[ExpectedException (typeof (CryptographicException))]
+	public void DecryptDisposed () 
+	{
+		byte[] encdata = { 0x4C, 0xBF, 0xFD, 0xD9, 0xAD, 0xDB, 0x65, 0x15, 0xB3, 0xE8, 0xE6, 0xD3, 0x22, 0x99, 0x69, 0x56, 0xD3, 0x1F, 0x1D, 0x2A, 0x66, 0x07, 0x00, 0xBB, 0x77, 0x47, 0xB6, 0x6F, 0x8E, 0x3A, 0xBA, 0x37, 0xA3, 0x0F, 0x0A, 0xC8, 0x8D, 0x1F, 0x8D, 0xAB, 0xAC, 0xFD, 0x82, 0x6F, 0x7F, 0x88, 0x3B, 0xA1, 0x0F, 0x9B, 0x4B, 0x8A, 0x27, 0x3B, 0xEC, 0xFF, 0x69, 0x20, 0x57, 0x64, 0xE1, 0xD8, 0x9E, 0x96, 0x7A, 0x53, 0x6A, 0x80, 0x63, 0xB0, 0xEE, 0x84, 0xA7, 0x67, 0x38, 0xA5, 0x30, 0x06, 0xA8, 0xBB, 0x16, 0x77, 0x49, 0x67, 0x0F, 0x90, 0x67, 0xD5, 0xC5, 0x12, 0x92, 0x5A, 0xDA, 0xC3, 0xFD, 0xC4, 0x8A, 0x89, 0x77, 0x79, 0x11, 0xEC, 0x95, 0xF6, 0x6A, 0x3B, 0xAD, 0xA8, 0xDF, 0xA1, 0xB0, 0x51, 0x34, 0xE8, 0xC1, 0x05, 0xB9, 0x09, 0x23, 0x33, 0x2A, 0x3E, 0xE7, 0x6A, 0x77, 0x6F, 0xBD, 0x21 };
+		byte[] data = disposed.Decrypt (encdata, false);
+		int total = 0;
+		for (int i=0; i < data.Length; i++)
+			total += data [i];
+		AssertEquals ("DecryptDisposed", 0, total);
+	}
+
+	[Test]
+	//[ExpectedException (typeof (ObjectDisposedException))]
+	// LAMESPEC/BUG: Disposed object can still be used (but original keypair seems lost)
+	public void EncryptDisposed () 
+	{
+		byte[] data = new byte [20];
+		try {
+			byte[] encdata = disposed.Encrypt (data, false);
+		}
+		catch (ObjectDisposedException) {
+			// on Mono we, indirectly, throw an ObjectDisposedException 
+			// because we're calling other public methods to do the job
+		}
+	}
+
+	[Test]
+	[ExpectedException (typeof (ObjectDisposedException))]
+	public void SignDataDisposed () 
+	{
+		byte[] data = new byte [20];
+		disposed.SignData (data, MD5.Create ());
+	}
+
+	[Test]
+	//[ExpectedException (typeof (ArgumentNullException))]
+	[ExpectedException (typeof (NullReferenceException))]
+	public void SignDataByteArrayNull () 
+	{
+		rsa = new RSACryptoServiceProvider (minKeySize);
+		byte[] data = null; // do not confuse compiler
+		rsa.SignData (data, MD5.Create ());
+	}
+
+	[Test]
+	//[ExpectedException (typeof (ArgumentNullException))]
+	[ExpectedException (typeof (NullReferenceException))]
+	public void SignDataStreamNull () 
+	{
+		rsa = new RSACryptoServiceProvider (minKeySize);
+		Stream data = null; // do not confuse compiler
+		rsa.SignData (data, MD5.Create ());
+	}
+
+	[Test]
+	[ExpectedException (typeof (ObjectDisposedException))]
+	public void SignHashDisposed () 
+	{
+		byte[] hash = new byte [20];
+		disposed.SignHash (hash, "1.3.14.3.2.26"); // SHA-1
+	}
+
+	[Test]
+	[ExpectedException (typeof (CryptographicException))]
+	public void SignHashInvalidLength () 
+	{
+		byte[] hash = new byte [19];
+		rsa = new RSACryptoServiceProvider (minKeySize);
+		rsa.SignHash (hash, "1.3.14.3.2.26"); // SHA-1
+	}
+
+	[Test]
+	[ExpectedException (typeof (ObjectDisposedException))]
+	public void VerifyDataDisposed () 
+	{
+		byte[] data = new byte [20];
+		byte[] sign = new byte [(minKeySize << 3) - 1];
+		disposed.VerifyData (data, SHA1.Create(), sign);
+	}
+
+	[Test]
+	//[ExpectedException (typeof (ArgumentNullException))]
+	[ExpectedException (typeof (NullReferenceException))]
+	public void VerifyDataNullData () 
+	{
+		byte[] sign = new byte [(minKeySize << 3)];
+		rsa = new RSACryptoServiceProvider (minKeySize);
+		rsa.VerifyData (null, SHA1.Create(), sign);
+	}
+
+	[Test]
+	[ExpectedException (typeof (ArgumentNullException))]
+	public void VerifyDataNullSignature () 
+	{
+		byte[] data = new byte [20];
+		rsa = new RSACryptoServiceProvider (minKeySize);
+		rsa.VerifyData (data, SHA1.Create(), null);
+	}
+
+	[Test]
+	[ExpectedException (typeof (ObjectDisposedException))]
+	public void VerifyHashDisposed () 
+	{
+		byte[] hash = new byte [20];
+		byte[] sign = new byte [(minKeySize << 3) - 1];
+		disposed.VerifyHash (hash, "1.3.14.3.2.26", sign);
+	}
+
+	[Test]
+	[ExpectedException (typeof (CryptographicException))]
+	public void VerifyHashInvalidHashLength () 
+	{
+		byte[] hash = new byte [19];
+		byte[] sign = new byte [(minKeySize << 3)];
+		rsa = new RSACryptoServiceProvider (minKeySize);
+		rsa.VerifyHash (hash, "1.3.14.3.2.26", sign);
+		// note: invalid signature length doesn't throw an exception (but returns false)
+	}
+
+	[Test]
+	[ExpectedException (typeof (ArgumentNullException))]
+	public void VerifyHashNullHash () 
+	{
+		byte[] sign = new byte [(minKeySize << 3)];
+		rsa = new RSACryptoServiceProvider (minKeySize);
+		rsa.VerifyHash (null, "1.3.14.3.2.26", sign);
+	}
+
+	[Test]
+	[ExpectedException (typeof (ArgumentNullException))]
+	public void VerifyHashNullSignature () 
+	{
+		byte[] hash = new byte [20];
+		rsa = new RSACryptoServiceProvider (minKeySize);
+		rsa.VerifyHash (hash, "1.3.14.3.2.26", null);
+	}
+
+	[Test]
+	[ExpectedException (typeof (ObjectDisposedException))]
+	public void ImportDisposed () 
+	{
+		disposed.ImportParameters (AllTests.GetRsaKey (false));
+	}
+
+	[Test]
+	[ExpectedException (typeof (ObjectDisposedException))]
+	public void ExportDisposed () 
+	{
+		RSAParameters param = disposed.ExportParameters (false);
+	}
+
+	[Test]
+	[ExpectedException (typeof (CryptographicException))]
+	public void RSAImportMissingExponent () 
+	{
+		RSAParameters input = AllTests.GetRsaKey (false);
+		input.Exponent = null;
+		rsa = new RSACryptoServiceProvider (minKeySize);
+		rsa.ImportParameters (input);
+	}
+
+	[Test]
+	[ExpectedException (typeof (CryptographicException))]
+	public void RSAImportMissingModulus () 
+	{
+		RSAParameters input = AllTests.GetRsaKey (false);
+		input.Modulus = null;
+		rsa = new RSACryptoServiceProvider (minKeySize);
+		rsa.ImportParameters (input);
 	}
 
 	// all keypairs generated by CryptoAPI on Windows

@@ -1,3 +1,14 @@
+2003-07-05  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* DSACryptoServiceProviderTest.cs: Added news unit tests for Dispose/Clear
+	and better test coverage (based on Zoltan's logs).
+	* DSATest.cs: Converted to NUnit2 format. Added new tests for better unit 
+	test coverage (import incomplete public keys).
+	* RSACryptoServiceProviderTest.cs: Added news unit tests for Dispose/Clear
+	and better test coverage (based on Zoltan's logs).
+	* RSATest.cs: Converted to NUnit2 format. Added new tests for better unit 
+	test coverage (import incomplete public keys).
+
 2003-06-23  Nick Drochak <ndrochak@gol.com>
 
         * MACTripleDESTest.cs: Adjust for .NET 1.1.
