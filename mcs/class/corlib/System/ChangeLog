@@ -1,4 +1,8 @@
 2002-04-23	Patrik Torstensson <patrik.torstensson@labs2.com>
+
+	* String.cs (Split): fixed invalid split of count 0 and 1.
+	
+2002-04-23	Patrik Torstensson <patrik.torstensson@labs2.com>
 	
 	* String.cs (LastIndexOf): fixed argument checking.
 	* String.cs (Equals): made internal for performace.

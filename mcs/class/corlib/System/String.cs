@@ -149,6 +149,9 @@ namespace System {
 				throw new ArgumentOutOfRangeException ();
 
 			if (count == 0) 
+				return new String[0];
+
+			if (count == 1) 
 				return new String[1] { ToString() };
 
 			return InternalSplit(separator, count);
