@@ -372,7 +372,6 @@ namespace System.Net
 
 			if ((socket != null && !socket.Connected) ||
 			   (!keepAlive || (cncHeader != null && cncHeader.IndexOf ("close") != -1))) {
-			   	Console.WriteLine ("CLosing");
 				Close ();
 			}
 
