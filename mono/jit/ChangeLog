@@ -3,6 +3,8 @@
 	* x86.brg: bug fix in CONV_OVF_I1_UN
 	impl. ADD_OVF, MUL_OVF
 	impl. ADD_OVF_UN, SUB_OVF, SUB_OVF_UN
+	(SUB (lreg, lreg)): bug fix - use SBB instead of SUB
+	(EMIT_COND_EXCEPTION): added signed flag
 
 Fri Jan 11 20:06:22 CET 2002 Paolo Molaro <lupus@ximian.com>
 
