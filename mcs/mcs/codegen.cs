@@ -108,7 +108,7 @@ namespace Mono.CSharp {
 								"-- Referenced assembly '" +
 								ref_name.Name +
 								"' does not have a strong name.");
-						Environment.Exit (1);
+						//Environment.Exit (1);
 					}
 				}
 			}
