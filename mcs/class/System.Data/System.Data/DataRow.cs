@@ -294,8 +294,9 @@ namespace System.Data {
 				}
 				else if(col.AutoIncrement == true && CanAccess(index,DataRowVersion.Default)) 
 				{
+					// New value is computed at .ctor(), so
+					// we don't have to do anything here.
 					newval = this [index];
-//					newval = col.AutoIncrementValue ();
 				}
 				else 
 				{
@@ -1283,27 +1284,26 @@ namespace System.Data {
 			for(int i = 0; i < columns.Count; i++){
 
 				string columnName = columns[i].ColumnName;
-				DataColumn column = row.Table.Columns[columnName];
+				int index = row.Table.Columns.IndexOf(columnName);
 				//if a column with the same name exists in both rows copy the values
-				if(column != null) {
-					int index = column.Ordinal;
+				if(index != -1) {
 					if (HasVersion(DataRowVersion.Original))
 					{
 						if (row.original == null)
 							row.original = new object[row.Table.Columns.Count];
-						row.original[index] = row.SetColumnValue(original[i], column, index);
+						row.original[index] = row.SetColumnValue(original[i], Table.Columns[index], index);
 					}
 					if (HasVersion(DataRowVersion.Current))
 					{
 						if (row.current == null)
 							row.current = new object[row.Table.Columns.Count];
-						row.current[index] = row.SetColumnValue(current[i], column, index);
+						row.current[index] = row.SetColumnValue(current[i], Table.Columns[index], index);
 					}
 					if (HasVersion(DataRowVersion.Proposed))
 					{
 						if (row.proposed == null)
 							row.proposed = new object[row.Table.Columns.Count];
-						row.proposed[index] = row.SetColumnValue(proposed[i], column, index);
+						row.proposed[index] = row.SetColumnValue(proposed[i], Table.Columns[index], index);
 					}
 					
 					//Saving the current value as the column value
@@ -1330,21 +1330,22 @@ namespace System.Data {
 				int index = this.Table.Columns.Count - 1;
 				if (current != null)
 				{
-					tmp = new object[current.Length + 1];
+					// When AutoIncrement column was added, current item array length automatically increases
+					tmp = new object [Table.Columns.Count];
 					Array.Copy (current, tmp, current.Length);
 					tmp[tmp.Length - 1] = SetColumnValue(null, this.Table.Columns[index], index);
 					current = tmp;
 				}
 				if (proposed != null)
 				{
-					tmp = new object[proposed.Length + 1];
+					tmp = new object [Table.Columns.Count];
 					Array.Copy (proposed, tmp, proposed.Length);
 					tmp[tmp.Length - 1] = SetColumnValue(null, this.Table.Columns[index], index);
 					proposed = tmp;
 				}
 				if(original != null)
 				{
-					tmp = new object[original.Length + 1];
+					tmp = new object [Table.Columns.Count];
 					Array.Copy (original, tmp, original.Length);
 					tmp[tmp.Length - 1] = SetColumnValue(null, this.Table.Columns[index], index);
 					original = tmp;
@@ -1479,9 +1480,9 @@ namespace System.Data {
 			if (_nullConstraintViolation) {
 				if (proposed != null) {
 					for (int i = 0; i < proposed.Length; i++) {
-					if (this[i] == DBNull.Value && !_table.Columns[i].AllowDBNull)
-						throw new NoNullAllowedException(_nullConstraintMessage);
-				}
+						if (this[i] == DBNull.Value && !_table.Columns[i].AllowDBNull)
+							throw new NoNullAllowedException(_nullConstraintMessage);
+					}
 				}
 				_nullConstraintViolation = false;
 			}

@@ -1,3 +1,9 @@
+2004-04-29  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* DataRow.cs : When Column was added and it was AutoIncrement column,
+	  it extended the item object array incorrectly.
+	  (Plus tiny comment and incorrect indentation fix.)
+
 2004-04-29  Boris Kirzner <borisk@mainsoft.com>
 
 	* MergeManager.cs : added ( incomplete yet ) support for merging DataSet schema.
