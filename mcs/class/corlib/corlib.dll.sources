@@ -778,6 +778,7 @@ System.Runtime.Serialization.Formatters/SoapMessage.cs
 System.Runtime.Serialization.Formatters/TypeFilterLevel.cs
 System.Runtime.Serialization.Formatters.Binary/BinaryFormatter.cs
 System.Runtime.Serialization.Formatters.Binary/BinaryCommon.cs
+System.Runtime.Serialization.Formatters.Binary/CodeGenerator.cs
 System.Runtime.Serialization.Formatters.Binary/ObjectReader.cs
 System.Runtime.Serialization.Formatters.Binary/ObjectWriter.cs
 System.Runtime.Serialization.Formatters.Binary/MessageFormatter.cs

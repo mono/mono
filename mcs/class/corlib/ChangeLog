@@ -1,3 +1,8 @@
+2004-02-17 Lluis Sanches Gual  <lluis@ximian.com>
+	
+	* corlib.dll.sources: Added 
+		System.Runtime.Serialization.Formatter.Binary.CodeGenerator.cs
+
 2004-02-10 Carlos Guzmán Álvarez  <carlosga@telefonica.net>
 
     * Mono.Security.Cryptography/PKCS1.cs:
