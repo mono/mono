@@ -1,3 +1,7 @@
+2003-12-28  Tim Coleman <tim@timcoleman.com>
+	* DbParameterBase.cs:
+		Correct type of ValueSize method to int
+
 2003-12-23  Tim Coleman <tim@timcoleman.com>
 	* DbCommandBase.cs DbConnectionBase.cs DbConnectionFactory.cs
 	* DbParameterCollectionBase.cs:

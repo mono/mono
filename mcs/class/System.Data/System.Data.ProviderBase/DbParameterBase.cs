@@ -166,7 +166,7 @@ namespace System.Data.ProviderBase {
 		}
 
 		[MonoTODO]
-		protected virtual byte ValueSize (object value)
+		protected virtual int ValueSize (object value)
 		{
 			throw new NotImplementedException ();
 		}
