@@ -1034,7 +1034,7 @@ namespace System.Windows.Forms
 		{
 			get {
 				CreateParams cp = base.CreateParams;
-				cp.Style = unchecked ((int)(WindowStyles.WS_POPUP | WindowStyles.WS_VISIBLE));
+				cp.Style = unchecked ((int)(WindowStyles.WS_POPUP | WindowStyles.WS_VISIBLE | WindowStyles.WS_CLIPSIBLINGS | WindowStyles.WS_CLIPCHILDREN));
 				cp.ExStyle |= (int)WindowStyles.WS_EX_TOOLWINDOW;
 				return cp;
 			}
@@ -1117,7 +1117,7 @@ namespace System.Windows.Forms
 					menu_parent = MenuAPI.GetMenuFromID (menu.tracker.hTopMenu);
 
 				if (menu_parent!=null && menu_parent.bMenubar) {
-					
+
 					Console.WriteLine ("MenuBar tracker move " + e.Y );
 
 					Point pnt = PointToClient (MousePosition);
