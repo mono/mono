@@ -1,3 +1,10 @@
+2004-06-12 Ben Maurer  <bmaurer@users.sourceforge.net>
+
+	* mini.c: use BIGMUL only if both operands have the same signage.
+	* iltests.il: Test for bug 60056. (errors related to signage in
+	BIGMUL).
+
+	r=lupus.
 
 Thu Jun 10 16:06:42 CEST 2004 Paolo Molaro <lupus@ximian.com>
 
