@@ -1,5 +1,7 @@
 2004-03-24  Zoltan Varga  <vargaz@freemail.hu>
 
+	* TypeBuilder.cs (GetMethod): Implement.
+
 	* CustomAttributeBuilder.cs: Reenable argument checking with MS.NET
 	compatibility tweaks.
 

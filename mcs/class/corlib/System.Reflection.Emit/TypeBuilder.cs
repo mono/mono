@@ -840,16 +840,35 @@ namespace System.Reflection.Emit {
 			throw not_supported ();
 		}
 
-		public override MethodInfo[] GetMethods (BindingFlags bindingAttr) {
-			if (methods == null)
+		private MethodInfo[] GetMethodsByName (string name, BindingFlags bindingAttr, bool ignoreCase, Type reflected_type) {
+			MethodInfo[] candidates;
+			if (((bindingAttr & BindingFlags.DeclaredOnly) == 0) && (parent != null)) {
+				MethodInfo[] parent_methods = parent.GetMethods (bindingAttr);
+				if (methods == null)
+					candidates = parent_methods;
+				else {
+					candidates = new MethodInfo [methods.Length + parent_methods.Length];
+					parent_methods.CopyTo (candidates, 0);
+					methods.CopyTo (candidates, parent_methods.Length);
+				}
+			}
+			else
+				candidates = methods;
+					
+			if (candidates == null)
 				return new MethodInfo [0];
+
 			ArrayList l = new ArrayList ();
 			bool match;
 			MethodAttributes mattrs;
 
-			foreach (MethodInfo c in methods) {
+			foreach (MethodInfo c in candidates) {
 				if (c == null)
 					continue;
+				if (name != null) {
+					if (String.Compare (c.Name, name, ignoreCase) != 0)
+						continue;
+				}
 				match = false;
 				mattrs = c.Attributes;
 				if ((mattrs & MethodAttributes.MemberAccessMask) == MethodAttributes.Public) {
@@ -873,15 +892,67 @@ namespace System.Reflection.Emit {
 					continue;
 				l.Add (c);
 			}
+
 			MethodInfo[] result = new MethodInfo [l.Count];
 			l.CopyTo (result);
 			return result;
 		}
 
-		protected override MethodInfo GetMethodImpl( string name, BindingFlags bindingAttr, Binder binder, CallingConventions callConvention, Type[] types, ParameterModifier[] modifiers) {
-			throw not_supported ();
+		public override MethodInfo[] GetMethods (BindingFlags bindingAttr) {
+			return GetMethodsByName (null, bindingAttr, false, this);
 		}
-		
+
+		protected override MethodInfo GetMethodImpl (string name, BindingFlags bindingAttr,
+							     Binder binder,
+							     CallingConventions callConvention,
+							     Type[] types, ParameterModifier[] modifiers)
+		{
+			if (!is_created)
+				/* MS.Net throws this exception if the type is unfinished... */
+				throw not_supported ();
+
+			bool ignoreCase = ((bindingAttr & BindingFlags.IgnoreCase) != 0);
+			MethodInfo[] methods = GetMethodsByName (name, bindingAttr, ignoreCase, this);
+			MethodInfo found = null;
+			MethodBase[] match;
+			int typesLen = (types != null) ? types.Length : 0;
+			int count = 0;
+			
+			foreach (MethodInfo m in methods) {
+				// Under MS.NET, Standard|HasThis matches Standard...
+				if (callConvention != CallingConventions.Any && ((m.CallingConvention & callConvention) != callConvention))
+					continue;
+				found = m;
+				count++;
+			}
+
+			if (count == 0)
+				return null;
+			
+			if (count == 1 && typesLen == 0) 
+				return found;
+
+			match = new MethodBase [count];
+			if (count == 1)
+				match [0] = found;
+			else {
+				count = 0;
+				foreach (MethodInfo m in methods) {
+					if (callConvention != CallingConventions.Any && ((m.CallingConvention & callConvention) != callConvention))
+						continue;
+					match [count++] = m;
+				}
+			}
+			
+			if (types == null) 
+				return (MethodInfo) Binder.FindMostDerivedMatch (match);
+
+			if (binder == null)
+				binder = Binder.DefaultBinder;
+			
+			return (MethodInfo)binder.SelectMethod (bindingAttr, match, types, modifiers);
+		}
+
 		public override Type GetNestedType( string name, BindingFlags bindingAttr) {
 			throw not_supported ();
 		}
