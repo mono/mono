@@ -1731,6 +1731,7 @@ namespace System.Windows.Forms
 			#region Public Methods
 			public virtual int Add (ColumnHeader value)
 			{
+				value.owner = this.owner;
 				return list.Add (value);
 			}
 
@@ -1823,6 +1824,7 @@ namespace System.Windows.Forms
 				if (index < 0 || index >= list.Count)
 					throw new ArgumentOutOfRangeException ("Index out of range.");
 
+				value.owner = this.owner;
 				list.Insert (index, value);
 			}
 

@@ -1,3 +1,7 @@
+2005-02-23  Chris Bacon  <chris.bacon@docobo.co.uk>
+
+	* ListView.cs: Assign owner for ColumnHeader. Patch by Chris Bacon
+
 2005-02-23  Jackson Harper  <jackson@ximian.com>
 
 	* PropertyManager.cs: Implement property binding. This doesn't
