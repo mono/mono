@@ -23,13 +23,26 @@ namespace Microsoft.Web.Services.Xml
 			_prefix = prefix;
 		}
 
-		[MonoTODO]
 		public static QualifiedName FromString (string value, XmlNode node)
 		{
 			if(node == null) {
 				throw new ArgumentNullException ("node");
 			}
-			throw new NotImplementedException ();
+			if(value.IndexOf(':') > 0) {
+				string[] strings = value.Split(':');
+
+				if(strings.Length != 2 || strings[0].Length == 0 || strings[1].Length == 1) {
+					throw new FormatException ("xml_ImproperQName");
+				}
+				string nspace = node.GetNamespaceOfPrefix (strings[0]);
+				if(nspace.Length == 0) {
+					throw new FormatException ("xml_CouldNotResolveNSPrefix");
+				}
+
+				return new QualifiedName (strings[0], strings[1], nspace);
+			}
+			
+			throw new FormatException ("xml_ImproperQName");
 		}
 
 		public XmlAttribute GetNamespaceDecl (XmlDocument document)

@@ -1,3 +1,7 @@
+2003-10-08  Todd Berman <tberman@gentoo.org>
+
+	* QualifiedName.cs: Initial implementation of FromString.
+
 2003-10-07  Todd Berman <tberman@gentoo.org>
 
 	* OpenElementElement.cs: implemented
