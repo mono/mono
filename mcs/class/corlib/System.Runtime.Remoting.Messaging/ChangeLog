@@ -1,3 +1,8 @@
+2003-07-21  Lluis Sanchez Gual <lluis@ximian.com>
+
+	* MethodCall.cs: Fixed copy constructor, when the message to copy does not
+	  implement IMethodMessage.
+
 2003-07-09  Jean-Marc André <jean-marc.andre@polymtl.ca>
 
 	* ReturnMessage.cs: Bug fix. GetOutArgName didn't return the right Name for the given out parameter.

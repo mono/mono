@@ -73,7 +73,15 @@ namespace System.Runtime.Remoting.Messaging {
 
 		public MethodCall (IMessage msg)
 		{
-			CopyFrom ((IMethodMessage) msg);
+			if (msg is IMethodMessage)
+				CopyFrom ((IMethodMessage) msg);
+			else
+			{
+				IDictionary dic = msg.Properties;
+				foreach (DictionaryEntry entry in msg.Properties)
+					InitMethodProperty ((String) entry.Key, entry.Value);
+				Init();
+    		}
 		}
 
 		internal MethodCall (string uri, string typeName, string methodName, object[] args)
