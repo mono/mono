@@ -1,3 +1,7 @@
+2004-01-01  Nick Drochak  <ndrochak@gol.com>
+
+	* PermissionRequestEvidence.cs: New File
+
 2003-12-15  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* PublisherMembershipCondition.cs: Completed TODO.
