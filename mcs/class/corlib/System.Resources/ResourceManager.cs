@@ -25,11 +25,15 @@ namespace System.Resources {
 
 			 // constructors
 			 public ResourceManager () {}
+
+		         [MonoTODO]
 			 public ResourceManager (Type resourceSource) {
 				    if (resourceSource == null)
 						  throw new ArgumentNullException ("resourceSource is null.");
 				    resourceSetType = resourceSource; // TODO Incomplete
 			 }
+
+		         [MonoTODO]
 			 public ResourceManager (string baseName, Assembly assembly) {
 				    if (baseName == null || assembly == null)
 						  throw new ArgumentNullException ("The arguments are null.");
@@ -64,12 +68,14 @@ namespace System.Resources {
 						  throw new ArgumentNullException ("CultureInfo is a null reference.");
 			 }
 
+		         [MonoTODO]
 			 public virtual string GetString (string name) {
 				    if (name == null)
 						  throw new ArgumentNullException ("Name is null.");
 				    if (ResourceSets.Contains (name)) {
 						  if (!ResourceSets[name] is string)
-								throw new InvalidOperationException ("The resource is not a string.");
+								throw new InvalidOperationException ("The resource is " +
+												     "not a string.");
 						  return ResourceSets[name].ToString();
 				    }
 				    // TODO check for correctness.				    
@@ -81,14 +87,15 @@ namespace System.Resources {
 				return name;
 			 }
 
+		         [MonoTODO]
 			 protected virtual string GetResourceFileName (CultureInfo culture) {
 				    return new culture.Name + ".resources"; // TODO check for correctness.
 			 }
 
 			 protected virtual ResourceSet InternalGetResourceSet (CultureInfo culture,
-														bool Createifnotexists,
-														bool tryParents) {}
-						  
+									       bool Createifnotexists,
+									       bool tryParents) {}
+		   
 			 public virtual void ReleaseAllResources () {
 				    foreach (ResourceSet r in ResourceSets)
 						  r.Close();

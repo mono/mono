@@ -1,4 +1,7 @@
+2002-01-05  Ravi Pratap  <ravi@ximian.com>
 
+	* ResourceManager.cs : MonoTODO attribute decoration.
+	
 Tue Dec 18 13:18:32 CET 2001 Paolo Molaro <lupus@ximian.com>
 
 	* *.cs: fixed some of the compilation issues: missing
