@@ -1,3 +1,7 @@
+2004-10-11  Martin Baulig  <martin@ximian.com>
+
+	* appdomain.c: Bump corlib version number to 28.
+
 2004-10-10  Martin Baulig  <martin@ximian.com>
 
 	* class-internals.h
