@@ -1,3 +1,13 @@
+
+Mon Aug 20 19:33:34 CEST 2001 Paolo Molaro <lupus@ximian.com>
+
+	* util.c: add a space when decoding multiple flags.
+	* dump.c, dump.h, main.c: decode the property map and
+	methodsemantics tables. Disassemble property information
+	to .property IL directives.
+	* get.c: allow passing a NULL as method in dis_stringify_method ()
+	if a methoddef_row is given.
+	
 2001-08-20  Dietmar Maurer  <dietmar@ximian.com>
 
 	* get.c (dis_stringify_type): support pinned values

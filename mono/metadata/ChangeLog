@@ -1,3 +1,13 @@
+Mon Aug 20 19:39:00 CEST 2001 Paolo Molaro <lupus@ximian.com>
+
+	* blob.h: fix MONO_TYPE_TYPEDBYREF value.
+	* cil-coff.h: split MonoMSDOSHeader and add size info.
+	* image.c: add some consistency checks.
+	* metadata.c: fix row size computation: one programmer
+	error and one LAMESPEC. Handle MONO_TYPE_TYPEDBYREF.
+	add explanation for the locator routine.
+	Fix decoding of size in method header.
+	
 2001-08-20  Miguel de Icaza  <miguel@ximian.com>
 
 	* assembly.c 	(g_concat_dir_and_file): Use _S for string concat.
