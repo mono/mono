@@ -77,7 +77,7 @@ namespace System.Web.SessionState {
 			string id = SessionId.Lookup (context.Request, config.CookieLess);
 
 			if (id != null) {
-				session = SelectSession (id);
+				session = SelectSession (id, module.IsReadOnly);
 				if (session != null) {
 					context.SetSession (session);
 					return false;
@@ -87,11 +87,10 @@ namespace System.Web.SessionState {
 			id = SessionId.Create (module.Rng);
 			session = new HttpSessionState (id, new SessionDictionary (),
 					new HttpStaticObjectsCollection (), config.Timeout, true,
-					false, SessionStateMode.SQLServer, false);
+					config.CookieLess, SessionStateMode.SQLServer, module.IsReadOnly);
 
 			InsertSession (session, config.Timeout);
 			context.SetSession (session);
-			context.Session.IsNewSession = true;
 
 			return true;
 		}
@@ -126,7 +125,7 @@ namespace System.Web.SessionState {
 				cncString = "SERVER=127.0.0.1;USER ID=monostate;PASSWORD=monostate;dbname=monostate";
 		}
 
-		private HttpSessionState SelectSession (string id)
+		private HttpSessionState SelectSession (string id, bool read_only)
 		{
 			HttpSessionState session = null;
 			IDbCommand command = cnc.CreateCommand();
@@ -150,8 +149,8 @@ namespace System.Web.SessionState {
 				dict = SessionDictionary.FromByteArray (ReadBytes (reader, reader.FieldCount-1));
 				sobjs = HttpStaticObjectsCollection.FromByteArray (ReadBytes (reader, reader.FieldCount-2));
 				
-				session = new HttpSessionState (id, dict, sobjs, 100, true, false,
-						SessionStateMode.SQLServer, false);
+				session = new HttpSessionState (id, dict, sobjs, 100, false, config.CookieLess,
+						SessionStateMode.SQLServer, read_only);
 				return session;
 			} catch {
 				throw;

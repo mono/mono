@@ -4,7 +4,7 @@
 // Authors:
 //	Gonzalo Paniagua Javier (gonzalo@ximian.com)
 //	Stefan Görling (stefan@gorling.se)
-//      Jackson Harper (jackson@ximian.com)
+//	Jackson Harper (jackson@ximian.com)
 //
 // (C) 2002,2003 Ximian, Inc (http://www.ximian.com)
 // (C) 2003 Stefan Görling (http://www.gorling.se)
@@ -24,7 +24,8 @@ namespace System.Web.SessionState
 		static SessionConfig config;
 		static Type handlerType;
 		ISessionHandler handler;
-
+		bool read_only;
+		
 		private RandomNumberGenerator rng;
 		
 		public SessionStateModule ()
@@ -34,6 +35,11 @@ namespace System.Web.SessionState
 
 		internal RandomNumberGenerator Rng {
 			get { return rng; }
+		}
+
+		internal bool IsReadOnly
+		{
+			get { return read_only; }
 		}
 		
 		public void Dispose ()
@@ -110,6 +116,8 @@ namespace System.Web.SessionState
 			HttpApplication application = (HttpApplication) o;
 			HttpContext context = application.Context;
 
+			read_only = (context.Handler is IReadOnlySessionState);
+			
 			bool isNew = false;
 			if (handler != null)
 			    isNew = handler.UpdateContext (context, this);

@@ -64,7 +64,7 @@ namespace System.Web.SessionState {
 					sobjs = HttpStaticObjectsCollection.FromByteArray (item.StaticObjectsData);
 					session = new HttpSessionState (id, dict, sobjs, 
 							config.Timeout, false, config.CookieLess,
-							SessionStateMode.StateServer, false);
+							SessionStateMode.StateServer, module.IsReadOnly);
 					context.SetSession (session);
 					return false;
 				}
@@ -78,12 +78,10 @@ namespace System.Web.SessionState {
 			state_server.Insert (id, item);
 
 			session = new HttpSessionState (id, dict, sobjs, config.Timeout,
-					false, config.CookieLess, SessionStateMode.StateServer, false);
+					true, config.CookieLess, SessionStateMode.StateServer, module.IsReadOnly);
 			
 			context.SetSession (session);
-			context.Session.IsNewSession = true;
-			context.Response.AppendCookie (new HttpCookie (CookieName, id));
-
+			
 			return true;
 		}
 

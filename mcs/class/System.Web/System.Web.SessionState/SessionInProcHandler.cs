@@ -13,7 +13,6 @@
 	TODO:
 	    * Remove abandoned sessions., preferably by a worker thread sleeping most of the time.
 	    * Increase session security, for example by using UserAgent i hashcode.
-	    * Generate SessionID:s in a good (more random) way.
 */
 using System;
 using System.IO;
@@ -113,7 +112,7 @@ namespace System.Web.SessionState
 										true, //new session
 										false, // is cookieless
 										SessionStateMode.InProc,
-										false)); //readonly
+										module.IsReadOnly)); //readonly
 			// puts it in the table.
 			_sessionTable [sessionID]=container;
 			AppDomain.CurrentDomain.SetData (".MonoSessionInProc", _sessionTable);

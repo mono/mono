@@ -1,3 +1,13 @@
+2003-12-05  Jackson Harper <jackson@ximian.com>
+
+	* SessionStateModule.cs: Add readonly property for readonly
+	sessions. This fixes bug #51647.
+	* SessionInProcHandler.cs:
+	* SessionSQLServerHandler.cs:
+	* SessionStateServerHandler.cs: Cleanup params for
+	HttpSessionState ctor. Make sure to always set is new, cookieless,
+	and readonly properly.
+	
 2003-12-03  Jackson Harper <jackson@ximian.com>
 
 	* SessionStateModule.cs: If using cookieless sessions add an
