@@ -264,7 +264,6 @@ _loop4_breakloop:			;
 		{
 		case IDENTIFIER:
 		case OPEN_PARENS:
-		case OPEN_BRACE:
 		case LITERAL_new:
 		case OPEN_BRACKET:
 		case INCREMENT:
@@ -317,7 +316,7 @@ _loop4_breakloop:			;
 		}
 		case LITERAL_break:
 		{
-			stm=break_stm();
+			stm=break_stm(parent);
 			break;
 		}
 		case LITERAL_return:
@@ -343,6 +342,11 @@ _loop4_breakloop:			;
 		case LITERAL_try:
 		{
 			stm=try_stm(parent);
+			break;
+		}
+		case OPEN_BRACE:
+		{
+			stm=block(new Block (parent), parent);
 			break;
 		}
 		default:
@@ -654,6 +658,9 @@ _loop15_breakloop:			;
 		{
 			
 					  if_stm = new If (parent, cond, true_stm, false_stm);
+					  cond.parent = true_stm.parent = if_stm;
+					  if (false_stm != null)
+						  false_stm.parent = if_stm;			
 				
 		}
 		return if_stm;
@@ -776,7 +783,9 @@ _loop15_breakloop:			;
 		return cont;
 	}
 	
-	public AST  break_stm() //throws RecognitionException, TokenStreamException
+	public AST  break_stm(
+		AST parent
+	) //throws RecognitionException, TokenStreamException
 {
 		AST b;
 		
@@ -834,7 +843,6 @@ _loop15_breakloop:			;
 			{
 			case IDENTIFIER:
 			case OPEN_PARENS:
-			case OPEN_BRACE:
 			case LITERAL_new:
 			case OPEN_BRACKET:
 			case INCREMENT:
@@ -1151,13 +1159,16 @@ _loop15_breakloop:			;
 		return t;
 	}
 	
-	public void block(
+	public AST  block(
 		Block elems, AST parent
 	) //throws RecognitionException, TokenStreamException
 {
+		AST _block;
 		
 		
-			AST stm = null;
+		AST stm = null;
+		_block = elems;
+		elems.parent = parent;
 		
 		
 		match(OPEN_BRACE);
@@ -1166,10 +1177,15 @@ _loop15_breakloop:			;
 			{
 				if ((tokenSet_2_.member(LA(1))))
 				{
-					stm=statement(parent);
+					stm=statement(elems);
 					if (0==inputState.guessing)
 					{
-						if (stm != null) elems.Add (stm);
+						
+								  if (stm != null) {
+									  stm.parent = elems;
+									  elems.Add (stm);
+								  }
+							
 					}
 				}
 				else
@@ -1181,6 +1197,7 @@ _loop15_breakloop:			;
 _loop19_breakloop:			;
 		}    // ( ... )*
 		match(CLOSE_BRACE);
+		return _block;
 	}
 	
 	public void catch_exp(
@@ -1402,7 +1419,6 @@ _loop66_breakloop:			;
 		{
 		case IDENTIFIER:
 		case OPEN_PARENS:
-		case OPEN_BRACE:
 		case SEMI_COLON:
 		case LITERAL_new:
 		case OPEN_BRACKET:
@@ -1428,7 +1444,6 @@ _loop66_breakloop:			;
 				{
 				case IDENTIFIER:
 				case OPEN_PARENS:
-				case OPEN_BRACE:
 				case LITERAL_new:
 				case OPEN_BRACKET:
 				case INCREMENT:
@@ -1467,7 +1482,6 @@ _loop66_breakloop:			;
 				{
 				case IDENTIFIER:
 				case OPEN_PARENS:
-				case OPEN_BRACE:
 				case LITERAL_new:
 				case OPEN_BRACKET:
 				case INCREMENT:
@@ -1506,7 +1520,6 @@ _loop66_breakloop:			;
 				{
 				case IDENTIFIER:
 				case OPEN_PARENS:
-				case OPEN_BRACE:
 				case LITERAL_new:
 				case OPEN_BRACKET:
 				case INCREMENT:
@@ -1563,7 +1576,6 @@ _loop66_breakloop:			;
 							{
 							case IDENTIFIER:
 							case OPEN_PARENS:
-							case OPEN_BRACE:
 							case LITERAL_new:
 							case OPEN_BRACKET:
 							case INCREMENT:
@@ -1602,7 +1614,6 @@ _loop66_breakloop:			;
 							{
 							case IDENTIFIER:
 							case OPEN_PARENS:
-							case OPEN_BRACE:
 							case LITERAL_new:
 							case OPEN_BRACKET:
 							case INCREMENT:
@@ -2062,7 +2073,6 @@ _loop58_breakloop:			;
 			}
 			case CLOSE_PARENS:
 			case COLON:
-			case CLOSE_BRACE:
 			case COMMA:
 			case SEMI_COLON:
 			case IN:
@@ -2098,7 +2108,6 @@ _loop58_breakloop:			;
 			{
 			case IDENTIFIER:
 			case OPEN_PARENS:
-			case OPEN_BRACE:
 			case OPEN_BRACKET:
 			case LITERAL_this:
 			case LITERAL_null:
@@ -2152,11 +2161,6 @@ _loop58_breakloop:			;
 			{
 				prim_exp = new This ();
 			}
-			break;
-		}
-		case OPEN_BRACE:
-		{
-			object_literal();
 			break;
 		}
 		case IDENTIFIER:
@@ -2227,7 +2231,6 @@ _loop58_breakloop:			;
 			{
 			case IDENTIFIER:
 			case OPEN_PARENS:
-			case OPEN_BRACE:
 			case LITERAL_new:
 			case OPEN_BRACKET:
 			case INCREMENT:
@@ -2307,7 +2310,6 @@ _loop58_breakloop:			;
 		case OPEN_PARENS:
 		case CLOSE_PARENS:
 		case COLON:
-		case CLOSE_BRACE:
 		case COMMA:
 		case SEMI_COLON:
 		case IN:
@@ -2450,7 +2452,6 @@ _loop58_breakloop:			;
 		}
 		case CLOSE_PARENS:
 		case COLON:
-		case CLOSE_BRACE:
 		case COMMA:
 		case SEMI_COLON:
 		case IN:
@@ -2574,7 +2575,6 @@ _loop86_breakloop:			;
 			}
 			case CLOSE_PARENS:
 			case COLON:
-			case CLOSE_BRACE:
 			case COMMA:
 			case SEMI_COLON:
 			case IN:
@@ -2639,7 +2639,6 @@ _loop86_breakloop:			;
 		{
 		case IDENTIFIER:
 		case OPEN_PARENS:
-		case OPEN_BRACE:
 		case LITERAL_new:
 		case OPEN_BRACKET:
 		case LITERAL_this:
@@ -2877,7 +2876,6 @@ _loop86_breakloop:			;
 			}
 			case CLOSE_PARENS:
 			case COLON:
-			case CLOSE_BRACE:
 			case COMMA:
 			case SEMI_COLON:
 			case IN:
@@ -3002,7 +3000,6 @@ _loop86_breakloop:			;
 			}
 			case CLOSE_PARENS:
 			case COLON:
-			case CLOSE_BRACE:
 			case COMMA:
 			case SEMI_COLON:
 			case IN:
@@ -3101,7 +3098,6 @@ _loop86_breakloop:			;
 			}
 			case CLOSE_PARENS:
 			case COLON:
-			case CLOSE_BRACE:
 			case COMMA:
 			case SEMI_COLON:
 			case IN:
@@ -3379,7 +3375,6 @@ _loop86_breakloop:			;
 			}
 			case CLOSE_PARENS:
 			case COLON:
-			case CLOSE_BRACE:
 			case COMMA:
 			case SEMI_COLON:
 			case IN:
@@ -3515,7 +3510,6 @@ _loop86_breakloop:			;
 			}
 			case CLOSE_PARENS:
 			case COLON:
-			case CLOSE_BRACE:
 			case COMMA:
 			case SEMI_COLON:
 			case IN:
@@ -3596,7 +3590,6 @@ _loop86_breakloop:			;
 			}
 			case CLOSE_PARENS:
 			case COLON:
-			case CLOSE_BRACE:
 			case COMMA:
 			case SEMI_COLON:
 			case IN:
@@ -3676,7 +3669,6 @@ _loop86_breakloop:			;
 			}
 			case CLOSE_PARENS:
 			case COLON:
-			case CLOSE_BRACE:
 			case COMMA:
 			case SEMI_COLON:
 			case IN:
@@ -3755,7 +3747,6 @@ _loop86_breakloop:			;
 			}
 			case CLOSE_PARENS:
 			case COLON:
-			case CLOSE_BRACE:
 			case COMMA:
 			case SEMI_COLON:
 			case IN:
@@ -3833,7 +3824,6 @@ _loop86_breakloop:			;
 			}
 			case CLOSE_PARENS:
 			case COLON:
-			case CLOSE_BRACE:
 			case COMMA:
 			case SEMI_COLON:
 			case IN:
@@ -3849,81 +3839,6 @@ _loop86_breakloop:			;
 			 }
 		}
 		return log_or_aux;
-	}
-	
-	public void object_literal() //throws RecognitionException, TokenStreamException
-{
-		
-		
-		match(OPEN_BRACE);
-		{
-			bool synPredMatched136 = false;
-			if (((tokenSet_7_.member(LA(1)))))
-			{
-				int _m136 = mark();
-				synPredMatched136 = true;
-				inputState.guessing++;
-				try {
-					{
-						property_name();
-						match(COLON);
-					}
-				}
-				catch (RecognitionException)
-				{
-					synPredMatched136 = false;
-				}
-				rewind(_m136);
-				inputState.guessing--;
-			}
-			if ( synPredMatched136 )
-			{
-				property_name();
-				match(COLON);
-				assignment_expr(null);
-				{    // ( ... )*
-					for (;;)
-					{
-						if ((LA(1)==COMMA))
-						{
-							match(COMMA);
-							property_name();
-							match(COLON);
-							assignment_expr(null);
-						}
-						else
-						{
-							goto _loop138_breakloop;
-						}
-						
-					}
-_loop138_breakloop:					;
-				}    // ( ... )*
-			}
-			else if ((tokenSet_8_.member(LA(1)))) {
-				{    // ( ... )*
-					for (;;)
-					{
-						if ((tokenSet_2_.member(LA(1))))
-						{
-							statement(null);
-						}
-						else
-						{
-							goto _loop140_breakloop;
-						}
-						
-					}
-_loop140_breakloop:					;
-				}    // ( ... )*
-			}
-			else
-			{
-				throw new NoViableAltException(LT(1), getFilename());
-			}
-			
-		}
-		match(CLOSE_BRACE);
 	}
 	
 	public AST  literal(
@@ -4005,7 +3920,6 @@ _loop140_breakloop:					;
 			{
 			case IDENTIFIER:
 			case OPEN_PARENS:
-			case OPEN_BRACE:
 			case OPEN_BRACKET:
 			case LITERAL_this:
 			case LITERAL_null:
@@ -4026,11 +3940,11 @@ _loop140_breakloop:					;
 						}
 						else
 						{
-							goto _loop150_breakloop;
+							goto _loop142_breakloop;
 						}
 						
 					}
-_loop150_breakloop:					;
+_loop142_breakloop:					;
 				}    // ( ... )*
 				break;
 			}
@@ -4045,37 +3959,6 @@ _loop150_breakloop:					;
 			 }
 		}
 		match(CLOSE_BRACKET);
-	}
-	
-	public void property_name() //throws RecognitionException, TokenStreamException
-{
-		
-		
-		{
-			switch ( LA(1) )
-			{
-			case IDENTIFIER:
-			{
-				match(IDENTIFIER);
-				break;
-			}
-			case STRING_LITERAL:
-			{
-				match(STRING_LITERAL);
-				break;
-			}
-			case DECIMAL_LITERAL:
-			case HEX_INTEGER_LITERAL:
-			{
-				numeric_literal(null);
-				break;
-			}
-			default:
-			{
-				throw new NoViableAltException(LT(1), getFilename());
-			}
-			 }
-		}
 	}
 	
 	public NumericLiteral  numeric_literal(
@@ -4119,7 +4002,7 @@ _loop150_breakloop:					;
 		
 		
 		{ // ( ... )+
-		int _cnt144=0;
+		int _cnt136=0;
 		for (;;)
 		{
 			if ((tokenSet_7_.member(LA(1))))
@@ -4130,13 +4013,44 @@ _loop150_breakloop:					;
 			}
 			else
 			{
-				if (_cnt144 >= 1) { goto _loop144_breakloop; } else { throw new NoViableAltException(LT(1), getFilename());; }
+				if (_cnt136 >= 1) { goto _loop136_breakloop; } else { throw new NoViableAltException(LT(1), getFilename());; }
 			}
 			
-			_cnt144++;
+			_cnt136++;
 		}
-_loop144_breakloop:		;
+_loop136_breakloop:		;
 		}    // ( ... )+
+	}
+	
+	public void property_name() //throws RecognitionException, TokenStreamException
+{
+		
+		
+		{
+			switch ( LA(1) )
+			{
+			case IDENTIFIER:
+			{
+				match(IDENTIFIER);
+				break;
+			}
+			case STRING_LITERAL:
+			{
+				match(STRING_LITERAL);
+				break;
+			}
+			case DECIMAL_LITERAL:
+			case HEX_INTEGER_LITERAL:
+			{
+				numeric_literal(null);
+				break;
+			}
+			default:
+			{
+				throw new NoViableAltException(LT(1), getFilename());
+			}
+			 }
+		}
 	}
 	
 	public void line_terminator() //throws RecognitionException, TokenStreamException
@@ -4331,13 +4245,13 @@ _loop144_breakloop:		;
 	public static readonly BitSet tokenSet_2_ = new BitSet(mk_tokenSet_2_());
 	private static long[] mk_tokenSet_3_()
 	{
-		long[] data = { 21474837088L, 520192L, 0L, 0L};
+		long[] data = { 21474836576L, 520192L, 0L, 0L};
 		return data;
 	}
 	public static readonly BitSet tokenSet_3_ = new BitSet(mk_tokenSet_3_());
 	private static long[] mk_tokenSet_4_()
 	{
-		long[] data = { 35137127449184L, 520192L, 0L, 0L};
+		long[] data = { 35137127448672L, 520192L, 0L, 0L};
 		return data;
 	}
 	public static readonly BitSet tokenSet_4_ = new BitSet(mk_tokenSet_4_());
@@ -4349,7 +4263,7 @@ _loop144_breakloop:		;
 	public static readonly BitSet tokenSet_5_ = new BitSet(mk_tokenSet_5_());
 	private static long[] mk_tokenSet_6_()
 	{
-		long[] data = { -72057559409746560L, 3L, 0L, 0L};
+		long[] data = { -72057559409747584L, 3L, 0L, 0L};
 		return data;
 	}
 	public static readonly BitSet tokenSet_6_ = new BitSet(mk_tokenSet_6_());
@@ -4359,12 +4273,6 @@ _loop144_breakloop:		;
 		return data;
 	}
 	public static readonly BitSet tokenSet_7_ = new BitSet(mk_tokenSet_7_());
-	private static long[] mk_tokenSet_8_()
-	{
-		long[] data = { 35137931916896L, 520192L, 0L, 0L};
-		return data;
-	}
-	public static readonly BitSet tokenSet_8_ = new BitSet(mk_tokenSet_8_());
 	
 }
 }
