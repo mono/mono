@@ -1,17 +1,23 @@
-The class libraries are grouped together in the assemblies they belong.
+* Coding Style for the Mono C# source code.
 
-Each directory here represents an assembly, and inside each directory we
-divide the code based on the namespace they implement.
+* Class Libraries and Assembly Layout
 
-In addition, each assembly directory contains a Test directory that holds the
-NUnit tests for that assembly. 
-
-We use a new build system which is described by various README files
-in mcs/build
-
-The build process typically builds an assembly, but in some cases it
-also builds special versions of the assemblies intended to be used for
-testing.
+	The class libraries are grouped together in the assemblies
+	they belong.
+	
+	Each directory here represents an assembly, and inside each
+	directory we divide the code based on the namespace they
+	implement.
+	
+	In addition, each assembly directory contains a Test directory
+	that holds the NUnit tests for that assembly.
+	
+	We use a new build system which is described by various README
+	files in mcs/build
+	
+	The build process typically builds an assembly, but in some
+	cases it also builds special versions of the assemblies
+	intended to be used for testing.
 
 * Missing implementation bits
 
@@ -93,7 +99,16 @@ testing.
 			do_more ();
 		}
 
-	A few guidelines:
+* Performance and readability
+
+	It is more important to be correct than to be fast.
+
+	It is more important to be maintainable than to be fast.
+
+	Fast code that is difficult to maintain is likely going to
+	be looked down upon.
+
+* Style Guidelines
 
 		* Use a space before an opening parenthesis when calling
 		  functions, or indexing, like this:
@@ -262,8 +277,147 @@ testing.
 					"Just like this one")
 		
 			}
+
+		* Variable declaration indentation.
+
+		  Sometimes it is convenient to indent the variables to make the code
+	 	  look pretier, but do not add gratuitous space, try to use the minimally
+	  	  necessary space, for example:
+
+		  Good:
+
+		  	void Method ()
+	 	  	{
+				string b;
+		  		int    a;
+				byte   c;
+			}
+
+		  Bad:
+
+		  	void Method ()
+	 	  	{
+				string 		b;
+		  		int    		a;
+				byte   		c;
+			}
+
+		* Braces and the `else' clause
+
+		  If there are braces closing or opening next to the else clause,
+	  	  they go on the same line as the word `else', for example:
+
+		  Good:
+
+			if (..) {
+
+			} else {
 		
-	Here are a couple of examples:
+			}
+	
+		  Bad:
+
+			if (..) {
+
+			} 
+			else {
+		
+			}
+
+		  Bad:
+
+			if (..) {
+
+			} else 
+			{		
+			}
+
+		  Bad:
+
+			if (..) {
+
+			} 
+			else 
+			{
+		
+			}
+
+* RCS and CVS tags
+
+	Some users like to use the special RCS/CVS tags in their
+	source code: $id$, $log$ and so on.  
+
+	The use of these is not permitted on the Mono source code
+	repository.   This metadata belongs on a ChangeLog or in the
+	SVN metadata. 
+
+* File formats
+
+	Historically our repository has used a mix of line-endings,
+	this is a mistake that we are trying hard to fix.
+
+	For existing files, please make sure that you do not convert 
+	the file, as that causes us to loose precious history (the
+	full file is commited).
+
+	For new files that you create, please make sure that you use
+	Subversion's support for mapping the line endings
+	automatically, after adding your file:
+
+		$ svn add file.cs
+
+	Execute this command:
+
+		$ svn propset svn:eol-style native file.cs
+
+	Which will make the file automatically receive the proper
+	treatment from that point on.
+
+	Please verify before commiting that your changes wont loose
+	history, you can do this by running:
+
+		$ svn diff
+
+	And examining the output.
+
+* ChangeLogs
+
+	ChangeLogs are the files that we use to track the project
+	history.  ChangeLogs are found one per directory, or in small
+	projects, one per project.
+
+	The format looks like this:
+
+	2004-11-19  Raja R Harinath  <rharinath@novell.com>
+
+		* Makefile (%-profiles): Go through an intermediate
+		set of rules.  Move body to ...
+		(profiles-do--%): ... this.
+		(profiles-do--run-test): Customized rule that usefully
+		runs with 'make -j' and 'make -k'.
+		(profiles-do--all, profile-do--%--all): Orchestrate
+		the bootstrap process.
+
+		* file.cs (MainForm): Updated version.
+
+	The date, author, email address in the first line.
+
+	From that point on a list of changes in a file-by-file basis,
+	describing what changes were done.
+		
+* Warnings
+
+	Avoid commiting code with warnings to the repository, the use
+	of #pragmas to disable warnings is strongly discouraged, but
+	can be used on unique cases.  Please justify the use of the
+	warning ignore clause on a comment.
+
+	Do not commit changes to the Makefiles that removes warnings,
+	if anything warnings should be eliminated one at a time, and
+	if not possible, they must be flagged.
+
+
+* Examples:
 
 class X : Y {
 
