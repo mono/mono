@@ -1,4 +1,10 @@
 
+2004-06-23 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* appdomain.c: for paths in PrivateBinPath that are absolute, there's
+	no need to build a new path combining that with the application base.
+	Fixes bug #60442.
+
 Wed Jun 23 18:36:58 CEST 2004 Paolo Molaro <lupus@ximian.com>
 
 	* reflection.c: fixed minor standard compliance issues.
