@@ -11,6 +11,11 @@ using System.ComponentModel;
 
 namespace System.Configuration.Install
 {
+	[DefaultEvent("AfterInstall")]
+#if (!NET_2_0)
+	// .NET 2.0 (Community Preview) no longer has this attribute
+	[Designer("Microsoft.VisualStudio.Configuration.InstallerDesigner, " + Consts.AssemblyMicrosoft_VisualStudio, "System.ComponentModel.Design.IRootDesigner," + Consts.AssemblySystem)]
+#endif
 	public class Installer : Component
 	{
 		private InstallContext context;
@@ -23,6 +28,8 @@ namespace System.Configuration.Install
 			throw new NotImplementedException ();
 		}
 
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[BrowsableAttribute(false)]
 		public InstallContext Context {
 			get {
 				return context;
@@ -37,22 +44,19 @@ namespace System.Configuration.Install
 			get {
 				return helptext;
 			}
-			
-			set {
-				helptext = value;
-			}
 		}
 
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
+		[BrowsableAttribute(false)]
 		public InstallerCollection Installers {
 			get {
 				return installers;
 			}
-			
-			set {
-				installers = value;		
-			}
 		}
 
+		[TypeConverter ("System.Configuration.Design.InstallerParentConverter")]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[BrowsableAttribute (false)]
 		public Installer Parent {
 			get {
 				return parent;

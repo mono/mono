@@ -28,11 +28,7 @@ namespace System.Configuration.Install
 			get {
 				return parameters;
 			}
-
-			set {
-				parameters = value;
-			}
-		}		
+		}
 
 		[MonoTODO]
 		public bool IsParameterTrue (string paramName)

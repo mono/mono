@@ -1,3 +1,9 @@
+2004-05-15  Gert Driesen (drieseng@users.sourceforge.net)
+
+	* InstallContext.cs: removed setter for Parameters
+	* Installer.cs: added missing attributes, remove
+	setter for Installers, Context
+
 2002-12-01  Alejandro Sánchez Acosta  <raciel@es.gnu.org>
 
 	* IManagedInstaller.cs,
