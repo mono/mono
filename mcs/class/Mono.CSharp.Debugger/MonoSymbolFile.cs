@@ -222,12 +222,31 @@ namespace Mono.CSharp.Debugger
 			return ++last_namespace_index;
 		}
 
-		internal void WriteString (BinaryWriter bw, string text)
+		byte [] stringBuffer;
+		int maxCharsPerRound;
+		static Encoding enc = Encoding.UTF8;
+		
+		internal void WriteString (BinaryWriter bw, string s)
 		{
-			byte[] data = Encoding.UTF8.GetBytes (text);
-			bw.Write ((int) data.Length);
-			bw.Write (data);
-			StringSize += data.Length;
+			int len = enc.GetByteCount (s);
+			bw.Write (len);
+			StringSize += len;
+			
+			if (stringBuffer == null) {
+				stringBuffer = new byte [512];
+				maxCharsPerRound = 512 / enc.GetMaxByteCount (1);
+			}
+			
+			int chpos = 0;
+			int chrem = s.Length;
+			while (chrem > 0) {
+				int cch = (chrem > maxCharsPerRound) ? maxCharsPerRound : chrem;
+				int blen = enc.GetBytes (s, chpos, cch, stringBuffer, 0);
+				bw.Write (stringBuffer, 0, blen);
+				
+				chpos += cch;
+				chrem -= cch;
+			}
 		}
 
 		internal string ReadString (int offset)
