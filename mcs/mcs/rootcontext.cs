@@ -40,6 +40,11 @@ namespace Mono.CSharp {
 		static ModuleBuilder mb;
 
 		//
+		// The list of global attributes (those that target the assembly)
+		//
+		static Attributes global_attributes;
+		
+		//
 		// Whether we are being linked against the standard libraries.
 		// This is only used to tell whether `System.Object' should
 		// have a parent or not.
@@ -365,6 +370,15 @@ namespace Mono.CSharp {
 				foreach (TypeContainer tc in type_container_resolve_order)
 					tc.Emit ();
 			}
+
+			if (global_attributes != null){
+				EmitContext ec = new EmitContext (
+					tree.Types, Mono.CSharp.Location.Null, null, null, 0, false);
+				AssemblyBuilder ab = cg.AssemblyBuilder;
+
+				Attribute.ApplyAttributes (ec, ab, ab, global_attributes,
+							   global_attributes.Location);
+			}
 		}
 		
 		static public ModuleBuilder ModuleBuilder {
@@ -412,6 +426,14 @@ namespace Mono.CSharp {
 				FieldAttributes.Static | FieldAttributes.Assembly);
 			
 			return fb;
+		}
+
+		static public void AddGlobalAttributes (AttributeSection sect, Location loc)
+		{
+			if (global_attributes == null)
+				global_attributes = new Attributes (sect, loc);
+
+			global_attributes.AddAttribute (sect);
 		}
 	}
 }

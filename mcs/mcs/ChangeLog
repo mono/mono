@@ -1,3 +1,15 @@
+2002-02-19  Miguel de Icaza  <miguel@ximian.com>
+
+	* cs-tokenizer.cs: Make tokenizer accept pre-processor directives
+	on any column (remove the old C-like limitation). 
+
+	* rootcontext.cs (EmitCode): Emit any global attributes.
+	(AddGlobalAttributes): Used to keep track of assembly attributes. 
+
+	* attribute.cs (ApplyAttributes): Support AssemblyAttributes.
+
+	* cs-parser.jay: Add support for global attributes.  
+
 2002-02-17  Miguel de Icaza  <miguel@ximian.com>
 
 	* expression.cs (Indirection): New helper class.  Unary will

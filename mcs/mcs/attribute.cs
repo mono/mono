@@ -386,7 +386,12 @@ namespace Mono.CSharp {
 					return true;
 				else
 					return false;
-			} 
+			} else if (element is AssemblyBuilder){
+				if ((targets & AttributeTargets.Assembly) != 0)
+					return true;
+				else
+					return false;
+			}
 
 			return false;
 		}
@@ -412,7 +417,6 @@ namespace Mono.CSharp {
 
 					if (!(kind is TypeContainer))
 						if (!CheckAttribute (a, kind)) {
-							Console.WriteLine ("Kind is: " + kind);
 							error592 (a, loc);
 							return;
 						}
@@ -426,7 +430,6 @@ namespace Mono.CSharp {
 									   MethodImplAttributes.Runtime);
 						} else if (a.Type != TypeManager.dllimport_type)
 							((MethodBuilder) builder).SetCustomAttribute (cb);
-						
 					} else if (kind is Constructor) {
 						((ConstructorBuilder) builder).SetCustomAttribute (cb);
 					} else if (kind is Field) {
@@ -471,7 +474,10 @@ namespace Mono.CSharp {
 						
 						((TypeBuilder) builder).SetCustomAttribute (cb);
 						
-					}
+					} else if (kind is AssemblyBuilder){
+						((AssemblyBuilder) builder).SetCustomAttribute (cb);
+					} else
+						throw new Exception ("Unknown kind: " + kind);
 				}
 			}
 		}
@@ -615,10 +621,10 @@ namespace Mono.CSharp {
 	}
 
 	public class Attributes {
-
 		public ArrayList AttributeSections;
+		public Location Location;
 
-		public Attributes (AttributeSection a)
+		public Attributes (AttributeSection a, Location loc)
 		{
 			AttributeSections = new ArrayList ();
 			AttributeSections.Add (a);

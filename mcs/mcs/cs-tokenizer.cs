@@ -37,6 +37,12 @@ namespace Mono.CSharp
 		public int current_token;
 		bool handle_get_set = false;
 		bool handle_remove_add = false;
+		bool handle_assembly = false;
+
+		//
+		// Whether tokens have been seen on this line
+		//
+		bool tokens_seen = false;
 		
 		//
 		// Returns a verbose representation of the current location
@@ -67,6 +73,16 @@ namespace Mono.CSharp
 				handle_get_set = value;
 			}
                 }
+
+		public bool AssemblyTargetParsing {
+			get {
+				return handle_assembly;
+			}
+
+			set {
+				handle_assembly = value;
+			}
+		}
 
 		public bool EventParsing {
 			get {
@@ -137,6 +153,7 @@ namespace Mono.CSharp
 			keywords.Add ("abstract", Token.ABSTRACT);
 			keywords.Add ("as", Token.AS);
 			keywords.Add ("add", Token.ADD);
+			keywords.Add ("assembly", Token.ASSEMBLY);
 			keywords.Add ("base", Token.BASE);
 			keywords.Add ("bool", Token.BOOL);
 			keywords.Add ("break", Token.BREAK);
@@ -235,6 +252,8 @@ namespace Mono.CSharp
 			if (handle_get_set == false && (name == "get" || name == "set"))
 				return false;
 			if (handle_remove_add == false && (name == "remove" || name == "add"))
+				return false;
+			if (handle_assembly == false && (name == "assembly"))
 				return false;
 			return res;
 		}
@@ -788,6 +807,7 @@ namespace Mono.CSharp
 		{
 			int c;
 			
+			tokens_seen = false;
 			arg = "";
 			static_cmd_arg.Length = 0;
 				
@@ -1068,7 +1088,7 @@ namespace Mono.CSharp
 			string cmd, arg;
 			
 			get_cmd_arg (out cmd, out arg);
-
+			
 			switch (cmd){
 			case "line":
 				if (!PreProcessLine (arg))
@@ -1210,7 +1230,8 @@ namespace Mono.CSharp
 				if (is_identifier_start_character ((char) c)){
 					System.Text.StringBuilder id = new System.Text.StringBuilder ();
 					string ids;
-					
+
+					tokens_seen = true;
 					id.Append ((char) c);
 					
 					while ((c = peekChar ()) != -1) {
@@ -1239,13 +1260,16 @@ namespace Mono.CSharp
 				}
 
 				if (c == '.'){
+					tokens_seen = true;
 					if (Char.IsDigit ((char) peekChar ()))
 						return is_number (c);
 					return Token.DOT;
 				}
 				
-				if (Char.IsDigit ((char) c))
+				if (Char.IsDigit ((char) c)){
+					tokens_seen = true;
 					return is_number (c);
+				}
 
 				// Handle double-slash comments.
 				if (c == '/'){
@@ -1281,7 +1305,7 @@ namespace Mono.CSharp
 				/* For now, ignore pre-processor commands */
 				// FIXME: In C# the '#' is not limited to appear
 				// on the first column.
-				if (col <= 1 && c == '#'){
+				if (c == '#' && !tokens_seen){
 				start_again:
 					
 					bool cont = handle_preprocessing_directive ();
@@ -1292,21 +1316,28 @@ namespace Mono.CSharp
 					}
 					col = 1;
 
+					bool skipping = false;
 					for (;(c = getChar ()) != -1; col++){
 						if (c == '\n'){
 							col = 0;
 							line++;
 							ref_line++;
-						} else if (col == 1 && c == '#'){
+							skipping = false;
+						} else if (c == ' ' || c == '\t' || c == '\v' || c == '\r')
+							continue;
+						else if (c != '#')
+							skipping = true;
+						if (c == '#' && !skipping)
 							goto start_again;
-						}
 					}
+					tokens_seen = false;
 					if (c == -1)
 						Report.Error (1027, Location, "#endif expected");
 					continue;
 				}
 				
 				if ((t = is_punct ((char)c, ref doread)) != Token.ERROR){
+					tokens_seen = true;
 					if (doread){
 						getChar ();
 						col++;
@@ -1316,7 +1347,8 @@ namespace Mono.CSharp
 				
 				if (c == '"'){
 					System.Text.StringBuilder s = new System.Text.StringBuilder ();
-
+					tokens_seen = true;
+					
 					while ((c = getChar ()) != -1){
 						if (c == '"'){
 							val = s.ToString ();
@@ -1332,6 +1364,7 @@ namespace Mono.CSharp
 
 				if (c == '\''){
 					c = getChar ();
+					tokens_seen = true;
 					if (c == '\''){
 						error_details = "Empty character literal";
 						Report.Error (1011, Location, error_details);
@@ -1364,17 +1397,18 @@ namespace Mono.CSharp
 					line++;
 					ref_line++;
 					col = 0;
+					tokens_seen = false;
 					continue;
 				}
 
 				if (c == ' ' || c == '\t' || c == '\f' || c == '\v' || c == '\r'){
 					if (c == '\t')
 						col = (((col + 8) / 8) * 8) - 1;
-
 					continue;
 				}
 
 				if (c == '@'){
+					tokens_seen = true;
 					allow_keyword_as_ident = true;
 					continue;
 				}

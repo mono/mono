@@ -89,6 +89,7 @@ namespace Mono.CSharp
 %token ABSTRACT	
 %token AS
 %token ADD
+%token ASSEMBLY
 %token BASE	
 %token BOOL	
 %token BREAK	
@@ -253,7 +254,7 @@ namespace Mono.CSharp
 %%
 
 compilation_unit
-	: opt_using_directives opt_namespace_member_declarations opt_EOF
+	: opt_using_directives opt_namespace_member_declarations opt_attributes opt_EOF
 	  {
 		// Check that using comes only before namespace elements
 	  }
@@ -397,13 +398,23 @@ opt_attributes
 	: /* empty */ { $$ = null; }
 	| attribute_section opt_attributes
 	  {
-		Attributes attrs;
-		
+		Attributes attrs = null;
+		AttributeSection sect = (AttributeSection) $1;
+
+		if (sect.Target == "assembly"){
+			RootContext.AddGlobalAttributes (sect, lexer.Location);
+			sect = null;
+		}
+
 		if ($2 != null) {
-			attrs = (Attributes) $2;
-			attrs.AddAttribute ((AttributeSection) $1);
-		} else
-			attrs = new Attributes ((AttributeSection) $1);
+			if (sect != null){
+				attrs = (Attributes) $2;
+				attrs.AddAttribute (sect);
+			}
+		} else {
+			if (sect != null)
+				attrs = new Attributes (sect, lexer.Location);
+		}
 		
 		$$ = attrs;
 	  }
@@ -3735,7 +3746,7 @@ void CheckAttributeTarget (string a)
 		
 	default :
 		Location l = lexer.Location;
-		Report.Error (658, l, "Invalid attribute target");
+		Report.Error (658, l, "`" + a + "' is an invalid attribute target");
 		break;
 	}
 

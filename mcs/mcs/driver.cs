@@ -656,7 +656,7 @@ namespace Mono.CSharp
 			RootContext.EmitCode ();
 			if (timestamps)
 				ShowTime ("   done");
-			
+
 			if (Report.Errors > 0){
 				error ("Compilation failed");
 				return;
