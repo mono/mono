@@ -1,3 +1,8 @@
+2005-03-14  Raja R Harinath  <rharinath@novell.com>
+
+	* Makefile (_boot_): New.  Used to generalize the bootstrap to
+	clean and install too.
+
 2005-02-25  Raja R Harinath  <rharinath@novell.com>
 
 	* Makefile (centum_tests): New list of test subdirs that should

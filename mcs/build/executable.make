@@ -25,6 +25,10 @@ executable_CLEAN_FILES += $(makefrag) $(pdb) $(mdb)
 
 all-local: $(PROGRAM) $(PROGRAM_config)
 
+install-local: all-local
+test-local: all-local
+uninstall-local:
+
 ifdef NO_INSTALL
 install-local uninstall-local:
 	@:
@@ -49,7 +53,7 @@ endif
 clean-local:
 	-rm -f $(executable_CLEAN_FILES) $(CLEAN_FILES)
 
-test-local: $(PROGRAM)
+test-local:
 	@:
 run-test-local:
 	@:

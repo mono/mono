@@ -19,7 +19,3 @@ profile-check:
 
 PROFILE_MCS_FLAGS = -d:NET_1_1 -d:ONLY_1_1
 PROFILE_MBAS_FLAGS = -d:NET_1_1 -d:ONLY_1_1
-
-install-local: no-install
-no-install:
-	exit 1

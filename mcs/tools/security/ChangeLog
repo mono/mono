@@ -1,3 +1,8 @@
+2005-03-14  Raja R Harinath  <rharinath@novell.com>
+
+	* Makefile (install-local, uninstall-local): Disable when
+	NO_INSTALL is defined.
+
 2005-02-21  Michal Moskal  <malekith@pld-linux.org>
 
 	* Makefile (PROGRAM_INSTALL_DIR): Define in terms of $(libdir).

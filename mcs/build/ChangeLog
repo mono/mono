@@ -1,3 +1,11 @@
+2005-03-14  Raja R Harinath  <rharinath@novell.com>
+
+	* executable.make (install-local): Depend on all-local even when
+	NO_INSTALL is defined.
+	* library.make: Minor cleanups to match executable.make.
+	* profiles/basic.make (no-install): Remove.
+	* profiles/net_1_1_bootstrap.make (no-install): Likewise.
+
 2005-02-22  Raja R Harinath  <rharinath@novell.com>
 
 	* library.make (BUILT_SOURCES_cmdline): Don't define if

@@ -15,6 +15,10 @@ DISTFILES = $(datafiles) $(sources) jay.1 $(wildcard *.h)
 all-local: jay
 
 install-local: jay
+uninstall-local:
+
+ifndef NO_INSTALL
+install-local:
 	$(MKINSTALLDIRS) $(DESTDIR)$(prefix)/bin
 	$(MKINSTALLDIRS) $(DESTDIR)$(prefix)/share/jay
 	$(MKINSTALLDIRS) $(DESTDIR)$(prefix)/man/man1
@@ -30,6 +34,7 @@ uninstall-local:
 	   rm -f $(DESTDIR)$(prefix)/share/jay/$$datafile || : ; \
 	done
 	-rm -f $(DESTDIR)$(prefix)/man/man1/jay.1
+endif
 
 clean-local:
 	rm -f jay *.o *.exe *.pdb

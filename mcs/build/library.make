@@ -96,7 +96,11 @@ GACDIR = $(libdir)
 GACROOT = $(DESTDIR)$(libdir)
 endif
 
-all-local install-local test-local: $(the_lib)
+all-local: $(the_lib)
+
+install-local: all-local
+test-local: all-local
+uninstall-local:
 
 ifdef NO_INSTALL
 install-local uninstall-local:

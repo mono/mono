@@ -65,11 +65,12 @@ profiles-do--run-test:
 	ret=:; $(foreach p,$(PROFILES), { $(MAKE) PROFILE=$(p) run-test || ret=false; }; ) $$ret
 
 # Orchestrate the bootstrap here.
-profile-do--net_2_0--all: profile-do--net_2_0_bootstrap--all
-profile-do--net_2_0_bootstrap--all: profile-do--default--all
-profile-do--default--all: profile-do--net_1_1_bootstrap--all
+_boot_ = all clean install
+$(_boot_:%=profile-do--net_2_0--%):           profile-do--net_2_0--%:           profile-do--net_2_0_bootstrap--%
+$(_boot_:%=profile-do--net_2_0_bootstrap--%): profile-do--net_2_0_bootstrap--%: profile-do--default--%
+$(_boot_:%=profile-do--default--%):           profile-do--default--%:           profile-do--net_1_1_bootstrap--%
 ifeq (linux, $(PLATFORM))
-profile-do--net_1_1_bootstrap--all: profile-do--basic--all
+$(_boot_:%=profile-do--net_1_1_bootstrap--%): profile-do--net_1_1_bootstrap--%: profile-do--basic--%
 endif
 
 testcorlib:

@@ -18,6 +18,10 @@ else
 all-local: $(SECURITY_PROGRAMS)
 endif
 
+install-local: all-local
+uninstall-local:
+
+ifndef NO_INSTALL
 install-local: $(SECURITY_PROGRAMS)
 	$(MKINSTALLDIRS) $(DESTDIR)$(PROGRAM_INSTALL_DIR)
 	for p in $(SECURITY_PROGRAMS) ; do \
@@ -29,6 +33,7 @@ uninstall-local:
 	for p in $(SECURITY_PROGRAMS) ; do \
 	    rm -f $(DESTDIR)$(PROGRAM_INSTALL_DIR)/$$p* ; \
 	done
+endif
 
 test-local:
 

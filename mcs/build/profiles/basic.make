@@ -20,10 +20,6 @@ endif
 clean-profile:
 	-rm -f $(PROFILE_CS) $(PROFILE_EXE) $(PROFILE_OUT)
 
-install-local: no-install
-no-install:
-	exit 1
-
 PROFILE_CS  = $(topdir)/build/deps/basic-profile-check.cs
 PROFILE_EXE = $(PROFILE_CS:.cs=.exe)
 PROFILE_OUT = $(PROFILE_CS:.cs=.out)
