@@ -251,8 +251,8 @@ namespace System.Reflection {
 				throw new ArgumentException ("culture");
 
 			AssemblyName aname = GetName (true);
-			if (version == null)
-				version = aname.Version;
+			if (version != null)
+				aname.Version = version;
 
 			aname.CultureInfo = culture;
 			aname.Name = aname.Name + ".resources";
