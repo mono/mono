@@ -79,28 +79,7 @@ namespace System.Windows.Forms {
 				throw new NotImplementedException ();
 			}
 		}
-/*		[MonoTODO]
-		public override Color BackColor {
-			get
-			{
-				throw new NotImplementedException ();
-			}
-			set
-			{
-				throw new NotImplementedException ();
-			}
-		}
-		[MonoTODO]
-		public override Color ForeColor {
-			get
-			{
-				throw new NotImplementedException ();
-			}
-			set
-			{
-				throw new NotImplementedException ();
-			}
-		}
+/*
 		[MonoTODO]
 		public override Image BackgroundImage {
 			get
