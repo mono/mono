@@ -58,6 +58,7 @@ public class StrongNameKeyPair
 			throw new ArgumentNullException ("keyPairArray");
 
 		LoadKey (keyPairArray);
+		GetRSA ();
 	}
 	
 	public StrongNameKeyPair (FileStream keyPairFile) 
@@ -68,6 +69,7 @@ public class StrongNameKeyPair
 		byte[] input = new byte [keyPairFile.Length];
 		keyPairFile.Read (input, 0, input.Length);
 		LoadKey (input);
+		GetRSA ();
 	}
 	
 	public StrongNameKeyPair (string keyPairContainer) 
@@ -77,6 +79,7 @@ public class StrongNameKeyPair
 			throw new ArgumentNullException ("keyPairContainer");
 
 		_keyPairContainer = keyPairContainer;
+		GetRSA ();
 	}
 	
 	private RSA GetRSA ()
@@ -84,7 +87,14 @@ public class StrongNameKeyPair
 		if (_rsa != null) return _rsa;
 		
 		if (_keyPairArray != null) {
-			_rsa = CryptoConvert.FromCapiKeyBlob (_keyPairArray);
+			try {
+				_rsa = CryptoConvert.FromCapiKeyBlob (_keyPairArray);
+			}
+			catch {
+				// exception is thrown when getting PublicKey
+				// to match MS implementation
+				_keyPairArray = null;
+			}
 		}
 		else if (_keyPairContainer != null) {
 			CspParameters csp = new CspParameters ();
