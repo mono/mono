@@ -1267,9 +1267,9 @@ reflection_methodbuilder_from_method_builder (ReflectionMethodBuilder *rmb,
 	rmb->refs = NULL;
 
 	if (mb->dll) {
-		rmb->charset = rmb->charset & 0xf;
-		rmb->lasterr = rmb->charset & 0x40;
-		rmb->native_cc = rmb->native_cc;
+		rmb->charset = mb->charset & 0xf;
+		rmb->lasterr = mb->charset & 0x40;
+		rmb->native_cc = mb->native_cc;
 		rmb->dllentry = mb->dllentry;
 		rmb->dll = mb->dll;
 	}

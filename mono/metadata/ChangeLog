@@ -1,5 +1,8 @@
 2005-01-06  Zoltan Varga  <vargaz@freemail.hu>
 
+	* reflection.c (reflection_methodbuilder_from_method_builder): Copy
+	fields from mb, not rmb. Fixes #71017.
+
 	* marshal.c (emit_ptr_to_str_conv): Fix 1.0 build.
 	
 	* marshal.c (emit_ptr_to_str_conv): Add support for 
