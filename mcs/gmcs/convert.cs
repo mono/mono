@@ -168,7 +168,7 @@ namespace Mono.CSharp {
 				if (TypeManager.IsValueType (expr_type))
 					return new BoxedCast (expr);
 				if (expr_type.IsClass || expr_type.IsInterface || expr_type == TypeManager.enum_type){
-					if (target_type == TypeManager.anonymous_method_type)
+					if (expr_type == TypeManager.anonymous_method_type)
 						return null;
 					return new EmptyCast (expr, target_type);
 				}

@@ -2347,12 +2347,12 @@ namespace Mono.CSharp {
 
 			if (allowed_types == null){
 				allowed_types = new Type [] {
+					TypeManager.int32_type,
+					TypeManager.uint32_type,
 					TypeManager.sbyte_type,
 					TypeManager.byte_type,
 					TypeManager.short_type,
 					TypeManager.ushort_type,
-					TypeManager.int32_type,
-					TypeManager.uint32_type,
 					TypeManager.int64_type,
 					TypeManager.uint64_type,
 					TypeManager.char_type,
@@ -2375,13 +2375,26 @@ namespace Mono.CSharp {
 				if (e == null)
 					continue;
 
+				//
+				// Ignore over-worked ImplicitUserConversions that do
+				// an implicit conversion in addition to the user conversion.
+				// 
+				if (e is UserCast){
+					UserCast ue = e as UserCast;
+
+					if (ue.Source != Expr)
+						e = null;
+				}
+				
 				if (converted != null){
-					Report.Error (-12, loc, "More than one conversion to an integral " +
-						      " type exists for type `" +
-						      TypeManager.CSharpName (Expr.Type)+"'");
+					Report.ExtraInformation (
+						loc,
+						String.Format ("reason: more than one conversion to an integral type exist for type {0}",
+							       TypeManager.CSharpName (Expr.Type)));
 					return null;
-				} else
+				} else {
 					converted = e;
+				}
 			}
 			return converted;
 		}

@@ -1,3 +1,48 @@
+2004-11-26  Miguel de Icaza  <miguel@ximian.com>
+
+	* attribute.cs (Attribute.Resolve): Refine error reporting and
+	report a cs0117 if the identifier does not exist, to distinguish
+	from 0617 which is a miss-use of the actual identifier.
+
+	* ecore.cs (EventExpr.Emit): Refine error report and distinguish
+	between cs0070 and cs0079.
+
+	* class.cs (MemberBase.DoDefine): When reporting a wrong
+	accessibility level, we use MethodCore to compare instead of
+	Method (this was a regression in some refactoring effort).
+
+	So now we correctly report cs0056 again.
+
+	* convert.cs (ImplicitReferenceConversion): Corrected typo, I was
+	testing the target_type (which was known to be object_type) and
+	not the source type (which is anonymous_method).
+
+	Fixed reporting of error cs1660.
+
+	* expression.cs (UserCast.Source): Expose the underlying cast.
+
+	* statement.cs (Switch.SwitchGoverningType): Sort the list of
+	allowed types to find a match to int32 first (most common).
+
+	In addition, it ignores any ImplicitUserConversions that did an
+	internal implicit conversion (as the switch statement allows only
+	one integral conversion to exist).
+
+	* class.cs (PartialContainer.Create): rename `name' to
+	`member_name' for clarity.  Then replace the string calls with a
+	call to MemberName.GetPartialName, as now using
+	MemberName.ToString is an error (this is due to the side effects
+	it had, that were fixed in the past).
+
+	This will restore the error reporting on a number of partial class
+	errors that were missusing this (and getting an exception as a
+	results, which is now just a plain textual warning, because
+	yyparse debug output would crash otherwise).
+
+2004-11-26  Raja R Harinath  <rharinath@novell.com>
+
+	* Makefile (PROGRAM_INSTALL_DIR): Remove.
+
 2004-11-25  Ben Maurer  <bmaurer@ximian.com>
 
 	* rootcontext.cs (LookupType): Make sure to cache lookups that

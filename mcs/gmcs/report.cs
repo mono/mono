@@ -65,7 +65,7 @@ namespace Mono.CSharp {
 		/// <summary>
 		/// List of symbols related to reported error/warning. You have to fill it before error/warning is reported.
 		/// </summary>
-		static StringCollection related_symbols = new StringCollection ();
+		static StringCollection extra_information = new StringCollection ();
 
 		abstract class AbstractMessage {
 
@@ -93,10 +93,10 @@ namespace Mono.CSharp {
 				msg.AppendFormat ("{0} CS{1:0000}: {2}", MessageType, code, text);
 				Console.Error.WriteLine (msg.ToString ());
 
-				foreach (string s in related_symbols) {
-					Console.Error.WriteLine (String.Concat (s, MessageType, ')'));
-				}
-				related_symbols.Clear ();
+				foreach (string s in extra_information) 
+					Console.Error.WriteLine (s);
+
+				extra_information.Clear ();
 
 				if (Stacktrace)
 					Console.WriteLine (FriendlyStackTrace (new StackTrace (true)));
@@ -156,7 +156,7 @@ namespace Mono.CSharp {
 			public override void Print(int code, string location, string text)
 			{
 				if (!IsEnabled (code)) {
-					related_symbols.Clear ();
+					extra_information.Clear ();
 					return;
 				}
 
@@ -321,7 +321,12 @@ namespace Mono.CSharp {
 
 		static void SymbolRelatedToPreviousError (string loc, string symbol)
 		{
-			related_symbols.Add (String.Format ("{0}: '{1}' (name of symbol related to previous ", loc, symbol));
+			extra_information.Add (String.Format ("{0}: '{1}' (name of symbol related to previous ", loc, symbol));
+		}
+
+		public static void ExtraInformation (Location loc, string msg)
+		{
+			extra_information.Add (String.Format ("{0}({1}) {2}", loc.Name, loc.Row, msg));
 		}
 
 		public static WarningRegions RegisterWarningRegion (Location location)

@@ -110,9 +110,9 @@ namespace Mono.CSharp {
 
 		void Error_InvalidNamedArgument (string name)
 		{
-			Report.Error (617, Location, "'" + name + "' is not a valid named attribute " +
-				      "argument. Named attribute arguments must be fields which are not " +
-				      "readonly, static or const, or read-write properties which are not static.");
+			Report.Error (617, Location, "Invalid attribute argument: '{0}'.  Argument must be fields " +
+				      "fields which are not readonly, static or const;  or read-write instance properties.",
+				      Name);
 		}
 
 		static void Error_AttributeArgumentNotValid (Location loc)
@@ -410,7 +410,13 @@ namespace Mono.CSharp {
 					}
 				}
 
-				if (member == null || !(member is PropertyExpr || member is FieldExpr)) {
+				if (member == null){
+					Report.Error (117, Location, "Attribute `{0}' does not contain a definition for `{1}'",
+						      Type, member_name);
+					return null;
+				}
+				
+				if (!(member is PropertyExpr || member is FieldExpr)) {
 					Error_InvalidNamedArgument (member_name);
 					return null;
 				}
