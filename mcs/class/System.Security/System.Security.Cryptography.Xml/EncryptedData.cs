@@ -47,18 +47,6 @@ namespace System.Security.Cryptography.Xml {
 
 		#region Methods
 
-		[MonoTODO]
-		public EncryptedData Encrypt (XmlElement inputElement, string keyName)
-		{
-			throw new NotImplementedException();
-		}
-
-		[MonoTODO]
-		public EncryptedData Encrypt (XmlElement inputElement, X509CertificateEx certificate)
-		{
-			throw new NotImplementedException();
-		}
-
 		public override XmlElement GetXml ()
 		{
 			return GetXml (new XmlDocument ());
