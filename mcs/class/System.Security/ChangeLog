@@ -1,3 +1,7 @@
+2004-02-07  Tim Coleman <tim@timcoleman.com>
+	* System.Security.dll.sources: Add new
+		System.Security.Cryptography.Xml classes.
+
 2004-01-11  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* System.Security.dll.sources: Added AssemblyInfo.cs and Locale.cs.
