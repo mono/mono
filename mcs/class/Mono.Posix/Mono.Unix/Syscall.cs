@@ -1410,7 +1410,7 @@ namespace Mono.Unix {
 
 		// kill(2)
 		//    int kill(pid_t pid, int sig);
-		[DllImport (LIBC, SetLastError=true)]
+		[DllImport (LIBC, SetLastError=true, EntryPoint="kill")]
 		private static extern int sys_kill (int pid, int sig);
 
 		public static int kill (int pid, Signum sig)
@@ -2359,7 +2359,7 @@ namespace Mono.Unix {
 				EntryPoint="Mono_Posix_Syscall_lockf")]
 		public static extern int lockf (int fd, LockFlags cmd, long len);
 
-		[DllImport (CRYPT, SetLastError=true, EntryPoint=CRYPT)]
+		[DllImport (CRYPT, SetLastError=true, EntryPoint="crypt")]
 		public static extern IntPtr sys_crypt (string key, string salt);
 
 		public static string crypt (string key, string salt)

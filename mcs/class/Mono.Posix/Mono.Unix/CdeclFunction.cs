@@ -54,6 +54,16 @@ namespace Mono.Unix {
 	// calls with the same argument list do not generate new code, speeding up
 	// the call sequence.
 	//
+	// Invoking Cdecl functions is not portable across all platforms.  In
+	// particular, AMD64 requires that the caller set EAX to the number of
+	// floating point arguments passed in the SSE registers.  This is only
+	// required for variable argument/stdarg functions; consequently, Mono's JIT
+	// doesn't set EAX properly which can lead to failures.  See:
+	//
+	//     http://lwn.net/Articles/5201/?format=printable
+	//
+	// Consequently, Cdecl functions should be avoided on most platforms.
+	//
 	// This class is intended to be thread-safe.
 	public sealed class CdeclFunction
 	{
