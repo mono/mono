@@ -1,3 +1,7 @@
+2004-03-16  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Pattern.cs : fixed incorrect optimization.
+
 2004-03-15  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* DTMXPathDocumentBuilder2.cs : skip only Read() internally called
