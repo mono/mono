@@ -1,4 +1,7 @@
 2004-05-27  Umadevi S <sumadevi@novell.com>
+         * DataRelationCollection.cs - fixed nunit test errors
+
+2004-05-27  Umadevi S <sumadevi@novell.com>
 	 * DataTableCollection.cs - fixed nunit test errors
 
 2004-05-21  Atsushi Enomoto  <atsushi@ximian.com>

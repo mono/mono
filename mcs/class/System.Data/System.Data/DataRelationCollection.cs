@@ -438,7 +438,21 @@ namespace System.Data {
 		{
 			if (relation == null || !GetDataSet().Equals(relation.DataSet))
 				return false;
-			return true;
+
+			// check if the relation doesnot belong to this collection
+                        int tmp = IndexOf(relation.RelationName);
+                        // if we found a relation with same name we have to check
+                        // that it is the same case.
+                        // indexof can return a table with different case letters.
+                        if (tmp != -1) {
+                               if(relation.RelationName != this[tmp].RelationName)
+                                        return false;
+                        }
+                        else {
+                                return false;
+                        }                                       
+                                                                                        
+                        return true;
 		}
 
 		public virtual void Clear()
@@ -503,6 +517,13 @@ namespace System.Data {
 
 		public void Remove (DataRelation relation)
 		{
+			if (relation == null)
+				throw new ArgumentNullException("Relation specified is null");
+
+			 // check if the list doesnot contains this relation.
+                        if (!(List.Contains(relation)))
+                                throw new ArgumentException("Relation doesnot belong to this Collection.");
+
 			RemoveCore (relation);
 			List.Remove (relation);
 			string name = "Relation" + index;
@@ -518,6 +539,8 @@ namespace System.Data {
 
 		public void RemoveAt (int index)
 		{
+			if (( index < 0 ) || (index >=List.Count))
+                                throw new ArgumentException("There is no row at position "+index+".");
 			Remove(this[index]);
 		}
 
