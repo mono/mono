@@ -1,5 +1,5 @@
 Managed.Windows.Forms README
-$Revision: 1.1 $
+$Revision: 1.2 $
 
 * Introduction
 
@@ -22,7 +22,9 @@ No contributions providing only stubs will be accepted at this time. We ask
 that you submit contributions for review before committing them, our goal is 
 to have a consistent and complete implementation, ideally having most or all
 methods and properties of a class written by the same author. This will ensure
-a certain degree of consistency in the code.
+a certain degree of consistency in the code. Please also check the 
+'Guidelines' file.
+
 
 The core team for Managed.Windows.Forms currently are:
 	Jordi Mas i Hernandez	(jordi@ximian.com)
