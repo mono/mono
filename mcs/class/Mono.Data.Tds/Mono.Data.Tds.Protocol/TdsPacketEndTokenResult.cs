@@ -63,6 +63,10 @@ namespace Mono.Data.TdsClient.Internal {
 			}
 		}
 
+		public TdsPacketSubType Type {
+			get { return type; }
+		}
+
 		#endregion // Properties
 
 		#region Methods

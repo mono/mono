@@ -20,6 +20,10 @@ namespace Mono.Data.TdsClient.Internal {
 			get;
 		}
 
+		bool DoneProc {
+			get;
+		}
+
 		bool IsConnected {
 			get;
 		}
@@ -57,6 +61,7 @@ namespace Mono.Data.TdsClient.Internal {
 		void ExecuteQuery (string sql);
 		bool NextResult ();
 		bool NextRow ();
+		void SkipToEnd ();
 
 		#endregion
 	}
