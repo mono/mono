@@ -204,41 +204,50 @@ namespace System.Xml
 			return Create (reader, new XmlUrlResolver (), settings);
 		}
 
-		[MonoTODO ("CheckCharacters, ConformanceLevel, IgnoreSchemaXXX etc.")]
+		[MonoTODO ("ConformanceLevel, IgnoreSchemaXXX etc.")]
 		public static XmlReader Create (XmlReader reader, XmlResolver resolver, XmlReaderSettings settings)
 		{
 			return CreateFilteredXmlReader (reader, resolver, settings);
 		}
 
-		[MonoTODO ("CheckCharacters, ConformanceLevel, IgnoreSchemaXXX etc.; Encoding")]
+		[MonoTODO ("ConformanceLevel, IgnoreSchemaXXX etc.; Encoding")]
 		public static XmlReader Create (string url, Encoding encoding, XmlResolver resolver, XmlReaderSettings settings)
 		{
 			return CreateCustomizedTextReader (new XmlTextReader (url), resolver, settings);
 		}
 
-		[MonoTODO ("CheckCharacters, ConformanceLevel, IgnoreSchemaXXX etc.")]
+		[MonoTODO ("ConformanceLevel, IgnoreSchemaXXX etc.")]
 		public static XmlReader Create (TextReader reader, string baseUri, XmlResolver resolver, XmlReaderSettings settings)
 		{
 			return CreateCustomizedTextReader (new XmlTextReader (baseUri, reader), resolver, settings);
 		}
 
-		[MonoTODO ("CheckCharacters, ConformanceLevel, IgnoreSchemaXXX etc.")]
+		[MonoTODO ("ConformanceLevel, IgnoreSchemaXXX etc.")]
 		public static XmlReader Create (Stream stream, string baseUri, Encoding encoding, XmlResolver resolver, XmlReaderSettings settings)
 		{
-			return CreateCustomizedTextReader (encoding == null ? new XmlTextReader (baseUri, stream) : new XmlTextReader (baseUri, new StreamReader (stream, encoding)), resolver, settings);
+			return CreateCustomizedTextReader (
+				encoding == null ?
+					new XmlTextReader (baseUri, stream) :
+					new XmlTextReader (baseUri, new StreamReader (stream, encoding)),
+				resolver,
+				settings);
 		}
 
 		private static XmlReader CreateCustomizedTextReader (XmlTextReader reader, XmlResolver resolver, XmlReaderSettings settings)
 		{
 			reader.XmlResolver = resolver;
+			// Normalization is set true by default.
+			reader.Normalization = true;
 
 			if (settings == null)
 				settings = new XmlReaderSettings ();
 
 			if (settings.ProhibitDtd)
 				reader.ProhibitDtd = true;
+
 			if (!settings.CheckCharacters)
-				throw new NotImplementedException ();
+				reader.CharacterChecking = false;
+
 			// I guess it might be changed in 2.0 RTM to set true
 			// as default, or just disappear. It goes against
 			// XmlTextReader's default usage and users will have 
@@ -741,7 +750,7 @@ namespace System.Xml
 		[MonoTODO]
 		public virtual object ReadTypedValue ()
 		{
-			throw new NotImplementedException ();
+			return ReadAsObject (ValueType);
 		}
 
 		[MonoTODO]

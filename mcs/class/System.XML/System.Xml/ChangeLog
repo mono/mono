@@ -1,3 +1,8 @@
+2004-09-07  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlReader.cs, XmlTextReader.cs :
+	  Added NET_2_0 CheckCharacters support.
+
 2004-09-06  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XmlNode.cs : GetEnumerator() does not have to create ChildNodes

@@ -162,7 +162,13 @@ namespace System.Xml
 		public override bool CanResolveEntity {
 			get { return true; }
 		}
+
 #endif
+
+		internal bool CharacterChecking {
+			get { return checkCharacters && normalization; }
+			set { checkCharacters = false; }
+		}
 
 		// for XmlReaderSettings.CloseInput support
 		internal bool CloseInput {
@@ -1112,6 +1118,7 @@ namespace System.Xml
 		private XmlResolver resolver = new XmlUrlResolver ();
 		private bool normalization = false;
 
+		private bool checkCharacters;
 		private bool prohibitDtd = false;
 		private bool closeInput = true;
 		private EntityHandling entityHandling; // 2.0
@@ -1168,6 +1175,13 @@ namespace System.Xml
 			shouldSkipUntilEndTag = false;
 			base64CacheStartsAt = -1;
 
+			checkCharacters = true;
+#if NET_2_0
+if (Settings != null)
+Console.WriteLine ("Settings.CheckCharacters = " + Settings.CheckCharacters);
+			if (Settings != null)
+				checkCharacters = Settings.CheckCharacters;
+#endif
 			prohibitDtd = false;
 			closeInput = true;
 			entityHandling = EntityHandling.ExpandCharEntities;
@@ -1801,9 +1815,9 @@ namespace System.Xml
 			ReadChar (); // ';'
 
 			// There is no way to save surrogate pairs...
-			if (normalization && XmlChar.IsInvalid (value))
+			if (CharacterChecking && XmlChar.IsInvalid (value))
 				throw new XmlException (this as IXmlLineInfo,
-					"Referenced character was not allowed in XML.");
+					"Referenced character was not allowed in XML. Normalization is " + normalization + ", checkCharacters = " + checkCharacters);
 			return value;
 		}
 
@@ -1966,7 +1980,7 @@ namespace System.Xml
 					if (PeekChar () == '#') {
 						ReadChar ();
 						ch = ReadCharacterReference ();
-						if (normalization && XmlChar.IsInvalid (ch))
+						if (CharacterChecking && XmlChar.IsInvalid (ch))
 							throw new XmlException (this as IXmlLineInfo,
 								"Not allowed character was found.");
 						AppendValueChar (ch);
@@ -1991,7 +2005,7 @@ namespace System.Xml
 						AppendValueChar (predefined);
 					break;
 				default:
-					if (normalization && XmlChar.IsInvalid (ch))
+					if (CharacterChecking && XmlChar.IsInvalid (ch))
 						throw new XmlException (this, "Invalid character was found.");
 					AppendValueChar (ch);
 					break;
@@ -2057,7 +2071,7 @@ namespace System.Xml
 					break;
 				}
 
-				if (normalization && XmlChar.IsInvalid (ch))
+				if (CharacterChecking && XmlChar.IsInvalid (ch))
 					throw new XmlException (this, "Invalid character was found.");
 				AppendValueChar (ch);
 			}
@@ -2302,18 +2316,16 @@ namespace System.Xml
 						skip = true;
 					}
 				}
-				if (normalization) {
-					if (ch == '\r') {
-						ch = PeekChar ();
-						if (ch != '\n')
-							// append '\n' instead of '\r'.
-							AppendValueChar ('\n');
-						// otherwise, discard '\r'.
-						continue;
-					}
-					else if (XmlChar.IsInvalid (ch))
-						throw new XmlException (this, "Invalid character was found.");
+				if (normalization && ch == '\r') {
+					ch = PeekChar ();
+					if (ch != '\n')
+						// append '\n' instead of '\r'.
+						AppendValueChar ('\n');
+					// otherwise, discard '\r'.
+					continue;
 				}
+				if (CharacterChecking && XmlChar.IsInvalid (ch))
+					throw new XmlException (this, "Invalid character was found.");
 
 				AppendValueChar (ch);
 			}
