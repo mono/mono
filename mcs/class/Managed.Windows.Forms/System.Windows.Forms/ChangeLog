@@ -1,3 +1,11 @@
+2004-11-17  Ravindra <rkumar@novell.com>
+
+	* ListView.cs: Added event handling for MouseMove/Up/Down.
+	* ColumnHeader.cs: Added a read-only internal property 'Pressed'.
+	* ThemeWin32Classic.cs: We need to clear the graphics context and
+	draw column header in a proper state.
+
+
 2004-11-17  Jordi Mas i Hernandez <jordi@ximian.com>
 
 	*  Menu.cs: fixes signature

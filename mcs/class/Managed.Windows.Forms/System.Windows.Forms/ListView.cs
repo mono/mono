@@ -80,6 +80,8 @@ namespace System.Windows.Forms
 		private bool check_boxes = false;
 		private CheckedIndexCollection checked_indices;
 		private CheckedListViewItemCollection checked_items;
+		private ColumnHeader clicked_column;
+		private ListViewItem clicked_item;
 		private ColumnHeaderCollection columns;
 		private ListViewItem focused_item;
 		private bool full_row_select = false;
@@ -165,6 +167,9 @@ namespace System.Windows.Forms
 
 			// event handlers
 			base.Paint += new PaintEventHandler (ListView_Paint);
+			base.MouseDown += new MouseEventHandler(ListView_MouseDown);
+			base.MouseUp += new MouseEventHandler(ListView_MouseUp);
+			base.MouseMove += new MouseEventHandler(ListView_MouseMove);
 		}
 		#endregion	// Public Constructors
 
@@ -785,6 +790,116 @@ namespace System.Windows.Forms
 				this.h_scroll.Visible = false;
 				this.v_scroll.Visible = false;
 			}
+		}
+
+		private void ListView_MouseDown (object sender, MouseEventArgs me)
+		{
+			if (items.Count == 0)
+				return;
+
+			Point hit = new Point (me.X, me.Y);
+
+			// hit test on columns
+			if (this.view == View.Details && this.columns.Count > 0) {
+				foreach (ColumnHeader col in this.columns) {
+					if (col.Rect.Contains (hit)) {
+						this.clicked_column = col;
+						this.Capture = true;
+						break;
+					}
+				}
+
+				if (this.clicked_column != null) {
+						this.clicked_column.pressed = true;
+						this.Invalidate (this.clicked_column.Rect);
+						this.Redraw (false);
+						return;
+				}
+			}
+
+			// hit test on items
+			// we need to take scrolling into account
+			hit = new Point (me.X + h_marker, me.Y + v_marker);
+			foreach (ListViewItem item in this.items) {
+				if (item.CheckRect.Contains (hit)) {
+					if (item.Checked)
+						item.Checked = false;
+					else
+						item.Checked = true;
+
+					this.Invalidate (item.CheckRect);
+					this.Redraw (false);
+					break;
+				}
+
+				if (item.EntireRect.Contains (hit)) {
+					this.clicked_item = item;
+					break;
+				}
+			}
+
+			if (this.clicked_item != null) {
+				this.clicked_item.Selected = true;
+				if (this.multiselect == false && this.selected_items.Count > 0) {
+					this.selected_items.Clear ();
+					this.selected_indices.list.Clear ();
+				}
+
+				this.selected_items.list.Add (this.clicked_item);
+				this.selected_indices.list.Add (this.clicked_item.Index);
+
+				if (this.multiselect) {
+					this.Invalidate (this.clicked_item.EntireRect);
+					this.OnSelectedIndexChanged (new EventArgs ());
+				}
+				else
+					this.Invalidate ();
+
+				this.Redraw (false);
+			}
+		}
+
+		private void ListView_MouseMove (object sender, MouseEventArgs me)
+		{
+			Point hit = new Point (me.X, me.Y);
+
+			// non-null clicked_col means mouse down has happened
+			// on a column
+			if (this.clicked_column != null) {
+				if (this.clicked_column.pressed == false &&
+					this.clicked_column.Rect.Contains (hit)) {
+					this.clicked_column.pressed = true;
+					this.Invalidate (this.clicked_column.Rect);
+					this.Redraw (false);
+				}
+				else if (this.clicked_column.pressed && 
+					! this.clicked_column.Rect.Contains (hit)) {
+					this.clicked_column.pressed = false;
+					this.Invalidate (this.clicked_column.Rect);
+					this.Redraw (false);
+				}
+			}
+		}
+
+		private void ListView_MouseUp (object sender, MouseEventArgs me)
+		{
+			this.Capture = false;
+			if (items.Count == 0)
+				return;
+
+			Point hit = new Point (me.X, me.Y);
+
+			if (this.clicked_column != null) {
+					if (this.clicked_column.pressed) {
+							this.clicked_column.pressed = false;
+							this.Invalidate (this.clicked_column.Rect);
+							this.Redraw (false);
+							this.OnColumnClick (new ColumnClickEventArgs (this.clicked_column.Index));
+					}
+			}
+
+			this.clicked_column = null;
+			this.clicked_item = null;
 		}
 
 		private void ListView_Paint (object sender, PaintEventArgs pe)
