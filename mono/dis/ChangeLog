@@ -1,3 +1,18 @@
+2004-11-26  Miguel de Icaza  <miguel@ximian.com>
+
+	* get.c (dis_stringify_object_with_class): Take an argument
+	`prefix' that controls whether the `class', `valuetype' labels are
+	used.  This is needed for the catch clause that takes the type
+	directly. 
+	(get_method_core): Rename get_method to get_method_core, and allow
+	for only part of the signature to be specified, so we can produce
+	.override signatures correctly.
+	(get_method_override): Pass false as the `fullsig' argument.
+
+	(get_typedef): no longer quote the type, we quote in the call site
+	elsewhere.   Avoids double quotes.
+	
+	* main.c (quote_keyword): Quote keywords.
 
 Tue Nov 9 17:29:28 CET 2004 Paolo Molaro <lupus@ximian.com>
 
