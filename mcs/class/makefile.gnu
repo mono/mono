@@ -5,10 +5,10 @@ DIRS =	corlib				\
 	System.Data			\
 	System.EnterpriseServices	\
 	System.Web			\
-	System.Web.Services
+	System.Web.Services		\
+	System.Configuration.Install
 
 #	Microsoft.VisualBasic		\
-#	System.Configuration.Install
 
 default: all
 
