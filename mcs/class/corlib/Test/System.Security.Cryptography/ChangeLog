@@ -1,3 +1,8 @@
+2003-04-17  Nick Drochak  <ndrochak@gol.com>
+
+	* DSATest.cs: Use nunit version 2 style to test throw.
+	* HMACSHA1Test.cs: Eliminate compiler warning.
+
 2003-03-04  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* CryptoConfigTest.cs: Added new tests for algorithms 

@@ -118,22 +118,13 @@ public class DSATest : TestCase {
 	}
 
 	// importing and exporting a DSA key (including private key)
-	public void TestDSAImportPublicExportPrivate() 
+	[Test]
+	[ExpectedException (typeof (CryptographicException))]
+	public void DSAImportPublicExportPrivate() 
 	{
 		DSAParameters input = AllTests.GetKey (false);
 		dsa.ImportParameters (input);
-		string xmlDSA = null;
-		try {
-			xmlDSA = dsa.ToXmlString (true);
-			Fail ("Expected CryptographicException but got no exception");
-		}
-		catch (CryptographicException) {
-			// expected as we cannot get a private key 
-			// from a public key (at least not in our lifetime)
-		}
-		catch (Exception e) {
-			Fail ("Expected ArgumentNullException but got " + e.ToString ());
-		}
+		string xmlDSA = dsa.ToXmlString (true);
 	}
 
 	// importing and exporting a DSA key (without private key)

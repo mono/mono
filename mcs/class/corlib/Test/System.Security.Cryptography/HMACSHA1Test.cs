@@ -25,13 +25,6 @@ public class HMACSHA1Test : KeyedHashAlgorithmTest {
 
 	protected HMACSHA1 algo;
 
-	protected override void SetUp () 
-	{
-		base.SetUp ();
-	}
-
-	protected override void TearDown () {}
-
 	public void TestConstructors () 
 	{
 		algo = new HMACSHA1 ();
