@@ -600,10 +600,7 @@ namespace Mono.Security.X509 {
 			epki.IterationCount = _iterations;
 			epki.EncryptedData = Encrypt (pbeWithSHAAnd3KeyTripleDESCBC, epki.Salt, _iterations, pki.GetBytes ());
 
-			ASN1 seqEncryptedWithParams = new ASN1 (0x30);
-			seqEncryptedWithParams.Add (new ASN1 (epki.GetBytes ()));
-
-			return seqEncryptedWithParams;
+			return new ASN1 (epki.GetBytes ());
 		}
 
 		private ASN1 CertificateSafeBag (X509Certificate x509) 
@@ -651,27 +648,6 @@ namespace Mono.Security.X509 {
 			// TODO (incomplete)
 			ASN1 safeBagSequence = new ASN1 (0x30);
 
-			if (_keyBags.Count > 0) {
-				ASN1 keysSafeBag = new ASN1 (0x30);
-				foreach (AsymmetricAlgorithm key in _keyBags) {
-					keysSafeBag.Add (ASN1Convert.FromOID (pkcs8ShroudedKeyBag));
-					keysSafeBag.Add (Pkcs8ShroudedKeyBag (key));
-				}
-
-				ASN1 seq = new ASN1 (0x30);
-				seq.Add (keysSafeBag);
-
-				ASN1 data = new ASN1 (0x30);
-				data.Add (seq);
-
-				ASN1 keyContent = new ASN1 (0xA0);
-				keyContent.Add (data);
-
-				PKCS7.ContentInfo keyBag = new PKCS7.ContentInfo (PKCS7.data);
-				keyBag.Content = keyContent;
-				safeBagSequence.Add (keyBag.ASN1);
-			}
-
 			if (_certs.Count > 0) {
 				byte[] certsSalt = new byte [8];
 				RNG.GetBytes (certsSalt);
@@ -710,6 +686,25 @@ namespace Mono.Security.X509 {
 				safeBagSequence.Add (bag.ASN1);
 			}
 
+			if (_keyBags.Count > 0) {
+				ASN1 safeContents = new ASN1 (0x30);
+				foreach (AsymmetricAlgorithm key in _keyBags) {
+					ASN1 safeBag = new ASN1 (0x30);
+					safeBag.Add (ASN1Convert.FromOID (pkcs8ShroudedKeyBag));
+					ASN1 safeBagValue = new ASN1 (0xA0); 
+					safeBagValue.Add (Pkcs8ShroudedKeyBag (key));
+					safeBag.Add (safeBagValue);
+					safeContents.Add (safeBag);
+				}
+
+				ASN1 content = new ASN1 (0xA0);
+				content.Add (new ASN1 (0x04, safeContents.GetBytes ()));
+				
+				PKCS7.ContentInfo keyBag = new PKCS7.ContentInfo (PKCS7.data);
+				keyBag.Content = content;
+				safeBagSequence.Add (keyBag.ASN1);
+			}
+
 			ASN1 encapsulates = new ASN1 (0x04, safeBagSequence.GetBytes ());
 			ASN1 ci = new ASN1 (0xA0);
 			ci.Add (encapsulates);
@@ -725,6 +720,7 @@ namespace Mono.Security.X509 {
 				// only for password based encryption
 				ASN1 oidSeq = new ASN1 (0x30);
 				oidSeq.Add (ASN1Convert.FromOID ("1.3.14.3.2.26"));	// SHA1
+				oidSeq.Add (new ASN1 (0x05));
 
 				ASN1 mac = new ASN1 (0x30);
 				mac.Add (oidSeq);
@@ -745,14 +741,17 @@ namespace Mono.Security.X509 {
 				pfx.Add (macData);
 			}
 
-			byte[] result = pfx.GetBytes ();
-/* DEBUG
-			using (FileStream fs = File.OpenWrite (@"c:\my.pfx")) {
-				fs.Write (result, 0, result.Length);
+			return pfx.GetBytes ();
+		}
+
+		public void SaveToFile (string filename)
+		{
+			using (FileStream fs = File.OpenWrite (filename)) {
+				byte[] data = GetBytes ();
+				fs.Write (data, 0, data.Length);
+				fs.Flush ();
 				fs.Close ();
 			}
-*/
-			return result;
 		}
 
 		// static methods

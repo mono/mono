@@ -1,3 +1,10 @@
+2004-03-17  Jesper Pedersen  <jep@itplus.dk>
+
+	* PKCS12.cs: Fixed sequence problem in Pkcs8ShroudedKeyBag. Fixed key
+	bag implementation in GetBytes. Moved key bag implementation in 
+	GetBytes to fit OpenSSL. Added NULL digest in MAC (GetBytes) to fit
+	OpenSSL. Added SaveToFile method.
+
 2004-03-10  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* PKCS12.cs: Completed GetBytes() so it	is now possible to encode
