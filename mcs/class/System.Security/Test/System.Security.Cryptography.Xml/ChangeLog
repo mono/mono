@@ -1,3 +1,9 @@
+2003-07-24  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* XmlDsigC14NTransformTest.cs: New tests from Aleksey Sanin.
+	* XmlDsigC14NWithCommentsTransformTest.cs: New tests from
+	Aleksey Sanin.
+
 2003-06-02  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* KeyInfoRetrievalMethodTest.cs: Changed RetrievalElement to
