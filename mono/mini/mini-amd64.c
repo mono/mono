@@ -1260,6 +1260,14 @@ if (ins->flags & MONO_INST_BRLABEL) { \
 	amd64_fnstsw (code); \
 } while (0); 
 
+#define EMIT_SSE2_FPFUNC(code, op, dreg, sreg1) do { \
+    amd64_movsd_membase_reg (code, AMD64_RSP, -8, (sreg1)); \
+	amd64_fld_membase (code, AMD64_RSP, -8, TRUE); \
+	amd64_ ##op (code); \
+	amd64_fst_membase (code, AMD64_RSP, -8, TRUE, TRUE); \
+	amd64_movsd_reg_membase (code, (dreg), AMD64_RSP, -8); \
+} while (0);
+
 static guint8*
 emit_call (MonoCompile *cfg, guint8 *code, guint32 patch_type, gconstpointer data)
 {
@@ -4251,23 +4259,31 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 				amd64_fchs (code);
 			break;		
 		case OP_SIN:
-			if (use_sse2)
-				g_assert_not_reached ();
-			amd64_fsin (code);
-			amd64_fldz (code);
-			amd64_fp_op_reg (code, X86_FADD, 1, TRUE);
+			if (use_sse2) {
+				EMIT_SSE2_FPFUNC (code, fsin, ins->dreg, ins->sreg1);
+			}
+			else {
+				amd64_fsin (code);
+				amd64_fldz (code);
+				amd64_fp_op_reg (code, X86_FADD, 1, TRUE);
+			}
 			break;		
 		case OP_COS:
-			if (use_sse2)
-				g_assert_not_reached ();
-			amd64_fcos (code);
-			amd64_fldz (code);
-			amd64_fp_op_reg (code, X86_FADD, 1, TRUE);
+			if (use_sse2) {
+				EMIT_SSE2_FPFUNC (code, fcos, ins->dreg, ins->sreg1);
+			}
+			else {
+				amd64_fcos (code);
+				amd64_fldz (code);
+				amd64_fp_op_reg (code, X86_FADD, 1, TRUE);
+			}
 			break;		
 		case OP_ABS:
-			if (use_sse2)
-				g_assert_not_reached ();
-			amd64_fabs (code);
+			if (use_sse2) {
+				EMIT_SSE2_FPFUNC (code, fabs, ins->dreg, ins->sreg1);
+			}
+			else
+				amd64_fabs (code);
 			break;		
 		case OP_TAN: {
 			/* 
@@ -4315,9 +4331,11 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			amd64_fp_op_reg (code, X86_FADD, 1, TRUE);
 			break;		
 		case OP_SQRT:
-			if (use_sse2)
-				g_assert_not_reached ();
-			amd64_fsqrt (code);
+			if (use_sse2) {
+				EMIT_SSE2_FPFUNC (code, fsqrt, ins->dreg, ins->sreg1);
+			}
+			else
+				amd64_fsqrt (code);
 			break;		
 		case OP_X86_FPOP:
 			if (!use_sse2)
@@ -5888,9 +5906,6 @@ mono_arch_get_inst_for_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMethod
 {
 	MonoInst *ins = NULL;
 
-	if (use_sse2)
-		return NULL;
-
 	if (cmethod->klass == mono_defaults.math_class) {
 		if (strcmp (cmethod->name, "Sin") == 0) {
 			MONO_INST_NEW (cfg, ins, OP_SIN);
@@ -5899,9 +5914,13 @@ mono_arch_get_inst_for_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMethod
 			MONO_INST_NEW (cfg, ins, OP_COS);
 			ins->inst_i0 = args [0];
 		} else if (strcmp (cmethod->name, "Tan") == 0) {
+			if (use_sse2)
+				return ins;
 			MONO_INST_NEW (cfg, ins, OP_TAN);
 			ins->inst_i0 = args [0];
 		} else if (strcmp (cmethod->name, "Atan") == 0) {
+			if (use_sse2)
+				return ins;
 			MONO_INST_NEW (cfg, ins, OP_ATAN);
 			ins->inst_i0 = args [0];
 		} else if (strcmp (cmethod->name, "Sqrt") == 0) {

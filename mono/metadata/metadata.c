@@ -551,6 +551,7 @@ mono_metadata_compute_size (MonoImage *meta, int tableindex, guint32 *result_bit
 				g_assert (i == 4 || i == 5);
 				field_size = i == 4 ? idx_size (MONO_TABLE_FIELD):
 					idx_size(MONO_TABLE_METHOD);
+				break;
 			case MONO_TABLE_GENERICPARAM:
 				g_assert (i == 2 || i == 4 || i == 5);
 				if (i == 2)
@@ -3693,6 +3694,10 @@ handle_enum:
 		return MONO_NATIVE_STRUCT;
 	}
 	case MONO_TYPE_FNPTR: return MONO_NATIVE_FUNC;
+	case MONO_TYPE_GENERICINST:
+		type = &type->data.generic_class->container_class->byval_arg;
+		t = type->type;
+		goto handle_enum;
 	case MONO_TYPE_TYPEDBYREF:
 	default:
 		g_error ("type 0x%02x not handled in marshal", t);

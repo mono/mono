@@ -6,6 +6,49 @@
 	* mini-ops.h cpu-amd64.md mini-amd64.c: Implement a lowering pass to
 	decompose some opcodes into simpler ones.
 
+2005-03-27  Zoltan Varga  <vargaz@freemail.hu>
+
+	* cpu-amd64.md (store_membase_reg): Fix length of storer8 opcodes.
+
+2005-03-24  Zoltan Varga  <vargaz@freemail.hu>
+
+	* driver.c: Turn off automatic command line globbing under windows. Fixes #73763.
+
+2005-03-24  Zoltan Varga  <vargaz@freemail.hu>
+
+	* mini.c (mono_method_to_ir): Remove debugging stuff left in by mistake.
+	
+	* mini.c (mono_precompile_assembly): Load and precompile referenced
+	assemblies as well. Fixes #74015.
+
+2005-03-23  Zoltan Varga  <vargaz@freemail.hu>
+
+	* cpu-amd64.md (sin): Fix up maximum lengths of some opcodes.
+
+2005-03-23  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* declsec.c: Skip linkdemand checks for intra-corlib calls. This skips
+	a lot of checks	and (anyway) permissions cannot work until corlib is 
+	loaded.
+
+Wed Mar 23 14:29:49 CET 2005 Paolo Molaro <lupus@ximian.com>
+
+	* mini-ppc.c: fixed ABI issue on sysv/ppc.
+
+Tue Mar 22 19:03:17 CET 2005 Paolo Molaro <lupus@ximian.com>
+
+	* tramp-ppc.c, exceptions-ppc.c: added missing icache flush
+	calls (fixes bug#72824).
+
+Tue Mar 22 16:28:48 CET 2005 Paolo Molaro <lupus@ximian.com>
+
+	* mini.c: fix tail recursion elimination (see test in bug#73936).
+
+2005-03-21  Zoltan Varga  <vargaz@freemail.hu>
+
+	* mini-amd64.c (mono_arch_output_basic_block): Add inline versions of
+	some fp functions in sse2 mode.
+
 2005-03-20  Zoltan Varga  <vargaz@freemail.hu>
 
 	* mini-x86.c (emit_tls_get): Move tls handling into a separate helper function.

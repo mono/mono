@@ -4028,14 +4028,22 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 					link_bblock (cfg, bblock, tblock);
 					ins->inst_target_bb = tblock;
 					start_new_bblock = 1;
-					ip += 5;
-					
+
 					if (!MONO_TYPE_IS_VOID (fsig->ret)) {
 						/* just create a dummy - the value is never used */
 						ins = mono_compile_create_var (cfg, fsig->ret, OP_LOCAL);
 						NEW_TEMPLOAD (cfg, *sp, ins->inst_c0);
 						sp++;
+						MONO_INST_NEW (cfg, ins, CEE_POP);
+						MONO_ADD_INS (bblock, ins);
+						--sp;
+						ins->inst_i0 = *sp;
 					}
+					/* skip the CEE_RET, too */
+					if (ip_in_bb (cfg, bblock, ip + 5))
+						ip += 6;
+					else
+						ip += 5;
 
 					break;
 				}
@@ -10109,9 +10117,15 @@ mono_set_defaults (int verbose_level, guint32 opts)
 static void
 mono_precompile_assembly (MonoAssembly *ass, void *user_data)
 {
+	GHashTable *assemblies = (GHashTable*)user_data;
 	MonoImage *image = mono_assembly_get_image (ass);
 	MonoMethod *method, *invoke;
 	int i, count = 0;
+
+	if (g_hash_table_lookup (assemblies, ass))
+		return;
+
+	g_hash_table_insert (assemblies, ass, ass);
 
 	if (mini_verbose > 0)
 		printf ("PRECOMPILE: %s.\n", mono_image_get_filename (image));
@@ -10137,9 +10151,20 @@ mono_precompile_assembly (MonoAssembly *ass, void *user_data)
 			mono_compile_method (invoke);
 		}
 	}
+
+	/* Load and precompile referenced assemblies as well */
+	for (i = 0; i < mono_image_get_table_rows (image, MONO_TABLE_ASSEMBLYREF); ++i) {
+		mono_assembly_load_reference (image, i);
+		if (image->references [i])
+			mono_precompile_assembly (image->references [i], assemblies);
+	}
 }
 
 void mono_precompile_assemblies ()
 {
-	mono_assembly_foreach ((GFunc)mono_precompile_assembly, NULL);
+	GHashTable *assemblies = g_hash_table_new (NULL, NULL);
+
+	mono_assembly_foreach ((GFunc)mono_precompile_assembly, assemblies);
+
+	g_hash_table_destroy (assemblies);
 }

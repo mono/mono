@@ -200,10 +200,8 @@ mono_remoting_marshal_init (void)
 gpointer
 mono_delegate_to_ftnptr (MonoDelegate *delegate)
 {
-	MonoMethod *method, *wrapper, *invoke;
-	MonoMarshalSpec **mspecs;
+	MonoMethod *method, *wrapper;
 	MonoClass *klass;
-	int i;
 
 	if (!delegate)
 		return NULL;
@@ -215,17 +213,8 @@ mono_delegate_to_ftnptr (MonoDelegate *delegate)
 	g_assert (klass->delegate);
 
 	method = delegate->method_info->method;
-	invoke = mono_class_get_method_from_name (klass, "Invoke", mono_method_signature (method)->param_count);
 
-	mspecs = g_new0 (MonoMarshalSpec*, mono_method_signature (invoke)->param_count + 1);
-	mono_method_get_marshal_info (invoke, mspecs);
-
-	wrapper = mono_marshal_get_managed_wrapper (method, delegate->target, mspecs);
-
-	for (i = mono_method_signature (invoke)->param_count; i >= 0; i--)
-		if (mspecs [i])
-			mono_metadata_free_marshal_spec (mspecs [i]);
-	g_free (mspecs);
+	wrapper = mono_marshal_get_managed_wrapper (method, klass, delegate->target);
 
 	delegate->delegate_trampoline =  mono_compile_method (wrapper);
 
@@ -299,12 +288,14 @@ mono_ftnptr_to_delegate (MonoClass *klass, gpointer ftn)
 			 * construct it.
 			 */
 			cinfo = mono_custom_attrs_from_class (klass);
-			attr = (MonoReflectionUnmanagedFunctionPointerAttribute*)mono_custom_attrs_get_attr (cinfo, UnmanagedFunctionPointerAttribute);
-			if (attr) {
-				piinfo.piflags = (attr->call_conv << 8) | (attr->charset ? (attr->charset - 1) * 2 : 1) | attr->set_last_error;
+			if (cinfo) {
+				attr = (MonoReflectionUnmanagedFunctionPointerAttribute*)mono_custom_attrs_get_attr (cinfo, UnmanagedFunctionPointerAttribute);
+				if (attr) {
+					piinfo.piflags = (attr->call_conv << 8) | (attr->charset ? (attr->charset - 1) * 2 : 1) | attr->set_last_error;
+				}
+				if (!cinfo->cached)
+					mono_custom_attrs_free (cinfo);
 			}
-			if (!cinfo->cached)
-				mono_custom_attrs_free (cinfo);
 		}
 
 		mspecs = g_new0 (MonoMarshalSpec*, mono_method_signature (invoke)->param_count + 1);
@@ -3522,6 +3513,7 @@ handle_enum:
 	case MONO_TYPE_I8:
 	case MONO_TYPE_U8:
 	case MONO_TYPE_VALUETYPE:
+	case MONO_TYPE_TYPEDBYREF:
 	case MONO_TYPE_GENERICINST:
 		/* box value types */
 		mono_mb_emit_byte (mb, CEE_BOX);
@@ -4037,6 +4029,10 @@ mono_marshal_get_stfld_wrapper (MonoType *type)
 		break;
 	case MONO_TYPE_VALUETYPE:
 		g_assert (!klass->enumtype);
+		mono_mb_emit_byte (mb, CEE_STOBJ);
+		mono_mb_emit_i4 (mb, mono_mb_add_data (mb, klass));
+		break;
+	case MONO_TYPE_GENERICINST:
 		mono_mb_emit_byte (mb, CEE_STOBJ);
 		mono_mb_emit_i4 (mb, mono_mb_add_data (mb, klass));
 		break;
@@ -6041,11 +6037,14 @@ mono_marshal_get_native_func_wrapper (MonoMethodSignature *sig,
  * generates IL code to call managed methods from unmanaged code 
  */
 MonoMethod *
-mono_marshal_get_managed_wrapper (MonoMethod *method, MonoObject *this, MonoMarshalSpec **mspecs)
+mono_marshal_get_managed_wrapper (MonoMethod *method, MonoClass *delegate_klass, MonoObject *this)
 {
-	MonoMethodSignature *sig, *csig;
+	static MonoClass *UnmanagedFunctionPointerAttribute;
+	MonoMethodSignature *sig, *csig, *invoke_sig;
 	MonoMethodBuilder *mb;
-	MonoMethod *res;
+	MonoMethod *res, *invoke;
+	MonoMarshalSpec **mspecs;
+	MonoMethodPInvoke piinfo;
 	GHashTable *cache;
 	int i, *tmp_locals;
 	EmitMarshalContext m;
@@ -6061,6 +6060,12 @@ mono_marshal_get_managed_wrapper (MonoMethod *method, MonoObject *this, MonoMars
 	cache = method->klass->image->managed_wrapper_cache;
 	if (!this && (res = mono_marshal_find_in_cache (cache, method)))
 		return res;
+
+	invoke = mono_class_get_method_from_name (delegate_klass, "Invoke", mono_method_signature (method)->param_count);
+	invoke_sig = mono_method_signature (invoke);
+
+	mspecs = g_new0 (MonoMarshalSpec*, mono_method_signature (invoke)->param_count + 1);
+	mono_method_get_marshal_info (invoke, mspecs);
 
 	sig = mono_method_signature (method);
 
@@ -6086,6 +6091,11 @@ mono_marshal_get_managed_wrapper (MonoMethod *method, MonoObject *this, MonoMars
 	csig->hasthis = 0;
 	csig->pinvoke = 1;
 
+	m.mb = mb;
+	m.sig = sig;
+	m.piinfo = NULL;
+	m.retobj_var = 0;
+
 #ifdef PLATFORM_WIN32
 	/* 
 	 * Under windows, delegates passed to native code must use the STDCALL
@@ -6093,6 +6103,54 @@ mono_marshal_get_managed_wrapper (MonoMethod *method, MonoObject *this, MonoMars
 	 */
 	csig->call_convention = MONO_CALL_STDCALL;
 #endif
+
+	/* Change default calling convention if needed */
+	/* Why is this a modopt ? */
+	if (invoke_sig->ret && invoke_sig->ret->num_mods) {
+		for (i = 0; i < invoke_sig->ret->num_mods; ++i) {
+			MonoClass *cmod_class = mono_class_get (delegate_klass->image, invoke_sig->ret->modifiers [i].token);
+			g_assert (cmod_class);
+			if ((cmod_class->image == mono_defaults.corlib) && !strcmp (cmod_class->name_space, "System.Runtime.CompilerServices")) {
+				if (!strcmp (cmod_class->name, "CallConvCdecl"))
+					csig->call_convention = MONO_CALL_C;
+				else if (!strcmp (cmod_class->name, "CallConvStdcall"))
+					csig->call_convention = MONO_CALL_STDCALL;
+				else if (!strcmp (cmod_class->name, "CallConvFastcall"))
+					csig->call_convention = MONO_CALL_FASTCALL;
+				else if (!strcmp (cmod_class->name, "CallConvThiscall"))
+					csig->call_convention = MONO_CALL_THISCALL;
+			}
+		}
+	}
+
+	/* Handle the UnmanagedFunctionPointerAttribute */
+	if (!UnmanagedFunctionPointerAttribute)
+		UnmanagedFunctionPointerAttribute = mono_class_from_name (mono_defaults.corlib, "System.Runtime.InteropServices", "UnmanagedFunctionPointerAttribute");
+
+	/* The attribute is only available in Net 2.0 */
+	if (UnmanagedFunctionPointerAttribute) {
+		MonoReflectionUnmanagedFunctionPointerAttribute *attr;
+		MonoCustomAttrInfo *cinfo;
+
+		/* 
+		 * The pinvoke attributes are stored in a real custom attribute so we have to
+		 * construct it.
+		 */
+		cinfo = mono_custom_attrs_from_class (delegate_klass);
+		if (cinfo) {
+			attr = (MonoReflectionUnmanagedFunctionPointerAttribute*)mono_custom_attrs_get_attr (cinfo, UnmanagedFunctionPointerAttribute);
+			if (attr) {
+				memset (&piinfo, 0, sizeof (piinfo));
+				m.piinfo = &piinfo;
+				piinfo.piflags = (attr->call_conv << 8) | (attr->charset ? (attr->charset - 1) * 2 : 1) | attr->set_last_error;
+
+				/* FIXME: modify the calling convention */
+				g_assert_not_reached ();
+			}
+			if (!cinfo->cached)
+				mono_custom_attrs_free (cinfo);
+		}
+	}
 
 	/* fixme: howto handle this ? */
 	if (sig->hasthis) {
@@ -6105,11 +6163,6 @@ mono_marshal_get_managed_wrapper (MonoMethod *method, MonoObject *this, MonoMars
 			g_assert_not_reached ();
 		}
 	} 
-
-	m.mb = mb;
-	m.sig = sig;
-	m.piinfo = NULL;
-	m.retobj_var = 0;
 
 	/* we first do all conversions */
 	tmp_locals = alloca (sizeof (int) * sig->param_count);
@@ -6228,6 +6281,11 @@ mono_marshal_get_managed_wrapper (MonoMethod *method, MonoObject *this, MonoMars
 		res->dynamic = 1;
 	}
 	mono_mb_free (mb);
+
+	for (i = mono_method_signature (invoke)->param_count; i >= 0; i--)
+		if (mspecs [i])
+			mono_metadata_free_marshal_spec (mspecs [i]);
+	g_free (mspecs);
 
 	/* printf ("CODE FOR %s: \n%s.\n", mono_method_full_name (res, TRUE), mono_disasm_code (0, res, ((MonoMethodNormal*)res)->header->code, ((MonoMethodNormal*)res)->header->code + ((MonoMethodNormal*)res)->header->code_size)); */
 

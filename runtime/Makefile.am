@@ -100,9 +100,14 @@ check-local: mcs-compileall mcs-do-test-profiles
 
 CLEANFILES = wrapper-config
 
-wrapper-config: ../data/config
+wrapper-config: ../data/config Makefile
 	d=`cd ../support && pwd`; \
 	sed 's,target="libMonoPosixHelper[^"]*",target="'$$d/libMonoPosixHelper.la'",' ../data/config > $@
+	if test -z "$(libgdiplus_loc)"; then :; else \
+	  mv $@ $@t; \
+	  sed 's,<configuration>,& <dllmap dll="gdiplus.dll" target="$(libgdiplus_loc)" />,' $@t > $@; \
+	  rm -f $@t; \
+	fi
 
 $(tmpinst)/bin/mono: mono-wrapper wrapper-config
 	cp mono-wrapper $@

@@ -1,3 +1,93 @@
+2005-03-27  Zoltan Varga  <vargaz@freemail.hu>
+
+	* marshal.c (mono_marshal_get_managed_wrapper): Fix bogus assert on
+	the 2.0 profile.
+
+2005-03-27  Raja R Harinath  <harinath@gmail.com>
+
+	* Makefile.am (assembliesdir): Fix.  If it is arch-dependent it
+	has to be in $(exec_prefix).  $(prefix) is for arch-independent
+	stuff, and it would probably use $(prefix)/share rather than
+	$(prefix)/lib.
+
+2005-03-24 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* console-io.c: added 2 includes that might be missing.
+
+2005-03-24  Zoltan Varga  <vargaz@freemail.hu>
+
+	* marshal.c (mono_marshal_get_managed_wrapper): Fix crashes in 2.0
+	profile.
+
+	* reflection.c (create_custom_attr): Allocate the params array using
+	alloca so it gets GC tracking.
+
+2005-03-23  Chris Toshok  <toshok@ximian.com>
+
+	* mono-debug-debugger.c (mono_debugger_runtime_invoke): comment
+	out some spew.
+
+2005-03-24  Raja R Harinath  <rharinath@novell.com>
+
+	* Makefile.am (assembly.lo, mono-config.lo): Rebuild when Makefile
+	changes to pick up any changes in prefix, etc.
+
+2005-03-23  Zoltan Varga  <vargaz@freemail.hu>
+
+	* marshal.c (mono_marshal_get_managed_wrapper): Remove fixme.
+	
+	* marshal.c (mono_marshal_get_managed_wrapper): Remove debugging output.
+	* marshal.c (mono_marshal_get_managed_wrapper): Add support for the modopt(CallConvCdecl).
+
+2005-03-23  Zoltan Varga  <vargaz@freemail.hu>
+
+	* class-internals.h object-internals.h class.c reflection.c: Extend the
+	mono_lookup_dynamic_token () function to return the class of the
+	token as well. 
+
+	* class.c (mono_ldtoken): Handle MEMBERREFS in the dynamic case as
+	well. Fixes #73848.
+
+2005-03-23  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* security-manager.c: Skip inheritance checks for intra-corlib
+	class inheritance and method overrides. This skips a lot of checks
+	and (anyway) permissions cannot work until corlib is loaded.
+
+2005-03-23  Martin Baulig  <martin@ximian.com>
+
+	* marshal.c (mono_marshal_get_stfld_wrapper): Add support for
+	MONO_TYPE_GENERICINST.	
+
+2005-03-23  Martin Baulig  <martin@ximian.com>
+
+	* metadata.c (mono_type_to_unmanaged): Add MONO_TYPE_GENERICINST.
+
+Tue Mar 22 16:57:01 CET 2005 Paolo Molaro <lupus@ximian.com>
+
+	* class.c: added locking comments to some functions.
+	Cache the interface offsets arrays (saves about 20 KB
+	of runtime memory in a typical app).
+	Reduce the time overhead in mono_class_setup_supertypes ().
+
+Tue Mar 22 16:35:57 CET 2005 Paolo Molaro <lupus@ximian.com>
+
+	* icall.c: speedup and fix leaks in GetMethodsByName and
+	GetPropertiesByName.
+
+Tue Mar 22 16:34:29 CET 2005 Paolo Molaro <lupus@ximian.com>
+
+	* reflection.c: some locking fixes.
+
+Tue Mar 22 15:13:54 CET 2005 Paolo Molaro <lupus@ximian.com>
+
+	* metadata.c: added missing break in case statement.
+
+2005-03-22  Zoltan Varga  <vargaz@freemail.hu>
+
+	* marshal.c (mono_marshal_get_runtime_invoke): Add support for
+	typedbyref return values. Fixes #73941.
+
 2005-03-17  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* security-manager.c|h: Added demandunmanaged method and 

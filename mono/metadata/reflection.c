@@ -134,7 +134,7 @@ static guint32 encode_marshal_blob (MonoDynamicImage *assembly, MonoReflectionMa
 static guint32 encode_constant (MonoDynamicImage *assembly, MonoObject *val, guint32 *ret_type);
 static char*   type_get_qualified_name (MonoType *type, MonoAssembly *ass);
 static void    ensure_runtime_vtable (MonoClass *klass);
-static gpointer resolve_object (MonoImage *image, MonoObject *obj);
+static gpointer resolve_object (MonoImage *image, MonoObject *obj, MonoClass **handle_class);
 static void    encode_type (MonoDynamicImage *assembly, MonoType *type, char *p, char **endbuf);
 static guint32 type_get_signature_size (MonoType *type);
 static void get_default_param_value_blobs (MonoMethod *method, char **blobs);
@@ -6580,8 +6580,9 @@ create_custom_attr (MonoImage *image, MonoMethod *method, const char *data, guin
 		return NULL;
 
 	/*g_print ("got attr %s\n", method->klass->name);*/
-	
-	params = g_new (void*, mono_method_signature (method)->param_count);
+
+	/* Allocate using alloca so it gets GC tracking */
+	params = alloca (mono_method_signature (method)->param_count * sizeof (void*));	
 
 	/* skip prolog */
 	p += 2;
@@ -6593,7 +6594,6 @@ create_custom_attr (MonoImage *image, MonoMethod *method, const char *data, guin
 	attr = mono_object_new (mono_domain_get (), method->klass);
 	mono_runtime_invoke (method, attr, params, NULL);
 	free_param_data (method->signature, params);
-	g_free (params);
 	num_named = read16 (named);
 	named += 2;
 	for (j = 0; j < num_named; j++) {
@@ -7425,6 +7425,8 @@ mono_reflection_setup_internal_class (MonoReflectionTypeBuilder *tb)
 
 	MONO_ARCH_SAVE_REGS;
 
+	mono_loader_lock ();
+
 	if (tb->parent) {
 		/* check so we can compile corlib correctly */
 		if (strcmp (mono_object_class (tb->parent)->name, "TypeBuilder") == 0) {
@@ -7446,6 +7448,7 @@ mono_reflection_setup_internal_class (MonoReflectionTypeBuilder *tb)
 		klass->supertypes = NULL;
 		mono_class_setup_parent (klass, parent);
 		mono_class_setup_mono_type (klass);
+		mono_loader_unlock ();
 		return;
 	}
 	
@@ -7502,6 +7505,8 @@ mono_reflection_setup_internal_class (MonoReflectionTypeBuilder *tb)
 	}
 
 	/*g_print ("setup %s as %s (%p)\n", klass->name, ((MonoObject*)tb)->vtable->klass->name, tb);*/
+
+	mono_loader_unlock ();
 }
 
 /*
@@ -7579,6 +7584,7 @@ mono_reflection_create_internal_class (MonoReflectionTypeBuilder *tb)
 
 	klass = my_mono_class_from_mono_type (tb->type.type);
 
+	mono_loader_lock ();
 	if (klass->enumtype && klass->enum_basetype == NULL) {
 		MonoReflectionFieldBuilder *fb;
 		MonoClass *ec;
@@ -7606,6 +7612,7 @@ mono_reflection_create_internal_class (MonoReflectionTypeBuilder *tb)
 		/* FIXME: Does this mean enums can't have method overrides ? */
 		mono_class_setup_vtable_general (klass, NULL, 0);
 	}
+	mono_loader_unlock ();
 }
 
 static MonoMarshalSpec*
@@ -8679,6 +8686,11 @@ mono_reflection_create_runtime_class (MonoReflectionTypeBuilder *tb)
 
 	mono_save_custom_attrs (klass->image, klass, tb->cattrs);
 
+	mono_loader_lock ();
+	if (klass->wastypebuilder) {
+		mono_loader_unlock ();
+		return mono_type_get_object (mono_object_domain (tb), &klass->byval_arg);
+	}
 	/*
 	 * Fields to set in klass:
 	 * the various flags: delegate/unicode/contextbound etc.
@@ -8691,6 +8703,7 @@ mono_reflection_create_runtime_class (MonoReflectionTypeBuilder *tb)
 		if (klass->generic_container) {
 			/* FIXME: The code below can't handle generic classes */
 			klass->wastypebuilder = TRUE;
+			mono_loader_unlock ();
 			return mono_type_get_object (mono_object_domain (tb), &klass->byval_arg);
 		}
 	}
@@ -8730,6 +8743,7 @@ mono_reflection_create_runtime_class (MonoReflectionTypeBuilder *tb)
 	typebuilder_setup_events (klass);
 
 	klass->wastypebuilder = TRUE;
+	mono_loader_unlock ();
 
 	res = mono_type_get_object (mono_object_domain (tb), &klass->byval_arg);
 	g_assert (res != (MonoReflectionType*)tb);
@@ -8858,8 +8872,9 @@ mono_reflection_create_dynamic_method (MonoReflectionDynamicMethod *mb)
 	rmb.nrefs = mb->nrefs;
 	rmb.refs = g_new0 (gpointer, mb->nrefs + 1);
 	for (i = 0; i < mb->nrefs; ++i) {
+		MonoClass *handle_class;
 		gpointer ref = resolve_object (mb->module->image, 
-					       mono_array_get (mb->refs, MonoObject*, i));
+					       mono_array_get (mb->refs, MonoObject*, i), &handle_class);
 		if (!ref) {
 			g_free (rmb.refs);
 			mono_raise_exception (mono_get_exception_type_load (NULL));
@@ -8881,10 +8896,11 @@ mono_reflection_create_dynamic_method (MonoReflectionDynamicMethod *mb)
  * mono_reflection_lookup_dynamic_token:
  *
  * Finish the Builder object pointed to by TOKEN and return the corresponding
- * runtime structure.
+ * runtime structure. HANDLE_CLASS is set to the class required by 
+ * mono_ldtoken.
  */
 gpointer
-mono_reflection_lookup_dynamic_token (MonoImage *image, guint32 token)
+mono_reflection_lookup_dynamic_token (MonoImage *image, guint32 token, MonoClass **handle_class)
 {
 	MonoDynamicImage *assembly = (MonoDynamicImage*)image;
 	MonoObject *obj;
@@ -8892,26 +8908,30 @@ mono_reflection_lookup_dynamic_token (MonoImage *image, guint32 token)
 	obj = mono_g_hash_table_lookup (assembly->tokens, GUINT_TO_POINTER (token));
 	g_assert (obj);
 
-	return resolve_object (image, obj);
+	return resolve_object (image, obj, handle_class);
 }
 
 static gpointer
-resolve_object (MonoImage *image, MonoObject *obj)
+resolve_object (MonoImage *image, MonoObject *obj, MonoClass **handle_class)
 {
 	gpointer result = NULL;
 
 	if (strcmp (obj->vtable->klass->name, "String") == 0) {
 		result = mono_string_intern ((MonoString*)obj);
+		*handle_class = NULL;
 		g_assert (result);
 	} else if (strcmp (obj->vtable->klass->name, "MonoType") == 0) {
 		MonoReflectionType *tb = (MonoReflectionType*)obj;
 		result = mono_class_from_mono_type (tb->type);
+		*handle_class = mono_defaults.typehandle_class;
 		g_assert (result);
 	} else if (strcmp (obj->vtable->klass->name, "MonoMethod") == 0) {
 		result = ((MonoReflectionMethod*)obj)->method;
+		*handle_class = mono_defaults.methodhandle_class;
 		g_assert (result);
 	} else if (strcmp (obj->vtable->klass->name, "MonoCMethod") == 0) {
 		result = ((MonoReflectionMethod*)obj)->method;
+		*handle_class = mono_defaults.methodhandle_class;
 		g_assert (result);
 	} else if (strcmp (obj->vtable->klass->name, "MethodBuilder") == 0) {
 		MonoReflectionMethodBuilder *mb = (MonoReflectionMethodBuilder*)obj;
@@ -8932,6 +8952,7 @@ resolve_object (MonoImage *image, MonoObject *obj)
 			 */
 			result = mb->mhandle;
 		}
+		*handle_class = mono_defaults.methodhandle_class;
 	} else if (strcmp (obj->vtable->klass->name, "ConstructorBuilder") == 0) {
 		MonoReflectionCtorBuilder *cb = (MonoReflectionCtorBuilder*)obj;
 
@@ -8942,8 +8963,10 @@ resolve_object (MonoImage *image, MonoObject *obj)
 			mono_domain_try_type_resolve (mono_domain_get (), NULL, (MonoObject*)tb);
 			result = cb->mhandle;
 		}
+		*handle_class = mono_defaults.methodhandle_class;
 	} else if (strcmp (obj->vtable->klass->name, "MonoField") == 0) {
 		result = ((MonoReflectionField*)obj)->field;
+		*handle_class = mono_defaults.fieldhandle_class;
 		g_assert (result);
 	} else if (strcmp (obj->vtable->klass->name, "FieldBuilder") == 0) {
 		MonoReflectionFieldBuilder *fb = (MonoReflectionFieldBuilder*)obj;
@@ -8955,6 +8978,7 @@ resolve_object (MonoImage *image, MonoObject *obj)
 			mono_domain_try_type_resolve (mono_domain_get (), NULL, (MonoObject*)tb);
 			result = fb->handle;
 		}
+		*handle_class = mono_defaults.fieldhandle_class;
 	} else if (strcmp (obj->vtable->klass->name, "TypeBuilder") == 0) {
 		MonoReflectionTypeBuilder *tb = (MonoReflectionTypeBuilder*)obj;
 		MonoClass *klass;
@@ -8969,6 +8993,7 @@ resolve_object (MonoImage *image, MonoObject *obj)
 			result = tb->type.type->data.klass;
 			g_assert (result);
 		}
+		*handle_class = mono_defaults.typehandle_class;
 	} else if (strcmp (obj->vtable->klass->name, "SignatureHelper") == 0) {
 		MonoReflectionSigHelper *helper = (MonoReflectionSigHelper*)obj;
 		MonoMethodSignature *sig;
@@ -9000,6 +9025,7 @@ resolve_object (MonoImage *image, MonoObject *obj)
 		}
 
 		result = sig;
+		*handle_class = NULL;
 	} else {
 		g_print (obj->vtable->klass->name);
 		g_assert_not_reached ();
