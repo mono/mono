@@ -257,7 +257,7 @@ namespace System.Windows.Forms
 		{
 			get { return base.Font; }
 			set {
-				if (base.Font == value)
+				if (base.Font.Equals (value))
 					return;
 
 				if (FontChanged != null)

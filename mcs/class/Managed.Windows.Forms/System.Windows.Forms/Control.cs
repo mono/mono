@@ -1417,7 +1417,7 @@ namespace System.Windows.Forms
 			}
 
 			set {
-				if (font == value) {
+				if (font.Equals (value)) {
 					return;
 				}
 

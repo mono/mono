@@ -1,3 +1,8 @@
+2005-04-04  Jordi Mas i Hernandez <jordi@ximian.com>
+
+	* Control.cs: use Equals to compare the font since no == op
+	* ScrollBar.cs: use Equals to compare the font since no == op
+
 2005-04-04  Alexander Olk  <xenomorph2@onlinehome.de>
 
 	* SaveFileDialog.cs: Open stream in OpenFile with FileMode Create
