@@ -1,4 +1,7 @@
 2004-04-14 Anirban Bhattacharjee <banirban@novell.com>
+	* const.cs: Added support for Shadows modifier in constant
+
+2004-04-14 Anirban Bhattacharjee <banirban@novell.com>
 	* expression.cs: Removed the check which was stoping type instances to access the shared variables
 
 2004-04-14 Anirban Bhattacharjee <banirban@novell.com>

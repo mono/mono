@@ -130,12 +130,19 @@ namespace Mono.MonoBASIC {
 					ptype, MemberTypes.Field, BindingFlags.Public,
 					Type.FilterName, Name);
 				
-				if (list.Count == 0)
-					if ((ModFlags & Modifiers.NEW) != 0)
-						WarningNotHiding (parent);
+				if ((list.Count > 0) && ((ModFlags & Modifiers.SHADOWS) == 0))
+					Report.Warning (
+							40004, 2, Location, 
+							"Const '" + Name + "' should be declared " +
+                            "Shadows since the base type '" + ptype.Name /*parent.MakeName (Name)*/ + 
+							"' has a Const with same name");
 
-			} else if ((ModFlags & Modifiers.NEW) != 0)
-				WarningNotHiding (parent);
+				/*if (list.Count == 0)
+					if ((ModFlags & Modifiers.NEW) != 0)
+						WarningNotHiding (parent);*/
+
+			} /*else if ((ModFlags & Modifiers.NEW) != 0)
+				WarningNotHiding (parent);*/
 
 			FieldBuilder = parent.TypeBuilder.DefineField (Name, type, FieldAttr);
 
