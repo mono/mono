@@ -219,10 +219,12 @@ System.Web.UI.HtmlControls/HtmlTableCellCollection.cs
 System.Web.UI.HtmlControls/HtmlTableRow.cs
 System.Web.UI.HtmlControls/HtmlTableRowCollection.cs
 System.Web.UI.HtmlControls/HtmlTextArea.cs
+System.Web.UI.WebControls/AccessDataSource.cs
 System.Web.UI.WebControls/AdCreatedEventArgs.cs
 System.Web.UI.WebControls/AdCreatedEventHandler.cs
 System.Web.UI.WebControls/AdRotator.cs
 System.Web.UI.WebControls/AdType.cs
+System.Web.UI.WebControls/AssociatedControlConverter.cs
 System.Web.UI.WebControls/AuthenticateEventArgs.cs
 System.Web.UI.WebControls/AuthenticateEventHandler.cs
 System.Web.UI.WebControls/AutoCompleteType.cs
@@ -245,6 +247,7 @@ System.Web.UI.WebControls/CalendarDay.cs
 System.Web.UI.WebControls/CalendarSelectionMode.cs
 System.Web.UI.WebControls/CheckBox.cs
 System.Web.UI.WebControls/CheckBoxList.cs
+System.Web.UI.WebControls/ControlIDConverter.cs
 System.Web.UI.WebControls/CommandEventArgs.cs
 System.Web.UI.WebControls/CommandEventHandler.cs
 System.Web.UI.WebControls/CompareValidator.cs
