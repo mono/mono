@@ -19,13 +19,13 @@ namespace System.Data.SqlTypes
 		private DateTime value;
 		private bool notNull;
 
-		public static readonly SqlDateTime MaxValue = new SqlDateTime (9999,12,31);
+		public static readonly SqlDateTime MaxValue = new SqlDateTime (9999,12,31,23,59,59);
 		public static readonly SqlDateTime MinValue = new SqlDateTime (1753,1,1);
 		public static readonly SqlDateTime Null;
-		public static readonly int SQLTicksPerHour;
-		public static readonly int SQLTicksPerMinute;
-		public static readonly int SQLTicksPerSecond;
-
+		public static readonly int SQLTicksPerHour = 1080000;
+		public static readonly int SQLTicksPerMinute = 18000;
+		public static readonly int SQLTicksPerSecond = 300;
+	      
 		#endregion
 
 		#region Constructors
@@ -36,10 +36,11 @@ namespace System.Data.SqlTypes
 			notNull = true;
 		}
 
-		[MonoTODO]
 		public SqlDateTime (int dayTicks, int timeTicks) 
 		{
-			throw new NotImplementedException ();
+			DateTime temp = new DateTime (1900, 1, 1);
+			this.value = new DateTime (temp.Ticks + (long)(dayTicks + timeTicks));
+			notNull = true;
 		}
 
 		public SqlDateTime (int year, int month, int day) 
@@ -54,34 +55,59 @@ namespace System.Data.SqlTypes
 			notNull = true;
 		}
 
-		[MonoTODO]
 		public SqlDateTime (int year, int month, int day, int hour, int minute, int second, double millisecond) 
 		{
-			throw new NotImplementedException ();
+			DateTime t = new DateTime(year, month, day);
+			
+			this.value = new DateTime ((long)(t.Day * 24 * SQLTicksPerHour + 
+						   hour * SQLTicksPerHour + 
+						   minute * SQLTicksPerMinute +
+						   second * SQLTicksPerSecond +
+						   millisecond * 1000));
+			notNull = true;
 		}
 
-		[MonoTODO]
 		public SqlDateTime (int year, int month, int day, int hour, int minute, int second, int bilisecond) 
 		{
-			throw new NotImplementedException ();
+			DateTime t = new DateTime(year, month, day);
+			
+			this.value = new DateTime ((long)(t.Day * 24 * SQLTicksPerHour + 
+						   hour * SQLTicksPerHour + 
+						   minute * SQLTicksPerMinute +
+						   second * SQLTicksPerSecond +
+						   bilisecond));
+			notNull = true;
 		}
 
 		#endregion
 
 		#region Properties
 
-		[MonoTODO]
 		public int DayTicks {
-			get { throw new NotImplementedException (); }
+			get { 
+				float DateTimeTicksPerHour = 3.6E+10f;
+
+				DateTime temp = new DateTime (1900, 1, 1);
+				
+				int result = (int)((this.Value.Ticks - temp.Ticks) / (24 * DateTimeTicksPerHour));
+				return result;
+			}
 		}
 
 		public bool IsNull { 
 			get { return !notNull; }
 		}
 
-		[MonoTODO]
 		public int TimeTicks {
-			get { throw new NotImplementedException (); }
+			get {
+				if (this.IsNull)
+					throw new SqlNullValueException ();
+
+				return (int)(value.Hour * SQLTicksPerHour + 
+					     value.Minute * SQLTicksPerMinute +
+					     value.Second * SQLTicksPerSecond +
+					     value.Millisecond);
+			}
 		}
 
 		public DateTime Value {
@@ -126,10 +152,9 @@ namespace System.Data.SqlTypes
 			return (x == y);
 		}
 
-		[MonoTODO]
 		public override int GetHashCode ()
 		{
-			return 42;
+			return value.GetHashCode ();
 		}
 
 		public static SqlBoolean GreaterThan (SqlDateTime x, SqlDateTime y)
@@ -157,10 +182,9 @@ namespace System.Data.SqlTypes
 			return (x != y);
 		}
 
-		[MonoTODO]
 		public static SqlDateTime Parse (string s)
 		{
-			throw new NotImplementedException ();
+			return new SqlDateTime (DateTime.Parse (s));
 		}
 
 		public SqlString ToSqlString ()
@@ -176,10 +200,12 @@ namespace System.Data.SqlTypes
 				return value.ToString ();
 		}
 	
-		[MonoTODO]	
 		public static SqlDateTime operator + (SqlDateTime x, TimeSpan t)
 		{
-			throw new NotImplementedException ();
+			if (x.IsNull)
+				return SqlDateTime.Null;
+			
+			return new SqlDateTime (x.Value + t);
 		}
 
 		public static SqlBoolean operator == (SqlDateTime x, SqlDateTime y)
@@ -230,10 +256,9 @@ namespace System.Data.SqlTypes
 				return new SqlBoolean (x.Value <= y.Value);
 		}
 
-		[MonoTODO]
 		public static SqlDateTime operator - (SqlDateTime x, TimeSpan t)
 		{
-			throw new NotImplementedException ();
+			return new SqlDateTime (x.Value - t);
 		}
 
 		public static explicit operator DateTime (SqlDateTime x)
@@ -241,10 +266,9 @@ namespace System.Data.SqlTypes
 			return x.Value;
 		}
 
-		[MonoTODO]
 		public static explicit operator SqlDateTime (SqlString x)
 		{
-			throw new NotImplementedException();
+			return SqlDateTime.Parse (x.Value);
 		}
 
 		public static implicit operator SqlDateTime (DateTime x)

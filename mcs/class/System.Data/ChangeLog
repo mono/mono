@@ -1,3 +1,8 @@
+2002-11-08  Ville Palo <vi64pa@koti.soon.fi>
+
+	* System.Data.SqlTypes/SqlDateTime.cs: Now the all methods are 
+	implemented.
+	
 2002-11-08  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* System.Data.SqlTypes/SqlDecimal.cs: fixed build. Someone should check
