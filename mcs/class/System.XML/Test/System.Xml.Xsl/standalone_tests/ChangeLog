@@ -1,3 +1,7 @@
+2005-03-04  Atsushi Enomoto <atsushi@ximian.com>
+
+	* ignore.lst : still more ignored cases.
+
 2005-02-25  Atsushi Enomoto <atsushi@ximian.com>
 
 	* ignore.lst : more ignored cases. fixed some test IDs.
