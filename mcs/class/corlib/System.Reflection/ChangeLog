@@ -1,4 +1,9 @@
 
+Mon Aug 5 21:19:41 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* Assembly.cs: implemented EntryPoint and a few 
+	resource related methods.
+
 Wed Jul 24 13:08:56 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
 	* MethodBase.cs: implemented GetCurrentMethod.

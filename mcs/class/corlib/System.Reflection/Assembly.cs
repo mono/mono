@@ -35,7 +35,7 @@ namespace System.Reflection {
 
 		internal virtual string CopiedCodeBase {
 			get {
-				return null;
+				return get_code_base ();
 			}
 		} 
 
@@ -49,10 +49,9 @@ namespace System.Reflection {
 			}
 		}
 
-		public virtual MethodInfo EntryPoint {
-			get {
-				return null;
-			}
+		public virtual extern MethodInfo EntryPoint {
+			[MethodImplAttribute (MethodImplOptions.InternalCall)]
+			get;
 		}
 
 		public virtual Evidence Evidence {
@@ -96,9 +95,18 @@ namespace System.Reflection {
 			throw new NotImplementedException ();
 		}
 
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		private extern object GetManifestResourceInternal (String name);
+
 		public virtual Stream GetManifestResourceStream (String name)
 		{
-			throw new NotImplementedException ();
+			object data = GetManifestResourceInternal (name);
+			string filename = data as string;
+			if (filename != null) {
+				return new FileStream (filename, FileMode.Open, FileAccess.Read);
+			} else {
+				return new MemoryStream ((byte[])data, false);
+			}
 		}
 
 		public virtual Stream GetManifestResourceStream (Type type, String name)
@@ -256,10 +264,8 @@ namespace System.Reflection {
 			throw new NotImplementedException ();
 		}
 
-		public virtual String[] GetManifestResourceNames ()
-		{
-			throw new NotImplementedException ();
-		}
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		public extern virtual String[] GetManifestResourceNames ();
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		public extern static Assembly GetExecutingAssembly ();
