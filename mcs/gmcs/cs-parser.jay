@@ -344,20 +344,26 @@ using_namespace_directive
 // detach them
 // 
 namespace_declaration
-	: opt_attributes NAMESPACE namespace_name
+	: opt_attributes NAMESPACE namespace_or_type_name
 	{
 		if ($1 != null) {
-			Report.Error(1518, Lexer.Location, "Attributes cannot be applied to namespaces."
-					+ " Expected class, delegate, enum, interface, or struct");
+			Report.Error(1518, Lexer.Location,
+				     "Attributes cannot be applied to namespaces. " +
+				     "Expected class, delegate, enum, interface, or struct");
 		}
 
-		if (current_namespace.Parent != null && $3 is MemberAccess) {
-			// Cannot use qualified namespace names in nested namespace declarations
-			Report.Error (134, lexer.Location, "Cannot use qualified namespace names in nested namespace declarations");
+		MemberName name = (MemberName) $3;
+
+		if (name.TypeArguments != null)
+			syntax_error (lexer.Location, "namespace name expected");
+		else if ((current_namespace.Parent != null) && (name.Left != null)) {
+			Report.Error (134, lexer.Location,
+				      "Cannot use qualified namespace names in nested " +
+				      "namespace declarations");
 		}
 
 		current_namespace = new NamespaceEntry (
-			current_namespace, file, (string) $3, lexer.Location);
+			current_namespace, file, name.GetName (), lexer.Location);
 	  } 
 	  namespace_body opt_semicolon
 	  { 

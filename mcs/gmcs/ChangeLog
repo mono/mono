@@ -1,5 +1,9 @@
 2004-09-09  Martin Baulig  <martin@ximian.com>
 
+	* cs-parser.jay (namespace_declaration): Fixed CS0134 reporting.
+
+2004-09-09  Martin Baulig  <martin@ximian.com>
+
 	* generic.cs (TypeParameter.DefineType): Added support for
 	explicit interface methods.
 
