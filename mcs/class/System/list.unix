@@ -238,6 +238,8 @@ System.ComponentModel/RefreshEventArgs.cs
 System.ComponentModel/StringConverter.cs
 System.ComponentModel/WarningException.cs
 System.ComponentModel/InvalidEnumArgumentException.cs
+System.ComponentModel.Design/ActiveDesignerEventArgs.cs
+System.ComponentModel.Design/ActiveDesignerEventHandler.cs
 System.ComponentModel.Design/CommandID.cs
 System.ComponentModel.Design/DesignerTransactionCloseEventArgs.cs
 System.ComponentModel.Design/DesignerTransactionCloseEventHandler.cs
