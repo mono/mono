@@ -1069,7 +1069,6 @@ System.Collections.Generic/IEnumerable.cs
 System.Collections.Generic/IEnumerator.cs
 System.Collections.Generic/IList.cs
 System.Collections.Generic/IComparer.cs
-System.Collections.Generic/IComparable.cs
 System.Collections.Generic/IDictionary.cs
 System.Collections.Generic/IKeyComparer.cs
 System.Collections.Generic/KeyValuePair.cs
