@@ -79,8 +79,7 @@ namespace MonoTests.System.Data.SqlTypes
                 		                       Int32.MaxValue, Int32.MaxValue, 
                 		                       Int32.MaxValue});
                 		Fail ("#A11");
-                	} catch (Exception e) {
-                		AssertEquals ("#A12", typeof (SqlTypeException), e.GetType ());
+                	} catch (SqlTypeException) {
                 	}
 
 			// sqlDecimal (byte, byte, bool, int, int, int, int)
@@ -93,8 +92,7 @@ namespace MonoTests.System.Data.SqlTypes
                 		                       Int32.MaxValue, Int32.MaxValue, 
                 		                       Int32.MaxValue);
                 		Fail ("#A14");
-                	} catch (Exception e) {
-                		AssertEquals ("#A15", typeof (SqlTypeException), e.GetType ());
+                	} catch (SqlTypeException) {
                 	}                	
                 }
 
@@ -152,8 +150,7 @@ namespace MonoTests.System.Data.SqlTypes
                         try {
                                 SqlDecimal test = SqlDecimal.Add (SqlDecimal.MaxValue, SqlDecimal.MaxValue);
                                 Fail ("#D05");
-                        } catch (Exception e) {
-                                AssertEquals ("#D06", typeof (OverflowException), e.GetType ());
+                        } catch (OverflowException) {
                         }
                         
 			AssertEquals ("#D07", (SqlDecimal)6465m, SqlDecimal.Ceiling(Test1));
@@ -206,10 +203,10 @@ namespace MonoTests.System.Data.SqlTypes
 		[Test]
 		public void AdjustScale()
 		{
-			AssertEquals ("#E01", (SqlString)"6464.646400", SqlDecimal.AdjustScale (Test1, 2, false).ToSqlString ());
-			AssertEquals ("#E02", (SqlString)"6464.65", SqlDecimal.AdjustScale (Test1, -2, true).ToSqlString ());
-			AssertEquals ("#E03", (SqlString)"6464.64", SqlDecimal.AdjustScale (Test1, -2, false).ToSqlString ());
-			AssertEquals ("#E01", (SqlString)"10000.000000000000", SqlDecimal.AdjustScale (Test2, 10, false).ToSqlString ());
+			AssertEquals ("#E01", "6464.646400", SqlDecimal.AdjustScale (Test1, 2, false).Value.ToString ());
+			AssertEquals ("#E02", "6464.65", SqlDecimal.AdjustScale (Test1, -2, true).Value.ToString ());
+			AssertEquals ("#E03", "6464.64", SqlDecimal.AdjustScale (Test1, -2, false).Value.ToString ());
+			AssertEquals ("#E01", "10000.000000000000", SqlDecimal.AdjustScale (Test2, 10, false).Value.ToString ());
 		}
 		
 		[Test]
@@ -329,11 +326,21 @@ namespace MonoTests.System.Data.SqlTypes
                          try {
                                 SqlDecimal test = SqlDecimal.Parse ("9e300");
                                 Fail ("#M05");
-                        } catch (Exception e) {
-                                AssertEquals ("#M06", typeof (FormatException), e.GetType ());
+                        } catch (FormatException) {
                         }
 
                         AssertEquals("#M07", 150m, SqlDecimal.Parse ("150").Value);
+
+			// decimal.Parse() does not pass this string.
+			string max  = "99999999999999999999999999999999999999";
+			SqlDecimal dx = SqlDecimal.Parse (max);
+			AssertEquals ("#M08", max, dx.ToString ());
+
+			try {
+				dx = SqlDecimal.Parse (max + ".0");
+				Fail ("#M09");
+			} catch (FormatException) {
+			}
                 }
 
 		[Test]
@@ -377,9 +384,11 @@ namespace MonoTests.System.Data.SqlTypes
                         }        
 
                         // ToSqlInt32 () 
-                        // FIXME: 6464.6464 --> 64646464 ??? with windows
-                        AssertEquals ("#N13a", (int)64646464, Test1.ToSqlInt32 ().Value);
-			AssertEquals ("#N13b", (int)1212, new SqlDecimal(12.12m).ToSqlInt32 ().Value);
+                        // LAMESPEC: 6464.6464 --> 64646464 ??? with windows
+			// MS.NET seems to return the first 32 bit integer (i.e. 
+			// Data [0]) but we don't have to follow such stupidity.
+//			AssertEquals ("#N13a", (int)64646464, Test1.ToSqlInt32 ().Value);
+//			AssertEquals ("#N13b", (int)1212, new SqlDecimal(12.12m).ToSqlInt32 ().Value);
                 	
                         try {
                                 SqlInt32 test = SqlDecimal.MaxValue.ToSqlInt32 ().Value;
@@ -610,6 +619,20 @@ namespace MonoTests.System.Data.SqlTypes
                         SqlMoney TestMoney64 = new SqlMoney(64);
                         AssertEquals ("#AA01", 64.0000M, ((SqlDecimal)TestMoney64).Value);
                 }
+
+		[Test]
+		public void ToStringTest ()
+		{
+			AssertEquals ("Null", SqlDecimal.Null.ToString ());
+			AssertEquals ("-99999999999999999999999999999999999999", SqlDecimal.MinValue.ToString ());
+			AssertEquals ("99999999999999999999999999999999999999", SqlDecimal.MaxValue.ToString ());
+		}
+
+		[Test]
+		public void Value ()
+		{
+			decimal d = decimal.Parse ("9999999999999999999999999999");
+		}
         }
 }
 

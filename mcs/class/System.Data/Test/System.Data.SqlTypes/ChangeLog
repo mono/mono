@@ -1,3 +1,12 @@
+2004-05-18  Atsushi Enomoto <atsushi@ximian.com>
+
+	* SqlDecimalTest.cs :
+	  Don't catch all kind of exception. That hides the exact error info.
+	  Don't use ToSqlString() in AdjustScale() test (to make which is
+	  wrong).
+	  MS.NET's ToSqlInt32() is buggy; no worth following the behavior.
+	  Added test for parsing "999999..." (SqlDecimal.MaxValue).
+
 2004-04-12  Atsushi Enomoto <atsushi@ximian.com>
 
 	* SqlDateTimeTest.cs : ToStringTest() is locale dependent.
