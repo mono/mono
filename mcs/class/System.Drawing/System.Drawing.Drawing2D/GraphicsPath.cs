@@ -1,5 +1,13 @@
+//
+// System.Drawing.Drawing2D.GraphicsPath.cs
+//
+// Author:
+//   Dennis Hayes (dennish@Raytek.com)
+//
+// (C) 2002 Ximian, Inc
+//
 using System;
-namespace System.Drawing2d
+namespace System.Drawing.Drawing2D
 {
 	/// <summary>
 	/// Summary description for GraphicsPath.

@@ -1,5 +1,5 @@
 //
-// System.Drawing.HatchStyle.cs
+// System.Drawing.Drawing2D.HatchStyle.cs
 //
 // Author:
 //   Stefan Maierhofer <sm@cg.tuwien.ac.at>
@@ -10,7 +10,7 @@
 
 using System;
 
-namespace System.Drawing.Drawing2d {
+namespace System.Drawing.Drawing2D {
 	/// <summary>
 	/// Summary description for HatchStyle.
 	/// </summary>
