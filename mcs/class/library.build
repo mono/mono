@@ -26,6 +26,7 @@
 		<nant basedir="Mono.Data.SqliteClient" target="build" buildfile="Mono.Data.SqliteClient/Mono.Data.SqliteClient.build"/>	
 		<nant basedir="Mono.Data.SybaseClient" target="build" buildfile="Mono.Data.SybaseClient/Mono.Data.SybaseClient.build"/>	
 		<nant basedir="Mono.Data.TdsClient" target="build" buildfile="Mono.Data.TdsClient/Mono.Data.TdsClient.build"/>
+		<nant basedir="Mono.Data.DB2Client" target="build" buildfile="Mono.Data.DB2Client/Mono.Data.DB2Client.build"/>
 		<nant basedir="Mono.Directory.LDAP" target="build" buildfile="Mono.Directory.LDAP/Mono.Directory.LDAP.build"/> 
 		<nant basedir="Mono.GetOptions" target="build" buildfile="Mono.GetOptions/Mono.GetOptions.build"/>
 		<nant basedir="Mono.PEToolkit" target="build" buildfile="Mono.PEToolkit/PEToolkit.build"/>
@@ -77,6 +78,7 @@
 		<nant basedir="Mono.Data.SqliteClient" target="clean"/>
 		<nant basedir="Mono.Data.SybaseClient" target="clean"/>
 		<nant basedir="Mono.Data.TdsClient" target="clean"/>
+		<nant basedir="Mono.Data.DB2Client" target="clean"/>
 		<nant basedir="System.Web.Services" target="clean"/>
 		<nant basedir="Mono.GetOptions" target="clean"/>
 		<nant basedir="Microsoft.VisualBasic" target="clean"/>
