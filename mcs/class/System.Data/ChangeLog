@@ -1,3 +1,17 @@
+2002-05-30  Daniel Morgan <danmorg@sc.rr.com>
+
+	* System.Data.SqlClient/SqlConnection.cs: modifed -
+	start to implement the interfaces properly and
+	properly doing a Close(), Dispose(), and 
+	releasing resources
+	
+	* Test/SqlSharpCli.cs: modified -
+	add support for MySQL in Mono.Data.MySql
+	and OleDb support in System.Data.OleDb.  However,
+	the OleDb support is commented right now.
+	When the program starts up, a shorter help menu should
+	display the most important commands: help and quit
+
 2002-05-28  Rodrigo Moya <rodrigo@ximian.com>
 
 	* System.Data.build: exclude System.Data.OleDb files.

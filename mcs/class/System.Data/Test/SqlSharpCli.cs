@@ -14,10 +14,13 @@
 //                    visit http://www.go-mono.com/
 //
 // To build SqlSharpCli.cs:
-// $ mcs SqlSharpCli.cs -r System.Data.dll
+// $ mcs SqlSharpCli.cs -r System.Data.dll -r Mono.Data.MySql.dll
 //
-// To run:
+// To run with mono:
 // $ mono SqlSharpCli.exe
+//
+// To run with mint:
+// $ mint SqlSharpCli.exe
 //
 // To run batch commands and get the output, do something like:
 // $ cat commands.txt | mono SqlSharpCli.exe > results.txt
@@ -28,6 +31,7 @@
 // (C)Copyright 2002 Daniel Morgan
 //
 
+using Mono.Data.MySql;
 using System;
 using System.Data;
 using System.Data.Common;
@@ -235,7 +239,13 @@ namespace Mono.Data.SqlSharp {
 			IDataReader reader = null;
 
 			// create a Command object based on the provider
-			switch(provider) {
+			switch(provider) {	
+			//case "OLEDB":
+			//	cmd = new OleDbCommand();
+			//	break;
+			case "MYSQL":
+				cmd = new MySqlCommand();
+				break;
 			case "POSTGRESCLIENT":
 				cmd = new SqlCommand();
 				break;
@@ -269,13 +279,30 @@ namespace Mono.Data.SqlSharp {
 			}
 		}
 
+		// like ShowHelp - but only show at the beginning
+		// only the most important commands are shown
+		// like help and quit
+		public void StartupHelp() {
+			Console.WriteLine(@"Type:  \Q to quit");
+			Console.WriteLine(@"       \ConnectionString to set the ConnectionString");
+			Console.WriteLine(@"       \Provider to set the Provider:");
+			Console.WriteLine(@"                 {OleDb,SqlClient,MySql,Odbc,");
+			Console.WriteLine(@"                  OracleClient,PostgresClient}");
+			Console.WriteLine(@"       \Open to open the connection");
+			Console.WriteLine(@"       \Close to close the connection");
+			Console.WriteLine(@"       \Execute to execute SQL command(s)/queries(s)");
+			Console.WriteLine(@"       \h to show this help.");
+			Console.WriteLine(@"       \defaults to show default variables.");
+			Console.WriteLine();
+		}
+
 		// ShowHelp - show the help - command a user can enter
 		public void ShowHelp() {
 			Console.WriteLine("");
 			Console.WriteLine(@"Type:  \Q to quit");
 			Console.WriteLine(@"       \ConnectionString to set the ConnectionString");
 			Console.WriteLine(@"       \Provider to set the Provider:");
-			Console.WriteLine(@"                 {OleDb,SqlClient,");
+			Console.WriteLine(@"                 {OleDb,SqlClient,MySql,Odbc,");
 			Console.WriteLine(@"                  OracleClient,PostgresClient}");
 			Console.WriteLine(@"       \Open to open the connection");
 			Console.WriteLine(@"       \Close to close the connection");
@@ -283,6 +310,7 @@ namespace Mono.Data.SqlSharp {
 			Console.WriteLine(@"       \f FILENAME to read a batch of commands from");
 			Console.WriteLine(@"       \o FILENAME to read a batch of commands from");
 			Console.WriteLine(@"       \h to show this help.");
+			Console.WriteLine(@"       \defaults to show default variables.");
 			Console.WriteLine(@"       \s {TRUE, FALSE} to silent messages.");
 			Console.WriteLine();
 		}
@@ -303,11 +331,17 @@ namespace Mono.Data.SqlSharp {
 			Console.WriteLine("Attempt to Open...");
 
 			switch(provider) {
+			//case "OLEDB":
+			//	conn = new OleDbConnection();
+			//	break;
+			case "MYSQL":
+				conn = new MySqlConnection();
+				break;
 			case "POSTGRESCLIENT":
 				conn = new SqlConnection();
 				break;
 			default:
-				Console.WriteLine("Error: Currently, PostgreSQL is the only provider supported, and it through SqlClient.");
+				Console.WriteLine("Error: Bad argument or provider not supported.");
 				break;
 			}
 
@@ -344,14 +378,17 @@ namespace Mono.Data.SqlSharp {
 			if(parms.Length == 2) {
 				string parm = parms[1].ToUpper();
 				switch(parm) {
-				case "OLEDB":
 				case "ORACLECLIENT":
+				case "ODBC":
+				case "GDA":
 					Console.WriteLine("Error: Provider not currently supported.");
 					break;
 				case "SQLCLIENT":
 					provider = "POSTGRESCLIENT";
 					Console.WriteLine("Warning: Currently, the SqlClient provider is the PostgreSQL provider.");
 					break;
+				//case "OLEDB":
+				case "MYSQL":
 				case "POSTGRESCLIENT":
 					provider = parm;
 					break;
@@ -479,6 +516,9 @@ namespace Mono.Data.SqlSharp {
 				// Help
 				ShowHelp();
 				break;
+			case "\\DEFAULTS":
+				ShowDefaults();
+				break;
 			case "\\Q": 
 			case "\\QUIT":
 				// Quit
@@ -531,7 +571,7 @@ namespace Mono.Data.SqlSharp {
 				Console.WriteLine("Welcome to SQL#. The interactive SQL command-line client ");
 				Console.WriteLine("for Mono.Data.  See http://www.go-mono.com/ for more details.\n");
 						
-				ShowHelp();
+				StartupHelp();
 				ShowDefaults();
 			}
 			

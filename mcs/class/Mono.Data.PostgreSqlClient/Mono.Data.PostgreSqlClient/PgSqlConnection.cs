@@ -35,10 +35,8 @@ namespace System.Data.SqlClient {
 	/// <summary>
 	/// Represents an open connection to a SQL data source
 	/// </summary>
-	//public sealed class SqlConnection : Component, IDbConnection,
-	//	ICloneable
-
-	public sealed class SqlConnection : IDbConnection, IDisposable
+	public sealed class SqlConnection : Component, IDbConnection,
+		ICloneable	
 	{
 		// FIXME: Need to implement class Component, 
 		// and interfaces: ICloneable and IDisposable	
@@ -95,6 +93,8 @@ namespace System.Data.SqlClient {
 		
 		private string versionString = "Unknown";
 
+		private bool disposed = false;
+
 		#endregion // Fields
 
 		#region Constructors
@@ -114,21 +114,27 @@ namespace System.Data.SqlClient {
 
 		#region Destructors
 
-		[MonoTODO]
-		public void Dispose () {	
-			// FIXME: release resources properly
-			Close ();
-			// Dispose (true);
+		protected override void Dispose(bool disposing) {
+			if(!this.disposed)
+				try {
+					if(disposing) {
+						// release any managed resources
+					}
+					// release any unmanaged resources
+					// close any handles
+										
+					this.disposed = true;
+				}
+				finally {
+					base.Dispose(disposing);
+				}
 		}
 	
-		// aka Finalize
+		// aka Finalize()
 		// [ClassInterface(ClassInterfaceType.AutoDual)]
 		[MonoTODO]
 		~SqlConnection() {
-			// FIXME: this class need 
-			//        a destructor to release resources
-			//        Also, take a look at Dispose
-			// Dispose (false);
+			Dispose (false);
 		}
 		
 		#endregion // Destructors
@@ -169,7 +175,11 @@ namespace System.Data.SqlClient {
 		public void ChangeDatabase (string databaseName) {
 			throw new NotImplementedException ();
 		}
-				
+
+		object ICloneable.Clone() {
+			throw new NotImplementedException ();
+		}
+		
 		[MonoTODO]
 		public void Close () {
 			if(dataReaderOpen == true) {
@@ -217,6 +227,7 @@ namespace System.Data.SqlClient {
 			connStatus = PostgresLibrary.PQstatus (pgConn);
 			if(connStatus == ConnStatusType.CONNECTION_OK) {
 				// Successfully Connected
+				disposed = false;
 				SetupConnection();
 			}
 			else {
@@ -231,20 +242,6 @@ namespace System.Data.SqlClient {
 		}
 
 		#endregion // Public Methods
-
-		#region Protected Methods
-
-		// FIXME: protected override void Dispose overrides Component
-		//        however, including Component causes other problems
-		/*
-		[MonoTODO]
-		protected override void Dispose (bool disposing)
-		{
-			throw new NotImplementedException ();
-		}
-		*/
-
-		#endregion
 
 		#region Internal Methods
 
@@ -283,6 +280,7 @@ namespace System.Data.SqlClient {
 		#region Private Methods
 
 		private void SetupConnection() {
+			
 			conState = ConnectionState.Open;
 
 			// FIXME: load types into hashtable
@@ -331,10 +329,7 @@ namespace System.Data.SqlClient {
 			//
 			// For OLE DB, you would have the additional 
 			// "provider=postgresql"
-			// OleDbConnection you would be using libgda, maybe
-			// it would be 
-			// "provider=OAFIID:GNOME_Database_Postgres_Provider"
-			// instead.
+			// OleDbConnection you would be using libgda
 			//
 			// Also, parse the connection string into properties
 
@@ -514,15 +509,6 @@ namespace System.Data.SqlClient {
 			}
 		}
 
-		/*
-		 * FIXME: this is here because of Component?
-		[MonoTODO]
-		protected bool DesignMode {
-			get { 
-				throw new NotImplementedException (); 
-			}
-		}
-		*/
 		public int PacketSize {
 			get { 
 				throw new NotImplementedException ();
