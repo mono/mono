@@ -1,9 +1,14 @@
+2004-03-31  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* BinaryReader.cs: don't modify the underlying stream in Peek(). Fixes
+	bug #51741. Patch by Nick Vaughan.
+
 2004-03-25  Lluis Sanchez Gual  <lluis@ximian.com>
 
-	* FileStream.cs: ReadByte(): when buffering is disabled, read the byte with
-	  a direct call to ReadData. In InitBuffer(), if buffering is disabled,
-	  create a buffer of one byte, to be used in ReadByte. 
-	  This fixes bug #52361.
+	* FileStream.cs: ReadByte(): when buffering is disabled, read the byte
+	with a direct call to ReadData. In InitBuffer(), if buffering is
+	disabled, create a buffer of one byte, to be used in ReadByte.  This
+	fixes bug #52361.
 
 2004-03-25  Lluis Sanchez Gual  <lluis@ximian.com>
 
@@ -15,7 +20,7 @@
 	* File.cs: In Move, throw IOException instead of ArgumentException if 
 	  destination is a directory.
 	* MonoIO.cs: In ExistsDirectory, return ERROR_PATH_NOT_FOUND instead of
-	  ERROR_FILE_NOT_FOUND, since we are looking for a directory, not a file.
+	ERROR_FILE_NOT_FOUND, since we are looking for a directory, not a file.
 	
 2004-03-15  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
 

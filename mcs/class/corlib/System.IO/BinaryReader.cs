@@ -17,9 +17,6 @@ namespace System.IO {
 		int m_encoding_max_byte;
 
 		byte[] m_buffer;
-		byte[] m_peekBuffer;
-		int m_peekIndex = 0;
-		int m_peekLimit = 0;
 		
 		private bool m_disposed = false;
 
@@ -75,9 +72,6 @@ namespace System.IO {
 			/* Cope with partial reads */
 			int pos=0;
 
-			while (m_peekIndex < m_peekLimit)
-				m_buffer[pos++] = m_peekBuffer[m_peekIndex++];
-
 			while(pos<bytes) {
 				int n=m_stream.Read(m_buffer, pos, bytes-pos);
 				if(n==0) {
@@ -97,21 +91,28 @@ namespace System.IO {
 				throw new IOException("Stream is invalid");
 			}
 
-			char[] result = new char[1];
+			if ( !m_stream.CanSeek )
+			{
+				return -1;
+			}
+
+            char[] result = new char[1];
 			byte[] bytes;
 			int bcount;
 
 			int ccount = ReadCharBytes (result, 0, 1, out bytes, out bcount);
 
-			if (m_peekBuffer == null || m_peekBuffer.Length < bcount)
-				m_peekBuffer = new byte[bcount];
+			// Reposition the stream
+			m_stream.Position -= bcount;
 
-			Array.Copy (bytes, m_peekBuffer, bcount);
-			m_peekIndex = 0;
-			m_peekLimit = bcount;
-
-			if (ccount == 0) return -1;
-			else return result[0];
+			// If we read 0 characters then return -1
+			if (ccount == 0) 
+			{
+				return -1;
+			}
+			
+			// Return the single character we read
+			return result[0];
 		}
 
 		public virtual int Read() {
@@ -148,16 +149,9 @@ namespace System.IO {
 				throw new ArgumentOutOfRangeException("count is less than 0");
 			}
 
-			int fromPeek = 0;
-			while (m_peekIndex < m_peekLimit) {
-				buffer[index++] = m_peekBuffer[m_peekIndex++];
-				count--; 
-				fromPeek++;
-			}
-
 			int bytes_read=m_stream.Read(buffer, index, count);
 
-			return(bytes_read + fromPeek);
+			return(bytes_read);
 		}
 
 		public virtual int Read(char[] buffer, int index, int count) {
@@ -193,11 +187,14 @@ namespace System.IO {
 			int chars_read=0;
 			bytes_read=0;
 			
-			while(chars_read < count) {
+			while(chars_read < count) 
+			{
 				CheckBuffer(bytes_read + 1);
 
-				int read_byte = (m_peekIndex < m_peekLimit) ? m_peekBuffer[m_peekIndex++] : m_stream.ReadByte();
-				if(read_byte==-1) {
+				int read_byte = m_stream.ReadByte();
+
+				if(read_byte==-1) 
+				{
 					/* EOF */
 					bytes = m_buffer;
 					return(chars_read);
@@ -265,9 +262,6 @@ namespace System.IO {
 			byte[] buf = new byte[count];
 			int pos=0;
 			
-			while (m_peekIndex < m_peekLimit)
-				buf[pos++] = m_peekBuffer[m_peekIndex++];
-
 			while(pos < count) 
 			{
 				int n=m_stream.Read(buf, pos, count-pos);
