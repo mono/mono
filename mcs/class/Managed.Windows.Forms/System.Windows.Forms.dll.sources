@@ -101,4 +101,15 @@ System.Windows.Forms/TickStyle.cs
 System.Windows.Forms/ImageList.cs
 System.Windows.Forms/ImageListStreamer.cs
 System.Windows.Forms/ColorDepth.cs
+System.Windows.Forms/LinkState.cs
+System.Windows.Forms/LinkBehavior.cs
+System.Windows.Forms/LinkClickedEventArgs.cs
+System.Windows.Forms/LinkClickedEventHandler.cs
+System.Windows.Forms/LinkLabelLinkClickedEventArgs.cs
+System.Windows.Forms/LinkLabelLinkClickedEventHandler.cs
+System.Windows.Forms/LinkArea.cs
+System.Windows.Forms/LinkLabel.cs
+System.Windows.Forms/IButtonControl.cs
+System.Windows.Forms/DialogResult.cs
+
 

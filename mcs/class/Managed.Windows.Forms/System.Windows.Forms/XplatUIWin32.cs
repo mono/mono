@@ -23,9 +23,12 @@
 //	Peter Bartok	pbartok@novell.com
 //
 //
-// $Revision: 1.1 $
+// $Revision: 1.2 $
 // $Modtime: $
 // $Log: XplatUIWin32.cs,v $
+// Revision 1.2  2004/07/21 16:19:17  jordi
+// LinkLabel control implementation
+//
 // Revision 1.1  2004/07/09 05:21:25  pbartok
 // - Initial check-in
 //
@@ -237,7 +240,7 @@ namespace System.Windows.Forms {
 
 		internal override Font Font {
 			get {
-				return new Font("Arial", 12);
+				return new Font (FontFamily.GenericSansSerif, 8.25f);
 			}
 		}
 

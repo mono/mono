@@ -77,7 +77,7 @@ namespace System.Windows.Forms
 			if (Enabled)
 				dc.DrawString (text, font, br_fore_color, area, string_format);
 			else
-				ControlPaint.DrawStringDisabled (dc, text, font, fore_color, area, string_format);		
+				ControlPaint.DrawStringDisabled (dc, text, font, fore_color, area, string_format);
 
 		}
 	}
@@ -89,21 +89,21 @@ namespace System.Windows.Forms
     		private Image background_image;
     		private BorderStyle border_style;
     		private bool autoSize;
-    		private Image image;
-    		private ContentAlignment image_align;
-		private StringFormat string_format;    		
+    		private Image image;    		
     		private bool render_transparent;
     		private FlatStyle flat_style;
     		private int preferred_height;
     		private int preferred_width;
-    		private bool tab_stop;
-    		private ContentAlignment text_align;
+    		private bool tab_stop;    		
     		private bool use_mnemonic;
     		private int image_index = -1;
     		private ImageList image_list;
-    		private Bitmap bmp_mem;
-		private Graphics dc_mem;
-		private Rectangle paint_area;
+    		protected Bitmap bmp_mem;
+		protected Graphics dc_mem;
+		protected Rectangle paint_area;
+		protected ContentAlignment image_align;
+		protected StringFormat string_format;    		
+    		protected ContentAlignment text_align;
 
     		#region Events
     		public event EventHandler autosizechanged_event;
@@ -455,7 +455,7 @@ namespace System.Windows.Forms
     		 	Console.WriteLine ("CalcAutoSize () after " + Size);
     		}
 
-    		private void draw ()
+    		protected virtual void draw ()
 		{
 			ThemePainter_Label.DrawLabel (dc_mem, paint_area, BorderStyle, Text, 
 				ForeColor, BackColor, Font, string_format, Enabled);
