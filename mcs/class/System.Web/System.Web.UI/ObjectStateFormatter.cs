@@ -7,6 +7,8 @@
 // (C) 2003 Ben Maurer
 //
 
+#define TRACE
+
 using System.Collections;
 using System.Drawing;
 using System.IO;
@@ -16,6 +18,7 @@ using System.Runtime.Serialization;
 using System.Text;
 using System.Web.UI.WebControls;
 using System.Web.Util;
+using System.Diagnostics;
 
 namespace System.Web.UI {
 	#if NET_1_2
@@ -50,6 +53,11 @@ namespace System.Web.UI {
 			
 			MemoryStream ms = new MemoryStream ();
 			Serialize (ms, stateGraph);
+			
+			#if TRACE
+				ms.WriteTo (File.OpenWrite (Path.GetTempFileName ()));
+			#endif
+			
 			return Convert.ToBase64String (ms.GetBuffer (), 0, (int) ms.Length);
 		}
 		
@@ -154,7 +162,7 @@ namespace System.Web.UI {
 			static SingleRankArrayFormatter singleRankArrayFormatter;
 			
 			static ObjectFormatter ()
-			{
+			{			
 				new StringFormatter ().Register ();
 				new Int64Formatter ().Register ();
 				new Int32Formatter ().Register ();
@@ -224,10 +232,18 @@ namespace System.Web.UI {
 			
 			public static void WriteObject (BinaryWriter w, object o, WriterContext ctx)
 			{
+				#if TRACE
+				if (o != null) {
+					Trace.WriteLine (String.Format ("Writing {0} (type: {1})", o, o.GetType ()));
+					Trace.Indent ();
+				} else {
+					Trace.WriteLine ("Writing null");
+				}
 				long pos = w.BaseStream.Position;
+				#endif
 				
 				if (o == null) {
-					w.Write (0);
+					w.Write ((byte) 0);
 					return;
 				}
 				
@@ -248,8 +264,10 @@ namespace System.Web.UI {
 				}
 
 				fmt.Write (w, o, ctx);
-				
-				Console.WriteLine ("{0} : {1} bytes", o.GetType (), w.BaseStream.Position - pos);
+				#if TRACE
+				Trace.Unindent ();
+				Trace.WriteLine (String.Format ("Wrote {0} (type: {1}) {2} bytes", o, o.GetType (), w.BaseStream.Position - pos));
+				#endif
 			}
 			
 			public static object ReadObject (BinaryReader r, ReaderContext ctx)
@@ -358,7 +376,10 @@ namespace System.Web.UI {
 			
 			protected override object Read (byte token, BinaryReader r, ReaderContext ctx)
 			{
-				return r.ReadInt32 ();
+				if (token == PrimaryId)
+					return r.ReadInt32 ();
+				else
+					return (int) r.ReadByte ();
 			}
 			protected override Type Type {
 				get { return typeof (int); }

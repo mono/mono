@@ -1,3 +1,8 @@
+2003-11-22 Ben Maurer  <bmaurer@users.sourceforge.net>
+
+	* ObjectStateFormatter.cs: Fix bug when reading small ints.
+	Add some tracing so we can see what is going on.
+
 2003-11-21  Jackson Harper <jackson@ximian.com>
 
 	* Page.cs: Set vary by params when cache location is Server.
