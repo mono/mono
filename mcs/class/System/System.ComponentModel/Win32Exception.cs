@@ -120,7 +120,7 @@ namespace System.ComponentModel
 			string message=(string)w32_errors[error_code];
 			
 			if(message==null) {
-				return(Locale.GetText("Some sort of w32 error occurred"));
+				return(Locale.GetText("Some sort of w32 error occurred: ") + error_code.ToString());
 			} else {
 				return(message);
 			}

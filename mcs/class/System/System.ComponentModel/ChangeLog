@@ -1,3 +1,8 @@
+2003-03-20  Dick Porter  <dick@ximian.com>
+
+	* Win32Exception.cs: Made the fallback error more useful by
+	reporting the error number
+
 2003-03-14  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* MarshalByValueComponent.cs: removed a monotodo.
