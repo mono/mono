@@ -1,3 +1,7 @@
+2003-08-26 Ben Maurer  <bmaurer@users.sourceforge.net>
+
+	* Enum.cs: Remove [MonoTODO]'s that had been completed.
+
 2003-08-22  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* String.cs: fixed bug #47802.

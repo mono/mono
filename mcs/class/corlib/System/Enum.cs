@@ -362,7 +362,6 @@ namespace System {
 			return ToString (format, null);
 		}
 
-		[MonoTODO]
 		public string ToString (String format, IFormatProvider provider)
 		{
 			// provider is not used for Enums
@@ -620,7 +619,6 @@ namespace System {
 			return retVal;
 		}
 
-		[MonoTODO]
 		public static string Format (Type enumType, object value, string format)
 		{
 			if (null == enumType)
