@@ -1,3 +1,8 @@
+2003-01-26  Daniel Morgan <danmorg@sc.rr.com>
+
+	* SqlSharpCli.cs: fixes contributed by
+	Francisco Figueiredo Jr. fxjrlists a-t yahoo.com.br
+
 2003-01-20  Daniel Morgan <danmorg@sc.rr.com>
 
 	* README: updated notes on connection strings and providers

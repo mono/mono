@@ -437,10 +437,20 @@ namespace Mono.Data.SqlSharp {
 				row++;
 				Console.WriteLine("Row: " + row);
 				for(int col = 0; col < reader.FieldCount; col++) {
-					Console.WriteLine("  Field: " + col);
-					//string dname = reader.GetName(col);
-					//Console.WriteLine("      Name: " + dname);
-					string dvalue = reader.GetValue(col).ToString();
+					Console.WriteLine("  Field: " + col + 1);
+					
+					string dname = (string) reader.GetName(col);
+					if(dname == null)
+						dname = "?column?";
+					if(dname.Equals(String.Empty))
+						dname = "?column?";
+					Console.WriteLine("      Name: " + dname);
+
+					string dvalue = "";
+					if (reader.IsDBNull(col))
+						dvalue = "(null)";
+					else
+						dvalue = reader.GetValue(col).ToString();
 					Console.WriteLine("      Value: " + dvalue);
 				}
 			}
@@ -969,7 +979,7 @@ namespace Mono.Data.SqlSharp {
 								     "Npgsql.NpgsqlConnection"};
 					SetupExternalProvider(extp);
 					UseParameters = false;
-					UseSimpleReader = true;
+					UseSimpleReader = false;
 					break;
 				default:
 					Console.WriteLine("Error: " + "Bad argument or Provider not supported.");
