@@ -1,0 +1,8 @@
+2003-11-25  Tim Coleman <tim@timcoleman.com>
+	* Makefile:
+	* System.Data.Mapping/*.cs:
+	* System.Data.SqlXml/*.cs:
+	* System.Data.SqlXml.dll.sources:
+	* System.Xml.Query/*.cs:
+	* TODOAttribute.cs:
+		Create initial stubs for System.Data.SqlXml
