@@ -420,7 +420,7 @@ namespace System
 
 		public static DateTime FromFileTime (long fileTime) 
 		{
-			return new DateTime (w32file_epoch + fileTime);
+			return new DateTime (true, w32file_epoch + fileTime);
 		}
 
 		// TODO: Implement me.

@@ -1,3 +1,8 @@
+2003-01-28  Zoltan Varga  <vargaz@freemail.hu>
+
+	* DateTime.cs: fix FromFileTime so the time returned by 
+	File::GetLastModificationTime etc. is in the correct timezone.
+
 2003-01-28  Patrik Torstensson
 	* Exception.cs: reverted formating/endline changes (sorry guys)
 
