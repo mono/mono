@@ -97,22 +97,26 @@ namespace System.Xml
 			omitXmlDeclaration = false;
 		}
 
+		// It affects only on XmlTextWriter
 		public bool CheckCharacters {
 			get { return checkCharacters; }
 			set { checkCharacters = value; }
 		}
 
+		// It affects only on XmlTextWriter
 		public bool CloseOutput {
 			get { return closeOutput; }
 			set { closeOutput = value; }
 		}
 
+		// It affects only on XmlTextWriter????
 		public ConformanceLevel ConformanceLevel {
 			get { return conformance; }
 			set { conformance = value; }
 		}
 
 		[MonoTODO]
+		[Obsolete]
 		public bool EncodeXmlBinary {
 			get { return encodeXmlBinary; }
 			set { encodeXmlBinary = value; }
@@ -124,31 +128,37 @@ namespace System.Xml
 			set { encoding = value; }
 		}
 
+		// It affects only on XmlTextWriter
 		public bool Indent {
 			get { return indent; }
 			set { indent = value; }
 		}
 
+		// It affects only on XmlTextWriter
 		public string IndentChars {
 			get { return indentChars; }
 			set { indentChars = value; }
 		}
 
+		// It affects only on XmlTextWriter
 		public string NewLineChars {
 			get { return newLineChars; }
 			set { newLineChars = value; }
 		}
 
+		// It affects only on XmlTextWriter
 		public bool NewLineOnAttributes {
 			get { return newLineOnAttributes; }
 			set { newLineOnAttributes = value; }
 		}
 
+		// It affects only on XmlTextWriter
 		public bool NormalizeNewLines {
 			get { return normalizeNewLines; }
 			set { normalizeNewLines = value; }
 		}
 
+		// It affects only on XmlTextWriter
 		public bool OmitXmlDeclaration {
 			get { return omitXmlDeclaration; }
 			set { omitXmlDeclaration = value; }

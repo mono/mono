@@ -1,3 +1,8 @@
+2004-08-03  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlWriter.cs : implemented settings-less Create().
+	* XmlWriterSettings.cs : added some comments.
+
 2004-07-29  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XmlWriter.cs : implemented WriteNode(XPathNavigator, bool) 

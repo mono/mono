@@ -101,13 +101,13 @@ namespace System.Xml
 		[MonoTODO]
 		public static XmlWriter Create (string file)
 		{
-			throw new NotImplementedException ();
+			return new XmlTextWriter (file, null);
 		}
 
 		[MonoTODO]
 		public static XmlWriter Create (TextWriter writer)
 		{
-			throw new NotImplementedException ();
+			return new XmlTextWriter (writer);
 		}
 
 		[MonoTODO]
