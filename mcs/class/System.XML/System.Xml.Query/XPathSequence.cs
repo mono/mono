@@ -1229,12 +1229,6 @@ namespace Mono.Xml.XPath2
 			return new FLWORIterator (this);
 		}
 
-#if false
-		protected override bool MoveNextCore ()
-		{
-			throw new NotImplementedException ();
-		}
-#else
 		protected override bool MoveNextCore ()
 		{
 			if (en == null)
@@ -1277,8 +1271,9 @@ namespace Mono.Xml.XPath2
 				ForSingleBody fsb = sb as ForSingleBody;
 				if (fsb != null) {
 					XPathSequence backup = contextSequence;
-					Context.ContextManager.PushCurrentSequence (sb.Expression.Evaluate (Context.CurrentSequence));
-					foreach (XPathItem forItem in Context.CurrentSequence) {
+					XPathSequence current = sb.Expression.Evaluate (Context.CurrentSequence);
+					Context.ContextManager.PushCurrentSequence (current);
+					foreach (XPathItem forItem in current) {
 						Context.PushVariable (fsb.PositionalVar, Context.CurrentSequence.Position);
 						Context.PushVariable (sb.VarName, forItem);
 						// recurse here (including following bindings)
@@ -1306,7 +1301,6 @@ EvaluateRemainingSingleItem (forLetClauses, singleBodies);
 					yield return (XPathItem) items.Current;
 			}
 		}
-#endif
 
 		public override XPathItem CurrentCore {
 			get { return (XPathItem) en.Current; }

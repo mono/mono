@@ -1923,7 +1923,7 @@ namespace Mono.Xml.XPath2
 #region CompileAndEvaluate
 		internal override ExprSingle CompileCore (XQueryASTCompiler compiler)
 		{
-			if (Expr.Count == 0)
+			if (Expr.Count == 1)
 				return Expr [0].Compile (compiler);
 			for (int i = 0; i < Expr.Count; i++)
 				Expr [i] = Expr [i].Compile (compiler);
