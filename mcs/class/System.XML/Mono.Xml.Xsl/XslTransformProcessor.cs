@@ -23,6 +23,8 @@ using QName = System.Xml.XmlQualifiedName;
 
 namespace Mono.Xml.Xsl {
 	public class XslTransformProcessor {
+		static char [] wsChars = new char [] {' ', '\t', '\n', '\r'};
+
 		CompiledStylesheet compiledStyle;
 		
 		XslStylesheet style;
@@ -34,6 +36,8 @@ namespace Mono.Xml.Xsl {
 		XsltArgumentList args;
 		XmlResolver resolver;
 		bool outputStylesheetXmlns;
+		bool insideCDataSectionElements;
+		string currentOutputUri;
 		
 		internal readonly XsltCompiledContext XPathContext;
 
@@ -53,6 +57,7 @@ namespace Mono.Xml.Xsl {
 			this.root = root;
 			this.resolver = resolver != null ? resolver : new XmlUrlResolver ();
 			this.outputStylesheetXmlns = true;
+			this.currentOutputUri = String.Empty;
 
 			XPathExpression exp = root.Compile (".");
 			PushNodeset (root.Select (exp, this.XPathContext));
@@ -124,6 +129,12 @@ namespace Mono.Xml.Xsl {
 		}
 		
 		public Hashtable Outputs { get { return compiledStyle.Outputs; }}
+
+		public XslOutput Output { get { return Outputs [currentOutputUri] as XslOutput; } }
+
+		public string CurrentOutputUri { get { return currentOutputUri; } }
+
+		public bool InsideCDataElement { get { return insideCDataSectionElements; } }
 		#endregion
 		
 		#region AVT StringBuilder
@@ -260,32 +271,19 @@ namespace Mono.Xml.Xsl {
 			currentTemplateStack.Pop ();
 		}
 
-		internal void TryStylesheetNamespaceOutput ()
+		internal void TryStylesheetNamespaceOutput (ArrayList excluded)
 		{
 			if (outputStylesheetXmlns) {
 				foreach (XmlQualifiedName qname in this.style.StylesheetNamespaces) {
-					string prefix = qname.Name;
-					if (style.ExcludeResultPrefixes != null) {
-						bool exclude = false;
-						foreach (XmlQualifiedName exc in style.ExcludeResultPrefixes)
-							if (exc.Name == "#default" && prefix == String.Empty || exc.Name == prefix) {
-								exclude = true;
-								break;
-							}
-						if (exclude)
-							continue;
-					}
-					if (style.ExtensionElementPrefixes != null) {
-						bool exclude = false;
-						foreach (XmlQualifiedName exc in style.ExtensionElementPrefixes)
-							if (exc.Name == "#default" && prefix == String.Empty || exc.Name == prefix) {
-								exclude = true;
-								break;
-							}
-						if (exclude)
-							continue;
-					}
-					Out.WriteNamespaceDecl (prefix, qname.Namespace);
+					string prefix = style.PrefixInEffect (qname.Name, excluded);
+					if (prefix == null)
+						continue;
+					else if (prefix == qname.Name)
+						Out.WriteNamespaceDecl (
+							prefix == "#default" ? String.Empty : prefix,
+							qname.Namespace);
+					else
+						Out.WriteNamespaceDecl (prefix, style.StyleDocument.GetNamespace (prefix));
 				}
 				outputStylesheetXmlns = false;
 			}
@@ -471,6 +469,26 @@ namespace Mono.Xml.Xsl {
 			return busyTable [o] == busyObject;
 		}
 		#endregion
-		
+
+		public bool PushCDataState (string name, string ns)
+		{
+			if (insideCDataSectionElements)
+				return false;
+			for (int i = 0; i < Output.CDataSectionElements.Length; i++) {
+				XmlQualifiedName qname = Output.CDataSectionElements [i];
+				if (qname.Name == name && qname.Namespace == ns) {
+					this.insideCDataSectionElements = true;
+					Out.InsideCDataSection = true;
+					return true;
+				}
+			}
+			return false;
+		}
+
+		public void PopCDataState ()
+		{
+			Out.InsideCDataSection = false;
+			this.insideCDataSectionElements = false;
+		}
 	}
 }

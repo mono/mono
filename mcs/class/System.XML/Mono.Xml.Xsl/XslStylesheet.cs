@@ -68,6 +68,10 @@ namespace Mono.Xml.Xsl {
 		string xpathDefaultNamespace = "";
 		XslDefaultValidation defaultValidation = XslDefaultValidation.Lax;
 
+		public string BaseUri {
+			get { return c.Input.BaseURI; }
+		}
+
 		public XmlQualifiedName [] ExtensionElementPrefixes {
 			get { return extensionElementPrefixes; }
 		}
@@ -98,6 +102,10 @@ namespace Mono.Xml.Xsl {
 
 		public MSXslScriptManager ScriptManager{
 			get { return msScripts; }
+		}
+
+		public XPathNavigator StyleDocument {
+			get { return c.Input; }
 		}
 
 		public XslTemplateTable Templates {
@@ -253,6 +261,41 @@ namespace Mono.Xml.Xsl {
 				spaceControls.Add (name, result);
 		}
 
+		public string PrefixInEffect (string prefix, ArrayList additionalExcluded)
+		{
+			if (additionalExcluded != null && additionalExcluded.Contains (prefix == String.Empty ? "#default" : prefix))
+				return null;
+			if (prefix == "#default")
+				prefix = String.Empty;
+
+			if (ExcludeResultPrefixes != null) {
+				bool exclude = false;
+				foreach (XmlQualifiedName exc in ExcludeResultPrefixes)
+					if (exc.Name == "#default" && prefix == String.Empty || exc.Name == prefix) {
+						exclude = true;
+						break;
+					}
+				if (exclude)
+					return null;
+			}
+
+			if (ExtensionElementPrefixes != null) {
+				bool exclude = false;
+				foreach (XmlQualifiedName exc in ExtensionElementPrefixes)
+					if (exc.Name == "#default" && prefix == String.Empty || exc.Name == prefix) {
+						exclude = true;
+						break;
+					}
+				if (exclude)
+					return null;
+			}
+
+			string alias = NamespaceAliases [prefix] as string;
+			if (alias != null)
+				return alias;
+
+			return prefix;
+		}
 	}
 
 	

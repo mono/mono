@@ -42,8 +42,7 @@ namespace Mono.Xml.Xsl
 		private NameTable _nt;
 		//Determines whether xsl:copy can output attribute-sets or not.
 		bool canProcessAttributes;
-		// FIXME: This is quick hack to eliminate XML declaration for HTML output.
-		bool htmlEmulation;
+		bool insideCData;
 
 		private GenericOutputter (Hashtable outputs)
 		{
@@ -60,7 +59,8 @@ namespace Mono.Xml.Xsl
 		public GenericOutputter (XmlWriter writer, Hashtable outputs) 
 			: this (outputs)
 		{
-			_emitter = new XmlWriterEmitter (writer);			
+			_emitter = new XmlWriterEmitter (writer);
+			_state = writer.WriteState;
 		}
 
 		public GenericOutputter (TextWriter writer, Hashtable outputs)
@@ -128,7 +128,7 @@ namespace Mono.Xml.Xsl
 		
 		public override void WriteStartDocument ()
 		{			
-			if (!_currentOutput.OmitXmlDeclaration && !htmlEmulation)
+			if (!_currentOutput.OmitXmlDeclaration)
 				_emitter.WriteStartDocument (_currentOutput.Standalone);
 			
 			_state = WriteState.Prolog;
@@ -218,6 +218,9 @@ namespace Mono.Xml.Xsl
 
 		public override void WriteNamespaceDecl (string prefix, string nsUri)
 		{
+			if (_nsManager.LookupNamespace (prefix) == nsUri)
+				return;
+
 			if (prefix == String.Empty) {
 				//Default namespace
 				if (_nsManager.DefaultNamespace != nsUri)
@@ -247,7 +250,10 @@ namespace Mono.Xml.Xsl
 		public override void WriteString (string text)
 		{
 			CheckState ();
-			_emitter.WriteString (text);
+			if (insideCData)
+				_emitter.WriteCDataSection (text);
+			else
+				_emitter.WriteString (text);
 		}
 
 		public override void WriteRaw (string data)
@@ -267,6 +273,11 @@ namespace Mono.Xml.Xsl
 		}
 
 		public override WriteState WriteState { get { return _state; } }
+
+		public override bool InsideCDataSection {
+			get { return insideCData; }
+			set { insideCData = value; }
+		}
 		#endregion
 	}
 }

@@ -80,6 +80,11 @@ namespace Mono.Xml.Xsl {
 			writer.WriteRaw (data);
 		}
 
+		public override void WriteCDataSection (string text)
+		{
+			writer.WriteCData (text);
+		}
+
 		public override void Done ()
 		{
 			writer.Flush ();

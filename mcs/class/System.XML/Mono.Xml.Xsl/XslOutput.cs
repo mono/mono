@@ -97,7 +97,7 @@ namespace Mono.Xml.Xsl
 			get { return doctypeSystem; }
 		}
 
-		public QName [] CdataSectionElements {
+		public QName [] CDataSectionElements {
 			get {
 				if (cdataSectionElements == null)
 					cdataSectionElements = cdSectsList.ToArray (typeof (QName)) as QName [];
@@ -138,11 +138,9 @@ namespace Mono.Xml.Xsl
 		{
 			string att;
 			
-			// cdata-section-elements
-		// FILL IN
-		//	att = nav.GetAttribute ("cdata-section-elements", "");
-		//	if (att != null)
-		//		cdSectsList.AddRange (XslNameUtil.ParseQNames (att, nav));
+			att = nav.GetAttribute ("cdata-section-elements", "");
+			if (att != String.Empty)
+				cdSectsList.AddRange (XslNameUtil.FromListString (att, nav));
 
 			att = nav.GetAttribute ("method", "");
 

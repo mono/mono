@@ -228,6 +228,8 @@ namespace Mono.Xml.Xsl
 
 		public override void WriteProcessingInstruction (string name, string text)
 		{
+			if ((text.IndexOf("?>") > 0))
+				throw new ArgumentException ("Processing instruction cannot contain \"?>\" as its value.");
 			writer.Write ("<?");
 			writer.Write (name);
 			if (text != null && text != String.Empty) {
@@ -302,6 +304,12 @@ namespace Mono.Xml.Xsl
 		public override void WriteRaw (string data)
 		{
 			writer.Write (data);
+		}
+
+		public override void WriteCDataSection (string text) {
+			writer.Write ("<![CDATA[");
+			writer.Write (text);
+			writer.Write ("]]>");
 		}
 
 		public override void Done ()

@@ -55,5 +55,7 @@ namespace Mono.Xml.Xsl {
 		}
 
 		public abstract WriteState WriteState { get; }
+
+		public abstract bool InsideCDataSection { get; set; }
 	}
 }

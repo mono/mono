@@ -63,6 +63,10 @@ namespace Mono.Xml.Xsl {
 			writer.Write (data);
 		}
 
+		public override void WriteCDataSection (string text) {
+			writer.Write (text);
+		}
+
 		public override void Done () {
 			//Do nothing
 		}

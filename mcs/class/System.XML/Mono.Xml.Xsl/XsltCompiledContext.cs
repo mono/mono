@@ -317,7 +317,7 @@ namespace Mono.Xml.Xsl.Functions {
 			Hashtable got = new Hashtable ();
 			
 			while (itr.MoveNext()) {
-				Uri uri = Resolve (itr.Current.Value, baseUri != null ? baseUri : itr.Current.BaseURI, xsltContext.Processor);
+				Uri uri = Resolve (itr.Current.Value, baseUri != null ? baseUri : /*itr.Current.BaseURI*/doc.BaseURI, xsltContext.Processor);
 				if (!got.ContainsKey (uri)) {
 					got.Add (uri, null);
 					if (uri.ToString () == "") {

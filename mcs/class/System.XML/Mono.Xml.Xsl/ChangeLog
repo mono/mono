@@ -1,3 +1,26 @@
+2003-11-24 Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
+
+	(in general: cdata-section-elements support, correct document() 
+	base uri handling, and so on)
+	* Compiler.cs : Use XmlSpace.Preserve to parse included stylesheet.
+	  And move to document element.  Added XslNameUtil.FromListString().
+	* Emitter.cs, HtmlEmitter.cs, TextEmitter.cs XmlWriterEmitter.cs :
+	  Added WriteCDataSection().
+	* Outputter.cs, GenericOutputter.cs, TextOutputter.cs :
+	  Added InsideCDataSection.
+	* GenericOutputter.cs :
+	  In .ctor(), WriteState should be succeeded from output XmlWriter.
+	  WriteNamespaceDecl() now drops declaration identical to existing one.
+	  Removed obsolete htmlEmulation.
+	* XslOutput.cs : Added CDataSectionElements support.
+	* XslStylesheet.cs : Added BaseUri, StyleDocument and PrefixInEffect().
+	* XslTransformProcessor.cs :
+	  Added Output and CurrentOutputUri. TryStylesheetNamespaceOutput()
+	  now considers xsl:exclude-element-prefixes on literal element.
+	  Added PushCDataState() and PopCDataState().
+	* XsltCompiledContext.cs : When base uri of document() target is empty,
+	  then it should use stylesheet's BaseURI, not that of current document.
+
 2003-11-21 Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
 
 	* Compiler.cs : Modified decimal-format comparison code.

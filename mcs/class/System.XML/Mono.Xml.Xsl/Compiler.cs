@@ -150,8 +150,12 @@ namespace Mono.Xml.Xsl {
 			using (Stream s = (Stream)res.GetEntity (absUri, null, typeof(Stream)))
 			{
 
-				XPathNavigator n = new XPathDocument (new XmlTextReader (absUri.ToString (), s)).CreateNavigator ();
+				XPathNavigator n = new XPathDocument (new XmlTextReader (absUri.ToString (), s), XmlSpace.Preserve).CreateNavigator ();
 				n.MoveToFirstChild ();
+				do {
+					if (n.NodeType == XPathNodeType.Element)
+						break;
+				} while (n.MoveToNext ());
 				PushInputDocument (n);
 			}
 		}
@@ -660,6 +664,26 @@ namespace Mono.Xml.Xsl {
 	
 	public class XslNameUtil
 	{
+		static char [] wsChars = new char [] {' ', '\t', '\n', '\r'};
+
+		public static QName [] FromListString (string names, XPathNavigator current)
+		{
+			string [] nameArray = names.Split (wsChars);
+			int idx = 0;
+			for (int i = 0; i < nameArray.Length; i++)
+				if (nameArray [i] != String.Empty)
+					idx++;
+
+			XmlQualifiedName [] qnames = new XmlQualifiedName [idx];
+
+			idx = 0;
+			for (int i = 0; i < nameArray.Length; i++)
+				if (nameArray [i] != String.Empty)
+					qnames [idx++] = FromString (nameArray [i], current);
+
+			return qnames;
+		}
+
 		public static QName FromString (string name, XPathNavigator current)
 		{
 			if (current.NodeType == XPathNodeType.Attribute)

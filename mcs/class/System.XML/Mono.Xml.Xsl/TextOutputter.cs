@@ -64,5 +64,7 @@ namespace Mono.Xml.Xsl {
 		}
 
 		public override WriteState WriteState { get { return WriteState.Start; } }
+
+		public override bool InsideCDataSection { get { return false; } set { } }
 	}
 }

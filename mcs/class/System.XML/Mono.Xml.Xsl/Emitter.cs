@@ -31,7 +31,8 @@ namespace Mono.Xml.Xsl {
 		public abstract void WriteComment (string text);		
 		public abstract void WriteProcessingInstruction (string name, string text);		
 		public abstract void WriteString (string text);
-		public abstract void WriteRaw (string data);		
+		public abstract void WriteCDataSection (string text);
+		public abstract void WriteRaw (string data);
 		public abstract void Done ();
 	}
 }
