@@ -1,6 +1,14 @@
+2003-05-22 Jackson Harper <jackson@latitudegeo.com>
+
+	* ILTables.cs: Comment out nan and inf keywords, these are not
+	referenced in the grammar. need to check if these keywords work on
+	MS ilasm.
+	* NumberHelper.cs: Parse numbers as Unsigned then cast to long
+	otherwise an overflow exception is thrown. (is this a classlib bug?)
+		
 2003-05-18 Jackson Harper <jackson@latitudegeo.com>
 
-	* ILTokenizer.cs: If toen.token does not create a keyword return
+	* ILTokenizer.cs: If token.token does not create a keyword return
 	the first token as an id, not a keyword ie (add.exe should return
 	"ID period ID" not "ADD period ID"
 		

@@ -178,7 +178,7 @@ namespace Mono.ILASM {
                         num = num_builder.ToString ();
 
                         try {
-                                long i = Int64.Parse (num, nstyles);
+                                long i = (long) UInt64.Parse (num, nstyles);
                                 if (i < Int32.MinValue || i > Int32.MaxValue) {
                                         result.token = Token.INT64;
                                         result.val = i;
@@ -187,11 +187,12 @@ namespace Mono.ILASM {
                                         result.val = (int) i;
                                 }
                         } catch {
+                                string tnum = num;
                                 reader.Unread (num.ToCharArray ());
                                 reader.RestoreLocation ();
                                 num = String.Empty;
                                 Reset ();
-                                throw new ILSyntaxError ("Bad hex number format! '" + num + "'");
+                                throw new ILSyntaxError ("Bad hex number format! '" + tnum + "'");
                         }
 
                         return num;
