@@ -1,3 +1,10 @@
+2004-01-12  Patrik Torstensson
+
+	* Environment.cs: Bump corlib version number due to new StringBuilder
+	
+	* String.cs: New internal method to support the new StringBuilder that
+	uses the string as a buffer (until ToString is called)
+
 2004-01-12  Zoltan Varga  <vargaz@freemail.hu>
 
 	* Environment.cs: Bump corlib version number for real this time.

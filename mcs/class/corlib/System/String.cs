@@ -2,7 +2,7 @@
 // System.String.cs
 //
 // Authors:
-//	  Patrik Torstensson (patrik.torstensson@labs2.com)
+//	 Patrik Torstensson
 //   Jeffrey Stedfast (fejj@ximian.com)
 //   Dan Lewis (dihlewis@yahoo.co.uk)
 //
@@ -18,8 +18,8 @@ using System.Runtime.CompilerServices;
 namespace System {
 	[Serializable]
 	public sealed class String : IConvertible, IComparable, ICloneable, IEnumerable {
-		[NonSerialized]
-		private int length;
+		[NonSerialized]	private int length;
+		[NonSerialized]	private char start_char;
 
 		private const int COMPARE_CASE = 0;
 		private const int COMPARE_INCASE = 1;
@@ -913,7 +913,8 @@ namespace System {
 						s3 = String.Empty;
 				}
 			}
-			
+
+			//return InternalConcat (s1, s2, s3);
 			String tmp = InternalAllocateStr(s1.length + s2.length + s3.length);
 
 			InternalStrcpy(tmp, 0, s1);
@@ -1209,7 +1210,31 @@ namespace System {
 			ptr = p;
 			return n;
 		}
-		
+
+		internal unsafe void InternalSetChar(int idx, char val) 
+		{
+			if ((uint) idx >= (uint) Length)
+				throw new ArgumentOutOfRangeException("idx");
+
+			fixed (char * pStr = &start_char) 
+			{
+				pStr [idx] = val;
+			}
+		}
+
+		internal unsafe void InternalSetLength(int newLength) 
+		{
+			if (newLength > length)
+				throw new ArgumentOutOfRangeException("newLength > length");
+			
+			length = newLength;
+			
+			// zero terminate, we can pass string objects directly via pinvoke
+			fixed (char * pStr = &start_char) {
+				pStr [length] = '\0';
+			}
+		}
+
 		[CLSCompliant(false), MethodImplAttribute(MethodImplOptions.InternalCall)]
 		unsafe public extern String(char *value);
 
@@ -1277,13 +1302,13 @@ namespace System {
 		private extern String InternalToUpper(CultureInfo culture);
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		private extern static String InternalAllocateStr(int length);
+		internal extern static String InternalAllocateStr(int length);
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		private extern static void InternalStrcpy(String dest, int destPos, String src);
+		internal extern static void InternalStrcpy(String dest, int destPos, String src);
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		private extern static void InternalStrcpy(String dest, int destPos, String src, int startPos, int count);
+		internal extern static void InternalStrcpy(String dest, int destPos, String src, int startPos, int count);
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private extern static string InternalIntern(string str);
