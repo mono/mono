@@ -1,3 +1,8 @@
+2004-09-02  Zoltan Varga  <vargaz@freemail.hu>
+
+	* mono-codeman.h mono-codeman.c: Generalize so it can be used to
+	allocate code for dynamic methods (one method per code manager).
+
 2004-07-30  Zoltan Varga  <vargaz@freemail.hu>
 
 	* mono-logger.c (mono_trace_set_mask_string): Fix AOT tracing constant.
