@@ -1,3 +1,9 @@
+2003-03-14  Daniel Morgan  <danmorg@sc.rr.com>
+
+	* mono-win32-setup.nsi: added NSIS 
+	(NullSoft Installer System) script file for building
+	a Mono release for Windows NT/2000/XP
+
 2003-03-08  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* ASN1.cs: Removed - now part of Mono.Security assembly
