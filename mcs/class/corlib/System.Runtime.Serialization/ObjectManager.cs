@@ -206,13 +206,14 @@ namespace System.Runtime.Serialization
 
 		public virtual void RegisterObject (object obj, long objectID)
 		{
+			if (objectID <= 0) throw new ArgumentOutOfRangeException("objectID","The objectID parameter is less than or equal to zero");
 			RegisterObjectInternal (obj, GetObjectRecord (objectID));
 		}
 
 		public void RegisterObject (object obj, long objectID, SerializationInfo info)
 		{
 			if (objectID <= 0) throw new ArgumentOutOfRangeException("objectID","The objectID parameter is less than or equal to zero");
-
+			
 			ObjectRecord record = GetObjectRecord (objectID);
 			record.Info = info;
 			RegisterObjectInternal (obj, record);

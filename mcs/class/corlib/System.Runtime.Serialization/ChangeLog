@@ -1,3 +1,10 @@
+2004-06-08  Duncan Mak  <duncan@ximian.com>
+
+	* ObjectManager.cs (RegisterObject): Throw
+	ArgumentOutOfRangeException if the objectID parameter is less than
+	or equal to zero. This check was missing from this particular
+	overload.
+
 2004-05-14  Marek Safar  <marek.safar@seznam.cz>
 
 	* SerializationInfo.cs: Removed useless [CLSCompliant (false)]
