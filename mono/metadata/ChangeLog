@@ -1,5 +1,7 @@
 2004-09-30  Zoltan Varga  <vargaz@freemail.hu>
 
+	* marshal.h marshal.c icall.c: Fix bugs in previous patch.
+
 	* marshal.c marshal.h icall.c: Add GetDelegateForFunctionPointerInternal icall.
 
 	* marshal.c: Fix warnings.
