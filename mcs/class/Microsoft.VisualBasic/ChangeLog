@@ -1,3 +1,6 @@
+2004-10-11 Rafael Teixeira <rafaelteixeirabr@hotmail.com>
+	* Makefile: Added reference to System.Windows.Forms as interface Microsoft.VisualBasic.CompilerServices.IVbHost needs it. 
+	
 2004-09-05  Jambunathan K  <kjambunathan@novell.com>
 	* Microsoft.VisualBasic.dll.sources: Added DefaultArgumentValueAttribute.cs
 	* Makefile: Removed '/unsafe' switch to the C# compiler
