@@ -172,6 +172,9 @@ namespace System.Net.Sockets
 				lock (result) {
 					Socket acc_socket = null;
 					try {
+						if (!result.Sock.blocking)
+							result.Sock.Poll (-1, SelectMode.SelectRead);
+
 						acc_socket = result.Sock.Accept ();
 					} catch (Exception e) {
 						result.Complete (e);
@@ -691,6 +694,11 @@ namespace System.Net.Sockets
 			int error;
 			IntPtr sock=Accept_internal(socket, out error);
 
+			if (!blocking && error == 10036) {
+				Poll (-1, SelectMode.SelectRead);
+				sock = Accept_internal (socket, out error);
+			}
+
 			if (error != 0) {
 				throw new SocketException (error);
 			}
@@ -761,7 +769,7 @@ namespace System.Net.Sockets
 				req.CreateAsyncDelegate ();
 				KeepReference (req);
 				AsyncReceiveInternal (req, out error);
-				if (error != 10036) // WSAEINPROGRESS
+				if (error != 0 && error != 10036) // WSAEINPROGRESS
 					throw new SocketException (error);
 			} else {
 				Worker worker = new Worker (req);
@@ -835,7 +843,7 @@ namespace System.Net.Sockets
 				req.CreateAsyncDelegate ();
 				KeepReference (req);
 				AsyncSendInternal (req, out error);
-				if (error != 10036) // WSAEINPROGRESS
+				if (error != 0 && error != 10036) // WSAEINPROGRESS
 					throw new SocketException (error);
 			} else {
 				Worker worker = new Worker (req);

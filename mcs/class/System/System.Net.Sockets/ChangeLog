@@ -1,3 +1,7 @@
+2004-06-20  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Socket.cs: fixed Accept for non-blocking sockets.
+
 2004-06-10  Gert Driesen <drieseng@users.sourceforge.net>
 
 	* LingerOption.cs: marked field private to fix API signature
