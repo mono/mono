@@ -17,42 +17,33 @@ namespace System.IO {
 	public class FileNotFoundException : IOException {
 		private string fileName;
 		private string fusionLog;
-		private string msg;
-		private Exception inner;
 
 		// Constructors
 		public FileNotFoundException ()
 			: base (Locale.GetText ("File not found"))
 		{
-			msg = "File not found";
 		}
 
 		public FileNotFoundException (string message)
 			: base (message)
 		{
-			msg = message;
 		}
 
 		public FileNotFoundException (string message, Exception inner)
 			: base (message, inner)
 		{
-			msg = message;
-			this.inner = inner;
 		}
 
 		public FileNotFoundException (string message, string fileName)
 			: base (message)
 		{
-			msg = message;
 			this.fileName = fileName;
 		}
 
 		public FileNotFoundException (string message, string fileName, Exception innerException)
 			: base (message, innerException)
 		{
-			msg = message;
 			this.fileName = fileName;
-			inner = innerException;
 		}
 
 		protected FileNotFoundException (SerializationInfo info, StreamingContext context)
@@ -60,7 +51,6 @@ namespace System.IO {
 		{
 			fileName = info.GetString ("FileNotFound_FileName");
 			fusionLog = info.GetString ("FileNotFound_FusionLog");
-			
 		}
 
 		public string FileName
@@ -75,7 +65,15 @@ namespace System.IO {
 
 		public override string Message
 		{
-			get { return Locale.GetText (msg); }
+			get {
+				if (base.Message == null)
+					return "File not found";
+
+				if (fileName == null)
+					return base.Message;
+				
+				return "File '" + fileName + "' not found.";
+			}
 		}
 
 		public override void GetObjectData (SerializationInfo info, StreamingContext context)
@@ -86,7 +84,14 @@ namespace System.IO {
 
 		public override string ToString ()
 		{
-			return "System.IO.FileNotFoundException: " + msg;
+			string result = GetType ().FullName + ": " + Message;
+			if (InnerException != null)
+				result += " ----> " + InnerException.ToString ();
+
+			if (StackTrace != null)
+				result += "\n" + StackTrace;
+
+			return result;
 		}
 	}
 }
