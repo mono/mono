@@ -30,6 +30,7 @@ namespace System.Xml.Serialization {
 		Hashtable targets;
 		Hashtable delayedListFixups;
 		XmlSerializer eventSource;
+		int delayedFixupId = 0;
 
 		string w3SchemaNS;
 		string w3SchemaNS2000;
@@ -567,7 +568,7 @@ namespace System.Xml.Serialization {
 				if (qname == arrayQName || arrayType != null)
 				{
 					delayedListFixups = EnsureHashtable (delayedListFixups);
-					fixupReference = "__<" + delayedListFixups.Count + ">";
+					fixupReference = "__<" + (delayedFixupId++) + ">";
 					object items;
 					ReadList (out items);
 					delayedListFixups [fixupReference] = items;
