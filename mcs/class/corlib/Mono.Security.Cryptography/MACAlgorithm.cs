@@ -5,9 +5,6 @@
 //	Sebastien Pouliot (spouliot@motus.com)
 //
 // (C) 2002, 2003 Motus Technologies Inc. (http://www.motus.com)
-//
-
-//
 // Copyright (C) 2004 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -54,7 +51,6 @@ namespace Mono.Security.Cryptography {
 		{
 			algo = (SymmetricAlgorithm) algorithm;
 			algo.Mode = CipherMode.CBC;
-			algo.Padding = PaddingMode.Zeros;
 			blockSize = (algo.BlockSize >> 3); // in bytes
 			algo.IV = new byte [blockSize];
 			block = new byte [blockSize];
