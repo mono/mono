@@ -3,6 +3,10 @@
 #
 
 TEST_SOURCES = \
+LabelA \
+LabelB \
+LabelC \
+LabelD\
 Test1 \
 Test2 \
 misc2 \

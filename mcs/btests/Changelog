@@ -1,3 +1,6 @@
+2004-08-01 Rafael Teixeira <rafaelteixeirabr@hotmail.com>
+	* LabelA.vb, LabelB.vb, LabelC.vb, LabelD.vb : new positive tests for labelled statements
+
 2004-07-30  Jambunathan K  <kjambunathan@novell.com>
 	* RegionDirectivesC1.vb: 
 	* RegionDirectives.vb: 
