@@ -1,5 +1,21 @@
 2003-05-10 Jackson Harper <jackson@latitudegeo.com>
 
+	* IFieldRef.cs: New file - interface field references must implement
+	* ExternFieldRef.cs: New file - Reference to a field in another
+	assembly
+	* FieldRef.cs: New file - Reference to a field in this assembly
+	* GlobalFieldRef.cs: New file - Reference to a global field
+	* FieldInstr.cs: New file - Instruction that takes a field
+	instruction
+	* CodeGen.cs: Add method to resolve global methods
+	* ExternTypeRef.cs: Add method to get method references
+	* FieldDef.cs: Allow methods to be resolved before being defined
+	* IClassRef.cs: Add method to get field references.
+	* TypeDef.cs: Add method to resolve member fields.
+	* TypeRef.cs: Add method to get field references
+		
+2003-05-10 Jackson Harper <jackson@latitudegeo.com>
+
 	* GlobalMethodRef.cs: New file - A reference to a global method
 	* CodeGen.cs: Store global methods and fields in hashtables to
 	make lookup easier. Add method to resolve global methods.

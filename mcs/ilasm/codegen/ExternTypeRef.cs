@@ -35,6 +35,11 @@ namespace Mono.ILASM {
                 {
                         return new ExternMethodRef (this, ret_type, name, param);
                 }
+
+                public IFieldRef GetFieldRef (ITypeRef ret_type, string name)
+                {
+                        return new ExternFieldRef (this, ret_type, name);
+                }
         }
 
 }

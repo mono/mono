@@ -175,6 +175,13 @@ namespace Mono.ILASM {
                         return methoddef.Resolve (this);
                 }
 
+                public PEAPI.Field ResolveField (string name)
+                {
+                        FieldDef fielddef = (FieldDef) global_field_table[name];
+
+                        return fielddef.Resolve (this);
+                }
+
         }
 
 }

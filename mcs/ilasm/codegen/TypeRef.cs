@@ -100,6 +100,11 @@ namespace Mono.ILASM {
                         return new MethodRef (this, ret_type, name, param);
                 }
 
+                public IFieldRef GetFieldRef (ITypeRef ret_type, string name)
+                {
+                        return new FieldRef (this, ret_type, name);
+                }
+
                 public void Resolve (CodeGen code_gen)
                 {
                         if (is_resolved)

@@ -147,6 +147,13 @@ namespace Mono.ILASM {
                         return methoddef.Resolve (code_gen, classdef);
                 }
 
+                public PEAPI.Field ResolveField (string name, CodeGen code_gen)
+                {
+                        FieldDef fielddef = (FieldDef) field_table[name];
+
+                        return fielddef.Resolve (code_gen, classdef);
+                }
+
                 private string MakeFullName ()
                 {
                         if (name_space == null || name_space == String.Empty)

@@ -23,6 +23,8 @@ namespace Mono.ILASM {
                 private bool datavalue_set;
                 private bool value_set;
 
+                private bool is_resolved;
+
                 private uint offset;
                 private PEAPI.Constant constant;
 
@@ -36,6 +38,8 @@ namespace Mono.ILASM {
                         offset_set = false;
                         datavalue_set = false;
                         value_set = false;
+
+                        is_resolved = false;
                 }
 
                 public string Name {
@@ -58,22 +62,39 @@ namespace Mono.ILASM {
                         this.constant = constant;
                 }
 
+                public PEAPI.FieldDef Resolve (CodeGen code_gen)
+                {
+                        if (is_resolved)
+                                return field_def;
+
+                        type.Resolve (code_gen);
+                        field_def = code_gen.PEFile.AddField (attr, name, type.PeapiType);
+
+                        is_resolved = true;
+
+                        return field_def;
+                }
+
+                public PEAPI.FieldDef Resolve (CodeGen code_gen, PEAPI.ClassDef classdef)
+                {
+                        if (is_resolved)
+                                return field_def;
+
+                        type.Resolve (code_gen);
+                        field_def = classdef.AddField (attr, name, type.PeapiType);
+
+                        is_resolved = true;
+
+                        return field_def;
+                }
+
                 /// <summary>
                 ///  Define a global field
                 /// </summary>
                 public void Define (CodeGen code_gen)
                 {
-                        type.Resolve (code_gen);
-
-                        field_def = code_gen.PEFile.AddField (attr, name, type.PeapiType);
-
-                        if (offset_set) {
-                                field_def.SetOffset (offset);
-                        }
-
-                        if (value_set) {
-                                field_def.AddValue (constant);
-                        }
+                        Resolve (code_gen);
+                        WriteCode (field_def);
                 }
 
                 /// <summary>
@@ -81,9 +102,17 @@ namespace Mono.ILASM {
                 /// </summary>
                 public void Define (CodeGen code_gen, PEAPI.ClassDef class_def)
                 {
-                        type.Resolve (code_gen);
+                        Resolve (code_gen, class_def);
+                        WriteCode (field_def);
+                }
 
-                        class_def.AddField (attr, name, type.PeapiType);
+                protected void WriteCode (PEAPI.FieldDef field_def)
+                {
+                        if (offset_set)
+                                field_def.SetOffset (offset);
+
+                        if (value_set)
+                                field_def.AddValue (constant);
                 }
         }
 
