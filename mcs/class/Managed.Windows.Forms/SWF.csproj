@@ -474,6 +474,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "System.Windows.Forms\IWindowTarget.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "System.Windows.Forms\KeyEventArgs.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
