@@ -573,6 +573,8 @@ namespace System.Drawing
 		internal static extern Status GdipResetClip(IntPtr graphics);		
 		[DllImport("gdiplus.dll")] 	
 		internal static extern Status GdipEndContainer(IntPtr graphics, int state);
+		[DllImport("gdiplus.dll")] 	
+		internal static extern Status GdipGetClip (IntPtr graphics, IntPtr region);
 
 		[DllImport("gdiplus.dll")] 	
 		internal static extern Status GdipFillClosedCurve(IntPtr graphics, IntPtr brush, PointF [] points, int count);

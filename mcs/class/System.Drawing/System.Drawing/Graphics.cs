@@ -1057,10 +1057,10 @@ namespace System.Drawing
 			GDIPlus.CheckStatus (status);
 		}
 
-		[MonoTODO]
 		public void ExcludeClip (Region region)
 		{
-			throw new NotImplementedException ();
+			Status status = GDIPlus.GdipSetClipRegion (nativeObject, region.NativeObject, CombineMode.Exclude);
+			GDIPlus.CheckStatus (status);
 		}
 
 		
@@ -1317,10 +1317,11 @@ namespace System.Drawing
 			return Color.FromArgb (argb);
 		}
 
-		[MonoTODO]
+		
 		public void IntersectClip (Region region)
 		{
-			throw new NotImplementedException ();
+			Status status = GDIPlus.GdipSetClipRegion (nativeObject, region.NativeObject, CombineMode.Intersect);
+			GDIPlus.CheckStatus (status);
 		}
 		
 		public void IntersectClip (RectangleF rect)
@@ -1607,11 +1608,11 @@ namespace System.Drawing
 			GDIPlus.CheckStatus (status);
 		}
 
-		[MonoTODO]
+		
 		public void SetClip (Region region, CombineMode combineMode)
 		{
-			//GDIPlus.GdipSetClipRegion(nativeObject,  region.NativeObject, combineMode); //TODO: Region not implemented yet
-			throw new NotImplementedException();
+			Status status =   GDIPlus.GdipSetClipRegion(nativeObject,  region.NativeObject, combineMode); 
+			GDIPlus.CheckStatus (status);
 		}
 
 		
@@ -1671,10 +1672,13 @@ namespace System.Drawing
 
 		public Region Clip {
 			get {
-				throw new NotImplementedException ();
+				Region reg = new Region();
+				Status status = GDIPlus.GdipGetClip (nativeObject, reg.NativeObject);
+				GDIPlus.CheckStatus (status);
+				return reg;				
 			}
 			set {
-				//throw new NotImplementedException ();
+				SetClip (value, CombineMode.Replace);
 			}
 		}
 

@@ -1,3 +1,7 @@
+2004-06-20 Jordi Mas i Hernandez <jordi@ximian.com>
+
+	* Graphics.cs, gdipFunctions.cs: added missing clip function wrappers
+
 2004-06-18  Ravindra <rkumar@novell.com>
 
 	* FontConverter.cs: Implemented the missing functions.
