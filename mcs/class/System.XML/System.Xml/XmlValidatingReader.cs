@@ -106,6 +106,12 @@ namespace System.Xml {
 		}
 #endif
 
+#if DTD_HANDLE_EVENTS
+		internal bool HasValidationEvent {
+			get { return ValidationEventHandler != null; }
+		}
+#endif
+
 		public override bool HasValue { 
 			get { return validatingReader == null ? false : validatingReader.HasValue; }
 		}
@@ -245,7 +251,7 @@ namespace System.Xml {
 			get { return schemaInfo.SchemaType; }
 		}
 
-//		[MonoTODO] We decided not to support XDR schema. It is obsolete.
+		[MonoTODO ("We decided not to support XDR schema that spec is obsolete.")]
 		public ValidationType ValidationType {
 			get { return validationType; }
 			set {
@@ -383,7 +389,7 @@ namespace System.Xml {
 			return validatingReader.MoveToNextAttribute ();
 		}
 
-//		[MonoTODO] We decided not to support XDR schema. It is obsolete.
+		[MonoTODO ("We decided not to support XDR schema that spec is obsolete.")]
 		public override bool Read ()
 		{
 			if (ReadState == ReadState.Initial) {
