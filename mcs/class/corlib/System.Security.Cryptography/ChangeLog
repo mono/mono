@@ -1,3 +1,8 @@
+2004-03-10  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* FromBase64Transform.cs: Now throws ObjectDisposedException and
+	return true for CanReuseTransform (as MS implementation).
+
 2004-03-09  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* DSA.cs : fixed incorrectly modified catch for debugging.

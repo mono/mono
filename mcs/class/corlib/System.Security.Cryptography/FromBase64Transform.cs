@@ -53,16 +53,12 @@ namespace System.Security.Cryptography {
 		}
 
 
-		/// <summary>
-		/// </summary>
 		public bool CanTransformMultipleBlocks {
-			get {
-				return false;
-			}
+			get { return false; }
 		}
 
 		public virtual bool CanReuseTransform {
-			get { return false; }
+			get { return true; }
 		}
 
 		/// <summary>
@@ -135,8 +131,8 @@ namespace System.Security.Cryptography {
 			return ptr;
 		}
 
-
 		private byte [] lookupTable; 
+
 		private byte lookup(byte input) {
 			byte ret;
 			if ((input >= lookupTable.Length) || 
@@ -212,6 +208,9 @@ namespace System.Security.Cryptography {
 		                                   byte [] outputBuffer,
 		                                   int outputOffset)
 		{
+			if (m_disposed)
+				throw new ObjectDisposedException ("FromBase64Transform");
+
 			int n;
 			byte [] src;
 			int srcOff;
@@ -242,7 +241,6 @@ namespace System.Security.Cryptography {
 				res = DoTransform (tmpBuff, 0, count & (~3), outputBuffer, outputOffset) ;
 			}
 
-
 			return res;
 		}
 
@@ -253,6 +251,9 @@ namespace System.Security.Cryptography {
 		                                            int inputOffset,
 		                                            int inputCount)
 		{
+			if (m_disposed)
+				throw new ObjectDisposedException ("FromBase64Transform");
+
 			byte [] src;
 			int srcOff;
 			int n;
@@ -266,7 +267,6 @@ namespace System.Security.Cryptography {
 				src = inputBuffer;
 				srcOff = inputOffset;
 			}
-
 
 			int dataLen = accPtr + n;
 			byte [] tmpBuf = new byte [dataLen];
@@ -292,8 +292,9 @@ namespace System.Security.Cryptography {
 
 				Array.Copy (res, newres, actLen);
 				return newres;
-			} else
-			return res;
+			} 
+			else
+				return res;
 		}
 
 	} // FromBase64Transform
