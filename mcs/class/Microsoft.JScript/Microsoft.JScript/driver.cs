@@ -39,24 +39,31 @@ namespace Microsoft.JScript
 			moduleBuilder = assemblyBuilder.DefineDynamicModule (JSCRIPT_MODULE, basename + ".exe", false);
 		}
 
-		public void  GetAST (string filename)
+		public ASTList GetAST (string filename)
 		{
 			StreamReader reader = new StreamReader (filename);
 			JScriptLexer lexer = new JScriptLexer (reader);
 			JScriptParser parser = new JScriptParser (lexer);
 
-			parser.program ();
+			ASTList astList = new ASTList ();			
+			parser.program (astList);
+
+			return astList;
 		}
+
 
 		public static void Main (string [] args)
 		{
 			try {			
 				string basename = Path.GetFileNameWithoutExtension (args [0]);
 				Jsc compiler = new Jsc (basename);
-				compiler.GetAST (args [0]);
-			
+
+				ASTList astList = compiler.GetAST (args [0]);
+
+				Console.WriteLine (astList.ToString ());
+
 			} catch (IndexOutOfRangeException) {
-				Console.WriteLine ("Usage: [mono] mjsc.exe filename.js");
+				Console.WriteLine ("Usage: [mono] mjs.exe filename.js");
 			}
 		}
 	}
