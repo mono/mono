@@ -1,3 +1,11 @@
+2004/03/22  Rafael Teixeira <rafaelteixeirabr@hotmail.com>
+	* typemanager.cs :  being more carefull with null arguments in some places, 
+						null checking in GetPertinentStandardModules() loop
+	* namespace.cs : a helper ToString override 
+	* ecore.cs : Dealing with finding more than a pertinent standard module having a global member
+	* testmbas/WriteOk.vb : Exercising correct standard module resolution
+    NOTE: Almost there for Bug #52067 - just the semi-qualified case isn't working 
+
 2004-03-23 Anirban Bhattacharjee <banirban@novell.com>
 	* modifiers.cs: Return name of the modifiers' changed to vb specific
 

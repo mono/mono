@@ -82,7 +82,7 @@ namespace Mono.MonoBASIC {
 		///   The AddressOf method should generate code that loads
 		///   the address of the object and leaves it on the stack.
 		///
-		///   The `mode' argument is used to notify the expression
+		///   The 'mode' argument is used to notify the expression
 		///   of whether this will be used to read from the address or
 		///   write to the address.
 		///
@@ -108,7 +108,7 @@ namespace Mono.MonoBASIC {
 		bool IsAssigned (EmitContext ec, Location loc);
 
 		/// <summary>
-		///   Checks whether field `name' in this struct has been assigned.
+		///   Checks whether field 'name' in this struct has been assigned.
 		/// </summary>
 		bool IsFieldAssigned (EmitContext ec, string name, Location loc);
 
@@ -122,7 +122,7 @@ namespace Mono.MonoBASIC {
 		void SetAssigned (EmitContext ec);
 
 		/// <summary>
-		///   Tells the flow analysis code that field `name' in this struct
+		///   Tells the flow analysis code that field 'name' in this struct
 		///   has already been assigned atthe current code position.
 		/// </summary>
 		void SetFieldAssigned (EmitContext ec, string name);
@@ -230,7 +230,7 @@ namespace Mono.MonoBASIC {
 
 		/// <summary>
 		///   Utility wrapper routine for Warning, only prints the warning if
-		///   warnings of level `level' are enabled.
+		///   warnings of level 'level' are enabled.
 		/// </summary>
 		public void Warning (int warning, int level, string s)
 		{
@@ -268,7 +268,7 @@ namespace Mono.MonoBASIC {
 		///   There are two side effects expected from calling
 		///   Resolve(): the the field variable "eclass" should
 		///   be set to any value of the enumeration
-		///   `ExprClass' and the type variable should be set
+		///   'ExprClass' and the type variable should be set
 		///   to a valid type (this is the type of the
 		///   expression).
 		/// </remarks>
@@ -325,11 +325,11 @@ namespace Mono.MonoBASIC {
 						ec.ContainerType, ec.ContainerType, AllMemberTypes,
 						AllBindingFlags | BindingFlags.NonPublic, s.Name);
 					if (lookup != null)
-						Error (122, "`" + s.Name + "' " +
+						Error (122, "'" + s.Name + "' " +
 						       "is inaccessible because of its protection level");
 					else
-						Error (103, "The name `" + s.Name + "' could not be " +
-						       "found in `" + ec.DeclSpace.Name + "'");
+						Error (103, "The name '" + s.Name + "' could not be " +
+						       "found in '" + ec.DeclSpace.Name + "'");
 					return null;
 				}
 
@@ -415,7 +415,7 @@ namespace Mono.MonoBASIC {
 
 					Report.Error (
 						103, loc,
-						"The name `" + s.Name + "' could not be found in `" +
+						"The name '" + s.Name + "' could not be found in '" +
 						ec.DeclSpace.Name + "'");
 					return null;
 				}
@@ -534,7 +534,7 @@ namespace Mono.MonoBASIC {
 		// FIXME: Probably implement a cache for (t,name,current_access_set)?
 		//
 		// This code could use some optimizations, but we need to do some
-		// measurements.  For example, we could use a delegate to `flag' when
+		// measurements.  For example, we could use a delegate to 'flag' when
 		// something can not any longer be a method-group (because it is something
 		// else).
 		//
@@ -546,7 +546,7 @@ namespace Mono.MonoBASIC {
 		//
 		//     null on error.
 		//
-		// FIXME: When calling MemberLookup inside an `Invocation', we should pass
+		// FIXME: When calling MemberLookup inside an 'Invocation', we should pass
 		// the arguments here and have MemberLookup return only the methods that
 		// match the argument count/type, unlike we are doing now (we delay this
 		// decision).
@@ -565,10 +565,10 @@ namespace Mono.MonoBASIC {
 		}
 
 		//
-		// Lookup type `t' for code in class `invocation_type'.  Note that it's important
-		// to set `invocation_type' correctly since this method also checks whether the
-		// invoking class is allowed to access the member in class `t'.  When you want to
-		// explicitly do a lookup in the base class, you must set both `t' and `invocation_type'
+		// Lookup type 't' for code in class 'invocation_type'.  Note that it's important
+		// to set 'invocation_type' correctly since this method also checks whether the
+		// invoking class is allowed to access the member in class 't'.  When you want to
+		// explicitly do a lookup in the base class, you must set both 't' and 'invocation_type'
 		// to the base class (although a derived class can access protected members of its base
 		// class it cannot do so through an instance of the base class (error CS1540)).
 		// 
@@ -609,8 +609,7 @@ namespace Mono.MonoBASIC {
 
 		public static Expression MemberLookup (EmitContext ec, Type t, string name, Location loc)
 		{
-			return MemberLookup (ec, ec.ContainerType, t, name,
-					     AllMemberTypes, AllBindingFlags, loc);
+			return MemberLookup (ec, ec.ContainerType, t, name, AllMemberTypes, AllBindingFlags, loc);
 		}
 
 		public static Expression MethodLookup (EmitContext ec, Type t, string name, Location loc)
@@ -651,11 +650,11 @@ namespace Mono.MonoBASIC {
 					  AllBindingFlags | BindingFlags.NonPublic, loc);
 			if (e == null){
 				Report.Error (
-					117, loc, "`" + t + "' does not contain a definition " +
-					"for `" + name + "'");
+					117, loc, "'" + t + "' does not contain a definition " +
+					"for '" + name + "'");
 			} else {
 					Report.Error (
-						122, loc, "`" + t + "." + name +
+						122, loc, "'" + t + "." + name +
 						"' is inaccessible due to its protection level");
 			}
 			
@@ -1458,7 +1457,7 @@ namespace Mono.MonoBASIC {
 
 		/// <summary>
 		///   Computes the MethodGroup for the user-defined conversion
-		///   operators from source_type to target_type.  `look_for_explicit'
+		///   operators from source_type to target_type.  'look_for_explicit'
 		///   controls whether we should also include the list of explicit
 		///   operators
 		/// </summary>
@@ -1607,9 +1606,9 @@ namespace Mono.MonoBASIC {
 		}
 		
 		/// <summary>
-		///   Converts implicitly the resolved expression `expr' into the
-		///   `target_type'.  It returns a new expression that can be used
-		///   in a context that expects a `target_type'. 
+		///   Converts implicitly the resolved expression 'expr' into the
+		///   'target_type'.  It returns a new expression that can be used
+		///   in a context that expects a 'target_type'. 
 		/// </summary>
 		static public Expression ConvertImplicit (EmitContext ec, Expression expr,
 							  Type target_type, Location loc)
@@ -1639,10 +1638,10 @@ namespace Mono.MonoBASIC {
 		}
 
 		/// <summary>
-		///   Converts the resolved expression `expr' into the
-		///   `target_type' using the Microsoft.VisualBasic runtime.
+		///   Converts the resolved expression 'expr' into the
+		///   'target_type' using the Microsoft.VisualBasic runtime.
 		///   It returns a new expression that can be used
-		///   in a context that expects a `target_type'. 
+		///   in a context that expects a 'target_type'. 
 		/// </summary>
 		static private Expression RTConversionExpression (EmitContext ec, string s, Expression expr, Location loc)
 		{
@@ -1763,13 +1762,13 @@ namespace Mono.MonoBASIC {
 		}
 										  		
 		/// <summary>
-		///   Attempts to apply the `Standard Implicit
-		///   Conversion' rules to the expression `expr' into
-		///   the `target_type'.  It returns a new expression
+		///   Attempts to apply the 'Standard Implicit
+		///   Conversion' rules to the expression 'expr' into
+		///   the 'target_type'.  It returns a new expression
 		///   that can be used in a context that expects a
-		///   `target_type'.
+		///   'target_type'.
 		///
-		///   This is different from `ConvertImplicit' in that the
+		///   This is different from 'ConvertImplicit' in that the
 		///   user defined implicit conversions are excluded. 
 		/// </summary>
 		static public Expression ConvertImplicitStandard (EmitContext ec, Expression expr,
@@ -1877,15 +1876,15 @@ namespace Mono.MonoBASIC {
 
 		static public void Error_CannotConvertImplicit (Location loc, Type source, Type target)
 		{
-			string msg = "Cannot convert implicitly from `"+
-				TypeManager.MonoBASIC_Name (source) + "' to `" +
+			string msg = "Cannot convert implicitly from '"+
+				TypeManager.MonoBASIC_Name (source) + "' to '" +
 				TypeManager.MonoBASIC_Name (target) + "'";
 
 			Report.Error (29, loc, msg);
 		}
 
 		/// <summary>
-		///   Attemptes to implicityly convert `target' into `type', using
+		///   Attemptes to implicityly convert 'target' into 'type', using
 		///   ConvertImplicit.  If there is no implicit conversion, then
 		///   an error is signaled
 		/// </summary>
@@ -2318,8 +2317,8 @@ namespace Mono.MonoBASIC {
 		}
 		
 		/// <summary>
-		///   Performs an explicit conversion of the expression `expr' whose
-		///   type is expr.Type to `target_type'.
+		///   Performs an explicit conversion of the expression 'expr' whose
+		///   type is expr.Type to 'target_type'.
 		/// </summary>
 		static public Expression ConvertExplicit (EmitContext ec, Expression expr,
 							  Type target_type, Location loc)
@@ -2489,7 +2488,7 @@ namespace Mono.MonoBASIC {
 		}
 		
 		/// <summary>
-		///   Reports that we were expecting `expr' to be of class `expected'
+		///   Reports that we were expecting 'expr' to be of class 'expected'
 		/// </summary>
 		public void Error118 (string expected)
 		{
@@ -2497,8 +2496,8 @@ namespace Mono.MonoBASIC {
 			
 			kind = ExprClassName (eclass);
 
-			Error (118, "Expression denotes a `" + kind +
-			       "' where a `" + expected + "' was expected");
+			Error (118, "Expression denotes a '" + kind +
+			       "' where a '" + expected + "' was expected");
 		}
 
 		public void Error118 (ResolveFlags flags)
@@ -2533,13 +2532,13 @@ namespace Mono.MonoBASIC {
 
 			string kind = ExprClassName (eclass);
 
-			Error (119, "Expression denotes a `" + kind + "' where " +
-			       "a `" + sb.ToString () + "' was expected");
+			Error (119, "Expression denotes a '" + kind + "' where " +
+			       "a '" + sb.ToString () + "' was expected");
 		}
 		
 		static void Error_ConstantValueCannotBeConverted (Location l, string val, Type t)
 		{
-			Report.Error (31, l, "Constant value `" + val + "' cannot be converted to " +
+			Report.Error (31, l, "Constant value '" + val + "' cannot be converted to " +
 				      TypeManager.MonoBASIC_Name (t));
 		}
 
@@ -2551,7 +2550,7 @@ namespace Mono.MonoBASIC {
 		/// <summary>
 		///   Converts the IntConstant, UIntConstant, LongConstant or
 		///   ULongConstant into the integral target_type.   Notice
-		///   that we do not return an `Expression' we do return
+		///   that we do not return an 'Expression' we do return
 		///   a boxed integral type.
 		///
 		///   FIXME: Since I added the new constants, we need to
@@ -2860,7 +2859,7 @@ namespace Mono.MonoBASIC {
 		}
 
 		//
-		// The stack contains the pointer and the value of type `type'
+		// The stack contains the pointer and the value of type 'type'
 		//
 		public static void StoreFromPtr (ILGenerator ig, Type type)
 		{
@@ -2889,7 +2888,7 @@ namespace Mono.MonoBASIC {
 		}
 		
 		//
-		// Returns the size of type `t' if known, otherwise, 0
+		// Returns the size of type 't' if known, otherwise, 0
 		//
 		public static int GetTypeSize (Type t)
 		{
@@ -2929,7 +2928,7 @@ namespace Mono.MonoBASIC {
 		}
 		
 		//
-		// Converts `source' to an int, uint, long or ulong.
+		// Converts 'source' to an int, uint, long or ulong.
 		//
 		public Expression ExpressionToArrayArgument (EmitContext ec, Expression source, Location loc)
 		{
@@ -2987,7 +2986,7 @@ namespace Mono.MonoBASIC {
 	public abstract class ExpressionStatement : Expression {
 
 		/// <summary>
-		///   Requests the expression to be emitted in a `statement'
+		///   Requests the expression to be emitted in a 'statement'
 		///   context.  This means that no new value is left on the
 		///   stack after invoking this method (constrasted with
 		///   Emit that will always leave a value on the stack).
@@ -3503,10 +3502,10 @@ namespace Mono.MonoBASIC {
 	///   creating a namespace map from the assemblies, as that requires
 	///   the GetExportedTypes function to be called and a hashtable to
 	///   be constructed which reduces startup time.  If later we find
-	///   that this is slower, we should create a `NamespaceExpr' expression
+	///   that this is slower, we should create a 'NamespaceExpr' expression
 	///   that fully participates in the resolution process. 
 	///   
-	///   For example `System.Console.WriteLine' is decomposed into
+	///   For example 'System.Console.WriteLine' is decomposed into
 	///   MemberAccess (MemberAccess (SimpleName ("System"), "Console"), "WriteLine")
 	///   
 	///   The first SimpleName wont produce a match on its own, so it will
@@ -3515,7 +3514,7 @@ namespace Mono.MonoBASIC {
 	///   
 	///   System.Console will produce a TypeExpr match.
 	///   
-	///   The downside of this is that we might be hitting `LookupType' too many
+	///   The downside of this is that we might be hitting 'LookupType' too many
 	///   times with this scheme.
 	/// </remarks>
 	public class SimpleName : Expression, ITypeExpression {
@@ -3533,12 +3532,12 @@ namespace Mono.MonoBASIC {
 				Report.Error (
 					236, l,
 					"A field initializer cannot reference the non-static field, " +
-					"method or property `"+name+"'");
+					"method or property '"+name+"'");
 			else
 				Report.Error (
 					120, l,
 					"An object reference is required " +
-					"for the non-static field `"+name+"'");
+					"for the non-static field '"+name+"'");
 		}
 		
 		//
@@ -3627,7 +3626,7 @@ namespace Mono.MonoBASIC {
 		///   Local Variables and Parameters are handled at
 		///   parse time, so they never occur as SimpleNames.
 		///
-		///   The `allow_static' flag is used by MemberAccess only
+		///   The 'allow_static' flag is used by MemberAccess only
 		///   and it is used to inform us that it is ok for us to 
 		///   avoid the static check, because MemberAccess might end
 		///   up resolving the Name as a Type name and the access as
@@ -3710,11 +3709,25 @@ namespace Mono.MonoBASIC {
 
 			if (e == null) {
 				string[] NamespacesInScope = RootContext.SourceBeingCompiled.GetNamespacesInScope(ec.DeclSpace.Namespace.Name);
-
+				ArrayList lookups = new ArrayList();
+				ArrayList typelookups = new ArrayList();
+				
 				foreach(Type type in TypeManager.GetPertinentStandardModules(NamespacesInScope)) {
 					e = MemberLookup(ec, type, Name, loc);
-					if (e != null) // FIXME! Must Output Ambiguity Error Messages
-						break;
+					if (e != null)  
+						lookups.Add(e);
+						typelookups.Add(type);
+				}
+				if (lookups.Count == 1) { 
+					e = (Expression)lookups[0];
+				} else {
+					if (lookups.Count > 1) {
+						StringBuilder sb = new StringBuilder();
+						foreach(Type type in typelookups)
+							sb.Append("'" + type.FullName + "'");						
+						Error (-1, "The name '" + Name + "' can be resolved to a member of more than one standard module: " + sb.ToString() + ". Please fully qualify it.");
+						return null;
+					}
 				}
 			}
 
@@ -3745,8 +3758,8 @@ namespace Mono.MonoBASIC {
 
 				if (!me.IsStatic &&
 				    TypeManager.IsNestedChildOf (me.InstanceExpression.Type, me.DeclaringType)) {
-					Error (38, "Cannot access nonstatic member `" + me.Name + "' of " +
-					       "outer type `" + me.DeclaringType + "' via nested type `" +
+					Error (38, "Cannot access nonstatic member '" + me.Name + "' of " +
+					       "outer type '" + me.DeclaringType + "' via nested type '" +
 					       me.InstanceExpression.Type + "'");
 					return null;
 				}
@@ -3775,8 +3788,8 @@ namespace Mono.MonoBASIC {
 			// find the name as a namespace
 			//
 
-			Error (103, "The name `" + Name +
-			       "' does not exist in the class `" +
+			Error (103, "The name '" + Name +
+			       "' does not exist in the class '" +
 			       ec.DeclSpace.Name + "'");
 		}
 
@@ -3900,7 +3913,7 @@ namespace Mono.MonoBASIC {
 		}
 		
 		//
-		// `A method group may have associated an instance expression' 
+		// 'A method group may have associated an instance expression' 
 		// 
 		public Expression InstanceExpression {
 			get {
@@ -3961,7 +3974,7 @@ namespace Mono.MonoBASIC {
 
 		public void ReportUsageError ()
 		{
-			Report.Error (654, loc, "Method `" + Methods [0].DeclaringType + "." +
+			Report.Error (654, loc, "Method '" + Methods [0].DeclaringType + "." +
 				      Methods [0].Name + "()' is referenced without parentheses");
 		}
 
@@ -4263,7 +4276,7 @@ namespace Mono.MonoBASIC {
 	
 	/// <summary>
 	///   Expression that evaluates to a Property.  The Assign class
-	///   might set the `Value' expression if we are in an assignment.
+	///   might set the 'Value' expression if we are in an assignment.
 	///
 	///   This is not an LValue because we need to re-write the expression, we
 	///   can not take data from the stack and store it.  
@@ -4331,7 +4344,7 @@ namespace Mono.MonoBASIC {
 		{
 			if (!PropertyInfo.CanWrite){
 				Report.Error (200, loc, 
-					      "The property `" + PropertyInfo.Name +
+					      "The property '" + PropertyInfo.Name +
 					      "' can not be assigned to, as it has not set accessor");
 				return false;
 			}
@@ -4373,7 +4386,7 @@ namespace Mono.MonoBASIC {
 		{
 			if (getter == null){
 				Report.Error (154, loc, 
-					      "The property `" + PropertyInfo.Name +
+					      "The property '" + PropertyInfo.Name +
 					      "' can not be used in " +
 					      "this context because it lacks a get accessor");
 				return null;
@@ -4397,7 +4410,7 @@ namespace Mono.MonoBASIC {
 		{
 			if (setter == null){
 				Report.Error (154, loc, 
-					      "The property `" + PropertyInfo.Name +
+					      "The property '" + PropertyInfo.Name +
 					      "' can not be used in " +
 					      "this context because it lacks a set accessor");
 				return null;
@@ -4528,7 +4541,7 @@ namespace Mono.MonoBASIC {
 
 		public override void Emit (EmitContext ec)
 		{
-			Report.Error (70, loc, "The event `" + Name + "' can only appear on the left hand side of += or -= (except on the defining type)");
+			Report.Error (70, loc, "The event '" + Name + "' can only appear on the left hand side of += or -= (except on the defining type)");
 		}
 
 		public void EmitAddOrRemove (EmitContext ec, Expression source)

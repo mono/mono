@@ -1,4 +1,4 @@
-﻿Option Explicit
+Option Explicit
 Option Strict Off
 Option Compare Text
 
@@ -41,7 +41,9 @@ Module WriteOK
 		ModuleSub("Unqualified") 
 		
 		Another.WriteOK6.ModuleSub("Qualified") 
-		'Another.ModuleSub("SemiQualified") ' FIXME
+		' Another.ModuleSub("SemiQualified") ' FIXME
+		Another.Indirector.WriteIt()
+
 
 		Console.WriteLine(Strings.ChrW(64))
 
@@ -93,5 +95,11 @@ Public Module WriteOK6
         Console.WriteLine("Another.ModuleSub:OK! (" & Parm & ")")
     End Sub
 End Module
+
+Public Class Indirector
+	Public Shared Sub WriteIt()
+		ModuleSub("Through WriteIt") ' Must resolve to Another.WriteOK6.ModuleSub
+	End Sub
+End Class
 
 End Namespace

@@ -57,5 +57,13 @@ namespace Mono.MonoBASIC {
 				return parent;
 			}
 		}
+		
+		/// <summary>
+		///   Show the qualified name of the namespace contained here
+		/// </summary>
+		public override string ToString() {
+			return Name;
+		}
+		
 	}
 }

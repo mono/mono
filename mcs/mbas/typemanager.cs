@@ -485,7 +485,12 @@ public class TypeManager {
 
 		if (standardModules != null)
 			standardModules.CopyTo (n, 0);
-		n [top] = new StandardModule(module.Namespace.Name, module.Name) ;
+		string name = module.Name;
+		int split = name.LastIndexOf('.'); 
+		if (split > 0)
+			name = name.Substring(split+1);
+		n [top] = new StandardModule(module.Namespace.Name, name); 
+		//Console.WriteLine("Standard Module added:" + module.Name + " [" + n [top] + "]");
 		standardModules = n;
 	}
 
@@ -519,8 +524,16 @@ public class TypeManager {
 		foreach(string Namespace in namespaces)
 		{ 
 			for(int i = 0; i < standardModules.Length; i++)
-				if (standardModules[i].Namespace == Namespace)
-					list.Add(LookupType(standardModules[i].ToString()));
+				if (standardModules[i].Namespace == Namespace) {
+					string name = standardModules[i].ToString();
+					Type t = LookupType(name);
+					if (t == null) {
+						System.Console.WriteLine("Could not find standard module '" + name + "'"); 
+					}
+					else {
+						list.Add(t);
+					}
+				}
 		}
 		return (Type[])list.ToArray(typeof(Type));
 	}
@@ -2139,6 +2152,8 @@ public class TypeManager {
 		
 		ArrayList method_list = null;
 		Type current_type = queried_type;
+		if (queried_type == null)
+			throw new ArgumentNullException("queried_type");
 		bool searching = (original_bf & BindingFlags.DeclaredOnly) == 0;
 		bool private_ok;
 		bool always_ok_flag = false;
@@ -2200,7 +2215,7 @@ public class TypeManager {
 			closure_queried_type = current_type;
 
 			Timer.StopTimer (TimerType.MemberLookup);
-bf |= BindingFlags.IgnoreCase;
+			bf |= BindingFlags.IgnoreCase;
 			list = MemberLookup_FindMembers (current_type, mt, bf, name, out used_cache);
 
 			Timer.StartTimer (TimerType.MemberLookup);
