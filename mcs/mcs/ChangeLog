@@ -1,3 +1,9 @@
+2004-11-17  Martin Baulig  <martin@ximian.com>
+
+	* decl.cs (MemberCache.AddHashtable): Add entries in the opposite
+	direction, like FindMembers() does.  Fixes #69546, testcase is in
+	test-315.cs.	
+
 2004-11-16  Martin Baulig  <martin@ximian.com>
 
 	This is based on a patch from Marek Safar, see bug #69082.

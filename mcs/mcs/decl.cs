@@ -1344,7 +1344,10 @@ namespace Mono.CSharp {
 				if (list == null)
 					hash [it.Key] = list = new ArrayList ();
 
-				foreach (CacheEntry entry in (ArrayList) it.Value) {
+				ArrayList entries = (ArrayList) it.Value;
+				for (int i = entries.Count-1; i >= 0; i--) {
+					CacheEntry entry = (CacheEntry) entries [i];
+
 					if (entry.Container != cache.Container)
 						break;
 					list.Add (entry);
