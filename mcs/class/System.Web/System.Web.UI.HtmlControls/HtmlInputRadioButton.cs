@@ -36,7 +36,7 @@ namespace System.Web.UI.HtmlControls{
 		protected override void RenderAttributes(HtmlTextWriter writer){
 			writer.WriteAttribute("value", Value);
 			Attributes.Remove("value");
-			RenderAttributes(writer);
+			base.RenderAttributes(writer);
 		}
 		
 		public bool LoadPostData(string postDataKey, NameValueCollection postCollection){
@@ -85,20 +85,16 @@ namespace System.Web.UI.HtmlControls{
 				Attributes["checked"] = "checked";
 			}
 		}
-		public new string Name{
-			get{
-				string attr = Attributes["name"];
-				if (attr != null){
-					return attr;
-				}
-				return String.Empty;
+		public override string Name
+		{
+			get {
+				string attr = Attributes ["name"]; // Gotta use "name" to group radio buttons
+				return (attr == null) ? String.Empty : attr;
 			}
-			set{
-				Attributes["name"] = AttributeToString(value);
-			}
+			set { Attributes ["name"] = value; }
 		}
 		
-		private new string RenderedName{
+		protected override string RenderedName{
 			get{
 				string attr = base.RenderedName;
 				string id = UniqueID;
@@ -108,6 +104,20 @@ namespace System.Web.UI.HtmlControls{
 				}
 				return attr;
 			}
+		}
+
+		public override string Value
+		{
+			get {
+				string v = Attributes ["value"];
+				if (v != null && v != "")
+					return v;
+				v = ID;
+				Attributes ["value"] = v;
+				return v;
+			}
+
+			set { Attributes ["value"] = value; }
 		}
 		
 	} // class HtmlInputRadioButton

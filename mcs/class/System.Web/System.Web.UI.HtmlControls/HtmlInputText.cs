@@ -31,10 +31,9 @@ namespace System.Web.UI.HtmlControls{
 		
 		protected override void RenderAttributes(HtmlTextWriter writer){
 			//hide value when password box
-			if (String.Compare(Type, "password") != 0){
+			if (String.Compare (Type, "password",true) != 0)
 				ViewState.Remove("value");
-			}
-			RenderAttributes(writer);
+			base.RenderAttributes(writer);
 		}
 		
 		public bool LoadPostData(string postDataKey, NameValueCollection postCollection){

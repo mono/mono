@@ -15,7 +15,9 @@ namespace System.Web.UI.HtmlControls{
 		
 		private static readonly object EventServerChange;
 		
-		public HtmlInputHidden(string type):base("hidden"){}
+		public HtmlInputHidden () : base ("hidden")
+		{
+		}
 		
 		public bool LoadPostData(string postDataKey, NameValueCollection postCollection){
 			string postValue = postCollection[postDataKey];

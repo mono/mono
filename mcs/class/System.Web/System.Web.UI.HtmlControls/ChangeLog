@@ -1,5 +1,21 @@
 2002-06-07  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* HtmlInputHidden.cs: fixed constructor.
+
+	* HtmlInputRadioButton.cs:
+	(RenderAttributes): fixed stack overflow.
+
+	(Name):
+	(RenderedName): new -> override.
+
+	(Value): new property. 
+
+	* HtmlInputText.cs:
+	(RenderAttributes): fixed the same kind of stack overflow and make
+	string comparison case insensitive.
+
+2002-06-07  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* HtmlForm.cs: fixed name of Enctype property and render enctype
 	enctype attribute.
 
