@@ -29,8 +29,7 @@ namespace System.IO
 		{
 			if (arg != null && arg.Length > 0)
 			{
-				string temp = arg;
-				temp.Trim ();
+				string temp = arg.Trim ();
 				if (temp.Length == 0)
 				{
 					throw new ArgumentException (desc);
