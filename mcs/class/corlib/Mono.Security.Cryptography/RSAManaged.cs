@@ -107,6 +107,7 @@ namespace Mono.Security.Cryptography {
 			qInv = q.modInverse (p);
 	
 			keypairGenerated = true;
+			isCRTpossible = true;
 		}
 		
 		// overrides from RSA class
@@ -138,12 +139,37 @@ namespace Mono.Security.Cryptography {
 			if (!keypairGenerated)
 				return null;
 
+			BigInteger input = new BigInteger (rgb);
+			BigInteger output;
 			// decrypt (which uses the private key) can be 
 			// optimized by using CRT (Chinese Remainder Theorem)
-			BigInteger input = new BigInteger (rgb);
-			BigInteger output = input.modPow (d, n);
-			input.Clear ();	// zeroize temp value
-			return output.getBytes ();
+			if (isCRTpossible) {
+				// m1 = c^dp mod p
+				BigInteger m1 = input.modPow (dp, p);
+				// m2 = c^dq mod q
+				BigInteger m2 = input.modPow (dq, q);
+				BigInteger h;
+				if (m2 > m1) {
+					// thanks to benm!
+					h = p - ((m2 - m1) * qInv % p);
+					output = m2 + q * h;
+				}
+				else {
+					// h = (m1 - m2) * qInv mod p
+					h = (m1 - m2) * qInv % p;
+					// m = m2 + q * h;
+					output = m2 + q * h;
+				}
+			}
+			else {
+				// m = c^d mod n
+				output = input.modPow (d, n);
+			}
+			byte[] result = output.getBytes ();
+			// zeroize value
+			input.Clear ();	
+			output.Clear ();
+			return result;
 		}
 
 		public override byte[] EncryptValue (byte[] rgb) 
@@ -156,8 +182,11 @@ namespace Mono.Security.Cryptography {
 
 			BigInteger input = new BigInteger (rgb);
 			BigInteger output = input.modPow (e, n);
-			input.Clear ();	// zeroize temp value
-			return output.getBytes ();
+			byte[] result = output.getBytes ();
+			// zeroize value
+			input.Clear ();	
+			output.Clear ();
+			return result;
 		}
 
 		public override RSAParameters ExportParameters (bool includePrivateParameters) 
@@ -182,8 +211,10 @@ namespace Mono.Security.Cryptography {
 		public override void ImportParameters (RSAParameters parameters) 
 		{
 			// if missing "mandatory" parameters
-			if ((parameters.Exponent == null) || (parameters.Modulus == null))
-				throw new CryptographicException ();
+			if (parameters.Exponent == null) 
+				throw new CryptographicException ("Missing Exponent");
+			if (parameters.Modulus == null)
+				throw new CryptographicException ("Missing Modulus");
 	
 			e = new BigInteger (parameters.Exponent);
 			n = new BigInteger (parameters.Modulus);
@@ -203,6 +234,7 @@ namespace Mono.Security.Cryptography {
 			
 			// we now have a keypair
 			keypairGenerated = true;
+			isCRTpossible = ((p != null) && (q != null) && (dp != null) && (dq != null) && (qInv != null));
 		}
 
 		protected override void Dispose (bool disposing) 

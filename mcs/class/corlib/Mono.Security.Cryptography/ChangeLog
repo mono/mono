@@ -1,3 +1,10 @@
+2003-06-15  Sebastien Pouliot <spouliot@motus.com>
+
+	* RSAManaged.cs: Now includes CRT (Chinese Remainder Theorem) 
+	optimization when using the private key (DecryptValue). This
+	cut more than 5 seconds of nunit on my system (out of 14 sec
+	for complete asymmetric tests). Thanks to Ben Maurer for help!
+
 2003-06-11  Sebastien Pouliot <spouliot@motus.com>
 
 	* DSAManaged.cs: Refactored from DSACryptoServiceProvider.cs. Cannot
