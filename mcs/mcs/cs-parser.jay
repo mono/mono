@@ -660,7 +660,7 @@ constant_declaration
 	  SEMICOLON
 	  {
 		foreach (VariableDeclaration constant in (ArrayList) $5){
-			Constant c = new Constant (
+			Const c = new Const (
 				(string) $4, (string) constant.identifier, 
 				(Expression) constant.expression_or_array_initializer, (int) $2, (Attributes) $1,
 				constant.Location);

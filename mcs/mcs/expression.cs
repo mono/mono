@@ -1304,6 +1304,21 @@ namespace Mono.CSharp {
 
 			return this;
 		}
+
+		/// <summary>
+		///   Constant expression reducer for binary operations
+		/// </summary>
+		public Expression ConstantFold (EmitContext ec)
+		{
+			if (left is StringLiteral && right is StringLiteral){
+				StringLiteral ls = (StringLiteral) left;
+				StringLiteral rs = (StringLiteral) right;
+				
+				return new StringLiteral (ls.Value + rs.Value);
+			}
+			
+			return this;
+		}
 		
 		public override Expression DoResolve (EmitContext ec)
 		{
@@ -1323,6 +1338,16 @@ namespace Mono.CSharp {
 					right + ") at Line: "+ loc.Row);
 
 			eclass = ExprClass.Value;
+
+			//
+			// We always need to reduce on Binary operators, as we need to do
+			// constant folding
+			//
+			left = left.Reduce (ec);
+			right = right.Reduce (ec);
+
+			if (left is Constant && right is Constant)
+				return ConstantFold (ec);
 
 			return ResolveOperator (ec);
 		}
@@ -1594,30 +1619,6 @@ namespace Mono.CSharp {
 			}
 
 			ig.Emit (opcode);
-		}
-
-		/// <summary>
-		///   Constant expression reducer for binary operations
-		/// </summary>
-		public override Expression Reduce (EmitContext ec)
-		{
-			
-			left = left.Reduce (ec);
-			right = right.Reduce (ec);
-
-			if (!(left is Literal && right is Literal))
-				return this;
-
-			if (method == TypeManager.string_concat_string_string){
-				StringLiteral ls = (StringLiteral) left;
-				StringLiteral rs = (StringLiteral) right;
-				
-				return new StringLiteral (ls.Value + rs.Value);
-			}
-
-			// FINISH ME.
-			
-			return this;
 		}
 	}
 
@@ -2732,7 +2733,6 @@ namespace Mono.CSharp {
 						conv = ConvertImplicit (
 							ec, a_expr, parameter_type, Location.Null);
 
-					Console.WriteLine ("From " + a.Type + " to " + parameter_type);
 					if (conv == null) {
 						if (!Location.IsNull (loc)) {
 							Error (1502, loc,
@@ -3853,7 +3853,7 @@ namespace Mono.CSharp {
 				FieldInfo fi = fe.FieldInfo;
 
 				if (fi is FieldBuilder) {
-					Constant c = TypeManager.LookupConstant ((FieldBuilder) fi);
+					Const c = TypeManager.LookupConstant ((FieldBuilder) fi);
 					
 					if (c != null) {
 						object o = c.LookupConstantValue (ec);

@@ -113,13 +113,17 @@ BUGS
 PENDING TASKS
 -------------
 
-	* Implement explicit interface implemenation.
-
 	* Implement Goto.
 
-	* Unsafe code.
+	* Implement explicit interface implemenation.
 
+	* Unsafe code.
+		Making the parser accept unsafe code.
+		
 	* Implement `base' (BaseAccess class)
+
+	* Implement constant folding.  We might need to implement
+	  a new `Constant' class and derive Literal from it.
 
 * OUT Variables passed as OUT variables.
 
@@ -153,6 +157,11 @@ PENDING TASKS
 
 * Implement `goto case expr'
 
+	switch (x){
+		case 1: print ("1"); goto case 4;
+		case 2: ...
+		case 4: ...
+	}
 
 OPTIMIZATIONS
 -------------
@@ -217,26 +226,6 @@ OPTIMIZATIONS
 
 * Add a cache for the various GetArrayMethod operations.
 
-* Use of temporary values in Assign
-
-	We generate suboptimal code for assignments, as we always
-	store the result in a temporary.  
-
-	When implenenting `using' on
-
-		using (a = new XXX)
-
-	Two instances of XXX were created, we need to research this.
-
-		//
-		// FIXME! We need a way to "probe" if the process can
-		// just use `dup' to propagate the result.
-		//
-		// I Think I figured this out, have EmitAssign take an
-		// argument: leave result on stack or not.  If true,
-		// then we can dup ahead of time if we know about this,
-		// and we get rid of the temporary value
-		// 
   
 RECOMMENDATIONS
 ---------------

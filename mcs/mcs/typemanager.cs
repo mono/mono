@@ -559,7 +559,7 @@ public class TypeManager {
 
 	static Hashtable builder_to_constant;
 
-	public static void RegisterConstant (FieldBuilder fb, Constant c)
+	public static void RegisterConstant (FieldBuilder fb, Const c)
 	{
 		if (builder_to_constant == null)
 			builder_to_constant = new Hashtable ();
@@ -570,12 +570,12 @@ public class TypeManager {
 		builder_to_constant.Add (fb, c);
 	}
 
-	public static Constant LookupConstant (FieldBuilder fb)
+	public static Const LookupConstant (FieldBuilder fb)
 	{
 		if (builder_to_constant == null)
 			return null;
 		
-		return (Constant) builder_to_constant [fb];
+		return (Const) builder_to_constant [fb];
 	}
 	
 

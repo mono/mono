@@ -126,7 +126,7 @@ namespace Mono.CSharp {
 			//Console.WriteLine ("New class " + name + " inside " + n);
 		}
 
-		public AdditionResult AddConstant (Constant constant)
+		public AdditionResult AddConstant (Const constant)
 		{
 			AdditionResult res;
 			string name = constant.Name;
@@ -915,7 +915,7 @@ namespace Mono.CSharp {
 		public void Populate ()
 		{
 			if (Constants != null){
-				foreach (Constant c in Constants)
+				foreach (Const c in Constants)
 					c.Define (this);
 			}
 
@@ -1134,7 +1134,7 @@ namespace Mono.CSharp {
 				}
 
 				if (Constants != null) {
-					foreach (Constant con in Constants) {
+					foreach (Const con in Constants) {
 						FieldBuilder fb = con.FieldBuilder;
 						if (filter (fb, criteria) == true)
 							members.Add (fb);
@@ -1355,7 +1355,7 @@ namespace Mono.CSharp {
 		public void Emit ()
 		{
 			if (constants != null)
-				foreach (Constant con in constants)
+				foreach (Const con in constants)
 					con.EmitConstant (this);
 			
 			if (constructors != null)
@@ -1824,12 +1824,10 @@ namespace Mono.CSharp {
 			const int nv = (Modifiers.NEW | Modifiers.VIRTUAL);
 
 			if ((ModFlags & va) == va){
-				if ((ModFlags & va) == va){
-					Report.Error (
-						503, Location, "The abstract method " +
-						MakeName (parent) + "can not be marked virtual");
-					error = true;
-				}
+				Report.Error (
+					503, Location, "The abstract method " +
+					MakeName (parent) + "can not be marked virtual");
+				error = true;
 			}
 
 			if ((ModFlags & Modifiers.ABSTRACT) != 0){

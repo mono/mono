@@ -13,6 +13,7 @@ COMPILER_SOURCES = \
 	delegate.cs			\
 	attribute.cs			\
 	codegen.cs			\
+	const.cs			\
 	constant.cs			\
 	decl.cs				\
 	enum.cs				\

@@ -2505,7 +2505,7 @@ namespace Mono.CSharp {
 				FieldInfo fi = fe.FieldInfo;
 				
 				if (fi is FieldBuilder) {
-					Constant c = TypeManager.LookupConstant ((FieldBuilder) fi);
+					Const c = TypeManager.LookupConstant ((FieldBuilder) fi);
 					
 					if (c != null) {
 						object o = c.LookupConstantValue (ec);

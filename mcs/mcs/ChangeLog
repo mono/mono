@@ -1,3 +1,15 @@
+2001-12-11  Miguel de Icaza  <miguel@ximian.com>
+
+	* expression.cs: Remove reducer for binary expressions, it can not
+	be done this way.
+
+	* const.cs: Put here the code that used to go into constant.cs
+
+	* constant.cs: Put here the code for constants, this is a new base
+	class for Literals.
+
+	* literal.cs: Make Literal derive from Constant.
+
 2001-12-09  Miguel de Icaza  <miguel@ximian.com>
 
 	* statement.cs (Return.Emit): Report error 157 if the user
