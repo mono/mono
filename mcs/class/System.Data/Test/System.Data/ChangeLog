@@ -1,3 +1,7 @@
+2003-03-25  Ville Palo <vi64pa@kolumbus.fi>
+
+	* DataTableTest.cs: Added test for PrimaryKey-property
+	
 2003-03-16  Ville Palo <vi64pa@kolumbus.fi>
 
 	* DataColumnCollectionTest.cs: little fix.

@@ -157,8 +157,9 @@ namespace MonoTests.System.Data
                 public void Select2 ()
                 {
 			DataSet Set = new DataSet ();
-			DataTable Child = new DataTable ("Child");						
-			//Set.Tables.Add (Child);
+			DataTable Child = new DataTable ("Child");
+
+			Set.Tables.Add (Child);
 						
 			DataColumn Col3 = new DataColumn ("Name");
 			DataColumn Col4 = new DataColumn ("Age");
@@ -682,8 +683,61 @@ namespace MonoTests.System.Data
 			dt.DisplayExpression = "Col1";
 			
 			
-			string cmpr = dt.TableName + " " + dt.DisplayExpression;
+			string cmpr = dt.TableName + " + " + dt.DisplayExpression;
 			Assertion.AssertEquals(cmpr,dt.ToString());
 		}
+
+		[Test]
+		public void PrimaryKey ()
+		{
+			DataTable dt = new DataTable ();
+			DataColumn Col = new DataColumn ();
+			Col.AllowDBNull = false;
+			Col.DataType = typeof (int);
+			dt.Columns.Add (Col);
+			dt.Columns.Add ();
+			dt.Columns.Add ();
+			dt.Columns.Add ();
+			
+			Assertion.AssertEquals ("test#01", 0, dt.PrimaryKey.Length);
+			
+			dt.PrimaryKey = new DataColumn [] {dt.Columns [0]};
+			Assertion.AssertEquals ("test#02", 1, dt.PrimaryKey.Length);
+			Assertion.AssertEquals ("test#03", "Column1", dt.PrimaryKey [0].ColumnName);
+			
+			dt.PrimaryKey = null;
+			Assertion.AssertEquals ("test#04", 0, dt.PrimaryKey.Length);
+			
+			Col = new DataColumn ("failed");
+			
+			try {
+				dt.PrimaryKey = new DataColumn [] {Col};
+				Assertion.Fail ("test#05");					
+			} catch (Exception e) {
+				Assertion.AssertEquals ("test#06", typeof (ArgumentException), e.GetType ());
+				Assertion.AssertEquals ("test#07", "Column must belong to a table.", e.Message);
+			}
+			
+			DataTable dt2 = new DataTable ();
+			dt2.Columns.Add ();
+			
+			try {
+				dt.PrimaryKey = new DataColumn [] {dt2.Columns [0]};
+				Assertion.Fail ("test#08");
+			} catch (Exception e) {
+				Assertion.AssertEquals ("test#09", typeof (ArgumentException), e.GetType ());
+				Assertion.AssertEquals ("test#10", "PrimaryKey columns do not belong to this table.", e.Message);
+			}
+			
+			Assertion.AssertEquals ("test#11", 0, dt.Constraints.Count);
+			
+			dt.PrimaryKey = new DataColumn [] {dt.Columns [0], dt.Columns [1]};
+			Assertion.AssertEquals ("test#12", 2, dt.PrimaryKey.Length);
+			Assertion.AssertEquals ("test#13", 1, dt.Constraints.Count);
+			Assertion.AssertEquals ("test#14", true, dt.Constraints [0] is UniqueConstraint);
+			Assertion.AssertEquals ("test#15", "Column1", dt.PrimaryKey [0]);
+			Assertion.AssertEquals ("test#16", "Column2", dt.PrimaryKey [1]);
+		}
+
 	}
 }
