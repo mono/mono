@@ -1,5 +1,7 @@
 2004-07-24  Zoltan Varga  <vargaz@freemail.hu>
 
+	* mini-sparc.c (mono_arch_output_basic_block): Add CEE_CONV_U8/I8.
+
 	* *-amd64*.*: Ongoing AMD64 work.
 
 2004-07-23 Zoltan Varga <vargaz@freemail.hu>
