@@ -441,7 +441,6 @@ System.Web.UI.WebControls/SessionParameter.cs
 System.Web.UI.WebControls/SiteMapDataSourceView.cs
 System.Web.UI.WebControls/SiteMapNodeItemType.cs
 System.Web.UI.WebControls/SiteMapNodeType.cs
-System.Web.UI.WebControls/SiteMapViewType.cs
 System.Web.UI.WebControls/SortDirection.cs
 System.Web.UI.WebControls/SqlDataSource.cs
 System.Web.UI.WebControls/SqlDataSourceCommandEventArgs.cs
@@ -461,6 +460,7 @@ System.Web.UI.WebControls/TableHeaderScope.cs
 System.Web.UI.WebControls/TableItemStyle.cs
 System.Web.UI.WebControls/TableRow.cs
 System.Web.UI.WebControls/TableRowCollection.cs
+System.Web.UI.WebControls/TableRowSection.cs
 System.Web.UI.WebControls/TableStyle.cs
 System.Web.UI.WebControls/TableViewMode.cs
 System.Web.UI.WebControls/TargetConverter.cs

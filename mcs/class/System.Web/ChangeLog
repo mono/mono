@@ -1,3 +1,8 @@
+2004-09-30  Sanjay Gupta <gsanjay@novell.com>
+
+	* System.Web.dll.sources: Added and removed an enumeration in  
+	  System.Web.UI.WebControls.
+
 2004-09-29  Sanjay Gupta <gsanjay@novell.com>
 
 	* System.Web.dll.sources: Added new classes in 
