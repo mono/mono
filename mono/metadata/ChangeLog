@@ -1,3 +1,35 @@
+2003-10-15  Martin Baulig  <martin@ximian.com>
+
+	* class.c (mono_class_from_gen_param): Renamed to
+	mono_class_from_generic_parameter() and moved most of the
+	functionality from mono_reflection_define_generic_parameter()
+	here; ie. we create a "real" class here.
+	(mono_class_from_mono_type): Only allow MONO_TYPE_VAR and
+	MONO_TYPE_MVAR if mono_class_from_generic_parameter() has
+	previously been called.
+
+	* class.h (MonoGenericParam): Moved the declaration of this struct
+	here from metadata.h and added `MonoMethod *method'.
+
+	* icall.c (ves_icall_MonoType_get_DeclaringMethod): New
+	interncall.
+
+	* loader.c (mono_get_method_from_token): If we have any generic
+	parameters, call mono_metadata_load_generic_params() to read them
+	from the MONO_TABLE_GENERICPAR.
+
+	* metadata.c (mono_metadata_load_generic_params): Added
+	`MonoMethod *method' argument which is used MONO_TYPE_MVAR.
+
+	* metadata.h (MonoMethodSignature): Replaced
+	`MonoGenericInst *geninst' with `guint16 generic_param_count'.
+	(MonoMethodHeader): Added `MonoGenericParam *gen_params'.
+
+	* reflection.c (mono_reflection_define_generic_parameter): Moved
+	most of the functionality into the new
+	mono_class_from_generic_parameter(); set the `method' field if
+	we're a method parameter.	
+
 2003-10-13 Bernie Solomon  <bernard@ugsolutions.com>
 
 	* marshal.c (emit_struct_conv): if native size is 0
