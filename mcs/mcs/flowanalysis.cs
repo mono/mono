@@ -424,8 +424,8 @@ namespace Mono.CSharp
 			// <summary>
 			//   Merges a child branching.
 			// </summary>
-			public FlowReturns MergeChild (MyBitVector new_params, MyBitVector new_locals,
-						       Reachability new_reachability)
+			public void MergeChild (MyBitVector new_params, MyBitVector new_locals,
+						Reachability new_reachability)
 			{
 				Report.Debug (2, "MERGING CHILD", this, new_params, new_locals,
 					      new_reachability);
@@ -460,8 +460,6 @@ namespace Mono.CSharp
 				}
 
 				Report.Debug (2, "MERGING CHILD DONE", this);
-
-				return Returns;
 			}
 
 			// <summary>
@@ -826,7 +824,7 @@ namespace Mono.CSharp
 		// <summary>
 		//   Merge a child branching.
 		// </summary>
-		public FlowReturns MergeChild (FlowBranching child)
+		public Reachability MergeChild (FlowBranching child)
 		{
 			MergeResult result = child.Merge ();
 
@@ -837,15 +835,17 @@ namespace Mono.CSharp
 				MayLeaveLoop |= child.MayLeaveLoop;
 
 			if (result.Reachability.Reachable == FlowReturns.Exception)
-				return FlowReturns.Exception;
+				return new Reachability (
+					FlowReturns.Exception, result.Reachability.Breaks,
+					result.Reachability.Reachable);
 			else
-				return result.Reachability.Returns;
+				return result.Reachability;
  		}
 
 		// <summary>
 		//   Does the toplevel merging.
 		// </summary>
-		public FlowReturns MergeTopBlock ()
+		public Reachability MergeTopBlock ()
 		{
 			if ((Type != BranchingType.Block) || (Block == null))
 				throw new NotSupportedException ();
@@ -859,9 +859,11 @@ namespace Mono.CSharp
 			if (vector.Reachable != FlowReturns.Exception)
 				CheckOutParameters (vector.Parameters, Location);
 			else
-				return FlowReturns.Exception;
+				return new Reachability (
+					FlowReturns.Exception, result.Reachability.Breaks,
+					result.Reachability.Reachable);
 
-			return result.Reachability.Returns;
+			return result.Reachability;
 		}
 
 		public virtual bool InTryBlock ()

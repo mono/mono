@@ -250,8 +250,8 @@ namespace Mono.CSharp {
 			}
 
 			ec.CurrentBranching.Infinite = infinite;
-			FlowBranching.FlowReturns returns = ec.EndFlowBranching ();
-			may_return = returns != FlowBranching.FlowReturns.Never;
+			FlowBranching.Reachability reachability = ec.EndFlowBranching ();
+			may_return = reachability.Returns != FlowBranching.FlowReturns.Never;
 
 			return ok;
 		}
@@ -346,8 +346,8 @@ namespace Mono.CSharp {
 				ec.KillFlowBranching ();
 			else {
 				ec.CurrentBranching.Infinite = infinite;
-				FlowBranching.FlowReturns returns = ec.EndFlowBranching ();
-				may_return = returns != FlowBranching.FlowReturns.Never;
+				FlowBranching.Reachability reachability = ec.EndFlowBranching ();
+				may_return = reachability.Returns != FlowBranching.FlowReturns.Never;
 			}
 
 			return ok;
@@ -472,8 +472,8 @@ namespace Mono.CSharp {
 				ec.KillFlowBranching ();
 			else {
 				ec.CurrentBranching.Infinite = infinite;
-				FlowBranching.FlowReturns returns = ec.EndFlowBranching ();
-				may_return = returns != FlowBranching.FlowReturns.Never;
+				FlowBranching.Reachability reachability = ec.EndFlowBranching ();
+				may_return = reachability.Returns != FlowBranching.FlowReturns.Never;
 			}
 
 			return ok;
@@ -1777,12 +1777,13 @@ namespace Mono.CSharp {
 
 			Report.Debug (1, "RESOLVE BLOCK DONE", StartLocation, ec.CurrentBranching);
 
-			FlowBranching.FlowReturns returns = ec.EndFlowBranching ();
+			FlowBranching.Reachability reachability = ec.EndFlowBranching ();
 			ec.CurrentBlock = prev_block;
 
 			// If we're a non-static `struct' constructor which doesn't have an
 			// initializer, then we must initialize all of the struct's fields.
-			if ((this_variable != null) && (returns != FlowBranching.FlowReturns.Exception) &&
+			if ((this_variable != null) &&
+			    (reachability.Returns != FlowBranching.FlowReturns.Exception) &&
 			    !this_variable.IsThisAssigned (ec, loc))
 				ok = false;
 
@@ -1793,11 +1794,11 @@ namespace Mono.CSharp {
 								"This label has not been referenced");
 			}
 
-			Report.Debug (1, "RESOLVE BLOCK DONE #2", StartLocation, returns);
+			Report.Debug (1, "RESOLVE BLOCK DONE #2", StartLocation, reachability);
 
-			if ((returns == FlowBranching.FlowReturns.Always) ||
-			    (returns == FlowBranching.FlowReturns.Exception) ||
-			    (returns == FlowBranching.FlowReturns.Unreachable))
+			if ((reachability.Returns == FlowBranching.FlowReturns.Always) ||
+			    (reachability.Returns == FlowBranching.FlowReturns.Exception) ||
+			    (reachability.Returns == FlowBranching.FlowReturns.Unreachable))
 				flags |= Flags.HasRet;
 
 			return ok;
@@ -3216,13 +3217,13 @@ namespace Mono.CSharp {
 				ec.InFinally = old_in_finally;
 			}
 
-			FlowBranching.FlowReturns returns = ec.EndFlowBranching ();
+			FlowBranching.Reachability reachability = ec.EndFlowBranching ();
 
 			FlowBranching.UsageVector f_vector = ec.CurrentBranching.CurrentUsageVector;
 
-			Report.Debug (1, "END OF TRY", ec.CurrentBranching, returns, vector, f_vector);
+			Report.Debug (1, "END OF TRY", ec.CurrentBranching, reachability, vector, f_vector);
 
-			if (returns != FlowBranching.FlowReturns.Always) {
+			if (reachability.Returns != FlowBranching.FlowReturns.Always) {
 				// Unfortunately, System.Reflection.Emit automatically emits a leave
 				// to the end of the finally block.  This is a problem if `returns'
 				// is true since we may jump to a point after the end of the method.
@@ -3487,9 +3488,9 @@ namespace Mono.CSharp {
 				return false;
 			}
 					
-			FlowBranching.FlowReturns returns = ec.EndFlowBranching ();
+			FlowBranching.Reachability reachability = ec.EndFlowBranching ();
 
-			if (returns != FlowBranching.FlowReturns.Always) {
+			if (reachability.Returns != FlowBranching.FlowReturns.Always) {
 				// Unfortunately, System.Reflection.Emit automatically emits a leave
 				// to the end of the finally block.  This is a problem if `returns'
 				// is true since we may jump to a point after the end of the method.
@@ -3597,7 +3598,7 @@ namespace Mono.CSharp {
 			if (!statement.Resolve (ec))
 				return false;
 
-			FlowBranching.FlowReturns returns = ec.EndFlowBranching ();
+			ec.EndFlowBranching ();
 
 			return true;
 		}
