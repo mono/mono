@@ -529,6 +529,17 @@ namespace Mono.CSharp {
 									 ((IntConstant) right).Value);
 
 						result = new IntConstant (res);
+					} else if (left is DecimalConstant) {
+						decimal res;
+
+						if (ec.ConstantCheckState)
+							res = checked (((DecimalConstant) left).Value +
+								((DecimalConstant) right).Value);
+						else
+							res = unchecked (((DecimalConstant) left).Value +
+								((DecimalConstant) right).Value);
+
+						result = new DecimalConstant (res);
 					} else {
 						throw new Exception ( "Unexepected addition input: " + left);
 					}
