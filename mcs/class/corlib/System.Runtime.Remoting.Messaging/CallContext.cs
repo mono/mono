@@ -94,7 +94,7 @@ namespace System.Runtime.Remoting.Messaging
 			object oldData = datastore;
 
 			if (ctx != null && ctx.HasInfo)
-				datastore = ctx.Datastore.Clone ();
+				datastore = (Hashtable) ctx.Datastore.Clone ();
 			else
 				datastore = null;
 				
