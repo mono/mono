@@ -268,6 +268,9 @@ namespace System.Text {
 		/* The Append Methods */
 		public StringBuilder Append (char[] value) 
 		{
+			if (value == null)
+				return this;
+
 			int needed_cap = _length + value.Length;
 			if (null != _cached_str || _str.Length < needed_cap)
 				InternalEnsureCapacity (needed_cap);
@@ -282,6 +285,9 @@ namespace System.Text {
 		
 		public StringBuilder Append (string value) 
 		{
+			if (value == null)
+				return this;
+
 			int needed_cap = _length + value.Length;
 			if (null != _cached_str || _str.Length < needed_cap)
 				InternalEnsureCapacity (needed_cap);
@@ -324,6 +330,9 @@ namespace System.Text {
 		}
 
 		public StringBuilder Append (object value) {
+			if (value == null)
+				return this;
+
 			return Append (value.ToString());
 		}
 
@@ -378,16 +387,16 @@ namespace System.Text {
 
 		public StringBuilder Append( char[] value, int startIndex, int charCount ) 
 		{
-			if ((charCount < 0 || startIndex < 0) || (charCount + startIndex > value.Length)) 
-				throw new ArgumentOutOfRangeException();
-			
-			if (value == null) 
-			{
+			if (value == null) {
 				if (!(startIndex == 0 && charCount == 0))
-					throw new ArgumentNullException();
+					throw new ArgumentNullException ("value");
 
 				return this;
 			}
+
+			if ((charCount < 0 || startIndex < 0) || (charCount + startIndex > value.Length)) 
+				throw new ArgumentOutOfRangeException();
+			
 			
 			InternalEnsureCapacity (_length + charCount);
 			
@@ -400,6 +409,13 @@ namespace System.Text {
 
 		public StringBuilder Append (string value, int startIndex, int count) 
 		{
+			if (value == null) {
+				if (startIndex != 0 && count != 0)
+					throw new ArgumentNullException ("value");
+					
+				return this;
+			}
+
 			if ((count < 0 || startIndex < 0) || (startIndex + count > value.Length))
 				throw new ArgumentOutOfRangeException();
 			

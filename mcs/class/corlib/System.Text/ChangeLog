@@ -1,3 +1,6 @@
+2004-01-13  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* StringBuilder.cs: added checks for null in a few Append methods.
 
 Tue Jan 13 22:23:25 CET 2004 Paolo Molaro <lupus@ximian.com>
 
