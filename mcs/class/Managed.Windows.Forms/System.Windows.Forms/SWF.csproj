@@ -105,7 +105,7 @@
                 />
                 <File
                     RelPath = "Application.cs"
-                    SubType = "Component"
+                    SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
@@ -134,17 +134,17 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "BindingManagerBase.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "BindingMemberInfo.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
                     RelPath = "BindingsCollection.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "BindingsManagerBase.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
