@@ -61,7 +61,7 @@ namespace MonoTests.System
 			tryUI16 = 34567;
 			tryUI32 = 567891234;
 			tryUI64 = 0;
-			ci = new CultureInfo("sv-SE");
+			ci = new CultureInfo("en-US");
 			ci.NumberFormat.NumberDecimalDigits = 3;
 		}
 		protected override void TearDown() {}
@@ -73,27 +73,49 @@ namespace MonoTests.System
 		}
 
 		public void TestChangeType() {
-			AssertEquals("#A01", (short)12345, Convert.ChangeType(tryInt32, typeof(short)));
-			AssertEquals("#A02", 'A', Convert.ChangeType(65, typeof(char)));
-			AssertEquals("#A03", 66, Convert.ChangeType('B', typeof(int)));
-			AssertEquals("#A04", ((ulong)12345), Convert.ChangeType(tryInt32, typeof(ulong)));
-			
-			AssertEquals("#A05", true, Convert.ChangeType(tryDec, TypeCode.Boolean));
-			AssertEquals("#A06", 'f', Convert.ChangeType("f", TypeCode.Char));
-			AssertEquals("#A07", (decimal)123456789012, Convert.ChangeType(tryInt64, TypeCode.Decimal));
-			AssertEquals("#A08", (int)34567, Convert.ChangeType(tryUI16, TypeCode.Int32));
+			int iTest = 1;
+			try {
+				AssertEquals("#A01", (short)12345, Convert.ChangeType(tryInt32, typeof(short)));
+				iTest++;
+				AssertEquals("#A02", 'A', Convert.ChangeType(65, typeof(char)));
+				iTest++;
+				AssertEquals("#A03", 66, Convert.ChangeType('B', typeof(int)));
+				iTest++;
+				AssertEquals("#A04", ((ulong)12345), Convert.ChangeType(tryInt32, typeof(ulong)));
+				
+				iTest++;
+				AssertEquals("#A05", true, Convert.ChangeType(tryDec, TypeCode.Boolean));
+				iTest++;
+				AssertEquals("#A06", 'f', Convert.ChangeType("f", TypeCode.Char));
+				iTest++;
+				AssertEquals("#A07", (decimal)123456789012, Convert.ChangeType(tryInt64, TypeCode.Decimal));
+				iTest++;
+				AssertEquals("#A08", (int)34567, Convert.ChangeType(tryUI16, TypeCode.Int32));
 
-			AssertEquals("#A09", (double)567891234, Convert.ChangeType(tryUI32, typeof(double), ci));
-			AssertEquals("#A10", (ushort)0, Convert.ChangeType(tryByte, typeof(ushort), ci));
-			AssertEquals("#A11", (decimal)567891234, Convert.ChangeType(tryUI32, typeof(decimal), ci));
-			AssertEquals("#A12", (float)1234, Convert.ChangeType(tryInt16, typeof(float), ci));
-			AssertEquals("#A13", null, Convert.ChangeType(null, null, ci));
+				iTest++;
+				AssertEquals("#A09", (double)567891234, Convert.ChangeType(tryUI32, typeof(double), ci));
+				iTest++;
+				AssertEquals("#A10", (ushort)0, Convert.ChangeType(tryByte, typeof(ushort), ci));
+				iTest++;
+				AssertEquals("#A11", (decimal)567891234, Convert.ChangeType(tryUI32, typeof(decimal), ci));
+				iTest++;
+				AssertEquals("#A12", (float)1234, Convert.ChangeType(tryInt16, typeof(float), ci));
+				iTest++;
+				AssertEquals("#A13", null, Convert.ChangeType(null, null, ci));
 
-			AssertEquals("#A14", (decimal)0, Convert.ChangeType(tryByte, TypeCode.Decimal, ci));
-			AssertEquals("#A15", "f", Convert.ChangeType('f', TypeCode.String, ci));
-			AssertEquals("#A16", 'D', Convert.ChangeType(68, TypeCode.Char, ci));
-			AssertEquals("#A17", (long)34567, Convert.ChangeType(tryUI16, TypeCode.Int64, ci));
-			AssertEquals("#A18", null, Convert.ChangeType(null, TypeCode.Empty, ci));
+				iTest++;
+				AssertEquals("#A14", (decimal)0, Convert.ChangeType(tryByte, TypeCode.Decimal, ci));
+				iTest++;
+				AssertEquals("#A15", "f", Convert.ChangeType('f', TypeCode.String, ci));
+				iTest++;
+				AssertEquals("#A16", 'D', Convert.ChangeType(68, TypeCode.Char, ci));
+				iTest++;
+				AssertEquals("#A17", (long)34567, Convert.ChangeType(tryUI16, TypeCode.Int64, ci));
+				iTest++;
+				AssertEquals("#A18", null, Convert.ChangeType(null, TypeCode.Empty, ci));
+			} catch (Exception e) {
+				Fail ("Unexpected exception at iTest = " + iTest + ": e = " + e);
+			}
 			
 			try {
 				Convert.ChangeType(boolTrue, typeof(char));
@@ -845,7 +867,7 @@ namespace MonoTests.System
 			AssertEquals("#I08", (double)tryInt64, Convert.ToDouble(tryInt64));
 			AssertEquals("#I09", (double)trySByte, Convert.ToDouble(trySByte));
 			AssertEquals("#I10", (double)tryFloat, Convert.ToDouble(tryFloat));
-			AssertEquals("#I11", (double)23456.432, Convert.ToDouble("23456,432"));
+			AssertEquals("#I11", (double)23456.432, Convert.ToDouble("23456.432"));
 			AssertEquals("#I12", (double)tryUI16, Convert.ToDouble(tryUI16));
 			AssertEquals("#I13", (double)tryUI32, Convert.ToDouble(tryUI32));
 			AssertEquals("#I14", (double)tryUI64, Convert.ToDouble(tryUI64));
@@ -1680,21 +1702,40 @@ namespace MonoTests.System
 		}
 
 		public void TestToSingle() {
-			AssertEquals("#N01", (float)0, Convert.ToSingle(boolFalse));
-			AssertEquals("#N02", (float)1, Convert.ToSingle(boolTrue));
-			AssertEquals("#N03", (float)0, Convert.ToSingle(tryByte));
-			AssertEquals("#N04", (float)1234,234, Convert.ToSingle(tryDec));
-			AssertEquals("#N05", (float)0, Convert.ToSingle(tryDbl));
-			AssertEquals("#N06", (float)1234, Convert.ToSingle(tryInt16));
-			AssertEquals("#N07", (float)12345, Convert.ToSingle(tryInt32));
-			AssertEquals("#N08", (float)123456789012, Convert.ToSingle(tryInt64));
-			AssertEquals("#N09", (float)123, Convert.ToSingle(trySByte));
-			AssertEquals("#N10", (float)1234,2345, Convert.ToSingle(tryFloat));
-			AssertEquals("#N11", (float)987, Convert.ToSingle("987"));
-			AssertEquals("#N12", (float)34567, Convert.ToSingle(tryUI16));
-			AssertEquals("#N13", (float)567891234, Convert.ToSingle(tryUI32));
-			AssertEquals("#N14", (float)0, Convert.ToSingle(tryUI64));
-			AssertEquals("#N15", (float)654.234, Convert.ToSingle("654,234", ci));
+			int iTest = 1;
+			try {
+				AssertEquals("#N01", (float)0, Convert.ToSingle(boolFalse));
+				iTest++;
+				AssertEquals("#N02", (float)1, Convert.ToSingle(boolTrue));
+				iTest++;
+				AssertEquals("#N03", (float)0, Convert.ToSingle(tryByte));
+				iTest++;
+				AssertEquals("#N04", (float)1234,234, Convert.ToSingle(tryDec));
+				iTest++;
+				AssertEquals("#N05", (float)0, Convert.ToSingle(tryDbl));
+				iTest++;
+				AssertEquals("#N06", (float)1234, Convert.ToSingle(tryInt16));
+				iTest++;
+				AssertEquals("#N07", (float)12345, Convert.ToSingle(tryInt32));
+				iTest++;
+				AssertEquals("#N08", (float)123456789012, Convert.ToSingle(tryInt64));
+				iTest++;
+				AssertEquals("#N09", (float)123, Convert.ToSingle(trySByte));
+				iTest++;
+				AssertEquals("#N10", (float)1234,2345, Convert.ToSingle(tryFloat));
+				iTest++;
+				AssertEquals("#N11", (float)987, Convert.ToSingle("987"));
+				iTest++;
+				AssertEquals("#N12", (float)34567, Convert.ToSingle(tryUI16));
+				iTest++;
+				AssertEquals("#N13", (float)567891234, Convert.ToSingle(tryUI32));
+				iTest++;
+				AssertEquals("#N14", (float)0, Convert.ToSingle(tryUI64));
+				iTest++;
+				AssertEquals("#N15", (float)654.234, Convert.ToSingle("654.234", ci));
+			} catch (Exception e) {
+				Fail ("Unexpected exception at iTest = " + iTest + ": e = " + e);
+			}
 
 			try {
 				Convert.ToSingle(tryChar);
@@ -2232,26 +2273,50 @@ namespace MonoTests.System
 
 		public void TestToUInt64() 
 		{
-			AssertEquals("#R01", (ulong)1, Convert.ToUInt64(boolTrue));
-			AssertEquals("#R02", (ulong)0, Convert.ToUInt64(boolFalse));
-			AssertEquals("#R03", (ulong)0, Convert.ToUInt64(tryByte));
-			AssertEquals("#R04", (ulong)97, Convert.ToUInt64(tryChar));
-			AssertEquals("#R05", (ulong)1234, Convert.ToUInt64(tryDec));
-			AssertEquals("#R06", (ulong)0, Convert.ToUInt64(tryDbl));
-			AssertEquals("#R07", (ulong)1234, Convert.ToUInt64(tryInt16));
-			AssertEquals("#R08", (ulong)12345, Convert.ToUInt64(tryInt32));
-			AssertEquals("#R09", (ulong)123456789012, Convert.ToUInt64(tryInt64));
-			AssertEquals("#R10", (ulong)123, Convert.ToUInt64(trySByte));
-			AssertEquals("#R11", (ulong)1234, Convert.ToUInt64(tryFloat));
-			AssertEquals("#R12", (ulong)345678, Convert.ToUInt64("345678"));
-			AssertEquals("#R13", (ulong)34567, Convert.ToUInt64(tryUI16));
-			AssertEquals("#R14", (ulong)567891234, Convert.ToUInt64(tryUI32));
-			AssertEquals("#R15", (ulong)0, Convert.ToUInt64(tryUI64));
-			AssertEquals("#R16", (ulong)123, Convert.ToUInt64("123", ci));
-			AssertEquals("#R17", (ulong)4, Convert.ToUInt64("100", 2));
-			AssertEquals("#R18", (ulong)64, Convert.ToUInt64("100", 8));
-			AssertEquals("#R19", (ulong)100, Convert.ToUInt64("100", 10));
-			AssertEquals("#R20", (ulong)256, Convert.ToUInt64("100", 16));
+			int iTest = 1;
+			try {
+				AssertEquals("#R01", (ulong)1, Convert.ToUInt64(boolTrue));
+				iTest++;
+				AssertEquals("#R02", (ulong)0, Convert.ToUInt64(boolFalse));
+				iTest++;
+				AssertEquals("#R03", (ulong)0, Convert.ToUInt64(tryByte));
+				iTest++;
+				AssertEquals("#R04", (ulong)97, Convert.ToUInt64(tryChar));
+				iTest++;
+				AssertEquals("#R05", (ulong)1234, Convert.ToUInt64(tryDec));
+				iTest++;
+				AssertEquals("#R06", (ulong)0, Convert.ToUInt64(tryDbl));
+				iTest++;
+				AssertEquals("#R07", (ulong)1234, Convert.ToUInt64(tryInt16));
+				iTest++;
+				AssertEquals("#R08", (ulong)12345, Convert.ToUInt64(tryInt32));
+				iTest++;
+				AssertEquals("#R09", (ulong)123456789012, Convert.ToUInt64(tryInt64));
+				iTest++;
+				AssertEquals("#R10", (ulong)123, Convert.ToUInt64(trySByte));
+				iTest++;
+				AssertEquals("#R11", (ulong)1234, Convert.ToUInt64(tryFloat));
+				iTest++;
+				AssertEquals("#R12", (ulong)345678, Convert.ToUInt64("345678"));
+				iTest++;
+				AssertEquals("#R13", (ulong)34567, Convert.ToUInt64(tryUI16));
+				iTest++;
+				AssertEquals("#R14", (ulong)567891234, Convert.ToUInt64(tryUI32));
+				iTest++;
+				AssertEquals("#R15", (ulong)0, Convert.ToUInt64(tryUI64));
+				iTest++;
+				AssertEquals("#R16", (ulong)123, Convert.ToUInt64("123", ci));
+				iTest++;
+				AssertEquals("#R17", (ulong)4, Convert.ToUInt64("100", 2));
+				iTest++;
+				AssertEquals("#R18", (ulong)64, Convert.ToUInt64("100", 8));
+				iTest++;
+				AssertEquals("#R19", (ulong)100, Convert.ToUInt64("100", 10));
+				iTest++;
+				AssertEquals("#R20", (ulong)256, Convert.ToUInt64("100", 16));
+			} catch (Exception e) {
+				Fail ("Unexpected exception caught when iTest = " + iTest + ": e = " + e);
+			}
 
 			try {
 				Convert.ToUInt64(tryDT);
