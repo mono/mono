@@ -1,5 +1,9 @@
 2004-11-18 Sanjay Gupta <gsanjay@novell.com>
 
+	* SqlDataSource.cs: Corrected Select method.
+
+2004-11-18 Sanjay Gupta <gsanjay@novell.com>
+
 	* SqlDataSource.cs: Updated Select method definition.
 	* SqlDataSourceStatusEventArgs.cs: Updated class.
 	 

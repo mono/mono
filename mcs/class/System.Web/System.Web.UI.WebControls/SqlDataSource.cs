@@ -80,10 +80,7 @@ namespace System.Web.UI.WebControls {
 		
 		public IEnumerable Select (DataSourceSelectArguments args)
 		{
-			//View.Selecting;
-			IEnumerable enums = View.Select (null);
-			//View.Selected;
-			return enums;
+			return View.Select (args);			
 		}
 		
 		public int Update ()
