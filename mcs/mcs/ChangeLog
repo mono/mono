@@ -1,3 +1,7 @@
+2004-06-11  Marek Safar  <marek.safar@seznam.cz>
+
+	* attribute.cs (Attribute.Emit): Fixed error CS0579 reporting.
+
 2004-06-11  Martin Baulig  <martin@ximian.com>
 
 	* expression.cs (Invocation.EmitCall): Use OpCodes.Callvirt for

@@ -805,11 +805,17 @@ namespace Mono.CSharp {
 
 			ias.ApplyAttributeBuilder (this, cb);
 
-			if (!usage_attr.AllowMultiple && emitted_attr.Contains (Target)) {
-				Report.Error (579, Location, "Duplicate '" + Name + "' attribute");
+			if (!usage_attr.AllowMultiple) {
+				ArrayList emitted_targets = (ArrayList)emitted_attr [Type];
+				if (emitted_targets == null) {
+					emitted_targets = new ArrayList ();
+					emitted_attr.Add (Type, emitted_targets);
+				} else if (emitted_targets.Contains (Target)) {
+					Report.Error (579, Location, "Duplicate '" + Name + "' attribute");
+					return;
+				}
+				emitted_targets.Add (Target);
 			}
-
-			emitted_attr [Type] = Target;
 
 			// Here we are testing attribute arguments for array usage (error 3016)
 			if (ias.IsClsCompliaceRequired (ec.DeclSpace)) {
