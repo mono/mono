@@ -672,7 +672,11 @@ namespace Mono.CSharp {
 				if (first.IsClass){
 					parent = first;
 					start = 1;
-				} else if (first.IsSealed){
+				} else {
+					parent = TypeManager.object_type;
+					start = 0;
+				}
+				if (first.IsSealed){
 					string detail = "";
 					
 					if (first.IsValueType)
@@ -683,9 +687,6 @@ namespace Mono.CSharp {
 						      first + "'" + detail);
 					error = true;
 					return null;
-				} else {
-					parent = TypeManager.object_type;
-					start = 0;
 				}
 
 				if (!AsAccessible (parent, ModFlags))
