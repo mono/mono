@@ -1,3 +1,9 @@
+
+Mon Apr 8 17:17:04 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* appdomain.h, appdomain.c: split initialization that requires the
+	execution engine support into mono_runtime_init().
+
 2002-04-08  Dietmar Maurer  <dietmar@ximian.com>
 
 	* class.c (mono_class_init): don't include vtable inside MonoClass
