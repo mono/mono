@@ -1098,13 +1098,11 @@ namespace Mono.CSharp {
 				}
 
 				if (iface.IsClass) {
-					if (parent != null){
-						Report.Error (527, Location,
-							      "In Class `{0}', `{1}' is not " +
-							      "an interface", Name, iface.Name);
-						error = true;
-						return null;
-					}
+					Report.Error (1722, Location,
+						      "In Class `{0}', `{1}' is not " +
+						      "an interface, a base class must be listed first", Name, iface.Name);
+					error = true;
+					return null;
 				}
   
 				for (int x = 0; x < i; x++) {
