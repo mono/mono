@@ -29,13 +29,13 @@ namespace System.Web.UI {
 		public override bool Equals (object obj)
 		{
 			if (!(obj is ControlBuilderAttribute))
-				return false
-			return ((ControlBuilderAttribute) obj).builderType == builderType);
+				return false;
+			return ((ControlBuilderAttribute) obj).builderType == builderType;
 		}
 
 		public override int GetHashCode ()
 		{
-			base.GetHashCode ();
+			return base.GetHashCode ();
 		}
 
 		public override bool IsDefaultAttribute ()
@@ -44,3 +44,4 @@ namespace System.Web.UI {
 		}
 	}
 }
+
