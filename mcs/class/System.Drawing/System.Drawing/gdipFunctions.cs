@@ -457,7 +457,7 @@ namespace System.Drawing
 
 		// Graphics functions
 		[DllImport("gdiplus.dll")]
-		static internal extern Status GdipCreateFromHDC(IntPtr hDC, out int graphics);
+		static internal extern Status GdipCreateFromHDC(IntPtr hDC, out IntPtr graphics);
 		[DllImport("gdiplus.dll")]
 		static internal extern Status GdipDeleteGraphics(IntPtr graphics);
 		[DllImport("gdiplus.dll")]
@@ -1330,6 +1330,8 @@ namespace System.Drawing
 		internal static extern Status GdipGetLogFontA(IntPtr font, IntPtr graphics, ref LOGFONTA logfontA);
 		[DllImport("gdiplus.dll")]                   
 		internal static extern Status GdipCreateFontFromDC(IntPtr hdc, out IntPtr font);
+		[DllImport("gdiplus.dll", SetLastError=true)]
+		internal static extern int GdipCreateFontFromLogfontA(IntPtr hdc, ref LOGFONTA lf, out IntPtr ptr);
 
 		// These are our private functions, they exists in our own libgdiplus library, this way we
 		// avoid relying on wine in System.Drawing

@@ -190,11 +190,9 @@ namespace System.Drawing
 				lock (typeof (Font))
 				{
 					hdc = GDIPlus.GetDC (IntPtr.Zero);
-					oldFont = GDIPlus.SelectObject (hdc, Hfont);
-					GDIPlus.CheckStatus (GDIPlus.GdipCreateFontFromDC (hdc, out newObject));
-					GDIPlus.CheckStatus (GDIPlus.GdipGetLogFontA (newObject, IntPtr.Zero, ref lf));
-					GDIPlus.SelectObject (hdc, oldFont);
+					Font f = FromLogFont (lf, hdc);
 					GDIPlus.ReleaseDC (hdc);
+					return f;
 				}
 			}
 
@@ -237,11 +235,8 @@ namespace System.Drawing
 				// If we're on Unix we use our private gdiplus API
 				GDIPlus.CheckStatus (GDIPlus.GdipGetHfont (fontObject, out Hfont));
 			} else {
-				// This needs testing, but I don't have a working win32 mono
-				// environment. 
 				LOGFONTA lf = new LOGFONTA ();
-
-				GDIPlus.CheckStatus (GDIPlus.GdipGetLogFontA (fontObject, IntPtr.Zero, ref lf));
+				ToLogFont(lf);
 				Hfont = GDIPlus.CreateFontIndirectA (ref lf);
 			}
 			return Hfont;
@@ -501,10 +496,13 @@ namespace System.Drawing
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
+		[MonoTODO("This is temporary implementation")]
 		public static Font FromLogFont (object lf,  IntPtr hdc)
 		{
-			throw new NotImplementedException ();
+			IntPtr newObject;
+			LOGFONTA o = (LOGFONTA)lf;
+			int l = GDIPlus.GdipCreateFontFromLogfontA (hdc, ref o, out newObject);
+			return new Font (newObject, "Microsoft Sans Serif", FontStyle.Regular, 10);
 		}
 
 		public float GetHeight ()
@@ -518,16 +516,22 @@ namespace System.Drawing
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		public void ToLogFont (object logFont)
 		{
-			throw new NotImplementedException ();
+			using (Graphics g = Graphics.FromHdc (GDIPlus.GetDC (IntPtr.Zero))) {
+				ToLogFont (logFont, g);
+			}
 		}
 
-		[MonoTODO]
 		public void ToLogFont (object logFont, Graphics graphics)
 		{
-			throw new NotImplementedException ();
+			if (graphics == null) {
+				throw new ArgumentNullException ("graphics");
+			}
+
+			// TODO: Does it make a sense to deal with LOGFONTW ?
+			LOGFONTA o = (LOGFONTA)logFont;
+			GDIPlus.CheckStatus (GDIPlus.GdipGetLogFontA(NativeObject, graphics.NativeObject, ref o));
 		}
 
 		public float GetHeight (Graphics graphics)

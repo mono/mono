@@ -1,3 +1,12 @@
+2004-09-17  Marek Safar <marek.safar@seznam.cz>
+
+	* Font.cs (FromHfont, ToHfont): Fixed windows implementation.
+	ToLogFont: Implemented.
+
+	* gdipFunctions.cs: GdipCreateFromHDC changed int to IntPtr to
+	avoid casts.
+	GdipCreateFontFromLogfontA: A new extern call.
+
 2004-09-13  Ravindra <rkumar@novell.com>
 
 	* Graphics.cs: MSDN says that using image width and height gives

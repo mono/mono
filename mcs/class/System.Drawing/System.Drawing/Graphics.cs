@@ -1231,11 +1231,10 @@ namespace System.Drawing
 		[EditorBrowsable (EditorBrowsableState.Advanced)]		
 		public static Graphics FromHdc (IntPtr hdc)
 		{
-			int graphics;
-			Status status = GDIPlus.GdipCreateFromHDC (hdc, out graphics); 				GDIPlus.CheckStatus (status);
-			    
-			Graphics result = new Graphics ((IntPtr) graphics);
-			return result;
+			IntPtr graphics;
+			Status status = GDIPlus.GdipCreateFromHDC (hdc, out graphics);
+			GDIPlus.CheckStatus (status);
+			return new Graphics (graphics);
 		}
 
 		[MonoTODO]
