@@ -484,7 +484,7 @@ namespace System.Net
 		}
 		
 		internal bool ProxyQuery {
-			get { return servicePoint.UsesProxy; }
+			get { return servicePoint.UsesProxy && !servicePoint.UseConnect; }
 		}
 		
 		// Methods
@@ -883,9 +883,9 @@ namespace System.Net
 					webHeaders.SetInternal ("Cookie", cookieHeader);
 			}
 
-			if (!usedPreAuth && preAuthenticate) {
+			if (!usedPreAuth && preAuthenticate)
 				DoPreAuthenticate ();
-			}
+
 			return webHeaders.ToString ();
 		}
 
