@@ -1,3 +1,18 @@
+2001-09-10  Ravi Pratap  <ravi@ximian.com>
+
+	* class.cs (Event::Define): Make the prefixes of the accessor methods
+	addOn_ and removeOn_ 
+
+	* genericparser.cs (GenericParser::error): Overloaded method to handle the case
+	of the location being passed in too. Ideally, this should go later since all
+	error reporting should be done through the Report object.
+
+	* class.cs (TypeContainer.Indexers): New property to access the list of indexers.
+	(Populate): Iterate thru the indexers we have and define them too.
+	(Indexer.GetMethodBuilder, .SetMethodBuilder): New members to hold the method builders
+	for the get and set accessors.
+	(Indexer::Define): Implement.
+	
 2001-09-09  Miguel de Icaza  <miguel@ximian.com>
 
 	* expression.cs (Binary::Resolve): Beginning of it.  I scratched

@@ -587,9 +587,7 @@ constant_declaration
 	  type
 	  constant_declarators
 	  SEMICOLON
-	  { 
-		Modifiers.Check (Constant.AllowedModifiers, (int) $2, Modifiers.PRIVATE);
-
+	  {
 		foreach (DictionaryEntry constant in (ArrayList) $5){
 			Constant c = new Constant (
 				(string) $4, (string) constant.Key, 

@@ -46,6 +46,17 @@ namespace Mono.Languages
 			global_errors++;
 		}
 
+		// Emits error messages with location info.
+		// FIXME : Ideally, all error reporting should happen
+		// with Report.Error but how do you get at that non-static
+		// method everywhere you need it ?
+		static public void error (int code, CIR.Location l, string text)
+		{
+			Console.WriteLine (l.Name + "(" + l.Row + "," + l.Col +
+					   "): Error CS" + code + ": " + text);
+			global_errors++;
+		}
+		
 		public GenericParser()
 		{
 			//

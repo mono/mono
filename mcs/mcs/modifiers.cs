@@ -155,7 +155,7 @@ namespace CIR {
 				a = ((a & 2) >> 1) + (a & 5);
 				a = ((a & 4) >> 2) + (a & 3);
 				if (a > 1)
-					CSharpParser.error (107, "More than one protecion modifier specified");
+					CSharpParser.error (107, "More than one protection modifier specified");
 				
 				return mod;
 			}
