@@ -43,6 +43,13 @@ using Mono.Xml;
 
 namespace System.Security {
 
+	// Must match MonoDeclSecurityActions in /mono/metadata/reflection.h
+	internal struct RuntimeDeclSecurityActions {
+		public RuntimeDeclSecurityEntry cas;
+		public RuntimeDeclSecurityEntry noncas;
+		public RuntimeDeclSecurityEntry choice;
+	}
+
 	public sealed class SecurityManager {
 
 		private static object _lockObject;
@@ -465,34 +472,26 @@ namespace System.Security {
 
 		// internal - get called at JIT time
 
-		private static bool LinkDemand (
-			Assembly a,
-			IntPtr casClassPermission, int casClassLength,
-			IntPtr nonCasClassPermission, int nonCasClassLength,
-			IntPtr choiceClassPermission, int choiceClassLength,
-			IntPtr casMethodPermission, int casMethodLength,
-			IntPtr nonCasMethodPermission, int nonCasMethodLength,
-			IntPtr choiceMethodPermission, int choiceMethodLength)
+		private unsafe static bool LinkDemand (Assembly a, RuntimeDeclSecurityActions *klass, RuntimeDeclSecurityActions *method)
 		{
 			try {
 				PermissionSet ps = null;
 				bool result = true;
-
-				if (casClassLength > 0) {
-					ps = Decode (casClassPermission, casClassLength);
+				if (klass->cas.size > 0) {
+					ps = Decode (klass->cas.blob, klass->cas.size);
 					result = SecurityManager.IsGranted (a, ps, false);
 				}
-				if (nonCasClassLength > 0) {
-					ps = Decode (nonCasClassPermission, nonCasClassLength);
+				if (klass->noncas.size > 0) {
+					ps = Decode (klass->noncas.blob, klass->noncas.size);
 					result = SecurityManager.IsGranted (a, ps, true);
 				}
 
-				if (casMethodLength > 0) {
-					ps = Decode (casMethodPermission, casMethodLength);
+				if (method->cas.size > 0) {
+					ps = Decode (method->cas.blob, method->cas.size);
 					result = SecurityManager.IsGranted (a, ps, false);
 				}
-				if (nonCasMethodLength > 0) {
-					ps = Decode (nonCasMethodPermission, nonCasMethodLength);
+				if (method->noncas.size > 0) {
+					ps = Decode (method->noncas.blob, method->noncas.size);
 					result = SecurityManager.IsGranted (a, ps, true);
 				}
 
@@ -598,7 +597,6 @@ namespace System.Security {
 
 		private static void InternalDemand (IntPtr permissions, int length)
 		{
-Console.WriteLine ("InternalDemand {0} {1}", permissions, length);
 			PermissionSet ps = Decode (permissions, length);
 			ps.Demand ();
 		}

@@ -1,3 +1,8 @@
+2005-02-10  Sebastien Pouliot  <sebastien@ximian.com> 
+ 
+	* SecurityManager.cs: Reduced the number of parameters for LinkDemand.
+	Removed a (forgotten) debugging message.
+
 2005-02-10  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* SecurityException.cs: Show more information when a SecurityException
