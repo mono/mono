@@ -6,6 +6,7 @@
 	<dllmap dll="odbc32.dll" target="libodbc.so" />
 	<dllmap dll="libglib-2.0-0.dll" target="libglib-2.0.so" />
 	<dllmap dll="libgobject-2.0-0.dll" target="libgobject-2.0.so" />
+	<dllmap dll="libgthread-2.0-0.dll" target="libgthread-2.0.so" />
 	<dllmap dll="libpango-1.0-0.dll" target="libpango-1.0.so" />
 	<dllmap dll="libatk-1.0-0.dll" target="libatk-1.0.so" />
 	<dllmap dll="libgdk-win32-2.0-0.dll" target="libgdk-x11-2.0.so" />
