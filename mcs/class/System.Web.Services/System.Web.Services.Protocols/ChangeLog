@@ -1,3 +1,11 @@
+2003-06-14  Lluis Sanchez Gual  <lluis@ximian.com>
+
+	* Methods.cs: Added information about headers in MethodStubInfo. Added cache of serializers
+	  in TypeStubInfo so serializers for headers they can be shared by several methods.
+	* SoapClientMessage.cs: Headers added in the constructor.
+	* SoapMessage.cs: Added header list initialization.
+	* SoapHttpClientProtocol.cs: Added support soap headers.
+
 2003-06-13  Lluis Sanchez Gual  <lluis@ximian.com>
 
 	* Methods.cs: Added serializer to MethodStubInfo for deserializing faults.

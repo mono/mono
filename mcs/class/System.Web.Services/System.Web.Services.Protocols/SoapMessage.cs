@@ -20,7 +20,7 @@ namespace System.Web.Services.Protocols {
 
 		string content_type = "text/xml";
 		SoapException exception = null;
-		SoapHeaderCollection headers = null;
+		SoapHeaderCollection headers = new SoapHeaderCollection ();
 		SoapMessageStage stage;
 		Stream stream;
 		

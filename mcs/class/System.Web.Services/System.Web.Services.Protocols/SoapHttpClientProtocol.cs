@@ -76,15 +76,22 @@ namespace System.Web.Services.Protocols {
 		
 		const string soap_envelope = "http://schemas.xmlsoap.org/soap/envelope/";
 		
-		void WriteSoapEnvelope (XmlTextWriter xtw)
+		void WriteSoapEnvelope (XmlTextWriter xtw, SoapHeaderCollection headers)
 		{
 			xtw.WriteStartDocument ();
 			
 			xtw.WriteStartElement ("soap", "Envelope", soap_envelope);
 			xtw.WriteAttributeString ("xmlns", "xsi", null, "http://www.w3.org/2001/XMLSchema-instance");
 			xtw.WriteAttributeString ("xmlns", "xsd", null, "http://www.w3.org/2001/XMLSchema");
+
+   			foreach (SoapHeader header in headers) {
+   				XmlSerializer ser = type_info.GetCommonSerializer (header.GetType());
+       			xtw.WriteStartElement ("soap", "Header", soap_envelope);
+   				ser.Serialize (xtw, header);
+       			xtw.WriteEndElement ();
+   			}
 		}
-		
+
 		void SendRequest (WebRequest request, SoapClientMessage message)
 		{
 			WebHeaderCollection headers = request.Headers;
@@ -99,7 +106,7 @@ namespace System.Web.Services.Protocols {
 				
 				XmlTextWriter xtw = new XmlTextWriter (s, new UTF8Encoding (false));
 				xtw.Formatting = Formatting.Indented;
-				WriteSoapEnvelope (xtw);
+				WriteSoapEnvelope (xtw, message.Headers);
 				xtw.WriteStartElement ("soap", "Body", soap_envelope);
 
 				// Serialize arguments.
@@ -175,7 +182,7 @@ namespace System.Web.Services.Protocols {
 			}
 			else
 			{
-				Fault fault = (Fault) msi.FaultSerializer.Deserialize (xml_reader);
+				Fault fault = (Fault) type_info.FaultSerializer.Deserialize (xml_reader);
 				throw new SoapException (fault.faultstring, fault.faultcode, fault.faultactor, fault.detail);
 			}
 		}

@@ -46,7 +46,7 @@ namespace System.Web.Services.Protocols {
 		internal XmlSerializer RequestSerializer;
 		internal XmlSerializer ResponseSerializer;
 
-		static XmlSerializer _faultSerializer;
+		internal HeaderInfo[] Headers;
 
 		//
 		// Constructor
@@ -148,7 +148,17 @@ namespace System.Web.Services.Protocols {
 				}
 				throw;
 			}
-//			ResponseSerializer.UnknownNode += new XmlNodeEventHandler (e);
+
+			o = source.GetCustomAttributes (typeof (SoapHeaderAttribute));
+			Headers = new HeaderInfo[o.Length];
+			for (int i = 0; i < o.Length; i++) {
+				SoapHeaderAttribute att = (SoapHeaderAttribute) o[i];
+				MemberInfo[] mems = source.DeclaringType.GetMember (att.MemberName);
+				if (mems.Length == 0) throw new InvalidOperationException ("Member " + att.MemberName + " not found in class " + source.DeclaringType.FullName);
+				
+				Type headerType = (mems[0] is FieldInfo) ? ((FieldInfo)mems[0]).FieldType : ((PropertyInfo)mems[0]).PropertyType;
+				Headers [i] = new HeaderInfo (parent.GetCommonSerializer (headerType), mems[0], att);
+			}
 		}
 
 		static internal MethodStubInfo Create (TypeStubInfo parent, LogicalMethodInfo lmi, XmlReflectionImporter xmlImporter, SoapReflectionImporter soapImporter)
@@ -228,23 +238,25 @@ namespace System.Web.Services.Protocols {
 			}
 			return out_members;
 		}
+	}
 
-		public XmlSerializer FaultSerializer
+	internal class HeaderInfo
+	{
+		internal XmlSerializer Serializer;
+		internal MemberInfo Member;
+		internal SoapHeaderAttribute AttributeInfo;
+
+		public HeaderInfo (XmlSerializer serializer, MemberInfo member, SoapHeaderAttribute attributeInfo)
 		{
-			get
-			{
-				if (_faultSerializer != null) return _faultSerializer;
-				_faultSerializer = new XmlSerializer (typeof(Fault));
-				return _faultSerializer;
-			}
+			Serializer = serializer;
+			Member = member;
+			AttributeInfo = attributeInfo;
 		}
-
-		static void e (object o, XmlNodeEventArgs a)
+		
+		public object GetHeaderValue (object ob)
 		{
-			Console.WriteLine ("Unexpected Node: {5}:{6} {0}/{1}/{2}/{3}/{4}",
-					   a.LocalName, a.Name, a.NamespaceURI, a.NodeType, a.Text,
-					   a.LineNumber, a.LinePosition);
-//			throw new Exception ();
+			if (Member is PropertyInfo) return ((PropertyInfo)Member).GetValue (ob, null);
+			else return ((FieldInfo)Member).GetValue (ob);
 		}
 	}
 
@@ -262,6 +274,7 @@ namespace System.Web.Services.Protocols {
 	//
 	internal class TypeStubInfo {
 		Hashtable name_to_method = new Hashtable ();
+		Hashtable common_serializers = new Hashtable ();
 
 		// Precomputed
 		internal SoapParameterStyle      ParameterStyle;
@@ -272,6 +285,7 @@ namespace System.Web.Services.Protocols {
 		internal string                  BindingLocation;
 		internal string                  BindingName;
 		internal string                  BindingNamespace;
+		internal XmlSerializer           FaultSerializer;
 
 		void GetTypeAttributes (Type t)
 		{
@@ -317,6 +331,7 @@ namespace System.Web.Services.Protocols {
 					Use = SoapBindingUse.Literal;
 				}
 			}
+			FaultSerializer = GetCommonSerializer (typeof(Fault));
 		}
 
 		//
@@ -349,6 +364,15 @@ namespace System.Web.Services.Protocols {
 		internal MethodStubInfo GetMethod (string name)
 		{
 			return (MethodStubInfo) name_to_method [name];
+		}
+
+		internal XmlSerializer GetCommonSerializer (Type type)
+		{
+			XmlSerializer s = (XmlSerializer) common_serializers [type];
+			if (s != null) return s;
+			s = new XmlSerializer (type);
+			common_serializers [type] = s;
+			return s;
 		}
 	}
 	
