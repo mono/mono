@@ -137,6 +137,7 @@ namespace NpgsqlTypes
                 return IPAddress.NetworkToHostOrder(BitConverter.ToInt64(data, 0));
             case DbType.String:
             case DbType.AnsiString:
+            case DbType.StringFixedLength:
                 return encoding.GetString(data, 0, fieldValueSize);
             default:
                 throw new NpgsqlException("Type not supported in binary format");
@@ -266,6 +267,7 @@ namespace NpgsqlTypes
 
             case DbType.String:
             case DbType.AnsiString:
+            case DbType.StringFixedLength:
                 return data;
             default:
                 throw new NpgsqlException(String.Format(resman.GetString("Exception_TypeNotSupported"),  oidToNameMapping[typeOid]));
@@ -321,6 +323,7 @@ namespace NpgsqlTypes
                 return Type.GetType("System.DateTime");
             case DbType.String:
             case DbType.AnsiString:
+            case DbType.StringFixedLength:
                 return Type.GetType("System.String");
             default:
                 throw new NpgsqlException(String.Format(resman.GetString("Exception_TypeNotSupported"), oidToNameMapping[typeOid]));
@@ -358,7 +361,7 @@ namespace NpgsqlTypes
                 // Bootstrap value as the datareader below will use ConvertStringToNpgsqlType above.
                 //oidToNameMapping.Add(26, "oid");
 
-                NpgsqlCommand command = new NpgsqlCommand("select oid, typname from pg_type where typname in ('bool', 'bytea', 'date', 'float4', 'float8', 'int2', 'int4', 'int8', 'numeric', 'text', 'time', 'timestamp');", conn);
+                NpgsqlCommand command = new NpgsqlCommand("select oid, typname from pg_type where typname in ('bool', 'bytea', 'date', 'float4', 'float8', 'int2', 'int4', 'int8', 'numeric', 'text', 'time', 'timestamp', 'timestamptz', 'timetz');", conn);
 
                 NpgsqlDataReader dr = command.ExecuteReader();
 
@@ -404,9 +407,11 @@ namespace NpgsqlTypes
                         type = DbType.Decimal;
                         break;
                     case "time":
+                    case "timetz":
                         type = DbType.Time;
                         break;
                     case "timestamp":
+                    case "timestamptz":
                         type = DbType.DateTime;
                         break;
                     default:
