@@ -324,11 +324,14 @@ FilterExpr
 PrimaryExpr
 	: DOLLAR QName
 	{
+		Expression ret = null;
 		if (Context != null)
-			$$ = Context.TryGetVariable (((XmlQualifiedName) $2).ToString ());
+			ret = Context.TryGetVariable (((XmlQualifiedName) $2).ToString ());
 		
-		if ($$ == null)
-			$$ = new ExprVariable ((XmlQualifiedName) $2, Context);
+		if (ret == null)
+			ret = new ExprVariable ((XmlQualifiedName) $2, Context);
+			
+		$$ = ret;
 	}
 	| PAREN_OPEN Expr PAREN_CLOSE
 	{
@@ -348,10 +351,13 @@ PrimaryExpr
 FunctionCall
 	: FUNCTION_NAME PAREN_OPEN OptionalArgumentList PAREN_CLOSE
 	{
+		Expression ret = null;
 		if (Context != null)
-			$$ = Context.TryGetFunction ((XmlQualifiedName) $1, (FunctionArguments) $3);
-		if ($$ == null)
-			$$ = ExprFunctionCall.Factory ((XmlQualifiedName) $1, (FunctionArguments) $3, Context);
+			ret = Context.TryGetFunction ((XmlQualifiedName) $1, (FunctionArguments) $3);
+		if (ret == null)
+			ret = ExprFunctionCall.Factory ((XmlQualifiedName) $1, (FunctionArguments) $3, Context);
+		
+		$$ = ret;
 	}
 	;
 

@@ -1,5 +1,9 @@
 2003-09-21 Ben Maurer  <bmaurer@users.sourceforge.net>
 
+	* Expression.cs: cant use $$ before assigned.
+
+2003-09-21 Ben Maurer  <bmaurer@users.sourceforge.net>
+
 	* Expression.cs, Parser.jay, XPathNavigator.cs: api beautification.
 
 2003-09-20 Ben Maurer  <bmaurer@users.sourceforge.net>
