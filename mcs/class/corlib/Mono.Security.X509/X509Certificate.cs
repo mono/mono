@@ -118,8 +118,12 @@ namespace Mono.Security.X509 {
 				m_keyalgo = ASN1Convert.ToOID (algo);
 				// parameters ANY DEFINED BY algorithm OPTIONAL
 				// so we dont ask for a specific (Element) type and return DER
-				ASN1 parameters = algorithm [1];
-				m_keyalgoparams = parameters.GetBytes ();
+				if (algorithm.Count > 1) {
+					ASN1 parameters = algorithm [1];
+					m_keyalgoparams = parameters.GetBytes ();
+				}
+				else
+					m_keyalgoparams = null;
 		
 				ASN1 subjectPublicKey = subjectPublicKeyInfo.Element (1, 0x03); 
 				// we must drop th first byte (which is the number of unused bits
@@ -137,9 +141,8 @@ namespace Mono.Security.X509 {
 				algorithm = decoder [1];
 				algo = algorithm.Element (0, 0x06);
 				m_signaturealgo = ASN1Convert.ToOID (algo);
-				parameters = algorithm [1];
-				if (parameters != null)
-					m_signaturealgoparams = parameters.GetBytes ();
+				if (algorithm.Count > 1)
+					m_signaturealgoparams = algorithm [1].GetBytes ();
 				else
 					m_signaturealgoparams = null;
 

@@ -1,3 +1,8 @@
+2003-05-16  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* X509Certificate.cs: Added support for "really" NULL key parameters
+	(i.e. not ASN.1	encoded NULL).
+
 2003-03-15  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* X501Name.cs: New. X.501 Distinguished Names stuff
