@@ -1,3 +1,15 @@
+2004-11-23  Raja R Harinath  <rharinath@novell.com>
+
+	* executable.make (NO_INSTALL): New option.  Disables installation.
+	* library.make (NO_INSTALL): Likewise.
+	(install-local) [!NO_INSTALL, !LIBRARY_INSTALL_DIR]: Pass both
+	/gacdir and /root options to gacutil.
+	* platforms/linux.make (platform-check): Print the BOOTSTRAP_MCS
+	command that was tried, in case of failure.	
+	* profiles/basic.make (NO_TEST, NO_INSTALL): Define.
+	* profiles/net_1_1_bootstrap.make: Likewise.
+	* profiles/net_2_0_bootstrap.make: Likewise.
+
 2004-11-22  Raja R Harinath  <rharinath@novell.com>
 
 	* library.make (SN): New define.  Use the net_1_1_bootstrap sn.exe.

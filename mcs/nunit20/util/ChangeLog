@@ -1,3 +1,7 @@
+2004-11-23  Raja R Harinath  <rharinath@novell.com>
+
+	* Makefile (NO_INSTALL) [PROFILE=net_2_0]: Don't install dll.
+
 2004-10-28  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Updated to NUnit 2.2.0 Final Release.

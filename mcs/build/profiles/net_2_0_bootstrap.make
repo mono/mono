@@ -20,6 +20,8 @@ $(topdir)/class/lib/$(PROFILE)/mcs.exe.config: $(topdir)/gmcs/gmcs.exe.config
 PROFILE_MCS_FLAGS = -d:NET_1_1 -d:BOOTSTRAP_NET_2_0
 FRAMEWORK_VERSION = 2.0
 NO_SIGN_ASSEMBLY = yes
+NO_TEST = yes
+NO_INSTALL = yes
 
 clean-local: clean-profile
 

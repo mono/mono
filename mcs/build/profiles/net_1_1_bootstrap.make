@@ -5,6 +5,8 @@ MCS = MONO_PATH="$(topdir)/class/lib/$(PROFILE):$$MONO_PATH" $(INTERNAL_MCS)
 MBAS = MONO_PATH="$(topdir)/class/lib/$(PROFILE):$$MONO_PATH" $(INTERNAL_MBAS)
 
 NO_SIGN_ASSEMBLY = yes
+NO_TEST = yes
+NO_INSTALL = yes
 
 profile-check:
 	@:

@@ -14,6 +14,10 @@ LOCAL_MCS_FLAGS= \
 	-r:System.Xml.dll /d:MONO /d:StronglyNamedAssembly -debug
 NO_TEST = yo
 
+ifeq (net_2_0, $(PROFILE))
+NO_INSTALL = yes
+endif
+
 EXTRA_DISTFILES = \
 	nunit.util.dll.csproj	\
 	Transform.resx

@@ -93,13 +93,23 @@ ifeq ($(PROFILE), net_2_0)
 PACKAGE = 2.0
 endif
 
+libdir = $(prefix)/lib
+
 ifeq ($(PLATFORM), win32)
-GACDIR = `cygpath -w $(DESTDIR)$(prefix)/lib`
+GACDIR = `cygpath -w $(libdir)`
+GACROOT = `cygpath -w $(DESTDIR)$(libdir)`
 else
-GACDIR = $(DESTDIR)$(prefix)/lib
+GACDIR = $(libdir)
+GACROOT = $(DESTDIR)$(libdir)
 endif
 
 all-local install-local test-local: $(the_lib)
+
+ifdef NO_INSTALL
+install-local uninstall-local:
+	@:
+
+else
 
 ifdef LIBRARY_INSTALL_DIR
 install-local:
@@ -113,13 +123,13 @@ uninstall-local:
 else
 
 install-local: $(gacutil)
-	$(GACUTIL) /i $(the_lib) /f /root $(GACDIR) /package $(PACKAGE)
+	$(GACUTIL) /i $(the_lib) /f /gacdir $(GACDIR) /root $(GACROOT) /package $(PACKAGE)
 
 uninstall-local: $(gacutil)
 	$(GACUTIL) /u $(LIBRARY_NAME:.dll=)
 
 endif
-
+endif
 
 clean-local:
 	-rm -f $(library_CLEAN_FILES) $(CLEAN_FILES)

@@ -23,11 +23,17 @@ pdb = $(patsubst %.exe,%.pdb,$(PROGRAM))
 mdb = $(patsubst %.exe,%.mdb,$(PROGRAM))
 executable_CLEAN_FILES += $(makefrag) $(pdb) $(mdb)
 
+all-local: $(PROGRAM) $(PROGRAM_config)
+
+ifdef NO_INSTALL
+install-local uninstall-local:
+	@:
+else
+
 ifndef PROGRAM_INSTALL_DIR
 PROGRAM_INSTALL_DIR = $(prefix)/bin
 endif
 
-all-local: $(PROGRAM) $(PROGRAM_config)
 
 install-local: $(PROGRAM) $(PROGRAM_config)
 	$(MKINSTALLDIRS) $(DESTDIR)$(PROGRAM_INSTALL_DIR)
@@ -39,6 +45,7 @@ endif
 
 uninstall-local:
 	-rm -f $(DESTDIR)$(PROGRAM_INSTALL_DIR)/$(base_prog) $(DESTDIR)$(PROGRAM_INSTALL_DIR)/$(base_prog).mdb
+endif
 
 clean-local:
 	-rm -f $(executable_CLEAN_FILES) $(CLEAN_FILES)
