@@ -1,3 +1,6 @@
+2004-04-22 Jordi Mas i Hernadez <jordi@ximian.com>
+	* ImageAttributes.cs Added
+	
 2004-04-28 Jordi Mas i Hernadez <jordi@ximian.com>
 	* ImageCodecs.cs Added
 
