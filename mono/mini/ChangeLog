@@ -1,3 +1,9 @@
+2004-04-16  Zoltan Varga  <vargaz@freemail.hu>
+
+	* exceptions-*.c (mono_arch_handle_exception): Do not overwrite the
+	original stack trace if an exception is rethrown. Fixes #56782. Oh,
+	the beauty of fixing the same thing in 5 different files...
+
 2004-04-15  Zoltan Varga  <vargaz@freemail.hu>
 
 	* mini.c (mono_method_to_ir): Do not compute coverage for inlined
