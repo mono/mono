@@ -1,3 +1,6 @@
+2004/10/22 Rafael Teixeira <rafaelteixeirabr@hotmail.com>
+	* driver.cs : accept also -t:library as vbc does, besides /target:library
+
 2004-10-21 Anirban Bhattacharjee <banirban@novell.com>
 	* statement.cs: Introduced few specific execptions
 			Changed exception number

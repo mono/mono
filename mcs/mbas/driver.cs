@@ -107,7 +107,7 @@ namespace Mono.Languages
 		[Option("Specifies the output {file} name", 'o', "out")]
 		public string OutputFileName = null;
 
-		[Option("Specifies the target {type} for the output file (exe [default], winexe, library, module)", "target")]
+		[Option("Specifies the target {type} for the output file (exe [default], winexe, library, module)", 't', "target")]
 		public WhatToDoNext SetTarget(string type)
 		{
 			switch (type.ToLower())
