@@ -1,3 +1,8 @@
+2004-09-23  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* AssemblyInfo.cs: Updated version to 1.0.3 for next stable release.
+	* MakeCert.cs: Hack for date parsing problem with Mono.
+
 2004-09-07  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* certmgr.cs: Merge enhancements from HEAD. Now allows users to 
