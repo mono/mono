@@ -118,6 +118,9 @@ namespace Mono.CSharp {
 		//
 		public static Constant ChangeType (Location loc, Constant expr, Type type)
 		{
+			if (type == TypeManager.object_type)
+				return expr;
+
 			bool fail;
 
 			// from the null type to any reference-type.

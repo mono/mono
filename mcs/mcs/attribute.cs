@@ -370,15 +370,13 @@ namespace Mono.CSharp {
 						return null;
 					}
 
-					if (e is Constant) {
-						Constant c;
-						
-						if (e.Type != pi.PropertyType){
-							c = Const.ChangeType (Location, (Constant) e, pi.PropertyType);
+					Constant c = e as Constant;
+					if (c != null) {
+						if (c.Type != pi.PropertyType) {
+							c = Const.ChangeType (Location, c, pi.PropertyType);
 							if (c == null)
 								return null;
-						} else
-							c = (Constant) e;
+						}
 						
 						object o = c.GetValue ();
 						prop_values.Add (o);
@@ -412,15 +410,14 @@ namespace Mono.CSharp {
 
 					//
 					// Handle charset here, and set the TypeAttributes
-					
-					if (e is Constant){
-						Constant c = (Constant) e;;
-						
-						if (c.Type != fi.FieldType){
-							c = Const.ChangeType (Location, (Constant) e, fi.FieldType);
+
+					Constant c = e as Constant;
+					if (c != null) {
+						if (c.Type != fi.FieldType) {
+							c = Const.ChangeType (Location, c, fi.FieldType);
 							if (c == null)
 								return null;
-						} 
+						}					
 						
 						object value = c.GetValue ();
 						field_values.Add (value);
@@ -539,9 +536,7 @@ namespace Mono.CSharp {
 				// class X { static void Main () {} }
 				//
 				Report.Warning (
-					-23, Location,
-					"The compiler can not encode this attribute in .NET due to\n" +
-					"\ta bug in the .NET runtime.  Try the Mono runtime.\nThe error was: " + e.Message);
+					-23, Location, "The compiler can not encode this attribute in .NET due to a bug in the .NET runtime. Try the Mono runtime. The exception was: " + e.Message);
 			}
 			
 			return cb;
