@@ -1,3 +1,11 @@
+2002-02-21  Mark Crichton  <crichton@gimp.org>
+
+        * rand.c, rand.h: Added random number generator for
+        System.Security.Cryptography classes.
+
+        * exception.c, exception.h: Added mono_get_exception_not_implemeted.
+
+        * icall.c: Added System.Security.Cryptography calls.
 
 Thu Feb 21 16:45:34 CET 2002 Paolo Molaro <lupus@ximian.com>
 
