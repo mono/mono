@@ -58,10 +58,14 @@ namespace System {
 
 		public override string Message {
 			get {
+				string base_message = base.Message;
+				if (base_message == null)
+					base_message = Locale.GetText ("An invalid argument was specified.");
+
 				if (param_name == null)
-					return Locale.GetText ("An invalid argument was specified.");
+					return base_message;
 				else
-					return Locale.GetText ("An invalid argument was specified.") + ParamName;
+					return base_message + " (" + ParamName + ")";
 			}
 		}
 		

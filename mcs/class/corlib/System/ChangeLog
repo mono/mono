@@ -1,3 +1,9 @@
+2002-06-18  Nick Drochak  <ndrochak@gol.com>
+
+	* ArgumentException.cs: Use the message given in the constructor when
+	accessing the Message property.  Thanks to Dietmar for the help with 
+	"base".
+
 2002-06-17  Dietmar Maurer  <dietmar@ximian.com>
 
 	* MonoType.cs: GetField is now a InternalCall
