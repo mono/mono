@@ -93,13 +93,28 @@ namespace Mono.CSharp {
 			} else if (left is UIntConstant || right is UIntConstant){
 				//
 				// If either operand is of type uint, and the other
-				// operand is of type sbyte, short or int, othe operands are
+				// operand is of type sbyte, short or int, the operands are
 				// converted to type long.
 				//
-				if (!(left is UIntConstant))
-					left = left.ToUInt (loc);
-				else if (!(right is UIntConstant))
-					right = right.ToUInt (loc);
+				Constant match, other;
+				if (left is UIntConstant){
+					other = right;
+					match = left;
+				} else {
+					other = left;
+					match = right;
+				}
+
+				// Nothing to do.
+				if (other is UIntConstant)
+					return;
+
+				if (other is SByteConstant || other is ShortConstant ||
+				    other is IntConstant){
+					left = left.ToLong (loc);
+					right = right.ToLong (loc);
+				}
+
 				return;
 			} else {
 				//

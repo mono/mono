@@ -25,13 +25,15 @@ namespace Mono.CSharp {
 	using System.Collections;
 
 	public class Const : MemberCore {
-		public readonly string ConstantType;
+		public Expression ConstantType;
 		public Expression Expr;
 		public Attributes  OptAttributes;
 		public FieldBuilder FieldBuilder;
 
 		object ConstantValue = null;
 		Type type;
+
+		bool in_transit = false;
 
 		public const int AllowedModifiers =
 			Modifiers.NEW |
@@ -40,7 +42,7 @@ namespace Mono.CSharp {
 			Modifiers.INTERNAL |
 			Modifiers.PRIVATE;
 
-		public Const (string constant_type, string name, Expression expr, int mod_flags,
+		public Const (Expression constant_type, string name, Expression expr, int mod_flags,
 			      Attributes attrs, Location loc)
 			: base (name, loc)
 		{
@@ -75,7 +77,7 @@ namespace Mono.CSharp {
 		/// </summary>
 		public override bool Define (TypeContainer parent)
 		{
-			type = RootContext.LookupType (parent, ConstantType, true, Location);
+			type = parent.ResolveType (ConstantType, false, Location);
 
 			if (type == null)
 				return false;
@@ -118,16 +120,38 @@ namespace Mono.CSharp {
 			if (ConstantValue != null)
 				return ConstantValue;
 
+			if (in_transit) {
+				Report.Error (110, Location,
+					      "The evaluation of the constant value for `" +
+					      Name + "' involves a circular definition.");
+				return null;
+			}
+
+			in_transit = true;
+			int errors = Report.Errors;
+
 			Expr = Expr.Resolve (ec);
 
+			in_transit = false;
+
 			if (Expr == null) {
-				Report.Error (150, Location, "A constant value is expected");
+				if (errors == Report.Errors)
+					Report.Error (150, Location, "A constant value is expected");
 				return null;
 			}
 
 			if (!(Expr is Constant)) {
-				Report.Error (150, Location, "A constant value is expected");
-				return null;
+				UnCheckedExpr un_expr = Expr as UnCheckedExpr;
+				CheckedExpr ch_expr = Expr as CheckedExpr;
+
+				if ((un_expr != null) && (un_expr.Expr is Constant))
+					Expr = un_expr.Expr;
+				else if ((ch_expr != null) && (ch_expr.Expr is Constant))
+					Expr = ch_expr.Expr;
+				else {
+					Report.Error (150, Location, "A constant value is expected");
+					return null;
+				}
 			}
 
 			ConstantValue = ((Constant) Expr).GetValue ();

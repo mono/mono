@@ -3,11 +3,13 @@
 //
 // Author:
 //   Miguel de Icaza (miguel@ximian.com)
+//   Martin Baulig (martin@gnome.org)
 //
 // (C) 2001, 2002 Ximian, Inc.
 //
 
 using System;
+using System.Text;
 using System.Reflection;
 using System.Reflection.Emit;
 using System.Diagnostics;
@@ -143,21 +145,32 @@ namespace Mono.CSharp {
 
 		public override bool Resolve (EmitContext ec)
 		{
+			Report.Debug (1, "START IF BLOCK");
+
 			expr = ResolveBoolean (ec, expr, loc);
 			if (expr == null){
 				return false;
 			}
 			
-			if (TrueStatement.Resolve (ec)){
-				if (FalseStatement != null){
-					if (FalseStatement.Resolve (ec))
-						return true;
-					
-					return false;
-				}
-				return true;
+			ec.StartFlowBranching (FlowBranchingType.BLOCK, loc);
+			
+			if (!TrueStatement.Resolve (ec)) {
+				ec.KillFlowBranching ();
+				return false;
 			}
-			return false;
+
+			ec.CurrentBranching.CreateSibling ();
+
+			if ((FalseStatement != null) && !FalseStatement.Resolve (ec)) {
+				ec.KillFlowBranching ();
+				return false;
+			}
+					
+			ec.EndFlowBranching ();
+
+			Report.Debug (1, "END IF BLOCK");
+
+			return true;
 		}
 		
 		public override bool Emit (EmitContext ec)
@@ -186,7 +199,7 @@ namespace Mono.CSharp {
 			}
 			
 			EmitBoolExpression (ec, expr, false_target, false);
-			
+
 			is_true_ret = TrueStatement.Emit (ec);
 			is_false_ret = is_true_ret;
 
@@ -198,7 +211,7 @@ namespace Mono.CSharp {
 					ig.Emit (OpCodes.Br, end);
 					branch_emitted = true;
 				}
-			
+
 				ig.MarkLabel (false_target);
 				is_false_ret = FalseStatement.Emit (ec);
 
@@ -226,11 +239,14 @@ namespace Mono.CSharp {
 
 		public override bool Resolve (EmitContext ec)
 		{
+			if (!EmbeddedStatement.Resolve (ec))
+				return false;
+
 			expr = ResolveBoolean (ec, expr, loc);
 			if (expr == null)
 				return false;
 			
-			return EmbeddedStatement.Resolve (ec);
+			return true;
 		}
 		
 		public override bool Emit (EmitContext ec)
@@ -241,10 +257,12 @@ namespace Mono.CSharp {
 			Label old_end = ec.LoopEnd;
 			bool  old_inloop = ec.InLoop;
 			bool old_breaks = ec.Breaks;
+			int old_loop_begin_try_catch_level = ec.LoopBeginTryCatchLevel;
 			
 			ec.LoopBegin = ig.DefineLabel ();
 			ec.LoopEnd = ig.DefineLabel ();
 			ec.InLoop = true;
+			ec.LoopBeginTryCatchLevel = ec.TryCatchLevel;
 				
 			ig.MarkLabel (loop);
 			ec.Breaks = false;
@@ -265,6 +283,7 @@ namespace Mono.CSharp {
 			
 			ig.MarkLabel (ec.LoopEnd);
 
+			ec.LoopBeginTryCatchLevel = old_loop_begin_try_catch_level;
 			ec.LoopBegin = old_begin;
 			ec.LoopEnd = old_end;
 			ec.InLoop = old_inloop;
@@ -312,11 +331,13 @@ namespace Mono.CSharp {
 			bool old_inloop = ec.InLoop;
 			bool old_breaks = ec.Breaks;
 			Label while_loop = ig.DefineLabel ();
+			int old_loop_begin_try_catch_level = ec.LoopBeginTryCatchLevel;
 			bool ret;
 			
 			ec.LoopBegin = ig.DefineLabel ();
 			ec.LoopEnd = ig.DefineLabel ();
 			ec.InLoop = true;
+			ec.LoopBeginTryCatchLevel = ec.TryCatchLevel;
 
 			ig.Emit (OpCodes.Br, ec.LoopBegin);
 			ig.MarkLabel (while_loop);
@@ -361,6 +382,7 @@ namespace Mono.CSharp {
 			ec.LoopEnd = old_end;
 			ec.InLoop = old_inloop;
 			ec.Breaks = old_breaks;
+			ec.LoopBeginTryCatchLevel = old_loop_begin_try_catch_level;
 
 			return ret;
 		}
@@ -389,14 +411,14 @@ namespace Mono.CSharp {
 		{
 			bool ok = true;
 
-			if (Test != null){
-				Test = ResolveBoolean (ec, Test, loc);
-				if (Test == null)
+			if (InitStatement != null){
+				if (!InitStatement.Resolve (ec))
 					ok = false;
 			}
 
-			if (InitStatement != null){
-				if (!InitStatement.Resolve (ec))
+			if (Test != null){
+				Test = ResolveBoolean (ec, Test, loc);
+				if (Test == null)
 					ok = false;
 			}
 
@@ -415,6 +437,7 @@ namespace Mono.CSharp {
 			Label old_end = ec.LoopEnd;
 			bool old_inloop = ec.InLoop;
 			bool old_breaks = ec.Breaks;
+			int old_loop_begin_try_catch_level = ec.LoopBeginTryCatchLevel;
 			Label loop = ig.DefineLabel ();
 			Label test = ig.DefineLabel ();
 			
@@ -425,6 +448,7 @@ namespace Mono.CSharp {
 			ec.LoopBegin = ig.DefineLabel ();
 			ec.LoopEnd = ig.DefineLabel ();
 			ec.InLoop = true;
+			ec.LoopBeginTryCatchLevel = ec.TryCatchLevel;
 
 			ig.Emit (OpCodes.Br, test);
 			ig.MarkLabel (loop);
@@ -451,6 +475,7 @@ namespace Mono.CSharp {
 			ec.LoopEnd = old_end;
 			ec.InLoop = old_inloop;
 			ec.Breaks = old_breaks;
+			ec.LoopBeginTryCatchLevel = old_loop_begin_try_catch_level;
 			
 			//
 			// Inform whether we are infinite or not
@@ -522,6 +547,15 @@ namespace Mono.CSharp {
 				if (Expr == null)
 					return false;
 			}
+
+			FlowBranching.UsageVector vector = ec.CurrentBranching.CurrentUsageVector;
+
+			if (ec.CurrentBranching.InTryBlock ())
+				ec.CurrentBranching.AddFinallyVector (vector);
+
+			vector.Returns = FlowReturns.ALWAYS;
+			vector.Breaks = FlowReturns.ALWAYS;
+
 			return true;
 		}
 		
@@ -535,14 +569,14 @@ namespace Mono.CSharp {
 			if (ec.ReturnType == null){
 				if (Expr != null){
 					Report.Error (127, loc, "Return with a value not allowed here");
-					return false;
+					return true;
 				}
 			} else {
 				if (Expr == null){
 					Report.Error (126, loc, "An object of type `" +
 						      TypeManager.CSharpName (ec.ReturnType) + "' is " +
 						      "expected for the return statement");
-					return false;
+					return true;
 				}
 
 				if (Expr.Type != ec.ReturnType)
@@ -550,7 +584,7 @@ namespace Mono.CSharp {
 						ec, Expr, ec.ReturnType, loc);
 
 				if (Expr == null)
-					return false;
+					return true;
 
 				Expr.Emit (ec);
 
@@ -558,9 +592,13 @@ namespace Mono.CSharp {
 					ec.ig.Emit (OpCodes.Stloc, ec.TemporaryReturn ());
 			}
 
-			if (ec.InTry || ec.InCatch)
+			if (ec.InTry || ec.InCatch) {
+				if (!ec.HasReturnLabel) {
+					ec.ReturnLabel = ec.ig.DefineLabel ();
+					ec.HasReturnLabel = true;
+				}
 				ec.ig.Emit (OpCodes.Leave, ec.ReturnLabel);
-			else
+			} else
 				ec.ig.Emit (OpCodes.Ret);
 
 			return true; 
@@ -570,9 +608,24 @@ namespace Mono.CSharp {
 	public class Goto : Statement {
 		string target;
 		Block block;
+		LabeledStatement label;
 		
 		public override bool Resolve (EmitContext ec)
 		{
+			label = block.LookupLabel (target);
+			if (label == null){
+				Report.Error (
+					159, loc,
+					"No such label `" + target + "' in this scope");
+				return false;
+			}
+
+			// If this is a forward goto.
+			if (!label.IsDefined)
+				label.AddUsageVector (ec.CurrentBranching.CurrentUsageVector);
+
+			ec.CurrentBranching.CurrentUsageVector.Breaks = FlowReturns.ALWAYS;
+
 			return true;
 		}
 		
@@ -591,17 +644,6 @@ namespace Mono.CSharp {
 
 		public override bool Emit (EmitContext ec)
 		{
-			LabeledStatement label = block.LookupLabel (target);
-
-			if (label == null){
-				//
-				// Maybe we should catch this before?
-				//
-				Report.Error (
-					159, loc,
-					"No such label `" + target + "' in this scope");
-				return false;
-			}
 			Label l = label.LabelTarget (ec);
 			ec.ig.Emit (OpCodes.Br, l);
 			
@@ -610,13 +652,18 @@ namespace Mono.CSharp {
 	}
 
 	public class LabeledStatement : Statement {
+		public readonly Location Location;
 		string label_name;
 		bool defined;
+		bool referenced;
 		Label label;
+
+		ArrayList vectors;
 		
-		public LabeledStatement (string label_name)
+		public LabeledStatement (string label_name, Location l)
 		{
 			this.label_name = label_name;
+			this.Location = l;
 		}
 
 		public Label LabelTarget (EmitContext ec)
@@ -627,6 +674,36 @@ namespace Mono.CSharp {
 			defined = true;
 
 			return label;
+		}
+
+		public bool IsDefined {
+			get {
+				return defined;
+			}
+		}
+
+		public bool HasBeenReferenced {
+			get {
+				return referenced;
+			}
+		}
+
+		public void AddUsageVector (FlowBranching.UsageVector vector)
+		{
+			if (vectors == null)
+				vectors = new ArrayList ();
+
+			vectors.Add (vector.Clone ());
+		}
+
+		public override bool Resolve (EmitContext ec)
+		{
+			if (vectors != null)
+				ec.CurrentBranching.CurrentUsageVector.MergeJumpOrigins (vectors);
+
+			referenced = true;
+
+			return true;
 		}
 
 		public override bool Emit (EmitContext ec)
@@ -647,6 +724,13 @@ namespace Mono.CSharp {
 		public GotoDefault (Location l)
 		{
 			loc = l;
+		}
+
+		public override bool Resolve (EmitContext ec)
+		{
+			ec.CurrentBranching.CurrentUsageVector.Returns = FlowReturns.UNREACHABLE;
+			ec.CurrentBranching.CurrentUsageVector.Breaks = FlowReturns.ALWAYS;
+			return true;
 		}
 
 		public override bool Emit (EmitContext ec)
@@ -670,6 +754,7 @@ namespace Mono.CSharp {
 	/// </summary>
 	public class GotoCase : Statement {
 		Expression expr;
+		Label label;
 		
 		public GotoCase (Expression e, Location l)
 		{
@@ -677,7 +762,7 @@ namespace Mono.CSharp {
 			loc = l;
 		}
 
-		public override bool Emit (EmitContext ec)
+		public override bool Resolve (EmitContext ec)
 		{
 			if (ec.Switch == null){
 				Report.Error (153, loc, "goto case is only valid in a switch statement");
@@ -707,7 +792,16 @@ namespace Mono.CSharp {
 					"No such label 'case " + val + "': for the goto case");
 			}
 
-			ec.ig.Emit (OpCodes.Br, sl.ILLabelCode);
+			label = sl.ILLabelCode;
+
+			ec.CurrentBranching.CurrentUsageVector.Returns = FlowReturns.UNREACHABLE;
+			ec.CurrentBranching.CurrentUsageVector.Breaks = FlowReturns.ALWAYS;
+			return true;
+		}
+
+		public override bool Emit (EmitContext ec)
+		{
+			ec.ig.Emit (OpCodes.Br, label);
 			return true;
 		}
 	}
@@ -727,7 +821,27 @@ namespace Mono.CSharp {
 				expr = expr.Resolve (ec);
 				if (expr == null)
 					return false;
+
+				ExprClass eclass = expr.eclass;
+
+				if (!(eclass == ExprClass.Variable || eclass == ExprClass.PropertyAccess ||
+				      eclass == ExprClass.Value || eclass == ExprClass.IndexerAccess)) {
+					expr.Error118 ("value, variable, property or indexer access ");
+					return false;
+				}
+
+				Type t = expr.Type;
+				
+				if (t != TypeManager.exception_type && !t.IsSubclassOf (TypeManager.exception_type)) {
+					Report.Error (155, loc,
+						      "The type caught or thrown must be derived " +
+						      "from System.Exception");
+					return false;
+				}
 			}
+
+			ec.CurrentBranching.CurrentUsageVector.Returns = FlowReturns.EXCEPTION;
+			ec.CurrentBranching.CurrentUsageVector.Breaks = FlowReturns.EXCEPTION;
 			return true;
 		}
 			
@@ -744,7 +858,7 @@ namespace Mono.CSharp {
 				}
 				return false;
 			}
-			
+
 			expr.Emit (ec);
 
 			ec.ig.Emit (OpCodes.Throw);
@@ -758,6 +872,12 @@ namespace Mono.CSharp {
 		public Break (Location l)
 		{
 			loc = l;
+		}
+
+		public override bool Resolve (EmitContext ec)
+		{
+			ec.CurrentBranching.CurrentUsageVector.Breaks = FlowReturns.ALWAYS;
+			return true;
 		}
 
 		public override bool Emit (EmitContext ec)
@@ -786,6 +906,12 @@ namespace Mono.CSharp {
 			loc = l;
 		}
 
+		public override bool Resolve (EmitContext ec)
+		{
+			ec.CurrentBranching.CurrentUsageVector.Breaks = FlowReturns.ALWAYS;
+			return true;
+		}
+
 		public override bool Emit (EmitContext ec)
 		{
 			Label begin = ec.LoopBegin;
@@ -806,24 +932,1042 @@ namespace Mono.CSharp {
 			// From:
 			// try {} catch { while () { continue; }}
 			//
-			ec.ig.Emit (OpCodes.Br, begin);
+			if (ec.TryCatchLevel > ec.LoopBeginTryCatchLevel)
+				ec.ig.Emit (OpCodes.Leave, begin);
+			else if (ec.TryCatchLevel < ec.LoopBeginTryCatchLevel)
+				throw new Exception ("Should never happen");
+			else
+				ec.ig.Emit (OpCodes.Br, begin);
 			return false;
+		}
+	}
+
+	// <summary>
+	//   This is used in the control flow analysis code to specify whether the
+	//   current code block may return to its enclosing block before reaching
+	//   its end.
+	// </summary>
+	public enum FlowReturns {
+		// It can never return.
+		NEVER,
+
+		// This means that the block contains a conditional return statement
+		// somewhere.
+		SOMETIMES,
+
+		// The code always returns, ie. there's an unconditional return / break
+		// statement in it.
+		ALWAYS,
+
+		// The code always throws an exception.
+		EXCEPTION,
+
+		// The current code block is unreachable.  This happens if it's immediately
+		// following a FlowReturns.ALWAYS block.
+		UNREACHABLE
+	}
+
+	// <summary>
+	//   This is a special bit vector which can inherit from another bit vector doing a
+	//   copy-on-write strategy.  The inherited vector may have a smaller size than the
+	//   current one.
+	// </summary>
+	public class MyBitVector {
+		public readonly int Count;
+		public readonly MyBitVector InheritsFrom;
+
+		bool is_dirty;
+		BitArray vector;
+
+		public MyBitVector (int Count)
+			: this (null, Count)
+		{ }
+
+		public MyBitVector (MyBitVector InheritsFrom, int Count)
+		{
+			this.InheritsFrom = InheritsFrom;
+			this.Count = Count;
+		}
+
+		// <summary>
+		//   Checks whether this bit vector has been modified.  After setting this to true,
+		//   we won't use the inherited vector anymore, but our own copy of it.
+		// </summary>
+		public bool IsDirty {
+			get {
+				return is_dirty;
+			}
+
+			set {
+				if (!is_dirty)
+					initialize_vector ();
+			}
+		}
+
+		// <summary>
+		//   Get/set bit `index' in the bit vector.
+		// </summary>
+		public bool this [int index]
+		{
+			get {
+				if (index > Count)
+					throw new ArgumentOutOfRangeException ();
+
+				// We're doing a "copy-on-write" strategy here; as long
+				// as nobody writes to the array, we can use our parent's
+				// copy instead of duplicating the vector.
+
+				if (vector != null)
+					return vector [index];
+				else if (InheritsFrom != null) {
+					BitArray inherited = InheritsFrom.Vector;
+
+					if (index < inherited.Count)
+						return inherited [index];
+					else
+						return false;
+				} else
+					return false;
+			}
+
+			set {
+				if (index > Count)
+					throw new ArgumentOutOfRangeException ();
+
+				// Only copy the vector if we're actually modifying it.
+
+				if (this [index] != value) {
+					initialize_vector ();
+
+					vector [index] = value;
+				}
+			}
+		}
+
+		// <summary>
+		//   If you explicitly convert the MyBitVector to a BitArray, you will get a deep
+		//   copy of the bit vector.
+		// </summary>
+		public static explicit operator BitArray (MyBitVector vector)
+		{
+			vector.initialize_vector ();
+			return vector.Vector;
+		}
+
+		// <summary>
+		//   Performs an `or' operation on the bit vector.  The `new_vector' may have a
+		//   different size than the current one.
+		// </summary>
+		public void Or (MyBitVector new_vector)
+		{
+			BitArray new_array = new_vector.Vector;
+
+			initialize_vector ();
+
+			int upper;
+			if (vector.Count < new_array.Count)
+				upper = vector.Count;
+			else
+				upper = new_array.Count;
+
+			for (int i = 0; i < upper; i++)
+				vector [i] = vector [i] | new_array [i];
+		}
+
+		// <summary>
+		//   Perfonrms an `and' operation on the bit vector.  The `new_vector' may have
+		//   a different size than the current one.
+		// </summary>
+		public void And (MyBitVector new_vector)
+		{
+			BitArray new_array = new_vector.Vector;
+
+			initialize_vector ();
+
+			int lower, upper;
+			if (vector.Count < new_array.Count)
+				lower = upper = vector.Count;
+			else {
+				lower = new_array.Count;
+				upper = vector.Count;
+			}
+
+			for (int i = 0; i < lower; i++)
+				vector [i] = vector [i] & new_array [i];
+
+			for (int i = lower; i < upper; i++)
+				vector [i] = false;
+		}
+
+		// <summary>
+		//   This does a deep copy of the bit vector.
+		// </summary>
+		public MyBitVector Clone ()
+		{
+			MyBitVector retval = new MyBitVector (Count);
+
+			retval.Vector = Vector;
+
+			return retval;
+		}
+
+		BitArray Vector {
+			get {
+				if (vector != null)
+					return vector;
+				else if (!is_dirty && (InheritsFrom != null))
+					return InheritsFrom.Vector;
+
+				initialize_vector ();
+
+				return vector;
+			}
+
+			set {
+				initialize_vector ();
+
+				for (int i = 0; i < Math.Min (vector.Count, value.Count); i++)
+					vector [i] = value [i];
+			}
+		}
+
+		void initialize_vector ()
+		{
+			if (vector != null)
+				return;
+
+			vector = new BitArray (Count, false);
+			if (InheritsFrom != null)
+				Vector = InheritsFrom.Vector;
+
+			is_dirty = true;
+		}
+
+		public override string ToString ()
+		{
+			StringBuilder sb = new StringBuilder ("MyBitVector (");
+
+			BitArray vector = Vector;
+			sb.Append (Count);
+			sb.Append (",");
+			if (!IsDirty)
+				sb.Append ("INHERITED - ");
+			for (int i = 0; i < vector.Count; i++) {
+				if (i > 0)
+					sb.Append (",");
+				sb.Append (vector [i]);
+			}
+			
+			sb.Append (")");
+			return sb.ToString ();
+		}
+	}
+
+	// <summary>
+	//   The type of a FlowBranching.
+	// </summary>
+	public enum FlowBranchingType {
+		// Normal (conditional or toplevel) block.
+		BLOCK,
+
+		// Try/Catch block.
+		EXCEPTION,
+
+		// Switch block.
+		SWITCH,
+
+		// Switch section.
+		SWITCH_SECTION
+	}
+
+	// <summary>
+	//   A new instance of this class is created every time a new block is resolved
+	//   and if there's branching in the block's control flow.
+	// </summary>
+	public class FlowBranching {
+		// <summary>
+		//   The type of this flow branching.
+		// </summary>
+		public readonly FlowBranchingType Type;
+
+		// <summary>
+		//   The block this branching is contained in.  This may be null if it's not
+		//   a top-level block and it doesn't declare any local variables.
+		// </summary>
+		public readonly Block Block;
+
+		// <summary>
+		//   The parent of this branching or null if this is the top-block.
+		// </summary>
+		public readonly FlowBranching Parent;
+
+		// <summary>
+		//   Start-Location of this flow branching.
+		// </summary>
+		public readonly Location Location;
+
+		// <summary>
+		//   A list of UsageVectors.  A new vector is added each time control flow may
+		//   take a different path.
+		// </summary>
+		public ArrayList Siblings;
+
+		//
+		// Private
+		//
+		InternalParameters param_info;
+		int[] param_map;
+		int num_params;
+		ArrayList finally_vectors;
+
+		static int next_id = 0;
+		int id;
+
+		// <summary>
+		//   Performs an `And' operation on the FlowReturns status
+		//   (for instance, a block only returns ALWAYS if all its siblings
+		//   always return).
+		// </summary>
+		public static FlowReturns AndFlowReturns (FlowReturns a, FlowReturns b)
+		{
+			if (b == FlowReturns.UNREACHABLE)
+				return a;
+
+			switch (a) {
+			case FlowReturns.NEVER:
+				if (b == FlowReturns.NEVER)
+					return FlowReturns.NEVER;
+				else
+					return FlowReturns.SOMETIMES;
+
+			case FlowReturns.SOMETIMES:
+				return FlowReturns.SOMETIMES;
+
+			case FlowReturns.ALWAYS:
+				if ((b == FlowReturns.ALWAYS) || (b == FlowReturns.EXCEPTION))
+					return FlowReturns.ALWAYS;
+				else
+					return FlowReturns.SOMETIMES;
+
+			case FlowReturns.EXCEPTION:
+				if (b == FlowReturns.EXCEPTION)
+					return FlowReturns.EXCEPTION;
+				else if (b == FlowReturns.ALWAYS)
+					return FlowReturns.ALWAYS;
+				else
+					return FlowReturns.SOMETIMES;
+			}
+
+			return b;
+		}
+
+		// <summary>
+		//   The vector contains a BitArray with information about which local variables
+		//   and parameters are already initialized at the current code position.
+		// </summary>
+		public class UsageVector {
+			// <summary>
+			//   If this is true, then the usage vector has been modified and must be
+			//   merged when we're done with this branching.
+			// </summary>
+			public bool IsDirty;
+
+			// <summary>
+			//   The number of parameters in this block.
+			// </summary>
+			public readonly int CountParameters;
+
+			// <summary>
+			//   The number of locals in this block.
+			// </summary>
+			public readonly int CountLocals;
+
+			// <summary>
+			//   If not null, then we inherit our state from this vector and do a
+			//   copy-on-write.  If null, then we're the first sibling in a top-level
+			//   block and inherit from the empty vector.
+			// </summary>
+			public readonly UsageVector InheritsFrom;
+
+			//
+			// Private.
+			//
+			MyBitVector locals, parameters;
+			FlowReturns real_returns, real_breaks;
+			bool returns_set, breaks_set, is_finally;
+
+			static int next_id = 0;
+			int id;
+
+			//
+			// Normally, you should not use any of these constructors.
+			//
+			public UsageVector (UsageVector parent, int num_params, int num_locals)
+			{
+				this.InheritsFrom = parent;
+				this.CountParameters = num_params;
+				this.CountLocals = num_locals;
+				this.real_returns = FlowReturns.NEVER;
+				this.real_breaks = FlowReturns.NEVER;
+
+				if (parent != null) {
+					locals = new MyBitVector (parent.locals, CountLocals);
+					if (num_params > 0)
+						parameters = new MyBitVector (parent.parameters, num_params);
+				} else {
+					locals = new MyBitVector (null, CountLocals);
+					if (num_params > 0)
+						parameters = new MyBitVector (null, num_params);
+				}
+
+				id = ++next_id;
+			}
+
+			public UsageVector (UsageVector parent)
+				: this (parent, parent.CountParameters, parent.CountLocals)
+			{ }
+
+			// <summary>
+			//   This does a deep copy of the usage vector.
+			// </summary>
+			public UsageVector Clone ()
+			{
+				UsageVector retval = new UsageVector (null, CountParameters, CountLocals);
+
+				retval.locals = locals.Clone ();
+				if (parameters != null)
+					retval.parameters = parameters.Clone ();
+				retval.real_returns = real_returns;
+				retval.real_breaks = real_breaks;
+
+				return retval;
+			}
+
+			// 
+			// State of parameter `number'.
+			//
+			public bool this [int number]
+			{
+				get {
+					if (number == -1)
+						return true;
+					else if (number == 0)
+						throw new ArgumentException ();
+
+					return parameters [number - 1];
+				}
+
+				set {
+					if (number == -1)
+						return;
+					else if (number == 0)
+						throw new ArgumentException ();
+
+					parameters [number - 1] = value;
+				}
+			}
+
+			//
+			// State of the local variable `vi'.
+			//
+			public bool this [VariableInfo vi]
+			{
+				get {
+					if (vi.Number == -1)
+						return true;
+					else if (vi.Number == 0)
+						throw new ArgumentException ();
+
+					return locals [vi.Number - 1];
+				}
+
+				set {
+					if (vi.Number == -1)
+						return;
+					else if (vi.Number == 0)
+						throw new ArgumentException ();
+
+					locals [vi.Number - 1] = value;
+				}
+			}
+
+			// <summary>
+			//   Specifies when the current block returns.
+			// </summary>
+			public FlowReturns Returns {
+				get {
+					return real_returns;
+				}
+
+				set {
+					real_returns = value;
+					returns_set = true;
+				}
+			}
+
+			// <summary>
+			//   Specifies whether control may return to our containing block
+			//   before reaching the end of this block.  This happens if there
+			//   is a break/continue/goto/return in it.
+			// </summary>
+			public FlowReturns Breaks {
+				get {
+					return real_breaks;
+				}
+
+				set {
+					real_breaks = value;
+					breaks_set = true;
+				}
+			}
+
+			// <summary>
+			//   Merge a child branching.
+			// </summary>
+			public FlowReturns MergeChildren (FlowBranching branching, ICollection children)
+			{
+				MyBitVector new_locals = null;
+				MyBitVector new_params = null;
+
+				FlowReturns new_returns = FlowReturns.NEVER;
+				FlowReturns new_breaks = FlowReturns.NEVER;
+				bool new_returns_set = false, new_breaks_set = false;
+				FlowReturns breaks;
+
+				Report.Debug (1, "MERGING CHILDREN", branching, this);
+
+				foreach (UsageVector child in children) {
+					Report.Debug (1, "  MERGING CHILD", child);
+
+					// If Returns is already set, perform an `And' operation on it,
+					// otherwise just set just.
+					if (!new_returns_set) {
+						new_returns = child.Returns;
+						new_returns_set = true;
+					} else
+						new_returns = AndFlowReturns (new_returns, child.Returns);
+
+					// If Breaks is already set, perform an `And' operation on it,
+					// otherwise just set just.
+					if (!new_breaks_set) {
+						new_breaks = child.Breaks;
+						new_breaks_set = true;
+					} else
+						new_breaks = AndFlowReturns (new_breaks, child.Breaks);
+
+					// Ignore unreachable children.
+					if (child.Returns == FlowReturns.UNREACHABLE)
+						continue;
+
+					// If we're a switch section, `break' won't leave the current
+					// branching (NOTE: the type check here means that we're "a"
+					// switch section, not that we're "in" a switch section!).
+					breaks = (branching.Type == FlowBranchingType.SWITCH_SECTION) ?
+						child.Returns : child.Breaks;
+
+					// A local variable is initialized after a flow branching if it
+					// has been initialized in all its branches which do neither
+					// always return or always throw an exception.
+					//
+					// If a branch may return, but does not always return, then we
+					// can treat it like a never-returning branch here: control will
+					// only reach the code position after the branching if we did not
+					// return here.
+					//
+					// It's important to distinguish between always and sometimes
+					// returning branches here:
+					//
+					//    1   int a;
+					//    2   if (something) {
+					//    3      return;
+					//    4      a = 5;
+					//    5   }
+					//    6   Console.WriteLine (a);
+					//
+					// The if block in lines 3-4 always returns, so we must not look
+					// at the initialization of `a' in line 4 - thus it'll still be
+					// uninitialized in line 6.
+					//
+					// On the other hand, the following is allowed:
+					//
+					//    1   int a;
+					//    2   if (something)
+					//    3      a = 5;
+					//    4   else
+					//    5      return;
+					//    6   Console.WriteLine (a);
+					//
+					// Here, `a' is initialized in line 3 and we must not look at
+					// line 5 since it always returns.
+					// 
+					if ((breaks != FlowReturns.EXCEPTION) &&
+					    (breaks != FlowReturns.ALWAYS)) {
+						if (new_locals != null)
+							new_locals.And (child.locals);
+						else {
+							new_locals = locals.Clone ();
+							new_locals.Or (child.locals);
+						}
+					}
+
+					// An `out' parameter must be assigned in all branches which do
+					// not always throw an exception.
+					if (!child.is_finally && (child.Returns != FlowReturns.EXCEPTION)) {
+						if (parameters != null) {
+							if (new_params != null)
+								new_params.And (child.parameters);
+							else {
+								new_params = parameters.Clone ();
+								new_params.Or (child.parameters);
+							}
+						}
+					}
+
+					// If we always return, check whether all `out' parameters have
+					// been assigned.
+					if ((child.Returns == FlowReturns.ALWAYS) && (child.parameters != null)) {
+						branching.CheckOutParameters (
+							child.parameters, branching.Location);
+					}
+				}
+
+				// Set new `Returns' status.
+				if (!returns_set) {
+					Returns = new_returns;
+					returns_set = true;
+				} else
+					Returns = AndFlowReturns (Returns, new_returns);
+
+				//
+				// We've now either reached the point after the branching or we will
+				// never get there since we always return or always throw an exception.
+				//
+				// If we can reach the point after the branching, mark all locals and
+				// parameters as initialized which have been initialized in all branches
+				// we need to look at (see above).
+				//
+
+				breaks = (branching.Type == FlowBranchingType.SWITCH_SECTION) ?
+					Returns : Breaks;
+
+				if ((new_locals != null) &&
+				    ((breaks == FlowReturns.NEVER) || (breaks == FlowReturns.SOMETIMES))) {
+					locals.Or (new_locals);
+				}
+
+				if ((new_params != null) && (Breaks == FlowReturns.NEVER))
+					parameters.Or (new_params);
+
+				//
+				// If we may have returned (this only happens if there was a reachable
+				// `return' statement in one of the branches), then we may return to our
+				// parent block before reaching the end of the block, so set `Breaks'.
+				//
+
+				if ((Returns != FlowReturns.NEVER) && (Returns != FlowReturns.SOMETIMES)) {
+					real_breaks = Returns;
+					breaks_set = true;
+				}
+
+				Report.Debug (1, "MERGING CHILDREN DONE", new_params, new_locals,
+					      new_returns, new_breaks, this);
+
+				return new_returns;
+			}
+
+			// <summary>
+			//   Tells control flow analysis that the current code position may be reached with
+			//   a forward jump from any of the origins listed in `origin_vectors' which is a
+			//   list of UsageVectors.
+			//
+			//   This is used when resolving forward gotos - in the following example, the
+			//   variable `a' is uninitialized in line 8 becase this line may be reached via
+			//   the goto in line 4:
+			//
+			//      1     int a;
+			//
+			//      3     if (something)
+			//      4        goto World;
+			//
+			//      6     a = 5;
+			//
+			//      7  World:
+			//      8     Console.WriteLine (a);
+			//
+			// </summary>
+			public void MergeJumpOrigins (ICollection origin_vectors)
+			{
+				Report.Debug (1, "MERGING JUMP ORIGIN", this);
+
+				real_breaks = FlowReturns.NEVER;
+				breaks_set = false;
+
+				foreach (UsageVector vector in origin_vectors) {
+					Report.Debug (1, "  MERGING JUMP ORIGIN", vector);
+
+					locals.And (vector.locals);
+					if (parameters != null)
+						parameters.And (vector.parameters);
+					Breaks = AndFlowReturns (Breaks, vector.Breaks);
+				}
+
+				Report.Debug (1, "MERGING JUMP ORIGIN DONE", this);
+			}
+
+			// <summary>
+			//   This is used at the beginning of a finally block if there were
+			//   any return statements in the try block or one of the catch blocks.
+			// </summary>
+			public void MergeFinallyOrigins (ICollection finally_vectors)
+			{
+				Report.Debug (1, "MERGING FINALLY ORIGIN", this);
+
+				real_breaks = FlowReturns.NEVER;
+				breaks_set = false;
+
+				foreach (UsageVector vector in finally_vectors) {
+					Report.Debug (1, "  MERGING FINALLY ORIGIN", vector);
+
+					if (parameters != null)
+						parameters.And (vector.parameters);
+					Breaks = AndFlowReturns (Breaks, vector.Breaks);
+				}
+
+				is_finally = true;
+
+				Report.Debug (1, "MERGING FINALLY ORIGIN DONE", this);
+			}
+
+			// <summary>
+			//   Performs an `or' operation on the locals and the parameters.
+			// </summary>
+			public void Or (UsageVector new_vector)
+			{
+				locals.Or (new_vector.locals);
+				if (parameters != null)
+					parameters.Or (new_vector.parameters);
+			}
+
+			// <summary>
+			//   Performs an `and' operation on the locals.
+			// </summary>
+			public void AndLocals (UsageVector new_vector)
+			{
+				locals.And (new_vector.locals);
+			}
+
+			// <summary>
+			//   Returns a deep copy of the parameters.
+			// </summary>
+			public MyBitVector Parameters {
+				get {
+					if (parameters != null)
+						return parameters.Clone ();
+					else
+						return null;
+				}
+			}
+
+			// <summary>
+			//   Returns a deep copy of the locals.
+			// </summary>
+			public MyBitVector Locals {
+				get {
+					return locals.Clone ();
+				}
+			}
+
+			//
+			// Debugging stuff.
+			//
+
+			public override string ToString ()
+			{
+				StringBuilder sb = new StringBuilder ();
+
+				sb.Append ("Vector (");
+				sb.Append (id);
+				sb.Append (",");
+				sb.Append (Returns);
+				sb.Append (",");
+				sb.Append (Breaks);
+				if (parameters != null) {
+					sb.Append (" - ");
+					sb.Append (parameters);
+				}
+				sb.Append (" - ");
+				sb.Append (locals);
+				sb.Append (")");
+
+				return sb.ToString ();
+			}
+		}
+
+		FlowBranching (FlowBranchingType type, Location loc)
+		{
+			this.Siblings = new ArrayList ();
+			this.Block = null;
+			this.Location = loc;
+			this.Type = type;
+			id = ++next_id;
+		}
+
+		// <summary>
+		//   Creates a new flow branching for `block'.
+		//   This is used from Block.Resolve to create the top-level branching of
+		//   the block.
+		// </summary>
+		public FlowBranching (Block block, InternalParameters ip, Location loc)
+			: this (FlowBranchingType.BLOCK, loc)
+		{
+			Block = block;
+			Parent = null;
+
+			param_info = ip;
+			param_map = new int [(param_info != null) ? param_info.Count : 0];
+			num_params = 0;
+
+			for (int i = 0; i < param_map.Length; i++) {
+				Parameter.Modifier mod = param_info.ParameterModifier (i);
+
+				if ((mod & Parameter.Modifier.OUT) == 0)
+					continue;
+
+				param_map [i] = ++num_params;
+			}
+
+			Siblings = new ArrayList ();
+			Siblings.Add (new UsageVector (null, num_params, block.CountVariables));
+		}
+
+		// <summary>
+		//   Creates a new flow branching which is contained in `parent'.
+		//   You should only pass non-null for the `block' argument if this block
+		//   introduces any new variables - in this case, we need to create a new
+		//   usage vector with a different size than our parent's one.
+		// </summary>
+		public FlowBranching (FlowBranching parent, FlowBranchingType type,
+				      Block block, Location loc)
+			: this (type, loc)
+		{
+			Parent = parent;
+			Block = block;
+
+			if (parent != null) {
+				param_info = parent.param_info;
+				param_map = parent.param_map;
+				num_params = parent.num_params;
+			}
+
+			UsageVector vector;
+			if (Block != null)
+				vector = new UsageVector (parent.CurrentUsageVector, num_params,
+							  Block.CountVariables);
+			else
+				vector = new UsageVector (Parent.CurrentUsageVector);
+
+			Siblings.Add (vector);
+
+			switch (Type) {
+			case FlowBranchingType.EXCEPTION:
+				finally_vectors = new ArrayList ();
+				break;
+
+			default:
+				break;
+			}
+		}
+
+		// <summary>
+		//   Returns the branching's current usage vector.
+		// </summary>
+		public UsageVector CurrentUsageVector
+		{
+			get {
+				return (UsageVector) Siblings [Siblings.Count - 1];
+			}
+		}
+
+		// <summary>
+		//   Creates a sibling of the current usage vector.
+		// </summary>
+		public void CreateSibling ()
+		{
+			Siblings.Add (new UsageVector (Parent.CurrentUsageVector));
+
+			Report.Debug (1, "CREATED SIBLING", CurrentUsageVector);
+		}
+
+		// <summary>
+		//   Creates a sibling for a `finally' block.
+		// </summary>
+		public void CreateSiblingForFinally ()
+		{
+			if (Type != FlowBranchingType.EXCEPTION)
+				throw new NotSupportedException ();
+
+			CreateSibling ();
+
+			CurrentUsageVector.MergeFinallyOrigins (finally_vectors);
+		}
+
+		// <summary>
+		//   Check whether all `out' parameters have been assigned.
+		// </summary>
+		public void CheckOutParameters (MyBitVector parameters, Location loc)
+		{
+			if (InTryBlock ())
+				return;
+
+			for (int i = 0; i < param_map.Length; i++) {
+				if (param_map [i] == 0)
+					continue;
+
+				if (!parameters [param_map [i] - 1]) {
+					Report.Error (
+						177, loc, "The out parameter `" +
+						param_info.ParameterName (i) + "` must be " +
+						"assigned before control leave the current method.");
+					param_map [i] = 0;
+				}
+			}
+		}
+
+		// <summary>
+		//   Merge a child branching.
+		// </summary>
+		public FlowReturns MergeChild (FlowBranching child)
+		{
+			return CurrentUsageVector.MergeChildren (child, child.Siblings);
+		}
+
+		// <summary>
+		//   Does the toplevel merging.
+		// </summary>
+		public FlowReturns MergeTopBlock ()
+		{
+			if ((Type != FlowBranchingType.BLOCK) || (Block == null))
+				throw new NotSupportedException ();
+
+			UsageVector vector = new UsageVector (null, num_params, Block.CountVariables);
+
+			vector.MergeChildren (this, Siblings);
+
+			Siblings.Clear ();
+			Siblings.Add (vector);
+
+			Report.Debug (1, "MERGING TOP BLOCK", vector);
+
+			if (vector.Returns != FlowReturns.EXCEPTION)
+				CheckOutParameters (CurrentUsageVector.Parameters, Location);
+
+			return vector.Returns;
+		}
+
+		public bool InTryBlock ()
+		{
+			if (finally_vectors != null)
+				return true;
+			else if (Parent != null)
+				return Parent.InTryBlock ();
+			else
+				return false;
+		}
+
+		public void AddFinallyVector (UsageVector vector)
+		{
+			if (finally_vectors != null) {
+				finally_vectors.Add (vector.Clone ());
+				return;
+			}
+
+			if (Parent != null)
+				Parent.AddFinallyVector (vector);
+			else
+				throw new NotSupportedException ();
+		}
+
+		public bool IsVariableAssigned (VariableInfo vi)
+		{
+			Report.Debug (2, "CHECK VARIABLE ACCESS", this, vi);
+
+			if (CurrentUsageVector.Breaks == FlowReturns.UNREACHABLE)
+				return true;
+			else
+				return CurrentUsageVector [vi];
+		}
+
+		public void SetVariableAssigned (VariableInfo vi)
+		{
+			Report.Debug (2, "SET VARIABLE ACCESS", this, vi, CurrentUsageVector);
+
+			if (CurrentUsageVector.Breaks == FlowReturns.UNREACHABLE)
+				return;
+
+			CurrentUsageVector [vi] = true;
+		}
+
+		public bool IsParameterAssigned (int number)
+		{
+			Report.Debug (2, "IS PARAMETER ASSIGNED", this, number);
+
+			if (param_map [number] == 0)
+				return true;
+			else
+				return CurrentUsageVector [param_map [number]];
+		}
+
+		public void SetParameterAssigned (int number)
+		{
+			Report.Debug (2, "SET PARAMETER ACCESS", this, number, param_map [number],
+				      CurrentUsageVector);
+
+			if (param_map [number] == 0)
+				return;
+
+			if (CurrentUsageVector.Breaks == FlowReturns.NEVER)
+				CurrentUsageVector [param_map [number]] = true;
+		}
+
+		public override string ToString ()
+		{
+			StringBuilder sb = new StringBuilder ("FlowBranching (");
+
+			sb.Append (id);
+			sb.Append (",");
+			sb.Append (Type);
+			if (Block != null) {
+				sb.Append (" - ");
+				sb.Append (Block.ID);
+				sb.Append (" - ");
+				sb.Append (Block.StartLocation);
+			}
+			sb.Append (" - ");
+			sb.Append (Siblings.Count);
+			sb.Append (" - ");
+			sb.Append (CurrentUsageVector);
+			sb.Append (")");
+			return sb.ToString ();
 		}
 	}
 	
 	public class VariableInfo {
-		public readonly string Type;
+		public Expression Type;
 		public LocalBuilder LocalBuilder;
 		public Type VariableType;
 		public readonly Location Location;
+		public readonly int Block;
+
+		public int Number;
 		
 		public bool Used;
 		public bool Assigned;
 		public bool ReadOnly;
 		
-		public VariableInfo (string type, Location l)
+		public VariableInfo (Expression type, int block, Location l)
 		{
 			Type = type;
+			Block = block;
 			LocalBuilder = null;
 			Location = l;
 		}
@@ -831,7 +1975,12 @@ namespace Mono.CSharp {
 		public void MakePinned ()
 		{
 			TypeManager.MakePinned (LocalBuilder);
-		}				
+		}
+
+		public override string ToString ()
+		{
+			return "VariableInfo (" + Number + "," + Type + "," + Location + ")";
+		}
 	}
 		
 	/// <summary>
@@ -918,7 +2067,10 @@ namespace Mono.CSharp {
 
 		public int ID {
 			get {
-				return this_id;
+				if (Implicit)
+					return Parent.ID;
+				else
+					return this_id;
 			}
 		}
 		
@@ -968,30 +2120,50 @@ namespace Mono.CSharp {
 			return null;
 		}
 
-		public VariableInfo AddVariable (string type, string name, Parameters pars, Location l)
+		public VariableInfo AddVariable (Expression type, string name, Parameters pars, Location l)
 		{
 			if (variables == null)
 				variables = new Hashtable ();
 
-			if (GetVariableType (name) != null)
+			VariableInfo vi = GetVariableInfo (name);
+			if (vi != null) {
+				if (vi.Block != ID)
+					Report.Error (136, l, "A local variable named `" + name + "' " +
+						      "cannot be declared in this scope since it would " +
+						      "give a different meaning to `" + name + "', which " +
+						      "is already used in a `parent or current' scope to " +
+						      "denote something else");
+				else
+					Report.Error (128, l, "A local variable `" + name + "' is already " +
+						      "defined in this scope");
 				return null;
+			}
 
 			if (pars != null) {
 				int idx = 0;
 				Parameter p = pars.GetParameterByName (name, out idx);
-				if (p != null) 
+				if (p != null) {
+					Report.Error (136, l, "A local variable named `" + name + "' " +
+						      "cannot be declared in this scope since it would " +
+						      "give a different meaning to `" + name + "', which " +
+						      "is already used in a `parent or current' scope to " +
+						      "denote something else");
 					return null;
+				}
 			}
 			
-			VariableInfo vi = new VariableInfo (type, l);
+			vi = new VariableInfo (type, ID, l);
 
 			variables.Add (name, vi);
+
+			if (variables_initialized)
+				throw new Exception ();
 
 			// Console.WriteLine ("Adding {0} to {1}", name, ID);
 			return vi;
 		}
 
-		public bool AddConstant (string type, string name, Expression value, Parameters pars, Location l)
+		public bool AddConstant (Expression type, string name, Expression value, Parameters pars, Location l)
 		{
 			if (AddVariable (type, name, pars, l) == null)
 				return false;
@@ -1026,7 +2198,7 @@ namespace Mono.CSharp {
 			return null;
 		}
 		
-		public string GetVariableType (string name)
+		public Expression GetVariableType (string name)
 		{
 			VariableInfo vi = GetVariableInfo (name);
 
@@ -1116,7 +2288,61 @@ namespace Mono.CSharp {
 		{
 			used = true;
 		}
-		
+
+		bool variables_initialized = false;
+		int count_variables = 0, first_variable = 0;
+
+		void UpdateVariableInfo (EmitContext ec)
+		{
+			DeclSpace ds = ec.DeclSpace;
+
+			first_variable = 0;
+
+			if (Parent != null)
+				first_variable += Parent.CountVariables;
+
+			count_variables = first_variable;
+			if (variables != null) {
+				foreach (VariableInfo vi in variables.Values) {
+					Report.Debug (2, "VARIABLE", vi);
+
+					Type type = ds.ResolveType (vi.Type, false, vi.Location);
+					if (type == null) {
+						vi.Number = -1;
+						continue;
+					}
+
+					vi.VariableType = type;
+
+					Report.Debug (2, "VARIABLE", vi, type, type.IsValueType,
+						      TypeManager.IsValueType (type),
+						      TypeManager.IsBuiltinType (type));
+
+					// FIXME: we don't have support for structs yet.
+					if (TypeManager.IsValueType (type) && !TypeManager.IsBuiltinType (type))
+						vi.Number = -1;
+					else
+						vi.Number = ++count_variables;
+				}
+			}
+
+			variables_initialized = true;
+		}
+
+		//
+		// <returns>
+		//   The number of local variables in this block
+		// </returns>
+		public int CountVariables
+		{
+			get {
+				if (!variables_initialized)
+					throw new Exception ();
+
+				return count_variables;
+			}
+		}
+
 		/// <summary>
 		///   Emits the variable declarations and labels.
 		/// </summary>
@@ -1130,7 +2356,10 @@ namespace Mono.CSharp {
 		{
 			DeclSpace ds = ec.DeclSpace;
 			ILGenerator ig = ec.ig;
-				
+
+			if (!variables_initialized)
+				UpdateVariableInfo (ec);
+
 			//
 			// Process this block variables
 			//
@@ -1140,14 +2369,11 @@ namespace Mono.CSharp {
 				foreach (DictionaryEntry de in variables){
 					string name = (string) de.Key;
 					VariableInfo vi = (VariableInfo) de.Value;
-					Type t;
 
-					t = RootContext.LookupType (ds, vi.Type, false, vi.Location);
-					if (t == null)
+					if (vi.VariableType == null)
 						continue;
 
-					vi.VariableType = t;
-					vi.LocalBuilder = ig.DeclareLocal (t);
+					vi.LocalBuilder = ig.DeclareLocal (vi.VariableType);
 
 					if (CodeGen.SymbolWriter != null)
 						vi.LocalBuilder.SetLocalSymInfo (name);
@@ -1218,24 +2444,42 @@ namespace Mono.CSharp {
 		public override bool Resolve (EmitContext ec)
 		{
 			Block prev_block = ec.CurrentBlock;
+			bool ok = true;
 
 			ec.CurrentBlock = this;
+			ec.StartFlowBranching (this);
+
+			Report.Debug (1, "RESOLVE BLOCK", StartLocation);
+
+			if (!variables_initialized)
+				UpdateVariableInfo (ec);
+
 			foreach (Statement s in statements){
-				if (s.Resolve (ec) == false){
-					ec.CurrentBlock = prev_block;
-					return false;
-				}
+				if (s.Resolve (ec) == false)
+					ok = false;
 			}
 
+			Report.Debug (1, "RESOLVE BLOCK DONE", StartLocation);
+
+			ec.EndFlowBranching ();
 			ec.CurrentBlock = prev_block;
-			return true;
+
+			if ((labels != null) && (RootContext.WarningLevel >= 2)) {
+				foreach (LabeledStatement label in labels.Values)
+					if (!label.HasBeenReferenced)
+						Report.Warning (164, label.Location,
+								"This label has not been referenced");
+			}
+
+			return ok;
 		}
 		
 		public override bool Emit (EmitContext ec)
 		{
-			bool is_ret = false;
+			bool is_ret = false, this_ret = false;
 			Block prev_block = ec.CurrentBlock;
-			
+			bool warning_shown = false;
+
 			ec.CurrentBlock = this;
 
 			if (CodeGen.SymbolWriter != null) {
@@ -1244,13 +2488,26 @@ namespace Mono.CSharp {
 				foreach (Statement s in statements) {
 					ec.Mark (s.loc);
 					
-					is_ret = s.Emit (ec);
+					if (is_ret && !warning_shown && !(s is EmptyStatement)){
+						warning_shown = true;
+						Warning_DeadCodeFound (s.loc);
+					}
+					this_ret = s.Emit (ec);
+					if (this_ret)
+						is_ret = true;
 				}
 
 				ec.Mark (EndLocation); 
 			} else {
-				foreach (Statement s in statements)
-					is_ret = s.Emit (ec);
+				foreach (Statement s in statements){
+					if (is_ret && !warning_shown && !(s is EmptyStatement)){
+						warning_shown = true;
+						Warning_DeadCodeFound (s.loc);
+					}
+					this_ret = s.Emit (ec);
+					if (this_ret)
+						is_ret = true;
+				}
 			}
 			
 			ec.CurrentBlock = prev_block;
@@ -1264,7 +2521,7 @@ namespace Mono.CSharp {
 		public Location loc;
 		public Label ILLabel;
 		public Label ILLabelCode;
-		
+
 		//
 		// if expr == null, then it is the default case.
 		//
@@ -1285,7 +2542,7 @@ namespace Mono.CSharp {
 				return converted;
 			}
 		}
-		
+
 		//
 		// Resolves the expression, reduces it to a literal if possible
 		// and then converts it to the requested type.
@@ -1356,7 +2613,8 @@ namespace Mono.CSharp {
 		//
 		bool got_default;
 		Label default_target;
-		
+		Expression new_expr;
+
 		//
 		// The types allowed to be implicitly cast from
 		// on the governing type
@@ -1863,8 +3121,10 @@ namespace Mono.CSharp {
 				//ig.Emit (OpCodes.Br, lblEnd);
 			}
 			
-			if (!fFoundDefault)
+			if (!fFoundDefault) {
 				ig.MarkLabel (lblDefault);
+				fAllReturn = false;
+			}
 			ig.MarkLabel (lblEnd);
 
 			return fAllReturn;
@@ -1988,21 +3248,11 @@ namespace Mono.CSharp {
 
 		public override bool Resolve (EmitContext ec)
 		{
-			foreach (SwitchSection ss in Sections){
-				if (ss.Block.Resolve (ec) != true)
-					return false;
-			}
-
-			return true;
-		}
-		
-		public override bool Emit (EmitContext ec)
-		{
 			Expr = Expr.Resolve (ec);
 			if (Expr == null)
 				return false;
 
-			Expression new_expr = SwitchGoverningType (ec, Expr.Type);
+			new_expr = SwitchGoverningType (ec, Expr.Type);
 			if (new_expr == null){
 				Report.Error (151, loc, "An integer type or string was expected for switch");
 				return false;
@@ -2014,6 +3264,31 @@ namespace Mono.CSharp {
 			if (!CheckSwitch (ec))
 				return false;
 
+			Switch old_switch = ec.Switch;
+			ec.Switch = this;
+			ec.Switch.SwitchType = SwitchType;
+
+			ec.StartFlowBranching (FlowBranchingType.SWITCH, loc);
+
+			bool first = true;
+			foreach (SwitchSection ss in Sections){
+				if (!first)
+					ec.CurrentBranching.CreateSibling ();
+				else
+					first = false;
+
+				if (ss.Block.Resolve (ec) != true)
+					return false;
+			}
+
+			ec.EndFlowBranching ();
+			ec.Switch = old_switch;
+
+			return true;
+		}
+		
+		public override bool Emit (EmitContext ec)
+		{
 			// Store variable for comparission purposes
 			LocalBuilder value = ec.ig.DeclareLocal (SwitchType);
 			new_expr.Emit (ec);
@@ -2214,11 +3489,20 @@ namespace Mono.CSharp {
 	// Fixed statement
 	//
 	public class Fixed : Statement {
-		string    type;
+		Expression type;
 		ArrayList declarators;
 		Statement statement;
+		Type expr_type;
+		FixedData[] data;
 
-		public Fixed (string type, ArrayList decls, Statement stmt, Location l)
+		struct FixedData {
+			public bool is_object;
+			public VariableInfo vi;
+			public Expression expr;
+			public Expression converted;
+		}			
+
+		public Fixed (Expression type, ArrayList decls, Statement stmt, Location l)
 		{
 			this.type = type;
 			declarators = decls;
@@ -2228,23 +3512,18 @@ namespace Mono.CSharp {
 
 		public override bool Resolve (EmitContext ec)
 		{
-			return statement.Resolve (ec);
-		}
-		
-		public override bool Emit (EmitContext ec)
-		{
-			ILGenerator ig = ec.ig;
-			Type t;
-			
-			t = RootContext.LookupType (ec.DeclSpace, type, false, loc);
-			if (t == null)
+			expr_type = ec.DeclSpace.ResolveType (type, false, loc);
+			if (expr_type == null)
 				return false;
 
-			bool is_ret = false;
+			data = new FixedData [declarators.Count];
 
+			int i = 0;
 			foreach (Pair p in declarators){
 				VariableInfo vi = (VariableInfo) p.First;
 				Expression e = (Expression) p.Second;
+
+				vi.Number = -1;
 
 				//
 				// The rules for the possible declarators are pretty wise,
@@ -2270,37 +3549,30 @@ namespace Mono.CSharp {
 							"No need to use fixed statement for parameters or " +
 							"local variable declarations (address is already " +
 							"fixed)");
-						continue;
+						return false;
 					}
 					
 					e = e.Resolve (ec);
 					if (e == null)
-						continue;
+						return false;
 
 					child = ((Unary) e).Expr;
 					
 					if (!TypeManager.VerifyUnManaged (child.Type, loc))
-						continue;
+						return false;
 
-					//
-					// Store pointer in pinned location
-					//
-					e.Emit (ec);
-					ig.Emit (OpCodes.Stloc, vi.LocalBuilder);
-
-					is_ret = statement.Emit (ec);
-
-					// Clear the pinned variable.
-					ig.Emit (OpCodes.Ldc_I4_0);
-					ig.Emit (OpCodes.Conv_U);
-					ig.Emit (OpCodes.Stloc, vi.LocalBuilder);
+					data [i].is_object = true;
+					data [i].expr = e;
+					data [i].converted = null;
+					data [i].vi = vi;
+					i++;
 
 					continue;
 				}
 
 				e = e.Resolve (ec);
 				if (e == null)
-					continue;
+					return false;
 
 				//
 				// Case 2: Array
@@ -2313,23 +3585,80 @@ namespace Mono.CSharp {
 					// Provided that array_type is unmanaged,
 					//
 					if (!TypeManager.VerifyUnManaged (array_type, loc))
-						continue;
+						return false;
 
 					//
 					// and T* is implicitly convertible to the
 					// pointer type given in the fixed statement.
 					//
-					ArrayPtr array_ptr = new ArrayPtr (e);
+					ArrayPtr array_ptr = new ArrayPtr (e, loc);
 					
 					Expression converted = Expression.ConvertImplicitRequired (
 						ec, array_ptr, vi.VariableType, loc);
 					if (converted == null)
-						continue;
+						return false;
 
+					data [i].is_object = false;
+					data [i].expr = e;
+					data [i].converted = converted;
+					data [i].vi = vi;
+					i++;
+
+					continue;
+				}
+
+				//
+				// Case 3: string
+				//
+				if (e.Type == TypeManager.string_type){
+					data [i].is_object = false;
+					data [i].expr = e;
+					data [i].converted = null;
+					data [i].vi = vi;
+					i++;
+				}
+			}
+
+			return statement.Resolve (ec);
+		}
+		
+		public override bool Emit (EmitContext ec)
+		{
+			ILGenerator ig = ec.ig;
+
+			bool is_ret = false;
+
+			for (int i = 0; i < data.Length; i++) {
+				VariableInfo vi = data [i].vi;
+
+				//
+				// Case 1: & object.
+				//
+				if (data [i].is_object) {
 					//
 					// Store pointer in pinned location
 					//
-					converted.Emit (ec);
+					data [i].expr.Emit (ec);
+					ig.Emit (OpCodes.Stloc, vi.LocalBuilder);
+
+					is_ret = statement.Emit (ec);
+
+					// Clear the pinned variable.
+					ig.Emit (OpCodes.Ldc_I4_0);
+					ig.Emit (OpCodes.Conv_U);
+					ig.Emit (OpCodes.Stloc, vi.LocalBuilder);
+
+					continue;
+				}
+
+				//
+				// Case 2: Array
+				//
+				if (data [i].expr.Type.IsArray){
+					//
+					// Store pointer in pinned location
+					//
+					data [i].converted.Emit (ec);
 					
 					ig.Emit (OpCodes.Stloc, vi.LocalBuilder);
 
@@ -2346,14 +3675,14 @@ namespace Mono.CSharp {
 				//
 				// Case 3: string
 				//
-				if (e.Type == TypeManager.string_type){
+				if (data [i].expr.Type == TypeManager.string_type){
 					LocalBuilder pinned_string = ig.DeclareLocal (TypeManager.string_type);
 					TypeManager.MakePinned (pinned_string);
 					
-					e.Emit (ec);
+					data [i].expr.Emit (ec);
 					ig.Emit (OpCodes.Stloc, pinned_string);
 
-					Expression sptr = new StringPtr (pinned_string);
+					Expression sptr = new StringPtr (pinned_string, loc);
 					Expression converted = Expression.ConvertImplicitRequired (
 						ec, sptr, vi.VariableType, loc);
 					
@@ -2376,17 +3705,55 @@ namespace Mono.CSharp {
 	}
 	
 	public class Catch {
-		public readonly string Type;
 		public readonly string Name;
 		public readonly Block  Block;
 		public readonly Location Location;
+
+		Expression type;
 		
-		public Catch (string type, string name, Block block, Location l)
+		public Catch (Expression type, string name, Block block, Location l)
 		{
-			Type = type;
+			this.type = type;
 			Name = name;
 			Block = block;
 			Location = l;
+		}
+
+		public Type CatchType {
+			get {
+				if (type == null)
+					throw new InvalidOperationException ();
+
+				return type.Type;
+			}
+		}
+
+		public bool IsGeneral {
+			get {
+				return type == null;
+			}
+		}
+
+		public bool Resolve (EmitContext ec)
+		{
+			if (type != null) {
+				type = type.DoResolve (ec);
+				if (type == null)
+					return false;
+
+				Type t = type.Type;
+				if (t != TypeManager.exception_type && !t.IsSubclassOf (TypeManager.exception_type)){
+					Report.Error (155, Location,
+						      "The type caught or thrown must be derived " +
+						      "from System.Exception");
+					return false;
+				}
+			}
+
+			if (!Block.Resolve (ec))
+				return false;
+
+			return true;
 		}
 	}
 
@@ -2398,7 +3765,7 @@ namespace Mono.CSharp {
 		//
 		// specific, general and fini might all be null.
 		//
-		public Try (Block block, ArrayList specific, Catch general, Block fini)
+		public Try (Block block, ArrayList specific, Catch general, Block fini, Location l)
 		{
 			if (specific == null && general == null){
 				Console.WriteLine ("CIR.Try: Either specific or general have to be non-null");
@@ -2408,28 +3775,104 @@ namespace Mono.CSharp {
 			this.Specific = specific;
 			this.General = general;
 			this.Fini = fini;
+			loc = l;
 		}
 
 		public override bool Resolve (EmitContext ec)
 		{
 			bool ok = true;
 			
-			if (General != null)
-				if (!General.Block.Resolve (ec))
-					ok = false;
+			ec.StartFlowBranching (FlowBranchingType.EXCEPTION, Block.StartLocation);
 
-			foreach (Catch c in Specific){
-				if (!c.Block.Resolve (ec))
-					ok = false;
-			}
+			Report.Debug (1, "START OF TRY BLOCK", Block.StartLocation);
+
+			bool old_in_try = ec.InTry;
+			ec.InTry = true;
 
 			if (!Block.Resolve (ec))
 				ok = false;
 
-			if (Fini != null)
+			ec.InTry = old_in_try;
+
+			FlowBranching.UsageVector vector = ec.CurrentBranching.CurrentUsageVector;
+
+			Report.Debug (1, "START OF CATCH BLOCKS", vector);
+
+			foreach (Catch c in Specific){
+				ec.CurrentBranching.CreateSibling ();
+				Report.Debug (1, "STARTED SIBLING FOR CATCH", ec.CurrentBranching);
+
+				if (c.Name != null) {
+					VariableInfo vi = c.Block.GetVariableInfo (c.Name);
+					if (vi == null)
+						throw new Exception ();
+
+					vi.Number = -1;
+				}
+
+				bool old_in_catch = ec.InCatch;
+				ec.InCatch = true;
+
+				if (!c.Resolve (ec))
+					ok = false;
+
+				ec.InCatch = old_in_catch;
+
+				FlowBranching.UsageVector current = ec.CurrentBranching.CurrentUsageVector;
+
+				if ((current.Returns == FlowReturns.NEVER) ||
+				    (current.Returns == FlowReturns.SOMETIMES)) {
+					vector.AndLocals (current);
+				}
+			}
+
+			if (General != null){
+				ec.CurrentBranching.CreateSibling ();
+				Report.Debug (1, "STARTED SIBLING FOR GENERAL", ec.CurrentBranching);
+
+				bool old_in_catch = ec.InCatch;
+				ec.InCatch = true;
+
+				if (!General.Resolve (ec))
+					ok = false;
+
+				ec.InCatch = old_in_catch;
+
+				FlowBranching.UsageVector current = ec.CurrentBranching.CurrentUsageVector;
+
+				if ((current.Returns == FlowReturns.NEVER) ||
+				    (current.Returns == FlowReturns.SOMETIMES)) {
+					vector.AndLocals (current);
+				}
+			}
+
+			ec.CurrentBranching.CreateSiblingForFinally ();
+			Report.Debug (1, "STARTED SIBLING FOR FINALLY", ec.CurrentBranching, vector);
+
+			if (Fini != null) {
+				bool old_in_finally = ec.InFinally;
+				ec.InFinally = true;
+
 				if (!Fini.Resolve (ec))
 					ok = false;
-			
+
+				ec.InFinally = old_in_finally;
+			}
+
+			FlowBranching.UsageVector f_vector = ec.CurrentBranching.CurrentUsageVector;
+
+			FlowReturns returns = ec.EndFlowBranching ();
+
+			Report.Debug (1, "END OF FINALLY", ec.CurrentBranching, returns, vector, f_vector);
+
+			if ((returns == FlowReturns.SOMETIMES) || (returns == FlowReturns.ALWAYS)) {
+				ec.CurrentBranching.CheckOutParameters (f_vector.Parameters, loc);
+			}
+
+			ec.CurrentBranching.CurrentUsageVector.Or (vector);
+
+			Report.Debug (1, "END OF TRY", ec.CurrentBranching);
+
 			return ok;
 		}
 		
@@ -2439,7 +3882,8 @@ namespace Mono.CSharp {
 			Label end;
 			Label finish = ig.DefineLabel ();;
 			bool returns;
-			
+
+			ec.TryCatchLevel++;
 			end = ig.BeginExceptionBlock ();
 			bool old_in_try = ec.InTry;
 			ec.InTry = true;
@@ -2455,21 +3899,15 @@ namespace Mono.CSharp {
 			DeclSpace ds = ec.DeclSpace;
 
 			foreach (Catch c in Specific){
-				Type catch_type = RootContext.LookupType (ds, c.Type, false, c.Location);
 				VariableInfo vi;
 				
-				if (catch_type == null)
-					return false;
-
-				ig.BeginCatchBlock (catch_type);
+				ig.BeginCatchBlock (c.CatchType);
 
 				if (c.Name != null){
 					vi = c.Block.GetVariableInfo (c.Name);
-					if (vi == null){
-						Console.WriteLine ("This should not happen! variable does not exist in this block");
-						Environment.Exit (0);
-					}
-				
+					if (vi == null)
+						throw new Exception ("Variable does not exist in this block");
+
 					ig.Emit (OpCodes.Stloc, vi.LocalBuilder);
 				} else
 					ig.Emit (OpCodes.Pop);
@@ -2496,13 +3934,21 @@ namespace Mono.CSharp {
 			}
 			
 			ig.EndExceptionBlock ();
+			ec.TryCatchLevel--;
 
-			//
-			// FIXME: Is this correct?
-			// Replace with `returns' and check test-18, maybe we can
-			// perform an optimization here.
-			//
-			return returns;
+			if (!returns || ec.InTry || ec.InCatch)
+				return returns;
+
+			// Unfortunately, System.Reflection.Emit automatically emits a leave
+			// to the end of the finally block.  This is a problem if `returns'
+			// is true since we may jump to a point after the end of the method.
+			// As a workaround, emit an explicit ret here.
+
+			if (ec.ReturnType != null)
+				ec.ig.Emit (OpCodes.Ldloc, ec.TemporaryReturn ());
+			ec.ig.Emit (OpCodes.Ret);
+
+			return true;
 		}
 	}
 
@@ -2513,6 +3959,12 @@ namespace Mono.CSharp {
 	public class Using : Statement {
 		object expression_or_block;
 		Statement Statement;
+		ArrayList var_list;
+		Expression expr;
+		Type expr_type;
+		Expression conv;
+		Expression [] converted_vars;
+		ExpressionStatement [] assign;
 		
 		public Using (object expression_or_block, Statement stmt, Location l)
 		{
@@ -2522,29 +3974,28 @@ namespace Mono.CSharp {
 		}
 
 		//
-		// Emits the code for the case of using using a local variable declaration.
+		// Resolves for the case of using using a local variable declaration.
 		//
-		bool EmitLocalVariableDecls (EmitContext ec, string type_name, ArrayList var_list)
+		bool ResolveLocalVariableDecls (EmitContext ec)
 		{
-			ILGenerator ig = ec.ig;
-			Expression [] converted_vars;
 			bool need_conv = false;
-			Type type = RootContext.LookupType (ec.DeclSpace, type_name, false, loc);
+			expr_type = ec.DeclSpace.ResolveType (expr, false, loc);
 			int i = 0;
 
-			if (type == null)
+			if (expr_type == null)
 				return false;
-			
+
 			//
 			// The type must be an IDisposable or an implicit conversion
 			// must exist.
 			//
 			converted_vars = new Expression [var_list.Count];
-			if (!TypeManager.ImplementsInterface (type, TypeManager.idisposable_type)){
+			assign = new ExpressionStatement [var_list.Count];
+			if (!TypeManager.ImplementsInterface (expr_type, TypeManager.idisposable_type)){
 				foreach (DictionaryEntry e in var_list){
 					Expression var = (Expression) e.Key;
 
-					var = var.Resolve (ec);
+					var = var.ResolveLValue (ec, new EmptyExpression ());
 					if (var == null)
 						return false;
 					
@@ -2557,32 +4008,55 @@ namespace Mono.CSharp {
 				}
 				need_conv = true;
 			}
-			
+
 			i = 0;
-			bool old_in_try = ec.InTry;
-			ec.InTry = true;
-			bool error = false;
 			foreach (DictionaryEntry e in var_list){
 				LocalVariableReference var = (LocalVariableReference) e.Key;
-				Expression expr = (Expression) e.Value;
+				Expression new_expr = (Expression) e.Value;
 				Expression a;
 
-				a = new Assign (var, expr, loc);
+				a = new Assign (var, new_expr, loc);
 				a = a.Resolve (ec);
+				if (a == null)
+					return false;
+
 				if (!need_conv)
 					converted_vars [i] = var;
+				assign [i] = (ExpressionStatement) a;
 				i++;
-				if (a == null){
-					error = true;
-					continue;
-				}
-				((ExpressionStatement) a).EmitStatement (ec);
+			}
+
+			return true;
+		}
+
+		bool ResolveExpression (EmitContext ec)
+		{
+			if (!TypeManager.ImplementsInterface (expr_type, TypeManager.idisposable_type)){
+				conv = Expression.ConvertImplicit (
+					ec, expr, TypeManager.idisposable_type, loc);
+
+				if (conv == null)
+					return false;
+			}
+
+			return true;
+		}
+		
+		//
+		// Emits the code for the case of using using a local variable declaration.
+		//
+		bool EmitLocalVariableDecls (EmitContext ec)
+		{
+			ILGenerator ig = ec.ig;
+			int i = 0;
+
+			bool old_in_try = ec.InTry;
+			ec.InTry = true;
+			for (i = 0; i < assign.Length; i++) {
+				assign [i].EmitStatement (ec);
 				
 				ig.BeginExceptionBlock ();
-
 			}
-			if (error)
-				return false;
 			Statement.Emit (ec);
 			ec.InTry = old_in_try;
 
@@ -2608,19 +4082,8 @@ namespace Mono.CSharp {
 			return false;
 		}
 
-		bool EmitExpression (EmitContext ec, Expression expr)
+		bool EmitExpression (EmitContext ec)
 		{
-			Type expr_type = expr.Type;
-			Expression conv = null;
-			
-			if (!TypeManager.ImplementsInterface (expr_type, TypeManager.idisposable_type)){
-				conv = Expression.ConvertImplicit (
-					ec, expr, TypeManager.idisposable_type, loc);
-
-				if (conv == null)
-					return false;
-			}
-
 			//
 			// Make a copy of the expression and operate on that.
 			//
@@ -2654,25 +4117,36 @@ namespace Mono.CSharp {
 		
 		public override bool Resolve (EmitContext ec)
 		{
+			if (expression_or_block is DictionaryEntry){
+				expr = (Expression) ((DictionaryEntry) expression_or_block).Key;
+				var_list = (ArrayList)((DictionaryEntry)expression_or_block).Value;
+
+				if (!ResolveLocalVariableDecls (ec))
+					return false;
+
+			} else if (expression_or_block is Expression){
+				expr = (Expression) expression_or_block;
+
+				expr = expr.Resolve (ec);
+				if (expr == null)
+					return false;
+
+				expr_type = expr.Type;
+
+				if (!ResolveExpression (ec))
+					return false;
+			}			
+
 			return Statement.Resolve (ec);
 		}
 		
 		public override bool Emit (EmitContext ec)
 		{
-			if (expression_or_block is DictionaryEntry){
-				string t = (string) ((DictionaryEntry) expression_or_block).Key;
-				ArrayList var_list = (ArrayList)((DictionaryEntry)expression_or_block).Value;
+			if (expression_or_block is DictionaryEntry)
+				return EmitLocalVariableDecls (ec);
+			else if (expression_or_block is Expression)
+				return EmitExpression (ec);
 
-				return EmitLocalVariableDecls (ec, t, var_list);
-			} if (expression_or_block is Expression){
-				Expression e = (Expression) expression_or_block;
-
-				e = e.Resolve (ec);
-				if (e == null)
-					return false;
-
-				return EmitExpression (ec, e);
-			}
 			return false;
 		}
 	}
@@ -2681,12 +4155,16 @@ namespace Mono.CSharp {
 	///   Implementation of the foreach C# statement
 	/// </summary>
 	public class Foreach : Statement {
-		string type;
+		Expression type;
 		LocalVariableReference variable;
 		Expression expr;
 		Statement statement;
+		ForeachHelperMethods hm;
+		Expression empty, conv;
+		Type array_type, element_type;
+		Type var_type;
 		
-		public Foreach (string type, LocalVariableReference var, Expression expr,
+		public Foreach (Expression type, LocalVariableReference var, Expression expr,
 				Statement stmt, Location l)
 		{
 			this.type = type;
@@ -2699,7 +4177,62 @@ namespace Mono.CSharp {
 		public override bool Resolve (EmitContext ec)
 		{
 			expr = expr.Resolve (ec);
-			return statement.Resolve (ec) && expr != null;
+			if (expr == null)
+				return false;
+
+			var_type = ec.DeclSpace.ResolveType (type, false, loc);
+			if (var_type == null)
+				return false;
+			
+			//
+			// We need an instance variable.  Not sure this is the best
+			// way of doing this.
+			//
+			// FIXME: When we implement propertyaccess, will those turn
+			// out to return values in ExprClass?  I think they should.
+			//
+			if (!(expr.eclass == ExprClass.Variable || expr.eclass == ExprClass.Value ||
+			      expr.eclass == ExprClass.PropertyAccess)){
+				error1579 (expr.Type);
+				return false;
+			}
+
+			if (expr.Type.IsArray) {
+				array_type = expr.Type;
+				element_type = array_type.GetElementType ();
+
+				empty = new EmptyExpression (element_type);
+			} else {
+				hm = ProbeCollectionType (ec, expr.Type);
+				if (hm == null){
+					error1579 (expr.Type);
+					return false;
+				}
+
+				array_type = expr.Type;
+				element_type = hm.element_type;
+
+				empty = new EmptyExpression (hm.element_type);
+			}
+
+			//
+			// FIXME: maybe we can apply the same trick we do in the
+			// array handling to avoid creating empty and conv in some cases.
+			//
+			// Although it is not as important in this case, as the type
+			// will not likely be object (what the enumerator will return).
+			//
+			conv = Expression.ConvertExplicit (ec, empty, var_type, loc);
+			if (conv == null)
+				return false;
+
+			if (variable.ResolveLValue (ec, empty) == null)
+				return false;
+
+			if (!statement.Resolve (ec))
+				return false;
+
+			return true;
 		}
 		
 		//
@@ -2746,7 +4279,7 @@ namespace Mono.CSharp {
 			foreach (MemberInfo m in move_next_list){
 				MethodInfo mi = (MethodInfo) m;
 				Type [] args;
-				
+
 				args = TypeManager.GetArgumentTypes (mi);
 				if (args != null && args.Length == 0)
 					return mi;
@@ -2762,10 +4295,16 @@ namespace Mono.CSharp {
 			public MethodInfo get_enumerator;
 			public MethodInfo move_next;
 			public MethodInfo get_current;
+			public Type element_type;
+			public Type enumerator_type;
+			public bool is_disposable;
 
 			public ForeachHelperMethods (EmitContext ec)
 			{
 				this.ec = ec;
+				this.element_type = TypeManager.object_type;
+				this.enumerator_type = TypeManager.ienumerator_type;
+				this.is_disposable = true;
 			}
 		}
 		
@@ -2788,7 +4327,7 @@ namespace Mono.CSharp {
 			}
 			ForeachHelperMethods hm = (ForeachHelperMethods) criteria;
 			EmitContext ec = hm.ec;
-			
+
 			//
 			// Check whether GetEnumerator is accessible to us
 			//
@@ -2824,8 +4363,10 @@ namespace Mono.CSharp {
 			// Ok, we can access it, now make sure that we can do something
 			// with this `GetEnumerator'
 			//
-			if (mi.ReturnType == TypeManager.ienumerator_type || 
-			    TypeManager.ienumerator_type.IsAssignableFrom (mi.ReturnType)){
+
+			if (mi.ReturnType == TypeManager.ienumerator_type ||
+			    TypeManager.ienumerator_type.IsAssignableFrom (mi.ReturnType) ||
+			    (!RootContext.StdLib && TypeManager.ImplementsInterface (mi.ReturnType, TypeManager.ienumerator_type))) {
 				hm.move_next = TypeManager.bool_movenext_void;
 				hm.get_current = TypeManager.object_getcurrent_void;
 				return true;
@@ -2843,6 +4384,11 @@ namespace Mono.CSharp {
 			hm.get_current = FetchMethodGetCurrent (return_type);
 			if (hm.get_current == null)
 				return false;
+
+			hm.element_type = hm.get_current.ReturnType;
+			hm.enumerator_type = return_type;
+			hm.is_disposable = TypeManager.ImplementsInterface (
+				hm.enumerator_type, TypeManager.idisposable_type);
 
 			return true;
 		}
@@ -2923,26 +4469,16 @@ namespace Mono.CSharp {
 		// FIXME: possible optimization.
 		// We might be able to avoid creating `empty' if the type is the sam
 		//
-		bool EmitCollectionForeach (EmitContext ec, Type var_type, ForeachHelperMethods hm)
+		bool EmitCollectionForeach (EmitContext ec)
 		{
 			ILGenerator ig = ec.ig;
 			LocalBuilder enumerator, disposable;
-			Expression empty = new EmptyExpression ();
-			Expression conv;
 
-			//
-			// FIXME: maybe we can apply the same trick we do in the
-			// array handling to avoid creating empty and conv in some cases.
-			//
-			// Although it is not as important in this case, as the type
-			// will not likely be object (what the enumerator will return).
-			//
-			conv = Expression.ConvertExplicit (ec, empty, var_type, loc);
-			if (conv == null)
-				return false;
-			
-			enumerator = ig.DeclareLocal (TypeManager.ienumerator_type);
-			disposable = ig.DeclareLocal (TypeManager.idisposable_type);
+			enumerator = ig.DeclareLocal (hm.enumerator_type);
+			if (hm.is_disposable)
+				disposable = ig.DeclareLocal (TypeManager.idisposable_type);
+			else
+				disposable = null;
 			
 			//
 			// Instantiate the enumerator
@@ -2966,9 +4502,13 @@ namespace Mono.CSharp {
 			// Protect the code in a try/finalize block, so that
 			// if the beast implement IDisposable, we get rid of it
 			//
-			Label l = ig.BeginExceptionBlock ();
+			Label l;
 			bool old_in_try = ec.InTry;
-			ec.InTry = true;
+
+			if (hm.is_disposable) {
+				l = ig.BeginExceptionBlock ();
+				ec.InTry = true;
+			}
 			
 			Label end_try = ig.DefineLabel ();
 			
@@ -2990,25 +4530,27 @@ namespace Mono.CSharp {
 			//
 			// Now the finally block
 			//
-			Label end_finally = ig.DefineLabel ();
-			bool old_in_finally = ec.InFinally;
-			ec.InFinally = true;
-			ig.BeginFinallyBlock ();
+			if (hm.is_disposable) {
+				Label end_finally = ig.DefineLabel ();
+				bool old_in_finally = ec.InFinally;
+				ec.InFinally = true;
+				ig.BeginFinallyBlock ();
 			
-			ig.Emit (OpCodes.Ldloc, enumerator);
-			ig.Emit (OpCodes.Isinst, TypeManager.idisposable_type);
-			ig.Emit (OpCodes.Stloc, disposable);
-			ig.Emit (OpCodes.Ldloc, disposable);
-			ig.Emit (OpCodes.Brfalse, end_finally);
-			ig.Emit (OpCodes.Ldloc, disposable);
-			ig.Emit (OpCodes.Callvirt, TypeManager.void_dispose_void);
-			ig.MarkLabel (end_finally);
-			ec.InFinally = old_in_finally;
+				ig.Emit (OpCodes.Ldloc, enumerator);
+				ig.Emit (OpCodes.Isinst, TypeManager.idisposable_type);
+				ig.Emit (OpCodes.Stloc, disposable);
+				ig.Emit (OpCodes.Ldloc, disposable);
+				ig.Emit (OpCodes.Brfalse, end_finally);
+				ig.Emit (OpCodes.Ldloc, disposable);
+				ig.Emit (OpCodes.Callvirt, TypeManager.void_dispose_void);
+				ig.MarkLabel (end_finally);
+				ec.InFinally = old_in_finally;
 
-			// The runtime generates this anyways.
-			// ig.Emit (OpCodes.Endfinally);
+				// The runtime generates this anyways.
+				// ig.Emit (OpCodes.Endfinally);
 
-			ig.EndExceptionBlock ();
+				ig.EndExceptionBlock ();
+			}
 
 			ig.MarkLabel (ec.LoopEnd);
 			return false;
@@ -3018,17 +4560,8 @@ namespace Mono.CSharp {
 		// FIXME: possible optimization.
 		// We might be able to avoid creating `empty' if the type is the sam
 		//
-		bool EmitArrayForeach (EmitContext ec, Type var_type)
+		bool EmitArrayForeach (EmitContext ec)
 		{
-			Type array_type = expr.Type;
-			Type element_type = array_type.GetElementType ();
-			Expression conv = null;
-			Expression empty = new EmptyExpression (element_type);
-			
-			conv = Expression.ConvertExplicit (ec, empty, var_type, loc);
-			if (conv == null)
-				return false;
-
 			int rank = array_type.GetArrayRank ();
 			ILGenerator ig = ec.ig;
 
@@ -3142,51 +4675,27 @@ namespace Mono.CSharp {
 		
 		public override bool Emit (EmitContext ec)
 		{
-			Type var_type;
 			bool ret_val;
 			
-			var_type = RootContext.LookupType (ec.DeclSpace, type, false, loc);
-			if (var_type == null)
-				return false;
-			
-			//
-			// We need an instance variable.  Not sure this is the best
-			// way of doing this.
-			//
-			// FIXME: When we implement propertyaccess, will those turn
-			// out to return values in ExprClass?  I think they should.
-			//
-			if (!(expr.eclass == ExprClass.Variable || expr.eclass == ExprClass.Value ||
-			      expr.eclass == ExprClass.PropertyAccess)){
-				error1579 (expr.Type);
-				return false;
-			}
-
 			ILGenerator ig = ec.ig;
 			
 			Label old_begin = ec.LoopBegin, old_end = ec.LoopEnd;
 			bool old_inloop = ec.InLoop;
+			int old_loop_begin_try_catch_level = ec.LoopBeginTryCatchLevel;
 			ec.LoopBegin = ig.DefineLabel ();
 			ec.LoopEnd = ig.DefineLabel ();
 			ec.InLoop = true;
+			ec.LoopBeginTryCatchLevel = ec.TryCatchLevel;
 			
-			if (expr.Type.IsArray)
-				ret_val = EmitArrayForeach (ec, var_type);
-			else {
-				ForeachHelperMethods hm;
-				
-				hm = ProbeCollectionType (ec, expr.Type);
-				if (hm == null){
-					error1579 (expr.Type);
-					return false;
-				}
-
-				ret_val = EmitCollectionForeach (ec, var_type, hm);
-			}
+			if (hm != null)
+				ret_val = EmitCollectionForeach (ec);
+			else
+				ret_val = EmitArrayForeach (ec);
 			
 			ec.LoopBegin = old_begin;
 			ec.LoopEnd = old_end;
 			ec.InLoop = old_inloop;
+			ec.LoopBeginTryCatchLevel = old_loop_begin_try_catch_level;
 
 			return ret_val;
 		}

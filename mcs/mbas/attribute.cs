@@ -10,6 +10,7 @@
 //
 
 using System;
+using System.Diagnostics;
 using System.Collections;
 using System.Reflection;
 using System.Reflection.Emit;
@@ -289,6 +290,12 @@ namespace Mono.CSharp {
 					(ConstructorInfo) constructor, pos_values,
 					prop_info_arr, prop_values_arr,
 					field_info_arr, field_values_arr); 
+			} catch (NullReferenceException) {
+				Report.Warning (
+					-23, Location,
+					"The compiler can not encode this attribute in the Mono runtime\n" +
+					"\tdue to a known bug in it.  We know about the problem and will\n" +
+					"\tfix it as soon as possible.");
 			} catch {
 				//
 				// Sample:
@@ -327,8 +334,10 @@ namespace Mono.CSharp {
 				}
 					
 				foreach (System.Attribute tmp in attrs)
-					if (tmp is AttributeUsageAttribute) 
+					if (tmp is AttributeUsageAttribute) {
 						targets = ((AttributeUsageAttribute) tmp).ValidOn;
+						break;
+					}
 			} else
 				targets = a.Targets;
 
@@ -535,7 +544,73 @@ namespace Mono.CSharp {
 			}
 			return null;
 		}
-		
+
+		//
+		// This pulls the condition name out of a Conditional attribute
+		//
+		public string Conditional_GetConditionName ()
+		{
+			//
+			// So we have a Conditional, pull the data out.
+			//
+			if (Arguments == null || Arguments [0] == null){
+				Error_AttributeConstructorMismatch (Location);
+				return null;
+			}
+
+			ArrayList pos_args = (ArrayList) Arguments [0];
+			if (pos_args.Count != 1){
+				Error_AttributeConstructorMismatch (Location);
+				return null;
+			}
+
+			Argument arg = (Argument) pos_args [0];	
+			if (!(arg.Expr is StringConstant)){
+				Error_AttributeConstructorMismatch (Location);
+				return null;
+			}
+
+			return ((StringConstant) arg.Expr).Value;
+		}
+
+		//
+		// This pulls the obsolete message and error flag out of an Obsolete attribute
+		//
+		public string Obsolete_GetObsoleteMessage (out bool is_error)
+		{
+			is_error = false;
+			//
+			// So we have an Obsolete, pull the data out.
+			//
+			if (Arguments == null || Arguments [0] == null)
+				return "";
+
+			ArrayList pos_args = (ArrayList) Arguments [0];
+			if (pos_args.Count == 0)
+				return "";
+			else if (pos_args.Count > 2){
+				Error_AttributeConstructorMismatch (Location);
+				return null;
+			}
+
+			Argument arg = (Argument) pos_args [0];	
+			if (!(arg.Expr is StringConstant)){
+				Error_AttributeConstructorMismatch (Location);
+				return null;
+			}
+
+			if (pos_args.Count == 2){
+				Argument arg2 = (Argument) pos_args [1];
+				if (!(arg2.Expr is BoolConstant)){
+					Error_AttributeConstructorMismatch (Location);
+					return null;
+				}
+				is_error = ((BoolConstant) arg2.Expr).Value;
+			}
+
+			return ((StringConstant) arg.Expr).Value;
+		}
+
 		//
 		// Applies the attributes to the `builder'.
 		//

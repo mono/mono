@@ -69,10 +69,30 @@ public class TypeManager {
 	static public Type param_array_type;
 	static public Type void_ptr_type;
 	static public Type indexer_name_type;
+	static public Type exception_type;
 	static public object obsolete_attribute_type;
 	static public object conditional_attribute_type;
 
+	//
+	// An empty array of types
+	//
 	static public Type [] NoTypes;
+
+
+	// 
+	// Expressions representing the internal types.  Used during declaration
+	// definition.
+	//
+	static public Expression system_object_expr, system_string_expr; 
+	static public Expression system_boolean_expr, system_decimal_expr;
+	static public Expression system_single_expr, system_double_expr;
+	static public Expression system_sbyte_expr, system_byte_expr;
+	static public Expression system_int16_expr, system_uint16_expr;
+	static public Expression system_int32_expr, system_uint32_expr;
+	static public Expression system_int64_expr, system_uint64_expr;
+	static public Expression system_char_expr, system_void_expr;
+	static public Expression system_asynccallback_expr;
+	static public Expression system_iasyncresult_expr;
 
 	//
 	// This is only used when compiling corlib
@@ -177,6 +197,12 @@ public class TypeManager {
 	static Hashtable method_arguments;
 
 	// <remarks>
+	//   Maps PropertyBuilder to a Type array that contains
+	//   the arguments to the indexer
+	// </remarks>
+	static Hashtable indexer_arguments;
+
+	// <remarks>
 	//   Maybe `method_arguments' should be replaced and only
 	//   method_internal_params should be kept?
 	// <remarks>
@@ -201,6 +227,12 @@ public class TypeManager {
 	// </remarks>
 
 	static Hashtable builder_to_attr;
+
+	// <remarks>
+	//  Keeps track of methods
+	// </remarks>
+
+	static Hashtable builder_to_method;
 
 	struct Signature {
 		public string name;
@@ -250,6 +282,32 @@ public class TypeManager {
 	// A delegate that points to the filter above.
 	static MemberFilter signature_filter;
 
+	//
+	// These are expressions that represent some of the internal data types, used
+	// elsewhere
+	//
+	static void InitExpressionTypes ()
+	{
+		system_object_expr  = new TypeExpression ("System.Object");
+		system_string_expr  = new TypeExpression ("System.String");
+		system_boolean_expr = new TypeExpression ("System.Boolean");
+		system_decimal_expr = new TypeExpression ("System.Decimal");
+		system_single_expr  = new TypeExpression ("System.Single");
+		system_double_expr  = new TypeExpression ("System.Double");
+		system_sbyte_expr   = new TypeExpression ("System.SByte");
+		system_byte_expr    = new TypeExpression ("System.Byte");
+		system_int16_expr   = new TypeExpression ("System.Int16");
+		system_uint16_expr  = new TypeExpression ("System.UInt16");
+		system_int32_expr   = new TypeExpression ("System.Int32");
+		system_uint32_expr  = new TypeExpression ("System.UInt32");
+		system_int64_expr   = new TypeExpression ("System.Int64");
+		system_uint64_expr  = new TypeExpression ("System.UInt64");
+		system_char_expr    = new TypeExpression ("System.Char");
+		system_void_expr    = new TypeExpression ("System.Void");
+		system_asynccallback_expr = new TypeExpression ("System.AsyncCallback");
+		system_iasyncresult_expr = new TypeExpression ("System.IAsyncResult");
+	}
+	
 	static TypeManager ()
 	{
 		assemblies = new Assembly [0];
@@ -263,14 +321,17 @@ public class TypeManager {
 		builder_to_delegate = new PtrHashtable ();
 		builder_to_enum  = new PtrHashtable ();
 		builder_to_attr = new PtrHashtable ();
+		builder_to_method = new PtrHashtable ();
 		method_arguments = new PtrHashtable ();
 		method_internal_params = new PtrHashtable ();
+		indexer_arguments = new PtrHashtable ();
 		builder_to_container = new PtrHashtable ();
 		builder_to_ifaces = new PtrHashtable ();
 		
 		NoTypes = new Type [0];
 
 		signature_filter = new MemberFilter (SignatureFilter);
+		InitExpressionTypes ();
 	}
 
 	public static void AddUserType (string name, TypeBuilder t, Type [] ifaces)
@@ -339,11 +400,16 @@ public class TypeManager {
 		builder_to_interface.Add (t, i);
 	}
 
+	public static void AddMethod (MethodBuilder builder, MethodData method)
+	{
+		builder_to_method.Add (builder, method);
+	}
+
 	public static void RegisterAttrType (Type t, TypeContainer tc)
 	{
 		builder_to_attr.Add (t, tc);
 	}
-		
+
 	/// <summary>
 	///   Returns the TypeContainer whose Type is `t' or null if there is no
 	///   TypeContainer for `t' (ie, the Type comes from a library)
@@ -620,6 +686,8 @@ public class TypeManager {
 
 		indexer_name_type     = CoreLookupType ("System.Runtime.CompilerServices.IndexerNameAttribute");
 
+		exception_type        = CoreLookupType ("System.Exception");
+
 		//
 		// Attribute types
 		//
@@ -656,6 +724,8 @@ public class TypeManager {
 				system_array_type, "CopyTo", system_array_int_arg);
 
 			Type [] system_type_type_arg = { system_type_type, system_type_type, system_type_type };
+
+			try {
 			system_void_set_corlib_type_builders = GetMethod (
 				system_assemblybuilder_type, "SetCorlibTypeBuilders",
 				system_type_type_arg);
@@ -666,6 +736,9 @@ public class TypeManager {
 			args [2] = enum_type;
 
 			system_void_set_corlib_type_builders.Invoke (CodeGen.AssemblyBuilder, args);
+			} catch {
+				Console.WriteLine ("Corlib compilation is not supported in Microsoft.NET due to bugs in it");
+			}
 		}
 	}
 
@@ -865,7 +938,7 @@ public class TypeManager {
 		if (t == object_type || t == string_type || t == int32_type || t == uint32_type ||
 		    t == int64_type || t == uint64_type || t == float_type || t == double_type ||
 		    t == char_type || t == short_type || t == decimal_type || t == bool_type ||
-		    t == sbyte_type || t == byte_type || t == ushort_type)
+		    t == sbyte_type || t == byte_type || t == ushort_type || t == void_type)
 			return true;
 		else
 			return false;
@@ -882,6 +955,14 @@ public class TypeManager {
 	public static bool IsEnumType (Type t)
 	{
 		if (t.IsSubclassOf (TypeManager.enum_type))
+			return true;
+		else
+			return false;
+	}
+	
+	public static bool IsValueType (Type t)
+	{
+		if (t.IsSubclassOf (TypeManager.value_type))
 			return true;
 		else
 			return false;
@@ -987,6 +1068,38 @@ public class TypeManager {
 			return types;
 		}
 	}
+
+	/// <summary>
+	///    Returns the argument types for an indexer based on its PropertyInfo
+	///
+	///    For dynamic indexers, we use the compiler provided types, for
+	///    indexers from existing assemblies we load them from GetParameters,
+	///    and insert them into the cache
+	/// </summary>
+	static public Type [] GetArgumentTypes (PropertyInfo indexer)
+	{
+		if (indexer_arguments.Contains (indexer))
+			return (Type []) indexer_arguments [indexer];
+		else if (indexer is PropertyBuilder)
+			// If we're a PropertyBuilder and not in the
+			// `indexer_arguments' hash, then we're a property and
+			// not an indexer.
+			return NoTypes;
+		else {
+			ParameterInfo [] pi = indexer.GetIndexParameters ();
+			// Property, not an indexer.
+			if (pi == null)
+				return NoTypes;
+			int c = pi.Length;
+			Type [] types = new Type [c];
+			
+			for (int i = 0; i < c; i++)
+				types [i] = pi [i].ParameterType;
+
+			indexer_arguments.Add (indexer, types);
+			return types;
+		}
+	}
 	
 	// <remarks>
 	//  This is a workaround the fact that GetValue is not
@@ -1077,7 +1190,7 @@ public class TypeManager {
 	{
 		return (MemberInfo) priv_fields_events [ei];
 	}
-	
+		
 	static Hashtable properties;
 	
 	static public bool RegisterProperty (PropertyBuilder pb, MethodBase get, MethodBase set)
@@ -1092,7 +1205,17 @@ public class TypeManager {
 
 		return true;
 	}
-	
+
+	static public bool RegisterIndexer (PropertyBuilder pb, MethodBase get, MethodBase set, Type[] args)
+	{
+		if (!RegisterProperty (pb, get,set))
+			return false;
+
+		indexer_arguments.Add (pb, args);
+
+		return true;
+	}
+
 	//
 	// FIXME: we need to return the accessors depending on whether
 	// they are visible or not.
@@ -1392,6 +1515,8 @@ public class TypeManager {
 				return TypeManager.void_type;
 			if (t == typeof (object))
 				return TypeManager.object_type;
+			if (t == typeof (System.Type))
+				return TypeManager.type_type;
 			return t;
 		}
 	}
@@ -1434,19 +1559,22 @@ public class TypeManager {
 	/// </remarks>
 	public static string IndexerPropertyName (Type t)
 	{
-		
 		if (t is TypeBuilder) {
-			TypeContainer tc = (TypeContainer) builder_to_container [t];
+			if (t.IsInterface) {
+				Interface i = LookupInterface (t);
 
-			//
-			// FIXME: Temporary hack, until we deploy the IndexerName
-			// property code (and attributes) in the interface code.
-			//
-			if (tc == null){
-				return "Item";
+				if ((i == null) || (i.IndexerName == null))
+					return "Item";
+
+				return i.IndexerName;
+			} else {
+				TypeContainer tc = LookupTypeContainer (t);
+
+				if ((tc == null) || (tc.IndexerName == null))
+					return "Item";
+
+				return tc.IndexerName;
 			}
-			
-			return tc.IndexerName;
 		}
 		
 		System.Attribute attr = System.Attribute.GetCustomAttribute (
@@ -1492,12 +1620,8 @@ public class TypeManager {
 			}
 			if (i != old_count)
 				continue;
-			
-			if (!(method is MethodInfo && new_method is MethodInfo))
-				return true;
-			
-			if (((MethodInfo) method).ReturnType == ((MethodInfo) new_method).ReturnType)
-				return true;
+
+			return true;
 		}
 		return false;
 	}
@@ -1535,22 +1659,31 @@ public class TypeManager {
 	[Flags]
 	public enum MethodFlags {
 		IsObsolete = 1,
-		ShouldIgnore = 2
+		IsObsoleteError = 2,
+		ShouldIgnore = 3
 	}
 	
-	static public MethodFlags GetMethodFlags (MethodBase mb)
+	//
+	// Returns the TypeManager.MethodFlags for this method.
+	// This emits an error 619 / warning 618 if the method is obsolete.
+	// In the former case, TypeManager.MethodFlags.IsObsoleteError is returned.
+	//
+	static public MethodFlags GetMethodFlags (MethodBase mb, Location loc)
 	{
 		MethodFlags flags = 0;
 		
 		if (mb.DeclaringType is TypeBuilder){
-			//
-			// FIXME: Support lookups of Obsolete and ConditionalAttribute
-			// on MethodBuilders.   
-			//
-			return 0;
+			MethodData method = (MethodData) builder_to_method [mb];
+			if (method == null) {
+				// FIXME: implement Obsolete attribute on Property,
+				//        Indexer and Event.
+				return 0;
+			}
+
+			return method.GetMethodFlags (loc);
 		}
 
-		object [] attrs = mb.GetCustomAttributes (false);
+		object [] attrs = mb.GetCustomAttributes (true);
 		foreach (object ta in attrs){
 			if (!(ta is System.Attribute)){
 				Console.WriteLine ("Unknown type in GetMethodFlags: " + ta);
@@ -1558,7 +1691,20 @@ public class TypeManager {
 			}
 			System.Attribute a = (System.Attribute) ta;
 			if (a.TypeId == TypeManager.obsolete_attribute_type){
+				ObsoleteAttribute oa = (ObsoleteAttribute) a;
+
+				string method_desc = TypeManager.CSharpSignature (mb);
+
+				if (oa.IsError) {
+					Report.Error (619, loc, "Method `" + method_desc +
+						      "' is obsolete: `" + oa.Message + "'");
+					return MethodFlags.IsObsoleteError;
+				} else
+					Report.Warning (618, loc, "Method `" + method_desc +
+							"' is obsolete: `" + oa.Message + "'");
+
 				flags |= MethodFlags.IsObsolete;
+
 				continue;
 			}
 			
@@ -1776,7 +1922,7 @@ public class TypeManager {
 			//
 			if (mi [0] is PropertyInfo)
 				return mi;
-			
+
 			//
 			// We found methods, turn the search into "method scan"
 			// mode.

@@ -334,6 +334,7 @@ namespace Mono.CSharp {
 			string [] classes_second_stage = {
 				"System.Reflection.MemberInfo",
 				"System.Type",
+				"System.Exception",
 
 				//
 				// These are not really important in the order, but they

@@ -25,10 +25,10 @@ COMPILER_SOURCES = \
 	mb-parser.cs 		\
 	mb-tokenizer.cs 	\
 	modifiers.cs 		\
-	module.cs			\
+	module.cs		\
 	namespace.cs		\
 	parameter.cs		\
-	pending.cs			\
+	pending.cs		\
 	report.cs		\
 	rootcontext.cs		\
 	statement.cs		\
@@ -40,6 +40,9 @@ COMPILER_SOURCES = \
 all: mbas.exe
 
 parser: mb-parser.cs
+
+test: mbas.exe
+	./mbas testmbas/WriteOk.vb
 
 mbas.exe: $(COMPILER_SOURCES)
 	$(CSC) $(CSCFLAGS) $(COMPILER_SOURCES)

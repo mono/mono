@@ -20,6 +20,7 @@ namespace Mono.CSharp {
 	public interface ParameterData {
 		Type ParameterType (int pos);
 		int  Count { get; }
+		string ParameterName (int pos);
 		string ParameterDesc (int pos);
 		Parameter.Modifier ParameterModifier (int pos);
 	}
@@ -57,6 +58,14 @@ namespace Mono.CSharp {
 				return pi [pos].ParameterType;
 		}
 
+		public string ParameterName (int pos)
+		{
+			if (last_arg_is_params && pos >= pi.Length - 1)
+				return pi [pi.Length - 1].Name;
+			else 
+				return pi [pos].Name;
+		}
+
 		public string ParameterDesc (int pos)
 		{
 			StringBuilder sb = new StringBuilder ();
@@ -86,7 +95,7 @@ namespace Mono.CSharp {
 			
 			Type t = pi [pos].ParameterType;
 			if (t.IsByRef)
-				return Parameter.Modifier.OUT;
+				return Parameter.Modifier.ISBYREF;
 			
 			return Parameter.Modifier.NONE;
 		}
@@ -140,6 +149,18 @@ namespace Mono.CSharp {
 				return parameters.ArrayParameter.ParameterType;
 		}
 
+		public string ParameterName (int pos)
+		{
+			Parameter p;
+
+			if (pos >= parameters.FixedParameters.Length)
+				p = parameters.ArrayParameter;
+			else
+				p = parameters.FixedParameters [pos];
+
+			return p.Name;
+		}
+
 		public string ParameterDesc (int pos)
 		{
 			string tmp = String.Empty;
@@ -164,27 +185,22 @@ namespace Mono.CSharp {
 
 		public Parameter.Modifier ParameterModifier (int pos)
 		{
+			Parameter.Modifier mod;
+
 			if (parameters.FixedParameters == null) {
 				if (parameters.ArrayParameter != null) 
-					return parameters.ArrayParameter.ModFlags;
+					mod = parameters.ArrayParameter.ModFlags;
 				else
-					return Parameter.Modifier.NONE;
-			}
-			
-			if (pos >= parameters.FixedParameters.Length)
-				return parameters.ArrayParameter.ModFlags;
-			else {
-				Parameter.Modifier m = parameters.FixedParameters [pos].ModFlags;
+					mod = Parameter.Modifier.NONE;
+			} else if (pos >= parameters.FixedParameters.Length)
+				mod = parameters.ArrayParameter.ModFlags;
+			else
+				mod = parameters.FixedParameters [pos].ModFlags;
 
-				//
-				// We use a return value of "OUT" for "reference" parameters.
-				// both out and ref flags in the source map to reference parameters.
-				//
-				if (m == Parameter.Modifier.OUT || m == Parameter.Modifier.REF)
-					return Parameter.Modifier.OUT;
-				
-				return Parameter.Modifier.NONE;
-			}
+			if ((mod & (Parameter.Modifier.REF | Parameter.Modifier.OUT)) != 0)
+				mod |= Parameter.Modifier.ISBYREF;
+
+			return mod;
 		}
 		
 	}

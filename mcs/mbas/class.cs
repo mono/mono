@@ -1,7 +1,8 @@
 //
 // class.cs: Class and Struct handlers
 //
-// Author: Miguel de Icaza (miguel@gnu.org)
+// Authors: Miguel de Icaza (miguel@gnu.org)
+//          Martin Baulig (martin@gnome.org)
 //
 // Licensed under the terms of the GNU GPL
 //
@@ -214,6 +215,9 @@ namespace Mono.CSharp {
 			
 			if (value != null && (!(value is Method)))
 				return AdditionResult.NameExists;
+
+			if (name == Basename)
+				return AdditionResult.EnclosingClash;
 
 			if (methods == null)
 				methods = new ArrayList ();
@@ -522,9 +526,7 @@ namespace Mono.CSharp {
 				if (init is Expression)
 					e = (Expression) init;
 				else {
-					string base_type = f.Type.Substring (0, f.Type.IndexOf ("["));
-					string rank = f.Type.Substring (f.Type.IndexOf ("["));
-					e = new ArrayCreation (base_type, rank, (ArrayList)init, f.Location);
+					e = new ArrayCreation (f.Type, "", (ArrayList)init, f.Location);
 				}
 
 				Location l = f.Location;
@@ -554,7 +556,7 @@ namespace Mono.CSharp {
 			Constructor c;
 			int mods = 0;
 
-			c = new Constructor (Basename, Parameters.GetEmptyReadOnlyParameters (),
+			c = new Constructor (Basename, Parameters.EmptyReadOnlyParameters,
 					     new ConstructorBaseInitializer (null, new Location (-1)),
 					     new Location (-1));
 			
@@ -634,13 +636,15 @@ namespace Mono.CSharp {
 			count = bases.Count;
 
 			if (is_class){
-				string name = (string) bases [0];
-				Type first = FindType (name);
+				Expression name = (Expression) bases [0];
+				name = ResolveTypeExpr (name, false, Location);
 
-				if (first == null){
+				if (name == null){
 					error = true;
 					return null;
 				}
+
+				Type first = name.Type;
 
 				if (first.IsClass){
 					parent = first;
@@ -650,6 +654,13 @@ namespace Mono.CSharp {
 					start = 0;
 				}
 
+				if (!AsAccessible (parent, ModFlags))
+					Report.Error (60, Location,
+						      "Inconsistent accessibility: base class `" +
+						      TypeManager.CSharpName (parent) + "' is less " +
+						      "accessible than class `" +
+						      Name + "'");
+
 			} else {
 				start = 0;
 			}
@@ -657,8 +668,10 @@ namespace Mono.CSharp {
 			Type [] ifaces = new Type [count-start];
 			
 			for (i = start, j = 0; i < count; i++, j++){
-				string name = (string) bases [i];
-				Type t = FindType (name);
+				Expression name = (Expression) bases [i];
+				Expression resolved = ResolveTypeExpr (name, false, Location);
+				bases [i] = resolved;
+				Type t = resolved.Type;
 
 				if (t == null){
 					error = true;
@@ -701,7 +714,7 @@ namespace Mono.CSharp {
 						return null;
 					}
 				}
-				
+
 				ifaces [j] = t;
 			}
 
@@ -724,7 +737,7 @@ namespace Mono.CSharp {
 				return null;
 			
 			InTransit = true;
-			
+
 			if (this is Class)
 				is_class = true;
 			else
@@ -916,6 +929,10 @@ namespace Mono.CSharp {
 				i.Define (this);
 
 				name = i.IndexerName;
+
+				if (i.InterfaceType != null)
+					continue;
+
 				if (class_indexer_name == null){
 					class_indexer_name = name;
 					continue;
@@ -932,13 +949,26 @@ namespace Mono.CSharp {
 				class_indexer_name = "Item";
 			IndexerName = class_indexer_name;
 		}
-		
+
+		static void Report1530 (Location loc)
+		{
+			Report.Error (1530, loc, "Keyword new not allowed for namespace elements");
+		}
+
 		/// <summary>
 		///   Populates our TypeBuilder with fields and methods
 		/// </summary>
 		public override bool Define (TypeContainer parent)
 		{
 			MemberInfo [] defined_names = null;
+
+			if (interface_order != null){
+				foreach (Interface iface in interface_order)
+					if ((iface.ModFlags & Modifiers.NEW) == 0)
+						iface.Define (this);
+					else
+						Report1530 (iface.Location);
+			}
 
 			if (RootContext.WarningLevel > 1){
 				Type ptype;
@@ -1025,17 +1055,6 @@ namespace Mono.CSharp {
 			return true;
 		}
 
-		/// <summary>
-		///   Looks up the alias for the name
-		/// </summary>
-		public string LookupAlias (string name)
-		{
-			if (Namespace != null)
-				return Namespace.LookupAlias (name);
-			else
-				return null;
-		}
-		
 		/// <summary>
 		///   This function is based by a delegate to the FindMembers routine
 		/// </summary>
@@ -1201,16 +1220,32 @@ namespace Mono.CSharp {
 			}
 			
 			if ((mt & MemberTypes.NestedType) != 0) {
+				if (types != null){
+					foreach (TypeContainer t in types) {
+						TypeBuilder tb = t.TypeBuilder;
 
-				if (Types != null)
-					foreach (TypeContainer t in Types)  
-						if (filter (t.TypeBuilder, criteria) == true)
-							members.Add (t.TypeBuilder);
+						if (tb != null && (filter (tb, criteria) == true))
+								members.Add (tb);
+					}
+				}
 
-				if (Enums != null)
-					foreach (Enum en in Enums)
-						if (filter (en.TypeBuilder, criteria) == true)
-							members.Add (en.TypeBuilder);
+				if (enums != null){
+					foreach (Enum en in enums){
+						TypeBuilder tb = en.TypeBuilder;
+
+						if (tb != null && (filter (tb, criteria) == true))
+							members.Add (tb);
+					}
+				}
+				
+				if (delegates != null){
+					foreach (Delegate d in delegates){
+						TypeBuilder tb = d.TypeBuilder;
+						
+						if (tb != null && (filter (tb, criteria) == true))
+							members.Add (tb);
+					}
+				}
 			}
 
 			if ((mt & MemberTypes.Constructor) != 0){
@@ -1228,6 +1263,7 @@ namespace Mono.CSharp {
 					ConstructorBuilder cb =
 						default_static_constructor.ConstructorBuilder;
 					
+					if (cb != null)
 					if (filter (cb, criteria) == true)
 						members.Add (cb);
 				}
@@ -1525,13 +1561,103 @@ namespace Mono.CSharp {
 			return ok;
 		}
 
-		//
-		// Returns true if `type' is as accessible as the flags `flags'
-		// given for this member
-		//
-		static public bool AsAccessible (Type type, int flags)
+		// Access level of a type.
+		enum AccessLevel {
+			Public			= 0,
+			ProtectedInternal	= 1,
+			Internal		= 2,
+			Protected		= 3,
+			Private			= 4
+		}
+
+		// Check whether `flags' denotes a more restricted access than `level'
+		// and return the new level.
+		static AccessLevel CheckAccessLevel (AccessLevel level, int flags)
 		{
-			return true;
+			AccessLevel old_level = level;
+
+			if ((flags & Modifiers.INTERNAL) != 0) {
+				if ((flags & Modifiers.PROTECTED) != 0) {
+					if ((int) level < (int) AccessLevel.ProtectedInternal)
+						level = AccessLevel.ProtectedInternal;
+				} else {
+					if ((int) level < (int) AccessLevel.Internal)
+						level = AccessLevel.Internal;
+				}
+			} else if ((flags & Modifiers.PROTECTED) != 0) {
+				if ((int) level < (int) AccessLevel.Protected)
+					level = AccessLevel.Protected;
+			} else if ((flags & Modifiers.PRIVATE) != 0)
+				level = AccessLevel.Private;
+
+			return level;
+		}
+
+		// Return the access level for a new member which is defined in the current
+		// TypeContainer with access modifiers `flags'.
+		AccessLevel GetAccessLevel (int flags)
+		{
+			if ((flags & Modifiers.PRIVATE) != 0)
+				return AccessLevel.Private;
+
+			AccessLevel level;
+			if (!IsTopLevel && (Parent != null))
+				level = Parent.GetAccessLevel (flags);
+			else
+				level = AccessLevel.Public;
+
+			return CheckAccessLevel (CheckAccessLevel (level, flags), ModFlags);
+		}
+
+		// Return the access level for type `t', but don't give more access than `flags'.
+		static AccessLevel GetAccessLevel (Type t, int flags)
+		{
+			if (((flags & Modifiers.PRIVATE) != 0) || t.IsNestedPrivate)
+				return AccessLevel.Private;
+
+			AccessLevel level;
+			if (TypeManager.IsBuiltinType (t))
+				return AccessLevel.Public;
+			else if ((t.DeclaringType != null) && (t != t.DeclaringType))
+				level = GetAccessLevel (t.DeclaringType, flags);
+			else {
+				level = CheckAccessLevel (AccessLevel.Public, flags);
+			}
+
+			if (t.IsNestedPublic)
+				return level;
+
+			if (t.IsNestedAssembly || t.IsNotPublic) {
+				if ((int) level < (int) AccessLevel.Internal)
+					level = AccessLevel.Internal;
+			}
+
+			if (t.IsNestedFamily) {
+				if ((int) level < (int) AccessLevel.Protected)
+					level = AccessLevel.Protected;
+			}
+
+			if (t.IsNestedFamORAssem) {
+				if ((int) level < (int) AccessLevel.ProtectedInternal)
+					level = AccessLevel.ProtectedInternal;
+			}
+
+			return level;
+		}
+
+		//
+		// Returns true if `parent' is as accessible as the flags `flags'
+		// given for this member.
+		//
+		public bool AsAccessible (Type parent, int flags)
+		{
+			while (parent.IsArray || parent.IsPointer || parent.IsByRef)
+				parent = parent.GetElementType ();
+
+			AccessLevel level = GetAccessLevel (flags);
+			AccessLevel level2 = GetAccessLevel (parent, flags);
+
+			return (int) level >= (int) level2;
 		}
 
 		Hashtable builder_and_args;
@@ -1658,45 +1784,36 @@ namespace Mono.CSharp {
 		}
 	}
 
-	public abstract class MethodCore : MemberCore {
+	public abstract class MethodCore : MemberBase {
 		public readonly Parameters Parameters;
 		Block block;
 		
 		//
 		// Parameters, cached for semantic analysis.
 		//
-		InternalParameters parameter_info;
-		
-		public MethodCore (string name, Parameters parameters, Location l)
-			: base (name, l)
+		protected InternalParameters parameter_info;
+		protected Type [] parameter_types;
+
+		public MethodCore (Expression type, int mod, int allowed_mod, string name,
+				   Attributes attrs, Parameters parameters, Location loc)
+			: base (type, mod, allowed_mod, name, attrs, loc)
 		{
-			Name = name;
 			Parameters = parameters;
 		}
 		
 		//
 		//  Returns the System.Type array for the parameters of this method
 		//
-		Type [] parameter_types;
-		public Type [] ParameterTypes (TypeContainer parent)
-		{
-			if (Parameters == null)
-				return TypeManager.NoTypes;
-			
-			if (parameter_types == null)
-				parameter_types = Parameters.GetParameterInfo (parent);
-
-			return parameter_types;
+		public Type [] ParameterTypes {
+			get {
+				return parameter_types;
+			}
 		}
 
 		public InternalParameters ParameterInfo
 		{
 			get {
 				return parameter_info;
-			}
-
-			set {
-				parameter_info = value;
 			}
 		}
 		
@@ -1708,6 +1825,18 @@ namespace Mono.CSharp {
 			set {
 				block = value;
 			}
+		}
+
+		protected virtual bool DoDefineParameters (TypeContainer parent)
+		{
+			// Check if arguments were correct
+			parameter_types = Parameters.GetParameterInfo (parent);
+			if ((parameter_types == null) || !CheckParameters (parent, parameter_types))
+				return false;
+
+			parameter_info = new InternalParameters (parent, Parameters);
+
+			return true;
 		}
 
 		public CallingConventions GetCallingConvention (bool is_class)
@@ -1781,11 +1910,8 @@ namespace Mono.CSharp {
 	}
 	
 	public class Method : MethodCore {
-		public readonly string ReturnType;
 		public MethodBuilder MethodBuilder;
-		public readonly Attributes OptAttributes;
-
-		MethodAttributes flags;
+		public MethodData MethodData;
 
 		/// <summary>
 		///   Modifiers allowed in a class declaration
@@ -1807,30 +1933,23 @@ namespace Mono.CSharp {
 		//
 		// return_type can be "null" for VOID values.
 		//
-		public Method (string return_type, int mod, string name, Parameters parameters,
+		public Method (Expression return_type, int mod, string name, Parameters parameters,
 			       Attributes attrs, Location l)
-			: base (name, parameters, l)
-		{
-			ReturnType = return_type;
-			ModFlags = Modifiers.Check (AllowedModifiers, mod, Modifiers.PRIVATE, l);
-			OptAttributes = attrs;
-		}
+			: base (return_type, mod, AllowedModifiers, name, attrs, parameters, l)
+		{ }
 
 		//
 		// Returns the `System.Type' for the ReturnType of this
 		// function.  Provides a nice cache.  (used between semantic analysis
 		// and actual code generation
 		//
-		Type type_return_type;
-		
 		public Type GetReturnType (TypeContainer parent)
 		{
-			if (type_return_type == null)
-				type_return_type = RootContext.LookupType (
-					parent, ReturnType, false, Location);
-			
-			return type_return_type;
+			return MemberType;
 		}
+
+		// Whether this is an operator method.
+		public bool IsOperator;
 
                 void DuplicateEntryPoint (MethodInfo b, Location location)
                 {
@@ -1872,48 +1991,35 @@ namespace Mono.CSharp {
                                 return true;
                         else
                                 return false;
-                }	
+                }
 
 		//
-		// Creates the type
+		// Checks our base implementation if any
 		//
-		public override bool Define (TypeContainer parent)
+		protected override bool CheckBase (TypeContainer parent)
 		{
-			Type ret_type = GetReturnType (parent);
-			Type [] parameters = ParameterTypes (parent);
-			bool error = false;
-			MethodInfo implementing = null;
-			Type iface_type = null;
-			string iface = "", short_name;
-			bool explicit_impl = false;
-
-			// Check if the return type and arguments were correct
-			if (ret_type == null || parameters == null)
-				return false;
-			
-			if (!parent.MethodModifiersValid (ModFlags, Name, Location))
+			// Check whether arguments were correct.
+			if (!DoDefineParameters (parent))
 				return false;
 
-			flags = Modifiers.MethodAttr (ModFlags);
+			MethodSignature ms = new MethodSignature (Name, null, ParameterTypes);
+			if (!IsOperator) {
+				MemberInfo [] mi_this;
 
-			//
-			// verify accessibility
-			//
-			if (!TypeContainer.AsAccessible (ret_type, ModFlags))
-				return false;
+				mi_this = TypeContainer.FindMembers (
+					parent.TypeBuilder, MemberTypes.Method,
+					BindingFlags.NonPublic | BindingFlags.Public |
+					BindingFlags.Static | BindingFlags.Instance |
+					BindingFlags.DeclaredOnly,
+					MethodSignature.method_signature_filter, ms);
 
-			if (ret_type.IsPointer && !UnsafeOK (parent))
-				return false;
-			
-			foreach (Type partype in parameters){
-				if (!TypeContainer.AsAccessible (partype, ModFlags))
-					error = true;
-				if (partype.IsPointer && !UnsafeOK (parent))
-					error = true;
+				if (mi_this != null && mi_this.Length > 0) {
+					Report.Error (111, Location, "Class `" + parent.Name + "' " +
+						      "already defines a member called `" + Name + "' " +
+						      "with the same parameter types");
+					return false;
+				}
 			}
-
-			if (error)
-				return false;
 
 			//
 			// Verify if the parent has a type with the same name, and then
@@ -1923,7 +2029,6 @@ namespace Mono.CSharp {
 
 			// ptype is only null for System.Object while compiling corlib.
 			if (ptype != null){
-				MethodSignature ms = new MethodSignature (Name, null, parameters);
 				MemberInfo [] mi, mi_static, mi_instance;
 
 				mi_static = TypeContainer.FindMembers (
@@ -1945,8 +2050,24 @@ namespace Mono.CSharp {
 					mi = null;
 
 				if (mi != null && mi.Length > 0){
-					if (!CheckMethodAgainstBase (parent, flags, (MethodInfo) mi [0])){
+					parent_method = (MethodInfo) mi [0];
+					string name = parent_method.DeclaringType.Name + "." +
+						parent_method.Name;
+
+					if (!CheckMethodAgainstBase (parent, flags, parent_method, name))
 						return false;
+
+					if ((ModFlags & Modifiers.NEW) == 0) {
+						Type parent_ret = TypeManager.TypeToCoreType (
+							parent_method.ReturnType);
+
+						if (parent_ret != MemberType) {
+							Report.Error (
+								508, parent.MakeName (Name) + ": cannot " +
+								"change return type when overriding " +
+								"inherited member " + name);
+							return false;
+						}
 					}
 				} else {
 					if ((ModFlags & Modifiers.NEW) != 0)
@@ -1961,156 +2082,30 @@ namespace Mono.CSharp {
 			} else if ((ModFlags & Modifiers.NEW) != 0)
 				WarningNotHiding (parent);
 
-			//
-			// If we implement an interface, extract the interface name.
-			//
-			if (Name.IndexOf (".") != -1){
-				int pos = Name.LastIndexOf (".");
-				iface = Name.Substring (0, pos);
+			return true;
+		}
 
-				iface_type = RootContext.LookupType (parent, iface, false, Location);
-				short_name = Name.Substring (pos + 1);
-
-				if (iface_type == null)
-					return false;
-
-				// Compute the full name that we need to export
-				Name = iface_type.FullName + "." + short_name;
-
-				if (!parent.VerifyImplements (iface_type, short_name, Name, Location))
-					return false;
-				
-				explicit_impl = true;
-			} else
-				short_name = Name;
-
-			//
-			// Check if we are an implementation of an interface method or
-			// a method
-			//
-			if (parent.Pending != null){
-				implementing = parent.Pending.IsInterfaceMethod (
-					iface_type, short_name, ret_type, parameters);
-
-				if (iface_type != null && implementing == null){
-					TypeContainer.Error_ExplicitInterfaceNotMemberInterface (Location, short_name);
-					return false;
-				}
-			}
-
-			//
-			// For implicit implementations, make sure we are public, for
-			// explicit implementations, make sure we are private.
-			//
-			if (implementing != null){
-				//
-				// Setting null inside this block will trigger a more
-				// verbose error reporting for missing interface implementations
-				//
-				// The "candidate" function has been flagged already
-				// but it wont get cleared
-				//
-				if (iface_type == null){
-					//
-					// We already catch different accessibility settings
-					// so we just need to check that we are not private
-					//
-					if ((ModFlags & Modifiers.PRIVATE) != 0)
-						implementing = null;
-
-					//
-					// Static is not allowed
-					//
-					if ((ModFlags & Modifiers.STATIC) != 0)
-						implementing = null;
-				} else {
-					if ((ModFlags & (Modifiers.PUBLIC | Modifiers.ABSTRACT | Modifiers.VIRTUAL)) != 0){
-						Modifiers.Error_InvalidModifier (Location, "public, virtual or abstract");
-						implementing = null;
-					}
-				}
-			}
-			
-			//
-			// If implementing is still valid, set flags
-			//
-			if (implementing != null){
-				// Console.WriteLine ("Implementing for:" + (iface_type != null ? iface_type.FullName : "<null>") + " " + short_name);
-				
-				if (implementing.DeclaringType.IsInterface)
-					flags |= MethodAttributes.NewSlot;
-				
-				flags |=
-					MethodAttributes.Virtual |
-					MethodAttributes.HideBySig;
-
-				//
-				// clear the pending implementation flag
-				//
-				parent.Pending.ImplementMethod (
-					iface_type, short_name, ret_type, parameters, explicit_impl);
-			} 
-
-			Attribute dllimport_attr = null;
-			if (OptAttributes != null && OptAttributes.AttributeSections != null) {
-				foreach (AttributeSection asec in OptAttributes.AttributeSections) {
-				 	if (asec.Attributes == null)
-						continue;
-					
-					foreach (Attribute a in asec.Attributes)
-						if (a.Name.IndexOf ("DllImport") != -1) {
-							flags |= MethodAttributes.PinvokeImpl;
-							dllimport_attr = a;
-						}
-				}
-			}
-
-			//
-			// Finally, define the method
-			//
-
-			if ((flags & MethodAttributes.PinvokeImpl) != 0) {
-
-				if ((ModFlags & Modifiers.STATIC) == 0) {
-					Report.Error (601, Location, "The DllImport attribute must be specified on " +
-						      "a method marked 'static' and 'extern'.");
-					return false;
-				}
-				
-				EmitContext ec = new EmitContext (
-					parent, Location, null, GetReturnType (parent), ModFlags);
-				
-				MethodBuilder = dllimport_attr.DefinePInvokeMethod (
-					ec, parent.TypeBuilder,
-					Name, flags, ret_type, parameters);
-			} else {
-				MethodBuilder = parent.TypeBuilder.DefineMethod (
-					Name, flags,
-					GetCallingConvention (parent is Class),
-					ret_type, parameters);
-
-				if (implementing != null && explicit_impl)
-					parent.TypeBuilder.DefineMethodOverride (
-						MethodBuilder, implementing);
-			}
-
-			if (MethodBuilder == null)
+		//
+		// Creates the type
+		//
+		public override bool Define (TypeContainer parent)
+		{
+			if (!DoDefine (parent))
 				return false;
 
-			//
-			// HACK because System.Reflection.Emit is lame
-			//
-			ParameterInfo = new InternalParameters (parent, Parameters);
-
-			if (!TypeManager.RegisterMethod (MethodBuilder, ParameterInfo,
-							 parameters)) {
-				Report.Error (
-					111, Location,
-					"Class `" + parent.Name + "' already contains a definition with " +
-					" the same return value and parameter types for method `" +
-					Name + "'");
+			if (!CheckBase (parent))
 				return false;
-			}
+
+			CallingConventions cc = GetCallingConvention (parent is Class);
+
+			MethodData = new MethodData (this, null, MemberType, ParameterTypes,
+						     ParameterInfo, cc, OptAttributes,
+						     ModFlags, flags, true);
+
+			if (!MethodData.Define (parent))
+				return false;
+
+			MethodBuilder = MethodData.MethodBuilder;
 			
 			//
 			// This is used to track the Entry Point,
@@ -2139,98 +2134,7 @@ namespace Mono.CSharp {
 		// 
 		public void Emit (TypeContainer parent)
 		{
-			ILGenerator ig;
-			EmitContext ec;
-
-			if ((flags & MethodAttributes.PinvokeImpl) == 0)
-				ig = MethodBuilder.GetILGenerator ();
-			else
-				ig = null;
-
-			ec = new EmitContext (parent, Location, ig, GetReturnType (parent), ModFlags);
-
-			if (OptAttributes != null)
-				Attribute.ApplyAttributes (ec, MethodBuilder, this, OptAttributes, Location);
-			
-
-			LabelParameters (ec, ParameterTypes (parent), MethodBuilder);
-			
-			//
-			// abstract or extern methods have no bodies
-			//
-			if ((ModFlags & (Modifiers.ABSTRACT | Modifiers.EXTERN)) != 0){
-				if (Block != null){
-					if ((ModFlags & Modifiers.ABSTRACT) != 0){
-						Report.Error (
-							500, "Abstract method `" +
-							TypeManager.CSharpSignature (MethodBuilder) +
-							"' can not have a body");
-					}
-				}
-				return;
-			}
-
-			//
-			// Handle destructors specially
-			//
-			// FIXME: This code generates buggy code
-			//
-			if (Name == "Finalize" && type_return_type == TypeManager.void_type)
-				EmitDestructor (ec);
-			else {
-				ISymbolWriter sw = CodeGen.SymbolWriter;
-
-				if ((sw != null) && (!Location.IsNull (Location))) {
-					MethodToken token = MethodBuilder.GetToken ();
-					sw.OpenMethod (new SymbolToken (token.Token));
-					sw.SetMethodSourceRange (Location.SymbolDocument,
-								 Location.Row, 0,
-								 Block.EndLocation.SymbolDocument,
-								 Block.EndLocation.Row, 0);
-
-					ec.EmitTopBlock (Block, Location);
-
-					sw.CloseMethod ();
-				} else
-					ec.EmitTopBlock (Block, Location);
-			}
-		}
-
-		void EmitDestructor (EmitContext ec)
-		{
-			ILGenerator ig = ec.ig;
-			
-			Label finish = ig.DefineLabel ();
-			bool old_in_try = ec.InTry;
-			
-			ig.BeginExceptionBlock ();
-			ec.InTry = true;
-			ec.ReturnLabel = finish;
-			ec.EmitTopBlock (Block, Location);
-			ec.InTry = old_in_try;
-			
-			ig.MarkLabel (finish);
-			bool old_in_finally = ec.InFinally;
-			ec.InFinally = true;
-			ig.BeginFinallyBlock ();
-			
-			if (ec.ContainerType.BaseType != null) {
-				Expression member_lookup = Expression.MemberLookup (
-					ec, ec.ContainerType.BaseType, "Finalize",
-					MemberTypes.Method, Expression.AllBindingFlags, Location);
-
-				if (member_lookup != null){
-					MethodGroupExpr parent_destructor = ((MethodGroupExpr) member_lookup);
-				
-					ig.Emit (OpCodes.Ldarg_0);
-					ig.Emit (OpCodes.Call, (MethodInfo) parent_destructor.Methods [0]);
-				}
-			}
-			ec.InFinally = old_in_finally;
-			
-			ig.EndExceptionBlock ();
-			//ig.MarkLabel (ec.ReturnLabel);
-			ig.Emit (OpCodes.Ret);
+			MethodData.Emit (parent, Block, this);
 		}
 	}
 
@@ -2326,7 +2230,7 @@ namespace Mono.CSharp {
 	public class Constructor : MethodCore {
 		public ConstructorBuilder ConstructorBuilder;
 		public ConstructorInitializer Initializer;
-		public Attributes OptAttributes;
+		new public Attributes OptAttributes;
 
 		// <summary>
 		//   Modifiers allowed for a constructor.
@@ -2344,7 +2248,7 @@ namespace Mono.CSharp {
 		// my very own code has static constructors.
 		//
 		public Constructor (string name, Parameters args, ConstructorInitializer init, Location l)
-			: base (name, args, l)
+			: base (null, 0, AllowedModifiers, name, null, args, l)
 		{
 			Initializer = init;
 		}
@@ -2373,15 +2277,14 @@ namespace Mono.CSharp {
 			MethodAttributes ca = (MethodAttributes.RTSpecialName |
 					       MethodAttributes.SpecialName);
 
-			Type [] parameters = ParameterTypes (parent);
-
-			if (parameters == null)
+			// Check if arguments were correct.
+			if (!DoDefineParameters (parent))
 				return false;
-			
+
 			if ((ModFlags & Modifiers.STATIC) != 0)
 				ca |= MethodAttributes.Static;
 			else {
-				if (parent is Struct && parameters.Length == 0){
+				if (parent is Struct && ParameterTypes.Length == 0){
 					Report.Error (
 						568, Location, 
 						"Structs can not contain explicit parameterless " +
@@ -2391,19 +2294,13 @@ namespace Mono.CSharp {
 				ca |= MethodAttributes.Public | MethodAttributes.HideBySig;
 			}
 
-			foreach (Type partype in parameters)
-				if (!TypeContainer.AsAccessible (partype, ModFlags))
-					return false;
-
 			ConstructorBuilder = parent.TypeBuilder.DefineConstructor (
-				ca, GetCallingConvention (parent is Class), parameters);
+				ca, GetCallingConvention (parent is Class), ParameterTypes);
 
 			//
 			// HACK because System.Reflection.Emit is lame
 			//
-			ParameterInfo = new InternalParameters (parent, Parameters);
-
-			if (!TypeManager.RegisterMethod (ConstructorBuilder, ParameterInfo, parameters)) {
+			if (!TypeManager.RegisterMethod (ConstructorBuilder, ParameterInfo, ParameterTypes)) {
 				Report.Error (
 					111, Location,
 					"Class `" +parent.Name+ "' already contains a definition with the " +
@@ -2438,7 +2335,7 @@ namespace Mono.CSharp {
 				ec.IsStatic = false;
 			}
 
-			LabelParameters (ec, ParameterTypes (parent), ConstructorBuilder);
+			LabelParameters (ec, ParameterTypes, ConstructorBuilder);
 			
 			//
 			// Classes can have base initializers and instance field initializers.
@@ -2455,7 +2352,660 @@ namespace Mono.CSharp {
 
 			Attribute.ApplyAttributes (ec, ConstructorBuilder, this, OptAttributes, Location);
 
-			ec.EmitTopBlock (Block, Location);
+			ec.EmitTopBlock (Block, ParameterInfo, Location);
+		}
+	}
+
+	public class MethodData {
+		//
+		// The return type of this method
+		//
+		public readonly Type ReturnType;
+		public readonly Type[] ParameterTypes;
+		public readonly InternalParameters ParameterInfo;
+		public readonly CallingConventions CallingConventions;
+		public readonly Attributes OptAttributes;
+		public readonly Location Location;
+
+		//
+		// Are we implementing an interface ?
+		//
+		public bool IsImplementing = false;
+
+		//
+		// Protected data.
+		//
+		protected MemberBase member;
+		protected int modifiers;
+		protected MethodAttributes flags;
+		protected bool is_method;
+		protected string accessor_name;
+		ArrayList conditionals;
+
+		MethodBuilder builder = null;
+		public MethodBuilder MethodBuilder {
+			get {
+				return builder;
+			}
+		}
+
+		public MethodData (MemberBase member, string name, Type return_type,
+				   Type [] parameter_types, InternalParameters parameters,
+				   CallingConventions cc, Attributes opt_attrs,
+				   int modifiers, MethodAttributes flags, bool is_method)
+		{
+			this.member = member;
+			this.accessor_name = name;
+			this.ReturnType = return_type;
+			this.ParameterTypes = parameter_types;
+			this.ParameterInfo = parameters;
+			this.CallingConventions = cc;
+			this.OptAttributes = opt_attrs;
+			this.modifiers = modifiers;
+			this.flags = flags;
+			this.is_method = is_method;
+			this.Location = member.Location;
+			this.conditionals = new ArrayList ();
+		}
+
+		//
+		// Attributes.
+		//
+		Attribute dllimport_attribute = null;
+		string obsolete = null;
+		bool obsolete_error = false;
+
+		public virtual bool ApplyAttributes (Attributes opt_attrs, bool is_method)
+		{
+			if ((opt_attrs == null) || (opt_attrs.AttributeSections == null))
+				return true;
+
+			foreach (AttributeSection asec in opt_attrs.AttributeSections) {
+				if (asec.Attributes == null)
+					continue;
+					
+				foreach (Attribute a in asec.Attributes) {
+					if (a.Name == "Conditional") {
+						if (!ApplyConditionalAttribute (a))
+							return false;
+					} else if (a.Name == "Obsolete") {
+						if (!ApplyObsoleteAttribute (a))
+							return false;
+					} else if (a.Name.IndexOf ("DllImport") != -1) {
+						if (!is_method) {
+							a.Type = TypeManager.dllimport_type;
+							Attribute.Error_AttributeNotValidForElement (a, Location);
+							return false;
+						}
+						if (!ApplyDllImportAttribute (a))
+							return false;
+					}
+				}
+			}
+
+			return true;
+		}
+
+		//
+		// Applies the `DllImport' attribute to the method.
+		//
+		protected virtual bool ApplyDllImportAttribute (Attribute a)
+		{
+			const int extern_static = Modifiers.EXTERN | Modifiers.STATIC;
+			if ((modifiers & extern_static) != extern_static) {
+				Report.Error (601, Location,
+					      "The DllImport attribute must be specified on a method " +
+					      "marked `static' and `extern'.");
+				return false;
+			}
+
+			flags |= MethodAttributes.PinvokeImpl;
+			dllimport_attribute = a;
+			return true;
+		}
+
+		//
+		// Applies the `Obsolete' attribute to the method.
+		//
+		protected virtual bool ApplyObsoleteAttribute (Attribute a)
+		{
+			if (obsolete != null) {
+				Report.Error (579, Location, "Duplicate `Obsolete' attribute");
+				return false;
+			}
+
+			obsolete = a.Obsolete_GetObsoleteMessage (out obsolete_error);
+			return obsolete != null;
+		}
+
+		//
+		// Applies the `Conditional' attribute to the method.
+		//
+		protected virtual bool ApplyConditionalAttribute (Attribute a)
+		{
+			// The Conditional attribute is only valid on methods.
+			if (!is_method) {
+				Attribute.Error_AttributeNotValidForElement (a, Location);
+				return false;
+			}
+
+			string condition = a.Conditional_GetConditionName ();
+
+			if (condition == null)
+				return false;
+
+			if (ReturnType != TypeManager.void_type) {
+				Report.Error (578, Location,
+					      "Conditional not valid on `" + member.Name + "' " +
+					      "because its return type is not void");
+				return false;
+			}
+
+			if ((modifiers & Modifiers.OVERRIDE) != 0) {
+				Report.Error (243, Location,
+					      "Conditional not valid on `" + member.Name + "' " +
+					      "because it is an override method");
+				return false;
+			}
+
+			if (member.IsExplicitImpl) {
+				Report.Error (577, Location,
+					      "Conditional not valid on `" + member.Name + "' " +
+					      "because it is an explicit interface implementation");
+				return false;
+			}
+
+			if (IsImplementing) {
+				Report.Error (623, Location,
+					      "Conditional not valid on `" + member.Name + "' " +
+					      "because it is an interface method");
+				return false;
+			}
+
+			conditionals.Add (condition);
+
+			return true;
+		}
+
+		//
+		// Checks whether this method should be ignored due to its Conditional attributes.
+		//
+		bool ShouldIgnore (Location loc)
+		{
+			// When we're overriding a virtual method, we implicitly inherit the
+			// Conditional attributes from our parent.
+			if (member.ParentMethod != null) {
+				TypeManager.MethodFlags flags = TypeManager.GetMethodFlags (
+					member.ParentMethod, loc);
+
+				if ((flags & TypeManager.MethodFlags.ShouldIgnore) != 0)
+					return true;
+			}
+
+			foreach (string condition in conditionals)
+				if (RootContext.AllDefines [condition] == null)
+					return true;
+
+			return false;
+		}
+
+		//
+		// Returns the TypeManager.MethodFlags for this method.
+		// This emits an error 619 / warning 618 if the method is obsolete.
+		// In the former case, TypeManager.MethodFlags.IsObsoleteError is returned.
+		//
+		public virtual TypeManager.MethodFlags GetMethodFlags (Location loc)
+		{
+			TypeManager.MethodFlags flags = 0;
+
+			if (obsolete != null) {
+				if (obsolete_error) {
+					Report.Error (619, loc, "Method `" + member.Name +
+						      "' is obsolete: `" + obsolete + "'");
+					return TypeManager.MethodFlags.IsObsoleteError;
+				} else
+					Report.Warning (618, loc, "Method `" + member.Name +
+							"' is obsolete: `" + obsolete + "'");
+
+				flags |= TypeManager.MethodFlags.IsObsolete;
+			}
+
+			if (ShouldIgnore (loc))
+			    flags |= TypeManager.MethodFlags.ShouldIgnore;
+
+			return flags;
+		}
+
+		public virtual bool Define (TypeContainer parent)
+		{
+			MethodInfo implementing = null;
+			string method_name, name, prefix;
+
+			if (OptAttributes != null)
+				if (!ApplyAttributes (OptAttributes, is_method))
+					return false;
+
+			if (member.IsExplicitImpl)
+				prefix = member.InterfaceType.FullName + ".";
+			else
+				prefix = "";
+
+			if (accessor_name != null)
+				name = accessor_name + "_" + member.ShortName;
+			else
+				name = member.ShortName;
+			method_name = prefix + name;
+				
+			if (parent.Pending != null){
+				if (member is Indexer)
+					implementing = parent.Pending.IsInterfaceIndexer (
+						member.InterfaceType, ReturnType, ParameterTypes);
+				else
+					implementing = parent.Pending.IsInterfaceMethod (
+						member.InterfaceType, name, ReturnType, ParameterTypes);
+
+				if (member.InterfaceType != null && implementing == null){
+					TypeContainer.Error_ExplicitInterfaceNotMemberInterface (
+						Location, name);
+					return false;
+				}
+			}
+
+			//
+			// For implicit implementations, make sure we are public, for
+			// explicit implementations, make sure we are private.
+			//
+			if (implementing != null){
+				//
+				// Setting null inside this block will trigger a more
+				// verbose error reporting for missing interface implementations
+				//
+				// The "candidate" function has been flagged already
+				// but it wont get cleared
+				//
+				if (!member.IsExplicitImpl){
+					//
+					// We already catch different accessibility settings
+					// so we just need to check that we are not private
+					//
+					if ((modifiers & Modifiers.PRIVATE) != 0)
+						implementing = null;
+					
+					//
+					// Static is not allowed
+					//
+					if ((modifiers & Modifiers.STATIC) != 0)
+						implementing = null;
+				} else {
+					if ((modifiers & (Modifiers.PUBLIC | Modifiers.ABSTRACT | Modifiers.VIRTUAL)) != 0){
+						Modifiers.Error_InvalidModifier (Location, "public, virtual or abstract");
+						implementing = null;
+					}
+				}
+			}
+			
+			//
+			// If implementing is still valid, set flags
+			//
+			if (implementing != null){
+				//
+				// When implementing interface methods, set NewSlot.
+				//
+				if (implementing.DeclaringType.IsInterface)
+					flags |= MethodAttributes.NewSlot;
+				
+				flags |=
+					MethodAttributes.Virtual |
+					MethodAttributes.HideBySig;
+
+				// Get the method name from the explicit interface.
+				if (member.InterfaceType != null) {
+					name = implementing.Name;
+					method_name = prefix + name;
+				}
+
+				IsImplementing = true;
+			}
+
+			//
+			// Create the MethodBuilder for the method
+			//
+			if ((flags & MethodAttributes.PinvokeImpl) != 0) {
+				if ((modifiers & Modifiers.STATIC) == 0) {
+					Report.Error (601, Location,
+						      "The DllImport attribute must be specified on " +
+						      "a method marked 'static' and 'extern'.");
+					return false;
+				}
+				
+				EmitContext ec = new EmitContext (
+					parent, Location, null, ReturnType, modifiers);
+				
+				builder = dllimport_attribute.DefinePInvokeMethod (
+					ec, parent.TypeBuilder, method_name, flags,
+					ReturnType, ParameterTypes);
+			} else
+				builder = parent.TypeBuilder.DefineMethod (
+					method_name, flags, CallingConventions,
+					ReturnType, ParameterTypes);
+
+			if (builder == null)
+				return false;
+
+			if (IsImplementing) {
+				//
+				// clear the pending implemntation flag
+				//
+				if (member is Indexer) {
+					parent.Pending.ImplementIndexer (
+						member.InterfaceType, builder, ReturnType,
+						ParameterTypes, true);
+				} else
+					parent.Pending.ImplementMethod (
+						member.InterfaceType, name, ReturnType,
+						ParameterTypes, member.IsExplicitImpl);
+
+				if (member.IsExplicitImpl)
+					parent.TypeBuilder.DefineMethodOverride (
+						builder, implementing);
+			}
+
+			if (!TypeManager.RegisterMethod (builder, ParameterInfo, ParameterTypes)) {
+				Report.Error (111, Location,
+					      "Class `" + parent.Name +
+					      "' already contains a definition with the " +
+					      "same return value and parameter types as the " +
+					      "'get' method of property `" + member.Name + "'");
+				return false;
+			}
+
+			TypeManager.AddMethod (builder, this);
+
+			return true;
+		}
+
+		//
+		// Emits the code
+		// 
+		public virtual void Emit (TypeContainer parent, Block block, object kind)
+		{
+			ILGenerator ig;
+			EmitContext ec;
+
+			if ((flags & MethodAttributes.PinvokeImpl) == 0)
+				ig = builder.GetILGenerator ();
+			else
+				ig = null;
+
+			ec = new EmitContext (parent, Location, ig, ReturnType, modifiers);
+
+			if (OptAttributes != null)
+				Attribute.ApplyAttributes (ec, builder, kind, OptAttributes, Location);
+
+			if (member is MethodCore)
+				((MethodCore) member).LabelParameters (ec, ParameterTypes, MethodBuilder);
+
+			//
+			// abstract or extern methods have no bodies
+			//
+			if ((modifiers & (Modifiers.ABSTRACT | Modifiers.EXTERN)) != 0){
+				if (block == null)
+					return;
+
+				//
+				// abstract or extern methods have no bodies.
+				//
+				if ((modifiers & Modifiers.ABSTRACT) != 0)
+					Report.Error (
+						500, Location, "Abstract method `" +
+						TypeManager.CSharpSignature (builder) +
+						"' can not have a body");
+
+				if ((modifiers & Modifiers.EXTERN) != 0)
+					Report.Error (
+						179, Location, "External method `" +
+						TypeManager.CSharpSignature (builder) +
+						"' can not have a body");
+
+				return;
+			}
+
+			//
+			// Methods must have a body unless they're extern or abstract
+			//
+			if (block == null) {
+				Report.Error (
+					501, Location, "Method `" +
+					TypeManager.CSharpSignature (builder) +
+					"' must declare a body since it is not marked " +
+					"abstract or extern");
+				return;
+			}
+
+			//
+			// Handle destructors specially
+			//
+			// FIXME: This code generates buggy code
+			//
+			if (member.Name == "Finalize" && ReturnType == TypeManager.void_type)
+				EmitDestructor (ec, block);
+			else {
+				ISymbolWriter sw = CodeGen.SymbolWriter;
+
+				if ((sw != null) && !Location.IsNull (Location) &&
+				    !Location.IsNull (block.EndLocation)) {
+					Location end = block.EndLocation;
+					MethodToken token = MethodBuilder.GetToken ();
+					sw.OpenMethod (new SymbolToken (token.Token));
+					sw.SetMethodSourceRange (Location.SymbolDocument,
+								 Location.Row, 0,
+								 end.SymbolDocument,
+								 end.Row, 0);
+
+					ec.EmitTopBlock (block, ParameterInfo, Location);
+
+					sw.CloseMethod ();
+				} else
+					ec.EmitTopBlock (block, ParameterInfo, Location);
+			}
+		}
+
+		void EmitDestructor (EmitContext ec, Block block)
+		{
+			ILGenerator ig = ec.ig;
+			
+			Label finish = ig.DefineLabel ();
+			bool old_in_try = ec.InTry;
+			
+			ig.BeginExceptionBlock ();
+			ec.InTry = true;
+			ec.ReturnLabel = finish;
+			ec.HasReturnLabel = true;
+			ec.EmitTopBlock (block, null, Location);
+			ec.InTry = old_in_try;
+			
+			// ig.MarkLabel (finish);
+			bool old_in_finally = ec.InFinally;
+			ec.InFinally = true;
+			ig.BeginFinallyBlock ();
+			
+			if (ec.ContainerType.BaseType != null) {
+				Expression member_lookup = Expression.MemberLookup (
+					ec, ec.ContainerType.BaseType, "Finalize",
+					MemberTypes.Method, Expression.AllBindingFlags, Location);
+
+				if (member_lookup != null){
+					MethodGroupExpr parent_destructor = ((MethodGroupExpr) member_lookup);
+				
+					ig.Emit (OpCodes.Ldarg_0);
+					ig.Emit (OpCodes.Call, (MethodInfo) parent_destructor.Methods [0]);
+				}
+			}
+			ec.InFinally = old_in_finally;
+			
+			ig.EndExceptionBlock ();
+			//ig.MarkLabel (ec.ReturnLabel);
+			ig.Emit (OpCodes.Ret);
+		}
+	}
+
+	abstract public class MemberBase : MemberCore {
+		public Expression Type;
+		public readonly Attributes OptAttributes;
+
+		protected MethodAttributes flags;
+
+		//
+		// The "short" name of this property / indexer / event.  This is the
+		// name without the explicit interface.
+		//
+		public string ShortName;
+
+		//
+		// The type of this property / indexer / event
+		//
+		public Type MemberType;
+
+		//
+		// If true, this is an explicit interface implementation
+		//
+		public bool IsExplicitImpl = false;
+
+		//
+		// The name of the interface we are explicitly implementing
+		//
+		public string ExplicitInterfaceName = null;
+
+		//
+		// If true, the interface type we are explicitly implementing
+		//
+		public Type InterfaceType = null;
+
+		//
+		// The method we're overriding if this is an override method.
+		//
+		protected MethodInfo parent_method = null;
+		public MethodInfo ParentMethod {
+			get {
+				return parent_method;
+			}
+		}
+
+		//
+		// The constructor is only exposed to our children
+		//
+		protected MemberBase (Expression type, int mod, int allowed_mod, string name,
+				      Attributes attrs, Location loc)
+			: base (name, loc)
+		{
+			Type = type;
+			ModFlags = Modifiers.Check (allowed_mod, mod, Modifiers.PRIVATE, loc);
+			OptAttributes = attrs;
+		}
+
+		protected virtual bool CheckBase (TypeContainer parent)
+		{
+			return true;
+		}
+
+		protected virtual bool CheckParameters (TypeContainer parent, Type [] parameters)
+		{
+			bool error = false;
+
+			foreach (Type partype in parameters){
+				if (partype.IsPointer && !UnsafeOK (parent))
+					error = true;
+
+				if (parent.AsAccessible (partype, ModFlags))
+					continue;
+
+				if (this is Indexer)
+					Report.Error (55, Location,
+						      "Inconsistent accessibility: parameter type `" +
+						      TypeManager.CSharpName (partype) + "' is less " +
+						      "accessible than indexer `" + Name + "'");
+				else
+					Report.Error (51, Location,
+						      "Inconsistent accessibility: parameter type `" +
+						      TypeManager.CSharpName (partype) + "' is less " +
+						      "accessible than method `" + Name + "'");
+				error = true;
+			}
+
+			return !error;
+		}
+
+		protected virtual bool DoDefine (TypeContainer parent)
+		{
+			if (Name == null)
+				Name = "this";
+
+			if (!parent.MethodModifiersValid (ModFlags, Name, Location))
+				return false;
+
+			flags = Modifiers.MethodAttr (ModFlags);
+
+			// Lookup Type, verify validity
+			MemberType = parent.ResolveType (Type, false, Location);
+			if (MemberType == null)
+				return false;
+
+			// verify accessibility
+			if (!parent.AsAccessible (MemberType, ModFlags)) {
+				if (this is Property)
+					Report.Error (53, Location,
+						      "Inconsistent accessibility: property type `" +
+						      TypeManager.CSharpName (MemberType) + "' is less " +
+						      "accessible than property `" + Name + "'");
+				else if (this is Indexer)
+					Report.Error (54, Location,
+						      "Inconsistent accessibility: indexer return type `" +
+						      TypeManager.CSharpName (MemberType) + "' is less " +
+						      "accessible than indexer `" + Name + "'");
+				else if (this is Method)
+					Report.Error (50, Location,
+						      "Inconsistent accessibility: return type `" +
+						      TypeManager.CSharpName (MemberType) + "' is less " +
+						      "accessible than method `" + Name + "'");
+				else
+					Report.Error (52, Location,
+						      "Inconsistent accessibility: field type `" +
+						      TypeManager.CSharpName (MemberType) + "' is less " +
+						      "accessible than field `" + Name + "'");
+				return false;
+			}
+
+			if (MemberType.IsPointer && !UnsafeOK (parent))
+				return false;
+			
+			//
+			// Check for explicit interface implementation
+			//
+			if ((ExplicitInterfaceName == null) && (Name.IndexOf (".") != -1)){
+				int pos = Name.LastIndexOf (".");
+
+				ExplicitInterfaceName = Name.Substring (0, pos);
+				ShortName = Name.Substring (pos + 1);
+			} else
+				ShortName = Name;
+
+			if (ExplicitInterfaceName != null) {
+				InterfaceType  = RootContext.LookupType (
+					parent, ExplicitInterfaceName, false, Location);
+				if (InterfaceType == null)
+					return false;
+
+				// Compute the full name that we need to export.
+				Name = InterfaceType.FullName + "." + ShortName;
+				
+				if (!parent.VerifyImplements (InterfaceType, ShortName, Name, Location))
+					return false;
+				
+				IsExplicitImpl = true;
+			} else
+				IsExplicitImpl = false;
+
+			return true;
 		}
 	}
 
@@ -2463,10 +3013,8 @@ namespace Mono.CSharp {
 	// Fields and Events both generate FieldBuilders, we use this to share 
 	// their common bits.  This is also used to flag usage of the field
 	//
-	abstract public class FieldBase : MemberCore {
-		public readonly string Type;
+	abstract public class FieldBase : MemberBase {
 		public readonly Object Initializer;
-		public readonly Attributes OptAttributes;
 		public FieldBuilder  FieldBuilder;
 		public Status status;
 
@@ -2476,14 +3024,11 @@ namespace Mono.CSharp {
 		//
 		// The constructor is only exposed to our children
 		//
-		protected FieldBase (string type, int mod, int allowed_mod, string name,
+		protected FieldBase (Expression type, int mod, int allowed_mod, string name,
 				     object init, Attributes attrs, Location loc)
-			: base (name, loc)
+			: base (type, mod, allowed_mod, name, attrs, loc)
 		{
-			Type = type;
-			ModFlags = Modifiers.Check (allowed_mod, mod, Modifiers.PRIVATE, loc);
 			Initializer = init;
-			OptAttributes = attrs;
 		}
 	}
 
@@ -2505,7 +3050,7 @@ namespace Mono.CSharp {
 		        Modifiers.UNSAFE |
 			Modifiers.READONLY;
 
-		public Field (string type, int mod, string name, Object expr_or_array_init,
+		public Field (Expression type, int mod, string name, Object expr_or_array_init,
 			      Attributes attrs, Location loc)
 			: base (type, mod, AllowedModifiers, name, expr_or_array_init, attrs, loc)
 		{
@@ -2513,13 +3058,18 @@ namespace Mono.CSharp {
 
 		public override bool Define (TypeContainer parent)
 		{
-			Type t = RootContext.LookupType (parent, Type, false, Location);
+			Type t = parent.ResolveType (Type, false, Location);
 			
 			if (t == null)
 				return false;
 
-			if (!TypeContainer.AsAccessible (t, ModFlags))
+			if (!parent.AsAccessible (t, ModFlags)) {
+				Report.Error (52, Location,
+					      "Inconsistent accessibility: field type `" +
+					      TypeManager.CSharpName (t) + "' is less " +
+					      "accessible than field `" + Name + "'");
 				return false;
+			}
 
 			if (t.IsPointer && !UnsafeOK (parent))
 				return false;
@@ -2594,72 +3144,78 @@ namespace Mono.CSharp {
 			OptAttributes = attrs;
 		}
 	}
-			
-	public class Property : MemberCore {
-		public readonly string Type;
+
+	//
+	// Properties and Indexers both generate PropertyBuilders, we use this to share 
+	// their common bits.
+	//
+	abstract public class PropertyBase : MethodCore {
 		public Accessor Get, Set;
 		public PropertyBuilder PropertyBuilder;
-		public Attributes OptAttributes;
 		public MethodBuilder GetBuilder, SetBuilder;
+		public MethodData GetData, SetData;
 
-		//
-		// The type, once we compute it.
-		Type PropertyType;
+		protected EmitContext ec;
 
-		bool explicit_impl;
-
-		//
-		// If true, the interface type we are explicitly implementing
-		//
-		Type explicit_iface_type = null;
-
-		const int AllowedModifiers =
-			Modifiers.NEW |
-			Modifiers.PUBLIC |
-			Modifiers.PROTECTED |
-			Modifiers.INTERNAL |
-			Modifiers.PRIVATE |
-			Modifiers.STATIC |
-			Modifiers.SEALED |
-			Modifiers.OVERRIDE |
-			Modifiers.ABSTRACT |
-		        Modifiers.UNSAFE |
-			Modifiers.EXTERN |
-			Modifiers.VIRTUAL;
-
-		public Property (string type, string name, int mod_flags,
-				 Accessor get_block, Accessor set_block,
-				 Attributes attrs, Location loc)
-			: base (name, loc)
+		public PropertyBase (Expression type, string name, int mod_flags, int allowed_mod,
+				     Parameters parameters, Accessor get_block, Accessor set_block,
+				     Attributes attrs, Location loc)
+			: base (type, mod_flags, allowed_mod, name, attrs, parameters, loc)
 		{
-			Type = type;
-			ModFlags = Modifiers.Check (AllowedModifiers, mod_flags, Modifiers.PRIVATE, loc);
 			Get = get_block;
 			Set = set_block;
-			OptAttributes = attrs;
+		}
+
+		protected override bool DoDefine (TypeContainer parent)
+		{
+			if (!base.DoDefine (parent))
+				return false;
+
+			ec = new EmitContext (parent, Location, null, MemberType, ModFlags);
+
+			return true;
 		}
 
 		//
 		// Checks our base implementation if any
 		//
-		bool CheckBase (MethodAttributes flags, TypeContainer parent)
+		protected override bool CheckBase (TypeContainer parent)
 		{
+			// Check whether arguments were correct.
+			if (!DoDefineParameters (parent))
+				return false;
+
+			MethodSignature ms = new MethodSignature (Name, null, ParameterTypes);
+			MemberInfo [] props_this;
+
+			props_this = TypeContainer.FindMembers (
+				parent.TypeBuilder, MemberTypes.Property,
+				BindingFlags.NonPublic | BindingFlags.Public |
+				BindingFlags.Static | BindingFlags.Instance |
+				BindingFlags.DeclaredOnly,
+				MethodSignature.method_signature_filter, ms);
+
+			if (props_this != null && props_this.Length > 0) {
+				Report.Error (111, Location, "Class `" + parent.Name + "' " +
+					      "already defines a member called `" + Name + "' " +
+					      "with the same parameter types");
+				return false;
+			}
+
 			//
 			// Find properties with the same name on the base class
 			//
-
 			MemberInfo [] props;
-			MemberInfo [] props_static = TypeManager.MemberLookup (
-				parent.TypeBuilder, 
-				parent.TypeBuilder.BaseType,
-				MemberTypes.Property, BindingFlags.Public | BindingFlags.Static,
-				Name);
+			MemberInfo [] props_static = TypeContainer.FindMembers (
+				parent.TypeBuilder.BaseType, MemberTypes.Property,
+				BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Static,
+				MethodSignature.inheritable_property_signature_filter, ms);
 
-			MemberInfo [] props_instance = TypeManager.MemberLookup (
-				parent.TypeBuilder, 
-				parent.TypeBuilder.BaseType,
-				MemberTypes.Property, BindingFlags.Public | BindingFlags.Instance,
-				Name);
+			MemberInfo [] props_instance = TypeContainer.FindMembers (
+				parent.TypeBuilder.BaseType, MemberTypes.Property,
+				BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance,
+				MethodSignature.inheritable_property_signature_filter,
+				ms);
 
 			//
 			// Find if we have anything
@@ -2674,9 +3230,6 @@ namespace Mono.CSharp {
 			//
 			// If we have something on the base.
 			if (props != null && props.Length > 0){
-				if (props.Length > 1)
-					throw new Exception ("Should not happen");
-				
 				PropertyInfo pi = (PropertyInfo) props [0];
 
 				MethodInfo inherited_get = TypeManager.GetPropertyGetter (pi);
@@ -2685,234 +3238,125 @@ namespace Mono.CSharp {
 				MethodInfo reference = inherited_get == null ?
 					inherited_set : inherited_get;
 				
-				if (reference != null)
-					if (!CheckMethodAgainstBase (parent, flags, reference))
+				if (reference != null) {
+					string name = reference.DeclaringType.Name + "." + Name;
+
+					if (!CheckMethodAgainstBase (parent, flags, reference, name))
 						return false;
-				
+				}
+
+				if (((ModFlags & Modifiers.NEW) == 0) && (pi.PropertyType != MemberType)) {
+					Report.Error (508, parent.MakeName (Name) + ": cannot " +
+						      "change return type when overriding inherited " +
+						      "member `" + pi.DeclaringType + "." + pi.Name + "'");
+					return false;
+				}
 			} else {
 				if ((ModFlags & Modifiers.NEW) != 0)
 					WarningNotHiding (parent);
 				
 				if ((ModFlags & Modifiers.OVERRIDE) != 0){
-					Report.Error (115, Location,
-						      parent.MakeName (Name) +
-						      " no suitable properties found to override");
+					if (this is Indexer)
+						Report.Error (115, Location,
+							      parent.MakeName (Name) +
+							      " no suitable indexers found to override");
+					else
+						Report.Error (115, Location,
+							      parent.MakeName (Name) +
+							      " no suitable properties found to override");
 					return false;
 				}
 			}
 			return true;
 		}
 
-		bool DefineMethod (TypeContainer parent, string short_name,
-				   MethodAttributes flags, bool is_get, ref bool is_implementing)
+		public void Emit (TypeContainer tc)
 		{
-			Type [] parameters = TypeManager.NoTypes;
-			MethodInfo implementing = null;
-			Type fn_type;
-			string name, prefix;
+			//
+			// The PropertyBuilder can be null for explicit implementations, in that
+			// case, we do not actually emit the ".property", so there is nowhere to
+			// put the attribute
+			//
+			if (PropertyBuilder != null)
+				Attribute.ApplyAttributes (ec, PropertyBuilder, this, OptAttributes, Location);
 
-			if (explicit_impl)
-				prefix = explicit_iface_type.FullName + ".";
-			else
-				prefix = "";
-				
-			if (is_get){
-				fn_type = PropertyType;
-				name = "get_" + short_name;
-			} else {
-				name = "set_" + short_name;
-				parameters = new Type [1];
-				parameters [0] = PropertyType;
-				fn_type = TypeManager.void_type;
-			}
+			if (GetData != null)
+				GetData.Emit (tc, Get.Block, Get);
 
-			if (parent.Pending != null){
-				implementing = parent.Pending.IsInterfaceMethod (
-					explicit_iface_type, name, fn_type, parameters);
-
-				if (explicit_iface_type != null && implementing == null){
-					TypeContainer.Error_ExplicitInterfaceNotMemberInterface (Location, name);
-					return false;
-				}
-			}
+			if (SetData != null)
+				SetData.Emit (tc, Set.Block, Set);
+		}
+	}
 			
-			//
-			// For implicit implementations, make sure we are public, for
-			// explicit implementations, make sure we are private.
-			//
-			if (implementing != null){
-				//
-				// Setting null inside this block will trigger a more
-				// verbose error reporting for missing interface implementations
-				//
-				// The "candidate" function has been flagged already
-				// but it wont get cleared
-				//
-				if (explicit_iface_type == null){
-					//
-					// We already catch different accessibility settings
-					// so we just need to check that we are not private
-					//
-					if ((ModFlags & Modifiers.PRIVATE) != 0)
-						implementing = null;
-					
-					//
-					// Static is not allowed
-					//
-					if ((ModFlags & Modifiers.STATIC) != 0)
-						implementing = null;
-				} else {
-					if ((ModFlags & (Modifiers.PUBLIC | Modifiers.ABSTRACT | Modifiers.VIRTUAL)) != 0){
-						Modifiers.Error_InvalidModifier (Location, "public, virtual or abstract");
-						implementing = null;
-					}
-				}
-			}
-			
-			//
-			// If implementing is still valid, set flags
-			//
-			if (implementing != null){
-				//
-				// When implementing interface methods, set NewSlot.
-				//
-				if (implementing.DeclaringType.IsInterface)
-					flags |= MethodAttributes.NewSlot;
-				
-				flags |=
-					MethodAttributes.Virtual |
-					MethodAttributes.HideBySig;
+	public class Property : PropertyBase {
+		const int AllowedModifiers =
+			Modifiers.NEW |
+			Modifiers.PUBLIC |
+			Modifiers.PROTECTED |
+			Modifiers.INTERNAL |
+			Modifiers.PRIVATE |
+			Modifiers.STATIC |
+			Modifiers.SEALED |
+			Modifiers.OVERRIDE |
+			Modifiers.ABSTRACT |
+		        Modifiers.UNSAFE |
+			Modifiers.EXTERN |
+			Modifiers.VIRTUAL;
 
-				//
-				// clear the pending implemntation flag
-				//
-				parent.Pending.ImplementMethod (
-					explicit_iface_type, name, fn_type, parameters, explicit_impl);
+		public Property (Expression type, string name, int mod_flags,
+				 Accessor get_block, Accessor set_block,
+				 Attributes attrs, Location loc)
+			: base (type, name, mod_flags, AllowedModifiers,
+				Parameters.EmptyReadOnlyParameters,
+				get_block, set_block, attrs, loc)
+		{
+		}
 
-				is_implementing = true;
-			}
+		public override bool Define (TypeContainer parent)
+		{
+			if (!DoDefine (parent))
+				return false;
 
-			//
-			// If this is not an explicit interface implementation,
-			// clear implementing, as it is only used for explicit
-			// interface implementation
-			//
-			if (Name.IndexOf (".") == -1)
-				implementing = null;
-			
-			if (is_get){
-				GetBuilder = parent.TypeBuilder.DefineMethod (
-					prefix + name, flags, PropertyType, null);
-			
-				if (implementing != null)
-					parent.TypeBuilder.DefineMethodOverride (
-						GetBuilder, implementing);
-				
-				//
-				// HACK because System.Reflection.Emit is lame
-				//
+			if (!CheckBase (parent))
+				return false;
+
+			flags |= MethodAttributes.HideBySig | MethodAttributes.SpecialName;
+
+			if (Get != null) {
+				Type [] parameters = TypeManager.NoTypes;
+
 				InternalParameters ip = new InternalParameters (
-					parent, Parameters.GetEmptyReadOnlyParameters ());
-				
-				if (!TypeManager.RegisterMethod (GetBuilder, ip, null)) {
-					Report.Error (111, Location,
-						      "Class `" + parent.Name +
-						      "' already contains a definition with the " +
-						      "same return value and parameter types as the " +
-						      "'get' method of property `" + Name + "'");
-					return false;
-				}
-			} else {
-				SetBuilder = parent.TypeBuilder.DefineMethod (
-					prefix + name, flags, null, parameters);
-				
-				if (implementing != null)
-					parent.TypeBuilder.DefineMethodOverride (
-						SetBuilder, implementing);
-				
-				SetBuilder.DefineParameter (1, ParameterAttributes.None, "value"); 
+					parent, Parameters.EmptyReadOnlyParameters);
 
-				//
-				// HACK because System.Reflection.Emit is lame
-				//
+				GetData = new MethodData (this, "get", MemberType,
+							  parameters, ip, CallingConventions.Standard,
+							  Get.OptAttributes, ModFlags, flags, false);
+
+				if (!GetData.Define (parent))
+					return false;
+
+				GetBuilder = GetData.MethodBuilder;
+			}
+
+			if (Set != null) {
+				Type [] parameters = new Type [1];
+				parameters [0] = MemberType;
+
 				Parameter [] parms = new Parameter [1];
 				parms [0] = new Parameter (Type, "value", Parameter.Modifier.NONE, null);
 				InternalParameters ip = new InternalParameters (
 					parent, new Parameters (parms, null, Location));
 
-				if (!TypeManager.RegisterMethod (SetBuilder, ip, parameters)) {
-					Report.Error (
-						111, Location,
-						"Class `" + parent.Name +
-						"' already contains a definition with the " +
-						"same return value and parameter types as the " +
-						"'set' method of property `" + Name + "'");
+				SetData = new MethodData (this, "set", TypeManager.void_type,
+							  parameters, ip, CallingConventions.Standard,
+							  Set.OptAttributes, ModFlags, flags, false);
+
+				if (!SetData.Define (parent))
 					return false;
-				}
+
+				SetBuilder = SetData.MethodBuilder;
+				SetBuilder.DefineParameter (1, ParameterAttributes.None, "value"); 
 			}
-
-			return true;
-		}
-
-		public override bool Define (TypeContainer parent)
-		{
-			string short_name;
-			
-			if (!parent.MethodModifiersValid (ModFlags, Name, Location))
-				return false;
-
-			MethodAttributes flags = Modifiers.MethodAttr (ModFlags);
-			
-			flags |= MethodAttributes.HideBySig | MethodAttributes.SpecialName;
-
-			// Lookup Type, verify validity
-			PropertyType = RootContext.LookupType (parent, Type, false, Location);
-			if (PropertyType == null)
-				return false;
-
-			// verify accessibility
-			if (!TypeContainer.AsAccessible (PropertyType, ModFlags))
-				return false;
-
-			if (PropertyType.IsPointer && !UnsafeOK (parent))
-				return false;
-			
-			if (!CheckBase (flags, parent))
-				return false;
-
-			//
-			// Check for explicit interface implementation
-			//
-			if (Name.IndexOf (".") != -1){
-				int pos = Name.LastIndexOf (".");
-				string iface = Name.Substring (0, pos);
-
-				explicit_iface_type = RootContext.LookupType (parent, iface, false, Location);
-				if (explicit_iface_type == null)
-					return false;
-
-				short_name = Name.Substring (pos + 1);
-
-				// Compute the full name that we need to export.
-				Name = explicit_iface_type.FullName + "." + short_name;
-				
-				if (!parent.VerifyImplements (explicit_iface_type, short_name, Name, Location))
-					return false;
-				
-				explicit_impl = true;
-			} else {
-				explicit_impl = false;
-				short_name = Name;
-			}
-
-			bool is_implementing = false;
-			if (Get != null)
-				if (!DefineMethod (parent, short_name, flags, true, ref is_implementing))
-					return false;
-			
-			if (Set != null)
-				if (!DefineMethod (parent, short_name, flags, false, ref is_implementing))
-					return false;
 
 			// FIXME - PropertyAttributes.HasDefault ?
 			
@@ -2920,9 +3364,9 @@ namespace Mono.CSharp {
 			PropertyAttributes.RTSpecialName |
 			PropertyAttributes.SpecialName;
 
-			if (!explicit_impl){
+			if (!IsExplicitImpl){
 				PropertyBuilder = parent.TypeBuilder.DefineProperty (
-					Name, prop_attr, PropertyType, null);
+					Name, prop_attr, MemberType, null);
 				
 				if (Get != null)
 					PropertyBuilder.SetGetMethod (GetBuilder);
@@ -2944,48 +3388,7 @@ namespace Mono.CSharp {
 			}
 			return true;
 		}
-		
-		public void Emit (TypeContainer tc)
-		{
-			ILGenerator ig;
-			EmitContext ec;
-
-			ec = new EmitContext (tc, Location, null, PropertyType, ModFlags);
-
-			//
-			// The PropertyBuilder can be null for explicit implementations, in that
-			// case, we do not actually emit the ".property", so there is nowhere to
-			// put the attribute
-			//
-			if (PropertyBuilder != null)
-				Attribute.ApplyAttributes (ec, PropertyBuilder, this, OptAttributes, Location);
-			if (Get != null)
-				Attribute.ApplyAttributes (ec, GetBuilder, Get, Get.OptAttributes, Location);
-			if (Set != null)
-				Attribute.ApplyAttributes (ec, SetBuilder, Set, Set.OptAttributes, Location);
-
-			//
-			// abstract or extern properties have no bodies
-			//
-			if ((ModFlags & (Modifiers.ABSTRACT | Modifiers.EXTERN)) != 0)
-				return;
-
-			if (Get != null){
-				ig = GetBuilder.GetILGenerator ();
-				ec = new EmitContext (tc, Location, ig, PropertyType, ModFlags);
-
-				ec.EmitTopBlock (Get.Block, Location);
-			}
-
-			if (Set != null){
-				ig = SetBuilder.GetILGenerator ();
-				ec = new EmitContext (tc, Location, ig, null, ModFlags);
-
-				ec.EmitTopBlock (Set.Block, Location);
-			}
-		}
 	}
-
 
 	/// </summary>
 	///  Gigantic workaround  for lameness in SRE follows :
@@ -3140,10 +3543,10 @@ namespace Mono.CSharp {
 		public readonly Accessor  Remove;
 		public MyEventBuilder     EventBuilder;
 
-		Type EventType;
 		MethodBuilder AddBuilder, RemoveBuilder;
+		MethodData AddData, RemoveData;
 		
-		public Event (string type, string name, Object init, int mod, Accessor add,
+		public Event (Expression type, string name, Object init, int mod, Accessor add,
 			      Accessor remove, Attributes attrs, Location loc)
 			: base (type, mod, AllowedModifiers, name, init, attrs, loc)
 		{
@@ -3153,98 +3556,75 @@ namespace Mono.CSharp {
 
 		public override bool Define (TypeContainer parent)
 		{
-			if (!parent.MethodModifiersValid (ModFlags, Name, Location))
-				return false;
-
-			MethodAttributes m_attr = Modifiers.MethodAttr (ModFlags);
 			EventAttributes e_attr = EventAttributes.RTSpecialName | EventAttributes.SpecialName;
 
-			EventType = RootContext.LookupType (parent, Type, false, Location);
-			if (EventType == null)
+			if (!DoDefine (parent))
 				return false;
 
-			if (!TypeContainer.AsAccessible (EventType, ModFlags))
-				return false;
-
-			if (EventType.IsPointer && !UnsafeOK (parent))
-				return false;
-
-			if (!EventType.IsSubclassOf (TypeManager.delegate_type)) {
+			if (!MemberType.IsSubclassOf (TypeManager.delegate_type)) {
 				Report.Error (66, Location, "'" + parent.Name + "." + Name +
 					      "' : event must be of a delegate type");
 				return false;
 			}
-			
-			Type [] parameters = new Type [1];
-			parameters [0] = EventType;
 
-			EventBuilder = new MyEventBuilder (parent.TypeBuilder, Name, e_attr, EventType);
+			Type [] parameter_types = new Type [1];
+			parameter_types [0] = MemberType;
 
-			if (Add == null && Remove == null) {
- 				FieldBuilder = parent.TypeBuilder.DefineField (
- 					Name, EventType, FieldAttributes.FamANDAssem);
- 				TypeManager.RegisterPrivateFieldOfEvent ((EventInfo) EventBuilder, FieldBuilder);
-				TypeManager.RegisterFieldBase (FieldBuilder, this);
-			}
-			
-			//
-			// Now define the accessors
-			//
-			string add_name = "add_" + Name;
-			
-			AddBuilder = parent.TypeBuilder.DefineMethod (
-				add_name, m_attr, null, parameters);
-			AddBuilder.DefineParameter (1, ParameterAttributes.None, "value");
-			EventBuilder.SetAddOnMethod (AddBuilder);
-			if (parent.Pending != null)
-				parent.Pending.ImplementMethod (null, add_name, null, parameters, false);
-			
-			//
-			// HACK because System.Reflection.Emit is lame
-			//
 			Parameter [] parms = new Parameter [1];
 			parms [0] = new Parameter (Type, "value", Parameter.Modifier.NONE, null);
 			InternalParameters ip = new InternalParameters (
-						            parent, new Parameters (parms, null, Location)); 
-			
-			if (!TypeManager.RegisterMethod (AddBuilder, ip, parameters)) {
-				Report.Error (111, Location,
-					      "Class `" + parent.Name + "' already contains a definition with the " +
-					      "same return value and parameter types for the " +
-					      "'add' method of event `" + Name + "'");
-				return false;
-			}
+				parent, new Parameters (parms, null, Location)); 
 
-			string remove_name = "remove_" + Name;
-			RemoveBuilder = parent.TypeBuilder.DefineMethod (
-				remove_name, m_attr, null, parameters);
+			if (!CheckBase (parent))
+				return false;
+
+			//
+			// Now define the accessors
+			//
+			AddData = new MethodData (this, "add", TypeManager.void_type,
+						  parameter_types, ip, CallingConventions.Standard,
+						  (Add != null) ? Add.OptAttributes : null,
+						  ModFlags, flags, false);
+
+			if (!AddData.Define (parent))
+				return false;
+
+			AddBuilder = AddData.MethodBuilder;
+			AddBuilder.DefineParameter (1, ParameterAttributes.None, "value");
+
+			RemoveData = new MethodData (this, "remove", TypeManager.void_type,
+						     parameter_types, ip, CallingConventions.Standard,
+						     (Remove != null) ? Remove.OptAttributes : null,
+						     ModFlags, flags, false);
+
+			if (!RemoveData.Define (parent))
+				return false;
+
+			RemoveBuilder = RemoveData.MethodBuilder;
 			RemoveBuilder.DefineParameter (1, ParameterAttributes.None, "value");
-			EventBuilder.SetRemoveOnMethod (RemoveBuilder);
 
-			//
-			// This looks like dead code
-			//
-			//if (parent.Pending != null)
-			// parent.Pending.IsInterfaceMethod (null, remove_name, null, parameters, false);
-
-			//
-			// HACK because System.Reflection.Emit is lame
-			//
-
-			if (!TypeManager.RegisterMethod (RemoveBuilder, ip, parameters)) {
-				Report.Error (111, Location,	
-					      "Class `" + parent.Name + "' already contains a definition with the " +
-					      "same return value and parameter types for the " +
-					      "'remove' method of event `" + Name + "'");
-				return false;
-			}
+			if (!IsExplicitImpl){
+				EventBuilder = new MyEventBuilder (
+					parent.TypeBuilder, Name, e_attr, MemberType);
+					
+				if (Add == null && Remove == null) {
+					FieldBuilder = parent.TypeBuilder.DefineField (
+						Name, MemberType, FieldAttributes.FamANDAssem);
+					TypeManager.RegisterPrivateFieldOfEvent (
+						(EventInfo) EventBuilder, FieldBuilder);
+					TypeManager.RegisterFieldBase (FieldBuilder, this);
+				}
 			
-			if (!TypeManager.RegisterEvent (EventBuilder, AddBuilder, RemoveBuilder)) {
-				Report.Error (111, Location,
-					"Class `" + parent.Name +
-					"' already contains a definition for the event `" +
-					Name + "'");
-				return false;
+				EventBuilder.SetAddOnMethod (AddBuilder);
+				EventBuilder.SetRemoveOnMethod (RemoveBuilder);
+
+				if (!TypeManager.RegisterEvent (EventBuilder, AddBuilder, RemoveBuilder)) {
+					Report.Error (111, Location,
+						      "Class `" + parent.Name +
+						      "' already contains a definition for the event `" +
+						      Name + "'");
+					return false;
+				}
 			}
 			
 			return true;
@@ -3259,43 +3639,47 @@ namespace Mono.CSharp {
 				method = TypeManager.delegate_combine_delegate_delegate;
 			else
 				method = TypeManager.delegate_remove_delegate_delegate;
-			
-			ig.Emit (OpCodes.Ldarg_0);
-			ig.Emit (OpCodes.Ldarg_0);
-			ig.Emit (OpCodes.Ldfld, (FieldInfo) FieldBuilder);
-			ig.Emit (OpCodes.Ldarg_1);
-			ig.Emit (OpCodes.Call, method);
-			ig.Emit (OpCodes.Castclass, EventType);
-			ig.Emit (OpCodes.Stfld, (FieldInfo) FieldBuilder);
+
+			if ((ModFlags & Modifiers.STATIC) != 0) {
+				ig.Emit (OpCodes.Ldsfld, (FieldInfo) FieldBuilder);
+				ig.Emit (OpCodes.Ldarg_0);
+				ig.Emit (OpCodes.Call, method);
+				ig.Emit (OpCodes.Castclass, MemberType);
+				ig.Emit (OpCodes.Stsfld, (FieldInfo) FieldBuilder);
+			} else {
+				ig.Emit (OpCodes.Ldarg_0);
+				ig.Emit (OpCodes.Ldarg_0);
+				ig.Emit (OpCodes.Ldfld, (FieldInfo) FieldBuilder);
+				ig.Emit (OpCodes.Ldarg_1);
+				ig.Emit (OpCodes.Call, method);
+				ig.Emit (OpCodes.Castclass, MemberType);
+				ig.Emit (OpCodes.Stfld, (FieldInfo) FieldBuilder);
+			}
 			ig.Emit (OpCodes.Ret);
 		}
 
 		public void Emit (TypeContainer tc)
 		{
 			EmitContext ec;
-			ILGenerator ig;
 
-			ig = AddBuilder.GetILGenerator ();
-			ec = new EmitContext (tc, Location, ig, TypeManager.void_type, ModFlags);
-
-			if (Add != null) {
-				Attribute.ApplyAttributes (ec, AddBuilder, Add, Add.OptAttributes, Location);
-				ec.EmitTopBlock (Add.Block, Location);
-			} else
-				EmitDefaultMethod (ec, true);
-
-			ig = RemoveBuilder.GetILGenerator ();
-			ec = new EmitContext (tc, Location, ig, TypeManager.void_type, ModFlags);
-			
-			if (Remove != null) {
-				Attribute.ApplyAttributes (ec, RemoveBuilder, Remove, Remove.OptAttributes, Location);
-				ec.EmitTopBlock (Remove.Block, Location);
-			} else
-				EmitDefaultMethod (ec, false);
-
-			ec = new EmitContext (tc, Location, null, EventType, ModFlags);
+			ec = new EmitContext (tc, Location, null, MemberType, ModFlags);
 			Attribute.ApplyAttributes (ec, EventBuilder, this, OptAttributes, Location);
-			
+
+			if (Add != null)
+				AddData.Emit (tc, Add.Block, Add);
+			else {
+				ILGenerator ig = AddData.MethodBuilder.GetILGenerator ();
+				ec = new EmitContext (tc, Location, ig, TypeManager.void_type, ModFlags);
+				EmitDefaultMethod (ec, true);
+			}
+
+			if (Remove != null)
+				RemoveData.Emit (tc, Remove.Block, Remove);
+			else {
+				ILGenerator ig = RemoveData.MethodBuilder.GetILGenerator ();
+				ec = new EmitContext (tc, Location, ig, TypeManager.void_type, ModFlags);
+				EmitDefaultMethod (ec, false);
+			}
 		}
 		
 	}
@@ -3310,7 +3694,7 @@ namespace Mono.CSharp {
 	// 
 	// int this [ args ]
  
-	public class Indexer : MemberCore {
+	public class Indexer : PropertyBase {
 
 		const int AllowedModifiers =
 			Modifiers.NEW |
@@ -3325,214 +3709,71 @@ namespace Mono.CSharp {
 			Modifiers.EXTERN |
 			Modifiers.ABSTRACT;
 
-		public readonly string     Type;
-		public readonly string     InterfaceType;
-		public readonly Parameters FormalParameters;
-		public readonly Accessor   Get, Set;
-		public Attributes          OptAttributes;
-		public MethodBuilder       GetBuilder;
-		public MethodBuilder       SetBuilder;
-		public PropertyBuilder PropertyBuilder;
-	        public Type IndexerType;
 		public string IndexerName;
+		public string InterfaceIndexerName;
+
+		//
+		// Are we implementing an interface ?
+		//
+		bool IsImplementing = false;
 		
-		EmitContext ec;
-		
-		public Indexer (string type, string int_type, int flags, Parameters parms,
+		public Indexer (Expression type, string int_type, int flags, Parameters parameters,
 				Accessor get_block, Accessor set_block, Attributes attrs, Location loc)
-			: base ("", loc)
+			: base (type, "", flags, AllowedModifiers, parameters, get_block, set_block,
+				attrs, loc)
 		{
-
-			Type = type;
-			InterfaceType = int_type;
-			ModFlags = Modifiers.Check (AllowedModifiers, flags, Modifiers.PRIVATE, loc);
-			FormalParameters = parms;
-			Get = get_block;
-			Set = set_block;
-			OptAttributes = attrs;
+			ExplicitInterfaceName = int_type;
 		}
 
-		bool DefineMethod (TypeContainer parent, Type explicit_iface_type, 
-				   Type ret_type, string name,
-				   Type [] parameters, MethodAttributes attr, bool is_get)
-		{
-			MethodInfo implementing = null;
-			bool is_implementation;
-
-			if (parent.Pending != null){
-				implementing = parent.Pending.IsInterfaceMethod (
-					explicit_iface_type, name, ret_type, parameters);
-
-				if (explicit_iface_type != null && implementing == null){
-					TypeContainer.Error_ExplicitInterfaceNotMemberInterface (Location, "this");
-					return false;
-				}
-			}
-
-			is_implementation = implementing != null;
-			
-			//
-			// Setting null inside this block will trigger a more
-			// verbose error reporting for missing interface implementations
-			//
-			// The "candidate" function has been flagged already
-			// but it wont get cleared
-			//
-			if (implementing != null){
-				if (explicit_iface_type == null){
-					//
-					// We already catch different accessibility settings
-					// so we just need to check that we are not private
-					//
-					if ((ModFlags & Modifiers.PRIVATE) != 0)
-						implementing = null;
-					
-					//
-					// Static is not allowed
-					//
-					if ((ModFlags & Modifiers.STATIC) != 0)
-						implementing = null;
-				} else {
-					if((ModFlags&(Modifiers.PUBLIC | Modifiers.ABSTRACT | Modifiers.VIRTUAL)) != 0){
-						Modifiers.Error_InvalidModifier (Location, "public, virtual or abstract");
-						implementing = null;
-					}
-				}
-			}
-			if (implementing != null){
-				//
-				// When implementing interface methods, set NewSlot.
-				//
-				if (implementing.DeclaringType.IsInterface)
-					attr |= MethodAttributes.NewSlot;
-				
-				attr |=
-					MethodAttributes.Virtual |
-					MethodAttributes.HideBySig;
-
-				//
-				// clear the pending implementing flag
-				//
-				parent.Pending.ImplementMethod (
-					explicit_iface_type, name, ret_type, parameters, true);
-			}
-
-			//
-			// If this is not an explicit interface implementation,
-			// clear implementing, as it is only used for explicit
-			// interface implementation
-			//
-			if (InterfaceType == null)
-				implementing = null;
-
-			string prefix;
-			if (explicit_iface_type == null)
-				prefix = "";
-			else
-				prefix = explicit_iface_type.FullName + ".";
-			
-			if (is_get){
-				string meth_name = prefix + "get_" + IndexerName;
-				
-				GetBuilder = parent.TypeBuilder.DefineMethod (
-					meth_name, attr, IndexerType, parameters);
-
-				if (implementing != null) 
-					parent.TypeBuilder.DefineMethodOverride (
-						GetBuilder, implementing);
-			} else {
-				string meth_name = prefix + "set_" + IndexerName;
-
-				SetBuilder = parent.TypeBuilder.DefineMethod (
-				        meth_name, attr, null, parameters);
-				if (implementing != null)
-					parent.TypeBuilder.DefineMethodOverride (
-						SetBuilder, implementing);
-			}
-
-			return is_implementation;
-		}
-			
 		public override bool Define (TypeContainer parent)
 		{
 			PropertyAttributes prop_attr =
 				PropertyAttributes.RTSpecialName |
 				PropertyAttributes.SpecialName;
-			bool error = false;
 			
-			IndexerType = RootContext.LookupType (parent, Type, false, Location);
-			Type [] parameters = FormalParameters.GetParameterInfo (parent);
-
-			// Check if the return type and arguments were correct
-			if (IndexerType == null || parameters == null)
+			if (!DoDefine (parent))
 				return false;
-
-			if (!parent.MethodModifiersValid (ModFlags, InterfaceType == null ?
-							  "this" : InterfaceType, Location))
-				return false;
-
-			//
-			// verify accessibility and unsafe pointers
-			//
-			if (!TypeContainer.AsAccessible (IndexerType, ModFlags))
-				return false;
-
-			if (IndexerType.IsPointer && !UnsafeOK (parent))
-				return false;
-
-			foreach (Type partype in parameters){
-				if (!TypeContainer.AsAccessible (partype, ModFlags))
-					error = true;
-				if (partype.IsPointer && !UnsafeOK (parent))
-					error = true;
-			}
-
-			if (error)
-				return false;
-			
-			Type explicit_iface_type = null;
-
-			if (InterfaceType != null){
-				explicit_iface_type = RootContext.LookupType (parent, InterfaceType, false, Location);
-				if (explicit_iface_type == null)
-					return false;
-
-				if (!parent.VerifyImplements (explicit_iface_type, "this", "this", Location))
-					return false;
-			} 
-
-			ec = new EmitContext (parent, Location, null, IndexerType, ModFlags);
 
 			IndexerName = Attribute.ScanForIndexerName (ec, OptAttributes);
 			if (IndexerName == null)
 				IndexerName = "Item";
-			
-			MethodAttributes attr = Modifiers.MethodAttr (ModFlags);
+			else if (IsExplicitImpl)
+				Report.Error (592, Location,
+					      "Attribute 'IndexerName' is not valid on this declaration " +
+					      "type. It is valid on `property' declarations only.");
 
-			bool is_implementing = false;
-			
+			ShortName = IndexerName;
+			if (IsExplicitImpl) {
+				InterfaceIndexerName = TypeManager.IndexerPropertyName (InterfaceType);
+				Name = InterfaceType.FullName + "." + IndexerName;
+			} else {
+				InterfaceIndexerName = IndexerName;
+				Name = ShortName;
+			}
+
+			if (!CheckBase (parent))
+				return false;
+
 			if (Get != null){
-				is_implementing = DefineMethod (
-					parent, explicit_iface_type, IndexerType, "get_" + IndexerName,
-					parameters, attr, true);
-                                InternalParameters pi = new InternalParameters (parent, FormalParameters);
-				if (!TypeManager.RegisterMethod (GetBuilder, pi, parameters)) {
-					Report.Error (111, Location,
-						      "Class `" + parent.Name +
-						      "' already contains a definition with the " +
-						      "same return value and parameter types for the " +
-						      "'get' indexer");
+                                InternalParameters ip = new InternalParameters (parent, Parameters);
+
+				GetData = new MethodData (this, "get", MemberType,
+							  ParameterTypes, ip, CallingConventions.Standard,
+							  Get.OptAttributes, ModFlags, flags, false);
+
+				if (!GetData.Define (parent))
 					return false;
-				}
+
+				GetBuilder = GetData.MethodBuilder;
 			}
 			
 			if (Set != null){
-				int top = parameters.Length;
+				int top = ParameterTypes.Length;
 				Type [] set_pars = new Type [top + 1];
-				parameters.CopyTo (set_pars, 0);
-				set_pars [top] = IndexerType;
+				ParameterTypes.CopyTo (set_pars, 0);
+				set_pars [top] = MemberType;
 
-				Parameter [] fixed_parms = FormalParameters.FixedParameters;
+				Parameter [] fixed_parms = Parameters.FixedParameters;
 
 				if (fixed_parms == null){
 					throw new Exception ("We currently do not support only array arguments in an indexer");
@@ -3559,27 +3800,22 @@ namespace Mono.CSharp {
 
 				Parameters set_formal_params = new Parameters (tmp, null, Location);
 				
-				is_implementing = DefineMethod (
-					parent, explicit_iface_type, TypeManager.void_type,
-					"set_" + IndexerName, set_pars, attr, false);
-
 				InternalParameters ip = new InternalParameters (parent, set_formal_params);
-				
-				if (!TypeManager.RegisterMethod (SetBuilder, ip, set_pars)) {
-					Report.Error (
-						111, Location,
-						"Class `" + parent.Name + "' already contains a " +
-						"definition with the " +
-						"same return value and parameter types for the " +
-						"'set' indexer");
+
+				SetData = new MethodData (this, "set", TypeManager.void_type,
+							  set_pars, ip, CallingConventions.Standard,
+							  Set.OptAttributes, ModFlags, flags, false);
+
+				if (!SetData.Define (parent))
 					return false;
-				}
+
+				SetBuilder = SetData.MethodBuilder;
 			}
 
 			//
 			// Now name the parameters
 			//
-			Parameter [] p = FormalParameters.FixedParameters;
+			Parameter [] p = Parameters.FixedParameters;
 			if (p != null) {
 				int i;
 				
@@ -3597,67 +3833,39 @@ namespace Mono.CSharp {
 					SetBuilder.DefineParameter (
 						i + 1, ParameterAttributes.None, "value");
 					
-				if (i != parameters.Length) {
-					Parameter array_param = FormalParameters.ArrayParameter;
-					SetBuilder.DefineParameter (i + 1, array_param.Attributes,
-								    array_param.Name);
+				if (i != ParameterTypes.Length) {
+					Parameter array_param = Parameters.ArrayParameter;
+					SetBuilder.DefineParameter (
+						i + 1, array_param.Attributes, array_param.Name);
 				}
 			}
 
+			if (GetData != null)
+				IsImplementing = GetData.IsImplementing;
+			else if (SetData != null)
+				IsImplementing = SetData.IsImplementing;
 
 			//
-			// Only define the PropertyBuilder if we are not implementing
-			// an interface property.
+			// Define the PropertyBuilder if one of the following conditions are met:
+			// a) we're not implementing an interface indexer.
+			// b) the indexer has a different IndexerName and this is no
+			//    explicit interface implementation.
 			//
-			if (!is_implementing){
+			if (!IsExplicitImpl) {
 				PropertyBuilder = parent.TypeBuilder.DefineProperty (
-					IndexerName, prop_attr, IndexerType, parameters);
+					IndexerName, prop_attr, MemberType, ParameterTypes);
 
-				if (GetBuilder != null)
+				if (GetData != null)
 					PropertyBuilder.SetGetMethod (GetBuilder);
 
-				if (SetBuilder != null)
+				if (SetData != null)
 					PropertyBuilder.SetSetMethod (SetBuilder);
 				
-				TypeManager.RegisterProperty (PropertyBuilder, GetBuilder, SetBuilder);
+				TypeManager.RegisterIndexer (PropertyBuilder, GetBuilder, SetBuilder,
+							     ParameterTypes);
 			}
 
 			return true;
-		}
-
-		public void Emit (TypeContainer tc)
-		{
-			ILGenerator ig;
-
-			//
-			// The PropertyBuilder can be null for explicit implementations, in that
-			// case, we do not actually emit the ".property", so there is nowhere to
-			// put the attribute
-			//
-			if (PropertyBuilder != null)
-				Attribute.ApplyAttributes (
-					ec, PropertyBuilder, this, OptAttributes, Location);
-			if (Get != null)
-				Attribute.ApplyAttributes (ec, GetBuilder, Get, Get.OptAttributes, Location);
-			if (Set != null)
-				Attribute.ApplyAttributes (ec, SetBuilder, Set, Set.OptAttributes, Location);
-
-			if ((ModFlags & (Modifiers.ABSTRACT | Modifiers.EXTERN)) != 0)
-				return;
-			
-			if (Get != null){
-				ig = GetBuilder.GetILGenerator ();
-				ec = new EmitContext (tc, Location, ig, IndexerType, ModFlags);
-				
-				ec.EmitTopBlock (Get.Block, Location);
-			}
-
-			if (Set != null){
-				ig = SetBuilder.GetILGenerator ();
-				ec = new EmitContext (tc, Location, ig, null, ModFlags);
-				
-				ec.EmitTopBlock (Set.Block, Location);
-			}
 		}
 	}
 
@@ -3712,11 +3920,9 @@ namespace Mono.CSharp {
 		};
 
 		public readonly OpType OperatorType;
-		public readonly string ReturnType;
-		public readonly string FirstArgType;
-		public readonly string FirstArgName;
-		public readonly string SecondArgType;
-		public readonly string SecondArgName;
+		public readonly Expression ReturnType;
+		public readonly Expression FirstArgType, SecondArgType;
+		public readonly string FirstArgName, SecondArgName;
 		public readonly Block  Block;
 		public Attributes      OptAttributes;
 		public MethodBuilder   OperatorMethodBuilder;
@@ -3724,8 +3930,10 @@ namespace Mono.CSharp {
 		public string MethodName;
 		public Method OperatorMethod;
 
-		public Operator (OpType type, string ret_type, int flags, string arg1type, string arg1name,
-				 string arg2type, string arg2name, Block block, Attributes attrs, Location loc)
+		public Operator (OpType type, Expression ret_type, int flags,
+				 Expression arg1type, string arg1name,
+				 Expression arg2type, string arg2name,
+				 Block block, Attributes attrs, Location loc)
 			: base ("", loc)
 		{
 			OperatorType = type;
@@ -3773,7 +3981,8 @@ namespace Mono.CSharp {
 			OperatorMethod = new Method (ReturnType, ModFlags, MethodName,
 						     new Parameters (param_list, null, Location),
 						     OptAttributes, Mono.CSharp.Location.Null);
-			
+
+			OperatorMethod.IsOperator = true;			
 			OperatorMethod.Define (parent);
 
 			if (OperatorMethod.MethodBuilder == null)
@@ -3781,7 +3990,7 @@ namespace Mono.CSharp {
 			
 			OperatorMethodBuilder = OperatorMethod.MethodBuilder;
 
-			Type [] param_types = OperatorMethod.ParameterTypes (parent);
+			Type [] param_types = OperatorMethod.ParameterTypes;
 			Type declaring_type = OperatorMethodBuilder.DeclaringType;
 			Type return_type = OperatorMethod.GetReturnType (parent);
 			Type first_arg_type = param_types [0];
@@ -3916,12 +4125,22 @@ namespace Mono.CSharp {
 		///   from the current assembly and class
 		/// </summary>
 		public static MemberFilter inheritable_method_signature_filter;
+
+		/// <summary>
+		///   This delegate is used to extract inheritable methods which
+		///   have the same signature as the argument.  By inheritable,
+		///   this means that we have permissions to override the method
+		///   from the current assembly and class
+		/// </summary>
+		public static MemberFilter inheritable_property_signature_filter;
 		
 		static MethodSignature ()
 		{
 			method_signature_filter = new MemberFilter (MemberSignatureCompare);
 			inheritable_method_signature_filter = new MemberFilter (
 				InheritableMemberSignatureCompare);
+			inheritable_property_signature_filter = new MemberFilter (
+				InheritablePropertySignatureCompare);
 		}
 		
 		public MethodSignature (string name, Type ret_type, Type [] parameters)
@@ -3972,27 +4191,35 @@ namespace Mono.CSharp {
 
 		static bool MemberSignatureCompare (MemberInfo m, object filter_criteria)
 		{
-			MethodInfo mi;
-
-			if (! (m is MethodInfo))
-				return false;
-
 			MethodSignature sig = (MethodSignature) filter_criteria;
 
 			if (m.Name != sig.Name)
 				return false;
-			
-			mi = (MethodInfo) m;
 
+			Type ReturnType;
+			MethodInfo mi = m as MethodInfo;
+			PropertyInfo pi = m as PropertyInfo;
+
+			if (mi != null)
+				ReturnType = mi.ReturnType;
+			else if (pi != null)
+				ReturnType = pi.PropertyType;
+			else
+				return false;
+			
 			//
 			// we use sig.RetType == null to mean `do not check the
 			// method return value.  
 			//
 			if (sig.RetType != null)
-				if (mi.ReturnType != sig.RetType)
+				if (ReturnType != sig.RetType)
 					return false;
 
-			Type [] args = TypeManager.GetArgumentTypes (mi);
+			Type [] args;
+			if (mi != null)
+				args = TypeManager.GetArgumentTypes (mi);
+			else
+				args = TypeManager.GetArgumentTypes (pi);
 			Type [] sigp = sig.Parameters;
 
 			if (args.Length != sigp.Length)
@@ -4040,5 +4267,46 @@ namespace Mono.CSharp {
 			}
 			return false;
 		}
-	}		
+
+		//
+		// This filter should be used when we are requesting properties that
+		// we want to override.
+		//
+		// This makes a number of assumptions, for example
+		// that the methods being extracted are of a parent
+		// class (this means we know implicitly that we are
+		// being called to find out about members by a derived
+		// class).
+		// 
+		static bool InheritablePropertySignatureCompare (MemberInfo m, object filter_criteria)
+		{
+		        if (MemberSignatureCompare (m, filter_criteria)){
+				PropertyInfo pi = (PropertyInfo) m;
+
+				MethodInfo inherited_get = TypeManager.GetPropertyGetter (pi);
+				MethodInfo inherited_set = TypeManager.GetPropertySetter (pi);
+
+				MethodInfo mi = inherited_get == null ? inherited_set : inherited_get;
+
+				MethodAttributes prot = mi.Attributes & MethodAttributes.MemberAccessMask;
+
+				// If only accessible to the current class.
+				if (prot == MethodAttributes.Private)
+					return false;
+
+				// If only accessible to the defining assembly or 
+				if (prot == MethodAttributes.FamANDAssem ||
+				    prot == MethodAttributes.Assembly){
+					if (m.DeclaringType.Assembly == CodeGen.AssemblyBuilder)
+						return true;
+					else
+						return false;
+				}
+
+				// Anything else (FamOrAssembly and Public) is fine
+				return true;
+			}
+			return false;
+		}
+	}
 }

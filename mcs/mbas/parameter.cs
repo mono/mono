@@ -23,19 +23,21 @@ namespace Mono.CSharp {
 	public class Parameter {
 		[Flags]
 		public enum Modifier : byte {
-			NONE   = 0,
-			REF    = 1,
-			OUT    = 2,
-			PARAMS = 4,
+			NONE    = 0,
+			REF     = 1,
+			OUT     = 2,
+			PARAMS  = 4,
+			// This is a flag which says that it's either REF or OUT.
+			ISBYREF = 8
 		}
 
-		public readonly string   TypeName;
-		public readonly string   Name;
+		public readonly Expression TypeName;
 		public readonly Modifier ModFlags;
 		public Attributes OptAttributes;
+		public readonly string Name;
 		public Type parameter_type;
 		
-		public Parameter (string type, string name, Modifier mod, Attributes attrs)
+		public Parameter (Expression type, string name, Modifier mod, Attributes attrs)
 		{
 			Name = name;
 			ModFlags = mod;
@@ -48,7 +50,7 @@ namespace Mono.CSharp {
 		// </summary>
 		public bool Resolve (DeclSpace ds, Location l)
 		{
-			parameter_type = RootContext.LookupType (ds, TypeName, false, l);
+			parameter_type = ds.ResolveType (TypeName, false, l);
 			return parameter_type != null;
 		}
 
@@ -58,13 +60,14 @@ namespace Mono.CSharp {
 		// </summary>
 		public bool ResolveAndDefine (DeclSpace ds)
 		{
-			parameter_type = ds.FindType (TypeName);
+			// FIXME: Should use something else instead of Location.Null
+			parameter_type = ds.ResolveType (TypeName, true, Location.Null);
 			return parameter_type != null;
 		}
 		
 		public Type ExternalType (DeclSpace ds, Location l)
 		{
-			if ((ModFlags & (Parameter.Modifier.REF | Parameter.Modifier.OUT)) != 0){
+			if ((ModFlags & Parameter.Modifier.ISBYREF) != 0){
 				string n = parameter_type.FullName + "&";
 
 				Type t = RootContext.LookupType (ds, n, false, l);
@@ -136,12 +139,13 @@ namespace Mono.CSharp {
 		///   This is used to reuse a set of empty parameters, because they
 		///   are common
 		/// </summary>
-		public static Parameters GetEmptyReadOnlyParameters ()
-		{
-			if (empty_parameters == null)
-				empty_parameters = new Parameters (null, null, Location.Null);
+		public static Parameters EmptyReadOnlyParameters {
+			get {
+				if (empty_parameters == null)
+					empty_parameters = new Parameters (null, null, Location.Null);
 			
-			return empty_parameters;
+				return empty_parameters;
+			}
 		}
 		
 		public bool Empty {
@@ -371,9 +375,9 @@ namespace Mono.CSharp {
 		///   Note that the returned type will not contain any dereference in this
 		///   case (ie, you get "int" for a ref int instead of "int&"
 		/// </summary>
-		public Type GetParameterInfo (DeclSpace ds, int idx, out bool is_out)
+		public Type GetParameterInfo (DeclSpace ds, int idx, out Parameter.Modifier mod)
 		{
-			is_out = false;
+			mod = Parameter.Modifier.NONE;
 			
 			if (!VerifyArgs ()){
 				FixedParameters = null;
@@ -384,25 +388,24 @@ namespace Mono.CSharp {
 				return null;
 			
 			if (types == null)
-				if (ComputeParameterTypes (ds) == false){
-					is_out = false;
+				if (ComputeParameterTypes (ds) == false)
 					return null;
-				}
 
 			//
 			// If this is a request for the variable lenght arg.
 			//
 			int array_idx = (FixedParameters != null ? FixedParameters.Length : 0);
-			if (idx == array_idx){
-				is_out = false;
+			if (idx == array_idx)
 				return types [idx];
-			} 
 
 			//
 			// Otherwise, it is a fixed parameter
 			//
 			Parameter p = FixedParameters [idx];
-			is_out = ((p.ModFlags & (Parameter.Modifier.REF | Parameter.Modifier.OUT)) != 0);
+			mod = p.ModFlags;
+
+			if ((mod & (Parameter.Modifier.REF | Parameter.Modifier.OUT)) != 0)
+				mod |= Parameter.Modifier.ISBYREF;
 
 			return p.ParameterType;
 		}

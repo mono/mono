@@ -10,6 +10,7 @@
 // FIXME: currently our class library does not support custom number format strings
 //
 using System;
+using System.Text;
 using System.Collections;
 using System.Diagnostics;
 
@@ -155,6 +156,41 @@ namespace Mono.CSharp {
                                 return expected_error;
                         }
                 }
+
+		public static int DebugFlags = 0;
+
+		[Conditional ("MCS_DEBUG")]
+		static public void Debug (string message, params object[] args)
+		{
+			Debug (4, message, args);
+		}
+			
+		[Conditional ("MCS_DEBUG")]
+		static public void Debug (int category, string message, params object[] args)
+		{
+			if ((category & DebugFlags) == 0)
+				return;
+
+			StringBuilder sb = new StringBuilder (message);
+
+			if ((args != null) && (args.Length > 0)) {
+				sb.Append (": ");
+
+				bool first = true;
+				foreach (object arg in args) {
+					if (first)
+						first = false;
+					else
+						sb.Append (",");
+					if (arg == null)
+						sb.Append ("null");
+					else
+						sb.Append (arg);
+				}
+			}
+
+			Console.WriteLine (sb.ToString ());
+		}
 	}
 
 	public class Message {

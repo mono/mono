@@ -30,6 +30,11 @@ namespace Mono.CSharp {
 		// because it was private, we could not use the match
 		//
 		public bool []       found;
+
+		// If a method is defined here, then we always need to
+		// create a proxy for it.  This is used when implementing
+		// an interface's indexer with a different IndexerName.
+		public MethodInfo [] need_proxy;
 	}
 
 	public class PendingImplementation {
@@ -147,6 +152,7 @@ namespace Mono.CSharp {
 					pending_implementations [i].methods = mi;
 					pending_implementations [i].args = new Type [count][];
 					pending_implementations [i].found = new bool [count];
+					pending_implementations [i].need_proxy = new MethodInfo [count];
 
 					int j = 0;
 					foreach (MethodInfo m in mi){
@@ -162,6 +168,7 @@ namespace Mono.CSharp {
 			if (abstract_methods != null){
 				int count = abstract_methods.Count;
 				pending_implementations [i].methods = new MethodInfo [count];
+				pending_implementations [i].need_proxy = new MethodInfo [count];
 				
 				abstract_methods.CopyTo (pending_implementations [i].methods, 0);
 				pending_implementations [i].found = new bool [count];
@@ -253,18 +260,30 @@ namespace Mono.CSharp {
 			//
 			Lookup, ClearOne, ClearAll
 		}
-		
+
 		/// <summary>
 		///   Whether the specified method is an interface method implementation
 		/// </summary>
 		public MethodInfo IsInterfaceMethod (Type t, string name, Type ret_type, Type [] args)
 		{
-			return InterfaceMethod (t, name, ret_type, args, Operation.Lookup);
+			return InterfaceMethod (t, name, ret_type, args, Operation.Lookup, null);
+		}
+
+		public MethodInfo IsInterfaceIndexer (Type t, Type ret_type, Type [] args)
+		{
+			return InterfaceMethod (t, null, ret_type, args, Operation.Lookup, null);
 		}
 
 		public void ImplementMethod (Type t, string name, Type ret_type, Type [] args, bool clear_one) 
 		{
-			InterfaceMethod (t, name, ret_type, args, clear_one ? Operation.ClearOne : Operation.ClearAll);
+			InterfaceMethod (t, name, ret_type, args,
+					 clear_one ? Operation.ClearOne : Operation.ClearAll, null);
+		}
+
+		public void ImplementIndexer (Type t, MethodInfo mi, Type ret_type, Type [] args, bool clear_one) 
+		{
+			InterfaceMethod (t, mi.Name, ret_type, args,
+					 clear_one ? Operation.ClearOne : Operation.ClearAll, mi);
 		}
 		
 		/// <remarks>
@@ -273,10 +292,19 @@ namespace Mono.CSharp {
 		///   arguments `args' implements an interface, this method will
 		///   return the MethodInfo that this method implements.
 		///
+		///   If `name' is null, we operate solely on the method's signature.  This is for
+		///   instance used when implementing indexers.
+		///
 		///   The `Operation op' controls whether to lookup, clear the pending bit, or clear
 		///   all the methods with the given signature.
+		///
+		///   The `MethodInfo need_proxy' is used when we're implementing an interface's
+		///   indexer in a class.  If the new indexer's IndexerName does not match the one
+		///   that was used in the interface, then we always need to create a proxy for it.
+		///
 		/// </remarks>
-		public MethodInfo InterfaceMethod (Type t, string name, Type ret_type, Type [] args, Operation op)
+		public MethodInfo InterfaceMethod (Type t, string name, Type ret_type, Type [] args,
+						   Operation op, MethodInfo need_proxy)
 		{
 			int arg_len = args.Length;
 
@@ -294,7 +322,12 @@ namespace Mono.CSharp {
 						continue;
 					}
 
-					if (name != m.Name){
+					// `need_proxy' is not null when we're implementing an
+					// interface indexer and this is Clear(One/All) operation.
+					// If `name' is null, then we do a match solely based on the
+					// signature and not on the name (this is done in the Lookup
+					// for an interface indexer).
+					if ((name != null) && (need_proxy == null) && (name != m.Name)){
 						i++;
 						continue;
 					}
@@ -330,8 +363,18 @@ namespace Mono.CSharp {
 						continue;
 					}
 
-					if (op != Operation.Lookup)
-						tm.methods [i] = null;
+					if (op != Operation.Lookup){
+						// If `t != null', then this is an explicitly interface
+						// implementation and we can always clear the method.
+						// `need_proxy' is not null if we're implementing an
+						// interface indexer.  In this case, we need to create
+						// a proxy if the implementation's IndexerName doesn't
+						// match the IndexerName in the interface.
+						if ((t == null) && (need_proxy != null) && (name != m.Name))
+							tm.need_proxy [i] = need_proxy;
+						else
+							tm.methods [i] = null;
+					}
 					tm.found [i] = true;
 
 					//
@@ -412,11 +455,11 @@ namespace Mono.CSharp {
 
 			if (list == null || list.Length == 0)
 				return false;
-			
+
 			DefineProxy (iface_type, (MethodInfo) list [0], mi, args);
 			return true;
 		}
-		
+
 		/// <summary>
 		///   Verifies that any pending abstract methods or interface methods
 		///   were implemented.
@@ -436,9 +479,18 @@ namespace Mono.CSharp {
 						continue;
 
 					if (type.IsInterface){
+						MethodInfo need_proxy =
+							pending_implementations [i].need_proxy [j];
+
+						if (need_proxy != null) {
+							Type [] args = TypeManager.GetArgumentTypes (mi);
+							DefineProxy (type, need_proxy, mi, args);
+							continue;
+						}
+
 						if (ParentImplements (type, mi))
 							continue;
- 
+
 						string extra = "";
 						
 						if (pending_implementations [i].found [j])

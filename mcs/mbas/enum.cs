@@ -20,9 +20,9 @@ namespace Mono.CSharp {
 	///   Enumeration container
 	/// </summary>
 	public class Enum : DeclSpace {
-
 		ArrayList ordered_enums;
-		public readonly string BaseType;
+		
+		public Expression BaseType;
 		public Attributes  OptAttributes;
 		
 		public Type UnderlyingType;
@@ -34,6 +34,11 @@ namespace Mono.CSharp {
 		// This is for members that have been defined
 		//
 		Hashtable member_to_value;
+
+		//
+		// This is used to mark members we're currently defining
+		//
+		Hashtable in_transit;
 		
 		ArrayList field_builders;
 		
@@ -44,16 +49,18 @@ namespace Mono.CSharp {
 			Modifiers.INTERNAL |
 			Modifiers.PRIVATE;
 
-		public Enum (TypeContainer parent, string type, int mod_flags, string name, Attributes attrs, Location l)
+		public Enum (TypeContainer parent, Expression type, int mod_flags, string name, Attributes attrs, Location l)
 			: base (parent, name, l)
 		{
 			this.BaseType = type;
-			ModFlags = Modifiers.Check (AllowedModifiers, mod_flags, Modifiers.PUBLIC, l);
+			ModFlags = Modifiers.Check (AllowedModifiers, mod_flags,
+						    IsTopLevel ? Modifiers.INTERNAL : Modifiers.PRIVATE, l);
 			OptAttributes = attrs;
 
 			ordered_enums = new ArrayList ();
 			member_to_location = new Hashtable ();
 			member_to_value = new Hashtable ();
+			in_transit = new Hashtable ();
 			field_builders = new ArrayList ();
 		}
 
@@ -117,9 +124,11 @@ namespace Mono.CSharp {
 			if (TypeBuilder != null)
 				return TypeBuilder;
 
-			TypeAttributes attr = TypeAttributes.Class | TypeAttributes.Sealed;
+			TypeAttributes attr = Modifiers.TypeAttr (ModFlags, IsTopLevel);
 
-			UnderlyingType = TypeManager.LookupType (BaseType);
+			attr |= TypeAttributes.Class | TypeAttributes.Sealed;
+
+			UnderlyingType = ResolveType (BaseType, false, Location);
 
 			if (UnderlyingType != TypeManager.int32_type &&
 			    UnderlyingType != TypeManager.uint32_type &&
@@ -139,21 +148,10 @@ namespace Mono.CSharp {
 			if (IsTopLevel) {
 				ModuleBuilder builder = CodeGen.ModuleBuilder;
 
-				if ((ModFlags & Modifiers.PUBLIC) != 0)
-					attr |= TypeAttributes.Public;
-				else
-					attr |= TypeAttributes.NotPublic;
-				
 				TypeBuilder = builder.DefineType (Name, attr, TypeManager.enum_type);
 			} else {
 				TypeBuilder builder = Parent.TypeBuilder;
 
-				if ((ModFlags & Modifiers.PUBLIC) != 0)
-					attr |= TypeAttributes.NestedPublic;
-				else
-					attr |= TypeAttributes.NestedPrivate;
-
-				
 				TypeBuilder = builder.DefineNestedType (
 					Basename, attr, TypeManager.enum_type);
 			}
@@ -280,6 +278,12 @@ namespace Mono.CSharp {
 			if (!defined_names.Contains (name))
 				return null;
 
+			if (in_transit.Contains (name)) {
+				Report.Error (110, loc, "The evaluation of the constant value for `" +
+					      Name + "." + name + "' involves a circular definition.");
+				return null;
+			}
+
 			//
 			// So if the above doesn't happen, we have a member that is undefined
 			// We now proceed to define it 
@@ -297,7 +301,11 @@ namespace Mono.CSharp {
 						string n = (string) ordered_enums [i];
 						Location m_loc = (Mono.CSharp.Location)
 							member_to_location [n];
+						in_transit.Add (name, true);
 						default_value = LookupEnumValue (ec, n, m_loc);
+						in_transit.Remove (name);
+						if (default_value == null)
+							return null;
 					}
 					
 					default_value = GetNextDefaultValue (default_value);
@@ -306,13 +314,13 @@ namespace Mono.CSharp {
 			} else {
 				bool old = ec.InEnumContext;
 				ec.InEnumContext = true;
+				in_transit.Add (name, true);
 				val = val.Resolve (ec);
+				in_transit.Remove (name);
 				ec.InEnumContext = old;
 				
-				if (val == null) {
-					Report.Error (-12, loc, "Definition is circular.");
+				if (val == null)
 					return null;
-				}
 
 				if (IsValidEnumConstant (val)) {
 					c = (Constant) val;

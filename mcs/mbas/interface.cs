@@ -44,8 +44,11 @@ namespace Mono.CSharp {
 
 		ArrayList method_builders;
 		ArrayList property_builders;
+		ArrayList event_builders;
 		
 		Attributes OptAttributes;
+
+		public string IndexerName;
 
 		// These will happen after the semantic analysis
 		
@@ -71,6 +74,7 @@ namespace Mono.CSharp {
 			
 			method_builders = new ArrayList ();
 			property_builders = new ArrayList ();
+			event_builders = new ArrayList ();
 		}
 
 		public AdditionResult AddMethod (InterfaceMethod imethod)
@@ -248,6 +252,12 @@ namespace Mono.CSharp {
 				                members.Add (pb);
 			}
 
+			if ((mt & MemberTypes.Event) != 0) {
+				foreach (MyEventBuilder eb in event_builders)
+				        if (filter (eb, criteria))
+				                members.Add (eb);
+			}
+
 			if (((bf & BindingFlags.DeclaredOnly) == 0) && (TypeBuilder.BaseType != null)) {
 				MemberInfo [] parent_mi;
 				
@@ -276,7 +286,7 @@ namespace Mono.CSharp {
 		//
 		void PopulateMethod (TypeContainer parent, DeclSpace decl_space, InterfaceMethod im)
 		{
-			Type return_type = RootContext.LookupType (this, im.ReturnType, false, im.Location);
+			Type return_type = this.ResolveType (im.ReturnType, false, im.Location);
 			Type [] arg_types = im.ParameterTypes (this);
 			MethodBuilder mb;
 			Parameter [] p;
@@ -338,7 +348,8 @@ namespace Mono.CSharp {
 		{
 			PropertyBuilder pb;
 			MethodBuilder get = null, set = null;
-			Type prop_type = RootContext.LookupType (this, ip.Type, false, ip.Location);
+			ip.Type = this.ResolveTypeExpr (ip.Type, false, ip.Location);
+			Type prop_type = ip.Type.Type;
 			Type [] setter_args = new Type [1];
 
 			if (prop_type == null)
@@ -367,7 +378,7 @@ namespace Mono.CSharp {
 				//
 				Type [] null_types = null;
 				InternalParameters inp = new InternalParameters
-					(null_types, Parameters.GetEmptyReadOnlyParameters ());
+					(null_types, Parameters.EmptyReadOnlyParameters);
 				
 				if (!RegisterMethod (get, inp, null)) {
 					Error111 (ip);
@@ -420,6 +431,63 @@ namespace Mono.CSharp {
 		        // FIXME: We need to do this after delegates have been
 			// declared or we declare them recursively.
 			//
+			MyEventBuilder eb;
+			MethodBuilder add = null, remove = null;
+			ie.Type = this.ResolveTypeExpr (ie.Type, false, ie.Location);
+			Type event_type = ie.Type.Type;
+
+			if (event_type == null)
+				return;
+
+			if (event_type.IsPointer && !UnsafeOK (this))
+				return;
+
+			Type [] parameters = new Type [1];
+			parameters [0] = event_type;
+
+			eb = new MyEventBuilder (TypeBuilder, ie.Name,
+						 EventAttributes.None, event_type);
+
+			//
+			// Now define the accessors
+			//
+			string add_name = "add_" + ie.Name;
+			
+			add = TypeBuilder.DefineMethod (
+				add_name, property_attributes, null, parameters);
+			add.DefineParameter (1, ParameterAttributes.None, "value");
+			eb.SetAddOnMethod (add);
+
+			string remove_name = "remove_" + ie.Name;
+			remove = TypeBuilder.DefineMethod (
+				remove_name, property_attributes, null, parameters);
+			remove.DefineParameter (1, ParameterAttributes.None, "value");
+			eb.SetRemoveOnMethod (remove);
+
+			Parameter [] parms = new Parameter [1];
+			parms [0] = new Parameter (ie.Type, "value", Parameter.Modifier.NONE, null);
+			InternalParameters ip = new InternalParameters (
+				this, new Parameters (parms, null, Location.Null));
+
+			if (!RegisterMethod (add, ip, parameters)) {
+				Error111 (ie);
+				return;
+			}
+			
+			if (!RegisterMethod (remove, ip, parameters)) {
+				Error111 (ie);
+				return;
+			}
+
+			EmitContext ec = new EmitContext (parent, decl_space, Location, null,
+							  null, ModFlags, false);
+
+
+			if (ie.OptAttributes != null)
+				Attribute.ApplyAttributes (ec, eb, ie, ie.OptAttributes, Location);
+
+			TypeManager.RegisterEvent (eb, add, remove);
+			event_builders.Add (eb);
 		}
 
 		//
@@ -428,7 +496,8 @@ namespace Mono.CSharp {
 		void PopulateIndexer (TypeContainer parent, DeclSpace decl_space, InterfaceIndexer ii)
 		{
 			PropertyBuilder pb;
-			Type prop_type = RootContext.LookupType (this, ii.Type, false, ii.Location);
+			ii.Type = this.ResolveTypeExpr (ii.Type, false, ii.Location);
+			Type prop_type = ii.Type.Type;
 			Type [] arg_types = ii.ParameterTypes (this);
 			Type [] value_arg_types;
 
@@ -458,8 +527,15 @@ namespace Mono.CSharp {
 				value_arg_types [1] = prop_type;
 			}
 
+			EmitContext ec = new EmitContext (parent, decl_space, Location, null,
+							  null, ModFlags, false);
+
+			IndexerName = Attribute.ScanForIndexerName (ec, ii.OptAttributes);
+			if (IndexerName == null)
+				IndexerName = "Item";
+			
 			pb = TypeBuilder.DefineProperty (
-				"Item", PropertyAttributes.None,
+				IndexerName, PropertyAttributes.None,
 				prop_type, arg_types);
 			
 			MethodBuilder set_item = null, get_item = null;
@@ -467,7 +543,8 @@ namespace Mono.CSharp {
 				Parameter [] p = ii.Parameters.FixedParameters;
 				
 				get_item = TypeBuilder.DefineMethod (
-					"get_Item", property_attributes, prop_type, arg_types);
+					"get_" + IndexerName, property_attributes,
+					prop_type, arg_types);
 				pb.SetGetMethod (get_item);
 				//
 				// HACK because System.Reflection.Emit is lame
@@ -500,7 +577,7 @@ namespace Mono.CSharp {
 				value_params.GetParameterInfo (decl_space);
 				
 				set_item = TypeBuilder.DefineMethod (
-					"set_Item", property_attributes,
+					"set_" + IndexerName, property_attributes,
 					TypeManager.void_type, value_arg_types);
 				pb.SetSetMethod (set_item);
 				//
@@ -522,9 +599,6 @@ namespace Mono.CSharp {
 				
 				set_item.DefineParameter (i + 1, ParameterAttributes.None, "value");
 			}
-
-			EmitContext ec = new EmitContext (parent, decl_space, Location, null,
-							  null, ModFlags, false);
 
 			if (ii.OptAttributes != null)
 				Attribute.ApplyAttributes (ec, pb, ii, ii.OptAttributes, Location);
@@ -568,8 +642,11 @@ namespace Mono.CSharp {
 		{
 			Type t = FindType (name);
 
-			if (t == null)
+			if (t == null) {
+				Report.Error (246, Location, "The type or namespace `" + name +
+					      "' could not be found");
 				return null;
+			}
 			
 			if (t.IsInterface)
 				return t;
@@ -615,7 +692,14 @@ namespace Mono.CSharp {
 					error = true;
 					return null;
 				}
-				
+
+				if (!Parent.AsAccessible (t, ModFlags))
+					Report.Error (61, Location,
+						      "Inconsistent accessibility: base interface `" +
+						      TypeManager.CSharpName (t) + "' is less " +
+						      "accessible than interface `" +
+						      Name + "'");
+
 				tbases [i++] = t;
 			}
 			
@@ -677,6 +761,40 @@ namespace Mono.CSharp {
 			
 			return TypeBuilder;
 		}
+
+		//
+		// Defines the indexers, and also verifies that the IndexerNameAttribute in the
+		// interface is consistent.  Either it is `Item' or it is the name defined by all the
+		// indexers with the `IndexerName' attribute.
+		//
+		// Turns out that the IndexerNameAttribute is applied to each indexer,
+		// but it is never emitted, instead a DefaultName attribute is attached
+		// to the interface
+		//
+		void DefineIndexers (TypeContainer parent)
+		{
+			string interface_indexer_name = null;
+
+			foreach (InterfaceIndexer ii in defined_indexer){
+
+				PopulateIndexer (parent, this, ii);
+
+				if (interface_indexer_name == null){
+					interface_indexer_name = IndexerName;
+					continue;
+				}
+				
+				if (IndexerName == interface_indexer_name)
+					continue;
+				
+				Report.Error (
+					668, "Two indexers have different names, " +
+					" you should use the same name for all your indexers");
+			}
+			if (interface_indexer_name == null)
+				interface_indexer_name = "Item";
+			IndexerName = interface_indexer_name;
+		}
 		
 		/// <summary>
 		///   Performs semantic analysis, and then generates the IL interfaces
@@ -700,15 +818,11 @@ namespace Mono.CSharp {
 				foreach (InterfaceEvent ie in defined_events)
 					PopulateEvent (parent, this, ie);
 
-			//
-			// FIXME: Pull the right indexer name out of the `IndexerName' attribute
-			//
 			if (defined_indexer != null) {
-				foreach (InterfaceIndexer ii in defined_indexer)
-					PopulateIndexer (parent, this, ii);
+				DefineIndexers (parent);
 
 				CustomAttributeBuilder cb = EmitDefaultMemberAttr (
-					parent, "Item", ModFlags, Location);
+					parent, IndexerName, ModFlags, Location);
 				if (cb != null)
 					TypeBuilder.SetCustomAttribute (cb);
  			}
@@ -767,11 +881,10 @@ namespace Mono.CSharp {
 	public class InterfaceProperty : InterfaceMemberBase {
 		public readonly bool HasSet;
 		public readonly bool HasGet;
-		public readonly string Type;
-		public readonly string type;
 		public readonly Location Location;
+		public Expression Type;
 		
-		public InterfaceProperty (string type, string name,
+		public InterfaceProperty (Expression type, string name,
 					  bool is_new, bool has_get, bool has_set,
 					  Attributes attrs, Location loc)
 			: base (name, is_new, attrs)
@@ -784,21 +897,24 @@ namespace Mono.CSharp {
 	}
 
 	public class InterfaceEvent : InterfaceMemberBase {
-		public readonly string Type;
+		public readonly Location Location;
+		public Expression Type;
 		
-		public InterfaceEvent (string type, string name, bool is_new, Attributes attrs)
+		public InterfaceEvent (Expression type, string name, bool is_new, Attributes attrs,
+				       Location loc)
 			: base (name, is_new, attrs)
 		{
 			Type = type;
+			Location = loc;
 		}
 	}
 	
 	public class InterfaceMethod : InterfaceMemberBase {
-		public readonly string     ReturnType;
+		public readonly Expression ReturnType;
 		public readonly Parameters Parameters;
 		public readonly Location Location;
 		
-		public InterfaceMethod (string return_type, string name, bool is_new, Parameters args,
+		public InterfaceMethod (Expression return_type, string name, bool is_new, Parameters args,
 					Attributes attrs, Location l)
 			: base (name, is_new, attrs)
 		{
@@ -812,7 +928,7 @@ namespace Mono.CSharp {
 		/// </summary>
 		public string GetSignature (DeclSpace ds)
 		{
-			Type ret = RootContext.LookupType (ds, ReturnType, false, Location);
+			Type ret = ds.ResolveType (ReturnType, false, Location);
 			string args = Parameters.GetSignature (ds);
 
 			if ((ret == null) || (args == null))
@@ -830,10 +946,10 @@ namespace Mono.CSharp {
 	public class InterfaceIndexer : InterfaceMemberBase {
 		public readonly bool HasGet, HasSet;
 		public readonly Parameters Parameters;
-		public readonly string Type;
 		public readonly Location Location;
+		public Expression Type;
 		
-		public InterfaceIndexer (string type, Parameters args, bool do_get, bool do_set,
+		public InterfaceIndexer (Expression type, Parameters args, bool do_get, bool do_set,
 					 bool is_new, Attributes attrs, Location loc)
 			: base ("", is_new, attrs)
 		{
