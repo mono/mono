@@ -18,13 +18,13 @@ namespace System.Xml.Serialization {
 		CodeCompileUnit codeCompileUnit;
 		CodeAttributeDeclarationCollection includeMetadata;
 		XmlTypeMapping exportedAnyType = null;
-		bool encodedFormat;
+		protected bool includeArrayTypes;
 
 		Hashtable exportedMaps = new Hashtable ();
+		Hashtable includeMaps = new Hashtable ();
 
 		public MapCodeGenerator (CodeNamespace codeNamespace, CodeCompileUnit codeCompileUnit)
 		{
-			includeMetadata = new CodeAttributeDeclarationCollection ();
 			this.codeCompileUnit = codeCompileUnit;
 			this.codeNamespace = codeNamespace;
 		}
@@ -33,15 +33,23 @@ namespace System.Xml.Serialization {
 		{
 			get 
 			{ 
+				if (includeMetadata != null) return includeMetadata;
+				includeMetadata = new CodeAttributeDeclarationCollection ();
+				
 				if (exportedAnyType != null)
 				{
 					foreach (XmlTypeMapping map in exportedAnyType.DerivedTypes) 
 					{
-						if (IsMapExported (map)) continue;
+						if (IsMapExported (map) || !map.IncludeInSchema) continue;
 						ExportTypeMapping (map);
 						GenerateClassInclude (includeMetadata, map);
 					}
 				}
+				else {
+					foreach (XmlTypeMapping map in includeMaps.Values)
+						GenerateClassInclude (includeMetadata, map);
+				}
+				
 				return includeMetadata; 
 			}
 		}
@@ -57,6 +65,7 @@ namespace System.Xml.Serialization {
 		public void ExportTypeMapping (XmlTypeMapping xmlTypeMapping)
 		{
 			ExportMapCode (xmlTypeMapping);
+			RemoveInclude (xmlTypeMapping);
 		}
 
 		void ExportMapCode (XmlTypeMapping map)
@@ -119,7 +128,10 @@ namespace System.Xml.Serialization {
 			{
 				CodeTypeReference ctr = new CodeTypeReference (map.BaseMap.TypeData.FullTypeName);
 				codeClass.BaseTypes.Add (ctr);
-				ExportMapCode (map.BaseMap);
+				if (map.BaseMap.IncludeInSchema) {
+					ExportMapCode (map.BaseMap);
+					AddInclude (map.BaseMap);
+				}
 			}
 
 			ExportDerivedTypes (map, codeClass, false);
@@ -133,7 +145,7 @@ namespace System.Xml.Serialization {
 					codeClass.CustomAttributes = new CodeAttributeDeclarationCollection ();
 
 				GenerateClassInclude (codeClass.CustomAttributes, tm);
-				if (!onlyIncludes) ExportMapCode (tm);
+				if (!onlyIncludes && tm.IncludeInSchema) ExportMapCode (tm);
 				ExportDerivedTypes (tm, codeClass, onlyIncludes);
 			}
 		}
@@ -194,21 +206,21 @@ namespace System.Xml.Serialization {
 			}
 		}
 
-		CodeMemberField CreateFieldMember (TypeData type, string name, object defaultValue, string comments)
+		CodeMemberField CreateFieldMember (XmlTypeMapMember member)
 		{
-			CodeMemberField codeField = new CodeMemberField (GetDomType (type), name);
+			CodeMemberField codeField = new CodeMemberField (GetDomType (member.TypeData), member.Name);
 			codeField.Attributes = MemberAttributes.Public;
-			AddComments (codeField, comments);
+			AddComments (codeField, member.Documentation);
 
-			if (defaultValue != System.DBNull.Value)
-				GenerateDefaultAttribute (codeField, type, defaultValue);
+			if (member.DefaultValue != System.DBNull.Value)
+				GenerateDefaultAttribute (codeField, member.TypeData, member.DefaultValue);
 
 			return codeField;
 		}
 
 		void AddAttributeFieldMember (CodeTypeDeclaration codeClass, XmlTypeMapMemberAttribute attinfo, string defaultNamespace)
 		{
-			CodeMemberField codeField = CreateFieldMember (attinfo.TypeData, attinfo.Name, attinfo.DefaultValue, attinfo.Documentation);
+			CodeMemberField codeField = CreateFieldMember (attinfo);
 			codeClass.Members.Add (codeField);
 
 			CodeAttributeDeclarationCollection attributes = codeField.CustomAttributes;
@@ -217,8 +229,10 @@ namespace System.Xml.Serialization {
 			GenerateAttributeMember (attributes, attinfo, defaultNamespace, false);
 			if (attributes.Count > 0) codeField.CustomAttributes = attributes;
 
-			if (attinfo.MappedType != null)
+			if (attinfo.MappedType != null) {
 				ExportMapCode (attinfo.MappedType);
+				RemoveInclude (attinfo.MappedType);
+			}
 
 			if (attinfo.TypeData.IsValueType && attinfo.IsOptionalValueType)
 			{
@@ -236,7 +250,7 @@ namespace System.Xml.Serialization {
 
 		void AddElementFieldMember (CodeTypeDeclaration codeClass, XmlTypeMapMemberElement member, string defaultNamespace)
 		{
-			CodeMemberField codeField = CreateFieldMember (member.TypeData, member.Name, member.DefaultValue, member.Documentation);
+			CodeMemberField codeField = CreateFieldMember (member);
 			codeClass.Members.Add (codeField);
 			
 			CodeAttributeDeclarationCollection attributes = codeField.CustomAttributes;
@@ -271,7 +285,10 @@ namespace System.Xml.Serialization {
 					continue;
 
 				GenerateElementInfoMember (attributes, member, einfo, defaultType, defaultNamespace, addAlwaysAttr, forceUseMemberName);
-				if (einfo.MappedType != null) ExportMapCode (einfo.MappedType);
+				if (einfo.MappedType != null) {
+					ExportMapCode (einfo.MappedType);
+					RemoveInclude (einfo.MappedType);
+				}
 			}
 
 			GenerateElementMember (attributes, member);
@@ -279,7 +296,7 @@ namespace System.Xml.Serialization {
 
 		void AddAnyElementFieldMember (CodeTypeDeclaration codeClass, XmlTypeMapMemberElement member, string defaultNamespace)
 		{
-			CodeMemberField codeField = CreateFieldMember (member.TypeData, member.Name, member.DefaultValue, member.Documentation);
+			CodeMemberField codeField = CreateFieldMember (member);
 			codeClass.Members.Add (codeField);
 
 			CodeAttributeDeclarationCollection attributes = new CodeAttributeDeclarationCollection ();
@@ -329,7 +346,11 @@ namespace System.Xml.Serialization {
 				else defaultName = ainfo.TypeData.XmlType;
 
 				GenerateArrayItemAttributes (attributes, listMap, type, ainfo, defaultName, defaultNamespace, nestingLevel);
-				if (ainfo.MappedType != null) ExportMapCode (ainfo.MappedType);
+				if (ainfo.MappedType != null) {
+					if (!IsMapExported (ainfo.MappedType) && includeArrayTypes)
+						AddInclude (ainfo.MappedType);
+					ExportMapCode (ainfo.MappedType);
+				}
 			}
 
 			if (listMap.IsMultiArray)
@@ -344,8 +365,11 @@ namespace System.Xml.Serialization {
 			ListMap listMap = (ListMap) map.ObjectMap;
 			foreach (XmlTypeMapElementInfo ainfo in listMap.ItemInfo)
 			{
-				if (ainfo.MappedType != null)
+				if (ainfo.MappedType != null) {
+					if (!IsMapExported (ainfo.MappedType) && includeArrayTypes)
+						AddInclude (ainfo.MappedType);
 					ExportMapCode (ainfo.MappedType);
+				}
 			}
 		}
 
@@ -394,6 +418,17 @@ namespace System.Xml.Serialization {
 				codeEnum.Members.Add (codeField);
 			}
 		}
+		
+		void AddInclude (XmlTypeMapping map)
+		{
+			if (!includeMaps.ContainsKey (map.TypeData.FullTypeName))
+				includeMaps [map.TypeData.FullTypeName] = map;
+		}
+
+		void RemoveInclude (XmlTypeMapping map)
+		{
+			includeMaps.Remove (map.TypeData.FullTypeName);
+		}
 
 		#endregion
 		
@@ -402,7 +437,6 @@ namespace System.Xml.Serialization {
 		bool IsMapExported (XmlTypeMapping map)
 		{
 			if (exportedMaps.Contains (map.TypeData.FullTypeName)) return true;
-			if (!map.IncludeInSchema && map.TypeData.Type != typeof(object)) return true;
 			return false;
 		}
 

@@ -25,8 +25,11 @@ namespace System.Xml.Serialization
 		MemberInfo _specifiedMember;
 		object _defaultValue = System.DBNull.Value;
 		string documentation;
-		bool _isOptional;
-		bool _isReturnValue;
+		int _flags;
+		
+		const int OPTIONAL = 1;
+		const int RETURN_VALUE = 2;
+		const int IGNORE = 4;
 
 		public XmlTypeMapMember()
 		{
@@ -100,20 +103,26 @@ namespace System.Xml.Serialization
 		
 		public bool IsOptionalValueType
 		{
-			get { return _isOptional; }
-			set { _isOptional = value; }
+			get { return (_flags & OPTIONAL) != 0; }
+			set { _flags = value ? (_flags | OPTIONAL) : (_flags & ~OPTIONAL); }
 		}
 		
 		public bool IsReturnValue
 		{
-			get { return _isReturnValue; }
-			set { _isReturnValue = value; }
+			get { return (_flags & RETURN_VALUE) != 0; }
+			set { _flags = value ? (_flags | RETURN_VALUE) : (_flags & ~RETURN_VALUE); }
+		}
+		
+		public bool Ignore
+		{
+			get { return (_flags & IGNORE) != 0; }
+			set { _flags = value ? (_flags | IGNORE) : (_flags & ~IGNORE); }
 		}
 		
 		public void CheckOptionalValueType (Type type)
 		{
 			if (_member == null) InitMember (type);
-			_isOptional = (_specifiedMember != null);
+			IsOptionalValueType = (_specifiedMember != null);
 		}
 		
 		public bool GetValueSpecified (object ob)

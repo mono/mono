@@ -155,6 +155,7 @@ namespace System.Xml.Serialization
 		Hashtable _elements = new Hashtable ();
 		ArrayList _elementMembers;
 		Hashtable _attributeMembers;
+		XmlTypeMapMemberAttribute[] _attributeMembersArray;
 		XmlTypeMapElementInfo[] _elementsByIndex;
 		ArrayList _flatLists;
 		ArrayList _allMembers = new ArrayList ();
@@ -186,6 +187,7 @@ namespace System.Xml.Serialization
 				string key = BuildKey (atm.AttributeName, atm.Namespace);
 				if (_attributeMembers.ContainsKey (key))
 					throw new InvalidOperationException ("The XML attribute named '" + atm.AttributeName + "' from namespace '" + atm.Namespace + "' already present in the current scope. Use XML attributes to specify another XML name or namespace for the attribute.");
+				member.Index = _attributeMembers.Count;
 				_attributeMembers.Add (key, member);
 				return;
 			}
@@ -314,7 +316,16 @@ namespace System.Xml.Serialization
 
 		public ICollection AttributeMembers
 		{
-			get { return (_attributeMembers != null) ? _attributeMembers.Values : null; }
+			get 
+			{
+				if (_attributeMembers == null) return null;
+				if (_attributeMembersArray != null) return _attributeMembersArray;
+				
+				_attributeMembersArray = new XmlTypeMapMemberAttribute[_attributeMembers.Count];
+				foreach (XmlTypeMapMemberAttribute mem in _attributeMembers.Values)
+					_attributeMembersArray [mem.Index] = mem;
+				return _attributeMembersArray;
+			}
 		}
 
 		public ICollection ElementMembers

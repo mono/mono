@@ -163,14 +163,23 @@ namespace System.Xml.Serialization
 			}
 			
 			Hashtable mapsByNamespace = new Hashtable ();
+			Hashtable generatedMaps = new Hashtable ();
 			
 			for (int n=0; n<_xmlMaps.Length; n++)
 			{
 				_typeMap = _xmlMaps [n];
 				if (_typeMap == null) continue;
 				
+				_result = generatedMaps [_typeMap] as GenerationResult;
+				if (_result != null) {
+					_results[n] = _result;
+					continue;
+				}
+				
 				_result = new GenerationResult ();
 				_results[n] = _result;
+				
+				generatedMaps [_typeMap] = _result;
 				
 				string typeName;
 				if (_typeMap is XmlTypeMapping) typeName = ((XmlTypeMapping)_typeMap).TypeName;

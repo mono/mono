@@ -129,6 +129,7 @@ namespace System.Xml.Serialization {
 			CodeAttributeDeclaration att = new CodeAttributeDeclaration ("System.Xml.Serialization.XmlType");
 			if (map.XmlType != map.TypeData.TypeName) att.Arguments.Add (GetArg (map.XmlType));
 			if (map.XmlTypeNamespace != "") att.Arguments.Add (GetArg ("Namespace", map.XmlTypeNamespace));
+			if (!map.IncludeInSchema) att.Arguments.Add (GetArg ("IncludeInSchema", false));
 			AddCustomAttribute (codeClass, att, false);
 
 			CodeAttributeDeclaration ratt = new CodeAttributeDeclaration ("System.Xml.Serialization.XmlRoot");
@@ -157,6 +158,9 @@ namespace System.Xml.Serialization {
 			if (attinfo.Form != XmlSchemaForm.None) att.Arguments.Add (GetEnumArg ("Form","System.Xml.Schema.XmlSchemaForm",attinfo.Form.ToString()));
 			if (!TypeTranslator.IsDefaultPrimitiveTpeData(attinfo.TypeData)) att.Arguments.Add (GetArg ("DataType",attinfo.TypeData.XmlType));
 			attributes.Add (att);
+			
+			if (attinfo.Ignore)
+				attributes.Add (new CodeAttributeDeclaration ("System.Xml.Serialization.XmlIgnoreAttribute"));
 		}
 		
 		protected override void GenerateElementInfoMember (CodeAttributeDeclarationCollection attributes, XmlTypeMapMemberElement member, XmlTypeMapElementInfo einfo, TypeData defaultType, string defaultNamespace, bool addAlwaysAttr, bool forceUseMemberName)
@@ -178,6 +182,9 @@ namespace System.Xml.Serialization {
 				att.Arguments.Add (GetArg(member.ChoiceMember));
 				attributes.Add (att);
 			}
+
+			if (member.Ignore)
+				attributes.Add (new CodeAttributeDeclaration ("System.Xml.Serialization.XmlIgnoreAttribute"));
 		}
 		
 		protected override void GenerateArrayElement (CodeAttributeDeclarationCollection attributes, XmlTypeMapMemberElement member, string defaultNamespace, bool forceUseMemberName)

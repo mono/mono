@@ -525,46 +525,92 @@ namespace System.Xml.Serialization {
 
 		ICollection GetReflectionMembers (Type type)
 		{
-			ArrayList members = new ArrayList();
-			MemberInfo[] tmembers = type.GetMembers (BindingFlags.Instance | BindingFlags.Public);
-			int currentTypePos = 0;
-			Type currentType = null;
-			
-			foreach (MemberInfo tmember in tmembers)
+			// First we want to find the inheritance hierarchy in reverse order.
+			Type currentType = type;
+			ArrayList typeList = new ArrayList();
+			typeList.Add(currentType);
+			while (currentType != typeof(object))
 			{
-				if (currentType != tmember.DeclaringType)
+				currentType = currentType.BaseType; // Read the base type.
+				typeList.Insert(0, currentType); // Insert at 0 to reverse the order.
+			}
+
+			// Read all Fields via reflection.
+			ArrayList fieldList = new ArrayList();
+			FieldInfo[] tfields = type.GetFields (BindingFlags.Instance | BindingFlags.Public);
+			currentType = null;
+			int currentIndex = 0;
+			foreach (FieldInfo field in tfields)
+			{
+				// This statement ensures fields are ordered starting from the base type.
+				if (currentType != field.DeclaringType)
 				{
-					currentType = tmember.DeclaringType;
-					currentTypePos = 0;
+					currentType = field.DeclaringType;
+					currentIndex=0;
 				}
-				
-				if (tmember is FieldInfo)
+				fieldList.Insert(currentIndex++, field);
+			}
+
+			// Read all Properties via reflection.
+			ArrayList propList = new ArrayList();
+			PropertyInfo[] tprops = type.GetProperties (BindingFlags.Instance | BindingFlags.Public);
+			currentType = null;
+			currentIndex = 0;
+			foreach (PropertyInfo prop in tprops)
+			{
+				// This statement ensures properties are ordered starting from the base type.
+				if (currentType != prop.DeclaringType)
 				{
-					FieldInfo field = tmember as FieldInfo;
-					XmlAttributes atts = attributeOverrides[type, field.Name];
-					if (atts == null) atts = new XmlAttributes (field);
-					if (atts.XmlIgnore) continue;
-					XmlReflectionMember member = new XmlReflectionMember(field.Name, field.FieldType, atts);
-					members.Insert (currentTypePos, member);
-					currentTypePos++;
+					currentType = prop.DeclaringType;
+					currentIndex = 0;
 				}
-				else if (tmember is PropertyInfo)
+				if (!prop.CanRead) continue;
+				if (!prop.CanWrite && TypeTranslator.GetTypeData (prop.PropertyType).SchemaType != SchemaTypes.Array) continue;
+				if (prop.GetIndexParameters().Length > 0) continue;
+				propList.Insert(currentIndex++, prop);
+			}
+
+			ArrayList members = new ArrayList();
+			int fieldIndex=0;
+			int propIndex=0;
+			// We now step through the type hierarchy from the base (object) through
+			// to the supplied class, as each step outputting all Fields, and then
+			// all Properties.  This is the exact same ordering as .NET 1.0/1.1.
+			foreach (Type t in typeList)
+			{
+				// Add any fields matching the current DeclaringType.
+				while (fieldIndex < fieldList.Count)
 				{
-					PropertyInfo prop  = tmember as PropertyInfo;
-					if (!prop.CanRead) continue;
-					if (!prop.CanWrite && TypeTranslator.GetTypeData (prop.PropertyType).SchemaType != SchemaTypes.Array)
-						continue;
-					if (prop.GetIndexParameters().Length > 0) continue;
-						
-					XmlAttributes atts = attributeOverrides[type, prop.Name];
-					if (atts == null) atts = new XmlAttributes (prop);
-					if (atts.XmlIgnore) continue;
-					XmlReflectionMember member = new XmlReflectionMember(prop.Name, prop.PropertyType, atts);
-					members.Insert (currentTypePos, member);
-					currentTypePos++;
+					FieldInfo field = (FieldInfo)fieldList[fieldIndex];
+					if (field.DeclaringType==t)
+					{
+						fieldIndex++;
+						XmlAttributes atts = attributeOverrides[type, field.Name];
+						if (atts == null) atts = new XmlAttributes (field);
+						if (atts.XmlIgnore) continue;
+						XmlReflectionMember member = new XmlReflectionMember(field.Name, field.FieldType, atts);
+						members.Add(member);
+					}
+					else break;
+				}
+
+				// Add any properties matching the current DeclaringType.
+				while (propIndex < propList.Count)
+				{
+					PropertyInfo prop = (PropertyInfo)propList[propIndex];
+					if (prop.DeclaringType==t)
+					{
+						propIndex++;
+						XmlAttributes atts = attributeOverrides[type, prop.Name];
+						if (atts == null) atts = new XmlAttributes (prop);
+						if (atts.XmlIgnore) continue;
+						XmlReflectionMember member = new XmlReflectionMember(prop.Name, prop.PropertyType, atts);
+						members.Add(member);
+					}
+					else break;
 				}
 			}
-			return members;
+			return members;		
 		}
 		
 		private XmlTypeMapMember CreateMapMember (XmlReflectionMember rmember, string defaultNamespace)

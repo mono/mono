@@ -851,18 +851,21 @@ namespace System.Xml.Serialization {
 			{
 				// Create the choice member
 				XmlTypeMapMemberElement choiceMember = new XmlTypeMapMemberElement ();
+				choiceMember.Ignore = true;
 				choiceMember.Name = classIds.AddUnique (member.Name + "ElementName", choiceMember);
 				member.ChoiceMember = choiceMember.Name;
 
 				// Create the choice enum
 				XmlTypeMapping enumMap = CreateTypeMapping (new XmlQualifiedName (member.Name + "ChoiceType", typeQName.Namespace), SchemaTypes.Enum, null);
+				enumMap.IncludeInSchema = false;
 
 				CodeIdentifiers codeIdents = new CodeIdentifiers ();
 				EnumMap.EnumMapMember[] members = new EnumMap.EnumMapMember [choices.Count];
 				for (int n=0; n<choices.Count; n++)
 				{
 					XmlTypeMapElementInfo it =(XmlTypeMapElementInfo) choices[n];
-					string xmlName = (it.Namespace != null && it.Namespace != "") ? it.Namespace + ":" + it.ElementName : it.ElementName;
+					bool extraNs = (it.Namespace != null && it.Namespace != "" && it.Namespace != typeQName.Namespace);
+					string xmlName = extraNs ? it.Namespace + ":" + it.ElementName : it.ElementName;
 					string enumName = codeIdents.AddUnique (CodeIdentifier.MakeValid (it.ElementName), it);
 					members [n] = new EnumMap.EnumMapMember (xmlName, enumName);
 				}

@@ -1,3 +1,18 @@
+2004-06-10  Lluis Sanchez Gual <lluis@ximian.com>
+
+	* MapCodeGenerator.cs, SoapCodeExporter.cs: Generate the same XmlInclude
+	  attributes that MS.NET generates.
+	* SerializationCodeGenerator.cs: Avoid duplicate generation of maps in the
+	  same reader/writer.
+	* XmlCodeExporter.cs: Added support for ignore flag in maps and members.
+	* XmlReflectionImporter.cs: Changed GetReflectionMembers to match
+	  MS.NET member ordering. Patch by David Taylor.
+	* XmlSchemaImporter.cs: When generating a choice member, set the ignore
+	  flag. The generated enum must also not be included in the schema.
+	* XmlTypeMapMember.cs: Added ignore flag.
+	* XmlTypeMapping.cs: The AttributeMembers property now returns the 
+	  attributes in the correct order.
+
 2004-06-03  Gert Driesen <drieseng@users.sourceforge.net>
 
 	* XmlSerializationReader.cs: added missing protected members

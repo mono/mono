@@ -85,6 +85,7 @@ namespace System.Xml.Serialization {
 		public SoapMapCodeGenerator (CodeNamespace codeNamespace, CodeCompileUnit codeCompileUnit)
 		: base (codeNamespace, codeCompileUnit)
 		{
+			includeArrayTypes = true;
 		}
 
 		protected override void GenerateClass (XmlTypeMapping map, CodeTypeDeclaration codeClass)
