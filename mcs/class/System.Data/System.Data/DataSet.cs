@@ -610,6 +610,12 @@ namespace System.Data {
 			WriteXml( writer, XmlWriteMode.IgnoreSchema,false);
 		}
 
+		public void WriteXml (string filename, XmlWriteMode mode)
+		{
+			XmlWriter writer = new XmlTextWriter (filename, null);
+			WriteXml (writer, mode, false);
+		}
+
 		public void WriteXml(Stream stream, XmlWriteMode mode,bool writePI)
 		{
 			XmlWriter writer = new XmlTextWriter(stream, null );
