@@ -317,7 +317,8 @@ namespace System {
 					else
 						digitValue = (int) (hexDigit - 'A' + 10);
 
-					number = checked (number * 16 - digitValue);
+					uint unumber = (uint)number;
+					number = (int)checked (unumber * 16u + (uint)digitValue);
 				}
 				else if (decimalPointFound) {
 					nDigits++;
@@ -387,7 +388,7 @@ namespace System {
 				throw new FormatException ("Input string was not in the correct format.");
 
 			
-			if (!negative)
+			if (!negative && !AllowHexSpecifier)
 				number = -number;
 
 			return number;

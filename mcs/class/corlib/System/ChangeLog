@@ -1,3 +1,8 @@
+2003-12-22  Bernie Solomon  <bernard@ugsolutions.com>
+
+	* Int32 (Parse):
+	  Int64 (Parse): Fix overflow checking for AllowHexSpecifier
+
 2003-12-20  Zoltan Varga  <vargaz@freemail.hu>
 
 	* MonoType.cs (GetMethodImpl): Only call FindMostDerivedMatch if the

@@ -238,7 +238,8 @@ namespace System {
 					else
 						digitValue = (int) (hexDigit - 'A' + 10);
 
-					number = checked (number * 16 - digitValue);
+					ulong unumber = (ulong)number;
+					number = (long)checked(unumber * 16ul + (ulong)digitValue);
 				}
 				else if (decimalPointFound) {
 					nDigits++;
@@ -312,7 +313,7 @@ namespace System {
 										+ pos + " s.Length = " + s.Length);
 
 			
-			if (!negative)
+			if (!negative && !AllowHexSpecifier)
 				number = -number;
 
 			return number;
