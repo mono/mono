@@ -2011,7 +2011,7 @@ namespace Mono.CSharp {
 				// been assigned.  If the struct has any non-public fields, this
 				// can only be done by assigning the whole struct.
 
-				MyStructInfo struct_info = struct_params [index - 1];
+				MyStructInfo struct_info = struct_params [i];
 				if ((struct_info == null) || struct_info.HasNonPublicFields) {
 					Report.Error (
 						177, loc, "The out parameter `" +
