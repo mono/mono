@@ -1,3 +1,11 @@
+2004-11-30  Ravindra <rkumar@novell.com>
+
+	* ThemeWin32Classic.cs (DrawListViewItem): Fixed selected item
+	drawing and replaced use of SystemColors by theme colors.
+	* ListView.cs (ListView_Paint): Fixed painting done during scrolling.
+	* ListView.cs (ListViewItemCollection.Add): Throw exception when
+	same ListViewItem is being added more than once.
+
 2004-11-30  John BouAntoun <jba-mono@optusnet.com.au>
 
 	* MonthCalendar.cs:

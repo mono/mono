@@ -92,6 +92,7 @@ namespace System.Windows.Forms
 		private ListViewItem last_clicked_item;
 		private ColumnHeaderCollection columns;
 		private bool ctrl_pressed;
+		private bool draw_headers = true; // Used for painting. Do we need to draw column headers ?
 		private ListViewItem focused_item;
 		private bool full_row_select = false;
 		private bool grid_lines = false;
@@ -170,9 +171,6 @@ namespace System.Windows.Forms
 			h_scroll.Scroll += new ScrollEventHandler(HorizontalScroller);
 			v_scroll.Visible = false;
 			v_scroll.Scroll += new ScrollEventHandler(VerticalScroller);
-
-			child_controls.Add (this.v_scroll);
-			child_controls.Add (this.h_scroll);
 
 			// event handlers
 			base.DoubleClick += new EventHandler(ListView_DoubleClick);
@@ -964,6 +962,7 @@ namespace System.Windows.Forms
 
 					if (this.clicked_column != null) {
 						this.clicked_column.pressed = true;
+						this.draw_headers = true;
 						this.Redraw (false);
 						return;
 					}
@@ -1054,7 +1053,10 @@ namespace System.Windows.Forms
 
 		private void ListView_MouseMove (object sender, MouseEventArgs me)
 		{
-			Point hit = new Point (me.X, me.Y);
+			// Column header is always at the top. It can
+			// scroll only horizontally. So, we have to take
+			// only horizontal scrolling into account
+			Point hit = new Point (me.X + h_marker, me.Y);
 
 			// non-null clicked_col means mouse down has happened
 			// on a column
@@ -1062,11 +1064,13 @@ namespace System.Windows.Forms
 				if (this.clicked_column.pressed == false &&
 				    this.clicked_column.Rect.Contains (hit)) {
 					this.clicked_column.pressed = true;
+					this.draw_headers = true;
 					this.Redraw (false);
 				}
 				else if (this.clicked_column.pressed && 
 					 ! this.clicked_column.Rect.Contains (hit)) {
 					this.clicked_column.pressed = false;
+					this.draw_headers = true;
 					this.Redraw (false);
 				}
 			}
@@ -1083,6 +1087,7 @@ namespace System.Windows.Forms
 			if (this.clicked_column != null) {
 				if (this.clicked_column.pressed) {
 					this.clicked_column.pressed = false;
+					this.draw_headers = true;
 					this.Redraw (false);
 
 					// Raise the ColumnClick event
@@ -1133,32 +1138,58 @@ namespace System.Windows.Forms
 				redraw = false;
 			}
 
-			// Clip to be used for drawing on screen.
-			Rectangle clip = this.ClientRectangle;
-
 			// We paint on the screen as per the location set
 			// by the two scrollbars. In case of details view
 			// since column headers can scroll only horizontally
 			// and items can scroll in both directions, paiting is
 			// done separtely for the column header and the items.
 
-			Rectangle srcRect = pe.ClipRectangle;
-			Rectangle dstRect = pe.ClipRectangle;
+			Rectangle srcRect = this.ClientRectangle;
+			Rectangle dstRect = this.ClientRectangle;
 
 			// set the visible starting point
 			if (scrollable) {
 				srcRect.X += h_marker;
 				srcRect.Y += v_marker;
 
-				if (h_scroll.Visible)
-					clip.Width -= this.v_scroll.Width;
+				if (h_scroll.Visible) {
+					srcRect.Height -= h_scroll.Height;
+					dstRect.Height -= h_scroll.Height;
+				}
 
-				if (v_scroll.Visible)
-					clip.Height -= this.h_scroll.Height;
+				if (v_scroll.Visible) {
+					srcRect.Width -= v_scroll.Width;
+					dstRect.Width -= v_scroll.Width;
+				}
 			}
 
-			// Set the clip and paint the items
-			pe.Graphics.SetClip (clip);
+			// We paint the column headers always at the top, in case
+			// of vertical scrolling. Therefore, we advance the painting
+			// by the amount equal to the column height.
+			if (this.view == View.Details &&
+			    this.Columns.Count > 0 &&
+			    this.header_style != ColumnHeaderStyle.None &&
+			    v_marker > 0) {
+
+				int col_ht = this.Columns [0].Ht;
+
+				if (this.draw_headers) {
+					this.draw_headers = false;
+					// Move the source rect by the amount of horizontal
+					// scrolling done so far.
+					Rectangle headerSrc = new Rectangle (h_marker, 0,
+									     srcRect.Width, col_ht);
+					// dest rect is always stable at 0,0
+					Rectangle headerDst = new Rectangle (0, 0, srcRect.Width, col_ht);
+					pe.Graphics.DrawImage (this.ImageBuffer, headerDst,
+							       headerSrc, GraphicsUnit.Pixel);
+				}
+
+				dstRect.Y += col_ht;
+				srcRect.Y += col_ht;
+			}
+
+			// Paint the items
 			pe.Graphics.DrawImage (this.ImageBuffer, dstRect,
 					       srcRect, GraphicsUnit.Pixel);
 
@@ -1169,24 +1200,7 @@ namespace System.Windows.Forms
 							       this.ClientRectangle,
 							       this.BorderStyle);
 
-			// paint the column headers at the top
-			if (this.view == View.Details &&
-			    this.Columns.Count > 0 &&
-			    this.header_style != ColumnHeaderStyle.None &&
-			    v_marker > 0) {
-
-				int col_ht = this.Columns [0].Ht;
-				// move the source rect by the amount of horizontal scrolling
-				// done so far.
-				Rectangle headerSrc = new Rectangle (h_marker, 0,
-								     this.Width, col_ht);
-				// dest rect is always stable at 0,0
-				Rectangle headerDst = new Rectangle (0, 0, this.Width, col_ht);
-
-				pe.Graphics.DrawImage (this.ImageBuffer, headerDst,
-						       headerSrc, GraphicsUnit.Pixel);
-			}
-
+			// Raise the Paint event
 			if (Paint != null)
 				Paint (this, pe);
 		}
@@ -1197,6 +1211,8 @@ namespace System.Windows.Forms
 			// kept pressed at the end
 			if (h_marker != se.NewValue) {
 				h_marker = se.NewValue;
+				// draw the headers again
+				this.draw_headers = true;
 				this.Refresh ();
 			}
 		}
@@ -1259,6 +1275,10 @@ namespace System.Windows.Forms
 		protected override void OnHandleCreated (EventArgs e)
 		{
 			base.OnHandleCreated (e);
+			this.Controls.Add (this.v_scroll);
+			this.Controls.Add (this.h_scroll);
+			this.SetStyle (ControlStyles.UserPaint |
+				       ControlStyles.AllPaintingInWmPaint, true);
 		}
 
 		protected override void OnHandleDestroyed (EventArgs e)
@@ -1846,6 +1866,10 @@ namespace System.Windows.Forms
 				set {
 					if (displayIndex < 0 || displayIndex >= list.Count)
 						throw new ArgumentOutOfRangeException ("Index out of range.");
+
+					if (list.Contains (value))
+						throw new ArgumentException ("An item cannot be added more than once. To add an item again, you need to clone it.", "value");
+
 					value.owner = this.owner;
 					list [displayIndex] = value;
 
@@ -1879,6 +1903,9 @@ namespace System.Windows.Forms
 			#region Public Methods
 			public virtual ListViewItem Add (ListViewItem value)
 			{
+				if (list.Contains (value))
+					throw new ArgumentException ("An item cannot be added more than once. To add an item again, you need to clone it.", "value");
+
 				value.owner = this.owner;
 				list.Add (value);
 
@@ -1942,8 +1969,11 @@ namespace System.Windows.Forms
 				int result;
 				ListViewItem li;
 
-				if (item is ListViewItem)
+				if (item is ListViewItem) {
 					li = (ListViewItem) item;
+					if (list.Contains (li))
+						throw new ArgumentException ("An item cannot be added more than once. To add an item again, you need to clone it.", "item");
+				}
 				else
 					li = new ListViewItem (item.ToString ());
 
@@ -1989,6 +2019,9 @@ namespace System.Windows.Forms
 			{
 				if (index < 0 || index >= list.Count)
 					throw new ArgumentOutOfRangeException ("Index out of range.");
+
+				if (list.Contains (item))
+					throw new ArgumentException ("An item cannot be added more than once. To add an item again, you need to clone it.", "item");
 
 				item.owner = this.owner;
 				list.Insert (index, item);

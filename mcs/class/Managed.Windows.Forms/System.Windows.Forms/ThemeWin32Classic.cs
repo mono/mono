@@ -1170,14 +1170,14 @@ namespace System.Windows.Forms
 					int scale = Math.Max (1, item.CheckRect.Width / 12);
 
 					// set the checkbox background
-					dc.FillRectangle (this.ResPool.GetSolidBrush (SystemColors.Window),
+					dc.FillRectangle (this.ResPool.GetSolidBrush (this.ColorWindow),
 							  item.CheckRect);
 					// define a rectangle inside the border area
 					Rectangle rect = new Rectangle (item.CheckRect.X + 2,
 									item.CheckRect.Y + 2,
 									item.CheckRect.Width - 4,
 									item.CheckRect.Height - 4);
-					Pen pen = new Pen (SystemColors.WindowText, 2);
+					Pen pen = new Pen (this.ColorWindowText, 2);
 					dc.DrawRectangle (pen, rect);
 
 					// Need to draw a check-mark
@@ -1239,17 +1239,30 @@ namespace System.Windows.Forms
 				format.FormatFlags = StringFormatFlags.NoWrap;
 			
 			if (item.Selected) {
-				if (control.View == View.Details && control.FullRowSelect) {
-					// fill the entire rect excluding the checkbox
-					Rectangle full_rect = item.EntireRect;
-					full_rect.Location = item.LabelRect.Location;
-					dc.FillRectangle (SystemBrushes.Highlight, full_rect);
+				if (control.View == View.Details) {
+					if (control.FullRowSelect) {
+						// fill the entire rect excluding the checkbox
+						Rectangle full_rect = item.EntireRect;
+						full_rect.Location = item.LabelRect.Location;
+						dc.FillRectangle (this.ResPool.GetSolidBrush
+								  (this.ColorHilight), full_rect);
+					}
+					else {
+						Size text_size = Size.Ceiling (dc.MeasureString (item.Text,
+												item.Font));
+						text_rect.Width = text_size.Width;
+						dc.FillRectangle (this.ResPool.GetSolidBrush
+								  (this.ColorHilight), text_rect);
+					}
 				}
 				else {
-					Size text_size = Size.Ceiling (dc.MeasureString (item.Text,
-											 item.Font));
-					text_rect.Width = text_size.Width;
-					dc.FillRectangle (SystemBrushes.Highlight, text_rect);
+					/*Size text_size = Size.Ceiling (dc.MeasureString (item.Text,
+					  item.Font));
+					  Point loc = text_rect.Location;
+					  loc.X += (text_rect.Width - text_size.Width) / 2;
+					  text_rect.Width = text_size.Width;*/
+					dc.FillRectangle (this.ResPool.GetSolidBrush (this.ColorHilight),
+							  text_rect);
 				}
 			}
 			else
@@ -1257,8 +1270,8 @@ namespace System.Windows.Forms
 
 			if (item.Text != null && item.Text.Length > 0) {
 				if (item.Selected)
-					dc.DrawString (item.Text, item.Font, SystemBrushes.HighlightText,
-						       text_rect, format);
+					dc.DrawString (item.Text, item.Font, this.ResPool.GetSolidBrush
+						       (this.ColorHilightText), text_rect, format);
 				else
 					dc.DrawString (item.Text, item.Font, this.ResPool.GetSolidBrush
 						       (item.ForeColor), text_rect, format);
@@ -1310,7 +1323,8 @@ namespace System.Windows.Forms
 						if (item.Selected && control.FullRowSelect) {
 							if (subItem.Text != null && subItem.Text.Length > 0)
 								dc.DrawString (subItem.Text, sub_item_font,
-									       SystemBrushes.HighlightText,
+									       this.ResPool.GetSolidBrush
+									       (this.ColorHilightText),
 									       sub_item_rect, format);
 						}
 						else {
