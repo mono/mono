@@ -14,6 +14,6 @@ namespace System.Resources {
 
 	   public interface IResourceReader : IEnumerable, IDisposable {
 			 void Close();
-			 IDictionaryEnumerator GetEnumerator();
+			 new IDictionaryEnumerator GetEnumerator();
 	   }
 }

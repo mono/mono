@@ -18,7 +18,7 @@ namespace System.Resources {
 
 			 protected string BaseNameField;
 			 protected Assembly MainAssembly;
-			 protected Hashtable Resourcesets;
+			 protected Hashtable ResourceSets;
 			 
 			 private bool ignoreCase;
 			 private Type resourceSetType;
@@ -44,13 +44,15 @@ namespace System.Resources {
 						  throw new ArgumentNullException ("The arguments are null.");
 
 				    if (usingResourceSet != null)
-						  if (!usingResourceSet.isSubclassOf (Typeof (ResourceSet)))
+						  if (!usingResourceSet.IsSubclassOf (typeof(ResourceSet)))
 							 throw new ArgumentException ("Type must be derived from ResourceSet.");
 			 }
 
 			 public static ResourceManager CreateFileBasedResourceManager (string baseName,
 															   string resourceDir,
-															   Type usingResourceSet) {}
+															   Type usingResourceSet) {
+				return null;
+			 }
 
 			 public virtual string BaseName { get { return BaseNameField; }}
 
@@ -59,13 +61,16 @@ namespace System.Resources {
 				    set { ignoreCase = value; }
 			 }
 
-			 public virtual Type ResourceSetType { get { return resourceSetType; }}
+			 public virtual Type ResourceSetType {
+					get { return resourceSetType; }
+			 }
 			 
 			 public virtual ResourceSet GetResourceSet (CultureInfo culture,
 											    bool createIfNotExists,
 											    bool tryParents) {
 				    if (culture == null)
 						  throw new ArgumentNullException ("CultureInfo is a null reference.");
+				return null;
 			 }
 
 		         [MonoTODO]
@@ -73,12 +78,13 @@ namespace System.Resources {
 				    if (name == null)
 						  throw new ArgumentNullException ("Name is null.");
 				    if (ResourceSets.Contains (name)) {
-						  if (!ResourceSets[name] is string)
+						  if (!(ResourceSets[name] is string))
 								throw new InvalidOperationException ("The resource is " +
 												     "not a string.");
 						  return ResourceSets[name].ToString();
 				    }
 				    // TODO check for correctness.				    
+				    return null;	
 			 }
 			 
 			 public virtual string GetString (string name, CultureInfo culture) {
@@ -89,12 +95,14 @@ namespace System.Resources {
 
 		         [MonoTODO]
 			 protected virtual string GetResourceFileName (CultureInfo culture) {
-				    return new culture.Name + ".resources"; // TODO check for correctness.
+				    return culture.Name + ".resources"; // TODO check for correctness.
 			 }
 
 			 protected virtual ResourceSet InternalGetResourceSet (CultureInfo culture,
 									       bool Createifnotexists,
-									       bool tryParents) {}
+									       bool tryParents) {
+				    return null;
+			 }
 		   
 			 public virtual void ReleaseAllResources () {
 				    foreach (ResourceSet r in ResourceSets)
@@ -102,18 +110,27 @@ namespace System.Resources {
 			 }
 
 			 protected static CultureInfo GetNeutralResourcesLanguage (Assembly a) {
-				    foreach (Attribute attribute in a.GetCustomAttributes ()) {
+				    foreach (Attribute attribute in a.GetCustomAttributes (false)) {
 						  if (attribute is NeutralResourcesLanguageAttribute)
-								return new Cultureinfo (attribute.CultureName);
+								// ???
+								// return new CultureInfo (attribute.CultureName);
+								// TODO: Line containing "new CultureInfo" commented out
+								// because the CultureInfo(string) constructor has not
+								// yet been defined
+								// return new CultureInfo (attribute.ToString());
+								return null;
 				    }
 				    return null;
 			 }
 
 			 public static Version GetSatelliteContractVersion (Assembly a) {
 
-				    foreach (Attribute attribute in a.GetCustomAttributes ()) {
+				    foreach (Attribute attribute in a.GetCustomAttributes (false)) {
 						  if (attribute is SatelliteContractVersionAttribute)
-								return new Version (attribute.Version);
+								// TODO: ??? "Attribute" does not have a property "Version"
+								// Do you mean "attribute.ToString()"?
+								// return new Version (attribute.Version);
+								return new Version (attribute.ToString());
 				    }
 				    return null;
 			 }

@@ -30,7 +30,7 @@ namespace System.Resources {
 			 }
 			 
 			 protected ResourceSet (String fileName) {
-				    Reader = new ResourceReader (filename);
+				    Reader = new ResourceReader (fileName);
 			 }
 
 			 public virtual void Close () {
@@ -81,7 +81,7 @@ namespace System.Resources {
 						  ReadResources (); // find out how to get element from Hashtable
 
 				    if (ignoreCase && Table != null) // while ignoring case.
-						  throw new NoImplementedException ();
+						  throw new NotImplementedException ();
 
 				    return null;
 			 }
@@ -89,20 +89,23 @@ namespace System.Resources {
 			 public virtual string GetString (string name) {
 				    Object o = GetObject (name);
 				    if (o is string)
-						  return o;
+						  return (string) o;
 				    return null;
 			 }
-			 public virtual string GetString (string name, bool ignoreCase) {}
+
+			 public virtual string GetString (string name, bool ignoreCase) {
+				    return null;
+			 }
 
 			 public virtual void ReadResources () {
-				    IDictonaryEnumerator i = Reader.getEnumerator();
+				    IDictionaryEnumerator i = Reader.GetEnumerator();
 
 				    if (Table == null)
-						  Table = new HashTable ();
+						  Table = new Hashtable ();
 				    i.Reset ();
 
 				    while (i.MoveNext ()) 
-						  Table.add (i.Key, i.Value);
+						  Table.Add (i.Key, i.Value);
 				    
 			 }
 	   }

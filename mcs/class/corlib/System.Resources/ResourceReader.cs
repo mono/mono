@@ -31,8 +31,14 @@ namespace System.Resources {
 			 public void Close () {}
 
 			 public IDictionaryEnumerator GetEnumerator () {
-				    return new DictionaryEnumerator
+				    return new DictionaryEnumerator ();
 			 }
+
+			 IEnumerator IEnumerable.GetEnumerator () {
+				return ((IResourceReader) this).GetEnumerator();
+			 }
+
+			 public void Dispose () {}
 
 	   }
 
@@ -52,5 +58,15 @@ namespace System.Resources {
 			 public object Value {
 				    get { return value; }
 			 }
+
+			 public object Current {
+				  get { return null; }
+			 }
+
+			 public bool MoveNext () {
+				  return false;
+			 }
+				
+			 public void Reset () { }
 	   }
 }

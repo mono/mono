@@ -15,7 +15,7 @@ namespace System.Resources {
 
 			 // Constructor
 			 public SatelliteContractVersionAttribute (string version) {
-				    ver = version;
+				    ver = new Version(version);
 			 }
 			 public string Version {
 				    get { return ver.ToString(); }

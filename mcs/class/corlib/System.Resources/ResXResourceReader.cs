@@ -11,7 +11,18 @@ using System.Collections;
 
 namespace System.Resources {
 	   public class ResXResourceReader : IResourceReader, IEnumerable, IDisposable {
-			 public ResXResourceReader () {}
+			public ResXResourceReader () {}
+	
+			// TODO:
+			public void Close () {}
+			IDictionaryEnumerator IResourceReader.GetEnumerator () { return null; }
+			IEnumerator IEnumerable.GetEnumerator () { return null; }
 
-	   }
+
+
+
+			// TODO:
+			protected virtual void Dispose (bool disposing) {}
+			public void Dispose () {}
+	   	}
 }

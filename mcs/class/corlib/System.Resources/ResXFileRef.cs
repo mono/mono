@@ -11,6 +11,6 @@ namespace System.Resources {
 	   public class ResXFileRef {
 
 			 public ResXFileRef (string fileName, string typeName) {}
-			 public override void ToString () {} // LAMESPEC, not specified.
+			 public override string ToString () { return ""; } // LAMESPEC, not specified.
 	   }
 }
