@@ -139,9 +139,13 @@ Provider Factoros (target: mono 1.2 PROFILE=net_2_0)
 * Create Configuration Class
 	DbProviderFactoriesConfigurationHandler - done
 	DbProviderConfigurationHandler - not much documents/use cases.
-	ConnectionStringSection
-	ConnectionStringSettingsCollection
-	ConnectionStringSettings
+	ConnectionStringsSection		- done
+	ConnectionStringSettingsCollection	- done
+	ConnectionStringSettings		- done
+
+	FIXME: Currently the test case for ConnectionStringsSection
+	fails as new configuration API is not yet implemented in
+	System.dll.
 
 * Create Base class
 	DbProviderFactories - done

@@ -1,4 +1,9 @@
 2005-02-22  Sureshkumar T  <tsureshkumar@novell.com>
+        
+	* System.Data_test.dll.sources: Added
+	System.Data.Common/ConnectionStringsSectionTest.cs
+	
+2005-02-22  Sureshkumar T  <tsureshkumar@novell.com>
 
 	* Makefile: added dependancy for test-lib to create
 	$(test-lib).config. These configuration entries are used currently

@@ -1,5 +1,11 @@
 2005-02-22  Sureshkumar T  <tsureshkumar@novell.com>
 
+	* ConnectionStringsSectionTest.cs: Added file. Tests for
+	System.Configuration.ConnectionStringsSection class. This is used
+	for managing connection strings information for provider factory.
+
+2005-02-22  Sureshkumar T  <tsureshkumar@novell.com>
+	
 	* DbProviderFactoriesConfigurationHandlerTest.cs: Tests for
 	DbProviderFactoriesConfigurationHandler class.
 
