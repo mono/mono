@@ -1,3 +1,10 @@
+2002-10-01  Dick Porter  <dick@ximian.com>
+
+	* threads.c (ves_icall_System_Threading_Thread_Start_internal):
+	Only add the handle to the cleanup array when we're about to
+	launch the thread.  Bug 31425 deadlocked when the test was run on
+	mono under w32.
+
 2002-10-01  Martin Baulig  <martin@gnome.org>
 
 	* debug-mono-symfile.c: Added support for properties.

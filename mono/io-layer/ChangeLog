@@ -1,3 +1,17 @@
+2002-10-01  Dick Porter  <dick@ximian.com>
+
+	* timed-thread.c: Kludge for CREATE_SUSPENDED thread creation.
+	Unfortunately libgc uses the same thread suspend technique that I
+	want to, and the two don't mix: libgc will deadlock when it tries
+	to stop the world if a thread has already been suspended by
+	someone else.  Just do the simple suspended create rather than the
+	general purpose thread suspension for now.
+
+	* threads.c: Pass create flags to the timed_thread create call, to
+	implement suspended thread creation.  ResumeThread() partially
+	implemented, to cope with the case where a newly created but
+	suspended thread is launched.
+
 2002-09-30  Dick Porter  <dick@ximian.com>
 
 	* sockets.c (ioctlsocket): Set non-blocking mode in a better way,
