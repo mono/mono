@@ -699,19 +699,6 @@ public abstract class Encoding
 		}
 	}
 
-	internal static Encoding UnixConsoleEncoding {
-		get {
-			if (unixConsoleEncoding == null) {
-				lock (typeof(Encoding)){
-					if (unixConsoleEncoding == null)
-						unixConsoleEncoding = Default;
-				}
-			}
-
-			return unixConsoleEncoding;
-		}
-	}
-	
 	// Forwarding decoder implementation.
 	private sealed class ForwardingDecoder : Decoder
 	{

@@ -1,3 +1,12 @@
+2003-02-03  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* AppDomain.cs: implemented AppendPrivatePath, ClearPrivatePath
+	and ClearShadowCopyPath and fixed GetType ().
+
+	* Attribute.cs: clean up.
+
+	* Console.cs: removed UnixConsoleEncoding. Use Default.
+
 2003-02-01  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Attribute.cs: fixed all IsDefined overloads. Gotta fix

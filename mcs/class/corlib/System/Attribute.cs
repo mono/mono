@@ -44,7 +44,7 @@ namespace System {
 							     "attribute_type");
 		}
 
-		private static System.Attribute FindAttribute (object[] attributes)
+		private static Attribute FindAttribute (object[] attributes)
 		{
 			// if there exists more than one attribute of the given type, throw an exception
 			if (attributes.Length > 1) {
@@ -58,7 +58,7 @@ namespace System {
 			// tested above for '> 1' and and '< 1', so only '== 1' is left,
 			// i.e. we found the attribute
 			
-			return (System.Attribute) attributes[0];
+			return (Attribute) attributes[0];
 		}
 
 		public static Attribute GetCustomAttribute (ParameterInfo element, Type attribute_type)
@@ -71,33 +71,31 @@ namespace System {
 			return GetCustomAttribute (element, attribute_type, true);
 		}
 
-		public static Attribute GetCustomAttribute (Assembly element,
-							    Type attribute_type)
+		public static Attribute GetCustomAttribute (Assembly element, Type attribute_type)
 		{
 			return GetCustomAttribute (element, attribute_type, true);
 		}
 
-		public static Attribute GetCustomAttribute (Module element,
-							    Type attribute_type)
+		public static Attribute GetCustomAttribute (Module element, Type attribute_type)
 		{
 			return GetCustomAttribute (element, attribute_type, true);
 		}
 
-		public static Attribute GetCustomAttribute (Module element,
-							    Type attribute_type, bool inherit)
+		public static Attribute GetCustomAttribute (Module element, Type attribute_type, bool inherit)
 		{
 			// neither parameter is allowed to be null
 			CheckParameters (element, attribute_type);
 
 			// Module inheritance hierarchies CAN NOT be searched for attributes, so the second
-			// parameter of GetCustomAttributes () is INGNORED.
+			// parameter of GetCustomAttributes () is IGNORED.
 			object[] attributes = element.GetCustomAttributes (attribute_type, inherit);
 
 			return FindAttribute (attributes);
 		}
 
 		public static Attribute GetCustomAttribute (Assembly element,
-							    Type attribute_type, bool inherit)
+							    Type attribute_type,
+							    bool inherit)
 		{
 			// neither parameter is allowed to be null
 			CheckParameters (element, attribute_type);
@@ -110,13 +108,14 @@ namespace System {
 		}
 
 		public static Attribute GetCustomAttribute (ParameterInfo element,
-							    Type attribute_type, bool inherit)
+							    Type attribute_type,
+							    bool inherit)
 		{
 			// neither parameter is allowed to be null
 			CheckParameters (element, attribute_type);
 
 			// ParameterInfo inheritance hierarchies CAN NOT be searched for attributes, so the second
-			// parameter of GetCustomAttributes () is INGNORED.
+			// parameter of GetCustomAttributes () is IGNORED.
 			object[] attributes = element.GetCustomAttributes (attribute_type, inherit);
 
 			return FindAttribute (attributes);
@@ -137,155 +136,119 @@ namespace System {
 
 		public static Attribute[] GetCustomAttributes (Assembly element)
 		{
-			return System.Attribute.GetCustomAttributes (element, true);
+			return GetCustomAttributes (element, true);
 		}
 
 		public static Attribute[] GetCustomAttributes (ParameterInfo element)
 		{
-			return System.Attribute.GetCustomAttributes (element, true);
+			return GetCustomAttributes (element, true);
 		}
 
-		public static Attribute[] GetCustomAttributes (MemberInfo element){
-			return System.Attribute.GetCustomAttributes (element, true);
+		public static Attribute[] GetCustomAttributes (MemberInfo element)
+		{
+			return GetCustomAttributes (element, true);
 		}
 
-		public static Attribute[] GetCustomAttributes (Module element){
-			return System.Attribute.GetCustomAttributes (element, true);
+		public static Attribute[] GetCustomAttributes (Module element)
+		{
+			return GetCustomAttributes (element, true);
+		}
+
+		public static Attribute[] GetCustomAttributes (Assembly element, Type attribute_type)
+		{
+			return GetCustomAttributes (element, attribute_type, true);
+		}
+
+		public static Attribute[] GetCustomAttributes (Module element, Type attribute_type)
+		{
+			return GetCustomAttributes (element, attribute_type, true);
+		}
+
+		public static Attribute[] GetCustomAttributes (ParameterInfo element, Type attribute_type)
+		{
+			return GetCustomAttributes (element, attribute_type, true);
+		}
+
+		public static Attribute[] GetCustomAttributes (MemberInfo element, Type attribute_type)
+		{
+			return GetCustomAttributes (element, attribute_type, true);
 		}
 
 		public static Attribute[] GetCustomAttributes (Assembly element,
-							       Type attribute_type)
-		{
-			return System.Attribute.GetCustomAttributes (element, attribute_type, true);
-		}
-
-		public static Attribute[] GetCustomAttributes (Module element,
-							       Type attribute_type)
-		{
-			return System.Attribute.GetCustomAttributes (element, attribute_type, true);
-		}
-
-		public static Attribute[] GetCustomAttributes (ParameterInfo element,
-							       Type attribute_type)
-		{
-			return System.Attribute.GetCustomAttributes (element, attribute_type, true);
-		}
-
-		public static Attribute[] GetCustomAttributes (MemberInfo element,
-							       Type attribute_type)
-		{
-			return System.Attribute.GetCustomAttributes (element, attribute_type, true);
-		}
-
-		public static Attribute[] GetCustomAttributes (Assembly element,
-							       Type attribute_type, bool inherit)
-		{
-			// element parameter is not allowed to be null
-			CheckParameters (element, attribute_type);
-
-			// make a properly typed array to return containing the custom attributes
-			System.Attribute[] attributes;
-
-			attributes = (System.Attribute[]) element.GetCustomAttributes (
-				attribute_type, inherit);
-
-			return attributes;
-		}
-
-		public static Attribute[] GetCustomAttributes (ParameterInfo element,
-							       Type attribute_type, bool inherit)
-		{
-			// element parameter is not allowed to be null
-			CheckParameters (element, attribute_type);
-
-			// make a properly typed array to return containing the custom attributes
-			System.Attribute[] attributes = (System.Attribute[]) element.GetCustomAttributes (
-				attribute_type, inherit);
-
-			return attributes;
-		}
-
-		public static Attribute[] GetCustomAttributes (Module element,
-							       Type attribute_type, bool inherit)
-		{
-			// element parameter is not allowed to be null
-			CheckParameters (element, attribute_type);
-
-			// make a properly typed array to return containing the custom attributes
-			System.Attribute[] attributes = (System.Attribute[]) element.GetCustomAttributes (
-				attribute_type, inherit);
-
-			return attributes;
-		}
-
-		public static Attribute[] GetCustomAttributes (MemberInfo element,
-							       Type attribute_type, bool inherit)
-		{
-			// element parameter is not allowed to be null
-			CheckParameters (element, attribute_type);
-
-			// make a properly typed array to return containing the custom attributes
-			System.Attribute[] attributes = (System.Attribute[]) element.GetCustomAttributes (
-				attribute_type, inherit);
-
-			return attributes;
-		}
-
-		public static Attribute[] GetCustomAttributes (Module element,
+							       Type attribute_type,
 							       bool inherit)
 		{
 			// element parameter is not allowed to be null
-			CheckParameters (element, typeof (System.Attribute));
+			CheckParameters (element, attribute_type);
 
-			// make a properly typed array to return containing the custom attributes
-			System.Attribute[] attributes = (System.Attribute[]) element.GetCustomAttributes (
-				inherit);
+			return (Attribute []) element.GetCustomAttributes (attribute_type, inherit);
+		}
 
-			return attributes;
+		public static Attribute[] GetCustomAttributes (ParameterInfo element,
+							       Type attribute_type,
+							       bool inherit)
+		{
+			// element parameter is not allowed to be null
+			CheckParameters (element, attribute_type);
+
+			return (Attribute []) element.GetCustomAttributes (attribute_type, inherit);
+		}
+
+		public static Attribute[] GetCustomAttributes (Module element,
+							       Type attribute_type,
+							       bool inherit)
+		{
+			// element parameter is not allowed to be null
+			CheckParameters (element, attribute_type);
+
+			return (Attribute []) element.GetCustomAttributes (attribute_type, inherit);
+		}
+
+		public static Attribute[] GetCustomAttributes (MemberInfo element,
+							       Type attribute_type,
+							       bool inherit)
+		{
+			// element parameter is not allowed to be null
+			CheckParameters (element, attribute_type);
+
+			return (Attribute []) element.GetCustomAttributes (attribute_type, inherit);
+		}
+
+		public static Attribute[] GetCustomAttributes (Module element, bool inherit)
+		{
+			// element parameter is not allowed to be null
+			CheckParameters (element, typeof (Attribute));
+
+			return (Attribute []) element.GetCustomAttributes (inherit);
 		}
 		
-		public static Attribute[] GetCustomAttributes (Assembly element,
-							       bool inherit)
+		public static Attribute[] GetCustomAttributes (Assembly element, bool inherit)
 		{
 			// element parameter is not allowed to be null
-			CheckParameters (element, typeof (System.Attribute));
+			CheckParameters (element, typeof (Attribute));
 
-			// make a properly typed array to return containing the custom attributes
-			System.Attribute[] attributes = (System.Attribute[]) element.GetCustomAttributes (
-				inherit);
-
-			return attributes;
+			return (Attribute []) element.GetCustomAttributes (inherit);
 		}
 
-		public static Attribute[] GetCustomAttributes (MemberInfo element,
-							       bool inherit)
+		public static Attribute[] GetCustomAttributes (MemberInfo element, bool inherit)
 		{
 			// element parameter is not allowed to be null
-			CheckParameters (element, typeof (System.Attribute));
+			CheckParameters (element, typeof (Attribute));
 
-			// make a properly typed array to return containing the custom attributes
-			System.Attribute[] attributes = (System.Attribute[]) element.GetCustomAttributes (
-				inherit);
-
-			return attributes;
+			return (Attribute []) element.GetCustomAttributes (inherit);
 		}
 
-		public static Attribute[] GetCustomAttributes (ParameterInfo element,
-							       bool inherit)
+		public static Attribute[] GetCustomAttributes (ParameterInfo element, bool inherit)
 		{
 			// element parameter is not allowed to be null
-			CheckParameters (element, typeof (System.Attribute));
+			CheckParameters (element, typeof (Attribute));
 
-			// make a properly typed array to return containing the custom attributes
-			System.Attribute[] attributes = (System.Attribute[]) element.GetCustomAttributes (
-				inherit);
-
-			return attributes;
+			return (Attribute []) element.GetCustomAttributes (inherit);
 		}
 
 		public override int GetHashCode ()
 		{
-			return ((Object) this).GetHashCode ();
+			return base.GetHashCode ();
 		}
 		
 		public virtual bool IsDefaultAttribute ()
@@ -368,3 +331,4 @@ namespace System {
 		}
 	}
 }
+

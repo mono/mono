@@ -13,6 +13,7 @@
 using System;
 using System.Collections;
 using System.Globalization;
+using System.IO;
 using System.Reflection;
 using System.Reflection.Emit;
 using System.Runtime.CompilerServices;
@@ -68,9 +69,7 @@ namespace System {
 		public bool ShadowCopyFiles {
 
 			get {
-				if (SetupInformation.ShadowCopyFiles == "true")
-					return true;
-				return false;
+				return (SetupInformation.ShadowCopyFiles == "true");
 			}
 		}
 
@@ -102,22 +101,34 @@ namespace System {
 			}
 		}
 
-		[MonoTODO]
 		public void AppendPrivatePath (string path)
 		{
-			throw new NotImplementedException ();
+			if (path == null || path == "")
+				return;
+
+			AppDomainSetup setup = SetupInformation;
+
+			string pp = setup.PrivateBinPath;
+			if (pp == null || pp == "") {
+				setup.PrivateBinPath = path;
+				return;
+			}
+
+			pp = pp.Trim ();
+			if (pp [pp.Length - 1] != Path.PathSeparator)
+				pp += Path.PathSeparator;
+
+			setup.PrivateBinPath = pp + path;
 		}
 		
-		[MonoTODO]
 		public void ClearPrivatePath ()
 		{
-			throw new NotImplementedException ();
+			SetupInformation.PrivateBinPath = "";
 		}
 		
-		[MonoTODO]
 		public void ClearShadowCopyPath ()
 		{
-			throw new NotImplementedException ();
+			SetupInformation.ShadowCopyDirectories = "";
 		}
 
 		[MonoTODO]
@@ -424,10 +435,9 @@ namespace System {
 			return (int)_mono_app_domain;
 		}
 
-		[MonoTODO("Somehow, we're supposed to implement 'public Type _AppDomain.GetType()' and still inherit 'public Type Object.GetType()")]
-		Type _AppDomain.GetType()
+		public new Type GetType()
 		{
-			throw new NotImplementedException();
+			return base.GetType ();
 		}
 		
 		[MonoTODO]
@@ -504,16 +514,14 @@ namespace System {
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		public void SetShadowCopyFiles()
 		{
-			throw new NotImplementedException ();
+			SetupInformation.ShadowCopyFiles = "true";
 		}
 						
-		[MonoTODO]
 		public void SetShadowCopyPath (string s)
 		{
-			throw new NotImplementedException ();
+			SetupInformation.ShadowCopyDirectories = s;
 		}
 		
 		[MonoTODO]

@@ -20,11 +20,11 @@ namespace System {
 
 		static Console ()
 		{
-			stderr = new StreamWriter (OpenStandardError (), Encoding.UnixConsoleEncoding);
+			stderr = new StreamWriter (OpenStandardError (), Encoding.Default);
 			((StreamWriter)stderr).AutoFlush = true;
-			stdout = new StreamWriter (OpenStandardOutput (), Encoding.UnixConsoleEncoding);
+			stdout = new StreamWriter (OpenStandardOutput (), Encoding.Default);
 			((StreamWriter)stdout).AutoFlush = true;
-			stdin  = new StreamReader (OpenStandardInput (), Encoding.UnixConsoleEncoding);
+			stdin  = new StreamReader (OpenStandardInput (), Encoding.Default);
 		}
 
 		private Console () {}

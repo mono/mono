@@ -52,7 +52,7 @@ namespace System.IO {
                         
                         this.capacity = capacity;
                         initialLength = 0;
-                        internalBuffer = new byte[ 0 ];
+                        internalBuffer = new byte [capacity];
 
                         expandable = true;
                         allowGetBuffer = true;

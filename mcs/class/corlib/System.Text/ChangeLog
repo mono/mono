@@ -1,3 +1,7 @@
+2003-02-03  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Encoding.cs: removed UnixConsoleEncoding.
+
 2003-01-30  Zoltan Varga  <vargaz@freemail.hu>
 
 	* StringBuilder.cs: fix the constructor: 'value' can be NULL,
