@@ -1,3 +1,13 @@
+
+Tue Feb 19 20:23:11 CET 2002 Paolo Molaro <lupus@ximian.com>
+
+	* icall.c: register the GetCustomAttributes method.
+	* object.c, object.h: add mono_string_new_len ().
+	* reflection.h, reflection.c: added mono_runtime_invoke(),
+	mono_install_runtime_invoke(). Added
+	mono_reflection_get_custom_attrs () to load custom attributes and
+	create the attribute objects.
+
 2002-02-19  Dick Porter  <dick@ximian.com>
 	* threads-dummy-types.c:
 	* threads-dummy-types.h:

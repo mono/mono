@@ -1,4 +1,8 @@
 
+Tue Feb 19 20:21:14 CET 2002 Paolo Molaro <lupus@ximian.com>
+
+	* interp.c: implement the runtime_invoke function.
+
 Mon Feb 18 15:49:20 CET 2002 Paolo Molaro <lupus@ximian.com>
 
 	* interp.c: fix alignment code. Make sure to init classes
