@@ -1,3 +1,7 @@
+2004-09-04  Marek Safar <marek.safar@seznam.cz>
+
+	* test-289.cs: New test for #63631.
+
 2004-09-03  Raja R Harinath  <rharinath@novell.com>
 
 	* Makefile (TEST_SOURCES): Add 'mtest-1-dll' and 'mtest-1-exe'.
