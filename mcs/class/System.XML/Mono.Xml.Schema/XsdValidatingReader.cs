@@ -53,7 +53,7 @@ namespace Mono.Xml.Schema
 		IXmlLineInfo readerLineInfo;
 		bool laxElementValidation = true;
 		bool reportNoValidationError;
-		XmlSchemaCollection schemas = new XmlSchemaCollection ();
+		XmlSchemaSet schemas = new XmlSchemaSet ();
 		bool namespaces = true;
 
 		Hashtable idList = new Hashtable ();
@@ -141,8 +141,13 @@ namespace Mono.Xml.Schema
 		}
 
 		// This should be changed before the first Read() call.
-		public XmlSchemaCollection Schemas {
+		public XmlSchemaSet Schemas {
 			get { return schemas; }
+			set {
+				if (ReadState != ReadState.Initial)
+					throw new InvalidOperationException ("Schemas must be set before the first call to Read().");
+				schemas = value;
+			}
 		}
 
 		public object SchemaType {
@@ -246,60 +251,12 @@ namespace Mono.Xml.Schema
 			return null;
 		}
 
-		/*
-		public ValueType ReadTypedValueType ()
-		{
-			XmlSchemaDatatype dt = SchemaType as XmlSchemaDatatype;
-			XmlSchemaSimpleType st = SchemaType as XmlSchemaSimpleType;
-			if (st != null)
-				dt = st.Datatype;
-			if (dt == null)
-				return null;
-
-			switch (NodeType) {
-			case XmlNodeType.Element:
-				if (IsEmptyElement)
-					return null;
-
-				storedCharacters.Length = 0;
-				bool loop = true;
-				do {
-					Read ();
-					switch (NodeType) {
-					case XmlNodeType.SignificantWhitespace:
-					case XmlNodeType.Text:
-					case XmlNodeType.CDATA:
-						storedCharacters.Append (Value);
-						break;
-					case XmlNodeType.Comment:
-						break;
-					default:
-						loop = false;
-						break;
-					}
-				} while (loop && !EOF);
-				return dt.ParseValueType (storedCharacters.ToString (), NameTable, ParserContext.NamespaceManager);
-			case XmlNodeType.Attribute:
-				return dt.ParseValueType (Value, NameTable, ParserContext.NamespaceManager);
-			}
-			return null;
-		}
-		*/
-
 		public ValidationEventHandler ValidationEventHandler;
 
 		// Public Overrided Properties
 
 		public override int AttributeCount {
 			get {
-				/*
-				if (NodeType == XmlNodeType.Element)
-					return attributeCount;
-				else if (IsDefault)
-					return 0;
-				else
-					return reader.AttributeCount;
-				*/
 				return nonDefaultAttributeCount + defaultAttributes.Length;
 			}
 		}
@@ -497,14 +454,6 @@ namespace Mono.Xml.Schema
 
 		private XmlQualifiedName QualifyName (string name)
 		{
-			/*
-			int colonAt = name.IndexOf (':');
-			if (colonAt < 0)
-				return new XmlQualifiedName (name, null);
-			else
-				return new XmlQualifiedName (name.Substring (colonAt + 1),
-					LookupNamespace (name.Substring (0, colonAt)));
-			*/
 			return XmlQualifiedName.Parse (name, this);
 		}
 
@@ -555,25 +504,12 @@ namespace Mono.Xml.Schema
 
 		private XmlSchemaElement FindElement (string name, string ns)
 		{
-			foreach (XmlSchema target in schemas) {
-				XmlSchema matches = target.Schemas [ns];
-				if (matches != null) {
-					XmlSchemaElement result = target.Elements [new XmlQualifiedName (name, ns)] as XmlSchemaElement;
-					if (result != null)
-						return result;
-				}
-			}
-			return null;
+			return (XmlSchemaElement) schemas.GlobalElements [new XmlQualifiedName (name, ns)];
 		}
 
 		private XmlSchemaType FindType (XmlQualifiedName qname)
 		{
-			foreach (XmlSchema target in schemas) {
-				XmlSchemaType type = target.SchemaTypes [qname] as XmlSchemaType;
-				if (type != null)
-					return type;
-			}
-			return null;
+			return (XmlSchemaType) schemas.GlobalTypes [qname];
 		}
 
 		private void ValidateStartElementParticle ()
@@ -912,8 +848,9 @@ namespace Mono.Xml.Schema
 					*/
 					break;
 				default:
-					schema = schemas [reader.NamespaceURI];
-					if (xsiTypeName == null && (schema == null || !schema.missedSubComponents))
+					if (xsiTypeName == null &&
+						(schemas.Contains (reader.NamespaceURI) ||
+						!schemas.MissedSubComponents (reader.NamespaceURI)))
 						HandleError ("Element declaration for " + reader.LocalName + " is missing.");
 					break;
 				}
@@ -1035,7 +972,7 @@ namespace Mono.Xml.Schema
 				else if (reader.NamespaceURI == XmlSchema.InstanceNamespace)
 					continue;
 				XmlQualifiedName qname = new XmlQualifiedName (reader.LocalName, reader.NamespaceURI);
-				object attMatch = FindAttributeDeclaration (cType, qname, elementNs);
+				XmlSchemaObject attMatch = FindAttributeDeclaration (cType, qname, elementNs);
 				if (attMatch == null)
 					HandleError ("Attribute declaration was not found for " + qname);
 				else {
@@ -1088,8 +1025,10 @@ namespace Mono.Xml.Schema
 			return false;
 		}
 
-		private XmlSchemaObject FindAttributeDeclaration (XmlSchemaComplexType cType,
-			XmlQualifiedName qname, string elementNs)
+		private XmlSchemaObject FindAttributeDeclaration (
+			XmlSchemaComplexType cType,
+			XmlQualifiedName qname,
+			string elementNs)
 		{
 			XmlSchemaObject result = cType.AttributeUses [qname];
 			if (result != null)
@@ -1102,13 +1041,9 @@ namespace Mono.Xml.Schema
 
 			if (cType.AttributeWildcard.ResolvedProcessContents == XmlSchemaContentProcessing.Skip)
 				return cType.AttributeWildcard;
-			foreach (XmlSchema schema in schemas) {
-				foreach (DictionaryEntry entry in schema.Attributes) {
-					XmlSchemaAttribute attr = (XmlSchemaAttribute) entry.Value;
-					if (attr.QualifiedName == qname)
-						return attr;
-				}
-			}
+			XmlSchemaAttribute attr = schemas.GlobalAttributes [qname] as XmlSchemaAttribute;
+			if (attr != null)
+				return attr;
 			if (cType.AttributeWildcard.ResolvedProcessContents == XmlSchemaContentProcessing.Lax)
 				return cType.AttributeWildcard;
 			else
@@ -1606,10 +1541,11 @@ namespace Mono.Xml.Schema
 		{
 			XmlSchema schema = null;
 			string schemaLocation = reader.GetAttribute ("schemaLocation", XmlSchema.InstanceNamespace);
+			bool schemaAdded = false;
 			if (schemaLocation != null) {
 				string [] tmp = null;
 				try {
-					schemaLocation = XmlSchemaDatatype.FromName ("token").Normalize (schemaLocation);
+					schemaLocation = XmlSchemaDatatype.FromName ("token", XmlSchema.Namespace).Normalize (schemaLocation);
 					tmp = schemaLocation.Split (XmlChar.WhitespaceChars);
 				} catch (Exception ex) {
 					HandleError ("Invalid schemaLocation attribute format.", ex, true);
@@ -1638,10 +1574,9 @@ namespace Mono.Xml.Schema
 				}
 			}
 			if (schema != null) {
-				try {
-					schemas.Add (schema, resolver);
-				} catch (XmlSchemaException ex) {
-					HandleError (ex);
+				if (!schemas.Contains (schema.TargetNamespace)) {
+					schemaAdded = true;
+					schemas.Add (schema);
 				}
 			}
 			schema = null;
@@ -1663,13 +1598,14 @@ namespace Mono.Xml.Schema
 					HandleError ("Specified schema has different target namespace.");
 			}
 			if (schema != null) {
-				try {
-					schema.Compile (ValidationEventHandler, resolver);
+				if (!schemas.Contains (schema.TargetNamespace)) {
+					schemaAdded = true;
 					schemas.Add (schema);
-				} catch (XmlSchemaException ex) {
-					HandleError (ex);
 				}
 			}
+			// FIXME: should call Reprocess()?
+			if (schemaAdded)
+				schemas.Compile ();
 		}
 
 		public override bool Read ()
@@ -1699,6 +1635,8 @@ namespace Mono.Xml.Schema
 			case XmlNodeType.Element:
 				nonDefaultAttributeCount = reader.AttributeCount;
 
+				// FIXME: schemaLocation could be specified 
+				// at any Depth.
 				if (reader.Depth == 0)
 					ExamineAdditionalSchema ();
 
@@ -1858,24 +1796,6 @@ namespace Mono.Xml.Schema
 				}
 			}
 		}
-
-		/*
-		internal class XsdValidityState
-		{
-			ArrayList currentParticles = new ArrayList ();
-			ArrayList occured = new ArrayList ();
-			Hashtable xsAllConsumed = new Hashtable ();
-			XmlSchemaParticle parciele;
-			int particleDepth;
-
-			public XsdValidityState (XmlSchemaParticle particle)
-			{
-				this.parciele = particle;
-				currentParticles.Add (particle);
-			}
-
-		}
-		*/
 	}
 
 }

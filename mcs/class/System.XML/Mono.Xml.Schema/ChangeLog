@@ -1,3 +1,8 @@
+2004-08-10  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XsdValidatingReader.cs : replaced XmlSchemaCollection with
+	  XmlSchemaSet. Removed unused code.
+
 2004-08-03  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XsdValidatingReader.cs : implemented 2.0 IXmlNamespaceResolver.
