@@ -1,8 +1,8 @@
-EXTRA_DIST = mcs.in mbas.in ilasm.in cilc.in monoresgen.in resgen.in secutil.in sqlsharp.in xsd.in wsdl.in genxs.in soapsuds.in chktrust.in signcode.in disco.in sn.in al.in cert2spc.in setreg.in makecert.in certmgr.in monop.in gacutil.in gmcs.in
+EXTRA_DIST = mcs.in mbas.in ilasm.in cilc.in monoresgen.in resgen.in secutil.in sqlsharp.in xsd.in wsdl.in genxs.in soapsuds.in chktrust.in signcode.in disco.in sn.in al.in cert2spc.in setreg.in makecert.in certmgr.in monop.in gacutil.in gmcs.in mono-find-provides.in mono-find-requires.in
 
-bin_SCRIPTS = mcs mbas ilasm cilc monoresgen resgen secutil sqlsharp xsd wsdl al genxs soapsuds chktrust signcode disco sn cert2spc setreg makecert certmgr monop gacutil gmcs
+bin_SCRIPTS = mcs mbas ilasm cilc monoresgen resgen secutil sqlsharp xsd wsdl al genxs soapsuds chktrust signcode disco sn cert2spc setreg makecert certmgr monop gacutil gmcs mono-find-requires mono-find-provides
 
-CLEANFILES = mcs mbas ilasm cilc monoresgen resgen secutil sqlsharp xsd wsdl al genxs soapsuds chktrust signcode disco sn cert2spc setreg makecert certmgr monop gacutil gmcs
+CLEANFILES = mcs mbas ilasm cilc monoresgen resgen secutil sqlsharp xsd wsdl al genxs soapsuds chktrust signcode disco sn cert2spc setreg makecert certmgr monop gacutil gmcs mono-find-requires mono-find-provides
 
 if USE_JIT
 MONO_INTERP = mono
@@ -115,3 +115,11 @@ monop: monop.in
 gacutil: gacutil.in
 	sed -e 's^\@bindir\@^$(bindir)^g' -e 's^\@mono_interp\@^$(MONO_INTERP)^g' -e's^\@plat_bindir\@^$(plat_bindir)^g' < $(srcdir)/gacutil.in > gacutil.tmp \
 	&& mv gacutil.tmp gacutil
+
+mono-find-provides: mono-find-provides.in
+	sed -e 's^\@bindir\@^$(bindir)^g' -e 's^\@mono_interp\@^$(MONO_INTERP)^g' -e's^\@plat_bindir\@^$(plat_bindir)^g' < $(srcdir)/mono-find-provides.in > mono-find-provides.tmp \
+	&& mv mono-find-provides.tmp mono-find-provides
+
+mono-find-requires: mono-find-requires.in
+	sed -e 's^\@bindir\@^$(bindir)^g' -e 's^\@mono_interp\@^$(MONO_INTERP)^g' -e's^\@plat_bindir\@^$(plat_bindir)^g' < $(srcdir)/mono-find-requires.in > mono-find-requires.tmp \
+	&& mv mono-find-requires.tmp mono-find-requires
