@@ -14,85 +14,101 @@ namespace System.Messaging
 	[Serializable]
 	public class MessageQueuePermissionEntryCollection: CollectionBase 
 	{
-		//[Serializable]
+		private MessageQueuePermission owner;
+
+		internal MessageQueuePermissionEntryCollection (MessageQueuePermission owner)
+		{
+			this.owner = owner;
+		}
+
 		public MessageQueuePermissionEntry this[int index] 
 		{
-			[MonoTODO]
-			get {throw new NotImplementedException();}
-			[MonoTODO]
-			set {throw new NotImplementedException();}
+			get
+			{
+				return ((MessageQueuePermissionEntry) base.List[index]);
+			}
+			set
+			{
+				base.List[index] = value;
+			}
 		}
 		
-		[MonoTODO]
 		public int Add(MessageQueuePermissionEntry value)
 		{
-			throw new NotImplementedException();
+			return base.List.Add (value);
 		}
 		
-		[MonoTODO]
 		public void AddRange(MessageQueuePermissionEntry[] value)
 		{
-			throw new NotImplementedException();
+			if (value == null)
+			{
+				throw new ArgumentNullException ("value");
+
+			}
+			for (int counter = 0; counter < value.Length; counter++)
+			{
+				this.Add (value[counter]);
+			}
 		}
 		
-		[MonoTODO]
 		public void AddRange(MessageQueuePermissionEntryCollection value)
 		{
-			throw new NotImplementedException();
+			if (value == null)
+			{
+				throw new ArgumentNullException ("value");
+
+			}
+			int entryCount = value.Count;
+			for (int counter = 0; counter < entryCount; counter++)
+			{
+				this.Add (value[counter]);
+			}
 		}
 		
-		[MonoTODO]
 		public bool Contains(MessageQueuePermissionEntry value)
 		{
-			throw new NotImplementedException();
+			return base.List.Contains (value);
 		}
 		
-		[MonoTODO]
 		public void CopyTo(MessageQueuePermissionEntry[] array,int index)
 		{
-			throw new NotImplementedException();
+			base.List.CopyTo (array, index);
 		}
 		
 		[MonoTODO]
 		public int IndexOf(MessageQueuePermissionEntry value)
 		{
-			throw new NotImplementedException();
+			return base.List.IndexOf (value);
 		}
 		
-		[MonoTODO]
 		public void Insert(int index, MessageQueuePermissionEntry value)
 		{
-			throw new NotImplementedException();
+			base.List.Insert (index, value);
 		}
 		
-		[MonoTODO]
 		public void Remove(MessageQueuePermissionEntry value)
 		{
-			throw new NotImplementedException();
+			base.List.Remove (value);
 		}
 		
-		[MonoTODO]
 		protected override void OnClear()
 		{
-			throw new NotImplementedException();
+			owner.Clear ();
 		}
 		
-		[MonoTODO]
 		protected override void OnInsert(int index,object value)
 		{
-			throw new NotImplementedException();
+			owner.Clear ();
 		}
 		
-		[MonoTODO]
 		protected override void OnRemove(int index,object value)
 		{
-			throw new NotImplementedException();
+			owner.Clear ();
 		}
 		
-		[MonoTODO]
 		protected override void OnSet(int index,object oldValue,object newValue)
 		{
-			throw new NotImplementedException();
+			owner.Clear ();
 		}
 	}
 }

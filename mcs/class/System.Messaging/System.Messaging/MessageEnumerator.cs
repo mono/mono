@@ -14,6 +14,11 @@ namespace System.Messaging
 {
 	public class MessageEnumerator: MarshalByRefObject, IEnumerator, IDisposable 
 	{
+		[MonoTODO]
+		internal MessageEnumerator (MessageQueue owner)
+		{
+		}
+
 		public Message Current {		
 			[MonoTODO]
 			get {throw new NotImplementedException();}
@@ -31,18 +36,18 @@ namespace System.Messaging
 		{
 			throw new NotImplementedException();
 		}
-		[MonoTODO]
+
 		public void Dispose()
 		{
-			throw new NotImplementedException();
+			Dispose (true);
+			GC.SuppressFinalize (this);
 		}
-		/*
-		[MonoTODO]
+
 		protected virtual void Dispose(bool disposing)
 		{
-			throw new NotImplementedException();
+			Close();
 		}
-		*/
+
 		[MonoTODO]
 		public bool MoveNext()
 		{
@@ -86,30 +91,13 @@ namespace System.Messaging
 		[MonoTODO]
 		public void Reset()
 		{
-			throw new NotImplementedException();
+			Close ();
 		}
-		/*
-		[MonoTODO]
-		public void Dispose()
-		{
-			throw new NotImplementedException();
-		}
-		*/
-		/*
-		[MonoTODO]
-		protected virtual void Dispose(bool disposing)
-		{
-			throw new NotImplementedException();
-		}
-		[MonoTODO]
-		protected virtual void Dispose(bool disposing)
-		{
-			throw new NotImplementedException();
-		}
-		*/
+
 		[MonoTODO]
 		~MessageEnumerator()
 		{
+			Dispose(false);
 		}
 	}
 }

@@ -69,11 +69,5 @@ namespace System.Messaging
 		}
 		
 		#endregion //Properties
-		
-		
-		[MonoTODO]
-		~AccessControlEntry()
-		{
-		}
 	}
 }

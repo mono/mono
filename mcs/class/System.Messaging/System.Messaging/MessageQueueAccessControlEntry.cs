@@ -28,10 +28,5 @@ namespace System.Messaging
 			[MonoTODO]
 			set {throw new NotImplementedException();}
 		}
-		
-		[MonoTODO]
-		~MessageQueueAccessControlEntry()
-		{
-		}
 	}
 }

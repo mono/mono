@@ -10,10 +10,10 @@ using System;
 using System.Collections;
 using System.ComponentModel;
 using System.Configuration.Install;
+using System.Drawing;
 
 namespace System.Messaging 
 {
-	[CLSCompliant (false)]
 	public class MessageQueueInstaller: ComponentInstaller 
 	{
 		[MonoTODO]
@@ -26,97 +26,100 @@ namespace System.Messaging
 		{
 			throw new NotImplementedException();
 		}
-		
-		public bool Authenticate 
-		{
+
+		[DefaultValue (false)]
+		public bool Authenticate {
 			[MonoTODO]
 			get {throw new NotImplementedException();}
 			[MonoTODO]
 			set {throw new NotImplementedException();}
 		}
-		
-		public short BasePriority 
-		{
+
+		[DefaultValue (0)]
+		public short BasePriority {
 			[MonoTODO]
 			get {throw new NotImplementedException();}
 			[MonoTODO]
 			set {throw new NotImplementedException();}
 		}
-		
-		public Guid Category 
-		{
+
+		[TypeConverter (typeof(GuidConverter))]
+		public Guid Category {
 			[MonoTODO]
 			get {throw new NotImplementedException();}
 			[MonoTODO]
 			set {throw new NotImplementedException();}
 		}
-		
-		public EncryptionRequired EncryptionRequired 
-		{
+
+		[DefaultValue (EncryptionRequired.None)]
+		public EncryptionRequired EncryptionRequired {
 			[MonoTODO]
 			get {throw new NotImplementedException();}
 			[MonoTODO]
 			set {throw new NotImplementedException();}
 		}
-		
-		public string Label 
-		{
+
+		[DefaultValue ("")]
+		public string Label {
 			[MonoTODO]
 			get {throw new NotImplementedException();}
 			[MonoTODO]
 			set {throw new NotImplementedException();}
 		}
-		
-		public long MaximumJournalSize 
-		{
+
+		[TypeConverter (typeof(SizeConverter))]
+		public long MaximumJournalSize {
 			[MonoTODO]
 			get {throw new NotImplementedException();}
 			[MonoTODO]
 			set {throw new NotImplementedException();}
 		}
-		
-		public long MaximumQueueSize 
-		{
+
+		[TypeConverter (typeof(SizeConverter))]
+		public long MaximumQueueSize {
 			[MonoTODO]
 			get {throw new NotImplementedException();}
 			[MonoTODO]
 			set {throw new NotImplementedException();}
 		}
-		
-		public string Path 
-		{
+
+		[Editor ("System.Messaging.Design.QueuePathEditor", "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
+		[DefaultValue ("")]
+		[TypeConverter ("System.Diagnostics.Design.StringValueConverter, " + Consts.AssemblySystem_Design)]
+		public string Path {
 			[MonoTODO]
 			get {throw new NotImplementedException();}
 			[MonoTODO]
 			set {throw new NotImplementedException();}
 		}
-		
-		public AccessControlList Permissions 
-		{
+
+		[Browsable (false)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		public AccessControlList Permissions {
 			[MonoTODO]
 			get {throw new NotImplementedException();}
 			[MonoTODO]
 			set {throw new NotImplementedException();}
 		}
-		
-		public bool Transactional 
-		{
+
+		[DefaultValue (false)]
+		public bool Transactional {
 			[MonoTODO]
 			get {throw new NotImplementedException();}
 			[MonoTODO]
 			set {throw new NotImplementedException();}
 		}
-		
-		public UninstallAction UninstallAction 
-		{
+
+		[DefaultValue (UninstallAction.Remove)]
+		public UninstallAction UninstallAction {
 			[MonoTODO]
 			get {throw new NotImplementedException();}
 			[MonoTODO]
 			set {throw new NotImplementedException();}
 		}
-		
-		public bool UseJournalQueue 
-		{
+
+		[DefaultValue (false)]
+		public bool UseJournalQueue {
 			[MonoTODO]
 			get {throw new NotImplementedException();}
 			[MonoTODO]
@@ -157,11 +160,6 @@ namespace System.Messaging
 		public override void Uninstall(IDictionary savedState)
 		{
 			throw new NotImplementedException();
-		}
-		
-		[MonoTODO]
-		~MessageQueueInstaller()
-		{
 		}
 	}
 }

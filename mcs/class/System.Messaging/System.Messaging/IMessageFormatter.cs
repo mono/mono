@@ -8,9 +8,12 @@
 //
 
 using System;
+using System.ComponentModel;
+using System.Messaging.Design;
 
 namespace System.Messaging 
 {
+	[TypeConverter (typeof(MessageFormatterConverter))]
 	public interface IMessageFormatter: ICloneable 
 	{
 		bool CanRead(Message message);

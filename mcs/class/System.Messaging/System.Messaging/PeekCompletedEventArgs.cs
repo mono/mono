@@ -7,6 +7,7 @@
 //
 // (C) 2003 Peter Van Isacker
 //
+
 using System;
 using System.Runtime.Remoting.Messaging;
 
@@ -14,18 +15,32 @@ namespace System.Messaging
 {
 	public class PeekCompletedEventArgs : EventArgs 
 	{
-		public IAsyncResult AsyncResult;
-		public Message Message;
+		private MessageQueue _sender;
+		private IAsyncResult _result;
+		private Message _message;
 
-		internal PeekCompletedEventArgs(AsyncResult AsyncResult, Message Message)
+		internal PeekCompletedEventArgs(MessageQueue sender, IAsyncResult result)
 		{
-			this.AsyncResult = AsyncResult;
-			this.Message = Message;
+			_sender = sender;
+			_result = result;
 		}
-		
-		[MonoTODO]
-		~PeekCompletedEventArgs()
+
+		public IAsyncResult AsyncResult
 		{
+			get { return _result; }
+			set { _result = value; }
+		}
+
+		public Message Message
+		{
+			get
+			{
+				if (_message == null)
+				{
+					_message = _sender.EndPeek (_result);
+				}
+				return _message;
+			}
 		}
 	}
 }

@@ -16,19 +16,25 @@ namespace System.Messaging
 {	
 	public class MessageQueueException: ExternalException 
 	{
-		private MessageQueueErrorCode messageQueueErrorCode;
+		private MessageQueueErrorCode _messageQueueErrorCode;
 
 		internal MessageQueueException(MessageQueueErrorCode messageQueueErrorCode)
 		{
-			this.messageQueueErrorCode = messageQueueErrorCode;
+			_messageQueueErrorCode = messageQueueErrorCode;
 		}
-		
+
+		protected MessageQueueException (SerializationInfo info, StreamingContext context) : base(info, context)
+		{
+			_messageQueueErrorCode = (MessageQueueErrorCode) info.GetInt32 ("NativeErrorCode");
+		}
+
 		[MonoTODO]
 		private string TranslateCodeToDescription()
 		{
 			return "UnknownError";
 		}
 
+		[MonoTODO]
 		public override string Message 
 		{
 			get { return TranslateCodeToDescription(); }
@@ -36,27 +42,16 @@ namespace System.Messaging
 		
 		public MessageQueueErrorCode MessageQueueErrorCode 
 		{
-			get { return messageQueueErrorCode; }
+			get { return _messageQueueErrorCode; }
 		}
 		
-		[MonoTODO]
 		public override void GetObjectData(SerializationInfo info, StreamingContext context)
 		{
 			if (info == null)
 				throw new ArgumentNullException();
+
+			info.AddValue ("NativeErrorCode", (int) _messageQueueErrorCode);
 			base.GetObjectData(info, context);
-			// serialize just the messageQueueErrorCode private field;
-		}
-		
-		[MonoTODO]
-		public override string ToString()
-		{
-			return base.ToString();
-		}
-		
-		[MonoTODO]
-		~MessageQueueException()
-		{
 		}
 	}
 }

@@ -15,6 +15,18 @@ namespace System.Messaging
 	[AttributeUsage(AttributeTargets.All)]
 	public class MessagingDescriptionAttribute:  DescriptionAttribute 
 	{
-		public MessagingDescriptionAttribute(string description) : base(description) {}
+		[MonoTODO ("localization")]
+		public MessagingDescriptionAttribute(string description) : base(description) 
+		{
+		}
+
+		[MonoTODO ("localization")]
+		public override string Description
+		{
+			get
+			{
+				return base.Description;
+			}
+		}
 	}
 }

@@ -10,83 +10,80 @@
 using System;
 using System.Collections;
 
-namespace System.Messaging 
+namespace System.Messaging
 {
-	public class MessageQueueEnumerator: MarshalByRefObject, IEnumerator, IDisposable 
+	public class MessageQueueEnumerator : MarshalByRefObject, IEnumerator, IDisposable
 	{
-        // To avoid multiple disposals
-        private bool disposed = false;
+		private bool disposed;
 		private ArrayList queueList;
 		private int currentIndex;
-		
-		internal MessageQueueEnumerator(ArrayList queueList)
+
+		internal MessageQueueEnumerator (ArrayList queueList)
 		{
 			this.queueList = queueList;
 			this.currentIndex = -1;
 		}
 
-		public MessageQueue Current 
+		public MessageQueue Current
 		{
-			get 
+			get
 			{
-				if (currentIndex < 0 ||
-					currentIndex >= queueList.Count)
+				if (currentIndex < 0 || currentIndex >= queueList.Count)
 					return null;
-				return (MessageQueue)queueList[currentIndex];
+				return (MessageQueue) queueList[currentIndex];
 			}
 		}
-		
-		object IEnumerator.Current 
+
+		object IEnumerator.Current
 		{
-			get 
+			get
 			{
-				if (currentIndex < 0 ||
-					currentIndex >= queueList.Count)
+				if (currentIndex < 0 || currentIndex >= queueList.Count)
 					return null;
 				return queueList[currentIndex];
 			}
 		}
-		
-		public IntPtr LocatorHandle 
+
+		public IntPtr LocatorHandle
 		{
 			[MonoTODO]
-			get {throw new NotImplementedException();}
+			get
+			{
+				throw new NotImplementedException ();
+			}
 		}
-		
-		public void Close()
+
+		[MonoTODO]
+		public void Close ()
 		{
-			Dispose();
 		}
-		
-		public void Dispose()
+
+		public void Dispose ()
 		{
-            // Do this only at the first time
-            if (!this.disposed)
-				Dispose(true);
-            disposed = true;         
-            // Take this object off the finalization queue 
-            //GC.SuppressFinalize(this);
+			Dispose (true);
+			GC.SuppressFinalize (this);
 		}
-		
-		protected virtual void Dispose(bool disposing)
+
+		protected virtual void Dispose (bool disposing)
 		{
-			// do nothing
+			Close ();
+			disposed = true;
 		}
-		
-		public bool MoveNext()
+
+		public bool MoveNext ()
 		{
-			return (++currentIndex) < queueList.Count;			
+			return (++currentIndex) < queueList.Count;
 		}
-		
-		public void Reset()
+
+		public void Reset ()
 		{
 			currentIndex = -1;
 		}
-		
-		~MessageQueueEnumerator()
+
+		~MessageQueueEnumerator ()
 		{
-           	if (!this.disposed)
-				Dispose(false);		
+			if (!disposed)
+				Dispose (false);
 		}
 	}
 }

@@ -23,17 +23,11 @@ namespace System.Messaging
 	[Serializable]
 	public class MessageQueuePermissionAttribute: CodeAccessSecurityAttribute 
 	{
-		//[AttributeUsage(AttributeTargets.Assembly | AttributeTargets.Class|
-		//                AttributeTargets.Struct | AttributeTargets.Constructor |AttributeTargets.Method | AttributeTargets.Event)]
-		//[Serializable]
 		[MonoTODO]
 		public MessageQueuePermissionAttribute(SecurityAction action):base(action)
 		{
 		}
 		
-		//[AttributeUsage(AttributeTargets.Assembly | AttributeTargets.Class| AttributeTargets.Struct | AttributeTargets.Constructor |
-		//                AttributeTargets.Method | AttributeTargets.Event)]
-		//[Serializable]
 		public string Category 
 		{
 			[MonoTODO]
@@ -42,10 +36,6 @@ namespace System.Messaging
 			set {throw new NotImplementedException();}
 		}
 		
-		//[AttributeUsage(AttributeTargets.Assembly | AttributeTargets.Class
-		//                | AttributeTargets.Struct | AttributeTargets.Constructor |
-		//AttributeTargets.Method | AttributeTargets.Event)]
-		//[Serializable]
 		public string Label 
 		{
 			[MonoTODO]
@@ -54,10 +44,6 @@ namespace System.Messaging
 			set {throw new NotImplementedException();}
 		}
 		
-		//[AttributeUsage(AttributeTargets.Assembly | AttributeTargets.Class
-		//                | AttributeTargets.Struct | AttributeTargets.Constructor |
-		//                AttributeTargets.Method | AttributeTargets.Event)]
-		//[Serializable]
 		public string MachineName 
 		{
 			[MonoTODO]
@@ -66,10 +52,6 @@ namespace System.Messaging
 			set {throw new NotImplementedException();}
 		}
 		
-		//[AttributeUsage(AttributeTargets.Assembly | AttributeTargets.Class
-		//                | AttributeTargets.Struct | AttributeTargets.Constructor |
-		//                AttributeTargets.Method | AttributeTargets.Event)]
-		//[Serializable]
 		public string Path 
 		{
 			[MonoTODO]
@@ -78,10 +60,6 @@ namespace System.Messaging
 			set {throw new NotImplementedException();}
 		}
 		
-		//[AttributeUsage(AttributeTargets.Assembly | AttributeTargets.Class
-		//                | AttributeTargets.Struct | AttributeTargets.Constructor |
-		//                AttributeTargets.Method | AttributeTargets.Event)]
-		//[Serializable]
 		public MessageQueuePermissionAccess PermissionAccess 
 		{
 			[MonoTODO]
@@ -90,19 +68,10 @@ namespace System.Messaging
 			set {throw new NotImplementedException();}
 		}
 		
-		//[AttributeUsage(AttributeTargets.Assembly | AttributeTargets.Class |
-		//                AttributeTargets.Struct | AttributeTargets.Constructor |
-		//                AttributeTargets.Method | AttributeTargets.Event)]
-		//[Serializable]
 		[MonoTODO]
 		public override IPermission CreatePermission()
 		{
 			throw new NotImplementedException();
-		}
-		
-		[MonoTODO]
-		~MessageQueuePermissionAttribute()
-		{
 		}
 	}
 }

@@ -12,9 +12,8 @@ using System.Security.Permissions;
 
 namespace System.Messaging 
 {
-	
 	[Serializable]
-	public class MessageQueuePermission: CodeAccessPermission, IUnrestrictedPermission 
+	public sealed class MessageQueuePermission: CodeAccessPermission, IUnrestrictedPermission 
 	{
 		[MonoTODO]
 		public MessageQueuePermission()
@@ -37,7 +36,7 @@ namespace System.Messaging
 		}
 		
 		[MonoTODO]
-		bool IUnrestrictedPermission.IsUnrestricted() 
+		public bool IsUnrestricted() 
 		{
 			throw new NotImplementedException();
 		}
@@ -90,6 +89,11 @@ namespace System.Messaging
 		public override IPermission Union(IPermission target)
 		{
 			throw new NotImplementedException();
+		}
+
+		[MonoTODO]
+		internal void Clear ()
+		{
 		}
 	}
 }

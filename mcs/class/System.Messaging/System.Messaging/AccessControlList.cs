@@ -28,8 +28,10 @@ namespace System.Messaging
 		}
 		[MonoTODO]
 		public void CopyTo(AccessControlEntry[] array, int index) {
-			if (array == null) throw new ArgumentNullException();
-			if (index < 0) throw new ArgumentOutOfRangeException();			
+			if (array == null) 
+				throw new ArgumentNullException();
+			if (index < 0) 
+				throw new ArgumentOutOfRangeException();
 			throw new NotImplementedException();		
 		}
 		[MonoTODO]
@@ -44,9 +46,5 @@ namespace System.Messaging
 		public void Remove(AccessControlEntry entry) {
 			throw new NotImplementedException();
 		}
-		[MonoTODO]
-		~AccessControlList()
-		{
-		}		
 	}
 }

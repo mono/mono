@@ -7,8 +7,8 @@
 //
 // (C) 2003 Peter Van Isacker
 //
-using System;
 
+using System;
 
 namespace System.Messaging 
 {
@@ -47,11 +47,6 @@ namespace System.Messaging
 		public void Write(Message message, object obj)
 		{
 			throw new NotImplementedException();
-		}
-		
-		[MonoTODO]
-		~ActiveXMessageFormatter()
-		{
 		}
 	}
 }

@@ -7,8 +7,10 @@
 //
 //	(C) 2003 Peter Van Isacker
 //
+
 using System;
 using System.Collections;
+using System.ComponentModel;
 
 namespace System.Messaging 
 {
@@ -37,7 +39,8 @@ namespace System.Messaging
 		private void initializeFromNames(string[] targetTypeNames)
 		{
 		}
-		
+
+		[MessagingDescription ("XmlMsgTargetTypeNames")]
 		public string[] TargetTypeNames 
 		{
 			get 
@@ -52,8 +55,11 @@ namespace System.Messaging
 			}
 			set { initializeFromNames(value); }
 		}
-		
-		public Type[] TargetTypes 
+
+		[Browsable (false)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[MessagingDescription ("XmlMsgTargetTypes")]
+		public Type[] TargetTypes
 		{
 			get {return this.targetTypes;}
 			set {targetTypes = value;}

@@ -64,10 +64,5 @@ namespace System.Messaging
 			get { return trusteeType; }
 			set { trusteeType = value;}
 		}
-		
-		[MonoTODO]
-		~Trustee()
-		{
-		}
 	}
 }

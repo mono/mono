@@ -53,10 +53,5 @@ namespace System.Messaging
 			[MonoTODO]
 			get {throw new NotImplementedException();}
 		}
-		
-		[MonoTODO]
-		~MessageQueuePermissionEntry()
-		{
-		}
 	}
 }
