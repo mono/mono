@@ -1,3 +1,9 @@
+2004-02-06  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* SymmetricTransform.cs: This class was split from S.S.C.
+	SymmetricAlgorithm.cs so it could be reused in Mono.Security 
+	assembly for other symmetric algorithms transforms.
+
 2004-02-05  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* KeyPairPersistence.cs: New. Class to persist keypairs in an XML
