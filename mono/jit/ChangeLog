@@ -1,3 +1,8 @@
+
+Mon May 6 15:38:15 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* jit.h, jit.c, emit-x86.c: x86 cpu detection code from Sergey.
+
 2002-05-03  Sergey Chaban <serge@wildwestsoftware.com>
 
 	* x86.brg: more coni4 optimizations
