@@ -1,7 +1,18 @@
 2002-05-05  Miguel de Icaza  <miguel@ximian.com>
 
+	* cs-parser.jay, class.cs (Accessor): new class used to represent
+	an accessor (get or set).  In the past we used `null' to represent
+	a missing accessor.  But this is ambiguous because there was no
+	way to tell in abstract indexers/properties if one of them was
+	specified.
+
+	Now there is a way of addressing that.
+
+	* expression.cs (Indexers.GetIndexersForType): Use TypeManager.MemberLookup
+	instead of FindMembers.
+
 	* class.cs (TypeContainer.EmitFieldInitializer): Do not typecast
-	the result of Assign.Resolve as Assign, but rather as ExpressionStatement
+	the result of Assign.Resolve as Assign, but rather as ExpressionStatement.
 
 	* attribute.cs: Treat indexers and properties as the same in terms
 	of applying attributes

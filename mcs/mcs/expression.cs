@@ -5641,28 +5641,27 @@ namespace Mono.CSharp {
 			}
 		}
 		
-		static public Indexers GetIndexersForType (Type t, Location loc) 
+		static public Indexers GetIndexersForType (Type caller_type, Type lookup_type, Location loc) 
 		{
-			Indexers ix = (Indexers) map [t];
-			string p_name = TypeManager.IndexerPropertyName (t);
+			Indexers ix = (Indexers) map [lookup_type];
+			string p_name = TypeManager.IndexerPropertyName (lookup_type);
 			
 			if (ix != null)
 				return ix;
 
-			MemberInfo [] mi = TypeManager.FindMembers (
-				t, MemberTypes.Property,
-				BindingFlags.Public | BindingFlags.Instance,
-				Type.FilterName, p_name);
+			MemberInfo [] mi = TypeManager.MemberLookup (
+				caller_type, lookup_type, MemberTypes.Property,
+				BindingFlags.Public | BindingFlags.Instance, p_name);
 
 			if (mi == null || mi.Length == 0){
 				Report.Error (21, loc,
-					      "Type `" + TypeManager.CSharpName (t) + "' does not have " +
-					      "any indexers defined");
+					      "Type `" + TypeManager.CSharpName (lookup_type) +
+					      "' does not have any indexers defined");
 				return null;
 			}
 			
 			ix = new Indexers (mi);
-			map [t] = ix;
+			map [lookup_type] = ix;
 
 			return ix;
 		}
@@ -5698,7 +5697,7 @@ namespace Mono.CSharp {
 
 			if (ilist == null)
 				ilist = Indexers.GetIndexersForType (
-					indexer_type, ea.loc);
+					ec.ContainerType, indexer_type, ea.loc);
 
 
 			//
@@ -5735,7 +5734,7 @@ namespace Mono.CSharp {
 
 			if (ilist == null)
 				ilist = Indexers.GetIndexersForType (
-					indexer_type, ea.loc);
+					ec.ContainerType, indexer_type, ea.loc);
 
 			if (ilist != null && ilist.setters != null && ilist.setters.Count > 0){
 				Location loc = ea.loc;

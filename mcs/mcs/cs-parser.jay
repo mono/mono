@@ -992,13 +992,8 @@ property_declaration
 	  { 
 		Property prop;
 		Pair pair = (Pair) $7;
-		Block get_block = null;
-		Block set_block = null;
-
-		if (pair.First != null)
-			get_block = (Block) pair.First;
-		if (pair.Second != null)
-			set_block = (Block) pair.Second;
+		Accessor get_block = (Accessor) pair.First;
+		Accessor set_block = (Accessor) pair.Second;
 
 		Location loc = (Location) $6;
 		prop = new Property ((string) $3, (string) $4, (int) $2, get_block, set_block,
@@ -1043,7 +1038,7 @@ get_accessor_declaration
 	  }
           accessor_body
 	  {
-		$$ = $4;
+		$$ = new Accessor ((Block) $4);
 		current_local_parameters = null;
 		lexer.PropertyParsing = true;
 	  }
@@ -1075,7 +1070,7 @@ set_accessor_declaration
 	  }
 	  accessor_body
 	  {
-		$$ = $4;
+		$$ = new Accessor ((Block) $4);
 		current_local_parameters = null;
 		lexer.PropertyParsing = true;
 	  }
@@ -1608,13 +1603,8 @@ indexer_declaration
 		Indexer indexer;
 		IndexerDeclaration decl = (IndexerDeclaration) $3;
 		Pair pair = (Pair) $6;
-		Block get_block = null;
-		Block set_block = null;
-
-		if (pair.First != null)
-			get_block = (Block) pair.First;
-		if (pair.Second != null)
-			set_block = (Block) pair.Second;
+		Accessor get_block = (Accessor) pair.First;
+		Accessor set_block = (Accessor) pair.Second;
 
 		indexer = new Indexer (decl.type, decl.interface_type, (int) $2, decl.param_list,
 				       get_block, set_block, (Attributes) $1, (Location) $5);

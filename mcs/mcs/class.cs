@@ -2827,9 +2827,24 @@ namespace Mono.CSharp {
 		}
 	}
 
+	//
+	// `set' and `get' accessors are represented with an Accessor.
+	// 
+	public class Accessor {
+		//
+		// Null if the accessor is empty, or a Block if not
+		//
+		public Block Block;
+
+		public Accessor (Block b)
+		{
+			Block = b;
+		}
+	}
+			
 	public class Property : MemberCore {
 		public readonly string Type;
-		public Block           Get, Set;
+		public Accessor Get, Set;
 		public PropertyBuilder PropertyBuilder;
 		public Attributes OptAttributes;
 		public MethodBuilder GetBuilder, SetBuilder;
@@ -2853,7 +2868,8 @@ namespace Mono.CSharp {
 			Modifiers.EXTERN |
 			Modifiers.VIRTUAL;
 
-		public Property (string type, string name, int mod_flags, Block get_block, Block set_block,
+		public Property (string type, string name, int mod_flags,
+				 Accessor get_block, Accessor set_block,
 				 Attributes attrs, Location loc)
 			: base (name, loc)
 		{
@@ -3166,14 +3182,14 @@ namespace Mono.CSharp {
 				ig = GetBuilder.GetILGenerator ();
 				ec = new EmitContext (tc, Location, ig, PropertyType, ModFlags);
 				
-				ec.EmitTopBlock (Get, Location);
+				ec.EmitTopBlock (Get.Block, Location);
 			}
 
 			if (Set != null){
 				ig = SetBuilder.GetILGenerator ();
 				ec = new EmitContext (tc, Location, ig, null, ModFlags);
 				
-				ec.EmitTopBlock (Set, Location);
+				ec.EmitTopBlock (Set.Block, Location);
 			}
 		}
 	}
@@ -3508,8 +3524,7 @@ namespace Mono.CSharp {
 		public readonly string     Type;
 		public readonly string     InterfaceType;
 		public readonly Parameters FormalParameters;
-		public readonly Block      Get;
-		public readonly Block      Set;
+		public readonly Accessor   Get, Set;
 		public Attributes          OptAttributes;
 		public MethodBuilder       GetBuilder;
 		public MethodBuilder       SetBuilder;
@@ -3517,7 +3532,7 @@ namespace Mono.CSharp {
 	        public Type IndexerType;
 
 		public Indexer (string type, string int_type, int flags, Parameters parms,
-				Block get_block, Block set_block, Attributes attrs, Location loc)
+				Accessor get_block, Accessor set_block, Attributes attrs, Location loc)
 			: base ("", loc)
 		{
 
@@ -3769,18 +3784,21 @@ namespace Mono.CSharp {
 			ec = new EmitContext (tc, Location, null, IndexerType, ModFlags);
 			Attribute.ApplyAttributes (ec, PropertyBuilder, this, OptAttributes, Location);
 
+			if ((ModFlags & (Modifiers.ABSTRACT | Modifiers.EXTERN)) != 0)
+				return;
+			
 			if (Get != null){
 				ig = GetBuilder.GetILGenerator ();
 				ec = new EmitContext (tc, Location, ig, IndexerType, ModFlags);
 				
-				ec.EmitTopBlock (Get, Location);
+				ec.EmitTopBlock (Get.Block, Location);
 			}
 
 			if (Set != null){
 				ig = SetBuilder.GetILGenerator ();
 				ec = new EmitContext (tc, Location, ig, null, ModFlags);
 				
-				ec.EmitTopBlock (Set, Location);
+				ec.EmitTopBlock (Set.Block, Location);
 			}
 		}
 	}
