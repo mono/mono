@@ -1,3 +1,7 @@
+2001-07-09  Jeffrey Stedfast  <fejj@ximian.com>
+
+	* Object.cs (Object::Equals): Object variable name is `o'.
+
 2001-07-06  Joe Shaw  <joe@ximian.com>
 
 	* Int16.cs, Int32.cs, Int64.cs, UInt16.cs, UInt32.cs, UInt64.cs:

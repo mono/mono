@@ -19,9 +19,9 @@ namespace System {
 		//   Compares this object to the specified object.
 		//   Returns true if they are equal, false otherwise.
 		// </summary>
-		public virtual bool Equals (object)
+		public virtual bool Equals (object o)
 		{
-			return this == object;
+			return this == o;
 		}
 
 		// <summary>
