@@ -1387,8 +1387,6 @@ namespace PEAPI
 
     internal CILLabel() {
     }
-    
-    public CILLabel (uint i) {}
 
     internal void AddBranch(CILInstruction instr) {
       if (branch == null) {
