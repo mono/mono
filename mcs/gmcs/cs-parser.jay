@@ -4238,15 +4238,16 @@ MemberName
 MakeName (MemberName class_name)
 {
 	string ns = current_namespace.FullName;
-	string container_name = current_container.Name;
 
-	if (container_name == ""){
+	if (current_container.Name == ""){
 		if (ns != "")
-			return new MemberName (ns, class_name);
+			return new MemberName (new TypeName (ns), class_name);
 		else
 			return class_name;
-	} else
-		return new MemberName (container_name, class_name);
+	} else {
+		TypeName type = current_container.MemberName.MakeTypeName (lexer.Location);
+		return new MemberName (type, class_name);
+	}
 }
 
 // <summary>

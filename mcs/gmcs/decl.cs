@@ -139,9 +139,9 @@ namespace Mono.CSharp {
 			this.Name = name;
 		}
 
-		public MemberName (string type, MemberName name)
+		public MemberName (TypeName type, MemberName name)
 		{
-			this.TypeName = new TypeName (type);
+			this.TypeName = type;
 			this.Name = name.Name;
 			this.TypeParameters = name.TypeParameters;
 		}
@@ -159,6 +159,18 @@ namespace Mono.CSharp {
 			: this (type, name)
 		{
 			this.TypeParameters = type_params;
+		}
+
+		public TypeName MakeTypeName (Location loc)
+		{
+			if (TypeParameters != null) {
+				TypeArguments args = new TypeArguments (loc);
+				foreach (string param in TypeParameters)
+					args.Add (new SimpleName (param, loc));
+				return new TypeName (TypeName, Name, args);
+			}
+
+			return new TypeName (TypeName, Name, null);
 		}
 
 		public static readonly MemberName Null = new MemberName ("");
@@ -180,12 +192,10 @@ namespace Mono.CSharp {
 				return name.Name;
 		}
 
-		public override string ToString ()
+		protected string PrintTypeParams ()
 		{
-			string full_name;
 			if (TypeParameters != null) {
 				StringBuilder sb = new StringBuilder ();
-				sb.Append (Name);
 				sb.Append ("<");
 				for (int i = 0; i < TypeParameters.Length; i++) {
 					if (i > 0)
@@ -193,14 +203,27 @@ namespace Mono.CSharp {
 					sb.Append (TypeParameters [i]);
 				}
 				sb.Append (">");
-				full_name = sb.ToString ();
-			} else
-				full_name = Name;
+				return sb.ToString ();
+			}
 
-			if (TypeName != null)
-				return TypeName + "." + full_name;
-			else
-				return full_name;
+			return "";
+		}
+
+		public string FullName {
+			get {
+				string full_name = Name + PrintTypeParams ();
+
+				if (TypeName != null)
+					return TypeName + "." + full_name;
+				else
+					return full_name;
+			}
+		}
+
+		public override string ToString ()
+		{
+			return String.Format ("MemberName [{0}:{1}:{2}]",
+					      TypeName, Name, PrintTypeParams ());
 		}
 	}
 
