@@ -1,3 +1,7 @@
+2004-12-23  Ben Maurer  <bmaurer@ximian.com>
+
+	* io.c (io_ops): make this `const' so it is shareable (well, only
+	really shareable if it is statically linked...)
 
 Mon Dec 20 11:58:33 CET 2004 Paolo Molaro <lupus@ximian.com>
 
