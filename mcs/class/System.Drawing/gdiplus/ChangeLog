@@ -1,0 +1,13 @@
+2003-10-12  Alexandre Pigolkine <pigolkine@gmx.de>
+	* bitmap.c
+	* brush.c
+	* gdip_defs.h
+	* gdip_win32.c
+	* gdip_main.h
+	* general.c
+	* graphics.c
+	* image.c
+	* Makefile
+	* pen.c
+	* solidbrush.c
+						Added
