@@ -33,6 +33,8 @@ namespace System.Xml.Serialization {
 		static readonly XmlQualifiedName arrayType = new XmlQualifiedName ("Array",XmlSerializer.EncodingNamespace);
 		static readonly XmlQualifiedName arrayTypeRefName = new XmlQualifiedName ("arrayType",XmlSerializer.EncodingNamespace);
 		
+		const string XmlNamespace = "http://www.w3.org/XML/1998/namespace";
+		
 		XmlSchemaElement anyElement = null;
 
 		class MapFixup
@@ -1230,7 +1232,7 @@ namespace System.Xml.Serialization {
 			if (!attr.RefName.IsEmpty)
 			{
 				ns = attr.RefName.Namespace;
-				return (XmlSchemaAttribute) schemas.Find (attr.RefName, typeof(XmlSchemaAttribute));
+				return FindRefAttribute (attr.RefName);
 			}
 			else
 			{
@@ -1262,7 +1264,7 @@ namespace System.Xml.Serialization {
 			bool sharedAnnType = false;
 
 			if (!attr.RefName.IsEmpty) {
-				XmlSchemaAttribute refAtt = (XmlSchemaAttribute)schemas.Find (attr.RefName, typeof (XmlSchemaAttribute));
+				XmlSchemaAttribute refAtt = FindRefAttribute (attr.RefName);
 				if (refAtt == null) throw new InvalidOperationException ("Global attribute not found: " + attr.RefName);
 				attr = refAtt;
 				sharedAnnType = true;
@@ -1362,6 +1364,18 @@ namespace System.Xml.Serialization {
 				return anyElement;
 			}
 			return (XmlSchemaElement) schemas.Find (elem.RefName, typeof(XmlSchemaElement));
+		}
+		
+		XmlSchemaAttribute FindRefAttribute (XmlQualifiedName refName)
+		{
+			if (refName.Namespace == XmlNamespace)
+			{
+				XmlSchemaAttribute at = new XmlSchemaAttribute ();
+				at.Name = refName.Name;
+				at.SchemaTypeName = new XmlQualifiedName ("string",XmlSchema.Namespace);
+				return at;
+			}
+			return (XmlSchemaAttribute) schemas.Find (refName, typeof(XmlSchemaAttribute));
 		}
 
 		string GetDocumentation (XmlSchemaAnnotated elem)

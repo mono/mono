@@ -210,7 +210,7 @@ namespace System.Xml.Serialization {
 		protected override void GenerateEnum (XmlTypeMapping map, CodeTypeDeclaration codeEnum)
 		{
 			CodeAttributeDeclaration att = new CodeAttributeDeclaration ("System.Xml.Serialization.XmlTypeAttribute");
-			if (map.ElementName != map.TypeData.TypeName) att.Arguments.Add (GetArg ("Name", map.ElementName));
+			if (map.ElementName != map.TypeData.TypeName) att.Arguments.Add (GetArg ("TypeName", map.ElementName));
 			if (map.Namespace != "") att.Arguments.Add (GetArg ("Namespace", map.Namespace));
 			AddCustomAttribute (codeEnum, att, false);
 		}		

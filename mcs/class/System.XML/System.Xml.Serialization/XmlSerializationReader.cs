@@ -446,6 +446,8 @@ namespace System.Xml.Serialization {
 		bool ReadList (out object resultList)
 		{
 			string arrayType = Reader.GetAttribute ("arrayType", XmlSerializer.EncodingNamespace);
+			if (arrayType == null) arrayType = Reader.GetAttribute ("arrayType", XmlSerializer.WsdlNamespace);
+			
 			XmlQualifiedName qn = ToXmlQualifiedName (arrayType);
 			int i = qn.Name.LastIndexOf ('[');
 			string dim = qn.Name.Substring (i);

@@ -93,13 +93,29 @@ namespace System.Xml.Serialization {
 					
 					foreach (XmlTypeMapMemberElement member in members)
 					{
+						XmlSchemaElement exe = FindElement (itemsCol, ((XmlTypeMapElementInfo)member.ElementInfo [0]).ElementName);
+						XmlSchemaElement elem;
+						
 						Type memType = member.GetType();
 						if (member is XmlTypeMapMemberFlatList)
 							throw new InvalidOperationException ("Unwrapped arrays not supported as parameters");
 						else if (memType == typeof(XmlTypeMapMemberElement))
-							AddSchemaElement (itemsCol, schema, (XmlTypeMapElementInfo) member.ElementInfo [0], member.DefaultValue, false);
+							elem = (XmlSchemaElement) AddSchemaElement (itemsCol, schema, (XmlTypeMapElementInfo) member.ElementInfo [0], member.DefaultValue, false);
 						else
-							AddSchemaElement (itemsCol, schema, (XmlTypeMapElementInfo) member.ElementInfo [0], false);
+							elem = (XmlSchemaElement) AddSchemaElement (itemsCol, schema, (XmlTypeMapElementInfo) member.ElementInfo [0], false);
+							
+						if (exe != null)
+						{
+							if (exe.SchemaTypeName.Equals (elem.SchemaTypeName))
+								itemsCol.Remove (elem);
+							else
+							{
+								string s = "The XML element named '" + ((XmlTypeMapElementInfo)member.ElementInfo [0]).ElementName + "' ";
+								s += "from namespace '" + schema.TargetNamespace + "' references distinct types " + elem.SchemaTypeName.Name + " and " + exe.SchemaTypeName.Name + ". ";
+								s += "Use XML attributes to specify another XML name or namespace for the element or types.";
+								throw new InvalidOperationException (s);
+							}
+						}
 					}
 				}
 			}
@@ -252,6 +268,16 @@ namespace System.Xml.Serialization {
 				anyAttribute = new XmlSchemaAnyAttribute ();
 			else
 				anyAttribute = null;
+		}
+		
+		XmlSchemaElement FindElement (XmlSchemaObjectCollection col, string name)
+		{
+			foreach (XmlSchemaObject ob in col)
+			{
+				XmlSchemaElement elem = ob as XmlSchemaElement;
+				if (elem != null && elem.Name == name) return elem;
+			}
+			return null;
 		}
 
 		XmlSchemaAttribute GetSchemaAttribute (XmlSchema currentSchema, XmlTypeMapMemberAttribute attinfo)

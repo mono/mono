@@ -359,7 +359,7 @@ namespace System.Xml.Serialization
 				int itemCount = GetListCount (typeMap.TypeData, ob);
 				((ListMap) typeMap.ObjectMap).GetArrayType (itemCount, out n, out ns);
 				string arrayType = (ns != string.Empty) ? FromXmlQualifiedName (new XmlQualifiedName(n,ns)) : n;
-				WriteAttribute ("arrayType", XmlSerializer.WsdlNamespace, arrayType);
+				WriteAttribute ("arrayType", XmlSerializer.EncodingNamespace, arrayType);
 			}
 			WriteListContent (typeMap.TypeData, (ListMap) typeMap.ObjectMap, ob, null);
 		}
