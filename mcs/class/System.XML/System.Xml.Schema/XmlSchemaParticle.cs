@@ -2,6 +2,7 @@
 //            Adwiv@Yahoo.com
 using System;
 using System.Collections;
+using System.Globalization;
 using System.Xml.Serialization;
 
 namespace System.Xml.Schema
@@ -48,11 +49,11 @@ namespace System.Xml.Schema
 					return;
 				}
 
-				decimal val = decimal.Parse(value);
+				decimal val = decimal.Parse (value, CultureInfo.InvariantCulture);
 				if(val >= 0 && (val == Decimal.Truncate(val)))
 				{
 					minOccurs = val;
-					minstr	 = val.ToString();
+					minstr	 = val.ToString (CultureInfo.InvariantCulture);
 				}
 				else
 				{
@@ -75,11 +76,11 @@ namespace System.Xml.Schema
 				}
 				else
 				{
-					decimal val = decimal.Parse(value);
+					decimal val = decimal.Parse (value, CultureInfo.InvariantCulture);
 					if(val >= 0 && (val == Decimal.Truncate(val)))
 					{
 						maxOccurs = val;
-						maxstr = val.ToString();
+						maxstr = val.ToString (CultureInfo.InvariantCulture);
 					}
 					else
 					{
@@ -102,7 +103,7 @@ namespace System.Xml.Schema
 			get{ return  minOccurs; }
 			set
 			{
-				MinOccursString = value.ToString ();
+				MinOccursString = value.ToString (CultureInfo.InvariantCulture);
 			}
 		}
 
@@ -112,7 +113,7 @@ namespace System.Xml.Schema
 			get{ return  maxOccurs; } 
 			set
 			{
-				MaxOccursString = value.ToString ();
+				MaxOccursString = value.ToString (CultureInfo.InvariantCulture);
 			}
 		}
 
@@ -124,6 +125,7 @@ namespace System.Xml.Schema
 		internal decimal ValidatedMaxOccurs
 		{
 			get { return validatedMaxOccurs; }
+//			set { validatedMaxOccurs = value; }
 		}
 		#endregion
 

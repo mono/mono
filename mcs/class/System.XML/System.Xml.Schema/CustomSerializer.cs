@@ -134,7 +134,7 @@ namespace System.Xml.Schema
 			{
 				case System.Xml.Schema.XmlSchemaForm.Qualified: return "qualified";
 				case System.Xml.Schema.XmlSchemaForm.Unqualified: return "unqualified";
-				default: return ((long)val).ToString();
+				default: return ((long)val).ToString (CultureInfo.InvariantCulture);
 			}
 		}
 
@@ -705,7 +705,7 @@ namespace System.Xml.Schema
 				case System.Xml.Schema.XmlSchemaUse.Optional: return "optional";
 				case System.Xml.Schema.XmlSchemaUse.Prohibited: return "prohibited";
 				case System.Xml.Schema.XmlSchemaUse.Required: return "required";
-				default: return ((long)val).ToString();
+				default: return ((long)val).ToString (CultureInfo.InvariantCulture);
 			}
 		}
 
@@ -1381,7 +1381,7 @@ namespace System.Xml.Schema
 				case System.Xml.Schema.XmlSchemaContentProcessing.Skip: return "skip";
 				case System.Xml.Schema.XmlSchemaContentProcessing.Lax: return "lax";
 				case System.Xml.Schema.XmlSchemaContentProcessing.Strict: return "strict";
-				default: return ((long)val).ToString();
+				default: return ((long)val).ToString (CultureInfo.InvariantCulture);
 			}
 		}
 

@@ -1,6 +1,7 @@
 // Author: Dwivedi, Ajay kumar
 //            Adwiv@Yahoo.com
 using System;
+using System.Globalization;
 using System.Runtime.Serialization;
 
 
@@ -90,12 +91,12 @@ namespace System.Xml.Schema
 			get {
 				string msg = "XmlSchema error: " + base.Message;
 				if (hasLineInfo)
-					msg += String.Format (" XML {0} Line {1}, Position {2}.",
+					msg += String.Format (CultureInfo.InvariantCulture, " XML {0} Line {1}, Position {2}.",
 						(sourceUri != null && sourceUri != "") ? "URI: " + sourceUri + " ." : "",
 						lineNumber,
 						linePosition);
 				if (sourceObj != null)
-					msg += String.Format (" Related schema item SourceUri: {0}, Line {1}, Position {2}.",
+					msg += String.Format (CultureInfo.InvariantCulture, " Related schema item SourceUri: {0}, Line {1}, Position {2}.",
 						sourceObj.SourceUri, sourceObj.LineNumber, sourceObj.LinePosition);
 				return msg;
 			}

@@ -1,3 +1,9 @@
+2004-06-18  Atsushi Enomoto <atsushi@ximian.com>
+
+	* CustomSerializer.cs, XmlSchemaException.cs,
+	  XmlSchemaParticle.cs, XmlSchemaSimpleTypeRestriction.cs
+	  : Globalization.
+
 2004-06-10  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlSchemaFacet.cs : Fixed internal protected --> internal.

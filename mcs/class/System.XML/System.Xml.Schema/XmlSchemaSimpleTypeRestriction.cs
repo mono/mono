@@ -384,12 +384,12 @@ namespace System.Xml.Schema
 			 * ·derived· from decimal. The value of totalDigits ·must· be a
 			 * positiveInteger. */
 				try {
-					decimal newTotalDigits = decimal.Parse (totf.Value.Trim (), lengthStyle);
+					decimal newTotalDigits = decimal.Parse (totf.Value.Trim (), lengthStyle, CultureInfo.InvariantCulture);
 					if (newTotalDigits <= 0) 
-						totf.error(h, String.Format("The value '{0}' is an invalid totalDigits value", newTotalDigits));
+						totf.error(h, String.Format(CultureInfo.InvariantCulture, "The value '{0}' is an invalid totalDigits value", newTotalDigits));
 					// Valid restriction
 					if ((totalDigitsFacet > 0) && (newTotalDigits > totalDigitsFacet)) {
-						totf.error(h, String.Format("The value '{0}' is not a valid restriction of the base totalDigits facet '{1}'", newTotalDigits, totalDigitsFacet));
+						totf.error(h, String.Format(CultureInfo.InvariantCulture, "The value '{0}' is not a valid restriction of the base totalDigits facet '{1}'", newTotalDigits, totalDigitsFacet));
 					}
 					totalDigitsFacet = newTotalDigits;
 				}
@@ -405,12 +405,12 @@ namespace System.Xml.Schema
 
 			if (fracf != null) {
 				try {
-					decimal newFractionDigits = decimal.Parse (fracf.Value.Trim (), lengthStyle);
+					decimal newFractionDigits = decimal.Parse (fracf.Value.Trim (), lengthStyle, CultureInfo.InvariantCulture);
 					if (newFractionDigits< 0) 
-						fracf.error(h, String.Format("The value '{0}' is an invalid fractionDigits value", newFractionDigits));
+						fracf.error(h, String.Format(CultureInfo.InvariantCulture, "The value '{0}' is an invalid fractionDigits value", newFractionDigits));
 					
 					if ((fractionDigitsFacet >= 0) && (newFractionDigits > fractionDigitsFacet)) {
-						fracf.error(h, String.Format("The value '{0}' is not a valid restriction of the base fractionDigits facet '{1}'", newFractionDigits, fractionDigitsFacet));
+						fracf.error(h, String.Format(CultureInfo.InvariantCulture, "The value '{0}' is not a valid restriction of the base fractionDigits facet '{1}'", newFractionDigits, fractionDigitsFacet));
 					}
 					fractionDigitsFacet = newFractionDigits;
 				}
@@ -433,7 +433,7 @@ namespace System.Xml.Schema
 				 XsdAnySimpleType dt = getDatatype();
 				 if (dt.Compare (newValue, baseFacet) != XsdOrdering.Equal) {
 					 facet.error (h, 
-							 String.Format("{0} is not the same as fixed parent {1} facet.", 
+							 String.Format(CultureInfo.InvariantCulture, "{0} is not the same as fixed parent {1} facet.", 
 										 facet.Value, facet.ThisFacet));
 				 }
 			 }
@@ -455,7 +455,7 @@ namespace System.Xml.Schema
 					if ((facetsDefined & (XmlSchemaFacet.Facet.minLength | XmlSchemaFacet.Facet.maxLength)) != 0)  
 							lf.error(h, "It is an error for both length and minLength or maxLength to be present.");
 						else {
-							lengthFacet = decimal.Parse (lf.Value.Trim (), lengthStyle);
+							lengthFacet = decimal.Parse (lf.Value.Trim (), lengthStyle, CultureInfo.InvariantCulture);
 						/* TODO: Check that it is between inherited max/min lengths */
 							if (lengthFacet < 0) 
 								lf.error(h, "The value '" + lengthFacet + "' is an invalid length");
@@ -474,12 +474,12 @@ namespace System.Xml.Schema
 					if ((facetsDefined & XmlSchemaFacet.Facet.length) != 0) 
 							maxlf.error(h, "It is an error for both length and minLength or maxLength to be present.");
 						else {
-						decimal newMaxLengthFacet = decimal.Parse (maxlf.Value.Trim (), lengthStyle);
+						decimal newMaxLengthFacet = decimal.Parse (maxlf.Value.Trim (), lengthStyle, CultureInfo.InvariantCulture);
 						
 						if (((fixedFacets & XmlSchemaFacet.Facet.maxLength)!=0) && (newMaxLengthFacet != maxLengthFacet)) 
-							maxlf.error(h, String.Format("The value '{0}' is not the same as the fixed value '{1}' on the base type", maxlf.Value.Trim (), maxLengthFacet));
+							maxlf.error(h, String.Format(CultureInfo.InvariantCulture, "The value '{0}' is not the same as the fixed value '{1}' on the base type", maxlf.Value.Trim (), maxLengthFacet));
 						if ((maxLengthFacet >0) && (newMaxLengthFacet > maxLengthFacet)) 
-							maxlf.error(h, String.Format("The value '{0}' is not a valid restriction of the value '{1}' on the base maxLength facet", maxlf.Value.Trim (), maxLengthFacet));
+							maxlf.error(h, String.Format(CultureInfo.InvariantCulture, "The value '{0}' is not a valid restriction of the value '{1}' on the base maxLength facet", maxlf.Value.Trim (), maxLengthFacet));
 						else
 							maxLengthFacet = newMaxLengthFacet;
 							if (maxLengthFacet < 0) 
@@ -502,12 +502,12 @@ namespace System.Xml.Schema
 						if (lengthFacet >=0) 
 							minlf.error(h, "It is an error for both length and minLength or maxLength to be present.");
 						else {
-						decimal newMinLengthFacet = decimal.Parse (minlf.Value.Trim (), lengthStyle);
+						decimal newMinLengthFacet = decimal.Parse (minlf.Value.Trim (), lengthStyle, CultureInfo.InvariantCulture);
 						
 						if (((fixedFacets & XmlSchemaFacet.Facet.minLength)!=0) && (newMinLengthFacet != minLengthFacet)) 
-							minlf.error(h, String.Format("The value '{0}' is not the same as the fixed value '{1}' on the base type", minlf.Value.Trim (), minLengthFacet));
+							minlf.error(h, String.Format(CultureInfo.InvariantCulture, "The value '{0}' is not the same as the fixed value '{1}' on the base type", minlf.Value.Trim (), minLengthFacet));
 						if (newMinLengthFacet < minLengthFacet) 
-							minlf.error(h, String.Format("The value '{0}' is not a valid restriction of the value '{1}' on the base minLength facet", minlf.Value.Trim (), minLengthFacet));
+							minlf.error(h, String.Format(CultureInfo.InvariantCulture, "The value '{0}' is not a valid restriction of the value '{1}' on the base minLength facet", minlf.Value.Trim (), minLengthFacet));
 						else
 							minLengthFacet = newMinLengthFacet;
 							if (minLengthFacet < 0) 
