@@ -1,3 +1,7 @@
+2003-05-06  Dietmar Maurer  <dietmar@ximian.com>
+
+	* marshal.c (mono_marshal_get_native_wrapper): free strings after pinvoke
+
 2003-05-06  Martin Baulig  <martin@ximian.com>
 
 	* mono-debug-debugger.h: #include <mono/io-layer/io-layer.h>.
