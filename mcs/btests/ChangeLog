@@ -1,3 +1,19 @@
+2004-08-06 Sachin Kumar <skumar1@novell.com>
+	* ArithmeticOperators.vb:
+	* ArithmeticOperators1.vb:
+	* ArithmeticOperators2.vb:
+	* ArithmeticOperators3.vb:
+	* ArithmeticOperatorsA.vb:
+	* ArithmeticOperatorsC1.vb:
+	* ArithmeticOperatorsC2.vb:
+	* LikeOperator.vb:
+	* LikeOperator1.vb:
+	* LikeOperatorA.vb:
+	* LikeOperatorC1.vb:
+	* RelationalOperators1.vb:
+	* RelationalOperatorsC1.vb:
+	* Test.Sources: Included newly added operators tests	
+	
 2004-08-06  Jambunathan K  <kjambunathan@novell.com>
 	* Makefile: Added 'mkdir -p $$logpath'
 

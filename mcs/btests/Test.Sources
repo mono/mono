@@ -152,7 +152,11 @@ ConcatenationOperator \
 LogicalOperators \
 LogicalOperatorsA \
 ShiftOperators \
-ShiftOperatorsA 
+ShiftOperatorsA \
+ArithmeticOperators \
+ArithmeticOperatorsA \
+LikeOperator \
+LikeOperatorA 
 
 # All negetive test cases which should
 # fail during compilation goes here
@@ -330,7 +334,11 @@ LogicalOperatorsC1 \
 LogicalOperatorsC2 \
 LogicalOperatorsC3 \
 ShiftOperatorsC1 \
-ShiftOperatorsC2 
+ShiftOperatorsC2 \
+ArithmeticOperatorsC1 \
+ArithmeticOperatorsC2 \
+LikeOperatorC1 \
+RelationalOperatorsC1 
 
 # All negetive test cases which should fail at
 # runtime goes here
@@ -351,6 +359,11 @@ CharacterLiterals1 \
 LiteralNothing1 \
 Inheritance1 \
 LogicalOperators1 \
-ShiftOperators1
+ShiftOperators1 \
+ArithmeticOperators1 \
+ArithmeticOperators2 \
+ArithmeticOperators3 \
+LikeOperator1 \
+RelationalOperators1
 
 
