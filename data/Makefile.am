@@ -2,7 +2,7 @@ monodir = $(sysconfdir)/mono
 
 EXTRA_DIST = config.in
 
-mono_DATA = config
+mono_DATA = config machine.config
 
 config: config.in Makefile
 	sed -e 's^\@LIBC\@^libc.so.6^g' < $(srcdir)/config.in > config.tmp \

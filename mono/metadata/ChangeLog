@@ -1,3 +1,7 @@
+2002-10-09  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* icall.c: added internal call to get the location of machine.config.
+
 2002-10-08  Martin Baulig  <martin@gnome.org>
 
 	* debug-mono-symfile.c: Ignore classes with a pending init for the
