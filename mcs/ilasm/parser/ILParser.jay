@@ -1765,7 +1765,7 @@ instr			: INSTR_NONE
                           }
 			| INSTR_STRING K_BYTEARRAY ASSIGN OPEN_PARENS bytes CLOSE_PARENS
 			| INSTR_STRING K_BYTEARRAY OPEN_PARENS bytes CLOSE_PARENS		// ****** ADDED
-			| INSTR_SIG call_conv type OPEN_PARENS sig_args CLOSE_PARENS
+			| INSTR_SIG call_conv type OPEN_PARENS type_list CLOSE_PARENS
                           {
                                 ArrayList arg_list = (ArrayList) $5;
                                 ITypeRef[] arg_array = null;

@@ -1,5 +1,9 @@
 2003-05-31 Jackson Harper <jackson@latitudegeo.com>
 
+	* ILParser.jay: Use type instead of params for calli signatures.
+		
+2003-05-31 Jackson Harper <jackson@latitudegeo.com>
+
 	* ILParser.jay: When looking up types first check to see if this
 	is actually a primitive object type (System.String,
 	System.Object). Add custom attributes to types. Handle the il
