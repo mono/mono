@@ -1763,5 +1763,14 @@ namespace MonoTests.System.Xml
 
 			AssertEndDocument (xmlReader);
 		}
+
+		public void TestAttributeWithEntityReference ()
+		{
+			string xml = @"<a value='hello &amp; world' />";
+			XmlReader xmlReader =
+				new XmlTextReader (new StringReader (xml));
+			xmlReader.Read ();
+			AssertEquals (xmlReader ["value"], "hello & world");
+		}
 	}
 }
