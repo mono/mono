@@ -1,3 +1,9 @@
+2003-04-22  Pedro Martínez Juliá  <yoros@wanadoo.es>
+
+	* FloatingPointFormatter.cs: Little fixes for get the same results
+	as MS.NET and show a message when something goes wrong with the
+	parser of Custom Formats.
+
 2003-04-22  Nick Drochak  <ndrochak@gol.com>
 
 	* Double.cs (ToString):

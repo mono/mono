@@ -259,8 +259,7 @@ namespace System.Globalization {
 
 		public static NumberFormatInfo CurrentInfo {
 			get {
-				// This should be culture specific
-				NumberFormatInfo nfi = new NumberFormatInfo ();
+				NumberFormatInfo nfi = (NumberFormatInfo) System.Threading.Thread.CurrentThread.CurrentCulture.NumberFormat.Clone();
 				nfi.readOnly = true;
 				return nfi;
 			}		       

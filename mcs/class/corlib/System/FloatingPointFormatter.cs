@@ -58,6 +58,13 @@ namespace System {
 					return FormatCustom();
 				}
 				catch (Exception e) {
+					string msg = "An exception was thrown but the " +
+						"application will continue working right.\n" +
+						"Please mail to \"yoros@wanadoo.es\" with the " +
+						"subject \"FORMAT_EXCEPTION\" and the content: " +
+						"Format: ->" + format + "<-; Value: ->" + value +
+						"<-;\n";
+					Console.Error.Write(msg); 
 					return FormatGeneral(-1);
 				}
 			}
@@ -163,12 +170,18 @@ namespace System {
 					}
 				}
 				else {
+					int decimal_limit = -(decimals+1);
 					while (exponent < 0) {
-						if (exponent > -(decimals+1)) {
+						if (exponent > decimal_limit) {
 							sb.Insert(0, Digits[mantissa % 10]);
 						}
 						mantissa /= 10;
 						exponent++;
+						decimals--;
+					}
+					while (decimals > 0) {
+						sb.Append('0');
+						decimals--;
 					}
 				}
 				sb.Insert(0, nfi.NumberDecimalSeparator);
@@ -179,6 +192,9 @@ namespace System {
 					int i = 0;
 					while (exponent > 0) {
 						int fin = nfi.NumberGroupSizes[i];
+						if (fin == 0) {
+							fin = int.MaxValue;
+						}
 						for (int j = 0; (j < fin) && (exponent > 0);
 								j++, exponent--) {
 							sb.Insert(0, "0");
@@ -189,6 +205,9 @@ namespace System {
 					}
 					while (mantissa != 0) {
 						int fin = nfi.NumberGroupSizes[i];
+						if (fin == 0) {
+							fin = int.MaxValue;
+						}
 						for (int j = 0; (j < fin) && (mantissa != 0); j++) {
 							sb.Insert(0, Digits[mantissa % 10]);
 							mantissa /= 10;
@@ -332,12 +351,18 @@ namespace System {
 					}
 				}
 				else {
+					int decimal_limit = -(decimals + 1);
 					while (exponent < 0) {
-						if (exponent > -(decimals+1)) {
+						if (exponent > decimal_limit) {
 							sb.Insert(0, Digits[mantissa % 10]);
 						}
 						mantissa /= 10;
 						exponent++;
+						decimals--;
+					}
+					while (decimals > 0) {
+						sb.Append('0');
+						decimals--;
 					}
 				}
 				sb.Insert(0, nfi.NumberDecimalSeparator);
@@ -456,12 +481,18 @@ namespace System {
 					}
 				}
 				else {
+					int decimal_limit = -(decimals + 1);
 					while (exponent < 0) {
-						if (exponent > -(decimals+1)) {
+						if (exponent > decimal_limit) {
 							sb.Insert(0, Digits[mantissa % 10]);
 						}
 						mantissa /= 10;
 						exponent++;
+						decimals--;
+					}
+					while (decimals > 0) {
+						sb.Append('0');
+						decimals--;
 					}
 				}
 				sb.Insert(0, nfi.NumberDecimalSeparator);
@@ -472,6 +503,9 @@ namespace System {
 					int i = 0;
 					while (exponent > 0) {
 						int fin = nfi.NumberGroupSizes[i];
+						if (fin == 0) {
+							fin = int.MaxValue;
+						}
 						for (int j = 0; (j < fin) && (exponent > 0);
 								j++, exponent--) {
 							sb.Insert(0, "0");
@@ -482,6 +516,9 @@ namespace System {
 					}
 					while (mantissa != 0) {
 						int fin = nfi.NumberGroupSizes[i];
+						if (fin == 0) {
+							fin = int.MaxValue;
+						}
 						for (int j = 0; (j < fin) && (mantissa != 0); j++) {
 							sb.Insert(0, Digits[mantissa % 10]);
 							mantissa /= 10;
@@ -537,12 +574,18 @@ namespace System {
 					}
 				}
 				else {
+					int decimal_limit = -(decimals + 1);
 					while (exponent < 0) {
-						if (exponent > -(decimals+1)) {
+						if (exponent > decimal_limit) {
 							sb.Insert(0, Digits[mantissa % 10]);
 						}
 						mantissa /= 10;
 						exponent++;
+						decimals--;
+					}
+					while (decimals > 0) {
+						sb.Append('0');
+						decimals--;
 					}
 				}
 				sb.Insert(0, nfi.NumberDecimalSeparator);
@@ -553,6 +596,9 @@ namespace System {
 					int i = 0;
 					while (exponent > 0) {
 						int fin = nfi.NumberGroupSizes[i];
+						if (fin == 0) {
+							fin = int.MaxValue;
+						}
 						for (int j = 0; (j < fin) && (exponent > 0);
 								j++, exponent--) {
 							sb.Insert(0, "0");
@@ -563,6 +609,9 @@ namespace System {
 					}
 					while (mantissa != 0) {
 						int fin = nfi.NumberGroupSizes[i];
+						if (fin == 0) {
+							fin = int.MaxValue;
+						}
 						for (int j = 0; (j < fin) && (mantissa != 0); j++) {
 							sb.Insert(0, Digits[mantissa % 10]);
 							mantissa /= 10;
