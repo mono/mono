@@ -1,3 +1,8 @@
+2004-11-04  Zoltan Varga  <vargaz@freemail.hu>
+
+	* assembly.c (mono_assembly_names_equal): Allow a match if one of
+	the cultures is false. Fixes #69090.
+
 2004-11-02  Zoltan Varga  <vargaz@freemail.hu>
 
 	* reflection.c: Fix some spec conformance issues with the PE file
