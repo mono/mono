@@ -1,3 +1,7 @@
+2002-03-01  Martin Baulig  <martin@gnome.org>
+
+	* Array.cs: More argument checking and bug fixing.
+
 2002-03-01  Miguel de Icaza  <miguel@ximian.com>
 
 	* BitConverter.cs: Indentation match

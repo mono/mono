@@ -386,8 +386,11 @@ namespace System
 			if (array == null)
 				throw new ArgumentNullException ();
 	
+			if (array.Rank > 1)
+				throw new RankException ();
+
 			if (length < 0 || index < array.GetLowerBound (0) ||
-			    index > array.GetUpperBound (0))
+			    index+length-1 > array.GetUpperBound (0))
 				throw new ArgumentOutOfRangeException ();
 
 			for (int i = 0; i < length; i++)
@@ -404,7 +407,7 @@ namespace System
 			if (array == null)
 				throw new ArgumentNullException ();
 	
-			return LastIndexOf (array, value, 0, array.Length);
+			return LastIndexOf (array, value, array.Length-1);
 		}
 
 		public static int LastIndexOf (Array array, object value, int index)
@@ -412,7 +415,7 @@ namespace System
 			if (array == null)
 				throw new ArgumentNullException ();
 	
-			return LastIndexOf (array, value, index, array.Length - index);
+			return LastIndexOf (array, value, index, index-array.GetLowerBound(0)+1);
 		}
 		
 		public static int LastIndexOf (Array array, object value, int index, int length)
@@ -420,14 +423,17 @@ namespace System
 			if (array == null)
 				throw new ArgumentNullException ();
 	
-			if (length < 0 || index < array.GetLowerBound (0) ||
+			if (array.Rank > 1)
+				throw new RankException ();
+
+			if (length < 0 || index-length+1 < array.GetLowerBound (0) ||
 			    index > array.GetUpperBound (0))
 				throw new ArgumentOutOfRangeException ();
 
-			for (int i = length - 1; i >= 0; i--)
+			for (int i = index; i >= index-length+1; i--)
 			{
-				if (array.GetValue(index + i).Equals(value))
-					return index + i;
+				if (array.GetValue(i).Equals(value))
+					return i;
 			}
 
 			return array.GetLowerBound (0) - 1;
@@ -596,7 +602,7 @@ namespace System
 			// but that's how the microsoft runtime does it.
 			if (this.Rank > 1)
 				throw new RankException ();
-			if (index >= this.GetLength(0))
+			if (index >= array.GetLength(0))
 				throw new ArgumentException ();
 			if (array.Rank > 1)
 				throw new RankException ();
