@@ -390,7 +390,6 @@ namespace System.PAL
 		public void FlushFile(IntPtr handle, byte[] byteBuf)
 		{
 			WriteFile(handle, byteBuf, 0, byteBuf.Length);
-			_fflush(handle);
 		}
 
 		public IntPtr OpenFile(string path, FileMode mode, FileAccess access, FileShare	share)
@@ -409,11 +408,11 @@ namespace System.PAL
 		{
 			switch (origin) {
 				case SeekOrigin.End:
-					return _fseek (handle, (int)offset, SEEK_END);
+					return _lseek (handle, (int)offset, SEEK_END);
 				case SeekOrigin.Current:
-					return _fseek (handle, (int)offset, SEEK_CUR);
+					return _lseek (handle, (int)offset, SEEK_CUR);
 				default:
-					return _fseek (handle, (int)offset, SEEK_SET);
+					return _lseek (handle, (int)offset, SEEK_SET);
 			}
 			
 		}
@@ -494,8 +493,8 @@ namespace System.PAL
 		[DllImport("libc", EntryPoint="ftruncate", CharSet=CharSet.Ansi)]
 		private unsafe static extern int _ftruncate(IntPtr fd, int count);
 
-		[DllImport("libc", EntryPoint="fseek", CharSet=CharSet.Ansi)]
-		private unsafe static extern int _fseek(IntPtr fd, int offset, int whence);
+		[DllImport("libc", EntryPoint="lseek", CharSet=CharSet.Ansi)]
+		private unsafe static extern int _lseek(IntPtr fd, int offset, int whence);
 
 		[DllImport("libc", EntryPoint="fflush", CharSet=CharSet.Ansi)]
 		private unsafe static extern int _fflush(IntPtr fd);
