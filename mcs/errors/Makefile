@@ -20,6 +20,7 @@ DISTFILES = \
 	$(wildcard *.cs)
 
 #all-local: run-test-local test-multi-local
+all-local:
 
 # again, run-test is when the tests actually happen, so
 # don't compile on make test.
