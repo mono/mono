@@ -84,7 +84,8 @@ namespace Mono.Xml.Schema
 		internal virtual bool AllowsFacet(XmlSchemaFacet xsf)
 		{
 			// Can you even use XsdAnySimpleType in a schema?
-			return false;
+			// -> Yes. See E1-22 of http://www.w3.org/2001/05/xmlschema-errata#Errata1 (somewhat paranoid ;-)
+			return true;
 		}
 
 

@@ -1,3 +1,7 @@
+2003-12-15  Atsushi Enomoto  <ginga@kit.hi-ho.ne.jp>
+
+	* BuiltInDatatype.cs : anySimpleType should allow facets.
+
 2003-12-14  David Sheldon <dave-mono@earth.li>
   
   * BuiltInDatatype.cs : Added code to tell which facets were valid on
