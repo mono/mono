@@ -1,3 +1,7 @@
+2003-01-22  Martin Baulig  <martin@ximian.com>
+
+	* Makefile.am: Install debug-mono-symfile.h.
+
 2003-01-21  Aleksey Demakov <avd@openlinksw.com>
 
 	* marshal.c: fixed copy_from_managed and copy_to_unmanaged for 0 length.
