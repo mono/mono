@@ -29,6 +29,7 @@ namespace System.Security.Cryptography.Xml {
 		private XmlElement signatureElement;
 		private Hashtable hashes;
 		private XmlResolver xmlResolver = new XmlUrlResolver ();
+		private ArrayList manifests;
 
 		public SignedXml () 
 		{
@@ -145,6 +146,35 @@ namespace System.Security.Cryptography.Xml {
 			}
 		}
 
+		private XmlDocument GetManifest (Reference r) 
+		{
+			XmlDocument doc = new XmlDocument ();
+			doc.PreserveWhitespace = true;
+
+			if (r.Uri [0] == '#') {
+				// local manifest
+				if (signatureElement != null) {
+					XmlElement xel = GetIdElement (signatureElement.OwnerDocument, r.Uri.Substring (1));
+					doc.LoadXml (xel.OuterXml);
+				}
+			}
+			else if (xmlResolver != null) {
+				// TODO: need testing
+				Stream s = (Stream) xmlResolver.GetEntity (new Uri (r.Uri), null, typeof (Stream));
+				doc.Load (s);
+			}
+
+			if (doc.FirstChild != null) {
+				// keep a copy of the manifests to check their references later
+				if (manifests == null)
+					manifests = new ArrayList ();
+				manifests.Add (doc);
+
+				return doc;
+			}
+			return null;
+		}
+
 		[MonoTODO("incomplete")]
 		private byte[] GetReferenceHash (Reference r) 
 		{
@@ -152,6 +182,9 @@ namespace System.Security.Cryptography.Xml {
 			XmlDocument doc = null;
 			if (r.Uri == String.Empty) {
 				doc = envdoc;
+			}
+			else if (r.Type == XmlSignature.Uri.Manifest) {
+				doc = GetManifest (r);
 			}
 			else {
 				doc = new XmlDocument ();
@@ -165,14 +198,16 @@ namespace System.Security.Cryptography.Xml {
 						}
 					}
 				}
-				else {
-					if (r.Uri.EndsWith (".xml")) {
-						doc.XmlResolver = xmlResolver;
-						doc.Load (r.Uri);
+				else if (xmlResolver != null) {
+					// TODO: test but doc says that Resolver = null -> no access
+					try {
+						// no way to know if valid without throwing an exception
+						Uri uri = new Uri (r.Uri);
+						s = (Stream) xmlResolver.GetEntity (new Uri (r.Uri), null, typeof (Stream));
 					}
-					else {
-						if (xmlResolver != null)
-							s = (Stream) xmlResolver.GetEntity (new Uri (r.Uri), null, typeof (Stream));
+					catch {
+						// may still be a local file (and maybe not xml)
+						s = File.OpenRead (r.Uri);
 					}
 				}
 			}
@@ -189,12 +224,20 @@ namespace System.Security.Cryptography.Xml {
 				}
 			}
 			else if (s == null) {
-				// apply default C14N transformation
-				s = ApplyTransform (new XmlDsigC14NTransform (), doc);
+				// we must not C14N references from outside the document
+				// e.g. non-xml documents
+				if (r.Uri [0] != '#') {
+					s = new MemoryStream ();
+					doc.Save (s);
+				}
+				else {
+					// apply default C14N transformation
+					s = ApplyTransform (new XmlDsigC14NTransform (), doc);
+				}
 			}
 
-			HashAlgorithm hash = GetHash (r.DigestMethod);
-			return hash.ComputeHash (s);
+			HashAlgorithm digest = GetHash (r.DigestMethod);
+			return digest.ComputeHash (s);
 		}
 
 		private void DigestReferences () 
@@ -289,12 +332,16 @@ namespace System.Security.Cryptography.Xml {
 			return (CheckSignatureInternal (null) != null);
 		}
 
-		private bool CheckReferenceIntegrity () 
+		private bool CheckReferenceIntegrity (ArrayList referenceList) 
 		{
+			if (referenceList == null)
+				return false;
+
 			// check digest (hash) for every reference
-			foreach (Reference r in signature.SignedInfo.References) {
+			foreach (Reference r in referenceList) {
 				// stop at first broken reference
-				if (! Compare (r.DigestValue, GetReferenceHash (r)))
+				byte[] hash = GetReferenceHash (r);
+				if (! Compare (r.DigestValue, hash))
 					return false;
 			}
 			return true;
@@ -329,9 +376,21 @@ namespace System.Security.Cryptography.Xml {
 				if (key == null)
 					return null;
 			}
+
 			// some parts may need to be downloaded
 			// so where doing it last
-			return (CheckReferenceIntegrity () ? key : null);
+			if (! CheckReferenceIntegrity (signature.SignedInfo.References))
+				return null;
+
+			if (manifests != null) {
+				// do not use foreach as a manifest could contain manifests...
+				for (int i=0; i < manifests.Count; i++) {
+					Manifest manifest = new Manifest ((manifests [i] as XmlDocument).DocumentElement);
+					if (! CheckReferenceIntegrity (manifest.References))
+						return null;
+				}
+			}
+			return key;
 		}
 
 		// Is the signature (over SignedInfo) valid ?
@@ -354,7 +413,9 @@ namespace System.Security.Cryptography.Xml {
 
 				HashAlgorithm hash = GetHash (sd.DigestAlgorithm);
 				// get the hash of the C14N SignedInfo element
-				byte[] digest = hash.ComputeHash (SignedInfoTransformed ());
+				MemoryStream ms = (MemoryStream) SignedInfoTransformed ();
+				byte[] debug = ms.ToArray ();
+				byte[] digest = hash.ComputeHash (ms);
 				return verifier.VerifySignature (digest, signature.SignatureValue);
 			}
 			catch {
@@ -412,7 +473,7 @@ namespace System.Security.Cryptography.Xml {
 			if (Compare (signature.SignatureValue, actual)) {
 				// some parts may need to be downloaded
 				// so where doing it last
-				return CheckReferenceIntegrity ();
+				return CheckReferenceIntegrity (signature.SignedInfo.References);
 			}
 			return false;
 		}
