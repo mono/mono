@@ -1,5 +1,10 @@
 2004-10-22  Atsushi Enomoto <atsushi@ximian.com>
 
+	* XmlConvertDateTimeSerializationMode.cs : added.
+	* XmlConvertDateTimeOption.cs : removed.
+
+2004-10-22  Atsushi Enomoto <atsushi@ximian.com>
+
 	* XmlDocument.cs :
 	  For net_2_0, CreateNavigator() returns editable XPathNavigator.
 	* XmlReader.cs, XmlTextReader.cs, XmlValidatingReader.cs :
