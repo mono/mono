@@ -1,3 +1,7 @@
+2005-02-13  Zoltan Varga  <vargaz@freemail.hu>
+
+	* pinvoke13.cs libtest.c: Add/correct tests for pinvoke name mangling.
+
 2005-02-05  Zoltan Varga  <vargaz@freemail.hu>
 
 	* libtest.c: Mark all exported functions STDCALL.
