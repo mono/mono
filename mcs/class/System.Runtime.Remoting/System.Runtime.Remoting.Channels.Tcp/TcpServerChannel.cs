@@ -45,9 +45,12 @@ namespace System.Runtime.Remoting.Channels.Tcp
 			if (host == null)
 			{
 				if (useIpAddress) {
-					IPHostEntry he = Dns.Resolve (Dns.GetHostName());
-					if (he.AddressList.Length == 0) throw new RemotingException ("IP address could not be determined for this host");
-					host = he.AddressList [0].ToString ();
+					if (!bindAddress.Equals(IPAddress.Any)) host = bindAddress.ToString ();
+					else {
+						IPHostEntry he = Dns.Resolve (Dns.GetHostName());
+						if (he.AddressList.Length == 0) throw new RemotingException ("IP address could not be determined for this host");
+						host = he.AddressList [0].ToString ();
+					}
 				}
 				else
 					host = Dns.GetHostByName(Dns.GetHostName()).HostName;

@@ -1,3 +1,8 @@
+2003-12-23  Lluis Sanchez Gual <lluis@ximian.com>
+
+	* TcpServerChannel.cs: If useIpAddress and bindAddress are both specified,
+	  set bindAddress as the host address for the client.
+
 2003-12-19  Lluis Sanchez Gual <lluis@ximian.com>
 
 	* TcpServerChannel.cs: Fixes in channel initialization.
