@@ -11,10 +11,12 @@
 
 using System;
 using System.IO;
+using System.Private;
 using System.Diagnostics;
 using System.Collections;
 using System.Security;
 using System.Security.Permissions;
+using System.Runtime.InteropServices;
 
 namespace System
 {
@@ -250,41 +252,50 @@ namespace System
 		/// </summary>
 		public static string GetEnvironmentVariable(string variable)
 		{
-			return (string)(getEnvironmentStrings()[variable]);
+			return Marshal.PtrToStringAuto(Wrapper.getenv(variable));
 		}
 
 		/// <summary>
 		/// Return a set of all environment variables and their values
 		/// </summary>
 	   
-		public static IDictionary getEnvironmentStrings()
+		public static IDictionary GetEnvironmentVariables()
 		{
-			// could cache these in a member variable, but that
-			// wouldn't be very safe because the environment is
-			// dyanamic ya know
-			string strEnv = PlatformSpecific.getEnvironment();
-			char[] delimiter = new char[1];
-			delimiter[0] = '\t';
-			string[] arEnv = strEnv.Split(delimiter);
-			string[] arStr;
+			IntPtr pp = Wrapper.environ(); // pointer to an array of char*
 			Hashtable ht = new Hashtable();
-			foreach(string str in arEnv)
+			
+			if(pp != IntPtr.Zero)
 			{
-				delimiter[0] = '=';
-				arStr = str.Split(delimiter, 2);
-				switch(arStr.Length)
+				IntPtr p;
+				bool done = false;
+				char[] delimiter = { '=' };
+				
+				while(!done)
 				{
-				case 1:
-					ht.Add(arStr[0], "");
-					break;
-				case 2:
-					ht.Add(arStr[0], arStr[1]);
-					break;
-				default:
-					Debug.Assert(false);	// this shouldn't happen
-					break;
-				}
-			}
+					p = Marshal.ReadIntPtr(pp);
+					if(p != IntPtr.Zero)
+					{
+						string str = Marshal.PtrToStringAuto(p);
+						string[] ar = str.Split(delimiter, 2);
+						switch(ar.Length)
+						{
+						case 1:
+							ht.Add(ar[0], "");
+							break;
+						case 2:
+							ht.Add(ar[0], ar[1]);
+							break;
+						default:
+							Debug.Assert(false);	// this shouldn't happen
+							break;
+						}	
+					}
+					else
+					{
+						done = true;
+					}
+				} 
+			}			
 			return ht;
 		}
 
