@@ -2,6 +2,12 @@
 
 	* mini.c (mono_method_to_ir): In CEE_DUP, handle the dup / stloc
 	idiom.
+	(handle_loaded_temps): Do not create a temporary variable for
+	things that we know are temps. They will never be modified.
+	(mono_spill_call): Set MONO_INST_IS_TEMP
+	(mono_emulate_opcode): ditto
+	(emit_tree): ditto
+	(mono_method_to_ir.CEE_DUP): ditto
 
 2004-12-19  Ben Maurer  <bmaurer@ximian.com>
 
