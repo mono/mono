@@ -1,4 +1,4 @@
-﻿//
+//
 // EventLogPermissionTest.cs -
 //	NUnit Test Cases for EventLogPermission
 //
@@ -232,7 +232,7 @@ namespace MonoTests.System.Diagnostics {
 		public void IsSubset_Null ()
 		{
 			EventLogPermission elp = new EventLogPermission (PermissionState.None);
-			Assert.IsTrue (elp.IsSubsetOf (null), "null");
+			Assert.IsFalse (elp.IsSubsetOf (null), "null");
 		}
 
 		[Test]

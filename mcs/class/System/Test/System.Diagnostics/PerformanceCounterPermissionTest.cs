@@ -1,4 +1,4 @@
-﻿//
+//
 // PerformanceCounterPermissionTest.cs -
 //	NUnit Test Cases for PerformanceCounterPermission
 //
@@ -239,7 +239,7 @@ namespace MonoTests.System.Diagnostics {
 		public void IsSubset_Null ()
 		{
 			PerformanceCounterPermission pcp = new PerformanceCounterPermission (PermissionState.None);
-			Assert.IsTrue (pcp.IsSubsetOf (null), "null");
+			Assert.IsFalse (pcp.IsSubsetOf (null), "null");
 		}
 
 		[Test]
