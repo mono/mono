@@ -2878,11 +2878,11 @@ lock_statement
 using_statement
 	: USING OPEN_PARENS resource_acquisition CLOSE_PARENS 
 	  {
-		$5 = lexer.Location;
+		$1 = lexer.Location;
 	  } 
 	  embedded_statement
 	  {
-		$$ = new Using ($3, (Statement) $6, (Location) $5);
+		$$ = new Using ($3, (Statement) $6, (Location) $1);
 	  }
 	; 
 

@@ -1,3 +1,11 @@
+2001-10-28  Miguel de Icaza  <miguel@ximian.com>
+
+	* typemanager.cs (ImplementsInterface): interface might be null;
+	Deal with this problem;
+
+	Also, we do store negative hits on the cache (null values), so use
+	this instead of calling t.GetInterfaces on the type everytime.
+
 2001-10-28  Ravi Pratap  <ravi@ximian.com>
 
 	* typemanager.cs (IsBuiltinType): New method to help determine the same.

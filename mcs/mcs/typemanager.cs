@@ -517,13 +517,16 @@ public class TypeManager {
 		Type [] interfaces = (Type []) type_interface_cache [t];
 
 		if (interfaces == null) {
+			if (type_interface_cache.Contains (t))
+				return false;
+			
 			interfaces = t.GetInterfaces ();
 
-			// Note that interfaces is an empty array if the type
-			// implements or inherits no interfaces so it makes sense for us to
-			// store that so as to not hit the expensive lookup again.
 			type_interface_cache [t] = interfaces;
 		}
+
+		if (interfaces == null)
+			return false;
 
 		for (int i = interfaces.Length; i > 0; ) {
 			i--;
