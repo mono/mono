@@ -479,7 +479,7 @@ namespace System.Windows.Forms {
 				xevent.ExposeEvent.width = rc.Width;
 				xevent.ExposeEvent.height = rc.Height;
 
-				message_queue.Enqueue (xevent);
+				AddExpose (xevent);
 			}
 		}
 
@@ -633,6 +633,23 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		private void AddExpose (XEvent xevent)
+		{
+			HandleData data = (HandleData) handle_data [xevent.AnyEvent.window];
+			if (data == null) {
+				data = new HandleData ();
+				handle_data [xevent.AnyEvent.window] = data;
+			}
+				   
+			data.AddToInvalidArea (xevent.ExposeEvent.x, xevent.ExposeEvent.y,
+					xevent.ExposeEvent.width, xevent.ExposeEvent.height);
+				   
+			if (!data.HasExpose) {
+				message_queue.Enqueue (xevent);
+				data.HasExpose = true;
+			}
+		}
+
 		private void UpdateMessageQueue ()
 		{
 			DateTime now = DateTime.Now;
@@ -677,19 +694,7 @@ namespace System.Windows.Forms {
 				
 				switch (xevent.type) {
 				case XEventName.Expose:
-					HandleData data = (HandleData) handle_data [xevent.AnyEvent.window];
-					if (data == null) {
-						data = new HandleData ();
-						handle_data [xevent.AnyEvent.window] = data;
-					}
-				   
-					data.AddToInvalidArea (xevent.ExposeEvent.x, xevent.ExposeEvent.y,
-							xevent.ExposeEvent.width, xevent.ExposeEvent.height);
-				   
-					if (!data.HasExpose) {
-						message_queue.Enqueue (xevent);
-						data.HasExpose = true;
-					}
+					AddExpose (xevent);
 					break;
 				case XEventName.KeyPress:
 				case XEventName.KeyRelease:
