@@ -750,8 +750,8 @@ namespace Mono.AssemblyCompare
 				AddWarning (parent, "Base class is wrong: {0} != {1}", baseName, oclass.baseName);
 
 			if (isAbstract != oclass.isAbstract || isSealed != oclass.isSealed) {
-				if ((isAbstract && isSealed) || (isAbstract && isSealed && !oclass.isAbstract && !oclass.isSealed))
-					AddWarning (parent, "Should {0}be static", isAbstract ? "" : "not ");
+				if ((isAbstract && isSealed) || (oclass.isAbstract && oclass.isSealed))
+					AddWarning (parent, "Should {0}be static", (isAbstract && isSealed) ? "" : "not ");
 				else if (isAbstract != oclass.isAbstract)
 					AddWarning (parent, "Should {0}be abstract", isAbstract ? "" : "not ");
 				else if (isSealed != oclass.isSealed)
