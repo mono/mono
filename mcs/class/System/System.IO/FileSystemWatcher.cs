@@ -84,12 +84,7 @@ namespace System.IO {
 		[DefaultValue("*.*")]
 		[IODescription("File name filter pattern")]
 		[RecommendedAsConfigurable(true)]
-		#if (NET_1_0)
-			[TypeConverter ("System.Diagnostics.Design.StringValueConverter, System.Design, Version=1.0.3300.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")]
-		#endif
-		#if (NET_1_1)
-    			[TypeConverter ("System.Diagnostics.Design.StringValueConverter, System.Design, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")]
-		#endif
+		[TypeConverter ("System.Diagnostics.Design.StringValueConverter, " + Consts.AssemblySystem_Design)]
 		public string Filter {
 			get { return filter; }
 			set {
@@ -124,14 +119,8 @@ namespace System.IO {
 		[DefaultValue("")]
 		[IODescription("The directory to monitor")]
 		[RecommendedAsConfigurable(true)]
-		#if (NET_1_0)
-			[TypeConverter ("System.Diagnostics.Design.StringValueConverter, System.Design, Version=1.0.3300.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")]
-			[Editor ("System.Diagnostics.Design.FSWPathEditor, System.Design, Version=1.0.3300.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", "System.Drawing.Design.UITypeEditor, System.Drawing, Version=1.0.3300.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")]
-		#endif
-		#if (NET_1_1)
-    			[TypeConverter ("System.Diagnostics.Design.StringValueConverter, System.Design, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")]
-			[Editor ("System.Diagnostics.Design.FSWPathEditor, System.Design, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", "System.Drawing.Design.UITypeEditor, System.Drawing, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")]
-		#endif
+		[TypeConverter ("System.Diagnostics.Design.StringValueConverter, " + Consts.AssemblySystem_Design)]
+		[Editor ("System.Diagnostics.Design.FSWPathEditor, " + Consts.AssemblySystem_Design, "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
 		public string Path {
 			get { return path; }
 			set {

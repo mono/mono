@@ -1,3 +1,7 @@
+2003-07-17  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
+
+	* FileSystemWatcher.cs: Reworked attributes based on the new Consts scheme
+
 2003-07-13  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
 
 	* FileSystemWatcher.cs: Added missing attributes
