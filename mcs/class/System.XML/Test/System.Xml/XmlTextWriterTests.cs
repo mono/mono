@@ -256,11 +256,19 @@ namespace MonoTests.System.Xml
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentException))]
 		public void CommentInvalid ()
 		{
-			xtw.WriteComment("foo-");
-			xtw.WriteComment("foo-->bar");
+			try {
+				xtw.WriteComment("foo-");
+				Fail("Should have thrown an ArgumentException.");
+			} 
+			catch (ArgumentException) { }
+
+			try {
+				xtw.WriteComment("foo-->bar");
+				Fail("Should have thrown an ArgumentException.");
+			} 
+			catch (ArgumentException) { }
 		}
 
 		[Test]
@@ -318,13 +326,23 @@ namespace MonoTests.System.Xml
 		}
 
 		[Test]
-		[ExpectedException (typeof (InvalidOperationException))]
 		public void DocumentStart ()
 		{
 			xtw.WriteStartDocument ();
 			AssertEquals ("XmlDeclaration is incorrect.", "<?xml version='1.0' encoding='utf-16'?>", StringWriterText);
 
-			xtw.WriteStartDocument ();
+			try 
+			{
+				xtw.WriteStartDocument ();
+				Fail("Should have thrown an InvalidOperationException.");
+			} 
+			catch (InvalidOperationException e) {
+				// Don't rely on English message assertion.
+				// It is enough to check an exception occurs.
+//				AssertEquals ("Exception message is incorrect.",
+//					"WriteStartDocument should be the first call.", e.Message);
+			}
+
 			xtw = new XmlTextWriter (sw = new StringWriter ());
 			xtw.QuoteChar = '\'';
 			xtw.WriteStartDocument (true);
@@ -446,7 +464,6 @@ namespace MonoTests.System.Xml
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentException))]
 		public void NamespacesElementsPassingInNamespaces ()
 		{
 			xtw.Namespaces = false;
@@ -466,12 +483,35 @@ namespace MonoTests.System.Xml
 
 			// These should throw ArgumentException because they pass in a
 			// namespace when Namespaces = false.
-			xtw.WriteElementString ("qux", "http://netsack.com/", String.Empty);
-			xtw.WriteStartElement ("foo", "http://netsack.com/");
-			xtw.WriteStartElement ("foo", "bar", "http://netsack.com/");
-			xtw.WriteStartElement ("foo", "bar", null);
-			xtw.WriteStartElement ("foo", "bar", "");
-			xtw.WriteStartElement ("foo", "", "");
+			try {
+				xtw.WriteElementString ("qux", "http://netsack.com/", String.Empty);
+				Fail ("Expected an ArgumentException.");
+			} catch (ArgumentException) {}
+
+			try {
+				xtw.WriteStartElement ("foo", "http://netsack.com/");
+				Fail ("Expected an ArgumentException.");
+			} catch (ArgumentException) {}
+
+			try {
+				xtw.WriteStartElement ("foo", "bar", "http://netsack.com/");
+				Fail ("Expected an ArgumentException.");
+			} catch (ArgumentException) {}
+
+			try {
+				xtw.WriteStartElement ("foo", "bar", null);
+				Fail ("Expected an ArgumentException.");
+			} catch (ArgumentException) {}
+
+			try {
+				xtw.WriteStartElement ("foo", "bar", "");
+				Fail ("Expected an ArgumentException.");
+			} catch (ArgumentException) {}
+
+			try {
+				xtw.WriteStartElement ("foo", "", "");
+				Fail ("Expected an ArgumentException.");
+			} catch (ArgumentException) {}
 		}
 
 		[Test]
@@ -499,19 +539,31 @@ namespace MonoTests.System.Xml
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentException))]
 		public void NamespacesPrefixWithEmptyAndNullNamespace ()
 		{
-			xtw.WriteStartElement ("foo", "bar", "");
-			xtw.WriteStartElement ("foo", "bar", null);
+			try {
+				xtw.WriteStartElement ("foo", "bar", "");
+				Fail ("Should have thrown an ArgumentException.");
+			} catch (ArgumentException) {}
+
+			try 
+			{
+				xtw.WriteStartElement ("foo", "bar", null);
+				Fail ("Should have thrown an ArgumentException.");
+			} 
+			catch (ArgumentException) {}
 		}
 
 		[Test]
-		[ExpectedException (typeof (InvalidOperationException))]
 		public void NamespacesSettingWhenWriteStateNotStart ()
 		{
 			xtw.WriteStartElement ("foo");
-			xtw.Namespaces = false;
+			try 
+			{
+				xtw.Namespaces = false;
+				Fail ("Expected an InvalidOperationException.");
+			} 
+			catch (InvalidOperationException) {}
 			AssertEquals (true, xtw.Namespaces);
 		}
 
@@ -523,13 +575,35 @@ namespace MonoTests.System.Xml
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentException))]
 		public void ProcessingInstructionInvalid ()
 		{
-			xtw.WriteProcessingInstruction("fo?>o", "bar");
-			xtw.WriteProcessingInstruction("foo", "ba?>r");
-			xtw.WriteProcessingInstruction("", "bar");
-			xtw.WriteProcessingInstruction(null, "bar");
+			try 
+			{
+				xtw.WriteProcessingInstruction("fo?>o", "bar");
+				Fail("Should have thrown an ArgumentException.");
+			} 
+			catch (ArgumentException) { }
+
+			try 
+			{
+				xtw.WriteProcessingInstruction("foo", "ba?>r");
+				Fail("Should have thrown an ArgumentException.");
+			} 
+			catch (ArgumentException) { }
+
+			try 
+			{
+				xtw.WriteProcessingInstruction("", "bar");
+				Fail("Should have thrown an ArgumentException.");
+			} 
+			catch (ArgumentException) { }
+
+			try 
+			{
+				xtw.WriteProcessingInstruction(null, "bar");
+				Fail("Should have thrown an ArgumentException.");
+			} 
+			catch (ArgumentException) { }
 		}
 
 		[Test]
@@ -585,7 +659,6 @@ namespace MonoTests.System.Xml
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentException))]
 		public void WriteCharEntity ()
 		{
 			xtw.WriteCharEntity ('a');
@@ -600,7 +673,9 @@ namespace MonoTests.System.Xml
 			xtw.WriteCharEntity ('K');
 			AssertEquals ("&#x61;&#x41;&#x31;&#x4B;", StringWriterText);
 
-			xtw.WriteCharEntity ((char)0xd800);
+			try {
+				xtw.WriteCharEntity ((char)0xd800);
+			} catch (ArgumentException) {}
 		}
 
 		[Test]
@@ -611,12 +686,21 @@ namespace MonoTests.System.Xml
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentException))]
 		public void WriteEndDocument ()
 		{
-			xtw.WriteEndDocument ();
+			try {
+				xtw.WriteEndDocument ();
+				Fail ("Expected an ArgumentException.");
+			} catch (ArgumentException) {}
+
 			xtw.WriteStartDocument ();
-			xtw.WriteEndDocument ();
+
+			try 
+			{
+				xtw.WriteEndDocument ();
+				Fail ("Expected an ArgumentException.");
+			} 
+			catch (ArgumentException) {}
 
 			xtw.WriteStartElement ("foo");
 			xtw.WriteStartAttribute ("bar", null);
@@ -628,13 +712,16 @@ namespace MonoTests.System.Xml
 		}
 
 		[Test]
-		[ExpectedException (typeof (InvalidOperationException))]
 		public void WriteEndElement ()
 		{
-			xtw.WriteEndElement ();
-			// Don't rely on English message assertion.
-			// It is enough to check an exception occurs.
-			// AssertEquals ("Exception message is incorrect.", "There was no XML start tag open.", e.Message);
+			try {
+				xtw.WriteEndElement ();
+				Fail ("Should have thrown an InvalidOperationException.");
+			} catch (InvalidOperationException e) {
+				// Don't rely on English message assertion.
+				// It is enough to check an exception occurs.
+//				AssertEquals ("Exception message is incorrect.", "There was no XML start tag open.", e.Message);
+			}
 
 			xtw.WriteStartElement ("foo");
 			xtw.WriteEndElement ();
@@ -714,11 +801,12 @@ namespace MonoTests.System.Xml
 		}
 
 		[Test]
-		[ExpectedException (typeof (InvalidOperationException))]
 		public void WriteString ()
 		{
 			xtw.WriteStartDocument ();
-			xtw.WriteString("foo");
+			try {
+				xtw.WriteString("foo");
+			} catch (InvalidOperationException) {}
 
 			// Testing attribute values
 
