@@ -125,8 +125,6 @@ namespace System.Reflection
 
 		public override MethodInfo[] GetMethods (BindingFlags bf)
 		{
-			initialize ();
-
 			ArrayList l = new ArrayList ();
 
 			//
@@ -166,6 +164,8 @@ namespace System.Reflection
 			bool match;
 			MethodAttributes mattrs;
 
+			initialize ();
+
 			MethodInfo[] methods = GetMethods_internal (reftype);
 
 			for (int i = 0; i < methods.Length; i++) {
@@ -201,8 +201,6 @@ namespace System.Reflection
 
 		public override ConstructorInfo[] GetConstructors (BindingFlags bf)
 		{
-			initialize ();
-
 			ArrayList l = new ArrayList ();
 
 			Type current_type = this;
@@ -233,6 +231,8 @@ namespace System.Reflection
 			ArrayList l = new ArrayList ();
 			bool match;
 			MethodAttributes mattrs;
+
+			initialize ();
 
 			ConstructorInfo[] ctors = GetConstructors_internal (reftype);
 
@@ -270,8 +270,6 @@ namespace System.Reflection
 
 		public override FieldInfo[] GetFields (BindingFlags bf)
 		{
-			initialize ();
-
 			ArrayList l = new ArrayList ();
 
 			Type current_type = this;
@@ -302,6 +300,8 @@ namespace System.Reflection
 			ArrayList l = new ArrayList ();
 			bool match;
 			FieldAttributes fattrs;
+
+			initialize ();
 
 			FieldInfo[] fields = GetFields_internal (reftype);
 
@@ -338,8 +338,6 @@ namespace System.Reflection
 
 		public override PropertyInfo[] GetProperties (BindingFlags bf)
 		{
-			initialize ();
-
 			ArrayList l = new ArrayList ();
 
 			Type current_type = this;
@@ -371,6 +369,8 @@ namespace System.Reflection
 			bool match;
 			MethodAttributes mattrs;
 			MethodInfo accessor;
+
+			initialize ();
 
 			PropertyInfo[] properties = GetProperties_internal (reftype);
 
@@ -412,8 +412,6 @@ namespace System.Reflection
 
 		public override EventInfo[] GetEvents (BindingFlags bf)
 		{
-			initialize ();
-
 			ArrayList l = new ArrayList ();
 
 			Type current_type = this;
@@ -445,6 +443,8 @@ namespace System.Reflection
 			bool match;
 			MethodAttributes mattrs;
 			MethodInfo accessor;
+
+			initialize ();
 
 			EventInfo[] events = GetEvents_internal (reftype);
 

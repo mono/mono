@@ -1,3 +1,8 @@
+2004-10-12  Martin Baulig  <martin@ximian.com>
+
+	* MonoGenericInst.cs (MonoGenericInst): Call initialize() just
+	before calling the *_internal() methods.
+
 2004-10-12  Zoltan Varga  <vargaz@freemail.hu>
 
 	* MethodBody.cs: Implement this.
