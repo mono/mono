@@ -1,3 +1,8 @@
+2002-03-19  Miguel de Icaza  <miguel@ximian.com>
+
+	* driver.cs (SplitPathAndPattern): Small bug fix, I was not
+	correctly splitting out the paths.
+
 2002-03-18  Miguel de Icaza  <miguel@ximian.com>
 
 	* interface.cs (Interface.PopulateProperty): Instead of using

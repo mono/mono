@@ -321,8 +321,8 @@ namespace Mono.CSharp
 
 			p = spec.LastIndexOf ("\\");
 			if (p != -1){
-				path = spec.Substring (0, p - 1);
-				pattern = spec.Substring (p);
+				path = spec.Substring (0, p);
+				pattern = spec.Substring (p + 1);
 				return;
 			}
 
@@ -631,6 +631,7 @@ namespace Mono.CSharp
 
 				string path, pattern;
 				SplitPathAndPattern (arg, out path, out pattern);
+				Console.WriteLine ("using: {0} and {1}", path, pattern);
 				string [] files = null;
 				try {
 					files = Directory.GetFiles (path, pattern);
