@@ -1,7 +1,7 @@
 2003-03-11  Cesar Octavio Lopez Nataren  <cesar@ciencias.unam.mx>
 
 	* mcs/class: Added the directories Microsoft.JScript and Microsoft.Vsa that
-	will have the runtime support and CodeDom support for the Script Compiler.
+	will have the runtime support and CodeDom support for the JScript Compiler.
 
 2003-03-06 Jackson Harper <jackson@latitudegeo.com>
 
