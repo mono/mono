@@ -1,3 +1,16 @@
+2004-09-01  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* NamedPermissionSet.cs: FromXml now calls base class instead of an
+	internal method of PermissionSet. This should allow class to inherit
+	from NamedPermissionSet properly.
+	* PermissionSet.cs: Added an internal PolicyLevel property to allow
+	policy file class name resolution. Fixed IsEmpty to return true if
+	the list contains "empty" permissions. Fixed Copy to copy permissions
+	even for unrestricted sets (again because of IUnrestrictedPermission).
+	* SecurityManager.cs: Fixed Resolve(Evidence) because permission 
+	classes	Intersect methods can either return null or an empty 
+	PermissionSet.  Fixed ResolvePolicy(Evidence[]) for null (NET_2_0).
+
 2004-08-31  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* PermissionSet.cs: Fixed RemovePermission and Intersect (due to typos

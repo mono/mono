@@ -34,6 +34,7 @@ using System.Diagnostics;
 using System.Reflection;
 using System.Runtime.Serialization;
 using System.Security.Permissions;
+using System.Security.Policy;
 
 namespace System.Security {
 
@@ -46,6 +47,7 @@ namespace System.Security {
 		private PermissionState state;
 		private ArrayList list;
 		private int _hashcode;
+		private PolicyLevel _policyLevel;
 
 		// constructors
 
@@ -188,8 +190,8 @@ namespace System.Security {
 		{
 		}
 
-		// to be re-used by NamedPermissionSet (and other derived classes)
-		internal void FromXml (SecurityElement et, string className) 
+		[MonoTODO ("adjust class version with current runtime - unification")]
+		public virtual void FromXml (SecurityElement et)
 		{
 			if (et == null)
 				throw new ArgumentNullException ("et");
@@ -197,33 +199,33 @@ namespace System.Security {
 				string msg = String.Format ("Invalid tag {0} expected {1}", et.Tag, tagName);
 				throw new ArgumentException (msg, "et");
 			}
-//			if (!et.Attribute ("class").EndsWith (className))
-//				throw new ArgumentException ("not " + className);
-// version isn't checked
-//			if (et.Attribute ("version") != "1")
-//				throw new ArgumentException ("wrong version");
 
 			if (CodeAccessPermission.IsUnrestricted (et))
 				state = PermissionState.Unrestricted;
 			else
 				state = PermissionState.None;
-		}
 
-		[MonoTODO ("adjust class version with current runtime")]
-		public virtual void FromXml (SecurityElement et)
-		{
 			list.Clear ();
-			FromXml (et, tagName);
 			if (et.Children != null) {
 				foreach (SecurityElement se in et.Children) {
 					string className = se.Attribute ("class");
-					// TODO: adjust class version with current runtime
+					if (className == null) {
+						throw new ArgumentException (Locale.GetText (
+							"No permission class is specified."));
+					}
+					if (Resolver != null) {
+						// policy class names do not have to be fully qualified
+						className = Resolver.ResolveClassName (className);
+					}
+					// TODO: adjust class version with current runtime (unification)
 					// http://blogs.msdn.com/shawnfa/archive/2004/08/05/209320.aspx
 					Type classType = Type.GetType (className);
-					object [] psNone = new object [1] { PermissionState.None };
-					IPermission p = (IPermission) Activator.CreateInstance (classType, psNone);
-					p.FromXml (se);
-					list.Add (p);
+					if (classType != null) {
+						object [] psNone = new object [1] { PermissionState.None };
+						IPermission p = (IPermission) Activator.CreateInstance (classType, psNone);
+						p.FromXml (se);
+						list.Add (p);
+					}
 				}
 			}
 		}
@@ -370,7 +372,27 @@ namespace System.Security {
 			// note: Unrestricted isn't empty
 			if (state == PermissionState.Unrestricted)
 				return false;
-			return ((list == null) || (list.Count == 0));
+			if ((list == null) || (list.Count == 0))
+				return true;
+			// the set may include some empty permissions
+			foreach (IPermission p in list) {
+				// an empty permission only has a class and/or version attributes
+				SecurityElement se = p.ToXml ();
+				int n = se.Attributes.Count;
+				if (n <= 2) {
+					if (se.Attribute ("class") != null)
+						n--;
+					if (se.Attribute ("version") != null)
+						n--;
+					if (n > 0)
+						return false;	// not class or version - then not empty
+				}
+				else {
+					// too much attributes - then not empty
+					return false;
+				}
+			}
+			return true;
 		}
 
 		public virtual bool IsUnrestricted () 
@@ -415,9 +437,10 @@ namespace System.Security {
 			se.AddAttribute ("version", version.ToString ());
 			if (state == PermissionState.Unrestricted)
 				se.AddAttribute ("Unrestricted", "true");
-			else {
-				foreach (IPermission p in list)
-					se.AddChild (p.ToXml ());
+
+			// required for permissions that do not implement IUnrestrictedPermission
+			foreach (IPermission p in list) {
+				se.AddChild (p.ToXml ());
 			}
 			return se;
 		}
@@ -516,5 +539,12 @@ namespace System.Security {
 		{
 		}
 #endif
+
+		// internal
+
+		internal PolicyLevel Resolver {
+			get { return _policyLevel; }
+			set { _policyLevel = value; }
+		}
 	}
 }

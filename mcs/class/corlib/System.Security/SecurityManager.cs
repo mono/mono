@@ -167,10 +167,15 @@ namespace System.Security {
 				PolicyStatement pst = pl.Resolve (evidence);
 				if (pst != null) {
 					if (ps == null)
-						ps = pst.PermissionSet;
+						ps = pst.PermissionSet;	// for first time only
 					else
 						ps = ps.Intersect (pst.PermissionSet);
-	
+
+					// some permissions returns null, other returns an empty set
+					// sadly we must adjust for every variations :(
+					if (ps == null)
+						ps = new PermissionSet (PermissionState.None);
+
 					if ((pst.Attributes & PolicyStatementAttribute.LevelFinal) == PolicyStatementAttribute.LevelFinal)
 						break;
 				}
@@ -192,6 +197,9 @@ namespace System.Security {
 #if NET_2_0
 		public static PermissionSet ResolvePolicy (Evidence[] evidences)
 		{
+			if (evidences == null)
+				throw new PermissionSet (PermissionState.None);
+
 			// probably not optimal
 			PermissionSet ps = null;
 			foreach (Evidence evidence in evidences) {

@@ -102,7 +102,7 @@ namespace System.Security {
 
 		public override void FromXml (SecurityElement e) 
 		{
-			FromXml (e, "NamedPermissionSet");
+			base.FromXml (e);
 			// strangely it can import a null Name (bypassing property setter)
 			name = e.Attribute ("Name");
 			description = e.Attribute ("Description");
