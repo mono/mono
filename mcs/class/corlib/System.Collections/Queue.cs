@@ -204,7 +204,7 @@ namespace System.Collections {
 			public override int Count {
 				get { 
 					lock (queue) {
-						return queue._size; 
+						return queue.Count; 
 					}
 				}
 			}

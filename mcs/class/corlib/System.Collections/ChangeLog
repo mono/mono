@@ -2,7 +2,7 @@
 
 	* Hashtable.cs: Cloned synchronized Hashtables are now synchronized.
 	* Queue.cs: Fixed case where we could still get Current after the last 
-	MoveNext.
+	MoveNext. Fixed Count for Queue.Synchronize (Queue.Synchronize (q)).
 
 2004-05-26  Sebastien Pouliot  <sebastien@ximian.com>
 
