@@ -1,7 +1,8 @@
-2003-09-11  Lluis Sanchez Gual <lluis@ximian.com>
+2003-11-11  Lluis Sanchez Gual <lluis@ximian.com>
 
-	* AsyncCalls.cs BaseCalls.cs DelegateCalls.cs ReflectionCalls.cs SyncCalls.cs:
-	  Added tests for CallContext and for parameters with the Out flag.
+	* BaseCalls.cs: Little fix.
+	* ContextsTest.cs: Unregister dynamic properties even if there is an exception.
+	* CrossDomainCalls.cs: New test for the cross-app domain channel.
 	  
 2003-09-01  Nick Drochak  <ndrochak@gol.com>
 

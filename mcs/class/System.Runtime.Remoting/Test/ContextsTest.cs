@@ -112,11 +112,11 @@ namespace MonoTests.System.Runtime.Remoting
 
 		void RunTestObject (ServerList list)
 		{
+			DynProperty prop1 = new DynProperty("defcontext");
+			DynProperty prop2 = new DynProperty("proxy");
+
 			try
 			{
-				DynProperty prop1 = new DynProperty("defcontext");
-				DynProperty prop2 = new DynProperty("proxy");
-
 				Context.RegisterDynamicProperty (prop1, null, Context.DefaultContext);
 				Context.RegisterDynamicProperty (prop2, list, null);
 
@@ -184,15 +184,15 @@ namespace MonoTests.System.Runtime.Remoting
 				CallSeq.Add (">> Processing items");
 				list.ProcessItems ();
 				CallSeq.Add ("<< Processing items");
-
-				Context.UnregisterDynamicProperty ("defcontext", null, Context.DefaultContext);
-				Context.UnregisterDynamicProperty ("proxy", list, null);
 			}
 			catch (Exception ex)
 			{
 			//	Console.WriteLine (ex.ToString());
 				throw;
 			}
+			
+			Context.UnregisterDynamicProperty ("defcontext", null, Context.DefaultContext);
+			Context.UnregisterDynamicProperty ("proxy", list, null);
 		}
 	}
 
@@ -1139,4 +1139,3 @@ namespace MonoTests.System.Runtime.Remoting
 		};
 	}
 }
-

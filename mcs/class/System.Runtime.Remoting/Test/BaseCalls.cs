@@ -100,7 +100,11 @@ namespace MonoTests.System.Runtime.Remoting
 		public abstract InstanceSurrogate GetInstanceSurrogate ();
 		public abstract AbstractSurrogate GetAbstractSurrogate ();
 		public abstract InterfaceSurrogate GetInterfaceSurrogate ();
-		public abstract ChannelManager CreateChannelManager ();
+		
+		public virtual ChannelManager CreateChannelManager ()
+		{
+			return null;
+		}
 
 		//
 		// The tests
