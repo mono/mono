@@ -1,4 +1,8 @@
-2003-05-04 Jackson Harper <jackson@lattidegeo.com>
+2003-05-06 Jackson Harper <jackson@latitudegeo.com>
+
+	* SwitchInstr.cs: New file - implementation of switch instructions
+		
+2003-05-05 Jackson Harper <jackson@lattidegeo.com>
 
 	* MethodDef.cs: Add ability to add and emit labels
 	* BranchInstr.cs: New file - Branch instructions
