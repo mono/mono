@@ -1,3 +1,8 @@
+2005-02-05  Zoltan Varga  <vargaz@freemail.hu>
+
+	* class.c string-icalls.c marshal.c reflection.c: Applied patch from
+	Robert Jordan (robertj@gmx.net). Fix compilation errors under gcc-2.95.
+
 2005-02-04  Zoltan Varga  <vargaz@freemail.hu>
 
 	* object.c (mono_class_proxy_vtable): Add missing _setup () calls.
