@@ -2,25 +2,21 @@
 // CryptoConfigTest.cs - NUnit Test Cases for CryptoConfig
 //
 // Author:
-//		Sebastien Pouliot (spouliot@motus.com)
+//	Sebastien Pouliot (spouliot@motus.com)
 //
-// (C) 2002 Motus Technologies Inc. (http://www.motus.com)
+// (C) 2002, 2003 Motus Technologies Inc. (http://www.motus.com)
 //
 
 using NUnit.Framework;
 using System;
 using System.Security.Cryptography;
 
-namespace MonoTests.System.Security.Cryptography
-{
+namespace MonoTests.System.Security.Cryptography {
 
-public class CryptoConfigTest : TestCase 
-{
-	protected override void SetUp () {}
+[TestFixture]
+public class CryptoConfigTest : Assertion {
 
-	protected override void TearDown () {}
-
-	public void AssertEquals (string msg, byte[] array1, byte[] array2)
+        public void AssertEquals (string msg, byte[] array1, byte[] array2)
 	{
 		AllTests.AssertEquals (msg, array1, array2);
 	}
@@ -34,18 +30,17 @@ public class CryptoConfigTest : TestCase
 			AssertEquals (name, o.ToString(), objectname);
 	}
 
-	// validate that CryptoConfig create the exact same implementation between mono and MS
-	public void TestCreateFromName () 
+	[Test]
+	[ExpectedException (typeof (ArgumentNullException))]
+	public void CreateFromNameNull () 
 	{
-		try {
-			object o = CryptoConfig.CreateFromName (null);
-		}
-		catch (ArgumentNullException) {
-			// do nothing, this is what we expect
-		}
-		catch (Exception e) {
-			Fail ("ArgumentNullException not thrown: " + e.ToString());
-		}
+		object o = CryptoConfig.CreateFromName (null);
+	}
+
+	// validate that CryptoConfig create the exact same implementation between mono and MS
+	[Test]
+	public void CreateFromName () 
+	{
 		CreateFromName ("SHA", "System.Security.Cryptography.SHA1CryptoServiceProvider");
 		// FIXME: We need to support the machine.config file to get exact same results
 		// with the MS .NET Framework
@@ -102,7 +97,8 @@ public class CryptoConfigTest : TestCase
 
 	// additional names (URL) used for XMLDSIG (System.Security.Cryptography.Xml)
 	// URL taken from http://www.w3.org/TR/2002/REC-xmldsig-core-20020212/
-	public void TestCreateFromURL () 
+	[Test]
+	public void CreateFromURL () 
 	{
 		// URL used in SignatureMethod element
 		CreateFromName ("http://www.w3.org/2000/09/xmldsig#dsa-sha1", "System.Security.Cryptography.DSASignatureDescription");
@@ -139,79 +135,83 @@ public class CryptoConfigTest : TestCase
 	static byte[] oidASN1CharacterModule = { 0x06, 0x04, 0x51, 0x00, 0x00, 0x00 };
 	static byte[] oidmd5withRSAEncryption = { 0x06, 0x09, 0x2A, 0x86, 0x48, 0x86, 0xF7, 0x0D, 0x01, 0x01, 0x04 };
 
+	[Test]
+	[ExpectedException (typeof (NullReferenceException))]
 	// LAMESPEC NullReferenceException is thrown (not ArgumentNullException) if parameter is NULL
-	public void TestEncodeOID () 
+	public void EncodeOIDNull () 
 	{
-		try {
-			byte[] o = CryptoConfig.EncodeOID (null);
-		}
-		catch (NullReferenceException) {
-			// do nothing, this is what we expect
-		}
-		catch (Exception e) {
-			Fail ("NullReferenceException not thrown: " + e.ToString());
-		}
+		byte[] o = CryptoConfig.EncodeOID (null);
+	}
+
+	[Test]
+	public void EncodeOID () 
+	{
 		// OID starts with 0, 1 or 2
 		AssertEquals ("OID starting with 0.", oidETSI, CryptoConfig.EncodeOID ("0.4.0.0"));
 		AssertEquals ("OID starting with 1.", oidSHA1, CryptoConfig.EncodeOID ("1.3.14.3.2.26"));
 		AssertEquals ("OID starting with 2.", oidASN1CharacterModule, CryptoConfig.EncodeOID ("2.1.0.0.0"));
 		// OID numbers can span multiple bytes
 		AssertEquals ("OID with numbers spanning multiple bytes", oidmd5withRSAEncryption, CryptoConfig.EncodeOID ("1.2.840.113549.1.1.4"));
-		
+	}
+
+	[Test]
+	[ExpectedException (typeof (CryptographicUnexpectedOperationException))]
+	// LAMESPEC: OID greater that 0x7F (127) bytes aren't supported by the MS Framework
+	public void EncodeOID_BiggerThan127bytes () 
+	{
 		// "ms"-invalid OID - greater than 127 bytes (length encoding)
 		// OID longer than 127 bytes (so length must be encoded on multiple bytes)
-		// LAMESPEC: OID greater that 0x7F (127) bytes aren't supported by the MS Framework
 		string baseOID = "1.3.6.1.4.1.11071.0.";
 		string lastPart = "1111111111"; // must fit in int32
-		for (int i = 1; i < 30; i++)
-		{
+		for (int i = 1; i < 30; i++) {
 			baseOID += lastPart + ".";
 		}
 		baseOID += "0";
-		try {
-			byte[] tooLongOID = CryptoConfig.EncodeOID (baseOID);
-		}
-		catch (CryptographicUnexpectedOperationException) {
-			// do nothing, this is what we expect
-		}
-		catch (Exception e) {
-			Fail ("CryptographicUnexpectedOperationException not thrown: " + e.ToString());
-		}
+		byte[] tooLongOID = CryptoConfig.EncodeOID (baseOID);
+	}
 		
+	[Test]
+	[ExpectedException (typeof (OverflowException))]
+	// LAMESPEC: OID with numbers > Int32 aren't supported by the MS BCL
+	public void EncodeOID_BiggerThanInt32 () 
+	{
 		// "ms"-invalid OID - where a number of the OID > Int32
-		// LAMESPEC: OID with numbers > Int32 aren't supported by the MS BCL
-		try {
-			byte[] tooLongOID = CryptoConfig.EncodeOID ("1.1.4294967295");
-		}
-		catch (OverflowException) {
-			// do nothing, this is what we expect
-		}
-		catch (Exception e) {
-			Fail( "OverflowException not thrown: " + e.ToString ());
-		}
+		byte[] tooLongOID = CryptoConfig.EncodeOID ("1.1.4294967295");
+	}
 
+	[Test]
+	public void EncodeOID_InvalidStart () 
+	{
 		// invalid OID - must start with 0, 1 or 2
 		// however it works with MS BCL
 		byte[] oid3 = CryptoConfig.EncodeOID ("3.0");
 		byte[] res3 = { 0x06, 0x01, 0x78 };
 		AssertEquals ("OID: 3.0", res3, oid3);
+	}
 
+	[Test]
+	[ExpectedException (typeof (CryptographicUnexpectedOperationException))]
+	public void EncodeOID_TooShort () 
+	{
 		// invalid OID - must have at least 2 parts (according to X.208)
-		try {
-			byte[] tooShortOID = CryptoConfig.EncodeOID ("0");
-		}
-		catch (CryptographicUnexpectedOperationException) {
-			// do nothing, this is what we expect
-		}
-		catch (Exception e) {
-			Fail("CryptographicUnexpectedOperationException not thrown: " + e.ToString());
-		}
+		byte[] tooShortOID = CryptoConfig.EncodeOID ("0");
+	}
 
+	[Test]
+	public void EncodeOID_InvalidSecondPart () 
+	{
 		// invalid OID - second value < 40 for 0. and 1. (modulo 40)
 		// however it works with MS BCL
 		byte[] tooBigSecondPartOID = CryptoConfig.EncodeOID ("0.40");
 		byte[] tooBigSecondPartRes = { 0x06, 0x01, 0x28 };
 		AssertEquals ("OID: 0.40", tooBigSecondPartRes, tooBigSecondPartOID);
+	}
+
+	[Test]
+	[ExpectedException (typeof (ArgumentNullException))]
+	public void MapNameToOIDNull () 
+	{
+		CryptoConfig.MapNameToOID (null);
 	}
 
 	private void MapNameToOID (string name, string oid)
@@ -222,17 +222,9 @@ public class CryptoConfigTest : TestCase
 	// LAMESPEC: doesn't support all names defined in CryptoConfig 
 	// non supported names (in MSFW) are commented or null-ed
 	// LAMESPEC: undocumented but full class name is supported
-	public void TestMapNameToOID() 
+	[Test]
+	public void MapNameToOID() 
 	{
-		try {
-			CryptoConfig.MapNameToOID (null);
-		}
-		catch (ArgumentNullException) {
-			// do nothing, this is what we expect
-		}
-		catch (Exception e) {
-			Fail( "ArgumentNullException not thrown: " + e.ToString ());
-		}
 //		MapNameToOID ("SHA", "1.3.14.3.2.26");
 		MapNameToOID ("SHA1", "1.3.14.3.2.26");
 		MapNameToOID ("System.Security.Cryptography.SHA1", "1.3.14.3.2.26");
@@ -285,7 +277,8 @@ public class CryptoConfigTest : TestCase
 		MapNameToOID ("NonExistingAlgorithm", null);
 	}
 
-	public void TestToString() 
+	[Test]
+	public void CCToString () 
 	{
 		// under normal circumstance there are no need to create a CryptoConfig object
 		// because all interesting stuff are in static methods

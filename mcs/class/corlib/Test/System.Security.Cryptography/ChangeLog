@@ -1,5 +1,6 @@
 2003-12-15  Sebastien Pouliot  <spouliot@videotron.ca>
 
+	* CryptoConfigTest.cs: Converted unit tests to NUnit2.
 	* PaddingModeTest.cs: New. Unit tests to check every padding modes for
 	symmetric algorithms.
 	* MACTripleDESTest.cs: Updated unit tests for NUnit2 and to work for 
