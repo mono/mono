@@ -24,9 +24,12 @@
 //
 //
 //
-// $Revision: 1.2 $
+// $Revision: 1.3 $
 // $Modtime: $
 // $Log: ITheme.cs,v $
+// Revision 1.3  2004/08/08 22:54:21  jordi
+// Label BorderStyles
+//
 // Revision 1.2  2004/08/07 19:05:44  jordi
 // Theme colour support and GetSysColor defines
 //
@@ -59,7 +62,7 @@ namespace System.Windows.Forms
 		Color ColorInactiveTitle {get;}		//COLOR_INACTIVECAPTION
 		Color ColorMenu {get;} 			//COLOR_MENU
 		Color ColorWindow {get;} 		//COLOR_WINDOW
-		Color WindowFrame {get;} 		//COLOR_WINDOWFRAME
+		Color ColorWindowFrame {get;} 		//COLOR_WINDOWFRAME
 		Color ColorMenuText {get;} 		//COLOR_MENUTEXT 
 		Color ColorWindowText {get;} 		//COLOR_WINDOWTEXT
 		Color ColorTitleText {get;} 		//COLOR_CAPTIONTEXT 

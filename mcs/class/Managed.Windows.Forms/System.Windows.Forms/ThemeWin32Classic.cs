@@ -25,9 +25,12 @@
 //
 //
 //
-// $Revision: 1.6 $
+// $Revision: 1.7 $
 // $Modtime: $
 // $Log: ThemeWin32Classic.cs,v $
+// Revision 1.7  2004/08/08 22:54:21  jordi
+// Label BorderStyles
+//
 // Revision 1.6  2004/08/08 18:09:53  jackson
 // Add pen_buttonface
 //
@@ -74,11 +77,12 @@ namespace System.Windows.Forms
 		static private SolidBrush br_buttonface;
 		static private SolidBrush br_buttonshadow;
 		static private SolidBrush br_buttondkshadow;
-		static private SolidBrush br_buttonhilight;
+		static private SolidBrush br_buttonhilight;		
 		static private Pen pen_buttonshadow;
 		static private Pen pen_buttondkshadow;
 		static private Pen pen_buttonhilight;
 		static private Pen pen_buttonface;
+		static private Pen pen_windowframe;
 
 		/* Cache */
 		static private SolidBrush label_br_fore_color;
@@ -103,6 +107,7 @@ namespace System.Windows.Forms
 			br_lighttop = new SolidBrush (ColorLightTop);
 			pen_arrow = new Pen (Color.Black);
 			br_bar = new  SolidBrush (Color.FromArgb (255, 49, 106, 197));
+			
 
 			br_buttonface = new SolidBrush (ColorButtonFace);
 			br_buttonshadow = new SolidBrush (ColorButtonShadow);
@@ -112,6 +117,7 @@ namespace System.Windows.Forms
 			pen_buttondkshadow = new Pen (ColorButtonDkShadow);
 			pen_buttonhilight = new Pen (ColorButtonHilight);
 			pen_buttonface = new Pen (ColorButtonFace);
+			pen_windowframe = new Pen (ColorWindowFrame);
 		}
 
 		/* Internal colors to paint controls */
@@ -168,7 +174,7 @@ namespace System.Windows.Forms
 			get {return Color.FromArgb (255, 255, 255, 255);}
 		}
 
-		public Color WindowFrame{
+		public Color ColorWindowFrame{
 			get {return Color.FromArgb (255, 0, 0, 0);}
 		}
 
@@ -1420,18 +1426,22 @@ namespace System.Windows.Forms
 			DrawBorder3D (dc, area, Border3DStyle.SunkenInner, Border3DSide.All);
 			
 		}
+		
 
 		public void DrawLabel (Graphics dc, Rectangle area, BorderStyle border_style, string text, 
 			Color fore_color, Color back_color, Font font, StringFormat string_format, bool Enabled)
 
-		{	
+		{				
+
 			if (label_br_fore_color == null || label_br_fore_color.Color != fore_color) 
 				label_br_fore_color = new SolidBrush (fore_color);
 
 			if (label_br_back_color == null || label_br_back_color.Color != back_color) 
 				label_br_back_color = new SolidBrush (back_color);
 
-			dc.FillRectangle (label_br_back_color, area);						
+			dc.FillRectangle (label_br_back_color, area);
+			
+			DrawBorderStyle (dc, area, border_style);
 
 			Console.WriteLine ("{0} - {1} - {2} - {3} - {4}",text, font, label_br_fore_color.Color, area, string_format);
 
@@ -1900,6 +1910,27 @@ namespace System.Windows.Forms
 				dc.FillRectangle (br_main, area.X + 1,
 					area.Y + 2, area.Width - 2, area.Height - 3);
 			}
+		}
+
+		private void DrawBorderStyle (Graphics dc, Rectangle area, BorderStyle border_style)
+		{
+			switch (border_style){
+			case BorderStyle.Fixed3D:				
+				dc.DrawLine (pen_buttonshadow, area.X, area.Y, area.X +area.Width, area.Y);
+				dc.DrawLine (pen_buttonshadow, area.X, area.Y, area.X, area.Y + area.Height);
+				dc.DrawLine (pen_buttonhilight, area.X , area.Y + area.Height - 1, area.X + area.Width , 
+					area.Y + area.Height - 1);
+				dc.DrawLine (pen_buttonhilight, area.X + area.Width -1 , area.Y, area.X + area.Width -1, 
+					area.Y + area.Height);
+				break;
+			case BorderStyle.FixedSingle:
+				dc.DrawRectangle (pen_windowframe, area.X, area.Y, area.Width - 1, area.Height - 1);
+				break;
+			case BorderStyle.None:
+			default:
+				break;
+			}
+			
 		}
 
 	} //class
