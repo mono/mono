@@ -1,3 +1,9 @@
+2004-01-19  Bernie Solomon  <bernard@ugsolutions.com>
+
+	* interp.c (ves_exec_method_with_context):
+	get_native_wrapper removed and	call 
+	mono_marshal_get_native_wrapper directly
+	with new DllNotFoundException handling
 
 Mon Jan 19 17:52:33 CET 2004 Paolo Molaro <lupus@ximian.com>
 
