@@ -1,3 +1,7 @@
+2004-05-27  Ravindra <rkumar@novell.com>
+
+	* Color.cs: Changed Color.Green to what MS.NET has. Conforming to MS.
+
 2004-05-26  Sanjay Gupta <gsanjay@novell.com>
 
 	* ImageFormatConverter.cs: Fixed issues discovered from nunit 
