@@ -3,6 +3,12 @@
 	* mini.c (mono_method_to_ir): Use `generic_container->context'
 	rather than creating a new one.
 
+2004-11-09  Neale Ferguson <Neale.Ferguson@SoftwareAG-usa.com>
+
+	* exceptions-s390.c, mini-s390, cpu-s390.md: Add support for OP_RETHROW.
+
+	* inssel-390.md, mini-s390.c: Correct register allocation for globals.
+
 2004-11-09  Zoltan Varga  <vargaz@freemail.hu>
 
 	* aot.c (mono_aot_init): Add MONO_AOT_CACHE env variable to turn on
