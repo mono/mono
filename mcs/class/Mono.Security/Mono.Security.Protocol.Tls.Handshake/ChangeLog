@@ -1,3 +1,8 @@
+2004-07-14  Carlos Guzman Alvarez  <carlosga@telefonica.net>
+
+	* Updated license head in c# source files for use
+	always the same format.
+
 2003-11-17 Carlos Guzmán Álvarez  <carlosga@telefonica.net>
 
 	* Mono.Security.Protocol.Tls/SslClientStream.cs:
