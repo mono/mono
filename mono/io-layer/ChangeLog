@@ -1,4 +1,8 @@
 
+Fri Feb 18 17:37:29 CET 2005 Paolo Molaro <lupus@ximian.com>
+
+	* io.c: fixed logic in checking errno in rev 40815.
+
 Fri Feb 18 16:00:29 CET 2005 Paolo Molaro <lupus@ximian.com>
 
 	* threads.c: we don't depend on the GC checking tls
