@@ -121,7 +121,11 @@ namespace Commons.Xml.Relaxng
 	#endregion
 
 	#region Grammatical elements
-	public class RelaxngStart : RelaxngElementBase
+	public interface IGrammarContent
+	{
+	}
+
+	public class RelaxngStart : RelaxngElementBase, IGrammarContent
 	{
 		RelaxngPattern p;
 		string combine;
@@ -155,7 +159,7 @@ namespace Commons.Xml.Relaxng
 		}
 	}
 
-	public class RelaxngDefine : RelaxngElementBase
+	public class RelaxngDefine : RelaxngElementBase, IGrammarContent
 	{
 		string name;
 		private RelaxngPatternList patterns = new RelaxngPatternList ();
@@ -211,12 +215,12 @@ namespace Commons.Xml.Relaxng
 		}
 	}
 
-	public class RelaxngInclude : RelaxngElementBase
+	public class RelaxngInclude : RelaxngElementBase, IGrammarContent
 	{
 		string href;
-		IList starts = new ArrayList ();
-		IList defines = new ArrayList ();
-		IList divs = new ArrayList ();
+		RelaxngGrammarContentList starts = new RelaxngGrammarContentList ();
+		RelaxngGrammarContentList defines = new RelaxngGrammarContentList ();
+		RelaxngGrammarContentList divs = new RelaxngGrammarContentList ();
 		string ns;
 
 		public RelaxngInclude ()
@@ -228,15 +232,15 @@ namespace Commons.Xml.Relaxng
 			set { href = value; }
 		}
 
-		public IList Starts {
+		public RelaxngGrammarContentList Starts {
 			get { return starts; }
 		}
 
-		public IList Defines {
+		public RelaxngGrammarContentList Defines {
 			get { return defines; }
 		}
 
-		public IList Divs {
+		public RelaxngGrammarContentList Divs {
 			get { return divs; }
 		}
 
@@ -292,7 +296,7 @@ namespace Commons.Xml.Relaxng
 			// starts.
 			if (this.Starts.Count > 0 && g.Starts.Count == 0)
 				throw new RelaxngException ("When the included grammar does not contain start components, this include component must not contain start components.");
-			IList appliedStarts = (this.starts.Count > 0) ?
+			RelaxngGrammarContentList appliedStarts = (this.starts.Count > 0) ?
 				this.starts : g.Starts;
 
 			RelaxngDiv div = new RelaxngDiv ();
@@ -325,30 +329,30 @@ namespace Commons.Xml.Relaxng
 		}
 	}
 
-	public class RelaxngDiv : RelaxngElementBase
+	public class RelaxngDiv : RelaxngElementBase, IGrammarContent
 	{
-		IList starts = new ArrayList ();
-		IList defines = new ArrayList ();
-		IList includes = new ArrayList ();
-		IList divs = new ArrayList ();
+		RelaxngGrammarContentList starts = new RelaxngGrammarContentList ();
+		RelaxngGrammarContentList defines = new RelaxngGrammarContentList ();
+		RelaxngGrammarContentList includes = new RelaxngGrammarContentList ();
+		RelaxngGrammarContentList divs = new RelaxngGrammarContentList ();
 
 		public RelaxngDiv ()
 		{
 		}
 
-		public IList Starts {
+		public RelaxngGrammarContentList Starts {
 			get { return starts; }
 		}
 
-		public IList Defines {
+		public RelaxngGrammarContentList Defines {
 			get { return defines; }
 		}
 
-		public IList Includes {
+		public RelaxngGrammarContentList Includes {
 			get { return includes; }
 		}
 
-		public IList Divs {
+		public RelaxngGrammarContentList Divs {
 			get { return divs; }
 		}
 
@@ -475,6 +479,33 @@ namespace Commons.Xml.Relaxng
 		}
 
 		public void Remove (RelaxngPattern p)
+		{
+			List.Remove (p);
+		}
+	}
+
+	public class RelaxngGrammarContentList : CollectionBase
+	{
+		public RelaxngGrammarContentList ()
+		{
+		}
+
+		public void Add (IGrammarContent p)
+		{
+			List.Add (p);
+		}
+
+		public IGrammarContent this [int i] {
+			get { return this.List [i] as IGrammarContent; }
+			set { this.List [i] = value; }
+		}
+
+		public void Insert (int pos, IGrammarContent p)
+		{
+			List.Insert (pos, p);
+		}
+
+		public void Remove (IGrammarContent p)
 		{
 			List.Remove (p);
 		}

@@ -23,10 +23,10 @@ namespace Commons.Xml.Relaxng
 			"http://relaxng.org/ns/structure/1.0";
 
 		// object model fields
-		ArrayList starts = new ArrayList ();
-		ArrayList defs = new ArrayList ();
-		ArrayList includes = new ArrayList ();
-		ArrayList divs = new ArrayList ();
+		RelaxngGrammarContentList starts = new RelaxngGrammarContentList ();
+		RelaxngGrammarContentList defs = new RelaxngGrammarContentList ();
+		RelaxngGrammarContentList includes = new RelaxngGrammarContentList ();
+		RelaxngGrammarContentList divs = new RelaxngGrammarContentList ();
 
 		RelaxngDatatypeProvider provider;
 
@@ -75,19 +75,19 @@ namespace Commons.Xml.Relaxng
 			get { return RelaxngPatternType.Grammar; }
 		}
 
-		public IList Starts {
+		public RelaxngGrammarContentList Starts {
 			get { return starts; }
 		}
 
-		public IList Defines {
+		public RelaxngGrammarContentList Defines {
 			get { return defs; }
 		}
 
-		public IList Includes {
+		public RelaxngGrammarContentList Includes {
 			get { return includes; }
 		}
 
-		public IList Divs {
+		public RelaxngGrammarContentList Divs {
 			get { return divs; }
 		}
 

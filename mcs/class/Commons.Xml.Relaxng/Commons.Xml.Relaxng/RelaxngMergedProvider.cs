@@ -20,8 +20,10 @@ namespace Commons.Xml.Relaxng
 		static RelaxngMergedProvider ()
 		{
 			RelaxngMergedProvider p = new RelaxngMergedProvider ();
+#if !PNET
 			p ["http://www.w3.org/2001/XMLSchema-datatypes"] = XsdDatatypeProvider.Instance;
 			p [XSchema.Namespace] = XsdDatatypeProvider.Instance;
+#endif
 			p [String.Empty] = RelaxngNamespaceDatatypeProvider.Instance;
 			defaultProvider = p;
 		}
