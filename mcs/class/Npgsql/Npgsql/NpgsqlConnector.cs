@@ -110,8 +110,8 @@ namespace Npgsql
         private Int32                            _planIndex;
         private Int32                            _portalIndex;
 
-        private const String                     _planNamePrefix = "NpgsqlPlan";
-        private const String                     _portalNamePrefix = "NpgsqlPortal";
+        private const String                     _planNamePrefix = "npgsqlplan";
+        private const String                     _portalNamePrefix = "npgsqlportal";
 
 
 
@@ -685,6 +685,7 @@ namespace Npgsql
     ///</summary>
     internal String NextPortalName()
         {
+            
             return _portalNamePrefix + System.Threading.Interlocked.Increment(ref _portalIndex);
         }
 
@@ -694,7 +695,6 @@ namespace Npgsql
         ///</summary>
         internal String NextPlanName()
         {
-
             return _planNamePrefix + System.Threading.Interlocked.Increment(ref _planIndex);
         }
 

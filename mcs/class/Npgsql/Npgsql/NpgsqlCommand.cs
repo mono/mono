@@ -654,19 +654,32 @@ namespace Npgsql
         {
             NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, "GetClearCommandText");
 
-
+            Boolean addProcedureParenthesis = false;  // Do not add procedure parenthesis by default.
+            
             String result = text;
 
             if (type == CommandType.StoredProcedure)
+            {
+                // Check if just procedure name was passed. If so, does not replace parameter names and just pass parameter values in order they were added in parameters collection.
+                if (!result.Trim().EndsWith(")"))  
+                {
+                    addProcedureParenthesis = true;
+                    result += "(";
+                }
+                
                 if (Connector.SupportsPrepare)
                     result = "select * from " + result; // This syntax is only available in 7.3+ as well SupportsPrepare.
                 else
                     result = "select " + result;				// Only a single result return supported. 7.2 and earlier.
+            }
             else if (type == CommandType.TableDirect)
                 return "select * from " + result; // There is no parameter support on table direct.
 
             if (parameters == null || parameters.Count == 0)
-                return result;
+                if (addProcedureParenthesis)
+                    return result + ")";
+                else
+                    return result;
 
 
             //CheckParameters();
@@ -679,17 +692,25 @@ namespace Npgsql
                 if ((Param.Direction == ParameterDirection.Input) ||
                     (Param.Direction == ParameterDirection.InputOutput))
                 
-                // FIXME DEBUG ONLY
-                // adding the '::<datatype>' on the end of a parameter is a highly
-                // questionable practice, but it is great for debugging!
-                // Removed as this was going in infinite loop when the parameter name had the same name of parameter
-                // type name. i.e.: parameter name called :text of type text. It would conflict with the parameter type name ::text.
-                result = ReplaceParameterValue(
-                             result,
-                             Param.ParameterName,
-                             Param.TypeInfo.ConvertToBackend(Param.Value, false)
-                         );
+                    
+                    // If parenthesis don't need to be added, they were added by user with parameter names. Replace them.
+                    if (!addProcedureParenthesis)
+                        // FIXME DEBUG ONLY
+                        // adding the '::<datatype>' on the end of a parameter is a highly
+                        // questionable practice, but it is great for debugging!
+                        // Removed as this was going in infinite loop when the parameter name had the same name of parameter
+                        // type name. i.e.: parameter name called :text of type text. It would conflict with the parameter type name ::text.
+                        result = ReplaceParameterValue(
+                                    result,
+                                    Param.ParameterName,
+                                    Param.TypeInfo.ConvertToBackend(Param.Value, false)
+                                );
+                    else
+                        result += Param.TypeInfo.ConvertToBackend(Param.Value, false);
             }
+            
+            if (addProcedureParenthesis)
+                result += ")";
 
             return result;
         }
@@ -725,10 +746,21 @@ namespace Npgsql
         {
             NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, "GetParseCommandText");
 
+            Boolean addProcedureParenthesis = false;  // Do not add procedure parenthesis by default.
+            
             String parseCommand = text;
 
             if (type == CommandType.StoredProcedure)
+            {
+                // Check if just procedure name was passed. If so, does not replace parameter names and just pass parameter values in order they were added in parameters collection.
+                if (!parseCommand.Trim().EndsWith(")"))  
+                {
+                    addProcedureParenthesis = true;
+                    parseCommand += "(";
+                }
+                
                 parseCommand = "select * from " + parseCommand; // This syntax is only available in 7.3+ as well SupportsPrepare.
+            }
             else if (type == CommandType.TableDirect)
                 return "select * from " + parseCommand; // There is no parameter support on TableDirect.
 
@@ -744,16 +776,25 @@ namespace Npgsql
                     if ((parameters[i].Direction == ParameterDirection.Input) ||
                     (parameters[i].Direction == ParameterDirection.InputOutput))
                     {
-                        //result = result.Replace(":" + parameterName, parameters[i].Value.ToString());
-                        parameterName = parameters[i].ParameterName;
-                        //textCommand = textCommand.Replace(':' + parameterName, "$" + (i+1));
-                        parseCommand = ReplaceParameterValue(parseCommand, parameterName, "$" + (i+1) + "::" + parameters[i].TypeInfo.Name);
+                    
+                        if (!addProcedureParenthesis)
+                        {
+                            //result = result.Replace(":" + parameterName, parameters[i].Value.ToString());
+                            parameterName = parameters[i].ParameterName;
+                            //textCommand = textCommand.Replace(':' + parameterName, "$" + (i+1));
+                            parseCommand = ReplaceParameterValue(parseCommand, parameterName, "$" + (i+1) + "::" + parameters[i].TypeInfo.Name);
+                        }
+                        else
+                            parseCommand += "$" + (i+1) + "::" + parameters[i].TypeInfo.Name;
                     }
 
                 }
             }
 
-            return parseCommand;
+            if (addProcedureParenthesis)
+                return parseCommand + ")";
+            else
+                return parseCommand ;
 
         }
 
@@ -762,7 +803,7 @@ namespace Npgsql
         {
             NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, "GetPrepareCommandText");
 
-
+            Boolean addProcedureParenthesis = false;  // Do not add procedure parenthesis by default.
 
             planName = Connector.NextPlanName();
 
@@ -771,7 +812,16 @@ namespace Npgsql
             String textCommand = text;
 
             if (type == CommandType.StoredProcedure)
+            {
+                // Check if just procedure name was passed. If so, does not replace parameter names and just pass parameter values in order they were added in parameters collection.
+                if (!textCommand.Trim().EndsWith(")"))  
+                {
+                    addProcedureParenthesis = true;
+                    textCommand += "(";
+                }
+                
                 textCommand = "select * from " + textCommand;
+            }
             else if (type == CommandType.TableDirect)
                 return "select * from " + textCommand; // There is no parameter support on TableDirect.
 
@@ -788,12 +838,18 @@ namespace Npgsql
                     if ((parameters[i].Direction == ParameterDirection.Input) ||
                     (parameters[i].Direction == ParameterDirection.InputOutput))
                     {
-                        //result = result.Replace(":" + parameterName, parameters[i].Value.ToString());
-                        parameterName = parameters[i].ParameterName;
-                        // The space in front of '$' fixes a parsing problem in 7.3 server
-                        // which gives errors of operator when finding the caracters '=$' in
-                        // prepare text
-                        textCommand = ReplaceParameterValue(textCommand, parameterName, " $" + (i+1));
+                    
+                        if (!addProcedureParenthesis)
+                        {
+                            //result = result.Replace(":" + parameterName, parameters[i].Value.ToString());
+                            parameterName = parameters[i].ParameterName;
+                            // The space in front of '$' fixes a parsing problem in 7.3 server
+                            // which gives errors of operator when finding the caracters '=$' in
+                            // prepare text
+                            textCommand = ReplaceParameterValue(textCommand, parameterName, " $" + (i+1));
+                        }
+                        else
+                            textCommand += " $" + (i+1);
                     }
 
                 }
@@ -815,6 +871,9 @@ namespace Npgsql
                 command.Append(')');
 
             }
+            
+            if (addProcedureParenthesis)
+                textCommand += ")";
 
             command.Append(" as ");
             command.Append(textCommand);
