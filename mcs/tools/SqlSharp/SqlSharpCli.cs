@@ -37,7 +37,7 @@ using System.Data;
 using System.Data.Common;
 using System.Data.Odbc;
 using System.Data.OleDb;
-using System.Data.SqlClient;
+//using System.Data.SqlClient;
 using System.IO;
 using System.Reflection;
 using System.Runtime.Remoting;
@@ -62,12 +62,14 @@ namespace Mono.Data.SqlSharp {
 	
 		private IDbConnection conn = null;
                 		
-		private string provider = "POSTGRESQL"; // name of internal provider
+		private string provider = "LOADEXTPROVIDER"; // name of internal provider
 		// {OleDb,SqlClient,MySql,Odbc,Oracle,PostgreSql,SqlLite} however, it
 		// can be set to LOADEXTPROVIDER to load an external provider
-		private string providerAssembly = ""; // filename of assembly
+		private string providerAssembly = "Mono.Data.PostgreSqlClient";
+		// filename of assembly
 		// for example: "Mono.Data.MySql"
-		private string providerConnectionClass = ""; // Connection class
+		private string providerConnectionClass = "Mono.Data.PostgreSqlClient.PgSqlConnection";
+		// Connection class
 		// in the provider assembly that implements the IDbConnection 
 		// interface.  for example: "Mono.Data.MySql.MySqlConnection"
 
@@ -704,14 +706,10 @@ namespace Mono.Data.SqlSharp {
 				case "OLEDB":
 					conn = new OleDbConnection();
 					break;
-				case "POSTGRESQL":
-					// FIXME: System.Data.SqlClient should
-					//        be used for MS SQL Server 7/2000
-					//        and move the PostgreSQL provider
-					//        to Mono.Data.PostgreSQL
-					//        and use a connection class
-					//        PgSqlConnection
-					conn = new SqlConnection();
+				case "SQLCLIENT":
+					Console.WriteLine("Error: SqlClient not currently supported.");
+					throw new Exception();
+					// conn = new SqlConnection();
 					break;
 				case "LOADEXTPROVIDER":
 					if(LoadExternalProvider() == false)
@@ -788,8 +786,10 @@ namespace Mono.Data.SqlSharp {
 					UseSimpleReader = true;
 					break;
 				case "SQLCLIENT":
-					provider = "POSTGRESQL";
-					Console.WriteLine("Warning: Currently, the SqlClient provider is the PostgreSQL provider.");
+					provider = parm;
+					UseParameters = false;
+					UseSimpleReader = true;
+					Console.WriteLine("Error: SqlClient provider is not currently supported.");
 					break;
 				case "ODBC":
 					UseParameters = false;
@@ -806,6 +806,13 @@ namespace Mono.Data.SqlSharp {
 					UseParameters = true;
 					UseSimpleReader = false;
 					provider = parm;
+					extp = new string[3] {
+								     "\\loadextprovider",
+								     "Mono.Data.PostgreSqlClient",
+								     "Mono.Data.PostgreSqlClient.PgSqlConnection"};
+					SetupExternalProvider(extp);
+					UseParameters = false;
+					UseSimpleReader = true;
 					break;
 				default:
 					Console.WriteLine("Error: " + "Bad argument or Provider not supported.");

@@ -1,5 +1,13 @@
 2002-10-16  Daniel Morgan <danmorg@sc.rr.com>
 
+	* SqlSharpCli.cs: added support for new place
+	where the PostgreSQL provider is an external
+	provider now.  Commented support for SqlClient and
+	cause an error and exception when trying to change to or open a
+	connection to the SqlClient provider.  
+
+2002-10-16  Daniel Morgan <danmorg@sc.rr.com>
+
 	* SqlSharpCli.cs: import from 
 	mcs/class/System.Data/Test
 	by Miguel to
