@@ -1,5 +1,10 @@
 2002-09-27  Dick Porter  <dick@ximian.com>
 
+	* semaphores.c: Only include semaphore.h if it's present. Patch
+	for BSD from jmmv@hispabsd.org (Julio Merino).
+
+2002-09-27  Dick Porter  <dick@ximian.com>
+
 	* processes.c: Pass environment and working directory to the
 	daemon when forking.  Don't let argv[0] be duplicated when looking
 	for the program name.  Implement EnumProcessModules (simple
