@@ -64,7 +64,7 @@ namespace Microsoft.VisualBasic {
 		// try to cast an Object to a string...used in several places
 		private static string CastToString (System.Object Expression) {
 			try {
-				return (string)Expression;
+				return Expression.ToString();
 			}
 			catch {
 				throw new InvalidCastException();
@@ -591,7 +591,7 @@ namespace Microsoft.VisualBasic {
 					Number[NumChars++] = c;
 				}
 			}
-
+			
 			// now we have a string to parse
 			switch (Base) {
 				// FIXME : for Octal and Hex, 
@@ -612,7 +612,7 @@ namespace Microsoft.VisualBasic {
 				case 10:
 				default:
 					NumberReg = new Regex (
-					"^[+-]?\\d*\\.?\\d*(e?[+-]?\\d*)", 
+					"^[+-]?\\d*\\.?\\d*(e[+-]?\\d*)?", 
 					RegexOptions.IgnoreCase);
 					NumberMatch = NumberReg.Match (
 					new string(Number, 0, NumChars));
@@ -620,10 +620,13 @@ namespace Microsoft.VisualBasic {
 				
 
 			}
-
+			
 			// we found a match, try to convert it
 			if (NumberMatch.Success) {
 				try {
+					if(NumberMatch.Length == 0)
+						return (double)0;
+
 					switch (Base) {
 						case 10:
 							return 
@@ -666,11 +669,12 @@ namespace Microsoft.VisualBasic {
 				throw new ArgumentNullException ("Expression", 
 					"Value cannot be null");
 			}
-
+		
 			try {
 				return Val (CastToString (Expression)); 
 			} 
 			catch {
+				
 				throw new ArgumentException(
 				"Type of argument 'Expression' is '" + 
 				Expression.GetType().FullName + 
