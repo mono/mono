@@ -1,3 +1,8 @@
+2004-08-19  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* SecurityPermission.cs: Updated to use the common template. Now 
+	pass all unit tests.
+
 2004-08-18  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* IsolatedStorageContainment.cs: Added new enums values for NET_2_0.

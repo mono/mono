@@ -3,13 +3,10 @@
 //
 // Authors:
 //	Dan Lewis (dihlewis@yahoo.co.uk)
-//	Sebastien Pouliot (spouliot@motus.com)
+//	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) 2002
 // Portions (C) 2003 Motus Technologies Inc. (http://www.motus.com)
-//
-
-//
 // Copyright (C) 2004 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -32,7 +29,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System;
 using System.Globalization;
 
 namespace System.Security.Permissions {
@@ -41,13 +37,15 @@ namespace System.Security.Permissions {
 	public sealed class SecurityPermission :
 		CodeAccessPermission, IUnrestrictedPermission, IBuiltInPermission {
 
+		private const int version = 1;
+
 		private SecurityPermissionFlag flags;
 
 		// constructors
 
 		public SecurityPermission (PermissionState state)
 		{
-			if (state == PermissionState.Unrestricted)
+			if (CheckPermissionState (state, true) == PermissionState.Unrestricted)
 				flags = SecurityPermissionFlag.AllFlags;
 			else
 				flags = SecurityPermissionFlag.NoFlags;
@@ -55,14 +53,22 @@ namespace System.Security.Permissions {
 
 		public SecurityPermission (SecurityPermissionFlag flags) 
 		{
-			this.flags = flags;
+			// reuse validation by the Flags property
+			Flags = flags;
 		}
 
 		public SecurityPermissionFlag Flags {
 			get { return flags; }
-			set { flags = value; }
+			set {
+				if ((value & SecurityPermissionFlag.AllFlags) != value) {
+					string msg = String.Format (Locale.GetText ("Invalid flags {0}"), value);
+					throw new ArgumentException (msg, "SecurityPermissionFlag");
+				}
+				flags = value;
+			}
 		}
 
+		// IUnrestrictedPermission
 		public bool IsUnrestricted () 
 		{
 			return (flags == SecurityPermissionFlag.AllFlags);
@@ -73,88 +79,105 @@ namespace System.Security.Permissions {
 			return new SecurityPermission (flags);
 		}
 
-		internal SecurityPermission Cast (IPermission target) 
-		{
-			SecurityPermission perm = (target as SecurityPermission);
-			if (perm == null)
-				throw new ArgumentException ("wrong type for target");
-			return perm;
-		}
-
 		public override IPermission Intersect (IPermission target) 
 		{
-			if (target == null)
+			SecurityPermission sp = Cast (target);
+			if (sp == null)
+				return null;
+			if (IsEmpty () || sp.IsEmpty ())
 				return null;
 
-			SecurityPermission perm = Cast (target);
-			if (this.IsUnrestricted () && perm.IsUnrestricted ())
+			if (this.IsUnrestricted () && sp.IsUnrestricted ())
 				return new SecurityPermission (PermissionState.Unrestricted);
 			if (this.IsUnrestricted ())
-				return perm.Copy ();
-			if (perm.IsUnrestricted ())
+				return sp.Copy ();
+			if (sp.IsUnrestricted ())
 				return this.Copy ();
-			return new SecurityPermission (flags & perm.flags);
+			return new SecurityPermission (flags & sp.flags);
 		}
 
 		public override IPermission Union (IPermission target) 
 		{
-			if (target == null)
+			SecurityPermission sp = Cast (target);
+			if (sp == null)
 				return this.Copy ();
 
-			SecurityPermission perm = Cast (target);
-			if (this.IsUnrestricted () || perm.IsUnrestricted ())
+			if (this.IsUnrestricted () || sp.IsUnrestricted ())
 				return new SecurityPermission (PermissionState.Unrestricted);
 			
-			return new SecurityPermission (flags | perm.flags);
+			return new SecurityPermission (flags | sp.flags);
 		}
 
 		public override bool IsSubsetOf (IPermission target) 
 		{
-			if (target == null) 
-				return (flags == SecurityPermissionFlag.NoFlags);
+			SecurityPermission sp = Cast (target);
+			if (sp == null) 
+				return IsEmpty ();
 
-			SecurityPermission perm = Cast (target);
-			if (perm.IsUnrestricted ())
+			if (sp.IsUnrestricted ())
 				return true;
 			if (this.IsUnrestricted ())
 				return false;
 
-			return ((flags & ~perm.flags) == 0);
+			return ((flags & ~sp.flags) == 0);
 		}
 
 		public override void FromXml (SecurityElement e) 
 		{
-			if (e == null)
-				throw new ArgumentNullException (
-					Locale.GetText ("The argument is null."));
-			
-			if (e.Attribute ("class") != GetType ().AssemblyQualifiedName)
-				throw new ArgumentException (
-					Locale.GetText ("The argument is not valid"));
+			// General validation in CodeAccessPermission
+			CheckSecurityElement (e, "e", version, version);
+			// Note: we do not (yet) care about the return value 
+			// as we only accept version 1 (min/max values)
 
-			if (e.Attribute ("version") != "1")
-				throw new ArgumentException (
-					Locale.GetText ("The argument is not valid"));
-
-			flags = (SecurityPermissionFlag) Enum.Parse (
-				typeof (SecurityPermissionFlag), e.Attribute ("Flags"));
+			if (IsUnrestricted (e)) {
+				flags = SecurityPermissionFlag.AllFlags;
+			}
+			else {
+				string f = e.Attribute ("Flags");
+				if (f == null) {
+					flags = SecurityPermissionFlag.NoFlags;
+				}
+				else {
+					flags = (SecurityPermissionFlag) Enum.Parse (
+						typeof (SecurityPermissionFlag), f);
+				}
+			}
 		}
 
 		public override SecurityElement ToXml () 
 		{
-			SecurityElement e = new SecurityElement ("IPermission");
-			e.AddAttribute ("class", GetType ().AssemblyQualifiedName);
-			e.AddAttribute ("version", "1");
-
-			e.AddAttribute ("Flags", flags.ToString ());
-
+			SecurityElement e = Element (version);
+			if (IsUnrestricted ())
+				e.AddAttribute ("Unrestricted", "true");
+			else
+				e.AddAttribute ("Flags", flags.ToString ());
 			return e;
 		}
 
 		// IBuiltInPermission
 		int IBuiltInPermission.GetTokenIndex ()
 		{
-			return 6;
+			return (int) BuiltInToken.Security;
+		}
+
+		// helpers
+
+		private bool IsEmpty ()
+		{
+			return (flags == SecurityPermissionFlag.NoFlags);
+		}
+
+		private SecurityPermission Cast (IPermission target)
+		{
+			if (target == null)
+				return null;
+
+			SecurityPermission sp = (target as SecurityPermission);
+			if (sp == null) {
+				ThrowInvalidPermission (target, typeof (SecurityPermission));
+			}
+
+			return sp;
 		}
 	}
 }
