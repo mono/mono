@@ -1,5 +1,9 @@
 2002-09-25  Miguel de Icaza  <miguel@ximian.com>
 
+	* expression.cs (ArrayAccess.EmitAssign): Mimic the same test from
+	EmitDynamicInitializers for the criteria to use Ldelema.  Thanks
+	to hwang_rob@yahoo.ca for finding the bug and providing a patch.
+
 	* ecore.cs (TryImplicitIntConversion): When doing an
 	implicit-enumeration-conversion, check if the type is 64-bits and
 	perform a conversion before passing to EnumConstant.
