@@ -1,5 +1,15 @@
 2002-08-01  Martin Baulig  <martin@gnome.org>
 
+	* statement.cs (ForeachHelperMethods): Added `enumerator_type' and
+	`is_disposable' fields.
+	(Foreach.GetEnumeratorFilter): Set `hm.enumerator_type' and
+	`hm.is_disposable' if we're using the collection pattern.
+	(Foreach.EmitCollectionForeach): Use the correct type for the
+	enumerator's local variable, only emit the try/finally block if
+	necessary (fixes #27713).
+
+2002-08-01  Martin Baulig  <martin@gnome.org>
+
 	* ecore.cs (Expression.report118): Renamed to Error118 and made
 	it public static.
 

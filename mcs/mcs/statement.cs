@@ -4220,11 +4220,15 @@ namespace Mono.CSharp {
 			public MethodInfo move_next;
 			public MethodInfo get_current;
 			public Type element_type;
+			public Type enumerator_type;
+			public bool is_disposable;
 
 			public ForeachHelperMethods (EmitContext ec)
 			{
 				this.ec = ec;
 				this.element_type = TypeManager.object_type;
+				this.enumerator_type = TypeManager.ienumerator_type;
+				this.is_disposable = true;
 			}
 		}
 		
@@ -4306,6 +4310,9 @@ namespace Mono.CSharp {
 				return false;
 
 			hm.element_type = hm.get_current.ReturnType;
+			hm.enumerator_type = return_type;
+			hm.is_disposable = TypeManager.ImplementsInterface (
+				hm.enumerator_type, TypeManager.idisposable_type);
 
 			return true;
 		}
@@ -4391,8 +4398,11 @@ namespace Mono.CSharp {
 			ILGenerator ig = ec.ig;
 			LocalBuilder enumerator, disposable;
 
-			enumerator = ig.DeclareLocal (TypeManager.ienumerator_type);
-			disposable = ig.DeclareLocal (TypeManager.idisposable_type);
+			enumerator = ig.DeclareLocal (hm.enumerator_type);
+			if (hm.is_disposable)
+				disposable = ig.DeclareLocal (TypeManager.idisposable_type);
+			else
+				disposable = null;
 			
 			//
 			// Instantiate the enumerator
@@ -4416,9 +4426,13 @@ namespace Mono.CSharp {
 			// Protect the code in a try/finalize block, so that
 			// if the beast implement IDisposable, we get rid of it
 			//
-			Label l = ig.BeginExceptionBlock ();
+			Label l;
 			bool old_in_try = ec.InTry;
-			ec.InTry = true;
+
+			if (hm.is_disposable) {
+				l = ig.BeginExceptionBlock ();
+				ec.InTry = true;
+			}
 			
 			Label end_try = ig.DefineLabel ();
 			
@@ -4440,25 +4454,27 @@ namespace Mono.CSharp {
 			//
 			// Now the finally block
 			//
-			Label end_finally = ig.DefineLabel ();
-			bool old_in_finally = ec.InFinally;
-			ec.InFinally = true;
-			ig.BeginFinallyBlock ();
+			if (hm.is_disposable) {
+				Label end_finally = ig.DefineLabel ();
+				bool old_in_finally = ec.InFinally;
+				ec.InFinally = true;
+				ig.BeginFinallyBlock ();
 			
-			ig.Emit (OpCodes.Ldloc, enumerator);
-			ig.Emit (OpCodes.Isinst, TypeManager.idisposable_type);
-			ig.Emit (OpCodes.Stloc, disposable);
-			ig.Emit (OpCodes.Ldloc, disposable);
-			ig.Emit (OpCodes.Brfalse, end_finally);
-			ig.Emit (OpCodes.Ldloc, disposable);
-			ig.Emit (OpCodes.Callvirt, TypeManager.void_dispose_void);
-			ig.MarkLabel (end_finally);
-			ec.InFinally = old_in_finally;
+				ig.Emit (OpCodes.Ldloc, enumerator);
+				ig.Emit (OpCodes.Isinst, TypeManager.idisposable_type);
+				ig.Emit (OpCodes.Stloc, disposable);
+				ig.Emit (OpCodes.Ldloc, disposable);
+				ig.Emit (OpCodes.Brfalse, end_finally);
+				ig.Emit (OpCodes.Ldloc, disposable);
+				ig.Emit (OpCodes.Callvirt, TypeManager.void_dispose_void);
+				ig.MarkLabel (end_finally);
+				ec.InFinally = old_in_finally;
 
-			// The runtime generates this anyways.
-			// ig.Emit (OpCodes.Endfinally);
+				// The runtime generates this anyways.
+				// ig.Emit (OpCodes.Endfinally);
 
-			ig.EndExceptionBlock ();
+				ig.EndExceptionBlock ();
+			}
 
 			ig.MarkLabel (ec.LoopEnd);
 			return false;
