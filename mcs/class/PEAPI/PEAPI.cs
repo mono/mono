@@ -523,7 +523,7 @@ namespace PEAPI
       }
       return 0;
     }
- 
+
         }
   /**************************************************************************/  
 
@@ -1993,7 +1993,6 @@ namespace PEAPI
         md.AddToTable(MDTable.PropertyMap,new MapElem(this,
                           ((Property)properties[0]).Row,MDTable.Property));
       }
-      DoCustomAttributes (md);
       // Console.WriteLine("End of building tables");
       done = true;
     }
@@ -4425,7 +4424,8 @@ if (rsrc != null)
     public MSCorLib mscorlib;
     private TypeSpec[] systemTypeSpecs = new TypeSpec[PrimitiveType.NumSystemTypes];
     long mdStart;
-
+                private ArrayList cattr_list;
+                
     internal MetaData(FileImage file) {
       // tilde = new MetaDataStream(tildeName,false,0);
       this.file = file;
@@ -4530,6 +4530,12 @@ if (rsrc != null)
       return blob.Add(val,true);
     }
 
+                internal void AddCustomAttribute (CustomAttribute cattr)
+                {
+                        if (cattr_list == null)
+                                cattr_list = new ArrayList ();
+                        cattr_list.Add (cattr);
+                }
 
     private ArrayList GetTable(MDTable tableIx) {
       int tabIx = (int)tableIx;
@@ -4761,6 +4767,11 @@ if (rsrc != null)
       BuildTable(metaDataTables[(int)MDTable.GenericParam]);
       BuildTable(metaDataTables[(int)MDTable.MethodSpec]);
       BuildTable(metaDataTables[(int)MDTable.GenericParamConstraint]);
+
+      if (cattr_list != null) {
+              foreach (CustomAttribute cattr in cattr_list)
+                      cattr.BuildTables (this);
+      }
       BuildTable(metaDataTables[(int)MDTable.CustomAttribute]);
 /*      for (int i=0; i < metaDataTables.Length; i++) {
         ArrayList table = metaDataTables[i];
@@ -4771,6 +4782,7 @@ if (rsrc != null)
         }
       }
       */
+
                         SetIndexSizes();
                         for (int i=1; i < numStreams; i++) {
                                 streams[i].EndStream();
@@ -4889,15 +4901,6 @@ if (rsrc != null)
         customAttributes = new ArrayList();
       } 
 //      customAttributes.Add(new CustomAttribute(this,ctorMeth,cVals));
-    }
-
-    internal void DoCustomAttributes(MetaData md) {
-      if (customAttributes != null) {
-        for (int i=0; i < customAttributes.Count; i++) {
-          CustomAttribute ca = (CustomAttribute)customAttributes[i];
-          ca.BuildTables(md);
-        }
-      }
     }
 
     internal uint Token() {
@@ -5363,7 +5366,6 @@ if (rsrc != null)
         varArgSig.BuildTables(md);
       }
       }
-      DoCustomAttributes (md);
       // Console.WriteLine("method has " + numPars + " parameters");
       done = true;
     }
@@ -6266,6 +6268,11 @@ if (rsrc != null)
     public void AddManifestResource(ManifestResource mr) {
       metaData.AddToTable(MDTable.ManifestResource,mr);
       //mr.FixName(metaData);
+    }
+
+    public void AddCustomAttribute (Method meth, byte [] data, MetaDataElement element)
+    {
+            metaData.AddCustomAttribute (new CustomAttribute (element, meth, data));
     }
 
     /// <summary>
