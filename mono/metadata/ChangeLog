@@ -1,3 +1,11 @@
+2004-11-15  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* icall.c: Added IsAuthenticodePresnet internal call.
+	* image.c|h: New function that check a MonoImage for an Authenticode
+	signature in the certificate PE data directory.
+	* security.c|h: New internal call to ask the runtime if an 
+	Authenticode signature seems referenced in the PE header.
+
 2004-11-15  Zoltan Varga  <vargaz@freemail.hu>
 
 	* icall.c (ves_icall_type_isprimitive): Native int is a primitive type.
