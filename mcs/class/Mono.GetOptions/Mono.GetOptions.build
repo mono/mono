@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+
+<!-- NAnt build file for Mono.GetOptions.dll -->
+
+<project name="Mono.GetOptions" default="build">
+	<property name="debug" value="false"/>
+
+	<target name="build">
+		<csc target="library" output="../lib/Mono.GetOptions.dll" debug="${debug}">
+			<arg value="/nowarn:1595"/>
+			<arg value="/nowarn:0067"/>
+			<arg value="/nowarn:0109"/>
+			<arg value="/nowarn:0169"/>
+			<arg value="/nowarn:0649"/>
+			<arg value="/unsafe"/>
+			<arg value="/noconfig"/>
+			<arg value="/r:System.dll"/>
+			<arg value="/r:System.Xml.dll"/>
+			<arg value="/r:System.Data.dll"/>
+			<sources>
+				<includes name="**/*.cs"/> 
+				<excludes name="GetOptTest/**"/>
+				
+			</sources>
+			<references>
+				<includes name="../lib/corlib.dll"/>
+				<includes name="../lib/System.dll"/>
+				<includes name="../lib/System.Xml.dll"/>
+				<includes name="../lib/System.Data.dll"/>
+			</references>
+		</csc>
+	</target>
+	<target name="test" depends="build">
+		<nant basedir="Test" target="test"/>
+	</target>
+	<target name="clean">
+		<delete file="../lib/Mono.GetOptions.dll" failonerror="false"/>
+	</target>
+</project>

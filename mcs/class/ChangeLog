@@ -1,3 +1,10 @@
+2002-12-09  Daniel Morgan <danmorg@sc.rr.com>
+
+	* library.build: add Mono.GetOptions to windows build
+	
+	* Mono.GetOptions/Mono.GetOptions.build: add file
+	for windows build
+
 2002-12-08  Radek Doulik  <rodo@ximian.com>
 
 	* makefile.gnu (DIRS): place System.Data before Mono.GetOptions,
