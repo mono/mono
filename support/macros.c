@@ -7,6 +7,7 @@
 #include <errno.h>
 #include <dirent.h>
 #include <string.h>
+#include <glib.h>
 
 int wifexited (int status)
 {
@@ -46,12 +47,12 @@ int helper_Mono_Posix_Stat(char *filename, int dereference,
 	int *uid,
 	int *gid,
 	int *rdev,
-	long *size,
-	long *blksize,
-	long *blocks,
-	long *atime,
-	long *mtime,
-	long *ctime
+	gint64 *size,
+	gint64 *blksize,
+	gint64 *blocks,
+	gint64 *atime,
+	gint64 *mtime,
+	gint64 *ctime
 	) {
 	int ret;
 	struct stat buf;

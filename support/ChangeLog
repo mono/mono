@@ -1,3 +1,7 @@
+2005-01-25  Jonathan Pryor  <jonpryor@vt.edu>
+
+	* macros.c: Use gint64, not long, to match C# declaration.  Fixes 71152.
+
 2005-01-23  Geoff Norton  <gnorton@customerdna.com>
 
 	* dirent.c: Include <unistd.h> to bring off_t in on gcc4.0+OSX
