@@ -1,3 +1,8 @@
+2002-06-04  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* System.Web.UI/Page.cs: finished stubbing out. Implemented some
+	methods.
+
 2002-06-03  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Page.cs:

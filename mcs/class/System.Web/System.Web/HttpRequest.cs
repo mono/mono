@@ -9,6 +9,7 @@ using System.Collections;
 using System.Collections.Specialized;
 using System.IO;
 using System.Text;
+using System.Web.Configuration;
 
 namespace System.Web {
    [MonoTODO("Review security in all path access function")]
@@ -51,6 +52,8 @@ namespace System.Web {
       private HttpValueCollection _oQueryString;
       private HttpValueCollection _oFormData;
       private HttpValueCollection _oParams;
+
+      private HttpBrowserCapabilities _browser;
 
       public HttpRequest(string Filename, string Url, string Querystring) {
          _iContentLength = -1;
@@ -262,15 +265,11 @@ namespace System.Web {
          }
       }
 
-      [MonoTODO()]
-      public HttpBrowserCapabilities Browser {
-         get {
-            throw new NotImplementedException();
-         }
+      public HttpBrowserCapabilities Browser
+      {
+	get { return _browser; }
 
-         set {
-            throw new NotImplementedException();
-         }
+	set { _browser = value; }
       }
 
       public HttpClientCertificate ClientCertificate {

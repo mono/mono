@@ -1,3 +1,9 @@
+2002-06-04  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* System.Web.SessionState/HttpSessionState.cs:
+	* System.Web.SessionState/SessionStateModule.cs: new files with some
+	implementation and the rest stubbed.
+
 2002-06-03  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* IReadOnlySessionState.cs:
