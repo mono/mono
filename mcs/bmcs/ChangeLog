@@ -1,5 +1,22 @@
 2005-03-26  Jambunathan K  <kjambunathan.devel@gmail.com>
 
+	* constant.cs: Added conversions between various constants
+	* literal.cs: Added conversions from Nothing to various primitive constants
+	
+	* convert.cs (NothingToPrimitiveConstants, WideningConstantconversions): Added
+
+	(TryWideningIntConversion): Removed C# specific constant
+	conversions. This functionality is now taken care of by
+	WideningConstantConversions.  
+
+	(WideningReferenceConversion): Added support for conversions from Nothing to ValueTypes
+	(WideningNumericConversion): Call WideningConstantConversions
+
+	* ecore.cs (NullCast.Emit): Conversion from Nothing to ValueType
+
+
+2005-03-26  Jambunathan K  <kjambunathan.devel@gmail.com>
+
 	* ecore.cs (ImplicitInvocation): Set eclass and type to that of the child
 	
 	* convert.cs (ImplicitVBConversion, ImplicitVBConversionRequired,

@@ -1609,7 +1609,19 @@ namespace Mono.CSharp {
 
 		public override void Emit (EmitContext ec)
 		{
-			child.Emit (ec);
+				if (!type.IsValueType)
+					child.Emit (ec);
+				else {
+					// VB.NET allows Nothing to be converted to any value type
+
+					ILGenerator ig = ec.ig;
+
+					ig.Emit (OpCodes.Ldtoken, type);
+					ig.Emit (OpCodes.Call, TypeManager.system_type_get_type_from_handle);
+					ig.Emit (OpCodes.Call, TypeManager.activator_create_instance);
+					ig.Emit (OpCodes.Unbox, type);
+					ig.Emit (OpCodes.Ldobj, type);
+				}
 		}
 
 		public override bool IsNegative {

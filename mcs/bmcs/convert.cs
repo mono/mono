@@ -205,6 +205,14 @@ namespace Mono.CSharp {
 					
 				if (!target_type.IsValueType)
 					return new NullCast (expr, target_type);
+
+				// VB.NET specific: Convert Nothing to value types
+
+				Expression e = NothingToPrimitiveConstants (expr, target_type);
+				if (e != null)
+					return e;
+
+				return new NullCast (expr, target_type);
 			}
 
 			// from any class-type S to any interface-type T.
@@ -398,22 +406,17 @@ namespace Mono.CSharp {
 			// Attempt to do the implicit constant expression conversions
 
 			if (expr is Constant){
+				Expression e;
+
+				e = WideningConstantConversions (target_type, (Constant) expr);
+				if (e != null)
+					return e;
+				
 				if (expr is IntConstant){
-					Expression e;
-					
 					e = TryWideningIntConversion (target_type, (IntConstant) expr);
 					
 					if (e != null)
 						return e;
-				} else if (expr is LongConstant && target_type == TypeManager.uint64_type){
-					//
-					// Try the implicit constant expression conversion
-					// from long to ulong, instead of a nice routine,
-					// we just inline it
-					//
-					long v = ((LongConstant) expr).Value;
-					if (v >= 0)
-						return new ULongConstant ((ulong) v);
 				} 
 			}
 			
@@ -1409,34 +1412,6 @@ namespace Mono.CSharp {
 		{
 			int value = ic.Value;
 
-			if (target_type == TypeManager.sbyte_type){
-				if (value >= SByte.MinValue && value <= SByte.MaxValue)
-					return new SByteConstant ((sbyte) value);
-			} else if (target_type == TypeManager.byte_type){
-				if (value >= Byte.MinValue && value <= Byte.MaxValue)
-					return new ByteConstant ((byte) value);
-			} else if (target_type == TypeManager.short_type){
-				if (value >= Int16.MinValue && value <= Int16.MaxValue)
-					return new ShortConstant ((short) value);
-			} else if (target_type == TypeManager.ushort_type){
-				if (value >= UInt16.MinValue && value <= UInt16.MaxValue)
-					return new UShortConstant ((ushort) value);
-			} else if (target_type == TypeManager.uint32_type){
-				if (value >= 0)
-					return new UIntConstant ((uint) value);
-			} else if (target_type == TypeManager.uint64_type){
-				//
-				// we can optimize this case: a positive int32
-				// always fits on a uint64.  But we need an opcode
-				// to do it.
-				//
-				if (value >= 0)
-					return new ULongConstant ((ulong) value);
-			} else if (target_type == TypeManager.double_type)
-				return new DoubleConstant ((double) value);
-			else if (target_type == TypeManager.float_type)
-				return new FloatConstant ((float) value);
-			
 			if (value == 0 && ic is IntLiteral && TypeManager.IsEnumType (target_type)){
 				Type underlying = TypeManager.EnumToUnderlying (target_type);
 				Constant e = (Constant) ic;
@@ -1461,6 +1436,84 @@ namespace Mono.CSharp {
 				return new BoxedCast (ic);
 
 			return null;
+		}
+
+		/// <summary>
+		///   Attempts to perform an implicit constant conversion of the IntConstant
+		///   into a different data type using casts (See Implicit Constant
+		///   Expression Conversions)
+		/// </summary>
+		static public Expression WideningConstantConversions (Type target_type, Constant const_expr)
+		{
+			Constant ret_expr;
+			
+			Type const_expr_type = const_expr.Type;
+			Location loc = const_expr.Location;
+
+			if (target_type == TypeManager.short_type){
+				if (const_expr_type == TypeManager.byte_type)
+					return const_expr.ToShort (loc);
+			}
+
+			if (target_type == TypeManager.int32_type){
+				if (const_expr_type == TypeManager.byte_type ||
+					const_expr_type == TypeManager.short_type)
+					return const_expr.ToInt (loc);
+			} 
+
+			if (target_type == TypeManager.int64_type){
+				if (const_expr_type == TypeManager.byte_type ||
+					const_expr_type == TypeManager.short_type ||
+					const_expr_type == TypeManager.int32_type)
+					return const_expr.ToLong (loc);
+			}
+
+			if (target_type == TypeManager.double_type) {
+				if (const_expr_type == TypeManager.float_type)
+					return const_expr.ToDouble (loc);
+			}
+			
+			return null;
+		}
+
+		static public Constant NothingToPrimitiveConstants (Expression expr, Type target_type)
+		{
+			NullLiteral null_literal = (NullLiteral) expr;
+			Location loc = null_literal.Location;
+			Type real_target_type = target_type ;
+			Constant retval = null;
+			
+			if (null_literal == null) 
+				throw new Exception ("FIXME: I was expecting that I would always get only NullLiterals");
+
+			if (target_type.IsSubclassOf(TypeManager.enum_type))
+				real_target_type = TypeManager.EnumToUnderlying (target_type);
+
+			if (real_target_type == TypeManager.bool_type)
+				retval = null_literal.ToBoolean (loc);
+			else if (real_target_type == TypeManager.byte_type)
+				retval = null_literal.ToByte (loc);
+			else if (real_target_type == TypeManager.short_type)
+				retval = null_literal.ToShort (loc);
+			else if (real_target_type == TypeManager.int32_type)
+				retval = null_literal.ToInt (loc);
+			else if (real_target_type == TypeManager.int64_type)
+				null_literal.ToLong (loc);
+			else if (real_target_type == TypeManager.decimal_type)
+				retval = null_literal.ToDecimal (loc);
+			else if (real_target_type == TypeManager.float_type)
+				retval = null_literal.ToLong (loc);
+			else if (real_target_type == TypeManager.double_type)
+				retval = null_literal.ToDouble (loc);
+			else if (real_target_type == TypeManager.char_type)
+				retval = null_literal.ToChar (loc);
+			else if (real_target_type == TypeManager.string_type)
+				retval = new StringConstant (null);
+			
+			if (real_target_type != target_type && retval != null)
+				retval = new EnumConstant (retval, target_type);
+
+			return retval;
 		}
 
 		static public void Error_CannotWideningConversion (Location loc, Type source, Type target)

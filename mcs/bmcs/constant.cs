@@ -127,6 +127,66 @@ namespace Mono.CSharp {
 			return c;
 		}
 
+		public ShortConstant ToShort (Location loc)
+		{
+			ShortConstant c = ConvertToShort ();
+
+			if (c == null)
+				Convert.Error_CannotConvertType (loc, Type, TypeManager.short_type);
+
+			return c;
+		}
+
+		public ByteConstant ToByte (Location loc)
+		{
+			ByteConstant c = ConvertToByte ();
+
+			if (c == null)
+				Convert.Error_CannotConvertType (loc, Type, TypeManager.byte_type);
+
+			return c;
+		}
+
+		public BoolConstant ToBoolean (Location loc)
+		{
+			BoolConstant c = ConvertToBoolean ();
+
+			if (c == null)
+				Convert.Error_CannotConvertType (loc, Type, TypeManager.bool_type);
+
+			return c;
+		}
+
+		public CharConstant ToChar (Location loc)
+		{
+			CharConstant c = ConvertToChar ();
+
+			if (c == null)
+				Convert.Error_CannotConvertType (loc, Type, TypeManager.char_type);
+
+			return c;
+		}
+
+		public virtual CharConstant ConvertToChar ()
+		{
+			return null;
+		}
+		
+		public virtual BoolConstant ConvertToBoolean ()
+		{
+			return null;
+		}
+
+		public virtual ByteConstant ConvertToByte ()
+		{
+			return null;
+		}
+
+		public virtual ShortConstant ConvertToShort ()
+		{
+			return null;
+		}
+
 		public virtual DecimalConstant ConvertToDecimal ()
 		{
 			return null;
@@ -204,6 +264,46 @@ namespace Mono.CSharp {
 			else
 				ec.ig.Emit (OpCodes.Ldc_I4_0);
 		}
+
+		public override DecimalConstant ConvertToDecimal ()
+		{
+			return Value ? new DecimalConstant (0) : new DecimalConstant (-1);
+		}
+		
+		public override DoubleConstant ConvertToDouble ()
+		{
+			return Value ? new DoubleConstant (0) : new DoubleConstant (-1);
+		}
+
+		public override FloatConstant ConvertToFloat ()
+		{
+			return Value ? new FloatConstant (0) : new FloatConstant (-1);
+		}
+
+		public override LongConstant ConvertToLong ()
+		{
+			return Value ? new LongConstant (0) : new LongConstant (-1);
+		}
+
+		public override IntConstant ConvertToInt ()
+		{
+			return Value ? new IntConstant (0) : new IntConstant (-1);
+		}
+
+		public override ShortConstant ConvertToShort ()
+		{
+			return Value ? new ShortConstant (0) : new ShortConstant (-1);
+		}
+
+		public override ByteConstant ConvertToByte ()
+		{
+			return Value ? new ByteConstant (0) : new ByteConstant (255);
+		}
+
+		public override BoolConstant ConvertToBoolean ()
+		{
+			return this;
+		}
 		
 		public override bool IsNegative {
 			get {
@@ -251,24 +351,34 @@ namespace Mono.CSharp {
 			return new FloatConstant (Value);
 		}
 
-		public override ULongConstant ConvertToULong ()
-		{
-			return new ULongConstant (Value);
-		}
-
 		public override LongConstant ConvertToLong ()
 		{
 			return new LongConstant (Value);
 		}
 
-		public override UIntConstant ConvertToUInt ()
+		public override ShortConstant ConvertToShort ()
 		{
-			return new UIntConstant (Value);
+			return new ShortConstant (Value);
+		}
+
+		public override ByteConstant ConvertToByte ()
+		{
+			return this;
+		}
+
+		public override DecimalConstant ConvertToDecimal ()
+		{
+			return new DecimalConstant (Value);
 		}
 
 		public override IntConstant ConvertToInt ()
 		{
 			return new IntConstant (Value);
+		}
+
+		public override BoolConstant ConvertToBoolean ()
+		{
+			return new BoolConstant (Value != 0);
 		}
 		
 		public override bool IsNegative {
@@ -481,24 +591,42 @@ namespace Mono.CSharp {
 			return new FloatConstant (Value);
 		}
 
-		public override ULongConstant ConvertToULong ()
-		{
-			return null;
-		}
-
 		public override LongConstant ConvertToLong ()
 		{
 			return new LongConstant (Value);
 		}
 
-		public override UIntConstant ConvertToUInt ()
+		public override ShortConstant ConvertToShort ()
 		{
-			return null;
+			return this;
 		}
 
 		public override IntConstant ConvertToInt ()
 		{
 			return new IntConstant (Value);
+		}
+
+		public override DecimalConstant ConvertToDecimal ()
+		{
+			return new DecimalConstant (Value);
+		}
+
+		public override ByteConstant ConvertToByte ()
+		{
+			byte val;
+			
+			try {
+				val = System.Convert.ToByte (Value);
+			} catch (Exception ex) {
+				return null;
+			}
+
+			return new ByteConstant (val);
+		}
+
+		public override BoolConstant ConvertToBoolean ()
+		{
+			return new BoolConstant (Value != 0);
 		}
 		
 		public override bool IsZeroInteger {
@@ -670,30 +798,45 @@ namespace Mono.CSharp {
 			return new FloatConstant (Value);
 		}
 
-		public override ULongConstant ConvertToULong ()
-		{
-			if (Value < 0)
-				return null;
-
-			return new ULongConstant ((ulong) Value);
-		}
-
 		public override LongConstant ConvertToLong ()
 		{
 			return new LongConstant (Value);
 		}
 
-		public override UIntConstant ConvertToUInt ()
-		{
-			if (Value < 0)
-				return null;
-
-			return new UIntConstant ((uint) Value);
-		}
-
 		public override IntConstant ConvertToInt ()
 		{
 			return this;
+		}
+
+		public override ShortConstant ConvertToShort ()
+		{
+			short val;
+			
+			try {
+				val = System.Convert.ToInt16 (Value);
+			} catch (Exception ex) {
+				return null;
+			}
+
+			return new ShortConstant (val);
+		}
+
+		public override ByteConstant ConvertToByte ()
+		{
+			byte val;
+			
+			try {
+				val = System.Convert.ToByte (Value);
+			} catch (Exception ex) {
+				return null;
+			}
+
+			return new ByteConstant (val);
+		}
+
+		public override BoolConstant ConvertToBoolean ()
+		{
+			return new BoolConstant (Value != 0);
 		}
 		
 		public override bool IsNegative {
@@ -820,12 +963,9 @@ namespace Mono.CSharp {
 			return new FloatConstant (Value);
 		}
 
-		public override ULongConstant ConvertToULong ()
+		public override DecimalConstant ConvertToDecimal()
 		{
-			if (Value < 0)
-				return null;
-			
-			return new ULongConstant ((ulong) Value);
+			return new DecimalConstant (Value);
 		}
 
 		public override LongConstant ConvertToLong ()
@@ -833,14 +973,48 @@ namespace Mono.CSharp {
 			return this;
 		}
 
-		public override UIntConstant ConvertToUInt ()
-		{
-			return null;
-		}
-
 		public override IntConstant ConvertToInt ()
 		{
-			return null;
+			int val;
+			
+			try {
+				val = System.Convert.ToInt32 (Value);
+			} catch (Exception ex) {
+				return null;
+			}
+
+			return new IntConstant (val);
+		}
+
+		public override ShortConstant ConvertToShort ()
+		{
+			short val;
+			
+			try {
+				val = System.Convert.ToInt16 (Value);
+			} catch (Exception ex) {
+				return null;
+			}
+
+			return new ShortConstant (val);
+		}
+
+		public override ByteConstant ConvertToByte ()
+		{
+			byte val;
+			
+			try {
+				val = System.Convert.ToByte (Value);
+			} catch (Exception ex) {
+				return null;
+			}
+
+			return new ByteConstant (val);
+		}
+
+		public override BoolConstant ConvertToBoolean ()
+		{
+			return new BoolConstant (Value != 0);
 		}
 		
 		public override bool IsNegative {
@@ -957,19 +1131,67 @@ namespace Mono.CSharp {
 			return this;
 		}
 
-		public override LongConstant ConvertToLong ()
+		public override DecimalConstant ConvertToDecimal ()
 		{
-			return null;
+			return new DecimalConstant (new System.Decimal (Value));
 		}
 
-		public override UIntConstant ConvertToUInt ()
+		public override LongConstant ConvertToLong ()
 		{
-			return null;
+			long val;
+			
+			try {
+				val = System.Convert.ToInt64 (System.Math.Round (Value));
+			} catch (Exception ex) {
+				return null;
+			}
+
+			return new LongConstant (val);
+			
 		}
 
 		public override IntConstant ConvertToInt ()
 		{
-			return null;
+			int val;
+			
+			try {
+				val = System.Convert.ToInt32 (System.Math.Round (Value));
+			} catch (Exception ex) {
+				return null;
+			}
+
+			return new IntConstant (val);
+		}
+
+		public override ShortConstant ConvertToShort ()
+		{
+			short val;
+			
+			try {
+				val = System.Convert.ToInt16 (System.Math.Round (Value));
+			} catch (Exception ex) {
+				return null;
+			}
+
+			return new ShortConstant (val);
+		}
+
+		public override ByteConstant ConvertToByte ()
+		{
+			byte val;
+			
+			try {
+				val = System.Convert.ToByte (System.Math.Round (Value));
+			} catch (Exception ex) {
+				return null;
+			}
+
+			return new ByteConstant (val);
+		}
+
+		public override BoolConstant ConvertToBoolean ()
+		{
+			return new BoolConstant (Value != 0);
 		}
 
 		public override bool IsNegative {
@@ -1011,27 +1233,78 @@ namespace Mono.CSharp {
 
 		public override FloatConstant ConvertToFloat ()
 		{
-			return null;
+			float val;
+			
+			try {
+				val = System.Convert.ToSingle (Value);
+			} catch (Exception ex) {
+				return null;
+			}
+
+			return new FloatConstant (val);
 		}
 
-		public override ULongConstant ConvertToULong ()
+		public override DecimalConstant ConvertToDecimal ()
 		{
-			return null;
+			return new DecimalConstant (new System.Decimal (Value));
 		}
 
 		public override LongConstant ConvertToLong ()
 		{
-			return null;
-		}
+			long val;
+			
+			try {
+				val = System.Convert.ToInt64 (System.Math.Round (Value));
+			} catch (Exception ex) {
+				return null;
+			}
 
-		public override UIntConstant ConvertToUInt ()
-		{
-			return null;
+			return new LongConstant (val);
+			
 		}
 
 		public override IntConstant ConvertToInt ()
 		{
-			return null;
+			int val;
+			
+			try {
+				val = System.Convert.ToInt32 (System.Math.Round (Value));
+			} catch (Exception ex) {
+				return null;
+			}
+
+			return new IntConstant (val);
+		}
+
+		public override ShortConstant ConvertToShort ()
+		{
+			short val;
+			
+			try {
+				val = System.Convert.ToInt16 (System.Math.Round (Value));
+			} catch (Exception ex) {
+				return null;
+			}
+
+			return new ShortConstant (val);
+		}
+
+		public override ByteConstant ConvertToByte ()
+		{
+			byte val;
+			
+			try {
+				val = System.Convert.ToByte (System.Math.Round (Value));
+			} catch (Exception ex) {
+				return null;
+			}
+
+			return new ByteConstant (val);
+		}
+
+		public override BoolConstant ConvertToBoolean ()
+		{
+			return new BoolConstant (Value != 0);
 		}
 
 		public override bool IsNegative {
@@ -1092,6 +1365,94 @@ namespace Mono.CSharp {
 			IntConstant.EmitInt (ig, power);
 
 			ig.Emit (OpCodes.Newobj, TypeManager.void_decimal_ctor_five_args);
+		}
+
+		public override DoubleConstant ConvertToDouble ()
+		{
+			double val;
+			
+			try {
+				val = System.Convert.ToDouble (Value);
+			} catch (Exception ex) {
+				return null;
+			}
+
+			return new DoubleConstant (val);
+		}
+
+		public override FloatConstant ConvertToFloat ()
+		{
+			float val;
+			
+			try {
+				val = System.Convert.ToSingle (Value);
+			} catch (Exception ex) {
+				return null;
+			}
+
+			return new FloatConstant (val);
+		}
+
+		public override DecimalConstant ConvertToDecimal ()
+		{
+			return this;
+		}
+
+		public override LongConstant ConvertToLong ()
+		{
+			long val;
+			
+			try {
+				val = System.Convert.ToInt64 (Value);
+			} catch (Exception ex) {
+				return null;
+			}
+
+			return new LongConstant (val);
+		}
+
+		public override IntConstant ConvertToInt ()
+		{
+			int val;
+			
+			try {
+				val = System.Convert.ToInt32 (Value);
+			} catch (Exception ex) {
+				return null;
+			}
+
+			return new IntConstant (val);
+		}
+
+		public override ShortConstant ConvertToShort ()
+		{
+			short val;
+			
+			try {
+				val = System.Convert.ToInt16 (Value);
+			} catch (Exception ex) {
+				return null;
+			}
+
+			return new ShortConstant (val);
+		}
+
+		public override ByteConstant ConvertToByte ()
+		{
+			byte val;
+			
+			try {
+				val = System.Convert.ToByte (Value);
+			} catch (Exception ex) {
+				return null;
+			}
+
+			return new ByteConstant (val);
+		}
+
+		public override BoolConstant ConvertToBoolean ()
+		{
+			return new BoolConstant (Value != 0);
 		}
 
 		public override bool IsNegative {

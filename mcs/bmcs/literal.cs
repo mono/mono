@@ -88,6 +88,51 @@ namespace Mono.CSharp {
 		{
 			ec.ig.Emit (OpCodes.Ldnull);
 		}
+
+		public override CharConstant ConvertToChar ()
+		{
+			return new CharConstant ((char) 0);
+		}
+		
+		public override BoolConstant ConvertToBoolean ()
+		{
+			return new BoolConstant (false);
+		}
+
+		public override ByteConstant ConvertToByte ()
+		{
+			return new ByteConstant ((byte) 0);
+		}
+
+		public override ShortConstant ConvertToShort ()
+		{
+			return new ShortConstant ((short) 0);
+		}
+
+		public override DecimalConstant ConvertToDecimal ()
+		{
+			return new DecimalConstant ((decimal) 0);
+		}
+		
+		public override DoubleConstant ConvertToDouble ()
+		{
+			return new DoubleConstant ((double) 0);
+		}
+
+		public override FloatConstant ConvertToFloat ()
+		{
+			return new FloatConstant ((float) 0);
+		}
+
+		public override LongConstant ConvertToLong ()
+		{
+			return new LongConstant ((long) 0);
+		}
+
+		public override IntConstant ConvertToInt ()
+		{
+			return new IntConstant (0);
+		}
 		
 		public override bool IsNegative {
 			get {
