@@ -1,3 +1,9 @@
+2002-05-28  Miguel de Icaza  <miguel@ximian.com>
+
+	* assign.cs (DoResolve): Forgot to do the implicit conversion to
+	the target type for indexers and properties.  Thanks to Joe for
+	catching this.
+
 2002-05-27  Miguel de Icaza  <miguel@ximian.com>
 
 	* expression.cs (Invocation.Emit): Only emit calls to
