@@ -45,7 +45,7 @@ namespace System {
 		const int dec_len2 = 7;
 		const int dec_len_min2 = -16;
 
-		public static string NumberToString (string format, NumberFormatInfo nfi, double value)
+		public static string NumberToString (string format, NumberFormatInfo nfi, float value)
 		{
 			if (fpf == null) {
 				fpf = new FloatingPointFormatter (p, p10, dec_len, dec_len_min, p2, p102, dec_len2, dec_len_min2);

@@ -1,3 +1,9 @@
+2005-01-31  Kazuki Oikawa <kazuki@panicode.com>
+
+	* Patch from Kazuki Oikawa <kazuki@panicode.com> that replaces the
+	old Integer and Floating point number string formatter with a new
+	formatter that is more compliant. 
+
 2005-01-17  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* corlib.dll.sources : added CharUnicodeInfo.cs.

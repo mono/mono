@@ -113,7 +113,6 @@ System/Exception.cs
 System/ExecutionEngineException.cs
 System/FieldAccessException.cs
 System/FlagsAttribute.cs
-System/FloatingPointFormatter.cs
 System/FormatException.cs
 System/GC.cs
 System/GenericParameterAttributes.cs
@@ -134,7 +133,6 @@ System/IndexOutOfRangeException.cs
 System/Int16.cs
 System/Int32.cs
 System/Int64.cs
-System/IntegerFormatter.cs
 System/IntPtr.cs
 System/InvalidCastException.cs
 System/InvalidOperationException.cs
@@ -162,6 +160,7 @@ System/NotImplementedException.cs
 System/NotSupportedException.cs
 System/Nullable.cs
 System/NullReferenceException.cs
+System/NumberFormatter.cs
 System/Object.cs
 System/ObjectDisposedException.cs
 System/ObsoleteAttribute.cs
