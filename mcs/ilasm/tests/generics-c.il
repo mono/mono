@@ -11,6 +11,9 @@
 
                   .field public !0 val
 
+		.method public instance void .ctor () {
+			ret
+		}
            }
 
            .class public Driver extends [mscorlib]System.Object {
@@ -27,6 +30,7 @@
                         ldc.i4.1
                         stfld int32 class Mono.ILASM.Tests.Set<int32>::val
 
+                        ldloc.0
                         ldfld int32 class Mono.ILASM.Tests.Set<int32>::val
                         call void [mscorlib]System.Console::WriteLine (int32)
 

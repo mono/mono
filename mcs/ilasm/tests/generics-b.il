@@ -9,6 +9,12 @@
 
            .class public Set<T> extends [mscorlib]System.Object {
 
+		.method public instance void .ctor () cil managed
+		{
+			ldarg.0
+			call instance void class [mscorlib]System.Object::.ctor()
+			ret
+		}
            }
 
            .class public GenericsB extends [mscorlib]System.Object {
