@@ -1,4 +1,7 @@
 2004-05-14 Umadevi S (sumadevi@novell.com)
+        * OdbcDataAdapter.cs - Added Attributes
+
+2004-05-14 Umadevi S (sumadevi@novell.com)
         * OdbcConnection.cs - Added Attributes
 
 2004-05-14 Umadevi S (sumadevi@novell.com)

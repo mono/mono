@@ -17,6 +17,8 @@ using System.Data.Common;
 
 namespace System.Data.Odbc {
 	[DefaultEvent ("RowUpdated")]
+	[DesignerAttribute ("Microsoft.VSDesigner.Data.VS.OdbcDataAdapterDesigner, "+ Consts.AssemblyMicrosoft_VSDesigner, "System.ComponentModel.Design.IDesigner")]
+        [ToolboxItemAttribute ("Microsoft.VSDesigner.Data.VS.OdbcDataAdapterToolboxItem, "+ Consts.AssemblyMicrosoft_VSDesigner)]
 	public sealed class OdbcDataAdapter : DbDataAdapter, IDbDataAdapter 
 	{
 		#region Fields
@@ -58,33 +60,37 @@ namespace System.Data.Odbc {
 
 		#region Properties
 
-		[DataCategory ("Update")]
-		[DataSysDescription ("Used during Update for deleted rows in DataSet.")]
+		[OdbcCategory ("Update")]
+		[OdbcDescription ("Used during Update for deleted rows in DataSet.")]
 		[DefaultValue (null)]
+		[EditorAttribute ("Microsoft.VSDesigner.Data.Design.DBCommandEditor, "+ Consts.AssemblyMicrosoft_VSDesigner, "System.Drawing.Design.UITypeEditor, "+ Consts.AssemblySystem_Drawing )]
 		public OdbcCommand DeleteCommand {
 			get { return deleteCommand; }
 			set { deleteCommand = value; }
 		}
 
-		[DataCategory ("Update")]
-		[DataSysDescription ("Used during Update for new rows in DataSet.")]
+		[OdbcCategory ("Update")]
+		[OdbcDescription ("Used during Update for new rows in DataSet.")]
 		[DefaultValue (null)]
+		[EditorAttribute ("Microsoft.VSDesigner.Data.Design.DBCommandEditor, "+ Consts.AssemblyMicrosoft_VSDesigner, "System.Drawing.Design.UITypeEditor, "+ Consts.AssemblySystem_Drawing )]
 		public OdbcCommand InsertCommand {
 			get { return insertCommand; }
 			set { insertCommand = value; }
 		}
 
-		[DataCategory ("Fill")]
-		[DataSysDescription ("Used during Fill/FillSchema.")]
+		[OdbcCategory ("Fill")]
+		[OdbcDescription ("Used during Fill/FillSchema.")]
 		[DefaultValue (null)]
+		[EditorAttribute ("Microsoft.VSDesigner.Data.Design.DBCommandEditor, "+ Consts.AssemblyMicrosoft_VSDesigner, "System.Drawing.Design.UITypeEditor, "+ Consts.AssemblySystem_Drawing )]
 		public OdbcCommand SelectCommand {
 			get { return selectCommand; }
 			set { selectCommand = value; }
 		}
 
-		[DataCategory ("Update")]
-		[DataSysDescription ("Used during Update for modified rows in DataSet.")]
+		[OdbcCategory ("Update")]
+		[OdbcDescription ("Used during Update for modified rows in DataSet.")]
 		[DefaultValue (null)]
+		[EditorAttribute ("Microsoft.VSDesigner.Data.Design.DBCommandEditor, "+ Consts.AssemblyMicrosoft_VSDesigner, "System.Drawing.Design.UITypeEditor, "+ Consts.AssemblySystem_Drawing )]
 		public OdbcCommand UpdateCommand {
 			get { return updateCommand; }
 			set { updateCommand = value; }
