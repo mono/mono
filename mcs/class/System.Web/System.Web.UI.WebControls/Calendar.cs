@@ -48,6 +48,7 @@ namespace System.Web.UI.WebControls
 
 		private Color defaultTextColor;
 		private System.Globalization.Calendar globCal;
+		private DateTimeFormatInfo infoCal = DateTimeFormatInfo.CurrentInfo;
 
 		private static int MASK_WEEKEND  = (0x01 << 0);
 		private static int MASK_OMONTH   = (0x01 << 1);
@@ -439,7 +440,7 @@ namespace System.Web.UI.WebControls
 			}
 			set
 			{
-				ViewState["TodaysDate"] = value;
+				ViewState["TodaysDate"] = value.Date;
 			}
 		}
 
@@ -454,7 +455,7 @@ namespace System.Web.UI.WebControls
 			}
 			set
 			{
-				ViewState["VisibleDate"] = value;
+				ViewState["VisibleDate"] = value.Date;
 			}
 		}
 
@@ -545,7 +546,6 @@ namespace System.Web.UI.WebControls
 		{
 			globCal = DateTimeFormatInfo.CurrentInfo.Calendar;
 			DateTime visDate = GetEffectiveVisibleDate();
-			//FIXME: Should it be String.Compare(eventArgument, "nextMonth", false);
 			if(eventArgument == "nextMonth")
 			{
 				VisibleDate = globCal.AddMonths(visDate, 1);
@@ -604,22 +604,21 @@ namespace System.Web.UI.WebControls
 			DateTime visDate   = GetEffectiveVisibleDate();
 			DateTime firstDate = GetFirstCalendarDay(visDate);
 
-			bool isEnabled = false;
-			bool isHtmlTextWriter = false;
-			if(Page == null || Site == null)
-			{
-				isEnabled = false;
-				isHtmlTextWriter = false;
-			} else
-			{
+			bool isEnabled;
+			bool isHtmlTextWriter;
+			//FIXME: when Control.Site works, reactivate this
+			//if (Page == null || Site == null) {
+			//	isEnabled = false;
+			//	isHtmlTextWriter = false;
+			//} else {
 				isEnabled = Enabled;
 				isHtmlTextWriter = (writer.GetType() != typeof(HtmlTextWriter));
-			}
+			//}
 			defaultTextColor = ForeColor;
 			if(defaultTextColor == Color.Empty)
 				defaultTextColor = Color.Black;
 
-			Table calTable = new Table();
+			Table calTable = new Table ();
 			calTable.ID = ID;
 			calTable.CopyBaseAttributes(this);
 			if(ControlStyleCreated)
@@ -629,25 +628,27 @@ namespace System.Web.UI.WebControls
 			calTable.CellSpacing = CellSpacing;
 			calTable.CellPadding = CellPadding;
 
-			if(ControlStyleCreated && ControlStyle.IsSet(WebControls.Style.BORDERWIDTH) && BorderWidth != Unit.Empty)
-			{
+			if (ControlStyleCreated &&
+			    ControlStyle.IsSet (WebControls.Style.BORDERWIDTH) &&
+			    BorderWidth != Unit.Empty)
 				calTable.BorderWidth = BorderWidth;
-			} else
-			{
+			else
 				calTable.BorderWidth = Unit.Pixel(1);
-			}
 
-			if(ShowGridLines)
+			if (ShowGridLines)
 				calTable.GridLines = GridLines.Both;
 			else
 				calTable.GridLines = GridLines.None;
 
-			calTable.RenderBeginTag(writer);
-			if(ShowTitle)
-				RenderTitle(writer, visDate, SelectionMode, isEnabled);
-			if(ShowDayHeader)
-				RenderHeader(writer, firstDate, SelectionMode, isEnabled, isHtmlTextWriter);
-			RenderAllDays(writer, firstDate, visDate, SelectionMode, isEnabled, isHtmlTextWriter);
+			calTable.RenderBeginTag (writer);
+
+			if (ShowTitle)
+				RenderTitle (writer, visDate, SelectionMode, isEnabled);
+
+			if (ShowDayHeader)
+				RenderHeader (writer, firstDate, SelectionMode, isEnabled, isHtmlTextWriter);
+
+			RenderAllDays (writer, firstDate, visDate, SelectionMode, isEnabled, isHtmlTextWriter);
 
 			calTable.RenderEndTag(writer);
 		}
@@ -751,77 +752,119 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
-		[MonoTODO("RenderAllDays")]
-		private void RenderAllDays(HtmlTextWriter writer, DateTime firstDay, DateTime activeDate, CalendarSelectionMode mode, bool isActive, bool isDownLevel)
+		private void RenderAllDays (HtmlTextWriter writer,
+					    DateTime firstDay,
+					    DateTime activeDate,
+					    CalendarSelectionMode mode,
+					    bool isActive,
+					    bool isDownLevel)
 		{
-			/*
 			TableItemStyle weeksStyle;
+			TableCell weeksCell = new TableCell ();
+			TableItemStyle weekendStyle = WeekendDayStyle;
+			TableItemStyle otherMonthStyle = OtherMonthDayStyle;
 			Unit size;
-			string weeksCellData;
-			bool isWeekMode = (mode == CalendarSelectionMode.DayWeek || mode == CalendarSelectionMode.DayWeekMonth);
-			if(isWeekMode)
-			{
-				weeksStyle = new TableItemStyle();
-				weeksStyle.Width = Unit.Percentage(12);
-				weeksStyle.HorizontalAlign = HorizontalAlign.Center;
-				weeksStyle.CopyFrom(SelectorStyle);
-				size = Unit.Percentage(14);
-				if(!isDownLevel)
-					weeksCellData = GetHtmlForCell(weeksCell, isActive);
-			}
-			bool dayRenderBool = false;
-			if(GetType() != typeof(Calendar) || Events[DayRenderEvent] != null || !isDownLevel)
-				dayRenderBool = true;
+			bool isWeekMode = (mode == CalendarSelectionMode.DayWeek ||
+					   mode == CalendarSelectionMode.DayWeekMonth);
 
-			string[] content = new string[0x01 << 4];
+			if (isWeekMode) {
+				weeksStyle = new TableItemStyle ();
+				weeksStyle.Width = Unit.Percentage (12);
+				weeksStyle.HorizontalAlign = HorizontalAlign.Center;
+				weeksStyle.CopyFrom (SelectorStyle);
+				size = Unit.Percentage (12);
+			} else {
+				size = Unit.Percentage (14);
+			}
+
+			TableItemStyle [] styles = new TableItemStyle [16];
 			int definedStyles = MASK_SELECTED;
-			if(weekendStyle != null && !weekendStyle.IsEmpty)
+			if (weekendStyle != null && !weekendStyle.IsEmpty)
 				definedStyles |= MASK_WEEKEND;
-			if(otherMonthStyle != null && !otherMonthStyle.IsEmpty)
+			if (otherMonthStyle != null && !otherMonthStyle.IsEmpty)
 				definedStyles |= MASK_OMONTH;
-			if(todayDayStyle != null && todayDayStyle.IsEmpty)
+			if (todayDayStyle != null && !todayDayStyle.IsEmpty)
 				definedStyles |= MASK_TODAY;
-			if(dayStyle != null && !dayStyle.IsEmpty)
+			if (dayStyle != null && !dayStyle.IsEmpty)
 				definedStyles |= MASK_DAY;
 
-			bool selectDayBool = false;
-			if(isActive && mode != CalendarSelectionMode.None)
-			{
-				selectDayBool = true;
-			}
+			bool isCalendar = GetType () == typeof (Calendar);
+			int month = globCal.GetMonth (activeDate);
+			DateTime currentDay = firstDay;
+			for (int crr = 0; crr < 6; crr++) {
+				writer.Write ("<tr>");
+				if (isWeekMode) {
+					string cellText = GetCalendarLinkText (
+								"selectWeek" + crr.ToString (),
+								SelectWeekText, 
+								weeksCell.ForeColor,
+								isActive);
 
-			for(int crr = 0; crr < 6; crr++)
-			{
-				writer.Write("<tr>");
-				if(isWeekMode)
-				{
-					if(isDownLevel)
-					{
-						string cellText = GetCalendarLinkText("selectWeek" + crr.ToString(), SelectWeekText, isActive, weeksCell.ForeColor);
-						weeksCell.Text = cellText;
-						RenderCalendarCell(writer, weeksCell, cellText);
-					} else
-					{
-						if(isActive)
-						{
-							writer.Write(String.Format(weeksCellData, "selectWeek" + crr.ToString(), SelectWeekText));
-						} else
-						{
-							writer.Write(String.Format(weeksCellData, "selectWeek" + crr.ToString()));
+					weeksCell.Text = cellText;
+					RenderCalendarCell (writer, weeksCell, cellText);
+				}
+
+				for (int weekDay = 0; weekDay < 7; weekDay++) {
+					string dayString = currentDay.Day.ToString ();
+					CalendarDay calDay =
+						new CalendarDay (
+								currentDay,
+								weekDay < 2,
+								currentDay == TodaysDate, 
+								selectedDates.Contains (currentDay),
+								globCal.GetMonth (currentDay) != month,
+								dayString
+								);
+
+
+					int dayStyles = GetMask (calDay) & definedStyles;
+					TableItemStyle currentDayStyle = styles [dayStyles];
+					if (currentDayStyle == null) {
+						currentDayStyle = new TableItemStyle ();
+						if ((dayStyles & MASK_DAY) != 0)
+							currentDayStyle.CopyFrom (DayStyle);
+
+						if ((dayStyles & MASK_WEEKEND) != 0)
+							currentDayStyle.CopyFrom (WeekendDayStyle);
+
+						if ((dayStyles & MASK_TODAY) != 0)
+							currentDayStyle.CopyFrom (TodayDayStyle);
+
+						if ((dayStyles & MASK_OMONTH) != 0)
+							currentDayStyle.CopyFrom (OtherMonthDayStyle);
+
+						if ((dayStyles & MASK_SELECTED) != 0) {
+							currentDayStyle.ForeColor = Color.White;
+							currentDayStyle.BackColor = Color.Silver;
+							currentDayStyle.CopyFrom (SelectedDayStyle);
 						}
+
+						currentDayStyle.Width = size;
+						currentDayStyle.HorizontalAlign = HorizontalAlign.Center;
 					}
+
+					TableCell dayCell = new TableCell ();
+					dayCell.ApplyStyle (currentDayStyle);
+					calDay.IsSelectable = isActive;
+					OnDayRender (dayCell, calDay);
+					if (isActive)
+						dayCell.Text = GetCalendarLinkText (
+									"selectDay" + (crr * 7 + weekDay),
+									dayString,
+									dayCell.ForeColor,
+									true);
+					else
+						dayCell.Text = dayString;
+
+					dayCell.RenderControl (writer);
+
+					currentDay = globCal.AddDays (currentDay, 1);
 				}
-				for(int crc = 0; crc < 7; crc++)
-				{
-					// have to display for each day in the week.
-					throw new NotImplementedException();
-				}
+				writer.Write("</tr>");
 			}
-			*/
-			throw new NotImplementedException();
 		}
 
-		private int GetMask(CalendarDay day)
+		private int GetMask (CalendarDay day)
 		{
 			int retVal = MASK_DAY;
 			if(day.IsSelected)
@@ -839,141 +882,158 @@ namespace System.Web.UI.WebControls
 		/// Refers to the second line of the calendar, that contains a link
 		/// to select whole month, and weekdays as defined by DayNameFormat
 		/// </remarks>
-		private void RenderHeader(HtmlTextWriter writer, DateTime firstDay, CalendarSelectionMode mode, bool isActive, bool isDownLevel)
+		private void RenderHeader (HtmlTextWriter writer,
+					   DateTime firstDay,
+					   CalendarSelectionMode mode,
+					   bool isActive,
+					   bool isDownLevel)
 		{
 			writer.Write("<tr>");
-			bool isWeekMode = (mode == CalendarSelectionMode.DayWeek || mode == CalendarSelectionMode.DayWeekMonth);
-			TableCell headerCell = new TableCell();
+			bool isWeekMode = (mode == CalendarSelectionMode.DayWeek ||
+					   mode == CalendarSelectionMode.DayWeekMonth);
+
+			TableCell headerCell = new TableCell ();
 			headerCell.HorizontalAlign = HorizontalAlign.Center;
 			string selMthText = String.Empty;
-			if(isWeekMode)
-			{
-				headerCell.ApplyStyle(SelectorStyle);
-				selMthText = GetCalendarLinkText("selectMonth", SelectMonthText, SelectorStyle.ForeColor, isActive);
-			} else
-			{
-				headerCell.ApplyStyle(DayHeaderStyle);
+			if (isWeekMode) {
+				if (mode == CalendarSelectionMode.DayWeekMonth) {
+					headerCell.ApplyStyle (SelectorStyle);
+					selMthText = GetCalendarLinkText ("selectMonth",
+									  SelectMonthText,
+									  SelectorStyle.ForeColor,
+									  isActive);
+				} else {
+					headerCell.ApplyStyle (DayHeaderStyle);
+					selMthText = String.Empty;
+				}
+				RenderCalendarCell (writer, headerCell, selMthText);
 			}
-			RenderCalendarCell(writer, headerCell, selMthText);
 
-			TableCell dayHeaderCell = new TableCell();
+			TableCell dayHeaderCell = new TableCell ();
 			dayHeaderCell.HorizontalAlign = HorizontalAlign.Center;
-			string content = null;
-			if(!isDownLevel)
-			{
-				content = GetHtmlForCell(dayHeaderCell, isActive);
-			}
-			int dayOfWeek = (int)globCal.GetDayOfWeek(firstDay);
+
+			int dayOfWeek = (int) globCal.GetDayOfWeek (firstDay);
 			DateTimeFormatInfo currDTInfo = DateTimeFormatInfo.CurrentInfo;
-			for(int currDay = dayOfWeek; currDay < dayOfWeek + 7; currDay++)
-			{
-				DayOfWeek effDay = (DayOfWeek) Enum.ToObject(typeof(DayOfWeek),currDay % 7);
-				string currDayContent = String.Empty;
-				switch(DayNameFormat)
-				{
-					case DayNameFormat.Full:            currDayContent = currDTInfo.GetDayName(effDay);
-					                                    break;
-					case DayNameFormat.FirstLetter:     currDayContent = currDTInfo.GetDayName(effDay).Substring(0,1);
-					                                    break;
-					case DayNameFormat.FirstTwoLetters: currDayContent = currDTInfo.GetDayName(effDay).Substring(0,2);
-					                                    break;
-					case DayNameFormat.Short:           goto default;
-					default:                            currDayContent = currDTInfo.GetAbbreviatedDayName(effDay);
-					                                    break;
+			for(int currDay = dayOfWeek; currDay < dayOfWeek + 7; currDay++) {
+				DayOfWeek effDay = (DayOfWeek) Enum.ToObject (typeof (DayOfWeek), currDay % 7);
+				string currDayContent;
+				switch(DayNameFormat) {
+				case DayNameFormat.Full:
+					currDayContent = currDTInfo.GetDayName (effDay);
+					break;
+				case DayNameFormat.FirstLetter:
+					currDayContent = currDTInfo.GetDayName (effDay).Substring (0,1);
+					break;
+				case DayNameFormat.FirstTwoLetters:
+					currDayContent = currDTInfo.GetDayName (effDay).Substring (0,2);
+					break;
+				case DayNameFormat.Short:
+					goto default;
+				default:
+					currDayContent = currDTInfo.GetAbbreviatedDayName (effDay);
+					break;
 				}
-				if(isDownLevel)
-				{
-					RenderCalendarCell(writer, dayHeaderCell, currDayContent);
-				} else
-				{
-					writer.Write(String.Format(content, currDayContent));
-				}
+
+				RenderCalendarCell(writer, dayHeaderCell, currDayContent);
 			}
-			writer.Write("</tr>");
+			writer.Write ("</tr>");
 		}
 
-		private void RenderTitle(HtmlTextWriter writer, DateTime visibleDate, CalendarSelectionMode mode, bool isActive)
+		private void RenderTitle (HtmlTextWriter writer,
+					  DateTime visibleDate,
+					  CalendarSelectionMode mode,
+					  bool isActive)
 		{
 			writer.Write("<tr>");
-			Table innerTable = new Table();
+			Table innerTable = new Table ();
 			TableCell titleCell = new TableCell();
-			bool isWeekMode = (mode == CalendarSelectionMode.DayWeek || mode == CalendarSelectionMode.DayWeekMonth);
+			bool isWeekMode = (mode == CalendarSelectionMode.DayWeek ||
+					   mode == CalendarSelectionMode.DayWeekMonth);
+
 			titleCell.ColumnSpan = (isWeekMode ? 8 : 7);
 			titleCell.BackColor = Color.Silver;
 
 			innerTable.GridLines = GridLines.None;
-			innerTable.Width = Unit.Percentage(100);
+			innerTable.Width = Unit.Percentage (100);
 			innerTable.CellSpacing = 0;
-			ApplyTitleStyle(innerTable, titleCell, TitleStyle);
+			ApplyTitleStyle (innerTable, titleCell, TitleStyle);
 
-			innerTable.RenderBeginTag(writer);
-			titleCell.RenderBeginTag(writer);
+			titleCell.RenderBeginTag (writer);
+			innerTable.RenderBeginTag (writer);
 
-			writer.Write("<tr>");
+			writer.Write ("<tr>");
 			string prevContent = String.Empty;
-			if(ShowNextPrevMonth)
-			{
-				TableCell prevCell = new TableCell();
-				prevCell.Width = Unit.Percentage(15);
+			if (ShowNextPrevMonth) {
+				TableCell prevCell = new TableCell ();
+				prevCell.Width = Unit.Percentage (15);
 				prevCell.HorizontalAlign = HorizontalAlign.Left;
-				if(NextPrevFormat == NextPrevFormat.CustomText)
-				{
+				if (NextPrevFormat == NextPrevFormat.CustomText) {
 					prevContent = PrevMonthText;
-				} else
-				{
-					int pMthInt = globCal.GetMonth(globCal.AddMonths(visibleDate, -1));
-					if(NextPrevFormat == NextPrevFormat.FullMonth)
-						prevContent = DateTimeFormatInfo.CurrentInfo.GetMonthName(pMthInt);
+				} else {
+					int pMthInt = globCal.GetMonth(globCal.AddMonths (visibleDate, -1));
+					if (NextPrevFormat == NextPrevFormat.FullMonth)
+						prevContent = infoCal.GetMonthName (pMthInt);
 					else
-						prevContent = DateTimeFormatInfo.CurrentInfo.GetAbbreviatedMonthName(pMthInt);
+						prevContent = infoCal.GetAbbreviatedMonthName (pMthInt);
 				}
-				prevCell.ApplyStyle(NextPrevStyle);
-				RenderCalendarCell(writer, prevCell, GetCalendarLinkText("prevMonth", prevContent, NextPrevStyle.ForeColor, isActive));
+				prevCell.ApplyStyle (NextPrevStyle);
+				RenderCalendarCell (writer,
+						    prevCell,
+						    GetCalendarLinkText ("prevMonth",
+							    		 prevContent,
+									 NextPrevStyle.ForeColor,
+									 isActive)
+						    );
 			}
-			TableCell currCell = new TableCell();
-			currCell.Width = Unit.Percentage(70);
-			if(TitleStyle.HorizontalAlign == HorizontalAlign.NotSet)
+
+			TableCell currCell = new TableCell ();
+			currCell.Width = Unit.Percentage (70);
+			if (TitleStyle.HorizontalAlign == HorizontalAlign.NotSet)
 				currCell.HorizontalAlign = HorizontalAlign.Center;
 			else
 				currCell.HorizontalAlign = TitleStyle.HorizontalAlign;
+
 			currCell.Wrap = TitleStyle.Wrap;
 			string currMonthContent = String.Empty;
-			if(TitleFormat == TitleFormat.Month)
-			{
-				currMonthContent = visibleDate.ToString("MMMM");
-			} else
-			{
-				string cmcFmt = DateTimeFormatInfo.CurrentInfo.YearMonthPattern;
-				if(cmcFmt.IndexOf(',') >= 0)
-				{
+			if (TitleFormat == TitleFormat.Month) {
+				currMonthContent = visibleDate.ToString ("MMMM");
+			} else {
+				string cmcFmt = infoCal.YearMonthPattern;
+				if (cmcFmt.IndexOf (',') >= 0)
 					cmcFmt = "MMMM yyyy";
-				}
-				currMonthContent = visibleDate.ToString(cmcFmt);
+
+				currMonthContent = visibleDate.ToString (cmcFmt);
 			}
+
+			RenderCalendarCell (writer, currCell, currMonthContent);
+								 
 			string nextContent = String.Empty;
-			if(ShowNextPrevMonth)
-			{
-				TableCell nextCell = new TableCell();
+			if (ShowNextPrevMonth) {
+				TableCell nextCell = new TableCell ();
 				nextCell.Width = Unit.Percentage(15);
 				nextCell.HorizontalAlign = HorizontalAlign.Left;
-				if(NextPrevFormat == NextPrevFormat.CustomText)
-				{
-					nextContent = PrevMonthText;
-				} else
-				{
-					int nMthInt = globCal.GetMonth(globCal.AddMonths(visibleDate, 1));
+				if (NextPrevFormat == NextPrevFormat.CustomText) {
+					nextContent = NextMonthText;
+				} else {
+					int nMthInt = globCal.GetMonth (globCal.AddMonths (visibleDate, 1));
 					if(NextPrevFormat == NextPrevFormat.FullMonth)
-						nextContent = DateTimeFormatInfo.CurrentInfo.GetMonthName(nMthInt);
+						nextContent = infoCal.GetMonthName(nMthInt);
 					else
-						nextContent = DateTimeFormatInfo.CurrentInfo.GetAbbreviatedMonthName(nMthInt);
+						nextContent = infoCal.GetAbbreviatedMonthName(nMthInt);
 				}
 				nextCell.ApplyStyle(NextPrevStyle);
-				RenderCalendarCell(writer, nextCell, GetCalendarLinkText("nextMonth", nextContent, NextPrevStyle.ForeColor, isActive));
+				RenderCalendarCell (writer,
+						    nextCell,
+						    GetCalendarLinkText ("nextMonth",
+									 nextContent,
+									 NextPrevStyle.ForeColor,
+									 isActive)
+						    );
 			}
 
 			writer.Write("</tr>");
-			titleCell.RenderEndTag(writer);
 			innerTable.RenderEndTag(writer);
+			titleCell.RenderEndTag(writer);
 
 			writer.Write("</tr>");
 		}
@@ -1017,7 +1077,7 @@ namespace System.Web.UI.WebControls
 			table.Font.MergeWith(Font);
 		}
 
-		private void RenderCalendarCell(HtmlTextWriter writer, TableCell cell, string text)
+		private void RenderCalendarCell (HtmlTextWriter writer, TableCell cell, string text)
 		{
 			cell.RenderBeginTag(writer);
 			writer.Write(text);
@@ -1026,85 +1086,73 @@ namespace System.Web.UI.WebControls
 
 		private DateTime GetFirstCalendarDay(DateTime visibleDate)
 		{
-			DayOfWeek firstDay = DateTimeFormatInfo.CurrentInfo.FirstDayOfWeek;
-			if(FirstDayOfWeek != FirstDayOfWeek.Default)
-			{
-				firstDay = (DayOfWeek) Enum.ToObject(typeof(DayOfWeek), (int)FirstDayOfWeek);
-			}
-			//FIXME: is (int)(Enum) correct?
-			int days = (int)globCal.GetDayOfWeek(visibleDate) - (int)firstDay;
-			if(days < 0)
-			{
+			int fow = (int) FirstDayOfWeek;
+			if (fow == 7)
+				fow = (int) infoCal.FirstDayOfWeek;
+
+			int days = (int) globCal.GetDayOfWeek (visibleDate) - fow;
+			if (days <= 0)
 				days += 7;
-			}
-			return globCal.AddDays(visibleDate, -days);
+			return globCal.AddDays (visibleDate, -days);
 		}
 
 		private DateTime GetEffectiveVisibleDate()
 		{
 			DateTime dt = VisibleDate;
-			if(dt.Equals(DateTime.MinValue))
-			{
-				dt = TodaysDate;
-			}
-			return new DateTime(globCal.GetYear(dt), globCal.GetMonth(dt), globCal.GetDayOfMonth(dt), globCal);
+			if (VisibleDate == DateTime.MinValue)
+				 dt = TodaysDate;
+			return globCal.AddDays (dt, 1 - globCal.GetDayOfMonth (dt));
 		}
 
 		/// <summary>
 		/// Creates text to be displayed, with all attributes if to be
 		/// shown as a hyperlink
 		/// </summary>
-		private string GetCalendarLinkText(string eventArg, string text, Color foreground, bool isLink)
+		private string GetCalendarLinkText (string eventArg,
+						    string text,
+						    Color foreground,
+						    bool isLink)
 		{
-			if(isLink)
-			{
-				StringBuilder dispVal = new StringBuilder();
-				dispVal.Append("<a href=\"");
-				dispVal.Append(Page.GetPostBackClientHyperlink(this, eventArg));
-				dispVal.Append("\" style=\"color: ");
-				if(foreground.IsEmpty)
-				{
-					dispVal.Append(ColorTranslator.ToHtml(defaultTextColor));
-				} else
-				{
-					dispVal.Append(ColorTranslator.ToHtml(foreground));
+			if (isLink) {
+				StringBuilder dispVal = new StringBuilder ();
+				dispVal.Append ("<a href=\"");
+				dispVal.Append (Page.GetPostBackClientHyperlink (this, eventArg));
+				dispVal.Append ("\" style=\"color: ");
+				if (foreground.IsEmpty) {
+					dispVal.Append (ColorTranslator.ToHtml (defaultTextColor));
+				} else {
+					dispVal.Append (ColorTranslator.ToHtml (foreground));
 				}
-				dispVal.Append("\">");
-				dispVal.Append(text);
-				dispVal.Append("</a>");
-				return dispVal.ToString();
+				dispVal.Append ("\">");
+				dispVal.Append (text);
+				dispVal.Append ("</a>");
+				return dispVal.ToString ();
 			}
 			return text;
 		}
 
-		private string GetHtmlForCell(TableCell cell, bool showLinks)
+		private string GetHtmlForCell (TableCell cell, bool showLinks)
 		{
-			StringWriter sw = new StringWriter();
-			HtmlTextWriter htw = new HtmlTextWriter(sw);
-			cell.RenderBeginTag(htw);
-			if(showLinks)
-			{
-				htw.Write(GetCalendarLinkText("{0}", "{1}", cell.ForeColor, showLinks));
-			} else
-			{
-				htw.Write("{0}");
+			StringWriter sw = new StringWriter ();
+			HtmlTextWriter htw = new HtmlTextWriter (sw);
+			cell.RenderBeginTag (htw);
+			if(showLinks) {
+				htw.Write (GetCalendarLinkText ("{0}", "{1}", cell.ForeColor, showLinks));
+			} else {
+				htw.Write ("{0}");
 			}
-			cell.RenderEndTag(htw);
+			cell.RenderEndTag (htw);
 			return sw.ToString();
 		}
 
-		internal void SelectRangeInternal(DateTime fromDate, DateTime toDate, DateTime visibleDate)
+		internal void SelectRangeInternal (DateTime fromDate, DateTime toDate, DateTime visibleDate)
 		{
-			TimeSpan span = fromDate - toDate;
-			if(SelectedDates.Count != span.Days || SelectedDates[SelectedDates.Count - 1]!= toDate)
-			{
-				SelectedDates.SelectRange(fromDate, toDate);
-				OnSelectionChanged();
-			}
-			if(globCal.GetMonth(fromDate) == globCal.GetMonth(fromDate) && globCal.GetMonth(fromDate) != globCal.GetMonth(visibleDate))
-			{
-				VisibleDate = new DateTime(globCal.GetYear(fromDate), globCal.GetMonth(fromDate), 1, globCal);
-				OnVisibleMonthChanged(VisibleDate, visibleDate);
+			TimeSpan span = toDate - fromDate;
+			if (SelectedDates.Count != span.Days + 1 || 
+			    SelectedDates [0] != fromDate || 
+			    SelectedDates [SelectedDates.Count - 1] != toDate) {
+				SelectedDates.SelectRange (fromDate, toDate);
+				OnSelectionChanged ();
 			}
 		}
 	}

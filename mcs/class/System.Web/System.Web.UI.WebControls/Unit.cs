@@ -41,12 +41,12 @@ namespace System.Web.UI.WebControls
 
 		public static Unit Percentage(double n)
 		{
-			return new Unit(n);
+			return new Unit (n, UnitType.Percentage);
 		}
 
 		public static Unit Pixel(int n)
 		{
-			return new Unit(n);
+			return new Unit (n, UnitType.Pixel);
 		}
 
 		public static Unit Point(int n)

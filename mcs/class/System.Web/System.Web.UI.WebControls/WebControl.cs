@@ -102,82 +102,58 @@ namespace System.Web.UI.WebControls
 
 		public virtual Color BackColor
 		{
-			get
-			{
-				object o = ViewState["BackColor"];
-				if(o != null)
-				{
-					return (Color)o;
-				}
-				return Color.Empty;
+			get {
+				if (!ControlStyleCreated)
+					return Color.Empty;
+				return ControlStyle.BackColor;
 			}
-			set
-			{
-				ViewState["BackColor"] = value;
+
+			set {
+				ControlStyle.BackColor = value;
 			}
 		}
 
 		public virtual Color BorderColor
 		{
-			get
-			{
-				object o = ViewState["BorderColor"];
-				if(o != null)
-				{
-					return (Color)o;
-				}
-				return Color.Empty;
+			get {
+				if (!ControlStyleCreated)
+					return Color.Empty;
+				return ControlStyle.BorderColor;
 			}
-			set
-			{
-				ViewState["BorderColor"] = value;
+
+			set {
+				ControlStyle.BorderColor = value;
 			}
 		}
 
-		[MonoTODO("FIXME_Internal_method_calls")]
 		public virtual BorderStyle BorderStyle
 		{
-			get
-			{
-				object o = ViewState["BorderStyle"];
-				if(o != null)
-				{
-					return (BorderStyle)o;
-				}
-				return BorderStyle.NotSet;
+			get {
+				if (!ControlStyleCreated)
+					return BorderStyle.NotSet;
+				return ControlStyle.BorderStyle;
 			}
-			set
-			{
-				if(!Enum.IsDefined(typeof(BorderStyle), value))
-				{
-					throw new ArgumentException();
-				}
-				ViewState["BorderStyle"] = value;
+
+			set {
+				ControlStyle.BorderStyle = value;
 			}
 		}
 
 		public virtual Unit BorderWidth
 		{
-			get
-			{
-				object o = ViewState["BorderWidth"];
-				if(o != null)
-				{
-					return (Unit)o;
-				}
-				return Unit.Empty;
+			get {
+				if (!ControlStyleCreated)
+					return Unit.Empty;
+				return ControlStyle.BorderWidth;
 			}
-			set
-			{
-				if(value.Value < 0)
-				{
+
+			set {
+				if (value.Value < 0)
 					throw new ArgumentException();
-				}
-				ViewState["BorderWidth"] = value;
+				ControlStyle.BorderWidth = value;
 			}
 		}
 
-		[MonoTODO("FIXME_Internal_method_calls")]
 		public Style ControlStyle
 		{
 			get
@@ -237,12 +213,13 @@ namespace System.Web.UI.WebControls
 
 		public virtual Color ForeColor
 		{
-			get
-			{
+			get {
+				if (!ControlStyleCreated)
+					return Color.Empty;
 				return ControlStyle.ForeColor;
 			}
-			set
-			{
+
+			set {
 				ControlStyle.ForeColor = value;
 			}
 		}
@@ -311,15 +288,10 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
-		[MonoTODO("FIXME_Internal_method_calls")]
 		public void ApplyStyle(Style s)
 		{
-			/* FIXME: Again internal problem
-			if(!ControlStyle.IsEmpty)
-			{
-			*/
-				ControlStyle.CopyFrom(s);
-			//}
+			if (s != null && !s.IsEmpty)
+				ControlStyle.CopyFrom (s);
 		}
 
 		public void CopyBaseAttributes(WebControl controlSrc)

@@ -47,6 +47,7 @@ public class Page : TemplateControl, IHttpHandler
 	private ArrayList requiresRaiseEvent;
 	private NameValueCollection secondPostData;
 	private bool requiresPostBackScript = false;
+	private bool postBackScriptRendered = false;
 
 	#region Fields
 	 	protected const string postEventArgumentID = ""; //FIXME
@@ -366,6 +367,23 @@ public class Page : TemplateControl, IHttpHandler
 		}
 	}
 
+	private void RenderPostBackScript (HtmlTextWriter writer, string formUniqueID)
+	{
+		writer.WriteLine ("<input type=\"hidden\" name=\"__EVENTTARGET\" value=\"\" />");
+		writer.WriteLine ("<input type=\"hidden\" name=\"__EVENTARGUMENT\" value=\"\" />");
+		writer.WriteLine ();
+		writer.WriteLine ("<script language=\"javascript\">");
+		writer.WriteLine ("<!--");
+		writer.WriteLine ("\tfunction __doPostBack(eventTarget, eventArgument) {");
+		writer.WriteLine ("\t\tvar theform = document.{0};", formUniqueID);
+		writer.WriteLine ("\t\ttheform.__EVENTTARGET.value = eventTarget;");
+		writer.WriteLine ("\t\ttheform.__EVENTARGUMENT.value = eventArgument;");
+		writer.WriteLine ("\t\ttheform.submit();");
+		writer.WriteLine ("\t}");
+		writer.WriteLine ("// -->");
+		writer.WriteLine ("</script>");
+	}
+
 	private bool got_state = false;
 	private int _random;
 	private int queryStringHash;
@@ -379,19 +397,8 @@ public class Page : TemplateControl, IHttpHandler
 		writer.Write ("<input type=\"hidden\" name=\"__VIEWSTATE\" ");
 		writer.WriteLine ("value=\"{0}\" />", GetViewStateString ());
 		if (requiresPostBackScript) {
-			writer.WriteLine ("<input type=\"hidden\" name=\"__EVENTTARGET\" value=\"\" />");
-			writer.WriteLine ("<input type=\"hidden\" name=\"__EVENTARGUMENT\" value=\"\" />");
-			writer.WriteLine ();
-			writer.WriteLine ("<script language=\"javascript\">");
-			writer.WriteLine ("<!--");
-			writer.WriteLine ("\tfunction __doPostBack(eventTarget, eventArgument) {");
-			writer.WriteLine ("\t\tvar theform = document.{0};", formUniqueID);
-			writer.WriteLine ("\t\ttheform.__EVENTTARGET.value = eventTarget;");
-			writer.WriteLine ("\t\ttheform.__EVENTARGUMENT.value = eventArgument;");
-			writer.WriteLine ("\t\ttheform.submit();");
-			writer.WriteLine ("\t}");
-			writer.WriteLine ("// -->");
-			writer.WriteLine ("</script>");
+			RenderPostBackScript (writer, formUniqueID);
+			postBackScriptRendered = true;
 		}
 	}
 
@@ -416,7 +423,11 @@ public class Page : TemplateControl, IHttpHandler
 
 	internal void OnFormPostRender (HtmlTextWriter writer, string formUniqueID)
 	{
+		if (!postBackScriptRendered && requiresPostBackScript)
+			RenderPostBackScript (writer, formUniqueID);
+
 		renderingForm = false;
+		postBackScriptRendered = false;
 	}
 
 

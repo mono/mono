@@ -1,3 +1,13 @@
+2002-07-30  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Calendar.cs: lots of fixes. Render days.  Still left to persist
+	selected days when changing month.
+
+	* Unit.cs: fixed Percentage and Pixel.
+
+	* WebControl.cs: a few properties are now using ControlStyle instead
+	of ViewState to persist.
+
 2002-07-28  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* BaseValidator.cs: it works now.
