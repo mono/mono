@@ -89,6 +89,23 @@ namespace System.Data.Common
 			_records.Push(index);
 		}
 
+		internal int CopyRecord(DataTable fromTable,int fromRecordIndex,int toRecordIndex)
+		{
+			int recordIndex = toRecordIndex;
+			if (toRecordIndex == -1) {
+				recordIndex = NewRecord();
+			}
+
+			foreach(DataColumn fromColumn in fromTable.Columns) {
+				DataColumn column = _table.Columns[fromColumn.ColumnName];
+				if (column != null) {
+					column.DataContainer.CopyValue(fromColumn.DataContainer,fromRecordIndex,recordIndex);
+				}
+			}
+
+			return recordIndex;
+		}
+
 		#endregion // Methods
 
 	}

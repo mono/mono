@@ -1,4 +1,7 @@
 2004-06-17  Boris Kirzner  <borisk@mainsoft.com>
+	* RecordCache.cs : Added CopyRecord mathod that copies single record from one table to another.
+
+2004-06-17  Boris Kirzner  <borisk@mainsoft.com>
 	* Datacontainer.cs : 
 	  - Store and retreival of null and DBNull values reviewed.
 	  - Added GetInt64 to support AutoIncrement of DataColumn.
