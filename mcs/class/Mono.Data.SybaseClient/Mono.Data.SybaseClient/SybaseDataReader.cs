@@ -481,7 +481,6 @@ namespace Mono.Data.SybaseClient {
 			schemaTable.Rows.Clear ();
 
 			moreResults = command.Tds.NextResult ();
-			command.Connection.CheckForErrors ();
 			rowsRead = 0;
 			resultsRead += 1;
 			return moreResults;
@@ -497,7 +496,6 @@ namespace Mono.Data.SybaseClient {
 				return false;
 
 			bool result = command.Tds.NextRow ();
-			command.Connection.CheckForErrors ();
 
 			rowsRead += 1;
 

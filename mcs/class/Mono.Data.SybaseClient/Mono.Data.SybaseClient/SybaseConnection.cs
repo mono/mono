@@ -50,9 +50,11 @@ namespace Mono.Data.SybaseClient {
 		ConnectionState state = ConnectionState.Closed;
 		bool dataReaderOpen = false;
 
-
 		// The TDS object
 		ITds tds;
+
+		static readonly object EventStateChange = new object ();
+		static readonly object EventSybaseInfoMessage = new object ();
 
 		#endregion // Fields
 
@@ -121,6 +123,34 @@ namespace Mono.Data.SybaseClient {
 
 		#endregion // Properties
 
+		#region Events
+                
+		public event SybaseInfoMessageEventHandler InfoMessage {
+			add { Events.AddHandler (EventSybaseInfoMessage, value); }
+			remove { Events.RemoveHandler (EventSybaseInfoMessage, value); }
+		}
+
+		public event StateChangeEventHandler StateChange {
+			add { Events.AddHandler (EventStateChange, value); }
+			remove { Events.RemoveHandler (EventStateChange, value); }
+		}
+		
+		#endregion // Events
+
+		#region Delegates
+
+		#endregion // Delegates
+
+		private void ErrorHandler (object sender, TdsInternalErrorMessageEventArgs e)
+		{
+			throw new SybaseException (e.Class, e.LineNumber, e.Message, e.Number, e.Procedure, e.Server, "Mono SybaseClient Data Provider", e.State);
+		}
+
+		private void MessageHandler (object sender, TdsInternalInfoMessageEventArgs e)
+		{
+			OnSybaseInfoMessage (CreateSybaseInfoMessageEvent (e.Errors));
+		}
+
 		#region Methods
 
 		public SybaseTransaction BeginTransaction ()
@@ -144,7 +174,6 @@ namespace Mono.Data.SybaseClient {
 				throw new InvalidOperationException ("SybaseConnection does not support parallel transactions.");
 
 			tds.ExecuteNonQuery (String.Format ("BEGIN TRANSACTION {0}", transactionName));
-			CheckForErrors ();
 
 			transaction = new SybaseTransaction (this, iso);
 			return transaction;
@@ -159,14 +188,14 @@ namespace Mono.Data.SybaseClient {
 				throw new InvalidOperationException ("The connection is not open");
 
 			tds.ExecuteNonQuery (String.Format ("use {0}", database));
-			CheckForErrors ();
 		}
 
-		internal void CheckForErrors ()
+		private void ChangeState (ConnectionState currentState)
 		{
-			if (tds.Errors.Count > 0)
-				throw SybaseException.FromTdsError (tds.Errors);
-                }
+			ConnectionState originalState = state;
+			state = currentState;
+			OnStateChange (CreateStateChangeEvent (originalState, currentState));
+		}
 
 		public void Close () 
 		{
@@ -176,7 +205,9 @@ namespace Mono.Data.SybaseClient {
 				pool.ReleaseConnection (tds);
 			else
 				tds.Disconnect ();
-			this.state = ConnectionState.Closed;
+			tds.TdsErrorMessage -= new TdsInternalErrorMessageEventHandler (ErrorHandler);
+			tds.TdsInfoMessage -= new TdsInternalInfoMessageEventHandler (MessageHandler);
+			ChangeState (ConnectionState.Closed);
 		}
 
 		public SybaseCommand CreateCommand () 
@@ -184,6 +215,16 @@ namespace Mono.Data.SybaseClient {
 			SybaseCommand command = new SybaseCommand ();
 			command.Connection = this;
 			return command;
+		}
+
+		private StateChangeEventArgs CreateStateChangeEvent (ConnectionState originalState, ConnectionState currentState)
+		{
+			return new StateChangeEventArgs (originalState, currentState);
+		}
+
+		private SybaseInfoMessageEventArgs CreateSybaseInfoMessageEvent (TdsInternalErrorCollection errors)
+		{
+			return new SybaseInfoMessageEventArgs (errors);
 		}
 
 		protected override void Dispose (bool disposing) 
@@ -238,17 +279,17 @@ namespace Mono.Data.SybaseClient {
 				tds = pool.AllocateConnection ();
 			}
 
-			state = ConnectionState.Open;
+			tds.TdsErrorMessage += new TdsInternalErrorMessageEventHandler (ErrorHandler);
+			tds.TdsInfoMessage += new TdsInternalInfoMessageEventHandler (MessageHandler);
 
 			if (!tds.IsConnected) {
 				tds.Connect (parms);
-				CheckForErrors ();
 				ChangeDatabase (parms.Database);
 			} 
-			else if (connectionReset) {
-				tds.ExecuteNonQuery ("EXEC sp_connection_reset");
-				CheckForErrors ();
-			}
+			else if (connectionReset) 
+				tds.ExecuteNonQuery ("EXEC sp_reset_connection");
+
+			ChangeState (ConnectionState.Open);
 		}
 
                 void SetConnectionString (string connectionString)
@@ -437,13 +478,20 @@ namespace Mono.Data.SybaseClient {
 			return true;
 		}
 
-		#endregion // Methods
+		private void OnSybaseInfoMessage (SybaseInfoMessageEventArgs value)
+		{
+			SybaseInfoMessageEventHandler handler = (SybaseInfoMessageEventHandler) Events [EventSybaseInfoMessage];
+			if (handler != null)
+				handler (this, value);
+		}
 
-		#region Events
-                
-		public event SybaseInfoMessageEventHandler InfoMessage;
-		public event StateChangeEventHandler StateChange;
-		
-		#endregion // Events
+		private void OnStateChange (StateChangeEventArgs value)
+		{
+			StateChangeEventHandler handler = (StateChangeEventHandler) Events [EventStateChange];
+			if (handler != null)
+				handler (this, value);
+		}
+
+		#endregion // Methods
 	}
 }

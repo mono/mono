@@ -1,3 +1,22 @@
+2002-11-04  Tim Coleman <tim@timcoleman.com>
+        * list:
+                Add Mono.Data.TdsClient.Internal.TdsInternalError
+                Add Mono.Data.TdsClient.Internal.TdsInternalErrorCollection
+                Add Mono.Data.TdsClient.Internal.TdsInternalErrorMessageEventHandler
+                Add Mono.Data.TdsClient.Internal.TdsInternalErrorMessageEventArgs
+                Add Mono.Data.TdsClient.Internal.TdsInternalInfoMessageEventHandler
+                Add Mono.Data.TdsClient.Internal.TdsInternalInfoMessageEventArgs
+                Remove Mono.Data.TdsClient.Internal.TdsPacketErrorResult
+                Remove Mono.Data.TdsClient.Internal.TdsPacketErrorResultCollection
+                Remove Mono.Data.TdsClient.Internal.TdsPacketMessageResult
+	* Mono.Data.SybaseClient/SybaseCommand.cs:
+	* Mono.Data.SybaseClient/SybaseConnection.cs:
+	* Mono.Data.SybaseClient/SybaseDataReader.cs:
+	* Mono.Data.SybaseClient/SybaseException.cs:
+	* Mono.Data.SybaseClient/SybaseInfoMessageEventArgs.cs:
+	* Mono.Data.SybaseClient/SybaseTransaction.cs:
+		Remove error checks in favour of event handlers
+
 2002-11-04  Tim Coleman (tim@timcoleman.com)
 	* list :
 		Add Mono.Data.TdsClient.Internal.TdsBigDecimal

@@ -163,7 +163,6 @@ namespace Mono.Data.SybaseClient {
 			if (connection == null || connection.Tds == null)
 				return;
 			connection.Tds.Cancel ();
-			connection.CheckForErrors ();
 		}
 
 		internal void CloseDataReader (bool moreResults)
@@ -194,7 +193,6 @@ namespace Mono.Data.SybaseClient {
 		public int ExecuteNonQuery ()
 		{
 			int result = connection.Tds.ExecuteNonQuery (ValidateQuery ("ExecuteNonQuery"));
-			connection.CheckForErrors ();
 			return result;
 		}
 
@@ -207,7 +205,6 @@ namespace Mono.Data.SybaseClient {
 		{
 			this.behavior = behavior;
 			connection.Tds.ExecuteQuery (ValidateQuery ("ExecuteReader"));
-			connection.CheckForErrors ();
 			connection.DataReaderOpen = true;
 			return new SybaseDataReader (this);
 		}
@@ -217,13 +214,11 @@ namespace Mono.Data.SybaseClient {
 			connection.Tds.ExecuteQuery (ValidateQuery ("ExecuteScalar"));
 
 			bool moreResults = connection.Tds.NextResult ();
-			connection.CheckForErrors ();
 
 			if (!moreResults)
 				return null;
 
 			moreResults = connection.Tds.NextRow ();
-			connection.CheckForErrors ();
 
 			if (!moreResults)
 				return null;

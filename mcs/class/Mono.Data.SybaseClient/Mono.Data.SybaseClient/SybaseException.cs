@@ -151,13 +151,6 @@ namespace Mono.Data.SybaseClient {
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
-		internal static SybaseException FromTdsError (TdsPacketErrorResultCollection errors)
-		{
-			TdsMessage message = errors[0].Message;
-			return new SybaseException (message.Severity, message.Line, message.Message, message.Number, message.ProcName, message.Server, "Mono SybaseClient Data Provider", message.State);
-		}
-
 		#endregion // Methods
 	}
 }

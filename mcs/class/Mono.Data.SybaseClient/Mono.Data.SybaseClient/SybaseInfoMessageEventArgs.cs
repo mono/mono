@@ -1,5 +1,5 @@
 //
-// Mono.Data.SybaseClient.SqlInfoMessageEventArgs.cs
+// Mono.Data.SybaseClient.SybaseInfoMessageEventArgs.cs
 //
 // Author:
 //   Tim Coleman (tim@timcoleman.com)
@@ -7,38 +7,50 @@
 // Copyright (C) Tim Coleman, 2002
 //
 
+using Mono.Data.TdsClient.Internal;
 using System;
 using System.Data;
 
 namespace Mono.Data.SybaseClient {
 	public sealed class SybaseInfoMessageEventArgs : EventArgs
 	{
+		#region Fields
+
+		SybaseErrorCollection errors = new SybaseErrorCollection ();
+
+		#endregion // Fields
+
+		#region Constructors
+
+		internal SybaseInfoMessageEventArgs (TdsInternalErrorCollection tdsErrors)
+		{
+			foreach (TdsInternalError e in tdsErrors)
+				errors.Add (e.Class, e.LineNumber, e.Message, e.Number, e.Procedure, e.Server, "Mono SybaseClient Data Provider", e.State);
+		}
+
+		#endregion // Constructors
+
 		#region Properties
 
-		[MonoTODO]
 		public SybaseErrorCollection Errors {
-			get { throw new NotImplementedException (); }
+			get { return errors; }
 		}	
 
-		[MonoTODO]
 		public string Message {
-			get { throw new NotImplementedException (); }
+			get { return errors[0].Message; }
 		}	
 
-		[MonoTODO]
 		public string Source {
-			get { throw new NotImplementedException (); }
+			get { return errors[0].Source; }
 		}
 
 		#endregion // Properties
 
 		#region Methods
 
-		[MonoTODO]
 		public override string ToString () 
 		{
-			// representation of InfoMessage event
-			return "'ToString() for SybaseInfoMessageEventArgs Not Implemented'";
+			return Message;
 		}
 
 		#endregion // Methods
