@@ -150,6 +150,8 @@ t      if (debug != null) debug.push(yyState, yyVal);
 .        if ((yyN = yyDefRed[yyState]) == 0) {	// else [default] reduce (yyN)
 .          if (yyToken < 0) {
 .            yyToken = yyLex.advance() ? yyLex.token() : 0;
+.	     if (yyToken == 0)
+.		yyLex.Cleanup ();
 t            if (debug != null)
 t              debug.lex(yyState, yyToken, yyname(yyToken), yyLex.value());
 .          }
@@ -219,6 +221,9 @@ t          if (debug != null) debug.shift(0, yyFinal);
 .          yyState = yyFinal;
 .          if (yyToken < 0) {
 .            yyToken = yyLex.advance() ? yyLex.token() : 0;
+.            if (yyToken == 0)
+.                 yyLex.Cleanup (); 
+		
 t            if (debug != null)
 t               debug.lex(yyState, yyToken,yyname(yyToken), yyLex.value());
 .          }
@@ -347,6 +352,9 @@ t        if (debug != null) debug.shift(yyStates[yyTop], yyState);
 .        @return value for token().
 .      */
 .    Object value ();
+.    /** Cleanup, this is called when advance returns false.
+.     */
+.    void Cleanup ();
 .  }
 . }
 .} // close outermost namespace, that MUST HAVE BEEN opened in the prolog
