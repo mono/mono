@@ -34,9 +34,6 @@ namespace System.Windows.Forms
 {
 	public sealed class SaveFileDialog : FileDialog
 	{
-		private bool createPrompt = false;
-		private bool overwritePrompt = true;
-		
 		#region Public Constructors
 		public SaveFileDialog( )
 		{
@@ -55,12 +52,11 @@ namespace System.Windows.Forms
 		#endregion	// Public Constructors
 		
 		#region Public Instance Properties
-		public bool CreatePrompt
+		public new bool CreatePrompt
 		{
 			set
 			{
-				createPrompt = value;
-				SaveDialogCreatePrompt = createPrompt;
+				base.CreatePrompt = value;
 			}
 			
 			get
@@ -69,12 +65,11 @@ namespace System.Windows.Forms
 			}
 		}
 		
-		public bool OverwritePrompt
+		public new bool OverwritePrompt
 		{
 			set
 			{
-				overwritePrompt = value;
-				SaveDialogOverwritePrompt = overwritePrompt;
+				base.OverwritePrompt = value;
 			}
 			
 			get
@@ -99,8 +94,8 @@ namespace System.Windows.Forms
 			base.Reset( );
 			overwritePrompt = true;
 			createPrompt = false;
-			SaveDialogOverwritePrompt = overwritePrompt;
-			SaveDialogCreatePrompt = createPrompt;
+			OverwritePrompt = overwritePrompt;
+			CreatePrompt = createPrompt;
 		}
 		
 		[MonoTODO]

@@ -1,5 +1,13 @@
 2005-03-28  Alexander Olk  <xenomorph2@onlinehome.de>
 
+	* FileDialog.cs, SaveFileDialog.cs OpenFileDialog.cs:
+	
+	  - Added ReadOnly CheckBox
+	  - Further refactoring: moved some code from Open-/SaveFileDialog
+	    to FileDialog
+
+2005-03-28  Alexander Olk  <xenomorph2@onlinehome.de>
+
 	* OpenFileDialog.cs: Fixed CheckFileExists
 	* FileDialog.cs:
 	  Moved FileView and DirComboBox outside FileDialog class.

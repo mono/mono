@@ -50,7 +50,7 @@ namespace System.Windows.Forms
 		internal FileDialogPanel fileDialogPanel;
 		
 		private bool addExtension = true;
-		private bool checkFileExists = false;
+		internal bool checkFileExists = false;
 		private bool checkPathExists = true;
 		private string defaultExt = "";
 		private bool dereferenceLinks = true;
@@ -64,13 +64,15 @@ namespace System.Windows.Forms
 		private string title = "";
 		private bool validateNames = true;
 		
+		//protected bool readOnlyChecked = false;
+		
 		internal string openSaveButtonText;
 		internal string searchSaveLabelText;
-		internal bool fileDialogShowReadOnly;
-		internal bool fileDialogReadOnlyChecked;
-		internal bool fileDialogMultiSelect;
-		internal bool saveDialogCreatePrompt = false;
-		internal bool saveDialogOverwritePrompt = true;
+		internal bool showReadOnly = false;
+		internal bool readOnlyChecked = false;
+		internal bool multiSelect = false;
+		internal bool createPrompt = false;
+		internal bool overwritePrompt = true;
 		
 		private bool showHiddenFiles = false;
 		
@@ -169,7 +171,7 @@ namespace System.Windows.Forms
 		{
 			get
 			{
-				if ( fileDialogMultiSelect )
+				if ( multiSelect )
 					return fileNames;
 				
 				return null;
@@ -314,44 +316,45 @@ namespace System.Windows.Forms
 			}
 		}
 		
-		internal bool FileDialogShowReadOnly
+		internal virtual bool ShowReadOnly
 		{
 			set
 			{
-				fileDialogShowReadOnly = value;
+				showReadOnly = value;
 				fileDialogPanel.ResizeAndRelocateForHelpOrReadOnly( );
 			}
 			
 			get
 			{
-				return fileDialogShowReadOnly;
+				return showReadOnly;
 			}
 		}
 		
-		internal bool FileDialogReadOnlyChecked
+		internal virtual bool ReadOnlyChecked
 		{
 			set
 			{
-				fileDialogReadOnlyChecked = value;
+				readOnlyChecked = value;
+				fileDialogPanel.CheckBox.Checked = value;
 			}
 			
 			get
 			{
-				return fileDialogReadOnlyChecked;
+				return readOnlyChecked;
 			}
 		}
 		
-		internal bool FileDialogMultiSelect
+		internal virtual bool Multiselect
 		{
 			set
 			{
-				fileDialogMultiSelect = value;
+				multiSelect = value;
 				fileDialogPanel.MultiSelect = value;
 			}
 			
 			get
 			{
-				return fileDialogMultiSelect;
+				return multiSelect;
 			}
 		}
 		
@@ -369,29 +372,29 @@ namespace System.Windows.Forms
 			}
 		}
 		
-		internal bool SaveDialogCreatePrompt
+		internal virtual bool CreatePrompt
 		{
 			set
 			{
-				saveDialogCreatePrompt = value;
+				createPrompt = value;
 			}
 			
 			get
 			{
-				return saveDialogCreatePrompt;
+				return createPrompt;
 			}
 		}
 		
-		internal bool SaveDialogOverwritePrompt
+		internal virtual bool OverwritePrompt
 		{
 			set
 			{
-				saveDialogOverwritePrompt = value;
+				overwritePrompt = value;
 			}
 			
 			get
 			{
-				return saveDialogOverwritePrompt;
+				return overwritePrompt;
 			}
 		}
 		
@@ -491,6 +494,7 @@ namespace System.Windows.Forms
 			private ComboBox fileTypeComboBox;
 			private ImageList imageListTopToolbar;
 			private ContextMenu contextMenu;
+			private CheckBox checkBox;
 			
 			internal FileDialog fileDialog;
 			
@@ -540,6 +544,7 @@ namespace System.Windows.Forms
 				imageListTopToolbar = new ImageList( );
 				menueToolBarButtonContextMenu = new ContextMenu( );
 				contextMenu = new ContextMenu( );
+				checkBox = new CheckBox( );
 				
 				SuspendLayout( );
 				
@@ -560,55 +565,12 @@ namespace System.Windows.Forms
 				searchSaveLabel.Text = fileDialog.SearchSaveLabelText;
 				searchSaveLabel.TextAlign = ContentAlignment.MiddleRight;
 				
-				// mwfFileView
-				mwfFileView.Anchor = ( (AnchorStyles)( ( ( ( AnchorStyles.Top | AnchorStyles.Bottom ) | AnchorStyles.Left ) | AnchorStyles.Right ) ) );
-				mwfFileView.Location = new Point( 99, 37 );
-				mwfFileView.Size = new Size( 449, 282 );
-				mwfFileView.Columns.Add( " Name", 170, HorizontalAlignment.Left );
-				mwfFileView.Columns.Add( "Size ", 80, HorizontalAlignment.Right );
-				mwfFileView.Columns.Add( " Type", 100, HorizontalAlignment.Left );
-				mwfFileView.Columns.Add( " Last Access", 150, HorizontalAlignment.Left );
-				mwfFileView.AllowColumnReorder = true;
-				mwfFileView.MultiSelect = false;
-				mwfFileView.TabIndex = 2;
-				mwfFileView.FilterIndex = fileDialog.FilterIndex;
-				
 				// dirComboBox
 				dirComboBox.Anchor = ( (AnchorStyles)( ( ( AnchorStyles.Top | AnchorStyles.Left ) | AnchorStyles.Right ) ) );
 				dirComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
 				dirComboBox.Location = new Point( 99, 8 );
 				dirComboBox.Size = new Size( 260, 21 );
 				dirComboBox.TabIndex = 1;
-				
-				// fileNameLabel
-				fileNameLabel.Anchor = ( (AnchorStyles)( ( AnchorStyles.Bottom | AnchorStyles.Left ) ) );
-				fileNameLabel.FlatStyle = FlatStyle.System;
-				fileNameLabel.Location = new Point( 102, 330 );
-				fileNameLabel.Size = new Size( 70, 21 );
-				fileNameLabel.TabIndex = 6;
-				fileNameLabel.Text = "Filename:";
-				fileNameLabel.TextAlign = ContentAlignment.MiddleLeft;
-				
-				// fileNameComboBox
-				fileNameComboBox.Anchor = ( (AnchorStyles)( ( ( AnchorStyles.Bottom | AnchorStyles.Left ) | AnchorStyles.Right ) ) );
-				fileNameComboBox.Location = new Point( 195, 330 );
-				fileNameComboBox.Size = new Size( 245, 21 );
-				fileNameComboBox.TabIndex = 4;
-				
-				// fileTypeLabel
-				fileTypeLabel.Anchor = ( (AnchorStyles)( ( AnchorStyles.Bottom | AnchorStyles.Left ) ) );
-				fileTypeLabel.FlatStyle = FlatStyle.System;
-				fileTypeLabel.Location = new Point( 102, 356 );
-				fileTypeLabel.Size = new Size( 70, 21 );
-				fileTypeLabel.TabIndex = 5;
-				fileTypeLabel.Text = "Filetype:";
-				fileTypeLabel.TextAlign = ContentAlignment.MiddleLeft;
-				
-				// fileTypeComboBox
-				fileTypeComboBox.Anchor = ( (AnchorStyles)( ( ( AnchorStyles.Bottom | AnchorStyles.Left ) | AnchorStyles.Right ) ) );
-				fileTypeComboBox.Location = new Point( 195, 356 );
-				fileTypeComboBox.Size = new Size( 245, 21 );
-				fileTypeComboBox.TabIndex = 6;
 				
 				// smallButtonToolBar
 				smallButtonToolBar.Anchor = ( (AnchorStyles)( ( AnchorStyles.Top | AnchorStyles.Right ) ) );
@@ -627,8 +589,56 @@ namespace System.Windows.Forms
 				smallButtonToolBar.Location = new Point( 372, 8 );
 				smallButtonToolBar.ShowToolTips = true;
 				smallButtonToolBar.Size = new Size( 110, 20 );
-				smallButtonToolBar.TabIndex = 10;
+				smallButtonToolBar.TabIndex = 2;
 				smallButtonToolBar.TextAlign = ToolBarTextAlign.Right;
+				
+				// buttonPanel
+				buttonPanel.Dock = DockStyle.None;
+				buttonPanel.Location = new Point( 7, 37 );
+				buttonPanel.TabIndex = 3;
+				
+				// mwfFileView
+				mwfFileView.Anchor = ( (AnchorStyles)( ( ( ( AnchorStyles.Top | AnchorStyles.Bottom ) | AnchorStyles.Left ) | AnchorStyles.Right ) ) );
+				mwfFileView.Location = new Point( 99, 37 );
+				mwfFileView.Size = new Size( 449, 282 );
+				mwfFileView.Columns.Add( " Name", 170, HorizontalAlignment.Left );
+				mwfFileView.Columns.Add( "Size ", 80, HorizontalAlignment.Right );
+				mwfFileView.Columns.Add( " Type", 100, HorizontalAlignment.Left );
+				mwfFileView.Columns.Add( " Last Access", 150, HorizontalAlignment.Left );
+				mwfFileView.AllowColumnReorder = true;
+				mwfFileView.MultiSelect = false;
+				mwfFileView.TabIndex = 4;
+				mwfFileView.FilterIndex = fileDialog.FilterIndex;
+				
+				// fileNameLabel
+				fileNameLabel.Anchor = ( (AnchorStyles)( ( AnchorStyles.Bottom | AnchorStyles.Left ) ) );
+				fileNameLabel.FlatStyle = FlatStyle.System;
+				fileNameLabel.Location = new Point( 102, 330 );
+				fileNameLabel.Size = new Size( 70, 21 );
+				fileNameLabel.TabIndex = 5;
+				fileNameLabel.Text = "Filename:";
+				fileNameLabel.TextAlign = ContentAlignment.MiddleLeft;
+				
+				// fileNameComboBox
+				fileNameComboBox.Anchor = ( (AnchorStyles)( ( ( AnchorStyles.Bottom | AnchorStyles.Left ) | AnchorStyles.Right ) ) );
+				fileNameComboBox.Location = new Point( 195, 330 );
+				fileNameComboBox.Size = new Size( 245, 21 );
+				fileNameComboBox.TabIndex = 6;
+				
+				// fileTypeLabel
+				fileTypeLabel.Anchor = ( (AnchorStyles)( ( AnchorStyles.Bottom | AnchorStyles.Left ) ) );
+				fileTypeLabel.FlatStyle = FlatStyle.System;
+				fileTypeLabel.Location = new Point( 102, 356 );
+				fileTypeLabel.Size = new Size( 70, 21 );
+				fileTypeLabel.TabIndex = 7;
+				fileTypeLabel.Text = "Filetype:";
+				fileTypeLabel.TextAlign = ContentAlignment.MiddleLeft;
+				
+				// fileTypeComboBox
+				fileTypeComboBox.Anchor = ( (AnchorStyles)( ( ( AnchorStyles.Bottom | AnchorStyles.Left ) | AnchorStyles.Right ) ) );
+				fileTypeComboBox.Location = new Point( 195, 356 );
+				fileTypeComboBox.Size = new Size( 245, 21 );
+				fileTypeComboBox.TabIndex = 8;
 				
 				// backToolBarButton
 				backToolBarButton.ImageIndex = 0;
@@ -647,10 +657,6 @@ namespace System.Windows.Forms
 				menueToolBarButton.ImageIndex = 3;
 				menueToolBarButton.DropDownMenu = menueToolBarButtonContextMenu;
 				menueToolBarButton.Style = ToolBarButtonStyle.DropDownButton;
-				
-				buttonPanel.Dock = DockStyle.None;
-				buttonPanel.Location = new Point( 7, 37 );
-				buttonPanel.TabIndex = 3;
 				
 				// menueToolBarButtonContextMenu
 				MenuItem mi = new MenuItem( "Small Icon", new EventHandler( OnClickMenuToolBarContextMenu ) );
@@ -672,30 +678,42 @@ namespace System.Windows.Forms
 				mwfFileView.ShowHiddenFiles = fileDialog.ShowHiddenFiles;
 				contextMenu.MenuItems.Add( mi );
 				
-				// openButton
+				// openSaveButton
 				openSaveButton.Anchor = ( (AnchorStyles)( ( AnchorStyles.Bottom | AnchorStyles.Right ) ) );
 				openSaveButton.FlatStyle = FlatStyle.System;
 				openSaveButton.Location = new Point( 475, 330 );
 				openSaveButton.Size = new Size( 72, 21 );
-				openSaveButton.TabIndex = 8;
+				openSaveButton.TabIndex = 9;
 				openSaveButton.Text = fileDialog.OpenSaveButtonText;
+				openSaveButton.FlatStyle = FlatStyle.System;
 				
 				// cancelButton
 				cancelButton.Anchor = ( (AnchorStyles)( ( AnchorStyles.Bottom | AnchorStyles.Right ) ) );
 				cancelButton.FlatStyle = FlatStyle.System;
 				cancelButton.Location = new Point( 475, 356 );
 				cancelButton.Size = new Size( 72, 21 );
-				cancelButton.TabIndex = 9;
+				cancelButton.TabIndex = 10;
 				cancelButton.Text = "Cancel";
+				cancelButton.FlatStyle = FlatStyle.System;
 				
 				// helpButton
 				helpButton.Anchor = ( (AnchorStyles)( ( AnchorStyles.Bottom | AnchorStyles.Right ) ) );
 				helpButton.FlatStyle = FlatStyle.System;
 				helpButton.Location = new Point( 475, 350 );
 				helpButton.Size = new Size( 72, 21 );
-				helpButton.TabIndex = 10;
+				helpButton.TabIndex = 11;
 				helpButton.Text = "Help";
+				helpButton.FlatStyle = FlatStyle.System;
 				helpButton.Hide( );
+				
+				// checkBox
+				checkBox.Anchor = ( (AnchorStyles)( ( ( AnchorStyles.Bottom | AnchorStyles.Left ) | AnchorStyles.Right ) ) );
+				checkBox.Text = "Open Readonly";
+				checkBox.Location = new Point( 195, 350 );
+				checkBox.Size = new Size( 245, 21 );
+				checkBox.FlatStyle = FlatStyle.System;
+				checkBox.TabIndex = 12;
+				checkBox.Hide( );
 				
 				ClientSize = new Size( 554, 405 ); // 384
 				
@@ -713,6 +731,7 @@ namespace System.Windows.Forms
 				Controls.Add( dirComboBox );
 				Controls.Add( searchSaveLabel );
 				Controls.Add( buttonPanel );
+				Controls.Add( checkBox );
 				
 				ResumeLayout( false );
 				
@@ -747,6 +766,8 @@ namespace System.Windows.Forms
 				mwfFileView.SelectedFilesChanged += new EventHandler( OnSelectedFilesChangedFileView );
 				
 				dirComboBox.DirectoryChanged += new EventHandler( OnDirectoryChangedDirComboBox );
+				
+				checkBox.CheckedChanged += new EventHandler( OnCheckCheckChanged );
 			}
 			
 			public ComboBox FileNameComboBox
@@ -802,6 +823,19 @@ namespace System.Windows.Forms
 				}
 			}
 			
+			public CheckBox CheckBox
+			{
+				set
+				{
+					checkBox = value;
+				}
+				
+				get
+				{
+					return checkBox;
+				}
+			}
+			
 			void OnClickContextMenu( object sender, EventArgs e )
 			{
 				MenuItem senderMenuItem = sender as MenuItem;
@@ -848,7 +882,7 @@ namespace System.Windows.Forms
 					}
 					else // FileDialogType == SaveFileDialog
 					{
-						if ( fileDialog.SaveDialogOverwritePrompt )
+						if ( fileDialog.OverwritePrompt )
 						{
 							if ( File.Exists( currentFileName ) )
 							{
@@ -864,7 +898,7 @@ namespace System.Windows.Forms
 							}
 						}
 						
-						if ( fileDialog.SaveDialogCreatePrompt )
+						if ( fileDialog.CreatePrompt )
 						{
 							if ( !File.Exists( currentFileName ) )
 							{
@@ -1087,6 +1121,11 @@ namespace System.Windows.Forms
 				ChangeDirectory( sender, dirComboBox.CurrentPath );
 			}
 			
+			void OnCheckCheckChanged( object sender, EventArgs e )
+			{
+				fileDialog.ReadOnlyChecked = checkBox.Checked;
+			}
+			
 			public void UpdateFilters( )
 			{
 				ArrayList filters = fileDialog.FileFilter.FilterArrayList;
@@ -1148,7 +1187,7 @@ namespace System.Windows.Forms
 			
 			public void ResizeAndRelocateForHelpOrReadOnly( )
 			{
-				if ( fileDialog.ShowHelp || fileDialog.FileDialogShowReadOnly )
+				if ( fileDialog.ShowHelp || fileDialog.ShowReadOnly )
 				{
 					mwfFileView.Size = new Size( 449, 250 );
 					fileNameLabel.Location = new Point( 102, 298 );
@@ -1171,6 +1210,9 @@ namespace System.Windows.Forms
 				
 				if ( fileDialog.ShowHelp )
 					helpButton.Show( );
+				
+				if ( fileDialog.ShowReadOnly )
+					checkBox.Show( );
 			}
 			
 			internal class ButtonPanel : Panel

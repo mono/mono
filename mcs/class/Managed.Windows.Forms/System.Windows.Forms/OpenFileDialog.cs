@@ -34,11 +34,6 @@ namespace System.Windows.Forms
 {
 	public class OpenFileDialog : FileDialog
 	{
-		private bool multiSelect = false;
-		private bool readOnlyChecked = false;
-		private bool showReadOnly = false;
-		private bool checkFileExists = true;
-		
 		#region Public Constructors
 		public OpenFileDialog( )
 		{
@@ -50,8 +45,7 @@ namespace System.Windows.Forms
 			
 			SearchSaveLabelText = "Search in:";
 			
-			FileDialogShowReadOnly = showReadOnly;
-			FileDialogReadOnlyChecked = readOnlyChecked;
+			checkFileExists = true;
 			
 			fileDialogType = FileDialogType.OpenFileDialog;
 			
@@ -73,7 +67,7 @@ namespace System.Windows.Forms
 			}
 		}
 		
-		public bool Multiselect
+		public new bool Multiselect
 		{
 			get
 			{
@@ -82,12 +76,11 @@ namespace System.Windows.Forms
 			
 			set
 			{
-				multiSelect = value;
-				FileDialogMultiSelect = value;
+				base.Multiselect = value;
 			}
 		}
 		
-		public bool ReadOnlyChecked
+		public new bool ReadOnlyChecked
 		{
 			get
 			{
@@ -96,12 +89,11 @@ namespace System.Windows.Forms
 			
 			set
 			{
-				readOnlyChecked = value;
-				FileDialogReadOnlyChecked = readOnlyChecked;
+				base.ReadOnlyChecked = value;
 			}
 		}
 		
-		public bool ShowReadOnly
+		public new bool ShowReadOnly
 		{
 			get
 			{
@@ -110,8 +102,7 @@ namespace System.Windows.Forms
 			
 			set
 			{
-				showReadOnly = value;
-				FileDialogShowReadOnly = value;
+				base.ShowReadOnly = value;
 			}
 		}
 		
@@ -133,9 +124,9 @@ namespace System.Windows.Forms
 			multiSelect = false;
 			checkFileExists = true;
 			readOnlyChecked = false;
-			FileDialogReadOnlyChecked = readOnlyChecked;
+			ReadOnlyChecked = readOnlyChecked;
 			showReadOnly = false;
-			FileDialogShowReadOnly = showReadOnly;
+			ShowReadOnly = showReadOnly;
 		}
 		
 		[MonoTODO]
