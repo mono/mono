@@ -1,3 +1,9 @@
+2004-12-21  Sebastien Pouliot  <sebastien@ximian.com> 
+
+	* Assembly.cs: Added private LoadAssemblyPermissions to get the 
+	declarative security permission sets (minimum, optional and refused)
+	for the assembly.
+
 2004-12-20  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Assembly.cs: Removed old Demand support (moved in System.Security).

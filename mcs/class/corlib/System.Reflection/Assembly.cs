@@ -708,6 +708,10 @@ namespace System.Reflection {
 		internal void Resolve () 
 		{
 			lock (this) {
+				// FIXME: As we (currently) delay the resolution until the first CAS
+				// Demand it's too late to evaluate the Minimum permission set as a 
+				// condition to load the assembly into the AppDomain
+				LoadAssemblyPermissions ();
 				_granted = SecurityManager.ResolvePolicy (Evidence, _minimum, _optional,
 					_refuse, out _denied);
 			}
@@ -743,6 +747,40 @@ namespace System.Reflection {
 					Resolve ();
 				}
 				return _denied;
+			}
+		}
+
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		extern internal static bool LoadPermissions (Assembly a, 
+			ref IntPtr minimum, ref int minLength,
+			ref IntPtr optional, ref int optLength,
+			ref IntPtr refused, ref int refLength);
+
+		// Support for SecurityAction.RequestMinimum, RequestOptional and RequestRefuse
+		private void LoadAssemblyPermissions ()
+		{
+			IntPtr minimum = IntPtr.Zero, optional = IntPtr.Zero, refused = IntPtr.Zero;
+			int minLength = 0, optLength = 0, refLength = 0;
+			if (LoadPermissions (this, ref minimum, ref minLength, ref optional,
+				ref optLength, ref refused, ref refLength)) {
+
+				// Note: no need to cache these permission sets as they will only be created once
+				// at assembly resolution time.
+				if (minLength > 0) {
+					byte[] data = new byte [minLength];
+					Marshal.Copy (minimum, data, 0, minLength);
+					_minimum = SecurityManager.Decode (data);
+				}
+				if (optLength > 0) {
+					byte[] data = new byte [optLength];
+					Marshal.Copy (optional, data, 0, optLength);
+					_optional = SecurityManager.Decode (data);
+				}
+				if (refLength > 0) {
+					byte[] data = new byte [refLength];
+					Marshal.Copy (refused, data, 0, refLength);
+					_refuse = SecurityManager.Decode (data);
+				}
 			}
 		}
 	}
