@@ -3122,11 +3122,13 @@ namespace Mono.CSharp {
 					}
 				} else {
 					//
-					// We already catch different accessibility settings
-					// so we just need to check that we are not private
+					// If this is an interface method implementation,
+					// check for public accessibility
 					//
-					if ((modifiers & Modifiers.PRIVATE) != 0)
-						implementing = null;
+					if ((flags & MethodAttributes.MemberAccessMask) != MethodAttributes.Public){
+						if (TypeManager.IsInterfaceType (implementing.DeclaringType))
+							implementing = null;
+					}
 				} 
 					
 				//
@@ -3195,7 +3197,7 @@ namespace Mono.CSharp {
 			if ((modifiers & Modifiers.UNSAFE) != 0)
 				builder.InitLocals = false;
 
-			if (IsImplementing) {
+			if (IsImplementing){
 				//
 				// clear the pending implemntation flag
 				//
@@ -3211,6 +3213,7 @@ namespace Mono.CSharp {
 				if (member.IsExplicitImpl)
 					container.TypeBuilder.DefineMethodOverride (
 						builder, implementing);
+
 			}
 
 			if (!TypeManager.RegisterMethod (builder, ParameterInfo, ParameterTypes)) {

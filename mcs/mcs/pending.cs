@@ -531,7 +531,7 @@ namespace Mono.CSharp {
 						string extra = "";
 						
 						if (pending_implementations [i].found [j])
-							extra = ".  (method might be private or static)";
+							extra = ".  (method might be non-public or static)";
 						Report.Error (
 							536, container.Location,
 							"`" + container.Name + "' does not implement " +

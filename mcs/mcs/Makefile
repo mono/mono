@@ -73,5 +73,11 @@ cs-parser.cs: cs-parser.jay $(topdir)/jay/skeleton.cs
 
 TIME = time
 
+test: mcs2.exe mcs3.exe
+	ls -l mcs2.exe mcs3.exe
+
 mcs2.exe: mcs.exe
 	$(TIME) $(RUNTIME) ./mcs.exe $(USE_MCS_FLAGS) /target:exe /out:$@ $(all_sources)
+
+mcs3.exe: mcs2.exe
+	$(TIME) $(RUNTIME) ./mcs2.exe $(USE_MCS_FLAGS) /target:exe /out:$@ $(all_sources)
