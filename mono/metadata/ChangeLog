@@ -1,3 +1,13 @@
+2004-03-08  Miguel de Icaza  <miguel@ximian.com>
+
+	*  loader.c, loader.h (mono_loader_wine_init): Loads the Wine/Lib
+	library routine if present.  Notice that it will still continue
+	executing even if its missing, for those working on the Gtk#
+	edition of Windows.Forms.
+
+	* assembly.c (do_mono_assembly_open): If loading the
+	System.Windows.Forms call mono_loader_wini_init.
+
 2004-03-04  Lluis Sanchez Gual  <lluis@ximian.com>
 
 	* class.h: Added MonoRemoteClass struct.
