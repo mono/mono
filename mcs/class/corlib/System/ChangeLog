@@ -1,3 +1,10 @@
+2002-05-21  Duncan Mak  <duncan@ximian.com>
+
+	* Convert.cs (ToString): Fixed the ToString methods. Previously I had
+	mixed up the two code paths, one for converting to a specific base
+	(this case), another from converting from a foreign base to base10
+	(used by ToInt16|32|64 (string, int)).
+
 2002-05-22  Lawrence Pit  <loz@cable.a2000.nl>
 
 	* Environment.cs: CommandLine missed spaces between arguments

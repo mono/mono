@@ -1617,10 +1617,12 @@ namespace System {
 			return value.ToString (); 
 		}
 
-		public static string ToString (int value, int fromBase)
+		public static string ToString (int value, int toBase)
 		{
-			int retVal = ConvertFromBase (value.ToString (), fromBase);
-			return retVal.ToString ();
+			if (NotValidBase (toBase))
+				throw new ArgumentException ("toBase is not valid.");
+		
+			return ConvertToBase ((int) value, toBase);
 		}
 
 		public static string ToString (int value, IFormatProvider provider) 
@@ -1633,9 +1635,12 @@ namespace System {
 			return value.ToString (); 
 		}
 
-		public static string ToString (long value, int fromBase)
+		public static string ToString (long value, int toBase)
 		{
-			return (ConvertFromBase (value.ToString (), fromBase)).ToString ();
+			if (NotValidBase (toBase))
+				throw new ArgumentException ("toBase is not valid.");
+			
+			return ConvertToBase ((int) value, toBase);
 		}
 
 		public static string ToString (long value, IFormatProvider provider) 
@@ -1674,9 +1679,12 @@ namespace System {
 			return value.ToString (); 
 		}
 
-		public static string ToString (short value, int fromBase)
+		public static string ToString (short value, int toBase)
 		{
-			return (ConvertFromBase (value.ToString (), fromBase)).ToString ();
+			if (NotValidBase (toBase))
+				throw new ArgumentException ("toBase is not valid.");
+			
+			return ConvertToBase ((int) value, toBase);
 		}
 
 		public static string ToString (short value, IFormatProvider provider) 
@@ -2264,6 +2272,7 @@ namespace System {
 			else
 				sb.Append ((char) (reminder + '0'));
 		}
+		
                 // Lookup table for the conversion ToType method. Order
 		// is important! Used by ToType for comparing the target
 		// type, and uses hardcoded array indexes.
