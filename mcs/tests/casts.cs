@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 class Test {
 
 	static void receive_int (int a)

@@ -2,10 +2,6 @@
 
 	* test-102.cs: Improve test.
 
-2003-08-28  Martin Baulig  <martin@ximian.com>
-
-	* gen-3.cs: New generics test.
-
 2003-08-26  Martin Baulig  <martin@ximian.com>
 
 	* test-215.cs: New test for bug #47927.
