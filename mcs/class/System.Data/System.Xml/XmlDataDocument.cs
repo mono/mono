@@ -145,7 +145,7 @@ namespace System.Xml {
 				throw new ArgumentException ("The local name for elements or attributes cannot be null" +
 							     "or an empty string.");
 			string pref = prefix != null ? prefix : String.Empty;
-			return new XmlElement (pref, localName, namespaceURI != null ? namespaceURI : String.Empty, this);
+			return base.CreateElement (pref, localName, namespaceURI != null ? namespaceURI : String.Empty);
 
 		}
 
