@@ -46,8 +46,16 @@ namespace MonoTests.System {
 		}
 
 		[Test]
-// 		[ExpectedException (typeof (ArgumentNullException))]
- 		[ExpectedException (typeof (NullReferenceException))]
+		public void ApplicationIdentity_WithCulture ()
+		{
+			ApplicationIdentity appid = new ApplicationIdentity ("Mono, Culture=fr-ca");
+			Assert.IsNull (appid.CodeBase, "CodeBase");
+			Assert.AreEqual ("Mono, Culture=fr-ca", appid.FullName);
+			Assert.AreEqual ("Mono, Culture=fr-ca", appid.ToString ());
+		}
+
+		[Test]
+ 		[ExpectedException (typeof (ArgumentNullException))]
 		public void ApplicationIdentity_Null ()
 		{
 			new ApplicationIdentity (null);

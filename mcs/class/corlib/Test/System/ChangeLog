@@ -1,3 +1,9 @@
+2005-01-10  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* ApplicationIdentityTest.cs: Changed NullReferenceException for
+	ArgumentNullException (fixed in Dec CTP) and added test for cultures
+	in the application indentity.
+
 2005-01-10  Nick Drochak  <ndrochak@ieee.org>
 
 	* ConvertTest.cs: Test for exception thrown by 1.1. This is different
