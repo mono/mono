@@ -1,3 +1,9 @@
+2003-06-23  Nick Drochak <ndrochak@gol.com>
+
+        * ResourceReaderTest.cs: Put it back the way it was, doesn't work on 
+	.NET, and it works fine on both if you cd to the proper dir before
+	running these tests.
+
 2003-06-16  Nick Drochak <ndrochak@gol.com>
 
         * ResourceReaderTest.cs: Help tests find input files.

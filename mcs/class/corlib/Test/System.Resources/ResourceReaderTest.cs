@@ -19,9 +19,9 @@ namespace MonoTests.System.Resources {
 
 	[TestFixture]
 	public class ResourceReaderTest : Assertion {
-		private static string m_ResourceFile = Path.GetDirectoryName (Assembly.GetAssembly (typeof (ResourceReaderTest)).Location) + Path.DirectorySeparatorChar + "resources" + Path.DirectorySeparatorChar + "MyResources.resources";
-		private static string m_BadResourceFile = Path.GetDirectoryName (Assembly.GetAssembly (typeof (ResourceReaderTest)).Location) + Path.DirectorySeparatorChar + "resources" + Path.DirectorySeparatorChar + "Empty.resources";
-		
+		private static string m_Path = "resources" + Path.DirectorySeparatorChar;
+		private static string m_ResourceFile = m_Path + "MyResources.resources";
+		private static string m_BadResourceFile = m_Path + "Empty.resources";
 
 		[Test]
 		public void TestConstructorStringExceptions() {
@@ -49,7 +49,7 @@ namespace MonoTests.System.Resources {
 		[Test]
 		public void TestConstructorString() {
 			if (!File.Exists(m_ResourceFile)) {
-				Fail("Resource file is not where it should be:" + Directory.GetCurrentDirectory()+ "\\" + m_ResourceFile);
+				Fail("Resource file is not where it should be:" + m_ResourceFile);
 			}
 			ResourceReader r = null;
 			try {
