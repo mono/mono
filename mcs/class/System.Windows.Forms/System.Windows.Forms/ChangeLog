@@ -270,5 +270,10 @@ Added delegates. All delegates in System.Windows.Forms done
 * added new files for Jackson Harper (jackson@latitudegeo.com)
 * needs to be mono styled, and may have other issues
 
+2002-6-5 DennisHayes <dennish@raytek.com>
+* ErrorProvider.cs
+* PrintControllerWithStatusDialog.cs
+* PrintDialog.cs
+* added new files for paul
 
 
