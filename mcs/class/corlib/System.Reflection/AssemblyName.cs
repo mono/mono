@@ -33,6 +33,7 @@ using System.Configuration.Assemblies;
 using System.Globalization;
 using System.Runtime.Serialization;
 using System.Security.Cryptography;
+using System.Security.Permissions;
 using System.Text;
 using System.Runtime.InteropServices;
 using System.Runtime.CompilerServices;
@@ -242,6 +243,7 @@ namespace System.Reflection {
 			keyToken = publicKeyToken;
 		}
 
+		[SecurityPermission (SecurityAction.Demand, SerializationFormatter = true)]
 		public void GetObjectData (SerializationInfo info, StreamingContext context)
 		{
 			if (info == null)
