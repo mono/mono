@@ -1,3 +1,7 @@
+2004-04-04  Miguel de Icaza  <miguel@ximian.com>
+
+	* security.c (GetUserName): Make it work on MacOS X
+
 2004-04-02  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* security.c: use getpwuid_r if available. This one is thread-safe.
