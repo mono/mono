@@ -24,6 +24,13 @@ namespace System.Data.SqlClient
 	public sealed class SqlDataReader : IEnumerable, 
 		IDataReader, IDataRecord
 	{
+		#region Fields
+
+		DataTable tableSchema;
+		DataTable tableRow;
+
+		#endregion // Fields
+
 		#region Public Methods
 
 		[MonoTODO]
@@ -50,164 +57,207 @@ namespace System.Data.SqlClient
 			throw new NotImplementedException ();
 		}
 
-		byte GetByte(int i)
+		[MonoTODO]
+		public byte GetByte(int i)
 		{
 			throw new NotImplementedException ();
 		}
 
-		long GetBytes(int i, long fieldOffset, 
+		[MonoTODO]
+		public long GetBytes(int i, long fieldOffset, 
 			byte[] buffer, int bufferOffset, 
 			int length)
 		{
 			throw new NotImplementedException ();
 		}
 
-		char GetChar(int i)
+		[MonoTODO]
+		public char GetChar(int i)
 		{
 			throw new NotImplementedException ();
 		}
 
-		long GetChars(int i, long fieldOffset, 
+		[MonoTODO]
+		public long GetChars(int i, long fieldOffset, 
 			char[] buffer, int bufferOffset, 
 			int length)
 		{
 			throw new NotImplementedException ();
 		}
 
-		IDataReader GetData(int i)
+		[MonoTODO]
+		public IDataReader GetData(int i)
 		{
 			throw new NotImplementedException ();
 		}
 
-		string GetDataTypeName(int i)
+		[MonoTODO]
+		public string GetDataTypeName(int i)
 		{
 			throw new NotImplementedException ();
 		}
 
-		DateTime GetDateTime(int i)
+		[MonoTODO]
+		public DateTime GetDateTime(int i)
 		{
 			throw new NotImplementedException ();
 		}
 
-		decimal GetDecimal(int i)
+		[MonoTODO]
+		public decimal GetDecimal(int i)
 		{
 			throw new NotImplementedException ();
 		}
 
-		double GetDouble(int i)
+		[MonoTODO]
+		public double GetDouble(int i)
 		{
 			throw new NotImplementedException ();
 		}
 
-		Type GetFieldType(int i)
+		[MonoTODO]
+		public Type GetFieldType(int i)
 		{
 			throw new NotImplementedException ();
 		}
 
-		float GetFloat(int i)
+		[MonoTODO]
+		public float GetFloat(int i)
 		{
 			throw new NotImplementedException ();
 		}
 
-		Guid GetGuid(int i)
+		[MonoTODO]
+		public Guid GetGuid(int i)
 		{
 			throw new NotImplementedException ();
 		}
 
-		short GetInt16(int i)
+		[MonoTODO]
+		public short GetInt16(int i)
 		{
 			throw new NotImplementedException ();
 		}
 
-		int GetInt32(int i)
+		[MonoTODO]
+		public int GetInt32(int i)
 		{
 			throw new NotImplementedException ();
 		}
 
-		long GetInt64(int i)
+		[MonoTODO]
+		public long GetInt64(int i)
 		{
 			throw new NotImplementedException ();
 		}
 
-		string GetName(int i)
+		[MonoTODO]
+		public string GetName(int i)
 		{
 			throw new NotImplementedException ();
 		}
 
-		int GetOrdinal(string name)
+		[MonoTODO]
+		public int GetOrdinal(string name)
 		{
 			throw new NotImplementedException ();
 		}
 
-		string GetString(int i)
+		[MonoTODO]
+		public string GetString(int i)
 		{
 			throw new NotImplementedException ();
 		}
 
-		object GetValue(int i)
+		[MonoTODO]
+		public object GetValue(int i)
 		{
 			throw new NotImplementedException ();
 		}
 
-		int GetValues(object[] values)
+		[MonoTODO]
+		public int GetValues(object[] values)
 		{
 			throw new NotImplementedException ();
 		}
 
-		bool IsDBNull(int i)
+		[MonoTODO]
+		public bool IsDBNull(int i)
 		{
 			throw new NotImplementedException ();
 		}
 
-		bool GetBoolean(int i)
+		[MonoTODO]
+		public bool GetBoolean(int i)
 		{
 			throw new NotImplementedException ();
 		}
 
-		#endregion
+		[MonoTODO]
+		public IEnumerator GetEnumerator() {
+			throw new NotImplementedException ();
+		}
+
+		#endregion // Public Methods
+
+		#region // Destructors
+
+		[MonoTODO]
+		public void Dispose () {
+		}
+
+		[MonoTODO]
+		~SqlDataReader() {
+		}
+
+		#endregion // Destructors
+
 
 		#region Properties
 
-		[MonoTODO]
 		public int Depth {
+			[MonoTODO]
 			get { 
 				throw new NotImplementedException (); 
 			}
 		}
 
-		[MonoTODO]
 		public bool IsClosed {
+			[MonoTODO]
 			get {
 				throw new NotImplementedException (); 
 			}
 		}
 
-		[MonoTODO]
 		public int RecordsAffected {
+			[MonoTODO]
 			get { 
 				throw new NotImplementedException (); 
 			}
 		}
 	
-		int FieldCount {
+		public int FieldCount {
+			[MonoTODO]
 			get { 
 				throw new NotImplementedException ();
 			}
 		}
 
-		object this[string name] {
+		public object this[string name] {
+			[MonoTODO]
 			get { 
 				throw new NotImplementedException ();
 			}
 		}
 
-		object this[int i] {
+		public object this[int i] {
+			[MonoTODO]
 			get 
 			{ 
 				throw new NotImplementedException ();
 			}
 		}
 
-		#endregion
+		#endregion // Properties
 	}
 }

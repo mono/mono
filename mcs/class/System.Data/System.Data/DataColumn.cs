@@ -1,4 +1,18 @@
+//
+// System.Data.DataColumn.cs
+//
+// Author:
+//   Christopher Podurgiel (cpodurgiel@msn.com)
+//   Rodrigo Moya (rodrigo@ximian.com)
+//   Daniel Morgan (danmorg@sc.rr.com)
+//
+// (C) Chris Podurgiel
+// (C) Ximian, Inc 2002
+//
+
+
 using System;
+using System.ComponentModel;
 
 namespace System.Data
 {
@@ -12,7 +26,9 @@ namespace System.Data
 		private long autoIncrementSeed = 0;
 		private long autoIncrementStep = 1;
 		private string caption = null;
-		private MappingType columnMapping = null;
+		// FIXME: what does ms.net do for default of columnMapping
+		//        when not specified by the constructor?
+		private MappingType columnMapping = MappingType.SimpleContent; // default?
 		private string columnName = null;
 		private Type dataType = null;
 		private object defaultValue = null;
@@ -96,9 +112,12 @@ namespace System.Data
 					{
 						throw new Exception();
 					}
-					if(DataType != Int16 && DataType != Int32 && DataType != Int64)
+					if(Type.GetTypeCode(dataType) != TypeCode.Int16 && 
+					   Type.GetTypeCode(dataType) != TypeCode.Int32 && 
+					   Type.GetTypeCode(dataType) != TypeCode.Int64)
 					{
-						DataType = Int32;
+						Int32 dtInt = new Int32();
+						dataType = dtInt.GetType();
 					}
 				}
 			}
@@ -172,7 +191,8 @@ namespace System.Data
 			}
 			set
 			{
-				if(AutoIncrement == true && value != Int32)
+				if(AutoIncrement == true && 
+				   Type.GetTypeCode(value) != TypeCode.Int32)
 				{
 					throw new Exception();
 				}
@@ -297,18 +317,29 @@ namespace System.Data
 
 		#region Methods
 
-		protected internal void CheckNotAllowNull();
+		[MonoTODO]
+		protected internal void CheckNotAllowNull() {
+		}
 
-		protected void CheckUnique();
+		[MonoTODO]
+		protected void CheckUnique() {
+		}
 
-		protected internal virtual void OnPropertyChanging(PropertyChangedEventArgs pcevent);
+		[MonoTODO]
+		protected internal virtual void 
+		OnPropertyChanging (PropertyChangedEventArgs pcevent) {
+		}
 
-		protected internal void RaisePropertyChanging(string name);
+		[MonoTODO]
+		protected internal void RaisePropertyChanging(string name) {
+		}
 
 		/// <summary>
 		/// Gets the Expression of the column, if one exists.
 		/// </summary>
-		/// <returns>The Expression value, if the property is set; otherwise, the ColumnName property.</returns>
+		/// <returns>The Expression value, if the property is set; 
+		/// otherwise, the ColumnName property.</returns>
+		[MonoTODO]
 		public override string ToString()
 		{
 			if(expression != null && expression != string.Empty)
