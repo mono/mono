@@ -225,6 +225,11 @@ namespace Mono.CSharp
 				"Options can be of the form -option or /option");
 		}
 
+		static void TargetUsage ()
+		{
+			Report.Error (2019, "Valid options for -target: are exe, winexe, library or module");
+		}
+		
 		static void About ()
 		{
 			Console.WriteLine (
@@ -693,7 +698,7 @@ namespace Mono.CSharp
 					target_ext = ".dll";
 					break;
 				default:
-					Usage ();
+					TargetUsage ();
 					Environment.Exit (1);
 					break;
 				}
@@ -846,7 +851,7 @@ namespace Mono.CSharp
 					break;
 
 				default:
-					Usage ();
+					TargetUsage ();
 					Environment.Exit (1);
 					break;
 				}
@@ -1307,9 +1312,12 @@ namespace Mono.CSharp
 
 			PEFileKinds k = PEFileKinds.ConsoleApplication;
 				
-			if (target == Target.Library || target == Target.Module)
+			if (target == Target.Library || target == Target.Module){
 				k = PEFileKinds.Dll;
-			else if (target == Target.Exe)
+
+				if (RootContext.MainClass != null)
+					Report.Error (2017, "Can not specify -main: when building module or library");
+			} else if (target == Target.Exe)
 				k = PEFileKinds.ConsoleApplication;
 			else if (target == Target.WinExe)
 				k = PEFileKinds.WindowApplication;

@@ -1,6 +1,9 @@
 2003-05-04  Miguel de Icaza  <miguel@ximian.com>
 
-	* cs-parser.jay (field_declaration): catch void field declaration
+	* cs-parser.jay (constructor_initializer): catch another error,
+	and display nice message.
+	
+	(field_declaration): catch void field declaration
 	to flag a better error. 
 
 	* class.cs (MemberBase.CheckBase): Report an error instead of a
