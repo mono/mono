@@ -1,3 +1,20 @@
+2003-04-17  Zoltan Varga  <vargaz@freemail.hu>
+
+	* tramp-x86.c (mono_arch_create_jit_trampoline): Subsitute synchronized
+	methods with their wrapper.
+
+	* tramp-ppc.c (mono_arch_create_jit_trampoline): Subsitute synchronized
+	methods with their wrapper.
+
+	* jit-icalls.c (mono_ldvirtfn): Subsitute synchronized methods with
+	their wrapper.
+
+	* mini.c (mono_method_to_ir): Subsitute synchronized methods with their
+	wrapper.
+
+	* mini.c (mono_method_check_inlining): Avoid inlining synchronized
+	methods.
+
 2003-04-17  Dietmar Maurer  <dietmar@ximian.com>
 
 	* exceptions-x86.c (mono_arch_handle_exception): fix for bug 36252
