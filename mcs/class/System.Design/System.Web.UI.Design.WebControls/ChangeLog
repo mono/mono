@@ -1,6 +1,15 @@
 
 2002-10-07     Gaurav Vaish <gvaish_mono@lycos.com>
 
+	* BordersPageInternal.cs  : LoadComponent() - Initial implementation.
+	                          : OnClickColorPicker(object, EventArgs),
+	                          : InitializePage()
+	                                            - Stubbed.
+	                          : OnBordersChanged(object, EventArgs)
+	                                            - Implemented.
+
+2002-10-07     Gaurav Vaish <gvaish_mono@lycos.com>
+
 	* BaseDataListPageInternal.cs
 	                          : ctor()         - Removed call to base.
 	                                             It's by default.

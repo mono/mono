@@ -26,11 +26,42 @@ namespace System.Web.UI.Design.WebControls
 		[MonoTODO]
 		protected override void LoadComponent()
 		{
+			InitializePage();
+			BaseDataList baseCtrl = GetBaseControl();
+			int cellPadding = baseCtrl.CellPadding;
+			if(cellPadding >= 0)
+			{
+				throw new NotImplementedException();
+			}
+			int cellSpacing = baseCtrl.CellSpacing;
+			if(cellSpacing >= 0)
+			{
+				throw new NotImplementedException();
+			}
+			throw new NotImplementedException();
+		}
+
+		[MonoTODO]
+		private void InitializePage()
+		{
 			throw new NotImplementedException();
 		}
 
 		[MonoTODO]
 		protected override void SaveComponent()
+		{
+			throw new NotImplementedException();
+		}
+
+		private void OnBordersChanged(object source, EventArgs e)
+		{
+			if(!IsLoading())
+			{
+				SetDirty();
+			}
+		}
+
+		private void OnClickColorPicker(object source, EventArgs e)
 		{
 			throw new NotImplementedException();
 		}
