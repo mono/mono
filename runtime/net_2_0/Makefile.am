@@ -65,6 +65,13 @@ gac_assemblies_list = \
 	System.Windows.Forms				\
 	System.Xml
 
+no_sign_list = \
+	ICSharpCode.SharpZipLib				\
+	Npgsql						\
+	nunit.util					\
+	nunit.core					\
+	nunit.framework
+
 if PLATFORM_WIN32
 gac_assemblies = 
 local_mscorlib =
@@ -80,13 +87,19 @@ EXTRA_DIST = $(gac_assemblies) $(corlib_DATA)
 MAINTAINERCLEANFILES = $(EXTRA_DIST)
 
 mscorlib.dll $(gac_assemblies):
-	cd $(srcdir) && $(LN_S) ../../../mcs/class/lib/net_2_0/$@ $@
+	cd $(srcdir) && $(LN_S) ../../../mcs/class/lib/net_2_0/$@ $@ ; \
+	cd $(srcdir) && $(LIBTOOL) --mode=execute $(mono_runtime) --config ../../data/config $(sn) -q -R $(srcdir)/$@ $(mono_snk) || exit 1 ;
 
 all-local: $(gac_assemblies)
 
 if INSTALL_2_0
 install-data-local:
 	@if test -n '$(gac_assemblies)'; then \
+	  for i in $(filter-out $(no_sign_list), $(gac_assemblies)) ; do \
+		echo "MONO_PATH=$(srcdir) $(mono_runtime) --config ../../data/config $(sn) -q -R $(srcdir)/$$i $(mono_snk)" ; \
+	    	MONO_PATH=$(srcdir) \
+	      	$(LIBTOOL) --mode=execute $(mono_runtime) --config ../../data/config $(sn) -q -R $(srcdir)/$$i $(mono_snk) || exit 1 ; \
+	  done; \
 	  for i in ''$(gac_assemblies); do \
 	    echo "MONO_PATH=$(srcdir) $(mono_runtime) --config ../../data/config $(sn) -q -R $(srcdir)/$$i $(mono_snk)" ; \
 	    MONO_PATH=$(srcdir) \
