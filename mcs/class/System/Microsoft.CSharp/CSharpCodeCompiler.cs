@@ -173,6 +173,8 @@ namespace Mono.CSharp
 				foreach (string import in options.ReferencedAssemblies)
 					args.AppendFormat("/r:\"{0}\" ",import);
 			}
+			
+			args.Append (" -- ");
 			foreach (string source in fileNames)
 				args.AppendFormat("\"{0}\" ",source);
 			return args.ToString();
