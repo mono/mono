@@ -343,6 +343,9 @@ namespace System {
 		public string ToString (string format, IFormatProvider fp)
 		{
 			// FIXME: Need to pass format and provider info to this call too.
+			if (format == "X")
+				throw new FormatException();
+
 			return ToStringImpl(value);
 		}
 

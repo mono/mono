@@ -1,3 +1,6 @@
+2002-09-12  Nick Drochak  <ndrochak@gol.com>
+
+	* Double.cs (ToString): Throw exception when "X" format is passed in.
 
 Wed Sep 11 15:26:34 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
