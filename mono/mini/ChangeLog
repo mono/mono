@@ -1,8 +1,11 @@
 2004-08-29  Zoltan Varga  <vargaz@freemail.hu>
 
-	* mini-amd64.c cpu-amd64.md inssel-amd64.brg mini-amd64.h: More SSE
+	* mini-amd64.c cpu-amd64.md inssel-amd64.brg mini-amd64.h: Ongoing SSE
 	work.
 	
+	* mini-amd64.c cpu-amd64.md inssel-amd64.brg mini-amd64.h: More SSE
+	work.
+
 	* mini-amd64.c cpu-amd64.md: Implement checked int<->uint casts.
 	Beginnings of SSE2 support.
 
