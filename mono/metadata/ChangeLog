@@ -1,3 +1,7 @@
+2001-08-01  Dietmar Maurer  <dietmar@ximian.com>
+
+	* assembly.c (mono_assembly_open): set the corlib before we continue.
+	(mono_assembly_open): replaced strcmp() with !strcmp()
 
 Tue Jul 31 17:54:02 CEST 2001 Paolo Molaro <lupus@ximian.com>
 
