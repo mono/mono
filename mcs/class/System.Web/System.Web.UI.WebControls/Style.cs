@@ -261,7 +261,7 @@ namespace System.Web.UI.WebControls
 			AddAttributesToRender(writer, null);
 		}
 
-		public void AddAttributesToRender(HtmlTextWriter writer, WebControl owner)
+		public virtual void AddAttributesToRender(HtmlTextWriter writer, WebControl owner)
 		{
 			if(IsSet(BACKCOLOR))
 			{
@@ -442,7 +442,7 @@ namespace System.Web.UI.WebControls
 				}
 			}
 		}
-		
+
 		public virtual void Reset()
 		{
 			if(IsSet(BACKCOLOR))
@@ -496,7 +496,7 @@ namespace System.Web.UI.WebControls
 			}
 			return null;
 		}
-		
+
 		protected internal void LoadViewState(object state)
 		{
 			if(state!=null && selfStateBag)
@@ -508,22 +508,22 @@ namespace System.Web.UI.WebControls
 				selectionBits = (int)ViewState[selectionBitString];
 			}
 		}
-		
+
 		void IStateManager.LoadViewState(object state)
 		{
 			LoadViewState(state);
 		}
-		
+
 		object IStateManager.SaveViewState()
 		{
 			return SaveViewState();
 		}
-		
+
 		void IStateManager.TrackViewState()
 		{
 			TrackViewState();
 		}
-		
+
 		bool IStateManager.IsTrackingViewState
 		{
 			get

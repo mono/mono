@@ -1,13 +1,13 @@
 /**
  * Namespace: System.Web.UI.WebControls
  * Class:     DataGridColumnCollection
- * 
+ *
  * Author:  Gaurav Vaish
  * Maintainer: gvaish@iitk.ac.in
  * Contact: <my_scripts2001@yahoo.com>, <gvaish@iitk.ac.in>
  * Implementation: yes
  * Status:  ??%
- * 
+ *
  * (C) Gaurav Vaish (2002)
  */
 
@@ -23,13 +23,13 @@ namespace System.Web.UI.WebControls
 		private DataGrid  owner;
 		private ArrayList columns;
 		private bool      trackViewState = false;
-		
+
 		public DataGridColumnCollection(DataGrid owner, ArrayList columns)
 		{
 			this.owner   = owner;
 			this.columns = columns;
 		}
-		
+
 		public int Count
 		{
 			get
@@ -37,7 +37,7 @@ namespace System.Web.UI.WebControls
 				return columns.Count;
 			}
 		}
-		
+
 		public bool IsReadOnly
 		{
 			get
@@ -45,7 +45,7 @@ namespace System.Web.UI.WebControls
 				return false;
 			}
 		}
-		
+
 		public bool IsSynchronized
 		{
 			get
@@ -53,7 +53,7 @@ namespace System.Web.UI.WebControls
 				return false;
 			}
 		}
-		
+
 		public DataGridColumn this[int index]
 		{
 			get
@@ -61,7 +61,7 @@ namespace System.Web.UI.WebControls
 				return (DataGridColumn)(columns[index]);
 			}
 		}
-		
+
 		public object SyncRoot
 		{
 			get
@@ -69,12 +69,12 @@ namespace System.Web.UI.WebControls
 				return this;
 			}
 		}
-		
+
 		public void Add(DataGridColumn column)
 		{
 			AddAt(-1, column);
 		}
-		
+
 		public void AddAt(int index, DataGridColumn column)
 		{
 			if(index == -1)
@@ -86,13 +86,13 @@ namespace System.Web.UI.WebControls
 			}
 			//TODO: To put. DataGridColumn class not created!
 			//column->owner = owner;
-			if(marked)
+			if(trackViewState)
 			{
-				column.TrackViewState();
+				((IStateManager)column).TrackViewState();
 			}
 			OnColumnsChanged();
 		}
-		
+
 		internal void OnColumnsChanged()
 		{
 			if(owner != null)
@@ -100,13 +100,13 @@ namespace System.Web.UI.WebControls
 				owner.OnColumnsChanged();
 			}
 		}
-		
+
 		public void Clear()
 		{
 			columns.Clear();
 			OnColumnsChanged();
 		}
-		
+
 		public void CopyTo(Array array, int index)
 		{
 			foreach(DataGridColumn current in this)
@@ -114,12 +114,12 @@ namespace System.Web.UI.WebControls
 				array.SetValue(current, index++);
 			}
 		}
-		
+
 		public IEnumerator GetEnumerator()
 		{
 			return columns.GetEnumerator();
 		}
-		
+
 		public int IndexOf(DataGridColumn column)
 		{
 			if(column != null)
@@ -128,7 +128,7 @@ namespace System.Web.UI.WebControls
 			}
 			return -1;
 		}
-		
+
 		public void Remove(DataGridColumn column)
 		{
 			if(column != null)
@@ -136,7 +136,7 @@ namespace System.Web.UI.WebControls
 				RemoveAt(IndexOf(column));
 			}
 		}
-		
+
 		public void RemoveAt(int index)
 		{
 			if(index >= 0 && index < columns.Count)
@@ -147,39 +147,39 @@ namespace System.Web.UI.WebControls
 			//This exception is not documented, but thrown
 			throw new ArgumentOutOfRangeException("string");
 		}
-		
+
 		object IStateManager.SaveViewState()
 		{
 			ArrayList retVal = new ArrayList(columns.Count);
 			foreach(DataGridColumn current in this)
 			{
-				retVal.Add(current.SaveViewState());
+				retVal.Add(((IStateManager)current).SaveViewState());
 			}
 			return retVal;
 		}
-		
+
 		void IStateManager.LoadViewState(object savedState)
 		{
 			if(savedState != null && savedState is ArrayList)
 			{
 				int currentIndex = 0;
-				foreach(DataGridColumn current in ArrayList)
+				foreach(DataGridColumn current in (ArrayList)savedState)
 				{
-					((DataGridColumn)columns[currentIndex ++]).LoadViewState(current);
+					((IStateManager)columns[currentIndex ++]).LoadViewState(current);
 				}
 			}
 		}
-		
+
 		void IStateManager.TrackViewState()
 		{
-			marked = true;
+			trackViewState = true;
 		}
-		
+
 		bool IStateManager.IsTrackingViewState
 		{
 			get
 			{
-				return marked;
+				return trackViewState;
 			}
 		}
 	}

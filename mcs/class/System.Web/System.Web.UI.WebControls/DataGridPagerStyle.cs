@@ -1,13 +1,13 @@
 /**
  * Namespace: System.Web.UI.WebControls
  * Class:     DataGridPagerStyle
- * 
+ *
  * Author:  Gaurav Vaish
  * Maintainer: gvaish@iitk.ac.in
  * Contact: <my_scripts2001@yahoo.com>, <gvaish@iitk.ac.in>
  * Implementation: yes
  * Status:  100%
- * 
+ *
  * (C) Gaurav Vaish (2002)
  */
 
@@ -20,7 +20,7 @@ namespace System.Web.UI.WebControls
 	public class DataGridPagerStyle : TableItemStyle
 	{
 		DataGrid owner;
-		
+
 		public static int MODE         = (0x01 << 19);
 		public static int NEXT_PG_TEXT = (0x01 << 20);
 		public static int PG_BTN_COUNT = (0x01 << 21);
@@ -32,7 +32,7 @@ namespace System.Web.UI.WebControls
 		{
 			this.owner = owner;
 		}
-		
+
 		public PagerMode Mode
 		{
 			get
@@ -53,7 +53,7 @@ namespace System.Web.UI.WebControls
 				Set(MODE);
 			}
 		}
-		
+
 		public string NextPageText
 		{
 			get
@@ -70,7 +70,7 @@ namespace System.Web.UI.WebControls
 				Set(NEXT_PG_TEXT);
 			}
 		}
-		
+
 		public string PrevPageText
 		{
 			get
@@ -87,7 +87,7 @@ namespace System.Web.UI.WebControls
 				Set(PREV_PG_TEXT);
 			}
 		}
-		
+
 		public int PageButtonCount
 		{
 			get
@@ -104,7 +104,7 @@ namespace System.Web.UI.WebControls
 				Set(PG_BTN_COUNT);
 			}
 		}
-		
+
 		public PagerPosition Position
 		{
 			get
@@ -125,7 +125,7 @@ namespace System.Web.UI.WebControls
 				Set(POSITION);
 			}
 		}
-		
+
 		public bool Visible
 		{
 			get
@@ -142,13 +142,13 @@ namespace System.Web.UI.WebControls
 				Set(PG_BTN_COUNT);
 			}
 		}
-		
+
 		public override void CopyFrom(Style s)
 		{
-			if(s != null && !s.IsEmpty && s is TableItemStyle)
+			if(s != null && !s.IsEmpty && s is DataGridPagerStyle)
 			{
 				base.CopyFrom(s);
-				TableItemStyle from = (TableItemStyle)s;
+				DataGridPagerStyle from = (DataGridPagerStyle)s;
 				if(from.IsSet(MODE))
 				{
 					Mode = from.Mode;
@@ -175,16 +175,16 @@ namespace System.Web.UI.WebControls
 				}
 			}
 		}
-		
+
 		public override void MergeWith(Style s)
 		{
-			if(s != null && !s.IsEmpty && s is TableItemStyle)
+			if(s != null && !s.IsEmpty && s is DataGridPagerStyle)
 			{
 				base.MergeWith(s);
-				TableItemStyle with = (TableItemStyle)s;
+				DataGridPagerStyle with = (DataGridPagerStyle)s;
 				if(with.IsSet(MODE) && !IsSet(MODE))
 				{
-					Mode = from.Mode;
+					Mode = with.Mode;
 				}
 				if(with.IsSet(NEXT_PG_TEXT) && !IsSet(NEXT_PG_TEXT))
 				{

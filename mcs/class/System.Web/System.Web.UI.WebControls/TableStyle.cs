@@ -1,13 +1,13 @@
 /**
  * Namespace: System.Web.UI.WebControls
  * Class:     TableStyle
- * 
+ *
  * Author:  Gaurav Vaish
  * Maintainer: gvaish@iitk.ac.in
  * Contact: <my_scripts2001@yahoo.com>, <gvaish@iitk.ac.in>
  * Implementation: yes
  * Status:  100%
- * 
+ *
  * (C) Gaurav Vaish (2002)
  */
 
@@ -24,15 +24,15 @@ namespace System.Web.UI.WebControls
 		private static int CELL_SPAC = (0x01 << 18);
 		private static int GRID_LINE = (0x01 << 19);
 		private static int HOR_ALIGN = (0x01 << 20);
-		
+
 		public TableStyle(): base()
 		{
 		}
-		
+
 		public TableStyle(StateBag bag): base(bag)
 		{
 		}
-		
+
 		public virtual string BackImageUrl
 		{
 			get
@@ -49,7 +49,7 @@ namespace System.Web.UI.WebControls
 				Set(IMAGE_URL);
 			}
 		}
-		
+
 		public virtual int CellPadding
 		{
 			get
@@ -66,7 +66,7 @@ namespace System.Web.UI.WebControls
 				Set(CELL_PADD);
 			}
 		}
-		
+
 		public virtual int CellSpacing
 		{
 			get
@@ -83,7 +83,7 @@ namespace System.Web.UI.WebControls
 				Set(CELL_SPAC);
 			}
 		}
-		
+
 		public virtual GridLines GridLines
 		{
 			get
@@ -100,7 +100,7 @@ namespace System.Web.UI.WebControls
 				Set(GRID_LINE);
 			}
 		}
-		
+
 		public virtual HorizontalAlign HorizontalAlign
 		{
 			get
@@ -117,7 +117,7 @@ namespace System.Web.UI.WebControls
 				Set(HOR_ALIGN);
 			}
 		}
-		
+
 		public override void AddAttributesToRender(HtmlTextWriter writer, WebControl owner)
 		{
 			base.AddAttributesToRender(writer, owner);
@@ -127,11 +127,11 @@ namespace System.Web.UI.WebControls
 			}
 			if(CellSpacing >= 0)
 			{
-				writer.AddAttribute(HtmlTextWriterAttribute.Cellspacing, CellSpacing.ToString(NumerFormatInfo.InvariantInfo));
+				writer.AddAttribute(HtmlTextWriterAttribute.Cellspacing, CellSpacing.ToString(NumberFormatInfo.InvariantInfo));
 			}
 			if(CellPadding >= 0)
 			{
-				writer.AddAttribute(HtmlTextWriterAttribute.Cellpadding, CellPadding.ToString(NumerFormatInfo.InvariantInfo));
+				writer.AddAttribute(HtmlTextWriterAttribute.Cellpadding, CellPadding.ToString(NumberFormatInfo.InvariantInfo));
 			}
 			if(HorizontalAlign != HorizontalAlign.NotSet)
 			{
@@ -151,13 +151,7 @@ namespace System.Web.UI.WebControls
 			}
 			writer.AddAttribute(HtmlTextWriterAttribute.Rules, gd);
 		}
-		
-		private static int IMAGE_URL = (0x01 << 16);
-		private static int CELL_PADD = (0x01 << 17);
-		private static int CELL_SPAC = (0x01 << 18);
-		private static int GRID_LINE = (0x01 << 19);
-		private static int HOR_ALIGN = (0x01 << 20);
-		
+
 		public override void CopyFrom(Style s)
 		{
 			if(s != null && s is TableStyle && !s.IsEmpty)
@@ -186,36 +180,36 @@ namespace System.Web.UI.WebControls
 				}
 			}
 		}
-		
+
 		public override void MergeWith(Style s)
 		{
 			if(s != null && s is TableStyle && !s.IsEmpty)
 			{
 				base.MergeWith(s);
 				TableStyle with = (TableStyle)s;
-				if(from.IsSet(HOR_ALIGN) && IsSet(HOR_ALIGN))
+				if(with.IsSet(HOR_ALIGN) && IsSet(HOR_ALIGN))
 				{
 					HorizontalAlign = with.HorizontalAlign;
 				}
-				if(from.IsSet(IMAGE_URL) && IsSet(IMAGE_URL))
+				if(with.IsSet(IMAGE_URL) && IsSet(IMAGE_URL))
 				{
 					BackImageUrl = with.BackImageUrl;
 				}
-				if(from.IsSet(CELL_PADD) && IsSet(CELLL_PADD))
+				if(with.IsSet(CELL_PADD) && IsSet(CELLL_PADD))
 				{
 					CellPadding = with.CellPadding;
 				}
-				if(from.IsSet(CELL_SPAC) && IsSet(CELL_SPAC))
+				if(with.IsSet(CELL_SPAC) && IsSet(CELL_SPAC))
 				{
 					CellSpacing = with.CellSpacing;
 				}
-				if(from.IsSet(GRID_LINE) && IsSet(GRID_LINE))
+				if(with.IsSet(GRID_LINE) && IsSet(GRID_LINE))
 				{
 					GridLines = with.GridLines;
 				}
 			}
 		}
-		
+
 		public override void Reset()
 		{
 			if(IsSet(IMAGE_URL))

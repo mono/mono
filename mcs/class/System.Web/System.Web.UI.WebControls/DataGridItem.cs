@@ -1,13 +1,13 @@
 /**
  * Namespace: System.Web.UI.WebControls
  * Class:     DataGridItem
- * 
+ *
  * Author:  Gaurav Vaish
  * Maintainer: gvaish@iitk.ac.in
  * Contact: <my_scripts2001@yahoo.com>, <gvaish@iitk.ac.in>
  * Implementation: yes
  * Status:  100%
- * 
+ *
  * (C) Gaurav Vaish (2002)
  */
 
@@ -30,7 +30,7 @@ namespace System.Web.UI.WebControls
 			this.dataSetIndex = dataSetIndex;
 			this.itemType     = itemType;
 		}
-		
+
 		public virtual object DataItem
 		{
 			get
@@ -42,7 +42,7 @@ namespace System.Web.UI.WebControls
 				dataItem = value;
 			}
 		}
-		
+
 		public virtual int DataSetIndex
 		{
 			get
@@ -50,7 +50,7 @@ namespace System.Web.UI.WebControls
 				return dataSetIndex;
 			}
 		}
-		
+
 		public virtual int ItemIndex
 		{
 			get
@@ -58,7 +58,7 @@ namespace System.Web.UI.WebControls
 				return itemIndex;
 			}
 		}
-		
+
 		public virtual ListItemType ItemType
 		{
 			get
@@ -66,14 +66,16 @@ namespace System.Web.UI.WebControls
 				return itemType;
 			}
 		}
-		
+
 		protected override bool OnBubbleEvent(object source, EventArgs e)
 		{
 			if(e is CommandEventArgs)
 			{
 				DataGridCommandEventArgs args = new DataGridCommandEventArgs(this, source, (CommandEventArgs)e);
 				RaiseBubbleEvent(this, args);
+				return true;
 			}
+			return false;
 		}
 	}
 }

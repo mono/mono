@@ -59,7 +59,10 @@ namespace System.Web.UI.WebControls
 			get
 			{
 				if(ControlStyleCreated)
+				{
 					return ((TableStyle)ControlStyle).BackImageUrl;
+				}
+				return String.Empty;
 			}
 			set
 			{
@@ -72,7 +75,10 @@ namespace System.Web.UI.WebControls
 			get
 			{
 				if(ControlStyleCreated)
+				{
 					return ((TableStyle)ControlStyle).CellPadding;
+				}
+				return -1;
 			}
 			set
 			{
@@ -85,7 +91,10 @@ namespace System.Web.UI.WebControls
 			get
 			{
 				if(ControlStyleCreated)
+				{
 					return ((TableStyle)ControlStyle).CellSpacing;
+				}
+				return -1;
 			}
 			set
 			{
@@ -98,7 +107,10 @@ namespace System.Web.UI.WebControls
 			get
 			{
 				if(ControlStyleCreated)
+				{
 					return ((TableStyle)ControlStyle).GridLines;
+				}
+				return GridLines.None;
 			}
 			set
 			{
@@ -111,7 +123,10 @@ namespace System.Web.UI.WebControls
 			get
 			{
 				if(ControlStyleCreated)
+				{
 					return ((TableStyle)ControlStyle).HorizontalAlign;
+				}
+				return HorizontalAlign.NotSet;
 			}
 			set
 			{

@@ -25,7 +25,7 @@ namespace System.Web.UI.WebControls
 		{
 			PreventAutoID();
 		}
-		
+
 		public virtual TableCellCollection Cells
 		{
 			get
@@ -37,7 +37,7 @@ namespace System.Web.UI.WebControls
 				return cells;
 			}
 		}
-		
+
 		public virtual HorizontalAlign HorizontalAlign
 		{
 			get
@@ -52,7 +52,7 @@ namespace System.Web.UI.WebControls
 				ViewState["HorizontalAlign"] = value;
 			}
 		}
-		
+
 		public virtual VerticalAlign VerticalAlign
 		{
 			get
@@ -67,24 +67,24 @@ namespace System.Web.UI.WebControls
 				ViewState["VerticalAlign"] = value;
 			}
 		}
-		
+
 		protected override Style CreateControlStyle()
 		{
 			return new TableItemStyle(ViewState);
 		}
-		
+
 		protected override ControlCollection CreateControlCollection()
 		{
 			return new CellControlCollection(this);
 		}
-		
+
 		class CellControlCollection: ControlCollection
 		{
 			public CellControlCollection(Control owner): base(owner)
 			{
 			}
-			
-			public void Add(Control child)
+
+			public override void Add(Control child)
 			{
 				if(child is TableCell)
 				{
@@ -94,8 +94,8 @@ namespace System.Web.UI.WebControls
 					throw new ArgumentException(HttpRuntime.FormatResourceString("Cannot_Have_Children_Of_Type", "TableRow", GetType().Name.ToString()));
 				}
 			}
-			
-			public void AddAt(int index, Control child)
+
+			public override void AddAt(int index, Control child)
 			{
 				if(child is TableCell)
 				{

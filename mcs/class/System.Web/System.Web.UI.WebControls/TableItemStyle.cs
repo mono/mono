@@ -22,15 +22,15 @@ namespace System.Web.UI.WebControls
 		private static int H_ALIGN = (0x01 << 16);
 		private static int V_ALIGN = (0x01 << 17);
 		private static int WRAP    = (0x01 << 18);
-		
+
 		public TableItemStyle(): base()
 		{
 		}
-		
+
 		public TableItemStyle(StateBag bag): base(bag)
 		{
 		}
-		
+
 		public virtual HorizontalAlign HorizontalAlign
 		{
 			get
@@ -49,7 +49,7 @@ namespace System.Web.UI.WebControls
 				Set(H_ALIGN);
 			}
 		}
-		
+
 		public virtual VerticalAlign VerticalAlign
 		{
 			get
@@ -82,7 +82,7 @@ namespace System.Web.UI.WebControls
 				ViewState["Wrap"] = value;
 			}
 		}
-		
+
 		public override void CopyFrom(Style s)
 		{
 			if(s!=null && s is TableItemStyle && !s.IsEmpty)
@@ -103,7 +103,7 @@ namespace System.Web.UI.WebControls
 				}
 			}
 		}
-		
+
 		public override void MergeWith(Style s)
 		{
 			if(s!=null && s is TableItemStyle && !s.IsEmpty)
@@ -124,7 +124,7 @@ namespace System.Web.UI.WebControls
 				}
 			}
 		}
-		
+
 		public override void Reset()
 		{
 			if(IsSet(H_ALIGN))
@@ -135,8 +135,8 @@ namespace System.Web.UI.WebControls
 				ViewState.Remove("Wrap");
 			base.Reset();
 		}
-		
-		protected override void AddAttributesToRender(HtmlTextWriter writer, WebControl owner)
+
+		public override void AddAttributesToRender(HtmlTextWriter writer, WebControl owner)
 		{
 			base.AddAttributesToRender(writer, owner);
 			if(!Wrap)

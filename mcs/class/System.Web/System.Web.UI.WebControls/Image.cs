@@ -109,7 +109,7 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
-		protected override void RenderContents(HtmlTextWriterAttribute attribute)
+		protected override void RenderContents(HtmlTextWriter writer)
 		{
 		}
 	}

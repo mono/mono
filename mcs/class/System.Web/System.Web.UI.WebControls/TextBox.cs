@@ -1,18 +1,19 @@
 /**
  * Namespace: System.Web.UI.WebControls
  * Class:     TextBox
- * 
+ *
  * Author:  Gaurav Vaish
  * Maintainer: gvaish@iitk.ac.in
  * Contact: <my_scripts2001@yahoo.com>, <gvaish@iitk.ac.in>
  * Implementation: yes
  * Status:  80%
- * 
+ *
  * (C) Gaurav Vaish (2002)
  */
 
 using System;
 using System.Collections.Specialized;
+using System.Globalization;
 using System.Web;
 using System.Web.UI;
 
@@ -21,11 +22,11 @@ namespace System.Web.UI.WebControls
 	public class TextBox : WebControl, IPostBackDataHandler
 	{
 		private static readonly object TextChangedEvent = new object();
-		
+
 		public TextBox(): base(HtmlTextWriterTag.Input)
 		{
 		}
-		
+
 		public virtual bool AutoPostBack
 		{
 			get
@@ -40,7 +41,7 @@ namespace System.Web.UI.WebControls
 				ViewState["AutoPostBack"] = value;
 			}
 		}
-		
+
 		public virtual int Columns
 		{
 			get
@@ -55,7 +56,7 @@ namespace System.Web.UI.WebControls
 				ViewState["Columns"] = value;
 			}
 		}
-		
+
 		public virtual int MaxLength
 		{
 			get
@@ -70,7 +71,7 @@ namespace System.Web.UI.WebControls
 				ViewState["MaxLrngth"] = value;
 			}
 		}
-		
+
 		public virtual bool ReadOnly
 		{
 			get
@@ -85,7 +86,7 @@ namespace System.Web.UI.WebControls
 				ViewState["ReadOnly"] = value;
 			}
 		}
-		
+
 		public virtual int Rows
 		{
 			get
@@ -100,7 +101,7 @@ namespace System.Web.UI.WebControls
 				ViewState["Rows"] = value;
 			}
 		}
-		
+
 		public virtual string Text
 		{
 			get
@@ -115,7 +116,7 @@ namespace System.Web.UI.WebControls
 				ViewState["Text"] = value;
 			}
 		}
-		
+
 		public virtual TextBoxMode TextMode
 		{
 			get
@@ -134,7 +135,7 @@ namespace System.Web.UI.WebControls
 				ViewState["TextMode"] = value;
 			}
 		}
-		
+
 		public virtual bool Wrap
 		{
 			get
@@ -149,7 +150,7 @@ namespace System.Web.UI.WebControls
 				ViewState["Wrap"] = value;
 			}
 		}
-		
+
 		public event EventHandler TextChanged
 		{
 			add
@@ -161,7 +162,7 @@ namespace System.Web.UI.WebControls
 				Events.RemoveHandler(TextChangedEvent, value);
 			}
 		}
-		
+
 		protected override HtmlTextWriterTag TagKey
 		{
 			get
@@ -173,7 +174,7 @@ namespace System.Web.UI.WebControls
 				return HtmlTextWriterTag.Input;
 			}
 		}
-		
+
 		[MonoTODO("Check_Value_of_Text_Potential_Bug_In_MS_Implementation")]
 		protected override void AddAttributesToRender(HtmlTextWriter writer)
 		{
@@ -186,11 +187,11 @@ namespace System.Web.UI.WebControls
 			{
 				if(Rows > 0)
 				{
-					writer.AddAttribute(HtmlTextWriterAttribute.Rows, Rows.ToString(NumerFormatInfo.InvariantInfo));
+					writer.AddAttribute(HtmlTextWriterAttribute.Rows, Rows.ToString(NumberFormatInfo.InvariantInfo));
 				}
 				if(Columns > 0)
 				{
-					writer.AddAttribute(HtmlTextWriterAttribute.Cols, Columns.ToString(NumerFormatInfo.InvariantInfo));
+					writer.AddAttribute(HtmlTextWriterAttribute.Cols, Columns.ToString(NumberFormatInfo.InvariantInfo));
 				}
 				if(!Wrap)
 				{
@@ -211,7 +212,7 @@ namespace System.Web.UI.WebControls
 				}
 				if(Columns > 0)
 				{
-					writer.AddAttribute(HtmlTextWriterAttribute.Size, Columns.ToString(NumerFormatInfo.InvariantInfo));
+					writer.AddAttribute(HtmlTextWriterAttribute.Size, Columns.ToString(NumberFormatInfo.InvariantInfo));
 				}
 			}
 
@@ -221,14 +222,14 @@ namespace System.Web.UI.WebControls
 				writer.AddAttribute(HtmlTextWriterAttribute.ReadOnly, "readonly");
 			}
 			base.AddAttributesToRender(writer);
-			
+
 			if(AutoPostBack && Page != null)
 			{
 				writer.AddAttribute(HtmlTextWriterAttribute.Onchange, Page.GetPostBackClientEvent(this, ""));
 				writer.AddAttribute("language", "javascript");
 			}
 		}
-		
+
 		protected override void AddParsedSubObject(object obj)
 		{
 			if(obj is LiteralControl)
@@ -238,14 +239,14 @@ namespace System.Web.UI.WebControls
 			}
 			throw new HttpException(HttpRuntime.FormatResourceString("Cannot_Have_Children_Of_Type", "TextBox", GetType().Name.ToString()));
 		}
-		
+
 		[MonoTODO("OnPreRender")]
 		protected override void OnPreRender(EventArgs e)
 		{
 			OnPreRender(e);
 			throw new NotImplementedException();
 		}
-		
+
 		protected virtual void OnTextChanged(EventArgs e)
 		{
 			if(Events != null)
@@ -255,7 +256,7 @@ namespace System.Web.UI.WebControls
 					eh(this, e);
 			}
 		}
-		
+
 		[MonoTODO("Encode_Text")]
 		protected override void Render(HtmlTextWriter writer)
 		{
@@ -264,7 +265,7 @@ namespace System.Web.UI.WebControls
 			RenderEndTag(writer);
 			throw new NotImplementedException();
 		}
-		
+
 		bool IPostBackDataHandler.LoadPostData(string postDataKey, NameValueCollection postCollection)
 		{
 			if(postCollection[postDataKey] != Text)
@@ -274,7 +275,7 @@ namespace System.Web.UI.WebControls
 			}
 			return false;
 		}
-		
+
 		void IPostBackDataHandler.RaisePostDataChangedEvent()
 		{
 			OnTextChanged(EventArgs.Empty);

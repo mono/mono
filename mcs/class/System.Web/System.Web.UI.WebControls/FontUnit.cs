@@ -60,7 +60,7 @@ namespace System.Web.UI.WebControls
 
 		public FontUnit(Unit value)
 		{
-			if(val.IsEmpty)
+			if(value.IsEmpty)
 			{
 				type = FontSize.NotSet;
 				val  = Unit.Empty;
@@ -81,7 +81,7 @@ namespace System.Web.UI.WebControls
 				int index = GetTypeFromString(low);
 				if( index != -1)
 				{
-					type = (FontSize)fs;
+					type = (FontSize)index;
 					return;
 				} else
 				{
@@ -103,7 +103,7 @@ namespace System.Web.UI.WebControls
 				"large",
 				"xlarge",
 				"xxlarge"
-			}
+			};
 			int i = 0;
 			foreach(string valType in values)
 			{
@@ -118,7 +118,7 @@ namespace System.Web.UI.WebControls
 
 		public static FontUnit Parse(string s)
 		{
-			Parse(s, CultureInfo.CurrentCulture);
+			return Parse(s, CultureInfo.CurrentCulture);
 		}
 
 		public static FontUnit Parse(string s, CultureInfo culture)
@@ -163,10 +163,10 @@ namespace System.Web.UI.WebControls
 
 		public override string ToString()
 		{
-			ToString(CultureInfo.CurrentCulture);
+			return ToString(CultureInfo.CurrentCulture);
 		}
 
-		public override string ToString(CultureInfo culture)
+		public string ToString(CultureInfo culture)
 		{
 			if(IsEmpty)
 			{

@@ -1,17 +1,19 @@
 /**
  * Namespace: System.Web.UI.WebControls
  * Class:     WebColorConverter
- * 
+ *
  * Author:  Gaurav Vaish
  * Maintainer: gvaish@iitk.ac.in
  * Contact: <my_scripts2001@yahoo.com>, <gvaish@iitk.ac.in>
  * Implementation: yes
  * Status:  ??%
- * 
+ *
  * (C) Gaurav Vaish (2002)
  */
 
 using System;
+using System.Globalization;
+using System.ComponentModel;
 using System.Drawing;
 using System.Web;
 using System.Web.UI;
@@ -23,7 +25,7 @@ namespace System.Web.UI.WebControls
 		public WebColorConverter(): base()
 		{
 		}
-		
+
 		[MonoTODO("Implement_If_Color_Is_#xxxxxx_OR_A_KnownColor")]
 		public override object ConvertFrom(ITypeDescriptorContext context, CultureInfo culture, object value)
 		{
@@ -41,7 +43,7 @@ namespace System.Web.UI.WebControls
 			}
 			return ConvertFrom(context, culture, value);
 		}
-		
+
 		[MonoTODO("Convert_To_For_KnownColor_And_For_#xxxxxx")]
 		public override object ConvertTo(ITypeDescriptorContext context, CultureInfo culture, object value, Type destinationType)
 		{

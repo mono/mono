@@ -1,18 +1,19 @@
 /**
  * Namespace: System.Web.UI.WebControls
  * Class:     DropDownList
- * 
+ *
  * Author:  Gaurav Vaish
  * Maintainer: gvaish@iitk.ac.in
  * Contact: <my_scripts2001@yahoo.com>, <gvaish@iitk.ac.in>
  * Implementation: yes
  * Status:  100%
- * 
+ *
  * (C) Gaurav Vaish (2002)
  */
 
 using System;
 using System.Collections.Specialized;
+using System.Drawing;
 using System.Web;
 using System.Web.UI;
 
@@ -23,7 +24,7 @@ namespace System.Web.UI.WebControls
 		public DropDownList(): base()
 		{
 		}
-		
+
 		public override Color BorderColor
 		{
 			get
@@ -35,8 +36,8 @@ namespace System.Web.UI.WebControls
 				BorderColor = value;
 			}
 		}
-		
-		public override BorderStyle BorderStyle
+
+		public override Style BorderStyle
 		{
 			get
 			{
@@ -47,7 +48,7 @@ namespace System.Web.UI.WebControls
 				BorderStyle = value;
 			}
 		}
-		
+
 		public override Unit BorderWidth
 		{
 			get
@@ -59,7 +60,7 @@ namespace System.Web.UI.WebControls
 				BorderWidth = value;
 			}
 		}
-		
+
 		public override int SelectedIndex
 		{
 			get
@@ -71,7 +72,7 @@ namespace System.Web.UI.WebControls
 				SelectedIndex = value;
 			}
 		}
-		
+
 		public override string ToolTip
 		{
 			get
@@ -83,7 +84,7 @@ namespace System.Web.UI.WebControls
 				ToolTip = value;
 			}
 		}
-		
+
 		protected override void AddAttributesToRender(HtmlTextWriter writer)
 		{
 			if(Page != null)
@@ -92,19 +93,19 @@ namespace System.Web.UI.WebControls
 			}
 			writer.AddAttribute(HtmlTextWriterAttribute.Name, UniqueID);
 			AddAttributesToRender(writer);
-			
+
 			if(AutoPostBack && Page != null)
 			{
 				writer.AddAttribute(HtmlTextWriterAttribute.Onchange, Page.GetPostBackClientEvent(this,""));
 				writer.AddAttribute("language", "javascript");
 			}
 		}
-		
+
 		protected override ControlCollection CreateControlCollection()
 		{
 			return new EmptyControlCollection(this);
 		}
-		
+
 		protected override void RenderContents(HtmlTextWriter writer)
 		{
 			if(Items != null)
@@ -130,7 +131,7 @@ namespace System.Web.UI.WebControls
 				}
 			}
 		}
-		
+
 		bool IPostBackDataHandler.LoadPostData(string postDataKey, NameValueCollection postCollection)
 		{
 			string[] vals = postCollection.GetValues();
@@ -145,7 +146,7 @@ namespace System.Web.UI.WebControls
 			}
 			return false;
 		}
-		
+
 		void IPostBackDataHandler.RaisePostDataChangedEvent()
 		{
 			OnSelectedIndexChanged(EventArgs.Empty);

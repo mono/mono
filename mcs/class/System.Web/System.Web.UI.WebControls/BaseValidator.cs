@@ -1,13 +1,13 @@
 /**
  * Namespace: System.Web.UI.WebControls
  * Class:     BaseValidator
- * 
+ *
  * Author:  Gaurav Vaish
  * Maintainer: gvaish@iitk.ac.in
  * Contact: <my_scripts2001@yahoo.com>, <gvaish@iitk.ac.in>
  * Implementation: yes
  * Status:  80%
- * 
+ *
  * (C) Gaurav Vaish (2001)
  */
 
@@ -26,13 +26,13 @@ namespace System.Web.UI.WebControls
 		private bool isPropertiesChecked;
 		private bool propertiesValid;
 		private bool renderUplevel;
-		
+
 		protected BaseValidator() : base()
 		{
 			isValid = true;
 			ForeColor = Color.Red;
 		}
-		
+
 		public string ControlToValidate
 		{
 			get
@@ -49,7 +49,7 @@ namespace System.Web.UI.WebControls
 				ViewState["ControlToValidate"] = value;
 			}
 		}
-		
+
 		public ValidatorDisplay Display
 		{
 			get
@@ -70,7 +70,7 @@ namespace System.Web.UI.WebControls
 				ViewState["ValidatorDisplay"] = value;
 			}
 		}
-		
+
 		public bool EnableClientScript
 		{
 			get
@@ -87,7 +87,7 @@ namespace System.Web.UI.WebControls
 				ViewState["EnableClientScript"] = value;
 			}
 		}
-		
+
 		public override bool Enabled
 		{
 			get
@@ -99,7 +99,7 @@ namespace System.Web.UI.WebControls
 				Enabled = value;
 			}
 		}
-		
+
 		public string ErrorMessage
 		{
 			get
@@ -116,7 +116,7 @@ namespace System.Web.UI.WebControls
 				ViewState["ErrorMessage"] = value;
 			}
 		}
-		
+
 		public override Color ForeColor
 		{
 			get
@@ -128,7 +128,7 @@ namespace System.Web.UI.WebControls
 				ForeColor = value;
 			}
 		}
-		
+
 		public bool IsValid
 		{
 			get
@@ -145,17 +145,17 @@ namespace System.Web.UI.WebControls
 				ViewState["IsValid"] = value;
 			}
 		}
-		
+
 		public static PropertyDescriptor GetValidationProperty(object component)
 		{
-			ValidationPropertyAttribute attrib = (ValidationPropertyAttribute)((TypeDescriptor.GetAttributes(this))[typeof(ValidationPropertyAttribute]);
+			ValidationPropertyAttribute attrib = (ValidationPropertyAttribute)((TypeDescriptor.GetAttributes(component))[typeof(ValidationPropertyAttribute)]);
 			if(attrib != null && attrib.Name != null)
 			{
-				return TypeDescriptor.GetProperties(this, null);
+				return (TypeDescriptor.GetProperties(component, null))[attrib.Name];
 			}
 			return null;
 		}
-		
+
 		public void Validate()
 		{
 			if(!Visible || (Visible && !Enabled))
@@ -178,9 +178,9 @@ namespace System.Web.UI.WebControls
 				IsValid = true;
 				return;
 			}
-			IsValid = EvaluateValid();
+			IsValid = EvaluateIsValid();
 		}
-		
+
 		protected bool PropertiesValid
 		{
 			get
@@ -193,7 +193,7 @@ namespace System.Web.UI.WebControls
 				return propertiesValid;
 			}
 		}
-		
+
 		protected bool RenderUplevel
 		{
 			get
@@ -201,7 +201,7 @@ namespace System.Web.UI.WebControls
 				return renderUplevel;
 			}
 		}
-		
+
 		protected override void AddAttributesToRender(HtmlTextWriter writer)
 		{
 			bool enabled = Enabled;
@@ -212,7 +212,7 @@ namespace System.Web.UI.WebControls
 			AddAttributesToRender(writer);
 			if(RenderUplevel)
 			{
-				if(ID = null)
+				if(ID == null)
 				{
 					writer.AddAttribute("id", ClientID);
 				}
@@ -220,13 +220,14 @@ namespace System.Web.UI.WebControls
 				{
 					writer.AddAttribute("controltovalidate", GetControlRenderID(ControlToValidate));
 				}
-				if(ErrorMesage.Length > 0)
+				if(ErrorMessage.Length > 0)
 				{
 					writer.AddAttribute("errormessage", ErrorMessage, true);
 				}
 				if(Display == ValidatorDisplay.Static)
 				{
-					writer.AddAttribute("display", Enum.ToString(typeof(ValidatorDisplay), Display));
+					writer.AddAttribute("display", Enum.Format(typeof(ValidatorDisplay), Display, "G").Replace('_','-'));
+					//writer.AddAttribute("display", PropertyConverter.EnumToString(typeof(ValidatorDisplay), Display));
 				}
 				if(!IsValid)
 				{
@@ -242,23 +243,24 @@ namespace System.Web.UI.WebControls
 				Enabled = false;
 			}
 		}
-		
+
+		[MonoTODO]
 		protected void CheckControlValidationProperty(string name, string propertyName)
 		{
 			Control ctrl = NamingContainer.FindControl(name);
 			if(ctrl == null)
 			{
 				throw new HttpException(HttpRuntime.FormatResourceString("Validator_control_not_found",
-				                 name, propertyName, ID));
+				                 name, propertyName/*, ID*/));
 			}
 			PropertyDescriptor pd = GetValidationProperty(ctrl);
 			if(pd == null)
 			{
 				throw new HttpException(HttpRuntime.FormatResourceString("Validator_bad_control_type",
-				                 name, propertyName, ID));
+				                 name, propertyName/*, ID*/));
 			}
 		}
-		
+
 		protected virtual bool ControlPropertiesValid()
 		{
 			if(ControlToValidate.Length == 0)
@@ -266,6 +268,7 @@ namespace System.Web.UI.WebControls
 				throw new HttpException(HttpRuntime.FormatResourceString("Validator_control_blank", ID));
 			}
 			CheckControlValidationProperty(ControlToValidate, "ControlToValidate");
+			return true;
 		}
 
 		[MonoTODO]
@@ -284,7 +287,7 @@ namespace System.Web.UI.WebControls
 			}
 			return false;
 		}
-		
+
 		protected string GetControlRenderID(string name)
 		{
 			Control ctrl = FindControl(name);
@@ -294,7 +297,7 @@ namespace System.Web.UI.WebControls
 			}
 			return String.Empty;
 		}
-		
+
 		protected string GetControlValidationValue(string name)
 		{
 			Control ctrl = NamingContainer.FindControl(name);
@@ -313,13 +316,13 @@ namespace System.Web.UI.WebControls
 			}
 			return null;
 		}
-		
+
 		protected override void OnInit(EventArgs e)
 		{
 			OnInit(e);
 			Page.Validators.Add(this);
 		}
-		
+
 		protected override void OnPreRender(EventArgs e)
 		{
 			OnPreRender(e);
@@ -331,7 +334,7 @@ namespace System.Web.UI.WebControls
 				RegisterValidatorCommonScript();
 			}
 		}
-		
+
 		protected override void OnUnload(EventArgs e)
 		{
 			if(Page != null)
@@ -384,5 +387,7 @@ namespace System.Web.UI.WebControls
 			}
 			return;
 		}
+
+		protected abstract bool EvaluateIsValid();
 	}
 }

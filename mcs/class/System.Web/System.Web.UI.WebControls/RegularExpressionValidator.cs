@@ -1,13 +1,13 @@
 /**
  * Namespace: System.Web.UI.WebControls
  * Class:     RegularExpressionValidator
- * 
+ *
  * Author:  Gaurav Vaish
  * Maintainer: gvaish@iitk.ac.in
  * Contact: <my_scripts2001@yahoo.com>, <gvaish@iitk.ac.in>
  * Implementation: yes
  * Status:  100%
- * 
+ *
  * (C) Gaurav Vaish (2002)
  */
 
@@ -23,7 +23,7 @@ namespace System.Web.UI.WebControls
 		public RegularExpressionValidator(): base()
 		{
 		}
-		
+
 		public string ValidationExpression
 		{
 			get
@@ -42,12 +42,12 @@ namespace System.Web.UI.WebControls
 					Regex.IsMatch("", value);
 				} catch(Exception)
 				{
-					throw new HttpException(HttpRuntime.FormatString("Validator_bad_regex", value));
+					throw new HttpException(HttpRuntime.FormatResourceString("Validator_bad_regex", value));
 				}
 				ViewState["ValidationExpression"] = value;
 			}
 		}
-		
+
 		protected override void AddAttributesToRender(HtmlTextWriter writer)
 		{
 			base.AddAttributesToRender(writer);
@@ -61,12 +61,12 @@ namespace System.Web.UI.WebControls
 				}
 			}
 		}
-		
+
 		protected override bool EvaluateIsValid()
 		{
 			string ctrl = GetControlValidationValue(ControlToValidate);
 			bool   retVal = true;
-			if(ctrl == null || ctr.Trim.Length == 0)
+			if(ctrl == null || ctrl.Trim().Length == 0)
 			{
 				return true;
 			}
@@ -82,7 +82,7 @@ namespace System.Web.UI.WebControls
 				}
 			} catch(Exception)
 			{
-				retval = true;
+				retVal = true;
 			}
 			return retVal;
 		}

@@ -1,17 +1,18 @@
 /**
  * Namespace: System.Web.UI.WebControls
  * Class:     Repeater
- * 
+ *
  * Author:  Gaurav Vaish
  * Maintainer: gvaish@iitk.ac.in
  * Contact: <my_scripts2001@yahoo.com>, <gvaish@iitk.ac.in>
  * Implementation: yes
  * Status:  90%
- * 
+ *
  * (C) Gaurav Vaish (2002)
  */
 
 using System;
+using System.Collections;
 using System.Web;
 using System.Web.UI;
 
@@ -22,7 +23,7 @@ namespace System.Web.UI.WebControls
 		private static readonly object ItemCommandEvent   = new object();
 		private static readonly object ItemCreatedEvent   = new object();
 		private static readonly object ItemDataBoundEvent = new object();
-		
+
 		private static readonly string ITEMCOUNT = "Repeater_Item_Count";
 
 		private ITemplate alternatingItemTemplate;
@@ -38,7 +39,7 @@ namespace System.Web.UI.WebControls
 		public Repeater(): base()
 		{
 		}
-		
+
 		public event RepeaterCommandEventHandler ItemCommand
 		{
 			add
@@ -50,7 +51,7 @@ namespace System.Web.UI.WebControls
 				Events.RemoveHandler(ItemCommandEvent, value);
 			}
 		}
-		
+
 		public event RepeaterItemEventHandler ItemCreated
 		{
 			add
@@ -62,7 +63,7 @@ namespace System.Web.UI.WebControls
 				Events.RemoveHandler(ItemCreatedEvent, value);
 			}
 		}
-		
+
 		public event RepeaterItemEventHandler ItemDataBound
 		{
 			add
@@ -74,7 +75,7 @@ namespace System.Web.UI.WebControls
 				Events.RemoveHandler(ItemDataBoundEvent, value);
 			}
 		}
-		
+
 		public virtual ITemplate AlternatingItemTemplate
 		{
 			get
@@ -86,7 +87,7 @@ namespace System.Web.UI.WebControls
 				alternatingItemTemplate = value;
 			}
 		}
-		
+
 		public override ControlCollection Controls
 		{
 			get
@@ -95,7 +96,7 @@ namespace System.Web.UI.WebControls
 				return Controls;
 			}
 		}
-		
+
 		public virtual string DataMember
 		{
 			get
@@ -112,7 +113,7 @@ namespace System.Web.UI.WebControls
 				ViewState["DataMember"] = value;
 			}
 		}
-		
+
 		public virtual object DataSource
 		{
 			get
@@ -124,7 +125,7 @@ namespace System.Web.UI.WebControls
 				dataSource = value;
 			}
 		}
-		
+
 		public virtual ITemplate FooterTemplate
 		{
 			get
@@ -136,7 +137,7 @@ namespace System.Web.UI.WebControls
 				footerTemplate = value;
 			}
 		}
-		
+
 		public virtual ITemplate HeaderTemplate
 		{
 			get
@@ -148,7 +149,7 @@ namespace System.Web.UI.WebControls
 				headerTemplate = value;
 			}
 		}
-		
+
 		public virtual RepeaterItemCollection Items
 		{
 			get
@@ -188,12 +189,12 @@ namespace System.Web.UI.WebControls
 				separatorTemplate = value;
 			}
 		}
-		
+
 		public override void DataBind()
 		{
 			OnDataBinding(EventArgs.Empty);
 		}
-		
+
 		protected override void CreateChildControls()
 		{
 			Controls.Clear();
@@ -206,7 +207,7 @@ namespace System.Web.UI.WebControls
 			}
 			ClearChildViewState();
 		}
-		
+
 		/// <summary>
 		/// Undocumented
 		/// </summary>
@@ -216,7 +217,7 @@ namespace System.Web.UI.WebControls
 			//TODO: Fille me up
 			throw new NotImplementedException();
 		}
-		
+
 		protected override bool OnBubbleEvent(object sender, EventArgs e)
 		{
 			bool retVal = false;
@@ -227,16 +228,16 @@ namespace System.Web.UI.WebControls
 			}
 			return retVal;
 		}
-		
+
 		protected override void OnDataBinding(EventArgs e)
 		{
 			OnDataBinding(e);
 			Controls.Clear();
 			ClearChildViewState();
 			CreateControlHierarchy(true);
-			ChildControlCreated = true;
+			ChildControlsCreated = true;
 		}
-		
+
 		protected virtual void OnItemCommand(RepeaterCommandEventArgs e)
 		{
 			if(Events != null)
@@ -248,7 +249,7 @@ namespace System.Web.UI.WebControls
 				}
 			}
 		}
-		
+
 		protected virtual void OnItemCreated(RepeaterCommandEventArgs e)
 		{
 			if(Events != null)
@@ -260,7 +261,7 @@ namespace System.Web.UI.WebControls
 				}
 			}
 		}
-		
+
 		protected virtual void OnItemDataBound(RepeaterCommandEventArgs e)
 		{
 			if(Events != null)

@@ -1,3 +1,14 @@
+2002-03-07      Gaurav Vaish <gvaish@iitk.ac.in>
+
+	Yesterday and today I tried to do some building of the aseembly,
+	 but was dumped with uncoutably infinite errors. ;-)
+	I have put the copies of the recent errors on my home page, want
+	 to have a look at them? See:
+	  http://mastergaurav.virtualave.net/mono/
+	I don't know what to do with these errors. Oh! The buggy me! How
+	 will I overcome myself. Hopefully, by when my vacations over, I
+	 should have made a repository where the build will not fail.
+
 2002-03-05      Gaurav Vaish <gvaish@iitk.ac.in>
 
 	I am now going to do a build that will include the

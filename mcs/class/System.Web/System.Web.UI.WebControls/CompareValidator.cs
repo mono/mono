@@ -22,7 +22,7 @@ namespace System.Web.UI.WebControls
 		{
 			// Intitalize();
 		}
-		
+
 		public string ControlToCompare
 		{
 			get
@@ -32,13 +32,13 @@ namespace System.Web.UI.WebControls
 					return (string)o;
 				return String.Empty;
 			}
-			
+
 			set
 			{
 				ViewState["ControlToCompare"] = value;
 			}
 		}
-		
+
 		public ValidationCompareOperator Operator
 		{
 			get
@@ -55,7 +55,7 @@ namespace System.Web.UI.WebControls
 				ViewState["Operator"] = value;
 			}
 		}
-		
+
 		public string ValueToCompare
 		{
 			get
@@ -70,7 +70,7 @@ namespace System.Web.UI.WebControls
 				ViewState["ValueToCompare"] = value;
 			}
 		}
-		
+
 		[MonoTODO]
 		protected override bool EvaluateIsValid()
 		{
@@ -78,8 +78,8 @@ namespace System.Web.UI.WebControls
 			throw new NotImplementedException();
 			if(ctrl!=null && ctrl.Length > 0)
 			{
-				//string 
-				return false;
+				//string
+				throw new NotImplementedException();
 			}
 			return true;
 		}

@@ -147,7 +147,7 @@ namespace System.Web.UI.WebControls
 		{
 			get
 			{
-				return (IsPagingEnable && allowCustomPaging);
+				return (IsPagingEnabled && allowCustomPaging);
 			}
 		}
 
@@ -212,11 +212,11 @@ namespace System.Web.UI.WebControls
 		{
 			get
 			{
-				return pageCount;
+				return pageSize;
 			}
 			set
 			{
-				pageCount = value;
+				pageSize = value;
 			}
 		}
 
@@ -248,38 +248,35 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
-		public IEnumerator GetEnumerator
+		public IEnumerator GetEnumerator()
 		{
-			get
+			int fInd = FirstIndexInPage;
+			int count = -1;
+			if(dataSource is ICollection)
 			{
-				int fInd = FirstIndexInPage;
-				int count = -1;
-				if(dataSource is ICollection)
-				{
-					count = dataSource.Count;
-				}
-
-				if(dataSource is IList)
-				{
-					return (new PrivateListEnumerator((IList)dataSource, fInd, count));
-				}
-				if(dataSource is Array)
-				{
-					return (new PrivateArrayEnumerator((object[])dataSource, fInd, count));
-				}
-				if(dataSource is ICollection)
-				{
-					return (new PrivateICollectionEnumerator((ICollection)dataSource, fInd, count));
-				}
-				if(allowCustomPaging)
-				{
-					return (new PrivateIEnumeratorEnumerator(dataSource, Count));
-				}
-				return dataSource.GetEnumerator();
+				count = Count;
 			}
+
+			if(dataSource is IList)
+			{
+				return (new PrivateListEnumerator((IList)dataSource, fInd, count));
+			}
+			if(dataSource is Array)
+			{
+				return (new PrivateArrayEnumerator((object[])dataSource, fInd, count));
+			}
+			if(dataSource is ICollection)
+			{
+				return (new PrivateICollectionEnumerator((ICollection)dataSource, fInd, count));
+			}
+			if(allowCustomPaging)
+			{
+				return (new PrivateIEnumeratorEnumerator(dataSource.GetEnumerator(), Count));
+			}
+			return dataSource.GetEnumerator();
 		}
 
-		private class PrivateIEnumeratorEnumerator
+		private class PrivateIEnumeratorEnumerator : IEnumerator
 		{
 			private int index;
 			private int max;
@@ -303,7 +300,7 @@ namespace System.Web.UI.WebControls
 			public void Reset()
 			{
 				index = -1;
-				collEnum = null;
+				enumerator.Reset();
 			}
 
 			public object Current
@@ -315,7 +312,7 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
-		private class PrivateICollectionEnumerator
+		private class PrivateICollectionEnumerator : IEnumerator
 		{
 			private int index;
 			private int start;
@@ -367,7 +364,7 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
-		private class PrivateArrayEnumerator
+		private class PrivateArrayEnumerator : IEnumerator
 		{
 			private int index;
 			private int start;
@@ -451,6 +448,23 @@ namespace System.Web.UI.WebControls
 					throw new InvalidOperationException("Enumerator_MoveNext_Not_Called");
 				}
 			}
+		}
+
+		public string GetListName(PropertyDescriptor[] listAccessors)
+		{
+			return String.Empty;
+		}
+
+		public PropertyDescriptorCollection GetItemProperties(PropertyDescriptor[] listAccessors)
+		{
+			if(dataSource != null)
+			{
+				if(dataSource is ITypedList)
+				{
+					return ((ITypedList)dataSource).GetItemProperties(listAccessors);
+				}
+			}
+			return null;
 		}
 	}
 }

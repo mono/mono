@@ -21,11 +21,11 @@ namespace System.Web.UI.WebControls
 	{
 		private static readonly object ClickEvent   = new object();
 		private static readonly object CommandEvent = new object();
-		
+
 		public LinkButton(): base(HtmlTextWriterTag.A)
 		{
 		}
-		
+
 		public bool CausesValidation
 		{
 			get
@@ -40,7 +40,7 @@ namespace System.Web.UI.WebControls
 				ViewState["CausesValidation"] = value;
 			}
 		}
-		
+
 		public string CommandArgument
 		{
 			get
@@ -55,7 +55,7 @@ namespace System.Web.UI.WebControls
 				ViewState["CommandArgument"] = value;
 			}
 		}
-		
+
 		public string CommandName
 		{
 			get
@@ -70,7 +70,24 @@ namespace System.Web.UI.WebControls
 				ViewState["CommandName"] = value;
 			}
 		}
-		
+
+		public virtual string Text
+		{
+			get
+			{
+				object o = ViewState["Text"];
+				if(o != null)
+				{
+					return (string)o;
+				}
+				return String.Empty;
+			}
+			set
+			{
+				ViewState["Text"] = value;
+			}
+		}
+
 		public event EventHandler Click
 		{
 			add
@@ -82,7 +99,7 @@ namespace System.Web.UI.WebControls
 				Events.RemoveHandler(ClickEvent, this);
 			}
 		}
-		
+
 		public event CommandEventHandler Command
 		{
 			add
@@ -94,7 +111,7 @@ namespace System.Web.UI.WebControls
 				Events.RemoveHandler(CommandEvent, this);
 			}
 		}
-		
+
 		protected virtual void OnClick(EventArgs e)
 		{
 			if(Events != null)
@@ -104,7 +121,7 @@ namespace System.Web.UI.WebControls
 					eh(this, e);
 			}
 		}
-		
+
 		protected virtual void OnCommand(CommandEventArgs e)
 		{
 			if(Events != null)
@@ -114,7 +131,7 @@ namespace System.Web.UI.WebControls
 					ceh(this, e);
 			}
 		}
-		
+
 		void IPostBackEventHandler.RaisePostBackEvent(string eventArgument)
 		{
 			if(CausesValidation)
@@ -124,7 +141,7 @@ namespace System.Web.UI.WebControls
 			OnClick(new EventArgs());
 			OnCommand( new CommandEventArgs(CommandName, CommandArgument));
 		}
-		
+
 		protected override void AddAttributesToRender(HtmlTextWriter writer)
 		{
 			base.AddAttributesToRender(writer);
@@ -138,7 +155,7 @@ namespace System.Web.UI.WebControls
 				writer.Write(HtmlTextWriterAttribute.Href, GetPostBackClientHyperlink(this, ""));
 			}
 		}
-		
+
 		protected override void AddParsedSubObject(object obj)
 		{
 			if(HasControls())
@@ -158,7 +175,7 @@ namespace System.Web.UI.WebControls
 			}
 			AddParsedSubObject(obj);
 		}
-		
+
 		protected override void LoadViewState(object savedState)
 		{
 			if(savedState != null)
@@ -169,7 +186,7 @@ namespace System.Web.UI.WebControls
 					Text = savedText;
 			}
 		}
-		
+
 		protected override void RenderContents(HtmlTextWriter writer)
 		{
 			if(HasControls())

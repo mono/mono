@@ -1,13 +1,13 @@
 /**
  * Namespace: System.Web.UI.WebControls
  * Class:     CustomValidator
- * 
+ *
  * Author:  Gaurav Vaish
  * Maintainer: gvaish@iitk.ac.in
  * Contact: <my_scripts2001@yahoo.com>, <gvaish@iitk.ac.in>
  * Implementation: yes
  * Status:  100%
- * 
+ *
  * (C) Gaurav Vaish (2002)
  */
 
@@ -24,7 +24,7 @@ namespace System.Web.UI.WebControls
 		public CustomValidator()
 		{
 		}
-		
+
 		public string ClientValidationFunction
 		{
 			get
@@ -41,7 +41,7 @@ namespace System.Web.UI.WebControls
 				ViewState["ClientValidationFunction"] = value;
 			}
 		}
-		
+
 		public event ServerValidateEventHandler ServerValidate
 		{
 			add
@@ -53,7 +53,7 @@ namespace System.Web.UI.WebControls
 				Events.RemoveHandler(ServerValidateEvent, value);
 			}
 		}
-		
+
 		protected override void AddAttributesToRender(HtmlTextWriter writer)
 		{
 			base.AddAttributesToRender(writer);
@@ -66,15 +66,16 @@ namespace System.Web.UI.WebControls
 				}
 			}
 		}
-		
+
 		protected override bool ControlPropertiesValid()
 		{
 			if(ControlToValidate.Length > 0)
 			{
 				CheckControlValidationProperty(ControlToValidate, "ControlToValidate");
 			}
+			return true;
 		}
-		
+
 		protected virtual bool OnServerValidate(string value)
 		{
 			if(Events != null)
@@ -82,12 +83,26 @@ namespace System.Web.UI.WebControls
 				ServerValidateEventHandler sveh = (ServerValidateEventHandler)(Events[ServerValidateEvent]);
 				if(sveh != null)
 				{
-					ServerValidateEventArgs args = new ServerValidateEventArgs(value, true));
+					ServerValidateEventArgs args = new ServerValidateEventArgs(value, true);
 					sveh(this, args);
 					return args.IsValid;
 				}
 			}
 			return true;
+		}
+
+		protected override bool EvaluateIsValid()
+		{
+			string ctrl = ControlToValidate;
+			if(ctrl.Length > 0)
+			{
+				ctrl = GetControlValidationValue(ctrl);
+				if(ctrl== null || ctrl.Length == 0)
+				{
+					return true;
+				}
+			}
+			return OnServerValidate(ctrl);
 		}
 	}
 }

@@ -1,13 +1,13 @@
 /**
  * Namespace: System.Web.UI.WebControls
  * Class:     WebControl
- * 
+ *
  * Author:  Gaurav Vaish
  * Maintainer: gvaish@iitk.ac.in
  * Contact: <my_scripts2001@yahoo.com>, <gvaish@iitk.ac.in>
  * Implementation: yes
  * Status:  40%
- * 
+ *
  * (C) Gaurav Vaish (2001)
  */
 
@@ -28,6 +28,7 @@ namespace System.Web.UI.WebControls
 		private string              stringTag;
 		private AttributeCollection attributes;
 		private StateBag            attributeState;
+		private Style               borderStyle;
 		private Style               controlStyle;
 		private bool                enabled;
 		private HtmlTextWriterTag   tagKey;
@@ -39,7 +40,7 @@ namespace System.Web.UI.WebControls
 			//todo: what now? To be rendered as SPAN tag!
 			Initialize();
 		}
-		
+
 		public WebControl(HtmlTextWriterTag tag): base()
 		{
 			//FIXME: am i right?
@@ -55,7 +56,7 @@ namespace System.Web.UI.WebControls
 			//writerTag = null;
 			Initialize();
 		}
-		
+
 		private void Initialize()
 		{
 			controlStyle   = null;
@@ -63,7 +64,7 @@ namespace System.Web.UI.WebControls
 			tagName        = null;
 			attributeState = null;
 		}
-		
+
 		public virtual string AccessKey
 		{
 			get
@@ -78,7 +79,7 @@ namespace System.Web.UI.WebControls
 				ViewState["AccessKey"] = value;
 			}
 		}
-		
+
 		[MonoTODO("FIXME_Internal_method_calls")]
 		public AttributeCollection Attributes
 		{
@@ -106,9 +107,77 @@ namespace System.Web.UI.WebControls
 				return attributes;
 			}
 		}
-		
+
+		public virtual Color BackColor
+		{
+			get
+			{
+				object o = ViewState["BackColor"];
+				if(o != null)
+				{
+					return (Color)o;
+				}
+				return Color.Empty;
+			}
+			set
+			{
+				ViewState["BackColor"] = value;
+			}
+		}
+
+		public virtual Color BorderColor
+		{
+			get
+			{
+				object o = ViewState["BorderColor"];
+				if(o != null)
+				{
+					return (Color)o;
+				}
+				return Color.Empty;
+			}
+			set
+			{
+				ViewState["BorderColor"] = value;
+			}
+		}
+
 		[MonoTODO("FIXME_Internal_method_calls")]
-		public Style ControlStyle		
+		public virtual Style BorderStyle
+		{
+			get
+			{
+				return borderStyle;
+			}
+			set
+			{
+				borderStyle = value;
+			}
+		}
+
+		public virtual Unit BorderWidth
+		{
+			get
+			{
+				object o = ViewState["BorderWidth"];
+				if(o != null)
+				{
+					return (Unit)o;
+				}
+				return Unit.Empty;
+			}
+			set
+			{
+				if(value.Value < 0)
+				{
+					throw new ArgumentException();
+				}
+				ViewState["BorderWidth"] = value;
+			}
+		}
+
+		[MonoTODO("FIXME_Internal_method_calls")]
+		public virtual Style ControlStyle
 		{
 			get
 			{
@@ -129,7 +198,7 @@ namespace System.Web.UI.WebControls
 				return controlStyle;
 			}
 		}
-		
+
 		public bool ControlStyleCreated
 		{
 			get
@@ -137,7 +206,7 @@ namespace System.Web.UI.WebControls
 				return (controlStyle!=null);
 			}
 		}
-		
+
 		public virtual string CssClass
 		{
 			get
@@ -149,7 +218,7 @@ namespace System.Web.UI.WebControls
 				ControlStyle.CssClass = value;
 			}
 		}
-		
+
 		public virtual bool Enabled
 		{
 			get
@@ -169,7 +238,7 @@ namespace System.Web.UI.WebControls
 				return ControlStyle.Font;
 			}
 		}
-		
+
 		public virtual Color ForeColor
 		{
 			get
@@ -181,7 +250,7 @@ namespace System.Web.UI.WebControls
 				ControlStyle.ForeColor = value;
 			}
 		}
-		
+
 		public virtual Unit Height
 		{
 			get
@@ -193,7 +262,7 @@ namespace System.Web.UI.WebControls
 				ControlStyle.Height = value;
 			}
 		}
-		
+
 		public CssStyleCollection Style
 		{
 			get
@@ -201,7 +270,7 @@ namespace System.Web.UI.WebControls
 				return Attributes.CssStyle;
 			}
 		}
-		
+
 		public virtual short TabIndex
 		{
 			get
@@ -218,7 +287,7 @@ namespace System.Web.UI.WebControls
 				ViewState["TabIndex"] = value;
 			}
 		}
-		
+
 		public virtual string ToolTip
 		{
 			get
@@ -233,7 +302,7 @@ namespace System.Web.UI.WebControls
 				ViewState["ToolTip"] = value;
 			}
 		}
-		
+
 		public virtual Unit Width
 		{
 			get
@@ -245,7 +314,7 @@ namespace System.Web.UI.WebControls
 				ControlStyle.Width = value;
 			}
 		}
-		
+
 		[MonoTODO("FIXME_Internal_method_calls")]
 		public void ApplyStyle(Style s)
 		{
@@ -256,7 +325,7 @@ namespace System.Web.UI.WebControls
 				ControlStyle.CopyFrom(s);
 			//}
 		}
-		
+
 		[MonoTODO]
 		public void CopyBaseAttributes(WebControl controlSrc)
 		{
@@ -271,12 +340,12 @@ namespace System.Web.UI.WebControls
 			attributes = controlSrc.Attributes;
 			throw new NotImplementedException();
 		}
-		
+
 		public void MergeStyle(Style s)
 		{
 			ControlStyle.MergeWith(s);
 		}
-		
+
 		public virtual void RenderBeginTag(HtmlTextWriter writer)
 		{
 			AddAttributesToRender(writer);
@@ -287,12 +356,12 @@ namespace System.Web.UI.WebControls
 			}
 			writer.RenderBeginTag(tagName);
 		}
-		
+
 		public virtual void RenderEndTag(HtmlTextWriter writer)
 		{
 			writer.RenderEndTag();
 		}
-		
+
 		protected virtual HtmlTextWriterTag TagKey
 		{
 			get
@@ -300,7 +369,7 @@ namespace System.Web.UI.WebControls
 				return tagKey;
 			}
 		}
-		
+
 		protected virtual string TagName
 		{
 			get
@@ -312,7 +381,7 @@ namespace System.Web.UI.WebControls
 				return tagName;
 			}
 		}
-		
+
 		protected virtual void AddAttributesToRender(HtmlTextWriter writer)
 		{
 			if(ID!=null)
@@ -351,41 +420,41 @@ namespace System.Web.UI.WebControls
 				} while(ie.MoveNext());
 			}
 		}
-		
+
 		protected virtual Style CreateControlStyle()
 		{
 			return new Style(ViewState);
 		}
-		
+
 		[MonoTODO]
 		protected override void LoadViewState(object savedState)
 		{
 			throw new NotImplementedException();
 			//TODO: Load viewStates
 			/*
-			 * May be will have to first look at Control::LoadViewState 
+			 * May be will have to first look at Control::LoadViewState
 			*/
 		}
-		
+
 		protected override void Render(HtmlTextWriter writer)
 		{
 			RenderBeginTag(writer);
 			RenderContents(writer);
 			RenderEndTag(writer);
 		}
-		
+
 		protected virtual void RenderContents(HtmlTextWriter writer)
 		{
 			base.Render(writer);
 		}
-		
+
 		[MonoTODO]
 		protected override object SaveViewState()
 		{
 			throw new NotImplementedException();
 			//TODO: Implement me!
 		}
-		
+
 		protected override void TrackViewState()
 		{
 			TrackViewState();
@@ -398,14 +467,14 @@ namespace System.Web.UI.WebControls
 				attributeState.TrackViewState();
 			}
 		}
-		
+
 		string IAttributeAccessor.GetAttribute(string key)
 		{
 			if(Attributes!=null)
 				return (string)Attributes[key];
 			return null;
 		}
-		
+
 		void IAttributeAccessor.SetAttribute(string key, string value)
 		{
 			Attributes[key] = value;

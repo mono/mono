@@ -1,18 +1,18 @@
 /**
  * Namespace: System.Web.UI.WebControls
  * Class:     SelectedDatesCollection
- * 
+ *
  * Author:  Gaurav Vaish
  * Maintainer: gvaish@iitk.ac.in
  * Contact: <my_scripts2001@yahoo.com>, <gvaish@iitk.ac.in>
  * Implementation: yes
  * Status:  100%
- * 
+ *
  * (C) Gaurav Vaish (2002)
  */
 
 using System;
-using System.Colletion;
+using System.Collections;
 using System.Web;
 using System.Web.UI;
 
@@ -21,12 +21,12 @@ namespace System.Web.UI.WebControls
 	public sealed class SelectedDatesCollection : ICollection, IEnumerable
 	{
 		ArrayList dateList;
-		
+
 		public SelectedDatesCollection(ArrayList dateList)
 		{
 			this.dateList = dateList;
 		}
-		
+
 		public int Count
 		{
 			get
@@ -34,7 +34,7 @@ namespace System.Web.UI.WebControls
 				return dateList.Count;
 			}
 		}
-		
+
 		public bool IsReadOnly
 		{
 			get
@@ -42,7 +42,7 @@ namespace System.Web.UI.WebControls
 				return false;
 			}
 		}
-		
+
 		public bool IsSynchronized
 		{
 			get
@@ -50,7 +50,7 @@ namespace System.Web.UI.WebControls
 				return false;
 			}
 		}
-		
+
 		public DateTime this[int index]
 		{
 			get
@@ -58,7 +58,7 @@ namespace System.Web.UI.WebControls
 				return (DateTime)(dateList[index]);
 			}
 		}
-		
+
 		public object SyncRoot
 		{
 			get
@@ -66,22 +66,22 @@ namespace System.Web.UI.WebControls
 				return this;
 			}
 		}
-		
+
 		public void Add(DateTime date)
 		{
 			dateList.Add(date);
 		}
-		
+
 		public void Clear()
 		{
 			dateList.Clear();
 		}
-		
+
 		public bool Contains(DateTime date)
 		{
 			return dateList.Contains(date);
 		}
-		
+
 		public void CopyTo(Array array, int index)
 		{
 			foreach(DateTime current in this)
@@ -89,17 +89,17 @@ namespace System.Web.UI.WebControls
 				array.SetValue(current, index++);
 			}
 		}
-		
+
 		public IEnumerator GetEnumerator()
 		{
 			return dateList.GetEnumerator();
 		}
-		
+
 		public void Remove(DateTime date)
 		{
 			dateList.Remove(date);
 		}
-		
+
 		public void SelectRange(DateTime fromDate, DateTime toDate)
 		{
 			dateList.Clear();

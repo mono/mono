@@ -1,17 +1,18 @@
 /**
  * Namespace: System.Web.UI.WebControls
  * Class:     RepeatInfo
- * 
+ *
  * Author:  Gaurav Vaish
  * Maintainer: gvaish@iitk.ac.in
  * Contact: <my_scripts2001@yahoo.com>, <gvaish@iitk.ac.in>
  * Implementation: yes
  * Status:  90%
- * 
+ *
  * (C) Gaurav Vaish (2002)
  */
 
 using System;
+using System.Globalization;
 using System.Web;
 using System.Web.UI;
 
@@ -23,7 +24,7 @@ namespace System.Web.UI.WebControls
 		private int             repeatColumns;
 		private RepeatDirection repeatDirection;
 		private RepeatLayout    repeatLayout;
-		
+
 		public RepeatInfo()
 		{
 			outerTableImp   = false;
@@ -31,7 +32,7 @@ namespace System.Web.UI.WebControls
 			repeatDirection = RepeatDirection.Vertical;
 			repeatLayout    = RepeatLayout.Table;
 		}
-		
+
 		public bool OuterTableImplied
 		{
 			get
@@ -43,7 +44,7 @@ namespace System.Web.UI.WebControls
 				outerTableImp = value;
 			}
 		}
-		
+
 		public int RepeatColumns
 		{
 			get
@@ -55,7 +56,7 @@ namespace System.Web.UI.WebControls
 				repeatColumns = value;
 			}
 		}
-		
+
 		public RepeatDirection RepeatDirection
 		{
 			get
@@ -69,7 +70,7 @@ namespace System.Web.UI.WebControls
 				repeatDirection = value;
 			}
 		}
-		
+
 		public RepeatLayout RepeatLayout
 		{
 			get
@@ -83,18 +84,18 @@ namespace System.Web.UI.WebControls
 				repeatLayout = value;
 			}
 		}
-		
+
 		public void RenderRepeater(HtmlTextWriter writer, IRepeatInfoUser user, Style controlStyle, WebControl baseControl)
 		{
 			if(RepeatDirection == RepeatDirection.Vertical)
 			{
-				DoVerticalRendering(writer, user, controlStyle, basecontrol);
+				DoVerticalRendering(writer, user, controlStyle, baseControl);
 			} else
 			{
-				DoHorizontalRendering(writer, user, controlStyle, basecontrol);
+				DoHorizontalRendering(writer, user, controlStyle, baseControl);
 			}
 		}
-		
+
 		private void DoVerticalRendering(HtmlTextWriter writer, IRepeatInfoUser user, Style controlStyle, WebControl baseControl)
 		{
 			int total = user.RepeatedItemCount;
@@ -117,7 +118,7 @@ namespace System.Web.UI.WebControls
 			WebControl ctrl = null;
 			bool isTable = true;
 			bool hasSeps = user.HasSeparators;
-			if(!outerTableImpl)
+			if(!outerTableImp)
 			{
 				if(RepeatLayout == RepeatLayout.Table)
 				{
@@ -128,15 +129,15 @@ namespace System.Web.UI.WebControls
 					isTable = false;
 				}
 			}
-			
+
 			if(ctrl != null)
 			{
 				ctrl.ID = baseControl.ClientID;
 				ctrl.CopyBaseAttributes(baseControl);
-				ctrl.ApplyControlStyle(controlStyle);
+				ctrl.ApplyStyle(controlStyle);
 				ctrl.RenderBeginTag(writer);
 			}
-			
+
 			Style itemStyle;
 			int colSpan = 0;
 			if(user.HasHeader)
@@ -171,7 +172,7 @@ namespace System.Web.UI.WebControls
 					}
 				}
 			}
-			
+
 			int rowIndex = 0;
 			int colIndex = 0;
 			int index = 0;
@@ -180,7 +181,7 @@ namespace System.Web.UI.WebControls
 				if(isTable)
 					writer.RenderBeginTag(HtmlTextWriterTag.Tr);
 				colIndex = 0;
-				while(colIndex < colCount)
+				while(colIndex < colsCount)
 				{
 					index = rowIndex + colIndex * rowsCount;
 					if(index < total)
@@ -225,7 +226,7 @@ namespace System.Web.UI.WebControls
 				if(isTable)
 					writer.RenderEndTag();
 				else
-					if(rowIndex != (rowCount - 1) || (user.hasFooter && !outerTableImp))
+					if(rowIndex != (rowsCount - 1) || (user.hasFooter && !outerTableImp))
 						writer.WriteFullBeginTag("br");
 				rowIndex++;
 			}
@@ -257,10 +258,10 @@ namespace System.Web.UI.WebControls
 				ctrl.RenderEndTag(writer);
 			}
 		}
-		
+
 		private void DoHorizontalRendering(HtmlTextWriter writer, IRepeatInfoUser user, Style controlStyle, WebControl baseControl)
 		{
-			
+
 		}
 	}
 }

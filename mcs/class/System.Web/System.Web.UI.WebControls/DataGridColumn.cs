@@ -1,13 +1,13 @@
 /**
  * Namespace: System.Web.UI.WebControls
  * Class:     DataGridColumn
- * 
+ *
  * Author:  Gaurav Vaish
  * Maintainer: gvaish@iitk.ac.in
  * Contact: <my_scripts2001@yahoo.com>, <gvaish@iitk.ac.in>
  * Implementation: yes
  * Status:  100%
- * 
+ *
  * (C) Gaurav Vaish (2002)
  */
 
@@ -30,7 +30,7 @@ namespace System.Web.UI.WebControls
 
 		public DataGridColumn()
 		{
-			viewStat = new StateBag();
+			viewState = new StateBag();
 		}
 
 		public virtual TableItemStyle FooterStyle
@@ -170,7 +170,7 @@ namespace System.Web.UI.WebControls
 				OnColumnChanged();
 			}
 		}
-		
+
 		public virtual void Initialize()
 		{
 			if(owner != null && owner.Site != null)
@@ -178,16 +178,16 @@ namespace System.Web.UI.WebControls
 				designMode = owner.Site.DesignMode;
 			}
 		}
-		
+
 		public virtual void InitializeCell(TableCell cell, int columnIndex, ListItemType itemType)
 		{
 			switch(itemType)
 			{
-				ListItemType.Header : InitializeCellHeader(cell, columnIndex);
-				                      break;
-				ListItemType.Footer : InitializeCellFooter(cell, columnIndex);
-				                      break;
-				default             : return;
+				case ListItemType.Header : InitializeCellHeader(cell, columnIndex);
+				                           break;
+				case ListItemType.Footer : InitializeCellFooter(cell, columnIndex);
+				                           break;
+				default                  : return;
 			}
 		}
 
@@ -251,7 +251,7 @@ namespace System.Web.UI.WebControls
 			}
 			if(ctrl != null)
 			{
-				Controls.Add(ctrl);
+				cell.Add(ctrl);
 			}
 		}
 
@@ -259,12 +259,12 @@ namespace System.Web.UI.WebControls
 		{
 			cell.Text = (FooterText.Length > 0 ? FooterText : "&nbsp;");
 		}
-		
+
 		public override string ToString()
 		{
 			return String.Empty;
 		}
-		
+
 		protected bool DesignMode
 		{
 			get
@@ -272,7 +272,7 @@ namespace System.Web.UI.WebControls
 				return designMode;
 			}
 		}
-		
+
 		protected DataGrid Owner
 		{
 			get
@@ -280,7 +280,7 @@ namespace System.Web.UI.WebControls
 				return owner;
 			}
 		}
-		
+
 		protected StateBag ViewState
 		{
 			get
@@ -288,7 +288,7 @@ namespace System.Web.UI.WebControls
 				return viewState;
 			}
 		}
-		
+
 		/// <summary>
 		/// Undocumented
 		/// </summary>
@@ -309,7 +309,7 @@ namespace System.Web.UI.WebControls
 			states[3] = (itemStyle == null ? null : itemStyle.SaveViewState());
 			return states;
 		}
-		
+
 		protected virtual void LoadViewState(object savedState)
 		{
 			if(savedState!= null)
@@ -320,11 +320,11 @@ namespace System.Web.UI.WebControls
 					ViewState.LoadViewState(states[0]);
 					FooterStyle.LoadViewState(states[1]);
 					HeaderStyle.LoadViewState(states[2]);
-					ItemStyle.LoadViewStae(states[3]);
+					ItemStyle.LoadViewState(states[3]);
 				}
 			}
 		}
-		
+
 		protected virtual void TrackViewState()
 		{
 			marked = true;
@@ -342,27 +342,35 @@ namespace System.Web.UI.WebControls
 				itemStyle.TrackViewState();
 			}
 		}
-		
-		void IStateManager.LoadViewState(object savedState)
-		{
-			LoadViewState(savedState);
-		}
-		
-		object IStateManager.SaveViewState()
-		{
-			return SaveViewState();
-		}
-		
-		void IStateManager.TrackViewState()
-		{
-			TrackViewState();
-		}
-		
-		bool IStateManager.IsTrackingViewState
+
+		protected virtual bool IsTrackingViewState
 		{
 			get
 			{
 				return marked;
+			}
+		}
+
+		void IStateManager.LoadViewState(object savedState)
+		{
+			LoadViewState(savedState);
+		}
+
+		object IStateManager.SaveViewState()
+		{
+			return SaveViewState();
+		}
+
+		void IStateManager.TrackViewState()
+		{
+			TrackViewState();
+		}
+
+		bool IStateManager.IsTrackingViewState
+		{
+			get
+			{
+				return IsTrackingViewState;
 			}
 		}
 	}

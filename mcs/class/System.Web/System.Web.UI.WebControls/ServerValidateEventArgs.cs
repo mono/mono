@@ -1,13 +1,13 @@
 /**
  * Namespace: System.Web.UI.WebControls
  * Class:     ServerValidateEventArgs
- * 
+ *
  * Author:  Gaurav Vaish
  * Maintainer: gvaish@iitk.ac.in
  * Contact: <my_scripts2001@yahoo.com>, <gvaish@iitk.ac.in>
  * Implementation: yes
  * Status:  100%
- * 
+ *
  * (C) Gaurav Vaish (2002)
  */
 
@@ -21,13 +21,13 @@ namespace System.Web.UI.WebControls
 	{
 		private bool isValid;
 		private string value;
-		
+
 		public ServerValidateEventArgs(string value, bool isValid)
 		{
 			this.value = value;
-			this.isValid = isvalid;
+			this.isValid = isValid;
 		}
-		
+
 		public bool IsValid
 		{
 			get
@@ -35,7 +35,7 @@ namespace System.Web.UI.WebControls
 				return isValid;
 			}
 		}
-		
+
 		public string Value
 		{
 			get

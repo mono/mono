@@ -1,17 +1,18 @@
 /**
  * Namespace: System.Web.UI.WebControls
  * Class:     DataListItem
- * 
+ *
  * Author:  Gaurav Vaish
  * Maintainer: gvaish@iitk.ac.in
  * Contact: <my_scripts2001@yahoo.com>, <gvaish@iitk.ac.in>
  * Implementation: yes
  * Status:  95%
- * 
+ *
  * (C) Gaurav Vaish (2002)
  */
 
 using System;
+using System.Collections;
 using System.Web;
 using System.Web.UI;
 
@@ -28,7 +29,7 @@ namespace System.Web.UI.WebControls
 			this.itemIndex = itemIndex;
 			this.itemType  = itemType;
 		}
-		
+
 		public virtual object DataItem
 		{
 			get
@@ -40,7 +41,7 @@ namespace System.Web.UI.WebControls
 				dataItem = value;
 			}
 		}
-		
+
 		public virtual int ItemIndex
 		{
 			get
@@ -48,7 +49,7 @@ namespace System.Web.UI.WebControls
 				return itemIndex;
 			}
 		}
-		
+
 		public virtual ListItemType ItemType
 		{
 			get
@@ -62,18 +63,20 @@ namespace System.Web.UI.WebControls
 		{
 			//TODO: Complete me!
 		}
-		
+
 		protected override Style CreateControlStyle()
 		{
 			return new TableItemStyle();
 		}
-		
+
 		protected override bool OnBubbleEvent(object source, EventArgs e)
 		{
 			if(e is CommandEventArgs)
 			{
 				RaiseBubbleEvent(this, new DataListCommandEventArgs(this, source, (CommandEventArgs)e));
+				return true;
 			}
+			return false;
 		}
 	}
 }

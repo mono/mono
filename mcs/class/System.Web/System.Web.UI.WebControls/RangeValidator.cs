@@ -1,28 +1,29 @@
 /**
  * Namespace: System.Web.UI.WebControls
  * Class:     RangeValidator
- * 
+ *
  * Author:  Gaurav Vaish
  * Maintainer: gvaish@iitk.ac.in
  * Contact: <my_scripts2001@yahoo.com>, <gvaish@iitk.ac.in>
  * Implementation: yes
  * Status:  100%
- * 
+ *
  * (C) Gaurav Vaish (2002)
  */
 
 using System;
 using System.Web;
 using System.Web.UI;
+using System.Xml;
 
 namespace System.Web.UI.WebControls
 {
-	public class RangeValidator : BaseValidator
+	public class RangeValidator : BaseCompareValidator
 	{
 		public RangeValidator(): base()
 		{
 		}
-		
+
 		public string MaximumValue
 		{
 			get
@@ -39,7 +40,7 @@ namespace System.Web.UI.WebControls
 				ViewState["MaximumValue"] = value;
 			}
 		}
-		
+
 		public string MinimumValue
 		{
 			get
@@ -56,7 +57,7 @@ namespace System.Web.UI.WebControls
 				ViewState["MinimumValue"] = value;
 			}
 		}
-		
+
 		protected override void AddAttributesToRender(HtmlTextWriter writer)
 		{
 			base.AddAttributesToRender(writer);
@@ -67,7 +68,7 @@ namespace System.Web.UI.WebControls
 				writer.AddAttribute("minimumvalue", MinimumValue);
 			}
 		}
-		
+
 		protected override bool ControlPropertiesValid()
 		{
 			string max = MaximumValue;
@@ -77,8 +78,8 @@ namespace System.Web.UI.WebControls
 				fmt[0] = max;
 				fmt[1] = "MaximumValue";
 				fmt[2] = ID;
-				fmt[3] = Enum.ToString(typeof(ValidationDataType), Type);
-				throw new HttpException(HttpRuntimer.FormatString("Validator_value_bad_type", fmt);
+				fmt[3] = PropertyConverter.EnumToString(typeof(ValidationDataType), Type);
+				throw new HttpException(HttpRuntime.FormatResourceString("Validator_value_bad_type", fmt));
 			}
 			string min = MaximumValue;
 			if(!CanConvert(min, Type))
@@ -87,21 +88,21 @@ namespace System.Web.UI.WebControls
 				fmt[0] = min;
 				fmt[1] = "MinimumValue";
 				fmt[2] = ID;
-				fmt[3] = Enum.ToString(typeof(ValidationDataType), Type);
-				throw new HttpException(HttpRuntimer.FormatString("Validator_value_bad_type", fmt);
+				fmt[3] = PropertyConverter.EnumToString(typeof(ValidationDataType), Type);
+				throw new HttpException(HttpRuntime.FormatResourceString("Validator_value_bad_type", fmt));
 			}
-			
-			if(Compare(max, min, ValidationDataType.Double) != 0)
+
+			if(Compare(max, min, ValidationCompareOperator.GreaterThan, ValidationDataType.Double))
 			{
 				string[] fmt = new string[3];
 				fmt[0] = min;
 				fmt[1] = max;
-				fmt[2] = Enum.ToString(typeof(ValidationDataType), Type);
-				throw new HttpException(HttpRuntimer.FormatString("Validator_range_overalap", fmt);
+				fmt[2] = PropertyConverter.EnumToString(typeof(ValidationDataType), Type);
+				throw new HttpException(HttpRuntime.FormatResourceString("Validator_range_overalap", fmt));
 			}
 			return base.ControlPropertiesValid();
 		}
-		
+
 		protected override bool EvaluateIsValid()
 		{
 			string ctrl = GetControlValidationValue(ControlToValidate);
@@ -110,11 +111,11 @@ namespace System.Web.UI.WebControls
 				return true;
 			}
 			bool retVal = Compare(ctrl, MinimumValue, ValidationCompareOperator.GreaterThanEqual,
-			                     ValidationType.String);
+			                     ValidationDataType.String);
 			if(!retVal)
 			{
 				retVal = Compare(ctrl, MaximumValue, ValidationCompareOperator.LessThanEqual,
-				                 ValidationType.String);
+				                 ValidationDataType.String);
 			}
 			return retVal;
 		}

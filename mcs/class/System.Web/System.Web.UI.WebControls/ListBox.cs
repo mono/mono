@@ -12,6 +12,7 @@
  */
 
 using System;
+using System.Drawing;
 using System.Collections.Specialized;
 using System.Web;
 using System.Web.UI;
@@ -36,7 +37,7 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
-		public override BorderStyle BorderStyle
+		public override Style BorderStyle
 		{
 			get
 			{

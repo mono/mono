@@ -1,13 +1,13 @@
 /**
  * Namespace: System.Web.UI.WebControls
  * Class:     DataGrid
- * 
+ *
  * Author:  Gaurav Vaish
  * Maintainer: gvaish@iitk.ac.in
  * Contact: <my_scripts2001@yahoo.com>, <gvaish@iitk.ac.in>
  * Implementation: yes
  * Status:  95%
- * 
+ *
  * (C) Gaurav Vaish (2002)
  */
 
@@ -29,7 +29,7 @@ namespace System.Web.UI.WebControls
 		public const string SelectCommandName   = "Select";
 		public const string SortCommandName     = "Sort";
 		public const string UpdateCommandName   = "Update";
-		
+
 		private TableItemStyle alternatingItemStyle;
 		private TableItemStyle editItemStyle;
 		private TableItemStyle headerStyle;
@@ -42,7 +42,7 @@ namespace System.Web.UI.WebControls
 		private ArrayList columnsArrayList;
 		private DataGridColumnCollection items;
 		private ArrayList itemsArrayList;
-		
+
 		private static readonly object CancelCommandEvent    = new object();
 		private static readonly object DeleteCommandEvent    = new object();
 		private static readonly object EditCommandEvent      = new object();
@@ -52,11 +52,11 @@ namespace System.Web.UI.WebControls
 		private static readonly object PageIndexChangedEvent = new object();
 		private static readonly object SortCommandEvent      = new object();
 		private static readonly object UpdateCommandEvent    = new object();
-		
+
 		public DataGrid(): base()
 		{
 		}
-		
+
 		public virtual bool AllowCustomPaging
 		{
 			get
@@ -71,7 +71,7 @@ namespace System.Web.UI.WebControls
 				ViewState["AllowCustomPaging"] = value;
 			}
 		}
-		
+
 		public virtual bool AllowPaging
 		{
 			get
@@ -101,7 +101,7 @@ namespace System.Web.UI.WebControls
 				ViewState["AllowSorting"] = value;
 			}
 		}
-		
+
 		public virtual TableItemStyle AlternatingItemStyle
 		{
 			get
@@ -128,7 +128,7 @@ namespace System.Web.UI.WebControls
 				ViewState["AutoGenerateColumns"] = value;
 			}
 		}
-		
+
 		public virtual string BackImageUrl
 		{
 			get
@@ -143,7 +143,7 @@ namespace System.Web.UI.WebControls
 				ViewState["BackImageUrl"] = value;
 			}
 		}
-		
+
 		public virtual DataGridColumnCollection Columns
 		{
 			get
@@ -160,7 +160,7 @@ namespace System.Web.UI.WebControls
 				}
 			}
 		}
-		
+
 		public int CurrentPageIndex
 		{
 			get
@@ -177,7 +177,7 @@ namespace System.Web.UI.WebControls
 				ViewState["CurrentPageIndex"] = value;
 			}
 		}
-		
+
 		public virtual int EditItemIndex
 		{
 			get
@@ -194,7 +194,7 @@ namespace System.Web.UI.WebControls
 				ViewState["EditItemIndex"] = value;
 			}
 		}
-		
+
 		public virtual TableItemStyle EditItemStyle
 		{
 			get
@@ -209,7 +209,7 @@ namespace System.Web.UI.WebControls
 				}
 			}
 		}
-		
+
 		public virtual TableItemStyle FooterStyle
 		{
 			get
@@ -224,7 +224,7 @@ namespace System.Web.UI.WebControls
 				}
 			}
 		}
-		
+
 		public virtual TableItemStyle HeaderStyle
 		{
 			get
@@ -239,7 +239,7 @@ namespace System.Web.UI.WebControls
 				}
 			}
 		}
-		
+
 		public virtual DataGridItemCollection Items
 		{
 			get
@@ -257,7 +257,7 @@ namespace System.Web.UI.WebControls
 				return items;
 			}
 		}
-		
+
 		public virtual TableItemStyle ItemStyle
 		{
 			get
@@ -273,7 +273,7 @@ namespace System.Web.UI.WebControls
 				return itemStyle;
 			}
 		}
-		
+
 		public int PageCount
 		{
 			get
@@ -288,7 +288,7 @@ namespace System.Web.UI.WebControls
 				return 0;
 			}
 		}
-		
+
 		public virtual DataGridPagerStyle PagerStyle
 		{
 			get
@@ -304,7 +304,7 @@ namespace System.Web.UI.WebControls
 				return pagerStyle;
 			}
 		}
-		
+
 		public virtual int PageSize
 		{
 			get
@@ -321,7 +321,7 @@ namespace System.Web.UI.WebControls
 				ViewState["PageSize"] = value;
 			}
 		}
-		
+
 		public virtual int SelectedIndex
 		{
 			get
@@ -355,7 +355,7 @@ namespace System.Web.UI.WebControls
 				}
 			}
 		}
-		
+
 		public virtual DataGridItem SelectedItem
 		{
 			get
@@ -365,7 +365,7 @@ namespace System.Web.UI.WebControls
 				return Items[SelectedIndex];
 			}
 		}
-		
+
 		public virtual TableItemStyle SelectedItemStyle
 		{
 			get
@@ -380,14 +380,14 @@ namespace System.Web.UI.WebControls
 				}
 			}
 		}
-		
+
 		public virtual bool ShowFooter
 		{
 			get
 			{
 				object o = ViewState["ShowFooter"];
 				if(o != null)
-					retur (bool)o;
+					return (bool)o;
 				return false;
 			}
 			set
@@ -402,7 +402,7 @@ namespace System.Web.UI.WebControls
 			{
 				object o = ViewState["ShowHeader"];
 				if(o != null)
-					retur (bool)o;
+					return (bool)o;
 				return false;
 			}
 			set
@@ -410,14 +410,14 @@ namespace System.Web.UI.WebControls
 				ViewState["ShowHeader"] = value;
 			}
 		}
-		
+
 		public virtual int VirtualItemCount
 		{
 			get
 			{
 				object o = ViewState["VirtualItemCount"];
 				if(o != null)
-					retur (int)o;
+					return (int)o;
 				return 0;
 			}
 			set
@@ -427,7 +427,7 @@ namespace System.Web.UI.WebControls
 				ViewState["VirtualItemCount"] = value;
 			}
 		}
-		
+
 		public event DataGridCommandEventHandler CancelCommand
 		{
 			add
@@ -439,7 +439,7 @@ namespace System.Web.UI.WebControls
 				Events.RemoveHandler(CancelCommandEvent, value);
 			}
 		}
-		
+
 		public event DataGridCommandEventHandler DeleteCommand
 		{
 			add
@@ -451,7 +451,7 @@ namespace System.Web.UI.WebControls
 				Events.RemoveHandler(DeleteCommandEvent, value);
 			}
 		}
-		
+
 		public event DataGridCommandEventHandler EditCommand
 		{
 			add
@@ -463,7 +463,7 @@ namespace System.Web.UI.WebControls
 				Events.RemoveHandler(EditCommandEvent, value);
 			}
 		}
-		
+
 		public event DataGridCommandEventHandler ItemCommand
 		{
 			add
@@ -475,7 +475,7 @@ namespace System.Web.UI.WebControls
 				Events.RemoveHandler(ItemCommandEvent, value);
 			}
 		}
-		
+
 		public event DataGridCommandEventHandler ItemCreated
 		{
 			add
@@ -487,7 +487,7 @@ namespace System.Web.UI.WebControls
 				Events.RemoveHandler(ItemCreatedEvent, value);
 			}
 		}
-		
+
 		public event DataGridCommandEventHandler ItemDataBound
 		{
 			add
@@ -499,7 +499,7 @@ namespace System.Web.UI.WebControls
 				Events.RemoveHandler(ItemDataBoundEvent, value);
 			}
 		}
-		
+
 		public event DataGridCommandEventHandler PageIndexChanged
 		{
 			add
@@ -511,7 +511,7 @@ namespace System.Web.UI.WebControls
 				Events.RemoveHandler(PageIndexChangedEvent, value);
 			}
 		}
-		
+
 		public event DataGridCommandEventHandler SortCommand
 		{
 			add
@@ -523,7 +523,7 @@ namespace System.Web.UI.WebControls
 				Events.RemoveHandler(SortCommandEvent, value);
 			}
 		}
-		
+
 		public event DataGridCommandEventHandler UpdateCommand
 		{
 			add
@@ -535,14 +535,14 @@ namespace System.Web.UI.WebControls
 				Events.RemoveHandler(UpdateCommandEvent, value);
 			}
 		}
-		
+
 		protected override Style CreateControlStyle()
 		{
 			TableStyle style = new TableStyle(ViewState);
 			style.GridLines = GridLines.Both;
 			style.CellSpacing = 0;
 		}
-		
+
 		protected override void LoadViewState(object savedState)
 		{
 			if(states != null)
@@ -570,7 +570,7 @@ namespace System.Web.UI.WebControls
 				}
 			}
 		}
-		
+
 		protected override object SaveViewState()
 		{
 			object[] states = new object[9];
@@ -585,7 +585,7 @@ namespace System.Web.UI.WebControls
 			states[8] = (editItemStyle == null ? null : editItemStyle.SaveViewState());
 			return states;
 		}
-		
+
 		protected override void TrackViewState()
 		{
 			TrackViewState();
@@ -623,7 +623,7 @@ namespace System.Web.UI.WebControls
 				columns.TrackViewState();
 			}
 		}
-		
+
 		[MonoTODO]
 		protected override bool OnBubbleEvent(object source, EventArgs e)
 		{
@@ -647,7 +647,7 @@ namespace System.Web.UI.WebControls
 			throw new NotImplementedException();
 			//return retVal;
 		}
-		
+
 		protected virtual void OnCancelCommand(DataGridCommandEventArgs e)
 		{
 			if(Events != null)
@@ -736,6 +736,26 @@ namespace System.Web.UI.WebControls
 				if(dceh != null)
 					dceh(this, e);
 			}
+		}
+
+		[MonoTODO]
+		protected override void PrepareControlHierarchy()
+		{
+			throw new NotImplementedException();
+		}
+
+		[MonoTODO]
+		protected override void CreateControlHierarchy(bool useDataSource)
+		{
+			throw new NotImplementedException();
+		}
+
+		internal void OnColumnsChanged()
+		{
+		}
+
+		internal void OnPagerChanged()
+		{
 		}
 	}
 }

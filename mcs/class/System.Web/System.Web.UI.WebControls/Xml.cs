@@ -1,17 +1,18 @@
 /**
  * Namespace: System.Web.UI.WebControls
  * Class:     Xml
- * 
+ *
  * Author:  Gaurav Vaish
  * Maintainer: gvaish@iitk.ac.in
  * Contact: <my_scripts2001@yahoo.com>, <gvaish@iitk.ac.in>
  * Implementation: yes
  * Status:  75%
- * 
+ *
  * (C) Gaurav Vaish (2002)
  */
 
 using System;
+using System.IO;
 using System.Xml;
 using System.Xml.Xsl;
 using System.Xml.XPath;
@@ -28,33 +29,33 @@ namespace System.Web.UI.WebControls
 		private XslTransform     transform;
 		private XsltArgumentList transformArgumentList;
 		private string           transformSource;
-		
+
 		private XPathDocument xpathDoc;
-		
+
 		private static XslTransform defaultTransform;
-		
+
 		static Xml()
 		{
-			XmlTextReader reader = new StringReader("<xsl:stylesheet version='1.0' " +
+			XmlTextReader reader = new XmlTextReader(new StringReader("<xsl:stylesheet version='1.0' " +
 			                                        "xmlns:xsl='http://www.w3.org/1999/XSL/Transform'>" +
 			                                        "<xsl:template match=\"\">" +
 			                                        "<xsl:copy-of select=\".\"/>" +
 			                                        "</xsl:template>" +
-			                                        "</xsl:stylesheet>");
+			                                        "</xsl:stylesheet>"));
 			defaultTransform = new XslTransform();
 			defaultTransform.Load(reader);
 		}
-		
+
 		public Xml(): base()
 		{
 		}
-		
+
 		[MonoTODO("Initialize_Document")]
 		private void LoadXmlDoc()
 		{
 			throw new NotImplementedException();
 		}
-		
+
 		public XmlDocument Document
 		{
 			get
@@ -71,7 +72,7 @@ namespace System.Web.UI.WebControls
 				document        = value;
 			}
 		}
-		
+
 		public string DocumentContent
 		{
 			get
@@ -85,7 +86,7 @@ namespace System.Web.UI.WebControls
 				documentContent = value;
 			}
 		}
-		
+
 		public string DocumentSource
 		{
 			get
@@ -102,7 +103,7 @@ namespace System.Web.UI.WebControls
 				documentSource  = value;
 			}
 		}
-		
+
 		public XslTransform Transform
 		{
 			get
@@ -115,7 +116,7 @@ namespace System.Web.UI.WebControls
 				transform       = value;
 			}
 		}
-		
+
 		public string TransformSource
 		{
 			get
@@ -126,11 +127,11 @@ namespace System.Web.UI.WebControls
 			}
 			set
 			{
-				transform       = null
+				transform       = null;
 				transformSource = value;
 			}
 		}
-		
+
 		public XsltArgumentList TransformArgumentList
 		{
 			get
@@ -142,17 +143,17 @@ namespace System.Web.UI.WebControls
 				transformArgumentList = value;
 			}
 		}
-		
+
 		protected override void AddParsedSubObject(object obj)
 		{
 			if(obj is LiteralControl)
 			{
-				DocumentContent = ((LiteralContent)obj).Text;
+				DocumentContent = ((LiteralControl)obj).Text;
 				return;
 			}
 			throw new HttpException(HttpRuntime.FormatResourceString("Cannot_Have_Children_of_Type", "Xml", GetType().Name.ToString()));
 		}
-		
+
 		[MonoTODO("Initialize_xpathDocument")]
 		private void LoadXpathDoc()
 		{
@@ -167,13 +168,13 @@ namespace System.Web.UI.WebControls
 			}
 			throw new NotImplementedException();
 		}
-		
+
 		[MonoTODO("Initialize_Transform")]
 		private void LoadTransform()
 		{
 			throw new ArgumentException();
 		}
-		
+
 		[MonoTODO]
 		protected override void Render(HtmlTextWriter output)
 		{
@@ -181,7 +182,7 @@ namespace System.Web.UI.WebControls
 			{
 				LoadXpathDoc();
 			}
-			
+
 			LoadTransform();
 			if(document == null || xpathDoc == null)
 			{

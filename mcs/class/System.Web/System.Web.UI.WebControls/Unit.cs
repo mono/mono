@@ -22,93 +22,95 @@ namespace System.Web.UI.WebControls
 	public struct Unit
 	{
 		public static readonly Unit Empty = new Unit();
-		
+
 		private static int Min = -32768;
 		private static int Max = +32767;
-		
+
 		private UnitType type;
 		private double   val;
-		
+
 		public static Unit Parse(string s)
 		{
 			return new Unit(s);
 		}
-		
+
 		public static Unit Parse(string s, CultureInfo culture)
 		{
 			return new Unit(s, culture);
 		}
-		
+
 		public static Unit Percentage(double n)
 		{
 			return new Unit(n);
 		}
-		
+
 		public static Unit Pixel(int n)
 		{
 			return new Unit(n);
 		}
-		
+
 		public static Unit Point(int n)
 		{
 			return new Unit(n, UnitType.Point);
 		}
-		
+
 		public static bool operator ==(Unit left, Unit right)
 		{
 			return (left.type == right.type && left.val == right.val);
 		}
-		
+
 		public static bool operator !=(Unit left, Unit right)
 		{
 			return !(left == right);
 		}
-		
+
 		public static implicit operator Unit(int n)
 		{
 			return new Unit(n);
 		}
-		
+
 		public Unit(double value)
 		{
 			if(value < Min || value > Max)
 			{
-				return ArgumentOutOfRangeException();
+				throw new ArgumentOutOfRangeException();
 			}
 			val = value;
 			type = UnitType.Pixel;
 		}
-		
+
 		public Unit(int value)
 		{
 			if(value < Min || value > Max)
 			{
-				return ArgumentOutOfRangeException();
+				throw new ArgumentOutOfRangeException();
 			}
 			val = value;
 			type = UnitType.Pixel;
 		}
-		
+
 		public Unit(string value): this(value, CultureInfo.CurrentCulture)
 		{
 		}
-		
+
 		public Unit(double value, UnitType type)
 		{
 			if(value < Min || value > Max)
 			{
-				return ArgumentOutOfRangeException();
+				throw new ArgumentOutOfRangeException();
 			}
 			val = value;
 			this.type = type;
 		}
-		
+
 		public Unit(string value, CultureInfo culture): this(value, culture, UnitType.Pixel)
 		{
 		}
-		
+
 		internal Unit(string value, CultureInfo culture, UnitType defType)
 		{
+			this.val = 0;
+			this.type = UnitType.Pixel;
 			if(value == null || value.Length == 0)
 			{
 				this.val = 0;
@@ -119,7 +121,7 @@ namespace System.Web.UI.WebControls
 			string strVal = value.Trim().ToLower();
 			char c;
 			int start = -1;
-			int current = 0;
+			//int current = 0;
 			for(int i = 0; i < strVal.Length; i++)
 			{
 				c = strVal[i];
@@ -130,28 +132,30 @@ namespace System.Web.UI.WebControls
 				throw new ArgumentException();
 			if( (start + 1) < strVal.Length)
 			{
-				this.type = GetTypeFromString(strVal.Substring(start + 1).Trim());
+				this.type = (UnitType)GetTypeFromString(strVal.Substring(start + 1).Trim());
+				this.val  = 0;
 			} else
 			{
 				this.type = defType;
+				this.val  = 0;
 			}
 			try
 			{
 				if(type == UnitType.Pixel)
 				{
-					val = (double)((new In32Converter()).ConvertFromString(null, culture, strVal.Substring(0, start + 1)));
+					val = (double)((new Int32Converter()).ConvertFromString(null, culture, strVal.Substring(0, start + 1)));
 				} else
 				{
 					val = (double)((new SingleConverter()).ConvertFromString(null, culture, strVal.Substring(0, start + 1)));
 				}
-			} catch(Exception e)
+			} catch(Exception)
 			{
 				throw new ArgumentOutOfRangeException();
 			}
 			if(val < Min || val > Max)
 				throw new ArgumentOutOfRangeException();
 		}
-		
+
 		private UnitType GetTypeFromString(string s)
 		{
 			if(s == null || s.Length == 0)
@@ -167,17 +171,17 @@ namespace System.Web.UI.WebControls
 				"%",
 				"em",
 				"ex"
-			}
+			};
 			int i = 0;
 			foreach(string cType in uTypes)
 			{
-				if(s == uTypes[i])
-					return (UnitType)(i + 1);
+				if(s == cType)
+					return (UnitType)Enum.ToObject(typeof(UnitType), (i + 1));
 				i++;
 			}
 			return UnitType.Pixel;
 		}
-		
+
 		private string GetStringFromPixel(UnitType ut)
 		{
 			string[] uTypes = {
@@ -190,12 +194,12 @@ namespace System.Web.UI.WebControls
 				"%",
 				"em",
 				"ex"
-			}
+			};
 			if( !Enum.IsDefined(typeof(UnitType), ut) )
 				return "px";
-			return uTypes[ut - 1];
+			return uTypes[(int)ut - 1];
 		}
-		
+
 		public bool IsEmpty
 		{
 			get
@@ -203,7 +207,7 @@ namespace System.Web.UI.WebControls
 				return (type == 0);
 			}
 		}
-		
+
 		public UnitType Type
 		{
 			get
@@ -213,7 +217,7 @@ namespace System.Web.UI.WebControls
 				return type;
 			}
 		}
-		
+
 		public double Value
 		{
 			get
@@ -221,7 +225,7 @@ namespace System.Web.UI.WebControls
 				return val;
 			}
 		}
-		
+
 		public override bool Equals(object obj)
 		{
 			if(obj != null && obj is Unit)
@@ -231,24 +235,24 @@ namespace System.Web.UI.WebControls
 			}
 			return false;
 		}
-		
+
 		public override int GetHashCode()
 		{
 			return ( (type.GetHashCode() << 2) | (val.GetHashCode()) );
 		}
-		
+
 		public override string ToString()
 		{
 			if(IsEmpty)
 				return String.Empty;
-			return ( val.ToString() + GetStringFromType(type) );
+			return ( val.ToString() + GetStringFromPixel(type) );
 		}
-		
-		public override string ToString(CultureInfo culture)
+
+		public string ToString(CultureInfo culture)
 		{
 			if(IsEmpty)
 				return String.Empty;
-			return ( val.ToString(culture) + GetStringFromType(type) );
+			return ( val.ToString(culture) + GetStringFromPixel(type) );
 		}
 	}
 }
