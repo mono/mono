@@ -197,9 +197,15 @@ namespace System.Xml
 
 		public virtual XmlNode AppendChild (XmlNode newChild)
 		{
-			if (NodeType == XmlNodeType.Document
-			    || NodeType == XmlNodeType.Element
-			    || NodeType == XmlNodeType.Attribute) {
+			XmlDocument ownerDoc = (NodeType == XmlNodeType.Document) ? (XmlDocument)this : OwnerDocument;
+
+			ownerDoc.onNodeInserting (newChild, this);
+
+			if (NodeType == XmlNodeType.Document || NodeType == XmlNodeType.Element || NodeType == XmlNodeType.Attribute) {
+				
+				if (newChild.OwnerDocument != ownerDoc)
+					throw new ArgumentException ("Can't append a node created by another document.");
+
 				XmlLinkedNode newLinkedChild = (XmlLinkedNode) newChild;
 				XmlLinkedNode lastLinkedChild = LastLinkedChild;
 
@@ -212,6 +218,8 @@ namespace System.Xml
 					newLinkedChild.NextLinkedSibling = newLinkedChild;
 				
 				LastLinkedChild = newLinkedChild;
+
+				ownerDoc.onNodeInserted (newChild, newChild.ParentNode);
 
 				return newChild;
 			} else
@@ -285,11 +293,17 @@ namespace System.Xml
 
 		public virtual void RemoveAll ()
 		{
+			XmlDocument ownerDoc = (NodeType == XmlNodeType.Document) ? (XmlDocument)this : OwnerDocument;
+
+			ownerDoc.onNodeRemoving (this, this.ParentNode);
 			LastLinkedChild = null;
+			ownerDoc.onNodeRemoved (this, this.ParentNode);
 		}
 
 		public virtual XmlNode RemoveChild (XmlNode oldChild)
 		{
+			OwnerDocument.onNodeRemoving (oldChild, oldChild.ParentNode);
+
 			if (NodeType == XmlNodeType.Document || NodeType == XmlNodeType.Element || NodeType == XmlNodeType.Attribute) 
 			{
 				if (IsReadOnly)
@@ -310,6 +324,8 @@ namespace System.Xml
 					beforeLinkedChild.NextLinkedSibling = oldLinkedChild.NextLinkedSibling;
 					oldLinkedChild.NextLinkedSibling = null;
 				 }
+
+				OwnerDocument.onNodeRemoved (oldChild, oldChild.ParentNode);
 
 				return oldChild;
 			} 

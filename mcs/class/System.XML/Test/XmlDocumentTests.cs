@@ -1,4 +1,15 @@
+//
+// System.Xml.XmlDocumentTests
+//
+// Authors:
+//   Jason Diamond <jason@injektilo.org>
+//   Kral Ferch <kral_ferch@hotmail.com>
+//
+// (C) 2002 Jason Diamond, Kral Ferch
+//
+
 using System;
+using System.Collections;
 using System.Xml;
 
 using NUnit.Framework;
@@ -11,6 +22,62 @@ namespace MonoTests.System.Xml
 		public XmlDocumentTests (string name) : base (name) {}
 
 		private XmlDocument document;
+		private ArrayList eventStrings = new ArrayList();
+
+		// These Event* methods support the TestEventNode* Tests in this file.
+		// Most of them are event handlers for the XmlNodeChangedEventHandler
+		// delegate.
+		private void EventStringAdd(string eventName, XmlNodeChangedEventArgs e)
+		{
+			string oldParent = (e.OldParent != null) ? e.OldParent.Name : "<none>";
+			string newParent = (e.NewParent != null) ? e.NewParent.Name : "<none>";
+			eventStrings.Add (String.Format ("{0}, {1}, {2}, {3}, {4}", eventName, e.Action.ToString (), e.Node.OuterXml, oldParent, newParent));
+		}
+
+		private void EventNodeChanged(Object sender, XmlNodeChangedEventArgs e)
+		{
+			EventStringAdd ("NodeChanged", e);
+		}
+
+		private void EventNodeChanging (Object sender, XmlNodeChangedEventArgs e)
+		{
+			EventStringAdd ("NodeChanging", e);
+		}
+
+		private void EventNodeChangingException (Object sender, XmlNodeChangedEventArgs e)
+		{
+			throw new Exception ("don't change the value.");
+		}
+
+		private void EventNodeInserted(Object sender, XmlNodeChangedEventArgs e)
+		{
+			EventStringAdd ("NodeInserted", e);
+		}
+
+		private void EventNodeInserting(Object sender, XmlNodeChangedEventArgs e)
+		{
+			EventStringAdd ("NodeInserting", e);
+		}
+
+		private void EventNodeInsertingException(Object sender, XmlNodeChangedEventArgs e)
+		{
+			throw new Exception ("don't insert the element.");
+		}
+
+		private void EventNodeRemoved(Object sender, XmlNodeChangedEventArgs e)
+		{
+			EventStringAdd ("NodeRemoved", e);
+		}
+
+		private void EventNodeRemoving(Object sender, XmlNodeChangedEventArgs e)
+		{
+			EventStringAdd ("NodeRemoving", e);
+		}
+
+		private void EventNodeRemovingException(Object sender, XmlNodeChangedEventArgs e)
+		{
+			throw new Exception ("don't remove the element.");
+		}
 
 		protected override void SetUp ()
 		{
@@ -193,6 +260,274 @@ namespace MonoTests.System.Xml
 			AssertEquals ("Incorrect output for empty document.", "", document.OuterXml);
 		}
 
+		public void TestEventNodeChanged()
+		{
+			XmlElement element;
+			XmlComment comment;
+
+			document.NodeChanged += new XmlNodeChangedEventHandler (this.EventNodeChanged);
+
+			// Node that is part of the document.
+			document.AppendChild (document.CreateElement ("foo"));
+			comment = document.CreateComment ("bar");
+			document.DocumentElement.AppendChild (comment);
+			AssertEquals ("<!--bar-->", document.DocumentElement.InnerXml);
+			comment.Value = "baz";
+			Assert (eventStrings.Contains ("NodeChanged, Change, <!--baz-->, foo, foo"));
+			AssertEquals ("<!--baz-->", document.DocumentElement.InnerXml);
+
+			// Node that isn't part of the document but created by the document.
+			element = document.CreateElement ("foo");
+			comment = document.CreateComment ("bar");
+			element.AppendChild (comment);
+			AssertEquals ("<!--bar-->", element.InnerXml);
+			comment.Value = "baz";
+			Assert (eventStrings.Contains ("NodeChanged, Change, <!--baz-->, foo, foo"));
+			AssertEquals ("<!--baz-->", element.InnerXml);
+
+/*
+ TODO:  Insert this when XmlNode.InnerText() and XmlNode.InnerXml() have been implemented.
+ 
+			// Node that is part of the document.
+			element = document.CreateElement ("foo");
+			element.InnerText = "bar";
+			document.AppendChild(element);
+			element.InnerText = "baz";
+			Assert(eventStrings.Contains("NodeChanged, Change, baz, foo, foo"));
+			
+			// Node that isn't part of the document but created by the document.
+			element = document.CreateElement("qux");
+			element.InnerText = "quux";
+			element.InnerText = "quuux";
+			Assert(eventStrings.Contains("NodeChanged, Change, quuux, qux, qux"));
+*/
+		}
+
+		public void TestEventNodeChanging()
+		{
+			XmlElement element;
+			XmlComment comment;
+
+			document.NodeChanging += new XmlNodeChangedEventHandler (this.EventNodeChanging);
+
+			// Node that is part of the document.
+			document.AppendChild (document.CreateElement ("foo"));
+			comment = document.CreateComment ("bar");
+			document.DocumentElement.AppendChild (comment);
+			AssertEquals ("<!--bar-->", document.DocumentElement.InnerXml);
+			comment.Value = "baz";
+			Assert (eventStrings.Contains ("NodeChanging, Change, <!--bar-->, foo, foo"));
+			AssertEquals ("<!--baz-->", document.DocumentElement.InnerXml);
+
+			// Node that isn't part of the document but created by the document.
+			element = document.CreateElement ("foo");
+			comment = document.CreateComment ("bar");
+			element.AppendChild (comment);
+			AssertEquals ("<!--bar-->", element.InnerXml);
+			comment.Value = "baz";
+			Assert (eventStrings.Contains ("NodeChanging, Change, <!--bar-->, foo, foo"));
+			AssertEquals ("<!--baz-->", element.InnerXml);
+
+			// If an exception is thrown the Document returns to original state.
+			document.NodeChanging += new XmlNodeChangedEventHandler (this.EventNodeChangingException);
+			element = document.CreateElement("foo");
+			comment = document.CreateComment ("bar");
+			element.AppendChild (comment);
+			AssertEquals ("<!--bar-->", element.InnerXml);
+			try 
+			{
+				comment.Value = "baz";
+				Fail("Expected an exception to be thrown by the NodeChanging event handler method EventNodeChangingException().");
+			} catch (Exception) {}
+			AssertEquals ("<!--bar-->", element.InnerXml);
+
+			// Yes it's a bit anal but this tests whether the node changing event exception fires before the
+			// ArgumentOutOfRangeException.  Turns out it does so that means our implementation needs to raise
+			// the node changing event before doing any work.
+			try 
+			{
+				comment.ReplaceData(-1, 0, "qux");
+				Fail("Expected an ArgumentOutOfRangeException to be thrown.");
+			} 
+			catch (Exception) {}
+
+			/*
+ TODO:  Insert this when XmlNode.InnerText() and XmlNode.InnerXml() have been implemented.
+ 
+			// Node that is part of the document.
+			element = document.CreateElement ("foo");
+			element.InnerText = "bar";
+			document.AppendChild(element);
+			element.InnerText = "baz";
+			Assert(eventStrings.Contains("NodeChanging, Change, bar, foo, foo"));
+
+			// Node that isn't part of the document but created by the document.
+			element = document.CreateElement("foo");
+			element.InnerText = "bar";
+			element.InnerText = "baz";
+			Assert(eventStrings.Contains("NodeChanging, Change, bar, foo, foo"));
+
+			// If an exception is thrown the Document returns to original state.
+			document.NodeChanging += new XmlNodeChangedEventHandler (this.EventNodeChangingException);
+			element = document.CreateElement("foo");
+			element.InnerText = "bar";
+			try {
+				element.InnerText = "baz";
+				Fail("Expected an exception to be thrown by the NodeChanging event handler method EventNodeChangingException().");
+			} catch (Exception) {}
+			AssertEquals("bar", element.InnerText);
+*/
+		}
+
+		public void TestEventNodeInserted()
+		{
+			XmlElement element;
+
+			document.NodeInserted += new XmlNodeChangedEventHandler (this.EventNodeInserted);
+
+			// Inserted 'foo' element to the document.
+			element = document.CreateElement ("foo");
+			document.AppendChild (element);
+			Assert (eventStrings.Contains ("NodeInserted, Insert, <foo />, <none>, #document"));
+
+			// Append child on node in document
+			element = document.CreateElement ("foo");
+			document.DocumentElement.AppendChild (element);
+			Assert (eventStrings.Contains ("NodeInserted, Insert, <foo />, <none>, foo"));
+
+			// Append child on node not in document but created by document
+			element = document.CreateElement ("bar");
+			element.AppendChild(document.CreateElement ("bar"));
+			Assert(eventStrings.Contains("NodeInserted, Insert, <bar />, <none>, bar"));
+		}
+
+		public void TestEventNodeInserting()
+		{
+			XmlElement element;
+
+			document.NodeInserting += new XmlNodeChangedEventHandler (this.EventNodeInserting);
+
+			// Inserting 'foo' element to the document.
+			element = document.CreateElement ("foo");
+			document.AppendChild (element);
+			Assert (eventStrings.Contains ("NodeInserting, Insert, <foo />, <none>, #document"));
+
+			// Append child on node in document
+			element = document.CreateElement ("foo");
+			document.DocumentElement.AppendChild (element);
+			Assert(eventStrings.Contains ("NodeInserting, Insert, <foo />, <none>, foo"));
+
+			// Append child on node not in document but created by document
+			element = document.CreateElement ("bar");
+			AssertEquals (0, element.ChildNodes.Count);
+			element.AppendChild (document.CreateElement ("bar"));
+			Assert (eventStrings.Contains ("NodeInserting, Insert, <bar />, <none>, bar"));
+			AssertEquals (1, element.ChildNodes.Count);
+
+			// If an exception is thrown the Document returns to original state.
+			document.NodeInserting += new XmlNodeChangedEventHandler (this.EventNodeInsertingException);
+			AssertEquals (1, element.ChildNodes.Count);
+			try 
+			{
+				element.AppendChild (document.CreateElement("baz"));
+				Fail ("Expected an exception to be thrown by the NodeInserting event handler method EventNodeInsertingException().");
+			} 
+			catch (Exception) {}
+			AssertEquals (1, element.ChildNodes.Count);
+		}
+
+		public void TestEventNodeRemoved()
+		{
+			XmlElement element;
+			XmlElement element2;
+
+			document.NodeRemoved += new XmlNodeChangedEventHandler (this.EventNodeRemoved);
+
+			// Removed 'bar' element from 'foo' outside document.
+			element = document.CreateElement ("foo");
+			element2 = document.CreateElement ("bar");
+			element.AppendChild (element2);
+			AssertEquals (1, element.ChildNodes.Count);
+			element.RemoveChild (element2);
+			Assert (eventStrings.Contains ("NodeRemoved, Remove, <bar />, foo, <none>"));
+			AssertEquals (0, element.ChildNodes.Count);
+
+/*
+ * TODO:  put this test back in when AttributeCollection.RemoveAll() is implemented.
+
+			// RemoveAll.
+			element = document.CreateElement ("foo");
+			element2 = document.CreateElement ("bar");
+			element.AppendChild(element2);
+			AssertEquals(1, element.ChildNodes.Count);
+			element.RemoveAll();
+			Assert (eventStrings.Contains ("NodeRemoved, Remove, <bar />, foo, <none>"));
+			AssertEquals(0, element.ChildNodes.Count);
+*/
+
+			// Removed 'bar' element from 'foo' inside document.
+			element = document.CreateElement ("foo");
+			document.AppendChild (element);
+			element = document.CreateElement ("bar");
+			document.DocumentElement.AppendChild (element);
+			AssertEquals (1, document.DocumentElement.ChildNodes.Count);
+			document.DocumentElement.RemoveChild (element);
+			Assert (eventStrings.Contains ("NodeRemoved, Remove, <bar />, foo, <none>"));
+			AssertEquals (0, document.DocumentElement.ChildNodes.Count);
+		}
+	
+		public void TestEventNodeRemoving()
+		{
+			XmlElement element;
+			XmlElement element2;
+
+			document.NodeRemoving += new XmlNodeChangedEventHandler (this.EventNodeRemoving);
+
+			// Removing 'bar' element from 'foo' outside document.
+			element = document.CreateElement ("foo");
+			element2 = document.CreateElement ("bar");
+			element.AppendChild (element2);
+			AssertEquals (1, element.ChildNodes.Count);
+			element.RemoveChild (element2);
+			Assert (eventStrings.Contains ("NodeRemoving, Remove, <bar />, foo, <none>"));
+			AssertEquals (0, element.ChildNodes.Count);
+
+/*
+ * TODO:  put this test back in when AttributeCollection.RemoveAll() is implemented.
+
+			// RemoveAll.
+			element = document.CreateElement ("foo");
+			element2 = document.CreateElement ("bar");
+			element.AppendChild(element2);
+			AssertEquals(1, element.ChildNodes.Count);
+			element.RemoveAll();
+			Assert (eventStrings.Contains ("NodeRemoving, Remove, <bar />, foo, <none>"));
+			AssertEquals(0, element.ChildNodes.Count);
+*/
+
+			// Removing 'bar' element from 'foo' inside document.
+			element = document.CreateElement ("foo");
+			document.AppendChild (element);
+			element = document.CreateElement ("bar");
+			document.DocumentElement.AppendChild (element);
+			AssertEquals (1, document.DocumentElement.ChildNodes.Count);
+			document.DocumentElement.RemoveChild (element);
+			Assert (eventStrings.Contains ("NodeRemoving, Remove, <bar />, foo, <none>"));
+			AssertEquals (0, document.DocumentElement.ChildNodes.Count);
+
+			// If an exception is thrown the Document returns to original state.
+			document.NodeRemoving += new XmlNodeChangedEventHandler (this.EventNodeRemovingException);
+			element.AppendChild (element2);
+			AssertEquals (1, element.ChildNodes.Count);
+			try 
+			{
+				element.RemoveChild(element2);
+				Fail ("Expected an exception to be thrown by the NodeRemoving event handler method EventNodeRemovingException().");
+			} 
+			catch (Exception) {}
+			AssertEquals (1, element.ChildNodes.Count);
+		}
+	
 		public void TestInnerAndOuterXml ()
 		{
 			AssertEquals (String.Empty, document.InnerXml);

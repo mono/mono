@@ -1,3 +1,12 @@
+//
+// System.Xml.XmlTextWriterTests
+//
+// Author:
+//   Kral Ferch <kral_ferch@hotmail.com>
+//
+// (C) 2002 Kral Ferch
+//
+
 using System;
 using System.Xml;
 using System.Collections;

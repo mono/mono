@@ -1,3 +1,14 @@
+//
+// System.Xml.XmlTextWriterOpenElement
+//
+// Author:
+//   Kral Ferch <kral_ferch@hotmail.com>
+//
+// (C) 2002 Kral Ferch
+//
+//
+//	Scope support for XmlLang and XmlSpace in XmlTextWriter.
+//
 using System;
 
 namespace System.Xml

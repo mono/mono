@@ -1,10 +1,11 @@
 //
 // System.Xml.XmlCharacterData.cs
 //
-// Author:
+// Authors:
 //   Jason Diamond <jason@injektilo.org>
+//   Kral Ferch <kral_ferch@hotmail.com>
 //
-// (C) 2002 Jason Diamond  http://injektilo.org/
+// (C) 2002 Jason Diamond, Kral Ferch
 //
 
 using System;
@@ -50,10 +51,14 @@ namespace System.Xml
 			get { return data; }
 
 			set {
+				OwnerDocument.onNodeChanging (this, this.ParentNode);
+
 				if (IsReadOnly)
 					throw new ArgumentException ("Node is read-only.");
 
 				data = value;
+
+				OwnerDocument.onNodeChanged (this, this.ParentNode);
 			}
 		}
 
@@ -61,28 +66,60 @@ namespace System.Xml
 
 		#region Methods
 
-		[MonoTODO]
 		public virtual void AppendData (string strData)
 		{
-			throw new NotImplementedException ();
+			OwnerDocument.onNodeChanging (this, this.ParentNode);
+			data += strData;
+			OwnerDocument.onNodeChanged (this, this.ParentNode);
 		}
 
-		[MonoTODO]
 		public virtual void DeleteData (int offset, int count)
 		{
-			throw new NotImplementedException ();
+			OwnerDocument.onNodeChanging (this, this.ParentNode);
+
+			if (offset < 0)
+				throw new ArgumentOutOfRangeException ("offset", "Must be non-negative and must not be greater than the length of this instance.");
+
+			int newCount = data.Length - offset;
+
+			if ((offset + count) < data.Length)
+				newCount = count;
+
+			data = data.Remove (offset, newCount);
+			
+			OwnerDocument.onNodeChanged (this, this.ParentNode);
 		}
 
-		[MonoTODO]
 		public virtual void InsertData (int offset, string strData)
 		{
-			throw new NotImplementedException ();
+			OwnerDocument.onNodeChanging (this, this.ParentNode);
+
+			if ((offset < 0) || (offset > data.Length))
+				throw new ArgumentOutOfRangeException ("offset", "Must be non-negative and must not be greater than the length of this instance.");
+
+			data = data.Insert(offset, strData);
+			
+			OwnerDocument.onNodeChanged (this, this.ParentNode);
 		}
 
-		[MonoTODO]
 		public virtual void ReplaceData (int offset, int count, string strData)
 		{
-			throw new NotImplementedException();
+			OwnerDocument.onNodeChanging (this, this.ParentNode);
+
+			if ((offset < 0) || (offset > data.Length))
+				throw new ArgumentOutOfRangeException ("offset", "Must be non-negative and must not be greater than the length of this instance.");
+
+			if (strData == null)
+				throw new ArgumentNullException ("strData", "Must be non-null.");
+
+			string newData = data.Substring (0, offset) + strData;
+			
+			if ((offset + count) < data.Length)
+				newData += data.Substring (offset + count);
+
+			data = newData;
+
+			OwnerDocument.onNodeChanged (this, this.ParentNode);
 		}
 
 		public virtual string Substring (int offset, int count)

@@ -466,14 +466,14 @@ namespace System.Xml
 		internal void onNodeChanged (XmlNode node, XmlNode Parent)
 		{
 			if (NodeChanged != null)
-				NodeInserted (node, new XmlNodeChangedEventArgs
+				NodeChanged (node, new XmlNodeChangedEventArgs
 					(XmlNodeChangedAction.Change,
 					node, Parent, Parent));
 		}
 
 		internal void onNodeChanging(XmlNode node, XmlNode Parent)
 		{
-			if (NodeInserting != null)
+			if (NodeChanging != null)
 				NodeChanging (node, new XmlNodeChangedEventArgs
 					(XmlNodeChangedAction.Change,
 					node, Parent, Parent));

@@ -75,7 +75,7 @@
                 <Reference
                     Name = "System.XML"
                     AssemblyName = "System.XML"
-                    HintPath = "..\..\..\..\..\WINDOWS\Microsoft.NET\Framework\v1.0.3705\System.XML.dll"
+                    HintPath = "..\obj\Debug\System.XML.dll"
                 />
             </References>
         </Build>
@@ -111,6 +111,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "XmlCharacterDataTests.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "XmlCommentTests.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -142,6 +147,11 @@
                 />
                 <File
                     RelPath = "XmlNodeListTests.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "XmlNodeTests.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
