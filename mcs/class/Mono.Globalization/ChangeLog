@@ -1,7 +1,7 @@
 2003-04-11  Duncan Mak  <duncan@ximian.com>
 
-	* ??.xml: Remove the empty Parent element.
+	* Data/??.xml: Remove the empty Parent element in the neutral cultures.
 
-	* *.xml: Remove the IsNeutralCulture information and add in specific
+	* Data/*.xml: Remove the IsNeutralCulture information and add in specific
         culture information as well.
         

@@ -11,7 +11,6 @@
   <OptionalCalendars>
     <Calendar>System.Globalization.GregorianCalendar</Calendar>
   </OptionalCalendars>
-  <Parent />
   <TextInfo>
     <ANSICodePage>1252</ANSICodePage>
     <EBCDICCodePage>20871</EBCDICCodePage>
