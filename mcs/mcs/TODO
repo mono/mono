@@ -1,15 +1,7 @@
-* Emitcontext
+BUGS
+----
 
-	Do we really need to instanciate this variable all the time?
-
-	It could be static for all we care, and just use it for making
-	sure that there are no recursive invocations on it.
-
-* Static-ization
-
-	Since AppDomain exists, maybe we can get rid of all the stuff
-	that is part of the `compiler instance' and just use globals
-	everywhere.
+* Implenment Array Initialization
 
 * FindMembers
 
@@ -22,11 +14,8 @@
 
 * Enumerations
 
-	Currently I am not resolving enumerations.
-
-	Either I track them with `RecordEnum' as I do with classes,
-	structs and interfaces or I rewrite the code to visit type
-	containers and `walk' the enums with this process. 
+	They currently can not be defined in terms of other enumerations
+	or constants.
 
 * Known problems:
 
@@ -66,38 +55,10 @@
 	Explanation: The reason for the `instance' attribute on
 	indexers is that indexers only apply to instances
 
-* Constructors
-
-	Currently it calls the parent constructor before initializing fields.
-	It should do it the other way around.
-
-* Use of EmitBranchable
-
-	Currently I use brfalse/brtrue in the code for statements, instead of
-	using the EmitBranchable function that lives in Binary
-
-* Create an UnimplementedExpcetion
-
-  	And use that instead of plain Exceptions to flag compiler errors.
-
-* ConvertImplicit
-
-	Currently ConvertImplicit will not catch things like:
-
-	- IntLiteral in a float context to generate a -FloatLiteral.
-	Instead it will perform an integer load followed by a conversion.
-
 * In class.cs: Method.Define
 
 	Need to use FindMembers to lookup the member for reporting
 	whether a new is needed or not.  
-
-* virtual-method.cs breaks
-
-	It breaks on the call to: new B ();
-
-	Where B is a class defined in the source code, my guess is that
-	the look for ".ctor" fails
 
 * Foreach on structure returns does not work
 
@@ -116,76 +77,10 @@
 
 	I need to get the address of that bad boy
 
-* Using Alias
-
-	Need to reset the aliases for each compilation unit, so an
-	alias defined in a file does not have any effect on another one:
-
-	File.cs
-	=======
-	namespace A {
-		using X = Blah;
-
-		class Z : X {           <-- This X is `Blah' 
-	}
-
-	File2.cs
-	namespace {
-		class Y : X {		<-- This X Is not `Blah' 
-		}
-	}
-
-	I think we can implement Aliases by having an `Alias' context in all
-	the toplevel TypeContainers of a compilation unit.  The children typecontainers
-	just chain to the parents to resolve the information.
-
-	The driver advances the Alias for each file compiled, so that each file
-	has its own alias set.
-
-* Tests
-
-	Write tests for the various reference conversions.  We have
-	test for all the numeric conversions.
-
 * Handle destructors specially
 
 	Turn ~X () { a () } into:
 	void Finalize () { try { a (); } finally { base.Finalize (); } }
-
-* Handle volatile
-
-* Support Re-Throw exceptions:
-
-	try {
-		X ();
-	} catch (SomeException e){
-		LogIt ();
-		throw;
-	}
-
-* Remove the tree dumper
-
-	And make all the stuff which is `public readonly' be private unless
-	required.
-
-* Use of lexer.Location in the parser
-
-	Currently we do:
-
-	TOKEN nt TERMINAL nt TERMINAL nt3 {
-		$$ = new Blah ($2, $4, $6, lexer.Location);
-	}
-
-	This is bad, because the lexer.Location is for the last item in `nt3'
-
-	We need to change that to use this pattern:
-
-	TOKEN { $$ = lexer.Location } nt TERMINAL nt TERMINAL nt3 {
-		$$ = new Blah ($3, $5, $7, (Location) $2);
-	}
-
-	Notice how numbering of the arguments changes, as the { $$ =
-	lexer.Location } takes up a number
 
 * Method Names
 
@@ -211,12 +106,7 @@
 	We need to make sure at *compile time* that the arguments in
 	the expression list of an array creation are always positive.
 
-* Fix the new parameter mess that we introduced to support ref/outo
-
-* Reducer and -Literal
-
-	Maybe we should never handle -Literal in Unary expressions and let
-	the reducer take care of it always?
+* Fix access to variables of type ref/out
 
 * Implement dead code elimination in statement.cs
 
@@ -244,14 +134,117 @@
 	if x has indexers, the value of x [N] set is set to void.  This needs to be
 	fixed.
 
-* Preincrement/pre-decrement is not working on array elements. 
+* Array declarations
 
-	We are catching this now.  But it does not work.
+	Multi-dim arrays are declared as [,] instead of [0..,0..]
 
-* local_variable_declaration
 
-	Not sure that this grammar is correct, we might have to
-	resolve this during semantic analysis.
+PENDING TASKS
+-------------
+
+	* Implement Using.
+
+	* Implement Goto.
+
+	* Implement Switch.
+
+	* Unsafe code.
+
+* Using Alias
+
+	Need to reset the aliases for each compilation unit, so an
+	alias defined in a file does not have any effect on another one:
+
+	File.cs
+	=======
+	namespace A {
+		using X = Blah;
+
+		class Z : X {           <-- This X is `Blah' 
+	}
+
+	File2.cs
+	namespace {
+		class Y : X {		<-- This X Is not `Blah' 
+		}
+	}
+
+	I think we can implement Aliases by having an `Alias' context in all
+	the toplevel TypeContainers of a compilation unit.  The children typecontainers
+	just chain to the parents to resolve the information.
+
+	The driver advances the Alias for each file compiled, so that each file
+	has its own alias set.
+
+* Handle volatile
+
+* Support Re-Throw exceptions:
+
+	try {
+		X ();
+	} catch (SomeException e){
+		LogIt ();
+		throw;
+	}
+
+* Static flow analysis
+
+	Required to warn about reachability of code and definite
+	assignemt as well as missing returns on functions.
+
+
+OPTIMIZATIONS
+-------------
+
+* Emitcontext
+
+	Do we really need to instanciate this variable all the time?
+
+	It could be static for all we care, and just use it for making
+	sure that there are no recursive invocations on it.
+
+* Static-ization
+
+	Since AppDomain exists, maybe we can get rid of all the stuff
+	that is part of the `compiler instance' and just use globals
+	everywhere.
+
+
+* Constructors
+
+	Currently it calls the parent constructor before initializing fields.
+	It should do it the other way around.
+
+* Reducer and -Literal
+
+	Maybe we should never handle -Literal in Unary expressions and let
+	the reducer take care of it always?
+
+* Use of EmitBranchable
+
+	Currently I use brfalse/brtrue in the code for statements, instead of
+	using the EmitBranchable function that lives in Binary
+
+* Create an UnimplementedExpcetion
+
+  	And use that instead of plain Exceptions to flag compiler errors.
+
+* ConvertImplicit
+
+	Currently ConvertImplicit will not catch things like:
+
+	- IntLiteral in a float context to generate a -FloatLiteral.
+	Instead it will perform an integer load followed by a conversion.
+
+* Tests
+
+	Write tests for the various reference conversions.  We have
+	test for all the numeric conversions.
+
+* Remove the tree dumper
+
+	And make all the stuff which is `public readonly' be private unless
+	required.
 
 * Optimizations
 
@@ -260,7 +253,32 @@
 	in the stack, so that later a Store can be emitted using that
 	this pointer (consider Property++ or Indexer++)
 
-* Static flow analysis
 
-	Required to warn about reachability of code and definite
-	assignemt as well as missing returns on functions.
+RECOMMENDATIONS
+---------------
+
+* Use of lexer.Location in the parser
+
+	Currently we do:
+
+	TOKEN nt TERMINAL nt TERMINAL nt3 {
+		$$ = new Blah ($2, $4, $6, lexer.Location);
+	}
+
+	This is bad, because the lexer.Location is for the last item in `nt3'
+
+	We need to change that to use this pattern:
+
+	TOKEN { $$ = lexer.Location } nt TERMINAL nt TERMINAL nt3 {
+		$$ = new Blah ($3, $5, $7, (Location) $2);
+	}
+
+	Notice how numbering of the arguments changes, as the { $$ =
+	lexer.Location } takes up a number
+
+* local_variable_declaration
+
+	Not sure that this grammar is correct, we might have to
+	resolve this during semantic analysis.
+
+
