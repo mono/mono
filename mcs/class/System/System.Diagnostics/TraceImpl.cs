@@ -26,6 +26,41 @@ namespace System.Diagnostics {
 		[ThreadStatic]
 		private static int indentSize;
 
+		// Grab the .config file stuff.
+		//
+		// There are some ordering issues with the .config file.
+		//
+		// The DiagnosticsConfigurationHandler assumes that the TraceImpl.Listeners
+		// collection exists (so it can initialize the DefaultTraceListener and
+		// add/remove existing listeners).
+		//
+		// When is the .config file read?  That's somewhat undefined.  The .config
+		// file will be read the first time someone calls
+		// ConfigurationSettings.GetConfig(), but when that occurs is
+		// indeterminate.
+		//
+		// Since it's probable that the Trace/Debug classes will be used by the
+		// application, the .config file should be read in before they're used.
+		//
+		// Thus, place the initialization here.  We can ensure that everything is
+		// initialized before reading in the .config file, which should ensure
+		// that everything is sane.
+		static TraceImpl ()
+		{
+			// defaults
+			autoFlush = false;
+			indentLevel = 0;
+			indentSize = 4;
+
+			listeners = new TraceListenerCollection ();
+
+			// Initialize the world
+			System.Collections.IDictionary d = DiagnosticsConfiguration.Settings;
+
+			// remove warning about d being unused
+			d = d;
+		}
+
 		private TraceImpl ()
 		{
 		}
@@ -61,8 +96,7 @@ namespace System.Diagnostics {
 			}
 		}
 
-		private static TraceListenerCollection listeners = 
-			new TraceListenerCollection ();
+		private static TraceListenerCollection listeners;
 
 		public static TraceListenerCollection Listeners {
 			get {return listeners;}

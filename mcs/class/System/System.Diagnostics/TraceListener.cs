@@ -24,7 +24,7 @@ namespace System.Diagnostics {
 		private int indentSize = 4;
 
 		private string name = null;
-		private bool needIndent = false;
+		private bool needIndent = true;
 
 		protected TraceListener () : this ("")
 		{
