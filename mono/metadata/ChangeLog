@@ -1,3 +1,8 @@
+2003-12-10  Zoltan Varga  <vargaz@freemail.hu>
+
+	* icall.c: Applied patch from Todd Berman (tbermann@gentoo.org). New
+	GetGacPath icall.
+
 2003-12-10  Bernie Solomon  <bernard@ugsolutions.com>
 
 	* process.c:  (ves_icall_System_Diagnostics_Process_GetWorkingSet_internal
