@@ -13,7 +13,7 @@ using System.ComponentModel;
 using System.Data;
 
 namespace System.Data.Common {
-	 [TypeConverterAttribute ("System.Data.Common.DataColumnMappingConverter, "+ Consts.AssemblySystem_Data)]
+	[TypeConverterAttribute (typeof (DataTableMappingConverter))]
 	public sealed class DataTableMapping : MarshalByRefObject, ITableMapping, ICloneable
 	{
 		#region Fields

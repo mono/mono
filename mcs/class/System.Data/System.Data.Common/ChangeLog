@@ -1,3 +1,11 @@
+2004-03-12  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
+
+	* DbDataPermissionAttribute.cs: Added .Net 1.1 marks
+	* DataColumnMapping.cs: DO NOT USE the consts scheme if types can be referenced directly!
+	* DataTableMapping.cs: DO NOT USE the consts scheme if types can be referenced directly!
+	* DataColumnMappingConverter: Added stub
+	* DataTableMappingConverter: Added stub
+
 2004-03-03  Eran Domb  <erand@miansoft.com>
 	
 	* ComparerFactory.cs : Added.

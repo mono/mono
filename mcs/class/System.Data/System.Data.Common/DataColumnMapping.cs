@@ -1,5 +1,5 @@
 //
-// System.Data.Common.DataColumnMapping
+// System.Data.Common.DataColumnMapping.cs
 //
 // Authors:
 //   Rodrigo Moya (rodrigo@ximian.com)
@@ -13,7 +13,7 @@ using System.ComponentModel;
 using System.Data;
 
 namespace System.Data.Common {
-	[TypeConverterAttribute ("System.Data.Common.DataColumnMappingConverter, "+ Consts.AssemblySystem_Data)]
+	[TypeConverterAttribute (typeof (DataColumnMappingConverter))]
 	public sealed class DataColumnMapping : MarshalByRefObject, IColumnMapping, ICloneable
 	{
 		#region Fields

@@ -21,8 +21,10 @@ namespace System.Data.Common {
 
 		SecurityAction securityAction;
 		bool allowBlankPassword;
+#if NET_1_1
 		KeyRestrictionBehavior keyRestrictionBehavior;
 		String 	connectionString;
+#endif
 
 		#endregion // Fields
 
@@ -44,6 +46,7 @@ namespace System.Data.Common {
 			set { allowBlankPassword = value; }
 		}
 
+#if NET_1_1
 		public String ConnectionString {
 			get { return connectionString; }
 			set { connectionString = value; }
@@ -53,7 +56,8 @@ namespace System.Data.Common {
 			get { return keyRestrictionBehavior; }
 			set { keyRestrictionBehavior = value; }
 		}
-		
+#endif
+
 		#endregion // Properties
 
 		#region // Methods
