@@ -2,6 +2,7 @@
 //            Adwiv@Yahoo.com
 using System;
 using System.Collections;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Xml;
 using System.Xml.Serialization;
@@ -279,7 +280,41 @@ namespace System.Xml.Schema
 				this.rexPatterns = new Regex [patterns.Count];
 				for (int i = 0; i < patternFacetValues.Length; i++) {
 					try {
-						Regex rex = new Regex (patternFacetValues [i]);
+						string src = patternFacetValues [i];
+						StringBuilder sb = null;
+						int start = 0;
+						for (int c = 0; c < src.Length; c++) {
+							if (src [c] == '\\' && src.Length > i + 1) {
+								string subst = null;
+								switch (src [c + 1]) {
+								case 'i':
+									subst = "[\\p{L}_]";
+									break;
+								case 'I':
+									subst = "[^\\p{L}_]";
+									break;
+								case 'c':
+									subst = "[\\p{L}\\p{N}_\\.\\-:]";
+									break;
+								case 'C':
+									subst = "[^\\p{L}\\p{N}_\\.\\-:]";
+									break;
+								}
+								if (subst != null) {
+									if (sb == null)
+										sb = new StringBuilder ();
+									sb.Append (src, start, c - start);
+									sb.Append (subst);
+									start = c + 2;
+								}
+							}
+						}
+						if (sb != null) {
+							sb.Append (src, start, src.Length - start);
+							src = sb.ToString ();
+						}
+//						src = src.Replace ("\\i", "[\\p{L}_]").Replace ("\\I", "[^\\p{L}_]").Replace ("\\c", "[\\p{L}\\p{N}_\\.\\-:]").Replace ("\\C", "[^\\p{L}\\p{N}_\\.\\-:]");
+						Regex rex = new Regex ("^" + src + "$");
 						rexPatterns [i] = rex;
 					} catch (Exception ex) {
 						error (h, "Invalid regular expression pattern was specified.", ex);
