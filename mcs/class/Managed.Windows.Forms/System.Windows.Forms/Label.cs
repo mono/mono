@@ -24,9 +24,12 @@
 //	Peter Bartok, pbartok@novell.com
 //
 //
-// $Revision: 1.12 $
+// $Revision: 1.13 $
 // $Modtime: $
 // $Log: Label.cs,v $
+// Revision 1.13  2004/09/04 17:10:18  jordi
+// Refresh when font changed
+//
 // Revision 1.12  2004/09/01 15:10:10  jordi
 // fixes method signatures, new methods, events, fixes autosize
 //
@@ -469,6 +472,7 @@ namespace System.Windows.Forms
     		{
 			base.OnTextChanged (e);
 			CalcPreferredWidth ();
+			Refresh ();
     		}
 
     		protected override void OnVisibleChanged (EventArgs e)
