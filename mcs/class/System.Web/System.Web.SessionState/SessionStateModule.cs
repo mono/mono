@@ -109,7 +109,7 @@ namespace System.Web.SessionState
 			if (id == null)
 				return;
 			
-			context.Request.SetFilePath (UrlUtils.RemoveSessionId (base_path,
+			context.Request.SetCurrentExePath (UrlUtils.RemoveSessionId (base_path,
 								     context.Request.FilePath));
 			context.Request.SetHeader (HeaderName, id);
 		}

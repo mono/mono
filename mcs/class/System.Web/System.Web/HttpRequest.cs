@@ -88,6 +88,7 @@ namespace System.Web {
 		Stream userFilter;
 		HttpRequestStream requestFilter;
 		string clientTarget;
+		string currentExePath;
 #if NET_1_1
 		bool validateCookies;
 		bool validateForm;
@@ -503,6 +504,9 @@ namespace System.Web {
 
 		public string CurrentExecutionFilePath {
 			get {
+				if (currentExePath != null)
+					return currentExePath;
+
 				return FilePath;
 			}
 		}
@@ -1139,9 +1143,9 @@ namespace System.Web {
 		}
 #endif
 		
-		internal void SetFilePath (string filePath)
+		internal void SetCurrentExePath (string filePath)
 		{
-			_sFilePath = filePath;
+			currentExePath = filePath;
 			_sRequestRootVirtualDir = null;
 			baseVirtualDir = null;
 		}
