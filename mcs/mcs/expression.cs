@@ -1299,7 +1299,8 @@ namespace Mono.CSharp {
 			ExclusiveOr,
 			BitwiseOr,
 			LogicalAnd,
-			LogicalOr
+			LogicalOr,
+			TOP
 		}
 
 		Operator oper;
@@ -1309,6 +1310,33 @@ namespace Mono.CSharp {
 		Location   loc;
 
 		bool DelegateOperation;
+
+		// This must be kept in sync with Operator!!!
+		static string [] oper_names;
+
+		static Binary ()
+		{
+			oper_names = new string [(int) Operator.TOP];
+
+			oper_names [(int) Operator.Multiply] = "op_Multiply";
+			oper_names [(int) Operator.Division] = "op_Division";
+			oper_names [(int) Operator.Modulus] = "op_Modulus";
+			oper_names [(int) Operator.Addition] = "op_Addition";
+			oper_names [(int) Operator.Subtraction] = "op_Subtraction";
+			oper_names [(int) Operator.LeftShift] = "op_LeftShift";
+			oper_names [(int) Operator.RightShift] = "op_RightShift";
+			oper_names [(int) Operator.LessThan] = "op_LessThan";
+			oper_names [(int) Operator.GreaterThan] = "op_GreaterThan";
+			oper_names [(int) Operator.LessThanOrEqual] = "op_LessThanOrEqual";
+			oper_names [(int) Operator.GreaterThanOrEqual] = "op_GreaterThanOrEqual";
+			oper_names [(int) Operator.Equality] = "op_Equality";
+			oper_names [(int) Operator.Inequality] = "op_Inequality";
+			oper_names [(int) Operator.BitwiseAnd] = "op_BitwiseAnd";
+			oper_names [(int) Operator.BitwiseOr] = "op_BitwiseOr";
+			oper_names [(int) Operator.ExclusiveOr] = "op_ExclusiveOr";
+			oper_names [(int) Operator.LogicalOr] = "op_LogicalOr";
+			oper_names [(int) Operator.LogicalAnd] = "op_LogicalAnd";
+		}
 
 		public Binary (Operator oper, Expression left, Expression right, Location loc)
 		{
@@ -1640,7 +1668,7 @@ namespace Mono.CSharp {
 			//
 			Expression left_expr, right_expr;
 			
-			string op = "op_" + oper;
+			string op = oper_names [(int) oper];
 
 			MethodGroupExpr union;
 			left_expr = MemberLookup (ec, l, op, MemberTypes.Method, AllBindingFlags, loc);
