@@ -33,6 +33,9 @@ namespace System.Web.Security
 
 			Initialize ();
 			HttpContext context = HttpContext.Current;
+			if (context == null)
+				throw new HttpException ("Context is null!");
+
 			AuthConfig config = context.GetConfig (authConfigPath) as AuthConfig;
 			Hashtable users = config.CredentialUsers;
 			string stored = users [name] as string;
@@ -109,17 +112,42 @@ namespace System.Web.Security
 			//TODO: encrypt and validate
 		}
 
-		[MonoTODO]
 		public static HttpCookie GetAuthCookie (string userName, bool createPersistentCookie)
 		{
-			throw new NotImplementedException ();
+			return GetAuthCookie (userName, createPersistentCookie, cookiePath);
 		}
 
-		[MonoTODO]
 		public static HttpCookie GetAuthCookie (string userName, bool createPersistentCookie, string strCookiePath)
 		{
-			throw new NotImplementedException ();
+			Initialize ();
+
+			if (userName == null)
+				userName = String.Empty;
+
+			if (strCookiePath == null || strCookiePath.Length == 0)
+				strCookiePath = cookiePath;
+
+			DateTime now = DateTime.Now;
+			DateTime then;
+			if (createPersistentCookie)
+				then = now.AddYears (50);
+			else
+				then = now.AddMinutes (timeout);
+
+			FormsAuthenticationTicket ticket = new FormsAuthenticationTicket (1,
+											  userName,
+											  now,
+											  then,
+											  createPersistentCookie,
+											  String.Empty,
+											  cookiePath);
+
+			if (!createPersistentCookie)
+				then = DateTime.MinValue;
+
+			return new HttpCookie (cookieName, Encrypt (ticket), strCookiePath, then);
 		}
+
 		[MonoTODO]
 		public static string GetRedirectUrl (string userName, bool createPersistentCookie)
 		{
@@ -170,6 +198,9 @@ namespace System.Web.Security
 					return;
 
 				HttpContext context = HttpContext.Current;
+				if (context == null)
+					throw new HttpException ("Context is null!");
+
 				AuthConfig authConfig = context.GetConfig (authConfigPath) as AuthConfig;
 				if (authConfig != null) {
 					cookieName = authConfig.CookieName;
@@ -204,36 +235,52 @@ namespace System.Web.Security
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		public static void SetAuthCookie (string userName, bool createPersistentCookie)
 		{
-			throw new NotImplementedException ();
+			SetAuthCookie (userName, createPersistentCookie, cookiePath);
 		}
 
-		[MonoTODO]
 		public static void SetAuthCookie (string userName, bool createPersistentCookie, string strCookiePath)
 		{
-			throw new NotImplementedException ();
-		}
-		[MonoTODO]
-		public static void SignOut ()
-		{
-			throw new NotImplementedException ();
+			HttpContext context = HttpContext.Current;
+			if (context == null)
+				throw new HttpException ("Context is null!");
+
+			HttpResponse response = context.Response;
+			if (response == null)
+				throw new HttpException ("Response is null!");
+
+			response.Cookies.Add (GetAuthCookie (userName, createPersistentCookie, strCookiePath));
 		}
 
-		[MonoTODO]
+		public static void SignOut ()
+		{
+			Initialize ();
+
+			HttpContext context = HttpContext.Current;
+			if (context == null)
+				throw new HttpException ("Context is null!");
+
+			HttpResponse response = context.Response;
+			if (response == null)
+				throw new HttpException ("Response is null!");
+
+			response.Cookies.MakeCookieExpire (cookieName, cookiePath);
+		}
+
 		public static string FormsCookieName
 		{
 			get {
-				throw new NotImplementedException ();
+				Initialize ();
+				return cookieName;
 			}
 		}
 
-		[MonoTODO]
 		public static string FormsCookiePath
 		{
 			get {
-				throw new NotImplementedException ();
+				Initialize ();
+				return cookiePath;
 			}
 		}
 	}

@@ -1,3 +1,8 @@
+2002-12-18  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* FormsAuthentication.cs: implemented GetAuthCookie, SetAuthCookie,
+	SignOut, FormsCookieName and FormsCookiePath.
+
 2002-12-17  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* FormsAuthentication.cs: implemented Authenticate, unencrypted Encrypt
