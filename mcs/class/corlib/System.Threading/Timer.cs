@@ -16,16 +16,20 @@ namespace System.Threading
 		sealed class Runner : MarshalByRefObject, IDisposable
 		{
 			ManualResetEvent wait;
+			AutoResetEvent start_event;
 			TimerCallback callback;
 			object state;
 			int dueTime;
 			int period;
 			bool disposed;
+			bool aborted;
 
-			public Runner (TimerCallback callback, object state)
+			public Runner (TimerCallback callback, object state, AutoResetEvent start_event)
 			{
 				this.callback = callback;
 				this.state = state;
+				this.start_event = start_event;
+				this.wait = new ManualResetEvent (false);
 			}
 
 			public int DueTime {
@@ -35,7 +39,7 @@ namespace System.Threading
 
 			public int Period {
 				get { return period; }
-				set { period = value; }
+				set { period = value == 0 ? Timeout.Infinite : value; }
 			}
 
 			bool WaitForDueTime ()
@@ -45,7 +49,10 @@ namespace System.Threading
 					do {
 						wait.Reset ();
 						signaled = wait.WaitOne (dueTime, false);
-					} while (signaled == true && !disposed);
+					} while (signaled == true && !disposed && !aborted);
+
+					if (!signaled)
+						callback (state);
 
 					if (disposed)
 						return false;
@@ -54,25 +61,43 @@ namespace System.Threading
 				return true;
 			}
 
+			public void Abort ()
+			{
+				lock (this) {
+					aborted = true;
+					wait.Set ();
+				}
+			}
+
 			public void Start ()
 			{
-				if (dueTime == Timeout.Infinite)
-					return;
+				while (start_event.WaitOne ()) {
+					aborted = false;
 
-				wait = new ManualResetEvent (false);
-				if (!WaitForDueTime ())
-					return;
+					if (dueTime == Timeout.Infinite)
+						continue;
 
-				bool signaled = false;
-				while (true) {
-					signaled = wait.WaitOne (period, false);
-					if (disposed)
-						break;
+					if (!WaitForDueTime ())
+						return;
 
-					if (!signaled) {
-						callback (state);
-					} else if (!WaitForDueTime ()) {
+					if (aborted || (period == Timeout.Infinite))
+						continue;
+
+					bool signaled = false;
+					while (true) {
+						wait.Reset ();
+						signaled = wait.WaitOne (period, false);
+						if (disposed)
 							return;
+
+						if (aborted)
+							break;
+
+						if (!signaled) {
+							callback (state);
+						} else if (!WaitForDueTime ()) {
+							return;
+						}
 					}
 				}
 			}
@@ -103,6 +128,7 @@ namespace System.Threading
 		}
 
 		Runner runner;
+		AutoResetEvent start_event;
 
 		public Timer (TimerCallback callback, object state, int dueTime, int period)
 		{
@@ -139,7 +165,8 @@ namespace System.Threading
 
 		void Init (TimerCallback callback, object state, int dueTime, int period)
 		{
-			runner = new Runner (callback, state);
+			start_event = new AutoResetEvent (false);
+			runner = new Runner (callback, state, start_event);
 			Change (dueTime, period);
 			Thread t = new Thread (new ThreadStart (runner.Start));
 			t.Start ();
@@ -156,6 +183,8 @@ namespace System.Threading
 
 			runner.DueTime = dueTime;
 			runner.Period = period;
+			runner.Abort ();
+			start_event.Set ();
 			return true;
 		}
 

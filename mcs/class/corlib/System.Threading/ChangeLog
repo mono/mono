@@ -1,3 +1,9 @@
+2002-12-07  Martin Baulig  <martin@ximian.com>
+
+	* Timer.cs: Make it actually work; now it no longer sets your
+	application on fire if you use a zero periode and Timer.Change()
+	actually works.
+
 2002-11-11  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Timer.cs: implemented more stuff. It works now.
