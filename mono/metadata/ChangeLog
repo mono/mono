@@ -1,4 +1,8 @@
 
+Wed Jun 18 12:47:43 CEST 2003 Paolo Molaro <lupus@ximian.com>
+
+	* icall.c: added Marshal.Prelink/All icalls.
+
 Wed Jun 18 12:17:48 CEST 2003 Paolo Molaro <lupus@ximian.com>
 
 	* object.c, object.h: fix warnings and do some overflow checking
