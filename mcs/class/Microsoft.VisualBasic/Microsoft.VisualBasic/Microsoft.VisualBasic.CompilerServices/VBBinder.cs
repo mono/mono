@@ -34,11 +34,12 @@ using System;
 using System.Reflection;
 using System.Globalization;
 using Microsoft.VisualBasic;
+using System.ComponentModel;
+
 
 namespace Microsoft.VisualBasic.CompilerServices
 {
-	[System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Never)]
-	[Microsoft.VisualBasic.CompilerServices.StandardModuleAttribute]
+	[StandardModule, EditorBrowsableAttribute(EditorBrowsableState.Never)]
 	public class VBBinder : Binder
 	{
 		public VBBinder() : base()

@@ -1,3 +1,34 @@
+2004-09-05  Jambunathan K  <kjambunathan@novell.com>
+	* DefaultArgumentValueAttribute.cs: Added a new internal attribute
+	  Microsoft.VisualBasic.CompilerServices.__DefaultArgumentValueAttribute
+	  to workaround the limitations in C# syntax. Refer the comments
+	  in the file for more information about this attribute.
+
+	* VBBinder.cs: 
+	* StringType.cs: 
+	* SingleType.cs: 
+	* ShortType.cs: 
+	* LongType.cs: 
+	* LateBinding.cs: 
+	* IntegerType.cs: 
+	* FlowControl.cs: 
+	* ExceptionUtils.cs: 
+	* DoubleType.cs: 
+	* DecimalType.cs: 
+	* DateType.cs: 
+	* CharType.cs: 
+	* CharArrayType.cs: 
+	* ByteType.cs: 
+	* BooleanType.cs: 
+
+	Replaced System.ComponentModel.EditorBrowsableAttribute and
+	Microsoft.VisualBasic.CompilerServices.StandardModuleAttribute
+	with their short and sweet equivalents.
+
+	Replaced System.ComponentModel.DefaultValueAttribute with the
+	newly introduced Microsoft.VisualBasic.CompilerServices
+	.__DefaultArgumentValueAttribute.
+
 2004-08-03 Satya Sudha K <ksathyasudha@novell.com>
         * ObjectType.cs: Fix for bug #61749  
 

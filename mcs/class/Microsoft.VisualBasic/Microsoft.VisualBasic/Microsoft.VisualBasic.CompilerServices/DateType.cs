@@ -35,9 +35,10 @@
  * Class that converts objects to DateTime object
  */
 using System;
+using System.ComponentModel;
+
 namespace Microsoft.VisualBasic.CompilerServices {
-	[Microsoft.VisualBasic.CompilerServices.StandardModuleAttribute] 
-	[System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Never)] 
+	[StandardModule, EditorBrowsable(EditorBrowsableState.Never)] 
 	sealed public class DateType {
 		private DateType () {}
 

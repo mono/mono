@@ -35,11 +35,11 @@
 
 using System;
 using System.Collections;
+using System.ComponentModel;
 
 namespace Microsoft.VisualBasic.CompilerServices 
 {
-	[Microsoft.VisualBasic.CompilerServices.StandardModuleAttribute] 
-	[System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Never)] 
+	[StandardModule, EditorBrowsable(EditorBrowsableState.Never)] 
 	sealed public class FlowControl {
 		private FlowControl () {}
 

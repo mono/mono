@@ -72,3 +72,4 @@ Microsoft.VisualBasic/Microsoft.VisualBasic.CompilerServices/TODOAttribute.cs
 Microsoft.VisualBasic/Microsoft.VisualBasic.CompilerServices/Utils.cs
 Microsoft.VisualBasic/Microsoft.VisualBasic.CompilerServices/VBBinder.cs
 Microsoft.VisualBasic/Microsoft.VisualBasic.CompilerServices/VBErrors.cs
+Microsoft.VisualBasic/Microsoft.VisualBasic.CompilerServices/DefaultArgumentValueAttribute.cs

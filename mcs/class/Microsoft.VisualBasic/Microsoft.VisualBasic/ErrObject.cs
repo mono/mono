@@ -35,7 +35,6 @@
 
 using System;
 using System.Runtime.InteropServices;
-using System.ComponentModel;
 using Microsoft.VisualBasic.CompilerServices;
 using System.Diagnostics;
 
@@ -242,10 +241,10 @@ namespace Microsoft.VisualBasic
 
 		[MonoTODO]
 		public void Raise (System.Int32 Number, 
-				   [Optional, DefaultValue(null)] System.Object Source, 
-				   [Optional, DefaultValue(null)] System.Object Description, 
-				   [Optional, DefaultValue(null)] System.Object HelpFile, 
-				   [Optional, DefaultValue(null)] System.Object HelpContext) 
+				   [Optional, __DefaultArgumentValue(null)] System.Object Source, 
+				   [Optional, __DefaultArgumentValue(null)] System.Object Description, 
+				   [Optional, __DefaultArgumentValue(null)] System.Object HelpFile, 
+				   [Optional, __DefaultArgumentValue(null)] System.Object HelpContext) 
 		{ 
 			Exception e;
 			

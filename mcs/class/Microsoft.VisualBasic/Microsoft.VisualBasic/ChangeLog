@@ -1,3 +1,24 @@
+2004-09-05  Jambunathan K  <kjambunathan@novell.com>
+	* DateAndTime.cs (DateTime.Today): Changed signature of stime().
+	
+	* VBMath.cs: 
+	* Interaction.cs: 
+	* Information.cs: 
+	* Globals.cs: 
+	* Financial.cs: 
+	* FileSystem.cs: 
+	* ErrObject.cs: 
+	* Conversion.cs: 
+	* Constants.cs: 
+
+	Replaced System.ComponentModel.EditorBrowsableAttribute and
+	Microsoft.VisualBasic.CompilerServices.StandardModuleAttribute
+	with their short and sweet equivalents.
+
+	Replaced System.ComponentModel.DefaultValueAttribute with the
+	newly introduced Microsoft.VisualBasic.CompilerServices
+	.__DefaultArgumentValueAttribute.
+
 2004-08-16  Jambunathan K  <kjambunathan@novell.com>
 	* Interaction.cs: 
 	* Information.cs: 

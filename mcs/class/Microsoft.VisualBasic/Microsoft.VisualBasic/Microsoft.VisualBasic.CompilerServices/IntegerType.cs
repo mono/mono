@@ -32,11 +32,12 @@
   * DEALINGS IN THE SOFTWARE.
   */
 using System;
+using System.ComponentModel;
 using Microsoft.VisualBasic;
+
 namespace Microsoft.VisualBasic.CompilerServices
 {
-	[Microsoft.VisualBasic.CompilerServices.StandardModuleAttribute] 
-	[System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Never)] 
+	[StandardModule, EditorBrowsable(EditorBrowsableState.Never)] 
 	sealed public class IntegerType {
 		private IntegerType () {}
 

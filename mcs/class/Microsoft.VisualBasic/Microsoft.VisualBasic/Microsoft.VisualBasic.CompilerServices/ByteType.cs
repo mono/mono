@@ -35,10 +35,11 @@
      * Class that converts objects to Byte value.
      */
 using System;
+using System.ComponentModel;
+
 namespace Microsoft.VisualBasic.CompilerServices 
 {
-	[Microsoft.VisualBasic.CompilerServices.StandardModuleAttribute] 
-	[System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Never)] 
+	[StandardModule, EditorBrowsableAttribute(EditorBrowsableState.Never)] 
 	sealed public class ByteType {
 		private ByteType () {}
     

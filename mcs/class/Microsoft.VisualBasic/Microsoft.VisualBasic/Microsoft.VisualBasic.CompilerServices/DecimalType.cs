@@ -31,10 +31,10 @@
   */
 using System;
 using System.Globalization;
+using System.ComponentModel;
 
 namespace Microsoft.VisualBasic.CompilerServices {
-	[System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Never)] 
-	[Microsoft.VisualBasic.CompilerServices.StandardModuleAttribute] 
+	[StandardModule, EditorBrowsable(EditorBrowsableState.Never)] 
 	sealed public class DecimalType {
 		private DecimalType () {}
 

@@ -27,11 +27,11 @@ using System;
 using System.Collections;
 using System.Reflection;
 using System.IO;
+using System.ComponentModel;
+using System.Runtime.InteropServices;
 
 namespace Microsoft.VisualBasic.CompilerServices {
-	[Microsoft.VisualBasic.CompilerServices.StandardModuleAttribute] 
-	[System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Never)] 
-	[System.Runtime.InteropServices.StructLayoutAttribute(System.Runtime.InteropServices.LayoutKind.Auto)] 
+	[StandardModule, StructLayout(LayoutKind.Auto), EditorBrowsable(EditorBrowsableState.Never)] 
 	sealed public class ExceptionUtils {
 		private ExceptionUtils () {}
 

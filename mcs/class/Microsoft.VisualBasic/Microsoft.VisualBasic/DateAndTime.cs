@@ -36,10 +36,11 @@ using System;
 using System.Runtime.InteropServices;
 using System.ComponentModel;
 using System.Globalization;
+using Microsoft.VisualBasic.CompilerServices;
 
 namespace Microsoft.VisualBasic 
 {
-	[Microsoft.VisualBasic.CompilerServices.StandardModuleAttribute] 
+	[StandardModule] 
 	sealed public class DateAndTime {
 
 		private DateAndTime ()
@@ -69,9 +70,9 @@ namespace Microsoft.VisualBasic
 		}
 		
                 [DllImport("libc")]
-                unsafe static extern int stime (void *t);
+                static extern int stime (ref int t);
 
-		unsafe public static System.DateTime Today {
+		public static System.DateTime Today {
 			get { 
 				return DateTime.Today; 
 			}
@@ -82,7 +83,7 @@ namespace Microsoft.VisualBasic
                                 System.TimeSpan secondsTimeSpan = NewDate.ToUniversalTime() - new DateTime(1970, 1, 1, 0, 0, 0);
                                 int seconds = (int) secondsTimeSpan.TotalSeconds;
 
-                                if(stime((void *) &seconds) == -1)
+                                if(stime(ref seconds) == -1)
                                         throw new UnauthorizedAccessException("The caller is not the super-user.");
             		}
  
@@ -102,7 +103,7 @@ namespace Microsoft.VisualBasic
 			get { return DateTime.Now; }
 		}
 
-		unsafe public static System.DateTime TimeOfDay {  
+		public static System.DateTime TimeOfDay {  
 			get { 
 				TimeSpan TSpan = DateTime.Now.TimeOfDay;
 
@@ -118,7 +119,7 @@ namespace Microsoft.VisualBasic
 		                 TimeSpan secondsTimeSpan = NewTime.ToUniversalTime() - new DateTime(1970, 1, 1, 0, 0, 0, 0);
                 		 int seconds = (int) secondsTimeSpan.TotalSeconds;
 
-                		 if(stime((void *) &seconds) == -1)
+                		 if(stime(ref seconds) == -1)
 					 throw new UnauthorizedAccessException("The caller is not the super-user.");
            		}
  

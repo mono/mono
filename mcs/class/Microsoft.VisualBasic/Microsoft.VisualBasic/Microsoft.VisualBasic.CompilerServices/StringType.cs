@@ -35,9 +35,10 @@
 using System;
 using System.Globalization;
 using System.Text;
+using System.ComponentModel;
+
 namespace Microsoft.VisualBasic.CompilerServices {
-	[System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Never)] 
-	[Microsoft.VisualBasic.CompilerServices.StandardModuleAttribute] 
+	[StandardModule, EditorBrowsableAttribute(EditorBrowsableState.Never)] 
 	sealed public class StringType {
 		private StringType () {}
 

@@ -29,7 +29,6 @@ using System.Collections;
 using System.Globalization;
 using Microsoft.VisualBasic;
 using System.Runtime.InteropServices;
-using System.ComponentModel;
 using Microsoft.VisualBasic.CompilerServices;
 
 /**
@@ -124,9 +123,9 @@ namespace Microsoft.VisualBasic
 					    int fileNumber,
 					    String fileName,
 					    OpenMode mode,
-					    [Optional, DefaultValue(-1)] OpenAccess access, 
-					    [Optional, DefaultValue(-1)] OpenShare share, 
-					    [Optional, DefaultValue(-1)] int recordLength)
+					    [Optional, __DefaultArgumentValue((OpenAccess)(-1))] OpenAccess access, 
+					    [Optional, __DefaultArgumentValue((OpenShare)(-1))] OpenShare share, 
+					    [Optional, __DefaultArgumentValue(-1)] int recordLength)
 
 		{
 			if (!isFileNumberFree(fileNumber))
@@ -162,7 +161,7 @@ namespace Microsoft.VisualBasic
 
 		public static void FilePut(int fileNumber,
 					   bool value,
-					   [Optional, DefaultValue(-1)] long  recordNumber)
+					   [Optional, __DefaultArgumentValue(-1)] long  recordNumber)
 		{
 			checkRecordNumber(recordNumber,false);
 			VBFile vbFile = getVBFile(fileNumber);
@@ -172,7 +171,7 @@ namespace Microsoft.VisualBasic
 
 		public static void FilePut(int fileNumber, 
 					   byte value, 
-					   [Optional, DefaultValue((long)-1)] long  recordNumber)
+					   [Optional, __DefaultArgumentValue((long)-1)] long  recordNumber)
 		{
 			checkRecordNumber(recordNumber,false);
 			VBFile vbFile = getVBFile(fileNumber);
@@ -181,7 +180,7 @@ namespace Microsoft.VisualBasic
 
 		public static void FilePut(int fileNumber, 
 					   short value, 
-					   [Optional, DefaultValue((long)-1)] long  recordNumber)
+					   [Optional, __DefaultArgumentValue((long)-1)] long  recordNumber)
 		{
 			checkRecordNumber(recordNumber,false);
 			VBFile vbFile = getVBFile(fileNumber);
@@ -191,7 +190,7 @@ namespace Microsoft.VisualBasic
 
 		public static void FilePut(int fileNumber, 
 					   char value, 
-					   [Optional, DefaultValue((long)-1)] long  recordNumber)
+					   [Optional, __DefaultArgumentValue((long)-1)] long  recordNumber)
 		{
 			checkRecordNumber(recordNumber,false);
 			VBFile vbFile = getVBFile(fileNumber);
@@ -200,7 +199,7 @@ namespace Microsoft.VisualBasic
 
 		public static void FilePut(int fileNumber, 
 					   int value, 
-					   [Optional, DefaultValue((long)-1)] long  recordNumber)
+					   [Optional, __DefaultArgumentValue((long)-1)] long  recordNumber)
 		{
 			checkRecordNumber(recordNumber,false);
 			VBFile vbFile = getVBFile(fileNumber);
@@ -209,7 +208,7 @@ namespace Microsoft.VisualBasic
 
 		public static void FilePut(int fileNumber, 
 					   long value, 
-					   [Optional, DefaultValue((long)-1)] long  recordNumber)
+					   [Optional, __DefaultArgumentValue((long)-1)] long  recordNumber)
 		{
 			checkRecordNumber(recordNumber,false);
 			VBFile vbFile = getVBFile(fileNumber);
@@ -219,7 +218,7 @@ namespace Microsoft.VisualBasic
 
 		public static void FilePut(int fileNumber, 
 					   float value, 
-					   [Optional, DefaultValue((long)-1)] long  recordNumber)
+					   [Optional, __DefaultArgumentValue((long)-1)] long  recordNumber)
 		{
 			checkRecordNumber(recordNumber,false);
 			VBFile vbFile = getVBFile(fileNumber);
@@ -228,7 +227,7 @@ namespace Microsoft.VisualBasic
 
 		public static void FilePut(int fileNumber, 
 					   double value, 
-					   [Optional, DefaultValue((long)-1)] long  recordNumber)
+					   [Optional, __DefaultArgumentValue((long)-1)] long  recordNumber)
 		{
 			checkRecordNumber(recordNumber,false);
 			VBFile vbFile = getVBFile(fileNumber);
@@ -237,8 +236,8 @@ namespace Microsoft.VisualBasic
 
 		public static void FilePut(int fileNumber,
 					   String value,
-					   [Optional, DefaultValue((long)-1)] long recordNumber,
-					   [Optional, DefaultValue(false)] bool stringIsFixedLength)
+					   [Optional, __DefaultArgumentValue((long)-1)] long recordNumber,
+					   [Optional, __DefaultArgumentValue(false)] bool stringIsFixedLength)
 		{
 			checkRecordNumber(recordNumber,true);
 			VBFile vbFile = getVBFile(fileNumber);
@@ -247,7 +246,7 @@ namespace Microsoft.VisualBasic
 
 		public static void FilePut(int fileNumber,
 					   DateTime value,
-					   [Optional, DefaultValue((long)-1)] long  recordNumber)
+					   [Optional, __DefaultArgumentValue((long)-1)] long  recordNumber)
 		{
 			checkRecordNumber(recordNumber,false);
 			VBFile vbFile = getVBFile(fileNumber);
@@ -256,7 +255,7 @@ namespace Microsoft.VisualBasic
 
 		public static void FileGet(int fileNumber,
 					   ref bool value,
-					   [Optional, DefaultValue((long)-1)] long recordNumber) 
+					   [Optional, __DefaultArgumentValue((long)-1)] long recordNumber) 
 
 		{
 			checkRecordNumber(recordNumber,false);
@@ -316,7 +315,7 @@ namespace Microsoft.VisualBasic
 		public static void FileGet(
 					   int fileNumber,
 					   ref byte value,
-					   [Optional, DefaultValue((long)-1)] long recordNumber) 
+					   [Optional, __DefaultArgumentValue((long)-1)] long recordNumber) 
 
 		{
 			checkRecordNumber(recordNumber,false);
@@ -327,7 +326,7 @@ namespace Microsoft.VisualBasic
 		public static void FileGet(
 					   int fileNumber,
 					   ref short value,
-					   [Optional, DefaultValue((long)-1)] long recordNumber) 
+					   [Optional, __DefaultArgumentValue((long)-1)] long recordNumber) 
 
 		{
 			checkRecordNumber(recordNumber,false);
@@ -338,7 +337,7 @@ namespace Microsoft.VisualBasic
 		public static void FileGet(
 					   int fileNumber,
 					   ref char value,
-					   [Optional, DefaultValue((long)-1)] long recordNumber) 
+					   [Optional, __DefaultArgumentValue((long)-1)] long recordNumber) 
 
 
 		{
@@ -350,7 +349,7 @@ namespace Microsoft.VisualBasic
 
 		public static void FileGet(int fileNumber, 
 					   ref int value,
-   					   [Optional, DefaultValue((long)-1)] long recordNumber) 
+   					   [Optional, __DefaultArgumentValue((long)-1)] long recordNumber) 
 		{
 			checkRecordNumber(recordNumber,false);
 			VBFile vbFile = getVBFile(fileNumber);
@@ -359,7 +358,7 @@ namespace Microsoft.VisualBasic
 
 		public static void FileGet(int fileNumber, 
 					   ref long value, 
-					   [Optional, DefaultValue((long)-1)] long recordNumber) 
+					   [Optional, __DefaultArgumentValue((long)-1)] long recordNumber) 
 		{
 			checkRecordNumber(recordNumber,false);
 			VBFile vbFile = getVBFile(fileNumber);
@@ -368,7 +367,7 @@ namespace Microsoft.VisualBasic
 
 		public static void FileGet(int fileNumber,
 					   ref float value,
-					   [Optional, DefaultValue((long)-1)] long recordNumber) 
+					   [Optional, __DefaultArgumentValue((long)-1)] long recordNumber) 
 		{
 			checkRecordNumber(recordNumber,false);
 			VBFile vbFile = getVBFile(fileNumber);
@@ -377,7 +376,7 @@ namespace Microsoft.VisualBasic
 
 		public static void FileGet(int fileNumber,
 					   ref double value,
-					   [Optional, DefaultValue((long)-1)] long recordNumber) 
+					   [Optional, __DefaultArgumentValue((long)-1)] long recordNumber) 
 					   
 		{
 			checkRecordNumber(recordNumber,false);
@@ -387,7 +386,7 @@ namespace Microsoft.VisualBasic
 
 		public static void FileGet(int fileNumber,
 					   ref Decimal value,
-					   [Optional, DefaultValue((long)-1)] long recordNumber) 
+					   [Optional, __DefaultArgumentValue((long)-1)] long recordNumber) 
 					   
 		{
 			checkRecordNumber(recordNumber,false);
@@ -397,8 +396,8 @@ namespace Microsoft.VisualBasic
 
 		public static void FileGet(int fileNumber,
 					   ref string value,
-					   [Optional, DefaultValue((long)-1)] long recordNumber,
-					   [Optional, DefaultValue(false)] bool bIgnored)
+					   [Optional, __DefaultArgumentValue((long)-1)] long recordNumber,
+					   [Optional, __DefaultArgumentValue(false)] bool bIgnored)
 		{
 			checkRecordNumber(recordNumber,true);
 			VBFile vbFile = getVBFile(fileNumber);
@@ -407,7 +406,7 @@ namespace Microsoft.VisualBasic
 
 		public static void FileGet(int fileNumber,
 					   ref Object value,
-					   [Optional, DefaultValue((long)-1)] long recordNumber) 
+					   [Optional, __DefaultArgumentValue((long)-1)] long recordNumber) 
 		{
 			checkRecordNumber(recordNumber,false);
 			VBFile vbFile = getVBFile(fileNumber);
@@ -723,7 +722,7 @@ namespace Microsoft.VisualBasic
 		}
 
 		public static /*synchronized*/ String Dir(String pathName, 
-							  [Optional, DefaultValue(0)] 
+							  [Optional, __DefaultArgumentValue((FileAttribute)0)] 
 							  FileAttribute fileAttribute)
 		{
 			_fileIndex = 0;
@@ -952,7 +951,7 @@ namespace Microsoft.VisualBasic
 
 		public static void FileGetObject(int fileNumber,
 						 ref object value,
-						 [Optional, DefaultValue((long)-1)] long recordNumber) 
+						 [Optional, __DefaultArgumentValue((long)-1)] long recordNumber) 
 
 
 		{
@@ -1028,7 +1027,7 @@ namespace Microsoft.VisualBasic
 
 		public static void FileGet(int fileNumber,
 					   ref DateTime value,
-					   [Optional, DefaultValue((long)-1)] long recordNumber)
+					   [Optional, __DefaultArgumentValue((long)-1)] long recordNumber)
 
 		{
 			checkRecordNumber(recordNumber,true);
@@ -1044,9 +1043,9 @@ namespace Microsoft.VisualBasic
 
 		public static void FileGet(int fileNumber,
 					   ref Array value,
-					   [Optional, DefaultValue((long)-1)] long recordNumber, 
-					   [Optional, DefaultValue(false)] bool arrayIsDynamic, 
-					   [Optional, DefaultValue(false)] bool stringIsFixedLength) 
+					   [Optional, __DefaultArgumentValue((long)-1)] long recordNumber, 
+					   [Optional, __DefaultArgumentValue(false)] bool arrayIsDynamic, 
+					   [Optional, __DefaultArgumentValue(false)] bool stringIsFixedLength) 
 
 
 		{
@@ -1057,7 +1056,7 @@ namespace Microsoft.VisualBasic
 
 		public static void FilePutObject(int fileNumber,
 						 Object value,
-						 [Optional, DefaultValue((long)-1)] long recordNumber)
+						 [Optional, __DefaultArgumentValue((long)-1)] long recordNumber)
 
 		{
 			checkRecordNumber(recordNumber,true);
@@ -1111,7 +1110,7 @@ namespace Microsoft.VisualBasic
 		[System.ObsoleteAttribute(obsoleteMsg, false)] 
 		public static void FilePut(Object FileNumber,
 					   Object Value,
-					   [Optional, DefaultValue(-1)] System.Object RecordNumber)
+					   [Optional, __DefaultArgumentValue(-1)] System.Object RecordNumber)
 		{
 			throw new ArgumentException(Utils.GetResourceString("UseFilePutObject"));
 		}
@@ -1119,7 +1118,7 @@ namespace Microsoft.VisualBasic
 		[MonoTODO]
 		public static void FilePut(int FileNumber,
 					   ValueType Value,
-					   [Optional, DefaultValue((long)-1)] System.Int64 RecordNumber)
+					   [Optional, __DefaultArgumentValue((long)-1)] System.Int64 RecordNumber)
 
 		{
 			throw new NotImplementedException();
@@ -1127,9 +1126,9 @@ namespace Microsoft.VisualBasic
 
 		public static void FilePut(int fileNumber,
 					   Array value,
-					   [Optional, DefaultValue((long)-1)] long recordNumber,
-					   [Optional, DefaultValue(false)] bool arrayIsDynamic,
-					   [Optional, DefaultValue(false)] bool stringIsFixedLength)
+					   [Optional, __DefaultArgumentValue((long)-1)] long recordNumber,
+					   [Optional, __DefaultArgumentValue(false)] bool arrayIsDynamic,
+					   [Optional, __DefaultArgumentValue(false)] bool stringIsFixedLength)
 		{
 			checkRecordNumber(recordNumber,true);
 			VBFile vbFile = getVBFile(fileNumber);
@@ -1138,7 +1137,7 @@ namespace Microsoft.VisualBasic
 
 		public static void FilePut(int fileNumber,
 					   Decimal value,
-					   [Optional, DefaultValue((long)-1)] long  recordNumber)
+					   [Optional, __DefaultArgumentValue((long)-1)] long  recordNumber)
 		{
 			checkRecordNumber(recordNumber,true);
 			VBFile vbFile = getVBFile(fileNumber);

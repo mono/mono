@@ -37,14 +37,12 @@
 
 using System;
 using System.Runtime.InteropServices;
-using System.ComponentModel;
 using System.Globalization;
+using Microsoft.VisualBasic.CompilerServices;
 
 namespace Microsoft.VisualBasic
 {
-	using CompilerServices;
-
-	[Microsoft.VisualBasic.CompilerServices.StandardModuleAttribute] 
+	[StandardModule] 
 	sealed public class Information {
 
 		private Information ()
@@ -232,7 +230,7 @@ namespace Microsoft.VisualBasic
 		}
 
 		public static System.Int32 UBound (System.Array Array, 
-						   [Optional, DefaultValue(1)] 
+						   [Optional, __DefaultArgumentValue(1)] 
 						   System.Int32 Rank) 
 		{ 
 			Exception e;
@@ -256,7 +254,7 @@ namespace Microsoft.VisualBasic
 		}
 
 		public static System.Int32 LBound (System.Array Array, 
-						   [Optional, DefaultValue(1)] 
+						   [Optional, __DefaultArgumentValue(1)] 
 						   System.Int32 Rank) 
 		{ 
 			Exception e;

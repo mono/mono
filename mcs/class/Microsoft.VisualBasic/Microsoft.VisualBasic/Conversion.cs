@@ -32,9 +32,10 @@
 
 using System;
 using System.Text.RegularExpressions;
+using Microsoft.VisualBasic.CompilerServices;
 
 namespace Microsoft.VisualBasic {
-	[Microsoft.VisualBasic.CompilerServices.StandardModuleAttribute] 
+	[StandardModule] 
 	sealed public class Conversion {
 		///
 		/// <summary>

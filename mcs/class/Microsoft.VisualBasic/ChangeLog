@@ -1,3 +1,7 @@
+2004-09-05  Jambunathan K  <kjambunathan@novell.com>
+	* Microsoft.VisualBasic.dll.sources: Added DefaultArgumentValueAttribute.cs
+	* Makefile: Removed '/unsafe' switch to the C# compiler
+
 2004-07-31  Jambunathan K  <kjambunathan@novell.com>
 	* Makefile: Added /unsafe switch to the compiler command line.
 	This is required as setting of Today and TimeOfDay makes a libc

@@ -32,10 +32,11 @@
   */
 
 using System;
+using Microsoft.VisualBasic.CompilerServices;
 
 namespace Microsoft.VisualBasic {
 
-	[Microsoft.VisualBasic.CompilerServices.StandardModuleAttribute]
+	[StandardModule]
 	sealed public class Globals	{
 		
 		// prevent public constructor
