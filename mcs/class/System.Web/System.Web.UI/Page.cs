@@ -450,8 +450,9 @@ public class Page : TemplateControl, IHttpHandler
 				foreach (string h in hdrs)
 					cache.VaryByHeaders [h.Trim ()] = true;
 			}
-                        
-                        break;
+
+			cache.SetCacheability (HttpCacheability.Server);
+			break;
 		case OutputCacheLocation.None:
 			break;
 		}
