@@ -94,21 +94,20 @@ namespace Mono.Xml.XPath2
 
 				// Whether it takes "current context" or not.
 				Type t = args > 0 ? prms [0].ParameterType : null;
-				bool ctxSeq = mi.GetCustomAttributes (typeof (XQueryFunctionContextAttribute), true).Length > 0;
+				bool ctxSeq = mi.GetCustomAttributes (typeof (XQueryFunctionContextAttribute), false).Length > 0;
 				bool hasContextArg = ctxSeq || t == typeof (XQueryContext);
-				if (hasContextArg)
+				if (ctxSeq || hasContextArg)
 					args--;
 				if (methods [args] != null)
 					throw new ArgumentException (String.Format ("XQuery does not allow functions that accepts such methods that have the same number of parameters in different types. Method name is {0}", mi.Name));
-if (mi.Name == "FnDistinctValues")
-				methods.Add (args, mi);
+				methods.Add ((int) args, mi);
 				if (args < minArgs || minArgs < 0)
 					minArgs = args;
 				if (args > maxArgs)
 					maxArgs = args;
 			}
 
-			MethodInfo m = (MethodInfo) methods [maxArgs];
+			MethodInfo m = (MethodInfo) methods [(int) maxArgs];
 			if (m == null)
 				throw new SystemException ("Should not happen: maxArgs is " + maxArgs);
 			ParameterInfo [] pl = m.GetParameters ();
@@ -174,11 +173,11 @@ if (mi.Name == "FnDistinctValues")
 			Type t = prms.Length > 0 ? prms [0].ParameterType : null;
 			bool ctxSeq = mi.GetCustomAttributes (
 				typeof (XQueryFunctionContextAttribute),
-				true).Length > 0;
+				false).Length > 0;
 			if (t == typeof (XQueryContext)) {
 				ArrayList pl = new ArrayList (args);
 				pl.Insert (0, current.Context);
-				return mi.Invoke (null, pl.ToArray ());
+				args = pl.ToArray ();
 			}
 			else if (ctxSeq) {
 				ArrayList pl = new ArrayList (args);
@@ -187,7 +186,7 @@ if (mi.Name == "FnDistinctValues")
 			}
 
 			if (args.Length != prms.Length)
-				throw new XmlQueryException (String.Format ("Argument numbers were different. Signature requires {0} while actual call was {1}.", prms.Length, args.Length));
+				throw new XmlQueryException (String.Format ("Argument numbers were different for function {0}. Signature requires {1} while actual call was {2}.", mi.Name, prms.Length, args.Length));
 
 			// If native parameter type is XPathSequence and the actual values are not, adjust them
 			for (int i = 0; i < args.Length; i++) {

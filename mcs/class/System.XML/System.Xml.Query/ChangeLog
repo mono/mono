@@ -1,5 +1,9 @@
 2004-10-08  Atsushi Enomoto <atsushi@ximian.com>
 
+	* XQueryCliFunction.cs : native method invokation was still crashing.
+
+2004-10-08  Atsushi Enomoto <atsushi@ximian.com>
+
 	* XPathSequence.cs :
 	  missed last checkin.
 	  Added WrapperIterator, RemovalIterator for fn:remove(),
