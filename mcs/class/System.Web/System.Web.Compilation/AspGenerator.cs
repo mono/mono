@@ -344,8 +344,12 @@ class AspGenerator
 		if (privateBinPath == null || privateBinPath.Length == 0)
 			privateBinPath = "bin";
 			
-		if (!Path.IsPathRooted (privateBinPath))
-			privateBinPath = Path.Combine (setup.ApplicationBase, privateBinPath);
+		if (!Path.IsPathRooted (privateBinPath)) {
+			string appbase = setup.ApplicationBase;
+			if (appbase.StartsWith ("file://"))
+				appbase = appbase.Substring (7);
+			privateBinPath = Path.Combine (appbase, privateBinPath);
+		}
 		
 		Init ();
 	}

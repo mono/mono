@@ -1,3 +1,8 @@
+2003-02-05  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* AspGenerator.cs: remove "file://" from the private bin path. Fixes
+	bug #37628.
+
 2003-02-03  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* AspParser.cs: the parser fires events when it parses an element.
