@@ -1,3 +1,16 @@
+2004-05-09  Gert Driesen (drieseng@users.sourceforge.net)
+	* OleDbCommand.cs: removed setter for Parameters property to
+	match MS.NET
+	* OleDbCommandBuilder.cs: fixed GetUpdatetCommand typo
+	* OleDbErrorCollection: added default internal ctor to match
+	MS.NET
+	* OleDbInfoMessageEventArgs.cs: added default internal ctor
+	to match MS.NET
+	* OleDbParameter.cs: added setter for IsNullable
+	* OleDbParameterCollection: added default internal ctor to
+	match MS.NET
+	* OleDbPermission.cs: removed extra IsSubsetOf method
+
 2004-04-06  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* OleDbPermissionAttribute.cs: missing bits from Gert's patch for

@@ -14,8 +14,15 @@ using System.Data.Common;
 
 namespace System.Data.OleDb
 {
-	public sealed class OleDbInfoMessageEventArgs : EventArgs
+	public sealed class OleDbInfoMessageEventArgs : EventArgs 
 	{
+		#region Constructors
+
+		internal OleDbInfoMessageEventArgs() {
+		}
+
+		#endregion Constructors
+
 		#region Properties
 
 		public int ErrorCode {

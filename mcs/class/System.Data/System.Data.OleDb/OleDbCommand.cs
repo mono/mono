@@ -125,9 +125,6 @@ namespace System.Data.OleDb
 			get {
 				return parameters;
 			}
-			set {
-				parameters = value;
-			}
 		}
 
 		public OleDbTransaction Transaction {

@@ -26,6 +26,13 @@ namespace System.Data.OleDb
 	
 		#endregion // Fields
 
+		#region Constructors
+
+		internal OleDbErrorCollection() {
+		}
+
+		#endregion Constructors
+
 		#region Properties 
 
 		public int Count {

@@ -102,7 +102,7 @@ namespace System.Data.OleDb
 		}
 
 		[MonoTODO]
-		public OleDbCommand GetUpdatetCommand ()
+		public OleDbCommand GetUpdateCommand ()
 		{
 			throw new NotImplementedException ();
 		}

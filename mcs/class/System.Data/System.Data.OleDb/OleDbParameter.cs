@@ -107,6 +107,7 @@ namespace System.Data.OleDb
 		
 		public bool IsNullable {
 			get { return isNullable; }
+			set { isNullable = value; }
 		}
 
 		public OleDbType OleDbType {

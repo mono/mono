@@ -75,12 +75,6 @@ namespace System.Data.OleDb
 		}
 
 		[MonoTODO]
-		public override bool IsSubsetOf (IPermission target)
-		{
-			throw new NotImplementedException ();
-		}
-
-		[MonoTODO]
 		public override SecurityElement ToXml ()
 		{
 			throw new NotImplementedException ();

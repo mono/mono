@@ -31,7 +31,7 @@ namespace System.Data.OleDb
 
 		#region Constructors
                                                                                                     
-                public OleDbParameterCollection () {
+                internal OleDbParameterCollection () {
                 }
                                                                                                     
                 #endregion // Constructors
