@@ -87,20 +87,46 @@ namespace System.Web.Services.Description {
 
 		public ServiceDescriptionImportWarnings Import (CodeNamespace codeNamespace, CodeCompileUnit codeCompileUnit)
 		{
+			ServiceDescriptionImportWarnings warns = 0;
+			CodeIdentifiers classNames = new CodeIdentifiers();
 			ProtocolImporter importer = GetImporter ();
-			importer.Import (this, codeNamespace, codeCompileUnit, importInfo);
+			bool found = false;
 			
-			return importer.Warnings;
+			foreach (ImportInfo info in importInfo)
+				foreach (Service service in info.ServiceDescription.Services)
+					foreach (Port port in service.Ports)
+					{
+						if (importer.Import (this, codeNamespace, codeCompileUnit, info, service, port, classNames)) {
+							found = true;
+							warns |= importer.Warnings;
+						}
+					}
+				
+			if (!found) throw new Exception ("None of the supported bindings was found");
+			return warns;
 		}
 		
 		ProtocolImporter GetImporter ()
 		{
-			switch ((protocolName != null && protocolName != "") ? protocolName : "Soap")
-			{
-				case "Soap": return new SoapProtocolImporter ();
-				default: throw new NotSupportedException ();
+			ArrayList importers = GetSupportedImporters ();
+			if (protocolName == null || protocolName == "") protocolName = "Soap";
+			foreach (ProtocolImporter importer in importers) {
+				if (importer.ProtocolName == protocolName)
+					return importer;
 			}
+			
+			throw new Exception ("Protocol " + protocolName + " not supported");
 		}
+		
+		ArrayList GetSupportedImporters ()
+		{
+			ArrayList list = new ArrayList ();
+			list.Add (new SoapProtocolImporter ());
+			list.Add (new HttpGetProtocolImporter ());
+			list.Add (new HttpPostProtocolImporter ());
+			return list;
+		}
+		
 #endregion
 	}
 

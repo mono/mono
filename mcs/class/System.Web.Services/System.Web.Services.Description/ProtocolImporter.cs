@@ -145,45 +145,35 @@ namespace System.Web.Services.Description {
 
 		#region Methods
 		
-		internal void Import (ServiceDescriptionImporter descriptionImporter, CodeNamespace codeNamespace, CodeCompileUnit codeCompileUnit, ArrayList importInfo)
+		internal bool Import (ServiceDescriptionImporter descriptionImporter, CodeNamespace codeNamespace, CodeCompileUnit codeCompileUnit, ImportInfo info, Service service, Port port, CodeIdentifiers classNames)
 		{
 			this.descriptionImporter = descriptionImporter;
+			this.service = service;
+			this.iinfo = info;
+			this.port = port;
+			binding = ServiceDescriptions.GetBinding (port.Binding);
+			
+			if (!IsBindingSupported ()) return false;
+			
+			this.classNames = classNames;
 			warnings = (ServiceDescriptionImportWarnings) 0;
 			
 			this.codeNamespace = codeNamespace;
 			this.codeCompileUnit = codeCompileUnit;
 
-			bool classesGenerated = false;
-			classNames = new CodeIdentifiers();
-			
 			BeginNamespace ();
-			
-			foreach (ImportInfo info in importInfo)
-			{
-				iinfo = info;
-				foreach (Service s in info.ServiceDescription.Services)
-				{
-					service = s;
-					foreach (Port p in service.Ports)
-					{
-						port = p;
-						classesGenerated = ImportPortBinding () || classesGenerated;
-					}
-				}
-			}
-			
+			ImportPortBinding ();
 			EndNamespace ();
 			
-			if (!classesGenerated) warnings |= ServiceDescriptionImportWarnings.NoCodeGenerated;
+			return true;
 		}
 
-		bool ImportPortBinding ()
+		void ImportPortBinding ()
 		{
 			if (service.Ports.Count > 1) className = port.Name;
 			else className = service.Name;
 			
 			className = classNames.AddUnique (CodeIdentifier.MakeValid (className), port);
-			binding = ServiceDescriptions.GetBinding (port.Binding);
 			
 			try
 			{
@@ -205,14 +195,9 @@ namespace System.Web.Services.Description {
 				att.Arguments.Add (GetArg ("code"));
 				AddCustomAttribute (codeClass, att, true);
 
-				att = new CodeAttributeDeclaration ("System.Web.Services.WebServiceBinding");
-				att.Arguments.Add (GetArg ("Name", port.Name));
-				att.Arguments.Add (GetArg ("Namespace", port.Binding.Namespace));
-				AddCustomAttribute (codeClass, att, true);
-	
 				if (binding.Operations.Count == 0) {
 					warnings |= ServiceDescriptionImportWarnings.NoMethodsGenerated;
-					return true;
+					return;
 				}
 				
 				foreach (OperationBinding oper in binding.Operations) 
@@ -233,20 +218,22 @@ namespace System.Web.Services.Description {
 					}
 					
 					CodeMemberMethod method = GenerateMethod ();
-					methodName = method.Name;
 					
-					if (operation.Documentation != null && operation.Documentation != "")
-						AddComments (method, operation.Documentation);
+					if (method != null)
+					{
+						methodName = method.Name;
+						if (operation.Documentation != null && operation.Documentation != "")
+							AddComments (method, operation.Documentation);
+					}
 				}
 				
 				EndClass ();
 			}
 			catch (Exception ex)
 			{
+				warnings |= ServiceDescriptionImportWarnings.NoCodeGenerated;
 				UnsupportedBindingWarning (ex.Message);
-				return false;
 			}
-			return true;
 		}
 
 		Operation FindPortOperation ()
@@ -276,6 +263,22 @@ namespace System.Web.Services.Description {
 			if (msg.Name == null) return operName;
 			else return msg.Name;
 		}
+		
+		internal string GetServiceUrl (string location)
+		{
+			if (ImportInfo.AppSettingUrlKey == null || ImportInfo.AppSettingUrlKey == string.Empty)
+				return location;
+			else
+			{
+				string url;
+				if (Style == ServiceDescriptionImportStyle.Server) throw new InvalidOperationException ("Cannot set appSettingUrlKey if Style is Server");
+				url = ConfigurationSettings.AppSettings [ImportInfo.AppSettingUrlKey];
+				if (ImportInfo.AppSettingBaseUrl != null && ImportInfo.AppSettingBaseUrl != string.Empty)
+					url += "/" + ImportInfo.AppSettingBaseUrl + "/" + location;
+				return url;
+			}
+		}
+
 		
 		[MonoTODO]
 		public void AddExtensionWarningComments (CodeCommentStatementCollection comments, ServiceDescriptionFormatExtensionCollection extensions) 

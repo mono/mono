@@ -1,3 +1,15 @@
+2003-10-06  Lluis Sanchez Gual <lluis@ximian.com>
+
+	* ProtocolImporter.cs: Moved some code to ServiceDescriptionImporter.
+	  WebServiceBindingAttribute addition moved to SoapProtocolImporter.
+	  Moved GetServiceUrl here (from SoapProtocolImporter).
+	* ServiceDescriptionImporter.cs: Added support for HttpGet and HttpPost
+	  importers.
+	* SoapProtocolImporter.cs: Minor fixes.
+	* HttpSimpleProtocolImporter.cs, HttpGetProtocolImporter.cs,
+	  HttpPostProtocolImporter.cs: new files that implement HttpGet and HttpPost
+	  importers.
+
 2003-10-04  Lluis Sanchez Gual <lluis@ximian.com>
 
 	* ProtocolReflector.cs: The ReflectionImporter property now creates a

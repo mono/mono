@@ -80,17 +80,23 @@ namespace System.Web.Services.Description {
 		protected override CodeTypeDeclaration BeginClass ()
 		{
 			soapBinding = (SoapBinding) Binding.Extensions.Find (typeof(SoapBinding));
-
-			if (soapBinding == null) throw new Exception ("None of the supported bindings was found");
 			if (soapBinding.Style != SoapBindingStyle.Document) throw new Exception ("Binding style not supported");
 			
 			CodeTypeDeclaration codeClass = new CodeTypeDeclaration (ClassName);
 			
-			string url = GetServiceUrl (); 
+			string location = null;			
+			SoapAddressBinding sab = (SoapAddressBinding) Port.Extensions.Find (typeof(SoapAddressBinding));
+			if (sab != null) location = sab.Location;
+			string url = GetServiceUrl (location); 
 
 			CodeTypeReference ctr = new CodeTypeReference ("System.Web.Services.Protocols.SoapHttpClientProtocol");
 			codeClass.BaseTypes.Add (ctr);
 			
+			CodeAttributeDeclaration att = new CodeAttributeDeclaration ("System.Web.Services.WebServiceBinding");
+			att.Arguments.Add (GetArg ("Name", Port.Name));
+			att.Arguments.Add (GetArg ("Namespace", Port.Binding.Namespace));
+			AddCustomAttribute (codeClass, att, true);
+	
 			CodeConstructor cc = new CodeConstructor ();
 			cc.Attributes = MemberAttributes.Public;
 			CodeExpression ce = new CodeFieldReferenceExpression (new CodeThisReferenceExpression(), "Url");
@@ -101,26 +107,6 @@ namespace System.Web.Services.Description {
 			memberIds = new CodeIdentifiers ();
 			headerVariables = new Hashtable ();
 			return codeClass;
-		}
-
-		string GetServiceUrl ()
-		{
-			string location = null;
-			
-			SoapAddressBinding sab = (SoapAddressBinding) Port.Extensions.Find (typeof(SoapAddressBinding));
-			if (sab != null) location = sab.Location;
-			
-			if (ImportInfo.AppSettingUrlKey == null || ImportInfo.AppSettingUrlKey == string.Empty)
-				return location;
-			else
-			{
-				string url;
-				if (Style == ServiceDescriptionImportStyle.Server) throw new InvalidOperationException ("Cannot set appSettingUrlKey if Style is Server");
-				url = ConfigurationSettings.AppSettings [ImportInfo.AppSettingUrlKey];
-				if (ImportInfo.AppSettingBaseUrl != null && ImportInfo.AppSettingBaseUrl != string.Empty)
-					url += "/" + ImportInfo.AppSettingBaseUrl + "/" + location;
-				return url;
-			}
 		}
 
 		protected override void BeginNamespace ()
@@ -142,10 +128,9 @@ namespace System.Web.Services.Description {
 		{
 		}
 
-		[MonoTODO]
 		protected override bool IsBindingSupported ()
 		{
-			throw new NotImplementedException ();
+			return Binding.Extensions.Find (typeof(SoapBinding)) != null;
 		}
 
 		[MonoTODO]
@@ -154,31 +139,25 @@ namespace System.Web.Services.Description {
 			throw new NotImplementedException ();
 		}
 
-		void AddComments (CodeTypeMember member, string comments)
-		{
-			if (comments == null || comments == "") member.Comments.Add (new CodeCommentStatement ("<remarks/>", true));
-			else member.Comments.Add (new CodeCommentStatement ("<remarks>\n" + comments + "\n</remarks>", true));
-		}
-
 		protected override CodeMemberMethod GenerateMethod ()
 		{
 			try
 			{
 				SoapOperationBinding soapOper = OperationBinding.Extensions.Find (typeof (SoapOperationBinding)) as SoapOperationBinding;
-				if (soapOper == null) throw new Exception ("Soap operation binding not found in operation " + OperationBinding.Name);
-				if (soapOper.Style != SoapBindingStyle.Document) throw new Exception ("Operation binding style not supported in operation " + OperationBinding.Name);
+				if (soapOper == null) throw new Exception ("Soap operation binding not found");
+				if (soapOper.Style != SoapBindingStyle.Document) throw new Exception ("Operation binding style not supported");
 
 				SoapBodyBinding isbb = OperationBinding.Input.Extensions.Find (typeof(SoapBodyBinding)) as SoapBodyBinding;
-				if (isbb == null) throw new Exception ("Soap body binding not found in operation " + OperationBinding.Name);
+				if (isbb == null) throw new Exception ("Soap body binding not found");
 				
 				SoapBodyBinding osbb = OperationBinding.Output.Extensions.Find (typeof(SoapBodyBinding)) as SoapBodyBinding;
-				if (osbb == null) throw new Exception ("Soap body binding not found in operation " + OperationBinding.Name);
+				if (osbb == null) throw new Exception ("Soap body binding not found");
 				
 				XmlMembersMapping inputMembers = ImportMembersMapping (InputMessage, isbb, soapOper);
-				if (inputMembers == null) throw new Exception ("Input message not declared in operation " + OperationBinding.Name);
+				if (inputMembers == null) throw new Exception ("Input message not declared");
 
 				XmlMembersMapping outputMembers = ImportMembersMapping (OutputMessage, osbb, soapOper);
-				if (outputMembers == null) throw new Exception ("Output message not declared in operation " + OperationBinding.Name);
+				if (outputMembers == null) throw new Exception ("Output message not declared");
 				
 				CodeMemberMethod met = GenerateMethod (memberIds, soapOper, isbb, inputMembers, outputMembers);
 				
