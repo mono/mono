@@ -15,7 +15,7 @@ plat_bindir = $(shell cygpath -m $(libdir))
 fx11_instdir = $(shell cygpath -m $(libdir))/mono/1.1/
 fx20_instdir = $(shell cygpath -m $(libdir))/mono/2.0/
 else
-plat_bindir = $(bindir)/mono
+plat_bindir = $(bindir)
 fx11_instdir = $(libdir)/mono/1.1/
 fx20_instdir = $(libdir)/mono/2.0/
 endif
