@@ -1,3 +1,10 @@
+
+Mon Jun 9 19:00:56 CEST 2003 Paolo Molaro <lupus@ximian.com>
+
+	* Makefile.am, mini-x86.c: rename cpu description array to
+	pentium_desc, since some compilers define the 'pentium' preprocessor
+	symbol.
+
 2003-05-28  Dietmar Maurer  <dietmar@ximian.com>
 
 	* mini.c (mini_select_instructions): add explicit branch if the
