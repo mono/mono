@@ -48,16 +48,13 @@ namespace Microsoft.JScript {
 
 		internal override bool Resolve (IdentificationTable context)
 		{
-			object e;
+			AST e;
 			bool r = true;
 			int i, n = Elements.Count;
 
 			for (i = 0; i < n; i++) {
-				e = Elements [i];
-				if (e is Exp)
-					r &= ((Exp) e).Resolve (context, true);
-				else 
-					r &= ((AST) e).Resolve (context);
+				e = (AST) Elements [i];
+				r &= e.Resolve (context);
 			}
 			return r;			
 		}

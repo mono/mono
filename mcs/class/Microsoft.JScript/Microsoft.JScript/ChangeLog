@@ -1,5 +1,7 @@
 2004-01-16  Cesar Lopez Nataren  <cesar@ciencias.unam.mx>
 
+	* Block.cs (Resolve): That check was not necessary.
+	
 	* InstanceOf.cs, PostOrPrefixOperator.cs, Relational.cs,
 	StrictEquality.cs, TypeOf.cs: added Resolve inherited from
 	BinaryOp and UnaryOp, and this from Exp.
