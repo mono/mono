@@ -20,27 +20,19 @@ public class BinaryWriterTest {
 	
 	string TempFolder = Path.Combine (Path.GetTempPath (), "MonoTests.System.IO.Tests");
 	
-	
-	public BinaryWriterTest() 
-	{
+	[SetUp]
+        protected void SetUp() {
 		if (Directory.Exists (TempFolder))
 			Directory.Delete (TempFolder, true);
 		Directory.CreateDirectory (TempFolder);
 	}
-	
-	~BinaryWriterTest ()
+
+	[TearDown]
+	public void TearDown()
 	{
 		if (Directory.Exists (TempFolder))
 			Directory.Delete (TempFolder, true);
 	}
-	
-	[SetUp]
-        protected void SetUp() {
-		
-		if (!Directory.Exists (TempFolder))				
-			Directory.CreateDirectory (TempFolder);
-	}
-
 
 	[Test]
 	public void Ctor ()

@@ -17,36 +17,26 @@ using System.Text;
 
 namespace MonoTests.System.IO
 {
-        public class FileStreamTest : TestCase
+        public class FileStreamTest : Assertion
         {
 		string TempFolder = Path.Combine (Path.GetTempPath (), "MonoTests.System.IO.Tests");
 
-                public FileStreamTest() 
-		{
-			if (Directory.Exists (TempFolder))
-				Directory.Delete (TempFolder, true);
-
-			Directory.CreateDirectory (TempFolder);
-		}
-
-		~FileStreamTest()
+		[TearDown]
+		public void TearDown()
 		{
 			if (Directory.Exists (TempFolder))
 				Directory.Delete (TempFolder, true);
 		}
 
 		[SetUp]
-                protected override void SetUp ()
+                public void SetUp ()
 		{
-			if (!Directory.Exists (TempFolder))				
-				Directory.CreateDirectory (TempFolder);
+			if (Directory.Exists (TempFolder))
+				Directory.Delete (TempFolder, true);
+
+			Directory.CreateDirectory (TempFolder);
                 }
 
-		[TearDown]
-		protected override void TearDown ()
-		{
-		}
-                
                 public void TestCtr ()
                 {
 			string path = TempFolder + "/testfilestream.tmp.1";
@@ -334,17 +324,17 @@ namespace MonoTests.System.IO
 				byte [] bytes = new byte [5];
 				stream2.Read (bytes, 0, 5);
 				
-				Assertion.AssertEquals ("test#01", 0, bytes [0]);
-				Assertion.AssertEquals ("test#02", 0, bytes [1]);
-				Assertion.AssertEquals ("test#03", 0, bytes [2]);
-				Assertion.AssertEquals ("test#04", 0, bytes [3]);
+				AssertEquals ("test#01", 0, bytes [0]);
+				AssertEquals ("test#02", 0, bytes [1]);
+				AssertEquals ("test#03", 0, bytes [2]);
+				AssertEquals ("test#04", 0, bytes [3]);
 				
 				stream.Flush ();
 				stream2.Read (bytes, 0, 5);			
-				Assertion.AssertEquals ("test#05", 1, bytes [0]);
-				Assertion.AssertEquals ("test#06", 2, bytes [1]);
-				Assertion.AssertEquals ("test#07", 3, bytes [2]);
-				Assertion.AssertEquals ("test#08", 4, bytes [3]);
+				AssertEquals ("test#05", 1, bytes [0]);
+				AssertEquals ("test#06", 2, bytes [1]);
+				AssertEquals ("test#07", 3, bytes [2]);
+				AssertEquals ("test#08", 4, bytes [3]);
 			} finally {
 				if (stream != null)
 					stream.Close ();
@@ -455,20 +445,20 @@ namespace MonoTests.System.IO
                 	FileStream stream2 = new FileStream (path, FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite);
                 	
                 	stream.Write (new byte [] {1, 2, 3, 4, 5, 6, 7, 8, 10}, 0, 9);
-                	Assertion.AssertEquals ("test#01", 5, stream2.Seek (5, SeekOrigin.Begin));
-                	Assertion.AssertEquals ("test#02", -1, stream2.ReadByte ());
+                	AssertEquals ("test#01", 5, stream2.Seek (5, SeekOrigin.Begin));
+                	AssertEquals ("test#02", -1, stream2.ReadByte ());
                 	
-                	Assertion.AssertEquals ("test#03", 2, stream2.Seek (-3, SeekOrigin.Current));
-                	Assertion.AssertEquals ("test#04", -1, stream2.ReadByte ());
+                	AssertEquals ("test#03", 2, stream2.Seek (-3, SeekOrigin.Current));
+                	AssertEquals ("test#04", -1, stream2.ReadByte ());
                 	
-                	Assertion.AssertEquals ("test#05", 12, stream.Seek (3, SeekOrigin.Current));
-                	Assertion.AssertEquals ("test#06", -1, stream.ReadByte ());
+                	AssertEquals ("test#05", 12, stream.Seek (3, SeekOrigin.Current));
+                	AssertEquals ("test#06", -1, stream.ReadByte ());
 
-                	Assertion.AssertEquals ("test#07", 5, stream.Seek (-7, SeekOrigin.Current));
-                	Assertion.AssertEquals ("test#08", 6, stream.ReadByte ());
+                	AssertEquals ("test#07", 5, stream.Seek (-7, SeekOrigin.Current));
+                	AssertEquals ("test#08", 6, stream.ReadByte ());
 
-                	Assertion.AssertEquals ("test#09", 5, stream2.Seek (5, SeekOrigin.Begin));
-                	Assertion.AssertEquals ("test#10", 6, stream2.ReadByte ());
+                	AssertEquals ("test#09", 5, stream2.Seek (5, SeekOrigin.Begin));
+                	AssertEquals ("test#10", 6, stream2.ReadByte ());
                 	                	
                 	stream.Close ();
                 	stream2.Close ();

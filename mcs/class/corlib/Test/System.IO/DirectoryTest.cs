@@ -21,29 +21,22 @@ public class DirectoryTest {
 	
 	string TempFolder = Path.Combine (Path.GetTempPath (), "MonoTests.System.IO.Tests");
 	
-	public DirectoryTest () 
+	[SetUp]
+	public void SetUp ()
 	{
 		if (Directory.Exists (TempFolder))
 			Directory.Delete (TempFolder, true);
 		Directory.CreateDirectory (TempFolder);
-	}
-
-	~DirectoryTest ()
-	{
-		if (Directory.Exists (TempFolder))
-			Directory.Delete (TempFolder, true);
-	}
-	
-	[SetUp]
-	public void SetUp ()
-	{
-		if (!Directory.Exists (TempFolder))				
-			Directory.CreateDirectory (TempFolder);
 
 		Thread.CurrentThread.CurrentCulture = new CultureInfo ("en-US");
 	}
 	
-	
+	[TearDown]
+	public void TearDown () {
+		if (Directory.Exists (TempFolder))
+			Directory.Delete (TempFolder, true);
+	}
+
 	[Test]
 	public void CreateDirectory ()
 	{

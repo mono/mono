@@ -14,29 +14,18 @@ namespace MonoTests.System.IO
     	{
 		string TempFolder = Path.Combine (Path.GetTempPath (), "MonoTests.System.IO.Tests");
 
-        	public DirectoryInfoTest() 
-	        {
+        	[SetUp]
+        	protected void SetUp() {
 			if (Directory.Exists (TempFolder))
 				Directory.Delete (TempFolder, true);
 			Directory.CreateDirectory (TempFolder);
-
-		}
-        
-		~DirectoryInfoTest ()
-		{
-			if (Directory.Exists (TempFolder))
-				Directory.Delete (TempFolder, true);
-		}
-		
-        	[SetUp]
-        	protected void SetUp() {
-
-			if (!Directory.Exists (TempFolder))				
-				Directory.CreateDirectory (TempFolder);
         	}
         
         	[TearDown]
-        	protected void TearDown() {}
+        	protected void TearDown() {
+			if (Directory.Exists (TempFolder))
+				Directory.Delete (TempFolder, true);
+		}
         
         	[Test]
         	public void Ctr ()
