@@ -651,6 +651,13 @@ namespace Mono.CSharp {
 			if (type_container_resolve_order != null){
 				if (RootContext.StdLib){
 					foreach (TypeContainer tc in type_container_resolve_order) {
+						if ((tc.ModFlags & Modifiers.NEW) == 0)
+							tc.DefineMembers (root);
+						else
+							Report1530 (tc.Location);
+					}
+				} else {
+					foreach (TypeContainer tc in type_container_resolve_order) {
 						// When compiling corlib, these types have already been
 						// populated from BootCorlib_PopulateCoreTypes ().
 						if (((tc.Name == "System.Object") ||
@@ -663,14 +670,7 @@ namespace Mono.CSharp {
 						else
 							Report1530 (tc.Location);
 					}
-				} else {
-					foreach (TypeContainer tc in type_container_resolve_order) {
-						if ((tc.ModFlags & Modifiers.NEW) == 0)
-							tc.DefineMembers (root);
-						else
-							Report1530 (tc.Location);
-					}
-				}
+				} 
 			}
 
 			ArrayList delegates = root.Delegates;
