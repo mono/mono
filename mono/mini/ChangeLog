@@ -1,5 +1,7 @@
 2004-12-28  Zoltan Varga  <vargaz@freemail.hu>
 
+	* aot.c (emit_method_info): Fix build.
+	
 	* aot.c: Further rework of the AOT file format to reduce the size of
 	the method info data.
 
