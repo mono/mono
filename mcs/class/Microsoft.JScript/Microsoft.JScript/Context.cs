@@ -36,11 +36,6 @@ namespace Microsoft.JScript {
 
 		internal DocumentContext Document;
 
-		public Context (string filename)
-		{
-			Document = new DocumentContext (filename);
-		}
-
 		public int EndColumn {
 			get { throw new NotImplementedException (); }
 		}
