@@ -29,8 +29,9 @@ using System;
 
 namespace System.Runtime.CompilerServices {
 
-	public static class IsVolatile
+	public class IsVolatile
 	{
+		private IsVolatile () {}
 	}
 }
 
