@@ -14,6 +14,9 @@
 //       great spot to put an `error' because you can reproduce it with this input:
 //	 "public X { }"
 //
+// Possible optimization:
+//   Run memory profiler with parsing only, and consider dropping 
+//   arraylists where not needed.   Some pieces can use linked lists.
 //
 using System.Text;
 using System.IO;
