@@ -5766,6 +5766,7 @@ namespace Mono.CSharp {
 						// If we are dealing with a struct, get the
 						// address of it, so we can store it.
 						//
+						bool do_stobj = false;
 						if ((dims == 1) &&
 						    etype.IsSubclassOf (TypeManager.value_type) &&
 						    (!TypeManager.IsBuiltinType (etype) ||
@@ -5778,17 +5779,22 @@ namespace Mono.CSharp {
 								// the address where to store the results
 								//
 								n.DisableTemporaryValueType ();
+								do_stobj = true;
 							}
-									     
+
 							ig.Emit (OpCodes.Ldelema, etype);
 						}
 
 						e.Emit (ec);
-						
-						if (dims == 1)
-							ArrayAccess.EmitStoreOpcode (ig, array_element_type);
-						else 
-							ig.Emit (OpCodes.Call, set);
+
+						if (do_stobj)
+							ig.Emit (OpCodes.Stobj, array_element_type);
+						else {
+							if (dims == 1)
+								ArrayAccess.EmitStoreOpcode (ig, array_element_type);
+							else 
+								ig.Emit (OpCodes.Call, set);
+						}
 					}
 				}
 				
@@ -6785,6 +6791,7 @@ namespace Mono.CSharp {
 		/// </summary>
 		static public OpCode GetStoreOpcode (Type t, out bool is_stobj)
 		{
+			//Console.WriteLine (new System.Diagnostics.StackTrace ());
 			is_stobj = false;
 			t = TypeManager.TypeToCoreType (t);
 			if (TypeManager.IsEnumType (t) && t != TypeManager.enum_type)

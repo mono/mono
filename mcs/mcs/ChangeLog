@@ -1,6 +1,10 @@
 2003-05-26  Miguel de Icaza  <miguel@ximian.com>
 
-	* expression.cs (IndexerAccess.Emit, IndexerAccess.EmitAssign):
+	* expression.cs (ArrayCreation.EmitDynamicInitializers): When
+	using the address to initialize an object, do an Stobj instead of
+	using the regular Stelem.
+
+	(IndexerAccess.Emit, IndexerAccess.EmitAssign):
 	Pass `is_base_indexer' to Invocation.EmitCall instead of false.
 	Because if we are a BaseIndexerAccess that value will be true.
 	Fixes 43643.
