@@ -1,3 +1,10 @@
+2004-12-20  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* appdomain.c: Bump corlib version.
+	* class-internals.h: Added RuntimeSecurityFrame to mono_defaults.
+	* domain.c: Add RuntimeSecurityFrame to mono_defaults.
+	* reflection.c|h: Add functions to get declarative security infos
+	(blob position and length) for assemblies, classes and methods.
 
 Mon Dec 20 15:28:54 CET 2004 Paolo Molaro <lupus@ximian.com>
 
