@@ -19,6 +19,7 @@ using System;
 using System.Data;
 using System.Xml;
 using System.Collections;
+using System.Globalization;
 
 namespace System.Data {
 
@@ -26,6 +27,7 @@ namespace System.Data {
 	{
 	
 	        private DataSet DSet;
+		Hashtable DiffGrRows = new Hashtable ();
 
 	        public XmlDataLoader (DataSet set) 
 		{
@@ -68,6 +70,8 @@ namespace System.Data {
 			switch (mode) {
 
 			        case XmlReadMode.DiffGram:
+					Result = XmlReadMode.DiffGram;
+					ReadModeDiffGram (reader);
 					break;
 			        case XmlReadMode.Auto:
 					LoadData (reader);
@@ -92,7 +96,93 @@ namespace System.Data {
 
 			return Result;
 		}
-		
+
+		// These methods should be in their own class for example XmlDiffLoader. But for now, let them be here
+		#region diffgram-methods
+
+		// Reads diffgr:before -values from diffgram
+		private void ReadModeDiffGramBefore (XmlReader reader)
+		{
+			while (reader.Read ()) {
+
+				if (String.Compare (reader.LocalName, "before", true) == 0) {
+
+					while (reader.Read ()) {
+
+						if (reader.NodeType == XmlNodeType.Element && DSet.Tables.Contains (reader.LocalName)) {
+							
+							string id = reader ["diffgr:id"];
+							string TableName = reader.LocalName;
+							DataTable table = DSet.Tables [TableName];
+							DataRow row = table.NewRow ();
+
+							ReadColumns (reader, row, table, TableName);
+
+							table.Rows.Add (row);
+							DiffGrRows.Add (id, row);
+							row.AcceptChanges ();
+						} 
+						else if (reader.NodeType == XmlNodeType.Element) {
+							throw new DataException (Locale.GetText ("Cannot load diffGram. Table '" + reader.LocalName + "' is missing in the destination dataset"));
+						}
+					}
+				}
+			}
+		}
+
+		// Reader current values from diffgram
+		private void ReadModeDiffGramCurrent (XmlReader reader)
+		{
+			while (reader.Read ()) {
+
+				if (reader.NodeType == XmlNodeType.Element) {
+
+					if (DSet.Tables.Contains (reader.LocalName)) {
+						
+						string TableName = reader.LocalName;
+						bool NewRow = false;
+						DataTable table = DSet.Tables [TableName];
+						DataRow row; 
+
+						if (DiffGrRows.Contains (reader ["diffgr:id"])) {
+							row = (DataRow)DiffGrRows [reader ["diffgr:id"]];
+						} 
+						else {
+							row = table.NewRow ();
+							NewRow = true;
+						}
+
+						ReadColumns (reader, row, table, TableName);
+
+						if (NewRow)
+							table.Rows.Add (row);
+					}
+					else if (String.Compare (reader.LocalName, "before", true) == 0) {
+						break;
+					}
+					else {
+						throw new DataException (Locale.GetText ("Cannot load diffGram. Table '" + reader.LocalName + "' is missing in the destination dataset"));
+					}
+				}
+			}
+		}
+
+		// XmlReadMode.DiffGram
+		private void ReadModeDiffGram (XmlReader reader)
+		{
+			reader.MoveToContent ();
+			string Prefix = reader.Prefix;
+			reader.Read ();
+
+			ReadModeDiffGramBefore (new XmlTextReader (reader.BaseURI));
+			ReadModeDiffGramCurrent (reader);
+		}
+
+		#endregion // diffgram-methods
+
+		#region reading
+
+		// XmlReadMode.InferSchema
 		[MonoTODO]
 		private void ReadModeInferSchema (XmlReader reader)
 		{
@@ -183,23 +273,35 @@ namespace System.Data {
 					
 					DataTable table = DSet.Tables [reader.LocalName];
 					DataRow row = table.NewRow ();
-					do {
-						if (reader.NodeType == XmlNodeType.Element && 
-						    table.Columns.Contains (reader.LocalName)) {
-							string columName = reader.LocalName;
-							reader.Read ();
-							row [columName] = reader.Value;
-						} 
-						else {
-							reader.Read ();
-						}
 
-					} while (table.TableName != reader.LocalName 
-								    || reader.NodeType != XmlNodeType.EndElement);
-					
+					ReadColumns (reader, row, table, reader.LocalName);					
+
 					table.Rows.Add (row);
 				}
 			}
 		}
+
+		#endregion // reading
+
+		#region Private helper methods
+		
+		private void ReadColumns (XmlReader reader, DataRow row, DataTable table, string TableName)
+		{
+			do {
+				if (reader.NodeType == XmlNodeType.Element && 
+				    table.Columns.Contains (reader.LocalName)) {
+					string columName = reader.LocalName;
+					reader.Read ();
+					row [columName] = reader.Value;
+								}
+				else {
+					reader.Read ();
+				}
+				
+			} while (table.TableName != reader.LocalName 
+				 || reader.NodeType != XmlNodeType.EndElement);
+		}
+
+		#endregion // Private helper methods
 	}
 }

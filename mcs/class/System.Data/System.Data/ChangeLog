@@ -1,5 +1,9 @@
 2002-12-29  Ville Palo <vi64pa@koti.soon.fi>
 
+	* XmlDataLoader.cs: Reading diffgrams.
+	
+2002-12-29  Ville Palo <vi64pa@koti.soon.fi>
+
 	* DataRow.cs: Little fix to indexer and DataColumnCang* trigger fixes.
 	* DataTable.cs: Added ChanginDataColumn () for triggering 
 	DataColumnChanging event
