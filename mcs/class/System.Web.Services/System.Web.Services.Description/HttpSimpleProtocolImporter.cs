@@ -169,8 +169,14 @@ namespace System.Web.Services.Description
 			
 			if (msg.Parts[0].Name == "Body" && msg.Parts[0].Element == XmlQualifiedName.Empty)
 				return xmlReflectionImporter.ImportTypeMapping (typeof(XmlNode));
-			else
+			else {
+				// This is a bit hacky. The issue is that types such as string[] are to be imported
+				// as such, not as ArrayOfString class. ImportTypeMapping will return a
+				// class if the type has not been imported as an array before, hence the
+				// call to ImportMembersMapping.
+				xmlImporter.ImportMembersMapping (new XmlQualifiedName[] {msg.Parts[0].Element});
 				return xmlImporter.ImportTypeMapping (msg.Parts[0].Element);
+			}
 		}
 		
 		CodeMemberMethod GenerateMethod (CodeIdentifiers memberIds, HttpOperationBinding httpOper, XmlMembersMapping inputMembers, XmlTypeMapping outputMember)
