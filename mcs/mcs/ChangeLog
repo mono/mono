@@ -1,5 +1,12 @@
 2003-04-10  Miguel de Icaza  <miguel@ximian.com>
 
+	* expression.cs (Binary.Emit): Test first for doubles instead of
+	floats, as they are more common.
+
+	(Binary.EmitBranchable): Use the .un version of the branch opcodes
+	when dealing with floats and the <=, >= operators.  This fixes bug
+	#39314 
+
 	* statement.cs (Foreach.EmitArrayForeach): bug fix: The code used
 	to load the array value by emitting a load on the foreach variable
 	type.  This was incorrect.  

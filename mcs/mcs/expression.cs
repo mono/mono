@@ -2749,7 +2749,8 @@ namespace Mono.CSharp {
 			left.Emit (ec);
 			right.Emit (ec);
 
-			bool isUnsigned = is_unsigned (left.Type);
+			Type t = left.Type;
+			bool isUnsigned = is_unsigned (t);
 
 			switch (oper){
 			case Operator.Equality:
@@ -2793,6 +2794,9 @@ namespace Mono.CSharp {
 				break;
 
 			case Operator.LessThanOrEqual:
+				if (t == TypeManager.double_type || t == TypeManager.float_type)
+					isUnsigned = true;
+
 				if (onTrue)
 					if (isUnsigned)
 						ig.Emit (OpCodes.Ble_Un, target);
@@ -2807,6 +2811,8 @@ namespace Mono.CSharp {
 
 
 			case Operator.GreaterThanOrEqual:
+				if (t == TypeManager.double_type || t == TypeManager.float_type)
+					isUnsigned = true;
 				if (onTrue)
 					if (isUnsigned)
 						ig.Emit (OpCodes.Bge_Un, target);
@@ -3001,7 +3007,9 @@ namespace Mono.CSharp {
 				break;
 
 			case Operator.LessThanOrEqual:
-				if (isUnsigned || (left.Type == TypeManager.float_type || left.Type == TypeManager.double_type))
+				Type lt = left.Type;
+				
+				if (isUnsigned || (lt == TypeManager.double_type || lt == TypeManager.float_type))
 					ig.Emit (OpCodes.Cgt_Un);
 				else
 					ig.Emit (OpCodes.Cgt);
@@ -3011,7 +3019,9 @@ namespace Mono.CSharp {
 				break;
 
 			case Operator.GreaterThanOrEqual:
-				if (isUnsigned || (left.Type == TypeManager.float_type || left.Type == TypeManager.double_type))
+				Type le = left.Type;
+				
+				if (isUnsigned || (le == TypeManager.double_type || le == TypeManager.float_type))
 					ig.Emit (OpCodes.Clt_Un);
 				else
 					ig.Emit (OpCodes.Clt);
