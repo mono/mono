@@ -1,5 +1,10 @@
 2003-10-10 Jackson Harper <jackson@ximian.com>
 
+	* dump.c: When dumping methodspecs dump the full methodspec with
+	signature, and dump the signature.
+	
+2003-10-10 Jackson Harper <jackson@ximian.com>
+
 	* get.c/get.h: Add methods to get stringified methodspecs and
 	method type parameters. 
 	
