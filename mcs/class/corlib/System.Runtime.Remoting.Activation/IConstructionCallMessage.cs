@@ -8,10 +8,11 @@
 //
 
 using System.Collections;
+using System.Runtime.Remoting.Messaging;
 
 namespace System.Runtime.Remoting.Activation {
 
-	public interface IConstructionCallMessage {
+	public interface IConstructionCallMessage : IMessage, IMethodCallMessage, IMethodMessage {
 		Type ActivationType {
 			get;
 		}
