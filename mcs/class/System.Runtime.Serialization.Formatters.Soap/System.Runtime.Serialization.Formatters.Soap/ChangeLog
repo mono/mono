@@ -1,3 +1,10 @@
+2004-05-26  Lluis Sanchez Gual <lluis@ximian.com>
+
+	* SoapFormatter.cs: Added headers parameter to SoapWriter call.
+	* SoapReader.cs: Added support for deserialization of headers. Cache
+	  both member indexes and member infos in the new TypeMetadata structure.
+	* SoapWriter.cs: Added support for serialization of headers.
+
 2004-05-10  Gert Driesen (drieseng@users.sourceforge.net)
 	* SoapFormatter.cs: sealed class and added ComVisible attribute
 	to FilterLevel property to match MS.NET

@@ -11,6 +11,7 @@ using System.IO;
 using System.Reflection;
 using System.Collections;
 using System.Runtime.Remoting;
+using System.Runtime.Remoting.Messaging;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters;
 using System.Xml;
@@ -61,6 +62,7 @@ namespace System.Runtime.Serialization.Formatters.Soap {
 		private ObjectIDGenerator idGen = new ObjectIDGenerator();
 		private FormatterAssemblyStyle _assemblyFormat = FormatterAssemblyStyle.Full;
 		private FormatterTypeStyle _typeFormat = FormatterTypeStyle.TypesWhenNeeded;
+		private static string defaultMessageNamespace;
 
 		#endregion
 		
@@ -86,7 +88,7 @@ namespace System.Runtime.Serialization.Formatters.Soap {
 
 		static SoapWriter() 
 		{
-
+			defaultMessageNamespace = typeof(SoapWriter).Assembly.GetName().FullName;
 		}
 
 		#endregion
@@ -162,10 +164,7 @@ namespace System.Runtime.Serialization.Formatters.Soap {
 		}
 
 
-		internal void Serialize(
-			object objGraph,
-			FormatterTypeStyle typeFormat,
-			FormatterAssemblyStyle assemblyFormat)
+		internal void Serialize (object objGraph, Header[] headers, FormatterTypeStyle typeFormat, FormatterAssemblyStyle assemblyFormat)
 		{
 			_typeFormat = typeFormat;
 			_assemblyFormat = assemblyFormat;
@@ -215,7 +214,21 @@ namespace System.Runtime.Serialization.Formatters.Soap {
 				"encodingStyle",
 				SoapTypeMapper.SoapEnvelopeNamespace,
 				"http://schemas.xmlsoap.org/soap/encoding/");
-
+						
+			ISoapMessage msg = objGraph as ISoapMessage;
+			if (msg != null)
+				headers = msg.Headers;
+			
+			if (headers != null && headers.Length > 0)
+			{
+				_xmlWriter.WriteStartElement (SoapTypeMapper.SoapEnvelopePrefix, "Header", SoapTypeMapper.SoapEnvelopeNamespace);
+				foreach (Header h in headers)
+					SerializeHeader (h);
+					
+				WriteObjectQueue ();
+				_xmlWriter.WriteEndElement ();
+			}
+				
 			// The body element
 			_xmlWriter.WriteStartElement(
 				SoapTypeMapper.SoapEnvelopePrefix,
@@ -225,14 +238,20 @@ namespace System.Runtime.Serialization.Formatters.Soap {
 
 			bool firstTime = false;
 
-			if(objGraph is ISoapMessage)
-			{
-				SerializeMessage(objGraph as ISoapMessage);
-				
-			}
+			if (msg != null)
+				SerializeMessage(msg);
 			else
 				_objectQueue.Enqueue(new EnqueuedObject( objGraph, idGen.GetId(objGraph, out firstTime)));
 
+			WriteObjectQueue ();
+
+			_xmlWriter.WriteFullEndElement(); // the body element
+			_xmlWriter.WriteFullEndElement(); // the envelope element
+			_xmlWriter.Flush();
+		}
+		
+		private void WriteObjectQueue ()
+		{
 			while(_objectQueue.Count > 0) 
 			{
 				EnqueuedObject currentEnqueuedObject;
@@ -242,26 +261,19 @@ namespace System.Runtime.Serialization.Formatters.Soap {
 
 				if(!currentType.IsValueType) _objectToIdTable[currentObject] = currentEnqueuedObject.Id;
 
-				if(currentType.IsArray) 
-				{
-						SerializeArray((Array) currentObject, currentEnqueuedObject.Id);
-				}
+				if(currentType.IsArray)
+					SerializeArray((Array) currentObject, currentEnqueuedObject.Id);
 				else
-				{
 					SerializeObject(currentObject, currentEnqueuedObject.Id);
-				}
-
 			}
-
-			_xmlWriter.WriteFullEndElement(); // the body element
-			_xmlWriter.WriteFullEndElement(); // the envelope element
-			_xmlWriter.Flush();
 		}
 
 		private void SerializeMessage(ISoapMessage message) 
 		{
 			bool firstTime;
-			_xmlWriter.WriteStartElement("i2", message.MethodName, message.XmlNameSpace);
+			string ns = message.XmlNameSpace != null ? message.XmlNameSpace : defaultMessageNamespace;
+			
+			_xmlWriter.WriteStartElement("i2", message.MethodName, ns);
 			Id(idGen.GetId(message, out firstTime));
 
 			string[] paramNames = message.ParamNames;
@@ -277,6 +289,16 @@ namespace System.Runtime.Serialization.Formatters.Soap {
 
 
 			_xmlWriter.WriteFullEndElement();
+		}
+				private void SerializeHeader (Header header)
+		{
+			string ns = header.HeaderNamespace != null ? header.HeaderNamespace : "http://schemas.microsoft.com/clr/soap"; 
+			_xmlWriter.WriteStartElement ("h4", header.Name, ns);
+			if (header.MustUnderstand)
+				_xmlWriter.WriteAttributeString ("mustUnderstand", SoapTypeMapper.SoapEnvelopeNamespace, "1");
+			_xmlWriter.WriteAttributeString ("root", SoapTypeMapper.SoapEncodingNamespace, "1");
+			SerializeComponent (header.Value, true);
+			_xmlWriter.WriteEndElement();
 		}
 
 		private void SerializeObject(object currentObject, long currentObjectId) 
@@ -359,8 +381,8 @@ namespace System.Runtime.Serialization.Formatters.Soap {
 				_xmlWriter.WriteFullEndElement();
 
 		}
-
-		private void SerializeISerializableObject(
+		
+				private void SerializeISerializableObject(
 			object currentObject,
 			long currentObjectId,
 			ISerializationSurrogate surrogate)

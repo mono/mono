@@ -14,6 +14,7 @@ using System.Reflection;
 using System.Collections;
 using System.Runtime.Remoting;
 using System.Runtime.Serialization;
+using System.Runtime.Remoting.Messaging;
 
 namespace System.Runtime.Serialization.Formatters.Soap {
 	internal sealed class SoapReader {
@@ -28,6 +29,13 @@ namespace System.Runtime.Serialization.Formatters.Soap {
 		private ISurrogateSelector _surrogateSelector;
 		private XmlTextReader xmlReader;
 		private Hashtable _fieldIndices;
+		private long _topObjectId = 1;
+		
+		class TypeMetadata
+		{
+			public MemberInfo[] MemberInfos;
+			public Hashtable Indices;
+		}
 
 		#endregion
 
@@ -61,6 +69,7 @@ namespace System.Runtime.Serialization.Formatters.Soap {
 
 		public object Deserialize(Stream inStream, ISoapMessage soapMessage) 
 		{
+			ArrayList headers = null;
 			xmlReader = new XmlTextReader(inStream);
 			xmlReader.WhitespaceHandling = WhitespaceHandling.None;
 			mapper = new SoapTypeMapper(_binder);
@@ -69,28 +78,48 @@ namespace System.Runtime.Serialization.Formatters.Soap {
 			{
 				// SOAP-ENV:Envelope
 				xmlReader.MoveToContent();
-				xmlReader.Read();
-				// SOAP-ENV:Body
-				xmlReader.Read();
-
-				// The root object
-				if(soapMessage != null)
+				xmlReader.ReadStartElement ();
+				xmlReader.MoveToContent();
+				
+				// Read headers
+				while (!(xmlReader.NodeType == XmlNodeType.Element && xmlReader.LocalName == "Body" && xmlReader.NamespaceURI == SoapTypeMapper.SoapEnvelopeNamespace))
 				{
-					if(DeserializeMessage(soapMessage)) 
+					if (xmlReader.NodeType == XmlNodeType.Element && xmlReader.LocalName == "Header" && xmlReader.NamespaceURI == SoapTypeMapper.SoapEnvelopeNamespace)
 					{
-						RegisterObject(1, soapMessage, null, 0, null, null);
+						if (headers == null) headers = new ArrayList ();
+						DeserializeHeaders (headers);
 					}
+					else
+						xmlReader.Skip ();
+					xmlReader.MoveToContent();
 				}
 				
-				if(xmlReader.NodeType != XmlNodeType.EndElement)
-				{
-					do
-					{
-						Deserialize();
+				// SOAP-ENV:Body
+				xmlReader.ReadStartElement();
+				xmlReader.MoveToContent();
 
+				// The root object
+				if (soapMessage != null)
+				{
+					if (DeserializeMessage (soapMessage)) {
+						_topObjectId = NextAvailableId;
+						RegisterObject (_topObjectId, soapMessage, null, 0, null, null);
 					}
-					while(xmlReader.NodeType != XmlNodeType.EndElement); 
+					xmlReader.MoveToContent();
+					
+					if (headers != null)
+						soapMessage.Headers = (Header[]) headers.ToArray (typeof(Header));
 				}
+				
+				while (xmlReader.NodeType != XmlNodeType.EndElement)
+					Deserialize();
+					
+				// SOAP-ENV:Body
+				xmlReader.ReadEndElement ();
+				xmlReader.MoveToContent();
+
+				// SOAP-ENV:Envelope
+				xmlReader.ReadEndElement ();
 			}
 			finally 
 			{
@@ -110,7 +139,7 @@ namespace System.Runtime.Serialization.Formatters.Soap {
 			{
 				objMgr.DoFixups();
 				objMgr.RaiseDeserializationEvent();
-				return objMgr.GetObject(1);
+				return objMgr.GetObject(_topObjectId);
 			}
 		}
 
@@ -220,6 +249,56 @@ namespace System.Runtime.Serialization.Formatters.Soap {
 			xmlReader.ReadEndElement();
 			RegisterObject(paramValuesId, message.ParamValues, null, 0, null, null);
 			return true;
+		}
+
+		void DeserializeHeaders (ArrayList headers)
+		{
+			xmlReader.ReadStartElement ();
+			xmlReader.MoveToContent ();
+			
+			while (xmlReader.NodeType != XmlNodeType.EndElement) 
+			{
+				if (xmlReader.NodeType != XmlNodeType.Element) { xmlReader.Skip(); continue; }
+				
+				if (xmlReader.GetAttribute ("root", SoapTypeMapper.SoapEncodingNamespace) == "1")
+					headers.Add (DeserializeHeader ());
+				else
+					Deserialize ();
+
+				xmlReader.MoveToContent ();
+			}
+			
+			xmlReader.ReadEndElement ();
+		}
+				Header DeserializeHeader ()
+		{
+			Header h = new Header (xmlReader.LocalName, null);
+			h.HeaderNamespace = xmlReader.NamespaceURI;
+			h.MustUnderstand = xmlReader.GetAttribute ("mustUnderstand", SoapTypeMapper.SoapEnvelopeNamespace) == "1";
+			
+			object value;
+			long fieldId, fieldHref;
+			long idHeader = NextAvailableId;
+			FieldInfo fieldInfo = typeof(Header).GetField ("Value");
+
+			value = DeserializeComponent (null, out fieldId, out fieldHref, idHeader, fieldInfo, null);
+			h.Value = value;
+
+			if(fieldHref != 0 && value == null)
+			{
+				RecordFixup (idHeader, fieldHref, h, null, null, fieldInfo, null);
+			}
+			else if(value != null && value.GetType().IsValueType && fieldId != 0)
+			{
+				RecordFixup (idHeader, fieldId, h, null, null, fieldInfo, null);
+			}
+			else if(fieldId != 0)
+			{
+				RegisterObject (fieldId, value, null, idHeader, fieldInfo, null);
+			}
+			
+			RegisterObject (idHeader, h, null, 0, null, null);
+			return h;
 		}
 
 		
@@ -359,7 +438,7 @@ namespace System.Runtime.Serialization.Formatters.Soap {
 				string elementString = xmlReader.ReadElementString();
 				object obj = SoapTypeMapper.ParseXsdValue (elementString, type);
 				
-				if(id > 0) 
+				if(id != 0) 
 					RegisterObject(id, obj, info, parentId, parentMemberInfo, indices);
 
 				return obj;
@@ -406,28 +485,17 @@ namespace System.Runtime.Serialization.Formatters.Soap {
 		{
 			hasFixup = false;
 			Type currentType = obj.GetType();
-			MemberInfo[] memberInfos = 
-				FormatterServices.GetSerializableMembers(currentType, _context);
-			Hashtable indices = (Hashtable) _fieldIndices[currentType];
-			if(indices == null) 
-			{
-				indices	= new Hashtable();
-				for(int i = 0; i < memberInfos.Length; i++) 
-				{
-					indices.Add(memberInfos[i].Name, i);
-				}
-				_fieldIndices[currentType] = indices;
-			}
+			TypeMetadata tm = GetTypeMetadata (currentType);
 
 			int objDepth = xmlReader.Depth;
-			object[] data = new object[memberInfos.Length];
+			object[] data = new object[tm.MemberInfos.Length];
 			xmlReader.Read();
-			for(int i = 0; i < memberInfos.Length; i++)
+			for(int i = 0; i < tm.MemberInfos.Length; i++)
 			{
 				object fieldObject;
 				long fieldId, fieldHref;
-				int index = (int) indices[xmlReader.LocalName];
-				FieldInfo fieldInfo = (memberInfos[index]) as FieldInfo;
+				int index = (int) tm.Indices[xmlReader.LocalName];
+				FieldInfo fieldInfo = (tm.MemberInfos[index]) as FieldInfo;
 				if(fieldInfo == null) continue;
 
 				fieldObject = 
@@ -459,7 +527,7 @@ namespace System.Runtime.Serialization.Formatters.Soap {
 				}
 			}
 
-			FormatterServices.PopulateObjectMembers(obj, memberInfos, data);
+			FormatterServices.PopulateObjectMembers (obj, tm.MemberInfos, data);
 			return obj;
 		}
 
@@ -618,7 +686,21 @@ namespace System.Runtime.Serialization.Formatters.Soap {
 			}
 		}
 
-
+		TypeMetadata GetTypeMetadata (Type type)
+		{
+			TypeMetadata tm = _fieldIndices[type] as TypeMetadata;
+			if (tm != null) return tm;
+			
+			tm = new TypeMetadata ();
+			tm.MemberInfos = FormatterServices.GetSerializableMembers (type, _context);
+			
+			tm.Indices	= new Hashtable();
+			for(int i = 0; i < tm.MemberInfos.Length; i++) 
+				tm.Indices.Add (tm.MemberInfos[i].Name, i);
+			
+			_fieldIndices[type] = tm;
+			return tm;
+		}
 		
 		#endregion
 	}

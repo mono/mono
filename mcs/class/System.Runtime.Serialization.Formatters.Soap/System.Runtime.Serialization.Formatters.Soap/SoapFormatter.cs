@@ -85,10 +85,7 @@ namespace System.Runtime.Serialization.Formatters.Soap {
 			CultureInfo savedCi = CultureInfo.CurrentCulture;
 			try {
 				Thread.CurrentThread.CurrentCulture = new CultureInfo("en-US");
-				_soapWriter.Serialize(
-					graph,
-					_typeFormat,
-					_assemblyFormat);
+				_soapWriter.Serialize (graph, headers, _typeFormat, _assemblyFormat);
 			}
 			finally {
 				Thread.CurrentThread.CurrentCulture = savedCi;
