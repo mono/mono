@@ -23,7 +23,7 @@ namespace System.Web.Compilation
 						"Inherits", "Language", "LCID", "ResponseEncoding",
 						"Src", "SmartNavigation", "Strict", "Trace",
 						"TraceMode", "Transaction", "UICulture",
-						"WarningLevel", "CodeBehind" };
+						"WarningLevel", "CodeBehind" , "ValidateRequest" };
 
 		static string [] control_atts = { "AutoEventWireup", "ClassName", "CompilerOptions",
 						  "Debug", "Description", "EnableViewState",
