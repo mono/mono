@@ -1,3 +1,7 @@
+2004-06-05  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XPathDocument.cs : close self-opened XmlTextReader in .ctor().
+
 2004-06-03  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* Expression.cs : LookupNamespace() only allows already-atomized names.
