@@ -1,3 +1,7 @@
+2004-11-12  Ben Maurer  <bmaurer@ximian.com>
+
+	* transform.c: Fix bug with delegates in interp.
+
 2004-11-10  Lluis Sanchez Gual  <lluis@novell.com>
 
 	* interp.c: Added MonoRemotingTarget parameter to signature
