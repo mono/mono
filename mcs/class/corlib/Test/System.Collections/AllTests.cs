@@ -23,6 +23,7 @@ namespace MonoTests.System.Collections {
                                 suite.AddTest(HashtableTest.Suite);
                                 suite.AddTest(CaseInsensitiveComparerTest.Suite);
                                 suite.AddTest(CaseInsensitiveHashCodeProviderTest.Suite);
+                                suite.AddTest(ArrayListTest.Suite);
                                 suite.AddTest(BitArrayTest.Suite);
                                 suite.AddTest(CollectionBaseTest.Suite);
                                 suite.AddTest(ReadOnlyCollectionBaseTest.Suite);
