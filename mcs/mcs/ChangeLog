@@ -1,5 +1,11 @@
 2003-02-09  Martin Baulig  <martin@ximian.com>
 
+	* symbolwriter.cs: New file.  This is a wrapper around
+	ISymbolWriter with a cleaner API.  We'll dynamically Invoke()
+	methods here in near future.
+
+2003-02-09  Martin Baulig  <martin@ximian.com>
+
 	* codegen.cs (EmitContext.Mark): Just pass the arguments to
 	ILGenerator.MarkSequencePoint() which are actually used by the
 	symbol writer.

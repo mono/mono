@@ -34,7 +34,6 @@ using System.Collections;
 using System.Reflection;
 using System.Reflection.Emit;
 using System.Runtime.CompilerServices;
-using System.Diagnostics.SymbolStore;
 
 namespace Mono.CSharp {
 
@@ -2679,24 +2678,15 @@ namespace Mono.CSharp {
 
 			LabelParameters (ec, ConstructorBuilder, OptAttributes);
 			
-			ISymbolWriter sw = CodeGen.SymbolWriter;
+			SymbolWriter sw = CodeGen.SymbolWriter;
 			bool generate_debugging = false;
 
 			if ((sw != null) && (block != null) &&
 				!Location.IsNull (Location) &&
 				!Location.IsNull (block.EndLocation)) {
 
-				Location end = block.EndLocation;
 				MethodToken token = ConstructorBuilder.GetToken ();
-				sw.OpenMethod (new SymbolToken (token.Token));
-				// Avoid error if we don't support debugging for the platform
-				try {
-					sw.SetMethodSourceRange (Location.SymbolDocument,
-								 Location.Row, 0,
-								 end.SymbolDocument,
-								 end.Row, 0);
-				} catch {
-				}
+				sw.OpenMethod (token, Location, block.EndLocation);
 
 				generate_debugging = true;
 			}
@@ -3125,21 +3115,11 @@ namespace Mono.CSharp {
 			//
 			if ((modifiers & (Modifiers.ABSTRACT | Modifiers.EXTERN)) != 0){
 				if (block == null) {
-					ISymbolWriter sw = CodeGen.SymbolWriter;
+					SymbolWriter sw = CodeGen.SymbolWriter;
 
 					if ((sw != null) && ((modifiers & Modifiers.EXTERN) != 0)) {
 						MethodToken token = MethodBuilder.GetToken ();
-						sw.OpenMethod (new SymbolToken (token.Token));
-
-						// Avoid error if we don't support debugging for the platform
-						try {
-							sw.SetMethodSourceRange (Location.SymbolDocument,
-										 Location.Row, 0,
-										 Location.SymbolDocument,
-										 Location.Row, 0);
-						} catch {
-						}
-
+						sw.OpenMethod (token, Location, Location);
 						sw.CloseMethod ();
 					}
 
@@ -3184,21 +3164,12 @@ namespace Mono.CSharp {
 			if (member.Name == "Finalize" && ReturnType == TypeManager.void_type)
 				EmitDestructor (ec, block);
 			else {
-				ISymbolWriter sw = CodeGen.SymbolWriter;
+				SymbolWriter sw = CodeGen.SymbolWriter;
 
 				if ((sw != null) && !Location.IsNull (Location) &&
 				    !Location.IsNull (block.EndLocation)) {
-					Location end = block.EndLocation;
 					MethodToken token = MethodBuilder.GetToken ();
-					sw.OpenMethod (new SymbolToken (token.Token));
-					// Avoid error if we don't support debugging for the platform
-					try {
-						sw.SetMethodSourceRange (Location.SymbolDocument,
-									 Location.Row, 0,
-									 end.SymbolDocument,
-									 end.Row, 0);
-					} catch (Exception) {
-					}
+					sw.OpenMethod (token, Location, block.EndLocation);
 
 					ec.EmitTopBlock (block, ParameterInfo, Location);
 
