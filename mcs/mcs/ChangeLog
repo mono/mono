@@ -1,5 +1,9 @@
 2004-11-26  Miguel de Icaza  <miguel@ximian.com>
 
+	* attribute.cs (Attribute.Resolve): Refine error reporting and
+	report a cs0117 if the identifier does not exist, to distinguish
+	from 0617 which is a miss-use of the actual identifier.
+
 	* ecore.cs (EventExpr.Emit): Refine error report and distinguish
 	between cs0070 and cs0079.
 
