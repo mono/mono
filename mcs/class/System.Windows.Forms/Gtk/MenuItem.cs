@@ -14,7 +14,7 @@ namespace System.Windows.Forms{
 
 		public MenuItemCollection MenuItems;
 		internal Gtk.MenuItem file_item;
-		String text, text2;
+		String text="", text2="";
 		bool check1, blChecked;
 		private Shortcut shortcut;
 

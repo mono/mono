@@ -132,6 +132,7 @@ namespace System.Windows.Forms {
 		
 		public Control () : this ("")
 		{
+			this.text = "";
 		}
 
 		public Control (string text) : this (null, text)

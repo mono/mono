@@ -19,6 +19,7 @@ namespace System.Windows.Forms {
 	
 	public Label () : base ()
 	{
+		this.Text = " ";
 	}
 		
 	//public virtual bool AutoSize {
