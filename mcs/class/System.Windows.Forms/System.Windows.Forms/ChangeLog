@@ -260,6 +260,15 @@ Added delegates. All delegates in System.Windows.Forms done
 * ItemChangedEventHandler.cs
 * added new files
 
+2002-6-5 DennisHayes <dennish@raytek.com>
+* TabControl.cs
+* TabPage.cs
+* TextBox.cs
+* TextBoxBase.cs
+* ThreadExceptionDialog.cs
+* Timer.cs
+* added new files for Jackson Harper (jackson@latitudegeo.com)
+* needs to be mono styled, and may have other issues
 
 
 
