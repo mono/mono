@@ -2,10 +2,10 @@
 ./Mono.Security/ASN1Convert.cs
 ./Mono.Security/PKCS7.cs
 ./Mono.Security/StrongName.cs
-./Mono.Security.Authenticode/PrivateKey.cs
 ./Mono.Security.Authenticode/SoftwarePublisherCertificate.cs
+./Mono.Security.Authenticode/PrivateKey.cs
 ./Mono.Security.Cryptography/ARC4Managed.cs
-./Mono.Security.Cryptography/CryptoConfig.cs
+./Mono.Security.Cryptography/CryptoConvert.cs
 ./Mono.Security.Cryptography/MD2.cs
 ./Mono.Security.Cryptography/MD2Managed.cs
 ./Mono.Security.Cryptography/RC4.cs
