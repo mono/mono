@@ -1,4 +1,5 @@
 2001-08-28  Bob Smith  <bob@thestuff.net>
+        * Control.cs: Figured out some undocumented API.
         * Added TODO.
         * BuildMethod.cs: Initial implementation.
         * BuildTemplateMethod.cs: Initial implementation.
