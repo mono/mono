@@ -9,6 +9,7 @@ System.Data/DataColumn.cs
 System.Data/DataColumnChangeEventArgs.cs
 System.Data/DataColumnChangeEventHandler.cs
 System.Data/DataColumnCollection.cs
+System.Data/DataColumnPropertyDescriptor.cs
 System.Data/DataException.cs
 System.Data/DataRelation.cs
 System.Data/DataRelationCollection.cs
