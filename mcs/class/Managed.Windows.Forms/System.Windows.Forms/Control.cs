@@ -29,9 +29,12 @@
 //	Jaak Simm		jaaksimm@firm.ee
 //	John Sohn		jsohn@columbus.rr.com
 //
-// $Revision: 1.75 $
+// $Revision: 1.76 $
 // $Modtime: $
 // $Log: Control.cs,v $
+// Revision 1.76  2004/11/05 19:16:48  jackson
+// Do not call CreateHandle if the handle is already created
+//
 // Revision 1.75  2004/10/22 17:49:35  jackson
 // oops
 //
@@ -1939,7 +1942,8 @@ namespace System.Windows.Forms
 
 		public void CreateControl() {
 
-			CreateHandle();
+			if (!IsHandleCreated)
+				CreateHandle();
 
 			for (int i=0; i<child_controls.Count; i++) {
 				child_controls[i].CreateControl();
