@@ -104,7 +104,7 @@ namespace Mono.CSharp {
 		{
 			string suffix = "";
 			if (full && (TypeArguments != null))
-				suffix = "!" + TypeArguments.Count;
+				suffix = "`" + TypeArguments.Count;
 			if (Left != null)
 				return Left.GetTypeName (full) + "." + Name + suffix;
 			else
@@ -128,7 +128,7 @@ namespace Mono.CSharp {
 		public string Basename {
 			get {
 				if (TypeArguments != null)
-					return Name + "!" + TypeArguments.Count;
+					return Name + "`" + TypeArguments.Count;
 				else
 					return Name;
 			}

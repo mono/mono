@@ -1,3 +1,9 @@
+2004-07-14  Martin Baulig  <martin@ximian.com>
+
+	* decl.cs, expression.cs, generic.cs: Use a backqoute (`) and not
+	an exclamation mark (!) for the generic arity to reflect the
+	latest spec changes; ie. use "System.Collections.Generic.IList`1".
+
 2004-07-13  Martin Baulig  <martin@ximian.com>
 
 	* cs-tokenizer.cs (Tokenizer.parse_less_than): Allow array rank

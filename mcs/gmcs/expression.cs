@@ -7509,7 +7509,7 @@ namespace Mono.CSharp {
 			member_lookup = MemberLookup (
 				ec, expr_type, expr_type, Identifier, loc);
 			if ((member_lookup == null) && (args != null)) {
-				string lookup_id = Identifier + "!" + args.Count;
+				string lookup_id = Identifier + "`" + args.Count;
 				member_lookup = MemberLookup (
 					ec, expr_type, expr_type, lookup_id, loc);
 			}
@@ -7593,7 +7593,7 @@ namespace Mono.CSharp {
 					fname = full_expr.Identifier;
 
 				if (args != null)
-					fname = fname + "!" + args.Count;
+					fname = fname + "`" + args.Count;
 
 				if (full_expr.Expr is SimpleName) {
 					string full_name = String.Concat (((SimpleName) full_expr.Expr).Name, ".", fname);
@@ -7629,7 +7629,7 @@ namespace Mono.CSharp {
 			Expression member_lookup;
 			string lookup_id;
 			if (args != null)
-				lookup_id = Identifier + "!" + args.Count;
+				lookup_id = Identifier + "`" + args.Count;
 			else
 				lookup_id = Identifier;
 			member_lookup = MemberLookupFinal (
@@ -7674,7 +7674,7 @@ namespace Mono.CSharp {
 		public override string ToString ()
 		{
 			if (args != null)
-				return expr + "." + Identifier + "!" + args.Count;
+				return expr + "." + Identifier + "`" + args.Count;
 			else
 				return expr + "." + Identifier;
 		}
