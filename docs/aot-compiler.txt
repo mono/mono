@@ -108,7 +108,13 @@ Mono Ahead Of Time Compiler
 			precompiled image.
 	
 		method_infos
-	
+
+			Contains additional information needed by the runtime for using the
+			precompiled method, like the GOT entries it uses.
+
+		method_info_offsets				
+
+		    Maps method indexes to offsets in the method_infos array.
 			
 		mono_icall_table
 	
@@ -122,22 +128,46 @@ Mono Ahead Of Time Compiler
 	
 		method_offsets
 	
-			The equivalent to a procedure linkage table.
+			The equivalent to a procedure linkage table. 
 	
-		method_info_offsets
+* Performance considerations
+----------------------------
 
-* Considerations
+Using AOT code is a trade-off which might lead to higher or slower performance,
+depending on a lot of circumstances. Some of these are:
 
-	[ This section is outdated ]
+- AOT code needs to be loaded from disk before being used, so cold startup of
+  an application using AOT code MIGHT be slower than using JITed code. Warm
+  startup (when the code is already in the machines cache) should be faster.
+  Also, JITing code takes time, and the JIT compiler also need to load 
+  additional metadata for the method from the disk, so startup can be faster
+  even in the cold startup case.
+- AOT code is usually compiled with all optimizations turned on, while JITted
+  code is usually compiled with default optimizations, so the generated code
+  in the AOT case should be faster.
+- JITted code can directly access runtime data structures and helper functions,
+  while AOT code needs to go through an indirection (the GOT) to access them,
+  so it will be slower and somewhat bigger as well.
+- When JITting code, the JIT compiler needs to load a lot of metadata about
+  methods and types into memory.
+- JITted code has better locality, meaning that if A method calls B, then
+  the native code for A and B is usually quite close in memory, leading to
+  better cache behaviour thus improved performance. In contrast, the native
+  code of methods inside the AOT file is in a somewhat random order.
 
-[OUTDATED]	All precompiled methods must be domain independent, or we add patch infos to
-[OUTDATED]	patch the target doamin.
-[OUTDATED]
-[OUTDATED]	The main problem is how to patch runtime related addresses, for example:
-[OUTDATED]
-[OUTDATED]		  - current application domain
-[OUTDATED]		  - string objects loaded with LDSTR
-[OUTDATED]		  - address of MonoClass data
-[OUTDATED]		  - static field offsets 
-[OUTDATED]		  - method addreses
-[OUTDATED]		  - virtual function and interface slots
+* Future Work
+-------------
+
+- Currently, the runtime needs to setup some data structures and fill out
+  GOT entries before a method is first called. This means that even calls to
+  a method whose code is in the same AOT image need to go through the GOT,
+  instead of using a direct call.
+- On x86, the generated code uses call 0, pop REG, add GOTOFFSET, REG to 
+  materialize the GOT address. Newer versions of gcc use a separate function
+  to do this, maybe we need to do the same.
+- Currently, we get vtable addresses from the GOT. Another solution would be
+  to store the data from the vtables in the .bss section, so accessing them
+  would involve less indirection.
+
+
+
