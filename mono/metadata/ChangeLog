@@ -1,5 +1,15 @@
 2003-09-08  Zoltan Varga  <vargaz@freemail.hu>
 
+	* image.c (load_class_names): Use a temporary hash table to hold the
+	namespaces in order to avoid doing many string comparisons.
+
+	* image.h: Fix typo.
+
+	* image.c class.c rawbuffer.c reflection.c threads.c verify.c domain.c:
+	Pass NULL instead of g_direct_equal to the GHashTable constructor 
+	since the NULL case is short-circuited inside g_hash_table_lookup, 
+	leading to better performance.	
+
 	* metadata.c (mono_metadata_custom_attrs_from_index): New function to
 	obtain the first custom attribute for a given index. Depends on the
 	CustomAttribute table being sorted by the parent field.
