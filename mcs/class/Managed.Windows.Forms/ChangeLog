@@ -1,3 +1,9 @@
+2004-12-03  Marek Safar  <marek.safar@seznam.cz>
+
+	* Makefile: Added System.Drawing.dll deps for tests.
+
+	* System.Windows.Forms_test.dll.sources: New test files.
+
 2004-12-02  Peter Bartok  <pbartok@novell.com>
 
 	* SWF.csproj: Added Jackson's fresly minted TreeView files to 

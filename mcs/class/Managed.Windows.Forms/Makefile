@@ -11,5 +11,6 @@ LIB_MCS_FLAGS = /unsafe \
 EXTRA_DISTFILES = \
 	README
 
+TEST_MCS_FLAGS = /r:System.Drawing.dll
 
 include ../../build/library.make
