@@ -199,7 +199,6 @@ namespace System.DirectoryServices
 			LdapUrl curl=new LdapUrl(Burl.Host,Burl.Port,eFdn);
 			ent.Path=curl.ToString();
 			ent.Nflag = true;
-			ent.Properties["objectclass"].Add(schemaClassName);
 			return ent;
 		}
 

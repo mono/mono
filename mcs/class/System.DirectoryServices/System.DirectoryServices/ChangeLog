@@ -1,3 +1,8 @@
+2005-03-22  Boris Kirzner <borisk@mainsoft.com>
+
+	* DirectoryEntries.cs : When adding new entry, do not set "objectclass" 
+	property to include schemaClassName value.
+
 2005-03-14 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* DirectoryEntry.cs: username and password are now initialized to null.
