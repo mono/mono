@@ -40,7 +40,9 @@ all clean:
 install: all
 	mkdir -p $(prefix)/lib/
 	$(INSTALL) -m 644 lib/*.dll $(prefix)/lib/
-	$(INSTALL) -m 444 lib/*.dbg $(prefix)/lib/
+	if [ -e lib/*.dbg ] ; then	\
+		$(INSTALL) -m 444 lib/*.dbg $(prefix)/lib/ ;	\
+	fi
 
 
 test: all
