@@ -1,3 +1,8 @@
+2004-01-03  Patrik Torstensson
+
+	* mini-x86.c: renamed fpflags to flags in RegTrack, going to be used
+	for other purposes than FP later on.
+
 2004-01-02  Zoltan Varga  <vargaz@freemail.hu>
 
 	* mini.c (mono_method_to_ir): Prevent register allocation for arguments
