@@ -1,3 +1,9 @@
+
+Mon Apr 7 16:31:34 CEST 2003 Paolo Molaro <lupus@ximian.com>
+
+	* driver.c: give a better error message when the assembly to execute
+	doesn't have an entry point.
+
 2003-04-07  Dietmar Maurer  <dietmar@ximian.com>
 
 	* Makefile.am: added hack for automake
