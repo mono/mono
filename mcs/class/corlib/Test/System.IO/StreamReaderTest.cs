@@ -76,6 +76,8 @@ public class StreamReaderTest : TestCase
 				StreamReader r = new StreamReader("");
 			} catch (ArgumentException) {
 				errorThrown = true;
+			} catch (Exception e) {
+				Fail ("Incorrect exception thrown at 1: " + e.ToString());
 			}
 			Assert("empty string error not thrown", errorThrown);
 		}
@@ -85,6 +87,8 @@ public class StreamReaderTest : TestCase
 				StreamReader r = new StreamReader((string)null);
 			} catch (ArgumentNullException) {
 				errorThrown = true;
+			} catch (Exception e) {
+				Fail ("Incorrect exception thrown at 1: " + e.ToString());
 			}
 			Assert("null string error not thrown", errorThrown);
 		}
@@ -94,6 +98,8 @@ public class StreamReaderTest : TestCase
 				StreamReader r = new StreamReader("nonexistentfile");
 			} catch (FileNotFoundException) {
 				errorThrown = true;
+			} catch (Exception e) {
+				Fail ("Incorrect exception thrown at 1: " + e.ToString());
 			}
 			Assert("fileNotFound error not thrown", errorThrown);
 		}
@@ -103,6 +109,8 @@ public class StreamReaderTest : TestCase
 				StreamReader r = new StreamReader("nonexistentdir/file");
 			} catch (DirectoryNotFoundException) {
 				errorThrown = true;
+			} catch (Exception e) {
+				Fail ("Incorrect exception thrown at 1: " + e.ToString());
 			}
 			Assert("dirNotFound error not thrown", errorThrown);
 		}
@@ -116,6 +124,8 @@ public class StreamReaderTest : TestCase
 				// FIXME - the spec says 'IOExc', but the
 				//   compiler says 'ArgExc'...
 				errorThrown = true;
+			} catch (Exception e) {
+				Fail ("Incorrect exception thrown at 1: " + e.ToString());
 			}
 			Assert("invalid filename error not thrown", errorThrown);
 		}
@@ -133,6 +143,8 @@ public class StreamReaderTest : TestCase
 				StreamReader r = new StreamReader((Stream)null, false);
 			} catch (ArgumentNullException) {
 				errorThrown = true;
+			} catch (Exception e) {
+				Fail ("Incorrect exception thrown at 1: " + e.ToString());
 			}
 			Assert("null string error not thrown", errorThrown);
 		}
@@ -144,6 +156,8 @@ public class StreamReaderTest : TestCase
 				r.Close();
 			} catch (ArgumentException) {
 				errorThrown = true;
+			} catch (Exception e) {
+				Fail ("Incorrect exception thrown at 2: " + e.ToString());
 			}
 			f.Close();
 			Assert("no read error not thrown", errorThrown);
@@ -164,6 +178,8 @@ public class StreamReaderTest : TestCase
 				StreamReader r = new StreamReader((Stream)null, true);
 			} catch (ArgumentNullException) {
 				errorThrown = true;
+			} catch (Exception e) {
+				Fail ("Incorrect exception thrown at 3: " + e.ToString());
 			}
 			Assert("null string error not thrown", errorThrown);
 		}
@@ -175,6 +191,8 @@ public class StreamReaderTest : TestCase
 				r.Close();
 			} catch (ArgumentException) {
 				errorThrown = true;
+			} catch (Exception e) {
+				Fail ("Incorrect exception thrown at 4: " + e.ToString());
 			}
 			f.Close();
 			Assert("no read error not thrown", errorThrown);
@@ -197,6 +215,8 @@ public class StreamReaderTest : TestCase
 				StreamReader r = new StreamReader("", false);
 			} catch (ArgumentException) {
 				errorThrown = true;
+			} catch (Exception e) {
+				Fail ("Incorrect exception thrown at 1: " + e.ToString());
 			}
 			Assert("empty string error not thrown", errorThrown);
 		}
@@ -206,6 +226,8 @@ public class StreamReaderTest : TestCase
 				StreamReader r = new StreamReader((string)null, false);
 			} catch (ArgumentNullException) {
 				errorThrown = true;
+			} catch (Exception e) {
+				Fail ("Incorrect exception thrown at 2: " + e.ToString());
 			}
 			Assert("null string error not thrown", errorThrown);
 		}
@@ -215,6 +237,8 @@ public class StreamReaderTest : TestCase
 				StreamReader r = new StreamReader("nonexistentfile", false);
 			} catch (FileNotFoundException) {
 				errorThrown = true;
+			} catch (Exception e) {
+				Fail ("Incorrect exception thrown at 3: " + e.ToString());
 			}
 			Assert("fileNotFound error not thrown", errorThrown);
 		}
@@ -224,6 +248,8 @@ public class StreamReaderTest : TestCase
 				StreamReader r = new StreamReader("nonexistentdir/file", false);
 			} catch (DirectoryNotFoundException) {
 				errorThrown = true;
+			} catch (Exception e) {
+				Fail ("Incorrect exception thrown at 4: " + e.ToString());
 			}
 			Assert("dirNotFound error not thrown", errorThrown);
 		}
@@ -237,6 +263,8 @@ public class StreamReaderTest : TestCase
 				// FIXME - the spec says 'IOExc', but the
 				//   compiler says 'ArgExc'...
 				errorThrown = true;
+			} catch (Exception e) {
+				Fail ("Incorrect exception thrown at 5: " + e.ToString());
 			}
 			Assert("invalid filename error not thrown", errorThrown);
 		}
@@ -252,6 +280,8 @@ public class StreamReaderTest : TestCase
 				StreamReader r = new StreamReader("", true);
 			} catch (ArgumentException) {
 				errorThrown = true;
+			} catch (Exception e) {
+				Fail ("Incorrect exception thrown at 6: " + e.ToString());
 			}
 			Assert("empty string error not thrown", errorThrown);
 		}
@@ -261,6 +291,8 @@ public class StreamReaderTest : TestCase
 				StreamReader r = new StreamReader((string)null, true);
 			} catch (ArgumentNullException) {
 				errorThrown = true;
+			} catch (Exception e) {
+				Fail ("Incorrect exception thrown at 7: " + e.ToString());
 			}
 			Assert("null string error not thrown", errorThrown);
 		}
@@ -270,6 +302,8 @@ public class StreamReaderTest : TestCase
 				StreamReader r = new StreamReader("nonexistentfile", true);
 			} catch (FileNotFoundException) {
 				errorThrown = true;
+			} catch (Exception e) {
+				Fail ("Incorrect exception thrown at 8: " + e.ToString());
 			}
 			Assert("fileNotFound error not thrown", errorThrown);
 		}
@@ -279,6 +313,8 @@ public class StreamReaderTest : TestCase
 				StreamReader r = new StreamReader("nonexistentdir/file", true);
 			} catch (DirectoryNotFoundException) {
 				errorThrown = true;
+			} catch (Exception e) {
+				Fail ("Incorrect exception thrown at 9: " + e.ToString());
 			}
 			Assert("dirNotFound error not thrown", errorThrown);
 		}
@@ -292,6 +328,8 @@ public class StreamReaderTest : TestCase
 				// FIXME - the spec says 'IOExc', but the
 				//   compiler says 'ArgExc'...
 				errorThrown = true;
+			} catch (Exception e) {
+				Fail ("Incorrect exception thrown at 10: " + e.ToString());
 			}
 			Assert("invalid filename error not thrown", errorThrown);
 		}
@@ -306,20 +344,28 @@ public class StreamReaderTest : TestCase
 	// TODO - Ctor with Encoding
 	
 	public void TestBaseStream() {
-		FileStream f = new FileStream(_codeFileName, 
-					      FileMode.Open, 
-					      FileAccess.Read);
-		StreamReader r = new StreamReader(f);
-		//AssertEquals("wrong base stream ", f.Name, ((FileStream)r.BaseStream).Name);
-		AssertEquals("wrong base stream ", f, r.BaseStream);
-		r.Close();
-		f.Close();
+		try {
+			FileStream f = new FileStream(_codeFileName, 
+						      FileMode.Open, 
+						      FileAccess.Read);
+			StreamReader r = new StreamReader(f);
+			//AssertEquals("wrong base stream ", f.Name, ((FileStream)r.BaseStream).Name);
+			AssertEquals("wrong base stream ", f, r.BaseStream);
+			r.Close();
+			f.Close();
+		} catch (Exception e) {
+			Fail ("Unexpected exception thrown: " + e.ToString());
+		}
 	}
 
 	public void TestCurrentEncoding() {
-		StreamReader r = new StreamReader(_codeFileName);
-		AssertEquals("wrong encoding", 
-			     Encoding.UTF8, r.CurrentEncoding);
+		try {
+			StreamReader r = new StreamReader(_codeFileName);
+			AssertEquals("wrong encoding", 
+				     Encoding.UTF8, r.CurrentEncoding);
+		} catch (Exception e) {
+			Fail ("Unexpected exception thrown: " + e.ToString());
+		}
 	}
 
 	// TODO - Close - annoying spec - won't commit to any exceptions. How to test?
@@ -365,6 +411,8 @@ public class StreamReaderTest : TestCase
 				int nothing = r.Read();
 			} catch (ObjectDisposedException) {
 				errorThrown = true;
+			} catch (Exception e) {
+				Fail ("Incorrect exception thrown at 1: " + e.ToString());
 			}
 			Assert("nothing-to-read error not thrown", errorThrown);
 		}
@@ -389,6 +437,8 @@ public class StreamReaderTest : TestCase
 				errorThrown = true;
 			} catch (ArgumentException) {
 				errorThrown = true;
+			} catch (Exception e) {
+				Fail ("Incorrect exception thrown at 2: " + e.ToString());
 			}
 			Assert("null buffer error not thrown", errorThrown);
 		}
@@ -401,6 +451,8 @@ public class StreamReaderTest : TestCase
 				r.Read(c, 0, 2);
 			} catch (ArgumentException) {
 				errorThrown = true;
+			} catch (Exception e) {
+				Fail ("Incorrect exception thrown at 3: " + e.ToString());
 			}
 			Assert("too-long range error not thrown", errorThrown);
 		}
@@ -413,6 +465,8 @@ public class StreamReaderTest : TestCase
 				r.Read(c, -1, 2);
 			} catch (ArgumentOutOfRangeException) {
 				errorThrown = true;
+			} catch (Exception e) {
+				Fail ("Incorrect exception thrown at 4: " + e.ToString());
 			}
 			Assert("out of range error not thrown", errorThrown);
 		}
@@ -425,6 +479,8 @@ public class StreamReaderTest : TestCase
 				r.Read(c, 0, -1);
 			} catch (ArgumentOutOfRangeException) {
 				errorThrown = true;
+			} catch (Exception e) {
+				Fail ("Incorrect exception thrown at 5: " + e.ToString());
 			}
 			Assert("out of range error not thrown", errorThrown);
 		}

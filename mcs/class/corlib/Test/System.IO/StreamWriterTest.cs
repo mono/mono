@@ -44,6 +44,8 @@ public class StreamWriterTest : TestCase
 				StreamWriter r = new StreamWriter((Stream)null);
 			} catch (ArgumentNullException) {
 				errorThrown = true;
+			} catch (Exception e) {
+				Fail ("Incorrect exception thrown at 1: " + e.ToString());
 			}
 			Assert("null string error not thrown", errorThrown);
 		}
@@ -57,6 +59,8 @@ public class StreamWriterTest : TestCase
 				r.Close();
 			} catch (ArgumentException) {
 				errorThrown = true;
+			} catch (Exception e) {
+				Fail ("Incorrect exception thrown at 2: " + e.ToString());
 			}
 			f.Close();
 			Assert("no read error not thrown", errorThrown);
@@ -78,6 +82,8 @@ public class StreamWriterTest : TestCase
 				StreamWriter r = new StreamWriter("");
 			} catch (ArgumentException) {
 				errorThrown = true;
+			} catch (Exception e) {
+				Fail ("Incorrect exception thrown at 1: " + e.ToString());
 			}
 			Assert("empty string error not thrown", errorThrown);
 		}
@@ -87,6 +93,8 @@ public class StreamWriterTest : TestCase
 				StreamWriter r = new StreamWriter((string)null);
 			} catch (ArgumentNullException) {
 				errorThrown = true;
+			} catch (Exception e) {
+				Fail ("Incorrect exception thrown at 2: " + e.ToString());
 			}
 			Assert("null string error not thrown", errorThrown);
 		}
@@ -96,6 +104,8 @@ public class StreamWriterTest : TestCase
 				StreamWriter r = new StreamWriter("nonexistentdir/file");
 			} catch (DirectoryNotFoundException) {
 				errorThrown = true;
+			} catch (Exception e) {
+				Fail ("Incorrect exception thrown at 3: " + e.ToString());
 			}
 			Assert("dirNotFound error not thrown", errorThrown);
 		}
@@ -109,6 +119,8 @@ public class StreamWriterTest : TestCase
 				// FIXME - the spec says 'IOExc', but the
 				//   compiler says 'ArgExc'...
 				errorThrown = true;
+			} catch (Exception e) {
+				Fail ("Incorrect exception thrown at 4: " + e.ToString());
 			}
 			Assert("invalid filename error not thrown", errorThrown);
 		}
@@ -126,6 +138,8 @@ public class StreamWriterTest : TestCase
 				StreamWriter r = new StreamWriter("", false);
 			} catch (ArgumentException) {
 				errorThrown = true;
+			} catch (Exception e) {
+				Fail ("Incorrect exception thrown at 1: " + e.ToString());
 			}
 			Assert("empty string error not thrown", errorThrown);
 		}
@@ -135,6 +149,8 @@ public class StreamWriterTest : TestCase
 				StreamWriter r = new StreamWriter((string)null, false);
 			} catch (ArgumentNullException) {
 				errorThrown = true;
+			} catch (Exception e) {
+				Fail ("Incorrect exception thrown at 2: " + e.ToString());
 			}
 			Assert("null string error not thrown", errorThrown);
 		}
@@ -144,6 +160,8 @@ public class StreamWriterTest : TestCase
 				StreamWriter r = new StreamWriter("nonexistentdir/file", false);
 			} catch (DirectoryNotFoundException) {
 				errorThrown = true;
+			} catch (Exception e) {
+				Fail ("Incorrect exception thrown at 3: " + e.ToString());
 			}
 			Assert("dirNotFound error not thrown", errorThrown);
 		}
@@ -157,6 +175,8 @@ public class StreamWriterTest : TestCase
 				// FIXME - the spec says 'IOExc', but the
 				//   compiler says 'ArgExc'...
 				errorThrown = true;
+			} catch (Exception e) {
+				Fail ("Incorrect exception thrown at 4: " + e.ToString());
 			}
 			Assert("invalid filename error not thrown", errorThrown);
 		}
@@ -171,6 +191,8 @@ public class StreamWriterTest : TestCase
 				StreamWriter r = new StreamWriter("", true);
 			} catch (ArgumentException) {
 				errorThrown = true;
+			} catch (Exception e) {
+				Fail ("Incorrect exception thrown at 5: " + e.ToString());
 			}
 			Assert("empty string error not thrown", errorThrown);
 		}
@@ -180,6 +202,8 @@ public class StreamWriterTest : TestCase
 				StreamWriter r = new StreamWriter((string)null, true);
 			} catch (ArgumentNullException) {
 				errorThrown = true;
+			} catch (Exception e) {
+				Fail ("Incorrect exception thrown at 6: " + e.ToString());
 			}
 			Assert("null string error not thrown", errorThrown);
 		}
@@ -189,6 +213,8 @@ public class StreamWriterTest : TestCase
 				StreamWriter r = new StreamWriter("nonexistentdir/file", true);
 			} catch (DirectoryNotFoundException) {
 				errorThrown = true;
+			} catch (Exception e) {
+				Fail ("Incorrect exception thrown at 7: " + e.ToString());
 			}
 			Assert("dirNotFound error not thrown", errorThrown);
 		}
@@ -202,6 +228,8 @@ public class StreamWriterTest : TestCase
 				// FIXME - the spec says 'IOExc', but the
 				//   compiler says 'ArgExc'...
 				errorThrown = true;
+			} catch (Exception e) {
+				Fail ("Incorrect exception thrown at 8: " + e.ToString());
 			}
 			Assert("invalid filename error not thrown", errorThrown);
 		}
@@ -296,6 +324,8 @@ public class StreamWriterTest : TestCase
 				r.Flush();
 			} catch (ObjectDisposedException) {
 				errorThrown = true;
+			} catch (Exception e) {
+				Fail ("Incorrect exception thrown at 1: " + e.ToString());
 			}
 			Assert("can't flush closed error not thrown", errorThrown);
 		}

@@ -1,3 +1,9 @@
+2002-05-01  Nick Drochak  <ndrochak@gol.com>
+
+	* StreamReaderTest.cs:
+	* StreamWriterTest.cs: Catch and display exception info where it wasn't
+	being caught before.
+
 2002-03-02  Jason Diamond  <jason@injektilo.org>
 
 	* StringReader.cs: Added test for peeking and reading at the end of
