@@ -9,7 +9,7 @@
 #if NET_1_2
 namespace System.Xml
 {
-	public delegate void XPathDocument2ChangedEventHandler (object sender, XmlUpdateEventArgs e);
+	public delegate void XPathDocument2ChangedEventHandler (object sender, XPathDocument2ChangedEventArgs e);
 }
 
 #endif

@@ -1,5 +1,10 @@
 2003-12-15  Atsushi Enomoto  <ginga@kit.hi-ho.ne.jp>
 
+	* XPathDocument2ChangedEventHandler.cs : fixed incorrect argument.
+	* Moved UpdateEventHandler.cs and XmlUpdateEventArgs.cs to sqlxml.
+
+2003-12-15  Atsushi Enomoto  <ginga@kit.hi-ho.ne.jp>
+
 	* XmlTextReader.cs : BaseURI was broken. This fixes bug #52098.
 
 2003-12-15  Atsushi Enomoto  <ginga@kit.hi-ho.ne.jp>
