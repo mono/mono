@@ -1,3 +1,8 @@
+2003-04-26  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* RuntimeEnvironment.cs: New file. Stubbed by Dominik Fretz
+	(roboto@gmx.net).
+
 2003-03-31  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* ExternalException.cs: doesn't need a field to keep the result code.
