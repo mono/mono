@@ -16,7 +16,7 @@ using System.Drawing.Text;
 
 namespace System.Drawing {
 internal class Factories {
-	internal static string DefaultImplementationNamespace = "Win32Impl";
+	internal static string DefaultImplementationNamespace = "XrImpl";
 	private static string FactoryClassNameBase = "System.Drawing.Win32Impl.";
 	private static Assembly FactoryAssembly;
 
