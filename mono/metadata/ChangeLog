@@ -1,5 +1,8 @@
 2004-09-02  Zoltan Varga  <vargaz@freemail.hu>
 
+	* marshal.c (mono_marshal_alloc): Raise an OutOfMemory exception if
+	the allocation request fails. Fixes #65089.
+
 	* object.c (mono_runtime_free_method): Do not call mono_free_method.
 	
 	* object.c (mono_runtime_free_method): New function to free a dynamic
