@@ -1,7 +1,7 @@
-diff -ruN --exclude=Makefile --exclude='*rules' --exclude='config.*' wine/configure.ac wine-patched/configure.ac
---- wine/configure.ac	2004-02-13 15:47:08.000000000 -0500
-+++ wine-patched/configure.ac	2004-03-03 17:40:25.000000000 -0500
-@@ -1644,6 +1644,7 @@
+diff -ruN wine/configure.ac wine-patched/configure.ac
+--- wine/configure.ac	2004-03-03 13:30:46.000000000 -0700
++++ wine-patched/configure.ac	2004-03-04 17:44:34.000000000 -0700
+@@ -1670,6 +1670,7 @@
  programs/uninstaller/Makefile
  programs/view/Makefile
  programs/wcmd/Makefile
@@ -9,9 +9,9 @@ diff -ruN --exclude=Makefile --exclude='*rules' --exclude='config.*' wine/config
  programs/wineboot/Makefile
  programs/winebrowser/Makefile
  programs/winecfg/Makefile
-diff -ruN --exclude=Makefile --exclude='*rules' --exclude='config.*' wine/dlls/kernel/process.c wine-patched/dlls/kernel/process.c
---- wine/dlls/kernel/process.c	2004-02-11 19:00:55.000000000 -0500
-+++ wine-patched/dlls/kernel/process.c	2004-03-03 17:40:36.000000000 -0500
+diff -ruN wine/dlls/kernel/process.c wine-patched/dlls/kernel/process.c
+--- wine/dlls/kernel/process.c	2004-02-20 13:19:24.000000000 -0700
++++ wine-patched/dlls/kernel/process.c	2004-03-04 17:44:34.000000000 -0700
 @@ -756,8 +756,12 @@
  
          SetLastError( 0 );  /* clear error code */
@@ -52,10 +52,10 @@ diff -ruN --exclude=Makefile --exclude='*rules' --exclude='config.*' wine/dlls/k
  
   error:
      ExitProcess( GetLastError() );
-diff -ruN --exclude=Makefile --exclude='*rules' --exclude='config.*' wine/dlls/ntdll/loader.c wine-patched/dlls/ntdll/loader.c
---- wine/dlls/ntdll/loader.c	2004-02-06 20:11:54.000000000 -0500
-+++ wine-patched/dlls/ntdll/loader.c	2004-03-03 17:40:36.000000000 -0500
-@@ -1954,7 +1954,9 @@
+diff -ruN wine/dlls/ntdll/loader.c wine-patched/dlls/ntdll/loader.c
+--- wine/dlls/ntdll/loader.c	2004-02-23 18:25:03.000000000 -0700
++++ wine-patched/dlls/ntdll/loader.c	2004-03-04 17:44:34.000000000 -0700
+@@ -1951,7 +1951,9 @@
      WINE_MODREF *wm;
      NTSTATUS status;
      ANSI_STRING func_name;
@@ -66,9 +66,9 @@ diff -ruN --exclude=Makefile --exclude='*rules' --exclude='config.*' wine/dlls/n
      extern void __wine_dbg_ntdll_init(void);
  
      thread_init();
-diff -ruN --exclude=Makefile --exclude='*rules' --exclude='config.*' wine/include/wine/library.h wine-patched/include/wine/library.h
---- wine/include/wine/library.h	2004-01-02 16:08:05.000000000 -0500
-+++ wine-patched/include/wine/library.h	2004-03-03 17:40:36.000000000 -0500
+diff -ruN wine/include/wine/library.h wine-patched/include/wine/library.h
+--- wine/include/wine/library.h	2004-01-02 14:08:05.000000000 -0700
++++ wine-patched/include/wine/library.h	2004-03-04 17:44:34.000000000 -0700
 @@ -49,6 +49,7 @@
  extern void wine_dll_unload( void *handle );
  extern int wine_dll_get_owner( const char *name, char *buffer, int size, int *file_exists );
@@ -77,9 +77,9 @@ diff -ruN --exclude=Makefile --exclude='*rules' --exclude='config.*' wine/includ
  extern int __wine_main_argc;
  extern char **__wine_main_argv;
  extern WCHAR **__wine_main_wargv;
-diff -ruN --exclude=Makefile --exclude='*rules' --exclude='config.*' wine/libs/wine/loader.c wine-patched/libs/wine/loader.c
---- wine/libs/wine/loader.c	2004-01-02 16:08:05.000000000 -0500
-+++ wine-patched/libs/wine/loader.c	2004-03-03 17:40:36.000000000 -0500
+diff -ruN wine/libs/wine/loader.c wine-patched/libs/wine/loader.c
+--- wine/libs/wine/loader.c	2004-01-02 14:08:05.000000000 -0700
++++ wine-patched/libs/wine/loader.c	2004-03-04 17:44:34.000000000 -0700
 @@ -46,6 +46,7 @@
  char **__wine_main_argv = NULL;
  WCHAR **__wine_main_wargv = NULL;
@@ -88,9 +88,9 @@ diff -ruN --exclude=Makefile --exclude='*rules' --exclude='config.*' wine/libs/w
  
  struct dll_path_context
  {
-diff -ruN --exclude=Makefile --exclude='*rules' --exclude='config.*' wine/libs/wine/wine.def wine-patched/libs/wine/wine.def
---- wine/libs/wine/wine.def	2004-02-04 21:01:35.000000000 -0500
-+++ wine-patched/libs/wine/wine.def	2004-03-03 17:40:36.000000000 -0500
+diff -ruN wine/libs/wine/wine.def wine-patched/libs/wine/wine.def
+--- wine/libs/wine/wine.def	2004-02-04 19:01:35.000000000 -0700
++++ wine-patched/libs/wine/wine.def	2004-03-04 17:44:34.000000000 -0700
 @@ -9,6 +9,7 @@
      __wine_dbgstr_an
      __wine_dbgstr_wn
@@ -99,9 +99,9 @@ diff -ruN --exclude=Makefile --exclude='*rules' --exclude='config.*' wine/libs/w
      __wine_main_argc
      __wine_main_argv
      __wine_main_environ
-diff -ruN --exclude=Makefile --exclude='*rules' --exclude='config.*' wine/libs/wine/wine.map wine-patched/libs/wine/wine.map
---- wine/libs/wine/wine.map	2004-02-12 17:54:00.000000000 -0500
-+++ wine-patched/libs/wine/wine.map	2004-03-03 17:40:36.000000000 -0500
+diff -ruN wine/libs/wine/wine.map wine-patched/libs/wine/wine.map
+--- wine/libs/wine/wine.map	2004-02-12 15:54:00.000000000 -0700
++++ wine-patched/libs/wine/wine.map	2004-03-04 17:44:34.000000000 -0700
 @@ -9,6 +9,7 @@
      __wine_dbgstr_an;
      __wine_dbgstr_wn;
@@ -110,9 +110,9 @@ diff -ruN --exclude=Makefile --exclude='*rules' --exclude='config.*' wine/libs/w
      __wine_main_argc;
      __wine_main_argv;
      __wine_main_environ;
-diff -ruN --exclude=Makefile --exclude='*rules' --exclude='config.*' wine/programs/Makefile.in wine-patched/programs/Makefile.in
---- wine/programs/Makefile.in	2004-01-06 15:49:59.000000000 -0500
-+++ wine-patched/programs/Makefile.in	2004-03-03 17:40:36.000000000 -0500
+diff -ruN wine/programs/Makefile.in wine-patched/programs/Makefile.in
+--- wine/programs/Makefile.in	2004-01-06 13:49:59.000000000 -0700
++++ wine-patched/programs/Makefile.in	2004-03-04 17:44:34.000000000 -0700
 @@ -11,6 +11,7 @@
  	cmdlgtst \
  	control \
@@ -147,9 +147,9 @@ diff -ruN --exclude=Makefile --exclude='*rules' --exclude='config.*' wine/progra
  notepad/notepad.exe$(DLLEXT): notepad
  progman/progman.exe$(DLLEXT): progman
  regedit/regedit.exe$(DLLEXT): regedit
-diff -ruN --exclude=Makefile --exclude='*rules' --exclude='config.*' wine/programs/wine-sharedlib/Makefile.in wine-patched/programs/wine-sharedlib/Makefile.in
---- wine/programs/wine-sharedlib/Makefile.in	1969-12-31 19:00:00.000000000 -0500
-+++ wine-patched/programs/wine-sharedlib/Makefile.in	2004-03-03 21:17:46.000000000 -0500
+diff -ruN wine/programs/wine-sharedlib/Makefile.in wine-patched/programs/wine-sharedlib/Makefile.in
+--- wine/programs/wine-sharedlib/Makefile.in	1969-12-31 17:00:00.000000000 -0700
++++ wine-patched/programs/wine-sharedlib/Makefile.in	2004-03-04 17:44:34.000000000 -0700
 @@ -0,0 +1,27 @@
 +TOPSRCDIR = @top_srcdir@
 +TOPOBJDIR = ../..
@@ -178,10 +178,10 @@ diff -ruN --exclude=Makefile --exclude='*rules' --exclude='config.*' wine/progra
 +
 +dlldir = ${exec_prefix}/lib
 +### Dependencies:
-diff -ruN --exclude=Makefile --exclude='*rules' --exclude='config.*' wine/programs/wine-sharedlib/wine-sharedlib.c wine-patched/programs/wine-sharedlib/wine-sharedlib.c
---- wine/programs/wine-sharedlib/wine-sharedlib.c	1969-12-31 19:00:00.000000000 -0500
-+++ wine-patched/programs/wine-sharedlib/wine-sharedlib.c	2004-03-03 20:24:28.000000000 -0500
-@@ -0,0 +1,111 @@
+diff -ruN wine/programs/wine-sharedlib/wine-sharedlib.c wine-patched/programs/wine-sharedlib/wine-sharedlib.c
+--- wine/programs/wine-sharedlib/wine-sharedlib.c	1969-12-31 17:00:00.000000000 -0700
++++ wine-patched/programs/wine-sharedlib/wine-sharedlib.c	2004-03-04 17:47:06.000000000 -0700
+@@ -0,0 +1,81 @@
 +/*
 + * wine-sharedlib code
 + *
@@ -204,36 +204,31 @@ diff -ruN --exclude=Makefile --exclude='*rules' --exclude='config.*' wine/progra
 +
 +
 +#include <wine/library.h>
++#include <stdio.h>
 +#include <windows.h>
 +#include <winsock.h>
 +#include <dlfcn.h>
 +
 +/*
-+	Dummy WinMain. Wine is modified so that this function is never actually called
++	Dummy WinMain. If __wine_shared_lib is set this function is never actually called
 +*/
 +
 +int WINAPI
 +WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdLine, int nCmdShow)
 +{
-+	int	dummy;
-+
-+   dummy=GetSystemMetrics(SM_CXSCREEN);
-+	wine_pthread_init_process(NULL);
-+
-+   return(0);
++	return(0);
 +}
++
++HMODULE WINAPI (*LoadLibraryF)(LPCSTR libname);
++FARPROC WINAPI (*GetProcAddressF)(HMODULE hModule, LPCSTR function);
 +
 +/*
 +	WineLoadLibrary is used by System.Windows.Forms to import the Wine dlls
 +*/
-+void	*(*LoadLibraryF)(unsigned char *);
-+void	*(*GetProcAddressF)(void *, unsigned char *);
-+char	VideoDLL[MAX_PATH];
-+
 +void *
 +WineLoadLibrary(unsigned char *dll)
 +{
-+   return(LoadLibraryF(dll));
++	return(LoadLibraryF(dll));
 +}
 +
 +void *
@@ -243,9 +238,8 @@ diff -ruN --exclude=Makefile --exclude='*rules' --exclude='config.*' wine/progra
 +}
 +
 +/*
-+	MonoWineInit()	Must be called to initialize wine. We pass special arguments
-+						which will tell wine to not actually run the specified 
-+						application
++	SharedWineInit()	Must be called to initialize Wine. Sets the __wine_shared_lib flag
++							to make wine return after initialization instead of running WinMain
 +*/
 +
 +int
@@ -253,8 +247,6 @@ diff -ruN --exclude=Makefile --exclude='*rules' --exclude='config.*' wine/progra
 +{
 +	unsigned char	Error[1024]="";
 +	char				*WineArguments[] = {"sharedapp", LIBPATH "/wine-sharedlib.exe.so", NULL};
-+	void				*hModule;
-+	int				FileExists;
 +	
 +	__wine_shared_lib=1;
 +	
@@ -266,36 +258,14 @@ diff -ruN --exclude=Makefile --exclude='*rules' --exclude='config.*' wine/progra
 +
 +	putenv ("_WINE_SHAREDLIB_PATH=" DLLPATH);
 +
-+   /* Now load kernel32 go get the pointers for LoadLibraryA and GetProcAddress */
-+   hModule=wine_dll_load("kernel32.dll", Error, sizeof(Error), &FileExists);
-+   if (hModule==NULL) {
-+      printf("Error loading kernel32.dll: %s\n", Error);
-+      exit(-2);
-+   }
++	LoadLibraryF=LoadLibraryA;
++	GetProcAddressF=GetProcAddress;
 +
-+   LoadLibraryF=dlsym(hModule, "LoadLibraryA");
-+   if (LoadLibraryF==NULL) {
-+      printf("Did not find symbol LoadLibraryA in kernel32.dll\n");
-+      exit(-3);
-+   }
-+
-+   GetProcAddressF=dlsym(hModule, "GetProcAddress");
-+   if (GetProcAddressF==NULL) {
-+      printf("Did not find symbol GetProcAddress in kernel32.dll\n");
-+      exit(-3);
-+   }
-+
-+	/*
-+		We need to load user32 here to make sure that __wine_main_argv is valid 
-+		when USER32.DLL loads the graphics driver. It seems that when SWF loads
-+		USER32 __wine_main_argv contains garbage.
-+	*/
-+	LoadLibraryF("user32.dll");
++	return(0);
 +}
-+
-diff -ruN --exclude=Makefile --exclude='*rules' --exclude='config.*' wine/tools/winebuild/spec32.c wine-patched/tools/winebuild/spec32.c
---- wine/tools/winebuild/spec32.c	2004-02-13 17:42:13.000000000 -0500
-+++ wine-patched/tools/winebuild/spec32.c	2004-03-03 17:40:36.000000000 -0500
+diff -ruN wine/tools/winebuild/spec32.c wine-patched/tools/winebuild/spec32.c
+--- wine/tools/winebuild/spec32.c	2004-02-16 13:24:32.000000000 -0700
++++ wine-patched/tools/winebuild/spec32.c	2004-03-04 17:44:34.000000000 -0700
 @@ -568,6 +568,7 @@
      fprintf( outfile, "extern int __wine_main_argc;\n" );
      fprintf( outfile, "extern char **__wine_main_argv;\n" );
