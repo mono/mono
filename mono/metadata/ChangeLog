@@ -1,5 +1,10 @@
 2002-11-11  Dietmar Maurer  <dietmar@ximian.com>
 
+	* assembly.c (mono_assembly_open): check the guid of aot compiled lib.
+
+	* metadata.c (mono_guid_to_string): imported method form Zoltan
+	Varga (slightly modified)
+
 	* assembly.c (mono_assembly_open): load precompiled code
 
 	* loader.h (MonoMethod): we store the method token for use in the
