@@ -7,7 +7,7 @@
 //   Alexandre Pigolkine (pigolkine@gmx.de)
 //   Christian Meyer (Christian.Meyer@cs.tum.edu)
 //   Miguel de Icaza (miguel@ximian.com)
-//	 Jordi Mas i Hern‡dez (jmas@softcatala.org)
+//	 Jordi Mas i Hern√†dez (jmas@softcatala.org)
 //
 using System;
 using System.IO;
@@ -25,6 +25,11 @@ namespace System.Drawing {
 				
 		#region constructors
 		// constructors
+		internal Bitmap (IntPtr ptr)
+		{
+			nativeObject = ptr;
+		}
+
 		public Bitmap (int width, int height) : this (width, height, PixelFormat.Format32bppArgb)
 		{
 			raw_format = ImageFormat.Bmp;

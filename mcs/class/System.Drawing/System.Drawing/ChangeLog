@@ -1,3 +1,9 @@
+2004-01-30  Ravindra  <rkumar@novell.com>
+
+	* Pen.cs: Modified to handle TextureBrush also.
+	* Bitmap.cs: Added one internal constructor.
+	* TextureBrush.cs: Implemented.
+
 2004-01-29  Duncan Mak  <duncan@ximian.com>
 
 	* gdipFunctions.cs

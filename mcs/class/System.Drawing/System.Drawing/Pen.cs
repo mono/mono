@@ -40,8 +40,10 @@ namespace System.Drawing {
 			GDIPlus.GdipCreatePen2 (brush.nativeObject, width, Unit.UnitWorld, out pen);
 			nativeObject = (IntPtr) pen;
 			this.brush = brush;
-			color = ((SolidBrush) brush).Color;
-			GDIPlus.GdipSetPenColor (nativeObject, color.ToArgb ());
+			if (brush is SolidBrush) {
+				color = ((SolidBrush) brush).Color;
+				GDIPlus.GdipSetPenColor (nativeObject, color.ToArgb ());
+			}
 		}
 
 		public Pen (Color color, float width)
@@ -87,9 +89,12 @@ namespace System.Drawing {
 						color = ((SolidBrush) brush).Color;
 						GDIPlus.GdipSetPenColor (nativeObject, color.ToArgb ());
 					}
-					else
+					else {
 						// other brushes should clear the color property
-						throw new NotImplementedException ();
+						GDIPlus.GdipSetPenBrushFill (nativeObject, value.nativeObject);
+						GDIPlus.GdipSetPenColor (nativeObject, 0);
+						color = Color.Empty;
+					}
 				}
 				else
 					throw new ArgumentException ("You may not change this Pen because it does not belong to you.");
