@@ -795,8 +795,8 @@ public class ArrayTest : TestCase
 			// and one that is definately not there
 			AssertEquals("AD03", -1, ((IList)iArr).IndexOf (42));
 		}
-		catch (Exception) {
-			Fail("Should not get here");
+		catch (Exception e) {
+			Fail("Unexpected exception: " + e.ToString());
 		}
 
 		// check that wierd case whem lowerbound is Int32.MinValue,
