@@ -1,3 +1,21 @@
+2004-02-25  Martin Baulig  <martin@ximian.com>
+
+	* class.c (_mono_class_get_instantiation_name): Added `int offset'
+	argument for nested types.
+	(mono_class_create_generic): Added support for nested generictypes.
+
+	* class.h (MonoGenericInst): Added `MonoType *nested_in' and
+	`GList *nested'.
+
+	* icall.c (ves_icall_MonoGenericInst_GetNestedTypes): New icall.
+
+	* reflection.c (method_encode_signature): Increase the minimum
+	value of `size' from 10 to 11.
+	(mono_reflection_bind_generic_parameters): Take `int type_argc'
+	and `MonoType **types' arguments instead of the `MonoArray
+	*types'; added `MonoType *nested_in'.  Recursively instantiate
+	nested classes.	
+
 2004-02-23  Zoltan Varga  <vargaz@freemail.hu>
 
 	* appdomain.h (MonoDomain): Add preallocated null_reference_ex and 
