@@ -1,3 +1,12 @@
+2002-03-25  Martin Baulig  <martin@gnome.org>
+
+	* debug-symfile.c (mono_debug_update_symbol_file): Use a new
+	mono_debug_get_class() function to get the classes. Added new
+	relocation types for arrays and strings.
+	(mono_debug_get_class): New static function to search in all
+	referenced assemblies for a metadata token.
+
+	* debug-symfile.h (MONO_DEBUG_SYMBOL_FILE_VERSION): Increased to 7.
 
 Mon Mar 25 13:08:18 CET 2002 Paolo Molaro <lupus@ximian.com>
 
