@@ -1,3 +1,8 @@
+2005-01-28  Sebastien Pouliot  <sebastien@ximian.com> 
+
+	* StackFrameCas.cs: New. Permission tests for StackFrame.
+	* StackTraceCas.cs: New. Permission tests for StackTrace.
+
 2004-08-30  Nick Drochak <ndrochak@ieee.com>
 
 	* StackTraceTest.cs: Fix warning.
