@@ -1,5 +1,10 @@
 2003-08-06  Martin Baulig  <martin@ximian.com>
 
+	* mono-debug-debugger.c: Added support for static fields,
+	properties and methods.
+
+2003-08-06  Martin Baulig  <martin@ximian.com>
+
 	* mono-debug-debugger.c: Don't store the MonoString's vtable to
 	make this work for applications with multiple application domains.
 
