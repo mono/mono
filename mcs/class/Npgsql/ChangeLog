@@ -1,3 +1,7 @@
+2003-05-25  Francisco Figueiredo Jr. <fxjrlists@yahoo.com.br>
+	* Npgsql/NpgsqlDataReader.cs: Fixed an invalid index exception when
+	processing 0 rows queries.
+
 2003-04-26  Pedro Martínez Juliá  <yoros@wanadoo.es>
 
 	* Npgsql/NpgsqlDataReader.cs: Now GetDateTime works for "dd/MM/yyyy"
