@@ -131,6 +131,9 @@ namespace Mono.Data.Tds.Protocol
 						connection = (ITds) list [list.Count - 1];
 						list.RemoveAt (list.Count - 1);
 						if (!connection.Reset ()) {
+							try {
+								connection.Disconnect ();
+							} catch {}
 							connection = null;
 							continue;
 						}
