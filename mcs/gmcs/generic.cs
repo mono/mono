@@ -74,6 +74,16 @@ namespace Mono.CSharp {
 			args.Add (type);
 		}
 
+		public Type[] Arguments {
+			get {
+				Type[] retval = new Type [args.Count];
+				for (int i = 0; i < args.Count; i++)
+					retval [i] = ((TypeExpr) args [i]).Type;
+
+				return retval;
+			}
+		}
+
 		public override string ToString ()
 		{
 			StringBuilder s = new StringBuilder ();
@@ -134,11 +144,22 @@ namespace Mono.CSharp {
 		{
 			if (args.Resolve (ec) == false)
 				return null;
-			
+
 			//
-			// Pretend there are not type parameters, until we get GetType support
+			// First, resolve the generic type.
 			//
-			return new SimpleName (name, loc).ResolveAsTypeStep (ec);
+			SimpleName sn = new SimpleName (name, loc);
+			Expression resolved = sn.ResolveAsTypeStep (ec);
+			if (resolved == null)
+				return null;
+
+			Type gt = resolved.Type.GetGenericTypeDefinition ();
+
+			//
+			// Now bind the parameters.
+			//
+			Type ntype = gt.BindGenericParameters (args.Arguments);
+			return new TypeExpr (ntype, loc);
 		}
 		
 		public override void Emit (EmitContext ec)

@@ -1,5 +1,10 @@
 2003-08-28  Martin Baulig  <martin@ximian.com>
 
+	* generic.cs (ConstructedType.ResolveAsTypeStep): Actually bind
+	the parameters to the generic type.
+
+2003-08-28  Martin Baulig  <martin@ximian.com>
+
 	* cs-tokenizer.cs (parse_less_than): Also allow all builtin types.
 
 2003-08-28  Martin Baulig  <martin@ximian.com>
