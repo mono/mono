@@ -1,3 +1,14 @@
+2002-10-10  Martin Baulig  <martin@gnome.org>
+
+	* codegen.cs (EmitContext.Breaks): Removed, we're now using the
+	flow analysis code for this.
+
+	* statement.cs (Do, While, For): Tell the flow analysis code about
+	infinite loops.
+	(FlowBranching.UsageVector): Added support for infinite loops.
+	(Block.Resolve): Moved the dead code elimination here and use flow
+	analysis to do it.
+
 2002-10-09  Miguel de Icaza  <miguel@ximian.com>
 
 	* class.cs (Field.Define): Catch cycles on struct type
