@@ -37,8 +37,8 @@ $(assemblies_DATA):
 	cp $(top_srcdir)/../mcs/class/lib/$@ . || cp $(assembliesdir)/$@ . || touch $@
 
 $(monobins_DATA):
-	cp $(top_srcdir)/../mcs/mcs/mcs.exe .
-	cp $(top_srcdir)/../mcs/monoresgen/monoresgen.exe .
+	cp $(top_srcdir)/../mcs/mcs/mcs.exe . || cp $(monobinsdir)/$@ . || touch $@
+	cp $(top_srcdir)/../mcs/monoresgen/monoresgen.exe . || cp $(monobinsdir)/$@ . || touch $@
 
 dist-hook:
 	for i in $(monobins_DATA) $(assemblies_DATA); do	\
