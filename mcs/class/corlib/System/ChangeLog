@@ -1,3 +1,8 @@
+2004-10-28  Ben Maurer  <bmaurer@ximian.com>
+
+	* String.cs: Rather than == String.Empty, use .Length == 0. It
+	is a bit faster (avoids a method call, and the code is less complex).
+
 2004-10-24  Fawad Halim  <fawad@fawad.net>
 	* Environment.cs: If an Environment variable value isn't found, leave the trailing % of the reference for further matches.
 	Add text between end of current lookup window and next % match if we just got a match, or add all text to the end if there are no further % matches.

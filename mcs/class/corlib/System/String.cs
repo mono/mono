@@ -422,7 +422,7 @@ namespace System
 			if (value == null)
 				throw new ArgumentNullException ("value");
 
-			if (value == String.Empty)
+			if (value.Length == 0)
 				return true;
 
 			if (value.length > this.length)
@@ -636,7 +636,7 @@ namespace System
 			if (startIndex - count + 1 < 0)
 				throw new ArgumentOutOfRangeException ("startIndex - count + 1 < 0");
 
-			if (value == String.Empty)
+			if (value.Length == 0)
 				return 0;
 
 			if (startIndex == 0 && this.length == 0)
@@ -694,7 +694,7 @@ namespace System
 			if (value == null)
 				throw new ArgumentNullException ("value");
 			
-			if (value == String.Empty)
+			if (value.Length == 0)
 				return true;
 
 			if (this.length < value.length)
@@ -715,15 +715,11 @@ namespace System
 			if (oldValue == null)
 				throw new ArgumentNullException ("oldValue");
 
-			if (oldValue == String.Empty)
+			if (oldValue.Length == 0)
 				throw new ArgumentException ("oldValue is the empty string.");
 
-			if (this == String.Empty)
+			if (this.Length == 0)
 				return this;
-
-			if (oldValue.Length == 0) {
-				return(this);
-			}
 			
 			if (newValue == null)
 				newValue = String.Empty;
