@@ -1,3 +1,8 @@
+2003-12-19  Jackson Harper <jackson@ximian.com>
+
+	* TableCell.cs: Setting a cells text should clear its control
+	collection as per la specification. This fixes bug #51825.
+	
 2003-12-18  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* DataGridColumn.cs: stylized LoadViewState.

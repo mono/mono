@@ -75,7 +75,11 @@ namespace System.Web.UI.WebControls
 				return (o == null) ? String.Empty : (string) o;
 			}
 
-			set { ViewState ["Text"] = value; }
+			set {
+				if (HasControls ())
+					Controls.Clear ();
+				ViewState ["Text"] = value;
+			}
 		}
 
 		[DefaultValue (typeof (HorizontalAlign), "NotSet"), Bindable (true), WebCategory ("Layout")]
