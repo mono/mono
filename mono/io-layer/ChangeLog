@@ -1,3 +1,9 @@
+2002-09-03  Dick Porter  <dick@ximian.com>
+
+	* threads.h: 
+	* threads.c: Removed PosixKillThread(), because it's not in the
+	w32 api
+
 2002-08-20  Dick Porter  <dick@ximian.com>
 
 	* handles.c (_wapi_handle_scratch_store): Made stored byte lengths

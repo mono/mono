@@ -1,3 +1,17 @@
+2002-09-03  Dick Porter  <dick@ximian.com>
+
+	* threads.h: 
+	* threads.c: Use MonoThread instead of MonoObject where
+	apropriate.
+
+	Store running thread objects in a hash table, so that we have all
+	the info to hand when waiting for them to finish
+	(means we don't need OpenThread() any more, so mingw builds should
+	be fully functional again.)
+
+	* verify.c:
+	* object.h: Added thread ID to MonoThread
+
 2002-09-03  Martin Baulig  <martin@gnome.org>
 
 	* icall.c (System.Reflection.Assembly::get_location): New interncall.
