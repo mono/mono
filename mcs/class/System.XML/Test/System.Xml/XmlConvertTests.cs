@@ -54,5 +54,27 @@ namespace MonoTests.System.Xml
 			AssertEquals (33, dateString.Length);
 			AssertEquals ("2003-05-05T00:00:00.0000000", dateString.Substring (0, 27));
 		}
+
+		[Test]
+		public void VerifyNCName ()
+		{
+			AssertEquals ("foo", XmlConvert.VerifyNCName ("foo"));
+			try {
+				XmlConvert.VerifyNCName ("?foo");
+				Fail ();
+			} catch (XmlException ex) {}
+			try {
+				XmlConvert.VerifyNCName (":foo");
+				Fail ();
+			} catch (XmlException ex) {}
+			try {
+				XmlConvert.VerifyNCName ("foo:bar");
+				Fail ();
+			} catch (XmlException ex) {}
+			try {
+				XmlConvert.VerifyNCName ("foo:bar:baz");
+				Fail ();
+			} catch (XmlException ex) {}
+		}
 	}
 }

@@ -1,3 +1,7 @@
+2003-06-01  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
+
+	* XmlConvertTests.cs : added VerifyNCName().
+
 2003-05-18  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
 
 	* XmlTextWriterTests.cs : added FlushDoesnTCloseTag() and 
