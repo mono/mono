@@ -45,6 +45,7 @@ public class ByteTest : Assertion
 	public void SetUp() 
 	{
                 CultureInfo EnUs = new CultureInfo ("en-us", false);
+		EnUs.NumberFormat.NumberDecimalDigits = 2;
                 Thread.CurrentThread.CurrentCulture = EnUs;
 
 		int cdd = NumberFormatInfo.CurrentInfo.CurrencyDecimalDigits;

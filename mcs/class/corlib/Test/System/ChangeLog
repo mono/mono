@@ -1,3 +1,7 @@
+2004-04-27  Nick Drochak <ndrochak@gol.com>
+
+	* ConvertTest.cs: Remove compiler warnings.
+
 2004-04-25  Nick Drochak <ndrochak@gol.com>
 
 	* MathTest.cs: Check precision only so far.

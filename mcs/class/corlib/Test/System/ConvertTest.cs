@@ -2235,25 +2235,19 @@ namespace MonoTests.System
 			Convert.ToInt32("-1", 2);
 			Fail();
 		  }
-		  catch (Exception e) {
-			//AssertEquals("Signed5", typeof (ArgumentException), e.GetType());
-		    // Do we care what sort of exception it is?
+		  catch (Exception) {
 		  }
 		  try {
 			Convert.ToInt32("-1", 8);
 			Fail();
 		  }
-		  catch (Exception e) {
-			//AssertEquals("Signed6", typeof (ArgumentException), e.GetType());
-		    // Do we care what sort of exception it is?
+		  catch (Exception) {
 		  }
 		  try {
 			Convert.ToInt32("-1", 16);
 			Fail();
 		  }
-		  catch (Exception e) {
-			//AssertEquals("Signed7", typeof (ArgumentException), e.GetType());
-		    // Do we care what sort of exception it is?
+		  catch (Exception) {
 		  }
 
 
