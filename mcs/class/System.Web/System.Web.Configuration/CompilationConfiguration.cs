@@ -36,6 +36,7 @@ namespace System.Web.Configuration
 		/* Only the config. handler should create instances of this. Use GetInstance (context) */
 		public CompilationConfiguration (object p)
 		{
+			//TODO: reload config when file changes.
 			CompilationConfiguration parent = p as CompilationConfiguration;
 			if (parent != null)
 				Init (parent);
@@ -74,6 +75,24 @@ namespace System.Web.Configuration
 			Type t = Type.GetType (compiler.Type);
 			compiler.Provider = Activator.CreateInstance (t) as CodeDomProvider;
 			return compiler.Provider;
+		}
+
+		public string GetCompilerOptions (string language)
+		{
+			WebCompiler compiler = Compilers [language];
+			if (compiler == null)
+				return null;
+
+			return compiler.CompilerOptions;
+		}
+
+		public int GetWarningLevel (string language)
+		{
+			WebCompiler compiler = Compilers [language];
+			if (compiler == null)
+				return 0;
+
+			return compiler.WarningLevel;
 		}
 
 		void Init (CompilationConfiguration parent)

@@ -162,6 +162,10 @@ namespace System.Web.Compilation
 
 			CreateMethods ();
 			compilerParameters.IncludeDebugInformation = parser.Debug;
+			compilerParameters.CompilerOptions = config.GetCompilerOptions (lang) + " " +
+							     parser.CompilerOptions;
+
+			compilerParameters.WarningLevel = config.GetWarningLevel (lang);
 			CompilerResults results = CachingCompiler.Compile (this);
 			CheckCompilerErrors (results);
 			if (results.CompiledAssembly == null)
