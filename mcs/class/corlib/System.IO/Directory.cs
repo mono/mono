@@ -204,13 +204,11 @@ namespace System.IO
 		
 		public static string [] GetFiles (string path)
 		{
-                        Console.WriteLine ("Entering GetFiles (string path = {0})", path);
 			return GetFiles (path, "*");
 		}
 		
 		public static string [] GetFiles (string path, string pattern)
 		{
-                        Console.WriteLine ("Entering GetFiles (string path = {0}, string pattern = {1})", path, pattern);
 			return GetFileSystemEntries (path, pattern, FileAttributes.Directory, 0);
 		}
 
@@ -365,15 +363,11 @@ namespace System.IO
 			MonoIOStat stat;
 			IntPtr find;
 
-                        Console.WriteLine ("Reached GetFileSystemEntries, {0},  {1},  {2},  {3}", path, pattern, mask, attrs);
-
 			if (path == null || pattern == null)
 				throw new ArgumentNullException ();
 
-			if (pattern == String.Empty) {
-                                Console.WriteLine ("Pattern is empty.  Woo.");
+			if (pattern == String.Empty)
 				return new string [] {};
-                        }
 			
 			if (IsEmptyString (path))
 				throw new ArgumentException ("The Path does not have a valid format");
