@@ -1,3 +1,14 @@
+2004-12-26  Martin Baulig  <martin@ximian.com>
+
+	* class.c
+	(inflate_generic_class): Moved some code out of inflate_generic_type().
+	(mono_class_inflate_generic_method): If we're already inflated,
+	inflate the context and use the declaring method; ie. make sure
+	the declaring method of an inflated method is always the generic
+	method definition.
+	(mono_class_create_from_typedef): Create
+	`class->generic_container->context->gclass'.
+
 2004-12-24  Ben Maurer  <bmaurer@ximian.com>
 
 	* metadata-internals.h, marshal.c, reflection.c: More
