@@ -1,3 +1,7 @@
+2002-10-20  Nick Drochak  <ndrochak@gol.com>
+
+	* cfold.cs: Fixed compile blocker.
+
 2002-10-20  Miguel de Icaza  <miguel@ximian.com>
 
 	* driver.cs: I was chekcing the key, not the file.
