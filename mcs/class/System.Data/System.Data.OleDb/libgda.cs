@@ -32,20 +32,15 @@ namespace System.Data.OleDb
 	
 	sealed internal class libgda
 	{
-		private static IntPtr m_gdaClient = IntPtr.Zero;
-		
-		static libgda ()
-		{
-			gda_init ("System.Data.OleDb", "0.1", 0, null);
-		}
+		private static IntPtr gdaClient = IntPtr.Zero;
 
 		public static IntPtr GdaClient
 		{
 			get {
-				if (m_gdaClient == IntPtr.Zero)
-					m_gdaClient = gda_client_new ();
+				if (gdaClient == IntPtr.Zero)
+					gdaClient = gda_client_new ();
 
-				return m_gdaClient;
+				return gdaClient;
 			}
 		}
 		

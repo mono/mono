@@ -1,3 +1,16 @@
+2002-08-05  Rodrigo Moya <rodrigo@ximian.com>
+
+	* System.Data.OleDb/OleDbConnection.cs (ConnectionString,
+	ConnectionTimeout, ServerVersion, GdaConnection):
+	corrected style.
+	(OleDbConnection): call libgda.gda_init on constructor.
+
+	* System.Data.OleDb/libgda.cs (libgda): removed static constructor,
+	which wasn't been called.
+
+	* System.Data.OleDb/TestOleDb.cs (TestOleDb): updated to really
+	make some tests.
+
 2002-08-04  Rodrigo Moya <rodrigo@ximian.com>
 
 	* list: added missing System.Data.OleDb and
@@ -8,9 +21,6 @@
 
 	* System.Data.OleDb/OleDbDataAdapter.cs:
 	* System.Data.OleDb/OleDbPermission.cs: compilation fixes.
-
-        * System.Data.OleDb/TestOleDb.cs (TestOleDb): updated to really
-	make some tests.
 
 2002-07-30  Rodrigo Moya <rodrigo@ximian.com>
 

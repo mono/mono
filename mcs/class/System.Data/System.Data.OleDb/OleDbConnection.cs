@@ -31,14 +31,15 @@ namespace System.Data.OleDb
 		
 		public OleDbConnection ()
 		{
+			libgda.gda_init ("System.Data.OleDb", "1.0", 0, null);
 			gdaConnection = IntPtr.Zero;
 			connectionTimeout = 15;
+			connectionString = null;
 		}
 
-		public OleDbConnection (string connectionString) 
-			: this ()
+		public OleDbConnection (string connectionString) : this ()
 		{
-			this.connectionString = connectionString;
+			connectionString = connectionString;
 		}
 
 		#endregion // Constructors
@@ -46,12 +47,18 @@ namespace System.Data.OleDb
 		#region Properties
 
 		public string ConnectionString {
-			get { return connectionString; }
-			set { connectionString = value; }
+			get {
+				return connectionString;
+			}
+			set {
+				connectionString = value;
+			}
 		}
 
 		public int ConnectionTimeout {
-			get { return connectionTimeout; }
+			get {
+				return connectionTimeout;
+			}
 		}
 
 		public string Database { 
@@ -83,7 +90,9 @@ namespace System.Data.OleDb
 
 		public string ServerVersion {
 			[MonoTODO]
-			get { throw new NotImplementedException (); }
+			get {
+				throw new NotImplementedException ();
+			}
 		}
 
 		public ConnectionState State
@@ -100,7 +109,9 @@ namespace System.Data.OleDb
 
 		internal IntPtr GdaConnection
 		{
-			get { return gdaConnection; }
+			get {
+				return gdaConnection;
+			}
 		}
 
 		#endregion // Properties
@@ -179,10 +190,13 @@ namespace System.Data.OleDb
 
 		public void Open ()
 		{
-			if (gdaConnection != IntPtr.Zero || libgda.gda_connection_is_open (gdaConnection))
+			if (gdaConnection != IntPtr.Zero ||
+			    libgda.gda_connection_is_open (gdaConnection))
 				throw new InvalidOperationException ();
 
-			gdaConnection = libgda.gda_client_open_connection (libgda.GdaClient, connectionString, "", "");
+			gdaConnection = libgda.gda_client_open_connection (libgda.GdaClient,
+									   connectionString,
+									   "", "");
 		}
 
 		[MonoTODO]
@@ -199,7 +213,7 @@ namespace System.Data.OleDb
 		// from doing anything while
 		// OleDbDataReader is open.
 		// Open the Reader. (called from OleDbCommand)
-		internal void OpenReader(OleDbDataReader reader)
+		internal void OpenReader (OleDbDataReader reader)
 		{
 			if(dataReaderOpen == true) {
 				// TODO: throw exception here?
