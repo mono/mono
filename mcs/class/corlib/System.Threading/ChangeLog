@@ -1,3 +1,9 @@
+2003-04-17  Pedro Martínez Juliá  <yoros@wanadoo.es>
+
+	* Timer.cs: Change the position of two lines because they were
+	before the "if" that ensures the integrity. After this, the first of
+	that two lines was producing a NullReferenceException.
+
 2003-04-09  Dick Porter  <dick@ximian.com>
 
 	* Thread.cs: Make sure a reference to the ThreadStart delegate is

@@ -85,13 +85,14 @@ namespace System.Threading
 
 					bool signaled = false;
 					while (true) {
-						wait.Reset ();
-						signaled = wait.WaitOne (period, false);
 						if (disposed)
 							return;
 
 						if (aborted)
 							break;
+
+						wait.Reset ();
+						signaled = wait.WaitOne (period, false);
 
 						if (!signaled) {
 							callback (state);
