@@ -48,20 +48,19 @@ namespace System.Web.Services.Protocols {
 		//
 		// Constructor
 		//
-		MethodStubInfo (TypeStubInfo parent, LogicalMethodInfo source, object kind, XmlReflectionImporter importer)
+		MethodStubInfo (TypeStubInfo parent, LogicalMethodInfo source, object kind, XmlReflectionImporter xmlImporter, SoapReflectionImporter soapImporter)
 		{
 			MethodInfo = source;
 
 			XmlElementAttribute optional_ns = null;
+			SoapBindingUse use;
 			
 			if (kind is SoapDocumentMethodAttribute){
 				SoapDocumentMethodAttribute dma = (SoapDocumentMethodAttribute) kind;
 				
-				SoapBindingUse use = dma.Use;
+				use = dma.Use;
 				if (use == SoapBindingUse.Default)
 					use = parent.Use;
-				if (use != SoapBindingUse.Literal)
-					throw new Exception ("Only SoapBindingUse.Literal supported");
 				
 				Action = dma.Action;
 				Binding = dma.Binding;
@@ -75,8 +74,8 @@ namespace System.Web.Services.Protocols {
 				OneWay = dma.OneWay;
 			} else {
 				SoapRpcMethodAttribute rma = (SoapRpcMethodAttribute) kind;
+				use = SoapBindingUse.Encoded;	// RPC always use encoded
 
-				// Assuem that the TypeStub already caught any possible use of Encoded
 				Action = rma.Action;
 				Binding = rma.Binding;
 				RequestName = rma.RequestElementName;
@@ -113,59 +112,79 @@ namespace System.Web.Services.Protocols {
 
 			if (ResponseName == "")
 				ResponseName = Name + "Response";
-			
-			MakeRequestSerializer (importer, optional_ns);
-			MakeResponseSerializer (importer, optional_ns);
+
+			XmlReflectionMember [] in_members = BuildRequestReflectionMembers (optional_ns);
+			XmlReflectionMember [] out_members = BuildResponseReflectionMembers (optional_ns);
+
+			XmlMembersMapping [] members = new XmlMembersMapping [2];
+			try {
+				if (use == SoapBindingUse.Literal) {
+					members [0] = xmlImporter.ImportMembersMapping (RequestName, RequestNamespace, in_members, true);
+					members [1] = xmlImporter.ImportMembersMapping (ResponseName, ResponseNamespace, out_members, true);
+				}
+				else {
+					members [0] = soapImporter.ImportMembersMapping (RequestName, RequestNamespace, in_members, true, true);
+					members [1] = soapImporter.ImportMembersMapping (ResponseName, ResponseNamespace, out_members, true, true);
+				}
+
+				XmlSerializer [] s = null;
+				s = XmlSerializer.FromMappings (members);
+				RequestSerializer = s [0];
+				ResponseSerializer = s [1];
+			} catch {
+				Console.WriteLine ("Got exception while creating serializer");
+				Console.WriteLine ("Method name: " + RequestName + " parameters are:");
+
+				for (int i = 0; i < in_members.Length; i++) {
+					Console.WriteLine ("    {0}: {1} {2}", i, in_members [i].MemberName, in_members [i].MemberType);
+				}
+
+				Console.WriteLine ("Output parameters are:");
+				for (int i = 0; i < out_members.Length; i++) {
+					Console.WriteLine ("    {0}: {1} {2}", i, out_members [i].MemberName, out_members [i].MemberType);
+				}
+				throw;
+			}
+			ResponseSerializer.UnknownNode += new XmlNodeEventHandler (e);
 		}
 
-		static internal MethodStubInfo Create (TypeStubInfo parent, LogicalMethodInfo lmi, XmlReflectionImporter importer)
+		static internal MethodStubInfo Create (TypeStubInfo parent, LogicalMethodInfo lmi, XmlReflectionImporter xmlImporter, SoapReflectionImporter soapImporter)
 		{
 			object [] o = lmi.GetCustomAttributes (typeof (SoapDocumentMethodAttribute));
 			if (o.Length == 0){
 				o = lmi.GetCustomAttributes (typeof (SoapRpcMethodAttribute));
 				if (o.Length == 0)
 					return null;
-				return new MethodStubInfo (parent, lmi, o [0], importer);
+				return new MethodStubInfo (parent, lmi, o [0], xmlImporter, soapImporter);
 			} else 
-				return new MethodStubInfo (parent, lmi, o [0], importer);
+				return new MethodStubInfo (parent, lmi, o [0], xmlImporter, soapImporter);
 		}
 
-		void MakeRequestSerializer (XmlReflectionImporter importer, XmlElementAttribute optional_ns)
+		XmlReflectionMember [] BuildRequestReflectionMembers (XmlElementAttribute optional_ns)
 		{
 			ParameterInfo [] input = MethodInfo.InParameters;
 			XmlReflectionMember [] in_members = new XmlReflectionMember [input.Length];
 
-			for (int i = 0; i < input.Length; i++){
+			for (int i = 0; i < input.Length; i++)
+			{
 				XmlReflectionMember m = new XmlReflectionMember ();
 				m.IsReturnValue = false;
 				m.MemberName = input [i].Name;
 				m.MemberType = input [i].ParameterType;
+
+				m.XmlAttributes = new XmlAttributes (input[i]);
+				m.SoapAttributes = new SoapAttributes (input[i]);
+
 				if (m.MemberType.IsByRef)
 					m.MemberType = m.MemberType.GetElementType ();
-
 				if (optional_ns != null)
 					m.XmlAttributes.XmlElements.Add (optional_ns);
 				in_members [i] = m;
 			}
-
-			XmlMembersMapping [] members = new XmlMembersMapping [1];
-			try {
-				members [0] = importer.ImportMembersMapping (RequestName, RequestNamespace, in_members, true);
-				XmlSerializer [] s = null;
-				s = XmlSerializer.FromMappings (members);
-				RequestSerializer = s [0];
-			} catch {
-				Console.WriteLine ("Got exception while creating serializer");
-				Console.WriteLine ("Method name: " + RequestName + " parameters are:");
-
-				for (int i = 0; i < input.Length; i++){
-					Console.WriteLine ("    {0}: {1} {2}", i, in_members [i].MemberName, in_members [i].MemberType);
-				}
-				throw;
-			}
+			return in_members;
 		}
-
-		void MakeResponseSerializer (XmlReflectionImporter importer, XmlElementAttribute optional_ns)
+		
+		XmlReflectionMember [] BuildResponseReflectionMembers (XmlElementAttribute optional_ns)
 		{
 			ParameterInfo [] output = MethodInfo.OutParameters;
 			bool has_return_value = !(OneWay || MethodInfo.ReturnType == typeof (void));
@@ -173,22 +192,30 @@ namespace System.Web.Services.Protocols {
 			XmlReflectionMember m;
 			int idx = 0;
 
-			if (has_return_value){
+			if (has_return_value)
+			{
 				m = new XmlReflectionMember ();
 				m.IsReturnValue = true;
 				m.MemberName = RequestName + "Result";
 				m.MemberType = MethodInfo.ReturnType;
+
+				m.XmlAttributes = new XmlAttributes (MethodInfo.ReturnTypeCustomAttributeProvider);
+				m.SoapAttributes = new SoapAttributes (MethodInfo.ReturnTypeCustomAttributeProvider);
+
 				if (optional_ns != null)
 					m.XmlAttributes.XmlElements.Add (optional_ns);
 				idx++;
 				out_members [0] = m;
 			}
 			
-			for (int i = 0; i < output.Length; i++){
+			for (int i = 0; i < output.Length; i++)
+			{
 				m = new XmlReflectionMember ();
 				m.IsReturnValue = false;
 				m.MemberName = output [i].Name;
 				m.MemberType = output [i].ParameterType;
+				m.XmlAttributes = new XmlAttributes (output[i]);
+				m.SoapAttributes = new SoapAttributes (output[i]);
 
 				if (m.MemberType.IsByRef)
 					m.MemberType = m.MemberType.GetElementType ();
@@ -196,23 +223,7 @@ namespace System.Web.Services.Protocols {
 					m.XmlAttributes.XmlElements.Add (optional_ns);
 				out_members [i + idx] = m;
 			}
-
-			try {
-				XmlMembersMapping [] members = new XmlMembersMapping [1];
-				members [0] = importer.ImportMembersMapping (ResponseName, ResponseNamespace, out_members, true);
-				XmlSerializer [] s = XmlSerializer.FromMappings (members);
-				ResponseSerializer = s [0];
-			} catch {
-				Console.WriteLine ("Got exception while creating serializer");
-				Console.WriteLine ("Method name: " + ResponseName + " parameters are:");
-
-				for (int i = 0; i < out_members.Length; i++){
-					Console.WriteLine ("    {0}: {1} {2}", i, out_members [i].MemberName, out_members [i].MemberType);
-				}
-				throw;
-			}
-
-			ResponseSerializer.UnknownNode += new XmlNodeEventHandler (e);
+			return out_members;
 		}
 
 		static void e (object o, XmlNodeEventArgs a)
@@ -220,7 +231,7 @@ namespace System.Web.Services.Protocols {
 			Console.WriteLine ("Unexpected Node: {5}:{6} {0}/{1}/{2}/{3}/{4}",
 					   a.LocalName, a.Name, a.NamespaceURI, a.NodeType, a.Text,
 					   a.LineNumber, a.LinePosition);
-			throw new Exception ();
+//			throw new Exception ();
 		}
 	}
 
@@ -290,13 +301,13 @@ namespace System.Web.Services.Protocols {
 		//
 		// Extract all method information
 		//
-		void GetTypeMethods (Type t, XmlReflectionImporter importer)
+		void GetTypeMethods (Type t, XmlReflectionImporter xmlImporter, SoapReflectionImporter soapImporter)
 		{
 			MethodInfo [] type_methods = t.GetMethods (BindingFlags.Instance | BindingFlags.Public);
 			LogicalMethodInfo [] methods = LogicalMethodInfo.Create (type_methods, LogicalMethodTypes.Sync);
 
 			foreach (LogicalMethodInfo mi in methods){
-				MethodStubInfo msi = MethodStubInfo.Create (this, mi, importer);
+				MethodStubInfo msi = MethodStubInfo.Create (this, mi, xmlImporter, soapImporter);
 
 				if (msi == null)
 					continue;
@@ -309,8 +320,9 @@ namespace System.Web.Services.Protocols {
 		{
 			GetTypeAttributes (t);
 
-			XmlReflectionImporter importer = new XmlReflectionImporter ();
-			GetTypeMethods (t, importer);
+			XmlReflectionImporter xmlImporter = new XmlReflectionImporter ();
+			SoapReflectionImporter soapImporter = new SoapReflectionImporter ();
+			GetTypeMethods (t, xmlImporter, soapImporter);
 		}
 
 		internal MethodStubInfo GetMethod (string name)
