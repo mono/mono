@@ -42,7 +42,8 @@ namespace Mono.Util {
 			"   /u /uri:NAME       Namespace uri of the elements to generate code for.\n" +
 			"   /l /language:NAME  The language to use for the generated code.\n" +
 			"                      Currently, the only supported language is CS (C#).\n" +
-			"   /g /generator:NAME[,FILE] Code Generator type name, optionally followed by ',' assembly file name.\n" +
+			"   /g /generator:TYPE Code Generator type name, followed by ','\n" + 
+			"                      and assembly file name.\n" +
 			"   /o /outputdir:PATH The directory where to generate the code or schemas.\n" +
 			"   /n /namespace:NAME Namespace for the generated code.\n" +
 			"   /t /type:NAME      Type for which to generate an xml schema.\n" +
@@ -261,6 +262,8 @@ namespace Mono.Util {
 				}
 				Console.WriteLine ("Loaded custom generator type " + param + " .");
 			}
+			if (provider == null)
+				provider = new CSharpCodeProvider ();
 
 			if (schemasOptions)
 			{
@@ -275,7 +278,7 @@ namespace Mono.Util {
 			else if (inference)
 			{
 				foreach (string xmlfile in inferenceNames) {
-					string genFile = Path.Combine (outputDir, Path.ChangeExtension (xmlfile, ".xsd"));
+					string genFile = Path.Combine (outputDir, Path.GetFileNameWithoutExtension (xmlfile) + ".xsd");
 					DataSet ds = new DataSet ();
 					ds.InferXmlSchema (xmlfile, null);
 					ds.WriteXmlSchema (genFile);
@@ -411,8 +414,7 @@ namespace Mono.Util {
 
 			// Generate the code
 			
-			CodeDomProvider p = provider != null ? provider : new CSharpCodeProvider ();
-			ICodeGenerator gen = p.CreateGenerator();
+			ICodeGenerator gen = provider.CreateGenerator();
 
 			string genFile = Path.Combine (outputDir, targetFile);
 			StreamWriter sw = new StreamWriter(genFile, false);
@@ -446,8 +448,7 @@ namespace Mono.Util {
 
 			// Generate the code
 			
-			CodeDomProvider p = provider != null ? provider : new CSharpCodeProvider ();
-			ICodeGenerator gen = p.CreateGenerator ();
+			ICodeGenerator gen = provider.CreateGenerator ();
 
 			TypedDataSetGenerator.Generate (dataset, codeNamespace, gen);
 
