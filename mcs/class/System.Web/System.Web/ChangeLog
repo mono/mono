@@ -1,11 +1,28 @@
-2004-10-29 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+2004-11-12 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
-        * HttpApplication.cs: don't hang if a sync step is aborted. Fixes the
-        system.web portion of bug #68270.
+	* HttpResponse.cs: added internl SetHeadersSent.
+	* HttpRuntime.cs: don't throw the 'headers already sent' exception
+	if we're sending a runtime error.
+
+2004-11-11 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpApplication.cs: undo the TimeoutManager.(Add|Remove) shuffling.
+	It causes troubles under heavy load.
+
+2004-11-08 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpRequest.cs: patch by Dennis Gervalle that fixes PhysicalPath in
+	presence of rewriting.
+
+2004-10-27 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpApplication.cs: don't hang if a sync step is aborted. Fixes the
+	system.web portion of bug #68270.
 
 2004-10-10 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
-	* TraceContext.cs: don't cast to Page is the handler it's not a page.
+	* TraceContext.cs: don't cast to Page is the handler it's
+	not a page.
 
 2004-10-06 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
@@ -66,6 +83,11 @@
 
 	* HttpValueCollection.cs: fixed signature of ToString (). Closes bug
 	#65392.
+
+2004-09-06 Ben Maurer  <bmaurer@users.sourceforge.net>
+
+	* HttpWriter.cs (.ctor): Dont create teh StreamWriter twice
+	(Clear): Don't recreate the MemoryStream and StreamWriter
 
 2004-09-05 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 

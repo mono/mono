@@ -79,12 +79,10 @@ namespace System.Web
 
 		public void Add (string key, string value)
 		{
-			lock (this) {
-				if (data == null)
-					data = new ListDictionary ();
+			if (data == null)
+				data = new ListDictionary ();
 
-				data.Add (key, value);
-			}
+			data.Add (key, value);
 		}
 
 		public Hashtable GetProperties (Hashtable tbl)
@@ -131,10 +129,10 @@ namespace System.Web
 				expression = expression.Substring (text.Length);
 			}
 			
-			lock (this) {
-				if (pattern == null)
-					return expression.Length == 0;
+			if (pattern == null)
+				return expression.Length == 0;
 
+			lock (this) {
 				if (regex == null)
 					regex = new Regex (pattern);
 			}
@@ -170,6 +168,9 @@ namespace System.Web
 
 		static void Init ()
 		{
+			if (loaded)
+				return;
+
 			lock (typeof (CapabilitiesLoader)) {
 				if (loaded)
 					return;

@@ -84,7 +84,6 @@ namespace System.Web {
 		private HttpBrowserCapabilities _browser;
 
 		private HttpCookieCollection cookies;
-		private bool rewritten;
 		Stream userFilter;
 		HttpRequestStream requestFilter;
 		string clientTarget;
@@ -769,14 +768,8 @@ namespace System.Web {
 
 		public string PhysicalPath {
 			get {
-				if (_sPathTranslated == null && _WorkerRequest != null) {
-					if (rewritten)
-						_sPathTranslated = _WorkerRequest.GetFilePathTranslated ();
-
-					string verifyPath = _WorkerRequest.MapPath (FilePath);
-					if (null == _sPathTranslated)
-						_sPathTranslated = verifyPath;
-				}
+				if (_sPathTranslated == null && _WorkerRequest != null)
+					_sPathTranslated = _WorkerRequest.MapPath (CurrentExecutionFilePath);
 
 				return _sPathTranslated;
 			}
@@ -1148,6 +1141,7 @@ namespace System.Web {
 			currentExePath = filePath;
 			_sRequestRootVirtualDir = null;
 			baseVirtualDir = null;
+			_sPathTranslated = null;
 		}
 
 		internal void SetPathInfo (string pathInfo)

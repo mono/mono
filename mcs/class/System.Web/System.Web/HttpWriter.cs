@@ -51,11 +51,10 @@ namespace System.Web
 		{
 			_Response = Response;
 
+			_Encoding = _Response.ContentEncoding;
 			_OutputStream = new MemoryStream (MaxBufferSize);
 			_OutputHelper = new StreamWriter (_OutputStream, _Response.ContentEncoding);
 			_ResponseStream = new HttpResponseStream (this);
-
-			Update ();
 		}  
 
 		internal void Dispose ()
@@ -117,11 +116,9 @@ namespace System.Web
 
 		internal void Clear ()
 		{
-			_OutputHelper.Close ();
-			_OutputStream.Close ();
-					
-			_OutputStream = new MemoryStream (32768);
-			_OutputHelper = new StreamWriter (_OutputStream, _Response.ContentEncoding);
+			// This clears all the buffers that are around
+			_OutputHelper.Flush ();
+			_OutputStream.SetLength (0);
 		}
 
 		internal void SendContent (HttpWorkerRequest Handler)

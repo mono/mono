@@ -639,7 +639,6 @@ namespace System.Web
 			{
 				bool ready_sync = false;
 				IStateHandler handler;
-				bool timeoutPossible = false;
 
 				lock (_app) {
 					_app.OnStateExecuteEnter ();
@@ -663,25 +662,14 @@ namespace System.Web
 
 							handler = _handlers [_currentStateIdx];
 							_countSteps++;
-							timeoutPossible = handler.PossibleToTimeout;
-							try {
-								if (timeoutPossible)
-									HttpRuntime.TimeoutManager.Add (_app.Context);
-	
-								lasterror = ExecuteState (handler, ref ready_sync);
-								if (ready_sync) 
-									_countSyncSteps++;
-							} finally {
-								if (timeoutPossible)
-									HttpRuntime.TimeoutManager.Remove (_app.Context);
-							}
+							lasterror = ExecuteState (handler, ref ready_sync);
+							if (ready_sync) 
+								_countSyncSteps++;
 						} while (_currentStateIdx < _endStateIdx);
 
 						if (null != lasterror)
 							_app.HandleError (lasterror);
 					} finally {
-
-
 						_app.OnStateExecuteLeave ();
 					}
 				}
@@ -905,12 +893,14 @@ namespace System.Web
 			SaveThreadCulture ();
 			_savedContext = HttpContext.Context;
 			HttpContext.Context = _Context;
+			HttpRuntime.TimeoutManager.Add (_Context);
 			SetPrincipal (Context.User);
 		}
 
 		internal void OnStateExecuteLeave ()
 		{
 			RestoreThreadCulture ();
+			HttpRuntime.TimeoutManager.Remove (_Context);
 			HttpContext.Context = _savedContext;
 			RestorePrincipal ();
 		}
