@@ -1,3 +1,8 @@
+2003-09-20 Jackson Harper <jackson@latitudegeo.com>
+
+	* TypeDef.cs: Rework so multiple constraints can be added to a
+	generic parameter.
+	
 2003-09-16 Jackson Harper <jackson@latitudegeo.com>
 
 	* InstrTable.cs: endfault instruction (which is just endfinally

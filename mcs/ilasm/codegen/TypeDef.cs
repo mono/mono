@@ -15,6 +15,11 @@ namespace Mono.ILASM {
 
         public class TypeDef {
 
+                protected class GenericInfo {
+                        public string Id;
+                        public ArrayList ConstraintList;
+                }
+
                 private PEAPI.TypeAttr attr;
                 private string name_space;
                 private string name;
@@ -32,7 +37,6 @@ namespace Mono.ILASM {
                 private ArrayList typar_list;
                 private ArrayList override_list;
                 private ArrayList override_long_list;
-                private Hashtable constraint_table;
                 private TypeDef outer;
 
                 private EventDef current_event;
@@ -211,15 +215,19 @@ namespace Mono.ILASM {
                         if (typar_list == null)
                                 typar_list = new ArrayList ();
 
-                        typar_list.Add (id);
+                        GenericInfo gi = new GenericInfo ();
+                        gi.Id = id;
+
+                        typar_list.Add (gi);
                 }
 
                 public void AddGenericConstraint (int index, ITypeRef constraint)
                 {
-                        if (constraint_table == null)
-                                constraint_table = new Hashtable ();
+                        GenericInfo gi = (GenericInfo) typar_list[index];
 
-                        constraint_table.Add (index, constraint);
+                        if (gi.ConstraintList == null)
+                                gi.ConstraintList = new ArrayList ();
+                        gi.ConstraintList.Add (constraint);
                 }
 
                 public void Define (CodeGen code_gen)
@@ -279,13 +287,13 @@ namespace Mono.ILASM {
 
                         if (typar_list != null) {
                                 short index = 0;
-                                foreach (string id in typar_list) {
-                                        if (constraint_table != null && constraint_table.Contains ((int) index)) {
-                                                ITypeRef constraint = (ITypeRef) constraint_table[(int) index];
-                                                constraint.Resolve (code_gen);
-                                                classdef.AddGenericParameter (index++, id, constraint.PeapiType);
-                                        } else {
-                                                classdef.AddGenericParameter (index++, id);
+                                foreach (GenericInfo gi in typar_list) {
+                                        PEAPI.GenericParameter gp = classdef.AddGenericParameter (index++, gi.Id);
+                                        if (gi.ConstraintList != null) {
+                                                foreach (ITypeRef cnst in gi.ConstraintList) {
+                                                        cnst.Resolve (code_gen);
+                                                        gp.AddConstraint (cnst.PeapiType);
+                                                }
                                         }
                                 }
                         }
