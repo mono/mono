@@ -7,6 +7,7 @@
 //
 
 using NUnit.Framework;
+
 namespace MonoTests
 {
 	/// <summary>
@@ -22,6 +23,7 @@ namespace MonoTests
 			get {
 				TestSuite suite = new TestSuite();
 				suite.AddTest (Microsoft.VisualBasic.CollectionTest.Suite);
+				suite.AddTest (Microsoft.VisualBasic.ConversionTest.Suite);
 				
 				return suite;
 			}
