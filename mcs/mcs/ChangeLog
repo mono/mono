@@ -1,5 +1,9 @@
 2002-07-24  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* cs-parser.jay: fixed bug #22119.
+
+2002-07-24  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* attribute.cs: fixed compilation. The error was:
 	"attribute.cs(571,17): error CS0177: The out parameter 'is_error' must 
 	be assigned to before control leaves the current method."
