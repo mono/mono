@@ -1,5 +1,9 @@
 2003-08-06  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
 
+	* corlib.dll.sources: added quite some files
+
+2003-08-06  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
+
 	* corlib.dll.sources: added/removed Locale.cs
 
 2003-08-03  Sebastien Pouliot  <spouliot@videotron.ca>
