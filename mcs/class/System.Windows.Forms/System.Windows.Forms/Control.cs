@@ -1848,6 +1848,7 @@
     		
     		protected virtual void OnSizeChanged (EventArgs e) 
     		{
+			OnResize ( e );
 			PerformLayout ( this, "Size" );
     			if (SizeChanged != null)
     				SizeChanged (this, e);

@@ -1,3 +1,8 @@
+2003-04-29  Aleksey Ryabchuk <ryabchuk@yahoo.com>
+	* Control.cs : call OnResize from OnSizeChanged
+	* TabControl.cs : small fixes
+	* Win32enums.cs : constants for ToolTip notifications
+
 2003-04-28 Alexandre Pigolkine <pigolkine@gmx.de>
 	* monogc.c
 	* makefile		small improvements

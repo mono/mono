@@ -764,6 +764,13 @@ namespace System.Windows.Forms{
 	}
 	#endregion
 
+	public enum ToolTipNotifications : int {
+		TTN_FIRST               = 0-520,
+		TTN_GETDISPINFO        = (TTN_FIRST - 10),
+		TTN_SHOW                = (TTN_FIRST - 1),
+		TTN_POP                 = (TTN_FIRST - 2)
+	}
+
 	#region Custom Draw Return Flags
 	public enum CustomDrawReturnFlags {
 		CDRF_DODEFAULT          = 0x00000000,

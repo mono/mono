@@ -54,7 +54,6 @@ namespace System.Windows.Forms {
 		private TabSizeMode sizeMode;
 		private bool showTooltips;
 
-		[MonoTODO]
 		public TabControl() {
 			selectedIndex = -1;
 			multiline = false;
@@ -68,7 +67,6 @@ namespace System.Windows.Forms {
 			showTooltips = false;
 		}
 
-		[MonoTODO]
 		public TabAlignment Alignment  {
 			get {
 				return tabAlignment;
@@ -92,7 +90,6 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		[MonoTODO]
 		public TabAppearance Appearance  {
 			get {	return appearance; }
 			set {
@@ -122,7 +119,6 @@ namespace System.Windows.Forms {
 			set {	base.BackgroundImage = value;}
 		}
 
-		[MonoTODO]
 		public override Rectangle DisplayRectangle  {
 			get {
 				RECT rect = new RECT( );
@@ -139,7 +135,6 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		[MonoTODO]
 		public TabDrawMode DrawMode  {
 			get {	return tabDrawMode; }
 			set {
@@ -201,7 +196,6 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		[MonoTODO]
 		public bool Multiline  {
 			get {	return multiline; }
 			set {
@@ -234,7 +228,6 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		[MonoTODO]
 		public int RowCount {
 			get {
 				if ( TabCount == 0)
@@ -262,7 +255,6 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		[MonoTODO]
 		public TabPage SelectedTab  {
 			get {	
 				if ( SelectedIndex >= 0 )
@@ -369,7 +361,7 @@ namespace System.Windows.Forms {
 					createParams.Style |= (int) TabControlStyles.TCS_VERTICAL;
 				break;
 				case TabAlignment.Right:
-					createParams.Style |= (int) TabControlStyles.TCS_RIGHT;
+					createParams.Style |= (int) ( TabControlStyles.TCS_RIGHT | TabControlStyles.TCS_VERTICAL );
 				break;
 				}
 
@@ -452,6 +444,9 @@ namespace System.Windows.Forms {
 
 		[MonoTODO]
 		protected override void OnResize(EventArgs e) {
+			for  ( int i = 0; i < Controls.Count; i++ )
+				Controls[ i ].SetBounds ( 0, 0, 0, 0, BoundsSpecified.None );
+
 			base.OnResize ( e );
 		}
 
