@@ -66,7 +66,8 @@ namespace Mono.CSharp {
 				TypeBuilder = builder.DefineType (
 					name, attr, TypeManager.multicast_delegate_type);
 			} else {
-				TypeBuilder builder = (TypeBuilder) parent_builder;
+				// FIXME: We could just use TypeBuilder here.
+				TypeBuilder builder = (System.Reflection.Emit.TypeBuilder) parent_builder;
 				attr = TypeAttributes.NestedPublic | TypeAttributes.Class |
 					TypeAttributes.Sealed;
 
@@ -549,7 +550,8 @@ namespace Mono.CSharp {
 					delegate_instance_expr = mg.InstanceExpression.Resolve (ec);
 				else {
 					if (!ec.IsStatic)
-						delegate_instance_expr = (new This (Location.Null)).Resolve (ec);
+						delegate_instance_expr = (
+							new This (Mono.CSharp.Location.Null)).Resolve (ec);
 					else
 						delegate_instance_expr = null;
 				}

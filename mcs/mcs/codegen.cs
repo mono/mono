@@ -166,7 +166,7 @@ namespace Mono.CSharp {
 			IsConstructor = is_constructor;
 			CurrentBlock = null;
 			loc = l;
-			
+
 			if (ReturnType == TypeManager.void_type)
 				ReturnType = null;
 		}
@@ -189,8 +189,10 @@ namespace Mono.CSharp {
 				if (Report.Errors == errors){
 					has_ret = block.Emit (this);
 
-					if (Report.Errors == errors)
-						block.UsageWarning ();
+					if (Report.Errors == errors){
+						if (RootContext.WarningLevel >= 3)
+							block.UsageWarning ();
+					}
 				}
 			}
 

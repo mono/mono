@@ -114,7 +114,7 @@ namespace Mono.CSharp {
 
 		static public void Error (int code, string text)
 		{
-			string msg = String.Format ("error CS{1:0000}: {2}", code, text);
+			string msg = String.Format ("error CS{0:0000}: {1}", code, text);
 
 			RealError (msg);
 			Check (code);

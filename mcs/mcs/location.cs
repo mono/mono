@@ -38,7 +38,7 @@ namespace Mono.CSharp {
 			module_base = 0;
 		}
 	
-		public void Push (string name)
+		static public void Push (string name)
 		{
 			map.Add (global_count, name);
 			list.Add (global_count);

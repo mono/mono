@@ -904,7 +904,7 @@ namespace Mono.CSharp {
 									  ifaces);
 
 			} else {
-				TypeBuilder builder = (TypeBuilder) parent_builder;
+				TypeBuilder builder = (System.Reflection.Emit.TypeBuilder) parent_builder;
 				
 				//
 				// Structs with no fields need to have a ".size 1"
@@ -1489,8 +1489,9 @@ namespace Mono.CSharp {
 					return;
 
 			if (OptAttributes != null) {
-				EmitContext ec = new EmitContext (this, Location.Null, null, null,
-								  ModFlags, false);
+				EmitContext ec = new EmitContext (
+					this, Mono.CSharp.Location.Null, null, null,
+					ModFlags, false);
 				
 				if (OptAttributes.AttributeSections != null) {
 					foreach (AttributeSection asec in OptAttributes.AttributeSections) {
@@ -3512,7 +3513,7 @@ namespace Mono.CSharp {
 			
 			OperatorMethod = new Method (ReturnType, ModFlags, MethodName,
 						     new Parameters (param_list, null, Location),
-						     OptAttributes, Location.Null);
+						     OptAttributes, Mono.CSharp.Location.Null);
 			
 			OperatorMethod.Define (parent);
 

@@ -52,6 +52,13 @@ namespace Mono.CSharp {
 			builder = ec.GetTemporaryStorage (t);
 		}
 
+		public LocalTemporary (LocalBuilder b, Type t)
+		{
+			type = t;
+			eclass = ExprClass.Value;
+			builder = b;
+		}
+		
 		public override Expression DoResolve (EmitContext ec)
 		{
 			return this;
@@ -189,7 +196,6 @@ namespace Mono.CSharp {
 				New n = (New) source;
 
 				n.ValueTypeVariable = target;
-
 				return n;
 			}
 

@@ -1234,6 +1234,9 @@ namespace Mono.CSharp {
 				if (value >= 0)
 					return new ULongConstant ((ulong) value);
 			}
+			
+			if (value == 0 && ic is IntLiteral && TypeManager.IsEnumType (target_type))
+				return new EnumConstant (ic, target_type);
 
 			return null;
 		}
@@ -2661,45 +2664,46 @@ namespace Mono.CSharp {
 			//
 
 			//
-			// Stage 2: Lookup members
-			//
+			// Stage 2: Lookup members 
+			// 
 			e = MemberLookup (ec, ec.TypeContainer.TypeBuilder, Name, true, Location);
-			if (e == null) {
+			if (e == null){
 				//
 				// Stage 3: Lookup symbol in the various namespaces. 
-				// 
+				//
 				DeclSpace ds = ec.TypeContainer;
 				Type t;
 				string alias_value;
-
+				
 				if ((t = RootContext.LookupType (ds, Name, true, Location)) != null)
 					return new TypeExpr (t);
-
+				
 				//
-				// Stage 3 part b: Lookup up if we are an alias to a type
+				// Stage 2 part b: Lookup up if we are an alias to a type
 				// or a namespace.
 				//
 				// Since we are cheating: we only do the Alias lookup for
 				// namespaces if the name does not include any dots in it
 				//
-
+				
 				if (Name.IndexOf ('.') == -1 && (alias_value = ec.TypeContainer.LookupAlias (Name)) != null) {
-					// System.Console.WriteLine (Name + " --> " + alias_value);
+				// System.Console.WriteLine (Name + " --> " + alias_value);
 					if ((t = RootContext.LookupType (ds, alias_value, true, Location))
 					    != null)
 						return new TypeExpr (t);
-
-					// we have alias value, but it isn't Type, so try if it's namespace
+					
+				// we have alias value, but it isn't Type, so try if it's namespace
 					return new SimpleName (alias_value, Location);
 				}
-
+				
 				// No match, maybe our parent can compose us
 				// into something meaningful.
-				//
 				return this;
 			}
-
-			// Step 2, continues here.
+			
+			//
+			// Stage 2 continues here. 
+			// 
 			if (e is TypeExpr)
 				return e;
 
@@ -2707,9 +2711,9 @@ namespace Mono.CSharp {
 				FieldExpr fe = (FieldExpr) e;
 				
 				if (!fe.FieldInfo.IsStatic){
-					This t = new This (Location.Null);
+					This this_expr = new This (Location.Null);
 
-					fe.InstanceExpression = t.DoResolve (ec);
+					fe.InstanceExpression = this_expr.DoResolve (ec);
 				}
 
 				FieldInfo fi = fe.FieldInfo;
@@ -2753,6 +2757,8 @@ namespace Mono.CSharp {
 						instance_expr = null;
 					else
 						instance_expr = new This (Location.Null);
+
+					instance_expr = instance_expr.Resolve (ec);
 
 					if (instance_expr != null)
 						instance_expr = instance_expr.Resolve (ec);
@@ -2955,8 +2961,23 @@ namespace Mono.CSharp {
 			if (FieldInfo.IsStatic)
 				ig.Emit (OpCodes.Ldsfld, FieldInfo);
 			else {
-				InstanceExpression.Emit (ec);
-				
+				if (InstanceExpression.Type.IsValueType){
+					IMemoryLocation ml;
+					
+					if (!(InstanceExpression is IMemoryLocation)){
+						LocalTemporary tempo = new LocalTemporary (
+							ec, InstanceExpression.Type);
+
+						InstanceExpression.Emit (ec);
+						tempo.Store (ec);
+						ml = tempo;
+					} else
+						ml = (IMemoryLocation) InstanceExpression;
+
+					ml.AddressOf (ec);
+				} else 
+					InstanceExpression.Emit (ec);
+
 				ig.Emit (OpCodes.Ldfld, FieldInfo);
 			}
 		}
@@ -2974,9 +2995,10 @@ namespace Mono.CSharp {
 
 						ml.AddressOf (ec);
 					} else
-						throw new Exception ("The " + instance + " of type " + Type+
-								     "represents a ValueType and does not " +
-								     "implement IMemoryLocation");
+						throw new Exception ("The " + instance + " of type " +
+								     instance.Type +
+								     " represents a ValueType and does " +
+								     "not implement IMemoryLocation");
 				} else
 					instance.Emit (ec);
 			}

@@ -2119,7 +2119,8 @@ namespace Mono.CSharp {
 			// FIXME: When we implement propertyaccess, will those turn
 			// out to return values in ExprClass?  I think they should.
 			//
-			if (!(expr.eclass == ExprClass.Variable || expr.eclass == ExprClass.Value)){
+			if (!(expr.eclass == ExprClass.Variable || expr.eclass == ExprClass.Value ||
+			      expr.eclass == ExprClass.PropertyAccess)){
 				error1579 (expr.Type);
 				return false;
 			}

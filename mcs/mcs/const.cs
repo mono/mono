@@ -58,6 +58,7 @@ namespace Mono.CSharp {
 			}
 		}
 
+#if DEBUG
 		void dump_tree (Type t)
 		{
 			Console.WriteLine ("Dumping hierarchy");
@@ -67,6 +68,7 @@ namespace Mono.CSharp {
 				t = t.BaseType;
 			}
 		}
+#endif
 
 		/// <summary>
 		///   Defines the constant in the @parent

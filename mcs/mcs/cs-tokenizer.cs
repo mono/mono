@@ -10,7 +10,9 @@
 //
 
 /*
-  Make sure we accept the proper Unicode ranges, per the spec.
+ * TODO:
+ *   Make sure we accept the proper Unicode ranges, per the spec.
+ *   Report error 1032
 */
 
 using System;
@@ -258,8 +260,12 @@ namespace Mono.CSharp
 				foreach (string def in defs)
 					defines [def] = true;
 			}
-			
-			Location.Push (fname);
+
+			//
+			// FIXME: This could be `Location.Push' but we have to
+			// find out why the MS compiler allows this
+			//
+			Mono.CSharp.Location.Push (fname);
 		}
 
 		bool is_identifier_start_character (char c)

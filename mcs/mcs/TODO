@@ -254,6 +254,12 @@ OPTIMIZATIONS
 	this pointer (consider Property++ or Indexer++)
 
 
+* Optimizations: variable allocation.
+
+	When local variables of a type are required, we should request
+	the variable and later release it when we are done, so that
+	the same local variable slot can be reused later on.
+
 * Add a cache for the various GetArrayMethod operations.
 
 RECOMMENDATIONS

@@ -2511,10 +2511,7 @@ statement
 
 		current_block.AddStatement ((Statement) $1);
 	  }
-	| labeled_statement 
-	  {
-		current_block.AddStatement ((Statement) $1);
-	  }
+	| labeled_statement 	// This adds itself to the list of stat
 	;
 
 embedded_statement
@@ -2546,13 +2543,13 @@ labeled_statement
 
 		block = new Block (current_block, lab);
 		block.AddStatement ((Statement) $3);
-		$$ = block;
 
 		if (!current_block.AddLabel (lab, block)){
 			Location l = lexer.Location;
 			Report.Error (140, l, "The label '" + lab + "' is a duplicate");
 			$$ = $3;
 		}	
+		current_block = block;
 	  }
 	;
 

@@ -7,6 +7,7 @@
 // (C) 2001 Ximian, Inc.
 //
 //
+#define USE_OLD
 
 namespace Mono.CSharp {
 	using System;
@@ -87,7 +88,7 @@ namespace Mono.CSharp {
 	public class Unary : Expression {
 		public enum Operator : byte {
 			UnaryPlus, UnaryNegation, LogicalNot, OnesComplement,
-			Indirection, AddressOf, 
+			Indirection, AddressOf,  TOP
 		}
 
 		Operator   oper;
@@ -144,6 +145,20 @@ namespace Mono.CSharp {
 			return oper.ToString ();
 		}
 
+		static string [] oper_names;
+
+		static Unary ()
+		{
+			oper_names = new string [(int)Operator.TOP];
+
+			oper_names [(int) Operator.UnaryPlus] = "op_UnaryPlus";
+			oper_names [(int) Operator.UnaryNegation] = "op_UnaryNegation";
+			oper_names [(int) Operator.LogicalNot] = "op_LogicalNot";
+			oper_names [(int) Operator.OnesComplement] = "op_OnesComplement";
+			oper_names [(int) Operator.Indirection] = "op_Indirection";
+			oper_names [(int) Operator.AddressOf] = "op_AddressOf";
+		}
+
 		void error23 (Type t)
 		{
 			Report.Error (
@@ -182,24 +197,24 @@ namespace Mono.CSharp {
 			return e;
 		}
 		
-		Expression Reduce (EmitContext ec)
+		Expression Reduce (EmitContext ec, Expression e)
 		{
-			Type expr_type = expr.Type;
+			Type expr_type = e.Type;
 			
 			switch (oper){
 			case Operator.UnaryPlus:
-				return expr;
+				return e;
 				
 			case Operator.UnaryNegation:
-				return TryReduceNegative (expr);
+				return TryReduceNegative (e);
 				
 			case Operator.LogicalNot:
 				if (expr_type != TypeManager.bool_type) {
-					error23 (expr.Type);
+					error23 (expr_type);
 					return null;
 				}
 				
-				BoolConstant b = (BoolConstant) expr;
+				BoolConstant b = (BoolConstant) e;
 				return new BoolConstant (!(b.Value));
 				
 			case Operator.OnesComplement:
@@ -208,21 +223,30 @@ namespace Mono.CSharp {
 				      (expr_type == TypeManager.int64_type) ||
 				      (expr_type == TypeManager.uint64_type) ||
 				      (expr_type.IsSubclassOf (TypeManager.enum_type)))){
-					error23 (expr.Type);
+					error23 (expr_type);
 					return null;
 				}
-				Type et = expr.Type;
-				
-				if (et == TypeManager.int32_type)
-					return new IntConstant (~ ((IntConstant) expr).Value);
-				if (et == TypeManager.uint32_type)
-					return new UIntConstant (~ ((UIntConstant) expr).Value);
-				if (et == TypeManager.int64_type)
-					return new LongConstant (~ ((LongConstant) expr).Value);
-				if (et == TypeManager.uint64_type)
-					return new ULongConstant (~ ((ULongConstant) expr).Value);
 
-				throw new Exception ("FIXME: Implement constant OnesComplement of enumerations");
+				if (e is EnumConstant){
+					EnumConstant enum_constant = (EnumConstant) e;
+					
+					Expression reduced = Reduce (ec, enum_constant.Child);
+
+					return new EnumConstant ((Constant) reduced, enum_constant.Type);
+				}
+
+				if (expr_type == TypeManager.int32_type)
+					return new IntConstant (~ ((IntConstant) e).Value);
+				if (expr_type == TypeManager.uint32_type)
+					return new UIntConstant (~ ((UIntConstant) e).Value);
+				if (expr_type == TypeManager.int64_type)
+					return new LongConstant (~ ((LongConstant) e).Value);
+				if (expr_type == TypeManager.uint64_type)
+					return new ULongConstant (~ ((ULongConstant) e).Value);
+
+				throw new Exception (
+					"FIXME: Implement constant OnesComplement of:" +
+					expr_type);
 			}
 			throw new Exception ("Can not constant fold");
 		}
@@ -237,7 +261,7 @@ namespace Mono.CSharp {
 			Expression mg;
 			string op_name;
 			
-			op_name = "op_" + oper;
+			op_name = oper_names [(int) oper];
 
 			mg = MemberLookup (ec, expr_type, op_name, false, loc);
 			
@@ -266,7 +290,7 @@ namespace Mono.CSharp {
 			// Step 2: Default operations on CLI native types.
 			//
 			if (expr is Constant)
-				return Reduce (ec);
+				return Reduce (ec, expr);
 
 			if (oper == Operator.LogicalNot){
 				if (expr_type != TypeManager.bool_type) {
@@ -1473,6 +1497,43 @@ namespace Mono.CSharp {
 					method = TypeManager.delegate_combine_delegate_delegate;
 
 					type = l;
+
+					return this;
+				}
+			}
+			
+			//
+			// Enumeration operators
+			//
+			bool lie = TypeManager.IsEnumType (l);
+			bool rie = TypeManager.IsEnumType (r);
+			if (lie || rie){
+				Expression temp;
+
+				if (!rie){
+					temp = ConvertImplicit (ec, right, l, loc);
+					if (temp != null)
+						right = temp;
+				} if (!lie){
+					temp = ConvertImplicit (ec, left, r, loc);
+					if (temp != null){
+						left = temp;
+						l = r;
+					}
+				}
+				
+				if (oper == Operator.Equality || oper == Operator.Inequality ||
+				    oper == Operator.LessThanOrEqual || oper == Operator.LessThan ||
+				    oper == Operator.GreaterThanOrEqual || oper == Operator.GreaterThan){
+					type = TypeManager.bool_type;
+					return this;
+				}
+
+				if (oper == Operator.BitwiseAnd ||
+				    oper == Operator.BitwiseOr ||
+				    oper == Operator.ExclusiveOr){
+					type = l;
+					return this;
 				}
 			}
 			
@@ -1500,6 +1561,25 @@ namespace Mono.CSharp {
 					return this;
 				}
 
+				//
+				// operator != (object a, object b)
+				// operator == (object a, object b)
+				//
+				// For this to be used, both arguments have to be reference-types.
+				// Read the rationale on the spec (14.9.6)
+				//
+				// Also, if at compile time we know that the classes do not inherit
+				// one from the other, then we catch the error there.
+				//
+				if (!(l.IsValueType || r.IsValueType)){
+					type = TypeManager.bool_type;
+
+					if (l == r)
+						return this;
+					
+					if (l.IsSubclassOf (r) || r.IsSubclassOf (l))
+						return this;
+				}
 			}
 
 			//
@@ -1507,27 +1587,8 @@ namespace Mono.CSharp {
 			//
 
 			if (!DoNumericPromotions (ec, l, r)){
-				// Attempt:
-				//
-				// operator != (object a, object b)
-				// operator == (object a, object b)
-				//
-
-				if (oper == Operator.Equality || oper == Operator.Inequality){
-					Expression li, ri;
-					li = ConvertImplicit (ec, left, TypeManager.object_type, loc);
-					if (li != null){
-						ri = ConvertImplicit (ec, right, TypeManager.object_type,
-								      loc);
-						if (ri != null){
-							left = li;
-							right = ri;
-							
-							type = TypeManager.bool_type;
-							return this;
-						}
-					}
-				}
+				error19 ();
+				return null;
 			}
 
 			if (left == null || right == null)
@@ -1543,8 +1604,7 @@ namespace Mono.CSharp {
 			    oper == Operator.BitwiseOr ||
 			    oper == Operator.ExclusiveOr){
 				if (l == r){
-					if (l.IsSubclassOf (TypeManager.enum_type) ||
-					    !((l == TypeManager.int32_type) ||
+					if (!((l == TypeManager.int32_type) ||
 					      (l == TypeManager.uint32_type) ||
 					      (l == TypeManager.int64_type) ||
 					      (l == TypeManager.uint64_type)))
@@ -2818,6 +2878,9 @@ namespace Mono.CSharp {
 			
 			int pd_count = pd.Count;
 
+			if (pd_count == 0)
+				return false;
+			
 			if (pd.ParameterModifier (pd_count - 1) != Parameter.Modifier.PARAMS)
 				return false;
 
@@ -3335,13 +3398,20 @@ namespace Mono.CSharp {
 			if (IsDelegate)
 				return (new NewDelegate (type, Arguments, loc)).Resolve (ec);
 			
-			Expression ml;
-			
-			ml = MemberLookup (ec, type, ".ctor", false,
-					   MemberTypes.Constructor, AllBindingFlags, loc);
-			
 			bool is_struct = false;
 			is_struct = type.IsSubclassOf (TypeManager.value_type);
+			eclass = ExprClass.Value;
+
+			//
+			// SRE returns a match for .ctor () on structs (the object constructor), 
+			// so we have to manually ignore it.
+			//
+			if (is_struct && Arguments == null)
+				return this;
+			
+			Expression ml;
+			ml = MemberLookup (ec, type, ".ctor", false,
+					   MemberTypes.Constructor, AllBindingFlags, loc);
 			
 			if (! (ml is MethodGroupExpr)){
 				if (!is_struct){
@@ -3360,7 +3430,7 @@ namespace Mono.CSharp {
 							return null;
 					}
 				}
-
+				
 				method = Invocation.OverloadResolve (ec, (MethodGroupExpr) ml,
 								     Arguments, loc);
 			}
@@ -3371,8 +3441,6 @@ namespace Mono.CSharp {
 				       "this argument list");
 				return null;
 			}
-			
-			eclass = ExprClass.Value;
 			return this;
 		}
 
@@ -3385,13 +3453,30 @@ namespace Mono.CSharp {
 		// need_value_on_stack.  The code *might* leave a value on the stack
 		// so it must be popped manually
 		//
+		// If we are dealing with a ValueType, we have a few
+		// situations to deal with:
+		//
+		//    * The target is a ValueType, and we have been provided
+		//      the instance (this is easy, we are being assigned).
+		//
+		//    * The target of New is being passed as an argument,
+		//      to a boxing operation or a function that takes a
+		//      ValueType.
+		//
+		//      In this case, we need to create a temporary variable
+		//      that is the argument of New.
+		//
 		// Returns whether a value is left on the stack
 		//
 		bool DoEmit (EmitContext ec, bool need_value_on_stack)
 		{
 			if (method == null){
-				IMemoryLocation ml = (IMemoryLocation) value_target;
+				IMemoryLocation ml;
 
+				if (value_target == null)
+					value_target = new LocalTemporary (ec, type);
+						
+				ml = (IMemoryLocation) value_target;
 				ml.AddressOf (ec);
 			} else {
 				Invocation.EmitArguments (ec, method, Arguments);
@@ -4152,6 +4237,7 @@ namespace Mono.CSharp {
 				      "type name instead");
 		}
 
+#if USE_OLD
 		public static Expression ResolveMemberAccess (EmitContext ec, Expression member_lookup,
 							      Expression left, Location loc)
 		{
@@ -4160,6 +4246,14 @@ namespace Mono.CSharp {
 			//
 			if (member_lookup is MethodGroupExpr){
 				MethodGroupExpr mg = (MethodGroupExpr) member_lookup;
+
+#if SHOW_METHOD_GROUPS
+				Console.WriteLine ("Method Groups:");
+				foreach (MethodInfo mi in mg.Methods){
+					Console.WriteLine ("  " + mi.DeclaringType + "/" + mi.Name +
+							   " " + mi.IsStatic);
+				}
+#endif
 				
 				//
 				// Type.MethodGroup
@@ -4376,6 +4470,222 @@ namespace Mono.CSharp {
 			return ResolveMemberAccess (ec, member_lookup, expr, loc);
 		}
 
+#else
+
+		//
+		// This code is more conformant to the spec (it follows it step by step),
+		// but it has not been tested yet, and there is nothing here that is not
+		// caught by the above code.  But it might be a better foundation to improve
+		// on in the future
+		//
+		public ResolveTypeMemberAccess (EmitContext ec, Expression member_lookup,
+						Expression left, Location loc)
+		{
+			if (member_lookup is TypeExpr){
+				member_lookup.Resolve (ec);
+				return member_lookup;
+			}
+			
+			if (member_lookup is MethodGroupExpr){
+				if (!mg.RemoveStaticMethods ()){
+					SimpleName.Error120 (loc, mg.Methods [0].Name); 
+					return null;
+				}
+				
+				return member_lookup;
+			}
+			
+			if (member_lookup is PropertyExpr){
+				PropertyExpr pe = (PropertyExpr) member_lookup;
+					
+					if (!pe.IsStatic){
+						SimpleName.Error120 (loc, pe.PropertyInfo.Name);
+						return null;
+					}
+					return pe;
+			}
+			
+			if (member_lookup is FieldExpr){
+				FieldExpr fe = (FieldExpr) member_lookup;
+				FieldInfo fi = fe.FieldInfo;
+				
+				if (fi is FieldBuilder) {
+					Const c = TypeManager.LookupConstant ((FieldBuilder) fi);
+					
+					if (c != null) {
+						object o = c.LookupConstantValue (ec);
+						return Constantify (o, fi.FieldType);
+					}
+				}
+				
+				if (fi.IsLiteral) {
+					Type t = fi.FieldType;
+					Type decl_type = fi.DeclaringType;
+					object o;
+					
+					if (fi is FieldBuilder)
+						o = TypeManager.GetValue ((FieldBuilder) fi);
+					else
+						o = fi.GetValue (fi);
+					
+					if (decl_type.IsSubclassOf (TypeManager.enum_type)) {
+						Expression enum_member = MemberLookup (
+							ec, decl_type, "value__",
+							false, loc); 
+						
+						Enum en = TypeManager.LookupEnum (decl_type);
+						
+						Constant c;
+						if (en != null)
+							c = Constantify (o, en.UnderlyingType);
+						else 
+							c = Constantify (o, enum_member.Type);
+						
+						return new EnumConstant (c, decl_type);
+					}
+					
+					Expression exp = Constantify (o, t);
+					
+					return exp;
+				}
+
+				if (!fe.FieldInfo.IsStatic){
+					error176 (loc, fe.FieldInfo.Name);
+					return null;
+				}
+				return member_lookup;
+			}
+
+			if (member_lookup is EventExpr){
+
+				EventExpr ee = (EventExpr) member_lookup;
+				
+				//
+				// If the event is local to this class, we transform ourselves into
+				// a FieldExpr
+				//
+
+				Expression ml = MemberLookup (
+					ec, ec.TypeContainer.TypeBuilder, ee.EventInfo.Name,
+					true, MemberTypes.Event, AllBindingFlags, loc);
+
+				if (ml != null) {
+					MemberInfo mi = ec.TypeContainer.GetFieldFromEvent ((EventExpr) ml);
+
+					ml = ExprClassFromMemberInfo (ec, mi, loc);
+					
+					if (ml == null) {
+						Report.Error (-200, loc, "Internal error!!");
+						return null;
+					}
+
+					return ResolveMemberAccess (ec, ml, left, loc);
+				}
+
+				if (!ee.IsStatic) {
+					SimpleName.Error120 (loc, ee.EventInfo.Name);
+					return null;
+				}
+				
+				return ee;
+			}
+
+			Console.WriteLine ("Left is: " + left);
+			Report.Error (-100, loc, "Support for [" + member_lookup + "] is not present yet");
+			Environment.Exit (0);
+
+			return null;
+		}
+		
+		public ResolveInstanceMemberAccess (EmitContext ec, Expression member_lookup,
+						    Expression left, Location loc)
+		{
+			if (member_lookup is MethodGroupExpr){
+				//
+				// Instance.MethodGroup
+				//
+				if (!mg.RemoveStaticMethods ()){
+					error176 (loc, mg.Methods [0].Name);
+					return null;
+				}
+				
+				mg.InstanceExpression = left;
+					
+				return member_lookup;
+			}
+
+			if (member_lookup is PropertyExpr){
+				PropertyExpr pe = (PropertyExpr) member_lookup;
+
+				if (pe.IsStatic){
+					error176 (loc, pe.PropertyInfo.Name);
+					return null;
+				}
+				pe.InstanceExpression = left;
+				
+				return pe;
+			}
+
+			Type left_type = left.type;
+
+			if (left_type.IsValueType){
+			} else {
+				
+			}
+		}
+		
+		public override Expression DoResolve (EmitContext ec)
+		{
+			//
+			// We are the sole users of ResolveWithSimpleName (ie, the only
+			// ones that can cope with it
+			//
+			expr = expr.ResolveWithSimpleName (ec);
+
+			if (expr == null)
+				return null;
+
+			if (expr is SimpleName){
+				SimpleName child_expr = (SimpleName) expr;
+				
+				expr = new SimpleName (child_expr.Name + "." + Identifier, loc);
+
+				return expr.ResolveWithSimpleName (ec);
+			}
+
+			//
+			// Handle enums here when they are in transit.
+			// Note that we cannot afford to hit MemberLookup in this case because
+			// it will fail to find any members at all (Why?)
+			//
+
+			Type expr_type = expr.Type;
+			if (expr_type.IsSubclassOf (TypeManager.enum_type)) {
+				
+				Enum en = TypeManager.LookupEnum (expr_type);
+				
+				if (en != null) {
+					object value = en.LookupEnumValue (ec, Identifier, loc);
+
+					if (value == null)
+						return null;
+					
+					Constant c = Constantify (value, en.UnderlyingType);
+					return new EnumConstant (c, expr_type);
+				}
+			}
+
+			member_lookup = MemberLookup (ec, expr.Type, Identifier, false, loc);
+
+			if (member_lookup == null)
+				return null;
+
+			if (expr is TypeExpr)
+				return ResolveTypeMemberAccess (ec, member_lookup, expr, loc);
+			else
+				return ResolveInstanceMemberAccess (ec, member_lookup, expr, loc);
+		}
+#endif
 		public override void Emit (EmitContext ec)
 		{
 			throw new Exception ("Should not happen I think");
@@ -4536,7 +4846,7 @@ namespace Mono.CSharp {
 	/// <summary>
 	///   Implements array access 
 	/// </summary>
-	public class ArrayAccess : Expression, IAssignMethod {
+	public class ArrayAccess : Expression, IAssignMethod, IMemoryLocation {
 		//
 		// Points to our "data" repository
 		//
@@ -4598,7 +4908,9 @@ namespace Mono.CSharp {
 				ig.Emit (OpCodes.Ldelem_R8);
 			else if (type == TypeManager.intptr_type)
 				ig.Emit (OpCodes.Ldelem_I);
-			else
+			else if (type.IsValueType)
+				ig.Emit (OpCodes.Ldelema, type);
+			else 
 				ig.Emit (OpCodes.Ldelem_Ref);
 		}
 
@@ -4625,6 +4937,57 @@ namespace Mono.CSharp {
 			else
 				ig.Emit (OpCodes.Stelem_Ref);
 		}
+
+		MethodInfo FetchGetMethod ()
+		{
+			ModuleBuilder mb = RootContext.ModuleBuilder;
+			Type [] args = new Type [ea.Arguments.Count];
+			MethodInfo get;
+			
+			int i = 0;
+				
+			foreach (Argument a in ea.Arguments)
+				args [i++] = a.Type;
+			
+			get = mb.GetArrayMethod (
+				ea.Expr.Type, "Get",
+				CallingConventions.HasThis |
+				CallingConventions.Standard,
+				type, args);
+			return get;
+		}
+				
+
+		MethodInfo FetchAddressMethod ()
+		{
+			ModuleBuilder mb = RootContext.ModuleBuilder;
+			Type [] args = new Type [ea.Arguments.Count];
+			MethodInfo address;
+			string ptr_type_name;
+			Type ret_type;
+			int i = 0;
+			
+			ptr_type_name = type.FullName + "&";
+			ret_type = Type.GetType (ptr_type_name);
+			
+			//
+			// It is a type defined by the source code we are compiling
+			//
+			if (ret_type == null){
+				ret_type = mb.GetType (ptr_type_name);
+			}
+			
+			foreach (Argument a in ea.Arguments)
+				args [i++] = a.Type;
+			
+			address = mb.GetArrayMethod (
+				ea.Expr.Type, "Address",
+				CallingConventions.HasThis |
+				CallingConventions.Standard,
+				ret_type, args);
+
+			return address;
+		}
 		
 		public override void Emit (EmitContext ec)
 		{
@@ -4639,22 +5002,10 @@ namespace Mono.CSharp {
 			if (rank == 1)
 				EmitLoadOpcode (ig, type);
 			else {
-				ModuleBuilder mb = RootContext.ModuleBuilder;
-				Type [] args = new Type [ea.Arguments.Count];
-				MethodInfo get;
+				MethodInfo method;
 				
-				int i = 0;
-				
-				foreach (Argument a in ea.Arguments)
-					args [i++] = a.Type;
-				
-				get = mb.GetArrayMethod (
-					ea.Expr.Type, "Get",
-					CallingConventions.HasThis |
-					CallingConventions.Standard,
-					type, args);
-				
-				ig.Emit (OpCodes.Call, get);
+				method = FetchGetMethod ();
+				ig.Emit (OpCodes.Call, method);
 			}
 		}
 
@@ -4693,6 +5044,24 @@ namespace Mono.CSharp {
 					TypeManager.void_type, args);
 				
 				ig.Emit (OpCodes.Call, set);
+			}
+		}
+
+		public void AddressOf (EmitContext ec)
+		{
+			int rank = ea.Expr.Type.GetArrayRank ();
+			ILGenerator ig = ec.ig;
+			
+			ea.Expr.Emit (ec);
+
+			foreach (Argument a in ea.Arguments)
+				a.Expr.Emit (ec);
+
+			if (rank == 1){
+				ig.Emit (OpCodes.Ldelema, type);
+			} else {
+				MethodInfo address = FetchAddressMethod ();
+				ig.Emit (OpCodes.Call, address);
 			}
 		}
 	}

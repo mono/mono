@@ -1,3 +1,56 @@
+2001-12-23  Miguel de Icaza  <miguel@ximian.com>
+
+	* expression.cs (IsParamsMethodApplicable): if there are not
+	parameters, return immediately.
+
+	* ecore.cs: The 0 literal can be implicity converted to an enum
+	type. 
+
+	(SimpleName.DoResolve): First lookup the type, then lookup the
+	members. 
+
+	(FieldExpr.Emit): If the InstanceExpression is a ValueType, we
+	want to get its address.  If the InstanceExpression is not
+	addressable, store the result in a temporary variable, then get
+	the address of it.
+
+	* codegen.cs: Only display 219 errors on warning level or above. 
+
+	* expression.cs (ArrayAccess): Make it implement the
+	IMemoryLocation interface.
+
+	(Binary.DoResolve): handle the operator == (object a, object b)
+	and operator != (object a, object b) without incurring into a
+	BoxedCast (because 5 != o should never be performed).
+
+	Handle binary enumerator operators.
+
+	(EmitLoadOpcode): Use Ldelema if the object we are loading is a
+	value type, otherwise use Ldelem_ref.
+
+	Use precomputed names;
+
+	(AddressOf): Implement address of
+
+	* cs-parser.jay (labeled_statement): Fix recursive block
+	addition by reworking the production.
+
+	* expression.cs (New.DoEmit): New has a special case:
+		
+		 If we are dealing with a ValueType, we have a few
+		 situations to deal with:
+		
+		    * The target of New is a ValueType variable, that is
+		      easy, we just pass this as the variable reference
+		
+		    * The target of New is being passed as an argument,
+		      to a boxing operation or a function that takes a
+		      ValueType.
+		
+		      In this case, we need to create a temporary variable
+		      that is the argument of New.
+
+
 2001-12-23  Ravi Pratap  <ravi@ximian.com>
 
 	* rootcontext.cs (LookupType): Check that current_type is not null before
