@@ -636,7 +636,7 @@ namespace Mono.CSharp {
 					pending_implementations [i].methods = mi;
 					pending_implementations [i].args = new Type [count][];
 					pending_implementations [i].found = new bool [count];
-					
+
 					int j = 0;
 					foreach (MethodInfo m in mi){
 						Type [] types = TypeManager.GetArgumentTypes (m);
@@ -1036,8 +1036,14 @@ namespace Mono.CSharp {
 			}
 
 			if (Properties != null) {
-				foreach (Property p in Properties)
-					p.Define (this);
+				foreach (Property p in Properties){
+					if (!p.Define (this))
+						remove_list.Add (p);
+				}
+				foreach (object o in remove_list)
+					properties.Remove (o);
+
+				remove_list.Clear ();
 			}
 
 			if (Events != null) {
@@ -1989,6 +1995,7 @@ namespace Mono.CSharp {
 				if (iface_type == null)
 					return null;
 
+				// Compute the full name that we need to export
 				Name = iface_type.FullName + "." + short_name;
 			} else
 				short_name = Name;
@@ -2005,20 +2012,19 @@ namespace Mono.CSharp {
 			// explicit implementations, make sure we are private.
 			//
 			if (implementing != null){
+				//
+				// Setting null inside this block will trigger a more
+				// verbose error reporting for missing interface implementations
+				//
+				// The "candidate" function has been flagged already
+				// but it wont get cleared
+				//
 				if (iface_type == null){
-					if ((ModFlags & Modifiers.PUBLIC) == 0){
-						//
-						// This forces a 536 (not impl) with extra information.
-						//
+					if ((ModFlags & Modifiers.PUBLIC) == 0)
 						implementing = null;
-					}
-					if ((ModFlags & Modifiers.STATIC) != 0){
-						//
-						// This forces a 536 (not impl) with extra information.
-						//
+
+					if ((ModFlags & Modifiers.STATIC) != 0)
 						implementing = null;
-					}
-					
 				} else {
 					if ((ModFlags & (Modifiers.PUBLIC | Modifiers.ABSTRACT)) != 0){
 						Report.Error (
@@ -2040,7 +2046,10 @@ namespace Mono.CSharp {
 				// If not abstract, then we can set Final.
 				if ((flags & MethodAttributes.Abstract) == 0)
 					flags |= MethodAttributes.Final;
-				
+
+				//
+				// clear the flag
+				//
 				parent.IsInterfaceMethod (
 					iface_type, short_name, ret_type, parameters, true);
 			}
@@ -2519,30 +2528,11 @@ namespace Mono.CSharp {
 			OptAttributes = attrs;
 		}
 
-		public void Define (TypeContainer parent)
+		//
+		// Checks our base implementation if any
+		//
+		bool CheckBase (TypeContainer parent)
 		{
-			MethodAttributes method_attr = Modifiers.MethodAttr(ModFlags);
-
-			if (!parent.MethodModifiersValid (ModFlags, Name, Location))
-				return;
-
-			// FIXME - PropertyAttributes.HasDefault ?
-
-			PropertyAttributes prop_attr = PropertyAttributes.RTSpecialName |
-				                       PropertyAttributes.SpecialName;
-		
-			// Lookup Type, verify validity
-			PropertyType = parent.LookupType (Type, false);
-			if (PropertyType == null)
-				return;
-
-			// verify accessibility
-			if (!TypeContainer.AsAccessible (PropertyType, ModFlags))
-				return;
-			
-			Type [] parameters = new Type [1];
-			parameters [0] = PropertyType;
-
 			//
 			// Find properties with the same name on the base class
 			//
@@ -2581,31 +2571,101 @@ namespace Mono.CSharp {
 				
 				PropertyInfo pi = (PropertyInfo) props [0];
 
-				MethodInfo get = TypeManager.GetPropertyGetter (pi);
-				MethodInfo set = TypeManager.GetPropertySetter (pi);
+				MethodInfo inherited_get = TypeManager.GetPropertyGetter (pi);
+				MethodInfo inherited_set = TypeManager.GetPropertySetter (pi);
 
-				MethodInfo reference = get == null ? set : get;
+				MethodInfo reference = inherited_get == null ?
+					inherited_set : inherited_get;
 				
 				if (!CheckMethodAgainstBase (parent, reference))
-					return;
+					return false;
 			} else {
 				if ((ModFlags & Modifiers.NEW) != 0)
 					WarningNotHiding (parent);
 				
-				if ((ModFlags & Modifiers.OVERRIDE) != 0)
+				if ((ModFlags & Modifiers.OVERRIDE) != 0){
 					Report.Error (115, Location,
 						      parent.MakeName (Name) +
 						      " no suitable methods found to override");
+					return false;
+				}
+			}
+			return true;
+		}
+
+		bool DefineMethod (TypeContainer parent, Type iface_type, string short_name, bool is_get)
+		{
+			MethodAttributes flags = Modifiers.MethodAttr (ModFlags);
+			Type [] parameters = null;
+			MethodInfo implementing;
+			string name;
+			
+			if (is_get)
+				name = "get_" + short_name;
+			else {
+				name = "set_" + short_name;
+				parameters = new Type [1];
+				parameters [0] = PropertyType;
+			}
+
+			implementing = parent.IsInterfaceMethod (
+				iface_type, name, PropertyType, parameters, false);
+
+			//
+			// For implicit implementations, make sure we are public, for
+			// explicit implementations, make sure we are private.
+			//
+			if (implementing != null){
+				//
+				// Setting null inside this block will trigger a more
+				// verbose error reporting for missing interface implementations
+				//
+				// The "candidate" function has been flagged already
+				// but it wont get cleared
+				//
+				if (iface_type == null){
+					if ((ModFlags & Modifiers.PUBLIC) == 0)
+						implementing = null;
+					if ((ModFlags & Modifiers.STATIC) != 0)
+						implementing = null;
+				} else {
+					if ((ModFlags & (Modifiers.PUBLIC | Modifiers.ABSTRACT)) != 0){
+						Report.Error (
+							106, Location, "`public' or `abstract' modifiers "+
+							"are not allowed in explicit interface declarations"
+							);
+						implementing = null;
+					}
+				}
 			}
 			
-			PropertyBuilder = parent.TypeBuilder.DefineProperty (
-				Name, prop_attr, PropertyType, null);
+			//
+			// If implementing is still valid, set flags
+			//
+			if (implementing != null){
+				flags |= MethodAttributes.Virtual |
+					 MethodAttributes.NewSlot | MethodAttributes.HideBySig;
 
-			if (Get != null){
+				// If not abstract, then we can set Final.
+				if ((flags & MethodAttributes.Abstract) == 0)
+					flags |= MethodAttributes.Final;
+				
+				//
+				// clear the pending flag
+				//
+				parent.IsInterfaceMethod (
+					iface_type, name, PropertyType, parameters, true);
+			}
+			
+			if (is_get){
 				GetBuilder = parent.TypeBuilder.DefineMethod (
-					"get_" + Name, method_attr, PropertyType, null);
+					name, flags, PropertyType, null);
 				PropertyBuilder.SetGetMethod (GetBuilder);
-
+			
+				if (implementing != null)
+					parent.TypeBuilder.DefineMethodOverride (
+						GetBuilder, implementing);
+				
 				//
 				// HACK because System.Reflection.Emit is lame
 				//
@@ -2614,18 +2674,20 @@ namespace Mono.CSharp {
 				
 				if (!TypeManager.RegisterMethod (GetBuilder, ip, null)) {
 					Report.Error (111, Location,
-					       "Class `" + parent.Name +
+						      "Class `" + parent.Name +
 						      "' already contains a definition with the " +
 						      "same return value and parameter types as the " +
 						      "'get' method of property `" + Name + "'");
-					return;
+					return false;
 				}
-			}
-			
-			
-			if (Set != null){
+			} else {
 				SetBuilder = parent.TypeBuilder.DefineMethod (
-					"set_" + Name, method_attr, null, parameters);
+					name, flags, null, parameters);
+
+				if (implementing != null)
+					parent.TypeBuilder.DefineMethodOverride (
+						SetBuilder, implementing);
+				
 				SetBuilder.DefineParameter (1, ParameterAttributes.None, "value"); 
 				PropertyBuilder.SetSetMethod (SetBuilder);
 
@@ -2638,24 +2700,86 @@ namespace Mono.CSharp {
 					parent, new Parameters (parms, null));
 
 				if (!TypeManager.RegisterMethod (SetBuilder, ip, parameters)) {
-					Report.Error (111, Location,
-					       "Class `" + parent.Name + "' already contains a definition with the " +
-					       "same return value and parameter types as the " +
-					       "'set' method of property `" + Name + "'");
-					return;
+					Report.Error (
+						111, Location,
+						"Class `" + parent.Name +
+						"' already contains a definition with the " +
+						"same return value and parameter types as the " +
+						"'set' method of property `" + Name + "'");
+					return false;
 				}
 			}
 
+			return true;
+		}
+
+		public bool Define (TypeContainer parent)
+		{
+			Type iface_type = null;
+			string short_name;
+			
+			if (!parent.MethodModifiersValid (ModFlags, Name, Location))
+				return false;
+
+			// Lookup Type, verify validity
+			PropertyType = parent.LookupType (Type, false);
+			if (PropertyType == null)
+				return false;
+
+			// verify accessibility
+			if (!TypeContainer.AsAccessible (PropertyType, ModFlags))
+				return false;
+			
+			if (!CheckBase (parent))
+				return false;
+
+			//
+			// Check for explicit interface implementation
+			//
+			if (Name.IndexOf (".") != -1){
+				int pos = Name.LastIndexOf (".");
+				string iface = Name.Substring (0, pos);
+
+				iface_type = parent.LookupType (iface, false);
+				if (iface_type == null)
+					return false;
+
+				short_name = Name.Substring (pos + 1);
+
+				// Compute the full name that we need to export.
+				Name = iface_type.FullName + "." + short_name;
+			} else
+				short_name = Name;
+
+			// FIXME - PropertyAttributes.HasDefault ?
+
+			PropertyAttributes prop_attr = PropertyAttributes.RTSpecialName |
+				                       PropertyAttributes.SpecialName;
+		
+			PropertyBuilder = parent.TypeBuilder.DefineProperty (
+				Name, prop_attr, PropertyType, null);
+
+			if (Get != null)
+				if (!DefineMethod (parent, iface_type, short_name, true))
+					return false;
+			
+			if (Set != null)
+				if (!DefineMethod (parent, iface_type, short_name, false))
+					return false;
+			
 			//
 			// HACK for the reasons exposed above
 			//
 			if (!TypeManager.RegisterProperty (PropertyBuilder, GetBuilder, SetBuilder)) {
 				Report.Error (
 					111, Location,
-					"Class `" + parent.Name + "' already contains a definition for the " +
-					" property `" + Name + "'");
-				return;
+					"Class `" + parent.Name +
+					"' already contains a definition for the property `" +
+					Name + "'");
+				return false;
 			}
+
+			return true;
 		}
 		
 		public void Emit (TypeContainer tc)

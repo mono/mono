@@ -13,6 +13,8 @@
 	(RegisterRequiredImplementations) BindingFlags.Public requires
 	either BindingFlags.Instace or Static.  Use instance here.
 
+	(Property): Refactored code to cope better with the full spec.
+
 	* parameter.cs (GetParameterInfo): Return an empty array instead
 	of null on error.
 

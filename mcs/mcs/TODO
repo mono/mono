@@ -287,3 +287,22 @@ RECOMMENDATIONS
 
 	Maybe keep a pool of constants/literals (zero, 1)?
 
+
+************
+Potential bug:
+
+	We would need to decode the shortname before we lookup members?
+	
+	Maybe not.
+
+interface I {
+	void A ();
+}
+
+class X : I {
+	void I.A ();
+}
+
+class Y : X, I {
+	void I.A () {}
+}

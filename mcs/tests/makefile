@@ -14,7 +14,7 @@ TEST_SOURCES = \
 
 
 TEST_NOPASS = \
-	test-29 test-38 test-52 
+	test-29 test-38 test-52 test-56
 
 test-compiler:
 	-rm *.exe
