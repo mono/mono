@@ -1556,7 +1556,7 @@ namespace System.Xml
 						AppendValueChar ('\n');
 					// and in case of "\r\n", discard '\r'.
 				} else {
-					if (XmlChar.IsInvalid (ch))
+					if (normalization && XmlChar.IsInvalid (ch))
 						throw new XmlException (this, "Not allowed character was found.");
 					ch = ReadChar ();
 				}

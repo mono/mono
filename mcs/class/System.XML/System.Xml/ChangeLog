@@ -1,3 +1,9 @@
+2004-10-18  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlTextReader.cs :
+	  Normalization check is also required for ReadText(). This fixes
+	  bug #68449.
+
 2004-10-15  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XmlTextReader.cs : Inside DTD, '<' character inside XML comment 
