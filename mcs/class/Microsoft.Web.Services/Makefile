@@ -110,7 +110,8 @@ dist-local: dist-default
 # Fun with dependency tracking
 
 $(the_lib): $(makefrag) $(stampfile) $(response)
-	$(CSCOMPILE) $(LIBRARY_FLAGS) $(LIB_MCS_FLAGS) /target:library /out:$@ @$(response)
+	$(CSCOMPILE) $(LIBRARY_FLAGS) $(LIB_MCS_FLAGS) /target:library /out:$(topdir)/class/lib/Microsoft.Web.Services.dll @$(response)
+	mv $(topdir)/class/lib/Microsoft.Web.Services.dll $(topdir)/class/lib/Microsoft.Web.Services.1.dll
 
 $(makefrag): $(sourcefile)
 	@echo Creating $@ ...
@@ -135,7 +136,8 @@ $(stampfile):
 endif
 
 $(the_lib2): $(makefrag2) $(stampfile2) $(response2)
-	$(CSCOMPILE) $(LIBRARY_FLAGS) $(LIB_MCS_FLAGS2) /target:library /out:$@ @$(response2)
+	$(CSCOMPILE) $(LIBRARY_FLAGS) $(LIB_MCS_FLAGS2) /target:library /out:$(topdir)/class/lib/Microsoft.Web.Services.dll @$(response2)
+	mv $(topdir)/class/lib/Microsoft.Web.Services.dll $(topdir)/class/lib/Microsoft.Web.Services.2.dll
 
 $(makefrag2): $(sourcefile2)
 	@echo Creating $@ ...
