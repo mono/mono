@@ -139,8 +139,13 @@ namespace System.IO {
 		}
 		
 		public void MoveTo (string dest) {
+
 			if (dest == null)
 				throw new ArgumentNullException ();
+
+                        if (dest == Name || dir == FullName)
+                                return;
+
 			MonoIOError error;
 			if (MonoIO.Exists (dest, out error) ||
 				MonoIO.ExistsDirectory (dest, out error))

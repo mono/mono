@@ -1,3 +1,10 @@
+2004-05-24  Duncan Mak  <duncan@ximian.com>
+
+	* DirectoryInfo.cs: 
+	* FileInfo.cs: Reformat the whole file to use DOS line endings.
+	(MoveTo): Return if the destination of Move is the
+	same as the file's current location.
+
 2004-05-24  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* MemoryStream.cs: Fixed exception reporting to match MS Fx. Fixed the
