@@ -1,6 +1,10 @@
 
 2002-10-28      Gaurav Vaish <gvaish_mono@lycos.com>
 
+	* DataList.cs          - PrepareControlHierarchy()       : Implemented.
+
+2002-10-28      Gaurav Vaish <gvaish_mono@lycos.com>
+
 	* DataList.cs          - RenderContents(HtmlTextWriter)  : Implemented.
 	                       - GetItem(ListItemType, int)      : Removed TODO.
 	                       - CreateControlHierarchy(bool)    : Implemented.

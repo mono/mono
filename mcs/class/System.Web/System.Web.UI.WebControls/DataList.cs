@@ -6,7 +6,7 @@
  * Maintainer: gvaish@iitk.ac.in
  * Contact: <my_scripts2001@yahoo.com>, <gvaish@iitk.ac.in>
  * Implementation: yes
- * Status:  70%
+ * Status:  98%
  *
  * (C) Gaurav Vaish (2001)
  */
@@ -875,9 +875,81 @@ namespace System.Web.UI.WebControls
 		/// <summary>
 		/// Undocumented
 		/// </summary>
-		[MonoTODO]
 		protected override void PrepareControlHierarchy()
 		{
+			if(Controls.Count > 0)
+			{
+				Style defaultStyle = null;
+				Style rowStyle     = null;
+				if(alternatingItemStyle != null)
+				{
+					defaultStyle = new TableItemStyle();
+					defaultStyle.CopyFrom(itemStyle);
+					defaultStyle.CopyFrom(alternatingItemStyle);
+				} else
+				{
+					defaultStyle = itemStyle;
+				}
+				foreach(DataListItem current in Controls)
+				{
+					rowStyle = null;
+					switch(current.ItemType)
+					{
+						case ListItemType.Header :
+							           if(headerStyle != null)
+							           	rowStyle = headerStyle;
+						               break;
+						case ListItemType.Footer :
+							           if(footerStyle != null)
+							           	rowStyle = footerStyle;
+						               break;
+						case ListItemType.Separator :
+							           rowStyle = separatorStyle;
+						               break;
+						case ListItemType.Item :
+							           rowStyle = itemStyle;
+						               break;
+						case ListItemType.AlternatingItem :
+							           rowStyle = defaultStyle;
+						               break;
+						case ListItemType.SelectedItem :
+							           rowStyle = new TableItemStyle();
+						               if((current.ItemIndex % 2) == 0)
+						               	rowStyle.CopyFrom(itemStyle);
+						               else
+						               	rowStyle.CopyFrom(defaultStyle);
+						               rowStyle.CopyFrom(selectedItemStyle);
+						               break;
+						case ListItemType.EditItem :
+							           rowStyle = new TableItemStyle();
+						               if((current.ItemIndex % 2) == 0)
+						               	rowStyle.CopyFrom(itemStyle);
+						               else
+						               	rowStyle.CopyFrom(defaultStyle);
+						               if(current.ItemIndex == SelectedIndex)
+						               	rowStyle.CopyFrom(selectedItemStyle);
+						               rowStyle.CopyFrom(editItemStyle);
+						               break;
+					}
+					if(rowStyle != null)
+					{
+						if(!extractTemplateRows)
+						{
+							current.MergeStyle(rowStyle);
+						} else
+						{
+							foreach(Control currentCtrl in current.Controls)
+							{
+								if(currentCtrl is Table)
+								{
+									foreach(TableRow cRow in ((Table)currentCtrl).Rows)
+										cRow.MergeStyle(rowStyle);
+								}
+							}
+						}
+					}
+				}
+			}
 		}
 
 		/// <summary>
