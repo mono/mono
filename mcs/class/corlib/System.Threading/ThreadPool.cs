@@ -60,15 +60,21 @@ namespace System.Threading
          // Holds requests..
          _RequestQueue = Queue.Synchronized(new Queue(128));
 
-         _MaxThreads = 64;
+			// TODO: This should be 2 x number of CPU:s in the box
+         _MaxThreads = 16;
          _CurrentThreads = 0;
          _RequestInQueue = 0;
          _ThreadsInUse = 0;
          _ThreadCreateTriggerRequests = 5;
 
-         // Keeps track of requests in the queue and increases the number of threads if needed
-         _MonitorThread = new Thread(new ThreadStart(MonitorThread));
-         _MonitorThread.Start();
+			// TODO: This temp starts one thread, remove this..
+			CheckIfStartThread();
+
+			// Keeps track of requests in the queue and increases the number of threads if needed
+
+			// PT: Disabled - causes problems during shutdown
+         //_MonitorThread = new Thread(new ThreadStart(MonitorThread));
+         //_MonitorThread.Start();
       }
 
       internal void RemoveThread() {
@@ -83,7 +89,9 @@ namespace System.Threading
             bCreateThread = true;
          }
 
-         if ((_MaxThreads == -1 || _CurrentThreads < _MaxThreads) && _ThreadsInUse > 0 && _RequestInQueue > _ThreadCreateTriggerRequests) {
+			if ((	_MaxThreads == -1 || _CurrentThreads < _MaxThreads) && 
+					_ThreadsInUse > 0 && 
+					_RequestInQueue >= _ThreadCreateTriggerRequests) {
             bCreateThread = true;
          }
 
@@ -119,9 +127,12 @@ namespace System.Threading
                }
             }
 
-            Interlocked.Increment(ref _ThreadsInUse);
+				Interlocked.Increment(ref _ThreadsInUse);
 
-            try {
+				// TODO: Remove when we know how to stop the watch thread
+				CheckIfStartThread();
+
+				try {
                ThreadPoolWorkItem oItem = (ThreadPoolWorkItem) _RequestQueue.Dequeue();
 
                if (Interlocked.Decrement(ref _RequestInQueue) == 0) {
@@ -143,7 +154,8 @@ namespace System.Threading
             }
          }
       }
-
+		
+		/* This is not used currently 
       internal void MonitorThread() {
          while (true) {
             if (_DataInQueue.WaitOne ()) {
@@ -153,7 +165,7 @@ namespace System.Threading
             Thread.Sleep(500);
          }
       }
-
+		*/
       internal bool QueueUserWorkItemInternal(WaitCallback callback) {
          return QueueUserWorkItem(callback, null);
       }
