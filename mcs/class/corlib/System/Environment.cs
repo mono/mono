@@ -281,28 +281,33 @@ namespace System
 		/// Returns the fully qualified path of the
 		/// folder specified by the "folder" parameter
 		/// </summary>
-		public static string GetFolderPath(SpecialFolder folder)
+		public static string GetFolderPath (SpecialFolder folder)
 		{
+                        string path;
+
                         switch (folder) {
 
 #if NET_1_1                                
                         case SpecialFolder.MyComputer: // MyComputer is a virtual directory
-                                return "";
+                                path = "";
                                 break;
                                 
                         case SpecialFolder.Desktop:
 #endif                                
                         case SpecialFolder.DesktopDirectory:
-                                return Path.Combine (GetEnvironmentVariable ("HOME"), "Desktop");
+                                path = Path.Combine (GetEnvironmentVariable ("HOME"), "Desktop");
                                 break;
                                 
                          case SpecialFolder.Personal:
-                                 return GetEnvironmentVariable ("HOME");
+                                 path = GetEnvironmentVariable ("HOME");
+                                 break;
 
                         default:
-                                return "";
+                                path = "";
                                 break;
                         }
+
+                        return path;
                 }
 
 		/// <summary>
