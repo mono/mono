@@ -1,3 +1,19 @@
+2001-07-13  Miguel de Icaza  <miguel@ximian.com>
+
+	* get.c (get_method): GOOD. Implemented this other bad boy.
+
+2001-07-12  Miguel de Icaza  <miguel@ximian.com>
+
+	* get.c (get_token_type): Implement TOKEN_TYPE_TYPE_SPEC.
+	(get_typespec): Implement.
+	(get_typedef_or_ref): Use get_typespec.
+
+	* dis-cil.c (dissasemble_cil): Implement InlineField
+	(dissasemble_cil): Implement InlineTok.
+
+	* get.c (get_token, get_field): Implemented.  Worked around lame
+	tables in the spec.
+
 Wed Jul 11 18:52:15 CEST 2001 Paolo Molaro <lupus@ximian.com>
 
 	* dis-cil.c: output real name of local var.
