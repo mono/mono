@@ -15,6 +15,12 @@
 	* Strings.cs:
 		Fixed bug in Len(Decimal)
 
+2003-12-02  Rafael Teixeira <rafaelteixeirabr@hotmail.com>
+	* Microsoft.VisualBasic: Strings.cs 
+		Simplified Asc(string) by using Asc(char)
+		Simplified AscW(string) by using AscW(char)
+		Simplified StrReverse
+
 2002-08-15  Tim Coleman <tim@timcoleman.com>
 	* ChangeLog:
 		Added a ChangeLog
