@@ -1,4 +1,13 @@
 
+Wed Aug 21 12:56:49 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* appdomain.h: added per-domain entry_assembly.
+	* appdomain.c: ensure mono_runtime_exec_main () gets non-null
+	arguments.
+	* icall.c: Assembly::GetEntryAssembly icall.
+	* object.c: set domain->entry_assembly in mono_runtime_exec_main().
+	Changes above from a patch by Tomi Pakarinen <tomi.pakarinen@welho.com>.
+
 Tue Aug 20 15:42:15 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
 	* appdomain.h, gc.c: added mono_domain_finalize ().
