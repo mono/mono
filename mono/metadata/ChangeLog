@@ -1,5 +1,7 @@
 2004-09-07  Zoltan Varga  <vargaz@freemail.hu>
 
+	* marshal.c (emit_marshal_array): Really null terminate string arrays.
+	
 	* marshal.c (emit_marshal_string): Fix freeing of unicode strings.
 
 2004-09-06  Zoltan Varga  <vargaz@freemail.hu>
