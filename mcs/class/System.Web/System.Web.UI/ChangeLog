@@ -1,3 +1,9 @@
+2004-06-10  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Control.cs:
+	(ResolveUrl): fixed typo when dealing with relative urls. Closes bug
+	#59794.
+
 2004-06-08  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* SimpleWebHandlerParser.cs:
