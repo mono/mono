@@ -1494,6 +1494,12 @@ namespace System.Drawing
 		{
 			public Stream stream;
 			
+			private StreamGetBytesDelegate sgbd = null;
+			private StreamSeekDelegate skd = null;
+			private StreamPutBytesDelegate spbd = null;
+			private StreamCloseDelegate scd = null;
+			private StreamSizeDelegate ssd = null;
+			
 			public GdiPlusStreamHelper (Stream s) 
 			{ 
 				stream = s;
@@ -1536,8 +1542,12 @@ namespace System.Drawing
 
 			public StreamGetBytesDelegate GetBytesDelegate {
 				get {
-					if (stream != null && stream.CanRead)
-						return new StreamGetBytesDelegate (StreamGetBytesImpl);
+					if (stream != null && stream.CanRead) {
+						if (sgbd == null) {
+							sgbd = new StreamGetBytesDelegate (StreamGetBytesImpl);
+						}
+						return sgbd;
+					}
 					return null;
 				}
 			}
@@ -1560,8 +1570,12 @@ namespace System.Drawing
 
 			public StreamSeekDelegate SeekDelegate {
 				get {
-					if (stream != null && stream.CanSeek)
-						return new StreamSeekDelegate (StreamSeekImpl);
+					if (stream != null && stream.CanSeek) {
+						if (skd == null) {
+							skd = new StreamSeekDelegate (StreamSeekImpl);
+						}
+						return skd;
+					}
 					return null;
 				}
 			}
@@ -1576,8 +1590,12 @@ namespace System.Drawing
 
 			public StreamPutBytesDelegate PutBytesDelegate {
 				get {
-					if (stream != null && stream.CanWrite)
-						return new StreamPutBytesDelegate (StreamPutBytesImpl);
+					if (stream != null && stream.CanWrite) {
+						if (spbd == null) {
+							spbd = new StreamPutBytesDelegate (StreamPutBytesImpl);
+						}
+						return spbd;
+					}
 					return null;
 				}
 			}
@@ -1589,8 +1607,12 @@ namespace System.Drawing
 
 			public StreamCloseDelegate CloseDelegate {
 				get {
-					if (stream != null)
-						return new StreamCloseDelegate (StreamCloseImpl);
+					if (stream != null) {
+						if (scd == null) {
+							scd = new StreamCloseDelegate (StreamCloseImpl);
+						}
+						return scd;
+					}
 					return null;
 				}
 			}
@@ -1602,8 +1624,12 @@ namespace System.Drawing
 
 			public StreamSizeDelegate SizeDelegate {
 				get {
-					if (stream != null)
-						return new StreamSizeDelegate (StreamSizeImpl);
+					if (stream != null) {
+						if (ssd == null) {
+							ssd = new StreamSizeDelegate (StreamSizeImpl);
+						}
+						return ssd;
+					}
 					return null;
 				}
 			}

@@ -1,3 +1,8 @@
+2005-02-24  Geoff Norton  <gnorton@customerdna.com>
+
+	* gdipFunctions.cs: Cache the delegates in the GdiPlusStreamHelper
+	so they dont get garbage collected before use.
+
 2005-02-11  Peter Bartok  <pbartok@novell.com>
 
 	* gdipFunctions.cs: Fixed prototype to match previous checkin
