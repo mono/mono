@@ -13,6 +13,7 @@
 using System.Collections;
 using System.Globalization;
 using System.Runtime.CompilerServices;
+using System.Threading;
 
 namespace System {
 	internal struct MonoEnumInfo {
@@ -34,22 +35,24 @@ namespace System {
 		internal static void GetInfo (Type enumType, out MonoEnumInfo info)
 		{
 			if (cache == null) {
-				cache = new Hashtable ();
-			} else if (cache.ContainsKey (enumType)) {
-				info = (MonoEnumInfo) cache [enumType];
-				return;
-			}
-
-			lock (cache) {
+				lock (typeof (MonoEnumInfo)) {
+					if (cache == null)
+						cache = new Hashtable ();
+				}
+				Monitor.Enter (cache);
+			} else {
+				Monitor.Enter (cache);
 				if (cache.ContainsKey (enumType)) {
 					info = (MonoEnumInfo) cache [enumType];
+					Monitor.Exit (cache);
 					return;
 				}
-
-				get_enum_info (enumType, out info);
-				Array.Sort (info.values, info.names);
-				cache.Add (enumType, new MonoEnumInfo (info));
 			}
+
+			get_enum_info (enumType, out info);
+			Array.Sort (info.values, info.names);
+			cache.Add (enumType, new MonoEnumInfo (info));
+			Monitor.Exit (cache);
 		}
 	};
 
