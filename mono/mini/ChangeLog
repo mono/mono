@@ -1,3 +1,8 @@
+2003-05-05  Dietmar Maurer  <dietmar@ximian.com>
+
+	* exceptions-x86.c (ves_icall_get_frame_info): also skip remoting
+	wrappers (fix bug 42122)
+
 2003-05-04  Martin Baulig  <martin@ximian.com>
 
 	* mini.h (mono_jit_init, mono_jit_cleanup): Added prototypes.
