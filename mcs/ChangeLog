@@ -1,5 +1,11 @@
 2002-03-14  Daniel Morgan <danmorg@sc.rr.com>
 
+	* class/makefile.gnu
+	* class/ByteFX.Data/makefile.gnu: add ByteFX.Data.dll 
+	to the Linux build
+
+2002-03-14  Daniel Morgan <danmorg@sc.rr.com>
+
 	* makefile: added ByteFX.Data.dll to windows install
 	
 	* class/library.build: added ByteFX.Data.dll 

@@ -34,6 +34,8 @@ DIRS =	corlib				\
 	System.Windows.Forms		\
 	Npgsql				\
 	PEAPI				\
+	ICSharpCode.SharpZipLib	\
+	ByteFX.Data	\
 
 default: all
 
