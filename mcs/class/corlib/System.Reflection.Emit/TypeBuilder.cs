@@ -1318,6 +1318,10 @@ namespace System.Reflection.Emit {
 		}
 
 #if NET_2_0 || BOOTSTRAP_NET_2_0
+		public bool IsCreated () {
+			return is_created;
+		}
+
 		public override Type[] GetGenericArguments ()
 		{
 			if (generic_params != null)
