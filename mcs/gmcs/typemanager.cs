@@ -95,6 +95,9 @@ public class TypeManager {
 	static public Type struct_layout_attribute_type;
 	static public Type field_offset_attribute_type;
 
+	static public Type generic_ienumerator_type;
+	static public Type generic_ienumerable_type;
+
 	//
 	// An empty array of types
 	//
@@ -1170,6 +1173,13 @@ public class TypeManager {
 		cls_compliant_attribute_type = CoreLookupType ("System.CLSCompliantAttribute");
 		struct_layout_attribute_type = CoreLookupType ("System.Runtime.InteropServices.StructLayoutAttribute");
 		field_offset_attribute_type = CoreLookupType ("System.Runtime.InteropServices.FieldOffsetAttribute");
+
+		//
+		// Generic types
+		//
+		generic_ienumerator_type     = CoreLookupType ("System.Collections.Generic.IEnumerator`1");
+		generic_ienumerable_type     = CoreLookupType ("System.Collections.Generic.IEnumerable`1");
+
 
 		//
 		// When compiling corlib, store the "real" types here.

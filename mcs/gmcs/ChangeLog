@@ -1,5 +1,16 @@
 2004-07-14  Martin Baulig  <martin@ximian.com>
 
+	* typemanager.cs
+	(TypeManager.generic_ienumerable_type): New type.
+	(TypeManager.generic_ienumerator_type): New type.
+
+	* rootcontext.cs
+	(RootContext.interfaces_first_stage): Added
+	"System.Collections.Generic.IEnumerator`1" and
+	"System.Collections.Generic.IEnumerable`1".	
+
+2004-07-14  Martin Baulig  <martin@ximian.com>
+
 	* iterators.cs: Use real error numbers.
 
 2004-07-14  Martin Baulig  <martin@ximian.com>

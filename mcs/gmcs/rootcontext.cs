@@ -310,7 +310,13 @@ namespace Mono.CSharp {
 				"System.Runtime.Serialization.ISerializable",
 
 				"System.Reflection.IReflect",
-				"System.Reflection.ICustomAttributeProvider"
+				"System.Reflection.ICustomAttributeProvider",
+
+				//
+				// Generic types
+				//
+				"System.Collections.Generic.IEnumerator`1",
+				"System.Collections.Generic.IEnumerable`1"
 			};
 
 			foreach (string iname in interfaces_first_stage)
