@@ -1,5 +1,15 @@
 2004-05-15  Gert Driesen (drieseng@users.sourceforge.net)
 
+	* System.Design.dll.sources: remove MenusCommands, added
+	MenuCommands
+	* System.Web.UI.Design/ImageUrlEditor.cs: fixed warnings
+	* System.Windows.Forms.Design/MenuCommands.cs: added impl
+	* System.Windows.Forms.Design/MenusCommands.cs: removed,
+	wrong name
+	
+
+2004-05-15  Gert Driesen (drieseng@users.sourceforge.net)
+
 	* System.Windows.Forms.Design/FolderNameEditor.cs: 
 	converted to unix linefeeds, marked class TODO, added Flags
 	attribute to FolderBrowserStyles enum
