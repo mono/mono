@@ -1,3 +1,9 @@
+2005-04-04  Zoltan Varga  <vargaz@freemail.hu>
+
+	* gc.c (mono_gchandle_is_in_domain): Applied patch from Jon Larimer 
+	(jlarimer@gmail.com). Avoid crashes when the wrapper object is null.
+	Fixes #74338.
+
 2005-03-30  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* domain.c: removed g_assert for runtimesecurityframe_class. This is 
