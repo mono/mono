@@ -30,6 +30,7 @@
 		<delete failonerror="false">
 			<fileset basedir="../lib">
 				<includes name="System.Web.Mobile.dll"/>
+				<includes name="System.Web.Mobile.pdb"/>
 			</fileset>
 		</delete>
 	</target>
