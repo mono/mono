@@ -1385,7 +1385,7 @@ namespace System.Reflection.Emit {
 			}
 		}
 
-		public GenericTypeParameterBuilder[] DefineGenericParameters (string[] names)
+		public GenericTypeParameterBuilder[] DefineGenericParameters (params string[] names)
 		{
 			setup_generic_class ();
 

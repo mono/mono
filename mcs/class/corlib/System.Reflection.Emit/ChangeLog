@@ -1,3 +1,7 @@
+2005-01-21 Rafael Teixeira <rafaelteixeirabr@hotmail.com>
+	* MethodBuilder.cs, TypeBuilder: missing 'params' in some method signature
+	patch by Kamil Skalski <nazgul@nemerle.org>
+
 2005-01-18  Geoff Norton  <gnorton@customerdna.com>
 
 	* ModuleBuilder.cs: Interfaces should have null BaseType.

@@ -376,7 +376,7 @@ namespace System.Reflection.Emit {
 			return result;
 		}
 
-		public GenericTypeParameterBuilder[] DefineGenericParameters (string[] names)
+		public GenericTypeParameterBuilder[] DefineGenericParameters (params string[] names)
 		{
 			generic_params = new GenericTypeParameterBuilder [names.Length];
 			for (int i = 0; i < names.Length; i++)
