@@ -74,13 +74,22 @@ namespace CIR {
 		// Returns the list of interfaces that this interface implements
 		// Null on error
 		//
-		Type [] GetInterfaces (Interface iface)
+		Type [] GetInterfaces (Interface iface, out bool error)
 		{
 			ArrayList bases = iface.Bases;
-			Type [] tbases = new Type [bases.Count];
-			int i = 0;
-			Hashtable source_ifaces = tree.Interfaces;
+			Hashtable source_ifaces;
+			int count = bases.Count;
+			Type [] tbases;
+			int i;
+
+			error = false;
+			if (count == 0)
+				return null;
 			
+			tbases = new Type [bases.Count];
+			i = 0;
+			source_ifaces = tree.Interfaces;
+
 			foreach (string name in iface.Bases){
 				Type t = type_manager.LookupType (name);
 				Interface parent;
@@ -91,6 +100,7 @@ namespace CIR {
 				}
 				parent = (Interface) source_ifaces [name];
 				if (parent == null){
+					error = true;
 					report.Error (246, "Can not find type `"+name+"'");
 					return null;
 				}
@@ -99,6 +109,7 @@ namespace CIR {
 					report.Error (529,
 						      "Inherited interface `"+name+"' in `"+
 						      iface.Name+"' is recursive");
+					error = true;
 					return null;
 				}
 				tbases [i++] = t;
@@ -116,20 +127,23 @@ namespace CIR {
 		TypeBuilder CreateInterface (Interface iface)
 		{
 			TypeBuilder tb;
-
+			bool error;
+			
 			if (iface.InTransit)
 				return null;
 			iface.InTransit = true;
 
 			string name = iface.Name;
-			Type [] ifaces = GetInterfaces (iface);
-			if (ifaces == null)
+			Type [] ifaces = GetInterfaces (iface, out error);
+
+			if (error)
 				return null;
 			
 			tb = mb.DefineType (name,
 					    TypeAttributes.Interface |
 					    TypeAttributes.Public |
-					    TypeAttributes.Abstract);
+					    TypeAttributes.Abstract,
+					    null, ifaces);
 			iface.Definition = tb;
 
 			//

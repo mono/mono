@@ -1,6 +1,9 @@
 2001-08-03  Miguel de Icaza  <miguel@ximian.com>
 
-	* rootcontext.cs (CloseTypes): Routine to flush types at the end.
+	* rootcontext.cs (CreateInterface): Handle the case where there
+	are no parent interfaces.
+	
+	(CloseTypes): Routine to flush types at the end.
 	(CreateInterface): Track types.
 	(GetInterfaces): Returns an array of Types from the list of
 	defined interfaces.
