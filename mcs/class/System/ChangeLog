@@ -1,3 +1,10 @@
+2004-11-18  Lluis Sanchez Gual <lluis@novell.com>
+
+	* System.dll.sources: Added new files:
+		System.Configuration/ProviderSettings.cs
+		System.Configuration/ProviderSettingsCollection.cs
+		System.Configuration.Provider/ProviderBase.cs
+
 2004-11-15  Lluis Sanchez Gual <lluis@novell.com>
 
 	* System.dll.sources: Added new files:

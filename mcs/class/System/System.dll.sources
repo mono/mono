@@ -370,6 +370,8 @@ System.Configuration/NonEmptyStringFlags.cs
 System.Configuration/PathLevel.cs
 System.Configuration/ProtectedConfigurationProvider.cs
 System.Configuration/ProviderBase.cs
+System.Configuration/ProviderSettings.cs
+System.Configuration/ProviderSettingsCollection.cs
 System.Configuration/RuntimeOnlySection.cs
 System.Configuration/SectionInfo.cs
 System.Configuration/SectionGroupInfo.cs
@@ -644,6 +646,6 @@ System/Uri.cs
 System/UriFormatException.cs
 System/UriHostNameType.cs
 System/UriPartial.cs
-System.Configuration.Provider/IProvider.cs
+System.Configuration.Provider/ProviderBase.cs
 System.Configuration.Provider/NotSupportedByProviderException.cs
 System.Configuration.Provider/ProviderCollection.cs
