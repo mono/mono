@@ -1,3 +1,9 @@
+2003-07-25  Duncan Mak  <duncan@ximian.com>
+
+	* AppDomain.cs (Equals):
+	(GetHashCode): Removed because they do not need to be defined
+	here.
+
 2003-07-24  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* TypeLoadException.cs: removed unused fields. TypeName returns "" if

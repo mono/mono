@@ -409,14 +409,6 @@ namespace System {
 				theDelegate ();
 		}
 		
-		public override bool Equals (object other)
-		{
-			if (!(other is AppDomain))
-				return false;
-
-			return this._mono_app_domain == ((AppDomain)other)._mono_app_domain;
-		}
-
 		public int ExecuteAssembly (string assemblyFile)
 		{
 			return ExecuteAssembly (assemblyFile, new Evidence (), null);
@@ -436,11 +428,6 @@ namespace System {
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		public extern object GetData (string name);
 		
-		public override int GetHashCode ()
-		{
-			return (int)_mono_app_domain;
-		}
-
 		public new Type GetType()
 		{
 			return base.GetType ();
