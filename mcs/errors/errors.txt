@@ -115,3 +115,5 @@ the Microsoft C# compiler:
 -213	This feature requires v2 support.
 
 -214    Generic class can not have attribute as its parent class
+
+-215    Taking the address of a parameter in an iterator is not allowed.

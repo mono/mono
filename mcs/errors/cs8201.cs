@@ -1,5 +1,5 @@
 // 
-// Should report an error, as C is defined twice
+// Should report an error, as class X is defined twice
 //
 
 class X <T> {
