@@ -1,3 +1,9 @@
+2004-01-22  Zoltan Varga  <vargaz@freemail.hu>
+
+	* class.c (mono_class_setup_vtable): If a parent class already 
+	implements an interface, use the implementing methods from that class.
+	Fixes #53148.
+
 2004-01-22  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* threadpool.c: just return instead of ExitThread to allow for thread
