@@ -18,6 +18,7 @@ class X {
 	enum A {
 		a = 23333,
 	}
+	public const string One = "one";
 
 	static int s (byte b)
 	{
@@ -407,7 +408,16 @@ class X {
 			return 100;
 		}
 	}
-	
+
+	static int test_memberaccess (string s)
+	{
+		switch (s){
+		case X.One: 
+			return 3;
+		default:
+			return 4;
+		}	
+	}
 	static int Main ()
 	{
 		byte b;
@@ -496,7 +506,10 @@ class X {
 			return 33;
 		if (test_goto (200) != 100)
 			return 34;
-		
+	
+		if (test_memberaccess ("one") != 3)
+			return 35;
+	
 		Console.WriteLine ("All tests pass");
 		return 0;
 	}
