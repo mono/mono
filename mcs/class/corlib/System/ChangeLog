@@ -1,5 +1,10 @@
 2002-02-05  Duncan Mak  <duncan@ximian.com>
 
+	* DBNull.cs: This is my first crack at the DBNull class. I think I
+	actually got most of the IConvertible methods right, but I haven't
+	done the research to test whether or not this is the correct
+	behavior. IConvertible.ToType () is the most iffy of all, IMHO.
+
 	* DllNotFoundException.cs: Inherits from TypeLoadException, not SystemException.
 
 2002-02-05  Dietmar Maurer  <dietmar@ximian.com>
