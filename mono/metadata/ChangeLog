@@ -1,3 +1,7 @@
+2002-08-21  Dietmar Maurer  <dietmar@ximian.com>
+
+	* marshal.c (mono_marshal_get_remoting_invoke): save lmf, because
+	we call unmanaged code which throws exceptions.
 
 Wed Aug 21 12:56:49 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
