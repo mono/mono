@@ -1,3 +1,9 @@
+2003-08-16  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* socket-io.c: patch by Bernie Solomon <bernard@ugsolutions.com> that
+	fixes a problem with byte ordering when getting the address family for
+	a socket.
+
 2003-08-15  Zoltan Varga  <vargaz@freemail.hu>
 
 	* .cvsignore: Added monosn.
