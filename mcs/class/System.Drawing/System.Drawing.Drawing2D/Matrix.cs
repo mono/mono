@@ -15,7 +15,7 @@ using System.Runtime.InteropServices;
 
 namespace System.Drawing.Drawing2D
 {
-        public  sealed class Matrix : MarshalByRefObject, IDisposable
+        public sealed class Matrix : MarshalByRefObject, IDisposable
         {
                 internal IntPtr nativeMatrix;
                 
@@ -32,16 +32,12 @@ namespace System.Drawing.Drawing2D
         
                 public Matrix (Rectangle rect , Point[] plgpts)
                 {
-                        GpRect rectangle = new GpRect (rect);
-
-                        GDIPlus.GdipCreateMatrix3I (rectangle, plgpts, out nativeMatrix);
+                        GDIPlus.GdipCreateMatrix3I (rect, plgpts, out nativeMatrix);
                 }
         
                 public Matrix (RectangleF rect , PointF[] pa)
                 {
-                        GpRectF rectangle = new GpRectF (rect);
-
-                        GDIPlus.GdipCreateMatrix3 (rectangle, pa, out nativeMatrix);
+                        GDIPlus.GdipCreateMatrix3 (rect, pa, out nativeMatrix);
                 }
 
                 public Matrix (float m11, float m12, float m21, float m22, float dx, float dy)
@@ -52,11 +48,10 @@ namespace System.Drawing.Drawing2D
                 // properties
                 public float[] Elements {
                         get {
-                                IntPtr tmp = Marshal.AllocHGlobal (8 * 6);
+                                IntPtr tmp = Marshal.AllocHGlobal (Marshal.SizeOf (typeof (float)) * 6);
+                                float [] retval = new float [6];
 
                                 Status s = GDIPlus.GdipGetMatrixElements (nativeMatrix, tmp);
-
-                                float [] retval = new float [6];
 
                                 Marshal.Copy (tmp, retval, 0, 6);
 

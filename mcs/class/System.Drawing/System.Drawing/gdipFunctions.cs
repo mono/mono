@@ -117,7 +117,7 @@ namespace System.Drawing {
                 [DllImport("gdiplus.dll")]
 		static internal extern Status GdipFillRectangle (IntPtr graphics, IntPtr brush, float x1, float y1, float x2, float y2);
 		[DllImport("gdiplus.dll")]
-		static internal extern Status GdipDrawString (IntPtr graphics, string text, int len, IntPtr font, ref GpRectF rc, IntPtr format, IntPtr brush);
+		static internal extern Status GdipDrawString (IntPtr graphics, string text, int len, IntPtr font, ref RectangleF rc, IntPtr format, IntPtr brush);
 		[DllImport("gdiplus.dll")]
 		static internal extern Status GdipGetDC (IntPtr graphics, out int hdc);
 		[DllImport("gdiplus.dll")]
@@ -234,7 +234,7 @@ namespace System.Drawing {
 		internal static extern Status GdipCreateBitmapFromGraphics (int width, int height, IntPtr target, out int bitmap);
 
 		[DllImport("gdiplus.dll")]
-		internal static extern Status GdipBitmapLockBits (IntPtr bmp, ref GpRect rc, ImageLockMode flags, PixelFormat format, [In, Out] IntPtr bmpData);
+		internal static extern Status GdipBitmapLockBits (IntPtr bmp, ref Rectangle rc, ImageLockMode flags, PixelFormat format, [In, Out] IntPtr bmpData);
 		
 		// This an internal GDIPlus Cairo function, not part GDIPlus interface
 		//[DllImport("gdiplus.dll")]
@@ -263,9 +263,9 @@ namespace System.Drawing {
                 [DllImport ("gdiplus.dll")]
                 internal static extern Status GdipCreateMatrix2 (float m11, float m12, float m21, float m22, float dx, float dy, out IntPtr matrix);
                 [DllImport ("gdiplus.dll")]
-                internal static extern Status GdipCreateMatrix3 (GpRectF rect, PointF[] dstplg, out IntPtr matrix);
+                internal static extern Status GdipCreateMatrix3 (RectangleF rect, PointF[] dstplg, out IntPtr matrix);
                 [DllImport ("gdiplus.dll")]                
-                internal static extern Status GdipCreateMatrix3I (GpRect rect, Point[] dstplg, out IntPtr matrix);
+                internal static extern Status GdipCreateMatrix3I (Rectangle rect, Point[] dstplg, out IntPtr matrix);
                 [DllImport ("gdiplus.dll")]
                 internal static extern Status GdipDeleteMatrix (IntPtr matrix);
 
@@ -311,7 +311,7 @@ namespace System.Drawing {
                 [DllImport ("gdiplus.dll")]                
                 internal static extern Status GdipCreatePath2 (PointF points, byte [] types, int count, FillMode brushMode, out IntPtr path);
                 [DllImport ("gdiplus.dll")]
-                internal static extern Status GdipClonePath (IntPtr path, out GraphicsPath clonePath);
+                internal static extern Status GdipClonePath (IntPtr path, out IntPtr clonePath);
                 [DllImport ("gdiplus.dll")]                
                 internal static extern Status GdipDeletePath (IntPtr path);
                 [DllImport ("gdiplus.dll")]                
@@ -319,106 +319,71 @@ namespace System.Drawing {
                 [DllImport ("gdiplus.dll")]                
                 internal static extern Status GdipGetPointCount (IntPtr path, out int count);
                 [DllImport ("gdiplus.dll")]                
-                internal static extern Status GdipGetPathTypes (IntPtr path, out IntPtr types, out int count);
+                internal static extern Status GdipGetPathTypes (IntPtr path, byte [] types, int count);
                 [DllImport ("gdiplus.dll")]                
-                internal static extern Status GdipGetPathPoints (IntPtr path, out IntPtr points, out int count);
+                internal static extern Status GdipGetPathPoints (IntPtr path, PointF [] points, int count);
                 [DllImport ("gdiplus.dll")]                
-                internal static extern Status GdipGetPathPointsI (IntPtr path, out IntPtr points, out int count);
-                [DllImport ("gdiplus.dll")]                
-                internal static extern Status GdipGetPathFillMode (IntPtr path, out FillMode mode);
-                [DllImport ("gdiplus.dll")]                
-                internal static extern Status GdipSetPathFillMode (IntPtr path, FillMode mode);
-                [DllImport ("gdiplus.dll")]                
+                internal static extern Status GdipGetPathPointsI (IntPtr path, Point [] points, int count);
+                [DllImport ("gdiplus.dll")]                                
+                internal static extern Status GdipGetPathFillMode (IntPtr path, out FillMode fillMode);
+                [DllImport ("gdiplus.dll")]                                                
+                internal static extern Status GdipSetPathFillMode (IntPtr path, FillMode fillMode);
+                [DllImport ("gdiplus.dll")]                                                
                 internal static extern Status GdipGetPathData (IntPtr path, out IntPtr pathData);
-                [DllImport ("gdiplus.dll")]                
+                [DllImport ("gdiplus.dll")]                                                
                 internal static extern Status GdipStartPathFigure (IntPtr path);
-                [DllImport ("gdiplus.dll")]                
+                [DllImport ("gdiplus.dll")]                                                
                 internal static extern Status GdipClosePathFigure (IntPtr path);
-                [DllImport ("gdiplus.dll")]                
-                internal static extern Status ClosePathFigures (IntPtr path);
-                [DllImport ("gdiplus.dll")]                
+                [DllImport ("gdiplus.dll")]                                                
+                internal static extern Status GdipClosePathFigures (IntPtr path);
+                [DllImport ("gdiplus.dll")]                                                
                 internal static extern Status GdipSetPathMarker (IntPtr path);
-                [DllImport ("gdiplus.dll")]                
+                [DllImport ("gdiplus.dll")]                                                
                 internal static extern Status GdipClearPathMarkers (IntPtr path);
-                [DllImport ("gdiplus.dll")]                
+                [DllImport ("gdiplus.dll")]                                                
                 internal static extern Status GdipReversePath (IntPtr path);
-                [DllImport ("gdiplus.dll")]                
-                internal static extern Status GdipGetPathLastPoint (IntPtr path, out IntPtr lastPoint);
-                [DllImport ("gdiplus.dll")]                
-                internal static extern Status GdipAddLine (IntPtr path, float x1, float y1, float x2, float y2);
-                [DllImport ("gdiplus.dll")]                
-                internal static extern Status GdipAddPathLine2 (IntPtr path, IntPtr points, int count);
-                [DllImport ("gdiplus.dll")]                
+                [DllImport ("gdiplus.dll")]                                                
+                internal static extern Status GdipGetPathLastPoint (IntPtr path, out PointF lastPoint);
+                [DllImport ("gdiplus.dll")]                                                
+                internal static extern Status GdipAddPathLine (IntPtr path, float x1, float y1, float x2, float y2);
+                [DllImport ("gdiplus.dll")]                                                
                 internal static extern Status GdipAddPathArc (IntPtr path, float x, float y, float width, float height, float startAngle, float sweepAngle);
-                [DllImport ("gdiplus.dll")]                
+                [DllImport ("gdiplus.dll")]                                                                
                 internal static extern Status GdipAddPathBezier (IntPtr path, float x1, float y1, float x2, float y2, float x3, float y3, float x4, float y4);
-                [DllImport ("gdiplus.dll")]                
-                internal static extern Status GdipAddPathBeziers (IntPtr path, IntPtr points, int count);
-                [DllImport ("gdiplus.dll")]                
-                internal static extern Status GdipAddPathCurve (IntPtr path, IntPtr points, int count);
-                [DllImport ("gdiplus.dll")]                
-                internal static extern Status GdipAddPathCurve2 (IntPtr path, IntPtr points, int count, float tension);
-                [DllImport ("gdiplus.dll")]                
-                internal static extern Status GdipAddPathCurve3 (IntPtr path, IntPtr points, int count, int offset, int numberOfSegments, float tension);
-                [DllImport ("gdiplus.dll")]                
-                internal static extern Status GdipAddPathClosedCurve (IntPtr path, IntPtr points, int count);
-                [DllImport ("gdiplus.dll")]                
-                internal static extern Status GdipAddPathClosedCurve2 (IntPtr path, IntPtr points, int count, float tension);
-                [DllImport ("gdiplus.dll")]                
+                [DllImport ("gdiplus.dll")]                                                                
+                internal static extern Status GdipAddPathBeziers (IntPtr path, PointF [] points, int count);
+                [DllImport ("gdiplus.dll")]                                                                
+                internal static extern Status GdipAddPathCurve (IntPtr path, PointF [] points, int count);
+                [DllImport ("gdiplus.dll")]                                                                
                 internal static extern Status GdipAddPathRectangle (IntPtr path, float x, float y, float width, float height);
-                [DllImport ("gdiplus.dll")]                
-                internal static extern Status GdipAddPathRectangles (IntPtr path, IntPtr rects, int count);
-                [DllImport ("gdiplus.dll")]                
+                [DllImport ("gdiplus.dll")]                                                                
+                internal static extern Status GdipAddPathRectangles (IntPtr path, RectangleF [] rects, int count);
+                [DllImport ("gdiplus.dll")]                                                                
                 internal static extern Status GdipAddPathEllipse (IntPtr path, float x, float y, float width, float height);
-                [DllImport ("gdiplus.dll")]                
+                [DllImport ("gdiplus.dll")]                                                                
                 internal static extern Status GdipAddPathPie (IntPtr path, float x, float y, float width, float height, float startAngle, float sweepAngle);
-                [DllImport ("gdiplus.dll")]                
-                internal static extern Status GdipAddPathPolygon (IntPtr path, IntPtr points, int count);
-                [DllImport ("gdiplus.dll")]                
-                internal static extern Status GdipAddPathPath (IntPtr path, GraphicsPath addingPath, bool connect);
-                [DllImport ("gdiplus.dll")]                
+                [DllImport ("gdiplus.dll")]                                                                
+                internal static extern Status GdipAddPathPolygon (IntPtr path, PointF [] points, int count);
+                [DllImport ("gdiplus.dll")]                                                                
+                internal static extern Status GdipAddPathPath (IntPtr path, IntPtr addingPath, bool connect);
+                [DllImport ("gdiplus.dll")]
                 internal static extern Status GdipAddPathLineI (IntPtr path, int x1, int y1, int x2, int y2);
-                [DllImport ("gdiplus.dll")]                
-                internal static extern Status GdipAddPathLine2I (IntPtr path, IntPtr points, int count);
-                [DllImport ("gdiplus.dll")]                
+                [DllImport ("gdiplus.dll")]                                                
                 internal static extern Status GdipAddPathArcI (IntPtr path, int x, int y, int width, int height, float startAngle, float sweepAngle);
+                
                 [DllImport ("gdiplus.dll")]                
                 internal static extern Status GdipAddPathBezierI (IntPtr path, int x1, int y1, int x2, int y2, int x3, int y3, int x4, int y4);
-
-				[DllImport ("gdiplus.dll")]                
-                internal static extern Status GdipAddPathBeziersI (IntPtr path, IntPtr points, int count);
+                [DllImport ("gdiplus.dll")]
+                internal static extern Status GdipAddPathBeziersI (IntPtr path, Point [] points, int count);
+                                
                 [DllImport ("gdiplus.dll")]                
-                internal static extern Status GdipAddPathCurveI (IntPtr path, IntPtr points, int count);
-                [DllImport ("gdiplus.dll")]                
-                internal static extern Status GdipAddPathCurve2I (IntPtr path, IntPtr points, int count, float tension);
-                [DllImport ("gdiplus.dll")]                
-                internal static extern Status GdipAddPathCurve3I (IntPtr path, IntPtr points, int count, int offset, int numberOfSegments, float tension);
-                [DllImport ("gdiplus.dll")]                
-                internal static extern Status GdipAddPathClosedCurveI (IntPtr path, IntPtr points, int count);
-                [DllImport ("gdiplus.dll")]                
-                internal static extern Status GdipAddPathClosedCurve2I (IntPtr path, IntPtr points, int count, float tension);
+                internal static extern Status GdipAddPathPolygonI (IntPtr path, Point [] points, int count);
                 [DllImport ("gdiplus.dll")]                
                 internal static extern Status GdipAddPathRectangleI (IntPtr path, int x, int y, int width, int height);
                 [DllImport ("gdiplus.dll")]                
-                internal static extern Status GdipAddPathRectanglesI (IntPtr path, IntPtr rects, int count);
-                [DllImport ("gdiplus.dll")]                
-                internal static extern Status GdipAddPathEllipseI (IntPtr path, int x, int y, int width, int height);
-                [DllImport ("gdiplus.dll")]                
-                internal static extern Status GdipAddPathPieI (IntPtr path, int x, int y, int width, int height, float startAngle, float sweepAngle);
-                [DllImport ("gdiplus.dll")]                
-                internal static extern Status GdipAddPathPolygonI (IntPtr path, IntPtr points, int count);
-                [DllImport ("gdiplus.dll")]                
-                internal static extern Status GdipFlattenPath (IntPtr path, IntPtr matrix, float flatness);
-                [DllImport ("gdiplus.dll")]                
-                internal static extern Status GdipWindingModeOutline (IntPtr path, IntPtr matrix, float flatness);
-                [DllImport ("gdiplus.dll")]                
-                internal static extern Status GdipWidenPath (IntPtr nativePath, IntPtr pen, IntPtr matrix, float flatness);
-                [DllImport ("gdiplus.dll")]                
-                internal static extern Status GdipWarpPath (IntPtr nativePath, IntPtr matrix, IntPtr points, int count,  float src, float srcy, float srcwidth, float srcheight, WarpMode warpMode, float flatness);
-                [DllImport ("gdiplus.dll")]                
+                internal static extern Status GdipAddPathRectanglesI (IntPtr path, Rectangle [] rects, int count);
+                [DllImport ("gdiplus.dll")]
                 internal static extern Status GdipTransformPath (IntPtr path, IntPtr matrix);
-                [DllImport ("gdiplus.dll")]                
-                internal static extern Status GdipGetPathWorldBounds (IntPtr path, IntPtr bounds, IntPtr matrix, IntPtr pen);
                 [DllImport ("gdiplus.dll")]                
                 internal static extern Status GdipGetPathWorldBoundsI (IntPtr path, IntPtr bounds, IntPtr matrix, IntPtr pen);
                 [DllImport ("gdiplus.dll")]                
@@ -428,7 +393,8 @@ namespace System.Drawing {
                 [DllImport ("gdiplus.dll")]                
                 internal static extern Status GdipIsOutlineVisiblePathPoint (IntPtr path, float x, float y, IntPtr graphics, out bool result);
                 [DllImport ("gdiplus.dll")]                
-                internal static extern Status GdipIsOutlineVisiblePathPointI (IntPtr path, int x, int y, IntPtr graphics, out bool result); 
+                internal static extern Status GdipIsOutlineVisiblePathPointI (IntPtr path, int x, int y, IntPtr graphics, out bool result);
+                
 #endregion      
 	}               
 }               

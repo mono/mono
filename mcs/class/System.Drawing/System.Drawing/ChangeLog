@@ -1,9 +1,24 @@
+2004-01-19  Duncan Mak  <duncan@ximian.com>
+
+	* gdipFunctions.cs: Import functions for GraphicsPath.
+
 2004-01-14  Ravindra <rkumar@novell.com>
                                                                                 
         * SolidBrush.cs: Made SolidBrush to initialize its color
 	from IntPtr.
                                                                                 
         * gdipFunctions.cs: Added call to GdipGetSolidFillColor GDI+ API.
+
+2004-01-11  Duncan Mak  <duncan@ximian.com>
+
+	* Bitmap.cs (LockBits): 
+	* Graphics.cs (DrawString): Removed reference to GpRectF.
+
+2004-01-09  Duncan Mak  <duncan@ximian.com>
+
+	* gdipStructs.cs (GpRectF, GpRect, GpPointF, GpPoint):
+	Removed. Didn't know that structs are laid out sequentially by
+	default. We don't need these anymore.
 
 2004-01-12 Ben Maurer  <bmaurer@users.sourceforge.net>
 

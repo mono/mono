@@ -21,6 +21,7 @@ local_objs = bitmap.o \
 	brush.o \
 	general.o \
 	graphics.o \
+	graphics-path.o \
 	image.o \
 	matrix.o \
 	pen.o \

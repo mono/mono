@@ -49,21 +49,6 @@ array_to_g_byte_array (const byte *types, int count)
         return p;
 }
 
-static GpPoint *
-float_to_int (const GpPointF *pts, int count)
-{
-        GpPoint *p = (GpPoint *) GdipAlloc (sizeof (GpPoint) * count);
-        GpPointF *tmp = (GpPointF *) pts;
-        int i;
-        
-        for (i = 0; i < count; i++, p++, tmp++) {
-                p->X = (int) tmp->X;
-                p->Y = (int) tmp->Y;
-        }
-        
-        return p;
-}
-
 static GpPointF *
 int_to_float (const GpPoint *pts, int count)
 {
@@ -86,16 +71,16 @@ append (GpPath *path, float x, float y, GpPathPointType type)
         GpPointF pt;
         pt.X = x;
         pt.Y = y;
+
         g_array_append_val (path->points, pt);
         g_byte_array_append (path->types, &t, 1);
+        path->count++;
 }
 
 static void
 append_point (GpPath *path, GpPointF pt, GpPathPointType type)
 {
-        byte t = (byte) type;
-        g_array_append_val (path->points, pt);
-        g_byte_array_append (path->types, &t, 1);
+        append (path, pt.X, pt.Y, type);
 }
 
 static void
@@ -112,8 +97,8 @@ GdipCreatePath (GpFillMode brushMode, GpPath **path)
         *path = (GpPath *) GdipAlloc (sizeof (GpPath));
 
         (*path)->fill_mode = brushMode;
-        (*path)->points = NULL;
-        (*path)->types = NULL;
+        (*path)->points = g_array_new (FALSE, FALSE, sizeof (GpPointF));
+        (*path)->types = g_byte_array_new ();
         (*path)->count = 0;
 
         return Ok;
@@ -180,33 +165,41 @@ GdipGetPointCount (GpPath *path, int *count)
 }
 
 GpStatus
-GdipGetPathTypes (GpPath *path, byte *types, int *count)
+GdipGetPathTypes (GpPath *path, byte *types, int count)
 {
-        *count = path->count;
-        types = g_byte_array_to_array (path->types);
+        int i;
+        
+        for (i = 0; i < count; i++)
+                types [i] = path->types->data [i];
         
         return Ok;
 }
 
 GpStatus
-GdipGetPathPoints (GpPath *path, GpPointF *points, int *count)
+GdipGetPathPoints (GpPath *path, GpPointF *points, int count)
 {
-        *count = path->count;
-        points = g_array_to_array (path->points);
-        
+        int i;
+
+        for (i = 0; i < count; i++) {
+		GpPointF point = g_array_index (path->points, GpPointF, i);
+                points [i].X = point.X;
+                points [i].Y = point.Y;
+	}
+
         return Ok;
 }
 
 GpStatus
-GdipGetPathPointsI (GpPath *path, GpPoint *points, int *count)
+GdipGetPathPointsI (GpPath *path, GpPoint *points, int count)
 {
-        *count = path->count;
-        PointF *tmp = g_array_to_array (path->points);
+        int i;
 
-        points = float_to_int (tmp, path->count);
+        for (i = 0; i < count; i++) {
+                GpPoint point = g_array_index (path->points, GpPoint, i);
+                points [i].X = (int) point.X;
+                points [i].Y = (int) point.Y; 
+        }
 
-        GdipFree (tmp);
-        
         return Ok;
 }
 
@@ -355,8 +348,8 @@ GdipAddPathArc (GpPath *path, float x, float y,
 
 GpStatus
 GdipAddPathBezier (GpPath *path, 
-        float x1, float y1, float x2, float y2, 
-        float x3, float y3, float x4, float y4)
+                   float x1, float y1, float x2, float y2, 
+                   float x3, float y3, float x4, float y4)
 {
         append (path, x1, y1, PathPointTypeStart);
         append_bezier (path, x2, y2, x3, y3, x4, y4);
@@ -541,11 +534,13 @@ GdipAddPathPath (GpPath *path, GpPath *addingPath, bool connect)
         return NotImplemented;
 }
 
-/* XXX: This one is really hard. They really translate a string into bezier points and what not */
+/* XXX: This one is really hard. They really translate a string into
+bezier points and what not */
 /*
  * GpStatus 
  * GdipAddString (GpPath *path, const char *string, int length, 
- *                const GpFontFamily *family, int style, float emSize, const GpRectF *layoutRect,
+ *                const GpFontFamily *family, int style, float emSize,
+const GpRectF *layoutRect,
  *                const GpStringFormat *format)
  * { 
  *         return NotImplemented; 
@@ -555,7 +550,8 @@ GdipAddPathPath (GpPath *path, GpPath *addingPath, bool connect)
 /*
  * GpStatus
  * GdipAddString (GpPath *path, const char *string, int length,
- *                const GpFontFamily *family, int style, float emSize, const GpRect *layoutRect,
+ *                const GpFontFamily *family, int style, float emSize,
+const GpRect *layoutRect,
  *                const GpStringFormat *format)
  * {
  *          return NotImplemented;
@@ -624,7 +620,7 @@ GdipAddPathCurve2I (GpPath *path, const GpPoint *points, int count, float tensio
 }
 
 GpStatus
-GdipAddPathCurve3I (GpPath *path, const GpPoint *points, 
+GdipAddPathCurve3I (GpPath *path, const GpPoint *points,
                     int count, int offset, int numberOfSegments, float tension)
 {
         return NotImplemented;
@@ -707,7 +703,8 @@ GdipWidenPath (GpPath *nativePath, GpPen *pen, GpMatrix *matrix, float flatness)
 
 GpStatus 
 GdipWarpPath (GpPath *nativePath, GpMatrix *matrix, const GpPointF *points, int count, 
-                float src, float srcy, float srcwidth, float srcheight, WarpMode warpMode, float flatness)
+              float src, float srcy, float srcwidth, float srcheight,
+              WarpMode warpMode, float flatness)
 {
         return NotImplemented;
 }
@@ -762,3 +759,5 @@ GdipIsOutlineVisiblePathPointI (GpPath *path, int x, int y, GpGraphics *graphics
 {
         return NotImplemented;
 }
+
+

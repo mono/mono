@@ -569,51 +569,34 @@ namespace System.Drawing
 		[MonoTODO("Ignores the font")]
 		public void DrawString (string s, Font font, Brush brush, RectangleF layoutRectangle)
 		{
-			GpRectF rf = new GpRectF (layoutRectangle);
-			
-			GDIPlus.GdipDrawString (nativeObject, s, s.Length, IntPtr.Zero, ref rf, IntPtr.Zero, brush.nativeObject);
+			GDIPlus.GdipDrawString (nativeObject, s, s.Length, IntPtr.Zero, ref layoutRectangle, IntPtr.Zero, brush.nativeObject);
 		}
 
 		[MonoTODO("This ignores the font")]
 		public void DrawString (string s, Font font, Brush brush, PointF point)
 		{
-			GpRectF rc = new GpRectF ();
-			rc.left = point.X;
-			rc.top = point.Y;
-			rc.right = 0;
-			rc.bottom = 0;
+			RectangleF rc = new RectangleF (point.X, point.Y, 0, 0);
 			GDIPlus.GdipDrawString (nativeObject, s, s.Length, IntPtr.Zero, ref rc, IntPtr.Zero, brush.nativeObject);
 		}
 
 		[MonoTODO ("This ignores the font and format")]
 		public void DrawString (string s, Font font, Brush brush, PointF point, StringFormat format)
 		{
-			GpRectF rc = new GpRectF ();
-			rc.left = point.X;
-			rc.top = point.Y;
-			rc.right = 0;
-			rc.bottom = 0;
+			RectangleF rc = new RectangleF (point.X, point.Y, 0, 0);
 			GDIPlus.GdipDrawString (nativeObject, s, s.Length, IntPtr.Zero, ref rc, IntPtr.Zero, brush.nativeObject);
 		}
 
 		[MonoTODO ("This ignores the font and the format")]
 		public void DrawString (string s, Font font, Brush brush, RectangleF layoutRectangle, StringFormat format)
 		{
-			GpRectF rect = new GpRectF (layoutRectangle);
-			
-			GDIPlus.GdipDrawString (nativeObject, s, s.Length, IntPtr.Zero, ref rect, IntPtr.Zero, brush.nativeObject);
-			
+			GDIPlus.GdipDrawString (nativeObject, s, s.Length, IntPtr.Zero, ref layoutRectangle, IntPtr.Zero, brush.nativeObject);
 		}
 
 		[MonoTODO("This ignores the font")]
 		public void DrawString (string s, Font font, Brush brush, float x, float y)
 		{
 			Console.WriteLine("DrawString!");
-			GpRectF rc = new GpRectF ();
-			rc.left = x;
-			rc.top = y;
-			rc.right = 0;
-			rc.bottom = 0;
+			RectangleF rc = new RectangleF (x, y, 0, 0);
 			
 			Status status = GDIPlus.GdipDrawString (nativeObject, s, s.Length, IntPtr.Zero, 
 				ref rc, IntPtr.Zero, brush.nativeObject);

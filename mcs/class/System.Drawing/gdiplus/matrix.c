@@ -14,8 +14,9 @@ GpStatus
 GdipCreateMatrix (GpMatrix **matrix)
 {
         *matrix = cairo_matrix_create ();
-        cairo_matrix_set_affine (*matrix, 1, 0, 0, 1, 0, 0);
-        return Ok;
+
+        return gdip_get_status (
+                cairo_matrix_set_affine (*matrix, 1, 0, 0, 1, 0, 0));
 }
 
 GpStatus
@@ -291,7 +292,7 @@ GdipIsMatrixInvertible (GpMatrix *matrix, int *result)
         return Ok;
 }
 
-static int
+static bool
 matrix_equals (GpMatrix *x, GpMatrix *y)
 {
         double ax, bx, cx, dx, ex, fx;
@@ -302,9 +303,9 @@ matrix_equals (GpMatrix *x, GpMatrix *y)
 
         if ((ax != ay) || (bx != by) || (cx != cy) ||
             (dx != dy) || (ex != ey) || (fx != fy))
-                return 0;
+                return FALSE;
 
-        return 1;
+        return TRUE;
 }
 
 GpStatus

@@ -195,7 +195,6 @@ namespace System.Drawing {
 		{
 			Console.WriteLine("Bitmap.LockBits");
 			
-			GpRect rc = new GpRect (rect);			
 			BitmapData result = new BitmapData();
 
 			if (nativeObject == (IntPtr) 0)
@@ -204,7 +203,7 @@ namespace System.Drawing {
 			IntPtr lfBuffer = Marshal.AllocHGlobal(Marshal.SizeOf(result));
      		Marshal.StructureToPtr(result, lfBuffer, false);						
      		
-			Status status = GDIPlus.GdipBitmapLockBits (nativeObject, ref rc, flags, format,  lfBuffer);
+			Status status = GDIPlus.GdipBitmapLockBits (nativeObject, ref rect, flags, format,  lfBuffer);
 			
 			result = (BitmapData) Marshal.PtrToStructure(lfBuffer,  typeof(BitmapData));											
 			Marshal.FreeHGlobal (lfBuffer);

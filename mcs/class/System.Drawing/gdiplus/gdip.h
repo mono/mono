@@ -428,6 +428,9 @@ GpStatus GdipIsMatrixInvertible (GpMatrix *matrix, int *result);
 GpStatus GdipIsMatrixIdentity (GpMatrix *matrix, int *result);
 GpStatus GdipIsMatrixEqual (GpMatrix *matrix, GpMatrix *matrix2, int *result);
 
+/* Path*/
+#include "graphics-path.h"
+
 /* Memory */
 void *GdipAlloc (int size);
 void GdipFree (void *ptr);

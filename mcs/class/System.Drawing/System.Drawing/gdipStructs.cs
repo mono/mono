@@ -15,10 +15,10 @@ namespace System.Drawing {
 	[StructLayout(LayoutKind.Sequential)]
 	internal struct GdiplusStartupInput
 	{
-    	uint 		GdiplusVersion;
-    	IntPtr 		DebugEventCallback;
-    	int             SuppressBackgroundThread;
-    	int 		SuppressExternalCodecs;
+                uint 		GdiplusVersion;
+                IntPtr 		DebugEventCallback;
+                int             SuppressBackgroundThread;
+                int 		SuppressExternalCodecs;
     
     	internal static GdiplusStartupInput MakeGdiplusStartupInput ()
     	{
@@ -30,14 +30,14 @@ namespace System.Drawing {
         	return result;
     	}
     	
-    }
+        }
     
 	[StructLayout(LayoutKind.Sequential)]
 	internal struct GdiplusStartupOutput
 	{
-	    internal IntPtr 	NotificationHook;
-    	internal IntPtr		NotificationUnhook;
-    	
+                internal IntPtr 	NotificationHook;
+                internal IntPtr		NotificationUnhook;
+                
     	internal static GdiplusStartupOutput MakeGdiplusStartupOutput ()
     	{
     		GdiplusStartupOutput result = new GdiplusStartupOutput ();
@@ -45,41 +45,5 @@ namespace System.Drawing {
         	return result;
     	}
 	}
-	
-	[StructLayout(LayoutKind.Sequential)]
-	internal struct GpRect
-	{
-		internal int left;
-		internal int top;
-		internal int right;
-		internal int bottom;
-
-                internal GpRect (Rectangle r)
-                {
-			left = r.Left;
-			top = r.Top;
-			right = r.Right;
-			bottom = r.Bottom;
-                }
-	}
-
-	[StructLayout(LayoutKind.Sequential)]
-	internal struct GpRectF
-	{
-		internal float left;
-		internal float top;
-		internal float right;
-		internal float bottom;
-
-		internal GpRectF (RectangleF r)
-		{
-			left = r.Left;
-			top = r.Top;
-			right = r.Right;
-			bottom = r.Bottom;
-		}
-	}
-	
-	
 }
 

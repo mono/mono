@@ -1,3 +1,17 @@
+2004-01-19  Duncan Mak  <duncan@ximian.com>
+
+	* graphics-path.c (GdipGetPathPoints): Fixed.
+	(GdipCreatePath): Remember to	initialize the arrays instead of
+	just setting them to NULL.
+	(GdipGetPathTypes, GdipGetPathPoints): Fix signature.
+
+	* Makefile (local_sources): Add graphics-path.c to the build.
+
+2004-01-13  Duncan Mak  <duncan@ximian.com>
+
+	* matrix.c (GdipCreateMatrix): Use gdip_get_status instead of just
+	returning Ok;
+
 2004-01-13  Bernie Solomon  <bernard@ugsolutions.com>
 
 	* graphics-path.c (append): fix struct initialization
@@ -15,7 +29,6 @@
 	* graphics.c		restore position in GRAPHICS_STATE stack 
 	* matrix.c		order of matrices in GdipMultiplyMatrix changed 
 	* pen.c			initialization of fields, protection in GdipDeletePen function added
-			
 
 2003-12-25  Duncan Mak  <duncan@ximian.com>
 

@@ -1,8 +1,18 @@
+2004-01-19  Duncan Mak  <duncan@ximian.com>
+
+	* GraphicsPath.cs: Implemented. Still needs testing, though.
+	Particular the PathPoints property, I ran into a P/Invoke problem,
+	I need to first fix that before I can go on with the rest of the testing.
+
 2004-01-13  Ravindra  <rkumar@novell.com>
 
 	* Matrix.cs: Made the Matrix(IntPtr) constructor internal.
 	Because default access is private, that makes it unusable
 	by other classes.
+
+2004-01-11  Duncan Mak  <duncan@ximian.com>
+
+	* Matrix.cs (Matrix): Removed reference to GpRect/GpRectF.
 
 2004-01-10  Ravindra  <rkumar@novell.com>
 
