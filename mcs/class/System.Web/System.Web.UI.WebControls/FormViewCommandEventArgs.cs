@@ -32,7 +32,7 @@
 
 namespace System.Web.UI.WebControls
 {
-	public class FormCommandEventArgs : CommandEventArgs
+	public class FormViewCommandEventArgs : CommandEventArgs
 	{
 		private object source;
 		private CommandEventArgs arguments;
