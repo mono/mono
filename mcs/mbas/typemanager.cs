@@ -683,7 +683,7 @@ public class TypeManager {
 	/// <summary>
 	///    Returns the ConstructorInfo for "args"
 	/// </summary>
-	static ConstructorInfo GetConstructor (Type t, Type [] args)
+	public static ConstructorInfo GetConstructor (Type t, Type [] args)
 	{
 		MemberList list;
 		Signature sig;
