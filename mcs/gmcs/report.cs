@@ -275,8 +275,11 @@ namespace Mono.CSharp {
 			if (temp_ds == null) {
 				SymbolRelatedToPreviousError (mi.DeclaringType.Assembly.Location, TypeManager.GetFullNameSignature (mi));
 			} else {
-				if (mi is MethodBase) {
-					IMethodData md = TypeManager.GetMethod ((MethodBase)mi);
+				MethodBase mb = mi as MethodBase;
+				if (mb != null) {
+					if (mb.Mono_IsInflatedMethod)
+						mb = mb.GetGenericMethodDefinition ();
+					IMethodData md = TypeManager.GetMethod (mb);
 					SymbolRelatedToPreviousError (md.Location, md.GetSignatureForError (temp_ds));
 					return;
 				}
