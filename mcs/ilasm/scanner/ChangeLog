@@ -1,3 +1,8 @@
+2003-02-06 Jackson Harper <jackson@latitudegeo.com>
+
+	* IlToken.cs: Add Dash Token (this is used for assembly names)
+	* ILTokenizer.cs: Return Dash token
+	
 2003-02-02 Jackson Harper <jackson@latitudegeo.com>
 
 	* ChangeLog: Add ChangeLog

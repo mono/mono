@@ -115,11 +115,16 @@ namespace Mono.ILASM {
 
 				// Numbers
 				if (numBuilder.Start (ch)) {
-					reader.Unread (ch);
-					numBuilder.Build ();
-					if (numBuilder.ResultToken != ILToken.Invalid) {
-						res.CopyFrom (numBuilder.ResultToken);
+					if ((ch == '-') && !(Char.IsDigit ((char) reader.Peek ()))) {
+						res = ILToken.Dash;
 						break;
+					} else {
+						reader.Unread (ch);
+						numBuilder.Build ();
+						if (numBuilder.ResultToken != ILToken.Invalid) {
+							res.CopyFrom (numBuilder.ResultToken);
+							break;
+						}
 					}
 				}
 

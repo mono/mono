@@ -32,6 +32,7 @@ namespace Mono.ILASM {
 		public static readonly ILToken Slash;
 		public static readonly ILToken Bang;
 		public static readonly ILToken Ellipsis;
+		public static readonly ILToken Dash;
 
 		private static readonly ILToken [] punctuations;
 
@@ -60,6 +61,7 @@ namespace Mono.ILASM {
 			Slash = new ILToken (Token.SLASH, "/");
 			Bang = new ILToken (Token.BANG, "!");
 			Ellipsis = new ILToken (Token.ELLIPSIS, "...");
+			Dash = new ILToken (Token.DASH, "-");
 
 			punctuations = new ILToken [] {
 				OpenBrace, CloseBrace,
