@@ -1,3 +1,15 @@
+2002-04-30  Miguel de Icaza  <miguel@ximian.com>
+
+	* ecore.cs (SimpleName.SimpleNameResolve): Perform member lookups
+	in container classes as well.  
+
+	* expression.cs (Binary.ResolveOperator): Handle string case
+	before anything else (as operator overloading does emit an error
+	before doing anything else).
+
+	This code could go away when we move to a table driven model, but
+	i could not come up with a good plan last night.
+	
 2002-04-30  Lawrence Pit <loz@cable.a2000.nl>
 
 	* typemanager.cs (CSharpName): reimplementation using regex.

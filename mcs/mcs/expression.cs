@@ -1686,44 +1686,7 @@ namespace Mono.CSharp {
 			Type r = right.Type;
 
 			//
-			// Step 1: Perform Operator Overload location
-			//
-			Expression left_expr, right_expr;
-			
-			string op = oper_names [(int) oper];
-
-			MethodGroupExpr union;
-			left_expr = MemberLookup (ec, l, op, MemberTypes.Method, AllBindingFlags, loc);
-			if (r != l){
-				right_expr = MemberLookup (
-					ec, r, op, MemberTypes.Method, AllBindingFlags, loc);
-				union = Invocation.MakeUnionSet (left_expr, right_expr, loc);
-			} else
-				union = (MethodGroupExpr) left_expr;
-			
-			if (union != null) {
-				Arguments = new ArrayList ();
-				Arguments.Add (new Argument (left, Argument.AType.Expression));
-				Arguments.Add (new Argument (right, Argument.AType.Expression));
-
-				method = Invocation.OverloadResolve (ec, union, Arguments, loc);
-				if (method != null) {
-					MethodInfo mi = (MethodInfo) method;
-
-					type = mi.ReturnType;
-					return this;
-				} else {
-					error19 ();
-					return null;
-				}
-			}	
-
-			//
-			// Step 2: Default operations on CLI native types.
-			//
-
-			// Only perform numeric promotions on:
-			// +, -, *, /, %, &, |, ^, ==, !=, <, >, <=, >=
+			// Step 0: String concatenation (because overloading will get this wrong)
 			//
 			if (oper == Operator.Addition){
 				//
@@ -1795,6 +1758,46 @@ namespace Mono.CSharp {
 				}
 			}
 
+			//
+			// Step 1: Perform Operator Overload location
+			//
+			Expression left_expr, right_expr;
+			
+			string op = oper_names [(int) oper];
+
+			MethodGroupExpr union;
+			left_expr = MemberLookup (ec, l, op, MemberTypes.Method, AllBindingFlags, loc);
+			if (r != l){
+				right_expr = MemberLookup (
+					ec, r, op, MemberTypes.Method, AllBindingFlags, loc);
+				union = Invocation.MakeUnionSet (left_expr, right_expr, loc);
+			} else
+				union = (MethodGroupExpr) left_expr;
+			
+			if (union != null) {
+				Arguments = new ArrayList ();
+				Arguments.Add (new Argument (left, Argument.AType.Expression));
+				Arguments.Add (new Argument (right, Argument.AType.Expression));
+
+				method = Invocation.OverloadResolve (ec, union, Arguments, loc);
+				if (method != null) {
+					MethodInfo mi = (MethodInfo) method;
+
+					type = mi.ReturnType;
+					return this;
+				} else {
+					error19 ();
+					return null;
+				}
+			}	
+
+			//
+			// Step 2: Default operations on CLI native types.
+			//
+
+			// Only perform numeric promotions on:
+			// +, -, *, /, %, &, |, ^, ==, !=, <, >, <=, >=
+			//
 			if (oper == Operator.Addition || oper == Operator.Subtraction) {
 				if (l.IsSubclassOf (TypeManager.delegate_type) &&
 				    r.IsSubclassOf (TypeManager.delegate_type)) {

@@ -2937,10 +2937,27 @@ namespace Mono.CSharp {
 				//
 
 				//
-				// For enums, the TypeBuilder is not ec.TypeContainer.TypeBuilder
+				// For enums, the TypeBuilder is not ec.DeclSpace.TypeBuilder
 				// Hence we have two different cases
 				//
-				e = MemberLookup (ec, ec.DeclSpace.TypeBuilder, Name, Location);
+
+				DeclSpace lookup_ds = ec.DeclSpace;
+				do {
+					if (lookup_ds.TypeBuilder == null)
+						break;
+
+					e = MemberLookup (ec, lookup_ds.TypeBuilder, Name, Location);
+					if (e != null)
+						break;
+
+					//
+					// Classes/structs keep looking, enums break
+					//
+					if (lookup_ds is TypeContainer)
+						lookup_ds = ((TypeContainer) lookup_ds).Parent;
+					else
+						break;
+				} while (lookup_ds != null);
 				
 				if (e == null && ec.ContainerType != null)
 					e = MemberLookup (ec, ec.ContainerType, Name, Location);
