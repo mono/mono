@@ -2719,7 +2719,7 @@ namespace Mono.CSharp {
 		//
 		public static void StoreFromPtr (ILGenerator ig, Type type)
 		{
-			if (type.IsEnum)
+			if (TypeManager.IsEnumType (type))
 				type = TypeManager.EnumToUnderlying (type);
 			if (type == TypeManager.int32_type || type == TypeManager.uint32_type)
 				ig.Emit (OpCodes.Stind_I4);
