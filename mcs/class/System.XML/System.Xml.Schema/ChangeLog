@@ -1,3 +1,8 @@
+2004-11-05  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlSchemaSimpleTypeList.cs,
+	  XmlSchemaSimpleTypeUnion.cs : XmlIgnore.
+
 2004-10-29  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlSchemaAttribute.cs : AttributeSchemaType could be determined on

@@ -58,6 +58,7 @@ namespace System.Xml.Schema
 		}
 
 #if NET_2_0
+		[XmlIgnore]
 		public XmlSchemaSimpleType [] BaseMemberTypes {
 			get { return validatedSchemaTypes; }
 		}

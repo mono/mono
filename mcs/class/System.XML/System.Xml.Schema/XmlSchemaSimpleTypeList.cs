@@ -66,7 +66,8 @@ namespace System.Xml.Schema
 
 #if NET_2_0
 		// LAMESPEC: this name is really ambiguous. Actually it just
-		// holds compiled itemType.
+		// holds compiled itemType, not baseType of the itemType.
+		[XmlIgnore]
 		public XmlSchemaSimpleType BaseItemType {
 			get { return validatedListItemSchemaType; }
 		}
