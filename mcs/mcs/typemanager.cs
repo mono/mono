@@ -375,7 +375,7 @@ public class TypeManager {
 		        return iface.FindMembers (mt, bf, filter, criteria);
 		
 		tc = (TypeContainer) builder_to_container [t];
-		
+
 		if (tc == null) 
 		        return t.FindMembers (mt, bf, filter, criteria);
 		else 

@@ -1019,7 +1019,8 @@ namespace CIR {
 				foreach (TypeContainer tc in Types)
 					tc.Populate ();
 			}
-			
+
+		
 		}
 
 		// <summary>
@@ -1332,12 +1333,28 @@ namespace CIR {
 			if (pending_implementations != null)
 				VerifyPendingMethods ();
 
+			if (OptAttributes != null) {
+				if (OptAttributes.AttributeSections != null) {
+					foreach (AttributeSection asec in OptAttributes.AttributeSections) {
+						if (asec.Attributes != null) {
+							foreach (Attribute a in asec.Attributes) {
+								EmitContext ec = new EmitContext (this, null,
+												  null, ModFlags, false);
+								
+								CustomAttributeBuilder cb = a.Resolve (ec);
+								if (cb != null)
+									TypeBuilder.SetCustomAttribute (cb);
+							}
+						}
+					}
+				}
+			}
+			
 			if (types != null)
 				foreach (TypeContainer tc in types)
 					tc.Emit ();
-
 		}
-
+		
 		public void CloseType ()
 		{
 			try {
@@ -1811,8 +1828,11 @@ namespace CIR {
 					MethodBuilder.DefineParameter (
 						      i + 1, p [i].Attributes, p [i].Name);
 					
-				if (i != parameters.Length)
-					Console.WriteLine ("Implement the type definition for params");
+				if (i != parameters.Length) {
+					Parameter array_param = Parameters.ArrayParameter;
+					MethodBuilder.DefineParameter (i + 1, array_param.Attributes,
+								       array_param.Name);
+				}
 			}
 
 			return MethodBuilder;
@@ -1825,6 +1845,20 @@ namespace CIR {
 		{
 			ILGenerator ig = MethodBuilder.GetILGenerator ();
 			EmitContext ec = new EmitContext (parent, ig, GetReturnType (parent), ModFlags);
+
+			if (OptAttributes != null) {
+				if (OptAttributes.AttributeSections != null) {
+					foreach (AttributeSection asec in OptAttributes.AttributeSections) {
+						if (asec.Attributes != null) {
+							foreach (Attribute a in asec.Attributes) {
+								CustomAttributeBuilder cb = a.Resolve (ec);
+								if (cb != null)
+									MethodBuilder.SetCustomAttribute (cb);
+							}
+						}
+					}
+				}
+			}
 			
 			ec.EmitTopBlock (Block);
 		}
@@ -1863,11 +1897,10 @@ namespace CIR {
 
 			parent_constructor_group = Expression.MemberLookup (
 				ec,
-				ec.TypeContainer.TypeBuilder.BaseType, ".ctor", false,
+				ec.TypeContainer.TypeBuilder.BaseType, ".ctor", true,
 				MemberTypes.Constructor,
 				BindingFlags.Public | BindingFlags.Instance, location);
 			
-			//Console.WriteLine ("Base type : " + ec.TypeContainer.TypeBuilder.BaseType);
 			if (parent_constructor_group == null){
 				Console.WriteLine ("Could not find a constructor in our parent");
 				return false;
@@ -1906,6 +1939,7 @@ namespace CIR {
 	public class Constructor : MethodCore {
 		public ConstructorBuilder ConstructorBuilder;
 		public ConstructorInitializer Initializer;
+		public Attributes OptAttributes;
 
 		// <summary>
 		//   Modifiers allowed for a constructor.
@@ -2006,6 +2040,20 @@ namespace CIR {
 			
 			if ((ModFlags & Modifiers.STATIC) != 0)
 				parent.EmitFieldInitializers (ec, true);
+
+			if (OptAttributes != null) {
+				if (OptAttributes.AttributeSections != null) {
+					foreach (AttributeSection asec in OptAttributes.AttributeSections) {
+						if (asec.Attributes != null) {
+							foreach (Attribute a in asec.Attributes) {
+								CustomAttributeBuilder cb = a.Resolve (ec);
+								if (cb != null)
+									ConstructorBuilder.SetCustomAttribute (cb);
+							}
+						}
+					}
+				}
+			}
 
 			ec.EmitTopBlock (Block);
 		}
@@ -2405,8 +2453,11 @@ namespace CIR {
 					SetBuilder.DefineParameter (
 						i + 1, ParameterAttributes.None, "value");
 					
-				if (i != parameters.Length)
-					Console.WriteLine ("Implement type definition for params");
+				if (i != parameters.Length) {
+					Parameter array_param = FormalParameters.ArrayParameter;
+					SetBuilder.DefineParameter (i + 1, array_param.Attributes,
+								    array_param.Name);
+				}
 			}
 
 			TypeManager.RegisterProperty (PropertyBuilder, GetBuilder, SetBuilder);

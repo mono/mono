@@ -211,8 +211,8 @@ namespace CIR {
 			}
 
 			if (extra > 0)
-				types [i] = Type.GetType ("System.Object");
-
+			        types [i] = tc.LookupType (ArrayParameter.Type, false);
+			
 			return types;
 		}
 

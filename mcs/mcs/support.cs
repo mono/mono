@@ -92,7 +92,13 @@ namespace CIR {
 			if (param_types == null)
 				return null;
 
-			Parameter p = parameters.FixedParameters [pos];
+			Parameter p;
+			
+			if (pos == parameters.FixedParameters.Length)
+				p = parameters.ArrayParameter;
+			else
+				p = parameters.FixedParameters [pos];
+
 			Type t = param_types [pos];
 			string name = t.FullName;
 			
@@ -106,12 +112,19 @@ namespace CIR {
 		public string ParameterDesc (int pos)
 		{
 			string tmp = null;
-			Parameter p = parameters.FixedParameters [pos];
+			Parameter p;
+
+			if (pos == parameters.FixedParameters.Length)
+				p = parameters.ArrayParameter;
+			else
+				p = parameters.FixedParameters [pos];
 			
 			if (p.ModFlags == Parameter.Modifier.REF)
 				tmp = "ref ";
 			else if (p.ModFlags == Parameter.Modifier.OUT)
 				tmp = "out ";
+			else if (p.ModFlags == Parameter.Modifier.PARAMS)
+				tmp = "params ";
 
 			Type t = ParameterType (pos);
 
@@ -120,7 +133,10 @@ namespace CIR {
 
 		public Parameter.Modifier ParameterModifier (int pos)
 		{
-			return parameters.FixedParameters [pos].ModFlags;
+			if (pos == parameters.FixedParameters.Length)
+				return parameters.ArrayParameter.ModFlags;
+			else
+				return parameters.FixedParameters [pos].ModFlags;
 		}
 		
 	}

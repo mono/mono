@@ -1,3 +1,68 @@
+2001-11-04  Ravi Pratap  <ravi@ximian.com>
+
+	* attribute.cs (Attribute::Resolve): Implement guts. Note that resolution
+	of an attribute gives us a CustomAttributeBuilder which we use accordingly to
+	set custom atttributes.
+
+	* literal.cs (Literal::GetValue): New abstract method to return the actual
+	value of the literal, cast as an object.
+
+	(*Literal): Implement GetValue method.
+
+	* cs-parser.jay (positional_argument_list, named_argument_list): Add not just plain
+	expressions to the arraylist but objects of type Argument.
+
+	* class.cs (TypeContainer::Emit): Emit our attributes too.
+
+	(Method::Emit, Constructor::Emit): Ditto.
+
+	* cs-parser.jay (constructor_declaration): Set attributes too, which we seemed
+	to be ignoring earlier.
+
+2001-11-03  Ravi Pratap  <ravi@ximian.com>
+
+	* attribute.cs (AttributeSection::Define): Implement to do the business
+	of constructing a CustomAttributeBuilder.
+
+	(Attribute): New trivial class. Increases readability of code.	
+
+	* cs-parser.jay : Update accordingly.
+
+	(positional_argument_list, named_argument_list, named_argument): New rules
+
+	(attribute_arguments): Use the above so that we are more correct.
+	
+2001-11-02  Ravi Pratap  <ravi@ximian.com>
+	
+	* expression.cs (Invocation::IsParamsMethodApplicable): Implement
+	to perform all checks for a method with a params parameter.
+
+	(Invocation::OverloadResolve): Update to use the above method and therefore
+	cope correctly with params method invocations.
+
+	* support.cs (InternalParameters::ParameterDesc): Provide a desc for 
+	params too.
+
+	* class.cs (ConstructorInitializer::Resolve): Make sure we look for Non-public
+	constructors in our parent too because we can't afford to miss out on 
+	protected ones ;-)
+
+	* attribute.cs (AttributeSection): New name for the class Attribute
+
+	Other trivial changes to improve readability.
+
+	* cs-parser.jay (opt_attributes, attribute_section etc.): Modify to
+	use the new class names.
+	
+2001-11-01  Ravi Pratap  <ravi@ximian.com>
+
+	* class.cs (Method::Define): Complete definition for params types too
+
+	(Indexer::Define): Ditto.
+
+	* support.cs (InternalParameters::ParameterType, ParameterDesc, ParameterModifier):
+	Cope everywhere with a request for info about the array parameter.
+
 2001-11-01  Ravi Pratap  <ravi@ximian.com>
 
 	* tree.cs (RecordNamespace): Fix up to check for the correct key.

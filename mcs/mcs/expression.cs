@@ -366,9 +366,10 @@ namespace CIR {
 			if (mi == null)
 				return null;
 
-			// FIXME : How does this wierd case arise ?
-			if (mi.Length == 0)
+			// Empty array ...
+			if (mi.Length == 0) 
 				return null;
+
 			
 			if (mi.Length == 1 && !(mi [0] is MethodBase))
 				return Expression.ExprClassFromMemberInfo (ec, mi [0], loc);
@@ -3955,6 +3956,45 @@ namespace CIR {
 		}
 
 		// <summary>
+		//  Determines is the candidate method, if a params method, is applicable
+		//  in its expanded form to the given set of arguments
+		// </summary>
+		static bool IsParamsMethodApplicable (ArrayList arguments, MethodBase candidate)
+		{
+			int arg_count;
+			
+			if (arguments == null)
+				arg_count = 0;
+			else
+				arg_count = arguments.Count;
+			
+			ParameterData pd = GetParameterData (candidate);
+			
+			int pd_count = pd.Count;
+
+			if (pd.ParameterModifier (pd_count - 1) != Parameter.Modifier.PARAMS)
+				return false;
+
+			if (pd_count - 1 > arg_count)
+				return false;
+
+			// If we have come this far, the case which remains is when the number of parameters
+			// is less than or equal to the argument count. So, we now check if the element type
+			// of the params array is compatible with each argument type
+			//
+
+			Type element_type = pd.ParameterType (pd_count - 1).GetElementType ();
+
+			for (int i = pd_count - 1; i < arg_count - 1; i++) {
+				Argument a = (Argument) arguments [i];
+				if (!StandardConversionExists (a.Type, element_type))
+					return false;
+			}
+			
+			return true;
+		}
+
+		// <summary>
 		//  Determines if the candidate method is applicable (section 14.4.2.1)
 		//  to the given set of arguments
 		// </summary>
@@ -4013,7 +4053,7 @@ namespace CIR {
 		//   loc: The location if we want an error to be reported, or a Null
 		//        location for "probing" purposes.
 		//
-		//   inside_user_defined: controls whether OverloadResolve should use the 
+		//   use_standard: controls whether OverloadResolve should use the 
 		//   ConvertImplicit or ConvertImplicitStandard during overload resolution.
 		//
 		//   Returns: The MethodBase (either a ConstructorInfo or a MethodInfo)
@@ -4052,11 +4092,31 @@ namespace CIR {
 				argument_count = 0;
 			else
 				argument_count = Arguments.Count;
-			
+
+			//
+			// Now we see if we can find params functions, applicable in their expanded form
+			// since if they were applicable in their normal form, they would have been selected
+			// above anyways
+			//
+			if (best_match_idx == -1) {
+
+				for (int i = me.Methods.Length; i > 0; ) {
+					i--;
+					MethodBase candidate = me.Methods [i];
+
+					if (IsParamsMethodApplicable (Arguments, candidate)) {
+						best_match_idx = i;
+						method = me.Methods [best_match_idx];
+						break;
+					}
+				}
+			}
+
+			//
+			// Now we see if we can at least find a method with the same number of arguments
+			//
 			ParameterData pd;
 			
-			// Now we see if we can at least find a method with the same number of arguments
-			// and then try doing implicit conversion on the arguments
 			if (best_match_idx == -1) {
 				
 				for (int i = me.Methods.Length; i > 0;) {
@@ -4071,21 +4131,30 @@ namespace CIR {
 					} else
 						continue;
 				}
-
 			}
 
 			if (method == null)
 				return null;
-
+			
 			// And now convert implicitly, each argument to the required type
 			
 			pd = GetParameterData (method);
+			int pd_count = pd.Count;
 
 			for (int j = 0; j < argument_count; j++) {
 
 				Argument a = (Argument) Arguments [j];
 				Expression a_expr = a.Expr;
 				Type parameter_type = pd.ParameterType (j);
+
+				//
+				// Note that we need to compare against the element type
+				// when we have a params method
+				//
+				if (pd.ParameterModifier (pd_count - 1) == Parameter.Modifier.PARAMS) {
+					if (j >= pd_count - 1) 
+						parameter_type = pd.ParameterType (pd_count - 1).GetElementType ();
+				}
 
 				if (a.Type != parameter_type){
 					Expression conv;
@@ -4097,7 +4166,7 @@ namespace CIR {
 						conv = ConvertImplicit (ec, a_expr, parameter_type,
 									Location.Null);
 
-					if (conv == null){
+					if (conv == null) {
 						if (!Location.IsNull (loc)) {
 							Error (1502, loc,
 						        "The best overloaded match for method '" + FullMethodDesc (method)+
@@ -4117,9 +4186,14 @@ namespace CIR {
 					//
 					if (a_expr != conv)
 						a.Expr = conv;
-				}
 
-				if (a.GetParameterModifier () != pd.ParameterModifier (j)) {
+					// FIXME : For the case of params methods, we need to actually instantiate
+					// an array and initialize it with the argument values etc etc.
+
+				}
+				
+				if (a.GetParameterModifier () != pd.ParameterModifier (j) &&
+				    pd.ParameterModifier (j) != Parameter.Modifier.PARAMS) {
 					if (!Location.IsNull (loc)) {
 						Error (1502, loc,
 						       "The best overloaded match for method '" + FullMethodDesc (method)+
@@ -4131,11 +4205,13 @@ namespace CIR {
 					}
 					return null;
 				}
+				
+				
 			}
 			
 			return method;
 		}
-
+		
 		public static MethodBase OverloadResolve (EmitContext ec, MethodGroupExpr me,
 							  ArrayList Arguments, Location loc)
 		{

@@ -28,6 +28,12 @@ namespace CIR {
 			return AsString ();
 		}
 
+		// <summary>
+		//  This is used to obtain the actual value of the literal
+		//  cast into an object.
+		// </summary>
+		public abstract object GetValue ();
+
 		static public string descape (char c)
 		{
 			switch (c){
@@ -73,6 +79,11 @@ namespace CIR {
 			return "null";
 		}
 
+		public override object GetValue ()
+		{
+			return null;
+		}
+
 		public override Expression DoResolve (EmitContext ec)
 		{
 			type = TypeManager.object_type;
@@ -99,6 +110,12 @@ namespace CIR {
 			return val ? "true" : "false";
 		}
 
+		public override object GetValue ()
+		{
+			return (object) val;
+		}
+				
+		
 		public override Expression DoResolve (EmitContext ec)
 		{
 			type = TypeManager.bool_type;
@@ -128,6 +145,11 @@ namespace CIR {
 			return "\"" + descape (c) + "\"";
 		}
 
+		public override object GetValue ()
+		{
+			return (object) c;
+		}
+		
 		public override Expression DoResolve (EmitContext ec)
 		{
 			type = TypeManager.char_type;
@@ -152,6 +174,11 @@ namespace CIR {
 		override public string AsString ()
 		{
 			return Value.ToString ();
+		}
+
+		public override object GetValue ()
+		{
+			return (object) Value;
 		}
 
 		public override Expression DoResolve (EmitContext ec)
@@ -234,6 +261,11 @@ namespace CIR {
 			return Value.ToString ();
 		}
 
+		public override object GetValue ()
+		{
+			return (object) Value;
+		}
+		
 		public override Expression DoResolve (EmitContext ec)
 		{
 			type = TypeManager.uint32_type;
@@ -263,6 +295,11 @@ namespace CIR {
 			return Value.ToString ();
 		}
 
+		public override object GetValue ()
+		{
+			return (object) Value;
+		}
+		
 		public override Expression DoResolve (EmitContext ec)
 		{
 			type = TypeManager.int64_type;
@@ -296,6 +333,11 @@ namespace CIR {
 			return Value.ToString ();
 		}
 
+		public override object GetValue ()
+		{
+			return (object) Value;
+		}
+
 		public override Expression DoResolve (EmitContext ec)
 		{
 			type = TypeManager.uint64_type;
@@ -324,6 +366,11 @@ namespace CIR {
 			return Value.ToString ();
 		}
 
+		public override object GetValue ()
+		{
+			return (object) Value;
+		}
+		
 		public override Expression DoResolve (EmitContext ec)
 		{
 			type = TypeManager.float_type;
@@ -350,6 +397,11 @@ namespace CIR {
 			return Value.ToString ();
 		}
 
+		public override object GetValue ()
+		{
+			return (object) Value;
+		}
+		
 		public override Expression DoResolve (EmitContext ec)
 		{
 			type = TypeManager.double_type;
@@ -374,6 +426,11 @@ namespace CIR {
 		override public string AsString ()
 		{
 			return Value.ToString ();
+		}
+
+		public override object GetValue ()
+		{
+			return (object) Value;
 		}
 
 		public override Expression DoResolve (EmitContext ec)
@@ -403,6 +460,11 @@ namespace CIR {
 			return "\"" + s + "\"";
 		}
 
+		public override object GetValue ()
+		{
+			return (object) s;
+		}
+		
 		public override Expression DoResolve (EmitContext ec)
 		{
 			type = TypeManager.string_type;

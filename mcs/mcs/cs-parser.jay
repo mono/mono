@@ -398,9 +398,9 @@ opt_attributes
 		
 		if ($2 != null) {
 			attrs = (Attributes) $2;
-			attrs.AddAttribute ((Attribute) $1);
+			attrs.AddAttribute ((AttributeSection) $1);
 		} else
-			attrs = new Attributes ((Attribute) $1);
+			attrs = new Attributes ((AttributeSection) $1);
 		
 		$$ = attrs;
 	  }
@@ -414,11 +414,11 @@ attribute_section
 		if ($2 != null)
 			target = (string) $2;
 		
-		$$ = new Attribute (target, (ArrayList) $3);
+		$$ = new AttributeSection (target, (ArrayList) $3);
  	  }
         | OPEN_BRACKET attribute_list CLOSE_BRACKET
 	  {
-		$$ = new Attribute (null, (ArrayList) $2);
+		$$ = new AttributeSection (null, (ArrayList) $2);
 	  }
 	;
  
@@ -458,9 +458,13 @@ attribute_list
 	;
 
 attribute
-	: attribute_name opt_attribute_arguments
+	: attribute_name
 	  {
-		$$ = new DictionaryEntry ($1, $2);
+		temporary_loc = lexer.Location;
+	  }
+	  opt_attribute_arguments
+	  {
+		$$ = new Attribute ((string) $1, (ArrayList) $3, temporary_loc);
 	  }
 	;
 
@@ -476,24 +480,76 @@ opt_attribute_arguments
 	  }
 	;
 
+
 attribute_arguments
-	: expression
+	: positional_argument_list
 	  {
 		ArrayList args = new ArrayList ();
 		args.Add ($1);
 		
 		$$ = args;
 	  }
-	| attribute_arguments COMMA expression
+        | positional_argument_list COMMA named_argument_list
 	  {
+		ArrayList args = new ArrayList ();
+		args.Add ($1);
+		args.Add ($3);
+
+		$$ = args;
+	  }
+        | named_argument_list
+	  {
+		ArrayList args = new ArrayList ();
+		args.Add (null);
+		args.Add ($1);
+		
+		$$ = args;
+	  }
+        ;
+
+
+positional_argument_list
+	: expression
+	  {
+		ArrayList args = new ArrayList ();
+		args.Add (new Argument ((Expression) $1, Argument.AType.Expression));
+
+		$$ = args;
+	  }
+        | positional_argument_list COMMA expression
+	 {
+		ArrayList args = (ArrayList) $1;
+		args.Add (new Argument ((Expression) $3, Argument.AType.Expression));
+
+		$$ = args;
+	 }
+        ;
+
+named_argument_list
+	: named_argument
+	  {
+		ArrayList args = new ArrayList ();
+		args.Add ($1);
+
+		$$ = args;
+	  }
+        | named_argument_list COMMA named_argument
+	  {	  
 		ArrayList args = (ArrayList) $1;
 		args.Add ($3);
 
 		$$ = args;
 	  }
+        ;
+
+named_argument
+	: IDENTIFIER ASSIGN expression
+	  {
+		$$ = new DictionaryEntry ((string) $1, new Argument ((Expression) $3, Argument.AType.Expression));
+	  }
 	;
 
-
+		  
 class_body
 	:  OPEN_BRACE opt_class_member_declarations CLOSE_BRACE
 	;
@@ -1192,6 +1248,7 @@ constructor_declaration
 		Constructor c = (Constructor) $3;
 		c.Block = (Block) $4;
 		c.ModFlags = (int) $2;
+		c.OptAttributes = (Attributes) $1;
 
 		if ((c.ModFlags & Modifiers.STATIC) != 0){
 			if ((c.ModFlags & Modifiers.Accessibility) != 0) {
@@ -2438,14 +2495,24 @@ local_variable_type
 		// really) two shift/reduces appear.
 		// 
 
-		//  So we be a little smart :-)
+		// So the super-trick is that primary_expression
+		// can only be either a SimpleName or a MemberAccess. 
+		// The MemberAccess case arises when you have a fully qualified type-name like :
+		// Foo.Bar.Blah i;
+		// SimpleName is when you have
+		// Blah i;
+		  
 		Expression expr = (Expression) $1;  
-		if (!(expr is SimpleName) && !(expr is MemberAccess)) {
+		if (!(expr is SimpleName || expr is MemberAccess)) {
 			Location l = lexer.Location;
-			Console.WriteLine (((MemberAccess) $1).Identifier);
 			Report.Error (-1, l, "Invalid Type definition");
 			$$ = "System.Object";
 		}
+		
+		//
+		// So we extract the string corresponding to the SimpleName
+		// or MemberAccess
+		// 
 		$$ = GetQualifiedIdentifier (expr) + (string) $2;
 	  }
 	| builtin_types opt_rank_specifier
