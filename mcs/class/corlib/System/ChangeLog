@@ -1,3 +1,8 @@
+2003-01-28  Patrik Torstensson
+
+	* MarshalByRefObject.cs: implemented GetObjectIdentity
+	* Exception.cs: added support for remote exceptions
+
 2003-01-28  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* DateTime.cs: fixed bug #37225.
