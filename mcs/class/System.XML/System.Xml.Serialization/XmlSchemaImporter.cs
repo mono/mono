@@ -271,7 +271,7 @@ namespace System.Xml.Serialization {
 			return true;
 		}
 
-		public XmlTypeMapping ImportType (XmlQualifiedName name, XmlQualifiedName root)
+		XmlTypeMapping ImportType (XmlQualifiedName name, XmlQualifiedName root)
 		{
 			XmlTypeMapping map = GetRegisteredTypeMapping (name);
 			if (map != null) return map;
@@ -1222,9 +1222,18 @@ namespace System.Xml.Serialization {
 
 			TypeData typeData = new TypeData (typeName, typeName, typeName, schemaType, null);
 
-			XmlQualifiedName elemName = (root != null) ? root : typeQName;
+			string rootElem;
+			string rootNs;
+			if (root != null) {
+				rootElem = root.Name;
+				rootNs = root.Namespace;
+			}
+			else {
+				rootElem = typeQName.Name;
+				rootNs = "";
+			}
 			
-			XmlTypeMapping map = new XmlTypeMapping (elemName.Name, elemName.Namespace, typeData, typeQName.Name, typeQName.Namespace);
+			XmlTypeMapping map = new XmlTypeMapping (rootElem, rootNs, typeData, typeQName.Name, typeQName.Namespace);
 			map.IncludeInSchema = true;
 			mappedTypes [typeQName] = map;
 			dataMappedTypes [typeData] = map;

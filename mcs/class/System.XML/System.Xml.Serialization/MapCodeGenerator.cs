@@ -75,7 +75,7 @@ namespace System.Xml.Serialization {
 
 			GenerateClass (map, codeClass);
 
-			ExportMembersMapCode (codeClass, (ClassMap)map.ObjectMap, map.Namespace, map.BaseMap);
+			ExportMembersMapCode (codeClass, (ClassMap)map.ObjectMap, map.XmlTypeNamespace, map.BaseMap);
 
 			if (map.BaseMap != null)
 			{

@@ -115,12 +115,10 @@ namespace System.Xml.Serialization {
 			if (map.XmlTypeNamespace != "") att.Arguments.Add (GetArg ("Namespace", map.XmlTypeNamespace));
 			AddCustomAttribute (codeClass, att, false);
 
-			if (map.ElementName != map.XmlType || map.Namespace != map.XmlTypeNamespace) {
-				CodeAttributeDeclaration ratt = new CodeAttributeDeclaration ("System.Xml.Serialization.XmlRoot");
-				ratt.Arguments.Add (GetArg (map.ElementName));
-				ratt.Arguments.Add (GetArg ("Namespace", map.Namespace));
-				AddCustomAttribute (codeClass, ratt, false);
-			}
+			CodeAttributeDeclaration ratt = new CodeAttributeDeclaration ("System.Xml.Serialization.XmlRoot");
+			if (map.ElementName != map.XmlType) ratt.Arguments.Add (GetArg (map.ElementName));
+			if (map.Namespace != "") ratt.Arguments.Add (GetArg ("Namespace", map.Namespace));
+			AddCustomAttribute (codeClass, ratt, false);
 		}
 		
 		protected override void GenerateClassInclude (CodeTypeDeclaration codeClass, XmlTypeMapping map)

@@ -138,7 +138,9 @@ namespace System.Xml.Serialization {
 
 		XmlTypeMapping CreateTypeMapping (TypeData typeData, XmlRootAttribute root, string defaultXmlType, string defaultNamespace)
 		{
-			string rootNamespace = "";
+			string rootNamespace = defaultNamespace;
+			string typeNamespace = null;
+			
 			string elementName;
 			bool includeInSchema = true;
 			XmlAttributes atts = null;
@@ -162,7 +164,7 @@ namespace System.Xml.Serialization {
 			if (atts.XmlType != null)
 			{
 				if (atts.XmlType.Namespace != null && atts.XmlType.Namespace != string.Empty && typeData.SchemaType != SchemaTypes.Enum)
-					defaultNamespace = atts.XmlType.Namespace;
+					typeNamespace = atts.XmlType.Namespace;
 
 				if (atts.XmlType.TypeName != null && atts.XmlType.TypeName != string.Empty)
 					defaultXmlType = atts.XmlType.TypeName;
@@ -180,9 +182,10 @@ namespace System.Xml.Serialization {
 					rootNamespace = root.Namespace;
 			}
 
-			if (defaultNamespace == null || defaultNamespace.Length == 0) defaultNamespace = rootNamespace;
+			if (rootNamespace == null) rootNamespace = "";
+			if (typeNamespace == null || typeNamespace.Length == 0) typeNamespace = rootNamespace;
 			
-			XmlTypeMapping map = new XmlTypeMapping (elementName, rootNamespace, typeData, defaultXmlType, defaultNamespace);
+			XmlTypeMapping map = new XmlTypeMapping (elementName, rootNamespace, typeData, defaultXmlType, typeNamespace);
 			map.IncludeInSchema = includeInSchema;
 			relatedMaps.Add (map);
 			
@@ -253,6 +256,8 @@ namespace System.Xml.Serialization {
 
 		string GetTypeNamespace (TypeData typeData, XmlRootAttribute root, string defaultNamespace)
 		{
+			string typeNamespace = null;
+			
 			XmlAttributes atts = null;
 			if (!typeData.IsListType)
 			{
@@ -263,23 +268,24 @@ namespace System.Xml.Serialization {
 			if (atts == null)
 				atts = new XmlAttributes (typeData.Type);
 
-   			if (atts.XmlRoot != null && root == null)
-   				root = atts.XmlRoot;
-
    			if (atts.XmlType != null)
    			{
    				if (atts.XmlType.Namespace != null && atts.XmlType.Namespace.Length != 0 && typeData.SchemaType != SchemaTypes.Enum)
-   					defaultNamespace = atts.XmlType.Namespace;
+   					typeNamespace = atts.XmlType.Namespace;
 			}
 
-			string rootNamespace = "";
+			if (typeNamespace != null && typeNamespace.Length != 0) return typeNamespace;
+			
+   			if (atts.XmlRoot != null && root == null)
+   				root = atts.XmlRoot;
+
 			if (root != null)
 			{
 				if (root.Namespace != null && root.Namespace.Length != 0)
-					rootNamespace = root.Namespace;
+					return root.Namespace;
 			}
 
-			if (defaultNamespace == null || defaultNamespace.Length == 0) return rootNamespace;
+			if (defaultNamespace == null) return "";
 			else return defaultNamespace;
 		}
 

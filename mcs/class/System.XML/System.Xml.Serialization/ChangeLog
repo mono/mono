@@ -1,3 +1,15 @@
+2004-01-14  Lluis Sanchez Gual  <lluis@ximian.com>
+
+	* MapCodeGenerator.cs: Use type namespace instead of root namespace as
+	  default namespace for members.
+	* XmlCodeExporter.cs: Fixed generation of XmlRootAttribute.
+	* XmlReflectionImporter.cs: Fixed the assignment of root and type 
+	  namespaces.
+	* XmlSchemaExporter.cs: Use type namespace instead of root namespace as
+	  default namespace for members. In AddSchemaElement, if the element is
+	  a root element never use a "ref" attribute.
+	* XmlSchemaImporter.cs: Fixed issue when importing root elements.
+
 2004-01-13  Lluis Sanchez Gual  <lluis@ximian.com>
 
 	* XmlReflectionImporter.cs, XmlSerializationWriterInterpreter.cs

@@ -200,7 +200,7 @@ namespace System.Xml.Serialization {
 				ext.Particle = particle;
 				ext.AnyAttribute = anyAttribute;
 
-				ImportNamespace (schema, map.BaseMap.Namespace);
+				ImportNamespace (schema, map.BaseMap.XmlTypeNamespace);
 				ExportClassSchema (map.BaseMap);
 			}
 			else
@@ -349,9 +349,9 @@ namespace System.Xml.Serialization {
 			{
 				memberSchema = GetSchema (einfo.Namespace);
 				ImportNamespace (currentSchema, einfo.Namespace);
-			}		
-
-			if (currentSchema == memberSchema || encodedFormat)
+			}
+			
+			if (currentSchema == memberSchema || encodedFormat || !isTypeMember)
 			{
 				if (isTypeMember) selem.IsNillable = einfo.IsNullable;
 				selem.Name = einfo.ElementName;
@@ -492,7 +492,7 @@ namespace System.Xml.Serialization {
 			if (IsMapExported (map)) return;
 			SetMapExported (map);
 
-			XmlSchema schema = GetSchema (map.Namespace);
+			XmlSchema schema = GetSchema (map.XmlTypeNamespace);
 			XmlSchemaSimpleType stype = new XmlSchemaSimpleType ();
 			stype.Name = map.ElementName;
 			schema.Items.Add (stype);
@@ -570,7 +570,7 @@ namespace System.Xml.Serialization {
 				if (IsMapExported (map)) return new XmlQualifiedName (map.XmlType, map.XmlTypeNamespace);
 				
 				SetMapExported (map);
-				XmlSchema schema = GetSchema (map.Namespace);
+				XmlSchema schema = GetSchema (map.XmlTypeNamespace);
 				XmlSchemaComplexType stype = new XmlSchemaComplexType ();
 				stype.Name = map.ElementName;
 				schema.Items.Add (stype);
@@ -621,7 +621,7 @@ namespace System.Xml.Serialization {
 		
 		string GetMapKey (XmlTypeMapping map)
 		{
-			return map.TypeData.FullTypeName + " " + map.Namespace;
+			return map.TypeData.FullTypeName + " " + map.XmlTypeNamespace;
 		}
 
 		void CompileSchemas ()
