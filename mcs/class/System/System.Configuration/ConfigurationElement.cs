@@ -166,7 +166,7 @@ namespace System.Configuration
                         throw new NotImplementedException ();
                 }
 
-                protected internal virtual void ValidateRequiresProperties (
+                protected virtual void ValidateRequiredProperties (
                         ConfigurationPropertyCollection properties,
                         bool serialize_collection_key)
                 {
