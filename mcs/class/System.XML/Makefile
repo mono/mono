@@ -11,7 +11,7 @@ else
 SCARY_LIB=/lib:$(prefix)/lib /noconfig
 endif
 
-LIB_MCS_FLAGS = $(SCARY_LIB) /unsafe /r:$(corlib) /r:System.dll 
+LIB_MCS_FLAGS = $(SCARY_LIB) /unsafe /r:$(corlib) /r:System.dll
 TEST_MCS_FLAGS = $(LIB_MCS_FLAGS)
 
 EXTRA_DISTFILES = \
@@ -23,6 +23,7 @@ EXTRA_DISTFILES = \
 	$(wildcard System.Xml.Serialization/standalone_tests/*.cs) \
 	$(wildcard System.Xml.Serialization/standalone_tests/*.output) \
 	System.Xml.XPath/Parser.jay	\
+	System.Xml.Query/XQueryParser.jay	\
 	Test/Microsoft.Test.csproj	\
 	Test/Mono.Test.csproj		\
 	Test/MonoMicro.Test.csproj	\
@@ -35,6 +36,9 @@ EXTRA_DISTFILES = \
 System.Xml.XPath/Parser.cs: System.Xml.XPath/Parser.jay $(topdir)/jay/skeleton.cs
 	$(topdir)/jay/jay -ct < $(topdir)/jay/skeleton.cs $< >$@
 
-CLEAN_FILES = Test/XmlFiles/xsl/result.xml System.Xml.XPath/Parser.cs
+System.Xml.Query/XQueryParser.cs: System.Xml.Query/XQueryParser.jay System.Xml.Query/skeleton-2.0.cs
+	$(topdir)/jay/jay -ct < System.Xml.Query/skeleton-2.0.cs $< >$@
+
+CLEAN_FILES = Test/XmlFiles/xsl/result.xml System.Xml.XPath/Parser.cs System.Xml.Query/XQueryParser.cs
 
 include ../../build/library.make

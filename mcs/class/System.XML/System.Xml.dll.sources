@@ -362,3 +362,8 @@ System.Xml.Query/XmlQueryCompileException.cs
 System.Xml.Query/XmlQueryException.cs
 System.Xml.Query/XsltCommand.cs
 System.Xml.Query/XQueryConvert.cs
+System.Xml.Query/XQueryParser.cs
+System.Xml.Query/XQueryTokenizer.cs
+System.Xml.Query/XQueryModuleProlog.cs
+System.Xml.Query/XPath2Expression.cs
+System.Xml.Query/XQueryExpression.cs
