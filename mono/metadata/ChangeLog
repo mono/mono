@@ -1,4 +1,10 @@
 
+Mon Jan 10 18:47:28 CET 2005 Paolo Molaro <lupus@ximian.com>
+
+	* threads.h, threads.c, object.c: added accessor and settor for
+	main_thread. Handle it specially when exiting from it: wait
+	for other foreground threads to exit.
+
 Mon Jan 10 12:06:18 CET 2005 Paolo Molaro <lupus@ximian.com>
 
 	* process.c, verify.c: remove some bloat.
