@@ -8,6 +8,7 @@
 //
 
 using System;
+using System.Reflection.Emit;
 
 namespace Microsoft.JScript {
 
@@ -37,7 +38,9 @@ namespace Microsoft.JScript {
 
 		internal override void Emit (EmitContext ec)
 		{
-			throw new NotImplementedException ();
+			if (ec.is_global_code_method) {
+				ec.ig.Emit (OpCodes.Ldstr, str);
+			}
 		}
 	}
 }

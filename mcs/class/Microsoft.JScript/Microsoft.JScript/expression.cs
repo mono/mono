@@ -29,21 +29,24 @@ namespace Microsoft.JScript {
 			if (oper != JSToken.None)
 				sb.Append (oper + " ");
 
-			sb.Append (operand.ToString ());
+			if (operand != null)
+				sb.Append (operand.ToString ());
 			
 			return sb.ToString ();
 		}
 
 		internal override bool Resolve (IdentificationTable context)
 		{
-			operand.Resolve (context);
+			if (operand != null)
+				operand.Resolve (context);
 
 			return true;
 		}
 
 		internal override void Emit (EmitContext ec)
 		{
-			throw new NotImplementedException ();
+			if (operand != null)
+				operand.Emit (ec);
 		}			
 	}
 
@@ -144,34 +147,41 @@ namespace Microsoft.JScript {
 
 	public class Call : AST {
 
-		internal AST left;
-		internal AST args;
+		internal AST member_exp;
+		internal AST args1;
+		internal AST args2;
 
-		public Call (AST left, AST args)
+		public Call (AST member_exp, AST args1, AST args2)
 		{
-			this.left = left;
-			this.args = args;
+			this.member_exp = member_exp;
+			this.args1 = args1;
+			this.args2 = args2;
 		}
 
 		public override string ToString ()
 		{
 			StringBuilder sb = new StringBuilder ();
 
-			if (left != null)
-				sb.Append (left.ToString () + " ");
-			if (args != null)
-				sb.Append (args.ToString ());
+			if (member_exp != null)
+				sb.Append (member_exp.ToString () + " ");
+			if (args1 != null)
+				sb.Append (args1.ToString ());
+			if (args2 != null)
+				sb.Append (args2.ToString ());
 
 			return sb.ToString ();
 		}
 
 		internal override bool Resolve (IdentificationTable context)
 		{
-			if (left != null)
-				left.Resolve (context);
+			if (member_exp != null)
+				member_exp.Resolve (context);
 
-			if (args != null)
-				args.Resolve (context);
+			if (args1 != null)
+				args1.Resolve (context);
+
+			if (args2 != null)
+				args2.Resolve (context);
 
 			return true;
 		}

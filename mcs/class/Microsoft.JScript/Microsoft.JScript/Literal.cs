@@ -8,6 +8,7 @@
 //
 
 using System;
+using System.Reflection.Emit;
 
 namespace Microsoft.JScript {
 
@@ -40,12 +41,19 @@ namespace Microsoft.JScript {
 
 		internal override bool Resolve (IdentificationTable context)
 		{
-			throw new NotImplementedException ();
+			return true;
 		}
 
 		internal override void Emit (EmitContext ec)
 		{
-			throw new NotImplementedException ();
+			if (ec.is_global_code_method) {
+				if (val)
+					ec.ig.Emit (OpCodes.Ldc_I4_1);
+				else
+					ec.ig.Emit (OpCodes.Ldc_I4_0);
+
+				ec.ig.Emit (OpCodes.Box, typeof (System.Boolean));
+			}
 		}
 	}
 
