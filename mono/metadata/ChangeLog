@@ -1,3 +1,7 @@
+2003-02-27  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Makefile.am: make assemblies dir have \ instead of / on windows.
+
 2003-02-27  Zoltan Varga  <vargaz@freemail.hu>
 
 	* metadata.c metadata.h (mono_metadata_nesting_typedef): changed to
