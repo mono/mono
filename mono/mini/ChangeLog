@@ -1,5 +1,8 @@
 2004-04-05  Zoltan Varga  <vargaz@freemail.hu>
 
+	* mini-x86.c (mono_arch_setup_jit_tls_data): Use pthread_attr_get_np
+	under NetBSD. Fixes #56450.
+
 	* liveness.c (update_gen_kill_set): Fix previous patch.
 
 2004-04-04  Gonzalo Paniagua Javier <gonzalo@ximian.com>
