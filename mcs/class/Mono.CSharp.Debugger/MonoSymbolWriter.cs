@@ -450,7 +450,7 @@ namespace Mono.CSharp.Debugger
 
 		public void CloseMethod ()
 		{
-			current_method.SetLineNumbers (current_method_lines, current_method_lines_pos + 1);
+			current_method.SetLineNumbers (current_method_lines, current_method_lines_pos);
 			current_method_lines_pos = 0;
 			
 			current_method = null;
