@@ -396,6 +396,8 @@ namespace System.Xml.Serialization {
 			XmlTextWriter xmlWriter = new XmlTextWriter (stream, System.Text.Encoding.Default);
 			xmlWriter.Formatting = Formatting.Indented;
 			Serialize (xmlWriter, o, null);
+			xmlWriter.WriteEndDocument();
+			xmlWriter.Flush();
 		}
 		
 		public void Serialize (TextWriter textWriter, object o)
@@ -403,6 +405,8 @@ namespace System.Xml.Serialization {
 			XmlTextWriter xmlWriter = new XmlTextWriter (textWriter);
 			xmlWriter.Formatting = Formatting.Indented;
 			Serialize (xmlWriter, o, null);
+			xmlWriter.WriteEndDocument();
+			xmlWriter.Flush();
 		}
 		
 		public void Serialize (XmlWriter xmlWriter, object o)
@@ -415,6 +419,8 @@ namespace System.Xml.Serialization {
 			XmlTextWriter xmlWriter = new XmlTextWriter (stream, System.Text.Encoding.Default);
 			xmlWriter.Formatting = Formatting.Indented;
 			Serialize (xmlWriter, o, namespaces);
+			xmlWriter.WriteEndDocument();
+			xmlWriter.Flush();
 		}
 		
 		public void Serialize (TextWriter textWriter, object o, XmlSerializerNamespaces namespaces)
@@ -422,6 +428,8 @@ namespace System.Xml.Serialization {
 			XmlTextWriter xmlWriter = new XmlTextWriter (textWriter);
 			xmlWriter.Formatting = Formatting.Indented;
 			Serialize (xmlWriter, o, namespaces);
+			xmlWriter.WriteEndDocument();
+			xmlWriter.Flush();
 		}
 
 		public void Serialize (XmlWriter writer, object o, XmlSerializerNamespaces namespaces)

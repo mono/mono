@@ -1,3 +1,8 @@
+2003-03-22  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
+
+	* XmlSerializer.cs : patch by Sean Cier. Serialize() other than 
+	  XmlWriter argument should call WriteEndDocument.
+
 2003-03-19  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
 
 	* XmlSerializer.cs : Serialize() don't write xmldecl when WriteState is
