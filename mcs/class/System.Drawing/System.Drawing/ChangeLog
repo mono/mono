@@ -1,3 +1,8 @@
+2004-09-22  Ravindra <rkumar@novell.com>
+
+	* gdipFunctions.cs: Backporting. Improved the exception message
+	for unsupported image formats.
+
 2004-09-13  Ravindra <rkumar@novell.com>
 
 	* Graphics.cs: MSDN says that using image width and height gives

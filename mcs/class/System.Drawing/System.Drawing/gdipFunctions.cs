@@ -7,11 +7,7 @@
 //	Sanjay Gupta (gsanjay@novell.com)
 //	Ravindra (rkumar@novell.com)
 //
-// Copyright (C) 2004 Novell, Inc. http://www.novell.com
-//
-
-//
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004 Novell, Inc. (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -161,7 +157,7 @@ namespace System.Drawing
 					throw new UnauthorizedAccessException ("Access denied.");
 
 				case Status.UnknownImageFormat:
-					throw new NotSupportedException ("Unknown image format.");
+					throw new NotSupportedException ("Either image format is unknown or you don't have the required libraries for this format.");
 
 				case Status.NotImplemented:
 					throw new NotImplementedException ("Feature not implemented.");
