@@ -52,13 +52,13 @@ namespace System.Web.SessionState
 			state = new HttpSessionState (sessionID, // unique identifier
 						new SessionDictionary(), // dictionary
 						HttpApplicationFactory.ApplicationState.SessionObjects,
-						1, //config.Timeout, //lifetime before death.
+						config.Timeout, //lifetime before death.
 						true, //new session
 						false, // is cookieless
 						SessionStateMode.InProc,
 						read_only); //readonly
 
-			TimeSpan timeout = new TimeSpan (0, 0, 30);//config.Timeout);
+			TimeSpan timeout = new TimeSpan (0, config.Timeout, 0);
 			cache.Insert ("@@@InProc@" + sessionID, state, null, DateTime.Now + timeout,
 					timeout, CacheItemPriority.AboveNormal, removedCB);
 
