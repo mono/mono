@@ -1775,7 +1775,12 @@ namespace System.Windows.Forms {
 		internal override  bool MouseButtonsSwapped { get{ throw new NotImplementedException(); } }
 		internal override  bool MouseWheelPresent { get{ throw new NotImplementedException(); } }
 		internal override  Rectangle VirtualScreen { get{ throw new NotImplementedException(); } }
-		internal override  Rectangle WorkingArea { get{ throw new NotImplementedException(); } }
+		internal override  Rectangle WorkingArea { 
+			get { 
+				HIRect bounds = CGDisplayBounds (CGMainDisplayID ());
+				return new Rectangle ((int)bounds.origin.x, (int)bounds.origin.y, (int)bounds.size.width, (int)bounds.size.height);
+			}
+		}
 		#endregion
 		
 		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
