@@ -26,13 +26,15 @@ and resources.
 .I "-a" <assembly location>
 .Sp
 This option tells macpack where the managed assembly that you
-want to bundle resides.
+want to bundle resides.  This option is also used to point to the shell
+script to launch in the case of a X11/Gtk# application.
 .Sp
 .I "-m" <mode>
 .Sp
-An integer parameter of the mode (Cocoa# or System.Windows.Forms).
+An integer parameter of the mode (Cocoa# or System.Windows.Forms or X11).
 System.Windows.Forms = 1
 Cocoa# = 2
+Gtk#/X11 = 3
 .Sp
 .I "-n" <application name>
 .Sp
