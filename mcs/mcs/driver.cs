@@ -1019,6 +1019,9 @@ namespace Mono.CSharp
 				RootContext.StdLib = true;
 				return true;
 
+			case "/fullpaths":
+				return true;
+				
 			case "/codepage":
 				int cp = -1;
 

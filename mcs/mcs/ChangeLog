@@ -1,3 +1,7 @@
+2002-10-02  Miguel de Icaza  <miguel@ximian.com>
+
+	* driver.cs: Handle and ignore /fullpaths
+
 2002-10-01  Miguel de Icaza  <miguel@ximian.com>
 
 	* expression.cs (Binary.ResolveOperator): Catch the case where
