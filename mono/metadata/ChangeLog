@@ -1,3 +1,9 @@
+
+Tue Mar 26 18:45:46 CET 2002 Paolo Molaro <lupus@ximian.com>
+
+	* reflection.c: output also literal strings. Allocate parameter data
+	with GC_malloc() (thanks, Martin, for catching this!).
+
 2002-03-26  Martin Baulig  <martin@gnome.org>
 
 	* debug-symfile.h (MonoDebugMethodInfo): Added `this_offset', don't
