@@ -1,6 +1,13 @@
+2002-02-28  Jason Diamond <jason@injektilo.org>
+
+	* XmlException.cs, XmlReader.cs, XmlTextReader.cs: Reformatted, 
+	added missing members and MonoTODO attributes.
+	
+	* XmlTextReader.cs: Throw XmlException instead of System.Exception.
+
 2002-02-27  Jason Diamond <jason@injektilo.org>
 
-	* XmlElement.cs: Reformatted, added missing members, and MonoTODO 
+	* XmlElement.cs: Reformatted, added missing members and MonoTODO 
 	attributes.
 
 2002-02-26  Duncan Mak  <duncan@ximian.com>

@@ -1,11 +1,10 @@
-// -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*-
 //
-// System.Xml.XmlTextReader.cs
+// XmlTextReader.cs
 //
 // Author:
 //   Jason Diamond (jason@injektilo.org)
 //
-// (C) 2001 Jason Diamond  http://injektilo.org/
+// (C) 2001, 2002 Jason Diamond  http://injektilo.org/
 //
 
 // FIXME:
@@ -28,171 +27,127 @@
 //
 //   xml:space, xml:lang, and xml:base aren't being tracked.
 //
-//   Depth isn't being tracked.
 
 using System;
 using System.Collections;
 using System.IO;
-using System.Net;
 using System.Text;
 
 namespace System.Xml
 {
 	public class XmlTextReader : XmlReader, IXmlLineInfo
 	{
-		// constructors
+		#region Constructors
 
-		protected XmlTextReader()
+		[MonoTODO]
+		protected XmlTextReader ()
 		{
-			Init();
+			throw new NotImplementedException ();
 		}
 
-		public XmlTextReader(Stream input)
+		[MonoTODO]
+		public XmlTextReader (Stream input)
 		{
-			Init();
-			reader = new StreamReader(
-				input,
-				Encoding.UTF8,
-				true);
+			throw new NotImplementedException ();
 		}
 
-		public XmlTextReader(string url)
+		[MonoTODO]
+		public XmlTextReader (string url)
 		{
-			Init();
-			WebClient client = new WebClient();
-			reader = new StreamReader(
-				client.OpenRead(url),
-				Encoding.UTF8,
-				true);
+			throw new NotImplementedException ();
 		}
 
-		public XmlTextReader(TextReader input)
+		[MonoTODO]
+		public XmlTextReader (TextReader input)
 		{
-			Init();
+			Init ();
 			reader = input;
 		}
 
- 		public XmlTextReader(Stream input, XmlNameTable nameTable)
+		[MonoTODO]
+		protected XmlTextReader (XmlNameTable nt)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public XmlTextReader (Stream input, XmlNameTable nt)
  		{
-			this.nameTable = nameTable;
-
-			// TODO: implement me.
-			throw new NotImplementedException();
+			throw new NotImplementedException ();
 		}
 
-		public XmlTextReader(string baseURI, Stream input)
+		[MonoTODO]
+		public XmlTextReader (string url, Stream input)
 		{
-			// TODO: implement me.
-			throw new NotImplementedException();
+			throw new NotImplementedException ();
 		}
 
-		public XmlTextReader(string baseURI, TextReader input)
+		[MonoTODO]
+		public XmlTextReader (string url, TextReader input)
 		{
-			// TODO: implement me.
-			throw new NotImplementedException();
+			throw new NotImplementedException ();
 		}
 
-		public XmlTextReader(string url, XmlNameTable nameTable)
+		[MonoTODO]
+		public XmlTextReader (string url, XmlNameTable nt)
 		{
-			this.nameTable = nameTable;
-
-			// TODO: implement me.
-			throw new NotImplementedException();
+			throw new NotImplementedException ();
 		}
 
-		public XmlTextReader(
-			TextReader input,
-			XmlNameTable nameTable)
+		[MonoTODO]
+		public XmlTextReader (TextReader input, XmlNameTable nt)
 		{
-			this.nameTable = nameTable;
-
-			// TODO: implement me.
-			throw new NotImplementedException();
+			throw new NotImplementedException ();
 		}
 
-		public XmlTextReader(
-			Stream inputFragment,
-			XmlNodeType fragmentType,
-			XmlParserContext context)
+		[MonoTODO]
+		public XmlTextReader (Stream xmlFragment, XmlNodeType fragType, XmlParserContext context)
 		{
-			// TODO: implement me.
-			throw new NotImplementedException();
+			throw new NotImplementedException ();
 		}
 
-		public XmlTextReader(
-			string baseURI,
-			Stream input,
-			XmlNameTable nameTable)
+		[MonoTODO]
+		public XmlTextReader (string url, Stream input, XmlNameTable nt)
 		{
-			this.nameTable = nameTable;
-
-			// TODO: implement me.
-			throw new NotImplementedException();
+			throw new NotImplementedException ();
 		}
 
-		public XmlTextReader(
-			string baseURI,
-			TextReader input,
-			XmlNameTable nameTable)
+		[MonoTODO]
+		public XmlTextReader (string url, TextReader input, XmlNameTable nt)
 		{
-			this.nameTable = nameTable;
-			// TODO: implement me.
-			throw new NotImplementedException();
+			throw new NotImplementedException ();
 		}
 
-		public XmlTextReader(
-			string fragment,
-			XmlNodeType fragmentType,
-			XmlParserContext context)
+		[MonoTODO]
+		public XmlTextReader (string xmlFragment, XmlNodeType fragType, XmlParserContext context)
 		{
-			// TODO: implement me.
-			throw new NotImplementedException();
+			throw new NotImplementedException ();
 		}
 
-		// properties
+		#endregion
+
+		#region Properties
 
 		public override int AttributeCount
 		{
-			get
-			{
-				return attributes.Count;
-			}
+			get { return attributes.Count; }
 		}
 
+		[MonoTODO]
 		public override string BaseURI
 		{
-			get
-			{
-				// TODO: implement me.
-				return null;
-			}
-		}
-
-		public override bool CanResolveEntity
-		{
-			get
-			{
-				// XmlTextReaders don't resolve entities.
-				return false;
-			}
+			get { throw new NotImplementedException (); }
 		}
 
 		public override int Depth
 		{
-			get
-			{
-				// TODO: implement me.
-				return depth > 0 ? depth : 0;
-			}
+			get { return depth > 0 ? depth : 0; }
 		}
 
+		[MonoTODO]
 		public Encoding Encoding
 		{
-			get
-			{
-				// TODO: implement me.
-				return null;
-			}
+			get { throw new NotImplementedException (); }
 		}
 
 		public override bool EOF
@@ -207,10 +162,7 @@ namespace System.Xml
 
 		public override bool HasValue
 		{
-			get
-			{
-				return value != String.Empty;
-			}
+			get { return value != String.Empty;	}
 		}
 
 		public override bool IsDefault
@@ -224,363 +176,286 @@ namespace System.Xml
 
 		public override bool IsEmptyElement
 		{
-			get
-			{
-				return isEmptyElement;
-			}
+			get { return isEmptyElement; }
 		}
 
-		public override string this[int i]
+		public override string this [int i]
 		{
-			get
-			{
-				return GetAttribute(i);
-			}
+			get { return GetAttribute (i); }
 		}
 
-		public override string this[string name]
+		public override string this [string name]
 		{
-			get
-			{
-				return GetAttribute(name);
-			}
+			get { return GetAttribute (name); }
 		}
 
-		public override string this[
-			string localName,
-			string namespaceName]
+		public override string this [string localName, string namespaceName]
 		{
-			get
-			{
-				return GetAttribute(localName, namespaceName);
-			}
+			get { return GetAttribute (localName, namespaceName); }
 		}
 
+		[MonoTODO]
 		public int LineNumber
 		{
-			get
-			{
-				// TODO: implement me.
-				return 0;
-			}
+			get { throw new NotImplementedException (); }
 		}
 
+		[MonoTODO]
 		public int LinePosition
 		{
-			get
-			{
-				// TODO: implement me.
-				return 0;
-			}
+			get { throw new NotImplementedException (); }
 		}
 
 		public override string LocalName
 		{
-			get
-			{
-				return localName;
-			}
+			get { return localName; }
 		}
 
 		public override string Name
 		{
-			get
-			{
-				return name;
-			}
+			get { return name; }
 		}
 
+		[MonoTODO]
 		public bool Namespaces
 		{
-			get
-			{
-				// TODO: implement me.
-				return false;
-			}
-
-			set
-			{
-				// TODO: implement me.
-			}
+			get { throw new NotImplementedException (); }
+			set { throw new NotImplementedException (); }
 		}
 
 		public override string NamespaceURI
 		{
-			get
-			{
-				return namespaceURI;
-			}
+			get { return namespaceURI; }
 		}
 
 		public override XmlNameTable NameTable
 		{
-			get
-			{
-				// TODO: implement me.
-				return null;
-			}
+			get { return nameTable; }
 		}
 
 		public override XmlNodeType NodeType
 		{
-			get
-			{
-				return nodeType;
-			}
+			get { return nodeType; }
 		}
 
+		[MonoTODO]
 		public bool Normalization
 		{
-			get
-			{
-				// TODO: implement me.
-				return false;
-			}
-
-			set
-			{
-				// TODO: implement me.
-			}
+			get { throw new NotImplementedException (); }
+			set { throw new NotImplementedException (); }
 		}
 
 		public override string Prefix
 		{
-			get
-			{
-				return prefix;
-			}
+			get { return prefix; }
 		}
 
+		[MonoTODO]
 		public override char QuoteChar
 		{
-			get
-			{
-				// TODO: implement me.
-				return '"';
-			}
+			get { throw new NotImplementedException (); }
 		}
 
 		public override ReadState ReadState
 		{
-			get
-			{
-				return readState;
-			}
+			get { return readState; }
 		}
 
 		public override string Value
 		{
-			get
-			{
-				return value;
-			}
+			get { return value; }
 		}
 
+		[MonoTODO]
 		public WhitespaceHandling WhitespaceHandling
 		{
-			get
-			{
-				// TODO: implement me.
-				return WhitespaceHandling.All;
-			}
-
-			set
-			{
-				// TODO: implement me.
-			}
+			get { throw new NotImplementedException (); }
+			set { throw new NotImplementedException (); }
 		}
 
+		[MonoTODO]
 		public override string XmlLang
 		{
-			get
-			{
-				// TODO: implement me.
-				return null;
-			}
+			get { throw new NotImplementedException (); }
 		}
 
+		[MonoTODO]
 		public XmlResolver XmlResolver
 		{
-			set
-			{
-				// TODO: implement me.
-			}
+			set { throw new NotImplementedException (); }
 		}
 
+		[MonoTODO]
 		public override XmlSpace XmlSpace
 		{
-			get
-			{
-				// TODO: implement me.
-				return XmlSpace.Default;
-			}
+			get { throw new NotImplementedException (); }
 		}
 
-		// methods
+		#endregion
 
-		public override void Close()
+		#region Methods
+
+		[MonoTODO]
+		public override void Close ()
 		{
 			readState = ReadState.Closed;
 		}
 
-		public override string GetAttribute(int i)
+		[MonoTODO]
+		public override string GetAttribute (int i)
 		{
-			// TODO: implement me.
-			return null;
+			throw new NotImplementedException ();
 		}
 
-		public override string GetAttribute(string name)
+		public override string GetAttribute (string name)
 		{
-			return (string)attributes[name];
+			return attributes [name] as string;
 		}
 
-		public override string GetAttribute(
-			string localName,
-			string namespaceURI)
+		public override string GetAttribute (string localName, string namespaceURI)
 		{
 			foreach (DictionaryEntry entry in attributes)
 			{
-				string thisName = (string)entry.Key;
+				string thisName = entry.Key as string;
 
-				int indexOfColon = thisName.IndexOf(':');
+				int indexOfColon = thisName.IndexOf (':');
 
-				if (indexOfColon != -1)
-				{
-					string thisLocalName = thisName.Substring(indexOfColon + 1);
+				if (indexOfColon != -1) {
+					string thisLocalName = thisName.Substring (indexOfColon + 1);
 
-					if (localName == thisLocalName)
-					{
-						string thisPrefix = thisName.Substring(0, indexOfColon);
-						string thisNamespaceURI = LookupNamespace(thisPrefix);
+					if (localName == thisLocalName) {
+						string thisPrefix = thisName.Substring (0, indexOfColon);
+						string thisNamespaceURI = LookupNamespace (thisPrefix);
 
 						if (namespaceURI == thisNamespaceURI)
-						{
-							return (string)attributes[thisName];
-						}
+							return attributes [thisName] as string;
 					}
-				}
-				else if (localName == "xmlns" && namespaceURI == "http://www.w3.org/2000/xmlns/" && thisName == "xmlns")
-				{
-					return (string)attributes[thisName];
-				}
+				} else if (localName == "xmlns" && namespaceURI == "http://www.w3.org/2000/xmlns/" && thisName == "xmlns")
+					return attributes[thisName] as string;
 			}
 
 			return String.Empty;
 		}
 
-		public TextReader GetRemainder()
+		[MonoTODO]
+		public TextReader GetRemainder ()
 		{
-			// TODO: implement me.
-			return null;
+			throw new NotImplementedException ();
 		}
 
-		// Why does this use explicit interface implementation?
-		bool IXmlLineInfo.HasLineInfo()
+		[MonoTODO]
+		bool IXmlLineInfo.HasLineInfo ()
 		{
-			// TODO: implement me.
-			return false;
+			throw new NotImplementedException ();
 		}
 
-		public override string LookupNamespace(string prefix)
+		public override string LookupNamespace (string prefix)
 		{
-			return namespaceManager.LookupNamespace(prefix);
+			return namespaceManager.LookupNamespace (prefix);
 		}
 
-		public override void MoveToAttribute(int i)
+		[MonoTODO]
+		public override void MoveToAttribute (int i)
 		{
-			// TODO: implement me.
+			throw new NotImplementedException ();
 		}
 
-		public override bool MoveToAttribute(string name)
+		[MonoTODO]
+		public override bool MoveToAttribute (string name)
 		{
-			// TODO: implement me.
-			return false;
+			throw new NotImplementedException ();
 		}
 
-		public override bool MoveToAttribute(
-			string localName,
-			string namespaceName)
+		[MonoTODO]
+		public override bool MoveToAttribute (string localName, string namespaceName)
 		{
-			// TODO: implement me.
-			return false;
+			throw new NotImplementedException ();
 		}
 
-		public override bool MoveToElement()
+		[MonoTODO]
+		public override bool MoveToElement ()
 		{
-			// TODO: implement me.
-			return false;
+			throw new NotImplementedException ();
 		}
 
-		public override bool MoveToFirstAttribute()
+		[MonoTODO]
+		public override bool MoveToFirstAttribute ()
 		{
-			// TODO: implement me.
-			return false;
+			throw new NotImplementedException ();
 		}
 
-		public override bool MoveToNextAttribute()
+		[MonoTODO]
+		public override bool MoveToNextAttribute ()
 		{
-			// TODO: implement me.
-			return false;
+			throw new NotImplementedException ();
 		}
 
-		public override bool Read()
+		public override bool Read ()
 		{
 			bool more = false;
 
 			readState = ReadState.Interactive;
 
-			more = ReadContent();
+			more = ReadContent ();
 
 			return more;
 		}
 
-		public override bool ReadAttributeValue()
+		[MonoTODO]
+		public override bool ReadAttributeValue ()
 		{
-			// TODO: implement me.
-			return false;
+			throw new NotImplementedException ();
 		}
 
-		public int ReadBase64(byte[] buffer, int offset, int length)
+		[MonoTODO]
+		public int ReadBase64 (byte[] buffer, int offset, int length)
 		{
-			// TODO: implement me.
-			return 0;
+			throw new NotImplementedException ();
 		}
 
-		public int ReadBinHex(byte[] buffer, int offset, int length)
+		[MonoTODO]
+		public int ReadBinHex (byte[] buffer, int offset, int length)
 		{
-			// TODO: implement me.
-			return 0;
+			throw new NotImplementedException ();
 		}
 
-		public int ReadChars(char[] buffer, int offset, int length)
+		[MonoTODO]
+		public int ReadChars (char[] buffer, int offset, int length)
 		{
-			// TODO: implement me.
-			return 0;
+			throw new NotImplementedException ();
 		}
 
-		public override string ReadInnerXml()
+		[MonoTODO]
+		public override string ReadInnerXml ()
 		{
-			// TODO: implement me.
-			return null;
+			throw new NotImplementedException ();
 		}
 
-		public override string ReadOuterXml()
+		[MonoTODO]
+		public override string ReadOuterXml ()
 		{
-			// TODO: implement me.
-			return null;
+			throw new NotImplementedException ();
 		}
 
-		public override string ReadString()
+		[MonoTODO]
+		public override string ReadString ()
 		{
-			// TODO: implement me.
-			return null;
+			throw new NotImplementedException ();
 		}
 
-		public override void ResolveEntity()
+		[MonoTODO]
+		public void ResetState ()
+		{
+			throw new NotImplementedException ();
+		}
+
+		public override void ResolveEntity ()
 		{
 			// XmlTextReaders don't resolve entities.
-			throw new InvalidOperationException("XmlTextReaders don't resolve entities.");
+			throw new InvalidOperationException ("XmlTextReaders don't resolve entities.");
 		}
+
+		#endregion
 
 		// privates
 
@@ -616,9 +491,12 @@ namespace System.Xml
 		private int valueCapacity;
 		private const int initialValueCapacity = 8192;
 
-		private void Init()
+		private void Init ()
 		{
-			namespaceManager = new XmlNamespaceManager(nameTable);
+			if (nameTable == null)
+				nameTable = new NameTable ();
+
+			namespaceManager = new XmlNamespaceManager (nameTable);
 			popScope = false;
 
 			readState = ReadState.Initial;
@@ -632,7 +510,7 @@ namespace System.Xml
 			localName = string.Empty;
 			isEmptyElement = false;
 			value = String.Empty;
-			attributes = new Hashtable();
+			attributes = new Hashtable ();
 			
 			returnEntityReference = false;
 			entityReferenceName = String.Empty;
@@ -651,7 +529,7 @@ namespace System.Xml
 		// be changed in harmony with each other. Maybe the
 		// fields should be in a seperate class to help enforce
 		// this.
-		private void SetProperties(
+		private void SetProperties (
 			XmlNodeType nodeType,
 			string name,
 			bool isEmptyElement,
@@ -664,85 +542,72 @@ namespace System.Xml
 			this.value = value;
 
 			if (clearAttributes)
-			{
-				ClearAttributes();
-			}
+				ClearAttributes ();
 
-			int indexOfColon = name.IndexOf(':');
+			int indexOfColon = name.IndexOf (':');
 
-			if (indexOfColon == -1)
-			{
+			if (indexOfColon == -1) {
 				prefix = String.Empty;
 				localName = name;
-			}
-			else
-			{
-				prefix = name.Substring(0, indexOfColon);
-				localName = name.Substring(indexOfColon + 1);
+			} else {
+				prefix = name.Substring (0, indexOfColon);
+				localName = name.Substring (indexOfColon + 1);
 			}
 
-			namespaceURI = LookupNamespace(prefix);
+			namespaceURI = LookupNamespace (prefix);
 		}
 
-		private void AddAttribute(string name, string value)
+		private void AddAttribute (string name, string value)
 		{
-			attributes.Add(name, value);
+			attributes.Add (name, value);
 		}
 
-		private void ClearAttributes()
+		private void ClearAttributes ()
 		{
 			if (attributes.Count > 0)
-			{
-				attributes.Clear();
-			}
+				attributes.Clear ();
 		}
 
-		private int PeekChar()
+		private int PeekChar ()
 		{
-			return reader.Peek();
+			return reader.Peek ();
 		}
 
-		private int ReadChar()
+		private int ReadChar ()
 		{
-			return reader.Read();
+			return reader.Read ();
 		}
 
 		// This should really keep track of some state so
 		// that it's not possible to have more than one document
 		// element or text outside of the document element.
-		private bool ReadContent()
+		private bool ReadContent ()
 		{
 			bool more = false;
 
-			if (popScope)
-			{
-				namespaceManager.PopScope();
+			if (popScope) {
+				namespaceManager.PopScope ();
 				popScope = false;
 			}
 
 			if (depthDown)
-			{
 				--depth;
-			}
 
-			if (returnEntityReference)
-			{
+			if (returnEntityReference) {
 				++depth;
-				SetEntityReferenceProperties();
+				SetEntityReferenceProperties ();
 				more = true;
-			}
-			else
-			{
-				switch (PeekChar())
+			} else {
+				switch (PeekChar ())
 				{
 				case '<':
-					ReadChar();
-					ReadTag();
+					ReadChar ();
+					ReadTag ();
 					more = true;
 					break;
 				case -1:
 					readState = ReadState.EndOfFile;
-					SetProperties(
+					SetProperties (
 						XmlNodeType.None, // nodeType
 						String.Empty, // name
 						false, // isEmptyElement
@@ -752,7 +617,7 @@ namespace System.Xml
 					more = false;
 					break;
 				default:
-					ReadText();
+					ReadText ();
 					more = true;
 					break;
 				}
@@ -761,9 +626,9 @@ namespace System.Xml
 			return more;
 		}
 
-		private void SetEntityReferenceProperties()
+		private void SetEntityReferenceProperties ()
 		{
-			SetProperties(
+			SetProperties (
 				XmlNodeType.EntityReference, // nodeType
 				entityReferenceName, // name
 				false, // isEmptyElement
@@ -776,58 +641,55 @@ namespace System.Xml
 		}
 
 		// The leading '<' has already been consumed.
-		private void ReadTag()
+		private void ReadTag ()
 		{
-			switch (PeekChar())
+			switch (PeekChar ())
 			{
 			case '/':
-				ReadChar();
-				ReadEndTag();
+				ReadChar ();
+				ReadEndTag ();
 				break;
 			case '?':
-				ReadChar();
-				ReadProcessingInstruction();
+				ReadChar ();
+				ReadProcessingInstruction ();
 				break;
 			case '!':
-				ReadChar();
-				ReadDeclaration();
+				ReadChar ();
+				ReadDeclaration ();
 				break;
 			default:
-				ReadStartTag();
+				ReadStartTag ();
 				break;
 			}
 		}
 
 		// The leading '<' has already been consumed.
-		private void ReadStartTag()
+		private void ReadStartTag ()
 		{
-			namespaceManager.PushScope();
+			namespaceManager.PushScope ();
 
-			string name = ReadName();
-			SkipWhitespace();
+			string name = ReadName ();
+			SkipWhitespace ();
 
 			bool isEmptyElement = false;
 
-			ClearAttributes();
+			ClearAttributes ();
 
-			if (XmlChar.IsFirstNameChar(PeekChar()))
-			{
-				ReadAttributes();
-			}
+			if (XmlChar.IsFirstNameChar (PeekChar ()))
+				ReadAttributes ();
 
-			if (PeekChar() == '/')
-			{
-				ReadChar();
+			if (PeekChar () == '/') {
+				ReadChar ();
 				isEmptyElement = true;
 				depthDown = true;
 				popScope = true;
 			}
 
-			Expect('>');
+			Expect ('>');
 
 			++depth;
 
-			SetProperties(
+			SetProperties (
 				XmlNodeType.Element, // nodeType
 				name, // name
 				isEmptyElement, // isEmptyElement
@@ -838,15 +700,15 @@ namespace System.Xml
 
 		// The reader is positioned on the first character
 		// of the element's name.
-		private void ReadEndTag()
+		private void ReadEndTag ()
 		{
-			string name = ReadName();
-			SkipWhitespace();
-			Expect('>');
+			string name = ReadName ();
+			SkipWhitespace ();
+			Expect ('>');
 
 			--depth;
 
-			SetProperties(
+			SetProperties (
 				XmlNodeType.EndElement, // nodeType
 				name, // name
 				false, // isEmptyElement
@@ -857,95 +719,81 @@ namespace System.Xml
 			popScope = true;
 		}
 
-		private void AppendNameChar(int ch)
+		private void AppendNameChar (int ch)
 		{
-			CheckNameCapacity();
+			CheckNameCapacity ();
 			nameBuffer[nameLength++] = (char)ch;
 		}
 
-		private void CheckNameCapacity()
+		private void CheckNameCapacity ()
 		{
-			if (nameLength == nameCapacity)
-			{
+			if (nameLength == nameCapacity) {
 				nameCapacity = nameCapacity * 2;
 				char[] oldNameBuffer = nameBuffer;
 				nameBuffer = new char[nameCapacity];
-				Array.Copy(oldNameBuffer, nameBuffer, nameLength);
+				Array.Copy (oldNameBuffer, nameBuffer, nameLength);
 			}
 		}
 
-		private string CreateNameString()
+		private string CreateNameString ()
 		{
-			return new String(nameBuffer, 0, nameLength);
+			return new String (nameBuffer, 0, nameLength);
 		}
 
-		private void AppendValueChar(int ch)
+		private void AppendValueChar (int ch)
 		{
-			CheckValueCapacity();
+			CheckValueCapacity ();
 			valueBuffer[valueLength++] = (char)ch;
 		}
 
-		private void CheckValueCapacity()
+		private void CheckValueCapacity ()
 		{
-			if (valueLength == valueCapacity)
-			{
+			if (valueLength == valueCapacity) {
 				valueCapacity = valueCapacity * 2;
 				char[] oldValueBuffer = valueBuffer;
 				valueBuffer = new char[valueCapacity];
-				Array.Copy(oldValueBuffer, valueBuffer, valueLength);
+				Array.Copy (oldValueBuffer, valueBuffer, valueLength);
 			}
 		}
 
-		private string CreateValueString()
+		private string CreateValueString ()
 		{
-			return new String(valueBuffer, 0, valueLength);
+			return new String (valueBuffer, 0, valueLength);
 		}
 
 		// The reader is positioned on the first character
 		// of the text.
-		private void ReadText()
+		private void ReadText ()
 		{
 			valueLength = 0;
 
-			int ch = PeekChar();
+			int ch = PeekChar ();
 
-			while (ch != '<' && ch != -1)
-			{
-				if (ch == '&')
-				{
-					ReadChar();
-
-					if (ReadReference(false))
-					{
+			while (ch != '<' && ch != -1) {
+				if (ch == '&') {
+					ReadChar ();
+					if (ReadReference (false))
 						break;
-					}
-				}
-				else
-				{
-					AppendValueChar(ReadChar());
-				}
+				} else
+					AppendValueChar (ReadChar ());
 
-				ch = PeekChar();
+				ch = PeekChar ();
 			}
 
-			if (returnEntityReference && valueLength == 0)
-			{
+			if (returnEntityReference && valueLength == 0) {
 				++depth;
-				SetEntityReferenceProperties();
-			}
-			else
-			{
-				if (depth >= 0)
-				{
+				SetEntityReferenceProperties ();
+			} else {
+				if (depth >= 0) {
 					++depth;
 					depthDown = true;
 				}
 
-				SetProperties(
+				SetProperties (
 					XmlNodeType.Text, // nodeType
 					String.Empty, // name
 					false, // isEmptyElement
-					CreateValueString(), // value
+					CreateValueString (), // value
 					true // clearAttributes
 				);
 			}
@@ -956,128 +804,102 @@ namespace System.Xml
 		// character reference or one of the predefined entities.
 		// This allows the ReadText method to break so that the
 		// next call to Read will return the EntityReference node.
-		private bool ReadReference(bool ignoreEntityReferences)
+		private bool ReadReference (bool ignoreEntityReferences)
 		{
-			if (PeekChar() == '#')
-			{
-				ReadChar();
-				ReadCharacterReference();
-			}
-			else
-			{
-				ReadEntityReference(ignoreEntityReferences);
-			}
+			if (PeekChar () == '#') {
+				ReadChar ();
+				ReadCharacterReference ();
+			} else
+				ReadEntityReference (ignoreEntityReferences);
 
 			return returnEntityReference;
 		}
 
-		private void ReadCharacterReference()
+		private void ReadCharacterReference ()
 		{
 			int value = 0;
 
-			if (PeekChar() == 'x')
-			{
-				ReadChar();
+			if (PeekChar () == 'x') {
+				ReadChar ();
 
-				while (PeekChar() != ';' && PeekChar() != -1)
-				{
-					int ch = ReadChar();
+				while (PeekChar () != ';' && PeekChar () != -1) {
+					int ch = ReadChar ();
 
 					if (ch >= '0' && ch <= '9')
-					{
 						value = (value << 4) + ch - '0';
-					}
 					else if (ch >= 'A' && ch <= 'F')
-					{
 						value = (value << 4) + ch - 'A' + 10;
-					}
 					else if (ch >= 'a' && ch <= 'f')
-					{
 						value = (value << 4) + ch - 'a' + 10;
-					}
 					else
-					{
-						throw new Exception(
-							String.Format(
+						throw new XmlException (
+							String.Format (
 								"invalid hexadecimal digit: {0} (#x{1:X})",
 								(char)ch,
 								ch));
-					}
 				}
-			}
-			else
-			{
-				while (PeekChar() != ';' && PeekChar() != -1)
-				{
-					int ch = ReadChar();
+			} else {
+				while (PeekChar () != ';' && PeekChar () != -1) {
+					int ch = ReadChar ();
 
 					if (ch >= '0' && ch <= '9')
-					{
 						value = value * 10 + ch - '0';
-					}
 					else
-					{
-						throw new Exception(
-							String.Format(
+						throw new XmlException (
+							String.Format (
 								"invalid decimal digit: {0} (#x{1:X})",
 								(char)ch,
 								ch));
-					}
 				}
 			}
 
-			ReadChar(); // ';'
+			ReadChar (); // ';'
 
-			AppendValueChar(value);
+			AppendValueChar (value);
 		}
 
-		private void ReadEntityReference(bool ignoreEntityReferences)
+		private void ReadEntityReference (bool ignoreEntityReferences)
 		{
 			nameLength = 0;
 
-			int ch = PeekChar();
+			int ch = PeekChar ();
 
-			while (ch != ';' && ch != -1)
-			{
-				AppendNameChar(ReadChar());
-				ch = PeekChar();
+			while (ch != ';' && ch != -1) {
+				AppendNameChar (ReadChar ());
+				ch = PeekChar ();
 			}
 
-			Expect(';');
+			Expect (';');
 
-			string name = CreateNameString();
+			string name = CreateNameString ();
 
 			switch (name)
 			{
 				case "lt":
-					AppendValueChar('<');
+					AppendValueChar ('<');
 					break;
 				case "gt":
-					AppendValueChar('>');
+					AppendValueChar ('>');
 					break;
 				case "amp":
-					AppendValueChar('&');
+					AppendValueChar ('&');
 					break;
 				case "apos":
-					AppendValueChar('\'');
+					AppendValueChar ('\'');
 					break;
 				case "quot":
-					AppendValueChar('"');
+					AppendValueChar ('"');
 					break;
 				default:
-					if (ignoreEntityReferences)
-					{
-						AppendValueChar('&');
+					if (ignoreEntityReferences) {
+						AppendValueChar ('&');
 
-						foreach (char ch2 in name)
-						{
-							AppendValueChar(ch2);
+						foreach (char ch2 in name) {
+							AppendValueChar (ch2);
 						}
 
-						AppendValueChar(';');
-					}
-					else
-					{
+						AppendValueChar (';');
+					} else {
 						returnEntityReference = true;
 						entityReferenceName = name;
 					}
@@ -1087,245 +909,220 @@ namespace System.Xml
 
 		// The reader is positioned on the first character of
 		// the attribute name.
-		private void ReadAttributes()
+		private void ReadAttributes ()
 		{
-			do
-			{
-				string name = ReadName();
-				SkipWhitespace();
-				Expect('=');
-				SkipWhitespace();
-				string value = ReadAttribute();
-				SkipWhitespace();
+			do {
+				string name = ReadName ();
+				SkipWhitespace ();
+				Expect ('=');
+				SkipWhitespace ();
+				string value = ReadAttribute ();
+				SkipWhitespace ();
 
 				if (name == "xmlns")
-				{
-					namespaceManager.AddNamespace(String.Empty, value);
-				}
-				else if (name.StartsWith("xmlns:"))
-				{
-					namespaceManager.AddNamespace(name.Substring(6), value);
-				}
+					namespaceManager.AddNamespace (String.Empty, value);
+				else if (name.StartsWith ("xmlns:"))
+					namespaceManager.AddNamespace (name.Substring (6), value);
 
-				AddAttribute(name, value);
-			}
-			while (PeekChar() != '/' && PeekChar() != '>' && PeekChar() != -1);
+				AddAttribute (name, value);
+			} while (PeekChar () != '/' && PeekChar () != '>' && PeekChar () != -1);
 		}
 
 		// The reader is positioned on the quote character.
-		private string ReadAttribute()
+		private string ReadAttribute ()
 		{
-			int quoteChar = ReadChar();
+			int quoteChar = ReadChar ();
 
 			if (quoteChar != '\'' && quoteChar != '\"')
-			{
-				throw new Exception("an attribute value was not quoted");
-			}
+				throw new XmlException ("an attribute value was not quoted");
 
 			valueLength = 0;
 
-			while (PeekChar() != quoteChar)
-			{
-				int ch = ReadChar();
+			while (PeekChar () != quoteChar) {
+				int ch = ReadChar ();
 
 				switch (ch)
 				{
 				case '<':
-					throw new Exception("attribute values cannot contain '<'");
+					throw new XmlException ("attribute values cannot contain '<'");
 				case '&':
-					ReadReference(true);
+					ReadReference (true);
 					break;
 				case -1:
-					throw new Exception("unexpected end of file in an attribute value");
+					throw new XmlException ("unexpected end of file in an attribute value");
 				default:
-					AppendValueChar(ch);
+					AppendValueChar (ch);
 					break;
 				}
 			}
 
-			ReadChar(); // quoteChar
+			ReadChar (); // quoteChar
 
-			return CreateValueString();
+			return CreateValueString ();
 		}
 
 		// The reader is positioned on the first character
 		// of the target.
-		private void ReadProcessingInstruction()
+		private void ReadProcessingInstruction ()
 		{
-			string target = ReadName();
-			SkipWhitespace();
+			string target = ReadName ();
+			SkipWhitespace ();
 
 			valueLength = 0;
 
-			while (PeekChar() != -1)
-			{
-				int ch = ReadChar();
+			while (PeekChar () != -1) {
+				int ch = ReadChar ();
 
-				if (ch == '?' && PeekChar() == '>')
-				{
-					ReadChar();
+				if (ch == '?' && PeekChar () == '>') {
+					ReadChar ();
 					break;
 				}
 
-				AppendValueChar((char)ch);
+				AppendValueChar ((char)ch);
 			}
 
-			SetProperties(
+			SetProperties (
 				XmlNodeType.ProcessingInstruction, // nodeType
 				target, // name
 				false, // isEmptyElement
-				CreateValueString(), // value
+				CreateValueString (), // value
 				true // clearAttributes
 			);
 		}
 
 		// The reader is positioned on the first character after
 		// the leading '<!'.
-		private void ReadDeclaration()
+		private void ReadDeclaration ()
 		{
-			int ch = PeekChar();
+			int ch = PeekChar ();
 
 			switch (ch)
 			{
 			case '-':
-				Expect('-');
-				Expect('-');
-				ReadComment();
+				Expect ('-');
+				Expect ('-');
+				ReadComment ();
 				break;
 			case '[':
-				ReadChar();
-				Expect('C');
-				Expect('D');
-				Expect('A');
-				Expect('T');
-				Expect('A');
-				Expect('[');
-				ReadCDATA();
+				ReadChar ();
+				Expect ('C');
+				Expect ('D');
+				Expect ('A');
+				Expect ('T');
+				Expect ('A');
+				Expect ('[');
+				ReadCDATA ();
 				break;
 			}
 		}
 
 		// The reader is positioned on the first character after
 		// the leading '<!--'.
-		private void ReadComment()
+		private void ReadComment ()
 		{
 			valueLength = 0;
 
-			while (PeekChar() != -1)
-			{
-				int ch = ReadChar();
+			while (PeekChar () != -1) {
+				int ch = ReadChar ();
 
-				if (ch == '-' && PeekChar() == '-')
-				{
-					ReadChar();
+				if (ch == '-' && PeekChar () == '-') {
+					ReadChar ();
 
-					if (PeekChar() != '>')
-					{
-						throw new Exception("comments cannot contain '--'");
-					}
+					if (PeekChar () != '>')
+						throw new XmlException ("comments cannot contain '--'");
 
-					ReadChar();
+					ReadChar ();
 					break;
 				}
 
-				AppendValueChar((char)ch);
+				AppendValueChar ((char)ch);
 			}
 
-			SetProperties(
+			SetProperties (
 				XmlNodeType.Comment, // nodeType
 				String.Empty, // name
 				false, // isEmptyElement
-				CreateValueString(), // value
+				CreateValueString (), // value
 				true // clearAttributes
 			);
 		}
 
 		// The reader is positioned on the first character after
 		// the leading '<![CDATA['.
-		private void ReadCDATA()
+		private void ReadCDATA ()
 		{
 			valueLength = 0;
 
-			while (PeekChar() != -1)
-			{
-				int ch = ReadChar();
+			while (PeekChar () != -1) {
+				int ch = ReadChar ();
 
-				if (ch == ']' && PeekChar() == ']')
-				{
-					ch = ReadChar(); // ']'
+				if (ch == ']' && PeekChar () == ']') {
+					ch = ReadChar (); // ']'
 
-					if (PeekChar() == '>')
-					{
-						ReadChar(); // '>'
+					if (PeekChar () == '>') {
+						ReadChar (); // '>'
 						break;
-					}
-					else
-					{
-						AppendValueChar(']');
-						AppendValueChar(']');
-						ch = ReadChar();
+					} else {
+						AppendValueChar (']');
+						AppendValueChar (']');
+						ch = ReadChar ();
 					}
 				}
 
-				AppendValueChar((char)ch);
+				AppendValueChar ((char)ch);
 			}
 
 			++depth;
 
-			SetProperties(
+			SetProperties (
 				XmlNodeType.CDATA, // nodeType
 				String.Empty, // name
 				false, // isEmptyElement
-				CreateValueString(), // value
+				CreateValueString (), // value
 				true // clearAttributes
 			);
 		}
 
 		// The reader is positioned on the first character
 		// of the name.
-		private string ReadName()
+		private string ReadName ()
 		{
-			if (!XmlChar.IsFirstNameChar(PeekChar()))
-			{
-				throw new Exception("a name did not start with a legal character");
-			}
+			if (!XmlChar.IsFirstNameChar (PeekChar ()))
+				throw new XmlException ("a name did not start with a legal character");
 
 			nameLength = 0;
 
-			AppendNameChar(ReadChar());
+			AppendNameChar (ReadChar ());
 
-			while (XmlChar.IsNameChar(PeekChar()))
-			{
-				AppendNameChar(ReadChar());
+			while (XmlChar.IsNameChar (PeekChar ())) {
+				AppendNameChar (ReadChar ());
 			}
 
-			return CreateNameString();
+			return CreateNameString ();
 		}
 
 		// Read the next character and compare it against the
 		// specified character.
-		private void Expect(int expected)
+		private void Expect (int expected)
 		{
-			int ch = ReadChar();
+			int ch = ReadChar ();
 
-			if (ch != expected)
-			{
-				throw new Exception(String.Format(
-					"expected '{0}' ({1:X}) but found '{2}' ({3:X})",
-					(char)expected,
-					expected,
-					(char)ch,
-					ch));
+			if (ch != expected) {
+				throw new XmlException (
+					String.Format (
+						"expected '{0}' ({1:X}) but found '{2}' ({3:X})",
+						(char)expected,
+						expected,
+						(char)ch,
+						ch));
 			}
 		}
 
 		// Does not consume the first non-whitespace character.
-		private void SkipWhitespace()
+		private void SkipWhitespace ()
 		{
-			while (XmlChar.IsWhitespace(PeekChar()))
-			{
-				ReadChar();
-			}
+			while (XmlChar.IsWhitespace (PeekChar ()))
+				ReadChar ();
 		}
 	}
 }

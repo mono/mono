@@ -1,15 +1,13 @@
-// -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*-
 //
-// System.Xml.Test.cs
+// XmlTextReaderTests.cs
 //
 // Author:
 //   Jason Diamond (jason@injektilo.org)
 //
-// (C) 2001 Jason Diamond  http://injektilo.org/
+// (C) 2001, 2002 Jason Diamond  http://injektilo.org/
 //
 
 using System;
-using System.Diagnostics;
 using System.IO;
 using System.Xml;
 
@@ -19,18 +17,18 @@ namespace Ximian.Mono.Tests
 {
 	public class XmlTextReaderTests : TestCase
 	{
-		public XmlTextReaderTests() : base("Ximian.Mono.Tests.XmlTextReaderTests testsuite") { }
-		public XmlTextReaderTests(string name) : base(name) { }
+		public XmlTextReaderTests () : base ("Ximian.Mono.Tests.XmlTextReaderTests testsuite") { }
+		public XmlTextReaderTests (string name) : base (name) { }
 
-		private void AssertStartDocument(XmlReader xmlReader)
+		private void AssertStartDocument (XmlReader xmlReader)
 		{
-			Assert(xmlReader.ReadState == ReadState.Initial);
-			Assert(xmlReader.NodeType == XmlNodeType.None);
-			Assert(xmlReader.Depth == 0);
-			Assert(!xmlReader.EOF);
+			Assert (xmlReader.ReadState == ReadState.Initial);
+			Assert (xmlReader.NodeType == XmlNodeType.None);
+			Assert (xmlReader.Depth == 0);
+			Assert (!xmlReader.EOF);
 		}
 
-		private void AssertNode(
+		private void AssertNode (
 			XmlReader xmlReader,
 			XmlNodeType nodeType,
 			int depth,
@@ -42,61 +40,72 @@ namespace Ximian.Mono.Tests
 			string value,
 			int attributeCount)
 		{
-			Assert(xmlReader.Read());
-			Assert(xmlReader.ReadState == ReadState.Interactive);
-			Assert(!xmlReader.EOF);
+			Assert (xmlReader.Read ());
+			Assert (xmlReader.ReadState == ReadState.Interactive);
+			Assert (!xmlReader.EOF);
 
-			Assert(xmlReader.NodeType == nodeType);
-			Assert(xmlReader.Depth == depth);
-			Assert(xmlReader.IsEmptyElement == isEmptyElement);
+			Assert (xmlReader.NodeType == nodeType);
+			Assert (xmlReader.Depth == depth);
+			Assert (xmlReader.IsEmptyElement == isEmptyElement);
 
-			Assert(
-				String.Format(
+			Assert (
+				String.Format (
 					"name was {0}, expected {1}",
 					xmlReader.Name,
 					name),
 				xmlReader.Name == name);
 
-			Assert(
-				String.Format(
+			Assert (
+				String.Format (
 					"prefix was {0}, expected {1}",
 					xmlReader.Prefix,
 					prefix),
 				xmlReader.Prefix == prefix);
 
-			Assert(
-				String.Format(
+			Assert (
+				String.Format (
 					"localName was {0}, expected {1}",
 					xmlReader.LocalName,
 					localName),
 				xmlReader.LocalName == localName);
 
-			Assert(
-				String.Format(
+			Assert (
+				String.Format (
 					"namespaceURI was {0}, expected {1}",
 					xmlReader.NamespaceURI,
 					namespaceURI),
 				xmlReader.NamespaceURI == namespaceURI);
 
-			Assert(xmlReader.HasValue == (value != String.Empty));
-			Assert(xmlReader.Value == value);
+			Assert (
+				String.Format (
+					"hasValue was {0}, expected {1}",
+					xmlReader.HasValue,
+					(value != String.Empty)),				
+				xmlReader.HasValue == (value != String.Empty));
 
-			Assert(
-				String.Format(
+			Assert (
+				String.Format (
+					"value was {0}, expected {1}",
+					xmlReader.Value,
+					value),
+				xmlReader.Value == value);
+
+			Assert (
+				String.Format (
 					"hasAttributes was {0}, expected {1}",
 					xmlReader.HasAttributes,
 					(attributeCount > 0)),
 				xmlReader.HasAttributes == (attributeCount > 0));
 
-			Assert(
-				String.Format(
+			Assert (
+				String.Format (
 					"attributeCount was {0}, expected {1}",
 					xmlReader.AttributeCount,
 					attributeCount),
 				xmlReader.AttributeCount == attributeCount);
 		}
 
-		private void AssertAttribute(
+		private void AssertAttribute (
 			XmlReader xmlReader,
 			string name,
 			string prefix,
@@ -104,43 +113,42 @@ namespace Ximian.Mono.Tests
 			string namespaceURI,
 			string value)
 		{
-			Assert(
-				String.Format(
+			Assert (
+				String.Format (
 					"value was {0}, expected {1}",
 					xmlReader[name],
 					value),
 				xmlReader[name] == value);
 
-			Assert(xmlReader.GetAttribute(name) == value);
+			Assert (xmlReader.GetAttribute (name) == value);
 
-			if (namespaceURI != String.Empty)
-			{
-				Assert(xmlReader[localName, namespaceURI] == value);
-				Assert(xmlReader.GetAttribute(localName, namespaceURI) == value);
+			if (namespaceURI != String.Empty) {
+				Assert (xmlReader[localName, namespaceURI] == value);
+				Assert (xmlReader.GetAttribute (localName, namespaceURI) == value);
 			}
 		}
 
-		private void AssertEndDocument(XmlReader xmlReader)
+		private void AssertEndDocument (XmlReader xmlReader)
 		{
-			Assert(!xmlReader.Read());
-			Assert(xmlReader.NodeType == XmlNodeType.None);
-			Assert(xmlReader.Depth == 0);
-			Assert(xmlReader.ReadState == ReadState.EndOfFile);
-			Assert(xmlReader.EOF);
+			Assert (!xmlReader.Read ());
+			Assert (xmlReader.NodeType == XmlNodeType.None);
+			Assert (xmlReader.Depth == 0);
+			Assert (xmlReader.ReadState == ReadState.EndOfFile);
+			Assert (xmlReader.EOF);
 
-			xmlReader.Close();
-			Assert(xmlReader.ReadState == ReadState.Closed);
+			xmlReader.Close ();
+			Assert (xmlReader.ReadState == ReadState.Closed);
 		}
 
-		public void TestEmptyElement()
+		public void TestEmptyElement ()
 		{
 			string xml = "<foo/>";
 			XmlReader xmlReader =
-				new XmlTextReader(new StringReader(xml));
+				new XmlTextReader (new StringReader (xml));
 
-			AssertStartDocument(xmlReader);
+			AssertStartDocument (xmlReader);
 
-			AssertNode(
+			AssertNode (
 				xmlReader, // xmlReader
 				XmlNodeType.Element, // nodeType
 				0, // depth
@@ -153,18 +161,35 @@ namespace Ximian.Mono.Tests
 				0 // attributeCount
 			);
 
-			AssertEndDocument(xmlReader);
+			AssertEndDocument (xmlReader);
 		}
 
-		public void TestEmptyElementWithWhitespace()
+		public void TestEmptyElementWithBadName ()
+		{
+			string xml = "<1foo/>";
+			XmlReader xmlReader =
+				new XmlTextReader (new StringReader (xml));
+
+			bool caughtXmlException = false;
+
+			try {
+				xmlReader.Read();
+			} catch (XmlException) {
+				caughtXmlException = true;
+			}
+
+			Assert(caughtXmlException);
+		}
+
+		public void TestEmptyElementWithWhitespace ()
 		{
 			string xml = "<foo />";
 			XmlReader xmlReader =
-				new XmlTextReader(new StringReader(xml));
+				new XmlTextReader (new StringReader (xml));
 
-			AssertStartDocument(xmlReader);
+			AssertStartDocument (xmlReader);
 
-			AssertNode(
+			AssertNode (
 				xmlReader, // xmlReader
 				XmlNodeType.Element, // nodeType
 				0, //depth
@@ -177,18 +202,18 @@ namespace Ximian.Mono.Tests
 				0 // attributeCount
 			);
 
-			AssertEndDocument(xmlReader);
+			AssertEndDocument (xmlReader);
 		}
 
-		public void TestEmptyElementWithStartAndEndTag()
+		public void TestEmptyElementWithStartAndEndTag ()
 		{
 			string xml = "<foo></foo>";
 			XmlReader xmlReader =
-				new XmlTextReader(new StringReader(xml));
+				new XmlTextReader (new StringReader (xml));
 
-			AssertStartDocument(xmlReader);
+			AssertStartDocument (xmlReader);
 
-			AssertNode(
+			AssertNode (
 				xmlReader, // xmlReader
 				XmlNodeType.Element, // nodeType
 				0, //depth
@@ -201,7 +226,7 @@ namespace Ximian.Mono.Tests
 				0 // attributeCount
 			);
 
-			AssertNode(
+			AssertNode (
 				xmlReader, // xmlReader
 				XmlNodeType.EndElement, // nodeType
 				0, //depth
@@ -214,18 +239,18 @@ namespace Ximian.Mono.Tests
 				0 // attributeCount
 			);
 
-			AssertEndDocument(xmlReader);
+			AssertEndDocument (xmlReader);
 		}
 
-		public void TestEmptyElementWithStartAndEndTagWithWhitespace()
+		public void TestEmptyElementWithStartAndEndTagWithWhitespace ()
 		{
 			string xml = "<foo ></foo >";
 			XmlReader xmlReader =
-				new XmlTextReader(new StringReader(xml));
+				new XmlTextReader (new StringReader (xml));
 
-			AssertStartDocument(xmlReader);
+			AssertStartDocument (xmlReader);
 
-			AssertNode(
+			AssertNode (
 				xmlReader, // xmlReader
 				XmlNodeType.Element, // nodeType
 				0, //depth
@@ -238,7 +263,7 @@ namespace Ximian.Mono.Tests
 				0 // attributeCount
 			);
 
-			AssertNode(
+			AssertNode (
 				xmlReader, // xmlReader
 				XmlNodeType.EndElement, // nodeType
 				0, //depth
@@ -251,18 +276,18 @@ namespace Ximian.Mono.Tests
 				0 // attributeCount
 			);
 
-			AssertEndDocument(xmlReader);
+			AssertEndDocument (xmlReader);
 		}
 
-		public void TestNestedEmptyTag()
+		public void TestNestedEmptyTag ()
 		{
 			string xml = "<foo><bar/></foo>";
 			XmlReader xmlReader =
-				new XmlTextReader(new StringReader(xml));
+				new XmlTextReader (new StringReader (xml));
 
-			AssertStartDocument(xmlReader);
+			AssertStartDocument (xmlReader);
 
-			AssertNode(
+			AssertNode (
 				xmlReader, // xmlReader
 				XmlNodeType.Element, // nodeType
 				0, //depth
@@ -275,7 +300,7 @@ namespace Ximian.Mono.Tests
 				0 // attributeCount
 			);
 
-			AssertNode(
+			AssertNode (
 				xmlReader, // xmlReader
 				XmlNodeType.Element, // nodeType
 				1, //depth
@@ -288,7 +313,7 @@ namespace Ximian.Mono.Tests
 				0 // attributeCount
 			);
 
-			AssertNode(
+			AssertNode (
 				xmlReader, // xmlReader
 				XmlNodeType.EndElement, // nodeType
 				0, //depth
@@ -301,18 +326,18 @@ namespace Ximian.Mono.Tests
 				0 // attributeCount
 			);
 
-			AssertEndDocument(xmlReader);
+			AssertEndDocument (xmlReader);
 		}
 
-		public void TestNestedText()
+		public void TestNestedText ()
 		{
 			string xml = "<foo>bar</foo>";
 			XmlReader xmlReader =
-				new XmlTextReader(new StringReader(xml));
+				new XmlTextReader (new StringReader (xml));
 
-			AssertStartDocument(xmlReader);
+			AssertStartDocument (xmlReader);
 
-			AssertNode(
+			AssertNode (
 				xmlReader, // xmlReader
 				XmlNodeType.Element, // nodeType
 				0, //depth
@@ -325,7 +350,7 @@ namespace Ximian.Mono.Tests
 				0 // attributeCount
 			);
 
-			AssertNode(
+			AssertNode (
 				xmlReader, // xmlReader
 				XmlNodeType.Text, // nodeType
 				1, //depth
@@ -338,7 +363,7 @@ namespace Ximian.Mono.Tests
 				0 // attributeCount
 			);
 
-			AssertNode(
+			AssertNode (
 				xmlReader, // xmlReader
 				XmlNodeType.EndElement, // nodeType
 				0, //depth
@@ -351,18 +376,18 @@ namespace Ximian.Mono.Tests
 				0 // attributeCount
 			);
 
-			AssertEndDocument(xmlReader);
+			AssertEndDocument (xmlReader);
 		}
 
-		public void TestEmptyElementWithAttribute()
+		public void TestEmptyElementWithAttribute ()
 		{
 			string xml = @"<foo bar=""baz""/>";
 			XmlReader xmlReader =
-				new XmlTextReader(new StringReader(xml));
+				new XmlTextReader (new StringReader (xml));
 
-			AssertStartDocument(xmlReader);
+			AssertStartDocument (xmlReader);
 
-			AssertNode(
+			AssertNode (
 				xmlReader, // xmlReader
 				XmlNodeType.Element, // nodeType
 				0, //depth
@@ -375,7 +400,7 @@ namespace Ximian.Mono.Tests
 				1 // attributeCount
 			);
 
-			AssertAttribute(
+			AssertAttribute (
 				xmlReader, // xmlReader
 				"bar", // name
 				String.Empty, // prefix
@@ -384,18 +409,18 @@ namespace Ximian.Mono.Tests
 				"baz" // value
 			);
 
-			AssertEndDocument(xmlReader);
+			AssertEndDocument (xmlReader);
 		}
 
-		public void TestStartAndEndTagWithAttribute()
+		public void TestStartAndEndTagWithAttribute ()
 		{
 			string xml = @"<foo bar='baz'></foo>";
 			XmlReader xmlReader =
-				new XmlTextReader(new StringReader(xml));
+				new XmlTextReader (new StringReader (xml));
 
-			AssertStartDocument(xmlReader);
+			AssertStartDocument (xmlReader);
 
-			AssertNode(
+			AssertNode (
 				xmlReader, // xmlReader
 				XmlNodeType.Element, // nodeType
 				0, //depth
@@ -408,7 +433,7 @@ namespace Ximian.Mono.Tests
 				1 // attributeCount
 			);
 
-			AssertAttribute(
+			AssertAttribute (
 				xmlReader, // xmlReader
 				"bar", // name
 				String.Empty, // prefix
@@ -417,7 +442,7 @@ namespace Ximian.Mono.Tests
 				"baz" // value
 			);
 
-			AssertNode(
+			AssertNode (
 				xmlReader, // xmlReader
 				XmlNodeType.EndElement, // nodeType
 				0, //depth
@@ -430,18 +455,18 @@ namespace Ximian.Mono.Tests
 				0 // attributeCount
 			);
 
-			AssertEndDocument(xmlReader);
+			AssertEndDocument (xmlReader);
 		}
 
-		public void TestEmptyElementWithTwoAttributes()
+		public void TestEmptyElementWithTwoAttributes ()
 		{
 			string xml = @"<foo bar=""baz"" quux='quuux'/>";
 			XmlReader xmlReader =
-				new XmlTextReader(new StringReader(xml));
+				new XmlTextReader (new StringReader (xml));
 
-			AssertStartDocument(xmlReader);
+			AssertStartDocument (xmlReader);
 
-			AssertNode(
+			AssertNode (
 				xmlReader, // xmlReader
 				XmlNodeType.Element, // nodeType
 				0, //depth
@@ -454,7 +479,7 @@ namespace Ximian.Mono.Tests
 				2 // attributeCount
 			);
 
-			AssertAttribute(
+			AssertAttribute (
 				xmlReader, // xmlReader
 				"bar", // name
 				String.Empty, // prefix
@@ -463,7 +488,7 @@ namespace Ximian.Mono.Tests
 				"baz" // value
 			);
 
-			AssertAttribute(
+			AssertAttribute (
 				xmlReader, // xmlReader
 				"quux", // name
 				String.Empty, // prefix
@@ -472,18 +497,18 @@ namespace Ximian.Mono.Tests
 				"quuux" // value
 			);
 
-			AssertEndDocument(xmlReader);
+			AssertEndDocument (xmlReader);
 		}
 
-		public void TestProcessingInstructionBeforeDocumentElement()
+		public void TestProcessingInstructionBeforeDocumentElement ()
 		{
 			string xml = "<?foo bar?><baz/>";
 			XmlReader xmlReader =
-				new XmlTextReader(new StringReader(xml));
+				new XmlTextReader (new StringReader (xml));
 
-			AssertStartDocument(xmlReader);
+			AssertStartDocument (xmlReader);
 
-			AssertNode(
+			AssertNode (
 				xmlReader, // xmlReader
 				XmlNodeType.ProcessingInstruction, // nodeType
 				0, //depth
@@ -496,7 +521,7 @@ namespace Ximian.Mono.Tests
 				0 // attributeCount
 			);
 
-			AssertNode(
+			AssertNode (
 				xmlReader, // xmlReader
 				XmlNodeType.Element, // nodeType
 				0, //depth
@@ -509,18 +534,18 @@ namespace Ximian.Mono.Tests
 				0 // attributeCount
 			);
 
-			AssertEndDocument(xmlReader);
+			AssertEndDocument (xmlReader);
 		}
 
-		public void TestCommentBeforeDocumentElement()
+		public void TestCommentBeforeDocumentElement ()
 		{
 			string xml = "<!--foo--><bar/>";
 			XmlReader xmlReader =
-				new XmlTextReader(new StringReader(xml));
+				new XmlTextReader (new StringReader (xml));
 
-			AssertStartDocument(xmlReader);
+			AssertStartDocument (xmlReader);
 
-			AssertNode(
+			AssertNode (
 				xmlReader, // xmlReader
 				XmlNodeType.Comment, // nodeType
 				0, //depth
@@ -533,7 +558,7 @@ namespace Ximian.Mono.Tests
 				0 // attributeCount
 			);
 
-			AssertNode(
+			AssertNode (
 				xmlReader, // xmlReader
 				XmlNodeType.Element, // nodeType
 				0, //depth
@@ -546,18 +571,18 @@ namespace Ximian.Mono.Tests
 				0 // attributeCount
 			);
 
-			AssertEndDocument(xmlReader);
+			AssertEndDocument (xmlReader);
 		}
 
-		public void TestPredefinedEntities()
+		public void TestPredefinedEntities ()
 		{
 			string xml = "<foo>&lt;&gt;&amp;&apos;&quot;</foo>";
 			XmlReader xmlReader =
-				new XmlTextReader(new StringReader(xml));
+				new XmlTextReader (new StringReader (xml));
 
-			AssertStartDocument(xmlReader);
+			AssertStartDocument (xmlReader);
 
-			AssertNode(
+			AssertNode (
 				xmlReader, // xmlReader
 				XmlNodeType.Element, // nodeType
 				0, //depth
@@ -570,7 +595,7 @@ namespace Ximian.Mono.Tests
 				0 // attributeCount
 			);
 
-			AssertNode(
+			AssertNode (
 				xmlReader, // xmlReader
 				XmlNodeType.Text, // nodeType
 				1, //depth
@@ -583,7 +608,7 @@ namespace Ximian.Mono.Tests
 				0 // attributeCount
 			);
 
-			AssertNode(
+			AssertNode (
 				xmlReader, // xmlReader
 				XmlNodeType.EndElement, // nodeType
 				0, //depth
@@ -596,18 +621,18 @@ namespace Ximian.Mono.Tests
 				0 // attributeCount
 			);
 
-			AssertEndDocument(xmlReader);
+			AssertEndDocument (xmlReader);
 		}
 
-		public void TestEntityReference()
+		public void TestEntityReference ()
 		{
 			string xml = "<foo>&bar;</foo>";
 			XmlReader xmlReader =
-				new XmlTextReader(new StringReader(xml));
+				new XmlTextReader (new StringReader (xml));
 
-			AssertStartDocument(xmlReader);
+			AssertStartDocument (xmlReader);
 
-			AssertNode(
+			AssertNode (
 				xmlReader, // xmlReader
 				XmlNodeType.Element, // nodeType
 				0, //depth
@@ -620,7 +645,7 @@ namespace Ximian.Mono.Tests
 				0 // attributeCount
 			);
 
-			AssertNode(
+			AssertNode (
 				xmlReader, // xmlReader
 				XmlNodeType.EntityReference, // nodeType
 				1, //depth
@@ -633,7 +658,7 @@ namespace Ximian.Mono.Tests
 				0 // attributeCount
 			);
 
-			AssertNode(
+			AssertNode (
 				xmlReader, // xmlReader
 				XmlNodeType.EndElement, // nodeType
 				0, //depth
@@ -646,18 +671,18 @@ namespace Ximian.Mono.Tests
 				0 // attributeCount
 			);
 
-			AssertEndDocument(xmlReader);
+			AssertEndDocument (xmlReader);
 		}
 
-		public void TestEntityReferenceInsideText()
+		public void TestEntityReferenceInsideText ()
 		{
 			string xml = "<foo>bar&baz;quux</foo>";
 			XmlReader xmlReader =
-				new XmlTextReader(new StringReader(xml));
+				new XmlTextReader (new StringReader (xml));
 
-			AssertStartDocument(xmlReader);
+			AssertStartDocument (xmlReader);
 
-			AssertNode(
+			AssertNode (
 				xmlReader, // xmlReader
 				XmlNodeType.Element, // nodeType
 				0, //depth
@@ -670,7 +695,7 @@ namespace Ximian.Mono.Tests
 				0 // attributeCount
 			);
 
-			AssertNode(
+			AssertNode (
 				xmlReader, // xmlReader
 				XmlNodeType.Text, // nodeType
 				1, //depth
@@ -683,7 +708,7 @@ namespace Ximian.Mono.Tests
 				0 // attributeCount
 			);
 
-			AssertNode(
+			AssertNode (
 				xmlReader, // xmlReader
 				XmlNodeType.EntityReference, // nodeType
 				1, //depth
@@ -696,7 +721,7 @@ namespace Ximian.Mono.Tests
 				0 // attributeCount
 			);
 
-			AssertNode(
+			AssertNode (
 				xmlReader, // xmlReader
 				XmlNodeType.Text, // nodeType
 				1, //depth
@@ -709,7 +734,7 @@ namespace Ximian.Mono.Tests
 				0 // attributeCount
 			);
 
-			AssertNode(
+			AssertNode (
 				xmlReader, // xmlReader
 				XmlNodeType.EndElement, // nodeType
 				0, //depth
@@ -722,18 +747,18 @@ namespace Ximian.Mono.Tests
 				0 // attributeCount
 			);
 
-			AssertEndDocument(xmlReader);
+			AssertEndDocument (xmlReader);
 		}
 
-		public void TestCharacterReferences()
+		public void TestCharacterReferences ()
 		{
 			string xml = "<foo>&#70;&#x4F;&#x4f;</foo>";
 			XmlReader xmlReader =
-				new XmlTextReader(new StringReader(xml));
+				new XmlTextReader (new StringReader (xml));
 
-			AssertStartDocument(xmlReader);
+			AssertStartDocument (xmlReader);
 
-			AssertNode(
+			AssertNode (
 				xmlReader, // xmlReader
 				XmlNodeType.Element, // nodeType
 				0, //depth
@@ -746,7 +771,7 @@ namespace Ximian.Mono.Tests
 				0 // attributeCount
 			);
 
-			AssertNode(
+			AssertNode (
 				xmlReader, // xmlReader
 				XmlNodeType.Text, // nodeType
 				1, //depth
@@ -759,7 +784,7 @@ namespace Ximian.Mono.Tests
 				0 // attributeCount
 			);
 
-			AssertNode(
+			AssertNode (
 				xmlReader, // xmlReader
 				XmlNodeType.EndElement, // nodeType
 				0, //depth
@@ -772,18 +797,18 @@ namespace Ximian.Mono.Tests
 				0 // attributeCount
 			);
 
-			AssertEndDocument(xmlReader);
+			AssertEndDocument (xmlReader);
 		}
 
-		public void TestEntityReferenceInAttribute()
+		public void TestEntityReferenceInAttribute ()
 		{
 			string xml = "<foo bar='&baz;'/>";
 			XmlReader xmlReader =
-				new XmlTextReader(new StringReader(xml));
+				new XmlTextReader (new StringReader (xml));
 
-			AssertStartDocument(xmlReader);
+			AssertStartDocument (xmlReader);
 
-			AssertNode(
+			AssertNode (
 				xmlReader, // xmlReader
 				XmlNodeType.Element, // nodeType
 				0, //depth
@@ -796,7 +821,7 @@ namespace Ximian.Mono.Tests
 				1 // attributeCount
 			);
 
-			AssertAttribute(
+			AssertAttribute (
 				xmlReader, // xmlReader
 				"bar", // name
 				String.Empty, // prefix
@@ -805,18 +830,18 @@ namespace Ximian.Mono.Tests
 				"&baz;" // value
 			);
 
-			AssertEndDocument(xmlReader);
+			AssertEndDocument (xmlReader);
 		}
 
-		public void TestPredefinedEntitiesInAttribute()
+		public void TestPredefinedEntitiesInAttribute ()
 		{
 			string xml = "<foo bar='&lt;&gt;&amp;&apos;&quot;'/>";
 			XmlReader xmlReader =
-				new XmlTextReader(new StringReader(xml));
+				new XmlTextReader (new StringReader (xml));
 
-			AssertStartDocument(xmlReader);
+			AssertStartDocument (xmlReader);
 
-			AssertNode(
+			AssertNode (
 				xmlReader, // xmlReader
 				XmlNodeType.Element, // nodeType
 				0, //depth
@@ -829,7 +854,7 @@ namespace Ximian.Mono.Tests
 				1 // attributeCount
 			);
 
-			AssertAttribute(
+			AssertAttribute (
 				xmlReader, // xmlReader
 				"bar", // name
 				String.Empty, // prefix
@@ -838,18 +863,18 @@ namespace Ximian.Mono.Tests
 				"<>&'\"" // value
 			);
 
-			AssertEndDocument(xmlReader);
+			AssertEndDocument (xmlReader);
 		}
 
-		public void TestCharacterReferencesInAttribute()
+		public void TestCharacterReferencesInAttribute ()
 		{
 			string xml = "<foo bar='&#70;&#x4F;&#x4f;'/>";
 			XmlReader xmlReader =
-				new XmlTextReader(new StringReader(xml));
+				new XmlTextReader (new StringReader (xml));
 
-			AssertStartDocument(xmlReader);
+			AssertStartDocument (xmlReader);
 
-			AssertNode(
+			AssertNode (
 				xmlReader, // xmlReader
 				XmlNodeType.Element, // nodeType
 				0, //depth
@@ -862,7 +887,7 @@ namespace Ximian.Mono.Tests
 				1 // attributeCount
 			);
 
-			AssertAttribute(
+			AssertAttribute (
 				xmlReader, // xmlReader
 				"bar", // name
 				String.Empty, // prefix
@@ -871,18 +896,18 @@ namespace Ximian.Mono.Tests
 				"FOO" // value
 			);
 
-			AssertEndDocument(xmlReader);
+			AssertEndDocument (xmlReader);
 		}
 
-		public void TestCDATA()
+		public void TestCDATA ()
 		{
 			string xml = "<foo><![CDATA[<>&]]></foo>";
 			XmlReader xmlReader =
-				new XmlTextReader(new StringReader(xml));
+				new XmlTextReader (new StringReader (xml));
 
-			AssertStartDocument(xmlReader);
+			AssertStartDocument (xmlReader);
 
-			AssertNode(
+			AssertNode (
 				xmlReader, // xmlReader
 				XmlNodeType.Element, // nodeType
 				0, //depth
@@ -895,7 +920,7 @@ namespace Ximian.Mono.Tests
 				0 // attributeCount
 			);
 
-			AssertNode(
+			AssertNode (
 				xmlReader, // xmlReader
 				XmlNodeType.CDATA, // nodeType
 				1, //depth
@@ -908,7 +933,7 @@ namespace Ximian.Mono.Tests
 				0 // attributeCount
 			);
 
-			AssertNode(
+			AssertNode (
 				xmlReader, // xmlReader
 				XmlNodeType.EndElement, // nodeType
 				0, //depth
@@ -921,18 +946,18 @@ namespace Ximian.Mono.Tests
 				0 // attributeCount
 			);
 
-			AssertEndDocument(xmlReader);
+			AssertEndDocument (xmlReader);
 		}
 
-		public void TestEmptyElementInNamespace()
+		public void TestEmptyElementInNamespace ()
 		{
 			string xml = @"<foo:bar xmlns:foo='http://foo/' />";
 			XmlReader xmlReader =
-				new XmlTextReader(new StringReader(xml));
+				new XmlTextReader (new StringReader (xml));
 
-			AssertStartDocument(xmlReader);
+			AssertStartDocument (xmlReader);
 
-			AssertNode(
+			AssertNode (
 				xmlReader, // xmlReader
 				XmlNodeType.Element, // nodeType
 				0, // depth
@@ -945,7 +970,7 @@ namespace Ximian.Mono.Tests
 				1 // attributeCount
 			);
 
-			AssertAttribute(
+			AssertAttribute (
 				xmlReader, // xmlReader
 				"xmlns:foo", // name
 				"xmlns", // prefix
@@ -954,20 +979,20 @@ namespace Ximian.Mono.Tests
 				"http://foo/" // value
 			);
 
-			AssertEquals("http://foo/", xmlReader.LookupNamespace("foo"));
+			AssertEquals ("http://foo/", xmlReader.LookupNamespace ("foo"));
 
-			AssertEndDocument(xmlReader);
+			AssertEndDocument (xmlReader);
 		}
 
-		public void TestEmptyElementInDefaultNamespace()
+		public void TestEmptyElementInDefaultNamespace ()
 		{
 			string xml = @"<foo xmlns='http://foo/' />";
 			XmlReader xmlReader =
-				new XmlTextReader(new StringReader(xml));
+				new XmlTextReader (new StringReader (xml));
 
-			AssertStartDocument(xmlReader);
+			AssertStartDocument (xmlReader);
 
-			AssertNode(
+			AssertNode (
 				xmlReader, // xmlReader
 				XmlNodeType.Element, // nodeType
 				0, // depth
@@ -980,7 +1005,7 @@ namespace Ximian.Mono.Tests
 				1 // attributeCount
 			);
 
-			AssertAttribute(
+			AssertAttribute (
 				xmlReader, // xmlReader
 				"xmlns", // name
 				String.Empty, // prefix
@@ -989,20 +1014,20 @@ namespace Ximian.Mono.Tests
 				"http://foo/" // value
 			);
 
-			AssertEquals("http://foo/", xmlReader.LookupNamespace(String.Empty));
+			AssertEquals ("http://foo/", xmlReader.LookupNamespace (String.Empty));
 
-			AssertEndDocument(xmlReader);
+			AssertEndDocument (xmlReader);
 		}
 
-		public void TestChildElementInNamespace()
+		public void TestChildElementInNamespace ()
 		{
 			string xml = @"<foo:bar xmlns:foo='http://foo/'><baz:quux xmlns:baz='http://baz/' /></foo:bar>";
 			XmlReader xmlReader =
-				new XmlTextReader(new StringReader(xml));
+				new XmlTextReader (new StringReader (xml));
 
-			AssertStartDocument(xmlReader);
+			AssertStartDocument (xmlReader);
 
-			AssertNode(
+			AssertNode (
 				xmlReader, // xmlReader
 				XmlNodeType.Element, // nodeType
 				0, // depth
@@ -1015,7 +1040,7 @@ namespace Ximian.Mono.Tests
 				1 // attributeCount
 			);
 
-			AssertAttribute(
+			AssertAttribute (
 				xmlReader, // xmlReader
 				"xmlns:foo", // name
 				"xmlns", // prefix
@@ -1024,9 +1049,9 @@ namespace Ximian.Mono.Tests
 				"http://foo/" // value
 			);
 
-			AssertEquals("http://foo/", xmlReader.LookupNamespace("foo"));
+			AssertEquals ("http://foo/", xmlReader.LookupNamespace ("foo"));
 
-			AssertNode(
+			AssertNode (
 				xmlReader, // xmlReader
 				XmlNodeType.Element, // nodeType
 				1, // depth
@@ -1039,7 +1064,7 @@ namespace Ximian.Mono.Tests
 				1 // attributeCount
 			);
 
-			AssertAttribute(
+			AssertAttribute (
 				xmlReader, // xmlReader
 				"xmlns:baz", // name
 				"xmlns", // prefix
@@ -1048,10 +1073,10 @@ namespace Ximian.Mono.Tests
 				"http://baz/" // value
 			);
 
-			AssertEquals("http://foo/", xmlReader.LookupNamespace("foo"));
-			AssertEquals("http://baz/", xmlReader.LookupNamespace("baz"));
+			AssertEquals ("http://foo/", xmlReader.LookupNamespace ("foo"));
+			AssertEquals ("http://baz/", xmlReader.LookupNamespace ("baz"));
 
-			AssertNode(
+			AssertNode (
 				xmlReader, // xmlReader
 				XmlNodeType.EndElement, // nodeType
 				0, // depth
@@ -1064,21 +1089,21 @@ namespace Ximian.Mono.Tests
 				0 // attributeCount
 			);
 
-			AssertEquals("http://foo/", xmlReader.LookupNamespace("foo"));
-			AssertNull(xmlReader.LookupNamespace("baz"));
+			AssertEquals ("http://foo/", xmlReader.LookupNamespace ("foo"));
+			AssertNull (xmlReader.LookupNamespace ("baz"));
 
-			AssertEndDocument(xmlReader);
+			AssertEndDocument (xmlReader);
 		}
 
-		public void TestChildElementInDefaultNamespace()
+		public void TestChildElementInDefaultNamespace ()
 		{
 			string xml = @"<foo:bar xmlns:foo='http://foo/'><baz xmlns='http://baz/' /></foo:bar>";
 			XmlReader xmlReader =
-				new XmlTextReader(new StringReader(xml));
+				new XmlTextReader (new StringReader (xml));
 
-			AssertStartDocument(xmlReader);
+			AssertStartDocument (xmlReader);
 
-			AssertNode(
+			AssertNode (
 				xmlReader, // xmlReader
 				XmlNodeType.Element, // nodeType
 				0, // depth
@@ -1091,7 +1116,7 @@ namespace Ximian.Mono.Tests
 				1 // attributeCount
 			);
 
-			AssertAttribute(
+			AssertAttribute (
 				xmlReader, // xmlReader
 				"xmlns:foo", // name
 				"xmlns", // prefix
@@ -1100,9 +1125,9 @@ namespace Ximian.Mono.Tests
 				"http://foo/" // value
 			);
 
-			AssertEquals("http://foo/", xmlReader.LookupNamespace("foo"));
+			AssertEquals ("http://foo/", xmlReader.LookupNamespace ("foo"));
 
-			AssertNode(
+			AssertNode (
 				xmlReader, // xmlReader
 				XmlNodeType.Element, // nodeType
 				1, // depth
@@ -1115,7 +1140,7 @@ namespace Ximian.Mono.Tests
 				1 // attributeCount
 			);
 
-			AssertAttribute(
+			AssertAttribute (
 				xmlReader, // xmlReader
 				"xmlns", // name
 				String.Empty, // prefix
@@ -1124,10 +1149,10 @@ namespace Ximian.Mono.Tests
 				"http://baz/" // value
 			);
 
-			AssertEquals("http://foo/", xmlReader.LookupNamespace("foo"));
-			AssertEquals("http://baz/", xmlReader.LookupNamespace(String.Empty));
+			AssertEquals ("http://foo/", xmlReader.LookupNamespace ("foo"));
+			AssertEquals ("http://baz/", xmlReader.LookupNamespace (String.Empty));
 
-			AssertNode(
+			AssertNode (
 				xmlReader, // xmlReader
 				XmlNodeType.EndElement, // nodeType
 				0, // depth
@@ -1140,20 +1165,20 @@ namespace Ximian.Mono.Tests
 				0 // attributeCount
 			);
 
-			AssertEquals("http://foo/", xmlReader.LookupNamespace("foo"));
+			AssertEquals ("http://foo/", xmlReader.LookupNamespace ("foo"));
 
-			AssertEndDocument(xmlReader);
+			AssertEndDocument (xmlReader);
 		}
 
-		public void TestAttributeInNamespace()
+		public void TestAttributeInNamespace ()
 		{
 			string xml = @"<foo bar:baz='quux' xmlns:bar='http://bar/' />";
 			XmlReader xmlReader =
-				new XmlTextReader(new StringReader(xml));
+				new XmlTextReader (new StringReader (xml));
 
-			AssertStartDocument(xmlReader);
+			AssertStartDocument (xmlReader);
 
-			AssertNode(
+			AssertNode (
 				xmlReader, // xmlReader
 				XmlNodeType.Element, // nodeType
 				0, // depth
@@ -1166,7 +1191,7 @@ namespace Ximian.Mono.Tests
 				2 // attributeCount
 			);
 
-			AssertAttribute(
+			AssertAttribute (
 				xmlReader, // xmlReader
 				"bar:baz", // name
 				"bar", // prefix
@@ -1175,7 +1200,7 @@ namespace Ximian.Mono.Tests
 				"quux" // value
 			);
 
-			AssertAttribute(
+			AssertAttribute (
 				xmlReader, // xmlReader
 				"xmlns:bar", // name
 				"xmlns", // prefix
@@ -1184,9 +1209,9 @@ namespace Ximian.Mono.Tests
 				"http://bar/" // value
 			);
 
-			AssertEquals("http://bar/", xmlReader.LookupNamespace("bar"));
+			AssertEquals ("http://bar/", xmlReader.LookupNamespace ("bar"));
 
-			AssertEndDocument(xmlReader);
+			AssertEndDocument (xmlReader);
 		}
 
 // The following is #if'ed out because it's specific to the Mono
@@ -1195,55 +1220,53 @@ namespace Ximian.Mono.Tests
 
 #if false
 
-		public void TestIsFirstNameChar()
+		public void TestIsFirstNameChar ()
 		{
-			for (int ch = 0; ch <= 0xFFFF; ++ch)
-			{
-				Assert(
-					XmlChar.IsFirstNameChar(ch) ==
-						IsFirstNameChar(ch));
+			for (int ch = 0; ch <= 0xFFFF; ++ch) {
+				Assert (
+					XmlChar.IsFirstNameChar (ch) ==
+						IsFirstNameChar (ch));
 			}
 		}
 
-		public void TestIsNameChar()
+		public void TestIsNameChar ()
 		{
-			for (int ch = 0; ch <= 0xFFFF; ++ch)
-			{
-				Assert(
-					XmlChar.IsNameChar(ch) ==
-						IsNameChar(ch));
+			for (int ch = 0; ch <= 0xFFFF; ++ch) {
+				Assert (
+					XmlChar.IsNameChar (ch) ==
+						IsNameChar (ch));
 			}
 		}
 
-		private static bool IsFirstNameChar(int ch)
+		private static bool IsFirstNameChar (int ch)
 		{
 			return
-				IsLetter(ch) ||
+				IsLetter (ch) ||
 				(ch == '_') ||
 				(ch == ':');
 		}
 
-		private static bool IsNameChar(int ch)
+		private static bool IsNameChar (int ch)
 		{
 			return
-				IsLetter(ch) ||
-				IsDigit(ch) ||
+				IsLetter (ch) ||
+				IsDigit (ch) ||
 				(ch == '.') ||
 				(ch == '-') ||
 				(ch == '_') ||
 				(ch == ':') ||
-				IsCombiningChar(ch) ||
-				IsExtender(ch);
+				IsCombiningChar (ch) ||
+				IsExtender (ch);
 		}
 
-		private static bool IsLetter(int ch)
+		private static bool IsLetter (int ch)
 		{
 			return
-				IsBaseChar(ch) ||
-				IsIdeographic(ch);
+				IsBaseChar (ch) ||
+				IsIdeographic (ch);
 		}
 
-		private static bool IsBaseChar(int ch)
+		private static bool IsBaseChar (int ch)
 		{
 			return
 				(ch >= 0x0041 && ch <= 0x005A) ||
@@ -1450,7 +1473,7 @@ namespace Ximian.Mono.Tests
 				(ch >= 0xAC00 && ch <= 0xD7A3);
 		}
 
-		private static bool IsIdeographic(int ch)
+		private static bool IsIdeographic (int ch)
 		{
 			return
 				(ch >= 0x4E00 && ch <= 0x9FA5) ||
@@ -1458,7 +1481,7 @@ namespace Ximian.Mono.Tests
 				(ch >= 0x3021 && ch <= 0x3029);
 		}
 
-		private static bool IsDigit(int ch)
+		private static bool IsDigit (int ch)
 		{
 			return
 				(ch >= 0x0030 && ch <= 0x0039) ||
@@ -1478,7 +1501,7 @@ namespace Ximian.Mono.Tests
 				(ch >= 0x0F20 && ch <= 0x0F29);
 		}
 
-		private static bool IsCombiningChar(int ch)
+		private static bool IsCombiningChar (int ch)
 		{
 			return
 				(ch >= 0x0300 && ch <= 0x0345) ||
@@ -1578,7 +1601,7 @@ namespace Ximian.Mono.Tests
 				(ch == 0x309A);
 		}
 
-		private static bool IsExtender(int ch)
+		private static bool IsExtender (int ch)
 		{
 			return
 				(ch == 0x00B7) ||
@@ -1596,18 +1619,18 @@ namespace Ximian.Mono.Tests
 
 #endif
 
-		public void TestIsName()
+		public void TestIsName ()
 		{
-			Assert(XmlReader.IsName("foo"));
-			Assert(!XmlReader.IsName("1foo"));
-			Assert(!XmlReader.IsName(" foo"));
+			Assert (XmlReader.IsName ("foo"));
+			Assert (!XmlReader.IsName ("1foo"));
+			Assert (!XmlReader.IsName (" foo"));
 		}
 
-		public void TestIsNameToken()
+		public void TestIsNameToken ()
 		{
-			Assert(XmlReader.IsNameToken("foo"));
-			Assert(XmlReader.IsNameToken("1foo"));
-			Assert(!XmlReader.IsNameToken(" foo"));
+			Assert (XmlReader.IsNameToken ("foo"));
+			Assert (XmlReader.IsNameToken ("1foo"));
+			Assert (!XmlReader.IsNameToken (" foo"));
 		}
 	}
 }

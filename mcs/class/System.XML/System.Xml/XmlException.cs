@@ -1,99 +1,67 @@
-// -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*-
 //
-// System.Xml.XmlException
+// XmlException.cs
 //
 // Author:
-//   Daniel Weber (daniel-weber@austin.rr.com)
+//   Jason Diamond (jason@injektilo.org)
 //
-// (C) 2001 Daniel Weber
+// (C) 2002 Jason Diamond  http://injektilo.org/
+//
 
 using System;
 using System.Runtime.Serialization;
 
 namespace System.Xml
 {
-	/// <summary>
-	/// Abstract class XmlNodeList.
-	/// </summary>
 	public class XmlException : SystemException
 	{
-		// Private data members
-		int FlineNumber;
-		int FlinePosition;
-		string Fmessage;
+		#region Fields
 
-		// public properties
-		/// <summary>
-		/// Get the line number where the exception occured
-		/// </summary>
+		int lineNumber;
+		int linePosition;
+
+		#endregion
+
+		#region Constructors
+
+		public XmlException (string message, Exception innerException) 
+			: base (message, innerException)
+		{
+		}
+
+		[MonoTODO]
+		protected XmlException (SerializationInfo info, StreamingContext context)
+		{
+			throw new NotImplementedException ();
+		}
+
+		internal XmlException (string message) : base (message)
+		{
+		}
+
+		internal XmlException (string message, int lineNumber, int linePosition) : base (message)
+		{
+			this.lineNumber = lineNumber;
+			this.linePosition = linePosition;
+		}
+
+		internal XmlException (string message, XmlInputSource inputSrc)
+		{
+		}
+
+		#endregion
+
+		#region Properties
+
 		public int LineNumber 
 		{
-			get
-			{
-				return FlineNumber;
-			}
+			get { return lineNumber; }
 		}
 
-		/// <summary>
-		/// Get the line position where the exception occured.
-		/// </summary>
 		public int LinePosition 
 		{
-			get
-			{
-				return FlinePosition;
-			}
+			get { return linePosition; }
 		}
 
-		/// <summary>
-		/// Get the error message describing the exception.
-		/// </summary>
-		public override string Message 
-		{
-			get
-			{
-				return Fmessage;
-			}
-		}
-
-		// Public Methods
-
-		// Constructors
-		/// <summary>
-		/// Create a new XmlException object.
-		/// </summary>
-		/// <param name="info">The serializatin object holding all exception information.</param>
-		/// <param name="context">The streaming context containing the context of the error</param>
-		public XmlException(
-			SerializationInfo info,
-			StreamingContext context
-			)
-		{
-			FlineNumber = info.GetInt32("lineNumber");
-			FlinePosition = info.GetInt32("linePosition");
-			Fmessage = info.GetString("message");
-
-		}
-
-		/// <summary>
-		/// Create a new XmlException
-		/// </summary>
-		/// <param name="message">Description of error</param>
-		/// <param name="innerException">Exception causing error.  Value can be null.</param>
-		public XmlException(
-			string message,
-			Exception innerException
-			)
-		{
-			Fmessage = message;
-		}
-
-		internal XmlException( string message, XmlInputSource src)
-		{
-			FlineNumber = src.lineNumber;
-			FlinePosition = src.columnNumber;
-			Fmessage = message;
-		}
-
+		#endregion
 	}
 }
