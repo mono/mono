@@ -1,4 +1,8 @@
 
+2003-04-07	Gaurav Vaish <gvaish_mono AT lycos.com>
+
+	* MobileListItem.cs      : Completed.
+
 2003-04-04	Gaurav Vaish <gvaish_mono AT lycos.com>
 
 	* DeviceSpecificChoice.cs: FindAndApplyProperty(...) - Bug fix.
