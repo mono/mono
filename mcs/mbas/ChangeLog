@@ -1,3 +1,10 @@
+2004-12-21 Anirban Bhattacharjee <banirban@novell.com>
+	* class.cs: -Mbas will emit DefaultMemberConstuctor attribute for the class
+		    which is having Default Property so that it can be recognized by
+		    other assemblies
+		    - Removed Indexer class and some of the legacy code inherited from mcs
+	* typemanager.cs: Initialized DefaultMemberAttribute constructor info	
+
 2004-12-01 Rafael Teixeira <rafaelteixeirabr@hotmail.com>
 	Ooops small bits on:
 	* driver.cs: -q --quiet works, inclusive for the "Alpha" message

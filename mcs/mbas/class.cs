@@ -83,9 +83,6 @@ namespace Mono.MonoBASIC {
 		// Holds the events
 		ArrayList events;
 
-		// Holds the indexers
-		/* ArrayList indexers; */
-
 		// Holds AddHandlers stements for events
 		ArrayList handlers;
 
@@ -399,21 +396,6 @@ namespace Mono.MonoBASIC {
 			return AdditionResult.Success;
 		}
 
-		/*
-		public AdditionResult AddIndexer (Indexer i)
-		{
-			if (indexers == null)
-				indexers = new ArrayList ();
-
-			if (i.InterfaceType != null)
-				indexers.Insert (0, i);
-			else
-				indexers.Add (i);
-
-			return AdditionResult.Success;
-		}
-		*/		
-
 		public AdditionResult AddEventHandler (Statement stmt)
 		{
 			if (handlers == null)
@@ -432,17 +414,6 @@ namespace Mono.MonoBASIC {
 		}
 		public override void ApplyAttributeBuilder (Attribute a, CustomAttributeBuilder cb)
 		{
-			if (a.Type == TypeManager.default_member_type) {
-				/*
-				if (Indexers != null) {
-					Report.Error (646, a.Location,
-						      "Cannot specify the DefaultMember attribute on" +
-						      " a type containing an indexer");
-					return;
-				}
-				*/
-			}
-			
 			base.ApplyAttributeBuilder (a, cb);
 		} 
 
@@ -525,14 +496,6 @@ namespace Mono.MonoBASIC {
 				return enums;
 			}
 		}
-
-		/* 
-		public ArrayList Indexers {
-			get {
-				return indexers;
-			}
-		}
-		*/ 
 
 		public ArrayList Delegates {
 			get {
@@ -1025,49 +988,6 @@ namespace Mono.MonoBASIC {
 			remove_list.Clear ();
 		}
 
-		//
-		// Defines the indexers, and also verifies that the IndexerNameAttribute in the
-		// class is consisten.  Either it is `Item' or it is the name defined by all the
-		// indexers with the `IndexerName' attribute.
-		//
-		// Turns out that the IndexerNameAttribute is applied to each indexer,
-		// but it is never emitted, instead a DefaultName attribute is attached
-		// to the class.
-		//
-		void DefineIndexers ()
-		{
-			string class_indexer_name = null;
-
-			/*
-			foreach (Indexer i in Indexers){
-				string name;
-				
-				i.Define (this);
-
-				name = i.IndexerName;
-
-				if (i.InterfaceType != null)
-					continue;
-
-				if (class_indexer_name == null){
-					class_indexer_name = name;
-					continue;
-				}
-				
-				if (name == class_indexer_name)
-					continue;
-				
-				Report.Error (
-					668, "Two indexers have different names, " +
-					" you should use the same name for all your indexers");
-			}
-			*/
-			
-			if (class_indexer_name == null)
-				class_indexer_name = "Item";
-			IndexerName = class_indexer_name;
-		}
-
 		static void Error_KeywordNotAllowed (Location loc)
 		{
 			Report.Error (1530, loc, "Keyword new not allowed for namespace elements");
@@ -1155,13 +1075,6 @@ namespace Mono.MonoBASIC {
 
 			if (events != null)
 				DefineMembers (events, defined_names);
-
-			/*
-			if (indexers != null) {
-				DefineIndexers ();
-			} else
-			*/
-				IndexerName = "Item";
 
 			if (enums != null)
 				DefineMembers (enums, defined_names);
@@ -1329,27 +1242,6 @@ namespace Mono.MonoBASIC {
 							members.Add (b);
 					}
 				}
-
-				/*
-				if (indexers != null){
-					foreach (Indexer ix in indexers){
-						if ((ix.ModFlags & modflags) == 0)
-							continue;
-						if ((ix.ModFlags & static_mask) != static_flags)
-							continue;
-						
-						MethodBuilder b;
-
-						b = ix.GetBuilder;
-						if (b != null && filter (b, criteria) == true)
-							members.Add (b);
-
-						b = ix.SetBuilder;
-						if (b != null && filter (b, criteria) == true)
-							members.Add (b);
-					}
-				}
-				*/
 			}
 
 			if ((mt & MemberTypes.Event) != 0) {
@@ -1379,21 +1271,6 @@ namespace Mono.MonoBASIC {
 						if (pb != null && filter (pb, criteria) == true)
 							members.Add (p.PropertyBuilder);
 					}
-
-				/* 
-				if (indexers != null)
-					foreach (Indexer ix in indexers) {
-						if ((ix.ModFlags & modflags) == 0)
-							continue;
-						if ((ix.ModFlags & static_mask) != static_flags)
-							continue;
-
-						MemberInfo ib = ix.PropertyBuilder;
-						if (ib != null && filter (ib, criteria) == true) {
-							members.Add (ix.PropertyBuilder);
-						}
-					}
-				*/					
 			}
 			
 			if ((mt & MemberTypes.NestedType) != 0) {
@@ -1540,16 +1417,10 @@ namespace Mono.MonoBASIC {
 				foreach (Property p in properties)
 					p.Emit (this);
 
-			/*
-			if (indexers != null){
-				foreach (Indexer ix in indexers)
-					ix.Emit (this);
-				
-				CustomAttributeBuilder cb = Interface.EmitDefaultMemberAttr (
-					this, IndexerName, ModFlags, Location);
+			if (this.IndexerName != null) {
+				CustomAttributeBuilder cb = new CustomAttributeBuilder (TypeManager.default_member_ctor, new string [] { IndexerName });
 				TypeBuilder.SetCustomAttribute (cb);
 			}
-			*/
 			
 			if (fields != null)
 				foreach (Field f in fields)
@@ -2960,35 +2831,29 @@ namespace Mono.MonoBASIC {
 			bool IsImplementing = false;
 			Type current_iface_type = iface_type;
 
-				/*
-				if (member is Indexer)
-					implementing = parent.Pending.IsAbstractIndexer (
-					current_iface_type , ReturnType, ParameterTypes);
-				else
-				*/
-					implementing = parent.Pending.IsAbstractMethod (
-					current_iface_type, method_name, ReturnType, ParameterTypes);
+			implementing = parent.Pending.IsAbstractMethod (
+			current_iface_type, method_name, ReturnType, ParameterTypes);
 
-				if (implementing != null) {
-					if (!implementing_list.Contains (implementing)) {
-						implementing_list.Add (implementing);
-						implementing_iface.Add(current_iface_type);
-					}
-					IsImplementing = true;
-				} else {
-					Type[] current_iface_types = current_iface_type.GetInterfaces();
-					if (current_iface_types.Length == 0)
-						return false;
-
-					foreach (Type curr_iface_type in current_iface_types) {
-						IsImplementing = SearchBasesForAbstractMethods (
-							parent, curr_iface_type, method_name, 
-							ref implementing_list, ref implementing_iface);
-
-						if (IsImplementing)
-							break;
-					}
+			if (implementing != null) {
+				if (!implementing_list.Contains (implementing)) {
+					implementing_list.Add (implementing);
+					implementing_iface.Add(current_iface_type);
 				}
+				IsImplementing = true;
+			} else {
+				Type[] current_iface_types = current_iface_type.GetInterfaces();
+				if (current_iface_types.Length == 0)
+					return false;
+
+				foreach (Type curr_iface_type in current_iface_types) {
+					IsImplementing = SearchBasesForAbstractMethods (
+						parent, curr_iface_type, method_name, 
+						ref implementing_list, ref implementing_iface);
+
+					if (IsImplementing)
+						break;
+				}
+			}
 
 			return IsImplementing;
 		}
@@ -3016,12 +2881,6 @@ namespace Mono.MonoBASIC {
 			if ((member.ModFlags & Modifiers.OVERRIDE) != 0) {
 				if (parent.Pending == null)
 					implementing = null;
-				/*
-				else if (member is Indexer)
-					implementing = parent.Pending.IsAbstractIndexer (
-						(Type) parent.TypeBuilder.BaseType, 
-						ReturnType, ParameterTypes);
-				*/						
 				else
 					implementing = parent.Pending.IsAbstractMethod (
 						(Type) parent.TypeBuilder.BaseType, name, 
@@ -3389,18 +3248,10 @@ namespace Mono.MonoBASIC {
 				if (parent.AsAccessible (partype, ModFlags))
 					continue;
 
-				/*
-				if (this is Indexer)
-					Report.Error (55, Location,
-						      "Inconsistent accessibility: parameter type `" +
-						      TypeManager.MonoBASIC_Name (partype) + "' is less " +
-						      "accessible than indexer `" + Name + "'");
-				else
-				*/
-					Report.Error (51, Location,
-						      "Inconsistent accessibility: parameter type `" +
-						      TypeManager.MonoBASIC_Name (partype) + "' is less " +
-						      "accessible than method `" + Name + "'");
+				Report.Error (51, Location,
+						    "Inconsistent accessibility: parameter type `" +
+						    TypeManager.MonoBASIC_Name (partype) + "' is less " +
+						    "accessible than method `" + Name + "'");
 				error = true;
 			}
 
@@ -3469,13 +3320,6 @@ namespace Mono.MonoBASIC {
 						      "Inconsistent accessibility: property type `" +
 						      TypeManager.MonoBASIC_Name (MemberType) + "' is less " +
 						      "accessible than property `" + Name + "'");
-				/*
-				else if (this is Indexer)
-					Report.Error (54, Location,
-						      "Inconsistent accessibility: indexer return type `" +
-						      TypeManager.MonoBASIC_Name (MemberType) + "' is less " +
-						      "accessible than indexer `" + Name + "'");
-				*/						      
 				else if (this is Method)
 					Report.Error (50, Location,
 						      "Inconsistent accessibility: return type `" +
@@ -4585,195 +4429,6 @@ namespace Mono.MonoBASIC {
 		}
 		
 	}
-
-	//
-	// FIXME: This does not handle:
-	//
-	//   int INTERFACENAME [ args ]
-	//   Does not 
-	//
-	// Only:
-	// 
-	// int this [ args ]
-
-
-	/*
-	public class Indexer : PropertyBase {
-
-		const int AllowedModifiers =
-			Modifiers.NEW |
-			Modifiers.PUBLIC |
-			Modifiers.PROTECTED |
-			Modifiers.INTERNAL |
-			Modifiers.PRIVATE |
-			Modifiers.VIRTUAL |
-			Modifiers.SEALED |
-			Modifiers.OVERRIDE |
-			Modifiers.UNSAFE |
-			Modifiers.EXTERN |
-			Modifiers.ABSTRACT;
-
-		public string IndexerName;
-		public string InterfaceIndexerName;
-
-		//
-		// Are we implementing an interface ?
-		//
-		bool IsImplementing = false;
-		
-		public Indexer (Expression type, string int_type, int flags, Parameters parameters,
-				Accessor get_block, Accessor set_block, Attributes attrs, Location loc)
-			: base (type, "", flags, AllowedModifiers, parameters, get_block, set_block,
-				attrs, loc)
-		{
-			ExplicitInterfaceName = int_type;
-		}
-
-		public override bool Define (TypeContainer parent)
-		{
-			PropertyAttributes prop_attr =
-				PropertyAttributes.RTSpecialName |
-				PropertyAttributes.SpecialName;
-			
-			if (!DoDefine (parent))
-				return false;
-
-			IndexerName = Attribute.ScanForIndexerName (ec, OptAttributes);
-			if (IndexerName == null)
-				IndexerName = "Item";
-			else if (IsExplicitImpl)
-				Report.Error (592, Location,
-					      "Attribute 'IndexerName' is not valid on this declaration " +
-					      "type. It is valid on `property' declarations only.");
-
-			ShortName = IndexerName;
-			if (IsExplicitImpl) {
-				InterfaceIndexerName = TypeManager.IndexerPropertyName (InterfaceType);
-				Name = InterfaceType.FullName + "." + IndexerName;
-			} else {
-				InterfaceIndexerName = IndexerName;
-				Name = ShortName;
-			}
-
-			if (!CheckBase (parent))
-				return false;
-
-			if (Get != null){
-                                InternalParameters ip = new InternalParameters (parent, Parameters);
-
-				GetData = new MethodData (this, "get", MemberType,
-							  ParameterTypes, ip, CallingConventions.Standard,
-							  Get.OptAttributes, ModFlags, flags, false);
-
-				if (!GetData.Define (parent))
-					return false;
-
-				GetBuilder = GetData.MethodBuilder;
-			}
-			
-			if (Set != null){
-				int top = ParameterTypes.Length;
-				Type [] set_pars = new Type [top + 1];
-				ParameterTypes.CopyTo (set_pars, 0);
-				set_pars [top] = MemberType;
-
-				Parameter [] fixed_parms = Parameters.FixedParameters;
-
-				if (fixed_parms == null){
-					throw new Exception ("We currently do not support only array arguments in an indexer");
-					// BUG BUG BUG BUG BUG BUG BUG BUG BUG BUG
-					// BUG BUG BUG BUG BUG BUG BUG BUG BUG BUG
-					//
-					// Here is the problem: the `value' parameter has
-					// to come *after* the array parameter in the declaration
-					// like this:
-					// X (object [] x, Type value)
-					// .param [0]
-					//
-					// BUG BUG BUG BUG BUG BUG BUG BUG BUG BUG
-					// BUG BUG BUG BUG BUG BUG BUG BUG BUG BUG
-					
-				}
-				
-				Parameter [] tmp = new Parameter [fixed_parms.Length + 1];
-
-
-				fixed_parms.CopyTo (tmp, 0);
-				tmp [fixed_parms.Length] = new Parameter (
-					Type, this.Name, Parameter.Modifier.NONE, null);
-
-				Parameters set_formal_params = new Parameters (tmp, null, Location);
-				
-				InternalParameters ip = new InternalParameters (parent, set_formal_params);
-
-				SetData = new MethodData (this, "set", TypeManager.void_type,
-							  set_pars, ip, CallingConventions.Standard,
-							  Set.OptAttributes, ModFlags, flags, false);
-
-				if (!SetData.Define (parent))
-					return false;
-
-				SetBuilder = SetData.MethodBuilder;
-			}
-
-			//
-			// Now name the parameters
-			//
-			Parameter [] p = Parameters.FixedParameters;
-			if (p != null) {
-				int i;
-				
-				for (i = 0; i < p.Length; ++i) {
-					if (Get != null)
-						GetBuilder.DefineParameter (
-							i + 1, p [i].Attributes, p [i].Name);
-
-					if (Set != null)
-						SetBuilder.DefineParameter (
-							i + 1, p [i].Attributes, p [i].Name);
-				}
-				
-
-				if (Set != null)
-					SetBuilder.DefineParameter (
-						i + 1, ParameterAttributes.None, this.Name);
-					
-				if (i != ParameterTypes.Length) {
-					Parameter array_param = Parameters.ArrayParameter;
-					SetBuilder.DefineParameter (
-						i + 1, array_param.Attributes, array_param.Name);
-				}
-			}
-
-			if (GetData != null)
-				IsImplementing = GetData.IsImplementing;
-			else if (SetData != null)
-				IsImplementing = SetData.IsImplementing;
-
-			//
-			// Define the PropertyBuilder if one of the following conditions are met:
-			// a) we're not implementing an interface indexer.
-			// b) the indexer has a different IndexerName and this is no
-			//    explicit interface implementation.
-			//
-			if (!IsExplicitImpl) {
-				PropertyBuilder = parent.TypeBuilder.DefineProperty (
-					IndexerName, prop_attr, MemberType, ParameterTypes);
-
-				if (GetData != null)
-					PropertyBuilder.SetGetMethod (GetBuilder);
-
-				if (SetData != null)
-					PropertyBuilder.SetSetMethod (SetBuilder);
-				
-				TypeManager.RegisterIndexer (PropertyBuilder, GetBuilder, SetBuilder,
-							     ParameterTypes);
-			}
-
-			return true;
-		}
-	}
-	*/
 
 	struct MethodSignature {
 		public string Name;

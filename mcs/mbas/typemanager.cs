@@ -148,6 +148,7 @@ public class TypeManager {
 	static public ConstructorInfo void_decimal_ctor_five_args;
 	static public ConstructorInfo void_datetime_ctor_ticks_arg;
 	static public ConstructorInfo unverifiable_code_ctor;
+	static public ConstructorInfo default_member_ctor;
 	
 	// <remarks>
 	//   Holds the Array of Assemblies that have been loaded
@@ -1033,6 +1034,8 @@ public class TypeManager {
 		unverifiable_code_ctor = GetConstructor (
 			unverifiable_code_type, void_arg);
 		
+		default_member_ctor = GetConstructor (
+			default_member_type, string_);
 	}
 
 	const BindingFlags instance_and_static = BindingFlags.Static | BindingFlags.Instance;
