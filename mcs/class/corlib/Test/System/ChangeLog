@@ -1,3 +1,8 @@
+2003-02-25  Nick Drochak <ndrochak@gol.com>
+
+	* TimeSpanTest.cs: Isolate test for Negate bug. Same as previous
+	'checked' bug in ByteTest?
+
 2003/02/21  Nick Drochak <ndrochak@gol.com>
 
 	* EnumTest.cs: Add test for bug 38452 (Parsing numeric enum values).

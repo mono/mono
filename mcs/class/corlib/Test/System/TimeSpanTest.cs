@@ -115,6 +115,12 @@ public class TimeSpanTest : TestCase
 		AssertEquals ("A16", true, t1 <= t2);
 	}
 
+	[Test]
+	[ExpectedException (typeof (OverflowException))]
+	public void NoNegateMinValue() {
+		TimeSpan t1 = TimeSpan.MinValue.Negate ();
+	}
+
 	public void TestNegateAndDuration ()
 	{
 		TimeSpan t1;
@@ -123,17 +129,6 @@ public class TimeSpanTest : TestCase
 		AssertEquals ("A1", "-00:00:00.0012345", new TimeSpan (12345).Negate ().ToString ());
 		AssertEquals ("A2", "00:00:00.0012345", new TimeSpan (-12345).Duration ().ToString ());
 			
-		try
-		{
-			t1 = TimeSpan.MinValue.Negate ();
-			exception = false;
-		}
-		catch (OverflowException)
-		{
-			exception = true;
-		}
-		Assert ("A3", exception);
-
 		try
 		{
 			t1 = TimeSpan.MinValue.Duration ();
