@@ -3576,6 +3576,9 @@ namespace Mono.CSharp {
 				if (!me.IsStatic && (me.InstanceExpression == null))
 					return e;
 
+/* FIXME    If this is not commented out, it seems that it's not possible to reach class members in mBas.
+            Maybe a grammar-related problem?
+
 				if (!me.IsStatic &&
 				    TypeManager.IsNestedChildOf (me.InstanceExpression.Type, me.DeclaringType)) {
 					Error (38, "Cannot access nonstatic member `" + me.Name + "' of " +
@@ -3583,7 +3586,7 @@ namespace Mono.CSharp {
 					       me.InstanceExpression.Type + "'");
 					return null;
 				}
-
+*/
 				if (right_side != null)
 					e = e.DoResolveLValue (ec, right_side);
 				else
