@@ -518,7 +518,10 @@ namespace System.Xml.XPath
 					}
 				}
 				if (fTrue)
+				{
+					_pos ++;
 					return true;
+				}
 			}
 			return false;
 		}

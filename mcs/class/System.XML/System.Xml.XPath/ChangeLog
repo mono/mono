@@ -1,3 +1,7 @@
+2003-07-29 Piers Haken	<piersh@friskit.com>
+
+	* Iterator.cs: fix PredicateIterator.CurrentPosition bug (it wasn't incrementing)
+
 2003-07-29 Ben Maurer  <bmaurer@users.sourceforge.net>
 
 	* Iterator.cs: dont throw exceptions on tostring ()
