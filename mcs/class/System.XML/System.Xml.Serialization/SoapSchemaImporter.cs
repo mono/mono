@@ -14,8 +14,7 @@ namespace System.Xml.Serialization {
 
 		#region Fields
 
-		XmlSchemas schemas;
-		CodeIdentifiers typeIdentifiers;
+		XmlSchemaImporter _importer;
 
 		#endregion
 
@@ -23,13 +22,14 @@ namespace System.Xml.Serialization {
 
 		public SoapSchemaImporter (XmlSchemas schemas)
 		{
-			this.schemas = schemas;
+			_importer = new XmlSchemaImporter (schemas);
+			_importer.UseEncodedFormat = true;
 		}
 
 		public SoapSchemaImporter (XmlSchemas schemas, CodeIdentifiers typeIdentifiers)
-			: this (schemas)
 		{
-			this.typeIdentifiers = typeIdentifiers;
+			_importer = new XmlSchemaImporter (schemas, typeIdentifiers);
+			_importer.UseEncodedFormat = true;
 		}
 
 		#endregion // Constructors

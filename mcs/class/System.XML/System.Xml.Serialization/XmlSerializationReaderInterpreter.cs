@@ -209,7 +209,9 @@ namespace System.Xml.Serialization
 					}	
 					else if (anyAttrMember != null) 
 					{
-						AddListValue (anyAttrMember.TypeData, ref anyAttributeArray, anyAttributeIndex++, Document.ReadNode(Reader), true);
+						XmlAttribute attr = (XmlAttribute) Document.ReadNode(Reader);
+						ParseWsdlArrayType (attr);
+						AddListValue (anyAttrMember.TypeData, ref anyAttributeArray, anyAttributeIndex++, attr, true);
 					}
 					else
 						ProcessUnknownAttribute(ob);
@@ -230,7 +232,7 @@ namespace System.Xml.Serialization
 
 			// Reads elements
 
-			bool[] readFlag = new bool[map.ElementMembers.Count];
+			bool[] readFlag = new bool[(map.ElementMembers != null) ? map.ElementMembers.Count : 0];
 
 			Reader.MoveToContent();
 

@@ -24,8 +24,12 @@ namespace System.Xml.Serialization {
 		Hashtable dataMappedTypes = new Hashtable ();
 		Queue pendingMaps = new Queue ();
 		Hashtable sharedAnonymousTypes = new Hashtable ();
+		bool encodedFormat = false;
 
 		static readonly XmlQualifiedName anyType = new XmlQualifiedName ("anyType",XmlSchema.Namespace);
+		static readonly XmlQualifiedName arrayType = new XmlQualifiedName ("Array",XmlSerializer.EncodingNamespace);
+		static readonly XmlQualifiedName arrayTypeAttribute = new XmlQualifiedName ("arrayType",XmlSerializer.WsdlNamespace);
+		
 		XmlSchemaElement anyElement = null;
 
 		class MapFixup
@@ -49,6 +53,12 @@ namespace System.Xml.Serialization {
 			: this (schemas)
 		{
 			this.typeIdentifiers = typeIdentifiers;
+		}
+		
+		internal bool UseEncodedFormat
+		{
+			get { return encodedFormat; }
+			set { encodedFormat = value; }
 		}
 
 		#endregion // Constructors
@@ -113,18 +123,36 @@ namespace System.Xml.Serialization {
 			CodeIdentifiers classIds = new CodeIdentifiers ();
 			ImportParticleComplexContent (name, cmap, seq, classIds, false);
 
+			BuildPendingMaps ();
+
 			int n = 0;
 			XmlMemberMapping[] mapping = new XmlMemberMapping [cmap.AllMembers.Count];
 			foreach (XmlTypeMapMember mapMem in cmap.AllMembers)
 				mapping[n++] = new XmlMemberMapping (mapMem.Name, mapMem);
-				
-			return new XmlMembersMapping (name.Name, name.Namespace, true, mapping);
+			
+			return new XmlMembersMapping (name.Name, name.Namespace, mapping);
 		}
 
-		[MonoTODO]
 		public XmlMembersMapping ImportMembersMapping (XmlQualifiedName[] names)
 		{
-			throw new NotImplementedException ();
+			XmlMemberMapping[] mapping = new XmlMemberMapping [names.Length];
+			for (int n=0; n<names.Length; n++)
+			{
+				XmlSchemaElement elem = (XmlSchemaElement) schemas.Find (names[n], typeof (XmlSchemaElement));
+				if (elem == null) throw new InvalidOperationException ("Schema element '" + names[n] + "' not found");
+				
+				XmlQualifiedName typeQName = new XmlQualifiedName ("Message", names[n].Namespace);
+				TypeData td = GetElementTypeData (typeQName, elem);
+				
+				XmlTypeMapMemberElement mapMem = new XmlTypeMapMemberElement ();
+				mapMem.Name = elem.Name;
+				mapMem.TypeData = td;
+				mapMem.ElementInfo.Add (CreateElementInfo (typeQName.Namespace, mapMem, elem.Name, td, true));
+				
+				mapping[n] = new XmlMemberMapping (mapMem.Name, mapMem);
+			}
+			BuildPendingMaps ();
+			return new XmlMembersMapping (mapping);
 		}
 
 		[MonoTODO]
@@ -175,6 +203,14 @@ namespace System.Xml.Serialization {
 
 			XmlSchemaType type = (XmlSchemaType) schemas.Find (name, typeof (XmlSchemaComplexType));
 			if (type == null) type = (XmlSchemaType) schemas.Find (name, typeof (XmlSchemaSimpleType));
+			
+			if (type == null) 
+			{
+				if (name.Namespace == XmlSerializer.EncodingNamespace)
+					throw new InvalidOperationException ("Referenced type '" + name + "' valid only for encoded SOAP");
+				else
+					throw new InvalidOperationException ("Referenced type '" + name + "' not found");
+			}
 
 			return ImportType (name, type, root);
 		}
@@ -292,8 +328,9 @@ namespace System.Xml.Serialization {
 			}
 
 			ImportAttributes (typeQName, cmap, stype.Attributes, stype.AnyAttribute, classIds);
+			ImportExtensionTypes (typeQName);
 		}
-
+		
 		void ImportAttributes (XmlQualifiedName typeQName, ClassMap cmap, XmlSchemaObjectCollection atts, XmlSchemaAnyAttribute anyat, CodeIdentifiers classIds)
 		{
 			if (anyat != null)
@@ -334,21 +371,95 @@ namespace System.Xml.Serialization {
 
 		ListMap BuildArrayMap (XmlQualifiedName typeQName, XmlSchemaComplexType stype, out TypeData arrayTypeData)
 		{
-			ClassMap cmap = new ClassMap ();
-			CodeIdentifiers classIds = new CodeIdentifiers();
-			ImportParticleComplexContent (typeQName, cmap, stype.Particle, classIds, false);
-
-			XmlTypeMapMemberFlatList list = (cmap.AllMembers.Count == 1) ? cmap.AllMembers[0] as XmlTypeMapMemberFlatList : null;
-			if (list != null && list.ChoiceMember == null)
+			if (encodedFormat)
 			{
-				arrayTypeData = list.TypeData;
-				return list.ListMap;
+				XmlSchemaComplexContent content = stype.ContentModel as XmlSchemaComplexContent;
+				XmlSchemaComplexContentRestriction rest = content.Content as XmlSchemaComplexContentRestriction;
+				XmlSchemaAttribute arrayTypeAt = FindArrayAttribute (rest.Attributes);
+				
+				XmlAttribute[] uatts = arrayTypeAt.UnhandledAttributes;
+				if (uatts == null || uatts.Length == 0) throw new InvalidOperationException ("arrayType attribute not specified in array declaration: " + typeQName);
+				
+				XmlAttribute xat = null;
+				foreach (XmlAttribute at in uatts)
+					if (at.LocalName == "arrayType" && at.NamespaceURI == XmlSerializer.WsdlNamespace)
+						{ xat = at; break; }
+				
+				if (xat == null) 
+					throw new InvalidOperationException ("arrayType attribute not specified in array declaration: " + typeQName);
+
+				string name, ns, dims;
+				TypeTranslator.ParseArrayType (xat.Value, out name, out ns, out dims);
+				
+				return BuildEncodedArrayMap (name + dims, ns, out arrayTypeData);
 			}
 			else
 			{
-				arrayTypeData = null;
-				return null;
+				ClassMap cmap = new ClassMap ();
+				CodeIdentifiers classIds = new CodeIdentifiers();
+				ImportParticleComplexContent (typeQName, cmap, stype.Particle, classIds, false);
+	
+				XmlTypeMapMemberFlatList list = (cmap.AllMembers.Count == 1) ? cmap.AllMembers[0] as XmlTypeMapMemberFlatList : null;
+				if (list != null && list.ChoiceMember == null)
+				{
+					arrayTypeData = list.TypeData;
+					return list.ListMap;
+				}
+				else
+				{
+					arrayTypeData = null;
+					return null;
+				}
 			}
+		}
+		
+		ListMap BuildEncodedArrayMap (string type, string ns, out TypeData arrayTypeData)
+		{
+			ListMap map = new ListMap ();
+			
+			int i = type.LastIndexOf ("[");
+			if (i == -1) throw new InvalidOperationException ("Invalid arrayType value: " + type);
+			if (type.IndexOf (",",i) != -1) throw new InvalidOperationException ("Multidimensional arrays are not supported");
+			
+			string itemType = type.Substring (0,i);
+			
+			TypeData itemTypeData;
+			if (itemType.IndexOf ("[") != -1) 
+			{
+				ListMap innerListMap = BuildEncodedArrayMap (itemType, ns, out itemTypeData);
+				
+				int dims = itemType.Split ('[').Length - 1;
+				string name = TypeTranslator.GetArrayName (type, dims);
+				XmlQualifiedName qname = new XmlQualifiedName (name, ns);
+				XmlTypeMapping tmap = CreateArrayTypeMapping (qname, itemTypeData);
+				tmap.ObjectMap = innerListMap;
+			}
+			else
+			{
+				itemTypeData = GetTypeData (new XmlQualifiedName (itemType, ns), null);
+			}
+			
+			arrayTypeData = itemTypeData.ListTypeData;
+			map.ItemInfo.Add (CreateElementInfo ("", null, "Item", itemTypeData, true));
+			return map;
+		}
+		
+		XmlSchemaAttribute FindArrayAttribute (XmlSchemaObjectCollection atts)
+		{
+			foreach (object ob in atts)
+			{
+				XmlSchemaAttribute att = ob as XmlSchemaAttribute;
+				if (att != null && att.RefName == arrayTypeAttribute) return att;
+				
+				XmlSchemaAttributeGroupRef gref = ob as XmlSchemaAttributeGroupRef;
+				if (gref != null)
+				{
+					XmlSchemaAttributeGroup grp = (XmlSchemaAttributeGroup) schemas.Find (gref.RefName, typeof(XmlSchemaAttributeGroup));
+					att = FindArrayAttribute (grp.Attributes);
+					if (att != null) return att;
+				}
+			}
+			return null;
 		}
 
 		void ImportParticleComplexContent (XmlQualifiedName typeQName, ClassMap cmap, XmlSchemaParticle particle, CodeIdentifiers classIds, bool isMixed)
@@ -690,11 +801,10 @@ namespace System.Xml.Serialization {
 
 		void ImportComplexContent (XmlQualifiedName typeQName, XmlTypeMapping map, XmlSchemaComplexContent content, CodeIdentifiers classIds, bool isMixed)
 		{
-			XmlSchemaComplexContentExtension ext = content.Content as XmlSchemaComplexContentExtension;
-
 			ClassMap cmap = (ClassMap)map.ObjectMap;
 			XmlQualifiedName qname;
 
+			XmlSchemaComplexContentExtension ext = content.Content as XmlSchemaComplexContentExtension;
 			if (ext != null) qname = ext.BaseTypeName;
 			else qname = ((XmlSchemaComplexContentRestriction)content.Content).BaseTypeName;
 			
@@ -715,13 +825,32 @@ namespace System.Xml.Serialization {
 
 			if (ext != null) {
 				// Add the members of this map
-				ImportParticleComplexContent (typeQName, cmap, ext.Particle, classIds, isMixed);
+				if (ext.Particle != null)
+					ImportParticleComplexContent (typeQName, cmap, ext.Particle, classIds, isMixed);
 
 				ImportAttributes (typeQName, cmap, ext.Attributes, ext.AnyAttribute, classIds);
 			}
 			else {
 				if (isMixed) ImportParticleComplexContent (typeQName, cmap, null, classIds, true);
 			}
+		}
+		
+		void ImportExtensionTypes (XmlQualifiedName qname)
+		{
+			foreach (XmlSchema schema in schemas) {
+				foreach (XmlSchemaObject sob in schema.Items) 
+				{
+					XmlSchemaComplexType sct = sob as XmlSchemaComplexType;
+					if (sct != null && sct.ContentModel is XmlSchemaComplexContent) {
+						XmlQualifiedName exqname;
+						XmlSchemaComplexContentExtension ext = sct.ContentModel.Content as XmlSchemaComplexContentExtension;
+						if (ext != null) exqname = ext.BaseTypeName;
+						else exqname = ((XmlSchemaComplexContentRestriction)sct.ContentModel.Content).BaseTypeName;
+						if (exqname == qname)
+							ImportType (new XmlQualifiedName (sct.Name, schema.TargetNamespace), sct, null);
+					}
+				}
+			}					
 		}
 
 		XmlTypeMapping ImportClassSimpleType (XmlQualifiedName typeQName, XmlSchemaSimpleType stype, XmlQualifiedName root)
@@ -786,8 +915,19 @@ namespace System.Xml.Serialization {
 
 		bool CanBeArray (XmlQualifiedName typeQName, XmlSchemaComplexType stype)
 		{
-			if (stype.Attributes.Count > 0 || stype.AnyAttribute != null) return false;
-			else return !stype.IsMixed && CanBeArray (typeQName, stype.Particle, false);
+			if (encodedFormat)
+			{
+				XmlSchemaComplexContent content = stype.ContentModel as XmlSchemaComplexContent;
+				if (content == null) return false;
+				XmlSchemaComplexContentRestriction rest = content.Content as XmlSchemaComplexContentRestriction;
+				if (rest == null) return false;
+				return rest.BaseTypeName == arrayType;
+			}
+			else
+			{
+				if (stype.Attributes.Count > 0 || stype.AnyAttribute != null) return false;
+				else return !stype.IsMixed && CanBeArray (typeQName, stype.Particle, false);
+			}
 		}
 
 		bool CanBeArray (XmlQualifiedName typeQName, XmlSchemaParticle particle, bool multiValue)
@@ -937,7 +1077,10 @@ namespace System.Xml.Serialization {
 
 		XmlTypeMapping CreateArrayTypeMapping (XmlQualifiedName typeQName, TypeData arrayTypeData)
 		{
-			XmlTypeMapping map = new XmlTypeMapping (arrayTypeData.XmlType, typeQName.Namespace, arrayTypeData, arrayTypeData.XmlType, typeQName.Namespace);
+			XmlTypeMapping map;
+			if (encodedFormat) map = new XmlTypeMapping ("Array", XmlSerializer.EncodingNamespace, arrayTypeData, "Array", XmlSerializer.EncodingNamespace);
+			else map = new XmlTypeMapping (arrayTypeData.XmlType, typeQName.Namespace, arrayTypeData, arrayTypeData.XmlType, typeQName.Namespace);
+			
 			mappedTypes [typeQName] = map;
 			dataMappedTypes [arrayTypeData] = map;
 

@@ -3,6 +3,7 @@
 //
 // Authors:
 // 	Gonzalo Paniagua Javier (gonzalo@ximian.com)
+// 	Lluis Sanchez Gual (lluis@ximian.com)
 //
 // (c) 2002 Ximian, Inc. (http://www.ximian.com)
 //
@@ -13,16 +14,16 @@ namespace System.Xml.Serialization
 {
 	public class SoapSchemaExporter
 	{
-		[MonoTODO]
+		XmlSchemaExporter _exporter;
+		
 		public SoapSchemaExporter (XmlSchemas schemas)
 		{
-			throw new NotImplementedException ();
+			_exporter = new XmlSchemaExporter(schemas, true);
 		}
 
-		[MonoTODO]
 		public void ExportMembersMapping (XmlMembersMapping xmlMembersMapping)
 		{
-			throw new NotImplementedException ();
+			_exporter.ExportMembersMapping (xmlMembersMapping);
 		}
 
 		[MonoTODO]
@@ -32,11 +33,9 @@ namespace System.Xml.Serialization
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		public void ExportTypeMapping (XmlTypeMapping xmlTypeMapping)
 		{
-			throw new NotImplementedException ();
+			_exporter.ExportTypeMapping (xmlTypeMapping);
 		}
 	}
 }
-

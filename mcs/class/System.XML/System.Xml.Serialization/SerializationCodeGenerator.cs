@@ -407,7 +407,7 @@ namespace System.Xml.Serialization
 		
 						string tmpVar2 = GetObTempVar ();
 						WriteLineInd ("foreach (XmlAttribute " + tmpVar2 + " in " + tmpVar + ")");
-						WriteLine ("WriteAttribute (" + tmpVar2 + ".Prefix, " + tmpVar2 + ".LocalName, " + tmpVar2 + ".NamespaceURI, " + tmpVar2 + ".Value);");
+						WriteLine ("WriteXmlAttribute (" + tmpVar2 + ", " + ob + ");");
 						Unindent ();
 						WriteLineUni ("}");
 		
@@ -576,7 +576,7 @@ namespace System.Xml.Serialization
 				else
 					arrayType = GetLiteral (n);
 				
-				WriteMetCall ("WriteAttribute", GetLiteral("arrayType"), GetLiteral(SoapReflectionImporter.EncodingNamespace), arrayType);
+				WriteMetCall ("WriteAttribute", GetLiteral("arrayType"), GetLiteral(XmlSerializer.WsdlNamespace), arrayType);
 			}
 			GenerateWriteListContent (typeMap.TypeData, (ListMap) typeMap.ObjectMap, ob, false);
 		}
@@ -1121,7 +1121,10 @@ namespace System.Xml.Serialization
 				if (anyAttrMember != null) 
 				{
 					if (!GenerateReadArrayMemberHook (typeMap.TypeData.Type, anyAttrMember, "anyAttributeIndex")) {
-						GenerateAddListValue (anyAttrMember.TypeData, "anyAttributeArray", "anyAttributeIndex", GetCast (anyAttrMember.TypeData.ListItemTypeData, "Document.ReadNode(Reader)"), true);
+						WriteLine ("System.Xml.XmlAttribute attr = (System.Xml.XmlAttribute) Document.ReadNode(Reader);");
+						if (typeof(System.Xml.Schema.XmlSchemaAnnotated).IsAssignableFrom (typeMap.TypeData.Type)) 
+							WriteLine ("ParseWsdlArrayType (attr);");
+						GenerateAddListValue (anyAttrMember.TypeData, "anyAttributeArray", "anyAttributeIndex", GetCast (anyAttrMember.TypeData.ListItemTypeData, "attr"), true);
 						GenerateEndHook ();
 					}
 					WriteLine ("anyAttributeIndex++;");

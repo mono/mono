@@ -194,7 +194,7 @@ namespace System.Xml.Serialization
 				if (extraAtts != null) 
 				{
 					foreach (XmlAttribute attr in extraAtts)
-						WriteAttribute (attr.Prefix, attr.LocalName, attr.NamespaceURI, attr.Value);
+						WriteXmlAttribute (attr, ob);
 				}
 			}
 		}
@@ -358,7 +358,7 @@ namespace System.Xml.Serialization
 				int itemCount = GetListCount (typeMap.TypeData, ob);
 				((ListMap) typeMap.ObjectMap).GetArrayType (itemCount, out n, out ns);
 				string arrayType = (ns != string.Empty) ? FromXmlQualifiedName (new XmlQualifiedName(n,ns)) : n;
-				WriteAttribute ("arrayType", SoapReflectionImporter.EncodingNamespace, arrayType);
+				WriteAttribute ("arrayType", XmlSerializer.WsdlNamespace, arrayType);
 			}
 			WriteListContent (typeMap.TypeData, (ListMap) typeMap.ObjectMap, ob, null);
 		}

@@ -29,22 +29,19 @@ namespace System.Xml.Serialization
 				_elementName = info.ElementName;
 				_namespace = info.Namespace;
 				if (info.MappedType != null) _typeNamespace = info.MappedType.Namespace;
-				else _namespace = "";
+				else _typeNamespace = "";
 			}
 			else
 			{
 				_elementName = _memberName;
 				_namespace = "";
 			}
-
-			if (_typeNamespace == null) _typeNamespace = _namespace;
 		}
 
 		#region Properties
 
-		public bool Any {	
-			[MonoTODO]
-			get { return false; }
+		public bool Any {
+			get { return _mapMember is XmlTypeMapMemberAnyElement; }
 		}
 
 		public string ElementName {	

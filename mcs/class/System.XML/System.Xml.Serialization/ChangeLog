@@ -1,3 +1,26 @@
+2003-09-04  Lluis Sanchez Gual <lluis@ximian.com>
+
+	* SerializationCodeGenerator.cs: Minor fixes.
+	* SoapReflectionImporter.cs: More fixes.
+	* SoapSchemaExporter.cs: implemented.
+	* SoapSchemaImporter.cs: Initial implementation.
+	* TypeTranslator.cs: new methods for dealing with encoded arrays: GetArrayName
+	  and ParseArrayType
+	* XmlCodeExporter.cs: Fix. When exporting a map, export all derived maps.
+	* XmlMemberMapping.cs: Minor fixes.
+	* XmlMembersMapping.cs: added some convenient constructors.
+	* XmlSchemaExporter.cs: Added support for encoded format.
+	* XmlSchemaImporter.cs: Added support for encoded format. 
+	* XmlSerializationReader.cs: changed some string literals by constants.
+	  Implemented ParseWsdlArrayType.
+	* XmlSerializationReaderInterpreter.cs: Read typeArray attribute when serializing
+	  custom attributes.
+	* XmlSerializationWriter.cs: Implemented WriteXmlAttribute.
+	* XmlSerializationWriterInterpreter.cs: Use WriteXmlAttribute instead of
+	  WriteAttribute to write custom attributes.
+	* XmlSerializer.cs: added some namespace constants.
+	* XmlTypeMapping.cs: added GetSchemaArrayName method.
+
 2003-09-01  Lluis Sanchez Gual <lluis@ximian.com>
 
 	* XmlSchemaImporter.cs: Implemented ImportMembersMapping.

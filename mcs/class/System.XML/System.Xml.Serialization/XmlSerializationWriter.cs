@@ -735,12 +735,25 @@ namespace System.Xml.Serialization {
 			WriteXmlAttribute (node, null);
 		}
 
-		[MonoTODO ("Implement")]
 		protected void WriteXmlAttribute (XmlNode node, object container)
 		{
-			if (!(node is XmlAttribute))
+			XmlAttribute attr = node as XmlAttribute;
+			if (attr == null)
 				throw new InvalidOperationException ("The node must be either type XmlAttribute or a derived type.");
-			throw new NotImplementedException ();
+			
+			if (attr.NamespaceURI == XmlSerializer.WsdlNamespace)
+			{
+				// The wsdl arrayType attribute needs special handling
+				if (attr.LocalName == "arrayType") {
+					string ns, type, dimensions;
+					TypeTranslator.ParseArrayType (attr.Value, out type, out ns, out dimensions);
+					string value = GetQualifiedName (type + dimensions, ns);
+					WriteAttribute (attr.Prefix, attr.LocalName, attr.NamespaceURI, value);
+					return;
+				}
+			}
+			
+			WriteAttribute (attr.Prefix, attr.LocalName, attr.NamespaceURI, attr.Value);
 		}
 
 		protected void WriteXsiType (string name, string ns)

@@ -20,6 +20,8 @@ namespace System.Xml.Serialization
 
 	public class XmlSerializer
 	{
+		internal const string WsdlNamespace = "http://schemas.xmlsoap.org/wsdl/";
+		internal const string EncodingNamespace = "http://schemas.xmlsoap.org/soap/encoding/";
 
 #region Fields
 

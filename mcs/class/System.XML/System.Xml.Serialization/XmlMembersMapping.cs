@@ -22,6 +22,14 @@ namespace System.Xml.Serialization {
 		{
 		}
 
+		internal XmlMembersMapping (XmlMemberMapping[] mapping): this ("", null, false, mapping)
+		{
+		}
+
+		internal XmlMembersMapping (string elementName, string ns, XmlMemberMapping[] mapping): this (elementName, ns, true, mapping)
+		{
+		}
+
 		internal XmlMembersMapping (string elementName, string ns, bool hasWrapperElement, XmlMemberMapping[] mapping)
 		{
 			_elementName = elementName;

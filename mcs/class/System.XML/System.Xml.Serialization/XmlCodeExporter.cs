@@ -135,12 +135,18 @@ namespace System.Xml.Serialization {
 				ExportMapCode (map.BaseMap, false);
 			}
 
+			ExportDerivedTypes (map, codeClass);
+		}
+		
+		void ExportDerivedTypes (XmlTypeMapping map, CodeTypeDeclaration codeClass)
+		{
 			foreach (XmlTypeMapping tm in map.DerivedTypes)
 			{
 				CodeAttributeDeclaration iatt = new CodeAttributeDeclaration ("System.Xml.Serialization.XmlInclude");
 				iatt.Arguments.Add (new CodeAttributeArgument (new CodeTypeOfExpression(tm.TypeData.FullTypeName)));
 				AddCustomAttribute (codeClass, iatt, true);
 				ExportMapCode (tm, false);
+				ExportDerivedTypes (tm, codeClass);
 			}
 		}
 

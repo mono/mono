@@ -359,6 +359,13 @@ namespace System.Xml.Serialization
 				if (elem.ElementName == elementName && elem.Namespace == ns) return elem;
 			return null;
 		}
+		
+		public string GetSchemaArrayName ()
+		{
+			XmlTypeMapElementInfo einfo = (XmlTypeMapElementInfo) _itemInfo[0];
+			if (einfo.MappedType != null) return TypeTranslator.GetArrayName (einfo.MappedType.XmlType);
+			else return TypeTranslator.GetArrayName (einfo.TypeData.XmlType);
+		}
 
 		public void GetArrayType (int itemCount, out string localName, out string ns)
 		{

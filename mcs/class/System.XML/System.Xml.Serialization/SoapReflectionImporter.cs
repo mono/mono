@@ -20,7 +20,6 @@ namespace System.Xml.Serialization {
 		ArrayList includedTypes;
 		ArrayList relatedMaps = new ArrayList ();
 		ReflectionHelper helper = new ReflectionHelper();
-		internal const string EncodingNamespace = "http://schemas.xmlsoap.org/soap/encoding/";
 
 		#region Constructors
 
@@ -188,13 +187,13 @@ namespace System.Xml.Serialization {
 			if (type == typeof (object) && includedTypes != null)
 			{
 				foreach (Type intype in includedTypes)
-					map.DerivedTypes.Add (ImportTypeMapping (intype));
+					map.DerivedTypes.Add (ImportTypeMapping (intype, defaultNamespace));
 			}
 
 			// Register this map as a derived class of object
 
 			if (typeData.Type != typeof(object))
-				ImportTypeMapping (typeof(object)).DerivedTypes.Add (map);
+				ImportTypeMapping (typeof(object), defaultNamespace).DerivedTypes.Add (map);
 			
 			if (type.BaseType != null && type.BaseType != typeof(object))
 				map.BaseMap = ImportClassMapping (type.BaseType, defaultNamespace);
@@ -230,22 +229,21 @@ namespace System.Xml.Serialization {
 		XmlTypeMapping ImportListMapping (Type type, string defaultNamespace)
 		{
 			TypeData typeData = TypeTranslator.GetTypeData (type);
-			XmlTypeMapping map = helper.GetRegisteredClrType (type, EncodingNamespace);
+			XmlTypeMapping map = helper.GetRegisteredClrType (type, XmlSerializer.EncodingNamespace);
 			if (map != null) return map;
 
 			ListMap obmap = new ListMap ();
+			TypeData itemTypeData = typeData.ListItemTypeData;
 
-			map = CreateTypeMapping (typeData, "Array", EncodingNamespace);
-			helper.RegisterClrType (map, type, EncodingNamespace);
+			map = CreateTypeMapping (typeData, "Array", XmlSerializer.EncodingNamespace);
+			helper.RegisterClrType (map, type, XmlSerializer.EncodingNamespace);
 			map.MultiReferenceType = true;
 			map.ObjectMap = obmap;
 
-			Type itemType = typeData.ListItemType;
-			TypeData itemTypeData = TypeTranslator.GetTypeData (itemType);
 			XmlTypeMapElementInfo elem = new XmlTypeMapElementInfo (null, itemTypeData);
 			
 			if (elem.TypeData.IsComplexType) {
-				elem.MappedType = ImportTypeMapping (itemType);
+				elem.MappedType = ImportTypeMapping (typeData.ListItemType, defaultNamespace);
 				elem.TypeData = elem.MappedType.TypeData;
 			}
 				
@@ -257,7 +255,7 @@ namespace System.Xml.Serialization {
 			list.Add (elem);
 
 			obmap.ItemInfo = list;
-			ImportTypeMapping (typeof(object)).DerivedTypes.Add (map);
+			ImportTypeMapping (typeof(object), defaultNamespace).DerivedTypes.Add (map);
 
 			return map;
 		}
@@ -294,7 +292,7 @@ namespace System.Xml.Serialization {
 
 			bool isFlags = type.GetCustomAttributes (typeof(FlagsAttribute),false).Length > 0;
 			map.ObjectMap = new EnumMap (members, isFlags);
-			ImportTypeMapping (typeof(object)).DerivedTypes.Add (map);
+			ImportTypeMapping (typeof(object), defaultNamespace).DerivedTypes.Add (map);
 			return map;
 		}
 
@@ -345,7 +343,7 @@ namespace System.Xml.Serialization {
 
 				mapAttribute.Namespace = (atts.SoapAttribute.Namespace != null) ? atts.SoapAttribute.Namespace : "";
 				if (typeData.IsComplexType)
-					mapAttribute.MappedType = ImportTypeMapping (typeData.Type);
+					mapAttribute.MappedType = ImportTypeMapping (typeData.Type, defaultNamespace);
 
 				typeData = TypeTranslator.GetTypeData (rmember.MemberType, atts.SoapAttribute.DataType);
 				mapMember = mapAttribute;
@@ -366,7 +364,7 @@ namespace System.Xml.Serialization {
 				elem.Namespace = string.Empty;
 				elem.IsNullable = (atts.SoapElement != null) ? atts.SoapElement.IsNullable : false;
 				if (typeData.IsComplexType)
-					elem.MappedType = ImportTypeMapping (typeData.Type);
+					elem.MappedType = ImportTypeMapping (typeData.Type, defaultNamespace);
 				
 				infoList.Add (elem);
 				((XmlTypeMapMemberElement)mapMember).ElementInfo = infoList;

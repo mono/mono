@@ -150,6 +150,25 @@ namespace System.Xml.Serialization
 		{
 			return "ArrayOf" + Char.ToUpper (elemName [0]) + elemName.Substring (1);
 		}
+		
+		public static string GetArrayName (string elemName, int dimensions)
+		{
+			string aname = GetArrayName (elemName);
+			for ( ; dimensions > 1; dimensions--)
+				aname = "ArrayOf" + aname;
+			return aname;
+		}
+		
+		public static void ParseArrayType (string arrayType, out string type, out string ns, out string dimensions)
+		{
+			int i = arrayType.LastIndexOf (":");
+			if (i == -1) ns = "";
+			else ns = arrayType.Substring (0,i);
+			
+			int j = arrayType.IndexOf ("[", i+1);
+			if (j == -1) throw new InvalidOperationException ("Cannot parse WSDL array type: " + arrayType);
+			type = arrayType.Substring (i+1, j-i-1);
+			dimensions = arrayType.Substring (j);
+		}
 	}
 }
-

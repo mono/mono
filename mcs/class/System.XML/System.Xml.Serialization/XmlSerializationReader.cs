@@ -51,15 +51,15 @@ namespace System.Xml.Serialization {
 
 		internal void Initialize (XmlReader reader, XmlSerializer eventSource)
 		{
-			w3SchemaNS = reader.NameTable.Add ("http://www.w3.org/2001/XMLSchema");
+			w3SchemaNS = reader.NameTable.Add (XmlSchema.Namespace);
 			w3SchemaNS2000 = reader.NameTable.Add ("http://www.w3.org/2000/10/XMLSchema");
 			w3SchemaNS1999 = reader.NameTable.Add ("http://www.w3.org/1999/XMLSchema");
-			w3InstanceNS = reader.NameTable.Add ("http://www.w3.org/2001/XMLSchema-instance");
+			w3InstanceNS = reader.NameTable.Add (XmlSchema.InstanceNamespace);
 			w3InstanceNS2000 = reader.NameTable.Add ("http://www.w3.org/2000/10/XMLSchema-instance");
 			w3InstanceNS1999 = reader.NameTable.Add ("http://www.w3.org/1999/XMLSchema-instance");
-			soapNS = reader.NameTable.Add ("http://schemas.xmlsoap.org/soap/encoding/");
+			soapNS = reader.NameTable.Add (XmlSerializer.EncodingNamespace);
 			schema = reader.NameTable.Add ("schema");
-			wsdlNS = reader.NameTable.Add ("http://schemas.xmlsoap.org/wsdl/");
+			wsdlNS = reader.NameTable.Add (XmlSerializer.WsdlNamespace);
 			wsdlArrayType = reader.NameTable.Add ("arrayType");
 			nullX = reader.NameTable.Add ("null");
 			nil = reader.NameTable.Add ("nil");
@@ -68,7 +68,7 @@ namespace System.Xml.Serialization {
 			anyType = reader.NameTable.Add ("anyType");
 			this.reader = reader;
 			this.eventSource = eventSource;
-			arrayQName = new XmlQualifiedName ("Array", soapNS);
+			arrayQName = new XmlQualifiedName ("Array", XmlSerializer.EncodingNamespace);
 			InitIDs ();
 		}
 			
@@ -300,10 +300,15 @@ namespace System.Xml.Serialization {
 			return name.StartsWith ("xmlns:");
 		}
 
-		[MonoTODO ("Implement")]
 		protected void ParseWsdlArrayType (XmlAttribute attr)
 		{
-			throw new NotImplementedException ();
+			if (attr.NamespaceURI == XmlSerializer.WsdlNamespace && attr.LocalName == "arrayType")
+			{
+				string ns = "", type, dimensions;
+				TypeTranslator.ParseArrayType (attr.Value, out type, out ns, out dimensions);
+				if (ns != "") ns = Reader.LookupNamespace (ns) + ":";
+				attr.Value = ns + type + dimensions;
+			}
 		}
 
 		protected XmlQualifiedName ReadElementQualifiedName ()
@@ -440,7 +445,7 @@ namespace System.Xml.Serialization {
 
 		bool ReadList (out object resultList)
 		{
-			string arrayType = Reader.GetAttribute ("arrayType", soapNS);
+			string arrayType = Reader.GetAttribute ("arrayType", XmlSerializer.WsdlNamespace);
 			XmlQualifiedName qn = ToXmlQualifiedName (arrayType);
 			int i = qn.Name.LastIndexOf ('[');
 			string dim = qn.Name.Substring (i);
