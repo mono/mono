@@ -710,6 +710,11 @@ option_compare_directive
 	  }
 	;
 
+opt_declarations
+	: /* empty */
+	| declarations
+	;		
+
 declarations
 	: declaration
 	| declarations declaration
