@@ -1,3 +1,9 @@
+2003-06-05  Lluis Sanchez Gual <lluis@ideary.com>
+
+	* XmlTextWriter.cs : Fixed bug. After calling for example WriteStartElement ("pref","ln","ns");
+	  a call to LookupPrefix ("pref") when still writting attributes should 
+	  return "ns", and it didn't.
+
 2003-06-02  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
 
 	* XmlDocumentNavigator.cs : quick fix for MoveToFirstChild().

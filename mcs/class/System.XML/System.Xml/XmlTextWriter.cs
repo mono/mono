@@ -45,6 +45,7 @@ namespace System.Xml
 		bool openXmlSpace = false;
 		string openElementPrefix;
 		string openElementNS;
+		bool openElementNsAdded;
 		bool hasRoot = false;
 		Hashtable writtenAttributes = new Hashtable ();
 		bool checkMultipleAttributes = false;
@@ -198,22 +199,16 @@ namespace System.Xml
 				string formatXmlns = String.Empty;
 				if (ns != String.Empty)
 				{
-					string existingPrefix = namespaceManager.LookupPrefix (ns);
-					bool addDefaultNamespace = false;
-
-					if (existingPrefix == null) 
-					{
-						namespaceManager.AddNamespace (prefix, ns);
-						addDefaultNamespace = true;
-					}
-
 					if (prefix == String.Empty)
-						prefix = existingPrefix;
+						prefix = namespaceManager.LookupPrefix (ns);
 
-					if (prefix != existingPrefix)
-						formatXmlns = String.Format (" xmlns:{0}={1}{2}{1}", prefix, quoteChar, ns);
-					else if (addDefaultNamespace)
-						formatXmlns = String.Format (" xmlns={0}{1}{0}", quoteChar, ns);
+					if (openElementNsAdded)
+					{
+						if (prefix != string.Empty)
+							formatXmlns = String.Format (" xmlns:{0}={1}{2}{1}", prefix, quoteChar, ns);
+						else
+							formatXmlns = String.Format (" xmlns={0}{1}{0}", quoteChar, ns);
+					}
 				} 
 				else if ((prefix == String.Empty) && (namespaceManager.LookupNamespace (prefix) != ns)) 
 				{
@@ -566,6 +561,9 @@ namespace System.Xml
 			openAttribute = true;
 			attributeWrittenForElement = true;
 			ws = WriteState.Attribute;
+
+/*			This is managed in WriteAttributeString.
+			
 			if (prefix == String.Empty && localName == "xmlns") {
 				if (namespaceManager.LookupNamespace (prefix) == null)
 					namespaceManager.AddNamespace (prefix, ns);
@@ -573,6 +571,7 @@ namespace System.Xml
 				if (namespaceManager.LookupNamespace (localName) == null)
 					namespaceManager.AddNamespace (localName, ns);
 			}
+			*/
 		}
 
 		public override void WriteStartDocument ()
@@ -630,7 +629,7 @@ namespace System.Xml
 			CloseStartElement ();
 			writtenAttributes.Clear ();
 			checkMultipleAttributes = true;
-			
+
 			if (prefix == null)
 				prefix = namespaceManager.LookupPrefix (ns);
 			if (prefix == null)
@@ -650,9 +649,17 @@ namespace System.Xml
 			openStartElement = true;
 			openElementNS = ns;
 			openElementPrefix = prefix;
+			openElementNsAdded = false;
 
 			namespaceManager.PushScope ();
 			indentLevel++;
+
+			if (ns != null && ns != string.Empty && namespaceManager.LookupPrefix (ns) == null)
+			{
+				namespaceManager.AddNamespace (prefix, ns);
+				openElementNsAdded = true;
+			}
+
 		}
 
 		public override void WriteString (string text)
