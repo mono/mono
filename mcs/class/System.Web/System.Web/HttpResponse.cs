@@ -38,6 +38,11 @@ namespace System.Web
 		bool filtered;
 		long _lContentLength;
 		int _iStatusCode;
+		
+		int _expiresInMinutes;
+		bool _expiresInMinutesSet;
+		DateTime _expiresAbsolute;
+		bool _expiresAbsoluteSet;
 
 		bool _ClientDisconnected;
 		bool closed;
@@ -453,27 +458,35 @@ namespace System.Web
 			}
 		}
 
-		[MonoTODO("Set expires in the cache policy")]
 		public int Expires
 		{
 			get {
-				throw new NotImplementedException ();
+				return _expiresInMinutes;
 			}
 
 			set {
-				throw new NotImplementedException ();
+				if (!_expiresInMinutesSet || (value < _expiresInMinutes))
+				{
+					_expiresInMinutes = value;
+					Cache.SetExpires(_Context.Timestamp.Add(new TimeSpan(0, _expiresInMinutes, 0)));
+ 				}
+				_expiresInMinutesSet = true;
 			}
 		}
 
-		[MonoTODO("Set expiresabsolute in the cache policy")]
 		public DateTime ExpiresAbsolute
 		{
 			get {
-				throw new NotImplementedException ();
+				return _expiresAbsolute;
 			}
 
 			set {
-				throw new NotImplementedException ();
+				if (!_expiresAbsoluteSet || value.CompareTo(_expiresAbsolute)<0)
+				{
+					_expiresAbsolute = value;
+					Cache.SetExpires(_expiresAbsolute); 
+				}
+				_expiresAbsoluteSet = true;
 			}
 		}
 

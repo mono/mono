@@ -1,3 +1,6 @@
+2004-1-1  Alon Gazit <along@mainsoft.com>
+	* HttpResponse.cs: implemented ExpiresAbsolute and Expires.
+
 2003-12-18  Jackson Harper <jackson@ximian.com>
 
 	* TraceContext.cs: Write () methods are not warnings.
