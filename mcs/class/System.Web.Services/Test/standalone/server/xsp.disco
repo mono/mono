@@ -1,0 +1,7 @@
+<disco:discovery xmlns:disco='http://schemas.xmlsoap.org/disco/' xmlns:scl='http://schemas.xmlsoap.org/disco/scl/'>
+	<scl:contractRef ref="http://localhost:8080/ConvDocLitWra.asmx?wsdl" />
+	<scl:contractRef ref="http://localhost:8080/ConvDocLitBar.asmx?wsdl" />
+	<scl:contractRef ref="http://localhost:8080/ConvDocEncWra.asmx?wsdl" />
+	<scl:contractRef ref="http://localhost:8080/ConvDocEncBar.asmx?wsdl" />
+	<scl:contractRef ref="http://localhost:8080/ConvRpc.asmx?wsdl" />
+</disco:discovery>
