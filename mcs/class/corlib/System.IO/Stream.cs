@@ -10,6 +10,7 @@
 
 using System.Threading;
 using System.Runtime.Remoting.Messaging;
+using System.Runtime.InteropServices;
 
 namespace System.IO
 {
@@ -71,7 +72,7 @@ namespace System.IO
 		
 		public abstract void Flush ();
 
-		public abstract int Read (byte[] buffer,
+		public abstract int Read ([In,Out] byte[] buffer,
 					  int offset,
 					  int count);
 
@@ -226,10 +227,3 @@ namespace System.IO
 		}
 	}
 }
-
-
-
-
-
-
-

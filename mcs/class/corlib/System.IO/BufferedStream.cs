@@ -6,6 +6,7 @@
 //   Ville Palo <vi64pa@kolumbus.fi>
 //
 
+using System.Runtime.InteropServices;
 
 namespace System.IO {
 	public sealed class BufferedStream : Stream {
@@ -123,7 +124,7 @@ namespace System.IO {
 			Write(b, 0, 1);
 		}
 
-		public override int Read(byte[] array, int offset, int count) {
+		public override int Read([In,Out] byte[] array, int offset, int count) {
 
 			CheckObjectDisposedException ();
 

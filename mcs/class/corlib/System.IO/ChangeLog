@@ -1,3 +1,8 @@
+2003-09-11  Lluis Sanchez Gual  <lluis@ximian.com>
+
+	* BufferedStream.cs, FileStream.cs, MemoryStream.cs, Stream.cs:
+	  Added [In,Out] attributes to Read method.
+
 2003-08-05  Martin Baulig  <martin@ximian.com>
 
 	* StreamReader.cs (DiscardBufferedData): Do the same like on the
@@ -1088,4 +1093,3 @@ Sun Aug 26 11:47:56 CEST 2001 Paolo Molaro <lupus@ximian.com>
 	New class implemenations.
 
 	* StringReaderTest.cs, StringWriterTest.cs: Test suite for the above.
-

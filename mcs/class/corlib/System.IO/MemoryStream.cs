@@ -9,6 +9,8 @@
 // (c) 2003 Ximian, Inc. (http://www.ximian.com)
 //
 
+using System.Runtime.InteropServices;
+
 namespace System.IO
 {
 	[Serializable]
@@ -197,7 +199,7 @@ namespace System.IO
 			return internalBuffer;
 		}
 
-		public override int Read (byte [] buffer, int offset, int count)
+		public override int Read ([In,Out] byte [] buffer, int offset, int count)
 		{
 			CheckIfClosedThrowDisposed ();
 
@@ -372,5 +374,4 @@ namespace System.IO
 			stream.Write (internalBuffer, initialIndex, length - initialIndex);
 		}
 	}               
-}                      
-
+}

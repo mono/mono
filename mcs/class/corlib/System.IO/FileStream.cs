@@ -10,6 +10,7 @@
 
 using System;
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 
 // FIXME: emit the correct exceptions everywhere. add error handling.
 
@@ -275,7 +276,7 @@ namespace System.IO
 			}
 		}
 
-		public override int Read (byte[] dest, int dest_offset, int count)
+		public override int Read ([In,Out] byte[] dest, int dest_offset, int count)
 		{
 			if (handle == MonoIO.InvalidHandle)
 				throw new ObjectDisposedException ("Stream has been closed");
