@@ -109,8 +109,8 @@ monostub.exe.so: monostub.o monostub.exe.spec.o monostub.exe.dbg.o
 	gcc -shared -Wl,-Bsymbolic -D_REENTRANT -DWINELIB -o monostub.exe.so \
 	monostub.exe.spec.o \
 	monostub.o monostub.exe.dbg.o -I/usr/local/include \
-	 $(GLIB20_INCUDE) -L/usr/lib \
-	/usr/local/lib/libmono.a  -lgc \
+	$(GLIB20_INCUDE) -L/usr/lib \
+	$(LIBMONO)  -lgc \
 	-lwine -lntdll.dll $(GLIB20_LIB) -lm -lpthread 
 
 clean:	
