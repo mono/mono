@@ -289,7 +289,7 @@ namespace Microsoft.VisualBasic {
 				Position = GetIndexPosition(After) + 1;
 			}
 			if (Key == null) {
-				Key = Item.GetHashCode().ToString();
+				Key = (Item.GetHashCode() + m_HashIndexers.Count).ToString();
 			}
 
 			if (Position > (m_HashIndexers.Count+1) || Position == int.MinValue) {

@@ -1,3 +1,7 @@
+2004-06-21 Sachin Kumar <skumar1@novell.com>
+	* Collection.cs: Fixed bug in Add() 
+	* Information.cs: Fixed bug in IsNumeric()
+
 2004-06-19 Jochen Wezel <jwezel@compumaster.de>
 	* Conversion.cs, DateAndTime.cs, Information.cs, VBMath.cs, 
 	ForEachEnum.cs: changed some public to internal or private constructors

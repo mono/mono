@@ -119,7 +119,7 @@ namespace Microsoft.VisualBasic
  				return false;
 
 			if(Expression is Int16 || Expression is Int32 || Expression is Int64 || Expression is Decimal ||
-			    Expression is Single || Expression is Double)
+			    Expression is Single || Expression is Double || Expression is Boolean)
 				return true;
 	
 
