@@ -1,3 +1,8 @@
+2005-01-31  Ben Maurer  <bmaurer@ximian.com>
+
+	* marshal.c (mono_marshal_xdomain_copy_out_value): cached_str must
+	be set to null to keep things valid
+
 2005-01-31 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* icall.c: added Console 2.0 icalls.
