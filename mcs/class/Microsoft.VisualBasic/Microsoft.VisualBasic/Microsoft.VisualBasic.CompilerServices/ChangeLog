@@ -1,4 +1,17 @@
 2004-04-17	Dennis Hayes <dennish@raytek.com>
+ More Java code converted from Mainsoft.
+	
+	lots done, work in progress
+	* ObjectType.cs
+	* StringType.cs
+	
+	complete or very close
+ 	* ByteType.cs
+	* DecimalType.cs
+	* IntegerType.cs
+	* SingleType.cs
+ 	
+2004-04-17	Dennis Hayes <dennish@raytek.com>
   Added Mainsoft java code, lots of todos where the code has not been completly translated.
 
  	* LateBinding.cs

@@ -32,7 +32,7 @@
   * DEALINGS IN THE SOFTWARE.
   */
 using System;
-
+using Microsoft.VisualBasic;
 namespace Microsoft.VisualBasic.CompilerServices
 {
 	[Microsoft.VisualBasic.CompilerServices.StandardModuleAttribute] 
@@ -52,19 +52,15 @@ namespace Microsoft.VisualBasic.CompilerServices
 			if(Value == null)return 0;
 
 			double[] lRes = new double[1];
-			return Int32.Parse(Value);
-			//TODO:
-			// converet the following, then remove the above line
-			//
 			//the following handles &H &O and other stuff. int.parse does not.
-			//if (VBUtils.isNumber(value, lRes)) {
-			//	long val = (long)java.lang.Math.rint(lRes[0]);
-			//	if (val > ClrInt32.MaxValue || val < ClrInt32.MinValue)
-			//		throw new OverflowException(
-			//			Environment.GetResourceString("Overflow_Int32"));
-			//	return (int) val;
-			//}
-			//return 0;
+			if (VBUtils.isNumber(Value, lRes)) {
+				long val = (long)Math.Round(lRes[0]);
+				if (val > Int32.MaxValue || val < Int32.MinValue)
+					throw new OverflowException(
+						/*Environment.GetResourceString(*/"Overflow_Int32")/*)*/;
+				return (int) val;
+			}
+			return 0;
 		}
 
 		public static System.Int32 FromObject (object Value) { 

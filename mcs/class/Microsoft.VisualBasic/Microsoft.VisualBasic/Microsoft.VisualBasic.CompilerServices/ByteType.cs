@@ -79,7 +79,7 @@ namespace Microsoft.VisualBasic.CompilerServices
 				//is diff base
 				if(Value.Substring(1,1).ToUpper() == "H")
 					Base = 16;
-				else if(Value.Substring(1,1).ToUpper() == "B")
+				else if(Value.Substring(1,1).ToUpper() == "O")
 					Base = 8;
 				else {
 					// I think we should just let convert take care of the execption.

@@ -64,6 +64,8 @@ namespace Microsoft.VisualBasic.CompilerServices {
 
 			return Convert.ToSingle(Value,numberFormat);
 
+			//Actually we may need to downcast to long if H or O
+
 			//This gets base correct, but this conversion does not allow base, so I 
 			// think the java base check is unneeded
 			//int Base = 10;

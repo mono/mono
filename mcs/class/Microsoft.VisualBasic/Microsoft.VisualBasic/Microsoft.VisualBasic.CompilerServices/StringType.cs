@@ -62,7 +62,7 @@ namespace Microsoft.VisualBasic.CompilerServices {
 				try {
 					isLike = StrLike(subString, pattern, compareOption);
 				}
-				catch (Exception exp) {
+				catch /*(Exception exp)*/ {
 					isLike = false;
 				}
 				if (!isLike)
@@ -273,10 +273,10 @@ namespace Microsoft.VisualBasic.CompilerServices {
 			int maxInsertLength,
 			string sInsert) {
 			int destLen = 0;
-			int count;
+			//int count;
 			int insertLen = 0;
 			string dest = (string)strDesRef;
-			StringBuilder sb;
+			//StringBuilder sb;
 
 			if (dest != null)
 				destLen = dest.Length;
@@ -444,8 +444,7 @@ namespace Microsoft.VisualBasic.CompilerServices {
 							//	vbErrors.BadPatStr);
 						//when the previous char in the range matches the char in
 						// the source 
-						if (isNotSignAppears || isMatch);
-						else {
+						if (!(isNotSignAppears || isMatch)){
 							if (sourceChar == previousCharInRange)
 								isMatch = true;
 							if (isNotSignAppears)
@@ -476,8 +475,7 @@ namespace Microsoft.VisualBasic.CompilerServices {
 							//	vbErrors.BadPatStr);
 						//when the previous char in the range matches the char in
 						// the source 
-						if (isNotSignAppears || isMatch);
-						else {
+						if (!(isNotSignAppears || isMatch)){
 							if (sourceChar == previousCharInRange)
 								isMatch = true;
 							if (isNotSignAppears)
@@ -531,8 +529,7 @@ namespace Microsoft.VisualBasic.CompilerServices {
 							//	vbErrors.BadPatStr);
 						//when the previous char in the range matches the char in
 						// the source 
-						if (isNotSignAppears ^ isMatch);
-						else {
+						if (!(isNotSignAppears ^ isMatch)){
 							if (sourceChar == previousCharInRange)
 								isMatch = true;
 							if (isNotSignAppears)
@@ -570,8 +567,7 @@ namespace Microsoft.VisualBasic.CompilerServices {
 						if (previousCharInRange > currentCharInRange)
 							throw new Exception("Bad patteren string");
 							//throw (Exception)ExceptionUtils.VbMakeException(vbErrors.BadPatStr);
-						if (isNotSignAppears || isMatch);
-						else {                        
+						if (!(isNotSignAppears || isMatch)){
 							if (sourceChar <= previousCharInRange || sourceChar > currentCharInRange)
 								isMatch = true;
 							else
@@ -614,8 +610,8 @@ namespace Microsoft.VisualBasic.CompilerServices {
 			int patternLength = (char)0;
 			int patternIndex = (char)0;
 			char currentSourceChar = (char)0;
-			bool isRangeSignAppears = false;
-			bool specialChar = false;
+			//bool isRangeSignAppears = false;
+			//bool specialChar = false;
 			bool isNotSignAppears = false;
 			int numberOfSkipedChars = 0;
 			int sourceLength = 0;
@@ -666,10 +662,10 @@ namespace Microsoft.VisualBasic.CompilerServices {
 					sourceIndex++;
 					if (sourceIndex < sourceLength)
 						currentSourceChar = source[sourceIndex];
-					isRangeSignAppears = true;
+					//isRangeSignAppears = true;
 				}
 				else if (currentPatternChar == '!') {
-					specialChar = true;
+					//specialChar = true;
 					isMatch =
 						compareBinary(
 						isNotSignAppears,
@@ -710,12 +706,12 @@ namespace Microsoft.VisualBasic.CompilerServices {
 					if (sourceIndex < sourceLength)
 						currentSourceChar = source[sourceIndex];
 					isMatch = false;
-					specialChar = false;
+					//specialChar = false;
 					isNotSignAppears = false;
-					isRangeSignAppears = false;
+					//isRangeSignAppears = false;
 				}
 				else if (currentPatternChar == currentSourceChar || isNotSignAppears) {
-					specialChar = true;
+					//specialChar = true;
 					isNotSignAppears = false;
 					sourceIndex++;
 					if (sourceIndex < sourceLength)
@@ -777,20 +773,20 @@ namespace Microsoft.VisualBasic.CompilerServices {
 		 */
 
 		public static bool StrLikeText(string source, string pattern) {
-			char currentCharInRange = (char)0;
+			//char currentCharInRange = (char)0;
 			bool startRangeSignAppears = false;
 			bool isMatch = false;
 			char currentPatternChar = (char)0;
 			int patternLength = 0;
 			int patternIndex = 0;
 			char currentSourceChar = (char)0;
-			bool isRangeSignAppears = false;
-			bool specialChar = false;
+			//bool isRangeSignAppears = false;
+			//bool specialChar = false;
 			bool isNotSignAppears = false;
 			int numberOfSkipedChars = 0;
 			int sourceLength = 0;
 			int sourceIndex = 0;
-			char previousCharInRange = (char)0;
+			//char previousCharInRange = (char)0;
 
 			patternLength = (pattern == null)? 0 : pattern.Length;
 			sourceLength = (source == null)? 0 : source.Length ;
@@ -836,10 +832,10 @@ namespace Microsoft.VisualBasic.CompilerServices {
 					sourceIndex++;
 					if (sourceIndex < sourceLength)
 						currentSourceChar = source[sourceIndex];
-					isRangeSignAppears = true;
+					//isRangeSignAppears = true;
 				}
 				else if (currentPatternChar == '!') {
-					specialChar = true;
+					//specialChar = true;
 					isMatch =
 						compare(
 						isNotSignAppears,
@@ -874,19 +870,19 @@ namespace Microsoft.VisualBasic.CompilerServices {
 						isMatch,
 						currentPatternChar,
 						currentSourceChar);
-					specialChar = true;
+					//specialChar = true;
 					if (!(isMatch))
 						break;
 					sourceIndex++;
 					if (sourceIndex < sourceLength)
 						currentSourceChar = source[sourceIndex];
 					isMatch = false;
-					specialChar = false;
+					//specialChar = false;
 					isNotSignAppears = false;
-					isRangeSignAppears = false;
+					//isRangeSignAppears = false;
 				}
 				else {
-					specialChar = true;
+					//specialChar = true;
 					if (!(currentPatternChar == currentSourceChar || isNotSignAppears))
 						break;
 					isNotSignAppears = false;
@@ -949,8 +945,7 @@ namespace Microsoft.VisualBasic.CompilerServices {
 							//	vbErrors.BadPatStr);
 						//when the previous char in the range matches the char in
 						// the source
-						if (isNotSignAppears ^ isMatch);
-						else {
+						if (!(isNotSignAppears ^ isMatch)){
 							if (!(string.Compare(
 								FromChar(previousCharInRange),
 								FromChar(sourceChar),
@@ -986,8 +981,7 @@ namespace Microsoft.VisualBasic.CompilerServices {
 						if (previousCharInRange > currentCharInRange)
 							throw new Exception("Bad pattern string");
 							//throw (Exception)ExceptionUtils.VbMakeException(vbErrors.BadPatStr);
-						if (isNotSignAppears || isMatch);
-						else {
+						if (!(isNotSignAppears || isMatch)){
 							if (!(string.Compare(
 								FromChar(previousCharInRange),
 								FromChar(sourceChar),
@@ -1050,8 +1044,7 @@ namespace Microsoft.VisualBasic.CompilerServices {
 							//	vbErrors.BadPatStr);
 						//when the previous char in the range matches the char in
 						// the source 
-						if (isNotSignAppears || isMatch);
-						else {
+						if (!(isNotSignAppears || isMatch)){
 							if (!(string.Compare(
 								FromChar(previousCharInRange),
 								FromChar(sourceChar),
@@ -1094,8 +1087,7 @@ namespace Microsoft.VisualBasic.CompilerServices {
 						if (previousCharInRange > currentCharInRange)
 							throw new Exception("Bad patteren string");
 							//throw (Exception)ExceptionUtils.VbMakeException(vbErrors.BadPatStr);
-						if (isNotSignAppears ^ isMatch);
-						else {                        
+						if (!(isNotSignAppears ^ isMatch)){
 							if (sourceChar <= previousCharInRange || sourceChar > currentCharInRange)
 								isMatch = true;
 							else

@@ -71,15 +71,15 @@ namespace Microsoft.VisualBasic.CompilerServices {
 			if (Value == null)return Decimal.Zero;
 			
 			//TODO: remove this line
-			return Parse(Value, numberFormat);
+			//return Parse(Value, numberFormat);
 
 			//TODO convert this to C# and uncomment
 			//try {
-			//	double d;
-			//	long[] lRes = new long[1];
-			//	Boolean b = StringType.IsHexOrOctValue(str, lRes);
-			//	if (b == true)return new Decimal(lRes[0]);
-			//	return Parse(str, numberFormat);
+				//double d;
+				long[] lRes = new long[1];
+				bool b = StringType.IsHexOrOctValue(Value, lRes);
+				if (b == true)return (decimal)lRes[0];
+				return Parse(Value, numberFormat);
 			//}
 			//catch (OverflowException exp) {
 			//	throw (RuntimeException)ExceptionUtils.VbMakeException(6);
