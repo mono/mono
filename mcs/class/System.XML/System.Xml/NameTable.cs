@@ -29,7 +29,7 @@ namespace System.Xml
 			if (table.ContainsKey (key))
 				return (string) table [key];
 			else 
-				return Get (key);
+				return table.Add (key.GetHashCode (), key);
 		}
 
 		public override string Add (char[] key, int start, int len)
