@@ -260,7 +260,12 @@ namespace System.Xml
 
 		public override string Value
 		{
-			get { return value; }
+			get {
+				if(NodeType == XmlNodeType.Attribute)
+					return ResolveAttributeValue(value);
+				else
+					return value;
+			}
 		}
 
 		public WhitespaceHandling WhitespaceHandling
@@ -303,13 +308,13 @@ namespace System.Xml
 			if (i > attributes.Count)
 				throw new ArgumentOutOfRangeException ("i is smaller than AttributeCount");
 			else
-				throw new NotImplementedException ();
+				return ResolveAttributeValue (attributes [orderedAttributes [i]] as string);
 		}
 
 		public override string GetAttribute (string name)
 		{
 			return attributes.ContainsKey (name) ?
-				attributes [name] as string : String.Empty;
+				ResolveAttributeValue (attributes [name] as string) : String.Empty;
 		}
 
 		public override string GetAttribute (string localName, string namespaceURI)
@@ -329,11 +334,11 @@ namespace System.Xml
 
 						if (namespaceURI == thisNamespaceURI)
 							return attributes.ContainsKey (thisName) ?
-								attributes [thisName] as string : String.Empty;
+								ResolveAttributeValue (attributes [thisName] as string) : String.Empty;
 					}
 				} else if (localName == "xmlns" && namespaceURI == "http://www.w3.org/2000/xmlns/" && thisName == "xmlns")
 					return attributes.ContainsKey (thisName) ? 
-						attributes [thisName] as string : String.Empty;
+						ResolveAttributeValue (attributes [thisName] as string) : String.Empty;
 			}
 
 			return String.Empty;
@@ -356,10 +361,22 @@ namespace System.Xml
 			return parserContext.NamespaceManager.LookupNamespace (prefix);
 		}
 
-		[MonoTODO]
 		public override void MoveToAttribute (int i)
 		{
-			throw new NotImplementedException ();
+			MoveToElement ();
+
+			if (attributes == null || orderedAttributes.Count < i || i < 0)
+				throw new ArgumentOutOfRangeException ("attribute index out of range.");
+
+			string name = orderedAttributes [i] as string;
+			string value = attributes [name] as string;
+			SetProperties (
+				XmlNodeType.Attribute, // nodeType
+				name, // name
+				false, // isEmptyElement
+				value, // value
+				false // clearAttributes
+				);
 		}
 
 		public override bool MoveToAttribute (string name)
@@ -383,7 +400,6 @@ namespace System.Xml
 			}
 
 			if (match) {
-					
 				string value = attributes [name] as string;
 				SetProperties (
 					XmlNodeType.Attribute, // nodeType
@@ -393,7 +409,7 @@ namespace System.Xml
 					false // clearAttributes
 				);
 			}
-			
+
 			return match;
 		}
 
@@ -457,6 +473,7 @@ namespace System.Xml
 			return more;
 		}
 
+		[MonoTODO("This method should consider entity references")]
 		public override bool ReadAttributeValue ()
 		{
 			// reading attribute value phase now stopped
@@ -581,7 +598,7 @@ namespace System.Xml
 		public override string ReadOuterXml ()
 		{
 			if (NodeType == XmlNodeType.Attribute) {
-				return Name + "=\"" + Value + "\"";
+				return Name + "=\"" + Value.Replace ("\"", "'") + "\"";
 			} else {
    				saveToXmlBuffer = true;
 				xmlBuffer.Append (currentTag.ToString ());
@@ -615,7 +632,7 @@ namespace System.Xml
 		public override void ResolveEntity ()
 		{
 			// XmlTextReaders don't resolve entities.
-			throw new InvalidOperationException ("XmlTextReaders don't resolve entities.");
+			throw new InvalidOperationException ("XmlTextReader cannot resolve external entities.");
 		}
 
 		#endregion
@@ -1234,9 +1251,10 @@ namespace System.Xml
 				{
 				case '<':
 					throw new XmlException ("attribute values cannot contain '<'");
-				case '&':
-					ReadReference (true);
-					break;
+// expansion of entity now should be done at ResolveAttributeValue() method
+//				case '&':
+//					ReadReference (true);
+//					break;
 				case -1:
 					throw new XmlException ("unexpected end of file in an attribute value");
 				default:
