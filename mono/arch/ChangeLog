@@ -1,3 +1,11 @@
+2004-03-07  Duncan Mak  <duncan@ximian.com>
+
+        * Makefile.am: Removed the reference to 'x86-64'. This was the cause
+        of the missing Mono daily tarballs, 'make dist' wasn't working.
+        
+        We do have an 'amd64' directory, but it doesn't make it in 'make
+        dist'.
+
 2004-02-19  Zoltan Varga  <vargaz@freemail.hu>
 
 	* sparc/sparc-codegen.h: Fix lots of opcodes + add new ones.
