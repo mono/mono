@@ -24,6 +24,16 @@ namespace Mono.CSharp {
 		static Tree tree;
 
 		static public bool Optimize;
+
+		//
+		// If this value is `true', then calls to the Trace class are disabled
+		//
+		static public bool DisableTrace = true;
+
+		//
+		// If this value is `true', then calls to the Debug class are disabled
+		//
+		static public bool DisableDebug = true;
 		
 		//
 		// The list of global attributes (those that target the assembly)

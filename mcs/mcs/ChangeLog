@@ -1,3 +1,14 @@
+2002-05-27  Miguel de Icaza  <miguel@ximian.com>
+
+	* expression.cs (Invocation.Emit): Only emit calls to
+	System.Diagnostics.Debug and System.Diagnostics.Trace if the
+	TRACE and DEBUG defines are passed on the command line.
+
+	* rootcontext.cs: Global settings for tracing and debugging.
+
+	* cs-tokenizer.cs (define): New utility function to track
+	defines.   Set the global settings for TRACE and DEBUG if found.
+
 2002-05-25  Ravi Pratap  <ravi@ximian.com>
 
 	* interface.cs (Populate*): Pass in the TypeContainer as well as

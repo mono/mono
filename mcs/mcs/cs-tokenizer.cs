@@ -282,6 +282,15 @@ namespace Mono.CSharp
 				return new Location (ref_line);
 			}
 		}
+
+		void define (string def)
+		{
+			if (def == "TRACE")
+				RootContext.DisableTrace = false;
+			else if (def == "DEBUG")
+				RootContext.DisableDebug = false;
+			defines [def] = true;
+		}
 		
 		public Tokenizer (System.IO.Stream input, string fname, ArrayList defs)
 		{
@@ -292,7 +301,7 @@ namespace Mono.CSharp
 			if (defs != null){
 				defines = new Hashtable ();
 				foreach (string def in defs)
-					defines [def] = true;
+					define (def);
 			}
 
 			//
@@ -962,7 +971,7 @@ namespace Mono.CSharp
 			if (is_define){
 				if (defines == null)
 					defines = new Hashtable ();
-				defines [arg] = 1;
+				define (arg);
 			} else {
 				if (defines == null)
 					return;

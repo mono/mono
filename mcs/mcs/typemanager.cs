@@ -67,7 +67,9 @@ public class TypeManager {
 	static public Type param_array_type;
 	static public Type void_ptr_type;
 	static public Type indexer_name_type;
-
+	static public Type trace_type;
+	static public Type debug_type;
+	
 	static public Type [] NoTypes;
 	
 	//
@@ -591,7 +593,8 @@ public class TypeManager {
 		void_ptr_type         = CoreLookupType ("System.Void*");
 
 		indexer_name_type     = CoreLookupType ("System.Runtime.CompilerServices.IndexerNameAttribute");
-
+		trace_type            = CoreLookupType ("System.Diagnostics.Trace");
+		debug_type            = CoreLookupType ("System.Diagnostics.Debug");
 	}
 
 	//
