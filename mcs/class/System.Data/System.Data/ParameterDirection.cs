@@ -9,7 +9,7 @@
 
 using System;
 
-namespace mono.System.Data
+namespace System.Data
 {
 	/// <summary>
 	/// Specifies the type of a parameter within a query relative to the DataSet.

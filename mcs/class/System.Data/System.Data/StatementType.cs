@@ -9,7 +9,7 @@
 
 using System;
 
-namespace mono.System.Data
+namespace System.Data
 {
 	/// <summary>
 	/// Specifies the type of SQL query to be used by the OleDbRowUpdatedEventArgs, OleDbRowUpdatingEventArgs, SqlRowUpdatedEventArgs, or SqlRowUpdatingEventArgs class.

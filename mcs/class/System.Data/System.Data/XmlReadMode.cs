@@ -9,7 +9,7 @@
 
 using System;
 
-namespace mono.System.Data
+namespace System.Data
 {
 	/// <summary>
 	/// Specifies how to read XML data and a relational schema into a DataSet.

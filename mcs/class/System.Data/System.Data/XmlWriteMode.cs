@@ -9,7 +9,7 @@
 
 using System;
 
-namespace mono.System.Data
+namespace System.Data
 {
 	/// <summary>
 	/// Use the members of this enumeration when setting the WriteMode parameter of the WriteXml method.

@@ -9,7 +9,7 @@
 
 using System;
 
-namespace mono.System.Data
+namespace System.Data
 {
 	/// <summary>
 	/// Specifies how to handle existing schema mappings when performing a FillSchema operation.

@@ -9,7 +9,7 @@
 
 using System;
 
-namespace mono.System.Data
+namespace System.Data
 {
 	/// <summary>
 	/// Specifies the action to take when adding data to the DataSet and the required DataTable or DataColumn is missing.

@@ -9,7 +9,7 @@
 
 using System;
 
-namespace mono.System.Data
+namespace System.Data
 {
 	/// <summary>
 	/// Indicates the action that occurs when a ForeignKeyConstraint is enforced.

@@ -17,3 +17,6 @@
 	* DataRelationCollection.cs : Added
 	* DataTableRelationCollection.cs : Added
 	* DataColumn : Added
+2002-03-15  Christopher Podurgiel <cpodurgiel@msn.com>
+	
+	Changed the Namespace on some Enums from mono.System.Data to System.Data
