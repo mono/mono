@@ -1,3 +1,7 @@
+2003-07-31  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* ArrayList.cs: fixed EnsureCapacity when m_Data.Length is 0.
+
 2003-07-29  Miguel de Icaza  <miguel@ximian.com>
 
 	* ArrayList.cs: Deployed ArrayList from Tum;  Fixed iterator to

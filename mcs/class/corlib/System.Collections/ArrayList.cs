@@ -2708,6 +2708,8 @@ namespace System.Collections
 			object[] newData;
 
 			newLength = m_Data.Length << 1;
+			if (newLength == 0)
+				newLength = DefaultInitialCapacity;
 
 			while (newLength < count) 
 			{
