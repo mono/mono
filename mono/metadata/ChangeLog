@@ -1,3 +1,19 @@
+2004-11-09  Martin Baulig  <martin@ximian.com>
+
+	* class.c (mono_class_inflate_generic_method): Small fix; don't
+	crash here.
+
+	* icall.c
+	(ves_icall_MonoType_GetGenericArguments): Don't ignore `byref' types.
+	(ves_icall_Type_get_IsGenericTypeDefinition): Likewise.
+	(ves_icall_Type_GetGenericTypeDefinition_impl): Likewise.
+	(ves_icall_Type_BindGenericParameters): Likewise.
+	(ves_icall_Type_get_IsGenericInstance): Likewise.
+	(ves_icall_Type_GetGenericParameterPosition): Likewise.
+	(ves_icall_MonoType_get_HasGenericArguments): Likewise.
+	(ves_icall_MonoType_get_IsGenericParameter): Likewise.
+	(ves_icall_MonoType_get_DeclaringMethod): Likewise.
+
 2004-11-09  Zoltan Varga  <vargaz@freemail.hu>
 
 	* assembly.c (mono_assembly_names_equal): Reenable the comparison of
