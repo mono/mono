@@ -27,7 +27,10 @@ namespace Mono.Util.CorCompare {
 
 		public string Name {
 			get {
-				return mInfo.Name;
+				//return mInfo.Name;
+				string s = mInfo.ToString();
+				int index = s.IndexOf(' ');
+				return s.Substring(index + 1);
 			}
 		}
 
