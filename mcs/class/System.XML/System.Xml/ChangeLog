@@ -1,3 +1,7 @@
+2004-11-18  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlParserContext.cs : the fix was not checked in :(
+
 2004-11-17  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XQueryConvert.cs : moved from System.Xml.Query.

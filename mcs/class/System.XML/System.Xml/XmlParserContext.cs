@@ -264,7 +264,7 @@ namespace System.Xml
 				contextItems.Add (item);
 			}
 			else
-				item = (ContextItem) contextItems [contextItemCount - 1];
+				item = (ContextItem) contextItems [contextItemCount];
 			item.BaseURI = BaseURI;
 			item.XmlLang = XmlLang;
 			item.XmlSpace = XmlSpace;
@@ -273,6 +273,8 @@ namespace System.Xml
 
 		internal void PopScope ()
 		{
+			if (contextItemCount == 0)
+				throw new XmlException ("Unexpected end of element scope.");
 			contextItemCount--;
 			ContextItem prev = (ContextItem) contextItems [contextItemCount];
 			baseURI = prev.BaseURI;
