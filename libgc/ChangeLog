@@ -1,5 +1,7 @@
 2005-04-06  Zoltan Varga  <vargaz@freemail.hu>
 
+	* solaris_pthreads.c (GC_pthread_detach): Add locking.
+
 	* include/gc_pthread_redirects.h (pthread_detach): Override pthread_detach too.
 
 	* solaris_pthreads.c (GC_pthread_detach): Override pthread_detach too. Fixes

@@ -65,10 +65,15 @@ int GC_pthread_join(pthread_t wait_for, void **status)
 
 int GC_pthread_detach(pthread_t thread)
 {
-	GC_thread t = GC_lookup_thread(thread);	
+	GC_thread t;
 
+	LOCK();
+	t=GC_lookup_thread(thread);	
+	UNLOCK();
 	if (t) {
+		LOCK();
 		t->flags |= DETACHED;
+		UNLOCK();
 		return 0;
 	}
 	else
