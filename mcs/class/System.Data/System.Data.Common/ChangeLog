@@ -1,5 +1,10 @@
 2004-06-24  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* DataColumnMappingCollection.cs : fixed typo.
+	* DbDataAdapter.cs : column mappings were not filled.
+
+2004-06-24  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* DataTableMapping.cs : Clone() should also clone ColumnMappings.
 
 2004-06-18 Umadevi S <sumadevi@novell.com>

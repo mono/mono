@@ -595,11 +595,25 @@ namespace System.Data.Common {
 					table.TableName,
 					table.TableName,
 					MissingMappingAction);
-				if (tableMapping == null)
+				if (tableMapping != null) {
+					foreach (DataColumn col in table.Columns) {
+						if (tableMapping.ColumnMappings.IndexOf (col.ColumnName) >= 0)
+							continue;
+						DataColumnMapping columnMapping = DataColumnMappingCollection.GetColumnMappingBySchemaAction (tableMapping.ColumnMappings, col.ColumnName, MissingMappingAction);
+						if (columnMapping == null)
+							columnMapping = new DataColumnMapping (col.ColumnName, col.ColumnName);
+						tableMapping.ColumnMappings.Add (columnMapping);
+					}
+				} else {
+					ArrayList cmc = new ArrayList ();
+					foreach (DataColumn col in table.Columns)
+						cmc.Add (new DataColumnMapping (col.ColumnName, col.ColumnName));
 					tableMapping =
-						new DataTableMapping(
+						new DataTableMapping (
 						table.TableName,
-						table.TableName);
+						table.TableName,
+						cmc.ToArray (typeof (DataColumnMapping)) as DataColumnMapping []);
+				}
 			}
 
 			DataRow[] copy = new DataRow [dataRows.Length];
@@ -614,10 +628,41 @@ namespace System.Data.Common {
 
 		public int Update (DataTable dataTable) 
 		{
+		/*
 			int index = TableMappings.IndexOfDataSetTable (dataTable.TableName);
 			if (index < 0)
 				throw new ArgumentException ();
 			return Update (dataTable, TableMappings [index]);
+		*/
+			DataTableMapping tableMapping = TableMappings.GetByDataSetTable (dataTable.TableName);
+			if (tableMapping == null)
+			{
+				tableMapping = DataTableMappingCollection.GetTableMappingBySchemaAction (
+					TableMappings,
+					dataTable.TableName,
+					dataTable.TableName,
+					MissingMappingAction);
+				if (tableMapping != null) {
+					foreach (DataColumn col in dataTable.Columns) {
+						if (tableMapping.ColumnMappings.IndexOf (col.ColumnName) >= 0)
+							continue;
+						DataColumnMapping columnMapping = DataColumnMappingCollection.GetColumnMappingBySchemaAction (tableMapping.ColumnMappings, col.ColumnName, MissingMappingAction);
+						if (columnMapping == null)
+							columnMapping = new DataColumnMapping (col.ColumnName, col.ColumnName);
+						tableMapping.ColumnMappings.Add (columnMapping);
+					}
+				} else {
+					ArrayList cmc = new ArrayList ();
+					foreach (DataColumn col in dataTable.Columns)
+						cmc.Add (new DataColumnMapping (col.ColumnName, col.ColumnName));
+					tableMapping =
+						new DataTableMapping (
+							dataTable.TableName,
+							dataTable.TableName,
+							cmc.ToArray (typeof (DataColumnMapping)) as DataColumnMapping []);
+				}
+			}
+			return Update (dataTable, tableMapping);
 		}
 
 		private int Update (DataTable dataTable, DataTableMapping tableMapping)
