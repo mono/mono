@@ -349,4 +349,4 @@ System.Timers/Timer.cs
 System.Timers/TimersDescriptionAttribute.cs
 System.Security.Cryptography.X509Certificates/X509CertificateCollection.cs
 Microsoft.CSharp/CSharpCodeProvider.cs
-Microsoft.CSharp\CSharpCodeGenerator.cs
+Microsoft.CSharp/CSharpCodeGenerator.cs
