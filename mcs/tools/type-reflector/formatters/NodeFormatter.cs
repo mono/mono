@@ -3,7 +3,7 @@
 //
 // Author: Jonathan Pryor (jonpryor@vt.edu)
 //
-// (C) 2002 Jonathan Pryor
+// (C) 2002-2003 Jonathan Pryor
 //
 
 using System;
@@ -159,9 +159,9 @@ namespace Mono.TypeReflector
 			if (node.Description != null)
 				return node.Description.ToString();
 			return string.Format (
-					"{{** Error: Invalid NodeInfo.Description or unhandled type; " + 
+					"(** Error: Invalid NodeInfo.Description or unhandled type; " + 
 						"NodeType={0}, ReflectionObject={1}, " +
-						"ReflectionInstance={2}}}\n{3}", 
+						"ReflectionInstance={2}}}\n{3})", 
 					node.NodeType, 
 					node.ReflectionObject,
 					node.ReflectionInstance,

@@ -1,3 +1,8 @@
+2003-01-02  Jonathan Pryor <jonpryor@vt.edu>
+	* NodeFormatter.cs: Change formatting of error message.
+	* NodeInfo.cs: Nested types are MemberTypes.NestedType; set as
+	  NodeTypes.Type so we don't get error messages under .NET.
+
 2002-12-31  Jonathan Pryor <jonpryor@vt.edu>
 	* ConsoleTypeDisplayer.cs: New; Display reflection information to the console
 	* CSharpNodeFormatter.cs: Most formatting information was moved to

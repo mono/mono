@@ -9,7 +9,7 @@
 //
 // Author: Jonathan Pryor (jonpryor@vt.edu)
 //
-// (C) 2002 Jonathan Pryor
+// (C) 2002-2003 Jonathan Pryor
 //
 
 using System;
@@ -65,6 +65,7 @@ namespace Mono.TypeReflector
 		{
 			// set type
 			switch (mi.MemberType) {
+			case MemberTypes.NestedType:
 			case MemberTypes.TypeInfo:
 				this.type = NodeTypes.Type;
 				break;
