@@ -1,3 +1,8 @@
+2003-07-23  Ravi Pratap  <ravi@ximian.com>
+
+	* Type.cs, TypeBuilder.cs, MonoType.cs: Fixes to IsArrayImpl
+	from Paolo in response to bug #45993.
+
 2003-07-23  Lluis Sanchez Gual  <lluis@ximian.com>
 
 	* corlib_test.dll.sources: added System.Runtime.Serialization/SerializationTest.cs

@@ -757,6 +757,9 @@ namespace System {
 		protected abstract bool IsPointerImpl ();
 		protected abstract bool IsPrimitiveImpl ();
 		
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		internal static extern bool IsArrayImpl (Type type);
+
 		protected virtual bool IsValueTypeImpl ()
 		{
 			if (this == typeof (Enum) || this == typeof (ValueType))

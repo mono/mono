@@ -104,6 +104,22 @@ namespace System.Reflection.Emit {
 		}
 		public override Type DeclaringType {get {return nesting_type;}}
 
+/*		public override bool IsSubclassOf (Type c)
+		{
+			Type t;
+			if (c == null)
+				return false;
+			if (c == this)
+				return false;
+			t = parent;
+			while (t != null) {
+				if (c == t)
+					return true;
+				t = t.BaseType;
+			}
+			return false;
+		}*/
+
 		[MonoTODO]
 		public override Type UnderlyingSystemType {
 			get {
@@ -715,9 +731,11 @@ namespace System.Reflection.Emit {
 			throw not_supported ();
 		}
 
-		protected override bool IsArrayImpl () {
-			return type_is_subtype_of (this, typeof (System.Array), false);
+		protected override bool IsArrayImpl ()
+		{
+			return Type.IsArrayImpl (this);
 		}
+
 		protected override bool IsByRefImpl () {
 			// FIXME
 			return false;

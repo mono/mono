@@ -253,7 +253,7 @@ namespace System
 
 		protected override bool IsArrayImpl ()
 		{
-			return type_is_subtype_of (this, typeof (System.Array), false) && this != typeof (System.Array);
+			return Type.IsArrayImpl (this);
 		}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
