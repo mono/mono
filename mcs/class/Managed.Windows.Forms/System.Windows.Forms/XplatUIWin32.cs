@@ -23,9 +23,13 @@
 //	Peter Bartok	pbartok@novell.com
 //
 //
-// $Revision: 1.42 $
+// $Revision: 1.43 $
 // $Modtime: $
 // $Log: XplatUIWin32.cs,v $
+// Revision 1.43  2004/11/08 20:55:33  pbartok
+// - Added argument to SetTopmost method
+// - Fixed broken ClientToScreen function
+//
 // Revision 1.42  2004/10/20 03:58:05  pbartok
 // - Small sanity check
 //
@@ -919,7 +923,7 @@ namespace System.Windows.Forms {
 			return false;
 		}
 
-		internal override bool SetTopmost(IntPtr hWnd, bool Enabled) {
+		internal override bool SetTopmost(IntPtr hWnd, IntPtr hWndOwner, bool Enabled) {
 			if (Enabled) {
 				Win32SetWindowPos(hWnd, SetWindowPosZOrder.HWND_TOPMOST, 0, 0, 0, 0, SetWindowPosFlags.SWP_NOMOVE | SetWindowPosFlags.SWP_NOSIZE);
 				return true;
@@ -1049,13 +1053,7 @@ namespace System.Windows.Forms {
 			pnt.x = x;
 			pnt.y = y;
 
-			parent = Win32GetParent(handle);
-
-			if (parent != IntPtr.Zero) {
-				Win32ClientToScreen(parent, ref pnt);
-			} else {
-				Win32ClientToScreen(handle, ref pnt);
-			}
+			Win32ClientToScreen(handle, ref pnt);
 
 			x = pnt.x;
 			y = pnt.y;
