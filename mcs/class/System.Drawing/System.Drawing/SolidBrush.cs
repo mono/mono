@@ -19,6 +19,9 @@ namespace System.Drawing
                 internal SolidBrush (IntPtr ptr)
                         : base (ptr)
                 {
+			int val;
+			GDIPlus.GdipGetSolidFillColor (ptr, out val);
+			color = Color.FromArgb (val);
                 }
 
 		public SolidBrush (Color color)

@@ -1,3 +1,10 @@
+2004-01-14  Ravindra <rkumar@novell.com>
+                                                                                
+        * SolidBrush.cs: Made SolidBrush to initialize its color
+	from IntPtr.
+                                                                                
+        * gdipFunctions.cs: Added call to GdipGetSolidFillColor GDI+ API.
+
 2004-01-12 Ben Maurer  <bmaurer@users.sourceforge.net>
 
 	* Color.cs: Keep KnownColors in an array so that we avoid ht lookup.
