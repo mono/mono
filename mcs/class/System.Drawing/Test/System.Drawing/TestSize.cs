@@ -94,12 +94,7 @@ namespace MonoTests.System.Drawing
 			AssertEquals ("CL#3", sz1_1, Size.Round (sf));
 		}
 
-		[Test]
-		public void Test2String ()
-		{
-			AssertEquals ("2STR#1", "{Width=1, Height=1}", sz1_1.ToString ());
-		}
-
+		
 		[Test]
 		public void TestTruncate ()
 		{

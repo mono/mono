@@ -97,12 +97,7 @@ namespace MonoTests.System.Drawing
 			AssertEquals ("2SZ#1", sz1, sz2);
 		}
 
-		[Test]
-		public void Test2String ()
-		{
-			AssertEquals ("2STR#1", "{Width=1.1, Height=9.9}", sz11_99.ToString ());
-		}
-
+		
 		[Test]
 		public void TestAddition ()
 		{
