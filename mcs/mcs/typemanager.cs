@@ -2217,7 +2217,11 @@ public sealed class TypeHandle : IMemberContainer {
 
 	public MemberList GetMembers (MemberTypes mt, BindingFlags bf)
 	{
-		return new MemberList (type.FindMembers (mt, bf | BindingFlags.DeclaredOnly, null, null));
+		if (mt == MemberTypes.Event)
+			return new MemberList (type.GetEvents (bf | BindingFlags.DeclaredOnly));
+		else
+			return new MemberList (type.FindMembers (mt, bf | BindingFlags.DeclaredOnly,
+								 null, null));
 	}
 
 	// IMemberFinder methods

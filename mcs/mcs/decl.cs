@@ -892,15 +892,11 @@ namespace Mono.CSharp {
 			AddMembers (MemberTypes.Field, container);
 			AddMembers (MemberTypes.Method, container);
 			AddMembers (MemberTypes.Property, container);
-			// Nested types and events are returned by both Static and Instance
-			// searches.
+			AddMembers (MemberTypes.Event, container);
+			// Nested types are returned by both Static and Instance searches.
 			AddMembers (MemberTypes.NestedType,
 				    BindingFlags.Static | BindingFlags.Public, container);
 			AddMembers (MemberTypes.NestedType,
-				    BindingFlags.Static | BindingFlags.NonPublic, container);
-			// Type.GetEvents() doesn't distinguish between BindingFlags.Public and
-			// BindingFlags.NonPublic.
-			AddMembers (MemberTypes.Event,
 				    BindingFlags.Static | BindingFlags.NonPublic, container);
 		}
 
@@ -987,6 +983,8 @@ namespace Mono.CSharp {
 
 			if ((mt & MemberTypes.Constructor) != 0)
 				type |= EntryType.Constructor;
+			if ((mt & MemberTypes.Event) != 0)
+				type |= EntryType.Event;
 			if ((mt & MemberTypes.Field) != 0)
 				type |= EntryType.Field;
 			if ((mt & MemberTypes.Method) != 0)
@@ -996,11 +994,6 @@ namespace Mono.CSharp {
 			// Nested types are returned by static and instance searches.
 			if ((mt & MemberTypes.NestedType) != 0)
 				type |= EntryType.NestedType | EntryType.Static | EntryType.Instance;
-			// Events are returned by static and instance searches and we don't make
-			// a difference between public/non-public.
-			if ((mt & MemberTypes.Event) != 0)
-				type |= EntryType.Event | EntryType.Static | EntryType.Instance |
-					EntryType.Public | EntryType.NonPublic;
 
 			if ((bf & BindingFlags.Instance) != 0)
 				type |= EntryType.Instance;
