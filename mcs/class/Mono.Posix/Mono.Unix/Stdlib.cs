@@ -42,6 +42,7 @@ namespace Mono.Unix {
 
 		internal static XPrintf printf;
 		internal static XPrintf fprintf;
+		internal static XPrintf syslog;
 
 		static XPrintfFunctions ()
 		{
@@ -50,6 +51,9 @@ namespace Mono.Unix {
 
 			CdeclFunction _fprintf = new CdeclFunction ("libc", "fprintf", typeof(int));
 			fprintf = new XPrintf (_fprintf.Invoke);
+
+			CdeclFunction _syslog = new CdeclFunction ("libc", "syslog", typeof(void));
+			syslog = new XPrintf (_syslog.Invoke);
 		}
 	}
 
@@ -126,6 +130,16 @@ namespace Mono.Unix {
 		[DllImport (LIBC, SetLastError=true)]
 		public static extern int fileno (IntPtr stream);
 
+		[DllImport (LIBC, EntryPoint="printf")]
+		private static extern int sys_printf (string format, string message);
+
+		public static int printf (string message)
+		{
+			return sys_printf ("%s", message);
+		}
+
+		[Obsolete ("Not necessarily portable due to cdecl restrictions.\n" +
+				"Use printf (string) instead.")]
 		public static int printf (string format, params object[] parameters)
 		{
 			object[] _parameters = new object[checked(parameters.Length+1)];
@@ -134,6 +148,16 @@ namespace Mono.Unix {
 			return (int) XPrintfFunctions.printf (_parameters);
 		}
 
+		[DllImport (LIBC, EntryPoint="fprintf")]
+		private static extern int sys_fprintf (IntPtr stream, string format, string message);
+
+		public static int fprintf (IntPtr stream, string message)
+		{
+			return sys_fprintf (stream, "%s", message);
+		}
+
+		[Obsolete ("Not necessarily portable due to cdecl restrictions.\n" +
+				"Use fprintf (IntPtr, string) instead.")]
 		public static int fprintf (IntPtr stream, string format, params object[] parameters)
 		{
 			object[] _parameters = new object[checked(parameters.Length+2)];

@@ -5,6 +5,7 @@
  */
 
 using System;
+using System.IO;
 using System.Runtime.InteropServices;
 using Mono.Unix;
 
@@ -50,6 +51,102 @@ namespace Mono.Unix {
 		{
 			Error rval;
 			if (ToError (value, out rval) == -1)
+				ThrowArgumentException (value);
+			return rval;
+		}
+
+		[DllImport (LIB, EntryPoint="Mono_Posix_FromSyslogOptions")]
+		private static extern int FromSyslogOptions (SyslogOptions value, out Int32 rval);
+
+		public static bool TryFromSyslogOptions (SyslogOptions value, out Int32 rval)
+		{
+			return FromSyslogOptions (value, out rval) == 0;
+		}
+
+		public static Int32 FromSyslogOptions (SyslogOptions value)
+		{
+			Int32 rval;
+			if (FromSyslogOptions (value, out rval) == -1)
+				ThrowArgumentException (value);
+			return rval;
+		}
+
+		[DllImport (LIB, EntryPoint="Mono_Posix_ToSyslogOptions")]
+		private static extern int ToSyslogOptions (Int32 value, out SyslogOptions rval);
+
+		public static bool TryToSyslogOptions (Int32 value, out SyslogOptions rval)
+		{
+			return ToSyslogOptions (value, out rval) == 0;
+		}
+
+		public static SyslogOptions ToSyslogOptions (Int32 value)
+		{
+			SyslogOptions rval;
+			if (ToSyslogOptions (value, out rval) == -1)
+				ThrowArgumentException (value);
+			return rval;
+		}
+
+		[DllImport (LIB, EntryPoint="Mono_Posix_FromSyslogFacility")]
+		private static extern int FromSyslogFacility (SyslogFacility value, out Int32 rval);
+
+		public static bool TryFromSyslogFacility (SyslogFacility value, out Int32 rval)
+		{
+			return FromSyslogFacility (value, out rval) == 0;
+		}
+
+		public static Int32 FromSyslogFacility (SyslogFacility value)
+		{
+			Int32 rval;
+			if (FromSyslogFacility (value, out rval) == -1)
+				ThrowArgumentException (value);
+			return rval;
+		}
+
+		[DllImport (LIB, EntryPoint="Mono_Posix_ToSyslogFacility")]
+		private static extern int ToSyslogFacility (Int32 value, out SyslogFacility rval);
+
+		public static bool TryToSyslogFacility (Int32 value, out SyslogFacility rval)
+		{
+			return ToSyslogFacility (value, out rval) == 0;
+		}
+
+		public static SyslogFacility ToSyslogFacility (Int32 value)
+		{
+			SyslogFacility rval;
+			if (ToSyslogFacility (value, out rval) == -1)
+				ThrowArgumentException (value);
+			return rval;
+		}
+
+		[DllImport (LIB, EntryPoint="Mono_Posix_FromSyslogLevel")]
+		private static extern int FromSyslogLevel (SyslogLevel value, out Int32 rval);
+
+		public static bool TryFromSyslogLevel (SyslogLevel value, out Int32 rval)
+		{
+			return FromSyslogLevel (value, out rval) == 0;
+		}
+
+		public static Int32 FromSyslogLevel (SyslogLevel value)
+		{
+			Int32 rval;
+			if (FromSyslogLevel (value, out rval) == -1)
+				ThrowArgumentException (value);
+			return rval;
+		}
+
+		[DllImport (LIB, EntryPoint="Mono_Posix_ToSyslogLevel")]
+		private static extern int ToSyslogLevel (Int32 value, out SyslogLevel rval);
+
+		public static bool TryToSyslogLevel (Int32 value, out SyslogLevel rval)
+		{
+			return ToSyslogLevel (value, out rval) == 0;
+		}
+
+		public static SyslogLevel ToSyslogLevel (Int32 value)
+		{
+			SyslogLevel rval;
+			if (ToSyslogLevel (value, out rval) == -1)
 				ThrowArgumentException (value);
 			return rval;
 		}
@@ -604,6 +701,54 @@ namespace Mono.Unix {
 		public static long ToTimeT (DateTime time)
 		{
 			return (long) time.Subtract (LocalUnixEpoch).TotalSeconds;
+		}
+
+		public static OpenFlags ToOpenFlags (FileMode mode, FileAccess access)
+		{
+			OpenFlags flags = 0;
+			switch (mode) {
+			case FileMode.CreateNew:
+				flags = OpenFlags.O_CREAT | OpenFlags.O_EXCL;
+				break;
+			case FileMode.Create:
+				flags = OpenFlags.O_CREAT | OpenFlags.O_TRUNC;
+				break;
+			case FileMode.Open:
+				// do nothing
+				break;
+			case FileMode.OpenOrCreate:
+				flags = OpenFlags.O_CREAT;
+				break;
+			case FileMode.Truncate:
+				flags = OpenFlags.O_TRUNC;
+				break;
+			case FileMode.Append:
+				flags = OpenFlags.O_APPEND;
+				break;
+			default:
+				throw new ArgumentException (Locale.GetText ("Unsupported mode value"), "mode");
+			}
+
+			// Is O_LARGEFILE supported?
+			int _v;
+			if (TryFromOpenFlags (OpenFlags.O_LARGEFILE, out _v))
+				flags |= OpenFlags.O_LARGEFILE;
+
+			switch (access) {
+			case FileAccess.Read:
+				flags |= OpenFlags.O_RDONLY;
+				break;
+			case FileAccess.Write:
+				flags |= OpenFlags.O_WRONLY;
+				break;
+			case FileAccess.ReadWrite:
+				flags |= OpenFlags.O_RDWR;
+				break;
+			default:
+				throw new ArgumentException (Locale.GetText ("Unsupported access value"), "access");
+			}
+
+			return flags;
 		}
 	}
 }

@@ -69,7 +69,7 @@ namespace Mono.Unix {
 				string ignore = Translate (Error.EPERM);
 				HaveStrerror_r = true;
 			}
-			catch (MissingMethodException e) {
+			catch (EntryPointNotFoundException e) {
 				Translate = new ErrorTranslator (strerror);
 				HaveStrerror_r = false;
 			}
@@ -209,7 +209,44 @@ namespace Mono.Unix {
 			return false;
 		}
 
-		private static Exception CreateExceptionForError (Error errno)
+		// we can't permit any printf(3)-style formatting information, since that
+		// would kill the stack.  However, replacing %% is silly, and some %* are
+		// permitted (such as %m in syslog to print strerror(errno)).
+		internal static string EscapeFormatString (string message, 
+				char [] permitted)
+		{
+			if (message == null)
+				return "";
+			StringBuilder sb = new StringBuilder (message.Length);
+			for (int i = 0; i < message.Length; ++i) {
+				char c = message [i];
+				sb.Append (c);
+				if (c == '%' && (i+1) < message.Length) {
+					char n = message [i+1];
+					if (n == '%' || IsCharPresent (permitted, n))
+						sb.Append (n);
+					else
+						sb.Append ('%').Append (n);
+					++i;
+				}
+				// invalid format string: % at EOS.
+				else if (c == '%')
+					sb.Append ('%');
+			}
+			return sb.ToString ();
+		}
+
+		private static bool IsCharPresent (char[] array, char c)
+		{
+			if (array == null)
+				return false;
+			for (int i = 0; i < array.Length; ++i)
+				if (array [i] == c)
+					return true;
+			return false;
+		}
+
+		internal static Exception CreateExceptionForError (Error errno)
 		{
 			string message = GetErrorDescription (errno);
 			UnixIOException p = new UnixIOException (errno);

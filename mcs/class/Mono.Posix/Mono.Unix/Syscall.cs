@@ -66,6 +66,8 @@ using Mono.Unix;
 
 namespace Mono.Unix {
 
+	#region Enumerations
+
 	[Map]
 	public enum Error : int {
 		// errors & their values liberally copied from
@@ -200,6 +202,52 @@ namespace Mono.Unix {
 		EMEDIUMTYPE     = 124, // Wrong medium type 
 	}
 
+	[Flags][Map]
+	public enum SyslogOptions {
+		LOG_PID    = 0x01,  // log the pid with each message
+		LOG_CONS   = 0x02,  // log on the console if errors in sending
+		LOG_ODELAY = 0x04,  // delay open until first syslog (default)
+		LOG_NDELAY = 0x08,  // don't delay open
+		LOG_NOWAIT = 0x10,  // don't wait for console forks; DEPRECATED
+		LOG_PERROR = 0x20   // log to stderr as well
+	}
+
+	[Flags][Map]
+	public enum SyslogFacility {
+		LOG_KERN      = 0 << 3,
+		LOG_USRE      = 1 << 3,
+		LOG_MAIL      = 2 << 3,
+		LOG_DAEMON    = 3 << 3,
+		LOG_AUTH      = 4 << 3,
+		LOG_SYSLOG    = 5 << 3,
+		LOG_LPR       = 6 << 3,
+		LOG_NEWS      = 7 << 3,
+		LOG_UUCP      = 8 << 3,
+		LOG_CRON      = 8 << 3,
+		LOG_AUTHPRIV  = 10 << 3,
+		LOG_FTP       = 11 << 3,
+		LOG_LOCAL0    = 16 << 3,
+		LOG_LOCAL1    = 17 << 3,
+		LOG_LOCAL2    = 18 << 3,
+		LOG_LOCAL3    = 19 << 3,
+		LOG_LOCAL4    = 20 << 3,
+		LOG_LOCAL5    = 21 << 3,
+		LOG_LOCAL6    = 22 << 3,
+		LOG_LOCAL7    = 23 << 3,
+	}
+
+	[Flags][Map]
+	public enum SyslogLevel {
+		LOG_EMERG   = 0,  // system is unusable
+		LOG_ALERT   = 1,  // action must be taken immediately
+		LOG_CRIT    = 2,  // critical conditions
+		LOG_ERR     = 3,  // warning conditions
+		LOG_WARNING = 4,  // warning conditions
+		LOG_NOTICE  = 5,  // normal but significant condition
+		LOG_INFO    = 6,  // informational
+		LOG_DEBUG   = 7   // debug-level messages
+	}
+
 	[Map][Flags]
 	public enum OpenFlags : int {
 		//
@@ -270,14 +318,6 @@ namespace Mono.Unix {
 		S_IFIFO     = 0x1000, // FIFO
 		S_IFLNK     = 0xA000, // Symbolic link
 		S_IFSOCK    = 0xC000, // Socket
-	}
-
-	public struct Flock {
-		public LockType         l_type;    // Type of lock: F_RDLCK, F_WRLCK, F_UNLCK
-		public SeekFlags        l_whence;  // How to interpret l_start
-		public /* off_t */ long l_start;   // Starting offset for lock
-		public /* off_t */ long l_len;     // Number of bytes to lock
-		public /* pid_t */ int  l_pid;     // PID of process blocking our lock (F_GETLK only)
 	}
 
 	[Map]
@@ -707,12 +747,74 @@ namespace Mono.Unix {
 		POLLWRBAND  = 0x0200, // Priority data may be written
 	}
 
+	#endregion
+
+	#region Structures
+
+	public struct Flock {
+		public LockType         l_type;    // Type of lock: F_RDLCK, F_WRLCK, F_UNLCK
+		public SeekFlags        l_whence;  // How to interpret l_start
+		public /* off_t */ long l_start;   // Starting offset for lock
+		public /* off_t */ long l_len;     // Number of bytes to lock
+		public /* pid_t */ int  l_pid;     // PID of process blocking our lock (F_GETLK only)
+	}
+
 	[StructLayout(LayoutKind.Sequential)]
 	public struct Pollfd {
 		public int fd;
 		public PollEvents events;
 		public PollEvents revents;
 	}
+
+	public struct Stat {
+		public  /* dev_t */     ulong   st_dev;     // device
+		public  /* ino_t */     ulong   st_ino;     // inode
+		public  FilePermissions         st_mode;    // protection
+		private uint                    _padding_;  // padding for structure alignment
+		public  /* nlink_t */   ulong   st_nlink;   // number of hard links
+		public  /* uid_t */     uint    st_uid;     // user ID of owner
+		public  /* gid_t */     uint    st_gid;     // group ID of owner
+		public  /* dev_t */     ulong   st_rdev;    // device type (if inode device)
+		public  /* off_t */     long    st_size;    // total size, in bytes
+		public  /* blksize_t */ long    st_blksize; // blocksize for filesystem I/O
+		public  /* blkcnt_t */  long    st_blocks;  // number of blocks allocated
+		public  /* time_t */    long    st_atime;   // time of last access
+		public  /* time_t */    long    st_mtime;   // time of last modification
+		public  /* time_t */    long    st_ctime;   // time of last status change
+	}
+
+	public struct Statvfs {
+		public                  ulong f_bsize;	  // file system block size
+		public                  ulong f_frsize;   // fragment size
+		public /* fsblkcnt_t */ ulong f_blocks;   // size of fs in f_frsize units
+		public /* fsblkcnt_t */ ulong f_bfree;    // # free blocks
+		public /* fsblkcnt_t */ ulong f_bavail;   // # free blocks for non-root
+		public /* fsfilcnt_t */ ulong f_files;    // # inodes
+		public /* fsfilcnt_t */ ulong f_ffree;    // # free inodes
+		public /* fsfilcnt_t */ ulong f_favail;   // # free inodes for non-root
+		public                  ulong f_fsid;     // file system id
+		public                  ulong f_flag;     // mount flags
+		public                  ulong f_namemax;  // maximum filename length
+	}
+
+	public struct Timeval {
+		public  /* time_t */      long    tv_sec;   // seconds
+		public  /* suseconds_t */ long    tv_usec;  // microseconds
+	}
+
+	public struct Timezone {
+		public  int tz_minuteswest; // minutes W of Greenwich
+		private int tz_dsttime;     // type of dst correction (OBSOLETE)
+	}
+
+	public struct Utimbuf {
+		public  /* time_t */      long    actime;   // access time
+		public  /* time_t */      long    modtime;  // modification time
+	}
+
+	#endregion
+
+	#region Classes
 
 	public sealed class Dirent
 	{
@@ -751,7 +853,51 @@ namespace Mono.Unix {
 
 		public static bool operator!= (Dirent lhs, Dirent rhs)
 		{
+			return !Object.Equals (lhs, rhs);
+		}
+	}
+
+	public sealed class Fstab
+	{
+		public string fs_spec;
+		public string fs_file;
+		public string fs_vfstype;
+		public string fs_mntops;
+		public string fs_type;
+		public int    fs_freq;
+		public int    fs_passno;
+
+		public override int GetHashCode ()
+		{
+			return fs_spec.GetHashCode () ^ fs_file.GetHashCode () ^
+				fs_vfstype.GetHashCode () ^ fs_mntops.GetHashCode () ^
+				fs_type.GetHashCode () ^ fs_freq ^ fs_passno;
+		}
+
+		public override bool Equals (object obj)
+		{
+			if (obj == null || GetType() != obj.GetType())
+				return false;
+			Fstab  f = (Fstab) obj;
+			return f.fs_spec == fs_spec && f.fs_file == fs_file &&
+				f.fs_vfstype == fs_vfstype && f.fs_mntops == fs_mntops &&
+				f.fs_type == fs_type && f.fs_freq == fs_freq && 
+				f.fs_passno == fs_passno;
+		}
+
+		public override string ToString ()
+		{
+			return fs_spec;
+		}
+
+		public static bool operator== (Fstab lhs, Fstab rhs)
+		{
 			return Object.Equals (lhs, rhs);
+		}
+
+		public static bool operator!= (Fstab lhs, Fstab rhs)
+		{
+			return !Object.Equals (lhs, rhs);
 		}
 	}
 
@@ -815,7 +961,7 @@ namespace Mono.Unix {
 
 		public static bool operator!= (Group lhs, Group rhs)
 		{
-			return Object.Equals (lhs, rhs);
+			return !Object.Equals (lhs, rhs);
 		}
 	}
 
@@ -861,40 +1007,8 @@ namespace Mono.Unix {
 
 		public static bool operator!= (Passwd lhs, Passwd rhs)
 		{
-			return Object.Equals (lhs, rhs);
+			return !Object.Equals (lhs, rhs);
 		}
-	}
-
-	public struct Stat {
-		public  /* dev_t */     ulong   st_dev;     // device
-		public  /* ino_t */     ulong   st_ino;     // inode
-		public  FilePermissions         st_mode;    // protection
-		private uint                    _padding_;  // padding for structure alignment
-		public  /* nlink_t */   ulong   st_nlink;   // number of hard links
-		public  /* uid_t */     uint    st_uid;     // user ID of owner
-		public  /* gid_t */     uint    st_gid;     // group ID of owner
-		public  /* dev_t */     ulong   st_rdev;    // device type (if inode device)
-		public  /* off_t */     long    st_size;    // total size, in bytes
-		public  /* blksize_t */ long    st_blksize; // blocksize for filesystem I/O
-		public  /* blkcnt_t */  long    st_blocks;  // number of blocks allocated
-		public  /* time_t */    long    st_atime;   // time of last access
-		public  /* time_t */    long    st_mtime;   // time of last modification
-		public  /* time_t */    long    st_ctime;   // time of last status change
-	}
-
-	public struct Timeval {
-		public  /* time_t */      long    tv_sec;   // seconds
-		public  /* suseconds_t */ long    tv_usec;  // microseconds
-	}
-
-	public struct Timezone {
-		public  int tz_minuteswest; // minutes W of Greenwich
-		private int tz_dsttime;     // type of dst correction (OBSOLETE)
-	}
-
-	public struct Utimbuf {
-		public  /* time_t */      long    actime;   // access time
-		public  /* time_t */      long    modtime;  // modification time
 	}
 
 	//
@@ -983,10 +1097,7 @@ namespace Mono.Unix {
 				to.d_off    = from.d_off;
 				to.d_reclen = from.d_reclen;
 				to.d_type   = from.d_type;
-				if (from.d_name != IntPtr.Zero)
-					to.d_name = UnixMarshal.PtrToString (from.d_name);
-				else 
-					to.d_name = null;
+				to.d_name   = UnixMarshal.PtrToString (from.d_name);
 			}
 			finally {
 				Stdlib.free (from.d_name);
@@ -1101,6 +1212,91 @@ namespace Mono.Unix {
 		[DllImport (MPH, SetLastError=true, 
 				EntryPoint="Mono_Posix_Syscall_posix_fallocate")]
 		public static extern int posix_fallocate (int fd, long offset, long len);
+		#endregion
+
+		#region <fstab.h> Declarations
+		//
+		// <fstab.h>  -- COMPLETE
+		//
+		private struct _Fstab {
+			public IntPtr fs_spec;
+			public IntPtr fs_file;
+			public IntPtr fs_vfstype;
+			public IntPtr fs_mntops;
+			public IntPtr fs_type;
+			public int    fs_freq;
+			public int    fs_passno;
+			public IntPtr _fs_buf_;
+		}
+
+		private static void CopyFstab (Fstab to, ref _Fstab from)
+		{
+			try {
+				to.fs_spec     = UnixMarshal.PtrToString (from.fs_spec);
+				to.fs_file     = UnixMarshal.PtrToString (from.fs_file);
+				to.fs_vfstype  = UnixMarshal.PtrToString (from.fs_vfstype);
+				to.fs_mntops   = UnixMarshal.PtrToString (from.fs_mntops);
+				to.fs_type     = UnixMarshal.PtrToString (from.fs_type);
+				to.fs_freq     = from.fs_freq;
+				to.fs_passno   = from.fs_passno;
+			}
+			finally {
+				Stdlib.free (from._fs_buf_);
+				from._fs_buf_ = IntPtr.Zero;
+			}
+		}
+
+		[DllImport (LIBC, SetLastError=true)]
+		public static extern void endfsent ();
+
+		[DllImport (MPH, SetLastError=true,
+				EntryPoint="Mono_Posix_Syscall_getfsent")]
+		private static extern int sys_getfsent (out _Fstab fs);
+
+		public static Fstab getfsent ()
+		{
+			_Fstab fsbuf;
+			int r = sys_getfsent (out fsbuf);
+			if (r != 0)
+				return null;
+			Fstab fs = new Fstab ();
+			CopyFstab (fs, ref fsbuf);
+			return fs;
+		}
+
+		[DllImport (MPH, SetLastError=true,
+				EntryPoint="Mono_Posix_Syscall_getfsfile")]
+		private static extern int sys_getfsfile (string mount_point, out _Fstab fs);
+
+		public static Fstab getfsfile (string mount_point)
+		{
+			_Fstab fsbuf;
+			int r = sys_getfsfile (mount_point, out fsbuf);
+			if (r != 0)
+				return null;
+			Fstab fs = new Fstab ();
+			CopyFstab (fs, ref fsbuf);
+			return fs;
+		}
+
+		[DllImport (MPH, SetLastError=true,
+				EntryPoint="Mono_Posix_Syscall_getfsspec")]
+		private static extern int sys_getfsspec (string special_file, out _Fstab fs);
+
+		public static Fstab getfsspec (string special_file)
+		{
+			_Fstab fsbuf;
+			int r = sys_getfsspec (special_file, out fsbuf);
+			if (r != 0)
+				return null;
+			Fstab fs = new Fstab ();
+			CopyFstab (fs, ref fsbuf);
+			return fs;
+		}
+
+		[DllImport (LIBC, SetLastError=true)]
+		public static extern int setfsent ();
+
 		#endregion
 
 		#region <grp.h> Declarations
@@ -1489,7 +1685,7 @@ namespace Mono.Unix {
 
 		// strerror_r(3)
 		//    int strerror_r(int errnum, char *buf, size_t n);
-		[DllImport (LIBC, SetLastError=true, 
+		[DllImport (MPH, SetLastError=true, 
 				EntryPoint="Mono_Posix_Syscall_strerror_r")]
 		private static extern int sys_strerror_r (int errnum, 
 				[Out] StringBuilder buf, ulong n);
@@ -1669,6 +1865,21 @@ namespace Mono.Unix {
 
 		#endregion
 
+		#region <sys/stat.h> Declarations
+		//
+		// <sys/statvfs.h>
+		//
+
+		[DllImport (MPH, SetLastError=true,
+				EntryPoint="Mono_Posix_Syscall_statvfs")]
+		public static extern int statvfs (string path, out Statvfs buf);
+
+		[DllImport (MPH, SetLastError=true,
+				EntryPoint="Mono_Posix_Syscall_fstatvfs")]
+		public static extern int fstatvfs (int fd, out Statvfs buf);
+
+		#endregion
+
 		#region <sys/time.h> Declarations
 		//
 		// <sys/time.h>
@@ -1800,7 +2011,89 @@ namespace Mono.Unix {
 
 		#endregion
 
+		#region <syslog.h> Declarations
+		//
+		// <time.h>
+		//
+
+		[DllImport (LIBC, EntryPoint="openlog")]
+		private static extern void sys_openlog (IntPtr ident, int option, int facility);
+
+		public static void openlog (IntPtr ident, SyslogOptions option, 
+				SyslogFacility defaultFacility)
+		{
+			int _option   = UnixConvert.FromSyslogOptions (option);
+			int _facility = UnixConvert.FromSyslogFacility (defaultFacility);
+
+			sys_openlog (ident, _option, _facility);
+		}
+
+		[DllImport (LIBC)]
+		private static extern void sys_syslog (int priority, string message);
+
+		public static void syslog (SyslogFacility facility, SyslogLevel level, string message)
+		{
+			int _facility = UnixConvert.FromSyslogFacility (facility);
+			int _level = UnixConvert.FromSyslogLevel (level);
+			sys_syslog (_facility | _level, GetSyslogMessage (message));
+		}
+
+		public static void syslog (SyslogLevel level, string message)
+		{
+			int _level = UnixConvert.FromSyslogLevel (level);
+			sys_syslog (_level, GetSyslogMessage (message));
+		}
+
+		private static string GetSyslogMessage (string message)
+		{
+			return UnixMarshal.EscapeFormatString (message, new char[]{'m'});
+		}
+
+		[Obsolete ("Not necessarily portable due to cdecl restrictions.\n" +
+				"Use syslog(SyslogFacility, SyslogLevel, string) instead.")]
+		public static void syslog (SyslogFacility facility, SyslogLevel level, 
+				string format, params object[] parameters)
+		{
+			int _facility = UnixConvert.FromSyslogFacility (facility);
+			int _level = UnixConvert.FromSyslogLevel (level);
+
+			object[] _parameters = new object[checked(parameters.Length+2)];
+			_parameters [0] = _facility | _level;
+			_parameters [1] = format;
+			Array.Copy (parameters, 0, _parameters, 2, parameters.Length);
+			XPrintfFunctions.syslog (_parameters);
+		}
+
+		[Obsolete ("Not necessarily portable due to cdecl restrictions.\n" +
+				"Use syslog(SyslogLevel, string) instead.")]
+		public static void syslog (SyslogLevel level, string format, 
+				params object[] parameters)
+		{
+			int _level = UnixConvert.FromSyslogLevel (level);
+
+			object[] _parameters = new object[checked(parameters.Length+2)];
+			_parameters [0] = _level;
+			_parameters [1] = format;
+			Array.Copy (parameters, 0, _parameters, 2, parameters.Length);
+			XPrintfFunctions.syslog (_parameters);
+		}
+
+		[DllImport (LIBC)]
+		public static extern void closelog ();
+
+		[DllImport (LIBC, EntryPoint="setlogmask")]
+		private static extern int sys_setlogmask (int mask);
+
+		public static int setlogmask (SyslogLevel mask)
+		{
+			int _mask = UnixConvert.FromSyslogLevel (mask);
+			return sys_setlogmask (_mask);
+		}
+
+		#endregion
+
 		#region <time.h> Declarations
+
 		//
 		// <time.h>
 		//
@@ -2410,6 +2703,8 @@ namespace Mono.Unix {
 		}
 		#endregion
 	}
+
+	#endregion
 }
 
 // vim: noexpandtab

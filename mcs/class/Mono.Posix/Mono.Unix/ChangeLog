@@ -1,8 +1,24 @@
+2004-12-28  Jonathan Pryor <jonpryor@vt.edu>
+
+	* Stdlib.cs: Add syslog(3) to XPrintfFunctions; Add additional printf(3) 
+	  and fprintf(3) overload which properly escape the format string 
+	  (by using "%s" as the format for the user-supplied message).
+	* Syscall.cs: Add #regions for enummerations, structures, classes; Wrap
+	  syslog(3) and related enumerations; fix operator!= on Dirent, Group; 
+	  wrap {f}statvfs(2); wrap <fstab.h> entries (getfsent(3), etc.).
+	* UnixConvert.cs: Add Syslog-releated enumeration translation functions;
+	  Move ToOpenFlags here from UnixFile and UnixFileInfo.
+	* UnixMarshal.cs: Missing P/Invoke methods throw
+	  EntryPointNotFoundException, not MissingMethodException; add
+	  EscapeFormatString, which escapes printf-style format strings so that they
+	  can be safely handed off to native code (avoiding stack overflow, etc);
+	  make CreateExceptionForError internal.
+
 2004-12-15  Jonathan Pryor <jonpryor@vt.edu>
 
 	* Stdlib.cs: Add more <stdio.h> wrappers, such as fread(3) and fwrite(3).
 	  These will be useful in implementing System.IO.Stream subclass for
-	  reading/writing to a FILE*.  Fix a typo in the realloc DllImport.
+	  reading/writing to a FILE*.  Fix a typo in the realloc(3) DllImport.
 	* Syscall.cs: Fix the sys_kill and sys_crypt declarations.
 	* CdeclFunction.cs: Document calling convention problems on AMD64.
 
