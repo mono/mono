@@ -1,5 +1,7 @@
 2002-10-09  Miguel de Icaza  <miguel@ximian.com>
 
+	* expression.cs (As.DoResolve): Test for reference type.
+
 	* statement.cs (Using.ResolveExpression): Use
 	ConvertImplicitRequired, not ConvertImplicit which reports an
 	error on failture
