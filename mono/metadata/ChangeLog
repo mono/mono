@@ -1,3 +1,9 @@
+2004-06-07  Jackson Harper  <jackson@ximian.com>
+
+	* assembly.c: It should be <MONO_GAC_PATH>/lib/mono/gac when
+	looking up extra gac paths. This allows MONO_GAC_PATH to act
+	exactly like a prefix.
+	
 2004-06-08  Zoltan Varga  <vargaz@freemail.hu>
 
 	* reflection.c (mono_reflection_type_from_name): Make a copy of the
