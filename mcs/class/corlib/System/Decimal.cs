@@ -56,12 +56,29 @@ namespace System
 	IComparable
 #endif
     {
+#if BOOTSTRAP_WITH_OLDLIB
+	// LAMESPEC: the attributes aren't mentioned, but show up in CorCompare
+	// Unfortunately, corcompare starts throwing security exceptions when
+	// these attributes are present...
+
+	[DecimalConstantAttribute(0, 1, unchecked((uint)-1), unchecked((uint)-1), unchecked((uint)-1))]
+        public static readonly Decimal MinValue = new Decimal(-1, -1, -1, true, 0);
+	[DecimalConstantAttribute(0, 0, unchecked((uint)-1), unchecked((uint)-1), unchecked((uint)-1))]
+        public static readonly Decimal MaxValue = new Decimal(-1, -1, -1, false, 0);
+	[DecimalConstantAttribute(0, 1, 0, 0, 1)]
+        public static readonly Decimal MinusOne = new Decimal(1, 0, 0, true, 0);
+	[DecimalConstantAttribute(0, 0, 0, 0, 1)]
+        public static readonly Decimal One = new Decimal(1, 0, 0, false, 0);
+	[DecimalConstantAttribute(0, 0, 0, 0, 0)]
+        public static readonly Decimal Zero = new Decimal(0, 0, 0, false, 0);
+#else
         public const decimal MinValue = -79228162514264337593543950335m;
         public const decimal MaxValue =  79228162514264337593543950335m;
         
         public const decimal MinusOne = -1;
         public const decimal One = 1;
         public const decimal Zero = 0;
+#endif
 
 	private static readonly Decimal MaxValueDiv10 = MaxValue / 10;
 

@@ -1,3 +1,8 @@
+2004-11-23  Raja R Harinath  <rharinath@novell.com>
+
+	* Decimal.cs [BOOTSTRAP_WITH_OLDLIB]: Use old code for compilers
+	without decimal constant support.
+
 2004-11-23  Marek Safar  <marek.safar@seznam.cz>
 
 	* Decimal.cs: Updated to use compiler decimal constant support.
