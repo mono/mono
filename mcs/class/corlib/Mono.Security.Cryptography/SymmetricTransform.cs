@@ -237,6 +237,12 @@ namespace Mono.Security.Cryptography {
 			return InternalTransformBlock (inputBuffer, inputOffset, inputCount, outputBuffer, outputOffset);
 		}
 
+		private bool KeepLastBlock {
+			get {
+				return ((!encrypt) && (algo.Mode != CipherMode.ECB) && (algo.Padding != PaddingMode.None));
+			}
+		}
+
 		private int InternalTransformBlock (byte[] inputBuffer, int inputOffset, int inputCount, byte[] outputBuffer, int outputOffset) 
 		{
 			int offs = inputOffset;
@@ -253,7 +259,7 @@ namespace Mono.Security.Cryptography {
 			else
 				full = 1;
 
-			if (!encrypt)
+			if (KeepLastBlock)
 				full--;
 
 			int total = 0;
@@ -275,7 +281,7 @@ namespace Mono.Security.Cryptography {
 				total += BlockSizeByte;
 			}
 
-			if (!encrypt) {
+			if (KeepLastBlock) {
 				Buffer.BlockCopy (inputBuffer, offs, workBuff, 0, BlockSizeByte);
 				lastBlock = true;
 			}
