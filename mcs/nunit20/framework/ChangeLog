@@ -1,0 +1,5 @@
+2002-12-15  Nick Drochak  <ndrochak@gol.com>
+
+	* Transform.resources: Add file.  This is technically a generated file,
+	but it will never change for us since we get the sources from the nunit
+	project anyway.
