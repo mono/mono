@@ -49,6 +49,7 @@ namespace System.Reflection {
 		}
 		public abstract object GetValue( object obj, BindingFlags invokeAttr, Binder binder, object[] index, CultureInfo culture);
 		public virtual void SetValue( object obj, object value, object[] index) {
+			SetValue (obj, value, BindingFlags.Default, null, index, null);
 		}
 		public abstract void SetValue( object obj, object value, BindingFlags invokeAttr, Binder binder, object[] index, CultureInfo culture);
 	}

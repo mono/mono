@@ -143,6 +143,8 @@ namespace System.Reflection {
 			object ret = null;
 
 			MethodInfo method = GetGetMethod (false);
+			if (method == null)
+				throw new ArgumentException ("Get Method not found for '" + Name + "'");
 			
 			if (index == null || index.Length == 0) 
 				ret = method.Invoke (obj, invokeAttr, binder, null, culture);
@@ -153,6 +155,21 @@ namespace System.Reflection {
 		}
 
 		public override void SetValue( object obj, object value, BindingFlags invokeAttr, Binder binder, object[] index, CultureInfo culture) {
+			MethodInfo method = GetSetMethod (false);
+			if (method == null)
+				throw new ArgumentException ("Set Method not found for '" + Name + "'");
+			
+			object [] parms;
+			if (index == null || index.Length == 0) 
+				parms = new object [] {value};
+			else {
+				int ilen = index.Length;
+				parms = new object [ilen+ 1];
+				index.CopyTo (parms, 0);
+				parms [ilen] = value;
+			}
+
+			method.Invoke (obj, invokeAttr, binder, parms, culture);
 		}
 
 		public override string ToString () {
