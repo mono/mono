@@ -23,8 +23,11 @@
 //	Peter Bartok	pbartok@novell.com
 //
 //
-// $Revision: 1.2 $
+// $Revision: 1.3 $
 // $Log: ToolTip.cs,v $
+// Revision 1.3  2004/10/19 06:04:59  ravindra
+// Fixed constructor.
+//
 // Revision 1.2  2004/10/18 06:28:30  ravindra
 // Suppressed a warning message.
 //
@@ -160,7 +163,7 @@ namespace System.Windows.Forms {
 			timer.Tick +=new EventHandler(timer_Tick);
 		}
 
-		public ToolTip(System.ComponentModel.IContainer cont) : base() {
+		public ToolTip(System.ComponentModel.IContainer cont) : this() {
 			// Dunno why I'd need the container
 		}
 
