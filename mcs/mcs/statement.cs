@@ -122,12 +122,25 @@ namespace CIR {
 		{
 			ILGenerator ig = ec.ig;
 			Label loop = ig.DefineLabel ();
-
+			Label old_begin = ec.LoopBegin;
+			Label old_end = ec.LoopEnd;
+			bool  old_inloop = ec.InLoop;
+			
+			ec.LoopBegin = ig.DefineLabel ();
+			ec.LoopEnd = ig.DefineLabel ();
+			ec.InLoop = true;
+				
 			ig.MarkLabel (loop);
 			EmbeddedStatement.Emit (ec);
+			ig.MarkLabel (ec.LoopBegin);
 			EmitBoolExpression (ec, Expr);
 			ig.Emit (OpCodes.Brtrue, loop);
+			ig.MarkLabel (ec.LoopEnd);
 
+			ec.LoopBegin = old_begin;
+			ec.LoopEnd = old_end;
+			ec.InLoop = old_inloop;
+			
 			return false;
 		}
 	}
@@ -145,16 +158,25 @@ namespace CIR {
 		public override bool Emit (EmitContext ec)
 		{
 			ILGenerator ig = ec.ig;
-			Label while_eval = ig.DefineLabel ();
-			Label exit = ig.DefineLabel ();
+			Label old_begin = ec.LoopBegin;
+			Label old_end = ec.LoopEnd;
+			bool old_inloop = ec.InLoop;
 			
-			ig.MarkLabel (while_eval);
+			ec.LoopBegin = ig.DefineLabel ();
+			ec.LoopEnd = ig.DefineLabel ();
+			ec.InLoop = true;
+			
+			ig.MarkLabel (ec.LoopBegin);
 			EmitBoolExpression (ec, Expr);
-			ig.Emit (OpCodes.Brfalse, exit);
+			ig.Emit (OpCodes.Brfalse, ec.LoopEnd);
 			Statement.Emit (ec);
-			ig.Emit (OpCodes.Br, while_eval);
-			ig.MarkLabel (exit);
+			ig.Emit (OpCodes.Br, ec.LoopBegin);
+			ig.MarkLabel (ec.LoopEnd);
 
+			ec.LoopBegin = old_begin;
+			ec.LoopEnd = old_end;
+			ec.InLoop = old_inloop;
+			
 			return false;
 		}
 	}
@@ -179,21 +201,31 @@ namespace CIR {
 		public override bool Emit (EmitContext ec)
 		{
 			ILGenerator ig = ec.ig;
+			Label old_begin = ec.LoopBegin;
+			Label old_end = ec.LoopEnd;
+			bool old_inloop = ec.InLoop;
 			Label loop = ig.DefineLabel ();
-			Label exit = ig.DefineLabel ();
 			
 			if (! (InitStatement is EmptyStatement))
 				InitStatement.Emit (ec);
 
+			ec.LoopBegin = ig.DefineLabel ();
+			ec.LoopEnd = ig.DefineLabel ();
+			ec.InLoop = true;
+
 			ig.MarkLabel (loop);
 			EmitBoolExpression (ec, Test);
-			ig.Emit (OpCodes.Brfalse, exit);
+			ig.Emit (OpCodes.Brfalse, ec.LoopEnd);
 			Statement.Emit (ec);
+			ig.MarkLabel (ec.LoopBegin);
 			if (!(Increment is EmptyStatement))
 				Increment.Emit (ec);
 			ig.Emit (OpCodes.Br, loop);
-			ig.MarkLabel (exit);
+			ig.MarkLabel (ec.LoopEnd);
 
+			ec.LoopBegin = old_begin;
+			ec.LoopEnd = old_end;
+			ec.InLoop = old_inloop;
 			return false;
 		}
 	}
@@ -312,24 +344,46 @@ namespace CIR {
 	}
 
 	public class Break : Statement {
-		public Break ()
+		Location loc;
+		
+		public Break (Location l)
 		{
+			loc = l;
 		}
 
 		public override bool Emit (EmitContext ec)
 		{
-			throw new Exception ("Unimplemented");
+			ILGenerator ig = ec.ig;
+
+			if (!ec.InLoop){
+				Report.Error (139, loc, "No enclosing loop to continue to");
+				return false;
+			}
+			
+			ig.Emit (OpCodes.Br, ec.LoopEnd);
+			return false;
 		}
 	}
 
 	public class Continue : Statement {
-		public Continue ()
+		Location loc;
+		
+		public Continue (Location l)
 		{
+			loc = l;
 		}
 
 		public override bool Emit (EmitContext ec)
 		{
-			throw new Exception ("Unimplemented");
+			Label begin = ec.LoopBegin;
+			
+			if (!ec.InLoop){
+				Report.Error (139, loc, "No enclosing loop to continue to");
+				return false;
+			} 
+
+			ec.ig.Emit (OpCodes.Br, begin);
+			return false;
 		}
 	}
 	
@@ -996,10 +1050,13 @@ namespace CIR {
 			//
 			// Instantiate the enumerator
 
-			Label end = ig.DefineLabel ();
+			Label old_begin = ec.LoopBegin, old_end = ec.LoopEnd;
 			Label end_try = ig.DefineLabel ();
-			Label loop = ig.DefineLabel ();
-
+			bool old_inloop = ec.InLoop;
+			ec.LoopBegin = ig.DefineLabel ();
+			ec.LoopEnd = ig.DefineLabel ();
+			ec.InLoop = true;
+			
 			//
 			// FIXME: This code does not work for cases like:
 			// foreach (int a in ValueTypeVariable){
@@ -1021,7 +1078,7 @@ namespace CIR {
 			// if the beast implement IDisposable, we get rid of it
 			//
 			Label l = ig.BeginExceptionBlock ();
-			ig.MarkLabel (loop);
+			ig.MarkLabel (ec.LoopBegin);
 			ig.Emit (OpCodes.Ldloc, enumerator);
 			ig.Emit (OpCodes.Callvirt, TypeManager.bool_movenext_void);
 			ig.Emit (OpCodes.Brfalse, end_try);
@@ -1030,7 +1087,7 @@ namespace CIR {
 			conv.Emit (ec);
 			Variable.Store (ec);
 			Statement.Emit (ec);
-			ig.Emit (OpCodes.Br, loop);
+			ig.Emit (OpCodes.Br, ec.LoopBegin);
 			ig.MarkLabel (end_try);
 
 			// The runtime provides this for us.
@@ -1055,7 +1112,12 @@ namespace CIR {
 			// ig.Emit (OpCodes.Endfinally);
 
 			ig.EndExceptionBlock ();
-			ig.MarkLabel (end);
+
+			ig.MarkLabel (ec.LoopEnd);
+			
+			ec.LoopBegin = old_begin;
+			ec.LoopEnd = old_end;
+			ec.InLoop = old_inloop;
 
 			return false;
 		}

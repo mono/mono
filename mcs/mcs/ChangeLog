@@ -1,3 +1,18 @@
+2001-10-15  Miguel de Icaza  <miguel@ximian.com>
+
+	* statement.cs (Break::Emit): Implement.   
+	(Continue::Emit): Implement.
+
+	(For::Emit): Track old being/end loops;  Set Begin loop, ack end loop
+	(While::Emit): Track old being/end loops;  Set Begin loop, ack end loop
+	(Do::Emit): Track old being/end loops;  Set Begin loop, ack end loop
+	(Foreach::Emit): Track old being/end loops;  Set Begin loop, ack
+	end loop
+	
+	* codegen.cs (EmitContext::LoopEnd, EmitContext::LoopBegin): New
+	properties that track the label for the current loop (begin of the
+	loop and end of the loop).
+
 2001-10-15  Ravi Pratap  <ravi@ximian.com>
 
 	* delegate.cs (Emit): Get rid of it as there doesn't seem to be any ostensible

@@ -2654,14 +2654,14 @@ jump_statement
 break_statement
 	: BREAK SEMICOLON
 	  {
-		$$ = new Break ();
+		$$ = new Break (lexer.Location);
 	  }
 	;
 
 continue_statement
 	: CONTINUE SEMICOLON
 	  {
-		$$ = new Continue ();
+		$$ = new Continue (lexer.Location);
 	  }
 	;
 

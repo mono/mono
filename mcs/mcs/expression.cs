@@ -2087,10 +2087,17 @@ namespace CIR {
 					//
 					throw new Exception ("Implement me");
 				} else if (expr.ExprClass == ExprClass.PropertyAccess){
-					//
-					// FIXME: Verify that we have both get and set methods
-					//
-					throw new Exception ("Implement me");
+					PropertyExpr pe = (PropertyExpr) expr;
+
+					bool a, b;
+					
+					a = pe.VerifyReadable ();
+					b = pe.VerifyAssignable ();
+					type = expr_type;
+					
+					if (a && b)
+						return this;
+					return null;
 				} else {
 					report118 (loc, expr, "variable, indexer or property access");
 				}
@@ -2125,7 +2132,8 @@ namespace CIR {
 		{
 			ILGenerator ig = ec.ig;
 			Type expr_type = expr.Type;
-
+			ExprClass eclass;
+			
 			if (method != null) {
 
 				// Note that operators are static anyway
@@ -2209,7 +2217,8 @@ namespace CIR {
 				
 			case Operator.PostIncrement:
 			case Operator.PostDecrement:
-				if (expr.ExprClass == ExprClass.Variable){
+				eclass = expr.ExprClass;
+				if (eclass == ExprClass.Variable){
 					//
 					// Resolve already verified that it is an "incrementable"
 					// 
@@ -2222,8 +2231,12 @@ namespace CIR {
 					else
 						ig.Emit (OpCodes.Add);
 					((LValue) expr).Store (ec);
+				} else if (eclass == ExprClass.PropertyAccess){
+					throw new Exception ("Handle Properties here");
+				} else if (eclass == ExprClass.IndexerAccess) {
+					throw new Exception ("Handle Indexers here");
 				} else {
-					throw new Exception ("Handle Indexers and Properties here");
+					Console.WriteLine ("Unknown exprclass: " + eclass);
 				}
 				break;
 				
@@ -4866,6 +4879,19 @@ namespace CIR {
 
 			return true;
 		}
+
+		public bool VerifyReadable ()
+		{
+			if (!PropertyInfo.CanRead){
+				Report.Error (154, loc, 
+					      "The property `" + PropertyInfo.Name +
+					      "' can not be used in " +
+					      "this context because it lacks a get accessor");
+				return false;
+			}
+
+			return true;
+		}
 		
 		override public Expression DoResolve (EmitContext ec)
 		{
@@ -4873,13 +4899,6 @@ namespace CIR {
 			// Not really sure who should call perform the test below
 			// given that `assignable' has special code for this.
 			//
-			if (!PropertyInfo.CanRead){
-				Report.Error (154, loc, 
-					      "The property `" + PropertyInfo.Name +
-					      "' can not be used in " +
-					      "this context because it lacks a get accessor");
-				return null;
-			}
 			
 			return this;
 		}

@@ -108,7 +108,7 @@ namespace CIR {
 		//   value on structure method invocations)
 		// </summary>
 		public Hashtable temporary_storage;
-		
+
 		public EmitContext (TypeContainer parent, ILGenerator ig, Type return_type,
 				    int code_flags, bool is_constructor)
 		{
@@ -170,5 +170,15 @@ namespace CIR {
 
 			return location;
 		}
+
+		//
+		// Current loop begin and end labels.
+		//
+		public Label LoopBegin, LoopEnd;
+
+		//
+		// Whether we are inside a loop and break/continue are possible.
+		// 
+		public bool  InLoop;
 	}
 }
