@@ -1,7 +1,14 @@
+2005-02-23  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlDocumentNavigator.cs : it should virtually expand EntityReference,
+	  so refactored to handle both entity references and top level children.
+
 2005-02-22  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlTextReader.cs : XmlParserContext was not properly popped on
 	  the expected timing and thus had lost BaseURI, XmlSpace and XmlLang.
+	* XmlInputStream.cs : XmlTextReader does not allow invalid utf-8 
+	  characters.
 
 2005-02-21  Atsushi Enomoto <atsushi@ximian.com>
 
