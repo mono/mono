@@ -30,14 +30,14 @@ namespace System
                 }
                 public virtual int Next()
                 {
-                        return (int)(this.Sample()*this.MaxValue);
+                        return (int)(this.Sample()*Random.MaxValue);
                 }
                 public virtual int Next(int maxValue)
                 {
-                        if (maxValue < this.MinValue)
+                        if (maxValue < Random.MinValue)
                                 throw new ArgumentOutOfRangeException("Max value is less then min value.");
-                        else if (maxValue == this.MinValue)
-                                return this.MinValue;
+                        else if (maxValue == Random.MinValue)
+                                return Random.MinValue;
                         return (int)(this.Sample()*maxValue);
                 }
                 public virtual int Next(int minValue, int maxValue)
@@ -56,7 +56,7 @@ namespace System
                         l = buffer.GetUpperBound(0);
                         for (i = buffer.GetLowerBound(0); i < l; i++)
                         {
-                                buffer[i] = (byte)(this.Sample()*this.MaxValue);
+                                buffer[i] = (byte)(this.Sample()*Random.MaxValue);
                         }
                 }
                 public virtual double NextDouble()
