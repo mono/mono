@@ -3031,7 +3031,7 @@ namespace Mono.CSharp {
 
 			if (e is StringConstant || e is NullLiteral){
 				if (required_type == TypeManager.string_type){
-					converted = label;
+					converted = e;
 					ILLabel = ec.ig.DefineLabel ();
 					return true;
 				}
