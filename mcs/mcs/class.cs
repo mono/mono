@@ -859,10 +859,10 @@ namespace CIR {
 			return null;
 		}
 
-		public MemberInfo [] FindMembers (Type t, MemberTypes mt, BindingFlags bf,
+		public static MemberInfo [] FindMembers (Type t, MemberTypes mt, BindingFlags bf,
 						  MemberFilter filter, object criteria)
 		{
-			TypeContainer tc = RootContext.TypeManager.LookupTypeContainer (t);
+			TypeContainer tc = TypeManager.LookupTypeContainer (t);
 
 			if (tc != null)
 				return tc.FindMembers (mt, bf, filter, criteria);
@@ -1329,9 +1329,10 @@ namespace CIR {
 				MethodSignature ms = new MethodSignature (Name, ret_type, parameters);
 				MemberInfo [] mi;
 				
-				mi = parent.FindMembers (ptype, MemberTypes.Method,
-							 BindingFlags.Public, method_signature_filter,
-							 ms);
+				mi = TypeContainer.FindMembers (
+					ptype, MemberTypes.Method,
+					BindingFlags.Public, method_signature_filter,
+					ms);
 
 				if (mi != null && mi.Length > 0){
 					CheckMethod (parent, mi);

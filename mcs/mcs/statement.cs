@@ -107,46 +107,21 @@ namespace CIR {
 	}
 
 	public class For : Statement {
-		Statement initStatement;
-		Expression test;
-		Statement increment;
-		Statement statement;
+		public readonly Statement InitStatement;
+		public readonly Expression Test;
+		public readonly Statement Increment;
+		public readonly Statement Statement;
 		
 		public For (Statement initStatement,
 			    Expression test,
 			    Statement increment,
 			    Statement statement)
 		{
-			this.initStatement = initStatement;
-			this.test = test;
-			this.increment = increment;
-			this.statement = statement;
+			InitStatement = initStatement;
+			Test = test;
+			Increment = increment;
+			Statement = statement;
 		}
-
-		public Statement InitStatement {
-			get {
-				return initStatement;
-			}
-		}
-
-		public Expression Test {
-			get {
-				return test;
-			}
-		}
-		
-		public Statement Increment {
-			get {
-				return increment;
-			}
-		}
-
-		public Statement Statement {
-			get {
-				return statement;
-			}
-		}
-
 	}
 	
 	public class StatementExpression : Statement {
@@ -165,17 +140,11 @@ namespace CIR {
 	}
 
 	public class Return : Statement {
-		Expression expr;
+		public readonly Expression Expr;
 		
 		public Return (Expression expr)
 		{
-			this.expr = expr;
-		}
-
-		public Expression Expr {
-			get {
-				return expr;
-			}
+			Expr = expr;
 		}
 	}
 
@@ -716,6 +685,21 @@ namespace CIR {
 			get {
 				return type;
 			}
+		}
+	}
+
+	public class Foreach : Statement {
+		public readonly string Type;
+		public readonly string Identifier;
+		public readonly Expression Expr;
+		public readonly Statement Statement;
+
+		public Foreach (string type, string identifier, Expression expr, Statement stmt)
+		{
+			Type = type;
+			Identifier = identifier;
+			Expr = expr;
+			Statement = stmt;
 		}
 	}
 }

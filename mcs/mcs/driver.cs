@@ -222,7 +222,7 @@ namespace CIR
 						
 						if (arg == "--probe"){
 							int code, line;
-							
+
 							code = Int32.Parse (args [++i], 0);
 							line = Int32.Parse (args [++i], 0);
 							Report.SetProbe (code, line);
@@ -294,6 +294,10 @@ namespace CIR
 						return;
 					}
 				} catch (System.IndexOutOfRangeException){
+					Usage ();
+					error_count++;
+					return;
+				} catch (System.FormatException) {
 					Usage ();
 					error_count++;
 					return;
@@ -445,6 +449,9 @@ namespace CIR
 			if (Report.Errors > 0){
 				error ("Compilation failed");
 				return;
+			} else if (Report.ProbeCode != 0){
+				error ("Failed to report code " + Report.ProbeCode);
+				Environment.Exit (124);
 			}
 		}
 

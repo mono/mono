@@ -90,7 +90,13 @@ namespace CIR {
 			probe_error = code;
 			probe_line = line;
 		}
-	
+
+		static public int ProbeCode {
+			get {
+				return probe_error;
+			}
+		}
+		
 		static public int Errors {
 			get {
 				return errors;

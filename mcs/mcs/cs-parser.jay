@@ -2643,39 +2643,7 @@ foreach_statement
 	: FOREACH OPEN_PARENS type IDENTIFIER IN expression CLOSE_PARENS 
 	  embedded_statement
 	  {
-		string temp_id = current_block.MakeInternalID ();
-		ExpressionStatement assign_e;
-		Expression ma;
-		Statement getcurrent;
-		Block foreach_block, child_block;
-		Location l = lexer.Location;
-
-		foreach_block = new Block (current_block, true);
-
-		foreach_block.AddVariable ("System.IEnumerator", temp_id, l);
-		foreach_block.AddVariable ((string) $3, (string) $4, l);
-		assign_e = new Assign (new LocalVariableReference (foreach_block, temp_id), 
-				       new Invocation (
-						new MemberAccess ((Expression) $6, "GetEnumerator"), 
-						null, lexer.Location), lexer.Location);
-		current_block.AddStatement (new StatementExpression (assign_e));
-		ma = new MemberAccess (new LocalVariableReference (foreach_block, temp_id), "MoveNext");
-		child_block = new Block (current_block);
-
-		getcurrent = new StatementExpression (
-			new Assign (
-				new LocalVariableReference (foreach_block, (string) $4),
-				new Cast (
-					(string) $3, 
-					new MemberAccess (
-				new LocalVariableReference (foreach_block, temp_id), "Current"), lexer.Location), 
-				lexer.Location));
-
-		child_block.AddStatement (getcurrent);
-		child_block.AddStatement ((Statement) $8);
-	 	foreach_block.AddStatement (new While (ma, (Statement) child_block));
-
-		$$ = foreach_block;
+		$$ = new Foreach ((string) $3, (string) $4, (Expression) $6, (Statement) $8);
 	  }
 	;
 

@@ -76,7 +76,8 @@ namespace CIR {
 	public struct EmitContext {
 		public TypeContainer parent;
 		public ILGenerator   ig;
-
+		Block current_block;
+		
 		// FIXME: FIXME: FIXME!
 		// This structure has to be kept small.  We need to figure
 		// out ways of moving the CheckState somewhere else
@@ -91,6 +92,7 @@ namespace CIR {
 			this.parent = parent;
 			this.ig = ig;
 			CheckState = false;
+			current_block = null;
 		}
 
 		public bool ConvertTo (Type target, Type source, bool verbose)
@@ -210,6 +212,23 @@ namespace CIR {
 			ig.MarkLabel (exit);
 		}
 
+		bool ProbeCollectionType (Type t)
+		{
+			return true;
+		}
+		
+		void EmitForeach (Foreach f)
+		{
+			Expression e = f.Expr;
+
+			e = e.Resolve (parent);
+			if (e == null)
+				return;
+
+			if (!ProbeCollectionType (e.Type))
+				return;
+		}
+		
 		void EmitReturn (Return s)
 		{
 			Expression ret_expr = s.Expr;
@@ -288,6 +307,8 @@ namespace CIR {
 				return EmitBlock ((Block) s);
 			else if (s is StatementExpression)
 				EmitStatementExpression ((StatementExpression) s);
+			else if (s is Foreach)
+				EmitForeach ((Foreach) s);
 			else {
 				Console.WriteLine ("Unhandled Statement type: " +
 						   s.GetType ().ToString ());
@@ -299,10 +320,13 @@ namespace CIR {
 		bool EmitBlock (Block block)
 		{
 			bool is_ret = false;
+			Block last_block = current_block;
 			
+			current_block = block;
 			foreach (Statement s in block.Statements){
 				is_ret = EmitStatement (s);
 			}
+			current_block = last_block;
 
 			return is_ret;
 		}

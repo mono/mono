@@ -1,3 +1,16 @@
+2001-10-05  Miguel de Icaza  <miguel@ximian.com>
+
+	* typemanager.cs: Make the LookupTypeContainer function static,
+	and not per-instance.  
+
+	* class.cs: Make static FindMembers (the one that takes a Type
+	argument). 
+
+	* codegen.cs: Add EmitForeach here.
+
+	* cs-parser.jay: Make foreach a toplevel object instead of the
+	inline expansion, as we need to perform semantic analysis on it. 
+
 2001-10-05  Ravi Pratap  <ravi@ximian.com>
 
 	* expression.cs (Expression::ImplicitUserConversion): Rename to

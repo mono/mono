@@ -74,7 +74,7 @@ public class TypeManager {
 	// <remarks>
 	//   Keeps a mapping between TypeBuilders and their TypeContainers
 	// </remarks>
-	Hashtable builder_to_container;
+	static Hashtable builder_to_container;
 
 	// <remarks>
 	//   Maps MethodBase.RuntimeTypeHandle to a Type array that contains
@@ -90,13 +90,13 @@ public class TypeManager {
 		user_types = new ArrayList ();
 		types = new Hashtable ();
 		typecontainers = new Hashtable ();
-		builder_to_container = new Hashtable ();
 		builder_to_interface = new Hashtable ();
 	}
 
 	static TypeManager ()
 	{
 		method_arguments = new Hashtable ();
+		builder_to_container = new Hashtable ();
 	}
 	
 	public void AddUserType (string name, TypeBuilder t)
@@ -122,7 +122,7 @@ public class TypeManager {
 	//   Returns the TypeContainer whose Type is `t' or null if there is no
 	//   TypeContainer for `t' (ie, the Type comes from a library)
 	// </summary>
-	public TypeContainer LookupTypeContainer (Type t)
+	public static TypeContainer LookupTypeContainer (Type t)
 	{
 		return (TypeContainer) builder_to_container [t];
 	}
