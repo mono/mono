@@ -1,18 +1,18 @@
-.TH sqlsharp 1 "10 December 2002"
+.TH sqlsharp 1 "21 October 2004"
 .SH NAME 
-sqlsharp \- Mono SQL# command-line SQL Query tool
+sqlsharp \- Mono SQL Query command-line tool
 .SH SYNOPSIS
 .B sqlsharp 
 [\-f filename] [\-o filename] [\-s]
 .SH DESCRIPTION
-sqlsharp is the Mono SQL# tool used for entering SQL queries
-to a database using Mono ADO.NET providers.
+sqlsharp is a Mono SQL tool used for entering SQL queries
+to a database using Mono data providers.
 .PP
 .SH OPTIONS
 The following options are supported:
 .TP
 .I "-f filename"
-Output file to load SQL# commands from.
+Output file to load SQL commands from.
 .TP
 .I "-o filename"
 Output file to send results.
@@ -21,7 +21,7 @@ Output file to send results.
 Silent mode.
 .PP
 .SH HOW TO USE
-The SQL# tool accepts commands via its command line interface.  Commands
+The SQL tool accepts commands via its command line interface.  Commands
 begin with a backslash followed by the command name.
 .PP
 Example:
@@ -344,28 +344,25 @@ ption defaulting to true.
 
 PROVIDER   NAME          NAMESPACE                  ASSEMBLY
 
-Internal
---------
-
-OleDb      OLE DB        System.Data.OleDb          System.Data 
+Oracle     Oracle 8i     System.Data.OracleClient   System.Data.OracleClient
+PostgreSql NetPostgreSQL Npgsql                     Npgsql
+MySQL      ByteFX MySQL  ByteFX.Data.MySqlClient    ByteFX.Data
 SqlClient  MS SQL 7/2000 System.Data.SqlClient      System.Data
 Odbc       ODBC          System.Data.Odbc           System.Data
-
-External to System.Data
------------------------
-MySql      MySQL         Mono.Data.MySql            Mono.Data.MySql
 Sqlite     SQL Lite      Mono.Data.SqliteClient     Mono.Data.SqliteClient
 Sybase     Sybase        Mono.Data.SybaseClient     Mono.Data.SybaseClient
+OleDb      OLE DB        System.Data.OleDb          System.Data 
 Tds        TDS Generic   Mono.Data.TdsClient        Mono.Data.TdsClient
-PostgreSql M PostgreSQL  Mono.Data.PostgreSqlClient Mono.Data.PostgreSqlClient
-DB2        IBM DB2       Mono.Data.DB2Client        Mono.Data.DB2Client
-Oracle     Oracle 8i     System.Data.OracleClient   System.Data.OracleClient
+MSOdbc     MS ODBC       Microsoft.Data.Odbc        Microsoft.Data.Odbc
+Firebird   Firebird SQL  FirebirdSql.Data.FirebirdSql FirebirdSql.Data.Firebird
 
-External to Mono
-----------------
+NOTES
 
-Npgsql     NetPostgreSQL Npgsql                     Npgsql
-MySQLNet   ByteFX MySQL  ByteFX.Data.MySQL          ByteFX.Data
+Npgsql maps to PostgreSql above.
+MySqlNet maps to MySql above.  
+Odbc is treated as an external provider for .NET 1.1 and above.
+MSODBC is an external provider for compatibility with .NET 1.0
+Firebird is not included with Mono.
 
 .fi
 .SH CONNECTION STRING SAMPLES
@@ -384,20 +381,6 @@ Microsoft SQL Server via System.Data.SqlClient
 or Mono.Data.TdsClient provider:
 
 	Server=DANPC;Database=pubs;User ID=saPassword=
-
-		
-PostgreSQL via Mono.Data.PostgreSqlClient provider:
-
-	host=localhost;dbname=test;user=postgres;password=fun2db
-
-		          or
-
-	Server=localhost;Database=test;User ID=postgres;Password=fun2db
-
-		
-MySQL via Mono.Data.MySql provider:
-
-	Server=localhost;Database=test;User ID=mysql;Password=
 
 	
 ODBC via System.Data.Odbc provider using 
@@ -427,11 +410,6 @@ Oracle via System.Data.OracleClient
 	Data Source=testdb;User ID=scott;Password=tiger
 
 		
-IBM DB2 Universal Database via Mono.Data.DB2Client
-
-	DSN=sample;User ID=db2admin;Password=mysecret	
-
-		
 Npgsql (.NET PostgreSQL) from 
 http://gborg.postgresql.org/project/npgsql/projdisplay.php
 
@@ -443,20 +421,24 @@ http://sourceforge.net/projects/mysqlnet/
 
 	Server=localhost;Database=test;User ID=mysql;Password=
 
+FirebirdSql via FirebirdSql.Data.Firebird (not included with Mono)
+
+	Database=C:\\FIREBIRD\\EXAMPLES\\EMPLOYEE.FDB;User=SYSDBA;Password=masterkey;Dialect=3;Server=localhost
+
 
 .fi
 .SH TRACING SUPPORT
 No support for tracing right now.
 .SH AUTHORS
-The Mono SQL# Tool was written 
+The Mono SQL Query Tool was written 
 .nf
-by Daniel Morgan <danmorg@sc.rr.com>
+by Daniel Morgan <danielmorgan@verizon.net>
 .fi
 .PP
 .SH LICENSE
-The Mono SQL# Tool is released under the terms of the GNU GPL.
+The Mono SQL Query Tool is released under the terms of the GNU GPL.
 Please read the accompanying `COPYING' file for details.  Alternative
-licenses are available from Ximian or Daniel Morgan.
+licenses are available from Novell or Daniel Morgan.
 .SH BUGS
 To report bugs in the compiler, you can use `bug-buddy', or you can
 file bug reports in our bug tracking system:
@@ -472,7 +454,7 @@ http://mail.ximian.com/mailman/mono-list
 .SH WEB SITE
 For details, visit: 
 .nf
-http://www.go-mono.com 
+http://www.mono-project.com 
 .fi
 .PP
 .SH SEE ALSO
