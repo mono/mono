@@ -1,5 +1,10 @@
 2005-02-21  Atsushi Enomoto <atsushi@ximian.com>
 
+	* Makefile : updated the expected "run-test-ms" output (reflecting fix
+	  for alltest.cs.)
+
+2005-02-21  Atsushi Enomoto <atsushi@ximian.com>
+
 	* simplify.xsl : currently key to external document results in
 	  infinite loop. Should be fixed but for now exclude from tests.
 	* alltest.cs : Don't use XmlTextWriter for transformation output. It

@@ -16,7 +16,7 @@ TARGET_RESULTS = Results
 MSTEST_RESULTS = testsuite/TESTS/ExpectedResults
 TEST_ARCHIVE = xslt-testsuite-03.ZIP
 XSLTTEST_RESULTS_ARCHIVE = xslttest-reference-output.zip
-MSTEST_RESULTS_ARCHIVE = mono-xslttest-ExpectedResults-20050214.zip
+MSTEST_RESULTS_ARCHIVE = mono-xslttest-ExpectedResults-20050221.zip
 
 all : xslttest.exe alltest.exe
 
