@@ -263,7 +263,9 @@ If set, the log mask is changed to the set value. Possible values are
 "asm" (assembly loader), "type", "dll" (native library loader), "gc"
 (garbage collector), "cfg" (config file loader), "all". The default value is
 "all". Changing the mask value allows you to display only messages for
-a certain component.
+a certain component. You can use multiple masks by comma separating
+them. For example to see config file messages and assembly loader
+messages set you mask to "asm,cfg".
 .TP
 .I "MONO_DEBUG"
 If set, enables some features of the runtime useful for debugging.
