@@ -173,7 +173,7 @@ namespace System {
 			MethodInfo info = target.GetType ().GetMethod (method, flags, null, delargtypes, new ParameterModifier [0]);
 
 			if (info == null)
-				throw new ArgumentException ("Couldn't bind to method");
+				throw new ArgumentException ("Couldn't bind to method '" + method + "'");
 
 			return CreateDelegate_internal (type, target, info);
 		}

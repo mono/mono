@@ -1,3 +1,9 @@
+2003-10-14  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Delegate.cs: add the method name to the exception when it cannot be
+	bound.
+	* Exception.cs: fix nullref in Source.
+
 2003-10-10  Zoltan Varga  <vargaz@freemail.hu>
 
 	* Array.cs: Add argument checking to GetValue and SetValue.

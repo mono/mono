@@ -115,8 +115,17 @@ namespace System {
 			{
 				if (source == null) {
 					StackTrace st = new StackTrace (this, true);
-					if (st.FrameCount > 0)
-						source = st.GetFrame (0).GetMethod ().DeclaringType.Assembly.GetName ().Name;
+					if (st.FrameCount > 0) {
+						StackFrame sf = st.GetFrame (0);
+						if (st != null) {
+							MethodBase method = sf.GetMethod ();
+							if (method != null) {
+								source = method.DeclaringType.Assembly.GetName ().Name;
+							}
+						}
+					}
+					if (source == null)
+						source = "";
 				}
 				
 				return source;
