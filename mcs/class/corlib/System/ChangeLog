@@ -1,11 +1,16 @@
 2002-05-22  Duncan Mak  <duncan@ximian.com>
 
-	* Convert.cs (ConvertToBase): Add new 64bit version.
+	* Convert.cs (ConvertToBase): Added new 64bit version.
 	(BuildConvertedString64): New 64bit version of
 	BuildConvertedString.
 
 	This fixes bug 25068.
 
+	(ConvertFromBase): Added additional test for checking if the
+	digits are valid. Thanks to Miguel for coming up with this test.
+
+	This fixes bug 25071.
+	
 2002-05-21  Duncan Mak  <duncan@ximian.com>
 
 	* Convert.cs (ToType): Rearranged to fit the new layout of

@@ -2267,6 +2267,9 @@ namespace System {
 					throw new FormatException ("This is an invalid string: " + value);
 			}
 
+			if (result >= fromBase)
+				throw new FormatException ("the digits are invalid.");
+
 			if (chars == 0)
 				throw new FormatException ("Could not find any digits.");
 			
