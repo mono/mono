@@ -1384,7 +1384,6 @@ class AspGenerator
 			       child_kind,
 			       ctrl.ParseChildren);
 
-
 		current_function = new StringBuilder ();
 		functions.Push (current_function);
 		current_function.AppendFormat ("\t\tprivate void __BuildControl_{0} ({1} __ctrl)\n" +
@@ -1441,14 +1440,18 @@ class AspGenerator
 		controls.Push (component.ComponentType,
 			       control_id, 
 			       component.TagID, 
-			       ChildrenKind.LISTITEM, 
+			       component.ChildrenKind, 
 			       component.DefaultPropertyName);
+
+		Type childType = component.DefaultPropertyType;
+		if (childType == null)
+			childType = typeof (ListItemCollection);
 
 		current_function = new StringBuilder ();
 		functions.Push (current_function);
 		current_function.AppendFormat ("\t\tprivate void __BuildControl_{0} " +
-						"(System.Web.UI.WebControls.ListItemCollection __ctrl)\n" +
-						"\t\t{{\n", control_id);
+						"({1} __ctrl)\n" +
+						"\t\t{{\n", control_id, childType);
 	}
 
 	private void ProcessComponent ()
@@ -1470,7 +1473,7 @@ class AspGenerator
 			current_function.AppendFormat ("\t\t\t__ctrl.ID = \"{0}\";\n", component.ControlID);
 
 		AddCodeForAttributes (component.ComponentType, component.Attributes);
-		if (component.ChildrenKind == ChildrenKind.LISTITEM)
+		if (component.ChildrenKind == ChildrenKind.LISTITEM || component.DefaultPropertyType != null)
 			NewBuildListFunction (component);
 
 		if (component.SelfClosing)

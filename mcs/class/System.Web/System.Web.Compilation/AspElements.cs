@@ -120,8 +120,8 @@ namespace System.Web.Compilation
 
 		private void MakeHash ()
 		{
-			atts_hash = new Hashtable (new CaseInsensitiveHashCodeProvider (),
-						   new CaseInsensitiveComparer ());
+			atts_hash = new Hashtable (CaseInsensitiveHashCodeProvider.Default,
+						   CaseInsensitiveComparer.Default);
 			for (int i = 0; i < keys.Count; i++)
 				atts_hash.Add (keys [i], values [i]);
 			got_hashed = true;
@@ -679,6 +679,23 @@ namespace System.Web.Compilation
 		private bool allow_children;
 		private ChildrenKind children_kind;
 		private string defaultPropertyName;
+		private Type defaultPropertyType;
+
+		ChildrenKind ChildrenKindFromProperty (Type type, string propertyName)
+		{
+			PropertyInfo prop = type.GetProperty (propertyName);
+			if (prop == null)
+				return ChildrenKind.LISTITEM;
+
+			defaultPropertyType = prop.PropertyType;
+			if (typeof (TableRowCollection).IsAssignableFrom (defaultPropertyType))
+				return ChildrenKind.HTMLROW;
+
+			if (typeof (TableCellCollection).IsAssignableFrom (defaultPropertyType))
+				return ChildrenKind.HTMLCELL;
+
+			return ChildrenKind.LISTITEM;
+		}
 
 		private ChildrenKind GuessChildrenKind (Type type)
 		{
@@ -698,7 +715,7 @@ namespace System.Web.Compilation
 					else if (defaultPropertyName == "")
 						return ChildrenKind.PROPERTIES;
 					else
-						return ChildrenKind.LISTITEM;
+						return ChildrenKindFromProperty (type, defaultPropertyName);
 				}
 			}
 
@@ -770,7 +787,11 @@ namespace System.Web.Compilation
 		{
 			get { return defaultPropertyName; }	
 		}
-			
+		
+		public Type DefaultPropertyType
+		{
+			get { return defaultPropertyType; }	
+		}
 			
 		public override string ToString ()
 		{

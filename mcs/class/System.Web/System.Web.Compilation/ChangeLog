@@ -1,3 +1,11 @@
+2003-02-13  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* AspElements.cs: get the property Type for controls that use
+	ParseChildren with a property name.
+
+	* AspGenerator.cs: generate correct signature for the method that
+	adds controls to the default property in ParseChildren.
+
 2003-02-11  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* AspGenerator.cs: rethrow exceptions that may come from parsing or 
