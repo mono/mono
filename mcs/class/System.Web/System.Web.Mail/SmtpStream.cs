@@ -20,6 +20,9 @@ namespace System.Web.Mail {
 	    encoding = new ASCIIEncoding();
 	}
 	
+	public Stream Stream {
+	    get { return stream; }
+	}
 	
 	public SmtpResponse LastResponse {
 	    get { return lastResponse; }
@@ -76,13 +79,13 @@ namespace System.Web.Mail {
 		
 	public void WriteBoundary( string boundary ) {
 	
-	    WriteLine( "--{0}" , boundary );
+	    WriteLine( "\r\n--{0}" , boundary );
 	
 	}
 	
 	public void WriteFinalBoundary( string boundary ) {
 	
-	    WriteLine( "--{0}--" , boundary );
+	    WriteLine( "\r\n--{0}--" , boundary );
 	
 	}
 	
@@ -164,73 +167,6 @@ namespace System.Web.Mail {
 	    #if DEBUG
 	      DebugPrint( line );
 	    #endif
-	}
-
-
-	// reads bytes from a stream and writes the encoded
-	// as base64 encoded characters. ( 60 chars on each row)
-	public void WriteBase64( Stream inStream ) {
-	
-	    ICryptoTransform base64 = new ToBase64Transform();
-	    ASCIIEncoding encoding = new ASCIIEncoding();
-	
-	    // the buffers
-	    byte[] plainText = new byte[ base64.InputBlockSize ];
-	    byte[] cipherText = new byte[ base64.OutputBlockSize ];
-
-	    int readLength = 0;
-	    int trLength = 0;
-	
-	    StringBuilder row = new StringBuilder( 60 );
-	
-	    // read through the stream until there 
-	    // are no more bytes left
-	    while( true ) {
-		readLength = inStream.Read( plainText , 0 , plainText.Length );
-	    
-		// break when there is no more data
-		if( readLength < 1 ) break;
-	    
-		// transfrom and write the blocks. If the block size
-		// is less than the InputBlockSize then write the final block
-		if( readLength == plainText.Length ) {
-		
-		    trLength = base64.TransformBlock( plainText , 0 , 
-						      plainText.Length ,
-						      cipherText , 0 );
-		
-		    // trLength must be the same size as the cipherText
-		    // length otherwise something is wrong
-		    if( trLength != cipherText.Length )
-			throw new SmtpException( "Problems occured when "  + 
-						 "encoding to base64." );
-		
-		    // convert the bytes to a string and then add it to the
-		    // current row
-		    string cipherString = encoding.GetString( cipherText , 0 , trLength ); 
-		    row.Append( cipherString );
-		
-		    // when a row is full write it and begin
-		    // on the next row
-		    if( row.Length == 60 ) {
-			WriteLine( row.ToString() );
-			row.Remove( 0 , 60 );
-		    }
-		
-		} else {
-		    // convert the final blocks of bytes
-		    cipherText = base64.TransformFinalBlock( plainText , 0 , readLength );
-		
-		    // convert the bytes to a string and then write it
-		    string cipherString = encoding.GetString( cipherText , 0 , 
-							      cipherText.Length );
-		    row.Append( cipherString );
-		    WriteLine( row.ToString() );
-		
-		}
-	    
-	    } 
-    
 	}
 	
 	/// debug printing 

@@ -98,6 +98,7 @@ System.Web.Mail/SmtpClient.cs
 System.Web.Mail/SmtpStream.cs
 System.Web.Mail/SmtpException.cs
 System.Web.Mail/SmtpResponse.cs
+System.Web.Mail/MailEncoder.cs
 System.Web.UI/BuildMethod.cs
 System.Web.UI/BuildTemplateMethod.cs
 System.Web.UI/Control.cs

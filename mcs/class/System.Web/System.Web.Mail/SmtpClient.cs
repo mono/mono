@@ -131,12 +131,10 @@ namespace System.Web.Mail {
 	    smtp.WriteBoundary( boundary );
 	    
 	    // now start to write the attachments
-
+	    
 	    for( int i=0; i< msg.Attachments.Count ; i++ ) {
 		MailAttachment a = (MailAttachment)msg.Attachments[ i ];
-		FileStream file = 
-		    new FileStream( a.Filename , FileMode.Open );
-		    		    
+				    		    
 		Hashtable aHeaders = new Hashtable();
 		
 		aHeaders[ "Content-Type" ] = 
@@ -149,8 +147,17 @@ namespace System.Web.Mail {
 		aHeaders[ "Content-Transfer-Encoding" ] = "base64";
 			
 		smtp.WriteHeaders( aHeaders );
-		    
-		smtp.WriteBase64( file );
+		   
+		// perform the actual writing of the file.
+		// read from the file stream and write to the tcp stream
+		FileStream ins = new FileStream( a.Filename , FileMode.Open );
+		
+		// create an apropriate encoder
+		MailEncoder encoder = new MailEncoder( a.Encoding );
+		encoder.EncodeStream( ins , smtp.Stream );
+		
+		ins.Close();
+		
 		    
 		smtp.WriteLine( "" );
 		
@@ -163,7 +170,7 @@ namespace System.Web.Mail {
 		    smtp.WriteFinalBoundary( boundary );
 		}
 		    
-		file.Close();
+		
 	    }
 	       
 	}
