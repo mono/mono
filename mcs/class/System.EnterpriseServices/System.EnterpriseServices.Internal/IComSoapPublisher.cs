@@ -3,15 +3,16 @@
 // Author:
 //   Alejandro Sánchez Acosta (raciel@es.gnu.org)
 //
-// (C) Alejandro Sánchez Acosta
+// Copyright (C) 2002 Alejandro Sánchez Acosta
 //
-using System;
 
+using System;
 using System.Runtime.InteropServices;
 
 namespace System.EnterpriseServices.Internal
 {
-	//[Guid("")]
+#if NET_1_1
+	[Guid("d8013eee-730b-45e2-ba24-874b7242c425")]
 	public interface IComSoapPublisher
 	{
 		void CreateMailBox (string RootMailServer, string MailBox, out string SmtpName, out string Domain,
@@ -41,6 +42,7 @@ namespace System.EnterpriseServices.Internal
 
 		void RegisterAssembly (string AssemblyPath);
 
-		void UnRegisterAssembly(string AssemblyPath);
+		void UnRegisterAssembly (string AssemblyPath);
 	}
+#endif
 }

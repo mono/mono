@@ -11,7 +11,6 @@ using System.Runtime.InteropServices;
 namespace System.EnterpriseServices {
 
 #if NET_1_1
-	[MonoTODO]
 	[ComVisible(false)]
 	public sealed class Activity {
 

@@ -85,3 +85,10 @@ System.EnterpriseServices.CompensatingResourceManager/CompensatorOptions.cs
 System.EnterpriseServices.CompensatingResourceManager/LogRecord.cs
 System.EnterpriseServices.CompensatingResourceManager/LogRecordFlags.cs
 System.EnterpriseServices.CompensatingResourceManager/TransactionState.cs
+System.EnterpriseServices.Internal/IClrObjectFactory.cs
+System.EnterpriseServices.Internal/IComManagedImportUtil.cs
+System.EnterpriseServices.Internal/IComSoapPublisher.cs
+System.EnterpriseServices.Internal/ISoapClientImport.cs
+System.EnterpriseServices.Internal/ISoapServerTlb.cs
+System.EnterpriseServices.Internal/ISoapServerVRoot.cs
+System.EnterpriseServices.Internal/ISoapUtility.cs
