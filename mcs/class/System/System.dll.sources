@@ -334,6 +334,7 @@ System.ComponentModel.Design.Serialization/InstanceDescriptor.cs
 System.Configuration/AppSettingsReader.cs
 System.Configuration/AppSettingsSection.cs
 System.Configuration/ConfigHelper.cs
+System.Configuration/ConfigInfo.cs
 System.Configuration/ConfigXmlDocument.cs
 System.Configuration/Configuration.cs
 System.Configuration/ConfigurationAllowDefinition.cs
@@ -361,11 +362,15 @@ System.Configuration/IConfigXmlNode.cs
 System.Configuration/IConfigurationSectionHandler.cs
 System.Configuration/IConfigurationSystem.cs
 System.Configuration/IgnoreSectionHandler.cs
+System.Configuration/IntegerConfigurationProperty.cs
 System.Configuration/NameValueFileSectionHandler.cs
 System.Configuration/NameValueSectionHandler.cs
 System.Configuration/PathLevel.cs
 System.Configuration/ProtectedConfigurationProvider.cs
 System.Configuration/ProviderBase.cs
+System.Configuration/RuntimeOnlySection.cs
+System.Configuration/SectionInfo.cs
+System.Configuration/SectionGroupInfo.cs
 System.Configuration/SingleTagSectionHandler.cs
 System.Diagnostics/AlphabeticalEnumConverter.cs
 System.Diagnostics/BooleanSwitch.cs
