@@ -1,3 +1,8 @@
+2003-10-14  Martin Baulig  <martin@ximian.com>
+
+	* reflection.c (mono_reflection_bind_generic_parameters): Also
+	inflate generic methods if we're reading the class from IL.
+
 2003-10-13  Martin Baulig  <martin@ximian.com>
 
 	* reflection.c (mono_reflection_define_generic_parameter): This
