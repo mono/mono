@@ -1,4 +1,12 @@
+2002-05-30  Dietmar Maurer  <dietmar@ximian.com>
 
+	* x86.brg (reg): bug fix in LOCALLOC
+
+	* mono.c (main): new switch --nointrinsic to disable memcpy opt.
+
+	* x86.brg: added block copy/init optimizations from 
+	Serge (serge@wildwestsoftware.com)
+ 
 Thu May 30 14:13:12 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
 	* invoke.cs: lookup P/Invoke method address only when needed.
