@@ -63,6 +63,13 @@ namespace Mono.MonoBASIC
 		Parameters current_local_parameters;
 		
 		/// <summary>
+		///   This are used when parsing parameters in property
+		///   declarations.
+		/// </summary>		
+		Parameters set_parameters;
+		Parameters get_parameters;
+		
+		/// <summary>
 		///   This is used by the sub_header parser to store modifiers
 		///   to be passed to sub/constructor  
 		/// </summary>
@@ -704,11 +711,21 @@ func_declaration
 	;		
 	
 property_declaration
-	  : PROPERTY IDENTIFIER OPEN_PARENS opt_formal_parameter_list CLOSE_PARENS AS type EOL
+	  : PROPERTY IDENTIFIER opt_property_parameters AS type EOL
 	  {
-		get_implicit_value_parameter_type = (Expression) $7;
+		get_implicit_value_parameter_type = (Expression) $5;
 		get_implicit_value_parameter_name = (string) $2;
-		current_local_parameters = (Parameters) $4;
+		
+		current_local_parameters = (Parameters) $3;
+		if (current_local_parameters != Parameters.EmptyReadOnlyParameters) { 
+			get_parameters = current_local_parameters.Copy (lexer.Location);
+			set_parameters = current_local_parameters.Copy (lexer.Location);
+		}
+		else
+		{
+			get_parameters = Parameters.EmptyReadOnlyParameters;
+			set_parameters = new Parameters (null, null ,lexer.Location);		
+		}
 		lexer.PropertyParsing = true;
 
 		$$ = lexer.Location;
@@ -719,21 +736,35 @@ property_declaration
 		lexer.PropertyParsing = false;
 
 		Property prop;
-		Pair pair = (Pair) $10;
+		Pair pair = (Pair) $8;
 		Accessor get_block = (Accessor) pair.First;
 		Accessor set_block = (Accessor) pair.Second;
 		Location loc = lexer.Location;
 		
-		prop = new Property ((Expression) $7, (string) $2, current_modifiers, get_block, set_block,
-				     current_attributes, loc, set_implicit_value_parameter_name);
+		prop = new Property ((Expression) $5, (string) $2, current_modifiers, get_block, set_block,
+				     current_attributes, loc, set_implicit_value_parameter_name, 
+				     get_parameters, set_parameters);
 		
 		CheckDef (current_container.AddProperty (prop), prop.Name, loc);
 		get_implicit_value_parameter_type = null;
 		set_implicit_value_parameter_type = null;
+		get_parameters = null;
+		set_parameters = null;
 		current_local_parameters = null;
 	  }
 	;
 
+opt_property_parameters
+	: /* empty */
+	  {
+	  	$$ = Parameters.EmptyReadOnlyParameters; ;
+	  }
+	| OPEN_PARENS opt_formal_parameter_list CLOSE_PARENS
+	  {
+	  	$$ = $2;
+	  }
+	;
+	
 accessor_declarations
 	: get_accessor_declaration opt_set_accessor_declaration
 	  { 
@@ -758,22 +789,23 @@ opt_set_accessor_declaration
 get_accessor_declaration
 	: opt_attributes GET EOL
 	  {
-		//current_local_parameters = null;
+		current_local_parameters = get_parameters;
 		
 		lexer.PropertyParsing = false;
-		start_block();
 		
+		start_block();	
 		// Add local var declaration
 		// for return value
 		ArrayList retval = new ArrayList ();
 		retval.Add (new VariableDeclaration (get_implicit_value_parameter_name, null, lexer.Location));
-		declare_local_variables (get_implicit_value_parameter_type, retval, lexer.Location);		
+		declare_local_variables (get_implicit_value_parameter_type, retval, lexer.Location);	
+		
 	  }
           opt_statement_list
           END GET EOL
 	  {
 		$$ = new Accessor ((Block) end_block(), (Attributes) $1);
-		//current_local_parameters = null;
+		current_local_parameters = null;
 		lexer.PropertyParsing = true;
 	  }
 	;
@@ -782,16 +814,12 @@ set_accessor_declaration
 	: opt_attributes SET opt_set_parameter EOL
 	  {
 		
-		//Parameter [] args;
-		
 		Parameter implicit_value_parameter = new Parameter (
 			set_implicit_value_parameter_type, 
 			set_implicit_value_parameter_name, 
 			Parameter.Modifier.NONE, null);
 
-		//args  = new Parameter [1];
-		//args [0] = implicit_value_parameter;
-		//current_local_parameters = new Parameters (args, null, lexer.Location);
+		current_local_parameters = set_parameters;
 		current_local_parameters.AppendParameter (implicit_value_parameter);
 		
 		start_block();

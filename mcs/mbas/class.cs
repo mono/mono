@@ -2029,7 +2029,7 @@ namespace Mono.CSharp {
 	}
 
 	public abstract class MethodCore : MemberBase {
-		public readonly Parameters Parameters;
+		public /* readonly */ Parameters Parameters;
 		Block block;
 		
 		//
@@ -2100,11 +2100,16 @@ namespace Mono.CSharp {
 
 		public void LabelParameters (EmitContext ec, Type [] parameters, MethodBase builder)
 		{
+			LabelParameters (ec, parameters, builder, null);
+		}
+
+		public void LabelParameters (EmitContext ec, Type [] parameters, MethodBase builder, Parameters p_params)
+		{
 			//
 			// Define each type attribute (in/out/ref) and
 			// the argument names.
 			//
-			Parameter [] p = Parameters.FixedParameters;
+			Parameter [] p = p_params == null ? Parameters.FixedParameters : p_params.FixedParameters;
 			int i = 0;
 			
 			MethodBuilder mb = null;
@@ -3620,12 +3625,13 @@ namespace Mono.CSharp {
 			//
 			if (PropertyBuilder != null)
 				Attribute.ApplyAttributes (ec, PropertyBuilder, this, OptAttributes, Location);
-
+/*
 			if (GetData != null)
 				GetData.Emit (tc, Get.Block, Get);
 
 			if (SetData != null)
 				SetData.Emit (tc, Set.Block, Set);
+*/				
 		}
 	}
 			
@@ -3645,15 +3651,20 @@ namespace Mono.CSharp {
 			Modifiers.VIRTUAL;
 
 		string set_parameter_name;
-
+		Parameters get_params;
+		Parameters set_params;
+		
 		public Property (Expression type, string name, int mod_flags,
 				Accessor get_block, Accessor set_block,
-				Attributes attrs, Location loc, string set_name)
+				Attributes attrs, Location loc, string set_name, 
+				Parameters p_get, Parameters p_set)
 			: base (type, name, mod_flags, AllowedModifiers,
-				Parameters.EmptyReadOnlyParameters,
+				p_set, // FIXME ???????????
 				get_block, set_block, attrs, loc)
 		{
 			set_parameter_name = set_name;
+			get_params = p_get;
+			set_params = p_set;
 		}
 
 		public Property (Expression type, string name, int mod_flags,
@@ -3664,10 +3675,16 @@ namespace Mono.CSharp {
 				get_block, set_block, attrs, loc)
 		{
 			set_parameter_name = "Value";
+			get_params = Parameters.EmptyReadOnlyParameters;
+			set_params = Parameters.EmptyReadOnlyParameters;
 		}
 
 		public override bool Define (TypeContainer parent)
 		{
+			Type [] g_parameters=null, s_parameters=null;
+			Parameter [] g_parms, s_parms;
+			InternalParameters g_ip=null, s_ip=null;
+
 			if (!DoDefine (parent))
 				return false;
 
@@ -3677,13 +3694,32 @@ namespace Mono.CSharp {
 			flags |= MethodAttributes.HideBySig | MethodAttributes.SpecialName;
 
 			if (Get != null) {
-				Type [] parameters = TypeManager.NoTypes;
-
-				InternalParameters ip = new InternalParameters (
-					parent, Parameters.EmptyReadOnlyParameters);
+				if (get_params == Parameters.EmptyReadOnlyParameters) 
+				{
+					g_parameters = TypeManager.NoTypes;
+					g_ip = new InternalParameters (
+							parent, Parameters.EmptyReadOnlyParameters);
+				}
+				else
+				{
+					g_parameters = new Type [get_params.FixedParameters.Length];
+					for (int i = 0; i < get_params.FixedParameters.Length; i ++) 
+					{
+						g_parameters[i] = get_params.FixedParameters[i].ParameterType;
+					}
+					g_parms = new Parameter [get_params.FixedParameters.Length];
+					for (int i = 0; i < get_params.FixedParameters.Length; i ++) 
+					{
+						Parameter tp = get_params.FixedParameters[i];
+						g_parms[i] = new Parameter (tp.TypeName, tp.Name,
+							Parameter.Modifier.NONE, null);
+					}
+					g_ip = new InternalParameters (
+						parent, new Parameters (g_parms, null, Location));
+				}
 
 				GetData = new MethodData (this, "get", MemberType,
-							  parameters, ip, CallingConventions.Standard,
+							  g_parameters, g_ip, CallingConventions.Standard,
 							  Get.OptAttributes, ModFlags, flags, false);
 
 				if (!GetData.Define (parent))
@@ -3693,17 +3729,38 @@ namespace Mono.CSharp {
 			}
 
 			if (Set != null) {
-				Type [] parameters = new Type [1];
-				parameters [0] = MemberType;
+				if (set_params == Parameters.EmptyReadOnlyParameters) 
+				{
+					s_parameters = new Type [1];
+					s_parameters [0] = MemberType;
 
-				Parameter [] parms = new Parameter [1];
-				parms [0] = new Parameter (Type, /* was "value" */ set_parameter_name, 
-							Parameter.Modifier.NONE, null);
-				InternalParameters ip = new InternalParameters (
-					parent, new Parameters (parms, null, Location));
+					s_parms = new Parameter [1];
+					s_parms [0] = new Parameter (Type, /* was "value" */ set_parameter_name, 
+						Parameter.Modifier.NONE, null);
+				}
+				else
+				{
+					s_parameters = new Type [set_params.FixedParameters.Length];
+					for (int i = 0; i < set_params.FixedParameters.Length; i ++) 
+					{
+						s_parameters[i] = set_params.FixedParameters[i].ParameterType;
+					}
 
+					s_parms = new Parameter [set_params.FixedParameters.Length];
+					for (int i = 0; i < set_params.FixedParameters.Length; i ++) 
+					{
+						Parameter tp = set_params.FixedParameters[i];
+						s_parms[i] = new Parameter (tp.TypeName, tp.Name,
+													Parameter.Modifier.NONE, null);
+					}
+				}
+
+				s_ip = new InternalParameters (
+					parent, new Parameters (s_parms, null, Location));
+
+				
 				SetData = new MethodData (this, "set", TypeManager.void_type,
-							  parameters, ip, CallingConventions.Standard,
+							  s_parameters, s_ip, CallingConventions.Standard,
 							  Set.OptAttributes, ModFlags, flags, false);
 
 				if (!SetData.Define (parent))
@@ -3743,6 +3800,24 @@ namespace Mono.CSharp {
 				}
 			}
 			return true;
+		}
+
+		public void Emit (TypeContainer tc)
+		{
+			base.Emit (tc);
+			
+			if (GetData != null) 
+			{
+				Parameters = get_params;
+				GetData.Emit (tc, Get.Block, Get);
+			}
+
+			if (SetData != null) 
+			{
+				Parameters = set_params;
+				SetData.Emit (tc, Set.Block, Set);
+			}
+				
 		}
 	}
 

@@ -274,6 +274,16 @@ namespace Mono.MonoBASIC
 			}
 		}
 		
+		public bool PropertyParsing {
+			get {
+				return handle_get_set;
+			}
+
+			set {
+				handle_get_set = value;
+			}
+                }
+                		
 		bool is_identifier_start_character (char c)
 		{
 			return Char.IsLetter (c) || c == '_' ;

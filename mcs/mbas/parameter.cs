@@ -130,7 +130,7 @@ namespace Mono.CSharp {
 			ArrayParameter  = array_parameter;
 			loc = l;
 		}
-
+	
 		/// <summary>
 		///   This is used to reuse a set of empty parameters, because they
 		///   are common
@@ -146,10 +146,36 @@ namespace Mono.CSharp {
 		
 		public void AppendParameter (Parameter p)
 		{
+			if (FixedParameters != null) 
+			{
+				Parameter [] pa = new Parameter [FixedParameters.Length+1];
+				FixedParameters.CopyTo (pa, 0);
+				pa[FixedParameters.Length] = p;
+				FixedParameters = pa;		
+			}
+			else
+			{
+				FixedParameters = new Parameter [1];
+				FixedParameters[0] = p;
+			}
+		}
+
+		public void PrependParameter (Parameter p)
+		{
 			Parameter [] pa = new Parameter [FixedParameters.Length+1];
-			FixedParameters.CopyTo (pa, 0);
-			pa[FixedParameters.Length] = p;
-			FixedParameters = pa;
+			FixedParameters.CopyTo (pa, 1);
+			pa[0] = p;
+			FixedParameters = pa;		
+		}
+		
+		public Parameters Copy (Location l)
+		{
+			Parameters p = new Parameters (null, null, l);
+			p.FixedParameters = new Parameter[this.FixedParameters.Length];
+			this.FixedParameters.CopyTo (p.FixedParameters, 0);
+			
+			return (p);
+			
 		}
 		
 		public bool Empty {

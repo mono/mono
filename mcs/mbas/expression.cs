@@ -3263,12 +3263,12 @@ namespace Mono.CSharp {
 	///   Invocation of methods or delegates.
 	/// </summary>
 	public class Invocation : ExpressionStatement {
-		public readonly ArrayList Arguments;
+		public ArrayList Arguments;
 
 		Expression expr;
 		MethodBase method = null;
 		bool is_base;
-		
+
 		static Hashtable method_parameter_cache;
 
 		static Invocation ()
@@ -3887,15 +3887,27 @@ namespace Mono.CSharp {
 		}
 
 		public static bool VerifyArgumentsCompat (EmitContext ec, ArrayList Arguments,
+			int argument_count,
+			MethodBase method, 
+			bool chose_params_expanded,
+			Type delegate_type,
+			Location loc)
+		{
+			return (VerifyArgumentsCompat (ec, Arguments, argument_count,
+				method, chose_params_expanded, delegate_type, loc, null));
+		}
+
+		public static bool VerifyArgumentsCompat (EmitContext ec, ArrayList Arguments,
 							  int argument_count,
 							  MethodBase method, 
 							  bool chose_params_expanded,
 							  Type delegate_type,
-							  Location loc)
+							  Location loc,
+							  string InvokingProperty)
 		{
 			ParameterData pd = GetParameterData (method);
 			int pd_count = pd.Count;
-			
+
 			for (int j = 0; j < argument_count; j++) {
 				Argument a = (Argument) Arguments [j];
 				Expression a_expr = a.Expr;
@@ -3913,10 +3925,16 @@ namespace Mono.CSharp {
 					if (conv == null) {
 						if (!Location.IsNull (loc)) {
 							if (delegate_type == null) 
-								Report.Error (1502, loc,
-								       "The best overloaded match for method '" +
-								       FullMethodDesc (method) +
-								       "' has some invalid arguments");
+								if (InvokingProperty == null)
+									Report.Error (1502, loc,
+										"The best overloaded match for method '" +
+										FullMethodDesc (method) +
+										"' has some invalid arguments");
+								else
+									Report.Error (1502, loc,
+										"Property '" +
+										InvokingProperty +
+										"' has some invalid arguments");
 							else
 								Report.Error (1594, loc,
 									      "Delegate '" + delegate_type.ToString () +
@@ -3946,9 +3964,6 @@ namespace Mono.CSharp {
 				if (a_mod != p_mod &&
 				    pd.ParameterModifier (pd_count - 1) != Parameter.Modifier.PARAMS) {
 					if (!Location.IsNull (loc)) {
-						Console.WriteLine ("A:P: " + a.GetParameterModifier ());
-						Console.WriteLine ("PP:: " + pd.ParameterModifier (j));
-						Console.WriteLine ("PT:  " + parameter_type.IsByRef);
 						Report.Error (1502, loc,
 						       "The best overloaded match for method '" + FullMethodDesc (method)+
 						       "' has some invalid arguments");
@@ -3964,7 +3979,7 @@ namespace Mono.CSharp {
 
 			return true;
 		}
-		
+
 		public override Expression DoResolve (EmitContext ec)
 		{
 			//
@@ -4038,15 +4053,27 @@ namespace Mono.CSharp {
 						return null;
 					}
 				}
+				eclass = ExprClass.Value;
 				expr_to_return = this;
 			}
 
 			if (expr is PropertyExpr) 
 			{
-				expr_to_return = ((PropertyExpr) expr).DoResolve (ec);
+				PropertyExpr pe = ((PropertyExpr) expr);
+				pe.PropertyArgs = (ArrayList) Arguments.Clone();
+				Arguments.Clear();
+				Arguments = new ArrayList();
+				MethodBase mi = pe.PropertyInfo.GetGetMethod(true);
+
+				if(VerifyArgumentsCompat (ec, pe.PropertyArgs, 
+					pe.PropertyArgs.Count, mi, false, null, loc, pe.Name)) 
+				{
+
+					expr_to_return = pe.DoResolve (ec);
+					expr_to_return.eclass = ExprClass.PropertyAccess;
+				}
 			}
 
-			eclass = ExprClass.Value;
 			return expr_to_return;
 		}
 
@@ -4162,12 +4189,20 @@ namespace Mono.CSharp {
 					     bool is_static, Expression instance_expr,
 					     MethodBase method, ArrayList Arguments, Location loc)
 		{
+			EmitCall (ec, is_base, is_static, instance_expr, method, Arguments, null, loc);
+		}
+		
+		public static void EmitCall (EmitContext ec, bool is_base,
+			bool is_static, Expression instance_expr,
+			MethodBase method, ArrayList Arguments, ArrayList prop_args, Location loc)
+		{
 			ILGenerator ig = ec.ig;
 			bool struct_call = false;
 
 			Type decl_type = method.DeclaringType;
 
-			if (!RootContext.StdLib) {
+			if (!RootContext.StdLib) 
+			{
 				// Replace any calls to the system's System.Array type with calls to
 				// the newly created one.
 				if (method == TypeManager.system_int_array_get_length)
@@ -4196,26 +4231,32 @@ namespace Mono.CSharp {
 			if ((flags & TypeManager.MethodFlags.ShouldIgnore) != 0)
 				return;
 			
-			if (!is_static){
+			if (!is_static)
+			{
 				if (decl_type.IsValueType)
 					struct_call = true;
 				//
 				// If this is ourselves, push "this"
 				//
-				if (instance_expr == null){
+				if (instance_expr == null)
+				{
 					ig.Emit (OpCodes.Ldarg_0);
-				} else {
+				} 
+				else 
+				{
 					//
 					// Push the instance expression
 					//
-					if (instance_expr.Type.IsValueType){
+					if (instance_expr.Type.IsValueType)
+					{
 						//
 						// Special case: calls to a function declared in a 
 						// reference-type with a value-type argument need
 						// to have their value boxed.  
 
 						struct_call = true;
-						if (decl_type.IsValueType){
+						if (decl_type.IsValueType)
+						{
 							//
 							// If the expression implements IMemoryLocation, then
 							// we can optimize and use AddressOf on the
@@ -4223,11 +4264,13 @@ namespace Mono.CSharp {
 							//
 							// If not we have to use some temporary storage for
 							// it.
-							if (instance_expr is IMemoryLocation){
+							if (instance_expr is IMemoryLocation)
+							{
 								((IMemoryLocation)instance_expr).
 									AddressOf (ec, AddressOp.LoadStore);
 							}
-							else {
+							else 
+							{
 								Type t = instance_expr.Type;
 								
 								instance_expr.Emit (ec);
@@ -4235,23 +4278,43 @@ namespace Mono.CSharp {
 								ig.Emit (OpCodes.Stloc, temp);
 								ig.Emit (OpCodes.Ldloca, temp);
 							}
-						} else {
+						} 
+						else 
+						{
 							instance_expr.Emit (ec);
 							ig.Emit (OpCodes.Box, instance_expr.Type);
 						} 
-					} else
+					} 
+					else
 						instance_expr.Emit (ec);
 				}
+			}
+			
+			if (prop_args != null && prop_args.Count > 0)
+			{
+				if (Arguments == null) 
+					Arguments = new ArrayList();
+
+				for (int i = prop_args.Count-1; i >=0 ; i--) 
+				{
+					Arguments.Insert (0,prop_args[i]);
+				}
+
 			}
 
 			EmitArguments (ec, method, Arguments);
 
-			if (is_static || struct_call || is_base){
-				if (method is MethodInfo) {
+			if (is_static || struct_call || is_base)
+			{
+				if (method is MethodInfo) 
+				{
 					ig.Emit (OpCodes.Call, (MethodInfo) method);
-				} else
+				} 
+				else
 					ig.Emit (OpCodes.Call, (ConstructorInfo) method);
-			} else {
+			} 
+			else 
+			{
 				if (method is MethodInfo)
 					ig.Emit (OpCodes.Callvirt, (MethodInfo) method);
 				else
@@ -4259,6 +4322,17 @@ namespace Mono.CSharp {
 			}
 		}
 		
+		static void EmitPropertyArgs (EmitContext ec, ArrayList prop_args)
+		{
+			int top = prop_args.Count;
+
+			for (int i = 0; i < top; i++)
+			{
+				Argument a = (Argument) prop_args [i];
+				a.Emit (ec);
+			}
+		}
+
 		public override void Emit (EmitContext ec)
 		{
 			MethodGroupExpr mg = (MethodGroupExpr) this.expr;

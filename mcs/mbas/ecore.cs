@@ -4109,13 +4109,15 @@ namespace Mono.CSharp {
 		public bool IsBase;
 		MethodInfo getter, setter;
 		bool is_static;
-		
+		public ArrayList PropertyArgs;
+
 		Expression instance_expr;
 
 		public PropertyExpr (EmitContext ec, PropertyInfo pi, Location l)
 		{
 			PropertyInfo = pi;
 			eclass = ExprClass.PropertyAccess;
+			PropertyArgs = new ArrayList();
 			is_static = false;
 			loc = l;
 
@@ -4265,9 +4267,7 @@ namespace Mono.CSharp {
 					return;
 				}
 			}
-
-			Invocation.EmitCall (ec, IsBase, IsStatic, instance_expr, getter, null, loc);
-			
+			Invocation.EmitCall (ec, IsBase, IsStatic, instance_expr, getter, null, PropertyArgs, loc);
 		}
 
 		//
@@ -4277,9 +4277,9 @@ namespace Mono.CSharp {
 		{
 			Argument arg = new Argument (source, Argument.AType.Expression);
 			ArrayList args = new ArrayList ();
-
+//HERE
 			args.Add (arg);
-			Invocation.EmitCall (ec, IsBase, IsStatic, instance_expr, setter, args, loc);
+			Invocation.EmitCall (ec, IsBase, IsStatic, instance_expr, setter, args, PropertyArgs,loc);
 		}
 
 		override public void EmitStatement (EmitContext ec)
