@@ -1,3 +1,9 @@
+2004-06-09  Raja R Harinath  <rharinath@novell.com>
+
+	* Makefile (HAS_TEST): Remove.
+	(run-test-local): Disable for now.  Move rules to ...
+	(run-sqlsharp-test): ... this.
+
 2003-09-28  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* SqlSharpCli.cs: changes by Daniel Morgan to make this build with MS
