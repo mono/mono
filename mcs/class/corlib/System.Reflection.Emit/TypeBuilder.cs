@@ -38,7 +38,7 @@ namespace System.Reflection.Emit {
 	private PackingSize packing_size;
 	private Type created;
 
-	public const int UnspecifiedTypeSize = -1;
+	public const int UnspecifiedTypeSize = 0;
 
 		protected override TypeAttributes GetAttributeFlagsImpl () {
 			return attrs;
