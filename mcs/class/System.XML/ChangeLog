@@ -1,3 +1,7 @@
+2002-08-22  Tim Coleman <tim@timcoleman.com>
+	* list.unix:
+		Add System.Xml.Serialization/XmlCustomFormatter.cs
+
 2002-08-19  Tim Coleman <tim@timcoleman.com>
 	* list.unix:
 		Add System.Xml.Serialization/XmlSerializationWriter.cs

@@ -188,6 +188,7 @@ System.Xml.Serialization/XmlAttributeOverrides.cs
 System.Xml.Serialization/XmlAttributes.cs
 System.Xml.Serialization/XmlCodeExporter.cs
 System.Xml.Serialization/XmlChoiceIdentifierAttribute.cs
+System.Xml.Serialization/XmlCustomFormatter.cs
 System.Xml.Serialization/XmlElementAttribute.cs
 System.Xml.Serialization/XmlElementAttributes.cs
 System.Xml.Serialization/XmlElementEventArgs.cs
