@@ -1,3 +1,7 @@
+2003-06-30  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
+
+	* System.XML_linux_test.args: added XPathNavigatorCommonTests.cs.
+
 2003-06-30  Zoltan Varga  <vargaz@freemail.hu>
 
 	* System.XML_linux_test.args: Get rid of CRLFs which break the
