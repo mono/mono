@@ -17,13 +17,6 @@ namespace Mono.ILASM {
         /// </summary>
         public class TypeRef : ModifiableType, IClassRef {
 
-                private enum ConversionMethod {
-                        MakeArray,
-                        MakeBoundArray,
-                        MakeManagedPointer,
-                        MakeUnmanagedPointer,
-                        MakeCustomModified
-                }
 
                 private Location location;
                 private string full_name;
