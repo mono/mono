@@ -155,7 +155,7 @@ namespace System
 				relativeUri = relativeUri.Substring (0, pos);
 			}
 
-			if (relativeUri [0] == '/') {
+			if (relativeUri.Length > 0 && relativeUri [0] == '/') {
 				path = relativeUri;
 				if (!userEscaped)
 					path = EscapeString (path);
@@ -164,10 +164,15 @@ namespace System
 			
 			// par 5.2 step 6 a)
 			path = baseUri.path;
-			pos = path.LastIndexOf ('/');
-			if (pos >= 0) 
-				path = path.Substring (0, pos + 1);
+			if (relativeUri.Length > 0 || query.Length > 0) {
+				pos = path.LastIndexOf ('/');
+				if (pos >= 0) 
+					path = path.Substring (0, pos + 1);
+			}
 
+			if(relativeUri.Length == 0)
+				return;
+	
 			// 6 b)
 			path += relativeUri;
 
