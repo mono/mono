@@ -72,7 +72,7 @@ EXTRA_DIST = $(gac_assemblies) $(corlib_DATA)
 MAINTAINERCLEANFILES = $(EXTRA_DIST)
 
 mscorlib.dll $(gac_assemblies):
-	cd $(srcdir) && $(LN_S) ../../../mcs/class/lib/default/$@ $@ ; \
+	cd $(srcdir) && $(LN_S) ../../../mcs/class/lib/default/$@ $@
 
 all-local: $(gac_assemblies)
 
