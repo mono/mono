@@ -30,6 +30,9 @@
 
 using System;
 using System.Reflection;
+using System.Resources;
+using System.Security;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 /* TODO COMPLETE INFORMATION
@@ -50,7 +53,10 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible (false)]
 
 */
+#if (NET_2_0)
+	[assembly: AssemblyVersion ("2.0.3600.0")]
+#endif
 
 [assembly: AssemblyDelaySign (true)]
-[assembly: AssemblyKeyFile("../msfinal.pub")]
+[assembly: AssemblyKeyFile("../ecma.pub")]
 
