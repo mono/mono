@@ -1,3 +1,8 @@
+2004-01-16  Martin Baulig  <martin@ximian.com>
+
+	* debug-mono-symfile.h: Set version number to 36 and reflect
+	latest symbol writer changes.
+
 2004-01-16  Zoltan Varga  <vargaz@freemail.hu>
 
 	* class.c (mono_bounded_array_class_get): Set 'bounded' to FALSE for
