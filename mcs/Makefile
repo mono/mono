@@ -1,12 +1,13 @@
 thisdir := .
 
 SUBDIRS := build jay mcs monoresgen class mbas nunit20 ilasm tools tests errors docs
-
-# 'gmcs' is specially built by rules inside class/corlib.
 DIST_ONLY_SUBDIRS := gmcs
 
+net_2_0_bootstrap_SUBDIRS := class
+net_2_0_SUBDIRS := gmcs class tests errors tools
+
 ifdef TEST_SUBDIRS
-SUBDIRS := $(TEST_SUBDIRS)
+$(PROFILE)_SUBDIRS := $(TEST_SUBDIRS)
 endif
 
 ifndef NO_SIGN_ASSEMBLIES
@@ -39,8 +40,10 @@ profile-do--%:
 	$(MAKE) PROFILE=$(subst --, ,$*)
 
 # Ensure these don't run in parallel, for now.
-profile-do--net_2_0--all: profile-do--default--all
 profile-do--net_2_0--run-test: profile-do--default--run-test
+
+profile-do--net_2_0--all: profile-do--net_2_0_bootstrap--all
+profile-do--net_2_0_bootstrap--all: profile-do--default--all
 
 testcorlib:
 	@cd class/corlib && $(MAKE) test run-test
@@ -52,12 +55,7 @@ test-installed-compiler:
 	$(MAKE) TEST_SUBDIRS="tests errors" PROFILE=default TEST_RUNTIME=mono MCS=mcs run-test
 	$(MAKE) TEST_SUBDIRS="tests errors" PROFILE=net_2_0 TEST_RUNTIME=mono MCS=gmcs run-test
 
-# Disting. We need to override $(distdir) here.
-
 package := mcs-$(VERSION)
-top_distdir = $(dots)/$(package)
-distdir = $(top_distdir)
-export package
 
 DISTFILES = \
 	AUTHORS			\
@@ -76,15 +74,14 @@ DISTFILES = \
 	ScalableMonoIcon.svg	\
 	winexe.in
 
-
 dist-local: dist-default
-dist-recursive: dist-pre
 
 dist-pre:
 	rm -rf $(package)
 	mkdir $(package)
 
-dist-tarball: dist-recursive
+dist-tarball: dist-pre
+	$(MAKE) distdir='$(package)' dist-recursive
 	tar cvzf $(package).tar.gz $(package)
 
 dist: dist-tarball
