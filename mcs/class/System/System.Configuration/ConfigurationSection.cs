@@ -27,7 +27,6 @@
 //
 
 #if NET_2_0
-#if XML_DEP
 using System.Collections;
 using System.Xml;
 
@@ -172,5 +171,4 @@ namespace System.Configuration
                 }
         }
 }
-#endif
 #endif
