@@ -221,6 +221,7 @@ namespace System.Net
 		{
 			WebConnection cnc = (WebConnection) state;
 			NetworkStream ns = cnc.nstream;
+			
 			try {
 				ns.BeginRead (cnc.buffer, 0, cnc.buffer.Length, readDoneDelegate, cnc);
 			} catch (Exception e) {
@@ -361,10 +362,17 @@ namespace System.Net
 		internal void NextRead ()
 		{
 			Monitor.Enter (this);
-			string cncHeader = (Data.Headers != null) ? Data.Headers ["Connection"] : null;
-			// Bug in xsp...? It does not send Connection: close. Well. it's 1.0
-			if (Data.Version == HttpVersion.Version10 || (socket != null && !socket.Connected) || (!keepAlive ||
-			    (cncHeader != null && cncHeader.IndexOf ("close") != -1))) {
+			string header = (sPoint.UsesProxy) ? "Proxy-Connection" : "Connection";
+			string cncHeader = (Data.Headers != null) ? Data.Headers [header] : null;
+			bool keepAlive = this.keepAlive;
+			if (cncHeader != null) {
+				cncHeader = cncHeader.ToLower ();
+				keepAlive = (keepAlive && cncHeader.IndexOf ("keep-alive") != -1);
+			}
+
+			if ((socket != null && !socket.Connected) ||
+			   (!keepAlive || (cncHeader != null && cncHeader.IndexOf ("close") != -1))) {
+			   	Console.WriteLine ("CLosing");
 				Close ();
 			}
 
@@ -522,18 +530,20 @@ namespace System.Net
 
 		void Close ()
 		{
-			if (nstream != null) {
-				try {
-					nstream.Close ();
-				} catch {}
-				nstream = null;
-			}
+			lock (this) {
+				if (nstream != null) {
+					try {
+						nstream.Close ();
+					} catch {}
+					nstream = null;
+				}
 
-			if (socket != null) {
-				try {
-					socket.Close ();
-				} catch {}
-				socket = null;
+				if (socket != null) {
+					try {
+						socket.Close ();
+					} catch {}
+					socket = null;
+				}
 			}
 		}
 

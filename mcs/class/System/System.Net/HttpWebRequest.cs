@@ -47,6 +47,7 @@ namespace System.Net
 		bool preAuthenticate;
 		Version version = HttpVersion.Version11;
 		IWebProxy proxy;
+		bool manualProxy;
 		bool sendChunked;
 		ServicePoint servicePoint;
 		int timeout = 100000;
@@ -325,7 +326,9 @@ namespace System.Net
 				CheckRequestStarted ();
 				if (value == null)
 					throw new ArgumentNullException ("value");
+
 				proxy = value;
+				servicePoint = null; // we may need a new one
 			}
 		}
 		
@@ -414,6 +417,10 @@ namespace System.Net
 
 		internal Uri AuthUri {
 			get { return actualUri; }
+		}
+		
+		internal bool ProxyQuery {
+			get { return servicePoint.UsesProxy; }
 		}
 		
 		// Methods
@@ -761,10 +768,14 @@ namespace System.Net
 				expectContinue = false;
 			}
 
-			if (keepAlive && version == HttpVersion.Version10)
-				webHeaders.SetInternal ("Connection", "keep-alive");
-			else if (!keepAlive && version == HttpVersion.Version11)
-				webHeaders.SetInternal ("Connection", "close");
+			string connectionHeader = (ProxyQuery) ? "Proxy-Connection" : "Connection";
+			webHeaders.RemoveInternal ((!ProxyQuery) ? "Proxy-Connection" : "Connection");
+				
+			if (keepAlive && version == HttpVersion.Version10) {
+				webHeaders.SetInternal (connectionHeader, "keep-alive");
+			} else if (!keepAlive && version == HttpVersion.Version11) {
+				webHeaders.SetInternal (connectionHeader, "close");
+			}
 
 			webHeaders.SetInternal ("Host", actualUri.Host);
 			if (cookieContainer != null) {
@@ -795,8 +806,21 @@ namespace System.Net
 		internal void SendRequestHeaders ()
 		{
 			StringBuilder req = new StringBuilder ();
-			req.AppendFormat ("{0} {1} HTTP/{2}.{3}\r\n", method, actualUri.PathAndQuery,
-								      version.Major, version.Minor);
+			string query;
+			if (!ProxyQuery) {
+				query = actualUri.PathAndQuery;
+			} else if (actualUri.IsDefaultPort) {
+				query = String.Format ("{0}://{1}{2}",  actualUri.Scheme,
+									actualUri.Host,
+									actualUri.PathAndQuery);
+			} else {
+				query = String.Format ("{0}://{1}:{2}{3}", actualUri.Scheme,
+									   actualUri.Host,
+									   actualUri.Port,
+									   actualUri.PathAndQuery);
+			}
+			
+			req.AppendFormat ("{0} {1} HTTP/{2}.{3}\r\n", method, query, version.Major, version.Minor);
 			req.Append (GetHeaders ());
 			string reqstr = req.ToString ();
 			byte [] bytes = Encoding.UTF8.GetBytes (reqstr);

@@ -1,3 +1,9 @@
+2003-07-08  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpWebRequest.cs:
+	* ServicePointManager.cs:
+	* WebConnection.cs: added support for proxies.
+
 2003-07-05  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
 
 	* DnsPermissionAttribute.cs:

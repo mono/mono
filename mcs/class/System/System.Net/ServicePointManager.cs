@@ -122,7 +122,9 @@ namespace System.Net
 
 			RecycleServicePoints ();
 			
+			bool usesProxy = false;
 			if (proxy != null && !proxy.IsBypassed(address)) {
+				usesProxy = true;
 				address = proxy.GetProxy (address);
 				if (address.Scheme != "http" && address.Scheme != "https")
 					throw new NotSupportedException ("Proxy scheme not supported.");
@@ -138,7 +140,9 @@ namespace System.Net
 
 				if (maxServicePoints > 0 && servicePoints.Count >= maxServicePoints)
 					throw new InvalidOperationException ("maximum number of service points reached");
+
 				sp = new ServicePoint (address, defaultConnectionLimit, maxServicePointIdleTime);
+				sp.UsesProxy = usesProxy;
 				servicePoints.Add (address, sp);
 			}
 			
