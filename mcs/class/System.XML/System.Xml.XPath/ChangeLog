@@ -1,3 +1,11 @@
+2004-02-16  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Expression.cs : Added EvaluatedNodeType and NeedAbsoluteMatching
+	  to reduce extraneous Matches() trial.
+	* Iterator.cs : Removed unused MergedIterator.
+	* XPathNavigator.cs : Optimized Matches() not to evaluate ancestors
+	  unnecessarily. (Test with NeedAbsoluteMatching).
+
 2004-02-10  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* Iterator.cs : Added overriden Count properties for some iterators

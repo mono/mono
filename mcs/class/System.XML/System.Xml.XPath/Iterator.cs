@@ -63,58 +63,6 @@ namespace System.Xml.XPath
 		}
 	}
 
-	internal class MergedIterator : BaseIterator
-	{
-		protected ArrayList _iters = new ArrayList ();
-		protected int _pos;
-		protected int _index;
-
-		public MergedIterator (BaseIterator iter ) : base (iter) {}
-		protected MergedIterator (MergedIterator other) : base (other)
-		{
-			for (int i = 0; i < other._iters.Count; i++)
-				_iters.Add (_needClone ? ((XPathNavigator) other._iters [i]).Clone () : other._iters [i]);
-			_pos = other._pos;
-			_index = other._index;
-		}
-		public override XPathNodeIterator Clone () { return new MergedIterator (this); }
-
-		public void Add (BaseIterator iter)
-		{
-			_iters.Add (iter);
-		}
-
-		public override bool MoveNext ()
-		{
-			while (_index < _iters.Count)
-			{
-				BaseIterator iter = (BaseIterator) _iters [_index];
-				if (iter.MoveNext ())
-				{
-					_pos ++;
-					return true;
-				}
-				_index ++;
-			}
-			return false;
-		}
-		public override XPathNavigator Current
-		{
-			get
-			{
-				if (_index >= _iters.Count)
-					return null;
-				BaseIterator iter = (BaseIterator) _iters [_index];
-				return iter.Current;
-			}
-		}
-		public override int CurrentPosition { get { return _pos; }}
-
-		public override bool RequireSorting { get { return true; } }
-
-		public override int Count { get { return _iters.Count; } }
-	}
-
 	internal abstract class SimpleIterator : BaseIterator
 	{
 		protected readonly BaseIterator _iter;

@@ -273,28 +273,48 @@ namespace System.Xml.XPath
 		[MonoTODO]	// optimize...
 		public virtual bool Matches (XPathExpression expr)
 		{
-			Expression e = ((CompiledExpression)expr).ExpressionNode;
+			Expression e = ((CompiledExpression) expr).ExpressionNode;
+			if (e is ExprRoot)
+				return NodeType == XPathNodeType.Root;
 			
 			if (e is NodeTest)
 				return ((NodeTest)e).Match (((CompiledExpression)expr).NamespaceManager, this);
 			if (e is ExprFilter) {
 				do {
-					e = ((ExprFilter)e).LeftHandSide;
+					e = ((ExprFilter) e).LeftHandSide;
 				} while (e is ExprFilter);
 				
-				if (e is NodeTest && !((NodeTest)e).Match (((CompiledExpression)expr).NamespaceManager, this))
+				if (e is NodeTest && !((NodeTest) e).Match (((CompiledExpression) expr).NamespaceManager, this))
 					return false;
 			}
-			
-			//e = ((CompiledExpression)expr).ExpressionNode;
-			//Console.WriteLine ("Didnt filter : " + e.GetType ().ToString () + " " + e.ToString ());
-			
+
+			XPathResultType resultType = e.ReturnType;
+			switch (resultType) {
+			case XPathResultType.Any:
+			case XPathResultType.NodeSet:
+				break;
+			default:
+				return false;
+			}
+
+			switch (e.EvaluatedNodeType) {
+			case XPathNodeType.Attribute:
+			case XPathNodeType.Namespace:
+				if (NodeType != e.EvaluatedNodeType)
+					return false;
+				break;
+			}
+
 			XPathNodeIterator nodes = Select (expr);
 
 			while (nodes.MoveNext ()) {
 				if (IsSamePosition (nodes.Current))
 					return true;
 			}
+
+			// ancestors might select this node.
+			if (!e.NeedAbsoluteMatching)
+				return false;
 
 			XPathNavigator navigator = Clone ();
 

@@ -27,7 +27,6 @@ namespace System.Xml.XPath
 		protected Expression _expr;
 		XPathSorters _sorters;
 
-
 		public CompiledExpression (Expression expr)
 		{
 			_expr = expr;
@@ -357,6 +356,15 @@ namespace System.Xml.XPath
 				return XPathResultType.Number;
 			throw new XPathException ("invalid node type: "+obj.GetType ().ToString ());
 		}
+
+		internal virtual XPathNodeType EvaluatedNodeType {
+			get { return XPathNodeType.All; }
+		}
+
+		internal virtual bool NeedAbsoluteMatching {
+			get { return false; }
+		}
+
 		[MonoTODO]
 		public virtual double EvaluateNumber (BaseIterator iter)
 		{
@@ -473,6 +481,15 @@ namespace System.Xml.XPath
 			return _left.ToString () + ' ' + Operator + ' ' + _right.ToString ();
 		}
 		protected abstract String Operator { get; }
+
+		internal override XPathNodeType EvaluatedNodeType {
+			get {
+				if (_left.EvaluatedNodeType == _right.EvaluatedNodeType)
+					return _left.EvaluatedNodeType;
+				else
+					return XPathNodeType.All;
+			}
+			}
 	}
 
 	internal abstract class ExprBoolean : ExprBinary
@@ -818,6 +835,7 @@ namespace System.Xml.XPath
 	{
 		public override XPathResultType ReturnType { get { return XPathResultType.NodeSet; }}
 	}
+
 	internal class ExprUNION : NodeSet
 	{
 		public readonly Expression left, right;
@@ -832,6 +850,14 @@ namespace System.Xml.XPath
 			BaseIterator iterLeft = left.EvaluateNodeSet (iter);
 			BaseIterator iterRight = right.EvaluateNodeSet (iter);
 			return new UnionIterator (iter, iterLeft, iterRight);
+		}
+
+		internal override bool NeedAbsoluteMatching {
+			get { return left.NeedAbsoluteMatching || right.NeedAbsoluteMatching; }
+		}
+
+		internal override XPathNodeType EvaluatedNodeType {
+			get { return left.EvaluatedNodeType == right.EvaluatedNodeType ? left.EvaluatedNodeType : XPathNodeType.All; }
 		}
 	}
 
@@ -852,6 +878,14 @@ namespace System.Xml.XPath
 		}
 
 		public override bool RequireSorting { get { return left.RequireSorting || right.RequireSorting; } }
+
+		internal override bool NeedAbsoluteMatching {
+			get { return left.NeedAbsoluteMatching; }
+		}
+
+		internal override XPathNodeType EvaluatedNodeType {
+			get { return right.EvaluatedNodeType; }
+		}
 	}
 	
 	internal class ExprSLASH2 : NodeSet {
@@ -878,6 +912,14 @@ namespace System.Xml.XPath
 		}
 
 		public override bool RequireSorting { get { return left.RequireSorting || right.RequireSorting; } }
+
+		internal override bool NeedAbsoluteMatching {
+			get { return true; }
+		}
+
+		internal override XPathNodeType EvaluatedNodeType {
+			get { return right.EvaluatedNodeType; }
+		}
 	}
 
 	internal class ExprRoot : NodeSet
@@ -888,6 +930,14 @@ namespace System.Xml.XPath
 			XPathNavigator navRoot = iter.Current.Clone ();
 			navRoot.MoveToRoot ();
 			return new SelfIterator (navRoot, iter.NamespaceManager);
+		}
+
+		internal override bool NeedAbsoluteMatching {
+			get { return false; }
+		}
+
+		internal override XPathNodeType EvaluatedNodeType {
+			get { return XPathNodeType.Root; }
 		}
 	}
 
@@ -1032,6 +1082,10 @@ namespace System.Xml.XPath
 				}
 			}
 
+		}
+
+		internal override XPathNodeType EvaluatedNodeType {
+			get { return _axis.NodeType; }
 		}
 	}
 
@@ -1205,6 +1259,14 @@ namespace System.Xml.XPath
 			BaseIterator iterExpr = expr.EvaluateNodeSet (iter);
 			return new PredicateIterator (iterExpr, pred);
 		}
+
+		internal override bool NeedAbsoluteMatching {
+			get { return expr.NeedAbsoluteMatching; }
+		}
+
+		internal override XPathNodeType EvaluatedNodeType {
+			get { return expr.EvaluatedNodeType; }
+		}
 	}
 
 	internal class ExprNumber : Expression
@@ -1307,6 +1369,14 @@ namespace System.Xml.XPath
 				return new ParensIterator (predBase);
 			else
 				return o;
+		}
+
+		internal override bool NeedAbsoluteMatching {
+			get { return _expr.NeedAbsoluteMatching; }
+		}
+
+		internal override XPathNodeType EvaluatedNodeType {
+			get { return _expr.EvaluatedNodeType; }
 		}
 	}
 
