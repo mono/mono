@@ -1,3 +1,7 @@
+2002-11-29  Ville Palo <vi64pa@koti.soon.fi>
+
+	* System.Xml/XmlDataDocument.cs: Started to implement.
+	
 2002-11-26  Tim Coleman <tim@timcoleman.com>
 	* System.Data.SqlClient/SqlCommand.cs:
 	* System.Data.SqlClient/SqlConnection.cs:

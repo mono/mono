@@ -10,6 +10,7 @@
 //
 // Author:
 //     Daniel Morgan <danmorg@sc.rr.com>
+//     Ville Palo <vi64pa@koti.soon.fi>
 //
 // (c)copyright 2002 Daniel Morgan
 //
@@ -21,6 +22,7 @@ using System.Data;
 using System.IO;
 using System.Text;
 using System.Xml.XPath;
+using System.Collections;
 
 namespace System.Xml {
 
@@ -29,13 +31,17 @@ namespace System.Xml {
 		#region Fields
 
 		private DataSet dataSet;
+		private bool isReadOnly = false;
+
+		private int dataRowID = 1;
+		private ArrayList dataRowIDList = new ArrayList ();
 
 		#endregion // Fields
 
 		#region Constructors
 
 		public XmlDataDocument() {
-			dataSet = new DataSet();
+			dataSet = new DataSet();			
 		}
 
 		public XmlDataDocument(DataSet dataset) {
@@ -77,7 +83,7 @@ namespace System.Xml {
 		public override bool IsReadOnly {
 			[MonoTODO]
 			get {
-				throw new NotImplementedException();
+				return isReadOnly;
 			}
 
 		}
@@ -173,7 +179,7 @@ namespace System.Xml {
 
 		// get the DataRow associated with the XmlElement
 		[MonoTODO]
-		public DataRow GetRowFromElement(XmlElement e) 
+		public DataRow GetRowFromElement(XmlElement e)
 		{
 			throw new NotImplementedException();
 		}
@@ -182,7 +188,7 @@ namespace System.Xml {
 
 		[MonoTODO]
 		public override void Load(Stream inStream) {
-			throw new NotImplementedException();
+			
 		}
 
 		[MonoTODO]
@@ -197,19 +203,69 @@ namespace System.Xml {
 
 		[MonoTODO]
 		public override void Load(XmlReader reader) {
-			throw new NotImplementedException();
-		}
+			
+			DataTable dt = null;
 
+			// For reading xml to XmlDocument
+			XmlTextReader textReader = new XmlTextReader (
+				reader.BaseURI);
+
+			if (reader.NodeType != XmlNodeType.Element)
+				reader.MoveToContent ();
+
+			// TODO: Findout which exception should be throwen
+			if (reader.NodeType != XmlNodeType.Element)
+				throw new Exception ();
+
+			if (dataSet.DataSetName != reader.Name)
+				throw new Exception ();
+
+			// read to next element
+			while (reader.Read () && reader.NodeType != XmlNodeType.Element);
+
+			do {
+
+				// Find right table from tablecollection
+				for (int i = 0; i < DataSet.Tables.Count && dt == null; i++) {
+					if (reader.Name == DataSet.Tables [i].TableName) {
+						dt = DataSet.Tables [i];
+						dt.ColumnChanged += new DataColumnChangeEventHandler (OnDataTableColumnChanged);
+
+					}
+				}
+				
+				// TODO: Findout what kind of exception 
+				if (dt == null) 
+					throw new Exception (); // there were no correct table
+				
+				while ((reader.NodeType != XmlNodeType.EndElement ||
+					reader.Name != dt.TableName) && reader.Read()) {
+					
+					switch (reader.NodeType) {
+						
+				        case XmlNodeType.Element:
+						dt.Rows.Add (LoadRow (reader, dt.NewRow ()));
+						
+						break;
+				        default:
+						break;
+					}			
+				}		
+			} while (reader.Read ());
+
+			base.Load (textReader);
+		}
+		
 		#endregion // overloaded Load methods
 
 		[MonoTODO]
 		public override void WriteContentTo(XmlWriter xw) {
-			throw new NotImplementedException();
+			base.WriteContentTo (xw);
 		}
 
 		[MonoTODO]
 		public override void WriteTo(XmlWriter w) {
-			throw new NotImplementedException();
+			base.WriteTo (w);
 		}
 
 		#endregion // Public Methods
@@ -217,7 +273,7 @@ namespace System.Xml {
 		#region Protected Methods
 
 		[MonoTODO]
-		protected override XPathNavigator CreateNavigator(XmlNode node) {
+		protected internal override XPathNavigator CreateNavigator(XmlNode node) {
 			throw new NotImplementedException();
 		}
 
@@ -227,6 +283,59 @@ namespace System.Xml {
 		}
 
 		#endregion // Protected Methods
+		
+		#region Private Methods
 
+		[MonoTODO]
+		private void OnDataTableColumnChanged(object sender, 
+							     DataColumnChangeEventArgs eventArgs)
+		{
+			// row is not yet in datatable
+			if (eventArgs.Row.XmlRowID == 0)
+				return;
+
+			// TODO: Here should be some kind of error checking.
+			GetElementsByTagName (eventArgs.Column.ToString ()) [dataRowIDList.IndexOf (
+				eventArgs.Row.XmlRowID)].InnerText = newValue;
+			
+			
+		}
+	
+		[MonoTODO]
+		private static void OnDataTableRowDeleted(object sender,
+							  DataRowChangeEventArgs eventArgs)
+		{
+			throw new NotImplementedException();
+		}
+		
+		[MonoTODO]
+		private DataRow LoadRow (XmlReader reader, DataRow row)
+		{
+			// This method returns DataRow filled by values
+			// from xmldocument
+			string rowname = reader.Name;
+			string column = "";
+			     		
+			if (reader.NodeType == XmlNodeType.Element)
+				column = reader.Name;
+
+			reader.Read ();
+
+			if (reader.NodeType == XmlNodeType.Text) {
+
+					string val = reader.Value;
+					if (row.Table.Columns.Contains (column))
+						row [column] = val;
+			}
+
+			// Every row must have unique id.
+			row.XmlRowID = dataRowID;
+			dataRowIDList.Add (dataRowID);
+			dataRowID++;					
+
+			return row;
+		}
+
+		#endregion
 	}
 }
