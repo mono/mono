@@ -5,20 +5,22 @@
 //   Andreas Nahr (ClassDevelopment@A-SoftTech.com)
 //
 // (C) 2003 Ximian, Inc.  http://www.ximian.com
+// (C) 2004 Novell (http://www.novell.com)
 //
 
 using System;
 using System.Reflection;
 using System.Runtime.InteropServices;
 
-/* TODO COMPLETE INFORMATION
-
 #if (NET_1_0)
 	[assembly: AssemblyVersion ("1.0.3300.0")]
-#endif
-#if (NET_1_1)
+#elif (NET_1_1)
 	[assembly: AssemblyVersion ("1.0.5000.0")]
+#elif (NET_2_0)
+	[assembly: AssemblyVersion ("2.0.3600.0")]
 #endif
+
+/* TODO COMPLETE INFORMATION
 
 [assembly: AssemblyTitle ("")]
 [assembly: AssemblyDescription ("")]
@@ -31,5 +33,5 @@ using System.Runtime.InteropServices;
 */
 
 [assembly: AssemblyDelaySign (true)]
-[assembly: AssemblyKeyFile("../mono.pub")]
+[assembly: AssemblyKeyFile ("../mono.pub")]
 
