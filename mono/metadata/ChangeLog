@@ -1,3 +1,9 @@
+2004-02-18  Martin Baulig  <martin@ximian.com>
+
+	* class.c (mono_class_inflate_generic_type): Clear the new
+	instance's `nginst->klass' when inflating a generic instance.
+	(mono_class_is_subclass_of): Added (basic) support for generic
+	instances.
 
 Tue Feb 17 21:40:16 CET 2004 Paolo Molaro <lupus@ximian.com>
 
