@@ -4342,8 +4342,8 @@ namespace Mono.CSharp {
 				ShortName = Name;
 
 			if (ExplicitInterfaceName != null) {
-				InterfaceType  = RootContext.LookupType (
-					container, ExplicitInterfaceName, false, Location);
+				InterfaceType  = container.FindType (
+					Location, ExplicitInterfaceName);
 				if (InterfaceType == null)
 					return false;
 

@@ -1,3 +1,9 @@
+2004-05-24  Martin Baulig  <martin@ximian.com>
+
+	* class.cs (MemberBase.DoDefine): Use DeclSpace.FindType() rather
+	than RootContext.LookupType() to find the explicit interface
+	type.  Fixes #58584.
+
 2004-05-24  Raja R Harinath  <rharinath@novell.com>
 
 	* Makefile: Simplify.  Use executable.make.
