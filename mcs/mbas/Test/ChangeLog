@@ -1,6 +1,12 @@
+2005-03-29 Satya Sudha K <ksathyasudha@novell.com>
+           Sudharsan V <vsudharsan@novell.com>
+
+	* Test cases for Array creation expressions
+
 2005-03-18 Manjula GHM <mmanjula@novell.com>
            Sudharsan V <vsudharsan@novell.com>
-          * Test cases for Type members and Like operator
+	* Test cases for Type members and Like operator
+
 2005-02-09  Raja R Harinath  <rharinath@novell.com>
 
 	* Makefile (SUBDIRS): Add 'rerrors'.
