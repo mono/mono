@@ -1,3 +1,7 @@
+2004-12-15  Peter Bartok  <pbartok@novell.com>
+
+	* TextControl.cs: Initial check-in. Still incomplete
+
 2004-12-15  Jackson Harper  <jackson@ximian.com>
 
 	* TreeNode.cs:
