@@ -19,6 +19,7 @@ System.ComponentModel\CollectionChangeEventHandler.cs
 System.ComponentModel\Component.cs
 System.ComponentModel\ComponentCollection.cs
 System.ComponentModel\Container.cs
+System.ComponentModel\DerivedPropertyDescriptor.cs
 System.ComponentModel\DescriptionAttribute.cs
 System.ComponentModel\DesignerSerializationVisibility.cs
 System.ComponentModel\DesignerSerializationVisibilityAttribute.cs

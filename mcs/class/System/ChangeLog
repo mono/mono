@@ -1,3 +1,8 @@
+2002-07-28  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* list:
+	* list.unix: added DerivedPropertyDescriptor.cs
+
 2002-07-22  Tim Coleman <tim@timcoleman.com>
 	* list.unix: Added new file
 		System.ComponentModel.RecommendedAsConfigurableAttribute.cs

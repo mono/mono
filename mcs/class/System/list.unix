@@ -197,6 +197,7 @@ System.ComponentModel/CategoryAttribute.cs
 System.ComponentModel/CollectionChangeAction.cs
 System.ComponentModel/CollectionChangeEventArgs.cs
 System.ComponentModel/CollectionChangeEventHandler.cs
+System.ComponentModel/DerivedPropertyDescriptor.cs
 System.ComponentModel/IListSource.cs
 System.ComponentModel/ISupportInitialize.cs
 System.ComponentModel/ICustomTypeDescriptor.cs
