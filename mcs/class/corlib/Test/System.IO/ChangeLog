@@ -1,5 +1,11 @@
 2003-12-17  Atsushi Enomoto <atsushi@ximian.com>
 
+        * PathTest.cs :
+	  Added more GetPathRoot and GetFullPath tests for windows.
+	  Fixed incorrectly specified arguments in the previous patch.
+
+2003-12-17  Atsushi Enomoto <atsushi@ximian.com>
+
         * PathTest.cs : Added more tests for IsPathRooted, HasExtension
 	  and GetExtension.
 

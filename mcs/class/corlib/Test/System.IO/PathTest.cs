@@ -428,7 +428,27 @@ namespace MonoTests.System.IO
 				AssertEquals ("GetFullPath Exc. #02", typeof (ArgumentException), e.GetType ());
 			}
 		}
-		
+
+		public void TestGetFullPath2 ()
+		{
+			if (Windows) {
+				AssertEquals ("GetFullPath w#01", "z:\\", Path.GetFullPath ("z:"));
+				AssertEquals ("GetFullPath w#02", "c:\\abc\\def", Path.GetFullPath ("c:\\abc\\def"));
+				Assert ("GetFullPath w#03", Path.GetFullPath ("\\").EndsWith ("\\"));
+				// "\\\\" is not allowed
+				Assert ("GetFullPath w#05", Path.GetFullPath ("/").EndsWith ("\\"));
+				// "//" is not allowed
+				Assert ("GetFullPath w#07", Path.GetFullPath ("readme.txt").EndsWith ("\\readme.txt"));
+				Assert ("GetFullPath w#08", Path.GetFullPath ("c").EndsWith ("\\c"));
+				Assert ("GetFullPath w#09", Path.GetFullPath ("abc\\def").EndsWith ("abc\\def"));
+				Assert ("GetFullPath w#10", Path.GetFullPath ("\\abc\\def").EndsWith ("\\abc\\def"));
+				AssertEquals ("GetFullPath w#11", "\\\\abc\\def", Path.GetFullPath ("\\\\abc\\def"));
+				AssertEquals ("GetFullPath w#12", "\\abc\\def", Path.GetFullPath ("abc//def"));
+				AssertEquals ("GetFullPath w#13", "\\", Path.GetFullPath ("/abc/def"));
+				AssertEquals ("GetFullPath w#14", "\\\\abc\\def", Path.GetFullPath ("//abc/def"));
+			}
+		}
+
 		public void TestGetPathRoot ()
 		{
 			string current;
@@ -449,6 +469,25 @@ namespace MonoTests.System.IO
 
 			pathRoot = Path.GetPathRoot (null);
 			AssertEquals ("GetPathRoot #03", null, pathRoot);
+
+			if (Windows) {
+				AssertEquals ("GetPathRoot w#01", "z:", Path.GetPathRoot ("z:"));
+				AssertEquals ("GetPathRoot w#02", "c:\\", Path.GetPathRoot ("c:\\abc\\def"));
+				AssertEquals ("GetPathRoot w#03", "\\", Path.GetPathRoot ("\\"));
+				AssertEquals ("GetPathRoot w#04", "\\\\", Path.GetPathRoot ("\\\\"));
+				AssertEquals ("GetPathRoot w#05", "\\", Path.GetPathRoot ("/"));
+				AssertEquals ("GetPathRoot w#06", "\\\\", Path.GetPathRoot ("//"));
+				AssertEquals ("GetPathRoot w#07", String.Empty, Path.GetPathRoot ("readme.txt"));
+				AssertEquals ("GetPathRoot w#08", String.Empty, Path.GetPathRoot ("c"));
+				AssertEquals ("GetPathRoot w#09", String.Empty, Path.GetPathRoot ("abc\\def"));
+				AssertEquals ("GetPathRoot w#10", "\\", Path.GetPathRoot ("\\abc\\def"));
+				AssertEquals ("GetPathRoot w#11", "\\\\abc\\def", Path.GetPathRoot ("\\\\abc\\def"));
+				AssertEquals ("GetPathRoot w#12", String.Empty, Path.GetPathRoot ("abc//def"));
+				AssertEquals ("GetPathRoot w#13", "\\", Path.GetPathRoot ("/abc/def"));
+				AssertEquals ("GetPathRoot w#14", "\\\\abc\\def", Path.GetPathRoot ("//abc/def"));
+			} else {
+				// TODO: Same tests for Unix.
+			}
 		}
 
 		public void TestGetTempPath ()
