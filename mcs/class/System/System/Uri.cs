@@ -18,6 +18,7 @@ using System.Net;
 using System.Runtime.Serialization;
 using System.Text;
 using System.Collections;
+using System.Globalization;
 
 // See RFC 2396 for more info on URI's.
 
@@ -86,7 +87,7 @@ namespace System
 		}
 
 		public Uri (string uriString, bool dontEscape) 
-		{			
+		{
 			userEscaped = dontEscape;
 			source = uriString;
 			Parse ();
@@ -444,7 +445,7 @@ namespace System
 				return false;
 			for (int i = 0; i < 4; i++) {
 				try {
-					int d = Int32.Parse (captures [i]);
+					int d = Int32.Parse (captures [i], CultureInfo.InvariantCulture);
 					if (d < 0 || d > 255)
 						return false;
 				} catch (Exception) {
@@ -519,13 +520,14 @@ namespace System
 					return false;
 				uri = new Uri (s);
 			}
-			
-			return ((this.scheme.ToLower () == uri.scheme.ToLower ()) &&
-				(this.userinfo.ToLower () == uri.userinfo.ToLower ()) &&
-				(this.host.ToLower () == uri.host.ToLower ()) &&
+
+			CultureInfo inv = CultureInfo.InvariantCulture;
+			return ((this.scheme.ToLower (inv) == uri.scheme.ToLower (inv)) &&
+				(this.userinfo.ToLower (inv) == uri.userinfo.ToLower (inv)) &&
+				(this.host.ToLower (inv) == uri.host.ToLower (inv)) &&
 				(this.port == uri.port) &&
 				(this.path == uri.path) &&
-				(this.query.ToLower () == uri.query.ToLower ()));
+				(this.query.ToLower (inv) == uri.query.ToLower (inv)));
 		}		
 		
 		public override int GetHashCode () 
@@ -928,7 +930,7 @@ namespace System
 			}
 
 			// scheme
-			scheme = uriString.Substring (0, pos).ToLower ();
+			scheme = uriString.Substring (0, pos).ToLower (CultureInfo.InvariantCulture);
 			// Check scheme name characters as specified in RFC2396.
 			if (!Char.IsLetter (scheme [0]))
 					throw new UriFormatException ("URI scheme must start with alphabet character.");
@@ -1006,7 +1008,7 @@ namespace System
 				string portStr = uriString.Remove (0, pos + 1);
 				if (portStr.Length > 1 && portStr [portStr.Length - 1] != ']') {
 					try {
-						port = (int) UInt32.Parse (portStr);
+						port = (int) UInt32.Parse (portStr, CultureInfo.InvariantCulture);
 						uriString = uriString.Substring (0, pos);
 					} catch (Exception) {
 						throw new UriFormatException ("Invalid URI: invalid port number");
