@@ -116,7 +116,8 @@ namespace System.IO
 			if (IsPathRooted (path2))
 				return path2;
 			
-			if (Array.IndexOf (PathSeparatorChars, path1 [path1.Length - 1]) == -1)
+			char p1end = path1 [path1.Length - 1];
+			if (p1end != DirectorySeparatorChar && p1end != AltDirectorySeparatorChar && p1end != VolumeSeparatorChar)
 				return path1 + DirectorySeparatorChar + path2;
 
 			return path1 + path2;

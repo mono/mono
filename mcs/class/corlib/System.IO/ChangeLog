@@ -1,5 +1,11 @@
 2004-09-05 Ben Maurer  <bmaurer@users.sourceforge.net>
 
+	* Path.cs (Combine): Array.IndexOf is slow (because of the
+	special cases it must handle). So, rather than doing IndexOf
+	just check each type of seperator.
+
+2004-09-05 Ben Maurer  <bmaurer@users.sourceforge.net>
+
 	* StringReader.cs (StreamReader): remove sourceChars and disposed
 	variables
 	(Read): Copy directly from the string, rather than a char []
