@@ -54,9 +54,9 @@ clean-local:
 	-rm -fr $(symlinks) $(tmpinst) .wapi
 
 if INSTALL_2_0
-TEST_SUPPORT_FILES = $(tmpinst)/bin/mono $(tmpinst)/bin/mcs $(tmpinst)/bin/mbas $(tmpinst)/bin/ilasm $(tmpinst)/bin/gmcs
+TEST_SUPPORT_FILES = $(tmpinst)/config $(tmpinst)/bin/mono $(tmpinst)/bin/mcs $(tmpinst)/bin/mbas $(tmpinst)/bin/ilasm $(tmpinst)/bin/gmcs
 else
-TEST_SUPPORT_FILES = $(tmpinst)/bin/mono $(tmpinst)/bin/mcs $(tmpinst)/bin/mbas $(tmpinst)/bin/ilasm
+TEST_SUPPORT_FILES = $(tmpinst)/config $(tmpinst)/bin/mono $(tmpinst)/bin/mcs $(tmpinst)/bin/mbas $(tmpinst)/bin/ilasm
 endif
 
 # List of NUnit testcases that should be 100% pass
@@ -86,14 +86,19 @@ mcs-do-run-test-profiles:
 	$(mkinstalldirs) $(tmpinst)/bin
 	$(MAKE) $(TEST_SUPPORT_FILES)
 	d=`pwd`; PATH=$$d/$(tmpinst)/bin:$$PATH ; export PATH ; \
-	( cd $(mcs_topdir) && $(MAKE) RUNTIME=$$d/mono-wrapper PROFILES='$(build_profiles)' run-test-profiles ) || ret=false ; \
+	( cd $(mcs_topdir) && $(MAKE) RUNTIME=$$d/$(tmpinst)/bin/mono PROFILES='$(build_profiles)' run-test-profiles ) || ret=false ; \
 	rm -fr $(tmpinst) ; $$ret
 
 check-local: mcs-do-test-profiles
 	$(MAKE) $(test_select) mcs-do-run-test-profiles
 
+$(tmpinst)/config: ../data/config
+	d=`cd ../support && pwd`; \
+	sed 's,<configuration>,& <dllmap dll="MonoPosixHelper" target="'$$d/MonoPosixHelper.la'" />,' ../data/config > $@
+
 $(tmpinst)/bin/mono: mono-wrapper
-	cp mono-wrapper $@
+	sed 's,/data/config",/runtime/$(tmpinst)/config",' mono-wrapper > $@
+	chmod +x $@
 
 $(tmpinst)/bin/mcs:
 	$(MAKE) test-support-file target=$@ file=class/lib/default/mcs.exe
