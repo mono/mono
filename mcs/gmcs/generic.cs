@@ -340,28 +340,49 @@ namespace Mono.CSharp {
 		}
 
 		public ConstructedType (string name, TypeParameter[] type_params, Location l)
+			: this (type_params, l)
 		{
 			loc = l;
+
 			this.name = name;
+			full_name = name + "<" + args.ToString () + ">";
+		}
+
+		protected ConstructedType (TypeArguments args, Location l)
+		{
+			loc = l;
+			this.args = args;
+
+			eclass = ExprClass.Type;
+		}
+
+		protected ConstructedType (TypeParameter[] type_params, Location l)
+		{
+			loc = l;
 
 			args = new TypeArguments (l);
 			foreach (TypeParameter type_param in type_params)
 				args.Add (new TypeParameterExpr (type_param, l));
 
 			eclass = ExprClass.Type;
-			full_name = name + "<" + args.ToString () + ">";
 		}
 
 		public ConstructedType (Type t, TypeParameter[] type_params, Location l)
-			: this (t.Name, type_params, l)
+			: this (type_params, l)
 		{
 			gt = t.GetGenericTypeDefinition ();
+
+			this.name = gt.FullName;
+			full_name = gt.FullName + "<" + args.ToString () + ">";
 		}
 
 		public ConstructedType (Type t, TypeArguments args, Location l)
-			: this (t.Name, args, l)
+			: this (args, l)
 		{
 			gt = t.GetGenericTypeDefinition ();
+
+			this.name = gt.FullName;
+			full_name = gt.FullName + "<" + args.ToString () + ">";
 		}
 
 		public TypeArguments TypeArguments {
@@ -627,15 +648,43 @@ namespace Mono.CSharp {
 			this.args = args;
 		}
 
+		private bool DoResolveBase (EmitContext ec)
+		{
+			ConstructedType cexpr = expr as ConstructedType;
+			if (cexpr != null) {
+				TypeArguments new_args = new TypeArguments (loc);
+				new_args.Add (cexpr.TypeArguments);
+				new_args.Add (args);
+
+				args = new_args;
+			}
+
+			return true;
+		}
+
 		public override Expression DoResolve (EmitContext ec, Expression right_side,
 						      ResolveFlags flags)
 		{
+			if (!DoResolveBase (ec))
+				return null;
+
 			Expression expr = base.DoResolve (ec, right_side, flags);
 			if (expr == null)
 				return null;
 
+			TypeExpr texpr = expr as TypeExpr;
+			if (texpr != null) {
+				Type t = texpr.ResolveType (ec);
+				if (t == null)
+					return null;
+
+				ConstructedType ctype = new ConstructedType (t, args, loc);
+				return ctype.DoResolve (ec);
+			}
+
 			MethodGroupExpr mg = expr as MethodGroupExpr;
 			if (mg == null) {
+				return expr;
 				Report.Error (-220, loc, "Member `{0}' has type arguments, but did " +
 					      "not resolve as a method group.", Identifier);
 				return null;
@@ -675,14 +724,8 @@ namespace Mono.CSharp {
 
 		public override Expression ResolveAsTypeStep (EmitContext ec)
 		{
-			ConstructedType cexpr = expr as ConstructedType;
-			if (cexpr != null) {
-				TypeArguments new_args = new TypeArguments (loc);
-				new_args.Add (cexpr.TypeArguments);
-				new_args.Add (args);
-
-				args = new_args;
-			}
+			if (!DoResolveBase (ec))
+				return null;
 
 			expr = base.ResolveAsTypeStep (ec);
 			if (expr == null)

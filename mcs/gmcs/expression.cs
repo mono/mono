@@ -6897,9 +6897,13 @@ namespace Mono.CSharp {
 				return null;
 			}
 
+			int real_num_type_args = NumTypeArguments +
+				TypeManager.GetNumberOfTypeArguments (expr_type);
+			
 			Expression member_lookup;
 			member_lookup = MemberLookupFinal (ec, expr_type, expr_type,
-							   Identifier, NumTypeArguments, loc);
+							   Identifier, real_num_type_args,
+							   loc);
 			if (member_lookup == null)
 				return null;
 

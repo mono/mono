@@ -1,3 +1,12 @@
+2004-03-17  Martin Baulig  <martin@ximian.com>
+
+	* expression.cs (MemberAccess.DoResolve): Take the parent's number
+	of type arguments into account; use the `real_num_type_args'
+	approach like in DoResolveAsTypeStep().
+
+	* generic.cs (GenericMemberAccess.DoResolve): Make this work for
+	nested types.
+
 2004-03-17  Marek Safar  <marek.safar@seznam.cz>
 
 	* interface.cs: In all interface classes removed redundant
