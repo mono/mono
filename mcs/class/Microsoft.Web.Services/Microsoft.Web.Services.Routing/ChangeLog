@@ -1,5 +1,11 @@
 2003-10-26  Todd Berman <tberman@gentoo.org>
 
+	* RoutingFault.cs: Implementation
+	* Path.cs: More Implementation
+	* Found.cs: Implementation
+
+2003-10-26  Todd Berman <tberman@gentoo.org>
+
 	* RoutingOutputFilter.cs: Adding ReplyTo
 
 2003-10-22  Todd Berman <tberman@gentoo.org>
