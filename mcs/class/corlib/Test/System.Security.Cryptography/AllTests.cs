@@ -19,12 +19,13 @@ namespace MonoTests.System.Security.Cryptography {
                 { 
                         get 
                         {
-                                TestSuite suite =  new TestSuite();
-                                suite.AddTest(SymmetricAlgorithmTest.Suite);
-				suite.AddTest(AsymmetricAlgorithmTest.Suite); 
-                        	suite.AddTest(RNGCryptoServiceProviderTest.Suite);
-				suite.AddTest(FromBase64TransformTest.Suite);
-				suite.AddTest(RijndaelManagedTest.Suite);
+                                TestSuite suite =  new TestSuite ();
+                                suite.AddTest (SymmetricAlgorithmTest.Suite);
+				suite.AddTest (AsymmetricAlgorithmTest.Suite); 
+                        	suite.AddTest (RNGCryptoServiceProviderTest.Suite);
+				suite.AddTest (FromBase64TransformTest.Suite);
+				suite.AddTest (RijndaelManagedTest.Suite);
+				suite.AddTest (MD5Test.Suite);
                                 return suite;
                         }
                 }

@@ -1,0 +1,4 @@
+2002-09-22  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* MD5Test.cs: new test from Eduardo García Cebollero (kiwnix@yahoo.es).
+	* AllTests.cs: added new test.

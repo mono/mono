@@ -202,8 +202,37 @@ namespace MonoTests.System.IO
 			}
 		}
 
+		public void TestReadInt32 () //Uses BinaryWriter!!
+		{
+			int [] arr_int = {1,10,200,3000,40000,500000,6000000};
+			byte [] arr_byte = new byte [28]; //Sizeof arr_int * 4
+			int [] arr_int2 = new int [7];
+			int i;
+			
+			MemoryStream mem_stream = new MemoryStream (arr_byte);
+			BinaryWriter bin_writer = new BinaryWriter (mem_stream);
+			
+			foreach (int elem in arr_int)	{
+				bin_writer.Write(elem);
+			}
+			
+			mem_stream.Seek(0,SeekOrigin.Begin);
+			BinaryReader bin_reader = new BinaryReader (mem_stream);
+			bin_reader.BaseStream.Seek(0,SeekOrigin.Begin);
+
+			for (i=0;i<7;i++) {
+				try{
+					arr_int2 [i] = bin_reader.ReadInt32();
+					AssertEquals("#2E Wrong Readed Int32 in iteration "+ i,arr_int [i],arr_int2 [i]);
+				} catch (IOException e) {
+					Fail("#2F Unexpected IO Exception" + e.ToString());
+				}
+			}
+		}
+
+
 		//-TODO: (TestRead[Type]*) Verify the ReadBoolean, ReadByte ....
-		// ReadBoolean, ReadByte, ReadChar Done
+		// ReadBoolean, ReadByte, ReadChar, ReadInt32 Done
 		
 		//TODO: (TestFillBuffer*) Verify the FillBuffer Method
 		public void TestPeekChar ()
@@ -223,11 +252,103 @@ namespace MonoTests.System.IO
 			try {	
 				char1 = (char) r.PeekChar ();
 				char2 = (char) r.PeekChar ();
-				AssertEquals ("#13 the stream pointer have been altered in peek", char1, char2);
+				AssertEquals ("#20 the stream pointer have been altered in peek", char1, char2);
 			} catch (Exception e) {
-				Fail ("#14 Unexpected exception thrown: " + e.ToString ());
+				Fail ("#21 Unexpected exception thrown: " + e.ToString ());
 			}
 		}
+		
+		public void TestBaseSeek1 ()
+		{
+			char char1, char2;
+			char [] b = {'A','B','C','D','E','F'};
+			byte [] arr_b = new byte[6];
+			int i = 0;
+			foreach (char b1 in b) {
+				arr_b [i] = Convert.ToByte (b1);
+				i++;
+			}
+
+			MemoryStream m = new MemoryStream (arr_b);
+			BinaryReader r = new BinaryReader (m);
+			try {
+				char1 = (char) r.PeekChar ();
+				r.BaseStream.Seek (0,SeekOrigin.Current);
+				char2 = (char) r.PeekChar ();
+				AssertEquals ("#22 the stream Has been altered in Seek", char1, char2);
+			} catch (Exception e) {
+				Fail ("#23 Unexpected exception thrown: " + e.ToString ());
+			}
+		}
+
+		public void TestBaseSeek2 ()
+		{
+			char char1, char2;
+			char [] b = {'A','B','C','D','E','F'};
+			byte [] arr_b = new byte[6];
+			int i = 0;
+			foreach (char b1 in b) {
+				arr_b [i] = Convert.ToByte (b1);
+				i++;
+			}
+			
+			MemoryStream m = new MemoryStream (arr_b);
+			BinaryReader r = new BinaryReader (m);
+			try {
+				char1 = (char) r.PeekChar ();
+				r.BaseStream.Seek (3,SeekOrigin.Current);
+				r.BaseStream.Seek (-3,SeekOrigin.Current);
+				char2 = (char) r.PeekChar ();
+				AssertEquals ("#24 the stream Has been altered in Seek", char1, char2);
+			} catch (Exception e) {
+				Fail ("#25 Unexpected exception thrown: " + e.ToString ());
+			}
+		}
+		public void TestInterleavedSeek1 ()
+		{
+			byte int1;
+			byte [] arr_byte = {0,1,2,3,4,5,6,7,8,9};
+			
+			MemoryStream m = new MemoryStream (arr_byte);
+			BinaryReader r = new BinaryReader (m);
+
+			{
+				try {
+					int1 = r.ReadByte();
+					AssertEquals("#26 Not well readed Byte", int1, arr_byte[0]);
+				} catch (Exception e) {
+				Fail ("#27 Unexpected exception thrown: " + e.ToString ());
+				}
+			}
+			{
+				try {
+					r.BaseStream.Seek(-1,SeekOrigin.End);
+					int1 = r.ReadByte();
+					AssertEquals("#28 Not well readed Byte",int1,arr_byte[9]);
+				} catch (Exception e) {
+				Fail ("#29 Unexpected exception thrown: " + e.ToString ());
+				}
+			}
+			{
+				try {
+					r.BaseStream.Seek(3,SeekOrigin.Begin);
+					int1 = r.ReadByte();
+					AssertEquals("#2A Not well readed Byte",int1,arr_byte[3]);
+				} catch (Exception e) {
+					Fail ("#2B Unexpected exception thrown: " + e.ToString ());
+				}
+			}
+			{
+				try {
+					r.BaseStream.Seek(2,SeekOrigin.Current);
+					int1 = r.ReadByte();
+					AssertEquals("#2C Not well readed Int32",int1,arr_byte [6]);
+				} catch (Exception e) {
+				Fail ("#2D Unexpected exception thrown: " + e.ToString ());
+				}
+			}
+
+		}			
 	}
 }
 
