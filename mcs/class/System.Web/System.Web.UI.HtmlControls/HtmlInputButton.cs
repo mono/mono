@@ -33,7 +33,6 @@ namespace System.Web.UI.HtmlControls{
 		{
 			if (Page != null && CausesValidation) {
 				string type = Type;
-				Console.WriteLine(type);
 				if (String.Compare (type, "button", true) == 0 || String.Compare (type, "submit", true) == 0) {
 					string script = Page.GetPostBackClientEvent (this, String.Empty);
 					if (script != null && Page.Validators.Count > 0){
