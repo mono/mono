@@ -2,6 +2,7 @@
 //
 // Sean MacIsaac (macisaac@ximian.com)
 // Paolo Molaro (lupus@ximian.com)
+// Dietmar Maurer (dietmar@ximian.com)
 //
 // (C) 2001-2002 Ximian, Inc.
 
@@ -46,74 +47,68 @@ namespace System.Runtime.InteropServices
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		extern static void copy_to_unmanaged (Array source, int startIndex,
+						      IntPtr destination, int length);
+
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		extern static void copy_from_unmanaged (IntPtr source, int startIndex,
+							Array destination, int length);
+
 		public static void Copy (byte[] source, int startIndex, IntPtr destination, int length) {
-			throw new NotImplementedException ();
+			copy_to_unmanaged (source, startIndex, destination, length);
 		}
 
-		[MonoTODO]
 		public static void Copy (char[] source, int startIndex, IntPtr destination, int length) {
-			throw new NotImplementedException ();
+			copy_to_unmanaged (source, startIndex, destination, length);
 		}
 
-		[MonoTODO]
 		public static void Copy (short[] source, int startIndex, IntPtr destination, int length) {
-			throw new NotImplementedException ();
+			copy_to_unmanaged (source, startIndex, destination, length);
 		}
 
-		[MonoTODO]
 		public static void Copy (int[] source, int startIndex, IntPtr destination, int length) {
-			throw new NotImplementedException ();
+			copy_to_unmanaged (source, startIndex, destination, length);
 		}
 
-		[MonoTODO]
 		public static void Copy (long[] source, int startIndex, IntPtr destination, int length) {
-			throw new NotImplementedException ();
+			copy_to_unmanaged (source, startIndex, destination, length);
 		}
 
-		[MonoTODO]
 		public static void Copy (float[] source, int startIndex, IntPtr destination, int length) {
-			throw new NotImplementedException ();
+			copy_to_unmanaged (source, startIndex, destination, length);
 		}
 
-		[MonoTODO]
 		public static void Copy (double[] source, int startIndex, IntPtr destination, int length) {
-			throw new NotImplementedException ();
+			copy_to_unmanaged (source, startIndex, destination, length);
 		}
 
-		[MonoTODO]
 		public static void Copy (IntPtr source, byte[] destination, int startIndex, int length) {
-			throw new NotImplementedException ();
+			copy_from_unmanaged (source, startIndex, destination, length);
 		}
 
-		[MonoTODO]
 		public static void Copy (IntPtr source, char[] destination, int startIndex, int length) {
-			throw new NotImplementedException ();
+			copy_from_unmanaged (source, startIndex, destination, length);
 		}
 
-		[MonoTODO]
 		public static void Copy (IntPtr source, short[] destination, int startIndex, int length) {
-			throw new NotImplementedException ();
+			copy_from_unmanaged (source, startIndex, destination, length);
 		}
 
-		[MonoTODO]
 		public static void Copy (IntPtr source, int[] destination, int startIndex, int length) {
-			throw new NotImplementedException ();
+			copy_from_unmanaged (source, startIndex, destination, length);
 		}
 
-		[MonoTODO]
 		public static void Copy (IntPtr source, long[] destination, int startIndex, int length) {
-			throw new NotImplementedException ();
+			copy_from_unmanaged (source, startIndex, destination, length);
 		}
 
-		[MonoTODO]
 		public static void Copy (IntPtr source, float[] destination, int startIndex, int length) {
-			throw new NotImplementedException ();
+			copy_from_unmanaged (source, startIndex, destination, length);
 		}
 
-		[MonoTODO]
 		public static void Copy (IntPtr source, double[] destination, int startIndex, int length) {
-			throw new NotImplementedException ();
+			copy_from_unmanaged (source, startIndex, destination, length);
 		}
 
 		[MonoTODO]

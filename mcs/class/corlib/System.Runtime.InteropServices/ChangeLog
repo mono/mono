@@ -1,3 +1,6 @@
+2002-06-24  root  <dietmar@ximian.com>
+
+	* Marshal.cs: impl. Copy()
 
 Fri Jun 14 16:18:50 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
