@@ -1,3 +1,19 @@
+2003-11-08  Martin Baulig  <martin@ximian.com>
+
+	* class.c (mono_class_inflate_generic_method): Interface method
+	don't have a header.
+
+	* reflection.c (mono_image_get_methodspec_token): Take an
+	additional `MonoGenericInst *' argument instead of reading it from
+	the header; this is necessary to support interfaces.
+	(mono_image_create_token): Pass the `MonoGenericInst *' from the
+	MonoReflectionInflatedMethod to mono_image_get_methodspec_token().
+	(inflated_method_get_object): Take an additional `MonoGenericInst *'
+	argument.
+
+	* reflection.h (MonoReflectionInflatedMethod): Added
+	`MonoGenericInst *ginst'.
+
 2003-11-07  Zoltan Varga  <vargaz@freemail.hu>
 
 	* gc.c (mono_domain_finalize): Fix compilation for no GC case.
