@@ -1,3 +1,16 @@
+2004-08-04  Jambunathan K  <kjambunathan@novell.com>
+	* mb-tokenizer.cs: 
+	* mb-parser.jay: 
+
+	1) Fixed the Attributes grammar starting with
+	   opt_attributes. Introduced new rules starting with
+	   opt_global_attributes rule - section 5.2 of VB.NET spec
+
+	2) Introduced new Tokens that correspond to reserved but unused
+	   VB.NET keywords. Added some comments as appropriate in the
+	   keywords hashtable of tokenizer - section 2.3 of VB.NET spec.
+	
+
 2004-08-04 Anirban Bhattacharjee <banirban@novell.com>
 	* mb-parser.jay: Added support for modifiers and attributes in interface member grammar
 

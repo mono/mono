@@ -145,7 +145,7 @@ namespace Mono.MonoBASIC
 			keywords.Add ("as", Token.AS);
 			keywords.Add ("assembly", Token.ASSEMBLY);
 			keywords.Add ("auto", Token.AUTO);
-			keywords.Add ("binary", Token.BINARY);
+			keywords.Add ("binary", Token.BINARY); // Not a VB.NET Keyword 
 			keywords.Add ("boolean", Token.BOOLEAN);
 			keywords.Add ("byref", Token.BYREF);
 			keywords.Add ("byte", Token.BYTE);
@@ -164,7 +164,7 @@ namespace Mono.MonoBASIC
 			keywords.Add ("class", Token.CLASS);
 			keywords.Add ("clng", Token.CLNG);
 			keywords.Add ("cobj", Token.COBJ);
-			keywords.Add ("compare", Token.COMPARE);
+			keywords.Add ("compare", Token.COMPARE); // Not a VB.NET Keyword
 			keywords.Add ("const", Token.CONST);
 			keywords.Add ("cshort", Token.CSHORT);
 			keywords.Add ("csng", Token.CSNG);
@@ -176,25 +176,28 @@ namespace Mono.MonoBASIC
 			keywords.Add ("default", Token.DEFAULT);
 			keywords.Add ("delegate", Token.DELEGATE);
 			keywords.Add ("dim", Token.DIM);
+			keywords.Add ("directcast", Token.DIRECTCAST);			
 			keywords.Add ("do", Token.DO);
 			keywords.Add ("double", Token.DOUBLE);
 			keywords.Add ("each", Token.EACH);
 			keywords.Add ("else", Token.ELSE);
 			keywords.Add ("elseif", Token.ELSEIF);
 			keywords.Add ("end", Token.END);
+			keywords.Add ("endif", Token.ENDIF); // An unused VB.NET keyword
 			keywords.Add ("enum", Token.ENUM);
 			keywords.Add ("erase", Token.ERASE);
 			keywords.Add ("error", Token.ERROR);
 			keywords.Add ("event", Token.EVENT);
 			keywords.Add ("exit", Token.EXIT);
-			keywords.Add ("explicit", Token.EXPLICIT);
+			keywords.Add ("explicit", Token.EXPLICIT); // Not a VB.NET keyword 
 			keywords.Add ("false", Token.FALSE);
 			keywords.Add ("finally", Token.FINALLY);
 			keywords.Add ("for", Token.FOR);
 			keywords.Add ("friend", Token.FRIEND);
 			keywords.Add ("function", Token.FUNCTION);
 			keywords.Add ("get", Token.GET);
-			//keywords.Add ("gettype", Token.GETTYPE);
+			keywords.Add ("gettype", Token.GETTYPE);
+			keywords.Add ("gosub", Token.GOSUB); // An unused VB.NET keyword 
 			keywords.Add ("goto", Token.GOTO);
 			keywords.Add ("handles", Token.HANDLES);
 			keywords.Add ("if", Token.IF);
@@ -205,7 +208,7 @@ namespace Mono.MonoBASIC
 			keywords.Add ("integer", Token.INTEGER);
 			keywords.Add ("interface", Token.INTERFACE);
 			keywords.Add ("is", Token.IS);
-			keywords.Add ("let ", Token.LET );
+			keywords.Add ("let ", Token.LET ); // An unused VB.NET keyword
 			keywords.Add ("lib ", Token.LIB );
 			keywords.Add ("like ", Token.LIKE );
 			keywords.Add ("long", Token.LONG);
@@ -225,7 +228,7 @@ namespace Mono.MonoBASIC
 			keywords.Add ("notinheritable", Token.NOTINHERITABLE);
 			keywords.Add ("notoverridable", Token.NOTOVERRIDABLE);
 			keywords.Add ("object", Token.OBJECT);
-			keywords.Add ("off", Token.OFF);
+			keywords.Add ("off", Token.OFF); // Not a VB.NET Keyword 
 			keywords.Add ("on", Token.ON);
 			keywords.Add ("option", Token.OPTION);
 			keywords.Add ("optional", Token.OPTIONAL);
@@ -253,16 +256,16 @@ namespace Mono.MonoBASIC
 			keywords.Add ("shared", Token.SHARED);
 			keywords.Add ("short", Token.SHORT);
 			keywords.Add ("single", Token.SINGLE);
-			keywords.Add ("sizeof", Token.SIZEOF);
+			keywords.Add ("sizeof", Token.SIZEOF); // Not a VB.NET Keyword 
 			keywords.Add ("static", Token.STATIC);
 			keywords.Add ("step", Token.STEP);
 			keywords.Add ("stop", Token.STOP);
-			keywords.Add ("strict", Token.STRICT);
+			keywords.Add ("strict", Token.STRICT); // Not a VB.NET Keyword 
 			keywords.Add ("string", Token.STRING);
 			keywords.Add ("structure", Token.STRUCTURE);
 			keywords.Add ("sub", Token.SUB);
 			keywords.Add ("synclock", Token.SYNCLOCK);
-			keywords.Add ("text", Token.TEXT);
+			keywords.Add ("text", Token.TEXT); // Not a VB.NET Keyword
 			keywords.Add ("then", Token.THEN);
 			keywords.Add ("throw", Token.THROW);
 			keywords.Add ("to", Token.TO);
@@ -271,7 +274,8 @@ namespace Mono.MonoBASIC
 			keywords.Add ("typeof", Token.TYPEOF);
 			keywords.Add ("unicode", Token.UNICODE);
 			keywords.Add ("until", Token.UNTIL);
-			keywords.Add ("variant", Token.VARIANT);
+			keywords.Add ("variant", Token.VARIANT); // An unused VB.NET keyword
+			keywords.Add ("wend", Token.WEND); // An unused VB.NET keyword
 			keywords.Add ("when", Token.WHEN);
 			keywords.Add ("while", Token.WHILE);
 			keywords.Add ("with", Token.WITH);
