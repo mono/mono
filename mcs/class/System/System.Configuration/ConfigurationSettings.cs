@@ -57,6 +57,9 @@ namespace System.Configuration
 				throw new ArgumentNullException ("newSystem");
 
 			lock (typeof (ConfigurationSettings)) {
+				if (config == null)
+					config = DefaultConfig.GetInstance ();
+
 				IConfigurationSystem old = config;
 				config = newSystem;
 				return old;

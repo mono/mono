@@ -1,3 +1,9 @@
+2003-12-03  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* ConfigurationSettings.cs: initialize config in
+	ChangeConfigurationSettings if it has not been done yet. Patch by
+	George Kodinov gkodinov@openlinksw.co.uk). Fixes bug #51643.
+
 2003-12-02  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* ConfigurationSettings.cs: handle allowdefinition and allowlocation,
