@@ -1,3 +1,7 @@
+2003-02-06  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* error.c: added WSA_EHOSTUNREACH mapping.
+
 2003-01-26  Miguel de Icaza  <miguel@ximian.com>
 
 	* io.c (SetFileAttributes): This routine is not currently
