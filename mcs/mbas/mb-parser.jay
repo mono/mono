@@ -24,7 +24,7 @@ namespace Mono.MonoBASIC
 	/// <summary>
 	///    The MonoBASIC Parser
 	/// </summary>
-	public class Parser : GenericParser 
+	public class Parser : GenericParser
 	{
 	
 
@@ -813,9 +813,7 @@ sub_declaration
 	  	
 	  	current_local_parameters = (Parameters) $4;
 		start_block(); 
-	  } 
-	  opt_local_declarations 
-	  {	
+
 	  	/* This is WEIRD: declaring a method (sub) in a module as static will
 	  	   trigger a syntax error, but the same methods MUST be static in order
 	  	   to be properly called
@@ -832,7 +830,7 @@ sub_declaration
 	  	
 		// Structure members are Public by default			
 		if ((current_container is Struct) && (current_modifiers == 0))
-			current_modifiers = Modifiers.PUBLIC;			  	
+			current_modifiers = Modifiers.PUBLIC;		 	
 	  }
 	  opt_statement_list 
 	  END SUB EOL
@@ -869,9 +867,7 @@ func_declaration
 	  	
 	  	current_local_parameters = (Parameters) $4;
 		start_block(); 
-	  } 
-	  opt_local_declarations 
-	  {	
+	
 	  	/* This is WEIRD: declaring a method (sub) in a module as static will
 	  	   trigger a syntax error, but the same methods MUST be static in order
 	  	   to be properly called
@@ -1450,7 +1446,6 @@ opt_evt_handler
 	
 constructor_declaration
 	: constructor_declarator
-	  opt_local_declarations
 	  opt_statement_list
 	  { 
 		Constructor c = (Constructor) $1;
@@ -1591,12 +1586,20 @@ statement_list
 	| statement_list EOL statement
 	;
 	
-statement : embedded_statement 
-	  {
+statement : 
+	    declaration_statement
+	    {
+		if ($1 != null && (Block) $1 != current_block){
+			current_block.AddStatement ((Statement) $1);
+			current_block = (Block) $1;
+		}
+	    }
+	  | embedded_statement 
+	    {
 		Statement s = (Statement) $1;
 
 		current_block.AddStatement ((Statement) $1);
-	  } 
+	    } 
 	  | labeled_statement 
 	  | ADDHANDLER prefixed_unary_expression COMMA ADDRESSOF qualified_identifier
 	   {
@@ -2117,22 +2120,7 @@ new_expression
 	/* | array_creation_expression */
 	;
 
-opt_local_declarations
-	: /* empty */
-	| local_declarations
-	{	if ($1 != null && (Block) $1 != current_block){
-			current_block.AddStatement ((Statement) $1);
-			current_block = (Block) $1;
-		}
-	}
-	;
-	
-local_declarations
-	: local_declaration EOL
-	| local_declaration EOL local_declarations
-	;
-	
-local_declaration
+declaration_statement
 	: local_variable_declaration 
 	  {
 		if ($1 != null){
@@ -2157,7 +2145,7 @@ local_variable_declaration
 	  {
 		$$ = new DictionaryEntry (DecomposeQI("_local_vars_", lexer.Location), $2);		
 	  }
-	| DIM variable_declarators 
+	/*| DIM variable_declarators 
 	  {
 		$$ = new DictionaryEntry (TypeManager.system_object_expr, $2);
 	  }
@@ -2168,7 +2156,7 @@ local_variable_declaration
 		else
 			$$ = null;
 						
-	  } 
+	  } */
  	;
 
 	
@@ -2209,22 +2197,34 @@ variable_declarator
 	  {
 	  	string varname = (string)$1;
 	  	string dims = "";
+	  	object varinit = $3;
 	  	Expression vartype = (Expression) $2;
-	  	Expression varinit = (Expression) $3;
+	  	
 	  	/*
 	  	   Check for a declaration like Dim a(2) or Dim a(2,3)
 	  	   If this is the case, we must generate an ArrayCreationExpression
 	  	   and, in case, add the initializer after the array has been created.
 	  	*/
 	  	if (VariableDeclaration.IsArrayDecl (varname)) {
-			if (VariableDeclaration.HasDimBounds(varname)) { 
+			if (VariableDeclaration.DimsSpecified(varname)) { 
 				varname = VariableDeclaration.StripDims (varname, ref dims);
-				ArrayList a_dims = VariableDeclaration.ParseDims(dims);
-				varinit = new ArrayCreation (vartype, a_dims,"", null, lexer.Location);
+				ArrayList a_dims = VariableDeclaration.ParseDimList(dims);
+				varinit = new ArrayCreation (vartype, a_dims,"", (ArrayList) varinit, lexer.Location);
 			}
 			vartype = DecomposeQI (vartype.ToString() + VariableDeclaration.GetRank (dims), lexer.Location);
 		}
-		
+
+		if (vartype is New) {
+			if (varinit != null) {
+				Report.Error (30205, lexer.Location, "End of statement expected");
+				$$ = null;
+			}
+			else
+			{
+				varinit = vartype;
+				vartype = ((New)vartype).RequestedType;
+			}
+		}
 	  	$$ = new VariableDeclaration (varname, vartype, varinit, lexer.Location, null);
 	  }
 	;
@@ -2239,7 +2239,7 @@ variable_identifier
 	;		
 		
 opt_type_spec
-	: /* empty */	{ $$ = null; /* $$ = (Expression) TypeManager.system_object_expr; */ }
+	: /* empty */	{ $$ = null; 		}
 	| AS type 	{ $$ = (Expression) $2; };
 	;
 			
@@ -2248,20 +2248,26 @@ opt_type_decl
 	  {
 	  	$$ = $1;
 	  }
-	| AS type OPEN_PARENS opt_argument_list CLOSE_PARENS /* FIXME must handle argument list*/
+	| AS type OPEN_PARENS opt_argument_list CLOSE_PARENS 
 	  {
-	  	$$ = $2;
+	  	Report.Error (30638, "Array bounds cannot appear in type specifiers");
+	  	$$ = null;
 	  }
-	| AS NEW type OPEN_PARENS opt_argument_list CLOSE_PARENS /* FIXME must handle NEW clause + argument list */
+	| AS NEW type
 	  {
-	  	$$ = $3;
+	  	New n = new New ((Expression)$3, null, lexer.Location);
+	  	$$ = (Expression) n;
+	  }
+	| AS NEW type OPEN_PARENS opt_argument_list CLOSE_PARENS 
+	  {
+	  	New n = new New ((Expression)$3, (ArrayList) $5, lexer.Location);
+	  	$$ = (Expression) n;
 	  }
 	;
 		
 opt_array_name_modifier
 	: /* empty */ 				{ $$ = null; }
 	| array_type_modifier			{ $$ = $1;   } 
-	| array_initialization_modifier	
 	;
 	
 array_type_modifier
@@ -2272,22 +2278,44 @@ opt_variable_initializer
 	: /* empty */ 			{ $$ = null; }
 	| ASSIGN variable_initializer  	{ $$ = $2; }
 	;
-	
-array_initialization_modifier
-	: /* empty */ { $$ = null; }
-	| OPEN_BRACE CLOSE_BRACE
-	;	
 		
 variable_initializer
 	: expression
 	  {
 		$$ = $1;
 	  }
-	/*| array_initializer
+	| array_initializer
 	  {
 		$$ = $1;
 	  }
-	*/
+	
+	;	
+	
+array_initializer
+	: OPEN_BRACE CLOSE_BRACE
+	  {
+		ArrayList list = new ArrayList ();
+		$$ = list;
+	  }
+	| OPEN_BRACE variable_initializer_list CLOSE_BRACE
+	  {
+		$$ = (ArrayList) $2;
+	  }
+	;
+
+variable_initializer_list
+	: variable_initializer
+	  {
+		ArrayList list = new ArrayList ();
+		list.Add ($1);
+		$$ = list;
+	  }
+	| variable_initializer_list COMMA variable_initializer
+	  {
+		ArrayList list = (ArrayList) $1;
+		list.Add ($3);
+		$$ = list;
+	  }
 	;	
 		
 /* 
@@ -2961,9 +2989,9 @@ Block declare_local_variables (Expression dummy_type, ArrayList variable_declara
 		Expression expr;
 		Expression type = decl.type;
 		
-		if (decl.expression_or_array_initializer is Expression){
+		if ((decl.expression_or_array_initializer is Expression) || 
+		    (decl.expression_or_array_initializer is New)) {
 			expr = (Expression) decl.expression_or_array_initializer;
-
 		} else {
 			ArrayList init = (ArrayList) decl.expression_or_array_initializer;
 			
@@ -3045,7 +3073,6 @@ public class VariableDeclaration {
 		
 		while (n >= 0) {
 			VariableDeclaration var = (VariableDeclaration) vars[n--];
-			n--;
 			if (var.type == null)
 				var.type = cur_type;
 			else
@@ -3053,7 +3080,7 @@ public class VariableDeclaration {
 		}
 	}
 	
-	public static bool HasDimBounds (string varname)
+	public static bool DimsSpecified (string varname)
 	{
 		bool res = false;
 		
@@ -3080,6 +3107,13 @@ public class VariableDeclaration {
 		return (res);
 	}	
 	
+	public static string StripDims (string varname)
+	{
+		string dres = "";
+		
+		return (StripDims(varname, ref dres));
+	}	
+	
 	public static string GetRank (string dims)
 	{
 		string res = "";
@@ -3092,7 +3126,7 @@ public class VariableDeclaration {
 		return (res);
 	}		
 	
-	public static ArrayList ParseDims (string dims)
+	public static ArrayList ParseDimList (string dims)
 	{
 		ArrayList res = new ArrayList();
 		string d = dims.Substring (1, dims.Length -2);
@@ -3102,8 +3136,11 @@ public class VariableDeclaration {
 			Report.Error (999, "Arrays cannot have more than 32 dimensions");
 		}
 		
-		foreach (string s in a)
-			res.Add (new IntLiteral ((Int32) Convert.ToInt32(s)));
+		foreach (string s in a) 
+			if (s != "")
+				res.Add (new IntLiteral ((Int32) Convert.ToInt32(s)));
+			else
+				res.Add (new IntLiteral ((Int32) 0));
 		
 		return (res);
 	}		
@@ -3307,3 +3344,4 @@ public override int parse ()
 
 /* end end end */
 }
+
