@@ -22,7 +22,7 @@ namespace Mono.CSharp {
 		AssemblyBuilder assembly_builder;
 		ModuleBuilder   module_builder;
 
-		string Basename (string name)
+		public static string Basename (string name)
 		{
 			int pos = name.LastIndexOf ("/");
 

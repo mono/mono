@@ -1,5 +1,7 @@
 2002-02-26  Miguel de Icaza  <miguel@ximian.com>
 
+	* driver.cs: If the user does not supply an extension, assume .exe
+
 	* cs-parser.jay (if_statement): Rewrote so that we can track the
 	location for the if statement.
 

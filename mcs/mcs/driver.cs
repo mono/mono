@@ -481,6 +481,9 @@ namespace Mono.CSharp
 							return;
 						}
 						output_file = args [++i];
+						string bname = CodeGen.Basename (output_file);
+						if (bname.IndexOf (".") == -1)
+							output_file += ".exe";
 						continue;
 
 					case "--checked":
