@@ -1,3 +1,10 @@
+2004-09-16  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* dump.c: Added new security actions added in 2.0: LinkDemandChoice,
+	InheritanceDemandChoice and DemandChoice.
+	* main.c: Added ".permissionset" to output IL. Removed "hassecurity"
+	as MS ilasm can't compile it.
+
 2004-09-16  Zoltan Varga  <vargaz@freemail.hu>
 
 	* get.c (get_token): Add support for memberrefs.
