@@ -3504,7 +3504,7 @@ namespace Mono.CSharp {
 			return this;
 		}
 
-		static void EmitLdArg (ILGenerator ig, int x)
+		static public void EmitLdArg (ILGenerator ig, int x)
 		{
 			if (x <= 255){
 				switch (x){
@@ -3538,6 +3538,12 @@ namespace Mono.CSharp {
 		public override void Emit (EmitContext ec)
 		{
 			ILGenerator ig = ec.ig;
+			if (ec.RemapToProxy){
+				ig.Emit (OpCodes.Ldarg_0);
+				ec.EmitArgument (idx);
+				return;
+			}
+			
 			int arg_idx = idx;
 
 			if (!ec.IsStatic)
@@ -3558,6 +3564,14 @@ namespace Mono.CSharp {
 		public void EmitAssign (EmitContext ec, Expression source)
 		{
 			ILGenerator ig = ec.ig;
+			
+			if (ec.RemapToProxy){
+				ig.Emit (OpCodes.Ldarg_0);
+				source.Emit (ec);
+				ec.EmitStoreArgument (idx);
+				return;
+			}
+			
 			int arg_idx = idx;
 
 			if (!ec.IsStatic)
@@ -3580,6 +3594,11 @@ namespace Mono.CSharp {
 
 		public void AddressOf (EmitContext ec, AddressOp mode)
 		{
+			if (ec.RemapToProxy){
+				Report.Error (-1, "Report this: Taking the address of a remapped parameter not supported");
+				return;
+			}
+			
 			int arg_idx = idx;
 
 			if (!ec.IsStatic)

@@ -621,6 +621,22 @@ namespace Mono.CSharp {
 			}
 		}
 
+		public void EmitArgument (int idx)
+		{
+			if (InIterator)
+				ig.Emit (OpCodes.Ldfld, IteratorHandler.Current.parameter_fields [idx]);
+			else
+				throw new Exception ("EmitStoreArgument for an unknown state");
+		}
+		
+		public void EmitStoreArgument (int idx)
+		{
+			if (InIterator)
+				ig.Emit (OpCodes.Stfld, IteratorHandler.Current.parameter_fields [idx]);
+			else
+				throw new Exception ("EmitStoreArgument for an unknown state");
+		}
+		
 		/// <summary>
 	        ///   A dynamic This that is shared by all variables in a emitcontext.
 		///   Created on demand.

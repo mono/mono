@@ -1,4 +1,21 @@
+2003-05-05  Miguel de Icaza  <miguel@ximian.com>
+
+	* codegen.cs (EmitContext.EmitArgument,
+	EmitContext.EmitStoreArgument): New helper functions when the
+	RemapToProxy flag is set.
+
+	* expression.cs (ParameterReference.EmitLdarg): Expose this useful
+	function.
+
+	Add support for remapping parameters. 
+
+	* iterators.cs: Propagate parameter values;  Store parameter
+	values in the proxy classes.
+	
 2003-05-04  Miguel de Icaza  <miguel@ximian.com>
+
+	* ecore.cs (FieldExpr): Fix an obvious bug.  static fields do not
+	need a proxy reference;  I do not know what I was thinking
 
 	* cs-parser.jay (constructor_initializer): catch another error,
 	and display nice message.

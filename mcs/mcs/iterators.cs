@@ -155,6 +155,13 @@ namespace Mono.CSharp {
 		public FieldBuilder enumerable_this_field;
 
 		//
+		// References the parameters
+		//
+
+		public FieldBuilder [] parameter_fields;
+		FieldBuilder [] enumerable_parameter_fields;
+		
+		//
 		// The state as we generate the iterator
 		//
 		ArrayList resume_labels = new ArrayList ();
@@ -325,14 +332,22 @@ namespace Mono.CSharp {
 				ig.Emit (OpCodes.Ldarg_0);
 				ig.Emit (OpCodes.Ldfld, enumerable_this_field);
 			}
+			for (int i = 0; i < parameters.Count; i++){
+				ig.Emit (OpCodes.Ldarg_0);
+				ig.Emit (OpCodes.Ldfld, enumerable_parameter_fields [i]);
+			}
 			ig.Emit (OpCodes.Newobj, (ConstructorInfo) enumerator_proxy_constructor);
 			ig.Emit (OpCodes.Ret);
 		}
 
 		void LoadArgs (ILGenerator ig)
 		{
-			if (this_field != null)
-				ig.Emit (OpCodes.Ldarg_0);
+			count = parameters.Count;
+			if ((modifiers & Modifiers.STATIC) == 0)
+				count++;
+
+			for (int i = 0; i < count; i++)
+				ParameterReference.EmitLdArg (ig, i);
 		}
 		
 		//
@@ -360,6 +375,41 @@ namespace Mono.CSharp {
 			Label resume_point = ig.DefineLabel ();
 			ig.MarkLabel (resume_point);
 			resume_labels.Add (resume_point);
+		}
+
+		void ComputeConstructorTypes (out Type [] constructor_types, out Parameters constructor_parameters)
+		{
+			bool is_static =  (modifiers & Modifiers.STATIC) != 0;
+			
+			if (is_static && parameters.Count == 0){
+				constructor_types = TypeManager.NoTypes;
+				constructor_parameters = Parameters.EmptyReadOnlyParameters;
+				return;
+			}
+
+			int count = (is_static ? 0 : 1) + parameters.Count;
+			constructor_types = new Type [count];
+			Parameter [] pars = new Parameter [count];
+			constructor_parameters = new Parameters (pars, null, loc);
+			
+			int i = 0;
+			if (!is_static){
+				constructor_types [0] = container.TypeBuilder;
+
+				Parameter THIS = new Parameter (
+					new TypeExpr (container.TypeBuilder, loc), "this", Parameter.Modifier.NONE, null);
+				pars [0] = THIS;
+				i++;
+			}
+
+			for (int j = 0; j < parameters.Count; j++, i++){
+				Type partype = parameters.ParameterType (j);
+				
+				pars [i] = new Parameter (new TypeExpr (partype, loc),
+							  parameters.ParameterName (j),
+							  Parameter.Modifier.NONE, null);
+				constructor_types [i] = partype;
+			}
 		}
 		
 		//
@@ -389,25 +439,21 @@ namespace Mono.CSharp {
 			if ((modifiers & Modifiers.STATIC) == 0)
 				this_field = enumerator_proxy_class.DefineField ("THIS", container.TypeBuilder, FieldAttributes.Private);
 
+			parameter_fields = new FieldBuilder [parameters.Count];
+			for (int i = 0; i < parameters.Count; i++){
+				parameter_fields [i] = enumerator_proxy_class.DefineField (
+					String.Format ("p{0}_{1}", i, parameters.ParameterName (i)),
+					parameters.ParameterType (i), FieldAttributes.Private);
+			}
+			
 			//
 			// Define a constructor 
 			//
 			// FIXME: currently its parameterless
 			Type [] constructor_types;
 			Parameters constructor_parameters;
-			
-			if (this_field == null){
-				constructor_types = TypeManager.NoTypes;
-				constructor_parameters = Parameters.EmptyReadOnlyParameters;
-			} else {
-				constructor_types = new Type [1];
-				constructor_types [0] = container.TypeBuilder;
 
-				Parameter THIS = new Parameter (new TypeExpr (container.TypeBuilder, loc), "this", Parameter.Modifier.NONE, null);
-				Parameter [] pars = new Parameter [1];
-				pars [0] = THIS;
-				constructor_parameters = new Parameters (pars, null, loc);
-			}
+			ComputeConstructorTypes (out constructor_types, out constructor_parameters);
 			
 			enumerator_proxy_constructor = enumerator_proxy_class.DefineConstructor (
 				MethodAttributes.Public | MethodAttributes.HideBySig |
@@ -423,10 +469,19 @@ namespace Mono.CSharp {
 			ig.Emit (OpCodes.Ldarg_0);
 			ig.Emit (OpCodes.Call, TypeManager.object_ctor);
 
+			int arg_start;
 			if (this_field != null){
+				arg_start = 2;
 				ig.Emit (OpCodes.Ldarg_0);
 				ig.Emit (OpCodes.Ldarg_1);
 				ig.Emit (OpCodes.Stfld, this_field);
+			} else {
+				arg_start = 1;
+			}
+			for (int i = 0; i < parameters.Count; i++){
+				ig.Emit (OpCodes.Ldarg_0);
+				ParameterReference.EmitLdArg (ig, i + arg_start);
+				ig.Emit (OpCodes.Stfld, parameter_fields [i]);
 			}
 			ig.Emit (OpCodes.Ret);
 		}
@@ -452,21 +507,17 @@ namespace Mono.CSharp {
 			//
 			Type [] constructor_types;
 			Parameters constructor_parameters;
-				
-			if ((modifiers & Modifiers.STATIC) != 0){
-				constructor_types = TypeManager.NoTypes;
-				constructor_parameters = Parameters.EmptyReadOnlyParameters;
-			} else {
+
+			ComputeConstructorTypes (out constructor_types, out constructor_parameters);
+			if ((modifiers & Modifiers.STATIC) == 0){
 				enumerable_this_field = enumerable_proxy_class.DefineField (
 					"THIS", container.TypeBuilder, FieldAttributes.Private);
-				
-				constructor_types = new Type [1];
-				constructor_types [0] = container.TypeBuilder;
-
-				Parameter THIS = new Parameter (new TypeExpr (container.TypeBuilder, loc), "this", Parameter.Modifier.NONE, null);
-				Parameter [] pars = new Parameter [1];
-				pars [0] = THIS;
-				constructor_parameters = new Parameters (pars, null, loc);
+			}
+			enumerable_parameter_fields = new FieldBuilder [parameters.Count];
+			for (int i = 0; i < parameters.Count; i++){
+				enumerable_parameter_fields [i] = enumerable_proxy_class.DefineField (
+					String.Format ("p{0}_{1}", i, parameters.ParameterName (i)),
+					parameters.ParameterType (i), FieldAttributes.Private);
 			}
 			
 			enumerable_proxy_constructor = enumerable_proxy_class.DefineConstructor (
@@ -479,10 +530,20 @@ namespace Mono.CSharp {
 			ILGenerator ig = enumerable_proxy_constructor.GetILGenerator ();
 			ig.Emit (OpCodes.Ldarg_0);
 			ig.Emit (OpCodes.Call, TypeManager.object_ctor);
+
+			int first_arg;
 			if (enumerable_this_field != null){
 				ig.Emit (OpCodes.Ldarg_0);
 				ig.Emit (OpCodes.Ldarg_1);
 				ig.Emit (OpCodes.Stfld, enumerable_this_field);
+				first_arg = 2;
+			} else
+				first_arg = 1;
+			
+			for (int i = 0; i < parameters.Count; i++){
+				ig.Emit (OpCodes.Ldarg_0);
+				ParameterReference.EmitLdArg (ig, i + first_arg);
+				ig.Emit (OpCodes.Stfld, enumerable_parameter_fields [i]);
 			}
 			ig.Emit (OpCodes.Ret);
 		}

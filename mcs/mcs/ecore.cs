@@ -4127,18 +4127,10 @@ namespace Mono.CSharp {
 			} 
 			
 			if (FieldInfo.IsStatic){
-				if (ec.RemapToProxy){
-					ec.EmitThis ();
-					if (is_volatile)
-						ig.Emit (OpCodes.Volatile);
+				if (is_volatile)
+					ig.Emit (OpCodes.Volatile);
 				
-					ig.Emit (OpCodes.Ldfld, FieldInfo);
-				} else {
-					if (is_volatile)
-						ig.Emit (OpCodes.Volatile);
-				
-					ig.Emit (OpCodes.Ldsfld, FieldInfo);
-				}
+				ig.Emit (OpCodes.Ldsfld, FieldInfo);
 				return;
 			}
 			
@@ -4215,14 +4207,10 @@ namespace Mono.CSharp {
 				f.status |= Field.Status.ASSIGNED;
 			} 
 
-			if (ec.RemapToProxy)
+			if (is_static)
+				ig.Emit (OpCodes.Stsfld, FieldInfo);
+			else 
 				ig.Emit (OpCodes.Stfld, FieldInfo);
-			else {
-				if (is_static)
-					ig.Emit (OpCodes.Stsfld, FieldInfo);
-				else 
-					ig.Emit (OpCodes.Stfld, FieldInfo);
-			}
 		}
 		
 		public void AddressOf (EmitContext ec, AddressOp mode)
