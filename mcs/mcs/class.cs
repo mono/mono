@@ -112,7 +112,7 @@ namespace Mono.CSharp {
 		// from classes from the arraylist `type_bases' 
 		//
 		string     base_class_name;
-		public Type base_classs_type;
+		public Type base_class_type;
 
 		ArrayList type_bases;
 
@@ -820,7 +820,7 @@ namespace Mono.CSharp {
 			TypeAttributes type_attributes = TypeAttr;
 
 			if (parent != null)
-				base_classs_type = parent.ResolveType (ec);
+				base_class_type = parent.ResolveType (ec);
 
 			if (IsTopLevel){
 				if (TypeManager.NamespaceClash (Name, Location)) {
@@ -830,7 +830,7 @@ namespace Mono.CSharp {
 				
 				ModuleBuilder builder = CodeGen.Module.Builder;
 				TypeBuilder = builder.DefineType (
-					Name, type_attributes, base_classs_type, null);
+					Name, type_attributes, base_class_type, null);
 				
 			} else {
 				TypeBuilder builder = Parent.DefineType ();
@@ -838,7 +838,7 @@ namespace Mono.CSharp {
 					return null;
 				
 				TypeBuilder = builder.DefineNestedType (
-					Basename, type_attributes, base_classs_type, null);
+					Basename, type_attributes, base_class_type, null);
 			}
 				
 			//
@@ -2109,7 +2109,7 @@ namespace Mono.CSharp {
 
 		protected override void VerifyObsoleteAttribute()
 		{
-			CheckUsageOfObsoleteAttribute (base_classs_type);
+			CheckUsageOfObsoleteAttribute (base_class_type);
 
 			if (ifaces == null)
 				return;
@@ -3311,7 +3311,7 @@ namespace Mono.CSharp {
 			if (parent_constructor == null)
 				return;
 
-			TypeContainer type_ds = TypeManager.LookupTypeContainer (tc.base_classs_type);
+			TypeContainer type_ds = TypeManager.LookupTypeContainer (tc.base_class_type);
 			if (type_ds == null) {
 				ObsoleteAttribute oa = AttributeTester.GetMemberObsoleteAttribute (parent_constructor);
 
