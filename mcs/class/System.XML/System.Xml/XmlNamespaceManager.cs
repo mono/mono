@@ -4,9 +4,11 @@
 // Authors:
 //   Jason Diamond (jason@injektilo.org)
 //   Ben Maurer (bmaurer@users.sourceforge.net)
+//   Atsushi Enomoto (atsushi@ximian.com)
 //
 // (C) 2001 Jason Diamond  http://injektilo.org/
 // (C) 2003 Ben Maurer
+// (C) 2004 Novell Inc.
 //
 
 //
@@ -210,6 +212,15 @@ namespace System.Xml
 
 		public virtual bool HasNamespace (string prefix)
 		{
+			return HasNamespace (prefix, false);
+		}
+		
+#if NET_2_0
+		public virtual bool HasNamespace (string prefix, bool atomizedNames)
+#else
+		internal virtual bool HasNamespace (string prefix, bool atomizedNames)
+#endif
+		{
 			if (prefix == null || count == 0)
 				return false;
 
@@ -223,7 +234,11 @@ namespace System.Xml
 
 		public virtual string LookupNamespace (string prefix)
 		{
+#if NET_2_0
+			return LookupNamespace (prefix, false);
+#else
 			return LookupNamespace (prefix, true);
+#endif
 		}
 
 #if NET_2_0
@@ -253,7 +268,11 @@ namespace System.Xml
 
 		public virtual string LookupPrefix (string uri)
 		{
+#if NET_2_0
+			return LookupPrefix (uri, false);
+#else
 			return LookupPrefix (uri, true);
+#endif
 		}
 
 		private bool CompareString (string s1, string s2, bool atomizedNames)

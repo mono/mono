@@ -35,7 +35,7 @@ namespace System.Xml
 
 	public interface IXmlDataEvidence
 	{
-		Evidence[] Evidences { get; } 
+		Evidence[] Evidence { get; } 
 	}
 }
 #endif

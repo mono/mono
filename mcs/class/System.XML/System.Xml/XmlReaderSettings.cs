@@ -53,6 +53,7 @@ namespace System.Xml
 		private int lineNumberOffset;
 		private int linePositionOffset;
 		private bool prohibitDtd;
+		private XmlNameTable nameTable;
 		private XmlSchemaSet schemas;
 		private bool xsdValidate;
 
@@ -81,6 +82,7 @@ namespace System.Xml
 			prohibitDtd = org.prohibitDtd;
 			schemas = org.schemas;
 			xsdValidate = org.xsdValidate;
+			nameTable = org.NameTable;
 		}
 
 		public event ValidationEventHandler ValidationEventHandler;
@@ -185,10 +187,19 @@ namespace System.Xml
 			set { prohibitDtd = value; }
 		}
 
-		[MonoTODO ("Can set null value?")]
+		// LAMESPEC: MSDN documentation says "An empty XmlNameTable
+		// object" for default value, but XmlNameTable cannot be
+		// instantiate. It actually returns null by default.
+		public XmlNameTable NameTable {
+			get { return nameTable; }
+		}
+
+		// LAMESPEC: Apparently, this property should not have a setter.
 		public XmlSchemaSet Schemas {
 			get { return schemas; }
-			set { schemas = value; }
+			set {
+				throw new XmlException ("XmlReaderSettings.Schemas is read-only and cannot be set.");
+			}
 		}
 
 		public bool XsdValidate {

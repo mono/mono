@@ -35,6 +35,8 @@ using System.IO;
 using System.Security.Policy;
 using System.Text;
 
+using System.Xml.Schema; // only required for NET_2_0 (SchemaInfo)
+
 namespace System.Xml
 {
 #if NET_2_0
@@ -45,6 +47,9 @@ namespace System.Xml
 	{
 		private StringBuilder readStringBuffer;
 		private Evidence [] evidences;
+#if NET_2_0
+		private XmlReaderSettings settings;
+#endif
 
 		#region Constructor
 
@@ -71,7 +76,7 @@ namespace System.Xml
 
 #if NET_2_0
 		[MonoTODO]
-		public virtual Evidence [] Evidences {
+		public virtual Evidence [] Evidence {
 			get { return evidences; }
 		}
 #endif
@@ -111,6 +116,19 @@ namespace System.Xml
 		public abstract char QuoteChar { get; }
 
 		public abstract ReadState ReadState { get; }
+
+#if NET_2_0
+		[MonoTODO]
+		public virtual IXmlSchemaInfo SchemaInfo {
+			get {
+				throw new NotImplementedException ();
+			}
+		}
+
+		public virtual XmlReaderSettings Settings {
+			get { return settings; }
+		}
+#endif
 
 		public abstract string Value { get; }
 

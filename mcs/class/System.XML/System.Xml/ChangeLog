@@ -1,3 +1,23 @@
+2004-07-09  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlAttributeCollection.cs : In .net 2.0, it became sealed class.
+	* IXmlDataEvidence.cs : not "Evidences" but "Evidence".
+	* XmlInputStream.cs : new csc rejected implicit int->char cast.
+	* XmlNamespaceManager.cs : In net_2_0, LookupNamespace(string) and
+	  LookupPrefix(string) does not require argument string as atomized.
+	  Added HasNamespace (string, bool).
+	* XmlReader.cs : Added Settings and SchemaInfo properties.
+	* XmlReaderSettings.cs : Added NameTable. Throw XmlException when
+	  attempt to set Schemas.
+	* XmlTextReader.cs : Fixed "Evidences" to "Evidence". new csc rejected
+	  implicit int->char cast.
+	* XmlValidatingReader.cs : Fixed "Evidences" to "Evidence".
+
+2004-06-27  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlDocument.cs:
+	  Close XmlReader only when it is created. This fixes bug #60809.
+
 2004-06-18  Atsushi Enomoto <atsushi@ximian.com>
 
 	* DTDObjectModel.cs, DTDReader.cs, XmlConvert.cs, XmlDocument.cs,

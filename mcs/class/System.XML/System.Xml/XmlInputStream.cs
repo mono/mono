@@ -201,7 +201,7 @@ namespace System.Xml
 			int c;
 			while (true) {
 				c = ReadByteSpecial ();
-				switch (c) {
+				switch ((char) c) {
 				case '\r': goto case ' ';
 				case '\n': goto case ' ';
 				case '\t': goto case ' ';

@@ -188,8 +188,8 @@ namespace System.Xml
 
 #if NET_2_0
 		[MonoTODO]
-		public override Evidence [] Evidences {
-			get { return base.Evidences; }
+		public override Evidence [] Evidence {
+			get { return base.Evidence; }
 		}
 #endif
 
@@ -1189,24 +1189,8 @@ namespace System.Xml
 			if (returnEntityReference)
 				SetEntityReferenceProperties ();
 			else {
-    				switch (PeekChar ()) {
-				case '<':
-					ReadChar ();
-					ReadTag ();
-					break;
-				case '\r': goto case ' ';
-				case '\n': goto case ' ';
-				case '\t': goto case ' ';
-				case ' ':
-					if (whitespaceHandling == WhitespaceHandling.All ||
-						whitespaceHandling == WhitespaceHandling.Significant)
-						ReadWhitespace ();
-					else {
-						SkipWhitespace ();
-						return ReadContent ();
-					}
-					break;
-				case -1:
+				int c = PeekChar ();
+				if (c == -1) {
 					readState = ReadState.EndOfFile;
 					ClearValueBuffer ();
 					SetProperties (
@@ -1220,9 +1204,28 @@ namespace System.Xml
 						throw new XmlException ("unexpected end of file. Current depth is " + depth);
 
 					return false;
-				default:
-					ReadText (true);
-					break;
+				} else {
+ 	   				switch ((char) c) {
+					case '<':
+						ReadChar ();
+						ReadTag ();
+						break;
+					case '\r': goto case ' ';
+					case '\n': goto case ' ';
+					case '\t': goto case ' ';
+					case ' ':
+						if (whitespaceHandling == WhitespaceHandling.All ||
+							whitespaceHandling == WhitespaceHandling.Significant)
+							ReadWhitespace ();
+						else {
+							SkipWhitespace ();
+							return ReadContent ();
+						}
+						break;
+					default:
+						ReadText (true);
+						break;
+					}
 				}
 			}
 			return this.ReadState != ReadState.EndOfFile;
