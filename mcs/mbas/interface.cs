@@ -490,7 +490,14 @@ namespace Mono.CSharp {
 
 			if (ii.HasSet){
 				Parameter [] p = ii.Parameters.FixedParameters;
+				Parameter [] pv;
 				int i = 0;
+				
+				pv = new Parameter [p.Length + 1];
+				p.CopyTo (pv, 0);
+				pv [p.Length] = new Parameter (ii.Type, "value", Parameter.Modifier.NONE, null);
+				Parameters value_params = new Parameters (pv, null, Location.Null);
+				value_params.GetParameterInfo (decl_space);
 				
 				set_item = TypeBuilder.DefineMethod (
 					"set_Item", property_attributes,
@@ -500,7 +507,7 @@ namespace Mono.CSharp {
 				// HACK because System.Reflection.Emit is lame
 				//
 				InternalParameters ip = new InternalParameters (
-					value_arg_types, ii.Parameters);
+					value_arg_types, value_params);
 				if (!RegisterMethod (set_item, ip, value_arg_types)) {
 					Error111 (ii);
 					return;
@@ -612,7 +619,7 @@ namespace Mono.CSharp {
 				tbases [i++] = t;
 			}
 			
-			return tbases;
+			return TypeManager.ExpandInterfaces (tbases);
 		}
 		
 		//

@@ -1854,7 +1854,7 @@ namespace Mono.CSharp {
 
 			// From System.Array to any array-type
 			if (source_type == TypeManager.array_type &&
-			    target_type.IsSubclassOf (TypeManager.array_type)){
+			    target_type.IsArray){
 				return true;
 			}
 
@@ -1953,7 +1953,7 @@ namespace Mono.CSharp {
 
 			// From System.Array to any array-type
 			if (source_type == TypeManager.array_type &&
-			    target_type.IsSubclassOf (TypeManager.array_type)){
+			    target_type.IsArray) {
 				return new ClassCast (source, target_type);
 			}
 
@@ -2467,6 +2467,8 @@ namespace Mono.CSharp {
 		//
 		public static void StoreFromPtr (ILGenerator ig, Type type)
 		{
+			if (type.IsEnum)
+				type = TypeManager.EnumToUnderlying (type);
 			if (type == TypeManager.int32_type || type == TypeManager.uint32_type)
 				ig.Emit (OpCodes.Stind_I4);
 			else if (type == TypeManager.int64_type || type == TypeManager.uint64_type)
@@ -2484,7 +2486,7 @@ namespace Mono.CSharp {
 			else if (type == TypeManager.intptr_type)
 				ig.Emit (OpCodes.Stind_I);
 			else if (type.IsValueType)
-				ig.Emit (OpCodes.Stobj);
+				ig.Emit (OpCodes.Stobj, type);
 			else
 				ig.Emit (OpCodes.Stind_Ref);
 		}
@@ -3799,7 +3801,7 @@ namespace Mono.CSharp {
 				// System.Array.Length can be called, but the Type does not
 				// support invoking GetArrayRank, so test for that case first
 				//
-				if (iet == TypeManager.array_type || (iet.GetArrayRank () == 1)){
+				if (iet != TypeManager.array_type && (iet.GetArrayRank () == 1)){
 					instance_expr.Emit (ec);
 					ec.ig.Emit (OpCodes.Ldlen);
 					return;

@@ -2186,6 +2186,8 @@ namespace Mono.CSharp {
 			if (t == null)
 				return false;
 
+			bool is_ret = false;
+
 			foreach (Pair p in declarators){
 				VariableInfo vi = (VariableInfo) p.First;
 				Expression e = (Expression) p.Second;
@@ -2232,7 +2234,7 @@ namespace Mono.CSharp {
 					e.Emit (ec);
 					ig.Emit (OpCodes.Stloc, vi.LocalBuilder);
 
-					statement.Emit (ec);
+					is_ret = statement.Emit (ec);
 
 					// Clear the pinned variable.
 					ig.Emit (OpCodes.Ldc_I4_0);
@@ -2277,7 +2279,7 @@ namespace Mono.CSharp {
 					
 					ig.Emit (OpCodes.Stloc, vi.LocalBuilder);
 
-					statement.Emit (ec);
+					is_ret = statement.Emit (ec);
 					
 					// Clear the pinned variable.
 					ig.Emit (OpCodes.Ldc_I4_0);
@@ -2307,7 +2309,7 @@ namespace Mono.CSharp {
 					converted.Emit (ec);
 					ig.Emit (OpCodes.Stloc, vi.LocalBuilder);
 					
-					statement.Emit (ec);
+					is_ret = statement.Emit (ec);
 
 					// Clear the pinned variable
 					ig.Emit (OpCodes.Ldnull);
@@ -2315,7 +2317,7 @@ namespace Mono.CSharp {
 				}
 			}
 
-			return false;
+			return is_ret;
 		}
 	}
 	

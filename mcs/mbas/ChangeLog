@@ -1,3 +1,8 @@
+2002-06-21  Rafael Teixeira <rafaelteixeirabr@hotmail.com>
+	* merged attribute.cs, class.cs, interface.cs, expression.cs, ecore.cs, 
+	  modifiers.cs, rootcontext.cs, statement.cs and typemanager.cs from mcs/mcs, to resync
+	* added pending.cs from mcs/mcs, to resync
+
 2002-06-15  Rafael Teixeira <rafaelteixeirabr@hotmail.com>
 	* merged assign.cs, attribute.cs, enum.cs and namespace.cs from mcs/mcs, to resync
 	* namespace.cs needed some fixing, because CSharpParser isn´t available

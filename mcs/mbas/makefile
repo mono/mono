@@ -28,6 +28,7 @@ COMPILER_SOURCES = \
 	module.cs			\
 	namespace.cs		\
 	parameter.cs		\
+	pending.cs			\
 	report.cs		\
 	rootcontext.cs		\
 	statement.cs		\

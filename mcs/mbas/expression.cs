@@ -4169,7 +4169,7 @@ namespace Mono.CSharp {
 	}
 
 	/// <summary>
-	///   Represents an array creation expression.
+	///   14.5.10.2: Represents an array creation expression.
 	/// </summary>
 	///
 	/// <remarks>
@@ -4179,29 +4179,31 @@ namespace Mono.CSharp {
 	///   specified but where initialization data is mandatory.
 	/// </remarks>
 	public class ArrayCreation : ExpressionStatement {
-		string RequestedType;
-		string Rank;
-		ArrayList Initializers;
-		Location  loc;
+		string requested_type, rank;
+		ArrayList initializers;
+		Location loc;
 
 		//
 		// The list of Argument types.
-		// This is used to constrcut the `newarray' or constructor signature
+		// This is used to construct the `newarray' or constructor signature
 		//
-		ArrayList Arguments;
+		ArrayList arguments;
 
-		MethodBase method = null;
+		//
+		// Method used to create the array object.
+		//
+		MethodBase new_method = null;
+		
 		Type array_element_type;
-		bool IsOneDimensional = false;
-		bool IsBuiltinType = false;
-		bool ExpectInitializers = false;
-
-		int dimensions = 0;
 		Type underlying_type;
+		bool is_one_dimensional = false;
+		bool is_builtin_type = false;
+		bool expect_initializers = false;
+		int dimensions = 0;
 
-		ArrayList ArrayData;
+		ArrayList array_data;
 
-		Hashtable Bounds;
+		Hashtable bounds;
 
 		//
 		// The number of array initializers that we can handle
@@ -4209,32 +4211,31 @@ namespace Mono.CSharp {
 		//
 		int num_automatic_initializers;
 		
-		public ArrayCreation (string requested_type, ArrayList exprs,
-				      string rank, ArrayList initializers, Location l)
+		public ArrayCreation (string requested_type, ArrayList exprs, string rank, ArrayList initializers, Location l)
 		{
-			RequestedType = requested_type;
-			Rank          = rank;
-			Initializers  = initializers;
+			this.requested_type = requested_type;
+			this.initializers = initializers;
+			this.rank = rank;
 			loc = l;
 
-			Arguments = new ArrayList ();
+			arguments = new ArrayList ();
 
 			foreach (Expression e in exprs)
-				Arguments.Add (new Argument (e, Argument.AType.Expression));
+				arguments.Add (new Argument (e, Argument.AType.Expression));
 		}
 
 		public ArrayCreation (string requested_type, string rank, ArrayList initializers, Location l)
 		{
-			RequestedType = requested_type;
-			Initializers = initializers;
+			this.requested_type = requested_type;
+			this.initializers = initializers;
 			loc = l;
 
-			Rank = rank.Substring (0, rank.LastIndexOf ("["));
+			this.rank = rank.Substring (0, rank.LastIndexOf ("["));
 
 			string tmp = rank.Substring (rank.LastIndexOf ("["));
 
 			dimensions = tmp.Length - 1;
-			ExpectInitializers = true;
+			expect_initializers = true;
 		}
 
 		public static string FormArrayType (string base_type, int idx_count, string rank)
@@ -4277,7 +4278,7 @@ namespace Mono.CSharp {
 		public bool CheckIndices (EmitContext ec, ArrayList probe, int idx, bool specified_dims)
 		{
 			if (specified_dims) { 
-				Argument a = (Argument) Arguments [idx];
+				Argument a = (Argument) arguments [idx];
 				
 				if (!a.Resolve (ec, loc))
 					return false;
@@ -4294,7 +4295,7 @@ namespace Mono.CSharp {
 					return false;
 				}
 				
-				Bounds [idx] = value;
+				bounds [idx] = value;
 			}
 			
 			foreach (object o in probe) {
@@ -4307,7 +4308,8 @@ namespace Mono.CSharp {
 					tmp = tmp.Resolve (ec);
 					if (tmp == null)
 						continue;
-					
+
+					// Console.WriteLine ("I got: " + tmp);
 					// Handle initialization from vars, fields etc.
 
 					Expression conv = ConvertImplicitRequired (
@@ -4317,12 +4319,12 @@ namespace Mono.CSharp {
 						return false;
 
 					if (conv is StringConstant)
-						ArrayData.Add (conv);
+						array_data.Add (conv);
 					else if (conv is Constant) {
-						ArrayData.Add (conv);
+						array_data.Add (conv);
 						num_automatic_initializers++;
 					} else
-						ArrayData.Add (conv);
+						array_data.Add (conv);
 				}
 			}
 
@@ -4332,20 +4334,20 @@ namespace Mono.CSharp {
 		public void UpdateIndices (EmitContext ec)
 		{
 			int i = 0;
-			for (ArrayList probe = Initializers; probe != null;) {
+			for (ArrayList probe = initializers; probe != null;) {
 				if (probe.Count > 0 && probe [0] is ArrayList) {
 					Expression e = new IntConstant (probe.Count);
-					Arguments.Add (new Argument (e, Argument.AType.Expression));
+					arguments.Add (new Argument (e, Argument.AType.Expression));
 
-					Bounds [i++] =  probe.Count;
+					bounds [i++] =  probe.Count;
 					
 					probe = (ArrayList) probe [0];
 					
 				} else {
 					Expression e = new IntConstant (probe.Count);
-					Arguments.Add (new Argument (e, Argument.AType.Expression));
+					arguments.Add (new Argument (e, Argument.AType.Expression));
 
-					Bounds [i++] = probe.Count;
+					bounds [i++] = probe.Count;
 					probe = null;
 				}
 			}
@@ -4354,46 +4356,100 @@ namespace Mono.CSharp {
 		
 		public bool ValidateInitializers (EmitContext ec)
 		{
-			if (Initializers == null) {
-				if (ExpectInitializers)
+			if (initializers == null) {
+				if (expect_initializers)
 					return false;
 				else
 					return true;
 			}
 			
 			underlying_type = RootContext.LookupType (
-				ec.DeclSpace, RequestedType, false, loc);
+				ec.DeclSpace, requested_type, false, loc);
+
+			if (underlying_type == null)
+				return false;
 			
 			//
 			// We use this to store all the date values in the order in which we
 			// will need to store them in the byte blob later
 			//
-			ArrayData = new ArrayList ();
-			Bounds = new Hashtable ();
+			array_data = new ArrayList ();
+			bounds = new Hashtable ();
 			
 			bool ret;
 
-			if (Arguments != null) {
-				ret = CheckIndices (ec, Initializers, 0, true);
+			if (arguments != null) {
+				ret = CheckIndices (ec, initializers, 0, true);
 				return ret;
-				
 			} else {
-				Arguments = new ArrayList ();
+				arguments = new ArrayList ();
 
-				ret = CheckIndices (ec, Initializers, 0, false);
+				ret = CheckIndices (ec, initializers, 0, false);
 				
 				if (!ret)
 					return false;
 				
 				UpdateIndices (ec);
 				
-				if (Arguments.Count != dimensions) {
+				if (arguments.Count != dimensions) {
 					error178 ();
 					return false;
 				}
 
 				return ret;
 			}
+		}
+
+		void Error_NegativeArrayIndex ()
+		{
+			Report.Error (284, loc, "Can not create array with a negative size");
+		}
+		
+		//
+		// Converts `source' to an int, uint, long or ulong.
+		//
+		Expression ExpressionToArrayArgument (EmitContext ec, Expression source)
+		{
+			Expression target;
+			
+			bool old_checked = ec.CheckState;
+			ec.CheckState = true;
+			
+			target = ConvertImplicit (ec, source, TypeManager.int32_type, loc);
+			if (target == null){
+				target = ConvertImplicit (ec, source, TypeManager.uint32_type, loc);
+				if (target == null){
+					target = ConvertImplicit (ec, source, TypeManager.int64_type, loc);
+					if (target == null){
+						target = ConvertImplicit (ec, source, TypeManager.uint64_type, loc);
+						if (target == null)
+							Expression.Error_CannotConvertImplicit (loc, source.Type, TypeManager.int32_type);
+					}
+				}
+			} 
+			ec.CheckState = old_checked;
+
+			//
+			// Only positive constants are allowed at compile time
+			//
+			if (target is Constant){
+				if (target is IntConstant){
+					if (((IntConstant) target).Value < 0){
+						Error_NegativeArrayIndex ();
+						return null;
+					}
+				}
+
+				if (target is LongConstant){
+					if (((LongConstant) target).Value < 0){
+						Error_NegativeArrayIndex ();
+						return null;
+					}
+				}
+				
+			}
+
+			return target;
 		}
 		
 		public override Expression DoResolve (EmitContext ec)
@@ -4407,24 +4463,15 @@ namespace Mono.CSharp {
 			if (!ValidateInitializers (ec))
 				return null;
 
-			if (Arguments == null)
+			if (arguments == null)
 				arg_count = 0;
 			else {
-				arg_count = Arguments.Count;
-				foreach (Argument a in Arguments){
+				arg_count = arguments.Count;
+				foreach (Argument a in arguments){
 					if (!a.Resolve (ec, loc))
 						return null;
 
-					//
-					// Now, convert that to an integer
-					//
-					Expression real_arg;
-					bool old_checked = ec.CheckState;
-					ec.CheckState = true;
-			
-					real_arg = ConvertExplicit (
-						ec, a.expr, TypeManager.uint32_type, loc);
-					ec.CheckState = old_checked;
+					Expression real_arg = ExpressionToArrayArgument (ec, a.expr);
 					if (real_arg == null)
 						return null;
 
@@ -4432,8 +4479,8 @@ namespace Mono.CSharp {
 				}
 			}
 			
-			string array_type = FormArrayType (RequestedType, arg_count, Rank);
-			string element_type = FormElementType (RequestedType, arg_count, Rank);
+			string array_type = FormArrayType (requested_type, arg_count, rank);
+			string element_type = FormElementType (requested_type, arg_count, rank);
 
 			type = RootContext.LookupType (ec.DeclSpace, array_type, false, loc);
 			
@@ -4444,21 +4491,20 @@ namespace Mono.CSharp {
 				return null;
 			
 			if (arg_count == 1) {
-				IsOneDimensional = true;
+				is_one_dimensional = true;
 				eclass = ExprClass.Value;
 				return this;
 			}
 
-			IsBuiltinType = TypeManager.IsBuiltinType (type);
+			is_builtin_type = TypeManager.IsBuiltinType (type);
 			
-			if (IsBuiltinType) {
-
+			if (is_builtin_type) {
 				Expression ml;
 				
 				ml = MemberLookup (ec, type, ".ctor", MemberTypes.Constructor,
 						   AllBindingFlags, loc);
 				
-				if (!(ml is MethodGroupExpr)){
+				if (!(ml is MethodGroupExpr)) {
 					report118 (loc, ml, "method group");
 					return null;
 				}
@@ -4469,9 +4515,9 @@ namespace Mono.CSharp {
 					return null;
 				}
 				
-				method = Invocation.OverloadResolve (ec, (MethodGroupExpr) ml, Arguments, loc);
+				new_method = Invocation.OverloadResolve (ec, (MethodGroupExpr) ml, arguments, loc);
 
-				if (method == null) {
+				if (new_method == null) {
 					Report.Error (-6, loc, "New invocation: Can not find a constructor for " +
 						      "this argument list");
 					return null;
@@ -4479,13 +4525,11 @@ namespace Mono.CSharp {
 				
 				eclass = ExprClass.Value;
 				return this;
-				
 			} else {
-
 				ModuleBuilder mb = CodeGen.ModuleBuilder;
-
 				ArrayList args = new ArrayList ();
-				if (Arguments != null){
+				
+				if (arguments != null) {
 					for (int i = 0; i < arg_count; i++)
 						args.Add (TypeManager.int32_type);
 				}
@@ -4497,10 +4541,10 @@ namespace Mono.CSharp {
 				
 				args.CopyTo (arg_types, 0);
 				
-				method = mb.GetArrayMethod (type, ".ctor", CallingConventions.HasThis, null,
+				new_method = mb.GetArrayMethod (type, ".ctor", CallingConventions.HasThis, null,
 							    arg_types);
 
-				if (method == null) {
+				if (new_method == null) {
 					Report.Error (-6, loc, "New invocation: Can not find a constructor for " +
 						      "this argument list");
 					return null;
@@ -4508,16 +4552,15 @@ namespace Mono.CSharp {
 				
 				eclass = ExprClass.Value;
 				return this;
-				
 			}
 		}
 
-		public static byte [] MakeByteBlob (ArrayList ArrayData, Type underlying_type, Location loc)
+		public static byte [] MakeByteBlob (ArrayList array_data, Type underlying_type, Location loc)
 		{
 			int factor;
 			byte [] data;
 			byte [] element;
-			int count = ArrayData.Count;
+			int count = array_data.Count;
 
 			factor = GetTypeSize (underlying_type);
 			if (factor == 0)
@@ -4527,7 +4570,7 @@ namespace Mono.CSharp {
 			int idx = 0;
 			
 			for (int i = 0; i < count; ++i) {
-				object v = ArrayData [i];
+				object v = array_data [i];
 
 				if (v is EnumConstant)
 					v = ((EnumConstant) v).Child;
@@ -4645,7 +4688,7 @@ namespace Mono.CSharp {
 			FieldBuilder fb;
 			ILGenerator ig = ec.ig;
 			
-			byte [] data = MakeByteBlob (ArrayData, underlying_type, loc);
+			byte [] data = MakeByteBlob (array_data, underlying_type, loc);
 			
 			if (data != null) {
 				fb = RootContext.MakeStaticData (data);
@@ -4667,9 +4710,9 @@ namespace Mono.CSharp {
 		void EmitDynamicInitializers (EmitContext ec, bool is_expression)
 		{
 			ILGenerator ig = ec.ig;
-			int dims = Bounds.Count;
+			int dims = bounds.Count;
 			int [] current_pos = new int [dims];
-			int top = ArrayData.Count;
+			int top = array_data.Count;
 			LocalBuilder temp = ig.DeclareLocal (type);
 
 			ig.Emit (OpCodes.Stloc, temp);
@@ -4698,8 +4741,8 @@ namespace Mono.CSharp {
 
 				Expression e = null;
 
-				if (ArrayData [i] is Expression)
-					e = (Expression) ArrayData [i];
+				if (array_data [i] is Expression)
+					e = (Expression) array_data [i];
 
 				if (e != null) {
 					//
@@ -4750,7 +4793,7 @@ namespace Mono.CSharp {
 				//
 				for (int j = 0; j < dims; j++){
 					current_pos [j]++;
-					if (current_pos [j] < (int) Bounds [j])
+					if (current_pos [j] < (int) bounds [j])
 						break;
 					current_pos [j] = 0;
 				}
@@ -4762,7 +4805,7 @@ namespace Mono.CSharp {
 
 		void EmitArrayArguments (EmitContext ec)
 		{
-			foreach (Argument a in Arguments)
+			foreach (Argument a in arguments)
 				a.Emit (ec);
 		}
 		
@@ -4771,16 +4814,16 @@ namespace Mono.CSharp {
 			ILGenerator ig = ec.ig;
 			
 			EmitArrayArguments (ec);
-			if (IsOneDimensional)
+			if (is_one_dimensional)
 				ig.Emit (OpCodes.Newarr, array_element_type);
 			else {
-				if (IsBuiltinType) 
-					ig.Emit (OpCodes.Newobj, (ConstructorInfo) method);
+				if (is_builtin_type) 
+					ig.Emit (OpCodes.Newobj, (ConstructorInfo) new_method);
 				else 
-					ig.Emit (OpCodes.Newobj, (MethodInfo) method);
+					ig.Emit (OpCodes.Newobj, (MethodInfo) new_method);
 			}
 			
-			if (Initializers != null){
+			if (initializers != null){
 				//
 				// FIXME: Set this variable correctly.
 				// 
@@ -5460,7 +5503,7 @@ namespace Mono.CSharp {
 			//
 			Type t = Expr.Type;
 
-			if (t.IsSubclassOf (TypeManager.array_type))
+			if (t.IsArray)
 				return (new ArrayAccess (this)).Resolve (ec);
 			else if (t.IsPointer)
 				return MakePointerAccess ();
@@ -5474,7 +5517,7 @@ namespace Mono.CSharp {
 				return null;
 
 			Type t = Expr.Type;
-			if (t.IsSubclassOf (TypeManager.array_type))
+			if (t.IsArray)
 				return (new ArrayAccess (this)).ResolveLValue (ec, right_side);
 			else if (t.IsPointer)
 				return MakePointerAccess ();
@@ -5526,7 +5569,7 @@ namespace Mono.CSharp {
 					      ea.Arguments.Count);
 				return null;
 			}
-			type = t.GetElementType ();
+			type = TypeManager.TypeToCoreType (t.GetElementType ());
 			if (type.IsPointer && !ec.InUnsafe){
 				UnsafeError (ea.loc);
 				return null;

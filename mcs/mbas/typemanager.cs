@@ -522,7 +522,7 @@ public class TypeManager {
 		sig.args = args;
 		
 		mi = FindMembers (t, MemberTypes.Constructor,
-				  instance_and_static | BindingFlags.Public, signature_filter, sig);
+				  instance_and_static | BindingFlags.Public | BindingFlags.DeclaredOnly, signature_filter, sig);
 		if (mi == null || mi.Length == 0 || !(mi [0] is ConstructorInfo)){
 			Report.Error (-19, "Can not find the core constructor for type `" + t.Name + "'");
 			return null;
@@ -1036,6 +1036,42 @@ public class TypeManager {
 	}
 
 	/// <summary>
+	///   Given an array of interface types, expand and eliminate repeated ocurrences
+	///   of an interface.  
+	/// </summary>
+	///
+	/// <remarks>
+	///   This expands in context like: IA; IB : IA; IC : IA, IB; the interface "IC" to
+	///   be IA, IB, IC.
+	/// </remarks>
+	public static Type [] ExpandInterfaces (Type [] base_interfaces)
+	{
+		ArrayList new_ifaces = new ArrayList ();
+		
+		foreach (Type iface in base_interfaces){
+			new_ifaces.Add (iface);
+			
+			Type [] implementing = TypeManager.GetInterfaces (iface);
+			
+			foreach (Type imp in implementing){
+				bool found = false;
+				
+				foreach (Type ni in new_ifaces){
+					if (ni == imp){
+						found = true;
+						break;
+					}
+				}
+				if (!found)
+					new_ifaces.Add (imp);
+			}
+		}
+		Type [] ret = new Type [new_ifaces.Count];
+		new_ifaces.CopyTo (ret, 0);
+		return ret;
+	}
+		
+	/// <summary>
 	///   This function returns the interfaces in the type `t'.  Works with
 	///   both types and TypeBuilders.
 	/// </summary>
@@ -1054,9 +1090,24 @@ public class TypeManager {
 		if (t.IsArray)
 			t = TypeManager.array_type;
 		
-		if (t is TypeBuilder)
-			return (Type []) builder_to_ifaces [t];
-		else
+		if (t is TypeBuilder){
+			Type [] parent_ifaces;
+			
+			if (t.BaseType == null)
+				parent_ifaces = NoTypes;
+			else
+				parent_ifaces = GetInterfaces (t.BaseType);
+			Type [] type_ifaces = (Type []) builder_to_ifaces [t];
+			if (type_ifaces == null)
+				type_ifaces = NoTypes;
+
+			int parent_count = parent_ifaces.Length;
+			Type [] result = new Type [parent_count + type_ifaces.Length];
+			parent_ifaces.CopyTo (result, 0);
+			type_ifaces.CopyTo (result, parent_count);
+
+			return result;
+		} else
 			return t.GetInterfaces ();
 	}
 	
@@ -1180,6 +1231,45 @@ public class TypeManager {
 			return TypeManager.uint64_type;
 		}
 		throw new Exception ("Unhandled typecode in enum" + tc);
+	}
+
+	//
+	// When compiling corlib and called with one of the core types, return
+	// the corresponding typebuilder for that type.
+	//
+	public static Type TypeToCoreType (Type t)
+	{
+		if (RootContext.StdLib)
+			return t;
+
+		TypeCode tc = Type.GetTypeCode (t);
+
+		switch (tc){
+		case TypeCode.Boolean:
+			return TypeManager.bool_type;
+		case TypeCode.Byte:
+			return TypeManager.byte_type;
+		case TypeCode.SByte:
+			return TypeManager.sbyte_type;
+		case TypeCode.Char:
+			return TypeManager.char_type;
+		case TypeCode.Int16:
+			return TypeManager.short_type;
+		case TypeCode.UInt16:
+			return TypeManager.ushort_type;
+		case TypeCode.Int32:
+			return TypeManager.int32_type;
+		case TypeCode.UInt32:
+			return TypeManager.uint32_type;
+		case TypeCode.Int64:
+			return TypeManager.int64_type;
+		case TypeCode.UInt64:
+			return TypeManager.uint64_type;
+		case TypeCode.String:
+			return TypeManager.string_type;
+		default:
+			return t;
+		}
 	}
 
 	/// <summary>

@@ -110,6 +110,8 @@ namespace Mono.CSharp {
 		{
 			if (Type == null)
 				Type = CheckAttributeType (ec);
+			if (Type == null)
+				return null;
 
 			bool MethodImplAttr = false;
 			bool MarshalAsAttr = false;
@@ -142,6 +144,10 @@ namespace Mono.CSharp {
 			//
 			// First process positional arguments 
 			//
+
+			if (Type.Name.IndexOf ("DefaultValue") != -1){
+				Console.WriteLine ("HELLO");
+			}
 			
 			int i;
 			for (i = 0; i < pos_arg_count; i++) {
