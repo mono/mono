@@ -6,6 +6,7 @@ LIBRARY = Commons.Xml.Relaxng.dll
 LIB_MCS_FLAGS = /r:$(corlib) /r:System.dll /r:System.Xml.dll
 TEST_MCS_FLAGS = $(LIB_MCS_FLAGS)
 EXTRA_DISTFILES = \
+	Commons.Xml.Relaxng/RncParser.jay	\
 	Test/ChangeLog		\
 	Test/XmlFiles/ChangeLog	\
 	Test/XmlFiles/SimpleElementPattern1.xml	\
@@ -13,13 +14,15 @@ EXTRA_DISTFILES = \
 	Test/XmlFiles/SimpleElementPattern2.xml	\
 	Test/XmlFiles/SimpleElementPattern2.rng	\
 	Test/XmlFiles/team.xml	\
-	Test/XmlFiles/team.rng
+	Test/XmlFiles/team.rng	\
+	Test/XmlFiles/relaxng.rng	\
+	Test/XmlFiles/relaxng.rnc	\
+	$(wildcard Test/standalone_tests/*.cs)
 
-
-include ../../build/library.make
 
 Commons.Xml.Relaxng.Rnc/RncParser.cs : Commons.Xml.Relaxng.Rnc/RncParser.jay
-	cd Commons.Xml.Relaxng.Rnc; \
-	$(topdir)/jay/jay -ctv < ../../../jay/skeleton.cs RncParser.jay > RncParser.cs; \
-	cd ..
+	$(topdir)/jay/jay -ctv < $(topdir)/jay/skeleton.cs Commons.Xml.Relaxng.Rnc/RncParser.jay > Commons.Xml.Relaxng.Rnc/RncParser.cs;
 
+CLEAN_FILES = Commons.Xml.Relaxng.Rnc/RncParser.cs
+
+include ../../build/library.make

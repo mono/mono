@@ -1,5 +1,9 @@
 2004-03-18  Atsushi Enomoto <atsushi@ximian.com>
 
+	* Makefile : It was incorrect fix, and more fix on command line.
+
+2004-03-18  Atsushi Enomoto <atsushi@ximian.com>
+
 	* Makefile : path to jay should be supplied.
 
 2004-03-17  Atsushi Enomoto <atsushi@ximian.com>
