@@ -1,5 +1,7 @@
 2005-01-22  Ben Maurer  <bmaurer@ximian.com>
 
+	* outline.cs (OutlineProperty) handle mixed accessability.
+
 	* options.cs: Make things public.
 
 	* outline.cs: Use the Options class, rather than being passed

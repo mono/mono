@@ -297,7 +297,25 @@ public class Outline {
 	void OutlineProperty (PropertyInfo pi)
 	{
 		ParameterInfo [] idxp = pi.GetIndexParameters ();
-		MethodBase accessor = pi.CanRead ? pi.GetGetMethod (true) : pi.GetSetMethod (true);
+		MethodBase g = pi.GetGetMethod (true);
+		MethodBase s = pi.GetSetMethod (true);
+		MethodBase accessor = g == null ? g : s;
+		
+		if (pi.CanRead && pi.CanWrite) {
+
+			
+			// Get the more accessible accessor
+			if ((g.Attributes & MethodAttributes.MemberAccessMask) !=
+			    (s.Attributes & MethodAttributes.MemberAccessMask)) {
+				
+				if (g.IsPublic) accessor = g;
+				else if (s.IsPublic) accessor = s;
+				else if (g.IsFamilyOrAssembly) accessor = g;
+				else if (s.IsFamilyOrAssembly) accessor = s;
+				else if (g.IsAssembly || g.IsFamily) accessor = g;
+				else if (s.IsAssembly || s.IsFamily) accessor = s;
+			}
+		}
 		
 		o.Write (GetMethodVisibility (accessor));
 		o.Write (GetMethodModifiers  (accessor));
@@ -315,8 +333,19 @@ public class Outline {
 		o.WriteLine (" {");
 		o.Indent ++;
 		
-		if (pi.CanRead)  o.WriteLine ("get;");
-		if (pi.CanWrite) o.WriteLine ("set;");
+		if (g != null && ShowMember (g)) {
+			if ((g.Attributes & MethodAttributes.MemberAccessMask) !=
+			    (accessor.Attributes & MethodAttributes.MemberAccessMask))
+				o.Write (GetMethodVisibility (g));
+			o.WriteLine ("get;");
+		}
+		
+		if (s != null && ShowMember (s)) {
+			if ((s.Attributes & MethodAttributes.MemberAccessMask) !=
+			    (accessor.Attributes & MethodAttributes.MemberAccessMask))
+				o.Write (GetMethodVisibility (s));
+			o.WriteLine ("set;");
+		}
 		
 		o.Indent --;
 		o.Write ("}");
