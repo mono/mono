@@ -28,12 +28,13 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-namespace Microsoft.JScript.Tmp
-{
-	using System;
+using System;
 
-	public class EnumeratorPrototype : JSObject
-	{
+namespace Microsoft.JScript {
+
+	public class EnumeratorPrototype : JSObject {
+
+		[JSFunctionAttribute (JSFunctionAttributeEnum.HasThisObject, JSBuiltin.Enumerator_atEnd)]
 		public static bool atEnd (object thisObj)
 		{
 			throw new NotImplementedException ();
@@ -44,19 +45,19 @@ namespace Microsoft.JScript.Tmp
 			get { throw new NotImplementedException (); }
 		}
 
-
+		[JSFunctionAttribute (JSFunctionAttributeEnum.HasThisObject, JSBuiltin.Enumerator_item)]
 		public static object item (object thisObj)
 		{
 			throw new NotImplementedException ();
 		}
 
-
+		[JSFunctionAttribute (JSFunctionAttributeEnum.HasThisObject, JSBuiltin.Enumerator_moveFirst)]
 		public static void moveFirst (object thisObj)
 		{
 			throw new NotImplementedException ();
 		}
 
-
+		[JSFunctionAttribute (JSFunctionAttributeEnum.HasThisObject, JSBuiltin.Enumerator_moveNext)]
 		public static void moveNext (object thisObj)
 		{
 			throw new NotImplementedException ();

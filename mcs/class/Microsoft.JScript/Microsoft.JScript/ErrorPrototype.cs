@@ -28,19 +28,19 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-namespace Microsoft.JScript.Tmp
-{
-	using System;
+using System;
 
-	public class ErrorPrototype : JSObject
-	{
+namespace Microsoft.JScript {	
+
+	public class ErrorPrototype : JSObject {
+
 		public readonly string name;
 
 		public ErrorConstructor constructor {
 			get { throw new NotImplementedException (); }
 		}
 
-
+		[JSFunctionAttribute (JSFunctionAttributeEnum.HasThisObject, JSBuiltin.Error_toString)]
 		public static string toString (object thisObj)
 		{
 			throw new NotImplementedException ();
