@@ -2,6 +2,7 @@
 // System.Runtime.Remoting.Channels.ChannelServices.cs
 //
 // Author: Rodrigo Moya (rodrigo@ximian.com)
+//         Dietmar Maurer (dietmar@ximian.com)
 //
 // 2002 (C) Copyright, Ximian, Inc.
 //
@@ -11,6 +12,27 @@ using System.Runtime.Remoting.Messaging;
 
 namespace System.Runtime.Remoting.Channels
 {
+	internal class ChannelInfoStore : IChannelInfo
+	{
+		object [] data = null;
+
+		public ChannelInfoStore ()
+		{
+			this.data = ChannelServices.GetCurrentChannelInfo ();
+		}
+		
+		public object[] ChannelData {
+
+			get {
+				return data;
+			}
+			
+			set {
+				data = value;
+			}
+		}
+	}
+	
 	public sealed class ChannelServices
 	{
 		private static ArrayList registeredChannels = new ArrayList ();
@@ -78,6 +100,7 @@ namespace System.Runtime.Remoting.Channels
 
 		public static void RegisterChannel (IChannel chnl)
 	        {
+			// fixme: sort it by priority
 			registeredChannels.Add ((object) chnl);
 		}
 
@@ -95,6 +118,22 @@ namespace System.Runtime.Remoting.Channels
 				throw new RemotingException ();
 
 			registeredChannels.Remove ((object) chnl);
+		}
+
+		internal static object [] GetCurrentChannelInfo ()
+		{
+			ArrayList list = new ArrayList ();
+			
+			foreach (object chnl_obj in registeredChannels) {
+				IChannelReceiver chnl = chnl_obj as IChannelReceiver;
+				if (chnl != null) {
+					object chnl_data = chnl.ChannelData;
+					if (chnl_data != null)
+						list.Add (chnl_data);
+				}
+			}
+
+			return  list.ToArray ();
 		}
 	}
 }

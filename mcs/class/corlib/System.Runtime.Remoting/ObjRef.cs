@@ -13,24 +13,29 @@
 
 using System;
 using System.Runtime.Serialization;
+using System.Runtime.Remoting.Channels;
 
 namespace System.Runtime.Remoting {
 
 	[Serializable]
 	public class ObjRef : IObjectReference, ISerializable {
 		MarshalByRefObject mbr;
-		SerializationInfo si;
+		IChannelInfo chnl_info;
 		string uri;
 		Type type;
+
 		
 		public ObjRef ()
 		{
+			// no idea why this needs to be public
 		}
 		
 		public ObjRef (MarshalByRefObject mbr, Type type)
 		{
 			this.mbr = mbr;
 			this.type = type;
+
+			chnl_info = new ChannelInfoStore ();
 		}
 
 		[MonoTODO]
@@ -41,13 +46,14 @@ namespace System.Runtime.Remoting {
 			// This encarnates the object from serialized data.
 		}
 
-		[MonoTODO]
 		public virtual IChannelInfo ChannelInfo {
+
 			get {
-				throw new NotImplementedException ();
+				return chnl_info;
 			}
+			
 			set {
-				throw new NotImplementedException ();
+				chnl_info = value;
 			}
 		}
 		
@@ -86,20 +92,18 @@ namespace System.Runtime.Remoting {
 			// FIXME:
 		}
 
-		[MonoTODO]
 		public virtual object GetRealObject (StreamingContext sc)
 		{
-			// FIXME:
+			if (IsFromThisAppDomain ())
+				return mbr;
 			
+			// FIXME:
 			return null;
 		}
 
-		[MonoTODO]
 		public bool IsFromThisAppDomain ()
 		{
-			// FIXME:
-			
-			return true;
+			return (mbr != null);
 		}
 
 		[MonoTODO]

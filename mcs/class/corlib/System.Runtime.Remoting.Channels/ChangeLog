@@ -1,3 +1,7 @@
+2002-08-31  Dietmar Maurer  <dietmar@ximian.com>
+
+	* ChannelDataStore.cs: use a hash to store other keys
+
 2002-08-24  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* ChannelServices.cs: added private .ctor

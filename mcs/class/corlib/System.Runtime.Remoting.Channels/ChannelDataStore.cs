@@ -2,15 +2,19 @@
 // System.Runtime.Remoting.Channels.ChannelDataStore.cs
 //
 // Author: Rodrigo Moya (rodrigo@ximian.com)
+//         Dietmar Maurer (dietmar@ximian.com)
 //
 // 2002 (C) Copyright, Ximian, Inc.
 //
+
+using System.Collections;
 
 namespace System.Runtime.Remoting.Channels
 {
 	public class ChannelDataStore : IChannelDataStore
 	{
-		private string[] channelUris;
+		string[] channelUris;
+		Hashtable hash;
 		
 		public ChannelDataStore (string[] uris)
 		{
@@ -29,14 +33,18 @@ namespace System.Runtime.Remoting.Channels
 
 		public object this[object key]
 		{
-			[MonoTODO]
 			get {
-				throw new NotImplementedException ();
+				if (hash == null)
+					hash = new Hashtable ();
+				
+				return hash [key];
 			}
 
-			[MonoTODO]
 			set {
-				throw new NotImplementedException ();
+				if (hash == null)
+					hash = new Hashtable ();
+				
+				hash [key] = value;
 			}
 		}
 	}
