@@ -1,5 +1,7 @@
 2003-09-04  Zoltan Varga  <vargaz@freemail.hu>
 
+	* TODO: Some new optimization ideas.
+
 	* aot.c: Move AOT module loading logic here from mono_assembly_open.
 
 	* aot.c: Save the optimization flags used to compile the code into
