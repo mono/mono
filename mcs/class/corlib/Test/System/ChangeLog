@@ -1,3 +1,7 @@
+2003-09-09  Zoltan Varga  <vargaz@freemail.hu>
+
+	* ArrayTest.cs: Fix the expected exception on some methods.
+
 2003-08-22  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* StringTest.cs: added a couple of tests for Split. See bug #47802.
