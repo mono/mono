@@ -107,10 +107,10 @@ uninstall-local:
 else
 
 install-local: $(gacutil)
-	MONO_PATH="$(topdir)/class/lib/$(PROFILE)$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" $(RUNTIME) $(gacutil) /i $(the_lib) /f /root $(GACDIR) /package $(PACKAGE)
+	MONO_PATH="$(topdir)/class/lib/$(PROFILE):$$MONO_PATH" $(RUNTIME) $(gacutil) /i $(the_lib) /f /root $(GACDIR) /package $(PACKAGE)
 
 uninstall-local: $(gacutil)
-	MONO_PATH="$(topdir)/class/lib/$(PROFILE)$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" $(RUNTIME) $(gacutil) /u $(LIBRARY_NAME:.dll=)
+	MONO_PATH="$(topdir)/class/lib/$(PROFILE):$$MONO_PATH" $(RUNTIME) $(gacutil) /u $(LIBRARY_NAME:.dll=)
 
 endif
 
@@ -122,7 +122,7 @@ LIBRARY_SNK = $(topdir)/class/mono.snk
 endif
 
 $(the_lib_signature_stamp): $(the_lib) $(sn)
-	MONO_PATH="$(topdir)/class/lib/$(PROFILE)$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" $(RUNTIME) $(sn) -q -R $(the_lib) $(LIBRARY_SNK)
+	MONO_PATH="$(topdir)/class/lib/$(PROFILE):$$MONO_PATH" $(RUNTIME) $(sn) -q -R $(the_lib) $(LIBRARY_SNK)
 	echo stamp > $@
 endif
 
