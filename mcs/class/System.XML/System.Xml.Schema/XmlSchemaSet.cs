@@ -168,7 +168,7 @@ namespace System.Xml.Schema
 				col.OnValidationError (o, e);
 			if (ValidationEventHandler != null)
 				ValidationEventHandler (o, e);
-			else
+			else if (e.Severity == XmlSeverityType.Error)
 				throw e.Exception;
 		}
 

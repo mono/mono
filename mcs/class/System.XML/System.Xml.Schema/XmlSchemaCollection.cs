@@ -92,7 +92,15 @@ namespace System.Xml.Schema
 			if (!schema.IsCompiled)
 				schema.Compile (ValidationEventHandler, this, resolver);
 
+			string ns = GetSafeNs (schema.TargetNamespace);
+			if (schemaSet.Contains (ns))
+				schemaSet.Remove (schemaSet.Get (ns));
 			return schemaSet.Add (schema);
+		}
+
+		private string GetSafeNs (string ns)
+		{
+			return ns != null ? ns : String.Empty;
 		}
 
 		public void Add (XmlSchemaCollection schema)
@@ -100,8 +108,12 @@ namespace System.Xml.Schema
 			if (schema == null)
 				throw new ArgumentNullException ("schema");
 
-			foreach (XmlSchema s in schema)
+			foreach (XmlSchema s in schema) {
+				string ns = GetSafeNs (s.TargetNamespace);
+				if (schemaSet.Contains (ns))
+					schemaSet.Remove (schemaSet.Get (ns));
 				schemaSet.Add (s);
+			}
 		}
 
 		public bool Contains (string ns)
@@ -167,7 +179,7 @@ namespace System.Xml.Schema
 		{
 			if (ValidationEventHandler != null)
 				ValidationEventHandler (o, e);
-			else
+			else if (e.Severity == XmlSeverityType.Error)
 				throw e.Exception;
 		}
 

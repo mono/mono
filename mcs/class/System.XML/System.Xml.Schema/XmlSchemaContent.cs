@@ -23,5 +23,12 @@ namespace System.Xml.Schema
 		{
 			get { return actualBaseSchemaType; }
 		}
+
+		internal abstract XmlQualifiedName GetBaseTypeName ();
+
+		internal virtual XmlSchemaParticle GetParticle ()
+		{
+			return null; // default for simple types
+		}
 	}
 }

@@ -61,7 +61,6 @@ namespace System.Xml.Schema
 
 		/// <remarks>
 		/// </remarks>
-		[MonoTODO]
 		internal override int Compile(ValidationEventHandler h, XmlSchema schema)
 		{
 			// If this is already compiled this time, simply skip.
@@ -135,7 +134,16 @@ namespace System.Xml.Schema
 			return errorCount;
 		}
 		
-		[MonoTODO]
+		internal override XmlQualifiedName GetBaseTypeName ()
+		{
+			return baseTypeName;
+		}
+
+		internal override XmlSchemaParticle GetParticle ()
+		{
+			return particle;
+		}
+
 		internal override int Validate(ValidationEventHandler h, XmlSchema schema)
 		{
 			if (IsValidated (schema.ValidationId))

@@ -95,7 +95,7 @@ namespace System.Xml.Schema
 				xsobj,
 				sender,
 				null,
-				XmlSeverityType.Warning);
+				XmlSeverityType.Error);
 		}
 		internal static void warn(ValidationEventHandler handle,
 			string message,

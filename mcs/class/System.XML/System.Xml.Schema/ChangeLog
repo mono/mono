@@ -1,3 +1,18 @@
+2004-01-13  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlSchemaObject.cs : Fixed error() not to set severity as Warning.
+	* ValidationHandler.cs,
+	  XmlSchemaSet.cs,
+	  XmlSchemaCollection.cs : Throw exception only in case of errors.
+	* XmlSchemaCollection.cs : Remove schema from schemaset if exist.
+	  (It might not be good to use schemaset, but keep for a while)
+	* XmlSchemaContent.cs,
+	  XmlSchemaComplexContentExtension.cs,
+	  XmlSchemaComplexContentRestriction.cs,
+	  XmlSchemaSimpleContentExtension.cs,
+	  XmlSchemaSimpleContentRestriction.cs,
+	  : added GetBaseTypeName() and GetParticle() (not used yet).
+
 2004-01-11  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* BuiltInDatatype.cs : internal type should not appear in protected

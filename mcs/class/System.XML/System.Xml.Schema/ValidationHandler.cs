@@ -25,7 +25,8 @@ namespace System.Xml.Schema
 			ValidationEventArgs e = new ValidationEventArgs(ex,message,severity);
 			if(handle == null)
 			{
-				throw e.Exception;
+				if (e.Severity == XmlSeverityType.Error)
+					throw e.Exception;
 			}
 			else
 			{
