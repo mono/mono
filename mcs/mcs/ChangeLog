@@ -1,3 +1,11 @@
+2001-11-09  Miguel de Icaza  <miguel@ximian.com>
+
+	* enum.cs (Enum.Emit): Delay the lookup of loc until we run into
+	an error.  This removes the lookup from the critical path.
+
+	* cs-parser.jay: Removed use of temporary_loc, which is completely
+	broken. 
+
 2001-11-14  Miguel de Icaza  <miguel@ximian.com>
 
 	* support.cs (ReflectionParameters.ParameterModifier): Report

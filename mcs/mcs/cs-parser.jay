@@ -80,11 +80,6 @@ namespace CIR
 
 		RootContext rc;
 
-		// <summary>
-		//  Used to temporarily hold the lexer's location for storage later
-		// </summary>
-		Location temporary_loc;
-
 %}
 
 %token EOF
@@ -460,11 +455,11 @@ attribute_list
 attribute
 	: attribute_name
 	  {
-		temporary_loc = lexer.Location;
+		$$ = lexer.Location;
 	  }
 	  opt_attribute_arguments
 	  {
-		$$ = new Attribute ((string) $1, (ArrayList) $3, temporary_loc);
+		$$ = new Attribute ((string) $1, (ArrayList) $3, (Location) $$);
 	  }
 	;
 
@@ -888,7 +883,7 @@ property_declaration
 		implicit_value_parameter_type = (string) $3;
 
 		lexer.properties = true;
-		temporary_loc = lexer.Location;
+	        $$ = lexer.Location;
 	  }
 	  accessor_declarations 
 	  {
@@ -907,7 +902,7 @@ property_declaration
 			set_block = (Block) pair.Value;
 
 		prop = new Property ((string) $3, (string) $4, (int) $2, get_block, set_block,
-				     (Attributes) $1, temporary_loc);
+				     (Attributes) $1, (Location) $$);
 		
 		CheckDef (current_container.AddProperty (prop), prop.Name);
 		implicit_value_parameter_type = null;
@@ -1422,7 +1417,7 @@ indexer_declaration
 		implicit_value_parameter_type = decl.type;
 		
 		lexer.properties = true;
-		temporary_loc = lexer.Location;
+		$$ = lexer.Location;
 		parsing_indexer  = true;
 		
 		indexer_parameters = decl.param_list;
@@ -1449,7 +1444,7 @@ indexer_declaration
 			set_block = (Block) pair.Value;
 
 		indexer = new Indexer (decl.type, decl.interface_type, (int) $2, decl.param_list,
-				       get_block, set_block, (Attributes) $1, temporary_loc);
+				       get_block, set_block, (Attributes) $1, (Location) $$);
 
 		// Note that there is no equivalent of CheckDef for this case
 		// We shall handle this in semantic analysis
@@ -1537,11 +1532,11 @@ enum_member_declaration
 	  }
 	| opt_attributes IDENTIFIER
 	  {
-		  temporary_loc = lexer.Location;
+		  $$ = lexer.Location;
 	  }
           ASSIGN expression
 	  { 
-		$$ = new VariableDeclaration ((string) $2, $5, temporary_loc);
+		$$ = new VariableDeclaration ((string) $2, $5, lexer.Location);
 	  }
 	;
 

@@ -23,7 +23,7 @@ namespace CIR {
 		int mod_flags;
 		public TypeBuilder EnumBuilder;
 		public Attributes  OptAttributes;
-
+		
 		Type UnderlyingType;
 
 		public readonly RootContext RootContext;
@@ -106,7 +106,7 @@ namespace CIR {
 
 			EnumBuilder.DefineField ("value__", UnderlyingType,
 						 FieldAttributes.Public | FieldAttributes.SpecialName);
-			
+
 			RootContext.TypeManager.AddEnumType (EnumName, EnumBuilder, this);
 
 			return;
@@ -248,7 +248,7 @@ namespace CIR {
 					error31 ((Literal) e, loc);
 					return;
 				}
-				
+
 				fb.SetConstant (default_value);
 				field_builders.Add (fb);
 
