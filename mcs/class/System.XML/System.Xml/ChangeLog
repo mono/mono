@@ -1,5 +1,8 @@
 2002-03-13  Duncan Mak  <duncan@ximian.com>
 
+	* XmlException.cs: Made it [Serializable], implemented good ol'
+	GetObjectData, and the serialization constructor.
+
 	* XmlNamedNodeMap.cs (SetNamedItem): Check for the Name property.
 	(SetNamedItem): Reverted (added back in) the patch with the
 	ReadOnly checks. "Don't doubt yourself, my son... you were right!"

@@ -12,6 +12,7 @@ using System.Runtime.Serialization;
 
 namespace System.Xml
 {
+	[Serializable]
 	public class XmlException : SystemException
 	{
 		#region Fields
@@ -28,13 +29,14 @@ namespace System.Xml
 		{
 		}
 
-		[MonoTODO]
 		protected XmlException (SerializationInfo info, StreamingContext context)
 		{
-			throw new NotImplementedException ();
+			this.lineNumber = info.GetInt32 ("lineNumber");
+			this.linePosition = info.GetInt32 ("linePosition");
 		}
 
-		internal XmlException (string message) : base (message)
+		internal XmlException (string message)
+			: base (message)
 		{
 		}
 
@@ -56,6 +58,17 @@ namespace System.Xml
 		public int LinePosition 
 		{
 			get { return linePosition; }
+		}
+
+		#endregion
+
+		#region Methods
+
+		public override void GetObjectData (SerializationInfo info, StreamingContext context)
+		{
+			base.GetObjectData (info, context);
+			info.AddValue ("lineNumber", lineNumber);
+			info.AddValue ("linePosition", linePosition);
 		}
 
 		#endregion
