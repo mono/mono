@@ -1,3 +1,11 @@
+2004-12-04  Martin Baulig  <martin@ximian.com>
+
+	* gen-116.cs: New test for #69781.
+
+2004-12-04  Martin Baulig  <martin@ximian.com>
+
+	* gen-115.cs: New test for #58305.
+
 2004-12-03  Raja R Harinath  <rharinath@novell.com>
 
 	* Makefile (NEW_TEST_SOURCES_common): Add test-327 and test-328.
