@@ -1,3 +1,7 @@
+2004-11-01  Marek Safar  <marek.safar@seznam.cz>
+
+	* cs-parser.jay: Add error 1055 report.
+
 2004-11-01  Miguel de Icaza  <miguel@ximian.com>
 
 	* assign.cs (Assign.DoResolve): Only do the transform of

@@ -1811,6 +1811,12 @@ event_accessor_declarations
 	}	
 	| add_accessor_declaration  { $$ = null; } 
 	| remove_accessor_declaration { $$ = null; } 
+	| error
+	{ 
+		Report.Error (1055, lexer.Location, "An add or remove accessor expected");
+		$$ = null;
+	}
+	| { $$ = null; }
 	;
 
 add_accessor_declaration
