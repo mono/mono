@@ -605,7 +605,7 @@ namespace Mono.Security.Protocol.Tls
 				}
 				catch (TlsException ex)
 				{
-					throw new IOException("The authentication or decryption has failed.", ex);
+					throw new IOException("The authentication or decryption has failed.");
 				}
 				catch (Exception ex)
 				{
@@ -738,51 +738,58 @@ namespace Mono.Security.Protocol.Tls
 
 		private void doHandshake()
 		{
-			// Obtain supported cipher suites
-			this.context.SupportedCiphers = TlsCipherSuiteFactory.GetSupportedCiphers(this.context.SecurityProtocol);
-
-			// Send client hello
-			this.protocol.SendRecord(TlsHandshakeType.ClientHello);
-
-			// Read server response
-			while (!this.context.HelloDone)
+			try
 			{
-				// Read next record
-				this.protocol.ReceiveRecord();
-			}
+				// Obtain supported cipher suites
+				this.context.SupportedCiphers = TlsCipherSuiteFactory.GetSupportedCiphers(this.context.SecurityProtocol);
+
+				// Send client hello
+				this.protocol.SendRecord(TlsHandshakeType.ClientHello);
+
+				// Read server response
+				while (!this.context.HelloDone)
+				{
+					// Read next record
+					this.protocol.ReceiveRecord();
+				}
 			
-			// Send client certificate if requested
-			if (this.context.ServerSettings.CertificateRequest)
-			{
-				this.protocol.SendRecord(TlsHandshakeType.Certificate);
-			}
+				// Send client certificate if requested
+				if (this.context.ServerSettings.CertificateRequest)
+				{
+					this.protocol.SendRecord(TlsHandshakeType.Certificate);
+				}
 
-			// Send Client Key Exchange
-			this.protocol.SendRecord(TlsHandshakeType.ClientKeyExchange);
+				// Send Client Key Exchange
+				this.protocol.SendRecord(TlsHandshakeType.ClientKeyExchange);
 
-			// Now initialize session cipher with the generated keys
-			this.context.Cipher.InitializeCipher();
+				// Now initialize session cipher with the generated keys
+				this.context.Cipher.InitializeCipher();
 
-			// Send certificate verify if requested
-			if (this.context.ServerSettings.CertificateRequest)
-			{
-				this.protocol.SendRecord(TlsHandshakeType.CertificateVerify);
-			}
+				// Send certificate verify if requested
+				if (this.context.ServerSettings.CertificateRequest)
+				{
+					this.protocol.SendRecord(TlsHandshakeType.CertificateVerify);
+				}
 
-			// Send Cipher Spec protocol
-			this.protocol.SendChangeCipherSpec();			
+				// Send Cipher Spec protocol
+				this.protocol.SendChangeCipherSpec();			
 			
-			// Read record until server finished is received
-			while (!this.context.HandshakeFinished)
-			{
-				// If all goes well this will process messages:
-				// 		Change Cipher Spec
-				//		Server finished
-				this.protocol.ReceiveRecord();
-			}
+				// Read record until server finished is received
+				while (!this.context.HandshakeFinished)
+				{
+					// If all goes well this will process messages:
+					// 		Change Cipher Spec
+					//		Server finished
+					this.protocol.ReceiveRecord();
+				}
 
-			// Clear Key Info
-			this.context.ClearKeyInfo();
+				// Clear Key Info
+				this.context.ClearKeyInfo();
+			}
+			catch
+			{
+				throw new IOException("The authentication or decryption has failed.");
+			}
 		}
 
 		#endregion
