@@ -1,2 +1,6 @@
 *.dll
 list
+*.suo
+*.csproj.user
+bin
+obj
