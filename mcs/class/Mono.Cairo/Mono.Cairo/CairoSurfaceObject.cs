@@ -24,29 +24,30 @@ namespace Mono.Cairo {
                         surface = ptr;
                 }
 
-                public static CairoSurfaceObject CreateFromImage (
-                        string data, Cairo.Format format, int width, int height, int stride);
+                public static CairoSurfaceObject CreateForImage (
+                        string data, Cairo.Format format, int width, int height, int stride)
                 {
-                        IntPtr p = Cairo.cairo_surface_create_from_image (
-                                surface, data, format, width, height, stride);
+                        IntPtr p = Cairo.cairo_surface_create_for_image (
+                                data, format, width, height, stride);
                         
                         return new CairoSurfaceObject (p);
                 }
 
-                public static CairoMatrixObject CreateSimilar (Cairo.Format format, int width, int height);
+                public static CairoSurfaceObject CreateSimilar (
+                        CairoSurfaceObject surface, Cairo.Format format, int width, int height)
                 {
                         IntPtr p = Cairo.cairo_surface_create_similar (
-                                surface, format, width, height);
+                                surface.Pointer, format, width, height);
 
                         return new CairoSurfaceObject (p);
                 }
 
                 public static CairoSurfaceObject CreateSimilarSolid (
-                        Cairo.Format format,
+                        CairoSurfaceObject surface, Cairo.Format format,
                         int width, int height, double red, double green, double blue, double alpha)
                 {
-                        IntPtr p = Cairo.cairo_surface_create_similiar_solid (
-                                surface, format, width, height, red, green, blue, alpha);
+                        IntPtr p = Cairo.cairo_surface_create_similar_solid (
+                                surface.Pointer, format, width, height, red, green, blue, alpha);
 
                         return new CairoSurfaceObject (p);
                 }
@@ -77,9 +78,9 @@ namespace Mono.Cairo {
                         }
 
                         get {
-                                IntPtr p;
+                                IntPtr p = IntPtr.Zero;
                                 
-                                Cairo.cairo_surface_get_matrix (surface, p);
+                                Cairo.cairo_surface_get_matrix (surface, ref p);
 
                                 return new CairoMatrixObject (p);
                         }

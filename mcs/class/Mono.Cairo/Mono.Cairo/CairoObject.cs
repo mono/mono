@@ -49,7 +49,7 @@ namespace Mono.Cairo {
                         Cairo.cairo_restore (state);
                 }
                 
-                public Status Status {
+                public Cairo.Status Status {
                         get {
                                 return Cairo.cairo_get_status (state);
                         }
@@ -67,7 +67,7 @@ namespace Mono.Cairo {
                         }
                 }
                 
-                public Operator Operator {
+                public Cairo.Operator Operator {
                         set {
                                 Cairo.cairo_set_operator (state, value);
                         }
@@ -94,7 +94,7 @@ namespace Mono.Cairo {
 
                 public double Alpha {
                         set {
-                                Cairo.cairo_set_alpha (state, alpha);
+                                Cairo.cairo_set_alpha (state, value);
                         }
 
                         get {
@@ -138,7 +138,7 @@ namespace Mono.Cairo {
                         }
 
                         get {
-                                Cairo.cairo_get_line_join (state);
+                                return Cairo.cairo_get_line_join (state);
                         }
                 }
 
@@ -147,12 +147,11 @@ namespace Mono.Cairo {
                         Cairo.cairo_set_dash (state, dashes, ndash, offset);
                 }
 
-                public CairoPatternObject Pattern {
-
-                        set {
-                                Cairo.cairo_set_pattern (state, value.Pointer);
-                        }
-                }
+//              public CairoPatternObject Pattern {
+//                       set {
+//                              Cairo.cairo_set_pattern (state, value.Pointer);
+//                      }
+//              }
 
                 public double MiterLimit {
                         set {
@@ -160,7 +159,7 @@ namespace Mono.Cairo {
                         }
 
                         get {
-                                Cairo.cairo_get_miter_limit (state);
+                                return Cairo.cairo_get_miter_limit (state);
                         }
                 }
 
@@ -171,9 +170,9 @@ namespace Mono.Cairo {
 
                 public Point CurrentPoint {
                         get {
-                                int x, y;
+                                double x, y;
                                 Cairo.cairo_get_current_point (state, out x, out y);
-                                return new Point (x, y);
+                                return new Point ((int) x, (int) y);
                         }
                 }
 
@@ -194,7 +193,7 @@ namespace Mono.Cairo {
                         Cairo.cairo_line_to (state, x, y);
                 }
 
-                public void CurveTo (double x1, double y1, double x2, double y2, double x3, doubly y3)
+                public void CurveTo (double x1, double y1, double x2, double y2, double x3, double y3)
                 {
                         Cairo.cairo_curve_to (state, x1, y1, x2, x2, x3, y3);
                 }
@@ -254,7 +253,7 @@ namespace Mono.Cairo {
                 public void SetTargetImage (
                         string data, Cairo.Format format, int width, int height, int stride)
                 {
-                        cairo_set_target_image (state, data, format, width, height, stride);
+                        Cairo.cairo_set_target_image (state, data, format, width, height, stride);
                 }
 
 #endregion
@@ -276,22 +275,22 @@ namespace Mono.Cairo {
 
                 public void TransformPoint (ref double x, ref double y)
                 {
-                        Cairo.cairo_tranform_point (state, ref x, ref y);
+                        Cairo.cairo_transform_point (state, ref x, ref y);
                 }
 
                 public void TransformDistance (ref double dx, ref double dy)
                 {
-                        Cairo.cairo_tranform_distance (state, ref dx, ref dy);
+                        Cairo.cairo_transform_distance (state, ref dx, ref dy);
                 }
 
                 public void InverseTransformPoint (ref double x, ref double y)
                 {
-                        Cairo.cairo_inverse_tranform_point (state, ref x, ref y);
+                        Cairo.cairo_inverse_transform_point (state, ref x, ref y);
                 }
 
                 public void InverseTransformDistance (ref double dx, ref double dy)
                 {
-                        Cairo.cairo_inverse_tranform_distance (state, ref dx, ref dy);
+                        Cairo.cairo_inverse_transform_distance (state, ref dx, ref dy);
                 }
 
                 public void ConcatMatrix (CairoMatrixObject matrix)

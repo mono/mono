@@ -1,0 +1,4 @@
+./Mono.Cairo/CairoObject.cs
+./Mono.Cairo/Cairo.cs
+./Mono.Cairo/CairoSurfaceObject.cs
+./Mono.Cairo/CairoMatrixObject.cs

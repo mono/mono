@@ -24,9 +24,9 @@ namespace Mono.Cairo {
                 {                        
                 }
 
-                CairoMatrixObject (IntPtr ptr)
+                internal CairoMatrixObject (IntPtr ptr)
                 {
-                        surface = ptr;
+                        matrix = ptr;
                 }
 
                 public static IntPtr Create ()
@@ -41,7 +41,13 @@ namespace Mono.Cairo {
 
                 public Cairo.Status Copy (out CairoMatrixObject other)
                 {
-                        return Cairo.cairo_matrix_copy (matrix, out other.Pointer);
+                        IntPtr p = IntPtr.Zero;
+                        
+                        Cairo.Status status = Cairo.cairo_matrix_copy (matrix, out p);
+
+                        other = new CairoMatrixObject (p);
+
+                        return status;
                 }
 
                 public IntPtr Pointer {
@@ -79,16 +85,21 @@ namespace Mono.Cairo {
 
                 public Cairo.Status Invert ()
                 {
-                        return Cairo.cairo_matrix_inverse (matrix);
+                        return Cairo.cairo_matrix_invert (matrix);
                 }
 
                 public static Cairo.Status Multiply (
                         out CairoMatrixObject result,
                         CairoMatrixObject a, CairoMatrixObject b)
                 {
-                        return Cairo.cairo_matrix_multiply (
-                                out result.Pointer,
-                                a.Pointer, b.Pointer);
+                        IntPtr p = IntPtr.Zero;
+                        
+                        Cairo.Status status = Cairo.cairo_matrix_multiply (
+                                out p, a.Pointer, b.Pointer);
+
+                        result = new CairoMatrixObject (p);
+
+                        return status;
                 }
 
                 public Cairo.Status TransformDistance (ref double dx, ref double dy)
