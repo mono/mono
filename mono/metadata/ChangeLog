@@ -1,5 +1,8 @@
 2004-10-31  Zoltan Varga  <vargaz@freemail.hu>
 
+	* icall.c (ves_icall_Type_GetPropertiesByName): Handle properties
+	without accessors. Fixes #61561.
+
 	* appdomain.c (ves_icall_System_AppDomain_createDomain): Inherit
 	application base from the root domain if not set. Fixes #65641.
 
