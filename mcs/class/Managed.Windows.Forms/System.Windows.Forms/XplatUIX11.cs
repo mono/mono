@@ -122,7 +122,6 @@ namespace System.Windows.Forms {
 
 		internal static Caret		caret;			// To display a blinking caret
 
-		private static Hashtable	handle_data;
 		private static XEventQueue	message_queue;
 
 		private X11Keyboard keyboard;
@@ -670,8 +669,6 @@ namespace System.Windows.Forms {
 				post_message = XInternAtom (display_handle, "_SWF_PostMessageAtom", false);
 				hover.hevent = XInternAtom(display_handle, "_SWF_HoverAtom", false);
 
-				handle_data = new Hashtable ();
-
 				XSelectInput(DisplayHandle, root_window, EventMask.PropertyChangeMask);
 			} else {
 				throw new ArgumentNullException("Display", "Could not open display (X-Server required. Check you DISPLAY environment variable)");
@@ -889,10 +886,8 @@ namespace System.Windows.Forms {
 
 		internal override void DestroyWindow(IntPtr handle) {
 			lock (this) {
-				HandleData data = (HandleData) handle_data [handle];
-				if (data != null) {
-					data.Dispose ();
-					handle_data [handle] = null;
+				if (HandleData.Release(handle)) {
+					// Destroy if window still existed
 					XDestroyWindow(DisplayHandle, handle);
 				}
 			}
@@ -1074,12 +1069,9 @@ namespace System.Windows.Forms {
 		[MonoTODO("Add support for internal table of windows/DCs for looking up paint area and cleanup")]
 		internal override PaintEventArgs PaintEventStart(IntPtr handle) {
 			PaintEventArgs	paint_event;
+			HandleData	data;
 
-			HandleData data = (HandleData) handle_data [handle];
-			if (data == null) {
-				throw new Exception ("null data on paint event start: " + handle);
-
-			}
+			data = HandleData.Handle(handle);
 
 			if (caret.visible == 1) {
 				caret.paused = true;
@@ -1093,9 +1085,9 @@ namespace System.Windows.Forms {
 		}
 
 		internal override void PaintEventEnd(IntPtr handle) {
-			HandleData data = (HandleData) handle_data [handle];
-			if (data == null)
-				throw new Exception ("null data on PaintEventEnd");
+			HandleData	data;
+
+			data = HandleData.Handle(handle);
 			data.ClearInvalidArea ();
 			Graphics g = (Graphics) data.DeviceContext;
 			g.Flush ();
@@ -1195,12 +1187,9 @@ namespace System.Windows.Forms {
 		internal override IntPtr DefWndProc(ref Message msg) {
 			switch((Msg)msg.Msg) {
 				case Msg.WM_ERASEBKGND: {
-					HandleData data = (HandleData) handle_data [msg.HWnd];
-					if (data == null) {
-						throw new Exception ("null data on WM_ERASEBKGND: " + msg.HWnd);
+					HandleData	data;
 
-					}
-					
+					data = HandleData.Handle(msg.HWnd);
 					XClearArea(DisplayHandle, msg.HWnd, data.InvalidArea.Left, data.InvalidArea.Top, data.InvalidArea.Width, data.InvalidArea.Height, false);
 
 					return IntPtr.Zero;
@@ -1313,13 +1302,11 @@ namespace System.Windows.Forms {
 		}
 
 		private void ForceExpose (IntPtr handle) {
-			XEvent xevent;
+			XEvent		xevent;
+			HandleData	data;
 
-			HandleData data = (HandleData) handle_data [handle];
-			if (data == null) {
-				data = new HandleData ();
-				handle_data [handle] = data;
-			} else if (data.HasExpose || !data.IsVisible) {
+			data = HandleData.Handle(handle);
+			if (data.HasExpose || !data.IsVisible) {
 				return;
 			}
 
@@ -1334,11 +1321,9 @@ namespace System.Windows.Forms {
 
 		private void AddExpose (XEvent xevent)
 		{
-			HandleData data = (HandleData) handle_data [xevent.AnyEvent.window];
-			if (data == null) {
-				data = new HandleData ();
-				handle_data [xevent.AnyEvent.window] = data;
-			}
+			HandleData	data;
+
+			data = HandleData.Handle(xevent.AnyEvent.window);
 
 			if (!data.IsVisible) {
 				return;
@@ -1826,14 +1811,7 @@ namespace System.Windows.Forms {
 		}
 
 		internal override bool SetVisible(IntPtr handle, bool visible) {
-			HandleData data = (HandleData) handle_data [handle];
-
-			if (data == null) {
-				data = new HandleData ();
-				handle_data [handle] = data;
-			}
-
-			data.IsVisible = visible;
+			HandleData.Handle(handle).IsVisible = visible;
 
 			lock (xlib_lock) {
 				if (visible) {
@@ -1846,12 +1824,7 @@ namespace System.Windows.Forms {
 		}
 
 		internal override bool IsVisible(IntPtr handle) {
-			HandleData data = (HandleData) handle_data [handle];
-
-			if (data == null || data.IsVisible == true) {
-				return true;
-			}
-			return false;
+			return HandleData.Handle(handle).IsVisible;
 		}
 
 		internal override IntPtr SetParent(IntPtr handle, IntPtr parent) {
@@ -2328,11 +2301,8 @@ namespace System.Windows.Forms {
 			XGCValues	gc_values;
 			HandleData	data;
 
-			data = (HandleData) handle_data [hwnd];
-			if (data == null) {
-				data = new HandleData ();
-				handle_data [hwnd] = data;
-			} else if (data.InvalidArea != Rectangle.Empty) {
+			data = HandleData.Handle(hwnd);
+			if (data.InvalidArea != Rectangle.Empty) {
 				// BIG FAT WARNING. This only works with how we use this function right now
 				// where we basically still scroll the whole window, but work around areas
 				// that are covered by our children
@@ -2376,11 +2346,8 @@ namespace System.Windows.Forms {
 			int		depth;
 			HandleData	data;
 
-			data = (HandleData) handle_data [hwnd];
-			if (data == null) {
-				data = new HandleData ();
-				handle_data [hwnd] = data;
-			} else if (data.InvalidArea != Rectangle.Empty) {
+			data = HandleData.Handle(hwnd);
+			if (data.InvalidArea != Rectangle.Empty) {
 				data.ScrollInvalidArea(XAmount, YAmount);
 			}
 

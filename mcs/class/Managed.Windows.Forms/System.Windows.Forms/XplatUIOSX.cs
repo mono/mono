@@ -49,7 +49,6 @@ namespace System.Windows.Forms {
 		internal static OSXCaret caret;
 
 		internal static IntPtr mouseInWindow;
-		private static Hashtable handle_data;
 		private static Queue carbonEvents;
 		private CarbonEventHandler viewEventHandler;
 		private CarbonEventHandler windowEventHandler;
@@ -222,7 +221,6 @@ namespace System.Windows.Forms {
 			windowEventHandler = new CarbonEventHandler (WindowHandler);
 			ref_count = 0;
 			mouseInWindow = IntPtr.Zero;
-			handle_data = new Hashtable ();
 			carbonEvents = new Queue ();
 			grabWindow = IntPtr.Zero;
 			view_window_mapping = new Hashtable ();
@@ -512,12 +510,8 @@ namespace System.Windows.Forms {
 
 		internal override PaintEventArgs PaintEventStart(IntPtr handle) {
 			PaintEventArgs  paint_event;
-
-			HandleData data = (HandleData) handle_data [handle];
-			if (data == null) {
-				throw new Exception ("null data on paint event start: " + handle);
-			}
-
+			HandleData	data = HandleData.Handle(handle);
+ 
 			if (caret.visible == 1) {
 				caret.paused = true;
 				HideCaret ();
@@ -530,7 +524,8 @@ namespace System.Windows.Forms {
 		}
 
 		internal override void PaintEventEnd(IntPtr handle) {
-			HandleData data = (HandleData) handle_data [handle];
+			HandleData	data = HandleData.Handle(handle);
+
 			if (data == null)
 				throw new Exception ("null data on PaintEventEnd");
 			data.ClearInvalidArea ();
@@ -614,14 +609,12 @@ namespace System.Windows.Forms {
 		internal override void Invalidate (IntPtr handle, Rectangle rc, bool clear) {
 			// FIXME: We need to resolve the painting issues exposed by HIViewSetNeedsDisplayInRegion with listview
 			// This method isn't exactly right as some other event may AddToInvalidArea before this paint goes through
-			if (handle_data [handle] == null)
-				handle_data [handle] = new HandleData ();
 			MSG msg = new MSG ();
 			msg.hwnd = handle;
 			msg.message = Msg.WM_PAINT;
 			msg.wParam = IntPtr.Zero;
 			msg.lParam = IntPtr.Zero;
-			((HandleData) handle_data [handle]).AddToInvalidArea (rc.X, rc.Y, rc.Width, rc.Height);
+			HandleData.Handle(handle).AddToInvalidArea (rc.X, rc.Y, rc.Width, rc.Height);
 			carbonEvents.Enqueue (msg);
 	
 /*
@@ -939,11 +932,9 @@ namespace System.Windows.Forms {
 					case OSXConstants.kEventClassControl:
 						switch (eventKind) {
 							case OSXConstants.kEventControlDraw: {
-								if (handle_data [controlHnd] == null)
-									handle_data [controlHnd] = new HandleData ();
 								HIRect bounds = new HIRect ();
 								HIViewGetBounds (controlHnd, ref bounds); 
-								((HandleData) handle_data [controlHnd]).AddToInvalidArea ((int)bounds.origin.x, (int)bounds.origin.y, (int)bounds.size.width, (int)bounds.size.height);
+								HandleData.Handle(controlHnd).AddToInvalidArea ((int)bounds.origin.x, (int)bounds.origin.y, (int)bounds.size.width, (int)bounds.size.height);
 								msg.message = Msg.WM_PAINT;
 								msg.wParam = IntPtr.Zero;
 								msg.lParam = IntPtr.Zero;
@@ -964,7 +955,7 @@ namespace System.Windows.Forms {
 							}
 							case OSXConstants.kEventControlBoundsChanged: {
 /*
-								((HandleData) handle_data [msg.hwnd]).AddToInvalidArea ((int)bounds.origin.x, (int)bounds.origin.y, (int)bounds.size.width, (int)bounds.size.height);
+								HandleData.Handle(msg.hwnd).AddToInvalidArea ((int)bounds.origin.x, (int)bounds.origin.y, (int)bounds.size.width, (int)bounds.size.height);
 								msg.message = Msg.WM_PAINT;
 								msg.wParam = IntPtr.Zero;
 								msg.lParam = IntPtr.Zero;
@@ -1101,12 +1092,8 @@ namespace System.Windows.Forms {
 
 		internal override bool SetVisible(IntPtr handle, bool visible) {
 			// We dont have "windows" on OSX, we have views; so we toggle the view visibility here	
-			HandleData data = (HandleData) handle_data [handle];
+			HandleData data = HandleData.Handle(handle);
 
-			if (data == null) {
-				data = new HandleData ();
-				handle_data [handle] = data;
-			}
 			if (view_window_mapping [handle] != null && visible == true) {
 				ShowWindow ((IntPtr) view_window_mapping [handle]);
 			}
@@ -1134,12 +1121,7 @@ DEBUG THIS:
 		}
 
 		internal override bool IsVisible(IntPtr handle) {
-			HandleData data = (HandleData) handle_data [handle];
-
-			if (data == null || data.IsVisible == true) {
-				return true;
-			}
-			return false;
+			return HandleData.Handle(handle).IsVisible;
 		}
 
 		internal override IntPtr SetParent(IntPtr handle, IntPtr parent) {

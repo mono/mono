@@ -32,23 +32,71 @@ using System.Collections;
 namespace System.Windows.Forms {
 
 	internal class HandleData : IDisposable {
+		#region Local Variables
+		private static Hashtable	Handles = new Hashtable(100, 0.5f);	// I'm guessing here
 
-		private Queue		message_queue;
-		private Rectangle	invalid = Rectangle.Empty;
-		private Object		dc;
-		private bool		has_expose;
-		private bool		is_visible;
+		private Queue			message_queue;
+		private Rectangle		invalid = Rectangle.Empty;
+		private Object			dc;
+		private bool			has_expose;
+		private bool			is_visible;
+		private IntPtr			client;
+		#endregion	// Local Variables
 
 		#region Constructors and destructors
-		public HandleData ()
-		{
+		private HandleData() {
 			is_visible = true;
+		}
+
+		public HandleData (IntPtr handle) : this() {
+			// Add ourselves to the list
+			Handles[handle] = this;
 		}
 
 		public void Dispose () {
 			DeviceContext = null;
 		}
 		#endregion
+
+		#region	Static Methods
+		// Return new HandleData object for 'handle' or return existing, if already created
+		public static HandleData Set(IntPtr handle) {
+			HandleData	ret;
+
+			if ((ret = (HandleData)Handles[handle]) != null) {
+				return ret;
+			}
+
+			ret = new HandleData(handle);
+
+			return ret;
+		}
+
+		public static HandleData Handle(IntPtr handle) {
+			HandleData	ret;
+
+			ret = (HandleData)Handles[handle];
+			if (ret != null) {
+				return ret;
+			}
+			return new HandleData(handle);
+		}
+
+		public static bool Release(IntPtr handle) {
+			HandleData	ret;
+
+			ret = (HandleData)Handles[handle];
+
+			if (ret != null) {
+				ret.Dispose();
+				Handles[handle] = null;
+
+				return true;
+			}
+
+			return false;
+		}
+		#endregion	// Static Methods
 
 		#region Paint area handling
 		public Object DeviceContext {

@@ -53,7 +53,6 @@ namespace System.Windows.Forms {
 		internal static IntPtr		override_cursor;
 
 		internal static bool		themes_enabled;
-		private static Hashtable	handle_data;
 		private Hashtable		timer_list;
 		#endregion	// Local Variables
 
@@ -487,7 +486,6 @@ namespace System.Windows.Forms {
 				Win32MessageBox(IntPtr.Zero, "Could not create foster window, win32 error " + Win32GetLastError().ToString(), "Oops", 0);
 			}
 
-			handle_data = new Hashtable ();
 			timer_list = new Hashtable ();
 		}
 		#endregion	// Constructor & Destructor
@@ -814,11 +812,7 @@ namespace System.Windows.Forms {
 
 				hdc = Win32BeginPaint(handle, ref ps);
 
-				data = (HandleData) handle_data [0];
-				if (data == null) {
-					data = new HandleData();
-					handle_data[0] = data;
-				}
+				data = HandleData.Handle(IntPtr.Zero);
 
 				data.DeviceContext=(Object)ps;
 
@@ -844,11 +838,7 @@ namespace System.Windows.Forms {
 			HandleData	data;
 			PAINTSTRUCT	ps;			
 
-			data = (HandleData) handle_data [0];
-			if (data == null) {
-				data = new HandleData();
-				handle_data[0] = data;
-			}
+			data = HandleData.Handle(IntPtr.Zero);
 
 			//paint_event.Graphics.Dispose();
 			if (data.DeviceContext != null) {
@@ -924,10 +914,9 @@ namespace System.Windows.Forms {
 		}
 
 		internal override bool GetMessage(ref MSG msg, IntPtr hWnd, int wFilterMin, int wFilterMax) {
-			HandleData	data;
 			bool		result;
-			data = (HandleData) handle_data [0];
-			if ((data!=null) && data.GetMessage(ref msg)) {
+
+			if (HandleData.Handle(IntPtr.Zero).GetMessage(ref msg)) {
 				return true;
 			}
 
@@ -986,13 +975,8 @@ namespace System.Windows.Forms {
 					if (msg.hwnd != prev_mouse_hwnd) {
 						TRACKMOUSEEVENT	tme;
 
-						if (data == null) {
-							data = new HandleData();
-							handle_data[0] = data;
-						}
-
 						// The current message will be sent out next time around
-						data.StoreMessage(ref msg);
+						HandleData.Handle(IntPtr.Zero).StoreMessage(ref msg);
 
 						// This is the message we want to send at this point
 						msg.message = Msg.WM_MOUSE_ENTER;

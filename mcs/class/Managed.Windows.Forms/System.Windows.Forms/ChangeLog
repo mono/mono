@@ -1,3 +1,10 @@
+2005-02-02  Peter Bartok  <pbartok@novell.com>
+
+	* HandleData.cs: Introduced static methods to allow class 
+	  to be more self-contained and track it's own HandleData objects
+	* XplatUIOSX.cs, XplatUIWin32.cs, XplatUIX11.cs: Fixed usage of
+	  HandleData to use new static methods
+
 2005-02-02  Jordi Mas i Hernandez <jordi@ximian.com>
 
 	* Combobox.cs:
