@@ -3,13 +3,10 @@
 //
 // Authors:
 //	Tim Coleman <tim@timcoleman.com>
-//	Sebastien Pouliot <spouliot@motus.com>
+//	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // Copyright (C) 2002, Tim Coleman
 // Portions Copyright (C) 2003 Motus Technologies (http://www.motus.com)
-//
-
-//
 // Copyright (C) 2004 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -32,9 +29,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System;
 using System.Collections;
-using System.Security.Permissions;
 using System.Text;
 
 namespace System.Security.Permissions {
@@ -43,6 +38,8 @@ namespace System.Security.Permissions {
 	public sealed class EnvironmentPermission : CodeAccessPermission, IUnrestrictedPermission, IBuiltInPermission {
 
 		#region Fields
+
+		private const int version = 1;
 
 		EnvironmentPermissionAccess flags;
 		PermissionState _state;
@@ -55,16 +52,9 @@ namespace System.Security.Permissions {
 
 		public EnvironmentPermission (PermissionState state) : base ()
 		{
-			switch (state) {
-				case PermissionState.None:
-				case PermissionState.Unrestricted:
-					_state = state;
-					readList = new ArrayList ();
-					writeList = new ArrayList ();
-					break;
-				default:
-					throw new ArgumentException ("Invalid PermissionState", "state");
-			}
+			_state = CheckPermissionState (state, true);
+			readList = new ArrayList ();
+			writeList = new ArrayList ();
 		}
 
 		public EnvironmentPermission (EnvironmentPermissionAccess flag, string pathList) : base ()
@@ -82,6 +72,7 @@ namespace System.Security.Permissions {
 		{
 			if (pathList == null)
 				throw new ArgumentNullException ("pathList");
+
 			string[] paths;
 			switch (flag) {
 				case EnvironmentPermissionAccess.AllAccess:
@@ -129,14 +120,10 @@ namespace System.Security.Permissions {
 
 		public override void FromXml (SecurityElement esd)
 		{
-			if (esd == null)
-				throw new ArgumentNullException ("esd");
-			if (esd.Tag != "IPermission")
-				throw new ArgumentException ("not IPermission");
-			if (!(esd.Attributes ["class"] as string).StartsWith ("System.Security.Permissions.EnvironmentPermission"))
-				throw new ArgumentException ("not EnvironmentPermission");
-			if ((esd.Attributes ["version"] as string) != "1")
-				throw new ArgumentException ("wrong version");
+			// General validation in CodeAccessPermission
+			CheckSecurityElement (esd, "esd", version, version);
+			// Note: we do not (yet) care about the return value 
+			// as we only accept version 1 (min/max values)
 
 			string read = (esd.Attributes ["Read"] as string);
 			if ((read != null) && (read.Length > 0))
@@ -180,64 +167,60 @@ namespace System.Security.Permissions {
 
 		public override IPermission Intersect (IPermission target)
 		{
-			if (target == null)
+			EnvironmentPermission ep = Cast (target);
+			if (ep == null)
 				return null;
-			if (! (target is EnvironmentPermission))
-				throw new ArgumentException ("wrong type");
 
-			EnvironmentPermission o = (EnvironmentPermission) target;
-			int n = 0;
 			if (IsUnrestricted ())
-				return o.Copy ();
-			if (o.IsUnrestricted ())
+				return ep.Copy ();
+			if (ep.IsUnrestricted ())
 				return Copy ();
 
-			EnvironmentPermission ep = new EnvironmentPermission (PermissionState.None);
-			string readTarget = o.GetPathList (EnvironmentPermissionAccess.Read);
+			int n = 0;
+			EnvironmentPermission result = new EnvironmentPermission (PermissionState.None);
+			string readTarget = ep.GetPathList (EnvironmentPermissionAccess.Read);
 			if (readTarget != null) {
 				string[] targets = readTarget.Split (';');
 				foreach (string t in targets) {
 					if (readList.Contains (t)) {
-						ep.AddPathList (EnvironmentPermissionAccess.Read, t);
+						result.AddPathList (EnvironmentPermissionAccess.Read, t);
 						n++;
 					}
 				}
 			}
 
-			string writeTarget = o.GetPathList (EnvironmentPermissionAccess.Write);
+			string writeTarget = ep.GetPathList (EnvironmentPermissionAccess.Write);
 			if (writeTarget != null) {
 				string[] targets = writeTarget.Split (';');
 				foreach (string t in targets) {
 					if (writeList.Contains (t)) {
-						ep.AddPathList (EnvironmentPermissionAccess.Write, t);
+						result.AddPathList (EnvironmentPermissionAccess.Write, t);
 						n++;
 					}
 				}
 			}
-			return ((n > 0) ? ep : null);
+			return ((n > 0) ? result : null);
 		}
 
 		public override bool IsSubsetOf (IPermission target)
 		{
-			if (target == null)
+			EnvironmentPermission ep = Cast (target);
+			if (ep == null)
 				return false;
 
-			if (! (target is EnvironmentPermission))
-				throw new ArgumentException ("wrong type");
 
-			EnvironmentPermission o = (EnvironmentPermission) target;
 			if (IsUnrestricted ())
-				return o.IsUnrestricted ();
-			else if (o.IsUnrestricted ())
+				return ep.IsUnrestricted ();
+			else if (ep.IsUnrestricted ())
 				return true;
 
 			foreach (string s in readList) {
-				if (!o.readList.Contains (s))
+				if (!ep.readList.Contains (s))
 					return false;
 			}
 
 			foreach (string s in writeList) {
-				if (!o.writeList.Contains (s))
+				if (!ep.writeList.Contains (s))
 					return false;
 			}
 
@@ -288,7 +271,8 @@ namespace System.Security.Permissions {
 
 		public override SecurityElement ToXml ()
 		{
-			SecurityElement se = Element (this, 1);
+			SecurityElement se = Element (version);
+
 			if (_state == PermissionState.Unrestricted) {
 				se.AddAttribute ("Unrestricted", "true");
 			}
@@ -305,29 +289,42 @@ namespace System.Security.Permissions {
 
 		public override IPermission Union (IPermission other)
 		{
-			if (other == null)
+			EnvironmentPermission ep = Cast (other);
+			if (ep == null)
 				return Copy ();
-			if (! (other is EnvironmentPermission))
-				throw new ArgumentException ("wrong type");
 
-			EnvironmentPermission o = (EnvironmentPermission) other;
-			if (IsUnrestricted () || o.IsUnrestricted ())
+			if (IsUnrestricted () || ep.IsUnrestricted ())
 				return new EnvironmentPermission (PermissionState.Unrestricted);
 
-			EnvironmentPermission ep = (EnvironmentPermission) Copy ();
-			string path = o.GetPathList (EnvironmentPermissionAccess.Read);
+			EnvironmentPermission result = (EnvironmentPermission) Copy ();
+			string path = ep.GetPathList (EnvironmentPermissionAccess.Read);
 			if (path != null) 
-				ep.AddPathList (EnvironmentPermissionAccess.Read, path);
-			path = o.GetPathList (EnvironmentPermissionAccess.Write);
+				result.AddPathList (EnvironmentPermissionAccess.Read, path);
+			path = ep.GetPathList (EnvironmentPermissionAccess.Write);
 			if (path != null)
-				ep.AddPathList (EnvironmentPermissionAccess.Write, path);
-			return ep;
+				result.AddPathList (EnvironmentPermissionAccess.Write, path);
+			return result;
 		}
 
 		// IBuiltInPermission
 		int IBuiltInPermission.GetTokenIndex ()
 		{
-			return 0;
+			return (int) BuiltInToken.Environment;
+		}
+
+		// helpers
+
+		private EnvironmentPermission Cast (IPermission target)
+		{
+			if (target == null)
+				return null;
+
+			EnvironmentPermission ep = (target as EnvironmentPermission);
+			if (ep == null) {
+				ThrowInvalidPermission (target, typeof (EnvironmentPermission));
+			}
+
+			return ep;
 		}
 
 		#endregion // Methods

@@ -1,5 +1,12 @@
 2004-08-17  Sebastien Pouliot  <sebastien@ximian.com>
 
+	* EnvironmentPermission.cs: Updated to use the common template.
+	* FileDialogPermission.cs: Updated to use the common template.
+	* PublisherIdentityPermission.cs: Updated to use the common template.
+	* ReflectionPermission.cs: Updated to use the common template.
+
+2004-08-17  Sebastien Pouliot  <sebastien@ximian.com>
+
 	* IBuiltInPermission.cs: Added a new internal enum to store the index
 	of all corlib's permissions (as the index can changes in newer 
 	versions of the framework, e.g. 2.0).

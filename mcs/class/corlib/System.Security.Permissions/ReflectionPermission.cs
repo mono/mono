@@ -3,13 +3,10 @@
 //
 // Authors:
 //	Tim Coleman <tim@timcoleman.com>
-//	Sebastien Pouliot (spouliot@motus.com)
+//	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // Copyright (C) 2002, Tim Coleman
 // Portions (C) 2003 Motus Technologies Inc. (http://www.motus.com)
-//
-
-//
 // Copyright (C) 2004 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -32,53 +29,45 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System;
+using System.Globalization;
 
 namespace System.Security.Permissions {
 
 	[Serializable]
 	public sealed class ReflectionPermission : CodeAccessPermission, IUnrestrictedPermission, IBuiltInPermission {
 
-		#region Fields
+		private const int version = 1;
 
 		ReflectionPermissionFlag flags;
-		PermissionState state;
 
-		#endregion // Fields
-
-		#region Constructors
 
 		public ReflectionPermission (PermissionState state)
 		{
-			switch (state) {
-				case PermissionState.None:
-					flags = ReflectionPermissionFlag.NoFlags;
-					break;
-				case PermissionState.Unrestricted:
-					flags = ReflectionPermissionFlag.AllFlags;
-					break;
-				default:
-					throw new ArgumentException ("Invalid PermissionState");
-			}
+			if (CheckPermissionState (state, true) == PermissionState.Unrestricted)
+				flags = ReflectionPermissionFlag.AllFlags;
+			else
+				flags = ReflectionPermissionFlag.NoFlags;
 		}
 
 		public ReflectionPermission (ReflectionPermissionFlag flag)
 		{
-			flags = flag;
+			// reuse validation by the Flags property
+			Flags = flag;
 		}
 
-		#endregion // Constructors
-
-		#region Properties
 
 		public ReflectionPermissionFlag Flags {
 			get { return flags; }
-			set { flags = value; }
+			set {
+				if ((value & ReflectionPermissionFlag.AllFlags) != value) {
+					string msg = String.Format (Locale.GetText ("Invalid flags {0}"), value);
+					throw new ArgumentException (msg, "ReflectionPermissionFlag");
+				}
+
+				flags = value;
+			}
 		}
 
-		#endregion // Properties
-
-		#region Methods
 
 		public override IPermission Copy ()
 		{
@@ -87,17 +76,14 @@ namespace System.Security.Permissions {
 
 		public override void FromXml (SecurityElement esd)
 		{
-			if (esd == null)
-				throw new ArgumentNullException ("esd");
-			if (esd.Tag != "IPermission")
-				throw new ArgumentException ("not IPermission");
-			if (!(esd.Attributes ["class"] as string).StartsWith ("System.Security.Permissions.ReflectionPermission"))
-				throw new ArgumentException ("not ReflectionPermission");
-			if ((esd.Attributes ["version"] as string) != "1")
-				throw new ArgumentException ("wrong version");
+			// General validation in CodeAccessPermission
+			CheckSecurityElement (esd, "esd", version, version);
+			// Note: we do not (yet) care about the return value 
+			// as we only accept version 1 (min/max values)
 
-			if ((esd.Attributes ["Unrestricted"] as string) == "true")
+			if (IsUnrestricted (esd)) {
 				flags = ReflectionPermissionFlag.AllFlags;
+			}
 			else {
 				flags = ReflectionPermissionFlag.NoFlags;
 				string xmlFlags = (esd.Attributes ["Flags"] as string);
@@ -112,45 +98,40 @@ namespace System.Security.Permissions {
 
 		public override IPermission Intersect (IPermission target)
 		{
-			if (target == null)
+			ReflectionPermission rp = Cast (target);
+			if (rp == null)
 				return null;
-			if (! (target is ReflectionPermission))
-				throw new ArgumentException ("wrong type");
 
-			ReflectionPermission o = (ReflectionPermission) target;
 			if (IsUnrestricted ()) {
-				if (o.Flags == ReflectionPermissionFlag.NoFlags)
+				if (rp.Flags == ReflectionPermissionFlag.NoFlags)
 					return null;
 				else
-					return o.Copy ();
+					return rp.Copy ();
 			}
-			if (o.IsUnrestricted ()) {
+			if (rp.IsUnrestricted ()) {
 				if (flags == ReflectionPermissionFlag.NoFlags)
 					return null;
 				else
 					return Copy ();
 			}
 
-			ReflectionPermission p = (ReflectionPermission) o.Copy ();
+			ReflectionPermission p = (ReflectionPermission) rp.Copy ();
 			p.Flags &= flags;
 			return ((p.Flags == ReflectionPermissionFlag.NoFlags) ? null : p);
 		}
 
 		public override bool IsSubsetOf (IPermission target)
 		{
-			if (target == null)
+			ReflectionPermission rp = Cast (target);
+			if (rp == null)
 				return (flags == ReflectionPermissionFlag.NoFlags);
 
-			if (! (target is ReflectionPermission))
-				throw new ArgumentException ("wrong type");
-
-			ReflectionPermission o = (ReflectionPermission) target;
 			if (IsUnrestricted ())
-				return o.IsUnrestricted ();
-			else if (o.IsUnrestricted ())
+				return rp.IsUnrestricted ();
+			else if (rp.IsUnrestricted ())
 				return true;
 
-			return ((flags & o.Flags) == flags);
+			return ((flags & rp.Flags) == flags);
 		}
 
 		public bool IsUnrestricted ()
@@ -160,7 +141,7 @@ namespace System.Security.Permissions {
 
 		public override SecurityElement ToXml ()
 		{
-			SecurityElement se = Element (this, 1);
+			SecurityElement se = Element (version);
 			if (IsUnrestricted ()) {
 				se.AddAttribute ("Unrestricted", "true");
 			}
@@ -191,16 +172,14 @@ namespace System.Security.Permissions {
 
 		public override IPermission Union (IPermission other)
 		{
+			ReflectionPermission rp = Cast (other);
 			if (other == null)
 				return Copy ();
-			if (! (other is ReflectionPermission))
-				throw new ArgumentException ("wrong type");
 
-			ReflectionPermission o = (ReflectionPermission) other;
-			if (IsUnrestricted () || o.IsUnrestricted ())
+			if (IsUnrestricted () || rp.IsUnrestricted ())
 				return new ReflectionPermission (PermissionState.Unrestricted);
 
-			ReflectionPermission p = (ReflectionPermission) o.Copy ();
+			ReflectionPermission p = (ReflectionPermission) rp.Copy ();
 			p.Flags |= flags;
 			return p;
 		}
@@ -208,9 +187,22 @@ namespace System.Security.Permissions {
 		// IBuiltInPermission
 		int IBuiltInPermission.GetTokenIndex ()
 		{
-			return 4;
+			return (int) BuiltInToken.Reflection;
 		}
 
-		#endregion // Methods
+		// helpers
+
+		private ReflectionPermission Cast (IPermission target)
+		{
+			if (target == null)
+				return null;
+
+			ReflectionPermission rp = (target as ReflectionPermission);
+			if (rp == null) {
+				ThrowInvalidPermission (target, typeof (ReflectionPermission));
+			}
+
+			return rp;
+		}
 	}
 }
