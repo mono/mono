@@ -28,47 +28,47 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-namespace Microsoft.JScript.Tmp
-{
-	using System;
+using System;
 
-	public class ObjectPrototype : JSObject
-	{
+namespace Microsoft.JScript {
+
+	public class ObjectPrototype : JSObject	{
+
 		public static ObjectConstructor constructor {
 			get { throw new NotImplementedException (); }
 		}
 
-
+		[JSFunctionAttribute (JSFunctionAttributeEnum.HasThisObject, JSBuiltin.Object_hasOwnProperty)]
 		public static bool hasOwnProperty (object thisObj, object name)
 		{
 			throw new NotImplementedException ();
 		}
 
-
+		[JSFunctionAttribute (JSFunctionAttributeEnum.HasThisObject, JSBuiltin.Object_isPrototypeOf)]
 		public static bool isPrototypeOf (object thisObj, object obj)
 		{
 			throw new NotImplementedException ();
 		}
 
-
+		[JSFunctionAttribute (JSFunctionAttributeEnum.HasThisObject, JSBuiltin.Object_propertyIsEnumerable)]
 		public static bool propertyIsEnumerable (object thisObj, object name)
 		{
 			throw new NotImplementedException ();
 		}
 
-
+		[JSFunctionAttribute (JSFunctionAttributeEnum.HasThisObject, JSBuiltin.Object_toLocaleString)]
 		public static string toLocaleString (object thisObj)
 		{
 			throw new NotImplementedException ();
 		}
 
-
+		[JSFunctionAttribute (JSFunctionAttributeEnum.HasThisObject, JSBuiltin.Object_toString)]
 		public static string toString (object thisObj)
 		{
 			throw new NotImplementedException ();
 		}
 
-
+		[JSFunctionAttribute (JSFunctionAttributeEnum.HasThisObject, JSBuiltin.Object_valueOf)]
 		public static object valueOf (object thisObj)
 		{
 			throw new NotImplementedException ();
