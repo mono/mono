@@ -3188,14 +3188,21 @@ namespace Mono.CSharp {
 						Modifiers.Error_InvalidModifier (Location, "public, virtual or abstract");
 						implementing = null;
 					}
-				} else {
-					//
-					// If this is an interface method implementation,
-					// check for public accessibility
-					//
-					if ((flags & MethodAttributes.MemberAccessMask) != MethodAttributes.Public){
-						if (TypeManager.IsInterfaceType (implementing.DeclaringType))
-							implementing = null;
+				} else if ((flags & MethodAttributes.MemberAccessMask) != MethodAttributes.Public){
+					if (TypeManager.IsInterfaceType (implementing.DeclaringType)){
+						//
+						// If this is an interface method implementation,
+						// check for public accessibility
+						//
+						implementing = null;
+					} else if ((flags & MethodAttributes.MemberAccessMask) == MethodAttributes.Private){
+						// We may never be private.
+						implementing = null;
+					} else if ((modifiers & Modifiers.OVERRIDE) == 0){
+						//
+						// We may be protected if we're overriding something.
+						//
+						implementing = null;
 					}
 				} 
 					
