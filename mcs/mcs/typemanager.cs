@@ -1182,6 +1182,43 @@ public class TypeManager {
 		throw new Exception ("Unhandled typecode in enum" + tc);
 	}
 
+	//
+	// When compiling corlib and called with one of the core types, return
+	// the corresponding typebuilder for that type.
+	//
+	public static Type TypeToCoreType (Type t)
+	{
+		if (RootContext.StdLib)
+			return t;
+
+		TypeCode tc = Type.GetTypeCode (t);
+
+		switch (tc){
+		case TypeCode.Boolean:
+			return TypeManager.bool_type;
+		case TypeCode.Byte:
+			return TypeManager.byte_type;
+		case TypeCode.SByte:
+			return TypeManager.sbyte_type;
+		case TypeCode.Char:
+			return TypeManager.char_type;
+		case TypeCode.Int16:
+			return TypeManager.short_type;
+		case TypeCode.UInt16:
+			return TypeManager.ushort_type;
+		case TypeCode.Int32:
+			return TypeManager.int32_type;
+		case TypeCode.UInt32:
+			return TypeManager.uint32_type;
+		case TypeCode.Int64:
+			return TypeManager.int64_type;
+		case TypeCode.UInt64:
+			return TypeManager.uint64_type;
+		default:
+			return t;
+		}
+	}
+
 	/// <summary>
 	///   Utility function that can be used to probe whether a type
 	///   is managed or not.  

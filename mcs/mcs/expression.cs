@@ -5569,7 +5569,7 @@ namespace Mono.CSharp {
 					      ea.Arguments.Count);
 				return null;
 			}
-			type = t.GetElementType ();
+			type = TypeManager.TypeToCoreType (t.GetElementType ());
 			if (type.IsPointer && !ec.InUnsafe){
 				UnsafeError (ea.loc);
 				return null;

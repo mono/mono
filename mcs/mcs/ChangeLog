@@ -1,5 +1,14 @@
 2002-06-21  Martin Baulig  <martin@gnome.org>
 
+	* typemanager.cs (TypeManager.TypeToCoreType): New function.  When compiling corlib
+	and called with one of the core types, return the corresponding typebuilder for
+	that type.
+
+	* expression.cs (ArrayAccess.DoResolve): Call TypeManager.TypeToCoreType() on the
+	element type.
+
+2002-06-21  Martin Baulig  <martin@gnome.org>
+
 	* ecore.cs (Expression.ExplicitReferenceConversionExists): Use
 	`target_type.IsArray' instead of `target_type.IsSubclassOf (TypeManager.array_type)'.
 	(Expression.ConvertReferenceExplicit): Likewise.
