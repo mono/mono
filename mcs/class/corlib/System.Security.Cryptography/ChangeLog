@@ -1,4 +1,12 @@
+2004-09-16  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* DESCryptoServiceProvider.cs: Fixed warning (l4) by adding empty {}.
+	* DSASignatureDeformatter.cs: Fixed warning (l4) for unused variable.
+	* DSASignatureFormatter.cs: Fixed warning (l4) for unused variable.
+	* HMACSHA1.cs: Fixed warning (l4) for unused variable.
+
 2004-09-03  Tim Coleman (tim@timcoleman.com)
+
 	* CryptoConfig.cs: Add new Xml cryptography class info.
 
 2004-08-08  Sebastien Pouliot  <sebastien@ximian.com>

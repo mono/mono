@@ -6,10 +6,6 @@
 //	Sebastien Pouliot (sebastien@ximian.com)
 //
 // Portions (C) 2002 Motus Technologies Inc. (http://www.motus.com)
-// (C) 2004 Novell (http://www.novell.com)
-//
-
-//
 // Copyright (C) 2004 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -32,7 +28,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System;
 using System.Globalization;
 
 namespace System.Security.Cryptography {
@@ -67,7 +62,7 @@ namespace System.Security.Cryptography {
 
 			try {
 				// just to test, we don't need the object
-				SHA1 hash = SHA1.Create (strName);
+				SHA1.Create (strName);
 			}
 			catch (InvalidCastException) {
 				throw new CryptographicUnexpectedOperationException (

@@ -27,7 +27,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System;
 using System.IO;
 
 using Mono.Security.Cryptography;
@@ -103,8 +102,11 @@ namespace System.Security.Cryptography {
 			// let us throw an exception if hash name is invalid
 			// for HMACSHA1 (obviously this can't be done by the 
 			// generic HMAC class)
-			SHA1 sha = (SHA1) hmac.Algo;
-
+			if (!(hmac.Algo is SHA1)) {
+				string algo = (hmac.Algo == null) ? "none" : hmac.Algo.GetType ().ToString ();
+				string msg = Locale.GetText ("Invalid hash algorithm '{0}', expected '{1}'.");
+				throw new InvalidCastException (String.Format (msg, algo, "SHA1"));
+			}
 			State = 0;
 			hmac.Initialize ();
 		}

@@ -6,10 +6,6 @@
 //	Sebastien Pouliot (sebastien@ximian.com)
 //
 // Portions (C) 2002 Motus Technologies Inc. (http://www.motus.com)
-// (C) 2004 Novell (http://www.novell.com)
-//
-
-//
 // Copyright (C) 2004 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -32,7 +28,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System;
 using Mono.Security.Cryptography;
 
 namespace System.Security.Cryptography {
@@ -220,7 +215,9 @@ namespace System.Security.Cryptography {
 	
 			for (int i = 0; i < leftRot.Length; i++) {
 				int r = 0;
-				for (int j = 0; j <= i; r += leftRot [j++]);
+				for (int j = 0; j <= i; r += leftRot [j++]) {
+					// no statement (confuse the compiler == warning)
+				}
 				leftRotTotal [i]  = (byte) r;
 			}
 	
