@@ -43,7 +43,7 @@ namespace System.Security.Permissions {
 		AssemblyIsolationByRoamingUser = 0x60,
 		AdministerIsolatedStorageByUser = 0x70,
 		UnrestrictedIsolatedStorage = 0xF0,
-#if NET_2_0
+#if NET_2_0 || BOOTSTRAP_NET_2_0
 		ApplicationIsolationByUser = 0x25,
 		DomainIsolationByMachine = 0x30,
 		AssemblyIsolationByMachine = 0x40,

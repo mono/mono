@@ -1,3 +1,8 @@
+2005-03-17  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* IsolatedStorageContainment.cs: Add missing BOOTSTRAP_NET_2_0 to new
+	enum values. Fix bug #73046.
+
 2005-03-17  Martin Baulig  <martin@ximian.com>
 
 	* SecurityAction.cs: Use `#if NET_2_0 || BOOTSTRAP_NET_2_0'.
