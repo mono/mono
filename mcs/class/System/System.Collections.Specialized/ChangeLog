@@ -1,3 +1,9 @@
+2004-06-05  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* HybridDictionary.cs: Fixed Contains for null argument.
+	* NameValueCollection.cs: Fixed Set to remove existing values. Fixed
+	Add(NVC) to throw same exception as MS implementation.
+
 2004-05-24  Lluis Sanchez Gual  <lluis@ximian.com>
 
 	* StringCollection.cs: Renamed internal variable to make serialization

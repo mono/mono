@@ -49,7 +49,7 @@ namespace System.Collections.Specialized{
 		public NameValueCollection( NameValueCollection col ) : base(col.HashCodeProvider,col.Comparer)
 		{
 			if (col==null)
-				throw new ArgumentNullException("Null argument is not allowed");
+				throw new ArgumentNullException ("col");
 			Add(col);
 		}
 
@@ -145,7 +145,9 @@ namespace System.Collections.Specialized{
 			if (this.IsReadOnly)
 				throw new NotSupportedException ("Collection is read-only");
 			if (c == null)
-				throw new ArgumentNullException ();
+				throw new NullReferenceException ("c");
+// make sense - but it's not the exception thrown
+//				throw new ArgumentNullException ();
 			
 			InvalidateCachedArrays ();
 			int max = c.Count;
@@ -161,11 +163,8 @@ namespace System.Collections.Specialized{
 		/// <summary> SDK: Adds an entry with the specified name and value to the 
 		/// NameValueCollection. </summary>
 		/// 
-		/// LAMESPEC: 
 		/// in SDK doc: If the same value already exists under the same key in the collection, 
-		/// the new value overwrites the old value.
-		/// however the Microsoft implemenatation in this case just adds one more value
-		/// in other words after
+		/// it just adds one more value in other words after
 		/// <code>
 		/// NameValueCollection nvc;
 		/// nvc.Add("LAZY","BASTARD")
@@ -338,16 +337,22 @@ namespace System.Collections.Specialized{
 		/// <summary>
 		/// Sets the value of an entry in the NameValueCollection.
 		/// </summary>
-		public virtual void Set( string name, string value )
+		public virtual void Set (string name, string value)
 		{
 			if (this.IsReadOnly)
-				throw new NotSupportedException("Collection is read-only");
-			InvalidateCachedArrays();
-			
-			ArrayList values = new ArrayList();
-			values.Add(value);
-			BaseSet(name,values);
+				throw new NotSupportedException ("Collection is read-only");
 
+			InvalidateCachedArrays ();
+			
+			ArrayList values = new ArrayList ();
+			if (value != null) {
+				values.Add (value);
+				BaseSet (name,values);
+			}
+			else {
+				// remove all entries
+				BaseSet (name, null);
+			}
 		}
 		
 

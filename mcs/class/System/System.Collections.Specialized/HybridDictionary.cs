@@ -4,6 +4,8 @@
 // Author:
 //   Lawrence Pit (loz@cable.a2000.nl)
 //
+// Copyright (C) 2004 Novell (http://www.novell.com)
+//
 
 using System;
 using System.Collections;
@@ -134,6 +136,8 @@ namespace System.Collections.Specialized {
 		
 		public bool Contains (object key)
 		{
+			if (key == null)
+				return false;
 			if (list != null)
 				return list.Contains (key);
 			return hashtable.Contains (key);
