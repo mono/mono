@@ -1,3 +1,8 @@
+2004-01-19  Jackson Harper <jackson@ximian.com>
+
+	* FloatingPointFormatter.cs: Use the default decimal digits count
+	if they are not specified. This fixes bug #52927.
+	
 2004-01-19  Zoltan Varga  <vargaz@freemail.hu>
 
 	* Environment.cs: Bump version number.

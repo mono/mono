@@ -32,6 +32,8 @@ namespace System {
 		int dec_len2;
 		int dec_len_min2;
 
+		bool no_precision_specified;
+
 		public FloatingPointFormatter
 			(double p, double p10, int dec_len, int dec_len_min,
 			 double p2, double p102, int dec_len2, int dec_len_min2) {
@@ -47,6 +49,7 @@ namespace System {
 
 		public string GetStringFrom
 				(string format, NumberFormatInfo nfi, double value) {
+			no_precision_specified = false;
 			if (format == null || format == "") {
 				format = "G";
 			}
@@ -122,6 +125,7 @@ namespace System {
 			switch (format.Length) {
 			case 1:
 				specifier = Char.ToUpper(format[0]);
+				no_precision_specified = true;
 				return true;
 			case 2:
 				if (Char.IsLetter(format[0]) && Char.IsDigit(format[1])) {
@@ -178,8 +182,8 @@ namespace System {
 		private string FormatCurrency (double value,
 				NumberFormatInfo nfi, int precision) {
 			StringBuilder sb = new StringBuilder();
-			precision = (precision >= 0) ?
-				precision : nfi.CurrencyDecimalDigits;
+			precision = (no_precision_specified ?
+					nfi.CurrencyDecimalDigits : precision);                        
 			int decimals = precision;
 			long mantissa;
 			int exponent;
