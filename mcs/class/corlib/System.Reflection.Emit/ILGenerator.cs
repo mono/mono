@@ -593,10 +593,32 @@ namespace System.Reflection.Emit {
 		}
 		
 		public virtual void EmitWriteLine (FieldInfo field) {
-			throw new NotImplementedException ();
+			if (field == null)
+				throw new ArgumentNullException ("field");
+			// The MS implementation does not check for valuetypes here but it
+			// should. Also, it should check that if the field is not static,
+			// then it is a member of this type.
+			if (field.IsStatic)
+				Emit (OpCodes.Ldsfld, field);
+			else {
+				Emit (OpCodes.Ldloc_0);
+				Emit (OpCodes.Ldfld, field);
+			}
+			Emit (OpCodes.Call, 
+				  typeof (Console).GetMethod ("WriteLine",
+											  new Type[1] { field.FieldType }));
 		}
 		public virtual void EmitWriteLine (LocalBuilder lbuilder) {
-			throw new NotImplementedException ();
+			if (lbuilder == null)
+				throw new ArgumentNullException ("lbuilder");
+			if (lbuilder.LocalType is TypeBuilder)
+				throw new  ArgumentException ("Output streams do not support TypeBuilders.");
+			// The MS implementation does not check for valuetypes here but it
+			// should.
+			Emit (OpCodes.Ldloc, lbuilder);
+			Emit (OpCodes.Call, 
+				  typeof (Console).GetMethod ("WriteLine",
+											  new Type[1] { lbuilder.LocalType }));
 		}
 		public virtual void EmitWriteLine (string val) {
 			Emit (OpCodes.Ldstr, val);

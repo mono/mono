@@ -1,5 +1,7 @@
 2003-04-17  Zoltan Varga  <vargaz@freemail.hu>
 
+	* ILGenerator.cs: Implement EmitWriteLine methods.
+
 	* TypeBuilder.cs (CreateType): Avoid creating a default constructor
 	for the global type.
 
