@@ -1,3 +1,7 @@
+2004-11-28  Atsushi Enomoto <atsushi@ximian.com>
+
+	* RelaxngGrammar.cs : fixed error that happened on recompilation.
+
 2004-07-14  Atsushi Enomoto <atsushi@ximian.com>
 
 	* RelaxngGrammar.cs : When definition is missing, the error message

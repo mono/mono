@@ -83,6 +83,21 @@ namespace Commons.Xml.Relaxng
 		{
 		}
 
+		private void ResetCompileState ()
+		{
+			startPattern = null;
+			assembledDefs.Clear ();
+			assembledStart = null;
+			compiledStart = null;
+			elementReplacedDefs.Clear ();
+			includedUris.Clear ();
+			parentGrammar = null;
+			refPatterns.Clear ();
+			checkedDefs.Clear ();
+			unresolvedPatterns.Clear ();
+			ElementDefMap.Clear ();
+		}
+
 		internal RelaxngGrammar ParentGrammar {
 			get { return parentGrammar; }
 			set { parentGrammar = value; }
@@ -148,6 +163,8 @@ namespace Commons.Xml.Relaxng
 		// Compile from this simplified syntax to derivatives.
 		internal override RdpPattern Compile (RelaxngGrammar grammar)
 		{
+			ResetCompileState ();
+
 			parentGrammar = grammar;
 
 			// First, process includes and divs. RELAX NG 4.1 - 4.15.
