@@ -1,3 +1,8 @@
+2004-04-07  Martin Baulig  <martin@ximian.com>
+
+	* reflection.c (mono_reflection_initialize_generic_parameter): Set
+	`param->pklass->reflection_info'.	
+
 2004-04-07  Jackson Harper  <jackson@ximian.com>
 
 	* culture-info-tables.h: Fix date separator symbol.
