@@ -22,6 +22,7 @@ namespace MonoTests.System.Diagnostics {
                                 TestSuite suite =  new TestSuite();
                                 suite.AddTest(StackTraceTest.Suite);
                                 suite.AddTest(StackFrameTest.Suite);
+                        		suite.AddTest(TextWriterTraceListenerTest.Suite);
                                 return suite;
                         }
                 }
