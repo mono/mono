@@ -38,7 +38,9 @@ namespace System.Collections.Generic {
 	[CLSCompliant(false)]
 	[ComVisible(false)]
 	public interface IComparer<T> {
-		int Compare(T x, T y);
+		int Compare (T x, T y);
+		bool Equals (T x, T y);
+		int GetHashCode (T obj);
 	}
 }
 #endif

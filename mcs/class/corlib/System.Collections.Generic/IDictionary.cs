@@ -41,10 +41,9 @@ namespace System.Collections.Generic {
 		void Add (K key, V value);
 		bool ContainsKey (K key);
 		bool Remove (K key);
-		bool IsFixedSize { get; }
 		V this[K key] { get; set; }
-		ICollection<KeyValuePair<K,V>> Keys { get; }
-		ICollection<KeyValuePair<K,V>> Values { get; }
+		ICollection<K> Keys { get; }
+		ICollection<V> Values { get; }
 	}
 }
 #endif
