@@ -89,10 +89,23 @@ namespace System
             }
 
             // get digit string
-            StringBuilder sb = new StringBuilder(40);
+            const int bufSize = 40;
             int decPos = 0, sign = 0;
-            if (value != S.Decimal.Zero)
-                S.Decimal.decimal2string(ref value, digits, decimals, sb, sb.Capacity, out decPos, out sign);
+#if !MSTEST
+            char[] buf = new char[bufSize];
+            if (S.Decimal.decimal2string(ref value, digits, decimals, buf, bufSize, out decPos, out sign) != 0) 
+            {
+                throw new FormatException(); // should never happen 
+            }
+
+            StringBuilder sb = new StringBuilder(new String(buf), bufSize);
+#else
+            StringBuilder sb = new StringBuilder(bufSize);
+            if (S.Decimal.decimal2string(ref value, digits, decimals, sb, bufSize, out decPos, out sign) != 0) 
+            {
+                throw new FormatException(); // should never happen 
+            }
+#endif
 
             // now build the format
             switch (specifier)
@@ -109,46 +122,9 @@ namespace System
             }
         }
 
-        private static void FormatFixedPointSub(NumberFormatInfo nfi, StringBuilder sb, 
-            int decimals, int decPos)
-        {
-            int offset = 0;
-            int sigDigits = sb.Length;
-
-            if (decPos <= 0) 
-            {
-                sb.Insert(0, '0');
-                offset++;
-            }
-
-            if (decPos > 0) offset += decPos;
-
-            for (int i = sigDigits; i < decPos; i++)
-            {
-                sb.Append('0');
-                offset++;
-            }
-
-            if (decimals > 0) 
-            {
-                for (int i = decPos; i < 0; i++) 
-                {
-                    sb.Insert(offset, '0');
-                }
-
-                int sigDecimals = (decPos < sigDigits) ? sigDigits - decPos : 0;
-                for (int i = sigDecimals; i < decimals; i++) 
-                {
-                    sb.Append('0');
-                }
-            }
-        }
-
         private static string FormatFixedPoint(NumberFormatInfo nfi, StringBuilder sb, 
             int decimals, int decPos, int sign)
         {
-            FormatFixedPointSub(nfi, sb, decimals, decPos);
-
             if (decimals > 0)
             {
                 sb.Insert((decPos <= 0) ? 1 : decPos, nfi.NumberDecimalSeparator);
@@ -165,15 +141,6 @@ namespace System
         private static string FormatExponential(NumberFormatInfo nfi, StringBuilder sb, 
             int digits, int decPos, int sign, char echar)
         {
-            // append trailing zeros if needed
-            if (digits > 0 && sb.Length < digits) 
-            {
-                for (int i = sb.Length; i < digits; i++)
-                {
-                    sb.Append('0');
-                }
-            }
-
             // insert decimal separator
             if (digits > 1 || (digits == 0 && sb.Length > 1)) 
             {
@@ -221,16 +188,14 @@ namespace System
             }
         }
 
-        private static string FormatNumber(NumberFormatInfo nfi, StringBuilder sb, 
-            int decimals, int decPos, int sign)
+        private static string FormatGroupAndDec(StringBuilder sb, int decimals, int decPos, 
+            int[] groupSizes, string groupSeparator, string decSeparator)
         {
             int offset = 0;
-            FormatFixedPointSub(nfi, sb, decimals, decPos);
 
             // Groups
             if (decPos > 0) 
             {
-                int[] groupSizes = nfi.NumberGroupSizes;
                 if (groupSizes != null) 
                 {
                     int lastSize = 0;
@@ -243,11 +208,11 @@ namespace System
                             digitCount += size;
                             if (digitCount < decPos) 
                             {
-                                sb.Insert(decPos - digitCount, nfi.NumberGroupSeparator);
-                                offset += nfi.NumberGroupSeparator.Length;
+                                sb.Insert(decPos - digitCount, groupSeparator);
+                                offset += groupSeparator.Length;
                             }
-                            lastSize = size;
                         }
+                        lastSize = size;
                     }
 
                     if (lastSize > 0) 
@@ -256,8 +221,8 @@ namespace System
                         {
                             digitCount +=lastSize;
                             if (digitCount >= decPos) break;
-                            sb.Insert(decPos - digitCount, nfi.NumberGroupSeparator);
-                            offset += nfi.NumberGroupSeparator.Length;
+                            sb.Insert(decPos - digitCount, groupSeparator);
+                            offset += groupSeparator.Length;
                         }
                     }
                 }
@@ -265,8 +230,17 @@ namespace System
 
             if (decimals > 0)
             {
-                sb.Insert(offset + ((decPos <= 0) ? 1 : decPos), nfi.NumberDecimalSeparator);
+                sb.Insert(offset + ((decPos <= 0) ? 1 : decPos), decSeparator);
             }
+
+            return sb.ToString();
+        }
+
+        private static string FormatNumber(NumberFormatInfo nfi, StringBuilder sb, 
+            int decimals, int decPos, int sign)
+        {
+            string s = FormatGroupAndDec(sb, decimals, decPos,
+                nfi.NumberGroupSizes, nfi.NumberGroupSeparator, nfi.NumberDecimalSeparator);
 
             // sign
             if (sign != 0) 
@@ -274,47 +248,129 @@ namespace System
                 switch (nfi.NumberNegativePattern)
                 {
                     case 0:
-                        sb.Insert(0, '(');
-                        sb.Append(')');
-                        break;
+                        return "(" + s + ")";
                     case 1:
-                        sb.Insert(0, nfi.NegativeSign);
-                        break;
+                        return nfi.NegativeSign + s;
                     case 2:
-                        sb.Insert(0, nfi.NegativeSign);
-                        sb.Insert(nfi.NegativeSign.Length, ' ');
-                        break;
+                        return nfi.NegativeSign + " " + s;
                     case 3:
-                        sb.Append(nfi.NegativeSign);
-                        break;
+                        return s + nfi.NegativeSign;
                     case 4:
-                        sb.Append(' ');
-                        sb.Append(nfi.NegativeSign);
-                        break;
+                        return s + " " + nfi.NegativeSign;
                     default:
-                        goto case 1;
+                        throw new ArgumentException("Invalid NumberNegativePattern");
                 }
             } 
-
-            return sb.ToString();
+            else 
+            {
+                return s;
+            }
         }
 
         private static string FormatCurrency(NumberFormatInfo nfi, StringBuilder sb, 
             int decimals, int decPos, int sign)
         {
-            throw new Exception("Not implemented yet"); //TODO: implement me
+            string s = FormatGroupAndDec(sb, decimals, decPos,
+                nfi.CurrencyGroupSizes, nfi.CurrencyGroupSeparator, nfi.CurrencyDecimalSeparator);
+
+            if (sign != 0) 
+            { // negative
+                switch (nfi.CurrencyNegativePattern) 
+                {
+                    case 0:
+                        return "(" + nfi.CurrencySymbol + s + ")";
+                    case 1:
+                        return nfi.NegativeSign + nfi.CurrencySymbol + s;
+                    case 2:
+                        return nfi.CurrencySymbol + nfi.NegativeSign + s;
+                    case 3:
+                        return nfi.CurrencySymbol + s + nfi.NegativeSign;
+                    case 4:
+                        return "(" + s + nfi.CurrencySymbol + ")";
+                    case 5:
+                        return nfi.NegativeSign + s + nfi.CurrencySymbol;
+                    case 6:
+                        return s + nfi.NegativeSign + nfi.CurrencySymbol;
+                    case 7:
+                        return s + nfi.CurrencySymbol + nfi.NegativeSign;
+                    case 8:
+                        return nfi.NegativeSign + s + " " + nfi.CurrencySymbol;
+                    case 9:
+                        return nfi.NegativeSign + nfi.CurrencySymbol + " " + s;
+                    case 10:
+                        return s + " " + nfi.CurrencySymbol + nfi.NegativeSign;
+                    case 11:
+                        return nfi.CurrencySymbol + " " + s + nfi.NegativeSign;
+                    case 12:
+                        return nfi.CurrencySymbol + " " + nfi.NegativeSign + s;
+                    case 13:
+                        return s + nfi.NegativeSign + " " + nfi.CurrencySymbol;
+                    case 14:
+                        return "(" + nfi.CurrencySymbol + " " + s + ")";
+                    case 15:
+                        return "(" + s + " " + nfi.CurrencySymbol + ")";
+                    default:
+                        throw new ArgumentException("Invalid CurrencyNegativePattern");
+                }
+            }
+            else 
+            {
+                switch (nfi.CurrencyPositivePattern) 
+                {
+                    case 0:
+                        return nfi.CurrencySymbol + s;
+                    case 1:
+                        return s + nfi.CurrencySymbol;
+                    case 2:
+                        return nfi.CurrencySymbol + " " + s;
+                    case 3:
+                        return s + " " + nfi.CurrencySymbol;
+                    default:
+                        throw new ArgumentException("Invalid CurrencyPositivePattern");
+                }
+            }
         }
 
         private static string FormatPercent(NumberFormatInfo nfi, StringBuilder sb, 
             int decimals, int decPos, int sign)
         {
-            throw new Exception("Not implemented yet"); //TODO: implement me
+            string s = FormatGroupAndDec(sb, decimals, decPos+2, 
+                nfi.PercentGroupSizes, nfi.PercentGroupSeparator, nfi.PercentDecimalSeparator);
+
+            if (sign != 0) 
+            { // negative
+                switch (nfi.PercentNegativePattern) 
+                {
+                    case 0:
+                        return nfi.NegativeSign + s + " " + nfi.PercentSymbol;
+                    case 1:
+                        return nfi.NegativeSign + s + nfi.PercentSymbol;
+                    case 2:
+                        return nfi.NegativeSign + nfi.PercentSymbol + s;
+                    default:
+                        throw new ArgumentException("Invalid PercentNegativePattern");
+                }
+            }
+            else 
+            {
+                switch (nfi.PercentPositivePattern) 
+                {
+                    case 0:
+                        return s + " " + nfi.PercentSymbol;
+                    case 1:
+                        return s + nfi.PercentSymbol;
+                    case 2:
+                        return nfi.PercentSymbol + s;
+                    default:
+                        throw new ArgumentException("Invalid PercentPositivePattern");
+                }
+            }
         }
 
         private static string FormatNormalized(NumberFormatInfo nfi, StringBuilder sb, 
             int digits, int decPos, int sign)
         {
-            //LAMESPEC: is this a fixed point format ?
+            //LAMESPEC: how should this format look like ? Is this a fixed point format ?
             throw new Exception("Not implemented yet"); //TODO: implement me
         }
     }

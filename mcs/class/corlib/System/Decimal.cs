@@ -134,12 +134,18 @@ namespace System
 
         public Decimal(float val) 
         {
-            ConstructFromDouble(out this, val, 7);
+            if (double2decimal(out this, val, 7) != 0) 
+            {
+                throw new OverflowException();
+            }
         }
 
         public Decimal(double val) 
         {
-            ConstructFromDouble(out this, val, 15);
+            if (double2decimal(out this, val, 15) != 0) 
+            {
+                throw new OverflowException();
+            }
         }
 
         public Decimal(int[] bits) 
@@ -176,49 +182,6 @@ namespace System
             }
         }
 
-        // construct decimal from double value, 
-        // round value to <digits> significant digits using banker's rounding.
-        //!private static void ConstructFromDouble(double val, int digits)
-        private static void ConstructFromDouble(out Decimal dval, double val, int digits)
-        {
-            if (Double.IsNaN(val) || Double.IsInfinity(val))
-            {
-                throw new OverflowException("Cannot convert NAN or infinity to decimal");
-            }
-
-            int sign = 0;
-            // determine sign
-            if (val < 0) 
-            {
-                sign = 1;
-                val = -val;
-            }
-
-            // number so small that it is rounded to zero ?
-            if (val < dDecEpsilon) 
-            {
-                if (sign != 0) 
-                {
-                    dval = Negate(Zero);
-                }
-                else
-                {
-                    dval = Zero;
-                }
-            }
-
-            // too large ?
-            if (val > dDecMaxValue) 
-            {
-                throw new OverflowException("Number is too big to be converted to decimal");
-            }
-
-            if (double2decimal(out dval, val, digits, sign) != 0) 
-            {
-                throw new OverflowException("Interner Fehler");
-            }
-        }
-    
         public static Decimal Negate(Decimal d) 
         {
             d.ss32 ^= SIGN_FLAG;
@@ -893,41 +856,9 @@ namespace System
             Decimal d;
             int digits = s.Length;
             int sign = (isNegative) ? 1 : 0;
-            if (digits <= iMAX_SCALE)
+            if (string2decimal(out d, s, decPos, sign) != 0)
             {
-                if (string2decimal(out d, s, decPos, sign) != 0)
-                {
-                    throw new OverflowException();
-                }
-            }
-            else // very long decimals with digits > MAX_SCALE
-            {
-                if (decPos > MAX_SCALE + 1) throw new OverflowException();
-                if (decPos > 0) 
-                {
-                    String sInt = s.Substring(0, iDecPos);
-                    String sFrac = s.Substring(iDecPos);
-                    if (sFrac.Length > iMAX_SCALE) sFrac = sFrac.Substring(0, iMAX_SCALE);
-                    Decimal dInt, dFrac;
-                    if (string2decimal(out dInt, sInt, decPos, sign) != 0)
-                    {
-                        throw new OverflowException();
-                    }
-                    if (string2decimal(out dFrac, sFrac, 0, sign) != 0)
-                    {
-                        throw new OverflowException();
-                    }
-                    d = dInt + dFrac;
-                }
-                else
-                {
-                    String sFrac = s;
-                    if (sFrac.Length > iMAX_SCALE) sFrac = sFrac.Substring(0, iMAX_SCALE);
-                    if (string2decimal(out d, sFrac, 0, sign) != 0)
-                    {
-                        throw new OverflowException();
-                    }
-                }
+                throw new OverflowException();
             }
 
             if (expFlag)
@@ -974,21 +905,17 @@ namespace System
 
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
         private static extern int double2decimal(out Decimal erg, 
-            double val, int digits, int sign);
+            double val, int digits);
 
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
         private static extern int decimalIncr(ref Decimal d1, ref Decimal d2);
 
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
-        internal static extern void decimal2string(ref Decimal val, 
-            int digits, int decimals,
-            /*FIXME:how to get a string as result?: [Interop.MarshalAs(UnmanagedType.LPStr)]*/StringBuilder bufDigits, 
-            int bufSize, out int decPos, out int sign);
+        internal static extern int decimal2string(ref Decimal val, 
+            int digits, int decimals, char[] bufDigits, int bufSize, out int decPos, out int sign);
 
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
-        internal static extern int string2decimal(out Decimal val,
-            /*FIXME:how to use string as argument?: [Interop.MarshalAs(UnmanagedType.LPStr)]*/String sDigits,
-            uint decPos, int sign);
+        internal static extern int string2decimal(out Decimal val, String sDigits, uint decPos, int sign);
 
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
         internal static extern int decimalSetExponent(ref Decimal val, int exp);
@@ -1028,7 +955,7 @@ namespace System
         //![MethodImplAttribute(MethodImplOptions.InternalCall)]
         [DllImport("libdec", EntryPoint="double2decimal")]
         private static extern int double2decimal(out Decimal erg, 
-            double val, int digits, int sign);
+            double val, int digits);
 
         //![MethodImplAttribute(MethodImplOptions.InternalCall)]
         [DllImport("libdec", EntryPoint="decimalIncr")]
@@ -1036,15 +963,15 @@ namespace System
 
         //![MethodImplAttribute(MethodImplOptions.InternalCall)]
         [DllImport("libdec", EntryPoint="decimal2string")]
-        internal static extern void decimal2string(ref Decimal val, 
+        internal static extern int decimal2string(ref Decimal val, 
             int digits, int decimals,
-            [MarshalAs(UnmanagedType.LPStr)]StringBuilder bufDigits, 
+            [MarshalAs(UnmanagedType.LPWStr)]StringBuilder bufDigits, 
             int bufSize, out int decPos, out int sign);
 
         //![MethodImplAttribute(MethodImplOptions.InternalCall)]
         [DllImport("libdec", EntryPoint="string2decimal")]
         internal static extern int string2decimal(out Decimal val,
-            [MarshalAs(UnmanagedType.LPStr)]String sDigits,
+            [MarshalAs(UnmanagedType.LPWStr)]String sDigits,
             uint decPos, int sign);
 
         //![MethodImplAttribute(MethodImplOptions.InternalCall)]
