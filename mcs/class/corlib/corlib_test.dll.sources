@@ -170,6 +170,7 @@ System.Security.Permissions/FileDialogPermissionAttributeTest.cs
 System.Security.Permissions/FileDialogPermissionTest.cs
 System.Security.Permissions/FileIOPermissionAttributeTest.cs
 System.Security.Permissions/FileIOPermissionTest.cs
+System.Security.Permissions/IBuiltInPermissionTest.cs
 System.Security.Permissions/IsolatedStorageFilePermissionAttributeTest.cs
 System.Security.Permissions/PermissionSetAttributeTest.cs
 System.Security.Permissions/PrincipalPermissionAttributeTest.cs
@@ -184,6 +185,7 @@ System.Security.Permissions/SiteIdentityPermissionAttributeTest.cs
 System.Security.Permissions/StrongNameIdentityPermissionAttributeTest.cs
 System.Security.Permissions/StrongNamePublicKeyBlobTest.cs
 System.Security.Permissions/UIPermissionAttributeTest.cs
+System.Security.Permissions/UIPermissionTest.cs
 System.Security.Permissions/UrlIdentityPermissionAttributeTest.cs
 System.Security.Permissions/ZoneIdentityPermissionAttributeTest.cs
 System.Security.Permissions/ZoneIdentityPermissionTest.cs

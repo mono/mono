@@ -1,3 +1,8 @@
+2004-08-17  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* corlib_test.dll.sources: Added System.Security.Permissions/
+	IBuiltInPermissionTest.cs and UIPermissionTest.cs unit tests.
+
 2004-08-12  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* corlib.dll.sources: Added System.Runtime.ConstrainedExecution/
