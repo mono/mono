@@ -65,7 +65,11 @@ namespace Mono.CSharp.Debugger
 			get;
 		}
 
-		MethodInfo MethodInfo {
+		Type ReturnType {
+			get;
+		}
+
+		MethodBase MethodBase {
 			get;
 		}
 

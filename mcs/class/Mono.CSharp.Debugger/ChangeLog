@@ -1,3 +1,9 @@
+2002-05-22  Martin Baulig  <martin@gnome.org>
+
+	* IMonoSymbolWriter.cs (ISourceMethod): Replaced `MethodInfo MethodInfo' with
+	`MethodBase MethodBase' and added `Type ReturnType'.  We're now correctly
+	dealing with constructors and not crashing anymore.
+
 2002-05-21  Martin Baulig  <martin@gnome.org>
 
 	* MonoDwarfFileWriter.cs: Write a special line number table which can be read

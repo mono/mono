@@ -662,7 +662,7 @@ namespace Mono.CSharp.Debugger
 
 			public int Index {
 				get {
-					return _method.MethodInfo.IsStatic ? _param.Position - 1 :
+					return _method.MethodBase.IsStatic ? _param.Position - 1 :
 						_param.Position;
 				}
 			}
@@ -970,12 +970,12 @@ namespace Mono.CSharp.Debugger
 			private static int get_abbrev_id (DieCompileUnit parent_die, ISourceMethod method)
 			{
 				if (parent_die.DoGeneric)
-					if (method.MethodInfo.ReturnType == typeof (void))
+					if (method.ReturnType == typeof (void))
 						return my_abbrev_id_3;
 					else
 						return my_abbrev_id_4;
 				else
-					if (method.MethodInfo.ReturnType == typeof (void))
+					if (method.ReturnType == typeof (void))
 						return my_abbrev_id_1;
 					else
 						return my_abbrev_id_2;
@@ -994,14 +994,14 @@ namespace Mono.CSharp.Debugger
 			{
 				this.method = method;
 
-				if (method.MethodInfo.ReturnType != typeof (void))
+				if (method.ReturnType != typeof (void))
 					retval_die = DieCompileUnit.RegisterType (
-						method.MethodInfo.ReturnType);
+						method.ReturnType);
 
-				if (!method.MethodInfo.IsStatic)
+				if (!method.MethodBase.IsStatic)
 					new DieMethodVariable (this, method);
 
-				ParameterInfo[] parameters = method.MethodInfo.GetParameters ();
+				ParameterInfo[] parameters = method.MethodBase.GetParameters ();
 				foreach (ParameterInfo param in parameters) {
 					MethodParameter mp = new MethodParameter (method, param);
 
@@ -1013,7 +1013,7 @@ namespace Mono.CSharp.Debugger
 
 			public override void DoEmit ()
 			{
-				aw.WriteString (method.MethodInfo.Name);
+				aw.WriteString (method.MethodBase.Name);
 				aw.WriteUInt8 (true);
 				if (dw.DoGeneric)
 					aw.WriteUInt8 (true);
@@ -1023,7 +1023,7 @@ namespace Mono.CSharp.Debugger
 					dw.AddRelocEntry (RelocEntryType.METHOD_END_ADDRESS, method.Token);
 					aw.WriteAddress (0);
 				}
-				if (method.MethodInfo.ReturnType != typeof (void))
+				if (method.ReturnType != typeof (void))
 					DieCompileUnit.WriteRelativeDieReference (retval_die);
 			}
 		}
@@ -1850,7 +1850,7 @@ namespace Mono.CSharp.Debugger
 			}
 
 			public DieMethodVariable (Die parent_die, ISourceMethod method)
-				: base (parent_die, "this", method.MethodInfo.ReflectedType,
+				: base (parent_die, "this", method.MethodBase.ReflectedType,
 					VariableType.VARIABLE_THIS)
 			{
 				this.method = method;

@@ -281,16 +281,16 @@ namespace Mono.CSharp.Debugger
 			private Hashtable _block_hash = new Hashtable ();
 			private Stack _block_stack = new Stack ();
 
-			internal MethodInfo _method_info;
+			internal MethodBase _method_base;
 			internal ISourceFile _source_file;
 			private readonly int _token;
 
 			private SourceBlock _implicit_block;
 
-			public SourceMethod (int token, MethodInfo method_info, ISourceFile source_file)
+			public SourceMethod (int token, MethodBase method_base, ISourceFile source_file)
 				: this (token)
 			{
-				this._method_info = method_info;
+				this._method_base = method_base;
 				this._source_file = source_file;
 			}
 
@@ -381,9 +381,20 @@ namespace Mono.CSharp.Debugger
 				_implicit_block.AddLocal (local);
 			}
 
-			public MethodInfo MethodInfo {
+			public MethodBase MethodBase {
 				get {
-					return _method_info;
+					return _method_base;
+				}
+			}
+
+			public Type ReturnType {
+				get {
+					if (_method_base is MethodInfo)
+						return ((MethodInfo)_method_base).ReturnType;
+					else if (_method_base is ConstructorInfo)
+						return _method_base.DeclaringType;
+					else
+						throw new ArgumentException ("OOPS FUCK");
 				}
 			}
 
@@ -672,12 +683,12 @@ namespace Mono.CSharp.Debugger
 		internal extern static Type get_local_type_from_sig (Assembly module, byte[] sig);
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		internal extern static MethodInfo get_method (Assembly module, int token);
+		internal extern static MethodBase get_method (Assembly module, int token);
 
 		protected void DoFixups (Assembly assembly)
 		{
 			foreach (SourceMethod method in methods.Values) {
-				method._method_info = get_method (assembly, method.Token);
+				method._method_base = get_method (assembly, method.Token);
 
 				if (method.SourceFile == null)
 					orphant_methods.Add (method);
