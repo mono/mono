@@ -446,6 +446,9 @@ System.IO/SearchPattern.cs
 System.IO/WaitForChangedResult.cs
 System.IO/WatcherChangeTypes.cs
 System.IO/WindowsWatcher.cs
+System.IO.Compression/CompressionMode.cs
+System.IO.Compression/DeflateStream.cs
+System.IO.Compression/GzipStream.cs
 System.Net/AuthenticationManager.cs
 System.Net/Authorization.cs
 System.Net/BasicClient.cs
@@ -623,6 +626,7 @@ System.Timers/TimersDescriptionAttribute.cs
 System.Web/AspNetHostingPermission.cs
 System.Web/AspNetHostingPermissionAttribute.cs
 System.Web/AspNetHostingPermissionLevel.cs
+System/InvalidDataException.cs
 System/SRDescriptionAttribute.cs
 System/TODOAttribute.cs
 System/UriBuilder.cs

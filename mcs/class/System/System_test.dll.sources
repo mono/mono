@@ -28,6 +28,8 @@ System.Diagnostics/EventLogPermissionTest.cs
 System.Diagnostics/PerformanceCounterPermissionAttributeTest.cs
 System.Diagnostics/PerformanceCounterPermissionTest.cs
 System.IO/FileSystemWatcherTest.cs
+System.IO.Compression/DeflateStreamTest.cs
+System.IO.Compression/GzipStreamTest.cs
 System.Net/CookieCollectionTest.cs
 System.Net/CookieTest.cs
 System.Net/CredentialCacheTest.cs
