@@ -1,3 +1,7 @@
+2005-01-18  Jordi Mas i Hernandez <jordi@ximian.com>
+
+	* ComboBox.cs: fixes for ownerdraw
+
 2005-01-18  Peter Bartok  <pbartok@novell.com>
 
 	* TextControl.cs: 
