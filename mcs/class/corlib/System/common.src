@@ -5,6 +5,8 @@ ArgumentOutOfRangeException.cs
 ArithmeticException.cs
 Array.cs
 ArrayTypeMismatchException.cs
+Boolean.cs
+Convert.cs
 DivideByZeroException.cs
 DuplicateWaitObjectException.cs
 Exception.cs
