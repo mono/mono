@@ -1,3 +1,8 @@
+2005-03-16  Jordi Mas i Hernandez <jordi@ximian.com>
+
+	* ScrollBar.cs:
+	  - Only change Maximum and Minimum when need it (bug fix)
+
 2005-03-15  Peter Bartok  <pbartok@novell.com>
 
 	* Form.cs: Use Handle for icon, to trigger creation if

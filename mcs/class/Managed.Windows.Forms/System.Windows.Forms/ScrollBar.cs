@@ -330,6 +330,9 @@ namespace System.Windows.Forms
 		public int Maximum {
 			get { return maximum; }
 			set {
+				if (maximum == value)
+					return;
+					
 				maximum = value;
 
 				if (maximum < minimum)
@@ -348,6 +351,9 @@ namespace System.Windows.Forms
 		public int Minimum {
 			get { return minimum; }
 			set {
+				if (minimum == value)
+					return;
+					
 				minimum = value;
 
 				if (minimum > maximum)
