@@ -1,6 +1,10 @@
 2001-09-26  Miguel de Icaza  <miguel@ximian.com>
 
 	* expression.cs (Unary::Emit): Remove some dead code.
+	(Probe): Implement Resolve and Emit for `is'.
+
+	(ConvertNumericExplicit): Started work on explicit numeric
+	conversions.
 
 	* cs-parser.jay: Update operator constants.
 

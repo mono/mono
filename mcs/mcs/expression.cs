@@ -506,13 +506,125 @@ namespace CIR {
 			}
 			return e;
 		}
+
+		// <summary>
+		//   Performs the explicit numeric conversions
+		// </summary>
+		static Expression ConvertNumericExplicit (TypeContainer tc, Expression expr,
+							  Type target_type)
+		{
+			Type expr_type = expr.Type;
+			
+			if (expr_type == TypeManager.sbyte_type){
+				//
+				// From sbyte to byte, ushort, uint, ulong, char
+				//
+				if (target_type == TypeManager.byte_type)
+					return new OpcodeCast (expr, target_type, OpCodes.Conv_U1);
+				if (target_type == TypeManager.ushort_type)
+					return new OpcodeCast (expr, target_type, OpCodes.Conv_U2);
+				if (target_type == TypeManager.uint32_type)
+					return new OpcodeCast (expr, target_type, OpCodes.Conv_U4);
+				if (target_type == TypeManager.uint64_type)
+					return new OpcodeCast (expr, target_type, OpCodes.Conv_U8);
+				if (target_type == TypeManager.char_type)
+					return new OpcodeCast (expr, target_type, OpCodes.Conv_U2);
+			} else if (expr_type == TypeManager.byte_type){
+				//
+				// From byte to sbyte and char
+				//
+				if (target_type == TypeManager.sbyte_type)
+					return new OpcodeCast (expr, target_type, OpCodes.Conv_I1);
+				if (target_type == TypeManager.char_type)
+					return new OpcodeCast (expr, target_type, OpCodes.Conv_U2);
+			} else if (expr_type == TypeManager.short_type){
+				//
+				// From short to sbyte, byte, ushort, uint, ulong, char
+				//
+				if (target_type == TypeManager.sbyte_type)
+					return new OpcodeCast (expr, target_type, OpCodes.Conv_I1);
+				if (target_type == TypeManager.byte_type)
+					return new OpcodeCast (expr, target_type, OpCodes.Conv_U1);
+				if (target_type == TypeManager.ushort_type)
+					return new OpcodeCast (expr, target_type, OpCodes.Conv_U2);
+				if (target_type == TypeManager.uint32_type)
+					return new OpcodeCast (expr, target_type, OpCodes.Conv_U4);
+				if (target_type == TypeManager.uint64_type)
+					return new OpcodeCast (expr, target_type, OpCodes.Conv_U8);
+				if (target_type == TypeManager.char_type)
+					return new OpcodeCast (expr, target_type, OpCodes.Conv_U2);
+			} else if (expr_type == TypeManager.ushort_type){
+				//
+				// From ushort to sbyte, byte, short, char
+				//
+				if (target_type == TypeManager.ushort_type)
+					return new OpcodeCast (expr, target_type, OpCodes.Conv_I1);
+				if (target_type == TypeManager.uint32_type)
+					return new OpcodeCast (expr, target_type, OpCodes.Conv_U1);
+				if (target_type == TypeManager.uint64_type)
+					return new OpcodeCast (expr, target_type, OpCodes.Conv_I2);
+				if (target_type == TypeManager.char_type)
+					return new OpcodeCast (expr, target_type, OpCodes.Conv_U2);
+			} else if (expr_type == TypeManager.int32_type){
+				//
+				// From int to sbyte, byte, short, ushort, uint, ulong, char
+				//
+			} else if (expr_type == TypeManager.uint32_type){
+				//
+				// From uint to sbyte, byte, short, ushort, int, char
+				//
+			} else if (expr_type == TypeManager.int64_type){
+				//
+				// From long to sbyte, byte, short, ushort, int, uint, ulong, char
+				//
+			} else if (expr_type == TypeManager.uint64_type){
+				//
+				// From ulong, byte, short, ushort, int, uint, long, char
+				//
+			} else if (expr_type == TypeManager.char_type){
+				//
+				// From char to sbyte, byte, short
+				//
+			} else if (expr_type == TypeManager.float_type){
+				//
+				// From float to sbyte, byte, short,
+				// ushort, int uint, long, ulong, char
+				// or decimal
+				//
+			} else if (expr_type == TypeManager.double_type){
+				//
+				// FRom double to byte, byte, short,
+				// ushort, int, uint, long, ulong,
+				// char, float or decimal
+				//
+			} else if (expr_type == TypeManager.decimal_type){
+				//
+				// From decimal to sbyte, byte, short,
+				// ushort, int, uint, long, ulong,
+				// char, float or double
+				//
+			} else
+				return null;
+
+			return null;
+		}
 		
 		// <summary>
 		//   Performs an explicit conversion of the expression `expr' whose
 		//   type is expr.Type to `target_type'.
 		// </summary>
-		static public Expression ConvertExplicit (Expression expr, Type target_type)
+		static public Expression ConvertExplicit (TypeContainer tc, Expression expr,
+							  Type target_type)
 		{
+			Expression ne = ConvertImplicit (tc, expr, target_type);
+
+			if (ne != null)
+				return ne;
+
+			ne = ConvertNumericExplicit (tc, expr, target_type);
+			if (ne != null)
+				return ne;
+			
 			return expr;
 		}
 
@@ -686,7 +798,16 @@ namespace CIR {
 		}			
 		
 	}
-	
+
+	// <summary>
+	//   Unary expressions.  
+	// </summary>
+	//
+	// <remarks>
+	//   Unary implements unary expressions.   It derives from
+	//   ExpressionStatement becuase the pre/post increment/decrement
+	//   operators can be used in a statement context.
+	// </remarks>
 	public class Unary : ExpressionStatement {
 		public enum Operator {
 			Add, Subtract, Negate, BitComplement,
@@ -1123,25 +1244,20 @@ namespace CIR {
 	}
 	
 	public class Probe : Expression {
-		string probe_type;
+		public readonly string ProbeType;
+		public readonly Operator Oper;
 		Expression expr;
-		Operator oper;
-
+		Type probe_type;
+		
 		public enum Operator {
 			Is, As
 		}
 		
 		public Probe (Operator oper, Expression expr, string probe_type)
 		{
-			this.oper = oper;
-			this.probe_type = probe_type;
+			Oper = oper;
+			ProbeType = probe_type;
 			this.expr = expr;
-		}
-
-		public Operator Oper {
-			get {
-				return oper;
-			}
 		}
 
 		public Expression Expr {
@@ -1149,29 +1265,38 @@ namespace CIR {
 				return expr;
 			}
 		}
-
-		public string ProbeType {
-			get {
-				return probe_type;
-			}
-		}
-
+		
 		public override Expression Resolve (TypeContainer tc)
 		{
-			// FIXME: Implement;
-			throw new Exception ("Unimplemented");
-			// return this;
+			probe_type = tc.LookupType (ProbeType, false);
+
+			if (probe_type == null)
+				return null;
+
+			expr = expr.Resolve (tc);
+			
+			type = TypeManager.bool_type;
+			eclass = ExprClass.Value;
+
+			return this;
 		}
 
 		public override void Emit (EmitContext ec)
 		{
+			expr.Emit (ec);
+			
+			if (Oper == Operator.Is){
+				ec.ig.Emit (OpCodes.Isinst, probe_type);
+			} else {
+				throw new Exception ("Implement as");
+			}
 		}
 	}
 	
 	public class Cast : Expression {
 		string target_type;
 		Expression expr;
-		
+			
 		public Cast (string cast_type, Expression expr)
 		{
 			this.target_type = cast_type;
@@ -1201,14 +1326,17 @@ namespace CIR {
 			if (type == null)
 				return null;
 
-			//
-			// FIXME: Unimplemented
-			//
-			throw new Exception ("FINISH ME");
+			expr = ConvertExplicit (tc, expr, type);
+			
+			return expr;
 		}
 
 		public override void Emit (EmitContext ec)
 		{
+			//
+			// This one will never happen
+			//
+			throw new Exception ("Should not happen");
 		}
 	}
 
@@ -1481,8 +1609,6 @@ namespace CIR {
 
 			right_expr = MemberLookup (tc.RootContext, r, op, false);
 
-			Console.WriteLine ("Looking up: " + op);
-			
 			if (left_expr != null || right_expr != null) {
 				//
 				// Now we need to form the union of these two sets and
