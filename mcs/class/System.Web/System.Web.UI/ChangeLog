@@ -1,3 +1,7 @@
+2004-10-12 Sanjay Gupta <gsanjay@novell.com>
+
+	* UrlPropertyAttribute.cs: Added new file.
+
 2004-10-01 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Control.cs: even if the control has no children the naming container
