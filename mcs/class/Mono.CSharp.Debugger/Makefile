@@ -2,7 +2,7 @@ thisdir = class/Mono.CSharp.Debugger
 SUBDIRS =
 include ../../build/rules.make
 
-LIBRARY = Mono.CSharp.Debugger.dll
+LIBRARY = Mono.CompilerServices.SymbolWriter.dll
 LIBRARY_USE_INTERMEDIATE_FILE = yes
 
 LIB_MCS_FLAGS = /r:$(corlib)

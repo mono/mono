@@ -29,7 +29,6 @@
 //
 
 using System;
-using System.Reflection;
 using System.Collections;
 using System.Text;
 using System.IO;
@@ -68,11 +67,11 @@ using System.IO;
 // changing the file format.
 //
 
-namespace Mono.CSharp.Debugger
+namespace Mono.CompilerServices.SymbolWriter
 {
 	public struct OffsetTable
 	{
-		public const int  Version = 37;
+		public const int  Version = 38;
 		public const long Magic   = 0x45e82623fd7fa614;
 
 		#region This is actually written to the symbol file
@@ -208,7 +207,7 @@ namespace Mono.CSharp.Debugger
 			this.StartOffset = start_offset;
 		}
 
-		internal LexicalBlockEntry (int index, BinaryReader reader)
+		internal LexicalBlockEntry (int index, MyBinaryReader reader)
 		{
 			this.Index = index;
 			this.StartOffset = reader.ReadInt32 ();
@@ -220,7 +219,7 @@ namespace Mono.CSharp.Debugger
 			this.EndOffset = end_offset;
 		}
 
-		internal void Write (BinaryWriter bw)
+		internal void Write (MyBinaryWriter bw)
 		{
 			bw.Write (StartOffset);
 			bw.Write (EndOffset);
@@ -236,43 +235,36 @@ namespace Mono.CSharp.Debugger
 	{
 		#region This is actually written to the symbol file
 		public readonly string Name;
-		public readonly FieldAttributes Attributes;
 		public readonly byte[] Signature;
 		public readonly int BlockIndex;
 		#endregion
 
-		public LocalVariableEntry (string Name, FieldAttributes Attributes, byte[] Signature,
-					   int BlockIndex)
+		public LocalVariableEntry (string Name, byte[] Signature, int BlockIndex)
 		{
 			this.Name = Name;
-			this.Attributes = Attributes;
 			this.Signature = Signature;
 			this.BlockIndex = BlockIndex;
 		}
 
-		internal LocalVariableEntry (BinaryReader reader)
+		internal LocalVariableEntry (MyBinaryReader reader)
 		{
-			int name_length = reader.ReadInt32 ();
-			byte[] name = reader.ReadBytes (name_length);
-			Name = Encoding.UTF8.GetString (name);
-			Attributes = (FieldAttributes) reader.ReadInt32 ();
-			int sig_length = reader.ReadInt32 ();
+			Name = reader.ReadString ();
+			int sig_length = reader.ReadLeb128 ();
 			Signature = reader.ReadBytes (sig_length);
-			BlockIndex = reader.ReadInt32 ();
+			BlockIndex = reader.ReadLeb128 ();
 		}
 
-		internal void Write (MonoSymbolFile file, BinaryWriter bw)
+		internal void Write (MonoSymbolFile file, MyBinaryWriter bw)
 		{
-			file.WriteString (bw, Name);
-			bw.Write ((int) Attributes);
-			bw.Write ((int) Signature.Length);
+			bw.Write (Name);
+			bw.WriteLeb128 ((int) Signature.Length);
 			bw.Write (Signature);
-			bw.Write (BlockIndex);
+			bw.WriteLeb128 (BlockIndex);
 		}
 
 		public override string ToString ()
 		{
-			return String.Format ("[LocalVariable {0}:{1}]", Name, Attributes);
+			return String.Format ("[LocalVariable {0}]", Name);
 		}
 	}
 
@@ -297,7 +289,7 @@ namespace Mono.CSharp.Debugger
 			get { return 24; }
 		}
 
-		protected SourceFileEntry (MonoSymbolFile file, string file_name)
+		public SourceFileEntry (MonoSymbolFile file, string file_name)
 		{
 			this.file = file;
 			this.file_name = file_name;
@@ -308,17 +300,16 @@ namespace Mono.CSharp.Debugger
 			namespaces = new ArrayList ();
 		}
 
-		public void DefineMethod (string name, int token, int num_params,
-					  LocalVariableEntry[] locals, LineNumberEntry[] lines,
-					  LexicalBlockEntry[] blocks, int start, int end,
-					  int namespace_id)
+		public void DefineMethod (string name, int token, LocalVariableEntry[] locals,
+					  LineNumberEntry[] lines, LexicalBlockEntry[] blocks,
+					  int start, int end, int namespace_id)
 		{
 			if (!creating)
 				throw new InvalidOperationException ();
 
 			MethodEntry entry = new MethodEntry (
-				file, this, name, (int) token, num_params,
-				locals, lines, blocks, start, end, namespace_id);
+				file, this, name, (int) token, locals, lines, blocks,
+				start, end, namespace_id);
 
 			methods.Add (entry);
 			file.AddMethod (entry);
@@ -335,10 +326,10 @@ namespace Mono.CSharp.Debugger
 			return index;
 		}
 
-		internal void WriteData (BinaryWriter bw)
+		internal void WriteData (MyBinaryWriter bw)
 		{
 			NameOffset = (int) bw.BaseStream.Position;
-			file.WriteString (bw, file_name);
+			bw.Write (file_name);
 
 			ArrayList list = new ArrayList ();
 			foreach (MethodEntry entry in methods)
@@ -409,7 +400,7 @@ namespace Mono.CSharp.Debugger
 				if (creating)
 					throw new InvalidOperationException ();
 
-				BinaryReader reader = file.BinaryReader;
+				MyBinaryReader reader = file.BinaryReader;
 				int old_pos = (int) reader.BaseStream.Position;
 
 				reader.BaseStream.Position = NamespaceTableOffset;
@@ -530,9 +521,6 @@ namespace Mono.CSharp.Debugger
 		public readonly int Token;
 		public readonly int StartRow;
 		public readonly int EndRow;
-		[Obsolete("", true)]
-		public readonly int ClassTypeIndex;
-		public readonly int NumParameters;
 		public readonly int NumLocals;
 		public readonly int NumLineNumbers;
 		public readonly int NamespaceID;
@@ -547,14 +535,12 @@ namespace Mono.CSharp.Debugger
 		#endregion
 
 		int file_offset;
-		string name;
 
 		public readonly int Index;
 		public readonly SourceFileEntry SourceFile;
 		public readonly LineNumberEntry[] LineNumbers;
 		public readonly int[] LocalTypeIndices;
 		public readonly LocalVariableEntry[] Locals;
-		public readonly Type[] LocalTypes;
 		public readonly LexicalBlockEntry[] LexicalBlocks;
 
 		public readonly MonoSymbolFile SymbolFile;
@@ -563,15 +549,7 @@ namespace Mono.CSharp.Debugger
 			get { return 52; }
 		}
 
-		public string Name {
-			get { return name; }
-		}
-
-		public MethodBase MethodBase {
-			get { return MonoDebuggerSupport.GetMethod (SymbolFile.Assembly, Token); }
-		}
-
-		internal MethodEntry (MonoSymbolFile file, BinaryReader reader, int index)
+		internal MethodEntry (MonoSymbolFile file, MyBinaryReader reader, int index)
 		{
 			this.SymbolFile = file;
 			this.Index = index;
@@ -579,8 +557,6 @@ namespace Mono.CSharp.Debugger
 			Token = reader.ReadInt32 ();
 			StartRow = reader.ReadInt32 ();
 			EndRow = reader.ReadInt32 ();
-			reader.ReadInt32 ();
-			NumParameters = reader.ReadInt32 ();
 			NumLocals = reader.ReadInt32 ();
 			NumLineNumbers = reader.ReadInt32 ();
 			NameOffset = reader.ReadInt32 ();
@@ -591,8 +567,6 @@ namespace Mono.CSharp.Debugger
 			LexicalBlockTableOffset = reader.ReadInt32 ();
 			NamespaceID = reader.ReadInt32 ();
 			LocalNamesAmbiguous = reader.ReadInt32 () != 0;
-
-			name = file.ReadString (NameOffset);
 
 			SourceFile = file.GetSourceFile (SourceFileIndex);
 
@@ -613,15 +587,9 @@ namespace Mono.CSharp.Debugger
 				reader.BaseStream.Position = LocalVariableTableOffset;
 
 				Locals = new LocalVariableEntry [NumLocals];
-				LocalTypes = new Type [NumLocals];
 
-				Assembly ass = file.Assembly;
-
-				for (int i = 0; i < NumLocals; i++) {
+				for (int i = 0; i < NumLocals; i++)
 					Locals [i] = new LocalVariableEntry (reader);
-					LocalTypes [i] = MonoDebuggerSupport.GetLocalTypeFromSignature (
-						ass, Locals [i].Signature);
-				}
 
 				reader.BaseStream.Position = old_pos;
 			}
@@ -632,8 +600,6 @@ namespace Mono.CSharp.Debugger
 
 				LocalTypeIndices = new int [NumLocals];
 
-				for (int i = 0; i < NumParameters; i++)
-					reader.ReadInt32 ();
 				for (int i = 0; i < NumLocals; i++)
 					LocalTypeIndices [i] = reader.ReadInt32 ();
 
@@ -653,13 +619,11 @@ namespace Mono.CSharp.Debugger
 		}
 
 		internal MethodEntry (MonoSymbolFile file, SourceFileEntry source,
-				      string name, int token, int num_params,
-				      LocalVariableEntry[] locals, LineNumberEntry[] lines,
-				      LexicalBlockEntry[] blocks, int start_row, int end_row,
-				      int namespace_id)
+				      string name, int token, LocalVariableEntry[] locals,
+				      LineNumberEntry[] lines, LexicalBlockEntry[] blocks,
+				      int start_row, int end_row, int namespace_id)
 		{
 			this.SymbolFile = file;
-			this.name = name;
 
 			Index = file.GetNextMethodIndex ();
 
@@ -675,7 +639,8 @@ namespace Mono.CSharp.Debugger
 			LineNumbers = BuildLineNumberTable (lines);
 			NumLineNumbers = LineNumbers.Length;
 
-			NumParameters = num_params;
+			file.NumLineNumbers += NumLineNumbers;
+
 			NumLocals = locals != null ? locals.Length : 0;
 			Locals = locals;
 
@@ -760,15 +725,12 @@ namespace Mono.CSharp.Debugger
 			return retval;
 		}
 
-		internal MethodSourceEntry Write (MonoSymbolFile file, BinaryWriter bw)
+		internal MethodSourceEntry Write (MonoSymbolFile file, MyBinaryWriter bw)
 		{
 			NameOffset = (int) bw.BaseStream.Position;
-			file.WriteString (bw, name);
 
 			TypeIndexTableOffset = (int) bw.BaseStream.Position;
 
-			for (int i = 0; i < NumParameters; i++)
-				bw.Write (-1);
 			for (int i = 0; i < NumLocals; i++)
 				bw.Write (LocalTypeIndices [i]);
 
@@ -791,8 +753,6 @@ namespace Mono.CSharp.Debugger
 			bw.Write (Token);
 			bw.Write (StartRow);
 			bw.Write (EndRow);
-			bw.Write (-1);
-			bw.Write (NumParameters);
 			bw.Write (NumLocals);
 			bw.Write (NumLineNumbers);
 			bw.Write (NameOffset);
@@ -826,10 +786,9 @@ namespace Mono.CSharp.Debugger
 
 		public override string ToString ()
 		{
-			return String.Format ("[Method {0}:{1}:{2}:{3}:{4} - {6}:{7}:{8} - {5}]",
+			return String.Format ("[Method {0}:{1}:{2}:{3}:{4} - {6}:{7} - {5}]",
 					      Index, Token, SourceFileIndex, StartRow, EndRow,
-					      SourceFile, NumParameters, NumLocals,
-					      NumLineNumbers);
+					      SourceFile, NumLocals, NumLineNumbers);
 		}
 	}
 
@@ -850,26 +809,26 @@ namespace Mono.CSharp.Debugger
 			this.UsingClauses = using_clauses != null ? using_clauses : new string [0];
 		}
 
-		internal NamespaceEntry (MonoSymbolFile file, BinaryReader reader)
+		internal NamespaceEntry (MonoSymbolFile file, MyBinaryReader reader)
 		{
-			Name = file.ReadString ();
-			Index = reader.ReadInt32 ();
-			Parent = reader.ReadInt32 ();
+			Name = reader.ReadString ();
+			Index = reader.ReadLeb128 ();
+			Parent = reader.ReadLeb128 ();
 
-			int count = reader.ReadInt32 ();
+			int count = reader.ReadLeb128 ();
 			UsingClauses = new string [count];
 			for (int i = 0; i < count; i++)
-				UsingClauses [i] = file.ReadString ();
+				UsingClauses [i] = reader.ReadString ();
 		}
 
-		internal void Write (MonoSymbolFile file, BinaryWriter bw)
+		internal void Write (MonoSymbolFile file, MyBinaryWriter bw)
 		{
-			file.WriteString (bw, Name);
-			bw.Write (Index);
-			bw.Write (Parent);
-			bw.Write (UsingClauses.Length);
+			bw.Write (Name);
+			bw.WriteLeb128 (Index);
+			bw.WriteLeb128 (Parent);
+			bw.WriteLeb128 (UsingClauses.Length);
 			foreach (string uc in UsingClauses)
-				file.WriteString (bw, uc);
+				bw.Write (uc);
 		}
 
 		public override string ToString ()

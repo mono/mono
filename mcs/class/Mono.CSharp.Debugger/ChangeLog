@@ -1,3 +1,17 @@
+2004-07-30  Martin Baulig  <martin@ximian.com>
+
+	The library is now called Mono.CompilerServices.SymbolWriter.dll
+	and is in the Mono.CompilerServices.SymbolWriter namespace.
+
+	* MonoSymbolFile.cs (MonoDebuggerSupport.GetGuid): New public
+	static method.
+	(MonoSymbolFile.WriteString): Use the BinaryWriter's method.
+	(MonoSymbolFile.ReadString): Use the BinaryReader's method.
+	(MonoSymbolFile.Write): Write the module's Guid into the symbol
+	file.
+
+	* MonoSymbolTable.cs, MonoSymbolWriter.cs: Reworked the API.
+
 2004-07-27  Martin Baulig  <martin@ximian.com>
 
 	* MonoSymbolFile.cs (MonoSymbolFile.Write): Sort the methods

@@ -34,7 +34,7 @@ using System.Collections;
 using System.Text;
 using System.IO;
 	
-namespace Mono.CSharp.Debugger
+namespace Mono.CompilerServices.SymbolWriter
 {
 	public class MonoSymbolFileException : Exception
 	{
@@ -190,22 +190,46 @@ namespace Mono.CSharp.Debugger
 		}
 	}
 
+	internal class MyBinaryWriter : BinaryWriter
+	{
+		public MyBinaryWriter (Stream stream)
+			: base (stream)
+		{ }
+
+		public void WriteLeb128 (int value)
+		{
+			base.Write7BitEncodedInt (value);
+		}
+	}
+
+	internal class MyBinaryReader : BinaryReader
+	{
+		public MyBinaryReader (Stream stream)
+			: base (stream)
+		{ }
+
+		public int ReadLeb128 ()
+		{
+			return base.Read7BitEncodedInt ();
+		}
+	}
+
 	public class MonoDebuggerSupport
 	{
 		static GetTypeFunc get_type;
 		static GetMethodTokenFunc get_method_token;
 		static GetMethodFunc get_method;
 		static GetLocalTypeFromSignatureFunc local_type_from_sig;
+		static GetGuidFunc get_guid;
 
 		delegate Type GetTypeFunc (Assembly assembly, int token);
 		delegate int GetMethodTokenFunc (Assembly assembly, MethodBase method);
 		delegate MethodBase GetMethodFunc (Assembly assembly, int token);
 		delegate Type GetLocalTypeFromSignatureFunc (Assembly assembly, byte[] sig);
+		delegate Guid GetGuidFunc (Module module);
 
-		static Delegate create_delegate (Type delegate_type, string name)
+		static Delegate create_delegate (Type type, Type delegate_type, string name)
 		{
-			Type type = typeof (Assembly);
-
 			MethodInfo mi = type.GetMethod (name, BindingFlags.Static |
 							BindingFlags.NonPublic);
 			if (mi == null)
@@ -217,17 +241,23 @@ namespace Mono.CSharp.Debugger
 		static MonoDebuggerSupport ()
 		{
 			get_type = (GetTypeFunc) create_delegate (
-				typeof (GetTypeFunc), "MonoDebugger_GetType");
+				typeof (Assembly), typeof (GetTypeFunc),
+				"MonoDebugger_GetType");
 
 			get_method_token = (GetMethodTokenFunc) create_delegate (
-				typeof (GetMethodTokenFunc), "MonoDebugger_GetMethodToken");
+				typeof (Assembly), typeof (GetMethodTokenFunc),
+				"MonoDebugger_GetMethodToken");
 
 			get_method = (GetMethodFunc) create_delegate (
-				typeof (GetMethodFunc), "MonoDebugger_GetMethod");
+				typeof (Assembly), typeof (GetMethodFunc),
+				"MonoDebugger_GetMethod");
 
 			local_type_from_sig = (GetLocalTypeFromSignatureFunc) create_delegate (
-				typeof (GetLocalTypeFromSignatureFunc),
+				typeof (Assembly), typeof (GetLocalTypeFromSignatureFunc),
 				"MonoDebugger_GetLocalTypeFromSignature");
+
+			get_guid = (GetGuidFunc) create_delegate (
+				typeof (Module), typeof (GetGuidFunc), "MonoDebugger_GetGuid");
 		}
 
 		public static Type GetType (Assembly assembly, int token)
@@ -249,6 +279,11 @@ namespace Mono.CSharp.Debugger
 		{
 			return local_type_from_sig (assembly, sig);
 		}
+
+		public static Guid GetGuid (Module module)
+		{
+			return get_guid (module);
+		}
 	}
 
 	public class MonoSymbolFile : IDisposable
@@ -263,6 +298,8 @@ namespace Mono.CSharp.Debugger
 		int last_method_index;
 		int last_source_index;
 		int last_namespace_index;
+
+		public int NumLineNumbers;
 
 		public MonoSymbolFile ()
 		{ }
@@ -307,52 +344,24 @@ namespace Mono.CSharp.Debugger
 		int maxCharsPerRound;
 		static Encoding enc = Encoding.UTF8;
 		
-		internal void WriteString (BinaryWriter bw, string s)
-		{
-			int len = enc.GetByteCount (s);
-			bw.Write (len);
-			StringSize += len;
-			
-			if (stringBuffer == null) {
-				stringBuffer = new byte [512];
-				maxCharsPerRound = 512 / enc.GetMaxByteCount (1);
-			}
-			
-			int chpos = 0;
-			int chrem = s.Length;
-			while (chrem > 0) {
-				int cch = (chrem > maxCharsPerRound) ? maxCharsPerRound : chrem;
-				int blen = enc.GetBytes (s, chpos, cch, stringBuffer, 0);
-				bw.Write (stringBuffer, 0, blen);
-				
-				chpos += cch;
-				chrem -= cch;
-			}
-		}
-
 		internal string ReadString (int offset)
 		{
 			int old_pos = (int) reader.BaseStream.Position;
 			reader.BaseStream.Position = offset;
 
-			string text = ReadString ();
+			string text = reader.ReadString ();
 
 			reader.BaseStream.Position = old_pos;
 			return text;
 		}
 
-		internal string ReadString ()
-		{
-			int length = reader.ReadInt32 ();
-			byte[] data = reader.ReadBytes (length);
-			return Encoding.UTF8.GetString (data);
-		}
-
-		void Write (BinaryWriter bw)
+		void Write (MyBinaryWriter bw, Guid guid)
 		{
 			// Magic number and file version.
 			bw.Write (OffsetTable.Magic);
 			bw.Write (OffsetTable.Version);
+
+			bw.Write (guid.ToByteArray ());
 
 			//
 			// Offsets of file sections; we must write this after we're done
@@ -407,40 +416,58 @@ namespace Mono.CSharp.Debugger
 			bw.Seek (0, SeekOrigin.End);
 		}
 
-		public byte[] CreateSymbolFile ()
+		public byte[] CreateSymbolFile (Guid guid)
 		{
 			if (reader != null)
 				throw new InvalidOperationException ();
 
 			using (MyMemoryStream stream = new MyMemoryStream ()) {
-				Write (new BinaryWriter (stream));
+				Write (new MyBinaryWriter (stream), guid);
 				return stream.GetContents ();
 			}
 		}
 
 		Assembly assembly;
-		BinaryReader reader;
+		MyBinaryReader reader;
 		Hashtable method_hash;
 		Hashtable source_file_hash;
 
 		Hashtable method_token_hash;
 		Hashtable source_name_hash;
 
-		protected MonoSymbolFile (Assembly assembly, Stream stream)
+		protected MonoSymbolFile (string filename, Assembly assembly)
 		{
 			this.assembly = assembly;
 
-			reader = new BinaryReader (stream);
+			FileStream stream = new FileStream (filename, FileMode.Open);
+			reader = new MyBinaryReader (stream);
 
 			try {
 				long magic = reader.ReadInt64 ();
 				long version = reader.ReadInt32 ();
-				if ((magic != OffsetTable.Magic) || (version != OffsetTable.Version))
-					throw new MonoSymbolFileException ();
+				if (magic != OffsetTable.Magic)
+					throw new MonoSymbolFileException (
+						"Symbol file `{0}' is not a valid " +
+						"Mono symbol file", filename);
+				if (version != OffsetTable.Version)
+					throw new MonoSymbolFileException (
+						"Symbol file `{0}' has version {1}, " +
+						"but expected {2}", filename, version,
+						OffsetTable.Version);
 				ot = new OffsetTable (reader);
 			} catch {
-				throw new MonoSymbolFileException ();
+				throw new MonoSymbolFileException (
+					"Cannot read symbol file `{0}'", filename);
 			}
+
+			Guid guid = new Guid (reader.ReadBytes (16));
+			Module[] modules = assembly.GetModules ();
+			Guid assembly_guid = MonoDebuggerSupport.GetGuid (modules [0]);
+
+			if (guid != assembly_guid)
+				throw new MonoSymbolFileException (
+					"Symbol file `{0}' does not match assembly `{1}'",
+					filename, assembly.Location);
 
 			method_hash = new Hashtable ();
 			source_file_hash = new Hashtable ();
@@ -448,21 +475,10 @@ namespace Mono.CSharp.Debugger
 
 		public static MonoSymbolFile ReadSymbolFile (Assembly assembly)
 		{
-			Stream stream = assembly.GetManifestResourceStream ("MonoSymbolFile");
-			if (stream != null)
-				return new MonoSymbolFile (assembly, stream);
-
-			string basename;
 			string filename = assembly.Location;
-			if (filename.EndsWith (".exe") || filename.EndsWith (".dll"))
-				basename = filename.Substring (0, filename.Length - 4);
-			else
-				basename = filename;
+			string name = filename + ".mdb";
 
-			string name = basename + ".mdb";
-
-			stream = new FileStream (name, FileMode.Open);
-			return new MonoSymbolFile (assembly, stream);
+			return new MonoSymbolFile (filename, assembly);
 		}
 
 		public Assembly Assembly {
@@ -633,7 +649,7 @@ namespace Mono.CSharp.Debugger
 			return (int) value;
 		}
 
-		internal BinaryReader BinaryReader {
+		internal MyBinaryReader BinaryReader {
 			get {
 				if (reader == null)
 					throw new InvalidOperationException ();
