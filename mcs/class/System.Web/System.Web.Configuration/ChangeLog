@@ -1,6 +1,11 @@
+2004-02-24  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* WebConfigurationSettings.cs: we were loading web.config from / always!
+	Thanks to Lluis for noticing this.
+
 2004-02-09  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
-	* WebConfigurationSettings.cs: fix Web.config search for caseo
+	* WebConfigurationSettings.cs: fix Web.config search for case
 	insensitive filesystems.
 
 2004-02-04  Lluis Sanchez Gual <lluis@ximian.com>

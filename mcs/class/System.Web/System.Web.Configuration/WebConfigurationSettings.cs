@@ -140,6 +140,9 @@ namespace System.Web.Configuration
 			}
 
 			string dir = UrlUtils.GetDirectory (filepath);
+			if (dir == "/")
+				dir = "";
+
 			if (fileToConfig.ContainsKey (dir)) {
 				ConfigurationData data = (ConfigurationData) fileToConfig [dir];
 				if (CheckFileCache (data))
@@ -153,9 +156,6 @@ namespace System.Web.Configuration
 			bool isLower = File.Exists (lower);
 			if (isUpper && isLower && Directory.GetFiles (realpath, "Web.config").Length < 2)
 				throw new ConfigurationException ("Both web.config and Web.config exist for " + dir);
-
-			if (dir == "/")
-				dir = "";
 
 			string wcfile = (isUpper) ? upper : (isLower) ? lower : null;
 			ConfigurationData parent = GetConfigFromFileName (dir, context);
