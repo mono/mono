@@ -11,7 +11,7 @@
 
 	* SingleFormatter.cs: Adapt to the two level precision (7 - 8).
 
-2003-05-20  Philip Van Hoof <spamfrommailing@freax.org>
+2003-05-20  Philip Van Hoof <me@freax.org>
 
 	* DateTime.cs (FromOADate, GetDateTimeFormats, ToOADate):
 	Implemented.
