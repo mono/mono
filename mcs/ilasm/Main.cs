@@ -8,8 +8,14 @@ public class ILAsmTest {
 	private ILAsmTest() {}
 
 
-	public static void Main (string [] args) {
-		StreamReader reader = File.OpenText("test.il");
+	public static int Main (string [] args) {
+
+		if (args.Length != 1) {
+			Console.WriteLine ("Usage : ilasm [filename]");
+			return 1;
+		}
+		
+		StreamReader reader = File.OpenText (args [0]);
 		ILTokenizer scanner = new ILTokenizer (reader);
 
 		bool testScanner = !true;
@@ -27,5 +33,7 @@ public class ILAsmTest {
 			int n = cg.ClassCount;
 			cg.Emit ();
 		}
+
+		return 0;
 	}
 }
