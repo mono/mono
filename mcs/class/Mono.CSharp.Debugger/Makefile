@@ -3,7 +3,7 @@ SUBDIRS =
 include ../../build/rules.make
 
 LIBRARY = Mono.CSharp.Debugger.dll
-LIB_MCS_FLAGS = /r:$(corlib)
+LIB_MCS_FLAGS = /nostdlib /r:../../class/lib/default/$(corlib)
 NO_TEST = yes
 
 include ../../build/library.make
