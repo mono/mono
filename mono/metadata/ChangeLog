@@ -1,3 +1,7 @@
+2004-01-24  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* object.c: fire ProcessExit event in the root AppDomain after running
+	Main. Fixes bug #53299.
 
 Fri Jan 23 21:27:40 CET 2004 Paolo Molaro <lupus@ximian.com>
 
