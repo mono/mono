@@ -1,7 +1,7 @@
 
 Sat Apr 6 16:29:40 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
-	* x86/tramp.c: fix advancement od argument position on the stack.
+	* x86/tramp.c: fix advancement of argument position on the stack.
 
 Sat Mar 16 19:12:57 CET 2002 Paolo Molaro <lupus@ximian.com>
 
