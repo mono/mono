@@ -1,3 +1,9 @@
+2004-07-11 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+ 
+ 	* exceptions-x86.c: delay appending the method name to the trace until
+ 	after mono_jit_info_table_find is called, as this gets the real
+ 	MonoMethod.
+ 
 2004-07-08  Zoltan Varga  <vargaz@freemail.hu>
 
 	* mini.c (handle_stack_args): Handle some corner cases. Fixes 
