@@ -41,6 +41,8 @@ public class AssemblyBuilderTest : Assertion
 
 	static AssemblyBuilder ab;
 
+	static ModuleBuilder mb;
+
 	string tempDir = Path.Combine (Path.GetTempPath (), "MonoTests.System.Reflection.Emit.AssemblyBuilderTest");
 
 	[SetUp]
@@ -59,7 +61,7 @@ public class AssemblyBuilderTest : Assertion
 
 		domain = Thread.GetDomain ();
 		ab = genAssembly ();
-		ab.DefineDynamicModule ("def_module");
+		mb = ab.DefineDynamicModule ("def_module");
 	}
 
 	[TearDown]
@@ -512,6 +514,16 @@ public class AssemblyBuilderTest : Assertion
 		AssemblyName check = AssemblyName.GetAssemblyName (filename);
 		AssertEquals ("Token", "0E-EA-7C-E6-5F-35-F2-D8", BitConverter.ToString (check.GetPublicKeyToken ()));
 	}
+
+	[Test]
+	[ExpectedException (typeof (NotSupportedException))]
+	public void SaveUnfinishedTypes ()
+	{
+		TypeBuilder typeBuilder = mb.DefineType ("TestType", TypeAttributes.Class | TypeAttributes.Public | TypeAttributes.Sealed | TypeAttributes.AnsiClass | TypeAttributes.AutoClass, typeof(object));
+
+		ab.Save ("def_module");
+	}
+
 }
 }
 

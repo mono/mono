@@ -1,3 +1,7 @@
+2004-11-22  Zoltan Varga  <vargaz@freemail.hu>
+
+	* AssemblyBuilderTest.cs: Add regression test for bug #69780.
+
 2004-11-06  Zoltan Varga  <vargaz@freemail.hu>
 
 	* TypeBuilderTest.cs: Ignore some tests which depend on TypeBuilder
