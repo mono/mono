@@ -21,6 +21,7 @@ namespace Microsoft.JScript {
 		internal FunctionObject Function;
 		internal DictionaryEntry [] locals;
 		internal LocalBuilder local_func;
+		internal JSFunctionAttributeEnum func_type;
 
 		internal FunctionDeclaration (AST parent, string name, 
 					      FormalParameterList p,
@@ -52,80 +53,50 @@ namespace Microsoft.JScript {
 			return Function.ToString ();
 		}
 
-		internal string get_composite_name ()
+		internal string get_name ()
 		{
+			if (parent == null)
+				return Function.name;
+			
 			string parent_name, full_name;
 			FunctionDeclaration p = parent as FunctionDeclaration;
-
-			if (p.parent != null)
-				parent_name = p.get_composite_name ();
-			else parent_name = p.Function.name;
-
+			parent_name = p.get_name ();
 			full_name = parent_name + "." + Function.name;
-
 			return full_name;
 		}
 
 		internal override void Emit (EmitContext ec)
-		{
+		{			
+			string name = get_name ();
 			TypeBuilder type = ec.type_builder;
-			MethodBuilder method;
-			string name;
-			
-			if (parent == null) {
-				name = Function.name;
-				type.DefineField (name, 
-						  typeof (Microsoft.JScript.ScriptFunction),
-						  FieldAttributes.Public | 
-						  FieldAttributes.Static);
-				build_closure (ec);
-				method = type.DefineMethod (name, Function.attr, 
-							    Function.return_type,
-							    Function.params_types ());
-				ec.ig = method.GetILGenerator ();
-				Function.body.Emit (ec);
-				ec.ig.Emit (OpCodes.Ret);
-				return;
-			} else {
-				name = get_composite_name ();
-				local_func = ec.ig.DeclareLocal (typeof (Microsoft.JScript.ScriptFunction));
-				
-				method = type.DefineMethod (name, Function.attr, 
-							    Function.return_type,
-							    Function.params_types ());
-				EmitContext new_ec = new EmitContext (ec.type_builder, ec.mod_builder, ec.ig, method.GetILGenerator ());
-				build_closure_nested (new_ec);				
-				Function.body.Emit (new_ec);
-				new_ec.ig.Emit (OpCodes.Ret);
-			}
+			ILGenerator ig = ec.ig;
+			MethodBuilder method_builder = type.DefineMethod (name, Function.attr, 
+									  Function.return_type,
+									  Function.params_types ());
+			CustomAttributeBuilder attr_builder;
+			Type func_attr = typeof (JSFunctionAttribute);
+			Type [] func_attr_enum = new Type [] {typeof (JSFunctionAttributeEnum)};
+			attr_builder = new CustomAttributeBuilder (func_attr.GetConstructor (func_attr_enum), 
+								   new object [] {func_type});
+			method_builder.SetCustomAttribute (attr_builder);
+
+			EmitContext new_ec = new EmitContext (ec.type_builder, ec.mod_builder,
+							      method_builder.GetILGenerator ());
+			if (parent == null)
+				type.DefineField (name, typeof (Microsoft.JScript.ScriptFunction),
+						  FieldAttributes.Public | FieldAttributes.Static);
+			else
+				local_func = ig.DeclareLocal (typeof (Microsoft.JScript.ScriptFunction));
+			build_closure (ec);
+			Function.body.Emit (new_ec);
+			new_ec.ig.Emit (OpCodes.Ret);
 		}
 		
 		internal void build_closure (EmitContext ec)
 		{
-			ILGenerator ig = ec.gc_ig;
-			string name = Function.name;
-			Type t = ec.mod_builder.GetType ("JScript 0");
-			ig.Emit (OpCodes.Ldtoken, t);
-			ig.Emit (OpCodes.Ldstr, name);
-			ig.Emit (OpCodes.Ldstr, name);
-			Function.parameters.Emit (ec);
-			build_local_fields (ig);
+			ILGenerator ig = ec.ig;
+			string name = get_name ();
 
-			ig.Emit (OpCodes.Ldc_I4_0); // FIXME: this hard coded for now.
-			ig.Emit (OpCodes.Ldc_I4_0); // FIXME: this hard coded for now.
-			ig.Emit (OpCodes.Ldstr, "STRING_REPRESENTATION_OF_THE_FUNCTION"); // FIXME
-			ig.Emit (OpCodes.Ldnull); // FIXME: this hard coded for now.
-
-			ig.Emit (OpCodes.Ldarg_0);
-			ig.Emit (OpCodes.Ldfld, typeof (ScriptObject).GetField ("engine"));
-			ig.Emit (OpCodes.Call, typeof (FunctionDeclaration).GetMethod ("JScriptFunctionDeclaration"));
-			ig.Emit (OpCodes.Stsfld, ec.mod_builder.GetType ("JScript 0").GetField (name));
-		}
-
-		internal void build_closure_nested (EmitContext ec)
-		{
-			ILGenerator ig = ec.gc_ig;
-			string name = get_composite_name ();
 			Type t = ec.mod_builder.GetType ("JScript 0");
 			ig.Emit (OpCodes.Ldtoken, t);
 			ig.Emit (OpCodes.Ldstr, Function.name);
@@ -141,7 +112,11 @@ namespace Microsoft.JScript {
 			ig.Emit (OpCodes.Ldarg_0);
 			ig.Emit (OpCodes.Ldfld, typeof (ScriptObject).GetField ("engine"));
 			ig.Emit (OpCodes.Call, typeof (FunctionDeclaration).GetMethod ("JScriptFunctionDeclaration"));
-			ig.Emit (OpCodes.Stloc, local_func);
+
+			if (parent == null)
+				ig.Emit (OpCodes.Stsfld, ec.mod_builder.GetType ("JScript 0").GetField (name));
+			else					
+				ig.Emit (OpCodes.Stloc, local_func);	
 		}
 
 		internal void build_local_fields (ILGenerator ig)
@@ -183,8 +158,17 @@ namespace Microsoft.JScript {
 			}
 		}
 
+		internal void set_function_type ()
+		{
+			if (parent == null)
+				func_type = JSFunctionAttributeEnum.ClassicFunction;
+			else if (parent is FunctionDeclaration)
+				func_type = JSFunctionAttributeEnum.NestedFunction;
+		}
+
 		internal override bool Resolve (IdentificationTable context)
 		{
+			set_function_type ();
 			context.Enter (Function.name, this);
 			context.OpenBlock ();
 			FormalParameterList p = Function.parameters;
