@@ -307,10 +307,8 @@ namespace System.Runtime.InteropServices
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
-		public static IntPtr OffsetOf (Type t, string fieldName) {
-			throw new NotImplementedException ();
-		}
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		public extern static IntPtr OffsetOf (Type t, string fieldName);
 
 		[MonoTODO]
 		public static void Prelink (MethodInfo m) {
@@ -469,20 +467,14 @@ namespace System.Runtime.InteropServices
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
-		public static IntPtr StringToHGlobalAnsi (string s) {
-			throw new NotImplementedException ();
-		}
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		public extern static IntPtr StringToHGlobalAnsi (string s);
 
-		[MonoTODO]
-		public static IntPtr StringToHGlobalAuto (string s) {
-			throw new NotImplementedException ();
-		}
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		public extern static IntPtr StringToHGlobalAuto (string s);
 
-		[MonoTODO]
-		public static IntPtr StringToHGlobalUni (string s) {
-			throw new NotImplementedException ();
-		}
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		public extern static IntPtr StringToHGlobalUni (string s);
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		public extern static void StructureToPtr (object structure, IntPtr ptr, bool fDeleteOld);
