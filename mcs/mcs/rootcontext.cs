@@ -160,6 +160,9 @@ namespace CIR {
 		{
 			Hashtable ifaces = tree.Interfaces;
 
+			if (ifaces == null)
+				return;
+
 			foreach (Interface iface in ifaces){
 				string name = iface.Name;
 
