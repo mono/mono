@@ -306,7 +306,10 @@ namespace System.Reflection.Emit {
 			return writer;
 		}
 
-		private void AddUnmanagedResource (int res_type, int res_id, int lang_id, byte[] data) {
+		private void AddUnmanagedResource (Win32Resource res) {
+			MemoryStream ms = new MemoryStream ();
+			res.WriteTo (ms);
+
 			if (win32_resources != null) {
 				MonoWin32Resource[] new_res = new MonoWin32Resource [win32_resources.Length + 1];
 				System.Array.Copy (win32_resources, new_res, win32_resources.Length);
@@ -315,7 +318,7 @@ namespace System.Reflection.Emit {
 			else
 				win32_resources = new MonoWin32Resource [1];
 
-			win32_resources [win32_resources.Length - 1] = new MonoWin32Resource (res_type, res_id, lang_id, data);
+			win32_resources [win32_resources.Length - 1] = new MonoWin32Resource (res.Type.Id, res.Name.Id, res.Language, ms.ToArray ());
 		}
 
 		[MonoTODO]
@@ -324,10 +327,14 @@ namespace System.Reflection.Emit {
 			if (resource == null)
 				throw new ArgumentNullException ("resource");
 
+			/*
+			 * The format of the argument byte array is not documented
+			 * so this method is impossible to implement.
+			 */
+
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		public void DefineUnmanagedResource (string resourceFileName)
 		{
 			if (resourceFileName == null)
@@ -337,7 +344,16 @@ namespace System.Reflection.Emit {
 			if (!File.Exists (resourceFileName) || Directory.Exists (resourceFileName))
 				throw new FileNotFoundException ("File '" + resourceFileName + "' does not exists or is a directory.");
 
-			throw new NotImplementedException ();
+			using (FileStream fs = new FileStream (resourceFileName, FileMode.Open)) {
+				Win32ResFileReader reader = new Win32ResFileReader (fs);
+
+				foreach (Win32EncodedResource res in reader.ReadResources ()) {
+					if (res.Name.IsName || res.Type.IsName)
+						throw new InvalidOperationException ("resource files with named resources or non-default resource types are not supported.");
+
+					AddUnmanagedResource (res);
+				}
+			}
 		}
 
 		[MonoTODO]
@@ -350,7 +366,7 @@ namespace System.Reflection.Emit {
 		public void DefineVersionInfoResource (string product, string productVersion,
 						       string company, string copyright, string trademark)
 		{
-			if ((version_res != null) || (win32_resources != null))
+			if (version_res != null)
 				throw new ArgumentException ("Native resource has already been defined.");
 
 			/*
@@ -358,7 +374,7 @@ namespace System.Reflection.Emit {
 			 * the binary version is known.
 			 */
 
-			version_res = new Win32VersionResource ();
+			version_res = new Win32VersionResource (1, 0);
 			version_res.ProductName = product;
 			version_res.ProductVersion = productVersion;
 			version_res.CompanyName = company;
@@ -366,15 +382,40 @@ namespace System.Reflection.Emit {
 			version_res.LegalTrademarks = trademark;
 		}
 
+		/* 
+		 * Mono extension to support /win32icon in mcs
+		 */
+		internal void DefineIconResource (string iconFileName)
+		{
+			if (iconFileName == null)
+				throw new ArgumentNullException ("iconFileName");
+			if (iconFileName == String.Empty)
+				throw new ArgumentException ("iconFileName");
+			if (!File.Exists (iconFileName) || Directory.Exists (iconFileName))
+				throw new FileNotFoundException ("File '" + iconFileName + "' does not exists or is a directory.");
+
+			using (FileStream fs = new FileStream (iconFileName, FileMode.Open)) {
+				Win32IconFileReader reader = new Win32IconFileReader (fs);
+				
+				ICONDIRENTRY[] entries = reader.ReadIcons ();
+
+				Win32IconResource[] icons = new Win32IconResource [entries.Length];
+				for (int i = 0; i < entries.Length; ++i) {
+					icons [i] = new Win32IconResource (i + 1, 0, entries [i]);
+					AddUnmanagedResource (icons [i]);
+				}
+
+				Win32GroupIconResource group = new Win32GroupIconResource (1, 0, icons);
+				AddUnmanagedResource (group);
+			}
+		}
+
 		private void DefineVersionInfoResourceImpl (string fileName) {
 			// Add missing info
 			version_res.FileVersion = version;
 			version_res.OriginalFilename = fileName;
 
-			MemoryStream ms = new MemoryStream ();
-			version_res.WriteTo (ms);
-
-			AddUnmanagedResource ((int)Win32ResourceType.RT_VERSION, 1, 0, ms.ToArray ());
+			AddUnmanagedResource (version_res);
 		}
 
 		public ModuleBuilder GetDynamicModule (string name)

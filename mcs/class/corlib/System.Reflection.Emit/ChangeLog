@@ -1,5 +1,10 @@
 2004-01-08  Zoltan Varga  <vargaz@freemail.hu>
 
+	* AssemblyBuilder.cs (DefineUnmanagedResource): Implement.
+
+	* AssemblyBuilder.cs (DefineIconResource): New internal method to
+	support mcs.
+
 	* TypeBuilder.cs (IsDefined): Implement this, since some corlib classes
 	make calls to IsDefined.
 
