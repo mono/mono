@@ -1,5 +1,9 @@
 2003-08-04 Ben Maurer  <bmaurer@users.sourceforge.net>
 
+	* XslMessage.cs: Implement.
+
+2003-08-04 Ben Maurer  <bmaurer@users.sourceforge.net>
+
 	* XslText.cs: I can make that parsing simpler!
 	* XslText.cs, XslValueof.cs: support for disable-output-escaping.
 

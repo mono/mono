@@ -24,14 +24,23 @@ namespace Mono.Xml.Xsl.Operations {
 		
 		protected override void Compile (Compiler c)
 		{
+			terminate = c.ParseYesNoAttribute ("terminate", false);
+			
 			if (!c.Input.MoveToFirstChild ()) return;
-				
 			children = c.CompileTemplateContent ();
 			c.Input.MoveToParent ();
 		}
+		
 		public override void Evaluate (XslTransformProcessor p)
 		{
-			throw new NotImplementedException ();
+			if (children != null) {
+				p.PushOutput (new XmlTextWriter (Console.Error));
+				children.Evaluate (p);
+				p.PopOutput ();
+			}
+			
+			if (terminate)
+				throw new Exception ("XSLT TERMINATION");
 		}
 	}
 }
