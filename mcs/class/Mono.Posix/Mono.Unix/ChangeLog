@@ -1,3 +1,7 @@
+2005-01-01  Jonathan Pryor <jonpryor@vt.edu>
+
+	* Stdlib.cs: Don't use C# v2 features; fixes build under CSC.EXE.
+
 2004-12-30  Jonathan Pryor <jonpryor@vt.edu>
 
 	* Stdlib.cs: On miguel's suggestion, rename Sighandler_t to SignalHandler.

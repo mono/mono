@@ -4,7 +4,7 @@
 // Authors:
 //   Jonathan Pryor (jonpryor@vt.edu)
 //
-// (C) 2004 Jonathan Pryor
+// (C) 2004-2005 Jonathan Pryor
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -171,9 +171,9 @@ namespace Mono.Unix {
 					signum + ".  Don't do that.");
 		}
 
-		public static readonly SignalHandler SIG_DFL = _DefaultHandler;
-		public static readonly SignalHandler SIG_ERR = _ErrorHandler;
-		public static readonly SignalHandler SIG_IGN = _IgnoreHandler;
+		public static readonly SignalHandler SIG_DFL = new SignalHandler (_DefaultHandler);
+		public static readonly SignalHandler SIG_ERR = new SignalHandler (_ErrorHandler);
+		public static readonly SignalHandler SIG_IGN = new SignalHandler (_IgnoreHandler);
 
 		[DllImport (LIBC, SetLastError=true, EntryPoint="signal")]
 		private static extern IntPtr sys_signal (int signum, SignalHandler handler);
