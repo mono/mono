@@ -1,4 +1,8 @@
 2002-07-22  Tim Coleman <tim@timcoleman.com>
+	* TypeConverter.cs: Fixed bad stubb function
+		GetConvertToException ()
+
+2002-07-22  Tim Coleman <tim@timcoleman.com>
 	* ComponentCollection.cs: Added reference to
 		ReadOnlyCollectionBase to make sure
 		that we inherit the appropriate methods.
