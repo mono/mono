@@ -109,19 +109,11 @@ namespace System.Security.Cryptography.Xml {
 
 			t.LoadInput (doc);
 			if (t is XmlDsigEnvelopedSignatureTransform) {
-				object o = t.GetOutput ();
-				MemoryStream ms = new MemoryStream ();
-				XmlTextWriter xw = new XmlTextWriter (ms, Encoding.UTF8);
-				XmlDocument d = o as XmlDocument;
-				if (d != null)
-					d.Save (xw);
-				else {
-					XmlNodeList nl = (XmlNodeList) o;
-					foreach (XmlNode n in nl)
-						n.WriteTo (xw);
-				}
-				// don't close xw (and thus ms).
-				return ms;
+				// It returns XmlDocument for XmlDocument input.
+				doc = (XmlDocument) t.GetOutput ();
+				Transform c14n = GetC14NMethod ();
+				c14n.LoadInput (doc);
+				return (Stream) c14n.GetOutput ();
 			}
 
 			object obj = t.GetOutput ();
@@ -207,17 +199,22 @@ namespace System.Security.Cryptography.Xml {
 				r.DigestValue = GetReferenceHash (r);
 			}
 		}
-		
-		private Stream SignedInfoTransformed () 
+
+		private Transform GetC14NMethod ()
 		{
 			Transform t = (Transform) CryptoConfig.CreateFromName (signature.SignedInfo.CanonicalizationMethod);
 			if (t == null)
 				throw new CryptographicException ("Unknown Canonicalization Method {0}", signature.SignedInfo.CanonicalizationMethod);
+			return t;
+		}
+
+		private Stream SignedInfoTransformed () 
+		{
+			Transform t = GetC14NMethod ();
 
 			if (signatureElement != null) {
 				// TODO - check signature.SignedInfo.Id
 				XmlNodeList xnl = signatureElement.GetElementsByTagName (XmlSignature.ElementNames.SignedInfo, XmlSignature.NamespaceURI);
-
 				byte[] si = Encoding.UTF8.GetBytes (xnl [0].OuterXml);
 				MemoryStream ms = new MemoryStream ();
 				ms.Write (si, 0, si.Length);

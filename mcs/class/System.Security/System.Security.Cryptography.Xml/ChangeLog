@@ -1,3 +1,11 @@
+2004-03-17  Atsushi Enomoto <atsushi@ximian.com>
+
+	* SignedXml.cs : the result from enveloped signature transform should
+	  be canonicalized before getting its hash.
+	* XmlDsigEnvelopedSignatureTransform.cs : in XPath selection,
+	  if the node is Signature itself it is not allowed.
+	  PreserveWhitespace is required.
+
 2004-03-16  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* SignedXml.cs: Changed (again). This time we use the Stream when 

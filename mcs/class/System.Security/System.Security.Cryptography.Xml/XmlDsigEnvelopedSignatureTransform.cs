@@ -77,6 +77,7 @@ namespace System.Security.Cryptography.Xml {
 			// possible input: Stream, XmlDocument, and XmlNodeList
 			if (inputObj is Stream) {
 				doc = new XmlDocument ();
+				doc.PreserveWhitespace = true;
 				doc.XmlResolver = GetResolver ();
 				doc.Load (inputObj as Stream);
 				return GetOutputFromNode (doc, GetNamespaceManager (doc), true);
@@ -122,7 +123,7 @@ namespace System.Security.Cryptography.Xml {
 		{
 			XmlDocument doc = input is XmlDocument ? input as XmlDocument : input.OwnerDocument;
 			if (remove) {
-				XmlNodeList nl = input.SelectNodes ("//dsig:Signature", nsmgr);
+				XmlNodeList nl = input.SelectNodes ("descendant-or-self::dsig:Signature", nsmgr);
 				foreach (XmlNode n in nl)
 					n.ParentNode.RemoveChild (n);
 			}
