@@ -350,11 +350,120 @@ namespace System.Runtime.Serialization.Formatters.Binary
 			int length = reader.ReadInt32 ();
 			Type elementType = ReadType (reader, TypeTag.PrimitiveType);
 
-			Array array = Array.CreateInstance (elementType, length);
-			for (int n = 0; n < length; n++)
-				array.SetValue (ReadPrimitiveTypeValue (reader, elementType), n);
+			switch (Type.GetTypeCode (elementType))
+			{
+				case TypeCode.Boolean: {
+					bool[] arr = new bool [length];
+					for (int n = 0; n < length; n++) arr [n] = reader.ReadBoolean();
+					val = arr;
+					break;
+				}
 
-			val = array;
+				case TypeCode.Byte: {
+					val = reader.ReadBytes (length);
+					break;
+				}
+
+				case TypeCode.Char: {
+					val = reader.ReadChars (length);
+					break;
+				}
+
+				case TypeCode.DateTime: {
+					DateTime[] arr = new DateTime [length];
+					for (int n = 0; n < length; n++) arr [n] = new DateTime (reader.ReadInt64());
+					val = arr;
+					break;
+				}
+
+				case TypeCode.Decimal: {
+					Decimal[] arr = new Decimal [length];
+					for (int n = 0; n < length; n++) arr [n] = Decimal.Parse (reader.ReadString(), CultureInfo.InvariantCulture);
+					val = arr;
+					break;
+				}
+
+				case TypeCode.Double: {
+					Double[] arr = new Double [length];
+					for (int n = 0; n < length; n++) arr [n] = reader.ReadDouble();
+					val = arr;
+					break;
+				}
+
+				case TypeCode.Int16: {
+					short[] arr = new short [length];
+					for (int n = 0; n < length; n++) arr [n] = reader.ReadInt16();
+					val = arr;
+					break;
+				}
+
+				case TypeCode.Int32: {
+					int[] arr = new int [length];
+					for (int n = 0; n < length; n++) arr [n] = reader.ReadInt32();
+					val = arr;
+					break;
+				}
+
+				case TypeCode.Int64: {
+					long[] arr = new long [length];
+					for (int n = 0; n < length; n++) arr [n] = reader.ReadInt64();
+					val = arr;
+					break;
+				}
+
+				case TypeCode.SByte: {
+					sbyte[] arr = new sbyte [length];
+					for (int n = 0; n < length; n++) arr [n] = reader.ReadSByte();
+					val = arr;
+					break;
+				}
+
+				case TypeCode.Single: {
+					float[] arr = new float [length];
+					for (int n = 0; n < length; n++) arr [n] = reader.ReadSingle();
+					val = arr;
+					break;
+				}
+
+				case TypeCode.UInt16: {
+					ushort[] arr = new ushort [length];
+					for (int n = 0; n < length; n++) arr [n] = reader.ReadUInt16();
+					val = arr;
+					break;
+				}
+
+				case TypeCode.UInt32: {
+					uint[] arr = new uint [length];
+					for (int n = 0; n < length; n++) arr [n] = reader.ReadUInt32();
+					val = arr;
+					break;
+				}
+
+				case TypeCode.UInt64: {
+					ulong[] arr = new ulong [length];
+					for (int n = 0; n < length; n++) arr [n] = reader.ReadUInt64();
+					val = arr;
+					break;
+				}
+
+				case TypeCode.String: {
+					string[] arr = new string [length];
+					for (int n = 0; n < length; n++) arr [n] = reader.ReadString();
+					val = arr;
+					break;
+				}
+
+				default: {
+					if (elementType == typeof(TimeSpan)) {
+						TimeSpan[] arr = new TimeSpan [length];
+						for (int n = 0; n < length; n++) arr [n] = new TimeSpan (reader.ReadInt64 ());
+						val = arr;
+					}
+					else
+						throw new NotSupportedException ("Unsupported primitive type: " + elementType.FullName);
+					break;
+				}
+			}			
 		}
 
 		private void ReadArrayOfObject (BinaryReader reader, out long objectId, out object array)
