@@ -1,6 +1,4 @@
-REM LineNo: 4
-REM ExpectedError: BC30420
-REM ErrorMessage: 'Sub Main' was not found in 'OptionalArgu_dll'.
+REM Target: library
 
 Public Class c
 	public Function s (i As Integer, _
