@@ -1,3 +1,6 @@
+2003-05-14  Dietmar Maurer  <dietmar@ximian.com>
+
+	* inssel.brg: remove some common pop instructions without side effects
 
 Wed May 14 12:40:31 CEST 2003 Paolo Molaro <lupus@ximian.com>
 
