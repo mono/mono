@@ -10,13 +10,15 @@
 using System.Collections;
 using System.IO;
 using System.Runtime.Remoting.Messaging;
+using System.Runtime.Serialization.Formatters.Binary;
 
 namespace System.Runtime.Remoting.Channels
 {
 	public class BinaryClientFormatterSink : IClientFormatterSink,
 		IMessageSink, IClientChannelSink, IChannelSinkBase
 	{
-		private IClientChannelSink nextInChain;
+		IClientChannelSink nextInChain;
+		IRemotingFormatter formatter = new BinaryFormatter ();
 		
 		public BinaryClientFormatterSink (IClientChannelSink nextSink)
 		{
@@ -92,14 +94,20 @@ namespace System.Runtime.Remoting.Channels
 			Stream response_stream;
 			
 			// fixme: use nextInChain.GetRequestStream() ??
-			Stream out_stream = new MemoryStream ();
-
-			// fixme: serialize msg to the stream
-
+			//Stream out_stream = new MemoryStream ();
+			Stream out_stream = File.Open ("test.bin", FileMode.Create);
+			
+			// serialize msg to the stream
+			formatter.Serialize (out_stream, msg, null);
+			//formatter.Serialize (out_stream, new Exception ("TEST"), null);
+			
+			out_stream.Close ();
+			throw new NotImplementedException ();
+			
 			ProcessMessage (msg, null, out_stream, out response_headers, out response_stream);
 
-			// fixme: deserialize response_stream
-			IMessage result = null;
+			// deserialize response_stream
+			IMessage result = (IMessage) formatter.Deserialize (response_stream, null);
 
 			return null;
 		}
