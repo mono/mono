@@ -36,5 +36,17 @@ namespace CIR {
 				source = value;
 			}
 		}
+
+		public override void Resolve (TypeContainer tc)
+		{
+			// FIXME: Implement;
+		}
+
+		public override void Emit (EmitContext ec)
+		{
+		}
 	}
 }
+
+
+

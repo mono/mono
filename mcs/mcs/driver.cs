@@ -293,6 +293,17 @@ namespace CIR
 			//
 			context.ResolveTree ();
 			context.PopulateTypes ();
+
+			//
+			// Before emitting, we need to get the core
+			// types emitted from the user defined types
+			// or from the system ones.
+			//
+			context.TypeManager.InitCoreTypes ();
+
+			//
+			// The code generator
+			//
 			context.EmitCode ();
 			
 			if (context.Report.Errors > 0){

@@ -1,3 +1,18 @@
+2001-08-26  Miguel de Icaza  <miguel@ximian.com>
+
+	* typemanager.cs (InitCoreTypes): Initialize the various core
+	types after we have populated the type manager with the user
+	defined types (this distinction will be important later while
+	compiling corlib.dll)
+
+	* expression.cs, literal.cs, assign.cs, constant.cs: Started work
+	on Expression Classification.  Now all expressions have a method
+	`Resolve' and a method `Emit'.
+
+	* codegen.cs, cs-parser.jay: Fixed the bug that stopped code
+	generation from working.     Also add some temporary debugging
+	code. 
+	
 2001-08-24  Miguel de Icaza  <miguel@ximian.com>
 
 	* codegen.cs: Lots of code generation pieces.  This is only the

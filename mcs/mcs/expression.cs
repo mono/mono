@@ -10,48 +10,60 @@ namespace CIR {
 	using System.Collections;
 	using System.Diagnostics;
 	using System;
-	
-	public abstract class Expression {
-		string type;
-		bool is_lvalue;
 
-		public string Type {
+	// <remarks>
+	//   The ExprClass class contains the is used to pass the 
+	//   classification of an expression (value, variable, namespace,
+	//   type, method group, property access, event access, indexer access,
+	//   nothing).
+	// </remarks>
+	public enum ExprClass {
+		Invalid,
+		
+		Value, Variable, Namespace, Type,
+		MethodGroup, PropertyAccess,
+		EventAccess, IndexerAccess, Nothing, 
+	}
+
+	// <remarks>
+	//   Base class for expressions
+	// </remarks>
+	public abstract class Expression {
+		protected ExprClass eclass;
+		protected Type      type;
+		
+		public Type Type {
 			get {
 				return type;
 			}
+
+			set {
+				type = value;
+			}
 		}
 
-		public bool IsLValue {
+		public ExprClass ExprClass {
 			get {
-				return is_lvalue;
+				return eclass;
 			}
 
 			set {
-				is_lvalue = value;
+				eclass = value;
 			}
 		}
 
-		public virtual bool IsLiteral {
-			get {
-				return false;
-			}
-		}
+		public abstract void Resolve (TypeContainer tc);
+		public abstract void Emit    (EmitContext ec);
 		
 		// <summary>
 		//   Protected constructor.  Only derivate types should
 		//   be able to be created
 		// </summary>
-		// protected Type (
 
 		protected Expression ()
 		{
+			eclass = ExprClass.Invalid;
 			type = null;
-		}
-		
-		static bool EvaluateType (Expression expr, out string setType)
-		{
-			setType = null;
-			return true;
 		}
 	}
 
@@ -90,10 +102,19 @@ namespace CIR {
 				oper = value;
 			}
 		}
+
+		public override void Resolve (TypeContainer tc)
+		{
+			// FIXME: Implement;
+		}
+
+		public override void Emit (EmitContext ec)
+		{
+		}
 	}
 
 	public class Probe : Expression {
-		string type;
+		string probe_type;
 		Expression expr;
 		Operator oper;
 
@@ -101,10 +122,10 @@ namespace CIR {
 			Is, As
 		}
 		
-		public Probe (Operator oper, Expression expr, string type)
+		public Probe (Operator oper, Expression expr, string probe_type)
 		{
 			this.oper = oper;
-			this.type = type;
+			this.probe_type = probe_type;
 			this.expr = expr;
 		}
 
@@ -122,25 +143,33 @@ namespace CIR {
 
 		public string ProbeType {
 			get {
-				return type;
+				return probe_type;
 			}
 		}
-			       
+
+		public override void Resolve (TypeContainer tc)
+		{
+			// FIXME: Implement;
+		}
+
+		public override void Emit (EmitContext ec)
+		{
+		}
 	}
 	
 	public class Cast : Expression {
-		string type;
+		string target_type;
 		Expression expr;
 		
-		public Cast (string type, Expression expr)
+		public Cast (string cast_type, Expression expr)
 		{
-			this.type = type;
+			this.target_type = target_type;
 			this.expr = expr;
 		}
 
 		public string TargetType {
 			get {
-				return type;
+				return target_type;
 			}
 		}
 
@@ -151,6 +180,15 @@ namespace CIR {
 			set {
 				expr = value;
 			}
+		}
+		
+		public override void Resolve (TypeContainer tc)
+		{
+			// FIXME: Implement;
+		}
+
+		public override void Emit (EmitContext ec)
+		{
 		}
 	}
 
@@ -204,6 +242,14 @@ namespace CIR {
 				right = value;
 			}
 		}
+
+		public override void Resolve (TypeContainer tc)
+		{
+		}
+
+		public override void Emit (EmitContext ec)
+		{
+		}
 	}
 
 	public class Conditional : Expression {
@@ -233,6 +279,15 @@ namespace CIR {
 				return falseExpr;
 			}
 		}
+
+		public override void Resolve (TypeContainer tc)
+		{
+			// FIXME: Implement;
+		}
+
+		public override void Emit (EmitContext ec)
+		{
+		}
 	}
 
 	public class SimpleName : Expression {
@@ -247,6 +302,15 @@ namespace CIR {
 			get {
 				return name;
 			}
+		}
+
+		public override void Resolve (TypeContainer tc)
+		{
+			// FIXME: Implement;
+		}
+
+		public override void Emit (EmitContext ec)
+		{
 		}
 	}
 	
@@ -271,6 +335,15 @@ namespace CIR {
 				return name;
 			}
 		}
+
+		public override void Resolve (TypeContainer tc)
+		{
+			// FIXME: Implement;
+		}
+
+		public override void Emit (EmitContext ec)
+		{
+		}
 	}
 
 	public class ParameterReference : Expression {
@@ -288,6 +361,15 @@ namespace CIR {
 				return name;
 			}
 		}
+
+		public override void Resolve (TypeContainer tc)
+		{
+			// FIXME: Implement;
+		}
+
+		public override void Emit (EmitContext ec)
+		{
+		}
 	}
 	
 	// <summary>
@@ -300,24 +382,18 @@ namespace CIR {
 			Out
 		};
 
-		AType type;
+		public readonly AType Type;
 		Expression expr;
 
 		public Argument (Expression expr, AType type)
 		{
 			this.expr = expr;
-			this.type = type;
+			this.Type = type;
 		}
 
 		public Expression Expr {
 			get {
 				return expr;
-			}
-		}
-
-		public AType Type {
-			get {
-				return type;
 			}
 		}
 	}
@@ -326,7 +402,7 @@ namespace CIR {
 	//   Invocation of methods or delegates.
 	// </summary>
 	public class Invocation : Expression {
-		ArrayList arguments;
+		public readonly ArrayList Arguments;
 		Expression expr;
 
 		//
@@ -339,7 +415,7 @@ namespace CIR {
 		public Invocation (Expression expr, ArrayList arguments)
 		{
 			this.expr = expr;
-			this.arguments = arguments;
+			Arguments = arguments;
 		}
 
 		public Expression Expr {
@@ -348,77 +424,91 @@ namespace CIR {
 			}
 		}
 
-		public ArrayList Arguments {
-			get {
-				return arguments;
-			}
+		public override void Resolve (TypeContainer tc)
+		{
+			// FIXME: Implement;
+		}
+
+		public override void Emit (EmitContext ec)
+		{
 		}
 	}
 
 	public class New : Expression {
-		ArrayList arguments;
-		string requested_type;
+		public readonly ArrayList Arguments;
+		public readonly string    RequestedType;
 
 		public New (string requested_type, ArrayList arguments)
 		{
-			this.requested_type = requested_type;
-			this.arguments = arguments;
+			RequestedType = requested_type;
+			Arguments = arguments;
 		}
 		
-		public ArrayList Arguments{
-			get {
-				return arguments;
-			}
+		public override void Resolve (TypeContainer tc)
+		{
+			// FIXME: Implement;
 		}
-		
-		public string RequestedType {
-			get {
-				return requested_type;
-			}
+
+		public override void Emit (EmitContext ec)
+		{
 		}
 	}
 
 	public class This : Expression {
+		public override void Resolve (TypeContainer tc)
+		{
+			// FIXME: Implement;
+		}
+
+		public override void Emit (EmitContext ec)
+		{
+		}
 	}
 
 	public class TypeOf : Expression {
-		string queried_type;
+		public readonly string QueriedType;
 		
 		public TypeOf (string queried_type)
 		{
-			this.queried_type = queried_type;
+			QueriedType = queried_type;
 		}
 
-		public string QueriedType {
-			get {
-				return queried_type;
-			}
+		public override void Resolve (TypeContainer tc)
+		{
+			// FIXME: Implement;
+		}
+
+		public override void Emit (EmitContext ec)
+		{
 		}
 	}
 
 	public class SizeOf : Expression {
-		string queried_type;
+		public readonly string QueriedType;
 		
 		public SizeOf (string queried_type)
 		{
-			this.queried_type = queried_type;
+			this.QueriedType = queried_type;
 		}
 
-		public string QueriedType {
-			get {
-				return queried_type;
-			}
+		public override void Resolve (TypeContainer tc)
+		{
+			// FIXME: Implement;
+		}
+
+		public override void Emit (EmitContext ec)
+		{
 		}
 	}
 
 	public class MemberAccess : Expression {
+		public readonly string Identifier;
 		Expression expr;
-		string id;
 		
 		public MemberAccess (Expression expr, string id)
 		{
 			this.expr = expr;
-			this.id = id;
+			Identifier = id;
 		}
 
 		public Expression Expr {
@@ -426,35 +516,36 @@ namespace CIR {
 				return expr;
 			}
 		}
-
-		public string Identifier {
-			get {
-				return id;
-			}
+		
+		public override void Resolve (TypeContainer tc)
+		{
+			// FIXME: Implement;
 		}
+
+		public override void Emit (EmitContext ec)
+		{
+		}
+
 	}
 
 	public class BuiltinTypeAccess : Expression {
-		string access_base;
-		string method;
+		public readonly string AccessBase;
+		public readonly string Method;
 		
 		public BuiltinTypeAccess (string type, string method)
 		{
 			System.Console.WriteLine ("DUDE! This type should be fully resolved!");
-			this.access_base = access_base;
-			this.method = method;
+			AccessBase = type;
+			Method = method;
 		}
 
-		public string AccessBase {
-			get {
-				return access_base;
-			}
+		public override void Resolve (TypeContainer tc)
+		{
+			// FIXME: Implement;
 		}
 
-		public string Method {
-			get {
-				return method;
-			}
+		public override void Emit (EmitContext ec)
+		{
 		}
 	}
 }

@@ -7,9 +7,10 @@
 // (C) 2001 Ximian, Inc.
 //
 
+using System;
+
 namespace CIR {
 	public abstract class Literal : Expression {
-
 		// <summary>
 		//   This is different from ToString in that ToString
 		//   is supposed to be there for debugging purposes,
@@ -59,14 +60,25 @@ namespace CIR {
 		public NullLiteral ()
 		{
 		}
-
+		
 		override public string AsString ()
 		{
 			return "null";
 		}
+
+		public override void Resolve (TypeContainer tc)
+		{
+			eclass = ExprClass.Value;
+			type = TypeManager.object_type;
+		}
+
+		public override void Emit (EmitContext ec)
+		{
+		}
 	}
 
 	public class BoolLiteral : Literal {
+		static Type bool_type = Type.GetType ("System.Bool");
 		bool val;
 		
 		public BoolLiteral (bool val)
@@ -77,6 +89,16 @@ namespace CIR {
 		override public string AsString ()
 		{
 			return val ? "true" : "false";
+		}
+
+		public override void Resolve (TypeContainer tc)
+		{
+			eclass = ExprClass.Value;
+			type = bool_type;
+		}
+
+		public override void Emit (EmitContext ec)
+		{
 		}
 	}
 
@@ -92,6 +114,16 @@ namespace CIR {
 		{
 			return "\"" + descape (c) + "\"";
 		}
+
+		public override void Resolve (TypeContainer tc)
+		{
+			eclass = ExprClass.Value;
+			type = TypeManager.char_type;
+		}
+
+		public override void Emit (EmitContext ec)
+		{
+		}
 	}
 
 	public class IntLiteral : Literal {
@@ -105,6 +137,16 @@ namespace CIR {
 		override public string AsString ()
 		{
 			return i.ToString ();
+		}
+
+		public override void Resolve (TypeContainer tc)
+		{
+			eclass = ExprClass.Value;
+			type = TypeManager.int32_type;
+		}
+
+		public override void Emit (EmitContext ec)
+		{
 		}
 	}
 
@@ -120,6 +162,16 @@ namespace CIR {
 		{
 			return f.ToString ();
 		}
+
+		public override void Resolve (TypeContainer tc)
+		{
+			eclass = ExprClass.Value;
+			type = TypeManager.float_type;
+		}
+
+		public override void Emit (EmitContext ec)
+		{
+		}
 	}
 
 	public class DoubleLiteral : Literal {
@@ -133,6 +185,16 @@ namespace CIR {
 		override public string AsString ()
 		{
 			return d.ToString ();
+		}
+
+		public override void Resolve (TypeContainer tc)
+		{
+			eclass = ExprClass.Value;
+			type = TypeManager.double_type;
+		}
+
+		public override void Emit (EmitContext ec)
+		{
 		}
 	}
 
@@ -148,6 +210,16 @@ namespace CIR {
 		{
 			return d.ToString ();
 		}
+
+		public override void Resolve (TypeContainer tc)
+		{
+			eclass = ExprClass.Value;
+			type = TypeManager.decimal_type;
+		}
+
+		public override void Emit (EmitContext ec)
+		{
+		}
 	}
 
 	public class StringLiteral : Literal {
@@ -162,6 +234,16 @@ namespace CIR {
 		override public string AsString ()
 		{
 			return "\"" + s + "\"";
+		}
+
+		public override void Resolve (TypeContainer tc)
+		{
+			eclass = ExprClass.Value;
+			type = TypeManager.string_type;
+		}
+
+		public override void Emit (EmitContext ec)
+		{
 		}
 	}
 }

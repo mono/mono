@@ -2057,7 +2057,7 @@ statement
 	;
 
 embedded_statement
-	: block				{ current_block.AddStatement ((Statement) $1); }
+	: block
 	| empty_statement
         | expression_statement
 	| selection_statement

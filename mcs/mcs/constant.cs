@@ -7,7 +7,7 @@ namespace CIR {
 	public class Constant : Expression {
 		string     name;
 		Expression expr;
-		string     type;
+		string     constant_type;
 		int        mod_flags;
 
 		public const int AllowedModifiers =
@@ -17,9 +17,9 @@ namespace CIR {
 			Modifiers.INTERNAL |
 			Modifiers.PRIVATE;
 
-		public Constant (string type, string name, Expression expr, int mod_flags)
+		public Constant (string constant_type, string name, Expression expr, int mod_flags)
 		{
-			this.type = type;
+			this.constant_type = constant_type;
 			this.name = name;
 			this.expr = expr;
 			this.mod_flags = Modifiers.Check (AllowedModifiers, mod_flags, Modifiers.PRIVATE);
@@ -33,7 +33,7 @@ namespace CIR {
 
 		public string ConstantType {
 			get {
-				return type;
+				return constant_type;
 			}
 		}
 
@@ -49,6 +49,14 @@ namespace CIR {
 			}
 		}
 
+		public override void Resolve (TypeContainer tc)
+		{
+		}
+
+		public override void Emit (EmitContext ec)
+		{
+		}
+		       
 		// <summary>
 		//   Defines the constant in the @parent
 		// </summary>
@@ -58,7 +66,7 @@ namespace CIR {
 			TypeCode tc;
 			Type t;
 			
-			t = rc.LookupType (parent, type);
+			t = rc.LookupType (parent, constant_type);
 			if (t == null)
 				return;
 

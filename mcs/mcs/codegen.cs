@@ -78,8 +78,29 @@ namespace CIR {
 			check_state = false;
 		}
 
+		public bool ConvertTo (Type target, Type source, bool verbose)
+		{
+			if (target == source)
+				return true;
+
+			if (verbose)
+				parent.RootContext.Report.Error (
+					31, "Can not convert to type bool");
+			
+			return false;
+		}
+		
 		public void EmitBoolExpression (Expression e)
 		{
+			e.Resolve (parent);
+			if (!ConvertTo (TypeManager.bool_type, e.Type, false)){
+				parent.RootContext.Report.Error (
+					31, "Can not convert the expression to a boolean");
+				return;
+			}
+			
+			e.Emit (this);
+			
 			//
 			// Sample: for now we just load true on the stack
 			//
@@ -194,6 +215,8 @@ namespace CIR {
 		
 		void EmitStatement (Statement s)
 		{
+			Console.WriteLine ("Emitting statement of type" + s.GetType ().ToString ());
+			
 			if (s is If)
 				EmitIf ((If) s);
 			else if (s is Do)
@@ -210,18 +233,26 @@ namespace CIR {
 				EmitChecked ((Checked) s);
 			else if (s is Unchecked)
 				EmitUnChecked ((Unchecked) s);
+			else if (s is Block)
+				EmitBlock ((Block) s);
+			else {
+				Console.WriteLine ("Unhandled Statement type: " +
+						   s.GetType ().ToString ());
+			}
 		}
 
 		void EmitBlock (Block block)
 		{
-			foreach (Statement s in block.Statements)
+			foreach (Statement s in block.Statements){
 				EmitStatement (s);
+			}
 		}
 		
 		public void EmitTopBlock (Block block)
 		{
 			block.EmitMeta (parent, ig, block);
 
+			Console.WriteLine ("Emitting Top Block");
 			EmitBlock (block);
 
 			ig.Emit (OpCodes.Ret);
