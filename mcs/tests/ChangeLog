@@ -1,3 +1,7 @@
+2004-09-22  Martin Baulig  <martin@ximian.com>
+
+	* test-297.cs: New test for #28562.
+
 2004-09-21  Martin Baulig  <martin@ximian.com>
 
 	* test-295.cs: Added Geoff Norton's patch for #62984.
