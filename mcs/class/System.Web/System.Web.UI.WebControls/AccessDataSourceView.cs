@@ -35,8 +35,11 @@ using System.Text;
 using System.Data;
 using System.ComponentModel;
 using System.Data.OleDb;
+using System.Security.Permissions;
 
 namespace System.Web.UI.WebControls {
+
+	[AspNetHostingPermissionAttribute (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	public class AccessDataSourceView : SqlDataSourceView {
 
 		OleDbConnection oleConnection;

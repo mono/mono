@@ -744,29 +744,29 @@ namespace System.Web.UI.WebControls
 			base.LoadViewState (states[0]);
 			
 			if (states[1] != null)
-				((IStateManager)dataBindings).LoadViewState(states[1]);
+				((IStateManager)DataBindings).LoadViewState(states[1]);
 			if (states[2] != null)
 				((IStateManager)Items).LoadViewState(states[2]);
 			if (states[3] != null)
-				dynamicMenuItemStyle.LoadViewState (states[3]);
+				DynamicMenuItemStyle.LoadViewState (states[3]);
 			if (states[4] != null)
-				dynamicMenuStyle.LoadViewState (states[4]);
+				DynamicMenuStyle.LoadViewState (states[4]);
 			if (states[5] != null)
-				((IStateManager)levelMenuItemStyles).LoadViewState(states[5]);
+				((IStateManager)LevelMenuItemStyles).LoadViewState(states[5]);
 			if (states[6] != null)
-				((IStateManager)levelSelectedStyles).LoadViewState(states[6]);
+				((IStateManager)LevelSelectedStyles).LoadViewState(states[6]);
 			if (states[7] != null)
-				dynamicSelectedStyle.LoadViewState (states[7]);
+				DynamicSelectedStyle.LoadViewState (states[7]);
 			if (states[8] != null)
-				staticMenuItemStyle.LoadViewState (states[8]);
+				StaticMenuItemStyle.LoadViewState (states[8]);
 			if (states[9] != null)
-				staticMenuStyle.LoadViewState (states[9]);
+				StaticMenuStyle.LoadViewState (states[9]);
 			if (states[10] != null)
-				staticSelectedStyle.LoadViewState (states[10]);
+				StaticSelectedStyle.LoadViewState (states[10]);
 			if (states[11] != null)
-				staticHoverStyle.LoadViewState (states[11]);
+				StaticHoverStyle.LoadViewState (states[11]);
 			if (states[12] != null)
-				dynamicHoverStyle.LoadViewState (states[12]);
+				DynamicHoverStyle.LoadViewState (states[12]);
 		}
 		
 		protected override void OnInit (EventArgs e)

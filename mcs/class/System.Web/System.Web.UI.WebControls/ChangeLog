@@ -1,3 +1,24 @@
+2005-02-25  Lluis Sanchez Gual <lluis@novell.com>
+
+	* XmlDataSourceView.cs: ExecuteSelect now returns a list of
+	XmlDataSourceNodeDescriptor instead of a list of nodes. In this way
+	it is possible to query for properties fore each data item.
+	* Menu.cs, TreeView.cs: Make sure that objects are correctly created
+	when loading its view state.
+	* DataControlField.cs: Implement properties using a StateBag.
+	* XmlDataSourcePropertyDescriptor.cs: Implemented.
+	* PagerSettings.cs: Mostly implemented.
+	* AccessDataSourceView.cs, AccessDataSource.cs: Added security attribute.
+	* DataBoundControl.cs: Added null check.
+	* GridView.cs: Initial implementation.
+	* CompositeDataBoundControl.cs: Implemented.
+	* BoundField.cs: Initial implementation.
+	* GridViewRowCollection.cs: Initial implementation.
+	* DataControlFieldCollection.cs: Initial implementation.
+	* DataControlFieldCell.cs: Fixed control tag.
+	* GridViewRow: Initial implementation.
+	* XmlDataSourceNodeDescriptor.cs: Implemented.
+
 2005-02-23 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* WebControl.cs: correctly use TagName in RenderBeginTag, ie, if TagKey

@@ -104,7 +104,7 @@ namespace System.Web.UI.WebControls {
 		{
 			IDataSource ds = GetDataSource ();
 			
-			if (currentSource != ds) {
+			if (currentSource != null && currentSource != ds) {
 				currentSource.DataSourceChanged -= new EventHandler (OnDataSourceViewChanged);
 				currentSource = ds;
 			}

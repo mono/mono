@@ -1,12 +1,10 @@
 //
-// System.Web.UI.WebControls.XmlDataSourceView
+// System.Web.UI.WebControls.GridViewRowCollection.cs
 //
 // Authors:
-//	Ben Maurer (bmaurer@users.sourceforge.net)
+//	Lluis Sanchez Gual (lluis@novell.com)
 //
-// (C) 2003 Ben Maurer
-//
-
+// (C) 2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -27,50 +25,57 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
+// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+//
 
 #if NET_2_0
+
+using System;
+using System.Web.UI;
 using System.Collections;
-using System.Collections.Specialized;
-using System.Text;
-using System.Xml;
 
 namespace System.Web.UI.WebControls
 {
-	public sealed class XmlDataSourceView : DataSourceView
+	public class GridViewRowCollection: ICollection, IEnumerable
 	{
-		string name;
-		ArrayList nodes;
-	
-		public XmlDataSourceView (XmlDataSource owner, string name, XmlNodeList nodes)
+		ArrayList rows = new ArrayList ();
+		
+		public GridViewRowCollection (ArrayList rows)
 		{
-			// Why do they pass owner?
-			this.name = name;
-			this.nodes = new ArrayList (nodes.Count);
-			
-			foreach (XmlNode node in nodes) {
-				if (node.NodeType == XmlNodeType.Element)
-					this.nodes.Add (node);
-			}
+			this.rows = rows;
 		}
 		
-		public IEnumerable Select (DataSourceSelectArguments arguments)
-		{
-			return ExecuteSelect (arguments);
+		public GridViewRow this [int i] {
+			get { return (GridViewRow) rows [i]; }
 		}
 		
-		public override string Name { 
-			get { return name; }
+		public void CopyTo (GridViewRow[] array, int index)
+		{
+			rows.CopyTo (array, index);
 		}
 		
-		[MonoTODO]
-		protected internal override IEnumerable ExecuteSelect (DataSourceSelectArguments arguments)
+		public IEnumerator GetEnumerator ()
 		{
-			ArrayList list = new ArrayList ();
-			foreach (XmlNode node in nodes)
-				list.Add (new XmlDataSourceNodeDescriptor (node));
-			return list;
-		}		
+			return rows.GetEnumerator ();
+		}
+		
+		public int Count {
+			get { return rows.Count; }
+		}
+		
+		public bool IsSynchronized {
+			get { return false; }
+		}
+		
+		public object SyncRoot {
+			get { return rows.SyncRoot; }
+		}
+		
+		void System.Collections.ICollection.CopyTo (Array array, int index)
+		{
+			rows.CopyTo (array, index);
+		}
 	}
 }
-#endif
 
+#endif

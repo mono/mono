@@ -32,9 +32,11 @@
 
 using System.IO;
 using System.ComponentModel;
+using System.Security.Permissions;
 
 namespace System.Web.UI.WebControls {
-	[ DesignerAttribute ("System.Web.UI.Design.WebControls.AccessDataSourceDesigner, System.Design",
+	[AspNetHostingPermissionAttribute (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
+	[DesignerAttribute ("System.Web.UI.Design.WebControls.AccessDataSourceDesigner, System.Design",
 		"System.ComponentModel.Design.IDesigner")]			
 	public class AccessDataSource : SqlDataSource 
 	{

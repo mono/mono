@@ -761,7 +761,7 @@ namespace System.Web.UI.WebControls
 			if (states[7] != null)
 				SelectedNodeStyle.LoadViewState(states[7]);
 			if (states[8] != null)
-				((IStateManager)dataBindings).LoadViewState(states[8]);
+				((IStateManager)DataBindings).LoadViewState(states[8]);
 			if (states[9] != null)
 				((IStateManager)Nodes).LoadViewState(states[9]);
 		}

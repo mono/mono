@@ -36,7 +36,7 @@ namespace System.Web.UI.WebControls {
 	{
 		DataControlField containerField;
 		
-		public DataControlFieldCell (DataControlField containerField) : this (HtmlTextWriterTag.Span, containerField)
+		public DataControlFieldCell (DataControlField containerField) : this (HtmlTextWriterTag.Td, containerField)
 		{		
 		}
 		

@@ -33,156 +33,137 @@ using System.Collections;
 using System.Collections.Specialized;
 using System.Web.UI;
 using System.ComponentModel;
+using System.Security.Permissions;
 
 namespace System.Web.UI.WebControls {
 
 	[DefaultPropertyAttribute ("HeaderText")]
 	[TypeConverterAttribute (typeof(ExpandableObjectConverter))]
+	[AspNetHostingPermissionAttribute (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
+	[AspNetHostingPermissionAttribute (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	public abstract class DataControlField : IStateManager, IDataSourceViewSchemaAccessor
 	{
 		bool tracking = false;
 		StateBag viewState;
-		object dataSourceViewSchema;
-		string accessibleHeaderText;
 		Control control;
 		Style controlStyle;
-		bool designMode;
 		TableItemStyle footerStyle;
-		string footerText;
-		string headerImageUrl;
 		TableItemStyle headerStyle;
-		string headerText;
 		TableItemStyle itemStyle;
-		bool showHeader;
-		string sortExpression;
-		bool visible;
-
+		
 		protected DataControlField()
 		{ 
 			viewState = new StateBag ();
 		}
+		
+		internal void SetDirty ()
+		{
+			viewState.SetDirty ();
+		}
+		
+		protected StateBag ViewState {
+			get { return viewState; }
+		}
 
-		[MonoTODO]
 		public virtual void ExtractValuesFromCell (IOrderedDictionary dictionary,
 			DataControlFieldCell cell, DataControlRowState rowState, bool includeReadOnly)
 		{
-			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		public virtual bool Initialize (bool sortingEnabled, Control control)
-		{ 
-			throw new NotImplementedException ();
+		{
+			this.control = control;
+			return true;
 		}
 
-		[MonoTODO]
 		public virtual void InitializeCell (DataControlFieldCell cell,
 			DataControlCellType cellType, DataControlRowState rowState, int rowIndex)
-		{ 
-			throw new NotImplementedException ();
+		{
+			if (cellType == DataControlCellType.Header && ShowHeader) {
+				if (HeaderImageUrl != "") {
+					Image img = new Image ();
+					img.ImageUrl = HeaderImageUrl;
+					cell.Controls.Add (img);
+					if (HeaderText != "") {
+						Label label = new Label ();
+						label.Text = HeaderText;
+						cell.Controls.Add (label);
+					}
+				} else {
+					cell.Text = HeaderText;
+				}
+			} else if (cellType == DataControlCellType.Footer) {
+				cell.Text = FooterText;
+			}
+		}
+		
+		void SetCellText (DataControlFieldCell cell, string text, string img)
+		{
+			if (img != "") {
+				Image image = new Image ();
+				image.ImageUrl = HeaderImageUrl;
+				cell.Controls.Add (image);
+				if (text != "") {
+					Label label = new Label ();
+					label.Text = text;
+					cell.Controls.Add (label);
+				}
+			} else {
+				cell.Text = text;
+			}
 		}
 
-		[MonoTODO]
 		protected virtual void OnFieldChanged ()
 		{
-			throw new NotImplementedException ();
+			if (FieldChanged != null)
+				FieldChanged (this, EventArgs.Empty);
 		}	
 	
-		protected virtual void LoadViewState(object savedState)
+		protected virtual void LoadViewState (object savedState)
 		{
-			ArrayList items = savedState as ArrayList;
-			if (items == null)
+			if (savedState == null)
 				return;
-			foreach (Pair p in items) {
-				if (((string)p.First).Equals("accessibleHeaderText"))				{
-					accessibleHeaderText = (string)p.Second;
-					continue;
-				}
-				if (((string)p.First).Equals("footerText")) {
-					footerText = (string)p.Second;
-					continue;
-				}
-				if (((string)p.First).Equals("headerImageUrl")) {
-					headerImageUrl = (string)p.Second;
-					continue;
-				}
-				if (((string)p.First).Equals("headerText")) {
-					headerText = (string)p.Second;
-					continue;
-				}
-				if (((string)p.First).Equals("showHeader")) {
-					showHeader = (bool)p.Second;
-					continue;
-				}
-				if (((string)p.First).Equals("sortExpression")) {
-					sortExpression = (string)p.Second;
-					continue;
-				}
-				if (((string)p.First).Equals("visible")) {
-					visible = (bool)p.Second;
-					continue;
-				}
-				if (((string)p.First).Equals("dataSourceViewSchema"))
-				{
-					dataSourceViewSchema = p.Second;
-					continue;
-				}
-			}
-
+				
+			object [] states = (object []) savedState;
+			viewState.LoadViewState (states[0]);
+			
+			if (states[1] != null)
+				((IStateManager)controlStyle).LoadViewState (states[1]);
+			if (states[2] != null)
+				((IStateManager)footerStyle).LoadViewState (states[2]);
+			if (states[3] != null)
+				((IStateManager)headerStyle).LoadViewState (states[3]);
+			if (states[4] != null)
+				((IStateManager)itemStyle).LoadViewState (states[4]);
 		}
 
 		protected virtual object SaveViewState()
 		{
-			ArrayList items = new ArrayList();
-			Pair pair = new Pair ();
-			if (viewState.IsItemDirty("accessibleHeaderText")) {
-				pair.First = "accessibleHeaderText";
-				pair.Second = accessibleHeaderText;
-				items.Add(pair);
-			}
-			if (viewState.IsItemDirty("footerText")) {
-				pair.First = "footerText";
-				pair.Second = footerText;
-				items.Add(pair);
-			}
-			if (viewState.IsItemDirty("headerImageUrl")) {
-				pair.First = "headerImageUrl";
-				pair.Second = headerImageUrl;
-				items.Add(pair);
-			}
-			if (viewState.IsItemDirty("headerText")) {
-				pair.First = "headerText";
-				pair.Second = headerText;
-				items.Add(pair);
-			}
-			if (viewState.IsItemDirty("showHeader")) {
-				pair.First = "showHeader";
-				pair.Second = showHeader;
-				items.Add(pair);
-			}
-			if (viewState.IsItemDirty("sortExpression")) {
-				pair.First = "sortExpression";
-				pair.Second = sortExpression;
-				items.Add(pair);
-			}
-			if (viewState.IsItemDirty("visible")) {
-				pair.First = "visible";
-				pair.Second = visible;
-				items.Add(pair);
-			}
-			if (viewState.IsItemDirty("dataSourceViewSchema")) {
-				pair.First = "dataSourceViewSchema";
-				pair.Second = dataSourceViewSchema;
-				items.Add(pair);
-			}
-			if (items.Count == 0)
+			object[] state = new object [5];
+			state [0] = viewState.SaveViewState ();
+			if (controlStyle != null)
+				state [1] = ((IStateManager) controlStyle).SaveViewState ();
+			if (footerStyle != null)
+				state [2] = ((IStateManager) footerStyle).SaveViewState ();
+			if (headerStyle != null)
+				state [3] = ((IStateManager) headerStyle).SaveViewState ();
+			if (itemStyle != null)
+				state [4] = ((IStateManager) itemStyle).SaveViewState ();
+			
+			if (state [0] == null && state [1] == null && state [2] == null && 
+				state [3] == null && state [4] == null)
 				return null;
-			else
-				return items;
+				
+			return state;
 		}
 
 		protected virtual void TrackViewState()
 		{
+			if (controlStyle != null) ((IStateManager) controlStyle).TrackViewState ();
+			if (footerStyle != null) ((IStateManager) footerStyle).TrackViewState ();
+			if (headerStyle != null) ((IStateManager) headerStyle).TrackViewState ();
+			if (itemStyle != null) ((IStateManager) itemStyle).TrackViewState ();
+			viewState.TrackViewState ();
 			tracking = true;			
 		}
 		
@@ -207,6 +188,7 @@ namespace System.Web.UI.WebControls {
 			TrackViewState();
 		}
 
+		[MonoTODO ("Render this")]
 		[DefaultValueAttribute ("")]
 		[LocalizableAttribute (true)]
 		[WebCategoryAttribute ("Accessibility")]
@@ -216,8 +198,8 @@ namespace System.Web.UI.WebControls {
 				return val != null ? (string) val : "";
 			}
 			set { 
-				accessibleHeaderText = value;
-				viewState.SetItemDirty ("accessibleHeaderText", true);
+				viewState ["accessibleHeaderText"] = value;
+				OnFieldChanged ();
 			}
 		}
 
@@ -230,11 +212,18 @@ namespace System.Web.UI.WebControls {
 		[DefaultValueAttribute (null)]
 		[DesignerSerializationVisibilityAttribute (DesignerSerializationVisibility.Content)]
 		public virtual Style ControlStyle {
-			get { return controlStyle; }
+			get {
+				if (controlStyle == null) {
+					controlStyle = new Style ();
+					if (IsTrackingViewState)
+						controlStyle.TrackViewState();
+				}
+				return controlStyle;
+			}
 		}
 	
 		protected bool DesignMode {
-			get { return designMode; }
+			get { return control != null && control.Site != null ? control.Site.DesignMode : false; }
 		}
 
 		[DefaultValueAttribute (null)]
@@ -242,7 +231,14 @@ namespace System.Web.UI.WebControls {
 		[PersistenceModeAttribute (PersistenceMode.InnerProperty)]
 		[WebCategoryAttribute ("Styles")]
 		public virtual TableItemStyle FooterStyle {
-			get { return footerStyle; }
+			get {
+				if (footerStyle == null) {
+					footerStyle = new TableItemStyle ();
+					if (IsTrackingViewState)
+						footerStyle.TrackViewState();
+				}
+				return footerStyle;
+			}
 		}
 
 		[LocalizableAttribute (true)]
@@ -254,8 +250,8 @@ namespace System.Web.UI.WebControls {
 				return val != null ? (string) val : "";
 			}
 			set { 
-				footerText = value;
-				viewState.SetItemDirty ("footerText", true);
+				viewState ["footerText"] = value;
+				OnFieldChanged ();
 			}
 		}
 
@@ -269,8 +265,8 @@ namespace System.Web.UI.WebControls {
 				return val != null ? (string) val : "";
 			}
 			set { 
-				headerImageUrl = value;
-				viewState.SetItemDirty ("headerImageUrl", true);
+				viewState ["headerImageUrl"] = value;
+				OnFieldChanged ();
 			}
 		}
 
@@ -279,7 +275,14 @@ namespace System.Web.UI.WebControls {
 		[PersistenceModeAttribute (PersistenceMode.InnerProperty)]
 		[DefaultValueAttribute (null)]
 		public virtual TableItemStyle HeaderStyle {
-			get { return headerStyle; }
+			get {
+				if (headerStyle == null) {
+					headerStyle = new TableItemStyle ();
+					if (IsTrackingViewState)
+						headerStyle.TrackViewState();
+				}
+				return headerStyle;
+			}
 		}
 
 		[DefaultValueAttribute ("")]
@@ -291,8 +294,8 @@ namespace System.Web.UI.WebControls {
 				return val != null ? (string) val : "";
 			}
 			set { 
-				headerText = value;
-				viewState.SetItemDirty ("headerText", true);
+				viewState ["headerText"] = value;
+				OnFieldChanged ();
 			}
 		}
 
@@ -301,7 +304,14 @@ namespace System.Web.UI.WebControls {
 		[WebCategoryAttribute ("Styles")]
 		[DefaultValueAttribute (null)]
 		public virtual TableItemStyle ItemStyle {
-			get { return itemStyle; }
+			get {
+				if (itemStyle == null) {
+					itemStyle = new TableItemStyle ();
+					if (IsTrackingViewState)
+						itemStyle.TrackViewState();
+				}
+				return itemStyle;
+			}
 		}
 
 		[WebCategoryAttribute ("Behavior")]
@@ -312,8 +322,8 @@ namespace System.Web.UI.WebControls {
 				return val != null ? (bool) val : true;
 			}
 			set { 
-				showHeader = value;
-				viewState.SetItemDirty ("showHeader", true);
+				viewState ["showHeader"] = value;
+				OnFieldChanged ();
 			}
 		}
 
@@ -326,13 +336,12 @@ namespace System.Web.UI.WebControls {
 				return val != null ? (string) val : "";
 			}
 			set { 
-				sortExpression = value;
-				viewState.SetItemDirty ("sortExpression", true);
+				viewState ["sortExpression"] = value;
+				OnFieldChanged ();
 			}
 		}
 
 		[WebCategoryAttribute ("Behavior")]
-		[LocalizableAttribute (true)]
 		[DefaultValueAttribute (true)]
 		public bool Visible {
 			get {
@@ -340,8 +349,8 @@ namespace System.Web.UI.WebControls {
 				return val != null ? (bool) val : true;
 			}
 			set { 
-				visible = value;
-				viewState.SetItemDirty ("visible", true);
+				viewState ["visible"] = value;
+				OnFieldChanged ();
 			}
 		}
 
@@ -358,10 +367,11 @@ namespace System.Web.UI.WebControls {
 		object IDataSourceViewSchemaAccessor.DataSourceViewSchema {
 			get { return viewState ["dataSourceViewSchema"]; }
 			set { 
-				dataSourceViewSchema = value;
-				viewState.SetItemDirty ("dataSourceViewSchema", true);
+				viewState ["dataSourceViewSchema"] = value;
 			}
 		}		
+
+		internal event EventHandler FieldChanged;
 	}
 }
 #endif
