@@ -1,4 +1,4 @@
-DIRS=jay nant nunit mcs class tools doctools
+DIRS=jay nant mcs class nunit tools doctools
 
 all: linux
 

@@ -1,3 +1,8 @@
+2002-03-07  Nick Drochak  <ndrochak@gol.com>
+
+	* makefile: Change order of build so corlib is built before nunit since
+	Nunit needs corlib now.
+
 2002-02-14  Nick Drochak  <ndrochak@gol.com>
 
 	* makefile: Build mcs/doctools too when one does 'make'
