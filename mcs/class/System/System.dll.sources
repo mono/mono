@@ -500,7 +500,6 @@ System.Security.Permissions/ResourcePermissionBaseEntry.cs
 System.Text.RegularExpressions/arch.cs
 System.Text.RegularExpressions/cache.cs
 System.Text.RegularExpressions/category.cs
-System.Text.RegularExpressions/collections.cs
 System.Text.RegularExpressions/compiler.cs
 System.Text.RegularExpressions/debug.cs
 System.Text.RegularExpressions/interpreter.cs
