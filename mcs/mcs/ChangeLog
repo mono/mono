@@ -1,3 +1,8 @@
+2002-11-01  Miguel de Icaza  <miguel@ximian.com>
+
+	* cs-parser.jay (switch_section): A beautiful patch from Martin
+	Baulig that fixed 33094.
+
 2002-10-31  Miguel de Icaza  <miguel@ximian.com>
 
 	* ecore.cs (PropertyExpr.DoResolveLValue, PropertyExpr.DoResolve):

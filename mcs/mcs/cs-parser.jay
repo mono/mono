@@ -2994,9 +2994,11 @@ switch_section
 	  }
  	  statement_list 
 	  {
-		while (current_block.Implicit)
-			current_block = current_block.Parent;
-		$$ = new SwitchSection ((ArrayList) $1, current_block);
+		Block topmost = current_block;
+
+		while (topmost.Implicit)
+			topmost = topmost.Parent;
+		$$ = new SwitchSection ((ArrayList) $1, topmost);
 	  }
 	;
 
