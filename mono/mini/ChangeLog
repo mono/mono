@@ -1,3 +1,11 @@
+2004-07-28  Zoltan Varga  <vargaz@freemail.hu>
+
+	* inssel.brg: 64 bit fixes.
+
+	* mini.h (MonoCallInst): Add some AMD64 specific data.
+
+	* mini.h: Add some OP_P opcodes.
+
 2004-07-28  Ben Maurer  <bmaurer@ximian.com>
 
 	* basic.cs: tests for 61797 and 61740
