@@ -1,5 +1,10 @@
 2004-04-07  Miguel de Icaza  <miguel@ximian.com>
 
+	* rootcontext.cs: Add new types to the boot resolution.
+
+	* ecore.cs (TypeExpr.CanInheritFrom): Inheriting from
+	MulticastDelegate is not allowed.
+
 	* typemanager.cs: Add new types to lookup: System.TypedReference
 	and ArgIterator.
 

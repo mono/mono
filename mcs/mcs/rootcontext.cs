@@ -341,7 +341,9 @@ namespace Mono.CSharp {
 				"System.Decimal", "System.Void",
 				"System.RuntimeFieldHandle",
 				"System.RuntimeTypeHandle",
-				"System.IntPtr"
+				"System.IntPtr",
+				"System.TypedReference",
+				"System.ArgIterator"
 			};
 			
 			foreach (string cname in structs_second_stage)
@@ -374,8 +376,7 @@ namespace Mono.CSharp {
 				"System.Security.UnverifiableCodeAttribute",
 				"System.Runtime.CompilerServices.IndexerNameAttribute",
 				"System.Runtime.InteropServices.InAttribute",
-				"System.InvalidOperationException"
-
+				"System.InvalidOperationException",
 			};
 
 			// We must store them here before calling BootstrapCorlib_ResolveDelegate.

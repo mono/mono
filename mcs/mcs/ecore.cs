@@ -2237,6 +2237,7 @@ namespace Mono.CSharp {
 		{
 			if (Type == TypeManager.enum_type ||
 			    (Type == TypeManager.value_type && RootContext.StdLib) ||
+			    Type == TypeManager.multicast_delegate_type ||
 			    Type == TypeManager.delegate_type ||
 			    Type == TypeManager.array_type)
 				return false;
