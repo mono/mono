@@ -1,0 +1,14 @@
+2004-11-26  Lluis Sanchez Gual <lluis@novell.com>
+
+	* arrow_minus.gif, arrow_noexpand.gif, arrow_plus.gif, box_full.gif,
+	box_empty.gif, box_minus.gif, box_noexpand.gif, box_plus.gif,
+	contact.gif, dot_empty.gif, dot_full.gif, dots.gif,
+	inbox.gif, star_empty.gif, star_full.gif, warning.gif,
+	TreeView_noexpand.gif, TreeView_dash.gif, TreeView_dashminus.gif,
+	TreeView_dashplus.gif, TreeView_i.gif, TreeView_l.gif,
+	TreeView_lminus.gif, TreeView_lplus.gif, TreeView_minus.gif,
+	TreeView_plus.gif, TreeView_r.gif, TreeView_rminus.gif,
+	TreeView_rplus.gif, TreeView_t.gif, TreeView_tminus.gif,
+	TreeView_tplus.gif, System.Web.UI.WebControls/TreeView.js
+	
+	New files.
