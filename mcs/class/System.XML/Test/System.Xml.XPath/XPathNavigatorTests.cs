@@ -182,7 +182,7 @@ namespace MonoTests.System.Xml
 		[Test]
 		public void DocumentWithXmlDeclaration ()
 		{
-			document.LoadXml ("<?xml version=\"1.0\" standalone=\"yes\"?>\"<Root><foo>bar</foo></Root>");
+			document.LoadXml ("<?xml version=\"1.0\" standalone=\"yes\"?><Root><foo>bar</foo></Root>");
 			navigator = document.CreateNavigator ();
 
 			navigator.MoveToRoot ();
