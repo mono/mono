@@ -1,3 +1,8 @@
+2003-04-28 Jackson Harper <jackson@latitudegeo.com>
+
+	* ILTokenizer.cs: Get instructions from table and check if they
+	are null instead of checking if they exist then getting them.
+
 2003-04-03 Jackson Harper <jackson@latitudegeo.com>
 
 	* ILToken.cs: Add open angle bracket, and close angle bracket tokens.

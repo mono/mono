@@ -172,6 +172,7 @@ namespace Mono.ILASM {
                                         reader.Unread (ch);
                                         string val = strBuilder.Build ();
                                         if (strBuilder.TokenId == Token.ID) {
+                                                ILToken opcode;
                                                 next = reader.Peek ();
                                                 if (next == '.') {
                                                         reader.MarkLocation ();
@@ -179,12 +180,13 @@ namespace Mono.ILASM {
                                                         if (IsIdChar ((char) next)) {
                                                                 string opTail = BuildId ();
                                                                 string full_str = String.Format ("{0}{1}", val, opTail);
+                                                                opcode = InstrTable.GetToken (full_str);
 
-                                                                if (!IsOpcode (full_str)) {
+                                                                if (opcode == null) {
                                                                         reader.Unread (opTail.ToCharArray ());
                                                                         reader.RestoreLocation ();
                                                                 } else {
-                                                                        res = InstrTable.GetToken (full_str);
+                                                                        res = opcode;
                                                                         break;
                                                                 }
 
@@ -192,8 +194,9 @@ namespace Mono.ILASM {
                                                                 val += '.';
                                                         }
                                                 }
-                                                if (IsOpcode (val)) {
-                                                        res = InstrTable.GetToken (val);
+                                                opcode = InstrTable.GetToken (val);
+                                                if (opcode != null) {
+                                                        res = opcode;
                                                         break;
                                                 }
                                                 if (IsKeyword (val)) {
