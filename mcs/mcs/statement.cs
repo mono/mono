@@ -1648,10 +1648,7 @@ namespace Mono.CSharp {
 					
 					par = pars.GetParameterByName (name, out idx);
 					if (par != null){
-						ParameterReference pr;
-
-						pr = new ParameterReference (pars, this, idx, name, loc);
-						return pr;
+						return new ParameterReference (pars, this, idx, name, loc);
 					}
 				}
 				b = b.Parent;

@@ -1,3 +1,14 @@
+2005-03-22  Marek Safar  <marek.safar@seznam.cz>
+
+	* assign.cs (Assign.DoResolve): Check for CS1717 when
+	source and target are same (uses Equals).
+	
+	* expression.cs (LocalVariableReference, ParameterReference,
+	This): Implemented Equals, GetHashCode.
+	
+	* statement.cs (Block.GetParameterReference): Removed useless
+	local variable.
+
 2005-03-22  Raja R Harinath  <rharinath@novell.com>
 
 	Fix cs0128.cs
