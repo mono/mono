@@ -1020,13 +1020,24 @@ namespace System.Net
 					data.stream.Close ();
 				return;
 			}
-			
-			webResponse = new HttpWebResponse (actualUri, method, data, (cookieContainer != null));
-			haveResponse = true;
+
+			WebException wexc = null;
+			try {
+				webResponse = new HttpWebResponse (actualUri, method, data, (cookieContainer != null));
+				haveResponse = true;
+			} catch (Exception e) {
+				wexc = new WebException (e.Message, e, WebExceptionStatus.ProtocolError, null); 
+				if (data.stream != null)
+					data.stream.Close ();
+			}
 
 			WebAsyncResult r = asyncRead;
 			if (r != null) {
-				r.SetCompleted (false, webResponse);
+				if (wexc != null) {
+					r.SetCompleted (false, wexc);
+				} else {
+					r.SetCompleted (false, webResponse);
+				}
 				r.DoCallback ();
 			}
 		}
