@@ -524,7 +524,7 @@ namespace Mono.CSharp {
 			// NonPublic visibility for pointers
 			//
 			if (check_type.IsArray || check_type.IsPointer)
-				return CheckAccessLevel (check_type.GetElementType ());
+				return CheckAccessLevel (TypeManager.GetElementType (check_type));
 
 			switch (check_attr){
 			case TypeAttributes.Public:
@@ -1006,9 +1006,9 @@ namespace Mono.CSharp {
 
 			// If we have a parent class (we have a parent class unless we're
 			// TypeManager.object_type), we deep-copy its MemberCache here.
-			if (Container.Parent != null)
+			if (Container.Parent != null) {
 				member_hash = SetupCache (Container.Parent.MemberCache);
-			else if (Container.IsInterface)
+			} else if (Container.IsInterface)
 				member_hash = SetupCacheForInterface ();
 			else
 				member_hash = new Hashtable ();
@@ -1037,8 +1037,8 @@ namespace Mono.CSharp {
 			IDictionaryEnumerator it = parent.member_hash.GetEnumerator ();
 			while (it.MoveNext ()) {
 				hash [it.Key] = ((ArrayList) it.Value).Clone ();
-			}
-
+                        }
+                                
 			return hash;
 		}
 

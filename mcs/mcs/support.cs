@@ -77,7 +77,7 @@ namespace Mono.CSharp {
 
 			Type partype = ParameterType (pos);
 			if (partype.IsByRef){
-				partype = partype.GetElementType ();
+				partype = TypeManager.GetElementType (partype);
 				if (pi [pos].IsOut)
 					sb.Append ("out ");
 				else

@@ -607,7 +607,7 @@ namespace Mono.CSharp {
 		public Indirection (Expression expr, Location l)
 		{
 			this.expr = expr;
-			this.type = TypeManager.TypeToCoreType (expr.Type.GetElementType ());
+			this.type = TypeManager.GetElementType (expr.Type);
 			eclass = ExprClass.Variable;
 			loc = l;
 		}
@@ -848,7 +848,7 @@ namespace Mono.CSharp {
 
 		static int PtrTypeSize (Type t)
 		{
-			return GetTypeSize (t.GetElementType ());
+			return GetTypeSize (TypeManager.GetElementType (t));
 		}
 
 		//
@@ -3256,7 +3256,7 @@ namespace Mono.CSharp {
 		{
 			Type op_type = left.Type;
 			ILGenerator ig = ec.ig;
-			int size = GetTypeSize (op_type.GetElementType ());
+			int size = GetTypeSize (TypeManager.GetElementType (op_type));
 			Type rtype = right.Type;
 			
 			if (rtype.IsPointer){
@@ -4169,7 +4169,7 @@ namespace Mono.CSharp {
 
 					if (candidate_pd.ParameterModifier (j) == Parameter.Modifier.PARAMS)
 						if (expanded_form)
-							t = t.GetElementType ();
+							t = TypeManager.GetElementType (t);
 
 					x = BetterConversion (ec, a, t, null, loc);
 					
@@ -4197,11 +4197,11 @@ namespace Mono.CSharp {
 
 				if (candidate_pd.ParameterModifier (j) == Parameter.Modifier.PARAMS)
 					if (expanded_form)
-						ct = ct.GetElementType ();
+						ct = TypeManager.GetElementType (ct);
 
 				if (best_pd.ParameterModifier (j) == Parameter.Modifier.PARAMS)
 					if (expanded_form)
-						bt = bt.GetElementType ();
+						bt = TypeManager.GetElementType (bt);
 				
 				x = BetterConversion (ec, a, ct, bt, loc);
 				y = BetterConversion (ec, a, bt, ct, loc);
@@ -4360,7 +4360,7 @@ namespace Mono.CSharp {
 				
 			}
 
-			Type element_type = pd.ParameterType (pd_count - 1).GetElementType ();
+			Type element_type = TypeManager.GetElementType (pd.ParameterType (pd_count - 1));
 
 			for (int i = pd_count - 1; i < arg_count; i++) {
 				Argument a = (Argument) arguments [i];
@@ -4392,7 +4392,7 @@ namespace Mono.CSharp {
 
 			if (arg_count != pd.Count)
 				return false;
-			
+
 			for (int i = arg_count; i > 0; ) {
 				i--;
 
@@ -4406,9 +4406,11 @@ namespace Mono.CSharp {
 
 				if (a_mod == p_mod ||
 				    (a_mod == Parameter.Modifier.NONE && p_mod == Parameter.Modifier.PARAMS)) {
-					if (a_mod == Parameter.Modifier.NONE)
-						if (!Convert.ImplicitConversionExists (ec, a.Expr, pd.ParameterType (i)))
+					if (a_mod == Parameter.Modifier.NONE) {
+                                                 if (!Convert.ImplicitConversionExists (ec,
+                                                                                       a.Expr, pd.ParameterType (i)))
 							return false;
+                                        }
 					
 					if ((a_mod & Parameter.Modifier.ISBYREF) != 0) {
 						Type pt = pd.ParameterType (i);
@@ -4448,34 +4450,59 @@ namespace Mono.CSharp {
 							  ArrayList Arguments, Location loc)
 		{
 			MethodBase method = null;
-			Type current_type = null;
+			Type applicable_type = null;
 			int argument_count;
 			ArrayList candidates = new ArrayList ();
-			
 
-			foreach (MethodBase candidate in me.Methods){
-				int x;
+                        //
+                        // First we construct the set of applicable methods
+                        //
 
-				// If we're going one level higher in the class hierarchy, abort if
-				// we already found an applicable method.
-				if (candidate.DeclaringType != current_type) {
-					current_type = candidate.DeclaringType;
-					if (method != null)
-						break;
-				}
+                        //
+                        // We start at the top of the type hierarchy and
+                        // go down to find applicable methods
+                        //
+                        applicable_type = me.DeclaringType;
+
+                        bool found_applicable = false;
+			foreach (MethodBase candidate in me.Methods) {
+                                Type decl_type = candidate.DeclaringType;
+
+                                //
+                                // If we have already found an applicable method
+                                // we eliminate all base types (Section 14.5.5.1)
+                                //
+                                if (decl_type != applicable_type &&
+                                    (applicable_type.IsSubclassOf (decl_type) ||
+                                     TypeManager.ImplementsInterface (applicable_type, decl_type)) &&
+                                    found_applicable)
+                                                continue;
+
 
 				// Check if candidate is applicable (section 14.4.2.1)
 				if (!IsApplicable (ec, Arguments, candidate))
 					continue;
 
+                                
 				candidates.Add (candidate);
-				x = BetterFunction (ec, Arguments, candidate, method, false, loc);
-				
-				if (x == 0)
-					continue;
+                                applicable_type = candidate.DeclaringType;
+                                found_applicable = true;
 
-				method = candidate;
 			}
+
+
+                        //
+                        // Now we actually find the best method
+                        //
+                        foreach (MethodBase candidate in candidates) {
+                                int x = BetterFunction (ec, Arguments, candidate, method, false, loc);
+                                
+                                if (x == 0)
+                                        continue;
+                                
+                                method = candidate;
+                        }
+
 
 			if (Arguments == null)
 				argument_count = 0;
@@ -4483,9 +4510,10 @@ namespace Mono.CSharp {
 				argument_count = Arguments.Count;
 			
 			//
-			// Now we see if we can find params functions, applicable in their expanded form
-			// since if they were applicable in their normal form, they would have been selected
-			// above anyways
+			// Now we see if we can find params functions,
+			// applicable in their expanded form since if
+			// they were applicable in their normal form,
+			// they would have been selected above anyways
 			//
 			bool chose_params_expanded = false;
 			
@@ -4544,11 +4572,15 @@ namespace Mono.CSharp {
  					continue;
 
 				//
-				// If a normal method is applicable in the sense that it has the same
-				// number of arguments, then the expanded params method is never applicable
-				// so we debar the params method.
+				// If a normal method is applicable in
+				// the sense that it has the same
+				// number of arguments, then the
+				// expanded params method is never
+				// applicable so we debar the params
+				// method.
 				//
-				if (IsParamsMethodApplicable (ec, Arguments, candidate) &&
+
+                                if (IsParamsMethodApplicable (ec, Arguments, candidate) &&
 				    IsApplicable (ec, Arguments, method))
 					continue;
 					
@@ -4564,8 +4596,10 @@ namespace Mono.CSharp {
 			}
 
 			//
-			// And now check if the arguments are all compatible, perform conversions
-			// if necessary etc. and return if everything is all right
+			// And now check if the arguments are all
+			// compatible, perform conversions if
+			// necessary etc. and return if everything is
+			// all right
 			//
 
 			if (!VerifyArgumentsCompat (ec, Arguments, argument_count, method,
@@ -4627,7 +4661,7 @@ namespace Mono.CSharp {
 					}
 
 					if (chose_params_expanded)
-						parameter_type = TypeManager.TypeToCoreType (parameter_type.GetElementType ());
+						parameter_type = TypeManager.GetElementType (parameter_type);
 				} else {
 					//
 					// Check modifiers
@@ -4650,6 +4684,11 @@ namespace Mono.CSharp {
 					conv = Convert.ImplicitConversion (ec, a_expr, parameter_type, loc);
 
 					if (conv == null) {
+                                                Console.WriteLine ("GAA: {0} {1} {2}",
+                                                                   pd.ParameterType (j),
+                                                                   pd.ParameterType (j).Assembly == CodeGen.AssemblyBuilder,
+                                                                   method.DeclaringType.Assembly == CodeGen.AssemblyBuilder);
+
 						if (!Location.IsNull (loc)) 
 							Error_InvalidArguments (
 								loc, j, method, delegate_type,
@@ -4838,7 +4877,7 @@ namespace Mono.CSharp {
 					ILGenerator ig = ec.ig;
 
 					IntConstant.EmitInt (ig, 0);
-					ig.Emit (OpCodes.Newarr, pd.ParameterType (0).GetElementType ());
+					ig.Emit (OpCodes.Newarr, TypeManager.GetElementType (pd.ParameterType (0)));
 				}
 
 				return;
@@ -4871,7 +4910,7 @@ namespace Mono.CSharp {
 				ILGenerator ig = ec.ig;
 
 				IntConstant.EmitInt (ig, 0);
-				ig.Emit (OpCodes.Newarr, pd.ParameterType (top).GetElementType ());
+				ig.Emit (OpCodes.Newarr, TypeManager.GetElementType (pd.ParameterType (top)));
 			}
 		}
 
@@ -5686,7 +5725,7 @@ namespace Mono.CSharp {
 
 			underlying_type = type;
 			if (underlying_type.IsArray)
-				underlying_type = TypeManager.TypeToCoreType (underlying_type.GetElementType ());
+				underlying_type = TypeManager.GetElementType (underlying_type);
 			dimensions = type.GetArrayRank ();
 
 			return true;
@@ -5722,7 +5761,7 @@ namespace Mono.CSharp {
 				}
 			}
 			
-			array_element_type = TypeManager.TypeToCoreType (type.GetElementType ());
+			array_element_type = TypeManager.GetElementType (type);
 
 			if (arg_count == 1) {
 				is_one_dimensional = true;
@@ -7025,8 +7064,9 @@ namespace Mono.CSharp {
 					  ea.Arguments.Count);
 				return null;
 			}
-			type = TypeManager.TypeToCoreType (t.GetElementType ());
-			if (type.IsPointer && !ec.InUnsafe){
+
+                        type = TypeManager.GetElementType (t);
+                        if (type.IsPointer && !ec.InUnsafe){
 				UnsafeError (ea.Location);
 				return null;
 			}
@@ -7865,7 +7905,7 @@ namespace Mono.CSharp {
 		
 		public ArrayPtr (Expression array, Location l)
 		{
-			Type array_type = array.Type.GetElementType ();
+			Type array_type = TypeManager.GetElementType (array.Type);
 
 			this.array = array;
 
@@ -7880,7 +7920,7 @@ namespace Mono.CSharp {
 			
 			array.Emit (ec);
 			IntLiteral.EmitInt (ig, 0);
-			ig.Emit (OpCodes.Ldelema, array.Type.GetElementType ());
+			ig.Emit (OpCodes.Ldelema, TypeManager.GetElementType (array.Type));
 		}
 
 		public override Expression DoResolve (EmitContext ec)

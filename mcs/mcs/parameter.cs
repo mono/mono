@@ -56,7 +56,7 @@ namespace Mono.CSharp {
 				Report.Error (1536, l, "`void' parameter is not permitted");
 				return false;
 			}
-			
+
 			return parameter_type != null;
 		}
 

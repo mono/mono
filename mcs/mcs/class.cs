@@ -1806,7 +1806,7 @@ namespace Mono.CSharp {
 		public bool AsAccessible (Type parent, int flags)
 		{
 			while (parent.IsArray || parent.IsPointer || parent.IsByRef)
-				parent = parent.GetElementType ();
+				parent = TypeManager.GetElementType (parent);
 
 			AccessLevel level = GetAccessLevel (flags);
 			AccessLevel level2 = GetAccessLevel (parent, flags);
@@ -2400,7 +2400,7 @@ namespace Mono.CSharp {
                         Type t = pinfo.ParameterType(0);
                         if (t.IsArray &&
                             (t.GetArrayRank() == 1) &&
-                            (t.GetElementType() == TypeManager.string_type) &&
+                            (TypeManager.GetElementType(t) == TypeManager.string_type) &&
                             (pinfo.ParameterModifier(0) == Parameter.Modifier.NONE))
                                 return true;
                         else
@@ -3480,7 +3480,7 @@ namespace Mono.CSharp {
 				if (partype.IsPointer){
 					if (!UnsafeOK (container))
 						error = true;
-					if (!TypeManager.VerifyUnManaged (partype.GetElementType (), Location))
+					if (!TypeManager.VerifyUnManaged (TypeManager.GetElementType (partype), Location))
 						error = true;
 				}
 

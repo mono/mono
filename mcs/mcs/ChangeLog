@@ -1,3 +1,26 @@
+2003-07-22  Ravi Pratap  <ravi@ximian.com>
+
+	* expression.cs (Invocation.OverloadResolve): Follow the spec more
+	closely: we eliminate methods in base types when we have an
+	applicable method in a top-level type.
+
+        Please see section 14.5.5.1 for an exact description of what goes
+	on. 
+
+	This fixes bug #45127 and a host of other related to corlib compilation.
+
+        * ecore.cs (MethodGroupExpr.DeclaringType): The element in the
+	array is the method corresponding to the top-level type (this is
+	because of the changes made to icall.c) so we change this
+	accordingly.
+
+	(MethodGroupExpr.Name): This too.
+
+	* typemanager.cs (GetElementType): New method which does the right
+	thing when compiling corlib. 
+
+	* everywhere: Make use of the above in the relevant places.
+
 2003-07-22  Martin Baulig  <martin@ximian.com>
 
 	* cs-parser.jay (invocation_expression): Moved

@@ -105,13 +105,13 @@ namespace Mono.CSharp {
 				if (expr_type.IsArray && target_type.IsArray) {
 					if (expr_type.GetArrayRank () == target_type.GetArrayRank ()) {
 
-						Type expr_element_type = expr_type.GetElementType ();
+						Type expr_element_type = TypeManager.GetElementType (expr_type);
 
 						if (MyEmptyExpr == null)
 							MyEmptyExpr = new EmptyExpression ();
 						
 						MyEmptyExpr.SetType (expr_element_type);
-						Type target_element_type = target_type.GetElementType ();
+						Type target_element_type = TypeManager.GetElementType (target_type);
 
 						if (!expr_element_type.IsValueType && !target_element_type.IsValueType)
 							if (ImplicitStandardConversionExists (MyEmptyExpr,
@@ -187,7 +187,7 @@ namespace Mono.CSharp {
 							MyEmptyExpr = new EmptyExpression ();
 						
 						MyEmptyExpr.SetType (expr_element_type);
-						Type target_element_type = target_type.GetElementType ();
+						Type target_element_type = TypeManager.GetElementType (target_type);
 						
 						if (!expr_element_type.IsValueType && !target_element_type.IsValueType)
 							if (ImplicitStandardConversionExists (MyEmptyExpr,
@@ -397,7 +397,7 @@ namespace Mono.CSharp {
 		/// </summary>
 		public static bool ImplicitConversionExists (EmitContext ec, Expression expr, Type target_type)
 		{
-			if (ImplicitStandardConversionExists (expr, target_type) == true)
+			if (ImplicitStandardConversionExists (expr, target_type))
 				return true;
 
 			Expression dummy = ImplicitUserConversion (ec, expr, target_type, Location.Null);
@@ -425,9 +425,13 @@ namespace Mono.CSharp {
 
 			if (expr_type == TypeManager.void_type)
 				return false;
-			
+
+                        //Console.WriteLine ("Expr is {0}", expr);
+                        //Console.WriteLine ("{0} -> {1} ?", expr_type, target_type);
 			if (expr_type == target_type)
 				return true;
+
+                        //Console.WriteLine ("No !!");
 
 			// First numeric conversions 
 
@@ -1055,7 +1059,7 @@ namespace Mono.CSharp {
 					// t1 == t2, we have to compare their element types.
 					//
 					if (target_type.IsPointer){
-						if (target_type.GetElementType() == expr_type.GetElementType())
+						if (TypeManager.GetElementType(target_type) == TypeManager.GetElementType(expr_type))
 							return expr;
 					}
 				}
@@ -1435,8 +1439,8 @@ namespace Mono.CSharp {
 			if (source_type.IsArray && target_type.IsArray) {
 				if (source_type.GetArrayRank () == target_type.GetArrayRank ()) {
 					
-					Type source_element_type = source_type.GetElementType ();
-					Type target_element_type = target_type.GetElementType ();
+					Type source_element_type = TypeManager.GetElementType (source_type);
+					Type target_element_type = TypeManager.GetElementType (target_type);
 					
 					if (!source_element_type.IsValueType && !target_element_type.IsValueType)
 						if (ExplicitReferenceConversionExists (source_element_type,
@@ -1534,8 +1538,8 @@ namespace Mono.CSharp {
 			if (source_type.IsArray && target_type.IsArray) {
 				if (source_type.GetArrayRank () == target_type.GetArrayRank ()) {
 					
-					Type source_element_type = source_type.GetElementType ();
-					Type target_element_type = target_type.GetElementType ();
+					Type source_element_type = TypeManager.GetElementType (source_type);
+					Type target_element_type = TypeManager.GetElementType (target_type);
 					
 					if (!source_element_type.IsValueType && !target_element_type.IsValueType)
 						if (ExplicitReferenceConversionExists (source_element_type,

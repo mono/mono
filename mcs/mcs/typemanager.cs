@@ -578,10 +578,10 @@ public class TypeManager {
 
 		foreach (ModuleBuilder mb in modules) {
 			t = mb.GetType (name);
-			if (t != null){
+			if (t != null) 
 				return t;
-			}
 		}
+                        
 		return null;
 	}
 
@@ -1213,6 +1213,8 @@ public class TypeManager {
 	private static MemberList MemberLookup_FindMembers (Type t, MemberTypes mt, BindingFlags bf,
 							    string name, out bool used_cache)
 	{
+                bool not_loaded_corlib = (t.Assembly == CodeGen.AssemblyBuilder);
+                
 		//
 		// We have to take care of arrays specially, because GetType on
 		// a TypeBuilder array will return a Type, not a TypeBuilder,
@@ -1398,6 +1400,18 @@ public class TypeManager {
 
 		return false;
 	}
+
+        //
+        // Do the right thing when returning the element type of
+        // an array type based on whether we 
+        //
+        public static Type GetElementType (Type t)
+        {
+                if (RootContext.StdLib)
+                        return t.GetElementType ();
+                else
+                        return TypeToCoreType (t.GetElementType ());
+        }
 
 	/// <summary>
 	///   Returns the User Defined Types
@@ -1663,7 +1677,8 @@ public class TypeManager {
 		return true;
 	}
 
-	static public bool RegisterIndexer (PropertyBuilder pb, MethodBase get, MethodBase set, Type[] args)
+	static public bool RegisterIndexer (PropertyBuilder pb, MethodBase get,
+                                            MethodBase set, Type[] args)
 	{
 		if (!RegisterProperty (pb, get,set))
 			return false;
@@ -2470,9 +2485,9 @@ public class TypeManager {
 			mt &= (MemberTypes.Method | MemberTypes.Constructor);
 		} while (searching);
 
-		if (method_list != null && method_list.Count > 0)
-			return (MemberInfo []) method_list.ToArray (typeof (MemberInfo));
-
+		if (method_list != null && method_list.Count > 0) {
+                        return (MemberInfo []) method_list.ToArray (typeof (MemberInfo));
+                }
 		//
 		// This happens if we already used the cache in the first iteration, in this case
 		// the cache already looked in all interfaces.

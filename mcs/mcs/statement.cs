@@ -2685,7 +2685,7 @@ namespace Mono.CSharp {
 					continue;
 
 				VariableNames [i] = ip.ParameterName (i);
-				VariableTypes [i] = ip.ParameterType (i).GetElementType ();
+				VariableTypes [i] = TypeManager.GetElementType (ip.ParameterType (i));
 
 				map [i] = new VariableInfo (VariableNames [i], VariableTypes [i], i, Length);
 				Length += map [i].Length;
@@ -3352,7 +3352,8 @@ namespace Mono.CSharp {
 						// but the fact is that you would not be able to use the pointer variable
 						// *anyways*
 						//
-						if (!TypeManager.VerifyUnManaged (variable_type.GetElementType (), vi.Location))
+						if (!TypeManager.VerifyUnManaged (TypeManager.GetElementType (variable_type),
+                                                                                  vi.Location))
 							continue;
 					}
 
@@ -4622,7 +4623,7 @@ namespace Mono.CSharp {
 				// Case 2: Array
 				//
 				if (e.Type.IsArray){
-					Type array_type = e.Type.GetElementType ();
+					Type array_type = TypeManager.GetElementType (e.Type);
 					
 					vi.MakePinned ();
 					//
@@ -5240,7 +5241,7 @@ namespace Mono.CSharp {
 
 			if (expr.Type.IsArray) {
 				array_type = expr.Type;
-				element_type = array_type.GetElementType ();
+				element_type = TypeManager.GetElementType (array_type);
 
 				empty = new EmptyExpression (element_type);
 			} else {

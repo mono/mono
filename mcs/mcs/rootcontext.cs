@@ -866,7 +866,10 @@ namespace Mono.CSharp {
 			
 			if (impl_details_class == null){
 				impl_details_class = CodeGen.ModuleBuilder.DefineType (
-					"<PrivateImplementationDetails>", TypeAttributes.NotPublic, TypeManager.object_type);
+					"<PrivateImplementationDetails>",
+                                        TypeAttributes.NotPublic,
+                                        TypeManager.object_type);
+                                
 				RegisterHelperClass (impl_details_class);
 			}
 

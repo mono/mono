@@ -2267,6 +2267,7 @@ namespace Mono.CSharp {
 				}
 				throw;
 			}
+
 			loc = l;
 			eclass = ExprClass.MethodGroup;
 			type = TypeManager.object_type;
@@ -2274,7 +2275,11 @@ namespace Mono.CSharp {
 
 		public Type DeclaringType {
 			get {
-				return Methods [0].DeclaringType;
+                                //
+                                // We assume that the top-level type is in the end
+                                //
+				return Methods [Methods.Length - 1].DeclaringType;
+                                //return Methods [0].DeclaringType;
 			}
 		}
 		
@@ -2303,7 +2308,8 @@ namespace Mono.CSharp {
 
 		public string Name {
 			get {
-				return Methods [0].Name;
+				//return Methods [0].Name;
+                                return Methods [Methods.Length - 1].Name;
 			}
 		}
 
@@ -2343,8 +2349,8 @@ namespace Mono.CSharp {
 
 		public void ReportUsageError ()
 		{
-			Report.Error (654, loc, "Method `" + Methods [0].DeclaringType + "." +
-				      Methods [0].Name + "()' is referenced without parentheses");
+			Report.Error (654, loc, "Method `" + DeclaringType + "." +
+				      Name + "()' is referenced without parentheses");
 		}
 
 		override public void Emit (EmitContext ec)
