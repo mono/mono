@@ -16,6 +16,14 @@ class X {
 		}
 	}
 
+	int P2 {
+		get { return 0; }
+	}
+
+	int P3 {
+		set {  }
+	}
+
 	public delegate void MyEvent ();
 	
 	public event MyEvent XX {
