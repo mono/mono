@@ -129,7 +129,7 @@ namespace I18N.CJK
 		// Decoder that handles a rolling state.
 		internal class DbcsDecoder : Decoder
 		{
-			private DbcsConvert convert;
+			protected DbcsConvert convert;
 			internal int lastByte;
 			
 			// Constructor.
