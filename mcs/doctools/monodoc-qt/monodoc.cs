@@ -75,7 +75,7 @@ namespace Mono.Document.Editor {
 
 			if (filename != null) {
 				Global.LastOpened = filename;
-				Global.InitDir = GetDir (filename);
+				Global.InitDir = Path.GetDirectoryName (filename);
 				WriteInit ();
 				Emit ("Load (String)", filename);
 			}
@@ -113,16 +113,6 @@ namespace Mono.Document.Editor {
 			if (options.OpenPrevious)
 				st.WriteLine (Global.LastOpened);
 			st.Flush ();
-		}
-		
-		public string GetDir (string filename)
-		{
-			StringBuilder builder = new StringBuilder ();
-			string [] s = filename.Split ('/');
-			for (int i = 0; i < s.Length - 1; i++) {
-				builder.Append (s[i]+"/");
-			}
-			builder.Length--; return builder.ToString ();
 		}
 
 		public void Options ()
