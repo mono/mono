@@ -136,7 +136,7 @@ namespace System.Data.Odbc
 		internal static extern OdbcReturn SQLGetData (IntPtr StatementHandle, ushort ColumnNumber, OdbcType TargetType, byte[] TargetPtr, int BufferLen, ref int Len);
 
 		[DllImport("odbc32")]
-		internal static extern OdbcReturn SQLDescribeCol(IntPtr StatementHandle, ushort ColumnNumber, byte[] ColumnName, short BufferLength, ref short NameLength, ref short DataType, ref short ColumnSize, ref short DecimalDigits, ref short Nullable);
+		internal static extern OdbcReturn SQLDescribeCol(IntPtr StatementHandle, ushort ColumnNumber, byte[] ColumnName, short BufferLength, ref short NameLength, ref short DataType, ref uint ColumnSize, ref short DecimalDigits, ref short Nullable);
 
 		[DllImport("odbc32")]
 		internal static extern OdbcReturn SQLFreeHandle(ushort HandleType, IntPtr SqlHandle);

@@ -120,7 +120,8 @@ namespace System.Data.Odbc
 				byte[] colname_buffer=new byte[bufsize];
 				string colname;
 				short colname_size=0;
-				short ColSize=0, DecDigits=0, Nullable=0, dt=0;
+				uint ColSize=0;
+				short DecDigits=0, Nullable=0, dt=0;
 				OdbcReturn ret=libodbc.SQLDescribeCol(hstmt, Convert.ToUInt16(ordinal+1), 
 					colname_buffer, bufsize, ref colname_size, ref dt, ref ColSize, 
 					ref DecDigits, ref Nullable);
@@ -132,7 +133,7 @@ namespace System.Data.Odbc
 				c.AllowDBNull=(Nullable!=0);
 				c.Digits=DecDigits;
 				if (c.IsStringType)
-					c.MaxLength=ColSize;
+					c.MaxLength=(int)ColSize;
 				cols[ordinal]=c;
 			}
 			return cols[ordinal];
