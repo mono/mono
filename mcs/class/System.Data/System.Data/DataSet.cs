@@ -56,6 +56,9 @@ namespace System.Data {
 			tableCollection = new DataTableCollection (this);
 			relationCollection = new DataRelationCollection.DataSetRelationCollection (this);
 			properties = new PropertyCollection();
+			this.prefix = String.Empty;
+			
+			this.Locale = CultureInfo.CurrentCulture;
 		}
 
 		[MonoTODO]
@@ -225,7 +228,15 @@ namespace System.Data {
 			get { return prefix; } 
 			[MonoTODO]
 			set {
-				//TODO - trigger an event if this happens?
+				if (value == null)
+				{
+					value = string.Empty;
+				}
+				
+				if (value != this.prefix)
+				{
+					RaisePropertyChanging("Prefix");
+				}
 				prefix = value;
 			}
 		}
@@ -485,7 +496,14 @@ namespace System.Data {
 
 		public virtual void RejectChanges()
 		{
-			throw new NotImplementedException();
+			int i;
+			bool oldEnforceConstraints = this.EnforceConstraints;
+			this.EnforceConstraints = false;
+			for (i = 0; i < this.Tables.Count; i++)
+			{
+				this.Tables[i].RejectChanges();
+			}
+			this.EnforceConstraints = oldEnforceConstraints;
 		}
 
 		public virtual void Reset()

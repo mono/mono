@@ -36,6 +36,7 @@ namespace System.Data {
 		private string rowError;
 		private DataRowState rowState;
 		internal int xmlRowID = 0;
+		internal bool _nullConstraintViolation;
 		private bool editing = false;
 
 		#endregion
@@ -245,30 +246,61 @@ namespace System.Data {
 			if (col.ReadOnly && v != this[index])
 				throw new ReadOnlyException ();
 
-			if (v == null) {
-				if(col.DefaultValue != DBNull.Value) {
+			if (v == null)
+			{
+				if(col.DefaultValue != DBNull.Value) 
+				{
 					newval = col.DefaultValue;
 				}
- 				else if(col.AutoIncrement == true) {
+				else if(col.AutoIncrement == true) 
+				{
 					newval = this [index];
- 				}
-				else {
+				}
+				else 
+				{
 					if (!col.AllowDBNull)
-						throw new NoNullAllowedException ();
-					newval = DBNull.Value;
+					{
+						if (!this._table._duringDataLoad)
+						{
+							throw new NoNullAllowedException ();
+						}
+						else 
+						{
+							//Constraint violations during data load is raise in DataTable EndLoad
+							this._nullConstraintViolation = true;
+							
+						}
+					}
+
+					newval= DBNull.Value;
+					
+				
 				}
-			}
-			else if (v == DBNull.Value) {
+			}		
+			else if (v == DBNull.Value) 
+			{
+				
 				if (!col.AllowDBNull)
-					throw new NoNullAllowedException ();
-				else {
-					newval = DBNull.Value;
+				{
+					if (!this._table._duringDataLoad)
+					{
+						throw new NoNullAllowedException ();
+					}
+					else 
+					{
+						//Constraint violations during data load is raise in DataTable EndLoad
+						this._nullConstraintViolation = true;
+							
+					}
 				}
+				newval= DBNull.Value;
 			}
-			else {	
+			else 
+			{	
 				Type vType = v.GetType(); // data type of value
 				Type cType = col.DataType; // column data type
-				if (cType != vType) {
+				if (cType != vType) 
+				{
 					TypeCode typeCode = Type.GetTypeCode(cType);
 					switch(typeCode) {
 					case TypeCode.Boolean :
@@ -317,7 +349,7 @@ namespace System.Data {
 						v = Convert.ToUInt64 (v);
 						break;
 					default :
-						switch(cType.ToString()) {
+					switch(cType.ToString()) {
 						case "System.TimeSpan" :
 							v = (System.TimeSpan) v;
 							break;
@@ -330,10 +362,10 @@ namespace System.Data {
 						default:
 							// FIXME: is exception correct?
 							throw new InvalidCastException("Type not supported.");
-						}
-						break;
 					}
-					vType = v.GetType();
+						break;
+				}
+				vType = v.GetType();
 				}
 				newval = v;
 				if(col.AutoIncrement == true) {

@@ -52,6 +52,8 @@ namespace System.Data {
 		private string _tableName;
 		private bool _containsListCollection;
 		private string _encodedTableName;
+		internal bool _duringDataLoad;
+		private bool dataSetPrevEnforceConstraints;
 
 		
 		// If CaseSensitive property is changed once it does not anymore follow owner DataSet's 
@@ -460,6 +462,20 @@ namespace System.Data {
 		[MonoTODO]
 		public void BeginLoadData () 
 		{
+			if (!this._duringDataLoad)
+			{
+				//duringDataLoad is important to EndLoadData and
+				//for not throwing unexpected exceptions.
+				this._duringDataLoad = true;
+			
+				if (this.dataSet != null)
+				{
+					//Saving old Enforce constraints state for later
+					//use in the EndLoadData.
+					this.dataSetPrevEnforceConstraints = this.dataSet.EnforceConstraints;
+					this.dataSet.EnforceConstraints = false;
+				}
+			}
 		}
 
 		/// <summary>
@@ -619,6 +635,27 @@ namespace System.Data {
 		[MonoTODO]
 		public void EndLoadData() 
 		{
+			int i = 0;
+			if (this._duringDataLoad) 
+			{
+				//Returning from loading mode, raising exceptions as usual
+				this._duringDataLoad = false;
+				
+				if (this.dataSet !=null)
+				{
+					//Getting back to previous EnforceConstraint state
+					this.dataSet.EnforceConstraints = this.dataSetPrevEnforceConstraints;
+				}
+				for (i=0 ; i<this.Rows.Count ; i++)
+				{
+					if (this.Rows[i]._nullConstraintViolation )
+					{
+						throw new ConstraintException ("Failed to enable constraints. One or more rows contain values violating non-null, unique, or foreign-key constraints.");
+					}
+						
+				}
+
+			}
 		}
 
 		/// <summary>

@@ -1,3 +1,13 @@
+2003-10-27  Eran Domb  <erand@mainsoft.com>
+	* DataRow.cs (SetColumnValue): Donot check null value when in midle of loading data.
+	check null values when ending loading data.
+	
+	* DataSet.cs (RejectChanges) : Imlementation.
+	(Prefix) : If prefix was changed fire event. Check that the prefix is not null - if null, 
+	change it to empty string.
+	
+	* DataTable.cs (BeginLoadData, EndLoadData) : Impemantation.
+	
 2003-10-22  Eran Domb  <erand@mainsoft.com>
 	* MergeManager.cs : Fixing bugs. Adding check for PrimaryKey matching.
 	
