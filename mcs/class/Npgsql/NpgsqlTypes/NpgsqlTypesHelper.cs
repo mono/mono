@@ -441,7 +441,7 @@ namespace NpgsqlTypes
     /// </summary>
     internal class NpgsqlBackendTypeInfo
     {
-        private event ConvertBackendToNativeHandler _ConvertBackendToNative;
+        private ConvertBackendToNativeHandler _ConvertBackendToNative;
 
         internal Int32           _OID;
         private String           _Name;
@@ -512,7 +512,7 @@ namespace NpgsqlTypes
                 return _ConvertBackendToNative(this, BackendData, TypeSize, TypeModifier);
             } else {
                 try {
-                    return Convert.ChangeType(BackendData, Type, CultureInfo.InvariantCulture);
+                	return Convert.ChangeType(BackendData, Type, CultureInfo.InvariantCulture);
                 } catch {
                     return BackendData;
                 }
@@ -526,7 +526,7 @@ namespace NpgsqlTypes
     /// </summary>
     internal class NpgsqlNativeTypeInfo
     {
-        private event ConvertNativeToBackendHandler _ConvertNativeToBackend;
+        private ConvertNativeToBackendHandler _ConvertNativeToBackend;
 
         private String           _Name;
         private NpgsqlDbType     _NpgsqlDbType;
@@ -598,6 +598,11 @@ namespace NpgsqlTypes
                 return QuoteString(! ForExtendedQuery, _ConvertNativeToBackend(this, NativeData));
                 
             } else {
+            	// Do a special handling of Enum values.
+            	// Translate enum value to its underlying type. 
+            	if (NativeData is System.Enum)
+            		return QuoteString(! ForExtendedQuery, (String)Convert.ChangeType(Enum.Format(NativeData.GetType(), NativeData, "d"), typeof(String), CultureInfo.InvariantCulture));
+            	
                 return QuoteString(! ForExtendedQuery, (String)Convert.ChangeType(NativeData, typeof(String), CultureInfo.InvariantCulture));
             }
         }

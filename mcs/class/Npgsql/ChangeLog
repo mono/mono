@@ -1,3 +1,8 @@
+2004-09-23  Francisco Figueiredo Jr.  <fxjrlists@yahoo.com.br>
+
+    * NpgsqlTypes/NpgsqlTypesHelper.cs:
+        ConvertToBackend: Added support for System.Enum types. Now enumerated types can be used correctly as a paramater value. Thanks Martin ( martijn at boland dot org) for the heads up.
+
 2004-09-18  Francisco Figueiredo Jr.  <fxjrlists@yahoo.com.br>
 
     * Npgsql/NpgsqlCommand.cs:
