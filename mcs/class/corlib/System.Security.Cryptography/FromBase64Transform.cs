@@ -9,6 +9,7 @@ using System;
 
 namespace System.Security.Cryptography {
 
+	[Serializable]
 	public enum FromBase64TransformMode : int {
 		IgnoreWhiteSpaces,
 		DoNotIgnoreWhiteSpaces
@@ -135,8 +136,6 @@ namespace System.Security.Cryptography {
 		}
 
 
-
-
 		private int DoTransform (byte [] inputBuffer,
 		                         int inputOffset,
 		                         int inputCount,
@@ -237,9 +236,6 @@ namespace System.Security.Cryptography {
 
 			return res;
 		}
-
-
-
 
 
 		/// <summary>

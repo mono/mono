@@ -1,3 +1,10 @@
+2003-01-20  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* CipherMode.cs: Added missing [Serializable] to enum.
+	* CspProviderFlags.cs: Added missing [Serializable] to enum.
+	* FromBase64Transform.cs: Added missing [Serializable] to enum.
+	* PaddingMode.cs: Added missing [Serializable] to enum.
+
 2003-01-19  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* CryptoTools.cs: Added internal class BlockProcessor to help
