@@ -1,3 +1,14 @@
+2004-05-30 Ben Maurer  <bmaurer@users.sourceforge.net>
+
+	* expression.cs (Invocation.OverloadResolve): Avoid the
+	use of hashtables and boxing here by allocating on demand.
+
+2004-05-30  Martin Baulig  <martin@ximian.com>
+
+	* rootcontext.cs (RootContext.LookupType): Don't cache things if
+	we're doing a silent lookup.  Don't try to lookup nested types in
+	TypeManager.object_type (thanks to Ben Maurer).
+
 2004-05-30  Martin Baulig  <martin@ximian.com>
 
 	Committing a patch from Ben Maurer.
