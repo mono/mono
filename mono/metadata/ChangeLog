@@ -1,3 +1,8 @@
+2004-01-16  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Makefile.am: added filewatcher.[ch]
+	* filewatcher.[ch]: FileSystemWatcher runtime support.
+	* icall.c: added new FSW icalls.
 
 Tue Jan 13 20:03:17 CET 2004 Paolo Molaro <lupus@ximian.com>
 
