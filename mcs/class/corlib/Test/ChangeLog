@@ -1,3 +1,9 @@
+2001-10-10  Thomas Neidhart <tome@sbox.tugraz.at>
+  * added directory System.Security.Cryptography
+  * added TestSuite for all Crypto classes
+  * added tests for System.Security.Cryptography.AsymmetricAlgorithm
+    and System.Security.Cryptography.SymmetricAlgorithm
+    
 2001-10-02  Martin Weindel <martin.weindel@t-online.de>
   * added directory System
   * added tests for System.Int64
