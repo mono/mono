@@ -23,9 +23,13 @@
 //	Peter Bartok	pbartok@novell.com
 //
 //
-// $Revision: 1.10 $
+// $Revision: 1.11 $
 // $Modtime: $
 // $Log: XplatUIX11.cs,v $
+// Revision 1.11  2004/08/09 18:56:55  pbartok
+// - Added generation of WM_DESTROY message
+// - Added handling of window manager induced shutdown
+//
 // Revision 1.10  2004/08/09 16:05:16  jackson
 // These properties are handled by the theme now.
 //
@@ -78,6 +82,8 @@ namespace System.Windows.Forms {
 
 		private static IntPtr		DisplayHandle;		// X11 handle to display
 		private static IntPtr		FosterParent;		// Container to hold child windows until their parent exists
+		private static int		wm_protocols;		// X Atom
+		private static int		wm_delete_window;	// X Atom
 		internal static Keys		key_state;
 		internal static MouseButtons	mouse_state;
 		internal static Point		mouse_position;
@@ -132,6 +138,10 @@ namespace System.Windows.Forms {
 			if (FosterParent==IntPtr.Zero) {
 				Console.WriteLine("XplatUIX11 Constructor failed to create FosterParent");
 			}
+
+			// Prepare for shutdown
+			wm_protocols=XInternAtom(DisplayHandle, "WM_PROTOCOLS", false);
+			wm_delete_window=XInternAtom(DisplayHandle, "WM_DELETE_WINDOW", false);
 		}
 
 		~XplatUIX11() {
@@ -194,6 +204,7 @@ namespace System.Windows.Forms {
 			int	Width;
 			int	Height;
 			int	BorderWidth;
+			int	protocols;
 
 			ParentHandle=cp.Parent;
 
@@ -235,6 +246,10 @@ namespace System.Windows.Forms {
 				EventMask.StructureNotifyMask);
 			XSetWindowBackground(DisplayHandle, WindowHandle, (uint)this.BackColor.ToArgb());
 			is_visible=true;
+
+			protocols=wm_delete_window;
+			XSetWMProtocols(DisplayHandle, WindowHandle, ref protocols, 1);
+
 			return(WindowHandle);
 		}
 
@@ -313,7 +328,8 @@ namespace System.Windows.Forms {
 		}
 
 		internal override void Activate(IntPtr handle) {
-			Console.WriteLine("XplatUIX11.Activate");
+			// Not sure this is the right method, but we don't use ICs either...
+			XRaiseWindow(DisplayHandle, handle);
 			return;
 		}
 
@@ -458,6 +474,7 @@ namespace System.Windows.Forms {
 				}
 
 				case XEventName.Expose: {
+					// We might be able to do some optimizations by using count and combining regions
 					msg.message=Msg.WM_PAINT;
 					paint_area.X=xevent.ExposeEvent.x;
 					paint_area.Y=xevent.ExposeEvent.y;
@@ -466,10 +483,21 @@ namespace System.Windows.Forms {
 					break;
 				}
 
-				case XEventName.ResizeRequest: {
-					msg.message=Msg.WM_SIZE;
+				case XEventName.DestroyNotify: {
+					msg.message=Msg.WM_DESTROY;
 					msg.wParam=IntPtr.Zero;
-					msg.lParam=(IntPtr) (xevent.ResizeRequestEvent.width<<16 | xevent.ResizeRequestEvent.width);
+					msg.lParam=IntPtr.Zero;
+					break;
+				}
+
+				case XEventName.ClientMessage: {
+					if (xevent.ClientMessageEvent.l0==wm_delete_window) {
+						msg.message=Msg.WM_QUIT;
+						msg.wParam=IntPtr.Zero;
+						msg.lParam=IntPtr.Zero;
+						return false;
+					}
+					return true;
 					break;
 				}
 			}
@@ -509,7 +537,7 @@ namespace System.Windows.Forms {
 				XUnmapWindow(DisplayHandle, handle);
 				is_visible=false;
 			}
-			Console.WriteLine("Setting window visibility: {0}", visible);
+//			Console.WriteLine("Setting window visibility: {0}", visible);
 			return true;
 		}
 
@@ -588,7 +616,7 @@ namespace System.Windows.Forms {
 						g.FillRectangle(SystemBrushes.Window, r2);
 						g.DrawString("TestString", f, b, 0, 0);
 
-						Console.WriteLine("XplatUI.Run(): Exposed {0}", r);
+//						Console.WriteLine("XplatUI.Run(): Exposed {0}", r);
  						break;
 					}
 
@@ -699,6 +727,15 @@ namespace System.Windows.Forms {
 
 		[DllImport ("libX11.so", EntryPoint="XFree")]
 		internal extern static int XFree(IntPtr data);
+
+		[DllImport ("libX11.so", EntryPoint="XRaiseWindow")]
+		internal extern static int XRaiseWindow(IntPtr display, IntPtr window);
+
+		[DllImport ("libX11.so", EntryPoint="XInternAtom")]
+		internal extern static int XInternAtom(IntPtr display, string atom_name, bool only_if_exists);
+
+		[DllImport ("libX11.so", EntryPoint="XSetWMProtocols")]
+		internal extern static int XSetWMProtocols(IntPtr display, IntPtr window, ref int protocols, int count);
 
 		// Drawing
 		[DllImport ("libX11.so", EntryPoint="XCreateGC")]
