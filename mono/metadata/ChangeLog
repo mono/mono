@@ -1,3 +1,8 @@
+2003-11-12  Zoltan Varga  <vargaz@freemail.hu>
+
+	* assembly.c (mono_assembly_load_references): Disable check because it
+	triggers on older corlibs which lots of people have.
+
 2003-11-12  Jackson Harper  <jackson@ximian.com>
 
 	* assembly.c: Change corlib name to mscorlib. Add a temp. hack to
