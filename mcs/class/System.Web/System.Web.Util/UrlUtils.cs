@@ -330,8 +330,11 @@ namespace System.Web.Util
 		public static string RemoveSessionId (string base_path, string file_path)
 		{
 			int len = base_path.Length;
-			return Reduce (base_path.Substring (0, len - SessionId.IdLength - 2) + "/" +
-					GetFile (file_path));
+			string dir = base_path.Substring (0, len - SessionId.IdLength - 2);
+			if (!dir.EndsWith ("/"))
+				dir += "/";
+
+			return Reduce (dir + GetFile (file_path));
 		}
 		
 		public static string ResolveVirtualPathFromAppAbsolute (string path)

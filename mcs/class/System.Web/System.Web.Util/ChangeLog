@@ -4,6 +4,9 @@
 	(GetFile): not public, and fixed to really return just the file name.
 	(InsertSessionId): ensure that the directory ends with a "/". This
 	fixes cookieless sessions.
+	(RemoveSessionId): don't return "/" twice.
+
+	Fixed bug #59051.
 
 2004-05-14  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
