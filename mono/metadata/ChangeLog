@@ -1,3 +1,9 @@
+2004-09-30  Zoltan Varga  <vargaz@freemail.hu>
+
+	* marshal.c marshal.h icall.c: Add GetDelegateForFunctionPointerInternal icall.
+
+	* marshal.c: Fix warnings.
+
 2004-09-29  Geoff Norton  <gnorton@customerdna.com>
 
 	* marshal.c (mono_ftnptr_to_delegate): This method was improperly
