@@ -356,7 +356,10 @@ System.Reflection/Binder.cs
 System.Reflection/BindingFlags.cs
 System.Reflection/CallingConventions.cs
 System.Reflection/ConstructorInfo.cs
+System.Reflection/CustomAttributeData.cs
 System.Reflection/CustomAttributeFormatException.cs
+System.Reflection/CustomAttributeNamedArgument.cs
+System.Reflection/CustomAttributeTypedArgument.cs
 System.Reflection/DefaultMemberAttribute.cs
 System.Reflection/EventAttributes.cs
 System.Reflection/EventInfo.cs
