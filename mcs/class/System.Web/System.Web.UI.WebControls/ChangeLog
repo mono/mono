@@ -1,3 +1,8 @@
+2005-01-21  Lluis Sanchez Gual <lluis@novell.com>
+
+	* Content.cs, ContentPlaceHolder.cs, ContentControlBuilder.cs
+	ContentPlaceHolderBuilder.cs: Implemented.
+
 2005-01-20 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* CheckBox.cs: when rendering the input tag inside a span tag, keep the
