@@ -1,3 +1,8 @@
+2004-06-22  Lluis Sanchez Gual  <lluis@ximian.com>
+
+	* XmlReturnReader.cs, XmlReturnWriter.cs: Generate the serializer with
+	  the root attribute taken from the method attributes.
+
 2004-06-10  Lluis Sanchez Gual  <lluis@ximian.com>
 
 	* TypeStubManager.cs: Improved locking in GetLogicalTypeInfo().
