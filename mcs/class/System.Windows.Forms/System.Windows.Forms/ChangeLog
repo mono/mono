@@ -1,5 +1,19 @@
 2002-7-6  DennisHayes <dennish@raytek.com>
 
+* DragEventArgs.cs
+* PropertyValueChangedEventArgs.cs
+* InputLanguageChangedEventArgs.cs
+* added files
+
+2002-7-6  DennisHayes <dennish@raytek.com>
+
+* ToolBarButtonClickEventArgs.cs
+* UpDownEventArgs.cs
+* PropertyValueChangedEventArgs.c
+* Added new files
+
+2002-7-6  DennisHayes <dennish@raytek.com>
+
 * AccessibleObject.cs
 * AmbientProperties.cs
 * Application.cs
