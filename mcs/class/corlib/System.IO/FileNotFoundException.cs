@@ -86,7 +86,7 @@ namespace System.IO {
 
 		public override string ToString ()
 		{
-			return inner.ToString();
+			return "System.IO.FileNotFoundException: " + msg;
 		}
 	}
 }

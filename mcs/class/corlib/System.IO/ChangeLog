@@ -1,3 +1,8 @@
+2002/05/10  Nick Drochak <ndrochak@gol.com>
+
+	* FileNotFoundException.cs (ToString): Don't try to use the inner
+	exception, because it might be null.  Use the message instead.
+
 2002-05-09  Nick Drochak  <ndrochak@gol.com>
 
 	* File.cs (Delete): Do not throw an exception if the file does not
