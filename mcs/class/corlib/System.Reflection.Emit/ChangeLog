@@ -1,3 +1,8 @@
+2003-04-28  Miguel de Icaza  <miguel@ximian.com>
+
+	* MethodBuilder.cs: Mono allows the parameter position to be zero
+	to indicate the "returns:" attribute.
+
 2003-04-20  Miguel de Icaza  <miguel@ximian.com>
 
 	* ILGenerator.cs (EmitCall): Implement.

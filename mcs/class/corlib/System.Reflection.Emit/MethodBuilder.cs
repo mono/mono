@@ -164,7 +164,10 @@ namespace System.Reflection.Emit {
 		[MonoTODO]
 		public ParameterBuilder DefineParameter (int position, ParameterAttributes attributes, string strParamName)
 		{
-			if ((position < 1) || (position > parameters.Length))
+			//
+			// Extension: Mono allows position == 0 for the return attribute
+			//
+			if ((position < 0) || (position > parameters.Length))
 				throw new ArgumentOutOfRangeException ("position");
 
 			RejectIfCreated ();
