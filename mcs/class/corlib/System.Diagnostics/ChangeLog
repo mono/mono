@@ -1,3 +1,9 @@
 2001-08-21  Nick Drochak <ndrochak@gol.com>
 
 	* Implemented ConditionalAttribute.cs and DebuggableAttribute.cs
+	
+2001-08-29  Alexander Klyubin <klyubin@aqris.com>
+  
+  * Skeletal implementation of StackFrame and StackTrace classes.
+    The classes must be somehow connected to runtime environment in order to
+    generate proper traces.
