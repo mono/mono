@@ -1,5 +1,10 @@
 2003-06-08 Jackson Harper <jackson@latitudegeo.com>
 
+	* EventDef.cs: Only add one method for addon, fire, other, and
+	removeon
+		
+2003-06-08 Jackson Harper <jackson@latitudegeo.com>
+
 	* TypeDef.cs: Add properties to types.
 	* PropertyDef.cs: New file - Implementation of a type property feature
 		
