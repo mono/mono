@@ -1,3 +1,8 @@
+
+Mon Nov 18 13:02:09 CET 2002 Paolo Molaro <lupus@ximian.com>
+
+	* CultureInfo.cs: implemented Equals and GetHashCode.
+
 2002-10-17  Duncan Mak  <duncan@ximian.com>
 
 	* CultureInfo.cs (TextInfo): return a TextInfo in the property.

@@ -250,7 +250,7 @@ namespace System.Globalization
 				break;
 
 			default:
-				throw new ArgumentException ("CultureInfoCode");
+				throw new ArgumentException ("CultureInfoCode " + culture_id);
 			}
 			lcid = culture_id;
 			this.use_user_override = use_user_override;
@@ -1211,11 +1211,10 @@ namespace System.Globalization
 			}
 		}
 
-		[MonoTODO]
 		public bool UseUserOverride
 		{
 			get {
-				return(false);
+				return use_user_override;
 			}
 		}
 
@@ -1230,10 +1229,12 @@ namespace System.Globalization
 			return(null);
 		}
 
-		[MonoTODO]
-		public override bool Equals(object value)
+		public override bool Equals (object value)
 		{
-			throw new NotImplementedException();
+			CultureInfo b = value as CultureInfo;
+			if (b != null)
+				return b.lcid == lcid;
+			return false;
 		}
 
 		[MonoTODO]
@@ -1242,10 +1243,9 @@ namespace System.Globalization
 			return(null);
 		}
 
-		[MonoTODO]
 		public override int GetHashCode()
 		{
-			throw new NotImplementedException();
+			return lcid;
 		}
 
 		[MonoTODO]
@@ -1403,7 +1403,6 @@ namespace System.Globalization
 		{
 			if (name == null)
 				throw new ArgumentNullException ();
-			
 			InitializeByID (NameToID (name), use_user_override);
 		}
 
