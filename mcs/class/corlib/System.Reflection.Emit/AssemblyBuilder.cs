@@ -40,9 +40,11 @@ namespace System.Reflection.Emit {
 		public string name;
 		public string filename;
 		public ResourceAttributes attrs;
+		public int offset;
 	}
 
 	public sealed class AssemblyBuilder : Assembly {
+		#region Sync with reflection.h
 		private IntPtr dynamic_assembly;
 		private MethodInfo entry_point;
 		private ModuleBuilder[] modules;
@@ -58,6 +60,7 @@ namespace System.Reflection.Emit {
 		PEFileKinds pekind = PEFileKinds.Dll;
 		bool delay_sign;
 		uint access;
+		#endregion
 		internal Type corlib_object_type = typeof (System.Object);
 		internal Type corlib_value_type = typeof (System.ValueType);
 		internal Type corlib_enum_type = typeof (System.Enum);

@@ -1,3 +1,10 @@
+2003-12-17  Zoltan Varga  <vargaz@freemail.hu>
+
+	* AssemblyBuilder.cs (MonoResource): New 'offset' field used by the
+	runtime.
+
+	* ModuleBuilder: Implement DefineResource.
+
 2003-12-15  Zoltan Varga  <vargaz@freemail.hu>
 
 	* AssemblyBuilder.cs (RefEmitPermissionSet): New helper structure.

@@ -21,6 +21,7 @@ using System.Globalization;
 
 namespace System.Reflection.Emit {
 	public class ModuleBuilder : Module {
+		#region Sync with reflection.h
 		private IntPtr dynamic_image;
 		private int num_types;
 		private TypeBuilder[] types;
@@ -31,6 +32,8 @@ namespace System.Reflection.Emit {
 		private MethodBuilder[] global_methods;
 		private FieldBuilder[] global_fields;
 		bool is_main;
+		private MonoResource[] resources;
+		#endregion
 		private TypeBuilder global_type;
 		private Type global_type_created;
 		internal IMonoSymbolWriter symbol_writer;
@@ -39,6 +42,7 @@ namespace System.Reflection.Emit {
 		private int[] table_indexes;
 		bool transient;
 		ModuleBuilderTokenGenerator token_gen;
+		ArrayList resource_writers = null;
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private static extern void basic_init (ModuleBuilder ab);
@@ -411,7 +415,6 @@ namespace System.Reflection.Emit {
 			return copy;
 		}
 
-		[MonoTODO]
 		public IResourceWriter DefineResource (string name, string description, ResourceAttributes attribute)
 		{
 			if (name == null)
@@ -422,7 +425,24 @@ namespace System.Reflection.Emit {
 				throw new InvalidOperationException ("The module is transient");
 			if (!assemblyb.IsSave)
 				throw new InvalidOperationException ("The assembly is transient");
-			throw new NotImplementedException ();
+			ResourceWriter writer = new ResourceWriter (new MemoryStream ());
+			if (resource_writers == null)
+				resource_writers = new ArrayList ();
+			resource_writers.Add (writer);
+
+			// The data is filled out later
+			if (resources != null) {
+				MonoResource[] new_r = new MonoResource [resources.Length + 1];
+				System.Array.Copy(resources, new_r, resources.Length);
+				resources = new_r;
+			} else {
+				resources = new MonoResource [1];
+			}
+			int p = resources.Length - 1;
+			resources [p].name = name;
+			resources [p].attrs = attribute;
+
+			return writer;
 		}
 
 		public IResourceWriter DefineResource (string name, string description)
@@ -573,6 +593,17 @@ namespace System.Reflection.Emit {
 		{
 			if (transient)
 				return;
+
+			if (resource_writers != null) {
+				for (int i = 0; i < resource_writers.Count; ++i) {
+					ResourceWriter writer = (ResourceWriter)resource_writers [i];
+					writer.Generate ();
+					MemoryStream stream = (MemoryStream)writer.Stream;
+					resources [i].data = new byte [stream.Length];
+					stream.Seek (0, SeekOrigin.Begin);
+					stream.Read (resources [i].data, 0, (int)stream.Length);
+				}					
+			}
 
 			build_metadata (this);
 
