@@ -1,3 +1,8 @@
+2002-02-26  Dietmar Maurer  <dietmar@ximian.com>
+
+	* emit-x86.c (mono_add_jump_info): impl.
+	(mono_compute_branches): patch real jump address (instead of
+	emitting code twice)
 
 Tue Feb 26 11:56:03 CET 2002 Paolo Molaro <lupus@ximian.com>
 
