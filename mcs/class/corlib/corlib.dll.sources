@@ -19,6 +19,7 @@ Mono.Security.Authenticode/AuthenticodeDeformatter.cs
 Mono.Security.Cryptography/CryptoConvert.cs
 Mono.Security.Cryptography/CryptoTools.cs
 Mono.Security.Cryptography/DSAManaged.cs
+Mono.Security.Cryptography/KeyPairPersistence.cs
 Mono.Security.Cryptography/PKCS1.cs
 Mono.Security.Cryptography/HMACAlgorithm.cs
 Mono.Security.Cryptography/MACAlgorithm.cs
