@@ -1,3 +1,8 @@
+2004-02-29  Ben Maurer <bmaurer@users.sourceforge.net>
+
+	* class.cs (Method.CheckBase): Avoid using FindMembers, we have
+	direct access to our parent, so check the method inline there.
+
 2004-02-27 Ben Maurer  <bmaurer@users.sourceforge.net>
 
 	* expression.cs (Invocation.EmitCall): Miguel's last commit

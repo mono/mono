@@ -1028,6 +1028,14 @@ namespace Mono.CSharp {
 		{
 			MemberInfo [] defined_names = null;
 
+			//
+			// We need to be able to use the member cache while we are checking/defining
+			//
+#if CACHE
+			if (TypeBuilder.BaseType != null)
+				parent_container = TypeManager.LookupMemberContainer (TypeBuilder.BaseType);
+#endif
+
 			if (interface_order != null){
 				foreach (Interface iface in interface_order)
 					if ((iface.ModFlags & Modifiers.NEW) == 0)
@@ -1145,9 +1153,6 @@ namespace Mono.CSharp {
 				DefineMembers (delegates, defined_names);
 
 #if CACHE
-			if (TypeBuilder.BaseType != null)
-				parent_container = TypeManager.LookupMemberContainer (TypeBuilder.BaseType);
-
 			member_cache = new MemberCache (this);
 #endif
 
@@ -2508,22 +2513,37 @@ namespace Mono.CSharp {
 			if (IsOperator) {
 				flags |= MethodAttributes.SpecialName | MethodAttributes.HideBySig;
 			} else {
-				MemberList mi_this;
-
-				mi_this = TypeContainer.FindMembers (
-					container.TypeBuilder, MemberTypes.Method,
-					BindingFlags.NonPublic | BindingFlags.Public |
-					BindingFlags.Static | BindingFlags.Instance |
-					BindingFlags.DeclaredOnly,
-					MethodSignature.method_signature_filter, ms);
-
-				if (mi_this.Count > 0) {
-					Report.Error (111, Location, "Class `" + container.Name + "' " +
-						      "already defines a member called `" + Name + "' " +
-						      "with the same parameter types");
-					return false;
+				
+				//
+				// Check in our class for dups
+				//
+				ArrayList ar = container.Methods;
+				if (ar != null) {
+					int arLen = ar.Count;
+					
+					for (int i = 0; i < arLen; i++) {
+						Method m = (Method) ar [i];
+						if (m == this || m.Name != this.Name)
+							continue;
+						
+						if (m.MethodBuilder != null && m.ParameterTypes.Length == ParameterTypes.Length) {
+							
+							for (int j = ParameterTypes.Length - 1; j >= 0; j --)
+								if (m.ParameterTypes [j] != ParameterTypes [j])
+									goto next;
+							
+							Report.Error (111, Location, "Class `" + container.Name + "' " +
+								      "already defines a member called `" + Name + "' " +
+								      "with the same parameter types");
+							return false;
+						}
+						
+					next :
+						;
+					}
 				}
-			} 
+			}
+			
 
 			//
 			// Verify if the parent has a type with the same name, and then
