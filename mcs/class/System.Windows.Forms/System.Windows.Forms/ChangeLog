@@ -1,3 +1,9 @@
+2003-05-07  Aleksey Ryabchuk <ryabchuk@yahoo.com>
+	* Control.cs : use WS_OVERLAPPED instead of WS_OVERLAPPEDWINDOW, update text field in get Text property
+	* TextBox.cs : use styles provided by TextBoxBase
+	* TextBoxBase.cs : more methods and properties were implemented
+	* win32enums.cs  : messages and notifications for EDIT control
+
 2003-05-02  Aleksey Ryabchuk <ryabchuk@yahoo.com>
 	* Control.cs : call OnTextChange
 	* UpdownBase.cs 

@@ -280,6 +280,8 @@ namespace System.Windows.Forms{
 		internal extern static int InvalidateRect(IntPtr hWnd,  IntPtr rc, int bErase);
 		[DllImport("user32.dll", CharSet=CharSet.Auto)]
 		internal static extern bool WaitMessage();
+		[DllImport("user32.dll", CharSet=CharSet.Ansi,EntryPoint="SendMessageA")]
+		internal static extern int SendMessage2ref(IntPtr hWnd, int msg, ref int wParam, ref int lParam);
 
 		[DllImport("user32.dll", CharSet=CharSet.Auto,EntryPoint="PeekMessageA")]
 		internal static extern bool PeekMessage(ref MESSAGE msg, int hWnd, int wFilterMin, int wFilterMax, PeekMessageFlags flags);

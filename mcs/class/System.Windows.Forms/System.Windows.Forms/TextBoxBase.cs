@@ -4,10 +4,13 @@
 // Author:
 //   stubbed out by Jackson Harper (jackson@latitudegeo.com)
 //   Dennis Hayes (dennish@Raytek.com)
+//   Aleksey Ryabchuk (ryabchuk@yahoo.com)
 //
 // (C) 2002/3 Ximian, Inc
 //
 using System.Drawing;
+using System.ComponentModel;
+using System.Collections.Specialized;
 
 namespace System.Windows.Forms {
 
@@ -15,32 +18,57 @@ namespace System.Windows.Forms {
 	// </summary>
 
         public class TextBoxBase : Control {
-			private string text;
-		//
-		//  --- Public Properties
-		//
+
+		BorderStyle borderStyle;
+		int maxLength;
+		int  selectionStart;
+		int  selectionLength;
+
+		BitVector32 flags;
+		private static readonly int acceptsTab    = BitVector32.CreateMask();
+		private static readonly int autoSize      = BitVector32.CreateMask( acceptsTab );
+		private static readonly int hideSelection = BitVector32.CreateMask( autoSize );
+		private static readonly int modified      = BitVector32.CreateMask( hideSelection );
+		private static readonly int multiline     = BitVector32.CreateMask( modified );
+		private static readonly int readOnly      = BitVector32.CreateMask( multiline );
+		private static readonly int wordWrap      = BitVector32.CreateMask( readOnly );
+
+		internal TextBoxBase ( ) {
+			flags = new BitVector32 ( );
+
+			flags[ autoSize ] = true;
+			flags[ hideSelection ] = true;
+			flags[ wordWrap ] = true;
+
+			borderStyle = BorderStyle.Fixed3D;
+			selectionStart = -1;
+
+			base.foreColor = SystemColors.WindowText;
+			base.backColor = SystemColors.Window;
+		}
+
 		[MonoTODO]
 		public bool AcceptsTab {
-			get
-			{
-				throw new NotImplementedException ();
-			}
-			set
-			{
-				//FIXME:
+			get { return flags[ acceptsTab ]; }
+			set {
+				if ( flags[ acceptsTab ] != value ) {
+					flags[ acceptsTab ] = value;
+					OnAcceptsTabChanged ( EventArgs.Empty );
+				}
 			}
 		}
+
 		[MonoTODO]
 		public virtual bool AutoSize {
-			get
-			{
-				throw new NotImplementedException ();
-			}
-			set
-			{
-				//FIXME:
+			get { return flags[ autoSize ];	}
+			set {
+				if ( flags[ autoSize ] != value ) {
+					flags[ autoSize ] = value;
+					OnAutoSizeChanged ( EventArgs.Empty );
+				}
 			}
 		}
+
 		[MonoTODO]
 		public override Color BackColor {
 			get {
@@ -53,37 +81,38 @@ namespace System.Windows.Forms {
 				base.BackColor = value;
 			}
 		}
-		[MonoTODO]
+
+		[EditorBrowsable (EditorBrowsableState.Never)]	 
 		public override Image BackgroundImage {
-			get
-			{
-				//FIXME:
-				return base.BackgroundImage;
-			}
-			set
-			{
-				//FIXME:
-				base.BackgroundImage = value;
-			}
+			get { return base.BackgroundImage; }
+			set { base.BackgroundImage = value;}
 		}
-		[MonoTODO]
+
+
 		public BorderStyle BorderStyle {
-			get
-			{
-				throw new NotImplementedException ();
-			}
-			set
-			{
-				//FIXME:
+			get {   return borderStyle; }
+			set {
+				if ( !Enum.IsDefined ( typeof(BorderStyle), value ) )
+					throw new InvalidEnumArgumentException( "BorderStyle",
+						(int)value,
+						typeof(BorderStyle));
+				
+				if ( borderStyle != value ) {
+					borderStyle = value;
+					OnBorderStyleChanged ( EventArgs.Empty );
+					RecreateHandle ( );
+				}
 			}
 		}
-		[MonoTODO]
+
 		public bool CanUndo {
-			get
-			{
-				throw new NotImplementedException ();
+			get {
+				if ( IsHandleCreated ) 
+					return Win32.SendMessage ( Handle, (int) EditControlMessages.EM_CANUNDO, 0, 0 ) != 0; 
+				return false;
 			}
 		}
+
 		[MonoTODO]
 		public override Color ForeColor {
 			get
@@ -97,15 +126,15 @@ namespace System.Windows.Forms {
 				base.ForeColor = value;
 			}
 		}
-		[MonoTODO]
+
 		public bool HideSelection {
-			get
-			{
-				throw new NotImplementedException ();
-			}
-			set
-			{
-				//FIXME:
+			get {	return flags[ hideSelection ];	}
+			set {
+				if ( flags[ hideSelection ] != value ) {
+					flags[ hideSelection ] = value;
+					RecreateHandle ( );
+					OnHideSelectionChanged ( EventArgs.Empty );
+				}
 			}
 		}
 		[MonoTODO]
@@ -119,39 +148,52 @@ namespace System.Windows.Forms {
 				//FIXME:
 			}
 		}
-		[MonoTODO]
+
 		public virtual int MaxLength {
-			get
-			{
-				throw new NotImplementedException ();
+			get { 
+				if ( IsHandleCreated ) 
+					maxLength = Win32.SendMessage ( Handle, (int) EditControlMessages.EM_GETLIMITTEXT, 0, 0 );
+				return maxLength;
 			}
-			set
-			{
-				//FIXME:
+			set {
+				if ( value < 0 )
+					throw new ArgumentException (
+						string.Format ( "'{0}' is not a valid value for 'MaxLength'.  'MaxLength' must be greater than or equal to 0.", value ),
+						"MaxLength" );
+
+				maxLength = value;
+				if ( IsHandleCreated )
+					Win32.SendMessage ( Handle, (int) EditControlMessages.EM_LIMITTEXT, maxLength, 0 );
 			}
 		}
-		[MonoTODO]
+
 		public bool Modified {
-			get
-			{
-				throw new NotImplementedException ();
+			get {
+				if ( IsHandleCreated )
+					flags[ modified ] = Win32.SendMessage ( Handle, (int) EditControlMessages.EM_GETMODIFY, 0, 0 ) != 0;
+				return flags[ modified ];
 			}
-			set
-			{
-				//FIXME:
+			set {
+				if ( flags[ modified ] != value ) {
+					flags[ modified ] = value;
+					if ( IsHandleCreated )
+						Win32.SendMessage ( Handle, (int) EditControlMessages.EM_SETMODIFY, flags[ modified ] ? 1 : 0, 0 );
+					OnModifiedChanged ( EventArgs.Empty );
+				}
 			}
 		}
-		[MonoTODO]
+
 		public virtual bool Multiline {
-			get
-			{
-				throw new NotImplementedException ();
-			}
-			set
-			{
-				//FIXME:
+			get { return flags[ multiline ]; }
+			set {
+				if ( flags[ multiline ] != value ) {
+					flags[ multiline ] = value;
+					RecreateHandle ( );
+					OnMultilineChanged ( EventArgs.Empty );
+				}
 			}
 		}
+
 		[MonoTODO]
 		public int PreferredHeight {
 			get
@@ -159,55 +201,84 @@ namespace System.Windows.Forms {
 				throw new NotImplementedException ();
 			}
 		}
-		[MonoTODO]
+
 		public bool ReadOnly {
-			get
-			{
-				throw new NotImplementedException ();
-			}
-			set
-			{
-				//FIXME:
+			get {	return flags[ readOnly ]; }
+			set {
+				if ( flags[ readOnly ] != value ) {
+					flags[ readOnly ] = value;
+					if ( IsHandleCreated )
+						Win32.SendMessage ( Handle, (int) EditControlMessages.EM_SETREADONLY,
+									flags[ readOnly ] ? 1 : 0, 0 );
+					OnReadOnlyChanged ( EventArgs.Empty );
+				}
 			}
 		}
-		[MonoTODO]
+
 		public virtual string SelectedText {
-			get
-			{
-				throw new NotImplementedException ();
+			get {
+				if ( SelectionStart < 0 || SelectionStart >= TextLength || SelectionLength == 0 )
+					return String.Empty;
+
+				return Text.Substring ( SelectionStart,
+							SelectionStart + SelectionLength <= Text.Length ?
+							SelectionLength : Text.Length - SelectionStart );
+				
 			}
-			set
-			{
-				//FIXME:
+			set {
+				if ( IsHandleCreated )
+					Win32.SendMessage ( Handle, (int) EditControlMessages.EM_REPLACESEL, -1, value );
+				else {
+					if ( SelectionStart >= 0 && SelectionStart < TextLength && SelectionLength != 0 ) {
+						Text = 	Text.Remove (   SelectionStart,
+									SelectionStart + SelectionLength <= Text.Length ?
+									SelectionLength : Text.Length - SelectionStart )
+									.Insert (   SelectionStart, value );
+					}
+				}
 			}
 		}
-		[MonoTODO]
+
 		public virtual int SelectionLength {
-			get
-			{
-				throw new NotImplementedException ();
+			get {
+				if ( IsHandleCreated ) {
+					int selectionEnd = 0;
+					Win32.SendMessage2ref ( Handle, (int) EditControlMessages.EM_GETSEL, ref selectionStart, ref selectionEnd );
+					selectionLength = selectionEnd - selectionStart;
+				}
+				return selectionLength;
 			}
-			set
-			{
-				//FIXME:
+			set {
+			 	if ( value < 0 )
+					throw new ArgumentException (
+						String.Format ( "'{0}' is not a valid value for 'value'.", value ), "SelectionLength" );
+				
+				selectionLength = value;
+				selectImpl ( SelectionStart, selectionLength );
 			}
 		}
-		[MonoTODO]
+
 		public int SelectionStart {
-			get
-			{
-				throw new NotImplementedException ();
+			get {
+				if ( IsHandleCreated ) {
+					int selectionEnd = 0;
+					Win32.SendMessage2ref ( Handle, (int) EditControlMessages.EM_GETSEL, ref selectionStart, ref selectionEnd );
+				}
+				return selectionStart;
 			}
-			set
-			{
-				//FIXME:
+			set {
+				if ( value < 0 )
+					throw new ArgumentException (
+							String.Format ( "'{0}' is not a valid value for 'value'.", value ), "SelectionStart" );
+
+				selectionStart = value;
+				selectImpl ( selectionStart, SelectionLength );
 			}
 		}
+
 		[MonoTODO]
 		public override string Text {
-			get
-			{
-				//FIXME:
+			get {
 				return base.Text;
 			}
 			set
@@ -216,23 +287,18 @@ namespace System.Windows.Forms {
 				base.Text = value;
 			}
 		}
-		[MonoTODO]
-		public virtual int TextLength  {
 
-			get
-			{
-				throw new NotImplementedException ();
-			}
+		public virtual int TextLength  {
+			get {	return Text.Length; }
 		}
-		[MonoTODO]
+
 		public bool WordWrap {
-			get
-			{
-				throw new NotImplementedException ();
-			}
-			set
-			{
-				//FIXME:
+			get {	return flags[ wordWrap ]; }
+			set {
+				if ( flags[ wordWrap ] != value ) {
+					flags[ wordWrap ] = value;
+					RecreateHandle ( );
+				}
 			}
 		}
 		
@@ -241,18 +307,26 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		public void AppendText(string text) 
 		{
-			//FIXME:
+			if ( !IsHandleCreated )
+				Text += text;
+			else {
+				selectImpl ( TextLength, 1 );
+				if ( IsHandleCreated )
+					Win32.SendMessage ( Handle, (int) EditControlMessages.EM_REPLACESEL, -1, text );
+			}
 		}
-		[MonoTODO]
+		
 		public void Clear()
 		{
-			//FIXME:
+			Text = String.Empty;
 		}
-		[MonoTODO]
+
 		public void ClearUndo()
 		{
-			//FIXME:
+			if ( IsHandleCreated )
+				Win32.SendMessage ( Handle, (int) EditControlMessages.EM_EMPTYUNDOBUFFER, 0, 0 );
 		}
+
 		[MonoTODO]
 		public void Copy()
 		{
@@ -273,26 +347,34 @@ namespace System.Windows.Forms {
 		{
 			//FIXME:
 		}
-		[MonoTODO]
+
 		public void Select(int start, int length) 
 		{
-			//FIXME:
+			if ( start < 0 )
+				throw new ArgumentException ( 
+					String.Format ( " '{0}' is not a valid value for 'start'.", start ) );
+
+			if ( length < 0 )
+				throw new ArgumentException ( 
+					String.Format ( " '{0}' is not a valid value for 'length'.", length ) );
+
+			selectImpl ( start, length );
 		}
-		[MonoTODO]
+		
 		public void SelectAll()
 		{
-			//FIXME:
+			Select ( 0, TextLength );
 		}
-		[MonoTODO]
+
 		public override string ToString()
 		{
-			//FIXME:
-			return base.ToString();
+			return GetType( ).FullName.ToString ( ) + ", Text: " + Text;
 		}
-		[MonoTODO]
+
 		public void Undo()
 		{
-			//FIXME:
+			if ( IsHandleCreated )
+				Win32.SendMessage ( Handle, (int) EditControlMessages.EM_UNDO, 0, 0 );
 		}
 		
 		// --- Public Events
@@ -311,15 +393,35 @@ namespace System.Windows.Forms {
         
 		[MonoTODO]
 		protected override CreateParams CreateParams {
-			get {	return base.CreateParams; }
+			get {
+				CreateParams createParams = base.CreateParams;
+				
+				switch ( BorderStyle ) {
+				case BorderStyle.Fixed3D:
+					createParams.ExStyle |= (int)WindowExStyles.WS_EX_CLIENTEDGE;
+				break;
+				case BorderStyle.FixedSingle:
+					createParams.Style |= (int) WindowStyles.WS_BORDER;
+				break;
+				};
+
+				if ( !HideSelection )
+					createParams.Style |= (int) EditControlStyles.ES_NOHIDESEL;
+
+				if ( Multiline ) {
+					createParams.Style |= (int) EditControlStyles.ES_MULTILINE;
+					createParams.Style |= (int) EditControlStyles.ES_AUTOVSCROLL;
+				}
+
+				if ( !WordWrap )
+					createParams.Style |= (int) EditControlStyles.ES_AUTOHSCROLL;
+
+				return createParams; 
+			}
 		}
 
-		[MonoTODO]
 		protected override Size DefaultSize {
-			get
-			{
-				return new Size(100,20); //Correct size
-			}
+			get { return new Size(100,20); }
 		}
 		
 		// --- Protected Methods
@@ -336,21 +438,25 @@ namespace System.Windows.Forms {
 			//FIXME:
 			return base.IsInputKey(keyData);
 		}
-		[MonoTODO]
+
 		protected virtual void OnAcceptsTabChanged(EventArgs e)
 		{
-			//FIXME:
+			if ( AcceptsTabChanged != null )
+				AcceptsTabChanged ( this, e );
 		}
-		[MonoTODO]
+
 		protected virtual void OnAutoSizeChanged(EventArgs e)
 		{
-			//FIXME:
+			if ( AutoSizeChanged != null )
+				AutoSizeChanged ( this, e );
 		}
-		[MonoTODO]
+
 		protected virtual void OnBorderStyleChanged(EventArgs e)
 		{
-			//FIXME:
+			if ( BorderStyleChanged != null )
+				BorderStyleChanged ( this, e );			
 		}
+
 		[MonoTODO]
 		protected override void OnFontChanged(EventArgs e)
 		{
@@ -362,32 +468,46 @@ namespace System.Windows.Forms {
 		{
 			//FIXME:
 			base.OnHandleCreated(e);
+
+			if ( maxLength != 0 )
+				Win32.SendMessage ( Handle, (int) EditControlMessages.EM_LIMITTEXT, maxLength, 0 );
+			if ( flags[ modified ] )
+				Win32.SendMessage ( Handle, (int) EditControlMessages.EM_SETMODIFY, flags[ modified ] ? 1 : 0, 0 );
+			if ( ReadOnly )
+				Win32.SendMessage ( Handle, (int) EditControlMessages.EM_SETREADONLY, ReadOnly ? 1 : 0, 0 );
+			
+			selectImpl ( selectionStart, selectionLength );
 		}
+
 		[MonoTODO]
 		protected override void OnHandleDestroyed(EventArgs e)
 		{
 			//FIXME:
 			base.OnHandleDestroyed(e);
 		}
-		[MonoTODO]
+
 		protected virtual void OnHideSelectionChanged(EventArgs e)
 		{
-			//FIXME:
+			if ( HideSelectionChanged != null )
+				HideSelectionChanged ( this, e );
 		}
-		[MonoTODO]
+
 		protected virtual void OnModifiedChanged(EventArgs e)
 		{
-			//FIXME:
+			if ( ModifiedChanged != null )
+				ModifiedChanged ( this, e );
 		}
-		[MonoTODO]
+
 		protected virtual void OnMultilineChanged(EventArgs e)
 		{
-			//FIXME:
+			if ( MultilineChanged != null )
+				MultilineChanged ( this, e );
 		}
-		[MonoTODO]
+
 		protected virtual void OnReadOnlyChanged(EventArgs e)
 		{
-			//FIXME:
+			if ( ReadOnlyChanged != null )
+				ReadOnlyChanged ( this, e );
 		}
 		[MonoTODO]
 		protected override bool ProcessDialogKey(Keys keyData)
@@ -404,9 +524,30 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		protected override void WndProc(ref Message m)
 		{
-			//FIXME:
-			base.WndProc(ref m);
+			switch ( m.Msg ) {
+			case Msg.WM_CTLCOLOR:
+				CallControlWndProc ( ref m );
+			break;
+			case Msg.WM_COMMAND:
+				if ( m.HiWordWParam == (int) EditControlNotifications.EN_CHANGE )
+					OnTextChanged ( EventArgs.Empty );
+				CallControlWndProc ( ref m );
+			break;
+			default:
+				base.WndProc(ref m);
+			break;
+			}
 		}
+
+		private void selectImpl ( int start, int length ) {
+			if ( IsHandleCreated )
+				Win32.SendMessage ( Handle, (int) EditControlMessages.EM_SETSEL, start, start + length );
+			else {
+				selectionStart = start;
+				selectionLength = length;
+			}
+		}
+
 	}
 }
 

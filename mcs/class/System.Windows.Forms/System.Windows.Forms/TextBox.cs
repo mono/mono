@@ -105,8 +105,7 @@ namespace System.Windows.Forms {
 				CreateParams createParams = base.CreateParams;
 
 				createParams.ClassName = "EDIT";
-				createParams.ExStyle = (int)WindowExStyles.WS_EX_CLIENTEDGE;
-				createParams.Style = (int) (
+				createParams.Style |= (int) (
 					WindowStyles.WS_CHILD | 
 					WindowStyles.WS_VISIBLE) | TextAlignStyle;
 				return createParams;

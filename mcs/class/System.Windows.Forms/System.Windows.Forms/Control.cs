@@ -65,7 +65,7 @@
     		AccessibleRole accessibleRole;
     		bool allowDrop;
     		AnchorStyles anchor;
-    		Color backColor;
+    		protected Color backColor;
     		Image backgroundImage;
     		//BindingContext bindingContext;
     		Rectangle bounds;
@@ -76,7 +76,7 @@
     		DockStyle dock;
     		bool enabled;
     		Font font;
-    		Color foreColor;
+    		protected Color foreColor;
     		ImeMode imeMode;
     		bool isAccessible;
     		// Point location;  // using bounds to store location
@@ -543,7 +543,7 @@
   					else 
   						createParams.Parent = ParkingWindowHandle;
 	  
-  					createParams.Style = (int) WindowStyles.WS_OVERLAPPEDWINDOW;
+  					createParams.Style = (int) WindowStyles.WS_OVERLAPPED;
 	  
     				return createParams;
     			}
@@ -1035,17 +1035,15 @@
     			get {
 					// CHECKME: if we really need to provide back current text of real window
 					// or just our copy in text member.
-    				if (IsHandleCreated) {
-						int len = Win32.GetWindowTextLengthA (Handle);
-						// FIXME: len is doubled due to some strange behaviour.(of GetWindowText function ?)
-						// instead of 10 characters we can get only 9, even if sb.Capacity is 10.
-						StringBuilder sb = new StringBuilder(len * 2 /*Win32.GetWindowTextLengthA (Handle)*/);
+    				if ( IsHandleCreated ) {
+					int len = Win32.GetWindowTextLengthA (Handle);
+					// FIXME: len is doubled due to some strange behaviour.(of GetWindowText function ?)
+					// instead of 10 characters we can get only 9, even if sb.Capacity is 10.
+					StringBuilder sb = new StringBuilder(len * 2 /*Win32.GetWindowTextLengthA (Handle)*/);
     					Win32.GetWindowText (Handle, sb, sb.Capacity);
-    					return sb.ToString();
+    					text = sb.ToString();
     				} 
-					else{
-						return text;
-					}
+				return text;
     			}
     			set {
 				if ( text != value ) {
