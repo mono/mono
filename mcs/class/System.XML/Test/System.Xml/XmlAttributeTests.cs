@@ -19,6 +19,9 @@ namespace MonoTests.System.Xml
 	{
 		XmlDocument doc;
 		XmlAttribute attr;
+		bool inserted;
+		bool changed;
+		bool removed;
 
 		[SetUp]
 		public void GetReady()
@@ -26,6 +29,21 @@ namespace MonoTests.System.Xml
 			doc = new XmlDocument ();
 			attr = doc.CreateAttribute ("attr1");
 			attr.Value = "val1";
+		}
+
+		private void EventNodeInserted(Object sender, XmlNodeChangedEventArgs e)
+		{
+			inserted = true;
+		}
+
+		private void EventNodeChanged(Object sender, XmlNodeChangedEventArgs e)
+		{
+			changed = true;
+		}
+
+		private void EventNodeRemoved(Object sender, XmlNodeChangedEventArgs e)
+		{
+			removed = true;
 		}
 
 		[Test]
@@ -125,25 +143,49 @@ namespace MonoTests.System.Xml
 		{
 			string original = doc.OuterXml;
 			doc.LoadXml ("<root name='value' />");
-			XmlNodeChangedEventHandler eh = new XmlNodeChangedEventHandler (OnSetInnerText);
-			try {
-				doc.DocumentElement.Attributes ["name"].InnerText = "a&b";
-				AssertEquals ("setInnerText", "a&b", doc.DocumentElement.Attributes ["name"].Value);
-				doc.DocumentElement.Attributes ["name"].InnerXml = "a&amp;b";
-				AssertEquals ("setInnerXml", "a&b", doc.DocumentElement.Attributes ["name"].Value);
+			XmlAttribute attr = doc.DocumentElement.Attributes ["name"];
+			attr.InnerText = "a&b";
+			AssertEquals ("setInnerText", "a&b", attr.Value);
+			attr.InnerXml = "a&amp;b";
+			AssertEquals ("setInnerXml", "a&b", attr.Value);
+			attr.InnerXml = "'a&amp;b'";
+			AssertEquals ("setInnerXml.InnerXml", "'a&amp;b'", attr.InnerXml);
+			AssertEquals ("setInnerXml.Value", "'a&b'", attr.Value);
+			attr.InnerXml = "\"a&amp;b\"";
+			AssertEquals ("\"a&amp;b\"", attr.InnerXml);
+			attr.InnerXml = "\"a&amp;b'";
+			AssertEquals ("\"a&amp;b'", attr.InnerXml);
 
-				doc.NodeChanged += eh;
-				doc.DocumentElement.Attributes ["name"].InnerText = "fire";
-				// If you failed to pass it, then the reason may be loop of event.
-				AssertEquals ("setInnerText.Event", "event was fired", doc.DocumentElement.GetAttribute ("appended"));
-			} catch(Exception ex) {
-				Fail(ex.Message);
+			attr.Value = "";
+			XmlNodeChangedEventHandler evInserted = new XmlNodeChangedEventHandler (EventNodeInserted);
+			XmlNodeChangedEventHandler evChanged = new XmlNodeChangedEventHandler (EventNodeChanged);
+			XmlNodeChangedEventHandler evRemoved = new XmlNodeChangedEventHandler (EventNodeRemoved);
+			doc.NodeInserted += evInserted;
+			doc.NodeChanged += evChanged;
+			doc.NodeRemoved += evRemoved;
+			try {
+				// set_InnerText event
+				attr.InnerText = "fire";
+				AssertEquals ("setInnerText.NodeInserted", false, inserted);
+				AssertEquals ("setInnerText.NodeChanged", true, changed);
+				AssertEquals ("setInnerText.NodeRemoved", false, removed);
+				inserted = changed = removed = false;
+				// set_InnerXml event
+				attr.InnerXml = "fire";
+				AssertEquals ("setInnserXml.NodeInserted", true, inserted);
+				AssertEquals ("setInnserXml.NodeChanged", false, changed);
+				AssertEquals ("setInnserXml.NodeRemoved", true, removed);
+				inserted = changed = removed = false;
 			} finally {
-				doc.NodeChanged -= eh;
+				doc.NodeInserted -= evInserted;
+				doc.NodeChanged -= evChanged;
+				doc.NodeRemoved -= evRemoved;
 			}
 		}
 
-		public void OnSetInnerText (object o, XmlNodeChangedEventArgs e)
+
+
+		private void OnSetInnerText (object o, XmlNodeChangedEventArgs e)
 		{
 			if(e.NewParent.Value == "fire")
 				doc.DocumentElement.SetAttribute ("appended", "event was fired");

@@ -94,6 +94,8 @@ namespace MonoTests.System.Xml
 			xtw.WriteStartElement ("foo");
 			try {
 				xtw.WriteAttributeString ("xmlns", "xmlns", null, "http://abc.def");
+				// This should not be allowed, even though
+				// MS.NET doesn't treat as an error.
 				Fail ("any prefix which name starts from \"xml\" must not be allowed.");
 			}
  			catch (ArgumentException e) {}
@@ -113,6 +115,12 @@ namespace MonoTests.System.Xml
 
 			xtw.WriteAttributeString ("baz", null);
 			AssertEquals ("<foo foo='bar' bar='' baz=''", StringWriterText);
+
+			xtw.WriteAttributeString ("hoge", "a\nb");
+			AssertEquals ("<foo foo='bar' bar='' baz='' hoge='a&#xA;b'", StringWriterText);
+
+			xtw.WriteAttributeString ("fuga", " a\t\r\nb\t");
+			AssertEquals ("<foo foo='bar' bar='' baz='' hoge='a&#xA;b' fuga=' a\t&#xD;&#xA;b\t'", StringWriterText);
 
 			try {
 				// Why does this pass Microsoft?
@@ -1026,6 +1034,24 @@ namespace MonoTests.System.Xml
 			wr.Close();
 			// This method don't always have to take this double-quoted style...
 			AssertEquals("#WriteAttributes.Element", "<root a1=\"A\" b2=\"B\" c3=\"C\" />", sw.ToString().Trim());
+		}
+
+		[Test]
+		public void FlushDoesntCloseTag ()
+		{
+			xtw.WriteStartElement ("foo");
+			xtw.WriteAttributeString ("bar", "baz");
+			xtw.Flush ();
+			AssertEquals ("<foo bar='baz'", StringWriterText);
+		}
+
+		[Test]
+		public void WriteWhitespaceClosesTag ()
+		{
+			xtw.WriteStartElement ("foo");
+			xtw.WriteAttributeString ("bar", "baz");
+			xtw.WriteWhitespace (" ");
+			AssertEquals ("<foo bar='baz'> ", StringWriterText);
 		}
 	}
 }

@@ -1,3 +1,10 @@
+2003-05-18  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
+
+	* XmlTextWriterTests.cs : added FlushDoesnTCloseTag() and 
+	  WriteWhitespaceCloseTag() (patch by Jonathan Hogg).
+	  added more tests to AttributeWriteAttributeString().
+	* XmlAttributeTests.cs : SetInnerTextAndXml() rewrite.
+
 2003-05-16  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
 
 	* XmlAttributeTests.cs : added NamespaceAttributes() and WriteTo().
