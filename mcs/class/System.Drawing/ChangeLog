@@ -1,4 +1,7 @@
 2003-10-12  Alexandre Pigolkine <pigolkine@gmx.de>
+	* Makefile			gdiplus added to subdirs
+
+2003-10-12  Alexandre Pigolkine <pigolkine@gmx.de>
 	* System.Drawing.dll.sources: 	Remove cairo,win32,gtk implementations
 									Add gdi+ implementation
 

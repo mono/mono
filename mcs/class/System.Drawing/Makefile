@@ -1,5 +1,5 @@
 thisdir = class/System.Drawing
-SUBDIRS = 
+SUBDIRS = gdiplus 
 include ../../build/rules.make
 
 # to use JPEG decoder add -r ./cdeclRedirector/cdeclCallback.dll 
