@@ -466,25 +466,19 @@ public class ArrayTest : TestCase
 			}
 			Assert("#E67", errorThrown);
 		}
-// FIXME: This test will fail until a bug in Array is fixed.
-// bug details at http://bugzilla.ximian.com/show_bug.cgi?id=27337
-/*
+
 		{
 			bool errorThrown = false;
 			try {
 				String[] c1 = new String[2];
 				Char[] c2 = new Char[2];
-				// FIXME: Our implementation doesn't throw an exception if
-				//        this is uninitialized.
-				//c1[0] = "Hello";
-				//c1[1] = "World";
 				c1.CopyTo(c2, 0);
 			} catch (ArrayTypeMismatchException) {
 				errorThrown = true;
 			}
 			Assert("#E68", errorThrown);
 		}
-*/
+
 		Char[] orig = {'a', 'b', 'c', 'd'};
 		Char[] copy = new Char[10];
 		Array.Clear(copy, 0, copy.Length);

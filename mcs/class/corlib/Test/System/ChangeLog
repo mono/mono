@@ -1,3 +1,8 @@
+2002-09-19  Nick Drochak <ndrochak@gol.com>
+
+	* ArrayTest.cs: Can check for exception throw now on CopyTo(). Re-
+	enable test.
+
 2002-09-13  Nick Drochak  <ndrochak@gol.com>
 
 	* EnumTest.cs: Add an extreme value test for format.
