@@ -1,3 +1,7 @@
+2004-05-30 Ben Maurer  <bmaurer@users.sourceforge.net>
+
+	* convert.cs: add a trivial cache for overload operator resolution.
+
 2004-05-31  Marek Safar  <marek.safar@seznam.cz>
 
 	* attribute.cs

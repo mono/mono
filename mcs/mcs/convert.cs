@@ -856,6 +856,8 @@ namespace Mono.CSharp {
 			return UserDefinedConversion (ec, source, target, loc, true);
 		}
 
+		static DoubleHash explicit_conv = new DoubleHash (100);
+		static DoubleHash implicit_conv = new DoubleHash (100);
 		/// <summary>
 		///   Computes the MethodGroup for the user-defined conversion
 		///   operators from source_type to target_type.  `look_for_explicit'
@@ -873,7 +875,10 @@ namespace Mono.CSharp {
 			op_name = "op_Implicit";
 
 			MethodGroupExpr union3;
-
+			object r;
+			if ((look_for_explicit ? explicit_conv : implicit_conv).Lookup (source_type, target_type, out r))
+				return (MethodGroupExpr) r;
+			
 			mg1 = Expression.MethodLookup (ec, source_type, op_name, loc);
 			if (source_type.BaseType != null)
 				mg2 = Expression.MethodLookup (ec, source_type.BaseType, op_name, loc);
@@ -922,7 +927,9 @@ namespace Mono.CSharp {
 				union4 = Invocation.MakeUnionSet (union5, union6, loc);
 			}
 			
-			return Invocation.MakeUnionSet (union3, union4, loc);
+			MethodGroupExpr ret = Invocation.MakeUnionSet (union3, union4, loc);
+			(look_for_explicit ? explicit_conv : implicit_conv).Insert (source_type, target_type, ret);
+			return ret;
 		}
 		
 		/// <summary>
