@@ -6,6 +6,7 @@ using System.Text.RegularExpressions;
 using System.Xml;
 using System.Xml.Serialization;
 using Mono.Xml.Schema;
+using System.Globalization;
 
 namespace System.Xml.Schema
 {
@@ -98,6 +99,8 @@ namespace System.Xml.Schema
 		[MonoTODO]
 		internal override int Validate(ValidationEventHandler h, XmlSchema schema)
 		{
+			NumberStyles lengthStyle = NumberStyles.Integer;
+			
 			if (IsValidated (schema.ValidationId))
 				return errorCount;
 
@@ -132,12 +135,12 @@ namespace System.Xml.Schema
 						if (lengthFacet >= 0)
 							lf.error (h, "There already length facet exists.");
 						else {
-							lengthFacet = decimal.Parse (lf.Value.Trim ());
+							lengthFacet = decimal.Parse (lf.Value.Trim (), lengthStyle);
 							if (lengthFacet < 0) 
 								lf.error(h, "The value '" + lengthFacet + "' is an invalid length");
 						}
 					} catch (Exception) { // FIXME: better catch ;-(
-						lf.error (h, "Invalid length facet specifidation");
+						lf.error (h, "The value '" + lf.Value + "' is an invalid length facet specification");
 					}
 					continue;
 				}
@@ -149,7 +152,7 @@ namespace System.Xml.Schema
 						if (maxLengthFacet >= 0)
 							maxlf.error (h, "There already maxLength facet exists.");
 						else {
-							maxLengthFacet = decimal.Parse (maxlf.Value.Trim ());
+							maxLengthFacet = decimal.Parse (maxlf.Value.Trim (), lengthStyle);
 							if (maxLengthFacet < 0) 
 								maxlf.error(h, "The value '" + maxLengthFacet + "' is an invalid maxLength");
 							if (minLengthFacet >=0 && minLengthFacet > maxLengthFacet)
@@ -158,7 +161,7 @@ namespace System.Xml.Schema
 
 
 					} catch (Exception) { // FIXME: better catch ;-(
-						maxlf.error (h, "Invalid maxLength facet specifidation");
+						maxlf.error (h, "The value '" + maxlf.Value+ "' is an invalid maxLength facet specification");
 					}
 					continue;
 				}
@@ -170,14 +173,14 @@ namespace System.Xml.Schema
 						if (minLengthFacet >= 0)
 							minlf.error (h, "There already minLength facet exists.");
 						else {
-							minLengthFacet = decimal.Parse (minlf.Value.Trim ());
+							minLengthFacet = decimal.Parse (minlf.Value.Trim (), lengthStyle);
 							if (minLengthFacet < 0) 
 								minlf.error(h, "The value '" + minLengthFacet + "' is an invalid minLength");
 							if (maxLengthFacet >=0 && minLengthFacet > maxLengthFacet)
 								minlf.error(h, "minLength is greater than maxLength.");
 						}
 					} catch (Exception) { // FIXME: better catch ;-(
-						minlf.error (h, "Invalid minLength facet specifidation");
+						minlf.error (h, "The value '" + minlf.Value + "' is an invalid minLength facet specification");
 					}
 					continue;
 				}

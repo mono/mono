@@ -1,3 +1,8 @@
+2003-12-14  David Sheldon <dave-mono@earth.li>
+
+  * XmlSchemaSimpleTypeRestriction.cs : Check that min/max/lengths 
+    specified are integers. Also made some error messages more useful.
+
 2003-12-08  Atsushi Enomoto  <ginga@kit.hi-ho.ne.jp>
 
 	* XmlSchemaSimpleTypeRestriction.cs : patch by David Sheldon. Check

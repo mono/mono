@@ -1,3 +1,8 @@
+2003-12-14  David Sheldon <dave-mono@earth.li>
+
+  * XmlSchemaLengthFacetTests.cs : Tests for non-integers failing 
+    as length facets, and changed the assert for the correct type.
+
 2003-12-08  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
 
 	* Added XmlSchemaLengthFacetTests.cs. (patch by David Sheldon.)

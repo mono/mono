@@ -31,6 +31,14 @@ namespace MonoTests.System.Xml
       CreateSimpletypeLength("-5","-","-", false);
       CreateSimpletypeLength("-","-1","-", false);
       CreateSimpletypeLength("-","-","-1", false);
+
+      CreateSimpletypeLength("5.4","-","-", false);
+      CreateSimpletypeLength("-","1.0","-", false);
+      CreateSimpletypeLength("-","-","1.3", false);
+
+      CreateSimpletypeLength("+5","-","-", true);
+      CreateSimpletypeLength("-","+1","-", true);
+      CreateSimpletypeLength("-","-","+1", true);
      }
 
     private void CreateSimpletypeLength(string length, string minLength, string maxLength, bool expected) {
@@ -64,7 +72,7 @@ namespace MonoTests.System.Xml
       schema.Items.Add(testType);
       schema.Compile(new ValidationEventHandler(ValidationCallbackOne));
 
-      AssertEquals( 
+      Assert( 
         (passed ? "Test passed, should have failed" : "Test failed, should have passed") +
         ": " + length + " " + minLength + " " + maxLength,
         expected == passed);
