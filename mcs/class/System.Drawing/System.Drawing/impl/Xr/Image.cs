@@ -11,6 +11,7 @@
 using System;
 using System.Runtime.Remoting;
 using System.Runtime.Serialization;
+using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Runtime.InteropServices;
@@ -32,7 +33,7 @@ namespace System.Drawing.XrImpl {
 		// constructor
 		public Image () {}
 
-		[MonoTODO]
+		//[MonoTODO] - Breaks windows build - gon
 		public virtual object Clone()
 		{
 			throw new NotImplementedException ();
@@ -65,13 +66,13 @@ namespace System.Drawing.XrImpl {
 			throw new NotImplementedException ();
 		}
 		
-		[MonoTODO]
+		//[MonoTODO]
 		public static Image FromStream(Stream stream)
 		{
 			throw new NotImplementedException();
 		}
 	
-		[MonoTODO]
+		//[MonoTODO]
 		public static Image FromStream(Stream stream, bool useIcm)
 		{
 			throw new NotImplementedException();
@@ -108,13 +109,13 @@ namespace System.Drawing.XrImpl {
 			throw new NotImplementedException ();
 		}
 	
-		[MonoTODO]
+		//[MonoTODO]
 		int IImage.GetFrameCount (FrameDimension dimension)
 		{
 			throw new NotImplementedException ();
 		}
 		
-		[MonoTODO]
+		//[MonoTODO]
 		PropertyItem IImage.GetPropertyItem (int propid)
 		{
 			throw new NotImplementedException();
@@ -155,25 +156,25 @@ namespace System.Drawing.XrImpl {
 			throw new NotImplementedException ();
 		}
 	
-		[MonoTODO]
+		//[MonoTODO]
 		void IImage.Save(Stream stream, ImageFormat format)
 		{
 			throw new NotImplementedException ();
 		}
 		
-		[MonoTODO]
+		//[MonoTODO]
 		void IImage.Save (string filename, ImageFormat format)
 		{
 			throw new NotImplementedException ();
 		}
 		
-		[MonoTODO]
+		//[MonoTODO]
 		int IImage.SelectActiveFrame (FrameDimension dimension, int frameIndex)
 		{
 			throw new NotImplementedException();
 		}
 	
-		[MonoTODO]
+		//[MonoTODO]
 		void IImage.SetPropertyItem (PropertyItem item)
 		{
 			throw new NotImplementedException();
@@ -233,14 +234,14 @@ namespace System.Drawing.XrImpl {
 			}
 		}
 	
-		[MonoTODO]
+		//[MonoTODO]
 		PropertyItem [] IImage.PropertyItems {
 			get {
 				throw new NotImplementedException();
 			}
 		}
 
-		[MonoTODO]
+		//[MonoTODO]
 		ImageFormat IImage.RawFormat {
 			get {
 				return imageFormat;
@@ -265,12 +266,12 @@ namespace System.Drawing.XrImpl {
 			}
 		}
 
-		[MonoTODO]
+		//[MonoTODO]
 		public void Dispose ()
 		{
 		}
 
-		[MonoTODO]
+		//[MonoTODO]
 		protected virtual void Dispose (bool disposing)
 		{
 			throw new NotImplementedException();
