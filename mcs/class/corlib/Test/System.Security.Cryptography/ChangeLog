@@ -1,3 +1,9 @@
+2002-11-20  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* RSAPKCS1SignatureDeformatterTest.cs: Removed patch from Nick - 
+	as it doesn't seems to work on my system and the exception behavior 
+	isn't logical (only MD5 not SHA1, ...).
+
 2002-11-18  Nick Drochak  <ndrochak@gol.com>
 
 	* RSAPKCS1SignatureDeformatterTest.cs: MS .NET throws an exception when
