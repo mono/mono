@@ -1,4 +1,8 @@
 
+Tue May 11 12:15:24 CEST 2004 Paolo Molaro <lupus@ximian.com>
+
+	* tramp-ppc.c: removed old code.
+
 Tue May 11 12:02:28 CEST 2004 Paolo Molaro <lupus@ximian.com>
 
 	* mini.h, mini-ppc.c, cfold.c: export mono_is_power_of_two().
