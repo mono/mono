@@ -1,3 +1,16 @@
+2004-11-17  Martin Baulig  <martin@ximian.com>
+
+	* class.c (mono_class_init): Don't setup `class->parent' for
+	dynamic instances; moved this to mono_class_generic_2().
+	(mono_class_create_generic): Also set `klass->inited' for dynamic
+	generic instances.
+	(mono_class_create_generic_2): Don't do anything for dynamic
+	generic instances.  Set `klass->parent' here and also call
+	mono_class_setup_parent() here.	
+
+	* reflection.c (do_mono_reflection_bind_generic_parameters): Added
+	`MonoType *parent' argument; set `ginst->parent' before calling
+	mono_class_create_generic_2(), so we set the correct parent.
 
 Thu Nov 18 17:10:32 CET 2004 Paolo Molaro <lupus@ximian.com>
 
