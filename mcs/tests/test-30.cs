@@ -1,6 +1,9 @@
 //
 // Tests whether we implement the correct methods from interfaces
 //
+
+using System;
+
 interface IA {
 	void Draw ();
 }
@@ -10,8 +13,8 @@ interface IB {
 }
 
 class X : IA, IB {
-	bool ia_called;
-	bool ib_called;
+	public bool ia_called;
+	public bool ib_called;
 	
 	void IA.Draw ()
 	{
@@ -31,6 +34,15 @@ class test {
 		X x = new X ();
 
 		((IA) x).Draw ();
+		Console.WriteLine ("IA: " + x.ia_called);
+		Console.WriteLine ("IB: " + x.ib_called);
+
+		if (x.ib_called)
+			return 1;
+		if (x.ia_called)
+			return 0;
+
+		return 1;
 	}
 }
 

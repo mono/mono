@@ -2,16 +2,18 @@
 // Versioning test: make sure that we output a warning, but still call the derived
 // method
 //
+using System;
+
 class Base {
 	public int which;
 	
-	virtual void A ()
+	public virtual void A ()
 	{
 		which = 1;
 	}
 }
 
-class Derived {
+class Derived :Base {
 	public virtual void A ()
 	{
 		which = 2;
@@ -19,7 +21,7 @@ class Derived {
 }
 
 class Test {
-	int Main ()
+	static int Main ()
 	{
 		Derived d = new Derived ();
 
