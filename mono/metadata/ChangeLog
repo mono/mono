@@ -1,3 +1,9 @@
+2003-09-19  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* assembly.c: don't call check_env from mono_assembly_load. It's
+	already done once in mono_assemblies_init and may cause headaches when
+	multiple threads are loading assemblies.
+
 2003-09-19  Martin Baulig  <martin@ximian.com>
 
 	* reflection.c (mono_reflection_define_generic_parameter): Don't
