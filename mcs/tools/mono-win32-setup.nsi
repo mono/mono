@@ -25,7 +25,7 @@
 ;
 ;
   !define MILESTONE "0.24" ;
-  !define SOURCE_INSTALL_DIR "c:\mono-0.23-setup\install\\*" ;
+  !define SOURCE_INSTALL_DIR "c:\cygwin\home\Administrator\install\\*" ;
 
 ; =====================================================
 ; SET LOGO
@@ -164,6 +164,7 @@ Section "Uninstall"
   Delete $WINDIR\cert2spc.bat
   Delete $WINDIR\monoresgen.bat
   Delete $WINDIR\monosn.bat
+  Delete $WINDIR\cilc.bat
 
   GoNext2:
   NoUnInstall:
@@ -299,6 +300,14 @@ FileWrite $0 "#!/bin/sh$\r$\n"
 FileWrite $0 "export MONO_PATH=$6/lib$\r$\n"
 FileWrite $0 "export MONO_CFG_DIR=$6/etc/mono$\r$\n"
 FileWrite $0 '$6/bin/mono.exe $6/bin/cert2spc.exe "$$@"'
+FileClose $0
+
+; create bin/cilc wrapper to be used if the user has cygwin
+FileOpen $0 "$INSTDIR\bin\cilc.exe.sh" "w"
+FileWrite $0 "#!/bin/sh$\r$\n"
+FileWrite $0 "export MONO_PATH=$6/lib$\r$\n"
+FileWrite $0 "export MONO_CFG_DIR=$6/etc/mono$\r$\n"
+FileWrite $0 '$6/bin/mono.exe $6/bin/cilc.exe "$$@"'
 FileClose $0
 
 ;
@@ -556,6 +565,29 @@ FileWrite $0 ":done$\r$\n"
 FileWrite $0 "setlocal$\r$\n"
 FileWrite $0 'set path="%MONO_BASEPATH%\bin\;%MONO_BASEPATH%\lib\;%path%"$\r$\n'
 FileWrite $0 "%MONO_BASEPATH%\bin\monosn.exe %MONOARGS%$\r$\n"
+FileWrite $0 "endlocal$\r$\n"
+
+FileClose $0
+
+;========================
+; Write the cilc file
+;========================
+
+FileOpen $0 "$WINDIR\cilc.bat" "w"
+
+
+FileWrite $0 "@echo off$\r$\n"
+FileWrite $0 "call monobasepath.bat$\r$\n"
+FileWrite $0 "set MONOARGS=$\r$\n"
+FileWrite $0 ":loop$\r$\n"
+FileWrite $0 "if x%1 == x goto :done$\r$\n"
+FileWrite $0 "set MONOARGS=%MONOARGS% %1$\r$\n"
+FileWrite $0 "shift$\r$\n"
+FileWrite $0 "goto loop$\r$\n"
+FileWrite $0 ":done$\r$\n"
+FileWrite $0 "setlocal$\r$\n"
+FileWrite $0 'set path="%MONO_BASEPATH%\bin\;%MONO_BASEPATH%\lib\;%path%"$\r$\n'
+FileWrite $0 "%MONO_BASEPATH%\bin\mono.exe %MONO_BASEPATH%\bin\cilc.exe %MONOARGS%$\r$\n"
 FileWrite $0 "endlocal$\r$\n"
 
 FileClose $0
