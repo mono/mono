@@ -403,6 +403,9 @@ namespace System.Data.SqlClient {
 				theServerName = theDataSource;
 			}
 
+			if(theServerName.Equals("(local)"))
+				theServerName = "localhost";
+
 			return success;
 		}
 

@@ -1,3 +1,9 @@
+2003-03-15  Daniel Morgan <danmorg@sc.rr.com>
+
+	* SqlConnection.cs: if Server in the ConnectionString
+	is set to "(local", use "localhost" as the hostname
+	to connect
+
 2003-03-04  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* SqlException.cs: implemented GetObjectData ().
