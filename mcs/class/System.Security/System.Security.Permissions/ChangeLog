@@ -1,0 +1,4 @@
+2004-07-07  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* StorePermissionFlags.cs: New. CAS-related enum for StorePermission.
+	Adding it "creates" the namespace for corcompare.
