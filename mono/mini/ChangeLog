@@ -1,5 +1,13 @@
 2004-08-24  Zoltan Varga  <vargaz@freemail.hu>
 
+	* mini-amd64.c (mono_arch_local_regalloc): Fix regalloc problem.
+
+	* mini-amd64.h: Enable the emit_state optimization.
+
+	* mini-ops.h cpu-amd64.md: Add new amd64_test_null opcode.
+
+	* mini-amd64.c: Add some new 64 bit peephole opts.
+
 	* inssel.brg (mini_emit_memcpy): Optimize for 64 bit architectures.
 
 	* cpu-amd64.md: sreg1 of div instructions must be %rax.
