@@ -1,3 +1,8 @@
+2004-11-08  Zoltan Varga  <vargaz@freemail.hu>
+
+	* AppDomain.cs (CreateDomain): Handle the case when info is null. 
+	Fixes #69120.
+
 2004-11-03 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* InvalidOperationException.cs: make the message more meaningful and

@@ -611,8 +611,11 @@ namespace System
 			if (friendlyName == null)
 				throw new System.ArgumentNullException ("friendlyName");
 
-			if (info == null)
-				throw new ArgumentNullException ("info");
+			if (info == null) {
+				info = new AppDomainSetup ();	// we're default!
+			}
+			else
+				info = new AppDomainSetup (info);	// copy
 
 			// todo: allow setup in the other domain
 
