@@ -21,6 +21,8 @@ monobins_DATA = \
 	chktrust.exe				\
 	soapsuds.exe				\
 	monop.exe				\
+	mono-find-provides.exe			\
+	mono-find-requires.exe 			\
 	setreg.exe				\
 	cert2spc.exe				\
 	certmgr.exe				\
@@ -86,12 +88,14 @@ $(monobins_DATA):
 	setreg.exe)              d=tools/security               ;; \
 	sn.exe)                  d=tools/security               ;; \
 	monop.exe)               d=tools/monop                  ;; \
+	mono-find-provides.exe)  d=tools/mono-find-provides	;; \
+	mono-find-requires.exe)  d=tools/mono-find-requires	;; \
 	browsercaps-updater.exe) d=tools/browsercaps-updater    ;; \
 	gacutil.exe)		 d=tools/gacutil		;; \
 	gmcs.exe)                d=gmcs				;; \
 	esac; \
 	f=$(mcs_topdir)/$$d/$@; \
-	if test -f $$f; then :; else f=$(monobinsdir)/$@; fi ; \
+mcs	if test -f $$f; then :; else f=$(monobinsdir)/$@; fi ; \
 	echo "cp -f $$f $(srcdir)"; \
 	cp -f $$f $(srcdir)
 
