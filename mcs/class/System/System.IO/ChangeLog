@@ -1,3 +1,8 @@
+2004-01-26  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* DefaultWatcher.cs: check if the FileSystemWatcher is in WaitForChange
+	and call Monitor.PulseAll in that case.
+
 2004-01-21  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* DefaultWatcher.cs: implemented.

@@ -158,6 +158,19 @@ namespace System.IO {
 			return false;
 		}
 
+		static void DispatchEvents (FileSystemWatcher fsw, FileAction action, string filename)
+		{
+			RenamedEventArgs renamed = null;
+
+			lock (fsw) {
+				fsw.DispatchEvents (action, filename, ref renamed);
+				if (fsw.Waiting) {
+					fsw.Waiting = false;
+					System.Threading.Monitor.PulseAll (fsw);
+				}
+			}
+		}
+
 		void DoFiles (DefaultWatcherData data, string directory, string filemask, bool dispatch)
 		{
 			string [] files = Directory.GetFiles (directory, filemask);
@@ -168,15 +181,13 @@ namespace System.IO {
 					fd.NotExists = true;
 			}
 
-			RenamedEventArgs renamed = null;
-
 			/* New files */
 			foreach (string filename in files) {
 				FileData fd = (FileData) data.Files [filename];
 				if (fd == null) {
 					data.Files.Add (filename, CreateFileData (directory, filename));
 					if (dispatch)
-						data.FSW.DispatchEvents (FileAction.Added, filename, ref renamed);
+						DispatchEvents (data.FSW, FileAction.Added, filename);
 				} else if (fd.Directory == directory) {
 					fd.NotExists = false;
 				}
@@ -194,7 +205,7 @@ namespace System.IO {
 						removed = new ArrayList ();
 
 					removed.Add (filename);
-					data.FSW.DispatchEvents (FileAction.Removed, filename, ref renamed);
+					DispatchEvents (data.FSW, FileAction.Removed, filename);
 				}
 			}
 
@@ -218,14 +229,14 @@ namespace System.IO {
 						removed = new ArrayList ();
 
 					removed.Add (filename);
-					data.FSW.DispatchEvents (FileAction.Removed, filename, ref renamed);
+					DispatchEvents (data.FSW, FileAction.Removed, filename);
 					continue;
 				}
 				
 				if (creation != fd.CreationTime || write != fd.LastWriteTime) {
 					fd.CreationTime = creation;
 					fd.LastWriteTime = write;
-					data.FSW.DispatchEvents (FileAction.Modified, filename, ref renamed);
+					DispatchEvents (data.FSW, FileAction.Modified, filename);
 				}
 			}
 
