@@ -755,9 +755,7 @@ namespace System.Xml
 				throw new ArgumentException ("Cannot use a prefix with an empty namespace.");
 
 			// ignore non-namespaced node's prefix.
-			if (ns == null)
-				ns = String.Empty;
-			if (ns == String.Empty)
+			if (ns == null || ns == String.Empty)
 				prefix = String.Empty;
 
 
@@ -772,7 +770,7 @@ namespace System.Xml
 			newAttributeNamespaces.Clear ();
 			userWrittenNamespaces.Clear ();
 
-			if (prefix == null)
+			if (prefix == null && ns != null)
 				prefix = namespaceManager.LookupPrefix (ns);
 			if (prefix == null)
 				prefix = String.Empty;

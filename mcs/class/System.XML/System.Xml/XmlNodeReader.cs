@@ -772,7 +772,7 @@ namespace System.Xml
 				return current != null;
 			}
 
-			if (!isEndElement && current.FirstChild != null) {
+			if (!isEndElement && current.FirstChild != null && current.NodeType != XmlNodeType.EntityReference) {
 				isEndElement = false;
 				current = current.FirstChild;
 				depth++;

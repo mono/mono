@@ -1,7 +1,13 @@
-2004-01-14  Atsushi Enomoto <atsushi@ximian.com>
+2004-01-20  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlNode.cs : When adding a node to child list, it should reject its
 	  ancestors. Patch by Boris Kirzner.
+	* XmlNodeReader.cs : Related fix to the fix above. It should not move
+	  to children of XmlEntityReference nodes.
+	* XmlTextWriter.cs : FixedWriteStartElement() not to write default
+	  namespace when ns is null (while ns is "", it writes default ns).
+	* XmlElement.cs : Fixed WriteTo() to call WriteStartElement(localName)
+	  when NamespaceURI is an empty string.
 
 2004-01-14  Atsushi Enomoto <atsushi@ximian.com>
 

@@ -358,7 +358,10 @@ namespace System.Xml
 
 		public override void WriteTo (XmlWriter w)
 		{
-			w.WriteStartElement(Prefix, LocalName, NamespaceURI);
+			if (NamespaceURI == String.Empty)
+				w.WriteStartElement (LocalName);
+			else
+				w.WriteStartElement (Prefix, LocalName, NamespaceURI);
 
 			foreach(XmlAttribute attributeNode in Attributes)
 				if (attributeNode.Specified)

@@ -401,10 +401,8 @@ namespace System.Xml
 			if (refChild != null && newChild.OwnerDocument != refChild.OwnerDocument)
 					throw new ArgumentException ("argument nodes are on the different documents.");
 
-			// This check is done by MS.NET 1.0, but isn't done for MS.NET 1.1. 
-			// Skip this check in the meantime...
-//				if(this == ownerDoc && ownerDoc.DocumentElement != null && (newChild is XmlElement))
-//					throw new XmlException ("multiple document element not allowed.");
+			if(this == ownerDoc && ownerDoc.DocumentElement != null && (newChild is XmlElement))
+				throw new XmlException ("multiple document element not allowed.");
 
 			// checking validity finished. then appending...
 
