@@ -99,6 +99,19 @@ class MakeBundle {
 		return 0;
 	}
 
+	static void WriteSymbol (StreamWriter sw, string name, long size)
+	{
+		sw.WriteLine (
+	        	".globl {0}\n" +
+			"\t.section .rodata\n" +
+			"\t.align 32\n" +
+			"\t.type {0}, @object\n" +
+			"\t.size {0}, {1}\n" +
+			"{0}:\n",
+			name, size);
+
+	}
+	
 	static void GenerateBundles (ArrayList files)
 	{
 		string temp_s = "temp.s"; // Path.GetTempFileName ();
@@ -112,6 +125,7 @@ class MakeBundle {
 		
 		try {
 			ArrayList c_bundle_names = new ArrayList ();
+			ArrayList config_names = new ArrayList ();
 			byte [] buffer = new byte [8192];
 
 			StreamWriter ts = new StreamWriter (File.Create (temp_s));
@@ -133,15 +147,7 @@ class MakeBundle {
 				FileInfo fi = new FileInfo (fname);
 				FileStream fs = File.OpenRead (fname);
 
-				ts.WriteLine (
-			        	".globl assembly_data_{0}\n" +
-					"\t.section .rodata\n" +
-					"\t.align 32\n" +
-					"\t.type assembly_data_{0}, @object\n" +
-					"\t.size assembly_data_{0}, {1}\n" +
-					"assembly_data_{0}:\n",
-					encoded, fi.Length);
-
+				WriteSymbol (ts, "assembly_data_" + encoded, fi.Length);
 
 				int n;
 				while ((n = fs.Read (buffer, 0, 8192)) != 0){
@@ -156,6 +162,22 @@ class MakeBundle {
 					      encoded, aname, fi.Length);
 
 				c_bundle_names.Add ("assembly_bundle_" + encoded);
+
+				try {
+					FileStream config_file = File.OpenRead (fname + ".config");
+					Console.WriteLine (" config from: " + fname + ".config");
+					tc.WriteLine ("extern const unsigned char assembly_config_{0} [];", encoded);
+					WriteSymbol (ts, "assembly_config_" + encoded, config_file.Length);
+					while ((n = config_file.Read (buffer, 0, 8192)) != 0){
+						for (int i = 0; i < n; i++){
+							ts.Write ("\t.byte {0}\n", buffer [i]);
+						}
+					}
+					ts.WriteLine ();
+					config_names.Add (new string[] {aname, encoded});
+				} catch (FileNotFoundException) {
+					/* we ignore if the config file doesn't exist */
+				}
 			}
 			ts.Close ();
 			Console.WriteLine ("Compiling:");
@@ -173,6 +195,12 @@ class MakeBundle {
 			}
 			tc.WriteLine ("\tNULL\n};\n");
 			tc.WriteLine ("static char *image_name = \"{0}\";", prog);
+
+			tc.WriteLine ("\nstatic void install_dll_config_files (void) {\n");
+			foreach (string[] ass in config_names){
+				tc.WriteLine ("\tmono_register_config_for_assembly (\"{0}\", assembly_config_{1});\n", ass [0], ass [1]);
+			}
+			tc.WriteLine ("}\n");
 				      
 			StreamReader s = new StreamReader (Assembly.GetAssembly (typeof(MakeBundle)).GetManifestResourceStream ("template.c"));
 			tc.Write (s.ReadToEnd ());

@@ -1,3 +1,8 @@
+
+Wed Mar 16 18:11:47 CET 2005 Paolo Molaro <lupus@ximian.com>
+
+	* template.c, mkbundle.cs: automatically bundle config files if found.
+
 2004-12-07  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* Makefile : csc wanted ".dll" for -r:Mono.Posix.

@@ -13,6 +13,7 @@ int main (int argc, char* argv[])
 		newargs [i+1] = argv [i];
 	newargs [++i] = NULL;
 	
+	install_dll_config_files ();
 	mono_register_bundled_assemblies(bundled);
 	return mono_main (argc+1, newargs);
 }
