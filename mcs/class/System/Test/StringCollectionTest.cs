@@ -6,6 +6,7 @@
 */
 
 using NUnit.Framework;
+using System.Collections.Specialized;
 
 namespace Ximian.Mono.Tests.System.Collections.Specialized {
 	public class StringCollectionTest : TestCase {
