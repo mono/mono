@@ -188,7 +188,7 @@ namespace Mono.CSharp {
 			try {
 				AssemblyBuilder.Save (Basename (name));
 			} catch (System.IO.IOException io){
-				Report.Error (16, "Coult not write to file `"+name+"', cause: " + io.Message);
+				Report.Error (16, "Could not write to file `"+name+"', cause: " + io.Message);
 			}
 		}
 
