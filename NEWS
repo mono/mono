@@ -129,14 +129,13 @@ CVS Contributors to this release:
 	Diego Sevilla, Dietmar Maurer, Duncan Mak, Eduardo Garcia,
 	Ettore Perazzoli, Gaurav Vaish, Gonzalo Paniagua, Jackson
 	Harper, Jaime Anguiano, Johannes Roith, John Sohn, Jonathan
-	Pryor, Kristian Rietveld, Mads Pultz, Mail Delivery Subsystem,
-	mailman-owner@ximian.com, Mark Crichton, Martin Baulig, Martin
-	Willemoes Hansen, Miguel de Icaza, Mike Kestner, Nick Drochak,
-	Nick Zigarovich, Paolo Molaro, Patrik Torstensson, Phillip
-	Pearson, Piers Haken, Rachel Hestilow, Radek Doulik, Rafael
-	Teixeira, Ravi Pratap, Rodrigo Moya, Sebastien Pouliot, Tim
-	Coleman, Tim Haynes, Ville Palo, Vladimir Vukicevic, and
-	Zoltan Varga.
+	Pryor, Kristian Rietveld, Mads Pultz, Mark Crichton, Martin
+	Baulig, Martin Willemoes Hansen, Miguel de Icaza, Mike
+	Kestner, Nick Drochak, Nick Zigarovich, Paolo Molaro, Patrik
+	Torstensson, Phillip Pearson, Piers Haken, Rachel Hestilow,
+	Radek Doulik, Rafael Teixeira, Ravi Pratap, Rodrigo Moya,
+	Sebastien Pouliot, Tim Coleman, Tim Haynes, Ville Palo,
+	Vladimir Vukicevic, and Zoltan Varga.
 
 	(Am sorry, I could not track everyone from the ChangeLog
 	messages, I apologize in advance for the missing
