@@ -1,3 +1,7 @@
+2005-02-07  Raja R Harinath  <rharinath@novell.com>
+
+	* Makefile (ILASM): New.  Set MONO_PATH.
+
 2005-01-25  Raja R Harinath  <rharinath@novell.com>
 
 	* test-338.cs: New test for #71602.

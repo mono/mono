@@ -11,6 +11,11 @@ DISTFILES = README.tests $(wildcard *.cs)
 
 USE_MCS_FLAGS :=
 
+with_mono_path = MONO_PATH="$(topdir)/class/lib/$(PROFILE)$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH"
+
+MCS = $(with_mono_path) $(INTERNAL_MCS)
+ILASM = $(with_mono_path) $(INTERNAL_ILASM)
+
 #
 # If you add any tests here, please do also add them to README.Tests !
 #
@@ -118,8 +123,8 @@ test-compiler-jit-real:
 	    options=`sed -n 's,^// Compiler options:,,p' $$i.cs`; \
 	    testlogfile="$(TEST_TAG)-$$i.log" ; \
 	    echo -n "$$i: "; \
-	    echo "*** $(INTERNAL_MCS) $$options $$i.cs" > $$testlogfile ; \
-	    if $(INTERNAL_MCS) $$options $$i.cs >> $$testlogfile 2>&1 ; then \
+	    echo "*** $(MCS) $$options $$i.cs" > $$testlogfile ; \
+	    if $(MCS) $$options $$i.cs >> $$testlogfile 2>&1 ; then \
 		: ; \
 	    else \
 		echo "Exit code: $$?" >> $$testlogfile ; \
@@ -147,13 +152,13 @@ GENERIC_KNOWN_FAILURES = test-55 test-335
 #
 test-generic:
 	sources=`echo $(TEST_SOURCES) | tr ' ' '\n' | grep -v $(GENERIC_KNOWN_FAILURES)| tr '\n' ' ' `;  \
-	make INTERNAL_MCS="mono ../gmcs/gmcs.exe" test-compiler-jit-real TEST_SOURCES="$$sources" TEST_TAG=gmcs
+	make INTERNAL_MCS="$(RUNTIME) ../gmcs/gmcs.exe" test-compiler-jit-real TEST_SOURCES="$$sources" TEST_TAG=gmcs
 
 #
 # Tests the 2.0 features
 #
 test-2:
-	make INTERNAL_MCS="mono ../mcs/mcs.exe -v2" test-compiler-jit-real TEST_SOURCES="$(TEST2_SOURCES)" TEST_TAG=mcs-v2
+	make INTERNAL_MCS="$(RUNTIME) ../mcs/mcs.exe -v2" test-compiler-jit-real TEST_SOURCES="$(TEST2_SOURCES)" TEST_TAG=mcs-v2
 
 test-unsafe-compiler-jit:
 	make INTERNAL_MCS="$(INTERNAL_MCS) /unsafe" test-compiler-jit-real TEST_SOURCES="$(UNSAFE_SOURCES)" TEST_TAG=mcs-unsafe
@@ -165,8 +170,8 @@ multi: multi-1 multi-2 multi-3 multi-5 multi-6 ilasm
 	echo Multi-assembly test passes
 
 multi-1:
-	$(INTERNAL_MCS) -target:library dll-1.cs
-	$(INTERNAL_MCS) -r:dll-1.dll prog-1.cs /out:prog-1.exe
+	$(MCS) -target:library dll-1.cs
+	$(MCS) -r:dll-1.dll prog-1.cs /out:prog-1.exe
 	$(TEST_RUNTIME) prog-1.exe
 
 #
@@ -176,37 +181,37 @@ multi-1:
 # in a library. (eg, that it is not confused by two Main methods)
 #
 multi-2:
-	$(INTERNAL_MCS) -target:library pi.cs
-	$(INTERNAL_MCS) -target:library pp.cs
-	$(INTERNAL_MCS) pu.cs -r:pi.dll -r:pp.dll
-	$(INTERNAL_MCS) pu.cs -r:pp.dll -r:pi.dll
+	$(MCS) -target:library pi.cs
+	$(MCS) -target:library pp.cs
+	$(MCS) pu.cs -r:pi.dll -r:pp.dll
+	$(MCS) pu.cs -r:pp.dll -r:pi.dll
 
 multi-3:
-	$(INTERNAL_MCS) -target:library conv-lib.cs
-	$(INTERNAL_MCS) -r:conv-lib.dll conv-main.cs
+	$(MCS) -target:library conv-lib.cs
+	$(MCS) -r:conv-lib.dll conv-main.cs
 	$(TEST_RUNTIME) conv-main.exe
 
 multi-4:
-	$(INTERNAL_MCS) -target:module module-1.cs
-	$(INTERNAL_MCS) -target:module module-2.cs
-	$(INTERNAL_MCS) /addmodule:module-1.netmodule /addmodule:module-2.netmodule module-3.cs
+	$(MCS) -target:module module-1.cs
+	$(MCS) -target:module module-2.cs
+	$(MCS) /addmodule:module-1.netmodule /addmodule:module-2.netmodule module-3.cs
 	$(TEST_RUNTIME) module-3.exe
 
 multi-5:
-	$(INTERNAL_MCS) -target:library dll-2.cs
-	$(INTERNAL_MCS) -r:dll-2.dll prog-2.cs /out:prog-2.exe
+	$(MCS) -target:library dll-2.cs
+	$(MCS) -r:dll-2.dll prog-2.cs /out:prog-2.exe
 	$(TEST_RUNTIME) prog-2.exe
 
 multi-6:
-	$(INTERNAL_MCS) -target:library ns0.cs
-	$(INTERNAL_MCS) ns.cs -r:ns0.dll
+	$(MCS) -target:library ns0.cs
+	$(MCS) ns.cs -r:ns0.dll
 
 multi-7:
-	$(INTERNAL_MCS) -target:library vararg-lib.cs
-	$(INTERNAL_MCS) vararg-exe.cs -r:vararg-lib.dll
+	$(MCS) -target:library vararg-lib.cs
+	$(MCS) vararg-exe.cs -r:vararg-lib.dll
 	$(TEST_RUNTIME) vararg-exe.exe
 
 ilasm:
-	$(INTERNAL_ILASM) /dll property-il.il
-	$(INTERNAL_MCS) /r:property-il.dll property-main.cs /out:property-main.exe
+	$(ILASM) /dll property-il.il
+	$(MCS) /r:property-il.dll property-main.cs /out:property-main.exe
 	$(TEST_RUNTIME) property-main.exe
