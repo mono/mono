@@ -1,5 +1,11 @@
 2004-02-08  Martin Baulig  <martin@ximian.com>
 
+	* MonoGenericInst.cs (MonoGenericInst.inflate): Pass recursive
+	invocations the `reflected' type as `reflected', not `this'.
+	(MonoInflatedMethod, MonoInflatedCtor): Reflect latest runtime changes.
+
+2004-02-08  Martin Baulig  <martin@ximian.com>
+
 	* MonoGenericInst.cs (MonoGenericInst.GetParentType): New interncall.
 	(MonoGenericInst.GetInterfaces_internal): New interncall.
 	(MonoGenericInst): Reflect latest API changes; use GetParentType()

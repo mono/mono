@@ -53,7 +53,7 @@ namespace System.Reflection
 			MonoGenericInst parent = GetParentType ();
 			MonoGenericInst[] interfaces = GetInterfaces_internal ();
 			if (parent != null)
-				parent.inflate (parent, mlist, clist, flist);
+				parent.inflate (reflected, mlist, clist, flist);
 			else if (generic_type.BaseType != null) {
 				mlist.AddRange (generic_type.BaseType.GetMethods (flags));
 				clist.AddRange (generic_type.BaseType.GetConstructors (flags));
@@ -61,7 +61,7 @@ namespace System.Reflection
 			} else if (interfaces != null) {
 				foreach (MonoGenericInst iface in interfaces) {
 					if (iface != null)
-						iface.inflate (iface, mlist, clist, flist);
+						iface.inflate (reflected, mlist, clist, flist);
 				}
 			}
 
@@ -284,21 +284,7 @@ namespace System.Reflection
 	internal class MonoInflatedMethod : MonoMethod
 	{
 		private readonly MethodInfo declaring;
-		private readonly MonoGenericInst declaring_type;
-		private readonly MonoGenericInst reflected_type;
 		private readonly IntPtr ginst;
-
-		public override Type DeclaringType {
-			get {
-				return declaring_type != null ? declaring_type : base.DeclaringType;
-			}
-		}
-
-		public override Type ReflectedType {
-			get {
-				return reflected_type != null ? reflected_type : base.ReflectedType;
-			}
-		}
 
 		public override bool IsDefined (Type attributeType, bool inherit)
 		{
@@ -320,21 +306,7 @@ namespace System.Reflection
 	internal class MonoInflatedCtor : MonoCMethod
 	{
 		private readonly ConstructorInfo declaring;
-		private readonly MonoGenericInst declaring_type;
-		private readonly MonoGenericInst reflected_type;
 		private readonly IntPtr ginst;
-
-		public override Type DeclaringType {
-			get {
-				return declaring_type != null ? declaring_type : base.DeclaringType;
-			}
-		}
-
-		public override Type ReflectedType {
-			get {
-				return reflected_type != null ? reflected_type : base.ReflectedType;
-			}
-		}
 
 		public override bool IsDefined (Type attributeType, bool inherit)
 		{
