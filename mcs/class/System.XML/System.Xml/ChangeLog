@@ -1,3 +1,8 @@
+2003-09-21  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
+
+	* XmlNamespaceManager.cs: PopScope() must retain those namespaces which
+	  are added in the scope before PushScope() was called.
+
 2003-09-20 Ben Maurer  <bmaurer@users.sourceforge.net>
 
 	* XmlNamespaceManager.cs: Rewrote. Uses arrays, rather than linked

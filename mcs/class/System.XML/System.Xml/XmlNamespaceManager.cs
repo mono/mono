@@ -240,6 +240,7 @@ namespace System.Xml
 			} else {
 				defaultNamespace = scopes [scopePos].DefaultNamespace;
 				count = scopes [scopePos].DeclCount;
+				declPos += count;
 			}
 			return true;
 		}
