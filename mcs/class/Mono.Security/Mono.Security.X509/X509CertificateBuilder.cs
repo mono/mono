@@ -222,7 +222,7 @@ namespace Mono.Security.X509 {
 			tbsCert.Add (X501.FromString (subject));
 
 			// TBSCertificate / SubjectPublicKeyInfo
-			ASN1 keyInfo = tbsCert.Add (SubjectPublicKeyInfo ());
+			tbsCert.Add (SubjectPublicKeyInfo ());
                         
 			if (version > 1) {
 				// TBSCertificate / [1]  IMPLICIT UniqueIdentifier OPTIONAL

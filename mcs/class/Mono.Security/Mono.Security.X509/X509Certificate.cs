@@ -9,6 +9,8 @@
 //
 
 //
+// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+//
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
 // "Software"), to deal in the Software without restriction, including
@@ -88,8 +90,8 @@ namespace Mono.Security.X509 {
 		private int version;
 		private byte[] serialnumber;
 
-		private byte[] issuerUniqueID;
-		private byte[] subjectUniqueID;
+//		private byte[] issuerUniqueID;
+//		private byte[] subjectUniqueID;
 		private X509ExtensionCollection extensions;
 
 		// that's were the real job is!
@@ -125,7 +127,8 @@ namespace Mono.Security.X509 {
 				Array.Reverse (serialnumber, 0, serialnumber.Length);
 		
 				// Certificate / TBSCertificate / AlgorithmIdentifier
-				ASN1 signatureAlgo = tbsCertificate.Element (tbs++, 0x30); 
+				tbs++;
+				// ASN1 signatureAlgo = tbsCertificate.Element (tbs++, 0x30); 
 		
 				ASN1 issuer = tbsCertificate.Element (tbs++, 0x30); 
 				m_issuername = X501.ToString (issuer);
@@ -175,14 +178,14 @@ namespace Mono.Security.X509 {
 				ASN1 issuerUID = tbsCertificate.Element (tbs, 0xA1);
 				if (issuerUID != null) {
 					tbs++;
-					issuerUniqueID = issuerUID.Value;
+//					issuerUniqueID = issuerUID.Value;
 				}
 
 				// Certificate / TBSCertificate / subjectUniqueID
 				ASN1 subjectUID = tbsCertificate.Element (tbs, 0xA2);
 				if (subjectUID != null) {
 					tbs++;
-					subjectUniqueID = subjectUID.Value;
+//					subjectUniqueID = subjectUID.Value;
 				}
 
 				// Certificate / TBSCertificate / Extensions

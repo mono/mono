@@ -30,6 +30,7 @@
 //
 
 using System;
+using System.Globalization;
 using System.Text;
 
 using Mono.Security;
@@ -81,7 +82,13 @@ namespace Mono.Security.X509 {
 
 			public string Value {
 				get { return attrValue; }
-				set { attrValue = value; }
+				set { 
+					if ((attrValue != null) && (attrValue.Length > upperBound)) {
+						string msg = Locale.GetText ("Value length bigger than upperbound ({0}).");
+						throw new FormatException (String.Format (msg, upperBound));
+					}
+					attrValue = value; 
+				}
 			}
 
 			public ASN1 ASN1 {

@@ -1,3 +1,14 @@
+2004-09-17  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* PKCS12.cs: Fixed all level 4 compilation warnings.
+	* X501Name.cs: Fixed all level 4 compilation warnings.
+	* X509Certificate.cs: Fixed all level 4 compilation warnings.
+	* X509CertificateBuilder.cs: Fixed all level 4 compilation warnings.
+	* X509Extension.cs: In synch with corlib version. Fixed all level 4 
+	compilation warnings.
+	* X520Attributes.cs: Updated to check upperbounds - which fixed level
+	4 compilation warnings.
+
 2004-09-07  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* X509Chain.cs: Fixed a bug when constructing a certificate chain from

@@ -5,9 +5,7 @@
 //	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) 2003 Motus Technologies Inc. (http://www.motus.com)
-// (C) 2004 Novell (http://www.novell.com)
-//
-
+// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -159,7 +157,6 @@ namespace Mono.Security.X509 {
 		{
 			byte[] value = extnValue.Value;
 			int p = pos;
-			StringBuilder preview = new StringBuilder ();
 			for (int j=0; j < 8; j++) {
 				if (j < n) {
 					sb.Append (value [p++].ToString ("X2", CultureInfo.InvariantCulture));

@@ -269,7 +269,7 @@ namespace Mono.Security.X509 {
 
 		static private int recommendedIterationCount = 2000;
 
-		private int _version;
+		//private int _version;
 		private byte[] _password;
 		private ArrayList _keyBags;
 		private X509CertificateCollection _certs;
@@ -327,7 +327,7 @@ namespace Mono.Security.X509 {
 			ASN1 version = pfx [0];
 			if (version.Tag != 0x02)
 				throw new ArgumentException ("invalid PFX version");
-			_version = version.Value [0];
+			//_version = version.Value [0];
 
 			PKCS7.ContentInfo authSafe = new PKCS7.ContentInfo (pfx [1]);
 			if (authSafe.ContentType != PKCS7.Oid.data)
