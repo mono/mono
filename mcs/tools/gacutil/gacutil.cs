@@ -20,17 +20,17 @@ namespace Mono.Tools
 
 		private string gac_path = GetGacPath ();
 		
-		public static void Main (string[] args)
+		public static int Main (string[] args)
 		{
 			Driver d = new Driver ();
-			d.Run (args);
+			return d.Run (args);
 		}
 
-		public void Run (string[] args)
+		public int Run (string[] args)
 		{
 			if (args.Length == 0) {
 				ShowHelp (false);
-				return;
+				return 1;
 			}
 	
 			if (args[0] == "/user" || args[0] == "--user") {
@@ -54,83 +54,88 @@ namespace Mono.Tools
 				case "/?":
 				case "--help":
 					ShowHelp (true);
-					break;
+					return 0;
 				case "/i":
 				case "--install":
-					InstallAssembly (remainder_args);
-					break;
+					return InstallAssembly (remainder_args);
 				case "/l":
 				case "--ls":
-					ListAssemblies (remainder_args);
-					break;
+					return ListAssemblies (remainder_args);
 				case "/u":
 				case "--uninstall":
-					UninstallAssemblies (remainder_args);
-					break;
+					return UninstallAssemblies (remainder_args);
 				case "/il":
 				case "--install-from-list":
-					InstallAssembliesFromList (remainder_args);
-					break;
+					return InstallAssembliesFromList (remainder_args);
 				case "/ul":
 				case "--uninstall-from-list":
-					UninstallAssembliesFromList (remainder_args);
-					break;
+					return UninstallAssembliesFromList (remainder_args);
 				default:
 					ShowHelp (false);
 					break;
 			}
+
+			return 1;
 		}
 
-		public void InstallAssembliesFromList (string[] args)
+		public int InstallAssembliesFromList (string[] args)
 		{
 			if (args.Length == 0) {
 				Console.WriteLine ("ERROR: need a file passed");
-				return;
+				return 1;
 			}
 
 			if (!File.Exists (args[0])) {
 				Console.WriteLine ("ERROR: file '" + args[0] + "' does not exist");
-				return;
+				return 1;
 			}
 
 			string[] perFile = args;
 
+			int result = 0;
 			using (StreamReader s = File.OpenText (args[0])) {
 				string line;
 
 				while((line = s.ReadLine()) != null) {
 					perFile[0] = line;
-					InstallAssembly (perFile);
+					if (InstallAssembly (perFile) != 0)
+						result = 1;
 				}
 			}
+
+			return result;
 		}
 
-		public void UninstallAssembliesFromList (string[] args)
+		public int UninstallAssembliesFromList (string[] args)
 		{
 			if (args.Length == 0) {
 				Console.WriteLine ("ERROR: file must be passed.");
-				return;
+				return 1;
 			}
 
 			if (!File.Exists (args[0])) {
 				Console.WriteLine ("ERROR: file '" + args[0] + "' does not exist");
-				return;
+				return 1;
 			}
 
+			int result = 0;
 			using (StreamReader s = File.OpenText (args[0])) {
 				string line;
 
 				while ((line = s.ReadLine ()) != null) {
-					UninstallAssemblies (new string[] { line } );
+					if (UninstallAssemblies (new string[] { line } ) != 0)
+						result = 1;
 				}
 			}
+
+			return result;
 		}
 
-		public void UninstallAssemblies (string[] args)
+		public int UninstallAssemblies (string[] args)
 		{
 			if(args.Length == 0) {
 				Console.WriteLine ("ERROR: need an argument to uninstall");
-				return;
+				return 1;
 			}
 
 			string joinedArgs = String.Join ("", args);
@@ -149,7 +154,7 @@ namespace Mono.Tools
 
 			if (!Directory.Exists (Path.Combine (gac_path, (string) paramInfo["assembly"]))) {
 				Console.WriteLine ("ERROR: Assembly not in gac.");
-				return;
+				return 1;
 			}
 
 			string searchString = (string) paramInfo["assembly"] + Path.DirectorySeparatorChar;
@@ -179,10 +184,11 @@ namespace Mono.Tools
 				Console.WriteLine ("Cleaning assembly dir, its empty");
 				Directory.Delete (Path.Combine (gac_path, (string) paramInfo["assembly"]));
 			}
-			
+
+			return 0;
 		}
 
-		public void ListAssemblies (string[] args)
+		public int ListAssemblies (string[] args)
 		{
 			Console.WriteLine ("The following assemblies are installed into the GAC:");
 			DirectoryInfo d = new DirectoryInfo (gac_path);
@@ -192,6 +198,8 @@ namespace Mono.Tools
 					Console.WriteLine ("\t" + assemblyInfo["DisplayName"]);
 				}
 			}
+
+			return 0;
 		}
 
 		private Hashtable GetAssemblyInfo (string filename)
@@ -217,16 +225,16 @@ namespace Mono.Tools
 			}
 		}
 
-		public void InstallAssembly (string[] args)
+		public int InstallAssembly (string[] args)
 		{
 			if(args.Length == 0) {
 				Console.WriteLine ("ERROR: You must specify a valid assembly name after the install switch");
-				return;
+				return 1;
 			}
 
 			if(!File.Exists (args[0])) {
 				Console.WriteLine ("ERROR: The assembly: '" + args[0] + "' does not exist");
-				return;
+				return 1;
 			}
 
 			AssemblyName an = AssemblyName.GetAssemblyName (args[0]);
@@ -235,7 +243,7 @@ namespace Mono.Tools
 
 			if (pub_tok == null || pub_tok.Length == 0) {
 				Console.WriteLine ("ERROR: assembly has no valid public key token");
-				return;
+				return 1;
 			}
 
 			// strong name verification temp. disabled
@@ -269,12 +277,12 @@ namespace Mono.Tools
 				assemInfo["RefCount"] = ((int) Convert.ToInt32 (assemInfo["RefCount"]) + 1).ToString ();
 				WriteAssemblyInfo (fullPath + "__AssemblyInfo__", assemInfo);
 				Console.WriteLine ("RefCount of assembly '" + an.Name + "' increased by one.");
-				return;
+				return 0;
 			}
 
 			if(!EnsureDirectories (an.Name, version_token)) {
 				Console.WriteLine ("ERROR: gac directories could not be created, possibly permission issues");
-				return;
+				return 1;
 			}
 
 			File.Copy (args[0], fullPath + an.Name + ".dll", force);
@@ -287,6 +295,7 @@ namespace Mono.Tools
 			WriteAssemblyInfo (fullPath + "__AssemblyInfo__", info);
 
 			Console.WriteLine ("{0} installed into the gac", an.Name);
+			return 0;
 		}
 
 		private bool EnsureDirectories (string name, string tok)
