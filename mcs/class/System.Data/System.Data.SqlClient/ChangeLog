@@ -1,7 +1,12 @@
-2004-05-20 Umadevi S <sumadevi@novell.com>
-        * Fixed bug 58406- implemented the hasrow method, test program used
-         to test with the bug report                                                        
+2004-05-20  Gert Driesen (drieseng@users.sourceforge.net)
 
+	*  SqlClientPermissionAttribute.cs: change AllowMultiple and
+	Inherited to match .NET
+
+2004-05-20 Umadevi S <sumadevi@novell.com>
+
+        * Fixed bug 58406- implemented the hasrow method, test program used
+        to test with the bug report                                                        
 
 2004-05-13  Umadevi S  <sumadevi@novell.com>
 	
