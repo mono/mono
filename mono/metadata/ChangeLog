@@ -1,3 +1,8 @@
+2002-07-31  Dietmar Maurer  <dietmar@ximian.com>
+
+	* debug-helpers.c (mono_method_full_name): only print a number to
+	indicate wrapper type (so that the output is more readable in traces).
+
 2002-07-30  Dietmar Maurer  <dietmar@ximian.com>
 
 	* class.c (mono_class_init): include method override patch from Paolo
