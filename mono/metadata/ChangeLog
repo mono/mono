@@ -1,4 +1,9 @@
 
+Wed May 8 12:06:14 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* reflection.c: some changes to build a binary that can be run
+	directly in windows.
+
 Mon May 6 13:10:34 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
 	* loader.c: print a big message when an icall can't be found.
