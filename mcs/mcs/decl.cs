@@ -460,6 +460,108 @@ namespace Mono.CSharp {
 
 			return false;
 		}
+
+		// Access level of a type.
+		enum AccessLevel {
+			Public			= 0,
+			ProtectedInternal	= 1,
+			Internal		= 2,
+			Protected		= 3,
+			Private			= 4
+		}
+
+		// Check whether `flags' denotes a more restricted access than `level'
+		// and return the new level.
+		static AccessLevel CheckAccessLevel (AccessLevel level, int flags)
+		{
+			AccessLevel old_level = level;
+
+			if ((flags & Modifiers.INTERNAL) != 0) {
+				if ((flags & Modifiers.PROTECTED) != 0) {
+					if ((int) level < (int) AccessLevel.ProtectedInternal)
+						level = AccessLevel.ProtectedInternal;
+				} else {
+					if ((int) level < (int) AccessLevel.Internal)
+						level = AccessLevel.Internal;
+				}
+			} else if ((flags & Modifiers.PROTECTED) != 0) {
+				if ((int) level < (int) AccessLevel.Protected)
+					level = AccessLevel.Protected;
+			} else if ((flags & Modifiers.PRIVATE) != 0)
+				level = AccessLevel.Private;
+
+			return level;
+		}
+
+		// Return the access level for a new member which is defined in the current
+		// TypeContainer with access modifiers `flags'.
+		AccessLevel GetAccessLevel (int flags)
+		{
+			if ((flags & Modifiers.PRIVATE) != 0)
+				return AccessLevel.Private;
+
+			AccessLevel level;
+			if (!IsTopLevel && (Parent != null))
+				level = Parent.GetAccessLevel (flags);
+			else
+				level = AccessLevel.Public;
+
+			return CheckAccessLevel (CheckAccessLevel (level, flags), ModFlags);
+		}
+
+		// Return the access level for type `t', but don't give more access than `flags'.
+		static AccessLevel GetAccessLevel (Type t, int flags)
+		{
+			if (((flags & Modifiers.PRIVATE) != 0) || t.IsNestedPrivate)
+				return AccessLevel.Private;
+
+			AccessLevel level;
+			if (TypeManager.IsBuiltinType (t))
+				return AccessLevel.Public;
+			else if ((t.DeclaringType != null) && (t != t.DeclaringType))
+				level = GetAccessLevel (t.DeclaringType, flags);
+			else {
+				level = CheckAccessLevel (AccessLevel.Public, flags);
+			}
+
+			if (t.IsNestedPublic)
+				return level;
+
+			if (t.IsNestedAssembly || t.IsNotPublic) {
+				if ((int) level < (int) AccessLevel.Internal)
+					level = AccessLevel.Internal;
+			}
+
+			if (t.IsNestedFamily) {
+				if ((int) level < (int) AccessLevel.Protected)
+					level = AccessLevel.Protected;
+			}
+
+			if (t.IsNestedFamORAssem) {
+				if ((int) level < (int) AccessLevel.ProtectedInternal)
+					level = AccessLevel.ProtectedInternal;
+			}
+
+			return level;
+		}
+
+		//
+		// Returns true if `parent' is as accessible as the flags `flags'
+		// given for this member.
+		//
+		public bool AsAccessible (Type parent, int flags)
+		{
+			if (parent.IsUnboundGenericParameter)
+				return true; // FIXME
+
+			while (parent.IsArray || parent.IsPointer || parent.IsByRef)
+				parent = TypeManager.GetElementType (parent);
+
+			AccessLevel level = GetAccessLevel (flags);
+			AccessLevel level2 = GetAccessLevel (parent, flags);
+
+			return (int) level >= (int) level2;
+		}
 		
 		static DoubleHash dh = new DoubleHash ();
 

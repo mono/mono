@@ -1,3 +1,11 @@
+2003-10-09  Martin Baulig  <martin@ximian.com>
+
+	* decl.cs (DeclSpace.AsAccessible): Moved here from TypeContainer.
+	(AccessLevel, CheckAccessLevel, GetAccessLevel): They're used by
+	AsAccessible(), moved them as well.
+
+	* class.cs (TypeContainer.AsAccessible): Moved to DeclSpace.
+
 2003-10-08  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
 
 	* cs-parser.jay : Renamed yyName to yyNames related to jay.
