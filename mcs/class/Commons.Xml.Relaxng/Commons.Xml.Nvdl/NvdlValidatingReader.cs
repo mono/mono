@@ -3,7 +3,6 @@ using System.Collections;
 using System.Collections.Specialized;
 using System.Threading;
 using System.Xml;
-using Commons.Xml.Nvdl.Simplified;
 using Commons.Xml;
 
 namespace Commons.Xml.Nvdl
@@ -31,7 +30,7 @@ namespace Commons.Xml.Nvdl
 				rules, config, resolver)), this);
 		}
 
-		public NvdlValidatingReader (XmlReader reader, SimpleRules rules)
+		internal NvdlValidatingReader (XmlReader reader, SimpleRules rules)
 			: base (reader)
 		{
 			dispatcher = new NvdlDispatcher (rules, this);

@@ -2,14 +2,13 @@ using System;
 using System.Collections;
 using System.IO;
 using System.Xml;
-using Commons.Xml.Nvdl.Simplified;
 
 namespace Commons.Xml.Nvdl
 {
 	internal class NvdlDebug
 	{
-//		public static TextWriter Writer = TextWriter.Null;
-		public static TextWriter Writer = Console.Out;
+		public static TextWriter Writer = TextWriter.Null;
+//		public static TextWriter Writer = Console.Out;
 	}
 
 	internal class NvdlDispatcher

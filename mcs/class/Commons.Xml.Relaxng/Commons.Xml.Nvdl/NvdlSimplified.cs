@@ -3,9 +3,9 @@ using System.Collections;
 using System.Collections.Specialized;
 using System.Xml;
 
-namespace Commons.Xml.Nvdl.Simplified
+namespace Commons.Xml.Nvdl
 {
-	public class SimplifiedItem : IXmlLineInfo
+	internal class SimplifiedItem : IXmlLineInfo
 	{
 		int line;
 		int column;
@@ -43,7 +43,7 @@ namespace Commons.Xml.Nvdl.Simplified
 		}
 	}
 
-	public class SimpleRules : SimplifiedItem
+	internal class SimpleRules : SimplifiedItem
 	{
 		SimpleMode startMode;
 		XmlQualifiedName [] triggers;
@@ -148,7 +148,7 @@ namespace Commons.Xml.Nvdl.Simplified
 		#endregion
 	}
 
-	public class SimpleMode : SimplifiedItem
+	internal class SimpleMode : SimplifiedItem
 	{
 		string name;
 		SimpleRule [] rules;
@@ -340,7 +340,7 @@ namespace Commons.Xml.Nvdl.Simplified
 		}
 	}
 
-	public class SimpleRule : SimplifiedItem
+	internal class SimpleRule : SimplifiedItem
 	{
 		bool matchAttributes;
 		SimpleAction [] actions;
@@ -454,7 +454,7 @@ namespace Commons.Xml.Nvdl.Simplified
 		}
 	}
 
-	public abstract class SimpleAction : SimplifiedItem
+	internal abstract class SimpleAction : SimplifiedItem
 	{
 		readonly ListDictionary messages;
 		readonly SimpleModeUsage modeUsage;
@@ -498,7 +498,7 @@ namespace Commons.Xml.Nvdl.Simplified
 		}
 	}
 
-	public class SimpleValidate : SimpleAction
+	internal class SimpleValidate : SimpleAction
 	{
 		readonly NvdlValidatorGenerator generator;
 		XmlResolver resolver;
@@ -611,7 +611,7 @@ namespace Commons.Xml.Nvdl.Simplified
 		}
 	}
 
-	public class SimpleResultAction : SimpleAction
+	internal class SimpleResultAction : SimpleAction
 	{
 		readonly NvdlResultType resultType;
 
@@ -631,7 +631,7 @@ namespace Commons.Xml.Nvdl.Simplified
 		}
 	}
 
-	public class SimpleModeUsage : SimplifiedItem
+	internal class SimpleModeUsage : SimplifiedItem
 	{
 		// It will never be used in validation.
 		NvdlModeUsage source; // FIXME: put this into CompileContext
@@ -709,7 +709,7 @@ namespace Commons.Xml.Nvdl.Simplified
 		}
 	}
 
-	public class SimpleContext : SimplifiedItem
+	internal class SimpleContext : SimplifiedItem
 	{
 		readonly string useModeName; // It is never used in validation.
 		SimpleMode useMode;
@@ -780,29 +780,4 @@ namespace Commons.Xml.Nvdl.Simplified
 					useModeName), this);
 		}
 	}
-
-/*
-	// After simplification, each mode name "shall be different from any
-	// other mode name" (6.4.8)
-	public class SimpleModeTable : DictionaryBase
-	{
-		public SimpleModeTable (SimpleMode [] modes)
-		{
-			foreach (SimpleMode mode in modes)
-				Dictionary.Add (mode.Name, mode);
-		}
-
-		public SimpleMode this [string name] {
-			get { return (SimpleMode) Dictionary [name]; }
-		}
-
-		public ICollection Keys {
-			get { return Dictionary.Keys; }
-		}
-
-		public ICollection Values {
-			get { return Dictionary.Values; }
-		}
-	}
-*/
 }

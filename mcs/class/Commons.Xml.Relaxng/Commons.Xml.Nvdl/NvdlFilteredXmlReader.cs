@@ -2,11 +2,10 @@ using System;
 using System.Collections;
 using System.IO;
 using System.Xml;
-using Commons.Xml.Nvdl.Simplified;
 
 namespace Commons.Xml.Nvdl
 {
-	internal class NvdlFilteredXmlReader : XmlDefaultReader
+	internal class NvdlFilteredXmlReader : XmlReader
 	{
 		int placeHolderDepth = -1;
 		XmlNodeType nextPlaceHolder;
@@ -25,8 +24,8 @@ namespace Commons.Xml.Nvdl
 			public string NamespaceURI;
 		}
 
-		public NvdlFilteredXmlReader (XmlReader reader, NvdlValidateInterp validate)
-			: base (reader)
+		public NvdlFilteredXmlReader (XmlReader reader,
+			NvdlValidateInterp validate)
 		{
 			this.reader = reader;
 			this.validate = validate;
@@ -101,25 +100,29 @@ namespace Commons.Xml.Nvdl
 			MoveToElement ();
 			attributeCount = 0;
 
-			if (reader.MoveToFirstAttribute ()) {
-				do {
-					if (reader.NamespaceURI == String.Empty) {
+			if (!reader.MoveToFirstAttribute ())
+				return true;
+			do {
+				if (reader.NamespaceURI == String.Empty) {
+					AddAttribute ();
+					continue;
+				}
+				SimpleRule rule = FindAttributeRule (
+					reader.NamespaceURI,
+					validate.CreatedMode);
+				foreach (SimpleAction a in rule.Actions) {
+					SimpleResultAction ra =
+						a as SimpleResultAction;
+					if (ra != null &&
+						ra.ResultType == NvdlResultType.Attach)
 						AddAttribute ();
+					if (ra != null)
 						continue;
-					}
-					SimpleRule rule = FindAttributeRule (reader.NamespaceURI, validate.CreatedMode);
-					foreach (SimpleAction a in rule.Actions) {
-						SimpleResultAction ra = a as SimpleResultAction;
-						if (ra != null && ra.ResultType == NvdlResultType.Attach)
-							AddAttribute ();
-						if (ra != null)
-							continue;
-						// FIXME: validate global attribute.
-						SimpleValidate v = a as SimpleValidate;
-					}
-				} while (reader.MoveToNextAttribute ());
-				reader.MoveToElement ();
-			}
+					// FIXME: validate global attribute (PlanAtt).
+					SimpleValidate v = a as SimpleValidate;
+				}
+			} while (reader.MoveToNextAttribute ());
+			reader.MoveToElement ();
 			return true;
 		}
 
@@ -178,11 +181,17 @@ namespace Commons.Xml.Nvdl
 		}
 
 		public override bool IsDefault {
-			get { return placeHolder == XmlNodeType.None && reader.IsDefault; }
+			get {
+				return placeHolder == XmlNodeType.None &&
+					reader.IsDefault;
+			}
 		}
 
 		public override bool IsEmptyElement {
-			get { return placeHolder == XmlNodeType.None && reader.IsEmptyElement; }
+			get {
+				return placeHolder == XmlNodeType.None &&
+					reader.IsEmptyElement; 
+			}
 		}
 
 		public override string LocalName {
@@ -241,11 +250,17 @@ namespace Commons.Xml.Nvdl
 		}
 
 		public override XmlNodeType NodeType {
-			get { return placeHolder != XmlNodeType.None ? placeHolder : reader.NodeType; }
+			get {
+				return placeHolder != XmlNodeType.None ?
+					placeHolder : reader.NodeType; 
+			}
 		}
 
 		public override string Prefix {
-			get { return placeHolder != XmlNodeType.None ? String.Empty : reader.Name; }
+			get {
+				return placeHolder != XmlNodeType.None ?
+					String.Empty : reader.Name; 
+			}
 		}
 
 		public override char QuoteChar {
@@ -253,7 +268,12 @@ namespace Commons.Xml.Nvdl
 		}
 
 		public override ReadState ReadState {
-			get { return placeHolder != XmlNodeType.None && reader.ReadState != ReadState.Error ? ReadState.Interactive : reader.ReadState; }
+			get { 
+				return placeHolder != XmlNodeType.None &&
+					reader.ReadState != ReadState.Error ? 
+					ReadState.Interactive :
+					reader.ReadState; 
+			}
 		}
 
 		public override string Value {
@@ -409,7 +429,8 @@ namespace Commons.Xml.Nvdl
 				if (reader.NodeType == XmlNodeType.Element)
 					return false;
 				for (int i = 0; i < attributeCount - 1; i++) {
-					if (attributes [i].LocalName != reader.LocalName || attributes [i].NamespaceURI != reader.NamespaceURI)
+					if (attributes [i].LocalName != reader.LocalName ||
+						attributes [i].NamespaceURI != reader.NamespaceURI)
 						continue;
 					reader.MoveToAttribute (
 						attributes [i + 1].LocalName,

@@ -1,5 +1,12 @@
 2005-03-06  Atsushi Enomoto <atsushi@ximian.com>
 
+	* NvdlFilteredXmlReader.cs : code refactory.
+	* NvdlCompileContext.cs, NvdlConfig.cs, NvdlSimplified.cs,
+	  NvdlValidatingReader.cs : Simplified objects are now all internal.
+	* NvdlValidator.cs : don't output debug.
+
+2005-03-06  Atsushi Enomoto <atsushi@ximian.com>
+
 	* NvdlFilteredXmlReader.cs : New file. Supports createPlaceHolder()
 	  and attBubble[I].
 	* NvdlValidator.cs : support for attachPlaceHolder.
