@@ -1,3 +1,9 @@
+2003-05-11  Miguel de Icaza  <miguel@ximian.com>
+
+	* Binder.cs (ChangeType): Very simplistic change.  Am not sure if
+	it is correct, but it makes RemotingCorba move along a bit more
+	(Remoting.Corba invokes Binder.ConvertArgs, which calls
+	Binder.ChangeType with an Attribute [] to Object []).
 
 2003-05-10  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 

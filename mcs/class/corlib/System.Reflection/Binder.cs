@@ -88,6 +88,17 @@ namespace System.Reflection
 				return selected;
 			}
 
+			static bool IsArrayAssignable (Type object_type, Type target_type)
+			{
+				if (object_type.IsArray && target_type.IsArray)
+					return IsArrayAssignable (object_type.GetElementType (), target_type.GetElementType ());
+						
+				if (target_type.IsAssignableFrom (object_type))
+					return true;
+
+				return false;
+			}
+			
 			public override object ChangeType (object value, Type type, CultureInfo culture)
 			{
 				if (value == null)
@@ -95,6 +106,11 @@ namespace System.Reflection
 				Type vtype = value.GetType ();
 				if (vtype == type || type.IsAssignableFrom (vtype))
 					return value;
+				if (vtype.IsArray && type.IsArray){
+					if (IsArrayAssignable (vtype.GetElementType (), type.GetElementType ()))
+						return value;
+				}
+
 				if (check_type (vtype, type))
 					return Convert.ChangeType (value, type);
 				return null;
