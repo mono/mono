@@ -87,7 +87,7 @@ namespace Mono.Xml.Xsl.Operations {
 			requireNameFix = false;
 			prefix = stylesheetNode.Prefix;
 			string alias = stylesheet.PrefixInEffect (prefix, null);
-			if (alias != stylesheetNode.Prefix) {
+			if (alias != null && alias != stylesheetNode.Prefix) {
 				nsUri = stylesheetNode.GetNamespace (alias);
 				if (alias != null)
 					prefix = alias;
