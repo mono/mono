@@ -5,6 +5,7 @@
 assemblies_DATA =	\
 	Accessibility.dll					\
 	ByteFX.Data.dll						\
+	Commons.Xml.Relaxng.dll					\
 	corlib.dll						\
 	Cscompmgd.dll						\
 	I18N.CJK.dll						\
@@ -16,6 +17,7 @@ assemblies_DATA =	\
 	ICSharpCode.SharpZipLib.dll				\
 	Microsoft.VisualBasic.dll				\
 	Microsoft.VisualC.dll					\
+	Microsoft.Vsa.dll					\
 	Mono.CSharp.Debugger.dll				\
 	Mono.Data.DB2Client.dll					\
 	Mono.Data.MySql.dll					\
@@ -24,10 +26,13 @@ assemblies_DATA =	\
 	Mono.Data.SybaseClient.dll				\
 	Mono.Data.TdsClient.dll					\
 	Mono.Data.Tds.dll					\
+	Mono.Directory.LDAP.dll					\
 	Mono.GetOptions.dll					\
 	Mono.Http.dll						\
 	Mono.PEToolkit.dll					\
 	Mono.Posix.dll						\
+	Mono.Security.dll					\
+	Mono.Security.Win32.dll					\
 	Npgsql.dll						\
 	NUnit.Util.dll						\
 	NUnit.Framework.dll					\
@@ -37,11 +42,16 @@ assemblies_DATA =	\
 	System.Data.OracleClient.dll				\
 	System.dll						\
 	System.Design.dll					\
+	System.DirectoryServices.dll				\
+	System.Drawing.Design.dll				\
 	System.Drawing.dll					\
 	System.EnterpriseServices.dll				\
+	System.Management.dll					\
+	System.Messaging.dll					\
 	System.Runtime.Remoting.dll				\
 	System.Runtime.Serialization.Formatters.Soap.dll	\
 	System.Security.dll					\
+	System.ServiceProcess.dll				\
 	System.Web.dll						\
 	System.Web.Services.dll					\
 	System.Windows.Forms.dll				\
