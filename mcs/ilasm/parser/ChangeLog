@@ -1,5 +1,9 @@
 2003-03-13 Jackson Harper <jackson@latitudegeo.com>
 
+	* ILParser.jay: Remove unused references
+
+2003-03-13 Jackson Harper <jackson@latitudegeo.com>
+
 	* ILParser.jay: Emit simple instructions
 
 2003-03-13 Jackson Harper <jackson@latitudegeo.com>

@@ -1005,7 +1005,7 @@ instr                   : INSTR_NONE
 			| instr_r_head bytes CLOSE_PARENS 
 			| INSTR_BRTARGET int32  
 			| INSTR_BRTARGET id 
-			| INSTR_METHOD binding_flags type full_type DOUBLE_COLON call_name OPEN_PARENS arg_list CLOSE_PARENS 
+			| INSTR_METHOD binding_flags type type_ref DOUBLE_COLON call_name OPEN_PARENS arg_list CLOSE_PARENS 
 			  {
 				/*
 				if (OpCodes.Call.Equals ((OpCode)$1) || OpCodes.Callvirt.Equals ((OpCode)$1)) {
@@ -1074,7 +1074,7 @@ arg_list
 	;
 
 named_arg
-	: full_type ID
+	: type_ref ID
 	  {
 		$$ = new DictionaryEntry ((string) $1, (string) $2);
 	  }
@@ -1171,7 +1171,6 @@ callKind                : /* EMPTY */ 		{ $$ = CallConv.Default; }
 			| K_DEFAULT		{ $$ = (CallConv) $1 | CallConv.Default; }
 			| K_VARARG		{ $$ = (CallConv) $1 | CallConv.Vararg; }
 			| K_UNMANAGED K_CDECL 	{ $$ = (CallConv) $1 | CallConv.Cdecl; }
-			| K_UNMANAGED K_STALL 	{ }
 			| K_UNMANAGED K_THISCALL { $$ = (CallConv) $1 | CallConv.Thiscall; }
 			| K_UNMANAGED K_FASTCALL { $$ = (CallConv) $1 | CallConv.Fastcall; }
 			;
