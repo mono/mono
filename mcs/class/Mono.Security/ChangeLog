@@ -1,5 +1,9 @@
 2004-02-18 Carlos Guzmán Álvarez  <carlosga@telefonica.net>
 
+	* Mono.Security.Protocol.Tls/SslClientStream.cs:
+
+        - Implement CheckCertRevocationStatus ( not used yet )
+
 	* Mono.Security.Protocol.Tls/CipherAlgorithmType.cs:
 	* Mono.Security.Protocol.Tls/HashAlgorithmType.cs:
 	* Mono.Security.Protocol.Tls/ExchangeAlgorithmType.cs:

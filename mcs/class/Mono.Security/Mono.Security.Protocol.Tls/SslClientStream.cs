@@ -81,6 +81,7 @@ namespace Mono.Security.Protocol.Tls
 		private TlsContext						context;
 		private bool							ownsStream;
 		private bool							disposed;
+		private bool							checkCertRevocationStatus;
 		private string							read;
 		private string							write;
 
@@ -120,8 +121,8 @@ namespace Mono.Security.Protocol.Tls
 
 		public bool CheckCertRevocationStatus 
 		{
-			get { throw new NotImplementedException(); }
-			set { throw new NotImplementedException(); }
+			get { return this.checkCertRevocationStatus ; }
+			set { this.checkCertRevocationStatus = value; }
 		}
 
 		public CipherAlgorithmType CipherAlgorithm 
