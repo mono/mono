@@ -1,4 +1,7 @@
 2005-02-18 Ritvik Mayank <mritvik@novell.com>
+	* Removed DefaultAttr*.vb replicas of DefaultProp*.vb 
+
+2005-02-18 Ritvik Mayank <mritvik@novell.com>
 	* Throwing the Error Message with System.Exception for all the Conversion Tests
 
 2005-02-17 Manjula GHM <mmanjula@novell.com>
