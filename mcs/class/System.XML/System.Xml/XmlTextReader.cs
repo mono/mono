@@ -83,7 +83,7 @@ namespace System.Xml
 				new XmlNamespaceManager (nt),
 				String.Empty,
 				XmlSpace.None);
-			this.InitializeContext (url, ctx, new XmlStreamReader (s), XmlNodeType.Document);
+			this.InitializeContext (uri.ToString(), ctx, new XmlStreamReader (s), XmlNodeType.Document);
 		}
 
 		public XmlTextReader (TextReader input, XmlNameTable nt)

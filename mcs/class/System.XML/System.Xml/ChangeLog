@@ -1,3 +1,8 @@
+2004-01-05  David Sheldon <dave-mono@earth.li>
+  
+  * XmlTextReader.cs: Fixed constructors taking string url to not
+    loose the absolute part of the path.
+
 2004-01-04  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XmlDocument.cs : Fixed Load() to set XmlResolver correctly. Patch
