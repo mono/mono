@@ -40,9 +40,15 @@ namespace System.DirectoryServices
 	{
 		private ArrayList m_oKeys = new ArrayList();
 		private Hashtable m_oValues = new Hashtable();
+		private DirectoryEntry _parent;
 
-		internal PropertyCollection()
+		internal PropertyCollection(): this(null)
 		{
+		}
+
+		internal PropertyCollection(DirectoryEntry parent)
+		{
+			_parent=parent;
 		}
 
 		public int Count
@@ -167,7 +173,7 @@ namespace System.DirectoryServices
 				}
 				else
 				{
-					PropertyValueCollection _pValColl=new PropertyValueCollection();
+					PropertyValueCollection _pValColl=new PropertyValueCollection(_parent);
 //					String tstr=new String(propertyName.ToCharArray());
 //					Add((string)tstr.ToLower(), (PropertyValueCollection)_pValColl);
 					Add((string)propertyName.ToLower(), (PropertyValueCollection)_pValColl);

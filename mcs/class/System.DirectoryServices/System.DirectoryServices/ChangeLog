@@ -1,4 +1,14 @@
 2005-03-31  Boris Kirzner <borisk@mainsoft.com>
+	* DirectoryEntry.cs :
+		- Implemented UsePropertyCache.
+		- Refresh entry after Rename and MoveTo.
+		- CommitChanges : do not send request to server if no properties changed. Drop new flag after committing newly created entry.
+		- Disconnect only if connected in Close(). Clean up Dispose().
+		- Removed unnecessary console output.
+	* PropertyCollection.cs : Hold reference to parent DirectoryEntry.
+	* PropertyValueCollection.cs : Hold reference to parent DirectoryEntry. Call parent's CommitDeferred on collection changes. 
+
+2005-03-31  Boris Kirzner <borisk@mainsoft.com>
 
 	* DirectorySearcher.cs :
 		- Use common TimeSpan object to initialize properties default values.
