@@ -9,8 +9,8 @@
 
 using System.Collections;
 
-namespace Mono.Data.TdsClient.Internal {
-	internal class TdsSchemaInfo : Hashtable
+namespace Mono.Data.Tds.Protocol {
+	public class TdsSchemaInfo : Hashtable
 	{
 		#region Fields
 

@@ -1,5 +1,5 @@
 //
-// Mono.Data.TdsClient.Internal.TdsPacketEndTokenResult.cs
+// Mono.Data.Tds.Protocol.TdsPacketEndTokenResult.cs
 //
 // Author:
 //   Tim Coleman (tim@timcoleman.com)
@@ -9,8 +9,8 @@
 
 using System;
 
-namespace Mono.Data.TdsClient.Internal {
-	internal class TdsPacketEndTokenResult : TdsPacketResult
+namespace Mono.Data.Tds.Protocol {
+	public class TdsPacketEndTokenResult : TdsPacketResult
 	{
 
 		#region Fields

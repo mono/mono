@@ -8,7 +8,7 @@
 //
 using System;
 
-namespace Mono.Data.TdsClient.Internal {
+namespace Mono.Data.Tds.Protocol {
 
 	/// <summary>
 	///   The TODO attribute is used to flag all incomplete bits in our class libraries
@@ -18,7 +18,7 @@ namespace Mono.Data.TdsClient.Internal {
 	///   Use this to decorate any element which you think is not complete
 	/// </remarks>
 	[AttributeUsage (AttributeTargets.All)]
-	internal class MonoTODOAttribute : Attribute {
+	public class MonoTODOAttribute : Attribute {
 
 		string comment;
 

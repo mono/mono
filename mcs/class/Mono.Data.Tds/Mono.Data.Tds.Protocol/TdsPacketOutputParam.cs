@@ -1,5 +1,5 @@
 //
-// Mono.Data.TdsClient.Internal.TdsPacketOutputParam.cs
+// Mono.Data.Tds.Protocol.TdsPacketOutputParam.cs
 //
 // Author:
 //   Tim Coleman (tim@timcoleman.com)
@@ -7,8 +7,8 @@
 // Copyright (C) Tim Coleman, 2002
 //
 
-namespace Mono.Data.TdsClient.Internal {
-	internal class TdsPacketOutputParam : TdsPacketResult
+namespace Mono.Data.Tds.Protocol {
+	public class TdsPacketOutputParam : TdsPacketResult
 	{
 		#region Fields
 		

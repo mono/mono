@@ -1,5 +1,5 @@
 //
-// Mono.Data.TdsClient.Internal.TdsInternalErrorMessageEventHandler.cs
+// Mono.Data.Tds.Protocol.TdsInternalErrorMessageEventHandler.cs
 //
 // Authors:
 //   Tim Coleman (tim@timcoleman.com)
@@ -9,6 +9,6 @@
 
 using System;
 
-namespace Mono.Data.TdsClient.Internal {
-	internal delegate void TdsInternalErrorMessageEventHandler (object sender, TdsInternalErrorMessageEventArgs e);
+namespace Mono.Data.Tds.Protocol {
+	public delegate void TdsInternalErrorMessageEventHandler (object sender, TdsInternalErrorMessageEventArgs e);
 }

@@ -1,5 +1,5 @@
 //
-// Mono.Data.TdsClient.Internal.TdsPacketSubType.cs
+// Mono.Data.Tds.Protocol.TdsPacketSubType.cs
 //
 // Author:
 //   Tim Coleman (tim@timcoleman.com)
@@ -7,8 +7,8 @@
 // Copyright (C) Tim Coleman, 2002
 //
 
-namespace Mono.Data.TdsClient.Internal {
-	internal enum TdsPacketSubType {
+namespace Mono.Data.Tds.Protocol {
+	public enum TdsPacketSubType {
 		EnvChange = 0xe3,
 		Error = 0xaa,
 		Info = 0xab,

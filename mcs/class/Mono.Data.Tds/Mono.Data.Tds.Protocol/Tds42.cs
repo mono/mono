@@ -1,5 +1,5 @@
 //
-// Mono.Data.TdsClient.Internal.Tds42.cs
+// Mono.Data.Tds.Protocol.Tds42.cs
 //
 // Author:
 //   Tim Coleman (tim@timcoleman.com)
@@ -9,8 +9,8 @@
 
 using System;
 
-namespace Mono.Data.TdsClient.Internal {
-        internal class Tds42 : Tds
+namespace Mono.Data.Tds.Protocol {
+        public class Tds42 : Tds
 	{
 		#region Fields
 

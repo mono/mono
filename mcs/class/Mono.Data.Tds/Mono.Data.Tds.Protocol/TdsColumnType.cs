@@ -1,5 +1,5 @@
 //
-// Mono.Data.TdsClient.Internal.TdsColumnType.cs
+// Mono.Data.Tds.Protocol.TdsColumnType.cs
 //
 // Author:
 //   Tim Coleman (tim@timcoleman.com)
@@ -7,8 +7,8 @@
 // Copyright (C) Tim Coleman, 2002
 //
 
-namespace Mono.Data.TdsClient.Internal {
-	internal enum TdsColumnType {
+namespace Mono.Data.Tds.Protocol {
+	public enum TdsColumnType {
 		Void = 0x1f,
 		Image = 0x22,
 		Text = 0x23,

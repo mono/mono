@@ -1,5 +1,5 @@
 //
-// Mono.Data.TdsClient.Internal.TdsInternalInfoMessageEventHandler.cs
+// Mono.Data.Tds.Protocol.TdsInternalInfoMessageEventHandler.cs
 //
 // Authors:
 //   Tim Coleman (tim@timcoleman.com)
@@ -9,6 +9,6 @@
 
 using System;
 
-namespace Mono.Data.TdsClient.Internal {
-	internal delegate void TdsInternalInfoMessageEventHandler (object sender, TdsInternalInfoMessageEventArgs e);
+namespace Mono.Data.Tds.Protocol {
+	public delegate void TdsInternalInfoMessageEventHandler (object sender, TdsInternalInfoMessageEventArgs e);
 }

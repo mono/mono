@@ -1,5 +1,5 @@
 //
-// Mono.Data.TdsClient.Internal.TdsComm.cs
+// Mono.Data.Tds.Protocol.TdsComm.cs
 //
 // Author:
 //   Tim Coleman (tim@timcoleman.com)
@@ -13,7 +13,7 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading;
 
-namespace Mono.Data.TdsClient.Internal {
+namespace Mono.Data.Tds.Protocol {
         internal sealed class TdsComm
 	{
 		#region Fields

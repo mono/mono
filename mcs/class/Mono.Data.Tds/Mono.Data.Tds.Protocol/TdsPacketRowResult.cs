@@ -1,5 +1,5 @@
 //
-// Mono.Data.TdsClient.Internal.TdsPacketRowResult.cs
+// Mono.Data.Tds.Protocol.TdsPacketRowResult.cs
 //
 // Author:
 //   Tim Coleman (tim@timcoleman.com)
@@ -10,8 +10,8 @@
 using System;
 using System.Collections;
 
-namespace Mono.Data.TdsClient.Internal {
-	internal class TdsPacketRowResult : TdsPacketResult, IList, ICollection, IEnumerable
+namespace Mono.Data.Tds.Protocol {
+	public class TdsPacketRowResult : TdsPacketResult, IList, ICollection, IEnumerable
 	{
 		#region Fields
 

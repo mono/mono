@@ -1,5 +1,5 @@
 //
-// Mono.Data.TdsClient.Internal.Tds.cs
+// Mono.Data.Tds.Protocol.Tds.cs
 //
 // Author:
 //   Tim Coleman (tim@timcoleman.com)
@@ -14,8 +14,8 @@ using System.Diagnostics;
 using System.Net.Sockets;
 using System.Text;
 
-namespace Mono.Data.TdsClient.Internal {
-        internal abstract class Tds : Component, ITds
+namespace Mono.Data.Tds.Protocol {
+        public abstract class Tds : Component, ITds
 	{
 		#region Fields
 
@@ -81,7 +81,7 @@ namespace Mono.Data.TdsClient.Internal {
 			get { return currentRow; }
 		}
 
-		protected TdsComm Comm {
+		internal TdsComm Comm {
 			get { return comm; }
 		}
 
@@ -184,7 +184,7 @@ namespace Mono.Data.TdsClient.Internal {
 				result = ProcessSubPacket ();
 				if (result != null) {
 					switch (result.GetType ().ToString ()) {
-					case "Mono.Data.TdsClient.Internal.TdsPacketEndTokenResult" :
+					case "Mono.Data.Tds.Protocol.TdsPacketEndTokenResult" :
 						done = !((TdsPacketEndTokenResult) result).MoreResults;
 						break;
 					}
@@ -217,19 +217,19 @@ namespace Mono.Data.TdsClient.Internal {
 
 				if (result != null) {
 					switch (result.GetType ().ToString ()) {
-					case "Mono.Data.TdsClient.Internal.TdsPacketColumnNamesResult" :
+					case "Mono.Data.Tds.Protocol.TdsPacketColumnNamesResult" :
 						columnNames = (TdsPacketColumnNamesResult) result;
 						break;
-					case "Mono.Data.TdsClient.Internal.TdsPacketColumnInfoResult" :
+					case "Mono.Data.Tds.Protocol.TdsPacketColumnInfoResult" :
 						columnInfo = (TdsPacketColumnInfoResult) result;
 						break;
-					case "Mono.Data.TdsClient.Internal.TdsPacketRowResult" :
+					case "Mono.Data.Tds.Protocol.TdsPacketRowResult" :
 						currentRow = (TdsPacketRowResult) result;
 						break;
-					case "Mono.Data.TdsClient.Internal.TdsPacketTableNameResult" :
+					case "Mono.Data.Tds.Protocol.TdsPacketTableNameResult" :
 						tableNames = (TdsPacketTableNameResult) result;
 						break;
-					case "Mono.Data.TdsClient.Internal.TdsPacketEndTokenResult" :
+					case "Mono.Data.Tds.Protocol.TdsPacketEndTokenResult" :
 						done = !((TdsPacketEndTokenResult) result).MoreResults;
 						break;
 					}
@@ -275,22 +275,22 @@ namespace Mono.Data.TdsClient.Internal {
 
 				if (result != null) {
 					switch (result.GetType ().ToString ()) {
-					case "Mono.Data.TdsClient.Internal.TdsPacketColumnNamesResult" :
+					case "Mono.Data.Tds.Protocol.TdsPacketColumnNamesResult" :
 						columnNames = (TdsPacketColumnNamesResult) result;
 						break;
-					case "Mono.Data.TdsClient.Internal.TdsPacketColumnInfoResult" :
+					case "Mono.Data.Tds.Protocol.TdsPacketColumnInfoResult" :
 						columnInfo = (TdsPacketColumnInfoResult) result;
 						if (comm.Peek () != (byte) TdsPacketSubType.TableName) {
 							return true;
 						}
 						break;
-					case "Mono.Data.TdsClient.Internal.TdsPacketRowResult" :
+					case "Mono.Data.Tds.Protocol.TdsPacketRowResult" :
 						currentRow = (TdsPacketRowResult) result;
 						break;
-					case "Mono.Data.TdsClient.Internal.TdsPacketTableNameResult" :
+					case "Mono.Data.Tds.Protocol.TdsPacketTableNameResult" :
 						tableNames = (TdsPacketTableNameResult) result;
 						break;
-					case "Mono.Data.TdsClient.Internal.TdsPacketEndTokenResult" :
+					case "Mono.Data.Tds.Protocol.TdsPacketEndTokenResult" :
 						done = !((TdsPacketEndTokenResult) result).MoreResults;
 						break;
 					}
@@ -308,10 +308,10 @@ namespace Mono.Data.TdsClient.Internal {
 				result = ProcessSubPacket ();
 				if (result != null) {
 					switch (result.GetType ().ToString ()) {
-					case "Mono.Data.TdsClient.Internal.TdsPacketRowResult" :
+					case "Mono.Data.Tds.Protocol.TdsPacketRowResult" :
 						currentRow = (TdsPacketRowResult) result;
 						return true;
-					case "Mono.Data.TdsClient.Internal.TdsPacketEndTokenResult" :
+					case "Mono.Data.Tds.Protocol.TdsPacketEndTokenResult" :
 						return false;
 					}
 				}

@@ -1,5 +1,5 @@
 //
-// Mono.Data.TdsClient.Internal.TdsBigDecimal.cs
+// Mono.Data.Tds.Protocol.TdsBigDecimal.cs
 //
 // Author:
 //   Tim Coleman (tim@timcoleman.com)
@@ -7,8 +7,8 @@
 // Copyright (C) Tim Coleman, 2002
 //
 
-namespace Mono.Data.TdsClient.Internal {
-	internal class TdsBigDecimal 
+namespace Mono.Data.Tds.Protocol {
+	public class TdsBigDecimal 
 	{
 		#region Fields
 

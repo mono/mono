@@ -1,5 +1,5 @@
 //
-// Mono.Data.TdsClient.Internal.TdsInternalErrorCollection.cs
+// Mono.Data.Tds.Protocol.TdsInternalErrorCollection.cs
 //
 // Authors:
 //    Tim Coleman (tim@timcoleman.com)
@@ -10,8 +10,8 @@
 using System;
 using System.Collections;
 
-namespace Mono.Data.TdsClient.Internal {
-	internal sealed class TdsInternalErrorCollection : IEnumerable 
+namespace Mono.Data.Tds.Protocol {
+	public sealed class TdsInternalErrorCollection : IEnumerable 
 	{
 		#region Fields
 

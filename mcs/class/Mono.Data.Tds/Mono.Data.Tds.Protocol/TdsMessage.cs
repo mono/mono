@@ -1,5 +1,5 @@
 //
-// Mono.Data.TdsClient.Internal.TdsMessage.cs
+// Mono.Data.Tds.Protocol.TdsMessage.cs
 //
 // Author:
 //   Tim Coleman (tim@timcoleman.com)
@@ -10,8 +10,8 @@
 using System;
 using System.Text;
 
-namespace Mono.Data.TdsClient.Internal {
-	internal class TdsMessage 
+namespace Mono.Data.Tds.Protocol {
+	public class TdsMessage 
 	{
 		#region Fields
 

@@ -1,5 +1,5 @@
 //
-// Mono.Data.TdsClient.Internal.TdsVersionInternal.cs
+// Mono.Data.Tds.Protocol.TdsVersionInternal.cs
 //
 // Author:
 //   Daniel Morgan <danmorg@sc.rr.com>
@@ -7,7 +7,7 @@
 // Copyright (C) 2002 Daniel Morgan
 //
 
-namespace Mono.Data.TdsClient.Internal {
+namespace Mono.Data.Tds.Protocol {
 	public enum TdsVersion
 	{
                 tds42 = 42, // used by older Sybase and Microsoft SQL (< 7.0) servers

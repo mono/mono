@@ -1,5 +1,5 @@
 //
-// Mono.Data.TdsClient.Internal.TdsConnectionParameters.cs
+// Mono.Data.Tds.Protocol.TdsConnectionParameters.cs
 //
 // Author:
 //   Tim Coleman (tim@timcoleman.com)
@@ -7,8 +7,8 @@
 // Copyright (C) 2002 Tim Coleman
 //
 
-namespace Mono.Data.TdsClient.Internal {
-	internal class TdsConnectionParameters
+namespace Mono.Data.Tds.Protocol {
+	public class TdsConnectionParameters
 	{
 		public string ApplicationName = "Mono";
 		public string Database;

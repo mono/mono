@@ -1,5 +1,5 @@
 //
-// Mono.Data.TdsClient.Internal.TdsPacketType.cs
+// Mono.Data.Tds.Protocol.TdsPacketType.cs
 //
 // Author:
 //   Tim Coleman (tim@timcoleman.com)
@@ -7,8 +7,8 @@
 // Copyright (C) 2002 Tim Coleman
 //
 
-namespace Mono.Data.TdsClient.Internal {
-        internal enum TdsPacketType
+namespace Mono.Data.Tds.Protocol {
+        public enum TdsPacketType
 	{
 		None = 0x0,
 		Query = 0x1,

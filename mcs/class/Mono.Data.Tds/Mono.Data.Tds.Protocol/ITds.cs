@@ -1,5 +1,5 @@
 //
-// Mono.Data.TdsClient.Internal.ITds.cs
+// Mono.Data.Tds.Protocol.ITds.cs
 //
 // Author:
 //   Tim Coleman (tim@timcoleman.com)
@@ -10,8 +10,8 @@
 using System;
 using System.Collections;
 
-namespace Mono.Data.TdsClient.Internal {
-        internal interface ITds 
+namespace Mono.Data.Tds.Protocol {
+        public interface ITds 
 	{
 		#region Properties
 

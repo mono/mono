@@ -1,5 +1,5 @@
 //
-// Mono.Data.TdsClient.Internal.TdsInternalInfoMessageEventArgs.cs
+// Mono.Data.Tds.Protocol.TdsInternalInfoMessageEventArgs.cs
 //
 // Authors:
 //   Tim Coleman (tim@timcoleman.com)
@@ -9,8 +9,8 @@
 
 using System;
 
-namespace Mono.Data.TdsClient.Internal {
-	internal class TdsInternalInfoMessageEventArgs : EventArgs
+namespace Mono.Data.Tds.Protocol {
+	public class TdsInternalInfoMessageEventArgs : EventArgs
 	{
 		#region Fields
 

@@ -1,5 +1,5 @@
 //
-// Mono.Data.TdsClient.TdsInternalException.cs
+// Mono.Data.Tds.Protocol.TdsInternalException.cs
 //
 // Author:
 //   Tim Coleman (tim@timcoleman.com)
@@ -7,12 +7,11 @@
 // Copyright (C) 2002 Tim Coleman
 //
 
-using Mono.Data.TdsClient;
 using System;
 using System.Runtime.Serialization;
 
-namespace Mono.Data.TdsClient.Internal {
-        internal class TdsInternalException : SystemException
+namespace Mono.Data.Tds.Protocol {
+        public class TdsInternalException : SystemException
 	{
 		#region Fields
 

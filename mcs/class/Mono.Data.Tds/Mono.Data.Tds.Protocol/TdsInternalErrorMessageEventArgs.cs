@@ -1,5 +1,5 @@
 //
-// Mono.Data.TdsClient.Internal.TdsInternalErrorMessageEventArgs.cs
+// Mono.Data.Tds.Protocol.TdsInternalErrorMessageEventArgs.cs
 //
 // Authors:
 //   Tim Coleman (tim@timcoleman.com)
@@ -9,8 +9,8 @@
 
 using System;
 
-namespace Mono.Data.TdsClient.Internal {
-	internal sealed class TdsInternalErrorMessageEventArgs : TdsInternalInfoMessageEventArgs 
+namespace Mono.Data.Tds.Protocol {
+	public sealed class TdsInternalErrorMessageEventArgs : TdsInternalInfoMessageEventArgs 
 	{
 		#region Constructors
 		

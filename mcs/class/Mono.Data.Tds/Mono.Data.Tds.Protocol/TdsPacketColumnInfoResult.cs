@@ -1,5 +1,5 @@
 //
-// Mono.Data.TdsClient.Internal.TdsPacketColumnInfoResult.cs
+// Mono.Data.Tds.Protocol.TdsPacketColumnInfoResult.cs
 //
 // Author:
 //   Tim Coleman (tim@timcoleman.com)
@@ -7,11 +7,11 @@
 // Copyright (C) Tim Coleman, 2002
 //
 
-using Mono.Data.TdsClient.Internal;
+using Mono.Data.Tds.Protocol;
 using System.Collections;
 
-namespace Mono.Data.TdsClient.Internal {
-	internal class TdsPacketColumnInfoResult : TdsPacketResult, IEnumerable
+namespace Mono.Data.Tds.Protocol {
+	public class TdsPacketColumnInfoResult : TdsPacketResult, IEnumerable
 	{
 		#region Fields
 
