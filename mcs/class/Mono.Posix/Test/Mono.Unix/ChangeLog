@@ -1,3 +1,9 @@
+2005-02-01  Raja R Harinath  <rharinath@novell.com>
+
+	* UnixUserTest.cs (UnixUserTest.ReentrantConstructors): Don't
+	assume userid<->username mapping is a bijection.
+	(UnixUserTest.NonReentrantSyscalls): Likewise.
+
 2005-01-20  Jonathan Pryor  <jonpryor@vt.edu>
 
 	* StdlibTest.cs: Ignore the signal(3) test, as it's currently hanging Mono.

@@ -13,6 +13,7 @@ using System;
 using System.Configuration;
 using System.Diagnostics;
 using System.Xml;
+using System.Collections;
 
 using Mono.Unix;
 
@@ -40,19 +41,33 @@ namespace MonoTests.Mono.Unix {
 		[Test]
 		public void ReentrantConstructors ()
 		{
-			foreach (UnixUserInfo user in UnixUser.GetLocalUsers ()) {
+			ArrayList user_ids = new ArrayList (4);
+			IList users = UnixUser.GetLocalUsers ();
+			foreach (UnixUserInfo user in users) {
 				try {
 					UnixUserInfo byName = new UnixUserInfo (user.UserName);
-					UnixUserInfo byId   = new UnixUserInfo (user.UserId);
-
 					Assert.AreEqual (user, byName, "#TRC: construct by name");
-					Assert.AreEqual (user, byId,   "#TRC: construct by uid");
-					Assert.AreEqual (byName, byId, "#TRC: name == uid?");
+
+					if (! user_ids.Contains (user.UserId))
+						user_ids.Add (user.UserId);
 				}
 				catch (Exception e) {
 					Assert.Fail (
-						string.Format ("#TRC: Exception constructing UnixUserInfo: {0}",
-							e.ToString()));
+						     string.Format ("#TRC: Exception constructing UnixUserInfo (string): {0}",
+								    e.ToString()));
+				}
+			}
+
+			foreach (uint uid in user_ids) {
+				try {
+					UnixUserInfo byId = new UnixUserInfo (uid);
+					Assert.IsTrue (users.Contains (byId), "TRC: construct by uid");
+				}
+				catch (Exception e) {
+					Assert.Fail (
+						     string.Format ("#TRC: Exception constructing UnixUserInfo (uint): {0}",
+								    e.ToString()));
+
 				}
 			}
 		}
@@ -60,24 +75,37 @@ namespace MonoTests.Mono.Unix {
 		[Test]
 		public void NonReentrantSyscalls ()
 		{
-			foreach (UnixUserInfo user in UnixUser.GetLocalUsers ()) {
+			ArrayList user_ids = new ArrayList (4);
+			IList users = UnixUser.GetLocalUsers ();
+
+			foreach (UnixUserInfo user in users) {
 				try {
 					Passwd byName = Syscall.getpwnam (user.UserName);
-					Passwd byId   = Syscall.getpwuid (user.UserId);
-
 					Assert.IsNotNull (byName, "#TNRS: access by name");
-					Assert.IsNotNull (byId,   "#TNRS: access by uid");
-
 					UnixUserInfo n = new UnixUserInfo (byName);
-					UnixUserInfo u = new UnixUserInfo (byId);
-
 					Assert.AreEqual (user, n, "#TNRS: construct by name");
-					Assert.AreEqual (user, u, "#TNRS: construct by uid");
-					Assert.AreEqual (n, u,    "#TNRS: name == uid?");
+
+					if (! user_ids.Contains (user.UserId))
+						user_ids.Add (user.UserId);
 				}
 				catch (Exception e) {
 					Assert.Fail (
-						string.Format ("#TRC: Exception constructing UnixUserInfo: {0}",
+						string.Format ("#TNRS: Exception constructing UnixUserInfo (string): {0}",
+							e.ToString()));
+				}
+			}
+
+			foreach (uint uid in user_ids) {
+				try {
+					Passwd byId   = Syscall.getpwuid (uid);
+					Assert.IsNotNull (byId,   "#TNRS: access by uid");
+
+					UnixUserInfo u = new UnixUserInfo (byId);
+					Assert.IsTrue (users.Contains (u), "TNRS: construct by uid");
+				}
+				catch (Exception e) {
+					Assert.Fail (
+						string.Format ("#TNRS: Exception constructing UnixUserInfo (uint): {0}",
 							e.ToString()));
 				}
 			}
