@@ -15,7 +15,7 @@ using System.Web.Caching;
 
 namespace System.Web {
    [MonoTODO("Make corrent right now this is a simple impl to give us a base for testing... the methods here are not complete or valid")]
-   public class HttpRuntime {
+   public sealed class HttpRuntime {
       // Security permission helper objects
       private static IStackWalk appPathDiscoveryStackWalk;
       private static IStackWalk ctrlPrincipalStackWalk;

@@ -1,91 +1,177 @@
-//
-// System.Web.HttpCookie.cs
+// 
+// System.Web.HttpCookie
 //
 // Author:
-//   Bob Smith <bob@thestuff.net>
+//   Patrik Torstensson (Patrik.Torstensson@labs2.com)
 //
-// (C) Bob Smith
-//
-
 using System;
+using System.Text;
+using System.Web;
 using System.Collections.Specialized;
 
 namespace System.Web {
    public sealed class HttpCookie {
-      private string _name;
-      private string _value = null;
-      private string _domain; //TODO: default to some pref.
-      private DateTime _expires;
-      private string _path;  //TODO: default is the current request path.
-      private bool _secure = false;
+      private string _Name;
+      private string _Value;
+      private string _Domain;
+      private DateTime _Expires;
+      private bool _ExpiresSet;
+      private string _Path;  
+      private bool _Secure = false;
+      
+      private HttpValueCollection _Values;
+
+      internal HttpCookie() {
+         _Path = "/";
+      }
+
       public HttpCookie(string name) {
-         _name = name;
+         _Path = "/";
+         _Name = name;
       }
+
       public HttpCookie(string name, string value) {
-         _name = name;
-         _value = value;
+         _Name = name;
+         _Value = value;
       }
+
+      HttpResponseHeader GetCookieHeader() {
+         StringBuilder oSetCookie = new StringBuilder();
+
+         if (null != _Name && _Name.Length > 0) {
+            oSetCookie.Append(_Name);
+            oSetCookie.Append("=");
+         }
+
+         if (null != _Values) {
+            oSetCookie.Append(_Values.ToString(false));
+         } else if (null != _Value) {
+            oSetCookie.Append(_Value);
+         }
+
+         if (null != _Domain && _Domain.Length > 0) {
+            oSetCookie.Append("; domain=");
+            oSetCookie.Append(_Domain);
+         }
+
+         if (null != _Path && Path.Length > 0) {
+            oSetCookie.Append("; path=");
+            oSetCookie.Append(_Path);
+         }
+
+         if (_Secure) {
+            oSetCookie.Append("; secure");
+         }
+
+         return new HttpResponseHeader(HttpWorkerRequest.HeaderSetCookie, oSetCookie.ToString());
+      }
+
       public string Domain {
          get {
-            return _domain;
+            return _Domain;
          }
          set {
-            _domain = value;
+            _Domain = value;
          }
       }
+
       public DateTime Expires {
          get {
-            return _expires;
+            if (!_ExpiresSet) {
+               return DateTime.MinValue;
+            }
+
+            return _Expires;
          }
+
          set {
-            _expires = value;
+            _ExpiresSet = true;
+            _Expires = value;
          }
       }
+
       public bool HasKeys {
          get {
-            return false; //TODO
+            return Values.HasKeys();
          }
       }
+
       public string this[string key] {
-         //TODO: get/set subcookie.
-         get {return "";}
-         set {}
+         get {
+            return Values[key];
+         }
+         
+         set {
+            Values[key] = value;
+         }
       }
+
       public string Name {
          get {
-            return _name;
+            return _Name;
          }
+
          set {
-            _name = value;
+            _Name = value;
          }
       }
+
       public string Path {
          get {
-            return _path;
+            return _Path;
          }
+
          set {
-            _path = value;
+            _Path = value;
          }
       }
+
       public bool Secure {
          get {
-            return _secure;
+            return _Secure;
          }
          set {
-            _secure = value;
+            _Secure = value;
          }
       }
+
       public string Value {
          get {
-            return _value;
+            if (null != _Values) {
+               return _Values.ToString(false);
+            }
+            
+            return _Value;
          }
          set {
-            _value = value;
+            if (null != _Values) {
+               _Values.Reset();
+               _Values.Add(null, value);
+               return;
+            }
+
+            _Value = value;
          }
       }
+
       public NameValueCollection Values {
-         //TODO
-         get {return null;}
+         get {
+            if (null == _Values) {
+               _Values = new HttpValueCollection();
+               if (null != _Value) {
+                  // Do we have multiple keys
+                  if (_Value.IndexOf("&") >= 0 || _Value.IndexOf("=") >= 0) {
+                     _Values.FillFromCookieString(_Value);
+                  } else {
+                     _Values.Add(null, _Value);
+                  }
+
+                  _Value = null;
+               }
+            }
+
+            return _Values;
+         }
       }
    }
 }

@@ -1,3 +1,32 @@
+2002-04-11  Patrik Torstensson <patrik.torstensson@labs2.com>
+
+	* HttpException.cs: 95% ready, only windows dependent code left
+	* HttpFileCollection.cs: Finished.
+	* HttpRequest.cs: Minor fixes and fixed signature problems
+	* HttpResponse.cs: Implementation of missing methods and signature problems
+	* HttpResponseHeader.cs: Fixed signature problems
+	* HttpRuntime.cs: Fixed signature problems
+	* HttpServerUtility.cs: Added support for HttpApplication
+	* HttpSessionState.cs: Fixed signature issues
+	* HttpUtility.cs: fixed signature issues
+	* HttpValueCollection.cs: Support for cookie parsing and fixed signature issues
+	* HttpWorkerRequest.cs: Fixed small signature issue
+	* HttpWriter.cs: Fixed signature issue
+	* HttpApplication.cs: Basic implementation
+	* HttpApplicationState.cs: Small fixes to support major change comming up
+	* HttpBrowserCapabilities.cs: Added Type method
+	* HttpClientCertificate.cs: Almost ready, needs to parse certificate.
+	* HttpContext.cs: Fixed signature issues and added last methods.
+	* HttpCookie.cs: Full implementation
+	* HttpCookieCollection.cs: Full implementation
+	* TraceContext.cs: Methods implemented.
+	* HttpPostedFile.cs: Placeholder
+	* HttpStaticObjectsCollection.cs: Placeholder
+	* HttpModuleCollection.cs: Ready, will be used during the major revamp.
+	
+	* Fixed a number of other small signature problems also (class status page)
+	
+	
 2002-04-10  Patrik Torstensson <patrik.torstensson@labs2.com>
 
     * HttpWorkerRequest.EndOfSendNotification.cs Removed (included in WorkerRequest)

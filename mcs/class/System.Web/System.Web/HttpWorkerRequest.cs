@@ -382,6 +382,7 @@ namespace System.Web {
          return null;
       }
       
+      [CLSCompliant(false)]
       public virtual string[][] GetUnknownRequestHeaders() {
          return null;
       }

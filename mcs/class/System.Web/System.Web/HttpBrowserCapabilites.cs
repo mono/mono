@@ -14,5 +14,12 @@ namespace System.Web {
          // TODO: Add constructor logic here
          //
       }
+
+      [MonoTODO()]
+      public string Type {
+         get {
+            throw new NotImplementedException();
+         }
+      }
    }
 }

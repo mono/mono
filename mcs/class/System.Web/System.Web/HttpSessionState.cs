@@ -10,9 +10,6 @@ namespace System.Web {
    [MonoTODO()]
    public class HttpSessionState {
       public HttpSessionState() {
-         //
-         // TODO: Add constructor logic here
-         //
       }
    }
 }

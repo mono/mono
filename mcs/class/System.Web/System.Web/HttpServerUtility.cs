@@ -19,20 +19,23 @@ using System;
 using System.IO;
 
 namespace System.Web {
-   /// <summary>
-   /// System.Web.
-   /// </summary>
    public sealed class HttpServerUtility {
 
       private static string _name = "";
 
       private HttpContext _Context;
+      private HttpApplication _Application;
 		
       [MonoTODO()]
-      public HttpServerUtility(HttpContext Context) {
+      internal HttpServerUtility(HttpContext Context) {
          _Context = Context;
       }
 		
+      [MonoTODO()]
+      internal HttpServerUtility(HttpApplication app) {
+         _Application = app;
+      }
+
       // Properties
 
 
@@ -66,7 +69,14 @@ namespace System.Web {
       /// Clears the previous exception.
       /// </summary>
       public void ClearError() {
-         _Context.ClearError();
+         if (null != _Context) {
+            _Context.ClearError();
+            return;
+         }
+
+         if (null != _Application) {
+            _Application.ClearError();
+         }
       }
 
 		
@@ -185,6 +195,10 @@ namespace System.Web {
       /// <param name="path">The virtual path on the Web server. </param>
       /// <returns>The physical file path that corresponds to path.</returns>
       public string MapPath(string path) {
+         if (null == _Context) {
+            throw new HttpException("MapPath is not available");
+         }
+
          return _Context.Request.MapPath(path);
       }
 

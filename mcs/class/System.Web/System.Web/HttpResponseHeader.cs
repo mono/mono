@@ -12,12 +12,12 @@ namespace System.Web {
       private string _sValue;
       private int _iKnowHeaderId;
 
-      public HttpResponseHeader(int KnowHeaderId, string value) {
+      internal HttpResponseHeader(int KnowHeaderId, string value) {
          _iKnowHeaderId = KnowHeaderId;
          _sValue = value;
       }
 
-      public HttpResponseHeader(string header, string value) {
+      internal HttpResponseHeader(string header, string value) {
          _sHeader = header;
          _sValue = value;
       }

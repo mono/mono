@@ -9,7 +9,7 @@ using System.IO;
 using System.Text;
 
 namespace System.Web {
-   public class HttpWriter : TextWriter {
+   public sealed class HttpWriter : TextWriter {
       private HttpResponse	_Response;
 		
       private HttpResponseStream _ResponseStream;

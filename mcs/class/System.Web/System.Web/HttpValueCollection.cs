@@ -6,6 +6,7 @@
 //
 using System;
 using System.Collections.Specialized;
+using System.Runtime.Serialization;
 using System.Text;
 
 namespace System.Web {
@@ -28,6 +29,9 @@ namespace System.Web {
          IsReadOnly = ReadOnly;
       }
 
+      protected HttpValueCollection(SerializationInfo info, StreamingContext context) : base(info, context) {
+      }
+      
       // string = header1: value1\r\nheader2: value2
       internal void FillFromHeaders(string sHeaders, Encoding encoding) {
          _bHeaders = true;
@@ -96,6 +100,10 @@ namespace System.Web {
       }
 
       internal void FillFromQueryString(string sData) {
+         FillFromQueryString(sData, Encoding.UTF8);
+      }
+
+      internal void FillFromCookieString(string sData) {
          FillFromQueryString(sData, Encoding.UTF8);
       }
 

@@ -7,11 +7,10 @@
 // (C) Bob Smith
 //
 
-namespace System.Web
-{
-        public enum TraceMode
-        {
-                SortByCategory,
-                SortByTime
-        }
+namespace System.Web {
+   public enum TraceMode {
+      Default,               
+      SortByCategory,
+      SortByTime
+   }
 }

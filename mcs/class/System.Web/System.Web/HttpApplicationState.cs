@@ -5,16 +5,14 @@
 //   Patrik Torstensson (Patrik.Torstensson@labs2.com)
 //
 using System;
+using System.Web;
+using System.Collections.Specialized;
 
 namespace System.Web {
 
-   [MonoTODO()]
-   public class HttpApplicationState {
+   public class HttpApplicationState : NameObjectCollectionBase {
       [MonoTODO()]
       internal HttpApplicationState() {
-         //
-         // TODO: Add constructor logic here
-         //
       }
    }
 }

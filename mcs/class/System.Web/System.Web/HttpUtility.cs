@@ -10,8 +10,7 @@ using System.Text;
 using System.IO;
 
 namespace System.Web {
-   [MonoTODO()]
-   public class HttpUtility {
+   public sealed class HttpUtility {
       // private stuff
       private const string _hex = "0123456789ABCDEF";
       private const string _chars = "<>;:.?=&@*+%/\\";
@@ -74,6 +73,8 @@ namespace System.Web {
          }
          return dest;
       }
+
+
 
       public static string UrlEncode(string str) {
          return UrlDecode(str, Encoding.UTF8);

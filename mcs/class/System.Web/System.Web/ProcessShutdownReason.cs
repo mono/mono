@@ -7,17 +7,16 @@
 // (C) Bob Smith
 //
 
-namespace System.Web
-{
-        public enum ProcessShutdownReason
-        {
-                IdleTimeout,
-                MemoryLimitExceeded,
-                None,
-                PingFailed,
-                RequestQueueLimit,
-                RequestsLimit,
-                Timeout,
-                Unexpected
-        }
+namespace System.Web {
+   public enum ProcessShutdownReason {
+      DeadlockSuspected,
+      IdleTimeout,
+      MemoryLimitExceeded,
+      None,
+      PingFailed,
+      RequestQueueLimit,
+      RequestsLimit,
+      Timeout,
+      Unexpected
+   }
 }

@@ -12,7 +12,7 @@ using System.Threading;
 
 namespace System.Web {
    [MonoTODO("HttpContext - Should also keep the script timeout info")]
-   public class HttpContext : IServiceProvider {
+   public sealed class HttpContext : IServiceProvider {
       private Exception []	_arrExceptions;
 
       private HttpResponse	_oResponse;
@@ -170,6 +170,10 @@ namespace System.Web {
       [MonoTODO("bool SkipAuthorization")]
       public bool SkipAuthorization {
          get {
+            throw new NotImplementedException();
+         }
+
+         set {
             throw new NotImplementedException();
          }
       }

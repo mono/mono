@@ -30,12 +30,15 @@ namespace System.Web {
       private long _lContentLength;
       private int _iStatusCode;
 
+      private bool _ClientDisconnected;
+
       private string	_sContentType;
       private string	_sCacheControl;
       private string	_sTransferEncoding;
       private string	_sCharset;
       private string	_sStatusDescription;
 
+      private HttpCookieCollection _Cookies;
       private HttpCachePolicy _CachePolicy;
 
       private Encoding _ContentEncoding;
@@ -46,7 +49,31 @@ namespace System.Web {
 
       private HttpWorkerRequest _WorkerRequest;
 
-      public HttpResponse(HttpWorkerRequest WorkerRequest, HttpContext Context) {
+      [MonoTODO("Verify that this really works")]
+      internal HttpResponse(TextWriter output) {
+         _bBuffering = true;
+         _bFlushing = false;
+         _bHeadersSent = false;
+
+         _Headers = new ArrayList();
+
+         _sContentType = "text/html";
+
+         _iStatusCode = 200;
+         _sCharset = null;
+         _sCacheControl = null;
+
+         _lContentLength = 0;
+         _bSuppressContent = false;
+         _bSuppressHeaders = false;
+         _bClientDisconnected = false;
+
+         _bChunked = false;
+
+         _TextWriter = output;
+      }
+
+      internal HttpResponse(HttpWorkerRequest WorkerRequest, HttpContext Context) {
          _Context = Context;
          _WorkerRequest = WorkerRequest;
 
@@ -122,6 +149,8 @@ namespace System.Web {
             oHeaders.Add(new HttpResponseHeader(HttpWorkerRequest.HeaderTransferEncoding, _sTransferEncoding));
          }
 
+         // TODO: Add Cookie headers..
+
          return oHeaders;
       }
 
@@ -134,6 +163,67 @@ namespace System.Web {
          }
 			
          _bHeadersSent = true;
+      }
+
+      public string Status {
+         get {
+            return StatusCode.ToString() + " " + StatusDescription;
+         }
+
+         set {
+            string sMsg = "OK";
+            int iCode = 200;
+
+            try {
+               iCode = Int32.Parse(value.Substring(0, value.IndexOf(' ')));
+               sMsg = value.Substring(value.IndexOf(' ') + 1);
+            }
+            catch(Exception) {
+               throw new HttpException("Invalid status string");
+            }
+
+            StatusCode = iCode;
+            StatusDescription = sMsg;
+         }
+      }
+
+      [MonoTODO()]
+      public void AddCacheItemDependencies(ArrayList cacheKeys) {
+         throw new NotImplementedException();
+      }
+
+      [MonoTODO()]
+      public void AddCacheItemDependency(string cacheKey) {
+         throw new NotImplementedException();
+      }
+
+      [MonoTODO()]
+      public void AddFileDependencies(ArrayList filenames) {
+         throw new NotImplementedException();
+      }
+
+      [MonoTODO()]
+      public void AddFileDependency(string filename) {
+         throw new NotImplementedException();
+      }
+
+      public void AddHeader(string name, string value) {
+         AppendHeader(name, value);
+      }
+
+      [MonoTODO()]
+      public void AppendCookie(HttpCookie cookie) {
+         throw new NotImplementedException();
+      }
+
+      [MonoTODO()]
+      public void AppendToLog(string param) {
+         throw new NotImplementedException();
+      }
+
+      [MonoTODO()]
+      public string ApplyAppPathModifier(string virtualPath) {
+         throw new NotImplementedException();
       }
 
       public bool Buffer {
@@ -238,10 +328,12 @@ namespace System.Web {
          }
       }
 
-      [MonoTODO("Set status in the cache policy")]
       public HttpCookieCollection Cookies {
          get {
-            throw new NotImplementedException();
+            if (null == _Cookies) {
+               _Cookies = new HttpCookieCollection(this, false);
+            }
+            return _Cookies;
          }
       }
 
@@ -256,14 +348,46 @@ namespace System.Web {
          }
       }
 
-      [MonoTODO("Set expires in the cache policy")]
-      public int ExpiresAbsolut {
+      [MonoTODO("Set expiresabsolute in the cache policy")]
+      public int ExpiresAbsolute {
          get {
             throw new NotImplementedException();
          }
 
          set {
             throw new NotImplementedException();
+         }
+      }
+
+      public Stream Filter {
+         get {
+            if (_Writer != null) {
+               return _Writer.GetActiveFilter();
+            }
+            return null;
+         }
+
+         set {
+            if (_Writer == null) {
+               throw new HttpException("Filtering is not allowed");
+            }
+
+            _Writer.ActivateFilter(value);
+         }
+      }
+
+      public bool IsClientConnected {
+         get {
+            if (_ClientDisconnected) {
+               return false;
+            }
+
+            if (null != _WorkerRequest && (!_WorkerRequest.IsClientConnected())) {
+               _ClientDisconnected = false;
+               return false;
+            }
+
+            return true;
          }
       }
       
@@ -577,6 +701,50 @@ namespace System.Web {
 
       public void Write(char [] buffer, int index, int count) {
          _TextWriter.Write(buffer, index, count);
+      }
+
+      [MonoTODO()]
+      public static void RemoveOutputCacheItem(string path) {
+         throw new NotImplementedException();
+      }
+
+      [MonoTODO()]
+      public void SetCookie(HttpCookie cookie) {
+         throw new NotImplementedException();
+      }
+
+      public void WriteFile(string filename) {
+         WriteFile(filename, false);
+      }
+
+      [MonoTODO()]
+      public void WriteFile(string filename, bool readIntoMemory) {
+         throw new NotImplementedException();
+      }
+      
+      [MonoTODO()]
+      public void WriteFile(string filename, long offset, long size) {
+         throw new NotImplementedException();
+      }
+
+      [MonoTODO("Should we support fileHandle ptrs?")]
+      public void WriteFile(IntPtr fileHandle, long offset, long size) {
+      }   
+
+      [MonoTODO()]
+      internal void OnCookieAdd(HttpCookie cookie) {
+      }
+
+      [MonoTODO("Do we need this?")]
+      internal void OnCookieChange(HttpCookie cookie) {
+      }
+
+      [MonoTODO()]
+      internal void GoingToChangeCookieColl() {
+      }
+
+      [MonoTODO()]
+      internal void ChangedCookieColl() {
       }
    }
 }

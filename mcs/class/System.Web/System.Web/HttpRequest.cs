@@ -11,21 +11,8 @@ using System.IO;
 using System.Text;
 
 namespace System.Web {
-   //-- Methods from HttpRequest not implemented
-   //		public HttpFileCollection Files {get;}
-   //		public HttpBrowserCapabilities Browser {get; set;}
-   //		public HttpClientCertificate ClientCertificate {get;}
-   //		public string ApplicationPath {get;}
-   //		public HttpCookieCollection Cookies {get;}
-   //		public Stream Filter {get; set;}
-   //		public string MapPath(string virtualPath, string baseVirtualDir, bool allowCrossAppMapping);
-   //		public string MapPath(string virtualPath);
-   //		public int [] MapImageCoordinates(string imageFieldName);
-   //		public string FilePath {get;}
-   //		public Uri UrlReferrer 
-
    [MonoTODO("Review security in all path access function")]
-   public class HttpRequest {
+   public sealed class HttpRequest {
       private string []	_arrAcceptTypes;
       private string []	_arrUserLanguages;
 
@@ -57,6 +44,7 @@ namespace System.Web {
 
       private HttpWorkerRequest _WorkerRequest;
       private HttpRequestStream	_oInputStream;
+      private HttpClientCertificate _ClientCert;
 
       private HttpValueCollection _oServerVariables;
       private HttpValueCollection _oHeaders;
@@ -285,10 +273,13 @@ namespace System.Web {
          }
       }
 
-      [MonoTODO()]
       public HttpClientCertificate ClientCertificate {
          get {
-            throw new NotImplementedException();
+            if (null == _ClientCert) {
+               _ClientCert = new HttpClientCertificate(_oContext);
+            }
+
+            return _ClientCert;
          }
       }
 
@@ -621,6 +612,10 @@ namespace System.Web {
             }
          
             return _sRequestType;
+         }
+
+         set {
+            _sRequestType = value;
          }
       }
 		
