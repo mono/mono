@@ -1,3 +1,7 @@
+2002-07-12  Piers Haken <piersh@friskit.com
+
+	* SelectNodesTests.cs: Added TestUnion (bug #27548)
+
 2002-07-11  Jason Diamond  <jason@injektilo.org>
 
 	* SelectNodesTests.cs: Added.

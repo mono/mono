@@ -205,5 +205,14 @@ namespace MonoTests.System.Xml
 			AssertEquals (1, nodes.Count);
 			AssertSame (document.DocumentElement.ChildNodes [2], nodes [0]);
 		}
+
+		public void TestUnion ()
+		{
+			XmlDocument document = new XmlDocument ();
+			document.LoadXml ("<foo />");
+			XmlNodeList nodes = document.SelectNodes ("(/foo) | (/foo)");
+			AssertEquals (1, nodes.Count);	// bug #27548
+			AssertSame (document.DocumentElement, nodes [0]);
+		}
 	}
 }
