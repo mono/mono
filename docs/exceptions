@@ -56,11 +56,14 @@ leave: is simply translated into a branch to the target. If the leave
 instruction is inside a finally block (but not inside another handler)
 we call the finally handler before we branch to the target.
 
-finally/endfinally: is translated into subroutine ending with a "return"
-statement. The subroutine does not save EBP/ESP, because we need access to the
-local variables of the enclosing method. We have to use a "call"
-instruction to execute such finally handlers. This makes it possible to
-execute them inside the stack unwinding code.
+finally/endfinally, filter/endfilter: is translated into subroutine ending with
+a "return" statement. The subroutine does not save EBP, because we need access
+to the local variables of the enclosing method. Its is possible that
+instructions inside those handlers modify the stack pointer, thus we save the
+stack pointer at the start of the handler, and restore it at the end. We have
+to use a "call" instruction to execute such finally handlers. This makes it
+also possible to execute them inside the stack unwinding code. Filters receives
+the exception object in ECX.
 
 throw: we first save all regs into a sigcontext struct (we pass the
 exception object in register ECX), and then call the stack unwinding
