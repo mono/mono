@@ -1,3 +1,10 @@
+2005-01-04  Jackson Harper  <jackson@ximian.com>
+
+	* TreeNode.cs: Patches by Kazuki Oikawa (kazuki@panicode.com) for
+	handling focus, return correct colors and fonts, 
+	* TreeView.cs: Patches by Kazuki Oikawa (kazuki@panicode.com) to
+	handle selection, horizontal scrolling, and mouse interaction.
+
 2005-01-04  Peter Bartok <pbartok@novell.com>
 
 	* TextControl.cs: Switched Line, LineTag and Document classes to 

@@ -17,11 +17,11 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-// Copyright (c) 2004 Novell, Inc.
+// Copyright (c) 2004-2005 Novell, Inc.
 //
 // Authors:
 //	Jackson Harper (jackson@ximian.com)
-
+//	Kazuki Oikawa (kazuki@panicode.com)
 
 using System;
 using System.Drawing;
@@ -40,6 +40,10 @@ namespace System.Windows.Forms {
 		private TreeNodeCollection nodes;
 		private int total_node_count;
 
+		private TreeNode selected_node = null;
+		private TreeNode focused_node = null;
+		private bool select_mmove = false;
+
 		private ImageList image_list;
 		private int image_index = -1;
 		private int selected_image_index = -1;
@@ -54,6 +58,17 @@ namespace System.Windows.Forms {
 		private bool show_lines = true;
 		private bool show_root_lines = true;
 		private bool show_plus_minus = true;
+		private bool hide_selection = true;
+
+		private bool add_hscroll;
+		private bool add_vscroll;
+		private int max_node_width;
+		private VScrollBar vbar;
+		private bool vbar_added;
+		private int skipped_nodes;
+		private HScrollBar hbar;
+		private bool hbar_added;
+		private int hbar_offset;
 
 		private int update_stack;
 
@@ -72,16 +87,21 @@ namespace System.Windows.Forms {
 
 		public TreeView ()
 		{
+			base.background_color = ThemeEngine.Current.ColorWindow;
+			base.foreground_color = ThemeEngine.Current.ColorWindowText;
+
 			root_node = new TreeNode (this);
 			root_node.Text = "ROOT NODE";
 			nodes = new TreeNodeCollection (root_node);
 			root_node.SetNodes (nodes);
 
 			MouseDown += new MouseEventHandler (MouseDownHandler);
+			MouseUp += new MouseEventHandler(MouseUpHandler);
+			MouseMove += new MouseEventHandler(MouseMoveHandler);
 			SizeChanged += new EventHandler (SizeChangedHandler);
 
-			SetStyle (ControlStyles.AllPaintingInWmPaint, true);
-			SetStyle (ControlStyles.UserPaint, true);
+			SetStyle (ControlStyles.AllPaintingInWmPaint | ControlStyles.ResizeRedraw, true);
+			SetStyle (ControlStyles.UserPaint | ControlStyles.Selectable, true);
 
 			dash = new Pen (SystemColors.ControlLight, 1);
 		}
@@ -89,6 +109,16 @@ namespace System.Windows.Forms {
 		public string PathSeparator {
 			get { return path_separator; }
 			set { path_separator = value; }
+		}
+
+		public bool HideSelection {
+			get { return hide_selection; }
+			set {
+				if (hide_selection == value)
+					return;
+				hide_selection = value;
+				this.Refresh ();
+			}
 		}
 
 		public bool Sorted {
@@ -138,7 +168,7 @@ namespace System.Windows.Forms {
 		public int ImageIndex {
 			get { return image_index; }
 			set {
-				if (value < 0) {
+				if (value < -1) {
 					throw new ArgumentException ("'" + value + "' is not a valid value for 'value'. " +
 						"'value' must be greater than or equal to 0.");
 				}
@@ -149,10 +179,30 @@ namespace System.Windows.Forms {
 		public int SelectedImageIndex {
 			get { return selected_image_index; }
 			set {
-				if (value < 0) {
+				if (value < -1) {
 					throw new ArgumentException ("'" + value + "' is not a valid value for 'value'. " +
 						"'value' must be greater than or equal to 0.");
 				}
+			}
+		}
+
+		public TreeNode SelectedNode {
+			get { return selected_node; }
+			set {
+				if (selected_node == value)
+					return;
+
+				TreeViewCancelEventArgs e = new TreeViewCancelEventArgs (value, false, TreeViewAction.Unknown);
+				OnBeforeSelect (e);
+
+				if (e.Cancel)
+					return;
+
+				selected_node = value;
+				focused_node = value;
+				Refresh ();
+				
+				OnAfterSelect (new TreeViewEventArgs (value, TreeViewAction.Unknown));
 			}
 		}
 
@@ -445,22 +495,33 @@ namespace System.Windows.Forms {
 
 		public TreeNode GetNodeAt (int x, int y)
 		{
+			TreeNode node = GetNodeAt (y);
+			if (node == null || !IsTextArea (node, x))
+				return null;
+			return node;
+					
+		}
+
+		private TreeNode GetNodeAt (int y)
+		{
+
 			if (top_node == null)
 				top_node = nodes [0];
 
 			OpenTreeNodeEnumerator o = new OpenTreeNodeEnumerator (TopNode);
-			int move = y / ItemHeight;
+			int move = y / ItemHeight + skipped_nodes;
 
-			for (int i = 0; i < move; i++) {
+			for (int i = -1; i < move; i++) {
 				if (!o.MoveNext ())
 					return null;
 			}
 
-			// Make sure it is in the horizontal bounding box
-			if (o.CurrentNode.Bounds.Left > x && o.CurrentNode.Bounds.Right < x)
-				return o.CurrentNode;
+			return o.CurrentNode;
+		}
 
-			return null;
+		private bool IsTextArea (TreeNode node, int x) 
+		{
+			return node != null && node.Bounds.Left <= x && node.Bounds.Right >= x;
 		}
 
 		public int GetNodeCount (bool include_subtrees)
@@ -489,15 +550,17 @@ namespace System.Windows.Forms {
 				return;
 			}
 			case Msg.WM_LBUTTONDBLCLK:
-				Console.WriteLine ("double click");
+				int val = m.LParam.ToInt32();
+				DoubleClickHandler (null, new MouseEventArgs (MouseButtons.Left, 2, val & 0xffff, (val>>16) & 0xffff, 0));
 				break;
 			}
 			base.WndProc (ref m);
 		}
 
+		// TODO: Update from supplied node down
 		internal void UpdateBelow (TreeNode node)
 		{
-			// Invalidate all these nodes and the nodes below it
+			Refresh ();
 		}
 
 		private void DoPaint (PaintEventArgs pe)
@@ -508,10 +571,6 @@ namespace System.Windows.Forms {
 			Draw();
 			pe.Graphics.DrawImage (ImageBuffer, 0, 0);
 		}
-
-		private bool add_hscroll;
-		private bool add_vscroll;
-		private int max_node_width;
 		
 		private void Draw ()
 		{
@@ -524,21 +583,11 @@ namespace System.Windows.Forms {
 			int node_count = 0;
 
 			Rectangle fill = ClientRectangle;
-			Rectangle vclip = Rectangle.Empty;
-
 			add_vscroll = false;
 			add_hscroll = false;
 
-			if ((visible_node_count * ItemHeight) > ClientRectangle.Height) {
-				add_vscroll = true;
-				if (vbar == null)
-					vbar = new VScrollBar ();
-				vclip = new Rectangle (ClientRectangle.Width - vbar.Width, 0, vbar.Width, Height);
-				fill.Width -= vbar.Width;
-				DeviceContext.ExcludeClip (vclip);
-			}
-
-			DeviceContext.FillRectangle (new SolidBrush (Color.White), fill);
+			add_vscroll = (visible_node_count * ItemHeight) > ClientRectangle.Height;
+			DeviceContext.FillRectangle (new SolidBrush (BackColor), fill);
 
 			int depth = 0;
 			int item_height = ItemHeight;
@@ -551,18 +600,37 @@ namespace System.Windows.Forms {
 				depth = 0;
 			}
 
-			if (max_node_width > ClientRectangle.Width) {
+			if (max_node_width > ClientRectangle.Width)
 				add_hscroll = true;
-				AddHorizontalScrollBar ();
-			}
 
 			if (add_vscroll)
-				AddVerticalScrollBar (node_count, vclip);
+				add_hscroll = max_node_width > ClientRectangle.Width - ThemeEngine.Current.VScrollBarDefaultSize.Width;
+			if (add_hscroll)
+				add_vscroll = (visible_node_count * ItemHeight) > ClientRectangle.Height - ThemeEngine.Current.HScrollBarDefaultSize.Width;
+
+			if (add_hscroll) {
+				AddHorizontalScrollBar ();
+			} else if (hbar != null) {
+				Controls.Remove (hbar);
+				hbar.Dispose ();
+				hbar_added = false;
+				hbar_offset = 0;
+			}
+
+			if (add_vscroll) {
+				AddVerticalScrollBar (node_count);
+			} else if (vbar != null) {
+				Controls.Remove (vbar);
+				vbar.Dispose ();
+				vbar = null;
+				vbar_added = false;
+				skipped_nodes = 0;
+			}
 
 			if (add_hscroll && add_vscroll) {
 				Rectangle grip = new Rectangle (hbar.Right, vbar.Bottom, vbar.Width, hbar.Height);
-				DeviceContext.FillRectangle (new SolidBrush (BackColor), grip);
-				ControlPaint.DrawSizeGrip (DeviceContext, BackColor, grip);
+				DeviceContext.FillRectangle (new SolidBrush (ThemeEngine.Current.ColorButtonFace), grip);
+				ControlPaint.DrawSizeGrip (DeviceContext, ThemeEngine.Current.ColorButtonFace, grip);
 			}
 			
 			/*
@@ -609,7 +677,7 @@ namespace System.Windows.Forms {
 				DeviceContext.DrawLine (SystemPens.ControlDarkDark, x + 2, middle, x + 6, middle); 
 			} else {
 				DeviceContext.DrawLine (SystemPens.ControlDarkDark, x + 2, middle, x + 6, middle);
-				DeviceContext.DrawLine (SystemPens.ControlDarkDark, x + 4, y + 6, x + 4, y + 10);
+				DeviceContext.DrawLine (SystemPens.ControlDarkDark, x + 4, middle - 2, x + 4, middle + 2);
 			}
 		}
 
@@ -646,13 +714,14 @@ namespace System.Windows.Forms {
 
 			int ly = 0;
 			if (node.PrevNode != null) {
-				int prevadjust = (node.PrevNode.Nodes.Count > 0 && show_plus_minus ? 4 : 0);
+				int prevadjust = (node.Nodes.Count > 0 && show_plus_minus ? (node.PrevNode.Nodes.Count == 0 ? 0 : 4) :
+						(node.PrevNode.Nodes.Count == 0 ? 0 : 4));
 				int myadjust = (node.Nodes.Count > 0 && show_plus_minus ? 4 : 0);
 				ly = node.PrevNode.Bounds.Bottom - (item_height / 2) + prevadjust;
 				DeviceContext.DrawLine (dash, x - indent + 9, middle - myadjust, x - indent + 9, ly);
 			} else if (node.Parent != null) {
 				int myadjust = (node.Nodes.Count > 0 && show_plus_minus ? 4 : 0);
-				ly = node.Parent.Bounds.Bottom;
+				ly = node.Parent.Bounds.Bottom - 1;
 				DeviceContext.DrawLine (dash, x - indent + 9, middle - myadjust, x - indent + 9, ly);
 			}
 		}
@@ -685,8 +754,8 @@ namespace System.Windows.Forms {
 				Font font, ref int visible_node_count, int max_height)
 		{
 			node_count++;
-			int x = (!show_root_lines && node.Parent != null ? depth  - 1 : depth) * indent;
-			int y = (item_height + 1) * (node_count - skipped_nodes - 1);
+			int x = (!show_root_lines && node.Parent != null ? depth  - 1 : depth) * indent - hbar_offset;
+			int y = item_height * (node_count - skipped_nodes - 1);
 			bool visible = (y >= 0 && y < max_height);
 
 			if (visible)
@@ -726,13 +795,27 @@ namespace System.Windows.Forms {
 			UpdateNodeBounds (node, x, y, item_height);
 
 			if (visible) {
-				if (node.BackColor != BackColor)
-					DeviceContext.FillRectangle (new SolidBrush (node.BackColor), node.Bounds);
 				Rectangle r = node.Bounds;
 				StringFormat format = new StringFormat ();
 				format.LineAlignment = StringAlignment.Center;
 				r.Y += 2; // we have to adjust this to get nice middle alignment
-				DeviceContext.DrawString (node.Text, font, new SolidBrush (Color.Black), r, format);
+
+				Color text_color = (Focused && SelectedNode == node ? ThemeEngine.Current.ColorHilightText : node.ForeColor);
+				if (Focused) {
+					if (SelectedNode == node)
+						DeviceContext.FillRectangle (new SolidBrush (ThemeEngine.Current.ColorHilight), node.Bounds);
+					if (focused_node == node) {
+						Pen dot_pen = new Pen (ThemeEngine.Current.ColorButtonHilight, 1);
+						dot_pen.DashStyle = DashStyle.Dot;
+						DeviceContext.DrawRectangle (new Pen (ThemeEngine.Current.ColorButtonDkShadow),
+								node.Bounds.X, node.Bounds.Y, node.Bounds.Width - 1, node.Bounds.Height - 1);
+						DeviceContext.DrawRectangle (dot_pen, node.Bounds.X, node.Bounds.Y, node.Bounds.Width - 1, node.Bounds.Height - 1);
+					}
+				} else {
+					if (!HideSelection && SelectedNode == node)
+						DeviceContext.FillRectangle (new SolidBrush (ThemeEngine.Current.ColorButtonFace), node.Bounds);
+				}
+				DeviceContext.DrawString (node.Text, font, new SolidBrush (text_color), r, format);
 				y += item_height + 1;
 			}
 
@@ -750,21 +833,18 @@ namespace System.Windows.Forms {
 
 		}
 
-		VScrollBar vbar;
-		bool vbar_added;
-		int skipped_nodes;
-		
-		private void AddVerticalScrollBar (int total_nodes, Rectangle bounds)
+		private void AddVerticalScrollBar (int total_nodes)
 		{
+			if (vbar == null)
+				vbar = new VScrollBar ();
+
+			vbar.Bounds = new Rectangle (ClientRectangle.Width - vbar.Width,
+				0, vbar.Width, (add_hscroll ? Height - ThemeEngine.Current.HScrollBarDefaultSize.Height : Height));
+
 			vbar.Maximum = total_nodes;
 			int height = ClientRectangle.Height;
 
 			vbar.LargeChange = height / ItemHeight;
-
-			if (add_hscroll)
-				bounds.Height -= hbar.Height;
-
-			vbar.Bounds = bounds;
 
 			if (!vbar_added) {
 				Controls.Add (vbar);
@@ -773,21 +853,17 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		HScrollBar hbar;
-		bool hbar_added;
-		int hbar_offset;
-
 		private void AddHorizontalScrollBar ()
 		{
-			if (hbar == null) {
+			if (hbar == null)
 				hbar = new HScrollBar ();
-			}
 
 			hbar.Bounds = new Rectangle (ClientRectangle.Left, ClientRectangle.Bottom - hbar.Height,
-					(add_vscroll ? Width - vbar.Width : Width), hbar.Height);
+					(add_vscroll ? Width - ThemeEngine.Current.VScrollBarDefaultSize.Width : Width), hbar.Height);
 
 			if (!hbar_added) {
 				Controls.Add (hbar);
+				hbar.ValueChanged += new EventHandler (HScrollBarValueChanged);
 				hbar_added = true;
 			}
 		}
@@ -817,6 +893,12 @@ namespace System.Windows.Forms {
 			Refresh ();
 		}
 
+		private void HScrollBarValueChanged(object sender, EventArgs e)
+		{
+			hbar_offset = hbar.Value;
+			Refresh ();
+		}
+
 		private int GetVisibleNodeCount ()
 		{
 
@@ -839,19 +921,59 @@ namespace System.Windows.Forms {
 			if (!show_plus_minus)
 				return;
 
-			OpenTreeNodeEnumerator walk = new OpenTreeNodeEnumerator (root_node);
+			TreeNode node = GetNodeAt (e.Y);
+			if (node == null)
+				return;
+			if (IsTextArea (node, e.X)) {
+				selected_node = node;
+				Console.WriteLine ("selected node");
+				if (selected_node != focused_node) {
+					select_mmove = true;
+					Refresh ();
+				}
+			} else if (node.PlusMinusBounds.Contains (e.X, e.Y)) {
+				node.Toggle ();
+				return;
+			} else if (node.CheckBoxBounds.Contains (e.X, e.Y)) {
+				node.Checked = !node.Checked;
+				return;
+			}
+		}
 
-			// TODO: So much optimization potential here
-			while (walk.MoveNext ()) {
-				TreeNode node = (TreeNode) walk.Current;
-				if (node.PlusMinusBounds.Contains (e.X, e.Y)) {
-					node.Toggle ();
-					break;
-				}
-				if (node.CheckBoxBounds.Contains (e.X, e.Y)) {
-					node.Checked = !node.Checked;
-					break;
-				}
+		private void MouseUpHandler (object sender, MouseEventArgs e) {
+			if (!select_mmove)
+				return;
+				
+			select_mmove = false;
+
+			TreeViewCancelEventArgs ce = new TreeViewCancelEventArgs (selected_node, false, TreeViewAction.ByMouse);
+			OnBeforeSelect (ce);
+			if (!ce.Cancel) {
+				focused_node = selected_node;
+				OnAfterSelect (new TreeViewEventArgs (selected_node, TreeViewAction.ByMouse));
+			} else {
+				selected_node = focused_node;
+			}
+
+			Refresh();
+		}
+
+		private void MouseMoveHandler (object sender, MouseEventArgs e) {
+			if(!select_mmove)
+				return;
+			TreeNode node = GetNodeAt(e.X,e.Y);
+			if(node == selected_node)
+				return;
+			
+			selected_node = focused_node;
+			select_mmove = false;
+			Refresh();
+		}
+
+		private void DoubleClickHandler (object sender, MouseEventArgs e) {
+			TreeNode node = GetNodeAt(e.X,e.Y);
+			if(node != null) {
+				node.Toggle();
 			}
 		}
 

@@ -17,10 +17,11 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-// Copyright (c) 2004 Novell, Inc.
+// Copyright (c) 2004-2005 Novell, Inc.
 //
 // Authors:
 //	Jackson Harper (jackson@ximian.com)
+//	Kazuki Oikawa (kazuki@panicode.com)
 
 using System;
 using System.Text;
@@ -41,7 +42,7 @@ namespace System.Windows.Forms {
 		private int selected_image_index = -1;
 		internal TreeNodeCollection nodes;
 		
-		private bool is_expanded = true;
+		private bool is_expanded = false;
 		private Rectangle bounds = Rectangle.Empty;
 		private Rectangle plus_minus_bounds = Rectangle.Empty;
 		private Rectangle checkbox_bounds = Rectangle.Empty;
@@ -164,7 +165,11 @@ namespace System.Windows.Forms {
 
 		public Color BackColor {
 			get { 
-				return prop_bag == null ? Color.Empty : prop_bag.BackColor;
+				if (prop_bag != null)
+					return prop_bag.BackColor;
+				if (TreeView != null)
+					return TreeView.BackColor;
+				return Color.Empty;
 			}
 			set { 
 				if (prop_bag == null)
@@ -174,8 +179,12 @@ namespace System.Windows.Forms {
 		}
 
 		public Color ForeColor {
-			get { 
-				return prop_bag == null ? Color.Empty : prop_bag.ForeColor;
+			get {
+				if (prop_bag != null)
+					return prop_bag.ForeColor;
+				if (TreeView != null)
+					return TreeView.ForeColor;
+				return Color.Empty;
 			}
 			set {
 				if (prop_bag == null)
@@ -186,7 +195,11 @@ namespace System.Windows.Forms {
 
 		public Font NodeFont {
 			get {
-				return prop_bag == null ? null : prop_bag.Font;
+				if (prop_bag != null)
+					return prop_bag.Font;
+				if (TreeView != null)
+					return TreeView.Font;
+				return null;
 			}
 			set {
 				if (prop_bag == null)
@@ -309,6 +322,10 @@ namespace System.Windows.Forms {
 
 		public void Expand ()
 		{
+			Expand(false);
+		}
+		private void Expand (bool byInternal)
+		{
 			if (is_expanded)
 				return;
 
@@ -330,6 +347,11 @@ namespace System.Windows.Forms {
 
 		public void Collapse ()
 		{
+			Collapse(false);
+		}
+
+		private void Collapse (bool byInternal)
+		{
 			if (!is_expanded)
 				return;
 
@@ -349,7 +371,20 @@ namespace System.Windows.Forms {
 					TreeView.OnAfterCollapse (new TreeViewEventArgs (this));
 				if (IsNodeVisible () && TreeView != null)
 					TreeView.UpdateBelow (this);
+				if(!byInternal && TreeView != null && HasFocusInChildren ())
+					TreeView.SelectedNode = this;
 			}
+		}
+
+		private bool HasFocusInChildren()
+		{
+			if(TreeView == null) return false;
+			foreach(TreeNode node in nodes) {
+				if(node == TreeView.SelectedNode) return true;
+				if(node.HasFocusInChildren())
+					return true;
+			}
+			return false;
 		}
 
 		public void Remove ()
@@ -362,11 +397,13 @@ namespace System.Windows.Forms {
 		public void ExpandAll ()
 		{
 			ExpandRecursive (this);
+			if(TreeView != null)
+				TreeView.Refresh();
 		}
 
 		private void ExpandRecursive (TreeNode node)
 		{
-			node.Expand ();
+			node.Expand (true);
 			foreach (TreeNode child in node.Nodes) {
 				ExpandRecursive (child);
 			}
