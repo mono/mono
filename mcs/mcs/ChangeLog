@@ -1,5 +1,10 @@
 2004-09-15  Marek Safar  <marek.safar@seznam.cz>
 
+	Fixed bug #64226
+	* cs-parser.jay: Add error 1017 report.
+
+2004-09-15  Marek Safar  <marek.safar@seznam.cz>
+
 	Fixed bug #59980, #64224
 	* expression.cs (Invocation.DoResolve): Fixed error CS0571 test.
 

@@ -3770,19 +3770,23 @@ try_statement
 	: TRY block catch_clauses 
 	{
 		Catch g = null;
-		ArrayList s = new ArrayList (4);
 		
-		foreach (Catch cc in (ArrayList) $3) {
-			if (cc.IsGeneral)
+		ArrayList c = (ArrayList)$3;
+		for (int i = 0; i < c.Count; ++i) {
+			Catch cc = (Catch) c [i];
+			if (cc.IsGeneral) {
+				if (i != c.Count - 1)
+					Report.Error (1017, cc.loc, "Empty catch block must be the last in a series of catch blocks");
 				g = cc;
-			else
-				s.Add (cc);
+				c.RemoveAt (i);
+				i--;
+			}
 		}
 
 		// Now s contains the list of specific catch clauses
 		// and g contains the general one.
 		
-		$$ = new Try ((Block) $2, s, g, null, lexer.Location);
+		$$ = new Try ((Block) $2, c, g, null, lexer.Location);
 	}
 	| TRY block opt_catch_clauses FINALLY block
 	  {
