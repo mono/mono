@@ -4131,11 +4131,9 @@ namespace Mono.CSharp {
 			if (expr == null)
 				return null;
 				
-			Console.WriteLine(expr);
 			if (expr is Invocation) {
-				Console.WriteLine("-->must first resolve a call");
+				// FIXME Calls which return an Array are not resolved (here or in the grammar)
 				expr = expr.Resolve(ec);
-				Console.WriteLine ("-->expr resolved: " + (expr == null ? "NULL" : "OK"));
 			}
 			
 			if (!(expr is MethodGroupExpr)) 

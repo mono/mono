@@ -636,7 +636,7 @@ namespace_declaration
 				if (asec.Target == "assembly")
 					RootContext.AddGlobalAttributeSection (current_container, asec);
 		}
-			  Console.WriteLine ("NS = " + (string)$3);
+			  
 		current_namespace = RootContext.Tree.RecordNamespace(current_namespace, name, (string)$3);
 	  } 
 	  opt_imports_directives
@@ -653,9 +653,6 @@ type_declaration
 	  { 
 		current_attributes = (Attributes) $1; 
 	  	current_modifiers = (int) $2; 
-	   
-	   	Console.WriteLine ("Declaring type with attr = " + ((current_attributes == null) ? "(null)" : "Attr"));
-	   	Console.WriteLine ("Declaring type with mod  = " + ((current_modifiers == 0) ? "0\n" : current_modifiers.ToString()));
 	  }	  
 	  type_spec_declaration
 	;
@@ -679,7 +676,7 @@ class_declaration
 
 		new_class = new Class (current_container, name, current_modifiers, 
 				       (Attributes) current_attributes, lexer.Location);
-Console.WriteLine ("Declaring class '" + name + "' with attributes '" + current_attributes + "'");
+
 		current_container = new_class;
 		current_container.Namespace = current_namespace;
 		RootContext.Tree.RecordDecl (name, new_class);
@@ -799,7 +796,7 @@ class_member_declarator
 	   }	
 	|  field_declaration
 	|  property_declaration			
-//	|  event_declaration	
+	|  event_declaration	
 	|  withevents_declaration	/* This is a field but must be treated specially, see below */
 	|  type_declaration			
 	;
@@ -958,7 +955,7 @@ struct_member_declarator
 	//| constant_declaration
 	| method_declaration
 	| property_declaration
-	//| event_declaration
+	| event_declaration
 	| constructor_declaration
 	| type_declaration
 
@@ -968,6 +965,24 @@ struct_member_declarator
 	 */
 	//| destructor_declaration
 	;
+	
+event_declaration
+	: EVENT IDENTIFIER AS type EOL
+	  {
+	  	VariableDeclaration var = new VariableDeclaration ((string) $2, (Expression) $4, lexer.Location);
+
+		Event e = new Event ((Expression) $4, var.identifier, 
+				     null, current_modifiers, null, null, 
+				     current_attributes, lexer.Location);
+
+		CheckDef (current_container.AddEvent (e), e.Name, e.Location);
+
+	  }
+	| EVENT IDENTIFIER OPEN_PARENS opt_formal_parameter_list CLOSE_PARENS EOL
+	  {
+		throw new NotSupportedException();
+	  }
+	;	
 
 enum_declaration
 	: ENUM IDENTIFIER opt_type_spec EOL
@@ -1582,13 +1597,16 @@ statement : embedded_statement
 
 		current_block.AddStatement ((Statement) $1);
 	  } 
-	  | labeled_statement EOL
+	  | labeled_statement 
 	  | ADDHANDLER prefixed_unary_expression COMMA ADDRESSOF qualified_identifier
 	   {
 	   	AddHandler ((Expression) $2, (string) $5);
 	   }
+	  | RAISEEVENT IDENTIFIER OPEN_PARENS opt_formal_parameter_list CLOSE_PARENS
+	    {
+	    	RaiseEvent ((string) $2, (ArrayList) $4);
+	    }
 	  ;	
-	  
 
 labeled_statement
 	: IDENTIFIER COLON 
@@ -1711,7 +1729,7 @@ try_catch_finally
 	
 try_header
 	: TRY EOL
-	  {   Console.WriteLine ("try_header");
+	  {   
 		start_block();  
 	  }
 	  opt_statement_list 
@@ -2221,7 +2239,7 @@ variable_identifier
 	;		
 		
 opt_type_spec
-	: /* empty */	{ $$ = (Expression) TypeManager.system_object_expr; }
+	: /* empty */	{ $$ = null; /* $$ = (Expression) TypeManager.system_object_expr; */ }
 	| AS type 	{ $$ = (Expression) $2; };
 	;
 			
@@ -2524,7 +2542,7 @@ variable_reference
 element_access
 	: primary_expression OPEN_PARENS expression_list CLOSE_PARENS
 	  {
-	  Console.WriteLine ("------------------> This is an element access to " + $$);
+	  
 		$$ = new ElementAccess ((Expression) $1, (ArrayList) $3, lexer.Location);
 	  }
 /*	| primary_expression rank_specifiers
@@ -2715,7 +2733,7 @@ relational_expression
 equality_expression
 	: relational_expression
 	| equality_expression ASSIGN relational_expression
-	  {Console.WriteLine ("EQ");
+	  {
 		$$ = new Binary (Binary.Operator.Equality,
 			         (Expression) $1, (Expression) $3, lexer.Location);
 	  }
@@ -2763,13 +2781,13 @@ conditional_expression
 
 assignment_expression
 	: prefixed_unary_expression ASSIGN expression
-	  { Console.WriteLine ("ASSI");
+	  { 
 		$$ = new Assign ((Expression) $1, (Expression) $3, lexer.Location);
 	  }
 	;
 
 expression
-	: conditional_expression { Console.WriteLine ("COND"); $$ = $1; }
+	: conditional_expression { $$ = $1; }
 	/*| assignment_expression*/
 	;
 
@@ -2878,7 +2896,7 @@ public Tokenizer Lexer {
 	}
 }		   
 
-Expression DecomposeQI (string name, Location loc)
+public static Expression DecomposeQI (string name, Location loc)
 {
 	Expression o;
 
@@ -3017,16 +3035,17 @@ public class VariableDeclaration {
 	public static void FixupTypes (ArrayList vars)
 	{
 		int varcount = 	vars.Count;
-		VariableDeclaration lf = (VariableDeclaration) vars[varcount - 1];
+		VariableDeclaration last_var = (VariableDeclaration) vars[varcount - 1];
 			
-		if (lf.type == null)
-			lf.type = TypeManager.system_object_expr;
+		if (last_var.type == null)
+			last_var.type = TypeManager.system_object_expr;
 			
-		Expression cur_type = lf.type;
+		Expression cur_type = last_var.type;
 		int n = varcount - 1;
 		
 		while (n >= 0) {
 			VariableDeclaration var = (VariableDeclaration) vars[n--];
+			n--;
 			if (var.type == null)
 				var.type = cur_type;
 			else
@@ -3185,19 +3204,22 @@ void CheckAttributeTarget (string a)
 	}
 }
 
-private void AddHandler (Block b, Expression evt_definition, string handler_name)
+private void AddHandler (Block b, Expression evt_id, string handler_name)
 {
    	Location loc = lexer.Location;
-   	ArrayList neh_args = new ArrayList();
-   	neh_args.Add (new Argument (DecomposeQI(handler_name, loc), Argument.AType.Expression));
-   	
-   	ExpressionStatement se = (ExpressionStatement)new New (DecomposeQI("System.EventHandler", loc), neh_args, loc);
-   	
-   	CompoundAssign ca = new CompoundAssign (
-			Binary.Operator.Addition, evt_definition, (Expression) se, loc);
-			
-	Statement s = (Statement)(new StatementExpression ((ExpressionStatement) ca, loc)); 
-	b.AddStatement (s);	
+   	string evt_target = evt_id.ToString();
+   	evt_target = evt_target.Substring (0, evt_target.LastIndexOf('.'));
+   	Statement s = (Statement) new AddHandler (evt_id, DecomposeQI(handler_name, loc), DecomposeQI(evt_target, loc), loc);
+   	b.AddStatement (s);
+}
+
+private void RaiseEvent (string evt_name, ArrayList args)
+{
+	Location loc = lexer.Location;
+	
+	Invocation evt_call = new Invocation (DecomposeQI(evt_name, loc), args, lexer.Location);
+   	Statement s = (Statement)(new StatementExpression ((ExpressionStatement) evt_call, loc)); 
+   	current_block.AddStatement (s);	
 }
 
 // FIXME: THIS DOES NOT WORK!!!

@@ -5413,4 +5413,74 @@ namespace Mono.CSharp {
 			return ret_val;
 		}
 	}
+	
+	/// <summary>
+	///   AddHandler statement
+	/// </summary>
+	public class AddHandler : Statement {
+		Expression EvtId;
+		Expression EvtHandler;
+		Expression EvtTarget;
+
+		public AddHandler (Expression evt_id, Expression evt_handler, 
+							Expression evt_target, Location l)
+		{
+			EvtId = evt_id;
+			EvtHandler = evt_handler;
+			EvtTarget = evt_target;
+			loc = l;
+			Console.WriteLine ("Adding handler '" + evt_handler + "' for Event '" + evt_id +"'");
+		}
+
+		public override bool Resolve (EmitContext ec)
+		{
+			EvtId = EvtId.Resolve(ec);
+			EvtHandler = EvtHandler.Resolve(ec,ResolveFlags.MethodGroup);
+			EvtTarget = EvtTarget.Resolve (ec,ResolveFlags.VariableOrValue);
+			if (EvtId == null || (!(EvtId is EventExpr))) {
+				Report.Error (999, "'AddHandler' statement needs an event designator.");
+				return false;
+			}
+
+			if (EvtHandler == null) 
+			{
+				Report.Error (999, "'AddHandler' statement needs an event handler.");
+				return false;
+			}
+			//EventExpr ee = (EventExpr) EvtId;
+			//MethodGroupExpr me = (MethodGroupExpr) EvtHandler;
+			//bool b = EvtId.Type.IsSubclassOf (TypeManager.delegate_type);
+			//ee.EventInfo.AddEventHandler(EvtTarget, new System.Delegate())
+			return true;
+		}
+
+		protected override bool DoEmit (EmitContext ec)
+		{
+			Expression e, d;
+			ArrayList args = new ArrayList();
+			Argument arg = new Argument (EvtHandler, Argument.AType.Expression);
+			args.Add (arg);
+			
+			// The even type was already resolved to a delegate, so
+			// we must un-resolve its name to generate a type expression
+			string ts = (EvtId.Type.ToString()).Replace ('+','.');
+			Expression dtype = Mono.MonoBASIC.Parser.DecomposeQI (ts, Location.Null);
+
+			// which we can use to declare a new event handler
+			// of the same type
+			d = new New (dtype, args, Location.Null);
+			d = d.Resolve(ec);
+			e = new CompoundAssign(Binary.Operator.Addition, EvtId, d, Location.Null);
+
+			// we resolve it all and emit the code
+			e = e.Resolve(ec);
+			if (e != null) 
+			{
+				e.Emit(ec);
+				return true;
+			}
+
+			return false;
+		}
+	}	
 }
