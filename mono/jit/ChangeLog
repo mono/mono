@@ -1,5 +1,8 @@
 2002-04-15  Dietmar Maurer  <dietmar@ximian.com>
 
+	* x86.brg: check the this pointer before calling
+	non-virtual functions
+
 	* emit-x86.c (arch_emit_prologue): initialize local vars.
 
 	* x86.brg: removed incredible clumsy code
