@@ -2323,6 +2323,13 @@ namespace Mono.CSharp {
 			if (rgKeys.Length > 0)
 				typeKeys = rgKeys [0].GetType ();	// used for conversions
 
+			Type compare_type;
+			
+			if (TypeManager.IsEnumType (SwitchType))
+				compare_type = TypeManager.EnumToUnderlying (SwitchType);
+			else
+				compare_type = SwitchType;
+			
 			for (int iBlock = rgKeyBlocks.Count - 1; iBlock >= 0; --iBlock)
 			{
 				KeyBlock kb = ((KeyBlock) rgKeyBlocks [iBlock]);
@@ -2341,8 +2348,8 @@ namespace Mono.CSharp {
 				{
 					// TODO: if all the keys in the block are the same and there are
 					//       no gaps/defaults then just use a range-check.
-					if (SwitchType == TypeManager.int64_type ||
-						SwitchType == TypeManager.uint64_type)
+					if (compare_type == TypeManager.int64_type ||
+						compare_type == TypeManager.uint64_type)
 					{
 						// TODO: optimize constant/I4 cases
 
@@ -2351,7 +2358,7 @@ namespace Mono.CSharp {
 						EmitObjectInteger (ig, System.Convert.ChangeType (kb.nFirst, typeKeys));
 						ig.Emit (OpCodes.Blt, lblDefault);
 						ig.Emit (OpCodes.Ldloc, val);
-						EmitObjectInteger (ig, System.Convert.ChangeType (kb.nFirst, typeKeys));
+						EmitObjectInteger (ig, System.Convert.ChangeType (kb.nLast, typeKeys));
 						ig.Emit (OpCodes.Bgt, lblDefault);
 
 						// normalize range
