@@ -1,3 +1,22 @@
+2004-08-12 Sanjay Gupta <gsanjay@novell.com>
+
+	* ConnectionConsumerCallback.cs:
+	* ConnectionProviderCallback.cs:
+	* WebPartAuthorizationEventArgs.cs:
+	* WebPartAuthorizationEventHandler.cs:
+	* WebPartCancelEventArgs.cs:
+	* WebPartCancelEventHandler.cs:
+	* WebPartConnectionsEventArgs.cs:
+	* WebPartConnectionsEventHandler.cs:
+	* WebPartDisplayModeCancelEventArgs.cs:
+	* WebPartDisplayModeCancelEventHandler.cs:
+	* WebPartDisplayModeEventArgs.cs:
+	* WebPartDisplayModeEventHandler.cs:
+	* WebPartEventArgs.cs:
+	* WebPartEventHandler.cs:
+	* WebPartVerbsEventArgs.cs:
+	* WebPartVerbsEventHandler.cs: Added new EventArgs and EventHandler.
+
 2004-08-03 Sanjay Gupta <gsanjay@novell.com>
 
 	* ConnectionPointType.cs : Implemented enumeration.
