@@ -58,7 +58,7 @@ namespace System.Data.OracleClient.Oci {
 			get { return serviceHandle; }
 			set { serviceHandle = value; }
 		}
-
+		
 		public ArrayList Values {
 			get { return values; }
 		}
@@ -218,8 +218,17 @@ namespace System.Data.OracleClient.Oci {
 				throw new InvalidOperationException ("StatementHandle is already disposed.");
 			}
 
-			byte [] buffer = System.Text.Encoding.UTF8.GetBytes (commandText + "\0");
+			int rsize = 0;
+			byte [] buffer;
+			
+			// Get size of buffer
+			OciCalls.OCIUnicodeToCharSet (Parent, null, commandText, out rsize);
+			
+			// Fill buffer
+			buffer = new byte[rsize];
+			OciCalls.OCIUnicodeToCharSet (Parent, buffer, commandText, out rsize);
 
+			// Execute statement
 			status = OciCalls.OCIStmtPrepare (this,
 				ErrorHandle,
 				buffer,

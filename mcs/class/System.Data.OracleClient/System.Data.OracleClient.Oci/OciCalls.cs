@@ -17,6 +17,7 @@
 using System;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
+using System.Text;
 
 namespace System.Data.OracleClient.Oci
 {
@@ -337,6 +338,23 @@ namespace System.Data.OracleClient.Oci
 				uint timeout,
 				[MarshalAs (UnmanagedType.U4)] OciTransactionFlags flags);
 
+			[DllImport ("oci")]
+			internal static extern int OCICharSetToUnicode (
+				IntPtr svchp,
+				[MarshalAs (UnmanagedType.LPWStr)] StringBuilder dst, 
+				[MarshalAs (UnmanagedType.U4)] int dstlen, 
+				byte [] src,
+				[MarshalAs (UnmanagedType.U4)] int srclen,
+				[MarshalAs (UnmanagedType.U4)] out int rsize);
+			
+			[DllImport ("oci")]
+			internal static extern int OCIUnicodeToCharSet (
+				IntPtr svchp,
+				byte [] dst,
+				[MarshalAs (UnmanagedType.U4)] int dstlen, 
+				[MarshalAs (UnmanagedType.LPWStr)] string src, 
+				[MarshalAs (UnmanagedType.U4)] int srclen,
+				[MarshalAs (UnmanagedType.U4)] out int rsize);
 		}
 
 		#endregion
@@ -753,6 +771,28 @@ namespace System.Data.OracleClient.Oci
 		{
 			Trace.WriteLineIf(traceOci, "OCITransStart", "OCI");
 			return OciNativeCalls.OCITransStart (svchp, errhp, timeout, flags);
+		}
+
+		internal static int OCICharSetToUnicode (
+			IntPtr svchp,
+			StringBuilder dst, 
+			byte [] src,
+			out int rsize)
+		{
+			Trace.WriteLineIf(traceOci, "OCICharSetToUnicode", "OCI");
+			
+			return OciNativeCalls.OCICharSetToUnicode (svchp, dst, dst!=null ? dst.Capacity : 0, src, src.Length, out rsize);
+		}
+
+		internal static int OCIUnicodeToCharSet (
+			IntPtr svchp,
+			byte [] dst,
+			[MarshalAs (UnmanagedType.LPWStr)] string src, 
+			[MarshalAs (UnmanagedType.U4)] out int rsize)
+		{
+			Trace.WriteLineIf(traceOci, "OCICharSetToUnicode", "OCI");
+			
+			return OciNativeCalls.OCIUnicodeToCharSet (svchp, dst, dst!=null ? dst.Length : 0, src, src.Length, out rsize);
 		}
 
 		#endregion

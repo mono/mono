@@ -1,3 +1,12 @@
+2004-05-10	Joerg Rosenkranz <joergr@voelcker.com>
+
+	* System.Data.OracleClient.Oci/OciCalls.cs:
+		Added OCI calls OCICharSetToUnicode and OCIUnicodeToCharSet.
+ 	* System.Data.OracleClient.Oci/OciStatementHandle.cs:
+ 		Changed statement encoding from UTF8 to OCIUnicodeToCharSet.
+ 	* System.Data.OracleClient.Oci/OciDefineHandle.cs:
+ 		Changed string encoding from UTF8 to OCICharSetToUnicode.
+	
 2004-05-21  Umadevi S  <sumadevi@novell.com>
 	* System.Data.OracleClient.Oci/OciDefineHandle.cs
 	  Fixed bug 55030. Included checking for size		

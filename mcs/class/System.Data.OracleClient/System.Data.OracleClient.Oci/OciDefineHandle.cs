@@ -263,8 +263,17 @@ namespace System.Data.OracleClient.Oci {
 			case OciDataType.OciString:
 				byte [] buffer = new byte [Size];
 				Marshal.Copy (Value, buffer, 0, Size);
-
-				return Encoding.UTF8.GetString (buffer);
+				
+				// Get length of returned string
+				int 	rsize = 0;
+				IntPtr	env = Parent.Parent;	// Parent is statement, grandparent is environment
+				OciCalls.OCICharSetToUnicode (env, null, buffer, out rsize);
+			
+				// Get string
+				StringBuilder ret = new StringBuilder(rsize);
+				OciCalls.OCICharSetToUnicode (env, ret, buffer, out rsize);
+	
+				return ret.ToString ();
 
 			case OciDataType.Integer:
 				tmp = Marshal.PtrToStringAnsi (Value, Size);
