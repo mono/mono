@@ -2,6 +2,8 @@ thisdir = class/System.Windows.Forms/Gtk
 SUBDIRS = 
 include ../../../build/rules.make
 
+CSCOMPILE=mcs
+
 # We can't build this by default because it depends on gtk-sharp.
 
 # Skip build/library.make for the moment -- we don't need its more advanced
@@ -75,8 +77,8 @@ LIB_SOURCES = \
 	DockStyle.cs \
 	ListControl.cs \
 	ListBox.cs \
-	DataGrid.cs	\
 	LayoutEventArgs.cs 
+#	DataGrid.cs	\
 
 all-local: $(LIBRARY) $(EXES)
 
