@@ -710,6 +710,152 @@ namespace System.Windows.Forms {
 		}
 
 		protected override bool ProcessDialogKey(Keys keyData) {
+			switch (keyData & Keys.KeyCode) {
+				case Keys.Left: {
+					document.SetSelectionToCaret(true);
+
+					if ((Control.ModifierKeys & Keys.Control) != 0) {
+						document.MoveCaret(CaretDirection.WordBack);
+					} else {
+						document.MoveCaret(CaretDirection.CharBack);
+					}
+					return true;
+				}
+
+				case Keys.Right: {
+					document.SetSelectionToCaret(true);
+
+					if ((Control.ModifierKeys & Keys.Control) != 0) {
+						document.MoveCaret(CaretDirection.WordForward);
+					} else {
+						document.MoveCaret(CaretDirection.CharForward);
+					}
+					return true;
+				}
+
+				case Keys.Up: {
+					document.SetSelectionToCaret(true);
+					document.MoveCaret(CaretDirection.LineUp);
+					return true;
+				}
+
+				case Keys.Down: {
+					document.SetSelectionToCaret(true);
+					document.MoveCaret(CaretDirection.LineDown);
+					return true;
+				}
+
+				case Keys.Home: {
+					document.SetSelectionToCaret(true);
+
+					if ((Control.ModifierKeys & Keys.Control) != 0) {
+						document.MoveCaret(CaretDirection.CtrlHome);
+					} else {
+						document.MoveCaret(CaretDirection.Home);
+					}
+					return true;
+				}
+
+				case Keys.End: {
+					document.SetSelectionToCaret(true);
+
+					if ((Control.ModifierKeys & Keys.Control) != 0) {
+						document.MoveCaret(CaretDirection.CtrlEnd);
+					} else {
+						document.MoveCaret(CaretDirection.End);
+					}
+					return true;
+				}
+
+				case Keys.Enter: {
+					if (multiline && (accepts_return || ((Control.ModifierKeys & Keys.Control) != 0))) {
+						if (document.selection_visible) {
+							document.ReplaceSelection("");
+						}
+						document.SetSelectionToCaret(true);
+
+						document.Split(document.CaretLine, document.CaretTag, document.CaretPosition);
+						OnTextChanged(EventArgs.Empty);
+						document.UpdateView(document.CaretLine, 2, 0);
+						document.MoveCaret(CaretDirection.CharForward);
+						return true;
+					}
+					break;
+				}
+
+				case Keys.Tab: {
+					if (accepts_tab) {
+						document.InsertChar(document.CaretLine, document.CaretPosition, '\t');
+						if (document.selection_visible) {
+							document.ReplaceSelection("");
+						}
+						document.SetSelectionToCaret(true);
+
+						OnTextChanged(EventArgs.Empty);
+						return true;
+					}
+					break;
+				}
+
+
+				case Keys.Back: {
+					// delete only deletes on the line, doesn't do the combine
+					if (document.selection_visible) {
+						document.ReplaceSelection("");
+					}
+					document.SetSelectionToCaret(true);
+					if (document.CaretPosition == 0) {
+						if (document.CaretLine.LineNo > 1) {
+							Line	line;
+							int	new_caret_pos;
+
+							line = document.GetLine(document.CaretLine.LineNo - 1);
+							new_caret_pos = line.text.Length;
+
+							document.Combine(line, document.CaretLine);
+							document.UpdateView(line, 1, 0);
+							document.PositionCaret(line, new_caret_pos);
+							document.UpdateCaret();
+							OnTextChanged(EventArgs.Empty);
+						}
+					} else {
+						document.DeleteChar(document.CaretTag, document.CaretPosition, false);
+						document.MoveCaret(CaretDirection.CharBack);
+						OnTextChanged(EventArgs.Empty);
+					}
+					return true;
+				}
+
+				case Keys.Delete: {
+					// delete only deletes on the line, doesn't do the combine
+					if (document.CaretPosition == document.CaretLine.text.Length) {
+						if (document.CaretLine.LineNo < document.Lines) {
+							Line	line;
+
+							line = document.GetLine(document.CaretLine.LineNo + 1);
+							document.Combine(document.CaretLine, line);
+							document.UpdateView(document.CaretLine, 2, 0);
+							OnTextChanged(EventArgs.Empty);
+
+#if Debug
+							Line	check_first;
+							Line	check_second;
+
+							check_first = document.GetLine(document.CaretLine.LineNo);
+							check_second = document.GetLine(check_first.line_no + 1);
+
+							Console.WriteLine("Post-UpdateView: Y of first line: {0}, second line: {1}", check_first.Y, check_second.Y);
+#endif
+
+							// Caret doesn't move
+						}
+					} else {
+						document.DeleteChar(document.CaretTag, document.CaretPosition, true);
+						OnTextChanged(EventArgs.Empty);
+					}
+					return true;
+				}
+			}
 			return base.ProcessDialogKey (keyData);
 		}
 
@@ -757,159 +903,19 @@ Console.WriteLine("Destroying caret");
 					return;
 				}
 
-				case Msg.WM_KEYDOWN: {
-					switch ((Keys)(m.WParam.ToInt32())) {
-						case Keys.Left: {
-							document.SetSelectionToCaret(true);
-
-							if ((Control.ModifierKeys & Keys.Control) != 0) {
-								document.MoveCaret(CaretDirection.WordBack);
-							} else {
-								document.MoveCaret(CaretDirection.CharBack);
-							}
-							return;
-						}
-
-						case Keys.Right: {
-							document.SetSelectionToCaret(true);
-
-							if ((Control.ModifierKeys & Keys.Control) != 0) {
-								document.MoveCaret(CaretDirection.WordForward);
-							} else {
-								document.MoveCaret(CaretDirection.CharForward);
-							}
-							return;
-						}
-
-						case Keys.Up: {
-							document.SetSelectionToCaret(true);
-							document.MoveCaret(CaretDirection.LineUp);
-							return;
-						}
-
-						case Keys.Down: {
-							document.SetSelectionToCaret(true);
-							document.MoveCaret(CaretDirection.LineDown);
-							return;
-						}
-
-						case Keys.Home: {
-							document.SetSelectionToCaret(true);
-
-							if ((Control.ModifierKeys & Keys.Control) != 0) {
-								document.MoveCaret(CaretDirection.CtrlHome);
-							} else {
-								document.MoveCaret(CaretDirection.Home);
-							}
-							return;
-						}
-
-						case Keys.End: {
-							document.SetSelectionToCaret(true);
-
-							if ((Control.ModifierKeys & Keys.Control) != 0) {
-								document.MoveCaret(CaretDirection.CtrlEnd);
-							} else {
-								document.MoveCaret(CaretDirection.End);
-							}
-							return;
-						}
-
-						case Keys.Enter: {
-							if (multiline && (accepts_return || ((Control.ModifierKeys & Keys.Control) != 0))) {
-								if (document.selection_visible) {
-									document.ReplaceSelection("");
-								}
-								document.SetSelectionToCaret(true);
-
-								document.Split(document.CaretLine, document.CaretTag, document.CaretPosition);
-								OnTextChanged(EventArgs.Empty);
-								document.UpdateView(document.CaretLine, 2, 0);
-								document.MoveCaret(CaretDirection.CharForward);
-								return;
-							}
-							break;
-						}
-
-						case Keys.Tab: {
-							if (accepts_tab) {
-								document.InsertChar(document.CaretLine, document.CaretPosition, '\t');
-								if (document.selection_visible) {
-									document.ReplaceSelection("");
-								}
-								document.SetSelectionToCaret(true);
-
-								OnTextChanged(EventArgs.Empty);
-							} else {
-								base.WndProc(ref m);
-							}
-							return;
-						}
-
-
-						case Keys.Back: {
-							// delete only deletes on the line, doesn't do the combine
-							if (document.selection_visible) {
-								document.ReplaceSelection("");
-							}
-							document.SetSelectionToCaret(true);
-							if (document.CaretPosition == 0) {
-								if (document.CaretLine.LineNo > 1) {
-									Line	line;
-									int	new_caret_pos;
-
-									line = document.GetLine(document.CaretLine.LineNo - 1);
-									new_caret_pos = line.text.Length;
-
-									document.Combine(line, document.CaretLine);
-									document.UpdateView(line, 1, 0);
-									document.PositionCaret(line, new_caret_pos);
-									document.UpdateCaret();
-									OnTextChanged(EventArgs.Empty);
-								}
-							} else {
-								document.DeleteChar(document.CaretTag, document.CaretPosition, false);
-								document.MoveCaret(CaretDirection.CharBack);
-								OnTextChanged(EventArgs.Empty);
-							}
-							return;
-						}
-
-						case Keys.Delete: {
-							// delete only deletes on the line, doesn't do the combine
-							if (document.CaretPosition == document.CaretLine.text.Length) {
-								if (document.CaretLine.LineNo < document.Lines) {
-									Line	line;
-
-									line = document.GetLine(document.CaretLine.LineNo + 1);
-									document.Combine(document.CaretLine, line);
-									document.UpdateView(document.CaretLine, 2, 0);
-									OnTextChanged(EventArgs.Empty);
-
-									#if Debug
-										Line	check_first;
-										Line	check_second;
-
-										check_first = document.GetLine(document.CaretLine.LineNo);
-										check_second = document.GetLine(check_first.line_no + 1);
-
-										Console.WriteLine("Post-UpdateView: Y of first line: {0}, second line: {1}", check_first.Y, check_second.Y);
-									#endif
-
-									// Caret doesn't move
-								}
-							} else {
-								document.DeleteChar(document.CaretTag, document.CaretPosition, true);
-								OnTextChanged(EventArgs.Empty);
-							}
-							return;
-						}
-					}
-					base.WndProc(ref m);
-					return;
-				}
-
 				case Msg.WM_CHAR: {
+					if (ProcessKeyEventArgs(ref m)) {
+						return;
+					}
+
+					if (PreProcessMessage(ref m)) {
+						return;
+					}
+
+					if (ProcessKeyMessage(ref m)) {
+						return;
+					}
+
 					if (m.WParam.ToInt32() >= 32) {	// FIXME, tabs should probably go through
 						if (document.selection_visible) {
 							document.ReplaceSelection("");
@@ -935,7 +941,7 @@ Console.WriteLine("Destroying caret");
 							}
 						}
 					}
-					base.WndProc(ref m);
+					DefWndProc(ref m);
 					return;
 				}
 

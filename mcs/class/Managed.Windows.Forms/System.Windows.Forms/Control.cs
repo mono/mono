@@ -2335,21 +2335,23 @@ namespace System.Windows.Forms
 				key_data = (Keys)msg.WParam.ToInt32();
 				if (!ProcessCmdKey(ref msg, key_data)) {
 					if (IsInputKey(key_data)) {
-						return false;
+						return true;
 					}
 
 					return ProcessDialogKey(key_data);
 				}
 
 				return true;
-			} else if ((msg.Msg == (int)Msg.WM_CHAR) || (msg.Msg == (int)Msg.WM_SYSCHAR)) {
+			} else if (msg.Msg == (int)Msg.WM_CHAR) {
 				if (IsInputChar((char)msg.WParam)) {
-					return false;
+					return true;
 				}
-
+			} else if (msg.Msg == (int)Msg.WM_SYSCHAR) {
+				if (IsInputChar((char)msg.WParam)) {
+					return true;
+				}
 				return ProcessDialogChar((char)msg.WParam);
 			}
-
 			return false;
 		}
 
@@ -2689,7 +2691,7 @@ namespace System.Windows.Forms
 				}
 			}
 
-			return ProcessKeyEventArgs(ref msg);
+			return false;
 		}
 
 		protected virtual bool ProcessKeyPreview(ref Message msg) {
@@ -3284,6 +3286,10 @@ namespace System.Windows.Forms
 				case Msg.WM_KEYUP:
 				case Msg.WM_SYSCHAR:
 				case Msg.WM_CHAR: {
+					if (ProcessKeyEventArgs(ref m)) {
+						return;
+					}
+
 					if (PreProcessMessage(ref m)) {
 						return;
 					}

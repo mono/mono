@@ -559,6 +559,12 @@ namespace System.Windows.Forms {
 				if ((state & 0x8000) != 0) {
 					key_state |= Keys.Control;
 				}
+
+				state = Win32GetKeyState(VirtualKeys.VK_MENU);
+				if ((state & 0x8000) != 0) {
+					key_state |= Keys.Alt;
+				}
+
 				return key_state;
 			}
 		}

@@ -1,3 +1,17 @@
+2005-02-20  Peter Bartok  <pbartok@novell.com>
+
+	* Control.cs:
+	  - Fixed ProcessKeyEventArgs to also handle WM_SYSKEY messages (and
+	    only process mnemonics on those)
+	  - Fixed event sequence for key handling; first calling 
+	    ProcessKeyEventArgs now
+	* TextBoxBase.cs: 
+	  - Removed WM_KEYDOWN hook, instead we now use ProcessDialogKey() 
+	    for processing non-character keys
+	  - Fixed WM_CHAR to generate proper event sequence before processing
+	* XplatUIWin32.cs: Added ALT key state to ModifierKeys property
+	  generation
+
 2005-02-19  Peter Bartok  <pbartok@novell.com>
 
 	* UserControl.cs: Added TextChanged event; added attributes
