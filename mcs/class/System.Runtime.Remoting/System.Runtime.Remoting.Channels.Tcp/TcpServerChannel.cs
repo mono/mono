@@ -324,6 +324,7 @@ namespace System.Runtime.Remoting.Channels.Tcp
 							end = true;
 							break;
 					}
+					_stream.Flush ();
 				}
 			}
 			catch (Exception ex)
@@ -332,7 +333,10 @@ namespace System.Runtime.Remoting.Channels.Tcp
 			}
 			finally
 			{
-				_stream.Close();
+				try {
+					_stream.Close();
+				}
+				catch { }
 				_serverChannel.ReleaseConnection (Thread.CurrentThread);
 			}
 		}
