@@ -91,7 +91,11 @@ foreach (glob ($files)) {
 	chomp $options;
 	print "...";
 
-	next if exists $ignore_map {$_};
+	if (exists $ignore_map {$_}) {
+	    print "IGNORED\n";
+	    next;
+	}
+
         $total++;
 	my $testlogfile="$profile-$_.log";
 	system "$compile --expect-error $error_number $options $_ > $testlogfile 2>&1";
