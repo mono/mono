@@ -308,11 +308,6 @@ namespace Mono.CSharp {
 		{
 			object value;
 			LookupConstantValue (out value);
-
-			if (OptAttributes != null) {
-				OptAttributes.Emit (const_ec, this);
-			}
-
 			base.Emit ();
 		}
 	}

@@ -671,7 +671,7 @@ namespace Mono.CSharp {
 		public Indirection (Expression expr, Location l)
 		{
 			this.expr = expr;
-			this.type = TypeManager.GetElementType (expr.Type);
+			type = TypeManager.HasElementType (expr.Type) ? TypeManager.GetElementType (expr.Type) : expr.Type;
 			eclass = ExprClass.Variable;
 			loc = l;
 		}
@@ -3449,7 +3449,12 @@ namespace Mono.CSharp {
 		{
 			Type op_type = left.Type;
 			ILGenerator ig = ec.ig;
-			Type element = TypeManager.GetElementType (op_type);
+			
+			// It must be either array or fixed buffer
+			Type element = TypeManager.HasElementType (op_type) ?
+				element = TypeManager.GetElementType (op_type) :
+				element = AttributeTester.GetFixedBuffer (((FieldExpr)left).FieldInfo).ElementType;
+
 			int size = GetTypeSize (element);
 			Type rtype = right.Type;
 			
@@ -7852,10 +7857,8 @@ namespace Mono.CSharp {
 			return true;
 		}
 
-		Expression MakePointerAccess (EmitContext ec)
+		Expression MakePointerAccess (EmitContext ec, Type t)
 		{
-			Type t = Expr.Type;
-
 			if (t == TypeManager.void_ptr_type){
 				Error (242, "The array index operation is not valid for void pointers");
 				return null;
@@ -7892,10 +7895,17 @@ namespace Mono.CSharp {
 			
 			if (t.IsArray)
 				return (new ArrayAccess (this, loc)).Resolve (ec);
-			else if (t.IsPointer)
-				return MakePointerAccess (ec);
-			else
-				return (new IndexerAccess (this, loc)).Resolve (ec);
+			if (t.IsPointer)
+				return MakePointerAccess (ec, Expr.Type);
+
+			FieldExpr fe = Expr as FieldExpr;
+			if (fe != null) {
+				IFixedBuffer ff = AttributeTester.GetFixedBuffer (fe.FieldInfo);
+				if (ff != null) {
+					return MakePointerAccess (ec, ff.ElementType);
+				}
+			}
+			return (new IndexerAccess (this, loc)).Resolve (ec);
 		}
 
 		public override Expression DoResolveLValue (EmitContext ec, Expression right_side)
@@ -7906,10 +7916,24 @@ namespace Mono.CSharp {
 			Type t = Expr.Type;
 			if (t.IsArray)
 				return (new ArrayAccess (this, loc)).ResolveLValue (ec, right_side);
-			else if (t.IsPointer)
-				return MakePointerAccess (ec);
-			else
-				return (new IndexerAccess (this, loc)).ResolveLValue (ec, right_side);
+
+			if (t.IsPointer)
+				return MakePointerAccess (ec, Expr.Type);
+
+			FieldExpr fe = Expr as FieldExpr;
+			if (fe != null) {
+				IFixedBuffer ff = AttributeTester.GetFixedBuffer (fe.FieldInfo);
+				if (ff != null) {
+// TODO: not sure whether it is correct
+//					if (!ec.InFixedInitializer) {
+//					if (!ec.InFixedInitializer) {
+//						Error (1666, "You cannot use fixed sized buffers contained in unfixed expressions. Try using the fixed statement.");
+//						return null;
+//					}
+					return MakePointerAccess (ec, ff.ElementType);
+				}
+			}
+			return (new IndexerAccess (this, loc)).ResolveLValue (ec, right_side);
 		}
 		
 		public override void Emit (EmitContext ec)
@@ -8935,31 +8959,21 @@ namespace Mono.CSharp {
 		}
 	}
 
-	//
-	// This class is used to represent the address of an array, used
-	// only by the Fixed statement, this is like the C "&a [0]" construct.
-	//
-	public class ArrayPtr : Expression {
+	public class FixedBufferPtr: Expression {
 		Expression array;
-		
-		public ArrayPtr (Expression array, Location l)
-		{
-			Type array_type = TypeManager.GetElementType (array.Type);
 
+		public FixedBufferPtr (Expression array, Type array_type, Location l)
+		{
 			this.array = array;
+			this.loc = l;
 
 			type = TypeManager.GetPointerType (array_type);
 			eclass = ExprClass.Value;
-			loc = l;
 		}
 
-		public override void Emit (EmitContext ec)
+		public override void Emit(EmitContext ec)
 		{
-			ILGenerator ig = ec.ig;
-			
 			array.Emit (ec);
-			IntLiteral.EmitInt (ig, 0);
-			ig.Emit (OpCodes.Ldelema, TypeManager.GetElementType (array.Type));
 		}
 
 		public override Expression DoResolve (EmitContext ec)
@@ -8968,6 +8982,31 @@ namespace Mono.CSharp {
 			// We are born fully resolved
 			//
 			return this;
+		}
+	}
+
+
+	//
+	// This class is used to represent the address of an array, used
+	// only by the Fixed statement, this generates "&a [0]" construct
+	// for fixed (char *pa = a)
+	//
+	public class ArrayPtr : FixedBufferPtr {
+		Type array_type;
+		
+		public ArrayPtr (Expression array, Type array_type, Location l):
+			base (array, array_type, l)
+		{
+			this.array_type = array_type;
+		}
+
+		public override void Emit (EmitContext ec)
+		{
+			base.Emit (ec);
+			
+			ILGenerator ig = ec.ig;
+			IntLiteral.EmitInt (ig, 0);
+			ig.Emit (OpCodes.Ldelema, array_type);
 		}
 	}
 

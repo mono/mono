@@ -1678,13 +1678,15 @@ namespace Mono.CSharp
 				if (type is TypeBuilder) {
 					TypeContainer tc = TypeManager.LookupTypeContainer (type);
 
-					ArrayList fields = tc.Fields;
+					ArrayList fields = null;
+					if (tc != null)
+						fields = tc.Fields;
 
 					ArrayList public_fields = new ArrayList ();
 					ArrayList non_public_fields = new ArrayList ();
 
 					if (fields != null) {
-						foreach (Field field in fields) {
+						foreach (FieldMember field in fields) {
 							if ((field.ModFlags & Modifiers.STATIC) != 0)
 								continue;
 							if ((field.ModFlags & Modifiers.PUBLIC) != 0)

@@ -1,3 +1,54 @@
+2005-02-11  Marek Safar  <marek.safar@seznam.cz>
+
+	C# 2.0 Fixed buffer implementation
+
+	* anonymous.cs: Update after RegisterHelperClass renaming.
+
+	* attribute.cs (AttributeTester.fixed_buffer_cache):
+	Cache of external fixed buffers.
+	(AttributeTester.GetFixedBuffer): Returns IFixedBuffer
+	implementation if field is fixed buffer else null.
+
+	* class.cs
+	(TypeContainer.AddField): Accept FieldMember instead of Field.
+	(FieldBase.IsFieldClsCompliant): Extracted code from
+	VerifyClsCompliance descendant customization.
+	(FixedField): New class handles fixed buffer fields.
+	(FixedFieldExternal): Keeps information about imported fixed
+	buffer.
+	(IFixedField): Make access to internal or external fixed buffer
+	same.
+
+	* cs-parser.jay: Add fixed buffer parsing.
+
+	* ecore.cs (FieldExpr.Emit): Add special emit case for fixed
+	buffer.
+
+	* expression.cs (Indirection): Extended implementation to accept
+	fixed buffer field.
+	(PointerArithmetic.Emit): Get element from fixed buffer as well.
+	(ElementAccess.MakePointerAccess): Get type as parameter.
+	(DoResolve): Add fixed buffer field expression conversion.
+	(DoResolveLValue): Ditto.
+	(FixedBufferPtr): New class. Moved most of original ArrayPtr.
+	(ArrayPtr): Derives from FixedBufferPtr.
+	(ArrayPtr.Emit): Add extra emit for array elements.
+
+	* flowanalysis.cs.cs (StructInfo): Use FieldMember.
+
+	* rootcontext.cs (CloseTypes): Emit CompilerGenerated attribute
+	for compiler generated types.
+	(RegisterCompilerGeneratedType): Renamed from RegisterHelperClass.
+
+	* statement.cs (Fixed): Refactored to be easier add fixed buffer
+	and consume less memory.
+	(Fixed.Resolve): Add fixed buffer case.
+
+	* typemanager.cs (compiler_generated_attr_ctor,
+	fixed_buffer_attr_ctor): Add new 2.0 compiler attributes.
+	(HasElementType): Add our own implementation to work on every
+	runtime.
+
 2005-02-11  Miguel de Icaza  <miguel@novell.com>
 
 	* anonymous.cs (CaptureContext): Track whether `this' has been

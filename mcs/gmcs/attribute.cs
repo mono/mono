@@ -1371,6 +1371,10 @@ namespace Mono.CSharp {
 		static PtrHashtable analyzed_types_obsolete = new PtrHashtable ();
 		static PtrHashtable analyzed_member_obsolete = new PtrHashtable ();
 		static PtrHashtable analyzed_method_excluded = new PtrHashtable ();
+		static PtrHashtable fixed_buffer_cache = new PtrHashtable ();
+
+		static object TRUE = new object ();
+		static object FALSE = new object ();
 
 		private AttributeTester ()
 		{
@@ -1463,10 +1467,39 @@ namespace Mono.CSharp {
 			}
 			analyzed_types.Add (type, result ? TRUE : FALSE);
 			return result;
-		}                
+		}        
+        
+		/// <summary>
+		/// Returns IFixedBuffer implementation if field is fixed buffer else null.
+		/// </summary>
+		public static IFixedBuffer GetFixedBuffer (FieldInfo fi)
+		{
+			FieldBase fb = TypeManager.GetField (fi);
+			if (fb != null) {
+				return fb as IFixedBuffer;
+			}
 
-		static object TRUE = new object ();
-		static object FALSE = new object ();
+#if NET_2_0
+			object o = fixed_buffer_cache [fi];
+			if (o == null) {
+				if (System.Attribute.GetCustomAttribute (fi, TypeManager.fixed_buffer_attr_type) == null) {
+					fixed_buffer_cache.Add (fi, FALSE);
+					return null;
+				}
+				
+				IFixedBuffer iff = new FixedFieldExternal (fi);
+				fixed_buffer_cache.Add (fi, iff);
+				return iff;
+			}
+
+			if (o == FALSE)
+				return null;
+
+			return (IFixedBuffer)o;
+#else
+			return null;
+#endif
+		}
 
 		public static void VerifyModulesClsCompliance ()
 		{

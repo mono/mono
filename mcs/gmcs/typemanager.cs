@@ -99,6 +99,14 @@ public partial class TypeManager {
 	static public Type field_offset_attribute_type;
 	static public Type security_attr_type;
 
+	/// 
+	/// .NET 2.0
+	///
+#if NET_2_0
+	static internal Type compiler_generated_attr_type;
+	static internal Type fixed_buffer_attr_type;
+#endif
+
 	//
 	// An empty array of types
 	//
@@ -184,10 +192,18 @@ public partial class TypeManager {
 	static public ConstructorInfo void_decimal_ctor_five_args;
 	static public ConstructorInfo void_decimal_ctor_int_arg;
 	static public ConstructorInfo unverifiable_code_ctor;
-	static public ConstructorInfo invalid_operation_ctor;
 	static public ConstructorInfo default_member_ctor;
 	static public ConstructorInfo decimal_constant_attribute_ctor;
-	
+	static internal ConstructorInfo struct_layout_attribute_ctor;
+
+	///
+	/// A new in C# 2.0
+	/// 
+#if NET_2_0
+	static internal CustomAttributeBuilder compiler_generated_attr;
+	static internal ConstructorInfo fixed_buffer_attr_ctor;
+#endif
+
 	// <remarks>
 	//   Holds the Array of Assemblies that have been loaded
 	//   (either because it is the default or the user used the
@@ -1164,6 +1180,13 @@ public partial class TypeManager {
 		InitGenericCoreTypes ();
 
 		//
+		// .NET 2.0
+		//
+#if NET_2_0
+		compiler_generated_attr_type = CoreLookupType ("System.Runtime.CompilerServices.CompilerGeneratedAttribute");
+		fixed_buffer_attr_type = CoreLookupType ("System.Runtime.CompilerServices.FixedBufferAttribute");
+#endif
+		//
 		// When compiling corlib, store the "real" types here.
 		//
 		if (!RootContext.StdLib) {
@@ -1375,23 +1398,27 @@ public partial class TypeManager {
 		//
 		// Attributes
 		//
-		cons_param_array_attribute = GetConstructor (
-			param_array_type, void_arg);
+		cons_param_array_attribute = GetConstructor (param_array_type, void_arg);
+		unverifiable_code_ctor = GetConstructor (unverifiable_code_type, void_arg);
+		default_member_ctor = GetConstructor (default_member_type, string_);
 
-		unverifiable_code_ctor = GetConstructor (
-			unverifiable_code_type, void_arg);
+		Type[] short_arg = { short_type };
+		struct_layout_attribute_ctor = GetConstructor (struct_layout_attribute_type, short_arg);
 
 		decimal_constant_attribute_ctor = GetConstructor (decimal_constant_attribute_type, new Type []
 			{ byte_type, byte_type, uint32_type, uint32_type, uint32_type } );
 
-		default_member_ctor = GetConstructor (default_member_type, string_);
 
 		//
-		// InvalidOperationException
+		// .NET 2.0 types
 		//
-		invalid_operation_ctor = GetConstructor (
-			invalid_operation_exception_type, void_arg);
+#if NET_2_0
+		compiler_generated_attr = new CustomAttributeBuilder (
+			GetConstructor (compiler_generated_attr_type, void_arg), new object[0]);
 
+		Type[] type_int_arg = { type_type, int32_type };
+		fixed_buffer_attr_ctor = GetConstructor (fixed_buffer_attr_type, type_int_arg);
+#endif
 
 		// Object
 		object_ctor = GetConstructor (object_type, void_arg);
@@ -1805,6 +1832,14 @@ public partial class TypeManager {
         }
 
 	/// <summary>
+	/// This method is not implemented by MS runtime for dynamic types
+	/// </summary>
+	public static bool HasElementType (Type t)
+	{
+		return t.IsArray || t.IsPointer || t.IsByRef;
+	}
+
+	/// <summary>
 	///   Returns the User Defined Types
 	/// </summary>
 	public static ArrayList UserTypes {
@@ -2074,7 +2109,7 @@ public partial class TypeManager {
 		if (tc.Fields == null)
 			return true;
 
-		foreach (Field field in tc.Fields) {
+		foreach (FieldMember field in tc.Fields) {
 			if (field.FieldBuilder == null || field.FieldBuilder.IsStatic)
 				continue;
 
