@@ -26,9 +26,12 @@
 //
 //
 //
-// $Revision: 1.48 $
+// $Revision: 1.49 $
 // $Modtime: $
 // $Log: ThemeWin32Classic.cs,v $
+// Revision 1.49  2004/10/18 04:49:25  pbartok
+// - Added ToolTip drawing code
+//
 // Revision 1.48  2004/10/15 15:08:49  ravindra
 // Added ColumnHeaderHeight property in Theme for ListView.
 //
@@ -1693,6 +1696,24 @@ namespace System.Windows.Forms
 			}
 		}
 		#endregion	// ToolBar
+
+		#region ToolTip
+		public override void DrawToolTip(Graphics dc, Rectangle clip_rectangle, ToolTip tt) {
+			Control	control;
+
+			control = tt.tooltip_window;
+			dc.FillRectangle(ResPool.GetSolidBrush(this.ColorInfoWindow), control.client_rect);
+			dc.DrawRectangle(ResPool.GetPen(this.ColorWindowFrame), 0, 0, control.Width-1, control.Height-1);
+			dc.DrawString(control.text, control.Font, ResPool.GetSolidBrush(this.ColorInfoText), control.client_rect, tt.tooltip_window.string_format);
+		}
+
+		public override Size ToolTipSize(ToolTip tt, string text) {
+			SizeF	sizef;
+
+			sizef = tt.tooltip_window.DeviceContext.MeasureString(text, tt.tooltip_window.Font);
+			return new Size((int)sizef.Width+2, (int)sizef.Height+3);		// Need space for the border
+		}
+		#endregion	// ToolTip
 
 		#region	TrackBar
 		private void DrawTrackBar_Vertical (Graphics dc, Rectangle area, TrackBar tb,
