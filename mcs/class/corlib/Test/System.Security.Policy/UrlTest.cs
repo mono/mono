@@ -90,7 +90,6 @@ namespace MonoTests.System.Security.Policy {
 
 		[Test]
 		[ExpectedException (typeof (ArgumentException))]
-		[Ignore ("not currently supported by Mono - CAS related")]
 		public void Url_InvalidSite () 
 		{
 			Url u = new Url ("http://www.go-mono.*");
@@ -124,9 +123,13 @@ namespace MonoTests.System.Security.Policy {
 		public void Url_LoneStar () 
 		{
 			Url u = new Url ("*");
+#if NET_2_0
+			AssertEquals ("Value", "*", u.Value);
+			AssertEquals ("ToString", "<System.Security.Policy.Url version=\"1\">" + Environment.NewLine + "<Url>*</Url>" + Environment.NewLine + "</System.Security.Policy.Url>" + Environment.NewLine, u.ToString ());
+#else
 			AssertEquals ("Value", "file://*", u.Value);
 			AssertEquals ("ToString", "<System.Security.Policy.Url version=\"1\">" + Environment.NewLine + "   <Url>file://*</Url>" + Environment.NewLine + "</System.Security.Policy.Url>" + Environment.NewLine, u.ToString ());
-
+#endif
 			Url u2 = (Url) u.Copy ();
 			AssertEquals ("Copy.Value", u.Value, u2.Value);
 			AssertEquals ("Copy.GetHashCode", u.GetHashCode (), u2.GetHashCode ());
@@ -137,6 +140,10 @@ namespace MonoTests.System.Security.Policy {
 			Assert ("Equals", u.Equals (u2));
 			Url u3 = new Url ("index.html");
 			Assert ("!Equals(*)", !u.Equals (u3));
+
+			u2 = new Url ("file://*");
+			AssertEquals ("Value-file://*", "file://*", u2.Value);
+			Assert ("Equals-file://*", u.Equals (u2));
 		}
 	}
 }

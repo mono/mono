@@ -2,9 +2,29 @@
 // SiteTest.cs - NUnit Test Cases for Site
 //
 // Author:
-//	Sebastien Pouliot (spouliot@motus.com)
+//	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) 2004 Motus Technologies Inc. (http://www.motus.com)
+// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+//
+// Permission is hereby granted, free of charge, to any person obtaining
+// a copy of this software and associated documentation files (the
+// "Software"), to deal in the Software without restriction, including
+// without limitation the rights to use, copy, modify, merge, publish,
+// distribute, sublicense, and/or sell copies of the Software, and to
+// permit persons to whom the Software is furnished to do so, subject to
+// the following conditions:
+// 
+// The above copyright notice and this permission notice shall be
+// included in all copies or substantial portions of the Software.
+// 
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+// NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+// LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+// OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
 using NUnit.Framework;
@@ -150,7 +170,7 @@ namespace MonoTests.System.Security.Policy {
 		[Test]
 		public void AllChars () 
 		{
-			for (int i=0; i < 256; i++) {
+			for (int i=1; i < 256; i++) {
 				bool actual = false;
 				char c = Convert.ToChar (i);
 				try {
@@ -161,13 +181,77 @@ namespace MonoTests.System.Security.Policy {
 				catch {
 					// Console.WriteLine ("FAIL: {0} - {1}", i, c);
 				}
-				bool result = ((i == 42)		// *
-					|| (i == 45)			// -
+				bool result = ((i == 45)		// -
+#if NET_2_0
+					|| (i == 33)			// !
+					|| (i >= 35 && i <= 42)		// #$%&'()*
+					|| (i >= 48 && i <= 57)		// 0-9
+					|| (i >= 94 && i <= 95)		// ^_
+					|| (i >= 97 && i <= 123)	// a-z{
+					|| (i >= 125 && i <= 126)	// }~
+#else
+					|| (i == 42)			// *
 					|| (i >= 47 && i <= 57)		// /,0-9
-					|| (i >= 64 && i <= 90)		// @,A-Z
 					|| (i == 95)			// _
-					|| (i >= 97 && i <= 122));	// a-z
+					|| (i >= 97 && i <= 122)	// a-z
+#endif
+					|| (i >= 64 && i <= 90));	// @,A-Z
 				Assert ("#"+i, (actual == result));
+			}
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void CreateFromUrl_Null ()
+		{
+			Site.CreateFromUrl (null);
+		}
+
+		[Test]
+		[ExpectedException (typeof (FormatException))]
+		public void CreateFromUrl_Empty ()
+		{
+			Site.CreateFromUrl (String.Empty);
+		}
+
+		string[] valid_urls = {
+			"http://www.go-mono.com",
+			"http://*.go-mono.com",
+			"http://www.go-mono.com:8080/index.html"
+		};
+
+		[Test]
+		public void CreateFromUrl_Valid () 
+		{
+			foreach (string url in valid_urls) {
+				Site s = Site.CreateFromUrl (url);
+			}
+		}
+
+		string[] invalid_urls = {
+			"file://mono/index.html",	// file:// isn't supported as a site
+		};
+
+		[Test]
+		public void CreateFromUrl_Invalid ()
+		{
+			string msg = null;
+			foreach (string url in invalid_urls) {
+				try {
+					Site.CreateFromUrl (url);
+					msg = String.Format ("Expected ArgumentException for {0} but got none", url);
+				}
+				catch (ArgumentException) {
+				}
+				catch (Exception e) {
+					msg = String.Format ("Expected ArgumentException for {0} but got: {1}", url, e);
+				}
+				finally {
+					if (msg != null) {
+						Fail (msg);
+						msg = null;
+					}
+				}
 			}
 		}
 	}
