@@ -1,3 +1,9 @@
+2005-02-02  Martin Baulig  <martin@ximian.com>
+
+	* delegate.cs (Delegate.DefineType): Report an internal error if
+	TypeManager.multicast_delegate_type is null.  See bug #72015 for
+	details.	
+
 2005-02-02  Raja R Harinath  <rharinath@novell.com>
 
 	Fix a crasher in a variant of #31984.
