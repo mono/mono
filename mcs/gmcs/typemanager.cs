@@ -1179,8 +1179,8 @@ public class TypeManager {
 		//
 		// Generic types
 		//
-		generic_ienumerator_type     = CoreLookupType ("System.Collections.Generic.IEnumerator`1");
-		generic_ienumerable_type     = CoreLookupType ("System.Collections.Generic.IEnumerable`1");
+		generic_ienumerator_type     = CoreLookupType (MemberName.MakeName ("System.Collections.Generic.IEnumerator", 1));
+		generic_ienumerable_type     = CoreLookupType (MemberName.MakeName ("System.Collections.Generic.IEnumerable", 1));
 
 
 		//

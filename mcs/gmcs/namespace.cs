@@ -267,7 +267,7 @@ namespace Mono.CSharp {
 				// this will fail with `using A = Stack<int>'
 				//
 				
-				string alias = Alias.GetTypeName (true);
+				string alias = Alias.GetTypeName ();
 				while ((curr_ns != null) && (resolved == null)) {
 					resolved = curr_ns.Lookup (
 						null, alias, Alias.CountTypeArguments,

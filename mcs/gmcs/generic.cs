@@ -531,7 +531,7 @@ namespace Mono.CSharp {
 		public ConstructedType (string name, TypeArguments args, Location l)
 		{
 			loc = l;
-			this.name = name + "`" + args.Count;
+			this.name = MemberName.MakeName (name, args.Count);
 			this.args = args;
 
 			eclass = ExprClass.Type;
