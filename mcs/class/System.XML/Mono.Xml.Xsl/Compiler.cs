@@ -231,7 +231,7 @@ namespace Mono.Xml.Xsl {
 		}
 		public XslAvt ParseAvtAttribute (string localName, string ns)
 		{
-			return ParseAvt (Input.GetAttribute (localName, ns));
+			return ParseAvt (GetAttribute (localName, ns));
 		}
 		
 		public void AssertAttribute (string localName)
