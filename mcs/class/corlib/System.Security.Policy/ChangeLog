@@ -1,3 +1,7 @@
+2002-11-5 Jackson Harper <jackson@latitudegeo.com>
+
+	* ApplicationDirectory.cs: Fixed (C) in file header
+	
 2002-10-29  Nick Drochak  <ndrochak@gol.com>
 
 	* Hash.cs: Fix build issues.  Add some using statements mostly.
