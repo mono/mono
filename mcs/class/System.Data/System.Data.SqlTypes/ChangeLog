@@ -1,3 +1,7 @@
+2004-05-09  Gert Driesen (drieseng@users.sourceforge.net)
+	* SqlString.cs: change accessibility of CompareOptions property
+	to private, commented out unreachable code
+
 2004-04-12  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* SqlBoolean.cs : Allow "0" and "1" on Parse(). Allow SqlString.Null

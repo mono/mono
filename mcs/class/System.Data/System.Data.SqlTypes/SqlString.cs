@@ -184,17 +184,6 @@ namespace System.Data.SqlTypes
 			}
 		}
 
-		public CompareOptions CompareOptions {
-			get {
-				return 
-					(this.compareOptions & SqlCompareOptions.BinarySort) != 0 ? 
-					CompareOptions.Ordinal :
-					// 27 == all SqlCompareOptions - BinarySort 
-					// (1,2,8,24 are common to CompareOptions)
-					(CompareOptions) ((int) this.compareOptions & 27);
-			}
-		}
-
 		public bool IsNull {
 			get { return !notNull; }
 		}
@@ -222,6 +211,21 @@ namespace System.Data.SqlTypes
                 }
 
 		#endregion // Public Properties
+
+		#region Private Properties
+
+		private CompareOptions CompareOptions {
+			get {
+				return
+					(this.compareOptions & SqlCompareOptions.BinarySort) != 0 ?
+					CompareOptions.Ordinal :
+					// 27 == all SqlCompareOptions - BinarySort 
+					// (1,2,8,24 are common to CompareOptions)
+					(CompareOptions)((int)this.compareOptions & 27);
+			}
+		}
+
+		#endregion Private Properties
 
 		#region Public Methods
 
@@ -513,7 +517,7 @@ namespace System.Data.SqlTypes
 				return Null;
 			else
 				return new SqlString (x.Value.ToString ());
-				return new SqlString (x.Value.ToString ("N", DecimalFormat));
+				// return new SqlString (x.Value.ToString ("N", DecimalFormat));
 		}
 
 		public static explicit operator SqlString (SqlDouble x) 
@@ -562,7 +566,7 @@ namespace System.Data.SqlTypes
 				return Null;
 			else
 				return new SqlString (x.Value.ToString ());
-				return new SqlString (x.Value.ToString ("N", MoneyFormat));
+				// return new SqlString (x.Value.ToString ("N", MoneyFormat));
 		}
 
 		public static explicit operator SqlString (SqlSingle x) 
