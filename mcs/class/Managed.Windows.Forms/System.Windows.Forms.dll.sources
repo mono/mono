@@ -1,10 +1,13 @@
 Assembly/AssemblyInfo.cs
 Assembly/Consts.cs
 Assembly/Locale.cs
+System.Resources/ResXResourceReader.cs
+System.Resources/ResXResourceWriter.cs
 System.Windows.Forms/AccessibleObject.cs
 System.Windows.Forms/AccessibleRole.cs
 System.Windows.Forms/AccessibleStates.cs
 System.Windows.Forms/AnchorStyles.cs
+System.Windows.Forms/Appearance.cs
 System.Windows.Forms/ApplicationContext.cs
 System.Windows.Forms/Application.cs
 System.Windows.Forms/AsyncMethodData.cs
@@ -23,6 +26,8 @@ System.Windows.Forms/ButtonBase.cs
 System.Windows.Forms/ButtonBorderStyle.cs
 System.Windows.Forms/ButtonState.cs
 System.Windows.Forms/CaptionButton.cs
+System.Windows.Forms/CheckBox.cs
+System.Windows.Forms/CheckState.cs
 System.Windows.Forms/ColorDepth.cs
 System.Windows.Forms/ContainerControl.cs
 System.Windows.Forms/Control.cs
@@ -150,5 +155,4 @@ System.Windows.Forms/XplatUIDriver.cs
 System.Windows.Forms/XplatUIStructs.cs
 System.Windows.Forms/XplatUIWin32.cs
 System.Windows.Forms/XplatUIX11.cs
-
 
