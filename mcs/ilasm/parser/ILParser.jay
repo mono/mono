@@ -26,6 +26,10 @@ namespace Mono.ILASM {
 		private string defaultAsmName = "output";
 
 
+		public ILParser (CodeGen codegen) {
+			this.codegen = codegen;
+		}
+
 		public CodeGen CodeGen {
 			get {
 				return codegen;
@@ -106,7 +110,6 @@ namespace Mono.ILASM {
 
 
 
-
 /* Mechanically generated  - DO NOT EDIT! */
 
 
@@ -142,7 +145,7 @@ namespace Mono.ILASM {
 %token D_LOCALE
 %token D_LOCALS
 %token D_MANIFESTRES
-%token D_MAXSTACK
+%token D_MAXSTCCK
 %token D_METHOD
 %token D_MIME
 %token D_MODULE
@@ -709,13 +712,15 @@ localsHead              : D_LOCALS
 
 methodDecl              : D_EMITBYTE int32 
 			| sehBlock 
-			| D_MAXSTACK int32 
+			| D_MAXSTACK int32 	
 			| localsHead OPEN_PARENS sigArgs0 CLOSE_PARENS 
-			| localsHead K_INIT OPEN_PARENS sigArgs0 CLOSE_PARENS 
-			| D_ENTRYPOINT 
+			| localsHead K_INIT OPEN_PARENS sigArgs0 CLOSE_PARENS  
+			| D_ENTRYPOINT          {method.IsEntryPoint = true;}
 			| D_ZEROINIT 
 			| dataDecl
-			| instr			{method.AddInstruction (currentInstr);}
+			| instr	{
+					method.AddInstruction (currentInstr);
+				}
 			| id COLON 
 			| secDecl
 			| extSourceSpec
@@ -870,14 +875,28 @@ instr                   : INSTR_NONE		{currentInstr = new InstrNone ((OpCode) $1
 			| INSTR_R float64	{currentInstr = new InstrR ((OpCode) $1, (Double) $2);}
 			| INSTR_R int64		{currentInstr = new InstrR ((OpCode) $1, (Int64) $2);}
 			| instr_r_head bytes CLOSE_PARENS 
-			| INSTR_BRTARGET int32 
+			| INSTR_BRTARGET int32  
 			| INSTR_BRTARGET id 
-			| INSTR_METHOD callConv type typeSpec DOUBLE_COLON methodName OPEN_PARENS sigArgs0 CLOSE_PARENS 
+			| INSTR_METHOD callConv type assembly_name name1 DOUBLE_COLON ID OPEN_PARENS signature_args CLOSE_PARENS 
+						{
+							currentInstr = new InstrCall ((OpCode) $1, (string)$3, (string)$4, 
+								(string)$5, (string)$7, (string)$9);
+						}
+
+					
 			| INSTR_METHOD callConv type methodName OPEN_PARENS sigArgs0 CLOSE_PARENS 
+						{
+							Console.WriteLine ("Internal Call: {0} {1} {2} {3} {4} {5}",
+								$1, $2, $3, $4, $5, $6);
+
+						}
 			| INSTR_FIELD type typeSpec DOUBLE_COLON id 
 			| INSTR_FIELD type id 
 			| INSTR_TYPE typeSpec 
-			| INSTR_STRING compQstring	{currentInstr = new InstrString ((OpCode) $1, $2 as string);}
+			| INSTR_STRING compQstring 
+				{
+					currentInstr = new InstrString ((OpCode) $1, $2 as string);
+				}
 			| INSTR_STRING bytearrayhead bytes CLOSE_PARENS 
 			| INSTR_SIG callConv type OPEN_PARENS sigArgs0 CLOSE_PARENS 
 			| INSTR_RVA id 
@@ -891,12 +910,18 @@ instr                   : INSTR_NONE		{currentInstr = new InstrNone ((OpCode) $1
 			| INSTR_PHI int16s 
 			;
 
+signature_args		: /* EMPTY */
+			| type
+			| type COMMA signature_args
+			;
+
+
 sigArgs0                : /* EMPTY */ 
 			| sigArgs1 
 			;
 
 sigArgs1                : sigArg 
-			| sigArgs1 COMMA sigArg 
+			| sigArgs1 COMMA sigArg
 			;
 
 sigArg                  : ELLIPSIS 
@@ -904,9 +929,8 @@ sigArg                  : ELLIPSIS
 			| paramAttr type id 
 			| paramAttr type K_MARSHAL OPEN_PARENS nativeType CLOSE_PARENS 
 			| paramAttr type K_MARSHAL OPEN_PARENS nativeType CLOSE_PARENS id 
-			;
-
-
+sint			;
+			
 
 dottedName		: id DOT id	{$$ = ($1 as string) + "." + ($3 as string);}
 			;
@@ -915,6 +939,9 @@ dottedName		: id DOT id	{$$ = ($1 as string) + "." + ($3 as string);}
 name1                   : id
 			| dottedName
 			| name1 DOT name1
+			;
+
+assembly_name		: OPEN_BRACKET name1 CLOSE_BRACKET {$$ = ($2 as string);}
 			;
 
 className               : OPEN_BRACKET name1 CLOSE_BRACKET slashedName 
@@ -1184,8 +1211,6 @@ hashHead                : D_HASH ASSIGN OPEN_PARENS
 
 assemblyHead            : D_ASSEMBLY asmAttr name1
 			{
-				codegen = new CodeGen (defaultAsmName);
-
 				// TODO: set assembly attrs
 				codegen.SetName ($3 as string);
 			}
