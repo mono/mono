@@ -38,11 +38,6 @@ namespace System.IO
 			if (access < FileAccess.Read || access > FileAccess.ReadWrite)
 				throw new ArgumentOutOfRangeException ("access");
 
-			this.handle = handle;
-			this.access = access;
-			this.owner = ownsHandle;
-			this.async = isAsync;
-
 			MonoIOError error;
 			MonoFileType ftype = MonoIO.GetFileType (handle, out error);
 			
@@ -53,6 +48,12 @@ namespace System.IO
 			} else {
 				this.canseek = false;
 			}
+
+			this.handle = handle;
+			this.access = access;
+			this.owner = ownsHandle;
+			this.async = isAsync;
+
 
 			InitBuffer (bufferSize, noBuffering);
 

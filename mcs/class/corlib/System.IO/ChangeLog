@@ -1,3 +1,9 @@
+2003-12-22  Bernie Solomon  <bernard@ugsolutions.com>
+
+	* FileStream.cs: (.ctor) do not set handle
+	in object until after it is validated via
+	GetFileType so finalizer doesn't see bad handles
+
 2003-12-19  Bernie Solomon  <bernard@ugsolutions.com>
 
 	* MonoIO.cs: SetFileTime() Failed Open returns InvalidHandle
