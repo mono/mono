@@ -1,3 +1,8 @@
+
+Wed Jul 7 12:32:29 CEST 2004 Paolo Molaro <lupus@ximian.com>
+
+	* gc.c, object.h: add nice GC handle API for embedders.
+
 2004-07-06  Ben Maurer  <bmaurer@ximian.com>
 
 	* reflection.c: more changes for the new api
