@@ -99,6 +99,10 @@ namespace System.Reflection
 			get { return parent != null ? parent : generic_type.BaseType; }
 		}
 
+		public override Type DeclaringType {
+			get { return generic_type.DeclaringType; }
+		}
+
 		public override Type[] GetInterfaces ()
 		{
 			if (interfaces != null)
