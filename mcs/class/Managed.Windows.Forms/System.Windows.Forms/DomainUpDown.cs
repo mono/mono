@@ -29,7 +29,14 @@ using System.ComponentModel;
 using System.Collections;
 
 namespace System.Windows.Forms {
-	public class DomainUpDown : UpDownBase, ISupportInitialize {
+
+	[DefaultEvent ("SelectedItemChanged")]
+	[DefaultProperty ("Items")]
+	public class DomainUpDown : UpDownBase
+#if NET_2_0
+		, ISupportInitialize
+#endif
+	{
 		public class DomainUpDownItemCollection : ArrayList {
 			DomainUpDown owner;
 			
@@ -93,7 +100,8 @@ namespace System.Windows.Forms {
 		bool sorted = false;
 		bool wrap = false;
 		DomainUpDownItemCollection items;
-		
+
+#if NET_2_0
 #region ISupportInitialize methods
 		
 		public void BeginInit ()
@@ -104,7 +112,8 @@ namespace System.Windows.Forms {
 		{
 		}
 #endregion
-
+#endif
+		
 		public event EventHandler SelectedItemChanged;
 		
 		public DomainUpDown () : base () {
@@ -165,12 +174,16 @@ namespace System.Windows.Forms {
 			return ao;
 		}
 
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Content)]
+		[Localizable(true)]
 		public DomainUpDownItemCollection Items {
 			get {
 				return items;
 			}
 		}
 
+		[DefaultValue(-1)]
+		[Browsable(false)]
 		public int SelectedIndex {
 			get {
 				return selected_index;
@@ -185,6 +198,8 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Item)]
+		[Browsable(false)]
 		public object SelectedItem {
 			get {
 				if (selected_index == -1)
@@ -202,6 +217,7 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		[DefaultValue(false)]
 		public bool Sorted {
 			get {
 				return sorted;
@@ -219,6 +235,7 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		[DefaultValue (false)]
 		public bool Wrap {
 			get {
 				return wrap;
@@ -227,6 +244,11 @@ namespace System.Windows.Forms {
 			set {
 				wrap = value;
 			}
+		}
+
+		public override string ToString ()
+		{
+			return String.Format ("{0} Count={1} Selected={2}", base.ToString (), items.Count, selected_index);
 		}
 	}
 }

@@ -1,3 +1,10 @@
+2005-02-16  Miguel de Icaza  <miguel@novell.com>
+
+	* UpDownBase.cs: Attach entry events.
+	Propagate events.
+	Add ForeColor property, Focused, InterceptArrowKeys (interception
+	does not work yet).
+
 2005-02-17  Jordi Mas i Hernandez <jordi@ximian.com>
 
 	* Form.cs: 

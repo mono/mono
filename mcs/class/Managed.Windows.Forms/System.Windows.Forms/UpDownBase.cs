@@ -167,8 +167,9 @@ namespace System.Windows.Forms {
 
 			void Click ()
 			{
-				if (up_pressed)
+				if (up_pressed){
 					updownbase.UpButton ();
+				}
 				if (down_pressed)
 					updownbase.DownButton ();
 			}
@@ -244,6 +245,7 @@ namespace System.Windows.Forms {
 		LeftRightAlignment updown_align = LeftRightAlignment.Right;
 		bool changing_text = false;
 		bool user_edit = false;
+		bool intercept = true;
 		
 		public UpDownBase () : base ()
 		{
@@ -254,6 +256,12 @@ namespace System.Windows.Forms {
 			entry.Size = new Size (120, Font.Height);
 			entry.LostFocus += new EventHandler (EntryOnLostFocus);
 			entry.TextChanged += new EventHandler (OnTextBoxTextChanged);
+			entry.KeyDown += new KeyEventHandler (OnTextBoxKeyDown);
+			entry.KeyPress += new KeyEventHandler (OnTextBoxKeyPress);
+			entry.LostFocus += new EventHandler (OnTextBoxLostFocus);
+			entry.Resize += new EventHandler (OnTextBoxResize);
+			entry.TexrChanged += new EventHandler (OnTextBoxTextChanged);
+			
 			entry.ReadOnly = false;
 			Controls.Add (entry);
 
@@ -379,22 +387,27 @@ namespace System.Windows.Forms {
 		//
 		protected virtual void OnTextBoxKeyDown (object source, KeyEventArgs e)
 		{
+			this.KeyDown (e);
 		}
 		
 		protected virtual void OnTextBoxKeyPress (object source, KeyPressEventArgs e)
 		{
+			this.KeyPress (e);
 		}
 
 		protected virtual void OnTextBoxLostFocus (object source, EventArgs e)
 		{
+			this.LostFocus (e);
 		}
 
 		protected virtual void OnTextBoxResize (object source, EventArgs e)
 		{
+			this.Resize (e);
 		}
 
 		protected virtual void OnTextBoxTextChanged (object source, EventArgs e)
 		{
+			this.TextChanged (e);
 #if false
 			if (changing_text)
 				return;
@@ -575,7 +588,34 @@ namespace System.Windows.Forms {
 				entry.ReadOnly = value;
 			}
 		}
-		
+
+		public override bool Focused {
+			get {
+				return entry.Focused;
+			}
+		}
+
+		public override Color ForeColor {
+			get {
+				return base.ForeColor;
+			}
+
+			set {
+				base.ForeColor = value;
+				entry.ForeColor = value;
+			}
+			
+		}
+
+		public bool InterceptArrowKeys {
+			get {
+				return intercept;
+			}
+
+			set {
+				intercept = value;
+			}
+		}
 #endregion
 		
 #region UpDownBase standard methods
