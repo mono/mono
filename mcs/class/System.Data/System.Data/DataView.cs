@@ -80,8 +80,21 @@ namespace System.Data
 		}
 
 		public DataView (DataTable table)
-			: this (table, null)
+			: this (table, (DataViewManager) null)
 		{
+		}
+
+		// This ctor() is for DataRowView.CreateChildView() support,
+		// which does not expose precise RowFilter, Sort and so on.
+		internal DataView (DataTable table, DataRow [] rows)
+		{
+			dataTable = table;
+			rowState = DataViewRowState.CurrentRows;
+			RegisterEventHandlers ();
+
+			foreach (DataRow dr in rows)
+				rowViewPool.Add (dr, new DataRowView (this, dr));
+			isOpen = true;
 		}
 
 		internal DataView (DataTable table, DataViewManager manager)

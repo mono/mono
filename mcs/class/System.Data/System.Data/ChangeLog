@@ -1,3 +1,8 @@
+2005-02-10  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* DataView.cs, DataRowView.cs : Fixed bug #72421. CreateChildView()
+	  should target only child rows.
+
 2005-02-03  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* DataViewManager.cs: misuse of ReadStartElement(string).

@@ -93,7 +93,8 @@ namespace System.Data
 		{
 			if (relation == null)
 				throw new ArgumentException ("The relation is not parented to the table.");
-			return new DataView (relation.ChildTable);
+			return new DataView (relation.ChildTable,
+				dataRow.GetChildRows (relation));
 		}
 
 		public DataView CreateChildView (string name)
