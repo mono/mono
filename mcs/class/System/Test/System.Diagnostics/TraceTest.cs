@@ -33,7 +33,6 @@ namespace MonoTests.System.Diagnostics {
 
 		protected override void SetUp ()
 		{
-			Console.Error.WriteLine ("TraceTest.SetUp");
 			// We don't want to deal with the default listener, which can send the
 			// output to various places (Debug stream, Console.Out, ...)
 			// Trace.Listeners.Remove ("Default");
@@ -50,38 +49,29 @@ namespace MonoTests.System.Diagnostics {
 
 		protected override void TearDown ()
 		{
-			Console.Error.WriteLine ("TraceTest.TearDown");
 			Trace.Listeners.Add (new DefaultTraceListener ());
 			Trace.Listeners.Remove (listener);
 		}
 
     public static ITest Suite {
  			get { 
-				Console.Error.WriteLine ("TraceTest.Suite");
 				return new TestSuite (typeof (TraceTest)); 
 			}
 		}
 
 		public void TestTracing ()
 		{
-			Console.Error.WriteLine ("TraceTest.TestTracing");
 			string value =  
 				"Entering Main" + Environment.NewLine +
 				"Exiting Main" + Environment.NewLine;
 
-			Console.Error.WriteLine ("expected output:");
-			Console.Error.WriteLine (value);
-
 			Trace.WriteLine ("Entering Main");
 			Trace.WriteLine ("Exiting Main");
-
-			Console.Error.WriteLine ("generated output:");
-			Console.Error.WriteLine (buffer.ToString());
 
 			AssertEquals ("#Tr01", value, buffer.ToString ());
 		}
 
-		public void TraceIndent ()
+		public void TestIndent ()
 		{
 			Console.Error.WriteLine ("TraceTest.TestIndent");
 			string value =  
