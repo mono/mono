@@ -1,3 +1,9 @@
+2001-07-15  Miguel de Icaza  <miguel@ximian.com>
+
+	* main.c (dis_code): Only display .entrypoint when we are dealing
+	with a module that contains an entry point.  This removes a bunch
+	of warnings for .dll dumping
+
 Sun Jul 15 17:29:10 CEST 2001 Paolo Molaro <lupus@ximian.com>
 
 	* get.h,get.c: added some dis_stringify_object() functions:
