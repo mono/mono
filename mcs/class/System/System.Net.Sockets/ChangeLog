@@ -1,3 +1,8 @@
+2004-10-14  Dick Porter  <dick@ximian.com>
+
+	* Socket.cs (Sockets ): Set Accept()ed socket blocking status to
+	be the same as the listening socket.  This follows MS behaviour.
+
 2004-08-04  Dick Porter  <dick@ximian.com>
 
 	* Socket.cs: Update Connected state in Select and Poll; this is
