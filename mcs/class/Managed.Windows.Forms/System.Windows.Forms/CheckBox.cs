@@ -25,6 +25,9 @@
 //
 //
 // $Log: CheckBox.cs,v $
+// Revision 1.8  2004/10/13 02:46:22  pbartok
+// - Fix from John BouAntoun: Now properly sets the Appearance property
+//
 // Revision 1.7  2004/09/28 18:44:25  pbartok
 // - Streamlined Theme interfaces:
 //   * Each DrawXXX method for a control now is passed the object for the
@@ -91,7 +94,7 @@ namespace System.Windows.Forms {
 
 			set {
 				if (value != appearance) {
-					value = appearance;
+					appearance = value;
 					if (AppearanceChanged != null) {
 						AppearanceChanged(this, EventArgs.Empty);
 					}
