@@ -16,7 +16,7 @@ namespace Mono.Data.TdsClient.Internal {
 		#region Fields
 
 		TdsContext context;
-		ArrayList row;
+		ArrayList list;
 
 		#endregion // Fields
 
@@ -26,7 +26,7 @@ namespace Mono.Data.TdsClient.Internal {
 			: base (TdsPacketSubType.Row)
 		{
 			this.context = context;
-			row = new ArrayList ();
+			list = new ArrayList ();
 		}
 
 		#endregion // Constructors
@@ -39,11 +39,11 @@ namespace Mono.Data.TdsClient.Internal {
 
 		public object this[int index] {
 			get { 
-				if (index > row.Count)
+				if (index > list.Count)
 					throw new IndexOutOfRangeException ();
-				return row[index]; 
+				return list[index]; 
 			}
-			set { row[index] = value; }
+			set { list[index] = value; }
 		}
 
 		#endregion // Properties
@@ -52,7 +52,12 @@ namespace Mono.Data.TdsClient.Internal {
 
 		public int Add (object value)
 		{
-			return row.Add (value);
+			return list.Add (value);
+		}
+
+		public void CopyTo (int index, Array array, int arrayIndex, int count)
+		{
+			list.CopyTo (index, array, arrayIndex, count);
 		}
 
 		#endregion // Methods

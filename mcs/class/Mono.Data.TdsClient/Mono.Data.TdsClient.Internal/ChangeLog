@@ -1,3 +1,14 @@
+2002-10-25  Tim Coleman (tim@timcoleman.com)
+	* TdsPacketErrorResultCollection.cs:
+		New class added for exporting errors
+	* ITds.cs:
+	* Tds.cs:
+	* Tds70.cs:
+	* TdsComm.cs:
+	* TdsPacketEndTokenResult.cs:
+	* TdsPacketRowResult.cs:
+		Changes to make SqlClient build.
+
 2002-10-24  Tim Coleman (tim@timcoleman.com)
 	* ITds.cs:
 		Added column info, and NextResult/NextRow

@@ -46,11 +46,11 @@ namespace Mono.Data.TdsClient.Internal {
 		bool autoCommit;
                 Socket socket = new Socket (AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
 
-		bool inUse = false;
 
 		TdsPacketRowResult currentRow;
 		TdsPacketColumnNamesResult columnNames;
 		TdsPacketColumnInfoResult columnInfo;
+		TdsPacketErrorResultCollection errors = new TdsPacketErrorResultCollection ();
 
 		#endregion // Fields
 
@@ -76,9 +76,8 @@ namespace Mono.Data.TdsClient.Internal {
 			get { return dataSource; }
 		}
 
-		public bool InUse {
-			get { return inUse; }
-			set { inUse = value; }
+		public TdsPacketErrorResultCollection Errors {
+			get { return errors; }
 		}
 
 		public bool IsConnected {
@@ -135,6 +134,10 @@ namespace Mono.Data.TdsClient.Internal {
 		#endregion // Constructors
 
 		#region Methods
+
+		public void Cancel ()
+		{
+		}
 		
 		public void ChangeSettings (bool autoCommit, IsolationLevel isolationLevel)
 		{
@@ -267,7 +270,7 @@ namespace Mono.Data.TdsClient.Internal {
 					result = "";
 			}
 			else
-				throw new TdsException ("");
+				result = null;
 			return result;
 		}
 
@@ -292,7 +295,7 @@ namespace Mono.Data.TdsClient.Internal {
 			int len = comm.GetTdsInt ();
 
 			if (len < 0)
-				throw new TdsException ("");
+				return null;
 
 			return new SqlBinary (comm.GetBytes (len, true));
 		}
@@ -316,7 +319,7 @@ namespace Mono.Data.TdsClient.Internal {
 				len = 1; 
 				break;
 			default:
-				throw new TdsException ("");
+				return null;
 			}
 
 			switch (len) {
@@ -326,10 +329,8 @@ namespace Mono.Data.TdsClient.Internal {
 				return (comm.GetTdsShort ());
 			case 1 :
 				return (comm.GetByte ());
-			case 0 :
-				return null;
 			default:
-				throw new TdsException ("Bad integer length");
+				return null;
 			}
 		}
 
@@ -351,7 +352,7 @@ namespace Mono.Data.TdsClient.Internal {
 				len = comm.GetByte ();
 				break;
 			default:
-				throw new TdsException ("not a money value");
+				return null;
 			}
 
 			if (len == 0)
@@ -370,7 +371,7 @@ namespace Mono.Data.TdsClient.Internal {
 
 		private object GetTextValue (bool wideChars)
 		{
-			string result;
+			string result = null;
 			byte hasValue = comm.GetByte ();
 
 			if (hasValue == 0)
@@ -387,8 +388,6 @@ namespace Mono.Data.TdsClient.Internal {
 				if ((byte) tdsVersion < (byte) TdsVersion.tds70 && result == " ")
 					result = "";
 			} 
-			else 
-				throw new TdsException ("");
 
 			return result;
 		}
@@ -426,7 +425,7 @@ namespace Mono.Data.TdsClient.Internal {
 				case TdsColumnType.UniqueIdentifier :
 					return false;
 				default :
-					throw new TdsException ("bad type");
+					return false;
 			}
 		}
 
@@ -449,7 +448,7 @@ namespace Mono.Data.TdsClient.Internal {
 				case TdsColumnType.Money :
 					return 8;
 				default :
-					throw new TdsException ("");
+					return 0;
 			}
 		}
 
@@ -478,7 +477,7 @@ namespace Mono.Data.TdsClient.Internal {
 				case TdsColumnType.SmallMoney :
 					return 12;
 				default:
-					throw new TdsException ("");
+					return 0;
 			}
 		}
 
@@ -564,9 +563,9 @@ namespace Mono.Data.TdsClient.Internal {
 				result[index].Writable = writable;
 			}
 
-			int skipLength = totalLength - bytesRead;
-			if (skipLength != 0)
-				throw new TdsException ("skipping");
+			//int skipLength = totalLength - bytesRead;
+			//if (skipLength != 0)
+				//throw new TdsException ("skipping");
 
 			return result;
 		}
@@ -631,9 +630,6 @@ namespace Mono.Data.TdsClient.Internal {
 				string newDB = comm.GetString (cLen);
 				cLen = comm.GetByte () & 0xff;
 				string oldDB = comm.GetString (cLen);
-
-				if (database != null && database != oldDB)
-					throw new TdsException ("Database mismatch.");
 				database = newDB;
 				break;
 			default:
@@ -646,6 +642,7 @@ namespace Mono.Data.TdsClient.Internal {
 
 		private TdsPacketResult ProcessLoginAck ()
 		{
+
 			GetSubPacketLength ();
 
 			if (tdsVersion == TdsVersion.tds70) {
@@ -696,15 +693,14 @@ namespace Mono.Data.TdsClient.Internal {
 				message.ProcName = comm.GetString (len);
 			}
 			else 
-				throw new TdsException ("Invalid subtype");
+				return null;
+
 			message.Line = comm.GetByte ();
 			comm.GetByte ();
 
 			lastServerMessage = message;
-			if (subType == TdsPacketSubType.Error)
-				throw new TdsException (message.ToString ());
-
-			Console.WriteLine (message.ToString ());
+			if (subType == TdsPacketSubType.Error) 
+				errors.Add (new TdsPacketErrorResult (subType, message));
 
 			return new TdsPacketMessageResult (subType, message);
 		}
@@ -830,7 +826,7 @@ namespace Mono.Data.TdsClient.Internal {
 				//element = (len == 0 ? null : new Guid (comm.GetBytes (len, false)));
 				break;
 			default :
-				throw new TdsException ("");
+				return null;
 			}
 
 			return element;
@@ -913,7 +909,7 @@ namespace Mono.Data.TdsClient.Internal {
 				result = ProcessTds7Result ();
 				break;
 			default:
-				throw new TdsException ("oops!");
+				return null;
 			}
 
 			return result;
@@ -952,7 +948,7 @@ namespace Mono.Data.TdsClient.Internal {
 				tmp = null;
 				break;
 			default:
-				throw new TdsException ("");
+				return null;
 			}
 
 			return tmp;

@@ -30,7 +30,7 @@ namespace Mono.Data.TdsClient.Internal {
 			: base (type)
 		{
 			if (type == TdsPacketSubType.DoneInProc)
-				throw new TdsException ("");
+				throw new Exception ("");
 			this.type = type;
 			this.status = status;
 			this.rowCount = rowCount;

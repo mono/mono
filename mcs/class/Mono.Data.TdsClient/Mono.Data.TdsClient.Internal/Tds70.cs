@@ -36,6 +36,7 @@ namespace Mono.Data.TdsClient.Internal {
 
 		public override bool Connect (TdsConnectionParameters connectionParameters)
 		{
+Console.WriteLine ("Connecting...");
 			if (IsConnected)
 				throw new InvalidOperationException ("The connection is already open.");
 

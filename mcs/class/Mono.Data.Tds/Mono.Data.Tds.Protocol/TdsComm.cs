@@ -358,8 +358,9 @@ namespace Mono.Data.TdsClient.Internal {
 				nread += stream.Read (tmpBuf, nread, 8 - nread);
 
 			TdsPacketType packetType = (TdsPacketType) tmpBuf[0];
-			if (packetType != TdsPacketType.Logon && packetType != TdsPacketType.Query && packetType != TdsPacketType.Reply) {
-				throw new TdsException (String.Format ("Unknown packet type {0}", tmpBuf[0]));
+			if (packetType != TdsPacketType.Logon && packetType != TdsPacketType.Query && packetType != TdsPacketType.Reply) 
+			{
+				throw new Exception (String.Format ("Unknown packet type {0}", tmpBuf[0]));
 			}
 
 			// figure out how many bytes are remaining in this packet.
@@ -369,7 +370,7 @@ namespace Mono.Data.TdsClient.Internal {
 				inBuffer = new byte[len];
 
 			if (len < 0) {
-				throw new TdsException (String.Format ("Confused by a length of {0}", len));
+				throw new Exception (String.Format ("Confused by a length of {0}", len));
 			}
 
 			// now get the data
