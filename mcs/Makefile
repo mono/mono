@@ -19,6 +19,8 @@ test: platform-check profile-check test-recursive #test-local
 
 run-test: run-test-recursive #run-test-local
 
+run-test-ondotnet: run-test-ondotnet-recursive # run-test-ondotnet-local
+
 clean: clean-recursive #clean-local
 
 # fun specialty targets
