@@ -1,5 +1,8 @@
 2004-03-30  Miguel de Icaza  <miguel@ximian.com>
 
+	* cs-parser.jay: Add a rule to catch wrong event syntax instead of
+	throwing a parser error.
+
 	* ecore.cs (PropertyExpr.GetAccessor): Apply patch from Patrik Reali
 	which removes the hardcoded get_/set_ prefixes for properties, as
 	IL allows for the properties to be named something else.  
