@@ -43,7 +43,7 @@ namespace System.Drawing.Drawing2D
 		private PointF[] points = null;
 		private byte[] types = null;
 
-		public PathData() { }
+		public PathData () { }
 
 		public PointF[] Points {
 			get { return points; } 

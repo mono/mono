@@ -1,5 +1,9 @@
 2004-07-15  Ravindra  <rkumar@novell.com>
 
+	* GraphicsPath.cs: Implemented PathData property and some formatting.
+
+2004-07-15  Ravindra  <rkumar@novell.com>
+
 	* CombineMode.cs, CompositingMode.cs, CompositingQuality.cs,
 	GraphicsPath.cs, CoordinateSpace.cs, DashCap.cs, DashStyle.cs,
 	FillMode.cs, FlushIntention.cs, GraphicsPath.cs, GraphicsState.cs,

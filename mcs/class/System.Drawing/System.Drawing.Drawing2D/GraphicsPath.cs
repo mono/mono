@@ -42,6 +42,7 @@ namespace System.Drawing.Drawing2D
         public sealed class GraphicsPath : MarshalByRefObject, ICloneable, IDisposable {
 
                 internal IntPtr nativePath = IntPtr.Zero;
+		private PathData data = null;
 
                 GraphicsPath (IntPtr ptr)
                 {
@@ -62,8 +63,7 @@ namespace System.Drawing.Drawing2D
                 
                 public GraphicsPath (Point[] pts, byte[] types)
                 {
-                        Status status = GDIPlus.GdipCreatePath2I (
-                                pts, types, pts.Length, FillMode.Alternate, out nativePath);
+                        Status status = GDIPlus.GdipCreatePath2I (pts, types, pts.Length, FillMode.Alternate, out nativePath);
                         GDIPlus.CheckStatus (status);
                 }
                 
@@ -75,8 +75,7 @@ namespace System.Drawing.Drawing2D
                 
 		public GraphicsPath (Point[] pts, byte[] types, FillMode fillMode)
 		{
-                        Status status = GDIPlus.GdipCreatePath2I (
-                                pts, types, pts.Length, fillMode, out nativePath);
+                        Status status = GDIPlus.GdipCreatePath2I (pts, types, pts.Length, fillMode, out nativePath);
                         GDIPlus.CheckStatus (status);
                 }
 
@@ -112,88 +111,76 @@ namespace System.Drawing.Drawing2D
 		
                 }
 
+		public FillMode FillMode {
+			get {
+				FillMode mode;
+				Status status = GDIPlus.GdipGetPathFillMode (nativePath, out mode);
+				GDIPlus.CheckStatus (status);
 
-                public FillMode FillMode {
-                        get {
+				return mode;
+			}
+			set {
+				Status status = GDIPlus.GdipSetPathFillMode (nativePath, value);
+				GDIPlus.CheckStatus (status);
+			}
+		}
 
-                                FillMode mode;
-                                Status status = GDIPlus.GdipGetPathFillMode (nativePath, out mode);
-                                GDIPlus.CheckStatus (status);                      	
-                                
-                                return mode;
-                        }
+		public PathData PathData {
+			get {
+				PathData pdata = new PathData ();
+				pdata.Points = PathPoints;
+				pdata.Types = PathTypes;
+				return pdata;
+			}
+		}
 
-                        set {
-                                Status status = GDIPlus.GdipSetPathFillMode (nativePath, value);
-                                GDIPlus.CheckStatus (status);                      	
-                        }
-                }
+		public PointF [] PathPoints {
+			get {
+				int count;
+				Status status = GDIPlus.GdipGetPointCount (nativePath, out count);
+				GDIPlus.CheckStatus (status);
 
-                public PathData PathData {
+				PointF [] points = new PointF [count];
+				status = GDIPlus.GdipGetPathPoints (nativePath, points, count); 
+				GDIPlus.CheckStatus (status);		      	
 
-                        get {
-                                IntPtr tmp;
-                                Status status = GDIPlus.GdipGetPathData (nativePath, out tmp);
-                                GDIPlus.CheckStatus (status);                      	
+				return points;
+			}
+		}
 
-                                throw new Exception ();
-                        }
-                }
+		public byte [] PathTypes {
+			get {
+				int count;
+				Status status = GDIPlus.GdipGetPointCount (nativePath, out count);
+				GDIPlus.CheckStatus (status);
 
-                public PointF [] PathPoints {
+				byte [] types = new byte [count];
+				status = GDIPlus.GdipGetPathTypes (nativePath, types, count);
+				GDIPlus.CheckStatus (status);
 
-                        get {
-                                int count;
-                        
-                                Status status = GDIPlus.GdipGetPointCount (nativePath, out count);
-                                GDIPlus.CheckStatus (status);                      	
+				return types;
+			}
+		}
 
-                                PointF [] points = new PointF [count];
+		public int PointCount {
+			get {
+				int count;
+				Status status = GDIPlus.GdipGetPointCount (nativePath, out count);
+				GDIPlus.CheckStatus (status);
 
-                                status = GDIPlus.GdipGetPathPoints (nativePath, points, count); 
-                                GDIPlus.CheckStatus (status);                      	
+				return count;
+			}
+		}
 
-                                return points;
-                        }
-                }
+		internal IntPtr NativeObject {
+			get {
+				return nativePath;
+			}
+			set {
+				nativePath = value;
+			}
+		}
 
-                public byte [] PathTypes {
-
-                        get {
-                                int count;
-                                Status status = GDIPlus.GdipGetPointCount (nativePath, out count);
-                                GDIPlus.CheckStatus (status);                      	
-
-                                byte [] types = new byte [count];
-                                status = GDIPlus.GdipGetPathTypes (nativePath, types, count);
-                                GDIPlus.CheckStatus (status);                      	
-
-                                return types;
-                        }
-                }
-
-                public int PointCount {
-
-                        get {
-                                int count;
-
-                                Status status = GDIPlus.GdipGetPointCount (nativePath, out count);
-                                GDIPlus.CheckStatus (status);                      	
-
-                                return count;
-                        }
-                }
-                
-                internal IntPtr NativeObject{
-                
-                        get {
-                                return nativePath;
-                        }
-                        set {
-                                nativePath = value;
-                        }
-                }
-        
                 //
                 // AddArc
                 //
