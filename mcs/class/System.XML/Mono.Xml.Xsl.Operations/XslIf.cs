@@ -36,7 +36,8 @@ namespace Mono.Xml.Xsl.Operations {
 		public bool EvaluateIfTrue (XslTransformProcessor p)
 		{
 			if (p.EvaluateBoolean (test)) {
-				children.Evaluate (p);
+				if (children != null)
+					children.Evaluate (p);
 				return true;
 			}
 			return false;

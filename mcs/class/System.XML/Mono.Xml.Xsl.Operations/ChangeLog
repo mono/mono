@@ -1,3 +1,7 @@
+2004-01-27 Atsushi Enomoto <atsushi@ximian.com>
+
+	* XslIf.cs : When content is empty, skip content evaluation.
+
 2004-01-14 Atsushi Enomoto <atsushi@ximian.com>
 
 	* XslVariable.cs : Use new GenericOutputter.ctor() to indicate it is
