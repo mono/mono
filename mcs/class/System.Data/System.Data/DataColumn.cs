@@ -135,19 +135,13 @@ namespace System.Data {
 				return DataContainer[index];
 			}
 			set {
-				DataContainer[index] = value;
+				if ( !(value == null && AutoIncrement) ) {
+					DataContainer[index] = value;
+				}
 
 				if ( AutoIncrement && !DataContainer.IsNull(index) ) {
 					long value64 = Convert.ToInt64(value);
-					if (_autoIncrementStep > 0 ) {
-						if (value64 >= _nextAutoIncrementValue) {
-							_nextAutoIncrementValue = value64;
-							AutoIncrementValue ();
-						}
-					}
-					else if (value64 <= _nextAutoIncrementValue) {
-						AutoIncrementValue ();
-					}
+					UpdateAutoIncrementValue(value64);
 				}
 			}
 		}
@@ -222,6 +216,11 @@ namespace System.Data {
 						throw new ArgumentException("Can not Auto Increment a computed column."); 
 					}
 
+					if ( DefaultValue != DBNull.Value ) {
+						throw new ArgumentException("Can not set AutoIncrement while" +
+							" default value exists for this column.");
+					}
+
 					//If the DataType of this Column isn't an Int
 					//Make it an int
 					TypeCode typeCode = Type.GetTypeCode(DataType);
@@ -268,6 +267,19 @@ namespace System.Data {
 			}
 			set {
 				_autoIncrementStep = value;
+			}
+		}
+
+		internal void UpdateAutoIncrementValue(long value64)
+		{
+			if (_autoIncrementStep > 0 ) {
+				if (value64 >= _nextAutoIncrementValue) {
+					_nextAutoIncrementValue = value64;
+					AutoIncrementValue ();
+				}
+			}
+			else if (value64 <= _nextAutoIncrementValue) {
+				AutoIncrementValue ();
 			}
 		}
 
@@ -380,38 +392,38 @@ namespace System.Data {
 			get {
 				return _defaultValue;
 			}
-			set {
-				object tmpObj;
-				if ((this._defaultValue == null) || (!this._defaultValue.Equals(value)))
-				{
-					//If autoIncrement == true throw
-					if (AutoIncrement) 
-					{
-						throw new ArgumentException("Can not set default value while" +
-							" AutoIncrement is true on this column.");
-					}
 
-					if (value == null) 
-					{
+			set {
+				if (AutoIncrement) {
+					throw new ArgumentException("Can not set default value while" +
+						" AutoIncrement is true on this column.");
+				}
+
+				object tmpObj;
+				if (!this._defaultValue.Equals(value)) {		
+					if (value == null) {
 						tmpObj = DBNull.Value;
 					}
-					else
+					else {
 						tmpObj = value;
+					}
 
-					if ((this.DataType != typeof (object))&& (tmpObj != DBNull.Value))
-					{
-						try
-						{
+					if ((this.DataType != typeof (object))&& (tmpObj != DBNull.Value)) {
+						try {
 							//Casting to the new type
 							tmpObj= Convert.ChangeType(tmpObj,this.DataType);
 						}
-						catch (InvalidCastException)
-						{
+						catch (InvalidCastException) {
 							throw new InvalidCastException("Default Value type is not compatible with" + 
 								" column type.");
 						}
 					}
 					_defaultValue = tmpObj;
+				}
+
+				// store default value in the table if already belongs to
+				if (Table != null && Table.DefaultValuesRowIndex != -1) {
+					DataContainer[Table.DefaultValuesRowIndex] = _defaultValue;
 				}
 			}
 		}
@@ -437,7 +449,7 @@ namespace System.Data {
 				expression = value;  
 			}
 		}
-		
+
 		internal IExpression CompiledExpression {
 			get { return compiledExpression; }
 		}
@@ -666,18 +678,30 @@ namespace System.Data {
 
 		internal void SetTable(DataTable table) {
 			if(_table!=null) { // serves as double check while adding to a table
-                        	throw new ArgumentException("The column already belongs to a different table");
-                        }
-                        _table = table;
-                        // this will get called by DataTable
-                        // and DataColumnCollection
-                        if(unique) {
-                        	// if the DataColumn is marked as Unique and then
-	                        // added to a DataTable , then a UniqueConstraint
-        	                // should be created
-                	        UniqueConstraint uc = new UniqueConstraint(this);
-                        	_table.Constraints.Add(uc);
-                        }
+                    throw new ArgumentException("The column already belongs to a different table");
+            }
+            _table = table;
+            // this will get called by DataTable
+            // and DataColumnCollection
+            if(unique) {
+                // if the DataColumn is marked as Unique and then
+	            // added to a DataTable , then a UniqueConstraint
+        	    // should be created
+                UniqueConstraint uc = new UniqueConstraint(this);
+                _table.Constraints.Add(uc);
+            }
+
+			// allocate space in the column data container 
+			DataContainer.Capacity = _table.RecordCache.CurrentCapacity;
+			
+			int defaultValuesRowIndex = _table.DefaultValuesRowIndex;
+			if ( defaultValuesRowIndex != -1) {
+				// store default value in the table
+				DataContainer[defaultValuesRowIndex] = _defaultValue;
+				// Set all the values in data container to default
+				// it's cheaper that raise event on each row.
+				DataContainer.FillValues(_table.DefaultValuesRowIndex);
+			}
 		}
 
 		

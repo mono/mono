@@ -1,3 +1,11 @@
+2004-06-17  Boris Kirzner  <borisk@mainsoft.com>
+
+	* DataColumn.cs : 
+	  - AutoIncrementValue fixes. Now AutoIncrement uses DataContainer.GetInt64 to avoid boxing.
+	  - DefaultValue fixes. Default value from now on is also stored in special record in 
+	  DataTable, so we're able to set default value for the column faster (typed).
+	
+	
 2004-06-15  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* DataSet.cs : children of non-root rows were not properly written.
