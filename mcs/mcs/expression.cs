@@ -5471,6 +5471,11 @@ namespace Mono.CSharp {
 			if (type == null)
 				return null;
 
+			if (!ec.InUnsafe && type.IsPointer){
+				Report.Error (214, loc, "Pointers can only be used in an unsafe context");
+				return null;
+			}
+			
 			eclass = ExprClass.Type;
 			return this;
 		}

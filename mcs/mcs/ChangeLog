@@ -1,5 +1,16 @@
 2002-01-24  Miguel de Icaza  <miguel@ximian.com>
 
+	* expression.cs (ComposedCast): report an error if a pointer cast
+	is used in a safe region.
+
+	* ecore.cs (Expression.ConvertExplicit): Add rules for implicit
+	pointer type casts in unsafe context.
+
+	* codegen.cs (EmitContext): Set up IsUnsafe.
+
+	* cs-parser.jay (non_expression_type): Add productions for pointer
+	casts. 
+
 	* expression.cs (Invocation.EmitCall): Remove chunk of buggy
 	code.  We should not use force into static mode if the method is
 	not virtual.  Fixes bug in MIS

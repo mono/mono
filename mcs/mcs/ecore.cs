@@ -1785,6 +1785,51 @@ namespace Mono.CSharp {
 			if (ne != null)
 				return ne;
 
+			if (ec.InUnsafe){
+				if (target_type.IsPointer){
+					if (expr_type.IsPointer)
+						return new EmptyCast (expr, target_type);
+					
+					if (expr_type == TypeManager.sbyte_type ||
+					    expr_type == TypeManager.byte_type ||
+					    expr_type == TypeManager.short_type ||
+					    expr_type == TypeManager.ushort_type ||
+					    expr_type == TypeManager.int32_type ||
+					    expr_type == TypeManager.uint32_type ||
+					    expr_type == TypeManager.uint64_type ||
+					    expr_type == TypeManager.int64_type)
+						return new OpcodeCast (expr, target_type, OpCodes.Conv_U);
+				}
+				if (expr_type.IsPointer){
+					if (target_type == TypeManager.sbyte_type ||
+					    target_type == TypeManager.byte_type ||
+					    target_type == TypeManager.short_type ||
+					    target_type == TypeManager.ushort_type ||
+					    target_type == TypeManager.int32_type ||
+					    target_type == TypeManager.uint32_type ||
+					    target_type == TypeManager.uint64_type ||
+					    target_type == TypeManager.int64_type){
+						Expression e = new EmptyCast (expr, TypeManager.uint32_type);
+						Expression ci, ce;
+
+						ci = ConvertImplicitStandard (ec, e, target_type, loc);
+
+						if (ci != null)
+							return ci;
+
+						ce = ConvertNumericExplicit (ec, e, target_type);
+						if (ce != null)
+							return ce;
+						//
+						// We should always be able to go from an uint32
+						// implicitly or explicitly to the other integral
+						// types
+						//
+						throw new Exception ("Internal compiler error");
+					}
+				}
+			}
+			
 			ne = ExplicitUserConversion (ec, expr, target_type, loc);
 			if (ne != null)
 				return ne;

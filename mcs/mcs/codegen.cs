@@ -176,6 +176,7 @@ namespace Mono.CSharp {
 			IsConstructor = is_constructor;
 			CurrentBlock = null;
 			ContainerType = parent.TypeBuilder;
+			InUnsafe = ((parent.ModFlags | code_flags) & Modifiers.UNSAFE) != 0;
 			loc = l;
 
 			if (ReturnType == TypeManager.void_type)

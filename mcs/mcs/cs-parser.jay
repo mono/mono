@@ -1725,9 +1725,17 @@ non_expression_type
 	  {
 		$$ = new ComposedCast ((Expression) $1, (string) $2, lexer.Location);
 	  }
+	| non_expression_type STAR
+	  {
+		$$ = new ComposedCast ((Expression) $1, "*", lexer.Location);
+	  }
 	| expression rank_specifiers 
 	  {
 		$$ = new ComposedCast ((Expression) $1, (string) $2, lexer.Location);
+	  }
+	| expression STAR 
+	  {
+		$$ = new ComposedCast ((Expression) $1, "*", lexer.Location);
 	  }
 	;
 
