@@ -19,7 +19,8 @@ using System.Globalization;
 using System.Reflection;
 using System.Collections;
 using System.Runtime.CompilerServices;
-namespace System.Windows.Forms {
+namespace System.Windows.Forms 
+{
 
 	/// <summary>
 	/// Provides static methods and properties to manage an application,
@@ -29,131 +30,169 @@ namespace System.Windows.Forms {
 	/// </summary>
 
 	[MonoTODO]
-	public sealed class Application {
+	public sealed class Application 
+	{
 		static private ApplicationContext applicationContext = null;
 		static private bool messageLoopStarted = false;
 		static private bool messageLoopStopRequest = false;
 		static private  ArrayList messageFilters = new ArrayList ();
 		static private string safeTopLevelCaptionFormat;
 		// --- (public) Properties ---
-		public static bool AllowQuit {
+		public static bool AllowQuit 
+		{
 			// according to docs return false if embbedded in a
 			// browser, not (yet?) embedded in a browser
 			get { return true; }
 		}
 
 		[MonoTODO]
-		public static string CommonAppDataPath {
-			get {
+		public static string CommonAppDataPath 
+		{
+			get 
+			{
 				//FIXME:
 				return "";
 			}
 		}
 
 		[MonoTODO]
-		public static RegistryKey CommonAppDataRegistry {
-			get {
+		public static RegistryKey CommonAppDataRegistry 
+		{
+			get 
+			{
 				throw new NotImplementedException ();
 			}
 		}
 	
 		[MonoTODO]
-		public static string CompanyName {
-			get {
-                AssemblyCompanyAttribute[] attrs =(AssemblyCompanyAttribute[]) Assembly.GetExecutingAssembly().GetCustomAttributes(typeof(AssemblyCompanyAttribute),true);
-                if (attrs != null && attrs[0] != null)
-                    return attrs[0].Company;
-                return "";
+		public static string CompanyName 
+		{
+			get 
+			{
+				AssemblyCompanyAttribute[] attrs =(AssemblyCompanyAttribute[]) Assembly.GetExecutingAssembly().GetCustomAttributes(typeof(AssemblyCompanyAttribute),true);
+				if (attrs != null && attrs[0] != null)
+					return attrs[0].Company;
+				return "";
 			}
 		}
 	
 		[MonoTODO]
-		public static CultureInfo CurrentCulture {
-			get {
+		public static CultureInfo CurrentCulture 
+		{
+			get 
+			{
 				return CultureInfo.CurrentCulture;
 			}
-			set {
+			set 
+			{
 				Thread.CurrentThread.CurrentCulture = value;
 			}
 		}
 	
 		[MonoTODO]
-		public static InputLanguage CurrentInputLanguage {
+		public static InputLanguage CurrentInputLanguage 
+		{
 			get { throw new NotImplementedException (); }
+			set {return;}
 		}
 	
 		[MonoTODO]
-		public static string ExecutablePath {
-			get {
-                    return Assembly.GetExecutingAssembly().Location;			
-            }
+		public static string ExecutablePath 
+		{
+			get 
+			{
+				return Assembly.GetExecutingAssembly().Location;			
+			}
 		}
 	
 		[MonoTODO]
-		public static string LocalUserAppDataPath {
-			get {
+		public static string LocalUserAppDataPath 
+		{
+			get 
+			{
 				//FIXME:
 				return "";
 			}
 		}
 	
-		public static bool MessageLoop {
-			get {
+		public static bool MessageLoop 
+		{
+			get 
+			{
 				return messageLoopStarted;
 			}
 		}
-	
+
 		[MonoTODO]
-		public static string ProductName {
-			get {
-                    AssemblyProductAttribute[] attrs =(AssemblyProductAttribute[]) Assembly.GetExecutingAssembly().GetCustomAttributes(typeof(AssemblyProductAttribute),true);
-                    if (attrs != null && attrs[0] != null)
-                        return attrs[0].Product;
-                    return "";
+			//.NET version 1.1
+		public static void EnableVisualStyles () 
+		{
+			return;
+		}
+			
+		[MonoTODO]
+		public static string ProductName 
+		{
+			get 
+			{
+				AssemblyProductAttribute[] attrs =(AssemblyProductAttribute[]) Assembly.GetExecutingAssembly().GetCustomAttributes(typeof(AssemblyProductAttribute),true);
+				if (attrs != null && attrs[0] != null)
+					return attrs[0].Product;
+				return "";
 			}
 		}
 	
 		[MonoTODO]
-		public static string ProductVersion {
-            get {
-                    AssemblyVersionAttribute[] attrs =(AssemblyVersionAttribute[]) Assembly.GetExecutingAssembly().GetCustomAttributes(typeof(AssemblyVersionAttribute),true);
-                    if (attrs != null && attrs[0] != null)
-                        return attrs[0].Version;
-                    return "";
+		public static string ProductVersion 
+		{
+			get 
+			{
+				AssemblyVersionAttribute[] attrs =(AssemblyVersionAttribute[]) Assembly.GetExecutingAssembly().GetCustomAttributes(typeof(AssemblyVersionAttribute),true);
+				if (attrs != null && attrs[0] != null)
+					return attrs[0].Version;
+				return "";
 			}
 		}
 	
 		[MonoTODO]
-		public static string SafeTopLevelCaptionFormat {
-			get {
+		public static string SafeTopLevelCaptionFormat 
+		{
+			get 
+			{
 				return safeTopLevelCaptionFormat;
 			}
-			set {
+			set 
+			{
 				safeTopLevelCaptionFormat = value;
 			}
 		}
 	
 		[MonoTODO]
-		public static string StartupPath {
-			get {
+		public static string StartupPath 
+		{
+			get 
+			{
 				//FIXME:
 				return "";
 			}
 		}
 	
 		[MonoTODO]
-		public static string UserAppDataPath {
-			get {
+		public static string UserAppDataPath 
+		{
+			get 
+			{
 				//FIXME:
 				return "";
 			}
 		}
 	
-		//[MonoTODO]
-		// Registry key not yet defined
-		//public static RegistryKey UserAppDataRegistry {
-		//	get { throw new NotImplementedException (); }
-		//}
+		[MonoTODO]
+			// Registry key not yet defined
+		public static RegistryKey UserAppDataRegistry 
+		{
+			get { throw new NotImplementedException (); }
+		}
 	
 		// --- Methods ---
 		public static void AddMessageFilter (IMessageFilter value) 
@@ -167,7 +206,7 @@ namespace System.Windows.Forms {
 			MSG msg = new MSG();
 
 			while (Win32.PeekMessageA (ref msg, (IntPtr) 0,  0, 0,
-						   (uint)PeekMessageFlags.PM_REMOVE) != 0);
+				(uint)PeekMessageFlags.PM_REMOVE) != 0);
 		}
 
 		//Compact Framework	
@@ -191,7 +230,8 @@ namespace System.Windows.Forms {
 		public static void OnThreadException (Exception t) 
 		{
 			//FIXME:
-			if( Application.ThreadException != null) {
+			if( Application.ThreadException != null) 
+			{
 				Application.ThreadException(null, new ThreadExceptionEventArgs(t));
 			}
 			
@@ -216,7 +256,8 @@ namespace System.Windows.Forms {
 
 
 			while (!messageLoopStopRequest && 
-			       Win32.GetMessageA (ref msg, 0, 0, 0) != 0) {
+				Win32.GetMessageA (ref msg, 0, 0, 0) != 0) 
+			{
 
 				bool dispatchMessage = true;
 
@@ -228,9 +269,10 @@ namespace System.Windows.Forms {
 
 				IEnumerator e = messageFilters.GetEnumerator();
 
-				while (e.MoveNext()) {
+				while (e.MoveNext()) 
+				{
 					IMessageFilter filter = 
-					    (IMessageFilter) e.Current;
+						(IMessageFilter) e.Current;
 
 					// if PreFilterMessage returns true
 					// the message should not be dispatched
@@ -239,20 +281,22 @@ namespace System.Windows.Forms {
 				}
 
 				Control receiver = Control.FromChildHandle ( message.HWnd );
-				if ( receiver != null ) {
+				if ( receiver != null ) 
+				{
 					dispatchMessage = ! receiver.PreProcessMessage ( ref message );
 				}
 
-				if (dispatchMessage) {
+				if (dispatchMessage) 
+				{
 					Win32.TranslateMessage (ref msg);
 					Win32.DispatchMessageA (ref msg);
 				}
 				//if (Idle != null)
-					//Idle (null, new EventArgs());
+				//Idle (null, new EventArgs());
 			}
 
 			//if (ApplicationExit != null)
-				//ApplicationExit (null, new EventArgs());
+			//ApplicationExit (null, new EventArgs());
 		}
 
 		public static void Run (ApplicationContext context) 
@@ -260,15 +304,15 @@ namespace System.Windows.Forms {
 			applicationContext = context;
 			applicationContext.MainForm.Show ();
 			applicationContext.ThreadExit += new EventHandler( ApplicationFormClosed );
-//			applicationContext.MainForm.Closed += //
-//			    new EventHandler (ApplicationFormClosed);
+			//			applicationContext.MainForm.Closed += //
+			//			    new EventHandler (ApplicationFormClosed);
 			Run();
 		}
 
 		//[TypeAttributes.BeforeFieldInit]
 		public static void Run (Form mainForm)
-		// Documents say this parameter name should be mainform, 
-		// but the verifier says context.
+			// Documents say this parameter name should be mainform, 
+			// but the verifier says context.
 		{
 			mainForm.CreateControl ();
 			ApplicationContext context = new ApplicationContext (
@@ -276,12 +320,13 @@ namespace System.Windows.Forms {
 			Run (context);
 		}
 		
-		public static void enterModalLoop ( Form mainForm )
+		internal static void enterModalLoop ( Form mainForm )
 		{
 			mainForm.ExitModalLoop = false;
 
 			MSG msg = new MSG();
-			while( Win32.GetMessageA( ref msg, 0, 0, 0 ) != 0 ) {
+			while( Win32.GetMessageA( ref msg, 0, 0, 0 ) != 0 ) 
+			{
 
 				if ( mainForm.ExitModalLoop )
 					break;
@@ -303,7 +348,7 @@ namespace System.Windows.Forms {
 			
 		}
 		
-		public static void exitModalLoop ( Form mainForm )
+		internal static void exitModalLoop ( Form mainForm )
 		{
 			mainForm.ExitModalLoop = true;
 
@@ -317,3 +362,4 @@ namespace System.Windows.Forms {
 		public static event EventHandler ThreadExit;
 	}
 }
+

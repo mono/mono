@@ -778,7 +778,7 @@
     			}
     		}
     
-		protected override bool MenuPresent {
+		protected internal override bool MenuPresent {
 			get { return mainMenu_ != null; }
 		}
 
@@ -998,7 +998,7 @@
 				return result;
     		}
 
- 			protected override void OnWmCommand (ref Message m)
+ 			protected internal override void OnWmCommand (ref Message m)
 			{
 				int wNotifyCode = (int)m.HiWordWParam;
 				int wID = (int)m.LoWordWParam;

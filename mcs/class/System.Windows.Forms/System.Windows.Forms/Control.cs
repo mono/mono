@@ -575,7 +575,7 @@ namespace System.Windows.Forms {
 		// This function lets Windows or/and default Windows control process message
 		// Classes have to call it if they do not handle message in WndProc or
 		// default handling is needed.
-		protected void CallControlWndProc (ref Message msg) {
+		protected internal void CallControlWndProc (ref Message msg) {
 			if (ControlRealWndProc != IntPtr.Zero) {
 				bool callControlProc = true;
 				if ((callWinControlProcMask & CallWinControlProcMask.MOUSE_MESSAGES) == 0 && msg.IsMouseMessage) {
@@ -607,7 +607,7 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		protected virtual void OnWmCommand (ref Message m) {
+		protected internal virtual void OnWmCommand (ref Message m) {
 			if (m.LParam.ToInt32 () != 0) {
 				if (m.LParam != Handle) {
 					// Control notification
@@ -934,7 +934,7 @@ namespace System.Windows.Forms {
     			}
     		}
     		
-		protected static IntPtr ParkingWindowHandle {
+		protected internal static IntPtr ParkingWindowHandle {
 			get {
 				if (parkingWindow == null)
 					parkingWindow = new NativeWindow ();
@@ -950,7 +950,7 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		protected static void RegisterDefaultWindowClass ()
+		protected internal static void RegisterDefaultWindowClass ()
 		{
 			if (!classRegistered){
 				WNDCLASS wndClass = new WNDCLASS ();
@@ -2458,7 +2458,7 @@ namespace System.Windows.Forms {
 			UpdateBounds (x, y, width, height);
 		}
     		
-		protected virtual bool MenuPresent {
+		protected internal virtual bool MenuPresent {
 			get { return false; }
 		}
 

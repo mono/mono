@@ -53,8 +53,7 @@ namespace System.Windows.Forms {
 		
 		#region Constructors
 		[MonoTODO]
-		public DataGrid() 
-		{
+		public DataGrid() {
 			// setting default values:
 			allowNavigation=true;
 			borderStyle = BorderStyle.FixedSingle;
@@ -82,7 +81,7 @@ namespace System.Windows.Forms {
 		}
 		#endregion
 		
-		protected override void Dispose(bool disposing){
+		protected override void Dispose(bool disposing) {
 		}
 
 
@@ -437,561 +436,490 @@ namespace System.Windows.Forms {
 		#endregion
 		
 		#region Methods
-		/* Following members support the .NET Framework infrastructure and are not intended to be used directly from your code.
-		 * Methods not stubbed out:
-		   - protected virtual string GetOutputTextDelimiter()
-			 - public void ResetLinkHoverColor()
-			 - public void SubObjectsSiteChange(bool site)
-		 */
+		// Following members support the .NET Framework infrastructure and are not intended to be used directly from your code.
+		
 		[MonoTODO]
-		public virtual bool BeginEdit(DataGridColumnStyle gridColumn,int rowNumber) 
-		{
+		protected virtual string GetOutputTextDelimiter(){
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public void ResetLinkHoverColor(){
+			
+		}
+
+		[MonoTODO]
+		public virtual bool BeginEdit(DataGridColumnStyle gridColumn,int rowNumber) {
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		public void BeginInit() 
-		{
+		public void BeginInit() {
 			//FIXME:
 		}
 		
 		[MonoTODO]
-		protected virtual void CancelEditing() 
-		{
+		protected virtual void CancelEditing() {
 			//FIXME:
 		}
 		
 		[MonoTODO]
-		public void Collapse(int row) 
-		{
+		public void Collapse(int row) {
 			//FIXME:
 		}
 		
 		[MonoTODO]
-		protected internal virtual void ColumnStartedEditing(Control editingControl) 
-		{
+		protected internal virtual void ColumnStartedEditing(Control editingControl) {
 			//FIXME:
 		}
 		
 		[MonoTODO]
-		protected internal virtual void ColumnStartedEditing(Rectangle bounds) 
-		{
+		protected internal virtual void ColumnStartedEditing(Rectangle bounds) {
 			//FIXME:
 		}
 		
 		[MonoTODO]
-		 protected override AccessibleObject CreateAccessibilityInstance() 
-		 {
+		protected override AccessibleObject CreateAccessibilityInstance() {
 			//FIXME:
 			return base.CreateAccessibilityInstance();
 		}
 		
 		[MonoTODO]
-		protected virtual DataGridColumnStyle CreateGridColumn(PropertyDescriptor prop) 
-		{
+		protected virtual DataGridColumnStyle CreateGridColumn(PropertyDescriptor prop) {
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		protected virtual DataGridColumnStyle CreateGridColumn(PropertyDescriptor prop,bool isDefault) 
-		{
+		protected virtual DataGridColumnStyle CreateGridColumn(PropertyDescriptor prop,bool isDefault) {
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		public virtual bool EndEdit(DataGridColumnStyle gridColumn,int rowNumber,bool shouldAbort) 
-		{
+		public virtual bool EndEdit(DataGridColumnStyle gridColumn,int rowNumber,bool shouldAbort) {
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		public void EndInit() 
-		{
+		public void EndInit() {
 			//FIXME:
 		}
 		
 		[MonoTODO]
-		public void Expand(int row) 
-		{
+		public void Expand(int row) {
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		public Rectangle GetCellBounds(DataGridCell dgc) 
-		{
+		public Rectangle GetCellBounds(DataGridCell dgc) {
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		public Rectangle GetCellBounds(int row,int col) 
-		{
+		public Rectangle GetCellBounds(int row,int col) {
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		public Rectangle GetCurrentCellBounds() 
-		{
+		public Rectangle GetCurrentCellBounds() {
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		protected virtual void GridHScrolled(object sender,ScrollEventArgs se) 
-		{
+		protected virtual void GridHScrolled(object sender,ScrollEventArgs se) {
 			//FIXME:
 		}
 		
 		[MonoTODO]
-		protected virtual void GridVScrolled(object sender,ScrollEventArgs se) 
-		{
+		protected virtual void GridVScrolled(object sender,ScrollEventArgs se) {
 			//FIXME:
 		}
 		
 		[MonoTODO]
-		public HitTestInfo HitTest(Point position) 
-		{
+		public HitTestInfo HitTest(Point position) {
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		public HitTestInfo HitTest(int x,int y) 
-		{
+		public HitTestInfo HitTest(int x,int y) {
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		public bool IsExpanded(int rowNumber) 
-		{
+		public bool IsExpanded(int rowNumber) {
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		public bool IsSelected(int row) 
-		{
+		public bool IsSelected(int row) {
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		public void NavigateBack() 
-		{
+		public void NavigateBack() {
 			//FIXME:
 		}
 		
 		[MonoTODO]
-		public void NavigateTo(int rowNumber,string relationName) 
-		{
+		public void NavigateTo(int rowNumber,string relationName) {
 			//FIXME:
 		}
 		
 		[MonoTODO]
-		protected virtual void OnAllowNavigationChanged(EventArgs e) 
-		{
+		protected virtual void OnAllowNavigationChanged(EventArgs e) {
 			//FIXME:
 		}
 		
 		[MonoTODO]
-		protected void OnBackButtonClicked(object sender,EventArgs e) 
-		{
+		protected void OnBackButtonClicked(object sender,EventArgs e) {
 			//FIXME:
 		}
 		
 		[MonoTODO]
-		protected override void OnBackColorChanged(EventArgs e) 
-		{
+		protected override void OnBackColorChanged(EventArgs e) {
 			//FIXME:
 			base.OnBackColorChanged(e);
 		}
 		
 		[MonoTODO]
-		protected virtual void OnBackgroundColorChanged(EventArgs e) 
-		{
+		protected virtual void OnBackgroundColorChanged(EventArgs e) {
 			//FIXME:
 		}
 		
 		[MonoTODO]
-		protected override void OnBindingContextChanged(EventArgs e) 
-		{
+		protected override void OnBindingContextChanged(EventArgs e) {
 			//FIXME:
 			base.OnBindingContextChanged(e);
 		}
 		
 		[MonoTODO]
-		protected virtual void OnBorderStyleChanged(EventArgs e) 
-		{
+		protected virtual void OnBorderStyleChanged(EventArgs e) {
 			//FIXME:
 		}
 		
 		[MonoTODO]
-		protected virtual void OnCaptionVisibleChanged(EventArgs e) 
-		{
+		protected virtual void OnCaptionVisibleChanged(EventArgs e) {
 			//FIXME:
 		}
 		
 		[MonoTODO]
-		protected virtual void OnCurrentCellChanged(EventArgs e) 
-		{
+		protected virtual void OnCurrentCellChanged(EventArgs e) {
 			//FIXME:
 		}
 		
 		[MonoTODO]
-		protected virtual void OnDataSourceChanged(EventArgs e) 
-		{
+		protected virtual void OnDataSourceChanged(EventArgs e) {
 			//FIXME:
 		}
 		
 		[MonoTODO]
-		protected override void OnEnter(EventArgs e) 
-		{
+		protected override void OnEnter(EventArgs e) {
 			//FIXME:
 			base.OnEnter(e);
 		}
 		
 		[MonoTODO]
-		protected virtual void OnFlatModeChanged(EventArgs e) 
-		{
+		protected virtual void OnFlatModeChanged(EventArgs e) {
 			//FIXME:
 		}
 		
 		[MonoTODO]
-		protected override void OnFontChanged(EventArgs e) 
-		{
+		protected override void OnFontChanged(EventArgs e) {
 			//FIXME:
 			base.OnFontChanged(e);
 		}
 		
 		[MonoTODO]
-		protected override void OnForeColorChanged(EventArgs e) 
-		{
+		protected override void OnForeColorChanged(EventArgs e) {
 			//FIXME:
 			base.OnForeColorChanged(e);
 		}
 		
 		[MonoTODO]
-		protected override void OnHandleCreated(EventArgs e) 
-		{
+		protected override void OnHandleCreated(EventArgs e) {
 			//FIXME:
 			base.OnHandleCreated(e);
 		}
 		
 		[MonoTODO]
-		protected override void OnHandleDestroyed(EventArgs e) 
-		{
+		protected override void OnHandleDestroyed(EventArgs e) {
 			//FIXME:
 			base.OnHandleDestroyed(e);
 		}
 		
 		[MonoTODO]
-		protected override void OnKeyDown(KeyEventArgs e) 
-		{
+		protected override void OnKeyDown(KeyEventArgs ke) {
 			//FIXME:
-			base.OnKeyDown(e);
+			base.OnKeyDown(ke);
 		}
 		
 		[MonoTODO]
-		protected override void OnKeyPress(KeyPressEventArgs kpe) 
-		{
+		protected override void OnKeyPress(KeyPressEventArgs kpe) {
 			//FIXME:
 			base.OnKeyPress(kpe);
 		}
 		
 		[MonoTODO]
-		protected override void OnLayout(LayoutEventArgs levent) 
-		{
+		protected override void OnLayout(LayoutEventArgs levent) {
 			//FIXME:
 			base.OnLayout(levent);
 		}
 		
 		[MonoTODO]
-		protected override void OnLeave(EventArgs e) 
-		{
+		protected override void OnLeave(EventArgs e) {
 			//FIXME:
 			base.OnLeave(e);
 		}
 		
 		[MonoTODO]
-		protected override void OnMouseDown(MouseEventArgs e) 
-		{
+		protected override void OnMouseDown(MouseEventArgs e) {
 			//FIXME:
 			base.OnMouseDown(e);
 		}
 		
 		[MonoTODO]
-		protected override void OnMouseLeave(EventArgs e) 
-		{
+		protected override void OnMouseLeave(EventArgs e) {
 			//FIXME:
 			base.OnMouseLeave(e);
 		}
 		
 		[MonoTODO]
-		protected override void OnMouseMove(MouseEventArgs e) 
-		{
+		protected override void OnMouseMove(MouseEventArgs e) {
 			//FIXME:
 			base.OnMouseMove(e);
 		}
 		
 		[MonoTODO]
-		protected override void OnMouseUp(MouseEventArgs e) 
-		{
+		protected override void OnMouseUp(MouseEventArgs e) {
 			//FIXME:
 			base.OnMouseUp(e);
 		}
 		
 		[MonoTODO]
-		protected override void OnMouseWheel(MouseEventArgs e) 
-		{
+		protected override void OnMouseWheel(MouseEventArgs e) {
 			//FIXME:
 			base.OnMouseWheel(e);
 		}
 		
 		[MonoTODO]
-		protected void OnNavigate(NavigateEventArgs e) 
-		{
+		protected void OnNavigate(NavigateEventArgs e) {
 			//FIXME:
 		}
 		
 		[MonoTODO]
-		protected override void OnPaint(PaintEventArgs pe) 
-		{
+		protected override void OnPaint(PaintEventArgs pe) {
 			//FIXME:
 			base.OnPaint(pe);
 		}
 		
 		[MonoTODO]
-		protected override void OnPaintBackground(PaintEventArgs ebe) 
-		{
+		protected override void OnPaintBackground(PaintEventArgs ebe) {
 			//FIXME:
 			base.OnPaintBackground(ebe);
 		}
 		
 		[MonoTODO]
-		protected virtual void OnParentRowsLabelStyleChanged(EventArgs e) 
-		{
+		protected virtual void OnParentRowsLabelStyleChanged(EventArgs e) {
 			//FIXME:
 		}
 		
 		[MonoTODO]
-		protected virtual void OnParentRowsVisibleChanged(EventArgs e) 
-		{
+		protected virtual void OnParentRowsVisibleChanged(EventArgs e) {
 			//FIXME:
 		}
 		
 		
 
 		[MonoTODO]
-		protected virtual void OnReadOnlyChanged(EventArgs e) 
-		{
+		protected virtual void OnReadOnlyChanged(EventArgs e) {
 			//FIXME:
 		}
+
 		[MonoTODO]
-		protected void OnRowHeaderClick(EventArgs e) 
-		{
+		protected virtual void OnResize(EventArgs e) {
 			//FIXME:
 		}
-		
+
 		[MonoTODO]
-		protected void OnScroll(EventArgs e) 
-		{
-			//FIXME:
-		}
-		
-		[MonoTODO]
-		protected void OnShowParentDetailsButtonClicked(object sender,EventArgs e) 
-		{
+		protected void OnRowHeaderClick(EventArgs e) {
 			//FIXME:
 		}
 		
 		[MonoTODO]
-		protected override bool ProcessDialogKey(Keys keyData) 
-		{
+		protected void OnScroll(EventArgs e) {
+			//FIXME:
+		}
+		
+		[MonoTODO]
+		protected void OnShowParentDetailsButtonClicked(object sender,EventArgs e) {
+			//FIXME:
+		}
+		
+		[MonoTODO]
+		protected override bool ProcessDialogKey(Keys keyData) {
 			//FIXME:
 			return base.ProcessDialogKey(keyData);
 		}
 		
 		[MonoTODO]
-		protected bool ProcessGridKey(KeyEventArgs ke) 
-		{
+		protected bool ProcessGridKey(KeyEventArgs ke) {
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		protected override bool ProcessKeyPreview(ref Message m) 
-		{
+		protected override bool ProcessKeyPreview(ref Message m) {
 			//FIXME:
 			return base.ProcessKeyPreview(ref m);
 		}
 		
 		[MonoTODO]
-		protected bool ProcessTabKey(Keys keyData) 
-		{
+		protected bool ProcessTabKey(Keys keyData) {
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		public void ResetAlternatingBackColor() 
-		{
+		public void ResetAlternatingBackColor() {
 			//FIXME:
 		}
 		
 		[MonoTODO]
-		public override void ResetBackColor() 
-		{
+		public override void ResetBackColor() {
 			//FIXME:
 			base.ResetBackColor();
 		}
 		
 		[MonoTODO]
-		public override void ResetForeColor() 
-		{
+		public override void ResetForeColor() {
 			//FIXME:
 			base.ResetForeColor();
 		}
 		
 		[MonoTODO]
-		public void ResetGridLineColor() 
-		{
+		public void ResetGridLineColor() {
 			//FIXME:
 		}
 		
 		[MonoTODO]
-		public void ResetHeaderBackColor() 
-		{
+		public void ResetHeaderBackColor() {
 			//FIXME:
 		}
 		
 		[MonoTODO]
-		public void ResetHeaderFont() 
-		{
+		public void ResetHeaderFont() {
 			//FIXME:
 		}
 		
 		[MonoTODO]
-		public void ResetHeaderForeColor() 
-		{
+		public void ResetHeaderForeColor() {
 			//FIXME:
 		}
 		
 		[MonoTODO]
-		public void ResetLinkColor() 
-		{
+		public void ResetLinkColor() {
 			//FIXME:
 		}
 		
 		[MonoTODO]
-		protected void ResetSelection() 
-		{
+		protected void ResetSelection() {
 			//FIXME:
 		}
 		
 		[MonoTODO]
-		public void ResetSelectionBackColor() 
-		{
+		public void ResetSelectionBackColor() {
 			//FIXME:
 		}
 		
 		[MonoTODO]
-		public void ResetSelectionForeColor() 
-		{
+		public void ResetSelectionForeColor() {
 			//FIXME:
 		}
 		
 		[MonoTODO]
-		public void Select(int row) 
-		{
+		public void Select(int row) {
 			//FIXME:
 		}
 		
 		[MonoTODO]
-		public void SetDataBinding(object dataSource,string dataMember) 
-		{
+		public void SetDataBinding(object dataSource,string dataMember) {
 			//FIXME:
 		}
 		
 		[MonoTODO]
-		protected virtual bool ShouldSerializeAlternatingBackColor() 
-		{
+		protected virtual bool ShouldSerializeAlternatingBackColor() {
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		protected virtual bool ShouldSerializeBackgroundColor() 
-		{
+		protected virtual bool ShouldSerializeBackgroundColor() {
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		protected virtual bool ShouldSerializeCaptionBackColor() 
-		{
+		protected virtual bool ShouldSerializeCaptionBackColor() {
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		protected virtual bool ShouldSerializeCaptionForeColor() 
-		{
+		protected virtual bool ShouldSerializeCaptionForeColor() {
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		protected virtual bool ShouldSerializeGridLineColor() 
-		{
+		protected virtual bool ShouldSerializeGridLineColor() {
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		protected virtual bool ShouldSerializeHeaderBackColor() 
-		{
+		protected virtual bool ShouldSerializeHeaderBackColor() {
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		protected bool ShouldSerializeHeaderFont() 
-		{
+		protected bool ShouldSerializeHeaderFont() {
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		protected virtual bool ShouldSerializeHeaderForeColor() 
-		{
+		protected virtual bool ShouldSerializeHeaderForeColor() {
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		protected virtual bool ShouldSerializeLinkHoverColor() 
-		{
+		protected virtual bool ShouldSerializeLinkHoverColor() {
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		protected virtual bool ShouldSerializeParentRowsBackColor() 
-		{
+		protected virtual bool ShouldSerializeParentRowsBackColor() {
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		protected virtual bool ShouldSerializeParentRowsForeColor() 
-		{
+		protected virtual bool ShouldSerializeParentRowsForeColor() {
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		protected bool ShouldSerializePreferredRowHeight() 
-		{
+		protected bool ShouldSerializePreferredRowHeight() {
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		protected bool ShouldSerializeSelectionBackColor() 
-		{
+		protected bool ShouldSerializeSelectionBackColor() {
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		protected virtual bool ShouldSerializeSelectionForeColor() 
-		{
+		protected virtual bool ShouldSerializeSelectionForeColor() {
 			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public void SubObjectsSiteChange(bool site) {
+			//FIXME:
 		}
 		
 		[MonoTODO]
-		public void UnSelect(int row) 
-		{
+		public void UnSelect(int row) {
 			//FIXME:
 		}
 		#endregion

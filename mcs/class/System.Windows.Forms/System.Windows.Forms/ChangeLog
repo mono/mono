@@ -1,3 +1,11 @@
+2003-09-01  Dennis Hayes <dennish@raytek.com>
+	* Application.cs
+	* DataGrid.cs
+	* Control.cs
+	* Form.cs
+	* Signiture fixes. Most notably marked as protected internal
+	* some protected implmentation in Control.cs
+
 2003-08-31  Jerome Laban <jlaban@wanadoo.fr>
 	* Timer.cs: Fixed Enabled property bebavior.
 
