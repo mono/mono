@@ -1,4 +1,9 @@
 
+Sun May 11 14:56:27 CEST 2003 Paolo Molaro <lupus@ximian.com>
+
+	* inssel-long32.brg, basic-long.cs, exceptions.cs: handle
+	a couple of missing operations for long casts, with test cases.
+
 2003-05-11  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* exceptions-x86.c: fixed small leaks in mono_arch_handle_exception.
