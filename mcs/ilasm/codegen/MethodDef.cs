@@ -55,6 +55,7 @@ namespace Mono.ILASM {
                 private ArrayList param_list;
                 private Hashtable named_param_table;
                 private ArrayList inst_list;
+                private ArrayList customattr_list;
                 private Hashtable label_table;
                 private PEAPI.MethodDef methoddef;
                 private bool entry_point;
@@ -77,6 +78,7 @@ namespace Mono.ILASM {
                         this.param_list = param_list;
 
                         inst_list = new ArrayList ();
+                        customattr_list = new ArrayList ();
                         label_table = new Hashtable ();
                         local_list = new ArrayList ();
                         named_local_table = new Hashtable ();
@@ -104,7 +106,7 @@ namespace Mono.ILASM {
                 }
 
                 public bool IsVararg {
-                        get { return (call_conv & PEAPI.CallConv.Vararg) == 0; }
+                        get { return (call_conv & PEAPI.CallConv.Vararg) != 0; }
                 }
 
                 public void AddLocals (ArrayList local_list)
@@ -158,6 +160,11 @@ namespace Mono.ILASM {
                         this.max_stack = max_stack;
                 }
 
+                public void AddCustomAttr (CustomAttr customattr)
+                {
+                        customattr_list.Add (customattr);
+                }
+
                 public PEAPI.MethodDef Resolve (CodeGen code_gen)
                 {
                         if (is_resolved)
@@ -166,11 +173,16 @@ namespace Mono.ILASM {
                         PEAPI.Param[] param_array;
 
                         if (param_list != null) {
-                                param_array = new PEAPI.Param[param_list.Count];
+                                int param_count = param_list.Count;
+                                //if (IsVararg)
+                                //       param_count--;
+                                param_array = new PEAPI.Param[param_count];
                                 int count = 0;
                                 ret_type.Resolve (code_gen);
 
                                 foreach (ParamDef paramdef in param_list) {
+                                        if (paramdef == ParamDef.Ellipsis)
+                                                break;
                                         paramdef.Define (code_gen);
                                         param_array[count++] = paramdef.PeapiParam;
                                 }
@@ -197,11 +209,16 @@ namespace Mono.ILASM {
                         PEAPI.Param[] param_array;
 
                         if (param_list != null) {
-                                param_array = new PEAPI.Param[param_list.Count];
+                                int param_count = param_list.Count;
+                                if (IsVararg)
+                                        param_count--;
+                                param_array = new PEAPI.Param[param_count];
                                 int count = 0;
                                 ret_type.Resolve (code_gen);
 
                                 foreach (ParamDef paramdef in param_list) {
+                                        if (paramdef == ParamDef.Ellipsis)
+                                                break;
                                         paramdef.Define (code_gen);
                                         param_array[count++] = paramdef.PeapiParam;
                                 }
@@ -285,6 +302,10 @@ namespace Mono.ILASM {
                                 max_stack = 8;
                         methoddef.SetMaxStack (max_stack);
 
+                        /// Add the custrom attributes to this method
+                        foreach (CustomAttr customattr in customattr_list)
+                                customattr.AddTo (code_gen, methoddef);
+
                         if (inst_list.Count < 1)
                                 return;
 
@@ -355,9 +376,12 @@ namespace Mono.ILASM {
                         if (param_list != null) {
                                 bool first = true;
                                 foreach (ParamDef paramdef in param_list) {
+                                        if (ParamDef.Ellipsis == paramdef)
+                                                break;
                                         if (!first)
                                                 builder.Append (',');
                                         builder.Append (paramdef.TypeName);
+                                        first = false;
                                 }
                         }
                         builder.Append (')');
@@ -380,10 +404,10 @@ namespace Mono.ILASM {
                                         if (!first)
                                                 builder.Append (',');
                                         builder.Append (param.FullName);
+                                        first = false;
                                 }
                         }
                         builder.Append (')');
-
 
                         return builder.ToString ();
                 }

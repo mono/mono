@@ -26,6 +26,7 @@ namespace Mono.ILASM {
                 private Hashtable field_table;
                 private Hashtable method_table;
                 private ArrayList data_list;
+                private ArrayList customattr_list;
                 private TypeDef outer;
 
                 private int size;
@@ -100,6 +101,14 @@ namespace Mono.ILASM {
                         method_table.Add (methoddef.Signature, methoddef);
                 }
 
+                public void AddCustomAttribute (CustomAttr customattr)
+                {
+                        if (customattr_list == null)
+                                customattr_list = new ArrayList ();
+
+                        customattr_list.Add (customattr);
+                }
+
                 public void Define (CodeGen code_gen)
                 {
                         if (is_defined)
@@ -156,6 +165,11 @@ namespace Mono.ILASM {
 
                         foreach (MethodDef methoddef in method_table.Values) {
                                 methoddef.Define (code_gen, classdef);
+                        }
+
+                        if (customattr_list != null) {
+                                foreach (CustomAttr customattr in customattr_list)
+                                        customattr.AddTo (code_gen, classdef);
                         }
                 }
 

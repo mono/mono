@@ -24,6 +24,8 @@ namespace Mono.ILASM {
                 private bool is_defined;
                 private PEAPI.Param peapi_param;
 
+                public static readonly ParamDef Ellipsis = new ParamDef (new PEAPI.ParamAttr (), "ELLIPSIS", null);
+
                 public ParamDef (PEAPI.ParamAttr attr, string name,
                                 ITypeRef typeref) {
                         this.attr = attr;

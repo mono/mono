@@ -16,6 +16,7 @@ namespace Mono.ILASM {
 
                 private IFieldRef field_ref;
                 private IMethodRef method_ref;
+                private ITypeRef type_ref;
 
                 public LdtokenInstr (IFieldRef field_ref)
                 {
@@ -25,6 +26,11 @@ namespace Mono.ILASM {
                 public LdtokenInstr (IMethodRef method_ref)
                 {
                         this.method_ref = method_ref;
+                }
+
+                public LdtokenInstr (ITypeRef type_ref)
+                {
+                        this.type_ref = type_ref;
                 }
 
                 public void Emit (CodeGen code_gen, PEAPI.CILInstructions cil)
@@ -37,6 +43,10 @@ namespace Mono.ILASM {
                                 method_ref.Resolve (code_gen);
                                 cil.MethInst (PEAPI.MethodOp.ldtoken,
                                                 method_ref.PeapiMethod);
+                        } else if (type_ref != null) {
+                                type_ref.Resolve (code_gen);
+                                cil.TypeInst (PEAPI.TypeOp.ldtoken,
+                                                type_ref.PeapiType);
                         }
                 }
 

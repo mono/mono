@@ -1,3 +1,17 @@
+2003-05-31 Jackson Harper <jackson@latitudegeo.com>
+
+	* CustomAttr.cs: New file - Custom attributes
+	* InstrTable.cs: Add stelem.r4 and stelem.r8 instructions. Add
+	. tail to unaligned modifier.
+	* LdtokenInstr.cs: Add type tokens.
+	* MethodDef.cs: Fix IsVararg, add method to add custom attributes,
+	emitting custom attributes when writing code, allow for Ellipsises
+	in param lists, add coma between args in signatures.
+	* ParamDef.cs: Add the Ellipsis pseudo param
+	* PrimitiveTypeRef.cs: System.String and System.Object can be
+	referenced without an [mscorlib] assembly prefix. 
+	* TypeDef.cs: Add Custom attributes.
+		
 2003-05-25 Jackson Harper <jackson@latitudegeo.com>
 
 	* CodeGen.cs: Add method to resolve global vararg methods.

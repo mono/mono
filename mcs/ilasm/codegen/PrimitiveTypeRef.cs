@@ -23,6 +23,24 @@ namespace Mono.ILASM {
 
                 }
 
+                /// <summary>
+                /// Primitive types can be created like this System.String instead
+                /// of like a normal type that would be [mscorlib]System.String This
+                /// method returns a proper primitive type if the supplied name is
+                /// the name of a primitive type.
+                /// </summary>
+                public static PrimitiveTypeRef GetPrimitiveType (string full_name)
+                {
+                        switch (full_name) {
+                        case "System.String":
+                                return new PrimitiveTypeRef (PEAPI.PrimitiveType.String, full_name);
+                        case "System.Object":
+                                return new PrimitiveTypeRef (PEAPI.PrimitiveType.Object, full_name);
+                        default:
+                                return null;
+                        }
+                }
+
                 public IClassRef AsClassRef (CodeGen code_gen)
                 {
                         PEAPI.ClassRef class_ref = code_gen.ExternTable.GetValueClass ("corlib", FullName);

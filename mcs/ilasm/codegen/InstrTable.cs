@@ -134,6 +134,8 @@ namespace Mono.ILASM {
                         inst_table["stelem.i2"] = new ILToken (Token.INSTR_NONE, Op.stelem_i2);
                         inst_table["stelem.i4"] = new ILToken (Token.INSTR_NONE, Op.stelem_i4);
                         inst_table["stelem.i8"] = new ILToken (Token.INSTR_NONE, Op.stelem_i8);
+                        inst_table["stelem.r4"] = new ILToken (Token.INSTR_NONE, Op.stelem_r4);
+                        inst_table["stelem.r8"] = new ILToken (Token.INSTR_NONE, Op.stelem_r8);
                         inst_table["stelem.ref"] = new ILToken (Token.INSTR_NONE, Op.stelem_ref);
                         inst_table["conv.ovf.i1"] = new ILToken (Token.INSTR_NONE, Op.conv_ovf_i1);
                         inst_table["conv.ovf.u1"] = new ILToken (Token.INSTR_NONE, Op.conv_ovf_u1);
@@ -203,7 +205,7 @@ namespace Mono.ILASM {
 
                         inst_table["ldc.i4.s"] = new ILToken (Token.INSTR_I, IntOp.ldc_i4_s);
                         inst_table["ldc.i4"] = new ILToken (Token.INSTR_I, IntOp.ldc_i4);
-                        inst_table["unaligned"] =  new ILToken (Token.INSTR_I, IntOp.unaligned);
+                        inst_table["unaligned."] =  new ILToken (Token.INSTR_I, IntOp.unaligned);
 
                         //
                         // Type operations
