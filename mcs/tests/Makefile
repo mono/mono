@@ -223,9 +223,11 @@ test-harness-run:
 	  if test -z "$$failed"; then :; else echo "Failing tests: $$failed"; exit 1; fi; fi
 
 ilasm:
+ifeq (default, $(PROFILE))
 	$(ILASM) /dll property-il.il
 	$(CSCOMPILE) /r:property-il.dll property-main.cs /out:property-main.exe
 	$(TEST_RUNTIME) property-main.exe
+endif
 
 #
 # Test for /doc option; need to compare result documentation files.

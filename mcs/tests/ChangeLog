@@ -1,3 +1,7 @@
+2005-01-25  Martin Baulig  <martin@ximian.com>
+
+	* Makefile: Only use the `ilasm' target in the "default" profile.
+
 2005-01-24  Marek Safar <marek.safar@seznam.cz>
 
 	* test-287.cs: Incorporated test for #71649.
