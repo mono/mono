@@ -158,6 +158,60 @@ namespace System.Security {
 			}
 			return se;
 		}
+
+		// internal stuff
+
+		internal void DemandChoice ()
+		{
+			SecurityException exception = null;
+			bool result = false;
+			foreach (PermissionSet pset in _list) {
+				try {
+					pset.Demand ();
+					result = true;
+					break;
+				}
+				catch (SecurityException se) {
+					// keep the first failure, we may throw it if we not succeed
+					if (exception == null)
+						exception = se;
+				}
+			}
+
+			if (!result) {
+				if (exception != null)
+					throw exception;
+				else
+					throw new SecurityException ("DemandChoice failed.");
+			}
+		}
+
+		// 2.0 metadata format
+
+		internal static PermissionSetCollection CreateFromBinaryFormat (byte[] data)
+		{
+			if ((data == null) || (data [0] != 0x2E) || (data.Length < 2)) {
+				string msg = Locale.GetText ("Invalid data in 2.0 metadata format.");
+				throw new SecurityException (msg);
+			}
+
+			int pos = 1;
+			int numattr = PermissionSet.ReadEncodedInt (data, ref pos);
+			PermissionSetCollection psc = new PermissionSetCollection ();
+			for (int i = 0; i < numattr; i++) {
+				IPermission p = PermissionSet.ProcessAttribute (data, ref pos);
+				if (p == null) {
+					string msg = Locale.GetText ("Unsupported data found in 2.0 metadata format.");
+					throw new SecurityException (msg);
+				}
+
+				PermissionSet ps = new PermissionSet (PermissionState.None);
+				ps.DeclarativeSecurity = true;
+				ps.AddPermission (p); 
+				psc.Add (ps);
+			}
+			return psc;
+		}
 	}
 }
 

@@ -432,42 +432,100 @@ namespace System.Security {
 				string xml = Encoding.Unicode.GetString (encodedPermissions);
 				return new PermissionSet (xml);
 			case 0x2E:
-				// TODO: Fx 2.0
-				throw new SecurityException ("Unsupported 2.0 metadata format.");
+				// Fx 2.0 are encoded "somewhat, but not enough, like" custom attributes
+				// note: we still support the older format!
+				return PermissionSet.CreateFromBinaryFormat (encodedPermissions);
 			default:
-				throw new SecurityException ("Unknown metadata format.");
+				throw new SecurityException (Locale.GetText ("Unknown metadata format."));
 			}
 		}
-
-		private static PermissionSet Union (byte[] classPermissions, byte[] methodPermissions)
+#if NET_2_0
+		internal static PermissionSetCollection DecodeCollection (IntPtr permissions, int length)
 		{
-			if (classPermissions != null) {
-				PermissionSet ps = Decode (classPermissions);
-				if (methodPermissions != null) {
-					ps = ps.Union (Decode (methodPermissions));
+			// Permission sets from the runtime (declarative security) can be cached
+			// for performance as they can never change (i.e. they are read-only).
+
+			if (_declsecCache == null) {
+				lock (_lockObject) {
+					if (_declsecCache == null) {
+						_declsecCache = new Hashtable ();
+					}
 				}
-				return ps;
 			}
 
-			return Decode (methodPermissions);
+			PermissionSetCollection psc = null;
+			lock (_lockObject) {
+				object key = (object) (int) permissions;
+				psc = (PermissionSetCollection) _declsecCache [key];
+				if (psc == null) {
+					// create permissionset and add it to the cache
+					byte[] data = new byte [length];
+					Marshal.Copy (permissions, data, 0, length);
+					psc = DecodeCollection (data);
+					_declsecCache.Add (key, psc);
+				}
+			}
+			return psc;
 		}
+
+		internal static PermissionSetCollection DecodeCollection (byte[] encodedPermissions)
+		{
+			if ((encodedPermissions == null) || (encodedPermissions.Length < 1))
+				throw new SecurityException ("Invalid metadata format.");
+
+			switch (encodedPermissions [0]) {
+			case 60:
+				// Fx 1.0/1.1 declarative security permissions metadata is in Unicode-encoded XML
+				throw new SecurityException (Locale.GetText ("1.0 metadata format doesn't support collections."));
+			case 0x2E:
+				// Fx 2.0 are encoded "somewhat, but not enough, like" custom attributes
+				// note: we still support the older format!
+				return PermissionSetCollection.CreateFromBinaryFormat (encodedPermissions);
+			default:
+				throw new SecurityException (Locale.GetText ("Unknown metadata format."));
+			}
+		}
+#endif
 
 		//  security check when using reflection
 
-		internal static void ReflectedLinkDemand ()
+		// When using reflection LinkDemand are promoted to full Demand (i.e. stack walk)
+		private unsafe static void ReflectedLinkDemand (RuntimeDeclSecurityActions *klass, RuntimeDeclSecurityActions *method)
 		{
-			// TODO - get the declarative LinkDemand permission set
 			PermissionSet ps = null;
 
-			Assembly corlib = typeof (int).Assembly;
-			// find the real caller of the icall
-			foreach (SecurityFrame f in SecurityFrame.GetStack (0)) {
-				// ignore System.Reflection class in corlib
-				if ((f.Assembly != corlib) || !f.Method.Name.StartsWith ("System.Reflection")) {
-					if (!SecurityManager.IsGranted (f.Assembly, ps, false))
-						LinkDemandSecurityException (1, f.Assembly, f.Method);
-				}
+			if (klass->cas.size > 0) {
+				ps = Decode (klass->cas.blob, klass->cas.size);
 			}
+			if (klass->noncas.size > 0) {
+				PermissionSet p = Decode (klass->noncas.blob, klass->noncas.size);
+				ps = (ps == null) ? p : ps.Union (p);
+			}
+
+			if (method->cas.size > 0) {
+				PermissionSet p = Decode (method->cas.blob, method->cas.size);
+				ps = (ps == null) ? p : ps.Union (p);
+			}
+			if (method->noncas.size > 0) {
+				PermissionSet p = Decode (method->noncas.blob, method->noncas.size);
+				ps = (ps == null) ? p : ps.Union (p);
+			}
+
+			// in this case we union-ed the permission sets because we want to do 
+			// a single stack walk (not up to 4).
+			if (ps != null)
+				ps.Demand ();
+#if NET_2_0
+			// Process LinkDemandChoice (2.0)
+			if (klass->choice.size > 0) {
+				PermissionSetCollection psc = DecodeCollection (klass->choice.blob, klass->choice.size);
+				psc.DemandChoice ();
+			}
+			if (method->choice.size > 0) {
+				PermissionSetCollection psc = DecodeCollection (method->choice.blob, method->choice.size);
+				psc.DemandChoice ();
+			}
+#endif
 		}
 
 		// internal - get called at JIT time
@@ -481,21 +539,46 @@ namespace System.Security {
 					ps = Decode (klass->cas.blob, klass->cas.size);
 					result = SecurityManager.IsGranted (a, ps, false);
 				}
-				if (klass->noncas.size > 0) {
+				if (result && (klass->noncas.size > 0)) {
 					ps = Decode (klass->noncas.blob, klass->noncas.size);
 					result = SecurityManager.IsGranted (a, ps, true);
 				}
 
-				if (method->cas.size > 0) {
+				if (result && (method->cas.size > 0)) {
 					ps = Decode (method->cas.blob, method->cas.size);
 					result = SecurityManager.IsGranted (a, ps, false);
 				}
-				if (method->noncas.size > 0) {
+				if (result && (method->noncas.size > 0)) {
 					ps = Decode (method->noncas.blob, method->noncas.size);
 					result = SecurityManager.IsGranted (a, ps, true);
 				}
-
-				// TODO LinkDemandChoice (2.0)
+#if NET_2_0
+				// success if one of the permission is granted
+				if (result && (klass->choice.size > 0)) {
+					PermissionSetCollection psc = DecodeCollection (klass->choice.blob, klass->choice.size);
+					if (psc.Count > 0) {
+						result = false;
+						foreach (PermissionSet pset in psc) {
+							if (SecurityManager.IsGranted (a, pset, false)) {
+								result = true;
+								break;
+							}
+						}
+					}
+				}
+				if (result && (method->choice.size > 0)) {
+					PermissionSetCollection psc = DecodeCollection (method->choice.blob, method->choice.size);
+					if (psc.Count > 0) {
+						result = false;
+						foreach (PermissionSet pset in psc) {
+							if (SecurityManager.IsGranted (a, pset, false)) {
+								result = true;
+								break;
+							}
+						}
+					}
+				}
+#endif
 				return result;
 			}
 			catch (SecurityException) {
@@ -620,14 +703,28 @@ namespace System.Security {
 					ps = Decode (actions->noncas.blob, actions->noncas.size);
 					result = SecurityManager.IsGranted (a, ps, true);
 				}
-
-				// TODO InheritanceDemandChoice (2.0)
+#if NET_2_0
+				// success if one of the permission is granted
+				if (result && (actions->choice.size > 0)) {
+					PermissionSetCollection psc = DecodeCollection (actions->choice.blob, actions->choice.size);
+					if (psc.Count > 0) {
+						result = false;
+						foreach (PermissionSet pset in psc) {
+							if (SecurityManager.IsGranted (a, pset, false)) {
+								result = true;
+								break;
+							}
+						}
+					}
+				}
+#endif
 				return result;
 			}
 			catch (SecurityException) {
 				return false;
 			}
 		}
+
 
 		// internal - get called by JIT generated code
 
@@ -640,8 +737,8 @@ namespace System.Security {
 		private static void InternalDemandChoice (IntPtr permissions, int length)
 		{
 #if NET_2_0
-			PermissionSet ps = Decode (permissions, length);
-			// TODO
+			PermissionSetCollection psc = DecodeCollection (permissions, length);
+			psc.DemandChoice ();
 #else
 			throw new SecurityException ("SecurityAction.DemandChoice is only possible in 2.0");
 #endif

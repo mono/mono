@@ -666,5 +666,178 @@ namespace System.Security {
 			}
 			return false;
 		}
+
+		// 2.0 metadata format
+
+		internal static PermissionSet CreateFromBinaryFormat (byte[] data)
+		{
+			if ((data == null) || (data [0] != 0x2E) || (data.Length < 2)) {
+				string msg = Locale.GetText ("Invalid data in 2.0 metadata format.");
+				throw new SecurityException (msg);
+			}
+
+			int pos = 1;
+			int numattr = ReadEncodedInt (data, ref pos);
+			PermissionSet ps = new PermissionSet (PermissionState.None);
+			for (int i = 0; i < numattr; i++) {
+				IPermission p = ProcessAttribute (data, ref pos);
+				if (p == null) {
+					string msg = Locale.GetText ("Unsupported data found in 2.0 metadata format.");
+					throw new SecurityException (msg);
+				}
+				ps.AddPermission (p);
+			}
+			return ps;
+		}
+
+		internal static int ReadEncodedInt (byte[] data, ref int position)
+		{
+			int len = 0;
+			if ((data [position] & 0x80) == 0) {
+				len = data [position];
+				position ++;
+			} else if ((data [position] & 0x40) == 0) {
+				len = ((data [position] & 0x3f) << 8 | data [position + 1]);
+				position += 2;
+			} else {
+				len = (((data [position] & 0x1f) << 24) | (data [position + 1] << 16) |
+					(data [position + 2] << 8) | (data [position + 3]));
+				position += 4;
+			}
+			return len;
+		}
+
+		static object[] action = new object [1] { (SecurityAction) 0 };
+
+		// TODO: add support for arrays and enums
+		internal static IPermission ProcessAttribute (byte[] data, ref int position)
+		{
+			int clen = ReadEncodedInt (data, ref position);
+			string cnam = Encoding.UTF8.GetString (data, position, clen);
+			position += clen;
+
+			// TODO: Unification
+			Type secattr = Type.GetType (cnam);
+			SecurityAttribute sa = (Activator.CreateInstance (secattr, action) as SecurityAttribute);
+			if (sa == null)
+				return null;
+
+			/*int optionalParametersLength =*/ ReadEncodedInt (data, ref position);
+			int numberOfParameters = ReadEncodedInt (data, ref position);
+			for (int j=0; j < numberOfParameters; j++) {
+				bool property = false;
+				switch (data [position++]) {
+				case 0x53: // field (technically possible and working)
+					property = false;
+					break;
+				case 0x54: // property (common case)
+					property = true;
+					break;
+				default:
+					return null;
+				}
+
+				bool array = false;
+				byte type = data [position++];
+				if (type == 0x1D) {
+					array = true;
+					type = data [position++];
+				}
+
+				int plen = ReadEncodedInt (data, ref position);
+				string pnam = Encoding.UTF8.GetString (data, position, plen);
+				position += plen;
+
+				int arrayLength = 1;
+				if (array) {
+					arrayLength = BitConverter.ToInt32 (data, position);
+					position += 4;
+				}
+
+				object obj = null;
+				object[] arrayIndex = null;
+				for (int i = 0; i < arrayLength; i++) {
+					if (array) {
+						// TODO - setup index
+					}
+
+					// sadly type values doesn't match ther TypeCode enum :(
+					switch (type) {
+					case 0x02: // MONO_TYPE_BOOLEAN
+						obj = (object) Convert.ToBoolean (data [position++]);
+						break;
+					case 0x03: // MONO_TYPE_CHAR
+						obj = (object) Convert.ToChar (data [position]);
+						position += 2;
+						break;
+					case 0x04: // MONO_TYPE_I1
+						obj = (object) Convert.ToSByte (data [position++]);
+						break;
+					case 0x05: // MONO_TYPE_U1
+						obj = (object) Convert.ToByte (data [position++]);
+						break;
+					case 0x06: // MONO_TYPE_I2
+						obj = (object) Convert.ToInt16 (data [position]);
+						position += 2;
+						break;
+					case 0x07: // MONO_TYPE_U2
+						obj = (object) Convert.ToUInt16 (data [position]);
+						position += 2;
+						break;
+					case 0x08: // MONO_TYPE_I4
+						obj = (object) Convert.ToInt32 (data [position]);
+						position += 4;
+						break;
+					case 0x09: // MONO_TYPE_U4
+						obj = (object) Convert.ToUInt32 (data [position]);
+						position += 4;
+						break;
+					case 0x0A: // MONO_TYPE_I8
+						obj = (object) Convert.ToInt64 (data [position]);
+						position += 8;
+						break;
+					case 0x0B: // MONO_TYPE_U8
+						obj = (object) Convert.ToUInt64 (data [position]);
+						position += 8;
+						break;
+					case 0x0C: // MONO_TYPE_R4
+						obj = (object) Convert.ToSingle (data [position]);
+						position += 4;
+						break;
+					case 0x0D: // MONO_TYPE_R8
+						obj = (object) Convert.ToDouble (data [position]);
+						position += 8;
+						break;
+					case 0x0E: // MONO_TYPE_STRING
+						string s = null;
+						if (data [position] != 0xFF) {
+							int slen = ReadEncodedInt (data, ref position);
+							s = Encoding.UTF8.GetString (data, position, slen);
+							position += slen;
+						} else {
+							position++;
+						}
+						obj = (object) s;
+						break;
+					case 0x50: // special for TYPE
+						int tlen = ReadEncodedInt (data, ref position);
+						obj = (object) Type.GetType (Encoding.UTF8.GetString (data, position, tlen));
+						position += tlen;
+						break;
+					default:
+						return null; // unsupported
+					}
+
+					if (property) {
+						PropertyInfo pi = secattr.GetProperty (pnam);
+						pi.SetValue (sa, obj, arrayIndex);
+					} else {
+						FieldInfo fi = secattr.GetField (pnam);
+						fi.SetValue (sa, obj);
+					}
+				}
+			}
+			return sa.CreatePermission ();
+		}
 	}
 }

@@ -110,7 +110,6 @@ namespace System.Security {
 		}
 
 #if NET_2_0
-		[MonoTODO]
 		[ComVisible (false)]
 		public override bool Equals (object obj)
 		{
@@ -118,15 +117,14 @@ namespace System.Security {
 				return false;
 			if (obj.GetType () != this.GetType ())
 				return false;
-			// TODO: compare
-			return true;
+			CodeAccessPermission cap = (obj as CodeAccessPermission);
+			return (IsSubsetOf (cap) && cap.IsSubsetOf (this));
 		}
 #endif
 
 		public abstract void FromXml (SecurityElement elem);
 
 #if NET_2_0
-		[MonoTODO]
 		[ComVisible (false)]
 		public override int GetHashCode ()
 		{

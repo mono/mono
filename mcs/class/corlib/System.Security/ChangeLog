@@ -1,3 +1,14 @@
+2005-02-25  Sebastien Pouliot  <sebastien@ximian.com> 
+
+	* CodeAccessPermission.cs: Implement Equals for NET_2_0 profile.
+	* PermissionSet.cs: Added code to decode the metadata format used for
+	declarative security in 2.0 (except enums and arrays now).
+	* PermissionSetCollection.cs: Added code to decode from the new metadata
+	format used for declarative security in 2.0.
+	* SecurityManager.cs: Added support for LinkDemandChoice, Inheritance
+	DemandChoice and DemandChoice (2.0). Added support for reflected 
+	LinkDemand (promotes the demand to a full Demand).
+
 2005-02-15  Sebastien Pouliot  <sebastien@ximian.com> 
 
 	* SecurityException.cs: Show the method informations when displaying a
