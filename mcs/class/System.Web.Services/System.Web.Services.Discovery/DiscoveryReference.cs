@@ -38,6 +38,7 @@ namespace System.Web.Services.Discovery {
 			
 		}
 		
+		[XmlIgnore]
 		public virtual string DefaultFilename {
 			get { return FilenameFromUrl (Url); }			
 		}

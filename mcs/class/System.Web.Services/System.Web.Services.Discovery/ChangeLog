@@ -1,3 +1,7 @@
+2004-06-01  Gert Driesen <drieseng@users.sourceforge.net>
+
+	* DiscoveryReference.cs: Added missing XmlIgnore attribute.
+
 2004-05-24  Lluis Sanchez Gual  <lluis@ximian.com>
 
 	* ContractReference.cs: convert relative import uris to absolute uris.
