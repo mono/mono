@@ -22,7 +22,6 @@
 		
 		<!-- TODO: Mono.Data.* depends on System.Data -->
 		<nant basedir="System.Data" target="build" buildfile="System.Data/System.Data.build"/>
-		<nant basedir="System.Data.OracleClient" target="build" buildfile="System.Data.OracleClient/System.Data.OracleClient.build"/>
 		<nant basedir="Mono.Data.MySql" target="build" buildfile="Mono.Data.MySql/Mono.Data.MySql.build"/>
 		<nant basedir="Mono.Data.PostgreSqlClient" target="build" buildfile="Mono.Data.PostgreSqlClient/Mono.Data.PostgreSqlClient.build"/>
 		<nant basedir="Mono.Data.SqliteClient" target="build" buildfile="Mono.Data.SqliteClient/Mono.Data.SqliteClient.build"/>	
@@ -37,7 +36,6 @@
 		<nant basedir="System" target="build" buildfile="System/System.build"/>
 		<nant basedir="System.Configuration.Install" target="build" buildfile="System.Configuration.Install/System.Configuration.Install.build"/>
 		<!-- <nant basedir="System.Data.OracleClient" target="build" buildfile="System.Data.OracleClient/System.Data.OracleClient.build"/> -->
-		<nant basedir="System.Design" target="build" buildfile="System.Design/System.Design.build"/>
 		<nant basedir="System.Drawing" target="build" buildfile="System.Drawing/System.Drawing.build"/>
 		<nant basedir="System.EnterpriseServices" target="build" buildfile="System.EnterpriseServices/System.EnterpriseServices.build"/>
 		<nant basedir="System.Runtime.Remoting" target="build" buildfile="System.Runtime.Remoting/System.Runtime.Remoting.build"/>
