@@ -1126,6 +1126,7 @@ namespace Mono.CSharp {
 		void AddMembers (MemberTypes mt, BindingFlags bf, IMemberContainer container)
 		{
 			MemberList members = container.GetMembers (mt, bf);
+                        
 			BindingFlags new_bf = (container == Container) ?
 				bf | BindingFlags.DeclaredOnly : bf;
 

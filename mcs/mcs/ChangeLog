@@ -1,3 +1,8 @@
+2003-07-25  Ravi Pratap  <ravi@ximian.com>
+
+	* typemanager.cs (GetMembers): Ensure that the list of members is
+	reversed. This keeps things in sync.
+
 2003-07-25  Martin Baulig  <martin@ximian.com>
 
 	* class.cs (TypeContainer.DefineMembers): Check whether all
