@@ -706,11 +706,16 @@ external_field_ref	: type_ref external_type_ref DOUBLE_COLON id
 			  }
 			;
 
+method_name		: name1
+			| D_CTOR
+			| D_CCTOR
+			;
+
 method_ref		: internal_method_ref
 			| external_method_ref
 			;
 
-external_method_ref	: type_ref external_type_ref DOUBLE_COLON name1 OPEN_PARENS param_list CLOSE_PARENS
+external_method_ref	: type_ref external_type_ref DOUBLE_COLON method_name OPEN_PARENS param_list CLOSE_PARENS
 			  {
 				TypeRef ret_type = (TypeRef)$1;
 				ClassRef parent = (ClassRef) ((TypeRef) $2).Type;
@@ -731,7 +736,7 @@ external_method_ref	: type_ref external_type_ref DOUBLE_COLON name1 OPEN_PARENS 
 			  }
 			;  
 
-internal_method_ref	: type_ref internal_type_ref DOUBLE_COLON name1 OPEN_PARENS param_list CLOSE_PARENS
+internal_method_ref	: type_ref internal_type_ref DOUBLE_COLON method_name OPEN_PARENS param_list CLOSE_PARENS
 			  {	
 				TypeRef parent, return_type;
 				parent = (TypeRef) $2;
