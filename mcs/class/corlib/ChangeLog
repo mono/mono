@@ -1,3 +1,7 @@
+2004-05-07  Nick Drochak <ndrochak@gol.com>
+
+	* Makefile (plattest_flags): Add /unsafe.
+
 2004-05-05  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* corlib.dll.sources: Added Base64Constants to the build.
