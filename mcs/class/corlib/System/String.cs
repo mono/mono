@@ -1628,10 +1628,9 @@ namespace System {
 		public string Trim (params char[] trimChars)
 		{
 			int begin, end;
-			bool matches;
+			bool matches = false;
 
-			matches = true;
-			for (begin = 0; matches && begin < this.length; begin++) {
+			for (begin = 0; begin < this.length; begin++) {
 				if (trimChars != null) {
 					matches = false;
 					foreach (char c in trimChars) {
@@ -1639,13 +1638,17 @@ namespace System {
 						if (matches)
 							break;
 					}
+					if (matches)
+						continue;
 				} else {
 					matches = is_lwsp (this.c_str[begin]);
+					if (matches)
+						continue;
 				}
+				break;
 			}
 
-			matches = true;
-			for (end = this.length - 1; matches && end > begin; end--) {
+			for (end = this.length - 1; end > begin; end--) {
 				if (trimChars != null) {
 					matches = false;
 					foreach (char c in trimChars) {
@@ -1653,10 +1656,16 @@ namespace System {
 						if (matches)
 							break;
 					}
+					if (matches)
+						continue;
 				} else {
 					matches = is_lwsp (this.c_str[end]);
+					if (matches)
+						continue;
 				}
+				break;
 			}
+			end++;
 
 			if (begin >= end)
 				return String.Empty;

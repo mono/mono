@@ -1,4 +1,8 @@
 
+Sat Feb 16 12:02:02 CET 2002 Paolo Molaro <lupus@ximian.com>
+
+	* String.cs: fix Trim().
+
 Fri Feb 15 21:02:46 CET 2002 Paolo Molaro <lupus@ximian.com>
 
 	* String.cs: fix more off by one errors.
