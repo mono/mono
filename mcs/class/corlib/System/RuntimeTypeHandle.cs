@@ -11,12 +11,13 @@ using System.Runtime.Serialization;
 
 namespace System {
 
+	// FIXME: Implement me!
 	public struct RuntimeTypeHandle : ISerializable {
-
+		IntrPtr value;
+		
 		public IntPtr Value {
 			get {
-				// FIXME: Implement me!
-				return (IntPtr) 0;
+				return (IntPtr) value;
 			}
 		}
 		

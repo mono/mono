@@ -1,3 +1,7 @@
+2001-08-02  Miguel de Icaza  <miguel@ximian.com>
+
+	* IServiceProvider.cs, EventHandler.cs: New files.
+
 2001-08-02  Marcel Narings  <marcel@narings.nl>
 	
 	* DateTime.cs: Cleaned up a bit. Added the Add* family members.

@@ -1,0 +1,5 @@
+2001-08-02  Miguel de Icaza  <miguel@ximian.com>
+
+	* Container.cs, Component.cs, IContainer.cs, IComponent.cs,
+	ComponentCollection.cs, ISite.cs: New classes
+

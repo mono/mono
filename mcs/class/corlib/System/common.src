@@ -13,6 +13,8 @@ Convert.cs
 DivideByZeroException.cs
 Double.cs
 DuplicateWaitObjectException.cs
+EventArgs.cs
+EventHandler.cs
 Exception.cs
 ExecutionEngineException.cs
 FormatException.cs
@@ -30,6 +32,7 @@ Int64.cs
 InvalidCastException.cs
 InvalidOperationException.cs
 InvalidProgramException.cs
+IServiceProvider.cs
 Math.cs
 MulticastNotSupportedException.cs
 NotFiniteNumberException.cs
