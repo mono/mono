@@ -1,3 +1,16 @@
+2002-07-29  Rodrigo Moya <rodrigo@ximian.com>
+
+	* OleDbDataReader.cs (OleDbDataReader constructor): changed to receive
+	a second argument (ArrayList results).
+	(NextResult): implemented.
+
+	* OleDbCommand.cs: don't store the ArrayList of results, since we'll
+	pass that to the OleDbDataReader.
+	(OleDbCommand constructor): don't create the ArrayList of results.
+	(GdaResults): removed property.
+	(ExecuteReader): create a temporary ArrayList and pass that to the
+	OleDbDataReader constructor.
+
 2002-07-28  Rodrigo Moya <rodrigo@ximian.com>
 
 	* OleDbCommand.cs (ExecuteReader):

@@ -33,7 +33,6 @@ namespace System.Data.OleDb
 		OleDbDataReader dataReader;
 		CommandBehavior behavior;
 		IntPtr gdaCommand;
-		ArrayList gdaResults;
 
 		#endregion // Fields
 
@@ -51,7 +50,6 @@ namespace System.Data.OleDb
 			dataReader = null;
 			behavior = CommandBehavior.Default;
 			gdaCommand = IntPtr.Zero;
-			gdaResults = new ArrayList ();
 		}
 
 		public OleDbCommand (string cmdText)
@@ -135,10 +133,6 @@ namespace System.Data.OleDb
 			set { Transaction = (OleDbTransaction) value; }
 		}
 
-		internal ArrayList GdaResults {
-			get { return gdaResults; }
-		}
-
 		#endregion // Properties
 
 		#region Methods
@@ -219,6 +213,8 @@ namespace System.Data.OleDb
 
 		public OleDbDataReader ExecuteReader (CommandBehavior behavior)
 		{
+			ArrayList results = new ArrayList ();
+
 			if (connection.State != ConnectionState.Open)
 				throw new InvalidOperationException ();
 
@@ -227,14 +223,14 @@ namespace System.Data.OleDb
 			IntPtr gdaConnection = connection.GdaConnection;
 			IntPtr gdaParameterList = parameters.GdaParameterList;
 
-			/* FIXME: split all returned resultsets into
-			   our internal GdaResults */
-			GdaResults.Add (libgda.gda_connection_execute_command (
+			/* FIXME: split all returned resultsets into the array
+			   list of results */
+			results.Add (libgda.gda_connection_execute_command (
 						gdaConnection,
 						gdaCommand,
 						gdaParameterList));
 
-			dataReader = new OleDbDataReader (this);
+			dataReader = new OleDbDataReader (this, results);
 			dataReader.NextResult ();
 
 			return dataReader;

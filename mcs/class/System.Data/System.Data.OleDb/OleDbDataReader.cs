@@ -20,17 +20,21 @@ namespace System.Data.OleDb
 	{
 		#region Fields
 		
-		OleDbCommand command;
-		bool open;
+		private OleDbCommand command;
+		private bool open;
+		private ArrayList gdaResults;
+		private int currentResult;
 
 		#endregion
 
 		#region Constructors
 
-		internal OleDbDataReader (OleDbCommand command) 
+		internal OleDbDataReader (OleDbCommand command, ArrayList results) 
 		{
 			this.command = command;
 			open = true;
+			gdaResults = results;
+			currentResult = -1;
 			command.OpenReader(this);
 		}
 
@@ -246,10 +250,15 @@ namespace System.Data.OleDb
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		public bool NextResult ()
 		{
-			throw new NotImplementedException ();
+			int i = currentResult + 1;
+			if (i >= 0 && i < gdaResults.Count) {
+				currentResult++;
+				return true;
+			}
+
+			return false;
 		}
 
 		[MonoTODO]
