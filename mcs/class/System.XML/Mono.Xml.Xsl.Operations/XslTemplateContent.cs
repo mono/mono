@@ -36,16 +36,28 @@ using System.Xml;
 using System.Xml.XPath;
 using System.Xml.Xsl;
 
-namespace Mono.Xml.Xsl.Operations {
-	internal class XslTemplateContent : XslCompiledElement {
+namespace Mono.Xml.Xsl.Operations
+{
+	internal class XslTemplateContent : XslCompiledElementBase
+	{
 		ArrayList content = new ArrayList ();
 		
 		bool hasStack;
 		int stackSize;
+		XPathNodeType parentType;
+		bool xslForEach;
 		
-		public XslTemplateContent (Compiler c, XPathNodeType parentType)
-			: base (c, parentType) 
+		public XslTemplateContent (Compiler c,
+			XPathNodeType parentType, bool xslForEach)
+			: base (c) 
 		{
+			this.parentType = parentType;
+			this.xslForEach = xslForEach;
+			Compile (c);
+		}
+
+		public XPathNodeType ParentType {
+			get { return parentType; }
 		}
 
 		protected override void Compile (Compiler c)
@@ -123,9 +135,15 @@ namespace Mono.Xml.Xsl.Operations {
 						case "variable":
 							content.Add (new XslLocalVariable (c));
 							break;
+						case "sort":
+							if (xslForEach)
+								break;
+							throw new XsltCompileException ("'sort' element is not allowed here as a templete content.", null, n);
 						default:
 							// TODO: handle fallback, like we should
-							throw new XsltCompileException ("Did not recognize element " + n.Name, null, n);
+//							throw new XsltCompileException ("Did not recognize element " + n.Name, null, n);
+							content.Add (new XslNotSupportedOperation (c));
+							break;
 						}
 						break;
 					default:

@@ -1,3 +1,8 @@
+2005-03-04  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Compiler.cs : added another CompileTemplateContent() which is
+	  requred in xsl:for-each. Commented out unused method.
+
 2005-03-03  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XslStylesheet.cs, XslTransformProcessor.cs : exclude-element-prefix

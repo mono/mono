@@ -373,12 +373,17 @@ namespace Mono.Xml.Xsl
 		
 		public XslOperation CompileTemplateContent ()
 		{
-			return CompileTemplateContent (XPathNodeType.All);
+			return CompileTemplateContent (XPathNodeType.All, false);
 		}
 
 		public XslOperation CompileTemplateContent (XPathNodeType parentType)
 		{
-			return new XslTemplateContent (this, parentType);
+			return CompileTemplateContent (parentType, false);
+		}
+		
+		public XslOperation CompileTemplateContent (XPathNodeType parentType, bool xslForEach)
+		{
+			return new XslTemplateContent (this, parentType, xslForEach);
 		}
 #endregion
 #region Variables
@@ -563,11 +568,12 @@ namespace Mono.Xml.Xsl
 		{
 			return XslNameUtil.FromString (s, Input);
 		}
-		
+		/*
 		XmlNamespaceManager IStaticXsltContext.GetNsm ()
 		{
 			return currentNsm;
 		}
+		*/
 		
 		public XmlNamespaceManager GetNsm ()
 		{

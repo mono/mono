@@ -1,3 +1,14 @@
+2005-03-04  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XslNotSupportedOperation.cs : added not-supported template content 
+	  type. Such elements should be rejected only run-time (since there
+	  could be future-version-only template content).
+	* XslCompiledElement.cs : added XslCompiledElementBase type, for
+	  not invoking Compile() in base .ctor() (in some types this design
+	  forces us to add extraneous protected fields to the base type).
+	* XslTemplateContent.cs : added "sort" element check (except for
+	  xsl:for-each, it should be skipped).
+
 2005-03-03  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XslElement.cs : reject incorrectly qualified name attribute.

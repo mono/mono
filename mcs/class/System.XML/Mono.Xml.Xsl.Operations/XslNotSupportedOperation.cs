@@ -1,12 +1,10 @@
 //
-// XslCompiledElement.cs
+// XslNotSupportedOperation.cs
 //
 // Authors:
-//	Ben Maurer (bmaurer@users.sourceforge.net)
-//	Atsushi Enomoto (ginga@kit.hi-ho.ne.jp)
+//	Atsushi Enomoto <atsushi@ximian.com>
 //	
-// (C) 2003 Ben Maurer
-// (C) 2003 Atsushi Enomoto
+// (C)2005 Novell Inc,
 //
 
 //
@@ -32,6 +30,7 @@
 
 using System;
 using System.Collections;
+using System.IO;
 using System.Xml;
 using System.Xml.XPath;
 using System.Xml.Xsl;
@@ -40,38 +39,23 @@ using QName = System.Xml.XmlQualifiedName;
 
 namespace Mono.Xml.Xsl.Operations
 {
-	internal abstract class XslCompiledElementBase : XslOperation
+	internal class XslNotSupportedOperation : XslCompiledElement
 	{
-		int lineNumber;
-		int linePosition;
+		string name;
 
-		// It does not automatically invoke Compile() in .ctor()
-		public XslCompiledElementBase (Compiler c)
-		{
-			IXmlLineInfo li = c.Input as IXmlLineInfo;
-			if (li != null) {
-				lineNumber = li.LineNumber;
-				linePosition = li.LinePosition;
-			}
-		}
-
-		public int LineNumber {
-			get { return lineNumber; }
-		}
-
-		public int LinePosition {
-			get { return linePosition; }
-		}
-
-		protected abstract void Compile (Compiler c);
-	}
-
-	internal abstract class XslCompiledElement : XslCompiledElementBase
-	{
-		public XslCompiledElement (Compiler c)
+		public XslNotSupportedOperation (Compiler c)
 			: base (c)
 		{
-			this.Compile (c);
+		}
+
+		protected override void Compile (Compiler c)
+		{
+			name = c.Input.LocalName;
+		}
+
+		public override void Evaluate (XslTransformProcessor p)
+		{
+			throw new XsltException (String.Format ("'{0}' element is not supported as a template content in XSLT 1.0.", name), null);
 		}
 	}
 }

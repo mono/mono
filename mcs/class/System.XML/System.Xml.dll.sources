@@ -40,6 +40,7 @@ Mono.Xml.Xsl.Operations/XslForEach.cs
 Mono.Xml.Xsl.Operations/XslIf.cs
 Mono.Xml.Xsl.Operations/XslLiteralElement.cs
 Mono.Xml.Xsl.Operations/XslMessage.cs
+Mono.Xml.Xsl.Operations/XslNotSupportedOperation.cs
 Mono.Xml.Xsl.Operations/XslNumber.cs
 Mono.Xml.Xsl.Operations/XslOperation.cs
 Mono.Xml.Xsl.Operations/XslProcessingInstruction.cs
