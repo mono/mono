@@ -20,6 +20,7 @@ System.Xml/XmlSignificantWhitespaceTests.cs
 System.Xml/XmlTextReaderTests.cs
 System.Xml/XmlTextTests.cs
 System.Xml/XmlTextWriterTests.cs
+System.Xml/XmlUrlResolverTests.cs
 System.Xml/XmlWhiteSpaceTests.cs
 System.Xml/XmlWriterTests.cs
 System.Xml.Schema/XmlSchemaTests.cs

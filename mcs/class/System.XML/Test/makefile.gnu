@@ -5,6 +5,7 @@ LIBRARY = System.XML_linux_test.dll
 LIB_LIST = System.XML_linux_test.args
 LIB_FLAGS = 	\
 		-r $(topdir)/class/lib/corlib.dll	\
+		-r $(topdir)/class/lib/System.dll	\
 		-r $(topdir)/class/lib/System.Xml.dll	\
 		-r $(topdir)/class/lib/NUnit.Framework.dll
 

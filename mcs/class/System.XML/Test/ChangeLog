@@ -1,3 +1,8 @@
+2003-06-20  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
+
+	* System.XML_linux_test.args: added XmlUrlResolverTests.cs.
+	* makefile.gnu: added reference to System.dll.
+
 2003-05-05  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
 
 	* System.XML_linux_test.args : added XmlConvertTests.cs
