@@ -62,19 +62,34 @@ namespace Mono.CSharp.Debugger
 			//
 			Hashtable methods = new Hashtable ();
 
+			uint address_table_size = 0;
+
 			ot.line_number_table_offset = (uint) bw.BaseStream.Position;
 			foreach (ISourceMethod method in symwriter.Methods) {
 				if (method.Start == null || method.Start.Row == 0)
 					continue;
 
-				methods.Add (method, (uint) bw.BaseStream.Position);
+				int count = method.Lines.Length;
+				LineNumberEntry[] lines = new LineNumberEntry [count];
 
-				foreach (ISourceLine line in method.Lines) {
-					LineNumberEntry lne = new LineNumberEntry (line);
-					lne.Write (bw);
+				uint pos = (uint) bw.BaseStream.Position;
+
+				uint address_table_offset = address_table_size;
+				uint my_size = (uint) (MethodAddress.Size + count * sizeof (long));
+				address_table_size += my_size;
+
+				for (int i = 0; i < count; i++) {
+					lines [i] = new LineNumberEntry (method.Lines [i]);
+					lines [i].Write (bw);
 				}
 
-				LineNumberEntry.Null.Write (bw);
+				MethodEntry entry = new MethodEntry (
+					(uint) method.Token, (uint) sources [method.SourceFile],
+					method.SourceFile.FileName, lines, pos, address_table_offset,
+					my_size, (uint) method.Start.Row, (uint) method.End.Row);
+
+				methods.Add (method, entry);
+
 			}
 			ot.line_number_table_size = (uint) bw.BaseStream.Position -
 				ot.line_number_table_offset;
@@ -82,18 +97,16 @@ namespace Mono.CSharp.Debugger
 			//
 			// Write method table
 			//
+			ot.method_count = (uint) methods.Count;
 			ot.method_table_offset = (uint) bw.BaseStream.Position;
-			foreach (ISourceMethod method in methods.Keys) {
-				MethodEntry entry = new MethodEntry (
-					(uint) method.Token, (uint) sources [method.SourceFile],
-					(uint) methods [method], (uint) method.Start.Row);
+			foreach (MethodEntry entry in methods.Values)
 				entry.Write (bw);
-			}
 			ot.method_table_size = (uint) bw.BaseStream.Position -  ot.method_table_offset;
 
 			//
 			// Write offset table
 			//
+			ot.address_table_size = address_table_size;
 			ot.total_file_size = (uint) bw.BaseStream.Position;
 			bw.Seek ((int) offset_table_offset, SeekOrigin.Begin);
 			ot.Write (bw);

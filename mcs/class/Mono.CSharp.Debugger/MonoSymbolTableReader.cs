@@ -19,7 +19,7 @@ namespace Mono.CSharp.Debugger
 	{
 		public readonly MethodEntry[] Methods;
 
-		public MonoSymbolTableReader (BinaryReader reader)
+		public MonoSymbolTableReader (BinaryReader reader, BinaryReader address_reader)
 		{
 			//
 			// Read the offset table.
@@ -39,20 +39,16 @@ namespace Mono.CSharp.Debugger
 			// Read the method table.
 			//
 			reader.BaseStream.Position = offset_table.method_table_offset;
-			long end = reader.BaseStream.Position + offset_table.method_table_size;
 
-			ArrayList methods = new ArrayList ();
+			Methods = new MethodEntry [offset_table.method_count];
 
-			while (reader.BaseStream.Position < end) {
+			for (int i = 0; i < offset_table.method_count; i++) {
 				try {
-					methods.Add (new MethodEntry (reader));
+					Methods [i] = new MethodEntry (reader, address_reader);
 				} catch {
 					throw new SymbolTableException ("Can't read method table");
 				}
 			}
-
-			Methods = new MethodEntry [methods.Count];
-			methods.CopyTo (Methods);
 		}
 	}
 }
