@@ -1,3 +1,9 @@
+2001-12-11  Ravi Pratap  <ravi@ximian.com>
+
+	* attribute.cs (Attribute::Resolve): Expand to handle named arguments too.
+
+	* ../errors/cs0617.cs : Add.
+
 2001-11-11  Ravi Pratap  <ravi@ximian.com>
 
 	* enum.cs (Emit): Rename to Populate to be more consistent with what
