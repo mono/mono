@@ -1,3 +1,8 @@
+2005-01-17  Dick Porter  <dick@ximian.com>
+
+	* timefuncs.h: Make WapiFileTime endian-aware, as it's often
+	cast to and from 64bit ints.  Fixes bug 71213.
+
 2005-01-11  Dick Porter  <dick@ximian.com>
 
 	* error.c (errno_to_WSA): Add EADDRNOTAVAIL error code
