@@ -1,3 +1,10 @@
+2005-02-21  Atsushi Enomoto <atsushi@ximian.com>
+
+	* DTDValidatingReader.cs : It should not skip whitespace and
+	  significant whitespace nodes unless it is expanding entities.
+	* XmlDocumentNavigator.cs : Fixed NodeType that was returning
+	  incorrect type when there is a sequence of text/cdata/space nodes.
+
 2005-02-18  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlNamespaceManager.cs : Prefix "xml" is bound to the fixed

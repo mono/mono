@@ -595,7 +595,7 @@ namespace Mono.Xml
 						XmlSeverityType.Error);
 					currentAutomata = previousAutomata;
 				}
-				if (validatingReader.EntityHandling == EntityHandling.ExpandEntities) {
+				if (entityReaderStack.Count > 0 && validatingReader.EntityHandling == EntityHandling.ExpandEntities) {
 					constructingTextValue += reader.Value;
 					return ReadContent ();
 				}
@@ -608,7 +608,7 @@ namespace Mono.Xml
 				}
 				if (!isText && !isSignificantWhitespace)
 					isWhitespace = true;
-				if (validatingReader.EntityHandling == EntityHandling.ExpandEntities) {
+				if (entityReaderStack.Count > 0 && validatingReader.EntityHandling == EntityHandling.ExpandEntities) {
 					constructingTextValue += reader.Value;
 					return ReadContent ();
 				}
@@ -901,7 +901,7 @@ namespace Mono.Xml
 			if (consumedAttribute)
 				return false;
 			if (NodeType == XmlNodeType.Attribute &&
-					currentEntityHandling == EntityHandling.ExpandEntities) {
+					entityReaderStack.Count > 0 && currentEntityHandling == EntityHandling.ExpandEntities) {
 				consumedAttribute = true;
 				return true;
 			}

@@ -178,7 +178,32 @@ namespace System.Xml
 		}
 
 		public override XPathNodeType NodeType {
-			get { return (NsNode != null) ? XPathNodeType.Namespace : node.XPathNodeType; }
+			get {
+				if (NsNode != null)
+					return XPathNodeType.Namespace;
+				XmlNode n = node;
+				bool sw = false;
+				do {
+					switch (n.NodeType) {
+					case XmlNodeType.SignificantWhitespace:
+						sw = true;
+						n = node.NextSibling;
+						break;
+					case XmlNodeType.Whitespace:
+						n = node.NextSibling;
+						break;
+					case XmlNodeType.Text:
+					case XmlNodeType.CDATA:
+						return XPathNodeType.Text;
+					default:
+						n = null;
+						break;
+					}
+				} while (n != null);
+				return sw ?
+					XPathNodeType.SignificantWhitespace :
+					node.XPathNodeType;
+			}
 		}
 
 		public override string Prefix {
