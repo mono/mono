@@ -1,6 +1,10 @@
 thisdir = class/System.Drawing
-SUBDIRS = gdiplus 
 include ../../build/rules.make
+ifeq ($(PLATFORM),win32)
+SUBDIRS = 
+else
+SUBDIRS = gdiplus 
+endif
 
 # to use JPEG decoder add -r ./cdeclRedirector/cdeclCallback.dll 
 # and remove -define:DECLARE_CDECL_DELEGATES

@@ -1,3 +1,6 @@
+2003-10-14  Bernie Solomon  <bernard@ugsolutions.com>
+	* Makefile			do not build gdiplus on Windows
+
 2003-10-12  Alexandre Pigolkine <pigolkine@gmx.de>
 	* Makefile			gdiplus added to subdirs
 
