@@ -890,6 +890,27 @@ implAttr                : /* empty */ 		{$$ = new ImplAttr (); }
 localsHead              : D_LOCALS
 			;
 
+local_list		: /* EMPTY */
+			| type_ref name1
+			  { 
+				ArrayList local_list = new ArrayList ();
+				TypeRef type = (TypeRef) $1;
+
+				local_list.Add (new Local ((string) $2, type.Type));
+				$$ = local_list; 
+			  }
+			| local_list COMMA type_ref name1
+			  {
+				ArrayList local_list = (ArrayList) $1;
+				TypeRef type = (TypeRef) $3;
+
+				local_list.Add (new Local ((string) $4, type.Type));
+			  }
+			;
+
+init_flag		: /* EMPTY */ 	{ $$ = false; }
+			| K_INIT	{ $$ = true; }
+
 					
 methodDecl              : D_EMITBYTE int32 
 			| sehBlock 
@@ -897,8 +918,7 @@ methodDecl              : D_EMITBYTE int32
 			  {
 				codegen.CurrentMethod.SetMaxStack ((int) $2);
 			  }
-			| localsHead OPEN_PARENS sigArgs0 CLOSE_PARENS 
-			| localsHead K_INIT OPEN_PARENS arg_list CLOSE_PARENS  
+			| localsHead init_flag OPEN_PARENS local_list CLOSE_PARENS  
 				{
 					ArrayList arg_list = $4 as ArrayList;
 					Local[] local_list;
@@ -906,16 +926,14 @@ methodDecl              : D_EMITBYTE int32
 					if (arg_list != null) {
 						local_list = new Local[arg_list.Count];
 						int index = 0;
-						foreach (DictionaryEntry local in arg_list) {
-							string name = (string) local.Value;
-							PEAPI.Type type = ((TypeRef) local.Key).Type;
-							local_list[index++] = new Local (name, type);
+						foreach (Local local in arg_list) {
+							local_list[index++] = local;
 						}
 					} else {
 						local_list = new Local[0];
 					}
 					
-					codegen.CurrentMethod.AddLocals (local_list, false);
+					codegen.CurrentMethod.AddLocals (local_list, (bool) $2);
 				}
 			| D_ENTRYPOINT          
 			  { 
