@@ -78,7 +78,8 @@ namespace System.Data.OleDb
 		{
 			this.sourceColumn = srcColumn;
 		}
-
+		
+		[EditorBrowsableAttribute (EditorBrowsableState.Advanced)]		
 		public OleDbParameter(string name, OleDbType dataType, int size, ParameterDirection direction, bool isNullable, byte precision, byte scale, string srcColumn, DataRowVersion srcVersion, object value)
 			: this (name, dataType, size, srcColumn)
 		{
@@ -106,16 +107,25 @@ namespace System.Data.OleDb
 			}
 		}
 		
+		[DataSysDescriptionAttribute ("Input, output, or bidirectional parameter")]			    [DefaultValue (ParameterDirection.Input)]
 		public ParameterDirection Direction {
 			get { return direction; }
 			set { direction = value; }
 		}
 		
+		[BrowsableAttribute (false)]
+		[DataSysDescriptionAttribute ("A design-time property used for strongly typed code generation")]
+		[DesignOnlyAttribute (true)]
+                [EditorBrowsableAttribute (EditorBrowsableState.Advanced)]
+		[DefaultValue (false)]
 		public bool IsNullable {
 			get { return isNullable; }
 			set { isNullable = value; }
 		}
 
+		[DefaultValue (OleDbType.VarWChar)]
+		[DataSysDescriptionAttribute ("The parameter native type")]
+		[RefreshPropertiesAttribute (RefreshProperties.All)]
 		public OleDbType OleDbType {
 			get { return oleDbType; }
 			set {
@@ -124,36 +134,52 @@ namespace System.Data.OleDb
 			}
 		}
 		
+		[DefaultValue ("")]
+		[DataSysDescriptionAttribute ("Name of the parameter")]
 		public string ParameterName {
 			get { return name; }
 			set { name = value; }
 		}
 
+		[DefaultValue (0)]
+                [DataSysDescriptionAttribute ("For decimal, numeric, varnumeric DBTypes")]
 		public byte Precision {
 			get { return precision; }
 			set { precision = value; }
 		}
 		
+		[DefaultValue (0)]
+                [DataSysDescriptionAttribute ("For decimal, numeric, varnumeric DBTypes")]
 		public byte Scale {
 			get { return scale; }
 			set { scale = value; }
 		}
 		
+
+		[DefaultValue (0)]
+                [DataSysDescriptionAttribute ("Size of variable length data types (string & arrays)")]
 		public int Size {
 			get { return size; }
 			set { size = value; }
 		}
 
+		[DefaultValue ("")]
+                [DataSysDescriptionAttribute ("When used by a DataAdapter.Update, the source column name that is used to find the DataSetColumn name in the ColumnMappings. This is to copy a value between the parameter and a datarow")]
 		public string SourceColumn {
 			get { return sourceColumn; }
 			set { sourceColumn = value; }
 		}
 		
+		[DefaultValue (DataRowVersion.Current)]
+                [DataSysDescriptionAttribute ("When used by a DataAdapter.Update(UpdateCommand only), the version of the DataRow value that is used to update the data source")]
 		public DataRowVersion SourceVersion {
 			get { return sourceVersion; }
 			set { sourceVersion = value; }
 		}
 		
+		[DefaultValue (null)]
+                [DataSysDescriptionAttribute ("value of the parameter")]
+		[TypeConverter (typeof (StringConverter))]
 		public object Value {
 			get { return value; }
 			set { this.value = value; }
