@@ -1,3 +1,7 @@
+2004-05-25  Jackson Harper  <jackson@ximian.com>
+
+	* ILParser.jay: Fix casting for data type constants.
+	
 2004-05-22  Jackson Harper  <jackson@ximian.com>
 
 	* ILParser.jay: [,] is short form for [...,...] this fixes bug
