@@ -3145,8 +3145,11 @@ namespace Mono.CSharp {
 
 				ObsoleteAttribute oa = AttributeTester.GetMethodObsoleteAttribute (parent_method);
 				if (oa != null) {
-					Report.SymbolRelatedToPreviousError (parent_method);
-					Report.Warning (672, Location, "Member '{0}' overrides obsolete member. Add the Obsolete attribute to '{0}'", GetSignatureForError (Parent));
+					EmitContext ec = new EmitContext (this.Parent, this.Parent, Location, null, null, ModFlags, false);
+					if (OptAttributes == null || !OptAttributes.Contains (TypeManager.obsolete_attribute_type, ec)) {
+						Report.SymbolRelatedToPreviousError (parent_method);
+						Report.Warning (672, 1, Location, "Member '{0}' overrides obsolete member. Add the Obsolete attribute to '{0}'", GetSignatureForError (Parent));
+					}
 				}
 				return true;
 			}
