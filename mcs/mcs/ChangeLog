@@ -1,5 +1,10 @@
 2004-10-18  Martin Baulig  <martin@ximian.com>
 
+	* parameter.cs (Parameter.Resolve):  Don't access the TypeExpr's
+	`Type' directly, but call ResolveType() on it.
+
+2004-10-18  Martin Baulig  <martin@ximian.com>
+
 	* class.cs (FieldMember.Define): Don't access the TypeExpr's
 	`Type' directly, but call ResolveType() on it.
 	(MemberBase.DoDefine): Likewise.

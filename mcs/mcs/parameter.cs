@@ -162,11 +162,11 @@ namespace Mono.CSharp {
 		// </summary>
 		public bool Resolve (EmitContext ec, Location l)
 		{
-			TypeName = TypeName.ResolveAsTypeTerminal (ec, false);
-			if (TypeName == null)
+			TypeExpr texpr = TypeName.ResolveAsTypeTerminal (ec, false);
+			if (texpr == null)
 				return false;
 
-			parameter_type = TypeName.Type;
+			parameter_type = texpr.ResolveType (ec);
 			
 			if (parameter_type.IsAbstract && parameter_type.IsSealed) {
 				Report.Error (721, l, "'{0}': static types cannot be used as parameters", GetSignatureForError ());
