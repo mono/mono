@@ -795,6 +795,7 @@ namespace Mono.CSharp {
 	public class MemberCache {
 		public readonly IMemberContainer Container;
 		protected Hashtable member_hash;
+		protected Hashtable method_hash;
 
 		/// <summary>
 		///   Create a new MemberCache for the given IMemberContainer `container'.
@@ -815,6 +816,14 @@ namespace Mono.CSharp {
 			else
 				member_hash = new Hashtable ();
 
+			// If this is neither a dynamic type nor an interface, create a special
+			// method cache with all declared and inherited methods.
+			Type type = container.Type;
+			if (!(type is TypeBuilder) && !type.IsInterface) {
+				method_hash = new Hashtable ();
+				AddMethods (type);
+			}
+
 			// Add all members from the current class.
 			AddMembers (Container);
 
@@ -827,8 +836,6 @@ namespace Mono.CSharp {
 		Hashtable SetupCache (MemberCache parent)
 		{
 			Hashtable hash = new Hashtable ();
-
-			Report.Debug (8, "SETUP CACHE", Container, Container.Parent, parent);
 
 			IDictionaryEnumerator it = parent.member_hash.GetEnumerator ();
 			while (it.MoveNext ()) {
@@ -879,8 +886,14 @@ namespace Mono.CSharp {
 		/// </summary>
 		void AddMembers (IMemberContainer container)
 		{
-			AddMembers (MemberTypes.Constructor | MemberTypes.Field | MemberTypes.Method |
-				    MemberTypes.Property, container);
+			// We need to call AddMembers() with a single member type at a time
+			// to get the member type part of CacheEntry.EntryType right.
+			AddMembers (MemberTypes.Constructor, container);
+			AddMembers (MemberTypes.Field, container);
+			AddMembers (MemberTypes.Method, container);
+			AddMembers (MemberTypes.Property, container);
+			// Nested types and events are returned by both Static and Instance
+			// searches.
 			AddMembers (MemberTypes.NestedType | MemberTypes.Event,
 				    BindingFlags.Public, container);
 			AddMembers (MemberTypes.NestedType | MemberTypes.Event,
@@ -894,7 +907,6 @@ namespace Mono.CSharp {
 			AddMembers (mt, BindingFlags.Instance | BindingFlags.Public, container);
 			AddMembers (mt, BindingFlags.Instance | BindingFlags.NonPublic, container);
 		}
-
 
 		/// <summary>
 		///   Add all members from class `container' with the requested MemberTypes and
@@ -922,7 +934,42 @@ namespace Mono.CSharp {
 				// We cannot add new members in front of the list since this'd be an
 				// expensive operation, that's why the list is sorted in reverse order
 				// (ie. members from the current class are coming last).
-				list.Add (new CacheEntry (container, member, mt, new_bf));
+				list.Add (new CacheEntry (container, member, mt, bf));
+			}
+		}
+
+		/// <summary>
+		///   Add all declared and inherited methods from class `type' to the method cache.
+		/// </summary>
+		void AddMethods (Type type)
+		{
+			AddMethods (BindingFlags.Static | BindingFlags.Public, type);
+			AddMethods (BindingFlags.Static | BindingFlags.NonPublic, type);
+			AddMethods (BindingFlags.Instance | BindingFlags.Public, type);
+			AddMethods (BindingFlags.Instance | BindingFlags.NonPublic, type);
+		}
+
+		void AddMethods (BindingFlags bf, Type type)
+		{
+			MemberInfo [] members = type.GetMethods (bf);
+
+			foreach (MemberInfo member in members) {
+				string name = member.Name;
+
+				// We use a name-based hash table of ArrayList's.
+				ArrayList list = (ArrayList) method_hash [name];
+				if (list == null) {
+					list = new ArrayList ();
+					method_hash.Add (name, list);
+				}
+
+				// Unfortunately, the elements returned by Type.GetMethods() aren't
+				// sorted so we need to do this check for every member.
+				BindingFlags new_bf = bf;
+				if (member.DeclaringType == type)
+					new_bf |= BindingFlags.DeclaredOnly;
+
+				list.Add (new CacheEntry (Container, member, MemberTypes.Method, new_bf));
 			}
 		}
 
@@ -1059,19 +1106,42 @@ namespace Mono.CSharp {
 		///
 		///   Unlike other FindMembers implementations, this method will always
 		///   check all inherited members - even when called on an interface type.
+		///
+		///   If you know that you're only looking for methods, you should use
+		///   MemberTypes.Method alone since this speeds up the lookup a bit.
+		///   When doing a method-only search, it'll try to use a special method
+		///   cache (unless it's a dynamic type or an interface) and the returned
+		///   MemberInfo's will have the correct ReflectedType for inherited methods.
+		///   The lookup process will automatically restart itself in method-only
+		///   search mode if it discovers that it's about to return methods.
 		/// </summary>
 		public MemberList FindMembers (MemberTypes mt, BindingFlags bf, string name,
 					       MemberFilter filter, object criteria)
 		{
 			bool declared_only = (bf & BindingFlags.DeclaredOnly) != 0;
+			bool method_search = mt == MemberTypes.Method;
+			// If we have a method cache and we aren't already doing a method-only search,
+			// then we restart a method search if the first match is a method.
+			bool do_method_search = !method_search && (method_hash != null);
 
-			ArrayList applicable = (ArrayList) member_hash [name];
+			ArrayList applicable;
+
+			// If this is a method-only search, we try to use the method cache if
+			// possible; a lookup in the method cache will return a MemberInfo with
+			// the correct ReflectedType for inherited methods.
+			if (method_search && (method_hash != null))
+				applicable = (ArrayList) method_hash [name];
+			else
+				applicable = (ArrayList) member_hash [name];
+
 			if (applicable == null)
 				return MemberList.Empty;
 
 			ArrayList list = new ArrayList ();
 
 			Timer.StartTimer (TimerType.CachedLookup);
+
+			EntryType type = GetEntryType (mt, bf);
 
 			IMemberContainer current = Container;
 
@@ -1095,8 +1165,6 @@ namespace Mono.CSharp {
 					current = entry.Container;
 				}
 
-				EntryType type = GetEntryType (mt, bf);
-
 				// Is the member of the correct type ?
 				if ((entry.EntryType & type & EntryType.MaskType) == 0)
 					continue;
@@ -1106,11 +1174,21 @@ namespace Mono.CSharp {
 					continue;
 
 				// Apply the filter to it.
-				if (filter (entry.Member, criteria))
+				if (filter (entry.Member, criteria)) {
+					if ((entry.EntryType & EntryType.MaskType) != EntryType.Method)
+						do_method_search = false;
 					list.Add (entry.Member);
+				}
 			}
 
 			Timer.StopTimer (TimerType.CachedLookup);
+
+			// If we have a method cache and we aren't already doing a method-only
+			// search, we restart in method-only search mode if the first match is
+			// a method.  This ensures that we return a MemberInfo with the correct
+			// ReflectedType for inherited methods.
+			if (do_method_search && (list.Count > 0))
+				return FindMembers (MemberTypes.Method, bf, name, filter, criteria);
 
 			return new MemberList (list);
 		}

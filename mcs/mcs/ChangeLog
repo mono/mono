@@ -1,5 +1,12 @@
 2002-08-20  Martin Baulig  <martin@gnome.org>
 
+	* decl.cs (MemberCache): Added a special method cache which will
+	be used for method-only searched.  This ensures that a method
+	search will return a MethodInfo with the correct ReflectedType for
+	inherited methods.
+
+2002-08-20  Martin Baulig  <martin@gnome.org>
+
 	* decl.cs (DeclSpace.FindMembers): Made this public.
 
 2002-08-20  Gonzalo Paniagua Javier <gonzalo@ximian.com>
