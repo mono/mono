@@ -1,3 +1,7 @@
+2003-11-11 Ben Maurer  <bmaurer@users.sourceforge.net>
+
+	* LinkLabel.cs, InputLanguageChangedEventArgs.cs: recursion!
+
 2003-10-27 Jordi Mas i Hernàndez <jmas@softcatala.org>
 	* ListListView.cs, ListViewItem.cs, win32Enums.cs
 	More work on the ListView implementation (bug fixing, new methods and properties)

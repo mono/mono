@@ -57,7 +57,7 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		public InputLanguage InputLanguage {
 			get {
-				return InputLanguage;
+				return inputLanguage;
 			}
 		}
 

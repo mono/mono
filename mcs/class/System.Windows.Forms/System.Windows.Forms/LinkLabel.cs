@@ -156,7 +156,7 @@ namespace System.Windows.Forms {
 		protected override ImeMode DefaultImeMode {
 			get {
 				//FIXME:
-				return DefaultImeMode;
+				return base.DefaultImeMode;
 			}
 		}
 
@@ -167,7 +167,7 @@ namespace System.Windows.Forms {
 		protected override AccessibleObject CreateAccessibilityInstance()
 		{
 			//FIXME:
-			return CreateAccessibilityInstance();
+			return base.CreateAccessibilityInstance();
 		}
 		[MonoTODO]
 		protected override void CreateHandle()
