@@ -1,3 +1,8 @@
+2002-04-03  Nick Drochak  <ndrochak@gol.com>
+
+	* Type.cs (GetTypeCode): provide some of the implementation for this
+	method.  It's still too simplistic to be considered complete.
+
 2002-04-02  Dietmar Maurer  <dietmar@ximian.com>
 
 	* Object.cs: fixed FieldGetter/FieldSetter signature

@@ -377,9 +377,46 @@ namespace System {
 		}
 
 		[MonoTODO]
-		public static TypeCode GetTypeCode( Type type)
+		public static TypeCode GetTypeCode (Type type)
 		{
-			// FIXME
+			// FIXME -- this is most likely too simplistic for all cases;
+			//  e.g. Enums
+
+			Type ust = type.UnderlyingSystemType;
+
+			if (ust == typeof (Boolean))
+				return TypeCode.Boolean;
+			if (ust == typeof (Byte))
+				return TypeCode.Byte;
+			if (ust == typeof (Char))
+				return TypeCode.Char;
+			if (ust == typeof (DateTime))
+				return TypeCode.DateTime;
+			if (ust == typeof (DBNull))
+				return TypeCode.DBNull;
+			if (ust == typeof (Decimal))
+				return TypeCode.Decimal;
+			if (ust == typeof (Double))
+				return TypeCode.Double;
+			if (ust == typeof (Int16))
+				return TypeCode.Int16;
+			if (ust == typeof (Int32))
+				return TypeCode.Int32;
+			if (ust == typeof (Int64))
+				return TypeCode.Int64;
+			if (ust == typeof (SByte))
+				return TypeCode.SByte;
+			if (ust == typeof (Single))
+				return TypeCode.Single;
+			if (ust == typeof (String))
+				return TypeCode.String;
+			if (ust == typeof (UInt16))
+				return TypeCode.UInt16;
+			if (ust == typeof (UInt32))
+				return TypeCode.UInt32;
+			if (ust == typeof (UInt64))
+				return TypeCode.UInt64;
+
 			return TypeCode.Empty;
 		}
 
