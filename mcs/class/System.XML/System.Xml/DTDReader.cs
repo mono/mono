@@ -1368,7 +1368,7 @@ namespace System.Xml
 			if (target == "xml") {
 				ReadTextDeclaration ();
 				return;
-			} else if (target.ToLower () == "xml")
+			} else if (String.Compare (target, "xml", true, CultureInfo.InvariantCulture) == 0)
 				throw new XmlException (this as IXmlLineInfo,
 					"Not allowed processing instruction name which starts with 'X', 'M', 'L' was found.");
 

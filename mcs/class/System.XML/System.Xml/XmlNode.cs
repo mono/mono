@@ -11,6 +11,7 @@
 
 using System;
 using System.Collections;
+using System.Globalization;
 using System.IO;
 using System.Text;
 using System.Xml.XPath;
@@ -732,9 +733,9 @@ namespace System.Xml
 
 		public virtual bool Supports (string feature, string version)
 		{
-			if (String.Compare (feature, "xml", true) == 0 // not case-sensitive
-			    && (String.Compare (version, "1.0", true) == 0
-				|| String.Compare (version, "2.0", true) == 0))
+			if (String.Compare (feature, "xml", true, CultureInfo.InvariantCulture) == 0 // not case-sensitive
+			    && (String.Compare (version, "1.0", true, CultureInfo.InvariantCulture) == 0
+				|| String.Compare (version, "2.0", true, CultureInfo.InvariantCulture) == 0))
 				return true;
 			else
 				return false;

@@ -132,7 +132,7 @@ namespace System.Xml {
 			if (pos == -1 || pos + 6 >= name.Length)
 				return name;
 
-			if (Char.ToUpper (name [pos + 1]) != 'X' || name [pos + 6] != '_')
+			if ((name [pos + 1] != 'X' && name [pos + 1] != 'x') || name [pos + 6] != '_')
 				return name [0] + DecodeName (name.Substring (1));
 
 			return name.Substring (0, pos) + TryDecoding (name.Substring (pos + 1));

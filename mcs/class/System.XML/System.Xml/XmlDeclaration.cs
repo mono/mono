@@ -3,12 +3,14 @@
 //
 // Author:
 //	Duncan Mak  (duncan@ximian.com)
+//	Atsushi Enomotot  (atsushi@ximian.com)
 //
 // (C) Ximian, Inc.
 
 using System;
+using System.Globalization;
+using System.Text;
 using System.Xml;
-using System.Text.RegularExpressions;
 
 namespace System.Xml
 {
@@ -60,9 +62,9 @@ namespace System.Xml
 			set {
 				if(value != null)
 				{
-					if (value.ToUpper() == "YES")
+					if (String.Compare (value, "YES", true, CultureInfo.InvariantCulture) == 0)
 						standalone = "yes";
-					if (value.ToUpper() == "NO")
+					if (String.Compare (value, "NO", true, CultureInfo.InvariantCulture) == 0)
 						standalone = "no";
 				}
 				else

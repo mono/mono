@@ -5,6 +5,7 @@
 //
 // (C) Ximian, Inc.
 //
+using System.Globalization;
 
 namespace System.Xml
 {
@@ -25,7 +26,7 @@ namespace System.Xml
 
 		public bool HasFeature (string strFeature, string strVersion)
 		{
-			if (String.Compare (strFeature, "xml", true) == 0) { // not case-sensitive
+			if (String.Compare (strFeature, "xml", true, CultureInfo.InvariantCulture) == 0) { // not case-sensitive
 				switch (strVersion) {
 				case "1.0":
 				case "2.0":
