@@ -28,12 +28,18 @@
 
 #if NET_2_0
 
+using System;
+using System.Runtime.InteropServices;
+
 namespace System.Security.AccessControl {
 
+	[Flags]
+	[Serializable]
+	[ComVisibleAttribute (true)]
 	public enum AccessControlActions {
-		Change,
 		None,
-		View
+		View,
+		Change
 	}
 }
 
