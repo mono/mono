@@ -1,4 +1,12 @@
 2002-05-11  Tim Coleman
+	* System.Data.SqlClient/SqlDataAdapter.cs:
+	* System.Data.Common/DbDataAdapter.cs:
+		Moved methods that weren't supposed to 
+		be in SqlDataAdapter out.  They should be implemented
+		in DbDataAdapter.
+	
+
+2002-05-11  Tim Coleman
         * System.Data.SqlClient/SqlDataAdapter.cs:
                 some implementation of this class.  Note
                 that none of the functionality has been

@@ -40,7 +40,7 @@ namespace System.Data.SqlClient
 		{
 		}
 
-		public SqlDataAdapter (SqlCommand selectCommand)
+		public SqlDataAdapter (SqlCommand selectCommand) : base ()
 		{
 			this.deleteCommand = new SqlCommand ();
 			this.insertCommand = new SqlCommand ();
@@ -89,101 +89,6 @@ namespace System.Data.SqlClient
 		#endregion // Properties
 
 		#region Methods
-
-		public override int Fill (DataSet dataSet) 
-		{
-			// Adds or refreshes rows in the DataSet to match those in 
-			// the data source using the DataSet name, and creates
-			// a DataTable named "Table"
-
-			// If the SELECT query has changed, then clear the results
-			// that we previously retrieved.
-
-			int changeCount = 0;
-
-			if (this.isDirty) 
-			{
-				dataSet.Tables.Clear ();
-			}
-
-			// Run the SELECT query and get the results in a datareader
-			SqlDataReader dataReader = selectCommand.ExecuteReader ();
-
-
-			// The results table in dataSet is called "Table"
-			string tableName = "Table";
-			DataTable table;
-
-			int i = 0;
-			do 
-			{
-				if (!this.isDirty)  // table already exists
-				{
-					table = dataSet.Tables[tableName];
-				}
-				else // create a new table
-				{
-					table = new DataTable (tableName);
-					for (int j = 0; j < dataReader.FieldCount; j += 1) 
-					{
-						string baseColumnName = dataReader.GetName (j);
-						string columnName = "";
-
-						if (baseColumnName == "")
-							baseColumnName = "Column";
-						else
-							columnName = baseColumnName;
-
-						for (int k = 1; table.Columns.Contains (columnName) || columnName == ""; k += 1)
-							columnName = String.Format ("{0}{1}", baseColumnName, k);
-							
-						table.Columns.Add (new DataColumn (columnName, dataReader.GetFieldType (j)));
-					}
-					dataSet.Tables.Add (table);
-				} 
-
-				DataRow thisRow;
-				object[] itemArray = new object[dataReader.FieldCount];
-
-				while (dataReader.Read ())
-				{
-					// need to check for existing rows to reconcile if we have key
-					// information.  skip this step for now
-
-					// append rows to the end of the current table.
-					dataReader.GetValues (itemArray);
-					thisRow = table.NewRow ();
-					thisRow.ItemArray = itemArray;
-					table.ImportRow (thisRow);
-					changeCount += 1;
-				}
-
-				i += 1;
-				tableName = String.Format ("Table{0}", i);
-			} while (dataReader.NextResult ());
-
-			dataReader.Close ();
-			this.isDirty = false;
-			return changeCount;
-		}
-
-		[MonoTODO]
-		public override DataTable[] FillSchema (DataSet dataSet, SchemaType schemaType) 
-		{
-			throw new NotImplementedException ();
-		}
-
-		[MonoTODO]
-		public override IDataParameter[] GetFillParameters () 
-		{
-			throw new NotImplementedException ();
-		}
-
-		[MonoTODO]
-		public override int Update (DataSet dataSet) 
-		{
-			throw new NotImplementedException ();
-		}
 
 		[MonoTODO]
 		protected override RowUpdatedEventArgs CreateRowUpdatedEvent (DataRow dataRow, IDbCommand command, StatementType statementType, DataTableMapping tableMapping) 
