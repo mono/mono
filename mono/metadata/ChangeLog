@@ -1,5 +1,7 @@
 2003-05-07  Dietmar Maurer  <dietmar@ximian.com>
 
+	* marshal.c (emit_struct_conv): allow unions
+
 	* class.c (class_compute_field_layout): added patches from Jerome Laban <jlaban@wanadoo.fr>
 
 2003-05-06  Dietmar Maurer  <dietmar@ximian.com>
