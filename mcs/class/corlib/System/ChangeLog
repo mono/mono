@@ -1,3 +1,8 @@
+2004-03-21  Jackson Harper  <jackson@ximian.com>
+
+	* FloatingPointFormatter.cs: Set precision from number format info
+	when it is not specified. This fixes bug #54983.
+	
 2004-03-18  Nick Drochak <ndrochak@ieee.org>
 
 	* Math.cs: Use IsNaN() method not "x == NaN".

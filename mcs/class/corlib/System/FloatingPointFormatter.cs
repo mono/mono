@@ -182,8 +182,7 @@ namespace System {
 		private string FormatCurrency (double value,
 				NumberFormatInfo nfi, int precision) {
 			StringBuilder sb = new StringBuilder();
-			precision = (no_precision_specified ?
-					nfi.CurrencyDecimalDigits : precision);                        
+			precision = no_precision_specified ? nfi.CurrencyDecimalDigits : precision;
 			int decimals = precision;
 			long mantissa;
 			int exponent;
@@ -305,8 +304,7 @@ namespace System {
 		private string FormatExponential (double value, NumberFormatInfo nfi,
 				int precision, char exp_char) {
 			StringBuilder sb = new StringBuilder();
-			precision = (precision >= 0) ?
-				precision : 6; //nfi.NumberDecimalDigits;
+			precision = no_precision_specified ? nfi.NumberDecimalDigits : precision;
 			int decimals = precision;
 			long mantissa;
 			int exponent;
@@ -366,8 +364,7 @@ namespace System {
 		private string FormatFixedPoint (double value,
 				NumberFormatInfo nfi, int precision) {
 			StringBuilder sb = new StringBuilder();
-			precision = (precision >= 0) ?
-				precision : nfi.NumberDecimalDigits;
+			precision = no_precision_specified ? nfi.NumberDecimalDigits : precision;
 			int decimals = precision;
 			long mantissa;
 			int exponent;
@@ -497,8 +494,7 @@ namespace System {
 		private string FormatNumber (double value, NumberFormatInfo nfi,
 				int precision) {
 			StringBuilder sb = new StringBuilder();
-			precision = (precision >= 0) ?
-				precision : nfi.NumberDecimalDigits;
+			precision = no_precision_specified ? nfi.NumberDecimalDigits : precision;
 			int decimals = precision;
 			long mantissa;
 			int exponent;
@@ -584,8 +580,7 @@ namespace System {
 		private string FormatPercent (double value, NumberFormatInfo nfi,
 				int precision) {
 			StringBuilder sb = new StringBuilder();
-			precision = (precision >= 0) ?
-				precision : nfi.PercentDecimalDigits;
+			precision = no_precision_specified ? nfi.PercentDecimalDigits : precision;
 			int decimals = precision;
 			long mantissa;
 			int exponent;
