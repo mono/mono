@@ -1,3 +1,7 @@
+2002-02-13  Dan Lewis <dihlewis@yahoo.co.uk>
+
+	* DSACryptoServiceProvider.cs, SHA384Managed.cs, SHA512Managed.cs,
+	Rijndael.cs, RSA.cs, RSAParameters.cs : New files (stubs)
 
 Mon Feb 11 13:26:17 CET 2002 Paolo Molaro <lupus@ximian.com>
 

@@ -1,3 +1,7 @@
+2002-02-13  Dan Lewis	<dihlewis@yahoo.co.uk>
+
+	* PolicyStatement: New file (stub)
+
 2002-02-09  Nick Drochak  <ndrochak@gol.com>
 
 	* FileCodeGroup.cs: New file. All done except for GetHashCode and 

@@ -56,7 +56,7 @@ namespace System.IO
 		[MonoTODO]
 		public static void ModeAccess(FileMode mode, FileAccess access, string path, bool exists)
 		{
-			return;
+#if false
 			// TODO: this logic isn't entirely complete and accurate, yet
 			if((mode & (FileMode.CreateNew | FileMode.Create)) != 0)
 			{
@@ -81,6 +81,7 @@ namespace System.IO
 			{
 				throw new FileNotFoundException();
 			}
+#endif
 		}
 	}
 }	// namespace System.IO.Private

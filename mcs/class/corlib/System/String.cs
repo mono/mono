@@ -2,8 +2,9 @@
 //
 // System.String.cs
 //
-// Author:
+// Authors:
 //   Jeffrey Stedfast (fejj@ximian.com)
+//   Dan Lewis (dihlewis@yahoo.co.uk)
 //
 // (C) 2001 Ximian, Inc.  http://www.ximian.com
 //

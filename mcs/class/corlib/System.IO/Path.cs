@@ -176,7 +176,7 @@ namespace System.IO
 						path.StartsWith (new string (AltDirectorySeparatorChar, 1)))
 				return path;
 
-			return _os.GetCurrentDirectory () + new string (DirectorySeparatorChar, 1) + path;
+			return Directory.GetCurrentDirectory () + new string (DirectorySeparatorChar, 1) + path;
 		}
 
 		public static string GetPathRoot (string path)

@@ -15,7 +15,7 @@ using System.Security.Permissions;
 
 namespace System.Security.Permissions {
 	[System.AttributeUsage(
-		System.AttributeTargets.Assembly 
+		System.AttributeTargets.Assembly
 		| System.AttributeTargets.Class 
 		| System.AttributeTargets.Struct 
 		| System.AttributeTargets.Constructor 

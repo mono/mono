@@ -17,8 +17,11 @@ namespace System.Threading
 		public int InternalLow;
 		public int OffsetHigh;
 		public int OffsetLow;
-		public GCHandle ReservedClassLib;
-		public int ReservedCOR1;
-		public GCHandle ReservedCOR2;
+
+		// (fields disappeared beta2 -> 1.0)
+
+		// public GCHandle ReservedClassLib;
+		// public int ReservedCOR1;
+		// public GCHandle ReservedCOR2;
 	}
 }
