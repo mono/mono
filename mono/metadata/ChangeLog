@@ -1,3 +1,8 @@
+2003-08-04  Martin Baulig  <martin@ximian.com>
+
+	* mono-debug-debugger.c: Completely reworked the type support; the
+	most important thing is that we're now just using one single
+	`MonoType' instance per type.
 
 Sat Aug  2 13:05:27 BST 2003 Malte Hildingson <malte@amy.udd.htu.se>
 
