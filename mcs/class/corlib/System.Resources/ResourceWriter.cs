@@ -38,7 +38,7 @@ namespace System.Resources
 				throw new ArgumentNullException ("fileName is null.");
 
 			stream=new FileStream(fileName, FileMode.Create, FileAccess.Write);
-			resources=new Hashtable(new CaseInsensitiveHashCodeProvider(), new CaseInsensitiveComparer());
+			resources=new Hashtable(CaseInsensitiveHashCodeProvider.Default, CaseInsensitiveComparer.Default);
 		}
 		
 		public void AddResource (string name, byte[] value)
