@@ -1,3 +1,10 @@
+2002-12-17  Ravi Pratap  <ravi@ximian.com>
+
+	* class.cs (MethodCore.LabelParameters): Remove the extra
+	Type [] parameter since it is completely unnecessary. Instead
+	pass in the method's attributes so that we can extract
+	the "return" attribute.
+
 2002-12-17  Miguel de Icaza  <miguel@ximian.com>
 
 	* cs-parser.jay (parse): Use Report.Error to flag errors instead

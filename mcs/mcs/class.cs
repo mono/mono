@@ -2109,7 +2109,11 @@ namespace Mono.CSharp {
 			return cc;
 		}
 
-		public void LabelParameters (EmitContext ec, Type [] parameters, MethodBase builder)
+		//
+		// The method's attributes are passed in because we need to extract
+		// the "return:" attribute from there to apply on the return type
+		//
+		public void LabelParameters (EmitContext ec, MethodBase builder, Attributes method_attrs)
 		{
 			//
 			// Define each type attribute (in/out/ref) and
@@ -2161,6 +2165,23 @@ namespace Mono.CSharp {
 				
 				pb.SetCustomAttribute (a);
 			}
+
+			//
+			// And now for the return type attribute decoration
+			//
+			ParameterBuilder ret_pb;
+			
+			if (mb == null || method_attrs == null)
+				return;
+
+			//
+			// This code is incomplete - it doesn't work although
+			// this is what Lupus told me to do
+			//
+
+		// 	ret_pb = mb.DefineParameter (0, ParameterAttributes.None, "");
+		//	Attribute.ApplyAttributes (ec, ret_pb, ret_pb, method_attrs, Location);
+
 		}
 	}
 	
@@ -2634,7 +2655,7 @@ namespace Mono.CSharp {
 				ec.IsStatic = false;
 			}
 
-			LabelParameters (ec, ParameterTypes, ConstructorBuilder);
+			LabelParameters (ec, ConstructorBuilder, OptAttributes);
 			
 			//
 			// Classes can have base initializers and instance field initializers.
@@ -3048,7 +3069,7 @@ namespace Mono.CSharp {
 				Attribute.ApplyAttributes (ec, builder, kind, OptAttributes, Location);
 
 			if (member is MethodCore)
-				((MethodCore) member).LabelParameters (ec, ParameterTypes, MethodBuilder);
+				((MethodCore) member).LabelParameters (ec, MethodBuilder, OptAttributes);
 
 			//
 			// abstract or extern methods have no bodies
