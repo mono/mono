@@ -1,3 +1,9 @@
+2004-12-12  Martin Baulig  <martin@ximian.com>
+
+	* expression.cs (Unary.TryReduceNegative): Added support for
+	SByteConstant and ByteConstant.
+	(Unary.Reduce): Check error values from TryReduceNegative().
+
 2004-12-11  Martin Baulig  <martin@ximian.com>
 
 	* support.cs (ReflectionParameters.ParameterName): If we have a

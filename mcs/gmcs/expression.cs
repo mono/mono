@@ -217,6 +217,10 @@ namespace Mono.CSharp {
 				e = new IntConstant (-((ShortConstant) expr).Value);
 			else if (expr is UShortConstant)
 				e = new IntConstant (-((UShortConstant) expr).Value);
+			else if (expr is SByteConstant)
+				e = new IntConstant (-((SByteConstant) expr).Value);
+			else if (expr is ByteConstant)
+				e = new IntConstant (-((ByteConstant) expr).Value);
 			return e;
 		}
 
@@ -237,7 +241,7 @@ namespace Mono.CSharp {
 				
 			case Operator.UnaryNegation:
 				result = TryReduceNegative (e);
-				return true;
+				return result != null;
 				
 			case Operator.LogicalNot:
 				if (expr_type != TypeManager.bool_type) {
