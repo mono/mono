@@ -1,3 +1,8 @@
+2001-11-30  Gaurav Vaish <gvaish@iitk.ac.in>
+
+	* System.Web.WebUtils: Removed
+	* System.Web.Utils   : Added --- replacement of WebUtils
+
 2001-11-08  Gaurav Vaish <gvaish@iitk.ac.in>
 
         *  System.Web.WebUtils:  Added directory
