@@ -6,12 +6,9 @@
 //
 // (C) Bob Smith
 //
-
-namespace System.Web
-{
-        public interface IHttpModule
-        {
-                void Dispose();
-                void Init(HttpApplication context);
-        }
+namespace System.Web {
+   public interface IHttpModule {
+      void Dispose();
+      void Init(HttpApplication context);
+   }
 }

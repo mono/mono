@@ -1,3 +1,35 @@
+2002-04-10  Patrik Torstensson <patrik.torstensson@labs2.com>
+
+    * HttpContext.cs: First implementation (basic support, few methods left to impl)
+    * HttpException.cs: Partial implementation (basic support)
+    * HttpHelper.cs: Header parse helper, used by runtime (non public)
+    * HttpRequest.cs: Implementation (all methods there, not all fully impl)
+    * HttpRequestStream.cs: Full implementation
+    * HttpResponse.cs: Partial implementation(almost all methods)
+    * HttpResponseHeader.cs: Header helper
+    * HttpResponseStream.cs: Full implementation - Response stream support
+    * HttpResponseStreamProxy.cs: Implementation - filter support
+    * HttpRuntime.cs: Rewrite to support one IHttpModule (use for testing the runtime)
+	* HttpServerUtility.cs: Implemented usage of HttpContext for methods
+	                        and moved encoding functions to HttpUtility.
+
+    * HttpUtility.cs: Added encoding/decoding functions from HttpServerUtility and
+                      added the Attribute encoding functions.
+
+    * HttpValueCollection.cs: Implementation.
+    * HttpWorkerRequest.cs: Rewrite and implementation of all methods (ready)
+    * HttpWriter.cs: Implementation (with filter support)    
+
+    * HttpFileCollection: Added dummy class (placeholder)
+    * HttpApplication.cs: Added dummy class (placeholder)
+    * HttpApplicationState.cs: Added dummy class (placeholder)
+    * HttpBrowserCapabilities.cs: Added dummy class (placeholder)
+    * HtttpCachePolicy.cs: Added dummy class (placeholder)
+    * HttpClientCertificate.cs: Added dummy class (placeholder)
+    * HttpSessionState.cs: Added dummy class (placeholder)
+    * TraceContext.cs: Added dummy class (placeholder)
+    
+
 2002/04/10  Nick Drochak <ndrochak@gol.com>
 
 	* HttpServerUtility.cs: Fix build breaker.
