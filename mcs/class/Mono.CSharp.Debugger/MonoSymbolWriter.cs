@@ -431,7 +431,7 @@ namespace Mono.CSharp.Debugger
 
 		public void Close () {
 			if (assembly == null)
-				assembly = AppDomain.CurrentDomain.Load (assembly_filename);
+				assembly = Assembly.LoadFrom (assembly_filename);
 
 			DoFixups (assembly);
 

@@ -1,3 +1,8 @@
+2002-05-06  Martin Baulig  <martin@gnome.org>
+
+	* MonoSymbolWriter.cs (MonoSymbolWriter.Close): Use Assembly.LoadFrom (), not
+	AppDomain.Load () to load the assembly.
+
 2002-04-26  Martin Baulig  <martin@gnome.org>
 
 	* gdb-csharp-support.patch: A patch for GDB (against the latest CVS version)
