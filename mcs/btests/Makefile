@@ -75,7 +75,7 @@ test-compiler-jit-real: test-dlls
 	for i in $(TEST_SOURCES) ; do \
 	    targetexe=`echo "$$i" |sed -e 's,\*,,'` ; \
 	    echo -n -e "========================\n$$i: " >> $$logfile; \
-	    testlogfile="$$logpath/$(TEST_TAG)-$$i.log" ; \
+	    testlogfile="$$logpath/$(TEST_TAG)-$$targetexe.log" ; \
 	    echo -n "$$i: "; \
 	    echo "*** $(INTERNAL_MBAS) $(SUPPORT_DLLS) $$i.vb" > $$testlogfile ; \
 	    if $(INTERNAL_MBAS) $(SUPPORT_DLLS) /o:$$targetexe.exe $$i.vb >> $$testlogfile 2>&1 ; then \
