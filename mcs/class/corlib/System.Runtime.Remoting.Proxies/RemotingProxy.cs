@@ -52,7 +52,6 @@ namespace System.Runtime.Remoting.Proxies
 		IMessageSink _sink;
 		bool _hasEnvoySink;
 		ConstructionCall _ctorCall;
-		string _targetUri;
 
 		internal RemotingProxy (Type type, ClientIdentity identity) : base (type, identity)
 		{

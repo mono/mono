@@ -52,9 +52,14 @@ namespace System.Runtime.Remoting.Proxies
 	
 	public abstract class RealProxy {
 
+		#region Sync with object-internals.h
 		Type class_to_proxy;
 		internal Context _targetContext;
 		MarshalByRefObject _server;
+		int _targetDomainId = -1;
+		internal string _targetUri;
+		#endregion
+		
 		internal Identity _objectIdentity;
 		Object _objTP;
 		object _stubData;
@@ -147,7 +152,7 @@ namespace System.Runtime.Remoting.Proxies
 						      out object [] out_args)
 		{
 			MonoMethodMessage mMsg = (MonoMethodMessage) msg;
-			mMsg.LogicalCallContext = CallContext.CreateLogicalCallContext();
+			mMsg.LogicalCallContext = CallContext.CreateLogicalCallContext (true);
 			CallType call_type = mMsg.CallType;
 			bool is_remproxy = (rp as RemotingProxy) != null;
 
@@ -256,6 +261,22 @@ namespace System.Runtime.Remoting.Proxies
 
 		protected MarshalByRefObject GetUnwrappedServer()
 		{
+			return _server;
+		}
+		
+		internal void SetTargetDomain (int domainId)
+		{
+			_targetDomainId = domainId;
+		}
+		
+		// Called by the runtime
+		internal object GetAppDomainTarget ()
+		{
+			if (_server == null) {
+				ClientActivatedIdentity identity = RemotingServices.GetIdentityForUri (_targetUri) as ClientActivatedIdentity;
+				if (identity == null) throw new RemotingException ("Server for uri '" + _targetUri + "' not found");
+				_server = identity.GetServerObject ();
+			}
 			return _server;
 		}
 

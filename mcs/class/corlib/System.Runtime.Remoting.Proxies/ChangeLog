@@ -1,3 +1,10 @@
+2004-10-26  Lluis Sanchez Gual  <lluis@novell.com>
+
+	* RealProxy.cs: Added _targetDomainId and _targetUri fields, which are
+	used by the new xdomain wrappers. Added GetAppDomainTarget() method,
+	which returns the remote object referenced by the proxy.
+	* RemotingProxy.cs: Moved _targetUri to RealProxy.
+
 2004-09-27  Lluis Sanchez Gual  <lluis@novell.com>
 
 	* RemotingProxy.cs: In Invoke, suport IMessages other than MonoMessage.
