@@ -1,3 +1,8 @@
+2003-12-10  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Win32Exception.cs: use a switch instead of creating a hashtable when
+	mapping from an error code to a message.
+
 2003-11-22  Miguel de Icaza  <miguel@ximian.com>
 
 	* PropertyDescriptorCollection.cs (Insert): Another one.

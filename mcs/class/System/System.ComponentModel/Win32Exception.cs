@@ -56,79 +56,99 @@ namespace System.ComponentModel
 			base.GetObjectData (info, context);
 		}
 
-		private static Hashtable w32_errors = new Hashtable();
+		static string W32ErrorMessage (int error_code)
+		{
+			string message;
 
-		/* Initialise the list of error strings */
-		static Win32Exception() {
-			/* No need to list everything, just the ones
-			 * the runtime can throw. A list of the errors
-			 * can be found in class System.IO.MonoIOError.
-			 */
-			w32_errors.Add(2,
-				       Locale.GetText("Cannot find the specified file"));
-			w32_errors.Add(10004,
-				       Locale.GetText("interrupted"));
-			w32_errors.Add(10013,
-				       Locale.GetText("Access denied"));
-			w32_errors.Add(10022,
-				       Locale.GetText("Invalid arguments"));
-			w32_errors.Add(10035,
-				       Locale.GetText("Operation on non-blocking socket would block"));
-			w32_errors.Add(10036,
-				       Locale.GetText("Operation in progress"));
-			w32_errors.Add(10038,
-				       Locale.GetText("The descriptor is not a socket"));
-			w32_errors.Add(10040,
-				       Locale.GetText("Message too long"));
-			w32_errors.Add(10043,
-				       Locale.GetText("proto no supported"));
-			w32_errors.Add(10044,
-				       Locale.GetText("socket not supproted"));
-			w32_errors.Add(10045,
-				       Locale.GetText("Operation not supported"));
-			w32_errors.Add(10047,
-				       Locale.GetText("AF not supported"));
-			w32_errors.Add(10048,
-				       Locale.GetText("Address already in use"));
-			w32_errors.Add(10050,
-				       Locale.GetText("Network subsystem is down"));
-			w32_errors.Add(10051,
-				       Locale.GetText("Network is unreachable"));
-			w32_errors.Add(10054,
-				       Locale.GetText("Connection reset by peer"));
-			w32_errors.Add(10055,
-				       Locale.GetText("Not enough buffer space is available"));
-			w32_errors.Add(10056,
-				       Locale.GetText("Socket is already connected"));
-			w32_errors.Add(10057,
-				       Locale.GetText("The socket is not connected"));
-			w32_errors.Add(10058,
-				       Locale.GetText("The socket has been shut down"));
-			w32_errors.Add(10060,
-				       Locale.GetText("Connection timed out"));
-			w32_errors.Add(10061,
-				       Locale.GetText("Connection refused"));
-			w32_errors.Add(10065,
-				       Locale.GetText("No route to host"));
-			w32_errors.Add(10093,
-				       Locale.GetText("Winsock not initialized"));
-			w32_errors.Add(10107,
-				       Locale.GetText("System call failed"));
-
-			w32_errors.Add(11001,
-				       Locale.GetText("No such host is known"));
-			w32_errors.Add(11002,
-				       Locale.GetText("A temporary error occurred on an  authoritative  name  server. Try  again later."));
-		}
-
-		private static string W32ErrorMessage(int error_code) {
-			string message=(string)w32_errors[error_code];
-			
-			if(message==null) {
-				return(Locale.GetText("Some sort of w32 error occurred: ") + error_code.ToString());
-			} else {
-				return(message);
+			switch (error_code) {
+			case 2:
+				message = Locale.GetText ("Cannot find the specified file");
+				break;
+			case 10004:
+				message = Locale.GetText ("interrupted");
+				break;
+			case 10013:
+				message = Locale.GetText ("Access denied");
+				break;
+			case 10022:
+				message = Locale.GetText ("Invalid arguments");
+				break;
+			case 10035:
+				message = Locale.GetText ("Operation on non-blocking socket would block");
+				break;
+			case 10036:
+				message = Locale.GetText ("Operation in progress");
+				break;
+			case 10038:
+				message = Locale.GetText ("The descriptor is not a socket");
+				break;
+			case 10040:
+				message = Locale.GetText ("Message too long");
+				break;
+			case 10043:
+				message = Locale.GetText ("proto no supported");
+				break;
+			case 10044:
+				message = Locale.GetText ("socket not supproted");
+				break;
+			case 10045:
+				message = Locale.GetText ("Operation not supported");
+				break;
+			case 10047:
+				message = Locale.GetText ("AF not supported");
+				break;
+			case 10048:
+				message = Locale.GetText ("Address already in use");
+				break;
+			case 10050:
+				message = Locale.GetText ("Network subsystem is down");
+				break;
+			case 10051:
+				message = Locale.GetText ("Network is unreachable");
+				break;
+			case 10054:
+				message = Locale.GetText ("Connection reset by peer");
+				break;
+			case 10055:
+				message = Locale.GetText ("Not enough buffer space is available");
+				break;
+			case 10056:
+				message = Locale.GetText ("Socket is already connected");
+				break;
+			case 10057:
+				message = Locale.GetText ("The socket is not connected");
+				break;
+			case 10058:
+				message = Locale.GetText ("The socket has been shut down");
+				break;
+			case 10060:
+				message = Locale.GetText ("Connection timed out");
+				break;
+			case 10061:
+				message = Locale.GetText ("Connection refused");
+				break;
+			case 10065:
+				message = Locale.GetText ("No route to host");
+				break;
+			case 10093:
+				message = Locale.GetText ("Winsock not initialized");
+				break;
+			case 10107:
+				message = Locale.GetText ("System call failed");
+				break;
+			case 11001:
+				message = Locale.GetText ("No such host is known");
+				break;
+			case 11002:
+				message = Locale.GetText ("A temporary error occurred on an " +
+							  "authoritative name server. Try  again later.");
+				break;
+			default:
+				message = Locale.GetText ("Some sort of w32 error occurred: ") + error_code;
+				break;
 			}
+
+			return message;
 		}
 	}
 }
