@@ -30,18 +30,26 @@
 //	John Sohn		jsohn@columbus.rr.com
 //
 
-// NOT COMPLETE 
+// COMPLETE 
 
 using System;
 using System.Drawing;
 using System.ComponentModel;
+using System.ComponentModel.Design;
 using System.Collections;
 using System.Diagnostics;
 using System.Threading;
 using System.Runtime.InteropServices;
+using System.ComponentModel.Design.Serialization;
+
 
 namespace System.Windows.Forms
 {
+	[Designer("System.Windows.Forms.Design.ContolDesigner, System.Design")]
+	[DefaultProperty("Text")]
+	[DefaultEvent("Click")]
+	[DesignerSerializer("System.Windows.Forms.Design.ControlCodeDomSerializer, System.Design", "System.ComponentModel.Design.Serialization.CodeDomSerializer, System.Design")]
+	[ToolboxItemFilter("System.Windows.Forms")]
 	public class Control : Component, ISynchronizeInvoke, IWin32Window
         {
 		#region Local Variables
@@ -897,6 +905,9 @@ namespace System.Windows.Forms
 		#endregion	// Public Static Properties
 
 		#region Public Instance Properties
+		[EditorBrowsable(EditorBrowsableState.Advanced)]
+		[Browsable(false)]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public AccessibleObject AccessibilityObject {
 			get {
 				if (accessibility_object==null) {
@@ -906,6 +917,9 @@ namespace System.Windows.Forms
 			}
 		}
 
+		[EditorBrowsable(EditorBrowsableState.Advanced)]
+		[Browsable(false)]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public string AccessibleDefaultActionDescription {
 			get {
 				return AccessibilityObject.default_action;
@@ -916,6 +930,8 @@ namespace System.Windows.Forms
 			}
 		}
 
+		[Localizable(true)]
+		[DefaultValue("")]
 		public string AccessibleDescription {
 			get {
 				return AccessibilityObject.description;
@@ -936,6 +952,8 @@ namespace System.Windows.Forms
 			}
 		}
 
+		[Localizable(true)]
+		[DefaultValue("")]
 		public AccessibleRole AccessibleRole {
 			get {
 				return AccessibilityObject.role;
@@ -946,6 +964,7 @@ namespace System.Windows.Forms
 			}
 		}
 
+		[DefaultValue(false)]
 		public virtual bool AllowDrop {
 			get {
 				return XplatUI.State.DropTarget;
@@ -956,6 +975,9 @@ namespace System.Windows.Forms
 			}
 		}
 
+		[Localizable(true)]
+		[RefreshProperties(RefreshProperties.Repaint)]
+	        [DefaultValue(AnchorStyles.Top | AnchorStyles.Left)]
 		public virtual AnchorStyles Anchor {
 			get {
 				return anchor_style;
@@ -970,6 +992,7 @@ namespace System.Windows.Forms
 			}
 		}
 
+		[DispId(-501)]
 		public virtual Color BackColor {
 			get {
 				if (background_color.IsEmpty) {
@@ -992,6 +1015,8 @@ namespace System.Windows.Forms
 			}
 		}
 
+		[Localizable(true)]
+		[DefaultValue(null)]
 		public virtual Image BackgroundImage {
 			get {
 				return background_image;
@@ -1005,6 +1030,9 @@ namespace System.Windows.Forms
 			}
 		}
 
+		[EditorBrowsable(EditorBrowsableState.Advanced)]
+		[Browsable(false)]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public virtual BindingContext BindingContext {
 			get {
 				throw new NotImplementedException();
@@ -1015,6 +1043,9 @@ namespace System.Windows.Forms
 			}
 		}
 
+		[EditorBrowsable(EditorBrowsableState.Advanced)]
+		[Browsable(false)]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public int Bottom {
 			get {
 				if ((this is Form) && (((Form)this).form_parent_window != null)) {
@@ -1025,6 +1056,9 @@ namespace System.Windows.Forms
 			}
 		}
 
+		[EditorBrowsable(EditorBrowsableState.Advanced)]
+		[Browsable(false)]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public Rectangle Bounds {
 			get {
 				return this.bounds;
@@ -1035,6 +1069,9 @@ namespace System.Windows.Forms
 			}
 		}
 
+		[EditorBrowsable(EditorBrowsableState.Advanced)]
+		[Browsable(false)]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public bool CanFocus {
 			get {
 				if (is_visible && is_enabled && GetStyle(ControlStyles.Selectable)) {
@@ -1044,6 +1081,9 @@ namespace System.Windows.Forms
 			}
 		}
 
+		[EditorBrowsable(EditorBrowsableState.Advanced)]
+		[Browsable(false)]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public bool CanSelect {
 			get {
 				Control	parent;
@@ -1064,6 +1104,9 @@ namespace System.Windows.Forms
 			}
 		}
 
+		[EditorBrowsable(EditorBrowsableState.Advanced)]
+		[Browsable(false)]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public bool Capture {
 			get {
 				return this.is_captured;
@@ -1082,6 +1125,7 @@ namespace System.Windows.Forms
 			}
 		}
 
+		[DefaultValue(true)]
 		public bool CausesValidation {
 			get {
 				return this.causes_validation;
@@ -1095,6 +1139,9 @@ namespace System.Windows.Forms
 			}
 		}
 
+		[EditorBrowsable(EditorBrowsableState.Advanced)]
+		[Browsable(false)]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public Rectangle ClientRectangle {
 			get {
 				client_rect.Width = client_size.Width;
@@ -1103,6 +1150,9 @@ namespace System.Windows.Forms
 			}
 		}
 
+		[EditorBrowsable(EditorBrowsableState.Advanced)]
+		[Browsable(false)]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public Size ClientSize {
 			get {
 #if notneeded
@@ -1124,12 +1174,18 @@ namespace System.Windows.Forms
 			}
 		}
 
+		[EditorBrowsable(EditorBrowsableState.Advanced)]
+		[Browsable(false)]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public String CompanyName {
 			get {
 				return "Mono Project, Novell, Inc.";
 			}
 		}
 
+		[EditorBrowsable(EditorBrowsableState.Advanced)]
+		[Browsable(false)]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public bool ContainsFocus {
 			get {
 				if (this.Focused) {
@@ -1144,6 +1200,8 @@ namespace System.Windows.Forms
 				return false;
 			}
 		}
+
+		[DefaultValue(null)]
 		public virtual ContextMenu ContextMenu {
 			get {
 				return context_menu;
@@ -1157,12 +1215,17 @@ namespace System.Windows.Forms
 			}
 		}
 
+		[Browsable(false)]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Content)]
 		public ControlCollection Controls {
 			get {
 				return this.child_controls;
 			}
 		}
 
+		[EditorBrowsable(EditorBrowsableState.Advanced)]
+		[Browsable(false)]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public bool Created {
 			get {
 				if (!this.is_disposed && (this.window.Handle != IntPtr.Zero)) {
@@ -1172,6 +1235,7 @@ namespace System.Windows.Forms
 			}
 		}
 
+		[DefaultValue(null)]
 		public virtual Cursor Cursor {
 			get {
 				if (cursor != null) {
@@ -1212,6 +1276,9 @@ namespace System.Windows.Forms
 		}
 
 #if haveDataBindings
+		[EditorBrowsable(EditorBrowsableState.Advanced)]
+		[Browsable(false)]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public ControlBindingsCollection DataBindings {
 			get {
 				throw new NotImplementedException();
@@ -1219,18 +1286,27 @@ namespace System.Windows.Forms
 		}
 #endif
 
+		[EditorBrowsable(EditorBrowsableState.Advanced)]
+		[Browsable(false)]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public virtual Rectangle DisplayRectangle {
 			get {
 				return ClientRectangle;
 			}
 		}
 
+		[EditorBrowsable(EditorBrowsableState.Advanced)]
+		[Browsable(false)]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public bool Disposing {
 			get {
 				return is_disposed;
 			}
 		}
 
+		[EditorBrowsable(EditorBrowsableState.Advanced)]
+		[Localizable(true)]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public virtual DockStyle Dock {
 			get {
 				return dock_style;
@@ -1251,6 +1327,8 @@ namespace System.Windows.Forms
 			}
 		}
 
+		[DispId(-514)]
+		[Localizable(true)]
 		public bool Enabled {
 			get {
 				return is_enabled;
@@ -1267,12 +1345,18 @@ namespace System.Windows.Forms
 			}
 		}
 
+		[EditorBrowsable(EditorBrowsableState.Advanced)]
+	        [Browsable(false)]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public virtual bool Focused {
 			get {
 				return this.has_focus;
 			}
 		}
 
+		[DispId(-512)]
+	        [AmbientValue(null)]
+		[Localizable(true)]
 		public virtual Font Font {
 			get {
 				if (font != null) {
@@ -1297,6 +1381,9 @@ namespace System.Windows.Forms
 			}
 		}
 
+		[DispId(-513)]
+		[Browsable(false)]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public virtual Color ForeColor {
 			get {
 				if (foreground_color.IsEmpty) {
@@ -1317,6 +1404,7 @@ namespace System.Windows.Forms
 			}
 		}
 
+		[DispId(-515)]
 		public IntPtr Handle {							// IWin32Window
 			get {
 				if (!IsHandleCreated) {
@@ -1326,6 +1414,9 @@ namespace System.Windows.Forms
 			}
 		}
 
+		[EditorBrowsable(EditorBrowsableState.Advanced)]
+		[Browsable(false)]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public bool HasChildren {
 			get {
 				if (this.child_controls.Count>0) {
@@ -1335,6 +1426,9 @@ namespace System.Windows.Forms
 			}
 		}
 
+		[EditorBrowsable(EditorBrowsableState.Always)]
+		[Browsable(false)]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public int Height {
 			get {
 				if ((this is Form) && (((Form)this).form_parent_window != null)) {
@@ -1353,6 +1447,8 @@ namespace System.Windows.Forms
 			}
 		}
 
+		[AmbientValue(ImeMode.Inherit)]
+		[Localizable(true)]
 		public ImeMode ImeMode {
 			get {
 				return ime_mode;
@@ -1363,6 +1459,9 @@ namespace System.Windows.Forms
 			}
 		}
 
+		[EditorBrowsable(EditorBrowsableState.Advanced)]
+	        [Browsable(false)]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public bool InvokeRequired {						// ISynchronizeInvoke
 			get {
 				if (creator_thread!=Thread.CurrentThread) {
@@ -1372,6 +1471,9 @@ namespace System.Windows.Forms
 			}
 		}
 
+		[EditorBrowsable(EditorBrowsableState.Advanced)]
+		[Browsable(false)]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public bool IsAccessible {
 			get {
 				return is_accessible;
@@ -1382,12 +1484,18 @@ namespace System.Windows.Forms
 			}
 		}
 
+		[EditorBrowsable(EditorBrowsableState.Advanced)]
+		[Browsable(false)]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public bool IsDisposed {
 			get {
 				return this.is_disposed;
 			}
 		}
 
+		[EditorBrowsable(EditorBrowsableState.Advanced)]
+		[Browsable(false)]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public bool IsHandleCreated {
 			get {
 				if ((window!=null) && (window.Handle!=IntPtr.Zero)) {
@@ -1398,6 +1506,9 @@ namespace System.Windows.Forms
 			}
 		}
 
+		[EditorBrowsable(EditorBrowsableState.Always)]
+		[Browsable(false)]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public int Left {
 			get {
 				if ((this is Form) && (((Form)this).form_parent_window != null)) {
@@ -1417,6 +1528,7 @@ namespace System.Windows.Forms
 			}
 		}
 
+		[Localizable(true)]
 		public Point Location {
 			get {
 				if ((this is Form) && (((Form)this).form_parent_window != null)) {
@@ -1435,6 +1547,7 @@ namespace System.Windows.Forms
 			}
 		}
 
+		[Browsable(false)]
 		public string Name {
 			get {
 				return this.name;
@@ -1445,6 +1558,8 @@ namespace System.Windows.Forms
 			}
 		}
 
+		[Browsable(false)]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public Control Parent {
 			get {
 				return this.parent;
@@ -1473,24 +1588,34 @@ namespace System.Windows.Forms
 			}
 		}
 
+		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		public string ProductName {
 			get {
-				return "Novell Mono .NET Framework";
+				return "Novell Mono MWF";
 			}
 		}
 
+		[EditorBrowsable(EditorBrowsableState.Advanced)]
+		[Browsable(false)]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public string ProductVersion {
 			get {
 				return "1.1.4322.573";
 			}
 		}
 
+		[EditorBrowsable(EditorBrowsableState.Advanced)]
+		[Browsable(false)]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public bool RecreatingHandle {
 			get {
 				return is_recreating;
 			}
 		}
 
+		[EditorBrowsable(EditorBrowsableState.Advanced)]
+		[Browsable(false)]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public Region Region {
 			get {
 				return new Region(this.bounds);
@@ -1509,6 +1634,9 @@ namespace System.Windows.Forms
 			}
 		}
 
+		[EditorBrowsable(EditorBrowsableState.Advanced)]
+		[Browsable(false)]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public int Right {
 			get {
 				if ((this is Form) && (((Form)this).form_parent_window != null)) {
@@ -1519,6 +1647,8 @@ namespace System.Windows.Forms
 			}
 		}
 
+		[AmbientValue(RightToLeft.Inherit)]
+		[Localizable(true)]
 		public virtual RightToLeft RightToLeft {
 			get {
 				return right_to_left;
@@ -1532,6 +1662,7 @@ namespace System.Windows.Forms
 			}
 		}
 
+		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		public override ISite Site {
 			get {
 				return base.Site;
@@ -1542,6 +1673,7 @@ namespace System.Windows.Forms
 			}
 		}
 
+		[Localizable(true)]
 		public Size Size {
 			get {
 				if ((this is Form) && (((Form)this).form_parent_window != null)) {
@@ -1559,6 +1691,8 @@ namespace System.Windows.Forms
 			}
 		}
 
+		[Localizable(true)]
+		[MergableProperty(false)]
 		public int TabIndex {
 			get {
 				if (tab_index != -1) {
@@ -1575,6 +1709,8 @@ namespace System.Windows.Forms
 			}
 		}
 
+		[DispId(-516)]
+		[DefaultValue(true)]
 		public bool TabStop {
 			get {
 				return tab_stop;
@@ -1585,6 +1721,10 @@ namespace System.Windows.Forms
 			}
 		}
 
+		[Localizable(false)]
+		[Bindable(true)]
+		[TypeConverter(typeof(StringConverter))]
+		[DefaultValue(null)]
 		public object Tag {
 			get {
 				return control_tag;
@@ -1595,6 +1735,8 @@ namespace System.Windows.Forms
 			}
 		}
 
+		[DispId(-517)]
+		[Localizable(true)]
 		public virtual string Text {
 			get {
 				return this.text;
@@ -1614,6 +1756,9 @@ namespace System.Windows.Forms
 			}
 		}
 
+		[EditorBrowsable(EditorBrowsableState.Advanced)]
+		[Browsable(false)]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public int Top {
 			get {
 				if ((this is Form) && (((Form)this).form_parent_window != null)) {
@@ -1632,6 +1777,9 @@ namespace System.Windows.Forms
 			}
 		}
 
+		[EditorBrowsable(EditorBrowsableState.Advanced)]
+		[Browsable(false)]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public Control TopLevelControl {
 			get {
 				Control	p = this;
@@ -1644,6 +1792,7 @@ namespace System.Windows.Forms
 			}
 		}
 
+		[Localizable(true)]
 		public bool Visible {
 			get {
 				if ((this is Form) && (((Form)this).form_parent_window != null)) {
@@ -1666,6 +1815,9 @@ namespace System.Windows.Forms
 			}
 		}
 
+		[EditorBrowsable(EditorBrowsableState.Always)]
+		[Browsable(false)]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public int Width {
 			get {
 				if ((this is Form) && (((Form)this).form_parent_window != null)) {
@@ -1767,12 +1919,18 @@ namespace System.Windows.Forms
 			}
 		}
 
+		[EditorBrowsable(EditorBrowsableState.Advanced)]
+		[Browsable(false)]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		protected virtual bool ShowFocusCues {
 			get {
 				return true;
 			}
 		}
 
+		[EditorBrowsable(EditorBrowsableState.Advanced)]
+		[Browsable(false)]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		protected bool ShowKeyboardCues {
 			get {
 				return true;
@@ -1781,6 +1939,7 @@ namespace System.Windows.Forms
 		#endregion	// Protected Instance Properties
 
 		#region Public Static Methods
+		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		public static Control FromChildHandle(IntPtr handle) {
 			IEnumerator control = Control.controls.GetEnumerator();
 
@@ -1795,6 +1954,7 @@ namespace System.Windows.Forms
 			return null;
 		}
 
+		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		public static Control FromHandle(IntPtr handle) {
 			IEnumerator control = Control.controls.GetEnumerator();
 
@@ -1826,6 +1986,7 @@ namespace System.Windows.Forms
 		#endregion
 
 		#region Protected Static Methods
+		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected static bool ReflectMessage(IntPtr hWnd, ref Message m) {
 			Control	c;
 
@@ -1840,10 +2001,12 @@ namespace System.Windows.Forms
 		#endregion
 
 		#region	Public Instance Methods
+		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		public IAsyncResult BeginInvoke(Delegate method) {
 			return BeginInvokeInternal(method, null);
 		}
 
+		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		public IAsyncResult BeginInvoke (Delegate method, object[] args) {
 			return BeginInvokeInternal (method, args);
 		}
@@ -1895,6 +2058,7 @@ namespace System.Windows.Forms
 			return DragDropEffects.None;
 		}
 
+		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		public object EndInvoke (IAsyncResult async_result) {
 			AsyncMethodResult result = (AsyncMethodResult) async_result;
 			return result.EndInvoke ();
@@ -2017,10 +2181,12 @@ namespace System.Windows.Forms
 			return EndInvoke(result);
 		}
 
+		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		public void PerformLayout() {
 			PerformLayout(null, null);
 		}
 
+		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		public void PerformLayout(Control affectedControl, string affectedProperty) {
 			LayoutEventArgs levent = new LayoutEventArgs(affectedControl, affectedProperty);
 
@@ -2221,33 +2387,40 @@ namespace System.Windows.Forms
 			}
 		}
 
+		[EditorBrowsable(EditorBrowsableState.Never)]
 		public virtual void ResetBackColor() {
 			background_color = Color.Empty;
 		}
 
 #if haveDataBindings
+	        [EditorBrowsable(EditorBrowsableState.Never)]
 		[MonoTODO]
 		public void ResetBindings() {
 			// Do something
 		}
 #endif
 
+		[EditorBrowsable(EditorBrowsableState.Never)]
 		public virtual void ResetCursor() {
 			cursor = null;
 		}
 
+		[EditorBrowsable(EditorBrowsableState.Never)]
 		public virtual void ResetFont() {
 			font = null;
 		}
 
+		[EditorBrowsable(EditorBrowsableState.Never)]
 		public virtual void ResetForeColor() {
 			foreground_color = Color.Empty;
 		}
 
+		[EditorBrowsable(EditorBrowsableState.Never)]
 		public void ResetImeMode() {
 			ime_mode = DefaultImeMode;
 		}
 
+		[EditorBrowsable(EditorBrowsableState.Never)]
 		public virtual void ResetRightToLeft() {
 			right_to_left = RightToLeft.Inherit;
 		}
@@ -2346,19 +2519,23 @@ namespace System.Windows.Forms
 		#endregion	// Public Instance Methods
 
 		#region Protected Instance Methods
+		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		[MonoTODO("Implement this and tie it into Control.ControlAccessibleObject.NotifyClients")]
 		protected void AccessibilityNotifyClients(AccessibleEvents accEvent, int childID) {
 			throw new NotImplementedException();
 		}
 
+		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected virtual AccessibleObject CreateAccessibilityInstance() {
 			return new Control.ControlAccessibleObject(this);
 		}
 
+		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected virtual ControlCollection CreateControlsInstance() {
 			return new ControlCollection(this);
 		}
 
+		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected virtual void CreateHandle() {
 			if (IsDisposed) {
 				throw new ObjectDisposedException(Name);
@@ -2386,10 +2563,12 @@ namespace System.Windows.Forms
 			}
 		}
 
+		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected virtual void DefWndProc(ref Message m) {
 			window.DefWndProc(ref m);
 		}
 
+		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected virtual void DestroyHandle() {
 			if (IsHandleCreated) {
 				if (Handle != IntPtr.Zero) {
@@ -2410,20 +2589,24 @@ namespace System.Windows.Forms
 			return is_toplevel;
 		}
 
+		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected virtual void InitLayout() {
 			if (parent != null) {
 				parent.PerformLayout(this, "parent");
 			}
 		}
 
+		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected void InvokeGotFocus(Control toInvoke, EventArgs e) {
 			toInvoke.OnGotFocus(e);
 		}
 
+		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected void InvokeLostFocus(Control toInvoke, EventArgs e) {
 			toInvoke.OnLostFocus(e);
 		}
 
+		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected void InvokeOnClick(Control toInvoke, EventArgs e) {
 			toInvoke.OnClick(e);
 		}
@@ -2554,6 +2737,7 @@ namespace System.Windows.Forms
 			// MS Internal
 		}
 
+		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected void RecreateHandle() {
 			IEnumerator child = child_controls.GetEnumerator();
 
@@ -2579,6 +2763,7 @@ namespace System.Windows.Forms
 			// MS Internal
 		}
 
+		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected ContentAlignment RtlTranslateAlignment(ContentAlignment align) {
 			if (right_to_left == RightToLeft.No) {
 				return align;
@@ -2616,6 +2801,7 @@ namespace System.Windows.Forms
 			}
 		}
 
+		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected HorizontalAlignment RtlTranslateAlignment(HorizontalAlignment align) {
 			if ((right_to_left == RightToLeft.No) || (align == HorizontalAlignment.Center)) {
 				return align;
@@ -2629,6 +2815,7 @@ namespace System.Windows.Forms
 			return HorizontalAlignment.Left;
 		}
 
+		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected LeftRightAlignment RtlTranslateAlignment(LeftRightAlignment align) {
 			if (right_to_left == RightToLeft.No) {
 				return align;
@@ -2642,18 +2829,22 @@ namespace System.Windows.Forms
 			return LeftRightAlignment.Left;
 		}
 
+		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected ContentAlignment RtlTranslateContent(ContentAlignment align) {
 			return RtlTranslateAlignment(align);
 		}
 
+		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected HorizontalAlignment RtlTranslateHorizontal(HorizontalAlignment align) {
 			return RtlTranslateAlignment(align);
 		}
 
+		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected LeftRightAlignment RtlTranslateLeftRight(LeftRightAlignment align) {
 			return RtlTranslateAlignment(align);
 		}
 
+		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected virtual void ScaleCore(float dx, float dy) {
 			Point	location;
 			Size	size;
@@ -2718,6 +2909,7 @@ namespace System.Windows.Forms
 			} while (!result && parent.child_controls[index] != this);
 		}
 
+		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected virtual void SetBoundsCore(int x, int y, int width, int height, BoundsSpecified specified) {
 			// SetBoundsCore updates the Win32 control itself. UpdateBounds updates the controls variables and fires events, I'm guessing - pdb
 			if ((specified & BoundsSpecified.X) != BoundsSpecified.X) {
@@ -2742,6 +2934,7 @@ namespace System.Windows.Forms
 			UpdateBounds(x, y, width, height);
 		}
 
+		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected virtual void SetClientSizeCore(int x, int y) {
 			// Calculate the actual window size from the client size (it usually stays the same or grows)
 			Rectangle	ClientRect;
@@ -2758,6 +2951,7 @@ namespace System.Windows.Forms
 			SetBoundsCore(bounds.X, bounds.Y, WindowRect.Width, WindowRect.Height, BoundsSpecified.Size);
 		}
 
+		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected void SetStyle(ControlStyles flag, bool value) {
 			if (value) {
 				control_style |= flag;
@@ -2814,6 +3008,7 @@ namespace System.Windows.Forms
 			}
 		}
 	
+		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected void UpdateBounds() {
 			int	x;
 			int	y;
@@ -2830,6 +3025,7 @@ namespace System.Windows.Forms
 			UpdateBounds(x, y, width, height, client_width, client_height);
 		}
 
+		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected void UpdateBounds(int x, int y, int width, int height) {
 			// UpdateBounds only seems to set our sizes and fire events but not update the GUI window to match
 			bool	moved	= false;
@@ -2870,6 +3066,7 @@ namespace System.Windows.Forms
 			}
 		}
 
+		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected void UpdateBounds(int x, int y, int width, int height, int clientWidth, int clientHeight) {
 			UpdateBounds(x, y, width, height);
 
@@ -2877,6 +3074,7 @@ namespace System.Windows.Forms
 			this.client_size.Height=clientHeight;
 		}
 
+		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected void UpdateStyles() {
 			if (!IsHandleCreated) {
 				return;
@@ -3176,106 +3374,131 @@ Console.WriteLine("Window {0} got focus", this.Text);
 			for (int i=0; i<child_controls.Count; i++) child_controls[i].OnParentBackColorChanged(e);
 		}
 
+		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected virtual void OnBackgroundImageChanged(EventArgs e) {
 			if (BackgroundImageChanged!=null) BackgroundImageChanged(this, e);
 			for (int i=0; i<child_controls.Count; i++) child_controls[i].OnParentBackgroundImageChanged(e);
 		}
 
+		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected virtual void OnBindingContextChanged(EventArgs e) {
 			if (BindingContextChanged!=null) BindingContextChanged(this, e);
 			for (int i=0; i<child_controls.Count; i++) child_controls[i].OnParentBindingContextChanged(e);
 		}
 
+		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected virtual void OnCausesValidationChanged(EventArgs e) {
 			if (CausesValidationChanged!=null) CausesValidationChanged(this, e);
 		}
 
+		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected virtual void OnChangeUICues(UICuesEventArgs e) {
 			if (CausesValidationChanged!=null) CausesValidationChanged(this, e);
 		}
 
+		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected virtual void OnClick(EventArgs e) {
 			if (Click!=null) Click(this, e);
 		}
 
+		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected virtual void OnContextMenuChanged(EventArgs e) {
 			if (ContextMenuChanged!=null) ContextMenuChanged(this, e);
 		}
 
+		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected virtual void OnControlAdded(ControlEventArgs e) {
 			if (ControlAdded!=null) ControlAdded(this, e);
 		}
 
+		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected virtual void OnControlRemoved(ControlEventArgs e) {
 			if (ControlRemoved!=null) ControlRemoved(this, e);
 		}
 
+		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected virtual void OnCreateControl() {
 			// Override me!
 		}
 
+		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected virtual void OnCursorChanged(EventArgs e) {
 			if (CursorChanged!=null) CursorChanged(this, e);
 		}
 
+		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected virtual void OnDockChanged(EventArgs e) {
 			if (DockChanged!=null) DockChanged(this, e);
 		}
 
+		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected virtual void OnDoubleClick(EventArgs e) {
 			if (DoubleClick!=null) DoubleClick(this, e);
 		}
 
+		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected virtual void OnDragDrop(DragEventArgs drgevent) {
 			if (DragDrop!=null) DragDrop(this, drgevent);
 		}
 
+		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected virtual void OnDragEnter(DragEventArgs drgevent) {
 			if (DragEnter!=null) DragEnter(this, drgevent);
 		}
 
+		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected virtual void OnDragLeave(EventArgs e) {
 			if (DragLeave!=null) DragLeave(this, e);
 		}
 
+		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected virtual void OnDragOver(DragEventArgs drgevent) {
 			if (DragOver!=null) DragOver(this, drgevent);
 		}
 
+		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected virtual void OnEnabledChanged(EventArgs e) {
 			if (EnabledChanged!=null) EnabledChanged(this, e);
 			for (int i=0; i<child_controls.Count; i++) child_controls[i].OnParentEnabledChanged(e);
 		}
 
+		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected virtual void OnEnter(EventArgs e) {
 			if (Enter!=null) Enter(this, e);
 		}
 
+		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected virtual void OnFontChanged(EventArgs e) {
 			if (FontChanged!=null) FontChanged(this, e);
 		}
 
+		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected virtual void OnForeColorChanged(EventArgs e) {
 			if (ForeColorChanged!=null) ForeColorChanged(this, e);
 			for (int i=0; i<child_controls.Count; i++) child_controls[i].OnParentForeColorChanged(e);
 		}
 
+		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected virtual void OnGiveFeedback(GiveFeedbackEventArgs gfbevent) {
 			if (GiveFeedback!=null) GiveFeedback(this, gfbevent);
 		}
 		
+		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected virtual void OnGotFocus(EventArgs e) {
 			if (GotFocus!=null) GotFocus(this, e);
 		}
 
+		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected virtual void OnHandleCreated(EventArgs e) {
 			if (HandleCreated!=null) HandleCreated(this, e);
 		}
 
+		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected virtual void OnHandleDestroyed(EventArgs e) {
 			if (HandleDestroyed!=null) HandleDestroyed(this, e);
 		}
 
+		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected virtual void OnHelpRequested(HelpEventArgs hevent) {
 			if (HelpRequested!=null) HelpRequested(this, hevent);
 		}
@@ -3284,66 +3507,82 @@ Console.WriteLine("Window {0} got focus", this.Text);
 			if (ImeModeChanged!=null) ImeModeChanged(this, e);
 		}
 
+		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected virtual void OnInvalidated(InvalidateEventArgs e) {
 			if (Invalidated!=null) Invalidated(this, e);
 		}
 
+		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected virtual void OnKeyDown(KeyEventArgs e) {			
 			if (KeyDown!=null) KeyDown(this, e);
 		}
 
+		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected virtual void OnKeyPress(KeyPressEventArgs e) {
 			if (KeyPress!=null) KeyPress(this, e);
 		}
 
+		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected virtual void OnKeyUp(KeyEventArgs e) {
 			if (KeyUp!=null) KeyUp(this, e);
 		}
 
+		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected virtual void OnLayout(LayoutEventArgs levent) {
 			if (Layout!=null) Layout(this, levent);
 		}
 
+		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected virtual void OnLeave(EventArgs e) {
 			if (Leave!=null) Leave(this, e);
 		}
 
+		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected virtual void OnLocationChanged(EventArgs e) {
 			if (LocationChanged!=null) LocationChanged(this, e);
 		}
 
+		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected virtual void OnLostFocus(EventArgs e) {
 			if (LostFocus!=null) LostFocus(this, e);
 		}
 
+		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected virtual void OnMouseDown(MouseEventArgs e) {
 			if (MouseDown!=null) MouseDown(this, e);
 		}
 
+		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected virtual void OnMouseEnter(EventArgs e) {
 			if (MouseEnter!=null) MouseEnter(this, e);
 		}
 
+		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected virtual void OnMouseHover(EventArgs e) {
 			if (MouseHover!=null) MouseHover(this, e);
 		}
 
+		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected virtual void OnMouseLeave(EventArgs e) {
 			if (MouseLeave!=null) MouseLeave(this, e);
 		}
 
+		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected virtual void OnMouseMove(MouseEventArgs e) {			
 			if (MouseMove!=null) MouseMove(this, e);
 		}
 
+		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected virtual void OnMouseUp(MouseEventArgs e) {
 			if (MouseUp!=null) MouseUp(this, e);
 		}
 
+		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected virtual void OnMouseWheel(MouseEventArgs e) {
 			if (MouseWheel!=null) MouseWheel(this, e);
 		}
 
+		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected virtual void OnMove(EventArgs e) {
 			if (Move!=null) Move(this, e);
 		}
@@ -3352,14 +3591,17 @@ Console.WriteLine("Window {0} got focus", this.Text);
 			// Override me!
 		}
 
+		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected virtual void OnPaint(PaintEventArgs e) {
 			if (Paint!=null) Paint(this, e);
 		}
 
+		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected virtual void OnPaintBackground(PaintEventArgs pevent) {
 			// Override me!
 		}
 
+		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected virtual void OnParentBackColorChanged(EventArgs e) {
 			if (background_color.IsEmpty && background_image==null) {
 				Invalidate();
@@ -3367,6 +3609,7 @@ Console.WriteLine("Window {0} got focus", this.Text);
 			}
 		}
 
+		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected virtual void OnParentBackgroundImageChanged(EventArgs e) {
 			if (background_color.IsEmpty && background_image==null) {
 				Invalidate();
@@ -3374,6 +3617,7 @@ Console.WriteLine("Window {0} got focus", this.Text);
 			}
 		}
 
+		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected virtual void OnParentBindingContextChanged(EventArgs e) {
 			if (binding_context==null) {
 				binding_context=Parent.binding_context;
@@ -3381,10 +3625,12 @@ Console.WriteLine("Window {0} got focus", this.Text);
 			}
 		}
 
+		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected virtual void OnParentChanged(EventArgs e) {
 			if (ParentChanged!=null) ParentChanged(this, e);
 		}
 
+		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected virtual void OnParentEnabledChanged(EventArgs e) {
 			if (is_enabled != Parent.is_enabled) {
 				is_enabled=Parent.is_enabled;
@@ -3395,6 +3641,7 @@ Console.WriteLine("Window {0} got focus", this.Text);
 			}
 		}
 
+		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected virtual void OnParentFontChanged(EventArgs e) {
 			if (font==null) {
 				Invalidate();
@@ -3402,6 +3649,7 @@ Console.WriteLine("Window {0} got focus", this.Text);
 			}
 		}
 
+		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected virtual void OnParentForeColorChanged(EventArgs e) {
 			if (foreground_color.IsEmpty) {
 				Invalidate();
@@ -3409,6 +3657,7 @@ Console.WriteLine("Window {0} got focus", this.Text);
 			}
 		}
 
+		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected virtual void OnParentRightToLeftChanged(EventArgs e) {
 			if (right_to_left==RightToLeft.Inherit) {
 				Invalidate();
@@ -3416,6 +3665,7 @@ Console.WriteLine("Window {0} got focus", this.Text);
 			}
 		}
 
+		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected virtual void OnParentVisibleChanged(EventArgs e) {
 			if (is_visible!=Parent.is_visible) {
 				is_visible=false;
@@ -3424,10 +3674,12 @@ Console.WriteLine("Window {0} got focus", this.Text);
 			}
 		}
 
+		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected virtual void OnQueryContinueDrag(QueryContinueDragEventArgs e) {
 			if (QueryContinueDrag!=null) QueryContinueDrag(this, e);
 		}
 
+		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected virtual void OnResize(EventArgs e) {
 			if (Resize!=null) Resize(this, e);
 
@@ -3438,45 +3690,55 @@ Console.WriteLine("Window {0} got focus", this.Text);
 			}
 		}
 
+		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected virtual void OnRightToLeftChanged(EventArgs e) {
 			if (RightToLeftChanged!=null) RightToLeftChanged(this, e);
 			for (int i=0; i<child_controls.Count; i++) child_controls[i].OnParentRightToLeftChanged(e);
 		}
 
+		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected virtual void OnSizeChanged(EventArgs e) {
 			InvalidateBuffers ();
 			OnResize(e);
 			if (SizeChanged!=null) SizeChanged(this, e);
 		}
 
+		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected virtual void OnStyleChanged(EventArgs e) {
 			if (StyleChanged!=null) StyleChanged(this, e);
 		}
 
+		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected virtual void OnSystemColorsChanged(EventArgs e) {
 			if (SystemColorsChanged!=null) SystemColorsChanged(this, e);
 		}
 
+		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected virtual void OnTabIndexChanged(EventArgs e) {
 			if (TabIndexChanged!=null) TabIndexChanged(this, e);
 		}
 
+		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected virtual void OnTabStopChanged(EventArgs e) {
 			if (TabStopChanged!=null) TabStopChanged(this, e);
 		}
 
+		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected virtual void OnTextChanged(EventArgs e) {
 			if (TextChanged!=null) TextChanged(this, e);
 		}
 
+		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected virtual void OnValidated(EventArgs e) {
 			if (Validated!=null) Validated(this, e);
 		}
 
+		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected virtual void OnValidating(System.ComponentModel.CancelEventArgs e) {
 			if (Validating!=null) Validating(this, e);
 		}
 
+		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected virtual void OnVisibleChanged(EventArgs e) {
 			if (!is_visible) {
 				if (dc_mem!=null) {
@@ -3514,8 +3776,15 @@ Console.WriteLine("Window {0} got focus", this.Text);
 		public event UICuesEventHandler		ChangeUICues;
 		public event EventHandler		Click;
 		public event EventHandler		ContextMenuChanged;
+
+		[EditorBrowsable(EditorBrowsableState.Advanced)]
+		[Browsable(false)]
 		public event ControlEventHandler	ControlAdded;
+
+		[EditorBrowsable(EditorBrowsableState.Advanced)]
+		[Browsable(false)]
 		public event ControlEventHandler	ControlRemoved;
+
 		public event EventHandler		CursorChanged;
 		public event EventHandler		DockChanged;
 		public event EventHandler		DoubleClick;
@@ -3528,26 +3797,48 @@ Console.WriteLine("Window {0} got focus", this.Text);
 		public event EventHandler		FontChanged;
 		public event EventHandler		ForeColorChanged;
 		public event GiveFeedbackEventHandler	GiveFeedback;
+
+		[EditorBrowsable(EditorBrowsableState.Advanced)]
+		[Browsable(false)]
 		public event EventHandler		GotFocus;
+
+		[EditorBrowsable(EditorBrowsableState.Advanced)]
+		[Browsable(false)]
 		public event EventHandler		HandleCreated;
+
+		[EditorBrowsable(EditorBrowsableState.Advanced)]
+		[Browsable(false)]
 		public event EventHandler		HandleDestroyed;
+
 		public event HelpEventHandler		HelpRequested;
 		public event EventHandler		ImeModeChanged;
+
+		[EditorBrowsable(EditorBrowsableState.Advanced)]
+		[Browsable(false)]
 		public event InvalidateEventHandler	Invalidated;
+
 		public event KeyEventHandler		KeyDown;
 		public event KeyPressEventHandler	KeyPress;
 		public event KeyEventHandler		KeyUp;
 		public event LayoutEventHandler		Layout;
 		public event EventHandler		Leave;
 		public event EventHandler		LocationChanged;
+
+		[EditorBrowsable(EditorBrowsableState.Advanced)]
+		[Browsable(false)]
 		public event EventHandler		LostFocus;
+
 		public event MouseEventHandler		MouseDown;
 		public event EventHandler		MouseEnter;
 		public event EventHandler		MouseHover;
 		public event EventHandler		MouseLeave;
 		public event MouseEventHandler		MouseMove;
 		public event MouseEventHandler		MouseUp;
+
+		[EditorBrowsable(EditorBrowsableState.Advanced)]
+		[Browsable(false)]
 		public event MouseEventHandler		MouseWheel;
+
 		public event EventHandler		Move;
 		public event PaintEventHandler		Paint;
 		public event EventHandler		ParentChanged;
