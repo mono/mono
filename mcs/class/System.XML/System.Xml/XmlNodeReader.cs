@@ -28,6 +28,7 @@ namespace System.Xml
 		bool isEndEntity;
 		bool nextIsEndElement;	// used for ReadString()
 		bool alreadyRead;
+		StringBuilder valueBuilder = new StringBuilder ();
 
 		public XmlNodeReader (XmlNode node)
 		{
@@ -43,10 +44,10 @@ namespace System.Xml
 
 		public override int AttributeCount {
 			get {
-				if (current == null)
+				if (current == null || current.Attributes == null)
 					return 0;
 
-				return ((ICollection) current.Attributes).Count;
+				return current.Attributes.Count;
 			}
 		}
 
@@ -81,7 +82,8 @@ namespace System.Xml
 				if (current == null)
 					return false;
 
-				if (current.Attributes == null)
+				if (current.Attributes == null ||
+					current.Attributes.Count == 0)
 					return false;
 				else
 					return true;
@@ -122,7 +124,6 @@ namespace System.Xml
 			}
 		}
 
-		[MonoTODO("test it.")]
 		public override bool IsEmptyElement {
 			get {
 				if (current == null)
@@ -180,10 +181,17 @@ namespace System.Xml
 				if (current == null)
 					return String.Empty;
 
-				if (current is XmlCharacterData)
-					return String.Empty;
-				else
+				switch (current.NodeType) {
+				case XmlNodeType.Attribute:
+				case XmlNodeType.DocumentType:
+				case XmlNodeType.Element:
+				case XmlNodeType.EntityReference:
+				case XmlNodeType.ProcessingInstruction:
+				case XmlNodeType.XmlDeclaration:
 					return current.LocalName;
+				}
+
+				return String.Empty;
 			}
 		}
 
@@ -192,7 +200,17 @@ namespace System.Xml
 				if (current == null)
 					return String.Empty;
 
-				return current.Name;
+				switch (current.NodeType) {
+				case XmlNodeType.Attribute:
+				case XmlNodeType.DocumentType:
+				case XmlNodeType.Element:
+				case XmlNodeType.EntityReference:
+				case XmlNodeType.ProcessingInstruction:
+				case XmlNodeType.XmlDeclaration:
+					return current.Name;
+				}
+
+				return String.Empty;
 			}
 		}
 
@@ -416,7 +434,7 @@ namespace System.Xml
 			MoveToElement ();
 			isEndEntity = false;
 
-			if (isEndElement) {
+			if (IsEmptyElement || isEndElement) {
 				// Then go up and move to next.
 				// If no more nodes, then set EOF.
 				isEndElement = false;
@@ -505,15 +523,19 @@ namespace System.Xml
 
 		public override string ReadString ()
 		{
-			if (NodeType == XmlNodeType.EndElement)
-				return String.Empty;
-
 			XmlNode original = current;
-			StringBuilder builder = new StringBuilder();
-			if (NodeType == XmlNodeType.Element) {
+			valueBuilder.Length = 0;
+
+			switch (NodeType) {
+			default:
+				return String.Empty;
+			case XmlNodeType.Element:
+				if (IsEmptyElement)
+					return String.Empty;
+
 				foreach (XmlNode child in current.ChildNodes) {
 					if (child is XmlCharacterData && !(child is XmlComment))
-						builder.Append (child.Value);
+						valueBuilder.Append (child.Value);
 					else {
 						depth++;
 						current = child;
@@ -525,9 +547,17 @@ namespace System.Xml
 					nextIsEndElement = true;
 					Read ();
 				}
-			} else {
+				break;
+			case XmlNodeType.Text:
+			case XmlNodeType.CDATA:
+			case XmlNodeType.Whitespace:
+			case XmlNodeType.SignificantWhitespace:
+				// [LAMESPEC] It is inconsistent with MS.NET.
+				// MS ignores current text value, but such 
+				// behaviour is inconsistent with XmlTextReader 
+				// and I think it is bug.
 				do {
-					builder.Append (current.Value);
+					valueBuilder.Append (current.Value);
 					if (current.NextSibling == null) {
 						nextIsEndElement = true;
 						break;
@@ -541,8 +571,9 @@ namespace System.Xml
 					nextIsEndElement = true;
 					Read ();
 				}
+				break;
 			}
-			return builder.ToString ();
+			return valueBuilder.ToString ();
 		}
 
 		[MonoTODO]

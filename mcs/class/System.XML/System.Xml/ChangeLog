@@ -1,3 +1,14 @@
+2003-03-23  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
+
+	* XmlTextReader.cs : implemented ReadString().
+	  fixed ctor(string, XmlNodeType, XmlParserContext) - don't raise
+	  null reference exception when context is null.
+	* XmlNodeReader.cs : fixed ReadString() - should ignore attributes etc.
+	  fixed Read() - when positioned at EndElement, it didn't progress.
+	  fixed HasAttribute - it didn't return false in all cases.
+	  fixed Name and LocalName - only limited type of nodes return names.
+	  fixed AttributeCount - in some cases it threw null ref exception.
+
 2003-03-22  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
 
 	* XmlTextWriter.cs : WriteStartDocument doesn't set hasRoot=true, then

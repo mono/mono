@@ -106,7 +106,10 @@ namespace System.Xml
 
 		[MonoTODO("TODO as same as private XmlTextReader(TextReader, XmlNodeType, XmlParserContext)")]
 		public XmlTextReader (string xmlFragment, XmlNodeType fragType, XmlParserContext context)
-			: this (context.BaseURI, new StringReader (xmlFragment), fragType, context)
+			: this (context != null ? context.BaseURI : String.Empty,
+				new StringReader (xmlFragment),
+				fragType,
+				context)
 		{
 		}
 
@@ -588,6 +591,8 @@ namespace System.Xml
 
 				int startDepth = depth;
 
+				if (innerXmlBuilder == null)
+					innerXmlBuilder = new StringBuilder ();
 				innerXmlBuilder.Length = 0;
 				do {
 					ReadContent ();
@@ -634,10 +639,52 @@ namespace System.Xml
 			}
 		}
 
-		[MonoTODO]
 		public override string ReadString ()
 		{
-			throw new NotImplementedException ();
+			if (readStringBuffer == null)
+				readStringBuffer = new StringBuilder ();
+			readStringBuffer.Length = 0;
+
+			switch (NodeType) {
+			default:
+				return String.Empty;
+			case XmlNodeType.Element:
+				if (IsEmptyElement)
+					return String.Empty;
+				do {
+					Read ();
+					switch (NodeType) {
+					case XmlNodeType.Text:
+					case XmlNodeType.CDATA:
+					case XmlNodeType.Whitespace:
+					case XmlNodeType.SignificantWhitespace:
+						readStringBuffer.Append (Value);
+						continue;
+					}
+					break;
+				} while (true);
+				break;
+			case XmlNodeType.Text:
+			case XmlNodeType.CDATA:
+			case XmlNodeType.Whitespace:
+			case XmlNodeType.SignificantWhitespace:
+				do {
+					switch (NodeType) {
+					case XmlNodeType.Text:
+					case XmlNodeType.CDATA:
+					case XmlNodeType.Whitespace:
+					case XmlNodeType.SignificantWhitespace:
+						readStringBuffer.Append (Value);
+						Read ();
+						continue;
+					}
+					break;
+				} while (true);
+				break;
+			}
+			string ret = readStringBuffer.ToString ();
+			readStringBuffer.Length = 0;
+			return ret;
 		}
 
 		[MonoTODO]
@@ -751,6 +798,7 @@ namespace System.Xml
 		private int attributeValuePos;
 		// This should be only referenced(used) by ReadInnerXml(). Kind of flyweight pattern.
 		private StringBuilder innerXmlBuilder;
+		private StringBuilder readStringBuffer;
 
 		// Parameter entity placeholder
 		private Hashtable parameterEntities = new Hashtable ();
@@ -798,8 +846,6 @@ namespace System.Xml
 			valueBuffer = new char [initialValueCapacity];
 			valueLength = 0;
 			valueCapacity = initialValueCapacity;
-
-			innerXmlBuilder = new StringBuilder ();
 		}
 
 		// Use this method rather than setting the properties
