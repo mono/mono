@@ -1,5 +1,10 @@
 2004-09-03  Sebastien Pouliot  <sebastien@ximian.com>
 
+	* EnvironmentPermission.cs: Fixed Unrestricted in FromXml.
+	* RegistryPermission.cs: Completed implementation wrt Fx 1.1.
+
+2004-09-03  Sebastien Pouliot  <sebastien@ximian.com>
+
 	* EnvironmentPermission.cs: Fixed GetPathList which has little 
 	differences between Fx 1.1 and 2.0. Required to run the MSDN samples.
 	* FileDialogPermission.cs: Fixed IsSubsetOf and Intersect.

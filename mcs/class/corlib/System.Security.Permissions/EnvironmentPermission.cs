@@ -126,14 +126,16 @@ namespace System.Security.Permissions {
 			// Note: we do not (yet) care about the return value 
 			// as we only accept version 1 (min/max values)
 
+			if (IsUnrestricted (esd))
+				_state = PermissionState.Unrestricted;
+
 			string read = esd.Attribute ("Read");
 			if ((read != null) && (read.Length > 0))
 				SetPathList (EnvironmentPermissionAccess.Read, read);
+
 			string write = esd.Attribute ("Write");
 			if ((write != null) && (write.Length > 0))
 				SetPathList (EnvironmentPermissionAccess.Write, write);
-
-			// Unrestricted ???
 		}
 
 		public string GetPathList (EnvironmentPermissionAccess flag)
