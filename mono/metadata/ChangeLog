@@ -2,6 +2,7 @@
 
 	* marshal.c (mono_delegate_to_ftnptr): invoke the right method
 	(fix bug #27695)
+	(mono_marshal_get_native_wrapper): allow byref arguments
 
 Tue Jul 16 19:00:57 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
