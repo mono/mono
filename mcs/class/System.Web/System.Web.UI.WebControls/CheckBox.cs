@@ -210,17 +210,11 @@ namespace System.Web.UI.WebControls
 		
 		bool IPostBackDataHandler.LoadPostData (string postDataKey, NameValueCollection postCollection)
 		{
-			string postedVal = postCollection [postDataKey];
-
-                        if (postedVal == null)
-                                return false;
-                        
-			bool haveData = (postedVal.Length > 0);
-			if (haveData == Checked)
-				return false;
-
+			string postedVal = postCollection [postDataKey];			
+			bool haveData = ((postedVal != null)&& (postedVal.Length > 0));
+			bool diff  = (haveData != Checked);
 			Checked = haveData;
-			return true;;
+			return diff ;
 		}
 		
 		void IPostBackDataHandler.RaisePostDataChangedEvent()

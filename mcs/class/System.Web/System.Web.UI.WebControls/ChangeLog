@@ -1,3 +1,9 @@
+2003-12-29  Alon Gazit <along@mainsoft.com>
+
+	* CheckBox.cs: change the implementation of LoadPostData. 
+	Currently, while the AutoPostBack property equals true ,
+	it isn't possible to perform uncheck.
+
 2003-12-19  Jackson Harper <jackson@ximian.com>
 
 	* TableCell.cs: Setting a cells text should clear its control
