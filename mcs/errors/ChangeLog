@@ -1,5 +1,9 @@
 2005-04-01  Raja R Harinath  <rharinath@novell.com>
 
+	* TestRunner.cs (TestRunner): Make "KNOWN ISSUE" messages slightly
+	more verbose.
+	* cs0208-4.cs: New test from #74232.
+
 	* cs0267.cs: New.  Mentioned in passing in #74309.
 
 2005-03-29  Raja R Harinath  <rharinath@novell.com>

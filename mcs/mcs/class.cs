@@ -4870,7 +4870,21 @@ namespace Mono.CSharp {
 		//
 		// The type of this property / indexer / event
 		//
-		public Type MemberType;
+		Type member_type;
+		public Type MemberType {
+			get {
+				if (member_type == null && Type != null) {
+					EmitContext ec = Parent.EmitContext;
+					bool old_unsafe = ec.InUnsafe;
+					ec.InUnsafe = InUnsafe;
+					Type = Type.ResolveAsTypeTerminal (ec, false);
+					ec.InUnsafe = old_unsafe;
+
+					member_type = Type == null ? null : Type.Type;
+				}
+				return member_type;
+			}
+		}
 
 		//
 		// Whether this is an interface member.
@@ -4986,16 +5000,8 @@ namespace Mono.CSharp {
 				flags = Modifiers.MethodAttr (ModFlags);
 			}
 
-			// Lookup Type, verify validity
-			bool old_unsafe = ec.InUnsafe;
-			ec.InUnsafe = InUnsafe;
-			Type = Type.ResolveAsTypeTerminal (ec, false);
-			ec.InUnsafe = old_unsafe;
-
-			if (Type == null)
+			if (MemberType == null)
 				return false;
-
-			MemberType = Type.Type;
 
 			if ((Parent.ModFlags & Modifiers.SEALED) != 0){
 				if ((ModFlags & (Modifiers.VIRTUAL|Modifiers.ABSTRACT)) != 0){
@@ -5306,15 +5312,8 @@ namespace Mono.CSharp {
 			if (ec == null)
 				throw new InternalErrorException ("FieldMember.Define called too early");
 
-			bool old_unsafe = ec.InUnsafe;
-			ec.InUnsafe = InUnsafe;
-			TypeExpr texpr = Type.ResolveAsTypeTerminal (ec, false);
-			if (texpr == null)
+			if (MemberType == null)
 				return false;
-
-			MemberType = texpr.ResolveType (ec);
-
-			ec.InUnsafe = old_unsafe;
 
 			if (MemberType == TypeManager.void_type) {
 				Report.Error (1547, Location, "Keyword 'void' cannot be used in this context");

@@ -1521,7 +1521,7 @@ public class TypeManager {
 	//
 	public static bool IsUnmanagedType (Type t)
 	{
-		if (IsBuiltinType (t) && t != TypeManager.string_type)
+		if (IsBuiltinType (t) && t != TypeManager.object_type && t != TypeManager.string_type)
 			return true;
 
 		if (IsEnumType (t))
@@ -1530,33 +1530,33 @@ public class TypeManager {
 		if (t.IsPointer)
 			return true;
 
-		if (IsValueType (t)){
-			if (t is TypeBuilder){
-				TypeContainer tc = LookupTypeContainer (t);
+		if (!IsValueType (t))
+			return false;
 
-				if (tc.Fields != null){
-					foreach (Field f in tc.Fields){
-						if (f.FieldBuilder.IsStatic)
-							continue;
-						if (!IsUnmanagedType (f.FieldBuilder.FieldType))
-							return false;
-					}
-				} else
-					return true;
-			} else {
-				FieldInfo [] fields = t.GetFields ();
-
-				foreach (FieldInfo f in fields){
-					if (f.IsStatic)
-						continue;
-					if (!IsUnmanagedType (f.FieldType))
-						return false;
-				}
+		if (t is TypeBuilder){
+			TypeContainer tc = LookupTypeContainer (t);
+			
+			if (tc.Fields == null)
+				return true;
+			foreach (Field f in tc.Fields){
+				// Avoid using f.FieldBuilder: f.Define () may not yet have been invoked.
+				if ((f.ModFlags & Modifiers.STATIC) != 0)
+					continue;
+				if (!IsUnmanagedType (f.MemberType))
+					return false;
 			}
 			return true;
 		}
-
-		return false;
+		
+		FieldInfo [] fields = t.GetFields ();
+		
+		foreach (FieldInfo f in fields){
+			if (f.IsStatic)
+				continue;
+			if (!IsUnmanagedType (f.FieldType))
+				return false;
+		}
+		return true;
 	}
 		
 	public static bool IsValueType (Type t)

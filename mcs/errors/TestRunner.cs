@@ -273,7 +273,7 @@ namespace TestRunner {
 
 				case CompilerError.Wrong:
 					if (know_issues.Contains (file)) {
-						LogLine ("KNOWN ISSUE");
+						LogLine ("KNOWN ISSUE (Wrong error reported)");
 						know_issues.Remove (file);
 						return false;
 					}
@@ -289,7 +289,7 @@ namespace TestRunner {
 
 				case CompilerError.Missing:
 					if (no_error_list.Contains (file)) {
-						LogLine ("KNOW ISSUE");
+						LogLine ("KNOWN ISSUE (No error reported)");
 						no_error_list.Remove (file);
 						return false;
 					}
