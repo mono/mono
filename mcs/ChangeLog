@@ -1,3 +1,7 @@
+2002-10-10  Daniel Morgan <danmorg@sc.rr.com>
+
+	* class/library.build: added Mono.Data.MySql directory to windows build.
+
 2002-10-10  Rodrigo Moya <rodrigo@ximian.com>
 
 	* class/makefile.gnu: added Mono.Data.MySql directory to linux build.
