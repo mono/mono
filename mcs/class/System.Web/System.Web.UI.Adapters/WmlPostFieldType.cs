@@ -28,9 +28,8 @@
 //
 
 #if NET_2_0
-namespace System.Web.UI.Adapters{
-	public enum WmlPostFieldType
-	{
+namespace System.Web.UI.Adapters {
+	public enum WmlPostFieldType {
 		Normal = 0,
 		Submit = 1,
 		Variable = 2,
