@@ -166,11 +166,28 @@ GdipCreatePen2 (GpBrush *brush, float width, GpUnit unit, GpPen **pen)
         }
 }
 
+static float *
+clone_dash_array (float *clone, float *array, int size)
+{
+        int i;
+
+        for (i = 0; i < size; i++)
+                clone [i] = array [i];
+
+        return clone;
+}
+
 GpStatus 
 GdipClonePen (GpPen *pen, GpPen **clonepen)
 {
-	// FIXME: copy dash array and matrix
         GpPen *result = gdip_pen_new ();
+        int count = pen->dash_count;
+        GpMatrix *matrix;       /* copy of pen->matrix */
+        float dashes [count];   /* copy off pen->dash_array */
+
+        GdipCloneMatrix (pen->matrix, &matrix);
+        clone_dash_array (dashes, pen->dash_array, count);
+
         result->color = pen->color;
 	result->brush = pen->brush;
         result->width = pen->width;
@@ -182,9 +199,9 @@ GdipClonePen (GpPen *pen, GpPen **clonepen)
         result->dash_offset = pen->dash_offset;
 	result->dash_count = pen->dash_count;
 	result->own_dash_array = 0;
-	result->dash_array = pen->dash_array;
+	result->dash_array = dashes;
 	result->unit = pen->unit;
-        result->matrix = pen->matrix;
+        result->matrix = matrix;
 
         *clonepen = result;
 

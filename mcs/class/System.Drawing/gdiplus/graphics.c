@@ -291,7 +291,7 @@ GdipReleaseDC (GpGraphics *graphics, int hDC)
 	return Ok;
 }
 
-// FIXME: the stack implementation is probably not suitable
+/* FIXME: the stack implementation is probably not suitable */
 #define MAX_GRAPHICS_STATE_STACK 100
 
 GpState saved_stack [MAX_GRAPHICS_STATE_STACK];

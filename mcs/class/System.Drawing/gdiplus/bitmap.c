@@ -115,7 +115,7 @@ gdip_bitmap_create_Win32_HDC (GpBitmap *bitmap)
 	if (hbitmap != 0) {
 		BITMAPINFO	bmi;
 		gdip_bitmap_fill_info_header (bitmap, &bmi.bmiHeader);
-		//_saveBmp ("file1.bmp", bitmap);
+		/* _saveBmp ("file1.bmp", bitmap); */
 		SetDIBits_pfn (hdc, hbitmap, 0, bitmap->data.Height, bitmap->data.Scan0, &bmi, 0);
 		holdbitmap = SelectObject_pfn (hdc, hbitmap);
 		bitmap->hBitmapDC = hdc;
@@ -151,7 +151,7 @@ gdip_bitmap_destroy_Win32_HDC (GpBitmap *bitmap, void *hdc)
 				++array;
 			}
 		}
-		//_saveBmp ("file2.bmp", bitmap);
+		/* _saveBmp ("file2.bmp", bitmap); */
 
 		DeleteObject_pfn (bitmap->hBitmap);
 		DeleteDC_pfn (bitmap->hBitmapDC);
@@ -169,7 +169,7 @@ GdipCreateBitmapFromScan0 (int width, int height, int stride, int format, void *
 
 	if (stride == 0)
 		return InvalidParameter;
-	if (scan0 == NULL)				//FIXME: Win32 GDIPlus accepts NULL as a value for the scan0 parameter. Jordi,
+	if (scan0 == NULL)				/* FIXME: Win32 GDIPlus accepts NULL as a value for the scan0 parameter. Jordi, */
 		return InvalidParameter;
 			
 	switch (format) {
