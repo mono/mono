@@ -1,3 +1,7 @@
+2004-10-06  Jackson Harper  <jackson@ximian.com>
+
+	* culture-info-tables.h: regenerated.
+
 2004-10-06  Zoltan Varga  <vargaz@freemail.hu>
 
 	* icall.c (ves_icall_Type_GetInterfaces): Include interfaces 
