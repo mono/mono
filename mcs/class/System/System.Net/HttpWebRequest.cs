@@ -691,7 +691,7 @@ namespace System.Net
 				webHeaders.SetInternal ("Transfer-Encoding", "chunked");
 			}
 
-			if (continue100) // RFC2616 8.2.3
+			if (continue100 && servicePoint.SendContinue) // RFC2616 8.2.3
 				webHeaders.SetInternal ("Expect" , "100-continue");
 
 			if (keepAlive && version == HttpVersion.Version10)

@@ -30,6 +30,7 @@ namespace System.Net
 		IPHostEntry host;
 		bool usesProxy;
 		Hashtable groups;
+		bool sendContinue = true;
 		
 		// Constructors
 
@@ -95,6 +96,10 @@ namespace System.Net
 			get { return HttpVersion.Version11.Equals (protocolVersion); }
 		}
 		
+		internal bool SendContinue {
+			get { return sendContinue; }
+			set { sendContinue = value; }
+		}
 		// Methods
 		
 		public override int GetHashCode() 

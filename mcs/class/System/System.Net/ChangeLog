@@ -1,3 +1,19 @@
+2003-06-08  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpWebRequest.cs: don't send "Expect: 100-continue" is the server
+	is known not to respond to that.
+
+	* ServicePoint.cs: added SendContinue property.
+
+	* WebConnection.cs: only wait 2 seconds for a continue reply. If it
+	timeouts, set SendContinue to false and proceeed sending data.
+
+	* WebConnectionStream.cs: if 100-continue is not received and instead we
+	get a 417 or anything else, don't send the data.
+
+	* WebClient.cs: implemented all missing properties and methods except
+	UploadFile.
+
 2003-06-06  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* FileWebRequestCreator.cs: splitted from WebRequest.

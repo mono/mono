@@ -288,8 +288,9 @@ namespace System.Net
 
 			request.InternalContentLength = length;
 			request.SendRequestHeaders ();
-			if (!cnc.WaitForContinue (headers, 0, headers.Length))
-				return; // the error is reported in WebConnection (timeout or 417 or whatever)
+			cnc.WaitForContinue (headers, 0, headers.Length);
+			if (cnc.Data.StatusCode != 0 && cnc.Data.StatusCode != 100)
+				return;
 
 			cnc.Write (bytes, 0, length);
 			requestWritten = true;
