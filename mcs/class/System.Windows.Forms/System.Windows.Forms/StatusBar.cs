@@ -57,6 +57,12 @@ namespace System.Windows.Forms {
 			base.CreateHandle();
 		}
 
+		[MonoTODO]
+		protected override void Dispose(bool disposing) {
+			// FIXME:
+			base.Dispose(disposing);
+		}
+
 		protected virtual void OnDrawItem(StatusBarDrawItemEventArgs e)
 		{
 			if( DrawItem != null)

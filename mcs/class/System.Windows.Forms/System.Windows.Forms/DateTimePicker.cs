@@ -124,6 +124,11 @@ namespace System.Windows.Forms {
 		}
 
 		[MonoTODO]
+		protected override void Dispose(bool disposing){
+			base.Dispose(disposing);
+		}
+
+		[MonoTODO]
 		protected override bool IsInputKey(Keys keyData)
 		{
 			//FIXME:

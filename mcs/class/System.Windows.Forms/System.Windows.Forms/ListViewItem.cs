@@ -233,17 +233,6 @@ namespace System.Windows.Forms {
 			//FIXME:
 		}
 		[MonoTODO]
-		public override bool Equals(object obj)
-		{
-			//FIXME:
-			return base.Equals(obj);
-		}
-		[MonoTODO]
-		public override int GetHashCode() {
-			//FIXME add our proprities
-			return base.GetHashCode();
-		}
-		[MonoTODO]
 		public Rectangle GetBounds(ItemBoundsPortion portion)
 		{
 			throw new NotImplementedException ();

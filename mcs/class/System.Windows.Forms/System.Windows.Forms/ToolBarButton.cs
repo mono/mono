@@ -159,5 +159,10 @@ using System.ComponentModel;
 		// --- Protected Methods
 		//
 
+		[MonoTODO]
+		protected override void Dispose(bool disposing) {
+			// FIXME:
+			base.Dispose(disposing);
+		}
 	}
 }

@@ -58,6 +58,11 @@ namespace System.Windows.Forms {
 		}
 
 		[MonoTODO]
+		protected override void Dispose(bool disposing){
+			base.Dispose(disposing);
+		}
+
+		[MonoTODO]
 		public IntPtr Handle {
 			get {
 				if ( !HandleCreated )

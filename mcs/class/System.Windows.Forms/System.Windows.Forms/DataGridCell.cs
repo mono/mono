@@ -78,7 +78,7 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		public int ColumeNumber {
+		public int ColumnNumber {
 			get{
 				return columnnumber;
 			}
@@ -95,12 +95,12 @@ namespace System.Windows.Forms {
 		///	Checks equivalence of this DataGridCell and another object.
 		/// </remarks>
 		
-		public override bool Equals (object obj)
+		public override bool Equals (object o)
 		{
-			if (!(obj is DataGridCell))
+			if (!(o is DataGridCell))
 				return false;
 
-			return (this == (DataGridCell) obj);
+			return (this == (DataGridCell) o);
 		}
 
 		/// <summary>

@@ -98,6 +98,15 @@ using System.ComponentModel;
 		}
 
 		//
+		//  --- Protected Methods
+		//
+		
+		[MonoTODO]
+		protected override void Dispose(bool disposing) { // .NET V1.1 Beta
+			base.Dispose(disposing);
+		}
+
+		//
 		//  --- Public Methods
 		//
 		[MonoTODO]

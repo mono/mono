@@ -25,9 +25,19 @@ namespace System.Windows.Forms  {
 	using System.ComponentModel;
 	public abstract class Menu : Component 	{
 
+		// Static Constant Fields
+		public const int FindHandle = 0;
+		public const int FindShortCut = 1;
+
+
 		//
 		// -- Public Methods
 		//
+
+		[MonoTODO]
+		public MenuItem FindMenuItem(int type, IntPtr value) {
+			throw new NotImplementedException();
+		}
 
 		[MonoTODO]
 		public ContextMenu GetContextMenu() {
@@ -67,8 +77,21 @@ namespace System.Windows.Forms  {
 		// -- Protected Methods
 		//
 
+
+		[MonoTODO]
 		protected void CloneMenu(Menu menuSrc) {
 			// FIXME:
+		}
+
+		[MonoTODO]
+		protected override void Dispose(bool disposing) {
+			// FIXME:
+			base.Dispose(disposing);
+		}
+
+		[MonoTODO]
+		protected int FindMergePosition(int mergeOrder) {
+			throw new NotImplementedException();
 		}
 
 		protected Menu( MenuItem[] items) {
@@ -114,7 +137,12 @@ namespace System.Windows.Forms  {
         
 		internal IntPtr menuHandle_ = IntPtr.Zero;
 		internal bool   isPopupMenu = false;
-
+		
+//		[MonoTODO]
+//		protected virtual int CreateMenuHandle() {
+//			throw new NotImplementedException();
+//			// FIXME:
+//		}
 		internal void CreateMenuHandle() {
 			if( menuHandle_ == IntPtr.Zero) {
 				if ( !isPopupMenu )

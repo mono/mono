@@ -239,16 +239,16 @@ namespace System.Windows.Forms {
 			throw new NotImplementedException ();
 		}
 		
-//		[MonoTODO]
-//		protected virtual PropertyTab CreatePropertyTab(Type tabType) {
-//			throw new NotImplementedException ();
-//		}
-		
-		//inherited
-		//protected override void Dispose(bool disposing) 
-		//{
+		//[MonoTODO]
+		//protected virtual PropertyTab CreatePropertyTab(Type tabType) {
 		//	throw new NotImplementedException ();
 		//}
+		
+		[MonoTODO]
+		protected override void Dispose(bool disposing) 
+		{
+			base.Dispose(disposing);
+		}
 		
 		[MonoTODO]
 		public void ExpandAllGridItems() 

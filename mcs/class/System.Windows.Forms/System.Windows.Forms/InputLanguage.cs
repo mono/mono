@@ -62,10 +62,10 @@ namespace System.Windows.Forms {
 		//  --- Public Methods
 		//
 		[MonoTODO]
-		public override bool Equals(object obj)
+		public override bool Equals(object value)
 		{
 			//FIXME:
-			return base.Equals(obj);
+			return base.Equals(value);
 		}
 
 		[MonoTODO]

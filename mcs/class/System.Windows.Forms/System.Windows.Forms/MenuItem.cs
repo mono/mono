@@ -123,11 +123,15 @@ namespace System.Windows.Forms {
 				MenuItems.AddRange(all_items);
 			}
 		}
-
-		~MenuItem() {
-			//FIXME: free resources
-			//throw new NotImplementedException ();
+		[MonoTODO]
+		protected override void Dispose(bool disposing){
+			base.Dispose(disposing);
 		}
+
+//		~MenuItem() {
+//			//FIXME: free resources
+//			//throw new NotImplementedException ();
+//		}
 
 		protected virtual void OnClick(EventArgs e) {
 			if( Click != null){

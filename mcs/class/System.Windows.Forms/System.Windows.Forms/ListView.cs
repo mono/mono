@@ -121,6 +121,12 @@ namespace System.Windows.Forms {
 				throw new NotImplementedException ();
 			}
 		}
+
+		[MonoTODO]
+		protected override void Dispose(bool disposing){
+			base.Dispose(disposing);
+		}
+
 		[MonoTODO]
 		public override Color ForeColor {
 			get {

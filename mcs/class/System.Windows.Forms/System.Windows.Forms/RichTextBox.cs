@@ -359,42 +359,38 @@ namespace System.Windows.Forms {
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
-		public override int GetHashCode() {
-			//FIXME add our proprities
-			return base.GetHashCode();
-		}		[MonoTODO]
-		public int Find(char[] chars)
+			[MonoTODO]
+		public int Find(char[] characterSet)
 		{
 			throw new NotImplementedException ();
 		}
 		[MonoTODO]
-		public int Find(string srt)
+		public int Find(string str)
 		{
 			throw new NotImplementedException ();
 		}
 		[MonoTODO]
-		public int Find(char[] chars, int val)
+		public int Find(char[] characterSet, int start)
 		{
 			throw new NotImplementedException ();
 		}
 		[MonoTODO]
-		public int Find(string srt, RichTextBoxFinds finds)
+		public int Find(string str, RichTextBoxFinds options)
 		{
 			throw new NotImplementedException ();
 		}
 		[MonoTODO]
-		public int Find(char[] chars, int val1, int val2)
+		public int Find(char[] characterSet, int start, int end)
 		{
 			throw new NotImplementedException ();
 		}
 		[MonoTODO]
-		public int Find(string srt, int val, RichTextBoxFinds finds)
+		public int Find(string str, int start, RichTextBoxFinds options)
 		{
 			throw new NotImplementedException ();
 		}
 		[MonoTODO]
-		public int Find(string srt, int val1, int val2, RichTextBoxFinds finds)
+		public int Find(string str, int val1, int val2, RichTextBoxFinds finds)
 		{
 			throw new NotImplementedException ();
 		}
@@ -415,19 +411,19 @@ namespace System.Windows.Forms {
 		}
 
 		[MonoTODO]
-		public void LoadFile(string str)
+		public void LoadFile(string path)
 		{
 			throw new NotImplementedException ();
 		}
 		[MonoTODO]
-		public void LoadFile(Stream str, RichTextBoxStreamType type)
+		public void LoadFile(Stream path, RichTextBoxStreamType fileType)
 		{
 			throw new NotImplementedException ();
 		}
 		
 
 		[MonoTODO]
-		public void Paste(DataFormats.Format format)
+		public void Paste(DataFormats.Format clipFormat)
 		{
 			throw new NotImplementedException ();
 		}
@@ -439,17 +435,17 @@ namespace System.Windows.Forms {
 		}
 
 		[MonoTODO]
-		public void SaveFile(string str)
+		public void SaveFile(string path)
 		{
 			throw new NotImplementedException ();
 		}
 		[MonoTODO]
-		public void SaveFile(Stream str, RichTextBoxStreamType type)
+		public void SaveFile(Stream path, RichTextBoxStreamType fileType)
 		{
 			throw new NotImplementedException ();
 		}
 		[MonoTODO]
-		public void SaveFile(string str, RichTextBoxStreamType type)
+		public void SaveFile(string path, RichTextBoxStreamType fileType)
 		{
 			throw new NotImplementedException ();
 		}
@@ -496,8 +492,9 @@ namespace System.Windows.Forms {
 		//
 		//  --- Protected Methods
 		//
+
 		[MonoTODO]
-		protected virtual object CreateRichTextEditOleCallback()
+		protected virtual object CreateRichEditOleCallback()
 		{
 			throw new NotImplementedException ();
 		}
@@ -538,13 +535,13 @@ namespace System.Windows.Forms {
 		}
 
 		[MonoTODO]
-		protected virtual void OnImeChanged(EventArgs e)
+		protected virtual void OnImeChange(EventArgs e)
 		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		protected virtual void OnClicked(LinkClickedEventArgs e)
+		protected virtual void OnLinkClicked(LinkClickedEventArgs e)
 		{
 			throw new NotImplementedException ();
 		}

@@ -124,7 +124,13 @@ namespace System.Windows.Forms {
 				}
 			}
 		}
+
 		
+		[MonoTODO]
+		protected override void Dispose(bool disposing) { 
+			base.Dispose(disposing);
+		}		
+
 		[MonoTODO]
 		protected override void OnEnabledChanged(EventArgs e) 
 		{
@@ -132,24 +138,24 @@ namespace System.Windows.Forms {
 			base.OnEnabledChanged(e);
 		}
 
-		protected override void OnPaint(PaintEventArgs pevent) 
+		protected override void OnPaint(PaintEventArgs pe) 
 		{
 			if ( Image != null ) {
 				switch ( SizeMode ) {
 				case PictureBoxSizeMode.StretchImage:
-					pevent.Graphics.DrawImage ( Image, ClientRectangle );
+					pe.Graphics.DrawImage ( Image, ClientRectangle );
 				break;
 				case PictureBoxSizeMode.CenterImage:
 					int dx = (ClientRectangle.Width - Image.Width)/2;
 					int dy = (ClientRectangle.Height- Image.Height)/2;
-					pevent.Graphics.DrawImage ( Image, dx, dy );
+					pe.Graphics.DrawImage ( Image, dx, dy );
 				break;
 				default:
-					pevent.Graphics.DrawImage ( Image, 0, 0 );
+					pe.Graphics.DrawImage ( Image, 0, 0 );
 				break;
 				}
 			}
-			base.OnPaint(pevent);
+			base.OnPaint(pe);
 		}
 
 		protected override void OnParentChanged(EventArgs e) 
@@ -184,6 +190,8 @@ namespace System.Windows.Forms {
 			base.OnVisibleChanged ( e );
 		}
 
+		[MonoTODO]
+		//this should be inherited.
 		protected override void OnPaintBackground (PaintEventArgs e) {
 			if ( SizeMode != PictureBoxSizeMode.StretchImage ) 
 				base.OnPaintBackground ( e );

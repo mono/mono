@@ -437,8 +437,8 @@ namespace System.Windows.Forms {
 		}
 		
 		[MonoTODO]
-		protected override void Dispose(bool Disposing) { // .NET V1.1 Beta
-			base.Dispose(Disposing);
+		protected override void Dispose(bool disposing) { // .NET V1.1 Beta
+			base.Dispose(disposing);
 		}
 
 		private void EditBox_TextChanged ( object sender, EventArgs e )

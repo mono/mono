@@ -66,6 +66,16 @@ namespace System.Windows.Forms {
 		}
 
 		//
+		//  --- protected Methods
+		//
+
+		[MonoTODO]
+		protected override void Dispose(bool disposing){
+			base.Dispose(disposing);
+		}
+
+
+		//
 		// -- Public Properties
 		//
 

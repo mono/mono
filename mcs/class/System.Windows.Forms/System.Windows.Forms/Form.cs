@@ -503,7 +503,7 @@
 			}
     
     
-			public override ISite Site {
+			public virtual ISite Site {
 				get {
 					return base.Site;
 				}
@@ -635,7 +635,21 @@
 					SetWindowPosFlags.SWP_NOZORDER);
 			}
     
-    
+			[MonoTODO]
+			public void SetDesktopBounds (int x, int y, int width, int height) {
+				///implmentation from setwindow location.
+				///not sure width and height were added correctly
+				Win32.SetWindowPos ((IntPtr) Handle, SetWindowPosZOrder.HWND_TOPMOST, 
+					x, y, width, height, 
+					SetWindowPosFlags.SWP_NOZORDER);
+			}
+			[MonoTODO]
+			public DialogResult ShowDialog (IWin32Window owner) {
+				//IWin32Window has 1 public prop, "Handle"
+				//use this knowledge to modify the () version for this version
+				throw new NotImplementedException();
+			}
+   
 			[MonoTODO]
 			public DialogResult ShowDialog () {
 				Control owner = Control.getOwnerWindow ( this );
@@ -672,6 +686,11 @@
 				return GetType( ).FullName.ToString( ) + ", Text: " + Text;
 			}
     
+			[MonoTODO]
+			protected override void UpdateDefaultButton(){
+				base.UpdateDefaultButton();
+			}
+
 			//  --- Public Events
     		
 			public event EventHandler Activated;
@@ -700,7 +719,18 @@
     		
 			//  --- Protected Properties
     		
-			protected override CreateParams CreateParams {
+			[MonoTODO]
+			public bool AllowTransparency{
+				get {
+					throw new NotImplementedException();
+				}
+				set {
+					//fixme
+				}
+			}
+
+
+				protected override CreateParams CreateParams {
 				get {
 					CreateParams pars = base.CreateParams;
 			
@@ -830,6 +860,21 @@
 				else
 					window.DefWndProc (ref m);
 			}
+
+			[MonoTODO]
+			public bool IsRestrictedWindow {
+				get {
+					throw new NotImplementedException();
+				}
+			}
+
+			[MonoTODO]
+			public MainMenu MergedMenu {
+				get {
+					throw new NotImplementedException();
+				}
+			}
+
 			//Compact Framework
 			protected virtual void OnActivated (EventArgs e) {
 				Activated(this,e);
@@ -858,6 +903,11 @@
 				Control c = getNextFocusedControl ( this, true );
 				if ( c != null )
 					c.Focus ( );
+			}
+
+			[MonoTODO]
+			protected virtual void OnDeactivate (EventArgs e) {
+				
 			}
     
 			protected override void OnFontChanged (EventArgs e) {
@@ -948,7 +998,7 @@
 				base.OnVisibleChanged (e);
 			}
 
-			protected virtual IntPtr OnMenuCommand (uint id) {
+			internal virtual IntPtr OnMenuCommand (uint id) {
 				IntPtr result = (IntPtr)1;
 				System.Console.WriteLine("Form on command {0}", id);
 				if(Menu != null) {
@@ -1023,6 +1073,11 @@
     
 			protected override void ScaleCore (float x, float y) {
 				ClientSize = new Size ( (int) ( ClientSize.Width * x ), (int) ( ClientSize.Height * y) );
+			}
+
+			[MonoTODO]
+			protected override void Select(bool directed, bool forward){
+				base.Select(directed, forward);
 			}
     
 			protected override void SetBoundsCore (	int x, int y,  int width, int height, BoundsSpecified specified ) {
@@ -1391,13 +1446,13 @@
 			// TODO: implement support classes and derive from 
 			// proper classes
 			// FIXME: use this or the one defined on Control?
-			public class  ControlCollectionX : 
+			public class  ControlCollection : 
 				System.Windows.Forms.Control.ControlCollection { 
 				/*,ICollection*/  
     
 				//  --- Constructor
 				// base class not defined (yet!)
-				public ControlCollectionX (Form owner) : base(owner) {
+				public ControlCollection (Form owner) : base(owner) {
     
 				}
     		

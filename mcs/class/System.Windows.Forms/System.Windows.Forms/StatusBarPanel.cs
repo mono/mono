@@ -186,6 +186,12 @@ namespace System.Windows.Forms {
 			return Width;
 		}
 
+		[MonoTODO]
+		protected override void Dispose(bool disposing) {
+			// FIXME:
+			base.Dispose(disposing);
+		}
+
 		private void UpdateParent (  bool UpdateParts, bool UpdateText, StatusBarPanel p ) {
 			if ( Parent != null && suppressUpdates != true)
 				Parent.UpdatePanels ( UpdateParts, UpdateText, p );

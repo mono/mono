@@ -251,6 +251,12 @@ namespace System.Windows.Forms {
 		}
 
 		[MonoTODO]
+		protected override void Dispose(bool disposing) {
+			// FIXME:
+			base.Dispose(disposing);
+		}
+
+		[MonoTODO]
 		protected virtual void OnButtonClick(ToolBarButtonClickEventArgs e) 
 		{
 			//FIXME:
