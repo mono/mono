@@ -11,7 +11,7 @@ namespace System.IO {
 	public abstract class TextWriter : MarshalByRefObject, IDisposable {
                 
                 protected TextWriter() {
-			coreNewLine = "\n".ToCharArray ();
+			CoreNewLine = "\n".ToCharArray ();
 		}
                 
                 protected TextWriter( IFormatProvider formatProvider ) {
@@ -34,11 +34,11 @@ namespace System.IO {
 
                 public virtual string NewLine { 
                         get {
-                                return new String(coreNewLine);
+                                return new String(CoreNewLine);
                         }
                         
                         set {
-                                coreNewLine = value.ToCharArray();
+                                CoreNewLine = value.ToCharArray();
                         }
                 }
 

@@ -52,8 +52,8 @@ namespace System.IO {
 		public FileLoadException (string message, string fileName, Exception inner)
 			: base (message, inner)
 		{
-			this.msg = message
-			this.fileName = fileName
+			this.msg = message;
+			this.fileName = fileName;
 			this.inner = inner;
 		}
 
@@ -69,8 +69,7 @@ namespace System.IO {
 			get {
 				if (fileName != null)
 					return Locale.GetText (msg + ": " + fileName);
-
-				if (fileName == null)
+				else
 					return msg;
 			}
 		}
@@ -93,7 +92,7 @@ namespace System.IO {
 			info.AddValue ("FileLoad_FusionLog", fusionLog);
 		}
 
-		[MonoTODO (Add StackTrace into the output)]
+		[MonoTODO]
 		public override string ToString ()
 		{
 			return "System.IO.FileLoadException: " + Message;
