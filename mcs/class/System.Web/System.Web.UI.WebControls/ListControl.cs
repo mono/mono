@@ -209,7 +209,12 @@ namespace System.Web.UI.WebControls
 				return -1;
 			}
 			set {
-				if (value < -1 || value > Items.Count)
+				if (Items.Count == 0)
+				{
+					cachedSelectedIndex = value;
+					return;
+				}
+				if ((value < -1) || (value >= Items.Count))
 					throw new ArgumentOutOfRangeException ();
 
 				ClearSelection ();

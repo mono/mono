@@ -1,3 +1,11 @@
+2004-05-06 Alon Gazit <along@mainsoft.com>
+        * WebControl.cs: fixed LoadViewState() and SaveViewState(). 
+        Before the change the Enabled property wasn't updated when a postback
+        event was raised.
+        * ListControl.cs: fixed SelectedIndex property implementation.
+        Prevents throwing ArgumentOutOfRangeException (that should not be thrown),
+        when the list is empty.     
+
 2004-04-28 Alon Gazit <along@mainsoft.com>
         * WebControl.cs: fixed LoadViewState(). 
         Always loading the saved attributes collection.

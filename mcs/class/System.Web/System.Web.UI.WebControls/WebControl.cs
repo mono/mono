@@ -433,6 +433,13 @@ namespace System.Web.UI.WebControls
 				attributeState.TrackViewState();
 				attributeState.LoadViewState (saved.Second);
 			}
+			
+			object enable = ViewState["Enabled"];
+			if (enable!=null)
+			{
+				Enabled = (bool)enable;
+				EnableViewState = true; 
+			}
 		}
 
 		protected override void Render(HtmlTextWriter writer)
@@ -449,6 +456,8 @@ namespace System.Web.UI.WebControls
 
 		protected override object SaveViewState()
 		{
+			if (EnableViewState)
+				ViewState["Enabled"] = enabled;
 			if (ControlStyleCreated)
 				ControlStyle.SaveViewState ();
 			
