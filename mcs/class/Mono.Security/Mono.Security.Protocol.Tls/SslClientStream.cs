@@ -126,12 +126,28 @@ namespace Mono.Security.Protocol.Tls
 
 		public CipherAlgorithmType CipherAlgorithm 
 		{
-			get { return this.context.Cipher.CipherAlgorithmType;}
+			get 
+			{ 
+				if (this.context.HandshakeFinished)
+				{
+					return this.context.Cipher.CipherAlgorithmType;
+				}
+
+				return CipherAlgorithmType.None;
+			}
 		}
 		
 		public int CipherStrength 
 		{
-			get { return this.context.Cipher.EffectiveKeyBits;}
+			get 
+			{ 
+				if (this.context.HandshakeFinished)
+				{
+					return this.context.Cipher.EffectiveKeyBits;
+				}
+
+				return 0;
+			}
 		}
 		
 		public X509CertificateCollection ClientCertificates 
@@ -141,25 +157,54 @@ namespace Mono.Security.Protocol.Tls
 		
 		public HashAlgorithmType HashAlgorithm 
 		{
-			get { return this.context.Cipher.HashAlgorithmType; }
+			get 
+			{ 
+				if (this.context.HandshakeFinished)
+				{
+					return this.context.Cipher.HashAlgorithmType; 
+				}
+
+				return HashAlgorithmType.None;
+			}
 		}
 		
 		public int HashStrength
 		{
-			get { return this.context.Cipher.HashSize * 8; }
+			get 
+			{ 
+				if (this.context.HandshakeFinished)
+				{
+					return this.context.Cipher.HashSize * 8; 
+				}
+
+				return 0;
+			}
 		}
 		
 		public int KeyExchangeStrength 
 		{
 			get 
 			{ 
-				return this.context.ServerSettings.Certificates[0].RSA.KeySize;
+				if (this.context.HandshakeFinished)
+				{
+					return this.context.ServerSettings.Certificates[0].RSA.KeySize;
+				}
+
+				return 0;
 			}
 		}
 		
 		public ExchangeAlgorithmType KeyExchangeAlgorithm 
 		{
-			get { return this.context.Cipher.ExchangeAlgorithmType; }
+			get 
+			{ 
+				if (this.context.HandshakeFinished)
+				{
+					return this.context.Cipher.ExchangeAlgorithmType; 
+				}
+
+				return ExchangeAlgorithmType.None;
+			}
 		}
 		
 		public SecurityProtocolType SecurityProtocol 

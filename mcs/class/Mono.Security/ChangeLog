@@ -1,5 +1,9 @@
 2004-02-17 Carlos Guzmán Álvarez  <carlosga@telefonica.net>
 
+	* Mono.Security.Protocol.Tls/SslClientStream.cs:
+
+		- Added changes to security properties for check that the handshake is finished.
+
 	* Mono.Security.Protocol.Tls.Handshake.Client/TlsClientCertificate.cs:
 
 		- Raise the Client Certificate event.

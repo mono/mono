@@ -1,5 +1,9 @@
 2004-02-17 Carlos Guzmán Álvarez  <carlosga@telefonica.net>
 
+	* Mono.Security.Protocol.Tls/SslClientStream.cs:
+
+		- Added changes to security properties for check that the handshake is finished.
+
  	* Mono.Security.Protocol.Tls/SslClientStream.cs:
 
         - Added changes for bring async methods to work ( Thanks to Sebastien Pouliot )
