@@ -1,3 +1,10 @@
+2004-02-11  Marek Safar  <marek.safar@seznam.cz>
+
+        * const.cs: Const is now derived from FieldBase. Method EmitConstant name
+	  renamed to Emit.
+
+        * delegate.cs (Define): Fixed crash when delegate type is undefined.
+        
 2004-02-11  Miguel de Icaza  <miguel@ximian.com>
 
 	* cs-parser.jay: Fix small regression: we were not testing V2

@@ -164,6 +164,9 @@ namespace Mono.CSharp {
 			}
 			
  			ReturnType = ResolveTypeExpr (ReturnType, false, Location);
+                        if (ReturnType == null)
+                            return false;
+                        
    			ret_type = ReturnType.Type;
 			if (ret_type == null)
 				return false;

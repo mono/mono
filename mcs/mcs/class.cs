@@ -1612,7 +1612,7 @@ namespace Mono.CSharp {
 		{
 			if (constants != null)
 				foreach (Const con in constants)
-					con.EmitConstant (this);
+					con.Emit (this);
 			return;
 		}
 
