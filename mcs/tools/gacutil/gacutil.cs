@@ -129,8 +129,13 @@ namespace Mono.Tools
 
 				while((line = s.ReadLine()) != null) {
 					perFile[0] = line;
-					if (InstallAssembly (perFile) != 0)
+					try {
+						if (InstallAssembly (perFile) != 0)
+							result = 1;
+					} catch (Exception e) {
+						Console.WriteLine ("Failed for {0}. Reason: {1}", line, e.Message);
 						result = 1;
+					}
 				}
 			}
 
