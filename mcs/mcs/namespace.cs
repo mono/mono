@@ -330,11 +330,12 @@ namespace Mono.CSharp {
 				return ns;
 
 			int pos = name.IndexOf ('.');
+			AliasEntry alias = null;
 			if (pos >= 0) {
 				string first = name.Substring (0, pos);
 				string last = name.Substring (pos + 1);
 
-				AliasEntry alias = GetAliasEntry (first);
+				alias = GetAliasEntry (first);
 				if (alias != null)
 					return LookupName (DeclSpace.MakeFQN (alias.Alias, last));
 			}
@@ -343,7 +344,7 @@ namespace Mono.CSharp {
 			if (t != null)
 				return t;
 
-			AliasEntry alias = GetAliasEntry (name);
+			alias = GetAliasEntry (name);
 			if (alias != null)
 				return LookupName (alias.Alias);
 

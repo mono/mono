@@ -1,3 +1,8 @@
+2003-07-07  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* namespace.cs: fixed compilation with csc. I'll file a bug report
+	about this.
+	
 2003-07-07  Miguel de Icaza  <miguel@ximian.com>
 
 	* attribute.cs: And this test is onger needed.
