@@ -1,5 +1,8 @@
 2002-06-18  Dietmar Maurer  <dietmar@ximian.com>
 
+	* StackTrace.cs: use new internal call for constructors, use MS like
+	trace format.
+
 	* StackFrame.cs: impl. constructors using a new internal call.
 
 2002-05-01  Duncan Mak  <duncan@ximian.com>

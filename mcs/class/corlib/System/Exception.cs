@@ -16,6 +16,7 @@ namespace System {
 //	[ClassInterface (ClassInterfaceType.AutoDual)] (no implementation yet)
 	[MonoTODO]
 	public class Exception : ISerializable {
+		IntPtr [] trace_ips;
 		Exception inner_exception;
 		string message;
 		string help_link;

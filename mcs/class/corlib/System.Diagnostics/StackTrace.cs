@@ -3,6 +3,7 @@
 //
 // Author:
 //      Alexander Klyubin (klyubin@aqris.com)
+//      Dietmar Maurer (dietmar@ximian.com)
 //
 // (C) 2001
 //
@@ -10,6 +11,7 @@
 using System;
 using System.Reflection;
 using System.Threading;
+using System.Runtime.CompilerServices;
 
 namespace System.Diagnostics {
         /// <summary>
@@ -29,83 +31,20 @@ namespace System.Diagnostics {
                 /// </value>
                 private StackFrame[] frames;
 
+                /// <summary>
+                ///   Initializes a new instance of the StackTrace class.
+                /// </summary>
+		[MonoTODO]
+                public StackTrace() : this (METHODS_TO_SKIP, false) {}
+                
+                /// <summary>
+                ///   Initializes a new instance of the StackTrace class.
+                /// </summary>
+                /// <param name="needFileInfo">
+                ///   TODO:
+                /// </param>
+                public StackTrace(bool needFileInfo) : this (METHODS_TO_SKIP, needFileInfo) {}
 
-                /// <summary>
-                ///   Initializes a new instance of the StackTrace class.
-                /// </summary>
-		[MonoTODO]
-                public StackTrace() {
-                        throw new NotImplementedException();
-                }
-                
-                /// <summary>
-                ///   Initializes a new instance of the StackTrace class.
-                /// </summary>
-                /// <param name="needFileInfo">
-                ///   TODO:
-                /// </param>
-                public StackTrace(bool needFileInfo) : this() {}
-                
-                /// <summary>
-                ///   Initializes a new instance of the StackTrace class.
-                /// </summary>
-                /// <param name="e">
-                ///   TODO:
-                /// </param>
-		[MonoTODO]
-                public StackTrace(Exception e) {
-                        throw new NotImplementedException();
-                }
-                
-                
-                /// <summary>
-                ///   Initializes a new instance of the StackTrace class,
-                ///   using the provided exception object. The resulting stack
-                ///   trace describes the stack at the time of the exception.
-                /// </summary>
-                /// <param name="e">
-                ///   TODO:
-                /// </param>
-                /// <param name="needFileInfo">
-                ///   TODO:
-                /// </param>
-                public StackTrace(Exception e, bool needFileInfo) : this(e) {}
-                
-                /// <summary>
-                ///   Initializes a new instance of the StackTrace class,
-                ///   using the provided exception object. The resulting stack
-                ///   trace describes the stack at the time of the exception.
-                /// </summary>
-                /// <param name="e">
-                ///   Exception.
-                /// </param>
-                /// <param name="skipFrames">
-                ///   The number of frames up the stack to start the trace
-                ///   from.
-                /// </param>
-		[MonoTODO]
-                public StackTrace(Exception e, int skipFrames) {
-                        throw new NotImplementedException();
-                }
-                
-                /// <summary>
-                ///   Initializes a new instance of the StackTrace class,
-                ///   using the provided exception object. The resulting stack
-                ///   trace describes the stack at the time of the exception.
-                /// </summary>
-                /// <param name="e">
-                ///   Exception.
-                /// </param>
-                /// <param name="skipFrames">
-                ///   The number of frames up the stack to start the trace
-                ///   from.
-                /// </param>
-                /// <param name="needFileInfo">
-                ///   TODO:
-                /// </param>
-                public StackTrace(Exception e, int skipFrames, bool needFileInfo)
-                : this(e, skipFrames) {}
-                
                 /// <summary>
                 ///   Initializes a new instance of the StackTrace class
                 ///   from the current location, in a caller's frame.
@@ -114,11 +53,86 @@ namespace System.Diagnostics {
                 ///   The number of frames up the stack to start the trace
                 ///   from.
                 /// </param>
-		[MonoTODO]
-                public StackTrace(int skipFrames) {
-                        throw new NotImplementedException();
+                public StackTrace(int skipFrames) : this (skipFrames, false) {}
+
+		/// <summary>
+                ///   Initializes a new instance of the StackTrace class
+                ///   from the current location, in a caller's frame.
+                /// </summary>
+                /// <param name="skipFrames">
+                ///   The number of frames up the stack to start the trace
+                ///   from.
+                /// </param>
+                /// <param name="needFileInfo">
+                ///   TODO:
+                /// </param>
+                public StackTrace(int skipFrames, bool needFileInfo) {
+                        throw new NotImplementedException();			
+		}
+                
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		extern static StackFrame [] get_trace (Exception e, int skipFrames, bool needFileInfo);
+
+                /// <summary>
+                ///   Initializes a new instance of the StackTrace class.
+                /// </summary>
+                /// <param name="e">
+                ///   TODO:
+                /// </param>
+                public StackTrace(Exception e) {
+                        frames = get_trace (e, METHODS_TO_SKIP, false);
+                }
+                                
+                /// <summary>
+                ///   Initializes a new instance of the StackTrace class,
+                ///   using the provided exception object. The resulting stack
+                ///   trace describes the stack at the time of the exception.
+                /// </summary>
+                /// <param name="e">
+                ///   TODO:
+                /// </param>
+                /// <param name="needFileInfo">
+                ///   TODO:
+                /// </param>
+                public StackTrace(Exception e, bool needFileInfo) {
+                        frames = get_trace (e, METHODS_TO_SKIP, needFileInfo);
+		}
+                
+                /// <summary>
+                ///   Initializes a new instance of the StackTrace class,
+                ///   using the provided exception object. The resulting stack
+                ///   trace describes the stack at the time of the exception.
+                /// </summary>
+                /// <param name="e">
+                ///   Exception.
+                /// </param>
+                /// <param name="skipFrames">
+                ///   The number of frames up the stack to start the trace
+                ///   from.
+                /// </param>
+                public StackTrace(Exception e, int skipFrames) {
+                        frames = get_trace (e, skipFrames, false);
                 }
                 
+                /// <summary>
+                ///   Initializes a new instance of the StackTrace class,
+                ///   using the provided exception object. The resulting stack
+                ///   trace describes the stack at the time of the exception.
+                /// </summary>
+                /// <param name="e">
+                ///   Exception.
+                /// </param>
+                /// <param name="skipFrames">
+                ///   The number of frames up the stack to start the trace
+                ///   from.
+                /// </param>
+                /// <param name="needFileInfo">
+                ///   TODO:
+                /// </param>
+                public StackTrace(Exception e, int skipFrames, bool needFileInfo) {
+                        frames = get_trace (e, skipFrames, needFileInfo);
+		}
+                              
                 /// <summary>
                 ///   Initializes a new instance of the StackTrace class
                 ///   containing a single frame.
@@ -130,22 +144,7 @@ namespace System.Diagnostics {
                         this.frames = new StackFrame[1];
                         this.frames[0] = frame;
                 }
-                
-                
-                /// <summary>
-                ///   Initializes a new instance of the StackTrace class
-                ///   from the current location, in a caller's frame.
-                /// </summary>
-                /// <param name="skipFrames">
-                ///   The number of frames up the stack to start the trace
-                ///   from.
-                /// </param>
-                /// <param name="needFileInfo">
-                ///   TODO:
-                /// </param>
-                public StackTrace(int skipFrames, bool needFileInfo)
-                : this(skipFrames) {}
-                
+                               
                 /// <summary>
                 ///   Initializes a new instance of the StackTrace class.
                 /// </summary>
@@ -159,9 +158,7 @@ namespace System.Diagnostics {
                 public StackTrace(Thread targetThread, bool needFileInfo) {
                         throw new NotImplementedException();
                 }
-                
-                
-                                  
+               
                 /// <summary>
                 ///   Holds the number of frames in the stack trace.
                 /// </summary>
@@ -246,45 +243,14 @@ namespace System.Diagnostics {
                 ///   ToString.
                 /// </returns>
                 private static String FrameToString(StackFrame frame) {
-                        string locationInfo;
-                        
-                        if (frame.GetFileName() == null) {
-                                // File name not available
-                                locationInfo = "";
-                        } else {
-                                // File name available
-                                locationInfo = frame.GetFileName();
-                                if (frame.GetFileLineNumber() != 0) {
-                                        // Line number information available
-                                        locationInfo += ":line "
-                                                + frame.GetFileLineNumber();
-                                        if (frame.GetFileColumnNumber() != 0) {
-                                                // Column number information available
-                                                locationInfo += ":column"
-                                                        + frame.GetFileColumnNumber();
-                                        }
-                                }
-                                
-                        }
-                        
-                        MethodBase method = frame.GetMethod();
+			MethodBase method = frame.GetMethod();
                         if (method != null) {
                                 // Method information available
-                                return  method.DeclaringType.Name
-                                        + "." + method.Name + "()"
-                                        + ((locationInfo != null)
-                                                ? " at " + locationInfo
-                                                  : "");
+                                return  method.DeclaringType.FullName
+                                        + "." + method.Name + "()";
                         } else {
                                 // Method information not available
-                                string methodInfo = "<unknown method>";
-                                if ("".Equals(locationInfo)) {
-                                        // No location information available
-                                        return methodInfo;
-                                }
-                                
-                                // Location information available
-                                return methodInfo + " at " + locationInfo;
+                                return "<unknown method>";
                         }
                 }
         }
