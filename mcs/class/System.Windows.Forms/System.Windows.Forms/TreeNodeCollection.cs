@@ -67,7 +67,7 @@ namespace System.Windows.Forms {
 
 			TreeView tree = owner.TreeView;
 			if ( tree != null && tree.IsHandleCreated )
-				node.createNode ( );
+				node.createNode ( tree );
 
 			return 	index;		
 		}

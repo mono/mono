@@ -36,9 +36,16 @@ namespace System.Windows.Forms {
 		private bool sorted;
 		private TreeNode selectedNode;
 		private TreeNode dummyNode;
+		private int itemHeight;
+		private bool labelEdit;
+		private bool scrollable;
+		private string pathSeparator;
+		private bool updateLocked;
 
 		const int DefaultIndent = 19;
+		const int DefaultItemHeight = 16;
 		
+		internal TVINSERTSTRUCT insStruct;
 		//
 		//  --- Public Constructors
 		//
@@ -61,8 +68,15 @@ namespace System.Windows.Forms {
 			imageList = null;
 			indent = DefaultIndent;
 			selectedNode = null;
+			itemHeight = -1;
+			labelEdit = false;
+			scrollable = true;
+			pathSeparator = @"\";
+			updateLocked = false;
 
 			dummyNode = new TreeNode( RootHandle, this );
+
+			insStruct =  new TVINSERTSTRUCT ( );
 		}
 		
 		// --- Public Properties
@@ -208,29 +222,47 @@ namespace System.Windows.Forms {
 				}
 			}
 		}
-		[MonoTODO]
+
 		public int ItemHeight {
-			get
-			{
-				throw new NotImplementedException ();
+			get {
+				if ( !IsHandleCreated )
+					if ( itemHeight == -1 ) return DefaultItemHeight;
+				else
+					itemHeight = Win32.SendMessage ( Handle, (int)TreeViewMessages.TVM_GETITEMHEIGHT, 0, 0 );
+				return itemHeight;
 			}
-			set
-			{
-				//FIXME:
+			set {
+				if ( value < 1 )
+					throw new ArgumentException ( 
+						 string.Format ("'{0}' is not a valid value for 'ItemHeight'.  'ItemHeight' must be greater than or equal to 1.", value), "value");
+
+				if ( value > Int16.MaxValue )
+					throw new ArgumentException ( 
+						string.Format ("'{0}' is not a valid value for 'ItemHeight'. 'ItemHeight' must be less than or equal to {1}.", value, Int16.MaxValue), "value" );
+
+				if ( itemHeight != value ) {
+					itemHeight = value;
+					if ( IsHandleCreated )
+						Win32.SendMessage ( Handle, (int)TreeViewMessages.TVM_SETITEMHEIGHT, itemHeight, 0 );
+				}				
 			}
 		}
-		[MonoTODO]
+
 		public bool LabelEdit {
-			get
-			{
-				throw new NotImplementedException ();
-			}
-			set
-			{
-				//FIXME:
+			get { return labelEdit;	}
+			set {
+				if ( labelEdit != value ) {
+					int oldStyle = labelEdit ? (int)TreeViewStyles.TVS_EDITLABELS : 0;
+					labelEdit = value;
+						
+					if ( IsHandleCreated ) {
+						int newStyle = labelEdit ? (int)TreeViewStyles.TVS_EDITLABELS : 0;
+						Win32.UpdateWindowStyle ( Handle, oldStyle, newStyle );
+					}
+				}
 			}
 		}
-		[MonoTODO]
+
 		public TreeNodeCollection Nodes {
 			get {
 				if ( nodes == null )
@@ -238,26 +270,21 @@ namespace System.Windows.Forms {
 				return nodes;
 			}
 		}
-		[MonoTODO]
+
 		public string PathSeparator {
-			get
-			{
-				throw new NotImplementedException ();
-			}
-			set
-			{
-				//FIXME:
+			get { return pathSeparator; }
+			set {
+				pathSeparator = value;
 			}
 		}
 		[MonoTODO]
 		public bool Scrollable {
-			get
-			{
-				throw new NotImplementedException ();
-			}
-			set
-			{
-				//FIXME:
+			get { return scrollable; }
+			set {
+				if ( scrollable != value ) {
+					scrollable = value;
+					RecreateHandle ( );
+				}
 			}
 		}
 		[MonoTODO]
@@ -345,18 +372,22 @@ namespace System.Windows.Forms {
 			get { return base.Text;	 }
 			set { base.Text = value; }
 		}
-		[MonoTODO]
+
 		public TreeNode TopNode {
-			get
-			{
-				throw new NotImplementedException ();
+			get {
+				if ( IsHandleCreated ) {
+					int hitem = Win32.SendMessage ( Handle, (int) TreeViewMessages.TVM_GETNEXTITEM, (int)TreeViewItemSelFlags.TVGN_FIRSTVISIBLE, 0 );
+					return TreeNode.FromHandle ( this, (IntPtr) hitem );
+				}
+				return null;
 			}
 		}
-		[MonoTODO]
+
 		public int VisibleCount {
-			get
-			{
-				throw new NotImplementedException ();
+			get {
+				if ( IsHandleCreated )
+					return Win32.SendMessage ( Handle, (int) TreeViewMessages.TVM_GETVISIBLECOUNT, 0, 0 );
+				return 0;
 			}
 		}
 		
@@ -365,7 +396,7 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		public void BeginUpdate() 
 		{
-			//FIXME:
+			updateLocked = true;
 		}
 		[MonoTODO]
 		public void CollapseAll()
@@ -375,7 +406,7 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		public void EndUpdate()
 		{
-			//FIXME:
+			updateLocked = false;
 		}
 		[MonoTODO]
 		public void ExpandAll()
@@ -452,6 +483,12 @@ namespace System.Windows.Forms {
 
 				if ( ShowRootLines )
 					createParams.Style |= (int) TreeViewStyles.TVS_LINESATROOT;
+
+				if ( LabelEdit )
+					createParams.Style |= (int) TreeViewStyles.TVS_EDITLABELS;
+
+				if ( !Scrollable )
+					createParams.Style |= (int) TreeViewStyles.TVS_NOSCROLL;
 
 				return createParams;
 			}		
@@ -536,6 +573,8 @@ namespace System.Windows.Forms {
 			makeTree ( );
 			
 			setImageList ( );
+			if ( itemHeight != -1 )
+				Win32.SendMessage ( Handle, (int)TreeViewMessages.TVM_SETITEMHEIGHT, itemHeight, 0 );
 			if ( BackColor != Control.DefaultBackColor )
 				setBackColor ( );
 			if ( ForeColor != Control.DefaultForeColor )
@@ -572,7 +611,7 @@ namespace System.Windows.Forms {
 		protected override void OnKeyUp(KeyEventArgs e)
 		{
 			//FIXME:
-            base.OnKeyUp(e);
+			base.OnKeyUp(e);
 		}
 		[MonoTODO]
 		protected override void WndProc(ref Message m)
@@ -591,7 +630,7 @@ namespace System.Windows.Forms {
 		internal void makeTree ( )
 		{
 			foreach ( TreeNode node in Nodes )
-				node.makeTree ( RootHandle );
+				node.makeTree ( RootHandle, this );
 		}
 
 		private void setBackColor ( )

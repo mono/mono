@@ -1,3 +1,10 @@
+2003-07-31 Aleksey Ryabchuk <ryabchuk@yahoo.com>
+	* TreeView.cs
+	* TreeNode.cs
+	* TreeNodeCollection.cs
+	* win32enums.cs
+	* win32functions.cs : more implementation added
+
 2003-08-03 Alexandre Pigolkine <pigolkine@gmx.de>
 	* CheckBox.cs			12x12 checkmark dimensions for a moment
 	* ControlPaint.cs		DrawRadioButton implemented

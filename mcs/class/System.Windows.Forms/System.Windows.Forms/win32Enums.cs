@@ -1262,6 +1262,8 @@ namespace System.Windows.Forms{
 		TVM_SORTCHILDREN    =  ( TV_FIRST + 19 ),
 		TVM_ENSUREVISIBLE   =  ( TV_FIRST + 20 ),
 		TVM_SORTCHILDRENCB  =  ( TV_FIRST + 21 ),
+		TVM_SETITEMHEIGHT   =  ( TV_FIRST + 27 ),
+		TVM_GETITEMHEIGHT   =  ( TV_FIRST + 28 ),
 		TVM_SETBKCOLOR      =  ( TV_FIRST + 29 ),
 		TVM_SETTEXTCOLOR    =  ( TV_FIRST + 30 ),
 		TVM_GETITEMW	    =  ( TV_FIRST + 62 ),

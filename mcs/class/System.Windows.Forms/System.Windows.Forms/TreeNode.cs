@@ -126,7 +126,7 @@ namespace System.Windows.Forms {
 		public IntPtr Handle {
 			get {
 				 if ( !Created )
-					createNode ( );
+					createNode ( null );
 				 return handle; 
 			}
 		}
@@ -281,6 +281,10 @@ namespace System.Windows.Forms {
 						parent = parent.Parent;
 					return parent.Nodes.TreeView;
 				}
+				else {
+					if ( handle == TreeView.RootHandle )
+						return Nodes.TreeView;
+				}
 				return null;
 			}
 		}
@@ -365,16 +369,16 @@ namespace System.Windows.Forms {
 			this.handle = hItem;
 		}
 
-		internal void makeTree ( IntPtr parent )
+		internal void makeTree ( IntPtr parent, TreeView treeView )
 		{
 			if ( handle == IntPtr.Zero )
-				handle = insertNode ( parent );
+				handle = insertNode ( parent, treeView );
 
 			foreach ( TreeNode node in Nodes )
-				node.makeTree ( handle );
+				node.makeTree ( handle, treeView );
 		}
 
-		internal void createNode ( )
+		internal void createNode ( TreeView treeView )
 		{
 			IntPtr parentHandle = IntPtr.Zero;
 
@@ -384,17 +388,17 @@ namespace System.Windows.Forms {
 				parentHandle = TreeView.RootHandle;
 
 			if ( parentHandle != IntPtr.Zero ) {
-				handle = insertNode ( parentHandle );
+				handle = insertNode ( parentHandle, treeView );
 			}
 		}
 
-		internal IntPtr insertNode (  IntPtr parent )
+		internal IntPtr insertNode (  IntPtr parent, TreeView treeView )
 		{
-			TreeView tree = TreeView;
+			TreeView tree = ( treeView != null ) ? treeView : TreeView;
 			if ( tree == null )
 				return IntPtr.Zero;
 
-			TVINSERTSTRUCT insStruct = new TVINSERTSTRUCT ( );
+			TVINSERTSTRUCT insStruct = tree.insStruct;
 			insStruct.hParent = parent;
 
 			unchecked {

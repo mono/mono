@@ -490,7 +490,7 @@ namespace System.Windows.Forms{
 		static internal extern bool IsWindow(IntPtr hWnd);
 
 		[DllImport("user32.dll", CharSet=CharSet.Auto)]
-		static internal extern int LockWindowUpdate(IntPtr hWnd);
+		static internal extern bool LockWindowUpdate(IntPtr hWnd);
 
 		[DllImport("user32.dll", CharSet=CharSet.Auto)]
 		static internal extern bool ValidateRect(IntPtr hWnd, ref RECT rcInvalidated);
