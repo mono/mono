@@ -230,6 +230,22 @@ namespace MonoTests.System.Text {
 
         public void TestAppendFormat() {
         }
+
+	[Test]
+	public void MoreReplace ()
+	{
+		StringBuilder sb = new StringBuilder ();
+		sb.Append ("First");
+		sb.Append ("Second");
+		sb.Append ("Third");
+		sb.Replace ("Second", "Gone", 2, sb.Length-2);
+		AssertEquals ("#01", "FirstGoneThird", sb.ToString ());
+
+		sb.Length = 0;
+		sb.Append ("This, is, a, list");
+		sb.Replace (",", "comma-separated", 11, sb.Length-11);
+		AssertEquals ("#02", "This, is, acomma-separated list", sb.ToString ());
+	}
 }
 
 }

@@ -1,3 +1,9 @@
+
+2003-05-10  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* StringBuilderTest.cs: added replace tests from bug #41397 by
+	<tom@acquist.com>>.
+
 2003-03-05  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* ASCIIEncodingTest.cs: added a couple of asserts fot zero-length
