@@ -1,3 +1,7 @@
+2002-02-28  Duncan Mak  <duncan@ximian.com>
+
+	* MathTest.cs: Committed for Jon Guymon <gnarg@slackworks.com>.
+
 2002-02-28  Martin Baulig  <martin@gnome.org>
 
 	* String.cs (TestCompare): Added a few tests.
