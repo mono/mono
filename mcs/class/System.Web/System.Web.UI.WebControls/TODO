@@ -32,7 +32,7 @@ All Classes, Interfaces, Structures, Delegates and Enumerations
 * CheckBoxList
 * CommandEventArgs
 & CompareValidator
-CustomValidator
+* CustomValidator
 & DataGrid
 * DataGridColumn
 * DataGridColumnCollection
@@ -41,9 +41,9 @@ CustomValidator
 * DataGridItemCollection
 * DataGridItemEventArgs
 * DataGridPageChangedEventArgs
-DataGridPagerStyle
+& DataGridPagerStyle
 * DataGridShortCommandEventArgs
-DataKeyCollection
+* DataKeyCollection
 & DataList
 * DataListCommandEventArgs
 & DataListItem

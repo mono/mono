@@ -6,7 +6,7 @@
  * Maintainer: gvaish@iitk.ac.in
  * Contact: <my_scripts2001@yahoo.com>, <gvaish@iitk.ac.in>
  * Implementation: yes
- * Status:  20%
+ * Status:  80%
  * 
  * (C) Gaurav Vaish (2001)
  */
@@ -21,33 +21,32 @@ namespace System.Web.UI.WebControls
 {
 	public abstract class BaseValidator: Label, IValidator
 	{
-		//
-		private PropertyDescriptor pDesc;
-		private string ctValid = String.Empty;
-		private ValidatorDisplay vDisp = ValidatorDisplay.Static;
-		private bool enableClientScript; //TODO: check the default value := false;
-		private bool enabled = true;
-		private string errorMessage = String.Empty;
-		private Color foreColor = Color.Red;
-		private bool isValid = true;
+		private bool isValid;
+		private bool isPreRenderCalled;
+		private bool isPropertiesChecked;
 		private bool propertiesValid;
 		private bool renderUplevel;
-
-		public static PropertyDescriptor GetValidationProperty(object component)
+		
+		protected BaseValidator() : base()
 		{
-			//TODO: Have to workout this one!
-			return null;
+			isValid = true;
+			ForeColor = Color.Red;
 		}
 		
 		public string ControlToValidate
 		{
 			get
 			{
-				return ctValid;
+				object o = ViewState["ControlToValidate"];
+				if(o != null)
+				{
+					return (string)o;
+				}
+				return String.Empty;
 			}
 			set
 			{
-				ctValid = value;
+				ViewState["ControlToValidate"] = value;
 			}
 		}
 		
@@ -55,12 +54,20 @@ namespace System.Web.UI.WebControls
 		{
 			get
 			{
-				return vDisp;
+				object o = ViewState["Display"];
+				if(o != null)
+				{
+					return (ValidatorDisplay)o;
+				}
+				return ValidatorDisplay.Static;
 			}
 			set
 			{
-				//TODO: Throw new exception ArgumentException("....") if the value is not valid
-				vDisp = value;
+				if(!Enum.IsDefined(typeof(ValidatorDisplay), value))
+				{
+					throw new ArgumentException();
+				}
+				ViewState["ValidatorDisplay"] = value;
 			}
 		}
 		
@@ -68,11 +75,16 @@ namespace System.Web.UI.WebControls
 		{
 			get
 			{
-				return enableClientScript;
+				object o = ViewState["EnableClientScript"];
+				if(o != null)
+				{
+					return (bool)o;
+				}
+				return true;
 			}
 			set
 			{
-				enableClientScript = value;
+				ViewState["EnableClientScript"] = value;
 			}
 		}
 		
@@ -80,11 +92,11 @@ namespace System.Web.UI.WebControls
 		{
 			get
 			{
-				return enabled;
+				return Enabled;
 			}
 			set
 			{
-				enabled = value;
+				Enabled = value;
 			}
 		}
 		
@@ -92,11 +104,16 @@ namespace System.Web.UI.WebControls
 		{
 			get
 			{
-				return errorMessage;
+				object o = ViewState["ErrorMessage"];
+				if(o != null)
+				{
+					return (string)o;
+				}
+				return String.Empty;
 			}
 			set
 			{
-				errorMessage = value;
+				ViewState["ErrorMessage"] = value;
 			}
 		}
 		
@@ -104,11 +121,11 @@ namespace System.Web.UI.WebControls
 		{
 			get
 			{
-				return foreColor;
+				return ForeColor;
 			}
 			set
 			{
-				foreColor = value;
+				ForeColor = value;
 			}
 		}
 		
@@ -116,30 +133,63 @@ namespace System.Web.UI.WebControls
 		{
 			get
 			{
-				return isValid;
+				object o = ViewState["IsValid"];
+				if(o != null)
+				{
+					return (bool)o;
+				}
+				return true;
 			}
 			set
 			{
-				isValid = value;
+				ViewState["IsValid"] = value;
 			}
+		}
+		
+		public static PropertyDescriptor GetValidationProperty(object component)
+		{
+			ValidationPropertyAttribute attrib = (ValidationPropertyAttribute)((TypeDescriptor.GetAttributes(this))[typeof(ValidationPropertyAttribute]);
+			if(attrib != null && attrib.Name != null)
+			{
+				return TypeDescriptor.GetProperties(this, null);
+			}
+			return null;
 		}
 		
 		public void Validate()
 		{
-			// TODO: write the validation code
-			// TODO: update the value of isValid
-		}
-		
-		protected BaseValidator()
-		{
-			// Dummy Constructor
+			if(!Visible || (Visible && !Enabled))
+			{
+				IsValid = true;
+			}
+			Control ctrl = Parent;
+			while(ctrl != null)
+			{
+				if(!ctrl.Visible)
+				{
+					IsValid = true;
+					return;
+				}
+				ctrl = ctrl.Parent;
+			}
+			isPropertiesChecked = false;
+			if(!PropertiesValid)
+			{
+				IsValid = true;
+				return;
+			}
+			IsValid = EvaluateValid();
 		}
 		
 		protected bool PropertiesValid
 		{
 			get
 			{
-				// TODO: throw HttpException, but when? How do I know about all the controls?
+				if(!isPropertiesChecked)
+				{
+					propertiesValid = ControlPropertiesValid();
+					isPropertiesChecked = true;
+				}
 				return propertiesValid;
 			}
 		}
@@ -148,61 +198,191 @@ namespace System.Web.UI.WebControls
 		{
 			get
 			{
-				//TODO: To set the value of renderUplevel. Problem: when, how?
 				return renderUplevel;
+			}
+		}
+		
+		protected override void AddAttributesToRender(HtmlTextWriter writer)
+		{
+			bool enabled = Enabled;
+			if(!Enabled)
+			{
+				Enabled = true;
+			}
+			AddAttributesToRender(writer);
+			if(RenderUplevel)
+			{
+				if(ID = null)
+				{
+					writer.AddAttribute("id", ClientID);
+				}
+				if(ControlToValidate.Length > 0)
+				{
+					writer.AddAttribute("controltovalidate", GetControlRenderID(ControlToValidate));
+				}
+				if(ErrorMesage.Length > 0)
+				{
+					writer.AddAttribute("errormessage", ErrorMessage, true);
+				}
+				if(Display == ValidatorDisplay.Static)
+				{
+					writer.AddAttribute("display", Enum.ToString(typeof(ValidatorDisplay), Display));
+				}
+				if(!IsValid)
+				{
+					writer.AddAttribute("isvalid", "False");
+				}
+				if(!enabled)
+				{
+					writer.AddAttribute("enabled", "False");
+				}
+			}
+			if(!enabled)
+			{
+				Enabled = false;
 			}
 		}
 		
 		protected void CheckControlValidationProperty(string name, string propertyName)
 		{
-			//TODO: I think it needs to be overridden. I may be wrong!
-			//TODO: When to throw HttpException(...)
+			Control ctrl = NamingContainer.FindControl(name);
+			if(ctrl == null)
+			{
+				throw new HttpException(HttpRuntime.FormatResourceString("Validator_control_not_found",
+				                 name, propertyName, ID));
+			}
+			PropertyDescriptor pd = GetValidationProperty(ctrl);
+			if(pd == null)
+			{
+				throw new HttpException(HttpRuntime.FormatResourceString("Validator_bad_control_type",
+				                 name, propertyName, ID));
+			}
 		}
-
+		
 		protected virtual bool ControlPropertiesValid()
 		{
-			// Do I need to do anything? But what?
-			// What do I do with ControlToValidate?
-			return true;
+			if(ControlToValidate.Length == 0)
+			{
+				throw new HttpException(HttpRuntime.FormatResourceString("Validator_control_blank", ID));
+			}
+			CheckControlValidationProperty(ControlToValidate, "ControlToValidate");
 		}
 
+		[MonoTODO]
 		protected virtual bool DetermineRenderUplevel()
 		{
-			// From where?
-			return true;
+			Page page = Page;
+			if(page == null || page.Request == null)
+			{
+				return false;
+			}
+			if(EnableClientScript)
+			{
+				throw new NotImplementedException();
+				//TODO: I need to get the (Browser->Dom_version_major >= 4 &&
+				//                         Brower->Ecma_script_version >= 1.2)
+			}
+			return false;
 		}
-
-		protected abstract bool EvaluateIsValid();
-
-		[MonoTODO]
+		
 		protected string GetControlRenderID(string name)
 		{
-			// TODO: What value? What is it?
-			throw new NotImplementedException();
+			Control ctrl = FindControl(name);
+			if(ctrl != null)
+			{
+				return ctrl.ClientID;
+			}
+			return String.Empty;
 		}
-
-		[MonoTODO]
+		
 		protected string GetControlValidationValue(string name)
 		{
-			throw new NotImplementedException();
-			// TODO: What value? What is it?
+			Control ctrl = NamingContainer.FindControl(name);
+			if(ctrl != null)
+			{
+				PropertyDescriptor pd = GetValidationProperty(ctrl);
+				if(pd != null)
+				{
+					object item = pd.GetValue(ctrl);
+					if(item is ListItem)
+					{
+						return ((ListItem)item).Value;
+					}
+					return item.ToString();
+				}
+			}
+			return null;
+		}
+		
+		protected override void OnInit(EventArgs e)
+		{
+			OnInit(e);
+			Page.Validators.Add(this);
+		}
+		
+		protected override void OnPreRender(EventArgs e)
+		{
+			OnPreRender(e);
+			isPreRenderCalled   = true;
+			isPropertiesChecked = false;
+			renderUplevel       = DetermineRenderUplevel();
+			if(renderUplevel)
+			{
+				RegisterValidatorCommonScript();
+			}
+		}
+		
+		protected override void OnUnload(EventArgs e)
+		{
+			if(Page != null)
+			{
+				Page.Validators.Remove(this);
+			}
+			OnUnload(e);
 		}
 
-		[MonoTODO]
+		[MonoTODO("What_do_I_have_to_do")]
 		protected void RegisterValidatorCommonScript()
 		{
 			throw new NotImplementedException();
-			// TODO: Still wondering!
-			// Note: This method is primarily used by control developers
 		}
 
-		[MonoTODO]
-		protected void RegisterValidatorDeclaration()
+		[MonoTODO("I_have_to_know_javascript_for_this_I_know_it_but_for_ALL_browsers_NO")]
+		protected virtual void RegisterValidatorDeclaration()
 		{
-			// TODO: Still wondering!
-			// Note: This method is primarily used by control developers
-			// The documentation in M$ refers to: Page_Validators array
 			throw new NotImplementedException();
+			//TODO: Since I have to access document.<ClientID> and register
+			// as page validator. Now this is Browser dependent :((
+		}
+
+		[MonoTODO("Render_ing_always_left")]
+		protected override void Render(HtmlTextWriter writer)
+		{
+			bool valid;
+			if(isPreRenderCalled)
+			{
+				valid = (Enabled && IsValid);
+			} else
+			{
+				isPropertiesChecked = true;
+				propertiesValid     = true;
+				renderUplevel       = false;
+				valid               = true;
+			}
+			if(PropertiesValid)
+			{
+				if(Page != null)
+				{
+					Page.VerifyRenderingInServerForm(this);
+				}
+				ValidatorDisplay dis = Display;
+				if(RenderUplevel)
+				{
+					throw new NotImplementedException();
+				}
+				throw new NotImplementedException();
+			}
+			return;
 		}
 	}
 }

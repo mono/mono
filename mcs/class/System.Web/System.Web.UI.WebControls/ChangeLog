@@ -1,3 +1,15 @@
+2002-03-04      Gaurav Vaish <gvaish@iitk.ac.in>
+
+	* CustomValidator.cs          - Completed. In process realized that
+	             I have to complete / rejuvinate BaseValidator class.
+	* BaseValidator.cs            - Complete rejuvination. Completed 80%
+	            of the job. All that is left is Render(HtmlTextWriter),
+	            DetermineRenderUplevel(), RegisterValidatorCommonScript()
+	            RegisterValidatorDeclaration()
+	* DataGridPagerStyle.cs       - Completed. That adds one more missle
+	            in my artillery.
+	* DataKeyCollection.cs        - Completed. Petty small.
+
 2002-03-03      Gaurav Vaish <gvaish@iitk.ac.in>
 
 	* SelectedDatesCollection.cs  - Completed.
