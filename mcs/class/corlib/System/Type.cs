@@ -114,7 +114,7 @@ namespace System {
 		}
 
 		[MonoTODO]
-		public bool HasEmelentType {
+		public bool HasElementType {
 			get {return false;} // FIXME
 		}
 
@@ -136,7 +136,7 @@ namespace System {
 			}
 		}
 
-		public bool IsAuto {
+		public bool IsAutoClass {
 			get {
 				return (Attributes & TypeAttributes.StringFormatMask) == TypeAttributes.AutoClass;
 			}
@@ -432,7 +432,7 @@ namespace System {
 		}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		protected static extern bool type_is_subtype_of (Type a, Type b, bool check_interfaces);
+		internal static extern bool type_is_subtype_of (Type a, Type b, bool check_interfaces);
 		
 		public bool IsSubclassOf (Type c)
 		{
