@@ -2,17 +2,16 @@
 // Mono.Security.Protocol.Ntlm.Type2Message - Challenge
 //
 // Author:
-//	Sebastien Pouliot (spouliot@motus.com)
+//	Sebastien Pouliot <sebastien@ximian.com>
 //
 // Copyright (C) 2003 Motus Technologies Inc. (http://www.motus.com)
+// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
 //
 // References
 // a.	NTLM Authentication Scheme for HTTP, Ronald Tschalär
 //	http://www.innovation.ch/java/ntlm.html
 // b.	The NTLM Authentication Protocol, Copyright © 2003 Eric Glass
 //	http://davenport.sourceforge.net/ntlm.html
-//
-
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -71,8 +70,10 @@ namespace Mono.Security.Protocol.Ntlm {
 			set { 
 				if (value == null)
 					throw new ArgumentNullException ("Nonce");
-				if (value.Length != 8)
-					throw new ArgumentException ("Invalid Nonce Length");
+				if (value.Length != 8) {
+					string msg = Locale.GetText ("Invalid Nonce Length (should be 8 bytes).");
+					throw new ArgumentException (msg, "Nonce");
+				}
 				_nonce = (byte[]) value.Clone (); 
 			}
 		}
@@ -83,7 +84,7 @@ namespace Mono.Security.Protocol.Ntlm {
 		{
 			base.Decode (message);
 
-			Flags = (NtlmFlags) BitConverter.ToUInt32 (message, 20);
+			Flags = (NtlmFlags) BitConverterLE.ToUInt32 (message, 20);
 
 			Buffer.BlockCopy (message, 24, _nonce, 0, 8);
 		}

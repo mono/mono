@@ -1,3 +1,10 @@
+2004-11-05  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* MessageBase.cs: Fixed endian issue. Added globalization support.
+	* Type1Message.cs: Fixed endian issue. Added globalization support.
+	* Type2Message.cs: Fixed endian issue.
+	* Type3Message.cs: Fixed endian issue. Added globalization support.
+
 2004-04-22  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* ChallengeResponse.cs: FxCop-ized. 

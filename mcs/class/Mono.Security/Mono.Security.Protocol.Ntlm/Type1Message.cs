@@ -5,15 +5,13 @@
 //	Sebastien Pouliot <sebastien@ximian.com>
 //
 // (C) 2003 Motus Technologies Inc. (http://www.motus.com)
-// (C) 2004 Novell (http://www.novell.com)
+// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
 //
 // References
 // a.	NTLM Authentication Scheme for HTTP, Ronald Tschalär
 //	http://www.innovation.ch/java/ntlm.html
 // b.	The NTLM Authentication Protocol, Copyright © 2003 Eric Glass
 //	http://davenport.sourceforge.net/ntlm.html
-//
-
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -77,13 +75,13 @@ namespace Mono.Security.Protocol.Ntlm {
 		{
 			base.Decode (message);
 
-			Flags = (NtlmFlags) BitConverter.ToUInt32 (message, 12);
+			Flags = (NtlmFlags) BitConverterLE.ToUInt32 (message, 12);
 
-			int dom_len = BitConverter.ToUInt16 (message, 16);
-			int dom_off = BitConverter.ToUInt16 (message, 20);
+			int dom_len = BitConverterLE.ToUInt16 (message, 16);
+			int dom_off = BitConverterLE.ToUInt16 (message, 20);
 			_domain = Encoding.ASCII.GetString (message, dom_off, dom_len);
 
-			int host_len = BitConverter.ToUInt16 (message, 24);
+			int host_len = BitConverterLE.ToUInt16 (message, 24);
 			_host = Encoding.ASCII.GetString (message, 32, host_len);
 		}
 
