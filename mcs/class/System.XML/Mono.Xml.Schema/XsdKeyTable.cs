@@ -87,8 +87,8 @@ namespace Mono.Xml.Schema
 				iter--;
 
 				XsdIdentityStep step;
-				for (int x = 0; x <= iter; x++, iter--) {
-					step = path.OrderedSteps [iter - x];
+				for (int x = 0; 0 <= iter; x++, iter--) {
+					step = path.OrderedSteps [iter];
 					if (step.IsAnyName)
 						continue;
 					XmlQualifiedName qname = (XmlQualifiedName) qnameStack [qnameStack.Count - x - 1];

@@ -827,6 +827,8 @@ namespace Mono.Xml.Schema
 					}
 				}
 			}
+			else
+				context.LocalTypeDefinition = null;
 
 			// Create Validation Root, if not exist.
 			// [Schema Validity Assessment (Element) 1.1]
@@ -901,6 +903,8 @@ namespace Mono.Xml.Schema
 				context.LocalTypeDefinition = GetLocalTypeDefinition (xsiType);
 				AssessLocalTypeDerivationOK (context.LocalTypeDefinition, element.ElementType, element.BlockResolved);
 			}
+			else
+				context.LocalTypeDefinition = null;
 
 			// 5 Not all things cannot be assessed here.
 			// It is common to 5.1 and 5.2
@@ -1147,6 +1151,11 @@ namespace Mono.Xml.Schema
 			if (childParticleState == null)
 				childParticleState = context.ParticleState;
 			ValidateEndElementParticle ();	// validate against childrens' state.
+
+			if (shouldValidateCharacters) {
+				ValidateEndCharacters ();
+				shouldValidateCharacters = false;
+			}
 
 			context.Load (reader.Depth);
 
@@ -1612,7 +1621,6 @@ namespace Mono.Xml.Schema
 				if (schemas.Count == 0)
 					break;
 
-//				context.Load (reader.Depth);
 				if (skipValidationDepth < 0 || reader.Depth <= skipValidationDepth) {
 					if (shouldValidateCharacters) {
 						ValidateEndCharacters ();
@@ -1633,14 +1641,10 @@ namespace Mono.Xml.Schema
 				if (reader.Depth == skipValidationDepth) {
 					skipValidationDepth = -1;
 					context.Clear ();
-				} else {
-//					context.Load (reader.Depth);
-					if (shouldValidateCharacters) {
-						ValidateEndCharacters ();
-						shouldValidateCharacters = false;
-					}
-					AssessEndElementSchemaValidity ();
 				}
+				else
+					AssessEndElementSchemaValidity ();
+
 				storedCharacters.Length = 0;
 				childParticleState = null;
 				popContext = true;

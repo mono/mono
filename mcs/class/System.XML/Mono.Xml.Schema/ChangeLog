@@ -1,3 +1,11 @@
+2004-01-21  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XsdKeyTable.cs : Matching evaluation is incorrect when path is more
+	  than depth 2.
+	* XsdValidatingReader.cs : Should clear LocalTypeDefinition when no
+	  xsi:type was specified.  
+	  Moved character validation inside AssessEndElementSchemaValidity().
+
 2004-01-20  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XsdParticleValidationState.cs : Use ValidatedMaxOccurs instead of
