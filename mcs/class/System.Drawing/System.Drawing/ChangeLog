@@ -1,3 +1,8 @@
+2004-07-28 Sanjay Gupta <gsanjay@novell.com>
+
+	* gdipStructs.cs: Implementing PropertyItem property in Image.cs.
+	* Image.cs: Implemented PropertyItems and PropertyIdList properties.
+
 2004-07-21  Ravindra <rkumar@novell.com>
 
 	* gdipFunctions.cs: Corrected signatures of GdipPathIterCopyData and

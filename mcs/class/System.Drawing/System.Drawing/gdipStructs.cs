@@ -143,5 +143,22 @@ namespace System.Drawing
 		internal EncoderParameterValueType type;
 		internal IntPtr value;
 	}
+
+	[StructLayout(LayoutKind.Sequential)]
+	internal struct GdipPropertyItem
+	{
+		internal int id;
+		internal int len;
+		internal short type;
+		internal IntPtr value;
+
+		internal static void MarshalTo (GdipPropertyItem gdipProp, PropertyItem prop)
+		{	
+			prop.Id = gdipProp.id;
+			prop.Len = gdipProp.len;
+			prop.Type = gdipProp.type;
+			Marshal.Copy (gdipProp.value, prop.Value, 0, gdipProp.len);
+		}
+	}
 }
 

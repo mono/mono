@@ -383,7 +383,6 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
 		}
 		GDIPlus.CheckStatus (st);
 	}
-
 	
 	public void SaveAdd (EncoderParameters encoderParams)
 	{
@@ -393,8 +392,7 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
 		st = GDIPlus.GdipSaveAdd (nativeObject, nativeEncoderParams);
 		Marshal.FreeHGlobal (nativeEncoderParams);
 	}
-	
-	
+		
 	public void SaveAdd (Image image, EncoderParameters encoderParams)
 	{
 		Status st;
@@ -403,8 +401,7 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
 		st = GDIPlus.GdipSaveAddImage (nativeObject, image.NativeObject, nativeEncoderParams);
 		Marshal.FreeHGlobal (nativeEncoderParams);
 	}
-	
-	
+		
 	public int SelectActiveFrame(FrameDimension dimension, int frameIndex)
 	{
 		Guid guid = dimension.Guid;		
@@ -439,7 +436,7 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
 			uint found;
 			Status status = GDIPlus.GdipImageGetFrameDimensionsCount (nativeObject, out found);
 			GDIPlus.CheckStatus (status);
-			Guid [] guid = new Guid [found ];
+			Guid [] guid = new Guid [found];
 			status = GDIPlus.GdipImageGetFrameDimensionsList (nativeObject, guid, found);
 			GDIPlus.CheckStatus (status);  
 			return guid;
@@ -480,8 +477,7 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
 			colorPalette = value;					
 		}
 	}
-	
-	
+		
 	public SizeF PhysicalDimension {
 		get {
 			float width,  height;
@@ -502,20 +498,48 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
 		}		
 	}
 	
-	
-	[MonoTODO]
 	[Browsable (false)]
 	public int[] PropertyIdList {
 		get {
-			throw new NotImplementedException ();
+			PropertyItem [] propItems = this.PropertyItems ;
+			int length = propItems.Length;
+			int [] ids = new int [length];
+			for (int i = 0; i < length; i++)
+				ids [i] = propItems [i].Id;
+
+			return ids;
 		}
 	}
 	
-	[MonoTODO]
 	[Browsable (false)]
 	public PropertyItem[] PropertyItems {
 		get {
-			throw new NotImplementedException ();
+			int prop_ptr, prop_size;
+			uint bufferSize, numProperties;
+                        
+			Status st = GDIPlus.GdipGetPropertySize (nativeObject, 
+							out bufferSize, out numProperties);
+			GDIPlus.CheckStatus (st);
+
+			IntPtr dest = Marshal.AllocHGlobal ( (int)bufferSize);           
+
+			st = GDIPlus.GdipGetAllPropertyItems (nativeObject, bufferSize, 
+								numProperties, out dest);
+			GDIPlus.CheckStatus (st);
+
+			GdipPropertyItem gdipProp = new GdipPropertyItem();
+			PropertyItem [] propItems = new PropertyItem [numProperties] ;
+			prop_size = Marshal.SizeOf (gdipProp);			
+			prop_ptr = dest.ToInt32();
+			
+			for (int i = 0; i < numProperties; i++, prop_ptr += prop_size) {
+				gdipProp = (GdipPropertyItem) Marshal.PtrToStructure 
+						((IntPtr)prop_ptr, typeof (GdipPropertyItem));						
+				GdipPropertyItem.MarshalTo (gdipProp, propItems [i]);				
+			}
+			
+			Marshal.FreeHGlobal (dest);
+			return propItems;
 		}
 	}
 
@@ -594,7 +618,6 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
 			nativeObject=IntPtr.Zero;
 		}
 	}
-	
 	
 	public virtual object Clone()
 	{				
