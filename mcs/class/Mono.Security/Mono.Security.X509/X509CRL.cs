@@ -9,6 +9,7 @@
 
 using System;
 using System.Collections;
+using System.Globalization;
 using System.IO;
 using System.Security.Cryptography;
 
@@ -38,41 +39,46 @@ namespace Mono.Security.X509 {
 	 *	crlExtensions           [0] Extensions OPTIONAL }
 	 *		-- if present, MUST be v2
 	 */
-	public class X509CRL {
+#if INSIDE_CORLIB
+	internal
+#else
+	public 
+#endif
+	class X509Crl {
 
-		public class X509CRLEntry {
+		public class X509CrlEntry {
 
 			private byte[] sn;
 			private DateTime revocationDate;
-			private X509Extensions extensions;
+			private X509ExtensionCollection extensions;
 
-			internal X509CRLEntry (byte[] serialNumber, DateTime revocationDate, X509Extensions extensions) 
+			internal X509CrlEntry (byte[] serialNumber, DateTime revocationDate, X509ExtensionCollection extensions) 
 			{
 				sn = serialNumber;
 				this.revocationDate = revocationDate;
 				if (extensions == null)
-					this.extensions = new X509Extensions ();
+					this.extensions = new X509ExtensionCollection ();
 				else
 					this.extensions = extensions;
 			}
 
-			internal X509CRLEntry (ASN1 entry) 
+			internal X509CrlEntry (ASN1 entry) 
 			{
 				sn = entry [0].Value;
 				Array.Reverse (sn);
 				revocationDate = ASN1Convert.ToDateTime (entry [1]);
-				extensions = new X509Extensions (entry [2]);
+				extensions = new X509ExtensionCollection (entry [2]);
 			}
 
 			public byte[] SerialNumber {
-				get { return sn; }
+				get { return (byte[]) sn.Clone (); }
 			}
 
 			public DateTime RevocationDate {
 				get { return revocationDate; }
 			}
 
-			public X509Extensions Extensions {
+			public X509ExtensionCollection Extensions {
 				get { return extensions; }
 			}
 
@@ -94,10 +100,10 @@ namespace Mono.Security.X509 {
 		private ArrayList entries;
 		private string signatureOID;
 		private byte[] signature;
-		private X509Extensions extensions;
+		private X509ExtensionCollection extensions;
 		private byte[] encoded;
 
-		public X509CRL (byte[] crl) 
+		public X509Crl (byte[] crl) 
 		{
 			if (crl == null)
 				throw new ArgumentNullException ("crl");
@@ -127,7 +133,7 @@ namespace Mono.Security.X509 {
 				else
 					version = 1; // DEFAULT
 				// CertificateList / TBSCertList / AlgorithmIdentifier,
-				signatureOID = ASN1Convert.ToOID (toBeSigned [n++][0]);
+				signatureOID = ASN1Convert.ToOid (toBeSigned [n++][0]);
 				// CertificateList / TBSCertList / Name,
 				issuer = X501.ToString (toBeSigned [n++]);
 				// CertificateList / TBSCertList / Time,
@@ -142,16 +148,16 @@ namespace Mono.Security.X509 {
 				entries = new ArrayList ();
 				ASN1 revokedCertificates = next;
 				for (int i=0; i < revokedCertificates.Count; i++) {
-					entries.Add (new X509CRLEntry (revokedCertificates [i]));
+					entries.Add (new X509CrlEntry (revokedCertificates [i]));
 				}
 				// CertificateList / TBSCertList / crlExtensions [0] Extensions OPTIONAL }
 				ASN1 extns = toBeSigned [n];
 				if ((extns != null) && (extns.Tag == 0xA0) && (extns.Count == 1))
-					extensions = new X509Extensions (extns [0]);
+					extensions = new X509ExtensionCollection (extns [0]);
 				else
-					extensions = new X509Extensions (null); // result in a read only object
+					extensions = new X509ExtensionCollection (null); // result in a read only object
 				// CertificateList / AlgorithmIdentifier
-				string signatureAlgorithm = ASN1Convert.ToOID (encodedCRL [1][0]);
+				string signatureAlgorithm = ASN1Convert.ToOid (encodedCRL [1][0]);
 				if (signatureOID != signatureAlgorithm)
 					throw new CryptographicException (e + " [Non-matching signature algorithms in CRL]");
 
@@ -159,7 +165,7 @@ namespace Mono.Security.X509 {
 				byte[] bitstring = encodedCRL [2].Value;
 				// first byte contains unused bits in first byte
 				signature = new byte [bitstring.Length - 1];
-				Array.Copy (bitstring, 1, signature, 0, signature.Length);
+				Buffer.BlockCopy (bitstring, 1, signature, 0, signature.Length);
 			}
 			catch {
 				throw new CryptographicException (e);
@@ -170,15 +176,15 @@ namespace Mono.Security.X509 {
 			get { return ArrayList.ReadOnly (entries); }
 		}
 
-		public X509CRLEntry this [int index] {
-			get { return (X509CRLEntry) entries [index]; }
+		public X509CrlEntry this [int index] {
+			get { return (X509CrlEntry) entries [index]; }
 		}
 
-		public X509CRLEntry this [byte[] serialNumber] {
-			get { return GetCRLEntry (serialNumber); }
+		public X509CrlEntry this [byte[] serialNumber] {
+			get { return GetCrlEntry (serialNumber); }
 		}
 
-		public X509Extensions Extensions {
+		public X509ExtensionCollection Extensions {
 			get { return extensions; }
 		}
 
@@ -199,7 +205,11 @@ namespace Mono.Security.X509 {
 		}
 
 		public byte[] Signature {
-			get { return signature; }
+			get { 
+				if (signature == null)
+					return null;
+				return (byte[]) signature.Clone ();
+			}
 		}
 
 		public byte Version {
@@ -210,17 +220,17 @@ namespace Mono.Security.X509 {
 			get { return WasCurrent (DateTime.UtcNow); }
 		}
 
-		public bool WasCurrent (DateTime date) 
+		public bool WasCurrent (DateTime instant) 
 		{
 			if (nextUpdate == DateTime.MinValue)
-				return (date >= thisUpdate);
+				return (instant >= thisUpdate);
 			else
-				return ((date >= thisUpdate) && (date <= nextUpdate));
+				return ((instant >= thisUpdate) && (instant <= nextUpdate));
 		}
 
 		public byte[] GetBytes () 
 		{
-			return encoded;
+			return (byte[]) encoded.Clone ();
 		}
 
 		private bool Compare (byte[] array1, byte[] array2) 
@@ -238,20 +248,21 @@ namespace Mono.Security.X509 {
 			return true;
 		}
 
-		public X509CRLEntry GetCRLEntry (X509Certificate x509) 
+		public X509CrlEntry GetCrlEntry (X509Certificate x509) 
 		{
 			if (x509 == null)
 				throw new ArgumentNullException ("x509");
-			return GetCRLEntry (x509.SerialNumber);
+
+			return GetCrlEntry (x509.SerialNumber);
 		}
 
-		public X509CRLEntry GetCRLEntry (byte[] serialNumber) 
+		public X509CrlEntry GetCrlEntry (byte[] serialNumber) 
 		{
 			if (serialNumber == null)
 				throw new ArgumentNullException ("serialNumber");
 
 			for (int i=0; i < entries.Count; i++) {
-				X509CRLEntry entry = (X509CRLEntry) entries [i];
+				X509CrlEntry entry = (X509CrlEntry) entries [i];
 				if (Compare (serialNumber, entry.SerialNumber))
 					return entry;
 			}
@@ -260,13 +271,16 @@ namespace Mono.Security.X509 {
 
 		public bool VerifySignature (X509Certificate x509) 
 		{
+			if (x509 == null)
+				throw new ArgumentNullException ("x509");
+
 			// 1. x509 certificate must be a CA certificate (unknown for v1 or v2 certs)
 			if (x509.Version >= 3) {
 				// 1.1. Check for "cRLSign" bit in KeyUsage extension
 				X509Extension ext = x509.Extensions ["2.5.29.15"];
 				if (ext != null) {
 					KeyUsageExtension keyUsage = new KeyUsageExtension (ext);
-					if (!keyUsage.Support (KeyUsage.cRLSign))
+					if (!keyUsage.Support (KeyUsages.cRLSign))
 						return false;
 				}
 				// 1.2. Check for ca = true in BasicConstraint
@@ -297,7 +311,7 @@ namespace Mono.Security.X509 {
 			return ha.ComputeHash (toBeSigned);
 		}
 
-		public bool VerifySignature (DSA dsa) 
+		internal bool VerifySignature (DSA dsa) 
 		{
 			if (signatureOID != "1.2.840.10040.4.3")
 				throw new CryptographicException ("Unsupported hash algorithm: " + signatureOID);
@@ -312,12 +326,12 @@ namespace Mono.Security.X509 {
 			byte[] part1 = sign [0].Value;
 			byte[] part2 = sign [1].Value;
 			byte[] sig = new byte [40];
-			Array.Copy (part1, 0, sig, (20 - part1.Length), part1.Length);
-			Array.Copy (part2, 0, sig, (40 - part2.Length), part2.Length);
+			Buffer.BlockCopy (part1, 0, sig, (20 - part1.Length), part1.Length);
+			Buffer.BlockCopy (part2, 0, sig, (40 - part2.Length), part2.Length);
 			return v.VerifySignature (GetHash (hashName), sig);
 		}
 
-		public bool VerifySignature (RSA rsa) 
+		internal bool VerifySignature (RSA rsa) 
 		{
 			RSAPKCS1SignatureDeformatter v = new RSAPKCS1SignatureDeformatter (rsa);
 			string hashName = null;
@@ -344,6 +358,9 @@ namespace Mono.Security.X509 {
 
 		public bool VerifySignature (AsymmetricAlgorithm aa) 
 		{
+			if (aa == null)
+				throw new ArgumentNullException ("aa");
+
 			// only validate the signature (in case we don't have the CA certificate)
 			if (aa is RSA)
 				return VerifySignature (aa as RSA);
@@ -353,13 +370,15 @@ namespace Mono.Security.X509 {
 				throw new NotSupportedException ("Unknown Asymmetric Algorithm " + aa.ToString ());
 		}
 
-		static public X509CRL CreateFromFile (string filename) 
+		static public X509Crl CreateFromFile (string filename) 
 		{
-			FileStream fs = File.Open (filename, FileMode.Open, FileAccess.Read, FileShare.Read);
-			byte[] crl = new byte [fs.Length];
-			fs.Read (crl, 0, crl.Length);
-			fs.Close ();
-			return new X509CRL (crl);
+			byte[] crl = null;
+			using (FileStream fs = File.Open (filename, FileMode.Open, FileAccess.Read, FileShare.Read)) {
+				crl = new byte [fs.Length];
+				fs.Read (crl, 0, crl.Length);
+				fs.Close ();
+			}
+			return new X509Crl (crl);
 		}
 	}
 }

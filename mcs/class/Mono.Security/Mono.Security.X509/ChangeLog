@@ -21,6 +21,7 @@
 	* X509StoreManager.cs: FxCop-ized. Sealed class.
 	* X509Stores.cs: Added INSIDE_CORLIB as the class is shared with 
 	corlib assembly.
+	* X520Attributes.cs: FxCop-ized. Added INSIDE_CORLIB.
 
 2004-04-02  Lluis Sanchez Gual  <lluis@ximian.com>
 
