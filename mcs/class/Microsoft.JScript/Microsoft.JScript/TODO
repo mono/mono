@@ -139,6 +139,10 @@ Relational.cs:			EvaluateRelational
 Convertion:
 Convert.cs, the not implemented methods.
 
+Engine:
+Microsoft.JScript/Microsoft.JScript.Vsa/VsaEngine.cs
+Microsoft.JScript/Microsoft.Vsa/BaseVsaEngine.cs
+
 Thanks!
 
 If you need more info, mail me to: cesar@ciencias.unam.mx 
