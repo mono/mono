@@ -208,7 +208,7 @@ namespace System.Threading {
 			if (ms < -1)
 				throw new ArgumentOutOfRangeException ("millisecondsTimeOutInterval", "timeout < -1");
 
-			return new TimeSpan (ms);
+			return new TimeSpan (0, 0, 0, 0, (int) ms);
 		}
 
 		public static RegisteredWaitHandle RegisterWaitForSingleObject (WaitHandle waitObject,

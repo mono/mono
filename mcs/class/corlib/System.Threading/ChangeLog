@@ -1,3 +1,9 @@
+2003-06-21  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* ThreadPool.cs: correctly create a TimeSpan with provided the number of
+	milliseconds.
+
+	* WaitHandle.cs: fixes for WaitAny/All and TimeSpan.
 
 2003-06-06  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
