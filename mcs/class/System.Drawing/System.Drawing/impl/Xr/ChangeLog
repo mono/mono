@@ -1,3 +1,7 @@
+2003-06-26  Alexandre Pigolkine <pigolkine@gmx.de>
+	* Bitmap.cs		remember format
+	* Graphics.cs	DrawLine functions
+
 2003-06-22  Alexandre Pigolkine <pigolkine@gmx.de>
 	* Font.cs
 	* Graphics.cs

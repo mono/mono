@@ -491,32 +491,36 @@ namespace System.Drawing
 				throw new NotImplementedException ();
 			}
 
+			void DrawLine( Pen xrPen, float x1, float y1, float x2, float y2) 
+			{
+				xrPen.SetXrValues(nativeObject_);
+				Xr.XrMoveTo (nativeObject_, (double)x1, (double)y1);
+				Xr.XrLineTo (nativeObject_, (double)x2, (double)y2);
+				Xr.XrStroke (nativeObject_);
+			}
+			
 			[MonoTODO]
 			void IGraphics.DrawLine (System.Drawing.Pen pen, PointF pt1, PointF pt2)
 			{
-				throw new NotImplementedException ();
+				DrawLine( ConvertPen(pen), pt1.X, pt1.Y, pt2.X, pt2.Y);
 			}
 
 			[MonoTODO]
 			void IGraphics.DrawLine (System.Drawing.Pen pen, Point pt1, Point pt2)
 			{
-				throw new NotImplementedException ();
+				DrawLine( ConvertPen(pen), (float)pt1.X, (float)pt1.Y, (float)pt2.X, (float)pt2.Y);
 			}
 
 			[MonoTODO]
 			void IGraphics.DrawLine (System.Drawing.Pen pen, int x1, int y1, int x2, int y2)
 			{
-				throw new NotImplementedException ();
+				DrawLine( ConvertPen(pen), (float)x1, (float)y1, (float)x2, (float)y2);
 			}
 
 			[MonoTODO]
 			void IGraphics.DrawLine (System.Drawing.Pen pen, float x1, float y1, float x2, float y2)
 			{
-				Pen XrPen = ConvertPen(pen);
-				XrPen.SetXrValues(nativeObject_);
-				Xr.XrMoveTo (nativeObject_, (double)x1, (double)y1);
-				Xr.XrLineTo (nativeObject_, (double)x2, (double)y2);
-				Xr.XrStroke (nativeObject_);
+				DrawLine( ConvertPen(pen), x1, y1, x2, y2);
 			}
 
 			[MonoTODO]

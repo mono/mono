@@ -105,6 +105,8 @@ namespace System.Drawing {
 					createdFrom_ = info;
 					size = info.Size;
 					imageFormat_ = info.RawFormat;
+					format =  info.Format;
+
 				}
 			}
 			
