@@ -88,8 +88,8 @@ namespace MonoTests.System.Drawing.Drawing2D
 			gr = Graphics.FromImage (bmp);
 			font = new Font (new FontFamily ("Arial"), fontSize);
 
-                        // make the background white
-                        gr.Clear (Color.White);
+			// make the background white
+			gr.Clear (Color.White);
 
 			// draw figures using hatch brush constructed
 			// using different constructors
