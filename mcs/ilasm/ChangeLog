@@ -1,5 +1,9 @@
 2003-05-19 Jackson Harper <jackson@latitudegeo.com>
 
+	* Driver.cs: Exit with 1 return code when no arguments are supplied.
+		
+2003-05-19 Jackson Harper <jackson@latitudegeo.com>
+
 	* Driver.cs: Add command switch to delete output files created if
 	there is an error. 
 		

@@ -58,10 +58,8 @@ namespace Mono.ILASM {
                         public void Run ()
                         {
                                 try {
-                                        if (il_file_list.Count == 0) {
+                                        if (il_file_list.Count == 0)
                                                 Usage ();
-                                                return;
-                                        }
                                         if (output_file == null)
                                                 output_file = CreateOutputFile ();
                                         codegen = new CodeGen (output_file, target == Target.Dll, true);
@@ -229,6 +227,7 @@ namespace Mono.ILASM {
                                         "   /exe               Compile to executable.\n" +
                                         "   /dll               Compile to library.\n" +
                                         "Options can be of the form -option or /option\n");
+                                Environment.Exit (1);
                         }
 
                         private void About ()
