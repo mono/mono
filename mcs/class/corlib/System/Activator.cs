@@ -161,7 +161,8 @@ namespace System
 				throw new ArgumentNullException ("type");
 
 			if (type.IsAbstract)
-				throw new MemberAccessException (Locale.GetText ("Cannot create an abstract class."));
+				throw new MemberAccessException (Locale.GetText ("Cannot create an abstract class. Class name: ") +
+								type.FullName);
 
 			int length = 0;
 			if (args != null)
@@ -177,7 +178,8 @@ namespace System
 				if (type.IsValueType && atypes.Length == 0)
 					return CreateInstanceInternal (type);
 
-				throw new MissingMethodException (Locale.GetText ("Constructor not found."));
+				throw new MissingMethodException (Locale.GetText ("Constructor not found. Class") +
+								type.FullName);
 			}
 
 			if (activationAttributes != null && activationAttributes.Length > 0 && type.IsMarshalByRef) {
@@ -202,7 +204,8 @@ namespace System
 				throw new ArgumentNullException ("type");
 		
 			if (type.IsAbstract)
-				throw new MemberAccessException (Locale.GetText ("Cannot create an abstract class."));
+				throw new MemberAccessException (Locale.GetText ("Cannot create an abstract class. Class name: ") +
+								type.FullName);
 				
 			// It seems to apply the same rules documented for InvokeMember: "If the type of lookup
 			// is omitted, BindingFlags.Public | BindingFlags.Instance will apply".
@@ -225,7 +228,8 @@ namespace System
 					return CreateInstanceInternal (type);
 				}
 
-				throw new MissingMethodException (Locale.GetText ("Constructor not found."));
+				throw new MissingMethodException (Locale.GetText ("Constructor not found. Class: ") +
+								type.FullName);
 			}
 
 			if (activationAttributes != null && activationAttributes.Length > 0 && type.IsMarshalByRef) {
@@ -243,7 +247,8 @@ namespace System
 				throw new ArgumentNullException ("type");
 		
 			if (type.IsAbstract)
-				throw new MemberAccessException (Locale.GetText ("Cannot create an abstract class."));
+				throw new MemberAccessException (Locale.GetText ("Cannot create an abstract class. Class name: ") +
+								type.FullName);
 
 			BindingFlags flags = BindingFlags.Public | BindingFlags.Instance;
 			if (nonPublic)
@@ -255,7 +260,8 @@ namespace System
 				if (type.IsValueType)
 					return CreateInstanceInternal (type);
 
-				throw new MissingMethodException (Locale.GetText ("Default constructor not found."));
+				throw new MissingMethodException (Locale.GetText ("Default constructor not found."),
+								".ctor() of " + type.FullName);
 			}
 
 			return ctor.Invoke (null);
