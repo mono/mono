@@ -1,3 +1,8 @@
+2004-05-30  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* DataTable.cs : serialization .ctor() should use XmlReadMode.DiffGram
+	  for ReadXml(). Thanks to Boris.
+
 2004-05-27  Boris Kirzner  <borisk@mainsoft.com>
 	* DataRow.cs : 
 		- CheckReadOnlyStatus : use typed (and faster comparing).

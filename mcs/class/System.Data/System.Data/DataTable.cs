@@ -141,7 +141,7 @@ namespace System.Data {
 			ds.Tables [0].CopyProperties (this);
 			ds = new DataSet ();
 			ds.Tables.Add (this);
-			ds.ReadXml (new StringReader (data), XmlReadMode.IgnoreSchema);
+			ds.ReadXml (new StringReader (data), XmlReadMode.DiffGram);
 			ds.Tables.Remove (this);
 /* keeping for a while. With the change above, we shouldn't have to consider 
  * DataTable mode in schema inference/read.
