@@ -237,11 +237,15 @@ namespace System {
 
 		public static bool ToBoolean (string value) 
 		{
+			if (value == null)
+				return false; // LAMESPEC: Spec says throw ArgumentNullException
 			return Boolean.Parse (value);
 		}
 
 		public static bool ToBoolean (string value, IFormatProvider provider)
 		{
+			if (value == null)
+				return false; // LAMESPEC: Spec says throw ArgumentNullException
 			return Boolean.Parse (value); // provider is ignored.
 		}
 
@@ -260,11 +264,15 @@ namespace System {
 		[CLSCompliant (false)]
 		public static bool ToBoolean (ushort value) 
 		{ 
+			//if (value == null)
+			//	return false;
 			return (value != 0); 
 		}
 
 		public static bool ToBoolean (object value)
 		{
+			if (value == null)
+				return false;
 			return ToBoolean (value, null);
 		}
 
@@ -383,11 +391,15 @@ namespace System {
 
 		public static byte ToByte (string value) 
 		{
+			if (value == null)
+				return 0; // LAMESPEC: Spec says throw ArgumentNullException
 			return Byte.Parse (value);
 		}
 
 		public static byte ToByte (string value, IFormatProvider provider) 
 		{
+			if (value == null)
+				return 0; // LAMESPEC: Spec says throw ArgumentNullException
 			return Byte.Parse (value, provider);
 		}
 
@@ -434,6 +446,8 @@ namespace System {
 
 		public static byte ToByte (object value)
 		{
+			if (value == null)
+				return 0;
 			return ToByte (value, null);
 		}
 
@@ -560,13 +574,15 @@ namespace System {
 
 		public static char ToChar (object value)
 		{
+			if (value == null)
+				return '\0';
 			return ToChar (value, null);
 		}
 
 		public static char ToChar (object value, IFormatProvider provider)
 		{
 			if (value == null)
-				return (char) 0;
+				return '\0';
 			return ((IConvertible) value).ToChar (provider);
 		}
 
@@ -574,11 +590,15 @@ namespace System {
 	
 		public static DateTime ToDateTime (string value) 
 		{ 
+			if (value == null)
+				return DateTime.MinValue; // LAMESPEC: Spec says throw ArgumentNullException
 			return DateTime.Parse (value);
 		}
 	
 		public static DateTime ToDateTime (string value, IFormatProvider provider) 
 		{
+			if (value == null)
+				return DateTime.MinValue; // LAMESPEC: Spec says throw ArgumentNullException
 			return DateTime.Parse (value, provider);
 		}
 
@@ -634,6 +654,8 @@ namespace System {
 
 		public static DateTime ToDateTime (object value)
 		{
+			if (value == null)
+				return DateTime.MinValue;
 			return ToDateTime (value, null);
 		}
 
@@ -731,11 +753,15 @@ namespace System {
 
 		public static decimal ToDecimal (string value) 
 		{
+			if (value == null)
+				return new Decimal (0); // LAMESPEC: Spec says throw ArgumentNullException
 			return Decimal.Parse (value);
 		}
 
 		public static decimal ToDecimal (string value, IFormatProvider provider) 
 		{
+			if (value == null)
+				return new Decimal (0); // LAMESPEC: Spec says throw ArgumentNullException
 			return Decimal.Parse (value, provider);
 		}
 
@@ -759,6 +785,8 @@ namespace System {
 
 		public static decimal ToDecimal (object value)
 		{
+			if (value == null)
+				return new Decimal (0);
 			return ToDecimal (value, null);
 		}
 
@@ -830,11 +858,15 @@ namespace System {
 
 		public static double ToDouble (string value) 
 		{
+			if (value == null)
+				return 0.0; // LAMESPEC: Spec says throw ArgumentNullException
 			return Double.Parse (value);
 		}
 
 		public static double ToDouble (string value, IFormatProvider provider) 
 		{
+			if (value == null)
+				return 0.0; // LAMESPEC: Spec says throw ArgumentNullException
 			return Double.Parse (value, provider);
 		}
 
@@ -858,6 +890,8 @@ namespace System {
 
 		public static double ToDouble (object value)
 		{
+			if (value == null)
+				return 0.0;
 			return ToDouble (value, null);
 		}
 
@@ -955,11 +989,15 @@ namespace System {
 
 		public static short ToInt16 (string value) 
 		{
+			if (value == null)
+				return 0; // LAMESPEC: Spec says throw ArgumentNullException
 			return Int16.Parse (value);
 		}
 
 		public static short ToInt16 (string value, IFormatProvider provider) 
 		{
+			if (value == null)
+				return 0; // LAMESPEC: Spec says throw ArgumentNullException
 			return Int16.Parse (value, provider);
 		}
 
@@ -1000,6 +1038,8 @@ namespace System {
 
 		public static short ToInt16 (object value)
 		{
+			if (value == null)
+				return 0;
 			return ToInt16 (value, null);
 		}
 
@@ -1090,11 +1130,15 @@ namespace System {
 
 		public static int ToInt32 (string value) 
 		{
+			if (value == null)
+				return 0; // LAMESPEC: Spec says throw ArgumentNullException
 			return Int32.Parse (value);
 		}
 
 		public static int ToInt32 (string value, IFormatProvider provider) 
 		{
+			if (value == null)
+				return 0; // LAMESPEC: Spec says throw ArgumentNullException
 			return Int32.Parse (value, provider);
 		}
 
@@ -1132,6 +1176,8 @@ namespace System {
 
 		public static int ToInt32 (object value)
 		{
+			if (value == null)
+				return 0;
 			return ToInt32 (value, null);
 		}
 
@@ -1218,11 +1264,15 @@ namespace System {
 
 		public static long ToInt64 (string value) 
 		{
+			if (value == null)
+				return 0; // LAMESPEC: Spec says throw ArgumentNullException
 			return Int64.Parse (value);
 		}
 
 		public static long ToInt64 (string value, IFormatProvider provider) 
 		{
+			if (value == null)
+				return 0; // LAMESPEC: Spec says throw ArgumentNullException
 			return Int64.Parse (value, provider);
 		}
 
@@ -1258,6 +1308,8 @@ namespace System {
 
 		public static long ToInt64 (object value)
 		{
+			if (value == null)
+				return 0;
 			return ToInt64 (value, null);
 		}
 
@@ -1374,12 +1426,16 @@ namespace System {
 		[CLSCompliant (false)]
 		public static sbyte ToSByte (string value) 
 		{
+			if (value == null)
+				return 0; // LAMESPEC: Spec says throw ArgumentNullException
 			return SByte.Parse (value);
 		}
 		
 		[CLSCompliant (false)]
 		public static sbyte ToSByte (string value, IFormatProvider provider) 
 		{
+			if (value == null)
+				return 0; // LAMESPEC: Spec says throw ArgumentNullException
 			return SByte.Parse (value, provider);
 		}
 
@@ -1430,6 +1486,8 @@ namespace System {
 		[CLSCompliant (false)]
 		public static sbyte ToSByte (object value)
 		{
+			if (value == null)
+				return 0;
 			return ToSByte (value, null);
 		}
 
@@ -1505,11 +1563,15 @@ namespace System {
 
 		public static float ToSingle (string value) 
 		{
+			if (value == null)
+				return 0.0f; // LAMESPEC: Spec says throw ArgumentNullException
 			return Single.Parse (value);
 		}
 
 		public static float ToSingle (string value, IFormatProvider provider) 
 		{
+			if (value == null)
+				return 0.0f; // LAMESPEC: Spec says throw ArgumentNullException
 			return Single.Parse (value, provider);
 		}	       
 
@@ -1533,6 +1595,8 @@ namespace System {
 
 		public static float ToSingle (object value)
 		{
+			if (value == null)
+				return 0.0f;
 			return ToSingle (value, null);
 		}
 
@@ -1540,7 +1604,7 @@ namespace System {
 		public static float ToSingle (object value, IFormatProvider provider)
 		{
 			if (value == null)
-				return 0;
+				return 0.0f;
 			return ((IConvertible) value).ToSingle (provider);
 		}
 
@@ -1852,12 +1916,16 @@ namespace System {
 		[CLSCompliant (false)]
 		public static ushort ToUInt16 (string value) 
 		{
+			if (value == null)
+				return 0; // LAMESPEC: Spec says throw ArgumentNullException
 			return UInt16.Parse (value);
 		}
 
 		[CLSCompliant (false)]
 		public static ushort ToUInt16 (string value, IFormatProvider provider) 
 		{
+			if (value == null)
+				return 0; // LAMESPEC: Spec says throw ArgumentNullException
 			return UInt16.Parse (value, provider);
 		}
 
@@ -1896,6 +1964,8 @@ namespace System {
 		[CLSCompliant (false)]
 		public static ushort ToUInt16 (object value)
 		{
+			if (value == null)
+				return 0;
 			return ToUInt16 (value, null);
 		}
 
@@ -2009,12 +2079,16 @@ namespace System {
 		[CLSCompliant (false)]
 		public static uint ToUInt32 (string value) 
 		{
+			if (value == null)
+				return 0; // LAMESPEC: Spec says throw ArgumentNullException
 			return UInt32.Parse (value);
 		}
 
 		[CLSCompliant (false)]
 		public static uint ToUInt32 (string value, IFormatProvider provider) 
 		{
+			if (value == null)
+				return 0; // LAMESPEC: Spec says throw ArgumentNullException
 			return UInt32.Parse (value, provider);
 		}
 
@@ -2049,6 +2123,8 @@ namespace System {
 		[CLSCompliant (false)]
 		public static uint ToUInt32 (object value)
 		{
+			if (value == null)
+				return 0;
 			return ToUInt32 (value, null);
 		}		
 
@@ -2163,12 +2239,16 @@ namespace System {
 		[CLSCompliant (false)]
 		public static ulong ToUInt64 (string value) 
 		{
+			if (value == null)
+				return 0; // LAMESPEC: Spec says throw ArgumentNullException
 			return UInt64.Parse (value);
 		}
 
 		[CLSCompliant (false)]
 		public static ulong ToUInt64 (string value, IFormatProvider provider) 
 		{
+			if (value == null)
+				return 0; // LAMESPEC: Spec says throw ArgumentNullException
 			return UInt64.Parse (value, provider);
 		}
 
@@ -2199,6 +2279,8 @@ namespace System {
 		[CLSCompliant (false)]
 		public static ulong ToUInt64 (object value)
 		{
+			if (value == null)
+				return 0;
 			return ToUInt64 (value, null);
 		}		
 
@@ -2252,6 +2334,8 @@ namespace System {
 		{
 			if (NotValidBase (fromBase))
 				throw new ArgumentException ("fromBase is not valid.");
+			if (value == null)
+				return 0;
 
 			int chars = 0;
 			int result = 0;
