@@ -12,6 +12,8 @@ System.Collections.Specialized\StringCollection.cs
 System.Collections.Specialized\StringDictionary.cs
 System.Collections.Specialized\StringEnumerator.cs
 System.ComponentModel\BrowsableAttribute.cs
+System.ComponentModel\CancelEventArgs.cs
+System.ComponentModel\CancelEventHandler.cs
 System.ComponentModel\CategoryAttribute.cs
 System.ComponentModel\CollectionChangeAction.cs
 System.ComponentModel\CollectionChangeEventArgs.cs
@@ -29,6 +31,7 @@ System.ComponentModel\EventHandlerList.cs
 System.ComponentModel\IBindingList.cs
 System.ComponentModel\IComponent.cs
 System.ComponentModel\IContainer.cs
+System.ComponentModel\IExtenderProvider.cs
 System.ComponentModel\IListSource.cs
 System.ComponentModel\ISite.cs
 System.ComponentModel\ISupportInitialize.cs
@@ -43,6 +46,7 @@ System.ComponentModel\LocalizableAttribute.cs
 System.ComponentModel\MarshalByValueComponent.cs
 System.ComponentModel\MemberDescriptor.cs
 System.ComponentModel\PropertyChangedEventArgs.cs
+System.ComponentModel\PropertyChangedEventHandler.cs
 System.ComponentModel\PropertyDescriptor.cs
 System.ComponentModel\PropertyDescriptorCollection.cs
 System.ComponentModel\TypeConverter.cs

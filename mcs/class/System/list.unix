@@ -194,6 +194,8 @@ System.ComponentModel/MemberDescriptor.cs
 System.ComponentModel/PropertyDescriptorCollection.cs
 System.ComponentModel/RecommendedAsConfigurableAttribute.cs
 System.ComponentModel/ISynchronizeInvoke.cs
+System.ComponentModel/CancelEventArgs.cs
+System.ComponentModel/CancelEventHandler.cs
 System.ComponentModel/CategoryAttribute.cs
 System.ComponentModel/CollectionChangeAction.cs
 System.ComponentModel/CollectionChangeEventArgs.cs
@@ -205,6 +207,7 @@ System.ComponentModel/ISupportInitialize.cs
 System.ComponentModel/ICustomTypeDescriptor.cs
 System.ComponentModel/IDataErrorInfo.cs
 System.ComponentModel/IEditableObject.cs
+System.ComponentModel/IExtenderProvider.cs
 System.ComponentModel/EventDescriptor.cs
 System.ComponentModel/DefaultValueAttribute.cs
 System.ComponentModel/EditorBrowsableAttribute.cs
@@ -213,6 +216,7 @@ System.ComponentModel/EventDescriptorCollection.cs
 System.ComponentModel/IComponent.cs
 System.ComponentModel/ISite.cs
 System.ComponentModel/MarshalByValueComponent.cs
+System.ComponentModel/PropertyChangedEventHandler.cs
 System.ComponentModel/ReadOnlyAttribute.cs
 System.ComponentModel/Win32Exception.cs
 System.ComponentModel/ITypeDescriptorContext.cs
