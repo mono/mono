@@ -1,3 +1,14 @@
+2004-10-15  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlTextReader.cs : Inside DTD, '<' character inside XML comment 
+	  is regatded as invalid. This fixes bug #68410. (Error message was
+	  also not correct.)
+
+2004-09-06  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlNode.cs : GetEnumerator() does not have to create ChildNodes
+	  every time. Removed unused StringBuilder field.
+
 2004-09-06  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XmlWriter.cs : on reader.NodeType is None, WriteNode() still tries
