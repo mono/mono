@@ -145,7 +145,7 @@ namespace System.Runtime.Remoting.Contexts
 		
 		internal static void ExitContext ()
 		{
-			if (Thread.CurrentContext == Context.DefaultContext) return;
+			if (Thread.CurrentContext.IsDefaultContext) return;
 			SynchronizationAttribute prop = Thread.CurrentContext.GetProperty ("Synchronization") as SynchronizationAttribute;
 			if (prop == null) return;
 			prop.Locked = false;
@@ -153,7 +153,7 @@ namespace System.Runtime.Remoting.Contexts
 		
 		internal static void EnterContext ()
 		{
-			if (Thread.CurrentContext == Context.DefaultContext) return;
+			if (Thread.CurrentContext.IsDefaultContext) return;
 			SynchronizationAttribute prop = Thread.CurrentContext.GetProperty ("Synchronization") as SynchronizationAttribute;
 			if (prop == null) return;
 			prop.Locked = true;

@@ -1,3 +1,10 @@
+2003-11-19  Lluis Sanchez Gual <lluis@ximian.com>
+
+	* Context.cs: Implemented several missing methods and properties:
+	  ContextProperties, DoCallBack, AllocateDataSlot, AllocateNamedDataSlot,
+	  FreeNamedDataSlot, GetData, GetNamedDataSlot, SetData.
+	* SynchronizationAttribute.cs: Fixed check for current context.
+	
 2003-11-18  Lluis Sanchez Gual <lluis@ximian.com>
 
 	* SynchronizationAttribute.cs: Implemented.

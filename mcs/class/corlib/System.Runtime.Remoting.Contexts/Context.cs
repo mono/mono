@@ -34,12 +34,16 @@ namespace System.Runtime.Remoting.Contexts {
 		// The sink chain that has to be used by all calls exiting the context
 		IMessageSink client_context_sink_chain = null;
 
+		Hashtable datastore;
 		ArrayList context_properties;
 		bool frozen;
+		
 		static int global_count;
+		static Hashtable namedSlots;
 
 		static DynamicPropertyCollection global_dynamic_properties;
 		DynamicPropertyCollection context_dynamic_properties;
+		ContextCollbackObject callback_object = null;
 		
 		public Context ()
 		{
@@ -59,6 +63,15 @@ namespace System.Runtime.Remoting.Contexts {
 			}
 		}
 
+		public IContextProperty[] ContextProperties
+		{
+			get 
+			{
+				if (context_properties == null) return new IContextProperty[0];
+				else return (IContextProperty[]) context_properties.ToArray (typeof(IContextProperty[]));
+			}
+		}
+		
 		internal bool IsDefaultContext
 		{
 			get { return context_id == 0; }
@@ -134,7 +147,6 @@ namespace System.Runtime.Remoting.Contexts {
 				return ( !(GetClientContextSinkChain() is ClientContextTerminatorSink) || HasDynamicSinks || HasGlobalDynamicSinks);
 			}
 		}
-
 
 		public virtual IContextProperty GetProperty (string name)
 		{
@@ -278,6 +290,99 @@ namespace System.Runtime.Remoting.Contexts {
 
 			return newContext;
 		}
+		
+		public void DoCallBack (CrossContextDelegate deleg)
+		{
+			if (callback_object == null)
+			{
+				lock (this)
+				{
+					if (callback_object == null) {
+						Context oldContext = Context.SwitchToContext (this);
+						callback_object = new ContextCollbackObject ();
+						Context.SwitchToContext (oldContext);
+					}
+				}
+			}
+			
+			callback_object.DoCallBack (deleg);
+		}
+		
+		public static LocalDataStoreSlot AllocateDataSlot ()
+		{
+			return new LocalDataStoreSlot ();
+		}
+		
+		public static LocalDataStoreSlot AllocateNamedDataSlot (string name)
+		{
+			if (namedSlots == null)
+			{
+				lock (typeof(Context))
+				{
+					if (namedSlots == null)
+						namedSlots = new Hashtable ();
+				}
+			}
+			
+			lock (namedSlots.SyncRoot)
+			{
+				LocalDataStoreSlot slot = new LocalDataStoreSlot ();
+				namedSlots.Add (name, slot);
+				return slot;
+			}
+		}
+		
+		public static void FreeNamedDataSlot (string name)
+		{
+			if (namedSlots == null) return;
+
+			lock (namedSlots.SyncRoot)
+			{
+				namedSlots.Remove (name);
+			}
+		}
+		
+		public static object GetData (LocalDataStoreSlot slot)
+		{
+			Context ctx = Thread.CurrentContext;
+			if (ctx.datastore == null) return null;
+			
+			lock (ctx.datastore.SyncRoot)
+			{
+				return ctx.datastore [slot];
+			}
+		}
+		
+		public static LocalDataStoreSlot GetNamedDataSlot (string name)
+		{
+			if (namedSlots == null)
+				return AllocateNamedDataSlot (name);
+			
+			lock (namedSlots)
+			{
+				LocalDataStoreSlot slot = namedSlots [name] as LocalDataStoreSlot;
+				if (slot == null) return AllocateNamedDataSlot (name);
+				else return slot;
+			}
+		}
+		
+		public static void SetData (LocalDataStoreSlot slot, object data)
+		{
+			Context ctx = Thread.CurrentContext;
+			if (ctx.datastore == null)
+			{
+				lock (ctx)
+				{
+					if (ctx.datastore == null)
+						ctx.datastore = new Hashtable ();
+				}
+			}
+			
+			lock (ctx.datastore.SyncRoot)
+			{
+				ctx.datastore [slot] = data;
+			}
+		}
 	}
 
 	class DynamicPropertyCollection
@@ -350,6 +455,13 @@ namespace System.Runtime.Remoting.Contexts {
 				if (((DynamicPropertyReg)_properties[n]).Property.Name == name)
 					return n;
 			return -1;
+		}
+	}
+	
+	class ContextCollbackObject: ContextBoundObject
+	{
+		public void DoCallBack (CrossContextDelegate deleg)
+		{
 		}
 	}
 }
