@@ -229,6 +229,7 @@ namespace System.Drawing {
 		///	Indicates if both Width and Height are zero.
 		/// </remarks>
 		
+		[Browsable (false)]
 		public bool IsEmpty {
 			get {
 				return ((width == 0) && (height == 0));

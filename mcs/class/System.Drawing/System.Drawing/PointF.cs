@@ -9,6 +9,7 @@
 
 using System;
 using System.Runtime.InteropServices;
+using System.ComponentModel;
 
 namespace System.Drawing {
 	
@@ -121,6 +122,7 @@ namespace System.Drawing {
 		///	Indicates if both X and Y are zero.
 		/// </remarks>
 		
+		[Browsable (false)]
 		public bool IsEmpty {
 			get {
 				return ((cx == 0.0) && (cy == 0.0));

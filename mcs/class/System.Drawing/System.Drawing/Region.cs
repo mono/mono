@@ -13,6 +13,7 @@ using System.Runtime.InteropServices;
 namespace System.Drawing
 {
 	[ComVisible(false)]
+	[MonoTODO ("Not implemented")]
 	public sealed class Region : MarshalByRefObject, IDisposable
 	{
 		public Region()
@@ -256,7 +257,6 @@ namespace System.Drawing
 		}
 		
 		
-		[ComVisible(false)]
 		public Region Clone()
 		{
 			return this;

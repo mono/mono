@@ -9,6 +9,7 @@
 
 using System;
 using System.Runtime.InteropServices;
+using System.ComponentModel;
 
 namespace System.Drawing {
 
@@ -166,6 +167,7 @@ namespace System.Drawing {
 		///	Indicates if both Width and Height are zero.
 		/// </remarks>
 		
+		[Browsable (false)]
 		public bool IsEmpty {
 			get {
 				return ((wd == 0.0) && (ht == 0.0));

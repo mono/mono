@@ -4,15 +4,13 @@
 // Authors:
 //   Dennis Hayes (dennish@Raytek.com)
 //   Miguel de Icaza (miguel@ximian.com)
-//	 Jordi Mas i Hernandez (jordi@ximian.com)
+//   Jordi Mas i Hernandez (jordi@ximian.com)
 //
 // (C) 2002 Ximian, Inc
 // (C) 2003 Novell, Inc.
 //
 using System;
 using System.Drawing.Text;
-using System.IO;// temp
-
 
 namespace System.Drawing
 {
@@ -168,8 +166,14 @@ namespace System.Drawing
 		}
 
 		[MonoTODO]
-		public object Clone () {
+		public object Clone ()
+		{
 			throw new NotImplementedException ();
+		}
+
+		public override string ToString ()
+		{
+			return "[StringFormat, FormatFlags=" + this.FormatFlags.ToString() + "]";
 		}
 		
 		internal IntPtr NativeObject{            

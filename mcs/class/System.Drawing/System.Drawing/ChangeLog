@@ -1,3 +1,17 @@
+﻿2004-02-07  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
+
+	* SRDescriptionAttribute.cs: Added and implemented
+	* ToolboxBitmapAttribute.cs: Implemented a few members
+	* SystemIcons.cs: Stubbed
+	* StringFormat.cs: Implemented method
+	* Region.cs: Added Todo, fixed attribute
+	* Size.cs: Added attribute
+	* SizeF.cs: Added attribute
+	* RectangleF.cs: Added attributes
+	* Rectangle.cs: Added attributes
+	* PointF.cs: Added attribute
+	* Point.cs: Added attribute
+
 2004-02-06  Ravindra  <rkumar@novell.com>
 
 	* Brush.cs: Renamed GetException method to CheckStatus

@@ -298,6 +298,7 @@ namespace System.Drawing {
 		///	Read only.
 		/// </remarks>
 		
+		[Browsable (false)]
 		public int Bottom {
 			get {
 				return y + height;
@@ -329,6 +330,7 @@ namespace System.Drawing {
 		///	Indicates if the width or height are zero. Read only.
 		/// </remarks>
 		
+		[Browsable (false)]
 		public bool IsEmpty {
 			get {
 				return ((width == 0) || (height == 0));
@@ -344,6 +346,7 @@ namespace System.Drawing {
 		///	Read only.
 		/// </remarks>
 		
+		[Browsable (false)]
 		public int Left {
 			get {
 				return X;
@@ -358,6 +361,7 @@ namespace System.Drawing {
 		///	The Location of the top-left corner of the Rectangle.
 		/// </remarks>
 		
+		[Browsable (false)]
 		public Point Location {
 			get {
 				return new Point (x, y);
@@ -377,6 +381,7 @@ namespace System.Drawing {
 		///	Read only.
 		/// </remarks>
 		
+		[Browsable (false)]
 		public int Right {
 			get {
 				return X + Width;
@@ -391,6 +396,7 @@ namespace System.Drawing {
 		///	The Size of the Rectangle.
 		/// </remarks>
 		
+		[Browsable (false)]
 		public Size Size {
 			get {
 				return new Size (Width, Height);
@@ -410,6 +416,7 @@ namespace System.Drawing {
 		///	Read only.
 		/// </remarks>
 		
+		[Browsable (false)]
 		public int Top {
 			get {
 				return y;

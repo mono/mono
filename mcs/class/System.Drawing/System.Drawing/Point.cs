@@ -244,6 +244,7 @@ namespace System.Drawing {
 		///	Indicates if both X and Y are zero.
 		/// </remarks>
 		
+		[Browsable (false)]
 		public bool IsEmpty {
 			get {
 				return ((x == 0) && (y == 0));

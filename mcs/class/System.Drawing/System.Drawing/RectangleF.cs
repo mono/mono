@@ -8,6 +8,7 @@
 //
 
 using System;
+using System.ComponentModel;
 
 namespace System.Drawing {
 	
@@ -236,6 +237,7 @@ namespace System.Drawing {
 		///	Read only.
 		/// </remarks>
 		
+		[Browsable (false)]
 		public float Bottom {
 			get {
 				return Y + Height;
@@ -267,6 +269,7 @@ namespace System.Drawing {
 		///	Indicates if the width or height are zero. Read only.
 		/// </remarks>
 		
+		[Browsable (false)]
 		public bool IsEmpty {
 			get {
 				return ((sz.Width == 0) || (sz.Height == 0));
@@ -282,6 +285,7 @@ namespace System.Drawing {
 		///	Read only.
 		/// </remarks>
 		
+		[Browsable (false)]
 		public float Left {
 			get {
 				return X;
@@ -296,6 +300,7 @@ namespace System.Drawing {
 		///	The Location of the top-left corner of the RectangleF.
 		/// </remarks>
 		
+		[Browsable (false)]
 		public PointF Location {
 			get {
 				return loc;
@@ -314,6 +319,7 @@ namespace System.Drawing {
 		///	Read only.
 		/// </remarks>
 		
+		[Browsable (false)]
 		public float Right {
 			get {
 				return X + Width;
@@ -328,6 +334,7 @@ namespace System.Drawing {
 		///	The Size of the RectangleF.
 		/// </remarks>
 		
+		[Browsable (false)]
 		public SizeF Size {
 			get {
 				return sz;
@@ -346,6 +353,7 @@ namespace System.Drawing {
 		///	Read only.
 		/// </remarks>
 		
+		[Browsable (false)]
 		public float Top {
 			get {
 				return Y;
