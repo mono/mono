@@ -175,6 +175,7 @@ System.Diagnostics/DebuggableAttribute.cs
 System.Diagnostics/Debugger.cs
 System.Diagnostics/DebuggerHiddenAttribute.cs
 System.Diagnostics/DebuggerStepThroughAttribute.cs
+System.Diagnostics/Process.cs
 System.Diagnostics/StackFrame.cs
 System.Diagnostics/StackTrace.cs
 System.Diagnostics.SymbolStore/ISymbolBinder.cs
