@@ -1,3 +1,12 @@
+2002-03-17  Martin Baulig  <martin@gnome.org>
+
+	* debug.c (mono_debug_get_type): Recursively call this for all function members
+	of a class type.
+	(mono_debug_add_method): Don't mangle function names, this must be done by the
+	debugger backend if the debugging format needs mangled names.
+
+	* debug-dwarf2.c: Improved support for classes, added member functions.
+
 2002-03-16  Martin Baulig  <martin@gnome.org>
 
 	* debug.c (mono_debug_get_type): Recursively call this for all members and
