@@ -1,3 +1,7 @@
+2003-01-08  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* AspElements.cs: attributes without value lacked a space afterwards.
+
 2003-01-07  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* AspGenerator.cs: functions for columns don't return anything. Fixed
