@@ -1,3 +1,14 @@
+2005-01-12  Martin Baulig  <martin@ximian.com>
+
+	* class-internals.h (mono_class_create_generic_2): Removed
+	function prototype, this function is now static inside class.c.
+
+	* class.c (mono_class_create_generic_2): Made this static, only
+	call it from mono_class_init() and mono_class_setup_parent().
+	(collect_implemented_interfaces_aux): Call mono_class_init() on
+	the interfaces we collect.
+	(mono_class_setup_vtable): Call mono_class_init (class->parent).
+
 2005-01-11  Zoltan Varga  <vargaz@freemail.hu>
 
 	* threads.c (mono_thread_attach): Call DuplicateHandle on the thread handle on win32 to make
