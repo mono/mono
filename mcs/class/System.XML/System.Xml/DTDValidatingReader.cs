@@ -221,9 +221,11 @@ namespace Mono.Xml
 			}
 
 			if (currentElement == null)
-				return;
+				throw new IndexOutOfRangeException ("The index is out of range.");
 
 			if (attributes.Count > i) {
+				if (reader.AttributeCount > i)
+					reader.MoveToAttribute (i);
 				currentAttribute = (string) attributes [i];
 				consumedAttribute = false;
 				return;

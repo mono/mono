@@ -1,3 +1,8 @@
+2005-03-07  Atsushi Enomoto <atsushi@ximian.com>
+
+	* DTDValidatingReader.cs : When there was actual attribute in source 
+	  XmlReader, MoveToAttribute(i) did not move source reader as expected.
+
 2005-03-03  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlDocument.cs : In ReadNode(), on EntityReference node, when 
