@@ -47,18 +47,49 @@ namespace System.Web.Services.Protocols {
 
 		protected override WebRequest GetWebRequest (Uri uri)
 		{
-			return WebRequest.Create (uri);
+			WebRequest request = WebRequest.Create (uri);
+			request.Method = "POST";
+
+			return request;
 		}
 
+		//
+		// Just for debugging
+		//
+		void DumpStackFrames ()
+		{
+			StackTrace st = new StackTrace ();
+
+			for (int i = 0; i < st.FrameCount; i++){
+				StackFrame sf = st.GetFrame (i);
+				Console.WriteLine ("At frame: {0} {1}", i, sf.GetMethod ().Name);
+			}
+		}
+		
 		//
 		// The `method_name' should be the name of our invoker, this is only used
 		// for sanity checks, nothing else
 		//
 		MethodInfo GetCallerMethod (string method_name)
 		{
-			StackFrame stack_frame = new StackFrame (5, false);
-			MethodInfo mi = (MethodInfo) stack_frame.GetMethod ();
+			MethodInfo mi;
+#if StackFrameWorks
+			StackFrame stack_trace = new StackFrame (5, false);
+			mi = (MethodInfo) stack_frame.GetMethod ();
 
+#else
+			//
+			// Temporary hack: look for a type which is not this type
+			//
+			StackTrace st = new StackTrace ();
+			mi = null;
+			for (int i = 0; i < st.FrameCount; i++){
+				StackFrame sf = st.GetFrame (i);
+				mi = (MethodInfo) sf.GetMethod ();
+				if (mi.DeclaringType != typeof (SoapHttpClientProtocol))
+					break;
+			}
+#endif
 			//
 			// A few sanity checks, just in case the code moves around later
 			//
@@ -89,12 +120,18 @@ namespace System.Web.Services.Protocols {
 			
 			SoapClientMessage message = new SoapClientMessage (
 				this, sma, new LogicalMethodInfo (mi), sma.OneWay, Url);
-			
-			return null;
+
+			return message;
 		}
 		
 		void SendMessage (WebRequest request, SoapClientMessage message)
 		{
+			WebHeaderCollection headers = request.Headers;
+			headers.Add ("SOAPAction", message.Action);
+
+			// create envelope
+			// create body
+			// serialize arguments
 			
 		}
 		
@@ -103,7 +140,8 @@ namespace System.Web.Services.Protocols {
 			SoapClientMessage message = CreateMessage (method_name, parameters);
 			WebRequest request = GetWebRequest (uri);
 			Stream s = request.GetRequestStream ();
-			
+
+
 			try {
 				SendMessage (request, message);
 			} finally {

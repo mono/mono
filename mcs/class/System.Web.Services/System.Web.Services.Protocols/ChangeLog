@@ -1,6 +1,7 @@
 2003-04-29  Miguel de Icaza  <miguel@ximian.com>
 
 	* SoapHttpClientProtocol.cs (CreateMessage): Extract information
+	from the method to be called.
 
 	* SoapDocumentMethodAttribute.cs: Do not initialize all the fields
 	on the attribute at bootstrap, for default values, just compute
