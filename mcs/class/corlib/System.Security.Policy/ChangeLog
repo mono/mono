@@ -1,3 +1,10 @@
+2004-01-14  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* Url.cs: Added IBuiltInEvidence (corcompare) and new static methods 
+	to prepare and compare urls.
+	* UrlMembershipCondition.cs: Added missing [Serializable] attribute 
+	and set_Url property. Implemented Check. Fixed Equals and To/FromXml.
+
 2004-01-05  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* CodeGroup.cs: Added internal constructor for PolicyLevel. Complete
