@@ -390,7 +390,7 @@ public abstract class Encoding
 			"unicodefffe", "utf_16be",
 
 			Latin1Encoding.ISOLATIN_CODE_PAGE,
-			"iso_8859_1",
+			"iso_8859_1", "latin1"
 		};
 
 	// Get an encoding object for a specific web encoding name.
