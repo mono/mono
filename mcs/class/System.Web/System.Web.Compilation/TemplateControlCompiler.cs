@@ -715,7 +715,7 @@ namespace System.Web.Compilation
 			CreateControlTree (parser.RootBuilder, false, false);
 			CreateFrameworkInitializeMethod ();
 		}
-		
+
 		void CreateFrameworkInitializeMethod ()
 		{
 			CodeMemberMethod method = new CodeMemberMethod ();
@@ -740,36 +740,22 @@ namespace System.Web.Compilation
 			method.Statements.Add (new CodeExpressionStatement (expr));
 		}
 
-		protected override void ProcessObjectTag (ObjectTagBuilder tag)
+		protected override void AddApplicationAndSessionObjects ()
 		{
-			string name = tag.ObjectID;
-			string className = tag.ClassName;
-			Type t = parser.LoadType (className);
-			if (t == null)
-				throw new ParseException (tag.location, "Error loading type " + className);
+			foreach (ObjectTagBuilder tag in GlobalAsaxCompiler.ApplicationObjects) {
+				CreateFieldForObject (tag.Type, tag.ObjectID);
+				CreateApplicationOrSessionPropertyForObject (tag.Type, tag.ObjectID, true, false);
+			}
 
-			string fieldName = "cached" + name;
-			CodeMemberField f = new CodeMemberField (t, fieldName);
-			f.Attributes = MemberAttributes.Private;
-			mainClass.Members.Add (f);
+			foreach (ObjectTagBuilder tag in GlobalAsaxCompiler.SessionObjects) {
+				CreateApplicationOrSessionPropertyForObject (tag.Type, tag.ObjectID, false, false);
+			}
+		}
 
-			CodeFieldReferenceExpression field = new CodeFieldReferenceExpression (thisRef, fieldName);
-
-			CodeMemberProperty prop = new CodeMemberProperty ();
-			prop.Type = new CodeTypeReference (t);
-			prop.Name = name;
-			prop.Attributes = MemberAttributes.Private | MemberAttributes.Final;
-
-			CodeConditionStatement stmt = new CodeConditionStatement();
-			stmt.Condition = new CodeBinaryOperatorExpression (field,
-									   CodeBinaryOperatorType.IdentityEquality,
-									   new CodePrimitiveExpression (null));
-
-			CodeObjectCreateExpression create = new CodeObjectCreateExpression (prop.Type);	
-			stmt.TrueStatements.Add (new CodeAssignStatement (field, create));
-			prop.GetStatements.Add (stmt);
-			prop.GetStatements.Add (new CodeMethodReturnStatement (field));
-			mainClass.Members.Add (prop);
+		protected void ProcessObjectTag (ObjectTagBuilder tag)
+		{
+			string fieldName = CreateFieldForObject (tag.Type, tag.ObjectID);
+			CreatePropertyForObject (tag.Type, tag.ObjectID, fieldName, false);
 		}
 
 		void CreateProperties ()

@@ -1,5 +1,9 @@
 2004-01-28  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* HttpApplicationFactory.cs: fixlet for session events hook.
+
+2004-01-28  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* HttpApplicationFactory.cs: attach all events from Type and BaseType
 	at the same time. Fixes bug #53454.
 

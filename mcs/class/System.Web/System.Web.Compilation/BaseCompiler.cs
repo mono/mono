@@ -62,6 +62,7 @@ namespace System.Web.Compilation
 			AddInterfaces ();
 			AddClassAttributes ();
 			CreateStaticFields ();
+			AddApplicationAndSessionObjects ();
 			AddScripts ();
 			CreateConstructor (null, null);
 		}
@@ -74,7 +75,8 @@ namespace System.Web.Compilation
 			mainClass.Members.Add (fld);
 		}
 
-		protected virtual void CreateConstructor (CodeStatementCollection localVars, CodeStatementCollection trueStmt)
+		protected virtual void CreateConstructor (CodeStatementCollection localVars,
+							  CodeStatementCollection trueStmt)
 		{
 			CodeConstructor ctor = new CodeConstructor ();
 			ctor.Attributes = MemberAttributes.Public;
@@ -83,12 +85,15 @@ namespace System.Web.Compilation
 			if (localVars != null)
 				ctor.Statements.AddRange (localVars);
 
-			CodeTypeReferenceExpression r = new CodeTypeReferenceExpression (mainNS.Name + "." + mainClass.Name);
-			CodeFieldReferenceExpression intialized = new CodeFieldReferenceExpression (r, "__intialized");
+			CodeTypeReferenceExpression r;
+			r = new CodeTypeReferenceExpression (mainNS.Name + "." + mainClass.Name);
+			CodeFieldReferenceExpression intialized;
+			intialized = new CodeFieldReferenceExpression (r, "__intialized");
 			
-			CodeBinaryOperatorExpression bin = new CodeBinaryOperatorExpression (intialized,
-											     CodeBinaryOperatorType.ValueEquality,
-											     new CodePrimitiveExpression (false));
+			CodeBinaryOperatorExpression bin;
+			bin = new CodeBinaryOperatorExpression (intialized,
+								CodeBinaryOperatorType.ValueEquality,
+								new CodePrimitiveExpression (false));
 
 			CodeAssignStatement assign = new CodeAssignStatement (intialized,
 									      new CodePrimitiveExpression (true));
@@ -130,9 +135,120 @@ namespace System.Web.Compilation
 		{
 		}
 		
-		protected virtual void ProcessObjectTag (ObjectTagBuilder tag)
+		protected virtual void AddApplicationAndSessionObjects ()
 		{
 		}
+
+		/* Utility methods for <object> stuff */
+		protected void CreateApplicationOrSessionPropertyForObject (Type type,
+									    string propName,
+									    bool isApplication,
+									    bool isPublic)
+		{
+			/* if isApplication this generates (the 'cachedapp' field is created earlier):
+			private MyNS.MyClass app {
+				get {
+					if ((this.cachedapp == null)) {
+						this.cachedapp = ((MyNS.MyClass)
+							(this.Application.StaticObjects.GetObject("app")));
+					}
+					return this.cachedapp;
+				}
+			}
+
+			else, this is for Session:
+			private MyNS.MyClass ses {
+				get {
+					return ((MyNS.MyClass) (this.Session.StaticObjects.GetObject("ses")));
+				}
+			}
+
+			*/
+
+			CodeExpression result = null;
+
+			CodeMemberProperty prop = new CodeMemberProperty ();
+			prop.Type = new CodeTypeReference (type);
+			prop.Name = propName;
+			if (isPublic)
+				prop.Attributes = MemberAttributes.Public | MemberAttributes.Final;
+			else
+				prop.Attributes = MemberAttributes.Private | MemberAttributes.Final;
+
+			CodePropertyReferenceExpression p1;
+			if (isApplication)
+				p1 = new CodePropertyReferenceExpression (thisRef, "Application");
+			else
+				p1 = new CodePropertyReferenceExpression (thisRef, "Session");
+
+			CodePropertyReferenceExpression p2;
+			p2 = new CodePropertyReferenceExpression (p1, "StaticObjects");
+
+			CodeMethodReferenceExpression getobject;
+			getobject = new CodeMethodReferenceExpression (p2, "GetObject");
+
+			CodeMethodInvokeExpression invoker;
+			invoker = new CodeMethodInvokeExpression (getobject,
+						new CodePrimitiveExpression (propName));
+
+			CodeCastExpression cast = new CodeCastExpression (prop.Type, invoker);
+
+			if (isApplication) {
+				CodeFieldReferenceExpression field;
+				field = new CodeFieldReferenceExpression (thisRef, "cached" + propName);
+
+				CodeConditionStatement stmt = new CodeConditionStatement();
+				stmt.Condition = new CodeBinaryOperatorExpression (field,
+							CodeBinaryOperatorType.IdentityEquality,
+							new CodePrimitiveExpression (null));
+
+				CodeAssignStatement assign = new CodeAssignStatement ();
+				assign.Left = field;
+				assign.Right = cast;
+				stmt.TrueStatements.Add (assign);
+				prop.GetStatements.Add (stmt);
+				result = field;
+			} else {
+				result = cast;
+			}
+						
+			prop.GetStatements.Add (new CodeMethodReturnStatement (result));
+			mainClass.Members.Add (prop);
+		}
+
+		protected string CreateFieldForObject (Type type, string name)
+		{
+			string fieldName = "cached" + name;
+			CodeMemberField f = new CodeMemberField (type, fieldName);
+			f.Attributes = MemberAttributes.Private;
+			mainClass.Members.Add (f);
+			return fieldName;
+		}
+
+		protected void CreatePropertyForObject (Type type, string propName, string fieldName, bool isPublic)
+		{
+			CodeFieldReferenceExpression field = new CodeFieldReferenceExpression (thisRef, fieldName);
+			CodeMemberProperty prop = new CodeMemberProperty ();
+			prop.Type = new CodeTypeReference (type);
+			prop.Name = propName;
+			if (isPublic)
+				prop.Attributes = MemberAttributes.Public | MemberAttributes.Final;
+			else
+				prop.Attributes = MemberAttributes.Private | MemberAttributes.Final;
+
+			CodeConditionStatement stmt = new CodeConditionStatement();
+			stmt.Condition = new CodeBinaryOperatorExpression (field,
+						CodeBinaryOperatorType.IdentityEquality,
+						new CodePrimitiveExpression (null));
+
+			CodeObjectCreateExpression create = new CodeObjectCreateExpression (prop.Type);	
+			stmt.TrueStatements.Add (new CodeAssignStatement (field, create));
+			prop.GetStatements.Add (stmt);
+			prop.GetStatements.Add (new CodeMethodReturnStatement (field));
+
+			mainClass.Members.Add (prop);
+		}
+		/******/
 
 		void CheckCompilerErrors (CompilerResults results)
 		{

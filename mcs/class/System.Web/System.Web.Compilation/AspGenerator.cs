@@ -116,6 +116,7 @@ namespace System.Web.Compilation
 		RootBuilder rootBuilder;
 		bool inScript, javascript;
 		ILocation location;
+		bool isApplication;
 		static Hashtable emptyHash = new Hashtable ();
 
 		public AspGenerator (TemplateParser tparser)
@@ -182,7 +183,9 @@ namespace System.Web.Compilation
 				return type;
 			}
 
+			isApplication = tparser.DefaultDirectiveName == "application";
 			InitParser (Path.GetFullPath (tparser.InputFile));
+
 			DoParse ();
 #if DEBUG
 			PrintTree (rootBuilder, 0);
@@ -279,9 +282,15 @@ namespace System.Web.Compilation
 			case TagType.CodeRenderExpression:
 				goto case TagType.CodeRender;
 			case TagType.CodeRender:
+				if (isApplication)
+					throw new ParseException (location, "Invalid content for application file.");
+			
 				ProcessCode (tagtype, tagid, location);
 				break;
 			case TagType.Include:
+				if (isApplication)
+					throw new ParseException (location, "Invalid content for application file.");
+			
 				string file = attributes ["virtual"] as string;
 				bool isvirtual = (file != null);
 				if (!isvirtual)
@@ -342,6 +351,11 @@ namespace System.Web.Compilation
 				return false;
 			}
 
+			if (isApplication) {
+				if (String.Compare (tagid, "object", true) != 0)
+					throw new ParseException (location, "Invalid tag for application file.");
+			}
+
 			ControlBuilder parent = stack.Builder;
 			ControlBuilder builder = null;
 			BuilderLocation bl = null;
@@ -381,7 +395,12 @@ namespace System.Web.Compilation
 				}
 				stack.Push (builder, location);
 			} else {
-				// FIXME:ObjectTags...
+				if (!isApplication && builder is ObjectTagBuilder) {
+					ObjectTagBuilder ot = (ObjectTagBuilder) builder;
+					if (ot.Scope != null && ot.Scope != "")
+						throw new ParseException (location, "Scope not allowed here");
+				}
+				
 				parent.AppendSubBuilder (builder);
 				builder.CloseControl ();
 			}
@@ -478,6 +497,7 @@ namespace System.Web.Compilation
 								tparser.Language, lang));
 			}
 		}
+
 		// Used to get CodeRender tags in attribute values
 		class CodeRenderParser
 		{

@@ -233,7 +233,7 @@ namespace System.Web {
 
 				string moduleName = key.Substring (0, pos);
 				object target;
-				if (moduleName == "Application")
+				if (moduleName == "Application" || moduleName == "Session")
 					target = app;
 				else
 					target = app.Modules [moduleName];

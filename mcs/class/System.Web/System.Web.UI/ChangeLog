@@ -1,5 +1,18 @@
 2004-01-28  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* ApplicationFileParser.cs: check for error in directives. Use
+	GlobalAsaxCompiler.CompileApplicationType for compiling.
+	
+	* ObjectTagBuilder.cs: load the Type and check for errors.
+
+	* TemplateParser.cs: add assemblies and imports from global.asax.
+
+	Now we properly create accessors for session and application objects in
+	the application itself, pages and controls. First step for fixing
+	bug #53387.
+
+2004-01-28  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* TemplateControl.cs: small speedup for WireUpautomaticEvents. Thanks
 	to Eric Lindvall for pointing this out.
 
@@ -11,7 +24,8 @@
 	
 2004-01-15  Martin Willemoes Hansen  <mwh@sysrq.dk>
 
-	* HtmlTextWriter.cs: Fixed OutputTab routine to generate correct indention.
+	* HtmlTextWriter.cs: Fixed OutputTab routine to generate correct
+	indention.
 
 2004-01-14  Jackson Harper <jackson@ximian.com>
 
@@ -22,7 +36,8 @@
 2004-01-14  Jackson Harper <jackson@ximian.com>
 
 	* Page.cs: Don't tell the response to cache anymore. This is done
-	when the cacheability is modified by a callback. Set the cache's duration.
+	when the cacheability is modified by a callback. Set the cache's
+	duration.
 	
 2004-01-14  Jackson Harper <jackson@ximian.com>
 

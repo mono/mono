@@ -1,5 +1,18 @@
 2004-01-28  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* AspGenerator.cs: handle more possible errors in global.asax file.
+
+	* BaseCompiler.cs: added utility methods for creating <object> related
+	properties and fields.
+
+	* GlobalAsaxCompiler.cs: keep around applications and session scope
+	objects builders. Also a list of imports and assemblies added in
+	global.asax.
+
+	* TemplateControlCompiler.cs: use base class methods for <object> stuff.
+
+2004-01-28  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* AspGenerator.cs: use the Cache to store compiled Types. Don't parse
 	pages more than once. Thanks to Eric Lindvall for pointing this out.
 

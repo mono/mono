@@ -17,7 +17,7 @@ namespace System.Web.UI
 	{
 		string id;
 		string scope;
-		string className;
+		Type type;
 		
 		public ObjectTagBuilder ()
 		{
@@ -43,23 +43,37 @@ namespace System.Web.UI
 			if (attribs == null)
 				throw new ParseException (parser.Location, "Error in ObjectTag.");
 
+			attribs.Remove ("runat");
 			this.id = attribs ["id"] as string;
+			attribs.Remove ("id");
 			if (this.id == null || this.id.Trim () == "")
 				throw new ParseException (parser.Location, "Object tag must have a valid ID.");
 
 			scope = attribs ["scope"] as string;
-			className = attribs ["class"] as string;
+			string className = attribs ["class"] as string;
 			attribs.Remove ("scope");
 			attribs.Remove ("class");
 			if (className == null || className.Trim () == "")
 				throw new ParseException (parser.Location, "Object tag must have 'class' attribute.");
 
+			this.type = parser.LoadType (className);
+			if (this.type == null)
+				throw new ParseException (parser.Location, "Type " + className + " not found.");
 
 			if (attribs ["progid"] != null || attribs ["classid"] != null)
 				throw new ParseException (parser.Location, "ClassID and ProgID are not supported.");
-			
-			base.Init (parser, parentBuilder, type, tagName, this.id, attribs);	
-			// class, id, scope
+
+			if (attribs.Count > 0)
+				throw new ParseException (parser.Location, "Unknown attribute");
+		}
+
+		public override bool HasBody ()
+		{
+			return false;
+		}
+
+		internal Type Type {
+			get { return type; }
 		}
 
 		internal string ObjectID {
@@ -68,10 +82,6 @@ namespace System.Web.UI
 
 		internal string Scope {
 			get { return scope; }
-		}
-
-		internal string ClassName {
-			get { return className; }
 		}
 	}
 }
