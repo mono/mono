@@ -108,10 +108,6 @@ key containers. The option is equivalent to including [assembly:
 AssemblyKeyName ("CONTAINER")] in your source code. Compiler option 
 takes precedence over the attributes.
 .TP
-.I \-\-stacktrace
-Generates a stack trace at the time the error is reported, useful for
-debugging the compiler.
-.TP
 .I -lib:PATHLIST
 Each path specified in the comma-separated list will direct the
 compiler to look for libraries in that specified path.
@@ -142,6 +138,16 @@ Names the output file to be generated.
 .I \-\-parse
 Used for benchmarking.  The compiler will only parse its input files.
 .TP
+.I \-pkg:package1[,packageN]
+The compiler will invoke pkg-config --libs on the set of packages
+specified on the command line to obtain libraries and directories to
+compile the code.
+.PP
+This is typically used with third party components, like this:
+.nf
+		$ mcs -pkg:gtk-sharp demo.cs
+.fi
+.TP
 .I -resource:RESOURCE[,ID]
 Embeds to the given resource file.  The optional ID can be used to
 give a different name to the resource.  If not specified, the resource
@@ -165,8 +171,12 @@ Does recursive compilation using the specified pattern.  In Unix the
 shell will perform globbing, so you migth want to use it like this:
 .PP
 .nf
-		bash$ mcs -recurse:'*.cs' 
+		$ mcs -recurse:'*.cs' 
 .fi
+.TP
+.I \-\-stacktrace
+Generates a stack trace at the time the error is reported, useful for
+debugging the compiler.
 .TP
 .I \-target:KIND, \-t:KIND
 Used to specify the desired target.  The possible values are: exe
