@@ -6,6 +6,11 @@
 	(mono_delegate_begin_invoke): impl.
 	(mono_mb_emit_save_args): impl.
 	(mono_delegate_end_invoke): impl.
+	(mono_marshal_get_delegate_begin_invoke):
+	(mono_marshal_get_delegate_end_invoke):
+	(mono_marshal_get_delegate_invoke): generate a special name for
+	those methods (including the signature) and associate them whith
+	the delegate class. 
 
 2002-07-13  Gonzalo Paniagua Javier <gonzalo@gnome-db.org>
 
