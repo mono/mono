@@ -1,3 +1,7 @@
+2003-10-25  Zoltan Varga  <vargaz@freemail.hu>
+
+	* libtest.c pinvoke2.cs: Add tests for [In,Out] marshalling of arrays.
+
 2003-10-15  Zoltan Varga  <vargaz@freemail.hu>
 
 	* vararg.il: New file.
