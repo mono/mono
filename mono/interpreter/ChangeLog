@@ -1,4 +1,20 @@
 
+Thu Sep 20 16:32:42 CEST 2001 Paolo Molaro <lupus@ximian.com>
+
+	* interp.c: implemented some more opcodes: calli, rem.un,
+	shr.un, conv.u, cpobj, stobj, conv.r.un, conv.ovf.i1.un,
+	conv.ovf.i2.un, conv.ovf.i4.un, conv.ovf.i8.un, conv.ovf.i.un,
+	conv.ovf.u1.un, conv.ovf.u2.un, conv.ovf.u4.un, conv.ovf.u8.un,
+	conv.ovf.u.un.
+	Fix some 64 bit issues in the array element access code and a small bug.
+	Throw an exception on index out of range instead of asserting.
+	Throw an exception on a NULL array instead of dying.
+	Stomped a memory corruption bug (.cctor methods were freed after
+	executing them, but they are stores in MonoClass now...).
+	Added a simple facility to invoke the debugger when a named
+	function is entered (use the cmdline option --debug method_name).
+	* interp.h: fix 64 bit issue.
+
 Tue Sep 18 13:21:33 CEST 2001 Paolo Molaro <lupus@ximian.com>
 
 	* interp.c: fix some 64 bit issues. Safer support for delegates.
