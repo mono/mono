@@ -50,9 +50,7 @@ namespace System.Xml
 		ReadState state = ReadState.Initial;
 		int depth;
 		bool isEndElement;
-		bool nextIsEndElement;	// used for ReadString()
 		bool alreadyRead;
-		StringBuilder valueBuilder = new StringBuilder ();
 		XmlNamespaceManager defaultNsmgr;
 		Stack entityReaderStack = new Stack ();
 		XmlReader entityReader;
@@ -615,7 +613,13 @@ namespace System.Xml
 				}
 			}
 
-			return defaultNsmgr.LookupNamespace (prefix);
+			switch (prefix) {
+			case "xml":
+				return XmlNamespaceManager.XmlnsXml;
+			case "xmlns":
+				return XmlNamespaceManager.XmlnsXmlns;
+			}
+			return null;
 		}
 
 #if NET_2_0
@@ -652,7 +656,13 @@ namespace System.Xml
 					}
 				}
 			}
-			return defaultNsmgr.LookupPrefix (ns, atomizedNames);
+			switch (ns) {
+			case XmlNamespaceManager.XmlnsXml:
+				return XmlNamespaceManager.PrefixXml;
+			case XmlNamespaceManager.XmlnsXmlns:
+				return XmlNamespaceManager.PrefixXmlns;
+			}
+			return null;
 		}
 #endif
 
@@ -804,11 +814,7 @@ namespace System.Xml
 
 		private bool MoveToNextSibling ()
 		{
-			if (nextIsEndElement) {
-				// nextIsEndElement is set only by ReadString.
-				nextIsEndElement = false;
-				MoveToParentElement ();
-			} else if (alreadyRead) {
+			if (alreadyRead) {
 				alreadyRead = false;
 				return current != null;
 			}
@@ -884,12 +890,6 @@ namespace System.Xml
 					current = current.NextSibling;
 					return true;
 				}
-
-			} else if (nextIsEndElement) {
-				// nextIsEndElement is set only by ReadString.
-				nextIsEndElement = false;
-				isEndElement = true;
-				return current != null;
 
 			} else if (alreadyRead) {
 				alreadyRead = false;

@@ -1,5 +1,20 @@
 2004-10-29  Atsushi Enomoto <atsushi@ximian.com>
 
+	* XmlNodeReader.cs : removed unused/unreachable code. Simplify
+	  namespace lookup.
+
+2004-10-29  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlDocument.cs, XmlNodeReader.cs, XmlTextReader.cs,
+	  XmlValidatingReader.cs : Those readers could just implement internal
+	  interface IHasXmlParserContext.
+	* XmlTextReader.cs, XmlValidatingReader.cs : this[] disappeared in 2.0.
+	  (XmlReader has them as virtual.)
+	* XmlReader.cs : ReadAsObject() disappeared.
+	* XmlWriter.cs : WriteFromObject() disappeared.
+
+2004-10-29  Atsushi Enomoto <atsushi@ximian.com>
+
 	* XmlDocumentNavigator.cs : GetNode() should consider namespace nodes.
 	* XmlNode.cs : dustclean.
 
