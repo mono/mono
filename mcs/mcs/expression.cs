@@ -3455,6 +3455,11 @@ namespace Mono.CSharp {
 			} else
 				ec.ig.Emit (OpCodes.Ldloca, local_info.LocalBuilder);
 		}
+
+		public override string ToString ()
+		{
+			return String.Format ("{0} ({1}:{2})", GetType (), Name, loc);
+		}
 	}
 
 	/// <summary>
@@ -6460,6 +6465,24 @@ namespace Mono.CSharp {
 
 		public override Expression ResolveAsTypeStep (EmitContext ec)
 		{
+			string fname = null;
+			MemberAccess full_expr = this;
+			while (full_expr != null) {
+				if (fname != null)
+					fname = String.Concat (full_expr.Identifier, ".", fname);
+				else
+					fname = full_expr.Identifier;
+
+				if (full_expr.Expr is SimpleName) {
+					string full_name = String.Concat (((SimpleName) full_expr.Expr).Name, ".", fname);
+					Type fully_qualified = ec.DeclSpace.FindType (loc, full_name);
+					if (fully_qualified != null)
+						return new TypeExpr (fully_qualified, loc);
+				}
+
+				full_expr = full_expr.Expr as MemberAccess;
+			}
+
 			Expression new_expr = expr.ResolveAsTypeStep (ec);
 
 			if (new_expr == null)

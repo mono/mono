@@ -1,5 +1,12 @@
 2003-07-13  Martin Baulig  <martin@ximian.com>
 
+	* expression.cs (MemberAccess.ResolveAsTypeStep): Try to do a type
+	lookup on the fully qualified name, to make things like "X.X" work
+	where "X.X" is a fully qualified type name, but we also have a
+	namespace "X" in the using list.  Fixes #41975.
+
+2003-07-13  Martin Baulig  <martin@ximian.com>
+
 	* assign.cs (Assign.GetEmbeddedAssign): New protected virtual
 	function. If we're a CompoundAssign, we need to create an embedded
 	CompoundAssign, not an embedded Assign.
