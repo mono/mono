@@ -29,9 +29,12 @@
 //	Jaak Simm		jaaksimm@firm.ee
 //	John Sohn		jsohn@columbus.rr.com
 //
-// $Revision: 1.63 $
+// $Revision: 1.64 $
 // $Modtime: $
 // $Log: Control.cs,v $
+// Revision 1.64  2004/09/16 23:44:19  pbartok
+// - Added SendToBack and BringToFront methods
+//
 // Revision 1.63  2004/09/11 03:50:00  pbartok
 // - Added DoDragDrop() [incomplete]
 // - Properly implemented 'Visible' handling
@@ -1754,6 +1757,36 @@ namespace System.Windows.Forms
 
 		public IAsyncResult BeginInvoke (Delegate method, object[] args) {
 			return BeginInvokeInternal (method, args);
+		}
+
+		public void BringToFront() {
+			// Need to update the child list of our parent
+			if ((parent != null) && (parent.child_controls[0]!=this)) {
+				if (parent.child_controls.Contains(this)) {
+					parent.child_controls.SetChildIndex(this, 0);
+				}
+			}
+
+			XplatUI.SetZOrder(this.window.Handle, IntPtr.Zero, true, false);
+
+			if (parent != null) {
+				parent.Refresh();
+			}
+		}
+
+		public void SendToBack() {
+			// Need to update the child list of our parent
+			if ((parent != null) && (parent.child_controls[parent.child_controls.Count-1]!=this)) {
+
+				if (parent.child_controls.Contains(this)) {
+					parent.child_controls.SetChildIndex(this, parent.child_controls.Count);
+				}
+			}
+
+			XplatUI.SetZOrder(this.window.Handle, IntPtr.Zero, false, true);
+			if (parent != null) {
+				parent.Refresh();
+			}
 		}
 
 		public bool Contains(Control ctl) {
