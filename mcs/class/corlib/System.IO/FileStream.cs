@@ -16,7 +16,7 @@ using Unix;
 namespace System.IO
 {
 
-	class FileStream : Stream
+	public class FileStream : Stream
 	{
 			
 		private IntPtr fd;
