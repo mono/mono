@@ -1,5 +1,8 @@
 2003-06-15  Zoltan Varga  <vargaz@freemail.hu>
 
+	* reflection.c (mono_reflection_create_runtime_class): Add support
+	for events in dynamically generated code.
+
 	* gc.c: Start GCHandle indexes from 1, since 0 means the handle is
 	not allocated.
 
