@@ -1,4 +1,9 @@
 
+Fri Feb 8 19:28:31 CET 2002 Paolo Molaro <lupus@ximian.com>
+
+	* get.c: don't abort if a methodref is not found, usa alternative way
+	to get the method name.
+
 Fri Feb 8 12:29:41 CET 2002 Paolo Molaro <lupus@ximian.com>
 
 	* Makefile.am: correct linking order.
