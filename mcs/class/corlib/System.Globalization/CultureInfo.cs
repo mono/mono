@@ -1,5 +1,5 @@
 //
-// System.Globalization.CultureInfo
+// System.Globalization.CultureInfo.cs
 //
 // Miguel de Icaza (miguel@ximian.com)
 // Dick Porter (dick@ximian.com)
@@ -501,7 +501,7 @@ namespace System.Globalization
 				return;
 			}
 
-			if (!construct_internal_locale_from_name (name.ToLower ()))
+			if (!construct_internal_locale_from_name (name.ToLowerInvariant ()))
 				throw new ArgumentException ("Culture name " + name +
 						" is not supported.", "name");
 		}

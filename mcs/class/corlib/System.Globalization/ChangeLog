@@ -1,3 +1,8 @@
+2004-04-25  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
+
+	* CultureInfo.cs: Call invariant String.ToLower
+	* RegionInfo.cs: Call invariant String.ToUpper
+
 2004-04-11  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* NumberFormatInfo.cs : All GetXXXGroupSizes() should not return
@@ -32,16 +37,16 @@
 
 2004-02-08 David Sheldon <dave-mono@earth.li>
 
-  * NumberFormatInfo.cs: When parsing the percentages, put the data 
-   into PercentDecimalDigits/PercentGroupLengths, rather than trashing
-   the NumberDecimatDigits etc. This also means that the percent format
-   info gets set.
+	* NumberFormatInfo.cs: When parsing the percentages, put the data 
+	  into PercentDecimalDigits/PercentGroupLengths, rather than trashing
+	  the NumberDecimatDigits etc. This also means that the percent format
+	  info gets set.
 
 2004-01-27  David Sheldon <dave-mono@earth.li>
 
-  * NumberFormatInfo.cs: InitPatterns: it seems that the patterns in 
-   ICU use digitPattern, not zeroPattern for the spaces after the 
-   decimal point. 
+	* NumberFormatInfo.cs: InitPatterns: it seems that the patterns in 
+	  ICU use digitPattern, not zeroPattern for the spaces after the 
+	  decimal point. 
 
 2004-01-12  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 

@@ -413,7 +413,7 @@ namespace System.Globalization {
 		}
 
 		public RegionInfo (string name) {
-			switch (name.ToUpper ()) {
+			switch (name.ToUpperInvariant ()) {
 			case "AF": // Afghanistan
 				NLS_id = 004;
 				break;
