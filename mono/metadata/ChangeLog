@@ -1,3 +1,8 @@
+2004-06-08  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* culture-info-tables.h : Reflecting the latest locale-builder that
+	  fixed empty array representation ({} to {0}).
+
 2004-06-07  Jackson Harper  <jackson@ximian.com>
 
 	* assembly.c: It should be <MONO_GAC_PATH>/lib/mono/gac when
