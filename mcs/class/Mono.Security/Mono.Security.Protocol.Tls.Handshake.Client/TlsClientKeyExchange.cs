@@ -28,13 +28,12 @@ using System.Security.Cryptography;
 
 namespace Mono.Security.Protocol.Tls.Handshake.Client
 {
-	internal class TlsClientKeyExchange : TlsHandshakeMessage
+	internal class TlsClientKeyExchange : HandshakeMessage
 	{
 		#region Constructors
 
 		public TlsClientKeyExchange (Context context) : 
-			base(context,
-				TlsHandshakeType.ClientKeyExchange)
+			base(context, HandshakeType.ClientKeyExchange)
 		{
 		}
 

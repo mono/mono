@@ -27,18 +27,18 @@ using System.Security.Cryptography;
 
 namespace Mono.Security.Protocol.Tls.Handshake.Client
 {
-	internal class TlsClientHello : TlsHandshakeMessage
+	internal class TlsClientHello : HandshakeMessage
 	{
 		#region Fields
 
-		private byte[]	random;
+		private byte[] random;
 
 		#endregion
 
 		#region Constructors
 
 		public TlsClientHello(Context context) 
-			: base(context, TlsHandshakeType.ClientHello)
+			: base(context, HandshakeType.ClientHello)
 		{
 		}
 

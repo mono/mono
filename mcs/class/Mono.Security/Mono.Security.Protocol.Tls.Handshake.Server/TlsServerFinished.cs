@@ -29,12 +29,12 @@ using Mono.Security.Cryptography;
 
 namespace Mono.Security.Protocol.Tls.Handshake.Server
 {
-	internal class TlsServerFinished : TlsHandshakeMessage
+	internal class TlsServerFinished : HandshakeMessage
 	{
 		#region Constructors
 
 		public TlsServerFinished(Context context) 
-			: base(context, TlsHandshakeType.ServerHello)
+			: base(context, HandshakeType.ServerHello)
 		{
 		}
 
@@ -53,12 +53,31 @@ namespace Mono.Security.Protocol.Tls.Handshake.Server
 
 		protected override void ProcessAsSsl3()
 		{
-			throw new NotSupportedException();
+			// Compute handshake messages hashes
+			HashAlgorithm hash = new SslHandshakeHash(this.Context.MasterSecret);
+
+			TlsStream data = new TlsStream();
+			data.Write(this.Context.HandshakeMessages.ToArray());
+			data.Write((int)0x53525652);
+			
+			hash.TransformFinalBlock(data.ToArray(), 0, (int)data.Length);
+
+			this.Write(hash.Hash);
+
+			data.Reset();
 		}
 
 		protected override void ProcessAsTls1()
 		{
-			throw new NotSupportedException();
+			// Compute handshake messages hash
+			HashAlgorithm hash = new MD5SHA1();
+			hash.ComputeHash(
+				this.Context.HandshakeMessages.ToArray(),
+				0,
+				(int)this.Context.HandshakeMessages.Length);
+
+			// Write message
+			this.Write(this.Context.Cipher.PRF(this.Context.MasterSecret, "server finished", hash.Hash, 12));
 		}
 
 		#endregion

@@ -28,19 +28,19 @@ using Mono.Security;
 
 namespace Mono.Security.Protocol.Tls.Handshake.Client
 {
-	internal class TlsServerCertificateRequest : TlsHandshakeMessage
+	internal class TlsServerCertificateRequest : HandshakeMessage
 	{
 		#region Fields
 
-		private TlsClientCertificateType[]	certificateTypes;
-		private string[]					distinguisedNames;
+		private ClientCertificateType[]	certificateTypes;
+		private string[]				distinguisedNames;
 
 		#endregion
 
 		#region Constructors
 
 		public TlsServerCertificateRequest(Context context, byte[] buffer) 
-			: base(context, TlsHandshakeType.ServerHello, buffer)
+			: base(context, HandshakeType.ServerHello, buffer)
 		{
 		}
 
@@ -71,11 +71,11 @@ namespace Mono.Security.Protocol.Tls.Handshake.Client
 			// Read requested certificate types
 			int typesCount = this.ReadByte();
 						
-			this.certificateTypes = new TlsClientCertificateType[typesCount];
+			this.certificateTypes = new ClientCertificateType[typesCount];
 
 			for (int i = 0; i < typesCount; i++)
 			{
-				this.certificateTypes[i] = (TlsClientCertificateType)this.ReadByte();
+				this.certificateTypes[i] = (ClientCertificateType)this.ReadByte();
 			}
 
 			/*

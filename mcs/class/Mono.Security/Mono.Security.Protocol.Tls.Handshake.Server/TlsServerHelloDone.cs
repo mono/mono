@@ -26,22 +26,13 @@ using System;
 
 namespace Mono.Security.Protocol.Tls.Handshake.Server
 {
-	internal class TlsServerHelloDone : TlsHandshakeMessage
+	internal class TlsServerHelloDone : HandshakeMessage
 	{
 		#region Constructors
 
 		public TlsServerHelloDone(Context context) 
-			: base(context, TlsHandshakeType.ServerHelloDone)
+			: base(context, HandshakeType.ServerHelloDone)
 		{
-		}
-
-		#endregion
-
-		#region Methods
-
-		public override void Update()
-		{
-			throw new NotSupportedException();
 		}
 
 		#endregion
@@ -50,12 +41,10 @@ namespace Mono.Security.Protocol.Tls.Handshake.Server
 
 		protected override void ProcessAsSsl3()
 		{
-			throw new NotSupportedException();
 		}
 
 		protected override void ProcessAsTls1()
 		{
-			throw new NotSupportedException();
 		}
 
 		#endregion

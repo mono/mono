@@ -30,12 +30,12 @@ using Mono.Security.Cryptography;
 
 namespace Mono.Security.Protocol.Tls.Handshake.Server
 {
-	internal class TlsClientCertificateVerify : TlsHandshakeMessage
+	internal class TlsClientCertificateVerify : HandshakeMessage
 	{
 		#region Constructors
 
 		public TlsClientCertificateVerify(Context context, byte[] buffer)
-			: base(context, TlsHandshakeType.Finished, buffer)
+			: base(context, HandshakeType.Finished, buffer)
 		{
 		}
 

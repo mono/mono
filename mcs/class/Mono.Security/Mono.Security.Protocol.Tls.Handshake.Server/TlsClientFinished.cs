@@ -29,12 +29,12 @@ using Mono.Security.Cryptography;
 
 namespace Mono.Security.Protocol.Tls.Handshake.Server
 {
-	internal class TlsClientFinished : TlsHandshakeMessage
+	internal class TlsClientFinished : HandshakeMessage
 	{
 		#region Constructors
 
 		public TlsClientFinished(Context context, byte[] buffer)
-			: base(context, TlsHandshakeType.Finished,  buffer)
+			: base(context, HandshakeType.Finished,  buffer)
 		{
 		}
 
@@ -53,12 +53,58 @@ namespace Mono.Security.Protocol.Tls.Handshake.Server
 
 		protected override void ProcessAsSsl3()
 		{
-			throw new NotSupportedException();
+			// Compute handshake messages hashes
+			HashAlgorithm hash = new SslHandshakeHash(this.Context.MasterSecret);
+
+			TlsStream data = new TlsStream();
+			data.Write(this.Context.HandshakeMessages.ToArray());
+			data.Write((int)0x434C4E54);
+			
+			hash.TransformFinalBlock(data.ToArray(), 0, (int)data.Length);
+
+			data.Reset();
+
+			byte[] clientHash	= this.ReadBytes((int)Length);			
+			byte[] serverHash	= hash.Hash;
+			
+			// Check client prf against server prf
+			if (clientHash.Length != serverHash.Length)
+			{
+				throw new TlsException("Invalid ServerFinished message received.");
+			}
+			for (int i = 0; i < clientHash.Length; i++)
+			{
+				if (clientHash[i] != serverHash[i])
+				{
+					throw new TlsException("Invalid ServerFinished message received.");
+				}
+			}
 		}
 
 		protected override void ProcessAsTls1()
 		{
-			throw new NotSupportedException();
+			byte[]			clientPRF	= this.ReadBytes((int)this.Length);
+			HashAlgorithm	hash		= new MD5SHA1();
+
+			hash.ComputeHash(
+				this.Context.HandshakeMessages.ToArray(), 
+				0,
+				(int)this.Context.HandshakeMessages.Length);
+
+			byte[] serverPRF = this.Context.Cipher.PRF(this.Context.MasterSecret, "client finished", hash.Hash, 12);
+
+			// Check client prf against server prf
+			if (clientPRF.Length != serverPRF.Length)
+			{
+				throw new TlsException("Invalid ServerFinished message received.");
+			}
+			for (int i = 0; i < serverPRF.Length; i++)
+			{
+				if (clientPRF[i] != serverPRF[i])
+				{
+					throw new TlsException("Invalid ServerFinished message received.");
+				}
+			}
 		}
 
 		#endregion

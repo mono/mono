@@ -31,13 +31,12 @@ using System.Text.RegularExpressions;
 using System.Security.Cryptography;
 using X509Cert = System.Security.Cryptography.X509Certificates;
 
-using Mono.Security.Protocol.Tls.Alerts;
 using Mono.Security.X509;
 using Mono.Security.X509.Extensions;
 
 namespace Mono.Security.Protocol.Tls.Handshake.Client
 {
-	internal class TlsServerCertificate : TlsHandshakeMessage
+	internal class TlsServerCertificate : HandshakeMessage
 	{
 		#region Fields
 
@@ -48,7 +47,7 @@ namespace Mono.Security.Protocol.Tls.Handshake.Client
 		#region Constructors
 
 		public TlsServerCertificate(Context context, byte[] buffer) 
-			: base(context, TlsHandshakeType.Certificate, buffer)
+			: base(context, HandshakeType.Certificate, buffer)
 		{
 		}
 
@@ -118,7 +117,8 @@ namespace Mono.Security.Protocol.Tls.Handshake.Client
 				return true;
 
 			KeyUsage ku = KeyUsage.none;
-			switch (context.Cipher.ExchangeAlgorithmType) {
+			switch (context.Cipher.ExchangeAlgorithmType) 
+			{
 				case ExchangeAlgorithmType.RsaSign:
 					ku = KeyUsage.digitalSignature;
 					break;
@@ -143,24 +143,28 @@ namespace Mono.Security.Protocol.Tls.Handshake.Client
 			if (xtn != null)
 				eku = new ExtendedKeyUsageExtension (xtn);
 
-			if ((kux != null) && (eku != null)) {
+			if ((kux != null) && (eku != null)) 
+			{
 				// RFC3280 states that when both KeyUsageExtension and 
 				// ExtendedKeyUsageExtension are present then BOTH should
 				// be valid
 				return (kux.Support (ku) &&
 					eku.KeyPurpose.Contains ("1.3.6.1.5.5.7.3.1"));
 			}
-			else if (kux != null) {
+			else if (kux != null) 
+			{
 				return kux.Support (ku);
 			}
-			else if (eku != null) {
+			else if (eku != null) 
+			{
 				// Server Authentication (1.3.6.1.5.5.7.3.1)
 				return eku.KeyPurpose.Contains ("1.3.6.1.5.5.7.3.1");
 			}
 
 			// last chance - try with older (deprecated) Netscape extensions
 			xtn = cert.Extensions ["2.16.840.1.113730.1.1"];
-			if (xtn != null) {
+			if (xtn != null) 
+			{
 				NetscapeCertTypeExtension ct = new NetscapeCertTypeExtension (xtn);
 				return ct.Support (NetscapeCertTypeExtension.CertType.SslServer);
 			}
@@ -212,8 +216,10 @@ namespace Mono.Security.Protocol.Tls.Handshake.Client
 			X509CertificateCollection chain = new X509CertificateCollection (certificates);
 			chain.Remove (leaf);
 			X509Chain verify = new X509Chain (chain);
-			if (!verify.Build (leaf)) {
-				switch (verify.Status) {
+			if (!verify.Build (leaf)) 
+			{
+				switch (verify.Status) 
+				{
 					case X509ChainStatusFlags.InvalidBasicConstraints:
 						// WinError.h TRUST_E_BASIC_CONSTRAINTS 0x80096019
 						errors.Add ((int)-2146869223);
@@ -273,16 +279,19 @@ namespace Mono.Security.Protocol.Tls.Handshake.Client
 
 			X509Extension ext = cert.Extensions ["2.5.29.17"];
 			// 1. subjectAltName
-			if (ext != null) {
+			if (ext != null) 
+			{
 				SubjectAltNameExtension subjectAltName = new SubjectAltNameExtension (ext);
 				// 1.1 - multiple dNSName
-				foreach (string dns in subjectAltName.DNSNames) {
+				foreach (string dns in subjectAltName.DNSNames) 
+				{
 					// 1.2 TODO - wildcard support
 					if (dns == targetHost)
 						return true;
 				}
 				// 2. ipAddress
-				foreach (string ip in subjectAltName.IPAddresses) {
+				foreach (string ip in subjectAltName.IPAddresses) 
+				{
 					// 2.1. Exact match required
 					if (ip == targetHost)
 						return true;
@@ -314,36 +323,36 @@ namespace Mono.Security.Protocol.Tls.Handshake.Client
 			// TODO: add wildcard * support
 			return (String.Compare (context.ClientSettings.TargetHost, domainName, true, CultureInfo.InvariantCulture) == 0);
 
-/*
- * the only document found describing this is:
- * http://www.geocities.com/SiliconValley/Byte/4170/articulos/tls/autentic.htm#Autenticaci%F3n%20del%20Server
- * however I don't see how this could deal with wildcards ?
- * other issues
- * a. there could also be many address returned
- * b. Address property is obsoleted in .NET 1.1
- * 
-  			if (domainName == String.Empty)
-			{
-				return false;
-			}
-			else
-			{
-				string targetHost = context.ClientSettings.TargetHost;
+			/*
+			 * the only document found describing this is:
+			 * http://www.geocities.com/SiliconValley/Byte/4170/articulos/tls/autentic.htm#Autenticaci%F3n%20del%20Server
+			 * however I don't see how this could deal with wildcards ?
+			 * other issues
+			 * a. there could also be many address returned
+			 * b. Address property is obsoleted in .NET 1.1
+			 * 
+						if (domainName == String.Empty)
+						{
+							return false;
+						}
+						else
+						{
+							string targetHost = context.ClientSettings.TargetHost;
 
-				// Check that the IP is correct
-				try
-				{
-					IPAddress	ipHost		= Dns.Resolve(targetHost).AddressList[0];
-					IPAddress	ipDomain	= Dns.Resolve(domainName).AddressList[0];
+							// Check that the IP is correct
+							try
+							{
+								IPAddress	ipHost		= Dns.Resolve(targetHost).AddressList[0];
+								IPAddress	ipDomain	= Dns.Resolve(domainName).AddressList[0];
 
-					// Note: Address is obsolete in 1.1
-					return (ipHost.Address == ipDomain.Address);
-				}
-				catch (Exception)
-				{
-					return false;
-				}
-			}*/
+								// Note: Address is obsolete in 1.1
+								return (ipHost.Address == ipDomain.Address);
+							}
+							catch (Exception)
+							{
+								return false;
+							}
+						}*/
 		}
 
 		#endregion

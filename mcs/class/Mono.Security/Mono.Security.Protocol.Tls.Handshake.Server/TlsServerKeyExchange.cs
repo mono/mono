@@ -30,12 +30,12 @@ using Mono.Security.X509;
 
 namespace Mono.Security.Protocol.Tls.Handshake.Server
 {
-	internal class TlsServerKeyExchange : TlsHandshakeMessage
+	internal class TlsServerKeyExchange : HandshakeMessage
 	{
 		#region Constructors
 
 		public TlsServerKeyExchange(Context context)
-			: base(context, TlsHandshakeType.ServerKeyExchange)
+			: base(context, HandshakeType.ServerKeyExchange)
 		{
 		}
 

@@ -28,12 +28,12 @@ using System.Security.Cryptography.X509Certificates;
 
 namespace Mono.Security.Protocol.Tls.Handshake.Server
 {
-	internal class TlsClientCertificate : TlsHandshakeMessage
+	internal class TlsClientCertificate : HandshakeMessage
 	{
 		#region Constructors
 
 		public TlsClientCertificate(Context context, byte[] buffer)
-			: base(context, TlsHandshakeType.Certificate, buffer)
+			: base(context, HandshakeType.Certificate, buffer)
 		{
 		}
 

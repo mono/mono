@@ -29,12 +29,12 @@ using Mono.Security.Protocol.Tls;
 
 namespace Mono.Security.Protocol.Tls.Handshake.Client
 {
-	internal class TlsClientCertificate : TlsHandshakeMessage
+	internal class TlsClientCertificate : HandshakeMessage
 	{
 		#region Constructors
 
 		public TlsClientCertificate(Context context) 
-			: base(context, TlsHandshakeType.Certificate)
+			: base(context, HandshakeType.Certificate)
 		{
 		}
 

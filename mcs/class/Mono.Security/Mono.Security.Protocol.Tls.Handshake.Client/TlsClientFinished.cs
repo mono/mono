@@ -29,12 +29,12 @@ using Mono.Security.Cryptography;
 
 namespace Mono.Security.Protocol.Tls.Handshake.Client
 {
-	internal class TlsClientFinished : TlsHandshakeMessage
+	internal class TlsClientFinished : HandshakeMessage
 	{
 		#region Constructors
 
 		public TlsClientFinished(Context context) 
-			: base(context, TlsHandshakeType.Finished)
+			: base(context, HandshakeType.Finished)
 		{
 		}
 
@@ -55,7 +55,7 @@ namespace Mono.Security.Protocol.Tls.Handshake.Client
 		protected override void ProcessAsSsl3()
 		{
 			// Compute handshake messages hashes
-			HashAlgorithm hash = new TlsSslHandshakeHash(this.Context.MasterSecret);
+			HashAlgorithm hash = new SslHandshakeHash(this.Context.MasterSecret);
 
 			TlsStream data = new TlsStream();
 			data.Write(this.Context.HandshakeMessages.ToArray());

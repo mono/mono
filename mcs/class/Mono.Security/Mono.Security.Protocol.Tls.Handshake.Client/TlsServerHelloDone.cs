@@ -26,26 +26,13 @@ using System;
 
 namespace Mono.Security.Protocol.Tls.Handshake.Client
 {
-	internal class TlsServerHelloDone : TlsHandshakeMessage
+	internal class TlsServerHelloDone : HandshakeMessage
 	{
 		#region Constructors
 
 		public TlsServerHelloDone(Context context, byte[] buffer) 
-			: base(context, TlsHandshakeType.ServerHelloDone, buffer)
+			: base(context, HandshakeType.ServerHelloDone, buffer)
 		{
-		}
-
-		#endregion
-
-		#region Methods
-
-		public override void Update()
-		{
-			ClientContext context = (ClientContext)this.Context;
-
-			base.Update();
-
-			context.HelloDone = true;
 		}
 
 		#endregion

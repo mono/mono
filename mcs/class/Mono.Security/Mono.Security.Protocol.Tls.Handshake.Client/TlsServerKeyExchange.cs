@@ -30,7 +30,7 @@ using Mono.Security.X509;
 
 namespace Mono.Security.Protocol.Tls.Handshake.Client
 {
-	internal class TlsServerKeyExchange : TlsHandshakeMessage
+	internal class TlsServerKeyExchange : HandshakeMessage
 	{
 		#region Fields
 
@@ -42,7 +42,7 @@ namespace Mono.Security.Protocol.Tls.Handshake.Client
 		#region Constructors
 
 		public TlsServerKeyExchange(Context context, byte[] buffer)
-			: base(context, TlsHandshakeType.ServerKeyExchange, buffer)
+			: base(context, HandshakeType.ServerKeyExchange, buffer)
 		{
 			this.verifySignature();
 		}

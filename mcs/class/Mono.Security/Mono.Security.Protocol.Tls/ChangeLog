@@ -1,3 +1,42 @@
+2004-03-06 Carlos Guzman Alvarez  <carlosga@telefonica.net>
+
+	* Mono.Security.Protocol.Tls/SslServerStream.cs:
+
+		- Initial implementation of the doHandshake method.
+
+        - Added initial events implementation.
+
+	* Mono.Security.Protocol.Tls/Ciphersuite.cs:
+	* Mono.Security.Protocol.Tls/TlsCiphersuite.cs:
+	* Mono.Security.Protocol.Tls/ClientRecordProtocol.cs:
+	* Mono.Security.Protocol.Tls/ServerRecordProtocol.cs:
+	* Mono.Security.Protocol.Tls/SslClientStream.cs:
+	* Mono.Security.Protocol.Tls/TlsServerSettings.cs:
+	* Mono.Security.Protocol.Tls/TlsClientSettings.cs:
+	* Mono.Security.Protocol.Tls/ClientContext.cs:
+
+		- Changes for make use of the renamed classes and enums.
+
+	* Mono.Security.Protocol.Tls/TlsContentType.cs:
+
+		- Renamed to ContentType.cs ( Enum and file )
+ 
+	* Mono.Security.Protocol.Tls/TlsCiphersuiteCollection.cs:
+
+		- Renamed to CiphersuiteCollection.cs ( Class and file )
+
+	* Mono.Security.Protocol.Tls/TlsCiphersuiteFactory.cs:
+
+		- Renamed to CiphersuiteCollection.cs ( Class and file )
+
+	* Mono.Security.Protocol.Tls/TlsSslHandshakeHash.cs:
+
+		- Renamed to SslHandshakeHash.cs ( Class and file )
+
+	* Mono.Security.Protocol.Tls/TlsSslCipherSuite.cs:
+
+		- Renamed to SslCipherSuite.cs ( Class and file )
+
 2004-02-26 Carlos Guzman Alvarez  <carlosga@telefonica.net>
 
 	* Mono.Security.Protocol.Tls/HandshakeState.cs:

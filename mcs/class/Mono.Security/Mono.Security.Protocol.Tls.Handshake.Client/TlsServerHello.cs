@@ -26,7 +26,7 @@ using System;
 
 namespace Mono.Security.Protocol.Tls.Handshake.Client
 {
-	internal class TlsServerHello : TlsHandshakeMessage
+	internal class TlsServerHello : HandshakeMessage
 	{
 		#region Fields
 
@@ -40,7 +40,7 @@ namespace Mono.Security.Protocol.Tls.Handshake.Client
 		#region Constructors
 
 		public TlsServerHello(Context context, byte[] buffer) 
-			: base(context, TlsHandshakeType.ServerHello, buffer)
+			: base(context, HandshakeType.ServerHello, buffer)
 		{
 		}
 
@@ -56,7 +56,6 @@ namespace Mono.Security.Protocol.Tls.Handshake.Client
 			this.Context.ServerRandom		= this.random;
 			this.Context.Cipher				= this.cipherSuite;
 			this.Context.CompressionMethod	= this.compressionMethod;
-			this.Context.Cipher.Context		= this.Context;
 			this.Context.ProtocolNegotiated	= true;
 
 			// Compute ClientRandom + ServerRandom
@@ -125,7 +124,7 @@ namespace Mono.Security.Protocol.Tls.Handshake.Client
 				this.Context.SecurityProtocol = serverProtocol;
 				this.Context.SupportedCiphers.Clear();
 				this.Context.SupportedCiphers = null;
-				this.Context.SupportedCiphers = TlsCipherSuiteFactory.GetSupportedCiphers(serverProtocol);
+				this.Context.SupportedCiphers = CipherSuiteFactory.GetSupportedCiphers(serverProtocol);
 			}
 			else
 			{

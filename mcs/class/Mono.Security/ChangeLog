@@ -1,3 +1,68 @@
+2004-03-06 Carlos Guzman Alvarez  <carlosga@telefonica.net>
+
+	* Mono.Security.Protocol.Tls.Handshake.Server/TlsClientHello.cs:
+	* Mono.Security.Protocol.Tls.Handshake.Server/TlsClientKeyExchange.cs:
+	* Mono.Security.Protocol.Tls.Handshake.Server/TlsServerHello.cs:
+	* Mono.Security.Protocol.Tls.Handshake.Server/TlsServerHelloDone.cs:
+	* Mono.Security.Protocol.Tls.Handshake.Server/TlsServerCertificate.cs:
+
+		- Initial implementation ( not finished ) 
+
+	* Mono.Security.Protocol.Tls/SslServerStream.cs:
+
+		- Initial implementation of the doHandshake method.
+
+        - Added initial events implementation.
+
+	* Mono.Security.Protocol.Tls/Ciphersuite.cs:
+	* Mono.Security.Protocol.Tls/TlsCiphersuite.cs:
+	* Mono.Security.Protocol.Tls/ClientRecordProtocol.cs:
+	* Mono.Security.Protocol.Tls/ServerRecordProtocol.cs:
+	* Mono.Security.Protocol.Tls/SslClientStream.cs:
+	* Mono.Security.Protocol.Tls/TlsServerSettings.cs:
+	* Mono.Security.Protocol.Tls/TlsClientSettings.cs:
+	* Mono.Security.Protocol.Tls/ClientContext.cs:
+	* Mono.Security.Protocol.Tls.Handshake.Client/*.cs:
+	* Mono.Security.Protocol.Tls.Handshake.Server/*.cs:
+
+		- Changes for make use of the renamed classes and enums.
+
+	* Mono.Security.Protocol.Tls.Handshake/TlsHandshakeType.cs:
+
+		- Renamed to HandshakeType.cs (Enum and file)
+
+	* Mono.Security.Protocol.Tls.Handshake/TlsHandshakeMessage.cs:
+
+		- Renamed to HandshakeMessage.cs (Class and file)
+
+	* Mono.Security.Protocol.Tls.Handshake/TlsClientCertificateType.cs:
+
+		- Renamed to ClientCertificateType.cs (Enum and file)
+
+	* Mono.Security.Protocol.Tls.Alerts/TlsAlert.cs:
+
+		- Renamed to Alert (Class, enums and file)
+
+	* Mono.Security.Protocol.Tls/TlsContentType.cs:
+
+		- Renamed to ContentType.cs ( Enum and file )
+ 
+	* Mono.Security.Protocol.Tls/TlsCiphersuiteCollection.cs:
+
+		- Renamed to CiphersuiteCollection.cs ( Class and file )
+
+	* Mono.Security.Protocol.Tls/TlsCiphersuiteFactory.cs:
+
+		- Renamed to CiphersuiteCollection.cs ( Class and file )
+
+	* Mono.Security.Protocol.Tls/TlsSslHandshakeHash.cs:
+
+		- Renamed to SslHandshakeHash.cs ( Class and file )
+
+	* Mono.Security.Protocol.Tls/TlsSslCipherSuite.cs:
+
+		- Renamed to SslCipherSuite.cs ( Class and file )
+
 2004-03-04 Carlos Guzman Alvarez  <carlosga@telefonica.net>
 
 	* Mono.Security.Protocol.Tls.Handshake.Client/TlsServerHelloDone.cs:

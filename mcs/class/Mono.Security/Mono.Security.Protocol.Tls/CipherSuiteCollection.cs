@@ -29,7 +29,7 @@ using System.Security.Cryptography;
 
 namespace Mono.Security.Protocol.Tls
 {
-	internal sealed class TlsCipherSuiteCollection : ArrayList
+	internal sealed class CipherSuiteCollection : ArrayList
 	{
 		#region Fields
 
@@ -61,7 +61,7 @@ namespace Mono.Security.Protocol.Tls
 
 		#region Constructors
 
-		public TlsCipherSuiteCollection(SecurityProtocolType protocol) : base()
+		public CipherSuiteCollection(SecurityProtocolType protocol) : base()
 		{
 			this.protocol = protocol;
 		}
@@ -127,7 +127,7 @@ namespace Mono.Security.Protocol.Tls
 
 				case SecurityProtocolType.Ssl3:
 					return this.add(
-						new TlsSslCipherSuite(
+						new SslCipherSuite(
 						code, name, cipherType, hashType, exchangeType, exportable, 
 						blockMode, keyMaterialSize, expandedKeyMaterialSize, 
 						effectiveKeyBytes, ivSize, blockSize));
@@ -145,7 +145,7 @@ namespace Mono.Security.Protocol.Tls
 			return cipherSuite;
 		}
 
-		private TlsSslCipherSuite add(TlsSslCipherSuite cipherSuite)
+		private SslCipherSuite add(SslCipherSuite cipherSuite)
 		{
 			base.Add(cipherSuite);
 
@@ -154,14 +154,11 @@ namespace Mono.Security.Protocol.Tls
 
 		private bool cultureAwareCompare(string strA, string strB)
 		{
-			try
-			{
-				return CultureInfo.CurrentCulture.CompareInfo.Compare(strA, strB, CompareOptions.IgnoreKanaType | CompareOptions.IgnoreWidth | CompareOptions.IgnoreCase) == 0 ? true : false;
-			}
-			catch (NotSupportedException)
-			{
-				return strA.ToUpper() == strB.ToUpper() ? true : false;
-			}
+			return CultureInfo.CurrentCulture.CompareInfo.Compare(
+				strA, 
+				strB, 
+				CompareOptions.IgnoreKanaType | CompareOptions.IgnoreWidth | 
+				CompareOptions.IgnoreCase) == 0 ? true : false;
 		}
 
 		#endregion

@@ -28,27 +28,17 @@ using System.Text.RegularExpressions;
 using System.Security.Cryptography;
 using X509Cert = System.Security.Cryptography.X509Certificates;
 
-using Mono.Security.Protocol.Tls.Alerts;
 using Mono.Security.X509;
 
 namespace Mono.Security.Protocol.Tls.Handshake.Server
 {
-	internal class TlsServerCertificate : TlsHandshakeMessage
+	internal class TlsServerCertificate : HandshakeMessage
 	{
 		#region Constructors
 
 		public TlsServerCertificate(Context context) 
-			: base(context, TlsHandshakeType.Certificate)
+			: base(context, HandshakeType.Certificate)
 		{
-		}
-
-		#endregion
-
-		#region Methods
-
-		public override void Update()
-		{
-			throw new NotSupportedException();
 		}
 
 		#endregion
@@ -57,12 +47,26 @@ namespace Mono.Security.Protocol.Tls.Handshake.Server
 
 		protected override void ProcessAsSsl3()
 		{
-			throw new NotSupportedException();
+			this.ProcessAsTls1();
 		}
 
 		protected override void ProcessAsTls1()
 		{
-			throw new NotSupportedException();
+			TlsStream certs = new TlsStream();
+
+			foreach (X509Certificate certificate in this.Context.ServerSettings.Certificates)
+			{
+				// Write certificate length
+				certs.WriteInt24(certificate.RawData.Length);
+
+				// Write certificate data
+				certs.Write(certificate.RawData);
+			}
+
+			this.WriteInt24(Convert.ToInt32(certs.Length));
+			this.Write(certs.ToArray());
+
+			certs.Close();
 		}
 
 		#endregion
