@@ -1843,7 +1843,7 @@ namespace Mono.CSharp {
 	///   times with this scheme.
 	/// </remarks>
 	public class SimpleName : Expression {
-		public readonly string Name;
+		public string Name;
 
 		//
 		// If true, then we are a simple name, not composed with a ".
@@ -1989,6 +1989,29 @@ namespace Mono.CSharp {
 		{
 			Expression e = null;
 
+			//
+			// Since we are cheating (is_base is our hint
+			// that we are the beginning of the name): we
+			// only do the Alias lookup for namespaces if
+			// the name does not include any dots in it
+			//
+			Namespace ns = ec.DeclSpace.Namespace;
+			if (is_base && ns != null){
+				string alias_value = ns.LookupAlias (Name);
+				if (alias_value != null){
+					Name = alias_value;
+					Type t;
+
+					if ((t = TypeManager.LookupType (Name)) != null)
+						return new TypeExpr (t, loc);
+					
+					// No match, maybe our parent can compose us
+					// into something meaningful.
+					return this;
+				}
+			}
+			
+			
 			//
 			// Stage 1: Performed by the parser (binding to locals or parameters).
 			//
