@@ -1,3 +1,8 @@
+2003-05-06  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* ResourceManager.cs: fixed infinite loop when the resource is not
+	found. Also fixes bug #34196.
+
 2003-05-04  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* ResourceManager.cs: enabled the code that calls GetSatelliteAssembly

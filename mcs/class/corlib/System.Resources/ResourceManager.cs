@@ -248,6 +248,13 @@ namespace System.Resources
 		{
 			ResourceSet set;
 			
+			if (culture == null) {
+				string msg = String.Format ("Could not find any resource appropiate for the " +
+							    "specified culture or its parents (assembly:{0})",
+							    MainAssembly != null ? MainAssembly.GetName ().Name : "");
+							    
+				throw new MissingManifestResourceException (msg);
+			}
 			/* if we already have this resource set, return it */
 			set=(ResourceSet)ResourceSets[culture];
 			if(set!=null) {
@@ -281,6 +288,13 @@ namespace System.Resources
 					 * with it?
 					 */
 					set=(ResourceSet)Activator.CreateInstance(resourceSetType, args);
+				} else if (culture == CultureInfo.InvariantCulture) {
+					string msg = "Could not find any resource appropiate for the " +
+						     "specified culture or its parents (assembly:{0})";
+						     
+					msg = String.Format (msg, MainAssembly != null ? MainAssembly.GetName ().Name : "");
+							    
+					throw new MissingManifestResourceException (msg);
 				}
 			} else if(resourceDir != null) {
 				/* File resources */
