@@ -843,7 +843,7 @@ namespace Mono.CSharp {
 				return false;
 
 			if (expr is EmptyCast)
-				expr = ((EmptyCast) expr).Child;
+				expr = ((EmptyCast) expr).Peel ();
 
 			if (!(expr is Constant)){
 				Report.Error (159, loc, "Target expression for goto case is not constant");
@@ -2995,7 +2995,7 @@ namespace Mono.CSharp {
 						continue;
 
 					if (e is EmptyCast)
-						e = ((EmptyCast) e).Child;
+						e = ((EmptyCast) e).Peel ();
 
 					if (!(e is Constant)){
 						Report.Error (133, vi.Location,
@@ -3180,7 +3180,7 @@ namespace Mono.CSharp {
 				return false;
 
 			if (e is EmptyCast)
-				e = ((EmptyCast) e).Child;
+				e = ((EmptyCast) e).Peel ();
 
 			if (!(e is Constant)){
 				Console.WriteLine ("Value is: " + label);

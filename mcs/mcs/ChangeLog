@@ -1,3 +1,10 @@
+2002-11-19  Miguel de Icaza  <miguel@ximian.com>
+
+	* statement.cs (Switch.ResolveAndReduce, Block.EmitMeta,
+	GotoCase.Resolve): Use Peel on EmpytCasts.
+
+	* ecore.cs (EmptyCast): drop child, add Peel method.
+
 2002-11-17  Martin Baulig  <martin@ximian.com>
 
 	* ecore.cs (EmptyCast.Child): New public property.

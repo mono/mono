@@ -2875,8 +2875,11 @@ namespace Mono.CSharp {
 			this.child = child;
 		}
 
-		public Expression Child {
-			get { return child; }
+		public Expression Peel ()
+		{
+			if (child is EmptyCast)
+				return ((EmptyCast) child).Peel ();
+			return child;
 		}
 
 		public override Expression DoResolve (EmitContext ec)
