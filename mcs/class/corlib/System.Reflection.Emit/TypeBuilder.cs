@@ -719,5 +719,12 @@ namespace System.Reflection.Emit {
 			return pmodule.get_next_table_index (obj, table, inc);
 		}
 
+		public override InterfaceMapping GetInterfaceMap (Type interfaceType)
+		{
+			if (created == null)
+				throw new NotSupportedException ("This method is not implemented for incomplete types.");
+
+			return created.GetInterfaceMap (interfaceType);
+		}
 	}
 }

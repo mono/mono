@@ -1,4 +1,9 @@
 
+2002-12-04  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* TypeBuilder.cs: implemented GetInterfaceMap () when the Type has been
+	created.
+
 Fri Nov 8 14:53:03 CET 2002 Paolo Molaro <lupus@ximian.com>
 
 	* ILGenerator.cs: account for the exception object being passed to the
