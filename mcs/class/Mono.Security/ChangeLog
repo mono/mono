@@ -1,3 +1,74 @@
+2004-02-09 Carlos Guzmán Álvarez  <carlosga@telefonica.net>
+
+    * Changed the license header to all the sources files
+    to remove accents.
+
+	* Mono.Security.Protocol.Tls/SslClientStream.cs:
+
+		- Try to improve record reading.
+
+	* Mono.Security.Protocol.Tls.Handshake.Client/TlsClientCertificate.cs:
+
+		- Send always the first certificate.
+
+	* Mono.Security.Protocol.Tls.Handshake.Client/TlsServerKeyExchange.cs:
+
+		- Added changes for correct verification of the signed data sent 
+		by the server.
+
+	* Mono.Security.Cryptography/PKCS1.cs:
+
+		- Added change to Encode_v15 method for allow correct
+		encoding of hash algorithms that doesn't have an OID
+		like the MD5SHA1 hash used in SSL/TLS protocols.
+
+	* Added files from mono:: project that are going to be needed
+	for client authentication:
+
+		Mono.Math/*
+
+		Mono.Math.Prime/*
+
+		Mono.Math.Prime.Generator/*
+
+		Mono.Security.Cryptography/RSAManaged.cs
+
+	* Mono.Security.Protocol.Tls/RSASslSignatureFormatter.cs:
+
+		- Create RSA as an RSAManaged instance.
+		
+	* Mono.Security.Protocol.Tls/RSASslSignatureFormatter.cs:
+	* Mono.Security.Protocol.Tls/RSASslSignatureDeformatter.cs:
+		
+		- Changed key field to be of RSA type.
+
+	* Mono.Security.Protocol.Tls/RSASslSignatureFormatter.cs:
+	* Mono.Security.Protocol.Tls/RSASslSignatureDeformatter.cs:
+
+		- Added new classes for implement in the future RSA-SSL signatures.
+
+	* Changed #region names in all source files.
+
+	* Mono.Security.Protocol.Handshake.Client/TlsServerCertificate.cs:
+		
+		- Fixed message (but not working yet - we need RSA signing 
+		capabilitites with MD5SHA1 hash).	
+
+	* Mono.Security.Protocol.Handshake.Client/TlsServerCertificate.cs:
+	
+		- Retrict certificate validation to the first validation.
+		( real validation needs to be made using a chain )
+		
+		- Improved domain validation by making a IP checking between
+		the target host IP and the certificate domain IP.
+
+		- Fixed error list handling on certificate validation.	
+
+	* Mono.Security.Protocol.Tls/SslClientStream.cs:
+
+		- Added new exceptions.
+
+
 2004-02-06  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Mono.Security.dll.sources: Added KeyPairPersistence and it's 
