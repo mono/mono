@@ -6,6 +6,7 @@
 // (C) 2003 Todd Berman
 
 using System;
+using System.Xml;
 using Microsoft.Web.Services.Xml;
 
 namespace Microsoft.Web.Services.Addressing
@@ -16,16 +17,45 @@ namespace Microsoft.Web.Services.Addressing
 		
 		private string _uri;
 
-		[MonoTODO]
-		public AttributedUriString ()
+		public AttributedUriString () : base ()
 		{
-			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		public AttributedUriString (string uri)
 		{
-			throw new NotImplementedException ();
+			if(uri == null) {
+				throw new ArgumentNullException ("uri");
+			}
+			_uri = uri;
+		}
+
+		public void GetXmlUri (XmlDocument document, XmlElement element)
+		{
+			if(element == null) {
+				throw new ArgumentNullException ("element");
+			}
+			element.InnerText = _uri;
+			GetXmlAny (document, element);
+		}
+
+		public void LoadXmlUri (XmlElement element)
+		{
+			if(element == null) {
+				throw new ArgumentNullException ("element");
+			}
+			ValidateSchema (element);
+			LoadXmlAny (element);
+			_uri = element.InnerText;
+		}
+
+		public void ValidateSchema (XmlElement element)
+		{
+			if(element.ChildNodes.Count >= 2) {
+				throw new AddressingFormatException ("wsa_InvalidAttributeUri");
+			}
+			if(element.ChildNodes.Count == 1 && !(element.FirstChild is XmlText)) {
+				throw new AddressingFormatException ("wsa_InvalidAttributeUri");
+			}
 		}
 
 		public string Value {

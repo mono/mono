@@ -1,4 +1,8 @@
 2003-09-30  Todd Berman <tberman@gentoo.org>
+
+	* Microsoft.Web.Services.Addressing/AttributedUriString.cs: implemented
+
+2003-09-30  Todd Berman <tberman@gentoo.org>
 	
 	* Ok, this was the beforementioned (on -devel) WSE Makefile edit.
 	
