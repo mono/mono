@@ -1,5 +1,7 @@
 // cs0255.cs: Can not use stackalloc in finally or catch
-// Line: 10
+// Line: 12
+// Compiler options: -unsafe
+
 unsafe class X {
 
 	static void Main ()

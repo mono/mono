@@ -1,3 +1,7 @@
+2003-11-01  Marek Safar <marek.safar@seznam.cz>
+
+        * makefile: Added "// Compiler options:" handling
+        
 2003-09-22  Martin Baulig  <martin@ximian.com>
 
 	* errors.txt: Added -219.

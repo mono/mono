@@ -1,6 +1,8 @@
 // cs0242: operation is not defined for void *
-// Line: 8
+// Line: 10
+// Compiler options: -unsafe
 using System;
+
 unsafe class ZZ {
 	static void Main () {
 		void *p = null;

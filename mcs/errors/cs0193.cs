@@ -1,5 +1,6 @@
 // cs0193.cs: * or -> operator can only be applied to pointer types.
-// Line: 8
+// Line: 9
+// Compiler options: -unsafe
 
 unsafe class X {
 	static void Main ()

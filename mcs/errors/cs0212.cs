@@ -1,6 +1,8 @@
 // cs0212: You can only take the address of an unfixed expression inside
 //         a fixed statement initializer.
-// Line: 17
+// Line: 19
+// Compiler options: -unsafe
+
 using System;
 
 class X

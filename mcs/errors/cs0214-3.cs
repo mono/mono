@@ -1,3 +1,5 @@
+// Compiler options: -unsafe
+
 struct X {
 	static unsafe void *a ()
 		{

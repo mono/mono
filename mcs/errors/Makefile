@@ -6,10 +6,9 @@ include ../build/rules.make
 # means we can use --options, yay.
 
 MCS = $(INTERNAL_MCS)
-LOCAL_MCS_FLAGS = /nowarn:162 /unsafe --wlevel 4
+LOCAL_MCS_FLAGS = /nowarn:162 --wlevel 4
 
 RUNTEST_PL = ./runtest.pl
-
 
 DISTFILES = \
 	CONTRIBUTORS_README 	\
@@ -39,7 +38,8 @@ run-test-local:
 			;;\
 		esac; \
 		echo -n "Running test $$i ... "; \
-		if $(CSCOMPILE) --expect-error $$error $$i > /dev/null; \
+		options=`fgrep "// Compiler options:" $$i | sed -e 's/\/\/ Compiler options://'`; \
+		if $(CSCOMPILE) --expect-error $$error $$i $$options > /dev/null; \
 		then echo OK; \
 		else echo FAILED; \
 		     flist="$$flist $$i"; \
@@ -71,8 +71,8 @@ test-multi-local:
 
 clean-local:
 	rm -f *.exe
+	rm -f *.dll
 
 dist-local: dist-default
 
 install-local uninstall-local:
-

@@ -1,3 +1,5 @@
+// Compiler options: -unsafe
+
 unsafe class XX {
 	static volatile int j;
 
