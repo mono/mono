@@ -10,7 +10,7 @@ Sub Main()
 	Dim R As Boolean
 	R = (B < A) And (A < B) 
 	if R = True Then
-		Console.WriteLine("#Error With And Operator")
+		throw new Exception("#Error With And Operator")
 	End if
 End Sub
 End Module

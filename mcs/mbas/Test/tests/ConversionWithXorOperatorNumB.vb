@@ -10,7 +10,7 @@ Sub Main()
 	Dim R As Boolean
 	R = A Xor B 	'01 XOr 11 
 	if R = False Then
-		Console.WriteLine("#Error With Xor Operator")
+		throw new Exception("#Error With Xor Operator")
 	End if
 End Sub
 End Module

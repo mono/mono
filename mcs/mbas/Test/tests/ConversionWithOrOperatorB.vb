@@ -10,7 +10,7 @@ Sub Main()
 	Dim R As Boolean
 	R = A Or B 	'0000 Or -1 = 1111 
 	if R = False Then
-		Console.WriteLine("#Error With Or Operator")
+		throw new Exception("#Error With Or Operator")
 	End if
 End Sub
 End Module

@@ -12,7 +12,7 @@ Sub Main()
 	Dim R As Boolean
 	R = ((A > B) And (C < A))And ((B > C) And (D < C))
 	if R = False Then
-		Console.WriteLine("#Error With And Operator")
+		throw new Exception("#Error With And Operator")
 	End if
 End Sub
 End Module

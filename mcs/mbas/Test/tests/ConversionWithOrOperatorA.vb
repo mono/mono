@@ -12,7 +12,7 @@ Sub Main()
 	Dim R As Boolean
 	R = ((A > B) Or (C > A))Or ((B < C) or (D > C))
 	if R = False Then
-		Console.WriteLine("#Error With Or Operator")
+		throw new Exception("#Error With Or Operator")
 	End if
 End Sub
 End Module

@@ -10,7 +10,7 @@ Sub Main()
 	Dim R As Integer
 	R = (B > A) Xor (A < B) 
 	if R = True Then
-		Console.WriteLine("#Error With Xor Operator")
+		throw new Exception("#Error With Xor Operator")
 	End if
 End Sub
 End Module

@@ -9,7 +9,7 @@ Sub Main()
 	Dim R As Integer
 	R = Not(A) 
 	if R <> - 30 Then
-		Console.WriteLine("#Error With Not Operator")
+		throw new Exception("#Error With Not Operator")
 	End if
 End Sub
 End Module

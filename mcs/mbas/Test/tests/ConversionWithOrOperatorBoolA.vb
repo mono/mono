@@ -10,7 +10,7 @@ Sub Main()
 	Dim R As Integer
 	R = (B > A) Or (A < B) 
 	if R = False Then
-		Console.WriteLine("#Error With Or Operator")
+		throw new Exception("#Error With Or Operator")
 	End if
 End Sub
 End Module

@@ -10,7 +10,7 @@ Sub Main()
 	Dim R As Integer
 	R = A Xor B 	'1010 XOr 1001 
 	if R <> 3 Then
-		Console.WriteLine("#Error With Xor Operator")
+		throw new Exception("#Error With Xor Operator")
 	End if
 End Sub
 End Module

@@ -10,7 +10,7 @@ Sub Main()
 	Dim R As Integer
 	R = A >> B 	
 	if R <> 10 Then
-		Console.WriteLine("#Error With >> Shift Operator")
+		throw new Exception("#Error With >> Shift Operator")
 	End if
 End Sub
 End Module

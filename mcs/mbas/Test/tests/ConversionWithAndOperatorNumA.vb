@@ -10,7 +10,7 @@ Sub Main()
 	Dim R As Boolean
 	R = A And B 	'0000 And -1 = 1111 
 	if R = False Then
-		Console.WriteLine("#Error With And Operator")
+		throw new Exception("#Error With And Operator")
 	End if
 End Sub
 End Module

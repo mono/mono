@@ -10,7 +10,7 @@ Sub Main()
 	Dim R As Boolean
 	R = Not (A > B)
 		if R = False Then
-			Console.WriteLine("#Error With Not Operator")
+			throw new Exception("#Error With Not Operator")
 		End if
 End Sub
 End Module
