@@ -30,6 +30,7 @@ Mono.Data.TdsClient.Internal/TdsPacketColumnOrderResult.cs
 Mono.Data.TdsClient.Internal/TdsPacketControlResult.cs
 Mono.Data.TdsClient.Internal/TdsPacketEndTokenResult.cs
 Mono.Data.TdsClient.Internal/TdsPacketErrorResult.cs
+Mono.Data.TdsClient.Internal/TdsPacketErrorResultCollection.cs
 Mono.Data.TdsClient.Internal/TdsPacketMessageResult.cs
 Mono.Data.TdsClient.Internal/TdsPacketOutputParam.cs
 Mono.Data.TdsClient.Internal/TdsPacketRowResult.cs
