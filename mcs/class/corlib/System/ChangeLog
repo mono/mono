@@ -1,3 +1,9 @@
+2003-08-08  Lluis Sanchez Gual <lluis@ximian.com>
+
+	* DateTime.cs: Fixed DoParse. It was calling the wrong constructor
+	  of DateTime.
+	* Environment.cs: return $HOME for ApplicationData folder.
+
 2003-08-04  Duncan Mak  <duncan@ximian.com>
 
 	* FloatingPointFormatter.cs (Normalize): Apply a patch from Aleksey

@@ -79,6 +79,7 @@ namespace System
 
 
 
+
 		
 			days = (IsLeapYear(year) ? daysmonthleap  : daysmonth);
 			
@@ -915,6 +916,7 @@ namespace System
 				}
 			}
 
+
 			if (day == -1)
 				day = 1;
 			if (month == -1)
@@ -958,7 +960,7 @@ namespace System
 
 			long newticks = (result.ticks - utcoffset).Ticks;
 
-			result = new DateTime (newticks);
+			result = new DateTime (use_localtime, newticks);
 
 			return true;
 		}

@@ -298,6 +298,7 @@ namespace System
                                 path = Path.Combine (GetEnvironmentVariable ("HOME"), "Desktop");
                                 break;
                                 
+                         case SpecialFolder.ApplicationData:
                          case SpecialFolder.Personal:
                                  path = GetEnvironmentVariable ("HOME");
                                  break;
