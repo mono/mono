@@ -862,12 +862,12 @@ public class ArrayListTest : TestCase {
 			char[] c = {'a', 'b', 'c'};
 			ArrayList a = new ArrayList(c);
 			a.InsertRange(1, c);
-			AssertEquals("bad insert", 'a', a[0]);
-			AssertEquals("bad insert", 'a', a[1]);
-			AssertEquals("bad insert", 'b', a[2]);
-			AssertEquals("bad insert", 'c', a[3]);
-			AssertEquals("bad insert", 'b', a[4]);
-			AssertEquals("bad insert", 'c', a[5]);
+			AssertEquals("bad insert 1", 'a', a[0]);
+			AssertEquals("bad insert 2", 'a', a[1]);
+			AssertEquals("bad insert 3", 'b', a[2]);
+			AssertEquals("bad insert 4", 'c', a[3]);
+			AssertEquals("bad insert 5", 'b', a[4]);
+			AssertEquals("bad insert 6", 'c', a[5]);
 		}
 	}
 
