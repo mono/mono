@@ -1,3 +1,8 @@
+
+Thu Mar 7 17:21:52 CET 2002 Paolo Molaro <lupus@ximian.com>
+
+	* threads.c, timed-thread.c, wait.c: Boehm-GC anable.
+
 2002-02-20  Dick Porter  <dick@ximian.com>
 
 	* io-layer.h: Always build without cygwin support on windows

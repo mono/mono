@@ -1,4 +1,8 @@
 
+Thu Mar 7 17:20:59 CET 2002 Paolo Molaro <lupus@ximian.com>
+
+	* interp.c: Boehm-GC enable. Fix some overflow opcodes.
+
 Tue Mar 5 18:12:40 CET 2002 Paolo Molaro <lupus@ximian.com>
 
 	* interp.c: fix non-debug build and some more opcode work.
