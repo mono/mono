@@ -5093,12 +5093,6 @@ namespace Mono.CSharp {
 					Report.Error (571, loc, method.Name + ": can not call operator or accessor");
 			}
 
-			if (method.CallingConvention == CallingConventions.VarArgs) {
-				Report.Error (-27, loc, method.Name + ": calling varargs " +
-					      "methods is not yet supported.");
-				return null;
-			}
-			
 			eclass = ExprClass.Value;
 			return this;
 		}
@@ -5198,6 +5192,20 @@ namespace Mono.CSharp {
 				IntConstant.EmitInt (ig, 0);
 				ig.Emit (OpCodes.Newarr, TypeManager.GetElementType (pd.ParameterType (top)));
 			}
+		}
+
+		static Type[] GetVarargsTypes (EmitContext ec, MethodBase mb,
+					       ArrayList arguments)
+		{
+			ParameterData pd = GetParameterData (mb);
+
+			if (arguments == null)
+				return new Type [0];
+
+			Argument a = (Argument) arguments [pd.Count - 1];
+			Arglist list = (Arglist) a.Expr;
+
+			return list.ArgumentTypes;
 		}
 
 		/// <summary>
@@ -5330,6 +5338,13 @@ namespace Mono.CSharp {
 			}
 
 			EmitArguments (ec, method, Arguments);
+
+			if (method.CallingConvention == CallingConventions.VarArgs) {
+				Type[] varargs_types = GetVarargsTypes (ec, method, Arguments);
+				ig.EmitCall (OpCodes.Call, (MethodInfo) method, varargs_types);
+				return;
+			}
+
 			//
 			// If you have:
 			// this.DoFoo ();
@@ -6690,6 +6705,15 @@ namespace Mono.CSharp {
 		{
 			Arguments = args;
 			loc = l;
+		}
+
+		public Type[] ArgumentTypes {
+			get {
+				Type[] retval = new Type [Arguments.Length];
+				for (int i = 0; i < Arguments.Length; i++)
+					retval [i] = Arguments [i].Type;
+				return retval;
+			}
 		}
 
 		public override Expression DoResolve (EmitContext ec)

@@ -1,5 +1,9 @@
 2004-06-08  Martin Baulig  <martin@ximian.com>
 
+	* expression.cs (Invocation.EmitCall): Enable varargs methods.
+
+2004-06-08  Martin Baulig  <martin@ximian.com>
+
 	* rootcontext.cs (ResolveCore): Added "System.RuntimeArgumentHandle".
 
 2004-06-07  Martin Baulig  <martin@ximian.com>
