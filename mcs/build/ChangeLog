@@ -1,3 +1,8 @@
+2004-07-30  Martin Baulig  <martin@ximian.com>
+
+	* executable.make (EXTRA_SOURCES): New variable to add extra
+	sources to the program.
+
 2004-07-30  Raja R Harinath  <harinath@blr-harinath.blr.novell.com>
 
 	* executable.make (PROGRAM_config): New auto-detecting define.

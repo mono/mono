@@ -59,8 +59,8 @@ ifndef PROGRAM_COMPILE
 PROGRAM_COMPILE = $(CSCOMPILE)
 endif
 
-$(PROGRAM): $(BUILT_SOURCES) $(response)
-	$(PROGRAM_COMPILE) /target:exe /out:$@ $(BUILT_SOURCES) @$(response)
+$(PROGRAM): $(BUILT_SOURCES) $(EXTRA_SOURCES) $(response)
+	$(PROGRAM_COMPILE) /target:exe /out:$@ $(BUILT_SOURCES) $(EXTRA_SOURCES) @$(response)
 
 $(makefrag): $(sourcefile)
 	@echo Creating $@ ...
