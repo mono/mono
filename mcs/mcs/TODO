@@ -1,0 +1,20 @@
+Known problems:
+
+Can not parse try {} catch {}
+
+	Have not figured out why.
+
+Cast expressions
+
+	They should should use:
+
+		OPEN_PARENS type CLOSE_PARENS
+
+	instead of the current production which is wrong, because it
+	only handles a few cases.
+
+	Complex casts like:
+
+		Array r = (string []) object
+
+	Wont be parsed.
