@@ -1,3 +1,8 @@
+2004-09-29  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* RSAManaged.cs: In synch with corlib. KeySize is now always a 
+	multiple of 8 bits. Fix #66929.
+
 2004-09-17  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* CryptoConvert.cs: In synch with corlib version. Fixed all level 4 
