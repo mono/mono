@@ -27,10 +27,11 @@ namespace Microsoft.Web.Services {
 		private SoapEnvelope envelope;
 #if WSE1
 		private Uri actor;
+		private Microsoft.Web.Services.Timestamp.Timestamp timestamp;
 #else
 		private Uri actor = new Uri ("http://" + System.Net.Dns.GetHostName ());
+		private Microsoft.Web.Services.Timestamp.Timestamp timestamp = new Microsoft.Web.Services.Timestamp.Timestamp ();
 #endif
-		private Microsoft.Web.Services.Timestamp.Timestamp timestamp;
 		private Microsoft.Web.Services.Security.Security security;
 		private Hashtable table;
 		private DimeAttachmentCollection attachments;

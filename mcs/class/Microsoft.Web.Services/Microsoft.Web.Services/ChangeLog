@@ -1,3 +1,8 @@
+2003-10-25  Todd Berman <tberman@gentoo.org>
+
+	* AsyncResult.cs: csc fixes
+	* SoapContext.cs: csc fixes
+
 2003-10-22  Todd Berman <tberman@gentoo.org>
 
 	* SoapContext.cs: Added Addressing objects, SetActor, SetTo, 

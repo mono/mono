@@ -47,7 +47,7 @@ namespace Microsoft.Web.Services
 				if(_callback != null) {
 					_callback (this);
 				}
-			} catch (Exception ex) {
+			} catch (Exception) {
 				ThreadPool.QueueUserWorkItem (new WaitCallback (ThrowException), this);
 			}
 		}
