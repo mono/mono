@@ -1,3 +1,7 @@
+2004-12-31  Zoltan Varga  <vargaz@freemail.hu>
+
+	* mini.c (mono_method_to_ir): Disable AOT for methods containing LDPTR.
+
 2004-12-30  Zoltan Varga  <vargaz@freemail.hu>
 
 	* mini.c linear-scan.c: Add a workaround for the mcs crash when using 
