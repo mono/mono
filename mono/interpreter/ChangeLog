@@ -1,6 +1,7 @@
 2002-05-20  Radek Doulik  <rodo@ximian.com>
 
 	* interp.c (dump_stack): print boxed values for --noptr
+	(ves_exec_method): use stackval_to_data as pointed out by lupus
 
 2002-05-17  Radek Doulik  <rodo@ximian.com>
 
