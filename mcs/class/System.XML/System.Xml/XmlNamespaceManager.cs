@@ -202,13 +202,13 @@ namespace System.Xml
 
 		public virtual string LookupNamespace (string prefix)
 		{
-			return LookupNamespace (prefix, false);
+			return LookupNamespace (prefix, true);
 		}
 
 #if NET_2_0
-		public string LookupNamespace (string prefix, bool atomizedName)
+		public virtual string LookupNamespace (string prefix, bool atomizedName)
 #else
-		internal string LookupNamespace (string prefix, bool atomizedName)
+		internal virtual string LookupNamespace (string prefix, bool atomizedName)
 #endif
 		{
 			switch (prefix) {
@@ -232,7 +232,7 @@ namespace System.Xml
 
 		public virtual string LookupPrefix (string uri)
 		{
-			return LookupPrefix (uri, false);
+			return LookupPrefix (uri, true);
 		}
 
 		private bool CompareString (string s1, string s2, bool atomizedNames)

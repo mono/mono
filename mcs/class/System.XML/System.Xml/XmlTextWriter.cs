@@ -302,7 +302,7 @@ openElements [openElementCount - 1]).IndentingOverriden;
 			if (ns == null || ns == String.Empty)
 				throw new ArgumentException ("The Namespace cannot be empty.");
 
-			string prefix = namespaceManager.LookupPrefix (ns);
+			string prefix = namespaceManager.LookupPrefix (ns, false);
 
 			// XmlNamespaceManager has changed to return null when NSURI not found.
 			// (Contradiction to the ECMA documentation.)
@@ -612,7 +612,7 @@ openElements [openElementCount - 1]).IndentingOverriden;
 			if (!openAttribute)
 				CloseStartElement ();
 
-			w.Write (namespaceManager.LookupPrefix (ns));
+			w.Write (namespaceManager.LookupPrefix (ns, false));
 			w.Write (':');
 			w.Write (localName);
 		}
@@ -679,17 +679,17 @@ openElements [openElementCount - 1]).IndentingOverriden;
 			string formatSpace = "";
 
 			if (ns != String.Empty && prefix != "xmlns") {
-				string existingPrefix = namespaceManager.LookupPrefix (ns);
+				string existingPrefix = namespaceManager.LookupPrefix (ns, false);
 
 				if (existingPrefix == null || existingPrefix == "") {
 					bool createPrefix = false;
 					if (prefix == "")
 						createPrefix = true;
 					else {
-						string existingNs = namespaceManager.LookupNamespace (prefix);
+						string existingNs = namespaceManager.LookupNamespace (prefix, false);
 						if (existingNs != null) {
 							namespaceManager.RemoveNamespace (prefix, existingNs);
-							if (namespaceManager.LookupNamespace (prefix) != existingNs) {
+							if (namespaceManager.LookupNamespace (prefix, false) != existingNs) {
 								createPrefix = true;
 								namespaceManager.AddNamespace (prefix, existingNs);
 							}
@@ -799,7 +799,7 @@ openElements [openElementCount - 1]).IndentingOverriden;
 			shouldCheckElementXmlns = false;
 
 			if (prefix == null && ns != null)
-				prefix = namespaceManager.LookupPrefix (ns);
+				prefix = namespaceManager.LookupPrefix (ns, false);
 			if (prefix == null)
 				prefix = String.Empty;
 

@@ -1,3 +1,10 @@
+2004-06-03  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlNamespaceManagre.cs : Fixed LookupNamespace() and LookupPrefix().
+	  They require that names are *already* atomized.
+	* XmlNodeReader.cs,
+	  XmlTextWriter.cs : use safe overload of LookupXXX().
+
 2004-05-30  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlTextReader.cs : Fixed version mismatch; ProhibitDtd should be
