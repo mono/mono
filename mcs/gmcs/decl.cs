@@ -1091,18 +1091,27 @@ namespace Mono.CSharp {
 			object r;
 			
 			error = false;
+			int p = name.LastIndexOf ('.');
 
 			if (dh.Lookup (ns, name, out r))
 				return (Type) r;
 			else {
+				//
+				// If the type is not a nested type, we do not need `LookupType's processing.
+				// If the @name does not have a `.' in it, this cant be a nested type.
+				//
 				if (ns != ""){
-					if (Namespace.IsNamespace (ns)){
-						string fullname = (ns != "") ? ns + "." + name : name;
-						t = TypeManager.LookupType (fullname);
+					if (Namespace.IsNamespace (ns)) {
+						if (p != -1)
+							t = TypeManager.LookupType (ns + "." + name);
+						else
+							t = TypeManager.LookupTypeDirect (ns + "." + name);
 					} else
 						t = null;
-				} else
+				} else if (p != -1)
 					t = TypeManager.LookupType (name);
+				else
+					t = TypeManager.LookupTypeDirect (name);
 			}
 			
 			if (t != null) {
@@ -1113,7 +1122,7 @@ namespace Mono.CSharp {
 			//
 			// In case we are fed a composite name, normalize it.
 			//
-			int p = name.LastIndexOf ('.');
+			
 			if (p != -1){
 				ns = MakeFQN (ns, name.Substring (0, p));
 				name = name.Substring (p+1);
@@ -2253,6 +2262,22 @@ namespace Mono.CSharp {
 			MemberInfo [] copy = new MemberInfo [global.Count];
 			global.CopyTo (copy);
 			return copy;
+		}
+		
+		// find the nested type @name in @this.
+		public Type FindNestedType (string name)
+		{
+			ArrayList applicable = (ArrayList) member_hash [name];
+			if (applicable == null)
+				return null;
+			
+			for (int i = applicable.Count-1; i >= 0; i--) {
+				CacheEntry entry = (CacheEntry) applicable [i];
+				if ((entry.EntryType & EntryType.NestedType & EntryType.MaskType) != 0)
+					return (Type) entry.Member;
+			}
+			
+			return null;
 		}
 		
 		//
