@@ -1,5 +1,13 @@
 2002-07-24  Martin Baulig  <martin@gnome.org>
 
+	* cfold.cs (ConstantFold.DoConstantNumericPromotions): "If either
+	operand is of type uint, and the other operand is of type sbyte,
+	short or int, the operands are converted to type long." -
+	Actually do what this comment already told us.  Fixes bug #28106,
+	added test-150.cs.
+
+2002-07-24  Martin Baulig  <martin@gnome.org>
+
 	* class.cs (MethodBase): New abstract class.  This is now a base
 	class for Property, Indexer and Event to avoid some code duplication
 	in their Define() and DefineMethods() methods.
