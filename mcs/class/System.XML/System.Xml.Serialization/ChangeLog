@@ -1,3 +1,7 @@
+2004-05-03  Lluis Sanchez Gual <lluis@ximian.com>
+
+	* XmlSerializer.cs: Enable serializer generation by default.
+
 2004-04-20  Lluis Sanchez Gual <lluis@ximian.com>
 
 	* TypeTranslator.cs: Mapped again anyUri, but now it is mapped to String.

@@ -74,8 +74,8 @@ namespace System.Xml.Serialization
 			string th = Environment.GetEnvironmentVariable ("MONO_XMLSERIALIZER_THS");
 			
 			if (th == null) {
-				generationThreshold = -1;
-				backgroundGeneration = false;
+				generationThreshold = 50;
+				backgroundGeneration = true;
 			}
 			else if (th.ToLower() == "no") 
 				generationThreshold = -1;
