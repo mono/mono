@@ -25,7 +25,7 @@ namespace System.Runtime.Serialization.Formatters {
 			throw new NotImplementedException ();
 		}
 
-		public SoapFault (SerializationInfo info, StreamingContext context)
+		private SoapFault (SerializationInfo info, StreamingContext context)
 		{
 			FaultCode = info.GetString ("faultcode");
 			FaultString = info.GetString ("faultstring");
