@@ -1,3 +1,7 @@
+2003-11-21  Jackson Harper <jackson@ximian.com>
+
+	* Page.cs: Set vary by params when cache location is Server.
+	
 2003-11-21 Ben Maurer  <bmaurer@users.sourceforge.net>
 
 	* ObjectStateFormatter.cs: v2 file. In v1.x this will be

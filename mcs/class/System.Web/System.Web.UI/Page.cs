@@ -405,6 +405,21 @@ public class Page : TemplateControl, IHttpHandler
 
 		switch (location) {
 		case OutputCacheLocation.Any:
+			cache.SetCacheability (HttpCacheability.Public);
+			cache.SetMaxAge (new TimeSpan (0, 0, duration));		
+			cache.SetLastModified (_context.Timestamp);
+			goto case OutputCacheLocation.Server;
+		case OutputCacheLocation.Client:
+			cache.SetCacheability (HttpCacheability.Private);
+			cache.SetMaxAge (new TimeSpan (0, 0, duration));		
+			cache.SetLastModified (_context.Timestamp);
+			break;
+		case OutputCacheLocation.Downstream:
+			cache.SetCacheability (HttpCacheability.Public);
+			cache.SetMaxAge (new TimeSpan (0, 0, duration));		
+			cache.SetLastModified (_context.Timestamp);
+			break;
+		case OutputCacheLocation.Server:
 			if (varyByCustom != null)
 				cache.SetVaryByCustom (varyByCustom);
 			
@@ -423,20 +438,7 @@ public class Page : TemplateControl, IHttpHandler
 					cache.VaryByHeaders [h.Trim ()] = true;
 			}
 			_context.Response.CacheResponse (_context.Request);
-			goto case OutputCacheLocation.Downstream;
-		case OutputCacheLocation.Client:
-			cache.SetCacheability (HttpCacheability.Private);
-			cache.SetMaxAge (new TimeSpan (0, 0, duration));		
-			cache.SetLastModified (_context.Timestamp);
-			break;
-		case OutputCacheLocation.Downstream:
-			cache.SetCacheability (HttpCacheability.Public);
-			cache.SetMaxAge (new TimeSpan (0, 0, duration));		
-			cache.SetLastModified (_context.Timestamp);
-			break;
-		case OutputCacheLocation.Server:
-			_context.Response.CacheResponse (_context.Request);
-			goto case OutputCacheLocation.None;
+                        break;
 		case OutputCacheLocation.None:
 			break;
 		}
