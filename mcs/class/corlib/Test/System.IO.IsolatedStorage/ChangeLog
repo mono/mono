@@ -1,0 +1,7 @@
+2005-01-31  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* IsolatedStorageFileStreamTest.cs: New. Unit tests for 
+	IsolatedStorageFileStream.
+	* IsolatedStorageFileTest.cs: New. Unit tests for IsolatedStorageFile.
+	* IsolatedStorageTest.cs: New. Unit tests for IsolatedStorage abstract
+	class.
