@@ -33,7 +33,7 @@ namespace System.Data {
 	[DefaultMember ("Item")]
 	[DefaultProperty ("ColumnName")]
 	[DesignTimeVisible (false)]
-	[TypeConverterAttribute ("System.Data.ComponentConverter, "+ Consts.AssemblySystem)]
+	[TypeConverterAttribute (typeof (ComponentConverter))]
 	public class DataColumn : MarshalByValueComponent
 	{		
 		#region Events
@@ -295,7 +295,7 @@ namespace System.Data {
 		[DataSysDescription ("Indicates the type of data stored in this column.")]
 		[DefaultValue (typeof (string))]
 		[RefreshProperties (RefreshProperties.All)]
-		[TypeConverterAttribute ("System.Data.ColumnTypeConverter, "+ Consts.AssemblySystem_Data)] 
+		[TypeConverterAttribute (typeof (ColumnTypeConverter))] 
 		public Type DataType
 		{
 			get {
@@ -328,7 +328,7 @@ namespace System.Data {
 		/// <exception cref="System.ArgumentException"></exception>
 		[DataCategory ("Data")]
 		[DataSysDescription ("Indicates the default column value used when adding new rows to the table.")]
-		[TypeConverterAttribute ("System.Data.DefaultValueTypeConverter, "+ Consts.AssemblySystem_Data)]
+		[TypeConverterAttribute (typeof (System.Data.DefaultValueTypeConverter))]
 		public object DefaultValue
 		{
 			get {

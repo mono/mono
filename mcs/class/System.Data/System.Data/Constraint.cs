@@ -23,7 +23,7 @@ namespace System.Data {
 
 	[DefaultProperty ("ConstraintName")]	
 	[Serializable]
-	[TypeConverterAttribute ("System.Data.ConstraintConverter, "+ Consts.AssemblySystem_Data)]
+	[TypeConverterAttribute (typeof (ConstraintConverter))]
 	public abstract class Constraint 
 	{
 		internal event DelegateConstraintNameChange BeforeConstraintNameChange;
