@@ -1,3 +1,8 @@
+2003-09-30  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
+
+	* XmlTextReader.cs : Attribute value token properties were incorrectly
+	  set by the linked node.
+
 2003-09-26  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
 
 	* XmlDocumentNavigator.cs : Fix for bugzilla #48931. MoveToRoot() now

@@ -728,8 +728,9 @@ namespace System.Xml
 					if (ValueTokenStartIndex == ValueTokenEndIndex) {
 						XmlTokenInfo ti = Reader.attributeValueTokens [ValueTokenStartIndex];
 						if (ti.NodeType == XmlNodeType.Text)
-							return ti.Value;
-						valueCache = '&' + ti.Name + ';';
+							valueCache = ti.Value;
+						else
+							valueCache = String.Concat ("&", ti.Name, ";");
 						return valueCache;
 					}
 
@@ -919,20 +920,31 @@ namespace System.Xml
 			string value,
 			bool clearAttributes)
 		{
-			this.valueBuilderAvailable = false;
-			currentToken.Clear ();
-			currentToken.NodeType = nodeType;
-			currentToken.Name = name;
-			currentToken.IsEmptyElement = isEmptyElement;
-			currentToken.Value = value;
+			SetProperties (currentToken, nodeType, name, isEmptyElement, value, clearAttributes);
 			currentToken.LineNumber = this.currentLinkedNodeLineNumber;
 			currentToken.LinePosition = this.currentLinkedNodeLinePosition;
+		}
+
+		private void SetProperties (
+			XmlTokenInfo token,
+			XmlNodeType nodeType,
+			string name,
+			bool isEmptyElement,
+			string value,
+			bool clearAttributes)
+		{
+			this.valueBuilderAvailable = false;
+			token.Clear ();
+			token.NodeType = nodeType;
+			token.Name = name;
+			token.IsEmptyElement = isEmptyElement;
+			token.Value = value;
 			this.elementDepth = depth;
 
 			if (clearAttributes)
 				ClearAttributes ();
 
-			currentToken.FillNames ();
+			token.FillNames ();
 		}
 
 		private void SetProperties (
@@ -1088,6 +1100,7 @@ namespace System.Xml
 			SkipWhitespace ();
 			if (XmlChar.IsFirstNameChar (PeekChar ()))
 				ReadAttributes (false);
+			cursorToken = this.currentToken;
 
 			// fill namespaces
 			for (int i = 0; i < attributeCount; i++)
@@ -1416,8 +1429,7 @@ namespace System.Xml
 			IncrementAttributeValueToken ();
 			XmlTokenInfo vti = attributeValueTokens [currentAttributeValue];
 			vti.Value = value;
-			currentToken = vti;
-			SetProperties (XmlNodeType.Text, name, false, value, false);
+			SetProperties (vti, XmlNodeType.Text, name, false, value, false);
 			attributeCount++;
 		}
 
