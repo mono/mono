@@ -589,24 +589,6 @@ namespace Mono.Xml.XPath2
 			this.node = nav.Clone ();
 		}
 
-		/*
-		public NodeIterator (XPathSequence iter)
-			: base (iter.Context)
-		{
-			if (iter.Position == 0) {
-				if (!iter.MoveNext ()) {
-					emptyInput = true;
-					return;
-				}
-			}
-			XPathItem item = iter.Current;
-			node = item as XPathNavigator;
-			if (node == null)
-				throw new XmlQueryException (String.Format ("Current item is expected to be a node, but it is {0} ({1}).", item.XmlType.QualifiedName, item.XmlType.TypeCode));
-			node = node.Clone ();
-		}
-		*/
-
 		internal NodeIterator (NodeIterator other, bool cloneFlag)
 			: base (other)
 		{

@@ -35,6 +35,7 @@ using System;
 using System.Collections;
 using System.Reflection;
 using System.Security;
+using System.Security.Policy;
 using System.Xml;
 using System.Xml.Schema;
 using System.Xml.Query;
@@ -92,7 +93,8 @@ namespace Mono.Xml.XPath2
 				int args = prms.Length;
 
 				// Whether it takes "current context" or not.
-				bool hasContextArg = (args > 0 && prms [0].ParameterType == typeof (XQueryContext));
+				Type t = args > 0 ? prms [0].ParameterType : null;
+				bool hasContextArg = (t != null && (t == typeof (XQueryContext)) || t == typeof (XPathSequence));
 				if (hasContextArg)
 					args--;
 				if (methods [args] != null)
@@ -108,10 +110,12 @@ namespace Mono.Xml.XPath2
 			if (m == null)
 				throw new SystemException ("Should not happen: maxArgs is " + maxArgs);
 			ParameterInfo [] pl = m.GetParameters ();
-			for (int i = 0; i < pl.Length; i++)
-				if (pl [i].ParameterType != typeof (XQueryContext))
+			for (int i = 0; i < pl.Length; i++) {
+				Type t = pl [i].ParameterType;
+				if (t != typeof (XQueryContext) && t != typeof (XPathSequence))
 					arguments.Add (
 						new XQueryFunctionArgument (new XmlQualifiedName (pl [i].Name), SequenceType.Create (pl [i].ParameterType)));
+			}
 
 			return new XQueryCliFunction (name,
 				arguments.ToArray (typeof (XQueryFunctionArgument)) as XQueryFunctionArgument [],
@@ -152,7 +156,7 @@ namespace Mono.Xml.XPath2
 			get { return maxArgs; }
 		}
 
-		public override object Invoke (XQueryContext context, object [] args)
+		public override object Invoke (XPathSequence current, object [] args)
 		{
 			MethodInfo mi = methods [args.Length] as MethodInfo;
 			if (mi == null)
@@ -161,12 +165,19 @@ namespace Mono.Xml.XPath2
 
 			// Use Evidence and PermissionSet.Demand() here
 			// before invoking external function.
-			if (context.StaticContext.Evidence != null)
-				SecurityManager.ResolvePolicy (context.StaticContext.Evidence).Demand ();
+			Evidence e = current.Context.StaticContext.Evidence;
+			if (e != null)
+				SecurityManager.ResolvePolicy (e).Demand ();
 
-			if (prms.Length > 0 && prms [0].ParameterType == typeof (XQueryContext)) {
+			Type t = prms.Length > 0 ? prms [0].ParameterType : null;
+			if (t == typeof (XQueryContext)) {
 				ArrayList pl = new ArrayList (args);
-				pl.Insert (0, context);
+				pl.Insert (0, current.Context);
+				return mi.Invoke (null, pl.ToArray ());
+			}
+			else if (t == typeof (XPathSequence)) {
+				ArrayList pl = new ArrayList (args);
+				pl.Insert (0, current);
 				return mi.Invoke (null, pl.ToArray ());
 			}
 			else

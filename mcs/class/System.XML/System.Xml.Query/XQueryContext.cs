@@ -121,7 +121,7 @@ namespace Mono.Xml.XPath2
 		{
 			if (sequence == null)
 				throw new ArgumentNullException ();
-			sequence = sequence.Clone ();
+//			sequence = sequence.Clone ();
 #if SEEMS_CONTEXT_FOR_CURRENT_REQURED
 			contextStack.Push (currentContext);
 			currentsequence = sequence;
@@ -168,6 +168,10 @@ namespace Mono.Xml.XPath2
 		internal XmlNamespaceManager NSManager {
 			get { return namespaceManager; }
 		}
+
+		internal XPathSequence CurrentSequence {
+			get { return currentSequence; }
+		}
 	}
 
 	public class XQueryContext : IXmlNamespaceResolver
@@ -178,7 +182,7 @@ namespace Mono.Xml.XPath2
 
 		internal XQueryContext (XQueryContextManager manager)
 			: this (manager,
-				manager.CurrentContext.currentSequence,
+				manager.CurrentSequence,
 				(Hashtable) manager.CurrentContext.currentVariables.Clone ())
 		{
 		}

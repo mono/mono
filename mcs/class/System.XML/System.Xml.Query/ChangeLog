@@ -1,5 +1,15 @@
 2004-10-05  Atsushi Enomoto <atsushi@ximian.com>
 
+	* XPathSequence.cs, XQueryTokenizer.cs :
+	  removed commented && unused code.
+	* XQueryContext.cs, XQueryCliFunction.cs, XQueryFunction.cs,
+	  XQueryFunctionCliImpl.cs :
+	  Now that position() requires current sequence that is not managed by
+	  XQueryContextManager (that is for FLWOR), it need to support
+	  XPathSequence input as the current node information.
+
+2004-10-05  Atsushi Enomoto <atsushi@ximian.com>
+
 	* XQueryParser.jay, XQueryTokenizer.cs :
 	  Added attribute value template support.
 	* XPath2Expression.cs : Inside attribute value, expressions must not

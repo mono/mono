@@ -556,33 +556,9 @@ namespace Mono.Xml.XQuery.Parser
 			case '$':
 				return Token.DOLLAR;
 			case '\'':
-				// FIXME: consider in the future
-/*
-				if (state == ParseState.StartTag) {
-					if (PeekChar () == '\'') {
-						// FIXME: this code is VERY inefficient
-						ReadChar ();
-						tokenValue = "'";
-						return Token.STRING_LITERAL;
-					}
-					return Token.APOS;
-				}
-*/
 				tokenValue = ReadQuoted ('\'');
 				return Token.STRING_LITERAL;
 			case '"':
-				// FIXME: consider in the future
-/*
-				if (state == ParseState.StartTag) {
-					if (PeekChar () == '"') {
-						// FIXME: this code is VERY inefficient
-						ReadChar ();
-						tokenValue = "\"";
-						return Token.STRING_LITERAL;
-					}
-					return Token.QUOT;
-				}
-*/
 				tokenValue = ReadQuoted ('"');
 				return Token.STRING_LITERAL;
 			case '=':

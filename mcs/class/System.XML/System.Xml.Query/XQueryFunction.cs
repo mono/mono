@@ -240,14 +240,16 @@ namespace Mono.Xml.XPath2
 			get { return returnType; }
 		}
 
-		public abstract object Invoke (XQueryContext context, object [] args);
+		public abstract object Invoke (XPathSequence current, object [] args);
 
 		public virtual XPathSequence Evaluate (XPathSequence iter, ExprSequence args)
 		{
 			object [] instParams = new object [args.Count];
-			for (int i = 0; i < args.Count; i++)
-				instParams [i] = Args [i].Type.ToRuntimeType (args [i].Evaluate (iter));
-			object o = Invoke (iter.Context, instParams);
+			for (int i = 0; i < args.Count; i++) {
+				XPathSequence val = args [i].Evaluate (iter);
+				instParams [i] = Args [i].Type.ToRuntimeType (val);
+			}
+			object o = Invoke (iter, instParams);
 			if (o == null)
 				return new XPathEmptySequence (iter.Context);
 			if (o is XPathSequence)
@@ -300,7 +302,7 @@ namespace Mono.Xml.XPath2
 			get { return Args.Length; }
 		}
 
-		public override object Invoke (XQueryContext context, object [] args)
+		public override object Invoke (XPathSequence current, object [] args)
 		{
 			throw new SystemException ("XQuery internal error: should not happen.");
 		}

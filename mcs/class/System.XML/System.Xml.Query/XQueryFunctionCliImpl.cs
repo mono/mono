@@ -826,9 +826,12 @@ namespace Mono.Xml.XPath2
 			return ctx.ResolveCollection (name);
 		}
 
-		public static int FnPosition (XQueryContext ctx)
+		// FIXME: It does not point to the expected sequence.
+		// Either the argument must be XPathSequence, or context
+		// must always have the expected CurrentSequence.
+		public static int FnPosition (XPathSequence current)
 		{
-			return ctx.CurrentSequence.Position;
+			return current.Position;
 		}
 
 		public static int FnLast (XQueryContext ctx)
