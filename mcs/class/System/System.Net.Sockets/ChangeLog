@@ -1,3 +1,9 @@
+2002-09-16  Miguel de Icaza  <miguel@ximian.com>
+
+	* SocketFlags.cs: Add missing enumeration.
+
+	* UdpClient.cs: Make Dispose private.
+
 2002-08-20  Dick Porter  <dick@ximian.com>
 
 	* Socket.cs: Fix deadlock when the AsyncResult callback calls

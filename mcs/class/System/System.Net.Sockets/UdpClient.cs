@@ -236,7 +236,7 @@ namespace System.Net.Sockets
 			GC.SuppressFinalize (this);
 		}
 
-		protected virtual void Dispose (bool disposing)
+		void Dispose (bool disposing)
 		{
 			if (disposed) 
 				return;

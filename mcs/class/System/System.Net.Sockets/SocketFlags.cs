@@ -28,6 +28,10 @@ namespace System.Net.Sockets {
 
 		/// <summary>
 		/// </summary>
+		MaxIOVectorLength = 0x00000010,
+		
+		/// <summary>
+		/// </summary>
 		Peek = 0x00000002,
 
 		/// <summary>
