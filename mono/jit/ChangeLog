@@ -1,5 +1,12 @@
 2002-05-21  Martin Baulig  <martin@gnome.org>
 
+	* debug-private.h (MonoDebugFlags): New enum typedef.
+
+	* debug.c (mono_debug_open): Added a few useful arguments.  See the manpage
+	for details.
+
+2002-05-21  Martin Baulig  <martin@gnome.org>
+
 	* debug.c (mono_debug_open_file): Renamed to mono_debug_open(), now takes
 	a `MonoAssembly *' argument instead of a `char *filename' one.  Also added
 	`const char **args' argument.
