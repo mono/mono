@@ -1,6 +1,16 @@
 
 2003-01-27	Gaurav Vaish <gvaish_mono AT lycos.com>
 
+	* IListControl.cs        : A private class hacked.
+	* PagedControl.cs        : Fixed typo error (OnPageChange)
+	* List.cs                : Stubbed almost all methods. Will
+	                           implement tommorrow. Time to sleep.
+	* MobileListItemCollection.cs
+	                         : Finally, a collection class will bite
+	                           me all. ;-)
+
+2003-01-27	Gaurav Vaish <gvaish_mono AT lycos.com>
+
 	* List.cs, PagedControl.cs
 	                         : Was I drunk? or Sleeping when I wrote
 	                           the classes? I mixed up the methods.

@@ -149,7 +149,7 @@ namespace System.Web.UI.MobileControls
 			OnLoadItems(new LoadItemsEventArgs(PagerItemIndex, PagerItemCount));
 		}
 
-		protected virtual void OnPageChanged(int oldPageIndex, int newPageIndex)
+		protected override void OnPageChange(int oldPageIndex, int newPageIndex)
 		{
 			pagingCharsChanged = true;
 		}
