@@ -1,3 +1,7 @@
+2004-12-15  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* ASN1.cs: Fixed warning for unused variable.
+
 2004-10-29  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* ASN1.cs: Throw an NotSupportedException when "undefined length 

@@ -246,7 +246,6 @@ namespace Mono.Security {
 
 			// minimum is 2 bytes (tag + length of 0)
 			while (anPos < anLength - 1) {
-				int nPosOri = anPos;
 				DecodeTLV (asn1, ref anPos, out nTag, out nLength, out aValue);
 
 				ASN1 elm = Add (new ASN1 (nTag, aValue));
