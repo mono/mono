@@ -115,7 +115,8 @@ namespace System.Security.Permissions {
 		public override SecurityElement ToXml ()
 		{
 			SecurityElement se = Element (version);
-			se.AddAttribute ("Zone", zone.ToString ());
+			if (zone != SecurityZone.NoZone)
+				se.AddAttribute ("Zone", zone.ToString ());
 			return se;
 		}
 
