@@ -12,7 +12,7 @@ using System.Runtime.Serialization;
 namespace System.Data.SqlTypes {
 
 	[Serializable]
-	public class SqlNullValueException : SqlTypeException
+	public sealed class SqlNullValueException : SqlTypeException
 	{
 		public SqlNullValueException ()
 			: base (Locale.GetText ("The value property is null"))

@@ -12,7 +12,7 @@ using System.Runtime.Serialization;
 namespace System.Data.SqlTypes {
 
 	[Serializable]
-	public class SqlTruncateException : SqlTypeException
+	public sealed class SqlTruncateException : SqlTypeException
 	{
 		public SqlTruncateException ()
 			: base (Locale.GetText ("This value is being truncated"))
