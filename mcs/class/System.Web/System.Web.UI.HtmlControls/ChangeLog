@@ -1,3 +1,8 @@
+2005-03-11  Lluis Sanchez Gual <lluis@novell.com>
+
+	* HtmlInputButton.cs, HtmlAnchor.cs, HtmlButton.cs: Don't use
+	Page.GetPostBackClientEvent since it is deprecated in 2.0.
+
 2005-02-25  Lluis Sanchez Gual <lluis@novell.com>
 
 	* HtmlForm.cs: Register the form in the page, so the page knows

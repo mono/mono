@@ -35,7 +35,7 @@ namespace System.Web.UI.HtmlControls{
 			if ( Events[EventServerClick] != null){
 				Attributes.Remove("href");
 				base.RenderAttributes(writer);
-				writer.WriteAttribute("href", Page.GetPostBackClientHyperlink(this,String.Empty));
+				writer.WriteAttribute("href", Page.ClientScript.GetPostBackClientHyperlink(this,String.Empty));
 			}
 			else{
 				PreProcessRelativeReference(writer,"href");

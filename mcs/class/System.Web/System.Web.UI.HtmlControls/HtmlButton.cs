@@ -38,7 +38,7 @@ namespace System.Web.UI.HtmlControls{
 		protected override void RenderAttributes (HtmlTextWriter writer)
 		{
 			if (Page != null && Events [EventServerClick] != null) {
-				string script = Page.GetPostBackClientEvent (this, String.Empty);
+				string script = Page.ClientScript.GetPostBackClientEvent (this, String.Empty);
 				AttributeCollection coll = Attributes;
 				if (coll ["language"] != null)
 					coll.Remove ("language");
