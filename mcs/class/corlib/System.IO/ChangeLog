@@ -1,3 +1,8 @@
+2003-12-25  Atsushi Enomoto <atsushi@ximian.com>
+
+	* Path.cs : Fixed GetFullPath() (and CanonicalizePath()), 
+	  HasExtension(), GetPathRoot() and IsPathRooted() to fit with tests.
+
 2003-12-22  Bernie Solomon  <bernard@ugsolutions.com>
 
 	* FileStream.cs: (.ctor) do not set handle
