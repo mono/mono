@@ -77,16 +77,16 @@ namespace Mono.Xml.Xsl.Operations {
 				foreach (DictionaryEntry de in nsDecls)
 					p.Out.WriteNamespaceDecl ((string)de.Key, (string)de.Value);
 			
+			if (useAttributeSets != null)
+				foreach (XmlQualifiedName s in useAttributeSets)
+					p.ResolveAttributeSet (s).Evaluate (p);
+						
 			if (attrs != null) {
 				int len = attrs.Count;
 				for (int i = 0; i < len; i++)
 					((XslLiteralAttribute)attrs [i]).Evaluate (p);
 			}
 			
-			if (useAttributeSets != null)
-				foreach (XmlQualifiedName s in useAttributeSets)
-					p.ResolveAttributeSet (s).Evaluate (p);
-						
 			if (children != null) children.Evaluate (p);
 			p.Out.WriteEndElement ();
 		}

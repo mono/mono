@@ -677,7 +677,7 @@ namespace Mono.Xml.Xsl {
 		{
 			int colon = name.IndexOf (':');
 			if (colon > 0)
-				return name.Substring (colon, name.Length - colon);
+				return name.Substring (colon + 1);
 			else if (colon < 0)
 				return name;
 			else

@@ -72,9 +72,6 @@ namespace Mono.Xml.Xsl {
 		public override void Evaluate (XslTransformProcessor p) {
 			p.SetBusy (this);
 			
-			foreach (Operations.XslAttribute a in attributes)
-				a.Evaluate (p);
-			
 			if (usedAttributeSets != null) {
 				foreach (QName set in usedAttributeSets)
 				{
@@ -88,6 +85,9 @@ namespace Mono.Xml.Xsl {
 					s.Evaluate (p);
 				}
 			}
+						
+			foreach (Operations.XslAttribute a in attributes)
+				a.Evaluate (p);
 			
 			p.SetFree (this);
 		}

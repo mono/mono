@@ -1,3 +1,8 @@
+2003-09-15 Ben Maurer  <bmaurer@users.sourceforge.net>
+
+	* XslLiteralElement.cs: must evaluate used attr sets *BEFORE*
+	children (so that they get overriden).
+
 2003-09-14 Oleg Tkachenko <oleg@tkachenko.com>
 	
 	* XslCopyOf.cs - WriteAttributeString instead of 
