@@ -292,16 +292,15 @@ namespace System.Data.Odbc
                         SQL_TYPE   sqltype = OdbcTypeConverter.ConvertToSqlType (odbcType);
                         
 			// Bind parameter based on type
+                        int ind = -3;
 			if (odbcType == OdbcType.Int)
                                 ret = libodbc.SQLBindParameter(hstmt, (ushort)ParamNum, (short)paramdir,
                                                                ctype, sqltype, Convert.ToUInt32(Size),
-                                                               0, ref intbuf, 0, 0);
+                                                               0, ref intbuf, 0, ref ind);
 			else
                                 ret = libodbc.SQLBindParameter(hstmt, (ushort)ParamNum, (short)paramdir,
                                                                ctype, sqltype, Convert.ToUInt32(Size),
-                                                               0, buffer, 0, 0);
-
-                                
+                                                               0, buffer, buffer.Length, ref ind);
 			// Check for error condition
 			if ((ret != OdbcReturn.Success) && (ret != OdbcReturn.SuccessWithInfo))
 				throw new OdbcException(new OdbcError("SQLBindParam", OdbcHandleType.Stmt, hstmt));

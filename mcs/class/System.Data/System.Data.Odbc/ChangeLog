@@ -1,3 +1,9 @@
+2005-04-05  Sureshkumar T  <tsureshkumar@novell.com>
+
+	* OdbcParameter.cs: SqlBindParameter requires the last parameter
+	to be a ref.
+	* libodbc.cs: API change for above.
+
 2005-04-04  Sureshkumar T  <tsureshkumar@novell.com>
 
 	* OdbcDataReader.cs: Ignore BaseTableName & BaseColumnName
