@@ -27,17 +27,19 @@ namespace System.Security.Cryptography.Xml {
 		private XmlDocument envdoc;
 		private IEnumerator pkEnumerator;
 		private XmlElement signatureElement;
+		private Hashtable hashes;
 
 		public SignedXml () 
 		{
 			signature = new Signature ();
 			signature.SignedInfo = new SignedInfo ();
+			hashes = new Hashtable (2); // 98% SHA1 for now
 		}
 
-		public SignedXml (XmlDocument document)
+		public SignedXml (XmlDocument document) : this ()
 		{
-			signature = new Signature ();
-			signature.SignedInfo = new SignedInfo ();
+			if (document == null)
+				throw new ArgumentNullException ("document");
 			envdoc = document;
 		}
 
@@ -45,8 +47,8 @@ namespace System.Security.Cryptography.Xml {
 		{
 			if (elem == null)
 				throw new ArgumentNullException ("elem");
-			signature = new Signature ();
-			signature.SignedInfo = new SignedInfo ();
+			envdoc = new XmlDocument ();
+			envdoc.LoadXml (elem.OuterXml);
 		}
 
 		public const string XmlDsigCanonicalizationUrl = "http://www.w3.org/TR/2001/REC-xml-c14n-20010315";
@@ -88,6 +90,7 @@ namespace System.Security.Cryptography.Xml {
 			set { key = value; }
 		}
 
+		// NOTE: CryptoAPI related ? documented as fx internal
 		public string SigningKeyName {
 			get { return keyName; }
 			set { keyName = value; }
@@ -126,18 +129,6 @@ namespace System.Security.Cryptography.Xml {
 			}
 		}
 
-		private Stream ApplyTransform (Transform t, Stream s) 
-		{
-			try {
-				t.LoadInput (s);
-				s = (Stream) t.GetOutput ();
-			}
-			catch (Exception e) {
-				string temp = e.ToString (); // stop debugger
-			}
-			return s;
-		}
-
 		[MonoTODO("incomplete")]
 		private byte[] GetReferenceHash (Reference r) 
 		{
@@ -159,8 +150,12 @@ namespace System.Security.Cryptography.Xml {
 					}
 				}
 				else {
-					if (r.Uri.EndsWith (".xml"))
+					if (r.Uri.EndsWith (".xml")) {
+#if ! NET_1_0
+						doc.XmlResolver = xmlResolver;
+#endif						
 						doc.Load (r.Uri);
+					}
 					else {
 						WebRequest req = WebRequest.Create (r.Uri);
 						s = req.GetResponse ().GetResponseStream ();
@@ -170,10 +165,13 @@ namespace System.Security.Cryptography.Xml {
 
 			if (r.TransformChain.Count > 0) {		
 				foreach (Transform t in r.TransformChain) {
-					if (s == null)
+					if (s == null) {
 						s = ApplyTransform (t, doc);
-					else
-						s = ApplyTransform (t, s);
+					}
+					else {
+						t.LoadInput (s);
+						s = (Stream) t.GetOutput ();
+					}
 				}
 			}
 			else if (s == null) {
@@ -181,10 +179,7 @@ namespace System.Security.Cryptography.Xml {
 				s = ApplyTransform (new XmlDsigC14NTransform (), doc);
 			}
 
-			// TODO: We should reuse the same hash object (when possible)
-			HashAlgorithm hash = (HashAlgorithm) CryptoConfig.CreateFromName (r.DigestMethod);
-			if (hash == null)
-				throw new CryptographicException ("Unknown digest algorithm {0}", r.DigestMethod);
+			HashAlgorithm hash = GetHash (r.DigestMethod);
 			return hash.ComputeHash (s);
 		}
 
@@ -225,6 +220,7 @@ namespace System.Security.Cryptography.Xml {
 				// TODO - check signature.SignedInfo.Id
 				XmlNodeList xnl = signatureElement.GetElementsByTagName (XmlSignature.ElementNames.SignedInfo, XmlSignature.NamespaceURI);
 				byte[] si = Encoding.UTF8.GetBytes (xnl [0].OuterXml);
+
 				MemoryStream ms = new MemoryStream ();
 				ms.Write (si, 0, si.Length);
 				ms.Position = 0;
@@ -235,13 +231,31 @@ namespace System.Security.Cryptography.Xml {
 			return (Stream) t.GetOutput ();
 		}
 
-		private byte[] Hash (string hashAlgorithm) 
+		// reuse hash - most document will always use the same hash
+		private HashAlgorithm GetHash (string algorithm) 
 		{
-			HashAlgorithm hash = HashAlgorithm.Create (hashAlgorithm);
+			HashAlgorithm hash = (HashAlgorithm) hashes [algorithm];
+			if (hash == null) {
+				hash = HashAlgorithm.Create (algorithm);
+				if (hash == null)
+					throw new CryptographicException ("Unknown hash algorithm: {0}", algorithm);
+				hashes.Add (algorithm, hash);
+				// now ready to be used
+			}
+			else {
+				// important before reusing an hash object
+				hash.Initialize ();
+			}
+			return hash;
+		}
+
+/*		private byte[] ComputeHash (string hashAlgorithm) 
+		{
+			HashAlgorithm hash = GetHash (hashAlgorithm);
 			// get the hash of the C14N SignedInfo element
 			return hash.ComputeHash (SignedInfoTransformed ());
 		}
-
+*/
 		public bool CheckSignature () 
 		{
 			return (CheckSignatureInternal (null) != null);
@@ -249,7 +263,6 @@ namespace System.Security.Cryptography.Xml {
 
 		private bool CheckReferenceIntegrity () 
 		{
-			pkEnumerator = null;
 			// check digest (hash) for every reference
 			foreach (Reference r in signature.SignedInfo.References) {
 				// stop at first broken reference
@@ -268,24 +281,27 @@ namespace System.Security.Cryptography.Xml {
 
 		private AsymmetricAlgorithm CheckSignatureInternal (AsymmetricAlgorithm key)
 		{
-			// Part 1: Are all references digest valid ?
-			if (!CheckReferenceIntegrity ())
-				return null;
+			pkEnumerator = null;
 
 			if (key != null) {
 				// check with supplied key
-				if (CheckSignatureWithKey (key))
-					return key;
+				if (!CheckSignatureWithKey (key))
+					return null;
 			}
 			else {
 				// no supplied key, iterates all KeyInfo
 				while ((key = GetPublicKey ()) != null) {
-					if (CheckSignatureWithKey (key))
-						return key;
+					if (CheckSignatureWithKey (key)) {
+						break;
+					}
 				}
+				if (key == null)
+					throw new CryptographicException ("No public key found to verify the signature.");
 			}
 
-			return null;
+			// some parts may need to be downloaded
+			// so where doing it last
+			return (CheckReferenceIntegrity () ? key : null);
 		}
 
 		// Is the signature (over SignedInfo) valid ?
@@ -305,8 +321,10 @@ namespace System.Security.Cryptography.Xml {
 			verifier.SetKey (key);
 			verifier.SetHashAlgorithm (sd.DigestAlgorithm);
 
-			byte[] hash = Hash (sd.DigestAlgorithm);
-			return verifier.VerifySignature (hash, signature.SignatureValue); 
+			HashAlgorithm hash = GetHash (sd.DigestAlgorithm);
+			// get the hash of the C14N SignedInfo element
+			byte[] digest = hash.ComputeHash (SignedInfoTransformed ());
+			return verifier.VerifySignature (digest, signature.SignatureValue); 
 		}
 
 		private bool Compare (byte[] expected, byte[] actual) 
@@ -330,34 +348,37 @@ namespace System.Security.Cryptography.Xml {
 			if (macAlg == null)
 				throw new ArgumentNullException ("macAlg");
 
-			// Part 1: Are all references digest valid ?
-			bool result = CheckReferenceIntegrity ();
-			if (result) {
-				// Part 2: Is the signature (over SignedInfo) valid ?
-				Stream s = SignedInfoTransformed ();
-				if (s == null)
-					return false;
+			pkEnumerator = null;
 
-				byte[] actual = macAlg.ComputeHash (s);
+			// Is the signature (over SignedInfo) valid ?
+			Stream s = SignedInfoTransformed ();
+			if (s == null)
+				return false;
+
+			byte[] actual = macAlg.ComputeHash (s);
+			// HMAC signature may be partial
+			if (signature.SignedInfo.SignatureLength != null) {
 				int length = actual.Length;
-				// HMAC signature may be partial
-				if (signature.SignedInfo.SignatureLength != null) {
-					try {
-						// SignatureLength is in bits
-						length = (Int32.Parse (signature.SignedInfo.SignatureLength) >> 3);
-					}
-					catch {
-					}
+				try {
+					// SignatureLength is in bits
+					length = (Int32.Parse (signature.SignedInfo.SignatureLength) >> 3);
 				}
+				catch {
+				}
+
 				if (length != actual.Length) {
 					byte[] trunked = new byte [length];
 					Buffer.BlockCopy (actual, 0, trunked, 0, length);
 					actual = trunked;
 				}
-
-				result = Compare (signature.SignatureValue, actual);
 			}
-			return result;
+
+			if (Compare (signature.SignatureValue, actual)) {
+				// some parts may need to be downloaded
+				// so where doing it last
+				return CheckReferenceIntegrity ();
+			}
+			return false;
 		}
 
 		public bool CheckSignatureReturningKey (out AsymmetricAlgorithm signingKey) 
@@ -373,12 +394,7 @@ namespace System.Security.Cryptography.Xml {
 				signature.SignedInfo.SignatureMethod = key.SignatureAlgorithm;
 				DigestReferences ();
 
-				SignatureDescription sd = (SignatureDescription) CryptoConfig.CreateFromName (signature.SignedInfo.SignatureMethod);
-
-				// the hard part - C14Ning the KeyInfo
-				byte[] hash = Hash (sd.DigestAlgorithm);
 				AsymmetricSignatureFormatter signer = null;
-
 				// in need for a CryptoConfig factory
 				if (key is DSA)
 					signer = new DSASignatureFormatter (key);
@@ -386,8 +402,14 @@ namespace System.Security.Cryptography.Xml {
 					signer = new RSAPKCS1SignatureFormatter (key);
 
 				if (signer != null) {
+					SignatureDescription sd = (SignatureDescription) CryptoConfig.CreateFromName (signature.SignedInfo.SignatureMethod);
+
+					HashAlgorithm hash = GetHash (sd.DigestAlgorithm);
+					// get the hash of the C14N SignedInfo element
+					byte[] digest = hash.ComputeHash (SignedInfoTransformed ());
+
 					signer.SetHashAlgorithm ("SHA1");
-					signature.SignatureValue = signer.CreateSignature (hash);
+					signature.SignatureValue = signer.CreateSignature (digest);
 				}
 			}
 		}
@@ -422,6 +444,9 @@ namespace System.Security.Cryptography.Xml {
 		// iterates all possible keys then return null
 		protected virtual AsymmetricAlgorithm GetPublicKey () 
 		{
+			if (signature.KeyInfo == null)
+				return null;
+
 			if (pkEnumerator == null) {
 				pkEnumerator = signature.KeyInfo.GetEnumerator ();
 			}
