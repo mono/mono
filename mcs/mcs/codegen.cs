@@ -85,7 +85,9 @@ namespace Mono.CSharp {
 			// loaded DLL - that's why we're doing a comparision based on the type
 			// name here instead of using `SymbolWriter is MonoSymbolWriter'.
 			//
-			switch (SymbolWriter.GetType ().Name){
+			Type sym_type = ((object) SymbolWriter).GetType ();
+			
+			switch (sym_type.Name){
 			case "MonoSymbolWriter":
 				InitMonoSymbolWriter (basename);
 				break;
