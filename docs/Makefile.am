@@ -12,4 +12,4 @@ EXTRA_DIST = \
 	opcode-decomp.txt	\
 	object-layout	 	\
 	unmanaged-calls 	\
-	stack-alignment 	\
+	stack-alignment
