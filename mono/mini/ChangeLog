@@ -1,4 +1,8 @@
 
+Fri May 21 08:00:12 EDT 2004 Paolo Molaro <lupus@ximian.com>
+
+	* exceptions-ppc.c:  handle alloca in methods with clauses.
+
 Fri May 21 07:35:30 EDT 2004 Paolo Molaro <lupus@ximian.com>
 
 	* mini-ppc.c: cleanups, off-by-one fixes, avoid recursive thunks.
