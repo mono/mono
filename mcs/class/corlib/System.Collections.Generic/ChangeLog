@@ -1,3 +1,8 @@
+2004-09-20  Gert Driesen <drieseng@users.sourceforge.net>
+
+	* ReadOnlyCollection.cs: Moved to System assembly
+	* Collection.cs: Moved to System assembly
+
 2004-09-07  Carlos Alberto Cortez <carlos@unixmexico.org>
 
 	* ReadOnlyCollection.cs: New file and changes to 
