@@ -24,8 +24,14 @@ namespace MonoTests.System  {
 			Single s2 = 1f;
 			Assert ("Equals s1==s2", s1.Equals (s2));
 			Assert ("Equals s1!=NaN", !s1.Equals (Single.NaN));
+
 			Assert ("Equals NaN=!s2", !Single.NaN.Equals (s2));
 			Assert ("Equals NaN==NaN", Single.NaN.Equals (Single.NaN));
+
+			Single p0 = 0.0f;
+			Single m0 = -0.0f;
+			Assert ("0.0==-0.0", p0.Equals (m0));
+			Assert ("-0.0==0.0", m0.Equals (p0));
 		}
 
 		[Test]
