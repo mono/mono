@@ -1,0 +1,4 @@
+2003-02-08  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* MiniParser.cs: Renamed namespace to match new location.
+

@@ -34,9 +34,10 @@ using System.Text;
 using System.Collections;
 using System.Globalization;
 
-namespace System.Security.Cryptography {
+namespace Mono.Xml {
 
-internal class MiniParser {
+[CLSCompliant(false)] 
+public class MiniParser {
 
 	public interface IReader {
 		int Read();
@@ -297,7 +298,7 @@ internal class MiniParser {
 
 	protected static int Xlat(int charCode, int state) {
 		int p = state * INPUT_RANGE;
-		int n = Math.Min(tbl.Length - p, INPUT_RANGE);
+		int n = System.Math.Min(tbl.Length - p, INPUT_RANGE);
 		for (;--n >= 0;) {
 			ushort code = tbl[p];
 			if (charCode == (code >> 12)) return (code & 0xFFF);
