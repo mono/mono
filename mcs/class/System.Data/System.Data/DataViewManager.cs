@@ -247,8 +247,10 @@ namespace System.Data
 			if (dataSet == null)
 				throw new DataException ("dataset is null");
 
-			if (listAccessors == null || listAccessors.Length == 0)
-				return TypeDescriptor.GetProperties (this);
+			if (listAccessors == null || listAccessors.Length == 0) {
+				ICustomTypeDescriptor desc = new DataViewManagerListItemTypeDescriptor (this);
+				return desc.GetProperties ();
+			}
 				
 			throw new NotImplementedException ();
 		}

@@ -75,10 +75,19 @@ namespace System.Data
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		PropertyDescriptorCollection ICustomTypeDescriptor.GetProperties ()
 		{
-			throw new NotImplementedException ();
+			DataSet ds = dvm.DataSet;
+			if (ds == null)
+				return null;
+
+			DataTableCollection tables = ds.Tables;
+			int index = 0;
+			PropertyDescriptor [] descriptors  = new PropertyDescriptor [tables.Count];
+			foreach (DataTable table in tables)
+				descriptors [index++] = new TablePD (table);
+
+			return new PropertyDescriptorCollection (descriptors);
 		}
 
 		[MonoTODO]
@@ -92,5 +101,70 @@ namespace System.Data
 		{
 			throw new NotImplementedException ();
 		}
+
+		class TablePD : PropertyDescriptor
+		{
+			DataTable table;
+
+			public TablePD (DataTable table) : base (table.TableName, null)
+			{
+				this.table = table;
+			}
+
+			public override object GetValue (object component)
+			{
+				DataViewManagerListItemTypeDescriptor desc = component as DataViewManagerListItemTypeDescriptor;
+				if (desc == null)
+					return null;
+
+				DataView dv = new DataView (table);
+				dv.dataViewManager = desc.dvm;
+				return dv;
+			}
+
+			public override bool CanResetValue (object component)
+			{
+				return false;
+			}
+
+			public override bool Equals (object other)
+			{
+				return other is TablePD && ((TablePD) other).table == table;
+			}
+
+			public override int GetHashCode ()
+			{
+				return table.GetHashCode ();
+			}
+
+			public override bool ShouldSerializeValue (object component)
+			{
+				return false;
+			}
+
+			public override void ResetValue (object component)
+			{
+			}
+
+			public override void SetValue (object component, object value)
+			{
+			}
+
+			public override bool IsReadOnly
+			{
+				get { return false; }
+			}
+
+			public override Type ComponentType
+			{
+				get { return typeof (DataRowView); }
+			}
+
+			public override Type PropertyType
+			{
+				get { return typeof (IBindingList); }
+			}
+		}
 	}
 }
+

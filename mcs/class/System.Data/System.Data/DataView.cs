@@ -40,7 +40,7 @@ namespace System.Data {
 
 		bool isOpen = false;
 
-		DataViewManager dataViewManager = null;
+		internal DataViewManager dataViewManager = null;
 
 		[MonoTODO]	
 		public DataView () {
