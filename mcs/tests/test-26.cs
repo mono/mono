@@ -17,6 +17,8 @@ public class Blah {
 
 		int number = del (2, 3);
 
+		Console.WriteLine ("Delegate invocation returned : " + number);
+
 		if (number == 5)
 			return 0;
 		else
