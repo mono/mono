@@ -15,6 +15,7 @@ Mono.Math.Prime.Generator/PrimeGeneratorBase.cs
 Mono.Math.Prime.Generator/SequentialSearchPrimeGeneratorBase.cs
 Mono.Security/ASN1.cs
 Mono.Security/ASN1Convert.cs
+Mono.Security/BitConverterLE.cs
 Mono.Security/PKCS7.cs
 Mono.Security/StrongName.cs
 Mono.Security/StrongNameManager.cs
