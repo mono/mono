@@ -1,3 +1,6 @@
+2004-08-27 Anirban Bhattacharjee <banirban@novell.com>
+	* driver.cs: bug fixing - #63580
+
 2004/08/19 Rafael Teixeira <rafaelteixeirabr@hotmail.com>
 	* testmbas/WriteOk.vb : Use Mono.GetOptions from VB.NET
 	* Makefile : exercise new option processing in test program [make-run-local target]

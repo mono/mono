@@ -646,7 +646,8 @@ namespace Mono.Languages
 			};
 			
 			foreach (string def in default_config)
-				soft_references.Add(def);
+				if (!(references.Contains(def) || references.Contains (def + ".dll")))
+					soft_references.Add(def);
 		}
 
 		[ArgumentProcessor]
