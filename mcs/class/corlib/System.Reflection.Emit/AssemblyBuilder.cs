@@ -104,6 +104,34 @@ namespace System.Reflection.Emit {
 			resources [p].attrs = attribute;
 		}
 
+		public void EmbedResourceFile (string name, string fileName)
+		{
+			EmbedResourceFile (name, fileName, ResourceAttributes.Public);
+		}
+
+		public void EmbedResourceFile (string name, string fileName, ResourceAttributes attribute)
+		{
+			if (resources != null) {
+				MonoResource[] new_r = new MonoResource [resources.Length + 1];
+				System.Array.Copy(resources, new_r, resources.Length);
+				resources = new_r;
+			} else {
+				resources = new MonoResource [1];
+			}
+			int p = resources.Length - 1;
+			resources [p].name = name;
+			resources [p].attrs = attribute;
+			try {
+				FileStream s = new FileStream (fileName, FileMode.Open, FileAccess.Read);
+				long len = s.Length;
+				resources [p].data = new byte [len];
+				s.Read (resources [p].data, 0, (int)len);
+				s.Close ();
+			} catch {
+				/* do something */
+			}
+		}
+
 		public ModuleBuilder DefineDynamicModule (string name)
 		{
 			return DefineDynamicModule (name, name, false);

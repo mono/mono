@@ -1,3 +1,8 @@
+
+Thu Aug 8 10:25:51 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* AssemblyBuilder.cs: added API to embed managed resources.
+
 2002-08-03  Martin Baulig  <martin@gnome.org>
 
 	* TypeBuilder.cs (TypeBuilder.DeclaringType): Implemented.
