@@ -442,11 +442,6 @@
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "DataGridColumnStyle.resx"
-                    DependentUpon = "DataGridColumnStyle.cs"
-                    BuildAction = "EmbeddedResource"
-                />
-                <File
                     RelPath = "DataGridLineStyle.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
