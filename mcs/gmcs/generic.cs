@@ -810,7 +810,13 @@ namespace Mono.CSharp {
 			//
 			// Now, check the interface constraints.
 			//
-			foreach (Type itype in TypeManager.GetInterfaces (ptype)) {
+			foreach (Type it in TypeManager.GetInterfaces (ptype)) {
+				Type itype;
+				if (it.IsGenericParameter)
+					itype = atypes [it.GenericParameterPosition];
+				else
+					itype = it;
+
 				if (!CheckConstraint (ec, ptype, aexpr, itype)) {
 					Report.Error (309, loc, "The type `{0}' must be " +
 						      "convertible to `{1}' in order to " +
