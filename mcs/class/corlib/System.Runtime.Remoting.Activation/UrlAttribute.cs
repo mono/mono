@@ -16,6 +16,7 @@ namespace System.Runtime.Remoting.Activation {
 		string url;
 		
 		public UrlAttribute (string callsiteURL)
+			: base (callsiteURL)
 		{
 			url = callsiteURL;
 		}

@@ -17,8 +17,11 @@ namespace System.Runtime.Remoting.Contexts {
 	public class ContextAttribute : Attribute, IContextAttribute, IContextProperty {
 		protected string AttributeName;
 
+		public ContextAttribute ()
+		{
+		}
+
 		public ContextAttribute (string name)
-			: base (name)
 		{
 			AttributeName = name;
 		}
