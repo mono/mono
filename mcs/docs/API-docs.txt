@@ -3,6 +3,11 @@ simply wrong in the microsoft docs. We keep a list of such things
 here so that we can show them to the Microsoft people later on to
 help them fix their documentation and class libraries.
 
+* BitConverter.To*():
+  The docs say it should be ArgumentOutOfRangeException in the case
+  where "startIndex is less than zero or greater than the length of value 
+  minus 2.", but the mscorlib throws an ArgumentException.
+
 * Guid.Guid(string) ctor:
   The documentation says this ctor accepts (amongst others) the format
   "{0xdddddddd,0xdddd,0xdddd,{0xdd},{0xdd},{0xdd},{0xdd},{0xdd},{0xdd},
