@@ -60,67 +60,66 @@ namespace Microsoft.JScript
 		public const int LITERAL_else = 30;
 		public const int ASSIGN = 31;
 		public const int LITERAL_new = 32;
-		// "." = 33
+		public const int DOT = 33;
 		public const int OPEN_BRACKET = 34;
 		public const int CLOSE_BRACKET = 35;
-		public const int DOT = 36;
-		public const int INCREMENT = 37;
-		public const int DECREMENT = 38;
-		public const int LITERAL_delete = 39;
-		public const int LITERAL_void = 40;
-		public const int LITERAL_typeof = 41;
-		public const int PLUS = 42;
-		public const int MINUS = 43;
-		public const int BITWISE_NOT = 44;
-		public const int LOGICAL_NOT = 45;
-		public const int MULT = 46;
-		public const int DIVISION = 47;
-		public const int MODULE = 48;
-		public const int SHIFT_LEFT = 49;
-		public const int SHIFT_RIGHT = 50;
-		public const int UNSIGNED_SHIFT_RIGHT = 51;
-		public const int LESS_THAN = 52;
-		public const int GREATER_THAN = 53;
-		public const int LESS_EQ = 54;
-		public const int GREATER_EQ = 55;
-		public const int LITERAL_instanceof = 56;
-		public const int EQ = 57;
-		public const int NEQ = 58;
-		public const int STRICT_EQ = 59;
-		public const int STRICT_NEQ = 60;
-		public const int BITWISE_AND = 61;
-		public const int BITWISE_XOR = 62;
-		public const int BITWISE_OR = 63;
-		public const int LOGICAL_AND = 64;
-		public const int LOGICAL_OR = 65;
-		public const int INTERR = 66;
-		public const int MULT_ASSIGN = 67;
-		public const int DIV_ASSIGN = 68;
-		public const int MOD_ASSIGN = 69;
-		public const int ADD_ASSIGN = 70;
-		public const int SUB_ASSIGN = 71;
-		public const int SHIFT_LEFT_ASSIGN = 72;
-		public const int SHIFT_RIGHT_ASSIGN = 73;
-		public const int AND_ASSIGN = 74;
-		public const int XOR_ASSIGN = 75;
-		public const int OR_ASSIGN = 76;
-		public const int LITERAL_this = 77;
-		public const int LITERAL_null = 78;
-		public const int LITERAL_true = 79;
-		public const int LITERAL_false = 80;
-		public const int STRING_LITERAL = 81;
-		public const int DECIMAL_LITERAL = 82;
-		public const int HEX_INTEGER_LITERAL = 83;
-		public const int LINE_FEED = 84;
-		public const int CARRIAGE_RETURN = 85;
-		public const int LINE_SEPARATOR = 86;
-		public const int PARAGRAPH_SEPARATOR = 87;
-		public const int TAB = 88;
-		public const int VERTICAL_TAB = 89;
-		public const int FORM_FEED = 90;
-		public const int SPACE = 91;
-		public const int NO_BREAK_SPACE = 92;
-		public const int SL_COMMENT = 93;
+		public const int INCREMENT = 36;
+		public const int DECREMENT = 37;
+		public const int LITERAL_delete = 38;
+		public const int LITERAL_void = 39;
+		public const int LITERAL_typeof = 40;
+		public const int PLUS = 41;
+		public const int MINUS = 42;
+		public const int BITWISE_NOT = 43;
+		public const int LOGICAL_NOT = 44;
+		public const int MULT = 45;
+		public const int DIVISION = 46;
+		public const int MODULE = 47;
+		public const int SHIFT_LEFT = 48;
+		public const int SHIFT_RIGHT = 49;
+		public const int UNSIGNED_SHIFT_RIGHT = 50;
+		public const int LESS_THAN = 51;
+		public const int GREATER_THAN = 52;
+		public const int LESS_EQ = 53;
+		public const int GREATER_EQ = 54;
+		public const int LITERAL_instanceof = 55;
+		public const int EQ = 56;
+		public const int NEQ = 57;
+		public const int STRICT_EQ = 58;
+		public const int STRICT_NEQ = 59;
+		public const int BITWISE_AND = 60;
+		public const int BITWISE_XOR = 61;
+		public const int BITWISE_OR = 62;
+		public const int LOGICAL_AND = 63;
+		public const int LOGICAL_OR = 64;
+		public const int INTERR = 65;
+		public const int MULT_ASSIGN = 66;
+		public const int DIV_ASSIGN = 67;
+		public const int MOD_ASSIGN = 68;
+		public const int ADD_ASSIGN = 69;
+		public const int SUB_ASSIGN = 70;
+		public const int SHIFT_LEFT_ASSIGN = 71;
+		public const int SHIFT_RIGHT_ASSIGN = 72;
+		public const int AND_ASSIGN = 73;
+		public const int XOR_ASSIGN = 74;
+		public const int OR_ASSIGN = 75;
+		public const int LITERAL_this = 76;
+		public const int LITERAL_null = 77;
+		public const int LITERAL_true = 78;
+		public const int LITERAL_false = 79;
+		public const int STRING_LITERAL = 80;
+		public const int DECIMAL_LITERAL = 81;
+		public const int HEX_INTEGER_LITERAL = 82;
+		public const int LINE_FEED = 83;
+		public const int CARRIAGE_RETURN = 84;
+		public const int LINE_SEPARATOR = 85;
+		public const int PARAGRAPH_SEPARATOR = 86;
+		public const int TAB = 87;
+		public const int VERTICAL_TAB = 88;
+		public const int FORM_FEED = 89;
+		public const int SPACE = 90;
+		public const int NO_BREAK_SPACE = 91;
+		public const int SL_COMMENT = 92;
 		
 		public JScriptLexer(Stream ins) : this(new ByteBuffer(ins))
 		{
@@ -145,30 +144,29 @@ namespace Microsoft.JScript
 			literals = new Hashtable();
 			literals.Add("switch", 17);
 			literals.Add("case", 19);
-			literals.Add("this", 77);
+			literals.Add("this", 76);
 			literals.Add("for", 26);
 			literals.Add("catch", 14);
-			literals.Add("true", 79);
+			literals.Add("true", 78);
 			literals.Add("default", 18);
 			literals.Add("try", 13);
-			literals.Add(".", 33);
-			literals.Add("void", 40);
+			literals.Add("void", 39);
 			literals.Add("break", 22);
 			literals.Add("while", 25);
 			literals.Add("continue", 23);
 			literals.Add("do", 24);
 			literals.Add("in", 28);
-			literals.Add("null", 78);
+			literals.Add("null", 77);
 			literals.Add("function", 4);
 			literals.Add("throw", 16);
-			literals.Add("instanceof", 56);
-			literals.Add("typeof", 41);
+			literals.Add("instanceof", 55);
+			literals.Add("typeof", 40);
 			literals.Add("new", 32);
 			literals.Add("return", 21);
-			literals.Add("delete", 39);
+			literals.Add("delete", 38);
 			literals.Add("if", 29);
 			literals.Add("finally", 15);
-			literals.Add("false", 80);
+			literals.Add("false", 79);
 			literals.Add("else", 30);
 			literals.Add("var", 27);
 			literals.Add("with", 20);
@@ -548,11 +546,11 @@ tryAgain:
 						}
 						else
 						{
-							goto _loop157_breakloop;
+							goto _loop159_breakloop;
 						}
 						
 					}
-_loop157_breakloop:					;
+_loop159_breakloop:					;
 				}    // ( ... )*
 				break;
 			}
@@ -575,11 +573,11 @@ _loop157_breakloop:					;
 						}
 						else
 						{
-							goto _loop160_breakloop;
+							goto _loop162_breakloop;
 						}
 						
 					}
-_loop160_breakloop:					;
+_loop162_breakloop:					;
 				}    // ( ... )*
 			}
 			else {
@@ -635,7 +633,7 @@ _loop160_breakloop:					;
 						 }
 					}
 					{ // ( ... )+
-					int _cnt166=0;
+					int _cnt168=0;
 					for (;;)
 					{
 						if (((LA(1) >= '0' && LA(1) <= '9')))
@@ -644,12 +642,12 @@ _loop160_breakloop:					;
 						}
 						else
 						{
-							if (_cnt166 >= 1) { goto _loop166_breakloop; } else { throw new NoViableAltForCharException((char)LA(1), getFilename(), getLine(), getColumn());; }
+							if (_cnt168 >= 1) { goto _loop168_breakloop; } else { throw new NoViableAltForCharException((char)LA(1), getFilename(), getLine(), getColumn());; }
 						}
 						
-						_cnt166++;
+						_cnt168++;
 					}
-_loop166_breakloop:					;
+_loop168_breakloop:					;
 					}    // ( ... )+
 				}
 			}
@@ -705,7 +703,7 @@ _loop166_breakloop:					;
 			 }
 		}
 		{ // ( ... )+
-		int _cnt170=0;
+		int _cnt172=0;
 		for (;;)
 		{
 			switch ( LA(1) )
@@ -731,12 +729,12 @@ _loop166_breakloop:					;
 			}
 			default:
 			{
-				if (_cnt170 >= 1) { goto _loop170_breakloop; } else { throw new NoViableAltForCharException((char)LA(1), getFilename(), getLine(), getColumn());; }
+				if (_cnt172 >= 1) { goto _loop172_breakloop; } else { throw new NoViableAltForCharException((char)LA(1), getFilename(), getLine(), getColumn());; }
 			}
 			break; }
-			_cnt170++;
+			_cnt172++;
 		}
-_loop170_breakloop:		;
+_loop172_breakloop:		;
 		}    // ( ... )+
 		if (_createToken && (null == _token) && (_ttype != Token.SKIP))
 		{
@@ -763,11 +761,11 @@ _loop170_breakloop:		;
 				}
 				else
 				{
-					goto _loop174_breakloop;
+					goto _loop176_breakloop;
 				}
 				
 			}
-_loop174_breakloop:			;
+_loop176_breakloop:			;
 		}    // ( ... )*
 		match('"');
 		if (_createToken && (null == _token) && (_ttype != Token.SKIP))
@@ -850,11 +848,11 @@ _loop174_breakloop:			;
 				}
 				default:
 				{
-					goto _loop178_breakloop;
+					goto _loop180_breakloop;
 				}
 				 }
 			}
-_loop178_breakloop:			;
+_loop180_breakloop:			;
 		}    // ( ... )*
 		_ttype = testLiteralsTable(_ttype);
 		if (_createToken && (null == _token) && (_ttype != Token.SKIP))
@@ -1526,11 +1524,11 @@ _loop178_breakloop:			;
 				}
 				else
 				{
-					goto _loop229_breakloop;
+					goto _loop231_breakloop;
 				}
 				
 			}
-_loop229_breakloop:			;
+_loop231_breakloop:			;
 		}    // ( ... )*
 		_ttype = Token.SKIP;
 		if (_createToken && (null == _token) && (_ttype != Token.SKIP))
