@@ -14,26 +14,74 @@ namespace System.Data.SqlClient
 	/// </summary>
 	public class SqlConnection : IDBConnection
 	{
-		SqlTransaction BeginTransaction();
+		#region methods
+		
+		public SqlTransaction BeginTransaction()
+		{
+			return new SqlTransaction (this);
+		}
 
-		SqlTransaction BeginTransaction(IsolationLevel il);
+		public SqlTransaction BeginTransaction(IsolationLevel il)
+		{
+			SqlTransaction xaction = new SqlTransaction (cnc);
+			xaction.IsolationLevel = il;
 
-		void ChangeDatabase(string databaseName);
+			return xaction;
+		}
 
-		void Close();
+		[MonoTODO]
+		public void ChangeDatabase(string databaseName)
+		{
+			throw new NotImplementedException ();
+		}
+				
+		[MonoTODO]
+		public void Close()
+		{
+			throw new NotImplementedException ();
+		}
 
-		SqlCommand CreateCommand();
+		[MonoTODO]
+		public SqlCommand CreateCommand()
+		{
+			throw new NotImplementedException ();
+		}
 
-		void Open();
+		[MonoTODO]
+		public void Open()
+		{
+			throw new NotImplementedException ();
+		}
 
+		#endregion
 
-		string ConnectionString{get; set;}
+		#region properties
 
-		int ConnectionTimeout{get;}
+		[MonoTODO]
+		public string ConnectionString
+		{
+			get { throw new NotImplementedException (); }
+			set { throw new NotImplementedException (); }
+		}
 
-		string Database{get;}
+		[MonoTODO]
+		public int ConnectionTimeout
+		{
+			get { throw new NotImplementedException (); }
+		}
 
-		ConnectionState State{get;}
+		[MonoTODO]
+		public string Database
+		{
+			get { throw new NotImplementedException (); }
+		}
 
+		[MonoTODO]
+		public ConnectionState State
+		{
+			get { throw new NotImplementedException (); }
+		}
+
+		#endregion
 	}
 }
