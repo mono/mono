@@ -1,3 +1,9 @@
+2004-08-02  Martin Baulig  <martin@ximian.com>
+
+	* IList.cs (IList.Add): Changed return type to void.
+
+	* List.cs (List.Add): Likewise.
+
 2004-07-16  Martin Baulig  <martin@ximian.com>
 
 	* IComparable.cs: Removed, it's in System.

@@ -82,18 +82,22 @@ namespace System.Collections.Generic
 			capacity = size;
 		}
 
-		public int Add (T item)
+		public void Add (T item)
 		{
 			if (count >= capacity)
 				Resize (2 * capacity);
 
 			contents [count] = item;
-			return count++;
+			count++;
 		}
 
 		int IList.Add (object item)
 		{
-			return Add ((T) item);
+			if (count >= capacity)
+				Resize (2 * capacity);
+
+			contents [count] = (T) item;
+			return count++;
 		}
 
 		public void Clear ()

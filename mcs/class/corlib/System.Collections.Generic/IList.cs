@@ -41,7 +41,7 @@ namespace System.Collections.Generic
 	[ComVisible(false)]
 	public interface IList<T> : ICollection<T>
 	{
-		int Add (T item);
+		void Add (T item);
 
 		void Clear ();
 
