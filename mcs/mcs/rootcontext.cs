@@ -66,6 +66,15 @@ namespace Mono.CSharp {
 		// If set, enable C# version 2 features
 		//
 		public static bool V2 = true;
+
+		//
+		// We keep strongname related info here because
+		// it's also used as complier options from CSC 8.x
+		//
+		public static string StrongNameKeyFile;
+		public static string StrongNameKeyContainer;
+		public static bool StrongNameDelaySign = false;
+
 		//
 		// Constructor
 		//

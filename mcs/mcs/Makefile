@@ -35,14 +35,14 @@ COMPILER_SOURCES = \
 	support.cs			\
 	typemanager.cs			\
 	symbolwriter.cs			\
-	tree.cs
+	tree.cs				\
+	CryptoConvert.cs
 
 all_sources = $(COMPILER_SOURCES) cs-parser.cs
 
 DISTFILES = \
 	$(COMPILER_SOURCES)	\
 	compiler.csproj		\
-	compiler.csproj.user	\
 	compiler.doc		\
 	compiler.sln		\
 	cs-parser.jay		\

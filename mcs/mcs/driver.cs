@@ -196,10 +196,13 @@ namespace Mono.CSharp
 				"   -codepage:ID       Sets code page to the one in ID\n" +
 				"                      (number, `utf8' or `reset')\n" +
 				"   -define:S1[;S2]    Defines one or more symbols (short: /d:)\n" +
-				"   -debug[+-]         Generate debugging information\n" + 
+				"   -debug[+|-]        Generate debugging information\n" + 
+				"   -delaysign[+|-]    Only insert the public key into the assembly (no signing)\n" +
 				"   -doc:FILE          XML Documentation file to generate\n" + 
 				"   -g                 Generate debugging information\n" +
 				"   --fatal            Makes errors fatal\n" +
+				"   -keycontainer:NAME The key pair container used to strongname the assembly\n" +
+				"   -keyfile:FILE      The strongname key file used to strongname the assembly\n" +
 				"   -lib:PATH1,PATH2   Adds the paths to the assembly link path\n" +
 				"   -main:class        Specified the class that contains the entry point\n" +
 				"   -noconfig[+|-]     Disables implicit references to assemblies\n" +
@@ -1156,6 +1159,27 @@ namespace Mono.CSharp
 				return true;
 
 			case "/fullpaths":
+				return true;
+
+			case "/keyfile":
+				if (value == String.Empty) {
+					Report.Error (5, arg + " requires an argument");
+					Environment.Exit (1);
+				}
+				RootContext.StrongNameKeyFile = value;
+				return true;
+			case "/keycontainer":
+				if (value == String.Empty) {
+					Report.Error (5, arg + " requires an argument");
+					Environment.Exit (1);
+				}
+				RootContext.StrongNameKeyContainer = value;
+				return true;
+			case "/delaysign+":
+				RootContext.StrongNameDelaySign = true;
+				return true;
+			case "/delaysign-":
+				RootContext.StrongNameDelaySign = false;
 				return true;
 
 			case "/v2":

@@ -123,6 +123,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "CryptoConvert.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "cs-parser.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -169,11 +174,6 @@
                 />
                 <File
                     RelPath = "genericparser.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "interface.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />

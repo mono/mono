@@ -1,3 +1,20 @@
+2004-03-25  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* attribute.cs: Added methods to get a string and a bool from an
+	attribute. Required to information from AssemblyKeyFileAttribute,
+	AttributeKeyNameAttribute (string) and AssemblyDelaySign (bool).
+	* codegen.cs: Modified AssemblyName creation to include support for
+	strongnames. Catch additional exceptions to report them as CS1548.
+	* compiler.csproj: Updated include CryptoConvert.cs.
+	* compiler.csproj.user: Removed file - user specific configuration.
+	* CryptoConvert.cs: New. A COPY of the class CryptoConvert from 
+	Mono.Security assembly. The original class is maintained and tested in
+	/mcs/class/Mono.Security/Mono.Security.Cryptography/CryptoConvert.cs.
+	* drivers.cs: Added support for /keyfile, /keycontainer and /delaysign
+	like CSC 8.0 (C# v2) supports.
+	* Makefile: Added CryptoConvert.cs to mcs sources.
+	* rootcontext.cs: Added new options for strongnames.
+
 2004-03-24 Ben Maurer  <bmaurer@users.sourceforge.net>
 
 	* driver.cs: For --expect-error, report error code `2'

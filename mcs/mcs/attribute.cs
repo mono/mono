@@ -1166,7 +1166,35 @@ namespace Mono.CSharp {
 			
 			return mb;
 		}
-		
+
+		private Expression GetValue () 
+		{
+			if ((Arguments == null) || (Arguments.Count < 1))
+				return null;
+			ArrayList al = (ArrayList) Arguments [0];
+			if ((al == null) || (al.Count < 1))
+				return null;
+			Argument arg = (Argument) al [0];
+			if ((arg == null) || (arg.Expr == null))
+				return null;
+			return arg.Expr;
+		}
+
+		public string GetString () 
+		{
+			Expression e = GetValue ();
+			if (e is StringLiteral)
+				return (e as StringLiteral).Value;
+			return null;
+		}
+
+		public bool GetBoolean () 
+		{
+			Expression e = GetValue ();
+			if (e is BoolLiteral)
+				return (e as BoolLiteral).Value;
+			return false;
+		}
 	}
 	
 	public class AttributeSection {

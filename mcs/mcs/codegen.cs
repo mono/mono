@@ -12,6 +12,9 @@ using System.IO;
 using System.Collections;
 using System.Reflection;
 using System.Reflection.Emit;
+using System.Security.Cryptography;
+
+using Mono.Security.Cryptography;
 
 namespace Mono.CSharp {
 
@@ -90,15 +93,31 @@ namespace Mono.CSharp {
 		//
 		static public void Init (string name, string output, bool want_debugging_support)
 		{
-			AssemblyName an;
-
 			FileName = output;
-			an = new AssemblyName ();
-			an.Name = Path.GetFileNameWithoutExtension (name);
+			AssemblyName an = Assembly.GetAssemblyName (name, output);
 			
 			current_domain = AppDomain.CurrentDomain;
-			Assembly.Builder = current_domain.DefineDynamicAssembly (
-				an, AssemblyBuilderAccess.Save, Dirname (name));
+
+			try {
+				Assembly.Builder = current_domain.DefineDynamicAssembly (an,
+					AssemblyBuilderAccess.Save, Dirname (name));
+			}
+			catch (ArgumentException) {
+				// specified key may not be exportable outside it's container
+				if (RootContext.StrongNameKeyContainer != null) {
+					Report.Error (1548, "Could not access the key inside the container `" +
+						RootContext.StrongNameKeyContainer + "'.");
+					Environment.Exit (1);
+				}
+				throw;
+			}
+			catch (CryptographicException) {
+				if ((RootContext.StrongNameKeyContainer != null) || (RootContext.StrongNameKeyFile != null)) {
+					Report.Error (1548, "Could not use the specified key to strongname the assembly.");
+					Environment.Exit (1);
+				}
+				throw;
+			}
 
 			//
 			// Pass a path-less name to DefineDynamicModule.  Wonder how
@@ -728,7 +747,7 @@ namespace Mono.CSharp {
 
 
 	public abstract class CommonAssemblyModulClass: IAttributeSupport {
-		Hashtable m_attributes;
+		protected Hashtable m_attributes;
 
 		protected CommonAssemblyModulClass () 
 		{
@@ -792,6 +811,102 @@ namespace Mono.CSharp {
 			get {
 				return m_is_cls_compliant;
 			}
+		}
+
+		public AssemblyName GetAssemblyName (string name, string output) 
+		{
+			// scan assembly attributes for strongname related attr
+			foreach (DictionaryEntry nsattr in m_attributes) {
+				ArrayList list = ((Attributes)nsattr.Value).AttributeSections;
+				for (int i=0; i < list.Count; i++) {
+					AttributeSection asect = (AttributeSection) list [i];
+					if (asect.Target != "assembly")
+						continue;
+					// strongname attributes don't support AllowMultiple
+					Attribute a = (Attribute) asect.Attributes [0];
+					switch (a.Name) {
+						case "AssemblyKeyFile":
+							if (RootContext.StrongNameKeyFile != null) {
+								Report.Warning (1616, "Compiler option -keyfile overrides " +
+									"AssemblyKeyFileAttribute");
+							}
+							else {
+								string value = a.GetString ();
+								if (value != String.Empty)
+									RootContext.StrongNameKeyFile = value;
+							}
+							break;
+						case "AssemblyKeyName":
+							if (RootContext.StrongNameKeyContainer != null) {
+								Report.Warning (1616, "Compiler option -keycontainer overrides " +
+									"AssemblyKeyNameAttribute");
+							}
+							else {
+								string value = a.GetString ();
+								if (value != String.Empty)
+									RootContext.StrongNameKeyContainer = value;
+							}
+							break;
+						case "AssemblyDelaySign":
+							RootContext.StrongNameDelaySign = a.GetBoolean ();
+							break;
+					}
+				}
+			}
+
+			AssemblyName an = new AssemblyName ();
+			an.Name = Path.GetFileNameWithoutExtension (name);
+
+			// note: delay doesn't apply when using a key container
+			if (RootContext.StrongNameKeyContainer != null) {
+				an.KeyPair = new StrongNameKeyPair (RootContext.StrongNameKeyContainer);
+				return an;
+			}
+
+			// strongname is optional
+			if (RootContext.StrongNameKeyFile == null)
+				return an;
+
+			string AssemblyDir = Path.GetDirectoryName (output);
+
+			// the StrongName key file may be relative to (a) the compiled
+			// file or (b) to the output assembly. See bugzilla #55320
+			// http://bugzilla.ximian.com/show_bug.cgi?id=55320
+
+			// (a) relative to the compiled file
+			string filename = Path.GetFullPath (RootContext.StrongNameKeyFile);
+			bool exist = File.Exists (filename);
+			if ((!exist) && (AssemblyDir != null) && (AssemblyDir != String.Empty)) {
+				// (b) relative to the outputed assembly
+				filename = Path.GetFullPath (Path.Combine (AssemblyDir, RootContext.StrongNameKeyFile));
+				exist = File.Exists (filename);
+			}
+
+			if (exist) {
+				using (FileStream fs = new FileStream (filename, FileMode.Open)) {
+					byte[] snkeypair = new byte [fs.Length];
+					fs.Read (snkeypair, 0, snkeypair.Length);
+
+					try {
+						// this will import public or private/public keys
+						RSA rsa = CryptoConvert.FromCapiKeyBlob (snkeypair);
+						// only the public part must be supplied if signature is delayed
+						byte[] key = CryptoConvert.ToCapiKeyBlob (rsa, !RootContext.StrongNameDelaySign);
+						an.KeyPair = new StrongNameKeyPair (key);
+					}
+					catch (CryptographicException) {
+						Report.Error (1548, "Could not strongname the assembly. File `" +
+							RootContext.StrongNameKeyFile + "' incorrectly encoded.");
+						Environment.Exit (1);
+					}
+				}
+			}
+			else {
+				Report.Error (1548, "Could not strongname the assembly. File `" +
+					RootContext.StrongNameKeyFile + "' not found.");
+				Environment.Exit (1);
+			}
+			return an;
 		}
 
 		public override void SetCustomAttribute(CustomAttributeBuilder customBuilder)
