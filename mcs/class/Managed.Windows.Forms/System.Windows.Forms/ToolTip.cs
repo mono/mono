@@ -23,8 +23,11 @@
 //	Peter Bartok	pbartok@novell.com
 //
 //
-// $Revision: 1.1 $
+// $Revision: 1.2 $
 // $Log: ToolTip.cs,v $
+// Revision 1.2  2004/10/18 06:28:30  ravindra
+// Suppressed a warning message.
+//
 // Revision 1.1  2004/10/18 05:19:57  pbartok
 // - Complete implementation
 //
@@ -269,7 +272,7 @@ namespace System.Windows.Forms {
 		}
 
 		public override string ToString() {
-			return base.ToString() + " InitialDelay: " + initial_delay + ", ShowAlways: " + show_always;;
+			return base.ToString() + " InitialDelay: " + initial_delay + ", ShowAlways: " + show_always;
 		}
 		#endregion	// Public Instance Methods
 
