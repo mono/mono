@@ -189,9 +189,9 @@ namespace System.Data {
 		public void RemoveAt (int index) 
 		{
 			if (( index < 0 ) || (index >=List.Count))
-				throw new ArgumentException("There is no row at position "+index+".");
-			DataTable t = this[index];	
-			CanRemove(t, true);
+				throw new IndexOutOfRangeException (String.Format ("There is no row at position {0}.", index));
+			DataTable t = this [index];	
+			CanRemove (t, true);
 			List.RemoveAt (index);
 			t.dataSet = null;
 			OnCollectionChanged (new CollectionChangeEventArgs (CollectionChangeAction.Remove, t));
