@@ -1,3 +1,6 @@
+//
+// fixed
+//
 interface I {
 	void a ();
 }

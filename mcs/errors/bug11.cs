@@ -1,3 +1,6 @@
+//
+// fixed
+//
 class Location {
 	static public int Null {
 		get {
