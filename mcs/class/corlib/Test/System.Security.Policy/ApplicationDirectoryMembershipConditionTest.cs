@@ -195,7 +195,7 @@ namespace MonoTests.System.Security.Policy {
 		}
 
 		[Test]
-		public void GetHashCode ()
+		public void GetHashCode_ ()
 		{
 			ApplicationDirectoryMembershipCondition ad = new ApplicationDirectoryMembershipCondition ();
 			ApplicationDirectoryMembershipCondition copy = (ApplicationDirectoryMembershipCondition)ad.Copy ();
@@ -203,7 +203,7 @@ namespace MonoTests.System.Security.Policy {
 		}
 
 		[Test]
-		public void ToString ()
+		public void ToString_ ()
 		{
 			ApplicationDirectoryMembershipCondition ad = new ApplicationDirectoryMembershipCondition ();
 			Assert.AreEqual ("ApplicationDirectory", ad.ToString ());

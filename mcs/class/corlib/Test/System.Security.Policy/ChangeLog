@@ -1,3 +1,24 @@
+2004-08-24  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* AllMembershipConditionTest.cs: Renamed GetHashCode and 
+	ToString tests to remove compiler warnings.
+	* ApplicationDirectoryMembershipConditionTest.cs: Renamed GetHashCode
+	and ToString tests to remove compiler warnings.
+	* ApplicationMembershipConditionTest.cs: Renamed GetHashCode and 
+	ToString tests to remove compiler warnings.
+	* DomainApplicationMembershipConditionTest.cs: Renamed GetHashCode and
+	ToString tests to remove compiler warnings.
+	* GacMembershipConditionTest.cs: Added some new unit tests for 
+	FromXml to match other *MembershipCondition classes.
+	* PublisherMembershipConditionTest.cs: Renamed GetHashCode and 
+	ToString tests to remove compiler warnings.
+	* SiteMembershipConditionTest.cs: Completed. Converted existing unit
+	tests to NUnit 2.2 format.
+	* UrlMembershipConditionTest.cs: Completed. Converted existing unit 
+	tests to NUnit 2.2 format.
+	* ZoneMembershipConditionTest.cs: Added some new unit tests to match
+	other *MembershipCondition classes.
+
 2004-08-23  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* AllMembershipConditionTest.cs: New. Unit tests in NUnit 2.2 format.

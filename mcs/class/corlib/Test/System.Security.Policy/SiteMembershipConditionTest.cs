@@ -1,23 +1,43 @@
 //
-// SiteMembershipConditionTest.cs - NUnit Test Cases for SiteMembershipCondition
+// SiteMembershipConditionTest.cs - 
+//	NUnit Test Cases for SiteMembershipCondition
 //
 // Author:
-//	Sebastien Pouliot (spouliot@motus.com)
+//	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) 2004 Motus Technologies Inc. (http://www.motus.com)
+// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+//
+// Permission is hereby granted, free of charge, to any person obtaining
+// a copy of this software and associated documentation files (the
+// "Software"), to deal in the Software without restriction, including
+// without limitation the rights to use, copy, modify, merge, publish,
+// distribute, sublicense, and/or sell copies of the Software, and to
+// permit persons to whom the Software is furnished to do so, subject to
+// the following conditions:
+// 
+// The above copyright notice and this permission notice shall be
+// included in all copies or substantial portions of the Software.
+// 
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+// NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+// LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+// OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
 using NUnit.Framework;
 using System;
 using System.Collections;
 using System.Security;
-using System.Security.Permissions;
 using System.Security.Policy;
 
 namespace MonoTests.System.Security.Policy {
 
 	[TestFixture]
-	public class SiteMembershipConditionTest : Assertion {
+	public class SiteMembershipConditionTest {
 
 		[Test]
 		[ExpectedException (typeof (ArgumentNullException))]
@@ -51,105 +71,83 @@ namespace MonoTests.System.Security.Policy {
 		public void SiteMembershipCondition_GoMonoWebSite () 
 		{
 			SiteMembershipCondition smc = new SiteMembershipCondition ("www.go-mono.com");
-			AssertEquals ("Site", "www.go-mono.com", smc.Site);
-			AssertEquals ("ToString", "Site - www.go-mono.com", smc.ToString ());
+			Assert.AreEqual ("www.go-mono.com", smc.Site, "Site");
+			Assert.AreEqual ("Site - www.go-mono.com", smc.ToString (), "ToString");
 
 			SiteMembershipCondition smc2 = (SiteMembershipCondition) smc.Copy ();
-			AssertEquals ("Copy.Site", smc.Site, smc2.Site);
-			AssertEquals ("Copy.GetHashCode", smc.GetHashCode (), smc2.GetHashCode ());
+			Assert.AreEqual (smc.Site, smc2.Site, "Copy.Site");
+			Assert.AreEqual (smc.GetHashCode (), smc2.GetHashCode (), "Copy.GetHashCode");
 
 			SecurityElement se = smc2.ToXml ();
 			SiteMembershipCondition smc3 = new SiteMembershipCondition ("*");
 			smc3.FromXml (se);
-			AssertEquals ("ToXml/FromXml", smc.Site, smc3.Site);
+			Assert.AreEqual (smc.Site, smc3.Site, "ToXml/FromXml");
 
-			Assert ("Equals", smc.Equals (smc2));
+			Assert.IsTrue (smc.Equals (smc2), "Equals");
 			SiteMembershipCondition smc4 = new SiteMembershipCondition ("go-mono.com");
-			Assert ("!Equals", !smc.Equals (smc4));
+			Assert.IsFalse (smc.Equals (smc4), "!Equals");
 		}
 
 		[Test]
 		public void Site_AllGoMonoSite () 
 		{
 			SiteMembershipCondition smc = new SiteMembershipCondition ("*.go-mono.com");
-			AssertEquals ("Site", "*.go-mono.com", smc.Site);
-			AssertEquals ("ToString", "Site - *.go-mono.com", smc.ToString ());
+			Assert.AreEqual ("*.go-mono.com", smc.Site, "Site");
+			Assert.AreEqual ("Site - *.go-mono.com", smc.ToString (), "ToString");
 
 			SiteMembershipCondition smc2 = (SiteMembershipCondition) smc.Copy ();
-			AssertEquals ("Copy.Site", smc.Site, smc2.Site);
-			AssertEquals ("Copy.GetHashCode", smc.GetHashCode (), smc2.GetHashCode ());
+			Assert.AreEqual (smc.Site, smc2.Site, "Copy.Site");
+			Assert.AreEqual (smc.GetHashCode (), smc2.GetHashCode (), "Copy.GetHashCode");
 
 			SecurityElement se = smc2.ToXml ();
 			SiteMembershipCondition smc3 = new SiteMembershipCondition ("*");
 			smc3.FromXml (se);
-			AssertEquals ("ToXml/FromXml", smc.Site, smc3.Site);
+			Assert.AreEqual (smc.Site, smc3.Site, "ToXml/FromXml");
 
-			Assert ("Equals", smc.Equals (smc2));
+			Assert.IsTrue (smc.Equals (smc2), "Equals");
 			SiteMembershipCondition smc4 = new SiteMembershipCondition ("go-mono.com");
-			Assert ("!Equals", !smc.Equals (smc4));
+			Assert.IsFalse (smc.Equals (smc4), "!Equals");
 		}
 
 		[Test]
-		public void CheckNull () 
+		public void Check () 
 		{
 			SiteMembershipCondition smc = new SiteMembershipCondition ("*.go-mono.com");
-			Assert ("Check(null)", !smc.Check (null));
-		}
 
-		[Test]
-		public void CheckPositive () 
-		{
-			SiteMembershipCondition smc = new SiteMembershipCondition ("*.go-mono.com");
-			Evidence e = new Evidence ();
-			e.AddHost (new Site ("*.go-mono.com"));
-			Assert ("Check(+)", smc.Check (e));
-		}
-
-		[Test]
-		public void CheckPositive_Partial () 
-		{
-			SiteMembershipCondition smc = new SiteMembershipCondition ("*.go-mono.com");
-			Evidence e = new Evidence ();
-			e.AddHost (new Site ("www.go-mono.com"));
-			Assert ("Check(+-)", smc.Check (e));
-		}
-
-		[Test]
-		public void CheckNegative () 
-		{
-			SiteMembershipCondition smc = new SiteMembershipCondition ("*.go-mono.com");
-			Evidence e = new Evidence ();
-			e.AddHost (new Site ("*.go-mono.org"));
-			Assert ("Check(-)", !smc.Check (e));
-		}
-
-		[Test]
-		public void CheckNegative_NoSiteEvidence () 
-		{
-			SiteMembershipCondition smc = new SiteMembershipCondition ("*.go-mono.com");
-			Evidence e = new Evidence ();
+			Evidence e = null;
+			Assert.IsFalse (smc.Check (e), "Check(null)");
+			e = new Evidence ();
+			Assert.IsFalse (smc.Check (e), "Check (empty)");
 			e.AddHost (new Zone (SecurityZone.MyComputer));
-			Assert ("Check(?)", !smc.Check (e));
+			Assert.IsFalse (smc.Check (e), "Check (zone)");
+			
+			Site s = new Site ("*.go-mono.com");
+			e.AddAssembly (s);
+			Assert.IsFalse (smc.Check (e), "Check (site-assembly)");
+			e.AddHost (s);
+			Assert.IsTrue (smc.Check (e), "Check (site-host)");
+
+			e = new Evidence ();
+			e.AddHost (new Site ("www.go-mono.com"));
+			Assert.IsTrue (smc.Check (e), "Check(+-)");
+
+			e = new Evidence ();
+			e.AddHost (new Site ("*.go-mono.org"));
+			Assert.IsFalse (smc.Check (e), "Check(-)");
 		}
 
 		[Test]
-		public void EqualsCaseSensitive () 
+		public void Equals () 
 		{
 			SiteMembershipCondition smc1 = new SiteMembershipCondition ("*.go-mono.com");
+			Assert.IsFalse (smc1.Equals (null), "Null");
 			SiteMembershipCondition smc2 = new SiteMembershipCondition ("*.Go-Mono.com");
-			Assert ("CaseSensitive", smc1.Equals (smc2));
-		}
-
-		[Test]
-		public void EqualsNull () 
-		{
-			SiteMembershipCondition smc = new SiteMembershipCondition ("*.go-mono.com");
-			Assert ("EqualsNull", !smc.Equals (null));
+			Assert.IsTrue (smc1.Equals (smc2), "CaseSensitive");
 		}
 
 		[Test]
 		[ExpectedException (typeof (ArgumentNullException))]
-		public void FromXmlNull () 
+		public void FromXml_Null () 
 		{
 			SiteMembershipCondition smc = new SiteMembershipCondition ("*.go-mono.com");
 			smc.FromXml (null);
@@ -157,7 +155,7 @@ namespace MonoTests.System.Security.Policy {
 
 		[Test]
 		[ExpectedException (typeof (ArgumentException))]
-		public void FromXmlInvalid () 
+		public void FromXml_InvalidTag () 
 		{
 			SiteMembershipCondition smc = new SiteMembershipCondition ("*.go-mono.com");
 			SecurityElement se = smc.ToXml ();
@@ -166,7 +164,48 @@ namespace MonoTests.System.Security.Policy {
 		}
 
 		[Test]
-		public void FromXmlPolicyLevel () 
+		public void FromXml_InvalidClass ()
+		{
+			SiteMembershipCondition smc = new SiteMembershipCondition ("*.go-mono.com");
+			SecurityElement se = smc.ToXml ();
+			se.Attributes ["class"] = "Hello world";
+			smc.FromXml (se);
+		}
+
+		[Test]
+		public void FromXml_NoClass ()
+		{
+			SiteMembershipCondition smc = new SiteMembershipCondition ("*.go-mono.com");
+			SecurityElement se = smc.ToXml ();
+
+			SecurityElement w = new SecurityElement (se.Tag);
+			w.AddAttribute ("version", se.Attribute ("version"));
+			smc.FromXml (w);
+			// doesn't even care of the class attribute presence
+		}
+
+		[Test]
+		public void FromXml_InvalidVersion ()
+		{
+			SiteMembershipCondition smc = new SiteMembershipCondition ("*.go-mono.com");
+			SecurityElement se = smc.ToXml ();
+			se.Attributes ["version"] = "2";
+			smc.FromXml (se);
+		}
+
+		[Test]
+		public void FromXml_NoVersion ()
+		{
+			SiteMembershipCondition smc = new SiteMembershipCondition ("*.go-mono.com");
+			SecurityElement se = smc.ToXml ();
+
+			SecurityElement w = new SecurityElement (se.Tag);
+			w.AddAttribute ("class", se.Attribute ("class"));
+			smc.FromXml (w);
+		}
+
+		[Test]
+		public void FromXml_PolicyLevel () 
 		{
 			SiteMembershipCondition smc = new SiteMembershipCondition ("*.go-mono.com");
 			SecurityElement se = smc.ToXml ();
@@ -176,22 +215,22 @@ namespace MonoTests.System.Security.Policy {
 				PolicyLevel pl = e.Current as PolicyLevel;
 				SiteMembershipCondition spl = new SiteMembershipCondition ("*");
 				spl.FromXml (se, pl);
-				Assert ("FromXml(PolicyLevel='" + pl.Label + "')", spl.Equals (smc));
+				Assert.IsTrue (spl.Equals (smc), "FromXml(PolicyLevel='" + pl.Label + "')");
 			}
 			// yes!
 		}
 
 		[Test]
-		public void ToXmlNull () 
+		public void ToXml_Null () 
 		{
 			SiteMembershipCondition smc = new SiteMembershipCondition ("*.go-mono.com");
 			// no ArgumentNullException here
 			SecurityElement se = smc.ToXml (null);
-			AssertNotNull ("ToXml(null)", se);
+			Assert.IsNotNull (se, "ToXml(null)");
 		}
 
 		[Test]
-		public void ToXmlPolicyLevel () 
+		public void ToXml_PolicyLevel () 
 		{
 			SiteMembershipCondition smc = new SiteMembershipCondition ("*.go-mono.com");
 			SecurityElement se = smc.ToXml ();
@@ -202,7 +241,7 @@ namespace MonoTests.System.Security.Policy {
 				PolicyLevel pl = e.Current as PolicyLevel;
 				SiteMembershipCondition spl = new SiteMembershipCondition ("*");
 				spl.FromXml (se, pl);
-				AssertEquals ("ToXml(PolicyLevel='" + pl.Label + "')", s, spl.ToXml (pl).ToString ());
+				Assert.AreEqual (s, spl.ToXml (pl).ToString (), "ToXml(PolicyLevel='" + pl.Label + "')");
 			}
 			// yes!
 		}
@@ -216,7 +255,7 @@ namespace MonoTests.System.Security.Policy {
 			SiteMembershipCondition smc2 = new SiteMembershipCondition ("*");
 			smc2.FromXml (se);
 
-			AssertEquals ("ToFromXmlRoundTrip", smc1.GetHashCode (), smc2.GetHashCode ());
+			Assert.AreEqual (smc1.GetHashCode (), smc2.GetHashCode (), "ToFromXmlRoundTrip");
 		}
 	}
 }

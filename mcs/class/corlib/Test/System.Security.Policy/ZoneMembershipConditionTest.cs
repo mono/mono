@@ -1,5 +1,6 @@
 ﻿//
-// ZoneMembershipConditionTest.cs - NUnit Test Cases for ZoneMembershipCondition
+// ZoneMembershipConditionTest.cs -
+//	NUnit Test Cases for ZoneMembershipCondition
 //
 // Author:
 //	Sebastien Pouliot  <sebastien@ximian.com>
@@ -30,7 +31,6 @@ using NUnit.Framework;
 using System;
 using System.Collections;
 using System.Security;
-using System.Security.Permissions;
 using System.Security.Policy;
 
 namespace MonoTests.System.Security.Policy {
@@ -114,7 +114,9 @@ namespace MonoTests.System.Security.Policy {
 			Assert.IsTrue (zmc.ToString ().StartsWith ("Zone - "), "ToString-1");
 			Assert.IsTrue (zmc.ToString ().EndsWith (zmc.SecurityZone.ToString ()), "ToString-2");
 
+#if NET_2_0
 			Assert.AreEqual (zmc.SecurityZone.GetHashCode (), zmc.GetHashCode (), "GetHashCode");
+#endif
 
 			return zmc; // for further tests
 		}
@@ -241,7 +243,7 @@ namespace MonoTests.System.Security.Policy {
 
 		[Test]
 		[ExpectedException (typeof (ArgumentNullException))]
-		public void FromXmlNull ()
+		public void FromXml_Null ()
 		{
 			ZoneMembershipCondition zmc = new ZoneMembershipCondition (SecurityZone.MyComputer);
 			zmc.FromXml (null);
@@ -249,7 +251,7 @@ namespace MonoTests.System.Security.Policy {
 
 		[Test]
 		[ExpectedException (typeof (ArgumentException))]
-		public void FromXmlInvalid ()
+		public void FromXml_InvalidTag ()
 		{
 			ZoneMembershipCondition zmc = new ZoneMembershipCondition (SecurityZone.MyComputer);
 			SecurityElement se = zmc.ToXml ();
@@ -258,7 +260,52 @@ namespace MonoTests.System.Security.Policy {
 		}
 
 		[Test]
-		public void FromXmlPolicyLevel ()
+		public void FromXml_InvalidClass ()
+		{
+			ZoneMembershipCondition zmc = new ZoneMembershipCondition (SecurityZone.MyComputer);
+			SecurityElement se = zmc.ToXml ();
+			se.Attributes ["class"] = "Hello world";
+			zmc.FromXml (se);
+		}
+
+		[Test]
+		public void FromXml_NoClass ()
+		{
+			ZoneMembershipCondition zmc = new ZoneMembershipCondition (SecurityZone.MyComputer);
+			SecurityElement se = zmc.ToXml ();
+
+			SecurityElement w = new SecurityElement (se.Tag);
+			w.AddAttribute ("version", se.Attribute ("version"));
+			zmc.FromXml (w);
+			// doesn't even care of the class attribute presence
+		}
+
+		[Test]
+		public void FromXml_InvalidVersion ()
+		{
+			ZoneMembershipCondition zmc = new ZoneMembershipCondition (SecurityZone.MyComputer);
+			SecurityElement se = zmc.ToXml ();
+
+			SecurityElement w = new SecurityElement (se.Tag);
+			w.AddAttribute ("class", se.Attribute ("class"));
+			w.AddAttribute ("version", "2");
+			w.AddAttribute ("Zone", se.Attribute ("Zone"));
+			zmc.FromXml (w);
+		}
+
+		[Test]
+		public void FromXml_NoVersion ()
+		{
+			ZoneMembershipCondition zmc = new ZoneMembershipCondition (SecurityZone.MyComputer);
+			SecurityElement se = zmc.ToXml ();
+
+			SecurityElement w = new SecurityElement (se.Tag);
+			w.AddAttribute ("class", se.Attribute ("class"));
+			zmc.FromXml (w);
+		}
+
+		[Test]
+		public void FromXml_PolicyLevel ()
 		{
 			ZoneMembershipCondition zmc = new ZoneMembershipCondition (SecurityZone.MyComputer);
 			SecurityElement se = zmc.ToXml ();
@@ -274,7 +321,16 @@ namespace MonoTests.System.Security.Policy {
 		}
 
 		[Test]
-		public void ToXmlPolicyLevel ()
+		public void ToXml_Null ()
+		{
+			ZoneMembershipCondition zmc = new ZoneMembershipCondition (SecurityZone.MyComputer);
+			// no ArgumentNullException here
+			SecurityElement se = zmc.ToXml (null);
+			Assert.IsNotNull (se, "ToXml(null)");
+		}
+
+		[Test]
+		public void ToXml_PolicyLevel ()
 		{
 			ZoneMembershipCondition zmc = new ZoneMembershipCondition (SecurityZone.MyComputer);
 			SecurityElement se = zmc.ToXml ();

@@ -179,7 +179,7 @@ namespace MonoTests.System.Security.Policy {
 		}
 
 		[Test]
-		public void GetHashCode ()
+		public void GetHashCode_ ()
 		{
 			AllMembershipCondition all = new AllMembershipCondition ();
 			AllMembershipCondition copy = (AllMembershipCondition)all.Copy ();
@@ -187,7 +187,7 @@ namespace MonoTests.System.Security.Policy {
 		}
 
 		[Test]
-		public void ToString ()
+		public void ToString_ ()
 		{
 			AllMembershipCondition all = new AllMembershipCondition ();
 			Assert.AreEqual ("All code", all.ToString ());

@@ -179,7 +179,7 @@ namespace MonoTests.System.Security.Policy {
 		}
 
 		[Test]
-		public void GetHashCode ()
+		public void GetHashCode_ ()
 		{
 			DomainApplicationMembershipCondition domapp = new DomainApplicationMembershipCondition ();
 			Assert.AreEqual (-1, domapp.GetHashCode ());
@@ -188,7 +188,7 @@ namespace MonoTests.System.Security.Policy {
 		}
 
 		[Test]
-		public void ToString ()
+		public void ToString_ ()
 		{
 			DomainApplicationMembershipCondition domapp = new DomainApplicationMembershipCondition ();
 			Assert.AreEqual ("Domain", domapp.ToString ());

@@ -32,7 +32,6 @@ using NUnit.Framework;
 using System;
 using System.Security;
 using System.Security.Policy;
-using System.Security.Permissions;
 
 namespace MonoTests.System.Security.Policy {
 
@@ -118,12 +117,38 @@ namespace MonoTests.System.Security.Policy {
 		}
 
 		[Test]
+		public void FromXml_NoClass ()
+		{
+			GacMembershipCondition gac = new GacMembershipCondition ();
+			SecurityElement se = gac.ToXml ();
+
+			SecurityElement w = new SecurityElement (se.Tag);
+			w.AddAttribute ("version", se.Attribute ("version"));
+			gac.FromXml (w);
+			// doesn't even care of the class attribute presence
+		}
+
+		[Test]
 		public void FromXml_InvalidVersion ()
 		{
 			GacMembershipCondition gac = new GacMembershipCondition ();
 			SecurityElement se = gac.ToXml ();
-			se.Attributes ["version"] = "2";
-			gac.FromXml (se);
+
+			SecurityElement w = new SecurityElement (se.Tag);
+			w.AddAttribute ("class", se.Attribute ("class"));
+			w.AddAttribute ("version", "2");
+			gac.FromXml (w);
+		}
+
+		[Test]
+		public void FromXml_NoVersion ()
+		{
+			GacMembershipCondition gac = new GacMembershipCondition ();
+			SecurityElement se = gac.ToXml ();
+
+			SecurityElement w = new SecurityElement (se.Tag);
+			w.AddAttribute ("class", se.Attribute ("class"));
+			gac.FromXml (w);
 		}
 
 		[Test]

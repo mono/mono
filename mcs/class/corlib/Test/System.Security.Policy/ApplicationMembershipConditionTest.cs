@@ -205,7 +205,7 @@ namespace MonoTests.System.Security.Policy {
 		}
 
 		[Test]
-		public void GetHashCode ()
+		public void GetHashCode_ ()
 		{
 			ApplicationMembershipCondition app = new ApplicationMembershipCondition ();
 			Assert.AreEqual (-1, app.GetHashCode ());
@@ -214,7 +214,7 @@ namespace MonoTests.System.Security.Policy {
 		}
 
 		[Test]
-		public void ToString ()
+		public void ToString_ ()
 		{
 			ApplicationMembershipCondition app = new ApplicationMembershipCondition ();
 			Assert.AreEqual ("Application", app.ToString ());
