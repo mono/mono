@@ -68,7 +68,6 @@ namespace System.Xml
 
 			string key = new string (array, offset, length);
 
-			//return (string) table [key];
 			return Get (key);
 		}
 	}

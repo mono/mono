@@ -1,5 +1,5 @@
 //
-// System.Xml.XmlText
+// System.Xml.XmlCharacterData.cs
 //
 // Author:
 //   Jason Diamond <jason@injektilo.org>
@@ -17,7 +17,8 @@ namespace System.Xml
 
 		#region Constructor
 
-		protected internal XmlCharacterData (string data, XmlDocument doc) : base (doc)
+		protected internal XmlCharacterData (string data, XmlDocument doc)
+			: base (doc)
 		{
 			this.data = data;
 		}
@@ -27,13 +28,9 @@ namespace System.Xml
 		#region Properties
 
 		public virtual string Data {
-			get {
-				return data;
-			}
+			get { return data; }
 			
-			set {
-				data = value;
-			}
+			set { data = value; }
 		}
 
 		[MonoTODO]
@@ -54,13 +51,9 @@ namespace System.Xml
 		}
 
 		public override string Value {
-			get {
-				return data;
-			}
+			get { return data; }
 
-			set {
-				data = value;
-			}
+			set { data = value; }
 		}
 
 		#endregion

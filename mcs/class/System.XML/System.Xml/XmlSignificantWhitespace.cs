@@ -1,17 +1,58 @@
+//
+// System.Xml.XmlSignificantWhitespace.cs
+//
+// Author:
+//	Duncan Mak  (duncan@ximian.com)
+//
+// (C) Ximian, Inc. http://www.ximian.com
+//
+
 using System;
 
 namespace System.Xml
 {
-	/// <summary>
-	/// 
-	/// </summary>
-	public class XmlSignificantWhitespace
+	public class XmlSignificantWhitespace : XmlCharacterData
 	{
-		// Private data members
-
-		// public properties
+		// Constructor
+		protected internal XmlSignificantWhitespace (string strData, XmlDocument doc)
+			: base (strData, doc)
+		{
+		}
 		
+		// Properties
+		public override string LocalName {
+			get { return "#significant-whitespace"; }
+		}
 
-		// Public Methods
+		public override string Name {
+			get { return "#significant-whitespace"; }
+		}
+
+		public override XmlNodeType NodeType {
+			get { return XmlNodeType.SignificantWhitespace; }
+		}
+
+		[MonoTODO]
+		public override string Value {
+			get { return null; }
+			set {}
+		}
+
+		// Methods
+		[MonoTODO]
+		public override XmlNode CloneNode (bool deep)
+		{
+			return null;
+		}
+
+		[MonoTODO]
+		public override void WriteContentTo (XmlWriter w)
+		{			
+		}
+
+		[MonoTODO]
+		public override void WriteTo (XmlWriter w)
+		{			
+		}
 	}
 }

@@ -1,3 +1,17 @@
+2002-03-12  Duncan Mak  <duncan@ximian.com>
+
+	* XmlCharacterData.cs: Reformatted the properties for better readability.
+
+	* XmlLinkedNode.cs: Removed the awful boxy comments.
+
+	* XmlNamedNodeMap.cs (Count):
+	(Item): Implemented. Tests will be coming.
+
+	* XmlEntityReference.cs: 
+	* XmlSignificantWhitespace.cs: Implemented these classes except for
+	the Clone, WriteContentTo and WriteTo methods. Will have to
+	investigate into these later.
+
 2002-03-11  Duncan Mak  <duncan@ximian.com>
 
 	* IHasXmlNode.cs: Added to CVS.

@@ -3,6 +3,7 @@
 //
 // Author:
 //   Jason Diamond (jason@injektilo.org)
+//   Duncan Mak  (duncan@ximian.com)
 //
 // (C) 2002 Jason Diamond  http://injektilo.org/
 //
@@ -23,11 +24,8 @@ namespace System.Xml
 			nodeList = new ArrayList ();
 		}
 
-		[MonoTODO]
 		public virtual int Count {
-			get {
-				throw new NotImplementedException ();
-			}
+			get { return nodeList.Count; }
 		}
 
 		[MonoTODO]
@@ -36,14 +34,12 @@ namespace System.Xml
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		public virtual XmlNode GetNamedItem (string name)
 		{
 			foreach (XmlNode node in nodeList) {
 				if (node.Name == name)
 					return node;
 			}
-
 			return null;
 		}
 
@@ -52,11 +48,13 @@ namespace System.Xml
 		{
 			throw new NotImplementedException ();
 		}
-
-		[MonoTODO]
+		
 		public virtual XmlNode Item (int index)
 		{
-			throw new NotImplementedException ();
+			if (index < 0 || index > nodeList.Count)
+				return null;
+			else
+				return (XmlNode) nodeList [index];
 		}
 
 		[MonoTODO]
