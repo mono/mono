@@ -7,3 +7,4 @@ System.Configuration.Install/InstallEventArgs.cs
 System.Configuration.Install/InstallerCollection.cs
 System.Configuration.Install/InstallEventHandler.cs
 System.Configuration.Install/UninstallAction.cs
+System.Configuration.Install/TODOAttribute.cs
