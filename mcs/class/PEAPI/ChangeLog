@@ -1,5 +1,9 @@
 2004-05-25  Jackson Harper  <jackson@ximian.com>
 
+	* PEAPI.cs: When writing to the blob heap we always set a size.
+	
+2004-05-25  Jackson Harper  <jackson@ximian.com>
+
 	* PEAPI.cs: Set the has default flag on fields when a default data
 	constant is assigned to them.
 	

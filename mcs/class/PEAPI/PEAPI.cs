@@ -4463,52 +4463,52 @@ if (rsrc != null)
     }
 
     internal uint AddToGUIDHeap(Guid guidNum) {
-      return guid.Add(guidNum);
+      return guid.Add(guidNum, false);
     }
 
     internal uint AddToBlobHeap(byte[] blobBytes) {
       if (blobBytes == null) return 0;
-      return blob.Add(blobBytes);
+      return blob.Add(blobBytes, true);
     }
 
     internal uint AddToBlobHeap(byte val) {
-      return blob.Add(val);
+      return blob.Add(val, true);
     }
 
     internal uint AddToBlobHeap(sbyte val) {
-      return blob.Add(val);
+      return blob.Add(val, true);
     }
 
     internal uint AddToBlobHeap(ushort val) {
-      return blob.Add(val);
+      return blob.Add(val, true);
     }
 
     internal uint AddToBlobHeap(short val) {
-      return blob.Add(val);
+      return blob.Add(val, true);
     }
 
     internal uint AddToBlobHeap(uint val) {
-      return blob.Add(val);
+      return blob.Add(val, true);
     }
 
     internal uint AddToBlobHeap(int val) {
-      return blob.Add(val);
+      return blob.Add(val, true);
     }
 
     internal uint AddToBlobHeap(ulong val) {
-      return blob.Add(val);
+      return blob.Add(val, true);
     }
 
     internal uint AddToBlobHeap(long val) {
-      return blob.Add(val);
+      return blob.Add(val, true);
     }
 
     internal uint AddToBlobHeap(float val) {
-      return blob.Add(val);
+      return blob.Add(val, true);
     }
 
     internal uint AddToBlobHeap(double val) {
-      return blob.Add(val);
+      return blob.Add(val, true);
     }
 
     internal uint AddToBlobHeap(string val) {
@@ -4993,7 +4993,9 @@ if (rsrc != null)
                 }
 
                     
-                internal uint Add(Guid guid) {
+                internal uint Add(Guid guid, bool prependSize) {
+                        byte [] b = guid.ToByteArray ();
+                        if (prependSize) CompressNum ((uint) b.Length);
                         Write(guid.ToByteArray());
                         size =(uint)Seek(0,SeekOrigin.Current);
                         return tide++;
@@ -5007,71 +5009,81 @@ if (rsrc != null)
                         return ix;
                 }
 
-    internal uint Add(byte val) {
+    internal uint Add(byte val, bool prependSize) {
       uint ix = size;
+      if (prependSize) CompressNum (1);
       Write(val);
       size = (uint)Seek(0,SeekOrigin.Current);
       return ix;
     }
 
-    internal uint Add(sbyte val) {
+    internal uint Add(sbyte val, bool prependSize) {
       uint ix = size;
+      if (prependSize) CompressNum (1);
       Write(val);
       size = (uint)Seek(0,SeekOrigin.Current);
       return ix;
     }
 
-    internal uint Add(ushort val) {
+    internal uint Add(ushort val, bool prependSize) {
       uint ix = size;
+      if (prependSize) CompressNum (2);
       Write(val);
       size = (uint)Seek(0,SeekOrigin.Current);
       return ix;
     }
 
-    internal uint Add(short val) {
+    internal uint Add(short val, bool prependSize) {
       uint ix = size;
+      if (prependSize) CompressNum (2);
       Write(val);
       size = (uint)Seek(0,SeekOrigin.Current);
       return ix;
     }
 
-    internal uint Add(uint val) {
+    internal uint Add(uint val, bool prependSize) {
       uint ix = size;
+      if (prependSize) CompressNum (4);
       Write(val);
       size = (uint)Seek(0,SeekOrigin.Current);
       return ix;
     }
 
-    internal uint Add(int val) {
+    internal uint Add(int val, bool prependSize) {
       uint ix = size;
+      if (prependSize) CompressNum (4);
+      Write (val);
+      size = (uint)Seek(0,SeekOrigin.Current);
+      return ix;
+    }
+
+    internal uint Add(ulong val, bool prependSize) {
+      uint ix = size;
+      if (prependSize) CompressNum (8);
       Write(val);
       size = (uint)Seek(0,SeekOrigin.Current);
       return ix;
     }
 
-    internal uint Add(ulong val) {
+    internal uint Add(long val, bool prependSize) {
       uint ix = size;
+      if (prependSize) CompressNum (8);
       Write(val);
       size = (uint)Seek(0,SeekOrigin.Current);
       return ix;
     }
 
-    internal uint Add(long val) {
+    internal uint Add(float val, bool prependSize) {
       uint ix = size;
+      if (prependSize) CompressNum (4);
       Write(val);
       size = (uint)Seek(0,SeekOrigin.Current);
       return ix;
     }
 
-    internal uint Add(float val) {
+    internal uint Add(double val, bool prependSize) {
       uint ix = size;
-      Write(val);
-      size = (uint)Seek(0,SeekOrigin.Current);
-      return ix;
-    }
-
-    internal uint Add(double val) {
-      uint ix = size;
+      if (prependSize) CompressNum (8);
       Write(val);
       size = (uint)Seek(0,SeekOrigin.Current);
       return ix;
