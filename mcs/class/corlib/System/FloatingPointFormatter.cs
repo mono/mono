@@ -156,7 +156,7 @@ namespace System {
 				return;
 			}
 			value = Math.Abs(value);
-			if (precision <= (dec_len + 1) && precision >= 0) {
+			if (precision <= (dec_len) && precision >= 0) {
 				value = Math.Round (value, precision);
 			}
 			if (value == 0.0 ||

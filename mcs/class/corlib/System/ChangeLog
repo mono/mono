@@ -1,3 +1,8 @@
+2004-02-16  Jackson Harper  <jackson@ximian.com>
+
+	* FloatingPointFormater.cs: Allow precision to be up to the number
+	of decimals without rounding.
+	
 2004-02-14  Zoltan Varga  <vargaz@freemail.hu>
 
 	* Delegate.cs (Equals): Do not compare method_ptr, since it might
