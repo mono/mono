@@ -126,11 +126,10 @@ namespace System.Collections.Specialized {
 			} else if (index < 0) {
 				throw new ArgumentOutOfRangeException("index");
 			} else if (array.Rank > 1) {
-				throw new ArgumentException("array");
-			} else if (index >= array.Length) {
-				throw new ArgumentException("index");
+				throw new ArgumentException("Rank must be 1", "array");
 			} else if (array.Length - index < count) {
-				throw new ArgumentException("array");
+				throw new ArgumentException("Count is smaller than the number of objects to copy",
+							    "array");
 			}
 			
 			Array.Copy(entries, 0, array, index, count);
@@ -142,11 +141,10 @@ namespace System.Collections.Specialized {
 			} else if (index < 0) {
 				throw new ArgumentOutOfRangeException("index");
 			} else if (array.Rank > 1) {
-				throw new ArgumentException("array");
-			} else if (index >= array.Length) {
-				throw new ArgumentException("index");
+				throw new ArgumentException("Rank must be 1", "array");
 			} else if (array.Length - index < count) {
-				throw new ArgumentException("array");
+				throw new ArgumentException("Count is smaller than the number of objects to copy",
+							    "array");
 			}
 			
 			Array.Copy(entries, 0, array, index, count);
