@@ -1,5 +1,8 @@
 2005-03-13  Zoltan Varga  <vargaz@freemail.hu>
 
+	* object.c (mono_array_new_full): Fix aligning of array size. Fixes
+	#73631.
+
 	* icall.c threads.c threads-types.h: Remove slothash icalls as they
 	are no longer used.
 
