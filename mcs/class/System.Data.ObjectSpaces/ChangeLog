@@ -1,3 +1,9 @@
+2003-11-27  Tim Coleman <tim@timcoleman.com>
+	* System.Data.ObjectSpaces.Query/ObjectExpression.cs:
+	* System.Data.ObjectSpaces.Query/ObjectSpaceNode.cs:
+	* System.Data.ObjectSpaces_test.dll.sources:
+		Various updates for completion
+
 2003-11-26  Tim Coleman <tim@timcoleman.com>
 	* System.Data.ObjectSpaces_test.dll.sources:
 	* Makefile:

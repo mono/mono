@@ -1,1 +1,2 @@
 System.Data.ObjectSpaces/CommonObjectContextTests.cs
+System.Data.ObjectSpaces.Query/ObjectExpressionTests.cs
