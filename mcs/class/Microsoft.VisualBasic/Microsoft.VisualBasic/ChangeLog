@@ -1,3 +1,10 @@
+2004-06-16  Jambunathan K  <kjambunathan@novell.com>
+	* InputVBFile.cs: Ported from Mainsoft's codebase
+	* BaseVBFile.cs: Ported from Mainsoft's codebase
+	* VBFile.cs: Ported from Mainsoft's codebase
+	* ErrObject.cs: Trivial changes
+	* VBUtils.txt: Trivial changes
+
 2004-06-16 Sachin Kumar <skumar1@novell.com>
 	Java code converted from Mainsoft	
 	* SpcInfo.cs

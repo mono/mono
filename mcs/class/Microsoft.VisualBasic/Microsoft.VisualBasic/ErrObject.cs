@@ -11,6 +11,7 @@
 
 using System;
 using Microsoft.VisualBasic.CompilerServices;
+using System.Diagnostics;
 
 namespace Microsoft.VisualBasic 
 {
@@ -234,7 +235,7 @@ namespace Microsoft.VisualBasic
 			if(Source != null)
 				this.Source = StringType.FromObject(Source);
 			else
-				this.Source = "";
+				this.Source = Process.GetCurrentProcess().ProcessName;
 
 			if(HelpFile != null)
 				this.HelpFile = StringType.FromObject(HelpFile);
@@ -244,8 +245,15 @@ namespace Microsoft.VisualBasic
 
 			if(Description != null)
 				this.Description = StringType.FromObject(Description);
-			else if (DescriptionIsSet == false)
-				this.Description = Utils.GetResourceString(pNumber);
+			else if (DescriptionIsSet == false) {
+				string desc;
+				desc = Utils.GetResourceString(pNumber);
+
+				if(desc == null)
+					desc = Utils.GetResourceString("ID95");
+
+				this.Description = desc;
+			}
 
 			e = MapNumberToException(pNumber, pDescription);
 
@@ -278,11 +286,7 @@ namespace Microsoft.VisualBasic
 				if(pException == null)
 					return "";
 
-				if(pException is Exception)
-					this.Description = FilterDefaultMessage(pException.Message);
-				else
-					this.Description = FilterDefaultMessage(pException.Message);
-			
+				this.Description = FilterDefaultMessage(pException.Message);
 				return pDescription; 
 			} 
 			set { 
@@ -303,13 +307,8 @@ namespace Microsoft.VisualBasic
 				if(HelpContextIsSet)
 					return pHelpContext; 
 
-				if(pException != null)
-				{
-					if(pException is Exception)
-						ParseHelpLink(pException.HelpLink);
-					else
-						ParseHelpLink("");
-
+				if(pException != null) {
+					ParseHelpLink(pException.HelpLink);
 					return this.pHelpContext;
 				}
 				return 0;
@@ -327,11 +326,7 @@ namespace Microsoft.VisualBasic
 					return pHelpFile;
         
 				if(pException != null) {
-					if(pException is Exception)
-						ParseHelpLink((pException as Exception).HelpLink);
-					else
-						ParseHelpLink("");
-
+					ParseHelpLink((pException as Exception).HelpLink);
 					return pHelpFile;
 				}
 				return "";
@@ -375,11 +370,7 @@ namespace Microsoft.VisualBasic
 				if(pException == null)
 					return "";
 
-				if(pException is Exception)
-					this.Source = pException.Source;
-				else
-					this.Source = "";
-
+				this.Source = pException.Source;
 				return pSource;
 			} 
 			set { 

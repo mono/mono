@@ -40,6 +40,7 @@ ID91 = Object variable or With block variable not set.
 ID92 = For loop not initialized.
 ID93 = Pattern string is not valid.
 ID94 = This Error number is obsolete and no longer used.
+ID95 = Application-defined or object-defined error.
 ID96 = Unable to sink events of object because the object is already firing events to the maximum number of event receivers that it supports.
 ID97 = Cannot call friend function on object that is not an instance of defining class.
 ID98 = A property or method call cannot include a reference to a private object, either as an argument or as a return value.

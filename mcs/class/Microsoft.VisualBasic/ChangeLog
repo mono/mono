@@ -1,3 +1,7 @@
+2004-06-16  Jambunathan K  <kjambunathan@novell.com>
+	* Microsoft.VisualBasic.dll.sources: Included VBFile.cs, BaseVBFile.cs,
+	and InputVBFile.cs
+
 2004-06-15  Jambunathan K  <kjambunathan@novell.com>
 	* Microsoft.VisualBasic_test.dll.sources: Added FinancialTest.cs 
 	to the list of test files
