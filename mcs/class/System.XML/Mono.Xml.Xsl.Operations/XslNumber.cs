@@ -64,6 +64,8 @@ namespace Mono.Xml.Xsl.Operations {
 		
 		public XslNumber (Compiler c) : base (c) {}
 
+		// This behaves differently from Math.Round. For n + 0.5,
+		// Math.Round() truncates, while XSLT expects ceiling.
 		public static double Round (double n)
 		{
 			double f = System.Math.Floor (n);

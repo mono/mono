@@ -1,5 +1,9 @@
 2005-02-17  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* XslNumber.cs : maybe I had better explain why I needed own Round().
+
+2005-02-17  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* XslNumber.cs : We must round double value before formatting it as
 	  alphabets or roman numbers.
 
