@@ -30,7 +30,6 @@ namespace System.IO {
 		string path;
 		string fullpath;
 		ISynchronizeInvoke synchronizingObject;
-		bool disposed;
 		WaitForChangedResult lastData;
 		bool waiting;
 		SearchPattern2 pattern;
@@ -287,7 +286,6 @@ namespace System.IO {
 			if (disposing) {
 				Stop ();
 			}
-			disposed = true;
 			base.Dispose (disposing);
 		}
 

@@ -143,7 +143,6 @@ namespace System.IO {
 
 		static void StopMonitoringDirectory (FAMData data)
 		{
-			FAMRequest fr;
 			if (FAMCancelMonitor (ref conn, ref data.Request) == -1)
 				throw new Win32Exception ();
 		}
