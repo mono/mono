@@ -1,3 +1,8 @@
+2005-01-19  Nick Drochak <ndrochak@gol.com>
+
+	* FileStreamTest.cs: Fix test regression on .NET. Need to close
+	stream so other tests don't fail.
+
 2004-12-06  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* TextWriterTest.cs : added.

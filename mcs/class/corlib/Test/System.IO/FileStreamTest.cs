@@ -545,6 +545,11 @@ namespace MonoTests.System.IO
                 		// locked
                 		AssertEquals ("test#01", typeof (IOException), e.GetType ());
                 	}
+
+					stream.Close ();
+                	stream2.Close ();
+                	
+                	DeleteFile (path);                		
 		}
 		    
                 public void TestLock()
