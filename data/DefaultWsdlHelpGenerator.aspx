@@ -1,4 +1,4 @@
-<%
+<%--
 //
 // DefaultWsdlHelpGenerator.aspx: 
 //
@@ -7,7 +7,7 @@
 //
 // (C) 2003 Ximian, Inc.  http://www.ximian.com
 //
-%>
+--%>
 
 <%@ Import Namespace="System.Collections" %>
 <%@ Import Namespace="System.IO" %>
