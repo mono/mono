@@ -3,6 +3,8 @@ using System.Reflection;
 
 static class StaticClass
 {
+    const int Foo = 1;    
+    
     public static string Name ()
     {
         return "OK";

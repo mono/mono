@@ -1,5 +1,9 @@
 2004-09-15  Marek Safar <marek.safar@seznam.cz>
 
+	* test-287.cs: Included test for bug #65766.
+
+2004-09-15  Marek Safar <marek.safar@seznam.cz>
+
 	* property-il.il, property-main.cs: Included test for #36804.
 
 2004-09-15  Martin Baulig  <martin@ximian.com>
