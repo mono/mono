@@ -43,7 +43,7 @@ namespace System.Xml.Schema
 		}
 		object IEnumerator.Current
 		{
-			get{return (XmlSchema) ienum.Current;}
+			get{return (XmlSchemaObject) ienum.Current;}
 		}
 	}
 }

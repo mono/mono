@@ -110,6 +110,7 @@ namespace System.Xml.Schema
 
 			//Content: (appinfo | documentation)*
 			bool skip = false;
+			string expectedEnd = null;
 			while(!reader.EOF)
 			{
 				if(skip) 
@@ -119,15 +120,27 @@ namespace System.Xml.Schema
 
 				if(reader.NodeType == XmlNodeType.EndElement)
 				{
-					if(reader.LocalName != xmlname)
-						error(h,"Should not happen :2: XmlSchemaAnnotation.Read, name="+reader.Name,null);
-					break;
+					bool end = true;
+					string expected = xmlname;
+					if(expectedEnd != null)
+					{
+						expected = expectedEnd;
+						expectedEnd = null;
+						end = false;
+					}
+					if(reader.LocalName != expected)
+						error(h,"Should not happen :2: XmlSchemaAnnotation.Read, name="+reader.Name+",expected="+expected,null);
+					if (end)
+						break;
+					else
+						continue;
 				}
 				if(reader.LocalName == "appinfo")
 				{
 					XmlSchemaAppInfo appinfo = XmlSchemaAppInfo.Read(reader,h,out skip);
 					if(appinfo != null)
 						annotation.items.Add(appinfo);
+					expectedEnd = "appinfo";
 					continue;
 				}
 				if(reader.LocalName == "documentation")
@@ -135,6 +148,7 @@ namespace System.Xml.Schema
 					XmlSchemaDocumentation documentation = XmlSchemaDocumentation.Read(reader,h, out skip);
 					if(documentation != null)
 						annotation.items.Add(documentation);
+					expectedEnd = "documentation";
 					continue;
 				}
 				reader.RaiseInvalidElementError();

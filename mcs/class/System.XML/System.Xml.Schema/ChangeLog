@@ -1,3 +1,10 @@
+2003-02-19  Atsushi Enomoto  <ginga@kit.hi-ho.ne.jp>
+
+	* XmlSchemaAnnotation.cs : expect the correct closing tag on <appinfo>
+		and <documentation> elements. (patch by Peter Pentchev)
+	* XmlSchemaObjectEnumerator.cs : cast properly to XmlSchemaObject 
+		instead of XmlSchema. (patch by Peter Pentchev)
+
 2002-07-23  Duncan Mak  <duncan@ximian.com>
 
 	* XmlSchemaException.cs: Partiall implement the ISerializable
