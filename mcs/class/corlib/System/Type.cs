@@ -561,8 +561,15 @@ namespace System {
 		{
 			if (name == null)
 				throw new ArgumentNullException ("name");
-			return GetMethodImpl (
-				name, DefaultBindingFlags, null, CallingConventions.Any, null, null);
+			//return GetMethodImpl (
+				//name, DefaultBindingFlags, null, CallingConventions.Any, null, null);
+			// This is a hack to find the MethodInfo.  Once GetMethodImpl works, we won't need this.
+			foreach (MethodInfo i in GetMethods ()) {
+				if (i.Name == name) {
+					return i;
+				}
+			}
+			return null;
 		}
 
 		public MethodInfo GetMethod (string name, BindingFlags bindingAttr)
