@@ -1,3 +1,9 @@
+
+Fri Apr 19 19:26:28 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* Makefile.am, appdomain.c, class.c, object.c: split runtime-depended
+	code into its own library: libmonoruntime.
+
 2002-04-19  Dan Lewis  <dihlewis@yahoo.co.uk>
 
 	* object.h, object.c: changed array format so that szarrays do not
