@@ -1,3 +1,8 @@
+2005-02-24  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* StrongNameIdentityPermissionTest.cs: Fixed some bad tests and 
+	re-enabled the tests on NET_2_0 profile.
+
 2005-01-08  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* PermissionSetAttributeTest.cs: Added unit tests for Hex property.
