@@ -1,3 +1,7 @@
+2005-02-15  Raja R Harinath  <rharinath@novell.com>
+
+	* cs1502-3.cs: New test from #72554.
+
 2005-02-11 Marek Safar <marek.safar@seznam.cz>
 
 	* cs0133-2.cs, cs1641.cs, cs1642.cs, cs1644-3.cs, cs1663.cs
