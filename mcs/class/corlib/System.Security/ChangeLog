@@ -1,3 +1,7 @@
+2002-01-02  Nick Drochak  <ndrochak@gol.com>
+
+	* CodeAccessPermission.cs: Fix syntax error hidden by exclusion in .build file
+
 2001-12-30  Nick Drochak  <ndrochak@gol.com>
 
 	* PermissionSet.cs SecurityManager.cs: New Files

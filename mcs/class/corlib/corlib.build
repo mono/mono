@@ -20,7 +20,6 @@
 				<excludes name="Linux/**"/>
 				<excludes name="System.PAL/IOperatingSystem.cs"/>
 				<excludes name="System.Resources/*"/>
-				<excludes name="System.Security/CodeAccessPermission.cs"/>
 			</sources>
 		</csc>
 		<csc target="library" output="Test/corlib_res.dll" debug="${debug}">
@@ -62,7 +61,6 @@
 				<excludes name="Test/**"/>
 				<excludes name="Windows/**"/>
 				<excludes name="System.PAL/IOperatingSystem.cs"/>
-				<excludes name="System.Security/CodeAccessPermission.cs"/>
 				<excludes name="System.Resources/*"/>
 			</sources>
 		</csc>
