@@ -1,3 +1,8 @@
+2004-05-18  Patrik Torstensson <totte@hiddenpeaks.com>
+
+	* mini-x86.c (mono_arch_local_regalloc): Last part of
+	fix for bug #58633 (releasing register to early).
+
 2004-05-18  Miguel de Icaza  <miguel@ximian.com>
 
 	* basic-long.cs: Add new regression test.
