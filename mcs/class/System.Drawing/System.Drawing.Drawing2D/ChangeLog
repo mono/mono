@@ -1,3 +1,8 @@
+2005-03-15 Jordi Mas i Hernandez <jordi@ximian.com>
+
+	* GraphicsState.cs: should only contain the nativeState cookie
+	* Matrix.cs: Fixes Dispose method to allow to be called multiple times
+	
 2005-01-02  Geoff Norton  <gnorton@customerdna.com>
 
 	* GraphicsPath.cs: Fixed the AddPoints methods.  Fixes bug #70916

@@ -1,3 +1,8 @@
+2005-03-15 Jordi Mas i Hernandez <jordi@ximian.com>
+
+	* Pen.cs: Fixes dispose method to allow to be called multiple times
+	* Graphics.cs: matrix are saved and restored at gdiplus level	
+
 2005-02-24  Geoff Norton  <gnorton@customerdna.com>
 
 	* gdipFunctions.cs: Cache the delegates in the GdiPlusStreamHelper

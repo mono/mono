@@ -455,19 +455,23 @@ namespace System.Drawing
 		void Dispose (bool disposing)
 		{
 			lock (this){
+				if (isModifiable == false) {
+					throw new ArgumentException ("This Pen object can't be modified.");
+				}
+					
 				// Pen is disposed if and only if it is not disposed and
 				// it is modifiable OR it is not disposed and it is being
 				// collected by GC.
-				if (! disposed) {
+				if (!disposed) {
 					if (isModifiable || disposing == false) {
-						Status status = GDIPlus.GdipDeletePen (nativeObject);
-						GDIPlus.CheckStatus (status);
-						nativeObject = IntPtr.Zero;
-						disposed = true;
+						if (nativeObject != IntPtr.Zero) {
+							Status status = GDIPlus.GdipDeletePen (nativeObject);
+							GDIPlus.CheckStatus (status);
+							nativeObject = IntPtr.Zero;
+							disposed = true;
+						}
 					}
-				}
-				else
-					throw new ArgumentException ("This Pen object can't be modified.");
+				}				
 			}
 		}
 

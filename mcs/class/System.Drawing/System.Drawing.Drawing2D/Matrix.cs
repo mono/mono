@@ -131,8 +131,13 @@ namespace System.Drawing.Drawing2D
         
                 public void Dispose ()
                 {
-			Status status = GDIPlus.GdipDeleteMatrix (nativeMatrix);
-			GDIPlus.CheckStatus (status);
+			if (nativeMatrix != IntPtr.Zero) {
+				Status status = GDIPlus.GdipDeleteMatrix (nativeMatrix);
+				GDIPlus.CheckStatus (status);
+				nativeMatrix = IntPtr.Zero;
+			}
+
+			GC.SuppressFinalize (true);
                 }                       
         
                 public override bool Equals (object obj)

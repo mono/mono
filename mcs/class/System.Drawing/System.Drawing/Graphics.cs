@@ -1606,8 +1606,7 @@ namespace System.Drawing
 		}
 
 		public void Restore (GraphicsState gstate)
-		{
-			Transform = gstate.matrix.Clone ();
+		{			
 			Status status = GDIPlus.GdipRestoreGraphics (nativeObject, gstate.nativeState);
 			GDIPlus.CheckStatus (status);
 		}
@@ -1626,13 +1625,12 @@ namespace System.Drawing
 		}
 
 		public GraphicsState Save ()
-		{
-			GraphicsState state = new GraphicsState ();
-			state.matrix = Transform.Clone ();
+		{						
 			uint saveState;
 			Status status = GDIPlus.GdipSaveGraphics (nativeObject, out saveState);
 			GDIPlus.CheckStatus (status);
 
+			GraphicsState state = new GraphicsState ();
 			state.nativeState = saveState;
 			return state;
 		}
