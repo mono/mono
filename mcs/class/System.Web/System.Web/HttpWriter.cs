@@ -72,7 +72,8 @@ namespace System.Web
 			FlushBuffers ();
 
 			// Save our current data
-			byte [] arrData = _OutputStream.ToArray ();
+			byte [] arrData = _OutputStream.GetBuffer ();
+			int size = (int) _OutputStream.Length;
 
 			// Remove our internal data
 			Clear ();
@@ -82,7 +83,7 @@ namespace System.Web
 
 			try {
 				// Call the filter (it does a callback into our HttpWriter again)
-				_OutputFilter.Write (arrData, 0, arrData.Length);
+				_OutputFilter.Write (arrData, 0, size);
 
 				if (CloseStream)
 					_OutputFilter.Close ();
@@ -107,7 +108,7 @@ namespace System.Web
 
 			int l = (int)_OutputStream.Length;
 			if (l > 0) {
-				byte [] arrContent = _OutputStream.ToArray ();
+				byte [] arrContent = _OutputStream.GetBuffer ();
 				Handler.SendResponseFromMemory (arrContent, l);
 			}
 		}

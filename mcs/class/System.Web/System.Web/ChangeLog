@@ -1,3 +1,7 @@
+2003-07-22  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpWriter.cs: avoid duplicating the MemoryStream byte buffer.
+
 2003-07-08  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HttpContext.cs: Session doesn't have a setter.
