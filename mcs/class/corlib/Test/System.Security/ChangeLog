@@ -1,3 +1,8 @@
+2004-01-24  David Sheldon <dave-mono@earth.li>
+
+	* CodeAccessPermissionTest.cs (To_String): Compared
+	Environment.NewLine rather than "\r\n"
+
 2004-01-11  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* CodeAccessPermissionTest.cs: Fixed CustomCAS test under Windows.

@@ -84,7 +84,7 @@ namespace MonoTests.System.Security {
 		{
 			NonAbstractCodeAccessPermission cap = new NonAbstractCodeAccessPermission ("CodeAccessPermission", "NonAbstract");
 			string s = cap.ToString ();
-			AssertEquals ("ToString", "<CodeAccessPermission>NonAbstract</CodeAccessPermission>\r\n", s);
+			AssertEquals ("ToString", "<CodeAccessPermission>NonAbstract</CodeAccessPermission>" + Environment.NewLine, s);
 		}
 	}
 }

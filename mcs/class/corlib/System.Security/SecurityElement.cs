@@ -326,16 +326,15 @@ namespace System.Security
 			else {
 				s.Append (">").Append (text);
 				if (children != null) {
+					s.Append (Environment.NewLine);
 					foreach (SecurityElement child in children) {
-						s.Append (Environment.NewLine);
 						child.ToXml (ref s, level + 1);
 					}
 				}
-				s.Append (Environment.NewLine)
-				 .Append (' ', level << 2)
-				 .Append ("</")
+				s.Append ("</")
 				 .Append (tag)
-				 .Append (">");
+				 .Append (">")
+				 .Append (Environment.NewLine);
 			}
 		}
 	}

@@ -1,3 +1,8 @@
+2004-01-24  David Sheldon <dave-mono@earth.li>
+
+       * SecurityElement.cs: Changed newline distribution in ToString.
+         Matches MS better.
+
 2004-01-06  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* CodeAccessPermission.cs: Fixed Demand for custom permissions 
