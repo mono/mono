@@ -182,7 +182,8 @@ class TxtResourceReader : IResourceReader {
 		while ((line = reader.ReadLine ()) != null) {
 			line_num++;
 			line = line.Trim ();
-			if (line.Length == 0 || line [0] == '#')
+			if (line.Length == 0 || line [0] == '#' ||
+			    line [0] == ';')
 				continue;
 			epos = line.IndexOf ('=');
 			if (epos < 0) 
