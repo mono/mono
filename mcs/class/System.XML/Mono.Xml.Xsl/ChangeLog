@@ -1,3 +1,8 @@
+2004-11-26  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XslKey.cs, XslStylesheet.cs, MSXslScriptManager.cs :
+	  warning elimination.
+
 2004-11-24  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XslStylesheet.cs : removed unused fields.

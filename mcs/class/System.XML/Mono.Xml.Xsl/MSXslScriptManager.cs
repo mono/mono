@@ -46,14 +46,12 @@ namespace Mono.Xml.Xsl {
 	[MonoTODO ("Correct evidence handling; test other than simple string case")]
 	internal class MSXslScriptManager {
 		Hashtable scripts = new Hashtable ();
-		Evidence evidence;
 
 		public MSXslScriptManager () {}
 		
 		public void AddScript (Compiler c)
 		{
-			MSXslScript s = new MSXslScript (c.Input, c.Evidence, scripts.Count);
-			this.evidence = c.Evidence;
+			MSXslScript s = new MSXslScript (c.Input, c.Evidence);
 			string ns = c.Input.GetNamespace (s.ImplementsPrefix);
 			if (ns == null)
 				throw new XsltCompileException ("Specified prefix for msxsl:script was not found: " + s.ImplementsPrefix, null, c.Input);
@@ -77,15 +75,13 @@ namespace Mono.Xml.Xsl {
 			ScriptingLanguage language = ScriptingLanguage.JScript; // default = JScript.
 			string implementsPrefix = null;
 			string code = null;
-			string suffix;
 			XPathNavigator node;
 			Evidence evidence;
 
-			public MSXslScript (XPathNavigator nav, Evidence evidence, int suffix)
+			public MSXslScript (XPathNavigator nav, Evidence evidence)
 			{
 				node = nav.Clone ();
 				this.evidence = evidence;
-				this.suffix = suffix.ToString (CultureInfo.InvariantCulture);
 				code = nav.Value;
 				if (nav.MoveToFirstAttribute ()) {
 					do {

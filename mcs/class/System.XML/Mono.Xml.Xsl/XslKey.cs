@@ -120,7 +120,7 @@ namespace Mono.Xml.Xsl
 		{
 			XPathNavigator nav = doc.Clone ();
 			nav.MoveToRoot ();
-			Expression expr = ((ExprKeyContainer) MatchPattern.ExpressionNode).BodyExpression;
+//			Expression expr = ((ExprKeyContainer) MatchPattern.ExpressionNode).BodyExpression;
 //			if (expr.NeedAbsoluteMatching)
 //				CollectAbsoluteMatchNodes (nav);
 //			else

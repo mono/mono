@@ -51,7 +51,7 @@ namespace Mono.Xml.Xsl {
 		
 		Compiler c;
 
-		XslStylesheet importer;
+//		XslStylesheet importer;
 		// Top-level elements
 		ArrayList imports = new ArrayList ();
 		// [QName]=>XmlSpace
@@ -70,19 +70,6 @@ namespace Mono.Xml.Xsl {
 		XmlQualifiedName [] extensionElementPrefixes;
 		XmlQualifiedName [] excludeResultPrefixes;
 		ArrayList stylesheetNamespaces = new ArrayList ();
-
-		// below are newly introduced in XSLT 2.0
-		//  elements::
-		// xsl:import-schema should be interpreted into it.
-		XmlSchemaCollection schemas = new XmlSchemaCollection ();
-		// [QName]=>XslCharacterMap
-		Hashtable characterMap = new Hashtable ();
-		// [QName]=>XslDateFormat
-		Hashtable dateFormats = new Hashtable ();
-		// [QName]=>XslFunction
-		Hashtable functions = new Hashtable ();
-		// [QName]=>XslSortKey
-		Hashtable sortKeys = new Hashtable ();
 
 		public string BaseUri {
 			get { return c.Input.BaseURI; }
@@ -249,7 +236,6 @@ namespace Mono.Xml.Xsl {
 			}
 
 			if (o != null) {
-				XmlSpace space = (XmlSpace) o;
 				switch ((XmlSpace) o) {
 				case XmlSpace.Preserve:
 					return true;
@@ -300,7 +286,7 @@ namespace Mono.Xml.Xsl {
 
 		private XslStylesheet (Compiler c, XslStylesheet importer) : this (c)
 		{
-			this.importer = importer;
+//			this.importer = importer;
 		}
 		
 		private void HandleInclude (string href)
