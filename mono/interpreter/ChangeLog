@@ -1,8 +1,11 @@
 2001-08-10  Dietmar Maurer  <dietmar@ximian.com>
 
+	* icall.c: moved the internal call stuff to this file
+
 	* interp.c (ves_exec_method): impl. BOX/UNBOX
 	(ves_icall_System_Array_GetValue): impl.
 	(ves_icall_System_Array_SetValue): impl.
+	added myself to Authors
 
 2001-08-09  Dietmar Maurer  <dietmar@ximian.com>
 
