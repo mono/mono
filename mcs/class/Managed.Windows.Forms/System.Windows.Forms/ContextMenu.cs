@@ -78,7 +78,7 @@ namespace System.Windows.Forms
 
 			src_control = control;
 
-			OnPopup (EventArgs.Empty);			
+			OnPopup (EventArgs.Empty);
 			MenuAPI.TrackPopupMenu (Handle, Handle,	Control.MousePosition, false, control);
 		}
 

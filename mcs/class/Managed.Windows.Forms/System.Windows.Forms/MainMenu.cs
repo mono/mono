@@ -31,16 +31,17 @@ namespace System.Windows.Forms
 	public class MainMenu : Menu
 	{
 		private RightToLeft right_to_left;
-		private Form form;
+		private Form form = null;
+		private MenuAPI.TRACKER tracker = null;
 
     		public MainMenu () : base (null)
     		{
-			form = null;
+			
     		}
 
 		public MainMenu (MenuItem[] items) : base (items)
 		{
-			form = null;
+			
 		}
 
 		#region Public Properties
@@ -67,8 +68,8 @@ namespace System.Windows.Forms
 		}
 
 		protected void Dispose (bool disposing)
-		{
-			base.Dispose (disposing);
+		{			
+			base.Dispose (disposing);			
 		}
 
 		public Form GetForm ()
@@ -88,18 +89,23 @@ namespace System.Windows.Forms
 		internal void SetForm (Form form)
 		{
 			this.form = form;
+			
+			if (tracker == null) {
+				tracker = new MenuAPI.TRACKER (); 
+				tracker.hCurrentMenu = tracker.hTopMenu = Handle;
+			}
 		}
 		
 		/* Mouse events from the form */
 		internal void OnMouseDown (Form window, MouseEventArgs e)
 		{			
-			MenuAPI.TrackBarMouseEvent (Handle, window, e, MenuAPI.MenuMouseEvent.Down);
+			MenuAPI.TrackBarMouseEvent (Handle, window, e, MenuAPI.MenuMouseEvent.Down, tracker);
 		}
 		
 		internal void OnMouseMove (Form window, MouseEventArgs e)
 		{			
 			MouseEventArgs ev = new MouseEventArgs (e.Button, e.Clicks, Control.MousePosition.X, Control.MousePosition.Y, e.Delta);
-			MenuAPI.TrackBarMouseEvent (Handle, window, ev, MenuAPI.MenuMouseEvent.Move);
+			MenuAPI.TrackBarMouseEvent (Handle, window, ev, MenuAPI.MenuMouseEvent.Move, tracker);
 		}
 		
 		#endregion Private Methods
