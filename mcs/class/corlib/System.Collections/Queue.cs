@@ -328,6 +328,7 @@ namespace System.Collections {
 				}
 
 				if (current >= queue._size - 1) {
+					current = -1; // to late!
 					return false;
 				} else {
 					current++;
