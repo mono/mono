@@ -8,6 +8,7 @@ using System.IO;
 
 namespace System.IO.IsolatedStorage
 {
+	[MonoTODO]
 	public class IsolatedStorageFileStream : FileStream
 	{
 		public IsolatedStorageFileStream (string name, FileMode mode)
