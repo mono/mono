@@ -1,6 +1,16 @@
+2003-07-08  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* appdomain.c: modified comment.
+	* gc.c: finalizer_thread can call finalizers even when finished == TRUE.
+	That will be its last iteration when mono_gc_cleanup is called from
+	mono_runtime_cleanup and before the domain is unloaded.
+
+	Fixes bug #45962.
+
 2003-07-04  Dietmar Maurer  <dietmar@ximian.com>
 
-	* marshal.c (mono_marshal_get_native_wrapper): fixes for [out] attributes
+	* marshal.c (mono_marshal_get_native_wrapper): fixes for [out]
+	attributes.
 
 Thu Jul 3 17:22:20 CEST 2003 Paolo Molaro <lupus@ximian.com>
 
