@@ -66,6 +66,7 @@ namespace System.Data {
 		private bool _caseSensitive;
 		private DataColumnCollection _columnCollection;
 		private ConstraintCollection _constraintCollection;
+		// never access it. Use DefaultView.
 		private DataView _defaultView;
 
 		private string _displayExpression;
@@ -126,8 +127,6 @@ namespace System.Data {
 			
 			_childRelations = new DataRelationCollection.DataTableRelationCollection (this);
 			_parentRelations = new DataRelationCollection.DataTableRelationCollection (this);
-
-			_defaultView = new DataView(this);
 		}
 
 		/// <summary>
@@ -283,7 +282,11 @@ namespace System.Data {
 		[Browsable (false)]
 		[DataSysDescription ("This is the default DataView for the table.")]
 		public DataView DefaultView {
-			get { return _defaultView; }
+			get {
+				if (_defaultView == null)
+					_defaultView = new DataView (this);
+				return _defaultView;
+			}
 		}
 		
 
@@ -934,7 +937,7 @@ namespace System.Data {
 		/// </summary>
 		IList IListSource.GetList () 
 		{
-			IList list = (IList) _defaultView;
+			IList list = (IList) DefaultView;
 			return list;
 		}
 				

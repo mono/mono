@@ -1,5 +1,10 @@
 2005-01-27  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* DataTable.cs : don't create DefaultView unless it is required. It
+	  significantly improves performance. (i.e. DataView perf. is sick ;-)
+
+2005-01-27  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* DataViewSetting.cs,
 	  DataViewSettingCollection.cs,
 	  DataViewManager.cs : implemented basic members.
