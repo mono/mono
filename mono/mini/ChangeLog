@@ -1,5 +1,8 @@
 2004-08-05  Zoltan Varga  <vargaz@freemail.hu>
 
+	* exceptions-amd64.c (mono_arch_get_throw_exception_by_name): Allocate
+	helper methods using the code manager.
+	
 	* exceptions-amd64.c (mono_arch_get_throw_exception): Fix maximum length.
 
 	* mini-amd64.c (mono_arch_allocate_vars): Fix tls offset detection.
