@@ -1,3 +1,6 @@
+#
+# use `run-test-local'
+#
 thisdir = tests
 SUBDIRS = 
 include ../build/rules.make

@@ -19,6 +19,8 @@ compilers and tools.
 *       Go to ../mono and read the README file to compile and       *
 *       install.                                                    *
 *                                                                   *
+*       ../mono is where you have your `mono' source download       *
+*                                                                   *
 *********************************************************************
 
 If you only want to build a snapshot or a fresh CVS checkout of the
