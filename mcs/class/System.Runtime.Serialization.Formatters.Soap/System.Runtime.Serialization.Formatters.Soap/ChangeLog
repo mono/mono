@@ -1,3 +1,9 @@
+2003-03-18 David Sheldon <dave-mono@earth.li>
+
+  * SoapTypeMapper.cs: Map object to xsd:anyType rather than 
+    SOAP-ENC:anyType so we can deserialise the objects serialised
+    by MS.NET.
+
 2003-11-21  Lluis Sanchez Gual <lluis@ximian.com>
 
 	* SoapReader.cs: Little fix.

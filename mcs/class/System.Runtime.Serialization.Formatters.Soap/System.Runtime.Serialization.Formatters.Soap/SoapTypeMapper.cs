@@ -70,8 +70,6 @@ namespace System.Runtime.Serialization.Formatters.Soap {
 				rtnObject = Type.GetType(typeNamespace+"."+mapping.TypeName);
 				
 				if(rtnObject == null) {
-//					AssemblyName assName = new AssemblyName()
-//					assName.FullName = asse
 					Assembly ass =Assembly.Load(assemblyName);
 					if(ass != null) {
 						rtnObject = ass.GetType(typeNamespace+"."+mapping.TypeName, true);
@@ -116,7 +114,10 @@ namespace System.Runtime.Serialization.Formatters.Soap {
 			RegisterSchemaType (typeof(bool), "boolean", true, true, true, false);
 			RegisterSchemaType (typeof(System.Single), "float", true, true, true, false);
 			RegisterSchemaType (typeof(System.Array), "Array", false, false, false, true);
-			RegisterSchemaType (typeof(object), "anyType", false, false, false, true);
+			
+			mapping = new SoapTypeMapping(typeof(object), "anyType", "http://www.w3.org/2001/XMLSchema", false, false, false, true);
+			_mappingTable.Add(typeof(object), mapping);
+			_invertMappingTable.Add(mapping, typeof(object));
 			
 			mapping = new SoapTypeMapping(typeof(System.Runtime.Serialization.Formatters.SoapFault), "Fault", "http://schemas.xmlsoap.org/soap/envelope/", false, false, false, true);
 			_mappingTable.Add(typeof(System.Runtime.Serialization.Formatters.SoapFault), mapping);
