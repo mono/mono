@@ -1,3 +1,8 @@
+2004-11-27  Martin Baulig  <martin@ximian.com>
+
+	* object.c (mono_class_vtable): Store the `MonoMethod *' itself in
+	the vtable for generic methods.
+
 2004-11-26  Martin Baulig  <martin@ximian.com>
 
 	* metadata.c
