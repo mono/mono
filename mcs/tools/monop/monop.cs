@@ -48,7 +48,7 @@ class MonoP {
 	{
 		Type t;
 		if (assembly != null) {
-			Assembly a = GetAssembly (assembly);
+			Assembly a = GetAssembly (assembly, true);
 			t = a.GetType (tname, false, ignoreCase);
 		} else {
 			t = Type.GetType (tname, false, ignoreCase);
@@ -57,7 +57,7 @@ class MonoP {
 		return t;
 	}
 
-	static Assembly GetAssembly (string assembly)
+	static Assembly GetAssembly (string assembly, bool exit)
 	{
 		Assembly a;
 
@@ -76,8 +76,10 @@ class MonoP {
 			return a;
 		}
 		catch {
-			Console.WriteLine ("Could not load {0}", assembly);
-			Environment.Exit (1);
+			if (exit) {
+				Console.WriteLine ("Could not load {0}", MonoP.assembly);
+				Environment.Exit (1);
+			}
 			return null;
 		}
 	}
@@ -89,7 +91,7 @@ class MonoP {
 	
 	static void PrintTypes (string assembly)
 	{
-		Assembly a = GetAssembly (assembly);
+		Assembly a = GetAssembly (assembly, true);
 		Type [] types = a.GetExportedTypes ();
 
 		foreach (Type t in types)
@@ -116,7 +118,7 @@ class MonoP {
 		foreach (string assm in common_assemblies) {
 			try {
 				
-				Assembly a = GetAssembly (assm);
+				Assembly a = GetAssembly (assm, true);
 				foreach (Type t in a.GetExportedTypes ()) {
 					
 					if (t.Name.StartsWith (prefix)) {
@@ -187,7 +189,7 @@ class MonoP {
 		if (t == null) {
 			foreach (string assm in common_assemblies) {
 				try {
-					Assembly a = GetAssembly (assm);
+					Assembly a = GetAssembly (assm, false);
 					t = a.GetType (tname, false, true);
 					if (t != null)
 						goto found;
