@@ -52,7 +52,7 @@ namespace Mono.MonoBASIC
 					"'Module' statements can occur only at file or namespace level");
 
 			// overwrite ModFlags
-			this.ModFlags = Modifiers.Check (AllowedModifiers, mod, Modifiers.INTERNAL, l) | Modifiers.SEALED;
+			this.ModFlags = Modifiers.Check (AllowedModifiers, mod, Modifiers.INTERNAL, l);
 
 			// add specialized attribute
 			Utils.AddSpecializedAttribute(ref attrs, "Microsoft.VisualBasic.CompilerServices.StandardModuleAttribute", null, l);
@@ -67,7 +67,7 @@ namespace Mono.MonoBASIC
 		{
 			get 
 			{
-				return base.TypeAttr | TypeAttributes.AutoLayout | TypeAttributes.Class;
+				return base.TypeAttr | TypeAttributes.AutoLayout | TypeAttributes.Class | TypeAttributes.Sealed;
 			}
 		}
 	}
