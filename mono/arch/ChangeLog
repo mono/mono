@@ -1,3 +1,8 @@
+
+Sun Sep 23 13:44:57 CEST 2001 Paolo Molaro <lupus@ximian.com>
+
+	* x86/tramp.c: handle MONO_TYPE_CLASS in trampolines.
+
 2001-09-21  Dietmar Maurer  <dietmar@ximian.com>
 
 	* x86/x86-codegen.h (x86_breakpoint): added.
