@@ -1,5 +1,14 @@
 2004-04-28  Martin Baulig  <martin@ximian.com>
 
+	* typemanager.cs (TypeManager.CheckStructCycles): New public
+	static method to check for cycles in the struct layout.
+
+	* rootcontext.cs (RootContext.PopulateTypes): Call
+	TypeManager.CheckStructCycles() for each TypeContainer.
+	[Note: We only need to visit each type once.]
+
+2004-04-28  Martin Baulig  <martin@ximian.com>
+
 	* constant.cs (StringConstant.Emit): Emit Ldnull if we're null.
 
 	* const.cs (Const.LookupConstantValue): Return a `bool' signalling

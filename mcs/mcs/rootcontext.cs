@@ -658,6 +658,15 @@ namespace Mono.CSharp {
 					else
 						Report1530 (en.Location);
 			}
+
+			//
+			// Check for cycles in the struct layout
+			//
+			if (type_container_resolve_order != null){
+				Hashtable seen = new Hashtable ();
+				foreach (TypeContainer tc in type_container_resolve_order)
+					TypeManager.CheckStructCycles (tc, seen);
+			}
 		}
 
 		//

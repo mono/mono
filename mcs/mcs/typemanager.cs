@@ -1862,6 +1862,43 @@ public class TypeManager {
 		return true;
 	}
 
+	public static bool CheckStructCycles (TypeContainer tc, Hashtable seen)
+	{
+		if (!(tc is Struct))
+			return true;
+
+		// We already checked that type.
+		if (seen.Contains (tc))
+			return true;
+		seen.Add (tc, null);
+
+		if (tc.Fields == null)
+			return true;
+
+		foreach (Field field in tc.Fields) {
+			if (field.FieldBuilder.IsStatic)
+				continue;
+
+			Type ftype = field.FieldBuilder.FieldType;
+			TypeContainer ftc = LookupTypeContainer (ftype);
+			if (ftc == null)
+				continue;
+
+			if (seen.Contains (ftc)) {
+				Report.Error (523, tc.Location,
+					      "Struct member `{0}.{1}' of type `{2}' " +
+					      "causes a cycle in the struct layout",
+					      tc.Name, field.Name, ftc.Name);
+				return false;
+			}
+
+			if (!CheckStructCycles (ftc, seen))
+				return false;
+		}
+
+		return true;
+	}
+
 	/// <summary>
 	///   Given an array of interface types, expand and eliminate repeated ocurrences
 	///   of an interface.  
