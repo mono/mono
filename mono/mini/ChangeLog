@@ -1,3 +1,9 @@
+2005-01-26  Zoltan Varga  <vargaz@freemail.hu>
+
+	* mini.c (mono_emit_native_call): Allocate a GOT var here.
+
+	* mini.c (mono_print_tree): Print more info for calls.
+
 2005-01-26  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* declsec.h: Remove warning by adding missing include for marshal.h
