@@ -229,23 +229,21 @@ namespace Mono.Languages
 
 		// TODO: handle VB.NET [+|-] boolean syntax
 		[Option("[NOT IMPLEMENTED YET]Require explicit declaration of variables")]
-		public bool optionexplicit = false;
+		public bool optionexplicit { set { Mono.MonoBASIC.Parser.InitialOptionExplicit = value; } }
 
 		// TODO: handle VB.NET [+|-] boolean syntax
 		[Option("[NOT IMPLEMENTED YET]Enforce strict language semantics")]
-		public bool optionstrict = false;
+		public bool optionstrict { set { Mono.MonoBASIC.Parser.InitialOptionStrict = value; } }
 		
+		[Option("[NOT IMPLEMENTED YET]Specifies binary-style string comparisons. This is the default", "optioncompare:binary")]
+		public bool optioncomparebinary { set { Mono.MonoBASIC.Parser.InitialOptionCompareBinary = true; } }
+
+		[Option("[NOT IMPLEMENTED YET]Specifies text-style string comparisons.", "optioncompare:text")]
+		public bool optioncomparetext { set { Mono.MonoBASIC.Parser.InitialOptionCompareBinary = false; } }
+
 		[Option("Specifies de root namespace for all type declarations")]
 		public string rootnamespace { set { RootContext.RootNamespace = value; } }
 		
-		private OptionCompare optioncompare = OptionCompare.Binary;
-		
-		[Option("[NOT IMPLEMENTED YET]Specifies binary-style string comparisons. This is the default", "optioncompare:binary")]
-		public bool optioncomparebinary { set { optioncompare = OptionCompare.Binary; } }
-
-		[Option("[NOT IMPLEMENTED YET]Specifies text-style string comparisons.", "optioncompare:text")]
-		public bool optioncomparetext { set { optioncompare = OptionCompare.Text; } }
-
 		// Miscellaneous options	
 		//------------------------------------------------------------------
 		

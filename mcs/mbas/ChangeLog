@@ -1,3 +1,10 @@
+2003/03/03  Rafael Teixeira <rafaelteixeirabr@hotmail.com>
+	* mb-tokenizer.cs : new semi-keywords: Compare, Explicit, Strict, On, Off, Binary, Text
+	* mb-parser.jay: tokens for above semi-keywords, and rules for option directives
+	* driver.cs: integrates command line options with parser flags for option directives
+	* makefile & makefile.gnu : added 'verbose' target that uses --verbose switch to compile 
+	  the test source and pipes it through 'less', also added a Extended Syntax source
+
 2003/02/22  Rafael Teixeira <rafaelteixeirabr@hotmail.com>
 	* class.cs : As, per vbc, there is a rootnamespace now, --main wasn't working anymore, 
 				 because it was expecting a fully qualified class name. 

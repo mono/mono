@@ -111,6 +111,7 @@ namespace Mono.MonoBASIC
 			keywords.Add ("as", Token.AS);
 			keywords.Add ("assembly", Token.ASSEMBLY);
 			keywords.Add ("auto", Token.AUTO);
+			keywords.Add ("binary", Token.BINARY);
 			keywords.Add ("boolean", Token.BOOLEAN);
 			keywords.Add ("byref", Token.BYREF);
 			keywords.Add ("byte", Token.BYTE);
@@ -129,7 +130,7 @@ namespace Mono.MonoBASIC
 			keywords.Add ("class", Token.CLASS);
 			keywords.Add ("clng", Token.CLNG);
 			keywords.Add ("cobj", Token.COBJ);
-			//keywords.Add ("compare", Token.COMPARE);
+			keywords.Add ("compare", Token.COMPARE);
 			keywords.Add ("const", Token.CONST);
 			keywords.Add ("cshort", Token.CSHORT);
 			keywords.Add ("csng", Token.CSNG);
@@ -152,7 +153,7 @@ namespace Mono.MonoBASIC
 			keywords.Add ("error", Token.ERROR);
 			keywords.Add ("event", Token.EVENT);
 			keywords.Add ("exit", Token.EXIT);
-			//keywords.Add ("explicit", Token.EXPLICIT);
+			keywords.Add ("explicit", Token.EXPLICIT);
 			keywords.Add ("false", Token.FALSE);
 			keywords.Add ("finally", Token.FINALLY);
 			keywords.Add ("for", Token.FOR);
@@ -190,6 +191,7 @@ namespace Mono.MonoBASIC
 			keywords.Add ("notinheritable", Token.NOTINHERITABLE);
 			keywords.Add ("notoverridable", Token.NOTOVERRIDABLE);
 			keywords.Add ("object", Token.OBJECT);
+			keywords.Add ("off", Token.OFF);
 			keywords.Add ("on", Token.ON);
 			keywords.Add ("option", Token.OPTION);
 			keywords.Add ("optional", Token.OPTIONAL);
@@ -221,10 +223,12 @@ namespace Mono.MonoBASIC
 			keywords.Add ("static", Token.STATIC);
 			keywords.Add ("step", Token.STEP);
 			keywords.Add ("stop", Token.STOP);
+			keywords.Add ("strict", Token.STRICT);
 			keywords.Add ("string", Token.STRING);
 			keywords.Add ("structure", Token.STRUCTURE);
 			keywords.Add ("sub", Token.SUB);
 			keywords.Add ("synclock", Token.SYNCLOCK);
+			keywords.Add ("text", Token.TEXT);
 			keywords.Add ("then", Token.THEN);
 			keywords.Add ("throw", Token.THROW);
 			keywords.Add ("to", Token.TO);
@@ -788,9 +792,9 @@ namespace Mono.MonoBASIC
 					string id;
 					if ((id = GetIdentifier(c)) == null)
 						break;
+					val = id;
 					if (is_keyword(id))
 						return getKeyword(id);
-					val = id;
 					return Token.IDENTIFIER;
 				}
 

@@ -4,7 +4,7 @@ Option Compare Text
 
 Imports System
 
-Module WriteOK
+Module WriteOK3
 
     Sub Main()
         REM Testing old-fashioned comments
@@ -13,11 +13,9 @@ Module WriteOK
 
 End Module
 
-Module WriteOK2
+Module WriteOK4
 
     Sub [Sub]() ' Escaped identifier
-		Dim Text as string ' here 'Text' isn't a keyword
-		
         Console.WriteLine("Sub:OK!")
     End Sub
 

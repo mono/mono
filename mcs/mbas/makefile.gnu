@@ -55,7 +55,10 @@ install: all
 	$(INSTALL) -m 755 mbas.exe $(prefix)/bin/
 
 test: mbas.exe
-	mono mbas.exe --main WriteOK testmbas/WriteOK.vb
+	mono mbas.exe --main WriteOK testmbas/WriteOK.vb testmbas/WriteOK2.mbs
+
+verbose: mbas.exe
+	mono mbas.exe --verbose --main WriteOK testmbas/WriteOK.vb testmbas/WriteOK2.mbs | less
 
 test-gtk: mbas.exe
 	mono mbas.exe testmbas/gtk.vb -r gtk-sharp

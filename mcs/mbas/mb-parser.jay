@@ -118,6 +118,14 @@ namespace Mono.MonoBASIC
 		// Switch stack.
 		//
 		Stack switch_stack;
+		
+		static public bool InitialOptionExplicit = false;
+		static public bool InitialOptionStrict = false;
+		static public bool InitialOptionCompareBinary = true;
+
+		bool OptionExplicit;
+		bool OptionStrict;
+		bool OptionCompareBinary;
 
 		bool UseExtendedSyntax; // for ".mbs" files
 
@@ -146,6 +154,7 @@ namespace Mono.MonoBASIC
 %token AS
 %token ASSEMBLY
 %token AUTO
+%token BINARY
 %token BOOLEAN	
 %token BYREF
 %token BYTE
@@ -164,7 +173,7 @@ namespace Mono.MonoBASIC
 %token CLASS
 %token CLNG
 %token COBJ
-//%token COMPARE	
+%token COMPARE	
 %token CONST	
 %token CSHORT	
 %token CSNG
@@ -189,7 +198,7 @@ namespace Mono.MonoBASIC
 %token ERROR
 %token EVENT
 %token EXIT	
-//%token EXPLICIT	
+%token EXPLICIT	
 %token FALSE	
 %token FINALLY	
 %token FOR	
@@ -227,6 +236,7 @@ namespace Mono.MonoBASIC
 %token NOTINHERITABLE
 %token NOTOVERRIDABLE
 %token OBJECT	
+%token OFF
 %token ON
 %token OPTION	
 %token OPTIONAL	
@@ -259,11 +269,13 @@ namespace Mono.MonoBASIC
 %token STATIC	
 %token STEP
 %token STOP
+%token STRICT	
 %token STRING	
 %token STRUCTURE
 %token SUB
 %token SUMMARY // MonoBASIC extension
 %token SYNCLOCK
+%token TEXT
 %token THEN
 %token THROW
 %token TO
@@ -356,15 +368,90 @@ namespace Mono.MonoBASIC
 %%
 
 compilation_unit
-	: opt_imports_directives 
+	: opt_option_directives
+	  opt_imports_directives 
 	  opt_attributes
 	  opt_declarations 
 	  EOF
 	  {
-		$$ = $3;
+		$$ = $4;
 	  }
 	;
 	
+opt_option_directives
+	: /* empty */
+	| option_directives
+	;
+	
+option_directives
+	: option_directive
+	| option_directives option_directive
+	;
+	
+option_directive
+	: option_explicit_directive
+	| option_strict_directive
+	| option_compare_directive
+	;
+	
+on_off
+	: /* empty */
+	  {
+		  $$ = (object)true;
+	  }
+	| ON
+	  {
+		  $$ = (object)true;
+	  }
+	| OFF
+	  {
+		  $$ = (object)false;
+	  }
+	;
+	  
+text_or_binary
+	: BINARY
+	  {
+		  $$ = (object)true;
+	  }
+	| TEXT
+	  {
+		  $$ = (object)false;
+	  }
+	;
+	  
+option_explicit_directive
+	: OPTION EXPLICIT on_off EOL
+	  {
+		if (!UseExtendedSyntax)
+			OptionExplicit = (bool)$3;
+		else
+			Report.Warning (
+				9999, lexer.Location, 
+				"In MonoBASIC extended syntax explicit declaration is always required. So OPTION EXPLICIT is deprecated");
+	  }
+	;
+	  
+			
+option_strict_directive
+	: OPTION STRICT on_off EOL
+	  {
+		if (!UseExtendedSyntax)
+			OptionStrict = (bool)$3;
+		else
+			Report.Warning (
+				9999, lexer.Location, 
+				"In MonoBASIC extended syntax strict assignability is always required. So OPTION STRICT is deprecated");
+	  }
+	;
+	  
+option_compare_directive
+	: OPTION COMPARE text_or_binary EOL
+	  {
+		OptionCompareBinary = (bool)$3;
+	  }
+	;
+
 opt_declarations
 	: /* empty */
 	| declarations
@@ -406,9 +493,18 @@ declaration
 	  }
 	;
 
-qualified_identifier
+identifier
 	: IDENTIFIER
-	| qualified_identifier DOT IDENTIFIER 
+	| BINARY
+	| TEXT
+	| COMPARE
+	| EXPLICIT
+	| OFF
+	;
+	  
+qualified_identifier
+	: identifier
+	| qualified_identifier DOT identifier 
 	  { 
 	    $$ = (($1).ToString ()) + "." + ($3.ToString ()); 
 	  }
@@ -497,7 +593,7 @@ attribute_target_specifier
 	;
 
 attribute_target
-	: IDENTIFIER
+	: identifier
 	  {
 		CheckAttributeTarget ((string) $1);
 		$$ = $1;
@@ -618,7 +714,7 @@ named_argument_list
         ;
 
 named_argument
-	: IDENTIFIER ATTR_ASSIGN expression
+	: identifier ATTR_ASSIGN expression
 	  {
 		$$ = new DictionaryEntry (
 			(string) $1, 
@@ -667,7 +763,7 @@ type_spec_declaration
 	;
 
 class_declaration
-	: CLASS IDENTIFIER EOL opt_class_base
+	: CLASS identifier EOL opt_class_base
 	  {
 		Class new_class;
 		string name;
@@ -737,7 +833,7 @@ modifier
 	;
 
 module_declaration
-	: MODULE IDENTIFIER EOL
+	: MODULE identifier EOL
 	  { 
 		Module new_module;
 		string name;
@@ -808,7 +904,7 @@ method_declaration
 	;
 	
 sub_declaration
-	: SUB IDENTIFIER OPEN_PARENS opt_formal_parameter_list CLOSE_PARENS opt_evt_handler opt_implement_clause EOL
+	: SUB identifier OPEN_PARENS opt_formal_parameter_list CLOSE_PARENS opt_evt_handler opt_implement_clause EOL
 	  { 
 	  	
 	  	current_local_parameters = (Parameters) $4;
@@ -861,7 +957,7 @@ sub_declaration
 	;
 	
 func_declaration
-	: FUNCTION IDENTIFIER 
+	: FUNCTION identifier 
 	  OPEN_PARENS opt_formal_parameter_list CLOSE_PARENS AS type opt_implement_clause EOL
 	  { 
 	  	
@@ -905,7 +1001,7 @@ func_declaration
 	;		
 
 struct_declaration
-	: STRUCTURE IDENTIFIER EOL
+	: STRUCTURE identifier EOL
 	  opt_implement_clause
 	  {
 		Struct new_struct;
@@ -963,7 +1059,7 @@ struct_member_declarator
 	;
 	
 event_declaration
-	: EVENT IDENTIFIER AS type EOL
+	: EVENT identifier AS type EOL
 	  {
 	  	VariableDeclaration var = new VariableDeclaration ((string) $2, (Expression) $4, lexer.Location);
 
@@ -974,14 +1070,14 @@ event_declaration
 		CheckDef (current_container.AddEvent (e), e.Name, e.Location);
 
 	  }
-	| EVENT IDENTIFIER OPEN_PARENS opt_formal_parameter_list CLOSE_PARENS EOL
-	  {
-		throw new NotSupportedException();
-	  }
+//	| EVENT identifier OPEN_PARENS opt_formal_parameter_list CLOSE_PARENS EOL
+//	  {
+//		throw new NotSupportedException();
+//	  }
 	;	
 
 enum_declaration
-	: ENUM IDENTIFIER opt_type_spec EOL
+	: ENUM identifier opt_type_spec EOL
 	  opt_enum_member_declarations
 	  { 
 		Location enum_location = lexer.Location;
@@ -1031,11 +1127,11 @@ enum_member_declarations
 	;
 
 enum_member_declaration
-	: opt_attributes IDENTIFIER EOL
+	: opt_attributes identifier EOL
 	  {
 		$$ = new VariableDeclaration ((string) $2, null, lexer.Location, (Attributes) $1);
 	  }
-	| opt_attributes IDENTIFIER
+	| opt_attributes identifier
 	  {
 		  $$ = lexer.Location;
 	  }
@@ -1046,7 +1142,7 @@ enum_member_declaration
 	;
 		
 interface_declaration
-	: INTERFACE IDENTIFIER EOL
+	: INTERFACE identifier EOL
 	  {
 		Interface new_interface;
 		string full_interface_name = MakeName ((string) $2);
@@ -1143,13 +1239,13 @@ opt_new
 	;
 	
 interface_method_declaration
-	: SUB IDENTIFIER
+	: SUB identifier
 	  OPEN_PARENS opt_formal_parameter_list CLOSE_PARENS EOL
 	  {
 		$$ = new InterfaceMethod (TypeManager.system_void_expr, (string) $2, false,
 					  (Parameters) $4, current_attributes, lexer.Location);
 	  }
-	| FUNCTION IDENTIFIER
+	| FUNCTION identifier
 	  OPEN_PARENS opt_formal_parameter_list CLOSE_PARENS AS type
 	  {
 		$$ = new InterfaceMethod (
@@ -1159,7 +1255,7 @@ interface_method_declaration
 	;
 
 interface_property_declaration
-	: PROPERTY IDENTIFIER
+	: PROPERTY identifier
 	  OPEN_PARENS
 	  opt_formal_parameter_list
 	  CLOSE_PARENS opt_type_spec EOL
@@ -1172,7 +1268,7 @@ interface_property_declaration
 	;
 
 interface_event_declaration
-	: opt_attributes opt_new EVENT type IDENTIFIER EOL
+	: opt_attributes opt_new EVENT type identifier EOL
 	  {
 		$$ = new InterfaceEvent ((Expression) $4, (string) $5, (bool) $2, (Attributes) $1,
 					 lexer.Location);
@@ -1180,7 +1276,7 @@ interface_event_declaration
 	;
 
 property_declaration
-	  : PROPERTY IDENTIFIER opt_property_parameters AS type opt_implement_clause EOL
+	  : PROPERTY identifier opt_property_parameters AS type opt_implement_clause EOL
 	  {
 		get_implicit_value_parameter_type = (Expression) $5;
 		get_implicit_value_parameter_name = (string) $2;
@@ -1405,7 +1501,7 @@ opt_dim_stmt
 		
 delegate_declaration
 	: DELEGATE SUB  
-	  IDENTIFIER OPEN_PARENS 
+	  identifier OPEN_PARENS 
 	  opt_formal_parameter_list
 	  CLOSE_PARENS 
 	  EOL
@@ -1420,7 +1516,7 @@ delegate_declaration
 		CheckDef (current_container.AddDelegate (del), del.Name, l);
 	  }	
 	| DELEGATE FUNCTION	  
-	  IDENTIFIER OPEN_PARENS 
+	  identifier OPEN_PARENS 
 	  opt_formal_parameter_list
 	  CLOSE_PARENS AS type
 	  {
@@ -1528,7 +1624,7 @@ fixed_parameters
 fixed_parameter
 	: opt_attributes
 	  opt_parameter_modifier
-	  IDENTIFIER opt_type_spec opt_variable_initializer
+	  identifier opt_type_spec opt_variable_initializer
 	  {
 	  	Parameter.Modifier pm = (Parameter.Modifier)$2;
 	  	bool opt_parm = ((pm & Parameter.Modifier.OPTIONAL) != 0);
@@ -1548,7 +1644,7 @@ fixed_parameter
 	;
 	
 parameter_array
-	: PARAM_ARRAY IDENTIFIER opt_parens AS type 
+	: PARAM_ARRAY identifier opt_parens AS type 
 	  { 
 		$$ = new Parameter ((Expression) $5, (string) $2, Parameter.Modifier.PARAMS, null);
 		// note  ("type must be a single-dimension array type"); 
@@ -1605,14 +1701,14 @@ statement :
 	   {
 	   	AddHandler ((Expression) $2, (string) $5);
 	   }
-	  | RAISEEVENT IDENTIFIER OPEN_PARENS opt_formal_parameter_list CLOSE_PARENS
+	  | RAISEEVENT identifier OPEN_PARENS opt_formal_parameter_list CLOSE_PARENS
 	    {
 	    	RaiseEvent ((string) $2, (ArrayList) $4);
 	    }
 	  ;	
 
 labeled_statement
-	: IDENTIFIER COLON 
+	: identifier COLON 
 	  {
 		LabeledStatement labeled = new LabeledStatement ((string) $1, lexer.Location);
 
@@ -1766,7 +1862,7 @@ catch_clauses
 
 opt_identifier
 	: /* empty */	{  $$ = null;  }
-	| IDENTIFIER
+	| identifier
 	;
 
 catch_clause 
@@ -1824,7 +1920,7 @@ opt_catch_args
 	;	  
 
 catch_args 
-        : IDENTIFIER AS type
+        : identifier AS type
         {
 		 $$ = new DictionaryEntry ($3, $1); 
 	}
@@ -2171,7 +2267,7 @@ local_constant_declaration
 	;	 
 	
 constant_declarator
-	: IDENTIFIER ASSIGN constant_expression
+	: identifier ASSIGN constant_expression
 	  {
 		$$ = new VariableDeclaration ((string) $1, $3, lexer.Location);
 	  }
@@ -2230,7 +2326,7 @@ variable_declarator
 	;
 
 variable_identifier
-	: IDENTIFIER opt_array_name_modifier 
+	: identifier opt_array_name_modifier 
 	  {
 	  	$$ = $1; 
 	  	if ($2 != null)
@@ -2493,11 +2589,11 @@ parenthesized_expression
 	;
 
 member_access
-	: primary_expression DOT IDENTIFIER
+	: primary_expression DOT identifier
 	  {
 		$$ = new MemberAccess ((Expression) $1, (string) $3, lexer.Location);
 	  }
-	| predefined_type DOT IDENTIFIER
+	| predefined_type DOT identifier
 	  {
 		$$ = new MemberAccess ((Expression) $1, (string) $3, lexer.Location);
 	  }
@@ -2516,7 +2612,7 @@ invocation_expression
 		}
 		$$ = new Invocation ((Expression) $1, (ArrayList) $3, lexer.Location);
 	  }
-	| MYBASE DOT IDENTIFIER OPEN_PARENS opt_expression_list CLOSE_PARENS
+	| MYBASE DOT identifier OPEN_PARENS opt_expression_list CLOSE_PARENS
 	  {
 		BaseAccess ba = new BaseAccess ((string) $3, lexer.Location);
 		$$ = new Invocation ((Expression) ba, (ArrayList) $5, lexer.Location);
@@ -3346,6 +3442,9 @@ public override int parse ()
 	switch_stack = new Stack ();
 	
 	UseExtendedSyntax = name.EndsWith(".mbs");
+	OptionExplicit = InitialOptionExplicit || UseExtendedSyntax;
+	OptionStrict = InitialOptionStrict || UseExtendedSyntax;
+	OptionCompareBinary = InitialOptionCompareBinary;
 
 	lexer = new Tokenizer (input, name, defines);
 	StringBuilder value = new StringBuilder ();
