@@ -1,3 +1,7 @@
+2003-08-14  Nick Drochak <ndrochak@gol.com>
+
+	* WebRequest.cs: Check lower case string since that is what we will add.
+
 2003-08-04  Jerome Laban <jlaban@wanadoo.fr>
 
 	* IPHostEntry.cs: Default contructor must not initialize members.

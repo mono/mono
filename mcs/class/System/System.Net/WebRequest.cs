@@ -156,9 +156,10 @@ namespace System.Net
 				throw new ArgumentNullException("creator");			
 			
 			lock (prefixes.SyncRoot) {
-				if (prefixes.Contains (prefix))
+				string lowerCasePrefix = prefix.ToLower ();
+				if (prefixes.Contains (lowerCasePrefix))
 					return false;
-				prefixes.Add (prefix.ToLower (), creator);
+				prefixes.Add (lowerCasePrefix, creator);
 			}
 			return true;
 		}
