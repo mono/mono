@@ -25,6 +25,7 @@ INSTALL_BIN = $(INSTALL) -m 755
 INSTALL_LIB = $(INSTALL_BIN)
 MKINSTALLDIRS = $(SHELL) $(topdir)/mkinstalldirs
 INTERNAL_MCS = $(RUNTIME) $(topdir)/mcs/mcs.exe
+INTERNAL_ILASM = $(RUNTIME) $(topdir)/ilasm/ilasm.exe
 corlib = mscorlib.dll
 
 depsdir = $(topdir)/build/deps
