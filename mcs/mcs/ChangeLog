@@ -1,3 +1,9 @@
+2004-06-04  Martin Baulig  <martin@ximian.com>
+
+	Merged latest changes into gmcs.  Please keep this comment in
+	here, it makes it easier for me to see what changed in MCS since
+	the last time I merged.
+
 2004-06-11  Raja R Harinath  <rharinath@novell.com>
 
 	Fix bug #59477.
@@ -13,12 +19,6 @@
 	public.
 	(MemberAccess.Resolve): Pass 'Intermediate' flag to the Resolve()
 	call on the left-side.
-
-2004-06-04  Martin Baulig  <martin@ximian.com>
-
-	Merged latest changes into gmcs.  Please keep this comment in
-	here, it makes it easier for me to see what changed in MCS since
-	the last time I merged.
 
 2004-06-11  Marek Safar  <marek.safar@seznam.cz>
 
