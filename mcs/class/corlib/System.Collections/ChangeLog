@@ -1,3 +1,18 @@
+2001-07-30 Garrett Rooney <rooneg@electricjellyfish.net>
+
+	* Stack.cs: Clone() doesn't need to check if it's synchronized, since 
+	we override it in SyncStack anyway...  
+
+	* Stack.cs: Pop() now shrinks the array if we drop below 1/4 full, to 
+	avoid using massive amounts of memory that are not necessary.  We only 
+	drop to half the current size, which I hope will avoid the 'ping-pong' 
+	effect.
+
+	* Stack.cs: SyncStack.IsReadOnly should return stack.IsReadOnly 
+	instead of just returning false, since we may have a ReadOnly wrapper 
+	in the future (although i can't imagine why).  Thanks to David 
+	Menestrina <dmenest@yahoo.com> for pointing this out.
+
 2001-07-23  Sergey Chaban <serge@wildwestsoftware.com>
 
 	*  Hashtable.cs: Fixed bug in Clear(), the Count wasn't zeroed.

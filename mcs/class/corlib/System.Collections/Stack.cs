@@ -1,4 +1,3 @@
-// -*- Mode: C; tab-width: 8; c-basic-offset: 8 -*-
 //
 // System.Collections.Stack
 //
@@ -63,9 +62,13 @@ namespace System.Collections {
 			}
 			
 			public override bool IsReadOnly {
-				get { return false; }
+				get { 
+					lock (stack) {
+						return stack.IsReadOnly; 
+					}
+				}
 			}
-
+			
 			public override bool IsSynchronized {
 				get { return true; }
 			}
@@ -153,16 +156,12 @@ namespace System.Collections {
 		public virtual object Clone() {
 			Stack stack;
 
-			if (IsSynchronized) {
-				stack = new Stack();
+			stack = new Stack();
 
-				stack.current = current;
-				stack.contents = contents;
-				stack.count = count;
-				stack.capacity = capacity;
-			} else {
-				stack = new SyncStack(this);
-			}
+			stack.current = current;
+			stack.contents = contents;
+			stack.count = count;
+			stack.capacity = capacity;
 
 			return stack;
 		}
@@ -274,14 +273,21 @@ namespace System.Collections {
 		
 				count--;
 				current--;
-		
+
+				// if we're down to capacity/4, go back to a 
+				// lower array size.  this should keep us from 
+				// sucking down huge amounts of memory when 
+				// putting large numbers of items in the Stack.
+				// if we're lower than 16, don't bother, since 
+				// it will be more trouble than it's worth.
+				if (count <= (capacity/4) && count > 16) {
+					Resize(capacity/2);
+				}
+
 				return ret;
 			}
 		}
 
-		// FIXME: We should probably be a bit smarter about our 
-		// resizing.  After a certain point, doubling isn't that smart.
-		// We just need to find out what that point is...
 		public virtual void Push(Object o) {
 			modCount++;
 
@@ -307,4 +313,3 @@ namespace System.Collections {
 		}
 	}
 }
-
