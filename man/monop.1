@@ -3,11 +3,14 @@
 monop \- Mono Class Outline Viewer
 .SH SYNOPSIS
 .B monop
-[-r:assembly] class
+[-r:assembly] [--search] class
 .SH OPTIONS
 .TP
 .I \-r:assembly
 Specifies the assembly to use for looking up the type
+.TP
+.I \--search, -s, -k
+Searches through all known assemblies for types containing `class'.
 .PP
 .SH DESCRIPTION
 Monop is a tool that allows you to view the outline of a class. You can see the
@@ -15,3 +18,6 @@ signature of each member of the class.
 .PP
 The tool takes one option, the class to view. You must specify the full name of the
 class, including namespace.
+
+If you are unsure of the full name of the class, you can use the
+`--search' option to search through all known assemblies.
