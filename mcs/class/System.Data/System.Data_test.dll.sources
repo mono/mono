@@ -23,4 +23,5 @@ System.Data/DataSetTest.cs
 System.Data/DataTableTest.cs
 System.Data/DataViewTest.cs
 System.Data/ForeignKeyConstraintTest.cs
+System.Data/TypedDataSetGeneratorTest.cs
 System.Data/UniqueConstraintTest.cs

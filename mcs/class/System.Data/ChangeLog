@@ -1,3 +1,7 @@
+2004-01-21  Atsushi Enomoto <atsushi@ximian.com>
+
+	* System.Data_test.dll.sources : Added TypedDataSetGeneratorTest.cs.
+
 2004-01-20  Atsushi Enomoto <atsushi@ximian.com>
 
 	* System.Data.dll.sources: Added missing TypedDataSetGenerator.cs.
