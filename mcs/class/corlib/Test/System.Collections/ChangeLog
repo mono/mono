@@ -1,3 +1,8 @@
+2002-06-30  Nick Drochak  <ndrochak@gol.com>
+
+	* SortedListTest.cs: Fix some expected/actual value parameters in the
+	Assert()'s. Disable a part of test until the class is finished.
+
 2002-06-25  Nick Drochak  <ndrochak@gol.com>
 
 	* QueueTest.cs: Trap some unexpected exceptions and add a bit of
