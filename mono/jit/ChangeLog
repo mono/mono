@@ -1,3 +1,7 @@
+2002-11-12  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* jit.c: display the domain name in trace output.
+
 2002-11-08  Dietmar Maurer  <dietmar@ximian.com>
 
 	* x86.brg (reg): fix bug #2721
