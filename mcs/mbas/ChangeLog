@@ -1,3 +1,8 @@
+2005-03-10 Satya Sudha K <sathyasudha@novell.com>
+	* mb-parser.jay :
+	* expression.cs :
+			Support for 'AndAlso' and 'OrElse' operator
+
 2005-03-09 Manjula GHM <mmanjula@novell.com>
 	*mb-parser.jay :
 	*expression.cs :

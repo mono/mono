@@ -1013,7 +1013,6 @@ namespace Mono.MonoBASIC {
 		}
 	}
 
-	
 	/// <summary>
 	///   Implementation of the 'is' operator.
 	/// </summary>
@@ -1115,7 +1114,6 @@ namespace Mono.MonoBASIC {
 			return this;
 		}				
 	}
-
 
 	/// <summary>
 	///   Implementation of the 'as' operator.
@@ -1941,7 +1939,7 @@ namespace Mono.MonoBASIC {
 			if (oper == Operator.LeftShift || oper == Operator.RightShift)
 				return true;
 			if (l == TypeManager.bool_type && r == TypeManager.bool_type) {
-				if (IsBitwiseOperator (oper) || IsRelationalOperator (oper)) 
+				if (IsBitwiseOperator (oper) || IsRelationalOperator (oper) || IsLogicalOperator (oper)) 
 					return true;
 				if (IsArithmaticOperator (oper) && oper != Operator.Division) {
 					type = TypeManager.int32_type;
@@ -1965,7 +1963,14 @@ namespace Mono.MonoBASIC {
 				}
 			}
 
-			if ((l == TypeManager.double_type || r == TypeManager.double_type) ||
+			if (IsLogicalOperator (oper)) {
+				if (l == TypeManager.decimal_type)
+					conv_left_as = TypeManager.bool_type;
+				else if (r == TypeManager.decimal_type)
+					conv_right_as = TypeManager.bool_type;
+				else 
+					return true;
+			} else if ((l == TypeManager.double_type || r == TypeManager.double_type) ||
 			    (oper == Operator.Division && 
 			    !(l == TypeManager.decimal_type || r == TypeManager.decimal_type))) {
 				//
@@ -2096,6 +2101,16 @@ namespace Mono.MonoBASIC {
 				oper == Operator.Modulus);
 		}
 
+		bool IsShiftOperator (Binary.Operator oper) {
+			return (oper == Operator.LeftShift ||
+				oper == Operator.RightShift);
+		}
+
+		bool IsLogicalOperator (Binary.Operator oper) {
+			return (oper == Operator.LogicalOr ||
+				oper == Operator.LogicalAnd);
+		}
+
 		bool IsBitwiseOperator (Binary.Operator oper) {
 			return (oper == Operator.BitwiseOr ||
 				oper == Operator.BitwiseAnd ||
@@ -2130,11 +2145,6 @@ namespace Mono.MonoBASIC {
 				}
 			}
 
-			if (oper == Operator.LogicalAnd) 
-				oper = Operator.BitwiseAnd;
-			if (oper == Operator.LogicalOr) 
-				oper = Operator.BitwiseOr;
-
 			if (TypeManager.IsEnumType (l)) 
 				l = TypeManager.EnumToUnderlying (l);
 			if (TypeManager.IsEnumType (r)) 
@@ -2168,9 +2178,7 @@ namespace Mono.MonoBASIC {
 				l = left.Type;
 				r = right.Type;
 
-
 				if (l == TypeManager.object_type && r == TypeManager.object_type) {
-	
 					string fqn = null;
 					switch (oper) {
 					case Operator.Addition :
@@ -2218,7 +2226,6 @@ namespace Mono.MonoBASIC {
 						eclass = ExprClass.Value;
 						type = TypeManager.bool_type;
 						return this;
-						break;
 					}
 			
 					if (fqn == null) {
@@ -2357,6 +2364,8 @@ namespace Mono.MonoBASIC {
 						conv_right_as = TypeManager.int32_type;
 						type = TypeManager.int64_type;
 	
+					} else if ( IsLogicalOperator (oper)) {
+						type = conv_right_as = conv_left_as = TypeManager.bool_type;
 					} else if ( IsBitwiseOperator (oper)) {
 	
 				    		if (other_type == TypeManager.bool_type) {
@@ -2574,6 +2583,8 @@ namespace Mono.MonoBASIC {
 				}
 			}
 
+			if (IsLogicalOperator (oper))
+				type = TypeManager.bool_type;
 			if (IsBitwiseOperator (oper)) {
 				if (l == r) {
 					if (l == TypeManager.byte_type ||
@@ -2637,7 +2648,8 @@ namespace Mono.MonoBASIC {
 			Type l = left.Type;
 			Expression etmp = ResolveOperator (ec);
 			// if the operands are of type byte/short, convert the result back to short/byte
-			if (l == TypeManager.short_type || l == TypeManager.byte_type) {
+			if ((l == TypeManager.short_type || l == TypeManager.byte_type) &&
+			    (IsArithmaticOperator (oper) || IsBitwiseOperator (oper) || IsShiftOperator (oper))) {
 				Expression conv_exp = ConvertImplicit (ec, etmp, left.Type, loc);
 				if (conv_exp != null)
 					return conv_exp;
@@ -2785,6 +2797,7 @@ namespace Mono.MonoBASIC {
 		{
 			ILGenerator ig = ec.ig;
 			Type l = left.Type;
+			Type r = right.Type;
 			//Type r = right.Type;
 			OpCode opcode;
 
@@ -2810,25 +2823,59 @@ namespace Mono.MonoBASIC {
 			// Handle short-circuit operators differently
 			// than the rest
 			//
-			if (oper == Operator.LogicalAnd){
+			if (IsLogicalOperator (oper)) {
 				Label load_zero = ig.DefineLabel ();
-				Label end = ig.DefineLabel ();
-				
-				left.Emit (ec);
-				ig.Emit (OpCodes.Brfalse, load_zero);
-				right.Emit (ec);
-				ig.Emit (OpCodes.Br, end);
-				ig.MarkLabel (load_zero);
-				ig.Emit (OpCodes.Ldc_I4_0);
-				ig.MarkLabel (end);
-				return;
-			} else if (oper == Operator.LogicalOr){
 				Label load_one = ig.DefineLabel ();
 				Label end = ig.DefineLabel ();
 				
 				left.Emit (ec);
-				ig.Emit (OpCodes.Brtrue, load_one);
+				if (l != TypeManager.bool_type) {
+					if (l == TypeManager.int64_type) {
+						ec.ig.Emit (OpCodes.Ldc_I8, 0L);
+						ec.ig.Emit (OpCodes.Cgt_Un);
+					} else if (l == TypeManager.float_type) {
+						ec.ig.Emit (OpCodes.Ldc_R4, 0.0F);
+						ec.ig.Emit (OpCodes.Ceq);
+						ec.ig.Emit (OpCodes.Ldc_I4_0);
+						ec.ig.Emit (OpCodes.Ceq);
+					} else if (l == TypeManager.double_type) {
+						ec.ig.Emit (OpCodes.Ldc_R8, 0.0);
+						ec.ig.Emit (OpCodes.Ceq);
+						ec.ig.Emit (OpCodes.Ldc_I4_0);
+						ec.ig.Emit (OpCodes.Ceq);
+					} else  {
+						ec.ig.Emit (OpCodes.Ldc_I4_0);
+						ec.ig.Emit (OpCodes.Cgt_Un);
+					}
+				}
+				if (oper == Operator.LogicalAnd) 
+					ig.Emit (OpCodes.Brfalse, load_zero);
+				else 
+					ig.Emit (OpCodes.Brtrue, load_one);
+				
 				right.Emit (ec);
+				if (r != TypeManager.bool_type) {
+					if (r == TypeManager.int64_type) {
+						ec.ig.Emit (OpCodes.Ldc_I8, 0L);
+						ec.ig.Emit (OpCodes.Cgt_Un);
+					} else if (r == TypeManager.float_type) {
+						ec.ig.Emit (OpCodes.Ldc_R4, 0.0F);
+						ec.ig.Emit (OpCodes.Ceq);
+						ec.ig.Emit (OpCodes.Ldc_I4_0);
+						ec.ig.Emit (OpCodes.Ceq);
+					} else if (r == TypeManager.double_type) {
+						ec.ig.Emit (OpCodes.Ldc_R8, 0.0);
+						ec.ig.Emit (OpCodes.Ceq);
+						ec.ig.Emit (OpCodes.Ldc_I4_0);
+						ec.ig.Emit (OpCodes.Ceq);
+					} else  {
+						ec.ig.Emit (OpCodes.Ldc_I4_0);
+						ec.ig.Emit (OpCodes.Cgt_Un);
+					}
+				}
+				ig.Emit (OpCodes.Brtrue, load_one);
+				ig.MarkLabel (load_zero);
+				ig.Emit (OpCodes.Ldc_I4_0);
 				ig.Emit (OpCodes.Br, end);
 				ig.MarkLabel (load_one);
 				ig.Emit (OpCodes.Ldc_I4_1);

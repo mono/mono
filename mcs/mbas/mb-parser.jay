@@ -4596,7 +4596,7 @@ conditional_and_expression
 	: negation_expression
 	| conditional_and_expression AND negation_expression
 	  {
-		$$ = new Binary (Binary.Operator.LogicalAnd,
+		$$ = new Binary (Binary.Operator.BitwiseAnd,
 			         (Expression) $1, (Expression) $3, lexer.Location);
 	  }
 	| conditional_and_expression ANDALSO negation_expression
@@ -4610,7 +4610,7 @@ conditional_or_expression
 	: conditional_and_expression
 	| conditional_or_expression OR conditional_and_expression
 	  {
-		$$ = new Binary (Binary.Operator.LogicalOr,
+		$$ = new Binary (Binary.Operator.BitwiseOr,
 			         (Expression) $1, (Expression) $3, lexer.Location);
 	  }
 	| conditional_or_expression ORELSE conditional_and_expression
