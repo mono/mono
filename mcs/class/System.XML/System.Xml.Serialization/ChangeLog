@@ -1,3 +1,7 @@
+2003-10-05  Lluis Sanchez Gual <lluis@ximian.com>
+
+	* XmlReflectionImporter.cs, SoapReflectionImporter.cs: Fixed bug #49349
+
 2003-10-04  Lluis Sanchez Gual <lluis@ximian.com>
 
 	* XmlSchemaExporter.cs: Keep track of elements being exported.
