@@ -684,9 +684,17 @@ namespace Mono.CSharp {
 					return new BoxedCast (expr);
 				if (expr_type.IsClass || expr_type.IsInterface)
 					return new EmptyCast (expr, target_type);
-			} else if (expr_type.IsSubclassOf (target_type)) 
+			} else if (expr_type.IsSubclassOf (target_type)) {
+				//
+				// Special case: enumeration to System.Enum.
+				// System.Enum is not a value type, it is a class, so we need
+				// a boxing conversion
+				//
+				if (expr_type.IsEnum)
+					return new BoxedCast (expr);
+			
 				return new EmptyCast (expr, target_type);
-			else {
+			} else {
 
 				// This code is kind of mirrored inside StandardConversionExists
 				// with the small distinction that we only probe there
@@ -939,7 +947,6 @@ namespace Mono.CSharp {
 				
 			} else if (expr_type.IsSubclassOf (target_type)) {
 				return true;
-				
 			} else {
 				// Please remember that all code below actually comes
 				// from ImplicitReferenceConversion so make sure code remains in sync

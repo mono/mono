@@ -1,8 +1,12 @@
 2002-10-08  Miguel de Icaza  <miguel@ximian.com>
 
-	* ecore.cs (Expression.ConvertExplicit): One codepath could return
+	* ecore.cs (ImplicitReferenceConversion): It is possible to assign
+	an enumeration value to a System.Enum, but System.Enum is not a
+	value type, but an class type, so we need to box.
+
+	(Expression.ConvertExplicit): One codepath could return
 	errors but not flag them.  Fix this.  Fixes #31853
-	
+
 	* parameter.cs (Resolve): Do not allow void as a parameter type.
 
 2002-10-06  Martin Baulig  <martin@gnome.org>
