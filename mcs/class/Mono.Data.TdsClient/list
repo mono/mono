@@ -7,6 +7,7 @@ Mono.Data.TdsClient/TdsException.cs
 Mono.Data.TdsClient/TdsParameter.cs
 Mono.Data.TdsClient/TdsParameterCollection.cs
 Mono.Data.TdsClient/TdsTransaction.cs
+Mono.Data.TdsClient/TODOAttribute.cs
 Mono.Data.TdsClient.Internal/Tds.cs
 Mono.Data.TdsClient.Internal/TdsColumnType.cs
 Mono.Data.TdsClient.Internal/TdsComm.cs
@@ -31,3 +32,4 @@ Mono.Data.TdsClient.Internal/TdsPacketType.cs
 Mono.Data.TdsClient.Internal/TdsPacketUnknown.cs
 Mono.Data.TdsClient.Internal/TdsServerType.cs
 Mono.Data.TdsClient.Internal/TdsVersion.cs
+Mono.Data.TdsClient.Internal/TODOAttribute.cs

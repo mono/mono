@@ -1,3 +1,8 @@
+2002-10-22  Tim Coleman (tim@timcoleman.com)
+	* list:
+		Add TODOAttribute in both
+		namespaces
+
 2002-10-20  Tim Coleman (tim@timcoleman.com)
 	* list: 
 		Add new files to build.
