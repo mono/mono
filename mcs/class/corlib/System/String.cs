@@ -680,27 +680,32 @@ namespace System
 			return InternalToLower (CultureInfo.CurrentCulture);
 		}
 
-		public unsafe String ToLower (CultureInfo culture)
+		public String ToLower (CultureInfo culture)
 		{
 			if (culture == null)
 				throw new ArgumentNullException ("culture");
 
 			if (culture.LCID == 0x007F) { // Invariant
-				string tmp = InternalAllocateStr (length);
-				fixed (char* source = &start_char, dest = tmp) {
-
-					char* destPtr = (char*)dest;
-					char* sourcePtr = (char*)source;
-
-					for (int n = 0; n < length; n++) {
-						*destPtr = Char.ToLower (*sourcePtr);
-						sourcePtr++;
-						destPtr++;
-					}
-				}
-				return tmp;
+				return ToLowerInvariant ();
 			}
 			return InternalToLower (culture);
+		}
+
+		internal unsafe String ToLowerInvariant ()
+		{
+			string tmp = InternalAllocateStr (length);
+			fixed (char* source = &start_char, dest = tmp) {
+
+				char* destPtr = (char*)dest;
+				char* sourcePtr = (char*)source;
+
+				for (int n = 0; n < length; n++) {
+					*destPtr = Char.ToLower (*sourcePtr);
+					sourcePtr++;
+					destPtr++;
+				}
+			}
+			return tmp;
 		}
 
 		public String ToUpper ()
@@ -709,27 +714,32 @@ namespace System
 			return InternalToUpper (CultureInfo.CurrentCulture);
 		}
 
-		public unsafe String ToUpper (CultureInfo culture)
+		public String ToUpper (CultureInfo culture)
 		{
 			if (culture == null)
 				throw new ArgumentNullException ("culture");
 
 			if (culture.LCID == 0x007F) { // Invariant
-				string tmp = InternalAllocateStr (length);
-				fixed (char* source = &start_char, dest = tmp) {
-
-					char* destPtr = (char*)dest;
-					char* sourcePtr = (char*)source;
-
-					for (int n = 0; n < length; n++) {
-						*destPtr = Char.ToUpper (*sourcePtr);
-						sourcePtr++;
-						destPtr++;
-					}
-				}
-				return tmp;
+				return ToUpperInvariant ();
 			}
 			return InternalToUpper (culture);
+		}
+
+		internal unsafe String ToUpperInvariant ()
+		{
+			string tmp = InternalAllocateStr (length);
+			fixed (char* source = &start_char, dest = tmp) {
+
+				char* destPtr = (char*)dest;
+				char* sourcePtr = (char*)source;
+
+				for (int n = 0; n < length; n++) {
+					*destPtr = Char.ToUpper (*sourcePtr);
+					sourcePtr++;
+					destPtr++;
+				}
+			}
+			return tmp;
 		}
 
 		public override String ToString ()

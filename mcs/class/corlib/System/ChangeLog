@@ -1,3 +1,9 @@
+2004-04-25  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
+
+	* String.cs: Refactored the Invariant ToXXX into its own internal methods
+	  so they are directly callable within corlib (can prevent early
+	  construction of CultureInfo, InvariantCulture and related classes)
+
 2004-04-24  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
 
 	* String.cs: Managed impl. of Invariant parts of ToLower, ToUpper
