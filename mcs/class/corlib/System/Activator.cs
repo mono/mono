@@ -218,10 +218,12 @@ namespace System
 			if (type.IsAbstract)
 				throw new MemberAccessException ("Cannot create an abstract class");
 
-			ConstructorInfo ctor = type.GetConstructor (Type.EmptyTypes);
-			if (ctor != null && !ctor.IsPublic && nonPublic == false)
-				throw new MissingMethodException ("Default constructor not found");
+			BindingFlags flags = BindingFlags.Public | BindingFlags.Instance;
+			if (nonPublic)
+				flags |= BindingFlags.NonPublic;
 
+			ConstructorInfo ctor = type.GetConstructor (
+				flags, null, CallingConventions.Any, Type.EmptyTypes, null);
 			if (ctor == null) {
 				if (type.IsValueType)
 					return CreateInstanceInternal (type);

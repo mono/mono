@@ -1,3 +1,8 @@
+2003-03-25  Zoltan Varga  <vargaz@freemail.hu>
+
+	* Activator.cs (CreateInstance): Call GetConstructor with the right
+	arguments so the nonPublic argument is handled correctly.
+
 2003-03-25  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Type.cs: fixed bug #40123.
