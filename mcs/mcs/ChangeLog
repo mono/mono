@@ -1,5 +1,11 @@
 2002-05-05  Miguel de Icaza  <miguel@ximian.com>
 
+	* class.cs (TypeContainer.EmitFieldInitializer): Do not typecast
+	the result of Assign.Resolve as Assign, but rather as ExpressionStatement
+
+	* attribute.cs: Treat indexers and properties as the same in terms
+	of applying attributes
+
 	* ecore.cs (FindMostEncompassedType): Use statically initialized
 	EmptyExpressions()s like we do elsewhere to avoid creating useless
 	objects (and we take this out of the tight loop).

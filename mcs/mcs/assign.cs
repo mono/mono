@@ -128,6 +128,9 @@ namespace Mono.CSharp {
 				      " used from within the type '" + ei.DeclaringType + "')");
 		}
 
+		//
+		// Will return either `this' or an instance of `New'.
+		//
 		public override Expression DoResolve (EmitContext ec)
 		{
 			source = source.Resolve (ec);

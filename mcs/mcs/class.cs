@@ -498,13 +498,17 @@ namespace Mono.CSharp {
 				Location l = f.Location;
 				FieldExpr fe = new FieldExpr (f.FieldBuilder, l);
 				fe.InstanceExpression = instance_expr;
-				Assign a = new Assign (fe, e, l);
-				
-				a = (Assign) a.Resolve (ec);
+				Expression a = new Assign (fe, e, l);
+
+				a = a.Resolve (ec);
 				if (a == null)
 					return false;
 
-				a.EmitStatement (ec);
+				if (a is ExpressionStatement)
+					((ExpressionStatement) a).EmitStatement (ec);
+				else {
+					throw new Exception ("Assign.Resolve returned a non ExpressionStatement");
+				}
 			}
 			
 			return true;

@@ -329,7 +329,7 @@ namespace Mono.CSharp {
 
 		}
 
-		public static void error592 (Attribute a, Location loc)
+		public static void Error_AttributeNotValidForElement (Attribute a, Location loc)
 		{
 			Report.Error (
 				592, loc, "Attribute '" + a.Name +
@@ -414,7 +414,7 @@ namespace Mono.CSharp {
 					return true;
 				else
 					return false;
-			} else if (element is Property) {
+			} else if (element is Property || element is Indexer) {
 				if ((targets & AttributeTargets.Property) != 0)
 					return true;
 				else
@@ -454,7 +454,8 @@ namespace Mono.CSharp {
 
 					if (!(kind is TypeContainer))
 						if (!CheckAttribute (a, kind)) {
-							error592 (a, loc);
+								Console.WriteLine ("Kind is: " + kind);
+							Error_AttributeNotValidForElement (a, loc);
 							return;
 						}
 
@@ -507,7 +508,7 @@ namespace Mono.CSharp {
 
 						} else {
 							if (!CheckAttribute (a, kind)) {
-								error592 (a, loc);
+								Error_AttributeNotValidForElement (a, loc);
 								return;
 							}
 						}
