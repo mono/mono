@@ -622,6 +622,9 @@ namespace System.Xml.Schema
                                                         {
                                                                 ReadContent(schema, reader, validationEventHandler);
                                                         }
+														else
+															rdr.Skip ();
+															
 							if (rdr.NodeType == XmlNodeType.EndElement)
 								rdr.Read ();
                                                         return schema;

@@ -1,3 +1,8 @@
+2003-10-13  Lluis Sanchez Gual <lluis@ximian.com>
+
+	* XmlSchema.cs: If the schema element is an empty element, skip it after
+	  reading the attributes.
+
 2003-10-09  Atsushi Enomoto  <ginga@kit.hi-ho.ne.jp>
 
 	* BuiltInDatatype.cs : Added CLSCompliant attributes to some classes.
