@@ -41,7 +41,8 @@ namespace Mono.Posix {
 			S_IWOTH   = 00002,
 			S_IXOTH   = 00001
 		}
-		
-		public static int chmod (string file, FileMode mode)
+
+		[DllImport ("libc")]
+		public static extern int chmod (string file, FileMode mode);
 	}
 }
