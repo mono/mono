@@ -67,8 +67,11 @@ endif
 
 EXTRA_DISTFILES = \
 	corlib.dll.win32-excludes corlib_cmp.dll.excludes corlib_res.dll.excludes \
-	$(plattestlib).excludes \
-	Test/ms_run_test.sh
+	$(plattestlib).excludes 		\
+	Test/ms_run_test.sh			\
+	Test/resources/MyResources.resources	\
+	Test/resources/Empty.resources		\
+	Test/resources/AFile.txt
 
 LIBRARY_COMPILE = $(BOOT_COMPILE)
 
