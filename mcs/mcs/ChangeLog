@@ -1,3 +1,10 @@
+2004-08-01  Martin Baulig  <martin@ximian.com>
+
+	* class.cs (TypeContainer.GetClassBases): Don't set the default
+	here since we may get called from GetPartialBases().
+	(TypeContainer.DefineType): If GetClassBases() didn't return a
+	parent, use the default one.
+
 2004-07-30  Duncan Mak  <duncan@ximian.com>
 
 	* Makefile (mcs2.exe, mcs3.exe): add $(EXTRA_SOURCES).
