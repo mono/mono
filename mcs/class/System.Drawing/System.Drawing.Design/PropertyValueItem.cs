@@ -8,7 +8,6 @@
 
 using System.Drawing;
 using System.Drawing.Imaging;
-using System.Web.UI.WebControls;
 using System.ComponentModel;
 
 namespace System.Drawing.Design
