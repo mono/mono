@@ -1,5 +1,9 @@
 2004-10-21    <vargaz@freemail.hu>
 
+	* aot.c: Reorganize the AOT file format to avoid relocations. Fix warnings.
+
+	* mini.h: Bump AOT version number.
+
 	* objects.cs: Add another test for unbox trampolines.
 
 	* tramp-amd64.c (amd64_magic_trampoline): Disable patching of trampolines for 
