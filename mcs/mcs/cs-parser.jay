@@ -3646,6 +3646,8 @@ CheckDef (AdditionResult result, string name, Location l)
 	if (result == AdditionResult.Success)
 		return;
 
+	Console.WriteLine ("Adding {0} to {1}", name, current_container.Name);
+
 	switch (result){
 	case AdditionResult.NameExists:
 		Report.Error (102, l, "The container `" + current_container.Name + 

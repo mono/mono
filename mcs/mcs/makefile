@@ -34,7 +34,11 @@ COMPILER_SOURCES = \
 
 TEST_TOKENIZER_SOURCES = test-token.cs $(COMMON_SOURCES)
 
-all: mcs.exe
+all: 
+	if test x$(OS) = xWindows_NT; then make mcs.exe; else make -f makefile.gnu; fi
+
+install:
+	make -f makefile.gnu install
 
 mcs.exe: cs-parser.cs $(COMPILER_SOURCES)
 	$(CSC) $(CSCFLAGS) /target:exe /r:System.dll /out:mcs.exe $(COMPILER_SOURCES)

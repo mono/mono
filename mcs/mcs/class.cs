@@ -215,7 +215,7 @@ namespace Mono.CSharp {
 
 		public AdditionResult AddMethod (Method method)
 		{
-			string name = method.Name;
+			string name = Name + "." + method.Name;
 			Object value = defined_names [name];
 
 			if (value != null && (!(value is Method)))
@@ -232,7 +232,7 @@ namespace Mono.CSharp {
 			else 
 				methods.Add (method);
 			
-			if (value != null)
+			if (value == null)
 				DefineName (name, method);
 
 			return AdditionResult.Success;

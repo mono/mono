@@ -1,6 +1,12 @@
 2002-09-26  Miguel de Icaza  <miguel@ximian.com>
 
-	* class.cs: Revert patch until I can properly fix it.  The issue
+	* class.cs (TypeManager.AddMethod): The fix is not to change
+	AddEnum, because that one was using a fully qualified name (every
+	DeclSpace derivative does), but to change the AddMethod routine
+	that was using an un-namespaced name.  This now correctly reports
+	the duplicated name.
+
+	Revert patch until I can properly fix it.  The issue
 	is that we have a shared Type space across all namespaces
 	currently, which is wrong.
 
