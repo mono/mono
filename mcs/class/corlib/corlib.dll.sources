@@ -408,6 +408,7 @@ System.Reflection.Emit/MethodToken.cs
 System.Reflection.Emit/MethodRental.cs
 System.Reflection.Emit/ModuleBuilder.cs
 System.Reflection.Emit/MonoArrayMethod.cs
+System.Reflection.Emit/OpCodeNames.cs
 System.Reflection.Emit/OpCode.cs
 System.Reflection.Emit/OpCodes.cs
 System.Reflection.Emit/OpCodeType.cs
