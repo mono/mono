@@ -100,7 +100,7 @@ namespace System.Web.Caching {
 			// moved after each period, and the absolute expiration is the value used 
 			// for all expiration calculations.
 			if (tsSpan.Ticks != Cache.NoSlidingExpiration.Ticks)
-				_ticksExpires = System.DateTime.Now.AddTicks(_ticksSlidingExpiration).Ticks;
+				_ticksExpires = System.DateTime.UtcNow.AddTicks(_ticksSlidingExpiration).Ticks;
 			
 			_objDependency = objDependency;
 			if (_objDependency != null)
