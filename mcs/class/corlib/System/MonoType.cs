@@ -172,12 +172,12 @@ namespace System
 
 		public override string AssemblyQualifiedName {
 			get {
-				return assQualifiedName ();
+				return getFullName () + "," + Assembly.ToString ();
 			}
 		}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		private extern string assQualifiedName();
+		private extern string getFullName();
 
 		public override Type BaseType {
 			get {
@@ -189,8 +189,7 @@ namespace System
 
 		public override string FullName {
 			get {
-				string str = assQualifiedName ();
-				return str.Split(',')[0];
+				return getFullName ();
 			}
 		}
 

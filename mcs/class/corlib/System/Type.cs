@@ -822,14 +822,7 @@ namespace System {
 
 		public override string ToString()
 		{
-			string res = FullName;
-			if (IsArray)
-				res = res + "[]";
-			if (IsByRef)
-				res = res + "&";
-			if (IsPointer)
-				res = res + "*";
-			return res;
+			return FullName;
 		}
 	}
 }

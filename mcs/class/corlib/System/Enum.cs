@@ -174,21 +174,15 @@ namespace System {
 			if (!enumType.IsEnum)
 				throw new ArgumentException ("enumType is not an Enum type.");
 
-
-			// FIXME: Not sure how to ensure type of value parameter is correct
-			if (!IsDefined (enumType, value)
-				//|| !GetUnderlyingType (enumType).IsAssignableFrom (value.GetType ())
-				)
-				throw new ArgumentException ("value is an invalid type.");
-
 			MonoEnumInfo info;
 			int i;
+			value = ToObject (enumType, value);
 			MonoEnumInfo.GetInfo (enumType, out info);
 			for (i = 0; i < info.values.Length; ++i) {				
 				if (value.Equals (info.values.GetValue (i)))
 					return info.names [i];
 			}
-			return null;
+			throw new ArgumentException ("value is an invalid type.");
 		}
 		
 		[MonoTODO("Complete parameter validation")]
@@ -257,7 +251,7 @@ namespace System {
 			MonoEnumInfo.GetInfo (enumType, out info);
 			for (i = 0; i < info.values.Length; ++i) {				
 				if (String.Compare (value, info.names [i], ignoreCase) == 0)
-					return ToObject (enumType, info.values.GetValue (i));
+					return info.values.GetValue (i);
 			}
 			throw new ArgumentException ("The rquested value was not found");
 		}
@@ -271,6 +265,10 @@ namespace System {
 		public int CompareTo (object obj)
 		{
 			Type thisType;
+
+			if (obj == null)
+				return 1;
+
 			thisType = this.GetType();
 			if (obj.GetType() != thisType){
 				throw new ArgumentException(
@@ -281,30 +279,10 @@ namespace System {
 					+ thisType.ToString() + ".");
 			}
 
-			thisType = GetUnderlyingType(this.GetType());
-			if (!(thisType == typeof(SByte)
-				|| thisType == typeof(Int16)
-				|| thisType == typeof(Int32)
-				|| thisType == typeof(Int64)
-				|| thisType == typeof(Byte)
-				|| thisType == typeof(UInt16)
-				|| thisType == typeof(UInt32)
-				|| thisType == typeof(UInt64)
-				)
-			)
-				throw new InvalidOperationException();
-
-			if (obj == null)
-				return 1;
-
 			object value1, value2;
 
 			value1 = this.get_value ();
-
-			if (obj is Enum)
-				value2 = ((Enum)obj).get_value();
-			else
-				value2 = obj;
+			value2 = ((Enum)obj).get_value();
 
 			return ((IComparable)value1).CompareTo (value2);
 		}
