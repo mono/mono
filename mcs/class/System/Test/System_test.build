@@ -6,49 +6,41 @@
 
 <project name="System_test" default="build">
 	<property name="debug" value="false"/>
-	<property name="nunit_home" value="..\..\..\nunit"/>
 
 	<target name="build">
 	</target>
 
 	<target name="assemblies">
-		<csc target="library" output="System_linux_test.dll" debug="${debug}">
+		<csc target="library" output="system_linux_test.dll" debug="${debug}">
 			<sources>
 				<includes name="**/*.cs"/>
 			</sources>
-			<references basedir="..\..\..\nunit">
-				<includes name="NUnitCore_mono.dll"/>
-			</references>
 
 			<arg value="/r:..\..\lib\System.dll"/>
 			<arg value="/r:..\..\lib\corlib.dll"/>
 			<arg value="/r:..\..\lib\System.Xml.dll"/>
+		    	<arg value="/r:..\..\..\nunit20\NUnit.Framework.dll"/>
 			<arg value="/nowarn:1595"/>
 			<arg value="/nostdlib"/> 	<!-- don't reference mscorlib -->
 			<arg value="/noconfig"/>	<!-- don't reference ms assemblies -->
 		</csc>
 
-		<csc target="library" output="System_test.dll" debug="${debug}">
+		<csc target="library" output="system_test.dll" debug="${debug}">
 			<sources>
 				<includes name="**/*.cs"/>
 			</sources>
-			<references basedir="..\..\..\nunit">
-				<includes name="NUnitCore.dll"/>
-			</references>
 
-			<arg value="/noconfig"/>
-			<arg value="/r:..\..\lib\System.dll"/>
-			<arg value="/r:..\..\lib\System.Xml.dll"/>
+		    	<arg value="/r:..\..\..\nunit20\NUnit.Framework.dll"/>
 		</csc>
 
 	</target>
 
 	<target name="test" depends="assemblies">
-		<exec program="..\..\..\nunit\NUnitConsole" commandline="MonoTests.AllTests,System_test.dll" failonerror="false"/>
+		<exec program="..\..\..\nunit20\nunit-console.exe" commandline="system_test.dll" failonerror="false"/>
 	</target>
 
 	<target name="clean">
-		<delete file="System_test.dll" failonerror="false"/>
-		<delete file="System_linux_test.dll" failonerror="false"/>
+		<delete file="system_test.dll" failonerror="false"/>
+		<delete file="system_linux_test.dll" failonerror="false"/>
 	</target>
 </project>

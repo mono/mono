@@ -1,3 +1,7 @@
+2003/03/25  Nick Drochak <ndrochak@gol.com>
+
+	* System_test.build: Use nunit2 to run the tests.
+
 2003-03-18  Martin Willemoes Hansen <mwh@sysrq.dk>
 	* Removed: Old AllTests.cs files
 	* NUnit20ified the tests.
