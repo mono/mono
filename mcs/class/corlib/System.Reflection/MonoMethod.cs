@@ -276,6 +276,10 @@ namespace System.Reflection {
 			[MethodImplAttribute(MethodImplOptions.InternalCall)]
 			get;
 		}
+
+		public override MethodBody GetMethodBody () {
+			return GetMethodBody (mhandle);
+		}
 #endif
 	}
 	
@@ -398,6 +402,10 @@ namespace System.Reflection {
 			get {
 				return false;
 			}
+		}
+
+		public override MethodBody GetMethodBody () {
+			return GetMethodBody (mhandle);
 		}
 #endif
 
