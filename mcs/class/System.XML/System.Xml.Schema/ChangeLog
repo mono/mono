@@ -1,3 +1,8 @@
+2003-07-15  Lluis Sanchez Gual <lluis@ximian.com>
+
+	* BuiltInDatatype.cs,
+	  XmlSchemaDatatype.cs : added unsignedByte type support.
+
 2003-07-14  Lluis Sanchez Gual <lluis@ximian.com>
 
 	* XmlSchemaDatatype.cs: Fixed compiler warning.

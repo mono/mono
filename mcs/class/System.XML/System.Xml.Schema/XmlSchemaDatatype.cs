@@ -95,8 +95,10 @@ namespace System.Xml.Schema
 				return datatypeEntities;
 			case "NOTATION":
 				return datatypeNotation;
+			case "unsignedByte":
+				return datatypeUnsignedBye;
 			default:
-				throw new NotImplementedException ();
+				throw new NotImplementedException ("Unknown type: " + localName);
 			}
 		}
 
@@ -114,6 +116,7 @@ namespace System.Xml.Schema
 		private static XsdEntity datatypeEntity = new XsdEntity ();
 		private static XsdEntities datatypeEntities = new XsdEntities ();
 		private static XsdNotation datatypeNotation = new XsdNotation ();
-
+		private static XsdUnsignedByte datatypeUnsignedBye = new XsdUnsignedByte ();
+		
 	}
 }

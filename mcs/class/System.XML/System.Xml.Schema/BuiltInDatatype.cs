@@ -76,6 +76,7 @@ namespace Mono.Xml.Schema
 		}
 
 		public override XmlTokenizedType TokenizedType {
+
 			get { return XmlTokenizedType.CDATA; }
 		}
 
@@ -266,6 +267,7 @@ namespace Mono.Xml.Schema
 		// ParseValue () method is as same as that of xs:string
 	}
 
+
 	// xs:ENTITIES
 	public class XsdEntities : XsdName
 	{
@@ -328,6 +330,24 @@ namespace Mono.Xml.Schema
 		public int MinLength;
 		public string Pattern;
 		public ICollection Enumeration;
+	}
+
+	// xs:unsignedByte
+	public class XsdUnsignedByte : XmlSchemaDatatype
+	{
+		public override XmlTokenizedType TokenizedType {
+			get { return XmlTokenizedType.CDATA; }
+		}
+
+		public override Type ValueType {
+			get { return typeof (byte); }
+		}
+
+		public override object ParseValue (string s,
+			XmlNameTable nameTable, XmlNamespaceManager nsmgr)
+		{
+			return XmlConvert.ToByte(Normalize (s));
+		}
 	}
 
 }
