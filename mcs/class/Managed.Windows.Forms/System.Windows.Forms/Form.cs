@@ -23,9 +23,15 @@
 //	Peter Bartok	pbartok@novell.com
 //
 //
-// $Revision: 1.18 $
+// $Revision: 1.19 $
 // $Modtime: $
 // $Log: Form.cs,v $
+// Revision 1.19  2004/10/20 03:56:23  pbartok
+// - Added private FormParentWindow class which acts as the container for
+//   our form and as the non-client area where menus are drawn
+// - Added/Moved required tie-ins to Jordi's menus
+// - Fixed/Implemented the FormStartPosition functionality
+//
 // Revision 1.18  2004/10/18 04:47:09  pbartok
 // - Fixed Form.ControlCollection to handle owner relations
 // - Added Owner/OwnedForms handling
@@ -133,7 +139,134 @@ namespace System.Windows.Forms {
 		private Form.ControlCollection	owned_forms;
 		private bool			key_preview;
 		private MainMenu		menu;
+		internal FormParentWindow	form_parent_window;
 		#endregion	// Local Variables
+
+		#region Private Classes
+
+		// This class will take over for the client area
+		internal class FormParentWindow : Control {
+			#region FormParentWindow Class Local Variables
+			internal Form	owner;
+			#endregion	// FormParentWindow Class Local Variables
+
+			#region FormParentWindow Class Constructor
+			internal FormParentWindow(Form owner) : base() {
+				this.owner = owner;
+
+				this.Width = 250;
+				this.Height = 250;
+
+				BackColor = owner.BackColor;
+				Text = "FormParent";
+				this.Location = new Point(0, 0);
+				this.Dock = DockStyle.Fill;
+
+				MouseDown += new MouseEventHandler (OnMouseDownForm); 
+				MouseMove += new MouseEventHandler (OnMouseMoveForm); 
+				owner.TextChanged += new EventHandler(OnFormTextChanged);
+			}
+			#endregion	// FormParentWindow Class Constructor
+
+			#region FormParentWindow Class Protected Instance Methods
+			protected override CreateParams CreateParams {
+				get {
+					CreateParams cp;
+
+					cp = base.CreateParams;
+
+					cp.Style = (int)(WindowStyles.WS_OVERLAPPEDWINDOW | 
+							 WindowStyles.WS_VISIBLE | 
+							 WindowStyles.WS_CLIPSIBLINGS | 
+							 WindowStyles.WS_CLIPCHILDREN);
+
+					cp.Width = 250;
+					cp.Height = 250;
+
+#if later
+					if (this.IsHandleCreated) {
+						int	x;
+						int	y;
+						int	width;
+						int	height;
+						int	cwidth;
+						int	cheight;
+
+						XplatUI.GetWindowPos(this.window.Handle, out x, out y, out width, out height, out cwidth, out cheight);
+						UpdateBounds(x, y, width, height);
+						owner.UpdateBounds(x, y, width, height);
+					}
+
+#endif
+					return cp;
+				}
+			}
+
+			protected override void OnResize(EventArgs e) {
+				base.OnResize(e);
+				//owner.SetBoundsCore(owner.Bounds.X, owner.Bounds.Y, ClientSize.Width, ClientSize.Height, BoundsSpecified.All);
+				if (owner.menu == null) {
+					owner.SetBoundsCore(0, 0, ClientSize.Width, ClientSize.Height, BoundsSpecified.All);
+				} else {
+					int menu_height;
+
+					menu_height = MenuAPI.MenuBarCalcSize(DeviceContext, owner.Menu.menu_handle, ClientSize.Width);
+					owner.SetBoundsCore(0, menu_height, ClientSize.Width, ClientSize.Height-menu_height, BoundsSpecified.All);
+				}
+			}
+
+			protected override void OnPaint(PaintEventArgs pevent) {
+				OnDrawMenu (pevent.Graphics);
+			}
+
+			protected override void WndProc(ref Message m) {
+				switch((Msg)m.Msg) {
+					case Msg.WM_CLOSE: {
+						CancelEventArgs args = new CancelEventArgs();
+
+						owner.OnClosing(args);
+
+						if (!args.Cancel) {
+							owner.OnClosed(EventArgs.Empty);
+							owner.closing = true;
+							base.WndProc(ref m);
+							break;
+						}
+						break;
+					}
+
+					default: {
+						base.WndProc (ref m);
+						break;
+					}
+				}
+			}
+			#endregion	// FormParentWindow Class Protected Instance Methods
+
+			#region FormParentWindow Class Private Methods
+			private void OnMouseDownForm (object sender, MouseEventArgs e) {			
+				if (owner.menu != null)
+					owner.menu.OnMouseDown (owner, e);
+			}
+
+			private void OnMouseMoveForm (object sender, MouseEventArgs e) {			
+				if (owner.menu != null)
+					owner.menu.OnMouseMove (owner, e);
+			}
+		
+		
+			private void OnDrawMenu (Graphics dc) {
+				if (owner.menu != null) {								
+					Rectangle rect = new Rectangle (0,0, Width, 0);			
+					MenuAPI.DrawMenuBar (dc, owner.menu.Handle, rect);
+				}			
+			}
+			private void OnFormTextChanged(object sender, EventArgs e) {
+				this.Text = ((Control)sender).Text;
+			}
+			#endregion	// FormParentWindow Class Private Methods
+		}
+		#endregion	// Private Classes
 
 		#region Public Classes
 		public class ControlCollection : Control.ControlCollection {
@@ -172,35 +305,9 @@ namespace System.Windows.Forms {
 			menu = null;
 
 			owned_forms = new Form.ControlCollection(this);
-			
-			MouseDown += new MouseEventHandler (OnMouseDownForm); 
-			MouseMove += new MouseEventHandler (OnMouseMoveForm); 
-
 		}
 		#endregion	// Public Constructor & Destructor
 
-		#region Private and Internal Methods
-		private void OnMouseDownForm (object sender, MouseEventArgs e)
-		{			
-			if (menu != null)
-				menu.OnMouseDown (this, e);
-		}
-		
-		private void OnMouseMoveForm (object sender, MouseEventArgs e)
-		{			
-			if (menu != null)
-				menu.OnMouseMove (this, e);
-		}
-		
-		
-		private void OnDrawMenu (Graphics dc)
-		{
-			if (menu != null) {								
-				Rectangle rect = new Rectangle (0,0, Width, 0);			
-				MenuAPI.DrawMenuBar (dc, menu.Handle, rect);
-			}			
-		}
-		#endregion	// Private and Internal Methods
 
 		#region Public Static Properties
 		#endregion	// Public Static Properties
@@ -277,10 +384,20 @@ namespace System.Windows.Forms {
 
 			set {
 				if (menu != value) {
-					// FIXME - I have to wait for jordi to finish menus before I can do some of this
-					// We'll need a way to store what form owns the menu inside the menu; I'd
-					// have to set this here.
+					if (value == null) {
+						form_parent_window.Width = form_parent_window.Width;	// Trigger a resize
+					}
+
 					menu = value;
+
+					// To simulate the non-client are for menus we create a 
+					// new control as the 'client area' of our form.  This
+					// way, the origin stays 0,0 and we don't have to fiddle with
+					// coordinates. The menu area is part of the original container
+					if (menu != null) {
+						form_parent_window.Width = form_parent_window.Width;	// Trigger a resize
+					}
+
 					menu.SetForm (this);
 				}
 			}
@@ -333,7 +450,33 @@ namespace System.Windows.Forms {
 			}
 
 			set {
-				start_position = value;
+				if (start_position == FormStartPosition.WindowsDefaultLocation) {		// Only do this if it's not set yet
+					start_position = value;
+					if (form_parent_window.IsHandleCreated) {
+						switch(start_position) {
+							case FormStartPosition.CenterParent: {
+								if (Parent!=null && Width>0 && Height>0) {
+									this.Location = new Point(Parent.Size.Width/2-Width/2, Parent.Size.Height/2-Height/2);
+								}
+								break;
+							}
+
+							case FormStartPosition.CenterScreen: {
+								if (Width>0 && Height>0) {
+									Size	DisplaySize;
+
+									XplatUI.GetDisplaySize(out DisplaySize);
+									this.Location = new Point(DisplaySize.Width/2-Width/2, DisplaySize.Height/2-Height/2);
+								}
+								break;
+							}
+
+							default: {
+								break;
+							}
+						}
+					}
+				}
 			}
 		}
 		#endregion	// Public Instance Properties
@@ -342,71 +485,29 @@ namespace System.Windows.Forms {
 		[MonoTODO("Need to add MDI support")]
 		protected override CreateParams CreateParams {
 			get {
-				CreateParams create_params = new CreateParams();
+				CreateParams cp = new CreateParams();
 
-				create_params.Caption = "";
-
-				create_params.ClassName=XplatUI.DefaultClassName;
-				create_params.ClassStyle = 0;
-				create_params.ExStyle=0;
-				create_params.Parent=IntPtr.Zero;
-				create_params.Param=0;
-				create_params.X = Left;
-				create_params.Y = Top;
-				create_params.Width = Width;
-				create_params.Height = Height;
-				
-				create_params.Style = (int)WindowStyles.WS_OVERLAPPEDWINDOW;
-				create_params.Style |= (int)WindowStyles.WS_OVERLAPPED;
-				//create_params.Style |= (int)WindowStyles.WS_VISIBLE;
-				create_params.Style |= (int)WindowStyles.WS_CLIPSIBLINGS;
-				create_params.Style |= (int)WindowStyles.WS_CLIPCHILDREN;
-
-				switch(start_position) {
-					case FormStartPosition.CenterParent: {
-						if (Parent!=null && Width>0 && Height>0) {
-							Size	ParentSize;
-
-							ParentSize = Parent.Size;
-
-							create_params.X = Parent.Size.Width/2-Width/2;
-							create_params.Y = Parent.Size.Height/2-Height/2;
-						}
-						break;
-					}
-
-					case FormStartPosition.CenterScreen: {
-						if (Width>0 && Height>0) {
-							Size	DisplaySize;
-
-							XplatUI.GetDisplaySize(out DisplaySize);
-
-							create_params.X = DisplaySize.Width/2-Width/2;
-							create_params.Y = DisplaySize.Height/2-Height/2;
-						}
-						break;
-					}
-
-					case FormStartPosition.Manual: {
-						break;
-					}
-
-					case FormStartPosition.WindowsDefaultBounds: {
-						create_params.X = -1;
-						create_params.Y = -1;
-						create_params.Width = -1;
-						create_params.Height = -1;
-						break;
-					}
-
-					case FormStartPosition.WindowsDefaultLocation: {
-						create_params.X = -1;
-						create_params.Y = -1;
-						break;
-					}
+				if (this.form_parent_window == null) {
+					form_parent_window = new FormParentWindow(this);
 				}
 
-				return create_params;
+				cp.Caption = "ClientArea";
+				cp.ClassName=XplatUI.DefaultClassName;
+				cp.ClassStyle = 0;
+				cp.ExStyle=0;
+				cp.Param=0;
+				cp.Parent = this.form_parent_window.window.Handle;
+				cp.X = Left;
+				cp.Y = Top;
+				cp.Width = Width;
+				cp.Height = Height;
+				
+				cp.Style = (int)WindowStyles.WS_CHILD;
+				cp.Style |= (int)WindowStyles.WS_VISIBLE;
+				cp.Style |= (int)WindowStyles.WS_CLIPSIBLINGS;
+				cp.Style |= (int)WindowStyles.WS_CLIPCHILDREN;
+
+				return cp;
 			}
 		}
 
@@ -415,11 +516,10 @@ namespace System.Windows.Forms {
 				return new Size (250, 250);
 			}
 		}		
-		
+
 		protected override void OnPaint (PaintEventArgs pevent)
 		{
 			base.OnPaint (pevent);
-			OnDrawMenu (pevent.Graphics);		
 		}		
 		
 		#endregion	// Protected Instance Properties
@@ -488,9 +588,26 @@ namespace System.Windows.Forms {
 		#endregion	// Public Instance Methods
 
 		#region Protected Instance Methods
+		protected override void CreateHandle() {
+			base.CreateHandle ();
+		}
+
 		protected override void OnCreateControl() {
 			base.OnCreateControl ();
 			OnLoad(EventArgs.Empty);
+		}
+
+		protected override void OnHandleCreated(EventArgs e) {
+			base.OnHandleCreated (e);
+		}
+
+		protected override void OnHandleDestroyed(EventArgs e) {
+			base.OnHandleDestroyed (e);
+		}
+
+
+		protected override void OnResize(EventArgs e) {
+			base.OnResize(e);
 		}
 
 		protected override bool ProcessCmdKey(ref Message msg, Keys keyData) {
