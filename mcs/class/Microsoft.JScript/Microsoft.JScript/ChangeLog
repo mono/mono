@@ -1,6 +1,31 @@
-2004-08-26  Cesar Lopez Nataren  <cesar@ciencias.unam.mx>
+2004-09-20  Cesar Lopez Nataren  <cesar@ciencias.unam.mx>
 
-	* ArrayPrototype.cs: mark method as built in.
+	* expression.cs: added semantic analysis for accessing fields on
+	class Binary. Semantic Analysis for Calls it takes care of
+	constructors and methods, added invocation code for built in
+	methods. Added interface IAccesible that let us resolve the '.'
+	operator. Class Args handles missing or surplus arguments. Added
+	class BuiltIn which will take care of all builtins of ECMAScript.
+	* ast.cs: added check for parent equal to ScriptBlock.
+	* SymbolTable.cs: added method Remove.
+	* Statement.cs: Added abstract class Jump of which Continue and
+	Break inherit, checks the label stuff. Added checks for Label
+	stuff to Continue and Break classes. Added method Init for
+	DoWhile. Fixes for loops statements in order to be able for have
+	nested loops. Initial support for Label statements.
+	* SemanticAnalizer.cs: added hash global_env and
+	IdentificationTable label_set for keeping track of global methods and
+	label sets. Added static constructor, method BuildGlobalEnv,
+	ImplementationName, ObjectSystemContains, AddLabel, ContainsLabel,
+	GetLabel, RemoveLabel.	
+	* Relational.cs: added code generation for ops instanceof and
+	in. Fixes for usual relational ops.
+	* Parser.cs:fixes to keep track of the inheritance chain.
+	* MathObject.cs: added internal constructor.
+	* JSFunctionAttribute.cs: added fields value and built_in_function
+	so we can decide when a method is really a built in.
+	* IdentificationTable.cs: added method Remove.
+	* CodeGenerator.cs: fixes for fall_true & fall_false for taking care of ast when is a Expression.
 
 2004-08-25  Cesar Lopez Nataren  <cesar@ciencias.unam.mx>
 
