@@ -14,7 +14,8 @@ namespace System
 	public sealed class AttributeUsageAttribute : Attribute
 	{
 		AttributeTargets valid_on;
-		bool allow_multiple, inherited;
+		bool allow_multiple;
+		bool inherited = true;
 
 		public AttributeUsageAttribute (AttributeTargets validOn)
 		{
