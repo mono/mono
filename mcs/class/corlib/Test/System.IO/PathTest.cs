@@ -140,12 +140,12 @@ namespace MonoTests.System.IO
 		}
 
 		[Test]
-//		[ExpectedException (typeof (ArgumentException))]
 		public void ChangeExtension_BadExtension () 
 		{
-			if (!Windows) throw new ArgumentException ("Test Only On Windows");
-			string fn = Path.ChangeExtension ("file.ext", "<");
-			AssertEquals ("Invalid filename", "file.<", fn);
+			if (Windows) {
+				string fn = Path.ChangeExtension ("file.ext", "<");
+				AssertEquals ("Invalid filename", "file.<", fn);
+			}
 		}
 
 		public void TestCombine ()
