@@ -1,5 +1,13 @@
 2003-10-25  Zoltan Varga  <vargaz@freemail.hu>
 
+	* appdomain.c (ves_icall_System_AppDomain_InternalIsFinalizingForUnload): New icall.
+
+	* appdomain.c (unload_thread_main): Clear class->cached_vtable if it
+	points to a vtable in the dying appdomain.
+
+	* appdomain.c (mono_domain_unload): Move the notification of OnUnload
+	listeners into unmanaged code inside the lock.
+
 	* object.c (mono_class_vtable): Turn off typed allocation in non-root
 	domains and add some comments.
 
