@@ -1,3 +1,7 @@
+2003-02-13  Zoltan Varga  <vargaz@freemail.hu>
+
+	* AssemblyBuilderTest.cs: New file.
+
 2003-02-12  Zoltan Varga  <vargaz@freemail.hu>
 
 	* MethodBuilderTest.cs: Added test for setting MethodImplAttributes
