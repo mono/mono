@@ -1,5 +1,11 @@
 2004-10-29  Atsushi Enomoto <atsushi@ximian.com>
 
+	* XmlSchemaAttribute.cs : AttributeSchemaType could be determined on
+	  compilation time. AttributeType is obsolete.
+	* XmlSchemaElement.cs : ditto for ElementSchemaType and ElementType.
+
+2004-10-29  Atsushi Enomoto <atsushi@ximian.com>
+
 	* XmlSchemaComplexType.cs : added LocalElements, with the description
 	  why it can never be correct implementation.
 	* XmlSchemaUtil.cs : use IHasXmlParserContext.
