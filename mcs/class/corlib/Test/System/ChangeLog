@@ -1,3 +1,8 @@
+2003-06-19  Nick Drochak <ndrochak@gol.com>
+
+	* ArrayTest.cs: Cleanup unused bits. Also get tests passing on .NET 1.1
+	All tests pass here now.
+
 2003-06-18  Nick Drochak <ndrochak@gol.com>
 
 	* ArrayTest.cs: Add .NET 1.1 overload test, and fix build problem.

@@ -20,10 +20,9 @@ namespace MonoTests.System
 
 	class AClass
 	{
-		bool init;
 		public AClass()
 		{
-			init = true;
+
 		}
 	}
 
@@ -644,7 +643,7 @@ public class ArrayTest : Assertion
 
 #if NET_1_1
 	[Test]
-        [ExpectedException (typeof (ArgumentException))]
+        [ExpectedException (typeof (NullReferenceException))]
         public void TestCreateInstance2b ()
         {
                 Array a = Array.CreateInstance (typeof (Int32), (long[])null);
@@ -1109,6 +1108,15 @@ public class ArrayTest : Assertion
 		}
 	}
 
+#if NET_1_1
+	[Test]
+        [ExpectedException (typeof (NullReferenceException))]
+	public void TestGetValueLongArray() {
+		char[] c = new Char[2];
+		c.GetValue((long [])null);
+	}
+#endif
+
 	[Test]
 	public void TestGetValueN() {
 		{
@@ -1121,18 +1129,6 @@ public class ArrayTest : Assertion
 			}
 			Assert("#I61a", errorThrown);
 		}
-#if NET_1_1
-		{
-			bool errorThrown = false;
-			try {
-				char[] c = new Char[2];
-				c.GetValue((long [])null);
-			} catch (ArgumentNullException) {
-				errorThrown = true;
-			}
-			Assert("#I61b", errorThrown);
-		}
-#endif
 		{
 			bool errorThrown = false;
 			try {
@@ -1707,6 +1703,16 @@ public class ArrayTest : Assertion
 		}
 	}
 
+#if NET_1_1
+	[Test]
+        [ExpectedException (typeof (NullReferenceException))]
+	public void TestSetValueLongArray() {
+		char[] c = new Char[2];
+		c.SetValue("buh", (long [])null);
+	}
+#endif
+
+
 	[Test]
 	public void TestSetValueN() {
 		{
@@ -1719,18 +1725,6 @@ public class ArrayTest : Assertion
 			}
 			Assert("#M61a", errorThrown);
 		}
-#if NET_1_1
-		{
-			bool errorThrown = false;
-			try {
-				char[] c = new Char[2];
-				c.SetValue("buh", (long [])null);
-			} catch (ArgumentNullException) {
-				errorThrown = true;
-			}
-			Assert("#M61b", errorThrown);
-		}
-#endif
 		{
 			bool errorThrown = false;
 			try {
