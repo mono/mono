@@ -269,119 +269,60 @@ namespace System {
 			return null;
 		}
 
-		public static int Compare (string strA, string strB)
-		{
-			int min, i;
+		internal enum _StringCompareMode {
+			CompareDirect,
+			CompareCaseInsensitive,
+			CompareOrdinal
+		};
 
-			if (strA == null) {
-				if (strB == null)
+		internal static int _CompareGetLength (string strA, string strB)
+		{
+			if ((strA == null) || (strB == null))
 					return 0;
 				else
-					return -1;
-			} else if (strB == null)
-				return 1;
-
-			min = strA.length < strB.length ? strA.length : strB.length;
-
-			for (i = 0; i < min; i++) {
-				if (strA.c_str[i] != strB.c_str[i]) {
-					return (int)strA.c_str[i] - (int)strB.c_str[i];
-				}
-			}
-			if (strA.length == strB.length) {
-				return 0;
-			}
-			if (strA.length > min) {
-				return 1;
-			} else {
-				return -1;
-			}
+				return Math.Max (strA.Length, strB.Length);
 		}
 
-		public static int Compare (string strA, string strB, bool ignoreCase)
+		internal static int _CompareChar (char chrA, char chrB, CultureInfo culture,
+						  _StringCompareMode mode)
 		{
-			int min, i;
+			int result = 0;
 
-			if (!ignoreCase)
-				return Compare (strA, strB);
+			switch (mode) {
+			case _StringCompareMode.CompareDirect:
+				// FIXME: We should do a culture based comparision here,
+				//        but for the moment let's do it by hand.
+				//        In the microsoft runtime, uppercase letters
+				//        sort after lowercase letters in the default
+				//        culture.
+				if (Char.IsUpper (chrA) && Char.IsLower (chrB))
+				return 1;
+				else if (Char.IsLower (chrA) && Char.IsUpper (chrB))
+				return -1;
+				result = (int) (chrA - chrB);
+				break;
+			case _StringCompareMode.CompareCaseInsensitive:
+				result = (int) (Char.ToLower (chrA) - Char.ToLower (chrB));
+				break;
+			case _StringCompareMode.CompareOrdinal:
+				result = (int) (tolowerordinal (chrA) - tolowerordinal (chrB));
+				break;
+			}
 
-			/*
-			 * And here I thought Eazel developers were on crack...
-			 * if a string is null it should pelt the programmer with
-			 * ArgumentNullExceptions, damnit!
-			 */
-			if (strA == null) {
-				if (strB == null)
+			if (result == 0)
 					return 0;
-				else
+			else if (result < 0)
 					return -1;
-			} else if (strB == null)
+			else
 				return 1;
-
-			min = strA.length < strB.length ? strA.length : strB.length;
-
-			for (i = 0; i < min; i++) {
-				if (Char.ToLower (strA.c_str[i]) != Char.ToLower (strB.c_str[i])) {
-					return (int)strA.c_str[i] - (int)strB.c_str[i];
-				}
-			}
-			if (strA.length == strB.length) {
-				return 0;
-			}
-			if (strA.length > min) {
-				return 1;
-			} else {
-				return -1;
-			}
 		}
 
-		[MonoTODO]
-		public static int Compare (string strA, string strB, bool ignoreCase, CultureInfo culture)
-		{
-			// FIXME: implement me
-			return 0;
-		}
+		internal static int _Compare (string strA, int indexA, string strB, int indexB,
+					      int length, CultureInfo culture,
+					      _StringCompareMode mode)
 
-		public static int Compare (string strA, int indexA, string strB, int indexB, int length)
 		{
 			int i;
-
-			if (length < 0 || indexA < 0 || indexB < 0)
-				throw new ArgumentOutOfRangeException ();
-
-			if (indexA > strA.Length || indexB > strB.Length)
-				throw new ArgumentOutOfRangeException ();
-
-			/* And again with the ("" > null) logic... lord have mercy! */
-			if (strA == null) {
-				if (strB == null)
-					return 0;
-				else
-					return -1;
-			} else if (strB == null)
-				return 1;
-
-			for (i = 0; i < length - 1; i++) {
-				if (strA[indexA + i] != strB[indexB + i])
-					break;
-			}
-
-			return ((int) (strA[indexA + i] - strB[indexB + i]));
-		}
-
-		public static int Compare (string strA, int indexA, string strB, int indexB,
-					   int length, bool ignoreCase)
-		{
-			int i;
-
-			if (!ignoreCase)
-				return Compare (strA, indexA, strB, indexB, length);
-
-			if (length < 0 || indexA < 0 || indexB < 0)
-				throw new ArgumentOutOfRangeException ();
-
-			if (indexA > strA.Length || indexB > strB.Length)
-				throw new ArgumentOutOfRangeException ();
 
 			/* When will the hurting stop!?!? */
 			if (strA == null) {
@@ -392,93 +333,85 @@ namespace System {
 			} else if (strB == null)
 				return 1;
 
-			for (i = 0; i < length - 1; i++) {
-				if (Char.ToLower (strA[indexA + i]) != Char.ToLower (strB[indexB + i]))
-					break;
-			}
-
-			return ((int) (strA[indexA + i] - strB[indexB + i]));
-		}
-
-		[MonoTODO]
-		public static int Compare (string strA, int indexA, string strB, int indexB,
-					   int length, bool ignoreCase, CultureInfo culture)
-		{
-			if (culture == null)
-				throw new ArgumentNullException ();
-
 			if (length < 0 || indexA < 0 || indexB < 0)
 				throw new ArgumentOutOfRangeException ();
 
 			if (indexA > strA.Length || indexB > strB.Length)
 				throw new ArgumentOutOfRangeException ();
 
-			/* I can't take it anymore! */
-			if (strA == null) {
-				if (strB == null)
+			// FIXME: Implement culture
+			if (culture != null)
+				throw new NotImplementedException ();
+
+			for (i = 0; i < length - 1; i++) {
+				if ((indexA+i >= strA.Length) || (indexB+i >= strB.Length))
+					break;
+
+				if (_CompareChar (strA[indexA+i], strB[indexB+i], culture, mode) != 0)
+					break;
+		}
+
+			if (indexA+i >= strA.Length) {
+				if (indexB+i >= strB.Length)
 					return 0;
 				else
 					return -1;
-			} else if (strB == null)
+			} else if (indexB+i >= strB.Length)
 				return 1;
 
-			// FIXME: implement me
-			return 0;
+			return _CompareChar (strA[indexA+i], strB[indexB+i], culture, mode);
+		}
+
+
+		public static int Compare (string strA, string strB)
+		{
+			return Compare (strA, strB, false);
+		}
+
+		public static int Compare (string strA, string strB, bool ignoreCase)
+		{
+			return Compare (strA, strB, ignoreCase, null);
+			}
+
+		public static int Compare (string strA, string strB, bool ignoreCase, CultureInfo culture)
+		{
+			return Compare (strA, 0, strB, 0,
+					_CompareGetLength (strA, strB),
+					ignoreCase, culture);
+		}
+
+		public static int Compare (string strA, int indexA, string strB, int indexB, int length)
+		{
+			return  Compare (strA, indexA, strB, indexB, length, false);
+		}
+
+		public static int Compare (string strA, int indexA, string strB, int indexB,
+					   int length, bool ignoreCase)
+		{
+			return Compare (strA, indexA, strB, indexB, length, ignoreCase, null);
+		}
+
+		public static int Compare (string strA, int indexA, string strB, int indexB,
+					   int length, bool ignoreCase, CultureInfo culture)
+		{
+			_StringCompareMode mode;
+
+			mode = ignoreCase ? _StringCompareMode.CompareCaseInsensitive :
+				_StringCompareMode.CompareDirect;
+
+			return _Compare (strA, indexA, strB, indexB, length, culture, mode);
 		}
 
 		public static int CompareOrdinal (string strA, string strB)
 		{
-			int i;
-
-			/* Please God, make it stop! */
-			if (strA == null) {
-				if (strB == null)
-					return 0;
-				else
-					return -1;
-			} else if (strB == null)
-				return 1;
-
-			for (i = 0; i < strA.Length && i < strB.Length; i++) {
-				char cA, cB;
-
-				cA = tolowerordinal (strA[i]);
-				cB = tolowerordinal (strB[i]);
-
-				if (cA != cB)
-					break;
+			return CompareOrdinal (strA, 0, strB, 0, _CompareGetLength (strA, strB));
 			}
-
-			return ((int) (strA[i] - strB[i]));
-		}
 
 		public static int CompareOrdinal (string strA, int indexA, string strB, int indexB,
 						  int length)
 		{
-			int i;
-
-			if (length < 0 || indexA < 0 || indexB < 0)
-				throw new ArgumentOutOfRangeException ();
-
-			if (strA == null) {
-				if (strB == null)
-					return 0;
-				else
-					return -1;
-			} else if (strB == null)
-				return 1;
-
-			for (i = 0; i < length; i++) {
-				char cA, cB;
-
-				cA = tolowerordinal (strA[indexA + i]);
-				cB = tolowerordinal (strB[indexB + i]);
-
-				if (cA != cB)
-					break;
-			}
-
-			return ((int) (strA[indexA + i] - strB[indexB + i]));
+			return _Compare (strA, indexA, strB, indexB, length, null,
+					 _StringCompareMode.CompareOrdinal);
 		}
 
 		public int CompareTo (object obj)
@@ -1693,12 +1626,7 @@ namespace System {
 					return Substring (begin, this.length - begin);
 			}
 
-			if (begin == this.length)
 				return String.Empty;
-
-			throw new FormatException ();
-
-			return Substring (begin, this.length - begin);
 		}
 
 		// Operators

@@ -1,3 +1,10 @@
+2002-02-28  Martin Baulig  <martin@gnome.org>
+
+	* String.cs (_CompareChar): New internal function which compares two chars.
+	(_Compare): Provide an internal compare method which can do all sorts of
+	comparision and call it from all the Compare() methods. Also fixed a lot of
+	bugs here, this code now actually passes the testsuite.
+
 2002-02-28  Duncan Mak  <duncan@ximian.com>
 
 	* Convert.cs: Added the missing methods. The new class status page
