@@ -1,0 +1,4 @@
+TEST_SOURCES = \
+	var-decl init-var-num init-var-string simple-assign-num simple-assign-vars \
+	simple-assign-bool global-bool-lits global-id global-num global-sum \
+	global-assign-sum
