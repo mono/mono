@@ -1,3 +1,8 @@
+2004-06-09  Zoltan Varga  <vargaz@freemail.hu>
+
+	* icall.c (ves_icall_Type_GetEvents_internal): Handle events without
+	any methods. Fixes #59629.
+
 2004-06-08  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* assembly.c:
