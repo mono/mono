@@ -14,6 +14,13 @@ using System.Xml;
 namespace System.Security.Cryptography.Xml {
 
 	public class Signature {
+		static XmlNamespaceManager dsigNsmgr;
+		
+		static Signature ()
+		{
+			dsigNsmgr = new XmlNamespaceManager (new NameTable ());
+			dsigNsmgr.AddNamespace ("xd", XmlSignature.NamespaceURI);
+		}
 
 		private ArrayList list;
 		private SignedInfo info;
@@ -109,38 +116,58 @@ namespace System.Security.Cryptography.Xml {
 			if ((value.LocalName == XmlSignature.ElementNames.Signature) && (value.NamespaceURI == XmlSignature.NamespaceURI)) {
 				id = GetAttribute (value, XmlSignature.AttributeNames.Id);
 
-				XmlNodeList xnl = value.GetElementsByTagName (XmlSignature.ElementNames.SignedInfo);
-				if ((xnl != null) && (xnl.Count == 1)) {
-					info = new SignedInfo ();
-					info.LoadXml ((XmlElement) xnl[0]);
-				}
+				// LAMESPEC: This library is totally useless against eXtensibly Marked-up document.
+				int i = NextElementPos (value.ChildNodes, 0, XmlSignature.ElementNames.SignedInfo, XmlSignature.NamespaceURI, true);
+				XmlElement sinfo = (XmlElement) value.ChildNodes [i];
+				info = new SignedInfo ();
+				info.LoadXml (sinfo);
 
-				xnl = value.GetElementsByTagName (XmlSignature.ElementNames.SignatureValue);
-				if ((xnl != null) && (xnl.Count == 1)) {
-					signature = Convert.FromBase64String (xnl[0].InnerText);
-				}
+				i = NextElementPos (value.ChildNodes, ++i, XmlSignature.ElementNames.SignatureValue, XmlSignature.NamespaceURI, true);
+				XmlElement sigValue = (XmlElement) value.ChildNodes [i];
+				signature = Convert.FromBase64String (sigValue.InnerText);
 
-				xnl = value.GetElementsByTagName (XmlSignature.ElementNames.KeyInfo);
-				if ((xnl != null) && (xnl.Count == 1)) {
+				i = NextElementPos (value.ChildNodes, ++i, XmlSignature.ElementNames.KeyInfo, XmlSignature.NamespaceURI, true);
+				if (i > 0) {
+					XmlElement kinfo = (XmlElement) value.ChildNodes [i];
 					key = new KeyInfo ();
-					key.LoadXml ((XmlElement) xnl[0]);
+					key.LoadXml (kinfo);
 				}
 
-				xnl = value.GetElementsByTagName (XmlSignature.ElementNames.Object);
-				if ((xnl != null) && (xnl.Count > 0)) {
-					foreach (XmlNode xn in xnl) {
-						DataObject obj = new DataObject ();
-						obj.LoadXml ((XmlElement) xn);
-						AddObject (obj);
-					}
+				XmlNodeList xnl = value.SelectNodes ("xd:Object", dsigNsmgr);
+				foreach (XmlElement xn in xnl) {
+					DataObject obj = new DataObject ();
+					obj.LoadXml (xn);
+					AddObject (obj);
 				}
 			}
+			else
+				throw new CryptographicException ("Malformed element: Signature.");
 
 			// if invalid
 			if (info == null)
 				throw new CryptographicException ("SignedInfo");
 			if (signature == null)
 				throw new CryptographicException ("SignatureValue");
+		}
+
+		private int NextElementPos (XmlNodeList nl, int pos, string name, string ns, bool required)
+		{
+			while (pos < nl.Count) {
+				if (nl [pos].NodeType == XmlNodeType.Element) {
+					if (nl [pos].LocalName != name && nl [pos].NamespaceURI != ns) {
+						if (required)
+							throw new CryptographicException ("Malformed element " + name);
+						else
+							return -2;
+					}
+					return pos;
+				}
+				else
+					pos++;
+			}
+			if (required)
+				throw new CryptographicException ("Malformed element " + name);
+			return -1;
 		}
 	}
 }

@@ -104,6 +104,7 @@ namespace System.Security.Cryptography.Xml {
 			// possible input: Stream, XmlDocument, and XmlNodeList
 			if (obj is Stream) {
 				doc = new XmlDocument ();
+				doc.XmlResolver = GetResolver ();
 				doc.Load (obj as Stream);
 			}
 			else if (obj is XmlDocument) {
@@ -111,6 +112,7 @@ namespace System.Security.Cryptography.Xml {
 			}
 			else if (obj is XmlNodeList) {
 				doc = new XmlDocument ();
+				doc.XmlResolver = GetResolver ();
 				foreach (XmlNode xn in (obj as XmlNodeList))  {
 					XmlNode importedNode = doc.ImportNode (xn, true);
 					doc.AppendChild (importedNode);

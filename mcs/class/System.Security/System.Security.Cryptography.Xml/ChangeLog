@@ -1,3 +1,15 @@
+2004-03-04  Atsushi Enomoto <atsushi@ximian.com>
+
+	* KeyInfo.cs :
+	  Fixed LoadXml() to skip text nodes as MS.NET does.
+	  Uncommented out RSAKeyValue.
+	* Signature.cs : Fixed LoadXml(). Don't use GetElementsByTagName()
+	  that incorrectly acquires descendants. Throw CryptographicException
+	  if required elements were not found.
+	* Transform.cs : added internal GetResolver().
+	* XmlDsigXPathTransform.cs,
+	  XmlDsigXsltTransform.cs : use XmlResolver.
+
 2004-02-19  Tim Coleman <tim@timcoleman.com>
 	* SymmetricKeyWrap.cs:
 		Add AES Key Wrap

@@ -90,6 +90,7 @@ namespace System.Security.Cryptography.Xml {
 		{
 			XslTransform xsl = new XslTransform ();
 			XmlDocument doc = new XmlDocument ();
+			doc.XmlResolver = GetResolver ();
 			Stream stream = null;
 
 			// possible input: Stream, XmlDocument, and XmlNodeList
@@ -101,8 +102,7 @@ namespace System.Security.Cryptography.Xml {
 				xsl.Load (obj as XmlDocument);
 			}
 			else if (obj is XmlNodeList) {
-//				xnl = (XmlNodeList) obj;
-//				xsl.Load (obj a);
+				// Is it valid operation?
 			}
 
 			if (xnl != null) {

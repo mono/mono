@@ -78,9 +78,10 @@ namespace System.Security.Cryptography.Xml {
 
 			if ((value.LocalName == XmlSignature.ElementNames.KeyInfo) && (value.NamespaceURI == XmlSignature.NamespaceURI)) {
 				foreach (XmlNode n in value.ChildNodes) {
-					KeyInfoClause kic = null;
-					if (n is XmlWhitespace)
+					if (n.NodeType != XmlNodeType.Element)
 						continue;
+
+					KeyInfoClause kic = null;
 
 					switch (n.LocalName) {
 					case XmlSignature.ElementNames.KeyValue:
@@ -108,9 +109,9 @@ namespace System.Security.Cryptography.Xml {
 					case XmlSignature.ElementNames.X509Data:
 						kic = (KeyInfoClause) new KeyInfoX509Data ();
 						break;
-/*					case XmlSignature.ElementNames.RSAKeyValue:
+					case XmlSignature.ElementNames.RSAKeyValue:
 						kic = (KeyInfoClause) new RSAKeyValue ();
-						break;*/
+						break;
 					default:
 						kic = (KeyInfoClause) new KeyInfoNode ();
 						break;
@@ -122,6 +123,7 @@ namespace System.Security.Cryptography.Xml {
 					}
 				}
 			}
+			// No check is performed on MS.NET...
 		}
 	}
 }

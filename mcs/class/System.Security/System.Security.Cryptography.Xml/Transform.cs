@@ -60,10 +60,14 @@ namespace System.Security.Cryptography.Xml {
 #if ! NET_1_0
 		private XmlResolver xmlResolver;
 
-		[MonoTODO("property not (yet) used in derived classes")]
 		[ComVisible(false)]
 		public XmlResolver Resolver {
 			set { xmlResolver = value; }
+		}
+		
+		internal XmlResolver GetResolver ()
+		{
+			return xmlResolver;
 		}
 #endif
 	}
