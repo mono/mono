@@ -18,6 +18,7 @@ namespace Microsoft.JScript {
 
 		internal Relational (AST parent, AST left, AST right, JSToken op)
 		{
+			this.parent = parent;
 			this.left = left;
 			this.right = right;
 			this.current_op = op;
@@ -78,17 +79,11 @@ namespace Microsoft.JScript {
 				return;
 			}			
 
-			ILGenerator ig;
-			LocalBuilder loc;
-			Type t = typeof (Relational);
-			ConstructorInfo ctr_info;
+			Type t = typeof (Relational);						
+			ILGenerator ig = ec.ig;
 
-			if (parent == null)
-				ig = ec.gc_ig;
-			else
-				ig = ec.ig;
-			
-			loc = ig.DeclareLocal (t);
+			LocalBuilder loc = ig.DeclareLocal (t);			
+			ConstructorInfo ctr_info;
 			
 			switch (current_op) {
 			case JSToken.GreaterThan:
@@ -122,7 +117,7 @@ namespace Microsoft.JScript {
 			Label a, b;
 			a = ig.DefineLabel ();
 			b = ig.DefineLabel ();
-			
+
 			switch (current_op) {
 			case JSToken.GreaterThan:
 				ig.Emit (OpCodes.Bgt_S, a);
@@ -143,11 +138,9 @@ namespace Microsoft.JScript {
 			ig.MarkLabel (a);
 			ig.Emit (OpCodes.Ldc_I4_1);
 			ig.MarkLabel (b);
-			
+
 			if (no_effect)				
 				ig.Emit (OpCodes.Pop);
-			else 
-				ig.Emit (OpCodes.Box, typeof (Boolean));
 		}
 	}
 }
