@@ -1,3 +1,8 @@
+2003-12-23 Ben Maurer  <bmaurer@users.sourceforge.net>
+
+	* pp.cs: Also test for 2 entry-point-looking methods
+	in a library, bug #52490.
+
 2003-12-22 Ben Maurer  <bmaurer@users.sourceforge.net>
 
 	* test-221.cs: Add some regression tests relating to

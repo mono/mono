@@ -158,6 +158,8 @@ multi-1:
 #
 # Tests that the order for internal/public in external 
 # assemblies does not affect the outcome of a build.
+# also checks that multiple `entry points' can be declared
+# in a library. (eg, that it is not confused by two Main methods)
 #
 multi-2:
 	$(INTERNAL_MCS) /target:library pi.cs
