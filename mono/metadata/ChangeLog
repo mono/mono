@@ -1,3 +1,11 @@
+2005-01-19  Zoltan Varga  <vargaz@freemail.hu>
+
+	* reflection.c (mono_method_body_get_object): Fill out local_var_sig_token
+	as well.
+
+	* object-internals.h (_MonoReflectionMethodBody): Rename 'sig_token' to
+	'local_var_sig_token'.
+
 2005-01-18  Zoltan Varga  <vargaz@freemail.hu>
 
 	* loader.c (mono_lookup_pinvoke_call): Revert the previous patch as it breaks 
