@@ -1,4 +1,8 @@
 
+Thu Nov 27 21:06:37 CET 2003 Paolo Molaro <lupus@ximian.com>
+
+	* mini-ppc.c: fixes for struct return type.
+
 Thu Nov 27 19:02:07 CET 2003 Paolo Molaro <lupus@ximian.com>
 
 	* mini.h, mini.c, mini-x86.c, mini-ppc.c, mini-sparc.c: move 
