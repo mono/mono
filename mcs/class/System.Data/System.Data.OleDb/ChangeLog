@@ -1,3 +1,8 @@
+2004-06-13  Gert Driesen <drieseng@users.sourceforge.net>
+
+	* OleDbLiteral.cs: changed enum field values to match MS.NET
+	* OleDbType.cs: changed enum field values to match MS.NET
+
 2004-06-04  Gert Driesen <drieseng@users.sourceforge.net>
 
 	* OleDbDataAdapter.cs: added stub for missing 
