@@ -2,6 +2,7 @@
 
 	* marshal.c (mono_marshal_get_native_wrapper): improved
 	class/byref arguments.
+	(mono_marshal_get_native_wrapper): better string marshaling support.
 
 Wed Jun 4 18:01:22 CEST 2003 Paolo Molaro <lupus@ximian.com>
 
