@@ -40,6 +40,8 @@ namespace Mono.Doc.Core
 		private bool      isNewProject;
 		private string    projectFileName;
 
+		public event EventHandler Modified;
+
 		public DocProject()
 		{
 			assemblyFiles   = new ArrayList();
@@ -275,7 +277,17 @@ namespace Mono.Doc.Core
 		public bool IsModified
 		{
 			get { return isModified;  }
-			set { isModified = value; }
+			set
+			{
+				if (!isModified && value && Modified != null)
+				{
+					Modified(this, new EventArgs());
+				}
+				else
+				{
+					isModified = value;
+				}
+			}
 		}
 
 		public bool IsNewProject
