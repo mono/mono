@@ -257,7 +257,6 @@ namespace System.Web.Services.Description {
 			
 			if (operationBinding.Input == null) throw new InvalidOperationException ("Input operation binding not found");
 			inMessage = (operationBinding.Input.Name != null) ? operationBinding.Input.Name : operationBinding.Name;
-			numMsg++;
 				
 			if (operationBinding.Output != null) {
 				outMessage = (operationBinding.Output.Name != null) ? operationBinding.Output.Name : operationBinding.Name;

@@ -99,7 +99,7 @@ namespace System.Web.Services.Description {
 					if (ats.XmlRoot != null) root = ats.XmlRoot;
 					else root = new XmlRootAttribute (hf.HeaderType.Name);
 					
-					if (root.Namespace == null) root.Namespace = TypeInfo.LogicalType.WebServiceLiteralNamespace;
+					if (root.Namespace == null) root.Namespace = TypeInfo.LogicalType.GetWebServiceLiteralNamespace (ServiceDescription.TargetNamespace);
 					if (root.ElementName == null) root.ElementName = hf.HeaderType.Name;
 					
 					XmlTypeMapping mapping = ReflectionImporter.ImportTypeMapping (hf.HeaderType, root);
@@ -108,7 +108,7 @@ namespace System.Web.Services.Description {
 				}
 				else
 				{
-					XmlTypeMapping mapping = SoapReflectionImporter.ImportTypeMapping (hf.HeaderType, TypeInfo.LogicalType.WebServiceEncodedNamespace);
+					XmlTypeMapping mapping = SoapReflectionImporter.ImportTypeMapping (hf.HeaderType, TypeInfo.LogicalType.GetWebServiceEncodedNamespace (ServiceDescription.TargetNamespace));
 					part.Type = new XmlQualifiedName (mapping.ElementName, mapping.Namespace);
 					SoapSchemaExporter.ExportTypeMapping (mapping);
 					hb.Encoding = EncodingNamespace;

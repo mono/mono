@@ -61,7 +61,7 @@ namespace System.Web.Services.Description {
 				MessagePart part = new MessagePart ();
 				part.Name = "Body";	
 				
-				XmlTypeMapping map = ReflectionImporter.ImportTypeMapping (Method.ReturnType, ti.WebServiceLiteralNamespace);
+				XmlTypeMapping map = ReflectionImporter.ImportTypeMapping (Method.ReturnType, ti.GetWebServiceLiteralNamespace (ServiceDescription.TargetNamespace));
 				XmlQualifiedName qname = new XmlQualifiedName (map.ElementName, map.Namespace);
 				part.Element = qname;
 				OutputMessage.Parts.Add (part);

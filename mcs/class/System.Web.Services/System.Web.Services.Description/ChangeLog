@@ -1,3 +1,11 @@
+2004-01-19  Lluis Sanchez Gual <lluis@ximian.com>
+
+	* HttpSimpleProtocolReflector.cs, SoapProtocolReflector.cs: 
+	  Use GetWebServiceLiteralNamespace instead of WebServiceLiteralNamespace.
+	* ProtocolReflector.cs: Port names must be unique in a service description.
+	  This fixes bug #53019.
+	* ProtocolImporter.cs: Little fix.
+
 2004-01-14  Lluis Sanchez Gual <lluis@ximian.com>
 
 	* ProtocolImporter.cs, SoapProtocolImporter.cs: Added support for OneWay

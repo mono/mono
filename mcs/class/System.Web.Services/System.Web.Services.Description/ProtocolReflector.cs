@@ -45,6 +45,8 @@ namespace System.Web.Services.Description {
 		XmlReflectionImporter reflectionImporter;
 		SoapReflectionImporter soapReflectionImporter;
 		
+		CodeIdentifiers portNames;
+		
 		#endregion // Fields
 
 		#region Constructors
@@ -184,6 +186,7 @@ namespace System.Web.Services.Description {
 		
 		internal void Reflect (ServiceDescriptionReflector serviceReflector, Type type, string url, XmlSchemaExporter xxporter, SoapSchemaExporter sxporter)
 		{
+			portNames = new CodeIdentifiers ();
 			this.serviceReflector = serviceReflector;
 			serviceUrl = url;
 			serviceType = type;
@@ -224,7 +227,7 @@ namespace System.Web.Services.Description {
 		void ImportBinding (ServiceDescription desc, Service service, TypeStubInfo typeInfo, string url, BindingInfo binfo)
 		{
 			port = new Port ();
-			port.Name = binfo.Name;
+			port.Name = portNames.AddUnique (binfo.Name, port);
 			port.Binding = new XmlQualifiedName (binfo.Name, binfo.Namespace);
 			service.Ports.Add (port);
 
@@ -249,6 +252,7 @@ namespace System.Web.Services.Description {
 		void ImportBindingContent (ServiceDescription desc, TypeStubInfo typeInfo, string url, BindingInfo binfo)
 		{
 			serviceDescription = desc;
+			
 			binding = new Binding ();
 			binding.Name = binfo.Name;
 			binding.Type = new XmlQualifiedName (binfo.Name, binfo.Namespace);
