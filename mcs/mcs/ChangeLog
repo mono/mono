@@ -1,3 +1,8 @@
+2004-04-27  Miguel de Icaza  <miguel@ximian.com>
+
+	* attribute.cs: Small regression fix: only convert the type if we
+	the type is different, fixes System.Drawing build.
+
 2004-04-27  Martin Baulig  <martin@ximian.com>
 
 	* attribute.cs (Attribute.Resolve): If we have a constant value

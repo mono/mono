@@ -309,12 +309,15 @@ namespace Mono.CSharp {
 					}
 
 					if (e is Constant) {
-						Constant c = Const.ChangeType (
-							Location, (Constant) e,
-							pi.PropertyType);
-						if (c == null)
-							return null;
-
+						Constant c;
+						
+						if (e.Type != pi.PropertyType){
+							c = Const.ChangeType (Location, (Constant) e, pi.PropertyType);
+							if (c == null)
+								return null;
+						} else
+							c = (Constant) e;
+						
 						object o = c.GetValue ();
 						prop_values.Add (o);
 						
@@ -349,11 +352,14 @@ namespace Mono.CSharp {
 					// Handle charset here, and set the TypeAttributes
 					
 					if (e is Constant){
-						Constant c = Const.ChangeType (
-							Location, (Constant) e, fi.FieldType);
-						if (c == null)
-							return null;
-
+						Constant c = (Constant) e;;
+						
+						if (c.Type != fi.FieldType){
+							c = Const.ChangeType (Location, (Constant) e, fi.FieldType);
+							if (c == null)
+								return null;
+						} 
+						
 						object value = c.GetValue ();
 						field_values.Add (value);
 					} else if (e is TypeOf) {
