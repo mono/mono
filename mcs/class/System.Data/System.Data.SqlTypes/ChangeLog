@@ -1,3 +1,7 @@
+2004-05-27  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* SqlDecimal.cs : don't output debug message to Console.
+
 2004-05-18  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* SqlDecimal.cs : Fixed operator/ not to return positive always.

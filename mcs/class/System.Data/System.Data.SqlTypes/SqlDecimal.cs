@@ -627,9 +627,9 @@ namespace System.Data.SqlTypes
 
 					// 10^i/2^i=5^i 
 					factor = constantsDecadeInt32Factors [i] >> i; 
-					System.Console.WriteLine ("***");
+//					System.Console.WriteLine ("***");
 					Mult128By32 (ref clo, ref chi, factor, 0);
-			       		System.Console.WriteLine ((((double)chi) * Math.Pow (2,64) + clo));
+//			       		System.Console.WriteLine ((((double)chi) * Math.Pow (2,64) + clo));
 
 				}
 
