@@ -1,3 +1,9 @@
+2003-03-13  Martin Baulig  <martin@ximian.com>
+
+	* statement.cs (Block.Emit): Call ig.BeginScope() and
+	ig.EndScope() when compiling with debugging info; call
+	LocalBuilder.SetLocalSymInfo _after_ opening the scope.
+
 2003-03-08  Miguel de Icaza  <miguel@ximian.com>
 
 	* expression.cs (Indexers): Do not construct immediately, allow
