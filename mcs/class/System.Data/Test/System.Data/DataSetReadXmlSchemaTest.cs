@@ -578,7 +578,7 @@ namespace MonoTests.System.Data
 
 			DataTable dt = ds.Tables [0];
 			AssertDataTable ("tab1", dt, "uno", 2, 0, 0, 1, 1, 1);
-			AssertDataColumn ("id", dt.Columns [0], "global", true, false, 0, 1, "global", MappingType.Attribute, typeof (string), "er", String.Empty, -1, "urn:foo", 0, String.Empty, false, false);
+			AssertDataColumn ("global", dt.Columns [0], "global", true, false, 0, 1, "global", MappingType.Attribute, typeof (string), "er", String.Empty, -1, "urn:foo", 0, String.Empty, false, false);
 			AssertDataColumn ("id", dt.Columns [1], "uno_Id", false, true, 0, 1, "uno_Id", MappingType.Hidden, typeof (int), DBNull.Value, String.Empty, -1, "urn:foo", 1, String.Empty, false, true);
 
 			// Here "XmlSchemaComplexType.AttributeUses" does not 
@@ -596,7 +596,7 @@ namespace MonoTests.System.Data
 			AssertDataColumn ("dos.global", dt.Columns ["global"], "global", true, false, 0, 1, "global", MappingType.Attribute, typeof (string), "si", String.Empty, -1, "urn:foo", /*1*/-1, String.Empty, false, false);
 #endif
 			AssertDataColumn ("dos.tres", dt.Columns [2], "tres", false, false, 0, 1, "tres", MappingType.Element, typeof (string), "yi", String.Empty, -1, "urn:foo", 2, String.Empty, false, false);
-			AssertDataColumn ("id", dt.Columns [3], "uno_Id", true, false, 0, 1, "uno_Id", MappingType.Hidden, typeof (int), DBNull.Value, String.Empty, -1, String.Empty, 3, String.Empty, false, false);
+			AssertDataColumn ("uno.id", dt.Columns [3], "uno_Id", true, false, 0, 1, "uno_Id", MappingType.Hidden, typeof (int), DBNull.Value, String.Empty, -1, String.Empty, 3, String.Empty, false, false);
 
 			AssertDataRelation ("rel", ds.Relations [0], "uno_des", true, new string [] {"uno_Id"}, new string [] {"uno_Id"}, true, true);
 		}
