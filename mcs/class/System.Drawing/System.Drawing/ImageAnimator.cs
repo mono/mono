@@ -8,6 +8,7 @@
 // (C) 2002 Ximian, Inc
 //
 using System;
+using System.Drawing.Imaging;
 
 namespace System.Drawing
 {
@@ -29,10 +30,32 @@ namespace System.Drawing
 			throw new NotImplementedException (); 
 		}
 
-		[MonoTODO ("Implement")]
 		public static bool CanAnimate (Image img)
 		{
-			throw new NotImplementedException (); 
+			//An image can animate if it has multiple frame in
+			//time based FrameDimension else return false
+			//Doubt what if the image has multiple frame in page
+			//based FrameDimension
+			if (img == null)
+				return false;
+
+			//Need to check whether i can do this without iterating
+			//within the FrameDimensionsList, ie just call GetFrameCount
+			//with parameter FrameDimension.Time
+			Guid[] dimensionList = img.FrameDimensionsList;
+			int length = dimensionList.Length;
+			for (int i=0; i<length; i++)
+			{
+				Guid dimension = dimensionList[i];
+				if (dimension.Equals (FrameDimension.Time))
+				{
+					int frameCount = img.GetFrameCount (FrameDimension.Time);
+					if (frameCount > 1)
+						return true;
+				}
+			}			
+
+			return false; 
 		}
 
 		[MonoTODO ("Implement")]

@@ -1,3 +1,6 @@
+2004-04-23 Sanjay Gupta <gsanjay@novell.com>
+	* ImageAnimator.cs: Implemented CanAnimate() method.
+
 2004-04-22 Jordi Mas i Hernandez <jordi@ximian.com>
 	* Image.cs: added RotateFlip and RemovePropertyItem calls
 	
