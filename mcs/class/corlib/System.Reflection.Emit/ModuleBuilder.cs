@@ -52,7 +52,9 @@ namespace System.Reflection.Emit {
 			this.fqname = fullyqname;
 			this.assembly = this.assemblyb = assb;
 			this.transient = transient;
-			guid = Guid.NewGuid().ToByteArray ();
+			// to keep mcs fast we do not want CryptoConfig wo be involved to create the RNG
+			guid = Guid.FastNewGuidArray ();
+			// guid = Guid.NewGuid().ToByteArray ();
 			table_idx = get_next_table_index (this, 0x00, true);
 			name_cache = new Hashtable ();
 
