@@ -11,10 +11,12 @@ System.Web.Services.Configuration/WebServicesConfigurationSectionHandler.cs
 System.Web.Services.Configuration/XmlFormatExtensionAttribute.cs
 System.Web.Services.Configuration/XmlFormatExtensionPointAttribute.cs
 System.Web.Services.Configuration/XmlFormatExtensionPrefixAttribute.cs
+System.Web.Services.Description/BasicProfileChecker.cs
 System.Web.Services.Description/BasicProfileViolation.cs
 System.Web.Services.Description/BasicProfileViolationCollection.cs
 System.Web.Services.Description/Binding.cs
 System.Web.Services.Description/BindingCollection.cs
+System.Web.Services.Description/ConformanceChecker.cs
 System.Web.Services.Description/DocumentableItem.cs
 System.Web.Services.Description/FaultBinding.cs
 System.Web.Services.Description/FaultBindingCollection.cs

@@ -1,3 +1,9 @@
+2004-07-14  Lluis Sanchez Gual <lluis@ximian.com>
+
+	* System.Web.Services.dll.sources: Added new files:
+		System.Web.Services.Description/BasicProfileChecker.cs
+		System.Web.Services.Description/ConformanceChecker.cs
+
 2004-07-13  Lluis Sanchez Gual <lluis@ximian.com>
 
 	* System.Web.Services.dll.sources: Added new files:
