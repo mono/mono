@@ -117,6 +117,15 @@ name will be the file name.
 Links to the specified RESOURCE.  The optional ID can be used to give
 a name to the linked resource.
 .TP
+.I -r:ASSEMBLY1[,ASSEMBLY2], \-r ASSEMBLY1[,ASSEMBLY2]
+Reference the named assemblies.  Use this to use classes from the named
+assembly in your program.  The assembly will be loaded from either the
+system directory where all the assemblies live, or from the path
+explicitly given with the -L option.
+.PP
+You can also use a semicolon to separate the assemblies instead of a
+comma. 
+.TP
 .I \-recurse:PATTERN, --recurse PATTERN
 Does recursive compilation using the specified pattern.  In Unix the
 shell will perform globbing, so you migth want to use it like this:
@@ -137,22 +146,6 @@ in the compilation process.
 .I \-unsafe, -unsafe+
 Enables compilation of unsafe code.
 .TP
-.I \-warnaserror, \-warnaserror+
-Treat warnings as errors.
-.TP
-.I \-warn:LEVEL
-Sets the warning level.  0 is the lowest warning level, and 4 is the
-highest.  The default is 2.
-.TP
-.I -r:ASSEMBLY1[,ASSEMBLY2], \-r ASSEMBLY1[,ASSEMBLY2]
-Reference the named assemblies.  Use this to use classes from the named
-assembly in your program.  The assembly will be loaded from either the
-system directory where all the assemblies live, or from the path
-explicitly given with the -L option.
-.PP
-You can also use a semicolon to separate the assemblies instead of a
-comma. 
-.TP
 .I \-v 
 Debugging. Turns on verbose yacc parsing.
 .TP
@@ -161,6 +154,21 @@ Turns on C# 2.0 language features.
 .TP
 .I \-\-version
 Shows the compiler version.
+.TP
+.I \-warnaserror, \-warnaserror+
+Treat warnings as errors.
+.TP
+.I \-warn:LEVEL
+Sets the warning level.  0 is the lowest warning level, and 4 is the
+highest.  The default is 2.
+.TP
+.I \-win32res:FILE
+Specifies a Win32 resource file (.res) to be bundled into the
+resulting assembly.
+.TP
+.I \-win32icon:FILE
+Attaches the icon specified in FILE on the output into the resulting
+assembly.
 .TP
 .I \-\-
 Use this to stop option parsing, and allow option-looking parameters
