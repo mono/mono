@@ -1,3 +1,7 @@
+2004-06-11  Martin Baulig  <martin@ximian.com>
+
+	* String.cs (Concat): Implemented the varargs version.
+
 2004-06-10  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Decimal.cs: Hacked the Parse method to allow the runtime C code to

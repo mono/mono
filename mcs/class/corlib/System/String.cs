@@ -986,10 +986,8 @@ namespace System
 			return Concat (s1, s2, s3);
 		}
 
-		//
-		// Do *not* remove `internal' from that method
-		//
-		internal static String Concat (Object obj1, Object obj2, Object obj3, Object obj4)
+		public static String Concat (Object obj1, Object obj2, Object obj3,
+					     Object obj4, __arglist)
 		{
 			string s1, s2, s3, s4;
 
@@ -1008,13 +1006,21 @@ namespace System
 			else
 				s3 = obj3.ToString ();
 
-			if (obj4 == null)
-				s4 = String.Empty;
-			else
-				s4 = obj4.ToString ();
+			ArgIterator iter = new ArgIterator (__arglist);
+			int argCount = iter.GetRemainingCount();
 
-			return Concat (s1, s2, s3, s4);
-			
+			StringBuilder sb = new StringBuilder ();
+			if (obj4 != null)
+				sb.Append (obj4.ToString ());
+
+			for (int i = 0; i < argCount; i++) {
+				TypedReference typedRef = iter.GetNextArg ();
+				sb.Append (TypedReference.ToObject (typedRef));
+			}
+
+			s4 = sb.ToString ();
+
+			return Concat (s1, s2, s3, s4);			
 		}
 
 		public static String Concat (String s1, String s2)
