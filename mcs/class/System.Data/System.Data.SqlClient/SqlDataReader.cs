@@ -237,7 +237,7 @@ namespace System.Data.SqlClient {
 		public int GetOrdinal (string name)
 		{
 			foreach (DataRow schemaRow in schemaTable.Rows)
-				if (schemaRow ["ColumnName"] == name)
+				if (((string) schemaRow ["ColumnName"]).Equals (name))
 					return (int) schemaRow ["ColumnOrdinal"];
 			foreach (DataRow schemaRow in schemaTable.Rows)
 				if (String.Compare (((string) schemaRow ["ColumnName"]), name, true) == 0)
