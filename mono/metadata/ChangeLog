@@ -1,3 +1,9 @@
+2002-11-14  Dietmar Maurer  <dietmar@ximian.com>
+
+	* image.c (mono_image_loaded_by_guid): a method to get loaded
+	images by guid. 
+	(load_metadata_ptrs): we store the guid as string.
+
 2002-11-11  Dietmar Maurer  <dietmar@ximian.com>
 
 	* assembly.c (mono_assembly_open): check the guid of aot compiled lib.
