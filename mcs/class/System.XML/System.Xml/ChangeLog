@@ -1,5 +1,10 @@
 2004-12-16  Atsushi Enomoto <atsushi@ximian.com>
 
+	* XmlConvert.cs :
+	  Added DateTime related methods with serialization mode.
+
+2004-12-16  Atsushi Enomoto <atsushi@ximian.com>
+
 	* XmlReader.cs : added MoveToFollowing().
 	* XmlNode.cs,
 	  XmlElement.cs,

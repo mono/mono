@@ -265,11 +265,30 @@ namespace System.Xml {
 			return Char.Parse(s);
 		}
 
-		public static DateTime ToDateTime(string s)
+#if NET_2_0
+		[Obsolete]
+#endif
+		public static DateTime ToDateTime (string s)
 		{
-			return ToDateTime(s, datetimeFormats);
+			return ToDateTime (s, datetimeFormats);
 		}
 		
+#if NET_2_0
+		public static DateTime ToDateTime (string value, XmlDateTimeSerializationMode mode)
+		{
+			string modestr = null;
+			switch (mode) {
+			case XmlDateTimeSerializationMode.Local:
+			case XmlDateTimeSerializationMode.RoundTripKind:
+			default:
+				return ToDateTime (value, "yyyy-MM-ddTHH:mm:ss.fffffffzzz");
+			case XmlDateTimeSerializationMode.Utc:
+				return ToDateTime (value, "yyyy-MM-ddTHH:mm:ss.fffffffZ").ToUniversalTime ();
+			case XmlDateTimeSerializationMode.Unspecified:
+				return ToDateTime (value, "yyyy-MM-ddTHH:mm:ss.fffffff");
+			}
+		}
+#endif
 		public static DateTime ToDateTime(string s, string format)
 		{
 			DateTimeFormatInfo d = new DateTimeFormatInfo();
@@ -448,10 +467,39 @@ namespace System.Xml {
 			return value.ToString(CultureInfo.InvariantCulture);
 		}
 
-		public static string ToString(DateTime value)
+#if NET_2_0
+		[Obsolete]
+#endif
+		public static string ToString (DateTime value)
 		{
-			return value.ToString("yyyy-MM-ddTHH:mm:ss.fffffffzzz", CultureInfo.InvariantCulture);
+			return value.ToString ("yyyy-MM-ddTHH:mm:ss.fffffffzzz", CultureInfo.InvariantCulture);
 		}
+
+#if NET_2_0
+		public static string ToString (DateTime value, XmlDateTimeSerializationMode mode)
+		{
+			string modestr = null;
+			switch (mode) {
+			case XmlDateTimeSerializationMode.Local:
+			case XmlDateTimeSerializationMode.RoundTripKind:
+			default:
+				return value.ToString (
+					"yyyy-MM-ddTHH:mm:ss.fffffffzzz",
+					CultureInfo.InvariantCulture);
+				break;
+			case XmlDateTimeSerializationMode.Utc:
+				return value.ToUniversalTime ().ToString (
+					"yyyy-MM-ddTHH:mm:ss.fffffffZ",
+					CultureInfo.InvariantCulture);
+				break;
+			case XmlDateTimeSerializationMode.Unspecified:
+				return value.ToString (
+					"yyyy-MM-ddTHH:mm:ss.fffffff",
+					CultureInfo.InvariantCulture);
+				break;
+			}
+		}
+#endif
 
 		public static string ToString(DateTime value, string format)
 		{
