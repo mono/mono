@@ -1,3 +1,11 @@
+2003-03-31  Martin Baulig  <martin@ximian.com>
+
+	* debug.h (MonoDebuggerEvent): Removed
+	MONO_DEBUGGER_EVENT_THREAD_CREATED.
+
+	* jit.c (mono_thread_start_cb): Don't send the
+	MONO_DEBUGGER_EVENT_THREAD_CREATED event.
+
 2003-03-13  Martin Baulig  <martin@ximian.com>
 
 	* debug.c (_mono_debug_address_from_il_offset): Moved to
