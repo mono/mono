@@ -1,3 +1,17 @@
+2003-12-29  Tim Coleman <tim@timcoleman.com>
+	* System.Data.ObjectSpaces/ObjectContext.cs:
+	* System.Data.ObjectSpaces/ObjectReader.cs:
+	* System.Data.ObjectSpaces/ObjectSet.cs:
+	* System.Data.ObjectSpaces/ObjectSpace.cs:
+		Some implementation
+	* System.Data.ObjectSpaces/ObjectList.cs:
+	* System.Data.ObjectSpaces/ObjectSources.cs:
+	* System.Data.ObjectSpaces.Schema/ObjectRelationship.cs:
+	* System.Data.ObjectSpaces.Schema/ObjectSchema.cs:
+	* System.Data.ObjectSpaces.Schema/SchemaClass.cs:
+	* System.Data.ObjectSpaces.Schema/SchemaMember.cs:
+		Remove erroneous "private" modifiers
+
 2003-12-13  Tim Coleman <tim@timcoleman.com>
 	* System.Data.ObjectSpaces.Query/ObjectExpression.cs:
 		Add missing includes

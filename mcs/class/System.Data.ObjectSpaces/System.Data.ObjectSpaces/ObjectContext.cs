@@ -3,8 +3,10 @@
 //
 // Author:
 //   Mark Easton (mark.easton@blinksoftware.co.uk)
+//   Tim Coleman (tim@timcoleman.com)
 //
 // (C) BLiNK Software Ltd.  http://www.blinksoftware.co.uk
+// Copyright (C) Tim Coleman, 2003
 //
 
 #if NET_1_2
@@ -31,16 +33,14 @@ namespace System.Data.ObjectSpaces
                 public abstract void Delete (object obj);
                 public abstract ValueRecord GetCurrentValueRecord (object obj);
                   
-                [MonoTODO]
                 public static ObjectContext GetInternalContext (ObjectSpace objectSpace)
                 {
-                        return null;
+			return objectSpace.ObjectContext;
                 }
                 
-                [MonoTODO]
                 public static ObjectContext GetInternalContext (ObjectSet objectSet)
                 {
-                        return null;
+			return objectSet.ObjectContext;
                 }
                 
                 public abstract ObjectState GetObjectState (object obj);

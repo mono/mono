@@ -66,7 +66,7 @@ namespace System.Data.ObjectSpaces.Schema {
 		}
 
 		[MonoTODO]
-		private IDomainStructure IDomainField.DomainStructure {
+		IDomainStructure IDomainField.DomainStructure {
 			get { throw new NotImplementedException (); }
 		}
 

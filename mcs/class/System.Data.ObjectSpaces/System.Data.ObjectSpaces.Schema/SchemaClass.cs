@@ -60,12 +60,12 @@ namespace System.Data.ObjectSpaces.Schema {
 		}
 
 		[MonoTODO]
-		private IDomainSchema IDomainStructure.DomainSchema {
+		IDomainSchema IDomainStructure.DomainSchema {
 			get { throw new NotImplementedException (); }
 		}
 
 		[MonoTODO]
-		private string IDomainStructure.Select {
+		string IDomainStructure.Select {
 			get { throw new NotImplementedException (); }
 		}
 
@@ -79,7 +79,7 @@ namespace System.Data.ObjectSpaces.Schema {
 		#region Methods
 
 		[MonoTODO]
-		private IDomainField IDomainStructure.GetDomainField (string select, IXmlNamespaceResolver namespaces)
+		IDomainField IDomainStructure.GetDomainField (string select, IXmlNamespaceResolver namespaces)
 		{
 			throw new NotImplementedException ();
 		}

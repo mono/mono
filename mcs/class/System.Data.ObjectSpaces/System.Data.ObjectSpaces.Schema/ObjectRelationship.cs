@@ -69,27 +69,27 @@ namespace System.Data.ObjectSpaces.Schema {
 			get { throw new NotImplementedException (); }
 		}
 
-		private bool IDomainConstraint.CascadeDelete {
+		bool IDomainConstraint.CascadeDelete {
 			get { return IsCascadeDelete; }
 		}
 
 		[MonoTODO]
-		private IDomainSchema IDomainConstraint.DomainSchema {
+		IDomainSchema IDomainConstraint.DomainSchema {
 			get { throw new NotImplementedException (); }
 		}
 
 		[MonoTODO]
-		private IDomainFieldJoinCollection IDomainConstraint.FieldJoins {
+		IDomainFieldJoinCollection IDomainConstraint.FieldJoins {
 			get { throw new NotImplementedException (); }
 		}
 
 		[MonoTODO]
-		private IDomainStructure IDomainConstraint.FromDomainStructure {
+		IDomainStructure IDomainConstraint.FromDomainStructure {
 			get { throw new NotImplementedException (); }
 		}
 
 		[MonoTODO]
-		private IDomainStructure IDomainConstraint.ToDomainStructure {
+		IDomainStructure IDomainConstraint.ToDomainStructure {
 			get { throw new NotImplementedException (); }
 		}
 

@@ -20,6 +20,12 @@ namespace System.Data.ObjectSpaces
 {
         public class ObjectSet : CollectionBase, IListSource, IXmlSerializable
         {        
+		#region Fields
+
+		ObjectContext context;
+
+		#endregion // Fields
+
 		#region Constructors
 
                 [MonoTODO]                
@@ -45,8 +51,12 @@ namespace System.Data.ObjectSpaces
 		}
 
 		[MonoTODO]
-		private bool IListSource.ContainsListCollection {
+		bool IListSource.ContainsListCollection {
 			get { throw new NotImplementedException(); }
+		}
+		 
+		internal ObjectContext ObjectContext {
+			get { return context; }
 		}
 
 		#endregion // Properties
@@ -78,25 +88,25 @@ namespace System.Data.ObjectSpaces
 		}
 
 		[MonoTODO]
-		private IList IListSource.GetList ()
+		IList IListSource.GetList ()
 		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		private XmlSchema IXmlSerializable.GetSchema()
+		XmlSchema IXmlSerializable.GetSchema()
 		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		private void IXmlSerializable.ReadXml (XmlReader reader)
+		void IXmlSerializable.ReadXml (XmlReader reader)
 		{
 			throw new NotImplementedException();
 		}
 
 		[MonoTODO]
-		private void IXmlSerializable.WriteXml (XmlWriter writer)
+		void IXmlSerializable.WriteXml (XmlWriter writer)
 		{
 			throw new NotImplementedException();
 		}

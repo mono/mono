@@ -74,7 +74,7 @@ namespace System.Data.ObjectSpaces {
 		}
 
 		[MonoTODO]
-		private IEnumerator IEnumerable.GetEnumerator ()
+		IEnumerator IEnumerable.GetEnumerator ()
 		{
 			throw new NotImplementedException ();
 		}

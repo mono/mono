@@ -52,7 +52,7 @@ namespace System.Data.ObjectSpaces.Schema {
 		}
 
 		[MonoTODO]
-		private MappingDataSourceType IDomainSchema.DomainType {
+		MappingDataSourceType IDomainSchema.DomainType {
 			get { throw new NotImplementedException (); }
 		}
 
@@ -94,109 +94,109 @@ namespace System.Data.ObjectSpaces.Schema {
 		}
 
 		[MonoTODO]
-		private IDomainConstraint IDomainSchema.GetDomainConstraint (string select, IXmlNamespaceResolver namespaces)
+		IDomainConstraint IDomainSchema.GetDomainConstraint (string select, IXmlNamespaceResolver namespaces)
 		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		private IDomainStructure IDomainSchema.GetDomainStructure (string select, IXmlNamespaceResolver namespaces)
+		IDomainStructure IDomainSchema.GetDomainStructure (string select, IXmlNamespaceResolver namespaces)
 		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		private void IDomainSchema.Read (string url)
+		void IDomainSchema.Read (string url)
 		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		private void IDomainSchema.Read (string url, ValidationEventHandler validationEventHandler)
+		void IDomainSchema.Read (string url, ValidationEventHandler validationEventHandler)
 		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		private void IDomainSchema.Read (XmlReader reader)
+		void IDomainSchema.Read (XmlReader reader)
 		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		private void IDomainSchema.Read (XmlReader reader, ValidationEventHandler validationEventHandler)
+		void IDomainSchema.Read (XmlReader reader, ValidationEventHandler validationEventHandler)
 		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		private void IDomainSchema.ReadExtensions (XmlReader reader)
+		void IDomainSchema.ReadExtensions (XmlReader reader)
 		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		private void IDomainSchema.ReadExtensions (XmlReader reader, ValidationEventHandler validationEventHandler)
+		void IDomainSchema.ReadExtensions (XmlReader reader, ValidationEventHandler validationEventHandler)
 		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		private void IDomainSchema.Write (string schemaLocation)
+		void IDomainSchema.Write (string schemaLocation)
 		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		private void IDomainSchema.Write (string schemaLocation, IXmlNamespaceResolver namespaceResolver)
+		void IDomainSchema.Write (string schemaLocation, IXmlNamespaceResolver namespaceResolver)
 		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		private void IDomainSchema.Write (XmlWriter writer)
+		void IDomainSchema.Write (XmlWriter writer)
 		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		private void IDomainSchema.Write (XmlWriter writer, IXmlNamespaceResolver namespaceResolver)
+		void IDomainSchema.Write (XmlWriter writer, IXmlNamespaceResolver namespaceResolver)
 		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		private void IDomainSchema.Write (Stream stream)
+		void IDomainSchema.Write (Stream stream)
 		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		private void IDomainSchema.Write (Stream stream, IXmlNamespaceResolver namespaceResolver)
+		void IDomainSchema.Write (Stream stream, IXmlNamespaceResolver namespaceResolver)
 		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		private void IDomainSchema.Write (TextWriter writer)
+		void IDomainSchema.Write (TextWriter writer)
 		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		private void IDomainSchema.Write (TextWriter writer, IXmlNamespaceResolver namespaceResolver)
+		void IDomainSchema.Write (TextWriter writer, IXmlNamespaceResolver namespaceResolver)
 		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		private void IDomainSchema.WriteExtensions (XmlWriter reader)
+		void IDomainSchema.WriteExtensions (XmlWriter reader)
 		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		private void IDomainSchema.WriteExtensions (XmlWriter reader, IXmlNamespaceResolver namespaceResolver)
+		void IDomainSchema.WriteExtensions (XmlWriter reader, IXmlNamespaceResolver namespaceResolver)
 		{
 			throw new NotImplementedException ();
 		}

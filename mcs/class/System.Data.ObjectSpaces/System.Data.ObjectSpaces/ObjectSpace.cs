@@ -1,10 +1,12 @@
 //
 // System.Data.ObjectSpaces.ObjectSpace.cs : Handles high-level object persistence interactions with a data source.
 //
-// Author:
+// Authors:
 //   Mark Easton (mark.easton@blinksoftware.co.uk)
+//   Tim Coleman (tim@timcoleman.com)
 //
 // (C) BLiNK Software Ltd.  http://www.blinksoftware.co.uk
+// Copyright (C) Tim Coleman, 2003
 //
 
 #if NET_1_2
@@ -12,107 +14,189 @@
 using System.Collections;
 using System.Data;
 using System.Data.Mapping;
+using System.Data.ObjectSpaces.Query;
+using System.Data.ObjectSpaces.Schema;
 
 namespace System.Data.ObjectSpaces
 {
         public class ObjectSpace
         {        
-                [MonoTODO]                
-                public ObjectSpace (MappingSchema map, ObjectSources sources) {}
-                
-                [MonoTODO]
-                public ObjectSpace (string mapFile, IDbConnection conn) {}
-                
-                [MonoTODO]
-                public ObjectSpace (string mapFile, ObjectSources sources) {}
-                
-                [MonoTODO]
-                public ObjectSpace (MappingSchema map, IDbConnection conn) {}
+		#region Fields
 
-                [MonoTODO]
+		MappingSchema map;
+		ObjectSources sources;
+		ObjectSchema os;
+		CommonObjectContext context;
+
+		#endregion // Fields
+
+		#region Constructors
+
+		private ObjectSpace ()
+			: base ()
+		{
+			os = new ObjectSchema ();
+			context = new CommonObjectContext (os);
+		}
+
+                [MonoTODO]                
+                public ObjectSpace (MappingSchema map, ObjectSources sources) 
+			: this ()
+		{
+			this.map = map;
+			this.sources = sources;
+		}
+                
+                [MonoTODO ("Figure out correct name")]
+                public ObjectSpace (string mapFile, IDbConnection con) 
+			: this ()
+		{
+			map = new MappingSchema (mapFile);
+			sources = new ObjectSources ();
+			sources.Add (map.DataSources [0].Name, con);
+		}
+                
+                public ObjectSpace (string mapFile, ObjectSources sources) 
+			: this ()
+		{
+			map = new MappingSchema (mapFile);
+			this.sources = sources;
+		}
+                
+                [MonoTODO ("Figure out correct name")]
+                public ObjectSpace (MappingSchema map, IDbConnection con) 
+			: this ()
+		{
+			this.map = map;
+			sources = new ObjectSources ();
+			sources.Add (map.DataSources [0].Name, con);
+		}
+
+		#endregion // Constructors
+
+		#region Properties
+
+		internal ObjectContext ObjectContext {
+			get { return context; }
+		}
+
+		#endregion // Properties
+
+		#region Methods
+
                 public object GetObject (ObjectQuery query, object[] parameters)
                 {
-                        return null;
+			return GetObject (GetObjectReader (query, parameters));
                 }
 
-                [MonoTODO]
                 public object GetObject (Type type, string queryString)
                 {
-                        return null;
+			return GetObject (GetObjectReader (type, queryString));
                 }
 
-                [MonoTODO]
                 public object GetObject (Type type, string queryString, string relatedSpan)
                 {
-                        return null;
+			return GetObject (GetObjectReader (type, queryString));
                 }
 
-                [MonoTODO]
+		private object GetObject (ObjectReader reader)
+		{
+			reader.Read ();
+			object result = reader.Current;
+			reader.Close ();
+			return result;
+		}
+
                 public ObjectReader GetObjectReader (ObjectQuery query, object[] parameters)
                 {
-                        return null;
+			ObjectExpression oe = OPath.Parse (query, os);
+			CompiledQuery cq = oe.Compile (map);
+			return ObjectEngine.GetObjectReader (sources, context, cq, parameters);
                 }
 
-                [MonoTODO]
                 public ObjectReader GetObjectReader (Type type, string queryString)
                 {
-                        return null;
+			return GetObjectReader (new ObjectQuery (type, queryString), null);
                 }
 
-                [MonoTODO]
                 public ObjectReader GetObjectReader (Type type, string queryString, string relatedSpan)
                 {
-                        return null;
+			return GetObjectReader (new ObjectQuery (type, queryString, relatedSpan), null);
                 }
 
-                [MonoTODO]
                 public ObjectSet GetObjectSet (ObjectQuery query, object[] parameters)
                 {
-                        return null;
+			return GetObjectSet (GetObjectReader (query, parameters));
                 }
 
-                [MonoTODO]
                 public ObjectSet GetObjectSet (Type type, string queryString)
                 {
-                        return null;
+			return GetObjectSet (GetObjectReader (type, queryString));
                 }
 
-                [MonoTODO]
                 public ObjectSet GetObjectSet (Type type, string queryString, string relatedSpan)
                 {
-                        return null;
+			return GetObjectSet (GetObjectReader (type, queryString, relatedSpan));
                 }
 
-                [MonoTODO]
-                public void MarkForDeletion (object obj) {}        
+		private ObjectSet GetObjectSet (ObjectReader reader)
+		{
+			ObjectSet result = new ObjectSet ();
+			foreach (object o in reader)
+				result.Add (o);
+			reader.Close ();
+			return result;
+		}
+
+                public void MarkForDeletion (object obj) 
+		{
+			MarkForDeletion (new object[] {obj});
+		}
 
                 [MonoTODO]
                 public void MarkForDeletion (ICollection objs) {}
 
-                [MonoTODO]
-                public void PersistChanges (object obj) {}
+                public void PersistChanges (object obj) 
+		{
+			PersistChanges (new object[] {obj}, new PersistenceOptions ());
+		}
 
-                [MonoTODO]
-                public void PersistChanges (object obj, PersistenceOptions options) {}
+                public void PersistChanges (object obj, PersistenceOptions options) 
+		{
+			PersistChanges (new object[] {obj}, options);
+		}
 
-                [MonoTODO]
-                public void PersistChanges (ICollection objs) {}
+                public void PersistChanges (ICollection objs) 
+		{
+			PersistChanges (objs, new PersistenceOptions ());
+		}
 
-                [MonoTODO]
-                public void PersistChanges (ICollection objs, PersistenceOptions options) {}
+                public void PersistChanges (ICollection objs, PersistenceOptions options) 
+		{
+			ObjectEngine.PersistChanges (map, sources, context, objs, options);
+		}
 
-                [MonoTODO]        
-                public void Resync (object obj, Depth depth) {}
+                public void Resync (object obj, Depth depth) 
+		{
+			Resync (new object[] {obj}, depth);
+		}
 
-                [MonoTODO]
-                public void Resync (ICollection objs, Depth depth) {}
+                public void Resync (ICollection objs, Depth depth) 
+		{
+			ObjectEngine.Resync (map, sources, context, objs, depth);
+		}
 
-                [MonoTODO]
-                public void StartTracking (object obj, InitialState state) {}
+                public void StartTracking (object obj, InitialState state) 
+		{
+			StartTracking (new object[] {obj}, state);
+		}
         
                 [MonoTODO]
-                public void StartTracking (ICollection objs, InitialState state) {}
-        
+                public void StartTracking (ICollection objs, InitialState state) 
+		{
+		}
+
+		#endregion // Methods
         }
 }
 

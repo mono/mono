@@ -3,8 +3,10 @@
 //
 // Author:
 //   Mark Easton (mark.easton@blinksoftware.co.uk)
+//   Tim Coleman (tim@timcoleman.com)
 //
 // (C) BLiNK Software Ltd.  http://www.blinksoftware.co.uk
+// Copyright (C) Tim Coleman, 2003
 //
 
 #if NET_1_2
@@ -18,8 +20,8 @@ namespace System.Data.ObjectSpaces
                 //Inform listeners when a ValueRecord is being merged
                 public event ValueRecordMergeEventHandler ValueMerging; 
                 
-                private bool isClosed = true;           //Is the reader closed
-
+                bool isClosed = true; 
+		bool disposed;
 
                 [MonoTODO]
                 public object Current { 
@@ -52,11 +54,15 @@ namespace System.Data.ObjectSpaces
                         this.isClosed = true;
                 }     
 
-
-                [MonoTODO]
-                protected virtual void Dispose (bool disposing) {}
-
-
+                protected virtual void Dispose (bool disposing) 
+		{
+			if (!disposed) {
+				if (disposing) {
+					Close ();
+				}
+				disposed = true;
+			}
+		}
 
                 [MonoTODO]
                 public IEnumerator GetEnumerator ()
@@ -64,9 +70,10 @@ namespace System.Data.ObjectSpaces
                         return null;
                 }
 
-                [MonoTODO]
-                private void IDisposable.Dispose ()
+                void IDisposable.Dispose ()
                 {
+			Dispose (true);
+			GC.SuppressFinalize (this);
                 }
 
                 [MonoTODO]
