@@ -1,3 +1,7 @@
+2004-12-11  Zoltan Varga  <vargaz@freemail.hu>
+
+	* mini.h mini.c aot.c: Put the bblock table for a SWITCH patch into a
+	separate structure to reduce the size of MonoJumpInfo.
 
 Fri Dec 10 18:09:22 CET 2004 Paolo Molaro <lupus@ximian.com>
 
