@@ -5218,6 +5218,7 @@ namespace Mono.CSharp {
 			ig.Emit (OpCodes.Brfalse, end_try);
 			ig.Emit (OpCodes.Ldloc, enumerator);
 			ig.Emit (OpCodes.Callvirt, hm.get_current);
+
 			variable.EmitAssign (ec, conv);
 			statement.Emit (ec);
 			ig.Emit (OpCodes.Br, ec.LoopBegin);
@@ -5288,8 +5289,12 @@ namespace Mono.CSharp {
 
 				ig.Emit (OpCodes.Ldloc, copy);
 				ig.Emit (OpCodes.Ldloc, counter);
-				ArrayAccess.EmitLoadOpcode (ig, var_type);
 
+				//
+				// Load the value, we load the value using the underlying type,
+				// then we use the variable.EmitAssign to load using the proper cast.
+				//
+				ArrayAccess.EmitLoadOpcode (ig, element_type);
 				variable.EmitAssign (ec, conv);
 
 				statement.Emit (ec);

@@ -1,3 +1,14 @@
+2003-04-10  Miguel de Icaza  <miguel@ximian.com>
+
+	* statement.cs (Foreach.EmitArrayForeach): bug fix: The code used
+	to load the array value by emitting a load on the foreach variable
+	type.  This was incorrect.  
+
+	We now emit the code to load an element using the the array
+	variable type, and then we emit the conversion operator.
+
+	Fixed #40176
+
 2003-04-10  Zoltan Varga  <vargaz@freemail.hu>
 
 	* attribute.cs: Avoid allocation of ArrayLists in the common case.

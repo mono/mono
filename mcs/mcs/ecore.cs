@@ -3214,6 +3214,11 @@ namespace Mono.CSharp {
 			return this;
 		}
 
+		public override string ToString ()
+		{
+			return String.Format ("ConvCast ({0}, {1})", mode, child);
+		}
+		
 		public override void Emit (EmitContext ec)
 		{
 			ILGenerator ig = ec.ig;
