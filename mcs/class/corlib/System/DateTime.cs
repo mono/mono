@@ -383,13 +383,13 @@ namespace System
 		public int CompareTo (object v)
 		{
 			if ( v == null)
-				return 1 ;
+				return 1;
 
 			if (!(v is System.DateTime))
 				throw new ArgumentException (Locale.GetText (
 					"Value is not a System.DateTime"));
 
-			return Compare (this , (DateTime) v);
+			return Compare (this, (DateTime) v);
 		}
 
 		public static int DaysInMonth (int year, int month)

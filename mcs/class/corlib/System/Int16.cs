@@ -23,10 +23,19 @@ namespace System {
 
 		public int CompareTo (object v)
 		{
-			if (v == null || !(v is System.Int16))
+			if (v == null)
+				return 1;
+
+			if (!(v is System.Int16))
 				throw new ArgumentException (Locale.GetText ("Value is not a System.Int16"));
 
-			return value - ((short) v);
+			short xv = (short) v;
+			if (value == xv)
+				return 0;
+			if (value > xv)
+				return 1;
+			else
+				return -1;
 		}
 
 		public override bool Equals (object o)

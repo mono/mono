@@ -28,10 +28,20 @@ namespace System {
 		
 		public int CompareTo (object v)
 		{
-			if (v == null || !(v is System.Char))
+			if (v == null)
+				return 1;
+			
+			if (!(v is System.Char))
 				throw new ArgumentException (Locale.GetText ("Value is not a System.Char"));
 
-			return value - ((char) v);
+			char xv = (char) v;
+			if (value == xv)
+				return 0;
+
+			if (value > xv)
+				return 1;
+			else
+				return -1;
 		}
 
 		public override bool Equals (object o)

@@ -77,7 +77,10 @@ namespace System {
 		/// </returns>
 		public int CompareTo (object obj) 
 		{
-			if(obj != null && !(obj is System.Boolean))
+			if (obj == null)
+				return 1;
+			
+			if (!(obj is System.Boolean))
 				throw new ArgumentException
 				(Locale.GetText ("Object is not a Boolean and is not a null reference"));
 			

@@ -90,7 +90,8 @@ namespace System {
 			Version v;
 			
 			if (version == null)
-				throw new ArgumentNullException ("version");
+				return 1;
+			
 			if (! (version is Version))
 				throw new ArgumentException ("version");
 

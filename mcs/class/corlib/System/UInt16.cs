@@ -22,7 +22,10 @@ namespace System {
 
 		public int CompareTo (object v)
 		{
-			if (v == null || !(v is System.UInt16))
+			if (v == null)
+				return 1;
+			
+			if(!(v is System.UInt16))
 				throw new ArgumentException (Locale.GetText ("Value is not a System.UInt16"));
 
 			return value - ((ushort) v);

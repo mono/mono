@@ -1,3 +1,32 @@
+2001-11-28  Miguel de Icaza  <miguel@ximian.com>
+
+	* UInt64.cs: ditto.
+
+	* UInt32.cs: ditto.
+
+	* Int32.cs (Int32.CompareTo): Fix because we can not just
+	substract the values.
+
+	Return possitive value if the object is null.
+
+	* Boolean.cs: (Boolean.CompareTo): ditto.
+
+	* Int16.cs (Int16.CompareTo): ditto.
+
+	* Byte.cs (Byte.CompareTo): ditto.
+
+	* SByte.cs (SByte.CompareTo): ditto.
+
+	* Char.cs (Char.CompareTo): ditto.
+	
+	* Decimal.cs (Decimal.CompareTo): ditto.
+
+	* Int64.cs (Int64.CompareTo): ditto.
+
+	* Single.cs: Ditto.
+
+	* UInt16.cs: Ditto.
+
 2001-11-28  Nick Drochak <ndrochak@gol.com>
 
 	* Byte.cs: Throw NotImplementedException for Parse.

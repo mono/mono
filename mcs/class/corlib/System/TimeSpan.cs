@@ -161,10 +161,8 @@ namespace System {
 
 		public int CompareTo (object value)
 		{
-			
-			if (value == null ) {
+			if (value == null )
 				return 1;
-			}
 
 			if (!(value is TimeSpan)) {
 				throw new ArgumentException (Locale.GetText (
