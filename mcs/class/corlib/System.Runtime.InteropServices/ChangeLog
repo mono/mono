@@ -1,3 +1,9 @@
+
+Sat Jan 29 12:48:03 CET 2005 Paolo Molaro <lupus@ximian.com>
+
+	* GCHandle.cs: update for runtime changes: the unallocated handle
+	is -1, now.
+
 2004-11-25  Raja R Harinath  <rharinath@novell.com>
 
 	* UnmanagedType.cs (mono_bootstrap_NativeTypeMax): Rename from

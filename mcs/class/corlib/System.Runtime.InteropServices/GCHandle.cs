@@ -64,7 +64,7 @@ namespace System.Runtime.InteropServices
 		{ 
 			get
 			{
-				return (handle != 0);
+				return (handle != -1);
 			}
 		}
 
@@ -104,7 +104,7 @@ namespace System.Runtime.InteropServices
 		public void Free()
 		{
 			FreeHandle(handle);
-			handle = 0;
+			handle = -1;
 		}
 		
 		public static explicit operator IntPtr (GCHandle value)
