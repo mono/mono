@@ -1,5 +1,7 @@
 2004-02-19  Zoltan Varga  <vargaz@freemail.hu>
 
+	* sparc/sparc-codegen.h: Fix lots of opcodes + add new ones.
+
 	* sparc/tramp.c: Fix alignment of structures containing doubles.
 
 2004-02-02  Zoltan Varga  <vargaz@freemail.hu>
