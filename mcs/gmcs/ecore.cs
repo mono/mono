@@ -1248,7 +1248,7 @@ namespace Mono.CSharp {
 				ig.Emit (OpCodes.Stind_I1);
 			else if (type == TypeManager.intptr_type)
 				ig.Emit (OpCodes.Stind_I);
-			else if (type.IsValueType)
+			else if (type.IsValueType || type.IsGenericParameter)
 				ig.Emit (OpCodes.Stobj, type);
 			else
 				ig.Emit (OpCodes.Stind_Ref);

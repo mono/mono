@@ -1,3 +1,7 @@
+2004-11-27  Martin Baulig  <martin@ximian.com>
+
+	* ecore.cs (Expression.StoreFromPtr): Use `stobj' for generic parameters.
+
 2004-11-26  Raja R Harinath  <rharinath@novell.com>
 
 	* Makefile: Convert to use executable.make.
