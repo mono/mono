@@ -304,6 +304,8 @@ namespace System
 			return null;
 		}
 
+		static internal string GetResourceString (string s) { return ""; }
+
 		// private methods
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
