@@ -7,6 +7,7 @@
 // (C) 2003 Ximian, Inc (http://www.ximian.com)
 //
 
+using System.Collections;
 using System.Globalization;
 using System.IO;
 using System.Text;
@@ -22,7 +23,24 @@ namespace System.Net
 			Trailer
 		}
 
-		MemoryStream ms;
+		class Chunk {
+			public byte [] Bytes;
+			public int Offset;
+
+			public Chunk (byte [] chunk)
+			{
+				this.Bytes = chunk;
+			}
+
+			public int Read (byte [] buffer, int offset, int size)
+			{
+				int nread = (size > Bytes.Length - Offset) ? Bytes.Length - Offset : size;
+				Buffer.BlockCopy (Bytes, Offset, buffer, offset, nread);
+				Offset += nread;
+				return nread;
+			}
+		}
+
 		WebHeaderCollection headers;
 		int chunkSize;
 		int chunkRead;
@@ -31,24 +49,22 @@ namespace System.Net
 		StringBuilder saved;
 		bool sawCR;
 		bool gotit;
-		long readPosition;
+		ArrayList chunks;
 		
 		public ChunkStream (byte [] buffer, int offset, int size, WebHeaderCollection headers)
 		{
 			this.headers = headers;
-			ms = new MemoryStream ();
 			saved = new StringBuilder ();
+			chunks = new ArrayList ();
 			chunkSize = -1;
-			if (offset < size)
-				Write (buffer, offset, size);
+			Write (buffer, offset, size);
 		}
 
 		public void ResetBuffer ()
 		{
-			ms.SetLength (0);
-			readPosition = 0;
 			chunkSize = -1;
 			chunkRead = 0;
+			chunks.Clear ();
 		}
 		
 		public void WriteAndReadBack (byte [] buffer, int offset, int size, ref int read)
@@ -59,14 +75,31 @@ namespace System.Net
 
 		public int Read (byte [] buffer, int offset, int size)
 		{
-			long prevPosition = ms.Position;
-			ms.Position = readPosition;
-			int r = ms.Read (buffer, offset, size);
-			readPosition += r;
-			ms.Position = prevPosition;
-			return r;
+			return ReadFromChunks (buffer, offset, size);
 		}
 
+		int ReadFromChunks (byte [] buffer, int offset, int size)
+		{
+			int count = chunks.Count;
+			int nread = 0;
+			for (int i = 0; i < count; i++) {
+				Chunk chunk = (Chunk) chunks [i];
+				if (chunk == null)
+					continue;
+
+				if (chunk.Offset == chunk.Bytes.Length) {
+					chunks [i] = null;
+					continue;
+				}
+				
+				nread += chunk.Read (buffer, offset + nread, size - nread);
+				if (nread == size)
+					break;
+			}
+
+			return nread;
+		}
+		
 		public void Write (byte [] buffer, int offset, int size)
 		{
 			InternalWrite (buffer, ref offset, size);
@@ -75,16 +108,10 @@ namespace System.Net
 		void InternalWrite (byte [] buffer, ref int offset, int size)
 		{
 			if (state == State.None) {
-				ms.Position = 0;
-				readPosition = 0;
 				state = GetChunkSize (buffer, ref offset, size);
 				if (state == State.None)
 					return;
 				
-				ms.SetLength (0);
-				if (ms.Capacity < chunkSize)
-					ms.Capacity = chunkSize;
-
 				saved.Length = 0;
 				sawCR = false;
 				gotit = false;
@@ -131,7 +158,9 @@ namespace System.Net
 			if (diff + chunkRead > chunkSize)
 				diff = chunkSize - chunkRead;
 
-			ms.Write (buffer, offset, diff);
+			byte [] chunk = new byte [diff];
+			Buffer.BlockCopy (buffer, offset, chunk, 0, diff);
+			chunks.Add (new Chunk (chunk));
 			offset += diff;
 			chunkRead += diff;
 			return (chunkRead == chunkSize) ? State.BodyFinished : State.Body;

@@ -1,3 +1,10 @@
+2004-02-12  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* ChunkStream.cs: use an array of buffers instead of a MemoryStream for
+	storing the chunks. This way, we won't miss traling data from the
+	previous chunk when a new one is received before the other is fully
+	read.
+
 2004-01-27  Nick Drochak <ndrochak@ieee.org>
 
 	* DigestClient.cs:
