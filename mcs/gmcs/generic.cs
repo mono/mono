@@ -609,14 +609,19 @@ namespace Mono.CSharp {
 			if (TypeManager.HasGenericArguments (ctype)) {
 				Type[] types = TypeManager.GetTypeArguments (ctype);
 
-				TypeArguments args = new TypeArguments (loc);
+				TypeArguments new_args = new TypeArguments (loc);
 
 				for (int i = 0; i < types.Length; i++) {
-					Type t = types [i] == ptype ? expr.Type : types [i];
-					args.Add (new TypeExpression (t, loc));
+					Type t = types [i];
+
+					if (t.IsGenericParameter) {
+						int pos = t.GenericParameterPosition;
+						t = args.Arguments [pos];
+					}
+					new_args.Add (new TypeExpression (t, loc));
 				}
 
-				ctype = new ConstructedType (ctype, args, loc).ResolveType (ec);
+				ctype = new ConstructedType (ctype, new_args, loc).ResolveType (ec);
 				if (ctype == null)
 					return false;
 			}
