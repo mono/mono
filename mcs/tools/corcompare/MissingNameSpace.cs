@@ -96,8 +96,11 @@ namespace Mono.Util.CorCompare {
 					}
 					else
 					{
-						htMono.Remove (t.FullName);
-						mt = new MissingType (tMono, t);
+						if (t.IsPublic)
+						{
+							htMono.Remove (t.FullName);
+							mt = new MissingType (tMono, t);
+						}
 					}
 					if (mt != null)
 					{

@@ -1,3 +1,9 @@
+2003-07-12  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
+
+	* MissingNameSpace.cs: Fixed the case where a private/ internal class that per chance has a class with the same name
+				in the compared assembly gets compared -> now only public classes are compared.
+	* MissingType: Internal nested types were always compared -> internal nested types are never compared
+
 2002-02-25  Nick Drochak  <ndrochak@gol.com>
 
 	* ToDoAssembly.cs: remove unused code 

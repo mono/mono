@@ -457,7 +457,7 @@ namespace Mono.Util.CorCompare
 				case MemberTypes.Field:
 					return !((FieldInfo) mi).IsPrivate && !((FieldInfo) mi).IsFamilyAndAssembly && !((FieldInfo) mi).IsAssembly;
 				case MemberTypes.NestedType:
-					return !((Type) mi).IsNestedPrivate;
+					return !((Type) mi).IsNestedPrivate && !((Type) mi).IsNestedAssembly && !((Type) mi).IsNestedFamANDAssem;
 				case MemberTypes.Property:	// great, now we have to look at the methods
 					PropertyInfo pi = (PropertyInfo) mi;
 					MethodInfo miAccessor = pi.GetGetMethod ();
