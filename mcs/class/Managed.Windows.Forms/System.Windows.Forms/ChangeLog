@@ -1,3 +1,10 @@
+2005-02-08  Jordi Mas i Hernandez <jordi@ximian.com>
+	
+	* ComboBox.cs:	
+		- Fixes button when no items available in dropdown
+		- Fixes repainting problems
+		- Adds the class attributes
+		
 2005-02-07  Geoff Norton  <gnorton@customerdna.com>
 
 	* XplatUIOSX.cs: Detect the menu bar and title bar height from

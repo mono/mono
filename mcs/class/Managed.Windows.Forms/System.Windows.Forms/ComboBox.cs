@@ -31,10 +31,16 @@ using System.Drawing;
 using System.Collections;
 using System.ComponentModel;
 using System.Reflection;
+using System.ComponentModel.Design;
+using System.ComponentModel.Design.Serialization;
+
 
 namespace System.Windows.Forms
 {
 
+	[DefaultProperty("Items")]
+	[DefaultEvent("SelectedIndexChanged")]
+	[Designer ("System.Windows.Forms.Design.ComboBoxDesigner, " + Consts.AssemblySystem_Design, typeof (IDesigner))]
 	public class ComboBox : ListControl
 	{
 		private DrawMode draw_mode;
@@ -50,7 +56,7 @@ namespace System.Windows.Forms
 		private bool sorted;
 		internal ComboBoxInfo combobox_info;
 		private readonly int def_button_width = 16;
-		private bool clicked;
+		private bool clicked;		
 		private int max_length;
 		private ComboListBox listbox_ctrl;
 		private StringFormat string_format;
@@ -114,17 +120,26 @@ namespace System.Windows.Forms
 
 			/* Events */
 			MouseDown += new MouseEventHandler (OnMouseDownCB);
-			MouseUp += new MouseEventHandler (OnMouseUpCB);			
+			MouseUp += new MouseEventHandler (OnMouseUpCB);
+			MouseMove += new MouseEventHandler (OnMouseMoveCB);
 		}
 
-		#region Events
-		public new event EventHandler BackgroundImageChanged;
-		public event DrawItemEventHandler DrawItem;
-		public event EventHandler DropDown;
-		public event EventHandler DropDownStyleChanged;
+		#region events
+		
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		public new event EventHandler BackgroundImageChanged;		
+		
+		public event DrawItemEventHandler DrawItem;		
+		public event EventHandler DropDown;		
+		public event EventHandler DropDownStyleChanged;		
 		public event MeasureItemEventHandler MeasureItem;
+		
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
 		public new event PaintEventHandler Paint;
-		public event EventHandler SelectedIndexChanged;
+		
+		public event EventHandler SelectedIndexChanged;		
 		public event EventHandler SelectionChangeCommitted;
 		#endregion Events
 
@@ -140,6 +155,8 @@ namespace System.Windows.Forms
 			}
 		}
 
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
 		public override Image BackgroundImage {
 			get { return base.BackgroundImage; }
 			set {
@@ -163,6 +180,8 @@ namespace System.Windows.Forms
 			get { return new Size (121, PreferredHeight); }
 		}
 
+		[RefreshProperties(RefreshProperties.Repaint)]
+		[DefaultValue (DrawMode.Normal)]
 		public DrawMode DrawMode {
 			get { return draw_mode; }
 
@@ -178,6 +197,8 @@ namespace System.Windows.Forms
     			}
 		}
 
+		[DefaultValue (ComboBoxStyle.DropDown)]
+		[RefreshProperties(RefreshProperties.Repaint)]
 		public ComboBoxStyle DropDownStyle {
 			get { return dropdown_style; }
 
@@ -248,6 +269,8 @@ namespace System.Windows.Forms
 			}
 		}
 		
+		[Browsable (false)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]		
 		public bool DroppedDown {
 			get { 
 				if (dropdown_style == ComboBoxStyle.Simple) 				
@@ -287,6 +310,8 @@ namespace System.Windows.Forms
 			}
 		}
 
+		[DefaultValue (true)]
+		[Localizable (true)]		
 		public bool IntegralHeight {
 			get { return integral_height; }
 			set {
@@ -310,10 +335,15 @@ namespace System.Windows.Forms
 			}
 		}
 
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
+		[Localizable (true)]
+		[Editor ("System.Windows.Forms.Design.ListContolStringCollectionEditor, " + Consts.AssemblySystem_Design, typeof (System.Drawing.Design.UITypeEditor))]		
 		public ComboBox.ObjectCollection Items {
 			get { return items; }
 		}
 
+		[DefaultValue (8)]
+		[Localizable (true)]
 		public int MaxDropDownItems {
 			get { return maxdrop_items; }
 			set {
@@ -324,6 +354,8 @@ namespace System.Windows.Forms
 			}
 		}
 
+		[DefaultValue (32767)]
+		[Localizable (true)]
 		public int MaxLength {
 			get { return max_length; }
 			set {
@@ -343,10 +375,15 @@ namespace System.Windows.Forms
 			}
 		}
 
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
 		public int PreferredHeight {
 			get { return preferred_height; }
 		}
-
+		
+		[Browsable (false)]
+		[DefaultValue (-1)]
 		public override int SelectedIndex {
 			get { return selected_index; }
 			set {
@@ -367,6 +404,8 @@ namespace System.Windows.Forms
 			}
 		}
 
+		[Browsable (false)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public object SelectedItem {
 			get {
 				if (selected_index !=-1 && Items !=null && Items.Count > 0)
@@ -394,6 +433,8 @@ namespace System.Windows.Forms
 			}
 		}
 		
+		[Browsable (false)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public string SelectedText {
 			get {
 				if (dropdown_style == ComboBoxStyle.DropDownList)
@@ -412,6 +453,8 @@ namespace System.Windows.Forms
 			}
 		}
 
+		[Browsable (false)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public int SelectionLength {
 			get {
 				if (dropdown_style == ComboBoxStyle.DropDownList) 
@@ -430,6 +473,8 @@ namespace System.Windows.Forms
 			}
 		}
 
+		[Browsable (false)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public int SelectionStart {
 			get { 
 				if (dropdown_style == ComboBoxStyle.DropDownList) 
@@ -448,6 +493,7 @@ namespace System.Windows.Forms
 			}
 		}
 
+		[DefaultValue (false)]
 		public bool Sorted {
 			get { return sorted; }
 
@@ -459,6 +505,8 @@ namespace System.Windows.Forms
     			}
     		}
 
+		[Bindable (true)]
+		[Browsable (true)]
 		public override string Text {
 			get { 
 				if (SelectedItem != null) 
@@ -776,7 +824,7 @@ namespace System.Windows.Forms
 
 		protected override void SetItemsCore (IList value)
 		{
-
+			Items.AddRange (value);
 		}
 
 		public override string ToString ()
@@ -910,12 +958,13 @@ namespace System.Windows.Forms
 			listbox_ctrl.Location = PointToScreen (new Point (combobox_info.textarea.X, combobox_info.textarea.Y +
 				combobox_info.textarea.Height));
 						
-    			if (listbox_ctrl.ShowWindow () == true) {
-    				combobox_info.button_status = ButtonState.Pushed;
-    				CBoxInfo.droppeddown = true;    				
-    				if (dropdown_style == ComboBoxStyle.DropDownList) {
-    					Invalidate (combobox_info.textarea_drawable);
-    				}
+    			if (listbox_ctrl.ShowWindow () == true) {    				
+    				CBoxInfo.droppeddown = true;        				
+    			}
+    			
+    			combobox_info.button_status = ButtonState.Pushed;				
+    			if (dropdown_style == ComboBoxStyle.DropDownList) {
+    				Invalidate (combobox_info.textarea_drawable);
     			}
 		}
 		
@@ -964,12 +1013,21 @@ namespace System.Windows.Forms
 	    			Invalidate (combobox_info.button_rect);
     			}
     		}
+    		
+    		internal virtual void OnMouseMoveCB (object sender, MouseEventArgs e)
+    		{    			
+    			/* When there are no items, act as a regular button */
+    			if (clicked == true && Items.Count == 0 &&
+    				 combobox_info.button_rect.Contains (e.X, e.Y) == false) {
+    				DropDownListBoxFinished ();
+    			}
+    		}
 
     		internal virtual void OnMouseUpCB (object sender, MouseEventArgs e)
     		{
     			/* Click on button*/
-    			if (clicked == true && combobox_info.button_rect.Contains (e.X, e.Y)) {
-    				clicked = false;
+    			if (clicked == true && combobox_info.button_rect.Contains (e.X, e.Y)) {    				
+    				DropDownListBoxFinished ();
     			}
     		}
 
@@ -1023,6 +1081,7 @@ namespace System.Windows.Forms
 		/*
 			ComboBox.ObjectCollection
 		*/
+		[ListBindableAttribute (false)]
 		public class ObjectCollection : IList, ICollection, IEnumerable
 		{
 
@@ -1201,6 +1260,14 @@ namespace System.Windows.Forms
 				combobox_items.Add (new ComboBox.ComboBoxItem (cnt));				
 				return cnt;
 			}
+			
+			internal void AddRange (IList items)
+			{
+				foreach (object mi in items)
+					AddItem (mi);
+										
+				owner.UpdatedItems ();
+			}
 
 			internal ComboBox.ComboBoxItem GetComboBoxItem (int index)
 			{
@@ -1226,8 +1293,7 @@ namespace System.Windows.Forms
 		*/
 		internal class ComboListBox : Control
 		{
-			private ComboBox owner;
-			private bool need_vscrollbar;
+			private ComboBox owner;			
 			private VScrollBarLB vscrollbar_ctrl;
 			private int top_item;			/* First item that we show the in the current page */
 			private int last_item;			/* Last visible item */
@@ -1269,8 +1335,7 @@ namespace System.Windows.Forms
 
 			public ComboListBox (ComboBox owner) : base ()
 			{	
-				this.owner = owner;				
-				need_vscrollbar = false;
+				this.owner = owner;								
 				top_item = 0;
 				last_item = 0;
 				page_size = 0;
@@ -1283,15 +1348,7 @@ namespace System.Windows.Forms
 				Paint += new PaintEventHandler (OnPaintPUW);				
 				SetStyle (ControlStyles.UserPaint | ControlStyles.AllPaintingInWmPaint, true);
 				SetStyle (ControlStyles.ResizeRedraw | ControlStyles.Opaque, true);
-
-				/* Vertical scrollbar */
-				vscrollbar_ctrl = new VScrollBarLB ();
-				vscrollbar_ctrl.Minimum = 0;
-				vscrollbar_ctrl.SmallChange = 1;
-				vscrollbar_ctrl.LargeChange = 1;
-				vscrollbar_ctrl.Maximum = 0;
-				vscrollbar_ctrl.ValueChanged += new EventHandler (VerticalScrollEvent);
-				vscrollbar_ctrl.Visible = false;				
+				
 			}
 
 			protected override CreateParams CreateParams
@@ -1310,8 +1367,7 @@ namespace System.Windows.Forms
 
 			protected override void CreateHandle ()
 			{			
-				base.CreateHandle ();
-				Controls.Add (vscrollbar_ctrl);
+				base.CreateHandle ();				
 			}
 
 			// Calcs the listbox area
@@ -1355,11 +1411,24 @@ namespace System.Windows.Forms
 					height += ThemeEngine.Current.DrawComboListBoxDecorationTop (owner.DropDownStyle);
 				}
 				
-				if (owner.Items.Count <= owner.MaxDropDownItems) {
-					need_vscrollbar = false;
+				if (owner.Items.Count <= owner.MaxDropDownItems) {					
+					
+					/* Does not need vertical scrollbar*/
+					if (vscrollbar_ctrl != null) {
+						vscrollbar_ctrl.Dispose ();
+						Controls.Remove (vscrollbar_ctrl);
+						vscrollbar_ctrl = null;
+					}					
 				}
 				else {
-					need_vscrollbar = true;
+					/* Need vertical scrollbar */
+					vscrollbar_ctrl = new VScrollBarLB ();
+					vscrollbar_ctrl.Minimum = 0;
+					vscrollbar_ctrl.SmallChange = 1;
+					vscrollbar_ctrl.LargeChange = 1;
+					vscrollbar_ctrl.Maximum = 0;
+					vscrollbar_ctrl.ValueChanged += new EventHandler (VerticalScrollEvent);
+					
 					vscrollbar_ctrl.Height = height - ThemeEngine.Current.DrawComboListBoxDecorationBottom (owner.DropDownStyle) -
 						ThemeEngine.Current.DrawComboListBoxDecorationTop (owner.DropDownStyle);
 						
@@ -1367,11 +1436,9 @@ namespace System.Windows.Forms
 						ThemeEngine.Current.DrawComboListBoxDecorationTop (owner.DropDownStyle));					
 						
 					vscrollbar_ctrl.Maximum = owner.Items.Count - owner.MaxDropDownItems;
+					Controls.Add (vscrollbar_ctrl);
 				}
-
-				if (vscrollbar_ctrl.Visible != need_vscrollbar)
-					vscrollbar_ctrl.Visible = need_vscrollbar;
-
+				
 				Size = new Size (width, height);
 				textarea_drawable = ClientRectangle;
 				textarea_drawable.Width = width;
@@ -1385,7 +1452,7 @@ namespace System.Windows.Forms
 				textarea_drawable.Height -= ThemeEngine.Current.DrawComboListBoxDecorationBottom (owner.DropDownStyle);				
 				textarea_drawable.Height -= ThemeEngine.Current.DrawComboListBoxDecorationTop (owner.DropDownStyle);
 				
-				if (need_vscrollbar)
+				if (vscrollbar_ctrl != null)
 					textarea_drawable.Width -= vscrollbar_ctrl.Width;
 
 				last_item = LastVisibleItem ();				
@@ -1636,19 +1703,23 @@ namespace System.Windows.Forms
 				if (owner.DropDownStyle == ComboBoxStyle.Simple)
 					return;		
 				
-				/* Reroute event to scrollbar */
-	    			scrollbar_screenrect = vscrollbar_ctrl.ClientRectangle;
-	    			scrollbar_screen = PointToScreen (vscrollbar_ctrl.Location);
-	    			scrollbar_screenrect.X = scrollbar_screen.X;
-	    			scrollbar_screenrect.Y = scrollbar_screen.Y;
-	    			
-	    			if (scrollbar_screenrect.Contains (mouse_screen)){	    				
-	    				Point pnt_client = vscrollbar_ctrl.PointToClient (mouse_screen);	    				
-	    				vscrollbar_ctrl.FireMouseDown (new MouseEventArgs (e.Button, e.Clicks,
-	    					pnt_client.X, pnt_client.Y, e.Delta));	    					
-	    			} else	{ /* Click in a non-client area*/
-	    				HideWindow ();	    			
-	    			}	    			
+				/* Reroute event to scrollbar */				
+				if (vscrollbar_ctrl != null) {				
+		    			scrollbar_screenrect = vscrollbar_ctrl.ClientRectangle;
+		    			scrollbar_screen = PointToScreen (vscrollbar_ctrl.Location);
+		    			scrollbar_screenrect.X = scrollbar_screen.X;
+		    			scrollbar_screenrect.Y = scrollbar_screen.Y;
+		    			
+		    			if (scrollbar_screenrect.Contains (mouse_screen)){	    				
+		    				Point pnt_client = vscrollbar_ctrl.PointToClient (mouse_screen);	    				
+		    				vscrollbar_ctrl.FireMouseDown (new MouseEventArgs (e.Button, e.Clicks,
+		    					pnt_client.X, pnt_client.Y, e.Delta));	    					
+		    			} else	{ /* Click in a non-client area*/
+		    				HideWindow ();	    			
+		    			}	    			
+		    		} else	{ /* Click in a non-client area*/
+		    			HideWindow ();
+		    		}
 			}
 
 			private void OnMouseMovePUW (object sender, MouseEventArgs e)
@@ -1667,22 +1738,23 @@ namespace System.Windows.Forms
 					return;		
 				
 				/* Reroute event to scrollbar */
-				Rectangle scrollbar_screenrect;
-	    			Point mouse_screen, scrollbar_screen;
-	    			mouse_screen = PointToScreen (new Point (e.X, e.Y));
-	    			
-	    			scrollbar_screenrect = vscrollbar_ctrl.ClientRectangle;
-	    			scrollbar_screen = PointToScreen (vscrollbar_ctrl.Location);
-	    			scrollbar_screenrect.X = scrollbar_screen.X;
-	    			scrollbar_screenrect.Y = scrollbar_screen.Y;
-	    			
-	    			if (scrollbar_screenrect.Contains (mouse_screen)){	    				
-	    				Point pnt_client = vscrollbar_ctrl.PointToClient (mouse_screen);
-	    				
-	    				vscrollbar_ctrl.FireMouseMove (new MouseEventArgs (e.Button, e.Clicks,
-	    					pnt_client.X, pnt_client.Y, e.Delta));
-	    			}    			
-	    			
+				if (vscrollbar_ctrl != null) {	
+					Rectangle scrollbar_screenrect;
+		    			Point mouse_screen, scrollbar_screen;
+		    			mouse_screen = PointToScreen (new Point (e.X, e.Y));
+		    			
+		    			scrollbar_screenrect = vscrollbar_ctrl.ClientRectangle;
+		    			scrollbar_screen = PointToScreen (vscrollbar_ctrl.Location);
+		    			scrollbar_screenrect.X = scrollbar_screen.X;
+		    			scrollbar_screenrect.Y = scrollbar_screen.Y;
+		    			
+		    			if (scrollbar_screenrect.Contains (mouse_screen)){	    				
+		    				Point pnt_client = vscrollbar_ctrl.PointToClient (mouse_screen);
+		    				
+		    				vscrollbar_ctrl.FireMouseMove (new MouseEventArgs (e.Button, e.Clicks,
+		    					pnt_client.X, pnt_client.Y, e.Delta));
+		    			}
+		    		}	    			
 			}
 			
 			private void OnMouseUpPUW (object sender, MouseEventArgs e)
@@ -1695,17 +1767,19 @@ namespace System.Windows.Forms
 	    			Point mouse_screen, scrollbar_screen;
 	    			mouse_screen = PointToScreen (new Point (e.X, e.Y));
 	    			
-	    			scrollbar_screenrect = vscrollbar_ctrl.ClientRectangle;
-	    			scrollbar_screen = PointToScreen (vscrollbar_ctrl.Location);
-	    			scrollbar_screenrect.X = scrollbar_screen.X;
-	    			scrollbar_screenrect.Y = scrollbar_screen.Y;
-	    			
-	    			if (scrollbar_screenrect.Contains (mouse_screen)){	    				
-	    				Point pnt_client = vscrollbar_ctrl.PointToClient (mouse_screen);	    				
-	    				
-	    				vscrollbar_ctrl.FireMouseUp (new MouseEventArgs (e.Button, e.Clicks,
-	    					pnt_client.X, pnt_client.Y, e.Delta));
-	    			}	    			
+	    			if (vscrollbar_ctrl != null) {	
+		    			scrollbar_screenrect = vscrollbar_ctrl.ClientRectangle;
+		    			scrollbar_screen = PointToScreen (vscrollbar_ctrl.Location);
+		    			scrollbar_screenrect.X = scrollbar_screen.X;
+		    			scrollbar_screenrect.Y = scrollbar_screen.Y;
+		    			
+		    			if (scrollbar_screenrect.Contains (mouse_screen)){	    				
+		    				Point pnt_client = vscrollbar_ctrl.PointToClient (mouse_screen);	    				
+		    				
+		    				vscrollbar_ctrl.FireMouseUp (new MouseEventArgs (e.Button, e.Clicks,
+		    					pnt_client.X, pnt_client.Y, e.Delta));
+		    			}
+		    		}
 			}
 
 			private void OnPaintPUW (Object o, PaintEventArgs pevent)
