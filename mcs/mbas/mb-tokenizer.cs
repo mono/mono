@@ -1085,9 +1085,11 @@ namespace Mono.MonoBASIC
             	           		  	  enUSculture,
         	                   	  	  DateTimeStyles.NoCurrentDateDefault | DateTimeStyles.AllowWhiteSpaces);
  			}
-	 		catch (FormatException)
+	 		catch (FormatException ex)
  			{
-				Report.Error (1, Location, "Invalid date literal");		//TODO: What is the correct error number and message?
+				//TODO: What is the correct error number and message?
+				Report.Error (1, Location, string.Format("Invalid date literal '{0}'", value.ToString()) 
+					+ Environment.NewLine + ex.ToString());
  			}
 	 		catch (Exception)
  			{

@@ -1,3 +1,6 @@
+2004/04/07  Rafael Teixeira <rafaelteixeirabr@hotmail.com>
+	* mb-tokenizer.cs : Better error message when dealing with date literals
+
 2004-04-06 Anirban Bhattacharjee <banirban@novell.com>
 	* class.cs:
 	* ecore.cs:
