@@ -193,6 +193,16 @@ namespace MonoTests.System.Text.RegularExpressions
 			Match m = re.Match (new string ('1', 33));
 			AssertEquals ("#01", true, m.Success);
 		}
+
+		[Test]
+		public void CategoryAndNegated () // Was a regression after first attemp to fix 59150.
+		{
+			string text = "<?xml version=\"1.0\"?>";
+			Regex re = new Regex ("<\\s*(\\/?)\\s*([\\s\\S]*?)\\s*(\\/?)\\s*>");
+			text = re.Replace (text, "{blue:&lt;$1}{maroon:$2}{blue:$3&gt;}");
+			AssertEquals ("#01", "{blue:&lt;}{maroon:?xml version=\"1.0\"?}{blue:&gt;}", text);
+		}
+		
 	}
 }
 
