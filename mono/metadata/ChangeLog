@@ -1,4 +1,9 @@
 
+Wed Feb 23 18:32:35 CET 2005 Paolo Molaro <lupus@ximian.com>
+
+	* reflection.c: reduce code duplication in named custom
+	attribute encoding.
+
 Wed Feb 23 17:23:52 CET 2005 Paolo Molaro <lupus@ximian.com>
 
 	* reflection.c: properly encode custom attrs of type object
