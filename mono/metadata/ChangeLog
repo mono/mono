@@ -1,4 +1,8 @@
 
+Fri Jul 26 11:22:52 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* assembly.c: fix possible memory corruption.
+
 Thu Jul 25 13:58:38 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
 	* reflection.h, reflection.c: added support for linking resources.
