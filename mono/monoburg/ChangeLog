@@ -1,4 +1,8 @@
 
+Mon Feb 18 14:28:10 CET 2002 Paolo Molaro <lupus@ximian.com>
+
+	* Makefile.am: fix compatibility problem with automake 1.4.
+
 Fri Feb 15 14:20:30 CET 2002 Paolo Molaro <lupus@ximian.com>
 
 	* Makefile.am: avoid automake for build on host stuff.
