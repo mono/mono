@@ -1,3 +1,7 @@
+2003-04-10  Zoltan Varga  <vargaz@freemail.hu>
+
+	* object.c (mono_array_new): Mark mono_array_new as an icall.
+
 2003-04-10  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* class.c: fixed test for public method when overriding interfaces.
