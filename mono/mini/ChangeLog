@@ -1,7 +1,10 @@
+2004-09-17  Zoltan Varga  <vargaz@freemail.hu>
+
+	* mini.c (mono_method_to_ir): Fix LDSTR in dynamic methods. Fixes #66132.
+	
 2004-09-11 Ben Maurer  <bmaurer@users.sourceforge.net>
 
 	* inssel.brg: make ldelema check aot friendly.
-
 
 Thu Sep 9 20:57:53 CEST 2004 Paolo Molaro <lupus@ximian.com>
 
