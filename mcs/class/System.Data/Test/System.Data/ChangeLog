@@ -1,5 +1,9 @@
 2003-03-16  Ville Palo <vi64pa@kolumbus.fi>
 
+	* DataColumnCollectionTest.cs: little fix.
+
+2003-03-16  Ville Palo <vi64pa@kolumbus.fi>
+
 	* DataColumnCollectionTest.cs: Typos
 	
 2003-03-16  Ville Palo <vi64pa@kolumbus.fi>

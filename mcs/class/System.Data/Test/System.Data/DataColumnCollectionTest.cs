@@ -190,7 +190,6 @@ namespace MonoTests.System.Data
 				Fail ("test#01");
 			} catch (Exception e) {
 				AssertEquals ("test#02", typeof (ArgumentNullException), e.GetType ());
-				AssertEquals ("test#03", "'column' argument cannot be null.\r\nParameter name: column", e.Message);
 			}
 
 			C = new DataColumn ("test");
