@@ -156,6 +156,11 @@ test-173.cs
 Check whether we select the correct function, don't report CS0121
 for integer literals.
 
+test-174.cs
+-----------
+Checks access to protected properties on base classes, and access to 
+private properties on container classes.
+
 verify-1.cs
 -----------
 Test whether we do not jump out of the method in a Try/Finally block.
