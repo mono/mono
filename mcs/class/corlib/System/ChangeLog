@@ -1,3 +1,9 @@
+2004-06-02  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* TimeSpan.cs: Fixed overflow issues when delaing with big (days) time
+	spans. Fixed parsing when only days are presents in the string (which
+	should be illegal according to the documentation but is supported).
+
 2004-06-01  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* TimeSpan.cs: Fixed exceptions in FromXXX methods as they are 

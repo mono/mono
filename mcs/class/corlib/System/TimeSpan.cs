@@ -1,12 +1,14 @@
 //
 // System.TimeSpan.cs
 //
-// Author:
+// Authors:
 //   Duco Fijma (duco@lorentz.xs4all.nl)
 //   Andreas Nahr (ClassDevelopment@A-SoftTech.com)
+//   Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) 2001 Duco Fijma
 // (C) 2004 Andreas Nahr
+// Copyright (C) 2004 Novell (http://www.novell.com)
 //
 
 using System.Text;
@@ -34,48 +36,66 @@ namespace System
 		}
 
 		public TimeSpan (int hours, int minutes, int seconds)
-			: this (0, hours, minutes, seconds, 0)
 		{
+			_ticks = CalculateTicks (0, hours, minutes, seconds, 0);
 		}
 
 		public TimeSpan (int days, int hours, int minutes, int seconds)
-			: this (days, hours, minutes, seconds, 0)
 		{
+			_ticks = CalculateTicks (days, hours, minutes, seconds, 0);
 		}
 
 		public TimeSpan (int days, int hours, int minutes, int seconds, int milliseconds)
 		{
-			try {
-				checked {
-					_ticks = TicksPerDay * days + 
-						TicksPerHour * hours +
-						TicksPerMinute * minutes +
-						TicksPerSecond * seconds +
-						TicksPerMillisecond * milliseconds;
-				}
-			}
-			catch (OverflowException) {
-				throw new ArgumentOutOfRangeException (Locale.GetText ("The timespan is too big or too small."));
-			}
+			_ticks = CalculateTicks (days, hours, minutes, seconds, milliseconds);
 		}
 
-		private TimeSpan (bool sign, int days, int hours, int minutes, int seconds, long ticks)
+		internal static long CalculateTicks (int days, int hours, int minutes, int seconds, int milliseconds)
 		{
-			try {
-				checked {
-					_ticks = TicksPerDay * days + 
-						TicksPerHour * hours +
-						TicksPerMinute * minutes +
-						TicksPerSecond * seconds +
-						ticks;
-					if ( sign ) {
-						_ticks = -_ticks;
-					}
+			bool overflow = false;
+
+			// this part cannot overflow Int64
+			long t = checked (TimeSpan.TicksPerHour * hours +
+				TimeSpan.TicksPerMinute * minutes +
+				TimeSpan.TicksPerSecond * seconds + 
+				TimeSpan.TicksPerMillisecond * milliseconds);
+
+			// days is problematic because it can overflow but that overflow can be 
+			// "legal" (i.e. temporary) (e.g. if other parameters are negative) or 
+			// illegal (e.g. sign change).
+			if (days > 0) {
+				long td = TicksPerDay * days;
+				if (t < 0) {
+					long ticks = t;
+					t += td;
+					// positive days -> total ticks should be lower
+					overflow = (ticks > t);
+				}
+				else {
+					t += td;
+					// positive + positive != negative result
+					overflow = (t < 0);
 				}
 			}
-			catch (OverflowException) {
-				throw new ArgumentOutOfRangeException (Locale.GetText ("The timespan is too big or too small."));
+			else if (days < 0) {
+				long td = TicksPerDay * days;
+				if (t <= 0) {
+					t += td;
+					// negative + negative != positive result
+					overflow = (t > 0);
+				}
+				else {
+					long ticks = t;
+					t += td;
+					// negative days -> total ticks should be lower
+					overflow = (t > ticks);
+				}
 			}
+
+			if (overflow)
+				throw new ArgumentOutOfRangeException (Locale.GetText ("The timespan is too big or too small."));
+
+			return t;
 		}
 
 		public int Days {
@@ -427,8 +447,11 @@ namespace System
 			}
 
 			// Parse simple int value
-			private int ParseInt ()
+			private int ParseInt (bool optional)
 			{
+				if (optional && AtEnd)
+					return 0;
+
 				int res = 0;
 				int count = 0;
 
@@ -459,13 +482,15 @@ namespace System
 				return false;
 			}	
 
-			// Parse NON-optional colon
-			private void ParseColon ()
+			// Parse optional (LAMESPEC) colon
+			private void ParseOptColon ()
 			{
-				if (!AtEnd && _src[_cur] == ':')
-					_cur++;
-				else 
-					ThrowFormatException ();
+				if (!AtEnd) {
+					if (_src[_cur] == ':')
+						_cur++;
+					else 
+						ThrowFormatException ();
+				}
 			}
 
 			// Parse [1..7] digits, representing fractional seconds (ticks)
@@ -492,7 +517,7 @@ namespace System
 			{
 				bool sign;
 				int days;
-				int hours;
+				int hours = 0;
 				int minutes;
 				int seconds;
 				long ticks;
@@ -500,18 +525,18 @@ namespace System
 				// Parse [ws][-][dd.]hh:mm:ss[.ff][ws]
 				ParseWhiteSpace ();
 				sign = ParseSign ();
-				days = ParseInt ();
+				days = ParseInt (false);
 				if (ParseOptDot ()) {
-					hours = ParseInt ();
+					hours = ParseInt (true);
 				}
-				else {
+				else if (!AtEnd) {
 					hours = days;
 					days = 0;
 				}
-				ParseColon();
-				minutes = ParseInt ();
-				ParseColon ();
-				seconds = ParseInt ();
+				ParseOptColon();
+				minutes = ParseInt (true);
+				ParseOptColon ();
+				seconds = ParseInt (true);
 				if ( ParseOptDot () ) {
 					ticks = ParseTicks ();
 				}
@@ -528,9 +553,11 @@ namespace System
 						"Invalid time data."));
 				}
 
-				TimeSpan ts = new TimeSpan (sign, days, hours, minutes, seconds, ticks);
-
-				return ts;
+				long t = TimeSpan.CalculateTicks (days, hours, minutes, seconds, 0);
+				t += ticks;
+				if (sign)
+					t = -t;
+				return new TimeSpan (t);
 			}
 		}
 	}
