@@ -984,6 +984,16 @@ namespace Mono.MonoBASIC
 			} else if (c == '\r')
 				col = 0;
 			arg = static_cmd_arg.ToString ().Trim ();
+			
+			if (cmd == "End" && arg == "Region") {
+				cmd = "End Region";
+				arg = "";	
+			}
+			if (cmd == "End" && arg == "If") {
+				cmd = "End If";
+				arg = "";	
+			}			
+				
 		}
 
 		//
@@ -1251,7 +1261,6 @@ namespace Mono.MonoBASIC
 			bool region_directive = false;
 
 			get_cmd_arg (out cmd, out arg);
-			cmd = cmd.ToLower();
 			// Eat any trailing whitespaces and single-line comments
 			if (arg.IndexOf ("//") != -1)
 				arg = arg.Substring (0, arg.IndexOf ("//"));
@@ -1268,16 +1277,16 @@ namespace Mono.MonoBASIC
 						"Argument to #line directive is missing or invalid");
 				return true;
 
-			case "region":
+			case "Region":
 				region_directive = true;
 				arg = "true";
-				goto case "if";
+				goto case "If";
 
-			case "endregion":
+			case "End Region":
 				region_directive = true;
-				goto case "endif";
+				goto case "End If";
 				
-			case "if":
+			case "If":
 				if (arg == ""){
 					Error_InvalidDirective ();
 					return true;
@@ -1308,7 +1317,7 @@ namespace Mono.MonoBASIC
 					return false;
 				}
 				
-			case "endif":
+			case "End If":
 				if (ifstack == null || ifstack.Count == 0){
 					Error_UnexpectedDirective ("no #if for this #endif");
 					return true;
@@ -1332,7 +1341,7 @@ namespace Mono.MonoBASIC
 					}
 				}
 
-			case "elif":
+			case "ElseIf":
 				if (ifstack == null || ifstack.Count == 0){
 					Error_UnexpectedDirective ("no #if for this #elif");
 					return true;
@@ -1360,7 +1369,7 @@ namespace Mono.MonoBASIC
 						return false;
 				}
 
-			case "else":
+			case "Else":
 				if (ifstack == null || ifstack.Count == 0){
 					Report.Error (
 						1028, Location,
