@@ -96,7 +96,7 @@ namespace Mono.CSharp {
 			if (!Yield.CheckContext (ec, loc))
 				return false;
 
-			ec.CurrentBranching.Goto ();
+			ec.CurrentBranching.CurrentUsageVector.Goto ();
 			return true;
 		}
 

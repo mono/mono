@@ -609,7 +609,7 @@ namespace Mono.CSharp {
 			else
 				vector.CheckOutParameters (ec.CurrentBranching);
 
-			ec.CurrentBranching.Return ();
+			ec.CurrentBranching.CurrentUsageVector.Return ();
 			return true;
 		}
 		
@@ -680,7 +680,7 @@ namespace Mono.CSharp {
 			if (!label.IsDefined)
 				label.AddUsageVector (ec.CurrentBranching.CurrentUsageVector);
 
-			ec.CurrentBranching.Goto ();
+			ec.CurrentBranching.CurrentUsageVector.Goto ();
 
 			return true;
 		}
@@ -783,7 +783,7 @@ namespace Mono.CSharp {
 
 		public override bool Resolve (EmitContext ec)
 		{
-			ec.CurrentBranching.Goto ();
+			ec.CurrentBranching.CurrentUsageVector.Goto ();
 			return true;
 		}
 
@@ -849,7 +849,7 @@ namespace Mono.CSharp {
 
 			label = sl.ILLabelCode;
 
-			ec.CurrentBranching.Goto ();
+			ec.CurrentBranching.CurrentUsageVector.Goto ();
 			return true;
 		}
 
@@ -896,7 +896,7 @@ namespace Mono.CSharp {
 				}
 			}
 
-			ec.CurrentBranching.Throw ();
+			ec.CurrentBranching.CurrentUsageVector.Throw ();
 			return true;
 		}
 			
@@ -963,7 +963,7 @@ namespace Mono.CSharp {
 
 		public override bool Resolve (EmitContext ec)
 		{
-			ec.CurrentBranching.Goto ();
+			ec.CurrentBranching.CurrentUsageVector.Goto ();
 			return true;
 		}
 

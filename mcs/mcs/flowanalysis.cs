@@ -400,7 +400,7 @@ namespace Mono.CSharp
 				}
 			}
 
-			public void Unreachable ()
+			public void Goto ()
 			{
 				// If we're already unreachable, don't modify the reason why.
 				if (!IsUnreachable)
@@ -676,9 +676,6 @@ namespace Mono.CSharp
 		protected abstract void AddSibling (UsageVector uv);
 
 		public abstract void Break ();
-		public abstract void Return ();
-		public abstract void Goto ();
-		public abstract void Throw ();
 		public abstract void Label (ArrayList origin_vectors);
 
 		// <summary>
@@ -960,21 +957,6 @@ namespace Mono.CSharp
 			}
 		}
 
-		public override void Return ()
-		{
-			CurrentUsageVector.Return ();
-		}
-
-		public override void Goto ()
-		{
-			CurrentUsageVector.Unreachable ();
-		}
-
-		public override void Throw ()
-		{
-			CurrentUsageVector.Throw ();
-		}
-
 		public override void Label (ArrayList origin_vectors)
 		{
 			CurrentUsageVector.MergeJumpOrigins (origin_vectors);
@@ -1039,21 +1021,6 @@ namespace Mono.CSharp
 		public override void Break ()
 		{
 			CurrentUsageVector.Break ();
-		}
-
-		public override void Return ()
-		{
-			CurrentUsageVector.Return ();
-		}
-
-		public override void Goto ()
-		{
-			CurrentUsageVector.Unreachable ();
-		}
-
-		public override void Throw ()
-		{
-			CurrentUsageVector.Throw ();
 		}
 
 		public override void Label (ArrayList origin_vectors)

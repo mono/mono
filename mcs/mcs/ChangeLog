@@ -1,5 +1,10 @@
 2003-12-09  Martin Baulig  <martin@ximian.com>
 
+	* flowanalyis.cs (FlowBranching.Return, Goto, Throw): Removed;
+	call them directly on the UsageVector.
+
+2003-12-09  Martin Baulig  <martin@ximian.com>
+
 	* flowanalysis.cs (FlowBranching.MergeChild, MergeTopBlock):
 	Changed return type from `FlowReturns' to `Reachability'.
 
