@@ -131,7 +131,13 @@ namespace System.Data.SqlTypes
 
 		public override int GetHashCode() 
 		{
-			return (int)value;
+			int hash;
+			if (this.IsTrue)
+				hash = 1;
+			else 
+				hash = 0;
+
+			return hash;
 		}
 
 		public static SqlBoolean NotEquals(SqlBoolean x, SqlBoolean y) 
@@ -283,7 +289,13 @@ namespace System.Data.SqlTypes
 		// One's Complement
 		public static SqlBoolean operator ~ (SqlBoolean x) 
 		{
-			return new SqlBoolean (~x.ByteValue);
+			SqlBoolean b;
+			if (x.IsTrue)
+				b = new SqlBoolean(false);
+			else
+				b = new SqlBoolean(true);
+
+			return b;
 		}
 
 		// test to see if value is true

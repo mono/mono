@@ -147,7 +147,9 @@ namespace System.Data.SqlTypes
 
 		public static SqlByte Parse (string s)
 		{
-			return new SqlByte (Byte.Parse (s));
+			checked {
+				return new SqlByte (Byte.Parse (s));
+			}
 		}
 
 		public static SqlByte Subtract (SqlByte x, SqlByte y)
@@ -215,7 +217,9 @@ namespace System.Data.SqlTypes
 
 		public static SqlByte operator + (SqlByte x, SqlByte y)
 		{
-			return new SqlByte ((byte) (x.Value + y.Value));
+			checked {
+				return new SqlByte ((byte) (x.Value + y.Value));
+			}
 		}
 
 		public static SqlByte operator & (SqlByte x, SqlByte y)
@@ -293,7 +297,9 @@ namespace System.Data.SqlTypes
 
 		public static SqlByte operator * (SqlByte x, SqlByte y)
 		{
-			return new SqlByte ((byte) (x.Value * y.Value));
+			checked {
+				return new SqlByte ((byte) (x.Value * y.Value));
+			}
 		}
 
 		public static SqlByte operator ~ (SqlByte x)
@@ -303,7 +309,9 @@ namespace System.Data.SqlTypes
 
 		public static SqlByte operator - (SqlByte x, SqlByte y)
 		{
-			return new SqlByte ((byte) (x.Value - y.Value));
+			checked {
+				return new SqlByte ((byte) (x.Value - y.Value));
+			}
 		}
 
 		public static explicit operator SqlByte (SqlBoolean x)
@@ -323,15 +331,16 @@ namespace System.Data.SqlTypes
 		{
 			if (x.IsNull)
 				return Null;
-			else
+			else 
 				return new SqlByte ((byte)x.Value);
+
 		}
 
 		public static explicit operator SqlByte (SqlDouble x)
 		{
 			if (x.IsNull)
 				return Null;
-			else
+			else 				
 				return new SqlByte ((byte)x.Value);
 		}
 
@@ -339,16 +348,22 @@ namespace System.Data.SqlTypes
 		{
 			if (x.IsNull)
 				return Null;
-			else
-				return new SqlByte ((byte)x.Value);
+			else {
+				checked {
+					return new SqlByte ((byte)x.Value);
+				}
+			}
 		}
 
 		public static explicit operator SqlByte (SqlInt32 x)
 		{
 			if (x.IsNull)
 				return Null;
-			else
-				return new SqlByte ((byte)x.Value);
+			else {
+				checked {
+					return new SqlByte ((byte)x.Value);
+				}
+			}
 		}
 
 		public static explicit operator SqlByte (SqlInt64 x)
@@ -363,8 +378,11 @@ namespace System.Data.SqlTypes
 		{
 			if (x.IsNull)
 				return Null;
-			else
-				return new SqlByte ((byte)x.Value);
+			else {
+				checked {
+					return new SqlByte ((byte)x.Value);
+				}
+			}
 		}
 
 		public static explicit operator SqlByte (SqlSingle x)
@@ -372,7 +390,7 @@ namespace System.Data.SqlTypes
 			if (x.IsNull)
 				return Null;
 			else
-				return new SqlByte ((byte)x.Value);
+				return new SqlByte (checked((byte)x.Value));
 		}
 
 

@@ -28,11 +28,11 @@ namespace System.Data.SqlTypes
 
 		private bool notNull;
 
-		public static readonly int BinarySort;
-		public static readonly int IgnoreCase;
-		public static readonly int IgnoreKanaType;
-		public static readonly int IgnoreNonSpace;
-		public static readonly int IgnoreWidth;
+		public static readonly int BinarySort = 0x8000;
+		public static readonly int IgnoreCase = 0x1;
+		public static readonly int IgnoreKanaType = 0x8;
+		public static readonly int IgnoreNonSpace = 0x2;
+		public static readonly int IgnoreWidth = 0x10;
 		public static readonly SqlString Null;
 
 		#endregion // Fields
@@ -372,7 +372,7 @@ namespace System.Data.SqlTypes
 			if (x.IsNull)
 				return Null;
 			else
-				return new SqlString (x.ByteValue.ToString ());
+				return new SqlString (x.Value.ToString ());
 		}
 
 		public static explicit operator SqlString (SqlByte x) 

@@ -144,13 +144,18 @@ namespace System.Data.SqlTypes
 
 		public static SqlInt64 OnesComplement (SqlInt64 x)
 		{
+			if (x.IsNull)
+				return Null;
+
 			return ~x;
 		}
 
 
 		public static SqlInt64 Parse (string s)
 		{
-			return new SqlInt64 (Int64.Parse (s));
+			checked {
+				return new SqlInt64 (Int64.Parse (s));
+			}
 		}
 
 		public static SqlInt64 Subtract (SqlInt64 x, SqlInt64 y)
@@ -218,7 +223,9 @@ namespace System.Data.SqlTypes
 
 		public static SqlInt64 operator + (SqlInt64 x, SqlInt64 y)
 		{
-			return new SqlInt64 (x.Value + y.Value);
+			checked {
+				return new SqlInt64 (x.Value + y.Value);
+			}
 		}
 
 		public static SqlInt64 operator & (SqlInt64 x, SqlInt64 y)
@@ -296,7 +303,9 @@ namespace System.Data.SqlTypes
 
 		public static SqlInt64 operator * (SqlInt64 x, SqlInt64 y)
 		{
-			return new SqlInt64 (x.Value * y.Value);
+			checked {
+				return new SqlInt64 (x.Value * y.Value);
+			}
 		}
 
 		public static SqlInt64 operator ~ (SqlInt64 x)
@@ -306,7 +315,9 @@ namespace System.Data.SqlTypes
 
 		public static SqlInt64 operator - (SqlInt64 x, SqlInt64 y)
 		{
-			return new SqlInt64 (x.Value - y.Value);
+			checked {
+				return new SqlInt64 (x.Value - y.Value);
+			}
 		}
 
 		public static SqlInt64 operator - (SqlInt64 n)

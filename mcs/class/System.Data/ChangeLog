@@ -1,3 +1,15 @@
+2002-10-31  Ville Palo <vi64pa@koti.soon.fi>
+
+	* SqlBinary.cs:
+	* SqlBoolean.cs:
+	* SqlByte.cs:
+	* SqlDecimal.cs:
+	* SqlDouble.cs:
+	* SqlInt16.cs:
+	* SqlInt64.cs:
+	* SqlString.cs: Some bugfixes and some TODOs but so much 
+	work to do.
+
 2002-10-30  Tim Coleman (tim@timcoleman.com)
 	* System.Data.Common/FieldNameLookup.cs:
 	* System.Data.Common/SchemaInfo.cs:

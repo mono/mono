@@ -192,7 +192,9 @@ namespace System.Data.SqlTypes
 
 		public static SqlDouble operator + (SqlDouble x, SqlDouble y)
 		{
-			return new SqlDouble (x.Value + y.Value);
+			checked {
+				return new SqlDouble (x.Value + y.Value);
+			}
 		}
 
 		public static SqlDouble operator / (SqlDouble x, SqlDouble y)

@@ -44,8 +44,9 @@ namespace System.Data.SqlTypes
 
 			this.precision = MaxPrecision; // this value seems unclear
 
-			this.scale = (byte)(binData[3] >> SCALE_SHIFT);
-			if (this.scale > MaxScale || (this.scale & RESERVED_SS32_BITS) != 0)
+			this.scale = (byte)(((uint)binData [3]) >> SCALE_SHIFT);
+			
+			if (this.scale > MaxScale || ((uint)binData [3] & RESERVED_SS32_BITS) != 0)
 				throw new ArgumentException(Locale.GetText ("Invalid scale"));
 
 			this.positive = ((binData[3] >> SIGN_SHIFT) > 0);
@@ -114,12 +115,11 @@ namespace System.Data.SqlTypes
 			get { 
 				if (this.IsNull) 
 					throw new SqlNullValueException ();
-				else 
-					if (this.value[3] > 0)
-						throw new OverflowException ();
-					else
-						System.Console.WriteLine( "boo!" );
-						return new decimal (value[0], value[1], value[2], !positive, scale);
+
+				if (this.value[3] > 0)
+					throw new OverflowException ();
+
+				return new decimal (value[0], value[1], value[2], positive, scale);
 			}
 		}
 
@@ -230,7 +230,7 @@ namespace System.Data.SqlTypes
 		[MonoTODO]
 		public static SqlDecimal Parse (string s)
 		{
-			throw new NotImplementedException ();
+			throw new NotImplementedException ();		       
 		}
 
 		[MonoTODO]
@@ -585,10 +585,9 @@ namespace System.Data.SqlTypes
 				return new SqlDecimal ((decimal)x.Value);
 		}
 
-		[MonoTODO]
 		public static explicit operator SqlDecimal (SqlString x)
 		{
-			throw new NotImplementedException ();
+			return Parse (x.Value);
 		}
 
 		public static implicit operator SqlDecimal (decimal x)
