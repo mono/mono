@@ -1,3 +1,8 @@
+2004-08-13  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* AssemblyBuilder.cs: (Partly) Fix delay-signing issue (#56621) when 
+	MCS is used on the MS runtime (other part of the fix is for MCS).
+
 2004-08-11  Marek Safar  <marek.safar@seznam.cz>
 
 	* AssemblyBuilder.cs: Added AddPermissionRequests method
