@@ -1,3 +1,8 @@
+2003-03-22  Martin Baulig  <martin@ximian.com>
+
+	* MonoSymbolTable.cs (MethodEntry.LocalNamesAmbiguous): New public
+	field.  Specifies whether two local variables have the same name.
+
 2003-03-13  Martin Baulig  <martin@ximian.com>
 
 	Added basic support for lexical scopes.  This is just to tell a

@@ -18,7 +18,7 @@ namespace Mono.CSharp.Debugger
 {
 	public struct OffsetTable
 	{
-		public const int  Version = 34;
+		public const int  Version = 35;
 		public const long Magic   = 0x45e82623fd7fa614;
 
 		public int TotalFileSize;
@@ -447,6 +447,7 @@ namespace Mono.CSharp.Debugger
 		public readonly int NumLocals;
 		public readonly int NumLineNumbers;
 		public readonly int NamespaceID;
+		public readonly bool LocalNamesAmbiguous;
 
 		int NameOffset;
 		int FullNameOffset;
@@ -509,6 +510,7 @@ namespace Mono.CSharp.Debugger
 			NumLexicalBlocks = reader.ReadInt32 ();
 			LexicalBlockTableOffset = reader.ReadInt32 ();
 			NamespaceID = reader.ReadInt32 ();
+			LocalNamesAmbiguous = reader.ReadInt32 () != 0;
 
 			name = file.ReadString (NameOffset);
 			full_name = file.ReadString (FullNameOffset);
@@ -619,6 +621,15 @@ namespace Mono.CSharp.Debugger
 			NumLocals = locals.Length;
 			Locals = locals;
 
+			Hashtable local_names = new Hashtable ();
+			foreach (LocalVariableEntry local in locals) {
+				if (local_names.Contains (local.Name)) {
+					LocalNamesAmbiguous = true;
+					break;
+				}
+				local_names.Add (local.Name, local);
+			}
+
 			LocalTypeIndices = new int [NumLocals];
 			for (int i = 0; i < NumLocals; i++)
 				LocalTypeIndices [i] = file.GetNextTypeIndex ();
@@ -701,6 +712,7 @@ namespace Mono.CSharp.Debugger
 			bw.Write (NumLexicalBlocks);
 			bw.Write (LexicalBlockTableOffset);
 			bw.Write (NamespaceID);
+			bw.Write (LocalNamesAmbiguous ? 1 : 0);
 
 			return new MethodSourceEntry (index, file_offset, StartRow, EndRow);
 		}
