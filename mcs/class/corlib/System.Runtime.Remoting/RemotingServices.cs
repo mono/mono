@@ -159,8 +159,10 @@ namespace System.Runtime.Remoting
 				else
 					throw new ArgumentException ("The obj parameter is a proxy.");
 			}
-			else
+			else {
 				identity = obj.ObjectIdentity;
+				obj.ObjectIdentity = null;
+			}
 
 			if (identity == null || !identity.IsConnected)
 				return false;

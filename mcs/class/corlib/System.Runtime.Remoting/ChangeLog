@@ -1,3 +1,10 @@
+2004-07-02  Lluis Sanchez Gual  <lluis@ximian.com>
+
+	* RemotingConfiguration.cs: Avoid adding "id" and "type" as custom 
+	  properties of providers. This fixes bug #60934.
+	* ServerIdentity.cs, RemotingServices.cs: When disposing an identity, detach
+	  the identity from the object, so it can be safely marshalled again.
+
 2004-06-15  Gert Driesen <drieseng@users.sourceforge.net>
 
 	* RemotingTimeoutException.cs: added missing serialization ctor
