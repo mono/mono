@@ -56,7 +56,6 @@ namespace System.IO
 			this.owner = ownsHandle;
 			this.async = isAsync;
 
-
 			InitBuffer (bufferSize, noBuffering);
 
 			/* Can't set append mode */
@@ -104,8 +103,6 @@ namespace System.IO
 				throw new UnauthorizedAccessException ("Access to the path '" + Path.GetFullPath (name) + "' is denied.");
 			}
 
-			InitBuffer (bufferSize, false);
-
 			/* Append streams can't be read (see FileMode
 			 * docs)
 			 */
@@ -150,6 +147,16 @@ namespace System.IO
 			} else {
 				this.append_startpos=0;
 			}
+
+			if (access == FileAccess.Read && canseek && (bufferSize == DefaultBufferSize)) {
+				/* Avoid allocating a large buffer for small files */
+				long len = Length;
+				if (bufferSize > len) {
+					bufferSize = (int)(len < 1000 ? 1000 : len);
+				}
+			}
+
+			InitBuffer (bufferSize, false);
 		}
 
 		// properties

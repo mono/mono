@@ -1,3 +1,8 @@
+2004-01-14  Zoltan Varga  <vargaz@freemail.hu>
+
+	* FileStream.cs (.ctor): Avoid allocating a large buffer when reading
+	from small files.
+
 2004-01-10  Atsushi Enomoto <atsushi@ximian.com>
 
 	* Path.cs : GetDirectoryName ("c:\readme.txt") should return "c:\"
