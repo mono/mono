@@ -79,14 +79,7 @@ namespace System.Data.OleDb
 
 		public object this[int index] {
 			get {
-				if (currentResult < 0 ||
-				    currentResult >= gdaResults.Count)
-					return null;
-				
-				return libgda.gda_data_model_get_value_at (
-						(IntPtr) gdaResults[currentResult],
-						index,
-						currentRow);
+				return (object) GetValue (index);
 			}
 		}
 
@@ -115,16 +108,23 @@ namespace System.Data.OleDb
 
 		#region Methods
 
-		[MonoTODO]
 		public void Close ()
 		{
-			throw new NotImplementedException ();
+			for (int i = 0; i < gdaResults.Count; i++) {
+				IntPtr obj = (IntPtr) gdaResults[i];
+				libgda.FreeObject (obj);
+				gdaResults = null;
+			}
+			
+			open = false;
+			currentResult = -1;
+			currentRow = -1;
 		}
 
-		[MonoTODO]
 		~OleDbDataReader ()
 		{
-			throw new NotImplementedException ();
+			if (open)
+				Close ();
 		}
 
 		public bool GetBoolean (int ordinal)

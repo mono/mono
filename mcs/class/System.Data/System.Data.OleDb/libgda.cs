@@ -72,7 +72,11 @@ namespace System.Data.OleDb
 				return gdaClient;
 			}
 		}
-		
+
+		[DllImport("gobject-2.0",
+			   EntryPoint="g_object_unref")]
+		public static extern void FreeObject (IntPtr obj);
+
 		[DllImport("gda-2")]
 		public static extern void gda_init (string app_id, string version, int nargs, string[] args);
 
