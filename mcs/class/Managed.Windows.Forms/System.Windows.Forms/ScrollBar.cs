@@ -26,9 +26,12 @@
 //	Jordi Mas i Hernandez	jordi@ximian.com
 //
 //
-// $Revision: 1.2 $
+// $Revision: 1.3 $
 // $Modtime: $
 // $Log: ScrollBar.cs,v $
+// Revision 1.3  2004/07/27 15:29:40  jordi
+// fixes scrollbar events
+//
 // Revision 1.2  2004/07/26 17:42:03  jordi
 // Theme support
 //
@@ -73,15 +76,11 @@ namespace System.Windows.Forms
 		private int thumb_size = 0;		
 		protected bool vert;
 				
-		public event ScrollEventHandler scroll_event;
-		public event EventHandler valueChanged_event;				
+		public event ScrollEventHandler Scroll;
+		public event EventHandler ValueChanged;				
 		#endregion	// Local Variables
 				
-		public void add_Scroll (System.Windows.Forms.ScrollEventHandler value) 
-		{
-			scroll_event = value;	
-		}
-
+		
 		public ScrollBar() : base()
 		{				
 			position = 0;
@@ -91,8 +90,8 @@ namespace System.Windows.Forms
 			smallChange = 1;			
 //			base.TabStop = false;
 //			RightToLeft = RightToLeft.No;
-			scroll_event = null;
-			valueChanged_event = null;			
+			Scroll = null;
+			ValueChanged = null;			
 						
 			SetStyle (ControlStyles.UserPaint | ControlStyles.AllPaintingInWmPaint, true);
 			SetStyle (ControlStyles.ResizeRedraw | ControlStyles.Opaque, true);
@@ -197,8 +196,8 @@ throw new NotImplementedException(); }
 				if (position != value){
 					position = value;
 					
-					if (valueChanged_event != null)
-						valueChanged_event (this, EventArgs.Empty);
+					if (ValueChanged != null)
+						ValueChanged (this, EventArgs.Empty);
 				}
 			}
 		}
@@ -225,12 +224,12 @@ throw new NotImplementedException(); }
 		}
 		
 		
-		private void fire_scroll_event (ScrollEventArgs event_args)
+		private void fire_Scroll (ScrollEventArgs event_args)
 		{
-			if (scroll_event == null)
+			if (Scroll == null)
 				return;
 				
-			scroll_event (this, event_args);					
+			Scroll (this, event_args);					
 			
 			//if (event_args.NewValue != position)
 			//	UpdatePos (event_args.NewValue, true);
@@ -238,9 +237,9 @@ throw new NotImplementedException(); }
 		
 		protected virtual void OnValueChanged (EventArgs e)
 		{					
-			if (valueChanged_event != null) {
+			if (ValueChanged != null) {
 				Console.Write ("OnValueChanged");
-				valueChanged_event (this, e);
+				ValueChanged (this, e);
 			}
 		}
 
@@ -373,7 +372,7 @@ throw new NotImplementedException(); }
     					else
     						position = newPos;  						    			    			    						
     						
-    			//Console.WriteLine ("event : {0} {1} {2}", scroll_event != null, position, old);    			
+    			//Console.WriteLine ("event : {0} {1} {2}", Scroll != null, position, old);    			
     			
 			if (update_trumbpos) 
 				if (vert)
@@ -382,7 +381,7 @@ throw new NotImplementedException(); }
 					UpdateThumbPos (thumb_area.X + (int)(((float)(position - Minimum)) * pixel_per_pos), false);							    			
 					
 			if (position != old) // Fire event
-				fire_scroll_event (new ScrollEventArgs (ScrollEventType.ThumbTrack, position));
+				fire_Scroll (new ScrollEventArgs (ScrollEventType.ThumbTrack, position));
 			
     		}	
     		
@@ -549,8 +548,8 @@ throw new NotImplementedException(); }
 			else
 				UpdateThumbPos (thumb_pos.X + SmallChange, true);
 				
-			fire_scroll_event (new ScrollEventArgs (ScrollEventType.SmallIncrement, position));
-			fire_scroll_event (new ScrollEventArgs (ScrollEventType.EndScroll, position));
+			fire_Scroll (new ScrollEventArgs (ScrollEventType.SmallIncrement, position));
+			fire_Scroll (new ScrollEventArgs (ScrollEventType.EndScroll, position));
     		}
     		
     		private void SmallDecrement()
@@ -560,8 +559,8 @@ throw new NotImplementedException(); }
 			else
 				UpdateThumbPos (thumb_pos.X - SmallChange, true);		
 				
-			fire_scroll_event (new ScrollEventArgs (ScrollEventType.SmallDecrement, position));
-			fire_scroll_event (new ScrollEventArgs (ScrollEventType.EndScroll, position));
+			fire_Scroll (new ScrollEventArgs (ScrollEventType.SmallDecrement, position));
+			fire_Scroll (new ScrollEventArgs (ScrollEventType.EndScroll, position));
     		}
     		
     		private void LargeIncrement()
@@ -571,8 +570,8 @@ throw new NotImplementedException(); }
 			else
 				UpdateThumbPos (thumb_pos.X + LargeChange, true);
 				
-			fire_scroll_event (new ScrollEventArgs (ScrollEventType.LargeIncrement, position));
-			fire_scroll_event (new ScrollEventArgs (ScrollEventType.EndScroll, position));
+			fire_Scroll (new ScrollEventArgs (ScrollEventType.LargeIncrement, position));
+			fire_Scroll (new ScrollEventArgs (ScrollEventType.EndScroll, position));
     		}
     		
     		private void LargeDecrement()
@@ -582,8 +581,8 @@ throw new NotImplementedException(); }
 			else
 				UpdateThumbPos (thumb_pos.X - LargeChange, true);		
 				
-			fire_scroll_event (new ScrollEventArgs (ScrollEventType.LargeDecrement, position));
-			fire_scroll_event (new ScrollEventArgs (ScrollEventType.EndScroll, position));
+			fire_Scroll (new ScrollEventArgs (ScrollEventType.LargeDecrement, position));
+			fire_Scroll (new ScrollEventArgs (ScrollEventType.EndScroll, position));
     		}
     		protected override void OnMouseUp (MouseEventArgs e) 
     		{
@@ -607,8 +606,8 @@ throw new NotImplementedException(); }
 			
 			if (thumb_pos.Contains (new Point (e.X, e.Y))) {																
 				
-				fire_scroll_event (new ScrollEventArgs (ScrollEventType.ThumbPosition, position));
-				fire_scroll_event (new ScrollEventArgs (ScrollEventType.EndScroll, position));
+				fire_Scroll (new ScrollEventArgs (ScrollEventType.ThumbPosition, position));
+				fire_Scroll (new ScrollEventArgs (ScrollEventType.EndScroll, position));
 				
 				thumb_pressed = false;				
 				Invalidate ();
@@ -643,7 +642,12 @@ throw new NotImplementedException(); }
 				break;
 			}
 
-		}    		
+		}    				
+		
+		protected void UpdateScrollInfo ()
+		{
+			Invalidate ();
+		}
 	 }
 }
 
