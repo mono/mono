@@ -1,3 +1,11 @@
+2003-10-17 Jackson Harper <jackson@ximian.com>
+
+	* dis-cil.c (get_encoded_user_string): Escape user strings when
+	loading. ie ""quote"" should be "\"quote\"".
+	* dis-cil.c (dissasemble_cil): Write SEH debug info into a comment
+	block. Combine SEH blocks that have the same offset and length,
+	this prevents creating invalid SEH blocks. 
+	
 2003-10-15  Zoltan Varga  <vargaz@freemail.hu>
 
 	* get.c (get_ret_type): Remove needless warning message.
