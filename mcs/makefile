@@ -22,10 +22,16 @@ linux:
 test:
 	if test x$(OS) = xWindows_NT; then make testwindows; else make -f makefile.gnu test; fi
 
+testcorlib:
+	if test x$(OS) = xWindows_NT; then make testcorlibwindows; else make -f makefile.gnu testcorlib; fi
+
 testwindows:
-	(cd nunit; make)
-	(cd nunit20; make)
-	(cd class; make test)
+	$(MAKE) -C nunit
+	$(MAKE) -C nunit20
+	$(MAKE) -C class test
+
+testcorlibwindows:
+	$(MAKE) -C class testcorlib
 
 clean:
 	if test x$(OS) = xWindows_NT; then make cleanwindows; else make cleanlinux; fi
