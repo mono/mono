@@ -1,3 +1,8 @@
+2004-04-12  Atsushi Enomoto <atsushi@ximian.com>
+
+	* SqlStringTest.cs : Removed locale-dependent test.
+	* SqlDecimalTest.cs : Removed runtime-dependent test.
+
 2003-06-02  Ville Palo <vi64pa@kolumbus.fi>
 
 	* All files except SqlGuidTest.cs: Now works fine on ms.net 1.1

@@ -263,12 +263,14 @@ namespace MonoTests.System.Data.SqlTypes
                         Assert ("#H10", SqlDecimal.NotEquals (SqlDecimal.Null, Test3).IsNull);                 
                 }
 
+		/* Don't do such environment-dependent test. It will never succeed under Portable.NET and MS.NET
 		[Test]
                 public void GetHashCodeTest()
                 {
                         // FIXME: Better way to test HashCode
                         AssertEquals ("#I01", -1281249885, Test1.GetHashCode ());
                 }
+		*/
 
 		[Test]
                 public void GetTypeTest()

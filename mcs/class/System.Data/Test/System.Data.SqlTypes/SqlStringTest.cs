@@ -113,19 +113,21 @@ namespace MonoTests.System.Data.SqlTypes
 		[Test]
                 public void Properties()
                 {
-                        // CompareInfo
-                        AssertEquals ("#C01", 3081, Test1.CompareInfo.LCID);
+/* Comment out: This test will succeed only when you're in en-au culture.
+			// CompareInfo
+			AssertEquals ("#C01", 3081, Test1.CompareInfo.LCID);
 
                         // CultureInfo
-                        AssertEquals ("#C02", 3081, Test1.CultureInfo.LCID);                
+			AssertEquals ("#C02", 3081, Test1.CultureInfo.LCID);             
+
+                        // LCID
+                        AssertEquals ("#C05", 3081, Test1.LCID);                        
+*/   
                         
                         // IsNull
                         Assert ("#C03", !Test1.IsNull);
                         Assert ("#C04", SqlString.Null.IsNull);
 			                        
-                        // LCID
-                        AssertEquals ("#C05", 3081, Test1.LCID);
-                        
                         // SqlCompareOptions
                         AssertEquals ("#C06", "IgnoreCase, IgnoreKanaType, IgnoreWidth", 
                                       Test1.SqlCompareOptions.ToString ());
@@ -182,7 +184,7 @@ namespace MonoTests.System.Data.SqlTypes
                 	Assert ("#D11", T2.CompareTo (T1) != 0);
 
 			// IgnoreNonSpace
-                        T1 = new SqlString ("TESTñ", 2057, SqlCompareOptions.IgnoreNonSpace);
+                        T1 = new SqlString ("TEST\xF1", 2057, SqlCompareOptions.IgnoreNonSpace);
                 	T2 = new SqlString ("TESTn", 2057, SqlCompareOptions.IgnoreNonSpace);
                 	Assert ("#D12", T2.CompareTo (T1) == 0);
                 
@@ -583,7 +585,7 @@ namespace MonoTests.System.Data.SqlTypes
                 public void SqlDecimalToSqlString()
                 {
                         SqlDecimal TestDecimal = new SqlDecimal (1000.2345);
-                        AssertEquals ("#U01", "1000.2345000000000", ((SqlString)TestDecimal).Value);
+			AssertEquals ("#U01", "1000.2345000000000", ((SqlString)TestDecimal).Value);
                 }
                 
 		[Test]
