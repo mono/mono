@@ -336,7 +336,7 @@ namespace System.Windows.Forms {
 				} else {
 					// This is a real root window too
 					if (cp.X < 1) cp.X = 0;
-					if (cp.Y < 1) cp.Y = 0;
+					if (cp.Y < 1) cp.Y = 44;
 					realWindow = true;
 				}
 			} else {

@@ -1,3 +1,7 @@
+2005-02-07  Geoff Norton  <gnorton@customerdna.com>
+
+	* XplatUIOSX.cs: Ensure the window doesn't get stuck behind the statusbar.
+
 2005-02-07  Miguel de Icaza  <miguel@novell.com>
 
 	* UpDownBase.cs: Add ReadOnly and UpDownAlign properties.
