@@ -219,7 +219,7 @@ namespace System.Web.UI.WebControls
 		protected override void LoadViewState(object savedState)
 		{
 			//Order: BaseClass, Items (Collection), Indices
-			if(savedState != null)
+			if(savedState != null && savedState is Triplet)
 			{
 				Triplet state = (Triplet)savedState;
 				base.LoadViewState(state.First);
