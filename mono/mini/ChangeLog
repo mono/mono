@@ -1,3 +1,7 @@
+2004-03-31  Zoltan Varga  <vargaz@freemail.hu>
+
+	* basic-long.cs: Add test for negation of Int64.MinValue.
+
 2004-03-30  Zoltan Varga  <vargaz@freemail.hu>
 
 	* mini-sparc.c: Update status.
