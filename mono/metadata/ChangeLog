@@ -1,3 +1,7 @@
+2001-12-11  Dick Porter  <dick@ximian.com>
+
+	* icall.c:
+	* file-io.c: Internal calls for file IO.
 
 Thu Dec 6 16:21:30 CET 2001 Paolo Molaro <lupus@ximian.com>
 
