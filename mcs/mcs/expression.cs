@@ -2887,7 +2887,8 @@ namespace Mono.CSharp {
 				y = BetterConversion (ec, a, bt, ct, loc);
 
 				if (x < y)
-					return 0;
+					break;
+//					return 0;
 				
 				rating1 += x;
 				rating2 += y;
