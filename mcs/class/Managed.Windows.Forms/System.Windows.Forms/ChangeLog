@@ -1,3 +1,9 @@
+2005-02-12  Peter Bartok  <pbartok@novell.com>
+
+	* OpacityConverter.cs: Implemented
+	* Hwnd.cs: Internal class to support drivers that need to emulate
+	  client area/non-client area window behaviour
+
 2005-02-11  Peter Bartok  <pbartok@novell.com>
 
 	* KeysConverter.cs: Implemented
