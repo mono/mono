@@ -1,3 +1,7 @@
+2003-06-01  Ville Palo <vi64pa@kolumbus.fi>
+
+	* SqlString.cs: added null checking
+	
 2003-05-28  Ville Palo <vi64pa@kolumbus.fi>
 
 	* SqlMoney.cs: little fixes and clean ups

@@ -385,6 +385,9 @@ namespace System.Data.SqlTypes
 		// Concatenates
 		public static SqlString operator + (SqlString x, SqlString y) 
 		{
+			if (x.IsNull || y.IsNull)
+				return SqlString.Null;
+
 			return new SqlString (x.Value + y.Value);
 		}
 
