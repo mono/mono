@@ -16,6 +16,7 @@ namespace System.Net.Configuration
 	class ConnectionManagementData
 	{
 		Hashtable data; // key -> address, value -> maxconnections
+		const int defaultMaxConnections = 2;
 		
 		public ConnectionManagementData (object parent)
 		{
@@ -44,6 +45,18 @@ namespace System.Net.Configuration
 		public void Clear ()
 		{
 			data.Clear ();
+		}
+
+		public uint GetMaxConnections (string hostOrIP)
+		{
+			object o = data [hostOrIP];
+			if (o == null)
+				o = data ["*"];
+
+			if (o == null)
+				return defaultMaxConnections;
+
+			return (uint) o;
 		}
 
 		public Hashtable Data {

@@ -1,3 +1,12 @@
+2003-10-08  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* WebConnection.cs: the queue is now handled by the threadpool.
+	Initialize the connection data in a place where it does not depend on
+	the execution order of the requests in threadpool. More error handling.
+
+	* WebConnectionGroup.cs: use the limits in the config file and reuse
+	connections when the limit is reached.
+
 2003-10-02  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HttpWebRequest.cs: handle 304 à la MS.

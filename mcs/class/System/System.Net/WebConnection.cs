@@ -30,13 +30,11 @@ namespace System.Net
 		WebExceptionStatus status;
 		WebConnectionGroup group;
 		bool busy;
-		ArrayList queue;
 		WaitOrTimerCallback initConn;
-		internal ManualResetEvent dataAvailable;
 		bool keepAlive;
 		bool aborted;
 		byte [] buffer;
-		internal static AsyncCallback readDoneDelegate = new AsyncCallback (ReadDone);
+		static AsyncCallback readDoneDelegate = new AsyncCallback (ReadDone);
 		EventHandler abortHandler;
 		ReadState readState;
 		internal WebConnectionData Data;
@@ -44,19 +42,20 @@ namespace System.Net
 		bool chunkedRead;
 		ChunkStream chunkStream;
 		AutoResetEvent waitForContinue;
+		AutoResetEvent goAhead;
 		bool waitingForContinue;
+		int queued;
 		
 		public WebConnection (WebConnectionGroup group, ServicePoint sPoint)
 		{
 			this.group = group;
 			this.sPoint = sPoint;
-			queue = new ArrayList (1);
-			dataAvailable = new ManualResetEvent (true);
 			buffer = new byte [4096];
 			readState = ReadState.None;
 			Data = new WebConnectionData ();
 			initConn = new WaitOrTimerCallback (InitConnection);
 			abortHandler = new EventHandler (Abort);
+			goAhead = new AutoResetEvent (true);
 		}
 
 		public void Connect ()
@@ -78,6 +77,8 @@ namespace System.Net
 				if(hostEntry == null) {
 					status = sPoint.UsesProxy ? WebExceptionStatus.ProxyNameResolutionFailure :
 								    WebExceptionStatus.NameResolutionFailure;
+					socket.Close();
+					socket = null;
 				} else {
 					foreach(IPAddress address in hostEntry.AddressList) {
 						socket = new Socket (address.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
@@ -87,6 +88,7 @@ namespace System.Net
 							break;
 						} catch (SocketException) {
 							socket.Close();
+							socket = null;
 							status = WebExceptionStatus.ConnectFailure;
 						}
 					}
@@ -113,6 +115,14 @@ namespace System.Net
 		{
 			status = st;
 			Close ();
+			lock (this) {
+				busy = false;
+				if (st == WebExceptionStatus.RequestCanceled)
+					Data.Init ();
+
+				status = st;
+			}
+
 			if (e == null) { // At least we now where it comes from
 				try {
 					throw new Exception ();
@@ -123,6 +133,8 @@ namespace System.Net
 
 			if (Data != null && Data.request != null)
 				Data.request.SetResponseError (st, e);
+
+			goAhead.Set ();
 		}
 		
 		internal bool WaitForContinue (byte [] headers, int offset, int size)
@@ -154,31 +166,29 @@ namespace System.Net
 			WebConnection cnc = (WebConnection) result.AsyncState;
 			WebConnectionData data = cnc.Data;
 			NetworkStream ns = cnc.nstream;
-			if (ns == null)
+			if (ns == null) {
+				cnc.busy = false;
+				cnc.goAhead.Set ();
 				return;
+			}
 
 			int nread = -1;
-			cnc.dataAvailable.Reset ();
 			try {
 				nread = ns.EndRead (result);
 			} catch (Exception e) {
 				cnc.status = WebExceptionStatus.ReceiveFailure;
 				cnc.HandleError (cnc.status, e);
-				cnc.dataAvailable.Set ();
 				return;
 			}
 
 			if (nread == 0) {
-				Console.WriteLine ("nread == 0: may be the connection was closed?");
-				data.request.SetResponseData (data);
-				cnc.Close ();
-				cnc.dataAvailable.Set ();
+				cnc.status = WebExceptionStatus.ReceiveFailure;
+				cnc.HandleError (cnc.status, null);
 				return;
 			}
 
 			if (nread < 0) {
 				cnc.HandleError (WebExceptionStatus.ServerProtocolViolation, null);
-				cnc.dataAvailable.Set ();
 				return;
 			}
 
@@ -206,14 +216,12 @@ namespace System.Net
 
 				if (pos == -1 || exc != null) {
 					cnc.HandleError (WebExceptionStatus.ServerProtocolViolation, exc);
-					cnc.dataAvailable.Set ();
 					return;
 				}
 			}
 
 			if (cnc.readState != ReadState.Content) {
 				cnc.HandleError (WebExceptionStatus.ServerProtocolViolation, null);
-				cnc.dataAvailable.Set ();
 				return;
 			}
 
@@ -232,10 +240,17 @@ namespace System.Net
 				cnc.chunkStream.Write (cnc.buffer, pos, nread);
 			}
 
-			cnc.prevStream = stream;
+			int more = Interlocked.Decrement (ref cnc.queued);
+
+			if (more > 0)
+				stream.ReadAll ();
+
 			data.stream = stream;
-			data.request.SetResponseData (data);
 			stream.CheckComplete ();
+			data.request.SetResponseData (data);
+			lock (cnc) {
+				cnc.prevStream = stream;
+			}
 		}
 		
 		static void InitRead (object state)
@@ -247,7 +262,6 @@ namespace System.Net
 				ns.BeginRead (cnc.buffer, 0, cnc.buffer.Length, readDoneDelegate, cnc);
 			} catch (Exception e) {
 				cnc.HandleError (WebExceptionStatus.ReceiveFailure, e);
-				cnc.dataAvailable.Set ();
 			}
 		}
 		
@@ -324,22 +338,46 @@ namespace System.Net
 		void InitConnection (object state, bool notUsed)
 		{
 			HttpWebRequest request = (HttpWebRequest) state;
-			if (aborted) {
-				status = WebExceptionStatus.RequestCanceled;
-				request.SetWriteStreamError (status);
+
+			// Just in case 2 requests are released
+			bool relaunch = false;
+			lock (this) {
+				relaunch = busy;
+				busy = true;
+			}
+
+			if (relaunch) {
+				SendRequest (request);
+				return;
+			}
+			//
+
+			if (status == WebExceptionStatus.RequestCanceled) {
+				busy = false;
+				Data.Init ();
+				goAhead.Set ();
+				aborted = false;
 				return;
 			}
 
+			keepAlive = request.KeepAlive;
+			Data.Init ();
+			Data.request = request;
+
 			Connect ();
 			if (status != WebExceptionStatus.Success) {
+				busy = false;
 				request.SetWriteStreamError (status);
 				Close ();
+				goAhead.Set ();
 				return;
 			}
 			
 			if (!CreateStream (request)) {
+				busy = false;
 				request.SetWriteStreamError (status);
 				Close ();
+				goAhead.Set ();
 				return;
 			}
 
@@ -348,33 +386,16 @@ namespace System.Net
 			InitRead (this);
 		}
 		
-		void BeginRequest (HttpWebRequest request)
-		{
-			lock (this) {
-				keepAlive = request.KeepAlive;
-				Data.Init ();
-				Data.request = request;
-			}
-
-			ThreadPool.RegisterWaitForSingleObject (dataAvailable, initConn, request, -1, true);
-		}
-
 		internal EventHandler SendRequest (HttpWebRequest request)
 		{
-			Monitor.Enter (this);
+			lock (this) {
+				Interlocked.Increment (ref queued);
+				if (prevStream != null && socket != null && socket.Connected) {
+					prevStream.ReadAll ();
+					prevStream = null;
+				}
 
-			if (prevStream != null && socket != null && socket.Connected) {
-				prevStream.ReadAll ();
-				prevStream = null;
-			}
-
-			if (!busy) {
-				busy = true;
-				Monitor.Exit (this);
-				BeginRequest (request);
-			} else {
-				queue.Add (request);
-				Monitor.Exit (this);
+				ThreadPool.RegisterWaitForSingleObject (goAhead, initConn, request, -1, true);
 			}
 
 			return abortHandler;
@@ -382,30 +403,22 @@ namespace System.Net
 		
 		internal void NextRead ()
 		{
-			Monitor.Enter (this);
-			string header = (sPoint.UsesProxy) ? "Proxy-Connection" : "Connection";
-			string cncHeader = (Data.Headers != null) ? Data.Headers [header] : null;
-			bool keepAlive = this.keepAlive;
-			if (cncHeader != null) {
-				cncHeader = cncHeader.ToLower ();
-				keepAlive = (keepAlive && cncHeader.IndexOf ("keep-alive") != -1);
-			}
+			lock (this) {
+				busy = false;
+				string header = (sPoint.UsesProxy) ? "Proxy-Connection" : "Connection";
+				string cncHeader = (Data.Headers != null) ? Data.Headers [header] : null;
+				bool keepAlive = this.keepAlive;
+				if (cncHeader != null) {
+					cncHeader = cncHeader.ToLower ();
+					keepAlive = (keepAlive && cncHeader.IndexOf ("keep-alive") != -1);
+				}
 
-			if ((socket != null && !socket.Connected) ||
-			   (!keepAlive || (cncHeader != null && cncHeader.IndexOf ("close") != -1))) {
-				Close ();
-			}
+				if ((socket != null && !socket.Connected) ||
+				   (!keepAlive || (cncHeader != null && cncHeader.IndexOf ("close") != -1))) {
+					Close ();
+				}
 
-			busy = false;
-			dataAvailable.Set ();
-
-			if (queue.Count > 0) {
-				HttpWebRequest request = (HttpWebRequest) queue [0];
-				queue.RemoveAt (0);
-				Monitor.Exit (this);
-				SendRequest (request);
-			} else {
-				Monitor.Exit (this);
+				goAhead.Set ();
 			}
 		}
 		
@@ -572,6 +585,10 @@ namespace System.Net
 			HandleError (WebExceptionStatus.RequestCanceled, null);
 		}
 
+		internal bool Busy {
+			get { lock (this) return busy; }
+		}
+		
 		~WebConnection ()
 		{
 			Close ();

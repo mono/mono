@@ -1,3 +1,8 @@
+2003-10-08  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* ConnectionManagementHandler.cs: added GetMaxConnections to return the 
+	max. number of simultaneous connections to a given host.
+
 2003-07-14  Jerome Laban <jlaban@wanadoo.fr>
 
 	* NetConfigurationHandler.cs: New file that handles 
