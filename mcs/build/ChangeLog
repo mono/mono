@@ -1,3 +1,7 @@
+2004-06-14  Raja R Harinath  <rharinath@novell.com>
+
+	* library.make (uninstall-local): Fix typo.
+
 2004-06-11  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* library.make : HAVE_CS_TESTS fixie.

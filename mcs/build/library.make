@@ -99,7 +99,7 @@ install-local: $(gacutil)
 	$(RUNTIME) $(gacutil) /i $(the_lib) /f /root $(DESTDIR)$(prefix)/lib /package $(PACKAGE)
 
 uninstall-local: $(gacutil)
-	$(RUNTIME) $(gacutil) /u `echo $(LIBRARY_NAME) | sed 's,.dll$,,'`
+	$(RUNTIME) $(gacutil) /u `echo $(LIBRARY_NAME) | sed 's,.dll$$,,'`
 
 $(gacutil):
 	cd $(topdir)/tools/gacutil && $(MAKE)
