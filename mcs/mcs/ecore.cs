@@ -3495,6 +3495,20 @@ namespace Mono.CSharp {
 			return this;
 		}
 
+		void Report_AssignToReadonly (bool is_instance)
+		{
+			string msg;
+			
+			if (is_instance)
+				msg = "Readonly field can not be assigned outside " +
+				"of constructor or variable initializer";
+			else
+				msg = "A static readonly field can only be assigned in " +
+				"a static constructor";
+
+			Report.Error (is_instance ? 191 : 198, loc, msg);
+		}
+		
 		override public Expression DoResolveLValue (EmitContext ec, Expression right_side)
 		{
 			Expression e = DoResolve (ec);
@@ -3512,9 +3526,7 @@ namespace Mono.CSharp {
 			if (ec.IsConstructor)
 				return this;
 
-			Report.Error (191, loc,
-				      "Readonly field can not be assigned outside " +
-				      "of constructor or variable initializer");
+			Report_AssignToReadonly (true);
 			
 			return null;
 		}
@@ -3566,8 +3578,15 @@ namespace Mono.CSharp {
 
 		public void EmitAssign (EmitContext ec, Expression source)
 		{
-			bool is_static = FieldInfo.IsStatic;
+			FieldAttributes fa = FieldInfo.Attributes;
+			bool is_static = (fa & FieldAttributes.Static) != 0;
+			bool is_readonly = (fa & FieldAttributes.InitOnly) != 0;
 			ILGenerator ig = ec.ig;
+
+			if (is_readonly && !ec.IsConstructor){
+				Report_AssignToReadonly (!is_static);
+				return;
+			}
 			
 			if (!is_static){
 				Expression instance = InstanceExpression;

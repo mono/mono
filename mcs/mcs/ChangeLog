@@ -1,5 +1,8 @@
 2002-05-10  Miguel de Icaza  <miguel@ximian.com>
 
+	* ecore.cs: Report readonly assigns here as well, as we might have
+	been resolved only by MemberAccess.
+
 	* typemanager.cs: Use a ptrhashtable for the criteria, because we
 	do not want to reuse potential criteria memory.
 
