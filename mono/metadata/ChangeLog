@@ -1,4 +1,11 @@
 
+Fri May 31 13:08:25 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* Makefile.am, mono-config.c, mono-config.h: configuration file
+	support routines.
+	* loader.c, loader.h: make Dll mapping configurable at runtime in the
+	config file. Export methods to insert and lookup mappings.
+
 Fri May 31 12:45:38 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
 	* reflection.c: handle types and boxed objects in custom attr
