@@ -32,8 +32,10 @@ namespace System.Web.SessionState {
 		{
 			this.config = config;
 			RemotingConfiguration.Configure (null);
-			state_server = (RemoteStateServer) Activator.GetObject (typeof (RemoteStateServer),
-					"tcp://localhost:8086/StateServer");
+			string cons, proto, server, port;
+			GetConData (config.StateConnectionString, out proto, out server, out port);
+			cons = String.Format ("{0}://{1}:{2}/StateServer", proto, server, port);
+			state_server = (RemoteStateServer) Activator.GetObject (typeof (RemoteStateServer), cons);
 		}
 
 		public void UpdateHandler (HttpContext context, SessionStateModule module)
@@ -100,7 +102,6 @@ namespace System.Web.SessionState {
 			if (!config.CookieLess &&
 					context.Request.Cookies [CookieName] != null)
 				return context.Request.Cookies [CookieName].Value;
-
 			return null;
 		}
 
@@ -117,6 +118,22 @@ namespace System.Web.SessionState {
 				if (stream != null)
 					stream.Close ();
 			}
+		}
+
+		private void GetConData (string cons, out string proto, out string server, out string port)
+		{
+			int ei = cons.IndexOf ('=');
+			int ci = cons.IndexOf (':');
+
+			if (ei < 0 || ci < 0)
+				throw new Exception ("Invalid StateConnectionString");
+			
+			proto = cons.Substring (0, ei);
+			server = cons.Substring (ei+1, ci - ei - 1);
+			port = cons.Substring (ci+1, cons.Length - ci - 1);
+
+			if (proto == "tcpip")
+				proto = "tcp";
 		}
 	} 
 }

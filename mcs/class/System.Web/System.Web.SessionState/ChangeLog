@@ -1,5 +1,10 @@
 2003-11-24  Jackson Harper <jackson@ximian.com>
 
+	* SessionStateServerHandler.cs: Parse connection string. Need to
+	look into what MS allows/doesn't allow better.
+	
+2003-11-24  Jackson Harper <jackson@ximian.com>
+
 	* RemoteStateServer.cs: The state server object that will reside
 	on the server and store session data and ids.
 	* StateServerItem.cs: Container for session data.
