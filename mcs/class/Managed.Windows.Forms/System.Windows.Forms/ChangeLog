@@ -1,5 +1,10 @@
 2004-12-17  Jackson Harper  <jackson@ximian.com>
 
+	* XplatUIX11.cs: When generating mouse wparams get the modifier
+	keys from the ModifierKeys property.
+
+2004-12-17  Jackson Harper  <jackson@ximian.com>
+
 	* X11Keyboard.cs: Send up/down input when generating
 	messages. Remove some unused vars.
 

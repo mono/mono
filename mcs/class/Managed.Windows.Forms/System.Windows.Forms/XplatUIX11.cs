@@ -823,11 +823,12 @@ namespace System.Windows.Forms {
 				result |= (int)MsgButtons.MK_RBUTTON;
 			}
 
-			if ((key_state & Keys.Control) != 0) {
+			Keys mods = ModifierKeys;
+			if ((mods & Keys.Control) != 0) {
 				result |= (int)MsgButtons.MK_CONTROL;
 			}
 
-			if ((key_state & Keys.Shift) != 0) {
+			if ((mods & Keys.Shift) != 0) {
 				result |= (int)MsgButtons.MK_SHIFT;
 			}
 
