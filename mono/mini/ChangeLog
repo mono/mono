@@ -1,3 +1,7 @@
+2005-01-30  Zoltan Varga  <vargaz@freemail.hu>
+
+	* exceptions-amd64.c (mono_arch_find_jit_info): Fix AMD64 build.
+
 2005-01-29  Ben Maurer  <bmaurer@ximian.com>
 
 	* *: MonoMethod->signature might be NULL now. You *MUST* use
