@@ -518,9 +518,18 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		private int CalcYPos ()
+		{
+			if (Alignment == TabAlignment.Bottom) {
+				Rectangle r = ThemeEngine.Current.GetTabControlDisplayRectangle (this);
+				return r.Bottom + 3;
+			}
+			return 1;
+		}
+
 		private void SizeTabs (int row_width)
 		{
-			int ypos = 1;
+			int ypos = CalcYPos ();
 			int prev_row = 1;
 			Size spacing = TabSpacing;
 			int size = item_size.Width + 2 + (spacing.Width * 2);
@@ -605,6 +614,8 @@ namespace System.Windows.Forms {
 					r = right_edge;
 				if (Alignment == TabAlignment.Top)
 					y -= 1;
+				if (Alignment == TabAlignment.Bottom)
+					y -= 2;
 
 				page.TabBounds = new Rectangle (l, y, r - l, h);
 			} else {
