@@ -23,9 +23,12 @@
 //	Jordi Mas i Hernandez, jordi@ximian.com
 //
 //
-// $Revision: 1.2 $
+// $Revision: 1.3 $
 // $Modtime: $
 // $Log: Theme.cs,v $
+// Revision 1.3  2004/08/24 16:16:46  jackson
+// Handle drawing picture boxes in the theme now. Draw picture box borders and obey sizing modes
+//
 // Revision 1.2  2004/08/20 00:12:51  jordi
 // fixes methods signature
 //
@@ -277,6 +280,7 @@ namespace System.Windows.Forms
 		public abstract void DrawStatusBarPanel (Graphics dc, Rectangle area, int index,
 			SolidBrush br_forecolor, StatusBarPanel panel);
 		
-
+		public abstract void DrawPictureBox (Graphics dc, PictureBox pb);
+		
 	}
 }

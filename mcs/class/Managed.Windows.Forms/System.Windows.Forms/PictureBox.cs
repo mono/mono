@@ -208,7 +208,7 @@ namespace System.Windows.Forms {
 		private void Draw ()
 		{
 			if (redraw) {
-				DeviceContext.DrawImage (image, 0, 0, Width, Height);
+				ThemeEngine.Current.DrawPictureBox (DeviceContext, this);
 			}
 			redraw = false;
 		}

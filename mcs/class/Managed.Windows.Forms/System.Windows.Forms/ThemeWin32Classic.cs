@@ -25,9 +25,12 @@
 //
 //
 //
-// $Revision: 1.26 $
+// $Revision: 1.27 $
 // $Modtime: $
 // $Log: ThemeWin32Classic.cs,v $
+// Revision 1.27  2004/08/24 16:16:46  jackson
+// Handle drawing picture boxes in the theme now. Draw picture box borders and obey sizing modes
+//
 // Revision 1.26  2004/08/21 01:52:08  ravindra
 // Improvments in mouse event handling in the ToolBar control.
 //
@@ -1633,6 +1636,36 @@ namespace System.Windows.Forms
 			float y = ((area.Bottom - area.Top) / 2.0F) + border_size;
 
 			dc.DrawString (text, panel.Parent.Font, br_forecolor, x, y, string_format);
+		}
+
+		public override void DrawPictureBox (Graphics dc, PictureBox pb)
+		{
+			Rectangle client = pb.ClientRectangle;
+			int x, y, width, height;
+
+			dc.FillRectangle (new SolidBrush (pb.BackColor), client);
+			DrawBorderStyle (dc, client, pb.BorderStyle);
+
+			x = y = 0;
+			switch (pb.SizeMode) {
+			case PictureBoxSizeMode.StretchImage:
+				width = client.Width;
+				height = client.Height;
+				break;
+			case PictureBoxSizeMode.CenterImage:
+				width = client.Width;
+				height = client.Height;
+				x = width / 2;
+				y = (height - pb.Image.Height) / 2;
+				break;
+			default:
+				// Normal, AutoSize
+				width = client.Width;
+				height = client.Height;
+				break;
+			}
+			dc.DrawImage (pb.Image, x, y, width, height);
+			
 		}
 
 		public  override void DrawOwnerDrawBackground (DrawItemEventArgs e)
