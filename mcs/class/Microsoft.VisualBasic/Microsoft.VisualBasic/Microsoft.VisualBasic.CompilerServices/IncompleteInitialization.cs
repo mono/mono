@@ -8,7 +8,7 @@
 //
 namespace Microsoft.VisualBasic.CompilerServices {
 	[System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Never)] 
-	[System.Runtime.InteropServices.StructLayoutAttribute(System.Runtime.InteropServices.LayoutKind.Auto)] 
+	[MonoTODO]
 	sealed public class IncompleteInitialization : System.Exception, System.Runtime.Serialization.ISerializable {
 		// Declarations
 		// Constructors
