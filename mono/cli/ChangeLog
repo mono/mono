@@ -1,5 +1,9 @@
 2001-08-06  Dietmar Maurer  <dietmar@ximian.com>
 
+	* cli.h: renamed MonoMethodManaged to MonoMethodNormal
+
+	* loader.h: removed.
+
 	* object.h: added MonoArrayObject and MonoStringObject
 
 	* loader.c (mono_typedef_from_name):

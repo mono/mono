@@ -4,6 +4,8 @@
 	(ves_exec_method): impl. most LDELEM/STELEM opcodes, LDLEN
 	(newarr): impl.
 	(mono_get_ansi_string): impl.
+	(mono_lookup_internal_call): impl.
+	(ves_exec_method): implemented internal calls
 
 2001-08-05  Dietmar Maurer  <dietmar@ximian.com>
 
