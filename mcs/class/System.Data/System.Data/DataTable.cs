@@ -43,7 +43,7 @@ namespace System.Data
 		// private DataTableRelationCollection _parentRelations;
 		private string _prefix;
 		private DataColumn[] _primaryKey;
-		private DataRowCollection _rows;
+		private DataRowCollection rows;
 		private ISite _site;
 		private string _tableName;
 		private bool _containsListCollection;
@@ -65,6 +65,7 @@ namespace System.Data
 			_caseSensitive = false;
 			_displayExpression = null;
 			_primaryKey = null;
+			rows = new DataRowCollection ();
 			
 			// FIXME: temporaily commented DataTableRelationCollection
 			// _childRelations = new DataTableRelationCollection();
@@ -312,9 +313,7 @@ namespace System.Data
 		
 		public DataRowCollection Rows
 		{
-			get {
-				return _rows;
-			}
+			get { return rows; }
 		}
 
 		/// <summary>
@@ -389,7 +388,7 @@ namespace System.Data
 		
 		public void Clear()
 		{
-			_rows.Clear ();
+			rows.Clear ();
 		}
 
 		/// <summary>

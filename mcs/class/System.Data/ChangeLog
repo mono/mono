@@ -1,4 +1,9 @@
 2002-05-16  Tim Coleman <tim@timcoleman.com>
+	* System.Data/DataTable.cs:
+		Construct the DataRowCollection in the DataTable
+		constructor.  Otherwise, it's a null reference.
+
+2002-05-16  Tim Coleman <tim@timcoleman.com>
 	* System.Data.SqlClient/SqlDataReader.cs:
 		Modify GetValues to use Array.Copy() to copy
 		the results from fields to values, rather than
