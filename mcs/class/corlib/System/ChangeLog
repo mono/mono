@@ -1,3 +1,7 @@
+2003-10-10  Zoltan Varga  <vargaz@freemail.hu>
+
+	* Array.cs: Add argument checking to GetValue and SetValue.
+
 2003-10-09  Miguel de Icaza  <miguel@ximian.com>
 
 	* DateTime.cs: Patch from Chris Turchin: the DateTime.MaxValue

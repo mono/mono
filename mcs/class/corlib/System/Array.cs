@@ -191,10 +191,12 @@ namespace System
 
 		public object GetValue (int idx)
 		{
-			if (idx < 0 || idx >= Length)
-				throw new ArgumentOutOfRangeException ("idx");
+			if (Rank != 1)
+				throw new ArgumentException ("Array was not a one-dimensional array.");
+			if (idx < GetLowerBound (0) || idx > GetUpperBound (0))
+				throw new IndexOutOfRangeException ("idx");
 
-			return GetValueImpl (idx);
+			return GetValueImpl (idx - GetLowerBound (0));
 		}
 
 		public object GetValue (int idx1, int idx2)
@@ -324,10 +326,12 @@ namespace System
 
 		public void SetValue (object value, int idx)
 		{
-			if (idx < 0 || idx >= Length)
-				throw new ArgumentOutOfRangeException ("idx");
+			if (Rank != 1)
+				throw new ArgumentException ("Array was not a one-dimensional array.");
+			if (idx < GetLowerBound (0) || idx > GetUpperBound (0))
+				throw new IndexOutOfRangeException ("idx");
 
-			SetValueImpl (value, idx);
+			SetValueImpl (value, idx - GetLowerBound (0));
 		}
 		
 		public void SetValue (object value, int idx1, int idx2)
