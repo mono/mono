@@ -168,7 +168,7 @@ namespace Mono.Tools.CertView {
 					version [1] = new Pixbuf ("v2.bmp");
 					version [2] = new Pixbuf ("v3.bmp");
 					version [3] = new Pixbuf ("v3critical.bmp");
-					version [4] = new Pixbuf ("app.ico");
+					version [4] = new Pixbuf ("mono.bmp");
 				}
 
 				return dataFunc;

@@ -122,8 +122,9 @@ namespace Mono.Tools.CertView {
 					if ((!extensions.ContainsKey (xe.OID)) && (xe.Critical))
 						status = unknownCriticalExtension;
 					if (xe.OID == "2.5.29.17") {
-						SubjectAltNameExtension san = new SubjectAltNameExtension (xe);
-						subjectAltName = san.RFC822;
+// BUG: Works with CSC but not with MCS
+//						SubjectAltNameExtension san = new SubjectAltNameExtension (xe);
+//						subjectAltName = san.RFC822;
 					}
 				}
 			}
@@ -232,9 +233,11 @@ namespace Mono.Tools.CertView {
 					break;
 				case "1.2.840.113549.1.1.2":
 					result = "md2RSA";
+					status = String.Format (unsupportedHash, "MD2");
 					break;
 				case "1.2.840.113549.1.1.3":
 					result = "md4RSA";
+					status = String.Format (unsupportedHash, "MD4");
 					break;
 				case "1.2.840.113549.1.1.4":
 					result = "md5RSA";
