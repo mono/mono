@@ -195,6 +195,25 @@ namespace System {
 			} 
 		}
 
+		internal static bool FindExponent (ref int pos, string s)
+		{
+				int i = s.IndexOfAny(new char [] {'e', 'E'}, pos);
+				if (i < 0)
+						return false;
+				if (++i == s.Length)
+						return false;
+				if (s [i] == '+' || s [i] == '-')
+						if (++i == s.Length)
+								return false;
+				if (!Char.IsDigit (s [i]))
+						return false;
+				for (; i < s.Length; ++i)
+						if (!Char.IsDigit (s [i])) 
+								break;
+				pos = i;
+				return true;
+		}
+
 		internal static bool FindOther (ref int pos,
 					      string s, 
 					      string other)
@@ -245,6 +264,7 @@ namespace System {
 			bool AllowLeadingSign = (style & NumberStyles.AllowLeadingSign) != 0;
 			bool AllowTrailingWhite = (style & NumberStyles.AllowTrailingWhite) != 0;
 			bool AllowLeadingWhite = (style & NumberStyles.AllowLeadingWhite) != 0;
+			bool AllowExponent = (style & NumberStyles.AllowExponent) != 0;
 
 			int pos = 0;
 
@@ -255,6 +275,7 @@ namespace System {
 			bool negative = false;
 			bool foundSign = false;
 			bool foundCurrency = false;
+			bool foundExponent = false;
 
 			// Pre-number stuff
 			if (AllowParentheses && s [pos] == '(') {
@@ -305,7 +326,7 @@ namespace System {
 					}
 				}
 			}
-			
+
 			int number = 0;
 			int nDigits = 0;
 			bool decimalPointFound = false;
@@ -369,6 +390,9 @@ namespace System {
 			// Post number stuff
 			if (nDigits == 0)
 				throw new FormatException ("Input string was not in the correct format.");
+
+			if (AllowExponent) 
+					FindExponent(ref pos, s);
 
 			if (AllowTrailingSign && !foundSign) {
 				// Sign + Currency
