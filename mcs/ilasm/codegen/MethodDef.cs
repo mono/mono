@@ -21,12 +21,14 @@ namespace Mono.ILASM {
 
                         public readonly string Name;
                         public readonly int Pos;
+			public readonly uint Offset;
                         public PEAPI.CILLabel Label;
 
-                        public LabelInfo (string name, int pos)
+                        public LabelInfo (string name, int pos, uint offset)
                         {
                                 Name = name;
                                 Pos = pos;
+				Offset = offset;
                                 Label = null;
                         }
 
@@ -57,6 +59,7 @@ namespace Mono.ILASM {
                 private ArrayList inst_list;
                 private ArrayList customattr_list;
                 private Hashtable label_table;
+		private ArrayList label_list;
                 private PEAPI.MethodDef methoddef;
                 private bool entry_point;
                 private bool is_resolved;
@@ -81,6 +84,7 @@ namespace Mono.ILASM {
                         inst_list = new ArrayList ();
                         customattr_list = new ArrayList ();
                         label_table = new Hashtable ();
+			label_list = new ArrayList ();
                         local_list = new ArrayList ();
                         named_local_table = new Hashtable ();
                         named_param_table = new Hashtable ();
@@ -315,13 +319,18 @@ namespace Mono.ILASM {
                         /// Create all the labels
                         /// TODO: Most labels don't actually need to be created so we could
                         /// probably only create the ones that need to be
-                        LabelInfo[] label_info = new LabelInfo[label_table.Count];
+                        LabelInfo[] label_info = new LabelInfo[label_table.Count + label_list.Count];
                         label_table.Values.CopyTo (label_info, 0);
+			label_list.CopyTo (label_info, label_table.Count);
                         int previous_pos = -1;
                         LabelInfo previous_label = null;
                         Array.Sort (label_info);
 
                         foreach (LabelInfo label in label_info) {
+				if (label.Offset > 0) {
+					label.Define (new PEAPI.CILLabel (label.Offset));
+					continue;
+				}
                                 if (label.Pos == previous_pos)
                                         label.Label = previous_label.Label;
                                 else
@@ -351,20 +360,36 @@ namespace Mono.ILASM {
 
                 public void AddLabel (string name)
                 {
-                        LabelInfo label_info = new LabelInfo (name, inst_list.Count);
-
+                        LabelInfo label_info = new LabelInfo (name, inst_list.Count, 0);
                         label_table.Add (name, label_info);
                 }
+
+		public void AddLabel (uint offset)
+		{
+			LabelInfo label_info = new LabelInfo (name, -1, offset);
+			label_list.Add (label_info);
+		}
+
+		public int AddLabel ()
+		{
+			int pos = inst_list.Count;
+			LabelInfo label_info = new LabelInfo (null, inst_list.Count, 0);
+			label_list.Add (label_info);
+			return pos;
+		}
 
                 /// TODO: This whole process is kinda a hack.
                 public string RandomLabel ()
                 {
+			/*
                         int rand = label_random.Next ();
                         string name = rand.ToString ();
                         LabelInfo label_info = new LabelInfo (name, inst_list.Count);
 
                         label_table.Add (name, label_info);
                         return name;
+			*/
+			return null;
                 }
 
                 public PEAPI.CILLabel GetLabelDef (string name)
@@ -373,6 +398,24 @@ namespace Mono.ILASM {
 
                         return label_info.Label;
                 }
+
+		public PEAPI.CILLabel GetLabelDef (int pos)
+		{
+			foreach (LabelInfo li in label_list) {
+				if (li.Pos == pos)
+					return li.Label;
+			}
+			return null;
+		}
+
+		public PEAPI.CILLabel GetLabelDef (uint offset)
+		{
+			foreach (LabelInfo li in label_list) {
+				if (li.Offset == offset)
+					return li.Label;
+			}
+			return null;
+		}
 
                 private void CreateSignature ()
                 {

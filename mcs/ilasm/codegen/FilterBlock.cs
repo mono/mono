@@ -15,12 +15,12 @@ namespace Mono.ILASM {
 
         public class FilterBlock : ISehClause {
 
-                private string this_label;
-                private HandlerBlock handler_block;
+                private HandlerBlock this_block;
+		private HandlerBlock handler_block;
 
-                public FilterBlock (string this_label)
+                public FilterBlock (HandlerBlock this_block)
                 {
-                        this.this_label = this_label;
+                        this.this_block = this_block;
                 }
 
                 public void SetHandlerBlock (HandlerBlock hb)
@@ -30,7 +30,7 @@ namespace Mono.ILASM {
 
                 public PEAPI.HandlerBlock Resolve (CodeGen code_gen, MethodDef method)
                 {
-                        PEAPI.CILLabel label = method.GetLabelDef (this_label);
+                        PEAPI.CILLabel label = this_block.GetFromLabel (code_gen, method);
                         PEAPI.CILLabel from = handler_block.GetFromLabel (code_gen, method);
                         PEAPI.CILLabel to = handler_block.GetToLabel (code_gen, method);
                         PEAPI.Filter filter = new PEAPI.Filter (label, from, to);

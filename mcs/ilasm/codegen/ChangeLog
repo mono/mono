@@ -1,5 +1,16 @@
 2003-07-29 Jackson Harper <jackson@latitudegeo.com>
 
+	* FilterBlock.cs: Use a handler block for the this block. This
+	makes it easier to create filters using braces, labels, or offsets
+	* HandlerBlock.cs: Allow handler blocks to be created using positions,
+	offsets, and labels.
+	* MethodDef.cs: Add methods to create labels all 3 ways, and emit
+	labels created by each of the methods.
+	* TryBlock.cs: Use a handler block instead of label strings. This 
+	allows all three methods of label creation to be used.
+	
+2003-07-29 Jackson Harper <jackson@latitudegeo.com>
+
 	* IInstr.cs: Instructions now get their parent method when being 
 	emitted.
 	* *Instr.cs: Adjust emit method to accept a methoddef
