@@ -4403,6 +4403,7 @@ namespace Mono.CSharp {
 				Parameter.Modifier p_mod = pd.ParameterModifier (i) &
 					~(Parameter.Modifier.OUT | Parameter.Modifier.REF);
 
+
 				if (a_mod == p_mod ||
 				    (a_mod == Parameter.Modifier.NONE && p_mod == Parameter.Modifier.PARAMS)) {
 					if (a_mod == Parameter.Modifier.NONE)
@@ -4615,6 +4616,16 @@ namespace Mono.CSharp {
 				Parameter.Modifier pm = pd.ParameterModifier (j);
 				
 				if (pm == Parameter.Modifier.PARAMS){
+					Parameter.Modifier am = a.GetParameterModifier ();
+
+					if ((pm & ~Parameter.Modifier.PARAMS) != a.GetParameterModifier ()) {
+						if (!Location.IsNull (loc))
+							Error_InvalidArguments (
+								loc, j, method, delegate_type,
+								Argument.FullDesc (a), pd.ParameterDesc (j));
+						return false;
+					}
+
 					if (chose_params_expanded)
 						parameter_type = TypeManager.TypeToCoreType (parameter_type.GetElementType ());
 				} else {
@@ -4657,7 +4668,6 @@ namespace Mono.CSharp {
 					~(Parameter.Modifier.OUT | Parameter.Modifier.REF);
 				Parameter.Modifier p_mod = pd.ParameterModifier (j) &
 					~(Parameter.Modifier.OUT | Parameter.Modifier.REF);
-
 				
 				if (a_mod != p_mod &&
 				    pd.ParameterModifier (pd_count - 1) != Parameter.Modifier.PARAMS) {
@@ -6337,7 +6347,7 @@ namespace Mono.CSharp {
 				FieldExpr fe = (FieldExpr) member_lookup;
 				FieldInfo fi = fe.FieldInfo;
 				Type decl_type = fi.DeclaringType;
-				
+
 				if (fi is FieldBuilder) {
 					Const c = TypeManager.LookupConstant ((FieldBuilder) fi);
 					
@@ -6433,7 +6443,7 @@ namespace Mono.CSharp {
 					return ResolveMemberAccess (ec, ml, left, loc, left_original);
 				}
 			}
-			
+
 			if (member_lookup is IMemberExpr) {
 				IMemberExpr me = (IMemberExpr) member_lookup;
 
@@ -6443,7 +6453,8 @@ namespace Mono.CSharp {
 						mg.IsExplicitImpl = left_is_explicit;
 
 					if (!me.IsStatic){
-						if (IdenticalNameAndTypeName (ec, left_original, loc))
+						if ((ec.IsFieldInitializer || ec.IsStatic) &&
+						    IdenticalNameAndTypeName (ec, left_original, loc))
 							return member_lookup;
 
 						SimpleName.Error_ObjectRefRequired (ec, loc, me.Name);
@@ -6537,10 +6548,10 @@ namespace Mono.CSharp {
 					       "is inaccessible because of its protection level");
 					return null;
 				}
-				    
+
 				if (expr_type == TypeManager.enum_type || expr_type.IsSubclassOf (TypeManager.enum_type)){
 					Enum en = TypeManager.LookupEnum (expr_type);
-					
+
 					if (en != null) {
 						object value = en.LookupEnumValue (ec, Identifier, loc);
 						
@@ -6563,8 +6574,15 @@ namespace Mono.CSharp {
 			if (member_lookup == null)
 				return null;
 
-			if (member_lookup is TypeExpr)
+			if (member_lookup is TypeExpr) {
+				if (!(expr is TypeExpr) && !(expr is SimpleName)) {
+					Error (572, "Can't reference type `" + Identifier + "' through an expression; try `" +
+					       member_lookup.Type + "' instead");
+					return null;
+				}
+
 				return member_lookup;
+			}
 			
 			member_lookup = ResolveMemberAccess (ec, member_lookup, expr, loc, original);
 			if (member_lookup == null)
@@ -7261,19 +7279,6 @@ namespace Mono.CSharp {
 				}
 					
 				copy = copy.BaseType;
-			}
-
-			Type [] ifaces = TypeManager.GetInterfaces (lookup_type);
-			if (ifaces != null) {
-				foreach (Type itype in ifaces) {
-					MemberInfo [] mi = GetIndexersForTypeOrInterface (caller_type, itype);
-					if (mi != null){
-						if (ix == null)
-							ix = new Indexers ();
-					
-						ix.Append (mi);
-					}
-				}
 			}
 
 			return ix;
