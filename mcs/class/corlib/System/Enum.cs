@@ -30,6 +30,9 @@ namespace System {
 	[MonoTODO]
 	public abstract class Enum : ValueType, IComparable {
 
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		private extern object get_value ();
+		
 		public static Array GetValues (Type enumType) {
 			MonoEnumInfo info;
 			MonoEnumInfo.GetInfo (enumType, out info);
@@ -44,8 +47,8 @@ namespace System {
 			MonoEnumInfo info;
 			int i;
 			MonoEnumInfo.GetInfo (enumType, out info);
-			for (i = 0; i < info.values.Length; ++i) {
-				if (info.values.GetValue (i) == value)
+			for (i = 0; i < info.values.Length; ++i) {				
+				if (value.Equals (info.values.GetValue (i)))
 					return info.names [i];
 			}
 			return null;
@@ -70,17 +73,21 @@ namespace System {
 			if (obj == null)
 				return 1;
 
-			if (obj.GetType () != GetType ())
-				throw new ArgumentException (
-					Locale.GetText ("Enumeration and object must be of the same type"));
+			object value1, value2;
 
-			throw new NotImplementedException ();
+			value1 = this.get_value ();
+
+			if (obj is Enum)
+				value2 = ((Enum)obj).get_value();
+			else
+				value2 = obj;
+
+			return ((IComparable)value1).CompareTo (value2);
 		}
 		
 		public override string ToString ()
 		{
-			//throw new NotImplementedException ();
-			return "Enum::ToString()";
+			return GetName (this.GetType(), this.get_value ());
 		}
 
 		public string ToString (IFormatProvider provider)
@@ -100,44 +107,55 @@ namespace System {
 
 		public static object ToObject(Type enumType, byte value)
 		{
-			throw new NotImplementedException ();
+			return ToObject (enumType, (object)value);
 		}
+		
 		public static object ToObject(Type enumType, short value)
 		{
-			throw new NotImplementedException ();
+			return ToObject (enumType, (object)value);
 		}
 		public static object ToObject(Type enumType, int value)
 		{
-			throw new NotImplementedException ();
+			return ToObject (enumType, (object)value);
 		}
 		public static object ToObject(Type enumType, long value)
 		{
-			throw new NotImplementedException ();
+			return ToObject (enumType, (object)value);
 		}
-		public static object ToObject(Type enumType, object value)
-		{
-			// needed by mcs
-			throw new NotImplementedException ();
-		}
+
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		public static extern object ToObject(Type enumType, object value);
+
 		[CLSCompliant(false)]
 		public static object ToObject(Type enumType, sbyte value)
 		{
-			throw new NotImplementedException ();
+			return ToObject (enumType, (object)value);
 		}
 		[CLSCompliant(false)]
 		public static object ToObject(Type enumType, ushort value)
 		{
-			throw new NotImplementedException ();
+			return ToObject (enumType, (object)value);
 		}
 		[CLSCompliant(false)]
 		public static object ToObject(Type enumType, uint value)
 		{
-			throw new NotImplementedException ();
+			return ToObject (enumType, (object)value);
 		}
 		[CLSCompliant(false)]
 		public static object ToObject(Type enumType, ulong value)
 		{
-			throw new NotImplementedException ();
+			return ToObject (enumType, (object)value);
+		}
+
+		public override bool Equals (object obj)
+		{
+			if (!(obj is Enum))
+				return false;
+
+			object v1 = this.get_value ();
+			object v2 = ((Enum)obj).get_value ();
+
+			return v1.Equals (v2);
 		}
 	}
 }
