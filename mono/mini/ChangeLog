@@ -1,3 +1,8 @@
+
+Tue May 13 22:02:06 CEST 2003 Paolo Molaro <lupus@ximian.com>
+
+	* inssel-long32.brg: two more missing instructions.
+
 2003-05-13  Dietmar Maurer  <dietmar@ximian.com>
 
 	* mini.c (mono_emit_call_args): set the cil_code for all arguments
