@@ -1,3 +1,11 @@
+2003-11-20  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* TemplateControlCompiler.cs: support for expressions of
+	System.Drawing.Size type. Allow getting Color from comma separated
+	numbers, which is not allowed by ColorConverter.
+
+	This makes http://www.codeproject.com/aspnet/asppopup.asp work.
+
 2003-11-13  Jackson Harper <jackson@ximian.com>
 
 	* PageCompiler.cs: Call InitOutputCache when the OutputCache

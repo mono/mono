@@ -656,7 +656,6 @@ namespace System.Web.Compilation
 			if (builder.defaultPropertyBuilder != null) {
 				ControlBuilder b = builder.defaultPropertyBuilder;
 				CreateControlTree (b, false, true);
-				Console.WriteLine ("Aqui");
 				AddChildCall (builder, b);
 			}
 
@@ -867,13 +866,53 @@ namespace System.Web.Compilation
 				return expr;
 			}
 
+			if (type == typeof (Size)) {
+				string [] subs = str.Split (',');
+				if (subs.Length != 2)
+					throw new ParseException (currentLocation,
+						String.Format ("Cannot create {0} from '{1}'", type, str));
+
+				int width = 0;
+				int height = 0;
+				try {
+					width = Int32.Parse (subs [0]);
+					height = Int32.Parse (subs [0]);
+					new Size (width, height);
+				} catch {
+					throw new ParseException (currentLocation,
+						String.Format ("Cannot create {0} from '{1}'", type, str));
+				}
+				
+				CodeObjectCreateExpression expr = new CodeObjectCreateExpression ();
+				expr.CreateType = new CodeTypeReference (type);
+				expr.Parameters.Add (new CodePrimitiveExpression (width));
+				expr.Parameters.Add (new CodePrimitiveExpression (height));
+				return expr;
+			}
+
 			if (type == typeof (Color)){
 				if (colorConverter == null)
 					colorConverter = TypeDescriptor.GetConverter (typeof (Color));
 
 				Color c;
 				try {
-					c = (Color) colorConverter.ConvertFromString (str);
+					if (str.IndexOf (',') == -1) {
+						c = (Color) colorConverter.ConvertFromString (str);
+					} else {
+						int [] argb = new int [4];
+						argb [0] = 255;
+
+						string [] parts = str.Split (',');
+						int length = parts.Length;
+						if (length < 3)
+							throw new Exception ();
+
+						int basei = (length == 4) ? 0 : 1;
+						for (int i = length - 1; i >= 0; i--) {
+							argb [basei + i] = (int) Byte.Parse (parts [i]);
+						}
+						c = Color.FromArgb (argb [0], argb [1], argb [2], argb [3]);
+					}
 				} catch (Exception e){
 					throw new ParseException (currentLocation,
 							"Color " + str + " is not a valid color.", e);
@@ -933,8 +972,8 @@ namespace System.Web.Compilation
 				}
 				return invoke;
 			}
-				
-			// FIXME: Arrays (arrays of string are implemented in old AspGenerator.cs
+
+			// FIXME: Arrays
 			Console.WriteLine ("Unknown type: " + type + " value: " + str);
 
 			return new CodePrimitiveExpression (str);
