@@ -1,5 +1,8 @@
 2002-05-03  Dietmar Maurer  <dietmar@ximian.com>
 
+	* x86.brg: replace BXX with CBRANCH/COMPARE
+	replaced CXX CSET/COMPARE
+
 	* emit-x86.c (arch_allocate_regs): improved register allocation
 
 2002-05-02  Dietmar Maurer  <dietmar@ximian.com>
