@@ -1,5 +1,7 @@
 2004-09-11  Zoltan Varga  <vargaz@freemail.hu>
 
+	* cpu-amd64.md: Fix more instruction lengths.
+
 	* cpu-amd64.md: Fix lengths of some instructions.
 
 2004-09-11 Ben Maurer  <bmaurer@users.sourceforge.net>
