@@ -790,10 +790,15 @@ namespace Mono.CSharp {
 					Attribute.ApplyAttributes (temp_ec, ab, ab, attrs);
 				}
 			}
-
+                        
 			if (attribute_types != null)
 				foreach (TypeContainer tc in attribute_types)
 					tc.Emit ();
+
+                        if (interface_resolve_order != null){
+				foreach (Interface iface in interface_resolve_order)
+                                        iface.Emit (Tree.Types);
+			}                        
 			
 			if (type_container_resolve_order != null) {
 				foreach (TypeContainer tc in type_container_resolve_order)

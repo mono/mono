@@ -1428,8 +1428,9 @@ public class TypeManager {
 			System.Attribute [] attrs = System.Attribute.GetCustomAttributes (attr_type);
 
 			foreach (System.Attribute tmp in attrs)
-				if (tmp is AttributeUsageAttribute)
-					return ((AttributeUsageAttribute) tmp).AllowMultiple;
+				if (tmp is AttributeUsageAttribute) {
+                                        return ((AttributeUsageAttribute) tmp).AllowMultiple;
+                                }
 
 			return false;
 		}

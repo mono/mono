@@ -1,3 +1,16 @@
+2003-07-16  Ravi Pratap  <ravi@ximian.com>
+
+	* interface.cs (Define): Do nothing here since there are no
+	members to populate etc. Move the attribute emission out of here
+	since this was just totally the wrong place to put it. Attribute
+	application happens during the 'Emit' phase, not in the 'Define'
+	phase.
+
+	(Emit): Add this method and move the attribute emission here
+
+	* rootcontext.cs (EmitCode): Call the Emit method on interface
+	types too.
+
 2003-07-14  Ravi Pratap M  <ravi@ximian.com>
 
 	* expression.cs (OverloadResolve): Report error only if Location

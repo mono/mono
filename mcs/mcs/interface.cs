@@ -873,19 +873,26 @@ namespace Mono.CSharp {
 			return true;
 		}
 
-		/// <summary>
-		///   Applies all the attributes.
-		/// </summary>
+
+                //
+                // In the case of Interfaces, there is nothing to do here
+                //
 		public override bool Define (TypeContainer parent)
 		{
-			if (OptAttributes != null) {
-				EmitContext ec = new EmitContext (parent, this, Location, null, null,
+			return true;
+		}
+
+                /// <summary>
+		///   Applies all the attributes.
+		/// </summary>
+                public void Emit (TypeContainer tc)
+                {
+                        if (OptAttributes != null) {
+				EmitContext ec = new EmitContext (tc, this, Location, null, null,
 								  ModFlags, false);
 				Attribute.ApplyAttributes (ec, TypeBuilder, this, OptAttributes);
 			}
-
-			return true;
-		}
+                }
 
 		public static CustomAttributeBuilder EmitDefaultMemberAttr (TypeContainer parent,
 									    string name,
