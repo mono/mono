@@ -366,7 +366,7 @@ namespace Mono.Data.Tds.Protocol {
 			if (parameter.Direction == TdsParameterDirection.Output)
 				return String.Format ("{0}={0} output", parameter.ParameterName);
 
-			if (parameter.Value == null)
+			if (parameter.Value == null || parameter.Value == DBNull.Value)
 				return parameter.ParameterName + "=NULL";
 
 			string value = null;
@@ -422,7 +422,7 @@ namespace Mono.Data.Tds.Protocol {
 			parms.Add (new TdsMetaParameter ("@P3", "nvarchar", commandText));
 
 			ExecProc ("sp_prepare", parms, 0, true);
-			if (!NextResult () || !NextRow () || ColumnValues [0] == null)
+			if (!NextResult () || !NextRow () || ColumnValues [0] == null || ColumnValues [0] == DBNull.Value)
 				throw new TdsInternalException ();
 			SkipToEnd ();	
 			return ColumnValues [0].ToString ();

@@ -451,7 +451,7 @@ namespace Mono.Data.Tds.Protocol {
 				if (outParam) 
 					comm.Skip (1);
 				if (comm.GetByte () == 0)
-					element = null;
+					element = DBNull.Value;
 				else
 					element = (comm.GetByte() != 0);
 				break;
@@ -470,7 +470,7 @@ namespace Mono.Data.Tds.Protocol {
 				}
 				break;
 			default :
-				return null;
+				return DBNull.Value;
 			}
 
 			return element;
@@ -479,7 +479,7 @@ namespace Mono.Data.Tds.Protocol {
 		private object GetBinaryValue ()
 		{
 			int len;
-			object result = null;
+			object result = DBNull.Value;
 			if (tdsVersion == TdsVersion.tds70) {
 				len = comm.GetTdsShort ();
 				if (len != 0xffff && len > 0)
@@ -496,7 +496,7 @@ namespace Mono.Data.Tds.Protocol {
 		private object GetDateTimeValue (TdsColumnType type)
 		{
 			int len = 0;
-			object result = null;
+			object result;
 		
 			switch (type) {
 			case TdsColumnType.DateTime4:
@@ -531,6 +531,9 @@ namespace Mono.Data.Tds.Protocol {
 				if (minutes != 0) 
 					result = ((DateTime) result).AddMinutes ((int) minutes);
 				break;
+			default:
+				result = DBNull.Value;
+				break;
 			}
 
 			return result;
@@ -542,12 +545,10 @@ namespace Mono.Data.Tds.Protocol {
 
 			int len = (comm.GetByte() & 0xff) - 1;
 			if (len < 0)
-				return null;
+				return DBNull.Value;
 			
 			bool positive = (comm.GetByte () == 1);
 
-			if (len < 0)
-				return null;
 			if (len > 16)
 				throw new OverflowException ();
 
@@ -563,7 +564,6 @@ namespace Mono.Data.Tds.Protocol {
 		private object GetFloatValue (TdsColumnType columnType)
 		{
 			int columnSize = 0;
-			object result = null;
 
 			switch (columnType) {
 			case TdsColumnType.Real:
@@ -579,14 +579,12 @@ namespace Mono.Data.Tds.Protocol {
 
 			switch (columnSize) {
 			case 8 :
-				result = BitConverter.Int64BitsToDouble (comm.GetTdsInt64 ());
-				break;
+				return BitConverter.Int64BitsToDouble (comm.GetTdsInt64 ());
 			case 4 :
-				result = BitConverter.ToSingle (BitConverter.GetBytes (comm.GetTdsInt ()), 0);
-				break;
+				return BitConverter.ToSingle (BitConverter.GetBytes (comm.GetTdsInt ()), 0);
+			default :
+				return DBNull.Value;
 			}
-
-			return result;
 		}
 
 		private object GetImageValue ()
@@ -594,13 +592,13 @@ namespace Mono.Data.Tds.Protocol {
 			byte hasValue = comm.GetByte ();
 
 			if (hasValue == 0)
-				return null;
+				return DBNull.Value;
 			
 			comm.Skip (24);
 			int len = comm.GetTdsInt ();
 
 			if (len < 0)
-				return null;
+				return DBNull.Value;
 
 			return (comm.GetBytes (len, true));
 		}
@@ -623,7 +621,7 @@ namespace Mono.Data.Tds.Protocol {
 				len = 1; 
 				break;
 			default:
-				return null;
+				return DBNull.Value;
 			}
 
 			switch (len) {
@@ -634,7 +632,7 @@ namespace Mono.Data.Tds.Protocol {
 			case 1 :
 				return (comm.GetByte ());
 			default:
-				return null;
+				return DBNull.Value;
 			}
 		}
 
@@ -656,7 +654,7 @@ namespace Mono.Data.Tds.Protocol {
 				len = comm.GetByte ();
 				break;
 			default:
-				return null;
+				return DBNull.Value;
 			}
 
 			long rawValue = 0;
@@ -678,7 +676,7 @@ namespace Mono.Data.Tds.Protocol {
 				rawValue = BitConverter.ToInt64 (bits, 0);
 				break;
 			default:
-				return null;
+				return DBNull.Value;
 			}
 
 			result = new Decimal (rawValue);
@@ -688,24 +686,23 @@ namespace Mono.Data.Tds.Protocol {
 
 		private object GetStringValue (bool wideChars, bool outputParam)
 		{
-			object result = null;
 			bool shortLen = (tdsVersion == TdsVersion.tds70) && (wideChars || !outputParam);
-
 			int len = shortLen ? comm.GetTdsShort () : (comm.GetByte () & 0xff);
 
 			if (tdsVersion < TdsVersion.tds70 && len == 0)
-				result = null;
+				return DBNull.Value;
 			else if (len >= 0) {
+				object result;
 				if (wideChars)
 					result = comm.GetString (len / 2);
 				else
 					result = comm.GetString (len, false);
 				if (tdsVersion < TdsVersion.tds70 && ((string) result).Equals (" "))
 					result = "";
+				return result;
 			}
 			else
-				result = null;
-			return result;
+				return DBNull.Value;
 		}
 
 		protected int GetSubPacketLength ()
@@ -719,7 +716,7 @@ namespace Mono.Data.Tds.Protocol {
 			byte hasValue = comm.GetByte ();
 
 			if (hasValue != 16)
-				return null;
+				return DBNull.Value;
 
 			// 16 Byte TEXTPTR, 8 Byte TIMESTAMP
 			comm.Skip (24);
@@ -727,7 +724,7 @@ namespace Mono.Data.Tds.Protocol {
 			int len = comm.GetTdsInt ();
 
 			if (len == 0)
-				return null;
+				return DBNull.Value;
 
 			if (wideChars)
 				result = comm.GetString (len / 2);

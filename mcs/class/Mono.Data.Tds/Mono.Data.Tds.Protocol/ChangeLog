@@ -1,3 +1,8 @@
+2004-04-01  Lluis Sanchez Gual  <lluis@ximian.com>
+
+	* Tds.cs: All methods now return DBNull instead of null for null values.
+	* Tds50.cs, Tds70.cs: Support parameters with DBNull value.
+
 2003-12-21  Tim Coleman <tim@timcoleman.com>
 	* Tds70.cs:
 		Fix Integrated Security to work with Domain users.

@@ -296,7 +296,7 @@ namespace Mono.Data.Tds.Protocol {
 			if (parameter.Direction == TdsParameterDirection.Output)
 				return String.Format ("{0} output", parameter.ParameterName);
 		
-			if (parameter.Value == null)
+			if (parameter.Value == null || parameter.Value == DBNull.Value)
 				return "NULL";
 		
 			switch (parameter.TypeName) {
