@@ -1,3 +1,8 @@
+2005-03-18  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* PolicyLevelTest.cs: Remove non-corlib permission classes from the 
+	policy XML string as this can fail for "make distcheck".
+
 2005-02-16  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* PolicyLevelTest.cs: Renamed the file created by the StoreLocation 
