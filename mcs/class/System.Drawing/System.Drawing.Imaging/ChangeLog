@@ -1,3 +1,9 @@
+2003-11-12  Alexandre Pigolkine <pigolkine@gmx.de>
+	* BitmapData.cs		new function to convert BRG to RGB
+	* JPEGCodec.cs		convert BRG to RBG
+	* PNGCodec.cs
+					
+					
 2003-11-02  Alexandre Pigolkine <pigolkine@gmx.de>
 	* BmpCodec.cs
 	* ImageCodecInfo.cs

@@ -208,28 +208,13 @@ namespace System.Drawing.Imaging
 		{
 			PNGCodec png = new PNGCodec();
 			BitmapData info = ((Bitmap)image).LockBits (new Rectangle (new Point (0,0), image.Size),
-									  ImageLockMode.ReadOnly, image.PixelFormat);
+									  ImageLockMode.ReadOnly, PixelFormat.Format24bppRgb);
 			png.Encode (image, stream, info);
 			((Bitmap)image).UnlockBits (info);
 		}
 
-		internal unsafe void switch_color_bytes (byte[] image)
+		internal unsafe bool Decode (Image image, Stream stream, BitmapData info) 
 		{
-			fixed(byte* start = image) {
-				byte *pb = start;
-				byte t1;
-				for (int ic = 0; ic < image.Length; ic +=3) {
-					t1 = *pb;
-					*(pb) = *(pb+2);
-					*(pb+2) = t1;
-					pb += 3;
-				}
-			}
-		}
-
-		internal bool Decode (Image image, Stream stream, BitmapData info) 
-		{
-#if false
 			fs = stream;
 		
 			IntPtr png_ptr = png_create_read_struct (PNG_LIBPNG_VER_STRING, IntPtr.Zero, 
@@ -257,39 +242,37 @@ namespace System.Drawing.Imaging
 			png_read_info (png_ptr, info_ptr);
 			
 			int height = png_get_image_height (png_ptr, info_ptr);
-			int row_width = png_get_rowbytes (png_ptr, info_ptr);
-			while ((row_width & 3) != 0) row_width++;
+			int stride = png_get_rowbytes (png_ptr, info_ptr);
+			stride = (stride + 3) & ~3;
 			
-			info.Size = new Size (png_get_image_width (png_ptr, info_ptr), height);
-			info.Stride = row_width;
+			info.Width = png_get_image_width (png_ptr, info_ptr);
+			info.Height = height;
+			info.Stride = stride;
 			// FIXME: do a real palette processing
 			//info.Palette = new ColorPalette(1, cinfo.ColorMap);
 			// FIXME: get color information from png info structure
 			info.PixelFormat = PixelFormat.Format24bppRgb;
-			info.RawImageBytes = new byte[height * row_width];
+			info.Scan0 = Marshal.AllocHGlobal (height * stride);
 			
-			IntPtr row_data = Marshal.AllocHGlobal (row_width);
-			int outputIndex = info.RawImageBytes.Length - row_width;
+			byte *start = (byte *) (void *) info.Scan0;
+			IntPtr scanline;
 			for (int row = 0; row < height; row++) {
-				png_read_row (png_ptr, row_data, IntPtr.Zero);
-				Marshal.Copy (row_data, info.RawImageBytes, outputIndex, row_width);
-				outputIndex -= row_width;
+				scanline = (IntPtr) start;
+				png_read_row (png_ptr, scanline, IntPtr.Zero);
+				start += stride;
 			}
-			Marshal.FreeHGlobal (row_data);
 			
 			png_read_end (png_ptr, end_info);
 			
  			png_destroy_read_struct (ref png_ptr, ref info_ptr, ref end_info);			
  			
-			// FIXME: not sure if this always works, and use PNG library transformation
-			switch_color_bytes(info.RawImageBytes);
-#endif
+			info.swap_red_blue_bytes();
+			
 			return true;
 		}
 
 		internal unsafe bool Encode (Image image, Stream stream, BitmapData info) 
 		{
-#if false
 			int bpp = Image.GetPixelFormatSize(info.PixelFormat) / 8;
 			if (bpp != 3 && bpp != 4) {
 				throw new ArgumentException(String.Format("Supplied pixel format is not yet supported: {0}, {1} bpp", info.PixelFormat, Image.GetPixelFormatSize(info.PixelFormat)));
@@ -314,56 +297,28 @@ namespace System.Drawing.Imaging
 						new cdeclCallback.cdeclRedirector.MethodVoidIntPtrIntPtrInt(this.write_data_fn),
 						new cdeclCallback.cdeclRedirector.MethodVoidIntPtr(this.output_flush_fn));
 						
-			png_set_IHDR (png_ptr, info_ptr, info.Size.Width, info.Size.Height, 8, 
+			png_set_IHDR (png_ptr, info_ptr, info.Width, info.Height, 8, 
 							(int)PNG_LIB.PNG_COLOR_TYPE_RGB/*(Image.IsAlphaPixelFormat(info.Format) ? (int)PNG_LIB.PNG_COLOR_TYPE_RGB_ALPHA : (int)PNG_LIB.PNG_COLOR_TYPE_RGB)*/,
 							(int)PNG_LIB.PNG_INTERLACE_NONE, (int)PNG_LIB.PNG_COMPRESSION_TYPE_DEFAULT, (int)PNG_LIB.PNG_FILTER_TYPE_DEFAULT);
 							
 			png_write_info (png_ptr, info_ptr);
 
-			
-			int row_width = info.Size.Width;
-			while ((row_width & 3) != 0) row_width++;
+			info.swap_red_blue_bytes ();
 
-			int row_bytes_width = row_width * 3;
-			int src_row_bytes_width = row_width * bpp;
-
-			IntPtr row_data = Marshal.AllocHGlobal (row_bytes_width);
-			int outputIndex = info.RawImageBytes.Length - src_row_bytes_width;
-			byte[] buffer = new byte[row_bytes_width];
-
-			fixed (byte *psrc = info.RawImageBytes, pbuf = buffer) {
-				byte* curSrc = null;
-				byte* curDst = null;
-				for (int row = 0; row < info.Size.Height; row++) {
-					curSrc = psrc + outputIndex;
-					curDst = pbuf;
-					for (int i = 0; i < row_width; i++) {
-						*curDst++ = *(curSrc+2);
-						*curDst++ = *(curSrc+1);
-						*curDst++ = *curSrc;
-/*
-						*curDst = *(curSrc+2);
-						*(curDst+1) = *(curSrc+1);
-						*(curDst+2) = *curSrc;
-						if (bpp == 4) {
-							*(curDst+3) = *(curSrc+3);
-						}
-						curDst += bpp;
-*/						
-						curSrc += bpp;
-					}
-					Marshal.Copy (buffer, 0, row_data, row_bytes_width);
-					outputIndex -= src_row_bytes_width;
-					png_write_row (png_ptr, row_data);
-				}
+			byte *start = (byte *) (void *) info.Scan0;
+			IntPtr scanline;
+			int stride = info.Stride;
+			for (int row = 0; row < info.Height; row++) {
+				scanline = (IntPtr) start;
+				png_write_row (png_ptr,  scanline);
+				start += stride;
 			}
-
-			Marshal.FreeHGlobal (row_data);
 			
 			png_write_end (png_ptr, info_ptr);
+ 			png_destroy_write_struct (ref png_ptr, ref info_ptr);
 			
- 			png_destroy_write_struct (ref png_ptr, ref info_ptr);			
-#endif
+			info.swap_red_blue_bytes ();
+
 			return true;
 		}
 	}

@@ -718,6 +718,8 @@ namespace System.Drawing.Imaging
 			}
 			jpeg_finish_decompress(cinfo.raw_struct);
 			jpeg_destroy_decompress(cinfo.raw_struct);
+			
+			info.swap_red_blue_bytes ();
 			return true;
 		}
 
@@ -792,35 +794,15 @@ namespace System.Drawing.Imaging
 			IntPtr scanline;
 			int stride;
 			
+			info.swap_red_blue_bytes ();
+			
 			switch (info.PixelFormat){
 			case PixelFormat.Format24bppRgb:
 				start = (byte *) (void *) info.Scan0;
 				stride = info.Stride;
 				while (cinfo.NextScanLine < cinfo.ImageHeight){
-					// Exchange red <=> blue bytes
-//					fixed (byte *pbuf = start) {
-						byte* curByte = start;
-						for (int i = 0; i < info.Width; i++) {
-							byte t = *(curByte+2);
-							*(curByte+2) = *curByte;
-							*curByte = t;
-							curByte += 3;
-						}
-//					}
-
 					scanline = (IntPtr) start;
 					jpeg_write_scanlines (cinfo.raw_struct, ref scanline, 1);
-					
-					// Exchange red <=> blue bytes back
-//					fixed (byte *pbuf1 = start) {
-						curByte = start;
-						for (int i = 0; i < info.Width; i++) {
-							byte t = *(curByte+2);
-							*(curByte+2) = *curByte;
-							*curByte = t;
-							curByte += 3;
-						}
-//					}
 					start += stride;
 				}
 				break;
@@ -829,6 +811,7 @@ namespace System.Drawing.Imaging
 				throw new Exception ("Unhandled PixelFormat: " + info.PixelFormat);
 			}
 			
+			info.swap_red_blue_bytes ();
 			jpeg_finish_compress(cinfo.raw_struct);
 			jpeg_destroy_compress(cinfo.raw_struct);
 
