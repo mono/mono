@@ -1,3 +1,8 @@
+2002-03-14  Miguel de Icaza  <miguel@ximian.com>
+
+	* UInt64.cs, UInt32.cs, UInt16.cs: Mark public parse methods as
+	NonCLSCompliant. 
+
 2002-03-14  Dietmar Maurer  <dietmar@ximian.com>
 
 	* Delegate.cs (Equals): also compare method_ptr 

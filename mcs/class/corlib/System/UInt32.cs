@@ -49,6 +49,7 @@ namespace System {
 			return (int) value;
 		}
 
+		[CLSCompliant(false)]
 		public static uint Parse (string s)
 		{
 			uint val = 0;
@@ -100,11 +101,13 @@ namespace System {
 
 		}
 
+		[CLSCompliant(false)]
 		public static uint Parse (string s, IFormatProvider fp)
 		{
 			return Parse (s, NumberStyles.Integer, fp);
 		}
 
+		[CLSCompliant(false)]
 		public static uint Parse (string s, NumberStyles style)
 		{
 			return Parse (s, style, null);

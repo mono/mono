@@ -43,6 +43,7 @@ namespace System {
 			return value;
 		}
 
+		[CLSCompliant(false)]
 		public static ushort Parse (string s)
 		{
 			ushort val = 0;
@@ -94,17 +95,20 @@ namespace System {
 
 		}
 
+		[CLSCompliant(false)]
 		public static ushort Parse (string s, IFormatProvider fp)
 		{
 			return Parse (s, NumberStyles.Integer, fp);
 		}
 
+		[CLSCompliant(false)]
 		public static ushort Parse (string s, NumberStyles style)
 		{
 			return Parse (s, style, null);
 		}
 
 		[MonoTODO]
+		[CLSCompliant(false)]
 		public static ushort Parse (string s, NumberStyles style, IFormatProvider fp)
 		{
 			// TODO: Implement me

@@ -48,21 +48,25 @@ namespace System {
 			return (int)(value & 0xffffffff) ^ (int)(value >> 32);
 		}
 
+		[CLSCompliant(false)]
 		public static ulong Parse (string s)
 		{
 			return Parse (s, NumberStyles.Integer, null);
 		}
 
+		[CLSCompliant(false)]
 		public static ulong Parse (string s, IFormatProvider fp)
 		{
 			return Parse (s, NumberStyles.Integer, fp);
 		}
 
+		[CLSCompliant(false)]
 		public static ulong Parse (string s, NumberStyles style)
 		{
 			return Parse (s, style, null);
 		}
 
+		[CLSCompliant(false)]
 		public static ulong Parse (string s, NumberStyles style, IFormatProvider fp)
 		{
 			ulong val = 0;
