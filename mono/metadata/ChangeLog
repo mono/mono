@@ -1,3 +1,8 @@
+2003-09-15  Zoltan Varga  <vargaz@freemail.hu>
+
+	* appdomain.h domain.c (MonoDomain): Added new hashtable to store the
+	class init trampolines.
+
 2003-09-11  Zoltan Varga  <vargaz@freemail.hu>
 
 	* profiler.c (mono_profiler_load): Added '-time' and '-alloc' options
