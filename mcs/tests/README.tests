@@ -274,6 +274,11 @@ The optimization that we perform in uint & int-constant was triggering a bug
 because we returned always, when we should have continued the processing if the
 conditions were not correct.
 
+test-197.cs
+-----------
+
+Fix for bug #42973.
+
 verify-1.cs
 -----------
 Test whether we do not jump out of the method in a Try/Finally block.

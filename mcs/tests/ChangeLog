@@ -1,3 +1,7 @@
+2003-07-05  Martin Baulig  <martin@ximian.com>
+
+	* test-197.cs: New test for bug #42973.
+
 2003-06-29  Miguel de Icaza  <miguel@ximian.com>
 
 	* makefile (TEST_SOURCES): Add the tests that require an assembly,
