@@ -1,3 +1,18 @@
+2004-04-13  Miguel de Icaza  <miguel@ximian.com>
+
+	* mini-ppc.c: Remove unused definitions FLOAT_REGS and
+	GENERAL_REGS they were also hardcoded for all PPC ports.
+
+	(add_general): Use PPC_NUM_REG_ARGS instead of GENERAL_REGS.
+
+	Remove hard-coded limit for floating point registers, use
+	PPC_LAST_FPARG_REG instead in MONO_TYPE_R4 and MONO_TYPE_R8.
+
+	Notice that in MacOS X calling conventions you can fit a lot more
+	floating point values in registers, so I should update the PInvoke
+	test to excercise the passing of floating point values on the
+	stack (currently broken).
+	
 2004-04-06  Miguel de Icaza  <miguel@ximian.com>
 
 	* tramp-ppc.c (create_trampoline_code): Added
