@@ -1,4 +1,9 @@
 
+Fri Jan 31 16:01:20 CET 2003 Paolo Molaro <lupus@ximian.com>
+
+	* marshal.c: handle NATIVE_LPSTR for strings when it's
+	explicitly specified.
+
 Fri Jan 31 11:51:43 CET 2003 Paolo Molaro <lupus@ximian.com>
 
 	* reflection.c, reflection.h, icall.c: setup the reflection
