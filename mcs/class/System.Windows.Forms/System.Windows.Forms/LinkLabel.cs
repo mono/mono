@@ -419,20 +419,25 @@ namespace System.Windows.Forms {
 				[MonoTODO] get { throw new NotImplementedException (); }
 			}
 			
+			[MonoTODO]
 			object IList.this[int index] {
-				[MonoTODO] get { throw new NotImplementedException (); }
-				[MonoTODO] set { throw new NotImplementedException (); }
+				get {
+					throw new NotImplementedException ();
+				}
+				set {
+					//FIXME:
+				}
 			}
-			
-
+			[MonoTODO] 
 			object ICollection.SyncRoot {
-				[MonoTODO] get {
+				get {
 					throw new NotImplementedException ();
 				}
 			}
 	
+			[MonoTODO]
 			bool ICollection.IsSynchronized {
-				[MonoTODO] get {
+				get {
 					throw new NotImplementedException ();
 				}
 			}

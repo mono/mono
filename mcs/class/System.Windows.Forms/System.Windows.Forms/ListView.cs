@@ -895,9 +895,14 @@ namespace System.Windows.Forms {
 				}
 			}
 
+			[MonoTODO]
 			object IList.this[int index]{
-				[MonoTODO] get { throw new NotImplementedException (); }
-				[MonoTODO] set { throw new NotImplementedException (); }
+				get{
+					throw new NotImplementedException ();
+				}
+				set{
+					//FIXME:
+				}
 			}
 		
 			[MonoTODO]
@@ -1235,9 +1240,14 @@ namespace System.Windows.Forms {
 				}
 			}
 
+			[MonoTODO]
 			object IList.this[int index]{
-				[MonoTODO] get { throw new NotImplementedException (); }
-				[MonoTODO] set { throw new NotImplementedException (); }
+				get{
+					throw new NotImplementedException ();
+				}
+				set{
+					//FIXME:
+				}
 			}
 		
 			[MonoTODO]
