@@ -1,6 +1,6 @@
 thisdir := .
 
-SUBDIRS := build jay mcs monoresgen class mbas nunit20 ilasm tools tests errors docs
+SUBDIRS := build jay mcs class mbas nunit20 ilasm tools tests errors docs
 DIST_ONLY_SUBDIRS := gmcs
 
 basic_SUBDIRS := jay mcs class
