@@ -23,9 +23,12 @@
 //	Peter Bartok	pbartok@novell.com
 //
 //
-// $Revision: 1.4 $
+// $Revision: 1.5 $
 // $Modtime: $
 // $Log: Form.cs,v $
+// Revision 1.5  2004/08/19 21:30:37  pbartok
+// - Added handling of WM_CLOSE
+//
 // Revision 1.4  2004/08/11 22:20:59  pbartok
 // - Signature fixes
 //
@@ -69,7 +72,7 @@ namespace System.Windows.Forms {
 		#region Public Instance Properties
 		protected override Size DefaultSize {
 			get {
-				return new Size (300, 300);
+				return new Size (250, 250);
 			}
 		}
 		#endregion	// Public Instance Properties
@@ -126,6 +129,28 @@ namespace System.Windows.Forms {
 		#endregion	// Public Instance Methods
 
 		#region Protected Instance Methods
+		protected override void WndProc(ref Message m) {
+			switch((Msg)m.Msg) {
+				case Msg.WM_CLOSE: {
+					CancelEventArgs args = new CancelEventArgs(false);
+
+					OnClosing(args);
+
+					if (!args.Cancel) {
+						OnClosed(EventArgs.Empty);
+						base.WndProc(ref m);
+						break;
+					}
+					break;
+				}
+
+				default: {
+					base.WndProc (ref m);
+					break;
+				}
+			}
+		}
+
 		#endregion	// Protected Instance Methods
 
 		#region Events
