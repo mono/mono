@@ -1,3 +1,9 @@
+2002-03-23  Martin Baulig  <martin@gnome.org>
+
+	* StreamReader.cs: Always do buffered reading, use 4k blocks.
+	(Read (char[], int, int)): Implemented.
+	(DiscardBufferedData): Implemented.
+
 2002-03-21  Mike Kestner <mkestner@speakeasy.net>
 
 	* StreamReader.cs : Fill out, add buffering, and use encoding.

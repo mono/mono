@@ -97,15 +97,63 @@ namespace System.IO {
 			}
 		}
 
-		[MonoTODO]
 		public override void Close ()
 		{
 			Dispose (true);
 		}
 
-		[MonoTODO]
 		public void DiscardBufferedData ()
 		{
+			if ((buffer == null) || (pos == buffer.Length))
+				return;
+
+			if (!internalStream.CanSeek)
+				return;
+
+			int seek_back = pos - buffer.Length;
+			internalStream.Seek (seek_back, SeekOrigin.Current);
+		}
+
+		private int GetRemaining ()
+		{
+			return (buffer != null) ? buffer.Length - pos : 0;
+		}
+
+		private int RoundUpTo (int number, int roundto)
+		{
+			if ((number % roundto) == 0)
+				return number;
+			else
+				return ((number / roundto) + 1) * roundto;
+		}
+
+		private bool ReadBuffer (int count)
+		{
+			// There are still enough bytes in the buffer.
+			if ((buffer != null) && (pos + count < buffer.Length))
+				return true;
+
+			// Number of bytes remaining in the buffer.
+			int remaining = GetRemaining ();
+
+			// Round up to block size
+			int size = RoundUpTo (count, 4096);
+			byte[] bytes = new byte [size];
+			int cnt = internalStream.Read (bytes, 0, size);
+
+			if (cnt <= 0) 
+				return false;
+
+			int bufcnt = decoder.GetCharCount (bytes, 0, cnt);
+			char[] newbuffer = new char [remaining + bufcnt];
+			if (remaining > 0)
+				Array.Copy (buffer, newbuffer, remaining);
+			buffer = newbuffer;
+
+			bufcnt = decoder.GetChars (bytes, 0, cnt, buffer, remaining);
+			pos = remaining;
+
+			return true;
 		}
 
 		public override int Peek ()
@@ -113,46 +161,40 @@ namespace System.IO {
 			if (!internalStream.CanSeek)
 				return -1;
 
-			if ((buffer == null) || ((pos + 1) == buffer.Length)) {
-				int cnt = internalEncoding.GetMaxByteCount (1);
-				byte[] bytes = new byte[cnt];
-				int actcnt = internalStream.Read (bytes, 0, cnt);
-				internalStream.Seek (-actcnt, SeekOrigin.Current);
+			if (!ReadBuffer (1))
+				return -1;
 
-				if (actcnt <= 0) 
-					return -1;
-
-				int bufcnt = decoder.GetCharCount (bytes, 0, cnt);
-				char[] chars = new char [bufcnt];
-				bufcnt = decoder.GetChars (bytes, 0, cnt, chars, 0);
-				return chars [0];
-			}
-
-			return buffer [pos + 1];
+			return buffer [pos];
 		}
 
 		public override int Read ()
 		{
-			if ((buffer == null) || (++pos == buffer.Length)) {
-				byte[] bytes =  new byte [8192];
-				int cnt = internalStream.Read (bytes, 0, 8192);
+			if (!ReadBuffer (1))
+				return -1;
 
-				if (cnt <= 0) 
-					return -1;
-
-				int bufcnt = decoder.GetCharCount (bytes, 0, cnt);
-				buffer = new char [bufcnt];
-				bufcnt = decoder.GetChars (bytes, 0, cnt, buffer, 0);
-				pos = 0;
-			}
-
-			return buffer[pos];
+			return buffer[pos++];
 		}
 
-		[MonoTODO]
-		public override int Read (char[] buffer, int index, int count)
+		public override int Read (char[] dest_buffer, int index, int count)
 		{
-			return 0;
+			if (dest_buffer == null)
+				throw new ArgumentException ();
+
+			if (index + count >= dest_buffer.Length)
+				throw new ArgumentException ();
+
+			if ((index < 0) || (count < 0))
+				throw new ArgumentOutOfRangeException ();
+
+			if (!ReadBuffer (count))
+				return -1;
+
+			int remaining = buffer.Length - pos;
+			int size = Math.Min (remaining, count);
+
+			Array.Copy (buffer, pos, dest_buffer, index, size);
+
+			return size;
 		}
 
 		[MonoTODO]
