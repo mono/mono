@@ -133,7 +133,8 @@ namespace System.Web.Services.Description
 				CodeMemberMethod met = GenerateMethod (memberIds, httpOper, inputMembers, outputMember);
 				
 				xmlExporter.ExportMembersMapping (inputMembers);
-				xmlExporter.ExportTypeMapping (outputMember);
+				if (outputMember != null)
+					xmlExporter.ExportTypeMapping (outputMember);
 
 				return met;
 			}

@@ -1,3 +1,8 @@
+2004-06-25  Lluis Sanchez Gual  <lluis@ximian.com>
+
+	* HttpSimpleProtocolImporter.cs: Added null check. The XmlTypeMapping for
+	  the return type will be null if the method returns void.
+
 2004-06-22  Lluis Sanchez Gual  <lluis@ximian.com>
 
 	* HttpSimpleProtocolImporter.cs: Import return types as XmlTypeMapping,
