@@ -176,32 +176,46 @@ namespace Mono.Unix {
 
 		public static string GetRealPath (string path)
 		{
-			StringBuilder buf = 
-				new StringBuilder (UnixSymbolicLinkInfo.MaxContentsSize);
-			int r;
 			do {
-				r = Syscall.readlink (path, buf);
-				if (r < 0) {
-					Error e;
-					switch (e = Syscall.GetLastError()) {
-					case Error.EINVAL:
-						// path isn't a symbolic link
-						return path;
-					default:
-						UnixMarshal.ThrowExceptionForError (e);
-						break;
-					}
-				}
-				string name = buf.ToString (0, r);
+				string name = ReadSymbolicLink (path);
+				if (name == null)
+					return path;
 				if (IsPathRooted (name))
 					path = name;
 				else {
 					path = GetDirectoryName (path) + DirectorySeparatorChar + name;
 					path = GetCanonicalPath (path);
 				}
-			} while (r >= 0);
+			} while (true);
+		}
 
-			return path;
+		// Read the specified symbolic link.  If the file isn't a symbolic link,
+		// return null; otherwise, return the contents of the symbolic link.
+		//
+		// readlink(2) is horribly evil, as there is no way to query how big the
+		// symlink contents are.  Consequently, it's trial and error...
+		internal static string ReadSymbolicLink (string path)
+		{
+			StringBuilder buf = new StringBuilder (256);
+			do {
+				int r = Syscall.readlink (path, buf);
+				if (r < 0) {
+					Error e;
+					switch (e = Syscall.GetLastError()) {
+					case Error.EINVAL:
+						// path isn't a symbolic link
+						return null;
+					default:
+						UnixMarshal.ThrowExceptionForError (e);
+						break;
+					}
+				}
+				else if (r == buf.Capacity) {
+					buf.Capacity *= 2;
+				}
+				else
+					return buf.ToString (0, r);
+			} while (true);
 		}
 
 		public static bool IsPathRooted (string path)

@@ -1,5 +1,12 @@
 2004-12-29  Jonathan Pryor <jonpryor@vt.edu>
 
+	* UnixPath.cs: Add ReadSymbolicLink(), which takes an intelligent approach
+	  to reading symlinks (since their contents may be any size, we grow the
+	  buffer dynamically to fit them all, instead of assuming a maximum size).
+	* UnixSymbolicLinkInfo.cs: Remove MaxContentsSize.
+
+2004-12-29  Jonathan Pryor <jonpryor@vt.edu>
+
 	* UnixPath.cs: Add check for when symlink points to a full path name.
 
 2004-12-29  Jonathan Pryor <jonpryor@vt.edu>

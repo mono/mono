@@ -49,9 +49,6 @@ namespace Mono.Unix {
 			get {return UnixPath.GetFileName (FullPath);}
 		}
 
-		// maximum number of bytes read from the symbolic link
-		public static readonly int MaxContentsSize = 1024;
-
 		public UnixFileSystemInfo Contents {
 			get {
 				return UnixFileSystemInfo.Create (ContentsPath);
@@ -106,13 +103,7 @@ namespace Mono.Unix {
 
 		private string TryReadLink ()
 		{
-			// Who came up with readlink(2)?  There doesn't seem to be a way to
-			// properly handle it.
-			StringBuilder sb = new StringBuilder (MaxContentsSize+1);
-			int r = Syscall.readlink (FullPath, sb, (ulong) MaxContentsSize);
-			if (r == -1)
-				return null;
-			return sb.ToString(0, r);
+			return UnixPath.ReadSymbolicLink (FullPath);
 		}
 	}
 }
