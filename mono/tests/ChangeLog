@@ -1,5 +1,7 @@
 2004-02-14  Zoltan Varga  <vargaz@freemail.hu>
 
+	* libtest.c: Add <time.h>
+
 	* delegate.cs: Add test for bug #52092.
 
 2004-02-12  Zoltan Varga  <vargaz@freemail.hu>
