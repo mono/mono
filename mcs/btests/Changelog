@@ -1,4 +1,7 @@
 2004-07-29 Sachin Kumar <skumar1@novell.com>
+	* LogicalOperators.vb: Added tests for logical operators
+
+2004-07-29 Sachin Kumar <skumar1@novell.com>
 	* RelationalOperators.vb: Added tests for relational operators
 	* RelationalOperatorsA.vb: Added more tests for relational operators
 	* AssignmentOperators.vb: Added tests for assignment operators   
