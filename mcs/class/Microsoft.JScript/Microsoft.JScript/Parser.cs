@@ -62,7 +62,7 @@ namespace Microsoft.JScript {
 		CaseAfterDefault
 	}
 
-	public class Parser {
+	internal class Parser {
 
 		TokenStream ts;
 		bool ok; // did the parse encounter an error?
@@ -71,7 +71,7 @@ namespace Microsoft.JScript {
 		int nesting_of_with;
 		bool allow_member_expr_as_function_name;
 
-		public Parser ()
+		internal Parser ()
 		{
 		}
 
@@ -83,7 +83,7 @@ namespace Microsoft.JScript {
 		///   return an AST representing the parsed program.
 		///    If the parse fails, null will be returned.
 		/// </remarks>
-		public AST Parse (string source_string, string source_location, int line_number)
+		internal AST Parse (string source_string, string source_location, int line_number)
 		{
 			ts = new TokenStream (null, source_string, source_location, line_number);
 			try {
@@ -101,7 +101,7 @@ namespace Microsoft.JScript {
 		///   return an AST representing the parsed program.
 		///    If the parse fails, null will be returned.
 		/// </remarks>
-		public AST Parse (StreamReader source_reader, string source_location, int line_number)
+		internal AST Parse (StreamReader source_reader, string source_location, int line_number)
 		{
 			ts = new TokenStream (source_reader, null, source_location, line_number);
 			return Parse ();
@@ -162,7 +162,7 @@ namespace Microsoft.JScript {
 			return current_script_or_fn;
 		}
 
-		public bool Eof {
+		internal bool Eof {
 			get { return ts.EOF; }
 		}
 

@@ -1,5 +1,7 @@
 2005-02-14  Cesar Lopez Nataren  <cnataren@novell.com>
 
+	* Token.cs, TokenStream.cs, Parser.cs: make this classes internal.
+
 	* Context.cs: delete wrongly exposed ctr.
 
 2005-02-10  Cesar Lopez Nataren  <cnataren@novell.com>

@@ -32,8 +32,8 @@
 using System;
 
 namespace Microsoft.JScript {
-public class Token  {
-	public static int
+internal class Token  {
+	internal static int
 		ERROR = -1,
 		EOF = 0,
 		EOL = 1,

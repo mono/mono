@@ -35,30 +35,30 @@ using System.Collections;
 using System.Globalization;
 
 namespace Microsoft.JScript {
-public class TokenStream { 
+internal class TokenStream { 
 
 	//
 	// fields
 	//
 	string source_name;
-	public string SourceName {
+	internal string SourceName {
 		get { return source_name; }
 		set { source_name = value; }
 	}
 
 	int line_number;
-	public int LineNumber {
+	internal int LineNumber {
 		get { return line_number; }
 		set { line_number = value; }
 	}
 
 	bool hit_eof;
-	public bool EOF {
+	internal bool EOF {
 		get { return hit_eof; }
 	}
 
 	int token_number;
-	public int TokenNumber {
+	internal int TokenNumber {
 		get { return token_number; }
 		set { token_number = value; }
 	}
@@ -91,20 +91,20 @@ public class TokenStream {
 	bool dirty_line;
 
 	string _string;
-	public string GetString {
+	internal string GetString {
 		get { return _string; }
 	}
 
 	static bool reserved_keyword_as_identifier;
 
 	double number;
-	public double GetNumber {
+	internal double GetNumber {
 		get { return number; }
 	}
 
 
 	int op;
-	public int GetOp ()
+	internal int GetOp ()
 	{
 		return op;
 	}
@@ -117,7 +117,7 @@ public class TokenStream {
 	// methods
 	//
 
-	public TokenStream (StreamReader source_reader, string source_string, string source_name, int line_number)
+	internal TokenStream (StreamReader source_reader, string source_string, string source_name, int line_number)
 	{
 		pushback_token = Token.EOF;
 		SourceName = source_name;
@@ -533,7 +533,7 @@ public class TokenStream {
 	//
 	// return and pop the token from the stream if it matches otherwise return null
 	//
-	public bool MatchToken (int to_match) 
+	internal bool MatchToken (int to_match) 
 	{
 		int token = GetToken ();
 		if (token == to_match)
@@ -544,7 +544,7 @@ public class TokenStream {
 		return false;
 	}
 
-	public void UnGetToken (int tt)
+	internal void UnGetToken (int tt)
 	{
 		// Can not unreadmore than one token
 		if (pushback_token != Token.EOF && tt != Token.ERROR)
@@ -553,7 +553,7 @@ public class TokenStream {
 		TokenNumber--;
 	}
 
-	public int PeekToken ()
+	internal int PeekToken ()
 	{
 		int result = GetToken ();
 		pushback_token = result;
@@ -561,7 +561,7 @@ public class TokenStream {
 		return result;
 	}
 
-	public int PeekTokenSameLine ()
+	internal int PeekTokenSameLine ()
 	{
 		significant_eol = true;
 		int result = GetToken ();
@@ -571,7 +571,7 @@ public class TokenStream {
 		return result;
 	}
 
-	public int GetToken ()
+	internal int GetToken ()
 	{
 		int c;
 		TokenNumber++;
@@ -1286,7 +1286,7 @@ public class TokenStream {
 	}
 
 
-	public static bool IsJSSpace (int c)
+	internal static bool IsJSSpace (int c)
 	{
 		if (c < 127)
 			return c == 0x20 || c == 0x9 || c == 0xC || c == 0xB;
@@ -1294,7 +1294,7 @@ public class TokenStream {
 			return c == 0xA0 || Char.GetUnicodeCategory ((char) c) == UnicodeCategory.SpaceSeparator;
 	}
 
-	public static bool IsJSLineTerminator (int c)
+	internal static bool IsJSLineTerminator (int c)
 	{
 		return c == '\n' || c == '\r' || c == 0x2028 || c == 0x2029;
 	}
@@ -1430,12 +1430,12 @@ public class TokenStream {
 		return true;
 	}
 
-	public void ReportCurrentLineWarning (string message, string str)
+	internal void ReportCurrentLineWarning (string message, string str)
 	{
 		Console.WriteLine ("warning: {0}, {1}, {2}, {3}", message, SourceName, LineNumber, str);
 	}
 
-	public void ReportCurrentLineError (string message)
+	internal void ReportCurrentLineError (string message)
 	{
 		Console.WriteLine ("error: {0}, {1}, {2}", message, SourceName, LineNumber);
 	}
