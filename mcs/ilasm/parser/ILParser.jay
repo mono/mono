@@ -1115,6 +1115,12 @@ instr                   : INSTR_NONE
 			  {
 				codegen.CodeBuffer.MethInst ((MethodOp) $1, (Method) $2);		
 			  }
+			| INSTR_METHOD callConv method_ref 
+			  {
+				Method method = (Method) $3;
+				method.AddCallConv ((CallConv) $2);
+				codegen.CodeBuffer.MethInst ((MethodOp) $1, method);
+			  }
 
 					
 			| INSTR_METHOD callConv type methodName OPEN_PARENS sigArgs0 CLOSE_PARENS 

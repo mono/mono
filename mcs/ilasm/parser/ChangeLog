@@ -1,5 +1,10 @@
 2003-03-17 Jackson Harper <jackson@latitudegeo.com>
 
+	* ILParser.jay: Set CallConv for opcodes that have a call conv, 
+	like call and newobj
+
+2003-03-17 Jackson Harper <jackson@latitudegeo.com>
+
 	* ILParser.jay: Set CallConvs properly, use type_ref instead of type for
 	method overrides.
 
