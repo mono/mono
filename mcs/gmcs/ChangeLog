@@ -1,5 +1,11 @@
 2005-01-26  Martin Baulig  <martin@ximian.com>
 
+	* class.cs (TypeContainer.AttributeTargets): Return the correct
+	AttributeTargets depending on our `Kind' instead of throwing an
+	exception; fixes #71632.
+
+2005-01-26  Martin Baulig  <martin@ximian.com>
+
 	* delegate.cs (Delegate.DefineType): Correctly define our type
 	parameters.  Fixes #71483.
 
