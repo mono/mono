@@ -1,3 +1,9 @@
+2003-05-16  Dick Porter  <dick@ximian.com>
+
+	* icall.c:
+	* file-io.h:
+	* file-io.c: Implement System.IO.MonoIO::GetTempPath
+
 2003-05-14  Lluis Sanchez Gual  <lluis@ideary.com>
 
 	* object.c: mono_store_remote_field: little fix to previous patch.
