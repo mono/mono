@@ -71,8 +71,11 @@ namespace System.Data {
 					this [Col] = Col.AutoIncrementValue();
 				}
 			}
+
+			_table.Columns.CollectionChanged += new System.ComponentModel.CollectionChangeEventHandler(CollectionChanged);
 		}
 
+		
 		#endregion
 
 		#region Properties
@@ -818,8 +821,104 @@ namespace System.Data {
 		{
 			throw new NotImplementedException ();
 		}
+		
+		//Copy all values of this DataaRow to the row parameter.
+		internal void CopyValuesToRow(DataRow row)
+		{
+			if (row == null)
+				throw new ArgumentNullException("row");
+			if (row == this)
+				throw new ArgumentException("'row' is the same as this object");
+
+			DataColumnCollection columns = Table.Columns;
+			
+			for(int i = 0; i < columns.Count; i++){
+				string columnName = columns[i].ColumnName;
+				int index = row.Table.Columns.IndexOf(columnName);
+				//if a column withe the same name exists in bote rows copy the values
+				if(index != -1) {
+					if (HasVersion(DataRowVersion.Original))
+					{
+						if (row.original == null)
+							row.original = new object[row.Table.Columns.Count];
+						row.original[index] = row.SetColumnValue(original[i], index);
+					}
+					if (HasVersion(DataRowVersion.Current))
+					{
+						if (row.current == null)
+							row.current = new object[row.Table.Columns.Count];
+						row.current[index] = row.SetColumnValue(current[i], index);
+					}
+					if (HasVersion(DataRowVersion.Proposed))
+					{
+						if (row.proposed == null)
+							row.proposed = new object[row.Table.Columns.Count];
+						row.proposed[index] = row.SetColumnValue(proposed[i], index);
+					}
+				}
+			}
+
+			row.rowState = RowState;
+			row.RowError = RowError;
+			row.columnErrors = columnErrors;
+		}
 
 		
+		public void CollectionChanged(object sender, System.ComponentModel.CollectionChangeEventArgs args)
+		{
+			// if a column is added we hava to add an additional value the 
+			// the priginal, current and propoed arrays.
+			// this scenario can happened in merge operation.
+
+			if (args.Action == System.ComponentModel.CollectionChangeAction.Add)
+			{
+				object[] tmp = new object[current.Length + 1];
+				Array.Copy (current, tmp, current.Length);
+				tmp[tmp.Length - 1] = DBNull.Value;
+				current = tmp;
+
+				if (proposed != null)
+				{
+					tmp = new object[proposed.Length + 1];
+					Array.Copy (proposed, tmp, proposed.Length);
+					proposed = tmp;
+				}
+				if(original != null)
+				{
+					tmp = new object[original.Length + 1];
+					Array.Copy (original, tmp, original.Length);
+					original = tmp;
+				}
+
+			}
+		}
+
+		internal bool IsRowChanged(DataRowState rowState) {
+			if((RowState & rowState) != 0)
+				return true;
+
+			//we need to find if child rows of this row changed.
+			//if yes - we should return true
+
+			// if the rowState is deleted we should get the original version of the row
+			// else - we should get the current version of the row.
+			DataRowVersion version = (rowState == DataRowState.Deleted) ? DataRowVersion.Original : DataRowVersion.Current;
+			int count = Table.ChildRelations.Count;
+			for (int i = 0; i < count; i++){
+				DataRelation rel = Table.ChildRelations[i];
+				DataRow[] childRows = GetChildRows(rel, version);
+				for (int j = 0; j < childRows.Length; j++){
+					if (childRows[j].IsRowChanged(rowState))
+						return true;
+				}
+			}
+
+			return false;
+		}
+
 		#endregion // Methods
 	}
+
+	
+
 }

@@ -23,6 +23,7 @@ using System.Runtime.Serialization;
 using System.Xml;
 using System.Xml.Schema;
 using System.Xml.Serialization;
+using System.Data.Common;
 
 namespace System.Data {
 	/// <summary>
@@ -160,19 +161,42 @@ namespace System.Data {
 		[MonoTODO]
 		public void Merge (DataRow[] rows, bool preserveChanges, MissingSchemaAction missingSchemaAction)
 		{
-			throw new NotImplementedException();
+			if(rows == null)
+				throw new ArgumentNullException("rows");
+			if(!IsLegalSchemaAction(missingSchemaAction))
+				throw new ArgumentOutOfRangeException("missingSchemaAction");
+			
+			MergeManager.Merge(this, rows, preserveChanges, missingSchemaAction);
 		}
 		
 		[MonoTODO]
 		public void Merge (DataSet dataSet, bool preserveChanges, MissingSchemaAction missingSchemaAction)
 		{
-			throw new NotImplementedException();
+			if(dataSet == null)
+				throw new ArgumentNullException("dataSet");
+			if(!IsLegalSchemaAction(missingSchemaAction))
+				throw new ArgumentOutOfRangeException("missingSchemaAction");
+			
+			MergeManager.Merge(this, dataSet, preserveChanges, missingSchemaAction);
 		}
 		
 		[MonoTODO]
 		public void Merge (DataTable table, bool preserveChanges, MissingSchemaAction missingSchemaAction)
 		{
-			throw new NotImplementedException();
+			if(table == null)
+				throw new ArgumentNullException("table");
+			if(!IsLegalSchemaAction(missingSchemaAction))
+				throw new ArgumentOutOfRangeException("missingSchemaAction");
+			
+			MergeManager.Merge(this, table, preserveChanges, missingSchemaAction);
+		}
+
+		private static bool IsLegalSchemaAction(MissingSchemaAction missingSchemaAction)
+		{
+			if (missingSchemaAction == MissingSchemaAction.Add || missingSchemaAction == MissingSchemaAction.AddWithKey
+				|| missingSchemaAction == MissingSchemaAction.Error || missingSchemaAction == MissingSchemaAction.Ignore)
+				return true;
+			return false;
 		}
 		
 		[DataCategory ("Data")]
@@ -298,15 +322,40 @@ namespace System.Data {
 
 		public DataSet GetChanges()
 		{
-			throw new NotImplementedException ();
+			return GetChanges(DataRowState.Added | DataRowState.Deleted | DataRowState.Modified);
 		}
 
 		
 		public DataSet GetChanges(DataRowState rowStates)
 		{
-			throw new NotImplementedException ();
+			if(!HasChanges(rowStates))
+				return null;
+			
+			DataSet copySet = Clone();
+			IEnumerator tableEnumerator = Tables.GetEnumerator();
+			DataTable origTable;
+			DataTable copyTable;
+			while (tableEnumerator.MoveNext())
+			{
+				origTable = (DataTable)tableEnumerator.Current;
+				copyTable = copySet.Tables[origTable.TableName];
+
+				IEnumerator rowEnumerator = origTable.Rows.GetEnumerator();
+				while (rowEnumerator.MoveNext())
+				{
+					DataRow row = (DataRow)rowEnumerator.Current;
+					if (row.IsRowChanged(rowStates))
+					{
+						DataRow newRow = copyTable.NewRow();
+						copyTable.Rows.Add(newRow);
+						row.CopyValuesToRow(newRow);
+					}
+				}
+			}
+			return copySet;
 		}
 
+		
 		public string GetXml()
 		{
 			StringWriter Writer = new StringWriter ();
@@ -324,13 +373,32 @@ namespace System.Data {
 		[MonoTODO]
 		public bool HasChanges()
 		{
-			throw new NotImplementedException ();
+			return HasChanges(DataRowState.Added | DataRowState.Deleted | DataRowState.Modified);
 		}
 
 		[MonoTODO]
 		public bool HasChanges(DataRowState rowState)
 		{
-			throw new NotImplementedException ();
+			if(((int)rowState & 0xffffffe0) != 0)
+				throw new ArgumentOutOfRangeException("rowState");
+
+			DataTableCollection tableCollection = Tables;
+			DataTable table;
+			DataRowCollection rowCollection;
+			DataRow row;
+			for (int i = 0; i < tableCollection.Count; i++)
+			{
+				table = tableCollection[i];
+				rowCollection = table.Rows;
+				for (int j = 0; j < rowCollection.Count; j++)
+				{
+					row = rowCollection[j];
+					if((row.RowState & rowState) != 0)
+						return true;
+				}
+			}
+
+			return false;		
 		}
 
 		[MonoTODO]
@@ -360,7 +428,7 @@ namespace System.Data {
 
 		public virtual void RejectChanges()
 		{
-			throw new NotImplementedException ();
+			throw new NotImplementedException();
 		}
 
 		public virtual void Reset()

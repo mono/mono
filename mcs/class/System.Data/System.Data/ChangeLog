@@ -1,3 +1,16 @@
+2003-10-01  Duncan Mak  <duncan@ximian.com>
+
+	More patches from Eran Domb <erand@mainsoft.com>.
+
+	* MergeManager.cs: New file.
+
+	* DataRelationCollection.cs (AddCore): Check that a
+	UniqueConstraint is already exists. It loops over the Relations
+	instead of the Constraints.
+	(Add, AddCore): The relation was added twice.
+
+	* DataSet.cs (Merge, GetChanges, HasChanges): Implemented.	
+
 2003-09-30  Duncan Mak  <duncan@ximian.com>        
 
 	Patches from Eran Domb <erand@mainsoft.com>.

@@ -104,6 +104,13 @@ namespace System.Data {
 						}
 					}
 				}
+				// if we did not find the unique constraint in the parent table.
+				// we generate new uniqueconastraint and add it to the parent table.
+				if (uniqueConstraint == null)
+				{
+					uniqueConstraint = new UniqueConstraint(relation.ParentColumns, false);
+					relation.ParentTable.Constraints.Add(uniqueConstraint);
+				}
 				relation.SetParentKeyConstraint (uniqueConstraint);
 				relation.SetChildKeyConstraint (foreignKeyConstraint);
 			}
@@ -197,6 +204,8 @@ namespace System.Data {
 
 		private int defaultNameIndex;
 		private bool inTransition;
+		int index;
+
 		
 		/// <summary>
 		/// Initializes a new instance of the DataRelationCollection class.
@@ -237,9 +246,17 @@ namespace System.Data {
 		public void Add(DataRelation relation)
 		{
 			this.AddCore (relation);
+			if(relation.RelationName == string.Empty)
+				relation.RelationName = GenerateRelationName();
 			CollectionChangeEventArgs e = new CollectionChangeEventArgs(CollectionChangeAction.Add, this);
 			List.Add(relation);
 			OnCollectionChanged(e);
+		}
+
+		private string GenerateRelationName()
+		{
+			index++;
+			return "Relation" + index;
 		}
 
 		/// <summary>
@@ -437,6 +454,9 @@ namespace System.Data {
 		{
 			RemoveCore (relation);
 			List.Remove (relation);
+			string name = "Relation" + index;
+			if (relation.RelationName == name)
+				index--;
 			OnCollectionChanged (CreateCollectionChangeEvent (CollectionChangeAction.Remove));
 		}
 

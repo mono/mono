@@ -66,6 +66,7 @@ System.Data/ITableMappingCollection.cs
 System.Data/MappingType.cs
 System.Data/MergeFailedEventArgs.cs
 System.Data/MergeFailedEventHandler.cs
+System.Data/MergeManager.cs
 System.Data/MissingMappingAction.cs
 System.Data/MissingPrimaryKeyException.cs
 System.Data/MissingSchemaAction.cs
