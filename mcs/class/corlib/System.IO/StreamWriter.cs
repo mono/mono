@@ -57,7 +57,7 @@ namespace System.IO {
 			if (bufferSize < 0)
 				throw new ArgumentOutOfRangeException("bufferSize");
 			if (!stream.CanWrite)
-				throw new ArgumentException("bufferSize");
+				throw new ArgumentException("Can not write to stream", "stream");
 
 			internalStream = stream;
 
