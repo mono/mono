@@ -3,8 +3,10 @@
 //
 // Authors:
 // 	Gonzalo Paniagua Javier (gonzalo@ximian.com)
+//      Martin Willemoes Hansen (mwh@sysrq.dk)
 //
 // (c) 2002 Ximian, Inc. (http://www.ximian.com)
+// (c) 2003 Martin Willemoes Hansen
 //
 
 #define NUNIT // Comment out this one if you wanna play with the test without using NUnit
@@ -21,26 +23,16 @@ using System.ComponentModel;
 namespace MonoTests.System.ComponentModel
 {
 #if NUNIT
-	public class EventHandlerListTests : TestCase
+	[TestFixture]
+	public class EventHandlerListTests
 	{
 #else
 	public class EventHandlerListTests
 	{
 #endif
 #if NUNIT
-		public static ITest Suite
-		{
-			get {
-				return new TestSuite (typeof (EventHandlerListTests));
-			}
-		}
-
-		public EventHandlerListTests () :
-			base ("MonoTests.System.ComponentModel.EventHandlerListTests testcase") { }
-
-		public EventHandlerListTests (string name) : base (name) { }
-
-		protected override void SetUp ()
+		[SetUp]
+		public void GetReady ()
 		{
 #else
 		static EventHandlerListTests ()
@@ -60,7 +52,8 @@ namespace MonoTests.System.ComponentModel
 			calls <<= 1;
 		}
 
-		public void TestAll ()
+		[Test]
+		public void All ()
 		{
 			EventHandlerList list = new EventHandlerList ();
 			string i1 = "i1";
@@ -69,61 +62,61 @@ namespace MonoTests.System.ComponentModel
 			EventHandler two = new EventHandler (Deleg2);
 			EventHandler d;
 
-			AssertEquals ("TestAll #01", null, list [i1]);
-			AssertEquals ("TestAll #02", null, list [i2]);
+			Assertion.AssertEquals ("All #01", null, list [i1]);
+			Assertion.AssertEquals ("All #02", null, list [i2]);
 
 			list.AddHandler (i1, one);
 			d = list [i1] as EventHandler;
-			Assert ("TestAll #03", d != null);
+			Assertion.Assert ("All #03", d != null);
 
 			d (this, EventArgs.Empty);
-			AssertEquals ("TestAll #04", 1, calls);
+			Assertion.AssertEquals ("All #04", 1, calls);
 
 			list.AddHandler (i2, two);
 			d = list [i1] as EventHandler;
-			Assert ("TestAll #05", d != null);
+			Assertion.Assert ("All #05", d != null);
 
 			d (this, EventArgs.Empty);
-			AssertEquals ("TestAll #06", 2, calls);
+			Assertion.AssertEquals ("All #06", 2, calls);
 
 			d = list [i2] as EventHandler;
-			Assert ("TestAll #07", d != null);
+			Assertion.Assert ("All #07", d != null);
 
 			d (this, EventArgs.Empty);
-			AssertEquals ("TestAll #08", 4, calls);
+			Assertion.AssertEquals ("All #08", 4, calls);
 
 			list.AddHandler (i2, two);
 			d = list [i2] as EventHandler;
-			Assert ("TestAll #08", d != null);
+			Assertion.Assert ("All #08", d != null);
 
 			d (this, EventArgs.Empty);
-			AssertEquals ("TestAll #09", 16, calls);
+			Assertion.AssertEquals ("All #09", 16, calls);
 
 			list.RemoveHandler (i1, one);
 			d = list [i1] as EventHandler;
-			Assert ("TestAll #10", d == null);
+			Assertion.Assert ("All #10", d == null);
 
 			list.RemoveHandler (i2, two);
 			d = list [i2] as EventHandler;
-			Assert ("TestAll #11", d != null);
+			Assertion.Assert ("All #11", d != null);
 
 			list.RemoveHandler (i2, two);
 			d = list [i2] as EventHandler;
-			Assert ("TestAll #12", d == null);
+			Assertion.Assert ("All #12", d == null);
 
 			list.AddHandler (i1, one);
 			d = list [i1] as EventHandler;
-			Assert ("TestAll #13", d != null);
+			Assertion.Assert ("All #13", d != null);
 
 			list.AddHandler (i2, two);
 			d = list [i2] as EventHandler;
-			Assert ("TestAll #14", d != null);
+			Assertion.Assert ("All #14", d != null);
 
 			list.AddHandler (i1, null);
-			Assert ("TestAll #15", list [i1] != null);
+			Assertion.Assert ("All #15", list [i1] != null);
 
 			list.AddHandler (i2, null);
-			Assert ("TestAll #16", list [i2] != null);
+			Assertion.Assert ("All #16", list [i2] != null);
 
 			list.Dispose ();
 		}

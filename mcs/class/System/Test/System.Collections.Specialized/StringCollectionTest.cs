@@ -1,21 +1,20 @@
-/* System.Collections.Specialized.StringCollection.cs
- * Authors:
- *   John Barnette (jbarn@httcb.net)
- *
- *  Copyright (C) 2001 John Barnette
-*/
+// System.Collections.Specialized.StringCollection.cs
+//
+// Authors:
+//   John Barnette (jbarn@httcb.net)
+//   Martin Willemoes Hansen (mwh@sysrq.dk)
+//
+//  (C) Copyright 2001 John Barnette
+//  (C) Copyright 2003 Martin Willemoes Hansen
+//
 
 using NUnit.Framework;
 using System.Collections.Specialized;
 
 namespace MonoTests.System.Collections.Specialized {
-	public class StringCollectionTest : TestCase {
 
-		public static ITest Suite {
-			get {
-				return new TestSuite(typeof (StringCollectionTest));
-			}
-		}
+	[TestFixture]
+	public class StringCollectionTest {
 
 		private StringCollection sc;
 		string[] strings = {
@@ -28,51 +27,65 @@ namespace MonoTests.System.Collections.Specialized {
 			"ringo"
 		};
 		
-		public StringCollectionTest() : base("MonoTests.System.Collections.Specialized.StringCollectionTest testsuite") {}
-		public StringCollectionTest(string name) : base(name) {}
-		
-		protected override void SetUp() {
+		[SetUp]
+		public void GetReady() 
+		{
 			sc = new StringCollection();
 			sc.AddRange(strings);
 		}
 
 		// Simple Tests
-		
-		public void TestSimpleCount() {
-			Assert(sc.Count == 7);
+		[Test]
+		public void SimpleCount() 
+		{
+			Assertion.Assert(sc.Count == 7);
 		}
 		
-		public void TestSimpleIsReadOnly() {
-			Assert(!sc.IsReadOnly);
+		[Test]
+		public void SimpleIsReadOnly() 
+		{
+			Assertion.Assert(!sc.IsReadOnly);
 		}
 		
-		public void TestSimpleIsSynchronized() {
-			Assert(!sc.IsSynchronized);
+		[Test]
+		public void SimpleIsSynchronized() 
+		{
+			Assertion.Assert(!sc.IsSynchronized);
 		}
 		
-		public void TestSimpleItemGet() {
+		[Test]
+		public void SimpleItemGet() 
+		{
 			for(int i = 0; i < strings.Length; i++) {
-				Assert(strings[i].Equals(sc[i]));
+				Assertion.Assert(strings[i].Equals(sc[i]));
 			}
 		}
 		
-		public void TestSimpleItemSet() {
+		[Test]
+		public void SimpleItemSet() 
+		{
 			sc[0] = "bob";
-			Assert(sc[0].Equals("bob"));
+			Assertion.Assert(sc[0].Equals("bob"));
 		}
 		
-		public void TestSimpleSyncRoot() {
-			Assert(sc.Equals(sc.SyncRoot));
+		[Test]
+		public void SimpleSyncRoot() 
+		{
+			Assertion.Assert(sc.Equals(sc.SyncRoot));
 		}
 		
-		public void TestSimpleAdd() {
+		[Test]
+		public void SimpleAdd() 
+		{
 			int index = sc.Add("chuck");
-			Assert(index == strings.Length);
-			Assert(sc[strings.Length].Equals("chuck"));
+			Assertion.Assert(index == strings.Length);
+			Assertion.Assert(sc[strings.Length].Equals("chuck"));
 			
 		}
 		
-		public void TestSimpleAddRange() {
+		[Test]
+		public void SimpleAddRange() 
+		{
 			string[] newStrings = {
 				"peter",
 				"paul",
@@ -82,44 +95,56 @@ namespace MonoTests.System.Collections.Specialized {
 			int index = sc.Count;
 			sc.AddRange(newStrings);
 			
-			Assert(sc.Count == index + newStrings.Length);
+			Assertion.Assert(sc.Count == index + newStrings.Length);
 			
 			for (int i = 0; i+index <= sc.Count-1; i++) {
-				Assert(newStrings[i].Equals(sc[i+index]));
+				Assertion.Assert(newStrings[i].Equals(sc[i+index]));
 			}
 		}
 		
-		public void TestSimpleClear() {
+		[Test]
+		public void SimpleClear() 
+		{
 			sc.Clear();
-			Assert(sc.Count == 0);
+			Assertion.Assert(sc.Count == 0);
 		}
 		
-		public void TestSimpleContains() {
-			Assert(sc.Contains(strings[0]));
-			Assert(!sc.Contains("NOT CONTAINED"));
+		[Test]
+		public void SimpleContains() 
+		{
+			Assertion.Assert(sc.Contains(strings[0]));
+			Assertion.Assert(!sc.Contains("NOT CONTAINED"));
 		}
 		
-		public void TestSimpleCopyTo() {
+		[Test]
+		public void SimpleCopyTo() 
+		{
 			string[] copyArray = new string[sc.Count];
 			sc.CopyTo(copyArray, 0);
 			for (int i = 0; i < copyArray.Length; i++) {
-				Assert(copyArray[i] == sc[i]);
+				Assertion.Assert(copyArray[i] == sc[i]);
 			}
 		}
 		
-		public void TestSimpleGetEnumerator() {
+		[Test]
+		public void SimpleGetEnumerator() 
+		{
 			int index = 0;
 			foreach(string s in sc) {
-				Assert(s.Equals(strings[index]));
+				Assertion.Assert(s.Equals(strings[index]));
 				index++;
 			}
 		}
 		
-		public void TestSimpleIndexOf() {
-			Assert(sc.IndexOf(strings[0]) == 0);
+		[Test]
+		public void SimpleIndexOf() 
+		{
+			Assertion.Assert(sc.IndexOf(strings[0]) == 0);
 		}
 		
-		public void TestSimpleInsert() {
+		[Test]
+		public void SimpleInsert() 
+		{
 			int index = 3;
 			int oldCount = sc.Count;
 			string before  = sc[index - 1];
@@ -129,29 +154,32 @@ namespace MonoTests.System.Collections.Specialized {
 			
 			sc.Insert(index, newStr);
 			
-			Assert(sc.Count == oldCount + 1);
-			Assert(sc[index].Equals(newStr));
-			Assert(sc[index-1].Equals(before));
-			Assert(sc[index+1].Equals(current));
-			Assert(sc[index+2].Equals(after));
+			Assertion.Assert(sc.Count == oldCount + 1);
+			Assertion.Assert(sc[index].Equals(newStr));
+			Assertion.Assert(sc[index-1].Equals(before));
+			Assertion.Assert(sc[index+1].Equals(current));
+			Assertion.Assert(sc[index+2].Equals(after));
 		}
 		
-		public void TestSimpleRemove() {
+		[Test]
+		public void SimpleRemove() 
+		{
 			int oldCount = sc.Count;
 			sc.Remove(strings[0]);
-			Assert(oldCount == sc.Count + 1);
-			Assert(!sc.Contains(strings[0]));
+			Assertion.Assert(oldCount == sc.Count + 1);
+			Assertion.Assert(!sc.Contains(strings[0]));
 		}
 		
-		public void TestSimpleRemoveAt() {
+		[Test]
+		public void SimpleRemoveAt() 
+		{
 			int index = 3;
 			int oldCount = sc.Count;
 			string after = sc[index+1];
 			
 			sc.RemoveAt(index);
-			Assert(oldCount == sc.Count + 1);
-			Assert(sc[index].Equals(after));
+			Assertion.Assert(oldCount == sc.Count + 1);
+			Assertion.Assert(sc[index].Equals(after));
 		}
-			
 	}
 }

@@ -3,9 +3,12 @@
 // 		NUnit Test Cases for System.Diagnostics.BooleanSwitch and
 // 		System.Diagnostics.TraceSwitch
 //
-// Jonathan Pryor (jonpryor@vt.edu)
+// Authors:
+//   Jonathan Pryor (jonpryor@vt.edu)
+//   Martin Willemoes Hansen (mwh@sysrq.dk)
 //
 // (C) 2002 Jonathan Pryor
+// (C) 2003 Martin Willemoes Hansen
 //
 // README:
 // Tests in this file are expected to fail until a decent strategy to test
@@ -71,7 +74,8 @@ namespace MonoTests.System.Diagnostics {
 		}
 	}
 
-	public class SwitchesTest : TestCase {
+	[TestFixture]
+	public class SwitchesTest {
     
 		private static BooleanSwitch bon = new BooleanSwitch ("bool-true", "");
 		private static BooleanSwitch bon2 = new BooleanSwitch ("bool-true-2", "");
@@ -90,40 +94,18 @@ namespace MonoTests.System.Diagnostics {
 
 		private static TestNewSwitch tns = new TestNewSwitch ("string-value", "");
 
-		public SwitchesTest () 
-			: base ("System.Diagnostics.Trace testsuite")
+		[Test]
+		public void BooleanSwitches ()
 		{
+			Assertion.AssertEquals ("#BS:T:1", true, bon.Enabled);
+			Assertion.AssertEquals ("#BS:T:2", true, bon2.Enabled);
+			Assertion.AssertEquals ("#BS:T:3", true, bon3.Enabled);
+			Assertion.AssertEquals ("#BS:F:1", false, boff.Enabled);
+			Assertion.AssertEquals ("#BS:F:2", false, boff2.Enabled);
 		}
 
-		public SwitchesTest (string name)
-			: base(name)
-		{
-		}
-
-		protected override void SetUp ()
-		{
-		}
-
-		protected override void TearDown ()
-		{
-		}
-
-		public static ITest Suite {
- 			get { 
-				return new TestSuite (typeof (SwitchesTest)); 
-			}
-		}
-
-		public void TestBooleanSwitches ()
-		{
-			AssertEquals ("#BS:T:1", true, bon.Enabled);
-			AssertEquals ("#BS:T:2", true, bon2.Enabled);
-			AssertEquals ("#BS:T:3", true, bon3.Enabled);
-			AssertEquals ("#BS:F:1", false, boff.Enabled);
-			AssertEquals ("#BS:F:2", false, boff2.Enabled);
-		}
-
-		public void TestTraceSwitches ()
+		[Test]
+		public void TraceSwitches ()
 		{
 			// The levels 0..4:
 			CheckTraceSwitch (toff,      false, false, false, false);
@@ -145,16 +127,17 @@ namespace MonoTests.System.Diagnostics {
 		private void CheckTraceSwitch (TraceSwitch ts, bool te, bool tw, bool ti, bool tv)
 		{
 			string desc = string.Format ("#TS:{0}", ts.DisplayName);
-			AssertEquals (desc + ":TraceError",   te, ts.TraceError);
-			AssertEquals (desc + ":TraceWarning", tw, ts.TraceWarning);
-			AssertEquals (desc + ":TraceInfo",    ti, ts.TraceInfo);
-			AssertEquals (desc + ":TraceVerbose", tv, ts.TraceVerbose);
+			Assertion.AssertEquals (desc + ":TraceError",   te, ts.TraceError);
+			Assertion.AssertEquals (desc + ":TraceWarning", tw, ts.TraceWarning);
+			Assertion.AssertEquals (desc + ":TraceInfo",    ti, ts.TraceInfo);
+			Assertion.AssertEquals (desc + ":TraceVerbose", tv, ts.TraceVerbose);
 		}
 
-		public void TestNewSwitch ()
+		[Test]
+		public void NewSwitch ()
 		{
-			AssertEquals ("#NS:Validate", true, tns.Validate());
-			AssertEquals ("#NS:Value", "string-value", tns.Value);
+			Assertion.AssertEquals ("#NS:Validate", true, tns.Validate());
+			Assertion.AssertEquals ("#NS:Value", "string-value", tns.Value);
 		}
 	}
 }

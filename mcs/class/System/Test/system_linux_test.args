@@ -1,27 +1,14 @@
---target library
--o corlib_linux_test.dll
---noconfig
--r ../../lib/corlib.dll
--r ../../lib/System.dll
--r ../../lib/System.Xml.dll
--r ../../../nunit/NUnitCore_mono.dll
-AllTests.cs
 BasicOperationsTest.cs
-System/AllTests.cs
 System/UriBuilderTest.cs
 System/UriTest.cs
-System.Collections.Specialized/AllTests.cs
 System.Collections.Specialized/BitVector32Test.cs
 System.Collections.Specialized/HybridDictionaryTest.cs
 System.Collections.Specialized/NameValueCollectionTest.cs
 System.Collections.Specialized/StringCollectionTest.cs
-System.ComponentModel/AllTests.cs
 System.ComponentModel/EventHandlerListTests.cs
-System.Diagnostics/AllTests.cs
 System.Diagnostics/TraceTest.cs
 System.Diagnostics/SwitchesTest.cs
 System.Diagnostics/DiagnosticsConfigurationHandlerTest.cs
-System.Net/AllTests.cs
 System.Net/CookieCollectionTest.cs
 System.Net/CookieTest.cs
 System.Net/CredentialCacheTest.cs
@@ -36,11 +23,9 @@ System.Net/SocketPermissionTest.cs
 System.Net/WebHeaderCollectionTest.cs
 System.Net/WebProxyTest.cs
 System.Net/WebRequestTest.cs
-System.Net.Sockets/AllTests.cs
 System.Net.Sockets/TcpClientTest.cs
 System.Net.Sockets/TcpListenerTest.cs
-System.Text.RegularExpressions/AllTests.cs
 System.Text.RegularExpressions/PerlTest.cs
 System.Text.RegularExpressions/PerlTrials.cs
 System.Text.RegularExpressions/RegexTrial.cs
-Microsoft.CSharp/AllTests.cs
+

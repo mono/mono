@@ -1,10 +1,11 @@
 // System.Net.Sockets.TcpClientTest.cs
 //
-// Author:
+// Authors:
 //    Phillip Pearson (pp@myelin.co.nz)
+//    Martin Willemoes Hansen (mwh@sysrq.dk)
 //
-// Copyright (C) 2001, Phillip Pearson
-//    http://www.myelin.co.nz
+// (C) Copyright 2001 Phillip Pearson (http://www.myelin.co.nz)
+// (C) Copyright 2003 Martin Willemoes Hansen
 //
 
 using System;
@@ -17,21 +18,15 @@ namespace MonoTests.System.Net.Sockets {
 	/// <summary>
 	/// Tests System.Net.Sockets.TcpClient
 	/// </summary>
-	public class TcpClientTest : TestCase {
+	[TestFixture]
+	public class TcpClientTest {
 		
-		public TcpClientTest(string name) : base(name) {}
-		
-		public static ITest Suite {
-			get {
-				return new TestSuite(typeof (TcpClientTest));
-			}
-		}
-
 		/// <summary>
 		/// Tests the TcpClient object
 		/// (from System.Net.Sockets)
 		/// </summary>
-		public void test_TcpClient()
+		[Test]
+		public void TcpClient()
 		{
 			// set up a listening Socket
 			Socket lSock = new Socket(AddressFamily.InterNetwork,
@@ -62,11 +57,11 @@ namespace MonoTests.System.Net.Sockets {
 			// and see if it comes back
 			byte[] inBuf = new Byte[len];
 			int ret = inSock.Receive(inBuf, 0, len, 0);
-			Assert(ret != 0);
+			Assertion.Assert(ret != 0);
 
 			for (int i=0; i<len; i++) 
 			{
-				Assert(inBuf[i] == outBuf[i]);
+				Assertion.Assert(inBuf[i] == outBuf[i]);
 			}
 			
 

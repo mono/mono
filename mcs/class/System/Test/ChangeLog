@@ -1,3 +1,7 @@
+2003-03-18  Martin Willemoes Hansen <mwh@sysrq.dk>
+	* Removed: Old AllTests.cs files
+	* NUnit20ified the tests.
+
 2002-12-23  Nick Drochak  <ndrochak@gol.com>
 
 	* System_test.build: Fix build.  Need to link with System.Xml.dll

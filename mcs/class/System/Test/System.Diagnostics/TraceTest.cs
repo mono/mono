@@ -1,9 +1,12 @@
 //
 // TraceTest.cs - NUnit Test Cases for System.Diagnostics.Trace
 //
-// Jonathan Pryor (jonpryor@vt.edu)
+// Authors:
+//   Jonathan Pryor (jonpryor@vt.edu)
+//   Martin Willemoes Hansen (mwh@sysrq.dk)
 //
 // (C) Jonathan Pryor
+// (C) 2003 Martin Willemoes Hansen
 // 
 
 // We want tracing enabled, so...
@@ -16,22 +19,14 @@ using System.Diagnostics;
 
 namespace MonoTests.System.Diagnostics {
 
-	public class TraceTest : TestCase {
+	[TestFixture]
+	public class TraceTest {
     
 		private StringWriter buffer;
 		private TraceListener listener;
 
-		public TraceTest () 
-			: base ("System.Diagnostics.Trace testsuite")
-		{
-		}
-
-		public TraceTest (string name)
-			: base(name)
-		{
-		}
-
-		protected override void SetUp ()
+		[SetUp]
+		public void GetReady ()
 		{
 			// We don't want to deal with the default listener, which can send the
 			// output to various places (Debug stream, Console.Out, ...)
@@ -44,20 +39,16 @@ namespace MonoTests.System.Diagnostics {
 			Trace.AutoFlush = true;
 		}
 
-		protected override void TearDown ()
+		[TearDown]
+		public void Clear ()
 		{
 			// Trace.Listeners.Add (new DefaultTraceListener ());
 			Trace.Listeners.Remove (listener);
 		}
 
-		public static ITest Suite {
- 			get { 
-				return new TestSuite (typeof (TraceTest)); 
-			}
-		}
-
 		// Make sure that when we get the output we expect....
-		public void TestTracing ()
+		[Test]
+		public void Tracing ()
 		{
 			Trace.IndentLevel = 0;
 			Trace.IndentSize = 4;
@@ -69,11 +60,12 @@ namespace MonoTests.System.Diagnostics {
 			Trace.WriteLine ("Entering Main");
 			Trace.WriteLine ("Exiting Main");
 
-			AssertEquals ("#Tr01", value, buffer.ToString ());
+			Assertion.AssertEquals ("#Tr01", value, buffer.ToString ());
 		}
 
 		// Make sure we get the output we expect in the presence of indenting...
-		public void TestIndent ()
+		[Test]
+		public void Indent ()
 		{
 			Trace.IndentLevel = 0;
 			Trace.IndentSize = 4;
@@ -91,12 +83,13 @@ namespace MonoTests.System.Diagnostics {
 			Trace.Unindent ();
 			Trace.WriteLine ("End of list of errors");
 
-			AssertEquals ("#In01", value, buffer.ToString());
+			Assertion.AssertEquals ("#In01", value, buffer.ToString());
 		}
 
 		// Make sure that TraceListener properties (IndentLevel, IndentSize) are
 		// modified when the corresponding Trace properties are changed.
-		public void TestAddedTraceListenerProperties ()
+		[Test]
+		public void AddedTraceListenerProperties ()
 		{
 			TraceListener t1 = new TextWriterTraceListener (Console.Out);
 			TraceListener t2 = new TextWriterTraceListener (Console.Error);
@@ -112,8 +105,8 @@ namespace MonoTests.System.Diagnostics {
 			foreach (TraceListener t in Trace.Listeners) {
 				string ids = "#TATLP-S-" + t.Name;
 				string idl = "#TATLP-L-" + t.Name;
-				AssertEquals (ids, ExpectedSize, t.IndentSize);
-				AssertEquals (idl, ExpectedLevel, t.IndentLevel);
+				Assertion.AssertEquals (ids, ExpectedSize, t.IndentSize);
+				Assertion.AssertEquals (idl, ExpectedLevel, t.IndentLevel);
 			}
 
 			Trace.Listeners.Remove(t1);
@@ -123,7 +116,8 @@ namespace MonoTests.System.Diagnostics {
 		// Make sure that the TraceListener properties (IndentLevel, IndentSize)
 		// are properly modified when the TraceListener is added to the
 		// collection.
-		public void TestListeners_Add_Values()
+		[Test]
+		public void Listeners_Add_Values()
 		{
 			const int ExpectedLevel = 0;
 			const int ExpectedSize = 4;
@@ -136,18 +130,18 @@ namespace MonoTests.System.Diagnostics {
 
 			Trace.Listeners.Add(tl);
 
-			// Assert that the listener we added has been set to the correct indent
+			// Assertion.Assert that the listener we added has been set to the correct indent
 			// level.
-			AssertEquals ("#LATL-L", ExpectedLevel, tl.IndentLevel);
-			AssertEquals ("#LATL-S", ExpectedSize, tl.IndentSize);
+			Assertion.AssertEquals ("#LATL-L", ExpectedLevel, tl.IndentLevel);
+			Assertion.AssertEquals ("#LATL-S", ExpectedSize, tl.IndentSize);
 
-			// Assert that all listeners in the collection have the same level.
+			// Assertion.Assert that all listeners in the collection have the same level.
 			foreach (TraceListener t in Trace.Listeners)
 			{
 				string idl = "#LATL-L:" + t.Name;
 				string ids = "#LATL-S:" + t.Name;
-				AssertEquals(idl, ExpectedLevel, t.IndentLevel);
-				AssertEquals(ids, ExpectedSize, t.IndentSize);
+				Assertion.AssertEquals(idl, ExpectedLevel, t.IndentLevel);
+				Assertion.AssertEquals(ids, ExpectedSize, t.IndentSize);
 			}
 		}
 

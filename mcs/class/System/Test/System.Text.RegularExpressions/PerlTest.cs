@@ -3,8 +3,12 @@
 // namespace:	MonoTests.System.Text.RegularExpressions
 // file:	PerlTest.cs
 //
-// author:	Dan Lewis (dlewis@gmx.co.uk)
-// 		(c) 2002
+// Authors:	
+//   Dan Lewis (dlewis@gmx.co.uk)
+//   Martin Willemoes Hansen (mwh@sysrq.dk)
+//
+// (c) 2002 Dan Lewis
+// (c) 2003 Martin Willemoes Hansen
 
 using System;
 using System.Text.RegularExpressions;
@@ -13,15 +17,11 @@ using NUnit.Framework;
 
 namespace MonoTests.System.Text.RegularExpressions {
 	
-	public class PerlTest : TestCase {
-		public static ITest Suite {
-			get { return new TestSuite (typeof (PerlTest)); }
-		}
+	[TestFixture]
+	public class PerlTest {
 
-		public PerlTest () : this ("System.Text.RegularExpressions Perl testsuite") { }
-		public PerlTest (string name) : base (name) { }
-
-		public void TestTrials () {
+		[Test]
+		public void Trials () {
 			foreach (RegexTrial trial in PerlTrials.trials) {
 				string actual = trial.Execute ();
 				if (actual != trial.Expected) {
@@ -33,8 +33,5 @@ namespace MonoTests.System.Text.RegularExpressions {
 				}
 			}
 		}
-
-		protected override void SetUp () { }
-		protected override void TearDown () { }
 	}
 }

@@ -1,8 +1,11 @@
 //
 // FileWebRequestTest.cs - NUnit Test Cases for System.Net.FileWebRequest
 //
-// Author:
+// Authors:
 //   Lawrence Pit (loz@cable.a2000.nl)
+//   Martin Willemoes Hansen (mwh@sysrq.dk)
+//
+// (C) 2003 Martin Willemoes Hansen
 //
 
 using NUnit.Framework;
@@ -16,26 +19,11 @@ using System.Security.Permissions;
 namespace MonoTests.System.Net
 {
 
-public class FileWebRequestTest : TestCase
+[TestFixture]
+public class FileWebRequestTest
 {
-        public FileWebRequestTest () :
-                base ("[MonoTests.System.Net.FileWebRequestTest]") {}
-
-        public FileWebRequestTest (string name) : base (name) {}
-
-        protected override void SetUp () {}
-
-        protected override void TearDown () {}
-
-        public static ITest Suite
-        {
-                get {
-                        return new TestSuite (typeof (FileWebRequestTest));
-                }
-        }
-        
-        
-        public void TestAsync ()
+        [Test]
+        public void Async ()
         {
 		string tmpFilename = GetFilename ();
 		if (tmpFilename == null) {
@@ -56,7 +44,7 @@ public class FileWebRequestTest : TestCase
 			IAsyncResult async = req.BeginGetRequestStream (null, null);
 			try {
 				req.BeginGetRequestStream (null, null);
-				Fail ("#1 should've failed");
+				Assertion.Fail ("#1 should've failed");
 			} catch (InvalidOperationException) { 
 				//Console.WriteLine ("GOT1: " + e.Message + "\n" + e.StackTrace);				
 				// Cannot re-call BeginGetRequestStream/BeginGetResponse while
@@ -65,12 +53,12 @@ public class FileWebRequestTest : TestCase
 			/*
 			try {
 				req.BeginGetResponse (null, null);
-				Fail ("#2 should've failed");
+				Assertion.Fail ("#2 should've failed");
 			} catch (InvalidOperationException) { }
 			*/
 			try {
 				req.GetRequestStream ();
-				Fail ("#3 should've failed");
+				Assertion.Fail ("#3 should've failed");
 			} catch (InvalidOperationException) { 
 				// Console.WriteLine ("GOT3: " + e.Message + "\n" + e.StackTrace);
 				// Cannot re-call BeginGetRequestStream/BeginGetResponse while
@@ -79,7 +67,7 @@ public class FileWebRequestTest : TestCase
 
 			try {
 				req.GetResponse ();
-				Fail ("#4 should've failed");
+				Assertion.Fail ("#4 should've failed");
 			} catch (WebException) { 
 				// Console.WriteLine ("4: " + e.Message + "\n" + e.StackTrace);				
 				// The operation has timed out
@@ -89,7 +77,7 @@ public class FileWebRequestTest : TestCase
 				IAsyncResult async0 = req.BeginGetResponse (null, null);
 				req.EndGetResponse (async0);
 				// Console.WriteLine ("X5c");
-				Fail ("#5 should've failed");
+				Assertion.Fail ("#5 should've failed");
 			} catch (InvalidOperationException) { 
 				// Console.WriteLine ("5e: " + e.Message + "\n" + e.StackTrace);
 				// Cannot re-call BeginGetRequestStream/BeginGetResponse while
@@ -99,9 +87,9 @@ public class FileWebRequestTest : TestCase
 			// Console.WriteLine ("WEBHEADERS: " + req.Headers);
 			
 			Stream wstream = req.EndGetRequestStream (async);
-			AssertEquals ("#1r", false, wstream.CanRead);
-			AssertEquals ("#1w", true, wstream.CanWrite);
-			AssertEquals ("#1s", true, wstream.CanSeek);
+			Assertion.AssertEquals ("#1r", false, wstream.CanRead);
+			Assertion.AssertEquals ("#1w", true, wstream.CanWrite);
+			Assertion.AssertEquals ("#1s", true, wstream.CanSeek);
 
 			wstream.WriteByte (72);
 			wstream.WriteByte (101);
@@ -117,7 +105,7 @@ public class FileWebRequestTest : TestCase
 			
 			try {
 				req.BeginGetRequestStream (null, null);
-				Fail ("#20: should've failed");
+				Assertion.Fail ("#20: should've failed");
 			} catch (InvalidOperationException) { 
 				// Console.WriteLine ("20: " + e.Message + "\n" + e.StackTrace);				
 				// Cannot send a content-body with this verb-type
@@ -126,7 +114,7 @@ public class FileWebRequestTest : TestCase
 			try {
 				req.Method = "PUT";
 				req.BeginGetRequestStream (null, null);
-				Fail ("#21: should've failed");
+				Assertion.Fail ("#21: should've failed");
 			} catch (InvalidOperationException) { 
 				// Console.WriteLine ("21: " + e.Message + "\n" + e.StackTrace);				
 				// This operation cannot be perfomed after the request has been submitted.
@@ -136,12 +124,12 @@ public class FileWebRequestTest : TestCase
 				//IAsyncResult async2 = req.BeginGetResponse (null, null);
 				//Console.WriteLine ("OK!");
 				req.GetResponse ();
-				//Fail ("#22: should've failed");
+				//Assertion.Fail ("#22: should've failed");
 			} catch (InvalidOperationException) { 
 				//Console.WriteLine ("22: " + e.Message + "\n" + e.StackTrace);
 				// Cannot re-call BeginGetRequestStream/BeginGetResponse while
 				// a previous call is still in progress
-				Fail ("#22: should not have failed");
+				Assertion.Fail ("#22: should not have failed");
 			}			
 			
 			try {
@@ -154,50 +142,50 @@ public class FileWebRequestTest : TestCase
 										
 					// and this succeeds
 					
-					AssertEquals ("#23", res, res2) ;
+					Assertion.AssertEquals ("#23", res, res2) ;
 					
-					//Fail ("#23: should've failed");
+					//Assertion.Fail ("#23: should've failed");
 				} catch (InvalidOperationException) { 
 					//Console.WriteLine ("22: " + e.Message + "\n" + e.StackTrace);				
 					// Cannot re-call BeginGetRequestStream/BeginGetResponse while
 					// a previous call is still in progress
 				}				
 				
-				// Fail ("#22: should've failed");
+				// Assertion.Fail ("#22: should've failed");
 			} catch (InvalidOperationException) { 
 			}			
 
-			AssertEquals ("#2 len", (long) 5, res.ContentLength);
-			AssertEquals ("#2 type", "binary/octet-stream", res.ContentType);
-			AssertEquals ("#2 scheme", "file", res.ResponseUri.Scheme);
+			Assertion.AssertEquals ("#2 len", (long) 5, res.ContentLength);
+			Assertion.AssertEquals ("#2 type", "binary/octet-stream", res.ContentType);
+			Assertion.AssertEquals ("#2 scheme", "file", res.ResponseUri.Scheme);
 			
 			Stream rstream = res.GetResponseStream ();			
-			AssertEquals ("#3r", true, rstream.CanRead);
-			AssertEquals ("#3w", false, rstream.CanWrite);
-			AssertEquals ("#3s", true, rstream.CanSeek);
+			Assertion.AssertEquals ("#3r", true, rstream.CanRead);
+			Assertion.AssertEquals ("#3w", false, rstream.CanWrite);
+			Assertion.AssertEquals ("#3s", true, rstream.CanSeek);
 			
-			AssertEquals ("#4a", 72, rstream.ReadByte ());
-			AssertEquals ("#4b", 101, rstream.ReadByte ());
-			AssertEquals ("#4c", 108, rstream.ReadByte ());
+			Assertion.AssertEquals ("#4a", 72, rstream.ReadByte ());
+			Assertion.AssertEquals ("#4b", 101, rstream.ReadByte ());
+			Assertion.AssertEquals ("#4c", 108, rstream.ReadByte ());
 
 			rstream.Close ();
 			// res.Close ();
 			
 			try {
 				long len = res.ContentLength;
-				AssertEquals ("#5", (long) 5, len);
+				Assertion.AssertEquals ("#5", (long) 5, len);
 			} catch (ObjectDisposedException) {
-				Fail ("#disposed contentlength");				
+				Assertion.Fail ("#disposed contentlength");				
 			}
 			try {
 				WebHeaderCollection w = res.Headers;
 			} catch (ObjectDisposedException) {
-				Fail ("#disposed headers");				
+				Assertion.Fail ("#disposed headers");				
 			}			
 			try {
 				res.Close ();				
 			} catch (ObjectDisposedException) {
-				Fail ("#disposed close");				
+				Assertion.Fail ("#disposed close");				
 			}
 		} catch (Exception) {
 			// Console.WriteLine ("ERROR! : " + ee.Message + "\n" + ee.StackTrace);
@@ -211,7 +199,8 @@ public class FileWebRequestTest : TestCase
 		}
 	}	        
         
-        public void TestSync ()
+        [Test]
+        public void Sync ()
         {
 		string tmpFilename = GetFilename ();
 		if (tmpFilename == null)
@@ -227,15 +216,15 @@ public class FileWebRequestTest : TestCase
 			
 			try {
 				Stream stream = req.GetRequestStream ();
-				Fail ("should throw exception");
+				Assertion.Fail ("should throw exception");
 			} catch (ProtocolViolationException) {}
 			
 			req.Method = "PUT";
 			
 			Stream wstream = req.GetRequestStream ();
-			AssertEquals ("#1r", false, wstream.CanRead);
-			AssertEquals ("#1w", true, wstream.CanWrite);
-			AssertEquals ("#1s", true, wstream.CanSeek);
+			Assertion.AssertEquals ("#1r", false, wstream.CanRead);
+			Assertion.AssertEquals ("#1w", true, wstream.CanWrite);
+			Assertion.AssertEquals ("#1s", true, wstream.CanSeek);
 
 			wstream.WriteByte (72);
 			wstream.WriteByte (101);
@@ -248,37 +237,37 @@ public class FileWebRequestTest : TestCase
 			
 			req = WebRequest.Create (uri);
 			WebResponse res = req.GetResponse ();			
-			AssertEquals ("#2 len", (long) 5, res.ContentLength);
-			AssertEquals ("#2 type", "binary/octet-stream", res.ContentType);
-			AssertEquals ("#2 scheme", "file", res.ResponseUri.Scheme);
+			Assertion.AssertEquals ("#2 len", (long) 5, res.ContentLength);
+			Assertion.AssertEquals ("#2 type", "binary/octet-stream", res.ContentType);
+			Assertion.AssertEquals ("#2 scheme", "file", res.ResponseUri.Scheme);
 			
 			Stream rstream = res.GetResponseStream ();			
-			AssertEquals ("#3r", true, rstream.CanRead);
-			AssertEquals ("#3w", false, rstream.CanWrite);
-			AssertEquals ("#3s", true, rstream.CanSeek);
+			Assertion.AssertEquals ("#3r", true, rstream.CanRead);
+			Assertion.AssertEquals ("#3w", false, rstream.CanWrite);
+			Assertion.AssertEquals ("#3s", true, rstream.CanSeek);
 			
-			AssertEquals ("#4a", 72, rstream.ReadByte ());
-			AssertEquals ("#4b", 101, rstream.ReadByte ());
-			AssertEquals ("#4c", 108, rstream.ReadByte ());
+			Assertion.AssertEquals ("#4a", 72, rstream.ReadByte ());
+			Assertion.AssertEquals ("#4b", 101, rstream.ReadByte ());
+			Assertion.AssertEquals ("#4c", 108, rstream.ReadByte ());
 			
 			rstream.Close ();
 			// res.Close ();
 			
 			try {
 				long len = res.ContentLength;
-				AssertEquals ("#5", (long) 5, len);
+				Assertion.AssertEquals ("#5", (long) 5, len);
 			} catch (ObjectDisposedException) {
-				Fail ("#disposed contentlength");				
+				Assertion.Fail ("#disposed contentlength");				
 			}
 			try {
 				WebHeaderCollection w = res.Headers;
 			} catch (ObjectDisposedException) {
-				Fail ("#disposed headers");				
+				Assertion.Fail ("#disposed headers");				
 			}			
 			try {
 				res.Close ();				
 			} catch (ObjectDisposedException) {
-				Fail ("#disposed close");				
+				Assertion.Fail ("#disposed close");				
 			}
 			
 		} finally {
@@ -303,4 +292,3 @@ public class FileWebRequestTest : TestCase
 }
 
 }
-

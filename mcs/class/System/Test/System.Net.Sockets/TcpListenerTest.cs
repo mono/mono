@@ -1,10 +1,11 @@
 // System.Net.Sockets.TcpListenerTest.cs
 //
-// Author:
+// Authors:
 //    Phillip Pearson (pp@myelin.co.nz)
+//    Martin Willemoes Hansen (mwh@sysrq.dk)
 //
-// Copyright (C) 2001, Phillip Pearson
-//    http://www.myelin.co.nz
+// (C) Copyright 2001 Phillip Pearson (http://www.myelin.co.nz)
+// (C) Copyright 2003 Martin Willemoes Hansen (mwh@sysrq.dk)
 //
 
 using System;
@@ -17,21 +18,15 @@ namespace MonoTests.System.Net.Sockets {
 	/// <summary>
 	/// Tests System.Net.Sockets.TcpListener
 	/// </summary>
-	public class TcpListenerTest : TestCase {
+	[TestFixture]
+	public class TcpListenerTest {
 		
-		public TcpListenerTest(string name) : base(name) {}
-
-		public static ITest Suite {
-			get {
-				return new TestSuite(typeof (TcpListenerTest));
-			}
-		}
-
 		/// <summary>
 		/// Tests the TcpListener object
 		/// (from System.Net.Sockets)
 		/// </summary>
-		public void test_TcpListener()
+		[Test]
+		public void TcpListener()
 		{
 			// listen with a new listener
 			TcpListener inListener = new TcpListener(1234);
@@ -47,7 +42,7 @@ namespace MonoTests.System.Net.Sockets {
 
 			
 			// make sure the connection arrives
-			Assert(inListener.Pending());
+			Assertion.Assert(inListener.Pending());
 			Socket inSock = inListener.AcceptSocket();
 
 
@@ -66,10 +61,10 @@ namespace MonoTests.System.Net.Sockets {
 
 
 			// let's see if it arrived OK
-			Assert(ret != 0);
+			Assertion.Assert(ret != 0);
 			for (int i=0; i<len; i++) 
 			{
-				Assert(inBuf[i] == outBuf[i]);
+				Assertion.Assert(inBuf[i] == outBuf[i]);
 			}
 
 
@@ -78,8 +73,5 @@ namespace MonoTests.System.Net.Sockets {
 
 			inListener.Stop();	
 		}
-	
-		
 	}
-
 }

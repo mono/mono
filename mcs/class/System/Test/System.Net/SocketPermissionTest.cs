@@ -1,8 +1,11 @@
 //
 // SocketPermissionTest.cs - NUnit Test Cases for System.Net.SocketPermission
 //
-// Author:
+// Authors:
 //   Lawrence Pit (loz@cable.a2000.nl)
+//   Martin Willemoes Hansen (mwh@sysrq.dk)
+//
+// (C) 2003 Martin Willemoes Hansen
 //
 
 using NUnit.Framework;
@@ -15,17 +18,14 @@ using System.Security.Permissions;
 namespace MonoTests.System.Net
 {
 
-public class SocketPermissionTest : TestCase
+[TestFixture]
+public class SocketPermissionTest
 {
 	SocketPermission s1;
 	SocketPermission s2;
 	
-        public SocketPermissionTest () :
-                base ("[MonoTests.System.Net.SocketPermissionTest]") {}
-
-        public SocketPermissionTest (string name) : base (name) {}
-
-        protected override void SetUp () 
+	[SetUp]
+        public void GetReady () 
         {
 		s1 = new SocketPermission(NetworkAccess.Connect, TransportType.Tcp, "12.13.14.15", 80);
 		//s1.AddPermission(NetworkAccess.Accept, TransportType.All, "localhost", 8080);
@@ -53,59 +53,54 @@ public class SocketPermissionTest : TestCase
 		//s2.AddPermission(NetworkAccess.Accept, TransportType.All, "10.11.4.7", SocketPermission.AllPorts);		
 	}
 
-        protected override void TearDown () {}
-
-        public static ITest Suite
-        {
-                get {
-                        return new TestSuite (typeof (SocketPermissionTest));
-                }
-        }
-        
-        public void TestIsSubsetOf ()
+        [Test]
+        public void IsSubsetOf ()
         {
 		s1 = new SocketPermission(NetworkAccess.Connect, TransportType.Tcp, "12.13.14.15", 80);
 		s1.AddPermission(NetworkAccess.Accept, TransportType.All, "10.11.4.*", SocketPermission.AllPorts);
 		s2 = new SocketPermission(NetworkAccess.Connect, TransportType.All, "12.13.14.15", 80);
 		s2.AddPermission(NetworkAccess.Accept, TransportType.All, "10.11.*.*", 9090);
 		
-		Assert ("#1", !s1.IsSubsetOf (s2));
-		Assert ("#2", !s2.IsSubsetOf (s1));
+		Assertion.Assert ("#1", !s1.IsSubsetOf (s2));
+		Assertion.Assert ("#2", !s2.IsSubsetOf (s1));
 
 		s1 = new SocketPermission(NetworkAccess.Connect, TransportType.Tcp, "12.13.14.15", 80);
 		s1.AddPermission(NetworkAccess.Accept, TransportType.All, "10.11.4.*", 9090);
 		s2 = new SocketPermission(NetworkAccess.Connect, TransportType.All, "12.13.14.15", 80);
 		s2.AddPermission(NetworkAccess.Accept, TransportType.All, "10.11.*.*", 9090);
 		
-		Assert ("#3: bug in MS.Net", s1.IsSubsetOf (s2));
-		Assert ("#4", !s2.IsSubsetOf (s1));
+		Assertion.Assert ("#3: bug in MS.Net", s1.IsSubsetOf (s2));
+		Assertion.Assert ("#4", !s2.IsSubsetOf (s1));
 		
 		s1 = new SocketPermission(NetworkAccess.Connect, TransportType.Tcp, "12.13.*.*", 80);
 		s2 = new SocketPermission(NetworkAccess.Connect, TransportType.All, "12.13.14.*", 80);
-		Assert ("#5", !s1.IsSubsetOf (s2));
-		Assert ("#6", !s2.IsSubsetOf (s1));
+		Assertion.Assert ("#5", !s1.IsSubsetOf (s2));
+		Assertion.Assert ("#6", !s2.IsSubsetOf (s1));
 
 		s1 = new SocketPermission(NetworkAccess.Connect, TransportType.Tcp, "12.13.14.15", 80);
 		s1.AddPermission(NetworkAccess.Accept, TransportType.Tcp, "10.11.*.*", 9090);
 		s2 = new SocketPermission(NetworkAccess.Connect, TransportType.Tcp, "12.13.14.15", 80);
 		s2.AddPermission(NetworkAccess.Accept, TransportType.All, "10.11.4.*", SocketPermission.AllPorts);
-		Assert ("#7", !s1.IsSubsetOf (s2));
-		Assert ("#8", !s2.IsSubsetOf (s1));
+		Assertion.Assert ("#7", !s1.IsSubsetOf (s2));
+		Assertion.Assert ("#8", !s2.IsSubsetOf (s1));
 	}
 	
-	public void TestIntersect ()
+        [Test]
+	public void Intersect ()
 	{
 	}
 	
-	public void TestUnion ()
+        [Test]
+	public void Union ()
 	{
 	}
 	
-	public void TestXml ()
+        [Test]
+	public void Xml ()
 	{
 		SecurityElement elem = s2.ToXml ();
 		s1.FromXml (elem);
-		Assert ("#1", s2.IsSubsetOf (s1) && s1.IsSubsetOf (s2));
+		Assertion.Assert ("#1", s2.IsSubsetOf (s1) && s1.IsSubsetOf (s2));
 	}
 }
 

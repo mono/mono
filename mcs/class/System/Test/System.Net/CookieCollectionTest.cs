@@ -1,8 +1,11 @@
 //
 // CookieCollectionTest.cs - NUnit Test Cases for System.Net.CookieCollection
 //
-// Author:
+// Authors:
 //   Lawrence Pit (loz@cable.a2000.nl)
+//   Martin Willemoes Hansen (mwh@sysrq.dk)
+//
+// (C) 2003 Martin Willemoes Hansen
 //
 
 using NUnit.Framework;
@@ -13,16 +16,13 @@ using System.Collections;
 namespace MonoTests.System.Net
 {
 
-public class CookieCollectionTest : TestCase
+[TestFixture]
+public class CookieCollectionTest
 {
 	CookieCollection col;
 	
-        public CookieCollectionTest () :
-                base ("[MonoTests.System.Net.CookieCollectionTest]") {}
-
-        public CookieCollectionTest (string name) : base (name) {}
-
-        protected override void SetUp () 
+	[SetUp]
+        public void GetReady () 
         {
 		col = new CookieCollection ();	
 		col.Add (new Cookie ("name1", "value1"));
@@ -30,45 +30,39 @@ public class CookieCollectionTest : TestCase
 		col.Add (new Cookie ("name3", "value3", "path3", "domain3"));		
 	}
 
-        protected override void TearDown () {}
-
-        public static ITest Suite
+        [Test]
+        public void Count ()
         {
-                get {
-                        return new TestSuite (typeof (CookieCollectionTest));
-                }
-        }
-        
-        public void TestCount ()
-        {
-		AssertEquals ("#1", col.Count, 3);
+		Assertion.AssertEquals ("#1", col.Count, 3);
 	}
 
-        public void TestIndexer ()
+        [Test]
+        public void Indexer ()
         {
 		Cookie c = null;
 		try {
 			c = col [-1];
-			Fail ("#1");
+			Assertion.Fail ("#1");
 		} catch (ArgumentOutOfRangeException) {
 		}
 		try {
 			c = col [col.Count];
-			Fail ("#2");
+			Assertion.Fail ("#2");
 		} catch (ArgumentOutOfRangeException) {
 		}
 		c = col ["name1"];
-		AssertEquals ("#3", c.Name, "name1");
+		Assertion.AssertEquals ("#3", c.Name, "name1");
 		c = col ["NAME2"];
-		AssertEquals ("#4", c.Name, "name2");
+		Assertion.AssertEquals ("#4", c.Name, "name2");
 	}
 	
-	public void TestAdd ()
+        [Test]
+	public void Add ()
 	{
 		try {
 			Cookie c = null;
 			col.Add (c);
-			Fail ("#1");
+			Assertion.Fail ("#1");
 		} catch (ArgumentNullException) {
 		}
 		
@@ -76,13 +70,13 @@ public class CookieCollectionTest : TestCase
 		// so we'll have to fail to.
 		try {
 			col.Add (col);
-			Fail ("#2");
+			Assertion.Fail ("#2");
 		} catch (Exception) {
 		}
-		AssertEquals ("#3", col.Count, 3);
+		Assertion.AssertEquals ("#3", col.Count, 3);
 		
 		col.Add (new Cookie("name1", "value1"));		
-		AssertEquals ("#4", col.Count, 3);
+		Assertion.AssertEquals ("#4", col.Count, 3);
 		
 		CookieCollection col2 = new CookieCollection();
 		Cookie c4 = new Cookie("name4", "value4");
@@ -90,34 +84,35 @@ public class CookieCollectionTest : TestCase
 		col2.Add (c4);
 		col2.Add (c5);
 		col.Add (col2);
-		AssertEquals ("#5", col.Count, 5);
-		AssertEquals ("#6", col ["NAME4"], c4);
-		AssertEquals ("#7", col [4], c5);
+		Assertion.AssertEquals ("#5", col.Count, 5);
+		Assertion.AssertEquals ("#6", col ["NAME4"], c4);
+		Assertion.AssertEquals ("#7", col [4], c5);
 	}
 	
-	public void TestCopyTo ()
+        [Test]
+	public void CopyTo ()
 	{
 		Array a = Array.CreateInstance (typeof (Cookie), 3);
 		col.CopyTo (a, 0);
-		AssertEquals ("#1", a.GetValue (0), col [0]);
-		AssertEquals ("#2", a.GetValue (1), col [1]);
-		AssertEquals ("#3", a.GetValue (2), col [2]);
+		Assertion.AssertEquals ("#1", a.GetValue (0), col [0]);
+		Assertion.AssertEquals ("#2", a.GetValue (1), col [1]);
+		Assertion.AssertEquals ("#3", a.GetValue (2), col [2]);
 	}
 	
-	public void TestEnumerator ()
+        [Test]
+	public void Enumerator ()
 	{
 		IEnumerator enumerator = col.GetEnumerator ();
 		enumerator.MoveNext ();
 		Cookie c = (Cookie) enumerator.Current;
-		AssertEquals ("#1", c, col [0]);
+		Assertion.AssertEquals ("#1", c, col [0]);
 		col.Add (new Cookie ("name6", "value6"));
 		try {
 			enumerator.MoveNext ();
-			Fail ("#2");
+			Assertion.Fail ("#2");
 		} catch (InvalidOperationException) {
 		}
 	}
 }
-
 }
 

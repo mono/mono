@@ -1,8 +1,11 @@
 //
 // IPEndPointTest.cs - NUnit Test Cases for System.Net.IPEndPoint
 //
-// Author:
+// Authors:
 //   Lawrence Pit (loz@cable.a2000.nl)
+//   Martin Willemoes Hansen (mwh@sysrq.dk)
+//
+// (C) 2003 Martin Willemoes Hansen
 //
 
 using NUnit.Framework;
@@ -13,7 +16,8 @@ using System.Runtime.InteropServices;
 namespace MonoTests.System.Net
 {
 
-public class IPEndPointTest : TestCase
+[TestFixture]
+public class IPEndPointTest
 {
         private const int MyPort = 42;
         private const int MyMaxPort = 65535;
@@ -25,12 +29,8 @@ public class IPEndPointTest : TestCase
         private IPEndPoint endPoint1;
         private IPEndPoint endPoint2;
 
-        public IPEndPointTest () :
-                base ("[MonoTests.System.Net.IPEndPointTest]") {}
-
-        public IPEndPointTest (string name) : base (name) {}
-
-        protected override void SetUp ()
+	[SetUp]
+	public void GetReady()
         {
                 ipAddress = IPAddress.Parse (MyIPAddressString);
                 ip = ipAddress.Address;
@@ -38,94 +38,92 @@ public class IPEndPointTest : TestCase
                 endPoint2 = new IPEndPoint (ip, MyPort);
         }
 
-        protected override void TearDown () {}
-
-        public static ITest Suite
+	[Test]
+        public void PublicFields ()
         {
-                get {
-                        return new TestSuite (typeof (IPEndPointTest));
-                }
+                Assertion.AssertEquals ("MinPort", IPEndPoint.MinPort, MyMinPort);
+                Assertion.AssertEquals ("MaxPort", IPEndPoint.MaxPort, MyMaxPort);
         }
 
-        public void TestPublicFields ()
-        {
-                AssertEquals ("MinPort", IPEndPoint.MinPort, MyMinPort);
-                AssertEquals ("MaxPort", IPEndPoint.MaxPort, MyMaxPort);
-        }
-
-        public void TestConstructors ()
+	[Test]
+        public void Constructors ()
         {
                 try {
                         new IPEndPoint (null, 0);
-                        Fail ("Should raise an ArgumentNullException");
+                        Assertion.Fail ("Should raise an ArgumentNullException");
                 } catch (ArgumentNullException) {
                 }
                 try {
                         new IPEndPoint (ipAddress, MyMinPort - 1);
-                        Fail ("Should raise an ArgumentOutOfRangeException #1");
+                        Assertion.Fail ("Should raise an ArgumentOutOfRangeException #1");
                 } catch (ArgumentOutOfRangeException) {
                 }
                 try {
                         new IPEndPoint (ipAddress, MyMaxPort + 1);
-                        Fail ("Should raise an ArgumentOutOfRangeException #2");
+                        Assertion.Fail ("Should raise an ArgumentOutOfRangeException #2");
                 } catch (ArgumentOutOfRangeException) {
                 }
 
                 try {
                         new IPEndPoint (ip, MyMinPort -1);
-                        Fail ("Should raise an ArgumentOutOfRangeException #3");
+                        Assertion.Fail ("Should raise an ArgumentOutOfRangeException #3");
                 } catch (ArgumentOutOfRangeException) {
                 }
                 try {
                         new IPEndPoint (ip, MyMaxPort + 1);
-                        Fail ("Should raise an ArgumentOutOfRangeException #4");
+                        Assertion.Fail ("Should raise an ArgumentOutOfRangeException #4");
                 } catch (ArgumentOutOfRangeException) {
                 }
         }
 
-        public void TestPortProperty ()
+	[Test]
+        public void PortProperty ()
         {
                 try {
                         endPoint1.Port = MyMinPort - 1;
-                        Fail ("Should raise an ArgumentOutOfRangeException #1");
+                        Assertion.Fail ("Should raise an ArgumentOutOfRangeException #1");
                 } catch (ArgumentOutOfRangeException) {
                 }
                 try {
                         endPoint1.Port = MyMaxPort + 1;
-                        Fail ("Should raise an ArgumentOutOfRangeException #2");
+                        Assertion.Fail ("Should raise an ArgumentOutOfRangeException #2");
                 } catch (ArgumentOutOfRangeException) {
                 }
         }
 
-        public void TestCreateAndSerialize()
+	[Test]
+        public void CreateAndSerialize()
         {
 		SocketAddress addr = endPoint1.Serialize ();
 		EndPoint endPoint3 = endPoint2.Create (addr);
-		Assert ("#1", endPoint1.Equals (endPoint3));
+		Assertion.Assert ("#1", endPoint1.Equals (endPoint3));
 
 		IPAddress ipAddress = IPAddress.Parse ("255.255.255.255");
                 IPEndPoint endPoint4 = new IPEndPoint (ipAddress, MyMaxPort);
 		addr = endPoint4.Serialize ();
 		EndPoint endPoint5 = endPoint2.Create(addr);
-		Assert ("#2", endPoint4.Equals (endPoint5));
-		AssertEquals ("#3", endPoint5.ToString (), "255.255.255.255:" + MyMaxPort);
+		Assertion.Assert ("#2", endPoint4.Equals (endPoint5));
+		Assertion.AssertEquals ("#3", endPoint5.ToString (), "255.255.255.255:" + MyMaxPort);
 	}
 
-        public void TestEquals ()
+	[Test]
+        public void Equals ()
         {
-                Assert("Equals", endPoint1.Equals (endPoint2));
-                Assert("Not Equals", !endPoint1.Equals (new IPEndPoint (ip, MyPort + 1)));
+                Assertion.Assert("Equals", endPoint1.Equals (endPoint2));
+                Assertion.Assert("Not Equals", !endPoint1.Equals (new IPEndPoint (ip, MyPort + 1)));
         }
 
-        public void TestGetHashCode ()
+	[Test]
+        public void GetHashCodeTest ()
         {
-                AssertEquals(endPoint1.GetHashCode(), endPoint2.GetHashCode());
+                Assertion.AssertEquals(endPoint1.GetHashCode(), endPoint2.GetHashCode());
         }
 
-        public void TestToString ()
+	[Test]
+        public void ToStringTest ()
         {
-                AssertEquals("ToString #1", endPoint1.ToString (), MyIPAddressString + ":" + MyPort);
-                AssertEquals("ToString #2", endPoint2.ToString (), MyIPAddressString + ":" + MyPort);
+                Assertion.AssertEquals("ToString #1", endPoint1.ToString (), MyIPAddressString + ":" + MyPort);
+                Assertion.AssertEquals("ToString #2", endPoint2.ToString (), MyIPAddressString + ":" + MyPort);
         }
 
 }

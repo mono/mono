@@ -15,25 +15,11 @@ using System.Security.Permissions;
 namespace MonoTests.System.Net
 {
 
-public class CredentialCacheTest : TestCase
+[TestFixture]
+public class CredentialCacheTest
 {
-        public CredentialCacheTest () :
-                base ("[MonoTests.System.Net.CredentialCacheTest]") {}
-
-        public CredentialCacheTest (string name) : base (name) {}
-
-        protected override void SetUp () {}
-
-        protected override void TearDown () {}
-
-        public static ITest Suite
-        {
-                get {
-                        return new TestSuite (typeof (CredentialCacheTest));
-                }
-        }
-        
-        public void TestAll ()
+	[Test]        
+        public void All ()
         {
 		CredentialCache c = new CredentialCache ();
 		
@@ -56,56 +42,56 @@ public class CredentialCacheTest : TestCase
 	
 		try {
 			c.Add (new Uri("http://www.ximian.com"), "Basic", cred1);
-			Fail ("#1: should have failed");
+			Assertion.Fail ("#1: should have failed");
 		} catch (ArgumentException) { }
 
 		c.Add (new Uri("http://www.contoso.com/"), "**Unknown**", cred1);
 		result = c.GetCredential (new Uri("http://www.contoso.com/"), "**Unknown**");
-		AssertEquals ("#3", result, cred1);
+		Assertion.AssertEquals ("#3", result, cred1);
 		c.Remove (new Uri("http://www.contoso.com/"), "**Unknown**");
 		result = c.GetCredential (new Uri("http://www.contoso.com/"), "**Unknown**");
-		Assert ("#4", result == null);
+		Assertion.Assert ("#4", result == null);
 
 		c.Add (new Uri("http://www.contoso.com/"), "**Unknown**", cred1);
 		result = c.GetCredential (new Uri("http://www.contoso.com"), "**Unknown**");
-		AssertEquals ("#5", result, cred1);
+		Assertion.AssertEquals ("#5", result, cred1);
 		c.Remove (new Uri("http://www.contoso.com"), "**Unknown**");
 		result = c.GetCredential (new Uri("http://www.contoso.com"), "**Unknown**");
-		Assert ("#6", result == null);
+		Assertion.Assert ("#6", result == null);
 
 		c.Add (new Uri("http://www.contoso.com/portal/"), "**Unknown**", cred1);
 		result = c.GetCredential (new Uri("http://www.contoso.com/portal/foo/bar.html"), "**Unknown**");
-		AssertEquals ("#7", result, cred1);
+		Assertion.AssertEquals ("#7", result, cred1);
 		c.Remove (new Uri("http://www.contoso.com"), "**Unknown**");
 		result = c.GetCredential (new Uri("http://www.contoso.com"), "**Unknown**");
-		Assert ("#8", result == null);
+		Assertion.Assert ("#8", result == null);
 
 		result = c.GetCredential (new Uri("http://www.contoso.com:80/portal/news/index.aspx"), "Basic");
-		AssertEquals ("#9", result, cred3);
+		Assertion.AssertEquals ("#9", result, cred3);
 
 		result = c.GetCredential (new Uri("http://www.contoso.com:80/portal/news/index"), "Basic");
-		AssertEquals ("#10", result, cred3);
+		Assertion.AssertEquals ("#10", result, cred3);
 
 		result = c.GetCredential (new Uri("http://www.contoso.com:80/portal/news/"), "Basic");
-		AssertEquals ("#11", result, cred3);
+		Assertion.AssertEquals ("#11", result, cred3);
 		
 		result = c.GetCredential (new Uri("http://www.contoso.com:80/portal/news"), "Basic");
-		AssertEquals ("#12", result, cred4);
+		Assertion.AssertEquals ("#12", result, cred4);
 
 		result = c.GetCredential (new Uri("http://www.contoso.com:80/portal/ne"), "Basic");
-		AssertEquals ("#13", result, cred4);
+		Assertion.AssertEquals ("#13", result, cred4);
 
 		result = c.GetCredential (new Uri("http://www.contoso.com:80/portal/"), "Basic");
-		AssertEquals ("#14", result, cred4);				
+		Assertion.AssertEquals ("#14", result, cred4);				
 
 		result = c.GetCredential (new Uri("http://www.contoso.com:80/portal"), "Basic");
-		AssertEquals ("#15", result, cred5);
+		Assertion.AssertEquals ("#15", result, cred5);
 
 		result = c.GetCredential (new Uri("http://www.contoso.com:80/"), "Basic");
-		AssertEquals ("#16", result, cred5);
+		Assertion.AssertEquals ("#16", result, cred5);
 
 		result = c.GetCredential (new Uri("http://www.contoso.com"), "Basic");
-		AssertEquals ("#17", result, cred5);		
+		Assertion.AssertEquals ("#17", result, cred5);		
 
 		/*		
 		IEnumerator e = c.GetEnumerator ();

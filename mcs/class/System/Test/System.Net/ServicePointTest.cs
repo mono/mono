@@ -1,8 +1,11 @@
 //
 // ServicePointTest.cs - NUnit Test Cases for System.Net.ServicePoint
 //
-// Author:
+// Authors:
 //   Lawrence Pit (loz@cable.a2000.nl)
+//   Martin Willemoes Hansen (mwh@sysrq.dk)
+//
+// (C) 2003 Martin Willemoes Hansen
 //
 
 using NUnit.Framework;
@@ -15,25 +18,11 @@ using System.Threading;
 namespace MonoTests.System.Net
 {
 
-public class ServicePointTest : TestCase
+[TestFixture]
+public class ServicePointTest
 {
-        public ServicePointTest () :
-                base ("[MonoTests.System.Net.ServicePointTest]") {}
-
-        public ServicePointTest (string name) : base (name) {}
-
-        protected override void SetUp () {}
-
-        protected override void TearDown () {}
-
-        public static ITest Suite
-        {
-                get {
-                        return new TestSuite (typeof (ServicePointTest));
-                }
-        }
-        
-        public void TestAll ()
+        [Test]
+        public void All ()
         {
 		try {
 			ServicePoint p = ServicePointManager.FindServicePoint (new Uri ("mailto:xx@yyy.com"));
@@ -43,7 +32,7 @@ public class ServicePointTest : TestCase
 			ServicePoint google = ServicePointManager.FindServicePoint (new Uri ("http://www.google.com"));
 			try {			
 				ServicePoint slashdot = ServicePointManager.FindServicePoint (new Uri ("http://www.slashdot.org"));
-				Fail ("#1");
+				Assertion.Fail ("#1");
 			} catch (InvalidOperationException) { }
 			ServicePointManager.MaxServicePoints = 0;
 			
@@ -54,7 +43,7 @@ public class ServicePointTest : TestCase
 			
 			WriteServicePoint ("google after getting a response", google);
 			ServicePoint google2 = ServicePointManager.FindServicePoint (new Uri ("http://www.google.com/dilbert.html"));
-			AssertEquals ("#equals", google, google2);
+			Assertion.AssertEquals ("#equals", google, google2);
 			res.Close ();
 			
 			// in both instances property CurrentConnections is 0 according to ms.net.
@@ -118,7 +107,8 @@ public class ServicePointTest : TestCase
 	// try getting the stream to 5 web response objects	
 	// while ConnectionLimit equals 2
 	/*
-	public void TestConnectionLimit ()
+	[Test]
+	public void ConnectionLimit ()
 	{		
 		try {
 			// the default is already 2, just in case it isn't..

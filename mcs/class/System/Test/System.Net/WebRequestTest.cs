@@ -1,8 +1,11 @@
 //
 // WebRequestTest.cs - NUnit Test Cases for System.Net.WebRequest
 //
-// Author:
+// Authors:
 //   Lawrence Pit (loz@cable.a2000.nl)
+//   Martin Willemoes Hansen (mwh@sysrq.dk)
+//
+// (C) 2003 Martin Willemoes Hansen
 //
 
 using NUnit.Framework;
@@ -15,59 +18,45 @@ using System.Security.Permissions;
 namespace MonoTests.System.Net
 {
 
-public class WebRequestTest : TestCase
+[TestFixture]
+public class WebRequestTest
 {
-        public WebRequestTest () :
-                base ("[MonoTests.System.Net.WebRequestTest]") {}
-
-        public WebRequestTest (string name) : base (name) {}
-
-        protected override void SetUp () {}
-
-        protected override void TearDown () {}
-
-        public static ITest Suite
-        {
-                get {
-                        return new TestSuite (typeof (WebRequestTest));
-                }
-        }
-        
-        public void TestAll ()
+        [Test]
+        public void All ()
         {
 		WebRequest req = WebRequest.Create ("http://www.contoso.com");
-		Assert ("#1", req is HttpWebRequest);
+		Assertion.Assert ("#1", req is HttpWebRequest);
 		req = WebRequest.Create ("https://www.contoso.com");
-		Assert ("#2", req is HttpWebRequest);
+		Assertion.Assert ("#2", req is HttpWebRequest);
 		req = WebRequest.Create ("file://www.contoso.com");
-		Assert ("#3", req is FileWebRequest);
+		Assertion.Assert ("#3", req is FileWebRequest);
 		
 		WebRequest.RegisterPrefix ("http://www.contoso.com", new TestWebRequestCreator ());
 		bool ret = WebRequest.RegisterPrefix ("http://WWW.contoso.com", new TestWebRequestCreator ());
-		AssertEquals ("#4a", false, ret);
+		Assertion.AssertEquals ("#4a", false, ret);
 		ret = WebRequest.RegisterPrefix ("http://www.contoso.com/foo/bar", new TestWebRequestCreator2 ());
-		AssertEquals ("#4b", true, ret);
+		Assertion.AssertEquals ("#4b", true, ret);
 		ret = WebRequest.RegisterPrefix ("http://www", new TestWebRequestCreator3 ());
-		AssertEquals ("#4c", true, ret);
+		Assertion.AssertEquals ("#4c", true, ret);
 
 		req = WebRequest.Create ("http://WWW.contoso.com");
-		Assert ("#5", req is TestWebRequest); 
+		Assertion.Assert ("#5", req is TestWebRequest); 
 
 		req = WebRequest.Create ("http://WWW.contoso.com/foo/bar/index.html");
-		Assert ("#6", req is TestWebRequest2); 
+		Assertion.Assert ("#6", req is TestWebRequest2); 
 		
 		req = WebRequest.Create ("http://WWW.x.com");
-		Assert ("#7", req is TestWebRequest3); 
+		Assertion.Assert ("#7", req is TestWebRequest3); 
 
 		req = WebRequest.Create ("http://WWW.c");
-		Assert ("#8", req is TestWebRequest3); 
+		Assertion.Assert ("#8", req is TestWebRequest3); 
 
 		req = WebRequest.CreateDefault (new Uri("http://WWW.contoso.com"));
-		Assert ("#9", req is HttpWebRequest);
+		Assertion.Assert ("#9", req is HttpWebRequest);
 
 		try {
 			req = WebRequest.Create ("tcp://www.contoso.com");
-			Fail ("#10 should have failed with NotSupportedException");			
+			Assertion.Fail ("#10 should have failed with NotSupportedException");			
 		} catch (NotSupportedException) {			
 		}		
 	}
