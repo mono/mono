@@ -77,6 +77,12 @@ namespace System.Runtime.Remoting.Messaging {
 
 		// We can ignore marshalling for string and primitive types
 		private static bool IsPossibleToIgnoreMarshal (object obj) {
+
+			// until this is more tested, we disable it....
+			return false;
+			// until this is more tested, we disable it....
+			return false;
+
 			if (obj is string) 
 				return true;
 

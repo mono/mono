@@ -1,3 +1,8 @@
+2003-02-07  Patrik Torstensson
+
+	* CADMessages.cs: Disable smuggeling of objects cross domain, still issues casing remoting
+	  to fail. (fixed formating)
+
 2003-02-07  Lluis Sanchez Gual <lluis@ideary.com>
 
 	* CADMessages.cs: Some minor changes that allow reuse of ObjRef methods.
