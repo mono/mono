@@ -1,3 +1,7 @@
+REM LineNo: 10
+REM ExpectedError: BC30256
+REM ErrorMessage: Class 'C2' cannot inherit from itself:
+
 Public Class C1
     Inherits C2
 End Class

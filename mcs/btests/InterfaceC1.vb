@@ -1,3 +1,7 @@
+REM LineNo: 18
+REM ExpectedError: BC30375
+REM ErrorMessage: 'New' cannot be used on an interface.
+
 Interface I
     Function F()
 End Interface

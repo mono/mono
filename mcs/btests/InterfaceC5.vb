@@ -1,3 +1,7 @@
+REM LineNo: 11
+REM ExpectedError: BC30149
+REM ErrorMessage: 'C1' must implement 'Sub S2()' for interface 'I'.
+
 Imports System
 Interface I
 	Sub S1()

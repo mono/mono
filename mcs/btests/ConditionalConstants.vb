@@ -1,3 +1,7 @@
+REM LineNo: 23
+REM ExpectedError: BC30249
+REM ErrorMessage: '=' expected.
+
 Imports System
 Module ConditionalConstants
 	Sub Main()

@@ -1,3 +1,7 @@
+REM LineNo: 18
+REM ExpectedError: BC30389
+REM ErrorMessage: 'C.E' is not accessible in this context because it is 'Private'.
+
 Imports System
 
 Class C

@@ -1,3 +1,7 @@
+REM LineNo: 27
+REM ExpectedError: BC30002
+REM ErrorMessage: Type 'Exception' is not defined.
+
 'Imports System
 Namespace NS1
 	Module M

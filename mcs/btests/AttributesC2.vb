@@ -1,3 +1,7 @@
+REM LineNo: 19
+REM ExpectedError: BC32035
+REM ErrorMessage: Attribute specifier is not a complete statement. Use a line continuation to apply the attribute to the following statement.
+
 Imports System
 
 <AttributeUsage(AttributeTargets.All)> _

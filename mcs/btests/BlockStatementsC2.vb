@@ -1,4 +1,8 @@
-' BC30094: Label 'a' is already defined in the current method.
+REM LineNo: 20
+REM ExpectedError: BC30094
+REM ErrorMessage: Label 'a' is already defined in the current method.
+
+
 
 Imports System
 

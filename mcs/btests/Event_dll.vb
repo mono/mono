@@ -1,3 +1,7 @@
+REM LineNo: 4
+REM ExpectedError: BC30420
+REM ErrorMessage: 'Sub Main' was not found in 'Event_dll'.
+
 Imports System
               
 NameSpace NSEvent

@@ -1,3 +1,7 @@
+REM LineNo: 12
+REM ExpectedError: BC31408
+REM ErrorMessage: 'Overrides' and 'Shadows' cannot be combined.
+
 Class A
     Public Overridable Sub F1()
     End Sub

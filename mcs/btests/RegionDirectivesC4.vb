@@ -1,4 +1,8 @@
-'Line 5, BC30217: String Constant expected
+REM LineNo: 9
+REM ExpectedError: BC30217
+REM ErrorMessage: String constant expected.
+
+
 
 Imports System
 Module RegionDirectives

@@ -1,3 +1,7 @@
+REM LineNo: 19
+REM ExpectedError: BC30045
+REM ErrorMessage: Attribute constructor has a parameter of type 'String', which is not an integral, floating-point, or Enum type or one of Char, String, Boolean, or System.Type.
+
 Imports System
 
 'Using byref positional parameters

@@ -1,3 +1,7 @@
+REM LineNo: 12
+REM ExpectedError: BC30121
+REM ErrorMessage: 'Inherits' can appear only once within a 'Class' statement and can only specify one class.
+
 Public Class C1
 End Class
 

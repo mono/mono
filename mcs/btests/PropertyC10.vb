@@ -1,3 +1,7 @@
+REM LineNo: 10
+REM ExpectedError: BC30503
+REM ErrorMessage: Properties in a Module cannot be declared 'Protected'.
+
 Imports system
 
 Module M

@@ -1,3 +1,7 @@
+REM LineNo: 15
+REM ExpectedError: BC30642
+REM ErrorMessage: 'Optional' and 'ParamArray' cannot be combined.
+
 '============================================================================================
 'Name:Manish Kumar Sinha 
 'Email Address: manishkumarsinha@sify.com

@@ -1,3 +1,7 @@
+REM LineNo: 14
+REM ExpectedError: BC30456
+REM ErrorMessage: 'c' is not a member of 'M.E1'.
+
 Imports System
 
 Module M

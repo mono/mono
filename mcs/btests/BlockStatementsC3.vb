@@ -1,4 +1,8 @@
-'BC30132: Label 'c' is not defined
+REM LineNo: 18
+REM ExpectedError: BC30132
+REM ErrorMessage: Label 'c' is not defined.
+
+
 
 Imports System
 

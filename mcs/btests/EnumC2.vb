@@ -1,3 +1,7 @@
+REM LineNo: 14
+REM ExpectedError: BC30074
+REM ErrorMessage: Constant cannot be the target of an assignment.
+
 Imports System
 
 Module M

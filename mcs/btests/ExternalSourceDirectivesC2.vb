@@ -1,4 +1,8 @@
-'Line 13, BC30579: '#ExternalSource' directive must end with matching '#End ExternalSource' directive
+REM LineNo: 17
+REM ExpectedError: BC30579
+REM ErrorMessage: '#ExternalSource' statement must end with a matching '#End ExternalSource'.
+
+
 
 Imports System
 Module ExternalSourceDirective

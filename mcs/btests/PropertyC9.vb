@@ -1,3 +1,7 @@
+REM LineNo: 10
+REM ExpectedError: BC30435
+REM ErrorMessage: Members in a Structure cannot be declared 'Protected'.
+
 Imports system
 
 Structure S

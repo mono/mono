@@ -1,4 +1,8 @@
-'Line 10, BC30012: '#If' must end with a matching '#EndIf'
+REM LineNo: 14
+REM ExpectedError: BC30012
+REM ErrorMessage: '#If' block must end with a matching '#End If'.
+
+
 
 Imports System
 Module ConditionalCompilation

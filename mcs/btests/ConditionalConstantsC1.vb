@@ -1,3 +1,7 @@
+REM LineNo: 9
+REM ExpectedError: BC30248
+REM ErrorMessage: 'If', 'ElseIf', 'Else', 'End If', or 'Const' expected.
+
 Imports System
 Module ConditionalConstants
 	Sub Main()

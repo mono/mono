@@ -1,3 +1,7 @@
+REM LineNo: 22
+REM ExpectedError: BC30663
+REM ErrorMessage: Attribute 'AuthorAttribute' cannot be applied multiple times.
+
 Imports System
 'Using a single-use attribute multiple times
 <AttributeUsage(AttributeTargets.Class, AllowMultiple:=False)> _

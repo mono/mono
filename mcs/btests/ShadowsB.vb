@@ -1,3 +1,7 @@
+REM LineNo: 30
+REM ExpectedError: BC40004
+REM ErrorMessage: function 'F' conflicts with function 'F' in the base class 'B' and so should be declared 'Shadows'.
+
 ' As per MS VB Specification (section 4.3.3)
 ' this program should compile.
 ' But MS VB compiler 7.0 is unable to compile it.

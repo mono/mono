@@ -1,3 +1,7 @@
+REM LineNo: 15
+REM ExpectedError: BC30022
+REM ErrorMessage: Properties declared 'ReadOnly' cannot have a 'Set'.
+
 Imports system
 
 Module M

@@ -1,3 +1,7 @@
+REM LineNo: 8
+REM ExpectedError: BC30002
+REM ErrorMessage: Type 'NSA' is not defined.
+
 Namespace nms1
     Module NSB
         Public Function f() As Integer

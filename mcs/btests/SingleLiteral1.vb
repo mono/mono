@@ -1,3 +1,7 @@
+REM LineNo: 9
+REM ExpectedError: BC30036
+REM ErrorMessage: Overflow.
+
 Imports System
 Module SingleLiteral
 	Sub Main()

@@ -1,3 +1,7 @@
+REM LineNo: 26
+REM ExpectedError: BC30002
+REM ErrorMessage: Type 'C2' is not defined.
+
 Imports System
 
 <AttributeUsage(AttributeTargets.All, AllowMultiple:=True, Inherited:=True)> _

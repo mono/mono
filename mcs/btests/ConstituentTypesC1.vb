@@ -1,3 +1,7 @@
+REM LineNo: 9
+REM ExpectedError: BC30508
+REM ErrorMessage: 'F' cannot expose a Private type outside of the Public class 'C1'.
+
 Imports System
 Public Class C1
 	Private Class C2

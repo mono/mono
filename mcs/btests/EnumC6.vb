@@ -1,3 +1,7 @@
+REM LineNo: 10
+REM ExpectedError: BC30439
+REM ErrorMessage: Constant expression not representable in type 'Integer'.
+
 Imports System
 
 Module M

@@ -1,3 +1,7 @@
+REM LineNo: 16
+REM ExpectedError: BC30043
+REM ErrorMessage: 'Me' is valid only within an instance method.
+
 Imports System
 
 Class A

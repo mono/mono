@@ -1,3 +1,7 @@
+REM LineNo: 17
+REM ExpectedError: BC31066
+REM ErrorMessage: Method in a Module cannot be declared 'Protected' or 'Protected Friend'.
+
 
 Module ClsModule
 	Sub New()

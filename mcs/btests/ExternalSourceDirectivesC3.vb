@@ -1,4 +1,8 @@
-'Line 11, BC30578: '#End ExternalSource' directive must be preceded by a  matching '#ExternalSource' directive
+REM LineNo: 15
+REM ExpectedError: BC30578
+REM ErrorMessage: '#End ExternalSource' must be preceded by a matching '#ExternalSource'.
+
+
 
 Imports System
 Module ExternalSourceDirective

@@ -1,4 +1,8 @@
-' BC30451: Name 'b' is not declared
+REM LineNo: 12
+REM ExpectedError: BC30451
+REM ErrorMessage: Name 'b' is not declared.
+
+
 
 Imports System
 

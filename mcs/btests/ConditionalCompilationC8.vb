@@ -1,4 +1,8 @@
-'Line 20, BC32030: '#ElseIf' cannot follow another '#ElseIf' in a conditional compilation block
+REM LineNo: 24
+REM ExpectedError: BC32030
+REM ErrorMessage: '#ElseIf' cannot follow '#Else' as part of a '#If' block.
+
+
 
 Imports System
 Module ConditionalCompilation

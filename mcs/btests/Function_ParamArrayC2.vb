@@ -1,3 +1,7 @@
+REM LineNo: 13
+REM ExpectedError: BC30667
+REM ErrorMessage: ParamArray parameters must be declared 'ByVal'.
+
 '=============================================================================================
 'Name:Manish Kumar Sinha 
 'Email Address: manishkumarsinha@sify.com

@@ -1,3 +1,7 @@
+REM LineNo: 8
+REM ExpectedError: BC31087
+REM ErrorMessage: Array modifiers cannot be specified on both a variable and its type.
+
 Imports System
 
 Module M

@@ -1,3 +1,7 @@
+REM LineNo: 10
+REM ExpectedError: BC30035
+REM ErrorMessage: Syntax error.
+
 Imports System
 Module LongLiteral
 	Sub Main()

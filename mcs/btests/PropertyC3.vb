@@ -1,3 +1,7 @@
+REM LineNo: 10
+REM ExpectedError: BC30124
+REM ErrorMessage: Property without a 'ReadOnly' or 'WriteOnly' specifier must provide both a 'Get' and a 'Set'.
+
 Imports system
 
 Module M

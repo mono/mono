@@ -1,3 +1,7 @@
+REM LineNo: 8
+REM ExpectedError: BC30480
+REM ErrorMessage: Shared 'Sub New' cannot be declared 'Public'.
+
 Imports System
 
 Class A

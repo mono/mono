@@ -1,4 +1,8 @@
-'Line 7, BC30014: '#ElseIf' must be preceded by a matching '#If' or '#ElseIf'
+REM LineNo: 11
+REM ExpectedError: BC30014
+REM ErrorMessage: '#ElseIf' must be preceded by a matching '#If' or '#ElseIf'.
+
+
 
 Imports System
 Module ConditionalCompilation

@@ -1,3 +1,7 @@
+REM LineNo: 8
+REM ExpectedError: BC30479
+REM ErrorMessage: Shared 'Sub New' cannot have any parameters.
+
 Imports System
 
 Class A

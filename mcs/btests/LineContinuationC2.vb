@@ -1,3 +1,7 @@
+REM LineNo: 8
+REM ExpectedError: BC30203
+REM ErrorMessage: Identifier expected.
+
 Imports System
 Module M
 	Sub Main()

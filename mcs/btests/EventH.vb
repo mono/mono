@@ -1,3 +1,7 @@
+REM LineNo: 29
+REM ExpectedError: BC30183
+REM ErrorMessage: Keyword is not valid as an identifier.
+
 Imports System
                                                                                 
 Class C

@@ -1,3 +1,7 @@
+REM LineNo: 11
+REM ExpectedError: BC30269
+REM ErrorMessage: Method 'S' has multiple definitions with identical signatures.
+
 Imports System
 
 Class C

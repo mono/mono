@@ -1,3 +1,7 @@
+REM LineNo: 11
+REM ExpectedError: BC30023
+REM ErrorMessage: Properties declared 'WriteOnly' cannot have a 'Get'.
+
 Imports system
 
 Module M

@@ -1,3 +1,7 @@
+REM LineNo: 10
+REM ExpectedError: BC30500
+REM ErrorMessage: Constant 'A' cannot depend on its own value.
+
 Imports System
 
 Module M
@@ -10,4 +14,4 @@ Module M
     End Sub
 End Module
 
-'C:\btests\EnumC4.vb(6) : error BC30500: Constant 'A' cannot depend on its own value.- B
+

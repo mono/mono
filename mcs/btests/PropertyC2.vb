@@ -1,3 +1,7 @@
+REM LineNo: 14
+REM ExpectedError: BC31064
+REM ErrorMessage: 'Set' parameter must have the same type as the containing property.
+
 Imports system
 
 Module M

@@ -1,3 +1,7 @@
+REM LineNo: 21
+REM ExpectedError: BC30662
+REM ErrorMessage: Attribute 'AuthorAttribute' cannot be applied to 'S1' because the attribute is not valid on this declaration type.
+
 Imports System
 
 'Declaring atrribute target to be class and using attribute on methods

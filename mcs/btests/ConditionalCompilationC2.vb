@@ -1,4 +1,8 @@
-'Line 11, BC30459: 'Nothing' is not valid in this context.
+REM LineNo: 15
+REM ExpectedError: BC30459
+REM ErrorMessage: 'Nothing' is not valid in this context.
+
+
 
 Imports System
 Module ConditionalCompilation

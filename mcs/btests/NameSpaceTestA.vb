@@ -1,3 +1,7 @@
+REM LineNo: 4
+REM ExpectedError: BC30420
+REM ErrorMessage: 'Sub Main' was not found in 'NameSpaceTestA'.
+
 Namespace ns1
     Class c1
         Public a As Integer = 5

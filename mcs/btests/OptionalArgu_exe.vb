@@ -1,3 +1,7 @@
+REM LineNo: 7
+REM ExpectedError: BC30002
+REM ErrorMessage: Type 'c' is not defined.
+
 Module M
 	Sub Main()
 		Dim x As New c()

@@ -1,4 +1,8 @@
-'Line 9, BC30013: '#EndIf' must be preceded by a matching '#If'
+REM LineNo: 13
+REM ExpectedError: BC30013
+REM ErrorMessage: '#ElseIf', '#Else', or '#End If' must be preceded by a matching '#If'.
+
+
 
 Imports System
 Module ConditionalCompilation

@@ -1,3 +1,7 @@
+REM LineNo: 17
+REM ExpectedError: BC30302
+REM ErrorMessage: Type character '#' cannot be used in a declaration with an explicit type.
+
 Imports System
 Module DecimalTypeCharTest
     Sub Main()

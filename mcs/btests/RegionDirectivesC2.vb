@@ -1,4 +1,8 @@
-'Line 10, BC30681: '#Region' directive must end with a matching '#End Region' directive
+REM LineNo: 14
+REM ExpectedError: BC30681
+REM ErrorMessage: '#Region' statement must end with a matching '#End Region'.
+
+
 
 Imports System
 Module RegionDirectives

@@ -1,3 +1,7 @@
+REM LineNo: 10
+REM ExpectedError: BC30683
+REM ErrorMessage: 'Inherits' statement must precede all declarations in a class.
+
 Public Class C1
 End Class
 

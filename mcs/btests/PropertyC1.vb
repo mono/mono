@@ -1,3 +1,7 @@
+REM LineNo: 15
+REM ExpectedError: BC31065
+REM ErrorMessage: 'Set' parameter cannot be declared 'ByRef'.
+
 Imports system
 
 Module M

@@ -1,3 +1,7 @@
+REM LineNo: 19
+REM ExpectedError: BC30408
+REM ErrorMessage: Method 'Public Function f1(a As Integer) As Integer' does not have the same signature as delegate 'Delegate Sub SD()'.
+
 Imports System
 
 Module M
