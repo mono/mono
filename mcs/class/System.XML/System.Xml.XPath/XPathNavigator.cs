@@ -173,6 +173,46 @@ namespace System.Xml.XPath
 			return cexpr.Evaluate (iterContext);
 		}
 
+		internal XPathNodeIterator EvaluateNodeSet (XPathExpression expr, XPathNodeIterator context)
+		{
+			CompiledExpression cexpr = (CompiledExpression) expr;
+			if (context == null)
+				context = new NullIterator (this, cexpr.NamespaceManager);
+			BaseIterator iterContext = (BaseIterator) context;
+			iterContext.NamespaceManager = cexpr.NamespaceManager;
+			return cexpr.EvaluateNodeSet (iterContext);
+		}
+
+		internal string EvaluateString (XPathExpression expr, XPathNodeIterator context)
+		{
+			CompiledExpression cexpr = (CompiledExpression) expr;
+			if (context == null)
+				context = new NullIterator (this, cexpr.NamespaceManager);
+			BaseIterator iterContext = (BaseIterator) context;
+			iterContext.NamespaceManager = cexpr.NamespaceManager;
+			return cexpr.EvaluateString (iterContext);
+		}
+
+		internal double EvaluateNumber (XPathExpression expr, XPathNodeIterator context)
+		{
+			CompiledExpression cexpr = (CompiledExpression) expr;
+			if (context == null)
+				context = new NullIterator (this, cexpr.NamespaceManager);
+			BaseIterator iterContext = (BaseIterator) context;
+			iterContext.NamespaceManager = cexpr.NamespaceManager;
+			return cexpr.EvaluateNumber (iterContext);
+		}
+
+		internal bool EvaluateBoolean (XPathExpression expr, XPathNodeIterator context)
+		{
+			CompiledExpression cexpr = (CompiledExpression) expr;
+			if (context == null)
+				context = new NullIterator (this, cexpr.NamespaceManager);
+			BaseIterator iterContext = (BaseIterator) context;
+			iterContext.NamespaceManager = cexpr.NamespaceManager;
+			return cexpr.EvaluateBoolean (iterContext);
+		}
+
 		public abstract string GetAttribute (string localName, string namespaceURI);
 
 		public abstract string GetNamespace (string name);

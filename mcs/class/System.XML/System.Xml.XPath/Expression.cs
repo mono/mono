@@ -87,6 +87,51 @@ namespace System.Xml.XPath
 				throw new XPathException ("Error during evaluation", e);
 			}
 		}
+		public double EvaluateNumber (BaseIterator iter)
+		{
+			try
+			{
+				return _expr.EvaluateNumber (iter);
+			}
+			catch (XPathException)
+			{
+				throw;
+			}
+			catch (Exception e)
+			{
+				throw new XPathException ("Error during evaluation", e);
+			}
+		}
+		public string EvaluateString (BaseIterator iter)
+		{
+			try
+			{
+				return _expr.EvaluateString (iter);
+			}
+			catch (XPathException)
+			{
+				throw;
+			}
+			catch (Exception e)
+			{
+				throw new XPathException ("Error during evaluation", e);
+			}
+		}
+		public bool EvaluateBoolean (BaseIterator iter)
+		{
+			try
+			{
+				return _expr.EvaluateBoolean (iter);
+			}
+			catch (XPathException)
+			{
+				throw;
+			}
+			catch (Exception e)
+			{
+				throw new XPathException ("Error during evaluation", e);
+			}
+		}
 
 		public override void AddSort (Object obj, IComparer cmp)
 		{

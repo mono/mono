@@ -1,5 +1,11 @@
 2003-07-29 Piers Haken	<piersh@friskit.com>
 
+	* XPathNavigator.cs:
+	* Expression.cs:
+		add typesafe Evaluate* methods
+
+2003-07-29 Piers Haken	<piersh@friskit.com>
+
 	* DefaultContext.cs: fix 'substring-after'
 
 2003-07-29 Piers Haken	<piersh@friskit.com>
