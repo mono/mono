@@ -2920,8 +2920,11 @@ namespace Mono.CSharp {
 					return 0;
 			}
 
-			if (StandardConversionExists (p, q) == true &&
-			    StandardConversionExists (q, p) == false)
+			Expression p_tmp = new EmptyExpression (p);
+			Expression q_tmp = new EmptyExpression (q);
+			
+			if (StandardConversionExists (p_tmp, q) == true &&
+			    StandardConversionExists (q_tmp, p) == false)
 				return 1;
 
 			if (p == TypeManager.sbyte_type)
@@ -3174,7 +3177,7 @@ namespace Mono.CSharp {
 				if (a_mod == p_mod) {
 					
 					if (a_mod == Parameter.Modifier.NONE)
-						if (!StandardConversionExists (a.Type, pd.ParameterType (i)))
+						if (!StandardConversionExists (a.Expr, pd.ParameterType (i)))
 							return false;
 										
 					if (a_mod == Parameter.Modifier.REF ||
@@ -3191,7 +3194,7 @@ namespace Mono.CSharp {
 			for (int i = pd_count - 1; i < arg_count; i++) {
 				Argument a = (Argument) arguments [i];
 				
-				if (!StandardConversionExists (a.Type, element_type))
+				if (!StandardConversionExists (a.Expr, element_type))
 					return false;
 			}
 			
@@ -3229,7 +3232,7 @@ namespace Mono.CSharp {
 				if (a_mod == p_mod) {
 					
 					if (a_mod == Parameter.Modifier.NONE)
-						if (!StandardConversionExists (a.Type, pd.ParameterType (i)))
+						if (!StandardConversionExists (a.Expr, pd.ParameterType (i)))
 							return false;
 					
 					if (a_mod == Parameter.Modifier.REF ||
@@ -3331,10 +3334,10 @@ namespace Mono.CSharp {
 			// Now we see if we can at least find a method with the same number of arguments
 			//
 			ParameterData pd;
-			int method_count = 0;
+ 			int method_count = 0;
 
 			if (best_match_idx == -1) {
-				
+
 				for (int i = me.Methods.Length; i > 0;) {
 					i--;
 					MethodBase mb = me.Methods [i];
@@ -3351,7 +3354,6 @@ namespace Mono.CSharp {
 
 			if (method == null)
 				return null;
-
 
 			//
 			// Now check that there are no ambiguities i.e the selected method

@@ -596,10 +596,15 @@ namespace Mono.CSharp {
 					if (expr_type.GetArrayRank () == target_type.GetArrayRank ()) {
 
 						Type expr_element_type = expr_type.GetElementType ();
+
+						if (MyEmptyExpr == null)
+							MyEmptyExpr = new EmptyExpression ();
+						
+						MyEmptyExpr.SetType (expr_element_type);
 						Type target_element_type = target_type.GetElementType ();
 
 						if (!expr_element_type.IsValueType && !target_element_type.IsValueType)
-							if (StandardConversionExists (expr_element_type,
+							if (StandardConversionExists (MyEmptyExpr,
 										      target_element_type))
 								return new EmptyCast (expr, target_type);
 					}
@@ -831,8 +836,10 @@ namespace Mono.CSharp {
 		///  Determines if a standard implicit conversion exists from
 		///  expr_type to target_type
 		/// </summary>
-		public static bool StandardConversionExists (Type expr_type, Type target_type)
+		public static bool StandardConversionExists (Expression expr, Type target_type)
 		{
+			Type expr_type = expr.Type;
+			
 			if (expr_type == target_type)
 				return true;
 
@@ -953,7 +960,7 @@ namespace Mono.CSharp {
 				return true;
 				
 			} else {
-				// Please remember that all code below actuall comes
+				// Please remember that all code below actually comes
 				// from ImplicitReferenceConversion so make sure code remains in sync
 				
 				// from any class-type S to any interface-type T.
@@ -973,10 +980,15 @@ namespace Mono.CSharp {
 					if (expr_type.GetArrayRank () == target_type.GetArrayRank ()) {
 						
 						Type expr_element_type = expr_type.GetElementType ();
+
+						if (MyEmptyExpr == null)
+							MyEmptyExpr = new EmptyExpression ();
+						
+						MyEmptyExpr.SetType (expr_element_type);
 						Type target_element_type = target_type.GetElementType ();
 						
 						if (!expr_element_type.IsValueType && !target_element_type.IsValueType)
-							if (StandardConversionExists (expr_element_type,
+							if (StandardConversionExists (MyEmptyExpr,
 										      target_element_type))
 								return true;
 					}
@@ -998,8 +1010,9 @@ namespace Mono.CSharp {
 						return true;
 				
 				// from the null type to any reference-type.
-				// FIXME : How do we do this ?
-
+				if (expr is NullLiteral && !target_type.IsValueType)
+					return true;
+				
 			}
 
 			return false;
@@ -1037,11 +1050,14 @@ namespace Mono.CSharp {
 				ParameterData pd = Invocation.GetParameterData (mb);
 				Type param_type = pd.ParameterType (0);
 
-				if (StandardConversionExists (source_type, param_type)) {
+				Expression source = new EmptyExpression (source_type);
+				Expression param = new EmptyExpression (param_type);
+
+				if (StandardConversionExists (source, param_type)) {
 					if (best == null)
 						best = param_type;
 					
-					if (StandardConversionExists (param_type, best))
+					if (StandardConversionExists (param, best))
 						best = param_type;
 				}
 			}
@@ -1063,12 +1079,14 @@ namespace Mono.CSharp {
 				
 				MethodInfo mi = (MethodInfo) me.Methods [i];
 				Type ret_type = mi.ReturnType;
+
+				Expression ret = new EmptyExpression (ret_type);
 				
-				if (StandardConversionExists (ret_type, target)) {
+				if (StandardConversionExists (ret, target)) {
 					if (best == null)
 						best = ret_type;
 
-					if (!StandardConversionExists (ret_type, best))
+					if (!StandardConversionExists (ret, best))
 						best = ret_type;
 				}
 				

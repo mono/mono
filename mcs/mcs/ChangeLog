@@ -1,3 +1,11 @@
+2002-03-13  Ravi Pratap  <ravi@ximian.com>
+
+	* ecore.cs (StandardConversionExists): Modify to take an Expression
+	as the first parameter. Ensure we do null -> reference type conversion
+	checking.
+
+	* Everywhere : update calls accordingly, making use of MyEmptyExpr to store
+	temporary Expression objects.
 
 Wed Mar 13 12:32:40 CET 2002 Paolo Molaro <lupus@ximian.com>
 
@@ -81,7 +89,6 @@ Wed Mar 13 12:32:40 CET 2002 Paolo Molaro <lupus@ximian.com>
 	* attribute.cs (ApplyAttributes): Recognize the MarshalAs attribute 
 	on parameters and accordingly set the marshalling info.
 	
-
 2002-03-09  Miguel de Icaza  <miguel@ximian.com>
 
 	* class.cs: Optimizing slightly by removing redundant code after
