@@ -96,7 +96,7 @@ namespace System.Web.UI.HtmlControls{
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public bool NoWrap {
 			get{
-				string attr = Attributes["colspan"];
+				string attr = Attributes["nowrap"];
 				if (attr != null) return attr.Equals("nowrap");
 				return false;
 			}

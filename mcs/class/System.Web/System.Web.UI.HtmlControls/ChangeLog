@@ -1,3 +1,6 @@
+2003-12-07  Alon Gazit <along@mainsoft.com>
+	* HtmlTableCell.cs: fixing a typo in NoWrap property. 
+
 2003-12-04  Jackson Harper <jackson@ximian.com>
 
 	* HtmlInputRadioButton.cs: Lookup name in postadata and compare to
