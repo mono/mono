@@ -1,5 +1,86 @@
 Hello everyone!
 
+      We are releasing a new version of Mono, Mono 0.22. A new release
+is made today because of the few recent bug-fixes that were committed
+to CVS.
+
+     Source code and binaries for this release can be found on the
+     web page,
+
+	   http://www.go-mono.com/download.html
+
+     The URLs for the sources are:
+
+     * MCS package (the Class Libraries, C# and VB.NET compiler
+       and other assorted tools written in Managed code):
+
+	    http://www.go-mono.com/archive/mcs-0.22.tar.gz
+
+     * Mono package (the Runtime engine and JIT compiler):
+
+	    http://www.go-mono.com/archive/mono-0.22.tar.gz
+
+     RPM packages for this release can be downloaded from the web-page
+as well as from the 'Mono' channel on Red Carpet. Debian packages will
+appear on the download page later, as well as an installer for our
+Windows users.
+
+     Since last Thursday, 320 commits have been made to our CVS
+repository. These following hackers contributed to Mono since version
+0.21:
+
+     Aleksey Demakov, Alexandre Pigolkine, Atsushi Enomoto, Elan
+     Feingeld, Dick Porter, Dietmar Maurer, Duncan Mak, Gonzalo
+     Paniagua, Ian MacLean, Jackson Harper, Jean-Marc Andre, Jerome
+     Laban, Lluis Sanchez, Martin Baulig, Miguel de Icaza, Nick
+     Drochak, Paolo Molaro, Pedro Martinez, Per Ameng, Peter Williams,
+     Rafael Teixeira, Reggie Burnett, Sebastien Pouliot, Tim Coleman
+     and Zoltan Varga.
+
+Highlights:
+
+    * The "MemoryStream" bug.
+       This bug affected a lot of classes, and made them crashy,
+       database code, XML parsing and a few others were
+       crashing. Thanks to Gonzalo for fixing this bug.
+	
+    * System.Data:
+	More bug fixes from Aleksey and Tim.
+
+    * Reflection:
+        Zoltan continues to provide fixes to our Reflection.Emit code
+        to host IKVM. 
+    
+    * Remoting:
+	Lluis added support for activation using activation
+	attributes.
+	 
+    * PEToolkit:
+	Jackson imported the PEAPI package from the Queensland
+	University of Technology in Australia. This will replace the
+	existing Mono.PEToolkit for our ILasm back-end.
+
+    * Windows Forms:
+	More fixes from Reggie and Alexandre.
+	
+    * System.Web.Mail:
+	Per has been working on this namespace. He announces recently
+	that all major parts of System.Web.Mail has now been implemented.
+
+    * System.Web.Mobile:
+        Gaurav continues to make progress here.
+
+    * Misc:
+
+        Ian MacLean contributed a /compile flag to monoresgen and
+        assorted bug-fixes and improvements from the rest of the team.
+
+
+    My name is Duncan Mak, and I just made my first Mono release.
+
+-----------------------------------------------------------------------------
+Hello everyone!
+
     The Mono Team introduces the best Mono release so far we have
 done.  Thanks to everyone who contributed fixes, code, ideas, and bug
 reports.  
