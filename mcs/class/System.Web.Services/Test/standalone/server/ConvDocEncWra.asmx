@@ -135,6 +135,12 @@ namespace WebServiceTests
 			dada = 1;
 		}
 		
+		[WebMethod]
+		public  System.Collections.Specialized.StringCollection TestArrays (string[] info, string lang)
+		{
+			return null;
+		}
+		
 		void CheckUser ()
 		{
 			if (userInfo == null) 

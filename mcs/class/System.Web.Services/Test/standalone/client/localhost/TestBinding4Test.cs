@@ -8,7 +8,7 @@ using TestBinding4Tests.HttpGet;
 using TestBinding4Tests.HttpPost;
 using System.Xml;
 
-namespace TestBinding4Tests
+namespace Localhost.TestBinding4Tests
 {
 	[TestFixture]
 	public class TestBinding4Test: WebServiceTest

@@ -5,7 +5,7 @@ using System;
 using NUnit.Framework;
 using TemperatureServiceTests.Soap;
 
-namespace TemperatureServiceTests
+namespace External.TemperatureServiceTests
 {
 	[TestFixture]
 	public class TemperatureServiceTest: WebServiceTest

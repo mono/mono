@@ -5,7 +5,7 @@ using System;
 using NUnit.Framework;
 using GlobalWeatherTests.Soap;
 
-namespace GlobalWeatherTests
+namespace External.GlobalWeatherTests
 {
 	[TestFixture]
 	public class GlobalWeatherTest: WebServiceTest

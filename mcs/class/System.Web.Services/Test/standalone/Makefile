@@ -17,10 +17,10 @@ clean:
 	rm error/*
 
 proxies.dll:
-	$(MCS) /r:System.Web.Services.dll /target:library -out:proxies.dll @proxies.sources
+	$(MCS) /r:System.Web.Services.dll /r:System.Data /target:library -out:proxies.dll @proxies.sources
 
 tests: proxies
-	$(MCS) /r:proxies.dll /r:System.Web.Services.dll /r:NUnit.Framework.dll /target:library -out:testclient.dll @client.sources WebServiceTest.cs
+	$(MCS) /r:proxies.dll /r:System.Web.Services.dll /r:NUnit.Framework.dll /r:System.Data /target:library -out:testclient.dll @client.sources WebServiceTest.cs
 
 update:
 	mono --debug wstest.exe ur http://www.xmethods.net/default.disco wsdl.ignore

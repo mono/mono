@@ -5,7 +5,7 @@ using System;
 using NUnit.Framework;
 using HPcatalogTests.Soap;
 
-namespace HPcatalogTests
+namespace External.HPcatalogTests
 {
 	[TestFixture]
 	public class HPcatalogTest: WebServiceTest

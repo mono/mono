@@ -5,7 +5,7 @@ using System;
 using NUnit.Framework;
 using IODCODESPOSTAUXTests.Soap;
 
-namespace IODCODESPOSTAUXTests
+namespace External.IODCODESPOSTAUXTests
 {
 	[TestFixture]
 	public class IODCODESPOSTAUXTest: WebServiceTest

@@ -58,7 +58,7 @@ public class Driver
 		}
 		else if (args[0] == "dw")
 		{
-			DownloadWsdls ();
+			DownloadWsdls (GetArg (args,1));
 		}
 		else if (args[0] == "clean")
 		{
@@ -228,15 +228,17 @@ public class Driver
 		Console.WriteLine ();
 	}
 	
-	static void DownloadWsdls ()
+	static void DownloadWsdls (string host)
 	{
 		Console.WriteLine ();
 		Console.WriteLine ("Downloading WSDL documents");
 		Console.WriteLine ("---------------------------");
 		
-		foreach (ServiceData sd in services.services)
+		foreach (ServiceData sd in services.services) {
+			if (host != null && host != new Uri (sd.Wsdl).Host) continue;
 			if (!File.Exists (GetWsdlFile(sd)))
 				Resolve (sd);
+		}
 				
 		Console.WriteLine ("Done");
 		Console.WriteLine ();

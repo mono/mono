@@ -5,7 +5,7 @@ using System;
 using NUnit.Framework;
 using BankCodeEJBHomeTests.Soap;
 
-namespace BankCodeEJBHomeTests
+namespace External.BankCodeEJBHomeTests
 {
 	[TestFixture]
 	public class BankCodeEJBHomeTest: WebServiceTest

@@ -27,7 +27,13 @@ http://www.dotnetisp.com/webservices/dotnetisp/src2html.asmx?WSDL # Not a wsdl d
 http://www.dotnetisp.com/webservices/dotnetisp/ville.asmx?WSDL # Not a wsdl doc
 http://www.dotnetisp.com/webservices/dotnetisp/codepostal.asmx?WSDL # Not a wsdl doc
 http://interpressfact.net/webservices/promotionService.asmx?wsdl # Not a wsdl doc
-http://www.interpressfact.net/webservices/getAds.asmx?wsdl # Not a wsdl doc
+http://www.interpressfact.net/webservices/getAds.asmx?wsdl 	# Not a wsdl doc
 http://soap.prowizorka.com/spam/wsdl/ISpamCheck # Not working
 http://www.interpressfact.net/webservices/getJoke.asmx?wsdl # Not working
+http://ws.cdyne.com/ip2geo/ip2geo.asmx?wsdl 				# Incomplete WSDL
+http://test.mapfrepr.net/Encryption/Encryption.asmx?WSDL 	# Error
+http://www.bitwaste.com/xmethods/ATTPager/ATTPager.wsdl 	# Not found
+http://www.freshscore.com/service/FreshScoreLiveScores.asmx?WSDL # Not found
+http://www.orbitarium.com/schemas/ows.wsdl					# Not valid WSDL
+http://www.drbob42.co.uk/cgi-bin/Euro42/wsdl/IEuro			# Not valid WSDL
 http://www.transactionalweb.com/SOAP/geoserve.wsdl	# Bug in Mono!!

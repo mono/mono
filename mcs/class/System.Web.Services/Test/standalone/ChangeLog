@@ -1,3 +1,26 @@
+2004-05-12  Lluis Sanchez Gual  <lluis@ximian.com>
+
+	* Makefile: Added reference to System.Data.
+	* services.xml, wsdl.ignore: Updated.
+	* wstest.cs: Small improvements.
+	* external/BankCodeEJBHomeTest.cs, external/GlobalWeatherTest.cs, 
+	  external/HPcatalogTest.cs, external/IODCODESPOSTAUXTest.cs,
+	  external/TemperatureServiceTest.cs, localhost/ConvDocEncBarTest.cs,
+	  localhost/ConvDocEncWraTest.cs, localhost/ConvDocLitBarTest.cs,
+	  localhost/ConvDocLitWraTest.cs, localhost/ConvRpcTest.cs
+	  Changed namespace to make it easier to select tests in gnunit.
+	* localhost/ConvRpcTest.cs: Added test for method that returns "Object".
+	* server/ConvDocEncWra.asmx, ConvDocLitWra.asmx, ConvRpc.asmx: New test 
+	  methods.
+	* server/web.config: Added version to vsdisco handler type name.
+	* client/localhost/DataServiceTest.cs
+	  client/localhost/DuplicateArrayTestTest.cs
+	  client/localhost/SessionCounterTest.cs
+	  server/DataService.asmx
+	  server/DuplicateArrayTest.asmx
+	  server/SessionCounter.asmx: New tests.
+	
+
 2004-03-10  Lluis Sanchez Gual  <lluis@ximian.com>
 
 	* client/localhost/ConvDocLitWraTest.cs: Test Discover() method.

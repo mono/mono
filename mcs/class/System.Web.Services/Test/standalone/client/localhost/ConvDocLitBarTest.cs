@@ -5,7 +5,7 @@ using System;
 using NUnit.Framework;
 using ConvDocLitBarTests.Soap;
 
-namespace ConvDocLitBarTests
+namespace Localhost.ConvDocLitBarTests
 {
 	[TestFixture]
 	public class ConvDocLitBarTest: WebServiceTest

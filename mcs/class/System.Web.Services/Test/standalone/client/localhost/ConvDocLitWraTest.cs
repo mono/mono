@@ -7,7 +7,7 @@ using NUnit.Framework;
 using ConvDocLitWraTests.Soap;
 using System.Web.Services.Protocols;
 
-namespace ConvDocLitWraTests
+namespace Localhost.ConvDocLitWraTests
 {
 	[TestFixture]
 	public class ConvDocLitWraTest: WebServiceTest

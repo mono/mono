@@ -135,10 +135,24 @@ namespace WebServiceTests
 			dada = 1;
 		}
 		
+		[WebMethod]
+		[return: SoapElement("retret")]
+		public MyInfo GetTestInfo (string s, out string d)
+		{
+			d = "iii";
+			return new MyInfo();
+		}
+		
 		void CheckUser ()
 		{
 			if (userInfo == null) 
 				throw new SoapException ("User not logged", SoapException.ServerFaultCode);
 		}
+	}
+	
+	public class MyInfo
+	{
+		public int a = 4;
+		public string b = "hi";
 	}
 }

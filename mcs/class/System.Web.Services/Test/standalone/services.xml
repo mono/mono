@@ -1471,17 +1471,6 @@
     <clientTest>false</clientTest>
   </service>
   <service>
-    <wsdl>http://ws.cdyne.com/ip2geo/ip2geo.asmx?wsdl</wsdl>
-    <name>ip2geoTest</name>
-    <serverType>Microsoft-IIS/6.0 # ASP.NET</serverType>
-    <protocols>
-      <protocol>Soap</protocol>
-      <protocol>HttpGet</protocol>
-      <protocol>HttpPost</protocol>
-    </protocols>
-    <clientTest>false</clientTest>
-  </service>
-  <service>
     <wsdl>http://www.xignite.com/xsimulation.asmx?WSDL</wsdl>
     <name>xsimulationTest</name>
     <serverType>Microsoft-IIS/5.0 # ASP.NET</serverType>
@@ -2481,12 +2470,6 @@
     <clientTest>false</clientTest>
   </service>
   <service>
-    <wsdl>http://www.orbitarium.com/schemas/ows.wsdl</wsdl>
-    <name>owsTest</name>
-    <protocols />
-    <clientTest>false</clientTest>
-  </service>
-  <service>
     <wsdl>http://adrianr.dyndns.org/Fortune/Fortune.wsdl</wsdl>
     <name>FortuneTest</name>
     <protocols>
@@ -3097,15 +3080,6 @@
     <clientTest>false</clientTest>
   </service>
   <service>
-    <wsdl>http://www.drbob42.co.uk/cgi-bin/Euro42/wsdl/IEuro</wsdl>
-    <name>IEuroTest</name>
-    <serverType>Apache/1.3.29 (Unix) mod_auth_passthrough/1.8 mod_log_bytes/1.2 mod_bwlimited/1.4 PHP/4.3.3 FrontPage/5.0.2.2634 mod_ssl/2.8.16 OpenSSL/0.9.7a # </serverType>
-    <protocols>
-      <protocol>Soap</protocol>
-    </protocols>
-    <clientTest>false</clientTest>
-  </service>
-  <service>
     <wsdl>http://www.verbix.com/cgi-bin/soapx.exe/wsdl/IGetInflection</wsdl>
     <name>IGetInflectionTest</name>
     <serverType>Microsoft-IIS/5.0 # </serverType>
@@ -3203,17 +3177,6 @@
     <serverType>Apache/2.0.46 (Unix) mod_ssl/2.0.46 OpenSSL/0.9.6g DAV/2 SOAP/1.1 Catacomb/0.9.1-dev # </serverType>
     <protocols>
       <protocol>Soap</protocol>
-    </protocols>
-    <clientTest>false</clientTest>
-  </service>
-  <service>
-    <wsdl>http://localhost:8080/foo.asmx?wsdl</wsdl>
-    <name>fooTest</name>
-    <serverType>Mono-XSP Server/0.6.99.0 128 # Mono</serverType>
-    <protocols>
-      <protocol>Soap</protocol>
-      <protocol>HttpGet</protocol>
-      <protocol>HttpPost</protocol>
     </protocols>
     <clientTest>false</clientTest>
   </service>
@@ -3316,6 +3279,10 @@
   <service>
     <wsdl>http://www.boyzoid.com/threat.cfc?wsdl</wsdl>
     <name>threatTest</name>
+    <serverType>Microsoft-IIS/6.0 # ASP.NET</serverType>
+    <protocols>
+      <protocol>Soap</protocol>
+    </protocols>
     <clientTest>false</clientTest>
   </service>
   <service>
@@ -4071,5 +4038,326 @@
       <protocol>HttpPost</protocol>
     </protocols>
     <clientTest>false</clientTest>
+  </service>
+  <service>
+    <wsdl>http://helena.europe.webmatrixhosting.net/LetterSoup.asmx?WSDL</wsdl>
+    <name>LetterSoupTest</name>
+    <serverType>Microsoft-IIS/6.0 # ASP.NET</serverType>
+    <protocols>
+      <protocol>Soap</protocol>
+    </protocols>
+    <clientTest>false</clientTest>
+  </service>
+  <service>
+    <wsdl>http://localhost:8080/DataService.asmx?wsdl</wsdl>
+    <name>DataServiceTest</name>
+    <serverType>Mono-XSP Server/0.9.99.0 128 # Mono</serverType>
+    <protocols>
+      <protocol>Soap</protocol>
+      <protocol>HttpGet</protocol>
+      <protocol>HttpPost</protocol>
+    </protocols>
+    <clientTest>true</clientTest>
+  </service>
+  <service>
+    <wsdl>http://www.javaportal.it/kservices/JIPNews?wsdl</wsdl>
+    <name>JIPNewsTest</name>
+    <serverType>Apache-AdvancedExtranetServer/1.3.26 (Mandrake Linux/6.1mdk) mod_jk/1.2.1 auth_ldap/1.6.0 mod_ssl/2.8.10 OpenSSL/0.9.6g sxnet/1.2.4 PHP/4.2.3 # </serverType>
+    <protocols>
+      <protocol>Soap</protocol>
+    </protocols>
+    <clientTest>false</clientTest>
+  </service>
+  <service>
+    <wsdl>http://www.tilisoft.com/ws/LocInfo/ZipCode.asmx?WSDL</wsdl>
+    <name>ZipCodeTest2</name>
+    <serverType>Microsoft-IIS/6.0 # ASP.NET</serverType>
+    <protocols>
+      <protocol>Soap</protocol>
+    </protocols>
+    <clientTest>false</clientTest>
+  </service>
+  <service>
+    <wsdl>http://www.quisque.com/fr/chasses/crypto/cesar.asmx?WSDL</wsdl>
+    <name>cesarTest</name>
+    <serverType>Microsoft-IIS/5.0 # ASP.NET</serverType>
+    <protocols>
+      <protocol>Soap</protocol>
+    </protocols>
+    <clientTest>false</clientTest>
+  </service>
+  <service>
+    <wsdl>http://www.quisque.com/fr/chasses/crypto/vigenere1.asmx?WSDL</wsdl>
+    <name>vigenere1Test</name>
+    <serverType>Microsoft-IIS/5.0 # ASP.NET</serverType>
+    <protocols>
+      <protocol>Soap</protocol>
+    </protocols>
+    <clientTest>false</clientTest>
+  </service>
+  <service>
+    <wsdl>http://soap.achchex.com/exec/btrnsoap.dll/wsdl/IBTRNSOAP</wsdl>
+    <name>IBTRNSOAPTest</name>
+    <serverType>Apache/2.0.43 (Win32) mod_ssl/2.0.43 OpenSSL/0.9.6g # </serverType>
+    <protocols>
+      <protocol>Soap</protocol>
+    </protocols>
+    <clientTest>false</clientTest>
+  </service>
+  <service>
+    <wsdl>http://www.costudio.com/WSLinkChecker.asmx?WSDL</wsdl>
+    <name>WSLinkCheckerTest</name>
+    <serverType>Microsoft-IIS/6.0 # </serverType>
+    <protocols>
+      <protocol>Soap</protocol>
+    </protocols>
+    <clientTest>false</clientTest>
+  </service>
+  <service>
+    <wsdl>http://www.webservicex.com/geoipservice.asmx?WSDL</wsdl>
+    <name>geoipserviceTest</name>
+    <serverType>Microsoft-IIS/5.0 # ASP.NET</serverType>
+    <protocols>
+      <protocol>Soap</protocol>
+      <protocol>HttpGet</protocol>
+      <protocol>HttpPost</protocol>
+    </protocols>
+    <clientTest>false</clientTest>
+  </service>
+  <service>
+    <wsdl>http://www.myweb-services.com/server/ShoppingBasket.wsdl</wsdl>
+    <name>ShoppingBasketTest</name>
+    <serverType>Apache/1.3.20 Sun Cobalt (Unix) mod_throttle/3.1.2 Chili!Soft-ASP/3.6.2 mod_ssl/2.8.4 OpenSSL/0.9.6b PHP/4.1.2 mod_auth_pam_external/0.1 FrontPage/4.0.4.3 mod_perl/1.25 # PHP/4.1.2</serverType>
+    <protocols>
+      <protocol>Soap</protocol>
+    </protocols>
+    <clientTest>false</clientTest>
+  </service>
+  <service>
+    <wsdl>http://www.closerfar.com/dic2.asmx?WSDL</wsdl>
+    <name>dic2Test2</name>
+    <serverType>Microsoft-IIS/6.0 # ASP.NET</serverType>
+    <protocols>
+      <protocol>Soap</protocol>
+    </protocols>
+    <clientTest>false</clientTest>
+  </service>
+  <service>
+    <wsdl>http://69.194.99.154/av/wsdl/ITAddressValidations</wsdl>
+    <name>ITAddressValidationsTest2</name>
+    <serverType>Apache/1.3.28 (Win32) # </serverType>
+    <protocols>
+      <protocol>Soap</protocol>
+    </protocols>
+    <clientTest>false</clientTest>
+  </service>
+  <service>
+    <wsdl>http://www.closerfar.com/engtoarabic.asmx?WSDL</wsdl>
+    <name>engtoarabicTest2</name>
+    <serverType>Microsoft-IIS/6.0 # ASP.NET</serverType>
+    <protocols>
+      <protocol>Soap</protocol>
+    </protocols>
+    <clientTest>false</clientTest>
+  </service>
+  <service>
+    <wsdl>http://www.ingig.com/channels.asmx?WSDL</wsdl>
+    <name>channelsTest</name>
+    <serverType>Microsoft-IIS/6.0 # ASP.NET</serverType>
+    <protocols>
+      <protocol>Soap</protocol>
+      <protocol>HttpGet</protocol>
+      <protocol>HttpPost</protocol>
+    </protocols>
+    <clientTest>false</clientTest>
+  </service>
+  <service>
+    <wsdl>http://www.javaportal.it/kservices/JIPComuni?wsdl</wsdl>
+    <name>JIPComuniTest</name>
+    <serverType>Apache-AdvancedExtranetServer/1.3.26 (Mandrake Linux/6.1mdk) mod_jk/1.2.1 auth_ldap/1.6.0 mod_ssl/2.8.10 OpenSSL/0.9.6g sxnet/1.2.4 PHP/4.2.3 # </serverType>
+    <protocols>
+      <protocol>Soap</protocol>
+    </protocols>
+    <clientTest>false</clientTest>
+  </service>
+  <service>
+    <wsdl>http://www.quisque.com/fr/chasses/crypto/hill.asmx?WSDL</wsdl>
+    <name>hillTest</name>
+    <serverType>Microsoft-IIS/5.0 # ASP.NET</serverType>
+    <protocols>
+      <protocol>Soap</protocol>
+    </protocols>
+    <clientTest>false</clientTest>
+  </service>
+  <service>
+    <wsdl>http://www.tilisoft.com/ws/eyeVeri/eyeVeri.asmx?WSDL</wsdl>
+    <name>eyeVeriTest</name>
+    <serverType>Microsoft-IIS/6.0 # ASP.NET</serverType>
+    <protocols>
+      <protocol>Soap</protocol>
+    </protocols>
+    <clientTest>false</clientTest>
+  </service>
+  <service>
+    <wsdl>http://www.strikeiron.com/WebServices/SMSMessagingService.asmx?WSDL</wsdl>
+    <name>SMSMessagingServiceTest</name>
+    <serverType>Microsoft-IIS/6.0 # ASP.NET</serverType>
+    <protocols>
+      <protocol>Soap</protocol>
+    </protocols>
+    <clientTest>false</clientTest>
+  </service>
+  <service>
+    <wsdl>http://www.strikeiron.com/WebServices/taxdata.asmx?WSDL</wsdl>
+    <name>taxdataTest</name>
+    <serverType>Microsoft-IIS/6.0 # ASP.NET</serverType>
+    <protocols>
+      <protocol>Soap</protocol>
+    </protocols>
+    <clientTest>false</clientTest>
+  </service>
+  <service>
+    <wsdl>http://smsserver.dotnetisp.com/ServiceSMS.asmx?WSDL</wsdl>
+    <name>ServiceSMSTest</name>
+    <serverType>Microsoft-IIS/5.0 # ASP.NET</serverType>
+    <protocols>
+      <protocol>Soap</protocol>
+    </protocols>
+    <clientTest>false</clientTest>
+  </service>
+  <service>
+    <wsdl>http://www.quisque.com/fr/chasses/crypto/crypta.asmx?WSDL</wsdl>
+    <name>cryptaTest</name>
+    <serverType>Microsoft-IIS/5.0 # ASP.NET</serverType>
+    <protocols>
+      <protocol>Soap</protocol>
+    </protocols>
+    <clientTest>false</clientTest>
+  </service>
+  <service>
+    <wsdl>http://www.netkoder.dk/postnummerws.asmx?wsdl</wsdl>
+    <name>postnummerwsTest</name>
+    <serverType>Microsoft-IIS/6.0 # ASP.NET</serverType>
+    <protocols>
+      <protocol>Soap</protocol>
+    </protocols>
+    <clientTest>false</clientTest>
+  </service>
+  <service>
+    <wsdl>http://addressmeister.bizware.com/service/wsdl/server.soap.wsdl</wsdl>
+    <name>serverTest2</name>
+    <clientTest>false</clientTest>
+  </service>
+  <service>
+    <wsdl>http://server.dotnetisp.com/webservices/dotnetisp/src2html.asmx?WSDL</wsdl>
+    <name>src2htmlTest</name>
+    <serverType>Microsoft-IIS/5.0 # ASP.NET</serverType>
+    <protocols>
+      <protocol>Soap</protocol>
+    </protocols>
+    <clientTest>false</clientTest>
+  </service>
+  <service>
+    <wsdl>http://www.myweb-services.com/server/UserApps.wsdl</wsdl>
+    <name>UserAppsTest</name>
+    <serverType>Apache/1.3.20 Sun Cobalt (Unix) mod_throttle/3.1.2 Chili!Soft-ASP/3.6.2 mod_ssl/2.8.4 OpenSSL/0.9.6b PHP/4.1.2 mod_auth_pam_external/0.1 FrontPage/4.0.4.3 mod_perl/1.25 # PHP/4.1.2</serverType>
+    <protocols>
+      <protocol>Soap</protocol>
+    </protocols>
+    <clientTest>false</clientTest>
+  </service>
+  <service>
+    <wsdl>http://webservices.mio.it/sendsms.asmx?WSDL</wsdl>
+    <name>sendsmsTest</name>
+    <serverType>Microsoft-IIS/5.0 # ASP.NET</serverType>
+    <protocols>
+      <protocol>Soap</protocol>
+      <protocol>HttpGet</protocol>
+      <protocol>HttpPost</protocol>
+    </protocols>
+    <clientTest>false</clientTest>
+  </service>
+  <service>
+    <wsdl>http://server.dotnetisp.com/webservices/dotnetisp/codepostal.asmx?WSDL</wsdl>
+    <name>codepostalTest</name>
+    <serverType>Microsoft-IIS/5.0 # ASP.NET</serverType>
+    <protocols>
+      <protocol>Soap</protocol>
+    </protocols>
+    <clientTest>false</clientTest>
+  </service>
+  <service>
+    <wsdl>http://www.strikeiron.com/webservices/medicaredata.asmx?WSDL</wsdl>
+    <name>medicaredataTest</name>
+    <serverType>Microsoft-IIS/6.0 # ASP.NET</serverType>
+    <protocols>
+      <protocol>Soap</protocol>
+    </protocols>
+    <clientTest>false</clientTest>
+  </service>
+  <service>
+    <wsdl>http://www.strikeiron.com/WebServices/dataenhancement.asmx?WSDL</wsdl>
+    <name>dataenhancementTest</name>
+    <serverType>Microsoft-IIS/6.0 # ASP.NET</serverType>
+    <protocols>
+      <protocol>Soap</protocol>
+    </protocols>
+    <clientTest>false</clientTest>
+  </service>
+  <service>
+    <wsdl>http://server.dotnetisp.com/webservices/dotnetisp/ville.asmx?WSDL</wsdl>
+    <name>villeTest</name>
+    <serverType>Microsoft-IIS/5.0 # ASP.NET</serverType>
+    <protocols>
+      <protocol>Soap</protocol>
+    </protocols>
+    <clientTest>false</clientTest>
+  </service>
+  <service>
+    <wsdl>http://webservices.wolfram.com/services/Integrator/Integrate.m?wsdl</wsdl>
+    <name>IntegrateTest</name>
+    <serverType>Apache Coyote/1.0 # </serverType>
+    <protocols>
+      <protocol>Soap</protocol>
+    </protocols>
+    <clientTest>false</clientTest>
+  </service>
+  <service>
+    <wsdl>http://www.javaportal.it/kservices/JIPCodice?wsdl</wsdl>
+    <name>JIPCodiceTest</name>
+    <serverType>Apache-AdvancedExtranetServer/1.3.26 (Mandrake Linux/6.1mdk) mod_jk/1.2.1 auth_ldap/1.6.0 mod_ssl/2.8.10 OpenSSL/0.9.6g sxnet/1.2.4 PHP/4.2.3 # </serverType>
+    <protocols>
+      <protocol>Soap</protocol>
+    </protocols>
+    <clientTest>false</clientTest>
+  </service>
+  <service>
+    <wsdl>http://www.strikeiron.com/WebServices/datageneration.asmx?WSDL</wsdl>
+    <name>datagenerationTest</name>
+    <serverType>Microsoft-IIS/6.0 # ASP.NET</serverType>
+    <protocols>
+      <protocol>Soap</protocol>
+    </protocols>
+    <clientTest>false</clientTest>
+  </service>
+  <service>
+    <wsdl>http://localhost:8080/DuplicateArrayTest.asmx?wsdl</wsdl>
+    <name>DuplicateArrayTestTest</name>
+    <serverType>Mono-XSP Server/0.13.0.0 128 # Mono</serverType>
+    <protocols>
+      <protocol>Soap</protocol>
+    </protocols>
+    <clientTest>true</clientTest>
+  </service>
+  <service>
+    <wsdl>http://localhost:8080/SessionCounter.asmx?wsdl</wsdl>
+    <name>SessionCounterTest</name>
+    <serverType>Mono-XSP Server/0.13.0.0 128 # Mono</serverType>
+    <protocols>
+      <protocol>Soap</protocol>
+      <protocol>HttpGet</protocol>
+      <protocol>HttpPost</protocol>
+    </protocols>
+    <clientTest>true</clientTest>
   </service>
 </services>

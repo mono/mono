@@ -5,7 +5,7 @@ using System;
 using NUnit.Framework;
 using IncludeTestTests.Soap;
 
-namespace IncludeTestTests
+namespace Localhost.IncludeTestTests
 {
 	[TestFixture]
 	public class IncludeTestTest: WebServiceTest
