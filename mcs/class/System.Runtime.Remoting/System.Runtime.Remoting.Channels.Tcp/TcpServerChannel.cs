@@ -23,6 +23,7 @@ namespace System.Runtime.Remoting.Channels.Tcp
 		string name = "tcp";
 		string host;
 		int priority = 1;
+		IPAddress bindAddress = IPAddress.Any;
 		Thread server_thread = null;
 		TcpListener listener;
 		TcpServerTransportSink sink;
@@ -32,7 +33,8 @@ namespace System.Runtime.Remoting.Channels.Tcp
 		
 		void Init (IServerChannelSinkProvider serverSinkProvider) 
 		{
-			if (serverSinkProvider == null) {
+			if (serverSinkProvider == null) 
+			{
 				serverSinkProvider = new BinaryServerFormatterSinkProvider ();
 			}
 
@@ -60,7 +62,7 @@ namespace System.Runtime.Remoting.Channels.Tcp
 			IServerChannelSink next_sink = ChannelServices.CreateServerChannelSinkChain (serverSinkProvider, this);
 			sink = new TcpServerTransportSink (next_sink);
 			
-			listener = new TcpListener (port);
+			listener = new TcpListener(bindAddress, port);
 			StartListening (null);
 		}
 		
@@ -73,7 +75,25 @@ namespace System.Runtime.Remoting.Channels.Tcp
 		public TcpServerChannel (IDictionary properties,
 					 IServerChannelSinkProvider serverSinkProvider)
 		{
-			port = Int32.Parse ((string)properties ["port"]);
+			foreach(DictionaryEntry property in properties)
+			{
+				switch((string)property.Key)
+				{
+					case "port":
+						port = Convert.ToInt32(property.Value);
+						break;
+					case "priority":
+						priority = Convert.ToInt32(property.Value);
+						break;
+					case "bindTo":
+						bindAddress = IPAddress.Parse((string)property.Value);
+						break;
+					case "rejectRemoteRequests":
+						if(Convert.ToBoolean(properties["rejectRemoteRequests"]))
+							bindAddress = IPAddress.Loopback;
+						break;
+				}
+			}			
 			Init (serverSinkProvider);
 		}
 
@@ -178,7 +198,8 @@ namespace System.Runtime.Remoting.Channels.Tcp
 		
 		public void StartListening (object data)
 		{
-			if (server_thread == null) {
+			if (server_thread == null) 
+			{
 				listener.Start ();
 				if (port == 0) {
 					port = ((IPEndPoint)listener.LocalEndpoint).Port;

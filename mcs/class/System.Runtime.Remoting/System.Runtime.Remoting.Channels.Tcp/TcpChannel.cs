@@ -34,11 +34,10 @@ namespace System.Runtime.Remoting.Channels.Tcp
 		{
 			_clientChannel = new TcpClientChannel(properties,clientSink);
 
-			string port = properties["port"] as string;
-			if (port != null && port != string.Empty)
-			{
+			if(properties["port"] != null)
+ 			{
 				_serverChannel = new TcpServerChannel(properties, serverSink);
-			}
+ 			}
 
 			_name = properties["name"] as string;
 		}

@@ -1,3 +1,9 @@
+2002-04-27  Lluis Sanchez Gual <lluis@ideary.com>
+
+	* TcpChannel.cs: The port property may not be an string. Fixed.
+	* TcpServerChannel.cs: Added some fixes by Jerome Laban. Implemented
+	  some channel properties.
+
 2002-04-03  Lluis Sanchez Gual <lluis@ideary.com>
 
 	* TcpMessageIO.cs: Changed header format to match MS.NET. Based on the patch
