@@ -133,8 +133,7 @@ namespace System.Runtime.Serialization.Formatters.Soap {
 			_xmlWriter = xmlWriter;
 			_assemblyFormat = assemblyFormat;
 			_prefixNumber = 1;
-			Type elementType;
-			elementType = typeof(string);
+			//Type elementType = typeof(string);
 			if(typeFormat == FormatterTypeStyle.XsdString)
 			{
 				elementString = new Element("xsd", "string", XmlSchema.Namespace);

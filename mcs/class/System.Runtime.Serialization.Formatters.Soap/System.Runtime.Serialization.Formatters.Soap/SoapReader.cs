@@ -522,7 +522,6 @@ namespace System.Runtime.Serialization.Formatters.Soap {
 			Type currentType = obj.GetType();
 			TypeMetadata tm = GetTypeMetadata (currentType);
 
-			int objDepth = xmlReader.Depth;
 			object[] data = new object[tm.MemberInfos.Length];
 			xmlReader.Read();
 			for(int i = 0; i < tm.MemberInfos.Length; i++)
