@@ -15,6 +15,7 @@ using System.Reflection;
 using System.Reflection.Emit;
 using System.Diagnostics;
 using System.Xml;
+using Microsoft.VisualBasic;
 
 namespace Mono.CSharp {
 
@@ -141,6 +142,12 @@ namespace Mono.CSharp {
 		// The default type checking state
 		//
 		static public bool StricterTypeChecking = false;
+
+		//
+		// The default character comparison mode
+		//
+
+		static public CompareMethod StringComparisonMode = CompareMethod.Binary;
 		
 		static string MakeFQN (string nsn, string name)
 		{

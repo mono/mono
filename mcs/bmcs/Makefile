@@ -28,7 +28,7 @@ mb-parser.cs: mb-parser.jay $(topdir)/jay/skeleton.cs
 include ../build/executable.make
 
 bmcs.exe: mb-parser.cs
-	gmcs    -d:NET_1_1 -d:ONLY_1_1 -debug /target:exe /out:bmcs.exe mb-parser.cs  @bmcs.exe.sources -nowarn:219 -nowarn:162
+	gmcs    -d:NET_1_1 -d:ONLY_1_1 -debug /target:exe /out:bmcs.exe /r:Microsoft.VisualBasic.dll mb-parser.cs  @bmcs.exe.sources -nowarn:219 -nowarn:162
 
 winstall: all
 	cp bmcs.exe  $(prefix)/lib/mono/2.0/

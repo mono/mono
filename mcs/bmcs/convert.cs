@@ -572,9 +572,9 @@ namespace Mono.CSharp {
 				// From decimal to float, double
 				//
 				if (real_target_type == TypeManager.double_type)
-					return new ImplicitInvocation (ec, "System", "Convert", "ToDouble", loc, expr);	
+					return new HelperMethodInvocation (ec, loc, TypeManager.double_type, TypeManager.convert_to_double_decimal, expr);	
 				if (real_target_type == TypeManager.float_type)
-					return new ImplicitInvocation (ec, "System", "Convert" ,"ToSingle", loc, expr);	
+					return new HelperMethodInvocation (ec, loc, TypeManager.float_type, TypeManager.convert_to_single_decimal, expr);	
 			}
 
 			return null;
@@ -1450,26 +1450,26 @@ namespace Mono.CSharp {
 			Type const_expr_type = const_expr.Type;
 			Location loc = const_expr.Location;
 
+			if (target_type == TypeManager.byte_type){
+				if (const_expr_type == TypeManager.short_type ||
+					const_expr_type == TypeManager.int32_type ||
+					const_expr_type == TypeManager.int64_type)
+						return const_expr.ToByte (loc);
+			}
+
 			if (target_type == TypeManager.short_type){
-				if (const_expr_type == TypeManager.byte_type)
-					return const_expr.ToShort (loc);
+				if (const_expr_type == TypeManager.int32_type ||
+					const_expr_type == TypeManager.int64_type)
+						return const_expr.ToShort (loc);
 			}
 
 			if (target_type == TypeManager.int32_type){
-				if (const_expr_type == TypeManager.byte_type ||
-					const_expr_type == TypeManager.short_type)
+				if (const_expr_type == TypeManager.int64_type)
 					return const_expr.ToInt (loc);
 			} 
 
-			if (target_type == TypeManager.int64_type){
-				if (const_expr_type == TypeManager.byte_type ||
-					const_expr_type == TypeManager.short_type ||
-					const_expr_type == TypeManager.int32_type)
-					return const_expr.ToLong (loc);
-			}
-
-			if (target_type == TypeManager.double_type) {
-				if (const_expr_type == TypeManager.float_type)
+			if (target_type == TypeManager.float_type) {
+				if (const_expr_type == TypeManager.double_type)
 					return const_expr.ToDouble (loc);
 			}
 			
@@ -1774,13 +1774,13 @@ namespace Mono.CSharp {
 				// From decimal to byte, short, int, long
 				//
 				if (real_target_type == TypeManager.byte_type)
-					return new ImplicitInvocation (ec, "System", "Convert" , "ToByte", loc, expr);	
+					return new HelperMethodInvocation (ec, loc, TypeManager.byte_type, TypeManager.convert_to_byte_decimal, expr);	
 				if (real_target_type == TypeManager.short_type)
-					return new ImplicitInvocation (ec, "System", "Convert", "ToInt16", loc, expr);	
+					return new HelperMethodInvocation (ec, loc, TypeManager.short_type, TypeManager.convert_to_int16_decimal, expr);	
 				if (real_target_type == TypeManager.int32_type)
-					return new ImplicitInvocation (ec, "System", "Convert", "ToInt32", loc, expr);	
+					return new HelperMethodInvocation (ec, loc, TypeManager.int32_type, TypeManager.convert_to_int32_decimal, expr);	
 				if (real_target_type == TypeManager.int64_type)
-					return new ImplicitInvocation (ec, "System", "Convert", "ToInt64", loc, expr);	
+					return new HelperMethodInvocation (ec, loc, TypeManager.int64_type, TypeManager.convert_to_int64_decimal, expr);	
 			} 
 
 			return null;
@@ -1816,7 +1816,7 @@ namespace Mono.CSharp {
 				if (real_target_type == TypeManager.double_type)
 					return new BooleanToNumericCast (expr, target_type, OpCodes.Conv_R8);
 				if (real_target_type == TypeManager.decimal_type) {
-					return new ImplicitInvocation (ec, "DecimalType", "FromBoolean", loc, expr);
+					return new HelperMethodInvocation (ec, expr.Location, TypeManager.decimal_type, TypeManager.msvbcs_decimaltype_from_boolean, expr);
 				}
 			} if (real_target_type == TypeManager.bool_type) {
 
@@ -1833,7 +1833,7 @@ namespace Mono.CSharp {
 					expr_type == TypeManager.double_type)
 						return new NumericToBooleanCast (expr, expr_type);
 				if (expr_type == TypeManager.decimal_type) {
-					return new ImplicitInvocation (ec, "System", "Convert", "ToBoolean", loc, expr);
+					return new HelperMethodInvocation (ec, expr.Location, TypeManager.bool_type, TypeManager.convert_to_boolean_decimal, expr);
 				}
 			}
 
@@ -1856,7 +1856,7 @@ namespace Mono.CSharp {
 				// From char to string
 				//
 				if (expr_type == TypeManager.char_type)
-					return new ImplicitInvocation (ec, "StringType", "FromChar", loc, expr);
+					return new HelperMethodInvocation (ec, expr.Location, TypeManager.string_type, TypeManager.msvbcs_stringtype_from_char, expr);
 			}
 
 			if(expr_type.IsArray && (expr_type.GetElementType() == TypeManager.char_type)) {
@@ -1889,28 +1889,28 @@ namespace Mono.CSharp {
 				// float, double, decimal and date 
 				//
 
-				if (real_target_type.IsArray && (real_target_type.GetElementType() == TypeManager.char_type))
-					return new ImplicitInvocation (ec, "CharArrayType", "FromString", loc, expr);
+//				if (real_target_type.IsArray && (real_target_type.GetElementType() == TypeManager.char_type))
+//					return new HelperMethodInvocation (ec, loc, TypeManager.char_array_type, TypeManager.msvbcs_char_array_type_from_string, loc, expr);
 				if (real_target_type == TypeManager.bool_type)
-					return new ImplicitInvocation (ec, "BooleanType", "FromString", loc, expr);
+					return new HelperMethodInvocation (ec, loc, TypeManager.bool_type, TypeManager.msvbcs_booleantype_from_string, expr);
 				if (real_target_type == TypeManager.byte_type)
-					return new ImplicitInvocation (ec, "ByteType", "FromString", loc, expr);
+					return new HelperMethodInvocation (ec, loc, TypeManager.byte_type, TypeManager.msvbcs_bytetype_from_string, expr);
 				if (real_target_type == TypeManager.short_type)
-					return new ImplicitInvocation (ec, "ShortType", "FromString", loc, expr);
+					return new HelperMethodInvocation (ec, loc, TypeManager.short_type, TypeManager.msvbcs_shorttype_from_string, expr);
 				if (real_target_type == TypeManager.char_type)
-					return new ImplicitInvocation (ec, "CharType", "FromString", loc, expr);
+					return new HelperMethodInvocation (ec, loc, TypeManager.char_type, TypeManager.msvbcs_chartype_from_string, expr);
 				if (real_target_type == TypeManager.int32_type)
-					return new ImplicitInvocation (ec, "IntegerType", "FromString", loc, expr);
+					return new HelperMethodInvocation (ec, loc, TypeManager.int32_type, TypeManager.msvbcs_integertype_from_string, expr);
 				if (real_target_type == TypeManager.int64_type)
-					return new ImplicitInvocation (ec, "LongType", "FromString", loc, expr);
+					return new HelperMethodInvocation (ec, loc, TypeManager.int64_type, TypeManager.msvbcs_longtype_from_string, expr);
 				if (real_target_type == TypeManager.float_type)
-					return new ImplicitInvocation (ec, "SingleType", "FromString", loc, expr);
+					return new HelperMethodInvocation (ec, loc, TypeManager.float_type, TypeManager.msvbcs_singletype_from_string, expr);
 				if (real_target_type == TypeManager.double_type)
-					return new ImplicitInvocation (ec, "DoubleType", "FromString", loc, expr);
+					return new HelperMethodInvocation (ec, loc, TypeManager.double_type, TypeManager.msvbcs_doubletype_from_string, expr);
 				if (real_target_type == TypeManager.decimal_type)
-					return new ImplicitInvocation (ec, "DecimalType", "FromString", loc, expr);
+					return new HelperMethodInvocation (ec, loc, TypeManager.decimal_type, TypeManager.msvbcs_decimaltype_from_string, expr);
 				if (real_target_type == TypeManager.date_type)
-					return new ImplicitInvocation (ec, "DateType", "FromString", loc, expr);
+					return new HelperMethodInvocation (ec, loc, TypeManager.date_type, TypeManager.msvbcs_datetype_from_string, expr);
 			} if (real_target_type == TypeManager.string_type) {
 
 				//
@@ -1920,23 +1920,23 @@ namespace Mono.CSharp {
 				//
 
 				if (expr_type == TypeManager.bool_type)
-					return new ImplicitInvocation (ec, "StringType", "FromBoolean", loc, expr);
+					return new HelperMethodInvocation (ec, loc, TypeManager.string_type, TypeManager.msvbcs_stringtype_from_boolean, expr);
 				if (expr_type == TypeManager.byte_type)
-					return new ImplicitInvocation (ec, "StringType", "FromByte", loc, expr);
+					return new HelperMethodInvocation (ec, loc, TypeManager.string_type, TypeManager.msvbcs_stringtype_from_byte, expr);
 				if (expr_type == TypeManager.short_type)
-					return new ImplicitInvocation (ec, "StringType", "FromShort", loc, expr);
+					return new HelperMethodInvocation (ec, loc, TypeManager.string_type, TypeManager.msvbcs_stringtype_from_short, expr);
 				if (expr_type == TypeManager.int32_type)
-					return new ImplicitInvocation (ec, "StringType", "FromInteger", loc, expr);
+					return new HelperMethodInvocation (ec, loc, TypeManager.string_type, TypeManager.msvbcs_stringtype_from_integer, expr);
 				if (expr_type == TypeManager.int64_type)
-					return new ImplicitInvocation (ec, "StringType", "FromLong", loc, expr);
+					return new HelperMethodInvocation (ec, loc, TypeManager.string_type, TypeManager.msvbcs_stringtype_from_long, expr);
 				if (expr_type == TypeManager.float_type)
-					return new ImplicitInvocation (ec, "StringType", "FromSingle", loc, expr);
+					return new HelperMethodInvocation (ec, loc, TypeManager.string_type, TypeManager.msvbcs_stringtype_from_single, expr);
 				if (expr_type == TypeManager.double_type)
-					return new ImplicitInvocation (ec, "StringType", "FromDouble", loc, expr);
+					return new HelperMethodInvocation (ec, loc, TypeManager.string_type, TypeManager.msvbcs_stringtype_from_double, expr);
 				if (expr_type == TypeManager.decimal_type)
-					return new ImplicitInvocation (ec, "StringType", "FromDecimal", loc, expr);
+					return new HelperMethodInvocation (ec, loc, TypeManager.string_type, TypeManager.msvbcs_stringtype_from_decimal, expr);
 				if (expr_type == TypeManager.date_type)
-					return new ImplicitInvocation (ec, "StringType", "FromDate", loc, expr);
+					return new HelperMethodInvocation (ec, loc, TypeManager.string_type, TypeManager.msvbcs_stringtype_from_date, expr);
 			}
 
 			return null;

@@ -207,9 +207,9 @@ namespace Mono.CSharp
 			keywords.Add ("integer", Token.INTEGER);
 			keywords.Add ("interface", Token.INTERFACE);
 			keywords.Add ("is", Token.IS);
-			keywords.Add ("let ", Token.LET ); // An unused VB.NET keyword
-			keywords.Add ("lib ", Token.LIB );
-			keywords.Add ("like ", Token.LIKE );
+			keywords.Add ("let", Token.LET ); // An unused VB.NET keyword
+			keywords.Add ("lib", Token.LIB );
+			keywords.Add ("like", Token.LIKE );
 			keywords.Add ("long", Token.LONG);
 			keywords.Add ("loop", Token.LOOP);
 			keywords.Add ("me", Token.ME);

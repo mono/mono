@@ -1,3 +1,38 @@
+2005-04-02  Jambunathan K  <kjambunathan.devel@gmail.com>
+
+	* Makefile: Added '/r:Microsoft.VisualBasic.dll' to the compile
+	command line.
+
+	* driver.cs (UnixParseOption, CSCParseOption): Added
+	'/optioncompare:[text|binary]' command line option.
+
+	* rootcontext.cs (StringComparisonMode): Added. Keeps track of the
+	'/optioncompare:' command line option.
+
+	* typemanager.cs (InitVisualBasicHelperTypes,
+	InitVisualBasicCodeHelpers): New routines that preload frequently
+	used types and helper methods available in
+	Microsoft.Visualbasic.dll. 
+
+	(IsFixedNumericType, IsFloatingNumericType,IsNumericType): New
+	VB.NET specific helper routines. Added in anticipation of a future
+	use.
+	
+	* ecore.cs (HelperMethodInvocation): Added. Implements the same
+	functionality as the earlier vaguely named class
+	'ImplicitInvocation'. This class uses the 'type cache' of
+	Microsoft.VisualBasic helper methods now available in the
+	TypeManager.
+
+	* convert.cs (WideningConstantConversions): Reimplemented. The
+	earlier implementation was completely topsy-turvy.  Propagated the
+	changes relating to the introduction of 'HelperMethodInvocation'.
+
+	* mb-parser.jay: Added rule and action for 'Like' expression.
+
+	* mb-tokenizer.cs (keywords): Cleaned up the extra space in the
+	'let', 'lib' and 'like' entries.
+
 2005-03-26  Jambunathan K  <kjambunathan.devel@gmail.com>
 
 	* constant.cs: Added conversions between various constants

@@ -101,6 +101,31 @@ public partial class TypeManager {
 	static public Type date_type;
 
 	//
+	// Used with VB.NET
+	//
+	static public Type convert_type;
+	static public Type math_type;
+
+	//
+	// Type cache of helper classes in Microsoft.VisualBasic.dll
+	//
+
+	static public Type msvbcs_boolean_type;
+	static public Type msvbcs_byte_type;
+	static public Type msvbcs_short_type;
+	static public Type msvbcs_integer_type;
+	static public Type msvbcs_long_type;
+	static public Type msvbcs_decimal_type;
+	static public Type msvbcs_single_type;
+	static public Type msvbcs_double_type;
+	static public Type msvbcs_string_type;
+	static public Type msvbcs_char_type;
+	static public Type msvbcs_chararray_type;
+	static public Type msvbcs_date_type;
+
+	static public Type msvbcs_comparemethod_type;
+
+	//
 	// Unlike C#, VB.NET doesn't understand "signed byte",
 	// "unsigned short" and "unsigned int" as primitive types. The
 	// NotDefinedAsPrimitiveType just exists to accomodate this fact.
@@ -231,9 +256,47 @@ public partial class TypeManager {
 	static public ConstructorInfo decimal_constant_attribute_ctor;
 
 	//
-	// VB.NET specific
+	// Type cache of helper methods in Microsoft.VisualBasic.dll
 	//
+	static public MethodInfo convert_to_byte_decimal;
+	static public MethodInfo convert_to_int16_decimal;
+	static public MethodInfo convert_to_int32_decimal;
+	static public MethodInfo convert_to_int64_decimal;
+	static public MethodInfo convert_to_single_decimal;
+	static public MethodInfo convert_to_double_decimal;
+	static public MethodInfo convert_to_boolean_decimal;
 
+	static public MethodInfo decimal_compare_decimal_decimal;
+	static public MethodInfo datetime_compare_datetime_datetime;
+	static public MethodInfo math_round_double;
+
+	static public MethodInfo msvbcs_booleantype_from_string;
+	static public MethodInfo msvbcs_bytetype_from_string;
+	static public MethodInfo msvbcs_shorttype_from_string; 
+	static public MethodInfo msvbcs_integertype_from_string;
+	static public MethodInfo msvbcs_longtype_from_string;
+	static public MethodInfo msvbcs_decimaltype_from_string;
+	static public MethodInfo msvbcs_singletype_from_string;
+	static public MethodInfo msvbcs_doubletype_from_string; 
+	static public MethodInfo msvbcs_chartype_from_string;
+	static public MethodInfo msvbcs_datetype_from_string;
+
+	static public MethodInfo msvbcs_stringtype_from_boolean;
+	static public MethodInfo msvbcs_stringtype_from_byte;
+	static public MethodInfo msvbcs_stringtype_from_short;
+	static public MethodInfo msvbcs_stringtype_from_integer;
+	static public MethodInfo msvbcs_stringtype_from_long;
+	static public MethodInfo msvbcs_stringtype_from_decimal;
+	static public MethodInfo msvbcs_stringtype_from_single;
+	static public MethodInfo msvbcs_stringtype_from_double; 
+	static public MethodInfo msvbcs_stringtype_from_date;
+	static public MethodInfo msvbcs_stringtype_from_char;
+
+	static public MethodInfo msvbcs_decimaltype_from_boolean;
+	
+	static public MethodInfo msvbcs_stringtype_strcmp_string_string_boolean;
+	static public MethodInfo msvbcs_stringtype_strlike_string_string_comparemethod;
+		
 	static public ConstructorInfo void_datetime_ctor_ticks_arg;
 	
 	// <remarks>
@@ -1164,7 +1227,9 @@ public partial class TypeManager {
 		//
 		// VB.NET Specific
 		//
+		convert_type = CoreLookupType ("System.Convert");
 		date_type  = CoreLookupType ("System.DateTime");
+		math_type = CoreLookupType ("System.Math");
 
 		multicast_delegate_type = CoreLookupType ("System.MulticastDelegate");
 		delegate_type           = CoreLookupType ("System.Delegate");
@@ -1326,6 +1391,30 @@ public partial class TypeManager {
 		//
 		anonymous_method_type = typeof (AnonymousMethod);
 		null_type = typeof (NullType);
+
+		InitVisualBasicHelperTypes ();
+	}
+
+	//
+	// This method preloads helper types in Microsoft.VisualBasic.dll for later use
+	//
+	public static void InitVisualBasicHelperTypes ()
+	{
+		msvbcs_boolean_type = CoreLookupType ("Microsoft.VisualBasic.CompilerServices.BooleanType");
+		msvbcs_byte_type = CoreLookupType ("Microsoft.VisualBasic.CompilerServices.ByteType");
+		msvbcs_short_type = CoreLookupType ("Microsoft.VisualBasic.CompilerServices.ShortType");
+		msvbcs_integer_type = CoreLookupType ("Microsoft.VisualBasic.CompilerServices.IntegerType");
+		msvbcs_long_type = CoreLookupType ("Microsoft.VisualBasic.CompilerServices.LongType");
+		msvbcs_decimal_type = CoreLookupType ("Microsoft.VisualBasic.CompilerServices.DecimalType");
+		msvbcs_single_type = CoreLookupType ("Microsoft.VisualBasic.CompilerServices.SingleType");
+		msvbcs_double_type = CoreLookupType ("Microsoft.VisualBasic.CompilerServices.DoubleType");
+
+		msvbcs_char_type = CoreLookupType ("Microsoft.VisualBasic.CompilerServices.CharType");
+		msvbcs_chararray_type = CoreLookupType ("Microsoft.VisualBasic.CompilerServices.CharArrayType");
+		msvbcs_date_type = CoreLookupType ("Microsoft.VisualBasic.CompilerServices.DateType");
+		msvbcs_string_type = CoreLookupType ("Microsoft.VisualBasic.CompilerServices.StringType");
+
+		msvbcs_comparemethod_type = CoreLookupType ("Microsoft.VisualBasic.CompareMethod");
 	}
 
 	//
@@ -1373,6 +1462,39 @@ public partial class TypeManager {
 
 		delegate_remove_delegate_delegate = GetMethod (
 				delegate_type, "Remove", delegate_delegate);
+
+		//
+		// VB.NET specific
+		//
+
+		Type [] decimal_arg = { decimal_type };
+		convert_to_byte_decimal = GetMethod (
+				convert_type, "ToByte", decimal_arg);
+		convert_to_int16_decimal = GetMethod (
+				convert_type, "ToInt16", decimal_arg);
+		convert_to_int32_decimal = GetMethod (
+				convert_type, "ToInt32", decimal_arg);
+		convert_to_int64_decimal = GetMethod (
+				convert_type, "ToInt64", decimal_arg);
+		convert_to_single_decimal = GetMethod (
+				convert_type, "ToSingle", decimal_arg);
+		convert_to_double_decimal = GetMethod (
+				convert_type, "ToDouble", decimal_arg);
+		convert_to_boolean_decimal = GetMethod (
+				convert_type, "ToBoolean", decimal_arg);
+
+		Type [] decimal_decimal = { decimal_type, decimal_type };
+		decimal_compare_decimal_decimal = GetMethod (
+				decimal_type, "Compare", decimal_decimal);
+
+		Type [] datetime_datetime = { date_type, date_type };
+		datetime_compare_datetime_datetime = GetMethod (
+				date_type, "Compare", datetime_datetime);
+
+		Type [] double_arg = { double_type };
+		math_round_double = GetMethod (
+				math_type, "Round", double_arg);
+		
 
 		//
 		// Void arguments
@@ -1475,6 +1597,80 @@ public partial class TypeManager {
 		object_ctor = GetConstructor (object_type, void_arg);
 
 		InitGenericCodeHelpers ();
+		InitVisualBasicCodeHelpers ();
+	}
+
+
+	//
+	// This method preloads  helper methods that are used by the VB.NET compiler
+	//
+	public static void InitVisualBasicCodeHelpers ()
+	{
+		Type [] boolean_arg = { bool_type };
+		Type [] byte_arg = { byte_type };
+		Type [] short_arg = { short_type };
+		Type [] integer_arg = { int32_type };
+		Type [] long_arg = { int64_type };
+		Type [] decimal_arg = { decimal_type };
+		Type [] single_arg = { float_type };
+		Type [] double_arg = { double_type };
+		Type [] char_arg = { char_type };
+		Type [] string_arg = { string_type };
+		Type [] date_arg = { date_type };
+		
+		msvbcs_booleantype_from_string = GetMethod (
+			msvbcs_boolean_type, "FromString", string_arg);
+		msvbcs_bytetype_from_string = GetMethod (
+			msvbcs_byte_type, "FromString", string_arg);
+		msvbcs_shorttype_from_string = GetMethod (
+			msvbcs_short_type, "FromString", string_arg);
+		msvbcs_integertype_from_string = GetMethod (
+			msvbcs_integer_type, "FromString", string_arg);
+		msvbcs_longtype_from_string = GetMethod (
+			msvbcs_long_type, "FromString", string_arg);
+		msvbcs_decimaltype_from_string = GetMethod (
+			msvbcs_decimal_type, "FromString", string_arg);
+		msvbcs_singletype_from_string = GetMethod (
+			msvbcs_single_type, "FromString", string_arg);
+		msvbcs_doubletype_from_string = GetMethod (
+			msvbcs_double_type, "FromString", string_arg);
+		msvbcs_chartype_from_string = GetMethod (
+			msvbcs_char_type, "FromString", string_arg);
+		msvbcs_datetype_from_string = GetMethod (
+			msvbcs_date_type, "FromString", string_arg);
+
+		msvbcs_stringtype_from_boolean = GetMethod (
+			msvbcs_string_type, "FromBoolean", boolean_arg);
+		msvbcs_stringtype_from_byte = GetMethod (
+			msvbcs_string_type, "FromByte", byte_arg);
+		msvbcs_stringtype_from_short = GetMethod (
+			msvbcs_string_type, "FromShort", short_arg);
+		msvbcs_stringtype_from_integer = GetMethod (
+			msvbcs_string_type, "FromInteger", integer_arg);
+		msvbcs_stringtype_from_long = GetMethod (
+			msvbcs_string_type, "FromLong", long_arg);
+		msvbcs_stringtype_from_decimal = GetMethod (
+			msvbcs_string_type, "FromDecimal", decimal_arg);
+		msvbcs_stringtype_from_single = GetMethod (
+			msvbcs_string_type, "FromSingle", single_arg);
+		msvbcs_stringtype_from_double = GetMethod (
+			msvbcs_string_type, "FromDouble", double_arg);
+		msvbcs_stringtype_from_date = GetMethod (
+			msvbcs_string_type, "FromDate", date_arg);
+		msvbcs_stringtype_from_char = GetMethod (
+			msvbcs_string_type, "FromChar", char_arg);
+		
+		msvbcs_decimaltype_from_boolean = GetMethod (
+			msvbcs_decimal_type, "FromBoolean", boolean_arg);
+
+		Type [] string_string_boolean_arg = { string_type, string_type, bool_type };
+		msvbcs_stringtype_strcmp_string_string_boolean = GetMethod (
+			msvbcs_string_type, "StrCmp", string_string_boolean_arg);
+
+		Type [] string_string_comparemethod_arg = { string_type, string_type, msvbcs_comparemethod_type };
+		msvbcs_stringtype_strlike_string_string_comparemethod = GetMethod (
+			msvbcs_string_type, "StrLike", string_string_comparemethod_arg);
+
 	}
 
 	const BindingFlags instance_and_static = BindingFlags.Static | BindingFlags.Instance;
@@ -1659,6 +1855,36 @@ public partial class TypeManager {
 			return true;
 		else
 			return false;
+	}
+
+	//
+	// The following three methods are used by the VB.NET compiler
+	// 
+
+	public static bool IsFixedNumericType (Type type)
+	{
+		if (type == byte_type || type == short_type ||
+		    type == int32_type || type == int64_type) 
+			return true;
+
+		return false;
+	}
+
+	public static bool IsFloatingNumericType (Type type)
+	{
+		if (type == decimal_type || 
+		    type == float_type || type == double_type)
+			return true;
+
+		return false;
+	}
+
+	public static bool IsNumericType (Type type)
+	{
+		if (IsFixedNumericType (type) || IsFloatingNumericType(type))
+			return true;
+
+		return false;
 	}
 
 	public static bool IsDelegateType (Type t)

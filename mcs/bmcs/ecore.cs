@@ -1500,33 +1500,27 @@ namespace Mono.CSharp {
 
 	
 	/// <summary> 
-	/// ImplicitInvocation of methods or delegates. Used by the
+	/// HelperMethodInvocation of methods or delegates. Used by the
 	/// VB.NET compiler specifically to emit calls to the
 	/// Microsoft.VisualBasic.CompilerServices helper routines
 	/// </summary>
 
-	public class ImplicitInvocation : Expression
+	public class HelperMethodInvocation : Expression
 	{
-		const string DEFAULT_NS_PREFIX = "Microsoft.VisualBasic.CompilerServices";
-
-		Expression child;
+		ArrayList args;
+		MethodInfo method;
 		
-		public ImplicitInvocation (EmitContext ec, string klass, string method, Location l, params Expression [] exprs) 
-			: this (ec, DEFAULT_NS_PREFIX, klass, method, l, exprs)
+		public HelperMethodInvocation (EmitContext ec,  Location l, Type return_type, MethodInfo method, params Expression [] exprs)
 		{
-		}
-
-		public ImplicitInvocation (EmitContext ec, string ns, string klass, string method, Location l, params Expression [] exprs)
-		{
-			ArrayList args = new ArrayList ();
-			string name = ns + "." + klass + "." + method;
-		
+			args = new ArrayList ();
 			foreach (Expression expr in exprs)
 				args.Add (new Argument (expr, Argument.AType.Expression));
 
-			child = new Invocation (StringToExpression (name, l), args, l).Resolve (ec);
-			eclass = child.eclass;
-			type = child.Type;
+
+			this.loc = l;
+			this.method = method;
+			type = return_type;
+			eclass = ExprClass.Value;
 		}
 
 		public override Expression DoResolve (EmitContext ec)
@@ -1536,7 +1530,8 @@ namespace Mono.CSharp {
 
 		public override void Emit (EmitContext ec)
 		{
-			child.Emit (ec);
+			Invocation.EmitArguments (ec, method, args, false, null);
+			ec.ig.Emit (OpCodes.Call, method);
 		}
 	}
 
@@ -2214,7 +2209,7 @@ namespace Mono.CSharp {
 	//
 	public class FloatingToFixedCast : ConvCast {
 		public FloatingToFixedCast (EmitContext ec, Expression child, Type return_type, Mode mode)
-			: base (ec, new ImplicitInvocation (ec, "System", "Math", "Round", child.Location, 
+			: base (ec, new HelperMethodInvocation (ec, child.Location, TypeManager.double_type, TypeManager.math_round_double,
 							    (child.Type == TypeManager.float_type) ? 
 							    new OpcodeCast (child, TypeManager.double_type, OpCodes.Conv_R8) : child), 
 				return_type, mode)

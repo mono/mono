@@ -4578,6 +4578,11 @@ relational_expression
 		$$ = new Binary (Binary.Operator.Is,
 			         (Expression) $1, (Expression) $3, lexer.Location);
 	  }
+	| relational_expression LIKE shift_expression
+	  {
+		$$ = new Binary (Binary.Operator.Like,
+			         (Expression) $1, (Expression) $3, lexer.Location);
+	  }
 	| TYPEOF shift_expression IS type
 	  {
                 $$ = new Is ((Expression) $2, (Expression) $4, lexer.Location);

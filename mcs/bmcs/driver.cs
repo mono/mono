@@ -20,6 +20,7 @@ namespace Mono.CSharp
 	using System.Text;
 	using System.Globalization;
 	using System.Xml;
+	using Microsoft.VisualBasic;
 
 	public enum Target {
 		Library, Exe, Module, WinExe
@@ -237,6 +238,7 @@ namespace Mono.CSharp
 				//
 				"   -removeintchecks[+|-]      Set default context to unchecked\n" +
 				"   -optionstrict[+|-]      Enables stricter type checking\n" +
+				"   -optioncompare:[text|binary] Specifies the default mode for character comparisons\n" +
 				
 				"\n" +
 				"Resources:\n" +
@@ -905,6 +907,23 @@ namespace Mono.CSharp
 			case "--optionstrict":
 				RootContext.StricterTypeChecking= true;
 				return true;
+
+			case "--optioncompare": 
+				if ((i + 1) >= args.Length){
+					Usage ();
+					Environment.Exit (1);
+				}
+
+				if (args [++i].Equals ("text"))
+					RootContext.StringComparisonMode = CompareMethod.Text;
+				else if (args[++i].Equals ("binary"))
+					RootContext.StringComparisonMode = CompareMethod.Binary;
+				else {
+					Report.Error (5, "Invalid argument to --optioncompare");
+					Environment.Exit (1);
+				}
+				
+				return true;
 				
 			}
 
@@ -1343,6 +1362,21 @@ namespace Mono.CSharp
 
 			case "/optionstrict-":
 				RootContext.StricterTypeChecking = false;
+				return true;
+
+			case "/optioncompare":
+				if (value == ""){
+					Report.Error (5, arg + " requires an argument");					
+					Environment.Exit (1);
+				}
+				if (value.Equals ("text"))
+					RootContext.StringComparisonMode = CompareMethod.Text;
+				else if (value.Equals ("binary"))
+					RootContext.StringComparisonMode = CompareMethod.Binary;
+				else {
+					Report.Error (5, "Invalid argument to /optioncompare");
+					Environment.Exit (1);
+				}
 				return true;
 
 			}
