@@ -144,5 +144,28 @@ namespace MonoTests.System.Data
 			drv.Row.CancelEdit ();
 			object o = drv ["col"];
 		}
+
+		[Test]
+		public void RowVersion1 ()
+		{
+			// I guess we could write better tests.
+			DataTable dt = new DataTable ("table");
+			dt.Columns.Add ("col");
+			dt.Rows.Add (new object [] {1});
+			DataView dv = new DataView (dt);
+			DataRowView drv = dv.AddNew ();
+			AssertEquals (DataRowVersion.Current, drv.RowVersion);
+			AssertEquals (DataRowVersion.Current, dv [0].RowVersion);
+			drv ["col"] = "mod";
+			AssertEquals (DataRowVersion.Current, drv.RowVersion);
+			AssertEquals (DataRowVersion.Current, dv [0].RowVersion);
+			dt.AcceptChanges ();
+			AssertEquals (DataRowVersion.Current, drv.RowVersion);
+			AssertEquals (DataRowVersion.Current, dv [0].RowVersion);
+			drv.EndEdit ();
+			dv [0].EndEdit ();
+			AssertEquals (DataRowVersion.Current, drv.RowVersion);
+			AssertEquals (DataRowVersion.Current, dv [0].RowVersion);
+		}
 	}
 }
