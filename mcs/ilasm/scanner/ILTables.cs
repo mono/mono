@@ -530,7 +530,7 @@ namespace Mono.ILASM {
                                 keywords ["alignment"] = new ILToken (Token.K_ALIGNMENT, "alignment");
                                 keywords ["nullref"] = new ILToken (Token.K_NULLREF, "nullref");
                                 keywords ["valuetype"] = new ILToken (Token.K_VALUETYPE, "valuetype");
-                                keywords ["Compilercontrolled"] = new ILToken (Token.K_COMPILERCONTROLLED, "Compilercontrolled");
+                                keywords ["compilercontrolled"] = new ILToken (Token.K_COMPILERCONTROLLED, "compilercontrolled");
                                 keywords ["reqsecobj"] = new ILToken (Token.K_REQSECOBJ, "reqsecobj");
                                 keywords ["enum"] = new ILToken (Token.K_ENUM, "enum");
                                 keywords ["object"] = new ILToken (Token.K_OBJECT, "object");

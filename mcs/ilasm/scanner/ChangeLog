@@ -1,3 +1,8 @@
+2003-09-16 Jackson Harper <jackson@latitudegeo.com>
+
+	* ILTables.cs: compilercontrolled is lowercase. I am guessing this
+	was an emacs introduced bug ;-).
+	
 2003-08-10 Jackson Harper <jackson@latitudegeo.com>
 
 	* StringHelper.cs: If an escape is not valid just use the \
