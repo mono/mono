@@ -1,3 +1,7 @@
+2001-08-17  Mike Kestner <mkestner@speakeasy.net>
+
+	* PointF.cs, Size.cs, SizeF.cs : New struct implementations.
+
 2001-08-16  Mike Kestner <mkestner@speakeasy.net>
 
 	* Point.cs : New. Implementation of System.Drawing.Point struct.
