@@ -12,6 +12,8 @@ using System.Globalization;
 namespace System {
 	
 	public struct Int32 : IComparable, IFormattable { //, IConvertible {
+		private static Type Type = typeof (int);
+		
 		public const int MaxValue = 0x7fffffff;
 		public const int MinValue = -2147483648;
 		
@@ -76,26 +78,21 @@ namespace System {
 
 		public string ToString (string format, IFormatProvider fp)
 		{
-			// TODO: use IFormatProvider.
+			string fmt;
+			NumberFormatInfo nfi;
 			
-			char[] ca = new char [20];
-			int i = 19;
-			int rem;
-
-			if (value < 0) {
-				ca [i] = '-';
-				value = -value;
-				i--;
+			fmt = (format == null) ? "G" : format;
+			
+			if (fp == null)
+				nfi = NumberFormatInfo.CurrentInfo;
+			else {
+				nfi = (NumberFormatInfo) fp.GetFormat (Type);
+				
+				if (nfi == null)
+					nfi = NumberFormatInfo.CurrentInfo;
 			}
-			
-			do {
-				rem = value % 10;
-				value = value / 10;
-				ca [i] = (char)('0' + rem);
-				i--;
-			} while (value > 0);
 
-			return new String (ca, i + 1, 19 - i);
+			return IntegerFormatter.NumberToString (fmt, nfi, value);
 		}
 
 		// =========== IConvertible Methods =========== //

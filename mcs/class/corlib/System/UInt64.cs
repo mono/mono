@@ -12,6 +12,8 @@ using System.Globalization;
 namespace System {
 	
 	public struct UInt64 : IComparable, IFormattable { //, IConvertible {
+		private static Type Type = typeof (ulong);
+
 		public const ulong MaxValue = 0xffffffffffffffff;
 		public const ulong MinValue = 0;
 		
@@ -82,8 +84,21 @@ namespace System {
 
 		public string ToString (string format, IFormatProvider fp)
 		{
-			// TODO: Implement me.
-			return "";
+			string fmt;
+			NumberFormatInfo nfi;
+			
+			fmt = (format == null) ? "G" : format;
+			
+			if (fp == null)
+				nfi = NumberFormatInfo.CurrentInfo;
+			else {
+				nfi = (NumberFormatInfo) fp.GetFormat (Type);
+				
+				if (nfi == null)
+					nfi = NumberFormatInfo.CurrentInfo;
+			}
+
+			return IntegerFormatter.NumberToString (fmt, nfi, value);
 		}
 
 		// =========== IConvertible Methods =========== //

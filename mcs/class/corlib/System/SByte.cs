@@ -12,6 +12,8 @@ using System.Globalization;
 namespace System {
 	
 	public struct SByte : IComparable, IFormattable { //, IConvertible {
+		public static Type Type = typeof (sbyte);
+
 		public const sbyte MinValue = -128;
 		public const sbyte MaxValue = 127;
 		
@@ -78,8 +80,21 @@ namespace System {
 
 		public string ToString (string format, IFormatProvider fp)
 		{
-			// TODO: Implement me.
-			return "";
+			string fmt;
+			NumberFormatInfo nfi;
+			
+			fmt = (format == null) ? "G" : format;
+			
+			if (fp == null)
+				nfi = NumberFormatInfo.CurrentInfo;
+			else {
+				nfi = (NumberFormatInfo) fp.GetFormat (Type);
+				
+				if (nfi == null)
+					nfi = NumberFormatInfo.CurrentInfo;
+			}
+
+			return IntegerFormatter.NumberToString (fmt, nfi, value);
 		}
 
 		// =========== ICovnertible Methods =========== //
