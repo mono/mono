@@ -1,3 +1,9 @@
+2004-06-09  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* StrongNameManager.cs: Fix ToString() when no verificationSettings
+	are present (used in sn -Vl).
+	* sn.cs: Fixed to match documentation.
+
 2004-06-08  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* AssemblyInfo.cs: Updated version number for post beta 2.

@@ -240,7 +240,7 @@ namespace Mono.Tools {
 					Console.WriteLine (" -Vx{0}\tRemove all exemptions entries", Environment.NewLine);
 					break;
 				case "csp":
-					Console.WriteLine ("CSP related options <2>");
+					Console.WriteLine ("CSP related options");
 					Console.WriteLine (" -d container{0}\tDelete the specified key container", Environment.NewLine);
 					Console.WriteLine (" -i keypair.snk container{0}\tImport the keypair from a SNK file into a CSP container", Environment.NewLine);
 					Console.WriteLine (" -pc container public.key{0}\tExport the public key from a CSP container to the specified file", Environment.NewLine);
@@ -268,14 +268,13 @@ namespace Mono.Tools {
 				default:
 					Console.WriteLine ("Help options");
 					Console.WriteLine (" -? | -h        \tShow this help screen about the tool");
-					Console.WriteLine (" -? | -h config \tConfiguration options (see strongname.xml)");
+					Console.WriteLine (" -? | -h config \tConfiguration options");
 					Console.WriteLine (" -? | -h csp    \tCrypto Service Provider (CSP) related options");
 					Console.WriteLine (" -? | -h convert\tFormat convertion options");
 					Console.WriteLine (" -? | -h sn     \tStrongName signing options");
 					break;
 			}
 			Console.WriteLine ("{0}<1> Currently not implemented in the tool", Environment.NewLine);
-			Console.WriteLine ("<2> Implemented in the tool but not in Mono{0}", Environment.NewLine);
 		}
 
 		[STAThread]
@@ -349,6 +348,9 @@ namespace Mono.Tools {
 					WriteToFile (args[i], CryptoConvert.ToCapiKeyBlob (sn.RSA, true));
 					if (!quiet)
 						Console.WriteLine ("A new strong name keypair has been generated in {0}", args [i]);
+					break;
+				case "-m":
+					Console.WriteLine ("Unimplemented option");
 					break;
 				case "-o":
 					byte[] infileD = ReadFromFile (args [i++]);

@@ -248,6 +248,11 @@ namespace Mono.Security {
 			StringBuilder sb = new StringBuilder ();
 			sb.Append ("Public Key Token\tAssemblies\t\tUsers");
 			sb.Append (Environment.NewLine);
+			if (tokens == null) {
+				sb.Append ("none");
+				return sb.ToString ();
+			}
+
 			foreach (DictionaryEntry token in tokens) {
 				sb.Append ((string)token.Key);
 				Element t = (Element) token.Value;
