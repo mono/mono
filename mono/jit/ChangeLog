@@ -1,3 +1,9 @@
+2001-09-15  Dietmar Maurer  <dietmar@ximian.com>
+
+	* x86.brg (stmt): don't emit unnecessary register moves
+
+	* testjit.c (tree_allocate_regs): free registers earlier
+
 2001-09-14  Dietmar Maurer  <dietmar@ximian.com>
 
 	* x86.brg: branch addresses are now resolved
