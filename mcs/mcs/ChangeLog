@@ -1,5 +1,17 @@
 2002-08-23  Martin Baulig  <martin@gnome.org>
 
+	* statement.cs (Block.AddChildVariableNames): New public method.
+	(Block.AddChildVariableName): Likewise.
+	(Block.IsVariableNameUsedInChildBlock): Likewise.
+	(Block.AddVariable): Check whether a variable name has already
+	been used in a child block.
+
+	* cs-parser.jay (declare_local_variables): Mark all variable names
+	from the current block as being used in a child block in the
+	implicit block.
+
+2002-08-23  Martin Baulig  <martin@gnome.org>
+
 	* codegen.cs (CodeGen.InitializeSymbolWriter): Abort if we can't
 	find the symbol writer.
 

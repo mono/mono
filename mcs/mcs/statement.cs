@@ -2418,10 +2418,7 @@ namespace Mono.CSharp {
 
 		public int ID {
 			get {
-				if (Implicit)
-					return Parent.ID;
-				else
-					return this_id;
+				return this_id;
 			}
 		}
 
@@ -2488,6 +2485,52 @@ namespace Mono.CSharp {
 			}
 		}
 
+		Hashtable child_variable_names;
+
+		// <summary>
+		//   Marks a variable with name @name as being used in a child block.
+		//   If a variable name has been used in a child block, it's illegal to
+		//   declare a variable with the same name in the current block.
+		// </summary>
+		public void AddChildVariableName (string name)
+		{
+			if (child_variable_names == null)
+				child_variable_names = new Hashtable ();
+
+			if (!child_variable_names.Contains (name))
+				child_variable_names.Add (name, true);
+		}
+
+		// <summary>
+		//   Marks all variables from block @block and all its children as being
+		//   used in a child block.
+		// </summary>
+		public void AddChildVariableNames (Block block)
+		{
+			if (block.Variables != null) {
+				foreach (string name in block.Variables.Keys)
+					AddChildVariableName (name);
+			}
+
+			foreach (Block child in block.children) {
+				if (child.Variables != null) {
+					foreach (string name in child.Variables.Keys)
+						AddChildVariableName (name);
+				}
+			}
+		}
+
+		// <summary>
+		//   Checks whether a variable name has already been used in a child block.
+		// </summary>
+		public bool IsVariableNameUsedInChildBlock (string name)
+		{
+			if (child_variable_names == null)
+				return false;
+
+			return child_variable_names.Contains (name);
+		}
+
 		// <summary>
 		//   This is used by non-static `struct' constructors which do not have an
 		//   initializer - in this case, the constructor must initialize all of the
@@ -2525,6 +2568,15 @@ namespace Mono.CSharp {
 				else
 					Report.Error (128, l, "A local variable `" + name + "' is already " +
 						      "defined in this scope");
+				return null;
+			}
+
+			if (IsVariableNameUsedInChildBlock (name)) {
+				Report.Error (136, l, "A local variable named `" + name + "' " +
+					      "cannot be declared in this scope since it would " +
+					      "give a different meaning to `" + name + "', which " +
+					      "is already used in a `child' scope to denote something " +
+					      "else");
 				return null;
 			}
 
