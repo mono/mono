@@ -1,3 +1,14 @@
+2004-03-31  Atsushi Enomoto <atsushi@ximian.com>
+
+	* Added XmlSchemaAssertion.cs.
+	* XmlSchemaTests.cs : now uses XmlSchemaAssertion.
+
+2004-01-03  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlSchemaTests.cs : fixed file path. Added more tests.
+	* added XmlSchemaCollectionTests.cs and XmlSchemaDatatypeTests.cs (the
+	  latter one's purpose overlaps with XmlSchemaBuiltInDatatypeTests ;)
+
 2003-12-17  David Sheldon <dave-mono@earth.li>
 
   * Added XmlSchemaBuiltInDatatypeTests.cs : Currently fails due to
