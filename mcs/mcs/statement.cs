@@ -215,14 +215,26 @@ namespace CIR {
 		}
 	}
 	
-	public struct VariableInfo {
+	public class VariableInfo {
 		public readonly string Type;
 		public LocalBuilder LocalBuilder ;
-
+		int idx;
+		
 		public VariableInfo (string type)
 		{
 			Type = type;
 			LocalBuilder = null;
+			idx = 0;
+		}
+
+		public int Idx {
+			get {
+				return idx;
+			}
+
+			set {
+				idx = value;
+			}
 		}
 	}
 		
@@ -340,24 +352,27 @@ namespace CIR {
 
 		public string GetVariableType (string name)
 		{
-			string type = null;
+			VariableInfo vi = GetVariableInfo (name);
 
-			if (variables != null) {
-				object temp;
-				temp = variables [name];
-				if (temp != null) {
-					VariableInfo vi = (VariableInfo) temp;
-					type = vi.Type;
-				}
-			}
-			
-			if (type != null)
-				return type;
-			else if (Parent != null)
-				return Parent.GetVariableType (name);
+			if (vi != null)
+				return vi.Type;
 			return null;
 		}
 
+		public VariableInfo GetVariableInfo (string name)
+		{
+			if (variables != null) {
+				object temp;
+				temp = variables [name];
+				return (VariableInfo) temp;
+			}
+
+			if (Parent != null)
+				return Parent.GetVariableInfo (name);
+
+			return null;
+		}
+		
 		// <summary>
 		//   True if the variable named @name has been defined
 		//   in this block
@@ -438,7 +453,8 @@ namespace CIR {
 			//
 			if (variables != null){
 				local_builders = new Hashtable ();
-
+				int count = 0;
+				
 				foreach (DictionaryEntry de in variables){
 					string name = (string) de.Key;
 					VariableInfo vi = (VariableInfo) de.Value;
@@ -449,6 +465,7 @@ namespace CIR {
 						continue;
 
 					vi.LocalBuilder = ig.DeclareLocal (t);
+					vi.Idx = count++;
 				}
 			}
 

@@ -1518,9 +1518,10 @@ primary_expression
 					$$ = new LocalVariableReference (current_block, name);
 			}
 			if (($$ == null) && (current_local_parameters != null)){
-				Parameter par = current_local_parameters.GetParameterByName (name);
+				int idx;
+				Parameter par = current_local_parameters.GetParameterByName (name, out idx);
 				if (par != null)
-					$$ = new ParameterReference (current_local_parameters, name);
+					$$ = new ParameterReference (current_local_parameters, idx, name);
 			}
 		}
 		if ($$ == null)

@@ -380,7 +380,12 @@ namespace CIR
 				context.CodeGen.AssemblyBuilder.SetEntryPoint (ep, k);
 			}
 			
-			context.CodeGen.Save (output_file);
+			context.CodeGen.Save (context.Report, output_file);
+
+			if (context.Report.Errors > 0){
+				error ("Compilation failed");
+				return;
+			}
 
 			notice ("Success");
 		}

@@ -127,14 +127,21 @@ namespace CIR {
 		// <summary>
 		//    Returns the paramenter information based on the name
 		// </summary>
-		public Parameter GetParameterByName (string name)
+		public Parameter GetParameterByName (string name, out int idx)
 		{
+			idx = 0;
+			
 			if (FixedParameters == null)
 				return null;
 
-			foreach (Parameter par in FixedParameters)
-				if (par.Name == name)
+			int i = 0;
+			foreach (Parameter par in FixedParameters){
+				i++;
+				if (par.Name == name){
+					idx = i;
 					return par;
+				}
+			}
 
 			return null;
 		}

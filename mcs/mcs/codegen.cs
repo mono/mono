@@ -43,9 +43,13 @@ namespace CIR {
 			}
 		}
 		
-		public void Save (string name)
+		public void Save (Report report, string name)
 		{
-			assembly_builder.Save (name);
+			try {
+				assembly_builder.Save (name);
+			} catch (System.IO.IOException io){
+				report.Error (16, "Coult not write to file `"+name+"', cause: " + io.Message);
+			}
 		}
 	}
 
@@ -100,19 +104,12 @@ namespace CIR {
 			}
 			
 			e.Emit (this);
-			
-			//
-			// Sample: for now we just load true on the stack
-			//
-			ig.Emit (OpCodes.Ldc_I4_1);
 		}
 
 		public void EmitExpression (Expression e)
 		{
-			//
-			// Sample: for now just load an integer on the stack
-			//
-			ig.Emit (OpCodes.Ldc_I4_1);
+			e.Resolve (parent);
+			e.Emit (this);     
 		}
 		
 		public void EmitIf (If s)
@@ -223,11 +220,12 @@ namespace CIR {
 		{
 			Expression e = s.Expr;
 
-			if (e is Invocation)
-				EmitInvocation ((Invocation) e);
-			else {
-				Console.WriteLine ("Unknown Expression type" + e);
-			}
+			Console.WriteLine ("Processing ExprStmt: " + e);
+
+			e.Resolve (parent);
+			e.Emit (this);
+
+			Console.WriteLine ("TODO: Maybe we need a pop here?");
 		}
 		
 		void EmitStatement (Statement s)

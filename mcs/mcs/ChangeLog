@@ -1,3 +1,34 @@
+2001-09-07  Miguel de Icaza  <miguel@ximian.com>
+
+	* expression.cs (ExprClassFromMemberInfo): Return FieldExpr and
+	PropertyExprs.
+	(FieldExpr, PropertyExprs): New resolved expressions.
+	(SimpleName::MemberStaticCheck): Perform static checks for access
+	to non-static fields on static methods. Maybe this should be
+	generalized for MemberAccesses. 
+	(SimpleName::ResolveSimpleName): More work on simple name
+	resolution. 
+
+	* cs-parser.jay (primary_expression/qualified_identifier): track
+	the parameter index.
+
+	* codegen.cs (CodeGen::Save): Catch save exception, report error.
+	(EmitContext::EmitBoolExpression): Chain to expression generation
+	instead of temporary hack.
+	(::EmitStatementExpression): Put generic expression code generation.
+
+	* assign.cs (Assign::Emit): Implement variable assignments to
+	local variables, parameters and fields.
+
+2001-09-06  Miguel de Icaza  <miguel@ximian.com>
+
+	* statement.cs (Block::GetVariableInfo): New method, returns the
+	VariableInfo for a variable name in a block.
+	(Block::GetVariableType): Implement in terms of GetVariableInfo
+
+	* literal.cs (IntLiteral::Emit, FloatLiteral::Emit,
+	DoubleLiteral::Emit, CharLiteral::Emit, BoolLiteral::Emit): Implement
+
 2001-09-06  Ravi Pratap  <ravi@ximian.com>
 
 	* cs-parser.jay (operator_declaration): Continue on my quest : update

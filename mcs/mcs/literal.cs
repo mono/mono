@@ -78,6 +78,7 @@ namespace CIR {
 
 		public override void Emit (EmitContext ec)
 		{
+			ec.ig.Emit (OpCodes.Ldnull);
 		}
 	}
 
@@ -105,6 +106,10 @@ namespace CIR {
 
 		public override void Emit (EmitContext ec)
 		{
+			if (val)
+				ec.ig.Emit (OpCodes.Ldc_I4_1);
+			else
+				ec.ig.Emit (OpCodes.Ldc_I4_0);
 		}
 	}
 
@@ -131,6 +136,7 @@ namespace CIR {
 
 		public override void Emit (EmitContext ec)
 		{
+			IntLiteral.EmitInt (ec.ig, c);
 		}
 	}
 
@@ -157,6 +163,61 @@ namespace CIR {
 
 		public override void Emit (EmitContext ec)
 		{
+			ILGenerator ig = ec.ig;
+
+			EmitInt (ig, i);
+		}
+
+		static public void EmitInt (ILGenerator ig, int i)
+		{
+			switch (i){
+			case -1:
+				ig.Emit (OpCodes.Ldc_I4_M1);
+				break;
+				
+			case 0:
+				ig.Emit (OpCodes.Ldc_I4_0);
+				break;
+				
+			case 1:
+				ig.Emit (OpCodes.Ldc_I4_1);
+				break;
+				
+			case 2:
+				ig.Emit (OpCodes.Ldc_I4_2);
+				break;
+				
+			case 3:
+				ig.Emit (OpCodes.Ldc_I4_3);
+				break;
+				
+			case 4:
+				ig.Emit (OpCodes.Ldc_I4_4);
+				break;
+				
+			case 5:
+				ig.Emit (OpCodes.Ldc_I4_5);
+				break;
+				
+			case 6:
+				ig.Emit (OpCodes.Ldc_I4_6);
+				break;
+				
+			case 7:
+				ig.Emit (OpCodes.Ldc_I4_7);
+				break;
+				
+			case 8:
+				ig.Emit (OpCodes.Ldc_I4_8);
+				break;
+
+			default:
+				if (i < 255)
+					ig.Emit (OpCodes.Ldc_I4_S, i);
+				else
+					ig.Emit (OpCodes.Ldc_I4, i);
+				break;
+			}
 		}
 	}
 
@@ -183,6 +244,7 @@ namespace CIR {
 
 		public override void Emit (EmitContext ec)
 		{
+			ec.ig.Emit (OpCodes.Ldc_R4, f);
 		}
 	}
 
@@ -209,6 +271,7 @@ namespace CIR {
 
 		public override void Emit (EmitContext ec)
 		{
+			ec.ig.Emit (OpCodes.Ldc_R8, d);
 		}
 	}
 

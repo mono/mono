@@ -77,11 +77,9 @@ namespace CIR {
 				// FIXME: Implement
 				return null;
 			} else if (mi is FieldInfo){
-				// FIXME: Implement
-				return null;
+				return new FieldExpr ((FieldInfo) mi);
 			} else if (mi is PropertyInfo){
-				// FIXME: implement
-				return null;
+				return new PropertyExpr ((PropertyInfo) mi);
 			} else if (mi is Type)
 				return new TypeExpr ((Type) mi);
 
@@ -107,7 +105,15 @@ namespace CIR {
 		//
 		//     null on error.
 		//
-		static Expression MemberLookup (Report r, Type t, string name, bool same_type)
+		// FIXME: When calling MemberLookup inside an `Invocation', we should pass
+		// the arguments here and have MemberLookup return only the methods that
+		// match the argument count/type, unlike we are doing now (we delay this
+		// decision).
+		//
+		// This is so we can catch correctly attempts to invoke instance methods
+		// from a static body (scan for error 120 in ResolveSimpleName).
+		// 
+		protected static Expression MemberLookup (Report r, Type t, string name, bool same_type)
 		{
 			MemberTypes mt =
 				// MemberTypes.Constructor |
@@ -124,6 +130,7 @@ namespace CIR {
 			
 			if (same_type)
 				bf |= BindingFlags.NonPublic;
+
 			
 			MemberInfo [] mi = t.FindMembers (mt, bf, Type.FilterName, name);
 
@@ -441,8 +448,67 @@ namespace CIR {
 			}
 		}
 
+		//
+		// Checks whether we are trying to access an instance
+		// property, method or field from a static body.
+		//
+		Expression MemberStaticCheck (Report r, Expression e)
+		{
+			if (e is FieldExpr){
+				FieldInfo fi = ((FieldExpr) e).FieldInfo;
+				
+				if (!fi.IsStatic){
+					r.Error (120,
+						 "An object reference is required " +
+						 "for the non-static field `"+name+"'");
+					return null;
+				}
+			} else if (e is MethodGroupExpr){
+				// FIXME: Pending reorganization of MemberLookup
+				// Basically at this point we should have the
+				// best match already selected for us, and
+				// we should only have to check a *single*
+				// Method for its static on/off bit.
+				return e;
+			} else if (e is PropertyExpr){
+				if (!((PropertyExpr) e).IsStatic){
+					r.Error (120,
+						 "An object reference is required " +
+						 "for the non-static property access `"+
+						 name+"'");
+					return null;
+				}
+			}
+
+			return e;
+		}
+		
+		//
+		// 7.5.2: Simple Names. 
+		//
+		// Local Variables and Parameters are handled at
+		// parse time, so they never occur as SimpleNames.
+		//
 		Expression ResolveSimpleName (TypeContainer tc)
 		{
+			Expression e;
+			Report r = tc.RootContext.Report;
+
+			e = MemberLookup (tc.RootContext.Report, tc.TypeBuilder, name, true);
+			if (e != null){
+				if (e is TypeExpr)
+					return e;
+				if ((tc.ModFlags & Modifiers.STATIC) != 0)
+					return MemberStaticCheck (r, e);
+				else
+					return e;
+			}
+
+			//
+			// Do step 3 of the Simple Name resolution.
+			//
+			// FIXME: implement me.
+			
 			return this;
 		}
 		
@@ -466,52 +532,43 @@ namespace CIR {
 	}
 	
 	public class LocalVariableReference : Expression {
-		string name;
-		Block block;
+		public readonly string Name;
+		public readonly Block Block;
 		
 		public LocalVariableReference (Block block, string name)
 		{
-			this.block = block;
-			this.name = name;
+			Block = block;
+			Name = name;
+			eclass = ExprClass.Variable;
 		}
 
-		public Block Block {
+		public VariableInfo VariableInfo {
 			get {
-				return block;
+				return (VariableInfo) Block.GetVariableInfo (Name);
 			}
 		}
-
-		public string Name {
-			get {
-				return name;
-			}
-		}
-
+		
 		public override Expression Resolve (TypeContainer tc)
 		{
-			// FIXME: Implement;
 			return this;
 		}
 
 		public override void Emit (EmitContext ec)
 		{
+			Console.WriteLine ("Internal compiler error, LocalVariableReference should not be emitted");
 		}
 	}
 
 	public class ParameterReference : Expression {
-		Parameters pars;
-		string name;
+		public readonly Parameters Pars;
+		public readonly String Name;
+		public readonly int Idx;
 		
-		public ParameterReference (Parameters pars, string name)
+		public ParameterReference (Parameters pars, int idx, string name)
 		{
-			this.pars = pars;
-			this.name = name;
-		}
-
-		public string Name {
-			get {
-				return name;
-			}
+			Pars = pars;
+			Idx  = idx;
+			Name = name;
 		}
 
 		public override Expression Resolve (TypeContainer tc)
@@ -868,6 +925,62 @@ namespace CIR {
 		override public void Emit (EmitContext ec)
 		{
 			
+		}
+	}
+
+	// <summary>
+	//   Fully resolved expression that evaluates to a Field
+	// </summary>
+	public class FieldExpr : Expression {
+		public readonly FieldInfo FieldInfo;
+
+		public FieldExpr (FieldInfo fi)
+		{
+			FieldInfo = fi;
+			eclass = ExprClass.Variable;
+		}
+
+		override public Expression Resolve (TypeContainer tc)
+		{
+			// We are born in resolved state. 
+			return this;
+		}
+
+		override public void Emit (EmitContext ec)
+		{
+			// FIXME: Assert that this should not be reached?
+		}
+	}
+	
+	// <summary>
+	//   Fully resolved expression that evaluates to a Property
+	// </summary>
+	public class PropertyExpr : Expression {
+		public readonly PropertyInfo PropertyInfo;
+		public readonly bool IsStatic;
+		
+		public PropertyExpr (PropertyInfo pi)
+		{
+			PropertyInfo = pi;
+			eclass = ExprClass.PropertyAccess;
+			IsStatic = false;
+				
+			MethodInfo [] acc = pi.GetAccessors ();
+
+			for (int i = 0; i < acc.Length; i++)
+				if (acc [i].IsStatic)
+					IsStatic = true;
+		}
+
+		override public Expression Resolve (TypeContainer tc)
+		{
+			// We are born in resolved state. 
+			return this;
+		}
+
+		override public void Emit (EmitContext ec)
+		{
+			// FIXME: Implement.
 		}
 	}
 
