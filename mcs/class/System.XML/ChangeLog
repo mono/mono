@@ -1,3 +1,8 @@
+2004-11-25  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Makefile : added LIBRARY_COMPILE condition for upcoming need to
+	  be referenced in bootstrap.
+
 2004-11-22  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* System.Xml.dll.sources : added XmlSchemaInfo.cs.
