@@ -15,11 +15,11 @@ BUILDMSG=$TOPDIR/.build.msg
 export LOGDATE
 
 EMAIL_FATAL="piersh@friskit.com"
-EMAIL_MESSAGE="mono-patches@ximian.com"
+EMAIL_MESSAGE="mono-patches@lists.ximian.com"
 #EMAIL_MESSAGE="mono-hackers-list@ximian.com"
 EMAIL_FROM="piersh@friskit.com"
 EMAIL_HOST="zeus.sfhq.friskit.com"
-EMAIL_CC="-c piersh@friskit.com"
+EMAIL_CC="-c mono-hackers-list@lists.ximian.com"
 
 DELAY_SUCCESS=5m			# wait after a successful build
 DELAY_CHECK_BROKEN=5m		# wait while verifying the build is broken
@@ -222,7 +222,7 @@ while [ 1 ] ; do
 					date > $LOGDATE.last_success
 					echo sleeping for $DELAY_SUCCESS
 					sleep $DELAY_SUCCESS
-					break 2
+					break
 				fi
 
 				cd $TOPDIR
