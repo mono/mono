@@ -310,7 +310,7 @@ namespace Mono.CSharp {
 			if (return_type == null)
 				return;
 
-			if (return_type.IsPointer && !UnsafeOK (this))
+			if (return_type.IsPointer && !im.UnsafeOK (this))
 				return;
 
 			if (arg_types == null)
@@ -321,7 +321,7 @@ namespace Mono.CSharp {
 				if (t == null)
 					return;
 				
-				if (t.IsPointer && !UnsafeOK (this))
+				if (t.IsPointer && !im.UnsafeOK (this))
 					return;
 			}
 			
@@ -367,7 +367,7 @@ namespace Mono.CSharp {
 			if (prop_type == null)
 				return;
 
-			if (prop_type.IsPointer && !UnsafeOK (this))
+			if (prop_type.IsPointer && !ip.UnsafeOK (this))
 				return;
 			
 			setter_args [0] = prop_type;
@@ -451,7 +451,7 @@ namespace Mono.CSharp {
 			if (event_type == null)
 				return;
 
-			if (event_type.IsPointer && !UnsafeOK (this))
+			if (event_type.IsPointer && !ie.UnsafeOK (this))
 				return;
 
 			Type [] parameters = new Type [1];
@@ -514,7 +514,7 @@ namespace Mono.CSharp {
 			if (prop_type == null)
 				return;
 
-			if (prop_type.IsPointer && !UnsafeOK (this))
+			if (prop_type.IsPointer && !ii.UnsafeOK (this))
 				return;
 			
 			//
@@ -528,7 +528,7 @@ namespace Mono.CSharp {
 				value_arg_types [count] = prop_type;
 
 				foreach (Type t in arg_types){
-					if (t.IsPointer && !UnsafeOK (this))
+					if (t.IsPointer && !ii.UnsafeOK (this))
 						return;
 				}
 			} else {
@@ -985,15 +985,14 @@ namespace Mono.CSharp {
 	}
 
 	public abstract class InterfaceMemberBase: MemberCore, IAttributeSupport {
-		public readonly bool IsNew;
                 // Why is not readonly
 		public Expression ReturnType;
-		
-		public InterfaceMemberBase (Expression type, string name, bool is_new, Attributes attrs, Location loc):
+
+		public InterfaceMemberBase (Expression type, string name, int mod_flags, Attributes attrs, Location loc):
 			base (name, attrs, loc)
 		{
                 	ReturnType = type;
-			IsNew = is_new;
+			ModFlags = mod_flags;
 		}
 
 		public virtual EmitContext Emit (TypeContainer tc, DeclSpace ds) {
@@ -1052,10 +1051,10 @@ namespace Mono.CSharp {
 		public readonly bool HasSet;
 		public readonly bool HasGet;
 		
-		public InterfaceSetGetBase (Expression type, string name, bool is_new,
+		public InterfaceSetGetBase (Expression type, string name, int modflags,
 						bool has_get, bool has_set, Attributes prop_attrs, Attributes get_attrs,
                         Attributes set_attrs, Location loc)
-			:base (type, name, is_new, prop_attrs, loc)
+			:base (type, name, modflags, prop_attrs, loc)
 		{
 			HasGet = has_get;
 			HasSet = has_set;
@@ -1089,10 +1088,11 @@ namespace Mono.CSharp {
 	public class InterfaceEvent : InterfaceMemberBase {
 		MyEventBuilder Builder;
                 
-		public InterfaceEvent (Expression type, string name, bool is_new, Attributes attrs,
+		public InterfaceEvent (Expression type, string name, int mod_flags, Attributes attrs,
 				       Location loc)
-			: base (type, name, is_new, attrs, loc)
+			: base (type, name, mod_flags, attrs, loc)
 		{
+			ModFlags = mod_flags;
 		}
 
 		public override string GetSignatureForError () {
@@ -1112,11 +1112,12 @@ namespace Mono.CSharp {
 		public readonly Parameters Parameters;
 		MethodBuilder Builder;
                 
-		public InterfaceMethod (Expression return_type, string name, bool is_new, Parameters args,
+		public InterfaceMethod (Expression return_type, string name, int mod_flags, Parameters args,
 					Attributes attrs, Location l)
-			: base (return_type, name, is_new, attrs, l)
+			: base (return_type, name, mod_flags, attrs, l)
 		{
 			this.Parameters = args;
+			ModFlags = mod_flags;
 		}
 
 		public override EmitContext Emit(TypeContainer tc, DeclSpace ds) {
@@ -1143,10 +1144,11 @@ namespace Mono.CSharp {
 			if ((ret == null) || (args == null))
 				return null;
 			
-			return (IsNew ? "new-" : "") + ret.FullName + "(" + args + ")";
+			return ModFlags + ret.FullName + "(" + args + ")";
 		}
 
-		public override string GetSignatureForError () {
+		public override string GetSignatureForError ()
+		{
 			return TypeManager.CSharpSignature (Builder);
 		}
 
@@ -1167,11 +1169,12 @@ namespace Mono.CSharp {
 	public class InterfaceProperty : InterfaceSetGetBase 
 	{
 		public InterfaceProperty (Expression type, string name,
-			bool is_new, bool has_get, bool has_set,
+			int mod_flags, bool has_get, bool has_set,
 			Attributes prop_attrs, Attributes get_attrs,
 			Attributes set_attrs, Location loc)
-			: base (type, name, is_new, has_get, has_set, prop_attrs, get_attrs, set_attrs, loc)
+			: base (type, name, mod_flags, has_get, has_set, prop_attrs, get_attrs, set_attrs, loc)
 		{
+			ModFlags = mod_flags;
 		}
 
 		public override string GetSignatureForError () {
@@ -1183,11 +1186,12 @@ namespace Mono.CSharp {
 		public readonly Parameters Parameters;
                 
 		public InterfaceIndexer (Expression type, Parameters args, bool do_get, bool do_set,
-					 bool is_new, Attributes attrs, Attributes get_attrs, Attributes set_attrs,
+					 int mod_flags, Attributes attrs, Attributes get_attrs, Attributes set_attrs,
                                          Location loc)
-			: base (type, "Item", is_new, do_get, do_set, attrs, get_attrs, set_attrs, loc)
+			: base (type, "Item", mod_flags, do_get, do_set, attrs, get_attrs, set_attrs, loc)
 		{
 			Parameters = args;
+			ModFlags = mod_flags;
 		}
 
 		public override string GetSignatureForError() {
