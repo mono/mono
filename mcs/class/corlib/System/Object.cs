@@ -31,6 +31,9 @@ namespace System {
 		// </summary>
 		public static bool Equals (object a, object b)
 		{
+			if (a == b)
+				return true;
+			
 			if (a == null) {
 				if (b == null)
 					return true;

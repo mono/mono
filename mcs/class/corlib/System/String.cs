@@ -200,7 +200,7 @@ namespace System {
 		private static int BoyerMoore (char[] haystack, string needle, int startIndex, int count)
 		{
 			/* (hopefully) Unicode-safe Boyer-Moore implementation */
-			int[] skiptable = new uint[65536];  /* our unicode-safe skip-table */
+			int[] skiptable = new int[65536];  /* our unicode-safe skip-table */
 			int h, n, he, ne, hc, nc, i;
 
 			if (haystack == null || needle == null)
