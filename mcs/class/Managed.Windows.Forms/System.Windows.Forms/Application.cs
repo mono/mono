@@ -23,9 +23,12 @@
 //	Peter Bartok	pbartok@novell.com
 //
 //
-// $Revision: 1.7 $
+// $Revision: 1.8 $
 // $Modtime: $
 // $Log: Application.cs,v $
+// Revision 1.8  2004/10/20 03:33:33  pbartok
+// - Fixed to deal with new Form subclasses for menus
+//
 // Revision 1.7  2004/10/18 04:14:14  pbartok
 // - Added code to simulate modal dialogs on Win32
 //
@@ -100,9 +103,11 @@ namespace System.Windows.Forms {
 			}
 
 			while (control.MoveNext()) {
-				if ((((Control)control.Current).parent == null) && (((Control)control.Current).is_visible) && (((Control)control.Current).is_enabled) && (((Form)control.Current)!=form)) {
-					XplatUI.EnableWindow(((Control)control.Current).window.Handle, false);
-					toplevels.Enqueue((Control)control.Current);
+				if ((((Control)control.Current).parent == null) && (((Control)control.Current).is_visible) && (((Control)control.Current).is_enabled)) {
+					if ((control.Current is Form.FormParentWindow)  && (((Form.FormParentWindow)control.Current)!=form.form_parent_window)) {
+						XplatUI.EnableWindow(((Control)control.Current).window.Handle, false);
+						toplevels.Enqueue((Control)control.Current);
+					}
 				}
 			}
 
