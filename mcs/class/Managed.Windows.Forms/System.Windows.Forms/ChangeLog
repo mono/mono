@@ -1,5 +1,12 @@
 2005-01-04  Jackson Harper  <jackson@ximian.com>
 
+	* XplatUIX11.cs (DoEvents): Implement, Just cast aside all events
+	but PAINT.
+	* XplatUIX11.cs (GetMessage): Call Exit when we get an unknown
+	ClientMessage. This makes apps exit cleanly (more often).
+	
+2005-01-04  Jackson Harper  <jackson@ximian.com>
+
 	* TreeNode.cs: Patches by Kazuki Oikawa (kazuki@panicode.com) for
 	handling focus, return correct colors and fonts, 
 	* TreeView.cs: Patches by Kazuki Oikawa (kazuki@panicode.com) to

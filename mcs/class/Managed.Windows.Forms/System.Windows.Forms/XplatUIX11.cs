@@ -777,8 +777,14 @@ namespace System.Windows.Forms {
 			Console.WriteLine("{0}{1}", e.Message, st.ToString());
 		}
 
-		internal override void DoEvents() {
-			Console.WriteLine("XplatUIX11.DoEvents");
+		internal override void DoEvents () {
+			MSG msg = new MSG ();
+			while (GetMessage (ref msg, IntPtr.Zero, 0, 0)) {
+				if (msg.message == Msg.WM_PAINT) {
+					TranslateMessage (ref msg);
+					DispatchMessage (ref msg);
+				}
+			}
 		}
 
 		internal override bool PeekMessage(ref MSG msg, IntPtr hWnd, int wFilterMin, int wFilterMax, uint flags) {
@@ -1206,6 +1212,11 @@ namespace System.Windows.Forms {
 						msg.hwnd = xevent.ClientMessageEvent.window;
 						msg.wParam = xevent.ClientMessageEvent.ptr2;
 						msg.lParam = xevent.ClientMessageEvent.ptr3;
+					} else {
+						msg.message = Msg.WM_DESTROY;
+						msg.wParam = IntPtr.Zero;
+						msg.lParam = IntPtr.Zero;
+						Exit ();
 					}
 					break;
 				}
