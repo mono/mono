@@ -1,6 +1,6 @@
 2005-01-19  Martin Baulig  <martin@ximian.com>
 
-	* Sorting.cs: 10000 elements is enough for us.
+	* Sorting.cs: 2000 elements is enough for us.
 
 2005-01-19  Martin Baulig  <martin@ximian.com>
 
