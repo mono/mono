@@ -1,3 +1,8 @@
+2003-01-16  Martin Baulig  <martin@ximian.com>
+
+	* debug.c (debugger_thread_func): We don't need to `raise
+	(SIGSTOP)' anymore; the thread manager already takes care of this.
+
 2003-01-16  Dietmar Maurer  <dietmar@ximian.com>
 
 	* exception.c (arch_handle_exception): exclude runtime invoke
@@ -13,6 +18,11 @@
 	and the LinuxThreads port doesn't allow you to override the handler.
 	[FIXME: This avoids an assertion failure on startup, but there's
 	still an issue with thread termination.]
+
+2003-01-16  Martin Baulig  <martin@ximian.com>
+
+	* debug.c (debugger_thread_func): We don't need to `raise
+	(SIGSTOP)' anymore; the thread manager already takes care of this.
 
 2003-01-16  Martin Baulig  <martin@ximian.com>
 
