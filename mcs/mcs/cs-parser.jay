@@ -2468,6 +2468,7 @@ statement
 	  {
 		Statement s = (Statement) $1;
 
+
 		current_block.AddStatement ((Statement) $1);
 	  }
 	| labeled_statement 
@@ -2736,6 +2737,9 @@ for_statement
 	: FOR OPEN_PARENS 
 	  opt_for_initializer SEMICOLON
 	  {
+		Block assign_block = new Block (current_block);
+		current_block = assign_block;
+
 		if ($3 is DictionaryEntry){
 			DictionaryEntry de = (DictionaryEntry) $3;
 			$3 = null;
@@ -2751,7 +2755,6 @@ for_statement
 				}
 			}
 
-			Block assign_block = new Block (current_block);
 			foreach (VariableDeclaration decl in var_declarators){
 				if (decl.expression_or_array_initializer is Expression){
 					Expression expr = (Expression) decl.expression_or_array_initializer;
@@ -2765,14 +2768,20 @@ for_statement
 					Console.WriteLine ("Not handling array initializers, strange");
 				}
 			}
-			$3 = assign_block;
-		}
+			$3 = null;
+		} 
 	  } 
 	  opt_for_condition SEMICOLON
 	  opt_for_iterator CLOSE_PARENS 
 	  embedded_statement
 	  {
-		$$ = new For ((Statement) $3, (Expression) $6, (Statement) $8, (Statement) $10);
+		For f = new For ((Statement) $3, (Expression) $6, (Statement) $8, (Statement) $10);
+
+		current_block.AddStatement (f);
+		while (current_block.Implicit)
+			current_block = current_block.Parent;
+		$$ = current_block;
+		current_block = current_block.Parent;
 	  }
 	;
 

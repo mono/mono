@@ -776,7 +776,6 @@ namespace Mono.CSharp {
 				return null;
 
 			expr = ConvertExplicit (ec, expr, type, loc);
-
 			return expr;
 		}
 

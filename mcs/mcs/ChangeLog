@@ -1,3 +1,13 @@
+2001-11-22  Miguel de Icaza  <miguel@ximian.com>
+
+	* ecore.cs (UnboxCast): new class used to unbox value types.
+	(Expression.ConvertExplicit): Add explicit type conversions done
+	by unboxing.
+
+	(Expression.ImplicitNumericConversion): Oops, forgot to test for
+	the target type before applying the implicit LongLiterals to ULong
+	literal cast.
+
 2001-11-21  Miguel de Icaza  <miguel@ximian.com>
 
 	* cs-parser.jay (for_statement): Reworked the way For works: now

@@ -510,9 +510,10 @@ namespace Mono.CSharp {
 				Expression e;
 				
 				e = TryImplicitIntConversion (target_type, (IntLiteral) expr);
+
 				if (e != null)
 					return e;
-			} else if (expr is LongLiteral){
+			} else if (expr is LongLiteral && target_type == TypeManager.uint64_type){
 				//
 				// Try the implicit constant expression conversion
 				// from long to ulong, instead of a nice routine,
@@ -1059,10 +1060,12 @@ namespace Mono.CSharp {
 			if (e != null)
 				return e;
 
+			Console.WriteLine ("HIT 2");
 			e = ImplicitReferenceConversion (expr, target_type);
 			if (e != null)
 				return e;
 
+			Console.WriteLine ("HIT 3");
 			e = ImplicitUserConversion (ec, expr, target_type, loc);
 			if (e != null)
 				return e;
@@ -1596,6 +1599,12 @@ namespace Mono.CSharp {
 			if (ne != null)
 				return ne;
 
+			//
+			// Unboxing conversion.
+			//
+			if (expr.Type == TypeManager.object_type && target_type.IsValueType)
+				return new UnboxCast (expr, target_type);
+			
 			ne = ConvertReferenceExplicit (expr, target_type);
 			if (ne != null)
 				return ne;
@@ -1803,6 +1812,62 @@ namespace Mono.CSharp {
 		}
 	}
 
+	public class UnboxCast : EmptyCast {
+		public UnboxCast (Expression expr, Type return_type)
+			: base (expr, return_type)
+		{
+		}
+
+		public override Expression DoResolve (EmitContext ec)
+		{
+			// This should never be invoked, we are born in fully
+			// initialized state.
+
+			return this;
+		}
+
+		public override void Emit (EmitContext ec)
+		{
+			Type t = type;
+			ILGenerator ig = ec.ig;
+			
+			base.Emit (ec);
+			ig.Emit (OpCodes.Unbox, t);
+
+			//
+			// Load the object from the pointer
+			//
+			if (t == TypeManager.int32_type)
+				ig.Emit (OpCodes.Ldind_I4);
+			else if (t == TypeManager.uint32_type)
+				ig.Emit (OpCodes.Ldind_U4);
+			else if (t == TypeManager.short_type)
+				ig.Emit (OpCodes.Ldind_I2);
+			else if (t == TypeManager.ushort_type)
+				ig.Emit (OpCodes.Ldind_U2);
+			else if (t == TypeManager.char_type)
+				ig.Emit (OpCodes.Ldind_U2);
+			else if (t == TypeManager.byte_type)
+				ig.Emit (OpCodes.Ldind_U1);
+			else if (t == TypeManager.sbyte_type)
+				ig.Emit (OpCodes.Ldind_I1);
+			else if (t == TypeManager.uint64_type)
+				ig.Emit (OpCodes.Ldind_I8);
+			else if (t == TypeManager.int64_type)
+				ig.Emit (OpCodes.Ldind_I8);
+			else if (t == TypeManager.float_type)
+				ig.Emit (OpCodes.Ldind_R4);
+			else if (t == TypeManager.double_type)
+				ig.Emit (OpCodes.Ldind_R8);
+			else if (t == TypeManager.bool_type)
+				ig.Emit (OpCodes.Ldind_I1);
+			else if (t == TypeManager.intptr_type)
+				ig.Emit (OpCodes.Ldind_I);
+			else 
+				ig.Emit (OpCodes.Ldobj, t);
+		}
+	}
+	
 	/// <summary>
 	///   This kind of cast is used to encapsulate a child expression
 	///   that can be trivially converted to a target type using one or 
