@@ -37,6 +37,7 @@ namespace System.Windows.Forms
 		private bool multiSelect = false;
 		private bool readOnlyChecked = false;
 		private bool showReadOnly = false;
+		private bool checkFileExists = true;
 		
 		#region Public Constructors
 		public OpenFileDialog( )
@@ -59,6 +60,19 @@ namespace System.Windows.Forms
 		#endregion	// Public Constructors
 		
 		#region Public Instance Properties
+		public override bool CheckFileExists
+		{
+			get
+			{
+				return checkFileExists;
+			}
+			
+			set
+			{
+				checkFileExists = value;
+			}
+		}
+		
 		public bool Multiselect
 		{
 			get
@@ -117,6 +131,7 @@ namespace System.Windows.Forms
 		{
 			base.Reset( );
 			multiSelect = false;
+			checkFileExists = true;
 			readOnlyChecked = false;
 			FileDialogReadOnlyChecked = readOnlyChecked;
 			showReadOnly = false;

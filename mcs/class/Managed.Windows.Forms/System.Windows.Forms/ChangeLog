@@ -1,3 +1,10 @@
+2005-03-28  Alexander Olk  <xenomorph2@onlinehome.de>
+
+	* OpenFileDialog.cs: Fixed CheckFileExists
+	* FileDialog.cs:
+	  Moved FileView and DirComboBox outside FileDialog class.
+	  They can now be used outside FileDialog
+
 2005-03-27  Alexander Olk  <xenomorph2@onlinehome.de>
 
 	* FileDialog.cs: Added a contextmenu to change ShowHiddenFiles

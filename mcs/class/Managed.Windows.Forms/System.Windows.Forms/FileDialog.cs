@@ -190,9 +190,9 @@ namespace System.Windows.Forms
 				
 				filter = value;
 				
-				SplitFilter( );
+				fileFilter = new FileFilter( filter );
 				
-				fileDialogPanel.UpdateFilters( filterArrayList );
+				fileDialogPanel.UpdateFilters( );
 			}
 		}
 		
@@ -319,6 +319,7 @@ namespace System.Windows.Forms
 			set
 			{
 				fileDialogShowReadOnly = value;
+				fileDialogPanel.ResizeAndRelocateForHelpOrReadOnly( );
 			}
 			
 			get
@@ -351,14 +352,6 @@ namespace System.Windows.Forms
 			get
 			{
 				return fileDialogMultiSelect;
-			}
-		}
-		
-		internal ArrayList FilterArrayList
-		{
-			get
-			{
-				return filterArrayList;
 			}
 		}
 		
@@ -402,6 +395,19 @@ namespace System.Windows.Forms
 			}
 		}
 		
+		internal FileFilter FileFilter
+		{
+			set
+			{
+				fileFilter = value;
+			}
+			
+			get
+			{
+				return fileFilter;
+			}
+		}
+		
 		public override void Reset( )
 		{
 			addExtension = true;
@@ -411,13 +417,15 @@ namespace System.Windows.Forms
 			dereferenceLinks = true;
 			fileName = "";
 			fileNames = null;
-			filter = "";
+			Filter = "";
 			filterIndex = 1;
 			initialDirectory = "";
 			restoreDirectory = false;
-			showHelp = false;
-			title = "";
+			ShowHelp = false;
+			Title = "";
 			validateNames = true;
+			
+			fileDialogPanel.UpdateFilters( );
 		}
 		
 		public override string ToString( )
@@ -445,29 +453,6 @@ namespace System.Windows.Forms
 			return true;
 		}
 		
-		private void SplitFilter( )
-		{
-			filterArrayList.Clear( );
-			
-			if ( filter == null )
-				throw new NullReferenceException( "Filter" );
-			
-			if ( filter.Length == 0 )
-				return;
-			
-			string[] filters = filter.Split( new Char[] {'|'} );
-			
-			if ( ( filters.Length % 2 ) != 0 )
-				throw new ArgumentException( "Filter" );
-			
-			for ( int i = 0; i < filters.Length; i += 2 )
-			{
-				FilterStruct filterStruct = new FilterStruct( filters[ i ], filters[ i + 1 ] );
-				
-				filterArrayList.Add( filterStruct );
-			}
-		}
-		
 		internal void SendHelpRequest( EventArgs e )
 		{
 			OnHelpRequest( e );
@@ -478,44 +463,10 @@ namespace System.Windows.Forms
 			fileNames = filenames;
 		}
 		
-		internal struct FilterStruct
-		{
-			public string filterName;
-			public StringCollection filters;
-			
-			public FilterStruct( string filterName, string filter )
-			{
-				this.filterName = filterName;
-				
-				filters =  new StringCollection( );
-				
-				SplitFilters( filter );
-			}
-			
-			private void SplitFilters( string filter )
-			{
-				string[] split = filter.Split( new Char[] {';'} );
-				
-				filters.AddRange( split );
-			}
-		}
-		
-		internal ArrayList filterArrayList = new ArrayList();
+		internal FileFilter fileFilter;
 		
 		internal class FileDialogPanel : Panel
 		{
-			internal struct FileStruct
-			{
-				public FileStruct( string fullname, FileAttributes attributes )
-				{
-					this.fullname = fullname;
-					this.attributes = attributes;
-				}
-				
-				public string fullname;
-				public FileAttributes attributes;
-			}
-			
 			private Button cancelButton;
 			private ToolBarButton upToolBarButton;
 			private ButtonPanel buttonPanel;
@@ -531,7 +482,7 @@ namespace System.Windows.Forms
 			private ComboBox fileNameComboBox;
 			private ToolBarButton networkToolBarButton;
 			private Label fileNameLabel;
-			private FileListView fileListView;
+			private MWFFileView mwfFileView;
 			private Label searchSaveLabel;
 			private ToolBarButton newdirToolBarButton;
 			private ToolBarButton backToolBarButton;
@@ -549,9 +500,6 @@ namespace System.Windows.Forms
 			
 			// store current directoryInfo
 			private DirectoryInfo directoryInfo;
-			
-			// store the FileStruct of all files in the current directory
-			internal Hashtable fileHashtable = new Hashtable();
 			
 			// store DirectoryInfo for backButton
 			internal Stack directoryStack = new Stack();
@@ -572,12 +520,12 @@ namespace System.Windows.Forms
 				backToolBarButton = new ToolBarButton( );
 				newdirToolBarButton = new ToolBarButton( );
 				searchSaveLabel = new Label( );
-				fileListView = new FileListView( this );
+				mwfFileView = new MWFFileView( );
 				fileNameLabel = new Label( );
 				networkToolBarButton = new ToolBarButton( );
 				fileNameComboBox = new ComboBox( );
 				lastUsedToolBarButton = new ToolBarButton( );
-				dirComboBox = new DirComboBox( this );
+				dirComboBox = new DirComboBox( );
 				smallButtonToolBar = new ToolBar( );
 				desktopToolBarButton = new ToolBarButton( );
 				menueToolBarButton = new ToolBarButton( );
@@ -612,17 +560,18 @@ namespace System.Windows.Forms
 				searchSaveLabel.Text = fileDialog.SearchSaveLabelText;
 				searchSaveLabel.TextAlign = ContentAlignment.MiddleRight;
 				
-				// fileListView
-				fileListView.Anchor = ( (AnchorStyles)( ( ( ( AnchorStyles.Top | AnchorStyles.Bottom ) | AnchorStyles.Left ) | AnchorStyles.Right ) ) );
-				fileListView.Location = new Point( 99, 37 );
-				fileListView.Size = new Size( 449, 282 );
-				fileListView.Columns.Add( " Name", 170, HorizontalAlignment.Left );
-				fileListView.Columns.Add( "Size ", 80, HorizontalAlignment.Right );
-				fileListView.Columns.Add( " Type", 100, HorizontalAlignment.Left );
-				fileListView.Columns.Add( " Last Access", 150, HorizontalAlignment.Left );
-				fileListView.AllowColumnReorder = true;
-				fileListView.MultiSelect = false;
-				fileListView.TabIndex = 2;
+				// mwfFileView
+				mwfFileView.Anchor = ( (AnchorStyles)( ( ( ( AnchorStyles.Top | AnchorStyles.Bottom ) | AnchorStyles.Left ) | AnchorStyles.Right ) ) );
+				mwfFileView.Location = new Point( 99, 37 );
+				mwfFileView.Size = new Size( 449, 282 );
+				mwfFileView.Columns.Add( " Name", 170, HorizontalAlignment.Left );
+				mwfFileView.Columns.Add( "Size ", 80, HorizontalAlignment.Right );
+				mwfFileView.Columns.Add( " Type", 100, HorizontalAlignment.Left );
+				mwfFileView.Columns.Add( " Last Access", 150, HorizontalAlignment.Left );
+				mwfFileView.AllowColumnReorder = true;
+				mwfFileView.MultiSelect = false;
+				mwfFileView.TabIndex = 2;
+				mwfFileView.FilterIndex = fileDialog.FilterIndex;
 				
 				// dirComboBox
 				dirComboBox.Anchor = ( (AnchorStyles)( ( ( AnchorStyles.Top | AnchorStyles.Left ) | AnchorStyles.Right ) ) );
@@ -666,10 +615,10 @@ namespace System.Windows.Forms
 				smallButtonToolBar.Appearance = ToolBarAppearance.Flat;
 				smallButtonToolBar.AutoSize = false;
 				smallButtonToolBar.Buttons.AddRange( new ToolBarButton[] {
-														backToolBarButton,
-														upToolBarButton,
-														newdirToolBarButton,
-														menueToolBarButton} );
+									    backToolBarButton,
+									    upToolBarButton,
+									    newdirToolBarButton,
+									    menueToolBarButton} );
 				smallButtonToolBar.ButtonSize = new Size( 21, 16 ); // 21, 16
 				smallButtonToolBar.Divider = false;
 				smallButtonToolBar.Dock = DockStyle.None;
@@ -720,6 +669,7 @@ namespace System.Windows.Forms
 				// contextMenu
 				mi = new MenuItem( "Show hidden files", new EventHandler( OnClickContextMenu ) );
 				mi.Checked = fileDialog.ShowHiddenFiles;
+				mwfFileView.ShowHiddenFiles = fileDialog.ShowHiddenFiles;
 				contextMenu.MenuItems.Add( mi );
 				
 				// openButton
@@ -755,7 +705,7 @@ namespace System.Windows.Forms
 				Controls.Add( cancelButton );
 				Controls.Add( openSaveButton );
 				Controls.Add( helpButton );
-				Controls.Add( fileListView );
+				Controls.Add( mwfFileView );
 				Controls.Add( fileTypeLabel );
 				Controls.Add( fileNameLabel );
 				Controls.Add( fileTypeComboBox );
@@ -778,7 +728,7 @@ namespace System.Windows.Forms
 				if ( fileDialog.RestoreDirectory )
 					restoreDirectory = currentDirectoryName;
 				
-				fileListView.UpdateFileListView( );
+				mwfFileView.UpdateFileView( directoryInfo );
 				
 				openSaveButton.Click += new EventHandler( OnClickOpenSaveButton );
 				cancelButton.Click += new EventHandler( OnClickCancelButton );
@@ -790,6 +740,13 @@ namespace System.Windows.Forms
 				fileNameComboBox.KeyUp += new KeyEventHandler( OnKeyUpFileNameComboBox );
 				
 				fileTypeComboBox.SelectedIndexChanged += new EventHandler( OnSelectedIndexChangedFileTypeComboBox );
+				
+				mwfFileView.SelectedFileChanged += new EventHandler( OnSelectedFileChangedFileView );
+				mwfFileView.DirectoryChanged += new EventHandler( OnDirectoryChangedFileView );
+				mwfFileView.ForceDialogEnd += new EventHandler( OnForceDialogEndFileView );
+				mwfFileView.SelectedFilesChanged += new EventHandler( OnSelectedFilesChangedFileView );
+				
+				dirComboBox.DirectoryChanged += new EventHandler( OnDirectoryChangedDirComboBox );
 			}
 			
 			public ComboBox FileNameComboBox
@@ -836,7 +793,7 @@ namespace System.Windows.Forms
 				set
 				{
 					multiSelect = value;
-					fileListView.MultiSelect = value;
+					mwfFileView.MultiSelect = value;
 				}
 				
 				get
@@ -853,7 +810,8 @@ namespace System.Windows.Forms
 				{
 					senderMenuItem.Checked = !senderMenuItem.Checked;
 					fileDialog.ShowHiddenFiles = senderMenuItem.Checked;
-					fileListView.UpdateFileListView( );
+					mwfFileView.ShowHiddenFiles = fileDialog.ShowHiddenFiles;
+					mwfFileView.UpdateFileView( directoryInfo );
 				}
 			}
 			
@@ -939,14 +897,14 @@ namespace System.Windows.Forms
 				else // multiSelect = true
 				if ( fileDialog.fileDialogType != FileDialogType.SaveFileDialog )
 				{
-					if ( fileListView.SelectedItems.Count > 0 )
+					if ( mwfFileView.SelectedItems.Count > 0 )
 					{
 						// first remove all selected directories
 						ArrayList al = new ArrayList( );
 						
-						foreach ( ListViewItem lvi in fileListView.SelectedItems )
+						foreach ( ListViewItem lvi in mwfFileView.SelectedItems )
 						{
-							FileStruct fileStruct = (FileStruct)fileHashtable[ lvi.Text ];
+							FileStruct fileStruct = (FileStruct)mwfFileView.FileHashtable[ lvi.Text ];
 							
 							if ( fileStruct.attributes != FileAttributes.Directory )
 							{
@@ -1030,7 +988,7 @@ namespace System.Windows.Forms
 						
 						dirComboBox.CurrentPath = currentDirectoryName;
 						
-						fileListView.UpdateFileListView( );
+						mwfFileView.UpdateFileView( directoryInfo );
 					}
 				}
 				else
@@ -1042,7 +1000,7 @@ namespace System.Windows.Forms
 						
 						dirComboBox.CurrentPath = currentDirectoryName;
 						
-						fileListView.UpdateFileListView( );
+						mwfFileView.UpdateFileView( directoryInfo );
 					}
 				}
 				else
@@ -1065,19 +1023,19 @@ namespace System.Windows.Forms
 				switch ( senderMenuItem.Index  )
 				{
 					case 0:
-						fileListView.View = View.SmallIcon;
+						mwfFileView.View = View.SmallIcon;
 						break;
 					case 1:
-						fileListView.View = View.LargeIcon;
+						mwfFileView.View = View.LargeIcon;
 						break;
 					case 2:
-						fileListView.View = View.LargeIcon;
+						mwfFileView.View = View.LargeIcon;
 						break;
 					case 3:
-						fileListView.View = View.List;
+						mwfFileView.View = View.List;
 						break;
 					case 4:
-						fileListView.View = View.Details;
+						mwfFileView.View = View.Details;
 						break;
 					default:
 						break;
@@ -1098,11 +1056,41 @@ namespace System.Windows.Forms
 			{
 				fileDialog.FilterIndex = fileTypeComboBox.SelectedIndex + 1;
 				
-				fileListView.UpdateFileListView( );
+				mwfFileView.FilterIndex = fileDialog.FilterIndex;
+				
+				mwfFileView.UpdateFileView( directoryInfo );
 			}
 			
-			public void UpdateFilters( ArrayList filters )
+			void OnSelectedFileChangedFileView( object sender, EventArgs e )
 			{
+				fileNameComboBox.Text = mwfFileView.FileName;
+				currentFileName = mwfFileView.FullFileName;
+			}
+			
+			void OnDirectoryChangedFileView( object sender, EventArgs e )
+			{
+				ChangeDirectory( sender, mwfFileView.FullFileName );
+			}
+			
+			void OnForceDialogEndFileView( object sender, EventArgs e )
+			{
+				ForceDialogEnd( );
+			}
+			
+			void OnSelectedFilesChangedFileView( object sender, EventArgs e )
+			{
+				fileNameComboBox.Text = mwfFileView.SelectedFilesString;
+			}
+			
+			void OnDirectoryChangedDirComboBox( object sender, EventArgs e )
+			{
+				ChangeDirectory( sender, dirComboBox.CurrentPath );
+			}
+			
+			public void UpdateFilters( )
+			{
+				ArrayList filters = fileDialog.FileFilter.FilterArrayList;
+				
 				fileTypeComboBox.Items.Clear( );
 				
 				fileTypeComboBox.BeginUpdate( );
@@ -1116,7 +1104,11 @@ namespace System.Windows.Forms
 				
 				fileTypeComboBox.EndUpdate( );
 				
-				fileListView.UpdateFileListView( );
+				mwfFileView.FilterArrayList = filters;
+				
+				mwfFileView.FilterIndex = fileDialog.FilterIndex;
+				
+				mwfFileView.UpdateFileView( directoryInfo );
 			}
 			
 			public void ChangeDirectory( object sender, string path )
@@ -1130,7 +1122,7 @@ namespace System.Windows.Forms
 				if ( sender != dirComboBox )
 					dirComboBox.CurrentPath = path;
 				
-				fileListView.UpdateFileListView( );
+				mwfFileView.UpdateFileView( directoryInfo );
 			}
 			
 			public void ForceDialogEnd( )
@@ -1158,7 +1150,7 @@ namespace System.Windows.Forms
 			{
 				if ( fileDialog.ShowHelp || fileDialog.FileDialogShowReadOnly )
 				{
-					fileListView.Size = new Size( 449, 250 );
+					mwfFileView.Size = new Size( 449, 250 );
 					fileNameLabel.Location = new Point( 102, 298 );
 					fileNameComboBox.Location = new Point( 195, 298 );
 					fileTypeLabel.Location = new Point( 102, 324 );
@@ -1168,7 +1160,7 @@ namespace System.Windows.Forms
 				}
 				else
 				{
-					fileListView.Size = new Size( 449, 282 );
+					mwfFileView.Size = new Size( 449, 282 );
 					fileNameLabel.Location = new Point( 102, 330 );
 					fileNameComboBox.Location = new Point( 195, 330 );
 					fileTypeLabel.Location = new Point( 102, 356 );
@@ -1181,204 +1173,6 @@ namespace System.Windows.Forms
 					helpButton.Show( );
 			}
 			
-			// FileListView
-			internal class FileListView : ListView
-			{
-				private ImageList fileListViewSmallImageList = new ImageList();
-				private ImageList fileListViewBigImageList = new ImageList();
-				
-				private FileDialogPanel fileDialogPanel;
-				
-				public FileListView( FileDialogPanel fileDialogPanel )
-				{
-					this.fileDialogPanel = fileDialogPanel;
-					
-					fileListViewSmallImageList.ColorDepth = ColorDepth.Depth32Bit;
-					fileListViewSmallImageList.ImageSize = new Size( 16, 16 );
-					fileListViewSmallImageList.Images.Add( (Image)Locale.GetResource( "paper" ) );
-					fileListViewSmallImageList.Images.Add( (Image)Locale.GetResource( "folder" ) );
-					fileListViewSmallImageList.TransparentColor = Color.Transparent;
-					
-					fileListViewBigImageList.ColorDepth = ColorDepth.Depth32Bit;
-					fileListViewBigImageList.ImageSize = new Size( 48, 48 );
-					fileListViewBigImageList.Images.Add( (Image)Locale.GetResource( "paper" ) );
-					fileListViewBigImageList.Images.Add( (Image)Locale.GetResource( "folder" ) );
-					fileListViewBigImageList.TransparentColor = Color.Transparent;
-					
-					SmallImageList = fileListViewSmallImageList;
-					LargeImageList = fileListViewBigImageList;
-					
-					View = View.List;
-				}
-				
-				private ArrayList GetFileInfoArrayList( DirectoryInfo directoryInfo )
-				{
-					ArrayList arrayList = new ArrayList( );
-					
-					if ( fileDialogPanel.fileDialog.FilterArrayList.Count != 0 )
-					{
-						FilterStruct fs = (FilterStruct)fileDialogPanel.fileDialog.FilterArrayList[ fileDialogPanel.fileDialog.FilterIndex - 1 ];
-						
-						foreach ( string s in fs.filters )
-							arrayList.AddRange( directoryInfo.GetFiles( s ) );
-					}
-					else
-						arrayList.AddRange( directoryInfo.GetFiles( ) );
-					
-					return arrayList;
-				}
-				
-				public void UpdateFileListView( )
-				{
-					DirectoryInfo directoryInfo = fileDialogPanel.DirectoryInfo;
-					
-					DirectoryInfo[] directoryInfoArray = directoryInfo.GetDirectories( );
-					
-					ArrayList fileInfoArrayList = GetFileInfoArrayList( directoryInfo );
-					
-					fileDialogPanel.fileHashtable.Clear( );
-					
-					BeginUpdate( );
-					
-					Items.Clear( );
-					
-					foreach ( DirectoryInfo directoryInfoi in directoryInfoArray )
-					{
-						if ( !fileDialogPanel.fileDialog.ShowHiddenFiles )
-							if ( directoryInfoi.Name.StartsWith( "." ) || directoryInfoi.Attributes == FileAttributes.Hidden )
-								continue;
-						
-						FileStruct fileStruct = new FileStruct( );
-						
-						fileStruct.fullname = directoryInfoi.FullName;
-						
-						ListViewItem listViewItem = new ListViewItem( directoryInfoi.Name );
-						
-						listViewItem.ImageIndex = 1;
-						
-						listViewItem.SubItems.Add( "" );
-						listViewItem.SubItems.Add( "Directory" );
-						listViewItem.SubItems.Add( directoryInfoi.LastAccessTime.ToShortDateString( ) + " " + directoryInfoi.LastAccessTime.ToShortTimeString( ) );
-						
-						fileStruct.attributes = FileAttributes.Directory;
-						
-						fileDialogPanel.fileHashtable.Add( directoryInfoi.Name, fileStruct );
-						
-						Items.Add( listViewItem );
-					}
-					
-					foreach ( FileInfo fileInfo in fileInfoArrayList )
-					{
-						if ( !fileDialogPanel.fileDialog.ShowHiddenFiles )
-							if ( fileInfo.Name.StartsWith( "." )  || fileInfo.Attributes == FileAttributes.Hidden )
-								continue;
-						
-						FileStruct fileStruct = new FileStruct( );
-						
-						fileStruct.fullname = fileInfo.FullName;
-						
-						ListViewItem listViewItem = new ListViewItem( fileInfo.Name );
-						
-						listViewItem.ImageIndex = 0;
-						
-						long fileLen = 1;
-						if ( fileInfo.Length > 1024 )
-							fileLen = fileInfo.Length / 1024;
-						
-						listViewItem.SubItems.Add( fileLen.ToString( ) + " KB" );
-						listViewItem.SubItems.Add( "File" );
-						listViewItem.SubItems.Add( fileInfo.LastAccessTime.ToShortDateString( ) + " " + fileInfo.LastAccessTime.ToShortTimeString( ) );
-						
-						fileStruct.attributes = FileAttributes.Normal;
-						
-						fileDialogPanel.fileHashtable.Add( fileInfo.Name, fileStruct );
-						
-						Items.Add( listViewItem );
-					}
-					
-					EndUpdate( );
-				}
-				
-				protected override void OnClick( EventArgs e )
-				{
-					if ( !MultiSelect )
-					{
-						if ( SelectedItems.Count > 0 )
-						{
-							ListViewItem listViewItem = SelectedItems[ 0 ];
-							
-							FileStruct fileStruct = (FileStruct)fileDialogPanel.fileHashtable[ listViewItem.Text ];
-							
-							if ( fileStruct.attributes != FileAttributes.Directory )
-							{
-								fileDialogPanel.FileNameComboBox.Text = listViewItem.Text;
-								fileDialogPanel.CurrentFileName = fileStruct.fullname;
-							}
-						}
-					}
-					
-					base.OnClick( e );
-				}
-				
-				protected override void OnDoubleClick( EventArgs e )
-				{
-					if ( SelectedItems.Count > 0 )
-					{
-						ListViewItem listViewItem = SelectedItems[ 0 ];
-						
-						FileStruct fileStruct = (FileStruct)fileDialogPanel.fileHashtable[ listViewItem.Text ];
-						
-						if ( fileStruct.attributes == FileAttributes.Directory )
-						{
-							fileDialogPanel.ChangeDirectory( this, fileStruct.fullname );
-						}
-						else
-						{
-							fileDialogPanel.FileNameComboBox.Text =  listViewItem.Text;
-							fileDialogPanel.CurrentFileName = fileStruct.fullname;
-							fileDialogPanel.ForceDialogEnd( );
-							return;
-						}
-					}
-					
-					base.OnDoubleClick( e );
-				}
-				
-				protected override void OnSelectedIndexChanged( EventArgs e )
-				{
-					if ( MultiSelect )
-					{
-						if ( SelectedItems.Count > 0 )
-						{
-							string combotext = "";
-							
-							if ( SelectedItems.Count == 1 )
-							{
-								FileStruct fileStruct = (FileStruct)fileDialogPanel.fileHashtable[ SelectedItems[ 0 ].Text ];
-								
-								if ( fileStruct.attributes != FileAttributes.Directory )
-									combotext = SelectedItems[ 0 ].Text;
-							}
-							else
-							{
-								foreach ( ListViewItem lvi in SelectedItems )
-								{
-									FileStruct fileStruct = (FileStruct)fileDialogPanel.fileHashtable[ lvi.Text ];
-									
-									if ( fileStruct.attributes != FileAttributes.Directory )
-										combotext += "\"" + lvi.Text + "\" ";
-								}
-							}
-							
-							fileDialogPanel.FileNameComboBox.Text = combotext;
-						}
-					}
-					
-					base.OnSelectedIndexChanged( e );
-				}
-			}
-			
-			// helper class until ToolBar is working correctly
 			internal class ButtonPanel : Panel
 			{
 				private FileDialogPanel fileDialogPanel;
@@ -1491,7 +1285,7 @@ namespace System.Windows.Forms
 					else
 					if ( sender == workplaceButton )
 					{
-//						fileDialogPanel.ChangeDirectory( this, Environment.GetFolderPath( Environment.SpecialFolder.MyComputer ) );
+//						fileDialogPanel.ChangeDirectory(this, Environment.GetFolderPath( Environment.SpecialFolder.MyComputer ) );
 					}
 					else
 					if ( sender == networkButton )
@@ -1500,214 +1294,672 @@ namespace System.Windows.Forms
 					}
 				}
 			}
+		}
+	}
+	
+	internal struct FilterStruct
+	{
+		public string filterName;
+		public StringCollection filters;
+		
+		public FilterStruct( string filterName, string filter )
+		{
+			this.filterName = filterName;
 			
-			internal class DirComboBox : ComboBox
+			filters =  new StringCollection( );
+			
+			SplitFilters( filter );
+		}
+		
+		private void SplitFilters( string filter )
+		{
+			string[] split = filter.Split( new Char[] {';'} );
+			
+			filters.AddRange( split );
+		}
+	}
+	
+	internal struct FileStruct
+	{
+		public FileStruct( string fullname, FileAttributes attributes )
+		{
+			this.fullname = fullname;
+			this.attributes = attributes;
+		}
+		
+		public string fullname;
+		public FileAttributes attributes;
+	}
+	
+	// MWFFileView
+	internal class MWFFileView : ListView
+	{
+		private ImageList fileViewSmallImageList = new ImageList();
+		private ImageList fileViewBigImageList = new ImageList();
+		
+		private ArrayList filterArrayList;
+		// store the FileStruct of all files in the current directory
+		private Hashtable fileHashtable = new Hashtable();
+		
+		private bool showHiddenFiles = false;
+		
+		private EventHandler on_selected_file_changed;
+		private EventHandler on_selected_files_changed;
+		private EventHandler on_directory_changed;
+		private EventHandler on_force_dialog_end;
+		
+		private string fileName;
+		private string fullFileName;
+		private string selectedFilesString;
+		
+		private int filterIndex;
+		
+		public MWFFileView( )
+		{
+			fileViewSmallImageList.ColorDepth = ColorDepth.Depth32Bit;
+			fileViewSmallImageList.ImageSize = new Size( 16, 16 );
+			fileViewSmallImageList.Images.Add( (Image)Locale.GetResource( "paper" ) );
+			fileViewSmallImageList.Images.Add( (Image)Locale.GetResource( "folder" ) );
+			fileViewSmallImageList.TransparentColor = Color.Transparent;
+			
+			fileViewBigImageList.ColorDepth = ColorDepth.Depth32Bit;
+			fileViewBigImageList.ImageSize = new Size( 48, 48 );
+			fileViewBigImageList.Images.Add( (Image)Locale.GetResource( "paper" ) );
+			fileViewBigImageList.Images.Add( (Image)Locale.GetResource( "folder" ) );
+			fileViewBigImageList.TransparentColor = Color.Transparent;
+			
+			SmallImageList = fileViewSmallImageList;
+			LargeImageList = fileViewBigImageList;
+			
+			View = View.List;
+		}
+		
+		public ArrayList FilterArrayList
+		{
+			set
 			{
-				internal class DirComboBoxItem
+				filterArrayList = value;
+			}
+			
+			get
+			{
+				return filterArrayList;
+			}
+		}
+		
+		public Hashtable FileHashtable
+		{
+			set
+			{
+				fileHashtable = value;
+			}
+			
+			get
+			{
+				return fileHashtable;
+			}
+		}
+		
+		public bool ShowHiddenFiles
+		{
+			set
+			{
+				showHiddenFiles = value;
+			}
+			
+			get
+			{
+				return showHiddenFiles;
+			}
+		}
+		
+		public string FileName
+		{
+			set
+			{
+				fileName = value;
+			}
+			
+			get
+			{
+				return fileName;
+			}
+		}
+		
+		public string FullFileName
+		{
+			set
+			{
+				fullFileName = value;
+			}
+			
+			get
+			{
+				return fullFileName;
+			}
+		}
+		
+		public int FilterIndex
+		{
+			set
+			{
+				filterIndex = value;
+			}
+			
+			get
+			{
+				return filterIndex;
+			}
+		}
+		
+		public string SelectedFilesString
+		{
+			set
+			{
+				selectedFilesString = value;
+			}
+			
+			get
+			{
+				return selectedFilesString;
+			}
+		}
+		
+		private ArrayList GetFileInfoArrayList( DirectoryInfo directoryInfo )
+		{
+			ArrayList arrayList = new ArrayList( );
+			
+			if ( filterArrayList != null && filterArrayList.Count != 0 )
+			{
+				FilterStruct fs = (FilterStruct)filterArrayList[ filterIndex - 1 ];
+				
+				foreach ( string s in fs.filters )
+					arrayList.AddRange( directoryInfo.GetFiles( s ) );
+			}
+			else
+				arrayList.AddRange( directoryInfo.GetFiles( ) );
+			
+			return arrayList;
+		}
+		
+		public void UpdateFileView( DirectoryInfo inputDirectoryInfo )
+		{
+			DirectoryInfo directoryInfo = inputDirectoryInfo;
+			
+			DirectoryInfo[] directoryInfoArray = directoryInfo.GetDirectories( );
+			
+			ArrayList fileInfoArrayList = GetFileInfoArrayList( directoryInfo );
+			
+			fileHashtable.Clear( );
+			
+			BeginUpdate( );
+			
+			Items.Clear( );
+			SelectedItems.Clear( );
+			
+			foreach ( DirectoryInfo directoryInfoi in directoryInfoArray )
+			{
+				if ( !ShowHiddenFiles )
+					if ( directoryInfoi.Name.StartsWith( "." ) || directoryInfoi.Attributes == FileAttributes.Hidden )
+						continue;
+				
+				FileStruct fileStruct = new FileStruct( );
+				
+				fileStruct.fullname = directoryInfoi.FullName;
+				
+				ListViewItem listViewItem = new ListViewItem( directoryInfoi.Name );
+				
+				listViewItem.ImageIndex = 1;
+				
+				listViewItem.SubItems.Add( "" );
+				listViewItem.SubItems.Add( "Directory" );
+				listViewItem.SubItems.Add( directoryInfoi.LastAccessTime.ToShortDateString( ) + " " + directoryInfoi.LastAccessTime.ToShortTimeString( ) );
+				
+				fileStruct.attributes = FileAttributes.Directory;
+				
+				fileHashtable.Add( directoryInfoi.Name, fileStruct );
+				
+				Items.Add( listViewItem );
+			}
+			
+			foreach ( FileInfo fileInfo in fileInfoArrayList )
+			{
+				if ( !ShowHiddenFiles )
+					if ( fileInfo.Name.StartsWith( "." )  || fileInfo.Attributes == FileAttributes.Hidden )
+						continue;
+				
+				FileStruct fileStruct = new FileStruct( );
+				
+				fileStruct.fullname = fileInfo.FullName;
+				
+				ListViewItem listViewItem = new ListViewItem( fileInfo.Name );
+				
+				listViewItem.ImageIndex = 0;
+				
+				long fileLen = 1;
+				if ( fileInfo.Length > 1024 )
+					fileLen = fileInfo.Length / 1024;
+				
+				listViewItem.SubItems.Add( fileLen.ToString( ) + " KB" );
+				listViewItem.SubItems.Add( "File" );
+				listViewItem.SubItems.Add( fileInfo.LastAccessTime.ToShortDateString( ) + " " + fileInfo.LastAccessTime.ToShortTimeString( ) );
+				
+				fileStruct.attributes = FileAttributes.Normal;
+				
+				fileHashtable.Add( fileInfo.Name, fileStruct );
+				
+				Items.Add( listViewItem );
+			}
+			
+			EndUpdate( );
+		}
+		
+		protected override void OnClick( EventArgs e )
+		{
+			if ( !MultiSelect )
+			{
+				if ( SelectedItems.Count > 0 )
 				{
-					private int imageIndex;
-					private string name;
-					private string path;
-					private int xPos;
+					ListViewItem listViewItem = SelectedItems[ 0 ];
 					
-					public DirComboBoxItem( int imageIndex, string name, string path, int xPos )
-					{
-						this.imageIndex = imageIndex;
-						this.name = name;
-						this.path = path;
-						this.XPos = xPos;
-					}
+					FileStruct fileStruct = (FileStruct)fileHashtable[ listViewItem.Text ];
 					
-					public int ImageIndex
+					if ( fileStruct.attributes != FileAttributes.Directory )
 					{
-						set
-						{
-							imageIndex = value;
-						}
+						fileName = listViewItem.Text;
+						fullFileName = fileStruct.fullname;
 						
-						get
-						{
-							return imageIndex;
-						}
-					}
-					
-					public string Name
-					{
-						set
-						{
-							name = value;
-						}
-						
-						get
-						{
-							return name;
-						}
-					}
-					
-					public string Path
-					{
-						set
-						{
-							path = value;
-						}
-						
-						get
-						{
-							return path;
-						}
-					}
-					
-					public int XPos
-					{
-						set
-						{
-							xPos = value;
-						}
-						
-						get
-						{
-							return xPos;
-						}
-					}
-				}
-				
-				private FileDialogPanel fileDialogPanel;
-				
-				private ImageList imageList = new ImageList();
-				
-				private string currentPath;
-				
-				private bool firstTime = true;
-				
-				public DirComboBox( FileDialogPanel fileDialogPanel )
-				{
-					this.fileDialogPanel = fileDialogPanel;
-					
-					DrawMode = DrawMode.OwnerDrawFixed;
-					
-					imageList.ColorDepth = ColorDepth.Depth32Bit;
-					imageList.ImageSize = new Size( 16, 16 );
-					imageList.Images.Add( (Image)Locale.GetResource( "last_open" ) );
-					imageList.Images.Add( (Image)Locale.GetResource( "desktop" ) );
-					imageList.Images.Add( (Image)Locale.GetResource( "folder_with_paper" ) );
-					imageList.Images.Add( (Image)Locale.GetResource( "folder" ) );
-					imageList.Images.Add( (Image)Locale.GetResource( "monitor-computer" ) );
-					imageList.Images.Add( (Image)Locale.GetResource( "monitor-planet" ) );
-					imageList.TransparentColor = Color.Transparent;
-					
-					Items.AddRange( new object[] {
-									   new DirComboBoxItem( 1, "Desktop", Environment.GetFolderPath( Environment.SpecialFolder.Desktop ), 0 ),
-									   new DirComboBoxItem( 2, "Home", Environment.GetFolderPath( Environment.SpecialFolder.Personal ), 0 )
-								   }
-								   );
-				}
-				
-				public string CurrentPath
-				{
-					set
-					{
-						currentPath = value;
-						
-						ShowPath( );
-					}
-					get
-					{
-						return currentPath;
-					}
-				}
-				
-				private void ShowPath( )
-				{
-					DirectoryInfo di = new DirectoryInfo( currentPath );
-					
-					Stack dirStack = new Stack( );
-					
-					dirStack.Push( di );
-					
-					while ( di.Parent != null )
-					{
-						di = di.Parent;
-						dirStack.Push( di );
-					}
-					
-					BeginUpdate( );
-					
-					Items.Clear( );
-					
-					Items.AddRange( new object[] {
-									   new DirComboBoxItem( 1, "Desktop", Environment.GetFolderPath( Environment.SpecialFolder.Desktop ), 0 ),
-									   new DirComboBoxItem( 2, "Home", Environment.GetFolderPath( Environment.SpecialFolder.Personal ), 0 )
-								   }
-								   );
-					
-					int sel = -1;
-					
-					int xPos = -4;
-					
-					while ( dirStack.Count != 0 )
-					{
-						DirectoryInfo dii = (DirectoryInfo)dirStack.Pop( );
-						sel = Items.Add( new DirComboBoxItem( 3, dii.Name, dii.FullName, xPos + 4 ) );
-						xPos += 4;
-					}
-					
-					if ( sel != -1 )
-						SelectedIndex = sel;
-					
-					EndUpdate( );
-				}
-				
-				protected override void OnDrawItem( DrawItemEventArgs e )
-				{
-					if ( e.Index == -1 )
-						return;
-					
-					Bitmap bmp = new Bitmap( e.Bounds.Width, e.Bounds.Height, e.Graphics );
-					Graphics gr = Graphics.FromImage( bmp );
-					
-					DirComboBoxItem dcbi = Items[ e.Index ] as DirComboBoxItem;
-					
-					Color backColor = e.BackColor;
-					Color foreColor = e.ForeColor;
-					
-					int xPos = dcbi.XPos;
-					
-					// Bug in ComboBox !!!!!
-					// we never receive DrawItemState.ComboBoxEdit
-					if ( ( e.State & DrawItemState.ComboBoxEdit ) != 0 )
-						xPos = 0;
-					else
-					if ( ( e.State & DrawItemState.Selected ) == DrawItemState.Selected )
-					{
-						backColor = Color.Blue;
-						foreColor = Color.White;
-					}
-					
-					gr.FillRectangle( new SolidBrush( backColor ), new Rectangle( 0, 0, bmp.Width, bmp.Height ) );
-					
-					gr.DrawString( dcbi.Name, e.Font , new SolidBrush( foreColor ), new Point( 24 + xPos, ( bmp.Height - e.Font.Height ) / 2 ) );
-					gr.DrawImage( imageList.Images[ dcbi.ImageIndex ], new Rectangle( new Point( xPos + 2, 0 ), new Size( 16, 16 ) ) );
-					
-					e.Graphics.DrawImage( bmp, e.Bounds.X, e.Bounds.Y );
-				}
-				
-				protected override void OnSelectedIndexChanged( EventArgs e )
-				{
-					// do not call ChangeDirectory when invoked from FileDialogPanel ctor...
-					if ( firstTime )
-					{
-						firstTime = false;
-						return;
-					}
-					
-					if ( Items.Count > 0 )
-					{
-						DirComboBoxItem dcbi = Items[ SelectedIndex ] as DirComboBoxItem;
-						
-						fileDialogPanel.ChangeDirectory( this, dcbi.Path );
+						if ( on_selected_file_changed != null )
+							on_selected_file_changed( this, EventArgs.Empty );
 					}
 				}
 			}
+			
+			base.OnClick( e );
+		}
+		
+		protected override void OnDoubleClick( EventArgs e )
+		{
+			if ( SelectedItems.Count > 0 )
+			{
+				ListViewItem listViewItem = SelectedItems[ 0 ];
+				
+				FileStruct fileStruct = (FileStruct)fileHashtable[ listViewItem.Text ];
+				
+				if ( fileStruct.attributes == FileAttributes.Directory )
+				{
+					fullFileName = fileStruct.fullname;
+					
+					if ( on_directory_changed != null )
+						on_directory_changed( this, EventArgs.Empty );
+				}
+				else
+				{
+					fileName = listViewItem.Text;
+					fullFileName = fileStruct.fullname;
+					
+					if ( on_selected_file_changed != null )
+						on_selected_file_changed( this, EventArgs.Empty );
+					
+					if ( on_force_dialog_end != null )
+						on_force_dialog_end( this, EventArgs.Empty );
+					
+					return;
+				}
+			}
+			
+			base.OnDoubleClick( e );
+		}
+		
+		protected override void OnSelectedIndexChanged( EventArgs e )
+		{
+			if ( MultiSelect )
+			{
+				if ( SelectedItems.Count > 0 )
+				{
+					selectedFilesString = "";
+					
+					if ( SelectedItems.Count == 1 )
+					{
+						FileStruct fileStruct = (FileStruct)fileHashtable[ SelectedItems[ 0 ].Text ];
+						
+						if ( fileStruct.attributes != FileAttributes.Directory )
+							selectedFilesString = SelectedItems[ 0 ].Text;
+					}
+					else
+					{
+						foreach ( ListViewItem lvi in SelectedItems )
+						{
+							FileStruct fileStruct = (FileStruct)fileHashtable[ lvi.Text ];
+							
+							if ( fileStruct.attributes != FileAttributes.Directory )
+								selectedFilesString += "\"" + lvi.Text + "\" ";
+						}
+					}
+					
+					if ( on_selected_files_changed != null )
+						on_selected_files_changed( this, EventArgs.Empty );
+				}
+			}
+			
+			base.OnSelectedIndexChanged( e );
+		}
+		
+		public event EventHandler SelectedFileChanged
+		{
+			add
+			{ on_selected_file_changed += value; }
+			remove
+			{ on_selected_file_changed -= value; }
+		}
+		
+		public event EventHandler SelectedFilesChanged
+		{
+			add
+			{ on_selected_files_changed += value; }
+			remove
+			{ on_selected_files_changed -= value; }
+		}
+		
+		public event EventHandler DirectoryChanged
+		{
+			add
+			{ on_directory_changed += value; }
+			remove
+			{ on_directory_changed -= value; }
+		}
+		
+		public event EventHandler ForceDialogEnd
+		{
+			add
+			{ on_force_dialog_end += value; }
+			remove
+			{ on_force_dialog_end -= value; }
+		}
+	}
+	
+	internal class FileFilter
+	{
+		private ArrayList filterArrayList = new ArrayList();
+		
+		private string filter;
+		
+		public FileFilter( )
+		{}
+		
+		public FileFilter( string filter )
+		{
+			this.filter = filter;
+			
+			SplitFilter( );
+		}
+		
+		public ArrayList FilterArrayList
+		{
+			set
+			{
+				filterArrayList = value;
+			}
+			
+			get
+			{
+				return filterArrayList;
+			}
+		}
+		
+		public string Filter
+		{
+			set
+			{
+				filter = value;
+				
+				SplitFilter( );
+			}
+			
+			get
+			{
+				return filter;
+			}
+		}
+		
+		private void SplitFilter( )
+		{
+			filterArrayList.Clear( );
+			
+			if ( filter == null )
+				throw new NullReferenceException( "Filter" );
+			
+			if ( filter.Length == 0 )
+				return;
+			
+			string[] filters = filter.Split( new Char[] {'|'} );
+			
+			if ( ( filters.Length % 2 ) != 0 )
+				throw new ArgumentException( "Filter" );
+			
+			for ( int i = 0; i < filters.Length; i += 2 )
+			{
+				FilterStruct filterStruct = new FilterStruct( filters[ i ], filters[ i + 1 ] );
+				
+				filterArrayList.Add( filterStruct );
+			}
+		}
+	}
+	
+	internal class DirComboBox : ComboBox
+	{
+		internal class DirComboBoxItem
+		{
+			private int imageIndex;
+			private string name;
+			private string path;
+			private int xPos;
+			
+			public DirComboBoxItem( int imageIndex, string name, string path, int xPos )
+			{
+				this.imageIndex = imageIndex;
+				this.name = name;
+				this.path = path;
+				this.XPos = xPos;
+			}
+			
+			public int ImageIndex
+			{
+				set
+				{
+					imageIndex = value;
+				}
+				
+				get
+				{
+					return imageIndex;
+				}
+			}
+			
+			public string Name
+			{
+				set
+				{
+					name = value;
+				}
+				
+				get
+				{
+					return name;
+				}
+			}
+			
+			public string Path
+			{
+				set
+				{
+					path = value;
+				}
+				
+				get
+				{
+					return path;
+				}
+			}
+			
+			public int XPos
+			{
+				set
+				{
+					xPos = value;
+				}
+				
+				get
+				{
+					return xPos;
+				}
+			}
+		}
+		
+		private ImageList imageList = new ImageList();
+		
+		private string currentPath;
+		
+		private bool firstTime = true;
+		
+		private EventHandler on_directory_changed;
+		
+		public DirComboBox( )
+		{
+			DrawMode = DrawMode.OwnerDrawFixed;
+			
+			imageList.ColorDepth = ColorDepth.Depth32Bit;
+			imageList.ImageSize = new Size( 16, 16 );
+			imageList.Images.Add( (Image)Locale.GetResource( "last_open" ) );
+			imageList.Images.Add( (Image)Locale.GetResource( "desktop" ) );
+			imageList.Images.Add( (Image)Locale.GetResource( "folder_with_paper" ) );
+			imageList.Images.Add( (Image)Locale.GetResource( "folder" ) );
+			imageList.Images.Add( (Image)Locale.GetResource( "monitor-computer" ) );
+			imageList.Images.Add( (Image)Locale.GetResource( "monitor-planet" ) );
+			imageList.TransparentColor = Color.Transparent;
+			
+			Items.AddRange( new object[] {
+					       new DirComboBoxItem( 1, "Desktop", Environment.GetFolderPath( Environment.SpecialFolder.Desktop ), 0 ),
+					       new DirComboBoxItem( 2, "Home", Environment.GetFolderPath( Environment.SpecialFolder.Personal ), 0 )
+				       }
+				       );
+		}
+		
+		public string CurrentPath
+		{
+			set
+			{
+				currentPath = value;
+				
+				ShowPath( );
+			}
+			get
+			{
+				return currentPath;
+			}
+		}
+		
+		private void ShowPath( )
+		{
+			DirectoryInfo di = new DirectoryInfo( currentPath );
+			
+			Stack dirStack = new Stack( );
+			
+			dirStack.Push( di );
+			
+			while ( di.Parent != null )
+			{
+				di = di.Parent;
+				dirStack.Push( di );
+			}
+			
+			BeginUpdate( );
+			
+			Items.Clear( );
+			
+			Items.AddRange( new object[] {
+					       new DirComboBoxItem( 1, "Desktop", Environment.GetFolderPath( Environment.SpecialFolder.Desktop ), 0 ),
+					       new DirComboBoxItem( 2, "Home", Environment.GetFolderPath( Environment.SpecialFolder.Personal ), 0 )
+				       }
+				       );
+			
+			int sel = -1;
+			
+			int xPos = -4;
+			
+			while ( dirStack.Count != 0 )
+			{
+				DirectoryInfo dii = (DirectoryInfo)dirStack.Pop( );
+				sel = Items.Add( new DirComboBoxItem( 3, dii.Name, dii.FullName, xPos + 4 ) );
+				xPos += 4;
+			}
+			
+			if ( sel != -1 )
+				SelectedIndex = sel;
+			
+			EndUpdate( );
+		}
+		
+		protected override void OnDrawItem( DrawItemEventArgs e )
+		{
+			if ( e.Index == -1 )
+				return;
+			
+			Bitmap bmp = new Bitmap( e.Bounds.Width, e.Bounds.Height, e.Graphics );
+			Graphics gr = Graphics.FromImage( bmp );
+			
+			DirComboBoxItem dcbi = Items[ e.Index ] as DirComboBoxItem;
+			
+			Color backColor = e.BackColor;
+			Color foreColor = e.ForeColor;
+			
+			int xPos = dcbi.XPos;
+			
+			// Bug in ComboBox !!!!!
+			// we never receive DrawItemState.ComboBoxEdit
+			if ( ( e.State & DrawItemState.ComboBoxEdit ) != 0 )
+				xPos = 0;
+			else
+			if ( ( e.State & DrawItemState.Selected ) == DrawItemState.Selected )
+			{
+				backColor = Color.Blue;
+				foreColor = Color.White;
+			}
+			
+			gr.FillRectangle( new SolidBrush( backColor ), new Rectangle( 0, 0, bmp.Width, bmp.Height ) );
+			
+			gr.DrawString( dcbi.Name, e.Font , new SolidBrush( foreColor ), new Point( 24 + xPos, ( bmp.Height - e.Font.Height ) / 2 ) );
+			gr.DrawImage( imageList.Images[ dcbi.ImageIndex ], new Rectangle( new Point( xPos + 2, 0 ), new Size( 16, 16 ) ) );
+			
+			e.Graphics.DrawImage( bmp, e.Bounds.X, e.Bounds.Y );
+		}
+		
+		protected override void OnSelectedIndexChanged( EventArgs e )
+		{
+			// do not call ChangeDirectory when invoked from FileDialogPanel ctor...
+			if ( firstTime )
+			{
+				firstTime = false;
+				return;
+			}
+			
+			if ( Items.Count > 0 )
+			{
+				DirComboBoxItem dcbi = Items[ SelectedIndex ] as DirComboBoxItem;
+				
+				currentPath = dcbi.Path;
+				
+				if ( on_directory_changed != null )
+					on_directory_changed( this, EventArgs.Empty );
+			}
+		}
+		
+		public event EventHandler DirectoryChanged
+		{
+			add
+			{ on_directory_changed += value; }
+			remove
+			{ on_directory_changed -= value; }
 		}
 	}
 }
