@@ -699,13 +699,21 @@ namespace System.Data.Common {
 						parameter.Value = row [dsColumnName, rowVersion];
 					}
 				}
-
-				if (command.Connection.State == ConnectionState.Closed) 
-					command.Connection.Open ();
 				
+				CommandBehavior commandBehavior = CommandBehavior.Default;
+				if (command.Connection.State == ConnectionState.Closed) 
+				{
+					command.Connection.Open ();
+					commandBehavior |= CommandBehavior.CloseConnection;
+				}
+				
+				IDataReader reader = null;
 				try
 				{
-					int tmp = command.ExecuteNonQuery ();
+					// use ExecuteReader because we want to use the commandbehavior parameter.
+					// so the connection will be closed if needed.
+					reader = command.ExecuteReader (commandBehavior);
+					int tmp = reader.RecordsAffected;
 					// if the execute does not effect any rows we throw an exception.
 					if (tmp == 0)
 						throw new DBConcurrencyException("Concurrency violation: the " + commandName +"Command affected 0 records.");
@@ -719,6 +727,11 @@ namespace System.Data.Common {
 						row.RowError = e.Message;// do somthing with the error
 					else
 						throw e;
+				}
+				finally
+				{
+					if (reader != null)
+						reader.Close ();
 				}
 			}
 			
