@@ -3815,6 +3815,9 @@ namespace Mono.CSharp {
 			if (!CheckBase ())
 				return false;
 
+			if (IsOperator)
+				flags |= MethodAttributes.SpecialName | MethodAttributes.HideBySig;
+
 			MethodData = new MethodData (this, ParameterInfo, ModFlags, flags,
 						     this, mb, GenericMethod);
 
@@ -7002,8 +7005,8 @@ namespace Mono.CSharp {
 
 			OperatorMethod.Block = Block;
 			OperatorMethod.IsOperator = true;			
-			OperatorMethod.Define ();
 			OperatorMethod.flags |= MethodAttributes.SpecialName | MethodAttributes.HideBySig;
+			OperatorMethod.Define ();
 
 			if (OperatorMethod.MethodBuilder == null)
 				return false;

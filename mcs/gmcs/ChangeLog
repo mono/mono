@@ -1,3 +1,8 @@
+2004-08-24  Martin Baulig  <martin@ximian.com>
+
+	* class.cs (Method.Define): Set MethodAttributes.SpecialName and
+	MethodAttributes.HideBySig for operators.
+
 2004-08-23  Martin Baulig  <martin@ximian.com>
 
 	Back to the old error reporting system :-)
