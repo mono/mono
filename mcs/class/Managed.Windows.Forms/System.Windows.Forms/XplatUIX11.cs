@@ -76,6 +76,7 @@ namespace System.Windows.Forms {
 		private static IntPtr		DisplayHandle;		// X11 handle to display
 		private static int		screen_num;		// Screen number used
 		private static IntPtr		root_window;		// Handle of the root window for the screen/display
+		private static IntPtr		active_window;		// Handle of the window with focus (if any)
 		private static IntPtr		FosterParent;		// Container to hold child windows until their parent exists
 		private static int		wm_protocols;		// X Atom
 		private static int		wm_delete_window;	// X Atom
@@ -347,6 +348,7 @@ namespace System.Windows.Forms {
 				Graphics.FromHdcInternal (DisplayHandle);
 
 				// Create a few things
+				active_window = IntPtr.Zero;
 				mouse_state = MouseButtons.None;
 				mouse_position = Point.Empty;
 				//Screen = XDefaultScreenOfDisplay(DisplayHandle);
@@ -380,6 +382,8 @@ namespace System.Windows.Forms {
 				hover.hevent = XInternAtom(display_handle, "_SWF_HoverAtom", false);
 
 				handle_data = new Hashtable ();
+
+				XSelectInput(DisplayHandle, root_window, EventMask.PropertyChangeMask);
 			} else {
 				throw new ArgumentNullException("Display", "Could not open display (X-Server required. Check you DISPLAY environment variable)");
 			}
@@ -558,10 +562,13 @@ namespace System.Windows.Forms {
 				atom_count = 0;
 				atoms[atom_count++] = (IntPtr)wm_delete_window;
 
+				#if notneeded
+				// This is better handled via the root_window property notification
 				// Only get the WM_TAKE_FOCUS message if we're a toplevel window
 				if ((cp.Parent == IntPtr.Zero) && ((cp.Style & (int)(WindowStyles.WS_POPUP | WindowStyles.WS_OVERLAPPEDWINDOW)) != 0)) {
 					atoms[atom_count++] = (IntPtr)wm_take_focus;
 				}
+				#endif
 
 				if ((cp.ExStyle & (int)WindowStyles.WS_EX_CONTEXTHELP) != 0) {
 					atoms[atom_count++] = (IntPtr)net_wm_context_help;
@@ -738,15 +745,12 @@ namespace System.Windows.Forms {
 		internal override void SetModal(IntPtr handle, bool Modal) {
 			if (Modal) {
 				modal_window.Push(handle);
-				XSelectInput(DisplayHandle, root_window, EventMask.PropertyChangeMask);
 			} else {
 				if (modal_window.Contains(handle)) {
 					modal_window.Pop();
 				}
 				if (modal_window.Count > 0) {
 					Activate((IntPtr)modal_window.Peek());
-				} else {
-					XSelectInput(DisplayHandle, root_window, EventMask.NoEventMask);
 				}
 			}
 		}
@@ -952,26 +956,43 @@ namespace System.Windows.Forms {
 
 				case XEventName.PropertyNotify:
 					if (xevent.PropertyEvent.atom == (IntPtr)net_active_window) {
-						if (modal_window.Count > 0) {
-							Atom	actual_atom;
-							int	actual_format;
-							int	nitems;
-							int	bytes_after;
-							IntPtr	prop = IntPtr.Zero;
-							IntPtr	active_window = (IntPtr)modal_window.Peek();	// if GetWindowProperty fails this prevents the reset trigger below
+						Atom	actual_atom;
+						int	actual_format;
+						int	nitems;
+						int	bytes_after;
+						IntPtr	prop = IntPtr.Zero;
+						IntPtr	prev_active;;
 
-							XGetWindowProperty(DisplayHandle, root_window, net_active_window, 0, 1, false, Atom.XA_WINDOW, out actual_atom, out actual_format, out nitems, out bytes_after, ref prop);
-							if ((nitems > 0) && (prop != IntPtr.Zero)) {
-								active_window = (IntPtr)Marshal.ReadInt32(prop);
-								XFree(prop);
-							}
+						prev_active = active_window;
+						XGetWindowProperty(DisplayHandle, root_window, net_active_window, 0, 1, false, Atom.XA_WINDOW, out actual_atom, out actual_format, out nitems, out bytes_after, ref prop);
+						if ((nitems > 0) && (prop != IntPtr.Zero)) {
+							active_window = (IntPtr)Marshal.ReadInt32(prop);
+							XFree(prop);
 
-							if (active_window != (IntPtr)modal_window.Peek()) {
-								if (NativeWindow.FindWindow(active_window) != null) {
-									Activate((IntPtr)modal_window.Peek());
+							if (prev_active != active_window) {
+								if (prev_active != IntPtr.Zero) {
+									PostMessage(prev_active, Msg.WM_ACTIVATE, (IntPtr)WindowActiveFlags.WA_INACTIVE, IntPtr.Zero);
+								}
+								if (active_window != IntPtr.Zero) {
+									PostMessage(active_window, Msg.WM_ACTIVATE, (IntPtr)WindowActiveFlags.WA_ACTIVE, IntPtr.Zero);
 								}
 							}
+							if (modal_window.Count == 0) {
+								break;
+							} else {
+								// Modality handling, if we are modal and the new active window is one
+								// of ours but not the modal one, switch back to the modal window
+
+								if (NativeWindow.FindWindow(active_window) != null) {
+									if (active_window != (IntPtr)modal_window.Peek()) {
+										Activate((IntPtr)modal_window.Peek());
+									}
+								}
+								break;
+							}
 						}
+
+
 					}
 					break;
 
@@ -1169,7 +1190,7 @@ namespace System.Windows.Forms {
 				}
 
 				case XEventName.FocusIn: {
-					Console.WriteLine("Received focus: {0}", xevent.FocusChangeEvent.detail);
+					//Console.WriteLine("Received focus: {0}", xevent.FocusChangeEvent.detail);
 					msg.message=Msg.WM_SETFOCUS;
 					msg.wParam=IntPtr.Zero;
 					msg.lParam=IntPtr.Zero;
@@ -1177,7 +1198,7 @@ namespace System.Windows.Forms {
 				}
 
 				case XEventName.FocusOut: {
-					Console.WriteLine("Lost focus: {0}", xevent.FocusChangeEvent.detail);
+					//Console.WriteLine("Lost focus: {0}", xevent.FocusChangeEvent.detail);
 					msg.message=Msg.WM_KILLFOCUS;
 					msg.wParam=IntPtr.Zero;
 					msg.lParam=IntPtr.Zero;
@@ -1238,18 +1259,17 @@ namespace System.Windows.Forms {
 					}
 
 					if  (xevent.ClientMessageEvent.message_type == (IntPtr)wm_protocols) {
-						if (xevent.ClientMessageEvent.ptr1 == (IntPtr)wm_take_focus) {
-							msg.message=Msg.WM_ACTIVATEAPP;
-							msg.wParam=(IntPtr)1;
-							msg.lParam=IntPtr.Zero;
+						if (xevent.ClientMessageEvent.ptr1 == (IntPtr)wm_delete_window) {
+							msg.message = Msg.WM_CLOSE;
+							msg.wParam = IntPtr.Zero;
+							msg.lParam = IntPtr.Zero;
 							break;
 						}
 
-						if (xevent.ClientMessageEvent.ptr1 == (IntPtr)wm_delete_window) {
-							msg.message = Msg.WM_DESTROY;
-							msg.wParam = IntPtr.Zero;
-							msg.lParam = IntPtr.Zero;
-							Exit ();
+						// We should not get this, but I'll leave the code in case we need it in the future
+						if (xevent.ClientMessageEvent.ptr1 == (IntPtr)wm_take_focus) {
+							msg.message = Msg.WM_NULL;
+							break;
 						}
 					}
 					break;
@@ -1664,15 +1684,15 @@ namespace System.Windows.Forms {
 			int	nitems;
 			int	bytes_after;
 			IntPtr	prop = IntPtr.Zero;
-			IntPtr	active_window = IntPtr.Zero;
+			IntPtr	active = IntPtr.Zero;
 
 			XGetWindowProperty(DisplayHandle, root_window, net_active_window, 0, 1, false, Atom.XA_WINDOW, out actual_atom, out actual_format, out nitems, out bytes_after, ref prop);
 			if ((nitems > 0) && (prop != IntPtr.Zero)) {
-				active_window = (IntPtr)Marshal.ReadInt32(prop);
+				active = (IntPtr)Marshal.ReadInt32(prop);
 				XFree(prop);
 			}
 
-			return active_window;
+			return active;
 		}
 
 		internal override bool GetFontMetrics(Graphics g, Font font, out int ascent, out int descent) {

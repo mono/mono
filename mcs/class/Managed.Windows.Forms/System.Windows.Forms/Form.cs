@@ -166,13 +166,11 @@ namespace System.Windows.Forms {
 						}
 						break;
 					}
-					case Msg.WM_ACTIVATEAPP: {
-						if (m.WParam == (IntPtr)1) {
-Console.WriteLine("App activated");
+					case Msg.WM_ACTIVATE: {
+						if (m.WParam != (IntPtr)WindowActiveFlags.WA_INACTIVE) {
 							owner.OnActivated(EventArgs.Empty);
-//						} else {
-//Console.WriteLine("App de-activated");
-//							owner.OnDeactivate(EventArgs.Empty);
+						} else {
+							owner.OnDeactivate(EventArgs.Empty);
 						}
 						break;
 					}
@@ -188,18 +186,6 @@ Console.WriteLine("App activated");
 					}
 #endif
 
-					case Msg.WM_SETFOCUS: {
-						owner.OnActivated(EventArgs.Empty);
-						base.WndProc(ref m);
-						break;
-					}
-
-					case Msg.WM_KILLFOCUS: {
-						owner.OnDeactivate(EventArgs.Empty);
-						base.WndProc(ref m);
-						break;
-					}
-					
 #if topmost_workaround
 					case Msg.WM_ACTIVATE: {
 							if (this.OwnedForms.Length>0) {
@@ -660,6 +646,16 @@ Console.WriteLine("App activated");
 		#endregion	// Public Static Methods
 
 		#region Public Instance Methods
+		public void Activate() {
+			Form	active;
+
+			// The docs say activate only activates if our app is already active
+			active = ActiveForm;
+			if ((active != null) && (this != active)) {
+				XplatUI.Activate(form_parent_window.window.Handle);
+			}
+		}
+
 		public void AddOwnedForm(Form ownedForm) {
 			owned_forms.Add(ownedForm);
 		}
@@ -673,6 +669,8 @@ Console.WriteLine("App activated");
 		}
 
 		public DialogResult ShowDialog(IWin32Window ownerWin32) {
+			Form		previous;
+
 			#if broken
 			Control		owner = null;
 
@@ -694,6 +692,8 @@ Console.WriteLine("App activated");
 			form_parent_window.Parent = owner;
 			#endif
 
+			previous = Form.ActiveForm;
+
 			if (!IsHandleCreated) {
 				CreateControl();
 			}
@@ -708,6 +708,11 @@ Console.WriteLine("App activated");
 			Hide();
 
 			XplatUI.SetModal(form_parent_window.window.Handle, false);
+
+			if (previous != null) {
+				// Cannot use Activate(), it has a check for the current active window...
+				XplatUI.Activate(previous.form_parent_window.window.Handle);
+			}
 
 			return DialogResult;
 		}
