@@ -273,6 +273,7 @@ namespace System.Runtime.Remoting.Channels.Tcp
 
 		public void ProcessMessages()
 		{
+			byte[] buffer = new byte[256];
 			_stream = new BufferedStream (_client.GetStream());
 
 			try
@@ -280,7 +281,7 @@ namespace System.Runtime.Remoting.Channels.Tcp
 				bool end = false;
 				while (!end)
 				{
-					MessageStatus type = TcpMessageIO.ReceiveMessageStatus (_stream);
+					MessageStatus type = TcpMessageIO.ReceiveMessageStatus (_stream, buffer);
 
 					switch (type)
 					{

@@ -1,3 +1,10 @@
+2005-01-21  Lluis Sanchez Gual  <lluis@novell.com>
+
+	* TcpMessageIO.cs: Added a buffer parameter to ReceiveMessageStatus,
+	to avoid creating unneded buffers.
+	* TcpServerChannel.cs, TcpClientTransportSink.cs: Use new buffer
+	parameter in ReceiveMessageStatus.
+
 2005-01-14  Lluis Sanchez Gual  <lluis@novell.com>
 
 	* TcpConnectionPool.cs: Don't limit client connections.

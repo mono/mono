@@ -119,7 +119,7 @@ namespace System.Runtime.Remoting.Channels.Tcp
 				ITransportHeaders responseHeaders;
 
 				// Read the response, blocking if necessary
-				MessageStatus status = TcpMessageIO.ReceiveMessageStatus (connection.Stream);
+				MessageStatus status = TcpMessageIO.ReceiveMessageStatus (connection.Stream, connection.Buffer);
 
 				if (status != MessageStatus.MethodMessage)
 					throw new RemotingException ("Unknown response message from server");
@@ -171,7 +171,7 @@ namespace System.Runtime.Remoting.Channels.Tcp
 				connection.Stream.Flush ();
 
 				// Reads the response
-				MessageStatus status = TcpMessageIO.ReceiveMessageStatus (connection.Stream);
+				MessageStatus status = TcpMessageIO.ReceiveMessageStatus (connection.Stream, connection.Buffer);
 
 				if (status != MessageStatus.MethodMessage)
 					throw new RemotingException ("Unknown response message from server");

@@ -48,10 +48,8 @@ namespace System.Runtime.Remoting.Channels.Tcp
 		public static int DefaultStreamBufferSize = 1000;
 
 		// Identifies an incoming message
-		public static MessageStatus ReceiveMessageStatus (Stream networkStream)
+		public static MessageStatus ReceiveMessageStatus (Stream networkStream, byte[] buffer)
 		{
-			byte[] buffer = new byte[6];
-
 			try {
 				StreamRead (networkStream, buffer, 6);
 			} catch (Exception ex) {
