@@ -1,3 +1,16 @@
+2002-10-10  Daniel Morgan <danmorg@sc.rr.com>
+
+	* SqlSharpCli.cs: modified
+	  - add support for System.Data.Odbc 
+	  - created simple reader to display data for those providers
+	    which have not implemented GetSchemaTable - UseSimpleReader
+	  - allow only providers that support parameters to use them
+	    during exection of SQL - UseParameters
+	  - add support for postional parameter marker (question mark),
+	    the delimted named parameter markers (square brackets) in addition
+	    to colon and at parameter markers.  Allow, the parameter marker 
+	    to be settable.  
+
 2002-10-09  Ville Palo (vi64pa@koti.soon.fi)
 
 	* System.Data.SqlTypes/SqlInt16Test.cs:

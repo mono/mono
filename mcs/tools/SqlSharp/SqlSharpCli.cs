@@ -35,6 +35,7 @@ using System;
 using System.Collections;
 using System.Data;
 using System.Data.Common;
+using System.Data.Odbc;
 using System.Data.OleDb;
 using System.Data.SqlClient;
 using System.IO;
@@ -54,9 +55,13 @@ namespace Mono.Data.SqlSharp {
 
 	// SQL Sharp - Command Line Interface
 	public class SqlSharpCli {
+
+		// provider supports
+		private bool UseParameters = true;
+		private bool UseSimpleReader = false;
 	
 		private IDbConnection conn = null;
-		
+                		
 		private string provider = "POSTGRESQL"; // name of internal provider
 		// {OleDb,SqlClient,MySql,Odbc,Oracle,PostgreSql} however, it
 		// can be set to LOADEXTPROVIDER to load an external provider
@@ -83,7 +88,7 @@ namespace Mono.Data.SqlSharp {
 		private bool showHeader = true;
 
 		private Hashtable internalVariables = new Hashtable();
-		
+				
 		// DisplayResult - used to Read() display a result set
 		//                   called by DisplayData()
 		public void DisplayResult(IDataReader reader, DataTable schemaTable) {
@@ -317,6 +322,28 @@ namespace Mono.Data.SqlSharp {
 			} while(reader.NextResult());
 		}
 
+		// display the result in a simple way
+		// new ADO.NET providers may have not certain
+		// things implemented yet, such as, TableSchema
+		// support
+		public void DisplayDataSimple(IDataReader reader) {
+						
+			int row = 0;
+			Console.WriteLine("Reading Data using simple reader...");
+			while(reader.Read()){
+				row++;
+				Console.WriteLine("Row: " + row);
+				for(int col = 0; col < reader.FieldCount; col++) {
+					Console.WriteLine("  Field: " + col);
+					//string dname = reader.GetName(col);
+					//Console.WriteLine("      Name: " + dname);
+					string dvalue = reader.GetValue(col).ToString();
+					Console.WriteLine("      Value: " + dvalue);
+				}
+			}
+			Console.WriteLine("\n" + row + " ROWS RETRIEVED\n");
+		}
+
 		public void OutputQueryResult(IDataReader dreader, DataTable dtable) {
 			if(outputFilestream == null) {
 				DisplayResult(dreader, dtable);
@@ -337,44 +364,47 @@ namespace Mono.Data.SqlSharp {
 		}
 
 		public void BuildParameters(IDbCommand cmd) {
-			ParametersBuilder parmsBuilder = 
-				new ParametersBuilder(cmd, 
-				BindVariableCharacter.Colon);
-			
-			Console.WriteLine("Get Parameters (if any)...");
-			parmsBuilder.ParseParameters();
-			IList parms = (IList) cmd.Parameters;
-		
-			Console.WriteLine("Print each parm...");
-			for(int p = 0; p < parms.Count; p++) {
-				string theParmName;
+			if(UseParameters == true) {
 
-				IDataParameter prm = (IDataParameter) parms[p];
-				theParmName = prm.ParameterName;
+				ParametersBuilder parmsBuilder = 
+					new ParametersBuilder(cmd, 
+					BindVariableCharacter.Colon);
+			
+				Console.WriteLine("Get Parameters (if any)...");
+				parmsBuilder.ParseParameters();
+				IList parms = (IList) cmd.Parameters;
+		
+				Console.WriteLine("Print each parm...");
+				for(int p = 0; p < parms.Count; p++) {
+					string theParmName;
+
+					IDataParameter prm = (IDataParameter) parms[p];
+					theParmName = prm.ParameterName;
 				
-				string inValue = "";
-				bool found;
-				if(parmsBuilder.ParameterMarkerCharacter == '?') {
-					Console.Write("Enter Parameter " + 
-						(p + 1).ToString() +
-						": ");
-					inValue = Console.ReadLine();
-					prm.Value = inValue;
-				}
-				else {
-					found = GetInternalVariable(theParmName, out inValue);
-					if(found == true) {
-						prm.Value = inValue;
-					}
-					else {
-						Console.Write("Enter Parameter " + (p + 1).ToString() +
-							": " + theParmName + ": ");
+					string inValue = "";
+					bool found;
+					if(parmsBuilder.ParameterMarkerCharacter == '?') {
+						Console.Write("Enter Parameter " + 
+							(p + 1).ToString() +
+							": ");
 						inValue = Console.ReadLine();
 						prm.Value = inValue;
 					}
+					else {
+						found = GetInternalVariable(theParmName, out inValue);
+						if(found == true) {
+							prm.Value = inValue;
+						}
+						else {
+							Console.Write("Enter Parameter " + (p + 1).ToString() +
+								": " + theParmName + ": ");
+							inValue = Console.ReadLine();
+							prm.Value = inValue;
+						}
+					}
 				}
+				parmsBuilder = null;
 			}
-			parmsBuilder = null;
 		}
 
 		// ExecuteSql - Execute the SQL Command(s) and/or Query(ies)
@@ -396,7 +426,12 @@ namespace Mono.Data.SqlSharp {
 
 			try {
 				reader = cmd.ExecuteReader();
-				DisplayData(reader);
+
+				if(UseSimpleReader == false)
+					DisplayData(reader);
+				else
+					DisplayDataSimple(reader);
+
 				reader.Close();
 				reader = null;
 			}
@@ -493,7 +528,7 @@ namespace Mono.Data.SqlSharp {
 			Console.WriteLine(@"       \defaults to show default variables.");
 			Console.WriteLine();
 		}
-
+		
 		// ShowHelp - show the help - command a user can enter
 		public void ShowHelp() {
 			Console.WriteLine("");
@@ -517,6 +552,7 @@ namespace Mono.Data.SqlSharp {
 			Console.WriteLine(@"       \s {TRUE, FALSE} to silent messages.");
 			Console.WriteLine(@"       \r reset (clear) the query buffer.");
 			Console.WriteLine(@"       \set NAME VALUE - set an internal variable.");
+			WaitForEnterKey();
 			Console.WriteLine(@"       \unset NAME - remove an internal variable.");
 			Console.WriteLine(@"       \variable NAME - display the value of an internal variable.");
 			Console.WriteLine(@"       \loadprovider CLASS - load the provider");
@@ -525,7 +561,14 @@ namespace Mono.Data.SqlSharp {
 			Console.WriteLine(@"            use the complete name of its assembly and");
 			Console.WriteLine(@"            its Connection class.");
 			Console.WriteLine(@"       \print - show what's in the SQL buffer now.");
+			Console.WriteLine(@"       \UseParameters (TRUE,FALSE) - use parameters when executing SQL.");
+			Console.WriteLine(@"       \UseSimpleReader (TRUE,FALSE) - use simple reader when displaying results.");
 			Console.WriteLine();
+		}
+
+		public void WaitForEnterKey() {
+                        Console.Write("Waiting... Press Enter key to continue. ");
+			string entry = Console.ReadLine();
 		}
 
 		// ShowDefaults - show defaults for connection variables
@@ -551,6 +594,9 @@ namespace Mono.Data.SqlSharp {
 
 			try {
 				switch(provider) {
+				case "ODBC":
+					conn = new OdbcConnection();
+					break;
 				case "OLEDB":
 					conn = new OleDbConnection();
 					break;
@@ -613,7 +659,8 @@ namespace Mono.Data.SqlSharp {
 				string parm = parms[1].ToUpper();
 				switch(parm) {
 				case "ORACLE":
-				case "ODBC":
+				case "TDS":
+				case "SYBASE":
 					Console.WriteLine("Error: Provider not currently supported.");
 					break;
 				case "MYSQL":
@@ -622,16 +669,23 @@ namespace Mono.Data.SqlSharp {
 									      "Mono.Data.MySql",
 									      "Mono.Data.MySql.MySqlConnection"};
 					SetupExternalProvider(extp);
-					break;		
+					UseParameters = false;
+					UseSimpleReader = true;
+					break;
 				case "SQLCLIENT":
 					provider = "POSTGRESQL";
 					Console.WriteLine("Warning: Currently, the SqlClient provider is the PostgreSQL provider.");
 					break;
+				case "ODBC":
 				case "GDA":
-					provider = "OLEDB";
-					break;
 				case "OLEDB":
+					UseParameters = false;
+					UseSimpleReader = true;
+					provider = parm;
+					break;
 				case "POSTGRESQL":
+					UseParameters = true;
+					UseSimpleReader = false;
 					provider = parm;
 					break;
 				default:
@@ -727,6 +781,35 @@ namespace Mono.Data.SqlSharp {
 			catch(Exception e) {
 				Console.WriteLine("Error: Could not save SQL Buffer to file." + e);
 			}
+		}
+
+		public void SetUseParameters(string[] parms) {
+			if(parms.Length != 2) {
+				Console.WriteLine("Error: wrong number of parameters");
+				return;
+			}
+			string parm = parms[1].ToUpper();
+			if(parm.Equals("TRUE"))
+				UseParameters = true;
+			else if(parm.Equals("FALSE"))
+				UseParameters = false;
+			else
+				Console.WriteLine("Error: invalid parameter.");
+
+		}
+
+		public void SetUseSimpleReader(string[] parms) {
+			if(parms.Length != 2) {
+				Console.WriteLine("Error: wrong number of parameters");
+				return;
+			}
+			string parm = parms[1].ToUpper();
+			if(parm.Equals("TRUE"))
+				UseSimpleReader = true;
+			else if(parm.Equals("FALSE"))
+				UseSimpleReader = false;
+			else
+				Console.WriteLine("Error: invalid parameter.");
 		}
 
 		public void SetupSilentMode(string[] parms) {
@@ -1004,6 +1087,12 @@ namespace Mono.Data.SqlSharp {
 					Console.WriteLine("SQL Buffer is empty.");
 				else
 					Console.WriteLine("SQL Bufer:\n" + buff);
+				break;
+			case "\\USEPARAMETERS":
+				SetUseParameters(parms);
+				break;
+			case "\\USESIMPLEREADER":
+				SetUseSimpleReader(parms);
 				break;
 			default:
 				// Error
