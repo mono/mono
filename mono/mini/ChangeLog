@@ -1,4 +1,10 @@
 
+Tue Mar 2 17:23:48 CET 2004 Paolo Molaro <lupus@ximian.com>
+
+	* mini-ppc.c: if a relative branch displacement is too big
+	but it points to and area reachable with an absolute branch, 
+	avoid the thunks.
+
 Tue Mar 2 16:59:40 CET 2004 Paolo Molaro <lupus@ximian.com>
 
 	* mini.c: optimize small copies in cpblk.
