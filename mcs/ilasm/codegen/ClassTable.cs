@@ -75,14 +75,14 @@ namespace Mono.ILASM {
 			
 			string name_space, name;			
 			GetNameAndNamespace (full_name, out name_space, out name);
-
 			Class klass = pefile.AddClass (DefaultAttr, name_space, name);
 			AddReference (full_name, klass, location);
 			
+	
 			return klass;
 		}
 
-		public Class AddDefinition (string name_space, string name, 
+		public ClassDef AddDefinition (string name_space, string name, 
 			TypeAttr attr, Location location) 
 		{
 			string full_name = String.Format ("{0}.{1}", name_space, name);
@@ -93,7 +93,7 @@ namespace Mono.ILASM {
 					full_name));
 			}
 			
-			Class klass = pefile.AddClass (attr, name_space, name);
+			ClassDef klass = pefile.AddClass (attr, name_space, name);
 			AddDefined (full_name, klass, location);
 
 			return klass;
