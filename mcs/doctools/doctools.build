@@ -30,6 +30,14 @@
         </csc>
     </target>
 
+    <target name="docval" depends="init">
+        <csc target="exe" output="${build.dir}/docval.exe" debug="${debug}">
+            <sources>
+                <includes name="${src.dir}/Console/docval.cs" />
+            </sources>
+        </csc>
+    </target>
+
     <target name="gui" depends="init,core">
         <mkdir dir="${build.resource.dir}" />
         <resgen input="etc/gui/ImageResources.resx"
