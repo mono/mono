@@ -1,3 +1,20 @@
+2005-01-05  Zoltan Varga  <vargaz@freemail.hu>
+
+	* mini.h (MonoBasicBlock): Add 'out_of_line' field.
+
+	* mini.c (mono_method_to_ir): Set 'out_of_line' for bblocks which have
+	a throw statement.
+
+	* mini.c (optimize_branches): Reverse not-equals branches if the false
+	bblock is a throw. This happens a lot of time with argument checking in
+	corlib.
+
+	* mini.c (mono_codegen): Add support for placing basic blocks after
+	the function epilogue.
+
+	* mini-x86.c mini-x86.h: Add support for placing basic blocks after the
+	function epilogue.
+	
 2005-01-05  Miguel de Icaza  <miguel@ximian.com>
 
 	* mini.c (setup_stat_profiler): Only set this up if the platform
