@@ -1,5 +1,9 @@
 2004-09-06  Zoltan Varga  <vargaz@freemail.hu>
 
+	* marshal.c (emit_marshal_array): Null terminate string arrays.
+	
+	* marshal.c (raise_auto_layout_exception): Fix warning.
+
 	* reflection.c (mono_param_get_objects): Initialize the default value
 	with DBNull.Value, not null. Fixes #62123.
 
