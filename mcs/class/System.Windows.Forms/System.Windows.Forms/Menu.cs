@@ -154,9 +154,9 @@ namespace System.Windows.Forms  {
 			// FIXME: Pay attention, do not assign an id to a "stranger"
 			// If reusing IDs, get one from array first
 			if ( mi.MenuID_ == INVALID_MENU_ID) {
-				mi.MenuID_ = MenuIDs_++;
+				mi.MenuID_ = (uint) MenuIDs_++;
 			}
-			return  (uint)mi.MenuID;
+			return  (uint) mi.MenuID_;
 		}
 
 		//inherited

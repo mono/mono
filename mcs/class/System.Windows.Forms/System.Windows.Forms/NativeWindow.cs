@@ -66,11 +66,11 @@ namespace System.Windows.Forms {
 
 			if (!registeredClass) {
 				Win32.WndProc wp = new Win32.WndProc (WndProc);
-				Win32.WNDCLASS wndClass = new Win32.WNDCLASS();
+				WNDCLASS wndClass = new WNDCLASS();
 
-				wndClass.style = (int) (Win32.CS_OWNDC |
-							Win32.CS_VREDRAW |
-							Win32.CS_HREDRAW);
+				wndClass.style = (int) (CS_.CS_OWNDC |
+							CS_.CS_VREDRAW |
+							CS_.CS_HREDRAW);
 				wndClass.lpfnWndProc = wp;
 				wndClass.cbClsExtra = 0;
 				wndClass.cbWndExtra = 0;
@@ -81,7 +81,7 @@ namespace System.Windows.Forms {
 				wndClass.lpszMenuName = "";
 				wndClass.lpszClassName = "mono_native_window";
 
-				if (Win32.RegisterClassA(wndClass) != 0) {
+				if (Win32.RegisterClassA(ref wndClass) != 0) {
 					registeredClass = true;
 				} else {
 					windowHandle = (IntPtr)0;
@@ -190,7 +190,7 @@ namespace System.Windows.Forms {
 
 		protected virtual void WndProc (ref Message m) 
 		{
-			if (m.Msg == Win32.WM_CREATE)
+			if (m.Msg == (int) Msg.WM_CREATE)
 				Console.WriteLine ("NW WndProc WM_CREATE");
 			DefWndProc (ref m);
 		}
@@ -219,11 +219,11 @@ namespace System.Windows.Forms {
 			message.LParam = lParam;
  			message.Result = (IntPtr) 0;
 
-			if (msg == Win32.WM_CREATE)
+			if (msg == (int) Msg.WM_CREATE)
 				Console.WriteLine ("WM_CREATE (static)");
 
  			if (window != null) {
-			if (msg == Win32.WM_CREATE)
+			if (msg == (int) Msg.WM_CREATE)
 				Console.WriteLine ("WM_CREATE (static != null)");
  				window.WndProc(ref message);
  			} else {
