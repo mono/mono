@@ -1632,7 +1632,7 @@ namespace Mono.MonoBASIC {
 		{
 			const int vao = (Modifiers.VIRTUAL | Modifiers.ABSTRACT | Modifiers.OVERRIDE);
 			const int va = (Modifiers.VIRTUAL | Modifiers.ABSTRACT);
-			const int nv = (Modifiers.NEW | Modifiers.VIRTUAL);
+			const int nv = (Modifiers.SHADOWS | Modifiers.VIRTUAL);
 			bool ok = true;
 			string name = MakeName (n);
 			
@@ -1642,8 +1642,8 @@ namespace Mono.MonoBASIC {
 			if ((flags & Modifiers.STATIC) != 0){
 				if ((flags & vao) != 0){
 					Report.Error (
-						112, loc, "static method " + name + "can not be marked " +
-						"as virtual, abstract or override");
+						30501, loc, "Shared method " + name + " can not be " +
+						"declared as Overridable");
 					ok = false;
 				}
 			}
@@ -1655,10 +1655,18 @@ namespace Mono.MonoBASIC {
 				}
 			}
 
-			if ((flags & Modifiers.OVERRIDE) != 0 && (flags & nv) != 0){
+			if ((flags & Modifiers.OVERRIDE) != 0 && (flags & Modifiers.VIRTUAL) != 0)
+			{
 				Report.Error (
-					113, loc, name +
-					" marked as override cannot be marked as new or virtual");
+					30730, loc, name +
+					": Methods marked as Overrides cannot be made Overridable");
+				ok = false;
+			}
+
+			if ((flags & Modifiers.OVERRIDE) != 0 && (flags & Modifiers.SHADOWS) != 0){
+				Report.Error (
+					31408, loc, name +
+					": Methods marked as Overrides cannot be marked as Shadows");
 				ok = false;
 			}
 
@@ -1691,8 +1699,8 @@ namespace Mono.MonoBASIC {
 			if ((flags & Modifiers.PRIVATE) != 0){
 				if ((flags & vao) != 0){
 					Report.Error (
-						621, loc, name +
-						" virtual or abstract members can not be private");
+						31408, loc, name +
+						": Members marked as Overridable or Overrides can not be Private");
 					ok = false;
 				}
 			}
@@ -1701,7 +1709,7 @@ namespace Mono.MonoBASIC {
 				if ((flags & Modifiers.OVERRIDE) == 0){
 					Report.Error (
 						238, loc, name +
-						" cannot be sealed because it is not an override");
+						": cannot be sealed because it is not an override");
 					ok = false;
 				}
 			}
@@ -2042,7 +2050,7 @@ namespace Mono.MonoBASIC {
 			if (parent.Parent == null)
 				accmods = Modifiers.INTERNAL;
 			else
-				accmods = Modifiers.PRIVATE;
+				accmods = Modifiers.PUBLIC;
 
 			this.ModFlags = Modifiers.Check (AllowedModifiers, mod, accmods, l);
 			this.attributes = attrs;
@@ -2079,7 +2087,7 @@ namespace Mono.MonoBASIC {
 			if (parent.Parent == null)
 				accmods = Modifiers.INTERNAL;
 			else
-				accmods = Modifiers.PRIVATE;
+				accmods = Modifiers.PUBLIC;
 			
 			this.ModFlags = Modifiers.Check (AllowedModifiers, mod, accmods, l);
 
@@ -2248,7 +2256,7 @@ namespace Mono.MonoBASIC {
 			Modifiers.PRIVATE |
 			Modifiers.STATIC |
 			Modifiers.VIRTUAL |
-			Modifiers.SEALED |
+			Modifiers.NONVIRTUAL |
 			Modifiers.OVERRIDE |
 			Modifiers.ABSTRACT |
 		    	Modifiers.UNSAFE |
@@ -2408,9 +2416,19 @@ namespace Mono.MonoBASIC {
 						WarningNotHiding (parent);*/
 
 					if ((ModFlags & Modifiers.OVERRIDE) != 0){
-						Report.Error (115, Location,
+						Report.Error (30284, Location,
 							      parent.MakeName (Name) +
-							      " no suitable methods found to override");
+							      " : No suitable methods found to override");
+					}
+					if ((ModFlags & ( Modifiers.NEW | Modifiers.SHADOWS | Modifiers.OVERRIDE )) == 0) 
+					{
+						if ((ModFlags & Modifiers.NONVIRTUAL) != 0)
+						{
+							Report.Error (31088, Location,
+								parent.MakeName (Name) + " : Cannot " +
+								"be declared NotOverridable since this method is " +
+								"not maked as Overrides");
+						}
 					}
 				}
 			}/* else if ((ModFlags & Modifiers.NEW) != 0)
@@ -3272,7 +3290,7 @@ namespace Mono.MonoBASIC {
 			: base (name, loc)
 		{
 			Type = type;
-			ModFlags = Modifiers.Check (allowed_mod, mod, Modifiers.PRIVATE, loc);
+			ModFlags = Modifiers.Check (allowed_mod, mod, Modifiers.PUBLIC, loc);
 			OptAttributes = attrs;
 		}
 

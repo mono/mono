@@ -75,26 +75,25 @@ namespace Mono.MonoBASIC {
 						       MethodInfo mb, string name)
 		{
 			bool ok = true;
-			
-			if ((ModFlags & Modifiers.OVERRIDE) != 0){
-				if (!(mb.IsAbstract || mb.IsVirtual)){
-					Report.Error (
-						506, Location, parent.MakeName (Name) +
-						": cannot override inherited member `" +
-						name + "' because it is not " +
-						"virtual, abstract or override");
-					ok = false;
-				}
-				
-				// Now we check that the overriden method is not final
-				
-				if (mb.IsFinal) {
-					Report.Error (239, Location, parent.MakeName (Name) + " : cannot " +
-						      "override inherited member `" + name +
-						      "' because it is sealed.");
-					ok = false;
-				}
 
+			if ((ModFlags & Modifiers.OVERRIDE) != 0){
+				// Now we check that the overriden method is not final
+				if (mb.IsFinal) 
+				{
+					Report.Error (30267, Location, parent.MakeName (Name) + " : cannot " +
+						"override inherited member `" + name +
+						"' because it is NotOverridable.");
+					ok = false;
+				}
+				else if (!(mb.IsAbstract || mb.IsVirtual)){
+					Report.Error (
+						31086, Location, parent.MakeName (Name) +
+						": Cannot override inherited member `" +
+						name + "' because it is not " +
+						"declared as Overridable");
+					ok = false;
+				}
+				
 				//
 				// Check that the permissions are not being changed
 				//
@@ -104,6 +103,17 @@ namespace Mono.MonoBASIC {
 				if (thisp != parentp){
 					Error_CannotChangeAccessModifiers (parent, mb, name);
 					ok = false;
+				}
+			}
+
+			if ((ModFlags & ( Modifiers.NEW | Modifiers.SHADOWS | Modifiers.OVERRIDE )) == 0) 
+			{
+				if ((ModFlags & Modifiers.NONVIRTUAL) != 0)
+				{
+					Report.Error (31088, Location,
+						parent.MakeName (Name) + " cannot " +
+						"be declared NotOverridable since this method is " +
+						"not marked as Overrides");
 				}
 			}
 
@@ -445,7 +455,7 @@ namespace Mono.MonoBASIC {
 			
 			t = parent.DefineType ();
 			if (t == null){
-				Report.Error (146, Location, "Class definition is circular: `"+name+"'");
+				Report.Error (30256, Location, "Class definition is circular: `"+name+"'");
 				error = true;
 				return null;
 			}

@@ -1,3 +1,9 @@
+2004-04-04 AnirbanBhattacharjee <banirban@novell.com>
+	* class.cs: Changed exception messages and their numbers to align better with VB
+		    Changed default access modifier of method to Public
+		    Bug fixed to get NotOverridable modifier working
+	* decl.cs:  Changed exception messages and numbers
+
 2004-03-25 Anirban Bhattacharjee <banirban@novell.com>
 	* class.cs: bug fixing - creating default constructor when no constructor is specified
 	Few modifiers are changed to align with Vb
