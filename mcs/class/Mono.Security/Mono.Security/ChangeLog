@@ -1,3 +1,7 @@
+2003-03-08  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* StrongName.cs: New. Partial implementation for StrongNames.
+
 2003-03-06  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* ASN1.cs: Updated ASN1 class (from corlib). This file will,
