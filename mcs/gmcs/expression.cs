@@ -5987,8 +5987,7 @@ namespace Mono.CSharp {
 		//
 		bool DoEmit (EmitContext ec, bool need_value_on_stack)
 		{
-			bool is_value_type = TypeManager.IsValueType (type) &&
-				!type.IsGenericInstance;
+			bool is_value_type = TypeManager.IsValueType (type);
 			ILGenerator ig = ec.ig;
 
 			if (is_value_type){

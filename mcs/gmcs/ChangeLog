@@ -355,7 +355,6 @@
 
 	* expression.cs (Invocation.EmitCall): If we're invoking a method
 	on a type parameter, use the new `Constrained' prefix opcode.
-	(New.DoEmit): Also use the `Newobj' opcode for generic instances.
 
 2004-08-02  Martin Baulig  <martin@ximian.com>
 
