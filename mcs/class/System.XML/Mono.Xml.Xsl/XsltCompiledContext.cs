@@ -47,8 +47,6 @@ namespace Mono.Xml.Xsl {
 		
 		internal override IXsltContextFunction ResolveFunction (XmlQualifiedName name, XPathResultType [] argTypes)
 		{
-			IXsltContextFunction func = null;
-
 			string ns = name.Namespace;
 
 			if (ns == null) return null;
@@ -342,7 +340,6 @@ namespace Mono.Xml.Xsl.Functions {
 			} catch (Exception ex) {
 				throw new XsltException ("Custom function reported an error.", ex);
 //				Debug.WriteLine ("****** INCORRECT RESOLUTION **********");
-				return "";
 			}
 		}
 	}

@@ -1,3 +1,7 @@
+2004-01-08  Nick Drochak <ndrochak@ieee.org>
+
+	* XsltCompiledContext.cs: Remove unused variable and unreachable code.
+
 2003-12-26 Atsushi Enomoto <atsushi@ximian.com>
 
 	* XslDecimalFormat.cs : implemented format-number() other than number
