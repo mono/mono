@@ -43,6 +43,7 @@ System/DBNull.cs
 System/Decimal.cs
 System/DecimalFormatter.cs
 System/Delegate.cs
+System/DelegateSerializationHolder.cs
 System/DivideByZeroException.cs
 System/DllNotFoundException.cs
 System/Double.cs
@@ -140,6 +141,7 @@ System/UIntPtr.cs
 System/UnauthorizedAccessException.cs
 System/UnhandledExceptionEventArgs.cs
 System/UnhandledExceptionEventHandler.cs
+System/UnitySerializationHolder.cs
 System/ValueType.cs
 System/Version.cs
 System/Void.cs
@@ -565,6 +567,7 @@ System.Runtime.Serialization/ISerializable.cs
 System.Runtime.Serialization/ISerializationSurrogate.cs
 System.Runtime.Serialization/ISurrogateSelector.cs
 System.Runtime.Serialization/ObjectIDGenerator.cs
+System.Runtime.Serialization/ObjectManager.cs
 System.Runtime.Serialization/SerializationBinder.cs
 System.Runtime.Serialization/SerializationEntry.cs
 System.Runtime.Serialization/SerializationException.cs
@@ -593,6 +596,9 @@ System.Runtime.Serialization.Formatters/ServerFault.cs
 System.Runtime.Serialization.Formatters/SoapFault.cs
 System.Runtime.Serialization.Formatters/SoapMessage.cs
 System.Runtime.Serialization.Formatters.Binary/BinaryFormatter.cs
+System.Runtime.Serialization.Formatters.Binary/BinaryCommon.cs
+System.Runtime.Serialization.Formatters.Binary/ObjectReader.cs
+System.Runtime.Serialization.Formatters.Binary/ObjectWriter.cs
 System.Security/CodeAccessPermission.cs
 System.Security/IEvidenceFactory.cs
 System.Security/IPermission.cs
