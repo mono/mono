@@ -6,6 +6,7 @@ include ../../build/rules.make
 LOCAL_MCS_FLAGS = /lib:../class/lib/default /r:Mono.Security.dll
 
 SECURITY_PROGRAMS = secutil.exe cert2spc.exe sn.exe MakeCert.exe chktrust.exe signcode.exe setreg.exe certmgr.exe
+PROGRAM_INSTALL_DIR = $(prefix)/bin
 
 DISTFILES = \
 	AssemblyInfo.cs	\
@@ -22,15 +23,16 @@ DISTFILES = \
 
 all-local: $(SECURITY_PROGRAMS)
 
+
 install-local: $(SECURITY_PROGRAMS)
-	$(MKINSTALLDIRS) $(DESTDIR)$(prefix)/bin
+	$(MKINSTALLDIRS) $(DESTDIR)$(PROGRAM_INSTALL_DIR)
 	for p in $(SECURITY_PROGRAMS) ; do \
-	    $(INSTALL_BIN) $$p $(DESTDIR)$(prefix)/bin ; \
+	    $(INSTALL_BIN) $$p $(DESTDIR)$(PROGRAM_INSTALL_DIR) ; \
 	done
 
 uninstall-local:
 	for p in $(SECURITY_PROGRAMS) ; do \
-	    rm -f $(DESTDIR)$(prefix)/bin/$$p ; \
+	    rm -f $(DESTDIR)$(PROGRAM_INSTALL_DIR)/$$p ; \
 	done
 
 test-local:

@@ -21,6 +21,8 @@ CORCOMPARE_SOURCES = \
 	MissingType.cs \
 	ToDoAssembly.cs
 
+PROGRAM_INSTALL_DIR = $(prefix)/bin
+
 APIINFO_SOURCES = mono-api-info.cs
 APIDIFF_SOURCES = mono-api-diff.cs
 
@@ -29,14 +31,14 @@ DISTFILES= $(CORCOMPARE_SOURCES) $(APIINFO_SOURCES) $(APIDIFF_SOURCES)
 all-local: $(ALL_PROGRAMS)
 
 install-local: $(ALL_PROGRAMS)
-	$(MKINSTALLDIRS) $(DESTDIR)$(prefix)/bin
+	$(MKINSTALLDIRS) $(DESTDIR)$(PROGRAM_INSTALL_DIR)
 	for i in $(ALL_PROGRAMS) ; do \
-		$(INSTALL_BIN) $$i $(DESTDIR)$(prefix)/bin ; \
+		$(INSTALL_BIN) $$i $(DESTDIR)$(PROGRAM_INSTALL_DIR) ; \
 	done
 
 uninstall-local:
 	for i in $(ALL_PROGRAMS) ; do \
-	    rm -f $(DESTDIR)$(prefix)/bin/$$i ; \
+	    rm -f $(DESTDIR)$(PROGRAM_INSTALL_DIR)/$$i ; \
 	done
 
 test-local:

@@ -1,3 +1,8 @@
+2004-06-11  Raja R Harinath  <rharinath@novell.com>
+
+	* Makefile (PROGRAM_INSTALL_DIR): New define.
+	(install-local, uninstall-local): Use it.
+
 2004-06-04  Gert Driesen <drieseng@users.sourceforge.net>
 
 	* mono-api-info.cs: for checking API compatibility, we're only

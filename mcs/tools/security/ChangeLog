@@ -1,3 +1,8 @@
+2004-06-11  Raja R Harinath  <rharinath@novell.com>
+
+	* Makefile (PROGRAM_INSTALL_DIR): New define.
+	(install-local, uninstall-local): Use it.
+
 2004-06-09  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* StrongNameManager.cs: Fix ToString() when no verificationSettings

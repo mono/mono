@@ -8,6 +8,8 @@ MONO_TOOLS = \
 	EnumCheck.exe 		\
 	IFaceDisco.exe
 
+PROGRAM_INSTALL_DIR = $(prefix)/bin
+
 DISTFILES = \
 	assemblies.xml			\
 	DumpCultureInfo.cs		\
@@ -30,14 +32,14 @@ DISTFILES = \
 all-local: $(MONO_TOOLS)
 
 install-local: all-local
-	$(MKINSTALLDIRS) $(DESTDIR)$(prefix)/bin
+	$(MKINSTALLDIRS) $(DESTDIR)$(PROGRAM_INSTALL_DIR)
 	for t in $(MONO_TOOLS) ; do \
-	   $(INSTALL_BIN) $$t $(DESTDIR)$(prefix)/bin ; \
+	   $(INSTALL_BIN) $$t $(DESTDIR)$(PROGRAM_INSTALL_DIR) ; \
 	done
 
 uninstall-local:
 	for t in $(MONO_TOOLS) ; do \
-	   rm -f $(DESTDIR)$(prefix)/bin/$$t ; \
+	   rm -f $(DESTDIR)$(PROGRAM_INSTALL_DIR)/$$t ; \
 	done
 
 test-local run-test-local:
