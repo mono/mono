@@ -74,9 +74,13 @@ System.Windows.Forms/CurrencyManager.cs
 System.Windows.Forms/Cursor.cs
 System.Windows.Forms/Cursors.cs
 System.Windows.Forms/DataGrid.cs
+System.Windows.Forms/DataGridBoolColumn.cs
+System.Windows.Forms/DataGridColumnStyle.cs
 System.Windows.Forms/DataGridLineStyle.cs
 System.Windows.Forms/DataGridParentRowsLabelStyle.cs
 System.Windows.Forms/DataGridTableStyle.cs
+System.Windows.Forms/DataGridTextBox.cs
+System.Windows.Forms/DataGridTextBoxColumn.cs
 System.Windows.Forms/DateBoldEventArgs.cs
 System.Windows.Forms/DateBoldEventHandler.cs
 System.Windows.Forms/DateRangeEventArgs.cs
