@@ -1,3 +1,12 @@
+2004-11-15  Martin Baulig  <martin@ximian.com>
+
+	* class.c (mono_class_create_generic): Changed return type to void.
+	(mono_class_create_generic_2): New public function; setup
+	`class->method', `class->field' and `class->interfaces' here
+	instead of in mono_class_init().
+
+	* class.h (mono_class_create_generic): Moved to class-internals.h.
+
 2004-11-14  Ben Maurer  <bmaurer@ximian.com>
 
 	* reflection.c (mono_image_create_pefile): take a file HANDLE.
