@@ -1,5 +1,7 @@
 2004-11-25  Miguel de Icaza  <miguel@ximian.com>
 
+	* report.cs (AbstractMessage.Print): messages are sent to stderr
+
 	* class.cs (TypeContainer.GetClassBases): It is an error to have a
 	non-interface in the list of interfaces (at this point, either
 	parent was properly set, or a base class is being listed in the

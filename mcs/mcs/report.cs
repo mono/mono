@@ -91,10 +91,10 @@ namespace Mono.CSharp {
 					msg.Append (' ');
 				}
 				msg.AppendFormat ("{0} CS{1:0000}: {2}", MessageType, code, text);
-				Console.WriteLine (msg.ToString ());
+				Console.Error.WriteLine (msg.ToString ());
 
 				foreach (string s in related_symbols) {
-					Console.WriteLine (String.Concat (s, MessageType, ')'));
+					Console.Error.WriteLine (String.Concat (s, MessageType, ')'));
 				}
 				related_symbols.Clear ();
 
@@ -250,11 +250,14 @@ namespace Mono.CSharp {
 
 		// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 		// IF YOU ADD A NEW WARNING YOU HAVE TO DUPLICATE ITS ID HERE
+		//
 		public static bool IsValidWarning (int code)
 		{
-			int[] all_warnings = new int[] { 28, 67, 78, 105, 108, 109, 114, 192, 168, 169, 183, 184, 219, 251, 612, 618, 626, 628, 642, 649,
-											 659, 660, 661, 672, 1030, 1522, 1616, 1691, 1692, 1901, 2002, 2023, 3012, 3019, 8024, 8028
-										   };
+			int[] all_warnings = new int[] {
+				28, 67, 78, 105, 108, 109, 114, 192, 168, 169, 183, 184, 219, 251, 612, 618, 626, 628, 642, 649,
+				659, 660, 661, 672, 1030, 1522, 1616, 1691, 1692, 1901, 2002, 2023, 3012, 3019, 8024, 8028
+			};
+			
 			foreach (int i in all_warnings) {
 				if (i == code)
 					return true;
@@ -264,7 +267,7 @@ namespace Mono.CSharp {
 		
 		static public void LocationOfPreviousError (Location loc)
 		{
-			Console.WriteLine (String.Format ("{0}({1}) (Location of symbol related to previous error)", loc.Name, loc.Row));
+			Console.Error.WriteLine (String.Format ("{0}({1}) (Location of symbol related to previous error)", loc.Name, loc.Row));
 		}    
         
 		static public void RuntimeMissingSupport (Location loc, string feature) 
