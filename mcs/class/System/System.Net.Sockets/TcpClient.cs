@@ -339,6 +339,8 @@ namespace System.Net.Sockets
 				s.Close();
 				active = false;
 				s = null;
+			} else if (client != null){
+				client.Close ();
 			}
 			client = null;
 		}
