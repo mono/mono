@@ -89,27 +89,16 @@ namespace System.Web.Configuration
 				return true;
 			}
 
-			bool userMatch;
-			bool roleMatch;
-			bool verbMatch;
 			foreach (UserData data in list) {
-				if (data.Users == null)
+				if (data.Verbs != null && !data.CheckVerb (verb))
 					continue;
 
-				userMatch = (data.Users == null);
-				if (!userMatch)
-					userMatch = data.CheckUser (user.Identity.Name);
+				if (data.Users != null && !data.CheckUser (user.Identity.Name))
+					continue;
+				else if (data.Roles != null && !data.CheckRole (user))
+					continue;
 
-				roleMatch = (data.Roles == null);
-				if (!roleMatch)
-					roleMatch = data.CheckRole (user);
-
-				verbMatch = (data.Verbs == null);
-				if (data.Verbs != null)
-					verbMatch = data.CheckVerb (verb);
-
-				if (userMatch && roleMatch && verbMatch)
-					return data.Allow;
+				return data.Allow;
 			}
 			
 			if (parent != null)

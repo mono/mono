@@ -1,3 +1,8 @@
+2004-06-22 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* AuthorizationConfig.cs: we must match [verb +] (role|user). Fixes bug
+	#60482.
+
 2004-06-15 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* WebConfigurationSettings.cs: allow empty <configSections>.
