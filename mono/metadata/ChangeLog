@@ -1,4 +1,9 @@
 
+Tue Aug 27 18:34:51 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* file-io.c process.c: MonoString are null terminated, no
+	need for mono_string_to_utf16() anymore.
+
 Tue Aug 27 17:51:27 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
 	* icall.c, unicode.h, unicode.c: removed unused iconv stuff.
