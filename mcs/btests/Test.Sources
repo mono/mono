@@ -221,7 +221,9 @@ LoopStatementsA \
 ExceptionHandlingA \
 ExceptionHandlingB \
 ExceptionHandlingC \
-InvocationStatementA
+InvocationStatementA \
+ControlFlowA \
+SyncLockA
 
 # All negetive test cases which should
 # fail during compilation goes here
@@ -486,7 +488,11 @@ ExceptionHandlingC13 \
 ExceptionHandlingC14 \
 ExceptionHandlingC15 \
 ExceptionHandlingC16 \
-ExceptionHandlingC17
+ExceptionHandlingC17 \
+ControlFlowC1 \
+SyncLockC1 \
+SyncLockC2 \
+SyncLockC3
 
 # All negetive test cases which should fail at
 # runtime goes here
@@ -523,6 +529,7 @@ ConditionalStatements1 \
 LoopStatements1 \
 Array1 \
 Array2 \
-Array3
+Array3 \
+SyncLock1
 
 

@@ -1,3 +1,13 @@
+2004-09-02 Sachin Kumar <skumar1@novell.com>
+	* ControlFlowA.vb;
+	* ControlFlowC1.vb:
+	* SyncLock1.vb:
+	* SyncLockA.vb:
+	* SyncLockC1.vb:
+	* SyncLockC2.vb:
+	* SyncLockC3.vb:
+	* Test.Sources: added more tests
+
 2004-09-01 Sachin Kumar <skumar1@novell.com>
 	* Array1.vb:
 	* Array2.vb:
