@@ -1,3 +1,7 @@
+2004-09-25  Zoltan Varga  <vargaz@freemail.hu>
+
+	* corlib_test.dll.sources: Add System.Reflection/ParameterInfoTest.
+
 2004-09-23  Zoltan Varga  <vargaz@freemail.hu>
 
 	* corlib.dll.sources: Add System.Reflection.ObfuscateAssemblyAttribute

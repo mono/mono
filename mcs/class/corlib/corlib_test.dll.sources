@@ -81,6 +81,7 @@ System.Reflection/AssemblyInformationalVersionAttributeTest.cs
 System.Reflection/AssemblyNameTest.cs
 System.Reflection/AssemblyTest.cs
 System.Reflection/BinderTests.cs
+System.Reflection/ParameterInfoTest.cs
 System.Reflection/PropertyInfoTest.cs
 System.Reflection.Emit/AssemblyBuilderTest.cs
 System.Reflection.Emit/AssemblyBuilderAccessTest.cs
