@@ -1,4 +1,8 @@
 2004-08-02  Jambunathan K  <kjambunathan@novell.com>
+	* mb-tokenizer.cs: Oops. Also pulled out all of the old
+	pre-processor code that is no more used.
+
+2004-08-02  Jambunathan K  <kjambunathan@novell.com>
 	* mb-tokenizer.cs: Fixed a bug where line nos were 
 	failing to get incremented when the line continuation 
 	character was appearing by itself on contiguous lines.
