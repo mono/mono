@@ -1,5 +1,10 @@
 2005-01-05  Peter Bartok <pbartok@novell.com>
 
+	* ToolTip.cs (WndProc): Enable setting focus now that we have the
+	  required XplatUI functions.
+
+2005-01-05  Peter Bartok <pbartok@novell.com>
+
 	* XplatUI.cs, XplatUIOSX.cs, XplatUIWin32.cs, XplatUIDriver.cs,
 	  XplatUIX11.cs, X11Structs.cs, Form.cs: Framework code required 
 	  to implement focus and activation handling; still incomplete and
