@@ -1,3 +1,7 @@
+2003-07-27  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
+
+	* SRDescriptionAttribute.cs: Moved to System directory
+
 2003-07-21  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
 
 	* EventLog.cs: Implementation handling
