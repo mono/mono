@@ -1,4 +1,8 @@
 
+Wed Apr 3 20:03:32 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* icall.c: cleanup some ugly casts in Array_SetValue*.
+
 Wed Apr 3 19:49:53 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
 	* icall.c: the values array fro enums is of the correct type, now.
