@@ -249,11 +249,6 @@ Console.WriteLine("Disposing window {0:X} (whole: {1:X})", client_window.ToInt32
 
 				rect = new Rectangle(0, 0, width, height);
 
-				if (menu_handle != IntPtr.Zero) {
-					rect.Y += menu_height;
-					rect.Height -= menu_height;
-				}
-
 				if (border_style == BorderStyle.Fixed3D) {
 					rect.X += 2;
 					rect.Y += 2;

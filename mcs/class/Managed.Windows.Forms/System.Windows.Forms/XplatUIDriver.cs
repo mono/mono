@@ -191,6 +191,8 @@ namespace System.Windows.Forms {
 		internal abstract Graphics GetMenuDC(IntPtr hwnd, IntPtr ncpaint_region);
 		internal abstract Point GetMenuOrigin(IntPtr hwnd);
 		internal abstract void ReleaseMenuDC(IntPtr hwnd, Graphics dc);
+		internal abstract void MenuToScreen(IntPtr hwnd, ref int x, ref int y);
+		internal abstract void ScreenToMenu(IntPtr hwnd, ref int x, ref int y);
 
 		internal abstract void SetIcon(IntPtr handle, Icon icon);
 

@@ -2483,6 +2483,22 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		internal override void MenuToScreen(IntPtr handle, ref int x, ref int y) {
+			int	dest_x_return;
+			int	dest_y_return;
+			IntPtr	child;
+			Hwnd	hwnd;
+
+			hwnd = Hwnd.ObjectFromHandle(handle);
+
+			lock (XlibLock) {
+				XTranslateCoordinates(DisplayHandle, hwnd.whole_window, RootWindow, x, y, out dest_x_return, out dest_y_return, out child);
+			}
+
+			x = dest_x_return;
+			y = dest_y_return;
+		}
+
 		internal override void OverrideCursor(IntPtr cursor) {
 			OverrideCursorHandle = cursor;
 		}
@@ -2584,6 +2600,22 @@ namespace System.Windows.Forms {
 
 			lock (XlibLock) {
 				XTranslateCoordinates (DisplayHandle, RootWindow, hwnd.client_window, x, y, out dest_x_return, out dest_y_return, out child);
+			}
+
+			x = dest_x_return;
+			y = dest_y_return;
+		}
+
+		internal override void ScreenToMenu(IntPtr handle, ref int x, ref int y) {
+			int	dest_x_return;
+			int	dest_y_return;
+			IntPtr	child;
+			Hwnd	hwnd;
+
+			hwnd = Hwnd.ObjectFromHandle(handle);
+
+			lock (XlibLock) {
+				XTranslateCoordinates (DisplayHandle, RootWindow, hwnd.whole_window, x, y, out dest_x_return, out dest_y_return, out child);
 			}
 
 			x = dest_x_return;

@@ -154,7 +154,7 @@ namespace System.Windows.Forms
 			
 			set
 			{
-				if ( filter == null )
+				if ( value == null )
 					throw new NullReferenceException( "Filter" );
 				
 				filter = value;

@@ -77,7 +77,7 @@ namespace System.Windows.Forms {
 
 		#region Constructor & Destructor
 		static XplatUI() {
-			Console.WriteLine("Mono System.Windows.Forms Assembly [Revision: 41731; built: 2005/2/11 23:27:29]");
+			Console.WriteLine("Mono System.Windows.Forms Assembly [Revision: 41731; built: 2005/2/15 5:56:12]");
 
 			// Don't forget to throw the mac in here somewhere, too
 			default_class_name="SWFClass";
@@ -458,6 +458,13 @@ namespace System.Windows.Forms {
 			driver.KillTimer (timer);
 		}
 
+		internal static void MenuToScreen(IntPtr handle, ref int x, ref int y) {
+			#if DriverDebug
+				Console.WriteLine("MenuToScreen({0:X}, {1}, {2}): Called", handle.ToInt32(), x, y);
+			#endif
+			driver.MenuToScreen(handle, ref x, ref y);
+		}
+
 		internal static void OverrideCursor(IntPtr cursor) {
 			#if DriverDebug
 				Console.WriteLine("OverrideCursor({0:X}): Called", cursor.ToInt32());
@@ -495,6 +502,13 @@ namespace System.Windows.Forms {
 				Console.WriteLine("ScreenToClient({0:X}, {1}, {2}): Called", handle.ToInt32(), x, y);
 			#endif
 			driver.ScreenToClient (handle, ref x, ref y);
+		}
+
+		internal static void ScreenToMenu(IntPtr handle, ref int x, ref int y) {
+			#if DriverDebug
+				Console.WriteLine("ScreenToMenu({0:X}, {1}, {2}): Called", handle.ToInt32(), x, y);
+			#endif
+			driver.ScreenToMenu(handle, ref x, ref y);
 		}
 
 		internal static void ScrollWindow(IntPtr handle, Rectangle rectangle, int XAmount, int YAmount, bool with_children) {

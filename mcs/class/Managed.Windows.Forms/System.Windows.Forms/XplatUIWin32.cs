@@ -629,7 +629,7 @@ namespace System.Windows.Forms {
 
 			set {
 				if (value) {
-					throw new NotImplementedException("Need to figure out D'n'D for Win32");
+					//throw new NotImplementedException("Need to figure out D'n'D for Win32");
 				}
 			}
 		}
@@ -1355,6 +1355,14 @@ Console.WriteLine("Hit Clear background");
 
 			x = pnt.x;
 			y = pnt.y;
+		}
+
+		internal override void ScreenToMenu(IntPtr handle, ref int x, ref int y) {
+			ScreenToClient(handle, ref x, ref y);
+		}
+
+		internal override void MenuToScreen(IntPtr handle, ref int x, ref int y) {			
+			ClientToScreen(handle, ref x, ref y);
 		}
 
 		internal override void SendAsyncMethod (AsyncMethodData method)

@@ -1285,6 +1285,23 @@ namespace System.Windows.Forms {
 			}
 		}
 		
+		internal override void MenuToScreen(IntPtr handle, ref int x, ref int y) {
+			CGPoint pt = new CGPoint ();
+			Rect wBounds = new Rect ();
+			Hwnd	hwnd;
+
+			hwnd = Hwnd.ObjectFromHandle(handle);
+
+			pt.x = x;
+			pt.y = y;
+
+			GetWindowBounds (GetControlOwner (hwnd.whole_window), 32, ref wBounds);
+			HIViewConvertPoint (ref pt, handle, IntPtr.Zero);
+
+			x = (int)(pt.x+wBounds.left);
+			y = (int)(pt.y+wBounds.top);
+		}
+
 		[MonoTODO]
 		internal override void OverrideCursor(IntPtr cursor) {
 			throw new NotImplementedException ();
@@ -1344,6 +1361,20 @@ namespace System.Windows.Forms {
 		}
 		
 		internal override void ScreenToClient(IntPtr handle, ref int x, ref int y) {
+			CGPoint pt = new CGPoint ();
+			Rect wBounds = new Rect ();
+
+			GetWindowBounds (GetControlOwner (handle), 32, ref wBounds);
+			pt.x = (x-wBounds.left);
+			pt.y = (y-wBounds.top);
+			HIViewConvertPoint (ref pt, IntPtr.Zero, handle);
+
+			x = (int)pt.x;
+			y = (int)pt.y;
+		}
+
+		[MonoTODO]
+		internal override void ScreenToMenu(IntPtr handle, ref int x, ref int y) {
 			CGPoint pt = new CGPoint ();
 			Rect wBounds = new Rect ();
 
