@@ -1,3 +1,7 @@
+2003-01-30  Ville Palo <vi64pa@koti.soon.fi>
+
+	* list: Added new file ExpressionElement.cs
+	
 2003-01-26  Daniel Morgan <danmorg@sc.rr.com>
 
 	* System.Data/DataColumn.cs: fix to not check for DataType being set
