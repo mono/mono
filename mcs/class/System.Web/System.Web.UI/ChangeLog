@@ -1,7 +1,12 @@
+2003-08-21  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* LosFormatter.cs: handle Unit and FonrUnit as special cases as they
+	are not serializable. Fixes bug #47784.
+
 2003-08-20  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
-	* Control.cs: index the viewstates saved by the control position, not the
-	control name. Fixes bug #47697.
+	* Control.cs: index the viewstates saved by the control position, not
+	the control name. Fixes bug #47697.
 
 2003-08-20  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 

@@ -14,6 +14,7 @@ using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 using System.Web.UI;
+using System.Web.UI.WebControls;
 using System.Web.Util;
 
 namespace System.Web.UI
@@ -37,6 +38,8 @@ namespace System.Web.UI
 		const char binaryID = 'b';
 		const char arrayID = 'a';
 		const char dateTimeID = 'd';
+		const char unitID = 'u';
+		const char fontUnitID = 'f';
 		
 		static Hashtable specialTypes;
 		static Hashtable idToType;
@@ -52,6 +55,8 @@ namespace System.Web.UI
 			specialTypes.Add (typeof (Hashtable), new WriteObject (WriteHashtable));
 			specialTypes.Add (typeof (Array), new WriteObject (WriteArray));
 			specialTypes.Add (typeof (DateTime), new WriteObject (WriteDateTime));
+			specialTypes.Add (typeof (Unit), new WriteObject (WriteUnit));
+			specialTypes.Add (typeof (FontUnit), new WriteObject (WriteFontUnit));
 
 			idToType = new Hashtable ();
 			idToType.Add (typeof (string), stringID);
@@ -66,6 +71,8 @@ namespace System.Web.UI
 			idToType.Add (typeof (ArrayList), arrayListID);
 			idToType.Add (typeof (Hashtable), hashtableID);
 			idToType.Add (typeof (Array), arrayID);
+			idToType.Add (typeof (Unit), unitID);
+			idToType.Add (typeof (FontUnit), fontUnitID);
 		}
 		
 		public object Deserialize (Stream stream)
@@ -259,6 +266,13 @@ namespace System.Web.UI
 			case dateTimeID:
 				obj = new DateTime (Int64.Parse (enclosed));
 				break;
+			case unitID:
+				obj = Unit.Parse (enclosed);
+				break;
+			case fontUnitID:
+				Console.WriteLine ("FontUnit: {0}", enclosed);
+				obj = FontUnit.Parse (enclosed);
+				break;
 			default:
 				throw new ArgumentException ("input");
 			}
@@ -403,6 +417,28 @@ namespace System.Web.UI
 			output.Write (dateTimeID);
 			output.Write ('<');
 			output.Write (((DateTime) value).Ticks);
+			output.Write('>');
+		}
+
+		static void WriteUnit (LosFormatter formatter, TextWriter output, object value)
+		{
+			if (value == null)
+				return;
+			
+			output.Write (unitID);
+			output.Write ('<');
+			output.Write (((Unit) value).ToString ());
+			output.Write('>');
+		}
+
+		static void WriteFontUnit (LosFormatter formatter, TextWriter output, object value)
+		{
+			if (value == null)
+				return;
+			
+			output.Write (fontUnitID);
+			output.Write ('<');
+			output.Write (((FontUnit) value).ToString ());
 			output.Write('>');
 		}
 
