@@ -42,6 +42,7 @@ class ControlStack
 		public StringBuilder dataBindFunction;
 		public StringBuilder codeRenderFunction;
 		public bool useCodeRender;
+		public int codeRenderIndex;
 
 		public ControlStackData (Type controlType,
 					 string controlID,
@@ -226,6 +227,12 @@ class ControlStack
 		}
 	}
 
+	public int CodeRenderIndex {
+		get {
+			return top.codeRenderIndex++;
+		}
+	}
+	
 	public StringBuilder CodeRenderFunction
 	{
 		get {
@@ -1202,6 +1209,11 @@ class AspGenerator
 		}
 	}
 	
+	private void AddCodeRenderControl (StringBuilder function)
+	{
+		AddCodeRenderControl (function, controls.CodeRenderIndex);
+	}
+
 	private void AddCodeRenderControl (StringBuilder function, int index)
 	{
 		function.AppendFormat ("\t\t\tparameterContainer.Controls [{0}]." + 
@@ -1783,6 +1795,8 @@ class AspGenerator
 		init_funcs.Append (db_function);
 		current_function.AppendFormat ("\t\t\tthis.__BuildControl_{0} ();\n\t\t\t__parser." +
 					       "AddParsedSubObject (this.{0});\n\n", control_id);
+
+		AddCodeRenderControl (controls.CodeRenderFunction);
 	}
 
 	private void ProcessCodeRenderTag ()

@@ -1,5 +1,9 @@
 2003-01-07  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* AspGenerator.cs: add data bound controls to code render function.
+
+2003-01-07  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* AspComponentFoundry.cs: reworked to allow same prefix for multiple
 	controls. You can register 1 assembly plus any number of user controls
 	under the same prefix.
