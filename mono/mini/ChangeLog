@@ -1,4 +1,8 @@
 
+Wed Apr 30 12:38:44 CEST 2003 Paolo Molaro <lupus@ximian.com>
+
+	* mini.c: when inlining, check this is not null only when needed (bug #42135).
+
 Wed Apr 30 11:44:36 CEST 2003 Paolo Molaro <lupus@ximian.com>
 
 	* mini-ppc.h, tramp-pcc.c: type fixes from Max Horn <max@quendi.de>.
