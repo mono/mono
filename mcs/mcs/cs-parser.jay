@@ -1669,7 +1669,7 @@ variable_reference
 element_access
 	: primary_expression OPEN_BRACKET expression_list CLOSE_BRACKET	
 	  {
-		$$ = new ElementAccess ((Expression) $1, (ArrayList) $3);
+		$$ = new ElementAccess ((Expression) $1, (ArrayList) $3, lexer.Location);
 	  }
 	;
 
@@ -1757,9 +1757,9 @@ rank_specifiers
 	  {
 		  $$ = $1;
 	  }
-	| rank_specifier rank_specifiers
+	| rank_specifiers rank_specifier
 	  {
-		  $$ = (string) $1 + (string) $2;
+		  $$ = (string) $2 + (string) $1;
 	  }     	
         ;
 
@@ -1862,7 +1862,8 @@ unchecked_expression
 
 unary_expression
 	: primary_expression
-	| PLUS unary_expression		{ 
+	| PLUS unary_expression
+	  { 
 	  	$$ = new Unary (Unary.Operator.Addition, (Expression) $2, lexer.Location);
 	  } 
 	| MINUS unary_expression 
@@ -2375,7 +2376,7 @@ declaration_statement
  * > The expressions are converted into types during semantic analysis.
  */
 local_variable_type
-	: primary_expression type_suffixes
+	: primary_expression opt_rank_specifier
 	  { 
 		// FIXME: Do something smart here regarding the composition of the type.
 
@@ -2396,9 +2397,9 @@ local_variable_type
 			$$ = "System.Object";
 		}
 	  }
-	| builtin_types type_suffixes
+	| builtin_types opt_rank_specifier
 	  {
-		$$ = (string) $1 + (string) $2;
+		  $$ = (string) $1 + (string) $2;
 	  }
         ;
 
@@ -2410,29 +2411,6 @@ local_variable_type
 //  		$$ = "void";
 //  	  }
 //  	;
-
-type_suffixes
-	: /* empty */
-	  {
-		$$ = "";
-	  }
-	| type_suffix_list
-	;
-
-type_suffix_list 
-	: type_suffix
-	| type_suffix_list type_suffix
-	  {
-		$$ = (string) $1 + (string) $2;
-	  }
-	;
-
-type_suffix
-	: OPEN_BRACKET opt_dim_separators CLOSE_BRACKET
-	  {
-		$$ = "[" + (string) $2 + "]";
-	  }
-	;
 
 local_variable_declaration
 	: local_variable_type variable_declarators
@@ -3094,7 +3072,7 @@ Block declare_local_variables (string type, ArrayList variable_declarators)
 			Assign assign;
 			
 			assign = new Assign (new LocalVariableReference (
-						implicit_block, decl.identifier), 
+					     implicit_block, decl.identifier), 
 					     expr, lexer.Location);
 			implicit_block.AddStatement (new StatementExpression (assign));
 		} else {

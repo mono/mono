@@ -402,7 +402,8 @@ namespace CIR {
 				
 				// from an array-type S to an array-type of type T
 				if (expr_type.IsArray && target_type.IsArray) {
-					
+
+					Console.WriteLine ("{0} -> {1}", expr_type, target_type);
 					throw new Exception ("Implement array conversion");
 					
 				}
@@ -972,7 +973,11 @@ namespace CIR {
 				e =  new UserCast ((MethodInfo) method, source);
 				
 				if (e.Type != target){
-					e = ConvertImplicitStandard (tc, e, target, l);
+					if (!look_for_explicit)
+						e = ConvertImplicitStandard (tc, e, target, l);
+					else
+						e = ConvertExplicitStandard (tc, e, target, l);
+
 					return e;
 				} else
 					return e;
@@ -1359,6 +1364,30 @@ namespace CIR {
 				return ne;
 
 			ne = ExplicitUserConversion (tc, expr, target_type, l);
+			if (ne != null)
+				return ne;
+
+			Report.Error (30, l, "Cannot convert type '" + TypeManager.CSharpName (expr.Type) + "' to '"
+				      + TypeManager.CSharpName (target_type) + "'");
+			return null;
+		}
+
+		// <summary>
+		//   Same as ConverExplicit, only it doesn't include user defined conversions
+		// </summary>
+		static public Expression ConvertExplicitStandard (TypeContainer tc, Expression expr,
+								  Type target_type, Location l)
+		{
+			Expression ne = ConvertImplicitStandard (tc, expr, target_type, l);
+
+			if (ne != null)
+				return ne;
+
+			ne = ConvertNumericExplicit (tc, expr, target_type);
+			if (ne != null)
+				return ne;
+
+			ne = ConvertReferenceExplicit (tc, expr, target_type);
 			if (ne != null)
 				return ne;
 
@@ -3642,6 +3671,7 @@ namespace CIR {
 				MethodBase candidate  = me.Methods [i];
 				int x;
 
+				Console.WriteLine ("Candidate : " + candidate.ToString ());
 				x = BetterFunction (tc, Arguments, candidate, method, use_standard);
 				
 				if (x == 0)
@@ -3850,9 +3880,9 @@ namespace CIR {
 		public readonly NType     NewType;
 		public readonly ArrayList Arguments;
 		public readonly string    RequestedType;
+
 		// These are for the case when we have an array
 		public readonly string    Rank;
-		public readonly ArrayList Indices;
 		public readonly ArrayList Initializers;
 
 		Location Location;
@@ -3869,54 +3899,125 @@ namespace CIR {
 		public New (string requested_type, ArrayList exprs, string rank, ArrayList initializers, Location loc)
 		{
 			RequestedType = requested_type;
-			Indices       = exprs;
 			Rank          = rank;
 			Initializers  = initializers;
 			NewType       = NType.Array;
 			Location      = loc;
+
+			Arguments = new ArrayList ();
+
+			foreach (Expression e in exprs)
+				Arguments.Add (new Argument (e, Argument.AType.Expression));
+			
+		}
+
+		public static string FormLookupType (string base_type, int idx_count, string rank)
+		{
+			StringBuilder sb = new StringBuilder (base_type);
+
+			sb.Append (rank);
+
+			sb.Append ("[");
+			for (int i = 1; i < idx_count; i++)
+				sb.Append (",");
+			sb.Append ("]");
+
+			return sb.ToString ();
+
 		}
 		
 		public override Expression DoResolve (TypeContainer tc)
 		{
-			type = tc.LookupType (RequestedType, false);
-
-			if (type == null)
-				return null;
-
-			Expression ml;
-
-			ml = MemberLookup (tc, type, ".ctor", false,
-					   MemberTypes.Constructor, AllBindingsFlags);
-
-			if (! (ml is MethodGroupExpr)){
-				//
-				// FIXME: Find proper error
-				//
-				report118 (tc, Location, ml, "method group");
-				return null;
-			}
-			
-			if (Arguments != null){
-				for (int i = Arguments.Count; i > 0;){
-					--i;
-					Argument a = (Argument) Arguments [i];
-
-					if (!a.Resolve (tc))
-						return null;
+			if (NewType == NType.Object) {
+				
+				type = tc.LookupType (RequestedType, false);
+				
+				if (type == null)
+					return null;
+				
+				Expression ml;
+				
+				ml = MemberLookup (tc, type, ".ctor", false,
+						   MemberTypes.Constructor, AllBindingsFlags);
+				
+				if (! (ml is MethodGroupExpr)){
+				        //
+				        // FIXME: Find proper error
+				        //
+					report118 (tc, Location, ml, "method group");
+					return null;
 				}
+				
+				if (Arguments != null){
+					for (int i = Arguments.Count; i > 0;){
+						--i;
+						Argument a = (Argument) Arguments [i];
+						
+						if (!a.Resolve (tc))
+							return null;
+					}
+				}
+				
+				method = Invocation.OverloadResolve (tc, (MethodGroupExpr) ml, Arguments,
+								     Location);
+				
+				if (method == null) {
+					Error (tc, -6, Location,
+					       "New invocation: Can not find a constructor for this argument list");
+					return null;
+				}
+
+				eclass = ExprClass.Value;
+				return this;
 			}
 
-			method = Invocation.OverloadResolve (tc, (MethodGroupExpr) ml, Arguments,
-							     Location);
+			if (NewType == NType.Array) {
 
-			if (method == null) {
-				Error (tc, -6, Location,
-				       "New invocation: Can not find a constructor for this argument list");
-				return null;
+				Expression ml;
+
+				string lookup_type = FormLookupType (RequestedType, Arguments.Count, Rank);
+									    
+				type   = tc.LookupType (lookup_type, false);
+				
+				if (type == null)
+					return null;
+
+				ml = MemberLookup (tc, type, ".ctor", false,
+						   MemberTypes.Constructor, AllBindingsFlags);
+				
+				if (! (ml is MethodGroupExpr)){
+				        //
+				        // FIXME: Find proper error
+				        //
+					report118 (tc, Location, ml, "method group");
+					return null;
+				}
+
+				if (Arguments != null){
+					for (int i = Arguments.Count; i > 0;){
+						--i;
+						Argument a = (Argument) Arguments [i];
+						
+						if (!a.Resolve (tc))
+							return null;
+					}
+				}
+
+				method = Invocation.OverloadResolve (tc, (MethodGroupExpr) ml, Arguments,
+								     Location);
+				
+				if (method == null) {
+					Error (tc, -6, Location,
+					       "New invocation: Can not find a constructor for this argument list");
+					return null;
+				}
+
+				eclass = ExprClass.Value;
+				return this;
+				
 			}
 
-			eclass = ExprClass.Value;
-			return this;
+			return null;
 		}
 
 		public override void Emit (EmitContext ec)
@@ -4359,28 +4460,93 @@ namespace CIR {
 		
 	}
 	
-	public class ElementAccess : Expression {
+	public class ElementAccess : Expression, LValue {
 		
-		public readonly ArrayList  Arguments;
-		public readonly Expression Expr;
+		public ArrayList  Arguments;
+		public Expression Expr;
+
+		Location   location;
+		MethodBase method;
 		
-		public ElementAccess (Expression e, ArrayList e_list)
+		public ElementAccess (Expression e, ArrayList e_list, Location loc)
 		{
 			Expr = e;
-			Arguments = e_list;
+
+			Arguments = new ArrayList ();
+			foreach (Expression tmp in e_list)
+				Arguments.Add (new Argument (tmp, Argument.AType.Expression));
+			
+			location  = loc;
 		}
 
 		public override Expression DoResolve (TypeContainer tc)
 		{
-			// FIXME: Implement;
-			throw new Exception ("Unimplemented");
-			// return this;
+			Expr = Expr.Resolve (tc);
+
+			Console.WriteLine (Expr.ToString ());
+
+			if (Expr == null) 
+				return null;
+
+			if (Arguments == null)
+				return null;
+
+			if (Expr.ExprClass != ExprClass.Variable) {
+				Report.Error (-30, location, "Variable expected !");
+				return null;
+			}
+
+			if (Arguments != null){
+				for (int i = Arguments.Count; i > 0;){
+					--i;
+					Argument a = (Argument) Arguments [i];
+					
+					if (!a.Resolve (tc))
+						return null;
+				}
+			}			
+			
+			type = Expr.Type;
+			
+			Expression ml = MemberLookup (tc, type, "Set", false,
+						      MemberTypes.Method, AllBindingsFlags);
+			
+			if (! (ml is MethodGroupExpr)){
+				//
+				// FIXME: Find proper error
+				//
+				report118 (tc, location, ml, "method group");
+				return null;
+			}
+			
+			method = Invocation.OverloadResolve (tc, (MethodGroupExpr) ml, Arguments, location);
+			
+			if (method == null) {
+				Report.Error (-31, location, "Internal error : Couldn't find the Set method !");
+				return null;
+			}
+			
+			eclass = ExprClass.Variable;
+			return this;
+		}
+
+		public void Store (EmitContext ec)
+		{
+			throw new Exception ("Implement me !");
+		}
+
+		public void AddressOf (EmitContext ec)
+		{
+			throw new Exception ("Implement me !");
 		}
 		
 		public override void Emit (EmitContext ec)
 		{
-			// FIXME : Implement !
-			throw new Exception ("Unimplemented");
+			Expr.Emit (ec);
+
+			Invocation.EmitArguments (ec, method, Arguments);
+
+			ec.ig.Emit (OpCodes.Callvirt, (MethodInfo) method);
 		}
 		
 	}
@@ -4474,10 +4640,6 @@ namespace CIR {
 			else
 				ig.Emit (OpCodes.Call, (ConstructorInfo) method);
 
-
-			// FIXME : Need to emit the right Opcode for conversion back to the
-			// type expected by the actual expression. At this point, the type
-			// of the value on the stack is obviously what the method returns 
 		}
 
 	}

@@ -1,3 +1,31 @@
+2001-10-07  Ravi Pratap  <ravi@ximian.com>
+
+	* cs-parser.jay (type_suffix*): Remove - they are redundant. Use
+	rank_specifiers instead.
+
+	(rank_specifiers): Change the order in which the rank specifiers are stored
+
+	(local_variable_declaration): Use opt_rank_specifier instead of type_suffixes.
+
+	* expression.cs (ElementAccess): Implement the LValue interface too.
+	
+2001-10-06  Ravi Pratap  <ravi@ximian.com>
+	
+	* expression.cs (ConvertExplicitStandard): Add. Same as ConvertExplicit
+	except that user defined conversions are not included.
+
+	(UserDefinedConversion): Update to use the ConvertExplicitStandard to 
+	perform the conversion of the return type, if necessary.
+
+	(New::DoResolve): Check whether we are creating an array or an object
+	and accordingly do the needful.
+
+	(New::Emit): Same here.
+
+	(New::DoResolve): Implement guts of array creation.
+
+	(New::FormLookupType): Helper function.
+
 2001-10-07  Miguel de Icaza  <miguel@ximian.com>
 
 	* codegen.cs: Added support for try/catch/finalize and throw.
