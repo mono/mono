@@ -1,4 +1,11 @@
 
+Fri Sep 7 18:45:38 CEST 2001 Paolo Molaro <lupus@ximian.com>
+
+	* interp.c, interp.h: make ves_exec_method () and stackval_from_data ()
+	non static. Implement a couple of runtime methods needed to
+	use delegates (ves_runtime_method ()).
+	Implemented ldftn opcode.
+
 Thu Sep 6 15:41:24 CEST 2001 Paolo Molaro <lupus@ximian.com>
 
 	* Makefile.am: link to libmonoarch.

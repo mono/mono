@@ -1,4 +1,11 @@
 
+Fri Sep 7 18:43:06 CEST 2001 Paolo Molaro <lupus@ximian.com>
+
+	* x86/x86-codegen.h: fixes and x86_mov_membase_imm ().
+	* x86/tramp.c: implemented mono_create_method_pointer ():
+	creates a native pointer to a method implementation that can be 
+	used as a normal C callback.
+
 Thu Sep 6 15:38:00 CEST 2001 Paolo Molaro <lupus@ximian.com>
 
 	* x86/x86-codegen.h: added x86_rdtsc() and fixes.
