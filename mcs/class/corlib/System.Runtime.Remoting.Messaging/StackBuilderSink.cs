@@ -14,12 +14,17 @@ namespace System.Runtime.Remoting.Messaging
 
 	public class StackBuilderSink: IMessageSink
 	{
+		MarshalByRefObject _target;
+
+		public StackBuilderSink (MarshalByRefObject obj)
+		{
+			_target = obj;
+		}
+
 		public IMessage SyncProcessMessage (IMessage msg)
 		{
 			// Makes the real call to the object
-
-			MarshalByRefObject obj = RemotingServices.GetServerForUri (((IMethodMessage)msg).Uri);
-			return RemotingServices.InternalExecuteMessage (obj, (IMethodCallMessage)msg);
+			return RemotingServices.InternalExecuteMessage (_target, (IMethodCallMessage)msg);
 		}
 
 		[MonoTODO]

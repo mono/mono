@@ -1,3 +1,9 @@
+2003-01-29  Lluis Sanchez Gual <lluis@ideary.com>
+	
+	* ServerContextTerminatorSink.cs: now it forwards messages to the target identity,
+	  which knows how to manage each type of service.
+	* StackBuilderSink.cs: added a reference to the target object.
+
 2002-12-28  Patrik Torstensson
 
 	* RemotingSurrogateSelector.cs: Added serialization support for MBR's.

@@ -19,13 +19,13 @@ namespace System.Runtime.Remoting.Messaging
 		public IMessage SyncProcessMessage (IMessage msg)
 		{
 			Identity identity = RemotingServices.GetIdentityForUri (((IMethodMessage)msg).Uri);
-			return identity.ServerSink.SyncProcessMessage (msg);
+			return identity.SyncObjectProcessMessage (msg);
 		}
 
 		public IMessageCtrl AsyncProcessMessage (IMessage msg, IMessageSink replySink)
 		{
 			Identity identity = RemotingServices.GetIdentityForUri (((IMethodMessage)msg).Uri);
-			return identity.ServerSink.AsyncProcessMessage (msg, replySink);
+			return identity.AsyncObjectProcessMessage (msg, replySink);
 		}
 
 		public IMessageSink NextSink 
