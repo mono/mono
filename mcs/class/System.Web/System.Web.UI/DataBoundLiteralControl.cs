@@ -54,8 +54,8 @@ namespace System.Web.UI {
 		{
 			if (savedState != null) {
 				Array source = (Array) savedState;
-				dataBoundLiterals = new string [source.Length];
-				source.CopyTo (dataBoundLiterals, 0);
+				if (source.Length == dataBoundLiterals.Length)
+					source.CopyTo (dataBoundLiterals, 0);
 			}
 		}
 
