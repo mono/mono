@@ -474,5 +474,16 @@ namespace Mono.Xml.Xsl {
 			else
 				throw new ArgumentException ("Invalid name: " + name);
 		}
+		
+		public static string LocalNameOf (string name)
+		{
+			int colon = name.IndexOf (':');
+			if (colon > 0)
+				return name.Substring (colon, name.Length - colon);
+			else if (colon < 0)
+				return name;
+			else
+				throw new ArgumentException ("Invalid name: " + name);
+		}
 	}
 }

@@ -97,6 +97,7 @@ namespace Mono.Xml.Xsl.Operations {
 		
 		public static string AttemptPreCalc (ref XslAvt avt)
 		{
+			if (avt == null) return null;
 			if (avt.simpleString != null) {
 				string s = avt.simpleString;
 				avt = null;

@@ -10,6 +10,7 @@
 //
 
 using System;
+using System.IO;
 using System.Collections;
 using System.Xml;
 using System.Xml.XPath;
@@ -29,6 +30,7 @@ namespace Mono.Xml.Xsl {
 		XPathNavigator root;
 		XsltContext ctx;
 		XsltArgumentList args;
+		XmlResolver resolver;
 
 		// Store the values of global params
 		internal Hashtable globalVariableTable = new Hashtable ();
@@ -39,7 +41,7 @@ namespace Mono.Xml.Xsl {
 			this.style = style.Style;
 		}
 
-		public void Process (XPathNavigator root, XmlWriter output, XsltArgumentList args)
+		public void Process (XPathNavigator root, XmlWriter output, XsltArgumentList args, XmlResolver resolver)
 		{
 			foreach (XslGlobalVariable v in CompiledStyle.Variables.Values)	{
 				if (v is XslGlobalParam) {
@@ -51,6 +53,7 @@ namespace Mono.Xml.Xsl {
 			
 			this.args = args;
 			this.root = root;
+			this.resolver = resolver != null ? resolver : new XmlUrlResolver ();
 			this.outputStack.Push (output);
 			this.ApplyTemplates (root.Select ("."), QName.Empty, null);
 		}
@@ -58,6 +61,10 @@ namespace Mono.Xml.Xsl {
 		public XsltContext Context { get { return ctx; }}
 		public CompiledStylesheet CompiledStyle { get { return compiledStyle; }}
 		public XsltArgumentList Arguments {get{return args;}}
+		
+		#region Document Resolution
+		public XmlResolver Resolver {get{return resolver;}}
+		#endregion
 		
 		#region Output
 		Stack outputStack = new Stack ();

@@ -1,3 +1,10 @@
+2003-08-04 Ben Maurer  <bmaurer@users.sourceforge.net>
+
+	* XslElement.cs, XslAttribute.cs: Better support for namespaces.
+	* XslAvt.cs: When precalculating, if the AVT is null (ie, the
+	attribute was not specified), just return null, that will be the
+	result.
+
 2003-08-01 Ben Maurer  <bmaurer@users.sourceforge.net>
 
 	* XslNumber.cs: More stubbing.

@@ -1,3 +1,7 @@
+2003-08-04 Ben Maurer  <bmaurer@users.sourceforge.net>
+
+	* ManagedXslTransform.cs: use the resolver given.
+
 2003-07-30 Ben Maurer  <bmaurer@users.sourceforge.net>
 
 	* ManagedXslTransform.cs: Hold reference to CompiledStyle, not the

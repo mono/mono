@@ -27,7 +27,7 @@ namespace System.Xml.Xsl {
 
 		public override void Transform (XPathNavigator input, XsltArgumentList args, XmlWriter output, XmlResolver resolver)
 		{
-			new XslTransformProcessor (s).Process (input, output, args); // todo use resolver
+			new XslTransformProcessor (s).Process (input, output, args, resolver);
 		}
 	}
 }

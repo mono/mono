@@ -15,10 +15,13 @@ using System.Xml;
 using System.Xml.XPath;
 using System.Xml.Xsl;
 
+using QName = System.Xml.XmlQualifiedName;
+
 namespace Mono.Xml.Xsl.Operations {	
 	public class XslElement : XslCompiledElement {
-		XslAvt name;
-		XslAvt ns;
+		XslAvt name, ns;
+		string calcName, calcNs;
+		
 		XslOperation value;
 		XmlQualifiedName [] useAttributeSets;
 		
@@ -27,6 +30,17 @@ namespace Mono.Xml.Xsl.Operations {
 		{
 			name = c.ParseAvtAttribute ("name");
 			ns = c.ParseAvtAttribute ("namespace");
+			
+			calcName = XslAvt.AttemptPreCalc (ref name);
+			
+			if (calcName != null && ns == null) {
+				QName q = XslNameUtil.FromString (calcName, c.Input);
+				calcName = q.Name;
+				calcNs = q.Namespace;	
+			} else if (ns != null)
+				calcNs = XslAvt.AttemptPreCalc (ref ns);
+			
+			
 			useAttributeSets = c.ParseQNameListAttribute ("use-attribute-sets");
 			
 			if (c.Input.MoveToFirstChild ()) {
@@ -37,10 +51,16 @@ namespace Mono.Xml.Xsl.Operations {
 		
 		public override void Evaluate (XslTransformProcessor p)
 		{
-			string nm = name.Evaluate (p);
-			string nsUri = ns == null ? null : ns.Evaluate (p);
+			string nm, nmsp;
 			
-			p.Out.WriteStartElement (nm, nsUri);
+			nm = calcName != null ? calcName : name.Evaluate (p);
+			nmsp = calcNs != null ? calcNs : ns != null ? ns.Evaluate (p) : null;
+			
+			if (nmsp == null)
+				throw new NotImplementedException ();
+			
+			p.Out.WriteStartElement (nm, nmsp);
+			
 			if (useAttributeSets != null)
 				foreach (XmlQualifiedName s in useAttributeSets)
 					p.ResolveAttributeSet (s).Evaluate (p);
