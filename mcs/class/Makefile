@@ -1,14 +1,14 @@
 thisdir = class
 
 MONO_POSIX := Mono.Posix
-MONO_CSHARP_DEBUGGER := Mono.CSharp.Debugger
+MONO_SYMBOLWRITER := Mono.CompilerServices.SymbolWriter
 
 bootstrap_dirs := \
 	corlib 					\
 	System					\
 	System.XML				\
 	System					\
-	$(MONO_CSHARP_DEBUGGER)
+	$(MONO_SYMBOLWRITER)
 
 basic_SUBDIRS := corlib System System.XML System
 net_1_1_bootstrap_SUBDIRS := $(bootstrap_dirs) Mono.Security
@@ -39,7 +39,7 @@ SUBDIRS = \
 	System.Runtime.Remoting		\
 	System.Configuration.Install 	\
 	System.Management		\
-	$(MONO_CSHARP_DEBUGGER)         \
+	$(MONO_SYMBOLWRITER)		\
 	Mono.Data.SqliteClient		\
 	Mono.Data.SybaseClient		\
 	Mono.Data.TdsClient		\

@@ -88,7 +88,7 @@ namespace Mono.CSharp {
 			//
 			if (SymbolWriter == null) {
 				Report.Warning (
-					-18, "Could not find the symbol writer assembly (Mono.CSharp.Debugger.dll). This is normally an installation problem. Please make sure to compile and install the mcs/class/Mono.CSharp.Debugger directory.");
+					-18, "Could not find the symbol writer assembly (Mono.CompilerServices.SymbolWriter.dll). This is normally an installation problem. Please make sure to compile and install the mcs/class/Mono.CompilerServices.SymbolWriter directory.");
 				return;
 			}
 		}

@@ -32,7 +32,7 @@ support.cs
 typemanager.cs
 symbolwriter.cs
 tree.cs
-../class/Mono.CSharp.Debugger/MonoSymbolFile.cs
-../class/Mono.CSharp.Debugger/MonoSymbolTable.cs
-../class/Mono.CSharp.Debugger/MonoSymbolWriter.cs
+../class/Mono.CompilerServices.SymbolWriter/MonoSymbolFile.cs
+../class/Mono.CompilerServices.SymbolWriter/MonoSymbolTable.cs
+../class/Mono.CompilerServices.SymbolWriter/MonoSymbolWriter.cs
 ../class/corlib/Mono.Security.Cryptography/CryptoConvert.cs

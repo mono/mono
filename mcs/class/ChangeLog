@@ -1,3 +1,8 @@
+2004-12-08  Martin Baulig  <martin@ximian.com>
+
+	* Mono.CSharp.Debugger/: Renamed to Mono.CSharp.CompilerServices.
+	(the DLL it creates has already been renamed a long time ago).
+
 2004-12-08  Raja R Harinath  <rharinath@novell.com>
 
 	* Makefile (monolite_files): New.  Do away with lib/basic.tar.gz.
