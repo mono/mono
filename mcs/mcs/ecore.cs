@@ -3441,7 +3441,7 @@ namespace Mono.CSharp {
 
 			if (ec.ResolvingTypeTree){
 				int errors = Report.Errors;
-				Type dt = ec.DeclSpace.FindType (Name);
+				Type dt = ec.DeclSpace.FindType (loc, Name);
 				if (Report.Errors != errors)
 					return null;
 				

@@ -466,7 +466,7 @@ namespace Mono.CSharp {
 		///   during the tree resolution process and potentially define
 		///   recursively the type
 		/// </remarks>
-		public Type FindType (string name)
+		public Type FindType (Location loc, string name)
 		{
 			Type t;
 			bool error;
@@ -548,7 +548,7 @@ namespace Mono.CSharp {
 
 					if (match != null){
 						if (t != null){
-							Report.Error (104, Location, "`" + name + "' is an ambiguous reference");
+							Report.Error (104, loc, "`" + name + "' is an ambiguous reference");
 							return null;
 						}
 						
