@@ -646,7 +646,7 @@ namespace Mono.CSharp {
 		protected MethodBase constructor_method;
 		protected MethodBase delegate_method;
 		protected MethodGroupExpr method_group;
-		public Expression DelegateInstanceExpression;
+		protected Expression delegate_instance_expression;
 
 		public DelegateCreation () {}
 
@@ -672,10 +672,10 @@ namespace Mono.CSharp {
 		
 		public override void Emit (EmitContext ec)
 		{
-			if (DelegateInstanceExpression == null || delegate_method.IsStatic)
+			if (delegate_instance_expression == null || delegate_method.IsStatic)
 				ec.ig.Emit (OpCodes.Ldnull);
 			else
-				DelegateInstanceExpression.Emit (ec);
+				delegate_instance_expression.Emit (ec);
 			
 			if (delegate_method.IsVirtual && !method_group.IsBase) {
 				ec.ig.Emit (OpCodes.Dup);
@@ -741,7 +741,7 @@ namespace Mono.CSharp {
 			}
 			
 			if (mg.InstanceExpression != null)
-				DelegateInstanceExpression = mg.InstanceExpression.Resolve (ec);
+				delegate_instance_expression = mg.InstanceExpression.Resolve (ec);
 			else if (ec.IsStatic) {
 				if (!delegate_method.IsStatic) {
 					Report.Error (120, loc,
@@ -749,12 +749,12 @@ namespace Mono.CSharp {
 						      delegate_method.Name);
 					return null;
 				}
-				DelegateInstanceExpression = null;
+				delegate_instance_expression = null;
 			} else
-				DelegateInstanceExpression = ec.GetThis (loc);
+				delegate_instance_expression = ec.GetThis (loc);
 			
-			if (DelegateInstanceExpression != null && DelegateInstanceExpression.Type.IsValueType)
-				DelegateInstanceExpression = new BoxedCast (mg.InstanceExpression);
+			if (delegate_instance_expression != null && delegate_instance_expression.Type.IsValueType)
+				delegate_instance_expression = new BoxedCast (mg.InstanceExpression);
 			
 			method_group = mg;
 			eclass = ExprClass.Value;
@@ -850,7 +850,7 @@ namespace Mono.CSharp {
 				return null;
 			}
 				
-			DelegateInstanceExpression = e;
+			delegate_instance_expression = e;
 			delegate_method = method_group.Methods [0];
 			
 			eclass = ExprClass.Value;
