@@ -1,3 +1,7 @@
+2003-02-16  Lluis Sanchez Gual <lluis@ideary.com>
+
+	* LeaseSink.cs: small correction.
+
 2003-02-04  Lluis Sanchez Gual <lluis@ideary.com>
 
 	* LifetimeServices.cs: Implemented all methods.
