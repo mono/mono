@@ -1,3 +1,9 @@
+2004-09-01  Martin Baulig  <martin@ximian.com>
+
+	* mono-debug.c, debug-mono-symfile.c: Use mono_loader_lock()
+	instead of mono_debugger_lock() because the latter one is a no-op
+	unless running in the debugger.
+
 2004-09-01  Zoltan Varga  <vargaz@freemail.hu>
 
 	* class.c (class_compute_field_layout): Classes with auto-layout or
