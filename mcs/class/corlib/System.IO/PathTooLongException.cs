@@ -11,7 +11,7 @@ using System;
 using System.Globalization;
 using System.Runtime.Serialization;
 
-namespace System
+namespace System.IO
 {
 	   [Serializable]
 	   public class PathTooLongException : SystemException
