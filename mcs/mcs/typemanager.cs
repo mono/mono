@@ -61,6 +61,7 @@ public class TypeManager {
 	static public Type icloneable_type;
 	static public Type type_type;
 	static public Type ienumerator_type;
+	static public Type ienumerable_type;
 	static public Type idisposable_type;
 	static public Type default_member_type;
 	static public Type iasyncresult_type;
@@ -79,6 +80,7 @@ public class TypeManager {
 	static public Type void_ptr_type;
 	static public Type indexer_name_type;
 	static public Type exception_type;
+	static public Type invalid_operation_exception_type;
 	static public object obsolete_attribute_type;
 	static public object conditional_attribute_type;
 	static public Type in_attribute_type;
@@ -137,6 +139,8 @@ public class TypeManager {
 	static public MethodInfo system_type_get_type_from_handle;
 	static public MethodInfo object_getcurrent_void;
 	static public MethodInfo bool_movenext_void;
+	static public MethodInfo ienumerable_getenumerator_void;
+	static public MethodInfo void_reset_void;
 	static public MethodInfo void_dispose_void;
 	static public MethodInfo void_monitor_enter_object;
 	static public MethodInfo void_monitor_exit_object;
@@ -156,9 +160,11 @@ public class TypeManager {
 	//
 	// The attribute constructors.
 	//
+	static public ConstructorInfo object_ctor;
 	static public ConstructorInfo cons_param_array_attribute;
 	static public ConstructorInfo void_decimal_ctor_five_args;
 	static public ConstructorInfo unverifiable_code_ctor;
+	static public ConstructorInfo invalid_operation_ctor;
 	
 	// <remarks>
 	//   Holds the Array of Assemblies that have been loaded
@@ -956,6 +962,7 @@ public class TypeManager {
 		asynccallback_type   = CoreLookupType ("System.AsyncCallback");
 		iasyncresult_type    = CoreLookupType ("System.IAsyncResult");
 		ienumerator_type     = CoreLookupType ("System.Collections.IEnumerator");
+		ienumerable_type     = CoreLookupType ("System.Collections.IEnumerable");
 		idisposable_type     = CoreLookupType ("System.IDisposable");
 		icloneable_type      = CoreLookupType ("System.ICloneable");
 		monitor_type         = CoreLookupType ("System.Threading.Monitor");
@@ -982,6 +989,7 @@ public class TypeManager {
 		indexer_name_type     = CoreLookupType ("System.Runtime.CompilerServices.IndexerNameAttribute");
 
 		exception_type        = CoreLookupType ("System.Exception");
+		invalid_operation_exception_type = CoreLookupType ("System.InvalidOperationException");
 
 		//
 		// Attribute types
@@ -1082,6 +1090,8 @@ public class TypeManager {
 			ienumerator_type, "get_Current", void_arg);
 		bool_movenext_void = GetMethod (
 			ienumerator_type, "MoveNext", void_arg);
+		void_reset_void = GetMethod (
+			ienumerator_type, "Reset", void_arg);
 		void_dispose_void = GetMethod (
 			idisposable_type, "Dispose", void_arg);
 		int_get_offset_to_string_data = GetMethod (
@@ -1090,7 +1100,9 @@ public class TypeManager {
 			array_type, "get_Length", void_arg);
 		int_array_get_rank = GetMethod (
 			array_type, "get_Rank", void_arg);
-
+		ienumerable_getenumerator_void = GetMethod (
+			ienumerable_type, "GetEnumerator", void_arg);
+		
 		//
 		// Int32 arguments
 		//
@@ -1146,7 +1158,17 @@ public class TypeManager {
 
 		unverifiable_code_ctor = GetConstructor (
 			unverifiable_code_type, void_arg);
-		
+
+		//
+		// InvalidOperationException
+		//
+		invalid_operation_ctor = GetConstructor (
+			invalid_operation_exception_type, void_arg);
+
+
+		// Object
+		object_ctor = GetConstructor (object_type, void_arg);
+
 	}
 
 	const BindingFlags instance_and_static = BindingFlags.Static | BindingFlags.Instance;

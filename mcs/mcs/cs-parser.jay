@@ -34,6 +34,8 @@ namespace Mono.CSharp
 		Namespace     current_namespace;
 		TypeContainer current_container;
 	
+		IIteratorContainer iterator_container;
+
 		// <summary>
 		//   Current block is used to add statements as we find
 		//   them.  
@@ -172,6 +174,9 @@ namespace Mono.CSharp
 %token VOID	
 %token VOLATILE
 %token WHILE	
+
+/* v2 tokens */
+%token YIELD
 
 /* C# keywords which are not really keywords */
 %token GET           "get"
@@ -811,11 +816,13 @@ variable_initializer
 	;
 
 method_declaration
-	: method_header
+	: method_header {
+		iterator_container = (IIteratorContainer) $1;
+	  }
 	  method_body
 	  {
 		Method method = (Method) $1;
-		Block b = (Block) $2;
+		Block b = (Block) $3;
 		const int extern_abstract = (Modifiers.EXTERN | Modifiers.ABSTRACT);
 
 		if (b == null){
@@ -832,10 +839,11 @@ method_declaration
 			}
 		}
 
-		method.Block = (Block) $2;
+		method.Block = (Block) $3;
 		CheckDef (current_container.AddMethod (method), method.Name, method.Location);
 
 		current_local_parameters = null;
+		iterator_container = null;
 	  }
 	;
 
@@ -3254,6 +3262,7 @@ jump_statement
 	| goto_statement
 	| return_statement
 	| throw_statement
+	| yield_statement
 	;
 
 break_statement
@@ -3296,6 +3305,29 @@ throw_statement
 	: THROW opt_expression SEMICOLON
 	  {
 		$$ = new Throw ((Expression) $2, lexer.Location);
+	  }
+	;
+
+yield_statement 
+	: YIELD expression SEMICOLON
+	  {
+		if (iterator_container == null){
+			Report.Error (204, lexer.Location, "yield statement can only be used within a method, operator or property");
+			$$ = null;
+		} else {
+			iterator_container.SetYields ();
+			$$ = new Yield ((Expression) $2, lexer.Location);
+		}
+	  }
+	| YIELD BREAK SEMICOLON
+	  {
+		if (iterator_container == null){
+			Report.Error (204, lexer.Location, "yield statement can only be used within a method, operator or property");
+			$$ = null;
+		} else {
+			iterator_container.SetYields ();
+			$$ = new YieldBreak (lexer.Location);
+		}
 	  }
 	;
 

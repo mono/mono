@@ -337,7 +337,7 @@ namespace Mono.CSharp {
 				if (expr_type != TypeManager.bool_type) {
 					Expr = ResolveBoolean (ec, Expr, loc);
 					if (Expr == null){
-						Error23 (Expr.Type);
+						Error23 (expr_type);
 						return null;
 					}
 				}
@@ -4763,8 +4763,7 @@ namespace Mono.CSharp {
 		{
 			MethodGroupExpr mg = (MethodGroupExpr) this.expr;
 
-			EmitCall (
-				ec, is_base, method.IsStatic, mg.InstanceExpression, method, Arguments, loc);
+			EmitCall (ec, is_base, method.IsStatic, mg.InstanceExpression, method, Arguments, loc);
 		}
 		
 		public override void EmitStatement (EmitContext ec)

@@ -237,6 +237,8 @@ namespace Mono.CSharp
 				"The compiler was written by Miguel de Icaza, Ravi Pratap and Martin Baulig");
 			Environment.Exit (0);
 		}
+
+		public static int counter1, counter2;
 		
 		public static int Main (string[] args)
 		{
@@ -248,6 +250,8 @@ namespace Mono.CSharp
 					Console.Write(" - {0} warning(s)", Report.Warnings);
 				}
 				Console.WriteLine();
+				//Console.WriteLine ("Counter1: " + counter1);
+				//Console.WriteLine ("Counter2: " + counter2);
 				return 0;
 			} else {
 				Console.WriteLine("Compilation failed: {0} error(s), {1} warnings",
@@ -544,6 +548,12 @@ namespace Mono.CSharp
 				RootContext.WarningLevel = level;
 		}
 
+		static void SetupV2 ()
+		{
+			RootContext.V2 = true;
+			defines.Add ("__V2__");
+		}
+		
 		static void Version ()
 		{
 			string version = Assembly.GetExecutingAssembly ().GetName ().Version.ToString ();
@@ -1035,6 +1045,10 @@ namespace Mono.CSharp
 				return true;
 
 			case "/fullpaths":
+				return true;
+
+			case "/v2":
+				SetupV2 ();
 				return true;
 				
 			case "/codepage":

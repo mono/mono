@@ -218,6 +218,11 @@ namespace Mono.CSharp {
 		public bool InTry;
 
 		/// <summary>
+		///   Whether we are inside an iterator block.
+		/// </summary>
+		public bool InIterator;
+		
+		/// <summary>
 		///   Whether we are in a Catch block
 		/// </summary>
 		public bool InCatch;
@@ -227,6 +232,11 @@ namespace Mono.CSharp {
 		/// </summary>
 		public bool InUnsafe;
 
+		/// <summary>
+		///  Whether we are inside an anonymous method.
+		/// </summary>
+		public bool InAnonymousMethod;
+		
 		/// <summary>
 		///   Location for this EmitContext
 		/// </summary>
@@ -262,6 +272,7 @@ namespace Mono.CSharp {
 			ConstantCheckState = true;
 			
 			IsStatic = (code_flags & Modifiers.STATIC) != 0;
+			InIterator = (code_flags & Modifiers.METHOD_YIELDS) != 0;
 			ReturnType = return_type;
 			IsConstructor = is_constructor;
 			CurrentBlock = null;
@@ -412,7 +423,7 @@ namespace Mono.CSharp {
 				CurrentFile = loc.File;
 
 			if (block != null){
-				try {
+			    try {
 				int errors = Report.Errors;
 
 				block.EmitMeta (this, block);
@@ -447,7 +458,7 @@ namespace Mono.CSharp {
 							block.UsageWarning ();
 					}
 				}
-				} catch {
+			    } catch {
 					Console.WriteLine ("Exception caught by the compiler while compiling:");
 					Console.WriteLine ("   Block that caused the problem begin at: " + loc);
 					
@@ -456,7 +467,7 @@ namespace Mono.CSharp {
 								   CurrentBlock.StartLocation, CurrentBlock.EndLocation);
 					}
 					throw;
-				}
+			    }
 			}
 
 			if (ReturnType != null && !has_ret){
@@ -465,8 +476,10 @@ namespace Mono.CSharp {
 				// correctly and emit an error instead of a warning.
 				//
 				//
-				Report.Error (161, loc, "Not all code paths return a value");
-				return;
+				if (!InIterator){
+					Report.Error (161, loc, "Not all code paths return a value");
+					return;
+				}
 			}
 
 			if (HasReturnLabel)
@@ -476,6 +489,9 @@ namespace Mono.CSharp {
 				ig.Emit (OpCodes.Ret);
 			} else {
 				if (!InTry){
+					if (InIterator)
+						has_ret = true;
+					
 					if (!has_ret || HasReturnLabel)
 						ig.Emit (OpCodes.Ret);
 				}

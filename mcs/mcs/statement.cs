@@ -598,6 +598,11 @@ namespace Mono.CSharp {
 					return false;
 			}
 
+			if (ec.InIterator){
+				Report.Error (-206, loc, "Return statement not allowed inside iterators");
+				return false;
+			}
+				
 			FlowBranching.UsageVector vector = ec.CurrentBranching.CurrentUsageVector;
 
 			if (ec.CurrentBranching.InTryBlock ())
@@ -613,7 +618,7 @@ namespace Mono.CSharp {
 		protected override bool DoEmit (EmitContext ec)
 		{
 			if (ec.InFinally){
-				Report.Error (157,loc,"Control can not leave the body of the finally block");
+				Report.Error (157, loc, "Control can not leave the body of the finally block");
 				return false;
 			}
 			

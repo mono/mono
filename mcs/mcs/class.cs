@@ -1067,6 +1067,7 @@ namespace Mono.CSharp {
 			member_cache = new MemberCache (this);
 #endif
 
+			
 			return true;
 		}
 
@@ -2227,8 +2228,8 @@ namespace Mono.CSharp {
 			}
 		}
 	}
-	
-	public class Method : MethodCore {
+
+	public class Method : MethodCore, IIteratorContainer {
 		public MethodBuilder MethodBuilder;
 		public MethodData MethodData;
 
@@ -2430,6 +2431,21 @@ namespace Mono.CSharp {
 			if (!MethodData.Define (container))
 				return false;
 
+			//
+			// Setup iterator if we are one
+			//
+			if ((ModFlags & Modifiers.METHOD_YIELDS) != 0){
+				IteratorHandler ih = new  IteratorHandler (
+					    Name, container, MemberType,
+					    ParameterTypes, ParameterInfo,
+					    ModFlags, Location);
+
+				Block new_block = ih.Setup (block);
+				if (new_block == null)
+					return false;
+				block = new_block;
+			}
+
 			MethodBuilder = MethodData.MethodBuilder;
 			
 			//
@@ -2461,6 +2477,11 @@ namespace Mono.CSharp {
 		{
 			MethodData.Emit (container, Block, this);
 			Block = null;
+		}
+
+		void IIteratorContainer.SetYields ()
+		{
+			ModFlags |= Modifiers.METHOD_YIELDS;
 		}
 	}
 
@@ -2748,6 +2769,9 @@ namespace Mono.CSharp {
 		}
 	}
 
+	//
+	// Encapsulates most of the Method's state
+	//
 	public class MethodData {
 		//
 		// The return type of this method
@@ -2772,7 +2796,10 @@ namespace Mono.CSharp {
 		protected MethodAttributes flags;
 		protected bool is_method;
 		protected string accessor_name;
-		ArrayList conditionals;
+
+		//
+		// It can either hold a string with the condition, or an arraylist of conditions.
+		object conditionals;
 
 		MethodBuilder builder = null;
 		public MethodBuilder MethodBuilder {
@@ -2797,7 +2824,8 @@ namespace Mono.CSharp {
 			this.flags = flags;
 			this.is_method = is_method;
 			this.Location = member.Location;
-			this.conditionals = new ArrayList ();
+			this.conditionals = null;
+			Driver.counter1++;
 		}
 
 		//
@@ -2914,7 +2942,17 @@ namespace Mono.CSharp {
 				return false;
 			}
 
-			conditionals.Add (condition);
+			//
+			// The likelyhood that the conditional will be more than 1 is very slim
+			//
+			if (conditionals == null)
+				conditionals = condition;
+			else if (conditionals is string){
+				string s = (string) conditionals;
+				conditionals = new ArrayList ();
+				((ArrayList)conditionals).Add (s);
+			} else
+				((ArrayList)conditionals).Add (condition);
 
 			return true;
 		}
@@ -2934,10 +2972,16 @@ namespace Mono.CSharp {
 					return true;
 			}
 
-			foreach (string condition in conditionals)
-				if (RootContext.AllDefines [condition] == null)
-					return true;
-
+			if (conditionals != null){
+				if (conditionals is string){
+					if (RootContext.AllDefines [conditionals] == null)
+						return true;
+				} else {
+					foreach (string condition in (ArrayList) conditionals)
+					if (RootContext.AllDefines [condition] == null)
+						return true;
+				}
+			}
 			return false;
 		}
 
@@ -2963,7 +3007,7 @@ namespace Mono.CSharp {
 			}
 
 			if (ShouldIgnore (loc))
-			    flags |= TypeManager.MethodFlags.ShouldIgnore;
+				flags |= TypeManager.MethodFlags.ShouldIgnore;
 
 			return flags;
 		}
@@ -3816,7 +3860,7 @@ namespace Mono.CSharp {
 				GetData = new MethodData (this, "get", MemberType,
 							  parameters, ip, CallingConventions.Standard,
 							  Get.OptAttributes, ModFlags, flags, false);
-				
+
 				if (!GetData.Define (container))
 					return false;
 
@@ -4280,7 +4324,7 @@ namespace Mono.CSharp {
 				Parameter [] fixed_parms = Parameters.FixedParameters;
 
 				if (fixed_parms == null){
-					throw new Exception ("We currently do not support only array arguments in an indexer");
+					throw new Exception ("We currently do not support only array arguments in an indexer at: " + Location);
 					// BUG BUG BUG BUG BUG BUG BUG BUG BUG BUG
 					// BUG BUG BUG BUG BUG BUG BUG BUG BUG BUG
 					//

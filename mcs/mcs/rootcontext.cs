@@ -58,10 +58,16 @@ namespace Mono.CSharp {
 		// Holds a reference to the Private Implementation Details
 		// class.
 		//
+		static ArrayList helper_classes;
+		
 		static TypeBuilder impl_details_class;
 
 		public static int WarningLevel = 2;
-		
+
+		//
+		// If set, enable C# version 2 features
+		//
+		public static bool V2;
 		//
 		// Constructor
 		//
@@ -114,7 +120,7 @@ namespace Mono.CSharp {
 				return name;
 			return String.Concat (nsn, ".", name);
 		}
-		       
+
 		// <remarks>
 		//   This function is used to resolve the hierarchy tree.
 		//   It processes interfaces, structs and classes in that order.
@@ -156,7 +162,6 @@ namespace Mono.CSharp {
 			if (root.Enums != null)
 				foreach (Enum e in root.Enums)
 					e.DefineType ();
-			
 		}
 
 		static void Error_TypeConflict (string name, Location loc)
@@ -353,7 +358,9 @@ namespace Mono.CSharp {
 				"System.ParamArrayAttribute",
 				"System.Security.UnverifiableCodeAttribute",
 				"System.Runtime.CompilerServices.IndexerNameAttribute",
-				"System.Runtime.InteropServices.InAttribute"
+				"System.Runtime.InteropServices.InAttribute",
+				"System.InvalidOperationException"
+
 			};
 
 			// We must store them here before calling BootstrapCorlib_ResolveDelegate.
@@ -421,11 +428,23 @@ namespace Mono.CSharp {
 			//
 			// If we have a <PrivateImplementationDetails> class, close it
 			//
-			if (impl_details_class != null){
-				impl_details_class.CreateType ();
+			if (helper_classes != null){
+				foreach (TypeBuilder type_builder in helper_classes)
+					type_builder.CreateType ();
 			}
 		}
 
+		/// <summary>
+		///   Used to register classes that need to be closed after all the
+		///   user defined classes
+		/// </summary>
+		public static void RegisterHelperClass (TypeBuilder helper_class)
+		{
+			if (helper_classes == null)
+				helper_classes = new ArrayList ();
+			helper_classes.Add (helper_class);
+		}
+		
 		//
 		// This idea is from Felix Arrese-Igor
 		//
@@ -692,6 +711,19 @@ namespace Mono.CSharp {
 			}
 		}
 
+		//
+		// A generic hook delegate
+		//
+		public delegate void Hook ();
+
+		//
+		// A hook invoked when the code has been generated.
+		//
+		public static event Hook EmitCodeHook;
+
+		//
+		// DefineTypes is used to fill in the members of each type.
+		//
 		static public void DefineTypes ()
 		{
 			TypeContainer root = Tree.Types;
@@ -770,6 +802,15 @@ namespace Mono.CSharp {
 					tc.Emit ();
 			}
 			
+			//
+			// Run any hooks after all the types have been defined.
+			// This is used to create nested auxiliary classes for example
+			//
+
+			if (EmitCodeHook != null)
+				EmitCodeHook ();
+
+			
 			if (Unsafe) {
 				if (TypeManager.unverifiable_code_ctor == null) {
 					Console.WriteLine ("Internal error ! Cannot set unverifiable code attribute.");
@@ -817,9 +858,11 @@ namespace Mono.CSharp {
 			FieldBuilder fb;
 			int size = data.Length;
 			
-			if (impl_details_class == null)
+			if (impl_details_class == null){
 				impl_details_class = CodeGen.ModuleBuilder.DefineType (
 					"<PrivateImplementationDetails>", TypeAttributes.NotPublic, TypeManager.object_type);
+				RegisterHelperClass (impl_details_class);
+			}
 
 			fb = impl_details_class.DefineInitializedData (
 				"$$field-" + (field_count++), data,

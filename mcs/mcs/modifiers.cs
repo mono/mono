@@ -27,6 +27,11 @@ namespace Mono.CSharp {
 		public const int UNSAFE    = 0x2000;
 		public const int TOP       = 0x2000;
 
+		//
+		// We use this internally to flag that the method contains an iterator
+		//
+		public const int METHOD_YIELDS = 0x8000;
+
 		public const int Accessibility =
 			PUBLIC | PROTECTED | INTERNAL | PRIVATE;
 		

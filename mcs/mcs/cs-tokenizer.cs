@@ -280,6 +280,11 @@ namespace Mono.CSharp
 			keywords.Add ("void", Token.VOID);
 			keywords.Add ("volatile", Token.VOLATILE);
 			keywords.Add ("while", Token.WHILE);
+
+			if (RootContext.V2){
+				keywords.Add ("__yield", Token.YIELD);
+				keywords.Add ("yield", Token.YIELD);
+			}
 		}
 
 		//

@@ -1,3 +1,47 @@
+2003-04-22  Miguel de Icaza  <miguel@ximian.com>
+
+	* typemanager.cs (ienumerable_type): Also look up
+	System.Collections.IEnumerable. 
+
+2003-04-21  Miguel de Icaza  <miguel@ximian.com>
+
+	TODO: Test more than one conditional per method.
+	
+	* class.cs (Indexer.Define): Report the location where the user is
+	referencing the unsupported feature.
+
+	(MethodData): Overload the use of `conditionals' to
+	minimize the creation of needless ArrayLists.   This saves roughly
+	212kb on my machine.
+
+	(Method): Implement the new IIteratorContainer interface.
+	(Method.SetYields): Implement the method by setting the ModFlags
+	to contain METHOD_YIELDS.
+	
+	* expression.cs (Unary.ResolveOperator): Use expr_type, not Expr,
+	which just got set to null.
+
+	* iterators.cs: New file.
+
+	(Yield, YieldBreak): New statements.
+
+	* statement.cs (Return.Resolve): Flag an error if we are used in
+	an iterator method.
+
+	* codegen.cs (InIterator): New flag set if the code is being
+	compiled in an iterator method.
+
+	* modifiers.cs: New flag METHOD_YIELDS.  This modifier is an
+	internal modifier, and we just use it to avoid adding extra
+	fields, as this is seldom used.  
+
+	* cs-parser.jay: Add yield_statement (yield and yield break).
+
+	* driver.cs: New flag -v2 to turn on version 2 features. 
+
+	* cs-tokenizer.cs (Tokenizer): Add yield and __yield to the
+	hashtable when v2 is enabled.
+
 2003-04-20  Miguel de Icaza  <miguel@ximian.com>
 
 	* typemanager.cs (TypeManager.NamespaceClash): Use to check if
