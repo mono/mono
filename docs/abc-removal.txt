@@ -30,8 +30,10 @@ Unfortunately, analyzing complex expressions is not so easy (see below for
 details), so the capabilities of this "abc remover" are limited.
 
 These are simple guidelines:
-- Only simple comparisons between variables are understood.
-- Only increment-decrement operations are handled.
+- Only expressions of the following kinds are handled:
+  - constant
+  - variable [+/- constant]
+- Only comparisons between "handled" expressions are understood.
 - "switch" statements are not yet handled.
 
 This means that code like this will be handled well:
@@ -59,16 +61,24 @@ for (int i = l; i > 0; i--) {
 	a [i] = .....
 }
 
+The following two examples would work:
+
+for (int i = 0; i < (a.Length -1); i++) .....
+for (int i = 0; i < a.Length; i += 2) .....
 
 But just something like this
 
-for (int i = 0; i < (a.Length -1); i++) .....
+int delta = -1;
+for (int i = 0; i < (a.Length + delta); i++) .....
 
 or like this
 
-for (int i = 0; i < a.Length; i += 2) .....
+int delta = +2;
+for (int i = 0; i < a.Length; i += delta) .....
 
 would not work, the check would stay there, sorry :-(
+(unless a combination of cfold, consprop and copyprop is used, too, which
+would make the constant value of "delta" explicit).
 
 Just to make you understand how things are tricky... this would work!
 
@@ -81,25 +91,8 @@ for (int i = 0; i < limit; i++) {
 A detailed explanation of the reason why things are done like this is given
 below...
 
-All in all, the compiling phase is generally non so fast, and the abc removed
-are so few, that there is hardly a performance gain in using the "abcrem"
-flag in the compiling options for short programs like the ones I tried.
-
-Anyway, various bound checks *are* removed, and this is good :-)
-
 ------------------------------------------------------------------------------
 THE ALGORITHM
-
-Unfortunately, this time google has not been my friend, and I did not
-find an algorithm I could reasonably implement in the time frame I had,
-so I had to invent one. The two cleasses of algorithms I found were either
-simply an analisys of variable ranges (which is not very different from
-what I'm doing), or they were based on type systems richer than the .NET
-one (particularly, they required integer types to have an explicit range,
-which could be related to array ranges). By the way, it seems that the
-gcj people do not have an array bound check removal optimization (they
-just have a compiler flag that unconditionally removes all the checks,
-but this is not what we want).
 
 This array bound check removal (abc removal) algorithm is based on
 symbolic execution concepts. I handle the removal like an "unreachable
@@ -202,9 +195,9 @@ one of the definitions of i is a PHI that can be either 0 or "i + 1".
 Now, we know that mathematically "i = i + 1" does not make sense, and in
 fact symbolic values are not "equations", they are "symbolic definitions".
 
-The symbolic value of i is a generic "n", where "n" is the number of
+The actual symbolic value of i is a generic "n", where "n" is the number of
 iterations of the loop, but this is terrible to handle (and in more complex
-examples the symbolic definition of i simply cannot be written, because i is
+examples the symbolic value of i simply cannot be written, because i is
 calculated in an iterative way).
 
 However, the definition "i = i + 1" tells us something about i: it tells us
@@ -227,13 +220,25 @@ conditions that could have caused to the removal of an abc, but will
 not remove checks "by mistake" (so the resulting code will be in any case
 correct).
 
-In a first attempt, we can consider only conditions that have the simple
-possible form, which is "(compare simpleExpression simpleExpression)",
-where "simpleExpression" is either "(ldind.* local[*])" or
-"(ldlen (ldind.ref local[*]))" (or a constant, of course).
+The expressions we handle are the following (all of integer type):
+- constant
+- variable
+- variable + constant
+- constant + variable
+- variable - constant
 
-We can also "summarize" variable definitions, keeping only what is relevant
-to know: if they are greater or smaller than zero or other variables.
+And, of course, PHI definitions.
+Any other expression causes the introduction of an "any" value in the
+evaluation, which makes all values that depend from it unknown as well.
+
+We will call these kind of definitions "summarizable" definitions.
+
+In a first attempt, we can consider only branch conditions that have the
+simplest possible form (the comparison of two summarizable expressions).
+
+We can also simplify the effect of variable definitions, keeping only
+what is relevant to know: their value range with respect to zero and with
+respect to the length of the array we are currently handling.
 
 One particular note on PHI functions: they work (obviously) like the logical
 "or" of their definitions, and therefore are equivalent to the "logical or"
@@ -245,281 +250,53 @@ if the recursive definition (which, as we said above, must happen because
 of a loop) always "grows" or "gets smaller". In all other cases, we decide
 we cannot handle it.
 
-So, the algorithm to optimize one method could be something like:
 
-[1] Build the SSA representation.
-[2] Analyze each BB. Particularly, do the following:
-    [2a] summarize its exit conditions
-    [2b] summarize all the variable definitions occurring in the BB
-    [2c] check if it contains array accesses (only as optimization, so that
-         step 3 will be performed only when necessary)
-[3] Perform the removal. For each BB that contains array accesses, do:
-    [3a] build an evaluation area where for each variable we keep track
-         of its relations with zero and with each other variable.
-    [3b] populate the evaluation area with the initial data (the variable
-         definitions and the complete entry condition of the BB)
-    [3c] propagate the relations between variables (so that from "a<b" and
-         "b<c" we know that "a<c") in the evaluation area
-    [3d] for each array access in the BB, use the evaluation area to "match
-         conditions", to see if the goal functions are satisfied
+One critical thing, once we have defined all these data structures, is how
+the evaluation is actually performed.
 
+In a first attempt I coded a "brute force" approach, which for each BB
+tried to examine all possible conditions between all variables, filling
+a sort of "evaluation matrix". The problem was that the complexity of this
+evaluation was quadratic (or worse) on the number of variables, and that
+many wariables were examined even if they were not involved in any array
+access.
 
-------------------------------------------------------------------------------
-LOW LEVEL DESIGN DECISIONS
-
-One of the problems I had to solve was the representation of the relations
-between symbolic values.
-The "canonical" solution would be to have a complex, potentially recursive
-data structure, somewhat similar to MonoInst, and use it all the time (maybe
-MonoInst could be used "as is").
-The problem is that, at this point, the software would have to "play" with
-these structures, for instance to deduce "b < a-1" from "a > b+1", because we
-are interested in what value b has, and not a. And maybe the software should
-be able to do this without modifying the original condition, because it was
-used elsewhere (or could be reused).
-Then, the software should also be able to apply logical relations to
-conditions (like "(a>0)||(c<1)"), and manipulate them, too.
-
-In my opinion, an optimizer written in this way risks to be too complex, and
-its performance not acceptable in a JIT compiler.
-Therefore, I decided to represent values in a "summarized" way.
-For instance, "x = a + 1" becomes "x > a" (and, by the way, "x = x + 1"
-would look like "x > x", which means that "x grows").
-So, each variable value is simply a "relation" of the variable with other
-variables or constants. Anything more complex is ignored.
-Relations are represented with flags (EQ, LT and GT), so that it is easy
-to combine them logically (it is enough to perform the bitwise operations
-on the flags). The condition (EQ|LT|GT) means we know nothing special, any
-value is possible. The empty condition would mean an unreachable statement
-(because no value is acceptable).
-
-There is still the problem of identifying variables, and where to store all
-these relations. After some thinking, I decided that a "brute force" approach
-is the easier, and probably also the fastest. In practice, I keep in memory
-an array of "variable relations", where for each variable I record its
-relation with the constants 0 and 1 and an array of its relations with all
-other variables. The evaluation area, therefore, looks like a square matrix
-as large as the number of variables. I *know* that the matrix is rather sparse
-(in the sense that only few of its cells are significant), but I decided that
-this data structure was the simplest and more efficient anyway. After all,
-each cell takes just one byte, and any other data structure must be some
-kind of associative array (like a g_hash_table). Such a data structue is
-difficult to use with a MonoMemPool, and in the end is slower than a plain
-array, and has the storage overhead of all the pointers... in the end, maybe
-the full matrix is not a waste at all.
-<note>
-After a few benchmarks, I clearly see that the matrix works well if the
-variables are not too much, otherwise it gets "too sparse", and much time
-is wasted in the propagation phase. Maybe the data structure could be changed
-after a more careful evaluation of the problem...
-</note>
-
-With these assumptions, all the memory used to represent values, conditions
-and the evaluation area can be allocated in advance (from a MonoMemPool), and
-used for all the analysis of one method. Moreover, the performance of logical
-operations is high (they are simple bitwise operations on bytes).
-<note>
-For the propagation phase, there was a function I could not easily code
-with bitwise operations. As that phase is a real pain for the performance
-(the complexity is quadratic, and it must be executed iteratively until
-nothing changes), I decided to code it in perl, and generate a precomputed
-table then used by the C code (just 64 bytes). I think this is faster than
-all those branches... Really, I could think again to phases 3c and 3d (see
-above), maybe there is a better way to do them.
-</note>
-
-Of course not all expressions can be handled by the summarization, so the
-optimizer is not as effective as a full blown theorem prover...
-
-Another thing related to design... the implementation is as less intrusive
-as possible.
-I "patched" the main files to add an option for abc removal, and handle it
-just like any other option, and then wrote all the relevant code in two
-separated files (one header for data structures, and a C file for the code).
-If the patch turns out to be useful also for other pourposes (like a more
-generic "unreachable code elimination", that detects branches that will never
-be taken using the analysis of variable values), it will not be difficult
-to integrate the branch summarizations into the BasicBlock data structures,
-and so on.
-
-One last thing... in some places, I knowingly coded in an inefficient way.
-For instance, "remove_abc_from_block" does something only if the flag
-"has_array_access_instructions" is true, but I call it anyway, letting it
-do nothing (calling it conditionally would be better). There are several
-things like this in the code, but I was in a hurry, and preferred to make
-the code more readable (it is already difficult to understand as it is).
-
-------------------------------------------------------------------------------
-WHEN IS ABC REMOVAL POSSIBLE? WHEN IS IT USEFUL?
-
-Warning! Random ideas ahead!
-
-In general, managed code should be safe, so abc removal is possible only if
-there already is some branch in the method that does the check.
-So, one check on the index is "mandatory", the abc removal can only avoid a
-second one (which is useless *because* of the first one).
-If in the code there is not a conditional branch that "avoids" to access
-an array out of its bounds, in general the abc removal cannot occur.
-
-It could happen, however, that one method is called from another one, and
-the check on the index is performed in the caller.
-
-For instance:
-
-void
-caller( int[] a, int n ) {
-	if ( n <= a.Length ) {
-		for ( int i = 0; i < n; i++ ) {
-			callee( a, i );
-		}
-	}
-}
-
-void callee( int[] a, int i ) {
-	Console.WriteLine( "a [i] = " + a [i] );
-}
+Following the ABCD paper (http://citeseer.ist.psu.edu/bodik00abcd.html),
+I rewrote the algorithm in a more "sparse" way.
+Now, the main data structure is a graph of relations between variables, and
+each attempt to remove a check performs a traversal of the graph, looking
+for a path from the index to the array length that satisfies the properties
+"index >= 0" and "index < length". If such a path is found, the check is
+removed. It is true that in theory *each* traversal has a complexity which
+is exponential on the number of variables, but in practice the graph is not
+very connected, so the traversal terminates quickly.
 
 
-In this case, it should be possible to have two versions of the callee, one
-without checks, to be called from methods that do the check themselves, and
-another to be called otherwise.
-This kind of optimization could be profile driven: if one method is executed
-several times, wastes CPU time for bound checks, and is mostly called from
-another one, it could make sense to analyze the situation in detail.
+Then, the algorithm to optimize one method looks like this:
 
-However, one simple way to perform this optimization would be to inline
-the callee (so that the abc removal algorithm can see both methods at once).
+[1] Preparation:
+    [1a] Build the SSA representation.
+    [1b] Prepare the evaluation graph (empty)
+    [1b] Summarize each varible definition, and put the resulting relations
+         in the evaluation graph
+[2] Analyze each BB, starting from the entry point and following the
+    dominator tree:
+    [2a] Summarize its entry condition, and put the resulting relations
+         in the evaluation graph (this is the reason why the BBs are examined
+	 following the dominator tree, so that conditions are added to the
+	 graph in a "cumulative" way)
+    [2b] Scan the BB instructions, and for each array access perform step [3]
+    [2c] Process children BBs following the dominator tree (step [2])
+    [2d] Remove from the evaluation area the conditions added at step [2a]
+         (so that backtracking along the tree the area is properly cleared)
+[3] Attempt the removal:
+    [3a] Summarize the index expression, to see if we can handle it; there
+         are three cases: the index is either a constant, or a variable (with
+	 an optional delta) or cannot be handled (is a "any")
+    [3b] If the index can be handled, traverse the evaluation area searching
+         a path from the index variable to the array length (if the index is
+	 a constant, just examine the array length to see if it has some
+	 relation with this constant)
+    [3c] Use the results of step [3b] to decide if the check is redundant
 
-The biggest benefits of abc removal can be seen for array accesses that
-occur "often", like the ones inside inner loops. This is why I tried to
-handle "recursive" variable definitions, because without them you cannot
-optimize inside loops, which is also where you need it most.
-
-Another possible optimization (alwais related to loops) is the following:
-
-void method( int[] a, int n ) {
-	for ( int i = 0; i < n; i++ ) {
-		Console.WriteLine( "a [i] = " + a [i] );
-	}
-}
-
-In this case, the check on n is missing, so the abc could not be removed.
-However, this would mean that i will be checked twice at each loop iteration,
-one against n, and the other against a.Length. The code could be transformed
-like this:
-
-void method( int[] a, int n ) {
-	if ( n < a.Length ) {
-		for ( int i = 0; i < n; i++ ) {
-			Console.WriteLine( "a [i] = " + a [i] ); // Remove abc
-		}
-	} else {
-		for ( int i = 0; i < n; i++ ) {
-			Console.WriteLine( "a [i] = " + a [i] ); // Leave abc
-		}
-	}
-}
-
-This could result in performance improvements (again, probably this
-optimization should be profile driven).
-
-------------------------------------------------------------------------------
-OPEN ISSUES
-
-There are several issues that should still be addressed...
-
-One is related to aliasing. For now, I decided to operate only on local
-variables, and ignore aliasing problems (and alias analisys has not yet
-been implemented anyway).
-Actually, I identified the local arrays with their length, because I
-totally ignore the contents of arrays (and objects in general).
-
-Also, in several places in the code I only handle some cases, and ignore
-other more complex ones, which could anyway work (there are comments where
-this happens). Anyway, this is not harmful (the code is not as effective
-as it could be).
-
-Another possible improvement is the explicit handling of all constants.
-For now, code like
-
-void
-method () {
-	int[] a = new int [16];
-	for ( int i = 0; i < 16; i++ ) {
-		a [i] = i;
-	}
-}
-
-is not handled, because the two constants "16" are lost when variable
-relations are summarized (actually they are not lost, they are stored in the
-summarized values, but they are not yet used correctly).
-
-The worst thing, anyway, is that for now I fail completely in distinguishing
-between signed and unsigned variables/operations/conditions, and between
-different integer sizes (in bytes). I did this on pourpose, just for lack of
-time, but this can turn out to be terribly wrong.
-The problem is caused by the fact that I handle arithmetical operations and
-conditions as "ideal" operations, but actually they can overflow and/or
-underflow, giving "surprising" results.
-
-For instance, look at the following two methods:
-
-public static void testSignedOverflow()
-{
-  Console.WriteLine( "Testing signed overflow..." );
-  int[] ia = new int[70000];
-  int i = 1;
-  while ( i <ia.Length )
-  {
-    try
-    {
-      Console.WriteLine( " i = " + i );
-      ia[i] = i;
-    }
-    catch ( IndexOutOfRangeException e )
-    {
-      Console.WriteLine( "Yes, we had an overflow (i = " + i + ")" );
-    }
-    i *= 60000;
-  }
-  Console.WriteLine( "Testing signed overflow done." );
-}
-
-public static void testUnsignedOverflow()
-{
-  Console.WriteLine( "Testing unsigned overflow..." );
-  int[] ia = new int[70000];
-  uint i = 1;
-  while ( i <ia.Length )
-  {
-    try
-    {
-      Console.WriteLine( " i = " + i );
-      ia[i] = (int) i;
-    }
-    catch ( IndexOutOfRangeException e )
-    {
-      Console.WriteLine( "Yes, we had an overflow (i = " + i + ")" );
-    }
-    i *= 60000;
-  }
-  Console.WriteLine( "Testing unsigned overflow done." );
-}
-
-In the "testSignedOverflow" method, the exception will be thrown, while
-in the "testUnsignedOverflow" everything will go on smoothly.
-The problem is that the test "i <ia.Length" is a signed comparison in the
-first case, and will not exit from the loop if the index is negative.
-Therefore, in the first method, the abc should not be removed.
-
-In practice, the abc removal code should try to predict if any given
-expression could over/under-flow, and act accordingly.
-For now, I made so that the only accepted expressions are plain increments
-and decrements of variables (which cannot over/under-flow without being
-trapped by the existing conditions). Anyway, this issue should be analyzed
-better.
-By the way, in summarizations there is a field that keeps track of the
-relation with "1", which I planned to use exactly to summarize products and
-quotients, but it is never used (as I said, only increment and decrement
-operations are properly summarized).
 
