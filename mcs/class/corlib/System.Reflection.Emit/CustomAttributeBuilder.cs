@@ -28,7 +28,7 @@ namespace System.Reflection.Emit {
 		}
 		
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		static extern byte[] GetBlob(ConstructorInfo con, object[] constructorArgs, PropertyInfo[] namedProperties, object[] propertyValues, FieldInfo[] namedFields, object[] fieldValues);
+		static extern byte[] GetBlob(Assembly asmb, ConstructorInfo con, object[] constructorArgs, PropertyInfo[] namedProperties, object[] propertyValues, FieldInfo[] namedFields, object[] fieldValues);
 		
 		internal CustomAttributeBuilder( ConstructorInfo con, byte[] cdata) {
 			ctor = con;
@@ -138,7 +138,7 @@ namespace System.Reflection.Emit {
 				i ++;
 			}
 				
-			data = GetBlob (con, constructorArgs, namedProperties, propertyValues, namedFields, fieldValues);
+			data = GetBlob (atype.Assembly, con, constructorArgs, namedProperties, propertyValues, namedFields, fieldValues);
 		}
 
 		/* helper methods */

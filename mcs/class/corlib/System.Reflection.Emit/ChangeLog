@@ -1,3 +1,8 @@
+2004-05-28  Jackson Harper  <jackson@ximian.com>
+
+	* CustomAttributeBuilder.cs: GetBlob now takes a ref to the
+	assembly so it can encode type names properly.
+	
 2004-05-25  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* MethodBuilder.cs: Now use FastNewGuidArray to create new random 
