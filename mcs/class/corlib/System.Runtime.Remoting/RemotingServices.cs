@@ -266,10 +266,20 @@ namespace System.Runtime.Remoting
 				throw new RemotingException ("Type '" + msg.TypeName + "' not found.");
 
 			BindingFlags bflags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic;
+			
+			MethodBase method;
 			if (msg.MethodSignature == null)
-				return type.GetMethod (msg.MethodName, bflags);
+				method = type.GetMethod (msg.MethodName, bflags);
 			else
-				return type.GetMethod (msg.MethodName, bflags, null, (Type[]) msg.MethodSignature, null);
+				method = type.GetMethod (msg.MethodName, bflags, null, (Type[]) msg.MethodSignature, null);
+			
+			if (method != null) 
+				return method;
+			
+			if (msg.MethodSignature == null)
+				return type.GetConstructor (bflags, null, Type.EmptyTypes, null);
+			else
+				return type.GetConstructor (bflags, null, (Type[]) msg.MethodSignature, null);
 		}
 
 		public static void GetObjectData(object obj, SerializationInfo info, StreamingContext context)
