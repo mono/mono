@@ -34,8 +34,6 @@ using System.Runtime.InteropServices;
 
 /// X11 Version
 namespace System.Windows.Forms {
-	#region X11 Structures
-
 	//
 	// In the structures below, fields of type long are mapped to IntPtr.
 	// This will work on all platforms where sizeof(long)==sizeof(void*), which
@@ -137,7 +135,7 @@ namespace System.Windows.Forms {
 		internal IntPtr		display;
 		internal IntPtr		window;
 		internal int		mode;
-		internal int		detail;
+		internal NotifyDetail	detail;
 	}
 
 	[StructLayout(LayoutKind.Sequential)]
@@ -606,9 +604,7 @@ namespace System.Windows.Forms {
 		internal int		format;
 		internal IntPtr		nitems;
 	}
-	#endregion
 
-	#region X11 Enumerations
 	internal enum XWindowClass {
 		InputOutput	= 1,
 		InputOnly	= 2
@@ -1136,6 +1132,11 @@ namespace System.Windows.Forms {
 		Add				= 1,
 		Toggle				= 2
 	}
-#endregion
+
+	internal enum RevertTo {
+		None				= 0,
+		PointerRoot			= 1,
+		Parent				= 2
+	}
 }
 
