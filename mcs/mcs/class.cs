@@ -796,7 +796,7 @@ namespace Mono.CSharp {
 			}
 
 			// add interfaces that were not added at type creation (weird API issue)
-			if (!is_class && !have_nonstatic_fields) {
+			if (!is_class && !have_nonstatic_fields && (ifaces != null)) {
 				foreach (Type i in ifaces)
 					TypeBuilder.AddInterfaceImplementation (i);
 			}

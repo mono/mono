@@ -1,3 +1,7 @@
+2002-07-01  Martin Baulig  <martin@gnome.org>
+
+	* class.cs: Make the last change actually work, we need to check
+	whether `ifaces != null' to avoid a crash.
 
 Mon Jul 1 16:15:03 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
