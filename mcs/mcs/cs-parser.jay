@@ -4408,10 +4408,10 @@ public void parse ()
 		Tokenizer tokenizer = lexer as Tokenizer;
 		tokenizer.cleanup ();		
 	} catch (Exception e){
-		// Please do not remove this, it is used during debugging
-		// of the grammar
+		// 
+		// Removed for production use, use parser verbose to get the output.
 		//
-		Console.WriteLine (e);
+		// Console.WriteLine (e);
 		Report.Error (-25, lexer.Location, "Parsing error");
 		if (Driver.parser_verbose)
 			Console.WriteLine (e);
