@@ -125,7 +125,12 @@ namespace System.Xml
 				scope = scope.Next;
 			}
 
-			return String.Empty;
+			// ECMA specifies that this method returns String.Empty
+			// in case of no match. But actually MS.NET returns null.
+			// For more information,see
+			//  http://lists.ximian.com/archives/public/mono-list/2003-January/005071.html
+			//return String.Empty;
+			return null;
 		}
 
 		public virtual bool PopScope ()

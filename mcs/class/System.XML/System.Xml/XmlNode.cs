@@ -237,59 +237,7 @@ namespace System.Xml
 		{
 			// I assume that AppendChild(n) equals to InsertAfter(n, this.LastChild) or InsertBefore(n, null)
 			return InsertBefore (newChild, null);
-
-			// Below are formerly used logic.
-/*			XmlDocument ownerDoc = (NodeType == XmlNodeType.Document) ? (XmlDocument)this : OwnerDocument;
-
-			if (NodeType == XmlNodeType.Document || NodeType == XmlNodeType.Element || NodeType == XmlNodeType.Attribute || NodeType == XmlNodeType.DocumentFragment) {
-				
-				if (IsReadOnly)
-					throw new ArgumentException ("The specified node is readonly.");
-
-				if (newChild.OwnerDocument != ownerDoc)
-					throw new ArgumentException ("Can't append a node created by another document.");
-
-				// checking validity finished. then appending...
-
-				ownerDoc.onNodeInserting (newChild, this);
-
-				if(newChild.ParentNode != null)
-					newChild.ParentNode.RemoveChild(newChild);
-
-				if(newChild.NodeType == XmlNodeType.DocumentFragment)
-				{
-					int x = newChild.ChildNodes.Count;
-					for(int i=0; i<x; i++)
-					{
-						// When this logic became to remove children in order, then index will have never to increments.
-						XmlNode n = newChild.ChildNodes [0];
-						this.AppendChild(n);	// recursively invokes events. (It is compatible with MS implementation.)
-					}
-				}
-				else
-				{
-					XmlLinkedNode newLinkedChild = (XmlLinkedNode) newChild;
-					XmlLinkedNode lastLinkedChild = LastLinkedChild;
-
-					newLinkedChild.parentNode = this;
-				
-					if (lastLinkedChild != null) 
-					{
-						newLinkedChild.NextLinkedSibling = lastLinkedChild.NextLinkedSibling;
-						lastLinkedChild.NextLinkedSibling = newLinkedChild;
-					} 
-					else
-						newLinkedChild.NextLinkedSibling = newLinkedChild;
-				
-					LastLinkedChild = newLinkedChild;
-
-					ownerDoc.onNodeInserted (newChild, newChild.ParentNode);
-
-				}
-				return newChild;
-			} else
-				throw new InvalidOperationException();
-*/		}
+		}
 
 		public virtual XmlNode Clone ()
 		{
@@ -321,7 +269,8 @@ namespace System.Xml
 		public virtual string GetPrefixOfNamespace (string namespaceURI)
 		{
 			XmlNamespaceManager nsmgr = ConstructNamespaceManager ();
-			return nsmgr.LookupPrefix (namespaceURI);
+			string ns = nsmgr.LookupPrefix (namespaceURI);
+			return (ns != null) ? ns : String.Empty;
 		}
 
 		object ICloneable.Clone ()

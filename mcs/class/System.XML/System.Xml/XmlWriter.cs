@@ -226,7 +226,7 @@ namespace System.Xml
 
 		public void WriteStartAttribute (string localName, string ns)
 		{
-			WriteStartAttribute ("", localName, ns);
+			WriteStartAttribute (null, localName, ns);
 		}
 
 		public abstract void WriteStartAttribute (string prefix, string localName, string ns);

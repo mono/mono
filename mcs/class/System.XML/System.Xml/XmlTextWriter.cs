@@ -40,6 +40,8 @@ namespace System.Xml
 		XmlSpace xmlSpace = XmlSpace.None;
 		bool openXmlLang = false;
 		bool openXmlSpace = false;
+		string openElementPrefix;
+		string openElementNS;
 
 		#endregion
 
@@ -175,6 +177,44 @@ namespace System.Xml
 		#endregion
 
 		#region Methods
+		private void AddMissingElementXmlns ()
+		{
+			// output namespace declaration if not exist.
+			string prefix = openElementPrefix;
+			string ns = openElementNS;
+			if (ns != null/* && LookupPrefix (ns) != prefix*/) 
+			{
+				string formatXmlns = String.Empty;
+				if (ns != String.Empty)
+				{
+					string existingPrefix = namespaceManager.LookupPrefix (ns);
+					bool addDefaultNamespace = false;
+
+					if (existingPrefix == null) 
+					{
+						namespaceManager.AddNamespace (prefix, ns);
+						addDefaultNamespace = true;
+					}
+
+					if (prefix == String.Empty)
+						prefix = existingPrefix;
+
+					if (prefix != existingPrefix)
+						formatXmlns = String.Format (" xmlns:{0}={1}{2}{1}", prefix, quoteChar, ns);
+					else if (addDefaultNamespace)
+						formatXmlns = String.Format (" xmlns={0}{1}{0}", quoteChar, ns);
+				} 
+				else if ((prefix == String.Empty) && (namespaceManager.LookupNamespace (prefix) != String.Empty)) 
+				{
+					namespaceManager.AddNamespace (prefix, ns);
+					formatXmlns = String.Format (" xmlns={0}{0}", quoteChar);
+				}
+				if(formatXmlns != String.Empty)
+					w.Write(formatXmlns);
+				openElementPrefix = null;
+				openElementNS = null;
+			}
+		}
 
 		private void CheckState ()
 		{
@@ -182,7 +222,7 @@ namespace System.Xml
 				throw new InvalidOperationException ("The Writer is closed.");
 			}
 			if ((documentStarted == true) && (formatting == Formatting.Indented) && (!IndentingOverriden)) {
-				indentFormatting = "\r\n";
+				indentFormatting = w.NewLine;
 				if (indentLevel > 0) {
 					for (int i = 0; i < indentLevel; i++)
 						indentFormatting += indentChars;
@@ -215,12 +255,15 @@ namespace System.Xml
 
 		private void CloseStartElement ()
 		{
-			if (openStartElement) {
-				w.Write(">");
-				ws = WriteState.Content;
-				openStartElement = false;
-				attributeWrittenForElement = false;
-			}
+			if (!openStartElement)
+				return;
+
+			AddMissingElementXmlns ();
+
+			w.Write (">");
+			ws = WriteState.Content;
+			openStartElement = false;
+			attributeWrittenForElement = false;
 		}
 
 		public override void Flush ()
@@ -232,9 +275,10 @@ namespace System.Xml
 		{
 			string prefix = namespaceManager.LookupPrefix (ns);
 
-			if (prefix == String.Empty)
-				prefix = null;
-
+			// XmlNamespaceManager has changed to return null when NSURI not found.
+			// (Contradiction to the documentation.)
+			//if (prefix == String.Empty)
+			//	prefix = null;
 			return prefix;
 		}
 
@@ -363,6 +407,7 @@ namespace System.Xml
 
 			indentLevel--;
 			CheckState ();
+			AddMissingElementXmlns ();
 
 			if (openStartElement) {
 				if (openAttribute)
@@ -476,7 +521,8 @@ namespace System.Xml
 				string existingPrefix = namespaceManager.LookupPrefix (ns);
 
 				if (prefix == String.Empty)
-					prefix = existingPrefix;
+					prefix = (existingPrefix == null) ?
+						String.Empty : existingPrefix;
 			}
 
 			if (prefix != String.Empty) 
@@ -538,45 +584,23 @@ namespace System.Xml
 
 		private void WriteStartElementInternal (string prefix, string localName, string ns)
 		{
-			if (prefix == null)
-				prefix = String.Empty;
-
-			if ((prefix != String.Empty) && ((ns == null) || (ns == String.Empty)))
+			if ((prefix != null && prefix != String.Empty) && ((ns == null) || (ns == String.Empty)))
 				throw new ArgumentException ("Cannot use a prefix with an empty namespace.");
 
 			CheckState ();
 			CloseStartElement ();
 			
+			if (prefix == null)
+				prefix = namespaceManager.LookupPrefix (ns);
+			if (prefix == null)
+				prefix = String.Empty;
+
 			string formatXmlns = "";
 			string formatPrefix = "";
 
-			if(ns != null)
-			{
-				if (ns != String.Empty) 
-				{
-					string existingPrefix = namespaceManager.LookupPrefix (ns);
-					bool addDefaultNamespace = false;
-
-					if (existingPrefix == String.Empty && !namespaceManager.HasNamespace (prefix)) {
-						namespaceManager.AddNamespace (prefix, ns);
-						addDefaultNamespace = true;
-					}
-
-					if (prefix == String.Empty)
-						prefix = existingPrefix;
-
-					if (prefix != existingPrefix)
-						formatXmlns = String.Format (" xmlns:{0}={1}{2}{1}", prefix, quoteChar, ns);
-					else if (addDefaultNamespace)
-						formatXmlns = String.Format (" xmlns={0}{1}{0}", quoteChar, ns);
-				}
-				else if ((prefix == String.Empty) && (namespaceManager.LookupNamespace(prefix) != String.Empty)) {
-					formatXmlns = String.Format (" xmlns={0}{0}", quoteChar);
-				}
-
-				if (prefix != String.Empty) {
+			if(ns != null) {
+				if (prefix != String.Empty)
 					formatPrefix = prefix + ":";
-				}
 			}
 
 			w.Write ("{0}<{1}{2}{3}", indentFormatting, formatPrefix, localName, formatXmlns);
@@ -585,12 +609,12 @@ namespace System.Xml
 			openElements.Push (new XmlTextWriterOpenElement (formatPrefix + localName));
 			ws = WriteState.Element;
 			openStartElement = true;
+			openElementNS = ns;
+			openElementPrefix = prefix;
 
 			namespaceManager.PushScope ();
-			if(ns != null)
-			{
-				namespaceManager.AddNamespace (prefix, ns);
-			}
+//			if(ns != null)
+//				namespaceManager.AddNamespace (prefix, ns);
 			indentLevel++;
 		}
 

@@ -1,3 +1,14 @@
+2003-01-19  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
+
+	* XmlNamespaceManager.cs : fundamental change of LookupPrefix to return
+		null when no matching uri.
+	* XmlElement.cs : removed unnecessary xmlns output.
+	* XmlNode.cs : GetPrefixOfNamespace fix along with the change above.
+	* XmlTextWriter.cs : LookupPrefix and WriteStartElementInternal fix 
+		along with the change above, and moved timing of 'xmlns' output 
+		to CloseStartElement.
+	* XmlWriter.cs: modified WriteStartAttribute, same as yesterday.
+
 2003-01-18  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
 
 	* XmlWriter.cs: modified WriteStartElement (see test for detail).
