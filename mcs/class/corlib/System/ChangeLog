@@ -1,3 +1,6 @@
+2002-01-14  Miguel de Icaza  <miguel@ximian.com>
+
+	* String.cs (System): Use DefaultMemberName for the String class.
 
 Mon Jan 14 17:06:40 CET 2002 Paolo Molaro <lupus@ximian.com>
 

@@ -29,6 +29,7 @@ using System.Runtime.CompilerServices;
 
 namespace System {
 
+	[DefaultMemberName("Chars")]
 	public sealed class String : IComparable, ICloneable, IConvertible, IEnumerable {
 		public static readonly string Empty = "";
 		private char[] c_str;
