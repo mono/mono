@@ -23,9 +23,19 @@
 //	Peter Bartok	pbartok@novell.com
 //
 //
-// $Revision: 1.11 $
+// $Revision: 1.12 $
 // $Modtime: $
 // $Log: X11Structs.cs,v $
+// Revision 1.12  2004/11/08 20:52:15  pbartok
+// - Added XSetWindowAttributes structure
+// - Improved XWindowAttributes structure
+// - Added SetWindowValuemask enum
+// - Added window creation arguments enum
+// - Added gravity enum
+// - Added Motif hints structure
+// - Added various Motif flags and enums
+// - Added PropertyMode enum for property functions
+//
 // Revision 1.11  2004/09/14 00:13:29  jackson
 // Timers are now handled in a second thread and post messages into the main threads message queue. This makes timing much more consistent. Both win2K and XP have a minimum timer value of 15 milliseconds, so we now do this too.
 //
@@ -589,6 +599,25 @@ namespace System.Windows.Forms {
 	}
 
 	[StructLayout(LayoutKind.Sequential)]
+	internal struct XSetWindowAttributes {
+		internal IntPtr		background_pixmap;
+		internal uint		background_pixel;
+		internal IntPtr		border_pixmap;
+		internal uint		border_pixel;
+		internal Gravity	bit_gravity;
+		internal Gravity	win_gravity;
+		internal int		backing_store;
+		internal uint		backing_planes;
+		internal uint		backing_pixel;
+		internal bool		save_under;
+		internal int		event_mask;
+		internal int		do_not_propagate_mask;
+		internal bool		override_redirect;
+		internal uint		colormap;
+		internal IntPtr		cursor;
+	}
+
+	[StructLayout(LayoutKind.Sequential)]
 	internal struct XWindowAttributes {
 		internal int		x;
 		internal int		y;
@@ -599,18 +628,18 @@ namespace System.Windows.Forms {
 		internal IntPtr		visual;
 		internal IntPtr		root;
 		internal int		c_class;
-		internal int		bit_gravity;
-		internal int		win_gravity;
+		internal Gravity	bit_gravity;
+		internal Gravity	win_gravity;
 		internal int		backing_store;
-		internal ulong		backing_planes;
-		internal ulong		backing_pixel;
+		internal uint		backing_planes;
+		internal uint		backing_pixel;
 		internal bool		save_under;
 		internal uint		colormap;
 		internal bool		map_installed;
 		internal int		map_state;
-		internal long		all_event_masks;
-		internal long		your_event_mask;
-		internal long		do_not_propagate_mask;
+		internal int		all_event_masks;
+		internal int		your_event_mask;
+		internal int		do_not_propagate_mask;
 		internal bool		override_direct;
 		internal IntPtr		screen;
 	}
@@ -669,22 +698,44 @@ namespace System.Windows.Forms {
 		LASTEvent
 	}
 
-	internal enum XWindowAttribute {
-		CWBackPixmap	= 1,
-		CWBackPixel	= 2,
-		CWBorderPixmap	= 4,
-		CWBorderPixel	= 8,
-		CWBitGravity	= 16,
-		CWWinGravity	= 32,
-		CWBackingStore	= 64,
-		CWBackingPlanes	= 128,
-		CWBackingPixel	= 256,
-		CWOverrideRedirect = 512,
-		CWSaveUnder	= 1024,
-		CWEventMask	= 2048,
-		CWDontPropagate	= 4096,
-		CWColorMap	= 8192,
-		CWCursor	= 16384
+	[Flags]
+	internal enum SetWindowValuemask {
+		BackPixmap	= 1,
+		BackPixel	= 2,
+		BorderPixmap	= 4,
+		BorderPixel	= 8,
+		BitGravity	= 16,
+		WinGravity	= 32,
+		BackingStore	= 64,
+		BackingPlanes	= 128,
+		BackingPixel	= 256,
+		OverrideRedirect = 512,
+		SaveUnder	= 1024,
+		EventMask	= 2048,
+		DontPropagate	= 4096,
+		ColorMap	= 8192,
+		Cursor	= 16384
+	}
+
+	internal enum CreateWindowArgs {
+		CopyFromParent	= 0,
+		ParentRelative	= 1,
+		InputOutput	= 1,
+		InputOnly	= 2
+	}
+
+	internal enum Gravity {
+		ForgetGravity	= 0,
+		NorthWestGravity= 1,
+		NorthGravity	= 2,
+		NorthEastGravity= 3,
+		WestGravity	= 4,
+		CenterGravity	= 5,
+		EastGravity	= 6,
+		SouthWestGravity= 7,
+		SouthGravity	= 8,
+		SouthEastGravity= 9,
+		StaticGravity	= 10
 	}
 
 	internal enum XKeySym {
@@ -927,6 +978,58 @@ namespace System.Windows.Forms {
 		NotifyDetailNone	= 7
 	}
 
+	[StructLayout(LayoutKind.Sequential)]
+	internal struct MotifWmHints {
+		internal MotifFlags		flags;
+		internal MotifFunctions		functions;
+		internal MotifDecorations	decorations;
+		internal MotifInputMode		input_mode;
+		internal uint			status;
+	}
+
+	[Flags]
+	internal enum MotifFlags {
+		Functions		= 1,
+		Decorations		= 2,
+		InputMode		= 4,
+		Status			= 8
+	}
+
+	[Flags]
+	internal enum MotifFunctions {
+		All			= 0x01,
+		Resize			= 0x02,
+		Move			= 0x04,
+		Minimize		= 0x08,
+		Maximize		= 0x10,
+		Close			= 0x20
+	}
+
+	[Flags]
+	internal enum MotifDecorations {
+		All			= 0x01,
+		Border			= 0x02,
+		ResizeH			= 0x04,
+		Title			= 0x08,
+		Menu			= 0x10,
+		Minimize		= 0x20,
+		Maximize		= 0x40,
+		
+	}
+
+	[Flags]
+	internal enum MotifInputMode {
+		Modeless		= 0,
+		ApplicationModal	= 1,
+		SystemModal		= 2,
+		FullApplicationMondal	= 3
+	}
+
+	internal enum PropertyMode {
+		Replace			= 0,
+		Prepend			= 1,
+		Append			= 2
+	}
 	#endregion
 }
 
