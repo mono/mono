@@ -846,9 +846,13 @@ namespace System.Windows.Forms
 
 	[StructLayout(LayoutKind.Sequential, CharSet=CharSet.Ansi)]
 	struct OFNOTIFY { 
-		internal NMHDR         hdr; 
+		//internal NMHDR         hdr; 	// FIXME: cannot be marshaled
+		internal IntPtr hwndFrom;
+		internal int idFrom;
+		internal int code;
 		internal IntPtr        lpOFN; 
-		internal string        pszFile; 
+		//internal string        pszFile; 	// FIXME: cannot be marshaled
+		internal IntPtr        pszFile; 
 	} 
 }
 

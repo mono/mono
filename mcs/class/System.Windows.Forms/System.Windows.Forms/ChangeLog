@@ -1,3 +1,15 @@
+2003-07-01 Alexandre Pigolkine <pigolkine@gmx.de>
+	* win32Structs.cs			some fields cannot be marshaled
+								OFNOTIFY structure simplified
+	* FileDialog.cs		
+	* win32functions.cs			
+			call wine_get_unix_filename from FileOpen dialog
+				
+	* win32functions.cs		WineLib library name changed
+	
+	* NativeWindow.cs	CLIENTCREATESTRUCT parameter for MDI 
+				Aleksey Ryabchuk <ryabchuk@yahoo.com>
+
 2003-06-30 Aleksey Ryabchuk <ryabchuk@yahoo.com>
 	* Form.cs : TopLevel, AcceptButton, CancelButton
 	* Application.cs : allow keyboard messages in modal forms

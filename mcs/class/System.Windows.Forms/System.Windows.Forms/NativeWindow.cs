@@ -97,12 +97,22 @@ namespace System.Windows.Forms {
 					}
 				}
 
+				IntPtr lParam = IntPtr.Zero;
+				
+				if ( cp.Param != null && cp.Param is CLIENTCREATESTRUCT ) {
+					lParam = Marshal.AllocHGlobal ( Marshal.SizeOf ( cp.Param ) );
+					Marshal.StructureToPtr ( cp.Param, lParam, false );
+				}
+				
 				windowHandle = Win32.CreateWindowEx (
 					(uint) cp.ExStyle, cp.ClassName,
 					cp.Caption,(uint) cp.Style,
 					cp.X, cp.Y, cp.Width, cp.Height,
 					(IntPtr) cp.Parent, (IntPtr) 0,
-					(IntPtr) 0, /*cp.Param*/ IntPtr.Zero );
+					(IntPtr) 0, lParam);
+					
+				if ( lParam != IntPtr.Zero )
+					Marshal.FreeHGlobal ( lParam );
 
 				if (windowHandle != (IntPtr) 0) {
 					windowCollection.Add (windowHandle, this);

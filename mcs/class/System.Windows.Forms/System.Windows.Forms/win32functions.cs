@@ -109,6 +109,23 @@ namespace System.Windows.Forms{
 				IntPtr.Zero, error, 0, sb, sb.Capacity, IntPtr.Zero);
 			return sb.ToString();
 		}
+		
+		[DllImport ("kernel32.dll", CallingConvention = CallingConvention.StdCall,
+			 CharSet = CharSet.Auto)]
+		internal extern static int wine_get_unix_file_name (string dos, IntPtr unix, int len);
+		
+		internal static string wine_get_unix_file_name(string dos) {
+			string result = dos;
+			if (RunningOnLinux){
+				// FIXME: shall we have a static buffer here ?
+				IntPtr tempBuf = Marshal.AllocHGlobal(2048);
+				if( Win32.wine_get_unix_file_name( dos, tempBuf, 2048) != 0){
+					result = Marshal.PtrToStringAnsi(tempBuf);
+				}
+				Marshal.FreeHGlobal(tempBuf);
+			}
+			return result;
+		}
 	#endregion
 	
 		#region Gdi32.dll functions
@@ -786,7 +803,7 @@ namespace System.Windows.Forms{
 /*			[ MarshalAs( UnmanagedType.AsAny )]
 			object lpParam);*/
 			IntPtr lpParam );
-
+			
 		[DllImport ("user32.dll", 
 			 CallingConvention = CallingConvention.StdCall, 
 			 CharSet = CharSet.Auto)]
@@ -1160,17 +1177,23 @@ namespace System.Windows.Forms{
 			return size;
 		}
 
-		[DllImport ("libntdll.dll.so", EntryPoint="PROCESS_InitWine")]
+		[DllImport ("libwinnt.dll.so", EntryPoint="PROCESS_InitWine")]
 		extern static void PROCESS_InitWine (int argc, string [] args);
 
-		[DllImport ("libntdll.dll.so", EntryPoint="LoadLibraryA")]
+		[DllImport ("libwinnt.dll.so", EntryPoint="LoadLibraryA")]
 		extern static void NTDLL_LoadLibraryA (string s);
-		
+
+		internal static bool RunningOnLinux = true;		
 		// 
 		// Used to initialize the runtime
 		//
 		static Win32 ()
 		{
+			// FIXME: this is definitely not the right way to understand that we are on Linux
+			if (Environment.GetEnvironmentVariable ("PWD") == null){
+				RunningOnLinux = false;
+			}
+			
 			string new_mode = Environment.GetEnvironmentVariable ("SWF");
 			if (new_mode == null){
 				Console.WriteLine ("MonoWin32: Default path");

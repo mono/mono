@@ -144,12 +144,12 @@ namespace System.Windows.Forms {
 			switch ( msg ) {
 			case ( int ) Msg.WM_NOTIFY:
 				OFNOTIFY ofnhdr = ( OFNOTIFY )Marshal.PtrToStructure ( lparam, typeof ( OFNOTIFY ) );
-
-				switch ( ofnhdr.hdr.code ) {
+				
+				switch ( ofnhdr.code ) {
 				case ( int ) CommDlgNotifications.CDN_FILEOK:
 					OPENFILENAME ofn = ( OPENFILENAME ) Marshal.PtrToStructure ( ofnhdr.lpOFN, typeof ( OPENFILENAME ) );
 					string oldFileName = FileName;
-					FileName = ofn.lpstrFile;
+					FileName = Win32.wine_get_unix_file_name(ofn.lpstrFile);
 					CancelEventArgs e = new CancelEventArgs ( false );
 					OnFileOk ( e );
 					if ( e.Cancel ){
@@ -182,7 +182,7 @@ namespace System.Windows.Forms {
 
 			bool res = Win32.GetOpenFileName ( ref opf );
 			if ( res )
-				FileName = opf.lpstrFile;
+				FileName = Win32.wine_get_unix_file_name(opf.lpstrFile);
 			else {
 				uint error = Win32.CommDlgExtendedError ( );
 				if ( error != 0 ) {
