@@ -239,7 +239,7 @@ namespace Mono.Tools
 			}
 
 			AssemblyName an = AssemblyName.GetAssemblyName (args[0]);
-
+			string config_path = null;
 			byte[] pub_tok = an.GetPublicKeyToken ();
 
 			if (pub_tok == null || pub_tok.Length == 0) {
@@ -247,6 +247,7 @@ namespace Mono.Tools
 				return 1;
 			}
 
+			config_path = args [0] + ".config";
 			// strong name verification temp. disabled
 			/*
 			byte[] akey = an.GetPublicKey ();
@@ -273,12 +274,14 @@ namespace Mono.Tools
 				"_" + GetStringToken (an.GetPublicKeyToken ());
                         
 			string fullPath = String.Format ("{0}{3}{1}{3}{2}{3}", gac_path, an.Name, version_token, Path.DirectorySeparatorChar);
-                        Console.WriteLine ("installing to fullpath:  " + fullPath);
+
 			if (File.Exists (fullPath + an.Name + ".dll") && force == false) {
 				Hashtable assemInfo = GetAssemblyInfo (fullPath + "__AssemblyInfo__");
 				assemInfo["RefCount"] = ((int) Convert.ToInt32 (assemInfo["RefCount"]) + 1).ToString ();
 				WriteAssemblyInfo (fullPath + "__AssemblyInfo__", assemInfo);
 				Console.WriteLine ("RefCount of assembly '" + an.Name + "' increased by one.");
+				if (File.Exists (config_path))
+					File.Copy (args[0], fullPath + an.Name + ".dll" + ".config", force);
 				return 0;
 			}
 
@@ -288,6 +291,8 @@ namespace Mono.Tools
 			}
 
 			File.Copy (args[0], fullPath + an.Name + ".dll", force);
+			if (File.Exists (config_path))
+				File.Copy (args[0], fullPath + an.Name + ".dll" + ".config", force);
 
 			Hashtable info = new Hashtable ();
 
