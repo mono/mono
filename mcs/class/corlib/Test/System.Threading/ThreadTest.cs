@@ -56,8 +56,8 @@ namespace MonoTests.System.Threading {
 			IPrincipal p = Thread.CurrentPrincipal;
 			AssertNotNull ("Thread.CurrentPrincipal", p);
 			Assert ("Type", (p is WindowsPrincipal));
-			Assert ("Name", (p.Identity.Name.IndexOf (@"\") > 0)); // DOMAIN\User
-			AssertEquals ("AuthenticationType", "NTLM", p.Identity.AuthenticationType);
+			AssertNotNull ("Name", p.Identity.Name);
+			AssertNotNull ("AuthenticationType", p.Identity.AuthenticationType);
 			Assert ("IsAuthenticated", p.Identity.IsAuthenticated);
 
 			// note: we can switch from a WindowsPrincipal to a GenericPrincipal
@@ -445,28 +445,27 @@ namespace MonoTests.System.Threading {
 			// because as soon as a Principal object is created the Policy doesn't matter anymore
 			Thread t = new Thread (new ThreadStart (ThreadedPrincipalTest.NoPrincipal));
 			t.Start ();
-			while (t.IsAlive) {}
+			t.Join ();
 		}
 
 		[Test]
-		 public void CurrentPrincipal_PrincipalPolicy_UnauthenticatedPrincipal () 
+		public void CurrentPrincipal_PrincipalPolicy_UnauthenticatedPrincipal () 
 		{
 			// note: switching from PrincipalPolicy won't work inside the same thread
 			// because as soon as a Principal object is created the Policy doesn't matter anymore
 			Thread t = new Thread (new ThreadStart (ThreadedPrincipalTest.UnauthenticatedPrincipal));
 			t.Start ();
-			while (t.IsAlive) {}
+			t.Join ();
 		}
 
 		[Test]
-		[Ignore ("WindowsPrincipal is not yet supported on Mono")]
 		public void CurrentPrincipal_PrincipalPolicy_WindowsPrincipal () 
 		{
 			// note: switching from PrincipalPolicy won't work inside the same thread
 			// because as soon as a Principal object is created the Policy doesn't matter anymore
 			Thread t = new Thread (new ThreadStart (ThreadedPrincipalTest.WindowsPrincipal));
 			t.Start ();
-			while (t.IsAlive) {}
+			t.Join ();
 		}
 	}
 }

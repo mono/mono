@@ -1,3 +1,8 @@
+2004-04-13  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* ThreadTest.cs: Removed [Ignore] on WindowsPrincipal test. Adjusted
+	CurrentPrincipal tests to work on both Windows and Linux.
+
 2004-04-09  Zoltan Varga  <vargaz@freemail.hu>
 
 	* TimerTest.cs: Beginnings of regression tests for the Timer class.
