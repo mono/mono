@@ -1,4 +1,8 @@
 
+Fri May 31 16:17:20 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* interp.c, hacks.h: compiler compatibility fixes.
+
 Fri May 31 13:25:57 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
 	* interp.c, mint.1: added --config command line option.
