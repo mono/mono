@@ -1,3 +1,7 @@
+2004-11-17  Jambunathan K  <kjambunathan@novell.com>
+	* mb-parser.jay: During multi-file compilation, global attributes
+	were not getting parsed properly. Fixed the same.
+	
 2004/10/22 Rafael Teixeira <rafaelteixeirabr@hotmail.com>
 	* mb-parser.jay : correcting global attributes handling, because it was 
 	   issuing wrong warnings for trivial files like testmbas/WriteOK.vb.
