@@ -1,9 +1,4 @@
-'Author:
-'   V. Sudharsan (vsudharsan@novell.com)
-'
-' (C) 2003 Ximian, Inc.
-
-REM LineNo: 19
+REM LineNo: 14
 REM ExpectedError: BC30154
 REM ErrorMessage: 'derive' must implement 'ReadOnly Default Property Item(i As Integer, j As Integer) As Integer' for interface 'base'. Implementing property must have matching 'ReadOnly'/'WriteOnly' specifiers.
 

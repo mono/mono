@@ -58,7 +58,7 @@ namespace Mono.MonoBASIC {
 
 			if (e == null){
 				Report.Error (
-					31, loc, "Can not convert the expression to a boolean");
+					30311, loc, "Can not convert the expression to a boolean");
 			}
 
 			ec.Mark (loc);

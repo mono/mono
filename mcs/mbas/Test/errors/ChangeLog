@@ -1,6 +1,13 @@
 2005-02-11 Manjula GHM <mmanjula@novell.com>
 	* Added tests for Statements - by Sudharsan V <vsudharsan@novell.com>
 
+2005-02-11 Ritvik Mayank <mritvik@novell.com>
+	* ConstantC10.vb
+	* DefaultPropC5.vb
+	* DefaultPropC6.vb
+	* OverrideC14.vb
+		changed the LineNo. and removed spurious errors.	
+
 2005-02-07 Ritvik Mayank <mritvik@novell.com>
 	* InterfaceC11.vb
 	* ShadowsC3.vb

@@ -1,3 +1,11 @@
+
+2005-02-11 Ritvik Mayank <mritvik@novell.com>
+	* class.cs
+	* decl.cs
+	* mb-parser.jay
+	* statement.cs
+		Changed for reflecting correct Error Number
+						
 2005-02-10 Satya Sudha K <ksathyasudha@novell.com>
 	* expression.cs: 
 		 - Implemented Exponentiation operator (^)

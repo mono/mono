@@ -1,9 +1,4 @@
-'Author:
-'   V. Sudharsan (vsudharsan@novell.com)
-'
-' (C) 2003 Ximian, Inc.
-
-REM LineNo: 18
+REM LineNo: 13
 REM ExpectedError: BC30359
 REM ErrorMessage: 'Default' can be applied to only one property name in a class.
 

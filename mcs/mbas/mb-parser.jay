@@ -1512,11 +1512,11 @@ func_declaration
 	;		
 
 struct_declaration
-	: STRUCTURE identifier end_of_stmt
+	: STRUCTURE _mark_ identifier end_of_stmt
 	  opt_implement_clause
 	  {
 		Struct new_struct;
-		string full_struct_name = MakeName ((string) $2);
+		string full_struct_name = MakeName ((string) $3);
 		
 		// Module members are static by default, but structures *can't* be declared static
 		// so we must fix it, if mbas was the one actually responsible for this
@@ -1526,7 +1526,7 @@ struct_declaration
 			
 		new_struct = new Struct (current_container, full_struct_name, 
 					 (int) current_modifiers,
-					 (Attributes) current_attributes, lexer.Location);
+					 (Attributes) current_attributes, (Location)$2);
 		current_container = new_struct;
 		current_container.Namespace = current_namespace;
 		RootContext.Tree.RecordDecl (full_struct_name, new_struct);
@@ -1535,8 +1535,8 @@ struct_declaration
 	  {
 		Struct new_struct = (Struct) current_container;
 
-		if ($4 != null)
-			new_struct.Bases = (ArrayList) $4;
+		if ($5 != null)
+			new_struct.Bases = (ArrayList) $5;
 
 		current_container = current_container.Parent;
 		CheckDef (current_container.AddStruct (new_struct), new_struct.Name, new_struct.Location);

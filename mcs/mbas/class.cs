@@ -823,7 +823,7 @@ namespace Mono.MonoBASIC {
 					"declared as 'Protected'");
 
 			if ((Parent is Struct) && ((ModFlags & Modifiers.PROTECTED) != 0))
-				Report.Error (31047, Location,
+				Report.Error (30435, Location,
 					"'Type' inside a 'Structure' can not be " +
 					"declared as 'Protected'");
 			
@@ -2202,7 +2202,7 @@ namespace Mono.MonoBASIC {
 						WarningNotHiding (parent);*/
 
 					if ((ModFlags & Modifiers.OVERRIDE) != 0){
-						Report.Error (30284, Location,
+						Report.Error (30398, Location,
 							      parent.MakeName (Name) +
 							      " : No suitable methods found to override");
 					}
@@ -3509,7 +3509,7 @@ namespace Mono.MonoBASIC {
 			}
 			
 			if ((parent is Struct) && ((ModFlags & Modifiers.PROTECTED) != 0))
-				Report.Error (31047, Location,
+				Report.Error (30435, Location,
 					"'Variable' inside a 'Structure' can not be " +
 					"declared as 'Protected'");
 
