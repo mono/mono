@@ -1,5 +1,10 @@
 2004-11-23  Raja R Harinath  <rharinath@novell.com>
 
+	* Decimal.cs [NET_2_0]: Use old code till GMCS imports decimal
+	constant support.
+
+2004-11-23  Raja R Harinath  <rharinath@novell.com>
+
 	* Decimal.cs [BOOTSTRAP_WITH_OLDLIB]: Use old code for compilers
 	without decimal constant support.
 
