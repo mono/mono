@@ -1,4 +1,8 @@
 
+Mon Jan 14 17:00:23 CET 2002 Paolo Molaro <lupus@ximian.com>
+
+	* dump.c: more info in method table dump.
+
 Mon Dec 24 17:24:13 CET 2001 Paolo Molaro <lupus@ximian.com>
 
 	* main.c, dump.h, dump.c: add dump_table_nestedclass().

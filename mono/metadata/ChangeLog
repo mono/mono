@@ -1,3 +1,11 @@
+
+Mon Jan 14 17:01:03 CET 2002 Paolo Molaro <lupus@ximian.com>
+
+	* reflection.h: add subtypes field to TypeBuilder.
+	* reflection.c: encode constants for literal fields.
+	Handle subtypes. Fix user string token (and add a zero byte)
+	at the end.
+	
 2002-01-14  Dietmar Maurer  <dietmar@ximian.com>
 
 	* class.c (mono_class_init): bug fix: assign slot numbers for
