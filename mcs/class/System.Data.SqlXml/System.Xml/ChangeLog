@@ -1,0 +1,5 @@
+2003-12-15  Atsushi Enomoto <atsushi@novell.com>
+	* UpdateEventHandler.cs,
+	  XmlAdapter.cs,
+	  XmlDataSourceResolve.cs,
+	  XmlUpdateEventArgs.cs : Initial checkin.
