@@ -1,3 +1,16 @@
+2004-09-02  Martin Baulig  <martin@ximian.com>
+
+	* class.c (mono_class_instance_size): Don't allow generic type
+	definitions or open generic instances.
+	(mono_class_array_element_size): If we're a value type, call
+	mono_class_instance_size() on the original class.
+
+	* metadata.c (mono_type_size, mono_type_stack_size): Correctly
+	handle generic instances.
+
+	* mono-debug-debugger.c (write_type): Handle generic instances
+	like classes.
+
 2004-09-02  Zoltan Varga  <vargaz@freemail.hu>
 
 	* marshal.c (mono_marshal_alloc): Raise an OutOfMemory exception if
