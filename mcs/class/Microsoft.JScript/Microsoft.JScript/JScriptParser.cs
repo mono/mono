@@ -667,6 +667,7 @@ _loop15_breakloop:			;
 			iter = null;
 			AST stm = null;
 			AST exprn = null;
+			AST [] exprs = null;
 		
 		
 		switch ( LA(1) )
@@ -707,9 +708,16 @@ _loop15_breakloop:			;
 		{
 			match(LITERAL_for);
 			match(OPEN_PARENS);
-			inside_for(parent);
+			exprs=inside_for(parent);
 			match(CLOSE_PARENS);
-			statement(null);
+			stm=statement(parent);
+			if (0==inputState.guessing)
+			{
+				
+						  iter = new For (parent, exprs, stm);
+				
+					
+			}
 			break;
 		}
 		default:
@@ -1279,10 +1287,17 @@ _loop66_breakloop:			;
 		statement_list();
 	}
 	
-	public void inside_for(
+	public AST []  inside_for(
 		AST parent
 	) //throws RecognitionException, TokenStreamException
 {
+		AST [] exprs;
+		
+		
+			// for parts
+			AST exp1, exp2, exp3;
+			exprs = null;
+			exp1 = exp2 = exp3 = null;
 		
 		
 		switch ( LA(1) )
@@ -1335,7 +1350,7 @@ _loop66_breakloop:			;
 				case DECIMAL_LITERAL:
 				case HEX_INTEGER_LITERAL:
 				{
-					expr(parent);
+					exp1=expr(parent);
 					break;
 				}
 				case SEMI_COLON:
@@ -1374,7 +1389,7 @@ _loop66_breakloop:			;
 				case DECIMAL_LITERAL:
 				case HEX_INTEGER_LITERAL:
 				{
-					expr(parent);
+					exp2=expr(parent);
 					break;
 				}
 				case SEMI_COLON:
@@ -1413,7 +1428,7 @@ _loop66_breakloop:			;
 				case DECIMAL_LITERAL:
 				case HEX_INTEGER_LITERAL:
 				{
-					expr(parent);
+					exp3=expr(parent);
 					break;
 				}
 				case CLOSE_PARENS:
@@ -1425,6 +1440,12 @@ _loop66_breakloop:			;
 					throw new NoViableAltException(LT(1), getFilename());
 				}
 				 }
+			}
+			if (0==inputState.guessing)
+			{
+				
+						  exprs = new AST [] {exp1, exp2, exp3};
+					
 			}
 			break;
 		}
@@ -1538,6 +1559,7 @@ _loop66_breakloop:			;
 			throw new NoViableAltException(LT(1), getFilename());
 		}
 		 }
+		return exprs;
 	}
 	
 	public void var_decl_list(
