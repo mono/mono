@@ -1,5 +1,8 @@
 2004-08-18  Zoltan Varga  <vargaz@freemail.hu>
 
+	* mini-amd64.c inssel-amd64.brg cpu-amd64.md: Merge changes from 
+	x86 backend.
+	
 	* mini-amd64.c (mono_arch_is_int_overflow): Handle all possible 
 	registers.
 
