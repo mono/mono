@@ -18,33 +18,46 @@ options {
 class JScriptParser extends Parser;
 
 // Program, see section 14 from Ecma-262, page 75.
-program
+program [ASTList astList]
     : 
-        source_elements
+        source_elements [astList]
     ;
 
 
-source_elements	
+source_elements	[ASTList astList]
+{ AST ast = null; }
     : 
-	source_element (source_elements | )
+	ast = source_element { if (ast != null) astList. Add (ast); } (source_elements [astList] | )
     ;
 
 
 // See Section 14 from Ecma-262, page 75.
-source_element
+source_element returns [AST ast]
+{
+	ast = null;
+	Statement stm = null;
+	FunctionDeclaration fd = null;
+}
     : 
-	statement
+	stm = statement
+	{ ast = stm; }
     |
-	function_declaration
+	fd = function_declaration
+	{ ast = fd; }			
     ;
 
 
 // Statement, see section 12 from Ecma-262, page 61.
-statement
+statement returns [Statement stm]
+{ 
+	stm = null; 
+	VariableStatement varStm = null;
+}
     : 
 	block	    
     |
-        variable_statement
+        varStm = variable_statement
+	{ stm = (Statement) varStm; }
     |
 	empty_statement
     |
@@ -174,20 +187,23 @@ statement_list
     ;
 
 // VariableStatement, see section 12.2 from Ecma-262 3td Edition, page 74.
-variable_statement
+variable_statement returns [VariableStatement varStm]
+{ varStm = new VariableStatement (); }
     :
-        "var" variable_declaration_list SEMI_COLON
+        "var" variable_declaration_list [varStm] SEMI_COLON
     ;
         
 
-variable_declaration_list
+variable_declaration_list [VariableStatement varStm]
+{ VariableDeclaration varDecl = null; }
     :
-        variable_declaration (COMMA variable_declaration_list | )
+        varDecl = variable_declaration { varStm.Add (varDecl); } (COMMA variable_declaration_list [varStm] | )
     ;
 
-variable_declaration
+variable_declaration returns [VariableDeclaration varDecl]
+{ varDecl = new VariableDeclaration (); }
     :
-	IDENTIFIER (initialiser | )
+	id:IDENTIFIER { varDecl.Id = id.getText (); } (initialiser | )
     ;
     
 
@@ -286,7 +302,7 @@ equality_expression
 // FIXME: more options left to implement
 relational_expression
     :
-        shift_expression ((L_THAN | G_THAN | LE_THAN | GE_THAN | "instanceof" | "in" ) relational_expression | )
+	shift_expression ((L_THAN | G_THAN | LE_THAN | GE_THAN | "instanceof" | "in") relational_expression | )
     ;
 
 
@@ -446,28 +462,29 @@ expression: assignment_expression (COMMA  expression | ) ;
 
 
 // Function definition, see Section 13 from Ecma-262, page 71.
-function_declaration
+function_declaration returns [FunctionDeclaration fd]
+{ fd = new FunctionDeclaration (); }
     :
-        "function" IDENTIFIER LPAREN (formal_parameter_list | ) RPAREN LBRACE function_body RBRACE
+        "function" id:IDENTIFIER { fd.id = id.getText (); } LPAREN (formal_parameter_list [fd.parameters] | ) RPAREN LBRACE function_body [fd.funcBody] RBRACE
     ;
 
 
-// This elems are just for compiling purposes.
+
 function_expression
     :
-	"function" (IDENTIFIER | ) LPAREN (formal_parameter_list | ) RPAREN LBRACE function_body RBRACE
+	"function" (IDENTIFIER | ) LPAREN (formal_parameter_list [null] | ) RPAREN LBRACE function_body [null] RBRACE
     ;
 
 
-formal_parameter_list
+formal_parameter_list [FormalParameterList param]
     :
-        IDENTIFIER (COMMA formal_parameter_list | )
+        id:IDENTIFIER { param.Add (id.getText ()); } (COMMA formal_parameter_list [param] | )
     ;
 
 
-function_body
+function_body [ASTList funcBody]
     :
-        source_elements
+        source_elements [funcBody]
     ;
 
 
