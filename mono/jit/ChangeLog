@@ -1,3 +1,32 @@
+2002-09-25  Martin Baulig  <martin@gnome.org>
+
+	Improved breakpoint support, we can now dynamically insert and
+	remove breakpoints at runtime and when called from withing the
+	Mono Debugger, we're using a special breakpoint trampoline.
+
+	* debug.h (mono_method_has_breakpoint): New method to check
+	whether to insert a breakpoint for a method.
+	(mono_insert_breakpoint): New method to insert a breakpoint.
+	(mono_insert_breakpoint_full): New method to insert a breakpoint,
+	takes a MonoMethodDesc.
+	(mono_remove_breakpoint): New method to remove a breakpoint.
+
+	* debug.c (mono_debugger_insert_breakpoint): New function for the
+	debugger.  Should only be called from the debugger.
+	(mono_debugger_remove_breakpoint): Likewise.
+
+	* mono.c (main): Use mono_insert_breakpoint() to insert breakpoints.
+
+	* trampoline.c (get_breakpoint_trampoline): New static function to
+	create a special breakpoint trampoline for the debugger.
+	(x86_magic_trampoline): If we're running inside the Mono Debugger
+	and a breakpoint was requested for the method, generate a special
+	breakpoint trampoline.
+
+	* jit.c (mono_debug_methods): Removed, use mono_insert_breakpoint()
+	to insert a breakpoint.
+	(mono_debug_last_breakpoint_address): Removed.
+	(match_debug_method): Removed, use mono_method_has_breakpoint().
 
 Wed Sep 25 12:04:08 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
