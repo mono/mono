@@ -6,7 +6,7 @@
 //
 
 //
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -448,7 +448,7 @@ namespace MonoTests.System.Drawing
 			Bitmap bmp = new Bitmap (600, 800);
 			Graphics dc = Graphics.FromImage (bmp);        					
 			Rectangle rect1, rect2;		
-			Region rgn1;								
+			Region rgn1, rgn2;								
 			Matrix matrix = new Matrix ();		
 			
 			rect1 = new Rectangle (500, 30, 60, 80);		
@@ -463,6 +463,32 @@ namespace MonoTests.System.Drawing
 			AssertEquals (true, rgn1.IsVisible (rect1));		
 			AssertEquals (true, rgn1.IsVisible (rect2));		
 			AssertEquals (false, rgn1.IsVisible (new Rectangle (50,50,2,5)));					
+			
+			Rectangle r = new Rectangle (1,1, 2,1);
+			rgn2 = new Region (r);
+			AssertEquals (true, rgn2.IsVisible (r));
+			AssertEquals (true, rgn2.IsVisible (new Rectangle (1,1, 2,2)));
+			AssertEquals (true, rgn2.IsVisible (new Rectangle (1,1, 10,10)));
+			AssertEquals (true, rgn2.IsVisible (new Rectangle (1,1, 1,1)));			
+			AssertEquals (false, rgn2.IsVisible (new Rectangle (2,2, 1,1)));			
+			AssertEquals (false, rgn2.IsVisible (new Rectangle (0,0, 1,1)));
+			AssertEquals (false, rgn2.IsVisible (new Rectangle (3,3, 1,1)));
+			
+			AssertEquals (false, rgn2.IsVisible (0,0));
+			AssertEquals (false, rgn2.IsVisible (1,0));
+			AssertEquals (false, rgn2.IsVisible (2,0));
+			AssertEquals (false, rgn2.IsVisible (3,0));
+			AssertEquals (false, rgn2.IsVisible (0,1));
+			AssertEquals (true, rgn2.IsVisible (1,1));
+			AssertEquals (true, rgn2.IsVisible (2,1));
+			AssertEquals (false, rgn2.IsVisible (3,1));
+			AssertEquals (false, rgn2.IsVisible (0,2));
+			AssertEquals (false, rgn2.IsVisible (1,2));
+			AssertEquals (false, rgn2.IsVisible (2,2));
+			AssertEquals (false, rgn2.IsVisible (3,2));
+			
+			
+			
 		}
 		
 		[Test]
