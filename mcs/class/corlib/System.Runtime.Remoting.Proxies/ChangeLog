@@ -1,3 +1,11 @@
+2003-02-03 Patrik Torstensson
+
+	* RealProxy.cs: changed excption behavior and added serialization helpers, 
+	  changed so it don't create a new TP for each gettp call.
+	
+	* RemotingProxy.cs: added functions to short cut calls to GetHashCode and GetType,
+	same behavior as MS.
+
 2003-01-28  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* RealProxy.cs: fixed compilation by adding missing GetObjectData ().

@@ -4,6 +4,7 @@
 // Authors:
 //   Dietmar Maurer (dietmar@ximian.com)
 //   Lluis Sanchez (lsg@ctv.es)
+//   Patrik Torstensson
 //
 // (C) 2001 Ximian, Inc.  http://www.ximian.com
 //
@@ -26,26 +27,36 @@ namespace System.Runtime.Remoting.Proxies
 
 		Type class_to_proxy;
 		Identity _objectIdentity;
+		Object _objTP;
 
 		protected RealProxy ()
 		{
 			throw new NotImplementedException ();
 		}
 
-		protected RealProxy (Type classToProxy)
+		protected RealProxy (Type classToProxy) : this(classToProxy, (IntPtr) 0, null)
 		{
-			this.class_to_proxy = classToProxy;
 		}
 
-		internal RealProxy (Type classToProxy, Identity identity)
+		internal RealProxy (Type classToProxy, Identity identity) : this(classToProxy, (IntPtr) 0, null)
 		{
-			this.class_to_proxy = classToProxy;
 			_objectIdentity = identity;
 		}
 
 		protected RealProxy (Type classToProxy, IntPtr stub, object stubData)
 		{
-			throw new NotImplementedException ();
+			if (!classToProxy.IsMarshalByRef && !classToProxy.IsInterface)
+				throw new ArgumentException("object must be MarshalByRef");
+
+			this.class_to_proxy = classToProxy;
+
+			// TODO: Fix stub
+			_objTP = InternalGetTransparentProxy();
+		}
+
+		public virtual Type GetProxiedType() 
+		{
+			return class_to_proxy;
 		}
 
 		public virtual ObjRef CreateObjRef (Type requestedType)
@@ -53,10 +64,10 @@ namespace System.Runtime.Remoting.Proxies
 			return _objectIdentity.CreateObjRef (requestedType);
 		}
 
-		[MonoTODO]
 		public virtual void GetObjectData (SerializationInfo info, StreamingContext context)
 		{
-			throw new NotImplementedException ();
+			Object obj = GetTransparentProxy();
+			RemotingServices.GetObjectData (obj, info, context);            
 		}
 		
 		internal Identity ObjectIdentity
@@ -74,12 +85,21 @@ namespace System.Runtime.Remoting.Proxies
 
 			exc = res_msg.Exception;
 			out_args = res_msg.OutArgs;
+
+			// todo: remove throw exception from the runtime invoke
+			if (null != exc) 
+				throw exc.FixRemotingException();
+
 			return res_msg.ReturnValue;
 		}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		public extern virtual object GetTransparentProxy ();
-	
+		public extern virtual object InternalGetTransparentProxy ();
+
+		public virtual object GetTransparentProxy () 
+		{
+			return _objTP;
+		}	
 	}
 
 }
