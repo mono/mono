@@ -1,3 +1,7 @@
+2004-02-28  Atsushi Enomoto <atsushi@ximian.com>
+
+	* RelaxngReader.cs : ReadPattern() should be public.
+
 2004-02-25  Atsushi Enomoto <atsushi@ximian.com>
 
 	* Removed 

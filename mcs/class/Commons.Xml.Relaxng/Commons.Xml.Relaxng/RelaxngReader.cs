@@ -344,7 +344,7 @@ namespace Commons.Xml.Relaxng
 
 		// Pattern reader
 
-		internal RelaxngPattern ReadPattern ()
+		public RelaxngPattern ReadPattern ()
 		{
 			while (NodeType != XmlNodeType.Element)
 				if (!Read ())
