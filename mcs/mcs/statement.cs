@@ -4169,9 +4169,9 @@ namespace Mono.CSharp {
 			enumerator.EmitCall (ig, hm.move_next);
 			
 			ig.Emit (OpCodes.Brfalse, end_try);
+
 			if (ec.InIterator)
-				ec.EmitThis ();
-			
+				enumerator.EmitThis (ig);
 			enumerator.EmitCall (ig, hm.get_current);
 
 			if (ec.InIterator){
