@@ -1,3 +1,33 @@
+2003-07-26  Miguel de Icaza  <miguel@ximian.com>
+
+	* namespace.cs: Cache the result of the namespace computation,
+	instead of computing it every time.
+
+2003-07-24  Miguel de Icaza  <miguel@ximian.com>
+
+	* decl.cs: Use a global arraylist that we reuse over invocations
+	to avoid excesive memory consumption.  Reduces memory usage on an
+	mcs compile by one meg (45 average).
+
+	* typemanager.cs (LookupTypeReflection): In .NET pointers are
+	private, work around that.
+
+2003-07-23  Miguel de Icaza  <miguel@ximian.com>
+
+	* literal.cs (IntLiteral): Define Zero and One static literals. 
+
+	* cs-parser.jay (integer_literal): use static literals to reduce
+	memory usage for the most used literals (0, 1 and -1).  211kb
+	reduced in memory usage.
+
+	Replace all calls to `new ArrayList' with `new
+	ArrayList(4)' which is a good average number for most allocations,
+	and also requires only 16 bytes of memory for its buffer by
+	default. 
+
+	This reduced MCS memory usage in seven megabytes for the RSS after
+	bootstrapping.
+
 2003-07-28  Ravi Pratap  <ravi@ximian.com>
 
 	* expression.cs (Invocation.OverloadResolve): Fix the algorithm to

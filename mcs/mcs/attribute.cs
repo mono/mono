@@ -1082,6 +1082,8 @@ namespace Mono.CSharp {
 
 			if (entry_point == null)
 				entry_point = name;
+			if (set_last_err)
+				charset = (CharSet)((int)charset | 0x40);
 			
 			MethodBuilder mb = builder.DefinePInvokeMethod (
 				name, dll_name, entry_point, flags | MethodAttributes.HideBySig,

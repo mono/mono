@@ -567,13 +567,26 @@ public class TypeManager {
 			if (t == null)
 				continue;
 
-			TypeAttributes ta = t.Attributes & TypeAttributes.VisibilityMask;
-			if (ta == TypeAttributes.NotPublic ||
-			    ta == TypeAttributes.NestedPrivate ||
-			    ta == TypeAttributes.NestedAssembly ||
-			    ta == TypeAttributes.NestedFamANDAssem)
-				continue;
-			return t;
+			do {
+				TypeAttributes ta = t.Attributes & TypeAttributes.VisibilityMask;
+				if (ta == TypeAttributes.NotPublic ||
+				    ta == TypeAttributes.NestedPrivate ||
+				    ta == TypeAttributes.NestedAssembly ||
+				    ta == TypeAttributes.NestedFamANDAssem){
+					
+					//
+					// In .NET pointers turn out to be private, even if their
+					// element type is not
+					//
+					
+					if (t.IsPointer){
+						t = t.GetElementType ();
+						continue;
+					} else
+						t = null;
+				} else
+					return t;
+			} while (t != null);
 		}
 
 		foreach (ModuleBuilder mb in modules) {

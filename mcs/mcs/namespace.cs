@@ -419,13 +419,18 @@ namespace Mono.CSharp {
 
 			return t;
 		}
-		
+
+		// Our cached computation.
+		Namespace [] namespace_using_table;
 		public Namespace[] GetUsingTable ()
 		{
-			ArrayList list = new ArrayList ();
-
+			if (namespace_using_table != null)
+				return namespace_using_table;
+			
 			if (using_clauses == null)
 				return new Namespace [0];
+
+			ArrayList list = new ArrayList (using_clauses.Count);
 
 			foreach (UsingEntry ue in using_clauses) {
 				Namespace using_ns = ue.Resolve ();
@@ -435,9 +440,9 @@ namespace Mono.CSharp {
 				list.Add (using_ns);
 			}
 
-			Namespace[] retval = new Namespace [list.Count];
-			list.CopyTo (retval, 0);
-			return retval;
+			namespace_using_table = new Namespace [list.Count];
+			list.CopyTo (namespace_using_table, 0);
+			return namespace_using_table;
 		}
 
 		public void DefineNamespace (SymbolWriter symwriter)

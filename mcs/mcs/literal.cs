@@ -104,6 +104,14 @@ namespace Mono.CSharp {
 	}
 
 	public class IntLiteral : IntConstant {
+		public static IntLiteral One, Zero;
+		
+		static IntLiteral ()
+		{
+			Zero = new IntLiteral (0);
+			One = new IntLiteral (1);
+		}
+		
 		public IntLiteral (int l) : base (l)
 		{
 		}
