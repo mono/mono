@@ -431,7 +431,7 @@ namespace Mono.AssemblyInfo
 			return (FieldInfo[]) list.ToArray (typeof (FieldInfo));
 		}
 
-		private PropertyInfo[] GetProperties (Type type)
+		internal static PropertyInfo[] GetProperties (Type type)
 		{
 			ArrayList list = new ArrayList ();
 
@@ -808,30 +808,48 @@ namespace Mono.AssemblyInfo
 				parent.AppendChild (natts);
 			}
 
-			ArrayList typeList = new ArrayList (atts.Length);
-			string comment = null;
-			for (int i = atts.Length - 1; i >= 0; i--) {
-				Type attType = atts [i].GetType ();
-				if (!MustDocumentAttribute (attType))
+			for (int i = 0; i < atts.Length; ++i) {
+				Type t = atts [i].GetType ();
+				if (!t.IsPublic && !t.Name.EndsWith ("TODOAttribute"))
 					continue;
-				typeList.Add (attType);
-				if (attType.Name.EndsWith ("TODOAttribute")) {
-					PropertyInfo prop = attType.GetProperty ("Comment");
-					if (prop != null)
-						comment = (string) prop.GetValue (atts [i], null);
-				}
-			}
 
-			Type[] types = (Type[]) typeList.ToArray (typeof (Type));
-			Array.Sort (types, TypeComparer.Default);
-			foreach (Type t in types) {
 				XmlNode node = document.CreateElement ("attribute");
 				AddAttribute (node, "name", t.FullName);
+
+				XmlNode properties = null;
+				foreach (PropertyInfo pi in TypeData.GetProperties (t)) {
+					if (pi.Name == "TypeId")
+						continue;
+
+					if (properties == null) {
+						properties = node.AppendChild (document.CreateElement ("properties"));
+					}
+
+					try {
+						object o = pi.GetValue (atts [i], null);
+
+						XmlNode n = properties.AppendChild (document.CreateElement ("property"));
+						AddAttribute (n, "name", pi.Name);
+
+						if (o == null) {
+							AddAttribute (n, "null", "true");
+							continue;
+						}
+
+						string value = o.ToString ();
+						if (t == typeof (GuidAttribute))
+							value = value.ToUpper ();
+
+						AddAttribute (n, "value", value);
+					}
+					catch (TargetInvocationException) {
+						continue;
+					}
+				}
+
 				if (target != null) {
 					AddAttribute (node, "target", target);
 				}
-				if (comment != null && t.Name.EndsWith ("TODOAttribute"))
-					AddAttribute (node, "comment", comment);
 
 				natts.AppendChild (node);
 			}

@@ -956,8 +956,96 @@ namespace Mono.AssemblyCompare
 		}
 	}
 
+	class XMLAttributeProperties: XMLNameGroup
+	{
+		static Hashtable ignored_properties;
+		static XMLAttributeProperties ()
+		{
+			ignored_properties = new Hashtable ();
+			ignored_properties.Add ("System.Reflection.AssemblyKeyFileAttribute", "KeyFile");
+			ignored_properties.Add ("System.Reflection.AssemblyCompanyAttribute", "Company");
+			ignored_properties.Add ("System.Reflection.AssemblyConfigurationAttribute", "Configuration");
+			ignored_properties.Add ("System.Reflection.AssemblyCopyrightAttribute", "Copyright");
+			ignored_properties.Add ("System.Reflection.AssemblyProductAttribute", "Product");
+			ignored_properties.Add ("System.Reflection.AssemblyTrademarkAttribute", "Trademark");
+			ignored_properties.Add ("System.Reflection.AssemblyInformationalVersionAttribute", "InformationalVersion");
+
+			ignored_properties.Add ("System.ObsoleteAttribute", "Message");
+			ignored_properties.Add ("System.IO.IODescriptionAttribute", "Description");
+			ignored_properties.Add ("System.Diagnostics.MonitoringDescriptionAttribute", "Description");
+		}
+
+		Hashtable properties = new Hashtable ();
+		string attribute;
+
+		public XMLAttributeProperties (string attribute)
+		{
+			this.attribute = attribute;
+		}
+
+		public override void LoadData(XmlNode node)
+		{
+			if (node == null)
+				throw new ArgumentNullException ("node");
+
+			if (node.ChildNodes == null)
+				return;
+
+			string ignored = ignored_properties [attribute] as string;
+
+			foreach (XmlNode n in node.ChildNodes) {
+				string name = n.Attributes ["name"].Value;
+				if (ignored == name)
+					continue;
+
+				if (n.Attributes ["null"] != null) {
+					properties.Add (name, null);
+					continue;
+				}
+				string value = n.Attributes ["value"].Value;
+				properties.Add (name, value);
+			}
+		}
+
+		public override void CompareTo (XmlDocument doc, XmlNode parent, object other)
+		{
+			this.document = doc;
+
+			Hashtable other_properties = ((XMLAttributeProperties)other).properties;
+			foreach (DictionaryEntry de in other_properties) {
+				object other_value = properties [de.Key];
+
+				if (de.Value == null) {
+					if (other_value != null)
+						AddWarning (parent, "Property '{0}' is 'null' and should be '{1}'", de.Key, other_value);
+					continue;
+				}
+
+				if (de.Value.Equals (other_value))
+					continue;
+
+				AddWarning (parent, "Property '{0}' is '{1}' and should be '{2}'", 
+					de.Key, de.Value, other_value == null ? "null" : other_value);
+			}
+		}
+
+		public override string GroupName {
+			get {
+				return "properties";
+			}
+		}
+
+		public override string Name {
+			get {
+				return "";
+			}
+		}
+	}
+
 	class XMLAttributes : XMLNameGroup
 	{
+		Hashtable properties = new Hashtable ();
+
 		bool isTodo;
 		string comment;
 
@@ -965,14 +1053,26 @@ namespace Mono.AssemblyCompare
 		{
 			if (value.EndsWith ("TODOAttribute")) {
 				isTodo = true;
-				XmlAttribute att = node.Attributes ["comment"];
-				if (att != null)
-					comment = att.Value;
 
+				XmlNode pNode = node.SelectSingleNode ("properties");
+				if (pNode.ChildNodes [0].Attributes ["value"] != null) {
+					comment = pNode.ChildNodes [0].Attributes ["value"].Value;
+				}
 				return false;
 			}
 
 			return true;
+		}
+
+		protected override void CompareToInner (string name, XmlNode node, XMLNameGroup other)
+		{
+			XMLAttributeProperties other_prop = ((XMLAttributes)other).properties [name] as XMLAttributeProperties;
+			XMLAttributeProperties this_prop = properties [name] as XMLAttributeProperties;
+			if (other_prop == null || this_prop == null)
+				return;
+
+			this_prop.CompareTo (document, node, other_prop);
+			counters.AddPartialToPartial (this_prop.Counters);
 		}
 
 		public override string GetNodeKey (string name, XmlNode node)
@@ -987,6 +1087,27 @@ namespace Mono.AssemblyCompare
 
 			return name;
 		}
+
+		protected override void LoadExtraData(string name, XmlNode node)
+		{
+			XmlNode pNode = node.SelectSingleNode ("properties");
+
+			if (name.EndsWith ("TODOAttribute")) {
+				isTodo = true;
+				if (pNode.ChildNodes [0].Attributes ["value"] != null) {
+					comment = pNode.ChildNodes [0].Attributes ["value"].Value;
+				}
+				return;
+			}
+
+			if (pNode != null) {
+				XMLAttributeProperties p = new XMLAttributeProperties (name);
+				p.LoadData (pNode);
+
+				properties[name] = p;
+			}
+		}
+
 
 		public override string GroupName {
 			get { return "attributes"; }
