@@ -1,5 +1,11 @@
 2003-07-26  Martin Baulig  <martin@ximian.com>
 
+	* cs-tokenizer.cs (Tokenizer.xtoken): Report a CS1040 if a
+	preprocessor directive is not the first non-whitespace character
+	on a line.
+
+2003-07-26  Martin Baulig  <martin@ximian.com>
+
 	* namespace.cs (NamespaceEntry.Lookup): New method; rewrote the
 	namespace parsing, follow the spec more closely.
 
