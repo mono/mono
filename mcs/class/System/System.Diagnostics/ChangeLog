@@ -1,3 +1,8 @@
+2002-04-07  Jonathan Pryor <jonpryor@vt.edu>
+
+	* TraceListener.cs: Fix stack overflow bug
+	* DefaultTraceListener.cs: Implement log file support
+
 2002-04-04  Dick Porter  <dick@ximian.com>
 
 	* ThreadWaitReason.cs:
@@ -15,6 +20,19 @@
 	* ProcessPriorityClass.cs: 
 	* ProcessModule.cs: 
 	* FileVersionInfo.cs: Stub out classes needed for Process
+
+2002-03-08  Jonathan Pryor <jonpryor@vt.edu>
+
+	* Debug.cs: Clean up (lots of code can be shared with Trace.cs, which 
+		is why TraceImpl.cs is introduced), "DEBUG" conditional support
+	* TraceListener.cs: Proper implementation of Dispose pattern;
+		implementatino of non-abstract methods in terms of abstract methods
+	* TraceListenerCollection.cs: check 'object' types before adding
+	* TextWriterTraceListener.cs: properly implement Dispose pattern;
+		handle NeedIndent and WriteIndent
+	* Trace.cs: new file; provides Trace functionality, "TRACE" conditional
+		support
+	* DefaultTraceListener.cs: new file; the default trace listener
 
 2002-01-17  Miguel de Icaza  <miguel@ximian.com>
 
