@@ -118,8 +118,11 @@
 
 	<target name="clean">
 		<delete file="../lib/corlib.dll" failonerror="false"/>
+		<delete file="../lib/corlib.pdb" failonerror="false"/>
 		<delete file="../lib/corlib_cmp.dll" failonerror="false"/>
+		<delete file="../lib/corlib_cmp.pdb" failonerror="false"/>
 		<delete file="Test/corlib_res.dll" failonerror="false"/>
+		<delete file="Test/corlib_res.pdb" failonerror="false"/>
 		<nant basedir="Test" target="clean"/>
 	</target>
 </project>

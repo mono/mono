@@ -1,5 +1,10 @@
 2002-01-05  Nick Drochak  <ndrochak@gol.com>
 
+	* corlib.build: Have the clean target remove any .pdb files that
+	might be around if we compiled with debug on.
+
+2002-01-05  Nick Drochak  <ndrochak@gol.com>
+
 	* corlib.build: Make new build of corlib_cmp.dll.  This is the same
 	as corlib.dll without Object and ValueType.  It is used by 
 	/mcs/tools/corcompare.exe to compare with mscorlib.
