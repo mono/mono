@@ -1,3 +1,8 @@
+2004-12-08  Martin Baulig  <martin@ximian.com>
+
+	* class.c (mono_class_create_from_typespec): Only inflate if we
+	either have `context->gclass' or `context->gmethod'.
+
 2004-12-08  Zoltan Varga  <vargaz@freemail.hu>
 
 	* metadata-internals.h (MonoAssembly): Add 'corlib_internal' field.
