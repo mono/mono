@@ -119,13 +119,17 @@ namespace System.Xml
 		public XmlAttribute NsNode {
 			get { return nsNode; }
 			set {
-				if (value == null) {
-					if (iteratedNsNames != null)
-						iteratedNsNames.Clear ();
-				}
-				else {
+				if (value == null)
+					iteratedNsNames = null;
+				else
+				{
 					if (iteratedNsNames == null)
-						iteratedNsNames = new ArrayList ();
+						iteratedNsNames = new ArrayList();
+					else
+					{
+						if (iteratedNsNames.IsReadOnly)
+							iteratedNsNames = new ArrayList(iteratedNsNames);
+					}
 					iteratedNsNames.Add (value.Name);
 				}
 				nsNode = value;
@@ -259,7 +263,12 @@ namespace System.Xml
 			// default namespace erasure - just add name and never return this node
 			if (ns == String.Empty) {
 				if (iteratedNsNames == null)
-					iteratedNsNames = new ArrayList ();
+					iteratedNsNames = new ArrayList();
+				else
+				{
+					if (iteratedNsNames.IsReadOnly)
+						iteratedNsNames = new ArrayList(iteratedNsNames);
+				}
 				iteratedNsNames.Add ("xmlns");
 				return true;
 			}
@@ -271,8 +280,7 @@ namespace System.Xml
 		{
 			XmlDocumentNavigator clone = new XmlDocumentNavigator (node, nsNodeXml);
 			clone.nsNode = nsNode;
-			if (iteratedNsNames != null)
-				clone.iteratedNsNames = (ArrayList) iteratedNsNames.Clone ();
+			clone.iteratedNsNames = (iteratedNsNames == null || iteratedNsNames.IsReadOnly) ? iteratedNsNames : ArrayList.ReadOnly(iteratedNsNames);
 			return clone;
 		}
 

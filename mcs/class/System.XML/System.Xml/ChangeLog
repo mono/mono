@@ -1,5 +1,10 @@
 2005-02-25  Atsushi Enomoto <atsushi@ximian.com>
 
+	* XmlDocumentNavigator.cs : iteratedNames array could be fixed and
+	  performance got improved. Patch by Knstantin Triger.
+
+2005-02-25  Atsushi Enomoto <atsushi@ximian.com>
+
 	* XmlAttribute.cs : MS does not reject non-NCName prefix. Patch by
 	  Konstantin Triger.
 
