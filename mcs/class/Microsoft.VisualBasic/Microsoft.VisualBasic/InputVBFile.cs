@@ -47,7 +47,7 @@ public class InputVBFile : BaseVBFile
 			_streamReader.Close();
 			_streamReader = null;
 		}
-		(this as BaseVBFile).closeFile();
+		base.closeFile();
 	}
     
 	private string readString()

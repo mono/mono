@@ -1,3 +1,8 @@
+2004-06-17  Jambunathan K  <kjambunathan@novell.com>
+	* OutPutVBFile.cs: Added from Mainsoft's code base
+	* InputVBFile.cs:  Trivial changes
+	* BaseVBFile.cs:  Trivial changes
+
 2004-06-17 Anirban Bhattacharjee <banirban@novell.com>
 	* ControlChars.cs: StandardModuleAttribute added
 

@@ -180,12 +180,12 @@ public abstract class BaseVBFile : VBFile
 		return this._fileStream;
 	}
 
-	public void writeLine(Object[] arr)
+	public virtual void writeLine(Object[] arr)
 	{
 		throw (IOException)ExceptionUtils.VbMakeException(VBErrors.BadFileMode);
 	}
 
-	public void write(Object[] arr)
+	public virtual void write(Object[] arr)
 	{
 		throw (IOException)ExceptionUtils.VbMakeException(VBErrors.BadFileMode);
 	}
@@ -200,12 +200,12 @@ public abstract class BaseVBFile : VBFile
 		_fileInfo.Attributes = fileAttr;   
 	}
     
-	public void printLine(Object[] arr)
+	public virtual void printLine(Object[] arr)
 	{
 		throw (IOException)ExceptionUtils.VbMakeException(VBErrors.BadFileMode);
 	}
 
-	public void print(Object[] arr)
+	public virtual void print(Object[] arr)
 	{
 		throw (IOException)ExceptionUtils.VbMakeException(VBErrors.BadFileMode);
 	}
@@ -453,7 +453,7 @@ public abstract class BaseVBFile : VBFile
 		}
 	}
     
-	public bool canWrite()
+	public virtual bool canWrite()
 	{
 		return false;
 	}
