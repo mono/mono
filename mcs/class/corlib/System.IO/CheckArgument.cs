@@ -122,7 +122,7 @@ namespace System.IO
 		/// </summary>
 		public static void PathLength (string path)
 		{
-			PathLength (path);
+			PathLength (path, "Path is too long");
 		}
 		
 		/// <summary>

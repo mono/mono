@@ -1,3 +1,8 @@
+2003-11-18  John Luke  <jluke@cfl.rr.com>
+
+	* CheckArgument.cs:
+	(PathLength): fix recursion found by JonK
+	
 2003-11-15  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Directory.cs:
