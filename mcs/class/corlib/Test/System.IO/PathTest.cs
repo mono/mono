@@ -105,6 +105,31 @@ namespace MonoTests.System.IO
 			testPath = Path.ChangeExtension ("path.ext1.ext2", "doc");
 			AssertEquals ("ChangeExtension #06", "path.ext1.doc", testPath);
 
+			testPath = Path.ChangeExtension ("hogehoge.xml", ".xsl");
+			AssertEquals ("ChangeExtension #07", "hogehoge.xsl", testPath);
+			testPath = Path.ChangeExtension ("hogehoge", ".xsl");
+			AssertEquals ("ChangeExtension #08", "hogehoge.xsl", testPath);
+			testPath = Path.ChangeExtension ("hogehoge.xml", "xsl");
+			AssertEquals ("ChangeExtension #09", "hogehoge.xsl", testPath);
+			testPath = Path.ChangeExtension ("hogehoge", "xsl");
+			AssertEquals ("ChangeExtension #10", "hogehoge.xsl", testPath);
+			testPath = Path.ChangeExtension ("hogehoge.xml", String.Empty);
+			AssertEquals ("ChangeExtension #11", "hogehoge.", testPath);
+			testPath = Path.ChangeExtension ("hogehoge", String.Empty);
+			AssertEquals ("ChangeExtension #12", "hogehoge.", testPath);
+			testPath = Path.ChangeExtension ("hogehoge.", null);
+			AssertEquals ("ChangeExtension #13", "hogehoge", testPath);
+			testPath = Path.ChangeExtension ("hogehoge", null);
+			AssertEquals ("ChangeExtension #14", "hogehoge", testPath);
+			testPath = Path.ChangeExtension (String.Empty, null);
+			AssertEquals ("ChangeExtension #15", String.Empty, testPath);
+			testPath = Path.ChangeExtension (String.Empty, "bashrc");
+			AssertEquals ("ChangeExtension #16", String.Empty, testPath);
+			testPath = Path.ChangeExtension (String.Empty, ".bashrc");
+			AssertEquals ("ChangeExtension #17", String.Empty, testPath);
+			testPath = Path.ChangeExtension (null, null);
+			AssertNull ("ChangeExtension #18", testPath);
+
 			if (Windows) {
 				try {
 					testPath = Path.ChangeExtension ("<", ".extension");

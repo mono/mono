@@ -1,3 +1,7 @@
+2003-04-03  Atsushi Enomoto <atsushi@ximian.com>
+
+	* PathTest.cs : Added more patterns on TestChangeExtension().
+
 2004-02-16  Jackson Harper <jackson@ximian.com>
 
 	* FileTest.cs: We do not need to convert to local time because we
