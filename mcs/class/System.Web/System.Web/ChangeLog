@@ -1,3 +1,8 @@
+2004-07-20 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpCookie.cs: use invariant when formatting expires date. Fixes bug
+	#61690.
+
 2004-07-07 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HttpApplication.cs: don't keep the session around if we got it from
