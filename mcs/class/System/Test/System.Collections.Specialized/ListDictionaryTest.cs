@@ -4,9 +4,10 @@
 //
 // Authors:
 //   Duncan Mak (duncan@ximian.com)
+//   Alon Gazit (along@mainsoft.com)
 //   
 //
-// (C) 2003 Duncan Mak (duncan@ximian.com)
+// Copyright (C) 2003 Ximian Inc.
 //
 
 using NUnit.Framework;
