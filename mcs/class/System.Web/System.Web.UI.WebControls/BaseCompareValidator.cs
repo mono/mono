@@ -189,122 +189,160 @@ namespace System.Web.UI.WebControls
 			return "dmy";
 		}
 
+		static bool ConvertDate (string text, ValidationDataType type, ref object convertedValue)
+		{
+			//Console.WriteLine (DateTimeFormatInfo.CurrentInfo.Calendar.GetType ());
+			// FIXME: sometime, somehow, the condition is true even when GetType () says
+			// it's a GregorianCalendar.
+			if (DateTimeFormatInfo.CurrentInfo.Calendar.GetType () != typeof (GregorianCalendar)) {
+				convertedValue = DateTime.Parse (text);
+				return true;
+			}
+
+			string order = GetDateElementOrder ();
+			int date = 0, mth = 0, year = 0;
+			string dateStr = null;
+			string mthStr = null;
+			string yearStr = null;
+			Match match = Regex.Match (text, @"^\s*((\d{4})|(\d{2}))([\.\/-])(\d{1,2})\4(\d{1,2})\s*$");
+			if (match.Success || order == "ymd") {
+				dateStr = match.Groups [6].Value;
+				mthStr = match.Groups [5].Value;
+				if (match.Groups [2].Success)
+					yearStr = match.Groups [2].Value;
+				else
+					yearStr = match.Groups [3].Value;
+			} else {
+				match = Regex.Match(text, @"^\s*(\d{1,2})([\.\/-])(\d{1,2})\2((\d{4}|\d{2}))\s*$");
+				if (!match.Success)
+					return false;
+
+				if (order == "dmy") {
+					dateStr = match.Groups [1].Value;
+					mthStr  = match.Groups [3].Value;
+					if (match.Groups [5].Success)
+						yearStr = match.Groups [5].Value;
+					else
+						yearStr = match.Groups [6].Value;
+				} else if (order == "mdy") {
+					dateStr = match.Groups [3].Value;
+					mthStr  = match.Groups [1].Value;
+					if (match.Groups [5].Success)
+						yearStr = match.Groups [5].Value;
+					else
+						yearStr = match.Groups [6].Value;
+				}
+			}
+
+			if (dateStr == null || mthStr == null || yearStr == null) {
+				return false;
+			}
+
+			CultureInfo inv = CultureInfo.InvariantCulture;
+			date = Int32.Parse (dateStr, inv);
+			mth  = Int32.Parse (mthStr, inv);
+			year = Int32.Parse (yearStr, inv);
+			year = (year < 100 ? GetFullYear (year) : year);
+			if (date != 0 && mth != 0 && year != 0) {
+				convertedValue = new DateTime  (year, mth, date);
+				return true;
+			}
+
+			return false;
+		}
+
+		static bool ConvertDouble (string text, ValidationDataType type, ref object convertedValue)
+		{
+			Match match = Regex.Match (text, @"^\s*([-\+])?(\d+)?(\" +
+						   NumberFormatInfo.CurrentInfo.NumberDecimalSeparator +
+						   @"(\d+))?\s*$");
+
+			if (!match.Success)
+				return false;
+
+			string sign     = (match.Groups [1].Success ? match.Groups [1].Value : "+");
+			string decPart  = (match.Groups [2].Success ? match.Groups [2].Value : "0");
+			string mantissa = (match.Groups [4].Success ? match.Groups [4].Value : "0");
+			string num = sign + decPart + "." + mantissa;
+			convertedValue  = Double.Parse (num, CultureInfo.InvariantCulture);
+			return true;
+		}
+
+		static bool ConvertCurrency (string text, ValidationDataType type, ref object convertedValue)
+		{
+			string decSep = NumberFormatInfo.CurrentInfo.CurrencyDecimalSeparator;
+			string grpSep = NumberFormatInfo.CurrentInfo.CurrencyGroupSeparator;
+			int decDig = NumberFormatInfo.CurrentInfo.CurrencyDecimalDigits;
+			if (grpSep [0] == 0xA0)
+				grpSep = " ";
+
+			string [] patternArray = new string [5];
+			patternArray [0] = "^\\s*([-\\+])?(((\\d+)\\";
+			patternArray [1] = grpSep;
+			patternArray [2] = @")*)(\d+)";
+			if (decDig > 0) {
+				string [] decPattern = new string [5];
+				decPattern [0] = "(\\";
+				decPattern [1] = decSep;
+				decPattern [2] = @"(\d{1,";
+				decPattern [3] = decDig.ToString (NumberFormatInfo.InvariantInfo);
+				decPattern [4] = @"}))";
+				patternArray [3] = String.Concat (decPattern);
+
+			} else {
+				patternArray [3] = String.Empty;
+			}
+
+			patternArray [4] = @"?\s*$";
+			Match match = Regex.Match (text, String.Concat (patternArray));
+			if (!match.Success)
+				return false;
+
+			StringBuilder sb = new StringBuilder ();
+			sb.Append (match.Groups [1]);
+			CaptureCollection cc = match.Groups [4].Captures;
+			foreach (IEnumerable current in cc)
+				sb.Append ((Capture) current);
+
+			sb.Append (match.Groups [5]);
+			if (decDig > 0) {
+				sb.Append (".");
+				sb.Append (match.Groups [7]);
+			}
+
+			convertedValue = Decimal.Parse (sb.ToString (), CultureInfo.InvariantCulture);
+			return true;
+		}
+
 		/// <summary>
 		/// Undocumented
 		/// </summary>
-		protected static bool Convert(string text, ValidationDataType type, out object convertedValue)
+		protected static bool Convert (string text, ValidationDataType type, out object convertedValue)
 		{
+			CultureInfo inv = CultureInfo.InvariantCulture;
 			convertedValue = null;
-			try
-			{
-				switch(type)
-				{
-					case ValidationDataType.String:	convertedValue = text;
-						break;
-					case ValidationDataType.Integer: convertedValue = Int32.Parse(text, CultureInfo.InvariantCulture);
-						break;
-					case ValidationDataType.Double:
-						Match matchDouble = Regex.Match(text, @"^\s*([-\+])?(\d+)?(\"
-			            + NumberFormatInfo.CurrentInfo.NumberDecimalSeparator
-			            + @"(\d+))?\s*$");
-						if(matchDouble.Success)
-						{
-							string sign     = (matchDouble.Groups[1].Success ? matchDouble.Groups[1].Value : "+");
-							string decPart  = (matchDouble.Groups[2].Success ? matchDouble.Groups[2].Value : "0");
-							string mantissa = (matchDouble.Groups[4].Success ? matchDouble.Groups[4].Value : "0");
-							convertedValue  = Double.Parse(sign + decPart + "." + mantissa, CultureInfo.InvariantCulture);
-						}
-						break;
-					case ValidationDataType.Date:
-						if(DateTimeFormatInfo.CurrentInfo.Calendar.GetType() != typeof(GregorianCalendar))
-						{
-							convertedValue = DateTime.Parse(text);
-							break;
-						}
-						string order = GetDateElementOrder();
-						int date = 0, mth = 0, year = 0;
-						Match  matchDate = Regex.Match(text, @"^\s*((\d{4})|(\d{2}))([\.\/-])(\d{1,2})\4(\d{1,2})\s*$");
-						if(matchDate.Success && order == "ymd")
-						{
-							date = Int32.Parse(matchDate.Groups[6].Value, CultureInfo.InvariantCulture);
-							mth  = Int32.Parse(matchDate.Groups[5].Value, CultureInfo.InvariantCulture);
-							year = Int32.Parse((matchDate.Groups[2].Success ? matchDate.Groups[2].Value : matchDate.Groups[3].Value), CultureInfo.InvariantCulture);
-						} else
-						{
-							matchDate = Regex.Match(text, @"^\s*(\d{1,2})([\.\/-])(\d{1,2})\2((\d{4}|\d{2}))\s*$");
-							if(matchDate.Success)
-							{
-								if(order == "dmy")
-								{
-									date = Int32.Parse(matchDate.Groups[1].Value, CultureInfo.InvariantCulture);
-									mth  = Int32.Parse(matchDate.Groups[3].Value, CultureInfo.InvariantCulture);
-									year = Int32.Parse((matchDate.Groups[5].Success ? matchDate.Groups[5].Value : matchDate.Groups[6].Value), CultureInfo.InvariantCulture);
-								}
-								if(order == "mdy")
-								{
-									date = Int32.Parse(matchDate.Groups[3].Value, CultureInfo.InvariantCulture);
-									mth  = Int32.Parse(matchDate.Groups[1].Value, CultureInfo.InvariantCulture);
-									year = Int32.Parse((matchDate.Groups[5].Success ? matchDate.Groups[5].Value : matchDate.Groups[6].Value), CultureInfo.InvariantCulture);
-								}
-							}
-						}
-						year = (year < 100 ? GetFullYear(year) : year);
-						if(matchDate.Success && date!=0 && mth!=0 && year!=0)
-						{
-							convertedValue = new DateTime(year, mth, date);
-						}
-						break;
-					case  ValidationDataType.Currency:
-						string decSep = NumberFormatInfo.CurrentInfo.CurrencyDecimalSeparator;
-						string grpSep = NumberFormatInfo.CurrentInfo.CurrencyGroupSeparator;
-						int    decDig = NumberFormatInfo.CurrentInfo.CurrencyDecimalDigits;
-						if(grpSep[0] == 0xA0)
-						{
-							grpSep = " ";
-						}
-						string[] patternArray = new string[5];
-						patternArray[0] = "^\\s*([-\\+])?(((\\d+)\\";
-						patternArray[1] = grpSep;
-						patternArray[2] = @")*)(\d+)";
-						if(decDig > 0)
-						{
-							string[] decPattern = new string[5];
-							decPattern[0] = "(\\";
-							decPattern[1] = decSep;
-							decPattern[2] = @"(\d{1,";
-							decPattern[3] = decDig.ToString(NumberFormatInfo.InvariantInfo);
-							decPattern[4] = @"}))";
-							patternArray[3] = String.Concat(decPattern);
-
-						} else
-						{
-							patternArray[3] = String.Empty;
-						}
-						patternArray[4] = @"?\s*$";
-						Match matchCurrency = Regex.Match(text, String.Concat(patternArray));
-						if(matchCurrency.Success)
-						{
-							StringBuilder sb = new StringBuilder();
-							sb.Append(matchCurrency.Groups[1]);
-							CaptureCollection cc = matchCurrency.Groups[4].Captures;
-							foreach(IEnumerable current in cc)
-							{
-								sb.Append((Capture)current);
-							}
-							sb.Append(matchCurrency.Groups[5]);
-							if(decDig > 0)
-							{
-								sb.Append(".");
-								sb.Append(matchCurrency.Groups[7]);
-							}
-							convertedValue = Decimal.Parse(sb.ToString(), CultureInfo.InvariantCulture);
-						}
-						break;
+			try {
+				switch(type) {
+				case ValidationDataType.String:
+					convertedValue = text;
+					break;
+				case ValidationDataType.Integer:
+					convertedValue = Int32.Parse (text, inv);
+					break;
+				case ValidationDataType.Double:
+					return ConvertDouble (text, type, ref convertedValue);
+					break;
+				case ValidationDataType.Date:
+					return ConvertDate (text, type, ref convertedValue);
+					break;
+				case  ValidationDataType.Currency:
+					return ConvertCurrency (text, type, ref convertedValue);
+					break;
 				}
-			} catch(Exception e)
-			{
+			} catch (Exception e) {
 				convertedValue = null;
 			}
+
 			return (convertedValue != null);
 		}
 	}

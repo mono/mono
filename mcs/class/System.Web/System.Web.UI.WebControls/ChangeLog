@@ -1,5 +1,10 @@
 2003-10-23  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* BaseCompareValidator.cs: splitted Convert. Fixed bug #49927. The fix
+	was just changing && by || after the first Match.
+
+2003-10-23  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* Calendar.cs: apply header style in RenderHeader. Fixes bug #49144.
 	Patch by Yaron Shkop.
 
