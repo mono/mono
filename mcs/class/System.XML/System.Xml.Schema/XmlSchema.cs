@@ -862,7 +862,8 @@ namespace System.Xml.Schema
                         //Add the xml schema namespace.
                         if(Namespaces.Count == 0)
                         {
-                                Namespaces.Add("xs", XmlSchema.Namespace);
+								if (writer.LookupPrefix (XmlSchema.Namespace) == null)
+	                                Namespaces.Add("xs", XmlSchema.Namespace);
                                 if (TargetNamespace != null && TargetNamespace != String.Empty)
                                         Namespaces.Add("tns", TargetNamespace);
                         }
