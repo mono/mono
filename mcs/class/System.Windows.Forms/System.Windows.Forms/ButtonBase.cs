@@ -193,6 +193,13 @@ namespace System.Windows.Forms {
 			base.WndProc (ref m);
 		}
 		
+		/// --- Internal implementation ---
+		internal override void OnWmCommand( uint wNotifyCode, uint wID, IntPtr wnd) {
+			if( wNotifyCode == (uint)ButtonNotification.BN_CLICKED) {
+				OnClick(new ControlEventArgs(this));
+			}
+    	}
+
 		/// --- ButtonBase.ButtonBaseAccessibleObject ---
 		/// the class is not stubbed, cause it's only used for .NET framework
 	}

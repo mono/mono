@@ -75,6 +75,17 @@ namespace System.Windows.Forms{
 			int systemNameBufferSize);
 		[DllImport("kernel32.dll")]
 		internal static extern void OutputDebugString(string message);
+
+		[DllImport("kernel32.dll")]
+		internal static extern MEASUREITEMSTRUCT MulDiv(IntPtr ptr, int AlwaysOne, int AlwaysOneDiv);
+		[DllImport("kernel32.dll")]
+		internal static extern void CopyMemory(IntPtr ptr, ref MEASUREITEMSTRUCT mis, int Size);
+		[DllImport("kernel32.dll")]
+		internal static extern void CopyMemory(ref MEASUREITEMSTRUCT mis, IntPtr ptr, int Size);
+		[DllImport("kernel32.dll")]
+		internal static extern void CopyMemory(IntPtr ptr, ref DRAWITEMSTRUCT mis, int Size);
+		[DllImport("kernel32.dll")]
+		internal static extern void CopyMemory(ref DRAWITEMSTRUCT mis, IntPtr ptr, int Size);
 		#endregion
 	
 		#region Gdi32.dll functions
@@ -135,6 +146,15 @@ namespace System.Windows.Forms{
 		internal static extern IntPtr CreateRectRgn(int nLeftRect,  int TopRect, int nRightRect, int nBottomRect);
 		[DllImport("gdi32")]
 		internal static extern int GetRgnBox(IntPtr hRegion, ref RECT rc);
+		
+		[DllImport("gdi32")]
+		internal static extern IntPtr GetStockObject(GSO_ objectType);
+
+		internal static int RGB(Color color)
+		{
+			return color.R | (color.G << 8) | (color.B << 16);
+		}
+		
 		#endregion
 
 		#region Uxtheme.dll functions
@@ -177,6 +197,10 @@ namespace System.Windows.Forms{
 		internal static extern void SendMessage(IntPtr hWnd, int msg, int wParam, ref RECT lParam);
 		[DllImport("user32.dll", CharSet=CharSet.Auto)]
 		internal static extern int SendMessage(IntPtr hWnd, int msg, int wParam, ref POINT lParam);
+		[DllImport("user32.dll", CharSet=CharSet.Auto)]
+		internal static extern int SendMessage(IntPtr hWnd, int msg, int wParam, string lParam);
+		[DllImport("user32.dll", CharSet=CharSet.Auto)]
+		internal static extern int SendMessage(IntPtr hWnd, Msg msg, int wParam, string lParam);
 		[DllImport("user32.dll", CharSet=CharSet.Auto)]
 		internal static extern void SendMessage(IntPtr hWnd, ToolBarMessages msg, int wParam, ref TBBUTTON lParam);
 		[DllImport("user32.dll", CharSet=CharSet.Auto)]
@@ -347,6 +371,9 @@ namespace System.Windows.Forms{
 
 		[DllImport("user32.dll", CharSet=CharSet.Auto)]
         static internal extern int DefWindowProc(IntPtr hWnd, int message, int wParam, int lParam);
+
+		[DllImport("user32.dll", CharSet=CharSet.Auto)]
+        static internal extern IntPtr LoadCursor(IntPtr hInstance, LC_ standardCursor);
 
 		#endregion
 
@@ -802,6 +829,9 @@ namespace System.Windows.Forms{
 			 CallingConvention = CallingConvention.StdCall)]
 		internal static extern int DrawMenuBar (IntPtr hWnd);
 		
+		[DllImport ("user32.dll", 
+			 CallingConvention = CallingConvention.StdCall)]
+		internal static extern int SetMenuDefaultItem(IntPtr hMenu, int uItem, int fByPos );
 
 
 		[DllImport ("user32.dll", CallingConvention = 
@@ -832,9 +862,6 @@ namespace System.Windows.Forms{
 				IntPtr.Zero, error, 0, sb, sb.Capacity, IntPtr.Zero);
 			return sb.ToString();
 		}
-
-
-
 	}
 
 }

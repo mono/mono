@@ -34,6 +34,7 @@
     			}
     
     			protected override void WndProc (ref Message m) {
+					Console.WriteLine ("Control WndProc Message HWnd {0}, Msg {1}", m.HWnd, m.Msg);
     				base.WndProc (ref m);
     
      				control.WndProc (ref m);
@@ -44,7 +45,8 @@
     		protected ControlNativeWindow window;
     		private ControlCollection childControls;
     		private Control parent;
-    
+    		static private Hashtable controlsCollection = new Hashtable ();
+
     		// private fields
     		// it seems these are stored in case the window is not created,
     		// corresponding properties (below) need to check if window
@@ -510,14 +512,15 @@
     
     		//[MonoTODO]
     		// FIXME: use GetSystemMetrics?
-     		//public static Font DefaultFont {
+     		public static Font DefaultFont {
     			// FIXME: get current system font from GenericSansSerif
     			//        call ArgumentException not called
-    		//	get {
+    			get {
     		//		throw new NotImplementedException ();
-    				//return (FontFamily.GenericSansSerif); 
-    		//	}
-    		//}
+    		//		return (FontFamily.GenericSansSerif);
+					return Font.FromHfont(Win32.GetStockObject(GSO_.DEFAULT_GUI_FONT));
+    			}
+    		}
     		
     		public static Color DefaultForeColor {
     			get {
@@ -580,13 +583,19 @@
   			//Compact Framework
     		public virtual Font Font {
 				get {
-					throw new NotImplementedException ();
-					//uint ReturnValue = SendMessage(Handle, WM_GETFONT, IntPtr.Zero, IntPtr.Zero);
+					// FIXME: Now the font from Control and from class do not match.
+					// Check Handle for 0 and return DefaultFont ?
+					IntPtr hfont = (IntPtr)Win32.SendMessage(Handle, Msg.WM_GETFONT, 0, 0);
+					if( hfont != IntPtr.Zero) {
+						return Font.FromHfont(hfont);
+					}
+					return Control.DefaultFont;
 					//if(ReturnValue != 0)throw new Exception("Could not get Font",null);
 					//return Handle;
 				}
     			set {
-					throw new NotImplementedException ();
+					font = value;
+					//throw new NotImplementedException ();
 					//uint ReturnValue = SendMessage(Handle, WM_SETFONT, value, (IntPtr)1 );
 					//if(ReturnValue != 0)throw new Exception("Could not set Font",null);
 				}
@@ -757,10 +766,13 @@
     				parent.Controls.Add (this);
     
     				Console.WriteLine ("SetParent");
-    				if (IsHandleCreated) {
-    					Console.WriteLine ("Handle created");
-    					Win32.SetParent (Handle, value.Handle);
-    				}
+					if (IsHandleCreated) {
+						Console.WriteLine ("Handle created");
+						Win32.SetParent (Handle, value.Handle);
+					}
+					else {
+						CreateControl();
+					}
     			}
     		}
     		
@@ -853,18 +865,28 @@
     		public Size Size {
 				//FIXME: should we return client size or someother size???
     			get {
-					RECT WindowRectangle;
-					WindowRectangle = new RECT();
-					if(!Win32.GetWindowRect(Handle,ref WindowRectangle)){
-						//throw new Exception("couild not retreve Control Size");
+					if( IsHandleCreated) {
+						RECT WindowRectangle;
+						WindowRectangle = new RECT();
+						if(!Win32.GetWindowRect(Handle,ref WindowRectangle)){
+							//throw new Exception("couild not retreve Control Size");
+						}
+						// CHECKME: Here we can also update internal variables
+						return new Size(WindowRectangle.right - WindowRectangle.left,
+							WindowRectangle.bottom - WindowRectangle.top);
 					}
-					return new Size(WindowRectangle.right - WindowRectangle.left,
-						WindowRectangle.bottom - WindowRectangle.top);
+					else {
+						return new Size(Width, Height);
+					}
     			}
     			set {
-    				Win32.SetWindowPos(Handle, SetWindowPosZOrder.HWND_TOP, 0, 0, this.Size.Width, this.Size.Height,
-						SetWindowPosFlags.SWP_NOMOVE | SetWindowPosFlags.SWP_NOMOVE | 
-						SetWindowPosFlags.SWP_NOZORDER);// Activating might be a good idea?? | SetWindowPosFlags.SWP_NOACTIVATE);
+					if( IsHandleCreated) {
+						Win32.SetWindowPos(Handle, SetWindowPosZOrder.HWND_TOP, 0, 0, this.Size.Width, this.Size.Height,
+							SetWindowPosFlags.SWP_NOMOVE | SetWindowPosFlags.SWP_NOMOVE | 
+							SetWindowPosFlags.SWP_NOZORDER);// Activating might be a good idea?? | SetWindowPosFlags.SWP_NOACTIVATE);
+					}
+					Width = value.Width;
+					Height = value.Height;
     			}
     		}
     		internal int tabindex;//for debug/test only. remove
@@ -1022,14 +1044,25 @@
     		[MonoTODO]
     		public Graphics CreateGraphics () 
     		{
-    			throw new NotImplementedException ();
+				return Graphics.FromHwnd(Handle);
     		}
     	
     		protected virtual void CreateHandle ()
     		{
-    			window = new ControlNativeWindow (this);
-    			
-  			window.CreateHandle (CreateParams);
+				if( !IsHandleCreated) {
+					if( window == null) {
+						window = new ControlNativeWindow (this);
+					}
+					if( window != null) {
+						window.CreateHandle (CreateParams);
+					}
+					if( Handle != IntPtr.Zero) {
+						if( controlsCollection[Handle] == null) {
+							controlsCollection.Add(Handle, this);
+						}
+						OnCreateControl();
+					}
+				}
     		}
     	
     		protected virtual void DefWndProc (ref Message m)
@@ -1075,12 +1108,21 @@
     		[MonoTODO]
     		public static Control FromChildHandle (IntPtr handle) 
     		{
-    			throw new NotImplementedException ();
+    			Control control  = null;
+    			IntPtr 	controlHwnd = handle;
+				while( controlHwnd != IntPtr.Zero) {
+		 			control  = controlsCollection[controlHwnd] as Control;
+		 			if( control != null) break;
+		 			controlHwnd = Win32.GetParent(controlHwnd);
+				}
+				return control;    			
     		}
     	
     		public static Control FromHandle (IntPtr handle) 
     		{
-    			Control control = new Control (handle);
+				// FIXME: Here we have to check, whether control already exists
+    			//Control control = new Control (handle);
+	 			Control control  = controlsCollection[handle] as Control;
     			return control;
     		}
     	
@@ -1368,6 +1410,16 @@
     		protected virtual void OnHandleCreated (EventArgs e) 
     		{
     			Console.WriteLine ("OnHandleCreated");
+
+				// FIXME: We can be here 2 times for Form
+				// this is not realistic.
+				/*
+				if( Handle != IntPtr.Zero) {
+					if( controlsCollection[Handle] == null) {
+						controlsCollection.Add(Handle, this);
+					}
+    			}
+    			*/
     
     			if (HandleCreated != null)
     				HandleCreated (this, e);
@@ -1385,8 +1437,13 @@
     		
     		protected virtual void OnHandleDestroyed (EventArgs e) 
     		{
-    			if (HandleDestroyed != null)
+				if( Handle != IntPtr.Zero) {
+					controlsCollection.Remove(Handle);
+				}
+				
+    			if (HandleDestroyed != null) {
     				HandleDestroyed (this, e);
+    			}
     		}
     		
     		protected virtual void OnHelpRequested (HelpEventArgs e) 
@@ -1764,12 +1821,31 @@
     			throw new NotImplementedException ();
     		}
     		
+			protected virtual bool ReflectMessageHelper( ref Message m) {
+				return false;
+			}
+
     		[MonoTODO]
     		protected static bool ReflectMessage (IntPtr hWnd,
     						      ref Message m) 
     		{
-    			throw new NotImplementedException ();
-    		}
+				bool result = false;
+				Control cntrl = Control.FromHandle( hWnd);
+				if( cntrl != null) {
+					result = cntrl.ReflectMessageHelper(ref m);
+					if( !result) {
+						switch (m.Msg) {
+							case Msg.WM_CTLCOLORLISTBOX:
+								Win32.SetTextColor( m.WParam, Win32.RGB(cntrl.ForeColor));
+								//Win32.SetBkColor( m.WParam, 0x00FF00);
+								//m.Result = Win32.GetStockObject(GSO_.LTGRAY_BRUSH);
+								result = true;
+								break;
+						}
+					}
+				}
+				return result;
+			}
     		
  			//Compact Framework
     		public virtual void Refresh () 
@@ -2184,6 +2260,11 @@
     // 				break;
     			}
     		}
+    		
+    		/// --- Internal implementation ---
+    		internal virtual void OnWmCommand( uint wNotifyCode, uint wID, IntPtr wnd) {
+    		}
+    		
     
     		/// --- Control: events ---
     		public event EventHandler BackColorChanged;
@@ -2486,7 +2567,10 @@
     			
     			public virtual void AddRange (Control[] controls) 
     			{
-    				collection.AddRange (controls);
+					for(int i = 0; i < controls.Length; i++) {
+						controls[i].Parent = owner;
+					}
+    				//collection.AddRange (controls);
     			}
     			
     			public virtual void Clear () 

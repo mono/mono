@@ -30,24 +30,33 @@ namespace System.Windows.Forms {
 		// --- Properties ---
 		protected override CreateParams CreateParams {
 			get {
-				CreateParams createParams = new CreateParams ();
-				window = new ControlNativeWindow (this);
+				// This is a child control, so it must have a parent for creation
+				if( Parent != null) {
+					CreateParams createParams = new CreateParams ();
+					// CHECKME: here we must not overwrite window
+					if( window == null) {
+						window = new ControlNativeWindow (this);
+					}
 
-				createParams.Caption = Text;
-				createParams.ClassName = "BUTTON";
-				createParams.X = Left;
-				createParams.Y = Top;
-				createParams.Width = Width;
-				createParams.Height = Height;
-				createParams.ClassStyle = 0;
-				createParams.ExStyle = 0;
-				createParams.Param = 0;
-	//			createParams.Parent = Parent.Handle;
-				createParams.Style = (int) (
-					WindowStyles.WS_CHILD | 
-					WindowStyles.WS_VISIBLE);
-				window.CreateHandle (createParams);
-				return createParams;
+					createParams.Caption = Text;
+					createParams.ClassName = "BUTTON";
+					createParams.X = Left;
+					createParams.Y = Top;
+					createParams.Width = Width;
+					createParams.Height = Height;
+					createParams.ClassStyle = 0;
+					createParams.ExStyle = 0;
+					createParams.Param = 0;
+					createParams.Parent = Parent.Handle;
+					createParams.Style = (int) (
+						WindowStyles.WS_CHILD | 
+						WindowStyles.WS_VISIBLE);
+					// CHECKME : this call is commented because (IMHO) Control.CreateHandle suppose to do this
+					// and this function is CreateParams, not CreateHandle
+					// window.CreateHandle (createParams);
+					return createParams;
+				}
+				return null;
 			}
 		}
 		

@@ -25,14 +25,24 @@ namespace System.Windows.Forms {
 		private IntPtr windowHandle;
 		static private Hashtable windowCollection = new Hashtable ();
 		static bool registeredClass = false;
-		static Win32.WndProc wp;
+		
+		// Important!  If this variable was initialized and supplied to Windows API,
+		// we cannot *free* (GC) a delegate until all our windows destroyed, or better 
+		// keep it forever.
+		static Win32.WndProc wp = null;
+
 		//
 		//  --- Constructor
 		//
 		public NativeWindow () 
 		{
 			windowHandle = (IntPtr) 0;
-			wp = null;
+			// Important! Do not reinitialize wp, because this will *free* (GC) 
+			// WindowProc delegate on every Control creation, but this delegate could
+			// already be passed to RegisterClass for the Form and others windows.
+			// We will get problems in Get/Translate/Dispatch Message loop
+			// (like call to invalid address)
+			// wp = null;
 		}
 
 		//
@@ -60,46 +70,52 @@ namespace System.Windows.Forms {
 
 		public virtual void CreateHandle (CreateParams cp) 
 		{
-			IntPtr createdHWnd = (IntPtr) 0;
-			Object lpParam = new Object();
+			if( cp != null ) {
+				IntPtr createdHWnd = (IntPtr) 0;
+				Object lpParam = new Object();
 
-			if (!registeredClass) {
-				WNDCLASS wndClass = new WNDCLASS();
+				if (!registeredClass) {
+					WNDCLASS wndClass = new WNDCLASS();
 
-				wndClass.style = (int) (CS_.CS_OWNDC |
-							CS_.CS_VREDRAW |
-							CS_.CS_HREDRAW);
-				wndClass.lpfnWndProc = GetWindowProc();
-				wndClass.cbClsExtra = 0;
-				wndClass.cbWndExtra = 0;
-				wndClass.hInstance = (IntPtr)0;
-				wndClass.hIcon = (IntPtr)0;
-				wndClass.hCursor = (IntPtr)0;
-				wndClass.hbrBackground = (IntPtr)6;  // ???
-				wndClass.lpszMenuName = "";
-				wndClass.lpszClassName = "mono_native_window";
+					wndClass.style = (int) (CS_.CS_OWNDC |
+						CS_.CS_VREDRAW |
+						CS_.CS_HREDRAW);
+					wndClass.lpfnWndProc = GetWindowProc();
+					wndClass.cbClsExtra = 0;
+					wndClass.cbWndExtra = 0;
+					wndClass.hInstance = (IntPtr)0;
+					wndClass.hIcon = (IntPtr)0;
+					wndClass.hCursor = Win32.LoadCursor( (IntPtr)0, LC_.IDC_ARROW);
+					wndClass.hbrBackground = (IntPtr)((int)GSC_.COLOR_BTNFACE + 1);
+					wndClass.lpszMenuName = "";
+					wndClass.lpszClassName = "mono_native_window";
 
-				if (Win32.RegisterClass(ref wndClass) != 0) {
-					registeredClass = true;
-				} else {
-					windowHandle = (IntPtr)0;
-					return;
+					if (Win32.RegisterClass(ref wndClass) != 0) {
+						registeredClass = true;
+					} else {
+						windowHandle = (IntPtr)0;
+						return;
+					}
+				}
+
+				windowHandle = Win32.CreateWindowEx (
+					(uint) cp.ExStyle, cp.ClassName,
+					cp.Caption,(uint) cp.Style,
+					cp.X, cp.Y, cp.Width, cp.Height,
+					(IntPtr) cp.Parent, (IntPtr) 0,
+					(IntPtr) 0, ref lpParam);
+
+				if (windowHandle != (IntPtr) 0) {
+					windowCollection.Add (windowHandle, this);
+					if( (cp.Style & (int)WindowStyles.WS_CHILD) != 0) {
+						Win32.SetWindowLong(windowHandle, GetWindowLongFlag.GWL_ID, (int)windowHandle);
+					}
+				}
+				//debug
+				else {
+					System.Console.WriteLine("Cannot create window {0}", Win32.FormatMessage(Win32.GetLastError()));
 				}
 			}
-
-			windowHandle = Win32.CreateWindowEx (
-				(uint) cp.ExStyle, cp.ClassName,
-				cp.Caption,(uint) cp.Style,
-				cp.X, cp.Y, cp.Width, cp.Height,
-				(IntPtr) cp.Parent, (IntPtr) 0,
-				(IntPtr) 0, ref lpParam);
-			
-			if (windowHandle != (IntPtr) 0)
-				windowCollection.Add (windowHandle, this);
-			//debug
-			//else {
-			//	System.Console.WriteLine("Cannot create window {0}", Win32.FormatMessage(Win32.GetLastError()));
-			//}
 		}
 
 		public void DefWndProc (ref Message m) 
@@ -162,36 +178,43 @@ namespace System.Windows.Forms {
  		static private IntPtr WndProc (
 			IntPtr hWnd, Msg msg, IntPtr wParam, IntPtr lParam) 
 		{
-			// windowCollection is a collection of all the 
-			// NativeWindow(s) that have been created.
-			// Dispatch the current message to the approriate
-			// window.
- 			NativeWindow window = 
-			        (NativeWindow) windowCollection[hWnd];
  			Message message = new Message ();
-			message.HWnd = hWnd;
-			message.Msg = msg;
-			message.WParam = wParam;
-			message.LParam = lParam;
- 			message.Result = (IntPtr) 0;
-
-			if (msg == Msg.WM_CREATE)
-				Console.WriteLine ("WM_CREATE (static)");
-
- 			if (window != null) {
-			if (msg == Msg.WM_CREATE)
-				Console.WriteLine ("WM_CREATE (static != null)");
- 				window.WndProc(ref message);
- 			} else {
-				Console.WriteLine ("no window, defwndproc");
- 				// even though we are not managing the
- 				// window let the window get the message
- 				message.Result = Win32.DefWindowProcA (
-					hWnd, msg, wParam, lParam);
- 			}
-
+			// CHECKME: This try/catch is implemented to keep Message Handlers "Exception safe"
+			try {
+				// windowCollection is a collection of all the 
+				// NativeWindow(s) that have been created.
+				// Dispatch the current message to the approriate
+				// window.
+	 			NativeWindow window = 
+				        (NativeWindow) windowCollection[hWnd];
+				message.HWnd = hWnd;
+				message.Msg = msg;
+				message.WParam = wParam;
+				message.LParam = lParam;
+	 			message.Result = (IntPtr) 0;
+	
+				if (msg == Msg.WM_CREATE)
+					Console.WriteLine ("WM_CREATE (static)");
+					
+	 			if (window != null) {
+				if (msg == Msg.WM_CREATE)
+					Console.WriteLine ("WM_CREATE (static != null)");
+	 				window.WndProc(ref message);
+	 			} else {
+					Console.WriteLine ("no window, defwndproc");
+	 				// even though we are not managing the
+	 				// window let the window get the message
+	 				message.Result = Win32.DefWindowProcA (
+						hWnd, msg, wParam, lParam);
+	 			}
+			}
+			catch( System.Exception ex) {
+				Application.OnThreadException(ex);
+				//Console.WriteLine(ex.Message + "\n" + ex.StackTrace);
+			}
  			return message.Result;
  		}
+ 		
 		internal static Win32.WndProc GetWindowProc() {
 			if( wp == null){
 				wp = new Win32.WndProc (WndProc);

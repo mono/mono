@@ -26,10 +26,20 @@ namespace System.Windows.Forms {
 		}
 
 		//
+		//	 --- Protected Fields
+		//
+		protected int ColumnWidth_ = 0; // The columns will have default width
+		protected bool IntegralHeight_ = true;
+		protected ListBox.ObjectCollection	Items_ = null;
+		protected DrawMode DrawMode_ = DrawMode.Normal;
+		protected bool UseTabStops_ = false;
+		
+		//
 		//	 --- Public Fields
 		//
 		public const int DefaultItemHeight = 500;//just guessing FIXME // = ??;
 		public const int NoMatches = 0 ;//just guessing FIXME // = ??;
+		
 
 		//
 		//  --- Public Properties
@@ -147,23 +157,33 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		public bool UseTabStops {
 			get {
-				throw new NotImplementedException ();
+				return UseTabStops_;
 			}
 			set {
-				//FIXME:
+				UseTabStops_ = value;
 			}
 		}
 
 		[MonoTODO]
 		public virtual DrawMode DrawMode {
 			get {
-				throw new NotImplementedException ();
+				return DrawMode_;
 			}
 			set {
-				//FIXME:
+				DrawMode_ = value;
+				// FIXME: change styles of Windows control/ recreate control
 			}
 		}
 
+		public int ColumnWidth {
+			get {
+				return ColumnWidth_;
+			}
+			set {
+				ColumnWidth_ = value;
+			}
+		}
+		
 		[MonoTODO]
 		public virtual int ItemHeight {
 			get {
@@ -173,6 +193,24 @@ namespace System.Windows.Forms {
 				//FIXME:
 			}
 		}
+		public bool IntegralHeight {
+			get {
+				return IntegralHeight_;
+			}
+			set {
+				IntegralHeight_ = value;
+			}
+		}
+		
+		public ListBox.ObjectCollection Items {
+			get {
+				if( Items_ == null) {
+					Items_ = new ListBox.ObjectCollection( this);
+				}
+				return Items_;
+			}
+		}
+		
 		//
 		//  --- Public Methods
 		//
@@ -248,26 +286,107 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		protected override CreateParams CreateParams {
 			get {
-				CreateParams createParams = new CreateParams ();
-				window = new ControlNativeWindow (this);
+				// This is a child control, so it must have a parent for creation
+				if( Parent != null) {
+					CreateParams createParams = new CreateParams ();
+					// CHECKME: here we must not overwrite window
+					if( window == null) {
+						window = new ControlNativeWindow (this);
+					}
 
-				createParams.Caption = Text;
-				createParams.ClassName = "LISTBOX";
-				createParams.X = Left;
-				createParams.Y = Top;
-				createParams.Width = Width;
-				createParams.Height = Height;
-				createParams.ClassStyle = 0;
-				createParams.ExStyle = 0;
-				createParams.Param = 0;
-				//			createParams.Parent = Parent.Handle;
-				createParams.Style = (int) (
-					WindowStyles.WS_CHILD | 
-					WindowStyles.WS_VISIBLE);
-				window.CreateHandle (createParams);
-				return createParams;
+					createParams.Caption = Text;
+					createParams.ClassName = "LISTBOX";
+					createParams.X = Left;
+					createParams.Y = Top;
+					createParams.Width = Width;
+					createParams.Height = Height;
+					createParams.ClassStyle = 0;
+					createParams.ExStyle = 0;
+					createParams.Param = 0;
+					createParams.Parent = Parent.Handle;
+					createParams.Style = (int) (
+						WindowStyles.WS_CHILD | 
+						WindowStyles.WS_VISIBLE );
+					createParams.Style |= (int) (LBS_.LBS_NOTIFY | 
+						LBS_.LBS_HASSTRINGS );
+					if( !IntegralHeight_) {
+						createParams.Style |= (int)LBS_.LBS_NOINTEGRALHEIGHT;
+					}
+					if( UseTabStops_ ) {
+						createParams.Style |= (int)LBS_.LBS_USETABSTOPS;
+					}
+					switch( DrawMode_){
+						case DrawMode.OwnerDrawFixed:
+							createParams.Style |= (int)LBS_.LBS_OWNERDRAWFIXED;
+							break;
+						case DrawMode.OwnerDrawVariable:
+							createParams.Style |= (int)LBS_.LBS_OWNERDRAWVARIABLE;
+							break;
+					}
+					// CHECKME : this call is commented because (IMHO) Control.CreateHandle supposed to do this
+					// and this function is CreateParams, not CreateHandle
+					// window.CreateHandle (createParams);
+					return createParams;
+				}
+				return null;
 			}		
 		}
+
+		internal void SafeAddItemToListControl( object item) {
+			int res = Win32.SendMessage(Handle, (int)LB_.LB_ADDSTRING, 0, item.ToString());
+		}
+		
+		internal void AddItemToListControl( object item) {
+			if( IsHandleCreated) {
+				SafeAddItemToListControl( item);	
+			}
+		}
+		
+		protected override void OnCreateControl ()
+		{
+			// Populate with Items
+			if( IsHandleCreated) {
+				foreach( object item in Items) {
+					SafeAddItemToListControl(item);	
+				}
+				if( ColumnWidth_ != 0) {
+					Win32.SendMessage( Handle, (int)LB_.LB_SETCOLUMNWIDTH, ColumnWidth_, 0);
+				}
+			}
+		}
+
+		protected override bool ReflectMessageHelper( ref Message m) {
+			bool		result = false;
+			switch (m.Msg) {
+				case Msg.WM_MEASUREITEM: {
+					MEASUREITEMSTRUCT mis = new MEASUREITEMSTRUCT();
+					Win32.CopyMemory(ref mis, m.LParam, 24);
+					MeasureItemEventArgs args = new MeasureItemEventArgs(CreateGraphics(),mis.itemID);
+					args.ItemHeight = mis.itemHeight;
+					args.ItemWidth = mis.itemWidth;
+					OnMeasureItem( args);
+					mis.itemHeight = args.ItemHeight;
+					mis.itemWidth = args.ItemWidth;
+					Win32.CopyMemory(m.LParam, ref mis, 24);
+					result = true;
+				}
+				break;
+				case Msg.WM_DRAWITEM: {
+					DRAWITEMSTRUCT dis = new DRAWITEMSTRUCT();
+					Win32.CopyMemory(ref dis, m.LParam, 48);
+					Rectangle	rect = new Rectangle(dis.rcItem.left, dis.rcItem.top, dis.rcItem.right - dis.rcItem.left, dis.rcItem.bottom - dis.rcItem.top);
+					DrawItemEventArgs args = new DrawItemEventArgs(Graphics.FromHdc(dis.hDC), Font,
+						rect, dis.itemID, (DrawItemState)dis.itemState);
+					OnDrawItem( args);
+					Win32.CopyMemory(m.LParam, ref dis, 48);
+					result = true;
+				}
+				break;
+			}
+			return result;
+		}
+
+		
 		[MonoTODO]
 		protected override Size DefaultSize {
 			get {
@@ -301,9 +420,10 @@ namespace System.Windows.Forms {
 
 		[MonoTODO]
 		protected virtual void OnDrawItem(DrawItemEventArgs e) {
-			//FIXME:
+			if( DrawItem != null) {
+				DrawItem(this, e);
+			}
 		}
-
 
 		[MonoTODO]
 		protected override void OnFontChanged(EventArgs e) {
@@ -323,8 +443,11 @@ namespace System.Windows.Forms {
 
 		[MonoTODO]
 		protected virtual void OnMeasureItem(MeasureItemEventArgs e) {
-			//FIXME:
+			if( MeasureItem != null) {
+				MeasureItem(this, e);
+			}
 		}
+
 		[MonoTODO]
 		protected override void OnParentChanged(EventArgs e) {
 			//FIXME:
@@ -418,7 +541,7 @@ namespace System.Windows.Forms {
 			}
 			[MonoTODO]
 			public void CopyTo(Array dest, int index) {
-				//FIXME:
+				// FIXME:
 			}
 			[MonoTODO]
 			public override bool Equals(object obj) {
@@ -530,16 +653,19 @@ namespace System.Windows.Forms {
 
 		public class ObjectCollection : IList, ICollection {
 
+			protected ListBox owner_ = null;
+			protected ArrayList items_ = new ArrayList();
 			//
 			//  --- Constructor
 			//
 			[MonoTODO]
 			public ObjectCollection(ListBox box) {
-				//FIXME:
+				owner_ = box;
 			}
 			[MonoTODO]
 			public ObjectCollection(ListBox box, object[] objs) {
-				//FIXME:
+				owner_ = box;
+				AddRange(objs);
 			}
 
 			//
@@ -548,22 +674,23 @@ namespace System.Windows.Forms {
 			[MonoTODO]
 			public int Count {
 				get {
-					throw new NotImplementedException ();
+					return items_.Count;
 				}
 			}
 			[MonoTODO]
 			public bool IsReadOnly {
 				get {
-					throw new NotImplementedException ();
+					// FIXME: Is it always not ReadOnly
+					return false;
 				}
 			}
 			[MonoTODO]
 			public virtual object this[int index] {
 				get {
-					throw new NotImplementedException ();
+					return items_[index];
 				}
 				set {
-					//FIXME:
+					throw new NotImplementedException ();
 				}
 			}
 
@@ -572,11 +699,17 @@ namespace System.Windows.Forms {
 			//
 			[MonoTODO]
 			public int Add(object item) {
-				throw new NotImplementedException ();
+				int result = -1;
+				if( item != null) {
+					result = items_.Add(item);
+				}
+				return result;
 			}
 			[MonoTODO]
 			public void AddRange(object[] items) {
-				//FIXME:
+				if( items != null) {
+					items_.AddRange(items);
+				}
 			}
 			[MonoTODO]
 			public void AddRange(ListBox.ObjectCollection collection) {
@@ -606,7 +739,7 @@ namespace System.Windows.Forms {
 			}
 			[MonoTODO]
 			public IEnumerator GetEnumerator() {
-				throw new NotImplementedException ();
+				return items_.GetEnumerator();
 			}
 			[MonoTODO]
 			public int IndexOf(object val) {
@@ -853,6 +986,10 @@ namespace System.Windows.Forms {
 				throw new NotImplementedException ();
 			}
 			// End Of ICollection
+
 		}//End of subclass
+
+		
+
 	}
 }

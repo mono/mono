@@ -183,9 +183,13 @@ namespace System.Windows.Forms {
 		}
 	
 		[MonoTODO]
-		public static void OnThreadException (Exception t) 
+		public static void OnThreadException (Exception ex) 
 		{
 			//FIXME:
+			if( Application.ThreadException != null) {
+				Application.ThreadException(null, new ThreadExceptionEventArgs(ex));
+			}
+			
 		}
 	
 		public static void RemoveMessageFilter (IMessageFilter value)
@@ -204,6 +208,7 @@ namespace System.Windows.Forms {
 			MSG msg = new MSG();
 
 			messageLoopStarted = true;
+
 
 			while (!messageLoopStopRequest && 
 			       Win32.GetMessageA (ref msg, 0, 0, 0) != 0) {
@@ -228,11 +233,10 @@ namespace System.Windows.Forms {
 						dispatchMessage = false;
 				}
 
-				if (dispatchMessage) {
-					Win32.TranslateMessage (ref msg);
-					Win32.DispatchMessageA (ref msg);
-				}
-
+					if (dispatchMessage) {
+						Win32.TranslateMessage (ref msg);
+						Win32.DispatchMessageA (ref msg);
+					}
 				//if (Idle != null)
 					//Idle (null, new EventArgs());
 			}

@@ -25,8 +25,7 @@ namespace System.Windows.Forms {
 		//
 		//  --- Constructor
 		//
-		public ScrollableControl () : base ()
-		{
+		public ScrollableControl () : base () {
 			dockPadding = new ScrollableControl.DockPaddingEdges();
 		}
 		//
@@ -92,7 +91,7 @@ namespace System.Windows.Forms {
 		protected override CreateParams CreateParams {
 			get {
 				if (!classRegistered) {
-        	                        WNDCLASS wndClass = new WNDCLASS();
+					WNDCLASS wndClass = new WNDCLASS();
  
 					wndClass.style = (int) (CS_.CS_OWNDC | CS_.CS_VREDRAW | CS_.CS_HREDRAW);
 					wndClass.lpfnWndProc = NativeWindow.GetWindowProc();
@@ -100,8 +99,8 @@ namespace System.Windows.Forms {
 					wndClass.cbWndExtra = 0;
 					wndClass.hInstance = (IntPtr)0;
 					wndClass.hIcon = (IntPtr)0;
-					wndClass.hCursor = (IntPtr)0;
-					wndClass.hbrBackground = (IntPtr)6;  // ???
+					wndClass.hCursor = Win32.LoadCursor( (IntPtr)0, LC_.IDC_ARROW);
+					wndClass.hbrBackground = (IntPtr)((int)GSC_.COLOR_BTNFACE + 1);
 					wndClass.lpszMenuName = "";
 					wndClass.lpszClassName = "mono_scrollable_control";
     
@@ -170,8 +169,7 @@ namespace System.Windows.Forms {
 		
 		[MonoTODO]
 		protected virtual void AdjustFormScrollbars (
-			bool displayScrollbars)
-		{
+			bool displayScrollbars) {
 			//FIXME:
 		}
 
@@ -315,8 +313,7 @@ namespace System.Windows.Forms {
 
 			
 			/// This member supports the .NET Framework infrastructure and is not intended to be used directly from your code.
-			object ICloneable.Clone () 
-			{
+			object ICloneable.Clone () {
 				DockPaddingEdges dpe = new DockPaddingEdges();
 				dpe.all = all;
 				dpe.top = top;
@@ -334,8 +331,7 @@ namespace System.Windows.Forms {
 			///	Formats the DockPaddingEdges as a string.
 			/// </remarks>
 		
-			public override string ToString () 
-			{
+			public override string ToString () {
 				return "All = " + all.ToString() + " Top = " + top.ToString() + 
 					" Right = " + right.ToString() + " Bottom = " + bottom.ToString() + 
 					" Left = " + left.ToString();

@@ -43,7 +43,7 @@ namespace System.Windows.Forms {
 			this.state = state;
 			foreColor = SystemColors.WindowText;
 			backColor = SystemColors.Window;
-			throw new NotImplementedException ();
+			//throw new NotImplementedException ();
 		}
 
 		public DrawItemEventArgs(Graphics graphics, Font font, Rectangle bounds, int index,

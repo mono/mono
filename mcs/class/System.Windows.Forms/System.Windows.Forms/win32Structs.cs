@@ -709,6 +709,29 @@ namespace System.Windows.Forms
 		internal string lpszClassName;
 	}
 
+	[StructLayout(LayoutKind.Sequential)]
+	internal struct MEASUREITEMSTRUCT {
+		public uint      CtlType; 
+		public uint      CtlID; 
+		public int       itemID; 
+		public int       itemWidth; 
+		public int       itemHeight; 
+		public IntPtr    itemData; 
+	}
+
+	[StructLayout(LayoutKind.Sequential)]
+	internal struct DRAWITEMSTRUCT {
+		public uint      CtlType; 
+		public uint      CtlID; 
+		public int       itemID; 
+		public uint      itemAction; 
+		public int       itemState; 
+		public IntPtr    hwndItem; 
+		public IntPtr    hDC; 
+		public RECT      rcItem; 
+		public IntPtr    itemData; 
+	}
+
 
 	//
 	//
