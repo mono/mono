@@ -49,11 +49,14 @@ namespace System.Configuration
 
                 public ConfigurationProperty this [string name] {
                         get {
+				throw new Exception ("FIXME");
+#if FIXME
                                 foreach (ConfigurationProperty cp in collection)
                                         if (cp.Name == name)
                                                 return cp;
 
                                 return null;
+#endif
                         }
                 }
 
