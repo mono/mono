@@ -63,7 +63,7 @@ public class UnicodeEncoding : Encoding
 			encoding_name = "Unicode (Big-Endian)";
 			header_name = "unicodeFFFE";
 			is_browser_save = false;
-			web_name = "utf-16be";
+			web_name = "unicodeFFFE";
 		} else {
 			body_name = "utf-16";
 			encoding_name = "Unicode";
@@ -198,12 +198,6 @@ public class UnicodeEncoding : Encoding
 		if (count < 0 || count > (bytes.Length - index)) {
 			throw new ArgumentOutOfRangeException ("count", _("ArgRange_Array"));
 		}
-		if (count >= 2) {
-			if ((bytes[index] == (byte)0xFE && bytes[index + 1] == (byte)0xFF) ||
-					(bytes[index] == (byte)0xFF && bytes[index + 1] == (byte)0xFE)) {
-				return ((count - 1) / 2);
-			}
-		}
 		return count / 2;
 	}
 
@@ -232,12 +226,8 @@ public class UnicodeEncoding : Encoding
 		if (byteCount >= 2) {
 			if (bytes[byteIndex] == (byte)0xFE && bytes[byteIndex + 1] == (byte)0xFF) {
 				isBigEndian = true;
-				byteCount -= 2;
-				byteIndex += 2;
 			} else if (bytes[byteIndex] == (byte)0xFF && bytes[byteIndex + 1] == (byte)0xFE) {
 				isBigEndian = false;
-				byteCount -= 2;
-				byteIndex += 2;
 			} else {
 				isBigEndian = bigEndian;
 			}
@@ -418,16 +408,11 @@ public class UnicodeEncoding : Encoding
 					leftOver = (int)(bytes[byteIndex]);
 					break;
 				}
-				if (ch == '\uFFFE') {
-					// Switch byte orders.
-					bigEndian = !bigEndian;
-				} else if (ch != '\uFEFF') {
-					// Ordinary character.
-					if (posn < length) {
-						chars[posn++] = ch;
-					} else {
-						throw new ArgumentException (_("Arg_InsufficientSpace"));
-					}
+
+				if (posn < length) {
+					chars[posn++] = ch;
+				} else {
+					throw new ArgumentException (_("Arg_InsufficientSpace"));
 				}
 			}
 			leftOverByte = leftOver;
