@@ -29,9 +29,12 @@
 //	Jaak Simm		jaaksimm@firm.ee
 //	John Sohn		jsohn@columbus.rr.com
 //
-// $Revision: 1.28 $
+// $Revision: 1.29 $
 // $Modtime: $
 // $Log: Control.cs,v $
+// Revision 1.29  2004/08/13 22:15:46  pbartok
+// - Fixed Anchor default
+//
 // Revision 1.28  2004/08/13 21:43:39  pbartok
 // - Changed GetCursorPos signature
 //
@@ -459,6 +462,7 @@ namespace System.Windows.Forms
 			bounds = new Rectangle(0, 0, DefaultSize.Width, DefaultSize.Height);
 			client_size = new Size(DefaultSize.Width, DefaultSize.Height);
 			prev_size = Size.Empty;
+			anchor_style=AnchorStyles.Top | AnchorStyles.Left;
 
 			is_visible = true;
 			is_disposed = false;
