@@ -14,7 +14,7 @@ using System.Runtime.CompilerServices;
 
 namespace System.Runtime.Remoting.Messaging {
 	
-	public class MonoMethodMessage : IMethodCallMessage, IMethodReturnMessage {
+	internal class MonoMethodMessage : IMethodCallMessage, IMethodReturnMessage {
 
 		MonoMethod method;
 

@@ -1,3 +1,7 @@
+2002-09-03  Dietmar Maurer  <dietmar@ximian.com>
+
+	* MonoMethodMessage.cs: make in an iternal class again.
+
 2002-08-22  Nick Drochak  <ndrochak@gol.com>
 
 	* RemotingSurrogateSelector.cs (SetRootObject): Function should return
