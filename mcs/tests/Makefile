@@ -47,6 +47,7 @@ TEST_SOURCES = \
 	test-281 test-282 test-283 test-284 test-285 test-286 \
 	cls-test-0 cls-test-1 cls-test-2 cls-test-3 cls-test-5 cls-test-6 cls-test-7 cls-test-10  \
 	cls-test-11 cls-test-14 cls-test-15 cls-test-16
+#	mtest-1-dll mtest-1-exe
 
 GENERIC_SOURCES = \
 	gen-1   gen-2   gen-3   gen-4   gen-5   gen-6   gen-7   gen-8   gen-9   gen-10 \
@@ -123,7 +124,7 @@ test-compiler-jit: multi test-compiler-jit-real
 TEST_TAG = mcs
 
 test-compiler-jit-real:
-	@rm -f *.exe $(TEST_TAG).log $(TEST_TAG)-*.log ; \
+	@rm -f *.exe *.dll $(TEST_TAG).log $(TEST_TAG)-*.log ; \
 	logfile="$(TEST_TAG).log" ; \
 	echo 'Running $(TEST_TAG) tests with flags "$(TEST_RUNTIME)" ... ' ; \
 	for i in $(TEST_SOURCES) ; do \
@@ -139,15 +140,20 @@ test-compiler-jit-real:
 		echo "FAIL: $$i: compilation" >> $$logfile ; \
 	        echo FAILED COMPILATION ; cat $$testlogfile ; \
 	    fi ; \
-	    echo "*** $(TEST_RUNTIME) ./$$i.exe" >> $$testlogfile ; \
-	    if $(TEST_RUNTIME) ./$$i.exe >> $$testlogfile 2>&1 ; then \
-		echo "PASS: $$i" >> $$logfile ; \
-	        echo OK ; rm -f $$testlogfile ; \
+	    if test -f $$i.exe; then \
+	        echo "*** $(TEST_RUNTIME) ./$$i.exe" >> $$testlogfile ; \
+	        if $(TEST_RUNTIME) ./$$i.exe >> $$testlogfile 2>&1 ; then \
+		    echo "PASS: $$i" >> $$logfile ; \
+	            echo OK ; rm -f $$testlogfile ; \
+	        else \
+		    echo "Exit code: $$?" >> $$testlogfile ; \
+		    failed="$$failed $$i" ; \
+		    echo "FAIL: $$i" >> $$logfile ; \
+	            echo FAILED ; cat $$testlogfile ; \
+		fi ; \
 	    else \
-		echo "Exit code: $$?" >> $$testlogfile ; \
-		failed="$$failed $$i" ; \
-		echo "FAIL: $$i" >> $$logfile ; \
-	        echo FAILED ; cat $$testlogfile ; \
+		echo "PASS: $$i: compilation" >> $$logfile ; \
+		echo OK ; rm -f $$testlogfile ; \
 	    fi ; \
 	done ; \
 	if test -z "$$failed"; then :; else echo "Failing tests: $$failed"; exit 1; fi
