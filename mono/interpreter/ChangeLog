@@ -1,3 +1,10 @@
+
+Fri Jul 27 20:54:00 CEST 2001 Paolo Molaro <lupus@ximian.com>
+
+	* interp.c: start implementing callvirt. Classes with
+	class constructors are properly initialized when needed.
+	Fix error introduced in version 1.17.
+
 Fri Jul 27 14:03:19 CEST 2001 Paolo Molaro <lupus@ximian.com>
 
 	* interp.c: implement static field loading and storing.

@@ -1,3 +1,8 @@
+
+Fri Jul 27 20:51:47 CEST 2001 Paolo Molaro <lupus@ximian.com>
+
+	* class.h, class.c: add inited field to MonoClass.
+
 Fri Jul 27 13:51:11 CEST 2001 Paolo Molaro <lupus@ximian.com>
 
 	* class.h, class.c: add a class_size member to MonoClass. We store
