@@ -1,6 +1,8 @@
 2001-11-19  Dietmar Maurer  <dietmar@ximian.com>
 
 	* jit.c (mono_analyze_stack): impl. LDFTN
+	(MAKE_SPILLED_BI_ALU): always spill DIV/REM results to memory to
+	make register allocation easier on x86
 
 	* emit-x86.c (enter_method): more debugging output for Strings
 	(arch_compile_method): added delegate support
