@@ -6332,8 +6332,12 @@ namespace Mono.CSharp {
 			}
 			
 			member_lookup = MemberLookup (ec, base_type, member, loc);
-			if (member_lookup == null)
+			if (member_lookup == null) {
+				Report.Error (117, loc,
+					      TypeManager.CSharpName (base_type) + " does not " +
+					      "contain a definition for `" + member + "'");
 				return null;
+			}
 
 			Expression left;
 			
@@ -6343,6 +6347,7 @@ namespace Mono.CSharp {
 				left = ec.This;
 			
 			e = MemberAccess.ResolveMemberAccess (ec, member_lookup, left, loc, null);
+
 			if (e is PropertyExpr){
 				PropertyExpr pe = (PropertyExpr) e;
 
