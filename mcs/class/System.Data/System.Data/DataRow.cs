@@ -294,8 +294,8 @@ namespace System.Data {
 				}
 				else if(col.AutoIncrement == true && CanAccess(index,DataRowVersion.Default)) 
 				{
-					// New value is computed at .ctor(), so
-					// we don't have to do anything here.
+					// AutoIncrement column is already filled,
+					// so it just need to return existing value.
 					newval = this [index];
 				}
 				else 
@@ -1284,26 +1284,27 @@ namespace System.Data {
 			for(int i = 0; i < columns.Count; i++){
 
 				string columnName = columns[i].ColumnName;
-				int index = row.Table.Columns.IndexOf(columnName);
+				DataColumn column = row.Table.Columns[columnName];
 				//if a column with the same name exists in both rows copy the values
-				if(index != -1) {
+				if(column != null) {
+					int index = column.Ordinal;
 					if (HasVersion(DataRowVersion.Original))
 					{
 						if (row.original == null)
 							row.original = new object[row.Table.Columns.Count];
-						row.original[index] = row.SetColumnValue(original[i], Table.Columns[index], index);
+						row.original[index] = row.SetColumnValue(original[i], column, index);
 					}
 					if (HasVersion(DataRowVersion.Current))
 					{
 						if (row.current == null)
 							row.current = new object[row.Table.Columns.Count];
-						row.current[index] = row.SetColumnValue(current[i], Table.Columns[index], index);
+						row.current[index] = row.SetColumnValue(current[i], column, index);
 					}
 					if (HasVersion(DataRowVersion.Proposed))
 					{
 						if (row.proposed == null)
 							row.proposed = new object[row.Table.Columns.Count];
-						row.proposed[index] = row.SetColumnValue(proposed[i], Table.Columns[index], index);
+						row.proposed[index] = row.SetColumnValue(proposed[i], column, index);
 					}
 					
 					//Saving the current value as the column value
@@ -1330,22 +1331,21 @@ namespace System.Data {
 				int index = this.Table.Columns.Count - 1;
 				if (current != null)
 				{
-					// When AutoIncrement column was added, current item array length automatically increases
-					tmp = new object [Table.Columns.Count];
+					tmp = new object [index + 1];
 					Array.Copy (current, tmp, current.Length);
 					tmp[tmp.Length - 1] = SetColumnValue(null, this.Table.Columns[index], index);
 					current = tmp;
 				}
 				if (proposed != null)
 				{
-					tmp = new object [Table.Columns.Count];
+					tmp = new object [index + 1];
 					Array.Copy (proposed, tmp, proposed.Length);
 					tmp[tmp.Length - 1] = SetColumnValue(null, this.Table.Columns[index], index);
 					proposed = tmp;
 				}
 				if(original != null)
 				{
-					tmp = new object [Table.Columns.Count];
+					tmp = new object [index + 1];
 					Array.Copy (original, tmp, original.Length);
 					tmp[tmp.Length - 1] = SetColumnValue(null, this.Table.Columns[index], index);
 					original = tmp;
