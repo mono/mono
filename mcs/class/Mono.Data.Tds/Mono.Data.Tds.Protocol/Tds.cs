@@ -1032,8 +1032,14 @@ namespace Mono.Data.Tds.Protocol {
 
 			if (op == (byte) 0xc1) 
 				rowCount = 0;
-			if (type == TdsPacketSubType.DoneInProc) 
-				rowCount = -1;
+
+                        bool validRowCount = ( (status & 0x10) != 0);
+
+			if (type == TdsPacketSubType.DoneInProc) {
+                                if (validRowCount && rowCount > 0)
+                                        recordsAffected += rowCount;
+                        }
+                        
 
 			moreResults = ((status & 0x01) != 0);
 			bool cancelled = ((status & 0x20) != 0);
@@ -1044,8 +1050,9 @@ namespace Mono.Data.Tds.Protocol {
 					goto case TdsPacketSubType.Done;
 
 				case TdsPacketSubType.Done:
-					if (rowCount > 0)
+					if (validRowCount && rowCount > 0)
 						recordsAffected += rowCount;
+
 					break;
 			}
 
