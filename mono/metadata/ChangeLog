@@ -1,3 +1,6 @@
+2002-02-19  Radek Doulik  <rodo@ximian.com>
+
+	* object.c (mono_ldstr): use hash table to avoid multiple swapping
 
 Tue Feb 19 20:23:11 CET 2002 Paolo Molaro <lupus@ximian.com>
 
