@@ -1,3 +1,7 @@
+2005-03-16 Marek Safar <marek.safar@seznam.cz>
+
+	* TestRunner.cs: Add support for (no errors, ignore errors).
+
 2005-03-16  Raja R Harinath  <rharinath@novell.com>
 
 	* Makefile (RUNTEST_PL, test-multi-local): Remove, now that
