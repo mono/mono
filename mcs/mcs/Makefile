@@ -15,12 +15,20 @@ EXTRA_DISTFILES = \
 PROGRAM = $(topdir)/class/lib/$(PROFILE)/mcs.exe
 PROGRAM_COMPILE = $(BOOT_COMPILE)
 
-CLEAN_FILES = y.output
+CLEAN_FILES = y.output *.exe *.mdb
 
 cs-parser.cs: cs-parser.jay $(topdir)/jay/skeleton.cs
 	$(topdir)/jay/jay -ctv < $(topdir)/jay/skeleton.cs $< > jay-tmp.out && mv jay-tmp.out $@
 
 include ../build/executable.make
+
+ifeq (default, $(PROFILE))
+# Utility rule to make debugging somewhat easier.
+all-local: mcs.exe
+mcs.exe: $(PROGRAM)
+	cp -p $< $@
+	test ! -f $<.mdb || cp -p $<.mdb $@.mdb
+endif
 
 # Testing targets
 

@@ -1,3 +1,8 @@
+2004-11-30  Raja R Harinath  <rharinath@novell.com>
+
+	* Makefile (mcs.exe) [PROFILE=default]: Keep a copy of mcs.exe in
+	the current directory to help debugging.
+
 2004-11-29  Marek Safar  <marek.safar@seznam.cz>
 
 	* class (GetClassBases): Better error 60 report.
