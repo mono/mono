@@ -1,3 +1,12 @@
+2005-01-14  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ConstraintCollectionTest.cs : Fixed run-test-ondotnet. MS.NET does
+	  not fill Table property even after EndInit().
+	* DataRelationTest.cs : Fixed run-test-ondotnet. ExpectedException 
+	  is missing.
+	* TypedDataSetGeneratorTest.cs : fixed GenerateName() both for
+	  run-test-ondotnet and run-test.
+
 2005-01-12  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* DataSetTest.cs : WriteXmlSchema2() and WriteXmlSchema3() didn't pass

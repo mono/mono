@@ -65,18 +65,20 @@ namespace MonoTests.System.Data
 		public void TestGenerateIdName ()
 		{
 		
-			AssertEquals ("a", TypedDataSetGenerator.GenerateIdName ("a", gen));
-			AssertEquals ("_int", TypedDataSetGenerator.GenerateIdName ("int", gen));
-			AssertEquals ("_", TypedDataSetGenerator.GenerateIdName ("_", gen));
-			AssertEquals ("1", TypedDataSetGenerator.GenerateIdName ("1", gen));
-			AssertEquals ("1a", TypedDataSetGenerator.GenerateIdName ("1a", gen));
-			AssertEquals ("1*2", TypedDataSetGenerator.GenerateIdName ("1*2", gen));
-			AssertEquals ("-", TypedDataSetGenerator.GenerateIdName ("-", gen));
-			AssertEquals ("+", TypedDataSetGenerator.GenerateIdName ("+", gen));
-			AssertEquals ("", TypedDataSetGenerator.GenerateIdName ("", gen));
-			AssertEquals ("--", TypedDataSetGenerator.GenerateIdName ("--", gen));
-			AssertEquals ("++", TypedDataSetGenerator.GenerateIdName ("++", gen));
-			AssertEquals ("\u3042", TypedDataSetGenerator.GenerateIdName ("\u3042", gen));
+			AssertEquals ("#1", "a", TypedDataSetGenerator.GenerateIdName ("a", gen));
+			AssertEquals ("#2", "_int", TypedDataSetGenerator.GenerateIdName ("int", gen));
+			AssertEquals ("#3", "_", TypedDataSetGenerator.GenerateIdName ("_", gen));
+			AssertEquals ("#3-2", "_", TypedDataSetGenerator.GenerateIdName ("_", gen));
+			AssertEquals ("#4", "_1", TypedDataSetGenerator.GenerateIdName ("1", gen));
+			AssertEquals ("#4-2", "_1", TypedDataSetGenerator.GenerateIdName ("1", gen));
+			AssertEquals ("#5", "_1a", TypedDataSetGenerator.GenerateIdName ("1a", gen));
+			AssertEquals ("#6", "_1_2", TypedDataSetGenerator.GenerateIdName ("1*2", gen));
+			AssertEquals ("#7", "__", TypedDataSetGenerator.GenerateIdName ("-", gen));
+			AssertEquals ("#8", "__", TypedDataSetGenerator.GenerateIdName ("+", gen));
+			AssertEquals ("#9", "_", TypedDataSetGenerator.GenerateIdName ("", gen));
+			AssertEquals ("#10", "___", TypedDataSetGenerator.GenerateIdName ("--", gen));
+			AssertEquals ("#11", "___", TypedDataSetGenerator.GenerateIdName ("++", gen));
+			AssertEquals ("#12", "\u3042", TypedDataSetGenerator.GenerateIdName ("\u3042", gen));
 		}
 
 	}

@@ -144,6 +144,7 @@ namespace MonoTests.System.Data
 		}
 
 		[Test]
+		[ExpectedException (typeof (InvalidConstraintException))]
 		public void InvalidConstraintException2 ()
 		{
 			// Parent Columns and Child Columns don't have type-matching columns.

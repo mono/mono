@@ -368,6 +368,9 @@ namespace MonoTests.System.Data
 		}
 		
 		[Test]
+		[Category ("NotDotNet")]
+		// Even after EndInit(), MS.NET does not fill Table property
+		// on UniqueConstraint.
 		public void TestAddRange2()
                 {
                         DataTable table = new DataTable ("Table");
