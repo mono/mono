@@ -402,18 +402,25 @@ namespace System.Xml.Schema
 			// {base type definition} => BaseSchemaType (later)
 			// {attribute uses} => AttributeUses (later)
 			// {content type} => ContentType and ContentTypeParticle (later)
-			if (contentModel != null)
+			if (ContentModel != null)
 				ValidateContentModel (h, schema);
 			else {
-				if (particle != null)
+				if (Particle != null)
 					ValidateImmediateParticle (h, schema);
-				// contentModel never has them.
+				if (contentTypeParticle == null || contentTypeParticle == XmlSchemaParticle.Empty) {
+					// note that this covers "Particle == null" case
+					if (this.IsMixed)
+						resolvedContentType = XmlSchemaContentType.TextOnly;
+					else
+						resolvedContentType = XmlSchemaContentType.Empty;
+				}
+				// ContentModel never has them.
 				ValidateImmediateAttributes (h, schema);
 			}
 			// Additional support for 3.8.6 All Group Limited
 			if (contentTypeParticle != null) {
 				XmlSchemaAll termAll = contentTypeParticle.ActualParticle as XmlSchemaAll;
-				if (termAll != null && contentTypeParticle.ValidatedMaxOccurs != 1)
+				if (termAll != null && (termAll.ValidatedMaxOccurs != 1 || contentTypeParticle.ValidatedMaxOccurs != 1)) // here contentTypeParticle is used to check occurence. FIXME: In the future contentTypeParticle will remove group references.
 					error (h, "Particle whose term is -all- and consists of complex type content particle must have maxOccurs = 1.");
 			}
 
@@ -424,7 +431,11 @@ namespace System.Xml.Schema
 				new ArrayList (), h, schema);
 			contentTypeParticle.ValidateUniqueTypeAttribution (
 				new XmlSchemaObjectTable (), h, schema);
-			resolvedContentType = GetContentType ();
+			contentTypeParticle = contentTypeParticle.GetParticleWithoutPointless ();
+
+			// FIXME: move to ValidateContentModel()
+			if (contentModel != null && contentModel.Content is XmlSchemaSimpleContent)
+				resolvedContentType = GetContentType (true);
 
 			// 3.4.6 Properties Correct :: 5 (Two distinct ID attributes)
 			XmlSchemaAttribute idAttr = null;
@@ -566,23 +577,31 @@ namespace System.Xml.Schema
 
 			// complexType/complexContent/extension
 			if (cce != null) {
-				// ContentTypeParticle
-				if (baseComplexType == null) {
-					// Basically it is an error. Considering ValidationEventHandler.
-				}
-				else if (baseComplexType.ContentTypeParticle == XmlSchemaParticle.Empty
-					|| baseComplexType == XmlSchemaComplexType.AnyType)
+				// 3.4.2 complex content {content type}
+				if (cce.Particle == null || cce.Particle == XmlSchemaParticle.Empty) {
+					// - 2.1
+					if (baseComplexType == null) {
+						// Basically it is an error. Considering ValidationEventHandler.
+						contentTypeParticle = XmlSchemaParticle.Empty;
+						resolvedContentType = XmlSchemaContentType.Empty;
+					} else {
+						contentTypeParticle = baseComplexType.ContentTypeParticle;
+						resolvedContentType = baseComplexType.resolvedContentType;
+					}
+				} else if (baseComplexType.ContentTypeParticle == XmlSchemaParticle.Empty
+					|| baseComplexType == XmlSchemaComplexType.AnyType) {
+					// - 2.2
 					contentTypeParticle = cce.Particle;
-				else if (cce.Particle == null || cce.Particle == XmlSchemaParticle.Empty)
-					contentTypeParticle = baseComplexType.ContentTypeParticle;
-				else {
-					// create a new sequences that merges both contents.
+					resolvedContentType = GetComplexContentType (contentModel);
+				} else {
+					// - 2.3 : create a new sequences that merges both contents.
 					XmlSchemaSequence seq = new XmlSchemaSequence ();
 					seq.Items.Add (baseComplexType.ContentTypeParticle);
 					seq.Items.Add (cce.Particle);
 					seq.Compile (h, schema);
 					seq.Validate (h, schema);
 					contentTypeParticle = seq;
+					resolvedContentType = GetComplexContentType (contentModel);
 				}
 				if (contentTypeParticle == null)
 					contentTypeParticle = XmlSchemaParticle.Empty;
@@ -615,14 +634,35 @@ namespace System.Xml.Schema
 				if (baseComplexType == null)
 					baseComplexType = XmlSchemaComplexType.AnyType;
 
-				// ContentTypeParticles (It must contain base type's particle).
-				if (ccr.Particle != null) {
+				// 3.4.2 complex content schema component {content type}
+				// - 1.1.1
+				bool isEmptyParticle = false;
+				if (ccr.Particle == null) 
+					isEmptyParticle = true;
+				else {
 					ccr.Particle.Validate (h, schema);
+
+					XmlSchemaGroupBase gb = ccr.Particle as XmlSchemaGroupBase;
+					if (gb != null) {
+						// - 1.1.2
+						if (!(gb is XmlSchemaChoice) && gb.Items.Count == 0)
+							isEmptyParticle = true;
+						// - 1.1.3
+						else if (gb is XmlSchemaChoice && gb.Items.Count == 0 && gb.ValidatedMinOccurs == 0)
+							isEmptyParticle = true;
+					}
+				}
+				if (isEmptyParticle) {
+					contentTypeParticle = XmlSchemaParticle.Empty;
+					resolvedContentType = XmlSchemaContentType.Empty;
+				} else {
+					// - 1.2.1
+					resolvedContentType = GetComplexContentType (contentModel);
+					// - 1.2.2
 					contentTypeParticle = ccr.Particle;
 				}
-				else
-					contentTypeParticle = XmlSchemaParticle.Empty;
 
+				// attributes
 				localAnyAttribute = ccr.AnyAttribute;
 				this.attributeWildcard = localAnyAttribute;
 				if (baseComplexType != null)
@@ -705,14 +745,18 @@ namespace System.Xml.Schema
 			this.baseSchemaTypeInternal = baseType;
 		}
 
-		private void AddExtensionAttributes (XmlSchemaObjectCollection attributes,
-			XmlSchemaAnyAttribute anyAttribute, ValidationEventHandler h, XmlSchema schema)
+		// 3.4.2 Complex Content Schema Component {content type} 1.2.1
+		private XmlSchemaContentType GetComplexContentType (XmlSchemaContentModel content)
 		{
+			if (this.IsMixed || ((XmlSchemaComplexContent) content).IsMixed)
+				return XmlSchemaContentType.Mixed;
+			else
+				return XmlSchemaContentType.ElementOnly;
 		}
 
 		// It was formerly placed directly in ContentType property.
 		// I get it out, since ContentType is _post_ compilation property value.
-		private XmlSchemaContentType GetContentType ()
+		private XmlSchemaContentType GetContentType (bool usePointlessCutParticle)
 		{
 			if (this.isMixed)
 				return XmlSchemaContentType.Mixed;
@@ -725,7 +769,10 @@ namespace System.Xml.Schema
 			if (xsc != null)
 				return XmlSchemaContentType.TextOnly;
 
-			return contentTypeParticle != XmlSchemaParticle.Empty ?
+			XmlSchemaParticle p = usePointlessCutParticle ?
+				contentTypeParticle : Particle;
+
+			return p != XmlSchemaParticle.Empty ?
 				XmlSchemaContentType.ElementOnly :
 				XmlSchemaContentType.Empty;
 		}
@@ -792,7 +839,7 @@ namespace System.Xml.Schema
 			// 1.4.2.2.1
 			if (baseComplexType.ContentType != XmlSchemaContentType.Empty) {
 				// 1.4.2.2.2.1
-				if (this.GetContentType () != baseComplexType.GetContentType ())
+				if (this.GetContentType (false) != baseComplexType.GetContentType (false))
 					error (h, "Base complex type has different content type " + baseComplexType.ContentType + ".");
 				// 1.4.2.2.2.2 => 3.9.6 Particle Valid (Extension)
 				else if (this.contentTypeParticle == null ||

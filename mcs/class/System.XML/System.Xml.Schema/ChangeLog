@@ -1,5 +1,13 @@
 2004-01-13  Atsushi Enomoto <atsushi@ximian.com>
 
+	* XmlSchemaSimpleTypeUnion.cs : The same reason as the previous patch.
+	* XmlSchemaComplexType.cs : Now it handles ContentTypeParticle and 
+	  ContentType much more presise than before.
+	* XmlSchemaElement.cs :
+	  Simplified property handling for reference element.
+
+2004-01-13  Atsushi Enomoto <atsushi@ximian.com>
+
 	* XmlSchema.cs, XmlSchemaComplexType.cs, XmlSchemaElement.cs :
 	  Invalid attribute should raise an error, not a warning.
 

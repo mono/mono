@@ -38,10 +38,11 @@ namespace System.Xml.Schema
 		internal bool parentIsSchema = false;
 		private string validatedDefaultValue;
 		private string validatedFixedValue;
-		internal bool actualIsAbstract;
-		internal bool actualIsNillable;
+		private bool actualIsAbstract;
+		private bool actualIsNillable;
+		private XmlSchemaElement substitutionGroupElement;
 		private ArrayList substitutingElements = new ArrayList ();
-		XmlSchemaElement referencedElement;
+		private XmlSchemaElement referencedElement;
 
 		// Post compilation items. It should be added on all schema components.
 		XmlSchema schema;
@@ -145,6 +146,9 @@ namespace System.Xml.Schema
 			get{ return  schemaTypeName; }
 			set{ schemaTypeName = value; }
 		}
+		#endregion
+
+		#region Elements
 
 		[XmlElement("simpleType",typeof(XmlSchemaSimpleType),Namespace="http://www.w3.org/2001/XMLSchema")]
 		[XmlElement("complexType",typeof(XmlSchemaComplexType),Namespace="http://www.w3.org/2001/XMLSchema")]
@@ -161,7 +165,9 @@ namespace System.Xml.Schema
 		{
 			get{ return constraints; }
 		}
+		#endregion
 
+		#region Post Compilation Schema Info
 		[XmlIgnore]
 		public XmlQualifiedName QualifiedName 
 		{
@@ -178,7 +184,7 @@ namespace System.Xml.Schema
 					return elementType;
 			}
 		}
-		
+
 		[XmlIgnore]
 		public XmlSchemaDerivationMethod BlockResolved 
 		{
@@ -201,9 +207,26 @@ namespace System.Xml.Schema
 			}
 		}
 
+		internal bool ActualIsNillable {
+			get {
+				if (referencedElement != null)
+					return referencedElement.ActualIsNillable;
+				else
+					return actualIsNillable;
+			}
+		}
+		
+		internal bool ActualIsAbstract {
+			get {
+				if (referencedElement != null)
+					return referencedElement.ActualIsAbstract;
+				else
+					return actualIsAbstract;
+			}
+		}
+		
 		// Post compilation default value (normalized)
-		internal string ValidatedDefaultValue
-		{
+		internal string ValidatedDefaultValue {
 			get{
 				if (referencedElement != null)
 					return referencedElement.ValidatedDefaultValue;
@@ -213,8 +236,7 @@ namespace System.Xml.Schema
 		}
 
 		// Post compilation fixed value (normalized)
-		internal string ValidatedFixedValue 
-		{
+		internal string ValidatedFixedValue {
 			get{
 				if (referencedElement != null)
 					return referencedElement.ValidatedFixedValue;
@@ -223,14 +245,17 @@ namespace System.Xml.Schema
 			}
 		}
 
-		internal ArrayList SubstitutingElements
-		{
+		internal ArrayList SubstitutingElements {
 			get {
 				if (referencedElement != null)
 					return referencedElement.SubstitutingElements;
 				else
 					return this.substitutingElements;
 			}
+		}
+
+		internal XmlSchemaElement SubstitutionGroupElement {
+			get { return substitutionGroupElement; }
 		}
 
 		#endregion
@@ -537,11 +562,6 @@ namespace System.Xml.Schema
 				if (refElem != null) {
 					this.referencedElement = refElem;
 					errorCount += refElem.Validate (h, schema);
-					elementType = refElem.ElementType;
-					this.validatedDefaultValue = refElem.validatedDefaultValue;
-					this.validatedFixedValue = refElem.validatedFixedValue;
-					this.actualIsAbstract = refElem.IsAbstract;
-					this.actualIsNillable = refElem.IsNillable;
 				}
 				// otherwise, it might be missing sub components.
 				else if (!schema.IsNamespaceAbsent (RefName.Namespace))
@@ -582,6 +602,8 @@ namespace System.Xml.Schema
 						if (xsSimpleType != null)
 							xsSimpleType.ValidateTypeDerivationOK (substElem.ElementType, h, schema, true);
 					}
+
+					this.substitutionGroupElement = substElem;
 					substElem.substitutingElements.Add (this);
 				}
 				// otherwise, it might be missing sub components.

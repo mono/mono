@@ -44,7 +44,6 @@ namespace System.Xml.Schema
 		/// 1. Circular union type definition is disallowed. (WTH is this?)
 		/// 2. id must be a valid ID
 		/// </remarks>
-		[MonoTODO]
 		internal override int Compile(ValidationEventHandler h, XmlSchema schema)
 		{
 			// If this is already compiled this time, simply skip.
@@ -74,7 +73,7 @@ namespace System.Xml.Schema
 				{
 					if(memberTypes[i] == null || !XmlSchemaUtil.CheckQName(MemberTypes[i]))
 					{
-						warn(h,"Invalid membertype");
+						error (h,"Invalid membertype");
 						memberTypes[i] = XmlQualifiedName.Empty;
 					}
 					else
@@ -93,7 +92,6 @@ namespace System.Xml.Schema
 			return errorCount;
 		}
 		
-		[MonoTODO]
 		internal override int Validate(ValidationEventHandler h, XmlSchema schema)
 		{
 			if (IsValidated (schema.ValidationId))
