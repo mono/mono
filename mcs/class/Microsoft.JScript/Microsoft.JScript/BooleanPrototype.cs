@@ -28,26 +28,38 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-namespace Microsoft.JScript.Tmp
-{
-	using System;
+using System;
 
-	public class BooleanPrototype : BooleanObject
-	{
+namespace Microsoft.JScript {
+
+	public class BooleanPrototype : BooleanObject {
+
 		public static BooleanConstructor constructor {
-			get { throw new NotImplementedException (); }
+			get { return BooleanConstructor.Ctr; }
 		}
 
 		[JSFunctionAttribute (JSFunctionAttributeEnum.HasThisObject, JSBuiltin.Boolean_toString)]
 		public static string toString (object thisObj)
 		{
-			throw new NotImplementedException ();
+			AssertType (thisObj);
+			BooleanObject bo = thisObj as BooleanObject;
+			return bo.value ? "true" : "false";
 		}
 
 		[JSFunctionAttribute (JSFunctionAttributeEnum.HasThisObject, JSBuiltin.Boolean_valueOf)]
 		public static object valueOf (object thisObj)
 		{
-			throw new NotImplementedException ();
+			AssertType (thisObj);
+			BooleanObject bo = thisObj as BooleanObject;
+			return bo.value;
+		}
+
+		internal static void AssertType (object thisObj)
+		{
+			if (thisObj == null || thisObj.GetType () != typeof (BooleanObject))
+				throw new Exception ("Type error");
 		}
 	}
 }
+
+
