@@ -1,4 +1,8 @@
 
+Wed Oct 10 16:07:24 CEST 2001 Paolo Molaro <lupus@ximian.com>
+
+	* x86/x86-codegen.c: added x86_set_{reg,mem,membase}.
+
 Mon Oct 8 16:13:07 CEST 2001 Paolo Molaro <lupus@ximian.com>
 
 	* x86/tramp.c: remove mono_get_ansi_string () and use
