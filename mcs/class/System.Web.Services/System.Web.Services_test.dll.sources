@@ -1,0 +1,4 @@
+System.Web.Services/WebMethodAttributeTest.cs
+System.Web.Services/WebServiceAttributeTest.cs
+System.Web.Services.Configuration/XmlFormatExtensionAttributeTest.cs
+System.Web.Services.Discovery/ContractReferenceTest.cs
