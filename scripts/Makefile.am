@@ -1,4 +1,5 @@
-EXTRA_DIST = script.in script2.in
+EXTRA_DIST = script.in script2.in mono-nunit.pc.in
+DISTCLEANFILES = mono-nunit.pc
 
 bin2dir = $(bindir)
 
@@ -68,4 +69,7 @@ $(bin_SCRIPTS): script.in Makefile.am
 $(bin2_SCRIPTS): script2.in Makefile.am
 	$(REWRITE) $(srcdir)/script2.in > $@.tmp
 	mv $@.tmp $@
+
+pkgconfigdir = $(libdir)/pkgconfig
+pkgconfig_DATA= mono-nunit.pc
 
