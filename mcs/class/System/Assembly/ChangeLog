@@ -1,3 +1,7 @@
+2003-07-12  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
+
+	* AssemblyInfo.cs: Added support for .Net 1.0 build
+
 2003-07-10  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
 
 	* AssemblyInfo.cs: Added
