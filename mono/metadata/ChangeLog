@@ -1,3 +1,7 @@
+2002-09-09  Martin Baulig  <martin@gnome.org>
+
+	* marshal.c (mono_marshal_get_native_wrapper): We need to use a special
+	signature with the pinvoke field being set for the actual call.
 
 Sat Sep 7 10:12:19 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
