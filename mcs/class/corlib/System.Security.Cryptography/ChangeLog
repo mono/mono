@@ -1,3 +1,28 @@
+2004-04-26  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* AsymmetricAlgorithm.cs: Moved XML comments to monodoc. Added 
+	globalization to exceptions. Already had 100% coverage.
+	* AsymmetricKeyExchangeDeformatter.cs: Moved XML comments to monodoc.
+	Already had 100% coverage.
+	* AsymmetricKeyExchangeFormatter.cs: Moved XML comments to monodoc.
+	Already had 100% coverage.
+	* AsymmetricSignatureDeformatter.cs: Moved XML comments to monodoc.
+	Already had 100% coverage.
+	* AsymmetricSignatureFormatter.cs: Moved XML comments to monodoc.
+	Already had 100% coverage.
+	* CryptoAPITransform.cs: Unused by Mono (added note to monodoc).
+	Class will stay at 0% coverage.
+	* CryptoConfig.cs: Added globalization to exceptions. 98% coverage.
+	* CryptographicException.cs: Added globalization to exceptions. 
+	Already had 100% coverage.
+	* CryptoStream.cs: Added globalization to exceptions. Removed (unused)
+	field _previousBlock to get 100% coverage.
+	* CspParameters.cs: Moved XML comments to monodoc. Already had 100% 
+	coverage.
+	* CspProviderFlags.cs: Moved XML comments to monodoc.
+	* DeriveBytes.cs: Moved XML comments to monodoc. Already had 100% 
+	coverage.
+
 2004-04-25  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
 
 	* DSACryptoServiceProvider.cs: Call invariant compare

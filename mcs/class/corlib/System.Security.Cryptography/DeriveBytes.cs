@@ -4,24 +4,21 @@
 // Author:
 //   Thomas Neidhart (tome@sbox.tugraz.at)
 //
+// (C) 2004 Novell (http://www.novell.com)
+//
 
 using System;
 
-namespace System.Security.Cryptography
-{
+namespace System.Security.Cryptography {
 
-	/// <summary>
-	/// Abstract base class for all classes that derive byte information from an integer
-	/// </summary>
-	public abstract class DeriveBytes
-	{
+	public abstract class DeriveBytes {
 	
-		protected DeriveBytes() {}
+		protected DeriveBytes ()
+		{
+		}
 		
-		public abstract byte[] GetBytes(int cb);
+		public abstract byte[] GetBytes (int cb);
 
-		public abstract void Reset();
-		
-	} // DeriveBytes
-	
-} // System.Security.Cryptography
+		public abstract void Reset ();
+	}
+}

@@ -4,26 +4,33 @@
 // Author:
 //   Thomas Neidhart (tome@sbox.tugraz.at)
 //
+// (C) 2004 Novell (http://www.novell.com)
+//
 
 using System;
 
-namespace System.Security.Cryptography
-{
+namespace System.Security.Cryptography {
 
-	/// <summary>
-	/// Contains information passed to Crypto Service Providers (CSP)
-	/// </summary>
-	public sealed class CspParameters
-	{
+	public sealed class CspParameters {
+
 		private CspProviderFlags _Flags;
 	
-		public CspParameters() : this(1) {}
+		public CspParameters () 
+			: this (1)
+		{
+		}
 		
-		public CspParameters(int dwTypeIn) : this(dwTypeIn, null) {}
+		public CspParameters (int dwTypeIn) 
+			: this (dwTypeIn, null) 
+		{
+		}
 		
-		public CspParameters(int dwTypeIn, string strProviderNameIn) : this(dwTypeIn, null, null) {}
+		public CspParameters (int dwTypeIn, string strProviderNameIn)
+			: this (dwTypeIn, null, null)
+		{
+		}
 		
-		public CspParameters(int dwTypeIn, string strProviderNameIn, string strContainerNameIn)
+		public CspParameters (int dwTypeIn, string strProviderNameIn, string strContainerNameIn)
 		{
 			ProviderType = dwTypeIn;
 			ProviderName = strProviderNameIn;
@@ -41,17 +48,9 @@ namespace System.Security.Cryptography
 		
 		public int ProviderType;
 		
-		public CspProviderFlags Flags 
-		{
-			get {
-				return _Flags;
-			}
-			
-			set {
-				_Flags = value;
-			}
+		public CspProviderFlags Flags {
+			get { return _Flags; }
+			set { _Flags = value; }
 		}
-		
-	} // CspParameters
-	
-} // System.Security.Cryptography
+	}
+}

@@ -20,7 +20,6 @@ namespace System.Security.Cryptography {
 		private Stream _stream;
 		private ICryptoTransform _transform;
 		private CryptoStreamMode _mode;
-		private byte[] _previousBlock;
 		private byte[] _currentBlock;
 		private bool _disposed;
 		private bool _flushedFinalBlock;
@@ -123,7 +122,7 @@ namespace System.Security.Cryptography {
 				throw new ArgumentException ("(offset+count)", 
 					Locale.GetText ("buffer overflow"));
 			}
-			// for some strange reason Object_disposedException isn't throw
+			// for some strange reason ObjectDisposedException isn't throw
 			// instead we get a ArgumentNullException (probably from an internal method)
 			if (_workingBlock == null) {
 				throw new ArgumentNullException (
@@ -334,13 +333,10 @@ namespace System.Security.Cryptography {
 					Array.Clear (_workingBlock, 0, _workingBlock.Length);
 				if (_currentBlock != null)
 					Array.Clear (_currentBlock, 0, _currentBlock.Length);
-				if (_previousBlock != null)
-					Array.Clear (_previousBlock, 0, _previousBlock.Length);
 				if (disposing) {
 					_stream = null;
 					_workingBlock = null;
 					_currentBlock = null;
-					_previousBlock = null;
 				}
 			}
 		}

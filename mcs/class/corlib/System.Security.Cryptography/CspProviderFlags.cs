@@ -4,12 +4,11 @@
 // Authors:
 //   Thomas Neidhart <tome@sbox.tugraz.at>
 //
+// (C) 2004 Novell (http://www.novell.com)
+//
 
 namespace System.Security.Cryptography {
 
-	/// <summary>
-	/// CSP Provider Flags
-	/// </summary>
 	[Flags]
 	[Serializable]
 	public enum CspProviderFlags {

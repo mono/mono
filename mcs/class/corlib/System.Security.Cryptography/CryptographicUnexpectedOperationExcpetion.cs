@@ -4,17 +4,20 @@
 // Author:
 //   Thomas Neidhart (tome@sbox.tugraz.at)
 //
+// (C) 2004 Novell (http://www.novell.com)
+//
 
 using System;
+using System.Globalization;
 using System.Runtime.Serialization;
 
 namespace System.Security.Cryptography {
 
 [Serializable]
 public class CryptographicUnexpectedOperationException : CryptographicException {
-	// Constructors
+
 	public CryptographicUnexpectedOperationException ()
-		: base ("Error occured during a cryptographic operation.")
+		: base (Locale.GetText ("Unexpected error occured during a cryptographic operation."))
 	{
 		// Default to CORSEC_E_CRYPTO_UNEX_OPER (CorError.h)
 		HResult = unchecked ((int)0x80131431);
