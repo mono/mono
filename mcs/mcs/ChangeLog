@@ -1,3 +1,9 @@
+
+Sun Jan 12 19:58:42 CET 2003 Paolo Molaro <lupus@ximian.com>
+
+	* attribute.cs: only set GuidAttr to true when we have a
+	GuidAttribute.
+
 2003-01-09  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* ecore.cs:
