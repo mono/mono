@@ -327,7 +327,15 @@ public abstract class BaseVBFile : VBFile
 		throw (IOException)ExceptionUtils.VbMakeException(VBErrors.BadFileMode);
 	}
 
-	public void Input(ref object Value, bool isString)
+	public virtual void Input(out string Value)
+	{
+		Value = null;
+		string answer = Input(Value);
+		Value = answer;
+		return;
+	}
+
+	public virtual void Input(ref object Value, bool isString)
 	{
 		if(Value == null && !isString ) {
 			string answer = Input((string) Value);

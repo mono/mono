@@ -1,3 +1,19 @@
+2004-06-23  Jambunathan K <kjambunathan@novell.com>
+	* BaseVBFile.cs: Fixed a trivial bug
+	* VBUtils.cs: Added Exception VBException(Exception, int)
+	* VBFile.cs: Trivial fixes
+	* TabInfo.cs: Added missing constructor
+	* SpcInfo.cs: Added missing constructor
+	* RandomVBFile.cs: Ported from mainsoft's codebase
+	* SpcInfo.cs: 
+	* Globals.cs: Rob Tillie's changes based on corcompare with
+	MS's dll
+	* FileSystem.cs: Entirely adopted from mainsoft's codebase.
+	Many existing methods that were not based on mainsoft's code
+	has been overriden by these changes. Rob's patches that is mentioned
+	below has also been left out. It needs to be merged as well.
+	* BinaryVBFile.cs: Ported from mainsoft's codebase
+
 2004-06-22 Sachin Kumar <skumar1@novell.com>
 	* DateAndTime.cs: Fixed bug in DateDiff()
 	* Collections.cs: Fixed bug in Add() 

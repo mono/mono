@@ -14,8 +14,10 @@ namespace Microsoft.VisualBasic {
 	public struct SpcInfo {
 		// Declarations
 		public short Count;
-	
-		// Constructors
-		// methods
+
+		public SpcInfo(short value)
+		{
+			Count = value;
+		}
 	};
 }

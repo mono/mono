@@ -129,7 +129,9 @@ interface VBFile
 
 	void Input(out Decimal Value);
 
-	//	void Input(ref object Value, bool  isString);
+	void Input(ref object Value, bool  isString);
+
+	void Input(out string Value);
     
 	string InputString(int count);
 

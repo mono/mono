@@ -36,21 +36,30 @@ namespace Microsoft.VisualBasic {
 
 	[Microsoft.VisualBasic.CompilerServices.StandardModuleAttribute]
 	sealed public class Globals	{
-
-		public static string ScriptEngine() {
-			return "VB";
+		
+		// prevent public constructor
+		private Globals ()
+		{
 		}
 
-		public static int ScriptEngineMajorVersion() {
-			return 7;
+		public static string ScriptEngine 
+		{
+			get { return "VB"; }
 		}
 
-		public static int ScriptEngineMinorVersion() {
-			return 0;
+		public static int ScriptEngineMajorVersion 
+		{
+			get { return 7; }
 		}
 
-		public static int ScriptEngineBuildVersion() {
-			return 0;
+		public static int ScriptEngineMinorVersion 
+		{
+			get { return 0; }
+		}
+
+		public static int ScriptEngineBuildVersion
+		{
+			get { return 0; }
 		}
 	}
 }

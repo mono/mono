@@ -42,6 +42,8 @@ Microsoft.VisualBasic/VBFile.cs
 Microsoft.VisualBasic/BaseVBFile.cs
 Microsoft.VisualBasic/InputVBFile.cs
 Microsoft.VisualBasic/OutPutVBFile.cs
+Microsoft.VisualBasic/RandomVBFile.cs
+Microsoft.VisualBasic/BinaryVBFile.cs
 Microsoft.VisualBasic/Microsoft.VisualBasic.CompilerServices/BooleanType.cs
 Microsoft.VisualBasic/Microsoft.VisualBasic.CompilerServices/ByteType.cs
 Microsoft.VisualBasic/Microsoft.VisualBasic.CompilerServices/CharArrayType.cs

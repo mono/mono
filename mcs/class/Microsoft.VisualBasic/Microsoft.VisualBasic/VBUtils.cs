@@ -121,11 +121,11 @@ namespace Microsoft.VisualBasic {
 			return GetResourceString(str, param1);
 		}
 		
-		// 		public static java.lang.Exception VBException(java.lang.Exception ex, int hr)
-		// 			{
-		// 				Information.Err().SetUnmappedError(hr);
-		// 				return ex;
-		// 			}
+		public static Exception VBException(Exception ex, int hr)
+		{
+			Information.Err().SetUnmappedError(hr);
+			return ex;
+		}
 
 	}
 }

@@ -1,1404 +1,1335 @@
-//
-// FileSystem.cs
-//
-// Authors:
-//   
-// Daniel Campos ( danielcampos@netcourrier.com )
-// Rafael Teixeira (rafaelteixeirabr@hotmail.com)
-// 
-//
+/*
+ * Copyright (c) 2002-2003 Mainsoft Corporation.
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a
+ * copy of this software and associated documentation files (the "Software"),
+ * to deal in the Software without restriction, including without limitation
+ * the rights to use, copy, modify, merge, publish, distribute, sublicense,
+ * and/or sell copies of the Software, and to permit persons to whom the
+ * Software is furnished to do so, subject to the following conditions:
+ * 
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+ * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+ * DEALINGS IN THE SOFTWARE.
+ */
+ 
 
 using System;
 using System.IO;
+using System.Text;
+using System.Collections;
 using System.Globalization;
+using Microsoft.VisualBasic;
 using Microsoft.VisualBasic.CompilerServices;
 
-namespace Microsoft.VisualBasic 
+/**
+ * CURRENT LIMITATIONS
+ * @limit TAB(int) - not supported.
+ * @limit not all file attributes are supported. supported are: Hidden, Directory, ReadOnly
+ * @limit ChDir(..) - not supported.
+ * @limit ChDrive - not supported.
+ * @limit CurDir(Char) - ignores the parameter.
+ */
+
+namespace Microsoft.VisualBasic
 {
-	[StandardModuleAttribute] 
-	sealed public class FileSystem {
-		private static FileStream [] FHandle = new FileStream [255];
-		private static OpenMode [] FMode= new OpenMode [255];
-		private static string InitialPath = Environment.CurrentDirectory; 
-		// Declarations
-		// Constructors
-		// Properties
-		// Methods
-		[MonoTODO("If path is another drive, it should change the default folder for that drive, but not switch to it.")]
-		public static void ChDir (string Path) 
+	[StandardModuleAttribute]
+	sealed public class FileSystem
+	{
+
+		private static Hashtable _fileNameIdMap = new Hashtable();
+		private static Hashtable _openFilesMap = new Hashtable();
+		private static Hashtable _randomRecordLength = new Hashtable();
+
+		static String _pattern;
+		static int _fileAttrs;
+		private static int _fileIndex;
+		private static FileInfo[] _files;
+		private static bool _isEndOfFiles = true;
+
+
+		public static void Reset()
 		{
-			if ((Path=="") || (Path==null))
-				throw new ArgumentException (Utils.GetResourceString ("Argument_PathNullOrEmpty")); 
-			try {
-				Environment.CurrentDirectory = Path;
-			}
-			catch { 
-				throw new FileNotFoundException (Utils.GetResourceString ("FileSystem_PathNotFound1", Path));
-			}
+			Object value;
+
+			ICollection s = _openFilesMap.Keys;
+
+			int [] iArr = new int[s.Count];
+			s.CopyTo(iArr, 0);
+			close(iArr);
 		}
-		
-		public static void ChDrive (char Drive) 
-		{ 
-			Console.WriteLine("SWITCHING TO: " + Drive);
-			Drive = Char.ToUpper (Drive, CultureInfo.InvariantCulture);
-			
-			if( (Drive < 65) || (Drive > 90) ) {
-				throw new FileNotFoundException (Utils.GetResourceString ("Argument_InvalidValue1", "Drive"));			
-			}
-			
-			try {
-				string path = Drive.ToString() + Path.VolumeSeparatorChar.ToString();	
-				Environment.CurrentDirectory = path;
-			}
-			catch { 
-				throw new FileNotFoundException (Utils.GetResourceString("Argument_InvalidValue1", "Drive")); 
-			}
-		}
-		
-		public static void ChDrive (string Drive)
-		{ 
-			if (Drive != null && Drive.Length != 0)
-				ChDrive(Drive[0]); 
-		}
-		
-		public static string CurDir() 
-		{ 
-			return Environment.CurrentDirectory;
-		}
-		
-		[MonoTODO("Needs Testing for other drives")]
-		public static string CurDir (char Drive)
+
+		public static void FileClose(int[] fileNumbers)
 		{
-			bool ok = false;
-			string myDrive = (Drive.ToString ()).ToLower ();
-			string [] buf= Directory.GetLogicalDrives ();
-			for (int lookfor = 0;lookfor < buf.Length || !ok; lookfor++) {
-				if (buf [lookfor].Substring (0,1).ToLower () == myDrive) 
-					ok = true;
+			int[] iArr = null;
+			if (fileNumbers.Length == 0)
+			{
+				ICollection keySet = FileSystem._openFilesMap.Keys;
+				iArr = new int[keySet.Count];
+				keySet.CopyTo(iArr, 0);
 			}
-			if (!ok)
-				throw new System.ArgumentException (Utils.GetResourceString ("Argument_InvalidValue1", "Drive"));
-			if (Environment.CurrentDirectory.Substring (0,1).ToLower () == myDrive)
-				return Environment.CurrentDirectory;
 			else
 			{
-				// TODO: not right. It should return the complete directory of another drive.	
-				if (InitialPath.Substring (0,1).ToLower () == myDrive) 
-					return InitialPath;
-				else
-					return (myDrive.ToUpper ()  + Path.VolumeSeparatorChar + Path.DirectorySeparatorChar);
+				iArr = new int[fileNumbers.Length];
+				for (int i = 0; i < fileNumbers.Length; i++)
+					iArr[i] = fileNumbers[i];
+			}
+			close(iArr);
+		}
+
+		private static void close(int [] keys)
+		{
+			Object obj;
+
+			for (int i = 0; i < keys.Length; i++)
+			{
+				if (keys[i] < 0 || keys[i] > 255)
+				{
+					ExceptionUtils.VbMakeException(
+								       VBErrors.IllegalFuncCall);
+					throw new ArgumentOutOfRangeException();
+				}
+				obj = _openFilesMap[keys[i]];
+
+				if (obj == null)
+				{
+					String message = VBUtils.GetResourceString(52);
+					throw (IOException)VBUtils.VBException(
+									       new IOException(message),
+									       52);
+				}
+				String fileName = null;
+				if (obj is VBFile)
+				{
+					((VBFile)obj).closeFile();
+					fileName = ((VBFile)obj).getFullPath();
+				}
+
+
+				_openFilesMap.Remove(keys[i]);
+				_fileNameIdMap.Remove(fileName);
 			}
 		}
-	
-		private class FileFinder {
-			public string Pathname;
-			public FileAttribute Attributes;
 
-			public FileFinder(string pathname, FileAttribute attributes) {
-				Pathname = pathname;
-				Attributes = attributes;
+		public static void FileOpen(
+					    int fileNumber,
+					    String fileName,
+					    OpenMode mode,
+					    [System.Runtime.InteropServices.Optional] 
+					    [System.ComponentModel.DefaultValue(-1)] OpenAccess access, 
+					    [System.Runtime.InteropServices.Optional]  
+					    [System.ComponentModel.DefaultValue(-1)] OpenShare share, 
+					    [System.Runtime.InteropServices.Optional] 
+					    [System.ComponentModel.DefaultValue(-1)] int recordLength)
+
+		{
+			if (!isFileNumberFree(fileNumber))
+				throw (IOException) ExceptionUtils.VbMakeException(
+										   VBErrors.FileAlreadyOpen);
+			if (fileNumber < 0 || fileNumber > 255)
+				throw (IOException) ExceptionUtils.VbMakeException(
+										   VBErrors.BadFileNameOrNumber);
+			if (recordLength != -1 && recordLength <= 0)
+				throw (ArgumentException) ExceptionUtils.VbMakeException(
+											 VBErrors.IllegalFuncCall);
+			if (share != OpenShare.Shared && _fileNameIdMap.ContainsKey(Path.GetFullPath(string.Intern(fileName))))
+				throw (IOException) ExceptionUtils.VbMakeException(
+										   VBErrors.FileAlreadyOpen);
+			if (mode == OpenMode.Input)
+			{
+				VBFile vbFile = new InputVBFile(fileName, (FileAccess) access,(recordLength == -1)? 4096:recordLength);
+				_openFilesMap.Add(fileNumber, vbFile);
+			}
+			else if (mode == OpenMode.Output || mode == OpenMode.Append)
+			{
+				VBFile vbFile = new OutPutVBFile(fileName,mode,access,recordLength);
+				_openFilesMap.Add(fileNumber, vbFile);
+			}
+			else if (mode == OpenMode.Random)
+			{
+				VBFile vbFile = new RandomVBFile(fileName,mode,access,recordLength);
+				_openFilesMap.Add(fileNumber, vbFile);
+			}
+			else if (mode == OpenMode.Binary)
+			{
+				VBFile vbFile = new BinaryVBFile(fileName,mode,access,recordLength);
+				_openFilesMap.Add(fileNumber, vbFile);
+			}
+			_fileNameIdMap.Add(Path.GetFullPath(string.Intern(fileName)),fileNumber);
+		}
+
+		public static void FilePut(int fileNumber,
+					   bool value,
+					   [System.Runtime.InteropServices.Optional]
+					   [System.ComponentModel.DefaultValue(-1)] long  recordNumber)
+		{
+			checkRecordNumber(recordNumber,false);
+			VBFile vbFile = getVBFile(fileNumber);
+			vbFile.put(value,recordNumber);
+		}
+
+
+		public static void FilePut(int fileNumber, 
+					   byte value, 
+					   [System.Runtime.InteropServices.Optional]
+					   [System.ComponentModel.DefaultValue(-1)] long  recordNumber)
+		{
+			checkRecordNumber(recordNumber,false);
+			VBFile vbFile = getVBFile(fileNumber);
+			vbFile.put(value,recordNumber);
+		}
+
+		public static void FilePut(int fileNumber, 
+					   short value, 
+					   [System.Runtime.InteropServices.Optional]
+					   [System.ComponentModel.DefaultValue(-1)] long  recordNumber)
+		{
+			checkRecordNumber(recordNumber,false);
+			VBFile vbFile = getVBFile(fileNumber);
+			vbFile.put(value,recordNumber);
+		}
+
+
+		public static void FilePut(int fileNumber, 
+					   char value, 
+					   [System.Runtime.InteropServices.Optional]
+					   [System.ComponentModel.DefaultValue(-1)] long  recordNumber)
+		{
+			checkRecordNumber(recordNumber,false);
+			VBFile vbFile = getVBFile(fileNumber);
+			vbFile.put(value,recordNumber);
+		}
+
+		public static void FilePut(int fileNumber, 
+					   int value, 
+					   [System.Runtime.InteropServices.Optional]
+					   [System.ComponentModel.DefaultValue(-1)] long  recordNumber)
+		{
+			checkRecordNumber(recordNumber,false);
+			VBFile vbFile = getVBFile(fileNumber);
+			vbFile.put(value,recordNumber);
+		}
+
+		public static void FilePut(int fileNumber, 
+					   long value, 
+					   [System.Runtime.InteropServices.Optional]
+					   [System.ComponentModel.DefaultValue(-1)] long  recordNumber)
+		{
+			checkRecordNumber(recordNumber,false);
+			VBFile vbFile = getVBFile(fileNumber);
+			vbFile.put(value,recordNumber);
+		}
+
+
+		public static void FilePut(int fileNumber, 
+					   float value, 
+					   [System.Runtime.InteropServices.Optional]
+					   [System.ComponentModel.DefaultValue(-1)] long  recordNumber)
+		{
+			checkRecordNumber(recordNumber,false);
+			VBFile vbFile = getVBFile(fileNumber);
+			vbFile.put(value,recordNumber);
+		}
+
+		public static void FilePut(int fileNumber, 
+					   double value, 
+					   [System.Runtime.InteropServices.Optional]
+					   [System.ComponentModel.DefaultValue(-1)] long  recordNumber)
+		{
+			checkRecordNumber(recordNumber,false);
+			VBFile vbFile = getVBFile(fileNumber);
+			vbFile.put(value,recordNumber);
+		}
+
+		public static void FilePut(int fileNumber,
+					   String value,
+					   [System.Runtime.InteropServices.Optional]
+					   [System.ComponentModel.DefaultValue(-1)] long recordNumber,
+					   [System.Runtime.InteropServices.Optional]
+					   [System.ComponentModel.DefaultValue(false)] bool stringIsFixedLength)
+		{
+			checkRecordNumber(recordNumber,true);
+			VBFile vbFile = getVBFile(fileNumber);
+			vbFile.put(value,recordNumber,stringIsFixedLength);
+		}
+
+		public static void FilePut(int fileNumber,
+					   DateTime value,
+					   [System.Runtime.InteropServices.Optional]
+					   [System.ComponentModel.DefaultValue(-1)] long  recordNumber)
+		{
+			checkRecordNumber(recordNumber,false);
+			VBFile vbFile = getVBFile(fileNumber);
+			vbFile.put(value,recordNumber);
+		}
+
+		public static void FileGet(int fileNumber,
+					   ref bool value,
+					   [System.Runtime.InteropServices.Optional] 
+					   [System.ComponentModel.DefaultValue(-1)] long recordNumber) 
+
+		{
+			checkRecordNumber(recordNumber,false);
+			VBFile vbFile = getVBFile(fileNumber);
+			vbFile.get(out value,recordNumber);
+		}
+
+		private static void checkRecordNumber(long recordNumber,bool throwArgExc)
+		{
+			if ((recordNumber < 1) && (recordNumber != -1))
+			{
+				if (!throwArgExc)
+					throw (IOException) ExceptionUtils.VbMakeException(
+											   new ArgumentException(
+														 Utils.GetResourceString(
+																	 "Argument_InvalidValue1",
+																	 "RecordNumber")),
+											   VBErrors.BadRecordNum);
+				else
+				{
+					ExceptionUtils.VbMakeException(VBErrors.BadRecordNum);
+					throw new ArgumentException(
+								    Utils.GetResourceString(
+											    "Argument_InvalidValue1",
+											    "RecordNumber"));
+				}
+
+			}
+		}
+
+		private static VBFile getVBFile(int fileNumber)
+		{
+			if ((fileNumber < 1) || (fileNumber > 255))
+				throw (IOException) ExceptionUtils.VbMakeException(
+										   VBErrors.BadFileNameOrNumber);
+			Object obj = _openFilesMap[fileNumber];
+			if (obj == null)
+				throw (IOException) ExceptionUtils.VbMakeException(
+										   VBErrors.BadFileNameOrNumber);
+			return (VBFile)obj;
+		}
+
+		private static VBFile getVBFile(String pathName)
+		{
+			object o = _fileNameIdMap[pathName];
+			int fileNumber = o == null ? 0 : (int) o ;
+			if (fileNumber == 0)
+				throw (IOException) ExceptionUtils.VbMakeException(
+										   VBErrors.BadFileNameOrNumber);
+			Object obj = _openFilesMap[fileNumber];
+			if (obj == null)
+				throw (IOException) ExceptionUtils.VbMakeException(
+										   VBErrors.BadFileNameOrNumber);
+			return (VBFile)obj;
+		}
+
+		public static void FileGet(
+					   int fileNumber,
+					   ref byte value,
+					   [System.Runtime.InteropServices.Optional] 
+					   [System.ComponentModel.DefaultValue(-1)] long recordNumber) 
+
+		{
+			checkRecordNumber(recordNumber,false);
+			VBFile vbFile = getVBFile(fileNumber);
+			vbFile.get(out value,recordNumber);
+		}
+
+		public static void FileGet(
+					   int fileNumber,
+					   ref short value,
+					   [System.Runtime.InteropServices.Optional] 
+					   [System.ComponentModel.DefaultValue(-1)] long recordNumber) 
+
+		{
+			checkRecordNumber(recordNumber,false);
+			VBFile vbFile = getVBFile(fileNumber);
+			vbFile.get(out value,recordNumber);
+		}
+
+		public static void FileGet(
+					   int fileNumber,
+					   ref char value,
+					   [System.Runtime.InteropServices.Optional] 
+					   [System.ComponentModel.DefaultValue(-1)] long recordNumber) 
+
+
+		{
+			checkRecordNumber(recordNumber,false);
+			VBFile vbFile = getVBFile(fileNumber);
+			vbFile.get(out value,recordNumber);
+		}
+
+
+		public static void FileGet(int fileNumber, 
+					   ref int value,
+   					   [System.Runtime.InteropServices.Optional] 
+					   [System.ComponentModel.DefaultValue(-1)] long recordNumber) 
+		{
+			checkRecordNumber(recordNumber,false);
+			VBFile vbFile = getVBFile(fileNumber);
+			vbFile.get(out value,recordNumber);
+		}
+
+		public static void FileGet(int fileNumber, 
+					   ref long value, 
+					   [System.Runtime.InteropServices.Optional] 
+					   [System.ComponentModel.DefaultValue(-1)] long recordNumber) 
+		{
+			checkRecordNumber(recordNumber,false);
+			VBFile vbFile = getVBFile(fileNumber);
+			vbFile.get(out value,recordNumber);
+		}
+
+		public static void FileGet(int fileNumber,
+					   ref float value,
+					   [System.Runtime.InteropServices.Optional] 
+					   [System.ComponentModel.DefaultValue(-1)] long recordNumber) 
+		{
+			checkRecordNumber(recordNumber,false);
+			VBFile vbFile = getVBFile(fileNumber);
+			vbFile.get(out value,recordNumber);
+		}
+
+		public static void FileGet(int fileNumber,
+					   ref double value,
+					   [System.Runtime.InteropServices.Optional] 
+					   [System.ComponentModel.DefaultValue(-1)] long recordNumber) 
+					   
+		{
+			checkRecordNumber(recordNumber,false);
+			VBFile vbFile = getVBFile(fileNumber);
+			vbFile.get(out value,recordNumber);
+		}
+
+		public static void FileGet(int fileNumber,
+					   ref Decimal value,
+					   [System.Runtime.InteropServices.Optional] 
+					   [System.ComponentModel.DefaultValue(-1)] long recordNumber) 
+					   
+		{
+			checkRecordNumber(recordNumber,false);
+			VBFile vbFile = getVBFile(fileNumber);
+			vbFile.get(out value,recordNumber);
+		}
+
+		public static void FileGet(int fileNumber,
+					   ref object value,
+					   [System.Runtime.InteropServices.Optional]
+					   [System.ComponentModel.DefaultValue(-1)] long recordNumber,
+					   [System.Runtime.InteropServices.Optional]
+					   [System.ComponentModel.DefaultValue(false)] bool bIgnored)
+		{
+			checkRecordNumber(recordNumber,true);
+			VBFile vbFile = getVBFile(fileNumber);
+			vbFile.get(ref value,recordNumber,bIgnored);
+		}
+
+		public static void FileGet(int fileNumber,
+					   ref Object value,
+					   [System.Runtime.InteropServices.Optional] 
+					   [System.ComponentModel.DefaultValue(-1)] long recordNumber) 
+		{
+			checkRecordNumber(recordNumber,false);
+			VBFile vbFile = getVBFile(fileNumber);
+			vbFile.get(ref value,recordNumber);
+		}
+
+		public static long Seek(int fileNumber)
+		{
+			VBFile vbFile = getVBFile(fileNumber);
+			return vbFile.seek();
+		}
+
+		public static void Seek(int fileNumber, long position)
+		{
+			VBFile vbFile = getVBFile(fileNumber);
+			vbFile.seek(position);
+
+		}
+
+		public static long Loc(int fileNumber)
+		{
+			VBFile vbFile = getVBFile(fileNumber);
+			return vbFile.getPosition();
+		}
+
+		public static long LOF(int fileNumber)
+		{
+			VBFile vbFile = getVBFile(fileNumber);
+			return vbFile.getLength();
+		}
+
+		public static void Input(int fileNumber, ref Object value)
+		{
+			VBFile vbFile = getVBFile(fileNumber);
+			if (value != null)
+			{
+				Type type = null;
+
+				if (value is bool) {
+					bool tmp;
+					vbFile.Input(out tmp);
+					value = tmp;
+				}
+				else if (value is byte) {
+					byte tmp;
+					vbFile.Input(out tmp);
+					value = tmp;
+				}
+				else if (value is char) {
+					char tmp;
+					vbFile.Input(out tmp);
+					value = tmp;
+				}
+				else if (value is double) {
+					double tmp;
+					vbFile.Input(out tmp);
+					value = tmp;
+				}
+				else if (value is short) {
+					short tmp;
+					vbFile.Input(out tmp);
+					value = tmp;
+				}
+				else if (value is int) {
+					int tmp;
+					vbFile.Input(out tmp);
+					value = tmp;
+				}
+				else if (value is long) {
+					long tmp;
+					vbFile.Input(out tmp);
+					value = tmp;
+				}
+				else if (value is float) {
+					float tmp;
+					vbFile.Input(out tmp);
+					value = tmp;
+				}
+				else if (value is Decimal) {
+					Decimal tmp;
+					vbFile.Input(out tmp);
+					value = tmp;
+				}
+				else if (value is string)
+					vbFile.Input((string)value);
+				// Come back to it later
+				// 			else if (type.get_IsByRef())
+				// 				vbFile.Input((ObjectRefWrapper)value[i],false);
+
+			}
+		}
+
+		public static String InputString(int fileNumber, int count)
+		{
+			if (count < 0)
+				throw (ArgumentException)ExceptionUtils.VbMakeException(VBErrors.IllegalFuncCall);
+			VBFile vbFile = getVBFile(fileNumber);
+			if (vbFile.getLength()- vbFile.getPosition() < count)
+				throw (EndOfStreamException)ExceptionUtils.VbMakeException(VBErrors.EndOfFile);
+			return vbFile.InputString(count);
+		}
+
+		public static String LineInput(int fileNumber)
+		{
+			VBFile vbFile = getVBFile(fileNumber);
+
+			if (EOF(fileNumber))
+				throw new EndOfStreamException("Input past end of file.");
+
+			return vbFile.readLine();
+		}
+
+		public static void Print(int fileNumber, Object[] output)
+		{
+			VBFile vbFile = getVBFile(fileNumber);
+			vbFile.print(output);
+		}
+
+		public static void PrintLine(int fileNumber)
+		{
+			VBFile vbFile = getVBFile(fileNumber);
+			vbFile.printLine(null);
+		}
+
+		public static void PrintLine(int fileNumber, Object[] output)
+		{
+			VBFile vbFile = getVBFile(fileNumber);
+			vbFile.printLine(output);
+		}
+
+		public static void Write(int fileNumber, Object[] output)
+		{
+			VBFile vbFile = getVBFile(fileNumber);
+			vbFile.write(output);
+		}
+
+		public static void WriteLine(int fileNumber, Object[] output)
+		{
+			VBFile vbFile = getVBFile(fileNumber);
+			vbFile.writeLine(output);
+		}
+
+		public static void Rename(String oldPath, String newPath)
+		{
+			FileInfo file = new FileInfo(newPath);
+			if (file.Exists)
+				throw (IOException) ExceptionUtils.VbMakeException(
+										   VBErrors.FileAlreadyExists);
+			try
+			{
+				Directory.Move(oldPath, newPath);
+			}catch (DirectoryNotFoundException e){
+				throw (ArgumentException)ExceptionUtils.VbMakeException(VBErrors.IllegalFuncCall);
+			}
+		}
+
+		public static void FileCopy(String source, String destination)
+		{
+			if ((source == null) || (source.Length == 0))
+			{
+				ExceptionUtils.VbMakeException(VBErrors.BadFileNameOrNumber);
+				throw new ArgumentException(
+							    Utils.GetResourceString("Argument_PathNullOrEmpty"));
 			}
 
-			public string Next() {
+			if ((destination == null) || (destination.Length == 0))
+			{
+				ExceptionUtils.VbMakeException(VBErrors.BadFileNameOrNumber);
+				throw new ArgumentException(
+							    Utils.GetResourceString("Argument_PathNullOrEmpty"));
+			}
+
+			FileInfo f = new FileInfo(source);
+			if (!f.Exists)
+				throw (FileNotFoundException) ExceptionUtils.VbMakeException(
+											     VBErrors.FileNotFound);
+			if (_fileNameIdMap[source] != null)
+				throw (IOException) ExceptionUtils.VbMakeException(
+										   VBErrors.FileAlreadyOpen);
+			int lastIndex = destination.LastIndexOf('\\');
+			DirectoryInfo dir = new DirectoryInfo(destination.Substring(0,lastIndex));
+			if (!dir.Exists)
+			{
+				ExceptionUtils.VbMakeException(VBErrors.FileAlreadyOpen);
+				throw new DirectoryNotFoundException();
+			}
+
+			// the file name length is 0
+			if (destination.Length == lastIndex +1)
+			{
+				throw (IOException)ExceptionUtils.VbMakeException(VBErrors.FileAlreadyOpen);
+
+			}
+
+			f = new FileInfo(destination);
+			if (f.Exists)
+				throw (IOException) ExceptionUtils.VbMakeException(
+										   VBErrors.FileAlreadyExists);
+			File.Copy(source, destination);
+		}
+
+		public static void MkDir(String path)
+		{
+			if ((path == null) || (path.Length == 0))
+			{
+				ExceptionUtils.VbMakeException(VBErrors.BadFileNameOrNumber);
+				throw new ArgumentException(
+							    Utils.GetResourceString("Argument_PathNullOrEmpty"));
+			}
+			if (Directory.Exists(path))
+				throw (IOException) ExceptionUtils.VbMakeException(
+										   VBErrors.PathFileAccess);
+
+			Directory.CreateDirectory(path);
+		}
+
+		public static void Kill(String pathName)
+		{
+			if (_fileNameIdMap[pathName] != null)
+				throw (IOException) ExceptionUtils.VbMakeException(
+										   VBErrors.FileAlreadyOpen);
+			if (!File.Exists(pathName))
+				throw (IOException) ExceptionUtils.VbMakeException(
+										   VBErrors.FileNotFound);
+			File.Delete(pathName);
+		}
+
+		public static void RmDir(String pathName)
+		{
+			if (pathName == null || pathName.Length == 0 )
+			{
+				ExceptionUtils.VbMakeException(VBErrors.BadFileNameOrNumber);
+				throw new ArgumentException(pathName);
+			}
+			DirectoryInfo dir = new DirectoryInfo(pathName);
+			if (!dir.Exists)
+			{
+				ExceptionUtils.VbMakeException(VBErrors.PathNotFound);
+				throw new DirectoryNotFoundException();
+			}
+			if (dir.GetFiles().Length != 0)
+				throw (IOException) ExceptionUtils.VbMakeException(
+										   VBErrors.PathFileAccess);
+			Directory.Delete(pathName);
+		}
+
+		public static FileAttribute  GetAttr(String pathName)
+		{
+			if (pathName == null || pathName.Length == 0 ||
+			    pathName.IndexOf('*') != -1 || pathName.IndexOf('?') != -1)
+			{
+				throw (IOException)ExceptionUtils.VbMakeException(VBErrors.BadFileNameOrNumber);
+			}
+			// 		File f = new File(pathName);
+			// 		if (!f.exists())
+			// 			throw (FileNotFoundException)
+			// 				ExceptionUtils.VbMakeException(VBErrors.FileNotFound);
+			return (FileAttribute) File.GetAttributes(pathName);
+		}
+
+		public static void SetAttr(String pathName, FileAttribute fileAttr)
+		{
+			if (pathName == null || pathName.Length == 0 ||
+			    pathName.IndexOf('*') != -1 || pathName.IndexOf('?') != -1)
+			{
+				throw (ArgumentException)ExceptionUtils.VbMakeException(VBErrors.IllegalFuncCall);
+			}
+			FileInfo f = new FileInfo(pathName);
+			if (!f.Directory.Exists)
+			{
+				ExceptionUtils.VbMakeException(VBErrors.PathNotFound);
+				throw new DirectoryNotFoundException();
+			}
+			if (!f.Exists)
+			{
+				throw (FileNotFoundException)
+					ExceptionUtils.VbMakeException(VBErrors.FileNotFound);
+			}
+
+			try
+			{
+				File.SetAttributes(pathName, (FileAttributes)fileAttr);
+			}
+			catch (ArgumentException e)
+			{
+				throw (ArgumentException) ExceptionUtils.VbMakeException(
+											 VBErrors.IllegalFuncCall);
+			}
+			catch (DirectoryNotFoundException ex)
+			{
+				ExceptionUtils.VbMakeException(VBErrors.PathNotFound);
+				throw ex;
+			}
+			catch (FileNotFoundException ex)
+			{
+				throw (FileNotFoundException)
+					ExceptionUtils.VbMakeException(VBErrors.FileNotFound);
+			}
+
+		}
+
+
+		public static /*synchronized*/ String Dir(String pathName)
+		{
+			return Dir(pathName, 0);
+		}
+
+		public static /*synchronized*/ String Dir(String pathName, 
+							  [System.Runtime.InteropServices.Optional] 
+							  [System.ComponentModel.DefaultValue(0)] 
+							  FileAttribute fileAttribute)
+		{
+			_fileIndex = 0;
+			_files = null;
+			_pattern = null;
+
+			_fileAttrs = (int)fileAttribute;
+
+			if (pathName == null || pathName.Equals(""))
+			{
 				return "";
 			}
+
+			if (FileAttribute.Volume == fileAttribute)
+				return "";
+
+
+			int lastBabkSlashInx = pathName.LastIndexOf('\\');
+			int lastSlashInx = pathName.LastIndexOf('/');
+			int maxIndex = (lastSlashInx>lastBabkSlashInx)?lastSlashInx:lastBabkSlashInx; 
+			String dir = pathName.Substring(0, maxIndex + 1);
+			String fileName = pathName.Substring(1 + maxIndex);
+			if (fileName == null || fileName.Length == 0)
+				fileName = "*";
+
+			//        int astricsInx = fileName.indexOf('*');
+			//        int questionInx = fileName.indexOf('?');
+
+			//        String pattern;
+			DirectoryInfo directory = new DirectoryInfo(dir);
+			//      java.io.File directory = new java.io.File(dir);
+			//		java.io.File file;
+			if (!directory.Exists)
+			{
+				// path not found - return empty string
+				return "";
+			}
+
+			//        if (astricsInx == -1 && questionInx == -1)
+			//        {
+			//            pattern = fileName;
+			//        }
+			//        else
+			//        {
+			//            pattern = Strings.Replace(fileName, ".", "\\.", 1, -1, CompareMethod.Binary);
+			//            pattern = Strings.Replace(pattern, "*", ".*", 1, -1, CompareMethod.Binary);
+			//            pattern = Strings.Replace(pattern, "?", ".?", 1, -1, CompareMethod.Binary);
+			//        }
+
+			_pattern = fileName;
+			//        _pattern = Pattern.compile(pattern, Pattern.CASE_INSENSITIVE);
+
+			_files = directory.GetFiles(_pattern);
+			String answer;
+			if (_files == null || _files.Length == 0)
+			{
+				DirectoryInfo[] dirs = directory.GetDirectories(_pattern);
+				if (dirs == null || dirs.Length == 0)
+				{
+					return "";
+				}
+				answer = dirs[0].Name;            
+			}
+			else
+			{   
+				answer = _files[0].Name;
+			}   
+
+			_fileIndex++;
+			_isEndOfFiles = false;
+
+
+			return answer;
+
 		}
 
-		private static FileFinder CurrentFileFinder = null;
+		public static /*synchronized*/ String Dir()
+		{
+			String name;
+			if (_files == null || _isEndOfFiles)
+				throw new /*Illegal*/ArgumentException("no path has been initiated");
 
-		[MonoTODO]
-		public static System.String Dir (
-						 System.String Pathname, 
+			if (_fileIndex < _files.Length)
+			{
+				name = _files[_fileIndex].Name;
+				_fileIndex++;
+			}
+			else
+			{
+				_isEndOfFiles = true;
+				name = "";
+			}
+
+			return name;
+		}
+
+		public static DateTime FileDateTime(String pathName)
+		{
+			if (pathName == null || pathName.Length == 0 ||
+			    pathName.IndexOf('*') != -1 || pathName.IndexOf('?') != -1)
+			{
+				ExceptionUtils.VbMakeException(VBErrors.BadFileNameOrNumber);
+				throw new ArgumentException(
+							    VBUtils.GetResourceString(
+										      "Argument_InvalidValue1",
+										      "PathName"));
+			}
+			FileInfo f = new FileInfo(pathName);
+			if (!f.Exists)
+			{
+				DirectoryInfo d = new DirectoryInfo(pathName);
+				if (!d.Exists)	
+					throw (FileNotFoundException)
+						ExceptionUtils.VbMakeException(VBErrors.FileNotFound);
+				return d.LastWriteTime;
+			}
+			return f.LastWriteTime;
+		}
+
+		public static long FileLen(String pathName)
+		{
+			FileInfo f = new FileInfo(pathName);
+			if (!f.Exists)
+				throw new FileNotFoundException(
+								"file not exists: " + pathName);
+
+			return f.Length;
+		}
+
+
+		public static String SPC(int count)
+		{
+			StringBuilder sb = new StringBuilder(count);
+			for (int i = 0; i < count; i++)
+				sb.Append(' ');
+
+			return sb.ToString();
+		}
+
+		public static int FreeFile()
+		{
+			ICollection s = _openFilesMap.Keys;
+
+			if (s.Count == 0)
+				return 1;
+
+			int [] keyArr = new int[s.Count];
+
+			s.CopyTo(keyArr, 0);
+
+			Array.Sort(keyArr);
+			int i = 0;
+			for (; i < keyArr.Length - 1; i++)
+			{
+				if ((keyArr[i]+ 1) < keyArr[i + 1])
+					break;
+			}
+
+			int retVal = keyArr[i]+ 1;
+
+			if (retVal > 255)
+			{
+				String message = VBUtils.GetResourceString(67);
+				throw (IOException)VBUtils.VBException(
+								       new IOException(message),
+								       67);
+			}
+
+			return retVal;
+
+		}
+
+		public static bool EOF(int fileNumber)
+		{
+			bool  retVal = false;
+			VBFile vbFile = getVBFile(fileNumber);
+			return vbFile.isEndOfFile();
+		}
+
+		// check if a specific number is free
+		private static bool isFileNumberFree(int fileNumber)
+		{
+			return !_openFilesMap.ContainsKey(fileNumber);
+		}
+
+		public static void ChDir(String Path)
+		{
+			Path = Strings.RTrim(Path);
+			if (Path == null || Path.Length == 0)
+			{
+				string errStr = Utils.GetResourceString("Argument_PathNullOrEmpty");
+				
+				throw (ArgumentException)ExceptionUtils.VbMakeException(new ArgumentException(errStr), 52);
+			}
+			if (StringType.StrCmp(Path, "\\", false) == 0)
+			{
+				//Path = Directory.GetDirectoryRoot(Directory.GetCurrentDirectory());
+			}
+			try
+			{
+				//Directory.SetCurrentDirectory(Path);
+				return;
+			}
+			catch (Exception e)
+			{
+				string errStr = Utils.GetResourceString("FileSystem_PathNotFound1", Path);
+				throw (FileNotFoundException)ExceptionUtils.VbMakeException(new FileNotFoundException(errStr),76);
+			}
+		}
+
+		public static void ChDrive(char Drive)
+		{
+			Drive = char.ToUpper(Drive, CultureInfo.InvariantCulture);
+			if ((Drive < 65) || (Drive > 90))
+			{
+				throw new ArgumentException(
+							    Utils.GetResourceString("Argument_InvalidValue1", "Drive"));
+			}
+			Directory.SetCurrentDirectory(String.Concat(StringType.FromChar(Drive), StringType.FromChar(Path.VolumeSeparatorChar)));
+		}
+
+		public static void ChDrive(String Drive)
+		{
+			if (Drive != null && Drive.Length != 0)
+				FileSystem.ChDrive(Drive[0]);
+		}
+
+		public static String CurDir()
+		{
+			return Directory.GetCurrentDirectory();
+		}
+
+		public static String CurDir(char Drive)
+		{
+			return Directory.GetCurrentDirectory();
+		}
+
+		public static void FileGetObject(int fileNumber,
+						 ref object value,
 						 [System.Runtime.InteropServices.Optional] 
-						 [System.ComponentModel.DefaultValue(0)] 
-						 Microsoft.VisualBasic.FileAttribute Attributes) { 
-			CurrentFileFinder = new FileFinder(Pathname, Attributes);
-			return Dir();
-		}
+						 [System.ComponentModel.DefaultValue(-1)] long recordNumber) 
 
-		[MonoTODO]
-		public static System.String Dir () {
-			if (CurrentFileFinder == null)
-				throw new ArgumentException();
-			string filename = CurrentFileFinder.Next();
-			if (filename == "")
-				CurrentFileFinder = null; // to cause an error next time
-			return filename;
-		}
-	
-		
-		[MonoTODO("Needs testing")]
-		public static void MkDir (System.String Path) 
-		{ 
-			// if a file called like 'path' does exist
-			// no exception is generated using .net
-			// A little extrange?
-			if (Path==null || Path=="")
-			{
-				throw new System.ArgumentException(); 
+
+		{
+			checkRecordNumber(recordNumber,true);
+			VBFile vbFile = getVBFile(fileNumber);
+
+			Type type = value.GetType();
+
+			if (type == null || value is string) {
+				vbFile.get(ref value,recordNumber,false);
 			}
+			else if ( value is bool) {
+				bool tmp;
+				vbFile.get(out tmp,recordNumber);
+				value = tmp;
+			}
+			else if ( value is char) {
+				char tmp;
+				vbFile.get(out tmp,recordNumber);
+				value = tmp;
+			}
+			else if ( value is byte) {
+				byte tmp;
+				vbFile.get(out tmp,recordNumber);
+				value = tmp;
+			}
+			else if ( value is short) {
+				short tmp;
+				vbFile.get(out tmp,recordNumber);
+				value = tmp;
+			}
+			else if ( value is int) {
+				int tmp;
+				vbFile.get(out tmp,recordNumber);
+				value = tmp;
+			}
+			else if ( value is long) {
+				long tmp;
+				vbFile.get(out tmp,recordNumber);
+				value = tmp;
+			}
+			else if ( value is float) {
+				float tmp;
+				vbFile.get(out tmp,recordNumber);
+				value = tmp;
+			}
+			else if ( value is double) {
+				double tmp;
+				vbFile.get(out tmp,recordNumber);
+				value = tmp;
+			}
+			else if ( value is Decimal) {
+				Decimal tmp;
+				vbFile.get(out tmp,recordNumber);
+				value = tmp;
+			}
+			else if ( value is DateTime) {
+				DateTime tmp;
+				vbFile.get(out tmp,recordNumber);
+				value = tmp;
+			}
+			else if (type.IsArray)
+				vbFile.get(value,recordNumber,true,false);
 			else
-			{
-				if (System.IO.Directory.Exists (Path))
-					throw new System.IO.IOException("Directory already exists");
-				else
-					System.IO.Directory.CreateDirectory(Path);
-			}
+				throw new NotSupportedException();
 		}
-		
-		[MonoTODO("Needs testing")]
-		public static void RmDir (System.String Path) 
-		{ 
-			System.IO.Directory.Delete(Path); 
-		}
-		
-		[MonoTODO("Needs testing")]
-		public static void FileCopy (System.String Source, System.String Destination) 
-		{ 
-			// using VB, filecopy always overwrites Destination
-			System.IO.File.Copy(Source,Destination,true); 
-		}
-		
-		[MonoTODO("Needs testing")]
-		public static System.DateTime FileDateTime (System.String PathName) 
-		{
-			// A better exception handling is needed : exceptions
-			// are not the same as 'GetLastWriteTime'
-			return System.IO.File.GetLastWriteTime (PathName);
-		}
-		
-		[MonoTODO("Needs Testing")]
-		public static System.Int64 FileLen(System.String PathName) 
-		{
-			FileInfo MyFile=new FileInfo(PathName);
-			if ( !MyFile.Exists )
-				throw new System.ArgumentException(PathName + " does not exists");
-			return (System.Int64)MyFile.Length;  
-		}
-		[MonoTODO]
-		public static Microsoft.VisualBasic.FileAttribute GetAttr (System.String PathName) {
-			throw new NotImplementedException ();
-		}
-		
-		[MonoTODO("Needs testing")]
-		public static void Kill (System.String PathName) 
-		{
-			if (!System.IO.File.Exists(PathName))
-				throw new System.IO.FileNotFoundException();
-			else
-				System.IO.File.Delete(PathName);
-		}
-		
-		[MonoTODO]
-		public static void SetAttr (System.String PathName, Microsoft.VisualBasic.FileAttribute Attributes) {
-			throw new NotImplementedException ();
-		}
-	
-		[MonoTODO("Needs testing")]
-		public static void FileOpen (System.Int32 FileNumber, 
-					     System.String FileName, 
-					     Microsoft.VisualBasic.OpenMode Mode, 
-					     [System.Runtime.InteropServices.Optional] 
-					     [System.ComponentModel.DefaultValue(-1)] Microsoft.VisualBasic.OpenAccess Access, 
-					     [System.Runtime.InteropServices.Optional]  
-					     [System.ComponentModel.DefaultValue(-1)] Microsoft.VisualBasic.OpenShare Share, 
-					     [System.Runtime.InteropServices.Optional] 
-					     [System.ComponentModel.DefaultValue(-1)] System.Int32 RecordLength)
-		{  
-			// at this moment you can open a file
-			// only for Append, Input or Output
-			System.IO.FileMode MyMode;
-			System.IO.FileAccess MyAccess; 
-			System.IO.FileShare MyShare;
-			//
-			// exceptions
-			//
-			if ( RecordLength < -1 )
-				throw new System.ArgumentException("Record Length is negative (nad not equal to -1)");
-			if ( RecordLength > 32767)
-				throw new System.ArgumentException ("Invalid Record Length");
-			if (FileNumber <0 || FileNumber > 255)
-				throw new System.IO.IOException(FileNumber.ToString() + " is invalid (<-1 or >255)",5); 
-			if ( (Mode == OpenMode.Output) && ( Access != OpenAccess.Default ) && ( Access != OpenAccess.Write ) )
-				throw new System.ArgumentException("To use Output Mode, you have to use OpenAccess.Write or OpenAccess.Default");
-			if ( (Mode == OpenMode.Input) && ( Access != OpenAccess.Default ) && ( Access != OpenAccess.Read ) )
-				throw new System.ArgumentException("To use Input Mode, you have to use OpenAccess.Read or OpenAccess.Default");
-			//
-			// implementation
-			//
-			FileNumber--;
-			if (FHandle[FileNumber] != null)
-				throw new System.IO.IOException (FileNumber.ToString() + " is in use",5); 	
-			
-			switch (Mode) {
-			case Microsoft.VisualBasic.OpenMode.Append :
-				MyMode=System.IO.FileMode.Append  ;  
-				break;
-			case Microsoft.VisualBasic.OpenMode.Binary :
-				throw new NotImplementedException ();
-						
-			case Microsoft.VisualBasic.OpenMode.Input  :
-				MyMode=System.IO.FileMode.Open  ;
-				break;
-			case Microsoft.VisualBasic.OpenMode.Output  :
-				MyMode=System.IO.FileMode.OpenOrCreate  ;
-				break;
-			case Microsoft.VisualBasic.OpenMode.Random  :
-				throw new NotImplementedException ();	
-			default:
-				throw new System.ArgumentException("Invalid Share"); 
-			}
 
-			switch (Access) {
-			case Microsoft.VisualBasic.OpenAccess.ReadWrite :  
-			case Microsoft.VisualBasic.OpenAccess.Default :
-				MyAccess=System.IO.FileAccess.ReadWrite;
-				break;
-			case Microsoft.VisualBasic.OpenAccess.Read :
-				MyAccess=System.IO.FileAccess.Read;
-				break;
-			case Microsoft.VisualBasic.OpenAccess.Write :
-				MyAccess=System.IO.FileAccess.Write;
-				break;
-			default:
-				throw new System.ArgumentException("Invalid Access");
-					
-			}
+		public static void FileGet(int fileNumber,
+					   ref DateTime value,
+					   [System.Runtime.InteropServices.Optional]
+					   [System.ComponentModel.DefaultValue(-1)] long recordNumber)
 
-			switch(Share) {
-			case Microsoft.VisualBasic.OpenShare.Default :
-			case Microsoft.VisualBasic.OpenShare.Shared :
-				MyShare=System.IO.FileShare.ReadWrite ;  
-				break;
-			case Microsoft.VisualBasic.OpenShare.LockRead  :
-				MyShare=System.IO.FileShare.Write; 
-				break;
-			case Microsoft.VisualBasic.OpenShare.LockReadWrite :
-				MyShare=System.IO.FileShare.None ;
-				break;
-			case Microsoft.VisualBasic.OpenShare.LockWrite :
-				MyShare=System.IO.FileShare.Read;
-				break;
-			default:
-				throw new System.ArgumentException("Invalid Share");
-			}
-
-			FHandle[FileNumber]=new System.IO.FileStream (FileName,MyMode,MyAccess,MyShare);
-			FMode[FileNumber]=Mode;
+		{
+			checkRecordNumber(recordNumber,true);
+			VBFile vbFile = getVBFile(fileNumber);
+			vbFile.get(out value,recordNumber);
 		}
-		
-		[MonoTODO("Needs testing")]
-		public static void FileClose (params System.Int32[] FileNumbers) 
-		{ 
-			int bucle=0;
-			if (FileNumbers.Length  == 0) 
-				Microsoft.VisualBasic.FileSystem.Reset();
+
+		public static void FileGet(int fileNumber,
+					   ValueType value,
+					   long recordNumber) /*throws NotImplementedException*/
+		{
+			throw new NotImplementedException();
+		}
+
+		public static void FileGet(int fileNumber,
+					   ref Object value,
+					   [System.Runtime.InteropServices.Optional] 
+					   [System.ComponentModel.DefaultValue(-1)] long recordNumber, 
+					   [System.Runtime.InteropServices.Optional] 
+					   [System.ComponentModel.DefaultValue(false)] bool arrayIsDynamic, 
+					   [System.Runtime.InteropServices.Optional] 
+					   [System.ComponentModel.DefaultValue(false)] bool stringIsFixedLength) 
+
+
+		{
+			checkRecordNumber(recordNumber,true);
+			VBFile vbFile = getVBFile(fileNumber);
+			vbFile.get(value,recordNumber,arrayIsDynamic,stringIsFixedLength);
+		}
+
+		public static void FilePutObject(int fileNumber,
+						 Object value,
+						 [System.Runtime.InteropServices.Optional]
+						 [System.ComponentModel.DefaultValue(-1)] long recordNumber)
+
+		{
+			checkRecordNumber(recordNumber,true);
+			VBFile vbFile = getVBFile(fileNumber);
+			Type type = value.GetType();
+			if(value is string || value == null)
+				vbFile.put((String)value,recordNumber,false);
+			else if( value is bool) {
+				vbFile.put((bool)value, recordNumber);
+			}
+			else if( value is char) {
+				vbFile.put((char)value,recordNumber);
+			}
+			else if( value is byte) {
+				vbFile.put((byte)value, recordNumber);
+			}
+			else if( value is short) {
+				vbFile.put((short)value, recordNumber);
+			}
+			else if( value is int) {
+				vbFile.put((int)value, recordNumber);
+			}
+			else if( value is long) {
+				vbFile.put((long)value, recordNumber);
+			}
+			else if( value is float) {
+				vbFile.put((float)value, recordNumber);
+			}
+			else if( value is double) {
+				vbFile.put((double)value, recordNumber);
+			}
+			else if( value is Decimal) {
+				vbFile.put((Decimal)value,recordNumber);
+			}
+			else if( value is DateTime) {
+				vbFile.put((DateTime)value, recordNumber);
+			}
+			else if(type.IsArray) {
+				vbFile.put(value,recordNumber,true,false);
+			}
 			else {
-				for(bucle=0;bucle<FileNumbers.Length;bucle++) {
-					if ( FHandle [ FileNumbers[bucle] - 1 ] != null ) {
-						if (FileNumbers[bucle]>0 && FileNumbers[bucle]<256) {
-							try {
-								FHandle[ FileNumbers[bucle] - 1].Close();
-								FHandle[ FileNumbers[bucle] - 1]=null;
-							}
-							catch (Exception e){e.GetType (); FHandle[ FileNumbers[bucle] - 1]= null ;}
-						}
-						else
-							throw new System.IO.IOException (FileNumbers[bucle].ToString() + " Does not exist",52);
-					}
-					else
-						throw new System.IO.IOException (FileNumbers[bucle].ToString() + " Does not exist",52);
-				}
+				throw new NotSupportedException();
 			}
-		}                
-
-		[MonoTODO]
-		public static void FileGetObject (System.Int32 FileNumber, 
-						  ref System.Object Value, 
-						  [System.Runtime.InteropServices.Optional] 
-						  [System.ComponentModel.DefaultValue(-1)] ref System.Int64 RecordNumber) 
-		{ 
-			throw new NotImplementedException (); 
-		}
-		
-		[MonoTODO]
-		public static void FileGet (System.Int32 FileNumber, 
-					    ref System.ValueType Value, 
-					    [System.Runtime.InteropServices.Optional] 
-					    [System.ComponentModel.DefaultValue(-1)] ref System.Int64 RecordNumber) 
-		{ 
-			throw new NotImplementedException (); 
-		}
-		
-		[MonoTODO]
-		public static void FileGet (System.Int32 FileNumber, 
-					    ref System.Array Value, 
-					    [System.Runtime.InteropServices.Optional] 
-					    [System.ComponentModel.DefaultValue(-1)] ref System.Int64 RecordNumber, 
-					    [System.Runtime.InteropServices.Optional] 
-					    [System.ComponentModel.DefaultValue(false)] ref System.Boolean ArrayIsDynamic, 
-					    [System.Runtime.InteropServices.Optional] 
-					    [System.ComponentModel.DefaultValue(false)] ref System.Boolean StringIsFixedLength) 
-		{ 
-			throw new NotImplementedException (); 
-		}
-		
-		[MonoTODO]
-		public static void FileGet (System.Int32 FileNumber, 
-					    ref System.Boolean Value, 
-					    [System.Runtime.InteropServices.Optional] 
-					    [System.ComponentModel.DefaultValue(-1)] ref System.Int64 RecordNumber) 
-		{ 
-			throw new NotImplementedException (); 
-		}
-
-		[MonoTODO]
-		public static void FileGet (System.Int32 FileNumber, 
-					    ref System.Byte Value, 
-					    [System.Runtime.InteropServices.Optional] 
-					    [System.ComponentModel.DefaultValue(-1)] ref System.Int64 RecordNumber) 
-		{ 
-			throw new NotImplementedException (); 
-		}
-		
-		[MonoTODO]
-		public static void FileGet (System.Int32 FileNumber,
-					    ref System.Int16 Value,
-					    [System.Runtime.InteropServices.Optional]
-					    [System.ComponentModel.DefaultValue(-1)] ref System.Int64 RecordNumber)
-		{
-			throw new NotImplementedException ();
-		}
-		
-		[MonoTODO]
-		public static void FileGet (System.Int32 FileNumber,
-					    ref System.Int32 Value,
-					    [System.Runtime.InteropServices.Optional]
-					    [System.ComponentModel.DefaultValue(-1)] ref System.Int64 RecordNumber)
-		{
-			throw new NotImplementedException ();
-		}
-		
-		[MonoTODO]
-		public static void FileGet (System.Int32 FileNumber,
-					    ref System.Int64 Value,
-					    [System.Runtime.InteropServices.Optional]
-					    [System.ComponentModel.DefaultValue(-1)] ref System.Int64 RecordNumber)
-		{
-			throw new NotImplementedException ();
-		}
-		
-		[MonoTODO]
-		public static void FileGet (System.Int32 FileNumber,
-					    ref System.Char Value,
-					    [System.Runtime.InteropServices.Optional]
-					    [System.ComponentModel.DefaultValue(-1)] ref System.Int64 RecordNumber)
-		{
-			throw new NotImplementedException ();
-		}
-		
-		[MonoTODO]
-		public static void FileGet (System.Int32 FileNumber,
-					    ref System.Single Value,
-					    [System.Runtime.InteropServices.Optional]
-					    [System.ComponentModel.DefaultValue(-1)] ref System.Int64 RecordNumber)
-		{
-			throw new NotImplementedException ();
-		}
-		
-		[MonoTODO]
-		public static void FileGet (System.Int32 FileNumber,
-					    ref System.Double Value,
-					    [System.Runtime.InteropServices.Optional]
-					    [System.ComponentModel.DefaultValue(-1)] ref System.Int64 RecordNumber)
-		{
-			throw new NotImplementedException ();
-		}
-		
-		[MonoTODO]
-		public static void FileGet (System.Int32 FileNumber,
-					    ref System.Decimal Value,
-					    [System.Runtime.InteropServices.Optional]
-					    [System.ComponentModel.DefaultValue(-1)] ref System.Int64 RecordNumber)
-		{
-			throw new NotImplementedException ();
-		}
-		
-		[MonoTODO]
-		public static void FileGet (System.Int32 FileNumber,
-					    ref System.String Value,
-					    [System.Runtime.InteropServices.Optional]
-					    [System.ComponentModel.DefaultValue(-1)] ref System.Int64 RecordNumber,
-					    [System.Runtime.InteropServices.Optional]
-					    [System.ComponentModel.DefaultValue(false)] ref System.Boolean StringIsFixedLength)
-		{
-			throw new NotImplementedException ();
-		}
-		
-		[MonoTODO]
-		public static void FileGet (System.Int32 FileNumber,
-					    ref System.DateTime Value,
-					    [System.Runtime.InteropServices.Optional]
-					    [System.ComponentModel.DefaultValue(-1)] ref System.Int64 RecordNumber)
-		{
-			throw new NotImplementedException ();
-		}
-		
-		[MonoTODO]
-		public static void FilePutObject (System.Int32 FileNumber,
-						  System.Object Value,
-						  [System.Runtime.InteropServices.Optional]
-						  [System.ComponentModel.DefaultValue(-1)] System.Int64 RecordNumber)
-		{
-			throw new NotImplementedException ();
-		}
-		
-		[MonoTODO]
-		[System.ObsoleteAttribute("Use FilePutObject to write Object types, or coerce FileNumber and RecordNumber to Integer for writing non-Object types", false)] 
-		public static void FilePut (System.Object FileNumber,
-					    System.Object Value,
-					    [System.Runtime.InteropServices.Optional]
-					    [System.ComponentModel.DefaultValue(-1)] System.Object RecordNumber)
-		{
-			throw new NotImplementedException ();
-		}
-		
-		[MonoTODO]
-		public static void FilePut (System.Int32 FileNumber,
-					    System.ValueType Value,
-					    [System.Runtime.InteropServices.Optional]
-					    [System.ComponentModel.DefaultValue(-1)] System.Int64 RecordNumber)
-		{
-			throw new NotImplementedException ();
-		}
-		
-		[MonoTODO]
-		public static void FilePut (System.Int32 FileNumber,
-					    System.Array Value,
-					    [System.Runtime.InteropServices.Optional]
-					    [System.ComponentModel.DefaultValue(-1)] System.Int64 RecordNumber,
-					    [System.Runtime.InteropServices.Optional]
-					    [System.ComponentModel.DefaultValue(false)] System.Boolean ArrayIsDynamic,
-					    [System.Runtime.InteropServices.Optional]
-					    [System.ComponentModel.DefaultValue(false)] System.Boolean StringIsFixedLength)
-		{
-			throw new NotImplementedException ();
-		}
-		
-		[MonoTODO]
-		public static void FilePut (System.Int32 FileNumber,
-					    System.Boolean Value,
-					    [System.Runtime.InteropServices.Optional]
-					    [System.ComponentModel.DefaultValue(-1)] System.Int64 RecordNumber)
-		{
-			throw new NotImplementedException ();
-		}
-		
-		[MonoTODO]
-		public static void FilePut (System.Int32 FileNumber,
-					    System.Byte Value,
-					    [System.Runtime.InteropServices.Optional]
-					    [System.ComponentModel.DefaultValue(-1)] System.Int64 RecordNumber)
-		{
-			throw new NotImplementedException ();
-		}
-		
-		[MonoTODO]
-		public static void FilePut (System.Int32 FileNumber,
-					    System.Int16 Value,
-					    [System.Runtime.InteropServices.Optional]
-					    [System.ComponentModel.DefaultValue(-1)] System.Int64 RecordNumber)
-		{
-			throw new NotImplementedException ();
-		}
-		
-		[MonoTODO]
-		public static void FilePut (System.Int32 FileNumber,
-					    System.Int32 Value,
-					    [System.Runtime.InteropServices.Optional]
-					    [System.ComponentModel.DefaultValue(-1)] System.Int64 RecordNumber)
-		{
-			throw new NotImplementedException ();
-		}
-		
-		[MonoTODO]
-		public static void FilePut (System.Int32 FileNumber,
-					    System.Int64 Value,
-					    [System.Runtime.InteropServices.Optional]
-					    [System.ComponentModel.DefaultValue(-1)] System.Int64 RecordNumber)
-		{
-			throw new NotImplementedException ();
-		}
-		
-		[MonoTODO]
-		public static void FilePut (System.Int32 FileNumber,
-					    System.Char Value,
-					    [System.Runtime.InteropServices.Optional]
-					    [System.ComponentModel.DefaultValue(-1)] System.Int64 RecordNumber)
-		{
-			throw new NotImplementedException ();
-		}
-		
-		[MonoTODO]
-		public static void FilePut (System.Int32 FileNumber,
-					    System.Single Value,
-					    [System.Runtime.InteropServices.Optional]
-					    [System.ComponentModel.DefaultValue(-1)] System.Int64 RecordNumber)
-		{
-			throw new NotImplementedException ();
-		}
-		
-		[MonoTODO]
-		public static void FilePut (System.Int32 FileNumber,
-					    System.Double Value,
-					    [System.Runtime.InteropServices.Optional]
-					    [System.ComponentModel.DefaultValue(-1)] System.Int64 RecordNumber)
-		{
-			throw new NotImplementedException ();
-		}
-		
-		[MonoTODO]
-		public static void FilePut (System.Int32 FileNumber,
-					    System.Decimal Value,
-					    [System.Runtime.InteropServices.Optional]
-					    [System.ComponentModel.DefaultValue(-1)] System.Int64 RecordNumber)
-		{
-			throw new NotImplementedException ();
-		}
-		
-		[MonoTODO]
-		public static void FilePut (System.Int32 FileNumber,
-					    System.String Value,
-					    [System.Runtime.InteropServices.Optional]
-					    [System.ComponentModel.DefaultValue(-1)] System.Int64 RecordNumber,
-					    [System.Runtime.InteropServices.Optional]
-					    [System.ComponentModel.DefaultValue(false)] System.Boolean StringIsFixedLength)
-		{
-			throw new NotImplementedException ();
-		}
-		
-		[MonoTODO]
-		public static void FilePut (System.Int32 FileNumber,
-					    System.DateTime Value,
-					    [System.Runtime.InteropServices.Optional]
-					    [System.ComponentModel.DefaultValue(-1)] System.Int64 RecordNumber)
-		{
-			throw new NotImplementedException ();
-		}
-		
-		[MonoTODO]
-		public static void Print (System.Int32 FileNumber,
-					  params System.Object[] Output)
-		{
-			throw new NotImplementedException ();
-		}
-		
-		[MonoTODO]
-		public static void PrintLine (System.Int32 FileNumber,
-					      params System.Object[] Output)
-		{
-			throw new NotImplementedException ();
-		}
-		
-		[MonoTODO]
-		public static void Input (System.Int32 FileNumber,
-					  ref System.Object Value)
-		{
-			throw new NotImplementedException ();
-		}
-		
-		[MonoTODO("Needs Testing")]
-		public static void Input (System.Int32 FileNumber,
-					  ref System.Boolean Value)
-		{
-			string buffer="";
-			InternalInputExceptions(FileNumber);
-			buffer=InternalInput(FileNumber,3);
-			if (buffer=="True")
-				Value=true;
-			else
-				Value=false;
-		}
-		
-		[MonoTODO("Needs Testing")]
-		public static void Input (System.Int32 FileNumber, ref System.Byte Value)
-		{
-			string buffer="";
-			InternalInputExceptions(FileNumber);
-			buffer=InternalInput(FileNumber,1);
-			if (buffer[0]=='-')
-				throw new System.OverflowException();
-			Value=0;
-			for (int addnumber=0; addnumber < buffer.Length;addnumber++)
-			{
-				checked	{
-					Value*=10;
-					Value += Byte.Parse(buffer.Substring(addnumber,1));
-
-				}
-			}
-		}
-		
-		[MonoTODO("Needs Testing")]
-		public static void Input (System.Int32 FileNumber, ref System.Int16 Value)
-		{
-			string buffer="";
-			System.Int16 factor=1;
-			InternalInputExceptions(FileNumber);
-			buffer=InternalInput(FileNumber,1);
-			if (buffer[0]=='-')
-			{
-				factor=-1;
-				buffer=buffer.Substring(1);
-			}
-			Value=0;
-			for (int addnumber=0; addnumber < buffer.Length;addnumber++)
-			{
-				checked	{
-					Value*=10;
-					Value += Int16.Parse(buffer.Substring(addnumber,1));
-
-				}
-			}
-			Value*=factor;
 
 		}
-		
-		[MonoTODO("Needs Testing")]
-		public static void Input (System.Int32 FileNumber, ref System.Int32 Value)
+
+		public static void FilePut(Object FileNumber,
+					   Object Value,
+					   [System.Runtime.InteropServices.Optional]
+					   [System.ComponentModel.DefaultValue(-1)] System.Object RecordNumber)
 		{
-			string buffer="";
-			int factor=1;
-			InternalInputExceptions(FileNumber);
-			buffer=InternalInput(FileNumber,1);
-			if (buffer[0]=='-')
-			{
-				factor=-1;
-				buffer=buffer.Substring(1);
-			}
-			Value=0;
-			for (int addnumber=0; addnumber < buffer.Length;addnumber++)
-			{
-				checked	{
-					Value*=10;
-					Value += Int32.Parse(buffer.Substring(addnumber,1));
-
-				}
-			}
-			Value*=factor;
-
+			throw new ArgumentException(Utils.GetResourceString("UseFilePutObject"));
 		}
-		
-		[MonoTODO("Needs Testing")]
-		public static void Input (System.Int32 FileNumber, ref System.Int64 Value)
+
+		public static void FilePut(int FileNumber,
+					   ValueType Value,
+					   [System.Runtime.InteropServices.Optional]
+					   [System.ComponentModel.DefaultValue(-1)] System.Int64 RecordNumber)
+
 		{
-			string buffer="";
-			int factor=1;
-			InternalInputExceptions(FileNumber);
-			buffer=InternalInput(FileNumber,1);
-			if (buffer[0]=='-')
-			{
-				factor=-1;
-				buffer=buffer.Substring(1);
-			}
-			Value=0;
-			for (int addnumber=0; addnumber < buffer.Length;addnumber++)
-			{
-				checked	{
-					Value*=10;
-					Value += Int64.Parse(buffer.Substring(addnumber,1));
-
-				}
-			}
-			Value*=factor;
-
+			throw new NotImplementedException();
 		}
-		
-		[MonoTODO]
-		public static void Input (System.Int32 FileNumber, ref System.Char Value)
+
+		public static void FilePut(int fileNumber,
+					   Object value,
+					   [System.Runtime.InteropServices.Optional]
+					   [System.ComponentModel.DefaultValue(-1)] long recordNumber,
+					   [System.Runtime.InteropServices.Optional]
+					   [System.ComponentModel.DefaultValue(false)] bool arrayIsDynamic,
+					   [System.Runtime.InteropServices.Optional]
+					   [System.ComponentModel.DefaultValue(false)] bool stringIsFixedLength)
 		{
-			throw new NotImplementedException ();
+			checkRecordNumber(recordNumber,true);
+			VBFile vbFile = getVBFile(fileNumber);
+			vbFile.put(value,recordNumber,arrayIsDynamic,stringIsFixedLength);
 		}
-		
-		[MonoTODO("Needs Testing")]
-		public static void Input (System.Int32 FileNumber, ref System.Single Value)
-		{
-			System.Single DecimalValue=0;
-			string buffer="";
-			//int factor=1;
-			string BufDecimal="";
-			InternalInputExceptions(FileNumber);
-			buffer=InternalInput(FileNumber,2);
-			if (buffer[0]=='-')
-			{
-				//factor=-1;
-				buffer=buffer.Substring(1);
-			}
-			if ( buffer.IndexOf(".")>=0)
-			{
-				if ( buffer.IndexOf(".") < (buffer.Length -1) )
-					BufDecimal=buffer.Substring(buffer.IndexOf(".")+1);
-				if ( buffer.IndexOf(".") > 0)
-					buffer=buffer.Substring(0,buffer.IndexOf("."));
-				else
-					buffer="";
 
-			}
-			Value=0;
-			if ( BufDecimal.Length > 0)
-			{
-				for (int addnumber=BufDecimal.Length-1; addnumber >=0;addnumber--)
-				{
-					checked	{
-						DecimalValue += System.Single.Parse(BufDecimal.Substring(addnumber,1));
-						DecimalValue /= 10;
-
-					}
-				}
-			}
-			if (buffer.Length >0)
-			{
-				for (int addnumber=0; addnumber < buffer.Length;addnumber++)
-				{
-					checked	{
-						Value*=10;
-						Value += System.Single.Parse(buffer.Substring(addnumber,1));
-
-					}
-				}
-			}
-			Value+=DecimalValue;
-		}
-		
-		[MonoTODO("Needs Testing")]
-		public static void Input (System.Int32 FileNumber, ref System.Double Value)
+		public static void FilePut(int fileNumber,
+					   Decimal value,
+					   [System.Runtime.InteropServices.Optional]
+					   [System.ComponentModel.DefaultValue(-1)] long  recordNumber)
+					   
 		{
-			double DecimalValue=0;
-			string buffer="";
-			//int factor=1;
-			string BufDecimal="";
-			InternalInputExceptions(FileNumber);
-			buffer=InternalInput(FileNumber,2);
-			if (buffer[0]=='-')
-			{
-				//factor=-1;
-				buffer=buffer.Substring(1);
-			}
-			if ( buffer.IndexOf(".")>=0)
-			{
-				if ( buffer.IndexOf(".") < (buffer.Length -1) )
-					BufDecimal=buffer.Substring(buffer.IndexOf(".")+1);
-				if ( buffer.IndexOf(".") > 0)
-					buffer=buffer.Substring(0,buffer.IndexOf("."));
-				else
-					buffer="";
+			checkRecordNumber(recordNumber,true);
+			VBFile vbFile = getVBFile(fileNumber);
+			vbFile.put(value,recordNumber);
+		}
 
-			}
-			Value=0;
-			if ( BufDecimal.Length > 0)
-			{
-				for (int addnumber=BufDecimal.Length-1; addnumber >=0;addnumber--)
-				{
-					checked	{
-						DecimalValue += Double.Parse(BufDecimal.Substring(addnumber,1));
-						DecimalValue /= 10;
-
-					}
-				}
-			}
-			if (buffer.Length >0)
-			{
-				for (int addnumber=0; addnumber < buffer.Length;addnumber++)
-				{
-					checked	{
-						Value*=10;
-						Value += Double.Parse(buffer.Substring(addnumber,1));
-
-					}
-				}
-			}
-			Value+=DecimalValue;
-		}
-		
-		[MonoTODO]
-		public static void Input (System.Int32 FileNumber, ref System.Decimal Value)
-		{
-			throw new NotImplementedException ();
-		}
-		
-		[MonoTODO("Needs Testing")]
-		public static void Input (System.Int32 FileNumber, ref System.String Value)
-		{
-			//string buffer="";
-			InternalInputExceptions(FileNumber);
-			Value=InternalInput(FileNumber,0);
-		}
-		
-		[MonoTODO]
-		public static void Input (System.Int32 FileNumber, ref System.DateTime Value)
-		{
-			throw new NotImplementedException ();
-		}
-		private static void InternalInputExceptions(System.Int32 FileNumber)
-		{
-			if ( FileNumber < 0 || FileNumber > 255 )
-				throw new System.ArgumentException("File Number is not valid");
-			if ( FHandle[FileNumber - 1] == null)
-				throw new System.ArgumentException("File Number is not valid");
-			if ( FMode[FileNumber - 1] != OpenMode.Input && FMode[FileNumber-1] != OpenMode.Binary )
-				throw new System.IO.IOException("File Mode is invalid");
-			if ( FHandle[FileNumber - 1].Position == FHandle[FileNumber - 1].Length)
-				throw new System.IO.EndOfStreamException();
-		}
-		private static string InternalInput(System.Int32 FileNumber,int DataType)
+		public static void Input(int fileNumber, out bool Value)
 		{
 
-			// DataType : an additional filter
-			// to know if conversion is possible
-			// 0 --> string
-			// 1 --> To a numeric (integer) value
-			// 2 --> To a numeric (not integer) value
-			// 3 -->  To Boolean
-			bool found=false;
-			bool firstzone=true;
-			bool literal=false;
-			bool MyOK=true;
-			bool DecimalFound=false;
-			bool SignFound=false;
-			string retval="";
-			string retval2="";
-			byte[] BufByte=new byte[1];
-			while ( !found && ( FHandle[FileNumber-1].Position < FHandle[FileNumber-1].Length ))
-			{
-				FHandle[FileNumber-1].Read (BufByte,0,1);
-				switch ((char)BufByte[0])
-				{
-				case ' ':
-					if (literal)
-						retval+=" ";
-					else {
-						if (!firstzone && (DataType==1 || DataType==2))
-							found=true;
-						else
-							retval+=" ";
-					}
-					break;
-				case '\t':
-					if (literal) retval+="\t";
-					else if (!firstzone) found=true;
-					break;
-				case '"':
-					retval+="\"";
-					if (literal) literal=!literal;
-					else
-					{
-						if (!firstzone)	found=true;
-						else			literal=!literal;
-					}
-					break;
-				case ',':
-					if (!literal) found=true;
-					else retval+=",";
-					break;
-				case '\x0d':
-					if (!literal)
-					{
-						found=true;
-						if (FHandle[FileNumber - 1].Length > FHandle[FileNumber - 1].Position )
-						{
-							FHandle[FileNumber - 1].Read (BufByte,0,1);
-							if (BufByte[0] != 10 )
-								FHandle[FileNumber - 1].Seek (-1,SeekOrigin.Current );
-						}
+			VBFile vbFile = getVBFile(fileNumber);
+			vbFile.Input(out Value);
+		}
 
-					}
-					else {	retval+="\x0d";	}
-					break;
-				case '\x0a':
-					if (literal) retval+="\x0a";
-					break;
-				default:
-					firstzone=false;
-					retval+=((char)BufByte[0]).ToString();
-					break;
-				}
-			}
-			switch (DataType)
-			{
-			case 0:
-				retval=retval.Trim();
-				if (retval.Substring(0,1)=="\"")
-				{
-					if (retval.Length > 1)	retval=retval.Substring (1);
-					else retval="";
-				}
-				if (retval.Length >=1)
-				{
-					if (retval.Substring (retval.Length -1 ,1)=="\"")
-					{
-						if (retval.Length > 1)	retval=retval.Substring (0,retval.Length -1);
-						else retval="";
-					}
-				}
-				retval2=retval;
-				break;
-			case 1:
-			case 2:
-				retval=retval.Trim();
-				for (int myloop=0; (myloop<retval.Length) && MyOK ;myloop++)
-					switch(retval[myloop])
-					{
-					case '+':
-					case '-':
-						if (myloop==0 || myloop == (retval.Length -1))
-						{
-							if (!SignFound)
-							{
-								retval2=retval[myloop].ToString() + retval2;
-								SignFound=true;
-							}
-							else
-								MyOK=false;
-						}
-						else
-							MyOK=false;
-						break;
-					case '0': case '1': case '2': case '3': case '4':
-					case '5': case '6': case '7': case '8': case '9':
-						retval2+=retval.Substring (myloop,1);
-						break;
-					case '.':
-						if (DataType==2)
-						{
-							if (!DecimalFound)
-							{
-								retval2+="." ;
-								DecimalFound=true;
-							}
-							else
-								MyOK=false;
-						}
-						break;
-					default:
-						MyOK=false;
-						break;
-					}
-				if (MyOK && (retval2.Length >=1 ) )
-				{
-					if (retval2[retval2.Length-1]=='.' )
-					{
-						if (retval2.Length >1)
-							retval2=retval2.Substring (0,retval2.Length -1);
-						else
-							MyOK=false;
-					}
-				}
-				else
-					MyOK=false;
-				break;
-			case 3:
-				retval=retval.Trim();
-				retval2="False";
-				retval=retval.Trim();
-				if (retval=="#TRUE#" || retval=="#FALSE#" ||
-				    retval.ToUpper() =="TRUE" || retval.ToUpper() =="FALSE" ||
-				    retval.ToUpper() == "\"TRUE\"" || retval.ToUpper() == "\"FALSE\"")
-				{
-					if (retval=="#TRUE#" || retval.ToUpper() == "TRUE" || retval.ToUpper () == "\"TRUE\"")
-						retval2="True";
-				}
-				else
-				{
-					if (retval.Substring(0,1)=="\"")
-					{
-						if (retval.Length > 1)	retval=retval.Substring (1);
-						else retval="";
-					}
-					if (retval.Length >=1)
-					{
-						if (retval.Substring (retval.Length -1 ,1)=="\"")
-						{
-							if (retval.Length > 1)	retval=retval.Substring (0,retval.Length -1);
-							else retval="";
-						}
-					}
-					for (int myloop=0; (myloop<retval.Length) && MyOK ;myloop++)
-						switch(retval[myloop])
-						{
-						case '0':
-							break;
-						case '1': case '2': case '3': case '4':	case '5':
-						case '6': case '7': case '8': case '9':
-							retval2="True";
-							break;
-						case '.': break;
-						case '-':
-							if ( (myloop!=0) && (myloop!=retval.Length-1) )
-								MyOK=false;
-							break;
-						default:
-							MyOK=false;
-							break;
-						}
-				}
-				break;
-			}
-			if (MyOK)
-			{
-				return retval2;
-			}
-			else // TODO : string explaining cast exception
-				throw new System.InvalidCastException();
-		}
-		
-		[MonoTODO("Needs Testing")]
-		public static void Write (System.Int32 FileNumber, params System.Object[] Output) 
+		public static void Input(int fileNumber, out byte Value)
 		{
-			string MyBuf=null;
-			byte[] Separator=new byte[1];
-			byte[] bufout=new Byte[1];
-			Separator[0]=(byte)',';
-			if (FileNumber<1 || FileNumber>255)
-				throw new System.IO.IOException (FileNumber.ToString() + " does not exists",52);
-			if (FHandle[FileNumber - 1]==null)
-				throw new System.IO.IOException(FileNumber + " does not exists",52);
-			if ( FMode[ FileNumber - 1] != OpenMode.Output  )
-				throw new System.IO.IOException ("FileMode is invalid");
-			if (Output.Length == 0)
-			{
-				FHandle[FileNumber - 1].Write(Separator,0,1);
-			}
-			else
-			{
-				for (int MyArgs=0;MyArgs<Output.Length;MyArgs++)
-				{
-					MyBuf=WriteAuxiliar(Output[MyArgs]);
-					for (int PutsData=0;PutsData<MyBuf.Length;PutsData++)
-					{
-						bufout[0]=(byte)MyBuf[PutsData];
-						FHandle[FileNumber-1].Write(bufout,0,1);
-					}
-					FHandle[FileNumber - 1].Write(Separator,0,1);
-				}
-			}
+			VBFile vbFile = getVBFile(fileNumber);
+			vbFile.Input(out Value);
 		}
-		
-		[MonoTODO("Needs Testing")]
-		public static void WriteLine (System.Int32 FileNumber, params System.Object[] Output) 
+
+		public static void Input(int fileNumber, out short Value)
 		{
-			byte[] Separator=new byte[1];
-			byte[] bufout=new Byte[1];
-			byte[] NewLine=new Byte[2];
-			string MyBuf="";
-			Separator[0]=(byte)',';
-			NewLine[0]=(byte)'\x0D';
-			NewLine[1]=(byte)'\x0A';
-			if (FileNumber<1 || FileNumber>255)
-				throw new System.IO.IOException (FileNumber.ToString() + " does not exists",52);
-			if (FHandle[FileNumber - 1]==null)
-				throw new System.IO.IOException(FileNumber + " does not exists",52);
-			if ( FMode[ FileNumber - 1] != OpenMode.Output  )
-				throw new System.IO.IOException ("FileMode is invalid");
-			if (Output.Length == 0)
-			{
-				FHandle[FileNumber - 1].Write(NewLine,0,2);
-			}
-			else
-			{
-				for (int MyArgs=0;MyArgs<Output.Length;MyArgs++)
-				{
-					MyBuf=WriteAuxiliar(Output[MyArgs]);
-					for (int PutsData=0;PutsData<MyBuf.Length;PutsData++)
-					{
-						bufout[0]=(byte)MyBuf[PutsData];
-						FHandle[FileNumber-1].Write(bufout,0,1);
-					}
-					if (MyArgs < (Output.Length -1))
-					{
-						FHandle[FileNumber - 1].Write(Separator,0,1);
-					}
-					else
-					{
-						FHandle[FileNumber - 1].Write(NewLine,0,2);
-					}
-				}
-			}
+			VBFile vbFile = getVBFile(fileNumber);
+			vbFile.Input(out Value);
 		}
-		private static string WriteAuxiliar(Object Argument)
+
+		public static void Input(int fileNumber, out int Value)
 		{
-			string retval="";
-			if (Argument==null)
-				retval="#NULL#";
-			else
-			{
-				switch (Argument.GetType().ToString())
-				{
-				case "System.Boolean": 
-					if ( (bool)Argument == true)
-						retval="#TRUE#";
-					else
-						retval="#FALSE#";
-					break;
-				case "System.String":
-					retval="\"" + (string)Argument + "\"";
-					break;
-				case "System.Int64":
-				case "System.UInt64":
-				case "System.Int32":
-				case "System.UInt32":
-				case "System.Int16":
-				case "System.UInt16":
-				case "System.Sbyte":
-				case "System.Byte":
-					retval = Argument.ToString();
-					break;
-				case "System.Single":
-				case "System.Double":
-				case "System.Decimal":
-					string buf= (Argument.ToString()) ;
-					if ( buf.IndexOf(",")>=0)
-						retval=buf.Substring(0, buf.IndexOf(",")) 
-							+ "." + buf.Substring(1+buf.IndexOf(","));
-					break;
-				case "System.Exception":
-					retval=((Exception)Argument).ToString();
-					break;
-				case "System.Char":
-					retval=((char)Argument).ToString();
-					break;
-				case "System.DateTime":
-					retval=((System.DateTime )Argument).ToString("u");
-					retval=retval.Substring(0,retval.Length -1);
-					if (retval.Substring(11,8)=="00:00:00")
-						retval=retval.Substring(0,10);
-					retval= "#" + retval + "#";
-					break;
-				default :
-					throw new NotImplementedException ();
-					
-				}
-			}
-			return retval;
+			VBFile vbFile = getVBFile(fileNumber);
+			vbFile.Input(out Value);
 		}
-		
-		[MonoTODO("Needs Testing")]
-		public static System.String InputString (System.Int32 FileNumber, System.Int32 CharCount) 
+
+		public static void Input(int fileNumber, out long Value)
 		{
-			byte[] Buf;
-			string retval="";
-			//
-			// exceptions
-			if ( FileNumber<1 || FileNumber>255)
-				throw new System.IO.IOException (FileNumber.ToString() + " does not exists",52);
-			if ( FHandle[FileNumber - 1] == null)
-				throw new System.IO.IOException (FileNumber.ToString() + " does not exists",52);
-			if ( (FMode[FileNumber - 1] != OpenMode.Input) && (FMode[FileNumber - 1] != OpenMode.Binary ))
-				throw new System.IO.IOException ("FileMode is invalid");
-			if (CharCount <0 || CharCount>2e14 )
-				throw new System.ArgumentException(); 
-			if ( (CharCount + FHandle[FileNumber - 1].Position) > FHandle[FileNumber - 1].Length)
-				throw new System.IO.EndOfStreamException();	
-			//
-			// implementation
-			Buf=new byte[CharCount];
-			FHandle[FileNumber - 1].Read(Buf,0,Buf.Length);
-			for (int myloop=0;myloop<Buf.Length;myloop++)
-				retval+=((char)Buf[myloop]).ToString();
-			return retval;
+			VBFile vbFile = getVBFile(fileNumber);
+			vbFile.Input(out Value);
 		}
-		
-		[MonoTODO("Needs testing")]
-		public static System.String LineInput (System.Int32 FileNumber) 
-		{ 
-			string retval="";
-			int buf='\x00';  
-			bool found=false;
-			if ( FileNumber<1 || FileNumber>255)
-				throw new System.IO.IOException (FileNumber.ToString() + " does not exists",52);
-			if ( FHandle[FileNumber - 1] == null)
-				throw new System.IO.IOException (FileNumber.ToString() + " does not exists",52);
-					
-			if ( EOF(FileNumber) )
-				throw new System.IO.EndOfStreamException();
-			
-			while (!found)
-			{
-				
-				buf=FHandle[FileNumber - 1].ReadByte();
-				if ( (buf == -1) || (buf == '\x0A' ) )
-					found=true;
-				else
-					retval+= ((char)buf).ToString();
-			}
-			if ( retval.Length > 0 )
-				if ( (buf == '\x0A') && (retval[retval.Length -1 ] == '\x0D') )
-					retval=retval.Substring(0,retval.Length -1) ;
-			return retval;
-			
-		}
-		
-		[MonoTODO]
-		public static void Lock (System.Int32 FileNumber)
+
+		public static void Input(int fileNumber, out char Value)
 		{
-			throw new NotImplementedException ();
+			VBFile vbFile = getVBFile(fileNumber);
+			vbFile.Input(out Value);
 		}
-		
-		[MonoTODO]
-		public static void Lock (System.Int32 FileNumber, System.Int64 Record)
+
+		public static void Input(int fileNumber, out float Value)
 		{
-			throw new NotImplementedException ();
+			VBFile vbFile = getVBFile(fileNumber);
+			vbFile.Input(out Value);
 		}
-		
-		[MonoTODO]
-		public static void Lock (System.Int32 FileNumber, System.Int64 FromRecord, System.Int64 ToRecord)
+
+		public static void Input(int fileNumber, out double Value)
 		{
-			throw new NotImplementedException ();
+			VBFile vbFile = getVBFile(fileNumber);
+			vbFile.Input(out Value);
 		}
-		
-		[MonoTODO]
-		public static void Unlock (System.Int32 FileNumber)
+
+		public static void Input(int fileNumber, out Decimal Value)
 		{
-			throw new NotImplementedException ();
+			VBFile vbFile = getVBFile(fileNumber);
+			vbFile.Input(out Value);
 		}
-		
-		[MonoTODO]
-		public static void Unlock (System.Int32 FileNumber, System.Int64 Record)
+
+		public static void Input(int fileNumber, out DateTime Value)
 		{
-			throw new NotImplementedException ();
+			VBFile vbFile = getVBFile(fileNumber);
+			vbFile.Input(out Value);
 		}
-		
-		[MonoTODO]
-		public static void Unlock (System.Int32 FileNumber, System.Int64 FromRecord, System.Int64 ToRecord)
+
+		public static void Input(int fileNumber, out string Value)
 		{
-			throw new NotImplementedException ();
+			VBFile vbFile = getVBFile(fileNumber);
+			vbFile.Input(out Value);
 		}
-		
-		[MonoTODO]
-		public static void FileWidth (System.Int32 FileNumber, System.Int32 RecordWidth)
+
+
+		// 	public static void Input$V$FileSystem$ILSystem_Object$$$(int fileNumber, ObjectRefWrapper Value)
+		// 	{
+		// 		VBFile vbFile = getVBFile(fileNumber);
+		// 		vbFile.Input(Value,false);
+		// 	}
+
+		public static void Lock(int fileNumber) 
 		{
-			throw new NotImplementedException ();
+			throw new NotImplementedException("The method Lock in class FileSystem is not supported");
 		}
-		
-		
-		[MonoTODO("Needs testing")]                
-		public static System.Int32 FreeFile () 
-		{ 
-			int bucle=0;
-			bool found=false;
-			for (bucle=0;bucle<255;bucle++)
-				if (FHandle[bucle]==null)
-				{
-					found=true;
-					break;
-				}
-			if (!found)
-				throw new System.IO.IOException ("More than 255 files are in use",67);
-			else
-				return bucle+1;
-		}
-		
-		[MonoTODO]
-		public static void Seek (System.Int32 FileNumber, System.Int64 Position)
+
+		public static void Lock(int FileNumber, long Record) 
 		{
-			throw new NotImplementedException ();
+			throw new NotImplementedException("The method Lock in class FileSystem is not supported");
 		}
-		
-		[MonoTODO]
-		public static System.Int64 Seek (System.Int32 FileNumber)
+
+		public static void Lock(int FileNumber, long FromRecord, long ToRecord) 
 		{
-			throw new NotImplementedException ();
+			throw new NotImplementedException("The method Lock in class FileSystem is not supported");
 		}
-		
-		
-		[MonoTODO("Needs testing")]
-		public static System.Boolean EOF ( System.Int32 FileNumber) 
-		{ 
-			if (FileNumber<1 || FileNumber>255)
-				throw new System.IO.IOException (FileNumber.ToString() + " does not exists",52);
-			if ( FHandle[FileNumber - 1] == null)
-				throw new System.IO.IOException (FileNumber.ToString() + " does not exists",52);
-			if ( FHandle[FileNumber - 1].Length == FHandle[FileNumber - 1].Position)
-				return true;
-			else
-				return false;
-				
-		}
-		
-		
-		[MonoTODO]
-		public static System.Int64 Loc (System.Int32 FileNumber)
+
+		public static void Unlock(int FileNumber) 
 		{
-			throw new NotImplementedException ();
+			throw new NotImplementedException("The method Unlock in class FileSystem is not supported");
 		}
-		
-		[MonoTODO]
-		public static System.Int64 LOF (System.Int32 FileNumber) 
+
+		public static void Unlock(int FileNumber, long Record) 
 		{
-			if (FileNumber<1 || FileNumber>255)
-				throw new System.IO.IOException (FileNumber.ToString() + " does not exists",52);
-			if ( FHandle[FileNumber - 1] == null)
-				throw new System.IO.IOException (FileNumber.ToString() + " does not exists",52);	
-			return (System.Int64)FHandle[FileNumber - 1].Length;
+			throw new NotImplementedException("The method Unlock in class FileSystem is not supported");
 		}
-		
-		[MonoTODO]
-		public static Microsoft.VisualBasic.TabInfo TAB ()
+
+		public static void Unlock(int FileNumber, long FromRecord, long ToRecord) 
 		{
-			throw new NotImplementedException ();
+			throw new NotImplementedException("The method Unlock in class FileSystem is not supported");
 		}
-		
-		[MonoTODO]
-		public static Microsoft.VisualBasic.TabInfo TAB (System.Int16 Column)
+
+		public static void FileWidth(int fileNumber, int RecordWidth)
 		{
-			throw new NotImplementedException ();
+			VBFile vbFile = getVBFile(fileNumber);
+			vbFile.width(fileNumber,RecordWidth);
 		}
-		
-		[MonoTODO]
-		public static Microsoft.VisualBasic.SpcInfo SPC (System.Int16 Count)
+
+		public static TabInfo TAB()
 		{
-			throw new NotImplementedException ();
+			return new TabInfo((short) - 1);
 		}
-		
-		[MonoTODO("Needs Testing")]
-		public static Microsoft.VisualBasic.OpenMode FileAttr (System.Int32 FileNumber) 
-		{ 
-			if (FileNumber<1 || FileNumber>255)
-				throw new System.IO.IOException (FileNumber.ToString() + " does not exists",52);
-			if ( FHandle[FileNumber - 1] == null)
-				throw new System.IO.IOException (FileNumber.ToString() + " does not exists",52);
-			return FMode[FileNumber - 1];
-		}
-		
-		[MonoTODO("Needs Testing")]
-		public static void Reset ()
+
+		public static TabInfo TAB(short Column)
 		{
-			for(int bucle=0;bucle<255;bucle++)
-			{
-				if (FHandle[bucle]!=null)
-					try
-					{
-						FHandle[bucle].Close();	
-					}
-				catch /*(Exception e) */
-				{ 
-					FHandle[bucle]=null ;
-				}
-			}
+			return new TabInfo(Column);
 		}
-		
-		[MonoTODO("Needs Testing")]
-		public static void Rename (System.String OldPath, System.String NewPath) 
+
+		public static SpcInfo SPC(short Count)
 		{
-			if ( !File.Exists (OldPath) && !Directory.Exists( OldPath))
-				throw new System.ArgumentException ( OldPath + " does not exist");
-			if ( File.Exists ( NewPath) || Directory.Exists ( NewPath))
-				throw new System.IO.IOException ( NewPath + " already exists");
-			if ( File.Exists (OldPath))
-				File.Move (OldPath, NewPath);
-			else
-				Directory.Move (OldPath, NewPath); 
+			return new SpcInfo(Count);
 		}
-		// Events
-		
-	};
+
+		public static OpenMode FileAttr(int fileNumber)
+		{
+			VBFile vbFile = getVBFile(fileNumber);
+			return (OpenMode) vbFile.getMode();
+		}
+
+		public static void main(String[] args)
+		{
+		}
+	}
+
+	class VBStreamWriter : StreamWriter
+	{
+		int _currentColumn;
+		int _width;
+
+		public VBStreamWriter(string fileName):base(fileName)
+		{
+		}
+
+		public VBStreamWriter(string fileName, bool append):base(fileName, append)
+		{
+		}
+	}
+
+	//TODO: FileFilters from Mainsoft code
+
 }
