@@ -1,3 +1,9 @@
+
+Tue Aug 21 18:54:58 CEST 2001 Paolo Molaro <lupus@ximian.com>
+
+	* metadata.c: zero is not a valid alignment boundary.
+	Merge MONO_TYPE_VOID in default decoding code.
+
 2001-08-21  Dietmar Maurer  <dietmar@ximian.com>
 
 	* image.h: merged MonoMetadata into MonoImage

@@ -1,3 +1,17 @@
+
+Tue Aug 21 18:56:19 CEST 2001 Paolo Molaro <lupus@ximian.com>
+
+	* interp.c: new macro INIT_FRAME() to properly
+	initialize a MonoInvocation. Fixed a couple of buglets in exception code:
+	increase stack pointer when pushing the exception for catch blocks,
+	initialize frame->ex_handler to NULL, correctly try all the
+	catch blocks (don't incorrectly fallback on filter handling).
+	Added a couple more checks where we may need to throw an
+	exception. Added more exception creation functions.
+	Changed stackval_from_data() to take the target stackval as
+	argument. Implemented a couple more opcodes.
+	* interp.h: prepare stackval for value type code.
+
 2001-08-21  Miguel de Icaza  <miguel@ximian.com>
 
 	* Makefile.am (mint_LDADD): Renamed interpreter to mint.
