@@ -10,7 +10,7 @@
 //   Sebastien Pouliot (sebastien@ximian.com)
 //
 // (C) 2001, 2002 Ximian, Inc.  http://www.ximian.com
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -162,6 +162,12 @@ namespace System
 				}
 				return _principal; 
 			}
+		}
+
+		// for AppDomain there is only an allowed (i.e. granted) set
+		// http://msdn.microsoft.com/library/en-us/cpguide/html/cpcondetermininggrantedpermissions.asp
+		internal PermissionSet GrantedPermissionSet {
+			get { return _granted; }
 		}
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
@@ -534,7 +540,8 @@ namespace System
 			if (IsFinalizingForUnload ())
 				throw new AppDomainUnloadedException ();
 
-			_granted = SecurityManager.ResolvePolicy (_evidence);
+			PolicyStatement ps = domainPolicy.Resolve (_evidence);
+			_granted = ps.PermissionSet;
 		}
 
 		public void SetCachePath (string path)

@@ -1,3 +1,8 @@
+2005-04-04  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* AppDomain.cs: Use the PolicyLevel to resolve the granted permissions
+	on the AppDomain. Added an internal property to get the granted set.
+
 2005-04-04  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* String.cs,
