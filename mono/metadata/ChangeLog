@@ -1,3 +1,15 @@
+2004-01-07  Zoltan Varga  <vargaz@freemail.hu>
+
+	* icall.c (ves_icall_get_enum_info): Store the value of the enum fields
+	in field->def_value, as done in all other cases.
+
+	* reflection.c (mono_reflection_get_custom_attrs): Add support for
+	TypeBuilders.
+
+	* reflection.c (mono_reflection_create_runtime_class): Remove 
+	errorneous assignment to klass->element_class, since it is already
+	done in mono_reflection_setup_internal_class.
+
 2004-01-07  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* gc.c: added missing LeaveCriticalSection.
