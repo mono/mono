@@ -1,3 +1,7 @@
+2005-02-06  Neale Ferguson <NealeFerguson@earthlink.net>
+
+	* cpu-s390.md,  mini-s390.c: Correct bug with register usage on certain 
+	arithmetic operations.
 
 Sun Feb 6 07:10:12 EST 2005 Paolo Molaro <lupus@ximian.com>
 
