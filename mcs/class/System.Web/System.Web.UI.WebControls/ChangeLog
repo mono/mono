@@ -1,5 +1,11 @@
 2002-01-27      Gaurav Vaish <gvaish@iitk.ac.in>
 
+	* FontNamesConverter.cs       - Completed
+	* FontUnitConverter.cs        - Partial Implementation
+	* ListItemControlBuilder.cs   - Completed
+
+2002-01-27      Gaurav Vaish <gvaish@iitk.ac.in>
+
 	* TextBox.cs                  - All done except *Render* methods
 	* TextBoxControlBuilder.cs    - Completed
 	* Xml.cs                      - Partial Implementation

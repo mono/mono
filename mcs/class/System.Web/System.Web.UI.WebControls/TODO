@@ -46,8 +46,8 @@ DataListItemCollecton
 DropDownList
 EditCommandColumn
 * FontInfo
-FontNamesConverter
-FontUnitConverter
+* FontNamesConverter
+& FontUnitConverter
 * HyperLink
 * HyperLinkColumn
 * HyperLinkControlBuilder
@@ -61,7 +61,7 @@ ListBox
 * ListControl
 * ListItem
 * ListItemCollection
-ListItemControlBuilder
+* ListItemControlBuilder
 * Literal
 * LiteralControlBuilder
 * MonthChangedEventArgs
