@@ -8,16 +8,19 @@
 //
 using System;
 using System.Xml;
+using System.Collections.Specialized;
 
 namespace System.Configuration
 {
 	/// <summary>
 	/// Summary description for NameValueSectionHandler.
 	/// </summary>
-	public class NameValueSectionHandler : IConfigurationSectionHandler
+	public class NameValueSectionHandler
 	{
-		private static string _stringKey;
-		private static string _stringValue;
+		private static string keyName;
+		private static string valueName;
+		private static NameValueCollection settingsCollection;
+		
 
 		/// <summary>
 		///		NameValueSectionHandler Constructor
@@ -25,8 +28,11 @@ namespace System.Configuration
 		public NameValueSectionHandler()
 		{
 			//Set Default Values.
-			_stringKey = "key";
-			_stringValue = "value";
+			keyName = "key";
+			valueName = "value";
+			
+			settingsCollection = new NameValueCollection();
+			
 		}
 
 		/// <summary>
@@ -38,8 +44,40 @@ namespace System.Configuration
 		/// <returns></returns>
 		public object Create(object parent, object context, XmlNode section)
 		{
-			//FIXME: Add Implemetation code here.
-			return null;
+			//FIXME: I'm not quite sure how to implement 'parent' or 'context'.
+			
+
+			//Get all of the ChildNodes in the XML section.
+			XmlNodeList childNodeList = section.ChildNodes;
+			
+			//loop throught the ChildNodes
+			for (int i=0; i < childNodeList.Count; i++)
+			{
+				XmlNode childNode = childNodeList[i];
+
+				//if the name of this childNode is not 'add' then throw a ConfigurationException.
+				if(childNode.Name != "add")
+				{
+					throw (new ConfigurationException("Unrecognized element"));
+				}
+				
+				//Get the attributes for the childNode
+				XmlAttributeCollection xmlAttributes = childNode.Attributes;
+				
+				//Get the key and value Attributes by their Name
+				XmlAttribute keyAttribute = xmlAttributes[keyName];
+				XmlAttribute valueAttribute = xmlAttributes[valueName];
+				
+				//Add this Key/Value Pair to the collection
+				settingsCollection.Add(keyAttribute.Value, valueAttribute.Value);
+
+			}
+			
+						
+			//FIXME: Something is missing here. MS's version of this method returns a System.Configuration.ReadOnlyNameValueCollection type,
+			//this class id not documented ANYWHERE.  This method is curretly returning a NameValueCollection, but it should be ReadOnly.
+
+			return settingsCollection;
 		}
 
 		/// <summary>
@@ -49,7 +87,7 @@ namespace System.Configuration
 		{
 			get
 			{
-				return _stringKey;
+				return keyName;
 			}
 		}
 
@@ -60,7 +98,7 @@ namespace System.Configuration
 		{
 			get
 			{
-				return _stringValue;
+				return valueName;
 			}
 		}
 

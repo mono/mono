@@ -9,6 +9,7 @@
 
 using System;
 using System.Xml;
+using System.Collections;
 
 
 namespace System.Configuration
@@ -35,8 +36,27 @@ namespace System.Configuration
 		/// <returns></returns>
 		public object Create(object parent, object context, XmlNode section)
 		{
-			//FIXME: Add Implemetation code here.
-			return null;
+			//FIXME: I'm not quite sure how to implement 'parent' or 'context'.
+			//TODO: Add in proper Error Handling.
+
+			//Get all of the ChildNodes in the XML section.
+			if(section.HasChildNodes)
+			{
+				throw (new ConfigurationException("Child Nodes not allowed."));
+			}
+			
+			
+			//Get the attributes for the childNode
+			XmlAttributeCollection xmlAttributes = section.Attributes;
+
+			Hashtable settingsCollection = new Hashtable();
+			
+			for(int i=0; i < xmlAttributes.Count; i++)
+			{
+				settingsCollection.Add(xmlAttributes[i].Name, xmlAttributes[i].Value);
+			}
+			
+			return settingsCollection;
 		}
 	}
 }
