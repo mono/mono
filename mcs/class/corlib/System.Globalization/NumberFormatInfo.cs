@@ -3,12 +3,14 @@
 //
 // Author:
 //   Derek Holden (dholden@draper.com)
+//   Bob Smith    (bob@thestuff.net)
 //
 // (C) Derek Holden
+// (C) Bob Smith     http://www.thestuff.net
 //
 
 //
-// NumberFormatInfo. One can only assume it is the class gottten
+// NumberFormatInfo. One can only assume it is the class gotten
 // back from a GetFormat() method from an IFormatProvider / 
 // IFormattable implementer. There are some discrepencies with the
 // ECMA spec and the SDK docs, surprisingly. See my conversation
@@ -666,5 +668,13 @@ namespace System.Globalization {
 			copy.readOnly = true;
 			return copy;
 		}			
+
+		public static NumberFormatInfo GetInstance(IFormatProvider formatProvider)
+		{
+			if (formatProvider == null) return NumberFormatInfo.CurrentInfo;
+			NumberFormatInfo retval = (NumberFormatInfo)formatProvider.GetFormat(Type.GetType("System.Globalization.NumberFormatInfo"));
+			if (retval == null) return NumberFormatInfo.CurrentInfo;
+			return retval;
+		}
 	}
 }

@@ -3,8 +3,10 @@
 //
 // Author:
 //   Miguel de Icaza (miguel@ximian.com)
+//   Bob Smith       (bob@thestuff.net)
 //
 // (C) Ximian, Inc.  http://www.ximian.com
+// (C) Bob Smith.    http://www.thestuff.net
 //
 
 using System.Globalization;
@@ -82,10 +84,64 @@ namespace System {
 			return Parse (s, style, null);
 		}
 
-		public static double Parse (string s, NumberStyles style, IFormatProvider fp)
+		public static double Parse (string s, NumberStyles style, IFormatProvider provider)
 		{
-			// TODO: Implement me
-			throw new NotImplementedException ();
+			if (s == null) throw new ArgumentNullException();
+			if (style > NumberStyles.Any)
+			{
+				throw new ArgumentException();
+			}
+			NumberFormatInfo format = NumberFormatInfo.GetInstance(provider);
+			if (format == null) throw new Exception("How did this happen?");
+			if (s == format.NaNSymbol) return Double.NaN;
+			if (s == format.PositiveInfinitySymbol) return Double.PositiveInfinity;
+			if (s == format.NegativeInfinitySymbol) return Double.NegativeInfinity;
+			string[] sl;
+			long integral = 0;
+			long fraction = 0;
+			long exponent = 1;
+			double retval = 0;
+			if ((style & NumberStyles.AllowLeadingWhite) != 0)
+			{
+				s.TrimStart(null);
+			}
+			if ((style & NumberStyles.AllowTrailingWhite) != 0)
+			{
+				s.TrimEnd(null);
+			}
+			sl = s.Split(new Char[] {'e', 'E'}, 2);
+			if (sl.Length > 1)
+			{
+				if ((style & NumberStyles.AllowExponent) == 0)
+				{
+					throw new FormatException();
+				}
+				exponent = long.Parse(sl[1], NumberStyles.AllowLeadingSign, format);
+			}
+			s = sl[0];
+			sl = s.Split(format.NumberDecimalSeparator.ToCharArray(), 2);
+			if (sl.Length > 1)
+			{
+				if ((style & NumberStyles.AllowDecimalPoint) == 0)
+				{
+					throw new FormatException();
+				}
+				fraction = long.Parse(sl[1], NumberStyles.None, format);
+			}
+			NumberStyles tempstyle = NumberStyles.None;
+			if ((style & NumberStyles.AllowLeadingSign) != 0){
+				tempstyle = NumberStyles.AllowLeadingSign;
+			}
+			integral = long.Parse(sl[0], tempstyle, format);
+			retval = fraction;
+			while (retval >1) retval /= 10;
+			if (integral < 0){
+				retval -= integral;
+				retval = -retval;
+			}
+			else retval += integral;
+			if (exponent != 1) retval *= Math.Pow(10, exponent);
+			return retval;
 		}
 
 		public override string ToString ()

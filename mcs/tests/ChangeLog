@@ -1,3 +1,7 @@
+2001-12-06  Dietmar Maurer  <dietmar@ximian.com>
+
+	* makefile: added new target test-jit
+
 2001-12-04  Ravi Pratap <ravi@ximian.com>
 
 	* makefile : Update to include test 50 as it now passes.

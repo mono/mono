@@ -7,7 +7,8 @@
 //   (C) 2001 Marcel Narings
 
 using System;
-using System.Globalization ;
+using System.Globalization;
+using System.Runtime.CompilerServices;
 
 
 namespace System
@@ -220,12 +221,15 @@ namespace System
 			}
 		}
 
-		// TODO implement me  		 
+	       
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		private static extern long GetNow ();
+
 		public static DateTime Now 
 		{
 			get	
 			{ 
-				return new DateTime (0); 
+				return new DateTime (GetNow ()); 
 			}
 		}
 

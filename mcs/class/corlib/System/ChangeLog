@@ -1,3 +1,11 @@
+2001-12-06  Dietmar Maurer  <dietmar@ximian.com>
+
+	* DateTime.cs: added an icall to GetNow()
+
+2001-12-04  Dietmar Maurer  <dietmar@ximian.com>
+
+	* Double.cs: added the parse method from Bob Smith
+
 2001-11-28  Miguel de Icaza  <miguel@ximian.com>
 
 	* UInt64.cs: ditto.

@@ -28,6 +28,15 @@ test-compiler:
 		fi \
 	done
 
+test-jit:
+	for i in $(TEST_SOURCES:.cs=.exe); do \
+		if mono ./$$i.exe; then \
+			echo $$i: ok; \
+		else \
+			echo test $$i failed; exit; \
+		fi \
+	done
+
 
 
 verify:
