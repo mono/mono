@@ -1,3 +1,8 @@
+2004-03-24  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* NumberFormatInfo.cs: this fixes bug #56000 for me. And it doesn't
+	break anything as NumberFormatInfo is sealed.
+
 2004-02-14  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* NumberFormatInfo.cs : CurrentInfo should not return clone every 

@@ -820,7 +820,7 @@ namespace System.Globalization {
 
 		public object GetFormat (Type formatType) 
 		{
-			return (formatType == GetType()) ? this : null;
+			return (formatType == typeof (NumberFormatInfo)) ? this : null;
 		}
 		
 		public object Clone () 
