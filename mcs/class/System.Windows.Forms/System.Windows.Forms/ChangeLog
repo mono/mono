@@ -1,3 +1,9 @@
+2004-02-26 Peter Dennis Bartok <pbartok@novell.com>
+	* Form.cs: Added initialization code for new Wine patch
+	* win32functions.cs: Removed initializion code for the old Wine patch and for monostub
+	* win32functions.cs: Added initialization code for new Wine patch
+	* win32functions.cs: Commented out selection of font in DrawText until ToHfont is implemented
+
 2003-11-26  Jackson Harper <jackson@ximian.com>
 
 	* TabDrawMode.cs: OwnerDrawFixed (fix typo).
