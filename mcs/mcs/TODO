@@ -33,8 +33,6 @@ BUGS
 * Check for Final when overriding, if the parent is Final, then we cant
   allow an override.
 
-* Add test case for destructors
-
 * Do not declare a .property on things that are just implementations, that
   comes from the parent, just do the method.
 
@@ -45,8 +43,6 @@ BUGS
 * Emit warning on hiding members without NEW not only in members.
 
 * Implement visibility.
-
-* Casts need to trigger a name resolution against types only.
 
 * Adding variables.
 
@@ -176,6 +172,8 @@ PENDING TASKS
 OPTIMIZATIONS
 -------------
 
+* Add test case for destructors
+
 * Places that use `Ldelema' are basically places where I will be
   initializing a value type.  I could apply an optimization to 
   disable the implicit local temporary from being created (by using
@@ -190,6 +188,11 @@ OPTIMIZATIONS
 	The only pending problem is that the code that implements Aliases
 	is on TypeContainer, and probably should go in DeclSpace.
 
+* Casts need to trigger a name resolution against types only.
+
+	currently we use a secret hand shake, probably we should use
+	a differen path, and only expressions (memberaccess, simplename)
+	would participate in this protocol.
 
 * Use of local temporary in UnaryMutator
 
