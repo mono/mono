@@ -1,3 +1,8 @@
+2002-08-13  Dietmar Maurer  <dietmar@ximian.com>
+
+	* jit.c (mono_jit_init): use  ((gpointer)-1) as end_of_stack
+	address for the main thread.
+
 2002-08-12  Dietmar Maurer  <dietmar@ximian.com>
 
 	* jit.c (mono_analyze_stack): added support for Thread::Abort ()
