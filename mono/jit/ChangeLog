@@ -1,3 +1,7 @@
+2001-09-19  Miguel de Icaza  <miguel@ximian.com>
+
+	* testjit.c (usage): Added a couple of more usage options.
+
 2001-09-19  Dietmar Maurer  <dietmar@ximian.com>
 
 	* x86.brg: added more floating point grammar 
