@@ -1,3 +1,7 @@
+2002-04-28  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Math.cs: fix Floor () and Round (). Closes #23960.
+
 2002-04-27  Nick Drochak  <ndrochak@gol.com>
 
 	* Array.cs (IList.Contains): Should throw a RankException if this is 

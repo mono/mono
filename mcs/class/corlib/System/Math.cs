@@ -65,7 +65,8 @@ namespace System
                         return (b < a)? b+1: b;
                 }
                 public static double Floor(double d) {
-		    return (double)((long)d) ;
+                        double b = (double)((long)d);
+			return (d < 0 && d != b) ? --b : b;
                 }
                 public static double IEEERemainder(double x, double y)
                 {
@@ -174,8 +175,8 @@ namespace System
                 public static decimal Round(decimal d)
                 {
                         decimal r = (decimal)((long)d);
-                        decimal a = d-r;
-                        if (a > .5M) return ++r;
+                        decimal a = Abs (d - r);
+                        if (a > .5M) return (r >= 0 ? ++r : --r);
                         else if (a <.5M) return r;
                         else
                         {
@@ -202,8 +203,8 @@ namespace System
                 public static double Round(double d)
                 {
                         double r = (double)((long)d);
-                        double a = d-r;
-                        if (a > .5) return ++r;
+                        double a = Abs (d - r);
+                        if (a > .5) return (r >= 0 ? ++r : --r);
                         else if (a <.5) return r;
                         else
                         {
