@@ -75,7 +75,7 @@ public sealed class StrongName : IIdentityPermissionFactory, IBuiltInEvidence {
 
 	public override string ToString () 
 	{
-		SecurityElement element = new SecurityElement (typeof (System.Security.Policy.StrongName).FullName);
+		SecurityElement element = new SecurityElement (typeof (System.Security.Policy.StrongName).Name);
 		element.AddAttribute ("version", "1");
 		element.AddAttribute ("Key", publickey.ToString ());
 		element.AddAttribute ("Name", name);
