@@ -45,3 +45,5 @@ numbers to match the Microsoft numbers:
 
 -16	Can not use System.Enum.ToObject (type, ConstantValue) with
 	user defined types.
+
+-17     A type has already been defined (try --nostdlib)
