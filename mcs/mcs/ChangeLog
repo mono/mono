@@ -1,5 +1,10 @@
 2002-11-24  Martin Baulig  <martin@ximian.com>
 
+	* ecore.cs (Expression.ConvertExplicit): Make casting from/to
+	System.Enum actually work.  Fixes bug #32269, added verify-6.cs.
+
+2002-11-24  Martin Baulig  <martin@ximian.com>
+
 	* expression.cs (Binary.DoNumericPromotions): Added `check_user_conv'
 	argument; if true, we also check for user-defined conversions.
 	This is only needed if both arguments are of a user-defined type.

@@ -2243,14 +2243,24 @@ namespace Mono.CSharp {
 			Type original_expr_type = expr_type;
 
 			if (expr_type.IsSubclassOf (TypeManager.enum_type)){
+				if (target_type == TypeManager.enum_type ||
+				    target_type == TypeManager.object_type) {
+					if (expr is EnumConstant)
+						expr = ((EnumConstant) expr).Child;
+					// We really need all these casts here .... :-(
+					expr = new BoxedCast (new EmptyCast (expr, expr_type));
+					return new EmptyCast (expr, target_type);
+				} else if ((expr_type == TypeManager.enum_type) && target_type.IsValueType &&
+					   target_type.IsSubclassOf (TypeManager.enum_type))
+					return new UnboxCast (expr, target_type);
+
 				//
 				// Notice that we have kept the expr_type unmodified, which is only
 				// used later on to 
 				if (expr is EnumConstant)
 					expr = ((EnumConstant) expr).Child;
-				else {
+				else
 					expr = new EmptyCast (expr, TypeManager.EnumToUnderlying (expr_type));
-				}
 				expr_type = expr.Type;
 			}
 
