@@ -91,22 +91,17 @@ namespace Mono.Data.SqlExpressions {
 			sb.Append (Current ());
 
 			char next;
-			while (Char.IsDigit (next = Next ())) {
+			while (Char.IsDigit (next = Next ()) || next == '.') {
 				sb.Append (next);
 				MoveNext ();
 			}
 
-			if (next == '.') {
-				sb.Append (next);
-				while (Char.IsDigit (next = Next ())) {
-					sb.Append (next);
-					MoveNext ();
-				}
-					
-				return double.Parse (sb.ToString ());
-			}
-			
-			return int.Parse (sb.ToString ());
+			string str = sb.ToString ();
+
+			if (str.IndexOf(".") == -1)
+				return int.Parse (str);
+			else
+				return double.Parse (str);
 		}
 
 		private char ProcessEscapes(char c)

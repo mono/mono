@@ -1,3 +1,8 @@
+2004-04-20  Juraj Skripsky <juraj@hotfeet.ch>
+
+	* Tokenizer.cs (ReadNumber): Correctly consume decimal point
+	when reading numbers. Fixes bug #57251.
+
 2004-03-31  Juraj Skripsky <juraj@hotfeet.ch>
 
 	* Parser.jay, ColumnReference.cs, Comparison.cs, Functions.cs,
