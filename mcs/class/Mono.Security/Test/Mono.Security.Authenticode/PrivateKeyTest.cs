@@ -2,13 +2,15 @@
 // PrivateKeyTest.cs - NUnit Test Cases for Private Key File
 //
 // Author:
-//	Sebastien Pouliot (spouliot@motus.com)
+//	Sebastien Pouliot (sebastien@ximian.com)
 //
 // (C) 2003 Motus Technologies Inc. (http://www.motus.com)
+// Copyright (C) 2004 Novell (http://www.novell.com)
 //
 
 using System;
 using System.IO;
+using System.Security.Cryptography;
 using System.Text;
 
 using Mono.Security.Authenticode;
@@ -101,6 +103,7 @@ public class PrivateKeyTest : Assertion {
 		AssertNotNull ("msnopwd.RSA", pvk.RSA);
 		Assert ("msnopwd.Encrypted", !pvk.Encrypted);
 		Assert ("msnopwd.Weak", pvk.Weak);
+		AssertEquals ("msnopwd.KeyType", 2, pvk.KeyType);
 	}
 
 	// this will convert a PVK file without a password to a PVK file
@@ -194,6 +197,85 @@ public class PrivateKeyTest : Assertion {
 		AssertEquals ("nomorepwd.RSA identical", rsa1, rsa2);
 		Assert ("nomorepwd.Encrypted", !pvk.Encrypted);
 		Assert ("nomorepwd.Weak", pvk.Weak);
+	}
+	
+	[Test]
+	public void CreatePVK () 
+	{
+		PrivateKey pvk = new PrivateKey ();
+		pvk.KeyType = 2;
+		pvk.RSA = RSA.Create ();
+		string rsa1 = pvk.RSA.ToXmlString (true);
+		pvk.Save (testfile, "mono");
+
+		pvk = PrivateKey.CreateFromFile (testfile, "mono");
+		AssertNotNull ("new.RSA", pvk.RSA);
+		string rsa2 = pvk.RSA.ToXmlString (true);
+		AssertEquals ("new.RSA identical", rsa1, rsa2);
+		Assert ("new.Encrypted", pvk.Encrypted);
+		Assert ("new.Weak", !pvk.Weak);
+	}
+
+	[Test]
+	[ExpectedException (typeof (ArgumentNullException))]
+	public void Save_Null () 
+	{
+		PrivateKey pvk = new PrivateKey ();
+		pvk.Save (null, "mono");
+	}
+	
+	[Test]
+	[ExpectedException (typeof (CryptographicException))]
+	public void BadMagic () 
+	{
+		byte[] bad = (byte[]) nopwd.Clone ();
+		bad [0] = 0x00;
+		WriteBuffer (bad);
+		PrivateKey pvk = PrivateKey.CreateFromFile (testfile, null);
+	}
+	
+	[Test]
+	[ExpectedException (typeof (CryptographicException))]
+	public void BadHeader () 
+	{
+		byte[] bad = (byte[]) nopwd.Clone ();
+		bad [4] = 0x01;
+		WriteBuffer (bad);
+		PrivateKey pvk = PrivateKey.CreateFromFile (testfile, null);
+	}
+
+	[Test]
+	[ExpectedException (typeof (CryptographicException))]
+	public void SaltWithoutPassword () 
+	{
+		byte[] bad = (byte[]) nopwd.Clone ();
+		int saltlen = BitConverter.ToInt32 (bad, 16);
+		int keylen = BitConverter.ToInt32 (bad, 20);
+		// preserve total length
+		saltlen += 8;
+		keylen -= 8;
+		// modify blob
+		byte[] data = BitConverter.GetBytes (saltlen);
+		Buffer.BlockCopy (data, 0, bad, 16, data.Length); 
+		data = BitConverter.GetBytes (keylen);
+		Buffer.BlockCopy (data, 0, bad, 20, data.Length); 
+		// save-n-load		
+		WriteBuffer (bad);
+		PrivateKey pvk = PrivateKey.CreateFromFile (testfile, null);
+	}
+	
+	[Test]
+	[ExpectedException (typeof (ArgumentNullException))]
+	public void CreateFromFile_Null () 
+	{
+		PrivateKey pvk = PrivateKey.CreateFromFile (null, "password");
+	}
+
+	[Test]
+	[ExpectedException (typeof (ArgumentNullException))]
+	public void Constructor_Null () 
+	{
+		PrivateKey pvk = new PrivateKey (null, "password");
 	}
 }
 

@@ -3,9 +3,10 @@
 //	- NUnit Test Cases for Software Publisher Certificate
 //
 // Author:
-//	Sebastien Pouliot (spouliot@motus.com)
+//	Sebastien Pouliot (sebastien@ximian.com)
 //
 // (C) 2003 Motus Technologies Inc. (http://www.motus.com)
+// Copyright (C) 2004 Novell (http://www.novell.com)
 //
 
 using System;
@@ -494,6 +495,29 @@ namespace MonoTests.Mono.Security.Authenticode {
 			SoftwarePublisherCertificate newerspc = new SoftwarePublisherCertificate (newnavy);
 			AssertEquals ("navy.Certificates", 3, newerspc.Certificates.Count);
 			AssertEquals ("navy.Crl", 2, newerspc.Crls.Count);
+		}
+		
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void Constructor_Null () 
+		{
+			SoftwarePublisherCertificate spc = new SoftwarePublisherCertificate (null);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void Constructor_BadOid () 
+		{
+			byte[] bad = (byte[]) certonly.Clone ();
+			bad [9] -= 1;
+			SoftwarePublisherCertificate spc = new SoftwarePublisherCertificate (bad);
+		}
+		
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void CreateFromFile_Null () 
+		{
+			SoftwarePublisherCertificate spc = SoftwarePublisherCertificate.CreateFromFile (null);
 		}
 	}
 }
