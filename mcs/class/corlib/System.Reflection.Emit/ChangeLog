@@ -1,3 +1,8 @@
+2004-02-02  Zoltan Varga  <vargaz@freemail.hu>
+
+	* TypeBuilder.cs: Implement DefineUninitializedData and 
+	AddDeclarativeSecurity.
+
 2004-01-27  Zoltan Varga  <vargaz@freemail.hu>
 
 	* AssemblyBuilder.cs (SetCustomAttribute): Move the reading of the

@@ -21,6 +21,7 @@ using System.Security.Permissions;
 namespace System.Reflection.Emit {
 
 	public sealed class TypeBuilder : Type {
+	#region Sync with reflection.h
 	private string tname;
 	private string nspace;
 	private Type parent;
@@ -41,6 +42,8 @@ namespace System.Reflection.Emit {
 	private int class_size;
 	private PackingSize packing_size;
 	private	MonoGenericParam[] generic_params;
+	private RefEmitPermissionSet[] permissions;	
+	#endregion
 	private Type created;
 	string fullname;
 
@@ -179,9 +182,32 @@ namespace System.Reflection.Emit {
 		}
 		public override Type ReflectedType {get {return nesting_type;}}
 
-		[MonoTODO]
 		public void AddDeclarativeSecurity( SecurityAction action, PermissionSet pset) {
-			throw new NotImplementedException ();
+			if (pset == null)
+				throw new ArgumentNullException ("pset");
+			if ((action == SecurityAction.RequestMinimum) ||
+				(action == SecurityAction.RequestOptional) ||
+				(action == SecurityAction.RequestRefuse))
+				throw new ArgumentException ("Request* values are not permitted", "action");
+
+			if (is_created)
+				throw not_after_created ();
+
+			if (permissions != null) {
+				/* Check duplicate actions */
+				foreach (RefEmitPermissionSet set in permissions)
+					if (set.action == action)
+						throw new InvalidOperationException ("Multiple permission sets specified with the same SecurityAction.");
+
+				RefEmitPermissionSet[] new_array = new RefEmitPermissionSet [permissions.Length + 1];
+				permissions.CopyTo (new_array, 0);
+				permissions = new_array;
+			}
+			else
+				permissions = new RefEmitPermissionSet [1];
+
+			permissions [permissions.Length - 1] = new RefEmitPermissionSet (action, pset.ToXml ().ToString ());
+			attrs |= TypeAttributes.HasSecurity;
 		}
 
 		public void AddInterfaceImplementation( Type interfaceType) {
@@ -1030,37 +1056,34 @@ namespace System.Reflection.Emit {
 			return res;
 		}
 
-		static int InitializedDataCount = 0;
-		
 		public FieldBuilder DefineInitializedData( string name, byte[] data, FieldAttributes attributes) {
-			check_name ("name", name);
 			if (data == null)
 				throw new ArgumentNullException ("data");
 			if ((data.Length == 0) || (data.Length > 0x3f0000))
 				throw new ArgumentException ("data", "Data size must be > 0 and < 0x3f0000");
-			if (is_created)
-				throw not_after_created ();
 
-			string s = "$ArrayType$"+InitializedDataCount.ToString();
-			TypeBuilder datablobtype = DefineNestedType (s,
-				TypeAttributes.NestedPrivate|TypeAttributes.ExplicitLayout|TypeAttributes.Sealed,
-				pmodule.assemblyb.corlib_value_type, null, PackingSize.Size1, data.Length);
-			datablobtype.CreateType ();
-			FieldBuilder res = DefineField (name, datablobtype, attributes|FieldAttributes.Assembly|FieldAttributes.Static|FieldAttributes.HasFieldRVA);
+			FieldBuilder res = DefineUninitializedData (name, data.Length, attributes);
 			res.SetRVAData (data);
-			InitializedDataCount++;
+
 			return res;
 		}
 
-		[MonoTODO]
+		static int UnmanagedDataCount = 0;
+		
 		public FieldBuilder DefineUninitializedData( string name, int size, FieldAttributes attributes) {
 			check_name ("name", name);
 			if ((size <= 0) || (size > 0x3f0000))
-				throw new ArgumentException ("data", "Data size must be > 0 and < 0x3f0000");
+				throw new ArgumentException ("size", "Data size must be > 0 and < 0x3f0000");
 			if (is_created)
 				throw not_after_created ();
 
-			throw new NotImplementedException ();
+			string s = "$ArrayType$"+UnmanagedDataCount.ToString();
+			UnmanagedDataCount++;
+			TypeBuilder datablobtype = DefineNestedType (s,
+				TypeAttributes.NestedPrivate|TypeAttributes.ExplicitLayout|TypeAttributes.Sealed,
+				pmodule.assemblyb.corlib_value_type, null, PackingSize.Size1, size);
+			datablobtype.CreateType ();
+			return DefineField (name, datablobtype, attributes|FieldAttributes.Static|FieldAttributes.HasFieldRVA);
 		}
 
 		public TypeToken TypeToken {
