@@ -1,3 +1,7 @@
+2004-07-17  Martin Baulig  <martin@ximian.com>
+
+	* TypeBuilder.cs (TypeBuilder.UnspecifiedTypeSize): Use -1, not 0.
+
 2004-07-07  Miguel de Icaza  <miguel@ximian.com>
 
 	* LocalBuilder.cs: Remove MakePinned, we are now going to use

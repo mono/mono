@@ -74,7 +74,7 @@ namespace System.Reflection.Emit {
 	private Type created;
 	string fullname;
 
-	public const int UnspecifiedTypeSize = 0;
+	public const int UnspecifiedTypeSize = -1;
 
 		protected override TypeAttributes GetAttributeFlagsImpl () {
 			return attrs;
