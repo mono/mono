@@ -1,3 +1,8 @@
+2002-08-03  Rodrigo Moya <rodrigo@ximian.com>
+
+	* BinaryServerFormatterSinkProvider.cs:
+	* BinaryClientFormatterSinkProvider.cs: new stubs.
+
 2002-08-03  Duncan Mak  <duncan@ximian.com>
 
 	* BinaryClientFormatterSink.cs: 
