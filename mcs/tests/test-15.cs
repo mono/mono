@@ -1,13 +1,20 @@
 using System;
 
 interface Iface {
-	void A ();
+	int A ();
 }
 
 class Implementor : Iface {
-	public void A () {}
+	public int A () {
+		return 1;
+	}
 }
 
+struct StructImplementor : Iface {
+	public int A () {
+		return 2;
+	}
+}
 class Run {
 
 	static int Main ()
@@ -16,6 +23,13 @@ class Run {
 		Implementor i = new Implementor ();
 
 		iface = i;
+		if (iface.A () != 1)
+			return 1;
+
+		StructImplementor s = new StructImplementor ();
+		Iface xiface = (Iface) s;
+		if (iface.A () != 2)
+			return 2;
 		
 		return 0;
 	}
