@@ -1,3 +1,7 @@
+2004-01-07  Nick Drochak <ndrochak@gol.com>
+
+	* attribute.cs: Remove unneeded catch variables. Eliminates a warning.
+
 2004-01-05  Miguel de Icaza  <miguel@ximian.com>
 
 	* cs-parser.jay: Add rules to improve error reporting if fields or

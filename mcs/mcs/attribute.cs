@@ -946,7 +946,7 @@ namespace Mono.CSharp {
 
 						try {
 							((TypeBuilder) builder).SetCustomAttribute (cb);
-						} catch (System.ArgumentException e) {
+						} catch (System.ArgumentException) {
 							Report.Warning (
 								-21, loc,
 						"The CharSet named property on StructLayout\n"+
@@ -962,7 +962,7 @@ namespace Mono.CSharp {
 						}
 						try {
 							((TypeBuilder) builder).SetCustomAttribute (cb);
-						} catch (System.ArgumentException e) {
+						} catch (System.ArgumentException) {
 							Report.Warning (
 								-21, loc,
 						"The CharSet named property on StructLayout\n"+
