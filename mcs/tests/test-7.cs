@@ -10,52 +10,64 @@ namespace Mine {
 		{
 			Blah k, l;
 
-			k = new Blah () + new Blah (); 
-			k = ~ new Blah ();
-			k = + new Blah ();
-			k = - new Blah ();
+			k = new Blah (2) + new Blah (3);
+			if (k.i != 5)
+				return 1;
+			
+			k = ~ new Blah (5);
+			if (k.i != -6)
+				return 1;
+			
+			
+			k = + new Blah (4);
+			if (k.i != 4)
+				return 1;
+			
+			k = - new Blah (21);
+			if (k.i != -21)
+				return 1;
 
-			k = new Blah () - new Blah ();
+			k = new Blah (22) - new Blah (21);
+			if (k.i != 1)
+				return 1;
 
 			if (!k)
-				Console.WriteLine ("Overloaded ! operator returned true");
+				Console.WriteLine ("! returned true");
 
 			int number = k;
-			Console.WriteLine (number);
+			if (number != 1)
+				return 1;
 			
-			k = 5;		
-
 			k++;	
 			++k;
 
 			if (k)
 				Console.WriteLine ("k is definitely true");
 
-			k = new Blah ();
+			k = new Blah (30);
 
 			double f = (double) k;
 
-			if (f == 2.0)
-				Console.WriteLine ("Explicit conversion correct.");
+			if (f != 30.0)
+				return 1;
 
+			int i = new Blah (5) * new Blah (10);
 
-			int i = new Blah () * new Blah ();
+			if (i.i != 50)
+				return 1;
 
-			if (i == 50)
-				Console.WriteLine ("Multiplication correct.");
-
-			k = new Blah ();
-			l = new Blah ();
+			k = new Blah (50);
+			l = new Blah (10);
 			
 			i = k / l;
 
-			if (i == 20)
-				Console.WriteLine ("Division correct");
+			if (i != 5)
+				return 1;
 
 			i = k % l;
 
-			if (i == 40)
-				Console.WriteLine ("Modulo correct");
+			if (i != 0)
+				return 1;
 			
 			return 0;
 		}
@@ -86,80 +98,77 @@ namespace Mine {
 
 		public static Blah operator - (Blah i, Blah j)
 		{
+			Blah b = new Blah (i.i - j.i);
 			Console.WriteLine ("Overloaded binary - operator");
-			return null;
+			return b;
 		}
 
 		public static int operator * (Blah i, Blah j)
 		{
 			Console.WriteLine ("Overloaded binary * operator");
-			return 50;
+			return i.i * j.i;
 		}
 
 		public static int operator / (Blah i, Blah j)
 		{
 			Console.WriteLine ("Overloaded binary / operator");
-			return 20;
+			return i.i / j.i;
 		}
 
 		public static int operator % (Blah i, Blah j)
 		{
 			Console.WriteLine ("Overloaded binary % operator");
-			return 40;
+			return i.i % j.i;
 		}
 		
 		public static Blah operator ~ (Blah i)
 		{
 			Console.WriteLine ("Overloaded ~ operator");
-			return null;
+			return new Blah (~i.i);
 		}
 	
 		public static bool operator ! (Blah i)
 		{
 			Console.WriteLine ("Overloaded ! operator");
-			return true;
+			return (i.i == 1);
 		}
 
 		public static Blah operator ++ (Blah i)
 		{
+			Blah b = new Blah (i.i + 1);
 			Console.WriteLine ("Incrementing i");
-			return null;
+			return b;
 		}
 
 		public static Blah operator -- (Blah i)
 		{
+			Blah b = new Blah (i.i - 1);
 			Console.WriteLine ("Decrementing i");
-			return null;
+			return b;
 		}	
 	
 		public static bool operator true (Blah i)
 		{
 			Console.WriteLine ("Overloaded true operator");
-			return true;
+			return (i.i == 3);
 		}
 
 		public static bool operator false (Blah i)
 		{
 			Console.WriteLine ("Overloaded false operator");
-			return false;
+			return (i.i != 1);
 		}	
 	
 		public static implicit operator int (Blah i) 
 		{	
 			Console.WriteLine ("Converting implicitly from Blah->int");
-			return 3;
-		}
-
-		public static implicit operator Blah (int i)
-		{
-			Console.WriteLine ("Converting implicitly from int->Blah");
-			return null;
+			return i.i;
 		}
 
 		public static explicit operator double (Blah i)
 		{
 			Console.WriteLine ("Converting explicitly from Blah->double");
-			return 2.0;
+			return (double) i.i;
 		}
 
 	}
