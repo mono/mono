@@ -186,13 +186,14 @@ namespace System.Net {
 
 		private static IPAddress ParseIPV4 (string ip)
 		{
-			if (ip.Length == 0 || ip [0] == ' ')
+			if (ip.Length == 0 || ip == " ")
 				return new IPAddress (0);
 				
 			int pos = ip.IndexOf (' ');
 			if (pos != -1)
 				ip = ip.Substring (0, pos);				
-			else if (ip [ip.Length - 1] == '.')
+
+			if (ip.Length == 0 || ip [ip.Length - 1] == '.')
 				return null;
 
 			string [] ips = ip.Split (new char [] {'.'});
@@ -214,7 +215,7 @@ namespace System.Net {
 						else 
 							val = (byte) ((Uri.FromHex (subnet [2]) << 4) | Uri.FromHex (subnet [3]));
 					} else if (subnet.Length == 0)
-						val = 0;
+						return null;
 					else 
 						val = Byte.Parse (subnet, NumberStyles.None);
 

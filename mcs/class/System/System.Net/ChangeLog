@@ -1,5 +1,13 @@
 2005-01-20  Jonathan Pryor  <jonpryor@vt.edu>
 
+	* IPAddress.cs (ParseIPV4): Fix so that the regression tests work.  In
+	  particular, " foo" and ".1.1.6" weren't being caught (" foo" because it
+	  started with a space, and ".1.1.6" because the split string accepted a
+	  0-length portion, which would make 1...6 valid, but isn't valid based on
+	  similar test cases).
+
+2005-01-20  Jonathan Pryor  <jonpryor@vt.edu>
+
 	* WebHeaderCollection.cs: Fix GetValues(string) to split the values on
 	  commas if the header is a Multi-Value header.  This matches
 	  MonoTests.System.Net.WebHeaderCollectionTest.
