@@ -1,5 +1,5 @@
 //
-// XmlTextReader.cs
+// System.Xml.XmlTextReader
 //
 // Author:
 //   Jason Diamond (jason@injektilo.org)
@@ -16,12 +16,12 @@
 //   There's also no checking being done for either well-formedness
 //   or validity.
 //
-//   ParserContext and NameTables aren't being used yet.
+//   NameTables aren't being used everywhere yet.
 //
 //   Some thought needs to be given to performance. There's too many
 //   strings being allocated.
 //
-//   None of the MoveTo methods have been implemented yet.
+//   Some of the MoveTo methods haven't been implemented yet.
 //
 //   LineNumber and LinePosition aren't being tracked.
 //
@@ -60,6 +60,9 @@ namespace System.Xml
 		[MonoTODO]
 		public XmlTextReader (TextReader input)
 		{
+			XmlNameTable nt = new NameTable ();
+			XmlNamespaceManager nsMgr = new XmlNamespaceManager (nt);
+			parserContext = new XmlParserContext (null, nsMgr, null, XmlSpace.None);
 			Init ();
 			reader = input;
 		}
@@ -230,7 +233,7 @@ namespace System.Xml
 
 		public override XmlNameTable NameTable
 		{
-			get { return nameTable; }
+			get { return parserContext.NameTable; }
 		}
 
 		public override XmlNodeType NodeType
@@ -331,7 +334,7 @@ namespace System.Xml
 							return attributes [thisName] as string;
 					}
 				} else if (localName == "xmlns" && namespaceURI == "http://www.w3.org/2000/xmlns/" && thisName == "xmlns")
-					return attributes[thisName] as string;
+					return attributes [thisName] as string;
 			}
 
 			return String.Empty;
@@ -351,7 +354,7 @@ namespace System.Xml
 
 		public override string LookupNamespace (string prefix)
 		{
-			return namespaceManager.LookupNamespace (prefix);
+			return parserContext.NamespaceManager.LookupNamespace (prefix);
 		}
 
 		[MonoTODO]
@@ -395,7 +398,7 @@ namespace System.Xml
 
 			if (attributeEnumerator == null) {
 				SaveProperties ();
-				attributeEnumerator = attributes.GetEnumerator();
+				attributeEnumerator = attributes.GetEnumerator ();
 			}
 
 			if (attributeEnumerator.MoveNext ()) {
@@ -432,19 +435,19 @@ namespace System.Xml
 		}
 
 		[MonoTODO]
-		public int ReadBase64 (byte[] buffer, int offset, int length)
+		public int ReadBase64 (byte [] buffer, int offset, int length)
 		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		public int ReadBinHex (byte[] buffer, int offset, int length)
+		public int ReadBinHex (byte [] buffer, int offset, int length)
 		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		public int ReadChars (char[] buffer, int offset, int length)
+		public int ReadChars (char [] buffer, int offset, int length)
 		{
 			throw new NotImplementedException ();
 		}
@@ -483,14 +486,14 @@ namespace System.Xml
 
 		// privates
 
+		private XmlParserContext parserContext;
+
 		private TextReader reader;
 		private ReadState readState;
 
 		private int depth;
 		private bool depthDown;
 
-		private XmlNameTable nameTable;
-		private XmlNamespaceManager namespaceManager;
 		private bool popScope;
 
 		private XmlNodeType nodeType;
@@ -514,28 +517,24 @@ namespace System.Xml
 		private bool returnEntityReference;
 		private string entityReferenceName;
 
-		private char[] nameBuffer;
+		private char [] nameBuffer;
 		private int nameLength;
 		private int nameCapacity;
 		private const int initialNameCapacity = 256;
 
-		private char[] valueBuffer;
+		private char [] valueBuffer;
 		private int valueLength;
 		private int valueCapacity;
 		private const int initialValueCapacity = 8192;
 
 		private void Init ()
 		{
-			if (nameTable == null)
-				nameTable = new NameTable ();
-
-			namespaceManager = new XmlNamespaceManager (nameTable);
-			popScope = false;
-
 			readState = ReadState.Initial;
 
 			depth = -1;
 			depthDown = false;
+
+			popScope = false;
 
 			nodeType = XmlNodeType.None;
 			name = String.Empty;
@@ -546,15 +545,15 @@ namespace System.Xml
 
 			attributes = new Hashtable ();
 			attributeEnumerator = null;
-			
+
 			returnEntityReference = false;
 			entityReferenceName = String.Empty;
 
-			nameBuffer = new char[initialNameCapacity];
+			nameBuffer = new char [initialNameCapacity];
 			nameLength = 0;
 			nameCapacity = initialNameCapacity;
 
-			valueBuffer = new char[initialValueCapacity];
+			valueBuffer = new char [initialValueCapacity];
 			valueLength = 0;
 			valueCapacity = initialValueCapacity;
 		}
@@ -645,7 +644,7 @@ namespace System.Xml
 			bool more = false;
 
 			if (popScope) {
-				namespaceManager.PopScope ();
+				parserContext.NamespaceManager.PopScope ();
 				popScope = false;
 			}
 
@@ -725,7 +724,7 @@ namespace System.Xml
 		// The leading '<' has already been consumed.
 		private void ReadStartTag ()
 		{
-			namespaceManager.PushScope ();
+			parserContext.NamespaceManager.PushScope ();
 
 			string name = ReadName ();
 			SkipWhitespace ();
@@ -781,15 +780,15 @@ namespace System.Xml
 		private void AppendNameChar (int ch)
 		{
 			CheckNameCapacity ();
-			nameBuffer[nameLength++] = (char)ch;
+			nameBuffer [nameLength++] = (char)ch;
 		}
 
 		private void CheckNameCapacity ()
 		{
 			if (nameLength == nameCapacity) {
 				nameCapacity = nameCapacity * 2;
-				char[] oldNameBuffer = nameBuffer;
-				nameBuffer = new char[nameCapacity];
+				char [] oldNameBuffer = nameBuffer;
+				nameBuffer = new char [nameCapacity];
 				Array.Copy (oldNameBuffer, nameBuffer, nameLength);
 			}
 		}
@@ -802,15 +801,15 @@ namespace System.Xml
 		private void AppendValueChar (int ch)
 		{
 			CheckValueCapacity ();
-			valueBuffer[valueLength++] = (char)ch;
+			valueBuffer [valueLength++] = (char)ch;
 		}
 
 		private void CheckValueCapacity ()
 		{
 			if (valueLength == valueCapacity) {
 				valueCapacity = valueCapacity * 2;
-				char[] oldValueBuffer = valueBuffer;
-				valueBuffer = new char[valueCapacity];
+				char [] oldValueBuffer = valueBuffer;
+				valueBuffer = new char [valueCapacity];
 				Array.Copy (oldValueBuffer, valueBuffer, valueLength);
 			}
 		}
@@ -979,9 +978,9 @@ namespace System.Xml
 				SkipWhitespace ();
 
 				if (name == "xmlns")
-					namespaceManager.AddNamespace (String.Empty, value);
+					parserContext.NamespaceManager.AddNamespace (String.Empty, value);
 				else if (name.StartsWith ("xmlns:"))
-					namespaceManager.AddNamespace (name.Substring (6), value);
+					parserContext.NamespaceManager.AddNamespace (name.Substring (6), value);
 
 				AddAttribute (name, value);
 			} while (PeekChar () != '/' && PeekChar () != '>' && PeekChar () != -1);

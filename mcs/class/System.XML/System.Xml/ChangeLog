@@ -1,5 +1,12 @@
 2002-03-08  Jason Diamond <jason@injektilo.org>
 
+	* XmlParserContext.cs: Added missing constructors and missing Encoding 
+	property.
+
+	* XmlTextReader.cs: Start using the XmlParserContext class.
+
+2002-03-08  Jason Diamond <jason@injektilo.org>
+
 	* XmlTextReader.cs: Implemented MoveToElement and MoveToFirstAttribute.
 
 2002-03-08  Mike Kestner  <mkestner@speakeasy.net>
