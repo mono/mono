@@ -302,12 +302,12 @@ namespace System.Windows.Forms {
 				set {
 				}
 			}
-    		[MonoTODO]
-    		public AccessibleObject AccessibilityObject {
-    			get {
-    				throw new NotImplementedException ();
-    			}
-    		}
+			[MonoTODO]
+			public AccessibleObject AccessibilityObject {
+				get {
+					throw new NotImplementedException ();
+				}
+			}
     
     		public string AccessibleDefaultActionDescription {
     			get {
@@ -3285,8 +3285,7 @@ namespace System.Windows.Forms {
     		/// Provides information about a control that can be used by an accessibility application.
     		/// </summary>
     		public class ControlAccessibleObject : AccessibleObject {
-    			// AccessibleObject not ready to be base class
-    			/// --- ControlAccessibleObject.constructor ---
+.    			/// --- ControlAccessibleObject.constructor ---
     			[MonoTODO]
     			public ControlAccessibleObject (Control ownerControl) 
     			{

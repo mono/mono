@@ -33,18 +33,18 @@ namespace System.Windows.Forms {
 		//
 		//	 --- Protected Fields
 		//
-		protected int ColumnWidth_ = 0; // The columns will have default width
-		protected bool IntegralHeight_ = true;
-		protected ListBox.ObjectCollection	Items_ = null;
-		protected ListBox.SelectedIndexCollection SelectedIndices_ = null;
-		protected ListBox.SelectedObjectCollection SelectedObjects_ = null;
-		protected DrawMode DrawMode_ = DrawMode.Normal;
-		protected bool UseTabStops_ = false;
-		protected bool MultiColumn_ = false;
+		internal int ColumnWidth_ = 0; // The columns will have default width
+		internal bool IntegralHeight_ = true;
+		internal ListBox.ObjectCollection	Items_ = null;
+		internal ListBox.SelectedIndexCollection SelectedIndices_ = null;
+		internal ListBox.SelectedObjectCollection SelectedObjects_ = null;
+		internal DrawMode DrawMode_ = DrawMode.Normal;
+		internal bool UseTabStops_ = false;
+		internal bool MultiColumn_ = false;
 		int selectedIndex = -1;
-		bool Sorted_ = false;
+		internal bool Sorted_ = false;
 		internal int prevSelectedIndex = -1;
-		BorderStyle	BorderStyle_;
+		internal BorderStyle	BorderStyle_;
 		
 		//
 		//	 --- Public Fields
@@ -56,6 +56,17 @@ namespace System.Windows.Forms {
 		//
 		//  --- Public Properties
 		//
+		[MonoTODO]
+		public override Color ForeColor {
+			get {
+				//FIXME:
+				return base.ForeColor;
+			}
+			set {
+				//FIXME:
+				base.ForeColor = value;
+			}
+		}
 
 		[MonoTODO]
 		public override Color BackColor {
@@ -402,11 +413,6 @@ namespace System.Windows.Forms {
 			}		
 		}
 
-		protected override void OnCreateControl ()
-		{
-			base.OnCreateControl();
-		}
-
 		[MonoTODO]
 		protected override Size DefaultSize {
 			get {
@@ -519,7 +525,7 @@ namespace System.Windows.Forms {
 			//FIXME:
 		}
 
-		protected override void SetItemsCore (IList Items){
+		protected override void SetItemsCore (IList value){
 		}
 
 		[MonoTODO]

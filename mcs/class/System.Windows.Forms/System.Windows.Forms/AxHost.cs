@@ -390,6 +390,12 @@ namespace System.Windows.Forms {
 			//FIXME:
 			base.OnHandleCreated(e);
 		}
+
+		[MonoTODO]
+		protected virtual void OnInPlaceActive() {
+			//FIXME:
+			
+		}
 		
 		[MonoTODO]
 		protected override void OnLostFocus(EventArgs e) {
@@ -576,10 +582,13 @@ namespace System.Windows.Forms {
 			PropertySet = 2
 		}
 		
-		public class AxComponentEditor {
+		[MonoTODO]
+			public class AxComponentEditor {// add ref to swf.desing : WindowsFormsComponentEditor {
+
 		}
 		
-		public class ConnectionPointCookie {
+		[MonoTODO]
+			public class ConnectionPointCookie {
 		}
 		
 		public class StateConverter : System.ComponentModel.TypeConverter {
@@ -590,7 +599,7 @@ namespace System.Windows.Forms {
 		}
 
 		[AttributeUsage(AttributeTargets.Assembly)]
-			public sealed class TypeLibraryTimeStampAtribute : Attribute{
+			public sealed class TypeLibraryTimeStampAttribute : Attribute{
 		}
 
 
