@@ -1,3 +1,10 @@
+2004-02-23  Jackson Harper <jackson@ximian.com>
+
+	* LockCookie.cs: Add some fields for restoring locks.
+	* ReaderWriterLock.cs: Implement
+	* LockQueue.cs: New File - used for queueing thread locks in
+	ReaderWriterLock.
+	
 2004-02-19  Jackson Harper <jackson@ximian.com>
 
 	* Monitor.cs: Fix spelleng.
