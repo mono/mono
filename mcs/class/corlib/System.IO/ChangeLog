@@ -1,3 +1,7 @@
+2004-12-06  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* TextWriter.cs : create CoreNewLine in another .ctor().
+
 2004-09-19  Dick Porter  <dick@ximian.com>
 
 	* UnexceptionalStreamWriter.cs: 
