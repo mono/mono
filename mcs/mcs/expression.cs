@@ -3983,19 +3983,18 @@ namespace Mono.CSharp {
 					}
 #endif
 				} else if (underlying_type == TypeManager.char_type){
-					int val = (char) 0;
+					int val = 0;
 
 					if (!(v is Expression))
-						v = (int) ((char) v);
-					
+						val = (int) ((char) v);
+
 					data [idx] = (byte) (val & 0xff);
 					data [idx+1] = (byte) (val >> 8);
-
 				} else if (underlying_type == TypeManager.short_type){
 					int val = (int) 0;
 
 					if (!(v is Expression))
-						v = (int) ((short) v);
+						val = (int) ((short) v);
 					
 					data [idx] = (byte) (val & 0xff);
 					data [idx+1] = (byte) (val >> 8);
@@ -4004,7 +4003,7 @@ namespace Mono.CSharp {
 					int val = (int) 0;
 
 					if (!(v is Expression))
-						v = (int) ((ushort) v);
+						val = (int) ((ushort) v);
 					
 					data [idx] = (byte) (val & 0xff);
 					data [idx+1] = (byte) (val >> 8);

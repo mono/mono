@@ -226,7 +226,7 @@ namespace Mono.CSharp {
 				((EventExpr) target).EmitAddOrRemove (ec, source);
 				return;
 			}
-			
+
 			//
 			// FIXME! We need a way to "probe" if the process can
 			// just use `dup' to propagate the result
@@ -242,7 +242,7 @@ namespace Mono.CSharp {
 				
 				source.Emit (ec);
 				tempo.Store (ec);
-				am.EmitAssign (ec, source);
+				am.EmitAssign (ec, tempo);
 				tempo.Emit (ec);
 			}
 		}

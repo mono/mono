@@ -10,6 +10,13 @@ Major tasks:
 BUGS
 ----
 
+* Major bug:
+
+	Since I added the support for the dual interpreatation of names, I dont
+	catch this error:
+
+	class X { int i;  static void a () { i = 1; } }
+
 * Currently the code path for 108/109 reporting is not being ran for methods
   as we need to compare method signatures.  But since we retrieve the expensive
   method arguments in the method, we probably should do 108/109 processing there.
