@@ -1,3 +1,7 @@
+2003-01-03  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* String.cs: fixed bug #36209.
+
 2002-12-20 Lluis Sanchez Gual <lsg@ctv.es>
 
 	* Activator.cs: implemented method GetObject.

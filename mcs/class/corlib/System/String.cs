@@ -652,9 +652,12 @@ namespace System {
 
 					start = ptr;
 				}
-				else if (c == '}' && format[ptr] == '}') {
+				else if (c == '}' && ptr < format.length && format[ptr] == '}') {
 					result.Append (format, start, ptr - start - 1);
 					start = ptr ++;
+				}
+				else if (c == '}') {
+					throw new FormatException ("Input string was not in a correct format.");
 				}
 			}
 
@@ -998,7 +1001,7 @@ namespace System {
 			
 				n = ParseDecimal (str, ref ptr);
 				if (n < 0)
-					throw new FormatException ("Input string was not in correct format.");
+					throw new FormatException ("Input string was not in a correct format.");
 				
 				// M = width (non-negative integer)
 
@@ -1016,7 +1019,7 @@ namespace System {
 
 					width = ParseDecimal (str, ref ptr);
 					if (width < 0)
-						throw new FormatException ("Input string was not in correct format.");
+						throw new FormatException ("Input string was not in a correct format.");
 				}
 				else {
 					width = 0;
@@ -1037,10 +1040,10 @@ namespace System {
 					format = null;
 
 				if (str[ptr ++] != '}')
-					throw new FormatException ("Input string was not in correct format.");
+					throw new FormatException ("Input string was not in a correct format.");
 			}
 			catch (IndexOutOfRangeException) {
-				throw new FormatException ("Input string was not in correct format.");
+				throw new FormatException ("Input string was not in a correct format.");
 			}
 		}
 
