@@ -221,12 +221,15 @@ namespace System.Web.UI.WebControls
 		protected override void OnPreRender (EventArgs e)
 		{
 			base.OnPreRender (e);
+			bool enabled = Enabled;
 			if (Page != null) {
-				if (AutoPostBack && Enabled)
+				if (AutoPostBack && enabled)
 					Page.RequiresPostBackScript ();
 			}
-			
-			if (Events [TextChangedEvent] == null)
+
+			/* Don't save passwords in ViewState */
+			if (TextMode == TextBoxMode.Password ||
+			    (enabled && Visible && Events [TextChangedEvent] == null))
 				ViewState.SetItemDirty ("Text", false);
 		}
 
