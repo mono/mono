@@ -477,6 +477,7 @@ namespace Mono.Xml.XPath
 					moveToNamespace (cur);
 					return true;
 				}
+				cur = namespaces [cur].NextNamespace;
 			}
 			return false;
 		}
