@@ -492,8 +492,11 @@ namespace System.Web.Services.Protocols {
 		{
 			Hashtable table = header_serializers_byname [(int)use];
 			if (table == null) return null;
+			
+			object serId = table [qname];
+			if (serId == null) return null;
 				
-			return GetSerializer ((int) table [qname]);
+			return GetSerializer ((int) serId);
 		}		
 		
 		public SoapMethodStubInfo GetMethodForSoapAction (string name)

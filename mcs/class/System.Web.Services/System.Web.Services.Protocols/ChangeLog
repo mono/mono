@@ -1,5 +1,12 @@
 2004-07-01  Lluis Sanchez Gual  <lluis@ximian.com>
 
+	* Methods.cs: Check for null when looking for a header serializer, since
+	  unknown headers don't have a serializer.
+	* SoapHeader.cs: Check for empty string before setting 
+	  EncodedMustUnderstand.
+
+2004-07-01  Lluis Sanchez Gual  <lluis@ximian.com>
+
 	* Methods.cs, SoapMessage.cs: Added support for unknown headers.
 	* SoapHeader.cs, SoapUnknownHeader.cs: Added new constructor that takes an
 	  XmlElement with header info.

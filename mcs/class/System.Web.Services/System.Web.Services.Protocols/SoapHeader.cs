@@ -57,7 +57,8 @@ namespace System.Web.Services.Protocols {
 		internal SoapHeader (XmlElement elem)
 		{
 			actor = elem.GetAttribute ("actor", "http://schemas.xmlsoap.org/soap/envelope/");
-			EncodedMustUnderstand = elem.GetAttribute ("mustUnderstand", "http://schemas.xmlsoap.org/soap/envelope/");
+			string me = elem.GetAttribute ("mustUnderstand", "http://schemas.xmlsoap.org/soap/envelope/");
+			if (me != "") EncodedMustUnderstand = me;
 		}
 
 		#endregion // Constructors
