@@ -400,7 +400,10 @@ namespace System.Xml.Schema
 			// If there is no schema information, then no validation is performed.
 			if (skipValidationDepth < 0 || depth <= skipValidationDepth) {
 				if (shouldValidateCharacters)
-					ValidateEndSimpleContent ();
+					// LAMESPEC: even if we get simple type
+					// information here, it will be
+					// overwritten with element information.
+					ValidateEndSimpleContent (info);
 
 				AssessOpenStartElementSchemaValidity (localName, ns);
 			}
@@ -411,6 +414,16 @@ namespace System.Xml.Schema
 				HandleXsiType (xsiType);
 
 			shouldValidateCharacters = true;
+
+			if (info != null) {
+				info.IsNil = xsiNilDepth >= 0;
+				info.SchemaElement = Context.Element;
+				info.SchemaType = Context.ActualSchemaType;
+				info.SchemaAttribute = null;
+				info.IsDefault = false;
+				info.MemberType = null;
+				// FIXME: supply Validity (really useful?)
+			}
 		}
 
 		public object ValidateEndElement (XmlSchemaInfo schemaInfo)
@@ -439,8 +452,7 @@ namespace System.Xml.Schema
 			if (depth == skipValidationDepth)
 				skipValidationDepth = -1;
 			else if (skipValidationDepth < 0 || depth <= skipValidationDepth)
-				ret = AssessEndElementSchemaValidity ();
-
+				ret = AssessEndElementSchemaValidity (schemaInfo);
 			return ret;
 		}
 
@@ -793,11 +805,12 @@ namespace System.Xml.Schema
 				HandleError ("Attribute " + attr.QualifiedName + " is prohibited in this context.");
 		}
 
-		private object AssessEndElementSchemaValidity ()
+		private object AssessEndElementSchemaValidity (
+			XmlSchemaInfo info)
 		{
 			ValidateEndElementParticle ();	// validate against childrens' state.
 
-			object ret = ValidateEndSimpleContent ();
+			object ret = ValidateEndSimpleContent (info);
 
 			// 3.3.4 Assess ElementLocallyValidElement 5: value constraints.
 			// 3.3.4 Assess ElementLocallyValidType 3.1.3. = StringValid(3.14.4)
@@ -836,17 +849,17 @@ namespace System.Xml.Schema
 
 
 		// Utility for missing validation completion related to child items.
-		private object ValidateEndSimpleContent ()
+		private object ValidateEndSimpleContent (XmlSchemaInfo info)
 		{
 			object ret = null;
 			if (shouldValidateCharacters)
-				ret = ValidateEndSimpleContentCore ();
+				ret = ValidateEndSimpleContentCore (info);
 			shouldValidateCharacters = false;
 			storedCharacters.Length = 0;
 			return ret;
 		}
 
-		private object ValidateEndSimpleContentCore ()
+		private object ValidateEndSimpleContentCore (XmlSchemaInfo info)
 		{
 			if (Context.ActualType == null)
 				return null;
@@ -893,6 +906,19 @@ namespace System.Xml.Schema
 #endregion
 
 			shouldValidateCharacters = false;
+
+			if (info != null) {
+				info.IsNil = xsiNilDepth >= 0;
+				info.SchemaElement = null;
+				info.SchemaType = st;
+				if (st == null)
+					info.SchemaType = XmlSchemaType.GetBuiltInSimpleType (dt.TypeCode);
+				info.SchemaAttribute = null;
+				info.IsDefault = false; // FIXME: might be true
+				info.MemberType = null; // FIXME: check
+				// FIXME: supply Validity (really useful?)
+			}
+
 			return ret;
 		}
 
