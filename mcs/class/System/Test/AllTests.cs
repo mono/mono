@@ -22,6 +22,7 @@ namespace MonoTests
 				TestSuite suite = new TestSuite();
 				suite.AddTest (System.AllTests.Suite);
 				suite.AddTest (System.Collections.Specialized.AllTests.Suite);
+				suite.AddTest (System.ComponentModel.AllTests.Suite);
 				suite.AddTest (System.Diagnostics.AllTests.Suite);
                                 suite.AddTest (System.Net.AllTests.Suite);
                                 suite.AddTest (System.Net.Sockets.AllTests.Suite);

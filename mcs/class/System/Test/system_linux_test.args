@@ -14,6 +14,8 @@ System.Collections.Specialized/BitVector32Test.cs
 System.Collections.Specialized/HybridDictionaryTest.cs
 System.Collections.Specialized/NameValueCollectionTest.cs
 System.Collections.Specialized/StringCollectionTest.cs
+System.ComponentModel/AllTests.cs
+System.ComponentModel/EventHandlerListTests.cs
 System.Diagnostics/AllTests.cs
 System.Diagnostics/TraceTest.cs
 System.Net/AllTests.cs

@@ -1,3 +1,9 @@
+2002-10-30  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* AllTests.cs:
+	* system_linux_test.args: added System.ComponentModel and
+	EventHandlerListTests to the build.
+
 2002-09-17  Nick Drochak  <ndrochak@gol.com>
 
 	* TheTests.cs: Removed.  Not needed anymore since NUnit runs on linux.
