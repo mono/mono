@@ -1,3 +1,8 @@
+2003-10-30  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* sn.cs: Fixed strongname generation for small exponents (like 17). 
+	Part of the fixed for bug #50341.
+
 2003-10-18  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* sn.cs: Fixed a bug when exporting the public key from a SNK file.

@@ -40,12 +40,14 @@ namespace Mono.Tools {
 
 		static string defaultCSP = null;
 
+		// TODO
 		static bool LoadConfig () 
 		{
 			// default CSP
 			return false;
 		}
 
+		// TODO
 		static int SaveConfig () 
 		{
 			// default CSP
@@ -122,16 +124,6 @@ namespace Mono.Tools {
 					return true;
 			}
 			return false;
-		}
-
-		static RSA GetAssemblyPublicKey (Assembly assembly) 
-		{
-			if (assembly == null)
-				return null;
-
-			;
-
-			return null;
 		}
 
 		static void ReSign (string assemblyName, RSA key) 
@@ -221,12 +213,12 @@ namespace Mono.Tools {
 					Console.WriteLine ("Convertion options");
 					Console.WriteLine (" -e assembly output.pub{0}\tExport the assembly public key to the specified file", Environment.NewLine);
 					Console.WriteLine (" -p keypair.snk output.pub{0}\tExport the public key from a SNK file to the specified file", Environment.NewLine);
-					Console.WriteLine (" -o input output.txt{0}\tConvert the input file to a CVS file (using decimal).", Environment.NewLine);
-					Console.WriteLine (" -oh input output.txt{0}\tConvert the input file to a CVS file (using hexadecimal).", Environment.NewLine);
+					Console.WriteLine (" -o input output.txt{0}\tConvert the input file to a CSV file (using decimal).", Environment.NewLine);
+					Console.WriteLine (" -oh input output.txt{0}\tConvert the input file to a CSV file (using hexadecimal).", Environment.NewLine);
 					break;
 				case "sn":
 					Console.WriteLine ("StrongName signing options");
-					Console.WriteLine (" -D assembly1 assembly2{0}\tCompare assembly1 and assembly2 (without signatures) <1>", Environment.NewLine);
+					Console.WriteLine (" -D assembly1 assembly2{0}\tCompare assembly1 and assembly2 (without signatures)", Environment.NewLine);
 					Console.WriteLine (" -k keypair.snk{0}\tCreate a new keypair in the specified file", Environment.NewLine);
 					Console.WriteLine (" -R assembly keypair.snk{0}\tResign the assembly with the specified StrongName key file", Environment.NewLine);
 					Console.WriteLine (" -Rc assembly container{0}\tResign the assembly with the specified CSP container", Environment.NewLine);
@@ -234,8 +226,8 @@ namespace Mono.Tools {
 					Console.WriteLine (" -tp file{0}\tShow the public key and pk token from the specified file <1>", Environment.NewLine);
 					Console.WriteLine (" -T assembly{0}\tShow the public key from the specified assembly", Environment.NewLine);
 					Console.WriteLine (" -Tp assembly{0}\tShow the public key and pk token from the specified assembly", Environment.NewLine);
-					Console.WriteLine (" -V assembly{0}\tVerify the specified assembly signature <1>", Environment.NewLine);
-					Console.WriteLine (" -Vf assembly{0}\tVerify the specified assembly signature (even if disabled) <1>.", Environment.NewLine);
+					Console.WriteLine (" -V assembly{0}\tVerify the specified assembly signature", Environment.NewLine);
+					Console.WriteLine (" -Vf assembly{0}\tVerify the specified assembly signature (even if disabled).", Environment.NewLine);
 					break;
 				default:
 					Console.WriteLine ("Help options");
@@ -337,7 +329,7 @@ namespace Mono.Tools {
 				case "-p":
 					// Extract public key from SNK file
 					sn = new StrongName (ReadFromFile (args [i++]));
-					WriteToFile (args[i], CryptoConvert.ToCapiKeyBlob (sn.RSA, false));
+					WriteToFile (args[i], sn.PublicKey);
 					if (!quiet)
 						Console.WriteLine ("Public Key extracted to file {0}", args [i]);
 					break;
@@ -345,7 +337,8 @@ namespace Mono.Tools {
 					// Extract public key from container
 					csp.KeyContainerName = args [i++];
 					rsa = new RSACryptoServiceProvider (csp);
-					WriteToFile (args[i], CryptoConvert.ToCapiKeyBlob (rsa, false));
+					sn = new StrongName (rsa);
+					WriteToFile (args[i], sn.PublicKey);
 					if (!quiet)
 						Console.WriteLine ("Public Key extracted to file {0}", args [i]);
 					break;
