@@ -32,3 +32,10 @@
 ./System.Runtime.Remoting.Channels.Http/HttpRemotingHandler.cs
 ./System.Runtime.Remoting.Channels.Http/HttpRemotingHandlerFactory.cs
 ./System.Runtime.Remoting.Channels.Http/HttpServerChannel.cs
+./System.Runtime.Remoting.MetadataServices/MetaData.cs
+./System.Runtime.Remoting.MetadataServices/SdlChannelSinkProvider.cs
+./System.Runtime.Remoting.MetadataServices/ServiceType.cs
+./System.Runtime.Remoting.MetadataServices/SUDSParserException.cs
+./System.Runtime.Remoting.MetadataServices/SdlChannelSink.cs
+./System.Runtime.Remoting.MetadataServices/SdlType.cs
+./System.Runtime.Remoting.MetadataServices/SUDSGeneratorException.cs

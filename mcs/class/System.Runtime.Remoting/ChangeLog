@@ -1,3 +1,7 @@
+2003-03-25  Martin Willemoes Hansen <mwh@sysrq.dk>
+	
+	* Stubed System.Runtime.Remoting.MetadataServices
+
 2003-03-22  Martin Willemoes Hansen <mwh@sysrq.dk>
 
 	* Stubed System.Runtime.Remoting.Channels.Http
