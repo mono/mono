@@ -395,6 +395,9 @@ namespace System {
 			// FIXME -- this is most likely too simplistic for all cases;
 			//  e.g. Enums
 
+			if (type.IsArray)
+				return TypeCode.Object;
+
 			Type ust = type.UnderlyingSystemType;
 
 			if (ust == typeof (Boolean))
@@ -430,7 +433,7 @@ namespace System {
 			if (ust == typeof (UInt64))
 				return TypeCode.UInt64;
 
-			return TypeCode.Empty;
+			return TypeCode.Object;
 		}
 
 		[MonoTODO]

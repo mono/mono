@@ -1,3 +1,8 @@
+
+Mon Jun 3 12:18:18 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* Type.cs: fixed GetTypeCode.
+
 2002-06-02  Duncan Mak  <duncan@ximian.com>
 
 	* Convert.cs (ToInt16): use Convert.ToInt16 (int) instead of a direct
