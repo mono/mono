@@ -230,6 +230,8 @@ namespace System.Xml
 
 					if (aprefix == prefix)
 						continue;
+					if (namespaceManager.LookupNamespace (aprefix) == ans)
+						continue;
 	
 					string formatXmlns = String.Format (" xmlns:{0}={1}{2}{1}", aprefix, quoteChar, ans);
 					w.Write(formatXmlns);
@@ -646,7 +648,20 @@ namespace System.Xml
 
 				if (existingPrefix == null || existingPrefix == "") 
 				{
-					if (prefix == "" || namespaceManager.LookupNamespace (prefix) != null)
+					bool createPrefix = false;
+					if (prefix == "")
+						createPrefix = true;
+					else {
+						string existingNs = namespaceManager.LookupNamespace (prefix);
+						if (existingNs != null) {
+							namespaceManager.RemoveNamespace (prefix, existingNs);
+							if (namespaceManager.LookupNamespace (prefix) != existingNs) {
+								createPrefix = true;
+								namespaceManager.AddNamespace (prefix, existingNs);
+							}
+						}
+					}
+					if (createPrefix)
 						prefix = "d" + indentLevel + "p" + (newAttributeNamespaces.Count + 1);
 					newAttributeNamespaces.Add (prefix, ns);
 				}

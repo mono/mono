@@ -276,9 +276,16 @@ namespace System.Xml
 						}
 					} while (loop);
 					node = n;
+				} else {
+					do {
+						node = node.FirstChild;
+						if (node.NodeType != XmlNodeType.EntityReference)
+							break;
+						node = node.NextSibling;
+					} while (node != null);
+					if (node == null)
+						return false;
 				}
-				else
-					node = node.FirstChild;
 				return true;
 			}
 			return false;
@@ -353,8 +360,8 @@ namespace System.Xml
 				return false;
 
 			if (node.NextSibling != null) {
+				XmlNode n = node.NextSibling;
 				if (node.ParentNode != null && node.ParentNode.NodeType == XmlNodeType.Document) {
-					XmlNode n = node.NextSibling;
 					while (n != null) {
 						switch (n.NodeType) {
 						case XmlNodeType.DocumentType:
@@ -368,9 +375,17 @@ namespace System.Xml
 						node = n;
 					else
 						return false;
+				} else {
+					while (n != null) {
+						if (n.NodeType != XmlNodeType.EntityReference)
+							break;
+						n = n.NextSibling;
+					}
+					if (n != null)
+						node = n;
+					else
+						return false;
 				}
-				else
-					node = node.NextSibling;
 				return true;
 			}
 			else

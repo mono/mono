@@ -1,5 +1,12 @@
 2003-11-02  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
 
+	* XmlDocumentNavigator.cs : Fixed MoveToFirstChild() and MoveToNext()
+	  to skip XmlEntityReference.
+	* XmlTextWriter.cs : Fixed AddMissingElements() and 
+	  WriteStartAttribute() not to emit extraneous xmlns.
+
+2003-11-02  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
+
 	* XmlTextWriter.cs : Skip multiple xmlns when element and any of 
 	  attributes have the same xmlns values.
 	  WriteEndElement() allows open attribute (calles WriteEndAttribute()).
