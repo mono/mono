@@ -256,7 +256,7 @@ namespace System.Xml.Xsl
 			xmlFreeDoc (xmlInput);
 			Cleanup ();
 
-			return new XmlTextReader (xslOutputString);
+			return new XmlTextReader (new StringReader (xslOutputString));
 		}
 
 		// Transforms the XML data in the IXPathNavigable using
@@ -283,9 +283,10 @@ namespace System.Xml.Xsl
 		// the specified args and outputs the result to an XmlWriter.
 		public void Transform (IXPathNavigable input, XsltArgumentList args, XmlWriter output)
 		{
-			StringWriter writer = new UTF8StringWriter ();
-			Transform (input, args, writer);
-			output.WriteRaw (writer.GetStringBuilder ().ToString ());
+			if (input == null)
+				throw new ArgumentNullException ("input");
+
+			Transform (input.CreateNavigator (), args, output);
 		}
 
 		// Transforms the XML data in the XPathNavigator using
@@ -447,55 +448,55 @@ namespace System.Xml.Xsl
 
 		#region Calls to external libraries
 		// libxslt
-		[DllImport ("libxslt")]
+		[DllImport ("xslt")]
 		static extern IntPtr xsltParseStylesheetFile (string filename);
 
-		[DllImport ("libxslt")]
+		[DllImport ("xslt")]
 		static extern IntPtr xsltParseStylesheetDoc (IntPtr docPtr);
 
-		[DllImport ("libxslt")]
+		[DllImport ("xslt")]
 		static extern IntPtr xsltApplyStylesheet (IntPtr stylePtr, IntPtr DocPtr, IntPtr notused);
 
-		[DllImport ("libxslt")]
+		[DllImport ("xslt")]
 		static extern int xsltSaveResultToFilename (string URI, IntPtr doc, IntPtr styleSheet, int compression);
 
-		[DllImport ("libxslt")]
+		[DllImport ("xslt")]
 		static extern void xsltCleanupGlobals ();
 
-		[DllImport ("libxslt")]
+		[DllImport ("xslt")]
 		static extern void xsltFreeStylesheet (IntPtr cur);
 
 		// libxml2
-		[DllImport ("libxml2")]
+		[DllImport ("xml2")]
 		static extern IntPtr xmlNewDoc (string version);
 
-		[DllImport ("libxml2")]
+		[DllImport ("xml2")]
 		static extern int xmlSaveFile (string filename, IntPtr cur);
 
-		[DllImport ("libxml2")]
+		[DllImport ("xml2")]
 		static extern IntPtr xmlParseFile (string filename);
 
-		[DllImport ("libxml2")]
+		[DllImport ("xml2")]
 		static extern IntPtr xmlParseDoc (string document);
 
-		[DllImport ("libxml2", EntryPoint="xmlParseDoc")]
+		[DllImport ("xml2", EntryPoint="xmlParseDoc")]
 		static extern IntPtr xmlParseDocUTF16 ([MarshalAs(UnmanagedType.LPWStr)] string document);
 
-		[DllImport ("libxml2")]
+		[DllImport ("xml2")]
 		static extern void xmlFreeDoc (IntPtr doc);
 
-		[DllImport ("libxml2")]
+		[DllImport ("xml2")]
 		static extern void xmlCleanupParser ();
 
-		[DllImport ("libxml2")]
+		[DllImport ("xml2")]
 		static extern void xmlDocDumpMemory (IntPtr doc, ref IntPtr mem, ref int size);
 
-		[DllImport ("libxml2")]
+		[DllImport ("xml2")]
 		static extern void xmlFree (IntPtr data);
 
 		#endregion
 
-		// This class just makes XmlTextWriter use 'encoding="utf-8"'
+		// This classes just makes the base class use 'encoding="utf-8"'
 		class UTF8StringWriter : StringWriter
 		{
 			static Encoding encoding = new UTF8Encoding (false);

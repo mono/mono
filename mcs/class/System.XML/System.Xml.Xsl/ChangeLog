@@ -1,3 +1,8 @@
+2003-01-23  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* XslTransform.cs: fixed a couple of Transform overloads and changed the
+	library name in DllImport to make it work on windows too.
+
 2003-01-22  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* XslTransform.cs: implemented all Load and Transform methods. It uses
