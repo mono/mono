@@ -1,3 +1,8 @@
+
+Sat Apr 20 13:33:07 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* threads.c: pass 'this' to the thread start routine.
+
 2002-04-20  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* string-icalls.c: fix IndexOf and LastIndexOf. Now
