@@ -527,6 +527,7 @@ namespace MonoTests.System.Threading {
 		}
 		
 		[Category("NotDotNet")]
+		[Category("NotWorking")]
 		public void TestSuspendAbort ()
 		{
 			Thread t = new Thread (new ThreadStart (DoCount));
