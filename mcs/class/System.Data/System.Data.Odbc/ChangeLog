@@ -1,4 +1,7 @@
 2004-05-14 Umadevi S (sumadevi@novell.com)
+        * Added Classes OdbcCategoryAttribute.cs, OdbcDescriptionAttribute.cs
+
+2004-05-14 Umadevi S (sumadevi@novell.com)
 	* Added Class OdbcCommandBuilder.cs
 
 2004-05-14 Umadevi S (sumadevi@novell.com)
