@@ -36,7 +36,7 @@ namespace System.Xml.Schema
 					error (h, "Invalid schema type name was specified: " + baseTypeName);
 			}
 			// otherwise, it might be missing sub components.
-			else if (!schema.missedSubComponents)
+			else if (!schema.IsNamespaceAbsent (baseTypeName.Namespace))
 				error (h, "Referenced base schema type " + baseTypeName + " was not found in the corresponding schema.");
 		}
 	}

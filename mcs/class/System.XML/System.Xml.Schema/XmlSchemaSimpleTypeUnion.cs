@@ -119,7 +119,7 @@ namespace System.Xml.Schema
 							error (h, "Invalid schema type name was specified: " + memberTypeName);
 					}
 					// otherwise, it might be missing sub components.
-					else if (!schema.missedSubComponents)
+					else if (!schema.IsNamespaceAbsent (memberTypeName.Namespace))
 						error (h, "Referenced base schema type " + memberTypeName + " was not found in the corresponding schema.");
 
 					al.Add (type);

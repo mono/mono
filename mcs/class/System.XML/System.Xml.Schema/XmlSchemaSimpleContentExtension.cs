@@ -123,7 +123,7 @@ namespace System.Xml.Schema
 					error (h, "Invalid schema datatype name is specified.");
 			}
 			// otherwise, it might be missing sub components.
-			else if (!schema.missedSubComponents)// && schema.Schemas [baseTypeName.Namespace] != null)
+			else if (!schema.IsNamespaceAbsent (baseTypeName.Namespace))
 				error (h, "Referenced base schema type " + baseTypeName + " was not found in the corresponding schema.");
 
 			ValidationId = schema.ValidationId;

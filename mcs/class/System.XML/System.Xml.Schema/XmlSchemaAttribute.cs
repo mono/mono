@@ -337,22 +337,8 @@ namespace System.Xml.Schema
 						error (h, "Invalid xml schema namespace datatype was specified.");
 				}
 				// otherwise, it might be missing sub components.
-				else if (!schema.missedSubComponents)
+				else if (!schema.IsNamespaceAbsent (SchemaTypeName.Namespace))
 					error (h, "Referenced schema type " + SchemaTypeName + " was not found in the corresponding schema.");
-				/*
-				attributeType = schema.Schemas.FindSchemaType (SchemaTypeName);
-				if (attributeType == null) {
-					if (SchemaTypeName.Namespace == XmlSchema.Namespace)
-						error (h, "Invalid xml schema namespace datatype was specified.");
-					else if (!schema.missedSubComponents)
-						error (h, "Referenced schema type was not found in the corresponding schema. Schema type name is " + SchemaTypeName + " .");
-				}
-				if (attributeType is XmlSchemaComplexType)
-					error(h,"An attribute can't have complexType Content");
-				XmlSchemaType attrSchemaType = attributeType as XmlSchemaType;
-				if (attrSchemaType != null)
-					attrSchemaType.Validate (h, schema);
-				*/
 			}
 
 			// Then, fill type information for the type references for the referencing attributes
@@ -363,7 +349,7 @@ namespace System.Xml.Schema
 				if (referencedAttribute != null)
 					errorCount += referencedAttribute.Validate (h, schema);
 				// otherwise, it might be missing sub components.
-				else if (!schema.missedSubComponents)
+				else if (!schema.IsNamespaceAbsent (RefName.Namespace))
 					error (h, "Referenced attribute " + RefName + " was not found in the corresponding schema.");
 			}
 

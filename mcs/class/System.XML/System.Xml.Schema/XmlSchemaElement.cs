@@ -520,7 +520,7 @@ namespace System.Xml.Schema
 						elementType = datatype;
 				}
 				// otherwise, it might be missing sub components.
-				else if (!schema.missedSubComponents)
+				else if (!schema.IsNamespaceAbsent (SchemaTypeName.Namespace))
 					error (h, "Referenced element schema type " + SchemaTypeName + " was not found in the corresponding schema.");
 			}
 			else if (RefName != XmlQualifiedName.Empty)
@@ -537,7 +537,7 @@ namespace System.Xml.Schema
 					this.actualIsNillable = refElem.IsNillable;
 				}
 				// otherwise, it might be missing sub components.
-				else if (!schema.missedSubComponents)// && schema.Schemas [RefName.Namespace] != null)
+				else if (!schema.IsNamespaceAbsent (RefName.Namespace))
 					error (h, "Referenced element " + RefName + " was not found in the corresponding schema.");
 			}
 			
@@ -578,7 +578,7 @@ namespace System.Xml.Schema
 					substElem.substitutingElements.Add (this);
 				}
 				// otherwise, it might be missing sub components.
-				else if (!schema.missedSubComponents)
+				else if (!schema.IsNamespaceAbsent (SubstitutionGroup.Namespace))
 					error (h, "Referenced element type " + SubstitutionGroup + " was not found in the corresponding schema.");
 			}
 

@@ -95,7 +95,7 @@ namespace System.Xml.Schema
 
 			referencedGroup = schema.Groups [RefName] as XmlSchemaGroup;
 			// it might be missing sub components.
-			if (referencedGroup == null && !schema.missedSubComponents)// && schema.Schemas [RefName.Namespace] != null)
+			if (referencedGroup == null && !schema.IsNamespaceAbsent (RefName.Namespace))
 				error (h, "Referenced group " + RefName + " was not found in the corresponding schema.");
 			else if (TargetGroup != null)
 				TargetGroup.Validate (h, schema);

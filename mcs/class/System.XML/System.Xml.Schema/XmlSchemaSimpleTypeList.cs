@@ -100,7 +100,7 @@ namespace System.Xml.Schema
 					error (h, "Invalid schema type name was specified: " + itemTypeName);
 			}
 			// otherwise, it might be missing sub components.
-			else if (!schema.missedSubComponents)
+			else if (!schema.IsNamespaceAbsent (itemTypeName.Namespace))
 				error (h, "Referenced base list item schema type " + itemTypeName + " was not found.");
 
 			ValidationId = schema.ValidationId;

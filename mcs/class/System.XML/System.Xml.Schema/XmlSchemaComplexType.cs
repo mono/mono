@@ -438,7 +438,7 @@ namespace System.Xml.Schema
 				if (pgrp.TargetGroup != null)
 					errorCount += pgrp.TargetGroup.Validate (h,schema);
 				// otherwise, it might be missing sub components.
-				else if (!schema.missedSubComponents)// && schema.Schemas [pgrp.RefName.Namespace] != null)
+				else if (!schema.IsNamespaceAbsent (pgrp.RefName.Namespace))
 					error (h, "Referenced group " + pgrp.RefName + " was not found in the corresponding schema.");
 			}
 		}
@@ -518,7 +518,7 @@ namespace System.Xml.Schema
 				// base
 				if (baseTypeName == XmlSchemaComplexType.AnyTypeName)
 					baseComplexType = XmlSchemaComplexType.AnyType;
-				else if (baseComplexType == null && !schema.missedSubComponents)
+				else if (baseComplexType == null && !schema.IsNamespaceAbsent (baseTypeName.Namespace))
 					error (h, "Referenced base schema type " + baseTypeName + " was not complex type or not found in the corresponding schema.");
 			}
 			// Common to simpleContent 
@@ -538,7 +538,7 @@ namespace System.Xml.Schema
 					// do nothing for particle.
 				}
 				// otherwise, it might be missing sub components.
-				else if (baseType == null && !schema.missedSubComponents)// && schema.Schemas [baseTypeName.Namespace] != null)
+				else if (baseType == null && !schema.IsNamespaceAbsent (baseTypeName.Namespace))// && schema.Schemas [baseTypeName.Namespace] != null)
 					error (h, "Referenced base schema type " + baseTypeName + " was not found in the corresponding schema.");
 			}
 
