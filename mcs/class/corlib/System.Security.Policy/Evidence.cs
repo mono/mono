@@ -24,7 +24,8 @@ namespace System.Security.Policy {
 
 		public Evidence (Evidence evidence) 
 		{
-			Merge (evidence);	
+			if (evidence != null)
+				Merge (evidence);	
 		}
 
 		public Evidence (object[] hostEvidence, object[] assemblyEvidence ) 

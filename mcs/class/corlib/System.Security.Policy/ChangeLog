@@ -1,3 +1,7 @@
+2002-12-20 Jackson Harper <jackson@latitudegeo.com>
+
+	* Evidence.cs: Copy constructor does not attempt to merge if it recieves a null ref
+
 2002-12-15  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* Publisher.cs: New. Implemented.
