@@ -1,3 +1,9 @@
+2002-05-07  Miguel de Icaza  <miguel@ximian.com>
+
+	* expression.cs (Unary.TryReduceNegative): Ah!  Tricky!  Tricky!
+	Because of the way we parse things, we should try to see if a
+	UIntConstant can fit in an integer.
+
 2002-05-07  Ravi Pratap  <ravi@ximian.com>
 
 	* ecore.cs (GetConversionOperators): Do not pick up op_True operators
