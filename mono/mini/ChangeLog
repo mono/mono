@@ -1,3 +1,8 @@
+2003-08-30  Zoltan Varga  <vargaz@freemail.hu>
+
+	* aot.c (mono_compile_assembly): Oops. Remove debugging cruft from
+	last checkin.
+
 2003-08-29  Zoltan Varga  <vargaz@freemail.hu>
 
 	* mini.c (mini_init): Call mono_marshal_init () explicitly since it
