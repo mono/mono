@@ -1,11 +1,10 @@
 //
-// System.Web.UI.WebControls.DataControlFieldCell.cs
+// System.Web.UI.WebControls.TemplateField.cs
 //
 // Authors:
-//	Sanjay Gupta (gsanjay@novell.com)
 //  Lluis Sanchez Gual (lluis@novell.com)
 //
-// (C) 2004 Novell, Inc. (http://www.novell.com)
+// (C) 2005 Novell, Inc. (http://www.novell.com)
 //
 
 //
@@ -34,23 +33,8 @@ using System.Web.UI;
 
 namespace System.Web.UI.WebControls
 {
-	public class DataControlFieldCell : TableCell
+	public class TemplateField : DataControlField
 	{
-		DataControlField containerField;
-		
-		public DataControlFieldCell (DataControlField containerField) : this (HtmlTextWriterTag.Td, containerField)
-		{		
-		}
-		
-		protected DataControlFieldCell (HtmlTextWriterTag tagKey, DataControlField containerField) : base (tagKey)
-		{
-			this.containerField = containerField;
-		}
-
-		public DataControlField ContainingField {
-			get { return containerField; }
-		}
 	}
 }
-	
 #endif

@@ -35,7 +35,7 @@ using System.Collections.Specialized;
 
 namespace System.Web.UI.WebControls
 {
-	public class ObjectDataSourceMethodEventArgs : EventArgs
+	public class ObjectDataSourceMethodEventArgs : System.ComponentModel.CancelEventArgs
 	{
 		private IOrderedDictionary parameters; 
 		

@@ -114,6 +114,18 @@ namespace System.Web.UI.WebControls {
 				ViewState ["ReadOnly"] = value;
 			}
 		}
+
+		[WebCategoryAttribute ("HtmlEncode")]
+		[DefaultValueAttribute (true)]
+		public virtual bool HtmlEncode {
+			get {
+				object val = ViewState ["HtmlEncode"];
+				return val != null ? (bool) val : true;
+			}
+			set { 
+				ViewState ["HtmlEncode"] = true;
+			}
+		}
 		
 		public override void ExtractValuesFromCell (IOrderedDictionary dictionary,
 			DataControlFieldCell cell, DataControlRowState rowState, bool includeReadOnly)
@@ -145,27 +157,35 @@ namespace System.Web.UI.WebControls {
 			}
 		}
 		
-		string FormatValue (object value)
+		protected virtual bool SupportsHtmlEncode {
+			get { return true; }
+		}
+		
+		protected virtual string FormatDataValue (object value, bool encode)
 		{
+			string res;
 			if (value == null || (value.ToString().Length == 0 && ConvertEmptyStringToNull))
-				return NullDisplayText;
-			if (DataFormatString.Length > 0)
-				return string.Format (DataFormatString, value);
+				res = NullDisplayText;
+			else if (DataFormatString.Length > 0)
+				res = string.Format (DataFormatString, value);
 			else
-				return value.ToString ();
+				res = value.ToString ();
+				
+			if (encode) return HttpUtility.HtmlEncode (res);
+			else return res;
 		}
 		
 		protected virtual object GetValue (Control controlContainer)
 		{
 			if (DesignMode)
-				return GetDesignTimeValue (controlContainer);
+				return GetDesignTimeValue ();
 			else
 				return GetBoundValue (controlContainer);
 		}
 		
-		protected virtual object GetDesignTimeValue (Control controlContainer)
+		protected virtual object GetDesignTimeValue ()
 		{
-			return GetBoundValue (controlContainer);
+			return GetBoundValue (Control);
 		}
 		
 		object GetBoundValue (Control controlContainer)
@@ -196,10 +216,10 @@ namespace System.Web.UI.WebControls {
 			DataControlFieldCell cell = (DataControlFieldCell) sender;
 			if (cell.Controls.Count > 0) {
 				TextBox box = cell.Controls [0] as TextBox;
-				box.Text = FormatValue (GetValue (cell.BindingContainer));
+				box.Text = FormatDataValue (GetValue (cell.BindingContainer), SupportsHtmlEncode && HtmlEncode);
 			}
 			else
-				cell.Text = FormatValue (GetValue (cell.BindingContainer));
+				cell.Text = FormatDataValue (GetValue (cell.BindingContainer), SupportsHtmlEncode && HtmlEncode);
 		}
 	}
 }

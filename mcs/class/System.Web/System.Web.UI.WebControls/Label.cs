@@ -49,7 +49,7 @@ namespace System.Web.UI.WebControls
 	[ToolboxData("<{0}:Label runat=\"server\">Label</{0}:Label>")]
 	public class Label : WebControl
 #if NET_2_0
-		, IStaticTextControl
+		, ITextControl
 #endif
 	{
 		public Label (): base ()

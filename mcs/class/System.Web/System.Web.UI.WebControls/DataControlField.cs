@@ -84,11 +84,11 @@ namespace System.Web.UI.WebControls {
 		{
 			if (cellType == DataControlCellType.Header && ShowHeader)
 			{
-				if (HeaderText != "" || HeaderImageUrl != "") {
-					if (sortingEnabled)
+				if (HeaderText.Length > 0 || HeaderImageUrl.Length > 0) {
+					if (sortingEnabled && SortExpression.Length > 0)
 						cell.Controls.Add (new DataControlButton (control, HeaderText, HeaderImageUrl, "Sort", SortExpression, true));
 					else
-						cell.Controls.Add (new DataControlButton (control, HeaderText, HeaderImageUrl, "", "", true));
+						cell.Controls.Add (new DataControlButton (control, HeaderText, HeaderImageUrl, string.Empty, string.Empty, true));
 				}
 			}
 			else if (cellType == DataControlCellType.Footer) {
@@ -168,6 +168,11 @@ namespace System.Web.UI.WebControls {
 		void IStateManager.TrackViewState()
 		{
 			TrackViewState();
+		}
+		
+		internal Exception GetNotSupportedPropException (string propName)
+		{
+			return new System.NotSupportedException ("The property '" + propName + "' is not supported in " + GetType().Name); 
 		}
 
 		[MonoTODO ("Render this")]

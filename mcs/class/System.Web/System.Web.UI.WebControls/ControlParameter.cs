@@ -33,6 +33,7 @@ using System.Collections;
 using System.Collections.Specialized;
 using System.Text;
 using System.ComponentModel;
+using System.Reflection;
 
 namespace System.Web.UI.WebControls {
 
@@ -71,10 +72,18 @@ namespace System.Web.UI.WebControls {
 			return new ControlParameter (this);
 		}
 		
-		[MonoTODO]
 		protected override object Evaluate (HttpContext ctx, Control control)
 		{
-			throw new NotImplementedException ();
+			if (control == null) return null;
+			if (control.Page == null) return null;
+			
+			Control c = control.Page.FindControl (ControlID);
+			if (c == null) throw new HttpException ("Control '" + ControlID + "' not found.");
+			
+			PropertyInfo prop = c.GetType().GetProperty (PropertyName);
+			if (prop == null) throw new HttpException ("Property '" + PropertyName + "' not found in type '" + c.GetType() + "'.");
+			
+			return prop.GetValue (c, null);
 		}
 		
 		[WebCategoryAttribute ("Control")]

@@ -1,11 +1,10 @@
 //
-// System.Web.UI.WebControls.DataControlFieldCell.cs
+// System.Web.UI.WebControls.DataControlFieldHeaderCell.cs
 //
 // Authors:
-//	Sanjay Gupta (gsanjay@novell.com)
 //  Lluis Sanchez Gual (lluis@novell.com)
 //
-// (C) 2004 Novell, Inc. (http://www.novell.com)
+// (C) 2005 Novell, Inc. (http://www.novell.com)
 //
 
 //
@@ -34,23 +33,36 @@ using System.Web.UI;
 
 namespace System.Web.UI.WebControls
 {
-	public class DataControlFieldCell : TableCell
+	public class DataControlFieldHeaderCell : DataControlFieldCell
 	{
-		DataControlField containerField;
+		TableHeaderScope scope;
 		
-		public DataControlFieldCell (DataControlField containerField) : this (HtmlTextWriterTag.Td, containerField)
-		{		
-		}
-		
-		protected DataControlFieldCell (HtmlTextWriterTag tagKey, DataControlField containerField) : base (tagKey)
+		public DataControlFieldHeaderCell (DataControlField containerField): base (HtmlTextWriterTag.Th, containerField)
 		{
-			this.containerField = containerField;
 		}
-
-		public DataControlField ContainingField {
-			get { return containerField; }
+		
+		internal DataControlFieldHeaderCell (DataControlField containerField, TableHeaderScope scope): this (containerField)
+		{
+			this.scope = scope;
+		}
+		
+		public TableHeaderScope Scope {
+			get { return scope; }
+			set { scope = value; }
+		}
+		
+		protected override void AddAttributesToRender (HtmlTextWriter writer)
+		{
+			base.AddAttributesToRender (writer);
+			switch (scope) {
+				case TableHeaderScope.Column:
+					writer.AddAttribute (HtmlTextWriterAttribute.Scope, "col");
+					break;
+				case TableHeaderScope.Row:
+					writer.AddAttribute (HtmlTextWriterAttribute.Scope, "row");
+					break;
+			}
 		}
 	}
 }
-	
 #endif

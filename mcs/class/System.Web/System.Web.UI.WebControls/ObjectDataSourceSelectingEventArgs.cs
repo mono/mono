@@ -37,15 +37,21 @@ namespace System.Web.UI.WebControls
 {
 	public class ObjectDataSourceSelectingEventArgs: ObjectDataSourceMethodEventArgs
 	{
-		private bool executeSelectCount;  
+		private bool executeSelectCount;
+		private DataSourceSelectArguments arguments;
 		
-		public ObjectDataSourceSelectingEventArgs (IOrderedDictionary inputParameters, bool executeSelectCount) : base (inputParameters)
+		public ObjectDataSourceSelectingEventArgs (IOrderedDictionary inputParameters, DataSourceSelectArguments arguments, bool executeSelectCount) : base (inputParameters)
 		{
 			this.executeSelectCount = executeSelectCount;
+			this.arguments = arguments;
 		}
 		
 		public bool ExecutingSelectCount {
 			get { return executeSelectCount; }
+		}
+		
+		public DataSourceSelectArguments Arguments {
+			get { return arguments; }
 		}
 	}
 }

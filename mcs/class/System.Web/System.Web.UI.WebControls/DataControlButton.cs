@@ -42,6 +42,7 @@ namespace System.Web.UI.WebControls
 		
 		public DataControlButton (Control container)
 		{
+			this.container = container;
 		}
 		
 		public DataControlButton (Control container, string text, string image, string command, string commandArg, bool allowCallback)
@@ -76,9 +77,20 @@ namespace System.Web.UI.WebControls
 			}
 		}
 		
+		public virtual ButtonType ButtonType {
+			get {
+				object ob = ViewState ["ButtonType"];
+				if (ob != null) return (ButtonType) ob;
+				return ButtonType.Link;
+			}
+			set {
+				ViewState ["ButtonType"] = value;
+			}
+		}
+
 		protected override void Render (HtmlTextWriter writer)
 		{
-			if (CommandName.Length > 0)
+			if (CommandName.Length > 0 || ButtonType == ButtonType.Button)
 			{
 				string postScript = null;
 				string callScript = null;
@@ -100,27 +112,43 @@ namespace System.Web.UI.WebControls
 						callScript = ccner.GetCallbackScript (this, CommandName + "$" + CommandArgument);
 				}
 			
-				if (ImageUrl.Length > 0) {
-					writer.AddAttribute (HtmlTextWriterAttribute.Type, "image");
-					writer.AddAttribute (HtmlTextWriterAttribute.Src, ResolveUrl (ImageUrl));
+				if (ButtonType == ButtonType.Link || ButtonType == ButtonType.Image)
+				{
+					if (ImageUrl.Length > 0) {
+						writer.AddAttribute (HtmlTextWriterAttribute.Type, "image");
+						writer.AddAttribute (HtmlTextWriterAttribute.Src, ResolveUrl (ImageUrl));
+						if (callScript != null)
+							writer.AddAttribute (HtmlTextWriterAttribute.Onclick, callScript);
+						else
+							writer.AddAttribute (HtmlTextWriterAttribute.Onclick, postScript);
+						if (Text.Length > 0)
+							writer.AddAttribute (HtmlTextWriterAttribute.Alt, Text);
+						writer.RenderBeginTag (HtmlTextWriterTag.Input);
+						writer.RenderEndTag ();
+					}
+					else {
+						if (callScript != null) {
+							writer.AddAttribute (HtmlTextWriterAttribute.Onclick, callScript);
+							writer.AddAttribute (HtmlTextWriterAttribute.Href, "javascript:");
+						}
+						else
+							writer.AddAttribute (HtmlTextWriterAttribute.Href, postScript);
+						writer.RenderBeginTag (HtmlTextWriterTag.A);
+						writer.Write (Text);
+						writer.RenderEndTag ();
+					}
+				}
+				else if (ButtonType == ButtonType.Button)
+				{
 					if (callScript != null)
 						writer.AddAttribute (HtmlTextWriterAttribute.Onclick, callScript);
 					else
 						writer.AddAttribute (HtmlTextWriterAttribute.Onclick, postScript);
-					if (Text.Length > 0)
-						writer.AddAttribute (HtmlTextWriterAttribute.Alt, Text);
+						
+					writer.AddAttribute (HtmlTextWriterAttribute.Type, "submit");
+					writer.AddAttribute (HtmlTextWriterAttribute.Name, ClientID);
+					writer.AddAttribute (HtmlTextWriterAttribute.Value, Text);
 					writer.RenderBeginTag (HtmlTextWriterTag.Input);
-					writer.RenderEndTag ();
-				}
-				else {
-					if (callScript != null) {
-						writer.AddAttribute (HtmlTextWriterAttribute.Onclick, callScript);
-						writer.AddAttribute (HtmlTextWriterAttribute.Href, "javascript:");
-					}
-					else
-						writer.AddAttribute (HtmlTextWriterAttribute.Href, postScript);
-					writer.RenderBeginTag (HtmlTextWriterTag.A);
-					writer.Write (Text);
 					writer.RenderEndTag ();
 				}
 			} else {

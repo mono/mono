@@ -251,6 +251,11 @@ namespace System.Web.UI.WebControls {
 		{
 			return this.DefaultValue;
 		}
+		
+		internal object GetValue (HttpContext context, Control control)
+		{
+			return Evaluate (context, control);
+		}
 
 		protected internal virtual void SetDirty()
 		{
