@@ -1,3 +1,7 @@
+2003-05-16  Dick Porter  <dick@ximian.com>
+
+	* UnixEndPoint.cs: New property to get and set the filename, like
+	the IPEndPoint has for the IP address.  Also implement ToString().
 
 Tue Apr 29 16:53:56 CEST 2003 Paolo Molaro <lupus@ximian.com>
 

@@ -23,6 +23,15 @@ namespace Mono.Posix
 			this.filename = filename;
 		}
 		
+		public string Filename {
+			get {
+				return(filename);
+			}
+			set {
+				filename=value;
+			}
+		}
+
 		public override AddressFamily AddressFamily {
 			get { return AddressFamily.Unix; }
 		}
@@ -48,6 +57,10 @@ namespace Mono.Posix
 				sa [i + 2] = bytes [i];
 
 			return sa;
+		}
+
+		public override string ToString() {
+			return(filename);
 		}
 	}
 }
