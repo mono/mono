@@ -1,3 +1,8 @@
+2004-01-10  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ISqlParameterCollection.cs : Obsolete attribute namespace
+	  declaration is missing (looks mcs bug if mcs allows this code).
+
 2003-12-19  Tim Coleman <tim@timcoleman.com>
 	* DataAccessKind.cs Format.cs IBinarySerialize.cs
 	* InvalidUdtException.cs ISqlCommand.cs ISqlConnection.cs

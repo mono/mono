@@ -9,6 +9,7 @@
 
 #if NET_1_2
 
+using System.Runtime.InteropServices;
 using System.Collections;
 
 namespace System.Data.Sql {
