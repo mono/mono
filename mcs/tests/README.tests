@@ -15,7 +15,7 @@ Test cases listed by Category:
 
 * Indexers and Properties
 
-  test-148.cs test-166.cs test-206.cs
+  test-148.cs test-166.cs test-206.cs test-208.cs
 
 * Events and Delegates
 
@@ -323,6 +323,21 @@ test-204.cs
 -----------
 
 User defined conditional logical operators; bug #40505.
+
+test-206.cs
+-----------
+
+Indexers; bug #46502.
+
+test-207.cs
+-----------
+
+Expressions which return delegates.
+
+test-208.cs
+-----------
+
+Indexers; bug #46788.
 
 verify-1.cs
 -----------
