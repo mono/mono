@@ -227,7 +227,8 @@ namespace System.IO {
 				if (haveEvents > 0) {
 					// Restart monitoring
 					KeventData data = (KeventData) requests [ev.ident];
-					StartMonitoringDirectory(data);
+					StopMonitoringDirectory (data);
+					StartMonitoringDirectory (data);
 					ProcessEvent (ev);
 				} else {
 					System.Threading.Thread.Sleep (500);
