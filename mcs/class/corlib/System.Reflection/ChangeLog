@@ -1,3 +1,13 @@
+2005-02-16  Miguel de Icaza  <miguel@novell.com>
+
+	* MonoEvent.cs: Put new methods here.
+
+	* EventInfo.cs: Move the methods GetCustomAttributes, and
+	IsDefined from EventInfo to MonoEvent.
+
+	Remove the methods that were not supposed to be exposed: Name,
+	ReflectedType, DeclaringType.
+
 2005-02-12  Chris Toshok  <toshok@ximian.com>
 
 	* Assembly.cs: Correct the type of MonoDebugger_MakeArrayType.
