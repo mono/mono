@@ -279,8 +279,8 @@ GpStatus GdipGetDC (GpGraphics *graphics, int *hDC);
 GpStatus GdipReleaseDC (GpGraphics *graphics, int hDC);
 GpStatus GdipRestoreGraphics (GpGraphics *graphics, unsigned int graphicsState);
 GpStatus GdipSaveGraphics(GpGraphics *graphics, unsigned int * state);
-GpStatus GdipRotateWorldTransform (GpGraphics *graphics, float angle, int order);
-GpStatus GdipTranslateWorldTransform (GpGraphics *graphics, float dx, float dy, int order);
+GpStatus GdipRotateWorldTransform (GpGraphics *graphics, float angle, GpMatrixOrder order);
+GpStatus GdipTranslateWorldTransform (GpGraphics *graphics, float dx, float dy, GpMatrixOrder order);
 GpStatus GdipDrawBezier (GpGraphics *graphics, GpPen *pen, float x1, float y1, float x2, float y2, float x3, float y3, float x4, float y4);
 GpStatus GdipDrawBezierI (GpGraphics *graphics, GpPen *pen, int x1, int y1, int x2, int y2, int x3, int y3, int x4, int y4);
 GpStatus GdipDrawBeziers (GpGraphics *graphics, GpPen *pen, GpPointF *points, int count);
@@ -329,8 +329,8 @@ GpStatus GdipDrawString (GpGraphics *graphics, const char *string, int len, void
 /* Matrix */
 GpStatus GdipCreateMatrix (GpMatrix **matrix);
 GpStatus GdipCreateMatrix2 (float m11, float m12, float m21, float m22, float dx, float dy, GpMatrix **matrix);
-GpStatus GdipCreateMatrix3 (GpRectF *rect, GpPointF *dstplg, GpMatrix **matrix);
-GpStatus GdipCreateMatrix3I (GpRect *rect, GpPoint *dstplg, GpMatrix **matrix);
+GpStatus GdipCreateMatrix3 (const GpRectF *rect, const GpPointF *dstplg, GpMatrix **matrix);
+GpStatus GdipCreateMatrix3I (const GpRect *rect, const GpPoint *dstplg, GpMatrix **matrix);
 GpStatus GdipCloneMatrix (GpMatrix *matrix, GpMatrix **cloneMatrix);
 GpStatus GdipDeleteMatrix (GpMatrix *matrix);
 GpStatus GdipSetMatrixElements (GpMatrix *matrix, float m11, float m12, float m21, float m22, float dx, float dy);

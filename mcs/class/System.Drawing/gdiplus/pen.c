@@ -188,7 +188,7 @@ GdipResetPenTransform (GpPen *pen)
 }
 
 GpStatus
-GdipMultiplyPenTransform (GpPen *pen, const GpMatrix *matrix, GpMatrixOrder order)
+GdipMultiplyPenTransform (GpPen *pen, GpMatrix *matrix, GpMatrixOrder order)
 {
         return GdipMultiplyMatrix (pen->matrix, matrix, order);
 }

@@ -122,8 +122,14 @@ namespace System.Drawing {
 		static internal extern Status GdipSetRenderingOrigin (IntPtr graphics, int x, int y);
  		[DllImport("gdiplus.dll")]
  		internal static extern Status GdipCloneBitmapAreaI (int x, int y, int width, int height, PixelFormat format, IntPtr original, out int bitmap);
-
-                
+ 		[DllImport("gdiplus.dll")]
+ 		internal static extern Status GdipResetWorldTransform (IntPtr graphics);
+ 		[DllImport("gdiplus.dll")]
+ 		internal static extern Status GdipSetWorldTransform (IntPtr graphics, IntPtr matrix);
+ 		[DllImport("gdiplus.dll")]
+ 		internal static extern Status GdipGetWorldTransform (IntPtr graphics, IntPtr matrix);
+ 		[DllImport("gdiplus.dll")]
+ 		internal static extern Status GdipScaleWorldTransform (IntPtr graphics, float sx, float sy, MatrixOrder order);
 		
 		// Pen functions
 		[DllImport("gdiplus.dll")]

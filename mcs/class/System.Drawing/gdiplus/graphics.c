@@ -281,25 +281,73 @@ GdipSaveGraphics(GpGraphics *graphics, unsigned int *state)
 	}
 	return Ok;
 }
-
-GpStatus 
-GdipRotateWorldTransform (GpGraphics *graphics, float angle, int order)
+GpStatus
+GdipResetWorldTransform (GpGraphics *graphics)
 {
-	cairo_matrix_t *mtx = cairo_matrix_create ();
-	cairo_matrix_rotate (mtx, angle * DEGTORAD);
-	cairo_matrix_multiply (graphics->copy_of_ctm, mtx, graphics->copy_of_ctm );
-	cairo_matrix_destroy ( mtx);
-	cairo_set_matrix (graphics->ct, graphics->copy_of_ctm);
-	return Ok;
+        GpStatus s = cairo_matrix_set_identity (graphics->copy_of_ctm);
+
+        if (s != Ok)
+                return s;
+        else {
+                cairo_set_matrix (graphics->ct, graphics->copy_of_ctm);
+                return Ok;
+        }
+}
+
+GpStatus
+GdipSetWorldTransform (GpGraphics *graphics, GpMatrix *matrix)
+{
+        graphics->copy_of_ctm = matrix;
+        cairo_set_matrix (graphics->ct, graphics->copy_of_ctm);
+        return Ok;
 }
 
 GpStatus 
-GdipTranslateWorldTransform (GpGraphics *graphics, float dx, float dy, int order)
+GdipGetWorldTransform (GpGraphics *graphics, GpMatrix *matrix)
 {
-	/* FIXME: consider order here */
-	cairo_matrix_translate (graphics->copy_of_ctm, dx, dy);
-	cairo_set_matrix (graphics->ct, graphics->copy_of_ctm);
-	return Ok;
+        cairo_current_matrix (graphics->ct, matrix);
+        return Ok;
+}
+
+GpStatus
+GdipMultiplyWorldTransform (GpGraphics *graphics, const GpMatrix *matrix, GpMatrixOrder order)
+{
+        GpMatrix *tmp = matrix;
+        Status s = GdipMultiplyMatrix (graphics->copy_of_ctm, tmp, order);
+        
+        if (s != Ok)
+                return s;
+
+        else {
+                cairo_set_matrix (graphics->ct, graphics->copy_of_ctm);
+                return Ok;
+        }
+}
+
+GpStatus 
+GdipRotateWorldTransform (GpGraphics *graphics, float angle, GpMatrixOrder order)
+{
+	GpStatus s = GdipRotateMatrix (graphics->copy_of_ctm, angle, order);
+
+        if (s != Ok)
+                return s;
+        else {
+                cairo_set_matrix (graphics->ct, graphics->copy_of_ctm);
+                return Ok;
+        }
+}
+
+GpStatus 
+GdipTranslateWorldTransform (GpGraphics *graphics, float dx, float dy, GpMatrixOrder order)
+{
+        GpStatus s = GdipTranslateMatrix (graphics->copy_of_ctm, dx, dy, order);
+
+        if (s != Ok) 
+                return s;
+        else {
+                cairo_set_matrix (graphics->ct, graphics->copy_of_ctm);
+                return Ok;
+        }
 }
 
 /* XXX: TODO */
@@ -633,10 +681,6 @@ GdipSetRenderingOrigin (GpGraphics *graphics, int x, int y)
         return gdip_get_status (cairo_status (graphics->ct));
 }
 
-/*
- * FIXME: cairo_current_point does not reflect changes made from
- * cairo_move_to.
- */
 GpStatus 
 GdipGetRenderingOrigin (GpGraphics *graphics, int *x, int *y)
 {

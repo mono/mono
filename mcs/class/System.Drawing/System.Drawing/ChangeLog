@@ -1,3 +1,19 @@
+2003-11-22  Duncan Mak  <duncan@ximian.com>
+
+	* gdipFunctions.cs
+	(GdipResetWorldTransform, GdipSetWorldTransform):
+	(GdipGetWorldTransform, GdipScaleWorldTransform): Imported.
+
+	* Graphics.cs: Remove unnecessary TODO, and reformatted the code.
+	(transform): Removed this field. Always use the
+	matrix associated in the GpGraphics ptr.
+	(DrawBeziers): Implemented.
+	(DrawLine): Don't need to manually invoke the transform now.
+	(MultiplyTransform, ResetTransform): 
+	(ScaleTransform, TranslateTransform): Use GDI+ implementation.
+	(Transform): Instead of storing a Matrix in managed code, use
+	equivalent GDI+ functions.
+
 2003-11-21  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* SizeConverter.cs: fixed class signature and implemented some methods.

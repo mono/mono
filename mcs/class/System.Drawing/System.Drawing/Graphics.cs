@@ -18,9 +18,7 @@ namespace System.Drawing
 	[ComVisible(false)]
 	public sealed class Graphics : MarshalByRefObject, IDisposable
 	{
-		internal IntPtr	nativeObject;
-		
-		internal Matrix transform = new Matrix();
+		internal IntPtr nativeObject;
 		
 		public delegate bool EnumerateMetafileProc (EmfPlusRecordType recordType,
 							    int flags,
@@ -110,16 +108,44 @@ namespace System.Drawing
                         GDIPlus.GdipDrawBezier (nativeObject, pen.nativeObject, x1, y1, x2, y2, x3, y3, x4, y4);
 		}
 
-		[MonoTODO]
+                [MonoTODO]
 		public void DrawBeziers (Pen pen, Point [] points)
 		{
-			throw new NotImplementedException ();
+                        int length = points.Length;
+
+                        if (length < 3)
+                                return;
+
+			for (int i = 0; i < length; i += 3) {
+                                Point p1 = points [i];
+                                Point p2 = points [i + 1];
+                                Point p3 = points [i + 2];
+                                Point p4 = points [i + 3];
+
+                                GDIPlus.GdipDrawBezier (nativeObject, pen.nativeObject,
+                                                        p1.X, p1.Y, p2.X, p2.Y, 
+                                                        p3.X, p3.Y, p4.X, p4.Y);
+                        }
 		}
 
-		[MonoTODO]
+                [MonoTODO]
 		public void DrawBeziers (Pen pen, PointF [] points)
 		{
-			throw new NotImplementedException ();
+			int length = points.Length;
+
+                        if (length < 3)
+                                return;
+
+			for (int i = 0; i < length; i += 3) {
+                                PointF p1 = points [i];
+                                PointF p2 = points [i + 1];
+                                PointF p3 = points [i + 2];
+                                PointF p4 = points [i + 3];
+
+                                GDIPlus.GdipDrawBezier (nativeObject, pen.nativeObject,
+                                                        p1.X, p1.Y, p2.X, p2.Y, 
+                                                        p3.X, p3.Y, p4.X, p4.Y);
+                        }
 		}
 
 		[MonoTODO]
@@ -188,13 +214,11 @@ namespace System.Drawing
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		public void DrawEllipse (Pen pen, Rectangle rect)
 		{
 			DrawEllipse (pen, rect.X, rect.Y, rect.Width, rect.Height);
 		}
 
-		[MonoTODO]
 		public void DrawEllipse (Pen pen, RectangleF rect)
 		{
 			DrawEllipse (pen, rect.X, rect.Y, rect.Width, rect.Height);
@@ -432,32 +456,20 @@ namespace System.Drawing
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		public void DrawLine (Pen pen, PointF pt1, PointF pt2)
 		{
-			PointF[] pts = new PointF[2];
-			pts[0] = pt1;
-			pts[1] = pt2;
-			transform.TransformPoints(pts);
-
                         GDIPlus.GdipDrawLine (
                                 nativeObject, pen.nativeObject,
-                                pts [0].X, pts [0].Y,
-                                pts [1].X, pts [1].Y);
+                                pt1.X, pt1.Y,
+                                pt2.X, pt2.Y);
 		}
 
-		[MonoTODO]
 		public void DrawLine (Pen pen, Point pt1, Point pt2)
 		{
-			Point[] pts = new Point[2];
-			pts[0] = pt1;
-			pts[1] = pt2;
-			transform.TransformPoints(pts);
-
                         GDIPlus.GdipDrawLine (
                                 nativeObject, pen.nativeObject,
-                                pts [0].X, pts [0].Y,
-                                pts [1].X, pts [1].Y);
+                                pt1.X, pt1.Y,
+                                pt2.X, pt2.Y);
                 }
 
 		public void DrawLine (Pen pen, int x1, int y1, int x2, int y2)
@@ -515,7 +527,6 @@ namespace System.Drawing
 			GDIPlus.GdipDrawPolygonI (nativeObject, pen.nativeObject, points, points.Length);
 		}
 
-		[MonoTODO]
 		public void DrawPolygon (Pen pen, PointF [] points)
 		{
 			GDIPlus.GdipDrawPolygon (nativeObject, pen.nativeObject, points, points.Length);
@@ -541,20 +552,16 @@ namespace System.Drawing
 			GDIPlus.GdipDrawRectangleI (nativeObject, pen.nativeObject, x, y, width, height);
 		}
 
-		[MonoTODO]
 		public void DrawRectangles (Pen pen, RectangleF [] rects)
 		{
-			foreach( RectangleF rc in rects) {
-				DrawRectangle(pen, rc.Left, rc.Top, rc.Width, rc.Height);
-			}
+			foreach (RectangleF rc in rects)
+				DrawRectangle (pen, rc.Left, rc.Top, rc.Width, rc.Height);
 		}
 
-		[MonoTODO]
 		public void DrawRectangles (Pen pen, Rectangle [] rects)
 		{
-			foreach( RectangleF rc in rects) {
+			foreach (RectangleF rc in rects)
 				DrawRectangle(pen, rc.Left, rc.Top, rc.Width, rc.Height);
-			}
 		}
 
 		[MonoTODO("Ignores the font")]
@@ -947,48 +954,36 @@ namespace System.Drawing
 			GDIPlus.GdipFillPolygon (nativeObject, brush.nativeObject, points, points.Length, fillMode);
 		}
 
-		[MonoTODO]
 		public void FillRectangle (Brush brush, RectangleF rect)
 		{
-		    FillRectangle( brush, rect.Left, rect.Top, rect.Width, rect.Height);
+                        FillRectangle (brush, rect.Left, rect.Top, rect.Width, rect.Height);
 		}
 
-		[MonoTODO]
 		public void FillRectangle (Brush brush, Rectangle rect)
 		{
-		    FillRectangle( brush, rect.Left, rect.Top, rect.Width, rect.Height);
+                        FillRectangle (brush, rect.Left, rect.Top, rect.Width, rect.Height);
 		}
 
-		[MonoTODO]
 		public void FillRectangle (Brush brush, int x, int y, int width, int height)
 		{
 			GDIPlus.GdipFillRectangle (nativeObject, brush.nativeObject, (float)x, (float)y, (float)width, (float)height);
 		}
 
-		[MonoTODO]
 		public void FillRectangle (Brush brush, float x, float y, float width, float height)
 		{
 			GDIPlus.GdipFillRectangle (nativeObject, brush.nativeObject, x, y, width, height);
 		}
 
-		[MonoTODO]
 		public void FillRectangles (Brush brush, Rectangle [] rects)
 		{
-		    if(rects != null) {
-				foreach( Rectangle rc in rects) {
-				    FillRectangle(brush, rc);
-				}
-		    }
+                        foreach (Rectangle rc in rects)
+                                FillRectangle(brush, rc);
 		}
 
-		[MonoTODO]
 		public void FillRectangles (Brush brush, RectangleF [] rects)
 		{
-		    if(rects != null) {
-			foreach( RectangleF rc in rects) {
-			    FillRectangle(brush, rc);
-			}
-		    }
+			foreach (RectangleF rc in rects)
+                                FillRectangle(brush, rc);
 		}
 
 		[MonoTODO]
@@ -1194,7 +1189,7 @@ namespace System.Drawing
 
 		public void MultiplyTransform (Matrix matrix, MatrixOrder order)
 		{
-			// GDIPlus.GdipMultiplyWorldTransform (nativeObject, matrix.nativeMatrix, order);
+			GDIPlus.GdipMultiplyWorldTransform (nativeObject, matrix.nativeMatrix, order);
 		}
 
 		[MonoTODO]
@@ -1215,16 +1210,15 @@ namespace System.Drawing
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		public void ResetTransform ()
 		{
-			throw new NotImplementedException ();
+			GDIPlus.GdipResetWorldTransform (nativeObject);
 		}
 
 		[MonoTODO]
 		public void Restore (GraphicsState gstate)
 		{
-			transform = gstate.matrix.Clone();
+			Transform = gstate.matrix.Clone();
 			GDIPlus.GdipRestoreGraphics (nativeObject, gstate.nativeState);
 		}
 
@@ -1238,7 +1232,7 @@ namespace System.Drawing
 		public void RotateTransform (float angle, MatrixOrder order)
 		{
 			//transform.Rotate(angle, order);
-			GDIPlus.GdipRotateWorldTransform (nativeObject, angle, order);
+			// GDIPlus.GdipRotateWorldTransform (nativeObject, angle, order);
 		}
 
 		[MonoTODO]
@@ -1246,21 +1240,19 @@ namespace System.Drawing
 		{
 			//return implementation.Save();
 			GraphicsState state = new GraphicsState();
-			state.matrix = transform.Clone();
+			state.matrix = Transform.Clone();
 			GDIPlus.GdipSaveGraphics (nativeObject, out state.nativeState);
 			return state;
 		}
 
-		[MonoTODO]
 		public void ScaleTransform (float sx, float sy)
 		{
-			throw new NotImplementedException ();
+			ScaleTransform (sx, sy, MatrixOrder.Prepend);
 		}
 
-		[MonoTODO]
 		public void ScaleTransform (float sx, float sy, MatrixOrder order)
 		{
-			throw new NotImplementedException ();
+                        GDIPlus.GdipScaleWorldTransform (nativeObject, sx, sy, order);
 		}
 
 		[MonoTODO]
@@ -1341,10 +1333,9 @@ namespace System.Drawing
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		public void TranslateTransform (float dx, float dy)
 		{
-			TranslateTransform(dx, dy, MatrixOrder.Prepend);
+			TranslateTransform (dx, dy, MatrixOrder.Prepend);
 		}
 
 		[MonoTODO]
@@ -1354,8 +1345,7 @@ namespace System.Drawing
 			GDIPlus.GdipTranslateWorldTransform (nativeObject, dx, dy, order);
 		}
 
-		public Region Clip
-		{
+		public Region Clip {
 			get {
 				throw new NotImplementedException ();
 			}
@@ -1364,49 +1354,23 @@ namespace System.Drawing
 			}
 		}
 
-		public RectangleF ClipBounds
-		{
+		public RectangleF ClipBounds {
 			get {
 				throw new NotImplementedException ();
 			}
 		}
 
-		public CompositingMode CompositingMode
-		{
-			get {
-				throw new NotImplementedException ();
-			}
-			set {
-				throw new NotImplementedException ();
-			}
-
-		}
-		public CompositingQuality CompositingQuality
-		{
+		public CompositingMode CompositingMode {
 			get {
 				throw new NotImplementedException ();
 			}
 			set {
 				throw new NotImplementedException ();
 			}
+
 		}
 
-		public float DpiX
-		{
-			get {
-				throw new NotImplementedException ();
-			}
-		}
-
-		public float DpiY
-		{
-			get {
-				throw new NotImplementedException ();
-			}
-		}
-
-		public InterpolationMode InterpolationMode
-		{
+		public CompositingQuality CompositingQuality {
 			get {
 				throw new NotImplementedException ();
 			}
@@ -1415,32 +1379,19 @@ namespace System.Drawing
 			}
 		}
 
-		public bool IsClipEmpty
-		{
+		public float DpiX {
 			get {
 				throw new NotImplementedException ();
 			}
 		}
 
-		public bool IsVisibleClipEmpty
-		{
+		public float DpiY {
 			get {
 				throw new NotImplementedException ();
 			}
 		}
 
-		public float PageScale
-		{
-			get {
-				throw new NotImplementedException ();
-			}
-			set {
-				throw new NotImplementedException ();
-			}
-		}
-
-		public GraphicsUnit PageUnit
-		{
+		public InterpolationMode InterpolationMode {
 			get {
 				throw new NotImplementedException ();
 			}
@@ -1449,8 +1400,37 @@ namespace System.Drawing
 			}
 		}
 
-		public PixelOffsetMode PixelOffsetMode
-		{
+		public bool IsClipEmpty {
+			get {
+				throw new NotImplementedException ();
+			}
+		}
+
+		public bool IsVisibleClipEmpty {
+			get {
+				throw new NotImplementedException ();
+			}
+		}
+
+		public float PageScale {
+			get {
+				throw new NotImplementedException ();
+			}
+			set {
+				throw new NotImplementedException ();
+			}
+		}
+
+		public GraphicsUnit PageUnit {
+			get {
+				throw new NotImplementedException ();
+			}
+			set {
+				throw new NotImplementedException ();
+			}
+		}
+
+		public PixelOffsetMode PixelOffsetMode {
 			get {
 				throw new NotImplementedException ();
 			}
@@ -1502,10 +1482,13 @@ namespace System.Drawing
 
 		public Matrix Transform {
 			get {
-                                return transform;
+                                Matrix matrix = new Matrix ();
+                                GDIPlus.GdipGetWorldTransform (nativeObject, matrix.nativeMatrix);
+
+                                return matrix;
 			}
 			set {
-				transform = value.Clone();
+                                GDIPlus.GdipSetWorldTransform (nativeObject, value.nativeMatrix);
 			}
 		}
 

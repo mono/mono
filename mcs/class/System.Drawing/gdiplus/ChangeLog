@@ -1,8 +1,35 @@
+2003-11-22  Duncan Mak  <duncan@ximian.com>
+
+	* matrix.c (GdipCreateMatrix3, GdipCreateMatrix3I): Implemented.
+	(GdipCloneMatrix): Fixed.
+	(GdipShearMatrix, set_shear): Implemented.
+	
+	* graphics.c:
+	(GdipGetWorldTransform, GdipMultiplyWorldTransform): Implemented.
+	(GdipRotatePenTransform, GdipTranslatePenTransform): Use GDI+
+	functions instead.
+
+	* gdip.h
+	(GdipRotatePenTransform, GdipTranslatePenTransform): Fix
+	signature.
+	(GdipCreateMatrix3, GdipCreateMatrix3I): Use const appropriately.
+	
+2003-11-17  Duncan Mak  <duncan@ximian.com>
+
+	* matrix.c (matrix_equals): New helper function help test matrix
+	equality.
+	(GdipIsMatrixIdentity, GdipIsMatrixEqual): Use matrix_equals.
+	(GdipGetMatrixElements): Don't malloc here, because the caller
+	should hand us an allocated array.
+
 2003-11-16  Duncan Mak  <duncan@ximian.com>
+
+	* matrix.c (GdipCreateMatrix2, GdipCreateMatrix3) 
+	(GdipCreateMatrix3I): Implemented.
 
 	* pen.c (GdipResetPenTransform):
 	(GdipMultiplyPenTransform, GdipTranslatePenTransform):
-	(GdipScalePenTransform, GdipRotatePenTransform): Implemented..
+	(GdipScalePenTransform, GdipRotatePenTransform): Implemented.
 
 	* matrix.c (set_translate, set_scale, set_rotate): Helper
 	functions copied from Cairo. We are doing this because you can
@@ -21,8 +48,7 @@
 	(GdipSetMatrixElements, GdipGetMatrixElements):
 	(GdipIsMatrixInvertible): Implemented.
 
-	* matrix.c (GdipIsMatrixIdentity, GdipIsMatrixEqual): Implemented,
-	but pending commit for cairo_matrix_equals to Cairo.
+	* matrix.c (GdipIsMatrixIdentity, GdipIsMatrixEqual): Implemented.
 
 2003-11-14  Duncan Mak  <duncan@ximian.com>	
 
