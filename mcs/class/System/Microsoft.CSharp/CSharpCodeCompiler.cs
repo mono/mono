@@ -139,7 +139,12 @@ namespace Mono.CSharp
 				mcs.StartInfo.Arguments = windowsMcsPath + ' ' + BuildArgs (options, fileNames);
 			}
 			else {
+#if NET_2_0
+				// FIXME: This is a temporary hack to make code genaration work in 2.0
+				mcs.StartInfo.FileName="gmcs";
+#else
 				mcs.StartInfo.FileName="mcs";
+#endif
 				mcs.StartInfo.Arguments=BuildArgs(options,fileNames);
 			}
 			mcs.StartInfo.CreateNoWindow=true;
