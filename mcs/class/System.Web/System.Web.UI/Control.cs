@@ -634,9 +634,9 @@ namespace System.Web.UI
 			TrackViewState ();
                 }
                 
-                protected object SaveViewStateRecursive()
+                internal object SaveViewStateRecursive()
                 {
-			if (!EnableViewState || !Visible)
+			if (!EnableViewState)
 				return null;
 
 			ArrayList controlList = null;
@@ -654,7 +654,7 @@ namespace System.Web.UI
 			return new Triplet (SaveViewState (), controlList, controlStates);
                 }
                 
-                protected void LoadViewStateRecursive (object savedState)
+		internal void LoadViewStateRecursive (object savedState)
                 {
 			if (!EnableViewState || !Visible || savedState == null)
 				return;

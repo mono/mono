@@ -1,3 +1,10 @@
+2002-07-22  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Control.cs:
+	(SaveViewState): save state even when control is not visible.
+	(SaveViewStateRecursive):
+	(LoadViewStateRecursive): made internal.
+
 2002-07-21  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Page.cs: improved event raising to allow client postback for a wider
