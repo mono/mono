@@ -2079,15 +2079,6 @@ namespace Mono.MonoBASIC {
 			TypeCode src_type = Type.GetTypeCode (expr_type);
 			Expression e = null;
 
-			// VB.NET Objects can be converted to anything by default
-			// unless, that is, an exception at runtime blows it all
-			if (src_type == TypeCode.Object) {
-				Expression cast_type = Mono.MonoBASIC.Parser.DecomposeQI(target_type.ToString(), loc);
-				Cast ce = new Cast (cast_type, expr, loc);
-				ce.IsRuntimeCast = true;
-				return ce.Resolve (ec);
-			}
-
 			switch (dest_type) {
 				case TypeCode.String:
 					switch (src_type) {
@@ -2185,8 +2176,17 @@ namespace Mono.MonoBASIC {
 			if (expr_type == typeof(System.String) && target_type == typeof (System.Char[])) {
 				e = RTConversionExpression(ec, "CharArrayType.FromString", expr, loc);
 			}
-			
-			return e;
+			if (e != null)	
+				return e;
+			// VB.NET Objects can be converted to anything by default
+			// unless, that is, an exception at runtime blows it all
+			if (src_type == TypeCode.Object) {
+				Expression cast_type = Mono.MonoBASIC.Parser.DecomposeQI(target_type.ToString(), loc);
+				Cast ce = new Cast (cast_type, expr, loc);
+				ce.IsRuntimeCast = true;
+				return ce.Resolve (ec);
+			}
+		      return null;
 		}
 										  		
 		/// <summary>
