@@ -1,3 +1,7 @@
+2004-12-09  Lluis Sanchez Gual <lluis@novell.com>
+
+	* SerializationCodeGenerator.cs: Fixed generation of enum literals.
+
 2004-10-19  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XmlSerializationWriter.cs : When namespace is an empty string,
