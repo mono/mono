@@ -139,7 +139,8 @@ namespace System.Web.Mail {
 		Hashtable aHeaders = new Hashtable();
 		
 		aHeaders[ "Content-Type" ] = 
-		    String.Format( "unknown/unknown; name=\"{0}\"", a.Filename );
+		    String.Format( "application/octet-stream; name=\"{0}\"", 
+				   a.Filename );
 		
 		aHeaders[ "Content-Disposition" ] = 
 		    String.Format( "attachment; filename=\"{0}\"" , a.Filename );
