@@ -90,6 +90,11 @@ namespace Mono.CSharp {
 			TypeAttributes attr = Modifiers.TypeAttr (ModFlags, IsTopLevel) |
 				TypeAttributes.Class | TypeAttributes.Sealed;
 
+			if (TypeManager.multicast_delegate_type == null && !RootContext.StdLib) {
+				TypeExpr expr = new TypeLookupExpression ("System.MulticastDelegate");
+				TypeManager.multicast_delegate_type = expr.ResolveType (ec);
+			}
+
 			if (TypeManager.multicast_delegate_type == null)
 				Report.Error (-100, Location, "Internal error: delegate used before " +
 					      "System.MulticastDelegate is resolved.  This can only " +
@@ -154,12 +159,14 @@ namespace Mono.CSharp {
 		{
 			MethodAttributes mattr;
 			int i;
-			ec = new EmitContext (this, this, Location, null, null, ModFlags, false);
 
 			if (IsGeneric) {
 				foreach (TypeParameter type_param in TypeParameters)
 					type_param.DefineType (ec);
 			}
+
+			if (ec == null)
+				throw new InternalErrorException ("Define called before DefineType?");
 
 			// FIXME: POSSIBLY make this static, as it is always constant
 			//
