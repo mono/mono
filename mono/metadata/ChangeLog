@@ -1,4 +1,9 @@
 
+Tue Apr 16 12:58:12 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* reflection.c, reflection.h: keep types and other handles separate in
+	the hash tables for referred tokens. Add guid for modules.
+
 Mon Apr 15 11:37:33 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
 	* assembly.c: fix bugs found with valgrind.
