@@ -403,7 +403,11 @@ namespace System.Windows.Forms{
 	#region Virtual Keys
 	public enum VirtualKeys {
 		VK_LBUTTON		= 0x01,
+		VK_RBUTTON              = 0x02,
 		VK_CANCEL		= 0x03,
+		VK_MBUTTON              = 0x04,
+		VK_XBUTTON1             = 0x05,
+		VK_XBUTTON2             = 0x06,
 		VK_BACK			= 0x08,
 		VK_TAB			= 0x09,
 		VK_CLEAR		= 0x0C,

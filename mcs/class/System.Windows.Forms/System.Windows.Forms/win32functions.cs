@@ -426,6 +426,9 @@ namespace System.Windows.Forms{
 		internal static extern short GetKeyState(int virtKey);
 
 		[DllImport("user32.dll", CharSet=CharSet.Auto)]
+		internal static extern short GetAsyncKeyState(int virtKey);
+
+		[DllImport("user32.dll", CharSet=CharSet.Auto)]
 		internal static extern bool MoveWindow(IntPtr hWnd, int x, int y, int width, int height, bool repaint);
 
 		[DllImport("user32.dll", CharSet=CharSet.Auto, EntryPoint="GetClassNameW")]
@@ -1231,6 +1234,23 @@ namespace System.Windows.Forms{
 			Win32.ReleaseDC ( hWnd, hDC );
 			return size;
 		}
+
+		internal static  int getBorderStyle ( BorderStyle style )
+		{
+			if ( style == BorderStyle.FixedSingle )
+				return (int) WindowStyles.WS_BORDER;
+
+			return 0;
+		}
+
+		internal static  int getBorderExStyle ( BorderStyle style )
+		{
+			if ( style == BorderStyle.Fixed3D )
+				return (int) (int)WindowExStyles.WS_EX_CLIENTEDGE;
+
+			return 0;
+		}
+
 
 		[DllImport ("libwinnt.dll.so", EntryPoint="PROCESS_InitWine")]
 		extern static void PROCESS_InitWine (int argc, string [] args);

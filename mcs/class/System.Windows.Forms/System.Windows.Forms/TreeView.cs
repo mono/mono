@@ -111,13 +111,13 @@ namespace System.Windows.Forms {
 						typeof(BorderStyle));
 				
 				if ( borderStyle != value ) {
-					int oldStyle = getBorderStyle ( borderStyle );
-					int oldExStyle = getBorderExStyle ( borderStyle );
+					int oldStyle = Win32.getBorderStyle ( borderStyle );
+					int oldExStyle = Win32.getBorderExStyle ( borderStyle );
 					borderStyle = value;
 
 					if ( IsHandleCreated ) {
-						Win32.UpdateWindowStyle ( Handle, oldStyle, getBorderStyle ( borderStyle ) );
-						Win32.UpdateWindowExStyle ( Handle, oldExStyle, getBorderExStyle ( borderStyle ) );
+						Win32.UpdateWindowStyle ( Handle, oldStyle, Win32.getBorderStyle ( borderStyle ) );
+						Win32.UpdateWindowExStyle ( Handle, oldExStyle, Win32.getBorderExStyle ( borderStyle ) );
 					}
 				}
 			}
@@ -466,8 +466,8 @@ namespace System.Windows.Forms {
 				createParams.ClassName = Win32.TREEVIEW_CLASS;
 				createParams.Style |= (int) WindowStyles.WS_CHILD ;
 
-				createParams.Style   |= getBorderStyle   ( BorderStyle );
-				createParams.ExStyle |= getBorderExStyle ( BorderStyle );
+				createParams.Style   |= Win32.getBorderStyle   ( BorderStyle );
+				createParams.ExStyle |= Win32.getBorderExStyle ( BorderStyle );
 
 				if ( CheckBoxes )
 					createParams.Style |= (int) TreeViewStyles.TVS_CHECKBOXES;
@@ -682,22 +682,6 @@ namespace System.Windows.Forms {
 		private void setForeColor ( )
 		{
 			Win32.SendMessage ( Handle , (int)TreeViewMessages.TVM_SETTEXTCOLOR, 0, Win32.RGB( ForeColor ) ) ;
-		}
-
-		private int getBorderStyle ( BorderStyle style )
-		{
-			if ( style == BorderStyle.FixedSingle )
-				return (int) WindowStyles.WS_BORDER;
-
-			return 0;
-		}
-
-		private int getBorderExStyle ( BorderStyle style )
-		{
-			if ( style == BorderStyle.Fixed3D )
-				return (int) (int)WindowExStyles.WS_EX_CLIENTEDGE;
-
-			return 0;
 		}
 
 		private void setImageList ( )

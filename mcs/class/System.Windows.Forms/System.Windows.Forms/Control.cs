@@ -858,11 +858,23 @@ namespace System.Windows.Forms {
     		}
     		
 		//Compact Framework
-    		[MonoTODO]
 		public static MouseButtons MouseButtons {
     			get {
-    				// FIXME: use GetAsycKeyState?
-    				throw new NotImplementedException ();
+				MouseButtons buttons = MouseButtons.None;
+
+				if ( (Win32.GetAsyncKeyState ( (int) VirtualKeys.VK_LBUTTON ) & 0x8000)== 0x8000)
+					buttons |= SystemInformation.MouseButtonsSwapped ? MouseButtons.Right : MouseButtons.Left;
+				if ( (Win32.GetAsyncKeyState ( (int) VirtualKeys.VK_RBUTTON ) & 0x8000)== 0x8000)
+					buttons |= SystemInformation.MouseButtonsSwapped ? MouseButtons.Left : MouseButtons.Right;
+
+				if ( (Win32.GetAsyncKeyState ( (int) VirtualKeys.VK_MBUTTON ) & 0x8000)== 0x8000)
+					buttons |= MouseButtons.Middle;
+				if ( (Win32.GetAsyncKeyState ( (int) VirtualKeys.VK_XBUTTON1) & 0x8000)== 0x8000)
+					buttons |= MouseButtons.XButton1;
+				if ( (Win32.GetAsyncKeyState ( (int) VirtualKeys.VK_XBUTTON2) & 0x8000)== 0x8000)
+					buttons |= MouseButtons.XButton2;
+				
+				return buttons;
     			}
     		}
     		
@@ -2080,17 +2092,23 @@ namespace System.Windows.Forms {
 		}
     		
 		//Compact Framework
-    		[MonoTODO]
-		public Point PointToClient (Point p) 
+		public Point PointToClient ( Point p ) 
     		{
-    			throw new NotImplementedException ();
+			POINT pt = new POINT();
+			pt.x = p.X;
+			pt.y = p.Y;
+			Win32.ScreenToClient( Handle, ref pt);
+    			return new Point ( pt.x, pt.y );
     		}
     		
 		//Compact Framework
-    		[MonoTODO]
-		public Point PointToScreen (Point p) 
+		public Point PointToScreen ( Point p ) 
     		{
-    			throw new NotImplementedException ();
+			POINT pt = new POINT();
+			pt.x = p.X;
+			pt.y = p.Y;
+			Win32.ClientToScreen ( Handle, ref pt);
+    			return new Point ( pt.x, pt.y );
     		}
     		
     		[MonoTODO]
@@ -2214,10 +2232,8 @@ namespace System.Windows.Forms {
 		}
     		
 		//Compact Framework
-    		[MonoTODO]
 		public Rectangle RectangleToClient (Rectangle r) 
     		{
-			// FIXME: What to return if Handle is not created yet ?
 			RECT rect = new RECT ();
 			rect.left = r.Left;
 			rect.top = r.Top;
@@ -2228,10 +2244,8 @@ namespace System.Windows.Forms {
     		}
     		
 		//Compact Framework
-    		[MonoTODO]
 		public Rectangle RectangleToScreen (Rectangle r) 
     		{
-			// FIXME: What to return if Handle is not created yet ?
 			RECT rect = new RECT ();
 			rect.left = r.Left;
 			rect.top = r.Top;
@@ -2363,7 +2377,6 @@ namespace System.Windows.Forms {
     			throw new NotImplementedException ();
     		}
     		
-    		[MonoTODO]
 		public void Scale (float ratio) 
     		{
 			Scale (ratio, ratio);
@@ -2553,18 +2566,15 @@ namespace System.Windows.Forms {
 			int clHeight = height;
 
 			CreateParams pars = CreateParams;
-			// this check should be removed when all controls will use base
-			// implementation of CreateParams
-			if (pars != null){
-				RECT rc   = new RECT ();
-				rc.right  = width;
-				rc.bottom = height;
-				
-				Win32.AdjustWindowRectEx (ref rc, pars.Style, MenuPresent ? 1 : 0, pars.ExStyle);
 
-				clWidth  -= ( (rc.right - rc.left)- clWidth);
-				clHeight -= ( (rc.bottom - rc.top)- clHeight);
-			}
+			RECT rc   = new RECT ();
+			rc.right  = width;
+			rc.bottom = height;
+			
+			Win32.AdjustWindowRectEx (ref rc, pars.Style, MenuPresent ? 1 : 0, pars.ExStyle);
+
+			clWidth  -= ( (rc.right - rc.left)- clWidth);
+			clHeight -= ( (rc.bottom - rc.top)- clHeight);
 			
 			UpdateBounds (x , y, width, height, clWidth, clHeight);
 		}
@@ -2937,6 +2947,7 @@ namespace System.Windows.Forms {
 							new Point (Win32.HIGH_ORDER (m.LParam.ToInt32 ()),
 								    Win32.LOW_ORDER (m.LParam.ToInt32 ())));
 					}
+					OnMouseDown ( Msg2MouseEventArgs( ref m ) );
 					CallControlWndProc (ref m);
 				break;
 				default:

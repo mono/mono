@@ -14,6 +14,7 @@ using System.ComponentModel;
 namespace System.Windows.Forms {
 
 	// <summary>
+	// Represents a Windows Panel control
 	// </summary>
 
 	public class Panel : ScrollableControl {
@@ -31,13 +32,24 @@ namespace System.Windows.Forms {
 		//
 		//  --- Public Properties
 		//
-		[MonoTODO]
 		public BorderStyle BorderStyle {
-			get {
-				return borderStyle;
-			}
+			get {   return borderStyle; }
 			set {
-				borderStyle = value;
+				if ( !Enum.IsDefined ( typeof(BorderStyle), value ) )
+					throw new InvalidEnumArgumentException( "BorderStyle",
+						(int)value,
+						typeof(BorderStyle));
+				
+				if ( borderStyle != value ) {
+					int oldStyle = Win32.getBorderStyle ( borderStyle );
+					int oldExStyle = Win32.getBorderExStyle ( borderStyle );
+					borderStyle = value;
+
+					if ( IsHandleCreated ) {
+						Win32.UpdateWindowStyle ( Handle, oldStyle, Win32.getBorderStyle ( borderStyle ) );
+						Win32.UpdateWindowExStyle ( Handle, oldExStyle, Win32.getBorderExStyle ( borderStyle ) );
+					}
+				}
 			}
 		}
 
@@ -53,14 +65,10 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		[MonoTODO]
+		[EditorBrowsable (EditorBrowsableState.Never)]
 		public override string Text {
-			get {
-				return base.Text;
-			}
-			set {
-				base.Text = value;
-			}
+			get { return base.Text; }
+			set { base.Text = value;}
 		}
 
 		//
@@ -71,35 +79,30 @@ namespace System.Windows.Forms {
 			get {
 				CreateParams createParams = base.CreateParams;
 
-				createParams.Style = (int) (
+				createParams.Style |= (int) (
 					WindowStyles.WS_CHILD | 
-					WindowStyles.WS_VISIBLE |
 					WindowStyles.WS_CLIPCHILDREN |
 					WindowStyles.WS_CLIPSIBLINGS);
 
-				switch (BorderStyle) {
-				case BorderStyle.Fixed3D:
-					createParams.ExStyle |= (int)WindowExStyles.WS_EX_CLIENTEDGE;
-				break;
-				case BorderStyle.FixedSingle:
-					createParams.Style   |= (int)WindowStyles.WS_BORDER;
-				break;
-				}
+				createParams.Style   |= Win32.getBorderStyle   ( BorderStyle );
+				createParams.ExStyle |= Win32.getBorderExStyle ( BorderStyle );
 
 				return createParams;
 			}		
 		}
 
-		[MonoTODO]
 		protected override Size DefaultSize {
-			get {
-				return new Size(219,109);
-			}
+			get { return new Size(219,109);	}
 		}
 		[MonoTODO]
 		protected override void OnResize(EventArgs e) {
 			//FIXME:
 			base.OnResize(e);
+		}
+
+		public override string ToString()
+		{
+			return GetType().FullName.ToString() + ", BorderStyle: " + BorderStyle.ToString();
 		}
 	}
 }
