@@ -19,7 +19,7 @@ using System.Runtime.InteropServices;
 #if (NET_1_0)
 	[assembly: AssemblyVersion("1.0.3300.0")]
 	[assembly: SatelliteContractVersion("1.0.3300.0")]
-#elif (NET_2_0)
+#elif NET_2_0 || BOOTSTRAP_NET_2_0
 	[assembly: AssemblyVersion("2.0.3600.0")]
 	[assembly: SatelliteContractVersion("2.0.3600.0")]
 #elif (NET_1_1)
@@ -44,5 +44,7 @@ using System.Runtime.InteropServices;
 [assembly: AllowPartiallyTrustedCallers]
 [assembly: Guid("BED7F4EA-1A96-11D2-8F08-00A0C9A6186D")]
 
-[assembly: AssemblyDelaySign(true)]
-[assembly: AssemblyKeyFile("../ecma.pub")]
+#if ! NET_2_0  && ! BOOTSTRAP_NET_2_0
+	[assembly: AssemblyDelaySign(true)]
+	[assembly: AssemblyKeyFile("../ecma.pub")]
+#endif

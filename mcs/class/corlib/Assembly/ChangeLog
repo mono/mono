@@ -1,5 +1,11 @@
 2004-04-29  Jackson Harper  <jackson@ximian.com>
 
+	* AssemblyInfo.cs: Set version number correctly for the bootstrap
+	corlib. For some reason setting key files does not work with gmcs
+	and the bootstrap corlib.
+	
+2004-04-29  Jackson Harper  <jackson@ximian.com>
+
 	* AssemblyInfo.cs: Add 2.0 version attributes.
 	
 2004-02-22  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
