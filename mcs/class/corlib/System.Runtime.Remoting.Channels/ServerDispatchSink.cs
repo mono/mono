@@ -30,18 +30,17 @@ namespace System.Runtime.Remoting.Channels {
 			}
 		}
 
-		[MonoTODO]
 		public void AsyncProcessResponse (IServerResponseChannelSinkStack sinkStack, object state,
 						  IMessage msg, ITransportHeaders headers, Stream stream)
 		{
-			throw new NotImplementedException ();
+			// Never called (this sink does not push itself into the sink stack)
+			throw new NotSupportedException ();
 		}
 
-		[MonoTODO]
 		public Stream GetResponseStream (IServerResponseChannelSinkStack sinkStack, object state,
 						 IMessage msg, ITransportHeaders headers)
 		{
-			throw new NotImplementedException ();
+			return null;
 		}
 		
 		public ServerProcessing ProcessMessage (IServerChannelSinkStack sinkStack,

@@ -170,10 +170,30 @@ namespace System.Runtime.Remoting.Channels
 			}
 		}
 
-		[MonoTODO]
 		public static IDictionary GetChannelSinkProperties (object obj)
 		{
-			throw new NotImplementedException ();
+			if (!RemotingServices.IsTransparentProxy (obj))
+				throw new ArgumentException ("obj must be a proxy","obj");
+				
+			ClientIdentity ident = (ClientIdentity) RemotingServices.GetRealProxy (obj).ObjectIdentity;
+			IMessageSink sink = ident.ChannelSink;
+			ArrayList dics = new ArrayList ();
+			
+			while (sink != null && !(sink is IClientChannelSink))
+				sink = sink.NextSink;
+
+			if (sink == null)
+				return new Hashtable ();
+
+			IClientChannelSink csink = sink as IClientChannelSink;
+			while (csink != null)
+			{
+				dics.Add (csink.Properties);
+				csink = csink.NextChannelSink;
+			}
+
+			IDictionary[] adics = (IDictionary[]) dics.ToArray (typeof(IDictionary[]));
+			return new AggregateDictionary (adics);
 		}
 
 		public static string[] GetUrlsForObject (MarshalByRefObject obj)

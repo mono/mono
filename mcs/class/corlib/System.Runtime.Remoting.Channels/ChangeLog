@@ -1,3 +1,9 @@
+2003-11-17  Lluis Sanchez Gual <lluis@ximian.com>
+
+	* GetChannelSinkProperties.cs: Implemented GetChannelSinkProperties().
+	* ServerDispatchSink.cs: Removed some TODOs.
+	* AggregateDictionary.cs: Added.
+
 2003-11-16  Lluis Sanchez Gual <lluis@ximian.com>
 
 	* ChannelServices.cs: Removed some TODOs. Implemented AsyncDispatchMessage.
