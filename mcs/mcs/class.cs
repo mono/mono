@@ -634,11 +634,11 @@ namespace Mono.CSharp {
 			if (t != null)
 				return t;
 
-			if (is_class){
+			if (is_class)
 				parent = (Class) RootContext.Tree.Classes [name];
-			} else {
+			else 
 				parent = (Struct) RootContext.Tree.Structs [name];
-			}
+			
 
 			if (parent != null){
 				t = parent.DefineType (builder);
@@ -1129,15 +1129,17 @@ namespace Mono.CSharp {
 			if ((mt & MemberTypes.Field) != 0) {
 				if (Fields != null) {
 					foreach (Field f in Fields) {
-						if (filter (f.FieldBuilder, criteria) == true)
-							members.Add (f.FieldBuilder);
+						FieldBuilder fb = f.FieldBuilder;
+						if (filter (fb, criteria) == true)
+							members.Add (fb);
 					}
 				}
 
 				if (Constants != null) {
 					foreach (Constant con in Constants) {
-						if (filter (con.FieldBuilder, criteria) == true)
-							members.Add (con.FieldBuilder);
+						FieldBuilder fb = con.FieldBuilder;
+						if (filter (fb, criteria) == true)
+							members.Add (fb);
 					}
 				}
 			}
@@ -1180,17 +1182,24 @@ namespace Mono.CSharp {
 					}
 
 				if (Indexers != null)
-					foreach (Indexer ix in Indexers){
+					foreach (Indexer ix in Indexers) {
 						if (filter (ix.PropertyBuilder, criteria) == true)
 							members.Add (ix.PropertyBuilder);
 					}
 			}
 			
-			if ((mt & MemberTypes.NestedType) != 0 && Types != null) {
-				foreach (TypeContainer t in Types) { 
-					if (filter (t.TypeBuilder, criteria) == true)
-						members.Add (t.TypeBuilder);
-				}
+			if ((mt & MemberTypes.NestedType) != 0) {
+
+				if (Types != null)
+					foreach (TypeContainer t in Types)  
+						if (filter (t.TypeBuilder, criteria) == true)
+							members.Add (t.TypeBuilder);
+
+				if (Enums != null)
+					foreach (Enum en in Enums)
+						if (filter (en.EnumBuilder, criteria) == true)
+							members.Add (en.EnumBuilder);
+				
 			}
 
 			if ((mt & MemberTypes.Constructor) != 0){
@@ -1347,13 +1356,12 @@ namespace Mono.CSharp {
 		/// </summary>
 		public void Emit ()
 		{
-
-			if (Constants != null)
-				foreach (Constant con in Constants)
+			if (constants != null)
+				foreach (Constant con in constants)
 					con.EmitConstant (this);
 			
-			if (Constructors != null)
-				foreach (Constructor c in Constructors)
+			if (constructors != null)
+				foreach (Constructor c in constructors)
 					c.Emit (this);
 			
 			if (methods != null)

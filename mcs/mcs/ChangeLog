@@ -1,3 +1,32 @@
+2001-12-01  Ravi Pratap  <ravi@ximian.com>
+
+	* enum.cs (LookupEnumValue): Re-write various bits, return an object value
+	instead of a Literal - much easier.
+
+	(EnumInTransit): Remove - utterly useless :-)
+
+	(Populate): Re-write bits - remove duplicate code etc. The code is much neater now.
+
+	* expression.cs (MemberLookup): Cope with user-defined enums when they are in transit.
+
+	* enum.cs (LookupEnumValue): Auto-compute next values by going down the dependency
+	chain when we have no associated expression.
+
+2001-11-30  Ravi Pratap  <ravi@ximian.com>
+
+	* constant.cs (Define): Use Location while reporting the errror.
+
+	Also emit a warning when 'new' is used and there is no inherited
+	member to hide.
+
+	* enum.cs (EnumInTransit): Used to tell if an enum type is in the process of being 
+	populated.
+
+	(LookupEnumValue): Implement to lookup an enum member's value and define it
+	if necessary.
+
+	(Populate): Re-write accordingly to use the above routine.
+
 2001-11-27  Miguel de Icaza  <miguel@ximian.com>
 
 	* expression.cs (This): Fix prototype for DoResolveLValue to

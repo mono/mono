@@ -381,6 +381,7 @@ namespace Mono.CSharp {
 					       "Methods and non-Method with the same name, " +
 					       "report this please");
 
+					Console.WriteLine (name);
 					for (i = 0; i < mi.Length; i++){
 						Type tt = mi [i].GetType ();
 
@@ -2224,7 +2225,7 @@ namespace Mono.CSharp {
 			Expression e;
 
 			//
-			// Stage 1: Performed by the parser (binding to local or parameters).
+			// Stage 1: Performed by the parser (binding to locals or parameters).
 			//
 
 			//

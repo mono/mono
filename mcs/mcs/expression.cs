@@ -3667,8 +3667,28 @@ namespace Mono.CSharp {
 
 				return expr.Resolve (ec);
 			}
-					
-			member_lookup = MemberLookup (ec, expr.Type, Identifier, false, loc);
+
+			//
+			// Handle enums here when they are in transit.
+			// Note that we cannot afford to hit MemberLookup in this case because
+			// it will fail to find any members at all
+			//
+
+			Type expr_type = expr.Type;
+
+			if (expr_type.IsSubclassOf (TypeManager.enum_type)) {
+				
+				Enum en = TypeManager.LookupEnum (expr_type);
+				
+				if (en != null) {
+					object value = en.LookupEnumValue (ec, Identifier, loc);
+					Expression l = Literalize (value, en.UnderlyingType);
+					l = l.Resolve (ec);
+					return new EnumLiteral (l, expr_type);
+				}
+			}
+
+			member_lookup = MemberLookup (ec, expr_type, Identifier, false, loc);
 
 			if (member_lookup == null)
 				return null;

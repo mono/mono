@@ -33,6 +33,12 @@ namespace Mono.CSharp {
 		public readonly RootContext RootContext;
 
 		Hashtable member_to_location;
+
+		//
+		// This is for members that have been defined
+		//
+		Hashtable member_to_value;
+		
 		ArrayList field_builders;
 		Location loc;
 		
@@ -55,6 +61,7 @@ namespace Mono.CSharp {
 
 			ordered_enums = new ArrayList ();
 			member_to_location = new Hashtable ();
+			member_to_value = new Hashtable ();
 			field_builders = new ArrayList ();
 		}
 
@@ -129,7 +136,7 @@ namespace Mono.CSharp {
 			if (!(e is Literal))
 				return false;
 
-			if (e is IntLiteral || e is UIntLiteral || e is LongLiteral || e is ULongLiteral)
+			if (e is IntLiteral || e is UIntLiteral || e is LongLiteral || e is ULongLiteral || e is EnumLiteral)
 				return true;
 			else
 				return false;
@@ -198,12 +205,100 @@ namespace Mono.CSharp {
 			return null;
 		}
 
-		void error31 (Literal l, Location loc)
+		void error31 (object val, Location loc)
 		{
-			Report.Error (31, loc, "Constant value '" + l.AsString () +
-				      "' cannot be converted" +
-				      " to a " + TypeManager.CSharpName (UnderlyingType));
+			if (val is Literal)
+				Report.Error (31, loc, "Constant value '" + ((Literal) val).AsString () +
+					      "' cannot be converted" +
+					      " to a " + TypeManager.CSharpName (UnderlyingType));
+			else 
+				Report.Error (31, loc, "Constant value '" + val +
+					      "' cannot be converted" +
+					      " to a " + TypeManager.CSharpName (UnderlyingType));
 			return;
+		}
+
+		/// <summary>
+		///  This is used to lookup the value of an enum member. If the member is undefined,
+		///  it attempts to define it and return its value
+		/// </summary>
+		public object LookupEnumValue (EmitContext ec, string name, Location loc)
+		{
+			object default_value = null;
+			Literal l = null;
+
+			default_value = member_to_value [name];
+
+			if (default_value != null)
+				return default_value;
+
+			//
+			// So if the above doesn't happen, we have a member that is undefined
+			// We now proceed to define it 
+			//
+			Expression val = this [name];
+
+			if (val == null) {
+				
+				int idx = ordered_enums.IndexOf (name);
+
+				if (idx == 0)
+					default_value = 0;
+				else {
+					for (int i = 0; i < idx; ++i) {
+						string n = (string) ordered_enums [i];
+						Location m_loc = (Location) member_to_location [n];
+						default_value = LookupEnumValue (ec, n, m_loc);
+					}
+					
+					default_value = GetNextDefaultValue (default_value);
+				}
+				
+			} else {
+			
+				val = val.Resolve (ec);
+				
+				if (val == null) {
+					Report.Error (-12, loc, "Definition is circular.");
+					return null;
+				}	
+				
+				if (IsValidEnumLiteral (val)) {
+					l = (Literal) val;
+					default_value = l.GetValue ();
+					
+					if (default_value == null) {
+						error31 (l, loc);
+						return null;
+					}
+					
+				} else {
+					Report.Error (1008, loc,
+						      "Type byte, sbyte, short, ushort, int, uint, long, or ulong expected");
+					return null;
+				}
+			}
+
+			FieldAttributes attr = FieldAttributes.Public | FieldAttributes.Static
+					| FieldAttributes.Literal;
+			
+			FieldBuilder fb = EnumBuilder.DefineField (name, UnderlyingType, attr);
+			
+			try {
+				default_value = Convert.ChangeType (default_value, UnderlyingType);
+			} catch {
+				error31 (l, loc);
+				return null;
+			}
+
+			fb.SetConstant (default_value);
+			field_builders.Add (fb);
+			member_to_value [name] = default_value;
+
+			if (!TypeManager.RegisterField (fb, default_value))
+				return null;
+			
+			return default_value;
 		}
 		
 		public void Populate (TypeContainer tc)
@@ -223,52 +318,53 @@ namespace Mono.CSharp {
 
 			
 			foreach (string name in ordered_enums) {
-				Expression e = this [name];
+
+				Expression val;
+
+				//
+				// Have we already been defined, thanks to some cross-referencing ?
+				// 
+				if (member_to_value.Contains (name))
+					continue;
+				
 				Location loc = (Location) member_to_location [name];
 
-				if (e != null) {
-					e = Expression.Reduce (ec, e);
+				if (this [name] != null) {
+					default_value = LookupEnumValue (ec, name, loc);
 
-					if (IsValidEnumLiteral (e)) {
-						Literal l = (Literal) e;
-						default_value = l.GetValue ();
+					if (default_value == null)
+						return;
 
-						if (default_value == null) {
-							error31 (l, loc);
-							return;
-						}
-						
-					} else {
-						Report.Error (1008, loc,
-					          "Type byte, sbyte, short, ushort, int, uint, long, or ulong expected");
+				} else {
+					
+					FieldBuilder fb = EnumBuilder.DefineField (name, UnderlyingType, attr);
+					
+					if (default_value == null) {
+					   Report.Error (543, loc, "Enumerator value for '" + name + "' is too large to " +
+							      "fit in its type");
 						return;
 					}
+					
+					try {
+						default_value = Convert.ChangeType (default_value, UnderlyingType);
+					} catch {
+						error31 (default_value, loc);
+						return;
+					}
+
+					val = Expression.Literalize (default_value, UnderlyingType);
+					
+					fb.SetConstant (default_value);
+					field_builders.Add (fb);
+					member_to_value [name] = default_value;
+					
+					if (!TypeManager.RegisterField (fb, default_value))
+						return;
 				}
-				
-				FieldBuilder fb = EnumBuilder.DefineField (name, UnderlyingType, attr);
-
-				if (default_value == null) {
-					Report.Error (543, loc, "Enumerator value for '" + name + "' is too large to " +
-						      "fit in its type");
-					return;
-				}
-
-				try {
-					default_value = Convert.ChangeType (default_value, UnderlyingType);
-				} catch {
-					error31 ((Literal) e, loc);
-					return;
-				}
-
-				fb.SetConstant (default_value);
-				field_builders.Add (fb);
-
-				if (!TypeManager.RegisterField (fb, default_value))
-					return;
 
 				default_value = GetNextDefaultValue (default_value);
 			}
-
+			
 			if (OptAttributes == null)
 				return;
 			

@@ -68,7 +68,15 @@ namespace Mono.CSharp {
 		{
 			throw new Exception ("Unimplemented");
 		}
-		       
+
+		void WarningNotHiding (TypeContainer parent)
+		{
+			Report.Warning (
+				109, Location,
+				"The member `" + parent.Name + "." + Name + "' does not hide an " +
+				"inherited member.  The keyword new is not required");
+		}
+		
 		/// <summary>
 		///   Defines the constant in the @parent
 		/// </summary>
@@ -80,13 +88,26 @@ namespace Mono.CSharp {
 				return;
 			
 			if (!TypeManager.IsBuiltinType (type) && (!type.IsSubclassOf (TypeManager.enum_type))) {
-				Report.Error (-3, "Constant type is not valid (only system types are allowed)");
+				Report.Error (-3, Location, "Constant type is not valid (only system types are allowed)");
 				return;
 			}
-			
+
+			Type ptype = parent.TypeBuilder.BaseType;
+
+			if (ptype != null) {
+				MemberInfo [] mi = TypeContainer.FindMembers (ptype, MemberTypes.Field, BindingFlags.Public,
+									   Type.FilterName, Name);
+				
+				if (mi == null || mi.Length == 0)
+					if ((ModFlags & Modifiers.NEW) != 0)
+						WarningNotHiding (parent);
+
+			} else if ((ModFlags & Modifiers.NEW) != 0)
+				WarningNotHiding (parent);
+
 			FieldBuilder = parent.TypeBuilder.DefineField (Name, type, FieldAttr);
 		}
-
+		
 		/// <summary>
 		///  Emits the field value by evaluating the expression
 		/// </summary>
