@@ -1,3 +1,7 @@
+2003-11-08 Ben Maurer  <bmaurer@users.sourceforge.net>
+
+	* *.cs: require NET_1_2 and GENERICS
+
 2003-11-07 Ben Maurer  <bmaurer@users.sourceforge.net>
 
 	* IComparable.cs, IComparer.cs, IDictionary.cs, IKeyComparer.cs, KeyValuePair.cs

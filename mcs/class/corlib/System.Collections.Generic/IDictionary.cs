@@ -7,6 +7,7 @@
 // (C) 2003 Ben Maurer
 //
 
+#if GENERICS && NET_1_2
 using System;
 using System.Runtime.InteropServices;
 
@@ -25,4 +26,4 @@ namespace System.Collections.Generic {
 		ICollection<KeyValuePair<K,V>> Values { get; }
 	}
 }
-
+#endif

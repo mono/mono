@@ -8,6 +8,7 @@
 // (C) 2003 Novell, Inc.
 //
 
+#if GENERICS && NET_1_2
 using System;
 using System.Runtime.InteropServices;
 
@@ -44,3 +45,4 @@ namespace System.Collections.Generic
 		}
 	}
 }
+#endif
