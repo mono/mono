@@ -132,10 +132,17 @@ namespace System.Xml.Serialization
 
 		object ReadRoot (XmlTypeMapping rootMap)
 		{
-			if (Reader.LocalName != rootMap.ElementName || Reader.NamespaceURI != rootMap.Namespace)
-				throw CreateUnknownNodeException();
+			if (rootMap.TypeData.SchemaType == SchemaTypes.XmlNode)
+			{
+				return ReadXmlNodeElement (rootMap, true);
+			}
+			else
+			{
+				if (Reader.LocalName != rootMap.ElementName || Reader.NamespaceURI != rootMap.Namespace)
+					throw CreateUnknownNodeException();
 				
-			return ReadObject (rootMap, true, true);
+				return ReadObject (rootMap, true, true);
+			}
 		}		
 
 

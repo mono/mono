@@ -1,3 +1,9 @@
+2004-01-22  Lluis Sanchez Gual  <lluis@ximian.com>
+
+	* XmlSerializationReaderInterpreter.cs: When deserializing an XmlElement,
+	  do not check the root element name, since it can be any name. This fixes
+	  bug #53201.
+
 2004-01-20  Lluis Sanchez Gual  <lluis@ximian.com>
 
 	* XmlReflectionImporter.cs: Throw exception if a value type member has the
