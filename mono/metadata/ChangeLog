@@ -1,3 +1,9 @@
+
+Sat Jan 8 19:03:26 CET 2005 Paolo Molaro <lupus@ximian.com>
+
+	* loader.c: for P/Invoke methods, allow the "Internal" shared
+	library name to refer to the calling process symbol namespace.
+
 2005-01-07  Dick Porter  <dick@ximian.com>
 
 	* threads.c: 

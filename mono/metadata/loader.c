@@ -615,6 +615,10 @@ mono_lookup_pinvoke_call (MonoMethod *method, const char **exc_class, const char
 		*exc_arg = NULL;
 	}
 
+	/* we allow a special name to dlopen from the running process namespace */
+	if (strcmp (new_scope, "Internal") == 0)
+		gmodule = g_module_open (NULL, G_MODULE_BIND_LAZY);
+
 #ifndef PLATFORM_WIN32
 	/*
 	 * If we are P/Invoking a library from System.Windows.Forms, load Wine
