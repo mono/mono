@@ -2,9 +2,10 @@
 // AuthenticodeBase.cs: Authenticode signature base class
 //
 // Author:
-//	Sebastien Pouliot (spouliot@motus.com)
+//	Sebastien Pouliot <sebastien@ximian.com>
 //
 // (C) 2003 Motus Technologies Inc. (http://www.motus.com)
+// (C) 2004 Novell (http://www.novell.com)
 //
 
 using System;
@@ -21,7 +22,7 @@ namespace Mono.Security.Authenticode {
 #else
 	public
 #endif
-	enum AuthenticodeAuthority {
+	enum Authority {
 		Individual,
 		Commercial,
 		Maximum
@@ -36,7 +37,7 @@ namespace Mono.Security.Authenticode {
 
 		public const string spcIndirectDataContext = "1.3.6.1.4.1.311.2.1.4";
 
-		protected byte[] rawData;
+		internal byte[] rawData;
 
 		public AuthenticodeBase ()
 		{
@@ -68,7 +69,7 @@ namespace Mono.Security.Authenticode {
 
 			if (dirSecuritySize > 8) {
 				rawData = new byte [dirSecuritySize - 8];
-				Array.Copy (file, dirSecurityOffset + 8, rawData, 0, rawData.Length);
+				Buffer.BlockCopy (file, dirSecurityOffset + 8, rawData, 0, rawData.Length);
 /* DEBUG 
 			FileStream debug = new FileStream (fileName + ".sig", FileMode.Create, FileAccess.Write);
 			debug.Write (rawData, 0, rawData.Length);
