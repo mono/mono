@@ -6,7 +6,7 @@
 //	Sebastien Pouliot (sebastien@ximian.com)
 //
 // (C) 2002
-// (C) 2004 Novell (http://www.novell.com)
+// Copyright (C) 2004 Novell (http://www.novell.com)
 //
 
 // "In the beginning there was Chaos,
@@ -15,6 +15,7 @@
 // -- The Verrah Rubicon of Verena, Book One
 
 using System;
+using System.Globalization;
 using System.Runtime.CompilerServices;
 using System.Text;
 
@@ -25,38 +26,61 @@ namespace System.Security.Cryptography {
 #else
 	public sealed class RNGCryptoServiceProvider : RandomNumberGenerator {
 #endif
+		private IntPtr _handle;
+
 		public RNGCryptoServiceProvider ()
 		{
+			_handle = RngInitialize (null);
+			Check ();
 		}
 		
-		public RNGCryptoServiceProvider (byte[] rgb) 
+		public RNGCryptoServiceProvider (byte[] rgb)
 		{
-			Seed (rgb);
+			_handle = RngInitialize (rgb);
+			Check ();
 		}
 		
 		public RNGCryptoServiceProvider (CspParameters cspParams)
 		{
-			// CSP selection isn't supported
-			// but we still return random (no exception) for compatibility
+			// CSP selection isn't supported but we still return 
+			// random data (no exception) for compatibility
+			_handle = RngInitialize (null);
+			Check ();
 		}
 		
 		public RNGCryptoServiceProvider (string str) 
 		{
-			Seed (Encoding.UTF8.GetBytes (str));
+			if (str == null)
+				_handle = RngInitialize (null);
+			else
+				_handle = RngInitialize (Encoding.UTF8.GetBytes (str));
+			Check ();
+		}
+
+		private void Check () 
+		{
+			if (_handle == IntPtr.Zero) {
+				throw new CryptographicException (
+					Locale.GetText ("Couldn't access random source."));
+			}
 		}
 		
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		private static extern void Seed (byte[] data);
+		private static extern IntPtr RngInitialize (byte[] seed);
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		private extern void InternalGetBytes (byte[] data);
+		private static extern IntPtr RngGetBytes (IntPtr handle, byte[] data);
+
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		private static extern void RngClose (IntPtr handle);
 		
 		public override void GetBytes (byte[] data) 
 		{
 			if (data == null)
 				throw new ArgumentNullException ("data");
 
-			InternalGetBytes (data);
+			_handle = RngGetBytes (_handle, data);
+			Check ();
 		}
 		
 		public override void GetNonZeroBytes (byte[] data) 
@@ -68,7 +92,8 @@ namespace System.Security.Cryptography {
         		int i = 0;
         		// one pass should be enough but hey this is random ;-)
         		while (i < data.Length) {
-                		GetBytes (random);
+                		_handle = RngGetBytes (_handle, random);
+				Check ();
                 		for (int j=0; j < random.Length; j++) {
                         		if (i == data.Length)
                                 		break;
@@ -78,10 +103,12 @@ namespace System.Security.Cryptography {
         		}
 		}
 		
-		/* Commented as we don't require this right now (and it will perform better that way)
 		~RNGCryptoServiceProvider () 
 		{
-			// in our case we have nothing unmanaged to dispose
-		}*/
+			if (_handle != IntPtr.Zero) {
+				RngClose (_handle);
+				_handle = IntPtr.Zero;
+			}
+		}
 	}
 }

@@ -1,3 +1,8 @@
+2004-05-26  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* RNGCryptoServiceProvider.cs: Changed RNG interface with the runtime
+	so it could be used in a thread-safe way with CryptoAPI.
+
 2004-05-07  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* CipherMode.cs: Moved XML comments to monodoc.
