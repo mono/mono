@@ -1,3 +1,8 @@
+2004-01-14  Lluis Sanchez Gual <lluis@ximian.com>
+
+	* MonoCustomAttrs.cs: Removed attribute cache. Attribute instances can't
+	be reused because they could be modified. This fixes bug #52655.
+
 2004-01-12  Patrik Torstensson
 
 	* Environment.cs: Bump corlib version number due to new StringBuilder

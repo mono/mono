@@ -16,22 +16,8 @@ using System.Runtime.CompilerServices;
 namespace System {
 	internal class MonoCustomAttrs {
 
-		static Hashtable handle_to_attrs = new Hashtable ();
-
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		internal static extern object[] GetCustomAttributes (ICustomAttributeProvider obj);
-
-		private static object[] from_cache (ICustomAttributeProvider obj)
-		{
-			lock (handle_to_attrs) {
-				object[] res = (object []) handle_to_attrs [obj];
-				if (res != null)
-					return res;
-				res = GetCustomAttributes (obj);
-				handle_to_attrs.Add (obj, res);
-				return res;
-			}
-		}
 
 		internal static Attribute GetCustomAttribute (ICustomAttributeProvider obj,
 							      Type attributeType,
@@ -40,7 +26,7 @@ namespace System {
 			if (obj == null)
 				throw new ArgumentNullException ("attribute_type"); // argument name in the caller
 
-			object[] res = from_cache (obj);
+			object[] res = GetCustomAttributes (obj);
 			ICustomAttributeProvider btype = obj;
 			Attribute result = null;
 
@@ -58,7 +44,7 @@ namespace System {
 				}
 
 				if (inherit && (btype = GetBase (btype)) != null)
-					res = from_cache (btype);
+					res = GetCustomAttributes (btype);
 
 			// Stop when encounters the first one for a given provider.
 			} while (inherit && result == null && btype != null);
@@ -72,7 +58,7 @@ namespace System {
 				return (object []) Array.CreateInstance (attributeType, 0);
 
 			object[] r;
-			object[] res = from_cache (obj);
+			object[] res = GetCustomAttributes (obj);
 			// shortcut
 			if (!inherit && res.Length == 1) {
 				if (attributeType.IsAssignableFrom (res[0].GetType ())) {
@@ -92,7 +78,7 @@ namespace System {
 						a.Add (attr);
 
 				if ((btype = GetBase (btype)) != null)
-					res = from_cache (btype);
+					res = GetCustomAttributes (btype);
 			} while (inherit && btype != null);
 
 			return (object []) a.ToArray (attributeType);
@@ -104,20 +90,20 @@ namespace System {
 				return new object [0]; //FIXME: Should i throw an exception here?
 
 			if (!inherit)
-				return (object []) from_cache (obj).Clone ();
+				return (object []) GetCustomAttributes (obj).Clone ();
 
 			ArrayList a = new ArrayList ();
 			ICustomAttributeProvider btype = obj;
-			a.AddRange (from_cache (btype));
+			a.AddRange (GetCustomAttributes (btype));
 			while ((btype = GetBase (btype)) != null)
-				a.AddRange (from_cache (btype));
+				a.AddRange (GetCustomAttributes (btype));
 
 			return (object []) a.ToArray (typeof (Attribute));
 		}
 
 		internal static bool IsDefined (ICustomAttributeProvider obj, Type attributeType, bool inherit)
 		{
-			object[] res = from_cache (obj);
+			object[] res = GetCustomAttributes (obj);
 			foreach (object attr in res) {
 				if (attributeType.Equals (attr.GetType ()))
 					return true;
