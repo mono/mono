@@ -1,3 +1,7 @@
+2004-05-13  Peter Bartok <pbartok@novell.com>
+	* Bitmap.cs: Fixed bug #52868, Bitmap(Image, Size) did not
+	resize the image.
+
 2004-05-12  Peter Bartok <pbartok@novell.com>
 	* Image.cs: Implemented GetThumbnailImage
 

@@ -56,17 +56,29 @@ namespace System.Drawing
 			nativeObject = (IntPtr) bmp;
 		}
 
-		public Bitmap (Image original) : this (original, original.Size)
+		public Bitmap (Image original) : this (original.Width, original.Height, PixelFormat.Format32bppArgb)
 		{
+			BitmapFromImage(original, original.Size);
 		}
 
 		public Bitmap (Stream stream)  : this (stream, false) {} 
 
 		public Bitmap (string filename) : this (filename, false) {}
 
-		public Bitmap (Image original, Size newSize) 
+		public Bitmap (Image original, Size newSize)  : this (newSize.Width, newSize.Height, PixelFormat.Format32bppArgb)
 		{			
-			BitmapFromImage(original, newSize);
+			Status          status;
+			Graphics        g;
+
+			g=Graphics.FromImage(this);
+
+			status = GDIPlus.GdipDrawImageRectRectI(g.nativeObject, original.nativeObject,
+				0, 0, newSize.Width, newSize.Height,
+				0, 0, original.Width, original.Height,
+				GraphicsUnit.Pixel, IntPtr.Zero, null, IntPtr.Zero);
+			GDIPlus.CheckStatus (status);
+
+			g.Dispose();
 		}
 		
 		internal Bitmap (int width, int height, PixelFormat pixel, IntPtr bmp)
