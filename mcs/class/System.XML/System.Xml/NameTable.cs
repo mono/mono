@@ -13,6 +13,7 @@ using System;
 using System.Collections;
 
 namespace System.Xml {
+
 	//
 	// This class implements the name table as a simple
 	// hashtable, using buckets and a linked list.
@@ -51,7 +52,8 @@ namespace System.Xml {
 			
 			int h = 0;
 			// This is from the String.Gethash () icall
-			for (int i = start; i < len; i++)
+			int end = start + len;
+			for (int i = start; i < end; i++)
 				h = (h << 5) - h + key [i];
 			// h must be be >= 0
 			h &= 0x7FFFFFFF;
@@ -70,7 +72,7 @@ namespace System.Xml {
 
 			int keyLen = key.Length;
 			if (keyLen == 0) return String.Empty;
-				
+
 			int h = 0;
 			// This is from the String.Gethash () icall
 			for (int i = 0; i < keyLen; i++)
@@ -97,7 +99,8 @@ namespace System.Xml {
 			
 			int h = 0;
 			// This is from the String.Gethash () icall
-			for (int i = start; i < len; i++)
+			int end = start + len;
+			for (int i = start; i < end; i++)
 				h = (h << 5) - h + key [i];
 			// h must be be >= 0
 			h &= 0x7FFFFFFF;

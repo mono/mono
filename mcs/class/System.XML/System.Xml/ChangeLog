@@ -1,5 +1,11 @@
 2004-06-06  Atsushi Enomoto <atsushi@ximian.com>
 
+	* NameTable.cs : Fixed incorrect hash computation. Thanks to Ben.
+	* XmlTextWriter.cs : Fixed remaining LookupNamespace() atom problem
+	  shown in xslt standalone tests.
+
+2004-06-06  Atsushi Enomoto <atsushi@ximian.com>
+
 	* XmlTextWriter.cs : Improved indenting. For children of a mixed 
 	  content element, it won't be indented.
 
@@ -8,8 +14,8 @@
 	* DTDObjectModel.cs,
 	  XmlDocument.cs : Close stream always.
 	* XmlNodeReader.cs : don't expect atomized name in LookupNamespace().
-	* XmlTextReader.cs : Namespace has was not done. Some tests depends on
-	  this failure and to be fixed.
+	* XmlTextReader.cs : Namespace check was not done. Some tests depends
+	  on this failure and to be fixed.
 
 2004-06-03  Atsushi Enomoto <atsushi@ximian.com>
 

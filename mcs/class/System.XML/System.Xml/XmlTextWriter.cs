@@ -234,7 +234,7 @@ openElements [openElementCount - 1]).IndentingOverriden;
 					string ans = (string) ent.Value;
 					string aprefix = (string) ent.Key;
 
-					if (namespaceManager.LookupNamespace (aprefix) == ans)
+					if (namespaceManager.LookupNamespace (aprefix, false) == ans)
 						continue;
 	
 					w.Write (" xmlns:");
