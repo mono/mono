@@ -81,6 +81,8 @@ namespace Mono.Xml.Xsl {
 		{
 			return (Outputter)this.outputStack.Pop ();
 		}
+		
+		public Hashtable Outputs { get { return compiledStyle.Outputs; }}
 		#endregion
 		
 		#region Templates -- Apply/Call

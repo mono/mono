@@ -43,8 +43,6 @@ namespace Mono.Xml.Xsl {
 		// [QName]=>XmlSpace
 		Hashtable parameters = new Hashtable ();
 		
-		// [string href]=>XslOutput
-		Hashtable outputs = new Hashtable ();
 		MSXslScriptManager msScripts = new MSXslScriptManager ();
 		XslTemplateTable templates;
 
@@ -87,10 +85,6 @@ namespace Mono.Xml.Xsl {
 
 		public Hashtable Parameters {
 			get { return parameters; }
-		}
-
-		public Hashtable Outputs {
-			get { return outputs; }
 		}
 
 		public MSXslScriptManager ScriptManager{
@@ -177,13 +171,7 @@ namespace Mono.Xml.Xsl {
 					break;
 					
 				case "output":
-					string uri = n.GetAttribute ("href", "");
-					XslOutput output = outputs [uri] as XslOutput;
-					if (output == null) {
-						output = new XslOutput (uri);
-						outputs.Add (uri, output);
-					}
-					output.Fill (n);
+					c.CompileOutput ();
 					break;
 					
 				case "template":

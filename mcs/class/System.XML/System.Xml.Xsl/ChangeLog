@@ -1,3 +1,7 @@
+2003-08-19 Ben Maurer  <bmaurer@users.sourceforge.net>
+
+	* ManagedXslTransform.cs: sync to API changes.
+
 2003-08-18 Ben Maurer  <bmaurer@users.sourceforge.net>
 
 	* ManagedXslTransform.cs, XslTransformImpl.cs: Add support for

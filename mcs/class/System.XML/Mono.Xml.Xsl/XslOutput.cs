@@ -28,14 +28,15 @@ namespace Mono.Xml.Xsl
 		XML,
 		HTML,
 		Text,
-		Custom
+		Custom,
+		Unknown
 	}
 	
 	public class XslOutput	// also usable for xsl:result-document
 	{
 		string uri;
 		QName customMethod;
-		OutputMethod method = OutputMethod.XML; 
+		OutputMethod method = OutputMethod.Unknown; 
 		string version;
 		Encoding encoding = System.Text.Encoding.UTF8;
 		bool omitXmlDeclaration;

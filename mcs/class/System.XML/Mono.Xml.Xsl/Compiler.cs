@@ -32,8 +32,9 @@ namespace Mono.Xml.Xsl {
 		ExpressionStore exprStore;
 		XmlNamespaceManager nsMgr;
 		ArrayList keys;
+		Hashtable outputs;
 		
-		public CompiledStylesheet (XslStylesheet style, Hashtable globalVariables, Hashtable attrSets, ExpressionStore exprStore, XmlNamespaceManager nsMgr, ArrayList keys)
+		public CompiledStylesheet (XslStylesheet style, Hashtable globalVariables, Hashtable attrSets, ExpressionStore exprStore, XmlNamespaceManager nsMgr, ArrayList keys, Hashtable outputs)
 		{
 			this.style = style;
 			this.globalVariables = globalVariables;
@@ -41,12 +42,14 @@ namespace Mono.Xml.Xsl {
 			this.exprStore = exprStore;
 			this.nsMgr = nsMgr;
 			this.keys = keys;
+			this.outputs = outputs;
 		}
 		public Hashtable Variables {get{return globalVariables;}}
 		public XslStylesheet Style { get { return style; }}
 		public ExpressionStore ExpressionStore {get{return exprStore;}}
 		public XmlNamespaceManager NamespaceManager {get{return nsMgr;}}
 		public ArrayList Keys {get { return keys;}}
+		public Hashtable Outputs { get { return outputs; }}
 		
 		public XslGeneralVariable ResolveVariable (QName name)
 		{
@@ -77,6 +80,7 @@ namespace Mono.Xml.Xsl {
 		XmlResolver res;
 		
 		XslStylesheet rootStyle;
+		Hashtable outputs = new Hashtable ();
 				
 		public CompiledStylesheet Compile (XPathNavigator nav, XmlResolver res, Evidence evidence)
 		{
@@ -85,6 +89,8 @@ namespace Mono.Xml.Xsl {
 				this.res = new XmlUrlResolver ();
 
 			if (!nav.MoveToFirstChild ()) throw new Exception ("WTF?");
+				
+			outputs [""] = new XslOutput ("");
 				
 			while (nav.NodeType != XPathNodeType.Element) nav.MoveToNext();
 			
@@ -98,7 +104,7 @@ namespace Mono.Xml.Xsl {
 			}
 			this.rootStyle = new XslStylesheet (this);
 			
-			return new CompiledStylesheet (rootStyle, globalVariables, attrSets, exprStore, nsMgr, keys);
+			return new CompiledStylesheet (rootStyle, globalVariables, attrSets, exprStore, nsMgr, keys, outputs);
 		}
 		
 #region Input
@@ -371,6 +377,18 @@ namespace Mono.Xml.Xsl {
 			keys.Add (key);
 		}
 #endregion
+		
+		public void CompileOutput ()
+		{
+			XPathNavigator n = Input;
+			string uri = n.GetAttribute ("href", "");
+			XslOutput output = outputs [uri] as XslOutput;
+			if (output == null) {
+				output = new XslOutput (uri);
+				outputs.Add (uri, output);
+			}
+			output.Fill (n);
+		}
 	}
 	
 	public class VariableScope {
