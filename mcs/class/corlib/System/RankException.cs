@@ -3,11 +3,14 @@
 //
 // Author:
 //   Joe Shaw (joe@ximian.com)
+//   Duncan Mak (duncan@ximian.com)
 //
 // (C) 2001 Ximian, Inc.  http://www.ximian.com
 //
 
 using System.Globalization;
+using System.Runtime.Serialization;
+
 namespace System {
 
 	public class RankException : SystemException {
@@ -26,5 +29,11 @@ namespace System {
 			: base (message, inner)
 		{
 		}
+
+		protected RankException (SerializationInfo info, StreamingContext context)
+			: base (info, context)
+		{
+		}
+					
 	}
 }

@@ -1,3 +1,16 @@
+2002-02-07  Duncan Mak  <duncan@ximian.com>
+	
+	* DuplicateWaitObjectException:
+	* InvalidCastException:
+	* NotImplementedException:
+	* NotSupportedException:
+	* NullReferenceException:
+	* OutOfMemoryException:
+	* OverflowException:
+	* RankException:
+	* StackOverflowException.cs:
+	* UnauthorizedAccessException: Added missing constructor used for serialization.
+
 2002-02-07  Dietmar Maurer  <dietmar@ximian.com>
 
 	* String.cs (System.Compare): bug fix 

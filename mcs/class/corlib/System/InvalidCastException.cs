@@ -3,11 +3,14 @@
 //
 // Author:
 //   Joe Shaw (joe@ximian.com)
+//   Duncan Mak (duncan@ximian.com)
 //
 // (C) 2001 Ximian, Inc.  http://www.ximian.com
 //
 
 using System.Globalization;
+using System.Runtime.Serialization;
+
 namespace System {
 
 	public class InvalidCastException : SystemException {
@@ -24,6 +27,11 @@ namespace System {
 
 		public InvalidCastException (string message, Exception inner)
 			: base (message, inner)
+		{
+		}
+
+		protected InvalidCastException (SerializationInfo info, StreamingContext context)
+			: base (info, context)
 		{
 		}
 	}

@@ -3,11 +3,13 @@
 //
 // Author:
 //   Paolo Molaro (lupus@ximian.com)
+//   Duncan Mak (duncan@ximian.com)
 //
 // (C) 2001 Ximian, Inc.  http://www.ximian.com
 //
 
 using System.Globalization;
+using System.Runtime.Serialization;
 
 namespace System {
 
@@ -25,6 +27,11 @@ namespace System {
 
 		public NotImplementedException (string message, Exception inner)
 			: base (message, inner)
+		{
+		}
+
+		protected NotImplementedException (SerializationInfo info, StreamingContext context)
+			: base (info, context)
 		{
 		}
 	}

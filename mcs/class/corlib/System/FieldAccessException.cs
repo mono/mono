@@ -7,7 +7,6 @@
 // 2002 (C) Ximian, Inc. http://www.ximian.com
 //
 
-using System;
 using System.Globalization;
 using System.Runtime.Serialization;
 
