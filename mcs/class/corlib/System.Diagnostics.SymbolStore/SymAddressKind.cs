@@ -10,17 +10,16 @@
 namespace System.Diagnostics.SymbolStore
 {
 
-[MonoTODO("find 'real' values of enum values")]
 public enum SymAddressKind {
-	BitField = 9,
 	ILOffset = 1,
-	NativeOffset = 5,
-	NativeRegister = 3,
-	NativeRegisterRegister = 6,
-	NativeRegisterRelative = 4,
-	NativeRegisterStack = 7,
 	NativeRVA = 2,
-	NativeStackRegister = 8
+	NativeRegister = 3,
+	NativeRegisterRelative = 4,
+	NativeOffset = 5,
+	NativeRegisterRegister = 6,
+	NativeRegisterStack = 7,
+	NativeStackRegister = 8,
+	BitField = 9
 }
 
 }
