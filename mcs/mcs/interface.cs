@@ -332,7 +332,7 @@ namespace Mono.CSharp {
 				return_type, arg_types);
 
 			InternalParameters ip = new InternalParameters (arg_types, im.Parameters);
-			
+
 			if (!RegisterMethod (mb, ip, arg_types)) {
 				Error111 (im);
 				return;
@@ -827,9 +827,13 @@ namespace Mono.CSharp {
 		/// </summary>
 		public override bool DefineMembers (TypeContainer parent)
 		{
+			if (members_defined)
+				return true;
+			
 			if (!SemanticAnalysis ())
 				return false;
 
+			
 			if (defined_method != null){
 				foreach (InterfaceMethod im in defined_method)
 					PopulateMethod (parent, this, im);
