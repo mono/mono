@@ -2332,6 +2332,13 @@ namespace Mono.CSharp {
 					Type = TypeManager.bool_type;
 					return this;
 				}
+				
+				// IntPtr equality
+				if (l == TypeManager.intptr_type && r == TypeManager.intptr_type) {
+					Type = TypeManager.bool_type;
+					
+					return this;
+				}
 			}
 
 			//
@@ -7303,7 +7310,7 @@ namespace Mono.CSharp {
 
 			Console.WriteLine ("Left is: " + left);
 			Report.Error (-100, loc, "Support for [" + member_lookup + "] is not present yet");
-			Environment.Exit (0);
+			Environment.Exit (1);
 			return null;
 		}
 		

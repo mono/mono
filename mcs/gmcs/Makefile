@@ -70,7 +70,7 @@ gmcs.exe: $(all_sources)
 	MONO_PATH="../class/lib/net_2_0_bootstrap$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" mono ../mcs/mcs.exe -2 /target:exe /out:$@ $^
 
 cs-parser.cs: cs-parser.jay $(topdir)/jay/skeleton.cs
-	$(topdir)/jay/jay -ctv < $(topdir)/jay/skeleton.cs $< >$@
+	$(topdir)/jay/jay -ctv < $(topdir)/jay/skeleton.cs $< > jay-tmp.out && mv jay-tmp.out $@
 
 # Testing targets
 
@@ -92,7 +92,7 @@ wc:
 	wc -l $(all_sources)
 
 ctest: 
-	-rm mcs2.exe mcs3.exe
+	rm -f mcs2.exe mcs3.exe
 	make btest USE_MCS_FLAGS= 
 
 # we need this because bash tries to use its own crappy timer

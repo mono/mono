@@ -683,7 +683,7 @@ namespace Mono.CSharp {
 			}
 
 			if ((qualifier_type != null) && (qualifier_type != ec.ContainerType) &&
-			    !qualifier_type.IsSubclassOf (ec.ContainerType)) {
+			    ec.ContainerType.IsSubclassOf (qualifier_type)) {
 				// Although a derived class can access protected members of
 				// its base class it cannot do so through an instance of the
 				// base class (CS1540).  If the qualifier_type is a parent of the
@@ -3118,76 +3118,104 @@ namespace Mono.CSharp {
 			return true;
 		}
 
-		MethodInfo GetAccessor (Type invocation_type, string accessor_name)
+		MethodInfo FindAccessor (Type invocation_type, bool is_set)
 		{
 			BindingFlags flags = BindingFlags.Public | BindingFlags.NonPublic |
-				BindingFlags.Static | BindingFlags.Instance;
-			MemberInfo[] group;
+				BindingFlags.Static | BindingFlags.Instance |
+				BindingFlags.DeclaredOnly;
 
-			group = TypeManager.MemberLookup (
-				invocation_type, invocation_type, PropertyInfo.DeclaringType,
-				MemberTypes.Method, flags, accessor_name + "_" + PropertyInfo.Name);
+			Type current = PropertyInfo.DeclaringType;
+			for (; current != null; current = current.BaseType) {
+				MemberInfo[] group = TypeManager.MemberLookup (
+					invocation_type, invocation_type, current,
+					MemberTypes.Property, flags, PropertyInfo.Name);
 
-			//
-			// The first method is the closest to us
-			//
-			if (group == null)
-				return null;
-
-			foreach (MethodInfo mi in group) {
-				MethodAttributes ma = mi.Attributes & MethodAttributes.MemberAccessMask;
-
-				//
-				// If only accessible to the current class or children
-				//
-				if (ma == MethodAttributes.Private) {
-					Type declaring_type = mi.DeclaringType;
-					
-					if (invocation_type != declaring_type){
-						if (TypeManager.IsSubclassOrNestedChildOf (invocation_type, mi.DeclaringType))
-							return mi;
-						else
-							continue;
-					} else
-						return mi;
-				}
-				//
-				// FamAndAssem requires that we not only derivate, but we are on the
-				// same assembly.  
-				//
-				if (ma == MethodAttributes.FamANDAssem){
-					if (mi.DeclaringType.Assembly != invocation_type.Assembly)
-						continue;
-					else
-						return mi;
-				}
-
-				// Assembly and FamORAssem succeed if we're in the same assembly.
-				if ((ma == MethodAttributes.Assembly) || (ma == MethodAttributes.FamORAssem)){
-					if (mi.DeclaringType.Assembly == invocation_type.Assembly)
-						return mi;
-				}
-
-				// We already know that we aren't in the same assembly.
-				if (ma == MethodAttributes.Assembly)
+				if (group == null)
 					continue;
 
-				// Family and FamANDAssem require that we derive.
-				if ((ma == MethodAttributes.Family) || (ma == MethodAttributes.FamANDAssem) || (ma == MethodAttributes.FamORAssem)){
-					if (!TypeManager.IsSubclassOrNestedChildOf (invocation_type, mi.DeclaringType))
-						continue;
-					else {
-						if (!TypeManager.IsNestedChildOf (invocation_type, mi.DeclaringType))
-							must_do_cs1540_check = true;
+				if (group.Length != 1)
+					// Oooops, can this ever happen ?
+					return null;
 
-						return mi;
-					}
+				PropertyInfo pi = (PropertyInfo) group [0];
+
+				MethodInfo get = pi.GetGetMethod (true);
+				MethodInfo set = pi.GetSetMethod (true);
+
+				if (is_set) {
+					if (set != null)
+						return set;
+				} else {
+					if (get != null)
+						return get;
 				}
 
-				return mi;
+				MethodInfo accessor = get != null ? get : set;
+				if (accessor == null)
+					continue;
+				if ((accessor.Attributes & MethodAttributes.NewSlot) != 0)
+					break;
 			}
 
 			return null;
+		}
+
+		MethodInfo GetAccessor (Type invocation_type, bool is_set)
+		{
+			MethodInfo mi = FindAccessor (invocation_type, is_set);
+			if (mi == null)
+				return null;
+
+			MethodAttributes ma = mi.Attributes & MethodAttributes.MemberAccessMask;
+
+			//
+			// If only accessible to the current class or children
+			//
+			if (ma == MethodAttributes.Private) {
+				Type declaring_type = mi.DeclaringType;
+					
+				if (invocation_type != declaring_type){
+					if (TypeManager.IsSubclassOrNestedChildOf (invocation_type, mi.DeclaringType))
+						return mi;
+					else
+						return null;
+				} else
+					return mi;
+			}
+			//
+			// FamAndAssem requires that we not only derivate, but we are on the
+			// same assembly.  
+			//
+			if (ma == MethodAttributes.FamANDAssem){
+				if (mi.DeclaringType.Assembly != invocation_type.Assembly)
+					return null;
+				else
+					return mi;
+			}
+
+			// Assembly and FamORAssem succeed if we're in the same assembly.
+			if ((ma == MethodAttributes.Assembly) || (ma == MethodAttributes.FamORAssem)){
+				if (mi.DeclaringType.Assembly == invocation_type.Assembly)
+					return mi;
+			}
+
+			// We already know that we aren't in the same assembly.
+			if (ma == MethodAttributes.Assembly)
+				return null;
+
+			// Family and FamANDAssem require that we derive.
+			if ((ma == MethodAttributes.Family) || (ma == MethodAttributes.FamANDAssem) || (ma == MethodAttributes.FamORAssem)){
+				if (!TypeManager.IsSubclassOrNestedChildOf (invocation_type, mi.DeclaringType))
+					return null;
+				else {
+					if (!TypeManager.IsNestedChildOf (invocation_type, mi.DeclaringType))
+						must_do_cs1540_check = true;
+
+					return mi;
+				}
+			}
+
+			return mi;
 		}
 
 		//
@@ -3196,11 +3224,11 @@ namespace Mono.CSharp {
 		//
 		void ResolveAccessors (EmitContext ec)
 		{
-			getter = GetAccessor (ec.ContainerType, "get");
+			getter = GetAccessor (ec.ContainerType, false);
 			if ((getter != null) && getter.IsStatic)
 				is_static = true;
 
-			setter = GetAccessor (ec.ContainerType, "set");
+			setter = GetAccessor (ec.ContainerType, true);
 			if ((setter != null) && setter.IsStatic)
 				is_static = true;
 

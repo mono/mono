@@ -1,3 +1,69 @@
+2004-05-05  Raja R Harinath  <rharinath@novell.com>
+
+	* expression.cs (MemberAccess.ResolveMemberAccess):
+	Exit with non-zero status after Report.Error.
+	* rootcontext.cs (RootContext.BootstrapCorlib_ResolveDelegate):
+	Likewise.
+	* typemanager.cs (TypeManager.CoreLookupType): Likewise.
+
+2004-05-04  Lluis Sanchez Gual  <lluis@ximian.com>
+
+	* support.cs: Don't hang when the file is empty.
+
+2004-05-04  Lluis Sanchez Gual  <lluis@ximian.com>
+
+	* support.cs: In SeekableStreamReader, compute the preamble size of the
+	  underlying stream. Position changes should take into account that initial
+	  count of bytes.
+
+2004-05-03  Todd Berman  <tberman@sevenl.net>
+
+	* driver.cs: remove unused GetSysVersion function.
+
+2004-05-03  Todd Berman  <tberman@sevenl.net>
+
+	* driver.cs: Remove the hack from saturday, as well as the hack
+	from jackson (LoadAssemblyFromGac), also adds the CWD to the
+	link_paths to get that bit proper.
+
+2004-05-01  Todd Berman  <tberman@sevenl.net>
+
+	* driver.cs: Try a LoadFrom before a Load, this checks the current
+	path. This is currently a bug in mono that is be fixed, however, this
+	provides a workaround for now. This will be removed when the bug
+	is fixed.
+
+2004-05-01  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* CryptoConvert.cs: Updated to latest version. Fix issue with 
+	incomplete key pairs (#57941).
+
+2004-05-01  Todd Berman  <tberman@sevenl.net>
+
+	* driver.cs: Remove '.' from path_chars, now System.* loads properly
+	from the GAC
+
+2004-04-30  Jackson Harper  <jackson@ximian.com>
+
+	* codegen.cs: Open keys readonly.
+	
+2004-04-30  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* typemanager.cs: don't report cyclic struct layout when a struct
+	contains 2 or more fields of the same type. Failed for Pango.AttrShape
+	which has 2 Pango.Rectangle fields.
+
+2004-04-29 Ben Maurer  <bmaurer@users.sourceforge.net>
+
+	* expression.cs: Handle IntPtr comparisons with IL code
+	rather than a method call.
+
+2004-04-29  Martin Baulig  <martin@ximian.com>
+
+	* ecore.cs (PropertyExpr.FindAccessor): New private method.  Walk
+	the list of PropertyInfo's in class hierarchy and find the
+	accessor.  Fixes #56013.
+
 2004-04-29  Martin Baulig  <martin@ximian.com>
 
 	* typemanager.cs (TypeManager.CheckStructCycles): Fixed.
@@ -110,6 +176,16 @@
 
 	* expression.cs (Unary.DoResolveLValue): Override this and report
 	CS0131 for anything but Operator.Indirection.
+
+2004-04-28  Martin Baulig  <martin@ximian.com>
+
+	Committing a patch from Ben Maurer; see bug #50820.
+
+	* typemanager.cs (TypeManager.FilterWithClosure): Added CS1540
+	check for classes.
+
+	* ecore.cs (Expression.MemberLookupFailed): Added CS1540 check for
+	classes.	
 
 2004-04-28  Martin Baulig  <martin@ximian.com>
 

@@ -976,7 +976,7 @@ public class TypeManager {
 
 		if (t == null){
 			Report.Error (518, "The predefined type `" + name + "' is not defined or imported");
-			Environment.Exit (0);
+			Environment.Exit (1);
 		}
 
 		return t;
@@ -2208,6 +2208,9 @@ public class TypeManager {
 
 			if (!ok)
 				return false;
+
+			if (!seen.Contains (ftc))
+				seen.Add (ftc, null);
 		}
 
 		return true;
@@ -2834,7 +2837,7 @@ public class TypeManager {
 				// it cannot do so through an instance of the base class (CS1540).
 				if (!mb.IsStatic && (closure_invocation_type != closure_qualifier_type) &&
 				    (closure_qualifier_type != null) &&
-				    ! closure_qualifier_type.IsSubclassOf (closure_invocation_type) &&
+				    closure_invocation_type.IsSubclassOf (closure_qualifier_type) &&
 				    !TypeManager.IsNestedChildOf (closure_invocation_type, closure_qualifier_type))
 					return false;
 
