@@ -1,4 +1,9 @@
 
+Wed Aug 20 19:02:22 CEST 2003 Paolo Molaro <lupus@ximian.com>
+
+	* mini.c: mono_thread_current() can be called only after
+	mono_runtime_init(): rearrange code to not call it early on.
+
 Wed Aug 20 13:14:31 CEST 2003 Paolo Molaro <lupus@ximian.com>
 
 	* mini.c: allocate jump tables in the code mempools.
