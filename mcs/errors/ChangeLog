@@ -1,3 +1,9 @@
+2004-05-06  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* cs1548.pub: New file. Strongname file with only the public key.
+	* cs1548-3.cs: New file to test signing with a strongname containing
+	only the public key.
+
 2004-04-05  Martin Baulig  <martin@ximian.com>
 
 	* gmcs-expect-wrong-error: New file.
