@@ -1,3 +1,7 @@
+2005-03-30  Zoltan Varga  <vargaz@freemail.hu>
+
+	* rules.make (INSTALL_DATA): Pass -c to install.
+
 2005-03-18  Raja R Harinath  <rharinath@novell.com>
 
 	* library.make (TEST_FILES, $(test_response), $(btest_response)):
