@@ -117,10 +117,12 @@
 # include <sys/uio.h>
 # include <malloc.h>   /* for locking */
 #endif
-#if defined(USE_MMAP) || defined(USE_MUNMAP)
+#if defined(USE_MUNMAP)
 # ifndef USE_MMAP
     --> USE_MUNMAP requires USE_MMAP
 # endif
+#endif
+#if defined(USE_MMAP) || defined(USE_MUNMAP) || defined(FALLBACK_TO_MMAP)
 # include <sys/types.h>
 # include <sys/mman.h>
 # include <sys/stat.h>
@@ -600,7 +602,7 @@ word GC_page_size;
 
 # else
 #   if defined(MPROTECT_VDB) || defined(PROC_VDB) || defined(USE_MMAP) \
-       || defined(USE_MUNMAP)
+       || defined(USE_MUNMAP) || defined(FALLBACK_TO_MMAP)
 	void GC_setpagesize()
 	{
 	    GC_page_size = GETPAGESIZE();
@@ -1533,7 +1535,7 @@ word bytes;
 
 #else  /* Not RS6000 */
 
-#if defined(USE_MMAP) || defined(USE_MUNMAP)
+#if defined(USE_MMAP) || defined(USE_MUNMAP) || defined(FALLBACK_TO_MMAP)
 
 #ifdef USE_MMAP_FIXED
 #   define GC_MMAP_FLAGS MAP_FIXED | MAP_PRIVATE
@@ -1557,14 +1559,18 @@ word bytes;
 
 #endif /* defined(USE_MMAP) || defined(USE_MUNMAP) */
 
-#if defined(USE_MMAP)
+#if defined(USE_MMAP) || defined(FALLBACK_TO_MMAP)
 /* Tested only under Linux, IRIX5 and Solaris 2 */
 
 #ifndef HEAP_START
 #   define HEAP_START 0
 #endif
 
+#ifdef FALLBACK_TO_MMAP
+static ptr_t GC_unix_get_mem_mmap(bytes)
+#else
 ptr_t GC_unix_get_mem(bytes)
+#endif
 word bytes;
 {
     void *result;
@@ -1601,7 +1607,10 @@ word bytes;
     return((ptr_t)result);
 }
 
-#else /* Not RS6000, not USE_MMAP */
+#endif
+
+#ifndef USE_MMAP
+
 ptr_t GC_unix_get_mem(bytes)
 word bytes;
 {
@@ -1620,7 +1629,13 @@ word bytes;
         if((ptr_t)sbrk(GC_page_size - lsbs) == (ptr_t)(-1)) return(0);
     }
     result = (ptr_t)sbrk((SBRK_ARG_T)bytes);
-    if (result == (ptr_t)(-1)) result = 0;
+    if (result == (ptr_t)(-1)) {
+#ifdef FALLBACK_TO_MMAP
+		result = GC_unix_get_mem_mmap (bytes);
+#else
+		result = 0;
+#endif
+	}
   }
 # ifdef IRIX5
     __UNLOCK_MALLOC();

@@ -1,5 +1,11 @@
 2005-03-29  Zoltan Varga  <vargaz@freemail.hu>
 
+	* os_dep.c: Add ability to fall back to mmap-ing memory when sbrk
+	fails.
+
+	* include/private/gcconfig.h: Enable FALLBACK_TO_MMAP on amd64. Fixes
+	#73882.
+
 	* config.guess config.sub ltmain.sh: Update these files with more
 	up-to-date versions. Fixes #74071.
 
