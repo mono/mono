@@ -1,3 +1,5 @@
+Assembly/AssemblyInfo.cs
+Assembly/Locale.cs
 Microsoft.JScript/ast.cs
 Microsoft.JScript/ASTList.cs
 Microsoft.JScript/ActivationObject.cs
