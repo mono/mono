@@ -1,3 +1,13 @@
+2002-07-23  Tim Coleman <tim@timcoleman.com>
+	* WebServicesDescriptionAttribute.cs:
+		Removed the "guts" because they are defined in
+		System.ComponentModel.DescriptionAttribute.
+	* WebService.cs:
+		Added attributes which were missing based on the
+		class status page.  Also added an HttpApplication
+		object and modified the properties to use that
+		object.
+
 2002-07-22 Tim Coleman <tim@timcoleman.com>
 	* WebServicesDescriptionAttribute.cs:
 		Added for build in System.Web.Services.Protocols

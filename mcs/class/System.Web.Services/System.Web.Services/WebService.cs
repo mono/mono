@@ -17,11 +17,7 @@ namespace System.Web.Services {
 
 		#region Fields
 
-		HttpApplicationState application;
-		HttpContext context;
-		HttpServerUtility server;
-		HttpSessionState session;
-		IPrincipal user;
+		HttpApplication application;
 
 		#endregion // Fields
 
@@ -29,30 +25,46 @@ namespace System.Web.Services {
 
 		public WebService ()
 		{
+			application = new HttpApplication ();
 		}
 		
 		#endregion // Constructors
 
 		#region Properties
 
+		[Browsable (false)]
+		[Description ("The ASP.NET application object for the current request.")]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public HttpApplicationState Application {
-			get { return application; }
+			get { return application.Application; }
 		}
 
+		[Browsable (false)]
+		[Description ("The ASP.NET context object for the current request.")]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public HttpContext Context {
-			get { return context; }
+			get { return application.Context; }
 		}
 
+		[Browsable (false)]
+		[Description ("The ASP.NET utility object for the current request.")]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public HttpServerUtility Server {
-			get { return server; }
+			get { return application.Server; }
 		}
 
+		[Browsable (false)]
+		[Description ("The ASP.NET session object for the current request.")]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public HttpSessionState Session {
-			get { return session; }
+			get { return application.Session; }
 		}
 
+		[Browsable (false)]
+		[Description ("The ASP.NET user object for the current request.  The object is used for authorization.")]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public IPrincipal User {
-			get { return user; }
+			get { return application.User; }
 		}
 
 		#endregion // Properties
