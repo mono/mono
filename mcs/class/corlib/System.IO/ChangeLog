@@ -1,7 +1,10 @@
 2003-07-29  Miguel de Icaza  <miguel@ximian.com>
 
-	* IntPtrStream.cs: New stream implementation, it maps to a region
-	in memory. 
+	* IntPtrStream.cs (Read): Use Marshal.Copy instead of the now
+	deprecated MemCopy.
+	
+	(IntPtrStream): New stream implementation, it maps to a region in
+	memory.
 
 2003-07-23  Duncan Mak  <duncan@ximian.com>
 

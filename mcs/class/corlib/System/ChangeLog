@@ -1,3 +1,8 @@
+2003-07-29  Miguel de Icaza  <miguel@ximian.com>
+
+	* Buffer.cs: Add new internal MemCopy call.
+
+	Removed the above.
 
 Tue Jul 29 12:13:16 CEST 2003 Paolo Molaro <lupus@ximian.com>
 

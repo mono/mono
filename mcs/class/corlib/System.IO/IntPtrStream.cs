@@ -14,6 +14,7 @@
 // (c) 2003 Ximian, Inc. (http://www.ximian.com)
 //
 
+using System.Runtime.InteropServices;
 namespace System.IO {
 
 	internal class IntPtrStream : Stream {
@@ -84,8 +85,7 @@ namespace System.IO {
 			if (position > size - count)
 				count = size - position;
 
-			// FIXME: this method doesn't exist:
-			// Buffer.MemCopy (base_address, position, buffer, offset, count);
+			Marshal.Copy (base_address, buffer, offset, count);
 			position += count;
 			return count;
 		}

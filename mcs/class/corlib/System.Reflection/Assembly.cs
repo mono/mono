@@ -155,7 +155,7 @@ namespace System.Reflection {
 		}
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		private extern object GetManifestResourceInternal (String name);
+		private extern IntPtr GetManifestResourceInternal (String name, out int size);
 
 		public virtual Stream GetManifestResourceStream (String name)
 		{
@@ -176,11 +176,12 @@ namespace System.Reflection {
 				return new FileStream (filename, FileMode.Open, FileAccess.Read);
 			}
 
-			object data = GetManifestResourceInternal (name);
-			if (data == null)
+			int size;
+			IntPtr data = GetManifestResourceInternal (name, out size);
+			if (data == (IntPtr) 0)
 				return null;
 			else
-				return new MemoryStream ((byte[])data, false);
+				return new IntPtrStream (data, size);
 		}
 
 		public virtual Stream GetManifestResourceStream (Type type, String name)
