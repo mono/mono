@@ -1,3 +1,7 @@
+2004-12-17  Peter Bartok  <pbartok@novell.com>
+
+	* TextControl.cs (RecalculateLine): Fixed baseline aligning calcs
+
 2004-12-16  Peter Bartok  <pbartok@novell.com>
 
 	* TextControl.cs:

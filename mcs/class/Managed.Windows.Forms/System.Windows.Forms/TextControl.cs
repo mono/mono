@@ -266,6 +266,7 @@ namespace System.Windows.Forms {
 			prev_height = this.height;	// For drawing optimization calculations
 			this.height = 0;		// Reset line height
 			this.ascent = 0;		// Reset the ascent for the line
+			tag.shift = 0;
 			tag.width = 0;
 			widths[0] = 0;
 			this.recalc = false;
@@ -301,7 +302,7 @@ namespace System.Windows.Forms {
 						// We have a tag that has a taller ascent than the line;
 						t = tags;
 						while (t != tag) {
-							t.shift = tag.ascent - this.ascent;
+							t.shift += tag.ascent - this.ascent;
 							t = t.next;
 						}
 
