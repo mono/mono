@@ -1288,27 +1288,37 @@ catch_args
         
         
 do_statement
-	: DO embedded_statement
-	  WHILE OPEN_PARENS boolean_expression CLOSE_PARENS 
+	: DO opt_do_construct EOL
+	  opt_statement_list
+	  LOOP opt_do_construct EOL
 	  {
-		$$ = new Do ((Statement) $2, (Expression) $5, lexer.Location);
+		$$ = new Do ((Statement) $4, (Expression) $2, lexer.Location);
 	  }
-	  LOOP EOL
 	  ;
 
+opt_do_construct
+	: /* empty */
+	| while_or_until boolean_expression
+	;
+
+while_or_until
+	: WHILE
+	| UNTIL
+	;
+
 while_statement
-	: WHILE OPEN_PARENS 
+	: WHILE
 	{
 		start_block();
 		oob_stack.Push (lexer.Location);
 	}
-	boolean_expression CLOSE_PARENS EOL 
+	boolean_expression EOL
 	opt_statement_list
 	END WHILE
 	{
 		Location l = (Location) oob_stack.Pop ();
 		Block b = end_block();
-		Expression e = (Expression) $4;
+		Expression e = (Expression) $3;
 		$$ = new While ((Expression) e, (Statement) b, l);
 	}
 	;
@@ -1350,7 +1360,7 @@ opt_next_identifier
 
 selection_statement
 	: if_statement
-	/*| select_statement*/
+	| select_statement
 	;
 
 if_statement
@@ -1395,6 +1405,63 @@ if_statement_rest
 	  }	   
 	;
 	
+select_statement
+	: SELECT opt_case expression EOL
+	  opt_case_statements
+	  opt_case_else_statement
+	  END SELECT EOL
+	;
+
+opt_case_statements
+	: /* empty */
+	| case_statements
+	;
+	
+case_statements
+	: case_statements case_statement
+	| case_statement
+	;
+
+case_statement
+	: CASE case_clauses EOL
+	  opt_statement_list
+	;
+	
+case_clauses
+	: case_clause
+	| case_clauses COMMA case_clause
+	;
+	
+case_clause
+	: opt_is comparison_operator expression
+	| expression
+	;
+	
+opt_is 
+	: /* empty */
+	| IS
+	;
+	
+opt_case_else_statement
+	: /* empty */
+	| CASE ELSE EOL
+	  opt_statement_list
+	;
+
+comparison_operator
+	: OP_LT
+	| OP_GT
+	| OP_LT
+	| OP_LE
+	| OP_NE
+	| OP_EQ
+	;
+
+opt_case
+	: /* empty */
+	| CASE
+	;
+
 expression_statement
 	: statement_expression 
 	  {
