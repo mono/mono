@@ -1,3 +1,7 @@
+2004-07-01  Zoltan Varga  <vargaz@freemail.hu>
+
+	* Makefile.am: Add SPARC64 support.
+
 2004-07-02  Zoltan Varga  <vargaz@freemail.hu>
 
 	* aot.c: Fix alignment problems on 32 bit platforms.
