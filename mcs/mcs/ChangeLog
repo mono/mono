@@ -1,3 +1,7 @@
+2004-08-31 Ben Maurer  <bmaurer@users.sourceforge.net>
+
+	* delegate.cs: Add seperate instance expr field for miguel.
+
 2004-08-29 Ben Maurer  <bmaurer@users.sourceforge.net>
 
 	* PointerArithmetic (Resolve): make sure we are not doing

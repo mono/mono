@@ -646,6 +646,7 @@ namespace Mono.CSharp {
 		protected MethodBase constructor_method;
 		protected MethodBase delegate_method;
 		protected MethodGroupExpr method_group;
+		public Expression DelegateInstanceExpression;
 
 		public DelegateCreation () {}
 
@@ -671,11 +672,10 @@ namespace Mono.CSharp {
 		
 		public override void Emit (EmitContext ec)
 		{
-			if (method_group.InstanceExpression == null ||
-			    delegate_method.IsStatic)
+			if (DelegateInstanceExpression == null || delegate_method.IsStatic)
 				ec.ig.Emit (OpCodes.Ldnull);
 			else
-				method_group.InstanceExpression.Emit (ec);
+				DelegateInstanceExpression.Emit (ec);
 			
 			if (delegate_method.IsVirtual && !method_group.IsBase) {
 				ec.ig.Emit (OpCodes.Dup);
@@ -741,7 +741,7 @@ namespace Mono.CSharp {
 			}
 			
 			if (mg.InstanceExpression != null)
-				mg.InstanceExpression = mg.InstanceExpression.Resolve (ec);
+				DelegateInstanceExpression = mg.InstanceExpression.Resolve (ec);
 			else if (ec.IsStatic) {
 				if (!delegate_method.IsStatic) {
 					Report.Error (120, loc,
@@ -749,12 +749,12 @@ namespace Mono.CSharp {
 						      delegate_method.Name);
 					return null;
 				}
-				mg.InstanceExpression = null;
+				DelegateInstanceExpression = null;
 			} else
-				mg.InstanceExpression = ec.GetThis (loc);
+				DelegateInstanceExpression = ec.GetThis (loc);
 			
-			if (mg.InstanceExpression != null && mg.InstanceExpression.Type.IsValueType)
-				mg.InstanceExpression = new BoxedCast (mg.InstanceExpression);
+			if (DelegateInstanceExpression != null && DelegateInstanceExpression.Type.IsValueType)
+				DelegateInstanceExpression = new BoxedCast (mg.InstanceExpression);
 			
 			method_group = mg;
 			eclass = ExprClass.Value;
@@ -850,7 +850,7 @@ namespace Mono.CSharp {
 				return null;
 			}
 				
-			method_group.InstanceExpression = e;
+			DelegateInstanceExpression = e;
 			delegate_method = method_group.Methods [0];
 			
 			eclass = ExprClass.Value;
