@@ -89,14 +89,17 @@ namespace Mono.ILASM {
                                         }
                                                 
                                         if (!is_hex (ch))
-                                                throw new Exception ("Invalid hex value."); // yeah proper error reporting would be great
+                                                throw new Exception ("Invalid hex value. '" + (char) ch + "'."); // yeah proper error reporting would be great
                                         hx += (char) ch;
                                         if (is_hex (reader.Peek ()))
                                                 hx += (char) reader.Read ();
-                                        else if (!Char.IsWhiteSpace ((char) reader.Peek ()) || reader.Peek () != ')')
-                                                throw new Exception ("Invalid hex value.");
+                                        else if (!Char.IsWhiteSpace ((char) reader.Peek ()) && reader.Peek () != ')')
+                                                throw new Exception ("Invalid hex value. '" + (char) reader.Peek () + "'.");
                                         res.token = Token.HEXBYTE;
                                         res.val = Byte.Parse (hx, NumberStyles.HexNumber);
+
+                                        while (Char.IsWhiteSpace ((char) reader.Peek ()))
+                                                reader.Read ();
                                         break;
                                 }
                                 
