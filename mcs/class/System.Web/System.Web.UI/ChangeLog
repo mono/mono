@@ -1,3 +1,8 @@
+2004-09-01 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* LiteralControl.cs: stylized. This control has EnableViewState disabled
+	by default and doesn't get an automatic ID. When text is null -> "".
+
 2004-07-16 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* TemplateControl.cs: don't include private methods of base classes when
