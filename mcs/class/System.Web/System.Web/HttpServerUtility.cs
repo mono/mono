@@ -31,6 +31,9 @@ namespace System.Web
 		
 		
 		
+		[MonoTODO()]
+		public HttpServerUtility(HttpContext Context {
+		}
 		// Properties
 
 
