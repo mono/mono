@@ -1,3 +1,8 @@
+
+Tue Jun 15 15:29:47 CEST 2004 Paolo Molaro <lupus@ximian.com>
+
+	* icall.c: fix signatures of some VolatileRead and VolatileWrite icalls.
+
 2004-06-15 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* icall.c: added internalGetHome.
