@@ -1,3 +1,7 @@
+2003-07.17 Jackson Harper <jackson@latitudegeo.com>
+
+	* ILParser.jay: Add generic type refs, and fake generic class refs.
+		
 2003-07-15 Jackson Harper <jackson@latitudegeo.com>
 
 	* ILParser.jay: Add generic type constraints and tokens used to

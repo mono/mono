@@ -589,6 +589,11 @@ class_ref		: OPEN_BRACKET file_name CLOSE_BRACKET slashed_name
                                 else
                                         $$ = new TypeRef ((string) $1, null);
                           }
+                        | slashed_name OPEN_ANGLE_BRACKET BANG int32 CLOSE_ANGLE_BRACKET
+                          {
+                                // Just cheat for now
+                                $$ = new TypeRef ((string) $1, null);
+                          }
 			;
 
 class_decls		: /* EMPTY */
@@ -757,7 +762,8 @@ type			: K_CLASS class_ref
                           }
                         | BANG int32
                           {
-                                // access class type parameter by number
+                                GenericTypeSpec spec = new GenericTypeSpec ((int) $2);
+                                $$ = new GenericTypeRef (spec, $2.ToString ());
                           }
                         | BANG BANG int32
                           {
