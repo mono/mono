@@ -1,4 +1,8 @@
 2004-11-02  Jambunathan K  <kjambunathan@novell.com>
+	* test-mbas.make: Implemented all STD_TARGETS specifically run-test and
+	run-test-ondotnet.
+
+2004-11-02  Jambunathan K  <kjambunathan@novell.com>
 	* test-mbas.pl:
 	* test-mbas.make: Added support for --runtime option in
 	test-mbas.pl. When working with mbas within the cygwin

@@ -13,13 +13,15 @@ COMPILER_FLAGS = /libpath:../../../class/lib/default /imports:System
 LIBRARY_OPT = /target:library
 DISTFILES = README.tests $(wildcard *.vb)
 
-all: run-test-local
-
-run-test-local: 
+run-test: 
 	@ rm -f *.exe *.log *.results; 
-	@ ../test-mbas.pl --compiler=$(COMPILER) --compilerflags=$(COMPILER_FLAGS) --pattern=$(PATTERN) --runtime=$(RUNTIME)
+	@ ../test-mbas.pl --compiler=$(COMPILER) --compilerflags=$(COMPILER_FLAGS) --pattern=$(PATTERN) --runtime=mono
 
-all-local install-local test-local:
+run-test-ondotnet: 
+	@ rm -f *.exe *.log *.results; 
+	@ ../test-mbas.pl --compiler=$(COMPILER) --compilerflags=$(COMPILER_FLAGS) --pattern=$(PATTERN) --runtime=dotnet
+
+all test clean install uninstall:
 	@:
 
 
