@@ -46,6 +46,7 @@ namespace System.Data.Odbc
 		int connectionTimeout;
 		internal OdbcTransaction transaction;
 		IntPtr henv=IntPtr.Zero, hdbc=IntPtr.Zero;
+		bool disposed = false;
 		
 		#endregion
 
@@ -216,8 +217,6 @@ namespace System.Data.Odbc
 
 				transaction = null;
 			}
-			else
-				throw new InvalidOperationException ();
 		}
 
 		public OdbcCommand CreateCommand ()
@@ -231,10 +230,23 @@ namespace System.Data.Odbc
 			throw new NotImplementedException ();
 		}
 		
-		[MonoTODO]
 		protected override void Dispose (bool disposing)
-		{
-		}
+                {
+                        if (!this.disposed) {
+                                try
+                                {
+                                        // release the native unmananged resources
+                                        this.Close();
+                                        this.disposed = true;
+                                }
+                                finally
+                                {
+                                        // call Dispose on the base class
+                                        base.Dispose(disposing);
+                                }
+                        }
+                }
+
 
 		[MonoTODO]
 		object ICloneable.Clone ()
