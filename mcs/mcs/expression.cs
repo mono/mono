@@ -2694,7 +2694,7 @@ namespace Mono.CSharp {
 				 (oper == Operator.LogicalOr && (bool)lc.GetValue () == true))) {
 
 				// TODO: make a sence to resolve unreachable expression as we do for statement
-				Report.Warning (429, 1, loc, "Unreachable expression code detected");
+				Report.Warning (429, 4, loc, "Unreachable expression code detected");
 				return left;
 			}
 
