@@ -47,6 +47,9 @@ namespace System.Xml.Schema
 
 		internal string Normalize (string s, XsdWhitespaceFacet whitespaceFacet)
 		{
+			int idx = s.IndexOfAny (wsChars);
+			if (idx < 0)
+				return s;
 			switch (whitespaceFacet) {
 			case XsdWhitespaceFacet.Collapse:
 				string [] arr = s.Trim ().Split (wsChars);
@@ -71,11 +74,6 @@ namespace System.Xml.Schema
 						sb [i] = ' ';
 						break;
 					}
-				/*
-				sb.Replace ('\r', ' ');
-				sb.Replace ('\n', ' ');
-				sb.Replace ('\t', ' ');
-				*/
 				result = sb.ToString ();
 				sb.Length = 0;
 				return result;
