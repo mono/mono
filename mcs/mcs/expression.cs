@@ -4807,8 +4807,14 @@ namespace Mono.CSharp {
 
 		void EmitArrayArguments (EmitContext ec)
 		{
-			foreach (Argument a in arguments)
+			ILGenerator ig = ec.ig;
+			
+			foreach (Argument a in arguments) {
+				Type atype = a.Type;
 				a.Emit (ec);
+				if (atype == TypeManager.uint64_type || atype == TypeManager.int64_type)
+					ig.Emit (OpCodes.Conv_Ovf_U4);
+			}
 		}
 		
 		void DoEmit (EmitContext ec, bool is_statement)
