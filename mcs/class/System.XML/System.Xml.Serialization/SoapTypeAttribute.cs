@@ -54,12 +54,13 @@ namespace System.Xml.Serialization
 			}
 		}
 		
-		internal bool InternalEquals (SoapTypeAttribute other)
+		internal void AddKeyHash (System.Text.StringBuilder sb)
 		{
-			return (other != null &&
-					ns == other.ns &&
-					typeName == other.typeName &&
-					includeInSchema == other.includeInSchema);
+			sb.Append ("STA ");
+			KeyHelper.AddField (sb, 1, ns);
+			KeyHelper.AddField (sb, 2, typeName);
+			KeyHelper.AddField (sb, 3, includeInSchema);
+			sb.Append ('|');
 		}
 	}
 }

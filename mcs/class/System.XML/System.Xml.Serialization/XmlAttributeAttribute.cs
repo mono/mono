@@ -90,15 +90,15 @@ namespace System.Xml.Serialization
 			}
 		}
 		
-		internal bool InternalEquals (XmlAttributeAttribute other)
+		internal void AddKeyHash (System.Text.StringBuilder sb)
 		{
-			if (other == null) return false;
-			
-			return (attributeName == other.attributeName &&
-					dataType == other.dataType &&
-					type == other.type &&
-					form == other.form &&
-					ns == other.ns);
+			sb.Append ("XAA ");
+			KeyHelper.AddField (sb, 1, ns);
+			KeyHelper.AddField (sb, 2, attributeName);
+			KeyHelper.AddField (sb, 3, form.ToString(), XmlSchemaForm.None.ToString());
+			KeyHelper.AddField (sb, 4, dataType);
+			KeyHelper.AddField (sb, 5, type);
+			sb.Append ('|');
 		}
 	}
 }

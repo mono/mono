@@ -37,11 +37,11 @@ namespace System.Xml.Serialization
 			}
 		}
 		
-		internal bool InternalEquals (XmlChoiceIdentifierAttribute ob)
+		internal void AddKeyHash (System.Text.StringBuilder sb)
 		{
-			if (ob == null) return false;
-			return memberName == ob.memberName;
+			sb.Append ("XCA ");
+			KeyHelper.AddField (sb, 1, memberName);
+			sb.Append ('|');
 		}
-
 	}
 }

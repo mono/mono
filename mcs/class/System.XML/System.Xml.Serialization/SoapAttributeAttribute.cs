@@ -8,6 +8,7 @@
 //
 
 using System;
+using System.Text;
 
 namespace System.Xml.Serialization
 {
@@ -58,12 +59,13 @@ namespace System.Xml.Serialization
 			}
 		}
 		
-		internal bool InternalEquals (SoapAttributeAttribute other)
+		internal void AddKeyHash (System.Text.StringBuilder sb)
 		{
-			if (other == null) return false;
-			return (attrName == other.attrName &&
-					dataType == other.dataType &&
-					ns == other.ns);
+			sb.Append ("SAA ");
+			KeyHelper.AddField (sb, 1, attrName);
+			KeyHelper.AddField (sb, 2, dataType);
+			KeyHelper.AddField (sb, 3, ns);
+			sb.Append ("|");
 		}
 	}
 }

@@ -50,5 +50,10 @@ namespace System.Xml.Serialization
 		{
 			return !TypeMember.Equals(tm1,tm2);
 		}
+		
+		public override string ToString ()
+		{
+			return type.ToString() + " " + member;
+		}
 	}
 }

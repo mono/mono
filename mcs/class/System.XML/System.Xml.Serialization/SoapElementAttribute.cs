@@ -57,12 +57,13 @@ namespace System.Xml.Serialization
 			}
 		}
 		
-		internal bool InternalEquals (SoapElementAttribute other)
+		internal void AddKeyHash (System.Text.StringBuilder sb)
 		{
-			if (other == null) return false;
-			return (elementName == other.elementName &&
-					dataType == other.dataType &&
-					isNullable == other.isNullable);
+			sb.Append ("SEA ");
+			KeyHelper.AddField (sb, 1, elementName);
+			KeyHelper.AddField (sb, 2, dataType);
+			KeyHelper.AddField (sb, 3, isNullable);
+			sb.Append ('|');
 		}
 	}
 }

@@ -37,9 +37,11 @@ namespace System.Xml.Serialization
 			}
 		}
 		
-		internal bool InternalEquals (SoapEnumAttribute other)
+		internal void AddKeyHash (System.Text.StringBuilder sb)
 		{
-			return (other == null && name == other.name);
+			sb.Append ("SENA ");
+			KeyHelper.AddField (sb, 1, name);
+			sb.Append ('|');
 		}
 	}
 }

@@ -360,7 +360,7 @@ namespace System.Xml.Serialization
 				Unindent ();
 			}
 			else
-				WriteLine ("default: return val.ToString();");
+				WriteLine ("default: return ((long)val).ToString();");
 			
 			WriteLineUni ("}");
 			
@@ -1311,7 +1311,7 @@ namespace System.Xml.Serialization
 				ArrayList members = map.MembersWithDefault;
 				for (int n=0; n<members.Count; n++) {
 					XmlTypeMapMember mem = (XmlTypeMapMember) members[n];
-					GenerateSetMemberValue (mem, ob, GetLiteral (mem.DefaultValue), isValueList);
+					GenerateSetMemberValueFromAttr (mem, ob, GetLiteral (mem.DefaultValue), isValueList);
 				}
 			}
 			
@@ -1701,6 +1701,17 @@ namespace System.Xml.Serialization
 				if (member.IsOptionalValueType)
 					WriteLine (ob + "." + member.Name + "Specified = true;");
 			}
+		}
+
+		void GenerateSetMemberValueFromAttr (XmlTypeMapMember member, string ob, string value, bool isValueList)
+		{
+			// Enumeration values specified in custom attributes are stored as integer
+			// values if the custom attribute property is of type object. So, it is
+			// necessary to convert to the enum type before asigning the value to the field.
+			
+			if (member.TypeData.Type.IsEnum)
+				value = GetCast (member.TypeData.Type, value);
+			GenerateSetMemberValue (member, ob, value, isValueList);
 		}
 
 		object GenerateGetMemberValue (XmlTypeMapMember member, object ob, bool isValueList)

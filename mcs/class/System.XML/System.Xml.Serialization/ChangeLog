@@ -1,3 +1,22 @@
+2004-03-25  Lluis Sanchez Gual <lluis@ximian.com>
+
+	* SerializationCodeGenerator.cs: Generate an integer for unknown enum values.
+	  Use a special method to generate default values, since default enum values
+	  will come as integers, so a special cast is needed.
+	* XmlSerializationReaderInterpreter.cs,
+	* SerializationSource.cs, SoapAttributeAttribute.cs, SoapAttributeOverrides.cs,
+	  SoapAttributes.cs, SoapElementAttribute.cs, SoapEnumAttribute.cs, 
+	  SoapTypeAttribute.cs, XmlAnyElementAttribute.cs, XmlAnyElementAttributes.cs,
+	  XmlArrayAttribute.cs, XmlArrayItemAttribute.cs, XmlArrayItemAttributes.cs, 
+	  XmlAttributeAttribute.cs, XmlAttributeOverrides.cs, XmlAttributes.cs,
+	  XmlChoiceIdentifierAttribute.cs, XmlElementAttribute.cs, XmlElementAttributes.cs,
+	  XmlEnumAttribute.cs, XmlReflectionMember.cs, XmlRootAttribute.cs,
+	  XmlTextAttribute.cs, XmlTypeAttribute.cs: Had to change the implementation
+	  of SerializationSource. It can't keep and use the XmlAttributeOverride
+	  instances as key values, since those instances can be modified after the
+	  xml map has been generated. Now, SerializationSource generates a unique 
+	  string hash from XmlAttributeOverride and uses it for comparisons.
+
 2004-03-24  Lluis Sanchez Gual <lluis@ximian.com>
 
 	* SerializationCodeGenerator.cs: Several fixes: generate valid names for 

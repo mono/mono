@@ -92,17 +92,16 @@ namespace System.Xml.Serialization
 			}
 		}
 		
-		internal bool InternalEquals (XmlElementAttribute other)
+		internal void AddKeyHash (System.Text.StringBuilder sb)
 		{
-			if (other == null) return false;
-			
-			return (elementName == other.elementName &&
-					dataType == other.dataType &&
-					type == other.type &&
-					form == other.form &&
-					ns == other.ns &&
-					isNullable == other.isNullable);
-		}
-			
+			sb.Append ("XEA ");
+			KeyHelper.AddField (sb, 1, ns);
+			KeyHelper.AddField (sb, 2, elementName);
+			KeyHelper.AddField (sb, 3, form.ToString(), XmlSchemaForm.None.ToString());
+			KeyHelper.AddField (sb, 4, dataType);
+			KeyHelper.AddField (sb, 5, type);
+			KeyHelper.AddField (sb, 6, isNullable);
+			sb.Append ('|');
+		}			
 	}
 }

@@ -58,14 +58,14 @@ namespace System.Xml.Serialization
 			List.Remove(attribute);
 		}
 		
-		internal bool InternalEquals (XmlArrayItemAttributes other)
+		internal void AddKeyHash (System.Text.StringBuilder sb)
 		{
-			if (other == null) return false;
+			if (Count == 0) return;
 			
-			if (Count != other.Count) return false;
+			sb.Append ("XAIAS ");
 			for (int n=0; n<Count; n++)
-				if (!this[n].InternalEquals (other[n])) return false;
-			return true;
+				this[n].AddKeyHash (sb);
+			sb.Append ('|');
 		}
 	}
 }

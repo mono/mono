@@ -78,13 +78,14 @@ namespace System.Xml.Serialization
 			}
 		}
 		
-		internal bool InternalEquals (XmlArrayAttribute other)
+		internal void AddKeyHash (System.Text.StringBuilder sb)
 		{
-			if (other == null) return false;
-			return (elementName == other.elementName &&
-					form == other.form &&
-					isNullable == other.isNullable &&
-					ns == other.ns);
+			sb.Append ("XAAT ");
+			KeyHelper.AddField (sb, 1, ns);
+			KeyHelper.AddField (sb, 2, elementName);
+			KeyHelper.AddField (sb, 3, form.ToString(), XmlSchemaForm.None.ToString());
+			KeyHelper.AddField (sb, 4, isNullable);
+			sb.Append ('|');
 		}
 	}
 }

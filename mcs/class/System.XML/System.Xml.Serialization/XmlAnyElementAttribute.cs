@@ -54,10 +54,12 @@ namespace System.Xml.Serialization
 			}
 		}
 		
-		internal bool InternalEquals (XmlAnyElementAttribute other)
+		internal void AddKeyHash (System.Text.StringBuilder sb)
 		{
-			if (other == null) return false;
-			return (elementName == other.elementName && ns == other.ns);
+			sb.Append ("XAEA ");
+			KeyHelper.AddField (sb, 1, ns);
+			KeyHelper.AddField (sb, 2, elementName);
+			sb.Append ('|');
 		}
 	}
 }

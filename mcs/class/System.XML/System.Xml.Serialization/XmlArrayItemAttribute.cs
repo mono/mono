@@ -73,17 +73,17 @@ namespace System.Xml.Serialization
 			set { nestingLevel = value; }
 		}
 		
-		internal bool InternalEquals (XmlArrayItemAttribute other)
+		internal void AddKeyHash (System.Text.StringBuilder sb)
 		{
-			if (other == null) return false;
-			
-			return (dataType == other.dataType &&
-					elementName == other.elementName &&
-					form == other.form &&
-					ns == other.ns &&
-					isNullable == other.isNullable &&
-					nestingLevel == other.nestingLevel &&
-					type == other.type);
+			sb.Append ("XAIA ");
+			KeyHelper.AddField (sb, 1, ns);
+			KeyHelper.AddField (sb, 2, elementName);
+			KeyHelper.AddField (sb, 3, form.ToString(), XmlSchemaForm.None.ToString());
+			KeyHelper.AddField (sb, 4, isNullable, true);
+			KeyHelper.AddField (sb, 5, dataType);
+			KeyHelper.AddField (sb, 6, nestingLevel, 0);
+			KeyHelper.AddField (sb, 7, type);
+			sb.Append ('|');
 		}
 	}
 }

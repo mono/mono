@@ -57,12 +57,13 @@ namespace System.Xml.Serialization
 			}
 		}
 		
-		internal bool InternalEquals (XmlTypeAttribute other)
+		internal void AddKeyHash (System.Text.StringBuilder sb)
 		{
-			if (other == null) return false;
-			return (includeInSchema == other.includeInSchema && 
-					typeName == other.typeName &&
-				    ns != other.ns);
-		}
+			sb.Append ("XTA ");
+			KeyHelper.AddField (sb, 1, ns);
+			KeyHelper.AddField (sb, 2, typeName);
+			KeyHelper.AddField (sb, 4, includeInSchema);
+			sb.Append ('|');
+		}			
 	}
 }

@@ -214,63 +214,48 @@ namespace System.Xml.Serialization
 		}
 		#endregion
 		
-		internal bool InternalEquals (XmlAttributes other)
+		internal void AddKeyHash (System.Text.StringBuilder sb)
 		{
-			if (other == null) return false;
+			sb.Append ("XA ");
 			
-			if (xmlIgnore != other.xmlIgnore) return false;
-			if (xmlns != other.xmlns) return false;
+			KeyHelper.AddField (sb, 1, xmlIgnore);
+			KeyHelper.AddField (sb, 2, xmlns);
+			KeyHelper.AddField (sb, 3, xmlAnyAttribute!=null);
+
+			xmlAnyElements.AddKeyHash (sb);
+			xmlArrayItems.AddKeyHash (sb);
+			xmlElements.AddKeyHash (sb);
 			
-			if (xmlAnyAttribute == null) {
-				if (other.xmlAnyAttribute != null) return false; }
-			else
-				if (other.xmlAnyAttribute == null) return false;
-			
-			if (!xmlAnyElements.Equals (other.xmlAnyElements)) return false; 
-			if (!xmlArrayItems.Equals (other.xmlArrayItems)) return false;
-			if (!xmlElements.Equals (other.xmlElements)) return false;
+			if (xmlArray != null)
+				xmlArray.AddKeyHash (sb);
 				
-			if (xmlArray == null) {
-				if (other.xmlArray != null) return false; }
-			else
-				if (!xmlArray.InternalEquals (other.xmlArray)) return false;
-				
-			if (xmlAttribute == null) {
-				if (other.xmlAttribute != null) return false; }
-			else
-				if (!xmlAttribute.InternalEquals (other.xmlAttribute)) return false;
+			if (xmlAttribute != null)
+				xmlAttribute.AddKeyHash (sb);
 				
 			if (xmlDefaultValue == null) {
-				if (other.xmlDefaultValue != null) return false; }
-			else
-				if (!xmlDefaultValue.Equals (other.xmlDefaultValue)) return false;
+				sb.Append ("n");
+			}
+			else if (!(xmlDefaultValue is System.DBNull)) {
+				string v = XmlCustomFormatter.ToXmlString (TypeTranslator.GetTypeData (xmlDefaultValue.GetType()), xmlDefaultValue);
+				sb.Append ("v" + v);
+			}
+			
+			if (xmlEnum != null)
+				xmlEnum.AddKeyHash (sb);
 				
-			if (xmlEnum == null) {
-				if (other.xmlEnum != null) return false; }
-			else
-				if (!xmlEnum.InternalEquals (other.xmlEnum)) return false;
+			if (xmlRoot != null)
+				xmlRoot.AddKeyHash (sb);
 				
-			if (xmlRoot == null) {
-				if (other.xmlRoot != null) return false; }
-			else
-				if (!xmlRoot.InternalEquals (other.xmlRoot)) return false;
+			if (xmlText != null)
+				xmlText.AddKeyHash (sb);
 				
-			if (xmlText == null) {
-				if (other.xmlText != null) return false; }
-			else
-				if (!xmlText.InternalEquals (other.xmlText)) return false;
+			if (xmlType != null)
+				xmlType.AddKeyHash (sb);
 				
-			if (xmlType == null) {
-				if (other.xmlType != null) return false; }
-			else
-				if (!xmlType.InternalEquals (other.xmlType)) return false;
+			if (xmlChoiceIdentifier != null)
+				xmlChoiceIdentifier.AddKeyHash (sb);
 				
-			if (xmlChoiceIdentifier == null) {
-				if (other.xmlChoiceIdentifier != null) return false; }
-			else
-				if (!xmlChoiceIdentifier.InternalEquals (other.xmlChoiceIdentifier)) return false;
-				
-			return true;
+			sb.Append ("|");
 		}
 	}
 }

@@ -68,17 +68,16 @@ namespace System.Xml.Serialization
 			return new TypeMember(type, member);
 		}
 
-		internal bool InternalEquals (SoapAttributeOverrides other)
+		internal void AddKeyHash (System.Text.StringBuilder sb)
 		{
-			if (other == null) return false;
-			if (overrides.Count != other.overrides.Count) return false;
-			
+			sb.Append ("SAO ");
 			foreach (DictionaryEntry entry in overrides)
 			{
-				SoapAttributes val = (SoapAttributes) other.overrides [entry.Key];
-				if (val == null || !val.InternalEquals ((SoapAttributes) entry.Value)) return false;
+				SoapAttributes val = (SoapAttributes) overrides [entry.Key];
+				sb.Append (entry.Key.ToString()).Append(' ');
+				val.AddKeyHash (sb);
 			}
-			return true;
+			sb.Append ("|");
 		}
 	}
 }

@@ -56,17 +56,16 @@ namespace System.Xml.Serialization
 			return new TypeMember(type, member);
 		}
 
-		internal bool InternalEquals (XmlAttributeOverrides other)
+		internal void AddKeyHash (System.Text.StringBuilder sb)
 		{
-			if (other == null) return false;
-			if (overrides.Count != other.overrides.Count) return false;
-			
+			sb.Append ("XAO ");
 			foreach (DictionaryEntry entry in overrides)
 			{
-				XmlAttributes val = (XmlAttributes) other.overrides [entry.Key];
-				if (val == null || !val.Equals ((XmlAttributes) entry.Value)) return false;
+				XmlAttributes val = (XmlAttributes) entry.Value;
+				sb.Append (entry.Key.ToString()).Append(' ');
+				val.AddKeyHash (sb);
 			}
-			return true;
+			sb.Append ("|");
 		}
 	}
 }

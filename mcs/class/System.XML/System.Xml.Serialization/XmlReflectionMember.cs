@@ -81,26 +81,21 @@ namespace System.Xml.Serialization {
 			set { xmlAttributes = value; }
 		}
 		
-		internal bool InternalEquals (XmlReflectionMember other)
+		internal void AddKeyHash (System.Text.StringBuilder sb)
 		{
-			if (other == null) return false;
+			sb.Append ("XRM ");
+			KeyHelper.AddField (sb, 1, isReturnValue);
+			KeyHelper.AddField (sb, 1, memberName);
+			KeyHelper.AddField (sb, 1, memberType);
+			KeyHelper.AddField (sb, 1, overrideIsNullable);
 			
-			if (isReturnValue != other.isReturnValue) return false;
-			if (memberName != other.memberName) return false;
-			if (memberType != other.memberType) return false;
-			if (overrideIsNullable != other.overrideIsNullable) return false;
+			if (soapAttributes != null)
+				soapAttributes.AddKeyHash (sb);
 			
-			if (soapAttributes == null) {
-				if (other.soapAttributes != null) return false; }
-			else
-				if (!soapAttributes.InternalEquals (other.soapAttributes)) return false;
+			if (xmlAttributes != null)
+				xmlAttributes.AddKeyHash (sb);
 			
-			if (xmlAttributes == null) {
-				if (other.xmlAttributes != null) return false; }
-			else
-				if (!xmlAttributes.InternalEquals (other.xmlAttributes)) return false;
-				
-			return true;
+			sb.Append ('|');
 		}
 
 		#endregion // Properties

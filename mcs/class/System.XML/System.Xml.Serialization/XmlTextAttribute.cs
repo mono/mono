@@ -48,10 +48,12 @@ namespace System.Xml.Serialization
 			}
 		}
 		
-		internal bool InternalEquals (XmlTextAttribute ob)
+		internal void AddKeyHash (System.Text.StringBuilder sb)
 		{
-			if (ob == null) return false;
-			return (dataType == ob.dataType && type == ob.type);
-		}
+			sb.Append ("XTXA ");
+			KeyHelper.AddField (sb, 1, type);
+			KeyHelper.AddField (sb, 2, dataType);
+			sb.Append ('|');
+		}			
 	}
 }

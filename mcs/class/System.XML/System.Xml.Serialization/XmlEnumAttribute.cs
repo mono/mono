@@ -37,10 +37,11 @@ namespace System.Xml.Serialization
 			}
 		}
 
-		internal bool InternalEquals (XmlEnumAttribute other)
+		internal void AddKeyHash (System.Text.StringBuilder sb)
 		{
-			if (other == null) return false;
-			return name == other.name;
+			sb.Append ("XENA ");
+			KeyHelper.AddField (sb, 1, name);
+			sb.Append ('|');
 		}
 	}
 }

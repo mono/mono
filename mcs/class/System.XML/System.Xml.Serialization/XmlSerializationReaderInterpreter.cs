@@ -206,7 +206,7 @@ namespace System.Xml.Serialization
 				ArrayList members = map.MembersWithDefault;
 				for (int n=0; n<members.Count; n++) {
 					XmlTypeMapMember mem = (XmlTypeMapMember) members[n];
-					SetMemberValue (mem, ob, mem.DefaultValue, isValueList);
+					SetMemberValueFromAttr (mem, ob, mem.DefaultValue, isValueList);
 				}
 			}
 			
@@ -451,6 +451,17 @@ namespace System.Xml.Serialization
 				if (member.IsOptionalValueType)
 					member.SetValueSpecified (ob, true); 
 			}
+		}
+
+		void SetMemberValueFromAttr (XmlTypeMapMember member, object ob, object value, bool isValueList)
+		{
+			// Enumeration values specified in custom attributes are stored as integer
+			// values if the custom attribute property is of type object. So, it is
+			// necessary to convert to the enum type before asigning the value to the field.
+			
+			if (member.TypeData.Type.IsEnum)
+				value = Enum.ToObject (member.TypeData.Type, value);
+			SetMemberValue (member, ob, value, isValueList);
 		}
 
 		object GetMemberValue (XmlTypeMapMember member, object ob, bool isValueList)

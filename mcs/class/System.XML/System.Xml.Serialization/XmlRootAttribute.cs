@@ -70,11 +70,14 @@ namespace System.Xml.Serialization
 			}
 		}
 		
-		internal bool InternalEquals (XmlRootAttribute other)
+		internal void AddKeyHash (System.Text.StringBuilder sb)
 		{
-			if (other == null) return false;
-			return (dataType == other.dataType && elementName == other.elementName &&
-				    isNullable == other.isNullable && ns == other.ns);
-		}
+			sb.Append ("XRA ");
+			KeyHelper.AddField (sb, 1, ns);
+			KeyHelper.AddField (sb, 2, elementName);
+			KeyHelper.AddField (sb, 3, dataType);
+			KeyHelper.AddField (sb, 4, isNullable);
+			sb.Append ('|');
+		}			
 	}
 }

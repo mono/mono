@@ -8,6 +8,7 @@
 //
 
 using System.Collections;
+using System.Text;
 
 namespace System.Xml.Serialization 
 {
@@ -49,38 +50,38 @@ namespace System.Xml.Serialization
 	
 	internal class XmlTypeSerializationSource: SerializationSource
 	{
-		XmlAttributeOverrides attributeOverrides;
+		string attributeOverridesHash;
 		Type type;
-		XmlRootAttribute root;
+		string rootHash;
 		
 		public XmlTypeSerializationSource (Type type, XmlRootAttribute root, XmlAttributeOverrides attributeOverrides, string namspace, ArrayList includedTypes)
 		: base (namspace, includedTypes)
 		{
-			this.attributeOverrides = attributeOverrides;
+			if (attributeOverrides != null) {
+				StringBuilder sb = new StringBuilder ();
+				attributeOverrides.AddKeyHash (sb);
+				attributeOverridesHash = sb.ToString ();
+			}
+			
+			if (root != null) {
+				StringBuilder sb = new StringBuilder ();
+				root.AddKeyHash (sb);
+				rootHash = sb.ToString ();
+			}
+				
 			this.type = type;
-			this.root = root;
 		}
 		
 		public override bool Equals (object o)
 		{
 			XmlTypeSerializationSource other = o as XmlTypeSerializationSource;
 			if (other == null) return false;
+			
 			if (!type.Equals(other.type)) return false;
+			if (rootHash != other.rootHash) return false;
+			if (attributeOverridesHash != other.attributeOverridesHash) return false;
 			
-			if (root == null) {
-				if (other.root != null) 
-					return false;
-			}
-			else if (!root.InternalEquals (other.root))
-				return false;
-			
-			if (!base.Equals (o))
-				return false;
-			
-			if (attributeOverrides == null)
-				return other.attributeOverrides == null;
-			
-			return attributeOverrides.InternalEquals (other.attributeOverrides);
+			return base.Equals (o);
 		}
 		
 		public override int GetHashCode ()
@@ -91,13 +92,18 @@ namespace System.Xml.Serialization
 	
 	internal class SoapTypeSerializationSource: SerializationSource
 	{
-		SoapAttributeOverrides attributeOverrides;
+		string attributeOverridesHash;
 		Type type;
 		
 		public SoapTypeSerializationSource (Type type, SoapAttributeOverrides attributeOverrides, string namspace, ArrayList includedTypes)
 		: base (namspace, includedTypes)
 		{
-			this.attributeOverrides = attributeOverrides;
+			if (attributeOverrides != null) {
+				StringBuilder sb = new StringBuilder ();
+				attributeOverrides.AddKeyHash (sb);
+				attributeOverridesHash = sb.ToString ();
+			}
+			
 			this.type = type;
 		}
 
@@ -106,14 +112,9 @@ namespace System.Xml.Serialization
 			SoapTypeSerializationSource other = o as SoapTypeSerializationSource;
 			if (other == null) return false;
 			if (!type.Equals(other.type)) return false;
+			if (attributeOverridesHash != other.attributeOverridesHash) return false;
 			
-			if (!base.Equals (o))
-				return false;
-			
-			if (attributeOverrides == null)
-				return other.attributeOverrides == null;
-			
-			return attributeOverrides.InternalEquals (other.attributeOverrides);
+			return base.Equals (o);
 		}
 		
 		public override int GetHashCode ()
@@ -126,10 +127,9 @@ namespace System.Xml.Serialization
 	{
 		string elementName;
 		bool hasWrapperElement;
-		XmlReflectionMember [] members;
+		string membersHash;
 		bool writeAccessors;
 		bool literalFormat;
-		int hcode = -1;
 		
 		public MembersSerializationSource (string elementName, bool hasWrapperElement, XmlReflectionMember [] members, bool writeAccessors, 
 										   bool literalFormat, string namspace, ArrayList includedTypes)
@@ -137,9 +137,15 @@ namespace System.Xml.Serialization
 		{
 			this.elementName = elementName;
 			this.hasWrapperElement = hasWrapperElement;
-			this.members = members;
 			this.writeAccessors = writeAccessors;
 			this.literalFormat = literalFormat;
+			
+			StringBuilder sb = new StringBuilder ();
+			sb.Append (members.Length.ToString());
+			foreach (XmlReflectionMember mem in members)
+				mem.AddKeyHash (sb);
+				
+			membersHash = sb.ToString();
 		}
 		
 		
@@ -150,25 +156,58 @@ namespace System.Xml.Serialization
 			if (literalFormat = other.literalFormat) return false;
 			if (elementName != other.elementName) return false;
 			if (hasWrapperElement != other.hasWrapperElement) return false;
-			if (members.Length != other.members.Length) return false;
+			if (membersHash != other.membersHash) return false;
 			
-			if (!base.Equals (o))
-				return false;
-			
-			for (int n=0; n<members.Length; n++)
-				if (!members[n].InternalEquals (other.members[n])) return false;
-
-			return true;
+			return base.Equals (o);
 		}
 		
 		public override int GetHashCode ()
 		{
-			if (hcode != -1) return hcode;
-			System.Text.StringBuilder sb = new System.Text.StringBuilder ();
-			foreach (XmlReflectionMember mem in members)
-				sb.Append (mem.MemberName);
-			hcode = sb.ToString().GetHashCode ();
-			return hcode;
+			return membersHash.GetHashCode ();
+		}
+	}
+	
+	internal class KeyHelper
+	{
+		public static void AddField (StringBuilder sb, int n, string val)
+		{
+			AddField (sb, n, val, null);
+		}
+		
+		public static void AddField (StringBuilder sb, int n, string val, string def)
+		{
+			if (val != def) {
+				sb.Append (n.ToString());
+				sb.Append (val.Length.ToString());
+				sb.Append (val);
+			}
+		}
+		
+		public static void AddField (StringBuilder sb, int n, bool val)
+		{
+			AddField (sb, n, val, false);
+		}
+		
+		public static void AddField (StringBuilder sb, int n, bool val, bool def)
+		{
+			if (val != def)
+				sb.Append (n.ToString());
+		}
+		
+		public static void AddField (StringBuilder sb, int n, int val, int def)
+		{
+			if (val != def) {
+				sb.Append (n.ToString());
+				sb.Append (val.ToString());
+			}
+		}
+		
+		public static void AddField (StringBuilder sb, int n, Type val)
+		{
+			if (val != null) {
+				sb.Append (n.ToString());
+				sb.Append (val.ToString());
+			}
 		}
 	}
 }
