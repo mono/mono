@@ -3,6 +3,7 @@
 //
 // Author:
 //   Tim Coleman (tim@timcoleman.com)
+//   Lluis Sanchez Gual (lluis@ximian.com)
 //
 // Copyright (C) Tim Coleman, 2002
 //

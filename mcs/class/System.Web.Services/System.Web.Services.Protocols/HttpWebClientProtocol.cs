@@ -25,7 +25,10 @@ namespace System.Web.Services.Protocols {
 		IWebProxy proxy;
 		string userAgent;
 		CookieCollection prevCookies;
-
+		
+#if NET_1_1
+		bool _unsafeAuthenticated;
+#endif
 		#endregion
 
 		#region Constructors
@@ -80,6 +83,14 @@ namespace System.Web.Services.Protocols {
 			get { return userAgent; }
 			set { userAgent = value; }
 		}
+		
+#if NET_1_1
+		public bool UnsafeAuthenticatedConnectionSharing
+		{
+			get { return _unsafeAuthenticated; }
+			set { _unsafeAuthenticated = value; }
+		}
+#endif
 
 		#endregion // Properties
 
@@ -138,6 +149,10 @@ namespace System.Web.Services.Protocols {
 				request.Proxy = proxy;
 
 			request.UserAgent = userAgent;
+
+#if NET_1_1
+		//	request.UnsafeAuthenticatedConnectionSharing = _unsafeAuthenticated;
+#endif
 
 			return request;
 		}

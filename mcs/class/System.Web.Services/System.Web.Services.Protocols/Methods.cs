@@ -125,7 +125,6 @@ namespace System.Web.Services.Protocols {
 					throw new Exception ("OneWay methods should not have out/ref parameters");
 			}
 			
-			if (Binding == null || Binding == "") Binding = parent.DefaultBinding;
 			BindingInfo binfo = parent.GetBinding (Binding);
 			if (binfo == null) throw new InvalidOperationException ("Type '" + parent.Type + "' is missing WebServiceBinding attribute that defines a binding named '" + Binding + "'");
 			

@@ -183,15 +183,14 @@ namespace System.Web.Services.Protocols {
 		
 		internal void AddBinding (BindingInfo info)
 		{
-			foreach (BindingInfo bi in bindings)
-				if (bi.Name == info.Name && bi.Namespace == info.Namespace)
-					return;
 			bindings.Add (info);
 		}
 		
 		internal BindingInfo GetBinding (string name)
 		{
-			for (int n=0; n<bindings.Count; n++)
+			if (name == null || name.Length == 0) return (BindingInfo) bindings[0];
+			
+			for (int n=1; n<bindings.Count; n++)
 				if (((BindingInfo)bindings[n]).Name == name) return (BindingInfo)bindings[n];
 			return null;
 		}

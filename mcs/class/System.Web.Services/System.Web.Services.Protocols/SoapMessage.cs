@@ -105,7 +105,16 @@ namespace System.Web.Services.Protocols {
 		public abstract string Url {
 			get;
 		}
-
+		
+#if NET_1_1
+		[MonoTODO]
+		public string ContentEncoding
+		{
+			get { throw new NotImplementedException (); }
+			set { throw new NotImplementedException (); }
+		}
+#endif
+ 
 		#endregion Properties
 
 		#region Methods

@@ -1,3 +1,13 @@
+2004-01-24  Lluis Sanchez Gual <lluis@ximian.com>
+
+	* HttpWebClientProtocol.cs: Added missing property.
+	* Methods.cs: Default binding for a method must be null.
+	* SoapHeaderDirection.cs: Added missing enum value.
+	* SoapMessage.cs: Added missing property.
+	* TypeStubManager.cs: Removed unneded check from AddBinding.
+	  In GetBinding(), return default binding if name is null.
+	* ValueCollectionParameterReader.cs: IsPrimitive must be internal.
+
 2004-01-21  Lluis Sanchez Gual <lluis@ximian.com>
 
 	* HttpSoapWebServiceHandler.cs, SoapHttpClientProtocol.cs: Do not use 

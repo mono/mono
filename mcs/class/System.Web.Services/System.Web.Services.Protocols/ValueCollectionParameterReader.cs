@@ -54,7 +54,7 @@ namespace System.Web.Services.Protocols {
 			else return IsSupportedPrimitive (type);
 		}
 		
-		public static bool IsSupportedPrimitive (Type type)
+		internal static bool IsSupportedPrimitive (Type type)
 		{
 			return ( type.IsPrimitive || 
 					 type == typeof(string) ||
