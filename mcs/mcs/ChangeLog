@@ -1,3 +1,8 @@
+2005-01-22  Miguel de Icaza  <miguel@ximian.com>
+
+	* cs-parser.jay: Improve error reporting when an interface
+	declares new types.
+
 2005-01-20  Dick Porter  <dick@ximian.com>
 
 	* support.cs: SeekableStreamReader fix from Sandor Dobos

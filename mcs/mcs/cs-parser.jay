@@ -1490,6 +1490,26 @@ interface_member_declaration
 		if (RootContext.Documentation != null)
 			Lexer.doc_state = XmlCommentState.Allowed;
 	  }
+	| delegate_declaration
+	  {
+		Report.Error (524, lexer.Location, "Interfaces can not declare delegates");
+	  }
+	| class_declaration
+	  {
+		Report.Error (524, lexer.Location, "Interfaces can not declare classes");
+	  }
+	| struct_declaration
+	  {
+		Report.Error (524, lexer.Location, "Interfaces can not declare structures");
+	  }
+	| enum_declaration 
+	  {
+		Report.Error (524, lexer.Location, "Interfaces can not declare enumerations");
+	  }
+	| interface_declaration 
+	  {
+		Report.Error (524, lexer.Location, "Interfaces can not declare interfaces");
+	  } 
 	;
 
 opt_new
