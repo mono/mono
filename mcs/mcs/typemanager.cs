@@ -23,6 +23,7 @@ using System.Globalization;
 using System.Collections;
 using System.Reflection;
 using System.Reflection.Emit;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Runtime.CompilerServices;
 using System.Diagnostics;
@@ -707,6 +708,7 @@ public class TypeManager {
 		//
 		// Now insert all the namespaces defined by the application
 		//
+		StringBuilder s = null;
 		foreach (Namespace ns in Namespace.UserDefinedNamespaces){
 			string name = ns.Name;
 			if (name == "")
@@ -715,6 +717,26 @@ public class TypeManager {
 				throw new Exception ();
 			if (namespaces_hash.Contains (name))
 				continue;
+			
+			if (name.IndexOf ('.') != -1){
+				if (s == null)
+					s = new StringBuilder ();
+				string [] pieces = name.Split ('.');
+				for (int i = 1; i < pieces.Length; i++){
+					s.Length = 0;
+				
+					s.Append (pieces [0]);
+					for (int j = 1; j < i; j++){
+						s.Append (".");
+						s.Append (pieces [j]);
+					}
+					string n = s.ToString ();
+					if (namespaces_hash.Contains (n))
+						continue;
+					namespaces_hash [n] = true;
+				}
+			}
+			
 			namespaces_hash [name] = true;
 		}
 
