@@ -28,7 +28,7 @@ namespace MonoTests.System.Xml
 			AssertEquals (true, s.CheckCharacters);
 			AssertEquals (ConformanceLevel.Document,
 				s.ConformanceLevel);
-			AssertEquals (false, s.DtdValidate);
+			Assert (s.ValidationType != ValidationType.DTD);
 			AssertEquals (false, s.IgnoreComments);
 			Assert (0 != (s.ValidationFlags &
 				ValidationFlags.IgnoreInlineSchema));
@@ -44,7 +44,7 @@ namespace MonoTests.System.Xml
 			AssertEquals (0, s.LinePositionOffset);
 			AssertNull (s.NameTable);
 			AssertEquals (0, s.Schemas.Count);
-			AssertEquals (false, s.XsdValidate);
+			Assert (s.ValidationType != ValidationType.Schema);
 		}
 
 		[Test]
