@@ -11,7 +11,7 @@
 //
 // (C) Chris Podurgiel
 // (C) Ximian, Inc 2002
-// Copyright (C) Tim Coleman, 2002
+// Copyright (C) Tim Coleman, 2002-2003
 // Copyright (C) Daniel Morgan, 2002-2003
 //
 
@@ -19,7 +19,9 @@ using System;
 using System.Collections;
 using System.ComponentModel;
 using System.Globalization;
+using System.IO;
 using System.Runtime.Serialization;
+using System.Xml;
 
 namespace System.Data {
 	//[Designer]
@@ -108,6 +110,14 @@ namespace System.Data {
 			// TODO: Add constructor logic here
 			//
 		}
+
+#if NET_1_2
+		public DataTable (string tableName, string tbNamespace)
+			: this (tableName)
+		{
+			_nameSpace = tbNamespace;
+		}
+#endif
 
 		/// <summary>
 		/// Indicates whether string comparisons within the table are case-sensitive.
@@ -722,6 +732,14 @@ namespace System.Data {
 			return copyTable;
 		}
 
+#if NET_1_2
+		[MonoTODO]
+		public DataTableReader GetDataReader ()
+		{
+			throw new NotImplementedException ();
+		}
+#endif
+
 		/// <summary>
 		/// Gets an array of DataRow objects that contain errors.
 		/// </summary>
@@ -789,6 +807,20 @@ namespace System.Data {
 		{
 		}
 
+#if NET_1_2
+		[MonoTODO]
+		public void Load (IDataReader reader)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public void Load (IDataReader reader, LoadOption loadOption)
+		{
+			throw new NotImplementedException ();
+		}
+#endif
+
 		/// <summary>
 		/// Finds and updates a specific row. If no matching row
 		///  is found, a new row is created using the given values.
@@ -831,6 +863,32 @@ namespace System.Data {
 			return row;
 		}
 
+#if NET_1_2
+		[MonoTODO]
+		public DataRow LoadDataRow (object[] values, LoadOption loadOption)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public void Merge (DataTable table)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public void Merge (DataTable table, bool preserveChanges)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public void Merge (DataTable table, bool preserveChanges, MissingSchemaAction missingSchemaAction)
+		{
+			throw new NotImplementedException ();
+		}
+#endif
+
 		/// <summary>
 		/// Creates a new DataRow with the same schema as the table.
 		/// </summary>
@@ -855,7 +913,38 @@ namespace System.Data {
 		{
 			return new DataRow (builder);
 		}
-	
+
+#if NET_1_2
+		[MonoTODO]
+		XmlReadMode ReadXml (Stream stream)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public void ReadXmlSchema (Stream stream)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public void ReadXmlSchema (TextReader reader)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public void ReadXmlSchema (string fileName)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public void ReadXmlSchema (XmlReader reader)
+		{
+			throw new NotImplementedException ();
+		}
+#endif
 
 		/// <summary>
 		/// Rolls back all changes that have been made to the 
@@ -1005,6 +1094,79 @@ namespace System.Data {
 			return retVal;
 		}
 
+#if NET_1_2
+		[MonoTODO]
+		public void WriteXml (Stream stream)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public void WriteXml (TextWriter writer)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public void WriteXml (XmlWriter writer)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public void WriteXml (string fileName)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public void WriteXml (Stream stream, XmlWriteMode mode)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public void WriteXml (TextWriter writer, XmlWriteMode mode)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public void WriteXml (XmlWriter writer, XmlWriteMode mode)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public void WriteXml (string fileName, XmlWriteMode mode)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public void WriteXmlSchema (Stream stream)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public void WriteXmlSchema (TextWriter writer)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public void WriteXmlSchema (XmlWriter writer)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public void WriteXmlSchema (string fileName)
+		{
+			throw new NotImplementedException ();
+		}
+#endif
 		
 		#region Events /////////////////
 		

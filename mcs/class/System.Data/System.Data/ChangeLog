@@ -1,3 +1,16 @@
+2003-11-26  Tim Coleman <tim@timcoleman.com>
+	* ConflictOptions.cs DataAdapterException.cs DataTableReader.cs
+	* DbMetaData.cs FillOptions.cs IDataReader2.cs IDataRecord2.cs
+	* IDataUpdatableRecord.cs IDbAsyncCommand.cs IDbAsyncConnection.cs
+	* IDbExecutionContext.cs IGetTypedData.cs ISetTypedData.cs
+	* LoadOption.cs OperationAbortedException.cs ResultSetOptions.cs
+	* ResultSetSensitivity.cs StatementCompletedEventArgs.cs 
+	* StatementCompletedEventHandler.cs UpdateOptions.cs:
+		New classes added for NET_1_2
+	* DBConcurrencyException.cs DataRelation.cs DataSet.cs DataTable.cs
+	* DataTableCollection.cs DataView.cs ForeignKeyConstraint.cs:
+		Modifications to add new NET_1_2 functions
+
 2003-11-25  Tim Coleman <tim@timcoleman.com>
 	* IDataSources.cs:
 		New 1.2 class added

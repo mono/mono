@@ -10,7 +10,7 @@
 //   Ville Palo <vi64pa@koti.soon.fi>
 //
 // (C) Ximian, Inc. 2002
-// Copyright (C) Tim Coleman, 2002
+// Copyright (C) Tim Coleman, 2002, 2003
 //
 
 using System;
@@ -446,6 +446,19 @@ namespace System.Data {
 			return copySet;
 		}
 
+#if NET_1_2
+		[MonoTODO]
+		public DataTableReader GetDataReader (DataTable[] dataTables)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public DataTableReader GetDataReader ()
+		{
+			throw new NotImplementedException ();
+		}
+#endif
 		
 		public string GetXml()
 		{
@@ -518,6 +531,20 @@ namespace System.Data {
 				reader.Close ();
 			}
 		}
+
+#if NET_1_2
+		[MonoTODO]
+		public void Load (IDataReader reader, LoadOption loadOption, DataTable[] tables)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public void Load (IDataReader reader, LoadOption loadOption, string[] tables)
+		{
+			throw new NotImplementedException ();
+		}
+#endif
 
 		public virtual void RejectChanges()
 		{

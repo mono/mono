@@ -4,9 +4,11 @@
 // Author:
 //   Daniel Morgan <danmorg@sc.rr.com>
 //   Alan Tam Siu Lung <Tam@SiuLung.com>
+//   Tim Coleman <tim@timcoleman.com>
 //
 // (C) 2002 Daniel Morgan
 // (C) 2002 Ximian, Inc.
+// Copyright (C) Tim Coleman, 2003
 //
 
 using System;
@@ -81,6 +83,14 @@ namespace System.Data
 		{
 			throw new NotImplementedException ();
 		}
+
+#if NET_1_2
+		[MonoTODO]
+		public DataRelation (string relationName, string parentTableName, string parentTableNamespace, string childTableName, string childTableNamespace, string[] parentColumnNames, string[] childColumnNames, bool nested)
+		{
+			throw new NotImplementedException ();
+		}
+#endif
 
 		#endregion // Constructors
 

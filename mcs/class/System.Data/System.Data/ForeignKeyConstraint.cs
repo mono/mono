@@ -68,6 +68,14 @@ namespace System.Data {
 		{
 		}
 
+#if NET_1_2
+		[MonoTODO]
+		public ForeignKeyConstraint (string constraintName, string parentTableName, string parentTableNamespace, string[] parentColumnNames, string[] childColumnNames, AcceptRejectRule acceptRejectRule, Rule deleteRule, Rule updateRule)
+		{
+			throw new NotImplementedException ();
+		}
+#endif
+
 		private void _foreignKeyConstraint(string constraintName, DataColumn[] parentColumns,
 				DataColumn[] childColumns)
 		{

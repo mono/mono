@@ -7,7 +7,7 @@
 //
 // Copyright (C) Daniel Morgan, 2002, 2003
 // (C) Ximian, Inc 2002
-// Copyright (C) Tim Coleman, 2002
+// Copyright (C) Tim Coleman, 2002-2003
 //
 
 using System;
@@ -301,6 +301,14 @@ namespace System.Data
 			throw new NotImplementedException ();
 		}
 
+#if NET_1_2
+		[MonoTODO]
+		public virtual bool Equals (DataView dv)
+		{
+			throw new NotImplementedException ();
+		}
+#endif
+
 		[MonoTODO]
 		public void EndInit() 
 		{
@@ -443,6 +451,20 @@ namespace System.Data
 			rowCache = null;
 			Open ();
 		}
+
+#if NET_1_2
+		[MonoTODO]
+		public DataTable ToTable ()
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public DataTable ToTable (bool isDistinct, string[] columnNames)
+		{
+			throw new NotImplementedException ();
+		}
+#endif
 
 		// internal use by Mono
 		protected virtual void UpdateIndex () 
