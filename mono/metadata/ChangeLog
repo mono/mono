@@ -1,3 +1,8 @@
+2004-02-05  Zoltan Varga  <vargaz@freemail.hu>
+
+	* appdomain.c (ves_icall_System_AppDomain_InternalPushDomainRefByID): 
+	Raise an exception when the domain is not found.
+
 2004-02-03  Martin Baulig  <martin@ximian.com>
 
 	* reflection.c (mono_image_get_methodspec_token): Use the
