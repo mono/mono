@@ -1,6 +1,6 @@
-BasicOperationsTest.cs
 System/UriBuilderTest.cs
 System/UriTest.cs
+System.Collections.Specialized/BasicOperationsTest.cs
 System.Collections.Specialized/BitVector32Test.cs
 System.Collections.Specialized/HybridDictionaryTest.cs
 System.Collections.Specialized/NameValueCollectionTest.cs

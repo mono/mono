@@ -1,3 +1,7 @@
+2002-03-29  Nick Drochak  <ndrochak@gol.com>
+
+	* BasicOperationsTest.cs: Moved file here from root of Test dir
+
 2002-06-24  Andrew Birkett <adb@tardis.ed.ac.uk>
 
 	* BitVector32Test.cs: New tests for sections and removed ^M's.
