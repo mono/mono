@@ -1,5 +1,8 @@
 2005-02-20  Zoltan Varga  <vargaz@freemail.hu>
 
+	* threads-types.h threads.c icall.c: Implement the net 2.0 interlocked
+	functions based on a patch by Luca Barbieri (luca.barbieri@gmail.com).
+
 	* marshal.c (emit_thread_interrupt_checkpoint_call): Mark the bblock 
 	containing the checkpoint call with NOT_TAKEN.
 	
