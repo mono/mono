@@ -1,3 +1,5 @@
+2002-07-14 Rafael Teixeira <rafaelteixeirabr@hotmail.com>
+	* removed mb-parser.jay and mb-tokenizer.cs
 
 Sat Jul 13 19:38:03 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
