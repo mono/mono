@@ -1,3 +1,12 @@
+2004-03-17  Martin Baulig  <martin@ximian.com>
+
+	* mini.c (get_generic_field_inst): Removed, this'll never happen.
+	(inflate_generic_field): Take the `MonoMethod *' instead of the
+	`MonoClass *' and added support for generic method.
+	(mono_method_to_ir): In CEE_LDSFLD and CEE_STSFLD, assert we never
+	have a `field->parent->gen_params', only inflate the field if it's
+	an open constructed type.
+
 2004-03-17  Zoltan Varga  <vargaz@freemail.hu>
 
 	* exceptions-x86.c (mono_arch_handle_exception): Allocate a new
