@@ -1,3 +1,10 @@
+2004-07-21  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* System.Xml.dll.sources: Added XQueryConvert.cs. Removed 
+	  XmlFactory.cs, XmlQualifiedNameTable.cs, IXPathChangeNavigable.cs,
+	  XPathChangeNavigator.cs and IXmlType.cs that are removed or going to 
+	  be removed.
+
 2004-07-13  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* System.Xml.dll.sources: Added MonoFIXAttribute.cs

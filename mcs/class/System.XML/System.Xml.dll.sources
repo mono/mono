@@ -101,7 +101,6 @@ System.Xml/XmlDocumentType.cs
 System.Xml/XmlElement.cs
 System.Xml/XmlEntityReference.cs
 System.Xml/XmlException.cs
-System.Xml/XmlFactory.cs
 System.Xml/XmlImplementation.cs
 System.Xml/XmlConvert.cs
 System.Xml/XmlConvertDateTimeOption.cs
@@ -122,7 +121,6 @@ System.Xml/XmlNodeType.cs
 System.Xml/XmlParserContext.cs
 System.Xml/XmlProcessingInstruction.cs
 System.Xml/XmlQualifiedName.cs
-System.Xml/XmlQualifiedNameTable.cs
 System.Xml/XmlQueryDialect.cs
 System.Xml/XmlReader.cs
 System.Xml/XmlReaderSettings.cs
@@ -142,7 +140,6 @@ System.Xml/XmlTextWriterOpenElement.cs
 System.Xml/XmlNodeArrayList.cs
 System.Xml/XmlInputStream.cs
 System.Xml/XmlParserInput.cs
-System.Xml.XPath/IXPathChangeNavigable.cs
 System.Xml.XPath/IXPathNavigable.cs
 System.Xml.XPath/IXPathEditable.cs
 System.Xml.XPath/NodeChangedEventArgs.cs
@@ -150,7 +147,6 @@ System.Xml.XPath/NodeChangedEventHandler.cs
 System.Xml.XPath/XmlChangeFilters.cs
 System.Xml.XPath/XmlNodeChangeType.cs
 System.Xml.XPath/XPathAtomicValue.cs
-System.Xml.XPath/XPathChangeNavigator.cs
 System.Xml.XPath/XPathDocumentNodeChangedAction.cs
 System.Xml.XPath/XPathEditableNavigator.cs
 System.Xml.XPath/XPathNavigator.cs
@@ -184,7 +180,6 @@ System.Xml.Xsl/XsltException.cs
 System.Xml.Schema/BuiltInDatatype.cs
 System.Xml.Schema/CustomSerializer.cs
 System.Xml.Schema/IXmlSchemaInfo.cs
-System.Xml.Schema/IXmlType.cs
 System.Xml.Schema/SchemaDataValueType.cs
 System.Xml.Schema/ValidationEventArgs.cs
 System.Xml.Schema/XmlSchema.cs
@@ -366,3 +361,4 @@ System.Xml.Query/XmlArgumentList.cs
 System.Xml.Query/XmlQueryCompileException.cs
 System.Xml.Query/XmlQueryException.cs
 System.Xml.Query/XsltCommand.cs
+System.Xml.Query/XQueryConvert.cs
