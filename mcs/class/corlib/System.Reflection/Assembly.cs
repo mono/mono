@@ -85,7 +85,6 @@ namespace System.Reflection {
 			}
 		}
 
-		[MonoTODO]
 		public bool GlobalAssemblyCache {
 			get {
 				return get_global_assembly_cache ();

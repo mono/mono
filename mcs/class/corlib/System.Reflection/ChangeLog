@@ -1,4 +1,7 @@
+2004-05-06  Jackson Harper <jackson@ximian.com>
 
+	* Assembly.cs: remove TODO, this is done.
+	
 2004-05-06  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Assembly.cs: ToString () returns the same as GetName ().ToString ().
