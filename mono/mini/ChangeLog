@@ -1,3 +1,7 @@
+2005-03-04  Zoltan Varga  <vargaz@freemail.hu>
+
+	* mini-exceptions.c (ves_icall_get_trace): Return wrapper info as well.
+
 2005-03-03  Zoltan Varga  <vargaz@freemail.hu>
 
 	* mini.h mini.c mini-x86.c: Pass the domain of the native->managed
