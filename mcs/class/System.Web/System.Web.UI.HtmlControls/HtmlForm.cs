@@ -9,6 +9,7 @@ using System.ComponentModel;
 using System.Text;
 using System.Web;
 using System.Web.UI;
+using System.Web.Util;
 
 namespace System.Web.UI.HtmlControls{
 	
@@ -87,19 +88,18 @@ namespace System.Web.UI.HtmlControls{
 			Page.RegisterViewStateHandler();
 		}
 		
-		internal string Action{
+		internal string Action {
 			get{
 				string executionFilePath = Context.Request.CurrentExecutionFilePath;
 				string filePath = Context.Request.FilePath;
 				string attr;
-				if (String.ReferenceEquals(executionFilePath, filePath) == true){
+				if (executionFilePath == filePath) {
 					attr = filePath;
 					int lastSlash = attr.LastIndexOf('/');
 					if (lastSlash >= 0)
 						attr = attr.Substring(lastSlash + 1);
-				}
-				else{
-					attr = System.Web.Util.UrlUtils.MakeRelative(filePath,executionFilePath);
+				} else {
+					attr = UrlUtils.MakeRelative (executionFilePath, UrlUtils.GetDirectory (filePath));
 				}
 				string queryString = Context.Request.QueryStringRaw;
 				if (queryString != null && queryString.Length > 0)

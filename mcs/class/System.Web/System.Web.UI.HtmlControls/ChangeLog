@@ -1,3 +1,8 @@
+2004-11-29 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HtmlForm.cs: fixed the Action property when running a different
+	page than the one requested (Transfer). Closes bug #69318.
+
 2004-06-23 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HtmlForm.cs: disabled smartnavigation as we have no scripts to support
