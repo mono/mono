@@ -178,7 +178,7 @@ namespace Mono.MonoBASIC
 			keywords.Add ("friend", Token.FRIEND);
 			keywords.Add ("function", Token.FUNCTION);
 			keywords.Add ("get", Token.GET);
-			//keywords.Add ("gettype", Token.GETTYPE);
+			keywords.Add ("gettype", Token.GETTYPE);
 			keywords.Add ("goto", Token.GOTO);
 			keywords.Add ("handles", Token.HANDLES);
 			keywords.Add ("if", Token.IF);
