@@ -1,3 +1,7 @@
+2003-12-10  Zoltan Varga  <vargaz@freemail.hu>
+
+	* HMAC.cs: Fix compilation warnings.
+
 2003-12-10  Mark Crichton  <crichton@gimp.org>
 
 	* RNGCryptoServiceProvider.cs: Removed icall to GetNonZeroBytes. Now

@@ -137,12 +137,12 @@ namespace System.Security.Cryptography {
 
 		// static methods
 
-		public static HMAC Create () 
+		public static new HMAC Create () 
 		{
 			return Create ("System.Security.Cryptography.HMAC");
 		}
 
-		public static HMAC Create (string algName) 
+		public static new HMAC Create (string algName) 
 		{
 			return (HMAC) CryptoConfig.CreateFromName (algName);
 		}
