@@ -40,4 +40,4 @@ using System.Runtime.InteropServices;
 [assembly: NeutralResourcesLanguage("en-US")]
 
 [assembly: AssemblyDelaySign(true)]
-[assembly: AssemblyKeyFile("../ecma.pub")]
+[assembly: AssemblyKeyFile("mswse.pub")]
