@@ -28,11 +28,9 @@ endif
 
 makefrag = $(depsdir)/$(PROFILE)_$(LIBRARY).makefrag
 the_lib = $(topdir)/class/lib/$(PROFILE)/$(LIBRARY_NAME)
-the_lib_signature_stamp = $(makefrag:.makefrag=.was_signed)
 the_pdb = $(the_lib:.dll=.pdb)
 the_mdb = $(the_lib).mdb
-library_CLEAN_FILES += $(makefrag) $(the_lib) $(the_pdb) \
-			$(the_mdb) $(the_lib_signature_stamp)
+library_CLEAN_FILES += $(makefrag) $(the_lib) $(the_pdb) $(the_mdb)
 
 ifndef NO_TEST
 test_nunit_lib = nunit.framework.dll nunit.core.dll nunit.util.dll
@@ -79,7 +77,15 @@ endif
 endif
 
 gacutil = $(topdir)/tools/gacutil/gacutil.exe
-sn = $(topdir)/tools/security/sn.exe
+GACUTIL = MONO_PATH="$(topdir)/class/lib/default:$$MONO_PATH" $(RUNTIME) $(gacutil)
+
+ifdef NO_SIGN_ASSEMBLY
+SN = :
+else
+sn = $(topdir)/class/lib/net_1_1_bootstrap/sn.exe
+SN = MONO_PATH="$(topdir)/class/lib/net_1_1_bootstrap:$$MONO_PATH" $(RUNTIME) $(sn)
+SNFLAGS = -q -R
+endif
 
 PACKAGE = 1.0
 
@@ -107,24 +113,13 @@ uninstall-local:
 else
 
 install-local: $(gacutil)
-	MONO_PATH="$(topdir)/class/lib/$(PROFILE):$$MONO_PATH" $(RUNTIME) $(gacutil) /i $(the_lib) /f /root $(GACDIR) /package $(PACKAGE)
+	$(GACUTIL) /i $(the_lib) /f /root $(GACDIR) /package $(PACKAGE)
 
 uninstall-local: $(gacutil)
-	MONO_PATH="$(topdir)/class/lib/$(PROFILE):$$MONO_PATH" $(RUNTIME) $(gacutil) /u $(LIBRARY_NAME:.dll=)
+	$(GACUTIL) /u $(LIBRARY_NAME:.dll=)
 
 endif
 
-ifndef NO_SIGN_ASSEMBLY
-all-local install-local: $(the_lib_signature_stamp)
-
-ifndef LIBRARY_SNK
-LIBRARY_SNK = $(topdir)/class/mono.snk
-endif
-
-$(the_lib_signature_stamp): $(the_lib) $(sn)
-	MONO_PATH="$(topdir)/class/lib/$(PROFILE):$$MONO_PATH" $(RUNTIME) $(sn) -q -R $(the_lib) $(LIBRARY_SNK)
-	echo stamp > $@
-endif
 
 clean-local:
 	-rm -f $(library_CLEAN_FILES) $(CLEAN_FILES)
@@ -138,6 +133,7 @@ $(test_nunit_dep): $(topdir)/build/deps/nunit-$(PROFILE).stamp
 $(topdir)/build/deps/nunit-$(PROFILE).stamp:
 	cd ${topdir}/nunit20 && $(MAKE)
 	echo "stamp" >$@
+library_CLEAN_FILES += $(topdir)/build/deps/nunit-$(PROFILE).stamp
 endif
 
 test_assemblies :=
@@ -192,18 +188,29 @@ ifndef BTEST_COMPILE
 BTEST_COMPILE = $(BASCOMPILE)
 endif
 
-$(gacutil) $(sn):
-	cd $(@D) && $(MAKE) $(@F)
+ifndef LIBRARY_SNK
+LIBRARY_SNK = $(topdir)/class/mono.snk
+endif
+
+$(gacutil):
+	cd $(topdir)/gacutil && $(MAKE) PROFILE=default
+
+ifdef sn
+$(sn):
+	cd $(topdir)/tools/security && $(MAKE) PROFILE=net_1_1_bootstrap
+endif
 
 # The library
 
-$(the_lib): $(response)
+$(the_lib): $(response) $(sn)
 ifdef LIBRARY_USE_INTERMEDIATE_FILE
 	$(LIBRARY_COMPILE) $(LIBRARY_FLAGS) $(LIB_MCS_FLAGS) /target:library /out:$(@F) @$(response)
+	$(SN) $(SNFLAGS) $(@F) $(LIBRARY_SNK)
 	mv $(@F) $@
 	-mv $(@F).mdb $@.mdb
 else
 	$(LIBRARY_COMPILE) $(LIBRARY_FLAGS) $(LIB_MCS_FLAGS) /target:library /out:$@ @$(response)
+	$(SN) $(SNFLAGS) $@ $(LIBRARY_SNK)
 endif
 
 $(makefrag): $(sourcefile)

@@ -1,3 +1,13 @@
+2004-11-22  Raja R Harinath  <rharinath@novell.com>
+
+	* library.make (SN): New define.  Use the net_1_1_bootstrap sn.exe.
+	(SNFLAGS): New.
+	($(the_lib)): Use them to sign assemblies as they're built.
+	(the_lib_signature_stamp): Remove.
+
+	* Makefile (DISTFILES): Distribute all the profile make-fragments.
+	(clean-local): Clean up the deps/ directory.
+
 2004-11-19  Raja R Harinath  <rharinath@novell.com>
 
 	Orchestrate the bootstrap.

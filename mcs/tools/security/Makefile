@@ -3,26 +3,20 @@ SUBDIRS =
 DIST_ONLY_SUBDIRS = certview
 include ../../build/rules.make
 
-LOCAL_MCS_FLAGS = /lib:../class/lib/default /r:Mono.Security.dll
+LOCAL_MCS_FLAGS = /lib:$(topdir)/class/lib/$(PROFILE) /r:Mono.Security.dll
 
 SECURITY_PROGRAMS = secutil.exe cert2spc.exe sn.exe MakeCert.exe chktrust.exe signcode.exe setreg.exe certmgr.exe
+SECURITY_SOURCES = AssemblyInfo.cs StrongNameManager.cs $(SECURITY_PROGRAMS:.exe=.cs)
+
 PROGRAM_INSTALL_DIR = $(prefix)/bin
 
-DISTFILES = \
-	AssemblyInfo.cs	\
-	cert2spc.cs	\
-	MakeCert.cs	\
-	README		\
-	secutil.cs	\
-	sn.cs		\
-	chktrust.cs	\
-	signcode.cs	\
-	setreg.cs	\
-	certmgr.cs	\
-	StrongNameManager.cs
+DISTFILES = README $(SECURITY_SOURCES)
 
+ifeq (net_1_1_bootstrap, $(PROFILE))
+all-local: $(topdir)/class/lib/$(PROFILE)/sn.exe
+else
 all-local: $(SECURITY_PROGRAMS)
-
+endif
 
 install-local: $(SECURITY_PROGRAMS)
 	$(MKINSTALLDIRS) $(DESTDIR)$(PROGRAM_INSTALL_DIR)
@@ -41,12 +35,14 @@ test-local:
 run-test-local:
 
 clean-local:
-	rm -f *.exe *.pdb
+	rm -f *.exe *.mdb *.pdb
+	rm -f $(topdir)/class/lib/$(PROFILE)/sn.exe*
 
 dist-local: dist-default
 
-sn.exe: sn.cs StrongNameManager.cs AssemblyInfo.cs
-	$(CSCOMPILE) $^
+sn_sources = sn.cs StrongNameManager.cs AssemblyInfo.cs
+sn.exe $(topdir)/class/lib/$(PROFILE)/sn.exe: $(sn_sources)
+	$(CSCOMPILE) /out:$@ $(sn_sources)
 
 %.exe: %.cs AssemblyInfo.cs
 	$(CSCOMPILE) $^

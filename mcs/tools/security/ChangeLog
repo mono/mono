@@ -1,3 +1,9 @@
+2004-11-22  Raja R Harinath  <rharinath@novell.com>
+
+	* Makefile (all-local) [PROFILE=net_1_1_bootstrap]: Build
+	profile-specific "bootstrap" sn.exe.
+	($(topdir)/class/lib/$(PROFILE)/sn.exe): New.
+
 2004-10-29  Raja R Harinath  <rharinath@novell.com>
 
 	* Makefile (install-local): Install .mdb files too.

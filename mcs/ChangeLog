@@ -1,5 +1,11 @@
 2004-11-22  Raja R Harinath  <rharinath@novell.com>
 
+	* Makefile (OVERRIDE_TARGET_ALL): Remove.
+	(all.override): Remove 2-pass build.
+	(net_1_1_bootstrap_SUBDIRS): Add 'tools'.
+
+2004-11-22  Raja R Harinath  <rharinath@novell.com>
+
 	* Makefile (profiles-do--all): Don't fallback to default pattern build.
 
 2004-11-19  Raja R Harinath  <rharinath@novell.com>

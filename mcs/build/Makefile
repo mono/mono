@@ -2,7 +2,16 @@ thisdir = build
 SUBDIRS = 
 include ../build/rules.make
 
-all-local install-local test-local run-test-local run-test-ondotnet-local clean-local uninstall-local:
+all-local install-local test-local run-test-local run-test-ondotnet-local uninstall-local:
+	@:
+
+clean-local:
+	-rm -f deps/*
+
+PLATFORMS = linux win32
+PROFILES = \
+	basic net_1_1_bootstrap default net_2_0_bootstrap net_2_0 \
+	atomic net_1_0
 
 DISTFILES = \
 	README.makefiles		\
@@ -12,11 +21,7 @@ DISTFILES = \
 	executable.make			\
 	library.make			\
 	rules.make			\
-	platforms/linux.make		\
-	platforms/win32.make		\
-	profiles/default.make		\
-	profiles/atomic.make		\
-	profiles/net_1_0.make
+	$(PLATFORMS:%=platforms/%.make) $(PROFILES:%=profiles/%.make)
 
 dist-local: dist-default
 	$(MKINSTALLDIRS) $(distdir)/deps

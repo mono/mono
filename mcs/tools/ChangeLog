@@ -1,3 +1,7 @@
+2004-11-22  Raja R Harinath  <rharinath@novell.com>
+
+	* Makefile (net_1_1_bootstrap_SUBDIRS): Add 'security' directory.
+
 2004-10-29  Raja R Harinath  <rharinath@novell.com>
 
 	* Makefile (net_2_0_SUBDIRS): New.  Only build 'wsdl' in the
