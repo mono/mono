@@ -1,4 +1,10 @@
 
+Wed Dec 17 12:27:26 CET 2003 Paolo Molaro <lupus@ximian.com>
+
+	* tramp-ppc.c, basic-calls.cs: rework trampolines so that
+	the magic trampoline stack frame is dropped before executing
+	the new method.
+
 Mon Dec 15 18:13:57 CET 2003 Paolo Molaro <lupus@ximian.com>
 
 	* mini-ppc.c, cpu-g4.md, inssel-ppc.brg: fixed some opcode lengths
