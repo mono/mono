@@ -4,7 +4,7 @@
 // Author:
 //   Miguel de Icaza (miguel@ximian.com)
 //   stubbed out by Daniel Carrera (dcarrera@math.toronto.edu)
-//
+//   Joel Basson  (jstrike@mweb.co.za)
 // (C) 2002 Ximian, Inc
 //
 
@@ -18,6 +18,7 @@ namespace System.Windows.Forms {
 	public class Form : ContainerControl {
 		Window win;
 		string caption;
+		Size csize;
 
 		public Form () : base ()
 		{
@@ -82,7 +83,7 @@ namespace System.Windows.Forms {
 		//	}
 		//}
 		// [MonoTODO]
-		// public virtual Size AtoScaleBaseSize {
+		//public virtual Size AutoScaleBaseSize {
 		//	get {
 		//		throw new NotImplementedException ();
 		//	}
@@ -118,14 +119,15 @@ namespace System.Windows.Forms {
 		//	}
 		//}
 		// [MonoTODO]
-		// public new Size ClientSize {
-		//	get {
-		//		throw new NotImplementedException ();
-		//	}
-		//	set {
-		//		throw new NotImplementedException ();
-		//	}
-		//}
+		public Size ClientSize {
+			get {
+				return csize;
+			}
+			set {
+				csize = value;
+				Widget.SetSizeRequest (value.Width,value.Height);
+			}
+		}
 		// [MonoTODO]
 		// public bool ControlBox {
 		//	get {
@@ -253,12 +255,12 @@ namespace System.Windows.Forms {
 		//	}
 		//}
 		// [MonoTODO]
-		// public MainMenu Menu {
+		//public Control Menu {
 		//	get {
 		//		throw new NotImplementedException ();
 		//	}
 		//	set {
-		//		throw new NotImplementedException ();
+		//			Controls.AddRange(new System.Windows.Forms.Control[] {value}); 
 		//	}
 		//}
 		// [MonoTODO]
@@ -452,10 +454,15 @@ namespace System.Windows.Forms {
 		//		throw new NotImplementedException ();
 		// }
 		// [MonoTODO]
-		// public void ResumeLayout()
-		// {
-		//		throw new NotImplementedException ();
-		// }
+		 public void SuspendLayout()
+		 {
+				throw new NotImplementedException ();
+		 }
+		// [MonoTODO]
+		 public void ResumeLayout()
+		 {
+				throw new NotImplementedException ();
+		 }
 		// [MonoTODO]
 		// public void Scale(float f)
 		// {

@@ -1,3 +1,10 @@
+2003-05-09  Joel Basson  <jstrike@mweb.co.za>
+
+* Added many new properties to Combo.cs
+* Fixed the TextBox.Text get property
+* Fixed some properties in Form.cs
+* Small code cleanups  
+
 2003-05-07  Joel Basson  <jstrike@mweb.co.za>
 
 * Added ComboBox.Items.Add and ComboBox.Items.Add to ComboBox.cs

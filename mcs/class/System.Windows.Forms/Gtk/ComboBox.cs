@@ -7,8 +7,6 @@
 //
 
 using System.Drawing;
-using System.Drawing.Printing;
-using System.ComponentModel;
 using System.Runtime.InteropServices;
 
 namespace System.Windows.Forms {
@@ -19,25 +17,29 @@ namespace System.Windows.Forms {
 	/// </summary>
 
 	public class ComboBox: Control{
-	
+		
+		private bool UpdateState;
 		public ItemCollection Items = new ItemCollection(this);
  		GLib.List list = new GLib.List (IntPtr.Zero, typeof (string));
+		System.Collections.ArrayList alist = new System.Collections.ArrayList();
 
 		public class ItemCollection {
 
 			ComboBox owner;
-			
+			 
 			public ItemCollection (ComboBox owner){
 
 				this.owner = owner;
 			}
 						
 			public void Add(String value){
+				owner.alist.Add(value);
 				owner.list.Append (Marshal.StringToHGlobalAnsi (value));
-				owner.Update();
+				if ( owner.UpdateState == false ) {owner.Update();}
 			}
 
 			public void AddRange(object[] items) {
+				owner.alist.AddRange(items);
 				foreach (object o in items)
 					{string s = (string)o;
 					owner.list.Append (Marshal.StringToHGlobalAnsi (s));}
@@ -46,6 +48,8 @@ namespace System.Windows.Forms {
 		}
 
 		public ComboBox () : base (){
+	
+			UpdateState = false;
 		}
 
 		internal override Gtk.Widget CreateWidget () {
@@ -55,7 +59,41 @@ namespace System.Windows.Forms {
 		}
 	
 		public void Update () {
-		((Gtk.Combo)Widget).PopdownStrings = list;		
+			((Gtk.Combo)Widget).PopdownStrings = list;		
+		}
+	
+		public void BeginUpdate () {
+
+			UpdateState = true;
+		}
+
+		public void EndUpdate () {
+
+			UpdateState = false;
+			Update();
+		}
+
+		public int FindString (string value){
+
+			return alist.BinarySearch(value);	
+		}
+		
+		public int SelectedIndex{
+			get{
+				return alist.IndexOf(((Gtk.Combo)Widget).Entry.Text);
+			}
+			set{
+				((Gtk.Combo)Widget).Entry.Text = (string)alist[value];
+			}
+		}
+	
+		public Object SelectedItem{
+			get{
+				return alist[this.SelectedIndex];
+			}
+			set{
+				throw new NotImplementedException ();
+			}
 		}
 
 	}

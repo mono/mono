@@ -7,9 +7,6 @@
 //
 
 using System;
-using System.Drawing;
-using System.Drawing.Printing;
-using System.ComponentModel;
 
 namespace System.Windows.Forms { 
 

@@ -4,7 +4,7 @@
 // Author:
 //   Miguel de Icaza (miguel@ximian.com)
 //   Rachel Hestilow (hestilow@ximian.com)
-//
+//   Joel Basson  (jstrike@mweb.co.za)
 // (C) 2002 Ximian, Inc
 //
 

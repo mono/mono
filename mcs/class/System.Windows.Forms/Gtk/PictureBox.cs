@@ -7,8 +7,6 @@
 //
 
 using System.Drawing;
-using System.Drawing.Printing;
-using System.ComponentModel;
 
 namespace System.Windows.Forms {
 	
@@ -28,7 +26,6 @@ namespace System.Windows.Forms {
 
 	internal override Gtk.Widget CreateWidget () {
 		Gtk.Image ibox = new Gtk.Image();
-		//cbox.Add (label.Widget);
 		return ibox;	
 	}
 	
@@ -36,8 +33,7 @@ namespace System.Windows.Forms {
 		set {
 				filevalue = value;
 				Gdk.Pixbuf pic1 = new Gdk.Pixbuf(filevalue);
-				((Gtk.Image)Widget).Pixbuf = pic1;	
-				
+				((Gtk.Image)Widget).Pixbuf = pic1;					
 		}
 	}
 	

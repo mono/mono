@@ -5,7 +5,7 @@
 //   stubbed out by Jackson Harper (jackson@latitudegeo.com)
 //	Dennis Hayes (dennish@raytek.com)
 //  Remco de Jong (rdj@rdj.cg.nu)
-//
+//	Joel Basson  (jstrike@mweb.co.za)
 // (C) 2002 Ximian, Inc
 //
 using System.Drawing;
@@ -47,6 +47,15 @@ namespace System.Windows.Forms {
 		protected override void OnTextChanged(EventArgs e)
 		{
 			TextBuffer.SetText(Text);
+		}
+
+		public override string Text {
+			get{
+				return TextBuffer.Text;
+			}
+			set{
+				TextBuffer.SetText(value);
+			}
 		}
 
 		[MonoTODO]

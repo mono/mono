@@ -7,10 +7,6 @@
 //
 
 using System.Drawing;
-using System.Drawing.Printing;
-using System.ComponentModel;
-using Gtk;
-using GtkSharp;
 
 namespace System.Windows.Forms {
 

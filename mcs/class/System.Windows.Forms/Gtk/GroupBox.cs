@@ -2,13 +2,9 @@
 //			System.Windows.Forms.GroupBox
 //
 //			Author: 
-//						Joel Basson		(jstrike@mweb.co.za)
+//						Joel Bason		(jstrike@mweb.co.za)
 //
 //
-
-using System.Drawing;
-using System.Drawing.Printing;
-using System.ComponentModel;
 
 namespace System.Windows.Forms {
 
