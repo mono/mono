@@ -14,22 +14,33 @@ public class Blah {
 	{
 		int [] i = new int [4] { 0, 1, 2, 3 };
 
-		int [,] j = new int [4,2] { {0,1}, {2,3}, {4,5}, {6,7} };
+		short [,] j = new short [4,2] { {0,1}, {2,3}, {4,5}, {6,7} };
 		
-		int [] a = { 4, 5, 6, 7 };
+		ushort [] a = { 4, 5, 6, 7 };
 
-		int [,,] m = new int [2,3,2] {{{0,1}, {2,3}, {4,5}}, {{6,7}, {8,9}, {10,11}}};
+		long [,,] m = new long [2,3,2] {{{0,1}, {2,3}, {4,5}}, {{6,7}, {8,9}, {10,11}}};
 
 		int foo = 1;
 		int [] k = new int [] { foo, foo+1, foo+4 };
 
-		int [,] boo = new int [,] {{foo, foo+10}, {foo+3, foo+10}};
+	        int [,] boo = new int [,] {{foo, foo+10}, {foo+3, foo+10}};
 
 		float [] f_array = new float [] { 1.23F, 4.5F, 6.24F };
 
 		double [] double_arr = new double [] { 34.4567, 90.1226, 54.9823 };
-	
 
+		char [] c_arr = { 'A', 'B', 'C', 'M', 'R' };
+
+		byte [] b_arr = { 0, 3, 8, 10, 21 };
+
+		sbyte [] s_arr = { 10, 15, 30, 123 };
+		
+		if (a [2] != 6)
+			return 1;
+
+		if (s_arr [3] != 123)
+			return 2;
+		
 		if (i [2] != 2)
 			return 1;
 		
@@ -67,6 +78,9 @@ public class Blah {
 
 		if (names [0] != "Miguel")
 			return 1;
+
+		if (c_arr [4] != 'R')
+			return 2;
 
 		int count = 10;
 

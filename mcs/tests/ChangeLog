@@ -1,3 +1,8 @@
+2002-01-02  Ravi Pratap  <ravi@ximian.com>
+
+	* test-45.cs : Augment to exercise support for array initialization
+	for various other types.
+
 2001-12-30  Miguel de Icaza  <miguel@ximian.com>
 
 	* test-67.cs: Improve this test.
