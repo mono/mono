@@ -30,6 +30,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 namespace System.Reflection {
@@ -63,5 +64,15 @@ namespace System.Reflection {
 		public abstract object [] GetCustomAttributes (bool inherit);
 
 		public abstract object [] GetCustomAttributes (Type attribute_type, bool inherit);
+
+#if NET_2_0 || BOOTSTRAP_NET_2_0
+		public
+#else
+		internal
+#endif
+		virtual extern int MetadataToken {
+			[MethodImplAttribute (MethodImplOptions.InternalCall)]
+			get;
+		}
 	}
 }

@@ -28,6 +28,7 @@
 //
 
 using System.Reflection.Emit;
+using System.Runtime.CompilerServices;
 
 namespace System.Reflection
 {
@@ -107,6 +108,16 @@ namespace System.Reflection
 
 		public virtual int Position {
 			get {return PositionImpl;}
+		}
+
+#if NET_2_0 || BOOTSTRAP_NET_2_0
+		public
+#else
+		internal
+#endif
+		virtual extern int MetadataToken {
+			[MethodImplAttribute (MethodImplOptions.InternalCall)]
+			get;
 		}
 
 		public virtual object[] GetCustomAttributes (bool inherit)

@@ -1,3 +1,9 @@
+2004-09-19  Zoltan Varga  <vargaz@freemail.hu>
+
+	* MemberInfo.cs ParameterInfo.cs: Add MetadataToken property.
+
+	* Module.cs: Add ModuleHandle property and new icalls.
+
 2004-09-18  Zoltan Varga  <vargaz@freemail.hu>
 
 	* Module.cs: Add net 2.0 Mvid property.

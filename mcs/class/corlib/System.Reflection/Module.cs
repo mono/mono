@@ -81,6 +81,14 @@ namespace System.Reflection {
 		public string ScopeName {
 			get { return scopename; }
 		}
+
+#if NET_2_0
+		public ModuleHandle ModuleHandle {
+			get {
+				return new ModuleHandle (_impl);
+			}
+		}			
+#endif
 	
 		public virtual Type[] FindTypes(TypeFilter filter, object filterCriteria) 
 		{
@@ -255,5 +263,17 @@ namespace System.Reflection {
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		private extern void Close ();
+
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		internal static extern IntPtr ResolveTypeToken (IntPtr module, int token);
+
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		internal static extern IntPtr ResolveMethodToken (IntPtr module, int token);
+
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		internal static extern IntPtr ResolveFieldToken (IntPtr module, int token);
+
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		internal static extern void GetPEKind (IntPtr module, out PortableExecutableKind peKind, out ImageFileMachine machine);
 	}
 }
