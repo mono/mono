@@ -22,6 +22,7 @@ using System.IO;
 
 using Mono.Xml.Xsl.Operations;
 using Mono.Xml.XPath;
+using Mono.Xml.Xsl.Functions;
 
 using QName = System.Xml.XmlQualifiedName;
 
@@ -415,6 +416,36 @@ namespace Mono.Xml.Xsl {
 			if (var == null) return null;
 			return new XPathVariableBinding (var);
 		}
+		
+		Expression IStaticXsltContext.TryGetFunction (QName name, FunctionArguments args)
+		{
+			if (name.Namespace != null && name.Namespace != "")
+				return null;
+			
+			switch (name.Name) {
+				case "current": return new XsltCurrent (args);
+				case "unparsed-entity-uri": return new XsltUnparsedEntityUri (args);
+				case "element-available": return new XsltElementAvailable (args, this);
+				case "system-property": return new XsltSystemProperty (args, this);
+				case "function-available": return new XsltFunctionAvailable (args, this);
+				case "generate-id": return new XsltGenerateId (args);
+				case "format-number": return new XsltFormatNumber (args, this);
+				case "key": return new XsltKey (args, this);
+				case "document": return new XsltDocument (args, this);
+			}
+			
+			return null;
+		}
+		
+		QName IStaticXsltContext.LookupQName (string s)
+		{
+			return XslNameUtil.FromString (s, Input);
+		}
+		
+		XmlNamespaceManager IStaticXsltContext.GetNsm ()
+		{
+			return new XPathNavigatorNsm (Input);
+		}
 #endregion
 		public void CompileOutput ()
 		{
@@ -572,24 +603,13 @@ namespace Mono.Xml.Xsl {
 	
 	public class ExpressionStore {
 		Hashtable exprToSorts;
-		Hashtable exprToDocument = new Hashtable ();
 		
 		public void AddExpression (XPathExpression e, Compiler c)
 		{		
-			XPathNavigator nsScope = c.Input.Clone ();
-			if (nsScope.NodeType == XPathNodeType.Attribute)
-				nsScope.MoveToParent ();
-			
-			exprToDocument [e] = nsScope;
 		}
 		
 		public void AddPattern (Pattern p, Compiler c)
 		{
-			XPathNavigator nsScope = c.Input.Clone ();
-			if (nsScope.NodeType == XPathNodeType.Attribute)
-				nsScope.MoveToParent ();
-			
-			exprToDocument [p] = nsScope;
 		}
 		
 		public void AddSort (XPathExpression e, Sort s)
@@ -610,7 +630,7 @@ namespace Mono.Xml.Xsl {
 		{
 			XPathExpression expr = e.Clone ();
 
-			expr.SetContext (new XsltCompiledContext (p, (XPathNavigator)exprToDocument [e]));
+			expr.SetContext (p.XPathContext);
 			if (exprToSorts != null && exprToSorts.Contains (e))
 			{
 				foreach (Sort s in (ArrayList)exprToSorts [e])
@@ -621,9 +641,7 @@ namespace Mono.Xml.Xsl {
 		
 		public bool PatternMatches (Pattern p, XslTransformProcessor proc, XPathNavigator n)
 		{
-			XsltContext c = new XsltCompiledContext (proc, (XPathNavigator)exprToDocument [p]);
-			
-			return p.Matches (n, c);
+			return p.Matches (n, proc.XPathContext);
 		}
 	}
 	
@@ -631,6 +649,9 @@ namespace Mono.Xml.Xsl {
 	{
 		public static QName FromString (string name, XPathNavigator current)
 		{
+			if (current.NodeType == XPathNodeType.Attribute)
+				(current = current.Clone ()).MoveToParent ();
+			
 			int colon = name.IndexOf (':');
 			if (colon > 0)
 				return new QName (name.Substring (colon+ 1), current.GetNamespace (name.Substring (0, colon)));
@@ -662,6 +683,26 @@ namespace Mono.Xml.Xsl {
 				return name;
 			else
 				throw new ArgumentException ("Invalid name: " + name);
+		}
+	}
+	
+	public class XPathNavigatorNsm : XmlNamespaceManager {
+		XPathNavigator nsScope;
+		
+		public XPathNavigatorNsm (XPathNavigator n) : base () {
+			nsScope = n.Clone ();
+			if (nsScope.NodeType == XPathNodeType.Attribute)
+				nsScope.MoveToParent ();
+		}
+		
+		public override string DefaultNamespace { get { return String.Empty; }}
+
+		public override string LookupNamespace (string prefix)
+		{
+			if (prefix == "" || prefix == null)
+				return "";
+			
+			return nsScope.GetNamespace (prefix);
 		}
 	}
 }

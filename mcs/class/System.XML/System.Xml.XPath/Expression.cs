@@ -372,9 +372,9 @@ namespace System.Xml.XPath
 			switch (type)
 			{
 				case XPathResultType.Number:
-					return Convert.ToDouble (result);
+					return (double)result;
 				case XPathResultType.Boolean:
-					return Convert.ToDouble ((bool) result);
+					return ((bool) result) ? 1.0 : 0.0;
 				case XPathResultType.NodeSet:
 					return XPathFunctions.ToNumber (EvaluateString (iter));
 				case XPathResultType.String:
@@ -393,7 +393,7 @@ namespace System.Xml.XPath
 			switch (type)
 			{
 				case XPathResultType.Number:
-					return (string) XmlConvert.ToString (Convert.ToDouble (result));	// TODO: spec? convert number to string
+					return (string) XmlConvert.ToString ((double)result);	// TODO: spec? convert number to string
 				case XPathResultType.Boolean:
 					return ((bool) result) ? "true" : "false";
 				case XPathResultType.String:
@@ -1076,8 +1076,13 @@ namespace System.Xml.XPath
 	internal class NodeNameTest : NodeTest
 	{
 		protected XmlQualifiedName _name;
-		public NodeNameTest (Axes axis, XmlQualifiedName name) : base (axis)
+		protected readonly bool resolvedName = false;
+		public NodeNameTest (Axes axis, XmlQualifiedName name, IStaticXsltContext ctx) : base (axis)
 		{
+			if (ctx != null) {
+				name = ctx.LookupQName (name.ToString ());
+				resolvedName = true;
+			}
 			_name = name;
 		}
 		public override String ToString () { return _axis.ToString () + "::" + _name.ToString (); }
@@ -1101,7 +1106,10 @@ namespace System.Xml.XPath
 			String strURI1 = "";
 			if (nsm != null && _name.Namespace != "")
 			{
-				strURI1 = nsm.LookupNamespace (_name.Namespace);	// TODO: check to see if this returns null or ""
+				if (resolvedName)
+					strURI1 = _name.Namespace;
+				else
+					strURI1 = nsm.LookupNamespace (_name.Namespace);	// TODO: check to see if this returns null or ""
 				if (strURI1 == null)
 					throw new XPathException ("Invalid namespace prefix: "+_name.Namespace);
 			}
@@ -1208,8 +1216,14 @@ namespace System.Xml.XPath
 	internal class ExprVariable : Expression
 	{
 		protected XmlQualifiedName _name;
-		public ExprVariable (XmlQualifiedName name)
+		protected bool resolvedName = false;
+		public ExprVariable (XmlQualifiedName name, IStaticXsltContext ctx)
 		{
+			if (ctx != null) {
+				name = ctx.LookupQName (name.ToString ());
+				resolvedName = true;
+			}
+			
 			_name = name;
 		}
 		public override String ToString () { return "$" + _name.ToString (); }
@@ -1222,9 +1236,15 @@ namespace System.Xml.XPath
 		public override object Evaluate (BaseIterator iter)
 		{
 			IXsltContextVariable var = null;
+			
 			XsltContext context = iter.NamespaceManager as XsltContext;
-			if (context != null)
-				var = context.ResolveVariable (_name.Namespace, _name.Name);
+			if (context != null) {
+				if (resolvedName)
+					var = context.ResolveVariable (_name);
+				else
+					var = context.ResolveVariable (_name.Namespace, _name.Name);
+			}
+			
 			if (var == null)
 				throw new XPathException ("variable "+_name.ToString ()+" not found");
 			object objResult = var.Evaluate (context);
@@ -1268,18 +1288,24 @@ namespace System.Xml.XPath
 	internal class ExprFunctionCall : Expression
 	{
 		protected readonly XmlQualifiedName _name;
+		protected readonly bool resolvedName = false;
 		protected readonly ArrayList _args = new ArrayList ();
-		public ExprFunctionCall (XmlQualifiedName name, FunctionArguments args)
+		public ExprFunctionCall (XmlQualifiedName name, FunctionArguments args, IStaticXsltContext ctx)
 		{
+			if (ctx != null) {
+				name = ctx.LookupQName (name.ToString ());
+				resolvedName = true;
+			}
+			
 			_name = name;
 			if (args != null)
 				args.ToArrayList (_args);
 		}
 		
-		public static Expression Factory (XmlQualifiedName name, FunctionArguments args)
+		public static Expression Factory (XmlQualifiedName name, FunctionArguments args, IStaticXsltContext ctx)
 		{
 			if (name.Namespace != null && name.Namespace != "")
-				return new ExprFunctionCall (name, args);
+				return new ExprFunctionCall (name, args, ctx);
 			
 			switch (name.Name) {
 				case "last": return new XPathFunctionLast (args);
@@ -1310,7 +1336,7 @@ namespace System.Xml.XPath
 				case "ceiling": return new XPathFunctionCeil (args);
 				case "round": return new XPathFunctionRound (args);
 			}
-			return new ExprFunctionCall (name, args);
+			return new ExprFunctionCall (name, args, ctx);
 		}
 		
 		public override String ToString ()
@@ -1343,8 +1369,12 @@ namespace System.Xml.XPath
 			XPathResultType [] rgTypes = GetArgTypes (iter);
 			IXsltContextFunction func = null;
 			XsltContext context = iter.NamespaceManager as XsltContext;
-			if (context != null)
-				func = context.ResolveFunction (_name.Namespace, _name.Name, rgTypes);
+			if (context != null) {
+				if (resolvedName)
+					func = context.ResolveFunction (_name, rgTypes);
+				else
+					func = context.ResolveFunction (_name.Namespace, _name.Name, rgTypes);
+			}
 
 			if (func == null)
 				throw new XPathException ("function "+_name.ToString ()+" not found");

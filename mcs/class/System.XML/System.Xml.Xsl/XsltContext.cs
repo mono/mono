@@ -35,11 +35,27 @@ namespace System.Xml.Xsl
 		public abstract IXsltContextVariable ResolveVariable (string prefix, string name);
 
 		#endregion
+		
+		#region XSLT Internal Calls
+		
+		internal virtual IXsltContextVariable ResolveVariable (XmlQualifiedName name)
+		{
+			throw new InvalidOperationException ("somehow you got into the internals of xslt!?");
+		}
+		
+		internal virtual IXsltContextFunction ResolveFunction (XmlQualifiedName name, XPathResultType [] ArgTypes)
+		{
+			throw new InvalidOperationException ("somehow you got into the internals of xslt!?");
+		}
+		#endregion
 	}
 	
 	// The static XSLT context, will try to simplify what it can
 	internal interface IStaticXsltContext
 	{
 		Expression TryGetVariable (string nm);
+		Expression TryGetFunction (XmlQualifiedName nm, FunctionArguments args);
+		XmlQualifiedName LookupQName (string s);
+		XmlNamespaceManager GetNsm ();
 	}
 }

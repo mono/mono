@@ -27,31 +27,14 @@ using QName = System.Xml.XmlQualifiedName;
 
 namespace Mono.Xml.Xsl {
 
-	internal class XsltCompiledContext : XsltContext {
-		protected static Hashtable xsltFunctions = new Hashtable ();
-
-		static XsltCompiledContext ()
-		{
-			xsltFunctions.Add ("current", new XsltCurrent ());
-			xsltFunctions.Add ("document", new XsltDocument ());
-			xsltFunctions.Add ("element-available", new XsltElementAvailable ());
-			xsltFunctions.Add ("format-number", new XsltFormatNumber ());
-			xsltFunctions.Add ("function-available", new XsltFunctionAvailable ());
-			xsltFunctions.Add ("generate-id", new XsltGenerateId ());
-			xsltFunctions.Add ("key", new XsltKey ());
-			xsltFunctions.Add ("system-property", new XsltSystemProperty ());
-			xsltFunctions.Add ("unparsed-entity-uri", new XsltUnparsedEntityUri ());
-		}
-			
+	internal class XsltCompiledContext : XsltContext {		
 		XslTransformProcessor p;
-		XPathNavigator doc;
 			
 		public XslTransformProcessor Processor { get { return p; }}
 			
-		public XsltCompiledContext (XslTransformProcessor p, XPathNavigator doc)
+		public XsltCompiledContext (XslTransformProcessor p)
 		{
 			this.p = p;
-			this.doc = doc;
 		}
 
 		public override string DefaultNamespace { get { return String.Empty; }}
@@ -59,34 +42,27 @@ namespace Mono.Xml.Xsl {
 
 		public override string LookupNamespace (string prefix)
 		{
-			if (prefix == "" || prefix == null)
-				return "";
-			
-			return this.doc.GetNamespace (prefix);
+			throw new Exception ("we should never get here");
 		}
 		
-		public override IXsltContextFunction ResolveFunction (string prefix, string name, XPathResultType[] argTypes)
+		internal override IXsltContextFunction ResolveFunction (XmlQualifiedName name, XPathResultType [] argTypes)
 		{
 			IXsltContextFunction func = null;
-			if (prefix == String.Empty || prefix == null) {
-				return xsltFunctions [name] as IXsltContextFunction;
-			} else {
-				string ns = this.LookupNamespace (prefix);
 
-				if (ns == null || p.Arguments == null) return null;
+			string ns = name.Namespace;
 
-				object extension = p.Arguments.GetExtensionObject (ns);
-					
-				if (extension == null)
-					return null;			
+			if (ns == null || p.Arguments == null) return null;
+
+			object extension = p.Arguments.GetExtensionObject (ns);
 				
-				MethodInfo method = FindBestMethod (extension.GetType (), name, argTypes);
-				
-				if (method != null) 
-					return new XsltExtensionFunction (extension, method);
-				return null;
-				
-			}
+			if (extension == null)
+				return null;			
+			
+			MethodInfo method = FindBestMethod (extension.GetType (), name.Name, argTypes);
+			
+			if (method != null) 
+				return new XsltExtensionFunction (extension, method);
+			return null;
 		}
 		
 		MethodInfo FindBestMethod (Type t, string name, XPathResultType [] argTypes)
@@ -148,32 +124,24 @@ namespace Mono.Xml.Xsl {
 			return null;
 		}
 			
-
-		public override System.Xml.Xsl.IXsltContextVariable ResolveVariable(string prefix, string name)
+		public override IXsltContextVariable ResolveVariable (string prefix, string name)
 		{
-			QName varName = new QName (name, LookupNamespace (prefix));
-			return p.CompiledStyle.ResolveVariable (varName);
+			throw new Exception ("shouldn't get here");
+		}
+		
+		public override IXsltContextFunction ResolveFunction (string prefix, string name, XPathResultType [] ArgTypes)
+		{
+			throw new Exception ("shouldn't get here");
+		}
+		
+		internal override System.Xml.Xsl.IXsltContextVariable ResolveVariable(QName q)
+		{
+			return p.CompiledStyle.ResolveVariable (q);
 		}
 
 		public override int CompareDocument (string baseUri, string nextBaseUri) { throw new NotImplementedException (); }
 		public override bool PreserveWhitespace (XPathNavigator nav) { throw new NotImplementedException (); }
 		public override bool Whitespace { get { throw new NotImplementedException (); }}
-		public string BaseUri { get { return doc.BaseURI; }}
-		public XPathNavigator Stylesheet {
-			get {
-				XPathNavigator ret = doc.Clone ();
-				ret.MoveToRoot ();
-				return ret;
-			}
-		}
-		
-		public XPathNavigator GetDocument (Uri uri)
-		{
-			if (uri.ToString () == string.Empty)
-				return Stylesheet;
-			
-			return p.GetDocument (uri);
-		}
 	}
 
 
@@ -278,34 +246,54 @@ namespace Mono.Xml.Xsl.Functions {
 			}
 		}
 	}
-		
-	class XsltCurrent : XPFuncImpl {
-		public XsltCurrent () : base (0, 0, XPathResultType.NodeSet, null) {}
-		
-		public override object Invoke (XsltCompiledContext xsltContext, object [] args, XPathNavigator docContext)
+	
+	class XsltCurrent : XPathFunction {
+		public XsltCurrent (FunctionArguments args) : base (args)
 		{
-			return new SelfIterator (xsltContext.Processor.CurrentNode, null);
+			if (args != null)
+				throw new XPathException ("current takes 0 args");
+		}
+		
+		public override XPathResultType ReturnType { get { return XPathResultType.NodeSet; }}
+
+		public override object Evaluate (BaseIterator iter)
+		{
+			return new SelfIterator ((iter.NamespaceManager as XsltCompiledContext).Processor.CurrentNode, null);
 		}
 	}
 	
-	class XsltDocument : XPFuncImpl {
-		public XsltDocument () : base (1, 2, XPathResultType.NodeSet, new XPathResultType [] { XPathResultType.Any, XPathResultType.NodeSet }) {}
+	class XsltDocument : XPathFunction {
+		Expression arg0, arg1;
+		XPathNavigator doc;
 		
-		public override object Invoke (XsltCompiledContext xsltContext, object [] args, XPathNavigator docContext)
+		public XsltDocument (FunctionArguments args, Compiler c) : base (args)
+		{
+			if (args == null || (args.Tail != null && args.Tail.Tail != null))
+				throw new XPathException ("document takes one or two args");
+			
+			arg0 = args.Arg;
+			if (args.Tail != null)
+				arg1 = args.Tail.Arg;
+			doc = c.Input.Clone ();
+		}
+		public override XPathResultType ReturnType { get { return XPathResultType.NodeSet; }}
+		
+		public override object Evaluate (BaseIterator iter)
 		{
 			string baseUri = null;
-			if (args.Length == 2) {
-				XPathNodeIterator it = (XPathNodeIterator) args [1];
+			if (arg1 != null) {
+				XPathNodeIterator it = arg1.EvaluateNodeSet (iter);
 				if (it.MoveNext())
 					baseUri = it.Current.BaseURI;
 				else
 					baseUri = VoidBaseUriFlag;
 			}
 
-			if (args [0] is XPathNodeIterator)
-				return GetDocument (xsltContext, (XPathNodeIterator)args [0], baseUri);
+			object o = arg0.Evaluate (iter);
+			if (o is XPathNodeIterator)
+				return GetDocument ((iter.NamespaceManager as XsltCompiledContext), (XPathNodeIterator)o, baseUri);
 			else
-				return GetDocument (xsltContext, args [0].ToString (), baseUri);
+				return GetDocument ((iter.NamespaceManager as XsltCompiledContext), o.ToString (), baseUri);
 		}
 		
 		static string VoidBaseUriFlag = "&^)(*&%*^$&$VOID!BASE!URI!";
@@ -332,7 +320,12 @@ namespace Mono.Xml.Xsl.Functions {
 				Uri uri = Resolve (itr.Current.Value, baseUri != null ? baseUri : itr.Current.BaseURI, xsltContext.Processor);
 				if (!got.ContainsKey (uri)) {
 					got.Add (uri, null);
-					list.Add (xsltContext.GetDocument (uri));
+					if (uri.ToString () == "") {
+						XPathNavigator n = doc.Clone ();
+						n.MoveToRoot ();
+						list.Add (n);
+					} else
+						list.Add (xsltContext.Processor.GetDocument (uri));
 				}
 			}
 			
@@ -341,20 +334,36 @@ namespace Mono.Xml.Xsl.Functions {
 	
 		XPathNodeIterator GetDocument (XsltCompiledContext xsltContext, string arg0, string baseUri)
 		{
-			return new SelfIterator (
-				xsltContext.GetDocument (
-					Resolve (arg0, baseUri != null ? baseUri : xsltContext.BaseUri, xsltContext.Processor)
-				)
-			, null);
+			Uri uri = Resolve (arg0, baseUri != null ? baseUri : doc.BaseURI, xsltContext.Processor);
+			XPathNavigator n;
+			if (uri.ToString () == "") {
+				n = doc.Clone ();
+				n.MoveToRoot ();
+			} else
+				n = xsltContext.Processor.GetDocument (uri);
+			
+			return new SelfIterator (n, null);
 		}
 	}
 	
-	class XsltElementAvailable : XPFuncImpl {
-		public XsltElementAvailable () : base (1, 1, XPathResultType.Boolean, new XPathResultType [] { XPathResultType.String }) {}
+	class XsltElementAvailable : XPathFunction {
+		Expression arg0;
+		XmlNamespaceManager nsm;
 		
-		public override object Invoke (XsltCompiledContext xsltContext, object [] args, XPathNavigator docContext)
+		public XsltElementAvailable (FunctionArguments args, IStaticXsltContext ctx) : base (args)
 		{
-			QName name = XslNameUtil.FromString ((string)args [0], xsltContext);
+			if (args == null || args.Tail != null)
+				throw new XPathException ("element-available takes 1 arg");
+			
+			arg0 = args.Arg;
+			nsm = ctx.GetNsm ();
+		}
+		
+		public override XPathResultType ReturnType { get { return XPathResultType.Boolean; }}
+
+		public override object Evaluate (BaseIterator iter)
+		{
+			QName name = XslNameUtil.FromString (arg0.EvaluateString (iter), nsm);
 
 			return (
 				(name.Namespace == Compiler.XsltNamespace) &&
@@ -380,39 +389,65 @@ namespace Mono.Xml.Xsl.Functions {
 					name.Name == "variable"
 				)
 			);
-			
 		}
 	}
 
-	class XsltFormatNumber : XPFuncImpl {
-		public XsltFormatNumber () : base (2, 3, XPathResultType.String , new XPathResultType [] { XPathResultType.Number, XPathResultType.String, XPathResultType.String }) {}
+	class XsltFormatNumber : XPathFunction {
+		Expression arg0, arg1, arg2;
+		XmlNamespaceManager nsm;
 		
-		public override object Invoke (XsltCompiledContext xsltContext, object [] args, XPathNavigator docContext)
+		public XsltFormatNumber (FunctionArguments args, IStaticXsltContext ctx) : base (args)
 		{
-			double d = (double)args [0];
-			string s = (string)args [1];
+			if (args == null || args.Tail == null || (args.Tail.Tail != null && args.Tail.Tail.Tail != null))
+				throw new XPathException ("format-number takes 2 or 3 args");
+			
+			arg0 = args.Arg;
+			arg1 = args.Tail.Arg;
+			if (args.Tail.Tail != null) {
+				arg2= args.Tail.Tail.Arg;
+				nsm = ctx.GetNsm ();
+			}
+		}
+		public override XPathResultType ReturnType { get { return XPathResultType.String; }}
+		
+		public override object Evaluate (BaseIterator iter)
+		{
+			double d = arg0.EvaluateNumber (iter);
+			string s = arg1.EvaluateString (iter);
 			QName nm = QName.Empty;
 			
-			if (args.Length == 3)
-				nm = XslNameUtil.FromString ((string)args [0], xsltContext);
+			if (arg2 != null)
+				nm = XslNameUtil.FromString (arg2.EvaluateString (iter), nsm);
 			
-			return xsltContext.Processor.CompiledStyle.LookupDecimalFormat (nm).FormatNumber (d, s);
+			return (iter.NamespaceManager as XsltCompiledContext).Processor.CompiledStyle
+				.LookupDecimalFormat (nm).FormatNumber (d, s);
 		}
 	}
 	
-	class XsltFunctionAvailable : XPFuncImpl {
-		public XsltFunctionAvailable () : base (1, 1, XPathResultType.Boolean, new XPathResultType [] { XPathResultType.String }) {}
+	class XsltFunctionAvailable : XPathFunction {
+		Expression arg0;
+		XmlNamespaceManager nsm;
 		
-		public override object Invoke (XsltCompiledContext xsltContext, object [] args, XPathNavigator docContext)
+		public XsltFunctionAvailable (FunctionArguments args, IStaticXsltContext ctx) : base (args)
+		{
+			if (args == null || args.Tail != null)
+				throw new XPathException ("element-available takes 1 arg");
+			
+			arg0 = args.Arg;
+			nsm = ctx.GetNsm ();
+		}
+		
+		public override XPathResultType ReturnType { get { return XPathResultType.Boolean; }}
+		
+		public override object Evaluate (BaseIterator iter)
 		{
 			
-			string name = (string)args [0];
+			string name = arg0.EvaluateString (iter);
 			int colon = name.IndexOf (':');
 			// extension function
 			if (colon > 0)
-				return xsltContext.ResolveFunction (
-					name.Substring (0, colon), 
-					name.Substring (colon, name.Length - colon), 
+				return (iter.NamespaceManager as XsltCompiledContext).ResolveFunction (
+					XslNameUtil.FromString (name, nsm),
 					null) != null;
 			
 			return (
@@ -446,24 +481,43 @@ namespace Mono.Xml.Xsl.Functions {
                                 name == "sum" ||
                                 name == "translate" ||
                                 name == "true" ||
-				xsltContext.ResolveFunction ("", name, null) != null // rest of xslt functions
+				// XSLT
+				name == "document" ||
+				name == "format-number" ||
+				name == "function-available" ||
+				name == "generate-id" ||
+				name == "key" ||
+				name == "current" ||
+				name == "unparsed-entity-uri" ||
+				name == "element-available" ||
+				name == "system-property"
 			);
 		}
 	} 
 
-	class XsltGenerateId : XPFuncImpl {
-		public XsltGenerateId () : base (0, 1, XPathResultType.String , new XPathResultType [] { XPathResultType.NodeSet }) {}
-		public override object Invoke (XsltCompiledContext xsltContext, object [] args, XPathNavigator docContext)
+	class XsltGenerateId : XPathFunction {
+		Expression arg0;
+		public XsltGenerateId (FunctionArguments args) : base (args)
+		{
+			if (args != null) {
+				if (args.Tail != null)
+					throw new XPathException ("generate-id takes 1 or no args");
+				arg0 = args.Arg;
+			}
+		}
+		
+		public override XPathResultType ReturnType { get { return XPathResultType.NodeSet; }}
+		public override object Evaluate (BaseIterator iter)
 		{
 			XPathNavigator n;
-			if (args.Length == 1) {
-				XPathNodeIterator itr = (XPathNodeIterator) args [0];
+			if (arg0 != null) {
+				XPathNodeIterator itr = arg0.EvaluateNodeSet (iter);
 				if (itr.MoveNext ())
 					n = itr.Current.Clone ();
 				else
 					return string.Empty; // empty nodeset == empty string
 			} else
-				n = docContext.Clone ();
+				n = iter.Current.Clone ();
 			
 			StringBuilder sb = new StringBuilder ("Mono"); // Ensure begins with alpha
 			sb.Append (XmlConvert.EncodeLocalName (n.BaseURI));
@@ -490,23 +544,36 @@ namespace Mono.Xml.Xsl.Functions {
 		
 	} 
 	
-	class XsltKey : XPFuncImpl {
-		public XsltKey () : base (2, 2, XPathResultType.NodeSet, new XPathResultType [] { XPathResultType.String, XPathResultType.Any }) {}
+	class XsltKey : XPathFunction {
+		Expression arg0, arg1;
+		XmlNamespaceManager nsm;
 		
-		public override object Invoke (XsltCompiledContext xsltContext, object [] args, XPathNavigator docContext)
+		public XsltKey (FunctionArguments args, IStaticXsltContext ctx) : base (args)
+		{
+			if (args == null || args.Tail == null)
+				throw new XPathException ("key takes 2 args");
+			
+			arg0 = args.Arg;
+			arg1 = args.Tail.Arg;
+			nsm = ctx.GetNsm ();
+		}
+		public override XPathResultType ReturnType { get { return XPathResultType.NodeSet; }}
+		
+		public override object Evaluate (BaseIterator iter)
 		{
 			ArrayList result = new ArrayList ();
-			QName name = XslNameUtil.FromString ((string)args [0], xsltContext);
-			XPathNodeIterator it = args [1] as XPathNodeIterator;
+			QName name = XslNameUtil.FromString (arg0.EvaluateString (iter), nsm);
+			object o = arg1.Evaluate (iter);
+			XPathNodeIterator it = o as XPathNodeIterator;
 			
 			if (it != null) {
 				while (it.MoveNext())
-					FindKeyMatch (xsltContext, name, it.Current.Value, result, docContext);
+					FindKeyMatch ((iter.NamespaceManager as XsltCompiledContext), name, it.Current.Value, result, iter.Current);
 			} else {
-				FindKeyMatch (xsltContext, name, XPathFunctions.ToString (args [1]), result, docContext);
+				FindKeyMatch ((iter.NamespaceManager as XsltCompiledContext), name, XPathFunctions.ToString (o), result, iter.Current);
 			}
 			
-			return new EnumeratorIterator (result.GetEnumerator (), xsltContext);
+			return new EnumeratorIterator (result.GetEnumerator (), (iter.NamespaceManager as XsltCompiledContext));
 		}
 		
 		void FindKeyMatch (XsltCompiledContext xsltContext, QName name, string value, ArrayList result, XPathNavigator context)
@@ -550,12 +617,23 @@ namespace Mono.Xml.Xsl.Functions {
 		}
 	}
 	
-	class XsltSystemProperty : XPFuncImpl {
-		public XsltSystemProperty () : base (1, 1, XPathResultType.String , new XPathResultType [] { XPathResultType.String }) {}
+	class XsltSystemProperty : XPathFunction {
+		Expression arg0;
+		XmlNamespaceManager nsm;
 		
-		public override object Invoke (XsltCompiledContext xsltContext, object [] args, XPathNavigator docContext)
+		public XsltSystemProperty (FunctionArguments args, IStaticXsltContext ctx) : base (args)
 		{
-			QName name = XslNameUtil.FromString ((string)args [0], xsltContext);
+			if (args == null || args.Tail != null)
+				throw new XPathException ("system-property takes 1 arg");
+			
+			arg0 = args.Arg;
+			nsm = ctx.GetNsm ();
+		}
+		
+		public override XPathResultType ReturnType { get { return XPathResultType.String; }}
+		public override object Evaluate (BaseIterator iter)
+		{
+			QName name = XslNameUtil.FromString (arg0.EvaluateString (iter), nsm);
 			
 			if (name.Namespace == Compiler.XsltNamespace) {
 				switch (name.Name) {
@@ -569,10 +647,19 @@ namespace Mono.Xml.Xsl.Functions {
 		}
 	} 
 
-	class XsltUnparsedEntityUri : XPFuncImpl {
-		public XsltUnparsedEntityUri () : base (1, 1, XPathResultType.String , new XPathResultType [] { XPathResultType.String }) {}
+	class XsltUnparsedEntityUri : XPathFunction {
+		Expression arg0;
 		
-		public override object Invoke (XsltCompiledContext xsltContext, object [] args, XPathNavigator docContext)
+		public XsltUnparsedEntityUri (FunctionArguments args) : base (args)
+		{
+			if (args == null || args.Tail != null)
+				throw new XPathException ("unparsed-entity-uri takes 1 arg");
+			
+			arg0 = args.Arg;
+		}
+		
+		public override XPathResultType ReturnType { get { return XPathResultType.String; }}
+		public override object Evaluate (BaseIterator iter)
 		{
 			throw new NotImplementedException ();
 		}

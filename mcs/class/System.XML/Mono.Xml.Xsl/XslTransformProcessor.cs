@@ -33,12 +33,15 @@ namespace Mono.Xml.Xsl {
 		XsltContext ctx;
 		XsltArgumentList args;
 		XmlResolver resolver;
+		
+		internal readonly XsltCompiledContext XPathContext;
 
 		// Store the values of global params
 		internal Hashtable globalVariableTable = new Hashtable ();
 		
 		public XslTransformProcessor (CompiledStylesheet style)
 		{
+			this.XPathContext = new XsltCompiledContext (this);
 			this.compiledStyle = style;
 			this.style = style.Style;
 		}

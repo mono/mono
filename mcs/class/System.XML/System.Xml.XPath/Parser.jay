@@ -290,7 +290,7 @@ PredicatedStep
 AxisTest
 	: AxisSpecifier QName
 	{
-		$$ = new NodeNameTest ((Axes) $1, (XmlQualifiedName) $2);
+		$$ = new NodeNameTest ((Axes) $1, (XmlQualifiedName) $2, Context);
 	}
 	| AxisSpecifier ASTERISK
 	{
@@ -340,7 +340,7 @@ PrimaryExpr
 			$$ = Context.TryGetVariable (((XmlQualifiedName) $2).ToString ());
 		
 		if ($$ == null)
-			$$ = new ExprVariable ((XmlQualifiedName) $2);
+			$$ = new ExprVariable ((XmlQualifiedName) $2, Context);
 	}
 	| PAREN_OPEN Expr PAREN_CLOSE
 	{
@@ -360,7 +360,10 @@ PrimaryExpr
 FunctionCall
 	: FUNCTION_NAME PAREN_OPEN OptionalArgumentList PAREN_CLOSE
 	{
-		$$ = ExprFunctionCall.Factory ((XmlQualifiedName) $1, (FunctionArguments) $3);
+		if (Context != null)
+			$$ = Context.TryGetFunction ((XmlQualifiedName) $1, (FunctionArguments) $3);
+		if ($$ == null)
+			$$ = ExprFunctionCall.Factory ((XmlQualifiedName) $1, (FunctionArguments) $3, Context);
 	}
 	;
 
