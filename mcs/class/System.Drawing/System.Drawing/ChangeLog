@@ -1,3 +1,6 @@
+2004-05-13  Sanjay Gupta <gsanjay@novell.com>
+	* ImageFormatConverter.cs: Implemented GetStandardValuesSupported () method. 
+
 2004-05-13  Peter Bartok <pbartok@novell.com>
 	* Bitmap.cs: Fixed bug #52868, Bitmap(Image, Size) did not
 	resize the image.

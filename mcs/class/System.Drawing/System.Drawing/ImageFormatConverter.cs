@@ -84,10 +84,9 @@ namespace System.Drawing
 			throw new NotImplementedException (); 
 		}
 
-		[MonoTODO ("Implement")]
 		public override bool GetStandardValuesSupported (ITypeDescriptorContext context )
 		{
-			throw new NotImplementedException (); 
+			return false;
 		}
 	}
 }
