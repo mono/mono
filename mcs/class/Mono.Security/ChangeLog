@@ -1,3 +1,10 @@
+2004-02-10 Carlos Guzmán Álvarez  <carlosga@telefonica.net>
+
+    * Mono.Security.Protocol.Tls/SslServerStream.cs:
+
+        - Ssl Server class without implementation ( methods signatures only )
+        That matches the described in the .NET 1.2 documentation.
+
 2004-02-09  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Mono.Security_test.dll.sources Added Mono.Math BigInteger unit test
