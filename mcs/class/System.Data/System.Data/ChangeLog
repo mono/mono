@@ -1,5 +1,10 @@
 2004-04-21  Boris Kirzner <borisk@mainsoft.com>
 
+	* MergeManager.cs : In AdjustSchema() source table clone should be added
+	  and not the table itself. 
+
+2004-04-21  Boris Kirzner <borisk@mainsoft.com>
+
 	* DataSet.cs : 
 	  - CaseSensitive : Additional fix (removed unnesessary assignment).
 	  - CopyProperties : Do not try to copy ExtendedProperties if the collection is empty.

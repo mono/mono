@@ -120,7 +120,10 @@ namespace System.Data
 					return true;
 				if (missingSchemaAction == MissingSchemaAction.Error)
 					throw new ArgumentException("Target DataSet missing definition for "+ tableName + ".");
-				targetSet.Tables.Add((DataTable)sourceTable.Clone());
+				
+				DataTable cloneTable = (DataTable)sourceTable.Clone();
+				targetSet.Tables.Add(cloneTable);
+				tableName = cloneTable.TableName;
 			}
 			
 			DataTable table = targetSet.Tables[tableName];
