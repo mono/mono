@@ -30,7 +30,8 @@ namespace System.Text.RegularExpressions {
 		Singleline			= 0x010,
 		IgnorePatternWhitespace		= 0x020,
 		RightToLeft			= 0x040,
-		ECMAScript			= 0x100
+		ECMAScript			= 0x100,
+		CultureInvariant		= 0x200 
 	}
 	
 	[Serializable]

@@ -1,3 +1,7 @@
+2003-11-22  Jackson Harper <jackson@ximian.com>
+
+	* regex.cs: Add CultureInvariant flag to RegexOptions.
+	
 2003-11-20  Juraj Skripsky <js@hotfeet.ch>
 
 	* quicksearch.cs: Use a hashtable instead of an array for the
