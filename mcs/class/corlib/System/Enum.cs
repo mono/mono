@@ -195,23 +195,21 @@ namespace System {
 			if (!enumType.IsEnum)
 				throw new ArgumentException ("enumType is not an Enum type.");
 
-			// FIXME: Not sure how to ensure Type of value parameter is correct
-
-			Type t = value.GetType ();
-			if (!(t == typeof (SByte)
-				|| t == typeof (Int16)
-				|| t == typeof (Int32)
-				|| t == typeof (Int64)
-				|| t == typeof (Byte)
-				|| t == typeof (UInt16)
-				|| t == typeof (UInt32)
-				|| t == typeof (UInt64)
-				))
-				throw new ExecutionEngineException();
-
 			MonoEnumInfo info;
 			MonoEnumInfo.GetInfo (enumType, out info);
-			return ((IList)(info.values)).Contains (value);
+
+			Type vType = value.GetType ();
+			if (vType is String) {
+				return ((IList)(info.names)).Contains (value);
+			} else if (vType == info.utype) {
+				return ((IList)(info.values)).Contains (value);
+			} else {
+				throw new ArgumentException("The value parameter is not the correct type."
+					+ "It must be type String or the same type as the underlying type"
+					+ "of the Enum.");
+			}
+			
+
 		}
 		
 		public static Type GetUnderlyingType (Type enumType) {
