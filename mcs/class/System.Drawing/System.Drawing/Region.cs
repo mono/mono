@@ -153,6 +153,89 @@ namespace System.Drawing
 		{
 		}
 
+		//
+		// IsVisible
+		//
+		public bool IsVisible(int x, int y, Graphics g)
+		{
+		}
+
+		public bool IsVisible(int x, int y, int width, int height)
+		{
+		}
+
+		public bool IsVisible(int x, int y, int width, int height, Graphics g)
+		{
+		}
+
+		public bool IsVisible(Point point)
+		{
+		}
+
+		public bool IsVisible(PointF point)
+		{
+		}
+
+		public bool IsVisible(Point point, Graphics g)
+		{
+		}
+
+		public bool IsVisible(PointF point, Graphics g)
+		{
+		}
+
+		public bool IsVisible(Rectangle rect)
+		{
+		}
+
+		public bool IsVisible(RectangleF rect)
+		{
+		}
+
+		public bool IsVisible(Rectangle rect, Graphics g)
+		{
+		}
+
+		public bool IsVisible(RectangleF rect, Graphics g)
+		{
+		}
+
+		public bool IsVisible(float x, float y)
+		{
+		}
+
+		public bool IsVisible(float x, float y, Graphics g)
+		{
+		}
+
+		public bool IsVisible(float x, float y, float width, float height)
+		{
+		}
+
+		public bool IsVisible(float x, float y, float width, float height, Graphics g)
+		{
+		}
+
+
+		//
+		// Miscellaneous
+		//
+
+		public bool IsEmpty(Graphics g)
+		{
+		}
+
+		public bool IsInfinite(Graphics g)
+		{
+		}
+
+		public void MakeEmpty()
+		{
+		}
+
+		public void MakeInfinite()
+		{
+		}
 		
 		
 		[ComVisible(false)]
