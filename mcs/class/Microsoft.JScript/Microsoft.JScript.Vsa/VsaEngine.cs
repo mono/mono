@@ -16,16 +16,19 @@ namespace Microsoft.JScript.Vsa {
 	public class VsaEngine : BaseVsaEngine,  IRedirectOutput {
 		
 		static private Hashtable options;
+		internal VsaScriptScope global_scope;
+		internal Stack globals;
 
 		public VsaEngine ()
-			: base ("", "", false)
+			: this (true)
 		{
 			InitOptions ();
 		}
 
 		public VsaEngine (bool b)
+			: base ("JScript", "0.0.1", true)
 		{
-			throw new NotImplementedException ();
+			globals = new Stack (4);			
 		}
 
 		public virtual IVsaEngine Clone (AppDomain appDom)
@@ -43,9 +46,25 @@ namespace Microsoft.JScript.Vsa {
 			throw new NotImplementedException ();
 		}
 
-		public static GlobalScope CreateEngineAndGetGlobalScope (bool b, string [] assemblyName)
+		public static GlobalScope CreateEngineAndGetGlobalScope (bool fast, string [] assembly_names)
 		{
-			throw new NotImplementedException ();
+			int i, n;
+			GlobalScope scope;
+
+			VsaEngine engine = new VsaEngine (fast);			
+			engine.InitVsaEngine ("JScript.Vsa.VsaEngine://Microsoft.JScript.VsaEngine.Vsa",
+					      new DefaultVsaSite ());
+			n = assembly_names.Length;
+
+			for (i = 0; i < n; i++) {
+				string assembly_name = assembly_names [i];
+				VsaReferenceItem r = (VsaReferenceItem) engine.Items.CreateItem (assembly_name,
+												 VsaItemType.Reference,
+												 VsaItemFlag.None);
+				r.AssemblyName = assembly_name;
+			}
+			scope = (GlobalScope) engine.GetGlobalScope ().GetObject ();
+			return scope;
 		}
 
 		public static GlobalScope CreateEngineAndGetGlobalScopeWithType (bool b, string [] assemblyNames,
@@ -76,7 +95,11 @@ namespace Microsoft.JScript.Vsa {
 
 		public virtual IVsaScriptScope GetGlobalScope ()
 		{
-			throw new NotImplementedException ();
+			if (global_scope == null) {
+				global_scope = new VsaScriptScope (this, "Global", null);
+			}
+
+			return global_scope;
 		}
 
 		public virtual GlobalScope GetMainScope ()
@@ -106,7 +129,12 @@ namespace Microsoft.JScript.Vsa {
 
 		public void InitVsaEngine (string moniker, IVsaSite site)
 		{
-			throw new NotImplementedException ();
+			RootMoniker = moniker;
+			Site = site;
+			InitNewCalled = true;
+			RootNamespace = "JScript.DefaultNamespace";
+			IsDirty = true;
+			compiled = false;
 		}
 
 		public virtual void Interrupt ()
@@ -127,12 +155,21 @@ namespace Microsoft.JScript.Vsa {
 
 		public ScriptObject PopScriptObject ()
 		{
-			throw new NotImplementedException ();
+			ScriptObject script_obj = null;
+
+			try {
+				script_obj = (ScriptObject) globals.Pop ();
+			} catch (NullReferenceException e) {
+			}
+			return script_obj;
 		}
 
 		public void PushScriptObject (ScriptObject obj)
 		{
-			throw new NotImplementedException ();
+			try {
+				globals.Push (obj);
+			} catch (NullReferenceException e) {
+			}
 		}
 
 		public virtual void RegisterEventSource (string name)
@@ -140,13 +177,10 @@ namespace Microsoft.JScript.Vsa {
 			throw new NotImplementedException ();
 		}
 
-		/*
 		public override void Reset ()
 		{
 			throw new NotImplementedException ();
 		}
-		*/
-
 
 		public virtual void Restart ()
 		{
@@ -211,5 +245,8 @@ namespace Microsoft.JScript.Vsa {
 				throw new VsaException (VsaError.OptionNotSupported);
 			}
 		}
+	}
+
+	class DefaultVsaSite : BaseVsaSite {		
 	}
 }
