@@ -178,9 +178,8 @@ namespace System.Data {
 			public override DataRelation this [string name]
 			{
 				get {
-					foreach (DataRelation dataRelation in List)
-						if (dataRelation.RelationName == name) return dataRelation;
-					return null;
+					int index = IndexOf (name, true);
+					return index < 0 ? null : (DataRelation) list[index];
 				}
 			}
 
