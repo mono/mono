@@ -1345,6 +1345,13 @@ namespace PEAPI
             numExceptClauses += (uint)tryBlock.NumHandlers();
             if (tryBlock.isFat()) fatExceptionFormat = true;
           }
+
+          uint data_size = ExHeaderSize + numExceptClauses *
+                 (fatExceptionFormat ? FatExClauseSize : SmlExClauseSize);
+
+          if (data_size > 256)
+                  fatExceptionFormat = true;
+                  
           // Console.WriteLine("numexceptclauses = " + numExceptClauses);
           if (fatExceptionFormat) {
             // Console.WriteLine("Fat exception format");

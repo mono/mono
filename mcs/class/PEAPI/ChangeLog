@@ -1,3 +1,8 @@
+2003-11-18 Jackson Harper <jackson@ximian.com>
+
+	* PEAPI.cs: If the data length for a methods seh section is
+	greater then 255 use fat format headers.
+	
 2003-11-17 Jackson Harper <jackson@ximian.com>
 
 	* PEAPI.cs: Allow strings to be loaded as bytearrays.
