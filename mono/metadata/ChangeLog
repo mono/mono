@@ -1,4 +1,8 @@
 
+Wed May 14 11:14:54 CEST 2003 Paolo Molaro <lupus@ximian.com>
+
+	* threads.c: allow compiling without GC.
+
 Tue May 13 16:41:49 CEST 2003 Paolo Molaro <lupus@ximian.com>
 
 	* appdomain.h, object.c, object.h, threads.c, threads.h: added
