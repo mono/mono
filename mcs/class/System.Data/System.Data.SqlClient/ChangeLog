@@ -1,3 +1,7 @@
+2004-06-30 Umadevi S <sumadevi@novell.com>
+        * SqlCommand.cs : In the Execute Method the commandbehavior parameters were ignored correct
+these
+
 2004-06-22  Atsushi Enomoto <atsushi@ximian.com>
 
 	* SqlCommandBuilder.cs : Avoid cast exception caused by DbNull.
