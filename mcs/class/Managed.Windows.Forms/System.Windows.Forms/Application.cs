@@ -23,9 +23,12 @@
 //	Peter Bartok	pbartok@novell.com
 //
 //
-// $Revision: 1.6 $
+// $Revision: 1.7 $
 // $Modtime: $
 // $Log: Application.cs,v $
+// Revision 1.7  2004/10/18 04:14:14  pbartok
+// - Added code to simulate modal dialogs on Win32
+//
 // Revision 1.6  2004/09/22 20:05:41  pbartok
 // - Added message loop for modal dialogs
 //
@@ -89,9 +92,18 @@ namespace System.Windows.Forms {
 		#region Private and Internal Methods
 		internal static void ModalRun(Form form) {
 			MSG	msg = new MSG();
+			Queue	toplevels = new Queue();
+			IEnumerator control = Control.controls.GetEnumerator();
 
 			if (form == null) {
 				return;
+			}
+
+			while (control.MoveNext()) {
+				if ((((Control)control.Current).parent == null) && (((Control)control.Current).is_visible) && (((Control)control.Current).is_enabled) && (((Form)control.Current)!=form)) {
+					XplatUI.EnableWindow(((Control)control.Current).window.Handle, false);
+					toplevels.Enqueue((Control)control.Current);
+				}
 			}
 
 			while (!exiting && XplatUI.GetMessage(ref msg, IntPtr.Zero, 0, 0)) {
@@ -106,6 +118,10 @@ namespace System.Windows.Forms {
 				if (form.closing) {
 					form.end_modal = true;
 				}
+			}
+
+			while (toplevels.Count>0) {
+				XplatUI.EnableWindow(((Control)toplevels.Dequeue()).window.Handle, true);
 			}
 		}
 		#endregion	// Private and Internal Methods
