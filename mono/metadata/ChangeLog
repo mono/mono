@@ -1,3 +1,10 @@
+2004-05-28  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* appdomain.c: we tried to load [name].(dll|exe), but according
+	to bug #57710, we must also try [culture]/[name].(dll|exe) and
+	[culture]/[name]/[name](dll|exe). This patch fixes the bug.
+	There's a test case attached to bug #58922.
+
 2004-05-27  Dick Porter  <dick@ximian.com>
 
 	* icall.c:
