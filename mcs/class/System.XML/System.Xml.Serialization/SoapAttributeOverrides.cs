@@ -68,5 +68,17 @@ namespace System.Xml.Serialization
 			return new TypeMember(type, member);
 		}
 
+		internal bool InternalEquals (SoapAttributeOverrides other)
+		{
+			if (other == null) return false;
+			if (overrides.Count != other.overrides.Count) return false;
+			
+			foreach (DictionaryEntry entry in overrides)
+			{
+				SoapAttributes val = (SoapAttributes) other.overrides [entry.Key];
+				if (val == null || !val.InternalEquals ((SoapAttributes) entry.Value)) return false;
+			}
+			return true;
+		}
 	}
 }

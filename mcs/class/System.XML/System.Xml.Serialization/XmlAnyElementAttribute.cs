@@ -21,7 +21,6 @@ namespace System.Xml.Serialization
 	{
 		private string elementName;
 		private string ns;
-		private int order;
 
 		public XmlAnyElementAttribute ()
 		{
@@ -54,13 +53,11 @@ namespace System.Xml.Serialization
 				ns = value;
 			}
 		}
-		/// <summary>
-		/// Specifies Order in which Memberswill be serialized as Elements.
-		/// </summary>
-		internal int Order
+		
+		internal bool InternalEquals (XmlAnyElementAttribute other)
 		{
-			get{ return  order; }
-			set{ order = value; }
+			if (other == null) return false;
+			return (elementName == other.elementName && ns == other.ns);
 		}
 	}
 }

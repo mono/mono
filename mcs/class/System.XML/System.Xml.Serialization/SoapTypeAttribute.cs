@@ -53,7 +53,13 @@ namespace System.Xml.Serialization
 			set { typeName = value;
 			}
 		}
-
-
+		
+		internal bool InternalEquals (SoapTypeAttribute other)
+		{
+			return (other != null &&
+					ns == other.ns &&
+					typeName == other.typeName &&
+					includeInSchema == other.includeInSchema);
+		}
 	}
 }

@@ -56,5 +56,13 @@ namespace System.Xml.Serialization
 				isNullable = value; 
 			}
 		}
+		
+		internal bool InternalEquals (SoapElementAttribute other)
+		{
+			if (other == null) return false;
+			return (elementName == other.elementName &&
+					dataType == other.dataType &&
+					isNullable == other.isNullable);
+		}
 	}
 }

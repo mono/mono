@@ -183,7 +183,7 @@ namespace System.Xml.Serialization {
 				XmlTypeMapping tmap;
 				TypeData td = GetElementTypeData (typeQName, elem, out tmap);
 				
-				mapping[n] = ImportMemberMapping (elem.Name, typeQName.Namespace, td, tmap);
+				mapping[n] = ImportMemberMapping (elem.Name, typeQName.Namespace, elem.IsNillable, td, tmap);
 			}
 			BuildPendingMaps ();
 			return new XmlMembersMapping (mapping);
@@ -196,7 +196,7 @@ namespace System.Xml.Serialization {
 			{
 				TypeData td = GetTypeData (members[n].MemberType, null);
 				XmlTypeMapping tmap = GetTypeMapping (td);
-				mapping[n] = ImportMemberMapping (members[n].MemberName, members[n].MemberType.Namespace, td, tmap);
+				mapping[n] = ImportMemberMapping (members[n].MemberName, members[n].MemberType.Namespace, true, td, tmap);
 			}
 			BuildPendingMaps ();
 			return new XmlMembersMapping (name, ns, hasWrapperElement, false, mapping);
@@ -235,7 +235,7 @@ namespace System.Xml.Serialization {
 			return mapping;
 		}
 		
-		XmlMemberMapping ImportMemberMapping (string name, string ns, TypeData type, XmlTypeMapping emap)
+		XmlMemberMapping ImportMemberMapping (string name, string ns, bool isNullable, TypeData type, XmlTypeMapping emap)
 		{
 			XmlTypeMapMemberElement mapMem;
 			
@@ -246,7 +246,7 @@ namespace System.Xml.Serialization {
 			
 			mapMem.Name = name;
 			mapMem.TypeData = type;
-			mapMem.ElementInfo.Add (CreateElementInfo (ns, mapMem, name, type, true, XmlSchemaForm.None, emap));
+			mapMem.ElementInfo.Add (CreateElementInfo (ns, mapMem, name, type, isNullable, XmlSchemaForm.None, emap));
 			return new XmlMemberMapping (name, ns, mapMem, encodedFormat);
 		}
 		

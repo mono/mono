@@ -8,12 +8,17 @@
 //
 
 using System;
+using System.Threading;
 using System.Collections;
 using System.IO;
 using System.Reflection;
 using System.Xml;
 using System.Xml.Schema;
 using System.Text;
+using System.CodeDom;
+using System.CodeDom.Compiler;
+using Microsoft.CSharp;
+using System.Configuration;
 
 namespace System.Xml.Serialization
 {
@@ -22,17 +27,67 @@ namespace System.Xml.Serialization
 	{
 		internal const string WsdlNamespace = "http://schemas.xmlsoap.org/wsdl/";
 		internal const string EncodingNamespace = "http://schemas.xmlsoap.org/soap/encoding/";
+		static int generationThreshold;
+		static bool backgroundGeneration = true;
+		static bool deleteTempFiles = true;
 
-#region Fields
-
+		bool customSerializer;
 		XmlMapping typeMapping;
-
-#endregion // Fields
+		
+		SerializerData serializerData;
+		Type writerType;
+		Type readerType;
+		
+		static Hashtable serializerTypes = new Hashtable ();
+		
+		internal class SerializerData
+		{
+			public int UsageCount;
+			public Type ReaderType;
+			public MethodInfo ReaderMethod;
+			public Type WriterType;
+			public MethodInfo WriterMethod;
+			public GenerationBatch Batch;
+		}
+		
+		internal class GenerationBatch
+		{
+			public bool Done;
+			public XmlMapping[] Maps;
+			public SerializerData[] Datas;
+		}
+		
+		static XmlSerializer ()
+		{
+			IDictionary table = (IDictionary) ConfigurationSettings.GetConfig("system.diagnostics");
+			if (table != null) {
+				table = (IDictionary) table["switches"];
+				if (table != null) {
+					string val = (string) table ["XmlSerialization.Compilation"];
+					if (val == "1") deleteTempFiles = false;
+				}
+			}
+			
+			string th = Environment.GetEnvironmentVariable ("MONO_XMLSERIALIZER_THS");
+			
+			if (th == null) {
+				generationThreshold = -1;
+				backgroundGeneration = false;
+			}
+			else if (th.ToLower() == "no") 
+				generationThreshold = -1;
+			else {
+				generationThreshold = int.Parse (th);
+				backgroundGeneration = (generationThreshold != 0);
+				if (generationThreshold < 1) generationThreshold = 1;
+			}
+		}
 
 #region Constructors
 
 		protected XmlSerializer ()
 		{
+			customSerializer = true;
 		}
 
 		public XmlSerializer (Type type)
@@ -45,9 +100,10 @@ namespace System.Xml.Serialization
 			typeMapping = xmlTypeMapping;
 		}
 
-		internal XmlSerializer (XmlMapping mapping)
+		internal XmlSerializer (XmlMapping mapping, SerializerData data)
 		{
 			typeMapping = mapping;
+			serializerData = data;
 		}
 
 		public XmlSerializer (Type type, string defaultNamespace)
@@ -182,10 +238,10 @@ namespace System.Xml.Serialization
 		public object Deserialize (XmlReader xmlReader)
 		{
 			XmlSerializationReader xsReader;
-			if (typeMapping == null)
+			if (customSerializer)
 				xsReader = CreateReader ();
 			else
-				xsReader = new XmlSerializationReaderInterpreter (typeMapping);
+				xsReader = CreateReader (typeMapping);
 				
 			xsReader.Initialize (xmlReader, this);
 			return Deserialize (xsReader);
@@ -193,24 +249,35 @@ namespace System.Xml.Serialization
 
 		protected virtual object Deserialize (XmlSerializationReader reader)
 		{
-			if (typeMapping != null)
-			{
-				XmlSerializationReaderInterpreter rd = reader as XmlSerializationReaderInterpreter;
-				if (rd == null) throw new InvalidOperationException ();
-				return rd.ReadObject ();
-			}
-			else
+			if (customSerializer)
 				// Must be implemented in derived class
 				throw new NotImplementedException ();
+			
+			if (reader is XmlSerializationReaderInterpreter)
+				return ((XmlSerializationReaderInterpreter)reader).ReadRoot ();
+			else
+				return serializerData.ReaderMethod.Invoke (reader, null);
 		}
 
 		public static XmlSerializer [] FromMappings (XmlMapping	[] mappings)
 		{
-			XmlSerializer [] sers = new XmlSerializer [mappings.Length];
+			XmlSerializer[] sers = new XmlSerializer [mappings.Length];
+			SerializerData[] datas = new SerializerData [mappings.Length];
+			GenerationBatch batch = new GenerationBatch ();
+			batch.Maps = mappings;
+			batch.Datas = datas;
+			
 			for (int n=0; n<mappings.Length; n++)
+			{
 				if (mappings[n] != null)
-					sers[n] = new XmlSerializer (mappings[n]);
-					
+				{
+					SerializerData data = new SerializerData ();
+					data.Batch = batch;
+					sers[n] = new XmlSerializer (mappings[n], data);
+					datas[n] = data;
+				}
+			}
+			
 			return sers;
 		}
 
@@ -224,15 +291,14 @@ namespace System.Xml.Serialization
 
 		protected virtual void Serialize (object o, XmlSerializationWriter writer)
 		{
-			if (typeMapping != null)
-			{
-				XmlSerializationWriterInterpreter wr = writer as XmlSerializationWriterInterpreter;
-				if (wr == null) throw new InvalidOperationException ();
-				wr.WriteObject (o);
-			}
-			else
+			if (customSerializer)
 				// Must be implemented in derived class
 				throw new NotImplementedException ();
+				
+			if (writer is XmlSerializationWriterInterpreter)
+				((XmlSerializationWriterInterpreter)writer).WriteRoot (o);
+			else
+				serializerData.WriterMethod.Invoke (writer, new object[] {o});
 		}
 
 		public void Serialize (Stream stream, object o)
@@ -273,10 +339,10 @@ namespace System.Xml.Serialization
 		{
 			XmlSerializationWriter xsWriter;
 			
-			if (typeMapping == null)
+			if (customSerializer)
 				xsWriter = CreateWriter ();
 			else
-				xsWriter = new XmlSerializationWriterInterpreter (typeMapping);
+				xsWriter = CreateWriter (typeMapping);
 				
 			if (namespaces == null || namespaces.Count == 0)
 			{
@@ -289,6 +355,190 @@ namespace System.Xml.Serialization
 			Serialize (o, xsWriter);
 			writer.Flush ();
 		}
+		
+		XmlSerializationWriter CreateWriter (XmlMapping typeMapping)
+		{
+			lock (this) {
+				if (serializerData != null && serializerData.WriterType != null)
+					return (XmlSerializationWriter) Activator.CreateInstance (serializerData.WriterType);
+			}
+			
+			if (!typeMapping.Source.CanBeGenerated || generationThreshold == -1)
+				return new XmlSerializationWriterInterpreter (typeMapping);
+
+			CheckGeneratedTypes (typeMapping);
+			
+			lock (this) {
+				if (serializerData.WriterType != null)
+					return (XmlSerializationWriter) Activator.CreateInstance (serializerData.WriterType);
+			}
+			
+			return new XmlSerializationWriterInterpreter (typeMapping);
+		}
+		
+		XmlSerializationReader CreateReader (XmlMapping typeMapping)
+		{
+			lock (this) {
+				if (serializerData != null && serializerData.ReaderType != null)
+					return (XmlSerializationReader) Activator.CreateInstance (serializerData.ReaderType);
+			}
+			
+			if (!typeMapping.Source.CanBeGenerated || generationThreshold == -1)
+				return new XmlSerializationReaderInterpreter (typeMapping);
+
+			CheckGeneratedTypes (typeMapping);
+			
+			lock (this) {
+				if (serializerData.ReaderType != null)
+					return (XmlSerializationReader) Activator.CreateInstance (serializerData.ReaderType);
+			}
+			
+			return new XmlSerializationReaderInterpreter (typeMapping);
+		}
+		
+		void CheckGeneratedTypes (XmlMapping typeMapping)
+		{
+			lock (this)
+			{
+				if (serializerData == null) 
+				{
+					lock (serializerTypes)
+					{
+						serializerData = (SerializerData) serializerTypes [typeMapping.Source];
+						if (serializerData == null) {
+							serializerData = new SerializerData();
+							serializerTypes [typeMapping.Source] = serializerData;
+						}
+					}
+				}
+			}
+			
+			bool generate = false;
+			lock (serializerData)
+			{
+				generate = (++serializerData.UsageCount == generationThreshold);
+			}
+			
+			if (generate)
+			{
+				if (serializerData.Batch != null)
+					GenerateSerializers (serializerData.Batch);
+				else
+				{
+					GenerationBatch batch = new GenerationBatch ();
+					batch.Maps = new XmlMapping[] {typeMapping};
+					batch.Datas = new SerializerData[] {serializerData};
+					GenerateSerializers (batch);
+				}
+			}
+		}
+		
+		void GenerateSerializers (GenerationBatch batch)
+		{
+			if (batch.Maps.Length != batch.Datas.Length)
+				throw new ArgumentException ("batch");
+
+			lock (batch)
+			{
+				if (batch.Done) return;
+				batch.Done = true;
+			}
+			
+			if (backgroundGeneration)
+				ThreadPool.QueueUserWorkItem (new WaitCallback (RunSerializerGeneration), batch);
+			else
+				RunSerializerGeneration (batch);
+		}
+		
+		void RunSerializerGeneration (object obj)
+		{
+			try
+			{
+				RunSerializerGenerationAux (obj);
+			}
+			catch (Exception ex)
+			{
+				Console.WriteLine (ex);
+			}
+		}
+		
+		void RunSerializerGenerationAux (object obj)
+		{
+			DateTime tim = DateTime.Now;
+			
+			GenerationBatch batch = (GenerationBatch) obj;
+			XmlMapping[] maps = batch.Maps;
+			
+			string file = Path.GetTempFileName ();
+			StreamWriter sw = new StreamWriter (file);
+//			Console.WriteLine ("Generating " + file);
+			
+			SerializationCodeGenerator gen = new SerializationCodeGenerator (maps);
+			
+			try
+			{
+				gen.GenerateSerializers (sw);
+			}
+			catch (Exception ex)
+			{
+				Console.WriteLine ("Serializer could not be generated");
+				Console.WriteLine (ex);
+				
+				if (deleteTempFiles)
+					File.Delete (file);
+				return;
+			}
+			sw.Close ();
+			
+			CSharpCodeProvider provider = new CSharpCodeProvider();
+			ICodeCompiler comp = provider.CreateCompiler ();
+			
+			CompilerParameters cp = new CompilerParameters();
+		    cp.GenerateExecutable = false;
+			cp.IncludeDebugInformation = false;
+		    cp.GenerateInMemory = true;
+		    cp.ReferencedAssemblies.Add ("System.dll");
+			cp.ReferencedAssemblies.Add ("System.Xml");
+			
+			foreach (Type rtype in gen.ReferencedTypes)
+			{
+				if (!cp.ReferencedAssemblies.Contains (rtype.Assembly.Location))
+					cp.ReferencedAssemblies.Add (rtype.Assembly.Location);
+			}
+
+			CompilerResults res = comp.CompileAssemblyFromFile (cp, file);
+			if (res.Errors.Count > 0)
+			{
+				Console.WriteLine ("Error while compiling generated serializer");
+				foreach (CompilerError error in res.Errors)
+					Console.WriteLine (error);
+					
+				if (deleteTempFiles)
+					File.Delete (file);
+				return;
+			}
+			
+			GenerationResult[] results = gen.GenerationResults;
+			for (int n=0; n<results.Length; n++)
+			{
+				GenerationResult gres = results[n];
+				SerializerData sd = batch.Datas [n];
+				lock (sd)
+				{
+					sd.WriterType = res.CompiledAssembly.GetType (gres.Namespace + "." + gres.WriterClassName);
+					sd.ReaderType = res.CompiledAssembly.GetType (gres.Namespace + "." + gres.ReaderClassName);
+					sd.WriterMethod = sd.WriterType.GetMethod (gres.WriteMethodName);
+					sd.ReaderMethod = sd.ReaderType.GetMethod (gres.ReadMethodName);
+					sd.Batch = null;
+				}
+			}
+			
+			if (deleteTempFiles)
+				File.Delete (file);
+
+//			Console.WriteLine ("Generation finished - " + (DateTime.Now - tim).TotalMilliseconds + " ms");
+		}
+		
 #endregion // Methods
 	}
 }

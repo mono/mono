@@ -89,6 +89,16 @@ namespace System.Xml.Serialization
 				type = value;
 			}
 		}
-
+		
+		internal bool InternalEquals (XmlAttributeAttribute other)
+		{
+			if (other == null) return false;
+			
+			return (attributeName == other.attributeName &&
+					dataType == other.dataType &&
+					type == other.type &&
+					form == other.form &&
+					ns == other.ns);
+		}
 	}
 }

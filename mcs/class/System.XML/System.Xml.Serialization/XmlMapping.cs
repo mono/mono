@@ -18,6 +18,7 @@ namespace System.Xml.Serialization
 		ObjectMap map;
 		ArrayList relatedMaps;
 		SerializationFormat format;
+		SerializationSource source;
 
 		internal XmlMapping ()
 		{
@@ -39,6 +40,12 @@ namespace System.Xml.Serialization
 		{
 			get { return format; }
 			set { format = value; }
+		}
+		
+		internal SerializationSource Source
+		{
+			get { return source; }
+			set { source = value; }
 		}
 	}
 

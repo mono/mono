@@ -56,5 +56,13 @@ namespace System.Xml.Serialization
 				typeName = value; 
 			}
 		}
+		
+		internal bool InternalEquals (XmlTypeAttribute other)
+		{
+			if (other == null) return false;
+			return (includeInSchema == other.includeInSchema && 
+					typeName == other.typeName &&
+				    ns != other.ns);
+		}
 	}
 }

@@ -56,5 +56,17 @@ namespace System.Xml.Serialization
 			return new TypeMember(type, member);
 		}
 
+		internal bool InternalEquals (XmlAttributeOverrides other)
+		{
+			if (other == null) return false;
+			if (overrides.Count != other.overrides.Count) return false;
+			
+			foreach (DictionaryEntry entry in overrides)
+			{
+				XmlAttributes val = (XmlAttributes) other.overrides [entry.Key];
+				if (val == null || !val.Equals ((XmlAttributes) entry.Value)) return false;
+			}
+			return true;
+		}
 	}
 }

@@ -26,7 +26,6 @@ namespace System.Xml.Serialization
 		private bool isNullable = true;
 		private int nestingLevel;
 		private Type type;
-		private int order;
 
 		public XmlArrayItemAttribute ()
 		{
@@ -73,13 +72,18 @@ namespace System.Xml.Serialization
 			get { return nestingLevel; }
 			set { nestingLevel = value; }
 		}
-		/// <summary>
-		/// Specifies Order in which Memberswill be serialized as Elements.
-		/// </summary>
-		public int Order
+		
+		internal bool InternalEquals (XmlArrayItemAttribute other)
 		{
-			get{ return  order; }
-			set{ order = value; }
+			if (other == null) return false;
+			
+			return (dataType == other.dataType &&
+					elementName == other.elementName &&
+					form == other.form &&
+					ns == other.ns &&
+					isNullable == other.isNullable &&
+					nestingLevel == other.nestingLevel &&
+					type == other.type);
 		}
 	}
 }

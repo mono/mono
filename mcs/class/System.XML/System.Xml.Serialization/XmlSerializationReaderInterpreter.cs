@@ -55,7 +55,7 @@ namespace System.Xml.Serialization
 			throw new InvalidOperationException ("Type " + type + " not mapped");
 		}
 
-		public object ReadObject ()
+		public object ReadRoot ()
 		{
 			Reader.MoveToContent();
 			if (_typeMap is XmlTypeMapping)
@@ -291,7 +291,6 @@ namespace System.Xml.Serialization
 				FixupCallbackInfo info = new FixupCallbackInfo (this, map, isValueList);
 				fixup = new Fixup(ob, new XmlSerializationFixupCallback(info.FixupMembers), map.ElementMembers.Count);
 				AddFixup (fixup);
-				if (readByOrder) maxInd = map.ElementMembers.Count;
 			}
 
 			while (Reader.NodeType != System.Xml.XmlNodeType.EndElement && (ind < maxInd)) 

@@ -57,5 +57,15 @@ namespace System.Xml.Serialization
 		{
 			List.Remove(attribute);
 		}
+		
+		internal bool InternalEquals (XmlArrayItemAttributes other)
+		{
+			if (other == null) return false;
+			
+			if (Count != other.Count) return false;
+			for (int n=0; n<Count; n++)
+				if (!this[n].InternalEquals (other[n])) return false;
+			return true;
+		}
 	}
 }

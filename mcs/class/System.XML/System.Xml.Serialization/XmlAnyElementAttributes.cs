@@ -61,6 +61,16 @@ namespace System.Xml.Serialization
 		{
 			List.CopyTo(array, index);
 		}
+		
+		internal bool InternalEquals (XmlAnyElementAttributes other)
+		{
+			if (other == null) return false;
+			
+			if (Count != other.Count) return false;
+			for (int n=0; n<Count; n++)
+				if (!this[n].InternalEquals (other[n])) return false;
+			return true;
+		}
 	}
 
 }

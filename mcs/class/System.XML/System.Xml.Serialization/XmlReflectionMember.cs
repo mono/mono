@@ -80,6 +80,28 @@ namespace System.Xml.Serialization {
 			}
 			set { xmlAttributes = value; }
 		}
+		
+		internal bool InternalEquals (XmlReflectionMember other)
+		{
+			if (other == null) return false;
+			
+			if (isReturnValue != other.isReturnValue) return false;
+			if (memberName != other.memberName) return false;
+			if (memberType != other.memberType) return false;
+			if (overrideIsNullable != other.overrideIsNullable) return false;
+			
+			if (soapAttributes == null) {
+				if (other.soapAttributes != null) return false; }
+			else
+				if (!soapAttributes.InternalEquals (other.soapAttributes)) return false;
+			
+			if (xmlAttributes == null) {
+				if (other.xmlAttributes != null) return false; }
+			else
+				if (!xmlAttributes.InternalEquals (other.xmlAttributes)) return false;
+				
+			return true;
+		}
 
 		#endregion // Properties
 	}

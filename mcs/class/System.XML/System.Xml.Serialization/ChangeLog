@@ -1,3 +1,28 @@
+2004-02-24  Lluis Sanchez Gual  <lluis@ximian.com>
+
+	* SerializationCodeGenerator.cs: Added support for generation of readers
+	  and writers for several maps in a single class. Added support for
+	  XmlMemberMapping. Fixed generation of serializers that use encoded format.
+	* SoapAttributeAttribute.cs, SoapAttributeOverrides.cs, SoapAttributes.cs,
+	  SoapElementAttribute.cs, SoapEnumAttribute.cs, SoapTypeAttribute.cs, 
+	  XmlAnyElementAttribute.cs, XmlAnyElementAttributes.cs, XmlArrayAttribute.cs,
+	  XmlArrayItemAttribute.cs, XmlArrayItemAttributes.cs, XmlAttributeAttribute.cs,
+	  XmlAttributeOverrides.cs, XmlChoiceIdentifierAttribute.cs, XmlRootAttribute.cs,
+	  XmlElementAttribute.cs, XmlElementAttributes.cs, XmlEnumAttribute.cs,
+	  XmlReflectionMember.cs, XmlTextAttribute.cs, XmlTypeAttribute.cs:
+	  Added InternalEquals method.
+	* XmlAttributes.cs: Removed a lot of unused code. Added InternalEquals method.
+	* SoapReflectionImporter.cs: Set SerializationSource to generated maps.
+	* XmlCustomFormatter.cs: Fixed little bug.
+	* XmlMapping.cs: Added Source property. This a global identifier of the map.
+	* XmlReflectionImporter.cs: Set SerializationSource to generated maps.
+	* XmlSchemaImporter.cs: Set the correct value for IsNillable when importing
+	  mapping members.
+	* XmlSerializationReaderInterpreter.cs, XmlSerializationWriter.cs: Minor fixes.
+	* XmlSerializationWriterInterpreter.cs: WriteObject and WriteEnum were not
+	  correctly used.
+	* XmlSerializer.cs: Added support for generation of serializers.
+
 2004-02-18  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* SerializationCodeGenerator.cs,

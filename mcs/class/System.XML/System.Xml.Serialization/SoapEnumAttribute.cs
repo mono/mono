@@ -36,5 +36,10 @@ namespace System.Xml.Serialization
 				name = value; 
 			}
 		}
+		
+		internal bool InternalEquals (SoapEnumAttribute other)
+		{
+			return (other == null && name == other.name);
+		}
 	}
 }

@@ -57,5 +57,13 @@ namespace System.Xml.Serialization
 				ns = value;
 			}
 		}
+		
+		internal bool InternalEquals (SoapAttributeAttribute other)
+		{
+			if (other == null) return false;
+			return (attrName == other.attrName &&
+					dataType == other.dataType &&
+					ns == other.ns);
+		}
 	}
 }

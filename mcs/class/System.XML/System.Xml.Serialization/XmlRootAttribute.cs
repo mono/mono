@@ -69,5 +69,12 @@ namespace System.Xml.Serialization
 				ns = value; 
 			}
 		}
+		
+		internal bool InternalEquals (XmlRootAttribute other)
+		{
+			if (other == null) return false;
+			return (dataType == other.dataType && elementName == other.elementName &&
+				    isNullable == other.isNullable && ns == other.ns);
+		}
 	}
 }

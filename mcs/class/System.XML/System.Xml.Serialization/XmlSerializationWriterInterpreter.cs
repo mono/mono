@@ -33,13 +33,13 @@ namespace System.Xml.Serialization
 			{
 				foreach (XmlTypeMapping map in maps)  {
 					CallbackInfo info = new CallbackInfo (this, map);
-					if (map.TypeData.SchemaType == SchemaTypes.Enum) AddWriteCallback(map.TypeData.Type, map.XmlType, map.Namespace, new XmlSerializationWriteCallback (info.WriteObject));
-					else AddWriteCallback(map.TypeData.Type, map.XmlType, map.Namespace, new XmlSerializationWriteCallback (info.WriteEnum));
+					if (map.TypeData.SchemaType == SchemaTypes.Enum) AddWriteCallback(map.TypeData.Type, map.XmlType, map.Namespace, new XmlSerializationWriteCallback (info.WriteEnum));
+					else AddWriteCallback(map.TypeData.Type, map.XmlType, map.Namespace, new XmlSerializationWriteCallback (info.WriteObject));
 				}
 			}
 		}
 
-		public void WriteObject (object ob)
+		public void WriteRoot (object ob)
 		{
 			WriteStartDocument ();
 
@@ -488,12 +488,12 @@ namespace System.Xml.Serialization
 
 			internal void WriteObject (object ob)
 			{
-				_swi.WriteObject (_typeMap, ob, _typeMap.ElementName, _typeMap.Namespace, false, true, false);
+				_swi.WriteObject (_typeMap, ob, _typeMap.ElementName, _typeMap.Namespace, false, false, false);
 			}
 
 			internal void WriteEnum (object ob)
 			{
-				_swi.WriteObject (_typeMap, ob, _typeMap.ElementName, _typeMap.Namespace, false, false, false);
+				_swi.WriteObject (_typeMap, ob, _typeMap.ElementName, _typeMap.Namespace, false, true, false);
 			}
 		}
 

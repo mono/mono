@@ -93,6 +93,8 @@ namespace System.Xml.Serialization {
 			XmlMembersMapping mps = new XmlMembersMapping (elementName, ns, hasWrapperElement, false, mapping);
 			mps.RelatedMaps = relatedMaps;
 			mps.Format = SerializationFormat.Literal;
+			mps.Source = new MembersSerializationSource (elementName, hasWrapperElement, members, false, true, ns, includedTypes);
+			if (allowPrivateTypes) mps.Source.CanBeGenerated = false;
 			return mps;
 		}
 
@@ -137,6 +139,8 @@ namespace System.Xml.Serialization {
 
 			map.RelatedMaps = relatedMaps;
 			map.Format = SerializationFormat.Literal;
+			map.Source = new XmlTypeSerializationSource (type, root, attributeOverrides, defaultNamespace, includedTypes);
+			if (allowPrivateTypes) map.Source.CanBeGenerated = false;
 			return map;
 		}
 
@@ -263,6 +267,7 @@ namespace System.Xml.Serialization {
 				XmlTypeMapMember mem = classMap.XmlTextCollector;
 				if (mem.TypeData.Type != typeof(string) && 
 				   mem.TypeData.Type != typeof(string[]) && 
+				   mem.TypeData.Type != typeof(object[]) && 
 				   mem.TypeData.Type != typeof(XmlNode[]))
 				   
 					throw new InvalidOperationException (String.Format (errSimple2, map.TypeData.TypeName, mem.Name, mem.TypeData.TypeName));
@@ -695,7 +700,7 @@ namespace System.Xml.Serialization {
 				elem.IsNullable = att.IsNullable;
 				
 				if (elem.IsNullable && elem.TypeData.IsValueType)
-					throw new InvalidOperationException ("IsNullable may not be 'true' for value type " + elem.TypeData.FullTypeName);
+					throw new InvalidOperationException ("IsNullable may not be 'true' for value type " + elem.TypeData.FullTypeName + " in member '" + defaultName + "'");
 					
 				if (elem.TypeData.IsComplexType)
 				{

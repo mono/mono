@@ -70,7 +70,7 @@ namespace System.Xml.Serialization {
 		#endregion // Properties
 
 		#region Methods
-
+		
 		protected void AddWriteCallback (Type type, string typeName, string typeNs, XmlSerializationWriteCallback callback)
 		{
 			WriteCallbackInfo info = new WriteCallbackInfo ();

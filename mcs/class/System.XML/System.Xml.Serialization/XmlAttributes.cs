@@ -34,57 +34,8 @@ namespace System.Xml.Serialization
 		private XmlTextAttribute xmlText;
 		private XmlTypeAttribute xmlType;
 
-		private MemberInfo minfo;
-		private FieldInfo  finfo;
-		private PropertyInfo pinfo;
-		internal ArrayList XmlIncludes = new ArrayList();
-		//internal string ElementName;
-
-		//The element Order in serialization.
-		internal int order;
-		internal bool isAttribute;
-		internal static XmlAttributes.XmlAttributesComparer attrComparer;
-
-		//Sorting Order of Elements: XmlNs, XmlAttributes, XmlElement
-		internal class XmlAttributesComparer : IComparer
-		{
-			public int Compare(object x,object y)
-			{
-				if(x is XmlAttributes && y is XmlAttributes)
-				{
-					XmlAttributes attx = (XmlAttributes)x;
-					XmlAttributes atty = (XmlAttributes)y;
-					if(attx.xmlns)
-						return -1;
-					if(atty.xmlns)
-						return 1;
-					if(attx.isAttribute)
-						return -1;
-					if(atty.isAttribute)
-						return 1;
-					int diff = attx.order - atty.order;
-					if(diff == 0)
-						return 0;
-					if(diff > 0)
-						return 1;
-					if(diff < 0)
-						return -1;
-				}
-				if(x == null)
-					return -1;
-				if(y == null)
-					return 1;
-				throw new Exception("Should never occur. XmlAttributesComparer.Compare");
-			}
-		}
-
 		public XmlAttributes ()
 		{
-		}
-
-		static XmlAttributes ()
-		{
-			attrComparer = new XmlAttributes.XmlAttributesComparer();
 		}
 
 		public XmlAttributes (ICustomAttributeProvider provider)
@@ -262,197 +213,64 @@ namespace System.Xml.Serialization
 			}
 		}
 		#endregion
-
-		#region internal properties
-		internal MemberInfo MemberInfo
-		{
-			get { return  minfo; }
-			set { minfo = value; }
-		}
-
-		internal FieldInfo FieldInfo 
-		{
-			get { return  finfo; }
-			set { finfo = value; }
-		}
-
-		internal PropertyInfo PropertyInfo
-		{
-			get { return  pinfo; }
-			set { pinfo = value; }
-		}
-		#endregion
-
-		//Only permissible attributes for a class type are: XmlRoot and XmlInclude
-		internal static XmlAttributes FromClass(Type classType)
-		{
-			XmlAttributes XmlAttr = new XmlAttributes();
-			object[] attributes = classType.GetCustomAttributes(false);
-			foreach(object obj in attributes)
-			{
-				if(obj is XmlRootAttribute)
-					XmlAttr.xmlRoot = (XmlRootAttribute) obj;
-				else if(obj is XmlIncludeAttribute)
-					XmlAttr.XmlIncludes.Add(obj);
-			}
-			return XmlAttr;
-		}
-
-		internal static XmlAttributes FromField(MemberInfo member, FieldInfo finfo)
-		{
-			XmlAttributes XmlAttr = new XmlAttributes();
-			object[] attributes = member.GetCustomAttributes(false);
-			XmlAttr.AddMemberAttributes(attributes);
-
-			XmlAttr.minfo = member;
-			XmlAttr.finfo = finfo;
-
-			return XmlAttr;
-		}
-
 		
-		internal static XmlAttributes FromProperty(MemberInfo member, PropertyInfo pinfo)
+		internal bool InternalEquals (XmlAttributes other)
 		{
-
-			XmlAttributes XmlAttr = new XmlAttributes();
-			object[] attributes = member.GetCustomAttributes(false);
-			XmlAttr.AddMemberAttributes(attributes);
-
-			XmlAttr.minfo = member;
-			XmlAttr.pinfo = pinfo;
-			return XmlAttr;
-		}
-
-		internal void AddMemberAttributes(object[] attributes)
-		{
-			foreach(object obj in attributes)
-			{
-				if(obj is XmlAnyAttributeAttribute)
-				{
-					xmlAnyAttribute = (XmlAnyAttributeAttribute) obj;
-					isAttribute = true;	
-				}
-				else if(obj is XmlAttributeAttribute)
-				{
-					xmlAttribute = (XmlAttributeAttribute) obj;
-					isAttribute = true;
-				}
-				else if(obj is XmlNamespaceDeclarationsAttribute)
-				{
-					xmlns = true;
-					isAttribute = true;
-				}
-				else if(obj is XmlAnyElementAttribute)
-				{
-					xmlAnyElements.Add((XmlAnyElementAttribute) obj);
-					order = ((XmlAnyElementAttribute) obj).Order;
-				}
-				else if(obj is XmlArrayAttribute)
-				{
-					xmlArray = (XmlArrayAttribute) obj;
-					order = ((XmlArrayAttribute) obj).Order;
-				}
-				else if(obj is XmlArrayItemAttribute)
-				{
-					xmlArrayItems.Add((XmlArrayItemAttribute) obj);
-					order = ((XmlArrayItemAttribute) obj).Order;
-				}
-				else if(obj is XmlChoiceIdentifierAttribute)
-				{
-					xmlChoiceIdentifier = (XmlChoiceIdentifierAttribute) obj;
-					order = ((XmlChoiceIdentifierAttribute) obj).Order;
-				}
-				else if(obj is XmlTextAttribute)
-				{
-					xmlText = (XmlTextAttribute) obj;
-					order = ((XmlTextAttribute) obj).Order;
-				}
-				else if(obj is XmlElementAttribute )
-				{
-					xmlElements.Add((XmlElementAttribute ) obj);
-					order = ((XmlElementAttribute ) obj).Order;
-				}
-				else if(obj is DefaultValueAttribute)
-				{
-					xmlDefaultValue = ((DefaultValueAttribute ) obj).Value;
-				}
-				else if(obj is XmlEnumAttribute)
-				{
-					xmlEnum = (XmlEnumAttribute) obj;
-				}
-				else if(obj is XmlIgnoreAttribute)
-				{
-					xmlIgnore = true;
-				}
-				else if(obj is XmlRootAttribute)
-				{
-					throw new Exception("should never happen. XmlRoot on a member");
-				}
-				else if(obj is XmlTypeAttribute)
-				{
-					xmlType = (XmlTypeAttribute) obj;
-				}
-			}
-		}
-
-		internal string GetAttributeName(Type type, string defaultName)
-		{
-			if(XmlAttribute != null && XmlAttribute.AttributeName != null && XmlAttribute.AttributeName != "")
-				return XmlAttribute.AttributeName;
-			else if (XmlType != null && XmlType.TypeName != null && XmlType.TypeName != "")
-				return XmlType.TypeName;
-			return defaultName;
-		}
-
-		internal string GetElementName(Type type, string defaultName)
-		{
-			string anonymousElemAttrName = null;
-			foreach(XmlElementAttribute elem in XmlElements)
-			{
-				if(elem.Type == type && elem.ElementName != null && elem.ElementName != "")
-					return elem.ElementName;
-				else if(elem.Type == null && elem.ElementName != null && elem.ElementName != "")
-					anonymousElemAttrName = elem.ElementName;
-			}
-			if (anonymousElemAttrName != null)
-				return anonymousElemAttrName;
-
-			if (XmlType != null && XmlType.TypeName != null && XmlType.TypeName != "")
-				return XmlType.TypeName;
-			return defaultName;
-		}
-
-		internal string GetAttributeNamespace(Type type)
-		{
-			if(XmlAttribute != null)
-				return XmlAttribute.Namespace;
-			return null;
-		}
-
-		internal string GetElementNamespace(Type type)
-		{
-			string defaultNS = null;
-			foreach(XmlElementAttribute elem in XmlElements)
-			{
-				if(elem.Type == type )
-					return elem.Namespace;
-				else if(elem.Type == null)
-					defaultNS = elem.Namespace;
-			}
-			return defaultNS;
-		}
-
-		internal bool GetElementIsNullable (Type type)
-		{
-			bool defaultIsNullable = false;
-			foreach(XmlElementAttribute elem in XmlElements)
-			{
-				if(elem.Type == type)
-					return elem.IsNullable;
-				else if(elem.Type == null)
-					defaultIsNullable = elem.IsNullable;
-			}
-			return defaultIsNullable;
+			if (other == null) return false;
+			
+			if (xmlIgnore != other.xmlIgnore) return false;
+			if (xmlns != other.xmlns) return false;
+			
+			if (xmlAnyAttribute == null) {
+				if (other.xmlAnyAttribute != null) return false; }
+			else
+				if (other.xmlAnyAttribute == null) return false;
+			
+			if (!xmlAnyElements.Equals (other.xmlAnyElements)) return false; 
+			if (!xmlArrayItems.Equals (other.xmlArrayItems)) return false;
+			if (!xmlElements.Equals (other.xmlElements)) return false;
+				
+			if (xmlArray == null) {
+				if (other.xmlArray != null) return false; }
+			else
+				if (!xmlArray.InternalEquals (other.xmlArray)) return false;
+				
+			if (xmlAttribute == null) {
+				if (other.xmlAttribute != null) return false; }
+			else
+				if (!xmlAttribute.InternalEquals (other.xmlAttribute)) return false;
+				
+			if (xmlDefaultValue == null) {
+				if (other.xmlDefaultValue != null) return false; }
+			else
+				if (!xmlDefaultValue.Equals (other.xmlDefaultValue)) return false;
+				
+			if (xmlEnum == null) {
+				if (other.xmlEnum != null) return false; }
+			else
+				if (!xmlEnum.InternalEquals (other.xmlEnum)) return false;
+				
+			if (xmlRoot == null) {
+				if (other.xmlRoot != null) return false; }
+			else
+				if (!xmlRoot.InternalEquals (other.xmlRoot)) return false;
+				
+			if (xmlText == null) {
+				if (other.xmlText != null) return false; }
+			else
+				if (!xmlText.InternalEquals (other.xmlText)) return false;
+				
+			if (xmlType == null) {
+				if (other.xmlType != null) return false; }
+			else
+				if (!xmlType.InternalEquals (other.xmlType)) return false;
+				
+			if (xmlChoiceIdentifier == null) {
+				if (other.xmlChoiceIdentifier != null) return false; }
+			else
+				if (!xmlChoiceIdentifier.InternalEquals (other.xmlChoiceIdentifier)) return false;
+				
+			return true;
 		}
 	}
 }

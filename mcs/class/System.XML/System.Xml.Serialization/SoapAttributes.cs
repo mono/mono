@@ -84,5 +84,38 @@ namespace System.Xml.Serialization
 			get { return  soapType; } 
 			set { soapType = value; }
 		}
+		
+		internal bool InternalEquals (SoapAttributes other)
+		{
+			if (other == null) return false;
+			if (soapIgnore != other.soapIgnore) return false;
+			
+			if (soapAttribute == null) {
+				if (other.soapAttribute != null) return false; }
+			else
+				if (!soapAttribute.InternalEquals (other.soapAttribute)) return false;
+				
+			if (soapElement == null) {
+				if (other.soapElement != null) return false; }
+			else
+				if (!soapElement.InternalEquals (other.soapElement)) return false;
+				
+			if (soapEnum == null) {
+				if (other.soapEnum != null) return false; }
+			else
+				if (!soapEnum.InternalEquals (other.soapEnum)) return false;
+				
+			if (soapType == null) {
+				if (other.soapType != null) return false; }
+			else
+				if (!soapType.InternalEquals (other.soapType)) return false;
+				
+			if (soapDefaultValue == null) {
+				if (other.soapDefaultValue != null) return false; }
+			else
+				if (!soapDefaultValue.Equals (other.soapDefaultValue)) return false;
+				
+			return true;
+		}	
 	}
 }

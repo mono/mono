@@ -69,6 +69,7 @@ namespace System.Xml.Serialization {
 			XmlMembersMapping mps = new XmlMembersMapping (elementName, ns, hasWrapperElement, writeAccessors, mapping);
 			mps.RelatedMaps = relatedMaps;
 			mps.Format = SerializationFormat.Encoded;
+			mps.Source = new MembersSerializationSource (elementName, hasWrapperElement, members, writeAccessors, false, null, includedTypes);
 			return mps;
 		}
 
@@ -101,6 +102,7 @@ namespace System.Xml.Serialization {
 			}
 			map.RelatedMaps = relatedMaps;
 			map.Format = SerializationFormat.Encoded;
+			map.Source = new SoapTypeSerializationSource (type, attributeOverrides, defaultNamespace, includedTypes);
 			return map;
 		}
 

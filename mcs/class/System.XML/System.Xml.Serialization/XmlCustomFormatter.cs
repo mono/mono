@@ -255,7 +255,7 @@ namespace System.Xml.Serialization {
 			switch (type.XmlType)
 			{
 				case "boolean": return "XmlConvert.ToBoolean (" + value + ")";
-				case "unsignedByte": return "SByte.Parse(" + value + ")";
+				case "unsignedByte": return "byte.Parse(" + value + ")";
 				case "char": return "(char)Int32.Parse (" + value + ")";
 				case "dateTime": return "XmlConvert.ToDateTime (" + value + ")";
 				case "date": return "DateTime.ParseExact (" + value + ", \"yyyy-MM-dd\", null)";

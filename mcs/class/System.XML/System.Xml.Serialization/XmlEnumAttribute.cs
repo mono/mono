@@ -37,5 +37,10 @@ namespace System.Xml.Serialization
 			}
 		}
 
+		internal bool InternalEquals (XmlEnumAttribute other)
+		{
+			if (other == null) return false;
+			return name == other.name;
+		}
 	}
 }
