@@ -1,3 +1,8 @@
+2002-10-29  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
+
+	* XmlElementTests.cs : added an Assert InnerXml with element content.
+	* XmlNodeTests.cs : TestInsertBefore() and TestInsertAfter()
+
 2002-10-28  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
 
 	* added XmlDocumentFragmentTests.cs

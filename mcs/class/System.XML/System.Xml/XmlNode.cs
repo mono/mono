@@ -204,19 +204,26 @@ namespace System.Xml
 
 		public virtual XmlNode AppendChild (XmlNode newChild)
 		{
-			XmlDocument ownerDoc = (NodeType == XmlNodeType.Document) ? (XmlDocument)this : OwnerDocument;
+			// I assume that AppendChild(n) equals to InsertAfter(n, this.LastChild) or InsertBefore(n, null)
+			return InsertBefore(newChild, null);
+
+			// Below are formerly used logic.
+/*			XmlDocument ownerDoc = (NodeType == XmlNodeType.Document) ? (XmlDocument)this : OwnerDocument;
 
 			if (NodeType == XmlNodeType.Document || NodeType == XmlNodeType.Element || NodeType == XmlNodeType.Attribute || NodeType == XmlNodeType.DocumentFragment) {
 				
-				ownerDoc.onNodeInserting (newChild, this);
-
-				// If newChild is already on the tree, then it was removed from current position.
-				// But test fails, so kept alive in the meantime;)
-				if(newChild.ParentNode != null)
-					newChild.ParentNode.RemoveChild(newChild);
+				if (IsReadOnly)
+					throw new ArgumentException ("The specified node is readonly.");
 
 				if (newChild.OwnerDocument != ownerDoc)
 					throw new ArgumentException ("Can't append a node created by another document.");
+
+				// checking validity finished. then appending...
+
+				ownerDoc.onNodeInserting (newChild, this);
+
+				if(newChild.ParentNode != null)
+					newChild.ParentNode.RemoveChild(newChild);
 
 				if(newChild.NodeType == XmlNodeType.DocumentFragment)
 				{
@@ -251,12 +258,12 @@ namespace System.Xml
 				return newChild;
 			} else
 				throw new InvalidOperationException();
-		}
+*/		}
 
-		[MonoTODO]
 		public virtual XmlNode Clone ()
 		{
-			throw new NotImplementedException ();
+			// By MS document, it is equivalent to CloneNode(true).
+			return this.CloneNode(true);
 		}
 
 		public abstract XmlNode CloneNode (bool deep);
@@ -272,16 +279,20 @@ namespace System.Xml
 			return new XmlNodeListChildren(this).GetEnumerator();
 		}
 
-		[MonoTODO]
+//		[MonoTODO]
 		public virtual string GetNamespaceOfPrefix (string prefix)
 		{
-			throw new NotImplementedException ();
+			XmlNamespaceManager nsmgr = ConstructNamespaceManager();
+			return nsmgr.LookupNamespace(prefix);
+//			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
+//		[MonoTODO]
 		public virtual string GetPrefixOfNamespace (string namespaceURI)
 		{
-			throw new NotImplementedException ();
+			XmlNamespaceManager nsmgr = ConstructNamespaceManager();
+			return nsmgr.LookupPrefix(namespaceURI);
+//			throw new NotImplementedException ();
 		}
 
 		object ICloneable.Clone ()
@@ -297,13 +308,97 @@ namespace System.Xml
 		[MonoTODO]
 		public virtual XmlNode InsertAfter (XmlNode newChild, XmlNode refChild)
 		{
-			throw new NotImplementedException ();
+			// I assume that insertAfter(n1, n2) equals to InsertBefore(n1, n2.PreviousSibling).
+
+			// I took this way because rather than calling InsertAfter() from InsertBefore()
+			//   because current implementation of 'NextSibling' looks faster than 'PreviousSibling'.
+			XmlNode argNode = (refChild == null) ? null : refChild.NextSibling;
+			return InsertBefore(newChild, argNode);
 		}
 
 		[MonoTODO]
 		public virtual XmlNode InsertBefore (XmlNode newChild, XmlNode refChild)
 		{
-			throw new NotImplementedException ();
+			XmlDocument ownerDoc = (NodeType == XmlNodeType.Document) ? (XmlDocument)this : OwnerDocument;
+
+			if (NodeType == XmlNodeType.Document || NodeType == XmlNodeType.Element || NodeType == XmlNodeType.Attribute || NodeType == XmlNodeType.DocumentFragment) 
+			{			
+				if (IsReadOnly)
+					throw new ArgumentException ("The specified node is readonly.");
+
+				if (newChild.OwnerDocument != ownerDoc)
+					throw new ArgumentException ("Can't append a node created by another document.");
+
+				if(refChild != null)
+				{
+					if(newChild.OwnerDocument != refChild.OwnerDocument)
+						throw new ArgumentException ("argument nodes are on the different documents.");
+
+					if(refChild == ownerDoc.DocumentElement && (newChild is XmlElement || newChild is XmlCharacterData || newChild is XmlEntityReference))
+						throw new XmlException("cannot insert this node to this position.");
+				}
+				// checking validity finished. then appending...
+
+				ownerDoc.onNodeInserting (newChild, this);
+
+				if(newChild.ParentNode != null)
+					newChild.ParentNode.RemoveChild(newChild);
+
+				if(newChild.NodeType == XmlNodeType.DocumentFragment)
+				{
+					int x = newChild.ChildNodes.Count;
+					for(int i=0; i<x; i++)
+					{
+						// When this logic became to remove children in order, then index will have never to increments.
+						XmlNode n = newChild.ChildNodes[0];
+						this.InsertBefore(n, refChild);	// recursively invokes events. (It is compatible with MS implementation.)
+					}
+				}
+				else
+				{
+					XmlLinkedNode newLinkedChild = (XmlLinkedNode) newChild;
+					XmlLinkedNode lastLinkedChild = LastLinkedChild;
+
+					newLinkedChild.parentNode = this;
+
+					if(refChild == null)
+					{
+						// append last, so:
+						// * set nextSibling of previous lastchild to newChild
+						// * set lastchild = newChild
+						// * set next of newChild to firstChild
+						if(LastLinkedChild != null)
+						{
+							XmlLinkedNode formerFirst = FirstChild as XmlLinkedNode;
+							LastLinkedChild.NextLinkedSibling = newLinkedChild;
+							LastLinkedChild = newLinkedChild;
+							newLinkedChild.NextLinkedSibling = formerFirst;
+						}
+						else
+						{
+							LastLinkedChild = newLinkedChild;
+							LastLinkedChild.NextLinkedSibling = newLinkedChild;	// FirstChild
+						}
+					}
+					else
+					{
+						// append not last, so:
+						// * if newchild is first, then set next of lastchild is newChild.
+						//   otherwise, set next of previous sibling to newChild
+						// * set next of newChild to refChild
+						XmlLinkedNode prev = refChild.PreviousSibling as XmlLinkedNode;
+						if(prev == null)
+							LastLinkedChild.NextLinkedSibling = newLinkedChild;
+						else
+							prev.NextLinkedSibling = newLinkedChild;
+						newLinkedChild.NextLinkedSibling = refChild as XmlLinkedNode;
+					}
+					ownerDoc.onNodeInserted (newChild, newChild.ParentNode);
+				}
+				return newChild;
+			} 
+			else
+				throw new InvalidOperationException();
 		}
 
 		[MonoTODO]
@@ -329,6 +424,9 @@ namespace System.Xml
 
 		public virtual XmlNode RemoveChild (XmlNode oldChild)
 		{
+			if(oldChild.ParentNode != this)
+				throw new XmlException("specified child is not child of this node.");
+
 			OwnerDocument.onNodeRemoving (oldChild, oldChild.ParentNode);
 
 			if (NodeType == XmlNodeType.Document || NodeType == XmlNodeType.Element || NodeType == XmlNodeType.Attribute || NodeType == XmlNodeType.DocumentFragment) 
@@ -501,7 +599,7 @@ namespace System.Xml
 		// It parses this and all the ancestor elements,
 		// find 'xmlns' declarations, stores and then return them.
 		// TODO: tests
-		internal protected XmlNamespaceManager ConstructNamespaceManager()
+		internal XmlNamespaceManager ConstructNamespaceManager()
 		{
 			XmlDocument doc = this is XmlDocument ? (XmlDocument)this : this.OwnerDocument;
 			XmlNamespaceManager nsmgr = new XmlNamespaceManager(doc.NameTable);
@@ -523,7 +621,7 @@ namespace System.Xml
 			{			
 				foreach(XmlAttribute attr in el.Attributes)
 				{
-					if(attr.Prefix == "xmlns")
+					if(attr.Prefix == "xmlns" || (attr.Name == "xmlns" && attr.Prefix == String.Empty))
 					{
 						if(nsmgr.LookupNamespace(attr.LocalName) == null )
 						{

@@ -221,11 +221,9 @@ namespace System.Xml
 			throw new NotImplementedException ();
 		}
 
-//		[MonoTODO]
 		public virtual XmlDocumentFragment CreateDocumentFragment ()
 		{
 			return new XmlDocumentFragment(this);
-//			throw new NotImplementedException ();
 		}
 
 		public virtual XmlDocumentType CreateDocumentType (string name, string publicId,

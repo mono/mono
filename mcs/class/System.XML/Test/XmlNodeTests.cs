@@ -106,6 +106,40 @@ namespace MonoTests.System.Xml
 */
 		}
 
+		public void TestInsertBefore()
+		{
+			document = new XmlDocument();
+			document.LoadXml("<root><sub /></root>");
+			XmlElement docelem = document.DocumentElement;
+			docelem.InsertBefore(document.CreateElement("good_child"), docelem.FirstChild);
+			AssertEquals("InsertBefore.Normal", "good_child", docelem.FirstChild.Name);
+			try {
+				document.InsertBefore(document.CreateElement("BAD_MAN"), docelem);
+				Fail("#InsertBefore.BadPositionButNoError.1");
+			}
+			catch(XmlException) {}
+		}
+
+		public void TestInsertAfter()
+		{
+			document = new XmlDocument();
+			document.LoadXml("<root><sub1 /><sub2 /></root>");
+			XmlElement docelem = document.DocumentElement;
+			XmlElement newelem = document.CreateElement("good_child");
+			docelem.InsertAfter(newelem, docelem.FirstChild);
+			AssertEquals("InsertAfter.Normal", 3, docelem.ChildNodes.Count);
+			AssertEquals("InsertAfter.First", "sub1", docelem.FirstChild.Name);
+			AssertEquals("InsertAfter.Last", "sub2", docelem.LastChild.Name);
+			AssertEquals("InsertAfter.Prev", "good_child", docelem.FirstChild.NextSibling.Name);
+			AssertEquals("InsertAfter.Next", "good_child", docelem.LastChild.PreviousSibling.Name);
+			try 
+			{
+				document.InsertBefore(document.CreateElement("BAD_MAN"), docelem);
+				Fail("#InsertBefore.BadPositionButNoError.1");
+			}
+			catch(XmlException) {}
+		}
+
 		public void saveTestRemoveAll ()
 		{
 			// TODO:  put this test back in when AttributeCollection.RemoveAll() is implemented.

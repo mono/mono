@@ -125,7 +125,9 @@ namespace MonoTests.System.Xml
 			AssertEquals ("bar<!--squonk-->", element.InnerXml);
 			AssertEquals ("<foo baz=\"quux\">bar<!--squonk--></foo>", element.OuterXml);
 
-
+			element.RemoveAll();
+			element.AppendChild(document.CreateElement("hoge"));
+			AssertEquals ("<hoge />", element.InnerXml);
 		}
 
 		public void TestSetGetAttribute ()

@@ -18,7 +18,6 @@ namespace System.Xml
 		#region Fields
 
 		private XmlAttributeCollection attributes;
-		private XmlLinkedNode lastLinkedChild;
 		private string localName;
 		private string namespaceURI;
 		private string prefix;
@@ -97,12 +96,6 @@ namespace System.Xml
 			set { throw new NotImplementedException (); }
 		}
 
-		internal override XmlLinkedNode LastLinkedChild {
-			get { return lastLinkedChild; }
-
-			set { lastLinkedChild = value; }
-		}
-		
 		public override string LocalName {
 			get { return localName; }
 		}

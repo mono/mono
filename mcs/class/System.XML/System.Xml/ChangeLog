@@ -1,3 +1,18 @@
+2002-10-31  Atsushi Enomoto <gigna@kit.hi-ho.ne.jp>
+
+	* XmlDocument.cs : implemented CreateDocumentFragment()
+	* XmlElement.cs, XmlLinkedNode.cs :
+		moved LastLinkedChild from XmlElement to XmlLinkedNode.
+	* XmlEntityReference.cs : must throw NotImplementedException.
+	* XmlNode.cs :
+	      + implemented InsertBefore() and then implemented InsertAfter()
+		and modified AppendChild() to call it.
+	      + added logic to check ReadOnly, parent document equivalence,
+		and inserting any 'content' before/after DocumentElement.
+	      + implemented Clone() [it is equals to CloneNode() by MS doc.]
+	      + added logic in RemoveChild() to check parent of oldChild.
+	      + fixed ConstructNamespaceManager() to internal only.
+
 2002-10-29  Atsushi Enomoto <gigna@kit.hi-ho.ne.jp>
 
 	* XmlAttribute.cs : add internal 'IsDefault' property

@@ -62,11 +62,13 @@ namespace System.Xml
 		[MonoTODO]
 		public override void WriteContentTo (XmlWriter w)
 		{
+			throw new NotImplementedException();
 		}
 
 		[MonoTODO]
 		public override void WriteTo (XmlWriter w)
 		{
+			throw new NotImplementedException();
 		}
 	}
 }
