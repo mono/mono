@@ -600,6 +600,54 @@ public class SortedListTest : Assertion {
         }
 
         [Test]
+        public void TestIndexer ()
+        {
+                SortedList list = new SortedList ();
+
+                list.Add (1, new Queue ());
+                list.Add (2, new Hashtable ());
+                list.Add (3, new Stack ());
+
+                AssertEquals (typeof (Queue), list [1].GetType ());
+                AssertEquals (typeof (Hashtable), list [2].GetType ());
+                AssertEquals (typeof (Stack), list [3].GetType ());                
+        }
+
+        [Test]
+        public void TestEnumerator ()
+        {
+                SortedList list = new SortedList ();
+
+                list.Add (1, new Queue ());
+                list.Add (2, new Hashtable ());
+                list.Add (3, new Stack ());
+
+                foreach (DictionaryEntry d in list) {
+
+                        int key = (int) d.Key;
+                        Type value = d.Value.GetType ();
+
+                        switch (key) {
+                        case 1:
+                                AssertEquals (typeof (Queue), value);
+                                break;
+
+                        case 2:
+                                AssertEquals (typeof (Hashtable), value);
+                                break;
+
+                        case 3:
+                                AssertEquals (typeof (Stack), value);
+                                break;
+
+                        default:
+                                Fail ("This is incorrect: " + value.FullName);
+                                break;
+                        }
+                }
+        }
+
+        [Test]
 	public void TestRemove() {
 		SortedList sl1 = new SortedList(24);
 		string s=null;

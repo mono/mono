@@ -3,6 +3,8 @@
 // 
 // Author:
 //   Sergey Chaban (serge@wildwestsoftware.com)
+//   Duncan Mak (duncan@ximian.com)
+//   Herve Poussineau (hpoussineau@fr.st
 // 
 
 
@@ -29,7 +31,7 @@ namespace System.Collections {
 
 		private readonly static int INITIAL_SIZE = 16;
 
-		public enum EnumeratorMode : int {KEY_MODE = 0, VALUE_MODE}
+		public enum EnumeratorMode : int { KEY_MODE = 0, VALUE_MODE, ENTRY_MODE }
 
 		private int inUse;
 		private int modificationCount;
@@ -196,7 +198,7 @@ namespace System.Collections {
 
 		IEnumerator IEnumerable.GetEnumerator ()
 		{
-			return new Enumerator (this, EnumeratorMode.KEY_MODE);
+			return new Enumerator (this, EnumeratorMode.ENTRY_MODE);
 		}
 
 
@@ -230,7 +232,7 @@ namespace System.Collections {
 
 		public virtual IDictionaryEnumerator GetEnumerator ()
 		{
-			return new Enumerator (this, EnumeratorMode.KEY_MODE);
+			return new Enumerator (this, EnumeratorMode.ENTRY_MODE);
 		}
 
 		public virtual void Remove (object key)
@@ -585,7 +587,7 @@ namespace System.Collections {
 
 			private object currentKey;
 			private object currentValue;
-				
+
 			bool invalid = false;
 
 			private readonly static string xstr = "SortedList.Enumerator: snapshot out of sync.";
@@ -600,7 +602,7 @@ namespace System.Collections {
 			}
 
 			public Enumerator (SortedList host)
-			: this (host, EnumeratorMode.KEY_MODE)
+			: this (host, EnumeratorMode.ENTRY_MODE)
 			{
 			}
 
@@ -665,10 +667,18 @@ namespace System.Collections {
 				get {
 					if (invalid || pos >= size || pos == -1)
 						throw new InvalidOperationException (xstr);
-					
-					return (mode == EnumeratorMode.KEY_MODE)
-					        ? currentKey
-					        : currentValue;
+
+					switch (mode) {
+                                        case EnumeratorMode.KEY_MODE:
+                                                return currentKey;
+                                        case EnumeratorMode.VALUE_MODE:
+                                                return currentValue;
+                                        case EnumeratorMode.ENTRY_MODE:
+                                                return this.Entry;
+
+                                        default:
+                                                throw new NotSupportedException (mode + " is not a supported mode.");
+                                        }
 				}
 			}
 		}

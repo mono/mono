@@ -1,3 +1,8 @@
+2003-06-13  Herve Poussineau  <hpoussineau@fr.st>
+
+	* SortedList.cs: Can enumerate on DictionaryEntries, not only on
+	keys on values. Enumerate by default on DictionaryEntries.
+
 2003-06-12  Duncan Mak  <duncan@ximian.com>
 
 	* Hashtable.cs (constructor):

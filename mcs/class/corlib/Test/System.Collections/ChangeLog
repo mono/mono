@@ -1,3 +1,10 @@
+2003-06-14  Duncan Mak  <duncan@ximian.com>
+
+	* SortedListTest.cs
+	(TestIndexer):
+	(TestEnumerator): Incorporated these two tests from Philippe
+	Lavoie <philippe.lavoie@cactus.ca>.
+
 2003-06-12  Duncan Mak  <duncan@ximian.com>
 
 	* HashtableTest.cs: Converted it to the new style of NUnit tests.
