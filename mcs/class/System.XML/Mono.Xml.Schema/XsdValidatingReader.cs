@@ -57,6 +57,7 @@ namespace Mono.Xml.Schema
 
 		ArrayList keyTables = new ArrayList ();
 		ArrayList currentKeyFieldConsumers;
+		ArrayList tmpKeyrefPool;
 
 		XsdValidationStateManager stateManager =
 			new XsdValidationStateManager ();
@@ -74,11 +75,6 @@ namespace Mono.Xml.Schema
 		XmlQualifiedName attrQName;
 
 		ArrayList elementQNameStack = new ArrayList ();
-
-		// Property Cache.
-
-		// Validation engine cached object
-		ArrayList tmpKeyrefPool;
 
 #region .ctor
 		public XsdValidatingReader (XmlReader reader)
@@ -1724,10 +1720,13 @@ namespace Mono.Xml.Schema
 
 			public void PopScope ()
 			{
-				XsdValidationContext restored = (XsdValidationContext) contextStack.Pop ();
-				this.Element = restored.Element;
-				this.State = restored.State;
-				this.XsiType = restored.XsiType;
+				// FIXME: this count check should not be required, so check the behavior.
+				if (contextStack.Count > 0) {
+					XsdValidationContext restored = (XsdValidationContext) contextStack.Pop ();
+					this.Element = restored.Element;
+					this.State = restored.State;
+					this.XsiType = restored.XsiType;
+				}
 			}
 
 			public void EvaluateStartElement (

@@ -1,5 +1,10 @@
 2004-12-09  Atsushi Enomoto <atsushi@ximian.com>
 
+	* XsdValidatingReader.cs : mhm, something is wrong with call to
+	  context.PopScope(). So quick fix and marked as FIXME.
+
+2004-12-09  Atsushi Enomoto <atsushi@ximian.com>
+
 	* XsdParticleValidationState.cs : removed unused enum.
 	* XsdValidatingReader.cs : more refactoring. Validation process is
 	  now strictly done only when not skipping (no side effect).
