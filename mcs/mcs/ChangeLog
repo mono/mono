@@ -1,3 +1,19 @@
+2001-10-31  Ravi Pratap  <ravi@ximian.com>
+
+	* support.cs (InternalParameters): Get rid of crap taking in duplicate info. We
+	now take a TypeContainer and a Parameters object.
+
+	(ParameterData): Modify return type of ParameterModifier method to be 
+	Parameter.Modifier and not a string.
+
+	(ReflectionParameters, InternalParameters): Update accordingly.
+
+	* expression.cs (Argument::GetParameterModifier): Same here.
+
+	* support.cs (InternalParameters::ParameterType): Find a better way of determining
+	if we are a ref/out parameter. Actually, the type shouldn't be holding the '&'
+	symbol in it at all so maybe this is only for now.
+
 2001-10-30  Ravi Pratap  <ravi@ximian.com>
 
 	* support.cs (InternalParameters): Constructor now takes an extra argument 

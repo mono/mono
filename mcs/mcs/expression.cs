@@ -3529,15 +3529,15 @@ namespace CIR {
 			}
 		}
 
-		public string GetParameterModifier ()
+		public Parameter.Modifier GetParameterModifier ()
 		{
 			if (ArgType == AType.Ref)
-				return "REF";
+				return Parameter.Modifier.REF;
 
 			if (ArgType == AType.Out)
-				return "OUT";
+				return Parameter.Modifier.OUT;
 
-			return "NONE";
+			return Parameter.Modifier.NONE;
 		}
 
 	        public static string FullDesc (Argument a)

@@ -19,7 +19,7 @@ namespace CIR {
 		Type ParameterType (int pos);
 		int  Count { get; }
 		string ParameterDesc (int pos);
-		string ParameterModifier (int pos);
+		Parameter.Modifier ParameterModifier (int pos);
 	}
 
 	public class ReflectionParameters : ParameterData {
@@ -51,12 +51,12 @@ namespace CIR {
 			
 		}
 
-		public string ParameterModifier (int pos)
+		public Parameter.Modifier ParameterModifier (int pos)
 		{
 			if (pi [pos].IsOut)
-				return "OUT";
+				return Parameter.Modifier.OUT;
 
-			return "NONE";
+			return Parameter.Modifier.NONE;
 		}
 
 		public int Count {
@@ -68,34 +68,36 @@ namespace CIR {
 	}
 
 	public class InternalParameters : ParameterData {
-		Type [] pars;
+		Type [] param_types;
 
 		Parameters parameters;
 		
-		public InternalParameters (Type [] pars, Parameters parameters)
+		public InternalParameters (TypeContainer tc, Parameters parameters)
 		{
-			this.pars = pars;
+			this.param_types = parameters.GetParameterInfo (tc);
 			this.parameters = parameters;
 		}
 
 		public int Count {
 			get {
-				if (pars == null)
+				if (param_types == null)
 					return 0;
 
-				return pars.Length;
+				return param_types.Length;
 			}
 		}
 
 		public Type ParameterType (int pos)
 		{
-			if (pars == null)
+			if (param_types == null)
 				return null;
 
-			Type t = pars [pos];
+			Parameter p = parameters.FixedParameters [pos];
+			Type t = param_types [pos];
 			string name = t.FullName;
 			
-			if (name.IndexOf ("&") != -1)
+			if (p.ModFlags == Parameter.Modifier.REF ||
+			    p.ModFlags == Parameter.Modifier.OUT)
 				t = Type.GetType (name.Substring (0, name.Length - 1));
 			
 			return t;
@@ -116,9 +118,9 @@ namespace CIR {
 			return tmp + TypeManager.CSharpName (t);
 		}
 
-		public string ParameterModifier (int pos)
+		public Parameter.Modifier ParameterModifier (int pos)
 		{
-			return parameters.FixedParameters [pos].ModFlags.ToString ();
+			return parameters.FixedParameters [pos].ModFlags;
 		}
 		
 	}
