@@ -1,3 +1,8 @@
+2004-04-01  Jackson Harper  <jackson@ximian.com>
+
+	* Driver.cs: The parser now needs to take a scanner object in its
+	constructor so it can set a flag when parsing byte arrays.
+	
 2004-02-18  Jackson Harper <jackson@ximian.com>
 
 	* ilasm.exe.sources: Add ExternTypeRefInst to the build.

@@ -104,7 +104,7 @@ namespace Mono.ILASM {
                                         return;
                                 }
 
-                                ILParser parser = new ILParser (codegen, reader);
+                                ILParser parser = new ILParser (codegen, scanner);
                                 try {
                                         if (show_parser)
                                                 parser.yyparse (new ScannerAdapter (scanner),
