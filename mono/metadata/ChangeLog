@@ -1,4 +1,10 @@
 
+Mon Sep 16 18:57:13 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* monosn.c, Makefile.am: added strong name utility.
+	* reflection.h, reflection.c: implemented delayed signing,
+	locale, version and hash id assembly attributes.
+
 Mon Sep 16 18:51:47 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
 	* loader.c, metadata.c: load param attributes in signatures.
