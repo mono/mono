@@ -1,3 +1,7 @@
+2004-02-05  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* ThreadTest.cs: Added unit tests for CurrentPrincipal.
+
 2003-01-28  Nick Drochak <ndrochak@gol.com>
 
         * MutexTest.cs: Ignore tests that hang mono.

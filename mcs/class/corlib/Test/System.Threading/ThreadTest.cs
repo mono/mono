@@ -1,20 +1,78 @@
 // ThreadTest.cs - NUnit Test Cases for the System.Threading.Thread class
 //
-// Eduardo Garcia Cebollero (kiwnix@yahoo.es)
+// Authors
+//	Eduardo Garcia Cebollero (kiwnix@yahoo.es)
+//	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) Eduardo Garcia Cebollero.
 // (C) Ximian, Inc.  http://www.ximian.com
+// (C) 2004 Novell (http://www.novell.com)
 //
 
 using NUnit.Framework;
 using System;
+using System.Security.Principal;
 using System.Threading;
 
-namespace MonoTests.System.Threading
-{
-	[Ignore("these tests fail randomly")]
-	public class ThreadTest : TestCase
-	{
+namespace MonoTests.System.Threading {
+
+	public class ThreadedPrincipalTest : Assertion {
+
+		public static void NoPrincipal () 
+		{
+			AppDomain.CurrentDomain.SetPrincipalPolicy (PrincipalPolicy.NoPrincipal);
+			IPrincipal p = Thread.CurrentPrincipal;
+			AssertNull ("Thread.CurrentPrincipal-1", p);
+
+			Thread.CurrentPrincipal = new GenericPrincipal (new GenericIdentity ("mono"), null);
+			AssertNotNull ("Thread.CurrentPrincipal-2", Thread.CurrentPrincipal);
+
+			Thread.CurrentPrincipal = null;
+			AssertNull ("Thread.CurrentPrincipal-3", Thread.CurrentPrincipal);
+			// in this case we can return to null
+		}
+
+		public static void UnauthenticatedPrincipal () 
+		{
+			AppDomain.CurrentDomain.SetPrincipalPolicy (PrincipalPolicy.UnauthenticatedPrincipal);
+			IPrincipal p = Thread.CurrentPrincipal;
+			AssertNotNull ("Thread.CurrentPrincipal", p);
+			Assert ("Type", (p is GenericPrincipal));
+			AssertEquals ("Name", String.Empty, p.Identity.Name);
+			AssertEquals ("AuthenticationType", String.Empty, p.Identity.AuthenticationType);
+			Assert ("IsAuthenticated", !p.Identity.IsAuthenticated);
+
+			Thread.CurrentPrincipal = new GenericPrincipal (new GenericIdentity ("mono"), null);
+			AssertNotNull ("Thread.CurrentPrincipal-2", Thread.CurrentPrincipal);
+
+			Thread.CurrentPrincipal = null;
+			AssertNotNull ("Thread.CurrentPrincipal-3", Thread.CurrentPrincipal);
+			// in this case we can't return to null
+		}
+
+		public static void WindowsPrincipal () 
+		{
+			AppDomain.CurrentDomain.SetPrincipalPolicy (PrincipalPolicy.WindowsPrincipal);
+			IPrincipal p = Thread.CurrentPrincipal;
+			AssertNotNull ("Thread.CurrentPrincipal", p);
+			Assert ("Type", (p is WindowsPrincipal));
+			Assert ("Name", (p.Identity.Name.IndexOf (@"\") > 0)); // DOMAIN\User
+			AssertEquals ("AuthenticationType", "NTLM", p.Identity.AuthenticationType);
+			Assert ("IsAuthenticated", p.Identity.IsAuthenticated);
+
+			// note: we can switch from a WindowsPrincipal to a GenericPrincipal
+			Thread.CurrentPrincipal = new GenericPrincipal (new GenericIdentity ("mono"), null);
+			AssertNotNull ("Thread.CurrentPrincipal-2", Thread.CurrentPrincipal);
+
+			Thread.CurrentPrincipal = null;
+			AssertNotNull ("Thread.CurrentPrincipal-3", Thread.CurrentPrincipal);
+			// in this case we can't return to null
+		}
+	}
+
+	[TestFixture]
+	public class ThreadTest : Assertion {
+
 		//Some Classes to test as threads
 		private class C1Test
 		{
@@ -47,6 +105,7 @@ namespace MonoTests.System.Threading
 				endm2 = true;
 			}
 		}
+
 		private class C2Test
 		{
 			public int cnt;
@@ -130,6 +189,7 @@ namespace MonoTests.System.Threading
 			}
 		}
 
+		[Ignore("these tests fail randomly")]
 		public void TestCtor1()
 		{			
 			C1Test test1 = new C1Test();
@@ -143,6 +203,7 @@ namespace MonoTests.System.Threading
 			}
 		}
 
+		[Ignore("these tests fail randomly")]
 		public void TestStart()
 		{
 		{
@@ -186,6 +247,7 @@ namespace MonoTests.System.Threading
 		}
 		}
 
+		[Ignore("these tests fail randomly")]
 		public void TestApartment()
 		{
 			C2Test test1 = new C2Test();
@@ -198,6 +260,7 @@ namespace MonoTests.System.Threading
 			AssertEquals("#21 Apartment State Changed when not needed",before,after);
 		}
 
+		[Ignore("these tests fail randomly")]
 		public void TestApartmentState()
 		{
 			C2Test test1 = new C2Test();
@@ -210,6 +273,7 @@ namespace MonoTests.System.Threading
 			AssertEquals("#31 Apartment State Changed when not needed: ",before,after);
 		}
 
+		[Ignore("these tests fail randomly")]
 		public void TestPriority1()
 		{
 			C2Test test1 = new C2Test();
@@ -223,6 +287,7 @@ namespace MonoTests.System.Threading
 			AssertEquals("#41 Unexpected Priority Change: ",before,after);
 		}
 
+		[Ignore("these tests fail randomly")]
 		public void TestPriority2()
 		{
 			C2Test test1 = new C2Test();
@@ -235,6 +300,7 @@ namespace MonoTests.System.Threading
 			AssertEquals("#44 Incorrect Priority in Aborted thread: ",ThreadPriority.Normal, TestThread.Priority);
 		}
 
+		[Ignore("these tests fail randomly")]
 		public void TestPriority3()
 		{
 			
@@ -255,6 +321,7 @@ namespace MonoTests.System.Threading
 		}
 
 
+		[Ignore("these tests fail randomly")]
 		public void TestIsBackground1()
 		{
 			C2Test test1 = new C2Test();
@@ -266,6 +333,7 @@ namespace MonoTests.System.Threading
 			Assert("#51 IsBackground not set at the default state: ",!(state));
 		}
 
+		[Ignore("these tests fail randomly")]
 		public void TestIsBackground2()
 		{
 			C2Test test1 = new C2Test();
@@ -277,6 +345,7 @@ namespace MonoTests.System.Threading
 		}
 
 
+		[Ignore("these tests fail randomly")]
 		public void TestName()
 		{
 			C2Test test1 = new C2Test();
@@ -291,6 +360,7 @@ namespace MonoTests.System.Threading
 			TestThread.Abort();
 		}
 
+		[Ignore("these tests fail randomly")]
 		public void TestNestedThreads1()
 		{
 			C3Test  test1 = new C3Test();
@@ -326,6 +396,7 @@ namespace MonoTests.System.Threading
 			}
 		}
 
+		[Ignore("these tests fail randomly")]
 		public void TestJoin1()
 		{
 			C1Test test1 = new C1Test();
@@ -349,6 +420,7 @@ namespace MonoTests.System.Threading
 			}
 		}
 		
+		[Ignore("these tests fail randomly")]
 		public void TestThreadState()
 		{
 			//TODO: Test The rest of the possible transitions
@@ -365,9 +437,36 @@ namespace MonoTests.System.Threading
 			Assert("#103 Wrong Thread State", ThreadState.Stopped == TestThread.ThreadState 
 				|| ThreadState.Aborted == TestThread.ThreadState);
 		} 
+
+		[Test]
+		public void CurrentPrincipal_PrincipalPolicy_NoPrincipal () 
+		{
+			// note: switching from PrincipalPolicy won't work inside the same thread
+			// because as soon as a Principal object is created the Policy doesn't matter anymore
+			Thread t = new Thread (new ThreadStart (ThreadedPrincipalTest.NoPrincipal));
+			t.Start ();
+			while (t.IsAlive) {}
+		}
+
+		[Test]
+		public void CurrentPrincipal_PrincipalPolicy_UnauthenticatedPrincipal () 
+		{
+			// note: switching from PrincipalPolicy won't work inside the same thread
+			// because as soon as a Principal object is created the Policy doesn't matter anymore
+			Thread t = new Thread (new ThreadStart (ThreadedPrincipalTest.UnauthenticatedPrincipal));
+			t.Start ();
+			while (t.IsAlive) {}
+		}
+
+		[Test]
+		[Ignore ("WindowsPrincipal is not yet supported on Mono")]
+		public void CurrentPrincipal_PrincipalPolicy_WindowsPrincipal () 
+		{
+			// note: switching from PrincipalPolicy won't work inside the same thread
+			// because as soon as a Principal object is created the Policy doesn't matter anymore
+			Thread t = new Thread (new ThreadStart (ThreadedPrincipalTest.WindowsPrincipal));
+			t.Start ();
+			while (t.IsAlive) {}
+		}
 	}
-
 }
-		
-
-
