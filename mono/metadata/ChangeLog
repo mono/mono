@@ -1,3 +1,10 @@
+
+Sat Feb 15 15:15:03 CET 2003 Paolo Molaro <lupus@ximian.com>
+
+	* image.c, image.h, class.c, assembly.c: move module loading
+	to MonoImage. When loading metadata, consider alignemnet from
+	the start of metadata, not from the metadata address in memory.
+
 2003-02-13  Zoltan Varga  <vargaz@freemail.hu>
 
 	* reflection.c (mono_reflection_get_custom_attrs): Added support for 
