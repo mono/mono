@@ -26,7 +26,7 @@
 
 #include <limits.h>             /* LONG_MAX, ULONG_MAX */
 #include <errno.h>              /* for ERANGE */
-#include <glib/gtypes.h>        /* for g* types, etc. */
+#include <glib.h>               /* for g* types, etc. */
 
 #ifdef HAVE_STDINT_H
 #include <stdint.h>             /* for SIZE_MAX */
