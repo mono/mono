@@ -1,3 +1,8 @@
+2004-08-09  Marek Safar  <marek.safar@seznam.cz>
+
+	* corlib.dll.sources: Added System/EnvironmentVariableTarget.cs
+	for NET_2_0.
+
 2004-08-09  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* corlib.dll.sources: Added System/ApplicationId.cs, 

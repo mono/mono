@@ -102,6 +102,7 @@ System/DuplicateWaitObjectException.cs
 System/EntryPointNotFoundException.cs
 System/Enum.cs
 System/Environment.cs
+System/EnvironmentVariableTarget.cs
 System/EventArgs.cs
 System/EventHandler.cs
 System/Exception.cs
