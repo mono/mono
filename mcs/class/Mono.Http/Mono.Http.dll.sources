@@ -6,3 +6,4 @@ Mono.Http/GZipWebRequestCreator.cs
 Mono.Http/NtlmClient.cs
 Mono.Http.Configuration/AcceptEncodingConfig.cs
 Mono.Http.Configuration/AcceptEncodingSectionHandler.cs
+Mono.Http.Modules/AcceptEncodingModule.cs
