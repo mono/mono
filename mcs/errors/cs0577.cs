@@ -1,4 +1,5 @@
-// cs0577.cs: Conditional not valid on 'MainClass.I.F()' because it is a destructor, operator, or explicit interface implementation// Line: 10
+// cs0577.cs: Conditional not valid on 'MainClass.I.F()' because it is a destructor, operator, or explicit interface implementation
+// Line: 10
 
 interface I
 {
