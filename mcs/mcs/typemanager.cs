@@ -14,6 +14,7 @@ using System;
 using System.Collections;
 using System.Reflection;
 using System.Reflection.Emit;
+using System.Text.RegularExpressions;
 
 namespace Mono.CSharp {
 
@@ -371,23 +372,28 @@ public class TypeManager {
 	/// </summary>
 	static public string CSharpName (Type t)
 	{
-		string s = t.FullName;
-
-		return s.
-		Replace ("System.Int32", "int").
-		Replace ("System.UInt32", "uint").
-		Replace ("System.Int16", "short").
-		Replace ("System.UInt16", "ushort").
-		Replace ("System.Int64", "long").
-		Replace ("System.UInt64", "ulong").
-		Replace ("System.Single", "float").
-		Replace ("System.Souble", "double").
-		Replace ("System.Char", "char").
-		Replace ("System.Decimal", "decimal").
-		Replace ("System.Byte", "byte").
-		Replace ("System.SByte", "sbyte").
-		Replace ("System.Object", "object").
-		Replace ("System.Void", "void");
+		return Regex.Replace (t.FullName, 
+			@"^System\." +
+			@"(Int32|UInt32|Int16|Uint16|Int64|UInt64|" +
+			@"Single|Double|Char|Decimal|Byte|SByte|Object|" +
+			@"Boolean|String|Void)" +
+			@"(\W+|\b)", 
+			new MatchEvaluator (CSharpNameMatch));
+	}	
+	
+	static String CSharpNameMatch (Match match) 
+	{
+		string s = match.Groups [1].Captures [0].Value;
+		return s.ToLower ().
+		Replace ("int32", "int").
+		Replace ("uint32", "uint").
+		Replace ("int16", "short").
+		Replace ("uint16", "ushort").
+		Replace ("int64", "long").
+		Replace ("uint64", "ulong").
+		Replace ("single", "float").
+		Replace ("boolean", "bool")
+		+ match.Groups [2].Captures [0].Value;
 	}
 
         /// <summary>

@@ -1,3 +1,9 @@
+2002-04-30  Lawrence Pit <loz@cable.a2000.nl>
+
+	* typemanager.cs (CSharpName): reimplementation using regex.
+	* class.cs: added null check for fields in Emit
+	* rootcontext.cs: set warninglevel to 4
+
 2002-04-29  Miguel de Icaza  <miguel@ximian.com>
 
 	* typemanager.cs (CSharpName): reimplemented with Lupus

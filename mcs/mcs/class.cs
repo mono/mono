@@ -1660,8 +1660,8 @@ namespace Mono.CSharp {
 			//
 			// Check for internal or private fields that were never assigned
 			//
-			if (RootContext.WarningLevel >= 3){
-				foreach (Field f in fields){
+			if (fields != null && RootContext.WarningLevel >= 3) {
+				foreach (Field f in fields) {
 					if ((f.ModFlags & Modifiers.PUBLIC) != 0)
 						continue;
 
@@ -1677,7 +1677,7 @@ namespace Mono.CSharp {
 					//
 					if (RootContext.WarningLevel < 4)
 						continue;
-					
+
 					if ((f.status & Field.Status.ASSIGNED) != 0)
 						continue;
 
