@@ -21,14 +21,11 @@ using System.Collections.Specialized;
 
 namespace System.Windows.Forms
 {
-	public class Control : Component, ISynchronizeInvoke, IWin32Window
-
-#if MCS_FIXED
-		,UnsafeNativeMethods.IOleControl, UnsafeNativeMethods.IOleObject, UnsafeNativeMethods.IOleInPlaceObject,
+	public class Control : Component, ISynchronizeInvoke, IWin32Window,
+		UnsafeNativeMethods.IOleControl, UnsafeNativeMethods.IOleObject, UnsafeNativeMethods.IOleInPlaceObject,
 		UnsafeNativeMethods.IOleInPlaceActiveObject, UnsafeNativeMethods.IOleWindow, UnsafeNativeMethods.IViewObject,
 		UnsafeNativeMethods.IViewObject2, UnsafeNativeMethods.IPersist, UnsafeNativeMethods.IPersistStreamInit,
 		UnsafeNativeMethods.IPersistPropertyBag, UnsafeNativeMethods.IPersistStorage, UnsafeNativeMethods.IQuickActivate
-#endif
 	{
 		//
     		// Helper NativeWindow class to dispatch messages back
