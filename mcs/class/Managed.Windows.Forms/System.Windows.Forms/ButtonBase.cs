@@ -23,6 +23,12 @@
 //	Peter Bartok	pbartok@novell.com
 //
 // $Log: ButtonBase.cs,v $
+// Revision 1.14  2004/10/15 13:16:10  ravindra
+// 	- Redraw () is not virtual now.
+// 	- Added an internal virtual method Paint (), so that
+// 	derived classes can do their painting on their own.
+// 	- Modified OnPaint () to call Paint ().
+//
 // Revision 1.13  2004/10/14 06:15:57  ravindra
 // Redraw () related improvements.
 //
@@ -101,7 +107,7 @@ namespace System.Windows.Forms {
 		internal bool			has_focus;
 		internal bool			is_pressed;
 		internal bool			is_entered;
-		private bool			redraw;
+		internal bool			redraw;
 		internal StringFormat		text_format;
 		#endregion	// Local Variables
 
@@ -136,9 +142,20 @@ namespace System.Windows.Forms {
 		}
 
 		[MonoTODO("Make the FillRectangle use a global brush instead of creating one every time")]
-		internal virtual void Redraw() {
+		internal void Redraw() {
 			redraw = true;
 			Refresh ();
+		}
+
+		// Derived classes should override Paint method and we dont want
+		// to break the control signature, hence this approach.
+		internal virtual void Paint (PaintEventArgs pevent) {
+			if (redraw) {
+				ThemeEngine.Current.DrawButtonBase(this.DeviceContext, pevent.ClipRectangle, this);
+				redraw = false;
+			}
+
+			pevent.Graphics.DrawImage(this.ImageBuffer, pevent.ClipRectangle, pevent.ClipRectangle, GraphicsUnit.Pixel);
 		}
 
 		private void RedrawEvent(object sender, System.EventArgs e) {
@@ -480,14 +497,8 @@ namespace System.Windows.Forms {
 		}
 
 		protected override void OnPaint(PaintEventArgs pevent) {
-			if (redraw) {
-				ThemeEngine.Current.DrawButtonBase(this.DeviceContext, pevent.ClipRectangle, this);
-				redraw = false;
-			}
-
-			pevent.Graphics.DrawImage(this.ImageBuffer, pevent.ClipRectangle, pevent.ClipRectangle, GraphicsUnit.Pixel);
-
-			base.OnPaint(pevent);
+			Paint (pevent);
+			base.OnPaint (pevent);
 		}
 
 		protected override void OnParentChanged(EventArgs e) {
