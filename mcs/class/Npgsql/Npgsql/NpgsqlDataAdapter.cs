@@ -48,6 +48,12 @@ namespace Npgsql
 		{
             NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, CLASSNAME);
             _selectCommand = selectCommand;
+			_deleteCommand = new NpgsqlCommand ();
+			_deleteCommand.Connection = _selectCommand.Connection;
+			_insertCommand = new NpgsqlCommand ();
+			_insertCommand.Connection = _selectCommand.Connection;
+			_updateCommand = new NpgsqlCommand ();
+			_updateCommand.Connection = _selectCommand.Connection;
 		}
 		
 		public NpgsqlDataAdapter(String selectCommandText, NpgsqlConnection selectConnection) : this(new NpgsqlCommand(selectCommandText, selectConnection)){}
