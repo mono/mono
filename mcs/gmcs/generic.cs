@@ -655,7 +655,11 @@ namespace Mono.CSharp {
 			//
 			// Now, check the interface constraints.
 			//
-			foreach (Type itype in ptype.GetInterfaces ()) {
+			foreach (TypeExpr iface in TypeManager.GetInterfaces (ptype)) {
+				Type itype = iface.ResolveType (ec);
+				if (itype == null)
+					return false;
+
 				if (!Convert.ImplicitStandardConversionExists (aexpr, itype)) {
 					Report.Error (309, loc, "The type `{0}' must be " +
 						      "convertible to `{1}' in order to " +
