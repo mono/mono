@@ -1,3 +1,11 @@
+2003-03-14  Daniel Morgan <danmorg@sc.rr.com>
+
+	* makefile: add ilasm.exe to windows build and add missing assemblies
+	to windows install
+	
+	* class/library.build: include PEAPI.dll, Npgsql.dll, and
+	ICSharpCode.SharpZipLib part of the windows build
+
 2003-03-10  Martin Willemoes Hansen <mwh@sysrq.dk>
 	* Fixed some spelling errors in class/doc/TemplateTest.cs
 
@@ -11,7 +19,7 @@
 
 2003-02-15  Nick Drochak  <ndrochak@gol.com>
 
-        * makefile.gnu: Add testcorlib target to run just the corlib unit tests.
+    * makefile.gnu: Add testcorlib target to run just the corlib unit tests.
 
 2003-02-10  Nick Drochak  <ndrochak@gol.com>
 

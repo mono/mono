@@ -51,6 +51,9 @@
 		<nant basedir="System.Security" target="build" buildfile="System.Security/System.Security.build"/>
 		<nant basedir="Mono.Posix" target="build" buildfile="Mono.Posix/Mono.Posix.build"/>
 		<nant basedir="System.Management" target="build" buildfile="System.Management/System.Management.build"/>
+		<nant basedir="PEAPI" target="build" buildfile="PEAPI/PEAPI.build"/>
+		<nant basedir="ICSharpCode.SharpZipLib" target="build" buildfile="ICSharpCode.SharpZipLib/SharpZipLib.build"/>
+		<nant basedir="Npgsql" target="build" buildfile="Npgsql/Npgsql.build"/>
 	</target>
 
 	<target name="test">

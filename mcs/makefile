@@ -1,6 +1,6 @@
 VERSION=0.13.99
 
-DIRS=jay nant mcs class nunit nunit20 monoresgen tools mbas
+DIRS=jay nant mcs class nunit nunit20 monoresgen tools mbas ilasm
 INSTALL= /usr/bin/install
 
 all: 
@@ -71,6 +71,7 @@ windowsinstall:
 
 MONO_WIN_INSTALL_LIB=	\
 	class/lib/Accessibility.dll	\
+	class/lib/ICSharpCode.SharpZipLib.dll \
 	class/lib/I18N.CJK.dll	\
 	class/lib/I18N.MidEast.dll	\
 	class/lib/I18N.Other.dll	\
@@ -79,29 +80,39 @@ MONO_WIN_INSTALL_LIB=	\
 	class/lib/I18N.dll	\
 	class/lib/Microsoft.VisualBasic.dll	\
 	class/lib/Microsoft.VisualC.dll	\
+	class/lib/Mono.Data.dll	\
+	class/lib/Mono.Data.DB2Client.dll	\
 	class/lib/Mono.Data.MySql.dll	\
 	class/lib/Mono.Data.PostgreSqlClient.dll	\
 	class/lib/Mono.Data.SqliteClient.dll	\
 	class/lib/Mono.Data.SybaseClient.dll	\
 	class/lib/Mono.Data.Tds.dll	\
 	class/lib/Mono.Data.TdsClient.dll	\
+	class/lib/Mono.Directory.LDAP.dll	\
 	class/lib/Mono.GetOptions.dll	\
 	class/lib/Mono.PEToolkit.dll	\
 	class/lib/Mono.Posix.dll	\
+	class/lib/Mono.Security.dll	\
+	class/lib/Mono.Security.Win32.dll	\
+	class/lib/Npgsql.dll	\
+	class/lib/PEAPI.dll	\
 	class/lib/System.Configuration.Install.dll	\
 	class/lib/System.Data.dll	\
+	class/lib/System.Data.OracleClient.dll	\
+	class/lib/System.Design.dll	\
 	class/lib/System.Drawing.dll	\
 	class/lib/System.EnterpriseServices.dll	\
+	class/lib/System.Management.dll	\
 	class/lib/System.Runtime.Remoting.dll	\
 	class/lib/System.Runtime.Serialization.Formatters.Soap.dll	\
+	class/lib/System.Security.dll	\
+	class/lib/System.ServiceProcess.dll	\
 	class/lib/System.Web.Services.dll	\
 	class/lib/System.Web.dll	\
-	class/lib/System.Management.dll	\
 	class/lib/System.Windows.Forms.dll	\
 	class/lib/System.Xml.dll	\
 	class/lib/System.dll	\
 	class/lib/corlib.dll	\
-	class/lib/corlib_cmp.dll	\
 	nunit/NUnitBase.dll	\
 	nunit/NUnitCore.dll	\
 	nunit/NUnitCore_mono.dll
@@ -120,4 +131,4 @@ MONO_WIN_INSTALL_BIN=	\
 	tools/GenerateDelegate.exe	\
 	tools/monostyle.exe	\
 	tools/SqlSharp/sqlsharp.exe	\
-	tools/corcompare/CorCompare.exe
+	
