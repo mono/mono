@@ -22,19 +22,21 @@ namespace System.Data.OleDb
 		#region Constructors
 
 		[MonoTODO]
-		public OleDbPermission ()
+		public OleDbPermission () : base (PermissionState.None)
 		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
 		public OleDbPermission (PermissionState state)
+			: base (state)
 		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
 		public OleDbPermission (PermissionState state, bool allowBlankPassword)
+			: base (state, allowBlankPassword, true)
 		{
 			throw new NotImplementedException ();
 		}
