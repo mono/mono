@@ -1,3 +1,10 @@
+2003-09-14  Lluis Sanchez Gual <lluis@ximian.com>
+
+	* XmlCustomFormatter.cs: added support for additional string types in
+	  GenerateToXmlString().
+	* XmlSchemaExporter.cs: Fixed generation of XmlMembersMapping using 
+	  encoded format.
+
 2003-09-11  Lluis Sanchez Gual <lluis@ximian.com>
 
 	* SoapSchemaImporter.cs: implemented.

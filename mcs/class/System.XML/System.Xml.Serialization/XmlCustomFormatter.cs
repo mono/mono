@@ -229,8 +229,17 @@ namespace System.Xml.Serialization {
 				case "unsignedLong": return value + ".ToString()";
 				case "guid": return "XmlConvert.ToString (" + value + ")";
 				case "base64Binary": return "Convert.ToBase64String (" + value + ")";
+				case "NMTOKEN":
+				case "Name":
+				case "NCName":
+				case "language":
+				case "ENTITY":
+				case "ID":
+				case "IDREF":
+				case "NOTATION":
+				case "token":
 				case "string": return value;
-				default: return value + ".ToString()";
+				default: return "((" + value + " != null) ? (" + value + ").ToString() : null)";
 			}
 		}
 

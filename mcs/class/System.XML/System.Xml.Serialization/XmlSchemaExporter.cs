@@ -80,15 +80,20 @@ namespace System.Xml.Serialization {
 				ICollection members = cmap.ElementMembers;
 				if (members != null)
 				{
+					XmlSchemaObjectCollection itemsCol = schema.Items;
+					
+					// In encoded format, the schema elements are not needed
+					if (encodedFormat) itemsCol = new XmlSchemaObjectCollection ();
+					
 					foreach (XmlTypeMapMemberElement member in members)
 					{
 						Type memType = member.GetType();
 						if (member is XmlTypeMapMemberFlatList)
 							throw new InvalidOperationException ("Unwrapped arrays not supported as parameters");
 						else if (memType == typeof(XmlTypeMapMemberElement))
-							AddSchemaElement (schema.Items, schema, (XmlTypeMapElementInfo) member.ElementInfo [0], member.DefaultValue, false);
+							AddSchemaElement (itemsCol, schema, (XmlTypeMapElementInfo) member.ElementInfo [0], member.DefaultValue, false);
 						else
-							AddSchemaElement (schema.Items, schema, (XmlTypeMapElementInfo) member.ElementInfo [0], false);
+							AddSchemaElement (itemsCol, schema, (XmlTypeMapElementInfo) member.ElementInfo [0], false);
 					}
 				}
 			}
@@ -492,6 +497,24 @@ namespace System.Xml.Serialization {
 				XmlAttribute arrayType = Document.CreateAttribute ("arrayType", XmlSerializer.WsdlNamespace);
 				arrayType.Value = ns + (ns != "" ? ":" : "") + name;
 				at.UnhandledAttributes = new XmlAttribute [] { arrayType };
+				
+				XmlTypeMapElementInfo einfo = (XmlTypeMapElementInfo) lmap.ItemInfo[0];
+				if (einfo.MappedType != null)
+				{
+					switch (einfo.TypeData.SchemaType)
+					{
+						case SchemaTypes.Enum:
+							ExportEnumSchema (einfo.MappedType);
+							break;
+						case SchemaTypes.Array: 
+							ExportArraySchema (einfo.MappedType, schemaNs); 
+							break;
+						case SchemaTypes.Class:
+							if (einfo.MappedType.TypeData.Type != typeof(object))
+								ExportClassSchema (einfo.MappedType);
+							break;
+					}
+				}
 				
 				return new XmlQualifiedName (lmap.GetSchemaArrayName (), schemaNs);
 			}
