@@ -268,6 +268,9 @@ namespace System.Data {
 
 			if (v == null)
 			{
+				if (col.DataType.ToString().Equals("System.Guid"))
+	                                throw new ArgumentException("Cannot set column to be null, Please use DBNull instead");
+
 				if(col.DefaultValue != DBNull.Value) 
 				{
 					newval = col.DefaultValue;
@@ -957,7 +960,7 @@ namespace System.Data {
 		public bool IsNull (DataColumn column) 
 		{
 			object o = this[column];
-			return (o == null || o == DBNull.Value);
+			return (o == DBNull.Value);
 		}
 
 		/// <summary>
@@ -967,7 +970,7 @@ namespace System.Data {
 		public bool IsNull (int columnIndex) 
 		{
 			object o = this[columnIndex];
-			return (o == null || o == DBNull.Value);
+			return (o == DBNull.Value);
 		}
 
 		/// <summary>
@@ -976,7 +979,7 @@ namespace System.Data {
 		public bool IsNull (string columnName) 
 		{
 			object o = this[columnName];
-			return (o == null || o == DBNull.Value);
+			return (o == DBNull.Value);
 		}
 
 		/// <summary>
@@ -986,7 +989,7 @@ namespace System.Data {
 		public bool IsNull (DataColumn column, DataRowVersion version) 
 		{
 			object o = this[column, version];
-			return (o == null || o == DBNull.Value);
+			return (o == DBNull.Value);
 		}
 
 		/// <summary>
