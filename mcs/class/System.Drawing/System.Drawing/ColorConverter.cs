@@ -7,6 +7,7 @@
 // (C) 2002 Ximian, Inc (http://www.ximian.com)
 //
 using System;
+using System.Collections;
 using System.ComponentModel;
 using System.Globalization;
 
@@ -14,6 +15,9 @@ namespace System.Drawing {
 
 public class ColorConverter : TypeConverter
 {
+	static StandardValuesCollection cached;
+	static object creatingCached = new object ();
+
 	public ColorConverter ()
 	{
 	}
@@ -26,7 +30,7 @@ public class ColorConverter : TypeConverter
 		return base.CanConvertFrom(context, sourceType);
 	}
 
-	//[MonoTODO]
+	[MonoTODO]
 	public override bool CanConvertTo (ITypeDescriptorContext context, Type destinationType)
 	{
 		throw new NotImplementedException ();
@@ -60,7 +64,7 @@ public class ColorConverter : TypeConverter
 		return Color.FromArgb (A, (i & 0x00FF0000) >> 16, (i & 0x00FF00) >> 8, (i & 0x0FF));
 	}
 
-	//[MonoTODO]
+	[MonoTODO]
 	public override object ConvertTo (ITypeDescriptorContext context,
 					  CultureInfo culture,
 					  object value,
@@ -68,19 +72,39 @@ public class ColorConverter : TypeConverter
 	{
 		throw new NotImplementedException ();
 	}
-/*
- *  StandardValuesCollection is TypeDescriptor.StandardValuesCollection
- *  TODO: check if the compiler already supports that.
+
 	public override StandardValuesCollection GetStandardValues (ITypeDescriptorContext context)
 	{
-	}
-*/
+		if (cached != null)
+			return cached;
 
-	//[MonoTODO]
+		lock (creatingCached) {
+			if (cached != null)
+				return cached;
+			
+			ICollection named = (ICollection) Color.NamedColors;
+			ICollection system = (ICollection) Color.SystemColors;
+			Array colors = Array.CreateInstance (typeof (Color), named.Count + system.Count);
+			named.CopyTo (colors, 0);
+			system.CopyTo (colors, named.Count);
+			Array.Sort (colors, 0, colors.Length, new CompareColors ());
+			cached = new StandardValuesCollection (colors);
+		}
+
+		return cached;
+	}
+
 	public override bool GetStandardValuesSupported (ITypeDescriptorContext context)
 	{
-		// This should return true once GetStandardValues is implemented
-		throw new NotImplementedException ();
+		return true;
+	}
+
+	class CompareColors : IComparer
+	{
+		public int Compare (object x, object y)
+		{
+			return String.Compare (((Color) x).Name, ((Color) y).Name);
+		}
 	}
 }
 }
