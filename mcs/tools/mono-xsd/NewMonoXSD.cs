@@ -20,6 +20,7 @@ using System.Xml.Serialization;
 using System.CodeDom;
 using System.CodeDom.Compiler;
 using Microsoft.CSharp;
+using Microsoft.VisualBasic;
 
 namespace Mono.Util {
 
@@ -41,6 +42,7 @@ namespace Mono.Util {
 			"   /u /uri:NAME       Namespace uri of the elements to generate code for.\n" +
 			"   /l /language:NAME  The language to use for the generated code.\n" +
 			"                      Currently, the only supported language is CS (C#).\n" +
+			"   /g /generator:NAME[,FILE] Code Generator type name, optionally followed by ',' assembly file name.\n" +
 			"   /o /outputdir:PATH The directory where to generate the code or schemas.\n" +
 			"   /n /namespace:NAME Namespace for the generated code.\n" +
 			"   /t /type:NAME      Type for which to generate an xml schema.\n" +
@@ -57,6 +59,10 @@ namespace Mono.Util {
 		static readonly string typeNotFound = "Type {0} not found in the specified assembly";
 		static readonly string languageNotSupported = "The language {0} is not supported";
 		static readonly string missingOutputForXsdInput = "Can only generate one of classes or datasets.";
+		static readonly string generatorAssemblyNotFound = "Could not load code provider assembly file: {0}";
+		static readonly string generatorTypeNotFound = "Could not find specified code provider type: {0}";
+		static readonly string generatorTypeIsNotCodeGenerator = "Specified code provider type was not CodeDomProvider: {0}";
+		static readonly string generatorThrewException = "Specified CodeDomProvider raised an error while creating its instance: {0}";
 
 		static void Main (string [] args)
 		{
@@ -88,6 +94,8 @@ namespace Mono.Util {
 		string language = null;
 		string namesp = null;
 		string uri = null;
+		string providerOption = null;
+		CodeDomProvider provider;
 
 		public void Run (string[] args)
 		{
@@ -101,32 +109,34 @@ namespace Mono.Util {
 
 			foreach (string arg in args)
 			{
-				if (arg.EndsWith (".dll") || arg.EndsWith (".exe"))
-				{
-					if (!readingFiles) throw new Exception (incorrectOrder);
-					assemblies.Add (arg);
-					assemblyOptions = true;
-					continue;
-				}
-				else if (arg.EndsWith (".xsd"))
-				{
-					if (!readingFiles) Error (incorrectOrder);
-					schemaNames.Add (arg);
-					schemasOptions = true;
-					continue;
-				}
-				else if (arg.EndsWith (".xml"))
-				{
-					if (generateClasses || generateDataset) Error (duplicatedParam);
-					inferenceNames.Add (arg);
-					inference = true;
-					continue;
-				}
-				else if (!arg.StartsWith ("/") && !arg.StartsWith ("-"))
-				{
-					if (!readingFiles) Error (incorrectOrder);
-					unknownFiles.Add (arg);
-					continue;
+				if (!arg.StartsWith ("--") && !arg.StartsWith ("/")) {
+					if (arg.EndsWith (".dll") || arg.EndsWith (".exe"))
+					{
+						if (!readingFiles) throw new Exception (incorrectOrder);
+						assemblies.Add (arg);
+						assemblyOptions = true;
+						continue;
+					}
+					else if (arg.EndsWith (".xsd"))
+					{
+						if (!readingFiles) Error (incorrectOrder);
+						schemaNames.Add (arg);
+						schemasOptions = true;
+						continue;
+					}
+					else if (arg.EndsWith (".xml"))
+					{
+						if (generateClasses || generateDataset) Error (duplicatedParam);
+						inferenceNames.Add (arg);
+						inference = true;
+						continue;
+					}
+					else //if (!arg.StartsWith ("/") && !arg.StartsWith ("-"))
+					{
+						if (!readingFiles) Error (incorrectOrder);
+						unknownFiles.Add (arg);
+						continue;
+					}
 				}
 
 				readingFiles = false;
@@ -155,6 +165,7 @@ namespace Mono.Util {
 				}
 				else if (option == "language" || option == "l")
 				{
+					if (provider != null) Error (duplicatedParam, option);
 					if (language != null) Error (duplicatedParam, option);
 					language = param;
 					schemasOptions = true;
@@ -181,6 +192,10 @@ namespace Mono.Util {
 					lookupTypes.Add (param);
 					assemblyOptions = true;
 				}
+				else if (option == "generator" || option == "g")
+				{
+					providerOption = param;
+				}
 				else if (option == "help" || option == "h")
 				{
 					Console.WriteLine (helpString);
@@ -200,7 +215,53 @@ namespace Mono.Util {
 				Error (tooManyAssem);
 
 			if (outputDir == null) outputDir = ".";
-				
+
+			if (language != null) {
+				switch (language) {
+				case "CS":
+					provider = new CSharpCodeProvider ();
+					break;
+				case "VB":
+					provider = new VBCodeProvider ();
+					break;
+				default:
+					Error (languageNotSupported, language);
+					break;
+				}
+			}
+
+			if (providerOption != null) {
+				string param = providerOption;
+				string typename;
+				Type generatorType;
+				int comma = param.IndexOf (',');
+				if (comma < 0) {
+					typename = param;
+					generatorType = Type.GetType (param);
+				} else {
+					typename = param.Substring (0, comma);
+					string asmName = param.Substring (comma + 1);
+#if NET_1_1
+					Assembly asm = Assembly.LoadFile (asmName);
+#else
+					Assembly asm = Assembly.LoadFrom (asmName);
+#endif
+					if (asm == null)
+						Error (generatorAssemblyNotFound, asmName);
+					generatorType = asm.GetType (typename);
+				}
+				if (generatorType == null)
+					Error (generatorTypeNotFound, typename);
+				if (!generatorType.IsSubclassOf (typeof (CodeDomProvider)))
+					Error (generatorTypeIsNotCodeGenerator, typename);
+				try {
+					provider = (CodeDomProvider) Activator.CreateInstance (generatorType, null);
+				} catch (Exception ex) {
+					Error (generatorThrewException, param);
+				}
+				Console.WriteLine ("Loaded custom generator type " + param + " .");
+			}
+
 			if (schemasOptions)
 			{
 				if (!generateClasses && !generateDataset)
@@ -290,7 +351,6 @@ namespace Mono.Util {
 		
 		public void GenerateClasses ()
 		{
-			if (language != null && language != "CS") Error (languageNotSupported, language);
 			if (namesp == null) namesp = "Schemas";
 			if (uri == null) uri = "";
 			string targetFile = "";
@@ -306,7 +366,7 @@ namespace Mono.Util {
 				else targetFile += "_" + Path.GetFileNameWithoutExtension (fileName);
 			}
 
-			targetFile += ".cs";
+			targetFile += "." + provider.FileExtension;
 
 			CodeCompileUnit cunit = new CodeCompileUnit ();
 			CodeNamespace codeNamespace = new CodeNamespace (namesp);
@@ -351,8 +411,8 @@ namespace Mono.Util {
 
 			// Generate the code
 			
-			CSharpCodeProvider provider = new CSharpCodeProvider();
-			ICodeGenerator gen = provider.CreateGenerator();
+			CodeDomProvider p = provider != null ? provider : new CSharpCodeProvider ();
+			ICodeGenerator gen = p.CreateGenerator();
 
 			string genFile = Path.Combine (outputDir, targetFile);
 			StreamWriter sw = new StreamWriter(genFile, false);
@@ -364,7 +424,6 @@ namespace Mono.Util {
 
 		public void GenerateDataset ()
 		{
-			if (language != null && language != "CS") Error (languageNotSupported, language);
 			if (namesp == null) namesp = "Schemas";
 			if (uri == null) uri = "";
 			string targetFile = "";
@@ -378,7 +437,7 @@ namespace Mono.Util {
 				else targetFile += "_" + Path.GetFileNameWithoutExtension (fileName);
 			}
 
-			targetFile += ".cs";
+			targetFile += "." + provider.FileExtension;
 
 			CodeCompileUnit cunit = new CodeCompileUnit ();
 			CodeNamespace codeNamespace = new CodeNamespace (namesp);
@@ -387,8 +446,8 @@ namespace Mono.Util {
 
 			// Generate the code
 			
-			CSharpCodeProvider provider = new CSharpCodeProvider ();
-			ICodeGenerator gen = provider.CreateGenerator ();
+			CodeDomProvider p = provider != null ? provider : new CSharpCodeProvider ();
+			ICodeGenerator gen = p.CreateGenerator ();
 
 			TypedDataSetGenerator.Generate (dataset, codeNamespace, gen);
 
