@@ -168,4 +168,66 @@ namespace Microsoft.JScript {
 			throw new NotImplementedException ();
 		}
 	}
+
+	internal class DoWhile : AST {
+
+		AST stm, exp;
+		
+		internal DoWhile (AST parent, AST stm, AST exp)
+		{
+			this.parent = parent;
+			this.stm = stm;
+			this.exp = exp;
+		}
+
+		internal override bool Resolve (IdentificationTable context)
+		{
+			bool r = true;
+
+			if (stm != null)
+				r &= stm.Resolve (context);
+			if (exp != null)
+				r &= exp.Resolve (context);
+			return r;
+		}
+
+		internal override void Emit (EmitContext ec)
+		{
+			throw new NotImplementedException ();
+		}
+	}
+
+
+	internal class While : AST {
+		
+		AST exp, stm;
+
+		internal While (AST parent, AST exp, AST stm)
+		{
+			this.parent = parent;
+			this.exp = exp;
+			this.stm = stm;
+		}
+
+		internal override bool Resolve (IdentificationTable context)
+		{
+			bool r = true;
+
+			if (exp != null)
+				if (exp is Exp)
+					r &= ((Exp) exp).Resolve (context, false);
+				else 
+					r &= exp.Resolve (context);
+			if (stm != null)
+				r &= stm.Resolve (context);
+			return r;
+		}
+
+		internal override void Emit (EmitContext ec)
+		{
+			throw new NotImplementedException ();
+		}
+	}
+
+
 }

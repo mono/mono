@@ -1,5 +1,9 @@
 2004-03-31  Cesar Lopez Nataren  <cesar@ciencias.unam.mx>
 
+	* Statement.cs: added stub for While and DoWhile ast
+	representation (reworking my Emit code).
+	* jscript-parser-lexer.g: allow iteration statement ast build.
+
 	* FunctionDeclaration.cs: agrouped code for setting custom attribute.
 
 	* expression.cs: added Modulo operator case.

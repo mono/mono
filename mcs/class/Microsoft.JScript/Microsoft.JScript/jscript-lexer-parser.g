@@ -105,7 +105,7 @@ statement [AST parent] returns [AST stm]
 	| stm = var_stm [parent]
 	| empty_stm
 	| stm = if_stm [parent]
-	| iteration_stm [parent]
+	| stm = iteration_stm [parent]
 	| stm = continue_stm
 	| stm = break_stm
 	| stm = return_stm [parent]
@@ -199,9 +199,20 @@ continue_stm returns [AST cont]
 	             | { ((Continue) cont).identifier = String.Empty; } ) SEMI_COLON
 	;
 
-iteration_stm [AST parent]
-	: "do" statement [null] "while" OPEN_PARENS expr [parent] CLOSE_PARENS SEMI_COLON
-	| "while" OPEN_PARENS expr [parent] CLOSE_PARENS statement [null]
+iteration_stm [AST parent] returns [AST iter]
+{
+	iter = null;
+	AST stm = null;
+	AST exprn = null;
+}
+	: "do" stm = statement [parent] "while" OPEN_PARENS exprn = expr [parent] CLOSE_PARENS SEMI_COLON
+	  {
+		  iter = new DoWhile (parent, stm, exprn);
+	  }
+	| "while" OPEN_PARENS exprn = expr [parent] CLOSE_PARENS stm = statement [parent]
+	  {
+		  iter = new While (parent, exprn, stm);
+	  }
 	| "for" OPEN_PARENS inside_for [parent] CLOSE_PARENS statement [null]
 	;
 
