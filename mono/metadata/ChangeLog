@@ -1,3 +1,9 @@
+
+Sun Jan 16 12:25:22 CET 2005 Paolo Molaro <lupus@ximian.com>
+
+	* reflection.c, reflection.h, icall.c: add a function to check
+	if an attribute type is defined for a metadata object.
+
 2005-01-14  Lluis Sanchez Gual  <lluis@novell.com>
 
 	* object-internals.h: Added some needed fields from StringBuilder class.
