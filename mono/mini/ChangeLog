@@ -1,5 +1,7 @@
 2004-08-16  Zoltan Varga  <vargaz@freemail.hu>
 
+	* Makefile.am: Link against the static version of libmonogc.
+	
 	* Makefile.am: Link the static versions of the convenience libraries
 	into the mono executable.
 
