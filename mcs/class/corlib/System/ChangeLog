@@ -1,5 +1,11 @@
 2003-09-13  Pedro Martínez Juliá  <yoros@wanadoo.es>
 
+	* FloatingPointFormatter.cs: Make the method calls more functional
+	for protecting the values from different threads (make it more
+	thread safe).
+
+2003-09-13  Pedro Martínez Juliá  <yoros@wanadoo.es>
+
 	* FloatingPointFormatter.cs: Fix a bug with the negative value of
 	count parameter.
 
