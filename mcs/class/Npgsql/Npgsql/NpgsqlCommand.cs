@@ -696,7 +696,7 @@ namespace Npgsql
                 // Check for errors and/or notifications and do the Right Thing.
                 connector.CheckErrorsAndNotifications();
 
-                bind = new NpgsqlBind(portalName, planName, new Int16[] {0}, null, new Int16[] {0});
+                bind = new NpgsqlBind("", planName, new Int16[] {0}, null, new Int16[] {0});
             }
         }
 

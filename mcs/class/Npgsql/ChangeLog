@@ -1,4 +1,8 @@
 
+2005-02-20 Francisco Figueiredo Jr.  <fxjrlists@yahoo.com.br>
+
+   * Npgsql/NpgsqlCommand.cs: Fixed a problem when using prepare commands inside a transaction. Portal wasn't being released. We use the unnamed portal now. Thanks Marcin (marcin at floryan dot neostrada dot pl) for the heads up.
+
 2005-02-13 Francisco Figueiredo Jr.  <fxjrlists@yahoo.com.br>
 
     * NpgsqlTypes/NpgsqlTypesHelper.cs: gborg 1121: Fixed another culture variant representation problem when handling floating numbers. Thanks Sergey (sergey dot p dot k dot no dot spam at gmail dot com) for patch.
