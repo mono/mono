@@ -511,10 +511,10 @@ namespace System.PAL
 		private const int O_RDONLY             = 0x00000000;
 		private const int O_WRONLY             = 0x00000001;
 		private const int O_RDWR               = 0x00000002;
-		private const int O_CREAT              = 0x00000200;
-		private const int O_EXCL               = 0x00000800;
-		private const int O_TRUNC              = 0x00000400;
-		private const int O_APPEND             = 0x00000008;
+		private const int O_CREAT              = 0x00000040;
+		private const int O_EXCL               = 0x00000080;
+		private const int O_TRUNC              = 0x00000200;
+		private const int O_APPEND             = 0x00000400;
 
 		private const int SEEK_SET             = 0;
 		private const int SEEK_CUR             = 1;
