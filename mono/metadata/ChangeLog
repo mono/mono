@@ -1,3 +1,12 @@
+2004-09-23  Zoltan Varga  <vargaz@freemail.hu>
+
+	* object-internals.h (MonoEventInfo): Add 'other_methods' field.
+	
+	* class.c (init_events): Fill out event->other field.
+
+	* class.c: Fix warnings.
+
+	* icall.c (ves_icall_get_event_info): Fill out 'other_methods' field.
 
 Wed Sep 22 19:04:32 CEST 2004 Paolo Molaro <lupus@ximian.com>
 
