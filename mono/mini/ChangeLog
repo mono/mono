@@ -1,5 +1,8 @@
 2004-08-20  Zoltan Varga  <vargaz@freemail.hu>
 
+	* mini-amd64.c (mono_arch_regalloc_cost): Adjust regalloc costs for
+	arguments.
+
 	* driver.c: Fix profiling after TLS changes.
 	
 	* driver.c (mono_main): Set mono_stats.enabled if needed.
