@@ -735,7 +735,7 @@ namespace System.Xml.XPath
 		[MonoTODO]
 		public virtual XmlReader ReadSubtree ()
 		{
-			throw new NotImplementedException ();
+			return new XPathNavigatorReader (this);
 		}
 
 		public virtual XPathNodeIterator Select (string xpath, IXmlNamespaceResolver nsResolver)
