@@ -1,3 +1,12 @@
+2004-03-10  Martin Baulig  <martin@ximian.com>
+
+	* ecore.cs (FieldExpr.ctor): Use TypeManager.TypeToCoreType().
+
+	* support.cs (ParameterData.HasArrayParameter): New property.
+	(ReflectionParameters.ctor): Take a MethodBase instead of a
+	ParameterInfo[].  If we have any type parameters, get the generic
+	method definition and ask it whether we have variable arguments.
+
 2004-02-26  Miguel de Icaza  <miguel@ximian.com>
 
 	* iterators.cs (IteratorHandler.IsIEnumerator, IsIEnumerable): New

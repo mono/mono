@@ -20,6 +20,7 @@ namespace Mono.CSharp {
 
 	public interface ParameterData {
 		Type ParameterType (int pos);
+		bool HasArrayParameter { get; }
 		int  Count { get; }
 		string ParameterName (int pos);
 		string ParameterDesc (int pos);
@@ -30,16 +31,23 @@ namespace Mono.CSharp {
 		ParameterInfo [] pi;
 		bool last_arg_is_params = false;
 		
-		public ReflectionParameters (ParameterInfo [] pi)
+		public ReflectionParameters (MethodBase method)
 		{
 			object [] attrs;
 			
-			this.pi = pi;
+			this.pi = method.GetParameters ();
 			int count = pi.Length-1;
 
-			if (count >= 0) {
-				attrs = pi [count].GetCustomAttributes (TypeManager.param_array_type, true);
+			if (count < 0)
+				return;
 
+			if (method.HasGenericParameters) {
+				MethodInfo generic = method.GetGenericMethodDefinition ();
+				ParameterData gpd = Invocation.GetParameterData (generic);
+
+				last_arg_is_params = gpd.HasArrayParameter;
+			} else {
+				attrs = pi [count].GetCustomAttributes (TypeManager.param_array_type, true);
 				if (attrs == null)
 					return;
 				
@@ -49,7 +57,11 @@ namespace Mono.CSharp {
 				last_arg_is_params = true;
 			}
 		}
-		       
+
+		public bool HasArrayParameter {
+			get { return last_arg_is_params; }
+		}
+
 		public Type ParameterType (int pos)
 		{
 			if (last_arg_is_params && pos >= pi.Length - 1)
@@ -144,6 +156,10 @@ namespace Mono.CSharp {
 
 				return param_types.Length;
 			}
+		}
+
+		public bool HasArrayParameter {
+			get { return Parameters.ArrayParameter != null; }
 		}
 
 		Parameter GetParameter (int pos)
@@ -267,7 +283,7 @@ namespace Mono.CSharp {
 			this.len = len;
 			comparer = new ArrComparer (len);
 		}
-	}
+	}			
 
 	//
 	// Compares member infos based on their name and
@@ -416,7 +432,7 @@ namespace Mono.CSharp {
 				if (e.hash == h && e.key1.Equals (a) && e.key2.Equals (b)) {
 					res = e.value;
 					return true;
-			}
+				}
 			}
 			res = null;
 			return false;

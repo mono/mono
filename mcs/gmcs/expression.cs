@@ -4032,15 +4032,13 @@ namespace Mono.CSharp {
 			if (pd != null)
 				return (ParameterData) pd;
 
-			
 			ip = TypeManager.LookupParametersByBuilder (mb);
 			if (ip != null){
 				method_parameter_cache [mb] = ip;
 
 				return (ParameterData) ip;
 			} else {
-				ParameterInfo [] pi = mb.GetParameters ();
-				ReflectionParameters rp = new ReflectionParameters (pi);
+				ReflectionParameters rp = new ReflectionParameters (mb);
 				method_parameter_cache [mb] = rp;
 
 				return (ParameterData) rp;

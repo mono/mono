@@ -2505,7 +2505,7 @@ namespace Mono.CSharp {
 		{
 			FieldInfo = fi;
 			eclass = ExprClass.Variable;
-			type = fi.FieldType;
+			type = TypeManager.TypeToCoreType (fi.FieldType);
 			loc = l;
 		}
 

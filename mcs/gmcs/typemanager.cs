@@ -822,10 +822,8 @@ public class TypeManager {
 		//
                 ParameterData iparams = LookupParametersByBuilder (mb);
 
-		if (iparams == null){
-			ParameterInfo [] pi = mb.GetParameters ();
-			iparams = new ReflectionParameters (pi);
-		}
+		if (iparams == null)
+			iparams = new ReflectionParameters (mb);
 		
                 for (int i = 0; i < iparams.Count; i++) {
                         if (i > 0) {
