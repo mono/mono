@@ -1,4 +1,8 @@
 
+Wed Aug 20 13:14:31 CEST 2003 Paolo Molaro <lupus@ximian.com>
+
+	* mini.c: allocate jump tables in the code mempools.
+
 Wed Aug 20 13:04:53 CEST 2003 Paolo Molaro <lupus@ximian.com>
 
 	* mini.c, mini.h: make sure per-thread data allocated by the jit is
