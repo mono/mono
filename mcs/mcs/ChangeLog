@@ -1,5 +1,20 @@
 2002-10-31  Miguel de Icaza  <miguel@ximian.com>
 
+	* ecore.cs (PropertyExpr.DoResolveLValue, PropertyExpr.DoResolve):
+	Check whether the base is abstract and report an error if so.
+
+	* expression.cs (IndexerAccess.DoResolveLValue,
+	IndexerAccess.DoResolve): ditto. 
+
+	(Invocation.DoResolve): ditto.
+	
+	(Invocation.FullMethodDesc): Improve the report string.
+
+	* statement.cs (Block): Eliminate IsVariableDefined as it is
+	basically just a wrapper for GetVariableInfo.
+
+	* ecore.cs (SimpleName): Use new 
+
 	* support.cs (ReflectionParamter.ParameterType): We unwrap the
 	type, as we return the actual parameter ref/unref state on a
 	different call.

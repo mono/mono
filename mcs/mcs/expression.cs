@@ -3549,9 +3549,14 @@ namespace Mono.CSharp {
 			string ret_type = "";
 
 			if (mb is MethodInfo)
-				ret_type = TypeManager.CSharpName (((MethodInfo) mb).ReturnType) + " ";
+				ret_type = TypeManager.CSharpName (((MethodInfo) mb).ReturnType);
 			
-			StringBuilder sb = new StringBuilder (ret_type + mb.Name);
+			StringBuilder sb = new StringBuilder (ret_type);
+			sb.Append (" ");
+			sb.Append (mb.ReflectedType.ToString ());
+			sb.Append (".");
+			sb.Append (mb.Name);
+			
 			ParameterData pd = GetParameterData (mb);
 
 			int count = pd.Count;
@@ -3879,11 +3884,11 @@ namespace Mono.CSharp {
 			// if necessary etc. and return if everything is all right
 			//
 
-			if (VerifyArgumentsCompat (ec, Arguments, argument_count, method,
+			if (!VerifyArgumentsCompat (ec, Arguments, argument_count, method,
 						   chose_params_expanded, null, loc))
-				return method;
-			else
 				return null;
+
+			return method;
 		}
 
 		public static bool VerifyArgumentsCompat (EmitContext ec, ArrayList Arguments,
@@ -4027,6 +4032,15 @@ namespace Mono.CSharp {
 				}
 			}
 			
+			//
+			// Only base will allow this invocation to happen.
+			//
+			if (is_base && method.IsAbstract){
+				Report.Error (205, loc, "Cannot call an abstract base member: " +
+					      FullMethodDesc (method));
+				return null;
+			}
+
 			eclass = ExprClass.Value;
 			return this;
 		}
@@ -6464,6 +6478,13 @@ namespace Mono.CSharp {
 				       "it lacks a `get' accessor");
 				return null;
 			}
+			//
+			// Only base will allow this invocation to happen.
+			//
+			if (get.IsAbstract && this is BaseIndexerAccess){
+				Report.Error (205, loc, "Cannot call an abstract base indexer: " + Invocation.FullMethodDesc (get));
+				return null;
+			}
 
 			type = get.ReturnType;
 			if (type.IsPointer && !ec.InUnsafe){
@@ -6500,6 +6521,13 @@ namespace Mono.CSharp {
 				return null;
 			}
 
+			//
+			// Only base will allow this invocation to happen.
+			//
+			if (set.IsAbstract && this is BaseIndexerAccess){
+				Report.Error (205, loc, "Cannot call an abstract base indexer: " + Invocation.FullMethodDesc (set));
+				return null;
+			}
 			type = TypeManager.void_type;
 			eclass = ExprClass.IndexerAccess;
 			return this;

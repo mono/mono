@@ -2845,24 +2845,6 @@ namespace Mono.CSharp {
 		}
 		
 		/// <summary>
-		///   True if the variable named @name has been defined
-		///   in this block
-		/// </summary>
-		public bool IsVariableDefined (string name)
-		{
-			// Console.WriteLine ("Looking up {0} in {1}", name, ID);
-			if (variables != null) {
-				if (variables.Contains (name))
-					return true;
-			}
-			
-			if (Parent != null)
-				return Parent.IsVariableDefined (name);
-
-			return false;
-		}
-
-		/// <summary>
 		///   True if the variable named @name is a constant
 		///  </summary>
 		public bool IsConstant (string name)

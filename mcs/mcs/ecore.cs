@@ -3496,7 +3496,7 @@ namespace Mono.CSharp {
 			// Stage 1: Performed by the parser (binding to locals or parameters).
 			//
 			Block current_block = ec.CurrentBlock;
-			if (current_block != null && current_block.IsVariableDefined (Name)){
+			if (current_block != null && current_block.GetVariableInfo (Name) != null){
 				LocalVariableReference var;
 
 				var = new LocalVariableReference (ec.CurrentBlock, Name, loc);
@@ -4103,6 +4103,10 @@ namespace Mono.CSharp {
 	/// </summary>
 	public class PropertyExpr : ExpressionStatement, IAssignMethod, IMemberExpr {
 		public readonly PropertyInfo PropertyInfo;
+
+		//
+		// This is set externally by the  `BaseAccess' class
+		//
 		public bool IsBase;
 		MethodInfo getter, setter;
 		bool is_static;
@@ -4210,6 +4214,22 @@ namespace Mono.CSharp {
 			}
 		}
 
+		bool InstanceResolve (EmitContext ec)
+		{
+			if ((instance_expr == null) && ec.IsStatic && !is_static) {
+				SimpleName.Error_ObjectRefRequired (ec, loc, PropertyInfo.Name);
+				return false;
+			}
+
+			if (instance_expr != null) {
+				instance_expr = instance_expr.DoResolve (ec);
+				if (instance_expr == null)
+					return false;
+			}
+
+			return true;
+		}
+		
 		override public Expression DoResolve (EmitContext ec)
 		{
 			if (getter == null){
@@ -4227,17 +4247,18 @@ namespace Mono.CSharp {
 					      "' can not be used in " +
 					      "this context because it lacks a get accessor");
 				return null;
-			}
+			} 
 
-			if ((instance_expr == null) && ec.IsStatic && !is_static) {
-				SimpleName.Error_ObjectRefRequired (ec, loc, PropertyInfo.Name);
+			if (!InstanceResolve (ec))
 				return null;
-			}
 
-			if (instance_expr != null) {
-				instance_expr = instance_expr.DoResolve (ec);
-				if (instance_expr == null)
-					return null;
+			//
+			// Only base will allow this invocation to happen.
+			//
+			if (IsBase && getter.IsAbstract){
+				Report.Error (205, loc, "Cannot call an abstract base property: " +
+					      PropertyInfo.DeclaringType + "." +PropertyInfo.Name);
+				return null;
 			}
 
 			return this;
@@ -4262,12 +4283,17 @@ namespace Mono.CSharp {
 				return null;
 			}
 
-			if (instance_expr != null) {
-				instance_expr = instance_expr.DoResolve (ec);
-				if (instance_expr == null)
-					return null;
+			if (!InstanceResolve (ec))
+				return null;
+			
+			//
+			// Only base will allow this invocation to happen.
+			//
+			if (IsBase && setter.IsAbstract){
+				Report.Error (205, loc, "Cannot call an abstract base property: " +
+					      PropertyInfo.DeclaringType + "." +PropertyInfo.Name);
+				return null;
 			}
-
 			return this;
 		}
 
