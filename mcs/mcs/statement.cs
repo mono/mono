@@ -2031,6 +2031,7 @@ namespace Mono.CSharp {
 		public override bool Emit (EmitContext ec)
 		{
 			Type type = expr.Type;
+			bool val;
 			
 			if (type.IsValueType){
 				Report.Error (185, loc, "lock statement requires the expression to be " +
@@ -2052,7 +2053,7 @@ namespace Mono.CSharp {
 			bool old_in_try = ec.InTry;
 			ec.InTry = true;
 			Label finish = ig.DefineLabel ();
-			Statement.Emit (ec);
+			val = Statement.Emit (ec);
 			ec.InTry = old_in_try;
 			// ig.Emit (OpCodes.Leave, finish);
 
@@ -2064,7 +2065,7 @@ namespace Mono.CSharp {
 			ig.Emit (OpCodes.Call, TypeManager.void_monitor_exit_object);
 			ig.EndExceptionBlock ();
 			
-			return false;
+			return val;
 		}
 	}
 
