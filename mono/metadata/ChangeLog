@@ -1,5 +1,10 @@
 2004-09-16  Sebastien Pouliot  <sebastien@ximian.com>
 
+	* appdomain.c: Bumped MONO_CORLIB_VERSION to 25.
+	* object-internals.h: Added 3 MonoArray* members to MonoReflection
+	AssemblyBuilder to access the permissions set in the class lib.
+	* reflection.c: Added security attributes encoding step in 
+	mono_image_build_metadata.
 	* tabledefs.h: Added new security actions defined in 2.0:
 	LinkDemandChoice, InheritanceDemandChoice and DemandChoice.
 
