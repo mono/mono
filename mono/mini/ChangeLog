@@ -1,3 +1,9 @@
+2004-05-20  Lluis Sanchez Gual  <lluis@ximian.com>
+
+	* mini.c: Delegate most of the abort signal work to 
+	  mono_thread_request_interruption, which also handles Stop and Suspend
+	  states.
+
 2004-05-20  Zoltan Varga  <vargaz@freemail.hu>
 
 	* mini.c mini.h: Allow inlining of icall wrappers if the backend 
