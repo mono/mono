@@ -1,3 +1,21 @@
+2003-04-14  Daniel Morgan <danmorg@sc.rr.com>
+
+	* SqlSharpDataAdapter.cs: added new file
+	as a special data adapter for SQL#
+	
+	* SqlEditorSharp.cs: allow the use of
+	syntax highlighting of SQL keywords or not
+	via a property and default to false
+	
+	* makefile.gnu
+	* win32.make: add SqlSharpDataAdapter.cs to
+	the build
+	
+	* sqlsharpgtk.cs: handle a key pressed event
+	when the user presses F5 to execute the SQL
+	in the editor's buffer.  Also, add an Edit menu, but
+	its menu options currently are placeholders
+
 2003-02-16  Daniel Morgan <danmorg@sc.rr.com>
 
 	* sqlsharpgtk.cs: fixes to get data

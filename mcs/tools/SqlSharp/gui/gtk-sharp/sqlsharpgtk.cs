@@ -153,6 +153,9 @@ namespace Mono.Data.SqlSharp.Gui.GtkSharp
 			SqlEditorSharp editor;
 			editor = new SqlEditorSharp ();
 			editor.View.Show ();
+			editor.View.KeyPressEvent +=
+				new GtkSharp.KeyPressEventHandler(EditorKeyPressedEventHandler);
+
 			lastUnknownFile ++;
 			string unknownFile = "Unknown" + 
 				lastUnknownFile.ToString() + ".sql";
@@ -223,6 +226,23 @@ namespace Mono.Data.SqlSharp.Gui.GtkSharp
 			sw.Add (textView);		
 
 			return sw;
+		}
+
+		void EditorKeyPressedEventHandler(object o,
+						KeyPressEventArgs args) 
+		{
+			if (o is TextView) {
+				TextView tv = (TextView) o;
+				//Gdk.EventKey k = args.Event;
+
+				// if the F5 key was pressed
+				if (args.Event.keyval == 0xFFC2) {
+					if (tv.Editable == true) {
+						// execute SQL
+						ExecuteSQL (ExecuteOutputType.Normal, "");
+					}
+				}
+			}
 		}
 
 		Toolbar CreateToolbar () 
@@ -400,6 +420,52 @@ namespace Mono.Data.SqlSharp.Gui.GtkSharp
 			menu.Append (item);
 
 			barItem = new MenuItem ("_File");
+			barItem.Submenu = menu;
+			menuBar.Append (barItem);
+
+			// Edit menu
+
+			menu = new Menu ();
+
+			item = new MenuItem ("_Undo");
+			//item.Activated += new EventHandler (OnMenu_EditUndo);
+			menu.Append (item);
+
+			item = new MenuItem ("_Redo");
+			//item.Activated += new EventHandler (OnMenu_EditRedo);
+			menu.Append (item);
+
+			menu.Append (new SeparatorMenuItem ());
+
+			item = new MenuItem ("Cu_t");
+			//item.Activated += new EventHandler (OnMenu_EditCut);
+			menu.Append (item);
+
+			item = new MenuItem ("_Copy");
+			//item.Activated += new EventHandler (OnMenu_EditCopy);
+			menu.Append (item);
+
+			item = new MenuItem ("_Paste");
+			//item.Activated += new EventHandler (OnMenu_EditPaste);
+			menu.Append (item);
+
+			item = new MenuItem ("_Delete");
+			//item.Activated += new EventHandler (OnMenu_EditDelete);
+			menu.Append (item);
+
+			menu.Append (new SeparatorMenuItem ());
+
+			item = new MenuItem ("_Find and Replace...");
+			//item.Activated += new EventHandler (OnMenu_EditFindReplace);
+			menu.Append (item);
+
+			menu.Append (new SeparatorMenuItem ());
+
+			item = new MenuItem ("_Options");
+			//item.Activated += new EventHandler (OnMenu_EditOptions);
+			menu.Append (item);
+
+			barItem = new MenuItem ("_Edit");
 			barItem.Submenu = menu;
 			menuBar.Append (barItem);
 
@@ -1527,14 +1593,46 @@ namespace Mono.Data.SqlSharp.Gui.GtkSharp
 
 		public DataTable LoadDataTable (IDbCommand dbcmd) 
 		{
-			AppendText("Create DbDataAdapter...");
-			DbDataAdapter adapter = CreateDbDataAdapter (dbcmd);
+			string status = String.Empty;
 
+			AppendText("Create DbDataAdapter...");
+			SqlSharpDataAdapter adapter = new SqlSharpDataAdapter (dbcmd);
+			
 			AppendText("Create DataTable...");
 			DataTable dataTable = new DataTable ();
 
 			AppendText("Fill data into DataTable via DbDataAdapter...");
-			adapter.Fill (dataTable);
+
+			int rowsAddedOrRefreshed = 0;
+			IDataReader reader = null;
+			
+			try {
+				reader = dbcmd.ExecuteReader ();
+				if (reader.FieldCount > 0)
+					rowsAddedOrRefreshed = adapter.FillTable (dataTable, reader);
+			}
+			catch(Exception sqle) {
+				status = "Error: " + sqle.Message;
+			}
+
+			if (status.Equals(String.Empty)) {
+				AppendText("Rows successfully Added or Refreshed in the DataTable: " + 
+					rowsAddedOrRefreshed);
+				int rowsAffected = reader.RecordsAffected;
+				AppendText("Rows Affected: " + rowsAffected);
+
+				int fields = ((IDataRecord) reader).FieldCount;
+				AppendText("Field Count: " + fields);
+			
+				if (fields > 0) {
+					status = "Rows Selected: " + rowsAddedOrRefreshed +
+						"  Fields: " + fields;
+				}
+				else {
+					status = "Rows Modified: " + rowsAffected;
+				}
+			}
+			AppendText("Status: " + status);
 
 			adapter.Dispose();
 			adapter = null;

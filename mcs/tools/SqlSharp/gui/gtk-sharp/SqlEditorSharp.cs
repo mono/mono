@@ -57,8 +57,7 @@ namespace SqlEditorSharp
 
 		// Constructors
 
-		public SqlEditorSharp() : base(false, 4) 
-		{		 
+		public SqlEditorSharp() : base(false, 4) {		 
 			scroll = new ScrolledWindow (
 				new Adjustment (0.0, 0.0, 0.0, 0.0, 0.0, 0.0), 
 				new Adjustment (0.0, 0.0, 0.0, 0.0, 0.0, 0.0));
@@ -71,7 +70,7 @@ namespace SqlEditorSharp
 			family = "courier";
 
 			// other default settings
-			use_hi_lighting = true;
+			use_hi_lighting = false;
 
 			// create text tag table
 			TextTagTable textTagTable = new TextTagTable ();
@@ -152,6 +151,16 @@ namespace SqlEditorSharp
 				tab = value;
 			}
 
+		}
+
+		public bool UseSyntaxHiLighting {
+			get {
+				return use_hi_lighting;
+			}
+
+			set {
+				use_hi_lighting = value;
+			}
 		}
 
 		// Private Methods
