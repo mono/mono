@@ -446,7 +446,7 @@ namespace System.Data {
 				Table.InitializeIndex (Index);
 			}
 			catch (ConstraintException) {
-#if false//NET_1_1
+#if NET_1_1
 				throw;
 #else
 				Index = null;
