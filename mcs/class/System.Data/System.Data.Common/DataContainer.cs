@@ -1098,8 +1098,8 @@ namespace System.Data.Common
 			{
 				// if exception thrown, it should be caught 
 				// in the  caller method
-				base.SetValue(index,record.GetDateTime(field));
-				base.SetItemFromDataRecord(index,record,field);
+				 if (!CheckAndSetNull(index,record,field))
+                                        base.SetValue(index,record.GetDateTime(field));
 			}
 
 			internal override int CompareValues(int index1, int index2)
