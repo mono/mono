@@ -39,6 +39,9 @@ all: mcs.exe
 mcs.exe: $(COMPILER_SOURCES)
 	$(MCS) $(MCS_FLAGS) -o $@ $(COMPILER_SOURCES)
 
+mcs-mono2.exe: $(COMPILER_SOURCES)
+	$(MCS) $(MCS_FLAGS) --debug -o $@ $(COMPILER_SOURCES)
+
 cs-parser.cs: cs-parser.jay
 	../jay/jay -ctv < ../jay/skeleton.cs $^ > $@
 

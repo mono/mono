@@ -5752,6 +5752,7 @@ namespace Mono.CSharp {
 		/// </summary>
 		static public void EmitStoreOpcode (ILGenerator ig, Type t)
 		{
+			t = TypeManager.TypeToCoreType (t);
 			if (t == TypeManager.byte_type || t == TypeManager.sbyte_type ||
 			    t == TypeManager.bool_type)
 				ig.Emit (OpCodes.Stelem_I1);
@@ -5768,7 +5769,7 @@ namespace Mono.CSharp {
 			else if (t == TypeManager.intptr_type)
 				ig.Emit (OpCodes.Stelem_I);
 			else if (t.IsValueType)
-				ig.Emit (OpCodes.Stobj, TypeManager.TypeToCoreType (t));
+				ig.Emit (OpCodes.Stobj, t);
 			else
 				ig.Emit (OpCodes.Stelem_Ref);
 		}

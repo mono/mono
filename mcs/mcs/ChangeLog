@@ -1,5 +1,11 @@
 2002-07-24  Martin Baulig  <martin@gnome.org>
 
+	* expression.cs (ArrayAccess.EmitStoreOpcode): Moved the
+	TypeManager.TypeToCoreType() to the top of the method so the
+	following equality checks will work.  Fixes #28107.
+
+2002-07-24  Martin Baulig  <martin@gnome.org>
+
 	* cfold.cs (ConstantFold.DoConstantNumericPromotions): "If either
 	operand is of type uint, and the other operand is of type sbyte,
 	short or int, the operands are converted to type long." -
