@@ -1,3 +1,8 @@
+2004-08-18  Zoltan Varga  <vargaz@freemail.hu>
+
+	* Makefile.am (libmono_la_LDFLAGS): Enable creating of libmono dll
+	under windows.
+
 2004-08-17 Ben Maurer  <bmaurer@users.sourceforge.net>
 
 	* mini.c: thread local allocation
