@@ -1,0 +1,14 @@
+2002-05-03  Tim Coleman <tim@timcoleman.com>
+	* Added ChangeLog to test dir
+	* Added NUnit framework necessary for make test
+	* Added subdirectory for System.Data.SqlTypes
+	* New files:
+		ChangeLog
+		AllTests.cs
+		TheTests.cs
+		System.Data_test.build
+		System.Data.SqlTypes
+		System.Data.SqlTypes/AllTests.cs
+		System.Data.SqlTypes/SqlInt32Test.cs
+
+
