@@ -1,5 +1,10 @@
 2002-08-26  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* HttpWorkerRequest.cs: mcs doesn't go crazy. It's just me, that forgot
+	to add HttpMapPath to the list file...
+
+2002-08-26  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* HttpWorkerRequest.cs: fixes compilation with mcs. I will add a bug
 	report when i get a test case.
 

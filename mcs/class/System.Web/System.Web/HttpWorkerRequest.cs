@@ -15,9 +15,7 @@ using System.Runtime.InteropServices;
 
 namespace System.Web
 {
-	// The following line makes mcs go crazy 
-	//public abstract class HttpWorkerRequest : IHttpMapPath
-	public abstract class HttpWorkerRequest
+	public abstract class HttpWorkerRequest : IHttpMapPath
 	{
 		public delegate void EndOfSendNotification (HttpWorkerRequest wr, object extraData);
 
