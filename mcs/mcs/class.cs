@@ -3946,7 +3946,8 @@ namespace Mono.CSharp {
 					
 				if (Add == null && Remove == null) {
 					FieldBuilder = parent.TypeBuilder.DefineField (
-						Name, MemberType, Modifiers.FieldAttr (ModFlags));
+						Name, MemberType,
+						FieldAttributes.FamANDAssem | ((ModFlags & Modifiers.STATIC) != 0 ? FieldAttributes.Static : 0));
 					TypeManager.RegisterPrivateFieldOfEvent (
 						(EventInfo) EventBuilder, FieldBuilder);
 					TypeManager.RegisterFieldBase (FieldBuilder, this);

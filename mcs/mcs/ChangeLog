@@ -1,5 +1,9 @@
 2002-10-19  Miguel de Icaza  <miguel@ximian.com>
 
+	* class.cs (Event.Define): Change my previous commit, as this
+	breaks the debugger.  This is a temporary hack, as it seems like
+	the compiler is generating events incorrectly to begin with.
+
 	* expression.cs (Binary.ResolveOperator): Added support for 
 	"U operator - (E x, E y)"
 
