@@ -687,21 +687,21 @@ namespace System.Windows.Forms
 				item = (MENUITEM) menu.items[i];
 				if (item.item.IsPopup) {
 					MENU sub_menu = GetMenuFromID (item.hSubMenu);
-					if (sub_menu != null && sub_menu.Wnd != null) {
+					if (sub_menu != null && sub_menu.Wnd != null) 
 						HideSubPopups (item.hSubMenu);
-						DestroyMenu (item.hSubMenu);
-					}
+						
+					DestroyMenu (item.hSubMenu);					
 				}
 			}
 
 			// Do not destroy the window of a Menubar
 			if (menu.Wnd != null && menu.bMenubar == false) {
 				((PopUpWindow)menu.Wnd).Dispose ();
-				menu.Wnd = null;
-
-				/* Unreference from the array list */
-				menu_list[((int)hMenu)-1] = null;
+				menu.Wnd = null;			
 			}
+			
+			/* Unreference from the array list */
+			menu_list[((int)hMenu)-1] = null;
 		}
 
 		static public void SetMenuBarWindow (IntPtr hMenu, Control wnd)
