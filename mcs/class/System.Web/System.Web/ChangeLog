@@ -1,3 +1,9 @@
+2003-08-19  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpResponse.cs: flush headers when the body length is 0.
+	* StaticFileHandler.cs: added If-Modified-Since handling patch slightly
+	modified from the original by Piers Haken <piersh@friskit.com>.
+
 2003-08-14  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HttpResponse.cs: another patch from totte and me. This one prevents

@@ -719,8 +719,12 @@ namespace System.Web
 					length = _Writer.BufferSize;
 				}
 
-				if (length == 0)
+				if (length == 0) {
+					_WorkerRequest.FlushResponse (bFinish);
+					if (!bFinish)
+						_Writer.Clear ();
 					return;
+				}
 
 				if (!_bSuppressContent && Request.HttpMethod == "HEAD")
 					_bSuppressContent = true;

@@ -28,8 +28,22 @@ namespace System.Web
 				return;
 			}
 
-			DateTime lastWT = fi.LastWriteTime;
+			string strHeader = request.Headers ["If-Modified-Since"];
 			try {
+				if (strHeader != null) {
+					DateTime dtIfModifiedSince = DateTime.ParseExact (strHeader, "r", null);
+					DateTime ftime = fi.LastWriteTime.ToUniversalTime ();
+					if (ftime <= dtIfModifiedSince) {
+						response.StatusCode = 304;
+						return;
+					}
+				}
+			} catch { } 
+
+			try {
+				DateTime lastWT = fi.LastWriteTime.ToUniversalTime ();
+				response.AddHeader ("Last-Modified", lastWT.ToString ("r"));
+
 				response.WriteFile (fileName);
 				response.ContentType = MimeTypes.GetMimeType (fileName);
 			} catch (Exception e) {
