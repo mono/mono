@@ -4584,19 +4584,13 @@ namespace System.Windows.Forms
 
 
 		public  override void CPDrawStringDisabled (Graphics graphics, string s, Font font, Color color, RectangleF layoutRectangle,
-			StringFormat format) {
-			SolidBrush	brush;
-
-			brush=new SolidBrush(ControlPaint.Light(color, 95));
+			StringFormat format) {			
 
 			layoutRectangle.Offset(1.0f, 1.0f);
-			graphics.DrawString(s, font, brush, layoutRectangle, format);
-
-			brush.Color=ControlPaint.Light(color, 50);
+			graphics.DrawString(s, font, ResPool.GetSolidBrush (ControlPaint.Light(color, 95)), layoutRectangle, format);			
 			layoutRectangle.Offset(-1.0f, -1.0f);
-			graphics.DrawString(s, font, brush, layoutRectangle, format);
-
-			brush.Dispose();
+			graphics.DrawString(s, font, ResPool.GetSolidBrush (ControlPaint.Light(color, 50)), layoutRectangle, format);
+			
 		}
 
 		private static void DrawBorderInternal(Graphics graphics, int startX, int startY, int endX, int endY,

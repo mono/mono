@@ -1,5 +1,10 @@
 2005-02-19  Jordi Mas i Hernandez <jordi@ximian.com>
 
+	* Label.cs: fixes image drawing (image and imagelist)
+	* ThemeWin32Classic.cs: cache brushes
+	
+2005-02-19  Jordi Mas i Hernandez <jordi@ximian.com>
+
 	* Form.cs: Move menu drawing code to Theme class
 	* ComboBox.cs: Move ComboBox drawing code to Theme class
 	* MenuItem.cs: Move menu drawing code to Theme class

@@ -17,7 +17,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-// Copyright (c) 2004 Novell, Inc.
+// Copyright (c) 2004-2005 Novell, Inc.
 //
 // Authors:
 //	Jordi Mas i Hernandez, jordi@ximian.com
@@ -25,7 +25,7 @@
 //
 //
 
-// INCOMPLETE
+// COMPLETE
 
 using System.ComponentModel;
 using System.ComponentModel.Design;
@@ -108,8 +108,7 @@ namespace System.Windows.Forms
 
 			SetStyle (ControlStyles.ResizeRedraw, true);
 			SetStyle (ControlStyles.Selectable, false);
-
-			Resize += new EventHandler (OnResizeLB);
+			
 			HandleCreated += new EventHandler (OnHandleCreatedLB);
 		}
 
@@ -201,7 +200,15 @@ namespace System.Windows.Forms
 		[Localizable(true)]
     		public Image Image {
     			get {
-    				return image;
+    				if (image != null) {
+    					return image;
+    				}
+    				
+    				if (image_list != null && ImageIndex >= 0) {
+    					return image_list.Images[ImageIndex];
+    				}
+    				
+    				return null;
     			}
     			set {
     				if (image == value)
@@ -235,11 +242,21 @@ namespace System.Windows.Forms
 		[Localizable (true)]
 		[TypeConverter (typeof (ImageIndexConverter))]
 		public int ImageIndex {
-    			get { return image_index;}
+    			get { 
+    				if (ImageList == null) {
+    					return -1;
+    				}
+    				
+    				if (image_index >= image_list.Images.Count) {
+    					return image_list.Images.Count - 1;
+    				}
+    				
+    				return image_index;
+    			}
     			set {
 
-				if (value < 0 || value>= image_list.Images.Count)
-					throw new ArgumentException();
+				if (value < -1)
+					throw new ArgumentException ();
 
     				if (image_index == value)
 					return;
@@ -259,8 +276,10 @@ namespace System.Windows.Forms
     			set {
     				if (image_list == value)
 					return;
+					
+				image_list = value;
 
-				if (ImageList != null && image_index !=-1)
+				if (image_list != null && image_index !=-1)
 					Image = null;
 
     				Refresh ();
@@ -474,16 +493,13 @@ namespace System.Windows.Forms
 			Refresh ();
     		}
 
-
     		protected override void OnPaint (PaintEventArgs pevent)
     		{
 			if (Width <= 0 || Height <=  0 || Visible == false)
     				return;
 
-			Draw ();
-			// TODO: Imagelist
+			Draw ();			
 			pevent.Graphics.DrawImage (ImageBuffer, 0, 0);
-
 		}
 
     		protected override void OnParentChanged (EventArgs e)
@@ -530,7 +546,7 @@ namespace System.Windows.Forms
 
     		public override string ToString()
     		{
-    			return base.ToString();
+    			return base.ToString () + "Text: " + Text;
     		}
 
     		protected override void WndProc(ref Message m)
@@ -590,8 +606,7 @@ namespace System.Windows.Forms
     		internal void Draw ()
 		{			
 			ThemeEngine.Current.DrawLabel(DeviceContext, ClientRectangle, this);
-
-			DrawImage (DeviceContext, Image, ClientRectangle, image_align);
+			DrawImage (DeviceContext, Image, ClientRectangle, image_align);			
 		}
 
     		private void OnHandleCreatedLB (Object o, EventArgs e)
@@ -599,13 +614,6 @@ namespace System.Windows.Forms
 			if (autosize)
 				CalcAutoSize ();
 		}
-
-		private void OnResizeLB (object o, EventArgs e)
-    		{
-    			if (Width <= 0 || Height <= 0)
-    				return;
-    		}
-
 
 		private void SetUseMnemonic (bool use)
     		{
