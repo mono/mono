@@ -1,6 +1,7 @@
 2004-01-10  Jackson Harper <jackson@ximian.com>
 
 	* Page.cs: Save trace data before rendering it.
+	* System.Web.dll.sources: Add TraceData.cs
 	
 2004-01-03  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
