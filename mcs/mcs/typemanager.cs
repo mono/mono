@@ -157,8 +157,8 @@ public class TypeManager {
 		assemblies = new ArrayList ();
 		modules = new ArrayList ();
 		user_types = new ArrayList ();
-		types = new PtrHashtable ();
-		typecontainers = new PtrHashtable ();
+		types = new Hashtable ();
+		typecontainers = new Hashtable ();
 		builder_to_interface = new PtrHashtable ();
 		builder_to_delegate = new PtrHashtable ();
 		builder_to_enum  = new PtrHashtable ();
@@ -740,6 +740,10 @@ public class TypeManager {
 		return true;
 	}
 	
+	//
+	// FIXME: we need to return the accessors depending on whether
+	// they are visible or not.
+	//
 	static public MethodInfo [] GetAccessors (PropertyInfo pi)
 	{
 		MethodInfo [] ret;
@@ -760,8 +764,8 @@ public class TypeManager {
 			// Because sometimes index 0 is the getter
 			// sometimes it is 1
 			//
-			mi [0] = pi.GetGetMethod ();
-			mi [1] = pi.GetSetMethod ();
+			mi [0] = pi.GetGetMethod (true);
+			mi [1] = pi.GetSetMethod (true);
 
 			return mi;
 		}

@@ -2711,7 +2711,7 @@ namespace Mono.CSharp {
 				FieldExpr fe = (FieldExpr) e;
 				
 				if (!fe.FieldInfo.IsStatic){
-					This this_expr = new This (Location.Null);
+					This this_expr = new This (Mono.CSharp.Location.Null);
 
 					fe.InstanceExpression = this_expr.DoResolve (ec);
 				}
@@ -2756,7 +2756,7 @@ namespace Mono.CSharp {
 					if (fi.IsStatic)
 						instance_expr = null;
 					else
-						instance_expr = new This (Location.Null);
+						instance_expr = new This (Mono.CSharp.Location.Null);
 
 					instance_expr = instance_expr.Resolve (ec);
 

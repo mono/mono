@@ -105,7 +105,7 @@ namespace Mono.CSharp {
 				EnumBuilder = builder.DefineType (Name, attr, TypeManager.enum_type);
 
 			} else {
-				TypeBuilder builder = (TypeBuilder) parent_builder;
+				TypeBuilder builder = (System.Reflection.Emit.TypeBuilder) parent_builder;
 
 				if ((ModFlags & Modifiers.PUBLIC) != 0)
 					attr |= TypeAttributes.NestedPublic;
@@ -250,7 +250,8 @@ namespace Mono.CSharp {
 				else {
 					for (int i = 0; i < idx; ++i) {
 						string n = (string) ordered_enums [i];
-						Location m_loc = (Location) member_to_location [n];
+						Location m_loc = (Mono.CSharp.Location)
+							member_to_location [n];
 						default_value = LookupEnumValue (ec, n, m_loc);
 					}
 					
@@ -328,7 +329,7 @@ namespace Mono.CSharp {
 				if (member_to_value.Contains (name))
 					continue;
 				
-				Location loc = (Location) member_to_location [name];
+				Location loc = (Mono.CSharp.Location) member_to_location [name];
 
 				if (this [name] != null) {
 					default_value = LookupEnumValue (ec, name, loc);

@@ -4247,14 +4247,6 @@ namespace Mono.CSharp {
 			if (member_lookup is MethodGroupExpr){
 				MethodGroupExpr mg = (MethodGroupExpr) member_lookup;
 
-#if SHOW_METHOD_GROUPS
-				Console.WriteLine ("Method Groups:");
-				foreach (MethodInfo mi in mg.Methods){
-					Console.WriteLine ("  " + mi.DeclaringType + "/" + mi.Name +
-							   " " + mi.IsStatic);
-				}
-#endif
-				
 				//
 				// Type.MethodGroup
 				//
@@ -4472,6 +4464,7 @@ namespace Mono.CSharp {
 
 #else
 
+		bla bla bla
 		//
 		// This code is more conformant to the spec (it follows it step by step),
 		// but it has not been tested yet, and there is nothing here that is not
