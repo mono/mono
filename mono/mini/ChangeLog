@@ -1,4 +1,8 @@
 
+Thu Jul 17 16:02:41 CEST 2003 Paolo Molaro <lupus@ximian.com>
+
+	* mini.c: use a faster allocator if possible.
+
 Thu Jul 17 16:00:39 CEST 2003 Paolo Molaro <lupus@ximian.com>
 
 	* aot.c: some cleanups and portability changes.
