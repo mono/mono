@@ -11,6 +11,5 @@ TODO
 		* handle explicit vs. implicit impl
 	* Show virtual/override?
 	* Fields
-	* Show valuetypes as `struct'
 	* Do enums
 	* Do delegates

@@ -86,16 +86,16 @@ class MonoP {
 	
 	static void PrintClass (Type t)
 	{
-		o.Write ("public class {0}", t.Name);
+		o.Write ("public {0} {1}", t.IsValueType ? "struct" : "class", t.Name);
 		
 		Type [] interfaces = (Type []) Comparer.Sort (t.GetInterfaces ());
 		Type parent = t.BaseType;
 		
-		if ((parent != null && parent != typeof (object))|| interfaces.Length != 0) {
+		if ((parent != null && parent != typeof (object) && parent != typeof (ValueType))|| interfaces.Length != 0) {
 			bool first = true;
 			o.Write (" : ");
 			
-			if (parent != null && parent != typeof (object)) {
+			if (parent != null && parent != typeof (object) && parent != typeof (ValueType)) {
 				o.Write (PName (parent));
 				first = false;
 			}

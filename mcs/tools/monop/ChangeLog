@@ -1,5 +1,9 @@
 2004-03-14 Ben Maurer  <bmaurer@users.sourceforge.net>
 
+	* monop.cs: do structs better.
+
+2004-03-14 Ben Maurer  <bmaurer@users.sourceforge.net>
+
 	* monop.cs: add gtk#. Try catch if gtk# is not installed.
 
 2004-03-14 Ben Maurer  <bmaurer@users.sourceforge.net>
