@@ -33,10 +33,10 @@ namespace MonoTests.System.Xml.Xsl
 		public void TestBasicTransform ()
 		{
 			doc.LoadXml ("<root/>");
-			xslt.Load ("XmlFiles/xsl/empty.xsl");
-			xslt.Transform ("XmlFiles/xsl/empty.xsl", "XmlFiles/xsl/result.xml");
-			result.Load ("XmlFiles/xsl/result.xml");
-			AssertEquals ("count", 1, result.ChildNodes.Count);
+			xslt.Load ("Test/XmlFiles/xsl/empty.xsl");
+			xslt.Transform ("Test/XmlFiles/xsl/empty.xsl", "Test/XmlFiles/xsl/result.xml");
+			result.Load ("Test/XmlFiles/xsl/result.xml");
+			AssertEquals ("count", 2, result.ChildNodes.Count);
 		}
 	}
 }
