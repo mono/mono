@@ -1,3 +1,8 @@
+2003-10-30  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
+
+	* HttpMultipartContentParser.cs : Quick fix for cygwin build. 
+	  CSC complains that constant char cannot be casted as byte.
+
 2003-10-22  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HttpApplication.cs: added AssemblyLocation property.

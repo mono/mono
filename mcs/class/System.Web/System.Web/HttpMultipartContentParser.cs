@@ -18,7 +18,7 @@ using System.Web.Util;
 namespace System.Web {
 	internal class HttpMultipartContentParser {
 		
-		const byte HYPHEN = '-', LF = '\n', CR = '\r';
+		const byte HYPHEN = (byte) '-', LF = (byte) '\n', CR = (byte) '\r';
 		
 		public static MultipartContentElement [] Parse (byte [] data, byte [] boundary, Encoding encoding)
 		{
