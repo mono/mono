@@ -23,7 +23,7 @@ namespace System {
 			string codepage = Encoding.InternalCodePage ();
 			Encoding encoding;
 
-			if (((int) Environment.Platform) != 128){
+			if (((int) Environment.Platform) == 128){
 				//
 				// On Unix systems (128), do not output the
 				// UTF-8 ZWNBSP (zero-width non-breaking space).
