@@ -304,6 +304,31 @@ public class CollectionBaseTest : Assertion
 	}
 
 	[Test]
+	public void SetCompleteUndo ()
+	{
+		ConcreteCollection coll = new ConcreteCollection (0);
+
+		bool throwsException = true;
+
+		coll.BaseList.Add (88);
+		coll.onValidateFired = false;
+		coll.onInsertFired = false;
+		coll.onSetCompleteFired = false;
+		coll.mustThrowException = 3;
+		try {
+			coll.BaseList [0] = 11;
+			throwsException = false;
+		} catch {
+		} finally {
+			Assert (throwsException);
+			Assert (coll.onValidateFired);
+			Assert (coll.onSetFired);
+			Assert (coll.onSetCompleteFired);
+			AssertEquals (88, coll.BaseList [0]);
+		}
+	}
+
+	[Test]
 	[ExpectedException (typeof (ArgumentException))]
 	public void InvalidRemove ()
 	{

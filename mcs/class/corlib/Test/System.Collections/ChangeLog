@@ -1,6 +1,11 @@
+2003-08-10  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* CollectionBaseTest.cs: added new test provided by Carlos Barcenilla
+	(barce@frlp.utn.edu.ar).
+
 2003-08-03  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
-	* CollectionBaseTet.cs: added a few more tests. Now derives from
+	* CollectionBaseTest.cs: added a few more tests. Now derives from
 	Assertion.
 
 2003-06-20  Nick Drochak  <ndrochak@gol.com>
