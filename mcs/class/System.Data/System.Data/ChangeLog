@@ -1,5 +1,18 @@
 2005-01-19  Sureshkumar T  <tsureshkumar@novell.com>
 
+	* DataRelationCollection.cs: 
+
+	Method Remove : Donot throw exception if DataRelation argument is
+	null in DataRelationCollection.Remove method.
+
+	Method RemoveAt : Exception should be IndexOutOfRangeException if
+	row index is not in list range.
+
+	Fixes nunit failures DataRelationCollection.Remove and
+	DataRelationCollection.RemoveAt.
+
+2005-01-19  Sureshkumar T  <tsureshkumar@novell.com>	
+
 	* ConstraintCollection.cs: Donot throw exception if constraints
 	are null in AddRange method. Check for null before using the
 	argument.
