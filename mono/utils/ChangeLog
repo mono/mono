@@ -1,3 +1,9 @@
+
+Fri Jun 6 19:09:51 CEST 2003 Paolo Molaro <lupus@ximian.com>
+
+	* mono-logger.h, mono-logger.c, Makefile.am: added
+	selective logging code by Jerome Laban <jlaban@wanadoo.fr>.
+
 2003-03-05  Dietmar Maurer  <dietmar@ximian.com>
 
 	* monobitset.c (mono_bitset_set_all): impl.
