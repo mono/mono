@@ -228,6 +228,17 @@ namespace System.Data {
 				
 			}
 
+                        //Same dataset.  If both are null it's ok
+			if (ptable.DataSet != ctable.DataSet)
+			{
+				//LAMESPEC: spec says InvalidConstraintExceptoin
+				//	impl does InvalidOperationException
+				throw new InvalidOperationException("Parent column and child column must belong to" + 
+						" tables that belong to the same DataSet.");
+						
+			}	
+
+
 			for (int i = 0; i < parentColumns.Length; i++)
 			{
 				DataColumn pc = parentColumns[i];
@@ -247,15 +258,6 @@ namespace System.Data {
 					
 			}
 			
-			//Same dataset.  If both are null it's ok
-			if (ptable.DataSet != ctable.DataSet)
-			{
-				//LAMESPEC: spec says InvalidConstraintExceptoin
-				//	impl does InvalidOperationException
-				throw new InvalidOperationException("Parent column and child column must belong to" + 
-						" tables that belong to the same DataSet.");
-						
-			}	
 		}
 		
 

@@ -1,3 +1,10 @@
+2005-02-02  Sureshkumar T  <tsureshkumar@novell.com>
+
+	* ForeignKeyConstraint.cs: validating columns: move checking
+	"tables are of same dataset" before "checking column types".
+
+	fixes nunit failure: ForeignKeyConstraint.CtorExceptions.
+	
 2005-02-02  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* DataViewManager.cs : let's just use StringWriter instead of 
