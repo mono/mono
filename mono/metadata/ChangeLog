@@ -1,3 +1,8 @@
+2003-04-21  Miguel de Icaza  <miguel@ximian.com>
+
+	* reflection.c (method_encode_code): Add a spicy exception to help
+	future compiler authors.
+
 2003-04-21  Martin Baulig  <martin@ximian.com>
 
 	* icall.c
