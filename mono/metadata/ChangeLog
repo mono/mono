@@ -1,3 +1,8 @@
+2004-08-26  Zoltan Varga  <vargaz@freemail.hu>
+
+	* class.c (mono_ptr_class_get): Fix name of pointer classes. Fixes
+	#63768.
+
 2004-08-25  Martin Baulig  <martin@ximian.com>
 
 	* loader.c (mono_get_method_from_token): Abstract methods can also
