@@ -1,4 +1,9 @@
 
+2003-04-12  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Makefile.am: patch by Urs Muff <umuff@quark.com> that fixes
+	MONO_ASSEMBLIES variable.
+
 Fri Apr 11 12:44:15 CEST 2003 Paolo Molaro <lupus@ximian.com>
 
 	* icall.c: added Assembly::GetNamespaces() icall.
