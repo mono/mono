@@ -1,5 +1,12 @@
 2005-01-20  Jonathan Pryor  <jonpryor@vt.edu>
 
+	* EndpointPermission.cs: Fix IsSubsetof(hostname) so that the regression 
+	  tests work.  In particular, IsSubsetOf ("12.13.*.*", "12.13.14.*") failed
+	  because 14 wasn't a subset of * (which it is).  Fix: if part1 is we 
+	  continue to the next portion.
+
+2005-01-20  Jonathan Pryor  <jonpryor@vt.edu>
+
 	* IPAddress.cs (ParseIPV4): Fix so that the regression tests work.  In
 	  particular, " foo" and ".1.1.6" weren't being caught (" foo" because it
 	  started with a space, and ".1.1.6" because the split string accepted a

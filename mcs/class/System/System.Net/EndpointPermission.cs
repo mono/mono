@@ -157,6 +157,8 @@ namespace System.Net
 				int part2 = ToNumber (h2 [i]);
 				if (part2 == -1)
 					return false;				
+				if (part1 == 256)
+					continue;
 				if (part1 != part2 && part2 != 256)
 					return false;
 			}
