@@ -41,10 +41,6 @@ using System.Text;
 
 class MonoP {
 	static string assembly;
-	static BindingFlags default_flags = 
-		BindingFlags.Instance |
-		BindingFlags.Static |
-		BindingFlags.Public;
 	
 	// very common namespaces, all in corlib
 	static readonly string [] v_common_ns = {
@@ -267,12 +263,6 @@ class MonoP {
 		Options options = new Options ();
 		if (!options.ProcessArgs (args))
 			return;
-
-		if (options.ShowPrivate)
-			default_flags |= BindingFlags.NonPublic;
-
-		if (options.DeclaredOnly)
-			default_flags |= BindingFlags.DeclaredOnly;
 		
 		if (options.AssemblyReference != null) {
 			assembly = options.AssemblyReference;
@@ -350,7 +340,7 @@ class MonoP {
 		// This gets us nice buffering
 		//
 		StreamWriter sw = new StreamWriter (Console.OpenStandardOutput (), Console.Out.Encoding);				
-		new Outline (t, sw).OutlineType (default_flags);
+		new Outline (t, sw, options).OutlineType ();
 		sw.Flush ();
 
 		if (message != null)

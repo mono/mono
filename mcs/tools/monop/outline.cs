@@ -37,16 +37,18 @@ using System.IO;
 	
 public class Outline {
 	
+	Options options;
 	IndentedTextWriter o;
 	Type t;
 	
-	public Outline (Type t, TextWriter output)
+	public Outline (Type t, TextWriter output, Options options)
 	{
 		this.t = t;
 		this.o = new IndentedTextWriter (output, "    ");
+		this.options = options;
 	}
 
-	public void OutlineType (BindingFlags flags)
+	public void OutlineType ()
         {
 		bool first;
 		
@@ -125,7 +127,11 @@ public class Outline {
 		
 		first = true;
 		
-		foreach (ConstructorInfo ci in t.GetConstructors (flags)) {
+		foreach (ConstructorInfo ci in t.GetConstructors (DefaultFlags)) {
+			
+			if (! ShowMember (ci))
+				continue;
+			
 			if (first)
 				o.WriteLine ();
 			first = false;
@@ -138,7 +144,11 @@ public class Outline {
 
 		first = true;
 		
-		foreach (MethodInfo m in Comparer.Sort (t.GetMethods (flags))) {
+		foreach (MethodInfo m in Comparer.Sort (t.GetMethods (DefaultFlags))) {
+			
+			if (! ShowMember (m))
+				continue;		
+			
 			if ((m.Attributes & MethodAttributes.SpecialName) != 0)
 				continue;
 			
@@ -153,7 +163,11 @@ public class Outline {
 		
 		first = true;
 		
-		foreach (MethodInfo m in t.GetMethods (flags)) {
+		foreach (MethodInfo m in t.GetMethods (DefaultFlags)) {
+			
+			if (! ShowMember (m))
+				continue;
+			
 			if ((m.Attributes & MethodAttributes.SpecialName) == 0)
 				continue;
 			if (!(m.Name.StartsWith ("op_")))
@@ -170,7 +184,11 @@ public class Outline {
 
 		first = true;
 		
-		foreach (PropertyInfo pi in Comparer.Sort (t.GetProperties (flags))) {
+		foreach (PropertyInfo pi in Comparer.Sort (t.GetProperties (DefaultFlags))) {
+			
+			if (! ((pi.CanRead  && ShowMember (pi.GetGetMethod (true))) ||
+			       (pi.CanWrite && ShowMember (pi.GetSetMethod (true)))))
+				continue;
 			
 			if (first)
 				o.WriteLine ();
@@ -183,7 +201,10 @@ public class Outline {
 		
 		first = true;
 
-		foreach (FieldInfo fi in t.GetFields (flags)) {
+		foreach (FieldInfo fi in t.GetFields (DefaultFlags)) {
+			
+			if (! ShowMember (fi))
+				continue;
 			
 			if (first)
 				o.WriteLine ();
@@ -196,7 +217,10 @@ public class Outline {
 
 		first = true;
 		
-		foreach (EventInfo ei in Comparer.Sort (t.GetEvents (flags))) {
+		foreach (EventInfo ei in Comparer.Sort (t.GetEvents (DefaultFlags))) {
+			
+			if (! ShowMember (ei.GetAddMethod ()))
+				continue;
 			
 			if (first)
 				o.WriteLine ();
@@ -209,16 +233,30 @@ public class Outline {
 
 		first = true;
 
-		foreach (Type ntype in Comparer.Sort (t.GetNestedTypes (flags))) {
+		foreach (Type ntype in Comparer.Sort (t.GetNestedTypes (DefaultFlags))) {
+			
+			if (! ShowMember (ntype))
+				continue;
 			
 			if (first)
 				o.WriteLine ();
 			first = false;
 			
-			new Outline (ntype, o).OutlineType (flags);
+			new Outline (ntype, o, options).OutlineType ();
 		}
 		
 		o.Indent--; o.WriteLine ("}");
+	}
+	
+	BindingFlags DefaultFlags {
+		get {
+			BindingFlags f = BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic;
+			
+			if (options.DeclaredOnly)
+				f |= BindingFlags.DeclaredOnly;
+			
+			return f;
+		}
 	}
 
 	// FIXME: add other interesting attributes?
@@ -493,6 +531,50 @@ public class Outline {
 		case "op_LessThanOrEqual": return "<=";
 		default: return name;
 		}
+	}
+	
+	bool ShowMember (MemberInfo mi)
+	{
+		if (options.ShowPrivate)
+			return true;
+		
+		switch (mi.MemberType) {
+		case MemberTypes.Constructor:
+		case MemberTypes.Method:
+			MethodBase mb = mi as MethodBase;
+		
+			if (mb.IsFamily || mb.IsPublic || mb.IsFamilyOrAssembly)
+				return true;
+			
+			return false;
+		
+		
+		case MemberTypes.Field:
+			FieldInfo fi = mi as FieldInfo;
+		
+			if (fi.IsFamily || fi.IsPublic || fi.IsFamilyOrAssembly)
+				return true;
+			
+			return false;
+		
+		
+		case MemberTypes.NestedType:
+		case MemberTypes.TypeInfo:
+			Type t = mi as Type;
+		
+			switch (t.Attributes & TypeAttributes.VisibilityMask){
+			case TypeAttributes.Public:
+			case TypeAttributes.NestedPublic:
+			case TypeAttributes.NestedFamily:
+			case TypeAttributes.NestedFamORAssem:
+				return true;
+			}
+			
+			return false;
+		}
+		
+		// What am I !!!
+		return true;
 	}
 }
 

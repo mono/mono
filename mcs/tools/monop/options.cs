@@ -26,15 +26,15 @@
 
 using System;
 
-internal class Options
+public class Options
 {
-	internal bool DeclaredOnly = false;
-	internal bool Search = false;
-	internal bool ShowPrivate = false;
-	internal string AssemblyReference = null;
-	internal string Type = null;
+	public bool DeclaredOnly = false;
+	public bool Search = false;
+	public bool ShowPrivate = false;
+	public string AssemblyReference = null;
+	public string Type = null;
 
-	internal Options ()
+	public Options ()
 	{
 	}
 
