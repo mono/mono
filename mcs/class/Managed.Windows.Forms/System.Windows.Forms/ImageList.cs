@@ -24,6 +24,9 @@
 //
 //
 // $Log: ImageList.cs,v $
+// Revision 1.7  2004/11/04 11:04:40  ravindra
+// Implemented the missing overload for Draw method.
+//
 // Revision 1.6  2004/08/21 01:50:52  ravindra
 // Changed draw method to use the arguments passed in to draw the image.
 //
@@ -439,7 +442,11 @@ namespace System.Windows.Forms {
 
 		#region Public Instance Methods
 		public void Draw(Graphics g, Point pt, int index) {
-			this.Draw(g, pt.X, pt.Y, this.size.Width, this.size.Height, index);
+			this.Draw(g, pt.X, pt.Y, index);
+		}
+
+		public void Draw(Graphics g, int x, int y, int index) {
+			this.Draw(g, x, y, this.size.Width, this.size.Height, index);
 		}
 
 		public void Draw(Graphics g, int x, int y, int width, int height, int index) {
