@@ -1,3 +1,7 @@
+2005-03-24  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* corlib_test.dll.sources : Added many new CAS unit tests to the build.
+
 2005-03-23  Lluis Sanchez Gual  <lluis@ximian.com>
 
 	* corlib_test.dll.sources: Added new serialization test.
