@@ -1,5 +1,11 @@
 2003-06-16  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
 
+	* added XmlCharTests.cs(separated XmlChar tests from XmlTextReaderTests)
+	* XmlTextReaderTests.cs : added ExternalDocument() which will result
+	  in BaseURI test and DTD parameter entity test.
+
+2003-06-16  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
+
 	* XmlReaderCommonTests.cs : EmptyElementWithTwoAttributes() is now
 	  EmptyElementWithAttributes() and was added namespaced attribute tests.
 	* XmlTextWriterTests.cs : added WriteWhitespace().
