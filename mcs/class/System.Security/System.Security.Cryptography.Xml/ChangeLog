@@ -1,3 +1,8 @@
+2003-12-14  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* SignedXml.cs: Now load the public key when verifying (bug #52084)
+	and can find an element by it's Id when Id isn't defined in DTD or XSD.
+
 2003-07-27  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* XmlSignature.cs: Changed USE_VERSION_1_0 for NET_1_0.

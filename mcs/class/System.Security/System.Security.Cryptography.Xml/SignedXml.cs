@@ -219,6 +219,7 @@ namespace System.Security.Cryptography.Xml {
 				AsymmetricSignatureDeformatter verifier = (AsymmetricSignatureDeformatter) CryptoConfig.CreateFromName (sd.DeformatterAlgorithm);
 
 				if (verifier != null) {
+					verifier.SetKey (key);
 					verifier.SetHashAlgorithm (sd.DigestAlgorithm);
 					result = verifier.VerifySignature (hash, signature.SignatureValue); 
 				}
@@ -311,10 +312,15 @@ namespace System.Security.Cryptography.Xml {
 				throw new CryptographicException ("unsupported algorithm");
 		}
 
-		// is that all ?
 		public virtual XmlElement GetIdElement (XmlDocument document, string idValue) 
 		{
-			return document.GetElementById (idValue);
+			// this works only if there's a DTD or XSD available to define the ID
+			XmlElement xel = document.GetElementById (idValue);
+			if (xel == null) {
+				// search an "undefined" ID
+				xel = (XmlElement) document.SelectSingleNode ("//*[@Id='" + idValue + "']");
+			}
+			return xel;
 		}
 
 		protected virtual AsymmetricAlgorithm GetPublicKey () 
