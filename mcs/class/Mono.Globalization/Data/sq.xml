@@ -86,6 +86,7 @@
     <MacCodePage>10029</MacCodePage>
     <OEMCodePage>852</OEMCodePage>
   </TextInfo>
+  <ThreeLetterWindowsLanguageName>SQI</ThreeLetterWindowsLanguageName>
   <ThreeLetterISOLanguageName>sqi</ThreeLetterISOLanguageName>
   <TwoLetterISOLanguageName>sq</TwoLetterISOLanguageName>
 </CultureInfo>

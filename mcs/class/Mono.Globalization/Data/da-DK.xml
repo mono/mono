@@ -188,6 +188,7 @@
     <MacCodePage>10000</MacCodePage>
     <OEMCodePage>850</OEMCodePage>
   </TextInfo>
+  <ThreeLetterWindowsLanguageName>DAN</ThreeLetterWindowsLanguageName>
   <ThreeLetterISOLanguageName>dan</ThreeLetterISOLanguageName>
   <TwoLetterISOLanguageName>da</TwoLetterISOLanguageName>
 </CultureInfo>

@@ -188,6 +188,7 @@
     <MacCodePage>10029</MacCodePage>
     <OEMCodePage>852</OEMCodePage>
   </TextInfo>
+  <ThreeLetterWindowsLanguageName>PLK</ThreeLetterWindowsLanguageName>
   <ThreeLetterISOLanguageName>pol</ThreeLetterISOLanguageName>
   <TwoLetterISOLanguageName>pl</TwoLetterISOLanguageName>
 </CultureInfo>

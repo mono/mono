@@ -86,6 +86,7 @@
     <MacCodePage>10081</MacCodePage>
     <OEMCodePage>857</OEMCodePage>
   </TextInfo>
+  <ThreeLetterWindowsLanguageName>TRK</ThreeLetterWindowsLanguageName>
   <ThreeLetterISOLanguageName>tur</ThreeLetterISOLanguageName>
   <TwoLetterISOLanguageName>tr</TwoLetterISOLanguageName>
 </CultureInfo>

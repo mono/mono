@@ -188,6 +188,7 @@
     <MacCodePage>10029</MacCodePage>
     <OEMCodePage>775</OEMCodePage>
   </TextInfo>
+  <ThreeLetterWindowsLanguageName>LTH</ThreeLetterWindowsLanguageName>
   <ThreeLetterISOLanguageName>lit</ThreeLetterISOLanguageName>
   <TwoLetterISOLanguageName>lt</TwoLetterISOLanguageName>
 </CultureInfo>

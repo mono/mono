@@ -86,6 +86,7 @@
     <MacCodePage>10000</MacCodePage>
     <OEMCodePage>850</OEMCodePage>
   </TextInfo>
+  <ThreeLetterWindowsLanguageName>CAT</ThreeLetterWindowsLanguageName>
   <ThreeLetterISOLanguageName>cat</ThreeLetterISOLanguageName>
   <TwoLetterISOLanguageName>ca</TwoLetterISOLanguageName>
 </CultureInfo>

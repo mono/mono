@@ -86,6 +86,7 @@
     <MacCodePage>10007</MacCodePage>
     <OEMCodePage>866</OEMCodePage>
   </TextInfo>
+  <ThreeLetterWindowsLanguageName>KYR</ThreeLetterWindowsLanguageName>
   <ThreeLetterISOLanguageName>kir</ThreeLetterISOLanguageName>
   <TwoLetterISOLanguageName>kz</TwoLetterISOLanguageName>
 </CultureInfo>

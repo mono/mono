@@ -165,7 +165,7 @@
     <NumberDecimalDigits>2</NumberDecimalDigits>
     <NegativeSign>-</NegativeSign>
     <NegativeInfinitySymbol>-Infinity</NegativeInfinitySymbol>
-    <NaNSymbol>NaN</NaNSymbol>
+    <NaNSymbol>NeuN</NaNSymbol>
     <CurrencySymbol>$</CurrencySymbol>
     <CurrencyPositivePattern>0</CurrencyPositivePattern>
     <CurrencyNegativePattern>0</CurrencyNegativePattern>
@@ -188,6 +188,7 @@
     <MacCodePage>10000</MacCodePage>
     <OEMCodePage>850</OEMCodePage>
   </TextInfo>
+  <ThreeLetterWindowsLanguageName>ESM</ThreeLetterWindowsLanguageName>
   <ThreeLetterISOLanguageName>spa</ThreeLetterISOLanguageName>
   <TwoLetterISOLanguageName>es</TwoLetterISOLanguageName>
 </CultureInfo>

@@ -188,6 +188,7 @@
     <MacCodePage>10017</MacCodePage>
     <OEMCodePage>866</OEMCodePage>
   </TextInfo>
+  <ThreeLetterWindowsLanguageName>UKR</ThreeLetterWindowsLanguageName>
   <ThreeLetterISOLanguageName>ukr</ThreeLetterISOLanguageName>
   <TwoLetterISOLanguageName>uk</TwoLetterISOLanguageName>
 </CultureInfo>

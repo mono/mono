@@ -86,6 +86,7 @@
     <MacCodePage>10000</MacCodePage>
     <OEMCodePage>850</OEMCodePage>
   </TextInfo>
+  <ThreeLetterWindowsLanguageName>ITA</ThreeLetterWindowsLanguageName>
   <ThreeLetterISOLanguageName>ita</ThreeLetterISOLanguageName>
   <TwoLetterISOLanguageName>it</TwoLetterISOLanguageName>
 </CultureInfo>

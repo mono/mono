@@ -188,6 +188,7 @@
     <MacCodePage>10004</MacCodePage>
     <OEMCodePage>720</OEMCodePage>
   </TextInfo>
+  <ThreeLetterWindowsLanguageName>URD</ThreeLetterWindowsLanguageName>
   <ThreeLetterISOLanguageName>urd</ThreeLetterISOLanguageName>
   <TwoLetterISOLanguageName>ur</TwoLetterISOLanguageName>
 </CultureInfo>

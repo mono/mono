@@ -188,6 +188,7 @@
     <MacCodePage>10000</MacCodePage>
     <OEMCodePage>850</OEMCodePage>
   </TextInfo>
+  <ThreeLetterWindowsLanguageName>DEU</ThreeLetterWindowsLanguageName>
   <ThreeLetterISOLanguageName>deu</ThreeLetterISOLanguageName>
   <TwoLetterISOLanguageName>de</TwoLetterISOLanguageName>
 </CultureInfo>

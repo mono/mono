@@ -188,6 +188,7 @@
     <MacCodePage>10004</MacCodePage>
     <OEMCodePage>720</OEMCodePage>
   </TextInfo>
+  <ThreeLetterWindowsLanguageName>ARS</ThreeLetterWindowsLanguageName>
   <ThreeLetterISOLanguageName>ara</ThreeLetterISOLanguageName>
   <TwoLetterISOLanguageName>ar</TwoLetterISOLanguageName>
 </CultureInfo>

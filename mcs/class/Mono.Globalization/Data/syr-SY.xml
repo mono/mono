@@ -188,6 +188,7 @@
     <MacCodePage>2</MacCodePage>
     <OEMCodePage>1</OEMCodePage>
   </TextInfo>
+  <ThreeLetterWindowsLanguageName>SYR</ThreeLetterWindowsLanguageName>
   <ThreeLetterISOLanguageName>syr</ThreeLetterISOLanguageName>
   <TwoLetterISOLanguageName>syr</TwoLetterISOLanguageName>
 </CultureInfo>

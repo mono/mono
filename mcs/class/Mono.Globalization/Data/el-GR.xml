@@ -188,6 +188,7 @@
     <MacCodePage>10006</MacCodePage>
     <OEMCodePage>737</OEMCodePage>
   </TextInfo>
+  <ThreeLetterWindowsLanguageName>ELL</ThreeLetterWindowsLanguageName>
   <ThreeLetterISOLanguageName>ell</ThreeLetterISOLanguageName>
   <TwoLetterISOLanguageName>el</TwoLetterISOLanguageName>
 </CultureInfo>

@@ -188,6 +188,7 @@
     <MacCodePage>10007</MacCodePage>
     <OEMCodePage>866</OEMCodePage>
   </TextInfo>
+  <ThreeLetterWindowsLanguageName>BGR</ThreeLetterWindowsLanguageName>
   <ThreeLetterISOLanguageName>bul</ThreeLetterISOLanguageName>
   <TwoLetterISOLanguageName>bg</TwoLetterISOLanguageName>
 </CultureInfo>

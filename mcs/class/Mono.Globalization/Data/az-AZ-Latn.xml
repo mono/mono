@@ -188,6 +188,7 @@
     <MacCodePage>10081</MacCodePage>
     <OEMCodePage>857</OEMCodePage>
   </TextInfo>
+  <ThreeLetterWindowsLanguageName>AZE</ThreeLetterWindowsLanguageName>
   <ThreeLetterISOLanguageName>aze</ThreeLetterISOLanguageName>
   <TwoLetterISOLanguageName>az</TwoLetterISOLanguageName>
 </CultureInfo>

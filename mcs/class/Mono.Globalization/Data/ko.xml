@@ -88,6 +88,7 @@
     <MacCodePage>10003</MacCodePage>
     <OEMCodePage>949</OEMCodePage>
   </TextInfo>
+  <ThreeLetterWindowsLanguageName>KOR</ThreeLetterWindowsLanguageName>
   <ThreeLetterISOLanguageName>kor</ThreeLetterISOLanguageName>
   <TwoLetterISOLanguageName>ko</TwoLetterISOLanguageName>
 </CultureInfo>

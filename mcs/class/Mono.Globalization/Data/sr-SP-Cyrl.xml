@@ -188,6 +188,7 @@
     <MacCodePage>10007</MacCodePage>
     <OEMCodePage>855</OEMCodePage>
   </TextInfo>
+  <ThreeLetterWindowsLanguageName>SRB</ThreeLetterWindowsLanguageName>
   <ThreeLetterISOLanguageName>srp</ThreeLetterISOLanguageName>
   <TwoLetterISOLanguageName>sr</TwoLetterISOLanguageName>
 </CultureInfo>

@@ -188,6 +188,7 @@
     <MacCodePage>2</MacCodePage>
     <OEMCodePage>1</OEMCodePage>
   </TextInfo>
+  <ThreeLetterWindowsLanguageName>HYE</ThreeLetterWindowsLanguageName>
   <ThreeLetterISOLanguageName>hye</ThreeLetterISOLanguageName>
   <TwoLetterISOLanguageName>hy</TwoLetterISOLanguageName>
 </CultureInfo>

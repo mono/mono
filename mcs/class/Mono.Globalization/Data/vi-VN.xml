@@ -188,6 +188,7 @@
     <MacCodePage>10000</MacCodePage>
     <OEMCodePage>1258</OEMCodePage>
   </TextInfo>
+  <ThreeLetterWindowsLanguageName>VIT</ThreeLetterWindowsLanguageName>
   <ThreeLetterISOLanguageName>vie</ThreeLetterISOLanguageName>
   <TwoLetterISOLanguageName>vi</TwoLetterISOLanguageName>
 </CultureInfo>

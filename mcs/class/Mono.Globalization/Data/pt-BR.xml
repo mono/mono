@@ -188,6 +188,7 @@
     <MacCodePage>10000</MacCodePage>
     <OEMCodePage>850</OEMCodePage>
   </TextInfo>
+  <ThreeLetterWindowsLanguageName>PTB</ThreeLetterWindowsLanguageName>
   <ThreeLetterISOLanguageName>por</ThreeLetterISOLanguageName>
   <TwoLetterISOLanguageName>pt</TwoLetterISOLanguageName>
 </CultureInfo>

@@ -87,6 +87,7 @@
     <MacCodePage>2</MacCodePage>
     <OEMCodePage>1</OEMCodePage>
   </TextInfo>
+  <ThreeLetterWindowsLanguageName>DIV</ThreeLetterWindowsLanguageName>
   <ThreeLetterISOLanguageName>div</ThreeLetterISOLanguageName>
   <TwoLetterISOLanguageName>div</TwoLetterISOLanguageName>
 </CultureInfo>

@@ -86,6 +86,7 @@
     <MacCodePage>10079</MacCodePage>
     <OEMCodePage>850</OEMCodePage>
   </TextInfo>
+  <ThreeLetterWindowsLanguageName>FOS</ThreeLetterWindowsLanguageName>
   <ThreeLetterISOLanguageName>fao</ThreeLetterISOLanguageName>
   <TwoLetterISOLanguageName>fo</TwoLetterISOLanguageName>
 </CultureInfo>

@@ -188,6 +188,7 @@
     <MacCodePage>10000</MacCodePage>
     <OEMCodePage>850</OEMCodePage>
   </TextInfo>
+  <ThreeLetterWindowsLanguageName>MSB</ThreeLetterWindowsLanguageName>
   <ThreeLetterISOLanguageName>msa</ThreeLetterISOLanguageName>
   <TwoLetterISOLanguageName>ms</TwoLetterISOLanguageName>
 </CultureInfo>

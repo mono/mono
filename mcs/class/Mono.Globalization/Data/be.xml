@@ -86,6 +86,7 @@
     <MacCodePage>10007</MacCodePage>
     <OEMCodePage>866</OEMCodePage>
   </TextInfo>
+  <ThreeLetterWindowsLanguageName>BEL</ThreeLetterWindowsLanguageName>
   <ThreeLetterISOLanguageName>bel</ThreeLetterISOLanguageName>
   <TwoLetterISOLanguageName>be</TwoLetterISOLanguageName>
 </CultureInfo>

@@ -86,6 +86,7 @@
     <MacCodePage>10000</MacCodePage>
     <OEMCodePage>850</OEMCodePage>
   </TextInfo>
+  <ThreeLetterWindowsLanguageName>IND</ThreeLetterWindowsLanguageName>
   <ThreeLetterISOLanguageName>ind</ThreeLetterISOLanguageName>
   <TwoLetterISOLanguageName>id</TwoLetterISOLanguageName>
 </CultureInfo>

@@ -188,6 +188,7 @@
     <MacCodePage>10029</MacCodePage>
     <OEMCodePage>775</OEMCodePage>
   </TextInfo>
+  <ThreeLetterWindowsLanguageName>LVI</ThreeLetterWindowsLanguageName>
   <ThreeLetterISOLanguageName>lav</ThreeLetterISOLanguageName>
   <TwoLetterISOLanguageName>lv</TwoLetterISOLanguageName>
 </CultureInfo>

@@ -188,6 +188,7 @@
     <MacCodePage>2</MacCodePage>
     <OEMCodePage>1</OEMCodePage>
   </TextInfo>
+  <ThreeLetterWindowsLanguageName>KAT</ThreeLetterWindowsLanguageName>
   <ThreeLetterISOLanguageName>kat</ThreeLetterISOLanguageName>
   <TwoLetterISOLanguageName>ka</TwoLetterISOLanguageName>
 </CultureInfo>

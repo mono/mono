@@ -86,6 +86,7 @@
     <MacCodePage>10029</MacCodePage>
     <OEMCodePage>852</OEMCodePage>
   </TextInfo>
+  <ThreeLetterWindowsLanguageName>HUN</ThreeLetterWindowsLanguageName>
   <ThreeLetterISOLanguageName>hun</ThreeLetterISOLanguageName>
   <TwoLetterISOLanguageName>hu</TwoLetterISOLanguageName>
 </CultureInfo>

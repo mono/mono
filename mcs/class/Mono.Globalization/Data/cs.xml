@@ -86,6 +86,7 @@
     <MacCodePage>10029</MacCodePage>
     <OEMCodePage>852</OEMCodePage>
   </TextInfo>
+  <ThreeLetterWindowsLanguageName>CSY</ThreeLetterWindowsLanguageName>
   <ThreeLetterISOLanguageName>ces</ThreeLetterISOLanguageName>
   <TwoLetterISOLanguageName>cs</TwoLetterISOLanguageName>
 </CultureInfo>

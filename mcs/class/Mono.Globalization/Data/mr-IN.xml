@@ -188,6 +188,7 @@
     <MacCodePage>2</MacCodePage>
     <OEMCodePage>1</OEMCodePage>
   </TextInfo>
+  <ThreeLetterWindowsLanguageName>MAR</ThreeLetterWindowsLanguageName>
   <ThreeLetterISOLanguageName>mar</ThreeLetterISOLanguageName>
   <TwoLetterISOLanguageName>mr</TwoLetterISOLanguageName>
 </CultureInfo>

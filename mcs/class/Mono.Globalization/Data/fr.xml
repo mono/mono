@@ -86,6 +86,7 @@
     <MacCodePage>10000</MacCodePage>
     <OEMCodePage>850</OEMCodePage>
   </TextInfo>
+  <ThreeLetterWindowsLanguageName>FRA</ThreeLetterWindowsLanguageName>
   <ThreeLetterISOLanguageName>fra</ThreeLetterISOLanguageName>
   <TwoLetterISOLanguageName>fr</TwoLetterISOLanguageName>
 </CultureInfo>

@@ -86,6 +86,7 @@
     <MacCodePage>10000</MacCodePage>
     <OEMCodePage>850</OEMCodePage>
   </TextInfo>
+  <ThreeLetterWindowsLanguageName>AFK</ThreeLetterWindowsLanguageName>
   <ThreeLetterISOLanguageName>afr</ThreeLetterISOLanguageName>
   <TwoLetterISOLanguageName>af</TwoLetterISOLanguageName>
 </CultureInfo>

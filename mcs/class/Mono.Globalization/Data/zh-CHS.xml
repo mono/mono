@@ -86,6 +86,7 @@
     <MacCodePage>10008</MacCodePage>
     <OEMCodePage>936</OEMCodePage>
   </TextInfo>
+  <ThreeLetterWindowsLanguageName>CHS</ThreeLetterWindowsLanguageName>
   <ThreeLetterISOLanguageName>zho</ThreeLetterISOLanguageName>
   <TwoLetterISOLanguageName>zh</TwoLetterISOLanguageName>
 </CultureInfo>

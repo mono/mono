@@ -188,6 +188,7 @@
     <MacCodePage>2</MacCodePage>
     <OEMCodePage>1</OEMCodePage>
   </TextInfo>
+  <ThreeLetterWindowsLanguageName>TAM</ThreeLetterWindowsLanguageName>
   <ThreeLetterISOLanguageName>tam</ThreeLetterISOLanguageName>
   <TwoLetterISOLanguageName>ta</TwoLetterISOLanguageName>
 </CultureInfo>

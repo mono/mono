@@ -188,6 +188,7 @@
     <MacCodePage>10000</MacCodePage>
     <OEMCodePage>850</OEMCodePage>
   </TextInfo>
+  <ThreeLetterWindowsLanguageName>ESZ</ThreeLetterWindowsLanguageName>
   <ThreeLetterISOLanguageName>spa</ThreeLetterISOLanguageName>
   <TwoLetterISOLanguageName>es</TwoLetterISOLanguageName>
 </CultureInfo>

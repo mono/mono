@@ -86,6 +86,7 @@
     <MacCodePage>10000</MacCodePage>
     <OEMCodePage>850</OEMCodePage>
   </TextInfo>
+  <ThreeLetterWindowsLanguageName>EUQ</ThreeLetterWindowsLanguageName>
   <ThreeLetterISOLanguageName>eus</ThreeLetterISOLanguageName>
   <TwoLetterISOLanguageName>eu</TwoLetterISOLanguageName>
 </CultureInfo>

@@ -188,6 +188,7 @@
     <MacCodePage>10000</MacCodePage>
     <OEMCodePage>437</OEMCodePage>
   </TextInfo>
+  <ThreeLetterWindowsLanguageName>ENP</ThreeLetterWindowsLanguageName>
   <ThreeLetterISOLanguageName>eng</ThreeLetterISOLanguageName>
   <TwoLetterISOLanguageName>en</TwoLetterISOLanguageName>
 </CultureInfo>

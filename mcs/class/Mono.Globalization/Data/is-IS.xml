@@ -188,6 +188,7 @@
     <MacCodePage>10079</MacCodePage>
     <OEMCodePage>850</OEMCodePage>
   </TextInfo>
+  <ThreeLetterWindowsLanguageName>ISL</ThreeLetterWindowsLanguageName>
   <ThreeLetterISOLanguageName>isl</ThreeLetterISOLanguageName>
   <TwoLetterISOLanguageName>is</TwoLetterISOLanguageName>
 </CultureInfo>

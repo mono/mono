@@ -188,6 +188,7 @@
     <MacCodePage>10021</MacCodePage>
     <OEMCodePage>874</OEMCodePage>
   </TextInfo>
+  <ThreeLetterWindowsLanguageName>THA</ThreeLetterWindowsLanguageName>
   <ThreeLetterISOLanguageName>tha</ThreeLetterISOLanguageName>
   <TwoLetterISOLanguageName>th</TwoLetterISOLanguageName>
 </CultureInfo>

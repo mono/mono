@@ -86,6 +86,7 @@
     <MacCodePage>10007</MacCodePage>
     <OEMCodePage>866</OEMCodePage>
   </TextInfo>
+  <ThreeLetterWindowsLanguageName>TTT</ThreeLetterWindowsLanguageName>
   <ThreeLetterISOLanguageName>tat</ThreeLetterISOLanguageName>
   <TwoLetterISOLanguageName>tt</TwoLetterISOLanguageName>
 </CultureInfo>

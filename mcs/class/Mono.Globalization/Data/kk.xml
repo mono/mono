@@ -86,6 +86,7 @@
     <MacCodePage>10007</MacCodePage>
     <OEMCodePage>866</OEMCodePage>
   </TextInfo>
+  <ThreeLetterWindowsLanguageName>KKZ</ThreeLetterWindowsLanguageName>
   <ThreeLetterISOLanguageName>kaz</ThreeLetterISOLanguageName>
   <TwoLetterISOLanguageName>kk</TwoLetterISOLanguageName>
 </CultureInfo>

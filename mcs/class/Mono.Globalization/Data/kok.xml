@@ -86,6 +86,7 @@
     <MacCodePage>2</MacCodePage>
     <OEMCodePage>1</OEMCodePage>
   </TextInfo>
+  <ThreeLetterWindowsLanguageName>KNK</ThreeLetterWindowsLanguageName>
   <ThreeLetterISOLanguageName>kok</ThreeLetterISOLanguageName>
   <TwoLetterISOLanguageName>hi</TwoLetterISOLanguageName>
 </CultureInfo>

@@ -188,6 +188,7 @@
     <MacCodePage>10082</MacCodePage>
     <OEMCodePage>852</OEMCodePage>
   </TextInfo>
+  <ThreeLetterWindowsLanguageName>HRV</ThreeLetterWindowsLanguageName>
   <ThreeLetterISOLanguageName>hrv</ThreeLetterISOLanguageName>
   <TwoLetterISOLanguageName>hr</TwoLetterISOLanguageName>
 </CultureInfo>

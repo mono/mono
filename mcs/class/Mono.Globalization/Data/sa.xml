@@ -86,6 +86,7 @@
     <MacCodePage>2</MacCodePage>
     <OEMCodePage>1</OEMCodePage>
   </TextInfo>
+  <ThreeLetterWindowsLanguageName>SAN</ThreeLetterWindowsLanguageName>
   <ThreeLetterISOLanguageName>san</ThreeLetterISOLanguageName>
   <TwoLetterISOLanguageName>sa</TwoLetterISOLanguageName>
 </CultureInfo>

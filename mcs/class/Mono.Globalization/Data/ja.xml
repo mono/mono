@@ -88,6 +88,7 @@
     <MacCodePage>10001</MacCodePage>
     <OEMCodePage>932</OEMCodePage>
   </TextInfo>
+  <ThreeLetterWindowsLanguageName>JPN</ThreeLetterWindowsLanguageName>
   <ThreeLetterISOLanguageName>jpn</ThreeLetterISOLanguageName>
   <TwoLetterISOLanguageName>ja</TwoLetterISOLanguageName>
 </CultureInfo>

@@ -87,6 +87,7 @@
     <MacCodePage>10005</MacCodePage>
     <OEMCodePage>862</OEMCodePage>
   </TextInfo>
+  <ThreeLetterWindowsLanguageName>HEB</ThreeLetterWindowsLanguageName>
   <ThreeLetterISOLanguageName>heb</ThreeLetterISOLanguageName>
   <TwoLetterISOLanguageName>he</TwoLetterISOLanguageName>
 </CultureInfo>

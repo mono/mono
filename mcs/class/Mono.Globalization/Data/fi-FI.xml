@@ -188,6 +188,7 @@
     <MacCodePage>10000</MacCodePage>
     <OEMCodePage>850</OEMCodePage>
   </TextInfo>
+  <ThreeLetterWindowsLanguageName>FIN</ThreeLetterWindowsLanguageName>
   <ThreeLetterISOLanguageName>fin</ThreeLetterISOLanguageName>
   <TwoLetterISOLanguageName>fi</TwoLetterISOLanguageName>
 </CultureInfo>

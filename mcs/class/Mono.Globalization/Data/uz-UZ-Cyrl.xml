@@ -188,6 +188,7 @@
     <MacCodePage>10007</MacCodePage>
     <OEMCodePage>866</OEMCodePage>
   </TextInfo>
+  <ThreeLetterWindowsLanguageName>UZB</ThreeLetterWindowsLanguageName>
   <ThreeLetterISOLanguageName>uzb</ThreeLetterISOLanguageName>
   <TwoLetterISOLanguageName>uz</TwoLetterISOLanguageName>
 </CultureInfo>

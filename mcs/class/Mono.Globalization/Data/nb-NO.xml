@@ -188,6 +188,7 @@
     <MacCodePage>10000</MacCodePage>
     <OEMCodePage>850</OEMCodePage>
   </TextInfo>
+  <ThreeLetterWindowsLanguageName>NOR</ThreeLetterWindowsLanguageName>
   <ThreeLetterISOLanguageName>nob</ThreeLetterISOLanguageName>
   <TwoLetterISOLanguageName>nb</TwoLetterISOLanguageName>
 </CultureInfo>

@@ -188,6 +188,7 @@
     <MacCodePage>10007</MacCodePage>
     <OEMCodePage>866</OEMCodePage>
   </TextInfo>
+  <ThreeLetterWindowsLanguageName>MKI</ThreeLetterWindowsLanguageName>
   <ThreeLetterISOLanguageName>mkd</ThreeLetterISOLanguageName>
   <TwoLetterISOLanguageName>mk</TwoLetterISOLanguageName>
 </CultureInfo>

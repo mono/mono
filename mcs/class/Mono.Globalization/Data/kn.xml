@@ -86,6 +86,7 @@
     <MacCodePage>2</MacCodePage>
     <OEMCodePage>1</OEMCodePage>
   </TextInfo>
+  <ThreeLetterWindowsLanguageName>KAN</ThreeLetterWindowsLanguageName>
   <ThreeLetterISOLanguageName>kan</ThreeLetterISOLanguageName>
   <TwoLetterISOLanguageName>kn</TwoLetterISOLanguageName>
 </CultureInfo>

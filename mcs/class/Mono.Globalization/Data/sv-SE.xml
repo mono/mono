@@ -188,6 +188,7 @@
     <MacCodePage>10000</MacCodePage>
     <OEMCodePage>850</OEMCodePage>
   </TextInfo>
+  <ThreeLetterWindowsLanguageName>SVE</ThreeLetterWindowsLanguageName>
   <ThreeLetterISOLanguageName>swe</ThreeLetterISOLanguageName>
   <TwoLetterISOLanguageName>sv</TwoLetterISOLanguageName>
 </CultureInfo>

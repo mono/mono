@@ -188,6 +188,7 @@
     <MacCodePage>10000</MacCodePage>
     <OEMCodePage>437</OEMCodePage>
   </TextInfo>
+  <ThreeLetterWindowsLanguageName>SWK</ThreeLetterWindowsLanguageName>
   <ThreeLetterISOLanguageName>swa</ThreeLetterISOLanguageName>
   <TwoLetterISOLanguageName>sw</TwoLetterISOLanguageName>
 </CultureInfo>

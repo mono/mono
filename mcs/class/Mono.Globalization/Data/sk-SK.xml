@@ -188,6 +188,7 @@
     <MacCodePage>10029</MacCodePage>
     <OEMCodePage>852</OEMCodePage>
   </TextInfo>
+  <ThreeLetterWindowsLanguageName>SKY</ThreeLetterWindowsLanguageName>
   <ThreeLetterISOLanguageName>slk</ThreeLetterISOLanguageName>
   <TwoLetterISOLanguageName>sk</TwoLetterISOLanguageName>
 </CultureInfo>

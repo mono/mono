@@ -188,6 +188,7 @@
     <MacCodePage>2</MacCodePage>
     <OEMCodePage>1</OEMCodePage>
   </TextInfo>
+  <ThreeLetterWindowsLanguageName>TEL</ThreeLetterWindowsLanguageName>
   <ThreeLetterISOLanguageName>tel</ThreeLetterISOLanguageName>
   <TwoLetterISOLanguageName>te</TwoLetterISOLanguageName>
 </CultureInfo>

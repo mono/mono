@@ -86,6 +86,7 @@
     <MacCodePage>10007</MacCodePage>
     <OEMCodePage>866</OEMCodePage>
   </TextInfo>
+  <ThreeLetterWindowsLanguageName>MON</ThreeLetterWindowsLanguageName>
   <ThreeLetterISOLanguageName>mon</ThreeLetterISOLanguageName>
   <TwoLetterISOLanguageName>mn</TwoLetterISOLanguageName>
 </CultureInfo>
