@@ -3,8 +3,10 @@
 //
 // Authors:
 //	Gonzalo Paniagua Javier (gonzalo@ximian.com)
+//	Erik LeBel (eriklebel@yahoo.ca)
 //
 // (C) 2002 Ximian, Inc (http://www.ximian.com)
+// (C) 2003 Erik Lebel
 //
 
 using System;
@@ -37,6 +39,7 @@ namespace System.Xml.Serialization
 			primitives.Add (typeof (sbyte), "byte");
 			primitives.Add (typeof (char), "char");
 			primitives.Add (typeof (object), "anyType");
+			primitives.Add (typeof (byte[]), "base64Binary");
 		}
 
 		private TypeTranslator ()
@@ -46,6 +49,12 @@ namespace System.Xml.Serialization
 		static public TypeData GetTypeData (Type type)
 		{
 			string name = primitives [type] as string;
+			if (name == null && type.IsArray) {
+				name = primitives [type.GetElementType ()] as string;
+				if (name != null)
+					name = "ArrayOf" + Char.ToUpper (name [0]) + name.Substring (1);
+			}
+			
 			return new TypeData (type, (name == null) ? type.Name : name, name != null);
 		}
 	}

@@ -3,8 +3,10 @@
 //
 // Author:
 //   Tim Coleman (tim@timcoleman.com)
+//   Erik LeBel (eriklebel@yahoo.ca)
 //
 // Copyright (C) Tim Coleman, 2002
+// (C) 2003 Erik LeBel
 //
 
 using System.Reflection;
@@ -88,6 +90,15 @@ namespace System.Xml.Serialization {
 			string typeName = data.TypeName;
 			string typeFullName = data.FullTypeName;
 			string nameSpc = (defaultNamespace != null) ? defaultNamespace : this.defaultNamespace;
+
+			if (group != null)
+			{
+				if (group.ElementName != null && group.ElementName != String.Empty)
+					elementName = group.ElementName;
+				if (group.Namespace != null && group.Namespace != String.Empty)
+					nameSpc = group.Namespace;
+			}
+			
 			return new XmlTypeMapping (elementName, nameSpc, typeFullName, typeName);
 		}
 
