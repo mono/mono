@@ -7109,7 +7109,15 @@ namespace Mono.CSharp {
 
 						object real_value = ((Constant) c.Expr).GetValue ();
 
-						return Constantify (real_value, t);
+						Expression exp = Constantify (real_value, t);
+
+						if (left_is_explicit && !left_is_type && !IdenticalNameAndTypeName (ec, left_original, left, loc)) {
+							Report.SymbolRelatedToPreviousError (c);
+							error176 (loc, c.GetSignatureForError ());
+							return null;
+						}
+					
+						return exp;
 					}
 				}
 
