@@ -1,3 +1,9 @@
+2003-08-10  Miguel de Icaza  <miguel@ximian.com>
+
+	* UdpClient.cs (Receive): Fix Bug 45633;  We should do a blocking
+	call until a datagram is arrives from the remote host.  This
+	removes the 512 "magic" buffer size when we did not have any data.
+
 2003-07-31  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* NetworkStream.cs:

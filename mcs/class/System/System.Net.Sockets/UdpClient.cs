@@ -192,11 +192,15 @@ namespace System.Net.Sockets
 		public byte [] Receive (ref IPEndPoint remoteEP)
 		{
 			CheckDisposed ();
-			// Length of the array for receiving data??
+
+			// Bug 45633: the spec states that we should block until a datagram arrives:
+			// remove the 512 hardcoded value.
+
+			// Block until we get it.
+			socket.Poll (-1, SelectMode.SelectRead);
+			
 			byte [] recBuffer;
 			int available = socket.Available;
-			if (available < 512)
-				available = 512;
 
 			recBuffer = new byte [available];
 			EndPoint endPoint = new IPEndPoint (IPAddress.Any, 0);
