@@ -277,7 +277,7 @@ namespace System.Text {
 			}
 
 			int nextIndex = startIndex; // Where to start the next search
-			int lastIndex = nextIndex;  // Where the last search finished
+			int lastIndex = startIndex;  // Where the last search finished
 
 			while( nextIndex != -1 ) {
 				nextIndex = startString.IndexOf( oldValue, lastIndex);				  
@@ -291,6 +291,9 @@ namespace System.Text {
 
 						// Add everything to the left of the old 
 						// string
+						if (lastIndex == startIndex) // don't lose the beginning
+							lastIndex = 0;
+
 						newStringB.Append( startString.Substring( lastIndex, nextIndex - lastIndex ) );
 	
 						// Add the replacement string
