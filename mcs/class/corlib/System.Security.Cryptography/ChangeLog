@@ -1,3 +1,18 @@
+2002-10-13  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* HashAlgorithm.cs: Added Dispose() to HashAlgorithm because it 
+	inherits ICryptoTransform
+	* KeyedHashAlgorithm.cs: New implementation
+	* HMACSHA1.cs: New (include a generic HMACAlgorithm as internal class)
+	* MACTripleDES.cs: New (missing core implementation on generic MACAlgorithm)
+	* CryptoStream.cs: Added limited functionalities to support HMACSHA1
+
+2002-10-12  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* DSA.cs: changed constructor to public from internal (like MS)
+	* HashAlgorithm.cs: Completed ComputeHash methods
+	* SHA1.cs: Added HashSizeValue = 160
+
 2002-10-12  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* ICryptoTransform.cs: Now inherits from IDisposable
