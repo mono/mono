@@ -1,5 +1,15 @@
 2002-07-21  Martin Baulig  <martin@gnome.org>
 
+	* assign.cs: Make this work if the rightmost source is a constant and
+	we need to do an implicit type conversion.  Also adding a few more tests
+	to test-38.cs which should have caught this.
+
+	* makefile.gnu: Disable debugging, there's already the mcs-mono2.exe
+	target in the makefile for this.  The makefile.gnu is primarily intended
+	for end-users who don't want to debug the compiler.
+
+2002-07-21  Martin Baulig  <martin@gnome.org>
+
 	* assign.cs: Improved the Assign class so it can now handle embedded
 	assignments (X = Y = Z = something).  As a side-effect this'll now also
 	consume less local variables.  test-38.cs now passes with MCS, added

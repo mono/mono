@@ -109,6 +109,7 @@ namespace Mono.CSharp {
 		protected LocalTemporary temp = null, real_temp = null;
 		protected Assign embedded = null;
 		protected bool is_embedded = false;
+		protected bool must_free_temp = false;
 		public Location l;
 
 		public Assign (Expression target, Expression source, Location l)
@@ -168,7 +169,7 @@ namespace Mono.CSharp {
 			// This is used in an embedded assignment.
 			// As an example, consider the statement "A = X = Y = Z".
 			//
-			if (is_embedded) {
+			if (is_embedded && !(source is Constant)) {
 				// If this is the innermost assignment (the "Y = Z" in our example),
 				// create a new temporary local, otherwise inherit that variable
 				// from our child (the "X = (Y = Z)" inherits the local from the
@@ -176,7 +177,7 @@ namespace Mono.CSharp {
 				if (embedded == null)
 					real_temp = temp = new LocalTemporary (ec, source.Type);
 				else
-					real_temp = temp = embedded.temp;
+					temp = embedded.temp;
 
 				// Set the source to the new temporary variable.
 				// This means that the following target.ResolveLValue () will tell
@@ -187,7 +188,7 @@ namespace Mono.CSharp {
 			// If we have an embedded assignment, use the embedded assignment's temporary
 			// local variable as source.
 			if (embedded != null)
-				source = embedded.temp;
+				source = (embedded.temp != null) ? embedded.temp : embedded.source;
 
 			target = target.ResolveLValue (ec, source);
 
@@ -331,22 +332,25 @@ namespace Mono.CSharp {
 			if (is_embedded || embedded != null) {
 				type = target_type;
 				temp = new LocalTemporary (ec, type);
+				must_free_temp = true;
 			}
 			
 			return this;
 		}
 
-		LocalTemporary EmitEmbedded (EmitContext ec)
+		Expression EmitEmbedded (EmitContext ec)
 		{
 			// Emit an embedded assignment.
 			
-			if (embedded == null) {
+			if (real_temp != null) {
 				// If we're the innermost assignment, `real_source' is the right-hand
 				// expression which gets assigned to all the variables left of it.
 				// Emit this expression and store its result in real_temp.
 				real_source.Emit (ec);
 				real_temp.Store (ec);
-			} else
+			}
+
+			if (embedded != null)
 				embedded.EmitEmbedded (ec);
 
 			// This happens when we've done a type conversion, in this case source will be
@@ -357,8 +361,10 @@ namespace Mono.CSharp {
 				source.Emit (ec);
 				temp.Store (ec);
 			}
-			((IAssignMethod) target).EmitAssign (ec, temp);
-			return temp;
+
+			Expression temp_source = (temp != null) ? temp : source;
+			((IAssignMethod) target).EmitAssign (ec, temp_source);
+			return temp_source;
 		}
 
 		void ReleaseEmbedded (EmitContext ec)
@@ -366,9 +372,11 @@ namespace Mono.CSharp {
 			if (embedded != null)
 				embedded.ReleaseEmbedded (ec);
 
-			if (real_temp != temp)
+			if (real_temp != null)
 				real_temp.Release (ec);
-			temp.Release (ec);
+
+			if (must_free_temp)
+				temp.Release (ec);
 		}
 
 		void Emit (EmitContext ec, bool is_statement)
