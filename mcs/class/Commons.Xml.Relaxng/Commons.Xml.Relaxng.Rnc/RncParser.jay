@@ -41,6 +41,7 @@ namespace Commons.Xml.Relaxng.Rnc
 		{
 			nsmgr = new XmlNamespaceManager (nameTable);
 			dtnsmgr = new XmlNamespaceManager (nameTable);
+			ErrorOutput = System.IO.TextWriter.Null;
 		}
 
 		public int Line {

@@ -16,7 +16,7 @@ using Commons.Xml.Relaxng;
 
 namespace Commons.Xml.Relaxng.Rnc
 {
-	public class RncTokenizer : Commons.Xml.Relaxng.Rnc.yyParser.yyInput
+	internal class RncTokenizer : Commons.Xml.Relaxng.Rnc.yyParser.yyInput
 	{
 		TextReader source;
 
