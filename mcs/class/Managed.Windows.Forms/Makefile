@@ -1,4 +1,4 @@
-thisdir = class/System.Windows.Forms
+thisdir = class/Managed.Windows.Forms
 include ../../build/rules.make
 
 LIBRARY = System.Windows.Forms.dll
@@ -12,5 +12,10 @@ EXTRA_DISTFILES = \
 	README
 
 TEST_MCS_FLAGS = /r:System.Drawing.dll
+
+all.local: SWF.csproj
+
+SWF.csproj: System.Windows.Forms.dll.sources
+	./build-csproj
 
 include ../../build/library.make

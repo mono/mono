@@ -1,3 +1,10 @@
+2005-01-28  Peter Bartok  <pbartok@novell.com>
+
+	* SWF.csproj: Updated with all the latest files
+	* build-csproj: Added, allows to autogenerate SWF.csproj
+	* Makefile: Added rule to automatically call build-csproj (Thanks
+	  to Geoff Norton for review and a simpler rule)
+
 2005-01-26  Peter Bartok  <pbartok@novell.com>
 
 	* System.Windows.Forms.dll.Sources: Added GridEntry.cs,
