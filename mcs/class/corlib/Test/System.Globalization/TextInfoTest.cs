@@ -25,9 +25,8 @@ public class TextInfoTest : Assertion
 
 		AssertEquals (" The Dog", ti.ToTitleCase (" the dog"));
 		AssertEquals (" The Dude", ti.ToTitleCase (" The Dude"));
-		AssertEquals ("la Guerra yLa pAz", ti.ToTitleCase ("La Guerra Yla Paz"));
-		AssertEquals ("la Guerra yLa pAz", ti.ToTitleCase ("La Guerra Yla Paz"));
-		AssertEquals ("\ttab\tand\tPeace", ti.ToTitleCase ("\tTab\tAnd\tPeace"));
+		AssertEquals ("La Guerra Yla Paz", ti.ToTitleCase ("la Guerra yLa pAz"));
+		AssertEquals ("\ttab\tand\tPeace", ti.ToTitleCase ("\tTab\tAnd\tPeace"))
 	}
 }
 
