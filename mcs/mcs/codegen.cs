@@ -221,8 +221,6 @@ namespace CIR {
 			e = e.Resolve (parent);
 			if (e != null)
 				e.Emit (this);
-
-			Console.WriteLine ("TODO: Maybe we need a pop here?");
 		}
 		
 		void EmitStatement (Statement s)

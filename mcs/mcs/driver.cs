@@ -45,6 +45,7 @@ namespace CIR
 		string first_source;
 
 		Target target = Target.Exe;
+		string target_ext = ".exe";
 
 		bool parse_only = false;
 		
@@ -224,6 +225,7 @@ namespace CIR
 						switch (type){
 						case "library":
 							target = Target.Library;
+							target_ext = ".dll";
 							break;
 							
 						case "exe":
@@ -236,8 +238,10 @@ namespace CIR
 							
 						case "module":
 							target = Target.Module;
+							target_ext = ".dll";
 							break;
 						}
+						continue;
 					}
 					
 					if (arg == "-r"){
@@ -252,6 +256,11 @@ namespace CIR
 
 					if (arg == "--nostdlib"){
 						context.StdLib = false;
+						continue;
+					}
+
+					if (arg == "--fatal"){
+						context.Report.Fatal = true;
 						continue;
 					}
 
@@ -284,8 +293,10 @@ namespace CIR
 			//
 			// Load Core Library for default compilation
 			//
-			if (context.StdLib)
+			if (context.StdLib){
 				references.Insert (0, "mscorlib");
+				references.Insert (1, "System");
+			}
 
 			if (errors > 0){
 				error ("Parsing failed");
@@ -340,7 +351,7 @@ namespace CIR
 			if (output_file == null){
 				int pos = first_source.LastIndexOf (".");
 
-				output_file = first_source.Substring (0, pos) + ".exe";
+				output_file = first_source.Substring (0, pos) + target_ext;
 			}
 
 			context.CodeGen = new CodeGen (output_file, output_file);

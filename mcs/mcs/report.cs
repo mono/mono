@@ -13,12 +13,23 @@ namespace CIR {
 	public class Report {
 		int errors;
 		int warnings;
+		bool fatal;
 
+		public void RealError (string msg)
+		{
+			errors++;
+			Console.WriteLine (msg);
+
+			if (fatal)
+				throw new Exception (msg);
+		}
+		       
 		public void Error (int code, Location l, string text)
 		{
-			Console.WriteLine (l.Name + "(" + l.Row + "," + l.Col +
-					   "): Error CS"+code+": " + text);
-			errors++;
+			string msg = l.Name + "(" + l.Row + "," + l.Col +
+				"): Error CS"+code+": " + text;
+
+			RealError (msg);
 		}
 
 		public void Warning (int code, Location l, string text)
@@ -30,8 +41,9 @@ namespace CIR {
 		
 		public void Error (int code, string text)
 		{
-			Console.WriteLine ("Error CS"+code+": "+text);
-			errors++;
+			string msg = "Error CS"+code+": "+text;
+
+			RealError (msg);
 		}
 
 		public void Warning (int code, string text)
@@ -57,6 +69,16 @@ namespace CIR {
 		public int Warnings {
 			get {
 				return warnings;
+			}
+		}
+
+		public bool Fatal {
+			set {
+				fatal = true;
+			}
+
+			get {
+				return fatal;
 			}
 		}
 	}

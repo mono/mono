@@ -1,3 +1,22 @@
+2001-09-14  Miguel de Icaza  <miguel@ximian.com>
+
+	* class.cs (TypeContainer::FindMembers): Add support for
+	constructors. 
+	(MethodCore): New class that encapsulates both the shared aspects
+	of a Constructor and a Method.  
+	(Method, Constructor): Factored pieces into MethodCore.
+
+	* driver.cs: Added --fatal which makes errors throw exceptions.
+	Load System assembly as well as part of the standard library.
+
+	* report.cs: Allow throwing exceptions on errors for debugging.
+
+	* modifiers.cs: Do not use `parent', instead use the real type
+	container to evaluate permission settings.
+
+	* class.cs: Put Ravi's patch back in.  He is right, and we will
+	have to cope with the
+
 2001-09-14  Ravi Pratap  <ravi@ximian.com>
 
 	* modifiers.cs (TypeAttr, MethodAttr, FieldAttr): Map protected internal to

@@ -62,39 +62,40 @@ namespace CIR {
 			return s;
 		}
 
-		public static TypeAttributes TypeAttr (int mod_flags, TypeContainer parent)
+		public static TypeAttributes TypeAttr (int mod_flags, TypeContainer caller)
 		{
 			TypeAttributes t = 0;
+			bool top_level = caller.IsTopLevel;
 			
-			if ((mod_flags & PUBLIC) != 0 && parent.IsTopLevel == true)
-				t |= TypeAttributes.Public;
-			else if ((mod_flags & PUBLIC) != 0)
-				t |= TypeAttributes.NestedPublic;
+			if (top_level){
+				if ((mod_flags & PUBLIC) != 0)
+					t |= TypeAttributes.Public;
+				if ((mod_flags & PRIVATE) != 0)
+					t |= TypeAttributes.NotPublic;
+			} else {
+				if ((mod_flags & PUBLIC) != 0)
+					t |= TypeAttributes.NestedPublic;
+				if ((mod_flags & PRIVATE) != 0)
+					t |= TypeAttributes.NestedPrivate;
+				if ((mod_flags & PROTECTED) != 0 && (mod_flags & INTERNAL) != 0)
+					t |= TypeAttributes.NestedFamORAssem;
+				if ((mod_flags & PROTECTED) != 0)
+					t |= TypeAttributes.NestedFamily;
+				if ((mod_flags & INTERNAL) != 0)
+					t |= TypeAttributes.NestedAssembly;
+			}
 			
-			if ((mod_flags & PRIVATE) != 0 && parent.IsTopLevel == true)
-				t |= TypeAttributes.NotPublic;
-			else if ((mod_flags & PRIVATE) != 0)
-				t |= TypeAttributes.NestedPrivate;
-
-			if ((mod_flags & PROTECTED) != 0 && (mod_flags & INTERNAL) != 0 && parent.IsTopLevel == false)
-				t |= TypeAttributes.NestedFamORAssem;
-			if ((mod_flags & PROTECTED) != 0 && parent.IsTopLevel == false)
-				t |= TypeAttributes.NestedFamily;
-			if ((mod_flags & INTERNAL) != 0 && parent.IsTopLevel == false)
-				t |= TypeAttributes.NestedAssembly;
-			
-
 			if ((mod_flags & SEALED) != 0)
 				t |= TypeAttributes.Sealed;
 			if ((mod_flags & ABSTRACT) != 0)
 				t |= TypeAttributes.Abstract;
-
+			
 			// If we have static constructors, the runtime needs to
 			// initialize the class, otherwise we can optimize
-		        // the case.
-			if (parent.HaveStaticConstructor)
+			// the case.
+			if (caller.HaveStaticConstructor)
 				t |= TypeAttributes.BeforeFieldInit;
-			
+				
 			return t;
 		}
 

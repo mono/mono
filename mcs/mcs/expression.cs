@@ -98,7 +98,7 @@ namespace CIR {
 		//
 		// Return values:
 		//     If the return value is an Array, then it is an array of
-		//     MethodInfos
+		//     MethodBases
 		//   
 		//     If the return value is an MemberInfo, it is anything, but a Method
 		//
@@ -129,20 +129,29 @@ namespace CIR {
 			
 			if (same_type)
 				bf |= BindingFlags.NonPublic;
-			
+
 			MemberInfo [] mi = rc.TypeManager.FindMembers (t, mt, bf, Type.FilterName, name);
 
 			if (mi == null)
 				return null;
 			
-			if (mi.Length == 1 && !(mi [0] is MethodInfo))
+			if (mi.Length == 1 && !(mi [0] is MethodBase))
 				return Expression.ExprClassFromMemberInfo (mi [0]);
 
 			for (int i = 0; i < mi.Length; i++)
-				if (!(mi [i] is MethodInfo)){
+				if (!(mi [i] is MethodBase)){
 					rc.Report.Error (-5, "Do not know how to reproduce this case: " + 
 							 "Methods and non-Method with the same name, report this please");
-					
+
+					for (i = 0; i < mi.Length; i++){
+						Type tt = mi [i].GetType ();
+
+						Console.WriteLine (i + ": " + mi [i]);
+						while (tt != TypeManager.object_type){
+							Console.WriteLine (tt);
+							tt = tt.BaseType;
+						}
+					}
 				}
 
 			return new MethodGroupExpr (mi);
@@ -1404,9 +1413,14 @@ namespace CIR {
 	public class Invocation : Expression {
 		public readonly ArrayList Arguments;
 		Expression expr;
-		MethodInfo method = null;
+		MethodBase method = null;
 		
 		static Hashtable method_parameter_cache;
+
+		static Invocation ()
+		{
+			method_parameter_cache = new Hashtable ();
+		}
 			
 		//
 		// arguments is an ArrayList, but we do not want to typecast,
@@ -1462,10 +1476,10 @@ namespace CIR {
 			if (pd != null)
 				return (ParameterData) pd;
 
-			if (mb is MethodBuilder){
-				Method m = TypeContainer.LookupMethodByBuilder ((MethodBuilder) mb);
+			if (mb is MethodBuilder || mb is ConstructorBuilder){
+				MethodCore mc = TypeContainer.LookupMethodByBuilder (mb);
 
-				InternalParameters ip = m.GetParameters ();
+				InternalParameters ip = mc.ParameterInfo;
 				method_parameter_cache [mb] = ip;
 
 				return (ParameterData) ip;
@@ -1481,13 +1495,13 @@ namespace CIR {
 		// <summary>
 		//   Find the Applicable Function Members (7.4.2.1)
 		// </summary>
-		public static MethodInfo OverloadResolve (TypeContainer tc, MethodGroupExpr me,
+		public static MethodBase OverloadResolve (TypeContainer tc, MethodGroupExpr me,
 							  ArrayList Arguments)
 		{
 			ArrayList afm = new ArrayList ();
 			int best_match = 10000;
 			int best_match_idx = -1;
-			MethodInfo method = null;
+			MethodBase method = null;
 			int argument_count;
 
 			if (Arguments == null)
@@ -1555,9 +1569,6 @@ namespace CIR {
 				return null;
 			}
 
-			if (method_parameter_cache == null)
-				method_parameter_cache = new Hashtable ();
-
 			//
 			// Next, evaluate all the expressions in the argument list
 			//
@@ -1579,7 +1590,9 @@ namespace CIR {
 				return null;
 			}
 
-			type = method.ReturnType;
+			if (method is MethodInfo)
+				type = ((MethodInfo)method).ReturnType;
+
 			return this;
 		}
 
@@ -1615,10 +1628,17 @@ namespace CIR {
 			
 			EmitArguments (ec, Arguments);
 
-			if (method.IsVirtual)
-				ec.ig.Emit (OpCodes.Callvirt, method);
-			else
-				ec.ig.Emit (OpCodes.Call, method);
+			if (method.IsVirtual){
+				if (method is MethodInfo)
+					ec.ig.Emit (OpCodes.Callvirt, (MethodInfo) method);
+				else
+					ec.ig.Emit (OpCodes.Callvirt, (MethodInfo) method);
+			} else {
+				if (method is MethodInfo)
+					ec.ig.Emit (OpCodes.Call, (MethodInfo) method);
+				else
+					ec.ig.Emit (OpCodes.Call, (ConstructorInfo) method);
+			}
 		}
 	}
 
@@ -1637,7 +1657,7 @@ namespace CIR {
 		public readonly ArrayList Indices;
 		public readonly ArrayList Initializers;
 		
-		MethodInfo method = null;
+		MethodBase method = null;
 
 		public New (string requested_type, ArrayList arguments)
 		{
@@ -1701,7 +1721,7 @@ namespace CIR {
 
 			if (method == null){
 				tc.RootContext.Report.Error (-6,
-				"Figure out error: Can not find a good function for this argument list");
+				"New invocation: Can not find a constructor for this argument list");
 				return null;
 			}
 
@@ -1711,7 +1731,7 @@ namespace CIR {
 		public override void Emit (EmitContext ec)
 		{
 			Invocation.EmitArguments (ec, Arguments);
-			ec.ig.Emit (OpCodes.Newobj, (MethodInfo) method);
+			ec.ig.Emit (OpCodes.Newobj, (ConstructorInfo) method);
 		}
 	}
 
@@ -1876,12 +1896,12 @@ namespace CIR {
 	//   This is a fully resolved expression that evaluates to a type
 	// </summary>
 	public class MethodGroupExpr : Expression {
-		public readonly MethodInfo [] Methods;
+		public readonly MethodBase [] Methods;
 		Expression instance_expression = null;
 		
 		public MethodGroupExpr (MemberInfo [] mi)
 		{
-			Methods = new MethodInfo [mi.Length];
+			Methods = new MethodBase [mi.Length];
 			mi.CopyTo (Methods, 0);
 			eclass = ExprClass.MethodGroup;
 		}
@@ -1970,7 +1990,7 @@ namespace CIR {
 			eclass = ExprClass.PropertyAccess;
 			IsStatic = false;
 				
-			MethodInfo [] acc = pi.GetAccessors ();
+			MethodBase [] acc = pi.GetAccessors ();
 
 			for (int i = 0; i < acc.Length; i++)
 				if (acc [i].IsStatic)

@@ -69,6 +69,12 @@ namespace CIR {
 		//
 		Constructor default_constructor;
 		Constructor default_static_constructor;
+
+		//
+		// Pointers to the constructor builders
+		//
+		ConstructorBuilder default_constructor_builder;
+		ConstructorBuilder default_static_constructor_builder;
 		
 		//
 		// Whether we have seen a static constructor for this class or not
@@ -482,15 +488,11 @@ namespace CIR {
 			}
 		}
 		
-		// <summary>
-		//   Returns the TypeAttributes for this TypeContainer
-		// </summary>
 		public virtual TypeAttributes TypeAttr {
 			get {
-				return Modifiers.TypeAttr (mod_flags, parent);
+				return Modifiers.TypeAttr (mod_flags, this);
 			}
 		}
-
 
 		//
 		// Emits the class field initializers
@@ -544,13 +546,16 @@ namespace CIR {
 				ca |= MethodAttributes.Family;
 			else
 				ca |= MethodAttributes.Public;
-			
+
 			cb = TypeBuilder.DefineDefaultConstructor (ca);
 
-			if (is_static)
+			if (is_static){
+				default_static_constructor_builder = cb;
 				EmitStaticFieldInitializers (cb);
-			else
+			} else {
+				default_constructor_builder = cb;
 				EmitFieldInitializers (cb);
+			}
 		}
 
 		//
@@ -569,9 +574,14 @@ namespace CIR {
 			}
 
 			if (Constructors != null){
-				foreach (Constructor c in Constructors)
+				if (method_builders_to_methods == null)
+					method_builders_to_methods = new Hashtable ();
+				
+				foreach (Constructor c in Constructors){
 					c.Define (this);
-			}
+					method_builders_to_methods.Add (c.ConstructorBuilder, c);
+				}
+			} 
 
 			if (Methods != null){
 				if (method_builders_to_methods == null)
@@ -616,9 +626,9 @@ namespace CIR {
 			
 		}
 
-		static public Method LookupMethodByBuilder (MethodBuilder mb)
+		static public MethodCore LookupMethodByBuilder (object mb)
 		{
-			return (Method) method_builders_to_methods [mb];
+			return (MethodCore) method_builders_to_methods [mb];
 		}
 		
 		//
@@ -665,6 +675,11 @@ namespace CIR {
 			return RootContext.LookupType (this, name, silent);
 		}
 
+		bool AlwaysAccept (MemberInfo m, object filterCriteria)
+		{
+			return true;
+		}
+		
 		// <summary>
 		//   This method returns the members of this type just like Type.FindMembers would
 		//   Only, we need to use this for types which are _being_ defined because MS' 
@@ -674,6 +689,9 @@ namespace CIR {
 						  MemberFilter filter, object criteria)
 		{
 			ArrayList members = new ArrayList ();
+
+			if (filter == null)
+				filter = new MemberFilter (AlwaysAccept);
 			
 			if ((mt & MemberTypes.Field) != 0 && Fields != null) {
 				foreach (Field f in Fields) {
@@ -711,6 +729,26 @@ namespace CIR {
 					if (filter (t.TypeBuilder, criteria) == true)
 						members.Add (t.TypeBuilder);
 				}
+			}
+
+			if ((mt & MemberTypes.Constructor) != 0){
+				if (Constructors != null){
+					foreach (Constructor c in Constructors)
+						if (filter (c.ConstructorBuilder, criteria) == true)
+							members.Add (c.ConstructorBuilder);
+				}
+
+				if ((bf & BindingFlags.Instance) != 0){
+					if (default_constructor_builder != null)
+						if (filter (default_constructor_builder, criteria) == true)
+							members.Add (default_constructor_builder);
+				}
+
+				
+				if ((bf & BindingFlags.Static) != 0)
+					if (default_static_constructor_builder != null)
+						if (filter (default_static_constructor_builder, criteria) == true)
+							members.Add (default_static_constructor_builder);
 			}
 
 			MemberInfo [] mi = new MemberInfo [members.Count];
@@ -801,30 +839,80 @@ namespace CIR {
 		}
 	}
 
-	public class Method {
+	public class MethodCore {
 		public readonly Parameters Parameters;
-		public readonly string     ReturnType;
-		public readonly string     Name;
-		public readonly int        ModFlags;
-		public MethodBuilder MethodBuilder;
-		public readonly Attributes OptAttributes;
-
+		public readonly string Name;
+		public int ModFlags;
+		Block block;
+		
 		//
 		// Parameters, cached for semantic analysis.
 		//
 		InternalParameters parameter_info;
 		
-		Block block;
-		
-		// return_type can be "null" for VOID values.
-		public Method (string return_type, int mod, string name, Parameters parameters, Attributes attrs)
+		public MethodCore (string name, Parameters parameters)
 		{
 			Name = name;
-			ReturnType = return_type;
 			Parameters = parameters;
-			ModFlags = Modifiers.Check (AllowedModifiers, mod, Modifiers.PRIVATE);
-			OptAttributes = attrs;
 		}
+		
+		//
+		//  Returns the System.Type array for the parameters of this method
+		//
+		Type [] parameter_types;
+		public Type [] ParameterTypes (TypeContainer parent)
+		{
+			if (Parameters == null)
+				return null;
+			
+			if (parameter_types == null)
+				parameter_types = Parameters.GetParameterInfo (parent);
+
+			return parameter_types;
+		}
+
+		public InternalParameters ParameterInfo
+		{
+			get {
+				return parameter_info;
+			}
+
+			set {
+				parameter_info = value;
+			}
+		}
+		
+		public Block Block {
+			get {
+				return block;
+			}
+
+			set {
+				block = value;
+			}
+		}
+
+		public CallingConventions GetCallingConvention (bool is_class)
+		{
+			CallingConventions cc = 0;
+			
+			cc = Parameters.GetCallingConvention ();
+
+			if (is_class)
+				if ((ModFlags & Modifiers.STATIC) == 0)
+					cc |= CallingConventions.HasThis;
+
+			// FIXME: How is `ExplicitThis' used in C#?
+			
+			return cc;
+		}
+
+	}
+	
+	public class Method : MethodCore {
+		public readonly string     ReturnType;
+		public MethodBuilder MethodBuilder;
+		public readonly Attributes OptAttributes;
 
 		// <summary>
 		//   Modifiers allowed in a class declaration
@@ -841,15 +929,15 @@ namespace CIR {
 			Modifiers.OVERRIDE |
 			Modifiers.ABSTRACT |
 			Modifiers.EXTERN;
-
-		public Block Block {
-			get {
-				return block;
-			}
-
-			set {
-				block = value;
-			}
+		
+		// return_type can be "null" for VOID values.
+		public Method (string return_type, int mod, string name, Parameters parameters,
+			       Attributes attrs)
+			: base (name, parameters)
+		{
+			ReturnType = return_type;
+			ModFlags = Modifiers.Check (AllowedModifiers, mod, Modifiers.PRIVATE);
+			OptAttributes = attrs;
 		}
 
 		//
@@ -864,34 +952,6 @@ namespace CIR {
 				type_return_type = parent.LookupType (ReturnType, false);
 			
 			return type_return_type;
-		}
-
-		//
-		//  Returns the System.Type array for the parameters of this method
-		//
-		Type [] parameter_types;
-		public Type [] ParameterTypes (TypeContainer parent)
-		{
-			if (Parameters == null)
-				return null;
-			
-			if (parameter_types == null)
-				parameter_types = Parameters.GetParameterInfo (parent);
-
-			return parameter_types;
-		}
-
-		public CallingConventions GetCallingConvention (bool is_class)
-		{
-			CallingConventions cc = 0;
-			
-			cc = Parameters.GetCallingConvention ();
-
-			if (is_class)
-				if ((ModFlags & Modifiers.STATIC) == 0)
-					cc |= CallingConventions.HasThis;
-
-			return cc;
 		}
 
 		//
@@ -910,7 +970,7 @@ namespace CIR {
 				GetCallingConvention (parent is Class),
 				ret_type, parameters);
 
-			parameter_info = new InternalParameters (parameters);
+			ParameterInfo = new InternalParameters (parameters);
 
 			//
 			// This is used to track the Entry Point,
@@ -948,12 +1008,95 @@ namespace CIR {
 			ILGenerator ig = MethodBuilder.GetILGenerator ();
 			EmitContext ec = new EmitContext (parent, ig);
 			
-			ec.EmitTopBlock (block);
+			ec.EmitTopBlock (Block);
+		}
+	}
+
+	public abstract class ConstructorInitializer {
+		ArrayList argument_list;
+
+		public ConstructorInitializer (ArrayList argument_list)
+		{
+			this.argument_list = argument_list;
 		}
 
-		public InternalParameters GetParameters ()
+		public ArrayList Arguments {
+			get {
+				return argument_list;
+			}
+		}
+	}
+
+	public class ConstructorBaseInitializer : ConstructorInitializer {
+		public ConstructorBaseInitializer (ArrayList argument_list) : base (argument_list)
 		{
-			return parameter_info;
+		}
+	}
+
+	public class ConstructorThisInitializer : ConstructorInitializer {
+		public ConstructorThisInitializer (ArrayList argument_list) : base (argument_list)
+		{
+		}
+	}
+	
+	public class Constructor : MethodCore {
+		public ConstructorBuilder ConstructorBuilder;
+		public readonly ConstructorInitializer Initializer;
+
+		// <summary>
+		//   Modifiers allowed for a constructor.
+		// </summary>
+		const int AllowedModifiers =
+			Modifiers.PUBLIC |
+			Modifiers.PROTECTED |
+			Modifiers.INTERNAL |
+			Modifiers.STATIC |
+			Modifiers.PRIVATE;
+
+		//
+		// The spec claims that static is not permitted, but
+		// my very own code has static constructors.
+		//
+		public Constructor (string name, Parameters args, ConstructorInitializer init)
+			: base (name, args)
+		{
+			Initializer = init;
+		}
+
+		//
+		// Returns true if this is a default constructor
+		//
+		public bool IsDefault ()
+		{
+			return  (Parameters == null) &&
+				(Initializer is ConstructorBaseInitializer) &&
+				(Initializer.Arguments == null);
+		}
+
+		//
+		// Creates the ConstructorBuilder
+		//
+		public void Define (TypeContainer parent)
+		{
+			MethodAttributes ca = (MethodAttributes.RTSpecialName |
+					       MethodAttributes.SpecialName);
+			Type [] parameters = ParameterTypes (parent);
+			
+			if ((ModFlags & Modifiers.STATIC) != 0)
+				ca |= MethodAttributes.Static;
+			
+			ConstructorBuilder = parent.TypeBuilder.DefineConstructor (
+				ca, GetCallingConvention (parent is Class),
+				parameters);
+
+			ParameterInfo = new InternalParameters (parameters);
+		}
+
+		//
+		// Emits the code
+		//
+		public void Emit ()
+		{
 		}
 	}
 
@@ -994,152 +1137,8 @@ namespace CIR {
 			if (t == null)
 				return;
 			
-			FieldBuilder = parent.TypeBuilder.DefineField (Name, t, Modifiers.FieldAttr (ModFlags));
-		}
-
-		
-	}
-
-	public abstract class ConstructorInitializer {
-		ArrayList argument_list;
-
-		public ConstructorInitializer (ArrayList argument_list)
-		{
-			this.argument_list = argument_list;
-		}
-
-		public ArrayList Arguments {
-			get {
-				return argument_list;
-			}
-		}
-	}
-
-	public class ConstructorBaseInitializer : ConstructorInitializer {
-		public ConstructorBaseInitializer (ArrayList argument_list) : base (argument_list)
-		{
-		}
-	}
-
-	public class ConstructorThisInitializer : ConstructorInitializer {
-		public ConstructorThisInitializer (ArrayList argument_list) : base (argument_list)
-		{
-		}
-	}
-	
-	public class Constructor {
-		public ConstructorBuilder ConstructorBuilder;
-		public readonly ConstructorInitializer Initializer;
-		public readonly Parameters Parameters;
-		public readonly string Name;
-		Block block;
-		int mod_flags;
-
-		// <summary>
-		//   Modifiers allowed for a constructor.
-		// </summary>
-		const int AllowedModifiers =
-			Modifiers.PUBLIC |
-			Modifiers.PROTECTED |
-			Modifiers.INTERNAL |
-			Modifiers.STATIC |
-			Modifiers.PRIVATE;
-
-		//
-		// The spec claims that static is not permitted, but
-		// my very own code has static constructors.
-		//
-		public Constructor (string name, Parameters args, ConstructorInitializer init)
-		{
-			Name = name;
-			Parameters = args;
-			Initializer = init;
-		}
-
-		//
-		// Returns true if this is a default constructor
-		//
-		public bool IsDefault ()
-		{
-			return  (Parameters == null) &&
-				(Initializer is ConstructorBaseInitializer) &&
-				(Initializer.Arguments == null);
-		}
-
-		public int ModFlags {
-			get {
-				return mod_flags;
-			}
-
-			set {
-				mod_flags = value;
-			}
-		}
-		
-		public Block Block {
-			get {
-				return block;
-			}
-
-			set {
-				block = value;
-			}
-		}
-
-		public CallingConventions GetCallingConvention (bool parent_is_class)
-		{
-			CallingConventions cc = 0;
-			
-			if (Parameters.ArrayParameter != null)
-				cc |= CallingConventions.VarArgs;
-			else
-				cc |= CallingConventions.Standard;
-
-			if (parent_is_class)
-				if ((ModFlags & Modifiers.STATIC) != 0)
-					cc |= CallingConventions.HasThis;
-
-				// FIXME: How is `ExplicitThis' used in C#?
-				
-			return cc;
-		}
-
-		//
-		// Cached representation
-		///
-		Type [] parameter_types;
-		public Type [] ParameterTypes (TypeContainer tc)
-		{
-			if (Parameters == null)
-				return null;
-			
-			if (parameter_types == null)
-				parameter_types = Parameters.GetParameterInfo (tc);
-			
-			return parameter_types;
-		}
-
-		//
-		// Creates the ConstructorBuilder
-		//
-		public void Define (TypeContainer parent)
-		{
-			MethodAttributes ca = (MethodAttributes.RTSpecialName |
-					       MethodAttributes.SpecialName);
-			
-			if ((ModFlags & Modifiers.STATIC) != 0)
-				ca |= MethodAttributes.Static;
-			
-			ConstructorBuilder = parent.TypeBuilder.DefineConstructor (
-				ca, GetCallingConvention (parent is Class),
-				ParameterTypes (parent));
-		}
-
-		//
-		// Emits the code
-		//
-		public void Emit ()
-		{
+			FieldBuilder = parent.TypeBuilder.DefineField (
+				Name, t, Modifiers.FieldAttr (ModFlags));
 		}
 	}
 
