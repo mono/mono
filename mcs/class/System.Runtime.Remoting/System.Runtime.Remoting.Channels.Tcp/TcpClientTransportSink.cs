@@ -64,6 +64,8 @@ namespace System.Runtime.Remoting.Channels.Tcp
 					sinkStack.Push (this, connection);
 					ThreadPool.QueueUserWorkItem (new WaitCallback(ReadAsyncTcpMessage), sinkStack);
 				}
+				else
+					connection.Release();
 			}
 			catch
 			{

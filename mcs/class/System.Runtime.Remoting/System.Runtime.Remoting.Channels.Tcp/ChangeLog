@@ -1,3 +1,8 @@
+2004-02-23  Lluis Sanchez Gual <lluis@ximian.com>
+
+	* TcpClientTransportSink.cs: Release the connection after sending an
+	  OneWay call. This fixes bug #54671.
+
 2003-12-23  Lluis Sanchez Gual <lluis@ximian.com>
 
 	* TcpServerChannel.cs: If useIpAddress and bindAddress are both specified,
