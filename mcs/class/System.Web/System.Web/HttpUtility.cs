@@ -77,7 +77,7 @@ namespace System.Web {
 
 
       public static string UrlEncode(string str) {
-         return UrlDecode(str, Encoding.UTF8);
+         return UrlEncode(str, Encoding.UTF8);
       }
 
       [MonoTODO("Use encoding")]
