@@ -22,9 +22,14 @@
 // Author:
 //      Ravindra (rkumar@novell.com)
 //
-// $Revision: 1.6 $
+// $Revision: 1.7 $
 // $Modtime: $
 // $Log: ListViewItem.cs,v $
+// Revision 1.7  2004/11/04 11:29:38  ravindra
+// 	- Changed default value signatures (prefixed all with ListView).
+// 	- Fixed/implemented layout LargeIcon, SmallIcon and List views for ListView.
+// 	- Fixed calculations for ListViewItem and implemented Clone() method.
+//
 // Revision 1.6  2004/10/30 10:21:14  ravindra
 // Added support for scrolling and fixed calculations.
 //
@@ -76,7 +81,6 @@ namespace System.Windows.Forms
 		private bool use_item_style = true;
 
 		// internal variables
-		internal CheckBox checkbox;		// the associated checkbox with an item
 		internal Rectangle checkbox_rect;	// calculated by CalcListViewItem method
 		internal Rectangle entire_rect;
 		internal Rectangle icon_rect;
@@ -291,8 +295,22 @@ namespace System.Windows.Forms
 
 		public virtual object Clone ()
 		{
-			// FIXME: TODO
-			return new ListViewItem ();
+			ListViewItem clone = new ListViewItem ();
+			clone.back_color = this.back_color;
+			clone.font = this.font;
+			clone.fore_color = this.fore_color;
+			clone.image_index = this.image_index;
+			clone.is_checked = this.is_checked;
+			clone.is_focused = this.is_focused;
+			clone.selected = this.selected;
+			clone.state_image_index = this.state_image_index;
+			clone.sub_items = this.sub_items;
+			clone.tag = this.tag;
+			clone.text = this.text;
+			clone.use_item_style = this.use_item_style;
+			clone.owner = this.owner;
+
+			return clone;
 		}
 
 		public virtual void EnsureVisible ()
@@ -378,12 +396,10 @@ namespace System.Windows.Forms
 		{
 			int item_ht;
 			Size text_size = owner.text_size;
+			checkbox_rect.Location = this.location;
 
-			if (owner.CheckBoxes) {
-				checkbox_rect.Location = this.location;
+			if (owner.CheckBoxes)
 				checkbox_rect.Size = owner.CheckBoxSize;
-				checkbox = new CheckBox ();
-			}
 			else
 				checkbox_rect = Rectangle.Empty;
 
@@ -438,8 +454,6 @@ namespace System.Windows.Forms
 				}
 
 				if (text_size.Width <= (checkbox_rect.Width + icon_rect.Width)) {
-					checkbox_rect.X += ThemeEngine.Current.HorizontalSpacing;
-
 			 		icon_rect.X = checkbox_rect.X + checkbox_rect.Width;
 					icon_rect.Y = checkbox_rect.Y;
 
@@ -447,14 +461,14 @@ namespace System.Windows.Forms
 								      - text_size.Width) / 2;
 					label_rect.Y = Math.Max (checkbox_rect.Bottom,
 								 icon_rect.Bottom) + 2;
-					label_rect.Height = text_size.Height;
+					label_rect.Size = text_size;
 				}
 				else {
-					label_rect.X = ThemeEngine.Current.HorizontalSpacing;
+					label_rect.X = this.location.X;
 
 					int centerX = label_rect.X + text_size.Width / 2;
 					icon_rect.X = centerX - icon_rect.Width / 2;
-					checkbox_rect.X += (icon_rect.X - checkbox_rect.Width);
+					checkbox_rect.X = (icon_rect.X - checkbox_rect.Width);
 
 					icon_rect.Y = checkbox_rect.Y;
 
@@ -493,17 +507,6 @@ namespace System.Windows.Forms
 				item_rect = Rectangle.Union (icon_rect, label_rect);
 				entire_rect = Rectangle.Union (item_rect, checkbox_rect);
 				break;
-			}
-
-			if (checkbox != null) {
-				checkbox.Location = checkbox_rect.Location;
-				checkbox.Size = checkbox_rect.Size;
-				checkbox.CheckAlign = ContentAlignment.BottomRight;
-				checkbox.Checked = this.Checked;
-
-				if (owner.child_controls.Contains (checkbox))
-					owner.child_controls.Remove (checkbox);
-				owner.child_controls.Add (checkbox);
 			}
 		}
 		#endregion	// Private Internal Methods

@@ -22,9 +22,14 @@
 // Author:
 //	Ravindra (rkumar@novell.com)
 //
-// $Revision: 1.7 $
+// $Revision: 1.8 $
 // $Modtime: $
 // $Log: ListView.cs,v $
+// Revision 1.8  2004/11/04 11:29:38  ravindra
+// 	- Changed default value signatures (prefixed all with ListView).
+// 	- Fixed/implemented layout LargeIcon, SmallIcon and List views for ListView.
+// 	- Fixed calculations for ListViewItem and implemented Clone() method.
+//
 // Revision 1.7  2004/10/30 10:21:14  ravindra
 // Added support for scrolling and fixed calculations.
 //
@@ -151,10 +156,8 @@ namespace System.Windows.Forms
 
 			// scroll bars are disabled initially
 			h_scroll.Visible = false;
-			//h_scroll.Dock = DockStyle.Bottom;
 			h_scroll.Scroll += new ScrollEventHandler(HorizontalScroller);
 			v_scroll.Visible = false;
-			//v_scroll.Dock = DockStyle.Right;
 			v_scroll.Scroll += new ScrollEventHandler(VerticalScroller);
 
 			child_controls.Add (this.v_scroll);
@@ -172,7 +175,7 @@ namespace System.Windows.Forms
 					if (this.state_image_list != null)
 						return this.state_image_list.ImageSize;
 					else
-						return ThemeEngine.Current.CheckBoxSize;
+						return ThemeEngine.Current.ListViewCheckBoxSize;
 				}
 				return Size.Empty;
 			}
@@ -444,7 +447,7 @@ namespace System.Windows.Forms
 				ret_size = BiggestItem (index);
 				// fall back to empty columns' width if no subitem is available for a column
 				if (ret_size.IsEmpty) {
-					ret_size.Width = ThemeEngine.Current.EmptyColumnWidth;
+					ret_size.Width = ThemeEngine.Current.ListViewEmptyColumnWidth;
 					if (col.Text.Length > 0)
 						ret_size.Height = Size.Ceiling (this.DeviceContext.MeasureString
 										(col.Text, this.Font)).Height;
@@ -455,7 +458,7 @@ namespace System.Windows.Forms
 
 			// adjust the size for icon and checkbox for 0th column
 			if (index == 0) {
-				ret_size.Width += (this.CheckBoxSize.Width + 2);
+				ret_size.Width += (this.CheckBoxSize.Width + 4);
 				if (this.small_image_list != null)
 					ret_size.Width += this.small_image_list.ImageSize.Width;
 			}
@@ -480,6 +483,11 @@ namespace System.Windows.Forms
 				if (temp.Width > ret_size.Width)
 					ret_size = temp;
 			}
+
+			// adjustment for space
+			if (!ret_size.IsEmpty)
+				ret_size.Width += 4;
+
 			return ret_size;
 		}
 
@@ -524,13 +532,25 @@ namespace System.Windows.Forms
 				text_size.Height = this.Font.Height;
 			if (text_size.Width <= 0)
 				text_size.Width = this.Width;
+
+			// little adjustment
+			text_size.Width += 4;
+			text_size.Height += 2;
 		}
 
 		// Sets the location of every item on
 		// the ListView as per the view
 		private void CalculateListView ()
 		{
-			int current_pos = 0; // our position marker
+			int current_pos_x = 0; // our x-position marker
+			int current_pos_y = 0; // our y-position marker
+			int item_ht;
+			int item_wd;
+			int max; 	 // max rows or columns depending on the alignment
+			int current = 0; // current row or column
+			int vertical_spacing = ThemeEngine.Current.ListViewVerticalSpacing;
+			int horizontal_spacing = ThemeEngine.Current.ListViewHorizontalSpacing;
+
 			CalcTextSize ();
 
 			switch (view) {
@@ -539,49 +559,153 @@ namespace System.Windows.Forms
 				int ht = this.Font.Height;
 				if (columns.Count > 0) {
 					foreach (ColumnHeader col in columns) {
-						col.X = current_pos;
+						col.X = current_pos_x;
 						col.Y = 0;
 						col.CalcColumnHeader ();
-						current_pos += col.Wd;
-						Console.WriteLine ("col: " + col.column_rect);
+						current_pos_x += col.Wd;
 					}
-					this.layout_wd = current_pos;
+					this.layout_wd = current_pos_x;
 					// set the position marker for placing items
 					// vertically down
-					current_pos = ht;
+					current_pos_y = ht;
 				}
 				if (items.Count > 0) {
 					foreach (ListViewItem item in items) {
 						item.location.X = 0;
-						item.location.Y = current_pos;
+						item.location.Y = current_pos_y;
 						item.CalcListViewItem ();
-						current_pos += item.entire_rect.Height;
+						current_pos_y += item.entire_rect.Height;
 					}
-					this.layout_ht = current_pos;
+					this.layout_ht = current_pos_y;
 				}
-				break;
-			case View.LargeIcon:
-				// take care of alignment, autoarrange too
-				break;
-
-			case View.List:
 				break;
 
 			case View.SmallIcon:
-				// take care of alignment, autoarrange too
+				vertical_spacing = 0;
+				horizontal_spacing = 0;
+				goto case View.LargeIcon;
+
+			case View.LargeIcon:
+				if (items.Count > 0) {
+					items [0].CalcListViewItem ();
+					item_ht = items [0].EntireRect.Height;
+					item_wd = items [0].EntireRect.Width;
+
+					// top (default) and snaptogrid alignments are handled same way
+					if (this.alignment == ListViewAlignment.Left) {
+						max = this.Height / item_ht;
+						if (max == 0)
+							max = 1; // we draw at least one row
+
+						foreach (ListViewItem item in items) {
+							item.location.X = current_pos_x +
+								horizontal_spacing;
+
+							item.location.Y = current_pos_y;
+							item.CalcListViewItem ();
+							current ++;
+							if (current == max) {
+								current_pos_x += item_wd;
+								current_pos_y = 0;
+								current = 0;
+							}
+							else
+								current_pos_y += (item_ht +
+										  vertical_spacing);
+						}
+						
+						// adjust the layout dimensions
+						this.layout_ht = Math.Max (max * item_ht, this.Height);
+						if (current == 0) // we have fully filled layout
+							this.layout_wd = Math.Max (current_pos_x,
+										   this.Width);
+						else
+							this.layout_wd = Math.Max (current_pos_x +
+										   item_wd, this.Width);
+					}
+					else { // other default/top alignment
+						max = this.Height / item_wd;
+						if (max == 0)
+							max = 1; // we draw at least one column
+
+						foreach (ListViewItem item in items) {
+							item.location.X = current_pos_x +
+								horizontal_spacing;
+
+							item.location.Y = current_pos_y;
+							item.CalcListViewItem ();
+							current ++;
+							if (current == max) {
+								current_pos_y += (item_ht +
+										  vertical_spacing);
+								current_pos_x = 0;
+								current = 0;
+							}
+							else
+								current_pos_x += item_wd;
+						}
+
+						// adjust the layout dimensions
+						this.layout_wd = Math.Max (max * item_wd, this.Width);
+						if (current == 0) // we have fully filled layout
+							this.layout_ht = Math.Max (current_pos_y,
+										   this.Height);
+						else
+							this.layout_ht = Math.Max (current_pos_y +
+										   item_ht, this.Height);
+					}
+				}
+				break;
+
+			case View.List:
+				if (items.Count > 0) {
+					items [0].CalcListViewItem ();
+					item_ht = items [0].EntireRect.Height;
+					item_wd = items [0].EntireRect.Width;
+
+					max = this.Height / item_ht;
+					if (max == 0)
+						max = 1; // we draw at least one row
+
+					foreach (ListViewItem item in items) {
+						item.location.X = current_pos_x;
+						item.location.Y = current_pos_y;
+						item.CalcListViewItem ();
+						current ++;
+						if (current == max) {
+							current_pos_x += item_wd;
+							current_pos_y = 0;
+							current = 0;
+						}
+						else
+							current_pos_y += item_ht;
+					}
+
+					// adjust the layout dimensions
+					this.layout_ht = Math.Max (max * item_ht, this.Height);
+					if (current == 0) // we have fully filled layout
+						this.layout_wd = Math.Max (current_pos_x, this.Width);
+					else
+						this.layout_wd = Math.Max (current_pos_x +
+									   item_wd, this.Width);
+				}
 				break;
 			}
 
 			if (this.scrollable) {
-				this.CreateBuffers (this.layout_wd, this.layout_ht);
-
 				if (this.layout_wd > this.Width)
 					this.h_scroll.Visible = true;
 				if (this.layout_ht > this.Height)
 					this.v_scroll.Visible = true;
 
+				//if (this.h_scroll.Visible)
+				//	this.layout_ht += ThemeEngine.Current.ListViewScrollBarWidth;
+				//if (this.v_scroll.Visible)
+				//	this.layout_wd += ThemeEngine.Current.ListViewScrollBarWidth;
+
+				this.CreateBuffers (this.layout_wd, this.layout_ht);
+
 				if (this.h_scroll.Visible) {
-					this.h_scroll.Height = 15;
 					this.h_scroll.Location = new Point (0, this.Height 
 									    - this.h_scroll.Height);
 					
@@ -599,13 +723,12 @@ namespace System.Windows.Forms
    
 					this.h_scroll.LargeChange = this.Width;
 					this.h_scroll.SmallChange = this.Font.Height;
-					// adjust the maximum value to make the raw Max value attainable
+					// adjust the maximum value to make the raw max value attainable
 					this.h_scroll.Maximum += this.h_scroll.LargeChange;
 				}
 
 				// vertical scrollbar
 				if (this.v_scroll.Visible) {
-					this.v_scroll.Width = 15;
 					this.v_scroll.Location = new Point (this.Width 
 									    - this.v_scroll.Width, 0);
 
@@ -624,7 +747,7 @@ namespace System.Windows.Forms
 					this.v_scroll.LargeChange = this.Height;
 					this.v_scroll.SmallChange = this.Font.Height;
 
-					// adjust the maximum value to make the raw Max value attainable
+					// adjust the maximum value to make the raw max value attainable
 					this.v_scroll.Maximum += this.v_scroll.LargeChange;
 				}
 			}
@@ -654,12 +777,29 @@ namespace System.Windows.Forms
 			Rectangle srcRect = pe.ClipRectangle;
 			Rectangle dstRect = pe.ClipRectangle;
 
+			// set the visible starting point
 			if (scrollable) {
-				srcRect.X = h_marker;
-				srcRect.Y = v_marker;
+				srcRect.X += h_marker;
+				srcRect.Y += v_marker;
+
+				// FIXME: exclude the area covered by scrollbars
+				// Bottom right corner needs to get the same color
+				// as used by scrollbars
+				if (h_scroll.Visible) {
+					//srcRect.Height -= h_scroll.Height;
+					//dstRect.Height -= h_scroll.Height;
+				}
+				if (v_scroll.Visible) {
+					//srcRect.Width -= v_scroll.Width;
+					//dstRect.Width -= v_scroll.Width;
+				}
 			}
 
-			// paint the column headers
+			// paint the items
+			pe.Graphics.DrawImage (this.ImageBuffer, dstRect,
+					       srcRect, GraphicsUnit.Pixel);
+
+			// paint the column headers at the top
 			if (this.view == View.Details && this.Columns.Count > 0 && v_marker > 0) {
 				int col_ht = this.Columns [0].Ht;
 				// move the source rect by the amount of horizontal scrolling
@@ -670,16 +810,7 @@ namespace System.Windows.Forms
 
 				pe.Graphics.DrawImage (this.ImageBuffer, headerDst,
 						       headerSrc, GraphicsUnit.Pixel);
-
-				// item painting starts below header. both the rects should
-				// exclude the column header region.
-				srcRect.Y += col_ht;
-				dstRect.Y += col_ht;
 			}
-
-			// paint the items
-			pe.Graphics.DrawImage (this.ImageBuffer, dstRect,
-					       srcRect, GraphicsUnit.Pixel);
 
 			if (Paint != null)
 				Paint (this, pe);
@@ -689,11 +820,6 @@ namespace System.Windows.Forms
 		{
 			Point loc;
 			h_marker = se.NewValue;
-			foreach (ListViewItem item in this.Items) {
-				loc = item.checkbox.Location;
-				loc.X -= h_marker;
-				item.checkbox.Location = loc;
-			}
 
 			// no need to paint when we reach the end
 			if (se.Type != ScrollEventType.EndScroll)

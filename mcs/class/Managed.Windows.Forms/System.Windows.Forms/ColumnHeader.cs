@@ -22,9 +22,14 @@
 // Author:
 //	Ravindra (rkumar@novell.com)
 //
-// $Revision: 1.4 $
+// $Revision: 1.5 $
 // $Modtime: $
 // $Log: ColumnHeader.cs,v $
+// Revision 1.5  2004/11/04 11:29:38  ravindra
+// 	- Changed default value signatures (prefixed all with ListView).
+// 	- Fixed/implemented layout LargeIcon, SmallIcon and List views for ListView.
+// 	- Fixed calculations for ListViewItem and implemented Clone() method.
+//
 // Revision 1.4  2004/10/26 09:55:48  ravindra
 // Some formatting for my last checkins.
 //
@@ -56,7 +61,7 @@ namespace System.Windows.Forms
 		private StringFormat format;
 		private string text = "ColumnHeader";
 		private HorizontalAlignment text_alignment = HorizontalAlignment.Left;
-		private int width = ThemeEngine.Current.DefaultColumnWidth;
+		private int width = ThemeEngine.Current.ListViewDefaultColumnWidth;
 		// column area
 		internal Rectangle column_rect = Rectangle.Empty;
 		#endregion	// Instance Variables
@@ -195,7 +200,7 @@ namespace System.Windows.Forms
 			columnHeader.text_alignment = text_alignment;
 			columnHeader.width = width;
 			columnHeader.owner = owner;
-			columnHeader.column_rect = column_rect = new Rectangle (Point.Empty, Size.Empty);
+			columnHeader.column_rect = Rectangle.Empty;
 			return columnHeader;
 		}
 
