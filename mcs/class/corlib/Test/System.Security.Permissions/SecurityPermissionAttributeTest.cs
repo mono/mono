@@ -2,9 +2,29 @@
 // SecurityPermissionAttributeTest.cs - NUnit Test Cases for SecurityPermissionAttribute
 //
 // Author:
-//	Sebastien Pouliot (spouliot@motus.com)
+//	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) 2003 Motus Technologies Inc. (http://www.motus.com)
+// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+//
+// Permission is hereby granted, free of charge, to any person obtaining
+// a copy of this software and associated documentation files (the
+// "Software"), to deal in the Software without restriction, including
+// without limitation the rights to use, copy, modify, merge, publish,
+// distribute, sublicense, and/or sell copies of the Software, and to
+// permit persons to whom the Software is furnished to do so, subject to
+// the following conditions:
+// 
+// The above copyright notice and this permission notice shall be
+// included in all copies or substantial portions of the Software.
+// 
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+// NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+// LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+// OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
 using NUnit.Framework;
@@ -15,61 +35,82 @@ using System.Security.Permissions;
 namespace MonoTests.System.Security.Permissions {
 
 	[TestFixture]
-	public class SecurityPermissionAttributeTest : Assertion {
+	public class SecurityPermissionAttributeTest {
 
 		[Test]
 		public void Default () 
 		{
 			SecurityPermissionAttribute a = new SecurityPermissionAttribute (SecurityAction.Assert);
-			Assert ("Assertion", !a.Assertion);
-			Assert ("ControlAppDomain", !a.ControlAppDomain);
-			Assert ("ControlDomainPolicy", !a.ControlDomainPolicy);
-			Assert ("ControlEvidence", !a.ControlEvidence);
-			Assert ("ControlPolicy", !a.ControlPolicy);
-			Assert ("ControlPrincipal", !a.ControlPrincipal);
-			Assert ("ControlThread", !a.ControlThread);
-			Assert ("Execution", !a.Execution);
-			Assert ("Infrastructure", !a.Infrastructure);
-			Assert ("RemotingConfiguration", !a.RemotingConfiguration);
-			Assert ("SerializationFormatter", !a.SerializationFormatter);
-			Assert ("SkipVerification", !a.SkipVerification);
-			Assert ("UnmanagedCode", !a.UnmanagedCode);
-			
-			AssertEquals ("Flags", SecurityPermissionFlag.NoFlags, a.Flags);
-			AssertEquals ("TypeId", a.ToString (), a.TypeId.ToString ());
-			Assert ("Unrestricted", !a.Unrestricted);
+			Assert.IsFalse (a.Assertion, "Assertion");
+#if NET_2_0
+			Assert.IsFalse (a.BindingRedirects, "BindingRedirects");
+#endif
+			Assert.IsFalse (a.ControlAppDomain, "ControlAppDomain");
+			Assert.IsFalse (a.ControlDomainPolicy, "ControlDomainPolicy");
+			Assert.IsFalse (a.ControlEvidence, "ControlEvidence");
+			Assert.IsFalse (a.ControlPolicy, "ControlPolicy");
+			Assert.IsFalse (a.ControlPrincipal, "ControlPrincipal");
+			Assert.IsFalse (a.ControlThread, "ControlThread");
+			Assert.IsFalse (a.Execution, "Execution");
+			Assert.IsFalse (a.Infrastructure, "Infrastructure");
+			Assert.IsFalse (a.RemotingConfiguration, "RemotingConfiguration");
+			Assert.IsFalse (a.SerializationFormatter, "SerializationFormatter");
+			Assert.IsFalse (a.SkipVerification, "SkipVerification");
+			Assert.IsFalse (a.UnmanagedCode, "UnmanagedCode");
+
+			Assert.AreEqual (SecurityPermissionFlag.NoFlags, a.Flags, "Flags");
+			Assert.AreEqual (a.ToString (), a.TypeId.ToString (), "TypeId");
+			Assert.IsFalse (a.Unrestricted, "Unrestricted");
 
 			SecurityPermission perm = (SecurityPermission) a.CreatePermission ();
-			AssertEquals ("CreatePermission.Flags", SecurityPermissionFlag.NoFlags, perm.Flags);
+			Assert.AreEqual (SecurityPermissionFlag.NoFlags, perm.Flags, "CreatePermission.Flags");
 		}
 
 		[Test]
 		public void Action () 
 		{
 			SecurityPermissionAttribute a = new SecurityPermissionAttribute (SecurityAction.Assert);
-			AssertEquals ("Action=Assert", SecurityAction.Assert, a.Action);
+			Assert.AreEqual (SecurityAction.Assert, a.Action, "Action=Assert");
 			a.Action = SecurityAction.Demand;
-			AssertEquals ("Action=Demand", SecurityAction.Demand, a.Action);
+			Assert.AreEqual (SecurityAction.Demand, a.Action, "Action=Demand");
 			a.Action = SecurityAction.Deny;
-			AssertEquals ("Action=Deny", SecurityAction.Deny, a.Action);
+			Assert.AreEqual (SecurityAction.Deny, a.Action, "Action=Deny");
 			a.Action = SecurityAction.InheritanceDemand;
-			AssertEquals ("Action=InheritanceDemand", SecurityAction.InheritanceDemand, a.Action);
+			Assert.AreEqual (SecurityAction.InheritanceDemand, a.Action, "Action=InheritanceDemand");
 			a.Action = SecurityAction.LinkDemand;
-			AssertEquals ("Action=LinkDemand", SecurityAction.LinkDemand, a.Action);
+			Assert.AreEqual (SecurityAction.LinkDemand, a.Action, "Action=LinkDemand");
 			a.Action = SecurityAction.PermitOnly;
-			AssertEquals ("Action=PermitOnly", SecurityAction.PermitOnly, a.Action);
+			Assert.AreEqual (SecurityAction.PermitOnly, a.Action, "Action=PermitOnly");
 			a.Action = SecurityAction.RequestMinimum;
-			AssertEquals ("Action=RequestMinimum", SecurityAction.RequestMinimum, a.Action);
+			Assert.AreEqual (SecurityAction.RequestMinimum, a.Action, "Action=RequestMinimum");
 			a.Action = SecurityAction.RequestOptional;
-			AssertEquals ("Action=RequestOptional", SecurityAction.RequestOptional, a.Action);
+			Assert.AreEqual (SecurityAction.RequestOptional, a.Action, "Action=RequestOptional");
 			a.Action = SecurityAction.RequestRefuse;
-			AssertEquals ("Action=RequestRefuse", SecurityAction.RequestRefuse, a.Action);
+			Assert.AreEqual (SecurityAction.RequestRefuse, a.Action, "Action=RequestRefuse");
+#if NET_2_0
+			a.Action = SecurityAction.DemandChoice;
+			Assert.AreEqual (SecurityAction.DemandChoice, a.Action, "Action=DemandChoice");
+			a.Action = SecurityAction.InheritanceDemandChoice;
+			Assert.AreEqual (SecurityAction.InheritanceDemandChoice, a.Action, "Action=InheritanceDemandChoice");
+			a.Action = SecurityAction.LinkDemandChoice;
+			Assert.AreEqual (SecurityAction.LinkDemandChoice, a.Action, "Action=LinkDemandChoice");
+#endif
+		}
+
+		[Test]
+		public void Action_Invalid ()
+		{
+			SecurityPermissionAttribute a = new SecurityPermissionAttribute ((SecurityAction)Int32.MinValue);
+			// no validation in attribute
 		}
 
 		private SecurityPermissionAttribute Empty () 
 		{
 			SecurityPermissionAttribute a = new SecurityPermissionAttribute (SecurityAction.Assert);
 			a.Assertion = false;
+#if NET_2_0
+			a.BindingRedirects = false;
+#endif
 			a.ControlAppDomain = false;
 			a.ControlDomainPolicy = false;
 			a.ControlEvidence = false;
@@ -82,7 +123,7 @@ namespace MonoTests.System.Security.Permissions {
 			a.SerializationFormatter = false;
 			a.SkipVerification = false;
 			a.UnmanagedCode = false;
-			AssertEquals ("Flags", SecurityPermissionFlag.NoFlags, a.Flags);
+			Assert.AreEqual (SecurityPermissionFlag.NoFlags, a.Flags, "Flags");
 			return a;
 		}
 
@@ -91,15 +132,23 @@ namespace MonoTests.System.Security.Permissions {
 		{
 			SecurityPermissionAttribute a = Empty ();
 			a.Assertion = true;
-			AssertEquals ("Flags=Assertion", SecurityPermissionFlag.Assertion, a.Flags);
+			Assert.AreEqual (SecurityPermissionFlag.Assertion, a.Flags, "Flags=Assertion");
 		}
-
+#if NET_2_0
+		[Test]
+		public void BindingRedirects ()
+		{
+			SecurityPermissionAttribute a = Empty ();
+			a.BindingRedirects = true;
+			Assert.AreEqual (SecurityPermissionFlag.BindingRedirects, a.Flags, "Flags=BindingRedirects");
+		}
+#endif
 		[Test]
 		public void ControlAppDomain () 
 		{
 			SecurityPermissionAttribute a = Empty ();
 			a.ControlAppDomain = true;
-			AssertEquals ("Flags=ControlAppDomain", SecurityPermissionFlag.ControlAppDomain, a.Flags);
+			Assert.AreEqual (SecurityPermissionFlag.ControlAppDomain, a.Flags, "Flags=ControlAppDomain");
 		}
 
 		[Test]
@@ -107,7 +156,7 @@ namespace MonoTests.System.Security.Permissions {
 		{
 			SecurityPermissionAttribute a = Empty ();
 			a.ControlDomainPolicy = true;
-			AssertEquals ("Flags=ControlDomainPolicy", SecurityPermissionFlag.ControlDomainPolicy, a.Flags);
+			Assert.AreEqual (SecurityPermissionFlag.ControlDomainPolicy, a.Flags, "Flags=ControlDomainPolicy");
 		}
 
 		[Test]
@@ -115,7 +164,7 @@ namespace MonoTests.System.Security.Permissions {
 		{
 			SecurityPermissionAttribute a = Empty ();
 			a.ControlEvidence = true;
-			AssertEquals ("Flags=ControlEvidence", SecurityPermissionFlag.ControlEvidence, a.Flags);
+			Assert.AreEqual (SecurityPermissionFlag.ControlEvidence, a.Flags, "Flags=ControlEvidence");
 		}
 
 		[Test]
@@ -123,7 +172,7 @@ namespace MonoTests.System.Security.Permissions {
 		{
 			SecurityPermissionAttribute a = Empty ();
 			a.ControlPolicy = true;
-			AssertEquals ("Flags=ControlPolicy", SecurityPermissionFlag.ControlPolicy, a.Flags);
+			Assert.AreEqual (SecurityPermissionFlag.ControlPolicy, a.Flags, "Flags=ControlPolicy");
 		}
 
 		[Test]
@@ -131,7 +180,7 @@ namespace MonoTests.System.Security.Permissions {
 		{
 			SecurityPermissionAttribute a = Empty ();
 			a.ControlPrincipal = true;
-			AssertEquals ("Flags=ControlPrincipal", SecurityPermissionFlag.ControlPrincipal, a.Flags);
+			Assert.AreEqual (SecurityPermissionFlag.ControlPrincipal, a.Flags, "Flags=ControlPrincipal");
 		}
 
 		[Test]
@@ -139,7 +188,7 @@ namespace MonoTests.System.Security.Permissions {
 		{
 			SecurityPermissionAttribute a = Empty ();
 			a.ControlThread = true;
-			AssertEquals ("Flags=ControlThread", SecurityPermissionFlag.ControlThread, a.Flags);
+			Assert.AreEqual (SecurityPermissionFlag.ControlThread, a.Flags, "Flags=ControlThread");
 		}
 
 		[Test]
@@ -147,7 +196,7 @@ namespace MonoTests.System.Security.Permissions {
 		{
 			SecurityPermissionAttribute a = Empty ();
 			a.Execution = true;
-			AssertEquals ("Flags=Execution", SecurityPermissionFlag.Execution, a.Flags);
+			Assert.AreEqual (SecurityPermissionFlag.Execution, a.Flags, "Flags=Execution");
 		}
 
 		[Test]
@@ -155,7 +204,7 @@ namespace MonoTests.System.Security.Permissions {
 		{
 			SecurityPermissionAttribute a = Empty ();
 			a.Infrastructure = true;
-			AssertEquals ("Flags=Infrastructure", SecurityPermissionFlag.Infrastructure, a.Flags);
+			Assert.AreEqual (SecurityPermissionFlag.Infrastructure, a.Flags, "Flags=Infrastructure");
 		}
 
 		[Test]
@@ -163,7 +212,7 @@ namespace MonoTests.System.Security.Permissions {
 		{
 			SecurityPermissionAttribute a = Empty ();
 			a.RemotingConfiguration = true;
-			AssertEquals ("Flags=RemotingConfiguration", SecurityPermissionFlag.RemotingConfiguration, a.Flags);
+			Assert.AreEqual (SecurityPermissionFlag.RemotingConfiguration, a.Flags, "Flags=RemotingConfiguration");
 		}
 
 		[Test]
@@ -171,7 +220,7 @@ namespace MonoTests.System.Security.Permissions {
 		{
 			SecurityPermissionAttribute a = Empty ();
 			a.SerializationFormatter = true;
-			AssertEquals ("Flags=SerializationFormatter", SecurityPermissionFlag.SerializationFormatter, a.Flags);
+			Assert.AreEqual (SecurityPermissionFlag.SerializationFormatter, a.Flags, "Flags=SerializationFormatter");
 		}
 
 		[Test]
@@ -179,7 +228,7 @@ namespace MonoTests.System.Security.Permissions {
 		{
 			SecurityPermissionAttribute a = Empty ();
 			a.SkipVerification = true;
-			AssertEquals ("Flags=SkipVerification", SecurityPermissionFlag.SkipVerification, a.Flags);
+			Assert.AreEqual (SecurityPermissionFlag.SkipVerification, a.Flags, "Flags=SkipVerification");
 		}
 
 		[Test]
@@ -187,7 +236,7 @@ namespace MonoTests.System.Security.Permissions {
 		{
 			SecurityPermissionAttribute a = Empty ();
 			a.UnmanagedCode = true;
-			AssertEquals ("Flags=UnmanagedCode", SecurityPermissionFlag.UnmanagedCode, a.Flags);
+			Assert.AreEqual (SecurityPermissionFlag.UnmanagedCode, a.Flags, "Flags=UnmanagedCode");
 		}
 
 		[Test]
@@ -195,10 +244,63 @@ namespace MonoTests.System.Security.Permissions {
 		{
 			SecurityPermissionAttribute a = new SecurityPermissionAttribute (SecurityAction.Assert);
 			a.Unrestricted = true;
-			AssertEquals ("Unrestricted", SecurityPermissionFlag.NoFlags, a.Flags);
+			Assert.AreEqual (SecurityPermissionFlag.NoFlags, a.Flags, "Unrestricted");
 
 			SecurityPermission perm = (SecurityPermission) a.CreatePermission ();
-			AssertEquals ("CreatePermission.Flags", SecurityPermissionFlag.AllFlags, perm.Flags);
+			Assert.AreEqual (SecurityPermissionFlag.AllFlags, perm.Flags, "CreatePermission.Flags");
+		}
+
+		[Test]
+		public void Flags ()
+		{
+			SecurityPermissionAttribute a = new SecurityPermissionAttribute (SecurityAction.Assert);
+			a.Flags = SecurityPermissionFlag.Assertion;
+			Assert.IsTrue (a.Assertion, "Assertion");
+#if NET_2_0
+			a.Flags |= SecurityPermissionFlag.BindingRedirects;
+			Assert.IsTrue (a.BindingRedirects, "BindingRedirects");
+#endif
+			a.Flags |= SecurityPermissionFlag.ControlAppDomain;
+			Assert.IsTrue (a.ControlAppDomain, "ControlAppDomain");
+			a.Flags |= SecurityPermissionFlag.ControlDomainPolicy;
+			Assert.IsTrue (a.ControlDomainPolicy, "ControlDomainPolicy");
+			a.Flags |= SecurityPermissionFlag.ControlEvidence;
+			Assert.IsTrue (a.ControlEvidence, "ControlEvidence");
+			a.Flags |= SecurityPermissionFlag.ControlPolicy;
+			Assert.IsTrue (a.ControlPolicy, "ControlPolicy");
+			a.Flags |= SecurityPermissionFlag.ControlPrincipal;
+			Assert.IsTrue (a.ControlPrincipal, "ControlPrincipal");
+			a.Flags |= SecurityPermissionFlag.ControlThread;
+			Assert.IsTrue (a.ControlThread, "ControlThread");
+			a.Flags |= SecurityPermissionFlag.Execution;
+			Assert.IsTrue (a.Execution, "Execution");
+			a.Flags |= SecurityPermissionFlag.Infrastructure;
+			Assert.IsTrue (a.Infrastructure, "Infrastructure");
+			a.Flags |= SecurityPermissionFlag.RemotingConfiguration;
+			Assert.IsTrue (a.RemotingConfiguration, "RemotingConfiguration");
+			a.Flags |= SecurityPermissionFlag.SerializationFormatter;
+			Assert.IsTrue (a.SerializationFormatter, "SerializationFormatter");
+			a.Flags |= SecurityPermissionFlag.SkipVerification;
+			Assert.IsTrue (a.SkipVerification, "SkipVerification");
+			a.Flags |= SecurityPermissionFlag.UnmanagedCode;
+			Assert.IsTrue (a.UnmanagedCode, "UnmanagedCode");
+			Assert.IsFalse (a.Unrestricted, "Unrestricted");
+		}
+
+		[Test]
+		public void Attributes ()
+		{
+			SecurityPermissionAttribute a = new SecurityPermissionAttribute (SecurityAction.Assert);
+			Type t = typeof (SecurityPermissionAttribute);
+			Assert.IsTrue (t.IsSerializable, "IsSerializable");
+
+			object [] attrs = t.GetCustomAttributes (typeof (AttributeUsageAttribute), false);
+			Assert.AreEqual (1, attrs.Length, "AttributeUsage");
+			AttributeUsageAttribute aua = (AttributeUsageAttribute)attrs [0];
+			Assert.IsTrue (aua.AllowMultiple, "AllowMultiple");
+			Assert.IsFalse (aua.Inherited, "Inherited");
+			AttributeTargets at = (AttributeTargets.Assembly | AttributeTargets.Class | AttributeTargets.Struct | AttributeTargets.Constructor | AttributeTargets.Method);
+			Assert.AreEqual (at, aua.ValidOn, "ValidOn");
 		}
 	}
 }

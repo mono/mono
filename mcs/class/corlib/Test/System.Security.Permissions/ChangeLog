@@ -1,3 +1,10 @@
+2003-08-19  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* SecurityPermissionAttributeTest.cs: Added unit tests for invalid 
+	SecurityAction, Flags effects and custom attributes. Converted 
+	existing tests to NUnit 2.2 format.
+	* SecurityPermissionTest.cs: New. Unit tests for SecurityPermission.
+
 2003-08-18  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* IsolatedStorageFilePermissionAttributeTest.cs: Added tests to check 
