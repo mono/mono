@@ -364,11 +364,29 @@ namespace MonoTests.System.Security.Cryptography {
 
 		[Test]
 		[ExpectedException (typeof (ArgumentException))]
+		public void Read_OverflowCount () 
+		{
+			byte[] buffer = new byte [8];
+			cs = new CryptoStream (readStream, encryptor, CryptoStreamMode.Read);
+			cs.Read (buffer, 0, Int32.MaxValue);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
 		public void Read_InvalidOffset () 
 		{
 			byte[] buffer = new byte [8];
 			cs = new CryptoStream (readStream, encryptor, CryptoStreamMode.Read);
 			cs.Read (buffer, 5, 4);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void Read_OverflowOffset () 
+		{
+			byte[] buffer = new byte [8];
+			cs = new CryptoStream (readStream, encryptor, CryptoStreamMode.Read);
+			cs.Read (buffer, Int32.MaxValue, 4);
 		}
 
 		[Test]
@@ -418,6 +436,15 @@ namespace MonoTests.System.Security.Cryptography {
 		}
 
 		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void Write_OverflowOffset () 
+		{
+			byte[] buffer = new byte [8];
+			cs = new CryptoStream (writeStream, encryptor, CryptoStreamMode.Write);
+			cs.Write (buffer, Int32.MaxValue, 8);
+		}
+
+		[Test]
 		public void Write_ZeroCount () 
 		{
 			byte[] buffer = new byte [8];
@@ -441,6 +468,15 @@ namespace MonoTests.System.Security.Cryptography {
 			byte[] buffer = new byte [8];
 			cs = new CryptoStream (writeStream, encryptor, CryptoStreamMode.Write);
 			cs.Write (buffer, 5, 4);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void Write_OverflowCount () 
+		{
+			byte[] buffer = new byte [8];
+			cs = new CryptoStream (writeStream, encryptor, CryptoStreamMode.Write);
+			cs.Write (buffer, 0, Int32.MaxValue);
 		}
 
 		[Test]

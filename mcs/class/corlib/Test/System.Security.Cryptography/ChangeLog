@@ -1,5 +1,6 @@
 2004-05-26  Sebastien Pouliot  <sebastien@ximian.com>
 
+	* CryptoStreamTest.cs: Added new unit tests for overflows.
 	* FromBase64Transform.cs: Added new unit tests for undocumented 
 	exceptions (null, overflows...).
 
