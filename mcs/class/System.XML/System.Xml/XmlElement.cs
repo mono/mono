@@ -25,7 +25,6 @@ namespace System.Xml
 		private string localName;
 		private string namespaceURI;
 		private string prefix;
-		private bool isEmpty;
 
 		#endregion
 
@@ -104,12 +103,13 @@ namespace System.Xml
 		}
 
 		public bool IsEmpty {
-			get { return isEmpty; }
+			get {
+				return (FirstChild == null);
+			}
 
 			set {
 				if(value)
 					RemoveAll();
-				isEmpty = value;
 			}
 		}
 

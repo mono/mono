@@ -28,6 +28,12 @@ namespace System.Xml
 		bool alreadyRead;
 		StringBuilder valueBuilder = new StringBuilder ();
 
+		private XmlNode ownerElement {
+			get {
+				return (current.NodeType == XmlNodeType.Attribute) ? ((XmlAttribute)current).OwnerElement : current;
+			}
+		}
+
 		#region Constructor
 
 		public XmlNodeReader (XmlNode node)
@@ -46,8 +52,7 @@ namespace System.Xml
 			get {
 				if (isEndElement || current == null || current.Attributes == null)
 					return 0;
-
-				return current.Attributes.Count;
+				return ownerElement.Attributes.Count;
 			}
 		}
 
@@ -142,11 +147,45 @@ namespace System.Xml
 				if (isEndElement || current == null)
 					return null;
 
+				if (NodeType == XmlNodeType.XmlDeclaration) {
+					XmlDeclaration decl = current as XmlDeclaration;
+					switch (i) {
+					case 0:
+						return decl.Version;
+					case 1:
+						if (decl.Encoding != String.Empty)
+							return decl.Encoding;
+						else if (decl.Standalone != String.Empty)
+							return decl.Standalone;
+						else
+							throw new ArgumentOutOfRangeException ("Index out of range.");
+					case 2:
+						if (decl.Encoding != String.Empty && decl.Standalone != null)
+							return decl.Standalone;
+						else
+							throw new ArgumentOutOfRangeException ("Index out of range.");
+					}
+				}
+
 				if (i < 0 || i > AttributeCount)
-					throw new ArgumentOutOfRangeException ("i is out of range.");
-				
-				return current.Attributes [i].Value;
+					throw new ArgumentOutOfRangeException ("Index out of range.");
+
+				return ownerElement.Attributes [i].Value;
 			}
+		}
+
+		private string GetXmlDeclarationAttribute (string name)
+		{
+			XmlDeclaration decl = current as XmlDeclaration;
+			switch (name) {
+			case "version":
+				return decl.Version;
+			case "encoding":
+				return decl.Encoding;
+			case "standalone":
+				return decl.Standalone;
+			}
+			return null;
 		}
 
 		public override string this [string name] {
@@ -155,8 +194,10 @@ namespace System.Xml
 				if (isEndElement || current == null)
 					return null;
 
-				XmlAttribute attr = current.Attributes [name];
-				
+				if (NodeType == XmlNodeType.XmlDeclaration)
+					return GetXmlDeclarationAttribute (name);
+
+				XmlAttribute attr = ownerElement.Attributes [name];
 				if (attr == null)
 					return String.Empty;
 				else
@@ -170,8 +211,10 @@ namespace System.Xml
 				if (isEndElement || current == null)
 					return null;
 
-				XmlAttribute attr = current.Attributes [name, namespaceURI];
-				
+				if (NodeType == XmlNodeType.XmlDeclaration)
+					return GetXmlDeclarationAttribute (name);
+
+				XmlAttribute attr = ownerElement.Attributes [name, namespaceURI];
 				if (attr == null)
 					return String.Empty;
 				else
@@ -322,7 +365,7 @@ namespace System.Xml
 				throw new ArgumentOutOfRangeException ();
 			
 			state = ReadState.Interactive;
-			current = current.Attributes [attributeIndex];
+			current = ownerElement.Attributes [attributeIndex];
 		}
 
 		public override bool MoveToAttribute (string name)
@@ -330,10 +373,11 @@ namespace System.Xml
 			if (isEndElement || current == null)
 				return false;
 
-			if (GetAttribute (name) == null)
+			XmlAttribute attr = ownerElement.Attributes [name];
+			if (attr == null)
 				return false;
 			else {
-				current = current.Attributes [name];
+				current = attr;
 				return true;
 			}
 		}
@@ -343,10 +387,11 @@ namespace System.Xml
 			if (isEndElement || current == null)
 				return false;
 
-			if (GetAttribute (name, namespaceURI) == null)
+			XmlAttribute attr = ownerElement.Attributes [name, namespaceURI];
+			if (attr == null)
 				return false;
 			else {
-				current = current.Attributes [name, namespaceURI];
+				current = attr;
 				return true;
 			}
 		}
@@ -372,9 +417,12 @@ namespace System.Xml
 
 		public override bool MoveToFirstAttribute ()
 		{
-			if(current.Attributes.Count > 0)
+			if (current == null)
+				return false;
+
+			if(ownerElement.Attributes.Count > 0)
 			{
-				current = current.Attributes [0];
+				current = ownerElement.Attributes [0];
 				return true;
 			}
 			else
@@ -383,6 +431,9 @@ namespace System.Xml
 
 		public override bool MoveToNextAttribute ()
 		{
+			if (current == null)
+				return false;
+
 			if (current.NodeType != XmlNodeType.Attribute)
 				return MoveToFirstAttribute ();
 			else
@@ -512,14 +563,43 @@ namespace System.Xml
 		{
 			if (ReadState == ReadState.Initial) {
 				state = ReadState.Error;
-				return String.Empty;	// heh
+				return String.Empty;
 			}
-		
+/*
 			if (current.NodeType != XmlNodeType.Attribute &&
 			    current.NodeType != XmlNodeType.Element)
 				return String.Empty;
 			else
 				return current.InnerXml;
+*/
+			XmlNode initial = current;
+			// Almost copied from XmlTextReader.
+			switch (NodeType) {
+			case XmlNodeType.Attribute:
+				return Value;
+			case XmlNodeType.Element:
+				if (IsEmptyElement)
+					return String.Empty;
+
+				int startDepth = depth;
+
+				bool loop = true;
+				do {
+					Read ();
+					if (NodeType ==XmlNodeType.None)
+						throw new XmlException ("unexpected end of xml.");
+					else if (NodeType == XmlNodeType.EndElement && depth == startDepth) {
+						loop = false;
+						Read ();
+					}
+				} while (loop);
+				return initial.InnerXml;
+			case XmlNodeType.None:
+				return String.Empty;
+			default:
+				Read ();
+				return String.Empty;
+			}
 		}
 
 		[MonoTODO("Need to move to next content.")]
@@ -528,67 +608,35 @@ namespace System.Xml
 		{
 			if (NodeType == XmlNodeType.EndElement)
 				return String.Empty;
-
+/*
 			if (current.NodeType != XmlNodeType.Attribute &&
 			    current.NodeType != XmlNodeType.Element)
 				return String.Empty;
 			else
 				return current.OuterXml;
+*/
+			XmlNode initial = current;
+
+			switch (NodeType) {
+			case XmlNodeType.Attribute:
+				return current.OuterXml;
+			case XmlNodeType.Element:
+				if (NodeType == XmlNodeType.Element && !IsEmptyElement)
+					ReadInnerXml ();
+				else
+					Read ();
+				return initial.OuterXml;
+			case XmlNodeType.None:
+				return String.Empty;
+			default:
+				Read ();
+				return String.Empty;
+			}
 		}
 
 		public override string ReadString ()
 		{
-			XmlNode original = current;
-			valueBuilder.Length = 0;
-
-			switch (NodeType) {
-			default:
-				return String.Empty;
-			case XmlNodeType.Element:
-				if (IsEmptyElement)
-					return String.Empty;
-
-				foreach (XmlNode child in current.ChildNodes) {
-					if (child is XmlCharacterData && !(child is XmlComment))
-						valueBuilder.Append (child.Value);
-					else {
-						depth++;
-						current = child;
-						break;
-					}
-				}
-				alreadyRead = true;
-				if (current == original) {
-					nextIsEndElement = true;
-					Read ();
-				}
-				break;
-			case XmlNodeType.Text:
-			case XmlNodeType.CDATA:
-			case XmlNodeType.Whitespace:
-			case XmlNodeType.SignificantWhitespace:
-				// [LAMESPEC] It is inconsistent with MS.NET.
-				// MS ignores current text value, but such 
-				// behaviour is inconsistent with XmlTextReader 
-				// and I think it is bug.
-				do {
-					valueBuilder.Append (current.Value);
-					if (current.NextSibling == null) {
-						nextIsEndElement = true;
-						break;
-					} else if (current.NextSibling.NodeType == XmlNodeType.Comment)
-						break;
-					else
-						current = current.NextSibling;
-				} while (true);
-				alreadyRead = true;
-				if (current.NextSibling == null) {
-					nextIsEndElement = true;
-					Read ();
-				}
-				break;
-			}
-			return valueBuilder.ToString ();
+			return ReadStringInternal ();
 		}
 
 		[MonoTODO]

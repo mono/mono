@@ -8,11 +8,14 @@
 // (C) 2001, 2002 Jason Diamond  http://injektilo.org/
 // (c) 2002 Ximian, Inc. (http://www.ximian.com)
 //
+using System.Text;
 
 namespace System.Xml
 {
 	public abstract class XmlReader
 	{
+		private StringBuilder readStringBuffer;
+
 		#region Constructor
 
 		protected XmlReader ()
@@ -351,6 +354,54 @@ namespace System.Xml
 		}
 
 		public abstract string ReadString ();
+
+		internal protected string ReadStringInternal ()
+		{
+			if (readStringBuffer == null)
+				readStringBuffer = new StringBuilder ();
+			readStringBuffer.Length = 0;
+
+			switch (NodeType) {
+			default:
+				return String.Empty;
+			case XmlNodeType.Element:
+				if (IsEmptyElement)
+					return String.Empty;
+				do {
+					Read ();
+					switch (NodeType) {
+					case XmlNodeType.Text:
+					case XmlNodeType.CDATA:
+					case XmlNodeType.Whitespace:
+					case XmlNodeType.SignificantWhitespace:
+						readStringBuffer.Append (Value);
+						continue;
+					}
+					break;
+				} while (true);
+				break;
+			case XmlNodeType.Text:
+			case XmlNodeType.CDATA:
+			case XmlNodeType.Whitespace:
+			case XmlNodeType.SignificantWhitespace:
+				do {
+					switch (NodeType) {
+					case XmlNodeType.Text:
+					case XmlNodeType.CDATA:
+					case XmlNodeType.Whitespace:
+					case XmlNodeType.SignificantWhitespace:
+						readStringBuffer.Append (Value);
+						Read ();
+						continue;
+					}
+					break;
+				} while (true);
+				break;
+			}
+			string ret = readStringBuffer.ToString ();
+			readStringBuffer.Length = 0;
+			return ret;
+		}
 
 		public abstract void ResolveEntity ();
 

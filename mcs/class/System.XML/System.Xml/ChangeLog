@@ -1,3 +1,17 @@
+2003-04-29  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
+
+	* XmlElement.cs : fixed IsEmpty (removed private field isEmpty).
+	* XmlNodeReader.cs : Fixed AttributeCount, each this[] (indexers),
+	  MoveTo*Attribute(),
+	  Fixed this[] to work correctly against XmlDeclarations.
+	  Fixed ReadInnerXml() and ReadOuterXml() to call Read() correctly.
+	  (which may prevent validations etc.)
+	* XmlReader.cs,
+	  XmlNodeReader.cs,
+	  XmlTextReader.cs : Fixed ReadString() to be compliant with each
+	  other.
+	* XmlTextReader.cs : ReadInnerXml() now moves to next node correctly.
+
 2003-04-27  Pedro Martínez Juliá  <yoros@wanadoo.es>
 
 	* XmlNode.cs: ensure to get a valid Uri in BaseUri when loading the

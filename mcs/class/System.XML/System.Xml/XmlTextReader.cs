@@ -620,8 +620,10 @@ namespace System.Xml
 					Read ();
 					if (NodeType ==XmlNodeType.None)
 						throw new XmlException ("unexpected end of xml.");
-					else if (NodeType == XmlNodeType.EndElement && depth == startDepth)
-							loop = false;
+					else if (NodeType == XmlNodeType.EndElement && depth == startDepth) {
+						loop = false;
+						Read ();
+					}
 					else
 						innerXmlBuilder.Append (currentTag);
 				} while (loop);
@@ -666,50 +668,7 @@ namespace System.Xml
 
 		public override string ReadString ()
 		{
-			if (readStringBuffer == null)
-				readStringBuffer = new StringBuilder ();
-			readStringBuffer.Length = 0;
-
-			switch (NodeType) {
-			default:
-				return String.Empty;
-			case XmlNodeType.Element:
-				if (IsEmptyElement)
-					return String.Empty;
-				do {
-					Read ();
-					switch (NodeType) {
-					case XmlNodeType.Text:
-					case XmlNodeType.CDATA:
-					case XmlNodeType.Whitespace:
-					case XmlNodeType.SignificantWhitespace:
-						readStringBuffer.Append (Value);
-						continue;
-					}
-					break;
-				} while (true);
-				break;
-			case XmlNodeType.Text:
-			case XmlNodeType.CDATA:
-			case XmlNodeType.Whitespace:
-			case XmlNodeType.SignificantWhitespace:
-				do {
-					switch (NodeType) {
-					case XmlNodeType.Text:
-					case XmlNodeType.CDATA:
-					case XmlNodeType.Whitespace:
-					case XmlNodeType.SignificantWhitespace:
-						readStringBuffer.Append (Value);
-						Read ();
-						continue;
-					}
-					break;
-				} while (true);
-				break;
-			}
-			string ret = readStringBuffer.ToString ();
-			readStringBuffer.Length = 0;
-			return ret;
+			return ReadStringInternal ();
 		}
 
 		[MonoTODO]
@@ -824,7 +783,6 @@ namespace System.Xml
 		private int attributeValuePos;
 		// This should be only referenced(used) by ReadInnerXml(). Kind of flyweight pattern.
 		private StringBuilder innerXmlBuilder;
-		private StringBuilder readStringBuffer;
 
 		// Parameter entity placeholder
 		private Hashtable parameterEntities = new Hashtable ();
