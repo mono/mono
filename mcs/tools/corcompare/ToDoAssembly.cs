@@ -87,7 +87,6 @@ namespace Mono.Util.CorCompare {
 					string strNamespace = t.Namespace;
 					if (strNamespace != null && strNamespace.Length > 0 &&
 						strName != null && strName.Length > 0 &&
-						!strNamespace.StartsWith ("Microsoft.") &&
 						!htGhostTypes.Contains (strName))
 					{
 						ArrayList rgContainedTypes = (ArrayList) mapTypes [strNamespace];
