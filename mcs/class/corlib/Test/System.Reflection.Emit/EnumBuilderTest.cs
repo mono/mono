@@ -17,9 +17,9 @@ using System.Threading;
 
 using NUnit.Framework;
 
-namespace MonoTest.System.Reflection.Emit {
+namespace MonoTests.System.Reflection.Emit {
 	[TestFixture]
-	public class EnumBuiderTest : Assertion {
+	public class EnumBuilderTest : Assertion {
 		private static string _assemblyName = "MonoTests.System.Reflection.Emit.EnumBuilder";
 		private static string _moduleName = "EmittedModule";
 		private static string _enumNamespace = "MyNameSpace";

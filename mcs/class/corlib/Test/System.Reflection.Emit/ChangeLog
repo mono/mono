@@ -1,3 +1,8 @@
+2004-06-14  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* EnumBuilderTest.cs: Fixed typos so the test is reported in 
+	alphabetical order by NUnit.
+
 2004-06-09  Gert Driesen <drieseng@users.sourceforge.net>
 
 	* TypeBuilderTest.cs: Added tests for completed/created type
