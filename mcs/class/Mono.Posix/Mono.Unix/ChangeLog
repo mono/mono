@@ -1,3 +1,11 @@
+2005-01-05  Jonathan Pryor <jonpryor@vt.edu>
+
+	* Stdlib.cs: Re-order declarations to match the order used in the 
+	  C99 Standard Annex B; Complete <stdio.h> exports (except for those not
+	  worth supporting); Add non-"unsafe" versions of fread(3), fwrite(3) and
+	  add some rudimentary buffer-overflow checking; Add <stdlib.h> exports such
+	  as getenv(3), exit(3), rand(3), EXIT_SUCCESS, RAND_MAX, etc.
+
 2005-01-03  Jonathan Pryor <jonpryor@vt.edu>
 
 	* Syscall.cs: Update endfsent() and setfsent() declarations, as these must
