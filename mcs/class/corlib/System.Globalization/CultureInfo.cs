@@ -4,6 +4,8 @@
 //
 // (C) Ximian, Inc. 2001 (http://www.ximian.com)
 
+using System.Threading;
+
 namespace System.Globalization
 {
 	public class CultureInfo
@@ -13,6 +15,9 @@ namespace System.Globalization
 		int  lcid;
 		bool use_user_override;
 		NumberFormatInfo number_format;
+		DateTimeFormatInfo datetime_format;
+
+		private static readonly string MSG_READONLY = "This instance is read only";
 		
 		// <summary>
 		//   Returns the Invariant Culture Information ("iv")
@@ -42,6 +47,39 @@ namespace System.Globalization
 				throw new ArgumentException ("CreateSpecificCultureName");
 			}
 		}
+
+		/// <summary>
+		/// CultureInfo instance that represents the culture used by the current thread
+		/// </summary>
+		public static CultureInfo CurrentCulture 
+		{
+			get 
+			{
+				return Thread.CurrentThread.CurrentCulture;
+			}
+			
+			set 
+			{
+				Thread.CurrentThread.CurrentCulture = value;
+			}
+		}
+
+		/// <summary>
+		/// CultureInfo instance that represents the current culture used by the ResourceManager to look up culture-specific resources at run time
+		/// </summary>
+		public static CultureInfo CurrentUICulture 
+		{
+			get 
+			{
+				return Thread.CurrentThread.CurrentUICulture;
+			}
+			
+			set 
+			{
+				Thread.CurrentThread.CurrentUICulture =	value;
+			}
+		}
+
 
 		public virtual int LCID {
 			get {
@@ -87,8 +125,7 @@ namespace System.Globalization
 			}
 
 			set {
-				if (is_read_only)
-					return;
+				if (is_read_only) throw new InvalidOperationException(MSG_READONLY);
 
 				if (value == null)
 					throw new ArgumentNullException ("NumberFormat");
@@ -96,6 +133,34 @@ namespace System.Globalization
 				number_format = value;
 			}
 		}
+
+		public virtual DateTimeFormatInfo DateTimeFormat
+		{
+			get 
+			{
+				if (datetime_format == null)
+				{
+					lock (this)
+					{
+						if (datetime_format == null)
+							datetime_format = new DateTimeFormatInfo(); //FIXME: create correct localized DateTimeFormat
+					}
+				}
+
+				return datetime_format;
+			}
+
+			set 
+			{
+				if (is_read_only) throw new InvalidOperationException(MSG_READONLY);
+
+				if (value == null)
+					throw new ArgumentNullException ("DateTimeFormat");
+				
+				datetime_format = value;
+			}
+		}
+
 		
 		public CultureInfo (int code, bool use_user_override)
 		{

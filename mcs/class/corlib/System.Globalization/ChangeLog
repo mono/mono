@@ -3,6 +3,8 @@
 
         * DateTimeFormatInfo.cs: added
 
+        * CultureInfo.cs: some changed needed for compiling DateTimeFormatInfo.cs
+
 2001-10-26  Miguel de Icaza  <miguel@ximian.com>
 
 	* NumberFormatInfo.cs: Provide an internal constructor that takes
