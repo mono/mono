@@ -1,4 +1,4 @@
-2004-11-10  Martin Baulig  <martin@localhost>
+2004-11-10  Martin Baulig  <martin@ximian.com>
 
 	* DeflateStream.cs, GzipStream.cs: `System.IO.Stream.Length' doesn't
 	have any setter.	
