@@ -190,7 +190,7 @@ namespace Microsoft.VisualBasic
 			TextWriter output = Output;
 
 			GenerateExpression (expression.TargetObject);
-			output.Write ('.Item(');
+			output.Write (".Item(");
 			OutputExpressionList (expression.Indices);
 			output.Write (')');
 		}
@@ -553,6 +553,8 @@ namespace Microsoft.VisualBasic
 		[MonoTODO ("partially implemented")]
 		protected override void GenerateMethod (CodeMemberMethod method, CodeTypeDeclaration declaration)
 		{
+			bool isSub = method.ReturnType == null || method.ReturnType.ToString() == "System.Void";
+
 			TextWriter output = Output;
 
 			if (method.CustomAttributes.Count > 0)
@@ -563,7 +565,7 @@ namespace Microsoft.VisualBasic
 			OutputMemberAccessModifier (attributes);
 			OutputMemberScopeModifier (attributes);
 
-			if (method.ReturnType == null)
+			if (isSub)
 				output.Write ("Sub ");
 			else
 				output.Write ("Function ");
@@ -573,7 +575,7 @@ namespace Microsoft.VisualBasic
 			OutputParameters (method.Parameters);
 			output.Write (')');
 
-			if (method.ReturnType != null) {
+			if (!isSub) {
 				output.Write (" As ");
 				OutputType (method.ReturnType);
 			}
@@ -598,7 +600,7 @@ namespace Microsoft.VisualBasic
 				++Indent;
 				GenerateStatements (method.Statements);
 				--Indent;
-				if (method.ReturnType == null)
+				if (isSub)
 					output.WriteLine ("End Sub");
 				else
 					output.WriteLine ("End Function");

@@ -1,5 +1,9 @@
 2003-10-17  Rafael Teixeira <rafaelteixeirabr@hotmail.com>
 
+	* Microsoft.VisualBasic/VBCodeGenerator.cs: Sub or Function generation is switched by method.ReturnType being "System.Void"
+
+2003-10-17  Rafael Teixeira <rafaelteixeirabr@hotmail.com>
+
 	* Microsoft.VisualBasic/VBCodeCompiler.cs: Inserts "--" before file names block
 	* Microsoft.VisualBasic/VBCodeGenerator.cs: Indexer should be ".Item(xx)"
 
