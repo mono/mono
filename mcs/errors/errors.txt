@@ -59,3 +59,12 @@ numbers to match the Microsoft numbers:
 	StructLayout.CharSet value.
 
 -22     Location of previous error 
+
+-23	.NET runtime error when encoding attributes whose constructor
+	takes an object, but an enumeration value that is boxed is
+	passed.
+
+	Sample:
+		using System.ComponentModel;
+		[DefaultValue (CollectionChangeAction.Add)]
+		class X { static void Main () {	} }
