@@ -1,5 +1,7 @@
 2005-02-20  Zoltan Varga  <vargaz@freemail.hu>
 
+	* InterlockedTest.cs: Enable 2.0 tests.
+	
 	* InterlockedTest.cs: New file. Tests from 
 	Luca Barbieri (luca.barbieri@gmail.com).
 

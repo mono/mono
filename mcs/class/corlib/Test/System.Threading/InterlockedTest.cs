@@ -68,7 +68,6 @@ namespace MonoTests.System.Threading
 
 #if NET_2_0
 		[Test]
-		[Category ("NotWorking")]
 		public void TestExchange_Int64 ()
 		{
 			int64 = int64_1;
@@ -77,7 +76,6 @@ namespace MonoTests.System.Threading
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void TestExchange_Dbl ()
 		{
 			dbl = dbl_1;
@@ -86,7 +84,6 @@ namespace MonoTests.System.Threading
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void TestExchange_Iptr ()
 		{
 			iptr = iptr_1;
@@ -121,7 +118,6 @@ namespace MonoTests.System.Threading
 
 #if NET_2_0
 		[Test]
-		[Category ("NotWorking")]
 		public void TestCompareExchange_Int64 ()
 		{
 			int64 = int64_1;
@@ -130,7 +126,6 @@ namespace MonoTests.System.Threading
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void TestCompareExchange_Dbl ()
 		{
 			dbl = dbl_1;
@@ -139,7 +134,6 @@ namespace MonoTests.System.Threading
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void TestCompareExchange_Iptr ()
 		{
 			iptr = iptr_1;
@@ -174,7 +168,6 @@ namespace MonoTests.System.Threading
 
 #if NET_2_0
 		[Test]
-		[Category ("NotWorking")]
 		public void TestCompareExchange_Failed_Int64 ()
 		{
 			int64 = int64_1;
@@ -183,7 +176,6 @@ namespace MonoTests.System.Threading
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void TestCompareExchange_Failed_Dbl ()
 		{
 			dbl = dbl_1;
@@ -192,7 +184,6 @@ namespace MonoTests.System.Threading
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void TestCompareExchange_Failed_Iptr ()
 		{
 			iptr = iptr_1;
@@ -235,7 +226,6 @@ namespace MonoTests.System.Threading
 
 #if NET_2_0
 		[Test]
-		[Category ("NotWorking")]
 		public void TestAdd_Int32 ()
 		{
 			int32 = int32_1;
@@ -244,7 +234,6 @@ namespace MonoTests.System.Threading
 		}
 		
 		[Test]
-		[Category ("NotWorking")]
 		public void TestAdd_Int64 ()
 		{
 			int64 = int64_1;
@@ -253,7 +242,6 @@ namespace MonoTests.System.Threading
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void TestRead_Int64()
 		{
 			int64 = int64_1;
