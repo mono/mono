@@ -435,7 +435,7 @@ public class X
 	//
 	// Bug #47095
 	//
-	static bool method (out int a)
+	static bool test29 (out int a)
 	{
 		try {
 			a = 0;
@@ -444,5 +444,22 @@ public class X
 			a = -1;
 			return false;
 		}
+	}
+
+	//
+	// Bug #46949
+	//
+	public string test30 (out string outparam)
+	{
+		try {
+			if (true) {
+				outparam = "";
+				return "";
+			}
+		} catch {
+		}
+
+		outparam = null;
+		return null;
 	}
 }
