@@ -1,5 +1,10 @@
 2004-12-28  Peter Bartok  <pbartok@novell.com>
 
+	* MessageBox.cs (get_CreateParams): Don't use owner var if it's
+	  not yet assigned
+
+2004-12-28  Peter Bartok  <pbartok@novell.com>
+
 	* Control.cs (WndProc): Added WM_HELP handler, now generates 
 	  HelpRequested event
 	* Form.cs: Added HelpButton property and required support code
