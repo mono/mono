@@ -442,6 +442,7 @@ namespace MonoTests.System.Security.Policy {
 		}
 
 		[Test]
+		[Ignore ("not yet implement in Mono - CAS related")]
 		public void Reset () 
 		{
 			PolicyLevel pl = PolicyLevel.CreateAppDomainLevel ();

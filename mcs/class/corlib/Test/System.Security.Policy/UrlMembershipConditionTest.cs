@@ -90,6 +90,7 @@ namespace MonoTests.System.Security.Policy {
 
 		[Test]
 		[ExpectedException (typeof (ArgumentException))]
+		[Ignore ("not currently supported by Mono - CAS related")]
 		public void Url_InvalidSite ()
 		{
 			UrlMembershipCondition umc = new UrlMembershipCondition ("http://www.go-mono.*");

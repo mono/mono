@@ -1,3 +1,12 @@
+2004-02-09  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* PolicyLevelTest.cs: Ignored test Reset as the functionality isn't
+	yet present in Mono.
+	* UrlMembershipConditionTest.cs: Ignored the site related test as the
+	functionality isn't yet present in Mono.
+	* UrlTest.cs: Ignored the site related test as the functionality isn't
+	yet present in Mono.
+
 2004-01-28  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* PermissionRequestEvidenceTest.cs: Added ToString () assertions
