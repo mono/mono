@@ -1,4 +1,8 @@
 
+Mon Mar 4 18:37:03 CET 2002 Paolo Molaro <lupus@ximian.com>
+
+	* Array.cs: allow copying an empty array to an empty array.
+
 Mon Mar 4 17:59:16 CET 2002 Paolo Molaro <lupus@ximian.com>
 
 	* String.cs: fixed LastIndexOf (string) to do a bit of argument
