@@ -31,6 +31,7 @@ using System.Resources;
 #if NET_2_0
 namespace System.Web.Configuration
 {
+        [Serializable, Flags]
         public enum BuildProviderAppliesTo
         {
                 Web = 1,

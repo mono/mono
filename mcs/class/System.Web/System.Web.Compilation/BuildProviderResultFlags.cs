@@ -31,6 +31,7 @@ using System.Resources;
 #if NET_2_0
 namespace System.Web.Compilation
 {
+        [Serializable, Flags]
         public enum BuildProviderResultFlags
         {
                 Default = 0,
