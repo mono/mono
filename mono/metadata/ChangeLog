@@ -1,4 +1,8 @@
 
+Thu Dec 20 20:11:26 CET 2001 Paolo Molaro <lupus@ximian.com>
+
+	* class.c: make the low-level routines handle the cache.
+
 Thu Dec 20 15:20:35 CET 2001 Paolo Molaro <lupus@ximian.com>
 
 	* image.c: fopen (file, "rb") ("David Dawkins" <david@dawkins.st>).
