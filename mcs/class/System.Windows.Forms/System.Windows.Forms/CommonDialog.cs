@@ -53,7 +53,7 @@ namespace System.Windows.Forms {
 			IntPtr handle;			
 			Control ctrl=Control.getOwnerWindow(null);
 						
-			if ((ctrl!=null) && (ctrl.Handle!=(IntPtr)null))
+			if ((ctrl!=null) && (ctrl.Handle!=(IntPtr)0))
 				handle=ctrl.Handle;
 			else
 				handle = Win32.GetDesktopWindow();												
