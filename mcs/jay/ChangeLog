@@ -1,3 +1,7 @@
+2002-07-10 Alp Toker  <alp@atoker.com>
+
+	* main.c: mktemp() is deprecated with gcc 3.1.1, use mkstemp() instead
+
 2001-07-15  Sean MacIsaac  <macisaac@ximian.com>
 
 	* makefile: added windows and unix targets.
