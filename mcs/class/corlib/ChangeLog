@@ -1,3 +1,8 @@
+2003-09-26  Pedro Martínez Julá  <yoros@wanadoo.es>
+
+	* corlib_test.dll.sources: Remove tests that generate compile
+	errors. The tests are still there but its name is rmoved here.
+
 2003-09-24    <cesar@ciencias.unam.mx>
 
 	* corlib.dll.sources: Added CompilerGlobalScopeAttribute.cs to the build
