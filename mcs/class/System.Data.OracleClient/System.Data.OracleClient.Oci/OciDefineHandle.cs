@@ -233,7 +233,7 @@ namespace System.Data.OracleClient.Oci {
 				byte [] buffer = new byte [Size];
 				Marshal.Copy (Value, buffer, 0, Size);
 
-				return Encoding.Default.GetString (buffer);
+				return Encoding.UTF8.GetString (buffer);
 
 			case OciDataType.Integer:
 				tmp = Marshal.PtrToStringAnsi (Value, Size);

@@ -1,3 +1,14 @@
+2004-01-26  Joerg Rosenkranz  <joergr@voelcker.com>
+
+	* System.Data.OracleClient.Oci/OciCalls.cs:
+		Changed binding of OciStmtPrepare from string 
+		to byte [].
+	* System.Data.OracleClient.Oci/OciDefineHandle.cs:
+		Character types are converted using UTF8 encoding.
+	* System.Data.OracleClient.Oci/OciStatementHandle.cs:
+		SQL statement to be prepared is converted to byte
+		array using UTF8 encoding.
+		
 2004-01-09  Joerg Rosenkranz  <joergr@voelcker.com>
 
 	* System.Data.OracleClient.Oci/OciCalls.cs:

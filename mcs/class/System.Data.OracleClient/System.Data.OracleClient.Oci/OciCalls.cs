@@ -316,7 +316,7 @@ namespace System.Data.OracleClient.Oci
 			[DllImport ("oci")]
 			internal static extern int OCIStmtPrepare (IntPtr stmthp,
 				IntPtr errhp,
-				string stmt,
+				byte [] stmt,
 				[MarshalAs (UnmanagedType.U4)] int stmt_length,
 				[MarshalAs (UnmanagedType.U4)] OciStatementLanguage language,
 				[MarshalAs (UnmanagedType.U4)] OciStatementMode mode);
@@ -720,12 +720,13 @@ namespace System.Data.OracleClient.Oci
 
 		internal static int OCIStmtPrepare (IntPtr stmthp,
 			IntPtr errhp,
-			string stmt,
+			byte [] stmt,
 			int stmt_length,
 			OciStatementLanguage language,
 			OciStatementMode mode)
 		{
-			Trace.WriteLineIf(traceOci, string.Format("OCIStmtPrepare ({0})", stmt), "OCI");
+			Trace.WriteLineIf(traceOci, string.Format("OCIStmtPrepare ({0})", System.Text.Encoding.UTF8.GetString(stmt)), "OCI");
+			
 			return OciNativeCalls.OCIStmtPrepare (stmthp, errhp, stmt, stmt_length, language, mode);
 		}
 

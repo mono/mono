@@ -209,12 +209,15 @@ namespace System.Data.OracleClient.Oci {
 				throw new InvalidOperationException ("StatementHandle is already disposed.");
 			}
 
+			byte [] buffer = System.Text.Encoding.UTF8.GetBytes (commandText + "\0");
+
 			status = OciCalls.OCIStmtPrepare (this,
 				ErrorHandle,
-				commandText,
-				commandText.Length,
+				buffer,
+				buffer.Length,
 				OciStatementLanguage.NTV,
 				OciStatementMode.Default);
+
 			if (status != 0) {
 				OciErrorInfo info = ErrorHandle.HandleError ();
 				throw new OracleException (info.ErrorCode, info.ErrorMessage);
