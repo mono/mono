@@ -30,7 +30,28 @@ command:
 The above will pull hello.exe native program called "hello".  Notice
 that the produced image still contains the CIL image and no
 precompilation is done.
+.PP
+In addition, it is possible to control whether mkbundle should compile
+the resulting executable or not.  This is useful if you want to link
+additional libraries or control the generated output in more detail.
+For example, this could be used to link some libraries statically:
+.nf
+	$ mkbundle -o host.c -oo bundles.o --deps hello.exe
+
+	$ cc host.c bundles.o /usr/lib/libmono.a -lc -lrt
+.fi
 .SH OPTIONS
+.TP
+.I "-c"
+Produce the stub file, do not compile the resulting stub.
+.TP
+.I "-o filename"
+Places the output on `out'.  If the flag -c is specified, this is the
+C host program.  If not, this contains the resulting executable.
+.TP
+.I "-oo filename"
+Specifies the name to be used for the helper object file that contains
+the bundle.
 .TP
 .I "-L path"
 Adds the `path' do the search list for assemblies.  The rules are the
