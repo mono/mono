@@ -2,6 +2,20 @@ Firebird ADO.NET Data provider for .NET and Mono
 ================================================
 
 
+2005-01-20 Carlos Guzman Alvarez  <carlosga@telefonica.net>
+
+	* FirebirdSql.Data.Common/StatementBase.cs:
+
+		- Fix ClearArrayHandles method by check for Array Fields.
+
+2005-01-19 Carlos Guzman Alvarez  <carlosga@telefonica.net>
+
+	* FirebirdSql.Data.Common/StatementBase.cs:
+	* FirebirdSql.Data.Embedded/FesStatement.cs:
+	* FirebirdSql.Data.Gds/GdsStatement.cs:
+
+		- Try to fix performance problems with array fields on select statements.
+
 2005-01-14 Carlos Guzman Alvarez  <carlosga@telefonica.net>
 
 	* FirebirdSql.Data.Embedded/FesArray.cs:
