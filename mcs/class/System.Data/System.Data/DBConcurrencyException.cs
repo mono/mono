@@ -73,9 +73,12 @@ namespace System.Data {
 			throw new NotImplementedException ();
 		}
 #endif
-		[MonoTODO]
 		public override void GetObjectData (SerializationInfo info, StreamingContext context)
 		{
+			if (info == null)
+                                throw new ArgumentNullException ("info");
+
+			info.AddValue ("DataRow", row);
 			base.GetObjectData (info, context);
 		}
 
