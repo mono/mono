@@ -1,3 +1,11 @@
+2004-01-12  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* icall.c: renamed ves_icall_Type_GetMethods to GetMethodsByName.
+	It takes 2 new parameters with an optional name for the method to look
+	for and case ignoring info.
+
+	* threadpool.c: removed unused variable.
+
 2004-01-11  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* icall.c: renamed ves_icall_Type_GetProperties to GetPropertiesByName.
