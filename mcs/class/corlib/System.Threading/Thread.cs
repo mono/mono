@@ -18,12 +18,16 @@ namespace System.Threading
 {
 	public sealed class Thread
 	{
+		#region Sync with object.h
 		// stores a thread handle
 		private IntPtr system_thread_handle;
 		
 		private CultureInfo current_culture;
 		private CultureInfo current_ui_culture;
 		private bool threadpool_thread;
+		/* accessed only from unmanaged code */
+		private IntPtr name;
+		private int name_len; 
 		private ThreadState state = ThreadState.Unstarted;
 		private object abort_exc;
 		internal object abort_state;
@@ -38,7 +42,9 @@ namespace System.Threading
 		private IntPtr static_data;
 		private IntPtr jit_data;
 		private IntPtr lock_data;
-		
+		private IntPtr appdomain_refs;
+		#endregion
+
 		private ThreadStart threadstart;
 		private string thread_name=null;
 		
