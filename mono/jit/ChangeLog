@@ -1,10 +1,18 @@
 2002-05-23  Martin Baulig  <martin@gnome.org>
 
+	* debug.c (mono_debug_open): Don't call mono_debug_add_image().
+	(mono_debug_write_symbols): Only recreate the symbol file if
+	necessary.
+
+	* debug-private.h (MonoDebugHandle): Added `dirty' flag.
+
+	* mono.c (main): Call mono_debug_add_image() here.
+
+	* jit.c (mono_thread_abort): If we have debugging support, call
+	mono_debug_make_symbols() and G_BREAKPOINT().
+
 	* exception.c (arch_handle_exception): Don't G_BREAKPOINT() if we get
 	an unhandled exception.
-
-	* jit.c (mono_thread_abort): G_BREAKPOINT() immediately before the
-	ExitThread().
 
 2002-05-23  Dietmar Maurer  <dietmar@ximian.com>
 
