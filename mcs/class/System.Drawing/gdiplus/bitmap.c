@@ -1,26 +1,27 @@
-//
-// bitmap.c
-// 
-// Copyright (c) 2003 Alexandre Pigolkine
-//
-// Permission is hereby granted, free of charge, to any person obtaining a copy of this software 
-// and associated documentation files (the "Software"), to deal in the Software without restriction, 
-// including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, 
-// and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, 
-// subject to the following conditions:
-// 
-// The above copyright notice and this permission notice shall be included in all copies or substantial 
-// portions of the Software.
-// 
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT 
-// NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. 
-// IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, 
-// WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE 
-// OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-//
-// Authors:
-//   Alexandre Pigolkine(pigolkine@gmx.de)
-//
+/* 
+ * bitmap.c
+ * 
+ * Copyright (c) 2003 Alexandre Pigolkine
+ * 
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of this software 
+ * and associated documentation files (the "Software"), to deal in the Software without restriction, 
+ * including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, 
+ * and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, 
+ * subject to the following conditions:
+ * 
+ * The above copyright notice and this permission notice shall be included in all copies or substantial 
+ * portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT 
+ * NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. 
+ * IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, 
+ * WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE 
+ * OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ * 
+ * Authors:
+ *   Alexandre Pigolkine(pigolkine@gmx.de)
+ */
+
 #include <glib.h>
 #include "gdip_main.h"
 #include "gdip_win32.h"
@@ -31,7 +32,8 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 
-void gdip_bitmap_init (gdip_bitmap_ptr bitmap)
+void 
+gdip_bitmap_init (GpBitmap *bitmap)
 {
 	gdip_image_init (&bitmap->image);
 	bitmap->image.type = imageBitmap;
@@ -48,9 +50,10 @@ void gdip_bitmap_init (gdip_bitmap_ptr bitmap)
 	bitmap->hBitmap = 0;
 }
 
-gdip_bitmap_ptr gdip_bitmap_new ()
+GpBitmap *
+gdip_bitmap_new ()
 {
-	gdip_bitmap_ptr result = (gdip_bitmap_ptr)GdipAlloc(sizeof(gdip_bitmap));
+	GpBitmap *result = (GpBitmap *) GdipAlloc (sizeof(GpBitmap));
 	gdip_bitmap_init (result);
 	return result;
 }
@@ -59,12 +62,14 @@ gdip_bitmap_ptr gdip_bitmap_new ()
  * This should only be called from GdipDisposeImage, and it should *not* free
  * the structure, that one is freed by GdipDisposeImage
  */
-void gdip_bitmap_dispose (gdip_bitmap_ptr bitmap)
+void 
+gdip_bitmap_dispose (GpBitmap *bitmap)
 {
 	
 }
 
-void gdip_bitmap_fill_info_header (gdip_bitmap_ptr bitmap, PBITMAPINFOHEADER bmi)
+void 
+gdip_bitmap_fill_info_header (GpBitmap *bitmap, PBITMAPINFOHEADER bmi)
 {
 	int  bitmapLen = bitmap->data.Stride * bitmap->data.Height;
 	memset (bmi, 0, 40);
@@ -77,7 +82,8 @@ void gdip_bitmap_fill_info_header (gdip_bitmap_ptr bitmap, PBITMAPINFOHEADER bmi
 	bmi->biSizeImage = bitmapLen; 
 }
 
-void gdip_bitmap_save_bmp (const char *name, gdip_bitmap_ptr bitmap)
+void 
+gdip_bitmap_save_bmp (const char *name, GpBitmap *bitmap)
 {
 	BITMAPFILEHEADER bmfh;
 	BITMAPINFOHEADER bmi;
@@ -97,7 +103,8 @@ void gdip_bitmap_save_bmp (const char *name, gdip_bitmap_ptr bitmap)
 	fclose (fp);
 }
 
-void *gdip_bitmap_create_Win32_HDC (gdip_bitmap_ptr bitmap)
+void *
+gdip_bitmap_create_Win32_HDC (GpBitmap *bitmap)
 {
 	void * result = 0;
 	void * hdc = CreateCompatibleDC_pfn (0);
@@ -123,7 +130,8 @@ void *gdip_bitmap_create_Win32_HDC (gdip_bitmap_ptr bitmap)
 	return result;
 }
 
-void gdip_bitmap_destroy_Win32_HDC (gdip_bitmap_ptr bitmap, void *hdc)
+void 
+gdip_bitmap_destroy_Win32_HDC (GpBitmap *bitmap, void *hdc)
 {
 	if (bitmap->hBitmapDC == hdc) {
 		
@@ -153,9 +161,10 @@ void gdip_bitmap_destroy_Win32_HDC (gdip_bitmap_ptr bitmap, void *hdc)
 	}
 }
 
-Status GdipCreateBitmapFromScan0 (int width, int height, int stride, int format, void * scan0, gdip_bitmap_ptr *bitmap)
+GpStatus 
+GdipCreateBitmapFromScan0 (int width, int height, int stride, int format, void *scan0, GpBitmap **bitmap)
 {
-	gdip_bitmap_ptr result = 0;
+	GpBitmap *result = 0;
 	int cairo_format = 0;
 
 	if (stride == 0)
@@ -186,9 +195,10 @@ Status GdipCreateBitmapFromScan0 (int width, int height, int stride, int format,
 	return Ok;
 }
 
-Status GdipCreateBitmapFromGraphics (int width, int height, gdip_graphics_ptr graphics, gdip_bitmap_ptr * bitmap)
+GpStatus
+GdipCreateBitmapFromGraphics (int width, int height, GpGraphics *graphics, GpBitmap **bitmap)
 {
-	gdip_bitmap_ptr result = 0;
+	GpBitmap *result = 0;
 	int bmpSize = 0;
 	int cairo_format = 0;
 	int stride = width;
@@ -215,7 +225,8 @@ Status GdipCreateBitmapFromGraphics (int width, int height, gdip_graphics_ptr gr
 	return Ok;
 }
 
-static int ChangePixelFormat (gdip_bitmap_ptr bitmap, GdipBitmapData *destData) 
+static int 
+ChangePixelFormat (GpBitmap *bitmap, GdipBitmapData *destData) 
 {
 	int 	sourcePixelIncrement = (bitmap->data.PixelFormat == Format32bppArgb) ? 1 : 0;
 	int 	destinationPixelIncrement = (destData->PixelFormat == Format32bppArgb) ? 1 : 0;
@@ -250,7 +261,8 @@ static int ChangePixelFormat (gdip_bitmap_ptr bitmap, GdipBitmapData *destData)
 	return 1;
 }
 
-Status GdipBitmapLockBits (gdip_bitmap_ptr bitmap, Rect *rc, int flags, int format, GdipBitmapData *result)
+GpStatus 
+GdipBitmapLockBits (GpBitmap *bitmap, Rect *rc, int flags, int format, GdipBitmapData *result)
 {
 	if (bitmap == 0){
 		printf ("Bitmap is null\n");
@@ -292,7 +304,8 @@ Status GdipBitmapLockBits (gdip_bitmap_ptr bitmap, Rect *rc, int flags, int form
 	return Ok;
 }
 
-Status ____BitmapLockBits (gdip_bitmap_ptr bitmap, Rect *rc, int flags, int format, int *width, int *height, int *stride, int *fptr, int *res, int *scan0)
+GpStatus 
+____BitmapLockBits (GpBitmap *bitmap, Rect *rc, int flags, int format, int *width, int *height, int *stride, int *fptr, int *res, int *scan0)
 {
 	GdipBitmapData d;
 	int s;
@@ -308,7 +321,8 @@ Status ____BitmapLockBits (gdip_bitmap_ptr bitmap, Rect *rc, int flags, int form
 	return s;
 }
 
-Status GdipBitmapUnlockBits (gdip_bitmap_ptr bitmap, GdipBitmapData *bitmap_data)
+GpStatus 
+GdipBitmapUnlockBits (GpBitmap *bitmap, GdipBitmapData *bitmap_data)
 {
 	if (bitmap_data->Reserved & 1)
 		GdipFree (bitmap_data->Scan0);

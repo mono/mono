@@ -1,12 +1,11 @@
-//
-// Enums, structs and functions
-//
+/*
+ * Enums, structs and functions
+ */
 
 #ifndef _GDIP_DEFS_H
 #define _GDIP_DEFS_H
 
-enum StatusCode
-{
+typedef enum {
     Ok = 0,
     GenericError = 1,
     InvalidParameter = 2,
@@ -28,18 +27,14 @@ enum StatusCode
     GdiplusNotInitialized = 18,
     PropertyNotFound = 19,
     PropertyNotSupported = 20
-};
+} GpStatus;
 
-#define Status int
-
-enum MatrixOrder
-{
+typedef enum  {
     MatrixOrderPrepend    = 0,
     MatrixOrderAppend     = 1
-};
+} MatrixOrder, GpMatrixOrder;
 
-enum Unit
-{
+typedef enum {
     UnitWorld	 = 0,      
     UnitDisplay	 = 1,    
     UnitPixel	 = 2,      
@@ -47,9 +42,9 @@ enum Unit
     UnitInch	 = 4,       
     UnitDocument = 5,   
     UnitMillimeter = 6 
-};
+} Unit;
 
-enum PixelFormat {
+typedef enum {
 	Alpha = 262144,
 	Canonical = 2097152,
 	DontCare = 0,
@@ -73,37 +68,76 @@ enum PixelFormat {
 	Max = 15,
 	PAlpha = 524288,
 	Undefined = 0
-};
+} PixelFormat;
 
-enum ImageLockMode {
+typedef enum {
 	ReadOnly = 1,
 	ReadWrite = 3,
 	UserInputBuffer = 4,
 	WriteOnly = 2
-};
+} ImageLockMode;
 
-Status GdipCreateBitmapFromScan0 (int width, int height, int strideIn, int format, void * scan0, gdip_bitmap_ptr * bitmap);
-Status GdipCreateBitmapFromGraphics (int width, int height, gdip_graphics_ptr graphics, gdip_bitmap_ptr * bitmap);
-Status GdipBitmapLockBits (gdip_bitmap_ptr bmp, Rect *rc, int flags, int format, GdipBitmapData * bmpData);
-Status GdipBitmapUnlockBits (gdip_bitmap_ptr bmp, GdipBitmapData * bmpData);
+typedef enum {
+        FillModeAlternate,
+        FillModeWinding
+} GpFillMode;
 
-Status GdipCreateFromHDC(int hDC, gdip_graphics_ptr *graphics);
-Status GdipDeleteGraphics(gdip_graphics_ptr graphics);
-Status GdipGetDC(gdip_graphics_ptr graphics, int *hDC);
-Status GdipReleaseDC(gdip_graphics_ptr graphics, int hDC);
-Status GdipRestoreGraphics(gdip_graphics_ptr graphics, unsigned int graphicsState);
-Status GdipSaveGraphics(gdip_graphics_ptr graphics, unsigned int * state);
-Status GdipRotateWorldTransform (gdip_graphics_ptr graphics, float angle, int order);
-Status GdipTranslateWorldTransform (gdip_graphics_ptr graphics, float dx, float dy, int order);
-Status GdipDrawLine (gdip_graphics_ptr graphics, gdip_pen_ptr pen, float x1, float y1, float x2, float y2);
-Status GdipFillRectangle (gdip_graphics_ptr graphics, gdip_brush_ptr brush, float x1, float y1, float x2, float y2);
-Status GdipDrawString (gdip_graphics_ptr graphics, const char *string, int len, void *font, RectF *rc, void *format, gdip_brush_ptr brush);
+/* Bitmap */
+GpStatus GdipCreateBitmapFromScan0 (int width, int height, int strideIn, int format, void *scan0, GpBitmap **bitmap);
+GpStatus GdipCreateBitmapFromGraphics (int width, int height, GpGraphics *graphics, GpBitmap **bitmap);
+GpStatus GdipBitmapLockBits (GpBitmap *bmp, Rect *rc, int flags, int format, GdipBitmapData *result);
+GpStatus GdipBitmapUnlockBits (GpBitmap *bmp, GdipBitmapData *bmpData);
 
-Status GdipCloneBrush (gdip_brush_ptr brush, gdip_brush_ptr * clonedBrush);
-Status GdipDeleteBrush (gdip_brush_ptr brush);
+/* Graphics */
+GpStatus GdipCreateFromHDC (int hDC, GpGraphics **graphics);
+GpStatus GdipDeleteGraphics (GpGraphics *graphics);
+GpStatus GdipGetDC (GpGraphics *graphics, int *hDC);
+GpStatus GdipReleaseDC (GpGraphics *graphics, int hDC);
+GpStatus GdipRestoreGraphics (GpGraphics *graphics, unsigned int graphicsState);
+GpStatus GdipSaveGraphics(GpGraphics *graphics, unsigned int * state);
+GpStatus GdipRotateWorldTransform (GpGraphics *graphics, float angle, int order);
+GpStatus GdipTranslateWorldTransform (GpGraphics *graphics, float dx, float dy, int order);
+GpStatus GdipDrawLine (GpGraphics *graphics, GpPen *pen, float x1, float y1, float x2, float y2);
+GpStatus GdipDrawLineI (GpGraphics *graphics, GpPen *pen, int x1, int y1, int x2, int y2);
+GpStatus GdipDrawLines (GpGraphics *graphics, GpPen *pen, GpPointF *points, int count);
+GpStatus GdipDrawLinesI (GpGraphics *graphics, GpPen *pen, GpPoint *points, int count);
 
+GpStatus GdipFillRectangle (GpGraphics *graphics, GpBrush *brush, float x1, float y1, float x2, float y2);
+
+/* Brush */
+GpStatus GdipCloneBrush (GpBrush *brush, GpBrush **clonedBrush);
+GpStatus GdipDeleteBrush (GpBrush *brush);
+
+/* Text */
+GpStatus GdipDrawString (GpGraphics *graphics, const char *string, int len, void *font, RectF *rc, void *format, GpBrush *brush);
+
+/* Matrix */
+GpStatus GdipCreateMatrix (GpMatrix **matrix);
+GpStatus GdipCreateMatrix2 (float m11, float m12, float m21, float m22, float dx, float dy, GpMatrix **matrix);
+GpStatus GdipCreateMatrix3 (GpRectF *rect, GpPointF *dstplg, GpMatrix **matrix);
+GpStatus GdipCreateMatrix3I (GpRect *rect, GpPoint *dstplg, GpMatrix **matrix);
+GpStatus GdipCloneMatrix (GpMatrix *matrix, GpMatrix **cloneMatrix);
+GpStatus GdipDeleteMatrix (GpMatrix *matrix);
+GpStatus GdipSetMatrixElements (GpMatrix *matrix, float m11, float m12, float m21, float m22, float dx, float dy);
+GpStatus GdipMultiplyMatrix (GpMatrix *matrix, GpMatrix *matrix2, GpMatrixOrder order);
+GpStatus GdipTranslateMatrix (GpMatrix *matrix, float offsetX, float offsetY, GpMatrixOrder order);
+GpStatus GdipScaleMatrix (GpMatrix *matrix, float scaleX, float scaleY, GpMatrixOrder order);
+GpStatus GdipRotateMatrix(GpMatrix *matrix, float angle, GpMatrixOrder order);
+GpStatus GdipShearMatrix (GpMatrix *matrix, float shearX, float shearY, GpMatrixOrder order);
+GpStatus GdipInvertMatrix (GpMatrix *matrix);
+GpStatus GdipTransformMatrixPoints (GpMatrix *matrix, GpPointF *pts, int count);
+GpStatus GdipTransformMatrixPointsI (GpMatrix *matrix, GpPoint *pts, int count);
+GpStatus GdipVectorTransformMatrixPoints (GpMatrix *matrix, GpPointF *pts, int count);
+GpStatus GdipVectorTransformMatrixPointsI (GpMatrix *matrix, GpPoint *pts, int count);
+GpStatus GdipGetMatrixElements (GpMatrix *matrix, float *matrixOut);
+GpStatus GdipIsMatrixInvertible (GpMatrix *matrix, int *result);
+GpStatus GdipIsMatrixIdentity (GpMatrix *matrix, int *result);
+GpStatus GdipIsMatrixEqual (GpMatrix *matrix, GpMatrix *matrix2, int *result);
+
+GpStatus gdip_get_status (cairo_t *ct);
+
+/* Memory */
 void * GdipAlloc (int size);
-void GdipFree (void * ptr);
+void GdipFree (void *ptr);
 
-
-#endif // _GDIP_DEFS_H
+#endif /* _GDIP_DEFS_H */

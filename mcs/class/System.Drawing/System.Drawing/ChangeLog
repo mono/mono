@@ -1,3 +1,11 @@
+2003-10-28  Duncan Mak  <duncan@ximian.com>
+
+	* Graphics.cs (DrawEllipse, DrawLine, DrawPolygon):
+	(FillEllipse, FillPolygon): implemented.
+	(RenderingOrigin): implemented.
+
+	* gdipFunctions.cs: Added new GDI+ equivalents.
+
 2003-10-25  Alexandre Pigolkine <pigolkine@gmx.de>
 	* Bitmap.cs
 	* Image.cs 			small fixes

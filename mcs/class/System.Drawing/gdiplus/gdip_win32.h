@@ -1,9 +1,9 @@
-//
-// gdip_win32.h
-//
-// Authors:
-//   Alexandre Pigolkine(pigolkine@gmx.de)
-//
+/*
+ * gdip_win32.h
+ * 
+ * Authors:
+ *   Alexandre Pigolkine(pigolkine@gmx.de)
+ */
 
 #ifndef _GDIP_WIN32_H
 #define _GDIP_WIN32_H
@@ -12,8 +12,8 @@
 #include <cairo-xlib.h>
 #include <mono/jit/jit.h>
 
-// sizeof (GDIOBJHDR) = 12 (2 + 2 + 4 + 4)
-// offsetof (DC, physDev) = 20 (12 + 4 + 4)
+/* sizeof (GDIOBJHDR) = 12 (2 + 2 + 4 + 4) */
+/* offsetof (DC, physDev) = 20 (12 + 4 + 4) */
 typedef struct tagGDIOBJHDR {
 	short 	next;
 	short 	wMagic;
@@ -102,4 +102,4 @@ extern int (__stdcall *SetDIBits_pfn) (void *hdc, void *hbitmap, unsigned startS
 DC *_get_DC_by_HDC (int hDC);
 void _release_hdc (int hdc);
 
-#endif // _GDIP_WIN32_H
+#endif /* _GDIP_WIN32_H */

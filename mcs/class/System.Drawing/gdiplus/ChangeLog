@@ -1,5 +1,62 @@
 2003-11-02  Alexandre Pigolkine <pigolkine@gmx.de>
+
 	* bitmap.c 		convert 24/32 bpp images in LockBits
+
+2003-11-01  Duncan Mak  <duncan@ximian.com>
+
+	* matrix.c
+	(GdipCreateMatrix, GdipCreateMatrix2, GdipCloneMatrix):
+	(GdipDeleteMatrix, GdipInvertMatrix): Implemented; the rest of the
+	functions are stubbed out.
+
+	* gdip_defs.h (GpMatrixOrder): Added.	
+
+	* gdip_main.h
+	(GpRect, GpRectF): Synonyms for Rect and RectF.
+	(GpMatrix): An alias of cairo_matrix_t.
+
+	* Makefile: Added matrix.c.
+
+2003-10-28  Duncan Mak  <duncan@ximian.com>
+
+	* gdip_main.h, gdip_def.h:
+	Renamed all gdip_foo_ptr types are now GpFoo *.
+	Renamed Status to GpStatus.
+	Reformatted all C++ style comments to C style comments.
+	Reformatted all C function prototypes to the style used by GTK+.
+
+	* gdip_main.h (GpPoint, GpPointF): Added.
+
+	* gdip_defs.h (GpFillMode): Added.
+
+	* graphics.c (make_ellipse):
+	(make_polygon, make_polygon_from_integers):
+	(make_pie): private functions (make_foo) to be reused by DrawFoo
+	and FillFoo.
+	
+	(convert_fill_mode): Converts a GpFillMode to a cairo_fill_rule_t.
+
+	(GdipDrawPie, GdipFillEllipse, GdipFillPolygon): Implemented.
+
+2003-10-26  Duncan Mak  <duncan@ximian.com>
+
+	* graphics.c
+	(GdipSetRenderingOrigin, GdipGetRenderingOrigin): Implemented.
+
+2003-10-25  Duncan Mak  <duncan@ximian.com>
+
+	* graphics.c
+	(GdipDrawBezier, GdipDrawBezierI):
+	(GdipDrawBeziers, GdipDrawBeziersI):
+	(GdipDrawLine, GdipDrawLineI):		
+	(GdipDrawLines, GdipDrawLinesI): implemented.
+
+	(GdipFillRectangle):
+	(GdipDrawString): Make use of gdip_get_status.
+	
+	* general.c
+	(gdip_get_status): A new function for retrieving a Status from a
+	cairo_t.
 	
 2003-10-23  Miguel de Icaza  <miguel@ximian.com>
 

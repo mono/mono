@@ -200,12 +200,12 @@ namespace System.Drawing
 
 		public void DrawEllipse (Pen pen, int x, int y, int width, int height)
 		{
-			throw new NotImplementedException ();
+			GDIPlus.GdipDrawEllipseI (nativeObject, pen.nativeObject, x, y, width, height);
 		}
 
 		public void DrawEllipse (Pen pen, float x, float y, float width, float height)
 		{
-			throw new NotImplementedException ();
+			GDIPlus.GdipDrawEllipse (nativeObject, pen.nativeObject, x, y, width, height); 
 		}
 
 		[MonoTODO]
@@ -437,7 +437,11 @@ namespace System.Drawing
 			pts[0] = pt1;
 			pts[1] = pt2;
 			transform.TransformPoints(pts);
-			throw new NotImplementedException ();
+
+                        GDIPlus.GdipDrawLine (
+                                nativeObject, pen.nativeObject,
+                                pts [0].X, pts [0].Y,
+                                pts [1].X, pts [1].Y);
 		}
 
 		[MonoTODO]
@@ -447,13 +451,17 @@ namespace System.Drawing
 			pts[0] = pt1;
 			pts[1] = pt2;
 			transform.TransformPoints(pts);
-			throw new NotImplementedException ();
-		}
+
+                        GDIPlus.GdipDrawLine (
+                                nativeObject, pen.nativeObject,
+                                pts [0].X, pts [0].Y,
+                                pts [1].X, pts [1].Y);
+                }
 
 		[MonoTODO]
 		public void DrawLine (Pen pen, int x1, int y1, int x2, int y2)
 		{
-			DrawLine(pen, new Point(x1, y1), new Point(x2, y2));
+			GDIPlus.GdipDrawLineI (nativeObject, pen.nativeObject, x1, y1, x2, y2);
 		}
 
 		[MonoTODO]
@@ -512,31 +520,33 @@ namespace System.Drawing
 
 		public void DrawPolygon (Pen pen, Point [] points)
 		{
-			throw new NotImplementedException ();
+			GDIPlus.GdipDrawPolygonI (nativeObject, pen.nativeObject, points, points.Length);
 		}
 
 		[MonoTODO]
 		public void DrawPolygon (Pen pen, PointF [] points)
 		{
-			throw new NotImplementedException ();
+			GDIPlus.GdipDrawPolygon (nativeObject, pen.nativeObject, points, points.Length);
 		}
 
-		[MonoTODO]
+		public void DrawRectangle (Pen pen, RectangleF rect)
+		{
+			DrawRectangle (pen, rect.Left, rect.Top, rect.Width, rect.Height);
+		}
+
 		public void DrawRectangle (Pen pen, Rectangle rect)
 		{
-			DrawRectangle(pen, rect.Left, rect.Top, rect.Width, rect.Height);
+			DrawRectangle (pen, rect.Left, rect.Top, rect.Width, rect.Height);
 		}
 
-		[MonoTODO]
 		public void DrawRectangle (Pen pen, float x, float y, float width, float height)
 		{
-			DrawRectangle(pen, (int)x, (int)y, (int)width, (int)height);
+			GDIPlus.GdipDrawRectangle (nativeObject, pen.nativeObject, x, y, width, height);
 		}
 
-		[MonoTODO]
 		public void DrawRectangle (Pen pen, int x, int y, int width, int height)
 		{
-			throw new NotImplementedException ();
+			GDIPlus.GdipDrawRectangleI (nativeObject, pen.nativeObject, x, y, width, height);
 		}
 
 		[MonoTODO]
@@ -878,12 +888,12 @@ namespace System.Drawing
 
 		public void FillEllipse (Brush brush, float x, float y, float width, float height)
 		{
-			throw new NotImplementedException ();
+                        GDIPlus.GdipFillEllipse (nativeObject, brush.nativeObject, x, y, width, height);
 		}
 
 		public void FillEllipse (Brush brush, int x, int y, int width, int height)
 		{
-			throw new NotImplementedException ();
+			GDIPlus.GdipFillEllipseI (nativeObject, brush.nativeObject, x, y, width, height);
 		}
 
 		[MonoTODO]
@@ -910,28 +920,24 @@ namespace System.Drawing
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		public void FillPolygon (Brush brush, PointF [] points)
 		{
-			throw new NotImplementedException ();
+			GDIPlus.GdipFillPolygon2 (nativeObject, brush.nativeObject, points, points.Length);
 		}
 
-		[MonoTODO]
 		public void FillPolygon (Brush brush, Point [] points)
 		{
-			throw new NotImplementedException ();
+			GDIPlus.GdipFillPolygon2I (nativeObject, brush.nativeObject, points, points.Length);
 		}
 
-		[MonoTODO]
 		public void FillPolygon (Brush brush, Point [] points, FillMode fillMode)
 		{
-			throw new NotImplementedException ();
+			GDIPlus.GdipFillPolygonI (nativeObject, brush.nativeObject, points, points.Length, fillMode);
 		}
 
-		[MonoTODO]
 		public void FillPolygon (Brush brush, PointF [] points, FillMode fillMode)
 		{
-			throw new NotImplementedException ();
+			GDIPlus.GdipFillPolygon (nativeObject, brush.nativeObject, points, points.Length, fillMode);
 		}
 
 		[MonoTODO]
@@ -1448,8 +1454,21 @@ namespace System.Drawing
 			}
 		}
 
-		public Point RenderingOrigin
-		{
+		public Point RenderingOrigin {
+			get {
+                                int x, y;
+				GDIPlus.GdipGetRenderingOrigin (
+                                        nativeObject, out x, out y);
+
+                                return new Point (x, y);
+			}
+
+			set {
+                                GDIPlus.GdipSetRenderingOrigin (nativeObject, value.X, value.Y);
+			}
+		}
+
+		public SmoothingMode SmoothingMode {
 			get {
 				throw new NotImplementedException ();
 			}
@@ -1458,8 +1477,7 @@ namespace System.Drawing
 			}
 		}
 
-		public SmoothingMode SmoothingMode
-		{
+		public int TextContrast {
 			get {
 				throw new NotImplementedException ();
 			}
@@ -1468,8 +1486,7 @@ namespace System.Drawing
 			}
 		}
 
-		public int TextContrast
-		{
+		public TextRenderingHint TextRenderingHint {
 			get {
 				throw new NotImplementedException ();
 			}
@@ -1478,18 +1495,7 @@ namespace System.Drawing
 			}
 		}
 
-		public TextRenderingHint TextRenderingHint
-		{
-			get {
-				throw new NotImplementedException ();
-			}
-			set {
-				throw new NotImplementedException ();
-			}
-		}
-
-		public Matrix Transform
-		{
+		public Matrix Transform {
 			get {
 				return transform;
 			}
@@ -1498,8 +1504,7 @@ namespace System.Drawing
 			}
 		}
 
-		public RectangleF VisibleClipBounds
-		{
+		public RectangleF VisibleClipBounds {
 			get {
 				throw new NotImplementedException ();
 			}

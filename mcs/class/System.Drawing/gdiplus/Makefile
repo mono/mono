@@ -5,13 +5,13 @@ include ../../../build/rules.make
 MoreWarnings = -Wstrict-prototypes -Wmissing-prototypes -Wmissing-declarations -Wredundant-decls
 LOCAL_CFLAGS=-g -Wall  `pkg-config --cflags cairo mono`
 LOCAL_LDFLAGS=`pkg-config --libs cairo mono`
-
 gdiplus = $(topdir)/class/lib/libgdiplus.dll.so
 local_sources = bitmap.c \
 	brush.c \
 	general.c \
 	graphics.c \
 	image.c \
+	matrix.c \
 	pen.c \
 	solidbrush.c \
 	gdip_win32.c
@@ -21,6 +21,7 @@ local_objs = bitmap.o \
 	general.o \
 	graphics.o \
 	image.o \
+	matrix.o \
 	pen.o \
 	solidbrush.o \
 	gdip_win32.o

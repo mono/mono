@@ -68,9 +68,47 @@ namespace System.Drawing {
 		static internal extern Status GdipTranslateWorldTransform(IntPtr graphics, float dx, float dy, MatrixOrder order);
 
 		[DllImport("gdiplus.dll")]
-		static internal extern Status GdipDrawLine (IntPtr graphics, IntPtr pen, float x1, float y1, float x2, float y2);
-		
+                static internal extern Status GdipDrawEllipseI (IntPtr graphics, IntPtr pen, int x, int y, int width, int height);
+
 		[DllImport("gdiplus.dll")]
+                static internal extern Status GdipDrawEllipse (IntPtr graphics, IntPtr pen, float x, float y, float width, float height);
+
+		[DllImport("gdiplus.dll")]
+		static internal extern Status GdipDrawLine (IntPtr graphics, IntPtr pen, float x1, float y1, float x2, float y2);
+
+		[DllImport("gdiplus.dll")]
+		static internal extern Status GdipDrawLineI (IntPtr graphics, IntPtr pen, int x1, int y1, int x2, int y2);
+
+                [DllImport ("gdiplus.dll")]
+                static internal extern Status GdipDrawPolygon (IntPtr graphics, IntPtr pen, PointF [] points, int count);
+
+                [DllImport ("gdiplus.dll")]
+                static internal extern Status GdipDrawPolygonI (IntPtr graphics, IntPtr pen, Point [] points, int count);
+
+                [DllImport ("gdiplus.dll")]
+                static internal extern Status GdipDrawRectangle (IntPtr graphics, IntPtr pen, float x, float y, float width, float height);
+
+                [DllImport ("gdiplus.dll")]
+                static internal extern Status GdipDrawRectangleI (IntPtr graphics, IntPtr pen, int x, int y, int width, int height);
+                
+		[DllImport("gdiplus.dll")]
+                static internal extern Status GdipFillEllipseI (IntPtr graphics, IntPtr pen, int x, int y, int width, int height);
+
+		[DllImport("gdiplus.dll")]
+                static internal extern Status GdipFillEllipse (IntPtr graphics, IntPtr pen, float x, float y, float width, float height);
+                [DllImport ("gdiplus.dll")]
+                static internal extern  Status GdipFillPolygon (IntPtr graphics, IntPtr brush, PointF [] points, int count, FillMode fillMode);
+
+                [DllImport ("gdiplus.dll")]
+                static internal extern  Status GdipFillPolygonI (IntPtr graphics, IntPtr brush, Point [] points, int count, FillMode fillMode);
+                
+                [DllImport ("gdiplus.dll")]
+                static internal extern  Status GdipFillPolygon2 (IntPtr graphics, IntPtr brush, PointF [] points, int count);
+
+                [DllImport ("gdiplus.dll")]
+                static internal extern  Status GdipFillPolygon2I (IntPtr graphics, IntPtr brush, Point [] points, int count);
+                
+                [DllImport("gdiplus.dll")]
 		static internal extern Status GdipFillRectangle (IntPtr graphics, IntPtr brush, float x1, float y1, float x2, float y2);
 
 		[DllImport("gdiplus.dll")]
@@ -84,6 +122,12 @@ namespace System.Drawing {
 		
 		[DllImport("gdiplus.dll")]
 		static internal extern Status GdipDrawImageRectI (IntPtr graphics, IntPtr image, int x, int y, int width, int height);
+
+		[DllImport ("gdiplus.dll")]
+		static internal extern Status GdipGetRenderingOrigin (IntPtr graphics, out int x, out int y);
+
+		[DllImport ("gdiplus.dll")]
+		static internal extern Status GdipSetRenderingOrigin (IntPtr graphics, int x, int y);
 	
 		// Pen functions
 		[DllImport("gdiplus.dll")]

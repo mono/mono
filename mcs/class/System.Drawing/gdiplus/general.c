@@ -1,31 +1,33 @@
-//
-// general.c
-//
-// Copyright (c) 2003 Alexandre Pigolkine
-//
-// Permission is hereby granted, free of charge, to any person obtaining a copy of this software 
-// and associated documentation files (the "Software"), to deal in the Software without restriction, 
-// including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, 
-// and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, 
-// subject to the following conditions:
-// 
-// The above copyright notice and this permission notice shall be included in all copies or substantial 
-// portions of the Software.
-// 
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT 
-// NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. 
-// IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, 
-// WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE 
-// OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-//
-// Authors:
-//   Alexandre Pigolkine(pigolkine@gmx.de)
-//
+/*
+ * general.c
+ * 
+ * Copyright (c) 2003 Alexandre Pigolkine
+ * 
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of this software 
+ * and associated documentation files (the "Software"), to deal in the Software without restriction, 
+ * including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, 
+ * and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, 
+ * subject to the following conditions:
+ * 
+ * The above copyright notice and this permission notice shall be included in all copies or substantial 
+ * portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT 
+ * NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. 
+ * IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, 
+ * WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE 
+ * OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ * 
+ * Authors:
+ *   Alexandre Pigolkine(pigolkine@gmx.de)
+ *   Duncan Mak (duncan@ximian.com)
+ */
 
 #include "gdip_main.h"
 #include <dlfcn.h>
+#include <cairo.h>
 
-// Startup / shutdown
+/* Startup / shutdown */
 
 struct startupInput
 {
@@ -80,20 +82,23 @@ Display *_get_wine_display ()
 	return result;
 }
 
-Status GdiplusStartup(unsigned long *token, const struct startupInput *input, struct startupOutput *output)
+GpStatus 
+GdiplusStartup(unsigned long *token, const struct startupInput *input, struct startupOutput *output)
 {
 	GDIP_display = _get_wine_display ();
 	if (GDIP_display == 0){
 		GDIP_display = XOpenDisplay(0);
 		closeDisplay = 1;
 	}
-	//printf ("GdiplusStartup. GDIP_Display %p\n", GDIP_display);
+
+	/* printf ("GdiplusStartup. GDIP_Display %p\n", GDIP_display); */
 	initializeGdipWin32 ();
 	*token = 1;
 	return Ok;
 }
 
-void GdiplusShutdown(unsigned long * token)
+void 
+GdiplusShutdown(unsigned long * token)
 {
 	if (closeDisplay) {
 		XCloseDisplay(GDIP_display);
@@ -102,14 +107,47 @@ void GdiplusShutdown(unsigned long * token)
 }
 
 
-// Memory
-void *GdipAlloc (int size)
+/* Memory */
+void *
+GdipAlloc (int size)
 {
 	return malloc (size);
 }
 
-void GdipFree (void * ptr)
+void 
+GdipFree (void * ptr)
 {
-	free(ptr);
+	free (ptr);
 }
 
+/* Helpers */
+GpStatus 
+gdip_get_status (cairo_t *ct)
+{
+        cairo_status_t status = cairo_status (ct);
+        
+        if (status == CAIRO_STATUS_SUCCESS)
+                return Ok;
+
+        else {
+                switch (status) {
+
+                case CAIRO_STATUS_NO_MEMORY:
+                        return OutOfMemory;
+
+                case CAIRO_STATUS_INVALID_RESTORE:
+                case CAIRO_STATUS_INVALID_POP_GROUP:
+                        return InvalidParameter;                
+
+                case CAIRO_STATUS_NO_CURRENT_POINT:
+                case CAIRO_STATUS_NO_TARGET_SURFACE:
+                        return WrongState;
+                
+                case CAIRO_STATUS_INVALID_MATRIX:
+                        return InsufficientBuffer;
+
+                default:
+                        return GenericError;
+                }
+        }
+}
