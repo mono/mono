@@ -30,11 +30,10 @@ namespace System.Net.Sockets
 		/// <summary>
 		/// Some code that is shared between the constructors.
 		/// </summary>
-		private void Init ()
+		private void Init (AddressFamily family)
 		{
 			active = false;
-			server = new Socket(AddressFamily.InterNetwork,
-				SocketType.Stream, ProtocolType.Tcp);
+			server = new Socket(family, SocketType.Stream, ProtocolType.Tcp);
 		}
 		
 		/// <summary>
@@ -44,7 +43,7 @@ namespace System.Net.Sockets
 		/// are a web server</param>
 		public TcpListener (int port)
 		{
-			Init();
+			Init(AddressFamily.InterNetwork);
 			server.Bind(new IPEndPoint(IPAddress.Any, port));
 		}
 
@@ -54,7 +53,7 @@ namespace System.Net.Sockets
 		/// <param name="local_end_point">The endpoint</param>
 		public TcpListener (IPEndPoint local_end_point)
 		{
-			Init();
+			Init(local_end_point.AddressFamily);
 			server.Bind(local_end_point);
 		}
 		
@@ -66,7 +65,7 @@ namespace System.Net.Sockets
 		/// <param name="port">The port to listen on</param>
 		public TcpListener (IPAddress listen_ip, int port)
 		{
-			Init();
+			Init(listen_ip.AddressFamily);
 			server.Bind(new IPEndPoint(listen_ip, port));
 		}
 

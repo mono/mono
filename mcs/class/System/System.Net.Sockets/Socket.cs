@@ -259,6 +259,12 @@ namespace System.Net.Sockets
 		private ProtocolType protocol_type;
 		private bool blocking=true;
 
+		/*
+		 *	These two fields are looked up by name by the runtime, don't change
+		 *  their name without also updating the runtime code.
+		 */
+		private static int ipv4Supported = -1, ipv6Supported = -1;
+
 		/* When true, the socket was connected at the time of
 		 * the last IO operation
 		 */
@@ -463,7 +469,7 @@ namespace System.Net.Sockets
 				
 				sa=LocalEndPoint_internal(socket);
 
-				if(sa.Family==AddressFamily.InterNetwork) {
+				if(sa.Family==AddressFamily.InterNetwork || sa.Family==AddressFamily.InterNetworkV6) {
 					// Stupidly, EndPoint.Create() is an
 					// instance method
 					return new IPEndPoint(0, 0).Create(sa);
@@ -493,7 +499,7 @@ namespace System.Net.Sockets
 				
 				sa=RemoteEndPoint_internal(socket);
 
-				if(sa.Family==AddressFamily.InterNetwork) {
+				if(sa.Family==AddressFamily.InterNetwork || sa.Family==AddressFamily.InterNetworkV6 ) {
 					// Stupidly, EndPoint.Create() is an
 					// instance method
 					return new IPEndPoint(0, 0).Create(sa);
@@ -509,6 +515,70 @@ namespace System.Net.Sockets
 		public SocketType SocketType {
 			get {
 				return(socket_type);
+			}
+		}
+
+#if NET_1_1
+		public static bool SupportsIPv4 {
+			get {
+				CheckProtocolSupport();
+				return ipv4Supported == 1;
+			}
+		}
+
+		public static bool SupportsIPv6 {
+			get {
+				CheckProtocolSupport();
+				return ipv6Supported == 1;
+			}
+		}
+#else
+		internal static bool SupportsIPv4 
+		{
+			get 
+			{
+				return true;
+			}
+		}
+
+		internal static bool SupportsIPv6 
+		{
+			get 
+			{
+				return false;
+			}
+		}
+#endif
+
+		internal static void CheckProtocolSupport()
+		{
+			if(ipv4Supported == -1) {
+				try  {
+					Socket tmp = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+					tmp.Close();
+
+					ipv4Supported = 1;
+				}
+				catch {
+					ipv4Supported = 0;
+				}
+			}
+
+			if(ipv6Supported == -1) {
+				NetConfig config = (NetConfig)System.Configuration.ConfigurationSettings.GetConfig("system.net/settings");
+
+				if(config != null)
+					ipv6Supported = config.ipv6Enabled?-1:0;
+
+				if(ipv6Supported != 0) {
+					try {
+						Socket tmp = new Socket(AddressFamily.InterNetworkV6, SocketType.Stream, ProtocolType.Tcp);
+						tmp.Close();
+
+						ipv6Supported = 1;
+					}
+					catch { }
+				}
 			}
 		}
 
@@ -635,7 +705,7 @@ namespace System.Net.Sockets
 			if(remote_end==null) {
 				throw new ArgumentNullException();
 			}
-			
+
 			Connect_internal(socket, remote_end.Serialize());
 			connected=true;
 		}

@@ -32,11 +32,16 @@ namespace System.Net.Sockets
 		/// <summary>
 		/// Some code that is shared between the constructors.
 		/// </summary>
-		private void Init ()
+		private void Init (AddressFamily family)
 		{
 			active = false;
-			client = new Socket(AddressFamily.InterNetwork,
-				SocketType.Stream, ProtocolType.Tcp);
+
+			if(client != null) {
+				client.Close();
+				client = null;
+			}
+
+			client = new Socket(family, SocketType.Stream, ProtocolType.Tcp);
 		}
 
 		/// <summary>
@@ -44,7 +49,7 @@ namespace System.Net.Sockets
 		/// </summary>
 		public TcpClient ()
 		{
-			Init();
+			Init(AddressFamily.InterNetwork);
 			client.Bind(new IPEndPoint(IPAddress.Any, 0));
 		}
 	
@@ -57,7 +62,7 @@ namespace System.Net.Sockets
 		/// <param name="local_end_point">The aforementioned local endpoint</param>
 		public TcpClient (IPEndPoint local_end_point)
 		{
-			Init();
+			Init(local_end_point.AddressFamily);
 			client.Bind(local_end_point);
 		}
 		
@@ -71,8 +76,6 @@ namespace System.Net.Sockets
 		/// <param name="port">The port to connect to, e.g. 80 for HTTP</param>
 		public TcpClient (string hostname, int port)
 		{
-			Init();
-			client.Bind(new IPEndPoint(IPAddress.Any, 0));
 			Connect(hostname, port);
 		}
 				
@@ -276,10 +279,35 @@ namespace System.Net.Sockets
 		public void Connect (string hostname, int port)
 		{
 			CheckDisposed ();
+
 			IPHostEntry host = Dns.GetHostByName(hostname);
-			/* TODO: This will connect to the first IP address returned
-			from GetHostByName.  Is that right? */
-			Connect(new IPEndPoint(host.AddressList[0], port));
+
+			for(int i=0; i<host.AddressList.Length; i++)
+			{
+				try {
+					Init(host.AddressList[i].AddressFamily);
+
+					if(host.AddressList[i].AddressFamily == AddressFamily.InterNetwork)
+						client.Bind(new IPEndPoint(IPAddress.Any, 0));
+#if NET_1_1
+					else if(host.AddressList[i].AddressFamily == AddressFamily.InterNetworkV6)
+						client.Bind(new IPEndPoint(IPAddress.IPv6Any, 0));
+#endif
+
+					Connect(new IPEndPoint(host.AddressList[i], port));
+					break;
+				}
+				catch(Exception e) {
+					if(client != null) {
+						client.Close();
+						client = null;
+					}
+
+					/// This is the last known address, re-throw the exception
+					if(i == host.AddressList.Length-1)
+						throw e;
+				}
+			}
 		}
 		
 		/// <summary>

@@ -1,3 +1,16 @@
+2003-07-14  Jerome Laban <jlaban@wanadoo.fr>
+
+	* Socket.cs:
+	* ProtocolType.cs:
+	* SocketOptionLevel.cs:
+	* TcpListener.cs:
+	* TcpClient.cs:
+	* UdpClient.cs:
+	
+	Added IPv6 support.
+
+	* IPv6MulticastOption.cs: Added for IPv6 support.
+
 2003-05-16  Dick Porter  <dick@ximian.com>
 
 	* Socket.cs: Use Mono.Posix.UnixEndPoint if its available

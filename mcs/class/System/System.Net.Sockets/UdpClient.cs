@@ -17,10 +17,19 @@ namespace System.Net.Sockets
 		private bool disposed = false;
 		private bool active = false;
 		private Socket socket;
+		private AddressFamily family = AddressFamily.InterNetwork;
 		
 #region Constructors
-		public UdpClient ()
+		public UdpClient () : this(AddressFamily.InterNetwork)
 		{
+		}
+
+		public UdpClient(AddressFamily family)
+		{
+			if(family != AddressFamily.InterNetwork && family != AddressFamily.InterNetwork)
+				throw new ArgumentException("family");
+
+			this.family = family;
 			InitSocket (null);
 		}
 
@@ -28,6 +37,8 @@ namespace System.Net.Sockets
 		{
 			if (port < IPEndPoint.MinPort || port > IPEndPoint.MaxPort)
 				throw new ArgumentOutOfRangeException ("port");
+
+			this.family = AddressFamily.InterNetwork;
 
 			IPEndPoint localEP = new IPEndPoint (IPAddress.Any, port);
 			InitSocket (localEP);
@@ -37,6 +48,8 @@ namespace System.Net.Sockets
 		{
 			if (localEP == null)
 				throw new ArgumentNullException ("localEP");
+
+			this.family = localEP.AddressFamily;
 
 			InitSocket (localEP);
 		}
@@ -55,7 +68,13 @@ namespace System.Net.Sockets
 
 		private void InitSocket (EndPoint localEP)
 		{
-			socket = new Socket (AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
+			if(socket != null) {
+				socket.Close();
+				socket = null;
+			}
+
+			socket = new Socket (family, SocketType.Dgram, ProtocolType.Udp);
+
 			if (localEP != null)
 				socket.Bind (localEP);
 		}
@@ -95,25 +114,61 @@ namespace System.Net.Sockets
 			if (port < IPEndPoint.MinPort || port > IPEndPoint.MaxPort)
 				throw new ArgumentOutOfRangeException ("port");
 
-			Connect (new IPEndPoint (Dns.Resolve (hostname).AddressList [0], port));
+			IPAddress[] addresses = Dns.Resolve (hostname).AddressList;
+			for(int i=0; i<addresses.Length; i++) {
+				try {
+					Console.WriteLine("Trying: {0}, Family: {1}", addresses[i], addresses[i].AddressFamily);
+
+					this.family = addresses[i].AddressFamily;
+					Connect (new IPEndPoint (addresses[i], port));
+
+					Console.WriteLine("Connected: {0}, Family: {1}", addresses[i], family);
+					break;
+				}
+				catch(Exception e) {
+					if(i == addresses.Length - 1){
+						if(socket != null) {
+							socket.Close();
+							socket = null;
+						}
+
+						/// This is the last entry, re-throw the exception
+						throw e;
+					}
+				}
+			}
+
 		}
 #endregion
-#region Multicast methods
+		#region Multicast methods
 		public void DropMulticastGroup (IPAddress multicastAddr)
 		{
 			CheckDisposed ();
 			if (multicastAddr == null)
 				throw new ArgumentNullException ("multicastAddr");
 
-			socket.SetSocketOption (SocketOptionLevel.IP, SocketOptionName.DropMembership,
-						new MulticastOption (multicastAddr));
+			if(family == AddressFamily.InterNetwork)
+				socket.SetSocketOption (SocketOptionLevel.IP, SocketOptionName.DropMembership,
+					new MulticastOption (multicastAddr));
+#if NET_1_1
+			else
+				socket.SetSocketOption (SocketOptionLevel.IPv6, SocketOptionName.DropMembership,
+					new IPv6MulticastOption (multicastAddr));
+#endif
 		}
 
 		public void JoinMulticastGroup (IPAddress multicastAddr)
 		{
 			CheckDisposed ();
-			socket.SetSocketOption (SocketOptionLevel.IP, SocketOptionName.AddMembership,
-						new MulticastOption (multicastAddr));
+
+			if(family == AddressFamily.InterNetwork)
+				socket.SetSocketOption (SocketOptionLevel.IP, SocketOptionName.AddMembership,
+					new MulticastOption (multicastAddr));
+#if NET_1_1
+			else
+				socket.SetSocketOption (SocketOptionLevel.IPv6, SocketOptionName.AddMembership,
+					new IPv6MulticastOption (multicastAddr));
+#endif
 		}
 
 		public void JoinMulticastGroup (IPAddress multicastAddr, int timeToLive)
@@ -123,10 +178,16 @@ namespace System.Net.Sockets
 			if (timeToLive < 0 || timeToLive > 255)
 				throw new ArgumentOutOfRangeException ("timeToLive");
 
-			socket.SetSocketOption (SocketOptionLevel.IP, SocketOptionName.MulticastTimeToLive,
-						timeToLive);
+			if(family == AddressFamily.InterNetwork)
+				socket.SetSocketOption (SocketOptionLevel.IP, SocketOptionName.MulticastTimeToLive,
+					timeToLive);
+#if NET_1_1
+			else
+				socket.SetSocketOption (SocketOptionLevel.IPv6, SocketOptionName.MulticastTimeToLive,
+					timeToLive);
+#endif
 		}
-#endregion
+		#endregion
 #region Data I/O
 		public byte [] Receive (ref IPEndPoint remoteEP)
 		{
