@@ -1,5 +1,10 @@
 2004-06-14  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* XslKey.cs : Key-value search in absolute path search was 
+	  insufficient.
+
+2004-06-14  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* HtmlEmitter.cs : Correct URL escape implementation.
 
 2004-06-06  Atsushi Enomoto  <atsushi@ximian.com>
