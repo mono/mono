@@ -1,5 +1,7 @@
 2004-09-30  Zoltan Varga  <vargaz@freemail.hu>
 
+	* marshal.cs: Add test for GetFunctionPointerForDelegate.
+
 	* libtest.c pinvoke2.cs: Add test for returning delegates.
 
 2004-09-28  Zoltan Varga  <vargaz@freemail.hu>
