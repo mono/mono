@@ -168,16 +168,20 @@ namespace System {
                                 throw new ArgumentOutOfRangeException (year + " is not in a range between 1 and 9999.");
 
                         if (daylightCache [year] == null) {
-				Int64[] data;
-				string[] names;
+				lock (this) {
+		                        if (daylightCache [year] == null) {
+						Int64[] data;
+						string[] names;
 
-				if (!GetTimeZoneData (year, out data, out names))
-					throw new ArgumentException (Locale.GetText ("Can't get timezone data for " + year));
+						if (!GetTimeZoneData (year, out data, out names))
+							throw new ArgumentException (Locale.GetText ("Can't get timezone data for " + year));
 
-				DaylightTime dlt = new DaylightTime (new DateTime (data[(int)TimeZoneData.DaylightSavingStartIdx]),
-								     new DateTime (data[(int)TimeZoneData.DaylightSavingEndIdx]),
-								     new TimeSpan (data[(int)TimeZoneData.AdditionalDaylightOffsetIdx]));
-				daylightCache.Add (year, dlt);
+						DaylightTime dlt = new DaylightTime (new DateTime (data[(int)TimeZoneData.DaylightSavingStartIdx]),
+										     new DateTime (data[(int)TimeZoneData.DaylightSavingEndIdx]),
+										     new TimeSpan (data[(int)TimeZoneData.AdditionalDaylightOffsetIdx]));
+						daylightCache.Add (year, dlt);
+					};
+				};
                         }
 
 			return (DaylightTime) daylightCache [year];
