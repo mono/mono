@@ -1,5 +1,7 @@
-2004-05-14  Duncan Mak  <duncan@ximian.com>
+2004-05-14  Peter Bartok <pbartok@novell.com>
+	* Graphics.cs: Added error check
 
+2004-05-14  Duncan Mak  <duncan@ximian.com>
 	* gdipFunctions.cs (GdipCreatePath2I, GdipAddPathPieI):
 	(GdipFlattenPath, GdipWarpPath, GdipWidenPath):
 	(GdipGetPathWorldBounds, GdipGetPathWorldBoundsI): Imported.

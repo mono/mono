@@ -1579,6 +1579,7 @@ namespace System.Drawing
 			IntPtr ptrPt =  GDIPlus.FromPointToUnManagedMemory (pts);
             
                         Status status = GDIPlus.GdipTransformPoints (nativeObject, destSpace, srcSpace,  ptrPt, pts.Length);
+			GDIPlus.CheckStatus (status);
 			
 			GDIPlus.FromUnManagedMemoryToPoint (ptrPt, pts);
 		}
