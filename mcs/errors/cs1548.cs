@@ -1,4 +1,4 @@
-// cs1548: Error while signing the assembly
+// cs1548: Error while signing the assembly (file not found)
 // Line: 6
 
 using System.Reflection;
