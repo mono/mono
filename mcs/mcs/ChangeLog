@@ -1,5 +1,8 @@
 2004-03-13  Miguel de Icaza  <miguel@ximian.com>
 
+	* driver.cs: Replace / and \ in resource specifications to dots.
+	Fixes 50752
+
 	* class.cs: Add check for duplicate operators.  Fixes 52477
 
 2004-03-11  Miguel de Icaza  <miguel@ximian.com>
