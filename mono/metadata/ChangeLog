@@ -1,5 +1,10 @@
 2004-03-17  Martin Baulig  <martin@ximian.com>
 
+	* class.c (dup_type): Added `const MonoType *original' argument;
+	copy the attrs from the original type.
+
+2004-03-17  Martin Baulig  <martin@ximian.com>
+
 	* metadata.c (do_mono_metadata_parse_generic_inst): Use the
 	`m->generic_inst_cache' here.
 
