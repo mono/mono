@@ -1,3 +1,10 @@
+2002-01-31  Dietmar Maurer  <dietmar@ximian.com>
+
+	* jit.c (mono_analyze_stack): impl. LDVIRTFTN
+	(mono_analyze_stack): handle MONO_TABLE_MEMBERREF in LDSFLD/STSFLD
+
+	* x86.brg: removed some dead code.
+
 2002-01-18  Dietmar Maurer  <dietmar@ximian.com>
 
 	* jit.c (arch_allocate_var): fixed alignment bugs
