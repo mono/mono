@@ -1,3 +1,8 @@
+2005-03-18 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* BasicClient.cs:
+	* DigestClient.cs: check that GetCredential() does not return null.
+
 2005-03-16 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* BasicClient.cs: ensure credentials are not null.

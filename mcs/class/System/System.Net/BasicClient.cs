@@ -52,6 +52,9 @@ namespace System.Net
 				return null;
 
 			NetworkCredential cred = credentials.GetCredential (request.AuthUri, "basic");
+			if (cred == null)
+				return null;
+
 			string userName = cred.UserName;
 			if (userName == null || userName == "")
 				return null;
