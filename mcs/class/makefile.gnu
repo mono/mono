@@ -11,6 +11,7 @@ DIRS =	corlib				\
 	System.Security			\
 	System.Data			\
 	Mono.GetOptions			\
+	System.Management		\
 	System.Web			\
 	System.Web.Services		\
 	System.Runtime.Remoting		\
@@ -25,6 +26,7 @@ DIRS =	corlib				\
 	Mono.Data.TdsClient		\
 	System.Data.OracleClient	\
 	Mono.PEToolkit			\
+	Mono.Posix			\
 	Accessibility			\
 	Microsoft.VisualBasic		\
 	Microsoft.VisualC		\

@@ -1,3 +1,7 @@
+2003-03-04  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* makefile: added Mono.Posix and System.Management.
+
 2003-02-16  Martin Baulig  <martin@ximian.com>
 
 	* docs/compiler: Added a few works about the new `Location' code.

@@ -48,6 +48,8 @@
 		<nant basedir="System.XML" target="build" buildfile="System.XML/System.XML.build"/>
 		<!-- System.Security depends on System.XML -->
 		<nant basedir="System.Security" target="build" buildfile="System.Security/System.Security.build"/>
+		<nant basedir="Mono.Posix" target="build" buildfile="Mono.Posix/Mono.Posix.build"/>
+		<nant basedir="System.Management" target="build" buildfile="System.Management/System.Management.build"/>
 	</target>
 
 	<target name="test">
@@ -94,6 +96,8 @@
 		<nant basedir="System.Configuration.Install" target="clean"/>
 		<nant basedir="Mono.PEToolkit" target="clean"/>
 		<nant basedir="System.Security" target="clean"/>
+		<nant basedir="Mono.Posix" target="clean"/>
 		<nant basedir="Mono.Security.Win32" target="clean"/>
+		<nant basedir="System.Management" target="clean"/>
 	</target>
 </project>

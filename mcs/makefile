@@ -87,6 +87,7 @@ MONO_WIN_INSTALL_LIB=	\
 	class/lib/Mono.Data.TdsClient.dll	\
 	class/lib/Mono.GetOptions.dll	\
 	class/lib/Mono.PEToolkit.dll	\
+	class/lib/Mono.Posix.dll	\
 	class/lib/System.Configuration.Install.dll	\
 	class/lib/System.Data.dll	\
 	class/lib/System.Drawing.dll	\
@@ -95,6 +96,7 @@ MONO_WIN_INSTALL_LIB=	\
 	class/lib/System.Runtime.Serialization.Formatters.Soap.dll	\
 	class/lib/System.Web.Services.dll	\
 	class/lib/System.Web.dll	\
+	class/lib/System.Management.dll	\
 	class/lib/System.Windows.Forms.dll	\
 	class/lib/System.Xml.dll	\
 	class/lib/System.dll	\

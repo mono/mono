@@ -1,3 +1,8 @@
+2003-03-04  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* class/library.build:
+	* class/makefile.gnu: added Mono.Posix and System.Management.
+
 2003-03-02 Jackson Harper <jackson@latitudegeo.com>
 
 	* mcs/class: Add PEAPI directory
