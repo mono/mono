@@ -20,9 +20,9 @@ namespace System {
 	public sealed class String : IConvertible, IComparable, ICloneable, IEnumerable {
 		private int length;
 
-		static private int COMPARE_CASE = 0;
-		static private int COMPARE_INCASE = 1;
-		static private int COMPARE_ORDINAL = 2;
+		private const int COMPARE_CASE = 0;
+		private const int COMPARE_INCASE = 1;
+		private const int COMPARE_ORDINAL = 2;
 
 		public static readonly String Empty = "";
 

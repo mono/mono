@@ -92,10 +92,10 @@ namespace System {
 
 	internal sealed class IntegerFormatter {
 
-		private static int maxByteLength = 4;
-		private static int maxShortLength = 6;
-		private static int maxIntLength = 12;
-		private static int maxLongLength = 22;
+		private const int maxByteLength = 4;
+		private const int maxShortLength = 6;
+		private const int maxIntLength = 12;
+		private const int maxLongLength = 22;
 
 		private static char[] digitLowerTable;
 /**
@@ -3319,7 +3319,7 @@ namespace System {
 			char[] buffy = new char[size];
 			char[] table = upper ? digitUpperTable : digitLowerTable;
 			int position = size;
-			ushort mask = (1 << 4) - 1;
+			const ushort mask = (1 << 4) - 1;
 
 			// loop through right to left, shifting and looking up
 			// our value. Don't worry about negative
@@ -3345,7 +3345,7 @@ namespace System {
 			char[] buffy = new char[size];
 			char[] table = upper ? digitUpperTable : digitLowerTable;
 			int position = size;
-			short mask = (1 << 4) - 1;
+			const short mask = (1 << 4) - 1;
 
 			// loop through right to left, shifting and looking up
 			// our value. If value is negavite stop after 4 F's
@@ -3371,7 +3371,7 @@ namespace System {
 			char[] buffy = new char[size];
 			char[] table = upper ? digitUpperTable : digitLowerTable;
 			int position = size;
-			int mask = (1 << 4) - 1;
+			const int mask = (1 << 4) - 1;
 
 			// loop through right to left, shifting and looking up
 			// our value. If value is negavite stop after 8 F's
@@ -3397,7 +3397,7 @@ namespace System {
 			char[] buffy = new char[size];
 			char[] table = upper ? digitUpperTable : digitLowerTable;
 			int position = size;
-			long mask = (1 << 4) - 1;
+			const long mask = (1 << 4) - 1;
 			
 			// loop through right to left, shifting and looking up
 			// our value. If value is negavite stop after 16 F's
@@ -3423,7 +3423,7 @@ namespace System {
 			char[] buffy = new char[size];
 			char[] table = upper ? digitUpperTable : digitLowerTable;
 			int position = size;
-			short mask = (1 << 4) - 1;
+			const short mask = (1 << 4) - 1;
 
 			// loop through right to left, shifting and looking up
 			// our value. If value is negavite stop after 2 F's
@@ -3449,7 +3449,7 @@ namespace System {
 			char[] buffy = new char[size];
 			char[] table = upper ? digitUpperTable : digitLowerTable;
 			int position = size;
-			int mask = (1 << 4) - 1;
+			const int mask = (1 << 4) - 1;
 
 			// loop through right to left, shifting and looking up
 			// our value. Don't worry about negative
@@ -3475,7 +3475,7 @@ namespace System {
 			char[] buffy = new char[size];
 			char[] table = upper ? digitUpperTable : digitLowerTable;
 			int position = size;
-			uint mask = (1 << 4) - 1;
+			const uint mask = (1 << 4) - 1;
 
 			// loop through right to left, shifting and looking up
 			// our value. Don't worry about negative
@@ -3501,7 +3501,7 @@ namespace System {
 			char[] buffy = new char[size];
 			char[] table = upper ? digitUpperTable : digitLowerTable;
 			int position = size;
-			ulong mask = (1 << 4) - 1;
+			const ulong mask = (1 << 4) - 1;
 			
 			// loop through right to left, shifting and looking up
 			// our value. Don't worry about negative
