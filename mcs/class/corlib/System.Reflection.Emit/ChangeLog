@@ -1,3 +1,8 @@
+2004-10-06  Zoltan Varga  <vargaz@freemail.hu>
+
+	* ModuleBuilder.cs (GetTypes): Fix length of returned array. Fixes
+	#65931.
+
 2004-10-04  Zoltan Varga  <vargaz@freemail.hu>
 
 	* ModuleBuilder.cs (DefineType): Check for duplicate type names. Fixes

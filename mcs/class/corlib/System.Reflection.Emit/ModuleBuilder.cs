@@ -393,7 +393,7 @@ namespace System.Reflection.Emit {
 			if (types == null)
 				return new TypeBuilder [0];
 
-			int n = types.Length;
+			int n = num_types;
 			TypeBuilder [] copy = new TypeBuilder [n];
 			Array.Copy (types, copy, n);
 
