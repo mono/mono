@@ -16,7 +16,7 @@ namespace System.Xml.Serialization
 	/// </summary>
 	/// 
 	[AttributeUsage(AttributeTargets.Property | AttributeTargets.Field
-		| AttributeTargets.Parameter | AttributeTargets.ReturnValue)]
+		| AttributeTargets.Parameter | AttributeTargets.ReturnValue, AllowMultiple=true)]
 	public class XmlAnyElementAttribute : Attribute
 	{
 		private string elementName;

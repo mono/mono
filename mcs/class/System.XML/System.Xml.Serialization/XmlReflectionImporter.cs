@@ -326,9 +326,15 @@ namespace System.Xml.Serialization {
 			XmlTypeMapping elemMap = CreateTypeMapping (TypeTranslator.GetTypeData (typeof(XmlElement)), root, null, defaultNamespace);
 			helper.RegisterClrType (elemMap, typeof(XmlElement), defaultNamespace);
 
-			ImportTypeMapping (typeof(object)).DerivedTypes.Add (nodeMap);
-			ImportTypeMapping (typeof(object)).DerivedTypes.Add (elemMap);
+			XmlTypeMapping textMap = CreateTypeMapping (TypeTranslator.GetTypeData (typeof(XmlText)), root, null, defaultNamespace);
+			helper.RegisterClrType (elemMap, typeof(XmlText), defaultNamespace);
+
+			XmlTypeMapping obmap = ImportTypeMapping (typeof(object));
+			obmap.DerivedTypes.Add (nodeMap);
+			obmap.DerivedTypes.Add (elemMap);
+			obmap.DerivedTypes.Add (textMap);
 			nodeMap.DerivedTypes.Add (elemMap);
+			nodeMap.DerivedTypes.Add (textMap);
 
 			return helper.GetRegisteredClrType (type, defaultNamespace);
 		}
@@ -448,7 +454,9 @@ namespace System.Xml.Serialization {
 				// If the member has a single XmlElementAttribute and the type is the type of the member,
 				// then it is not a flat list
 				
-				if (atts.XmlElements.Count > 1 || (atts.XmlElements.Count == 1 && atts.XmlElements[0].Type != typeData.Type))
+				if (atts.XmlElements.Count > 1 ||
+				   (atts.XmlElements.Count == 1 && atts.XmlElements[0].Type != typeData.Type) ||
+				   (atts.XmlText != null))
 				{
 					// A flat list
 
@@ -493,6 +501,25 @@ namespace System.Xml.Serialization {
 		XmlTypeMapElementInfoList ImportElementInfo (string defaultName, string defaultNamespace, Type defaultType, XmlTypeMapMemberElement member, XmlAttributes atts)
 		{
 			XmlTypeMapElementInfoList list = new XmlTypeMapElementInfoList();
+
+			if (atts.XmlText != null)
+			{
+				member.IsXmlTextCollector = true;
+				if (atts.XmlText.Type != null) defaultType = atts.XmlText.Type;
+				if (defaultType == typeof(XmlNode)) defaultType = typeof(XmlText);	// Nodes must be text nodes
+				
+				XmlTypeMapElementInfo elem = new XmlTypeMapElementInfo (member, TypeTranslator.GetTypeData(defaultType));
+				if (atts.XmlText.DataType != null) elem.DataType = atts.XmlText.DataType;
+
+				if (elem.TypeData.SchemaType != SchemaTypes.Primitive && elem.TypeData.SchemaType != SchemaTypes.Enum &&
+				    elem.TypeData.SchemaType != SchemaTypes.XmlNode)
+					throw new InvalidOperationException ("XmlText cannot be used to encode complex types");
+
+				elem.ElementName = "<text>";
+				elem.Namespace = string.Empty;
+				elem.WrappedElement = false;
+				list.Add (elem);
+			}
 
 			if (atts.XmlElements.Count == 0)
 			{

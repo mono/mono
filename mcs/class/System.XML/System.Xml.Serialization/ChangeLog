@@ -1,3 +1,11 @@
+2003-06-12  Lluis Sanchez Gual <lluis@ximian.com>
+
+	* XmlAnyElementAttribute.cs, XmlArrayItemAttribute.cs: Added AllowMultiple flag.
+	* XmlReflectionImporter.cs, XmlSerializationWriterInterpreter.cs,
+	  XmlSerializationReaderInterpreter.cs, XmlTypeMapElementInfo.cs,
+	  XmlTypeMapMemberElement.cs, XmlTypeMapping.cs: Added support for XmlTextAttribute.
+	* XmlSerializationWriter.cs: small fix.
+
 2003-06-11  Lluis Sanchez Gual <lluis@ximian.com>
 
 	* XmlReflectionImporter.cs: Added support for XmlIgnoreAttribute in enum members.

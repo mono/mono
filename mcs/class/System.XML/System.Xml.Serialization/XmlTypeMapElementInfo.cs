@@ -28,6 +28,7 @@ namespace System.Xml.Serialization
 		int _nestingLevel;	// Only for array items
 		XmlTypeMapping _mappedType;
 		TypeData _type;
+		bool _wrappedElement = true;
 
 		public XmlTypeMapElementInfo (XmlTypeMapMember member, TypeData type)
 		{
@@ -38,6 +39,7 @@ namespace System.Xml.Serialization
 		public TypeData TypeData
 		{
 			get { return _type; }
+			set { _type = value; }
 		}
 
 		public string ChoiceValue
@@ -108,13 +110,19 @@ namespace System.Xml.Serialization
 			set { _nestingLevel = value; }
 		}
 
-		internal bool MultiReferenceType
+		public bool MultiReferenceType
 		{
 			get 
 			{ 
 				if (_mappedType != null) return _mappedType.MultiReferenceType;
 				else return false;
 			}
+		}
+
+		public bool WrappedElement
+		{
+			get { return _wrappedElement; }
+			set { _wrappedElement = value; }
 		}
 
 		public override bool Equals (object other)

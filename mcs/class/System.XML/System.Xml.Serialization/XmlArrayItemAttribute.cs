@@ -16,7 +16,7 @@ namespace System.Xml.Serialization
 	/// Summary description for XmlArrayItemAttribute.
 	/// </summary>
 	[AttributeUsage(AttributeTargets.Property | AttributeTargets.Field
-		 | AttributeTargets.Parameter | AttributeTargets.ReturnValue)]
+		 | AttributeTargets.Parameter | AttributeTargets.ReturnValue, AllowMultiple=true)]
 	public class XmlArrayItemAttribute : Attribute
 	{
 		private string dataType;

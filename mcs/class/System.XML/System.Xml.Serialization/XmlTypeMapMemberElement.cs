@@ -19,6 +19,7 @@ namespace System.Xml.Serialization
 	{
 		XmlTypeMapElementInfoList _elementInfo;
 		string _choiceMember;
+  		bool _isTextCollector;
 
 		public XmlTypeMapMemberElement()
 		{
@@ -55,6 +56,12 @@ namespace System.Xml.Serialization
 					if (elem.TypeData.Type == type) return elem;
 			}
 			return null;
+		}
+
+		public bool IsXmlTextCollector
+		{
+			get { return _isTextCollector; }
+			set { _isTextCollector = value; }
 		}
 	}
 

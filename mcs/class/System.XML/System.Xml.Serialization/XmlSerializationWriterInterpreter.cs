@@ -227,13 +227,17 @@ namespace System.Xml.Serialization
 			switch (elem.TypeData.SchemaType)
 			{
 				case SchemaTypes.XmlNode:
-					if (_format == SerializationFormat.Literal) WriteElementLiteral(((XmlNode)memberValue), elem.ElementName, elem.Namespace, elem.IsNullable, false);
-					else WriteElementEncoded(((XmlNode)memberValue), elem.ElementName, elem.Namespace, elem.IsNullable, false);
+					string elemName = elem.WrappedElement ? elem.ElementName : "";
+					if (_format == SerializationFormat.Literal) WriteElementLiteral(((XmlNode)memberValue), elemName, elem.Namespace, elem.IsNullable, false);
+					else WriteElementEncoded(((XmlNode)memberValue), elemName, elem.Namespace, elem.IsNullable, false);
 					break;
 
 				case SchemaTypes.Enum:
 				case SchemaTypes.Primitive:
-					if (_format == SerializationFormat.Literal) {
+					if (!elem.WrappedElement) {
+						WriteValue (GetStringValue (elem.MappedType, memberValue));
+					}
+					else if (_format == SerializationFormat.Literal) {
 						if (elem.IsNullable) WriteNullableStringLiteral (elem.ElementName, elem.Namespace, GetStringValue (elem.MappedType, memberValue));
 						else WriteElementString (elem.ElementName, elem.Namespace, GetStringValue (elem.MappedType, memberValue));
 					}

@@ -295,6 +295,25 @@ namespace System.Xml.Serialization
 					else 
 						UnknownNode(ob);
 				}
+				else if (Reader.NodeType == System.Xml.XmlNodeType.Text && map.XmlTextCollector != null)
+				{
+					if (map.XmlTextCollector.GetType() == typeof (XmlTypeMapMemberFlatList))
+					{
+						XmlTypeMapMemberFlatList mem = (XmlTypeMapMemberFlatList)map.XmlTextCollector;
+						XmlTypeMapElementInfo info = (XmlTypeMapElementInfo) mem.ListMap.ItemInfo [0];
+						object val = (info.TypeData.Type == typeof (string)) ? (object) Reader.ReadString() : (object) ReadXmlNode (false);
+						AddListValue (mem.TypeData.Type, ref flatLists[mem.FlatArrayIndex], indexes[mem.FlatArrayIndex]++, val, true);
+					}
+					else
+					{
+						XmlTypeMapMemberElement mem = (XmlTypeMapMemberElement) map.XmlTextCollector;
+						XmlTypeMapElementInfo info = (XmlTypeMapElementInfo) mem.ElementInfo [0];
+						if (info.TypeData.Type == typeof (string))
+							SetMemberValue (mem, ob, ReadString ((string) GetMemberValue (mem, ob, isValueList)), isValueList);
+						else
+							SetMemberValue (mem, ob, GetValueFromXmlString (Reader.ReadString(), info.TypeData, info.MappedType), isValueList);
+					}
+				}
 				else 
 					UnknownNode(ob);
 

@@ -104,6 +104,7 @@ namespace System.Xml.Serialization
 		ArrayList _flatLists;
 		XmlTypeMapMemberAnyElement _defaultAnyElement;
 		XmlTypeMapMemberAnyAttribute _defaultAnyAttribute;
+		XmlTypeMapMember _xmlTextCollector;
 
 		public void AddMember (XmlTypeMapMember member)
 		{
@@ -128,6 +129,12 @@ namespace System.Xml.Serialization
 			{
 				_defaultAnyAttribute = (XmlTypeMapMemberAnyAttribute) member;
 				return;
+			}
+
+			if (member is XmlTypeMapMemberElement && ((XmlTypeMapMemberElement)member).IsXmlTextCollector)
+			{
+				if (_xmlTextCollector != null) throw new InvalidOperationException ("XmlTextAttribute can only be applied once in a class");
+				_xmlTextCollector = member;
 			}
 
 			if (_elementMembers == null) {
@@ -190,6 +197,11 @@ namespace System.Xml.Serialization
 		public ICollection FlatLists
 		{
 			get { return _flatLists; }
+		}
+
+		public XmlTypeMapMember XmlTextCollector
+		{
+			get { return _xmlTextCollector; }
 		}
 	}
 

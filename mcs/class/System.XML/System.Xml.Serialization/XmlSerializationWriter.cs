@@ -692,7 +692,8 @@ namespace System.Xml.Serialization {
 
 		protected void WriteValue (string value)
 		{
-			Writer.WriteString (value);
+			if (value != null)
+				Writer.WriteString (value);
 		}
 
 		protected void WriteXmlAttribute (XmlNode node)
