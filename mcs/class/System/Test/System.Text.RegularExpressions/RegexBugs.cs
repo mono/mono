@@ -220,6 +220,27 @@ namespace MonoTests.System.Text.RegularExpressions
 			text = re.Replace(text, "e", -1, 4);
 			AssertEquals("#01", "abcde", text);
 		}
+
+		[Test]
+		//[Ignore] You may want to ignore this if the bugs gets back
+		public void SplitInfiniteLoop () // bug 57274
+		{
+			string ss = "a b c d e";
+			string [] words = Regex.Split (ss, "[ \t\n\r]*");
+			AssertEquals ("#01Length", 11, words.Length);
+			AssertEquals ("#00", "", words [0]);
+			AssertEquals ("#01", "a", words [1]);
+			AssertEquals ("#02", "", words [2]);
+			AssertEquals ("#03", "b", words [3]);
+			AssertEquals ("#04", "", words [4]);
+			AssertEquals ("#05", "c", words [5]);
+			AssertEquals ("#06", "", words [6]);
+			AssertEquals ("#07", "d", words [7]);
+			AssertEquals ("#08", "", words [8]);
+			AssertEquals ("#09", "e", words [9]);
+			AssertEquals ("#10", "", words [10]);
+
+		}
 	}
 }
 

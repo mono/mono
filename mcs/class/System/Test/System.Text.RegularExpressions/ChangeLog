@@ -1,8 +1,16 @@
+2004-11-29 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* System.Text.RegularExpressions/RegexBugs.cs: test case for bug #57274.
+
 2004-10-18 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* System.Text.RegularExpressions/RegexBugs.cs: added test for bug
 	#68398.
 
+2004-07-05  Jackson Harper  <jackson@ximian.com>
+
+	* RegexTest.cs: Add some simple tests for debugging/zen building.
+	
 2004-06-06  Jambunathan K <kjambunathan@novell.com>
 	
 	* RegexTest.cs: 
