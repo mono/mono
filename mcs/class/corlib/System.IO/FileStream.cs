@@ -306,7 +306,7 @@ namespace System.IO
 			if (handle == MonoIO.InvalidHandle)
 				throw new ObjectDisposedException ("Stream has been closed");
 			if (dest == null)
-				throw new ArgumentNullException ("destination array is null");
+				throw new ArgumentNullException ("destFile");
 			if (!CanRead)
 				throw new NotSupportedException ("Stream does not support reading");
 			int len = dest.Length;
@@ -314,7 +314,8 @@ namespace System.IO
 				throw new ArgumentException ("dest or count is negative");
 			if (dest_offset > len)
 				throw new ArgumentException ("destination offset is beyond array size");
-			if ((dest_offset + count) > len)
+			// reordered to avoid possible integer overflow
+			if (dest_offset > len - count)
 				throw new ArgumentException ("Reading would overrun buffer");
 
 			if (async) {
@@ -383,7 +384,8 @@ namespace System.IO
 			if (offset < 0)
 				throw new ArgumentOutOfRangeException ("offset", "Must be >= 0");
 
-			if (count + offset > buffer.Length)
+			// reordered to avoid possible integer overflow
+			if (count > buffer.Length - offset)
 				throw new ArgumentException ("Buffer too small. count/offset wrong.");
 
 			if (!async)
@@ -456,16 +458,15 @@ namespace System.IO
 		{
 			if (handle == MonoIO.InvalidHandle)
 				throw new ObjectDisposedException ("Stream has been closed");
-
 			if (src == null)
 				throw new ArgumentNullException ("src");
-
 			if (src_offset < 0)
-				throw new ArgumentOutOfRangeException ("src_offset");
-
+				throw new ArgumentOutOfRangeException ("src_offset", "< 0");
 			if (count < 0)
-				throw new ArgumentOutOfRangeException ("count");
-
+				throw new ArgumentOutOfRangeException ("count", "< 0");
+			// ordered to avoid possible integer overflow
+			if (src_offset > src.Length - count)
+				throw new ArgumentException ("Reading would overrun buffer");
 			if (!CanWrite)
 				throw new NotSupportedException ("Stream does not support writing");
 
@@ -523,7 +524,8 @@ namespace System.IO
 			if (offset < 0)
 				throw new ArgumentOutOfRangeException ("offset", "Must be >= 0");
 
-			if (count + offset > buffer.Length)
+			// reordered to avoid possible integer overflow
+			if (count > buffer.Length - offset)
 				throw new ArgumentException ("Buffer too small. count/offset wrong.");
 
 			if (!async)

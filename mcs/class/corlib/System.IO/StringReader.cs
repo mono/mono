@@ -3,9 +3,11 @@
 //
 // Author: Marcin Szczepanski (marcins@zipworld.com.au)
 //
-
+// Copyright (C) 2004 Novell (http://www.novell.com)
+// 
 
 using System;
+using System.Globalization;
 using System.Runtime.InteropServices;
 
 namespace System.IO {
@@ -22,7 +24,7 @@ namespace System.IO {
 		public StringReader( string s ) {
 
 			if (s == null) 
-				throw new ArgumentNullException ();
+				throw new ArgumentNullException ("s");
 
 			this.source = s;
 			nextChar = 0;
@@ -74,7 +76,7 @@ namespace System.IO {
 			CheckObjectDisposedException ();
 
 			if( buffer == null ) {
-				throw new ArgumentNullException();
+				throw new ArgumentNullException ("buffer");
 			} else if( buffer.Length - index < count ) {
 				throw new ArgumentException();
 			} else if( index < 0 || count < 0 ) {
@@ -83,7 +85,8 @@ namespace System.IO {
 
 			int charsToRead;
 
-			if( nextChar + count > sourceLength ) {
+			// reordered to avoir possible integer overflow
+			if (nextChar > sourceLength - count) {
 				charsToRead = sourceLength - nextChar;
 			} else {
 				charsToRead = count;
@@ -112,9 +115,7 @@ namespace System.IO {
 			// HOWEVER, the MS implementation returns the rest of
 			// the string if no \r and/or \n is found in the string
 
-			if (disposed) 
-				throw new ObjectDisposedException ("StringReader",
-						"Cannot read from a closed StringReader");
+			CheckObjectDisposedException ();
 
 			if (nextChar >= source.Length)
 				return null;
@@ -151,8 +152,10 @@ namespace System.IO {
 
 		private void CheckObjectDisposedException ()
 		{
-			if (disposed) 
-				throw new ObjectDisposedException ("StringReader", "Cannot read from a closed StringReader");
+			if (disposed) {
+				throw new ObjectDisposedException ("StringReader", 
+					Locale.GetText ("Cannot read from a closed StringReader"));
+			}
 		}
 	}
 }

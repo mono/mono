@@ -225,11 +225,13 @@ namespace System.IO {
 				m_buffer_reading = false;
 			}
 
-			if (m_buffer_pos + count >= m_buffer.Length) {
-				Flush();
-				m_stream.Write(array, offset, count);
-			} else {
-				Array.Copy(array, offset, m_buffer, m_buffer_pos, count);
+			// reordered to avoid possible integer overflow
+			if (m_buffer_pos >= m_buffer.Length - count) {
+				Flush ();
+				m_stream.Write (array, offset, count);
+			} 
+			else {
+				Array.Copy (array, offset, m_buffer, m_buffer_pos, count);
 				m_buffer_pos += count;
 			}
 		}

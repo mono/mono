@@ -353,7 +353,8 @@ namespace System.IO
 				throw new ArgumentException ("offset+count",
 							     "The size of the buffer is less than offset + count.");
 
-			if (position + count > capacity)
+			// reordered to avoid possible integer overflow
+			if (position > capacity - count)
 				Capacity = CalculateNewCapacity (position + count);
 
 			Buffer.BlockCopyInternal (buffer, offset, internalBuffer, position, count);
