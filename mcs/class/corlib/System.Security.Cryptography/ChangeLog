@@ -1,3 +1,8 @@
+2003-10-04  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* CryptoStream.cs: Fixed bug 49323. The CanTransformMultipleBlocks
+	optimization in Read has been fixed for partial blocks.
+
 2003-09-11  Lluis Sanchez Gual  <lluis@ximian.com>
 
 	* CryptoStream.cs: Added [In,Out] attributes to Read method.

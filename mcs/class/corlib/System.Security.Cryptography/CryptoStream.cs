@@ -203,16 +203,22 @@ public class CryptoStream : Stream {
 			if (_transform.CanTransformMultipleBlocks) {
 				// transform all except the last block (which may be the last block
 				// of the stream and require TransformFinalBlock)
-				int numBlock = (count / blockSize);
-				if ((count % blockSize) == 0) // partial block ?
+				int numBlock = ((workPos + count) / blockSize);
+				if (((workPos + count) % blockSize) == 0) // partial block ?
 					numBlock--; // no then reduce
 				int multiSize = (numBlock * blockSize);
-				byte[] multiBlocks = new byte [multiSize];
-				_transform.TransformBlock (buffer, offset, multiSize, multiBlocks, 0);
-				_stream.Write (multiBlocks, 0, multiSize); 
-				// copy last block into partialBlock
-				workPos = count - multiSize;
-				Array.Copy (buffer, offset + multiSize, workingBlock, 0, workPos);
+				if (numBlock > 0) {
+					byte[] multiBlocks = new byte [multiSize];
+					_transform.TransformBlock (buffer, offset, multiSize, multiBlocks, 0);
+					_stream.Write (multiBlocks, 0, multiSize); 
+					// copy last block into partialBlock
+					workPos = count - multiSize;
+					Array.Copy (buffer, offset + multiSize, workingBlock, 0, workPos);
+				}
+				else {
+					Array.Copy (buffer, offset, workingBlock, workPos, count);
+					workPos += count;
+				}
 				count = 0; // the last block, if any, is in workingBlock
 			}
 			else {
