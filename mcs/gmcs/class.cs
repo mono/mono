@@ -2636,15 +2636,18 @@ namespace Mono.CSharp {
 		//
 		public override bool Define (TypeContainer container)
 		{
-			if (!DoDefine (container))
-				return false;
-
+			DeclSpace decl;
 			MethodBuilder mb = null;
 			if (GenericMethod != null) {
 				mb = container.TypeBuilder.DefineGenericMethod (Name, flags);
 				if (!GenericMethod.Define (mb))
 					return false;
-			}
+				decl = GenericMethod;
+			} else
+				decl = container;
+
+			if (!DoDefine (decl, container))
+				return false;
 
 			if (!CheckBase (container))
 				return false;
@@ -3397,7 +3400,9 @@ namespace Mono.CSharp {
 					method_name, flags, CallingConventions,
 					ReturnType, ParameterTypes);
 			else
-				builder.SetGenericMethodSignature (ReturnType, ParameterTypes);
+				builder.SetGenericMethodSignature (
+					flags, CallingConventions,
+					ReturnType, ParameterTypes);
 
 			if (builder == null)
 				return false;
@@ -3825,7 +3830,7 @@ namespace Mono.CSharp {
 			return !error;
 		}
 
-		protected virtual bool DoDefine (TypeContainer container)
+		protected virtual bool DoDefine (DeclSpace decl, TypeContainer container)
 		{
 			if (Name == null)
 				Name = "this";
@@ -3836,7 +3841,7 @@ namespace Mono.CSharp {
 			flags = Modifiers.MethodAttr (ModFlags);
 
 			// Lookup Type, verify validity
-			MemberType = container.ResolveType (Type, false, Location);
+			MemberType = decl.ResolveType (Type, false, Location);
 			if (MemberType == null)
 				return false;
 
@@ -4146,9 +4151,9 @@ namespace Mono.CSharp {
 			Set = set_block;
 		}
 
-		protected override bool DoDefine (TypeContainer container)
+		protected override bool DoDefine (DeclSpace decl, TypeContainer container)
 		{
-			if (!base.DoDefine (container))
+			if (!base.DoDefine (decl, container))
 				return false;
 
 			ec = new EmitContext (container, Location, null, MemberType, ModFlags);
@@ -4321,7 +4326,7 @@ namespace Mono.CSharp {
 
 		public override bool Define (TypeContainer container)
 		{
-			if (!DoDefine (container))
+			if (!DoDefine (container, container))
 				return false;
 
 			if (!CheckBase (container))
@@ -4575,7 +4580,7 @@ namespace Mono.CSharp {
 			EventAttributes e_attr = EventAttributes.RTSpecialName | EventAttributes.SpecialName;
 			MethodAttributes m_attr = MethodAttributes.HideBySig | MethodAttributes.SpecialName
 ;
-			if (!DoDefine (container))
+			if (!DoDefine (container, container))
 				return false;
 
 			if (init != null && ((ModFlags & Modifiers.ABSTRACT) != 0)){
@@ -4756,7 +4761,7 @@ namespace Mono.CSharp {
 				PropertyAttributes.RTSpecialName |
 				PropertyAttributes.SpecialName;
 			
-			if (!DoDefine (container))
+			if (!DoDefine (container, container))
 				return false;
 
 			IndexerName = Attribute.ScanForIndexerName (ec, OptAttributes);

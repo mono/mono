@@ -397,7 +397,13 @@ namespace Mono.CSharp {
 		
 		public bool CheckAccessLevel (Type check_type) 
 		{
-			if (check_type == TypeBuilder)
+			TypeBuilder tb;
+			if (this is GenericMethod)
+				tb = Parent.TypeBuilder;
+			else
+				tb = TypeBuilder;
+
+			if (check_type == tb)
 				return true;
 
 			if (check_type.IsGenericParameter)
@@ -421,7 +427,7 @@ namespace Mono.CSharp {
 				//
 				// This test should probably use the declaringtype.
 				//
-				if (check_type.Assembly == TypeBuilder.Assembly){
+				if (check_type.Assembly == tb.Assembly){
 					return true;
 				}
 				return false;
@@ -431,7 +437,7 @@ namespace Mono.CSharp {
 
 			case TypeAttributes.NestedPrivate:
 				string check_type_name = check_type.FullName;
-				string type_name = TypeBuilder.FullName;
+				string type_name = tb.FullName;
 				
 				int cio = check_type_name.LastIndexOf ('+');
 				string container = check_type_name.Substring (0, cio);
@@ -453,18 +459,18 @@ namespace Mono.CSharp {
 				//
 				// Only accessible to methods in current type or any subtypes
 				//
-				return FamilyAccessible (check_type);
+				return FamilyAccessible (tb, check_type);
 
 			case TypeAttributes.NestedFamANDAssem:
-				return (check_type.Assembly == TypeBuilder.Assembly) &&
-					FamilyAccessible (check_type);
+				return (check_type.Assembly == tb.Assembly) &&
+					FamilyAccessible (tb, check_type);
 
 			case TypeAttributes.NestedFamORAssem:
-				return (check_type.Assembly == TypeBuilder.Assembly) ||
-					FamilyAccessible (check_type);
+				return (check_type.Assembly == tb.Assembly) ||
+					FamilyAccessible (tb, check_type);
 
 			case TypeAttributes.NestedAssembly:
-				return check_type.Assembly == TypeBuilder.Assembly;
+				return check_type.Assembly == tb.Assembly;
 			}
 
 			Console.WriteLine ("HERE: " + check_attr);
@@ -472,10 +478,10 @@ namespace Mono.CSharp {
 
 		}
 
-		protected bool FamilyAccessible (Type check_type)
+		protected bool FamilyAccessible (TypeBuilder tb, Type check_type)
 		{
 			Type declaring = check_type.DeclaringType;
-			if (TypeBuilder.IsSubclassOf (declaring))
+			if (tb.IsSubclassOf (declaring))
 				return true;
 
 			string check_type_name = check_type.FullName;
