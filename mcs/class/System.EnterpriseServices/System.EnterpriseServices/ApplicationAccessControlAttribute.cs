@@ -8,9 +8,11 @@
 //
 
 using System;
+using System.Runtime.InteropServices;
 
 namespace System.EnterpriseServices {
 	[AttributeUsage (AttributeTargets.Assembly)]
+	[ComVisible(false)]
 	public sealed class ApplicationAccessControlAttribute : Attribute {
 
 		#region Fields
@@ -48,7 +50,7 @@ namespace System.EnterpriseServices {
 			set { authentication = value; }
 		}
 
-		public ImpersonationLevelOption Impersonation {
+		public ImpersonationLevelOption ImpersonationLevel {
 			get { return impersonation; }
 			set { impersonation = value; }
 		}

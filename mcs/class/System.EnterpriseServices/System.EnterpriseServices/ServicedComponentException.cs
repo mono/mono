@@ -8,9 +8,11 @@
 //
 
 using System;
+using System.Runtime.InteropServices;
 
 namespace System.EnterpriseServices {
 	[Serializable]
+	[ComVisible(false)]
 	public sealed class ServicedComponentException : SystemException {
 
 		#region Constructors

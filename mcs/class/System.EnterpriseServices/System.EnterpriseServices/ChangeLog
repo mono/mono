@@ -1,5 +1,25 @@
 2004-05-12  Mike Kestner <mkestner@ximian.com>
 
+	* ApplicationAccessControlAttribute.cs : Add ComVisible and
+	s/Impersonation/ImpersonationLevel.
+	* ApplicationActivationAttribute.cs : Add ComVisible
+	* ApplicationIDAttribute.cs : Add ComVisible
+	* ApplicationNameAttribute.cs : Add ComVisible
+	* ApplicationQueuingAttribute.cs : Add ComVisible
+	* AutoCompleteAttribute.cs : Add ComVisible
+	* ComponentAccessControlAttribute.cs : Add ComVisible and remove
+	set_Value.
+	* COMTIIntrinsicsAttribute.cs : Add ComVisible and remove set_Value.
+	* ConstructionEnabledAttribute.cs : Add ComVisible, add Enabled, and 
+	remove set_Value.
+	* DescriptionAttribute.cs : Add ComVisible
+	* EventClassAttribute.cs : Add ComVisible and s/InProc/Inproc.
+	* SecureMethodAttribute.cs : Add ComVisible
+	* SecurityRoleAttribute.cs : Add ComVisible
+	* ServicedComponentException.cs : Add ComVisible
+
+2004-05-12  Mike Kestner <mkestner@ximian.com>
+
 	* BOID.cs : add ComVisible attr.
 	* ServiceDomain.cs : impl
 	* SynchronizationAttribute.cs : add ComVisible attr

@@ -8,9 +8,11 @@
 //
 
 using System;
+using System.Runtime.InteropServices;
 
 namespace System.EnterpriseServices {
 	[AttributeUsage (AttributeTargets.Method)]
+	[ComVisible(false)]
 	public sealed class AutoCompleteAttribute : Attribute {
 
 		#region Fields

@@ -8,9 +8,11 @@
 //
 
 using System;
+using System.Runtime.InteropServices;
 
 namespace System.EnterpriseServices {
 	[AttributeUsage (AttributeTargets.Class)]
+	[ComVisible(false)]
 	public sealed class COMTIIntrinsicsAttribute : Attribute {
 
 		#region Fields
@@ -37,7 +39,6 @@ namespace System.EnterpriseServices {
 
 		public bool Value {
 			get { return val; }
-			set { val = value; }
 		}
 
 		#endregion // Properties

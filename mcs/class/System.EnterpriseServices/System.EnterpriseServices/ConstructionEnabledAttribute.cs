@@ -8,15 +8,17 @@
 //
 
 using System;
+using System.Runtime.InteropServices;
 
 namespace System.EnterpriseServices {
 	[AttributeUsage (AttributeTargets.Class)]
+	[ComVisible(false)]
 	public sealed class ConstructionEnabledAttribute : Attribute {
 
 		#region Fields
 
 		string def;
-		bool val;
+		bool enabled;
 
 		#endregion // Fields
 
@@ -25,13 +27,13 @@ namespace System.EnterpriseServices {
 		public ConstructionEnabledAttribute ()
 		{
 			def = String.Empty;
-			this.val = false;
+			enabled = true;
 		}
 
 		public ConstructionEnabledAttribute (bool val)
 		{
 			def = String.Empty;
-			this.val = val;
+			enabled = val;
 		}
 
 		#endregion // Constructors
@@ -43,9 +45,9 @@ namespace System.EnterpriseServices {
 			set { def = value; }
 		}
 
-		public bool Value {
-			get { return val; }
-			set { val = value; }
+		public bool Enabled {
+			get { return enabled; }
+			set { enabled = value; }
 		}
 
 		#endregion // Properties

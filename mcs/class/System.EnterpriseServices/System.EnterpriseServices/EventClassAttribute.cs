@@ -8,9 +8,11 @@
 //
 
 using System;
+using System.Runtime.InteropServices;
 
 namespace System.EnterpriseServices {
 	[AttributeUsage (AttributeTargets.Class)]
+	[ComVisible(false)]
 	public sealed class EventClassAttribute : Attribute {
 
 		#region Fields
@@ -34,7 +36,7 @@ namespace System.EnterpriseServices {
 
 		#region Properties
 
-		public bool AllowInProcSubscribers {
+		public bool AllowInprocSubscribers {
 			get { return allowInProcSubscribers; }
 			set { allowInProcSubscribers = value; }
 		}

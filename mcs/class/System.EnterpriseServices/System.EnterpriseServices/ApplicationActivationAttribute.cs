@@ -8,9 +8,11 @@
 //
 
 using System;
+using System.Runtime.InteropServices;
 
 namespace System.EnterpriseServices {
 	[AttributeUsage (AttributeTargets.Assembly)]
+	[ComVisible(false)]
 	public sealed class ApplicationActivationAttribute : Attribute {
 
 		#region Fields
