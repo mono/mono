@@ -1,4 +1,8 @@
 
+Tue Mar 26 20:09:10 CET 2002 Paolo Molaro <lupus@ximian.com>
+
+	* interp.c: set frame->ip before dumping the stack trace.
+
 Tue Mar 26 19:54:45 CET 2002 Paolo Molaro <lupus@ximian.com>
 
 	* interp.c: remove glib mem vtable code.
