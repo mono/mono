@@ -7,8 +7,10 @@
 // (C) 2003 Jackson Harper, All rights reserved
 //
 .assembly extern corlib { }
-.assembly HelloWorld { }
-.module HelloWorld.exe
+
+//
+// Pass a param to a method
+//
 
 .namespace Mono.ILASM.Tests {
 
@@ -18,7 +20,7 @@
 			.entrypoint
 			.maxstack 1	
 			
-			ldstr "Hello, World!"
+			ldstr "PASS"
 			call void Mono.ILASM.Tests.Test_4::print_string(string)
 
 			ret

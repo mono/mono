@@ -7,8 +7,10 @@
 // (C) 2003 Jackson Harper, All rights reserved
 //
 .assembly extern mscorlib { }
-.assembly test_9 { }
-.module test_9.exe
+
+//
+// Call a constructor for a type defined in this assembly
+//
 
 .namespace Mono.ILASM.Tests {
 

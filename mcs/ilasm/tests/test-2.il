@@ -7,14 +7,16 @@
 // (C) 2003 Jackson Harper, All rights reserved
 //
 .assembly extern mscorlib { }
-.assembly HelloWorld { }
-.module HelloWorld.exe
+
+//
+// Declare a local object instantiate it and print it to stdout
+//
 
 .namespace Mono.ILASM.Tests {
 
 	.class public auto ansi Test_2 extends [mscorlib]System.Object {
 	
-		.method public static void check( ) cil managed {
+		.method public static void main () cil managed {
 			.entrypoint
 			.maxstack 1	
 			.locals init (object obj)

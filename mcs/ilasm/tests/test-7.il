@@ -8,8 +8,12 @@
 //
 .assembly extern mscorlib { }
 .assembly extern Cscompmgd { }
-.assembly test_7 { }
-.module test_7.exe
+
+
+//
+// Define a method that references a type in another assembly (that is
+// not corlib)
+//
 
 .namespace Mono.ILASM.Tests {
 

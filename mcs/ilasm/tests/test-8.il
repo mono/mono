@@ -7,18 +7,16 @@
 // (C) 2003 Jackson Harper, All rights reserved
 //
 .assembly extern mscorlib { }
-.assembly test_8 { }
-.module test_8.exe
+
+//
+// Implement an interface
+//
 
 .namespace Mono.ILASM.Tests {
 
-	.class public auto ansi Test_8 extends [mscorlib]System.Object {
-	
-	}
-	
-	.class public auto ansi A 
+	.class public auto ansi Test_8
 		extends [mscorlib]System.Collections.ArrayList 
-		implements [mscorlib]System.Collections.IList, [mscorlib]System.Object {
+		implements [mscorlib]System.Collections.IList {
 
 	}
 }

@@ -7,8 +7,11 @@
 // (C) 2003 Jackson Harper, All rights reserved
 //
 .assembly extern mscorlib { }
-.assembly test_10 { }
-.module test_10.exe
+
+
+//
+// Create some bound arrays
+//
 
 .namespace Mono.ILASM.Tests {
 

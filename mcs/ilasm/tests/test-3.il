@@ -7,8 +7,10 @@
 // (C) 2003 Jackson Harper, All rights reserved
 //
 .assembly extern corlib { }
-.assembly HelloWorld { }
-.module HelloWorld.exe
+
+//
+// Define a method and execute that method
+//
 
 .namespace Mono.ILASM.Tests {
 
@@ -24,7 +26,7 @@
 		}
 
 		.method private static void print_hello() cil managed {
-			ldstr "Hello, World!"
+			ldstr "PASS"
 			call void [corlib]System.Console::WriteLine(string)
 		}
 	

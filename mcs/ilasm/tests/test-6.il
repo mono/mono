@@ -7,21 +7,20 @@
 // (C) 2003 Jackson Harper, All rights reserved
 //
 .assembly extern mscorlib { }
-.assembly test_6 { }
-.module test_6.exe
 
-.namespace Mono.ILASM.Tests {
+//
+// Define classes outside of namespaces, also define a field that
+// references a type in this assembly
+//
 
-	.class public auto ansi A extends [mscorlib]System.Object {
-	}
-
-	.class public auto ansi Test_6 extends [mscorlib]System.Object {
+.class public auto ansi Test_6 extends [mscorlib]System.Object {
 	
-		/// <summary>
-		///  Field that references a type in this assembly
-		/// </summary>
-		.field public Mono.ILASM.Tests.A a_field
-	}
-	
+	/// <summary>
+	///  Field that references a type in this assembly
+	/// </summary>
+       .field public class A a_field
 }
 
+.class public auto ansi A extends [mscorlib]System.Object {
+
+}

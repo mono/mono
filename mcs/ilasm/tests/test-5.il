@@ -7,8 +7,10 @@
 // (C) 2003 Jackson Harper, All rights reserved
 //
 .assembly extern mscorlib { }
-.assembly test_5 { }
-.module test_5.exe
+
+//
+// Define a field
+//
 
 .namespace Mono.ILASM.Tests {
 
