@@ -287,12 +287,22 @@ namespace System.Collections {
 					    int arrayIndex, int count) {
 		}
 
+		private class ArrayListEnumerator : IEnumerator {
+			// TODO: Constructor should take a snapshot
+			public ArrayListEnumerator(int index, int count){}
+
+			// TODO: Implement these methods...
+			public object Current {get{return null;}}
+			public bool MoveNext(){return true;}
+			public void Reset(){}
+		}
+
 		public virtual IEnumerator GetEnumerator () {
-			return null;
+			return new ArrayListEnumerator(0, this.Count);
 		}
 
 		public virtual IEnumerator GetEnumerator (int index, int count) {
-			return null;
+			return new ArrayListEnumerator(index, count);
 		}
 
 		public virtual ArrayList GetRange (int index, int count) {
