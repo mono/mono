@@ -1,3 +1,9 @@
+2004-06-02  Martin Baulig  <martin@ximian.com>
+
+	* mono-debug.h (MONO_DEBUGGER_VERSION): Bumped version to 41.
+
+	* debug-mono-symfile.h: Bumped symbol file version number to 37.
+
 2004-05-31  Zoltan Varga  <vargaz@freemail.hu>
 
 	* marshal.c (mono_marshal_get_runtime_invoke): Fix CR/LFs.
