@@ -50,8 +50,10 @@ namespace System.Net.Sockets
 
 			public WaitHandle AsyncWaitHandle {
 				get {
-					if (waithandle == null)
-						waithandle = new ManualResetEvent (completed);
+					lock (this) {
+						if (waithandle == null)
+							waithandle = new ManualResetEvent (completed);
+					}
 
 					return waithandle;
 				}
@@ -72,8 +74,10 @@ namespace System.Net.Sockets
 				}
 				set {
 					completed=value;
-					if (waithandle != null && value) {
-						((ManualResetEvent) waithandle).Set ();
+					lock (this) {
+						if (waithandle != null && value) {
+							((ManualResetEvent) waithandle).Set ();
+						}
 					}
 				}
 			}
@@ -177,7 +181,7 @@ namespace System.Net.Sockets
 						return;
 					}
 
-					SocketException rethrow = null;
+					Exception rethrow = null;
 					try {
 						socket.Connect (endpoint);
 					} catch (SocketException e) {
@@ -194,7 +198,10 @@ namespace System.Net.Sockets
 						} catch (SocketException e2) {
 							rethrow = e2;
 						}
+					} catch (Exception e3) {
+						rethrow = e3;
 					}
+					
 					if (rethrow != null)
 						result.SetDelayedException(rethrow);
 					End ();
@@ -214,7 +221,7 @@ namespace System.Net.Sockets
 						return;
 					}
 
-					SocketException rethrow = null;
+					Exception rethrow = null;
 					try {
 						total = socket.Receive (buffer, offset, size, sockflags);
 					} catch (SocketException e) {
@@ -231,7 +238,10 @@ namespace System.Net.Sockets
 						} catch (SocketException e2) {
 							rethrow = e2;
 						}
+					} catch (Exception e3) {
+						rethrow = e3;
 					}
+
 					if (rethrow != null)
 						result.SetDelayedException(rethrow);
 					End ();
@@ -253,7 +263,7 @@ namespace System.Net.Sockets
 						return;
 					}
 
-					SocketException rethrow = null;
+					Exception rethrow = null;
 					try {
 						total = socket.ReceiveFrom (buffer, offset, size,
 									sockflags, ref endpoint);
@@ -272,7 +282,10 @@ namespace System.Net.Sockets
 						} catch (SocketException e2) {
 							rethrow = e2;
 						}
+					} catch (Exception e3) {
+						rethrow = e3;
 					}
+
 					if (rethrow != null)
 						result.SetDelayedException(rethrow);
 					End ();
@@ -292,7 +305,7 @@ namespace System.Net.Sockets
 						return;
 					}
 
-					SocketException rethrow = null;
+					Exception rethrow = null;
 					try {
 						total = socket.Send (buffer, offset, size, sockflags);
 					} catch (SocketException e) {
@@ -309,6 +322,8 @@ namespace System.Net.Sockets
 						} catch (SocketException e2) {
 							rethrow = e2;
 						}
+					} catch (Exception e3) {
+						rethrow = e3;
 					}
 
 					if (rethrow != null)
@@ -331,7 +346,7 @@ namespace System.Net.Sockets
 						return;
 					}
 
-					SocketException rethrow = null;
+					Exception rethrow = null;
 					try {
 						total = socket.SendTo (buffer, offset, size,
 									sockflags, endpoint);
@@ -350,6 +365,8 @@ namespace System.Net.Sockets
 						} catch (SocketException e2) {
 							rethrow = e2;
 						}
+					} catch (Exception e3) {
+						rethrow = e3;
 					}
 
 					if (rethrow != null)
