@@ -1,14 +1,16 @@
 //
 // FileSystem.cs
 //
-// Author:
+// Authors:
 //   
 // Daniel Campos ( danielcampos@netcourrier.com )
+// Rafael Teixeira (rafaelteixeirabr@hotmail.com)
 // 
 //
 
 using System;
 using System.IO;
+
 namespace Microsoft.VisualBasic 
 {
         [Microsoft.VisualBasic.CompilerServices.StandardModuleAttribute] 
@@ -64,10 +66,41 @@ namespace Microsoft.VisualBasic
 					return (MyDrive.ToUpper()  + Path.VolumeSeparatorChar + Path.DirectorySeparatorChar  );
 			}
 		}
-                [MonoTODO]
-                public static System.String Dir () { throw new NotImplementedException (); }
-                [MonoTODO]
-                public static System.String Dir (System.String Pathname, [System.Runtime.InteropServices.Optional] [System.ComponentModel.DefaultValue(0)] Microsoft.VisualBasic.FileAttribute Attributes) { throw new NotImplementedException (); }
+	
+	private class FileFinder {
+		public string Pathname;
+		public FileAttribute Attributes;
+
+		public FileFinder(string pathname, FileAttribute attributes) {
+			Pathname = pathname;
+			Attributes = attributes;
+		}
+
+		public string Next() {
+			return "";
+		}
+	}
+
+	private static FileFinder CurrentFileFinder = null;
+
+	[MonoTODO]
+	public static System.String Dir (
+		System.String Pathname, 
+		[System.Runtime.InteropServices.Optional] 
+		[System.ComponentModel.DefaultValue(0)] 
+		Microsoft.VisualBasic.FileAttribute Attributes) { 
+		CurrentFileFinder = new FileFinder(Pathname, Attributes);
+		return Dir();
+	}
+
+	[MonoTODO]
+	public static System.String Dir () {
+		string filename = CurrentFileFinder.Next();
+		if (filename == "")
+			CurrentFileFinder = null; // to cause an error next time
+		return filename;
+	}
+	
                 
                 [MonoTODO("Needs testing")]
                 public static void MkDir (System.String Path) 
