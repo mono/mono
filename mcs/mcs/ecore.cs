@@ -791,12 +791,15 @@ namespace Mono.CSharp {
 					return new EmptyCast (expr, target_type);
 				
 				// from any delegate type to System.Delegate
-				if (expr_type.IsSubclassOf (TypeManager.delegate_type) &&
+				if ((expr_type == TypeManager.delegate_type || 
+				     expr_type.IsSubclassOf (TypeManager.delegate_type)) &&
 				    target_type == TypeManager.delegate_type)
 					return new EmptyCast (expr, target_type);
 					
 				// from any array-type or delegate type into System.ICloneable.
-				if (expr_type.IsArray || expr_type.IsSubclassOf (TypeManager.delegate_type))
+				if (expr_type.IsArray ||
+				    expr_type == TypeManager.delegate_type ||
+				    expr_type.IsSubclassOf (TypeManager.delegate_type))
 					if (target_type == TypeManager.icloneable_type)
 						return new EmptyCast (expr, target_type);
 				
@@ -1029,13 +1032,16 @@ namespace Mono.CSharp {
 					return true;
 				
 				// from any delegate type to System.Delegate
-				if (expr_type.IsSubclassOf (TypeManager.delegate_type) &&
+				if ((expr_type == TypeManager.delegate_type ||
+				     expr_type.IsSubclassOf (TypeManager.delegate_type)) &&
 				    target_type == TypeManager.delegate_type)
 					if (target_type.IsAssignableFrom (expr_type))
 						return true;
 					
 				// from any array-type or delegate type into System.ICloneable.
-				if (expr_type.IsArray || expr_type.IsSubclassOf (TypeManager.delegate_type))
+				if (expr_type.IsArray ||
+				    expr_type == TypeManager.delegate_type ||
+				    expr_type.IsSubclassOf (TypeManager.delegate_type))
 					if (target_type == TypeManager.icloneable_type)
 						return true;
 				
@@ -1239,7 +1245,9 @@ namespace Mono.CSharp {
 					return true;
 			}
 			
-			if (target_type.IsSubclassOf (TypeManager.enum_type) && expr is IntLiteral){
+			if ((target_type == TypeManager.enum_type ||
+			     target_type.IsSubclassOf (TypeManager.enum_type)) &&
+			     expr is IntLiteral){
 				IntLiteral i = (IntLiteral) expr;
 
 				if (i.Value == 0)
@@ -1703,7 +1711,9 @@ namespace Mono.CSharp {
 			if (e != null)
 				return e;
 
-			if (target_type.IsSubclassOf (TypeManager.enum_type) && expr is IntLiteral){
+			if ((target_type == TypeManager.enum_type ||
+			     target_type.IsSubclassOf (TypeManager.enum_type)) &&
+			    expr is IntLiteral){
 				IntLiteral i = (IntLiteral) expr;
 
 				if (i.Value == 0)

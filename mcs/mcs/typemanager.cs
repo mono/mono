@@ -1193,7 +1193,7 @@ public class TypeManager {
 		// a TypeBuilder array will return a Type, not a TypeBuilder,
 		// and we can not call FindMembers on this type.
 		//
-		if (t.IsSubclassOf (TypeManager.array_type)) {
+		if (t == TypeManager.array_type || t.IsSubclassOf (TypeManager.array_type)) {
 			used_cache = true;
 			return TypeHandle.ArrayType.MemberCache.FindMembers (
 				mt, bf, name, FilterWithClosure_delegate, null);
@@ -1275,7 +1275,7 @@ public class TypeManager {
 	
 	public static bool IsEnumType (Type t)
 	{
-		if (t.IsSubclassOf (TypeManager.enum_type))
+		if (t == TypeManager.enum_type || t.IsSubclassOf (TypeManager.enum_type))
 			return true;
 		else
 			return false;
