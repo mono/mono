@@ -83,15 +83,9 @@ namespace Mono.CSharp {
 		
 		bool resolve_error;
 
-		// Is non-null if type is AttributeUsageAttribute
-		AttributeUsageAttribute usage_attribute;
+		public AttributeUsageAttribute UsageAttribute;
+		public static AttributeUsageAttribute DefaultUsageAttribute = new AttributeUsageAttribute (AttributeTargets.All);
 
-		public AttributeUsageAttribute UsageAttribute {
-			get {
-				return usage_attribute;
-			}
-		}
-		
 		MethodImplOptions ImplOptions;
 		UnmanagedType     UnmanagedType;
 		CustomAttributeBuilder cb;
@@ -318,7 +312,7 @@ namespace Mono.CSharp {
 			Type oldType = Type;
 			
 			// Sanity check.
-			Type = CheckAttributeType (ec);
+			Type = CheckAttributeType (ec); // TODO: I really don't think we need such expensive double check
 
 			if (oldType == null && Type == null)
 				return null;
@@ -399,7 +393,7 @@ namespace Mono.CSharp {
 							Report.Error (591, Location, "Invalid value for argument to 'System.AttributeUsage' attribute");
 							return null;
 						}
-						usage_attribute = new AttributeUsageAttribute ((AttributeTargets)val);
+						UsageAttribute = new AttributeUsageAttribute ((AttributeTargets)val);
 					} else if (MethodImplAttr) {
 						this.ImplOptions = (MethodImplOptions) val;
 					} else if (GuidAttr){
@@ -496,13 +490,13 @@ namespace Mono.CSharp {
 
 					object value;
 					if (!GetAttributeArgumentExpression (e, Location, pi.PropertyType, out value))
-								return null;
-						
-						if (usage_attribute != null) {
-							if (member_name == "AllowMultiple")
-							usage_attribute.AllowMultiple = (bool) value;
+						return null;
+
+					if (UsageAttribute != null) {
+						if (member_name == "AllowMultiple")
+							UsageAttribute.AllowMultiple = (bool) value;
 							if (member_name == "Inherited")
-							usage_attribute.Inherited = (bool) value;
+							UsageAttribute.Inherited = (bool) value;
 					}
 					
 					prop_values.Add (value);
@@ -635,6 +629,10 @@ namespace Mono.CSharp {
 				return null;
 			}
 			
+			if (!usage_attr) {
+				UsageAttribute = DefaultUsageAttribute;
+			}
+
 			resolve_error = false;
 			return cb;
 		}
@@ -645,7 +643,7 @@ namespace Mono.CSharp {
 		public string GetValidTargets ()
 		{
 			StringBuilder sb = new StringBuilder ();
-			AttributeTargets targets = GetAttributeUsage ().ValidOn;
+			AttributeTargets targets = UsageAttribute.ValidOn;
 
 			if ((targets & AttributeTargets.Assembly) != 0)
 				sb.Append ("'assembly' ");
@@ -696,7 +694,7 @@ namespace Mono.CSharp {
 		/// <summary>
 		/// Returns AttributeUsage attribute for this type
 		/// </summary>
-		public AttributeUsageAttribute GetAttributeUsage ()
+		public AttributeUsageAttribute GetAttributeUsage (EmitContext ec)
 		{
 			AttributeUsageAttribute ua = usage_attr_cache [Type] as AttributeUsageAttribute;
 			if (ua != null)
@@ -710,8 +708,10 @@ namespace Mono.CSharp {
 				usage_attr_cache.Add (Type, ua);
 				return ua;
 			}
-		
-			return attr_class.AttributeUsage;
+
+			ua = attr_class.ResolveAttributeUsage (ec);
+			usage_attr_cache.Add (Type, ua);
+			return ua;
 		}
 
 		/// <summary>
@@ -987,7 +987,7 @@ namespace Mono.CSharp {
 			if (cb == null)
 				return;
 
-			AttributeUsageAttribute usage_attr = GetAttributeUsage ();
+			AttributeUsageAttribute usage_attr = GetAttributeUsage (ec);
 			if ((usage_attr.ValidOn & Target) == 0) {
 				Report.Error (592, Location, "Attribute '{0}' is not valid on this declaration type. It is valid on {1} declarations only.", Name, GetValidTargets ());
 				return;

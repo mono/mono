@@ -1,3 +1,23 @@
+2005-02-21  Marek Safar  <marek.safar@seznam.cz>
+
+	Fix #69949
+	* attribute.cs (Attribute.GetAttributeUsage): Add EmitContext
+	argument. Call ResolveAttributeUsage for unresolved.
+	when types doesn't match ctor arguments.
+	
+	* class.cs (DoDefineMembers.TypeContainer): Removed safety check
+	for nested attribute classes.
+	(Class.attribute_usage): Removed.
+	(Class.ResolveAttributeUsage): Resolves AttributeUsageAttribute
+	for attribute class.
+	
+	* namespace.cs (UsingEntry.Resolve): Don't destroy NamespaceEntry.
+	
+	* rootcontext.cs (RegisterAttribute): Removed, attributes are
+	now normal types.
+	(attribute_types): Removed.
+	(EmitCode): Global attributes are emited as the latest.
+
 2005-02-18  Marek Safar  <marek.safar@seznam.cz>
 
 	* class.cs (EmitFieldInitializers): Don't emit field initializer

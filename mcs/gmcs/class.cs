@@ -1376,9 +1376,7 @@ namespace Mono.CSharp {
 			//
 			ec.ContainerType = TypeBuilder;
 
-			if ((base_type != null) && base_type.IsAttribute) {
-				RootContext.RegisterAttribute (this);
-			} else if (!(this is Iterator))
+			if (!(this is Iterator))
 				RootContext.RegisterOrder (this); 
 
 			if (!DefineNestedTypes ()) {
@@ -1482,25 +1480,17 @@ namespace Mono.CSharp {
  				if ((ModFlags & Modifiers.NEW) != 0)
  					Error_KeywordNotAllowed (Location);
  			} else {
- 				// HACK: missing implemenation
- 				// This is not fully functional. Better way how to handle this is to have recursive definition of containers
- 				// instead of flat as we have now.
- 				// Now we are not able to check inner attribute class because its parent had not been defined.
-
- 				// TODO: remove this if
- 				if (Parent.MemberCache != null) {
- 					MemberInfo conflict_symbol = Parent.MemberCache.FindMemberWithSameName (Basename, false, TypeBuilder);
- 					if (conflict_symbol == null) {
- 						if ((RootContext.WarningLevel >= 4) && ((ModFlags & Modifiers.NEW) != 0))
- 							Report.Warning (109, Location, "The member '{0}' does not hide an inherited member. The new keyword is not required", GetSignatureForError ());
- 					} else {
- 						if ((ModFlags & Modifiers.NEW) == 0) {
- 							Report.SymbolRelatedToPreviousError (conflict_symbol);
- 							Report.Warning (108, Location, "The keyword new is required on '{0}' because it hides inherited member", GetSignatureForError ());
-						}
-					}
-				}
-			}
+ 				MemberInfo conflict_symbol = Parent.MemberCache.FindMemberWithSameName (Basename, false, TypeBuilder);
+ 				if (conflict_symbol == null) {
+ 					if ((RootContext.WarningLevel >= 4) && ((ModFlags & Modifiers.NEW) != 0))
+ 						Report.Warning (109, Location, "The member '{0}' does not hide an inherited member. The new keyword is not required", GetSignatureForError ());
+ 				} else {
+ 					if ((ModFlags & Modifiers.NEW) == 0) {
+ 						Report.SymbolRelatedToPreviousError (conflict_symbol);
+ 						Report.Warning (108, Location, "The keyword new is required on '{0}' because it hides inherited member", GetSignatureForError ());
+ 					}
+ 				}
+  			}
 
 			DefineContainerMembers (constants);
 			DefineContainerMembers (fields);
@@ -3057,15 +3047,11 @@ namespace Mono.CSharp {
 			Modifiers.SEALED |
 			Modifiers.UNSAFE;
 
-		// Information in the case we are an attribute type
-		AttributeUsageAttribute attribute_usage;
-
 		public Class (NamespaceEntry ns, TypeContainer parent, MemberName name, int mod,
 			      Attributes attrs, Location l)
 			: base (ns, parent, name, attrs, Kind.Class, l)
 		{
 			this.ModFlags = mod;
-			attribute_usage = new AttributeUsageAttribute (AttributeTargets.All);
 		}
 
 		virtual protected int AllowedModifiersProp {
@@ -3076,22 +3062,37 @@ namespace Mono.CSharp {
 
 		public override void ApplyAttributeBuilder(Attribute a, CustomAttributeBuilder cb)
 		{
-			if (a.UsageAttribute != null) {
+			if (a.Type == TypeManager.attribute_usage_type) {
 				if (ptype != TypeManager.attribute_type &&
 				    !ptype.IsSubclassOf (TypeManager.attribute_type) &&
 				    TypeBuilder.FullName != "System.Attribute") {
 					Report.Error (641, a.Location, "Attribute '{0}' is only valid on classes derived from System.Attribute", a.Name);
 				}
-				attribute_usage = a.UsageAttribute;
 			}
 
 			base.ApplyAttributeBuilder (a, cb);
 		}
 
-		public AttributeUsageAttribute AttributeUsage {
-			get {
-				return attribute_usage;
-			}
+		/// <summary>
+		/// Resolves AttributeUsageAttribute for attribute class
+		/// </summary>
+		public AttributeUsageAttribute ResolveAttributeUsage (EmitContext ec)
+		{
+			if (OptAttributes == null)
+				return Attribute.DefaultUsageAttribute;
+
+			Attribute a = OptAttributes.Search (TypeManager.attribute_usage_type, ec);
+			if (a == null)
+				return Attribute.DefaultUsageAttribute;
+
+			// Because our namespace model is so weird.
+			// When GlobalAttribute is resolved and it has AttributeUsage attribute
+			// we need to switch from global namespace to local
+			DeclSpace old_ds = ec.DeclSpace;
+			ec.DeclSpace = this;
+			a.Resolve (ec);
+			ec.DeclSpace = old_ds;
+			return a.UsageAttribute;
 		}
 
 		public const TypeAttributes DefaultTypeAttributes =
