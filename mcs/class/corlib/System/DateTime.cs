@@ -552,7 +552,7 @@ namespace System
 				fp = CultureInfo.CurrentCulture;
 			DateTimeFormatInfo dfi = DateTimeFormatInfo.GetInstance (fp);
 			// FIXME: It should be all the formats supported by dfi.
-			string [] formats = DateTime.formats;//dfi.GetAllDateTimePatterns ();
+			string [] formats = dfi.GetAllDateTimePatterns ();
 
 			if (ParseExact (s, formats, dfi, styles, out result))
 				return result;
@@ -568,7 +568,7 @@ namespace System
 
 			fp = CultureInfo.InvariantCulture;
 			dfi = DateTimeFormatInfo.GetInstance (fp);
-//			formats = dfi.GetAllDateTimePatterns ();
+			formats = DateTime.formats;//dfi.GetAllDateTimePatterns ();
 
 			if (ParseExact (s, formats, dfi, styles, out result))
 				return result;
@@ -976,12 +976,14 @@ namespace System
 						num = 2;
 					}
 					break;
-				// This should be part of UTCpattern string and
-				// thus should not be considered here. Note that
-				// 'Z' is not defined as a pattern character.
-//				case 'Z':
-//					useutc = true;
-//					break;
+				// LAMESPEC: This should be part of UTCpattern
+				// string and thus should not be considered here.
+				// Note that 'Z' is not defined as a pattern
+				// character. Keep it for certificate
+				// verification  right now.
+				case 'Z':
+					useutc = true;
+					break;
 				case ':':
 					if (!_ParseString (s, 0, dfi.TimeSeparator, out num_parsed))
 						return false;
