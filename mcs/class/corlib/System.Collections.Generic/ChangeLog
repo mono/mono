@@ -1,3 +1,7 @@
+2004-12-26  Ben Maurer  <bmaurer@ximian.com>
+
+	* Queue.cs: New, non-linked-list based impl.
+
 2004-11-29  Ben Maurer  <bmaurer@ximian.com>
 
 	* Comparer.cs: Update this class.

@@ -1,11 +1,11 @@
-// -*- Mode: csharp; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*-
 //
 // System.Collections.Generic.Queue
 //
 // Author:
 //    Martin Baulig (martin@ximian.com)
+//    Ben Maurer (bmaurer@ximian.com)
 //
-// (C) 2003 Novell, Inc.
+// (C) 2003, 2004 Novell, Inc.
 //
 
 //
@@ -39,193 +39,272 @@ namespace System.Collections.Generic
 {
 	[CLSCompliant(false)]
 	[ComVisible(false)]
-	public class Queue<T> : ICollection<T>, IEnumerable<T>,
-		ICollection, IEnumerable
+	public class Queue<T> : ICollection<T>, ICollection
 	{
-		int count;
-		protected int modified;
-		protected Node head;
-		Node tail;
-
+		T [] data;
+		int head;
+		int tail;
+		int size;
+		int version;
+		
+		public Queue ()
+		{
+		}
+		
+		public Queue (int count)
+		{
+			if (count < 0)
+				throw new ArgumentOutOfRangeException ("count");
+			
+			data = new T [count];
+		}
+		
+		public Queue (IEnumerable <T> collection)
+		{
+			if (collection == null)
+				throw new ArgumentNullException ("collection");
+			
+				foreach (T t in collection)
+					Enqueue (t);
+		}
+		
 		public void Clear ()
 		{
-			head = tail = null;
-			count = 0;
-			modified++;
+			Array.Clear (data, 0, data.Length);
 		}
-
-		public void Enqueue (T item)
-		{
-			tail = new Node (tail, item);
-			if (head == null)
-				head = tail;
-			count++;
-			modified++;
-		}
-
-		public T Peek ()
-		{
-			if (head == null)
-				throw new ArgumentException ();
-
-			return head.Item;
-		}
-
-		public T Dequeue ()
-		{
-			if (head == null)
-				throw new ArgumentException ();
-
-			T retval = head.Item;
-			head = head.Next;
-			if (head == null)
-				tail = null;
-			count--;
-			modified++;
-			return retval;
-		}
-
+		
 		public bool Contains (T item)
 		{
-			for (Node node = head; node != null; node = node.Next)
-				if (node.Item == item)
-					return true;
-
+			if (item == null) {
+				foreach (T t in this)
+					if (t == null)
+						return true;
+			} else {
+				foreach (T t in this)
+					if (item.Equals (t))
+						return true;
+			}
+			
 			return false;
 		}
-
-		public virtual void CopyTo (T[] array, int start)
+		
+		public void CopyTo (T [] array, int idx)
 		{
-			// re-ordered to avoid possible integer overflow
-			if (start >= array.Length - count)
+			if (array == null)
+				throw new ArgumentNullException ();
+			
+			if ((uint) idx < (uint) array.Length)
+				throw new ArgumentOutOfRangeException ();
+			
+			if (array.Length - idx < size)
+				throw new ArgumentOutOfRangeException ();
+			
+			int contents_length = data.Length;
+			int length_from_head = contents_length - head;
+			
+			Array.Copy (data, head, array, idx, Math.Min (size, length_from_head));
+			if (size > length_from_head)
+				Array.Copy (data, 0, array, 
+					    idx  + length_from_head,
+					    size - length_from_head);
+			
+		}
+		
+		void ICollection.CopyTo (Array array, int idx)
+		{
+			if (array == null)
+				throw new ArgumentNullException ();
+			
+			if ((uint) idx < (uint) array.Length)
+				throw new ArgumentOutOfRangeException ();
+			
+			if (array.Length - idx < size)
+				throw new ArgumentOutOfRangeException ();
+			
+			if (size == 0)
+				return;
+			
+			try {
+				int contents_length = data.Length;
+				int length_from_head = contents_length - head;
+				
+				Array.Copy (data, head, array, idx, Math.Min (size, length_from_head));
+				if (size > length_from_head)
+					Array.Copy (data, 0, array, 
+						    idx  + length_from_head,
+						    size - length_from_head);
+			} catch (ArrayTypeMismatchException) {
 				throw new ArgumentException ();
-
-			for (Node node = head; node != null; node = node.Next)
-				array [start++] = node.Item;
+			}
 		}
-
-		void ICollection.CopyTo (Array array, int start)
+		
+		public T Dequeue ()
 		{
-			// re-ordered to avoid possible integer overflow
-			if (start >= array.Length - count)
-				throw new ArgumentException ();
-
-			for (Node node = head; node != null; node = node.Next)
-				array.SetValue (node.Item, start++);
+			T ret = Peek ();
+			
+			// clear stuff out to make the GC happy
+			data [head] = default (T);
+			
+			if (++head == data.Length)
+				head = 0;
+			size --;
+			version ++;
+			
+			return ret;
 		}
-
-		public T[] ToArray ()
+		
+		public T Peek ()
 		{
-			int pos = 0;
-			T[] retval = new T [count];
-			for (Node node = head; node != null; node = node.Next)
-				retval [pos++] = node.Item;
-
-			return retval;
+			if (size == 0)
+				throw new InvalidOperationException ();
+			
+			return data [head];
 		}
-
+		
+		public void Enqueue (T item)
+		{
+			if (data == null || size == data.Length)
+				SetCapacity (Math.Max (size * 2, 4));
+			
+			data [tail] = item;
+			
+			if (++tail == data.Length)
+				tail = 0;
+			
+			size ++;
+			version ++;
+		}
+		
+		public T [] ToArray ()
+		{
+			T [] t = new T [size];
+			CopyTo (t, 0);
+			return t;
+		}
+		
 		public void TrimToSize ()
-		{ }
-
-		public int Count {
-			get { return count; }
+		{
+			SetCapacity (size);
 		}
-
-		public bool IsSynchronized {
+		
+		void SetCapacity (int new_size)
+		{
+			if (data != null && new_size == data.Length)
+				return;
+			
+			if (new_size < size)
+				throw new InvalidOperationException ("shouldnt happen");
+			
+			T [] new_data = new T [new_size];
+			if (size > 0)
+				CopyTo (new_data, 0);
+			
+			data = new_data;
+			tail = head = 0;
+			version ++;
+		}
+		
+		public int Count {
+			get { return size; }
+		}
+		
+		
+		bool ICollection <T>.IsReadOnly {
 			get { return false; }
 		}
-
-		public object SyncRoot {
+		
+		bool ICollection.IsSynchronized {
+			get { return false; }
+		}
+		
+		object ICollection.SyncRoot {
 			get { return this; }
 		}
+		
+		void ICollection <T>.Add (T t)
+		{
+			Enqueue (t);
+		}
+		
+		bool ICollection <T>.Remove (T t)
+		{
+			throw new InvalidOperationException ("");
+		}
+		
 
-		public bool IsReadOnly {
-			get { return false; }
+		public Enumerator <T> GetEnumerator ()
+		{
+			return new Enumerator <T> (this);
 		}
 
-		public void Add (T item)
+		IEnumerator <T> IEnumerable<T>.GetEnumerator ()
 		{
-			Enqueue (item);
-		}
-
-		public bool Remove (T item)
-		{
-			throw new NotImplementedException ();
-		}
-
-		public IEnumerator<T> GetEnumerator ()
-		{
-			return new Enumerator (this);
+			return GetEnumerator ();
 		}
 
 		IEnumerator IEnumerable.GetEnumerator ()
 		{
-			return new Enumerator (this);
+			return GetEnumerator ();
 		}
-
-		protected sealed class Node
-		{
-			public readonly T Item;
-			public readonly Node Next;
-
-			public Node (Node next, T item)
+		
+		public struct Enumerator <T> : IEnumerator <T>, IEnumerator, IDisposable {
+			const int NOT_STARTED = -2;
+			
+			// this MUST be -1, because we depend on it in move next.
+			// we just decr the size, so, 0 - 1 == FINISHED
+			const int FINISHED = -1;
+			
+			Queue <T> q;
+			int idx;
+			int ver;
+			
+			internal Enumerator (Queue <T> q)
 			{
-				this.Next = next;
-				this.Item = item;
+				this.q = q;
+				idx = NOT_STARTED;
+				ver = q.version;
 			}
-		}
-
-		protected class Enumerator : IEnumerator<T>, IEnumerator
-		{
-			Queue<T> queue;
-			int modified;
-			Node current;
-
-			public Enumerator (Queue<T> queue)
-			{
-				this.queue = queue;
-				this.modified = queue.modified;
-				this.current = queue.head;
-			}
-
-			public T Current {
-				get {
-					if (queue.modified != modified)
-						throw new InvalidOperationException ();
-					if (current == null)
-						throw new ArgumentException ();
-					return current.Item;
-				}
-			}
-
-			object IEnumerator.Current {
-				get {
-					return Current;
-				}
-			}
-
-			public bool MoveNext ()
-			{
-				if (queue.modified != modified)
-					throw new InvalidOperationException ();
-				if (current == null)
-					throw new ArgumentException ();
-
-				current = current.Next;
-				return current != null;
-			}
-
-			public void Reset () {
-				if (queue.modified != modified)
-					throw new InvalidOperationException();
-
-				current = queue.head;
-			}
-
+			
+			// for some fucked up reason, MSFT added a useless dispose to this class
+			// It means that in foreach, we must still do a try/finally. Broken, very
+			// broken.
 			public void Dispose ()
 			{
-				modified = -1;
+				idx = NOT_STARTED;
 			}
+			
+			public bool MoveNext ()
+			{
+				if (ver != q.version)
+					throw new InvalidOperationException ();
+				
+				if (idx == NOT_STARTED)
+					idx = q.size;
+				
+				return idx != FINISHED && -- idx != FINISHED;
+			}
+			
+			public T Current {
+				get {
+					if (idx < 0)
+						throw new InvalidOperationException ();
+					
+					return q.data [(q.size - 1 - idx + q.head) % q.data.Length];
+				}
+			}
+			
+			void IEnumerator.Reset ()
+			{
+				if (ver != q.version)
+					throw new InvalidOperationException ();
+				
+				idx = NOT_STARTED;
+			}
+			
+			object IEnumerator.Current {
+				get { return Current; }
+			}
+			
 		}
 	}
 }
