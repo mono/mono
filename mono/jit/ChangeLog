@@ -1,4 +1,10 @@
 
+Sun Feb 10 12:54:05 CET 2002 Paolo Molaro <lupus@ximian.com>
+
+	* emit-x86.c: make x86_magic_trampoline() handle call instructions
+	with an imm8 displacement. x86.brg not yet changed to take advantage
+	of it.
+
 Sun Feb 10 11:47:30 CET 2002 Paolo Molaro <lupus@ximian.com>
 
 	* jit.c: use opcode info from libmetadata to do flow analysis
