@@ -826,8 +826,7 @@ namespace Mono.CSharp {
 
 				if (!(eclass == ExprClass.Variable || eclass == ExprClass.PropertyAccess ||
 				      eclass == ExprClass.Value || eclass == ExprClass.IndexerAccess)) {
-					Expression.Error118 (loc, expr, "value, variable, property " +
-							     "or indexer access ");
+					expr.Error118 ("value, variable, property or indexer access ");
 					return false;
 				}
 
@@ -3592,7 +3591,7 @@ namespace Mono.CSharp {
 					// and T* is implicitly convertible to the
 					// pointer type given in the fixed statement.
 					//
-					ArrayPtr array_ptr = new ArrayPtr (e);
+					ArrayPtr array_ptr = new ArrayPtr (e, loc);
 					
 					Expression converted = Expression.ConvertImplicitRequired (
 						ec, array_ptr, vi.VariableType, loc);
@@ -3683,7 +3682,7 @@ namespace Mono.CSharp {
 					data [i].expr.Emit (ec);
 					ig.Emit (OpCodes.Stloc, pinned_string);
 
-					Expression sptr = new StringPtr (pinned_string);
+					Expression sptr = new StringPtr (pinned_string, loc);
 					Expression converted = Expression.ConvertImplicitRequired (
 						ec, sptr, vi.VariableType, loc);
 					

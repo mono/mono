@@ -63,6 +63,7 @@ namespace Mono.CSharp {
 		{
 			type = t;
 			eclass = ExprClass.Value;
+			loc = Location.Null;
 			builder = ec.GetTemporaryStorage (t);
 		}
 
@@ -76,6 +77,7 @@ namespace Mono.CSharp {
 		{
 			type = t;
 			eclass = ExprClass.Value;
+			loc = Location.Null;
 			builder = b;
 		}
 		
@@ -110,13 +112,12 @@ namespace Mono.CSharp {
 		protected Assign embedded = null;
 		protected bool is_embedded = false;
 		protected bool must_free_temp = false;
-		public Location l;
 
 		public Assign (Expression target, Expression source, Location l)
 		{
 			this.target = target;
 			this.source = this.real_source = source;
-			this.l = l;
+			this.loc = l;
 		}
 
 		protected Assign (Assign embedded, Location l)
@@ -159,7 +160,7 @@ namespace Mono.CSharp {
 		{
 			// Create an embedded assignment if our source is an assignment.
 			if (source is Assign)
-				source = embedded = new Assign ((Assign) source, l);
+				source = embedded = new Assign ((Assign) source, loc);
 
 			real_source = source = source.Resolve (ec);
 			if (source == null)
@@ -215,7 +216,7 @@ namespace Mono.CSharp {
 				PropertyExpr property_assign = (PropertyExpr) target;
 
 				if (source_type != target_type){
-					source = ConvertImplicitRequired (ec, source, target_type, l);
+					source = ConvertImplicitRequired (ec, source, target_type, loc);
 					if (source == null)
 						return null;
 				}
@@ -241,7 +242,7 @@ namespace Mono.CSharp {
 
 				Expression ml = MemberLookup (
 					ec, ec.ContainerType, ei.Name,
-					MemberTypes.Event, AllBindingFlags, l);
+					MemberTypes.Event, AllBindingFlags, loc);
 
 				if (ml == null) {
 				        //
@@ -256,13 +257,13 @@ namespace Mono.CSharp {
 					//
 					
 					if (!(source is Binary)) {
-						error70 (ei, l);
+						error70 (ei, loc);
 						return null;
 					} else {
 						tmp = ((Binary) source);
 						if (tmp.Oper != Binary.Operator.Addition &&
 						    tmp.Oper != Binary.Operator.Subtraction) {
-							error70 (ei, l);
+							error70 (ei, loc);
 							return null;
 						}
 					}
@@ -277,14 +278,14 @@ namespace Mono.CSharp {
 			}
 
 			if (target.eclass != ExprClass.Variable && target.eclass != ExprClass.EventAccess){
-				Report.Error (131, l,
+				Report.Error (131, loc,
 					      "Left hand of an assignment must be a variable, " +
 					      "a property or an indexer");
 				return null;
 			}
 
 			if ((source.eclass == ExprClass.Type) && (source is TypeExpr)) {
-				Expression.Error118 (l, source, "variable or value");
+				source.Error118 ("variable or value");
 				return null;
 			} else if (source is MethodGroupExpr){
 				((MethodGroupExpr) source).ReportUsageError ();
@@ -310,9 +311,9 @@ namespace Mono.CSharp {
 					//    target_type
 					//
 					
-					source = ConvertExplicit (ec, source, target_type, l);
+					source = ConvertExplicit (ec, source, target_type, loc);
 					if (source == null){
-						Error_CannotConvertImplicit (l, source_type, target_type);
+						Error_CannotConvertImplicit (loc, source_type, target_type);
 						return null;
 					}
 				
@@ -323,12 +324,12 @@ namespace Mono.CSharp {
 					if (StandardConversionExists (a.original_source, target_type))
 						return this;
 
-					Error_CannotConvertImplicit (l, a.original_source.Type, target_type);
+					Error_CannotConvertImplicit (loc, a.original_source.Type, target_type);
 					return null;
 				}
 			}
 			
-			source = ConvertImplicitRequired (ec, source, target_type, l);
+			source = ConvertImplicitRequired (ec, source, target_type, loc);
 			if (source == null)
 				return null;
 
@@ -483,7 +484,7 @@ namespace Mono.CSharp {
 			// into a tree, to guarantee that we do not have side
 			// effects.
 			//
-			source = new Binary (op, target, original_source, l);
+			source = new Binary (op, target, original_source, loc);
 			return base.DoResolve (ec);
 		}
 	}

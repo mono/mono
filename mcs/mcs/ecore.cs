@@ -69,7 +69,8 @@ namespace Mono.CSharp {
 	/// </remarks>
 	public abstract class Expression {
 		public ExprClass eclass;
-		protected Type      type;
+		protected Type type;
+		protected Location loc;
 		
 		public Type Type {
 			get {
@@ -81,25 +82,38 @@ namespace Mono.CSharp {
 			}
 		}
 
+		public Location Location {
+			get {
+				return loc;
+			}
+		}
+
 		/// <summary>
 		///   Utility wrapper routine for Error, just to beautify the code
 		/// </summary>
-		static protected void Error (int error, string s)
+		protected void Error (int error, string s)
 		{
-			Report.Error (error, s);
+			if (Location.IsNull (loc))
+				Report.Error (error, loc, s);
+			else
+				Report.Error (error, s);
 		}
 
-		static protected void Error (int error, Location loc, string s)
-		{
-			Report.Error (error, loc, s);
-		}
-		
 		/// <summary>
 		///   Utility wrapper routine for Warning, just to beautify the code
 		/// </summary>
-		static protected void Warning (int warning, string s)
+		protected void Warning (int warning, string s)
 		{
-			Report.Warning (warning, s);
+			if (Location.IsNull (loc))
+				Report.Warning (warning, loc, s);
+			else
+				Report.Warning (warning, s);
+		}
+
+		protected void Warning (int warning, int level, string s)
+		{
+			if (level <= RootContext.WarningLevel)
+				Warning (warning, s);
 		}
 
 		static public void Error_CannotConvertType (Location loc, Type source, Type target)
@@ -161,7 +175,7 @@ namespace Mono.CSharp {
 					SimpleName s = (SimpleName) e;
 
 					Report.Error (
-						      103, s.Location,
+						      103, loc,
 						      "The name `" + s.Name + "' could not be found in `" +
 						      ec.DeclSpace.Name + "'");
 					return null;
@@ -234,7 +248,7 @@ namespace Mono.CSharp {
 					SimpleName s = (SimpleName) e;
 
 					Report.Error (
-						103, s.Location,
+						103, loc,
 						"The name `" + s.Name + "' could not be found in `" +
 						ec.DeclSpace.Name + "'");
 					return null;
@@ -336,7 +350,7 @@ namespace Mono.CSharp {
 			else if (mi is PropertyInfo)
 				return new PropertyExpr ((PropertyInfo) mi, loc);
 		        else if (mi is Type){
-				return new TypeExpr ((System.Type) mi);
+				return new TypeExpr ((System.Type) mi, loc);
 			}
 
 			return null;
@@ -565,7 +579,7 @@ namespace Mono.CSharp {
 
 			args.Add (new Argument (expr, Argument.AType.Expression));
 
-			Expression ne = new New (new TypeExpr (target), args, new Location (-1));
+			Expression ne = new New (new TypeExpr (target, Location.Null), args, Location.Null);
 
 			return ne.Resolve (ec);
 		}
@@ -1418,7 +1432,7 @@ namespace Mono.CSharp {
 				return null;
 
 			Expression e;
-			e =  new UserCast ((MethodInfo) method, source);
+			e =  new UserCast ((MethodInfo) method, source, loc);
 			if (e.Type != target){
 				if (!look_for_explicit)
 					e = ConvertImplicitStandard (ec, e, target, loc);
@@ -1564,7 +1578,7 @@ namespace Mono.CSharp {
 				TypeManager.CSharpName (source) + "' to `" +
 				TypeManager.CSharpName (target) + "'";
 
-			Error (29, loc, msg);
+			Report.Error (29, loc, msg);
 		}
 
 		/// <summary>
@@ -1582,9 +1596,9 @@ namespace Mono.CSharp {
 				return e;
 
 			if (source is DoubleLiteral && target_type == TypeManager.float_type){
-				Error (664, loc,
-				       "Double literal cannot be implicitly converted to " +
-				       "float type, use F suffix to create a float literal");
+				Report.Error (664, loc,
+					      "Double literal cannot be implicitly converted to " +
+					      "float type, use F suffix to create a float literal");
 			}
 			
 			Error_CannotConvertImplicit (loc, source.Type, target_type);
@@ -2153,14 +2167,13 @@ namespace Mono.CSharp {
 		/// <summary>
 		///   Reports that we were expecting `expr' to be of class `expected'
 		/// </summary>
-		public static void Error118 (Location loc, Expression expr, string expected)
+		public void Error118 (string expected)
 		{
 			string kind = "Unknown";
 			
-			if (expr != null)
-				kind = ExprClassName (expr.eclass);
+			kind = ExprClassName (eclass);
 
-			Error (118, loc, "Expression denotes a `" + kind +
+			Error (118, "Expression denotes a `" + kind +
 			       "' where a `" + expected + "' was expected");
 		}
 
@@ -3145,12 +3158,11 @@ namespace Mono.CSharp {
 	/// </remarks>
 	public class SimpleName : Expression {
 		public readonly string Name;
-		public readonly Location Location;
 		
 		public SimpleName (string name, Location l)
 		{
 			Name = name;
-			Location = l;
+			loc = l;
 		}
 
 		public static void Error_ObjectRefRequired (Location l, string name)
@@ -3171,25 +3183,25 @@ namespace Mono.CSharp {
 				FieldInfo fi = ((FieldExpr) e).FieldInfo;
 				
 				if (!fi.IsStatic){
-					Error_ObjectRefRequired (Location, Name);
+					Error_ObjectRefRequired (loc, Name);
 					return null;
 				}
 			} else if (e is MethodGroupExpr){
 				MethodGroupExpr mg = (MethodGroupExpr) e;
 
 				if (!mg.RemoveInstanceMethods ()){
-					Error_ObjectRefRequired (Location, mg.Methods [0].Name);
+					Error_ObjectRefRequired (loc, mg.Methods [0].Name);
 					return null;
 				}
 				return e;
 			} else if (e is PropertyExpr){
 				if (!((PropertyExpr) e).IsStatic){
-					Error_ObjectRefRequired (Location, Name);
+					Error_ObjectRefRequired (loc, Name);
 					return null;
 				}
 			} else if (e is EventExpr) {
 				if (!((EventExpr) e).IsStatic) {
-					Error_ObjectRefRequired (Location, Name);
+					Error_ObjectRefRequired (loc, Name);
 					return null;
 				}
 			}
@@ -3242,7 +3254,7 @@ namespace Mono.CSharp {
 				if (current_block != null && current_block.IsVariableDefined (Name)){
 					LocalVariableReference var;
 					
-					var = new LocalVariableReference (ec.CurrentBlock, Name, Location);
+					var = new LocalVariableReference (ec.CurrentBlock, Name, loc);
 
 					if (right_side != null)
 						return var.ResolveLValue (ec, right_side);
@@ -3264,7 +3276,7 @@ namespace Mono.CSharp {
 					if (lookup_ds.TypeBuilder == null)
 						break;
 
-					e = MemberLookup (ec, lookup_ds.TypeBuilder, Name, Location);
+					e = MemberLookup (ec, lookup_ds.TypeBuilder, Name, loc);
 					if (e != null)
 						break;
 
@@ -3278,7 +3290,7 @@ namespace Mono.CSharp {
 				} while (lookup_ds != null);
 				
 				if (e == null && ec.ContainerType != null)
-					e = MemberLookup (ec, ec.ContainerType, Name, Location);
+					e = MemberLookup (ec, ec.ContainerType, Name, loc);
 			}
 
 			// Continuation of stage 2
@@ -3290,8 +3302,8 @@ namespace Mono.CSharp {
 				Type t;
 				string alias_value;
 
-				if ((t = RootContext.LookupType (ds, Name, true, Location)) != null)
-					return new TypeExpr (t);
+				if ((t = RootContext.LookupType (ds, Name, true, loc)) != null)
+					return new TypeExpr (t, loc);
 				
 				//
 				// Stage 2 part b: Lookup up if we are an alias to a type
@@ -3304,18 +3316,18 @@ namespace Mono.CSharp {
 				alias_value = ec.DeclSpace.LookupAlias (Name);
 				
 				if (Name.IndexOf ('.') == -1 && alias_value != null) {
-					if ((t = RootContext.LookupType (ds, alias_value, true, Location))
+					if ((t = RootContext.LookupType (ds, alias_value, true, loc))
 					    != null)
-						return new TypeExpr (t);
+						return new TypeExpr (t, loc);
 					
 				// we have alias value, but it isn't Type, so try if it's namespace
-					return new SimpleName (alias_value, Location);
+					return new SimpleName (alias_value, loc);
 				}
 				
 				if (ec.ResolvingTypeTree){
 					Type dt = ec.DeclSpace.FindType (Name);
 					if (dt != null)
-						return new TypeExpr (dt);
+						return new TypeExpr (dt, loc);
 				}
 				
 				// No match, maybe our parent can compose us
@@ -3337,12 +3349,12 @@ namespace Mono.CSharp {
 				FieldInfo fi = fe.FieldInfo;
 
 				if (fi.FieldType.IsPointer && !ec.InUnsafe){
-					UnsafeError (Location);
+					UnsafeError (loc);
 				}
 				
 				if (ec.IsStatic){
 					if (!allow_static && !fi.IsStatic){
-						Error_ObjectRefRequired (Location, Name);
+						Error_ObjectRefRequired (loc, Name);
 						return null;
 					}
 				} else {
@@ -3379,7 +3391,7 @@ namespace Mono.CSharp {
 					if (decl_type.IsSubclassOf (TypeManager.enum_type)) {
 						Expression enum_member = MemberLookup (
 							ec, decl_type, "value__", MemberTypes.Field,
-							AllBindingFlags, Location); 
+							AllBindingFlags, loc); 
 
 						Enum en = TypeManager.LookupEnum (decl_type);
 
@@ -3426,7 +3438,7 @@ namespace Mono.CSharp {
 
 				Expression ml = MemberLookup (
 					ec, ec.ContainerType, ee.EventInfo.Name,
-					MemberTypes.Event, AllBindingFlags | BindingFlags.DeclaredOnly, Location);
+					MemberTypes.Event, AllBindingFlags | BindingFlags.DeclaredOnly, loc);
 
 				if (ml != null) {
 					MemberInfo mi = GetFieldFromEvent ((EventExpr) ml);
@@ -3437,14 +3449,14 @@ namespace Mono.CSharp {
 						// accessors and private field etc so there's no need
 						// to transform ourselves : we should instead flag an error
 						//
-						Assign.error70 (ee.EventInfo, Location);
+						Assign.error70 (ee.EventInfo, loc);
 						return null;
 					}
 
-					ml = ExprClassFromMemberInfo (ec, mi, Location);
+					ml = ExprClassFromMemberInfo (ec, mi, loc);
 					
 					if (ml == null) {
-						Report.Error (-200, Location, "Internal error!!");
+						Report.Error (-200, loc, "Internal error!!");
 						return null;
 					}
 
@@ -3459,7 +3471,7 @@ namespace Mono.CSharp {
 						instance_expr = instance_expr.Resolve (ec);
 					} 
 					
-					return MemberAccess.ResolveMemberAccess (ec, ml, instance_expr, Location, null);
+					return MemberAccess.ResolveMemberAccess (ec, ml, instance_expr, loc, null);
 				}
 			}
 				
@@ -3482,7 +3494,7 @@ namespace Mono.CSharp {
 			// find the name as a namespace
 			//
 
-			Error (103, Location, "The name `" + Name +
+			Error (103, "The name `" + Name +
 			       "' does not exist in the class `" +
 			       ec.DeclSpace.Name + "'");
 		}
@@ -3497,10 +3509,11 @@ namespace Mono.CSharp {
 	///   Fully resolved expression that evaluates to a type
 	/// </summary>
 	public class TypeExpr : Expression {
-		public TypeExpr (Type t)
+		public TypeExpr (Type t, Location l)
 		{
 			Type = t;
 			eclass = ExprClass.Type;
+			loc = l;
 		}
 
 		override public Expression DoResolve (EmitContext ec)
@@ -3522,7 +3535,7 @@ namespace Mono.CSharp {
 	public class TypeExpression : TypeExpr {
 		string name;
 		
-		public TypeExpression (string name) : base (null)
+		public TypeExpression (string name) : base (null, Location.Null)
 		{
 			this.name = name;
 		}
@@ -3552,7 +3565,6 @@ namespace Mono.CSharp {
 	/// </summary>
 	public class MethodGroupExpr : Expression {
 		public MethodBase [] Methods;
-		Location loc;
 		Expression instance_expression = null;
 		
 		public MethodGroupExpr (MemberInfo [] mi, Location l)
@@ -3656,7 +3668,6 @@ namespace Mono.CSharp {
 	public class FieldExpr : Expression, IAssignMethod, IMemoryLocation {
 		public readonly FieldInfo FieldInfo;
 		public Expression InstanceExpression;
-		Location loc;
 		
 		public FieldExpr (FieldInfo fi, Location l)
 		{
@@ -3874,7 +3885,6 @@ namespace Mono.CSharp {
 		public readonly bool IsStatic;
 		public bool IsBase;
 		MethodInfo [] Accessors;
-		Location loc;
 		
 		Expression instance_expr;
 		
@@ -3987,7 +3997,6 @@ namespace Mono.CSharp {
 	/// </summary>
 	public class EventExpr : Expression {
 		public readonly EventInfo EventInfo;
-		Location loc;
 		public Expression InstanceExpression;
 
 		public readonly bool IsStatic;

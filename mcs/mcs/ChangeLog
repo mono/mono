@@ -1,3 +1,24 @@
+2002-08-06  Martin Baulig  <martin@gnome.org>
+
+	* ecore.cs (Expression.loc): Moved the location here instead of
+	duplicating it in all derived classes.
+	(Expression.Location): New public property.
+	(Expression.Error, Expression.Warning): Made them non-static and
+	removed the location argument.
+	(Expression.Warning): Added overloaded version which takes an
+	`int level' argument.
+	(Expression.Error118): Make this non-static and removed the
+	expression and location arguments.
+	(TypeExpr): Added location argument to the constructor.
+
+	* expression.cs (StaticCallExpr): Added location argument to
+	the constructor.
+	(Indirection, PointerArithmetic): Likewise.
+	(CheckedExpr, UnCheckedExpr): Likewise.
+	(ArrayAccess, IndexerAccess, UserCast, ArrayPtr): Likewise.
+	(StringPtr): Likewise.
+
+
 2002-08-05  Martin Baulig  <martin@gnome.org>
 
 	* expression.cs (BaseAccess.DoResolve): Actually report errors.

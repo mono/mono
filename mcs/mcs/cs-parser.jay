@@ -2221,14 +2221,14 @@ sizeof_expression
 checked_expression
 	: CHECKED OPEN_PARENS expression CLOSE_PARENS
 	  {
-		$$ = new CheckedExpr ((Expression) $3);
+		$$ = new CheckedExpr ((Expression) $3, lexer.Location);
 	  }
 	;
 
 unchecked_expression
 	: UNCHECKED OPEN_PARENS expression CLOSE_PARENS
 	  {
-		$$ = new UnCheckedExpr ((Expression) $3);
+		$$ = new UnCheckedExpr ((Expression) $3, lexer.Location);
 	  }
 	;
 

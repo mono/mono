@@ -530,51 +530,49 @@ namespace Mono.CSharp {
 		MethodBase delegate_method;
 		Expression delegate_instance_expr;
 
-		Location Location;
-		
 		public NewDelegate (Type type, ArrayList Arguments, Location loc)
 		{
 			this.type = type;
 			this.Arguments = Arguments;
-			this.Location  = loc; 
+			this.loc  = loc; 
 		}
 
 		public override Expression DoResolve (EmitContext ec)
 		{
 			if (Arguments == null) {
-				Report.Error (-11, Location,
+				Report.Error (-11, loc,
 					      "Delegate creation expression takes only one argument");
 				return null;
 			}
 
 			if (Arguments.Count != 1) {
-				Report.Error (-11, Location,
+				Report.Error (-11, loc,
 					      "Delegate creation expression takes only one argument");
 				return null;
 			}
 
 			Expression ml = Expression.MemberLookup (
-				ec, type, ".ctor", Location);
+				ec, type, ".ctor", loc);
 
 			if (!(ml is MethodGroupExpr)) {
-				Report.Error (-100, Location, "Internal error : Could not find delegate constructor!");
+				Report.Error (-100, loc, "Internal error : Could not find delegate constructor!");
 				return null;
 			}
 
 			constructor_method = ((MethodGroupExpr) ml).Methods [0];
 			Argument a = (Argument) Arguments [0];
 			
-			if (!a.Resolve (ec, Location))
+			if (!a.Resolve (ec, loc))
 				return null;
 			
 			Expression e = a.Expr;
 
 			Expression invoke_method = Expression.MemberLookup (
 				ec, type, "Invoke", MemberTypes.Method,
-				Expression.AllBindingFlags, Location);
+				Expression.AllBindingFlags, loc);
 
 			if (invoke_method == null) {
-				Report.Error (-200, Location, "Internal error ! COuld not find Invoke method!");
+				Report.Error (-200, loc, "Internal error ! COuld not find Invoke method!");
 				return null;
 			}
 
@@ -582,7 +580,7 @@ namespace Mono.CSharp {
 				MethodGroupExpr mg = (MethodGroupExpr) e;
 
 				foreach (MethodInfo mi in mg.Methods){
-					delegate_method  = Delegate.VerifyMethod (ec, type, mi, Location);
+					delegate_method  = Delegate.VerifyMethod (ec, type, mi, loc);
 
 					if (delegate_method != null)
 						break;
@@ -599,7 +597,7 @@ namespace Mono.CSharp {
 					ParameterData param = Invocation.GetParameterData (dm);
 					string delegate_desc = Delegate.FullDelegateDesc (type, dm, param);
 
-					Report.Error (123, Location, "Method '" + method_desc + "' does not " +
+					Report.Error (123, loc, "Method '" + method_desc + "' does not " +
 						      "match delegate '" + delegate_desc + "'");
 
 					return null;
@@ -625,7 +623,7 @@ namespace Mono.CSharp {
 			Type e_type = e.Type;
 
 			if (!TypeManager.IsDelegateType (e_type)) {
-				Report.Error (-12, Location, "Cannot create a delegate from something " +
+				Report.Error (-12, loc, "Cannot create a delegate from something " +
 					      "not a delegate or a method.");
 				return null;
 			}
@@ -633,8 +631,8 @@ namespace Mono.CSharp {
 			// This is what MS' compiler reports. We could always choose
 			// to be more verbose and actually give delegate-level specifics
 			
-			if (!Delegate.VerifyDelegate (ec, type, e_type, Location)) {
-				Report.Error (29, Location, "Cannot implicitly convert type '" + e_type + "' " +
+			if (!Delegate.VerifyDelegate (ec, type, e_type, loc)) {
+				Report.Error (29, loc, "Cannot implicitly convert type '" + e_type + "' " +
 					      "to type '" + type + "'");
 				return null;
 			}
@@ -663,7 +661,6 @@ namespace Mono.CSharp {
 
 		public Expression InstanceExpr;
 		public ArrayList  Arguments;
-		public Location   Location;
 
 		MethodBase method;
 		
@@ -671,7 +668,7 @@ namespace Mono.CSharp {
 		{
 			this.InstanceExpr = instance_expr;
 			this.Arguments = args;
-			this.Location = loc;
+			this.loc = loc;
 		}
 
 		public override Expression DoResolve (EmitContext ec)
@@ -682,17 +679,17 @@ namespace Mono.CSharp {
 			
 			if (Arguments != null){
 				foreach (Argument a in Arguments){
-					if (!a.Resolve (ec, Location))
+					if (!a.Resolve (ec, loc))
 						return null;
 				}
 			}
 			
-			if (!Delegate.VerifyApplicability (ec, del_type, Arguments, Location))
+			if (!Delegate.VerifyApplicability (ec, del_type, Arguments, loc))
 				return null;
 
-			Expression ml = Expression.MemberLookup (ec, del_type, "Invoke", Location);
+			Expression ml = Expression.MemberLookup (ec, del_type, "Invoke", loc);
 			if (!(ml is MethodGroupExpr)) {
-				Report.Error (-100, Location, "Internal error : could not find Invoke method!");
+				Report.Error (-100, loc, "Internal error : could not find Invoke method!");
 				return null;
 			}
 			
@@ -711,7 +708,7 @@ namespace Mono.CSharp {
 			// Invocation on delegates call the virtual Invoke member
 			// so we are always `instance' calls
 			//
-			Invocation.EmitCall (ec, false, false, InstanceExpr, method, Arguments, Location);
+			Invocation.EmitCall (ec, false, false, InstanceExpr, method, Arguments, loc);
 		}
 
 		public override void EmitStatement (EmitContext ec)
