@@ -138,8 +138,12 @@ Mono_Posix_Syscall_ttyname_r (int fd, char *buf, mph_size_t len)
 gint32
 Mono_Posix_Syscall_readlink (const char *path, char *buf, mph_size_t len)
 {
+	int r;
 	mph_return_if_size_t_overflow (len);
-	return readlink (path, buf, (size_t) len);
+	r = readlink (path, buf, (size_t) len);
+	if (r >= 0 && r < len)
+		buf [r] = '\0';
+	return r;
 }
 
 gint32
