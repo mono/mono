@@ -23,7 +23,7 @@ namespace System.IO {
 
 		protected virtual void Dispose( bool disposing ) {
 			return;
-	    }
+		}
 		
 		public virtual int Peek() {
 			return -1;
