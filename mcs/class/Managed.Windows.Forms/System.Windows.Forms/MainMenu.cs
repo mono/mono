@@ -98,7 +98,8 @@ namespace System.Windows.Forms
 		
 		internal void OnMouseMove (Form window, MouseEventArgs e)
 		{			
-			MenuAPI.TrackBarMouseEvent (Handle, window, e, MenuAPI.MenuMouseEvent.Move);
+			MouseEventArgs ev = new MouseEventArgs (e.Button, e.Clicks, Control.MousePosition.X, Control.MousePosition.Y, e.Delta);
+			MenuAPI.TrackBarMouseEvent (Handle, window, ev, MenuAPI.MenuMouseEvent.Move);
 		}
 		
 		#endregion Private Methods

@@ -1,3 +1,8 @@
+2004-11-09  Jordi Mas i Hernandez <jordi@ximian.com>
+
+	*  Form.cs, MainMenu.cs, MenuAPI.cs: fixes menu navigation, fixes popups,
+	does not destroy the windows, removes debugging messages
+
 2004-11-09  jba  <jba-mono@optusnet.com.au>
 
 	* ThemeWin32Classic.cs 
