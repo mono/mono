@@ -73,9 +73,6 @@ DIST_ONLY_SUBDIRS = \
 DISTFILES = \
 	LICENSE 		\
 	README			\
-	doc/API-notes		\
-	doc/NUnitGuidelines	\
-	doc/notes		\
 	notes/BitVecto32.txt
 
 all-local install-local test-local run-test-local clean-local uninstall-local:
