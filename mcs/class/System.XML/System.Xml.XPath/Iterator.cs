@@ -248,7 +248,7 @@ namespace System.Xml.XPath
 
 		public override bool ReverseAxis { get { return true; } }
 
-		public override bool RequireSorting { get { return true; } }
+		public override bool RequireSorting { get { return false; } }
 	}
 
 	internal class ChildIterator : SimpleIterator
@@ -330,7 +330,7 @@ namespace System.Xml.XPath
 				}
 
 				_nav.MoveToFirst ();
-				if (_nav.ComparePosition (startPosition) != XmlNodeOrder.Same) {
+				if (!_nav.IsSamePosition (startPosition)) {
 					// This clone cannot be omitted
 					_current = _nav.Clone ();
 					return true;
@@ -898,8 +898,8 @@ namespace System.Xml.XPath
 					return false;
 				}
 				while (_navStore.Count > CurrentPosition + 1) {
-					if (((XPathNavigator) _navStore [CurrentPosition + 1]).ComparePosition (
-						(XPathNavigator) _navStore [CurrentPosition]) == XmlNodeOrder.Same)
+					if (((XPathNavigator) _navStore [CurrentPosition + 1]).IsSamePosition (
+						(XPathNavigator) _navStore [CurrentPosition]))
 						_navStore.RemoveAt (CurrentPosition + 1);
 					else
 						break;

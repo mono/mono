@@ -1,5 +1,11 @@
 2004-11-30  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* Iterator.cs : reduced some extraneous ComparePosition() that could
+	  be written as IsSamePosition(). ParentIterator doesn't have to be
+	  RequireSorting.
+
+2004-11-30  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* Iterator.cs : reimplemented AncestorIterator and 
 	  AncestorOrSelfIterator just to collect parents and not to move to
 	  siblings. In some cases like thousands of siblings, it used to be
