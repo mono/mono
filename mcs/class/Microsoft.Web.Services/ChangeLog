@@ -1,3 +1,8 @@
+2003-10-04  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* Microsoft.Web.Services.dll.sources: Added ChainStream to build.
+	* Microsoft.Web.Services.dll.2.sources: Added ChainStream to build.
+
 2003-10-04  Todd Berman <tberman@gentoo.org>
 
 	* Microsoft.Web.Services.Addressing/Action.cs: implemented

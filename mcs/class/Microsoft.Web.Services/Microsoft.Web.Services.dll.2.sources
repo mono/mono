@@ -1,5 +1,6 @@
 Assembly/AssemblyInfo.cs
 Assembly/Locale.cs
+Microsoft.Web.Services/ChainStream.cs
 Microsoft.Web.Services/UriList.cs
 Microsoft.Web.Services/SoapFormatException.cs
 Microsoft.Web.Services/TODOAttribute.cs
