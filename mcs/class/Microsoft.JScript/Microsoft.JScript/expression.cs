@@ -1263,6 +1263,9 @@ namespace Microsoft.JScript {
 				case "String":
 					type = typeof (StringConstructor);
 					break;
+				case "Boolean":
+					type = typeof (BooleanConstructor);
+					break;
 				}
 				if (type != null)
 					ig.Emit (OpCodes.Call, type.GetMethod ("CreateInstance"));
