@@ -1,5 +1,12 @@
 2005-03-22  Martin Baulig  <martin@ximian.com>
 
+	* decl.cs (MemberCache.AddMethods): Reverted Hari's change from
+	r40402 in this method: in the generics-land, we cannot compare the
+	MethodInfo.MethodHandle's since we may be dealing with
+	instantiated method.
+
+2005-03-22  Martin Baulig  <martin@ximian.com>
+
 	* delegate.cs (Delegate.VerifyMethod): Call
 	TypeManager.GetParameterData() after method inference, not before.
 

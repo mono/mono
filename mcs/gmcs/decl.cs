@@ -1940,26 +1940,12 @@ namespace Mono.CSharp {
 					method_hash.Add (name, list);
 				}
 
-				Type declaring_type = member.DeclaringType;
-				if (declaring_type == type) {
-					list.Add (new CacheEntry (Container, member, MemberTypes.Method, bf | BindingFlags.DeclaredOnly));
-					continue;
-				}
-
-				int n = list.Count;
-				while (n-- > 0) {
-					CacheEntry entry = (CacheEntry) list [n];
-					MethodBase old = entry.Member as MethodBase;
-
-					if (member.MethodHandle.Value == old.MethodHandle.Value && 
-					    declaring_type == old.DeclaringType) {
-						list [n] = new CacheEntry (entry, member);
-						break;
-					}
-				}
-
-				if (n < 0)
-					throw new InternalErrorException ("cannot find inherited member " + member + " in base classes of " + type);
+				// Unfortunately, the elements returned by Type.GetMethods() aren't
+				// sorted so we need to do this check for every member.
+				BindingFlags new_bf = bf;
+				if (member.DeclaringType == type)
+					new_bf |= BindingFlags.DeclaredOnly;
+				list.Add (new CacheEntry (Container, member, MemberTypes.Method, new_bf));
 			}
 		}
 
