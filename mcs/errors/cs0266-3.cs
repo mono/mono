@@ -1,3 +1,6 @@
+// cs0266.cs: Cannot implicitly convert type 'object' to 'System.Collections.ArrayList'. An explicit conversion exists (are you missing a cast?)
+// Line: 10
+
 using System.Collections;
 
 class X
@@ -6,7 +9,6 @@ class X
 
 	public static void Main ()
 	{
-		// CS0029
 		ArrayList l = h ["hola"] = new ArrayList ();
 	}
 }
