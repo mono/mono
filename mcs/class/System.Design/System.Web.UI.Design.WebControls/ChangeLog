@@ -1,4 +1,16 @@
 
+2002-09-25     Gaurav Vaish <gvaish_mono@lycos.com>
+
+	* RegextEditorDialog.cs   : Added a few more methods.
+	* BaseDataListComponentEditor.cs
+	                          : Completed.
+	* DataListComponentEditor.cs
+	                          : Completed
+	* BaseDataListPageInternal.cs,
+	* GeneralPageDataListInternal.cs,
+	* FormatPageInternal.cs,
+	* BordersPageInternal.cs  : Added private classes. Initial implementation.
+
 2002-09-24     Gaurav Vaish <gvaish_mono@lycos.com>
 
 	* RegexTypeEditor.cs      : Completed
