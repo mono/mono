@@ -23,9 +23,15 @@
 //	Peter Bartok	pbartok@novell.com
 //
 //
-// $Revision: 1.8 $
+// $Revision: 1.9 $
 // $Modtime: $
 // $Log: XplatUI.cs,v $
+// Revision 1.9  2004/08/11 19:19:44  pbartok
+// - We had SetWindowPos and MoveWindow to set window positions and size,
+//   removed MoveWindow. We have GetWindowPos, so it made sense to keep
+//   SetWindowPos as matching counterpart
+// - Added some X11 sanity checking
+//
 // Revision 1.8  2004/08/11 18:55:46  pbartok
 // - Added method to calculate difference between decorated window and raw
 //   client area
@@ -199,10 +205,6 @@ namespace System.Windows.Forms {
 
 		internal static void PaintEventEnd(IntPtr handle) {
 			driver.PaintEventEnd(handle);
-		}
-
-		internal static void MoveWindow(IntPtr hWnd, int x, int y, int width, int height) {
-			driver.MoveWindow(hWnd, x, y, width, height);
 		}
 
 		internal static void SetWindowPos(IntPtr handle, int x, int y, int width, int height) {

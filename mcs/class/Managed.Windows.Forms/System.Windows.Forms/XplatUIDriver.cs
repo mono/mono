@@ -23,9 +23,15 @@
 //	Peter Bartok	pbartok@novell.com
 //
 //
-// $Revision: 1.8 $
+// $Revision: 1.9 $
 // $Modtime: $
 // $Log: XplatUIDriver.cs,v $
+// Revision 1.9  2004/08/11 19:19:44  pbartok
+// - We had SetWindowPos and MoveWindow to set window positions and size,
+//   removed MoveWindow. We have GetWindowPos, so it made sense to keep
+//   SetWindowPos as matching counterpart
+// - Added some X11 sanity checking
+//
 // Revision 1.8  2004/08/11 18:55:46  pbartok
 // - Added method to calculate difference between decorated window and raw
 //   client area
@@ -137,7 +143,6 @@ namespace System.Windows.Forms {
 		internal abstract bool PeekMessage(ref MSG msg, IntPtr hWnd, int wFilterMin, int wFilterMax, uint flags);
 		internal abstract bool GetMessage(ref MSG msg, IntPtr hWnd, int wFilterMin, int wFilterMax);
 		internal abstract bool TranslateMessage(ref MSG msg);
-		internal abstract bool MoveWindow(IntPtr hWnd, int x, int y, int width, int height);
 		internal abstract bool DispatchMessage(ref MSG msg);
 
 		internal abstract bool CalculateWindowRect(IntPtr hWnd, ref Rectangle ClientRect, int Style, bool HasMenu, out Rectangle WindowRect);

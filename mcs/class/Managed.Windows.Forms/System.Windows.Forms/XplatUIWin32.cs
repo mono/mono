@@ -23,9 +23,15 @@
 //	Peter Bartok	pbartok@novell.com
 //
 //
-// $Revision: 1.10 $
+// $Revision: 1.11 $
 // $Modtime: $
 // $Log: XplatUIWin32.cs,v $
+// Revision 1.11  2004/08/11 19:19:44  pbartok
+// - We had SetWindowPos and MoveWindow to set window positions and size,
+//   removed MoveWindow. We have GetWindowPos, so it made sense to keep
+//   SetWindowPos as matching counterpart
+// - Added some X11 sanity checking
+//
 // Revision 1.10  2004/08/11 18:55:46  pbartok
 // - Added method to calculate difference between decorated window and raw
 //   client area
@@ -514,7 +520,7 @@ namespace System.Windows.Forms {
 
 
 		internal override void SetWindowPos(IntPtr handle, int x, int y, int width, int height) {
-			Console.WriteLine("#region #line");
+			Win32MoveWindow(handle, x, y, width, height);
 			return;
 		}
 
@@ -580,10 +586,6 @@ namespace System.Windows.Forms {
 
 		internal override bool DispatchMessage(ref MSG msg) {
 			return Win32DispatchMessage(ref msg);
-		}
-
-		internal override bool MoveWindow(IntPtr hWnd, int x, int y, int width, int height) {
-			return Win32MoveWindow(hWnd, x, y, width, height);
 		}
 
 		internal override bool Text(IntPtr handle, string text) {

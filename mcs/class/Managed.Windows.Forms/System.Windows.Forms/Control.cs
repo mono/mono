@@ -29,9 +29,15 @@
 //	Jaak Simm		jaaksimm@firm.ee
 //	John Sohn		jsohn@columbus.rr.com
 //
-// $Revision: 1.21 $
+// $Revision: 1.22 $
 // $Modtime: $
 // $Log: Control.cs,v $
+// Revision 1.22  2004/08/11 19:19:44  pbartok
+// - We had SetWindowPos and MoveWindow to set window positions and size,
+//   removed MoveWindow. We have GetWindowPos, so it made sense to keep
+//   SetWindowPos as matching counterpart
+// - Added some X11 sanity checking
+//
 // Revision 1.21  2004/08/11 18:59:45  pbartok
 // - Major cleanup of my SetBounds/SetBoundsCore/UpdateBounds mess
 //   (It seems that SetBounds is just a front for SetBoundsCore and
@@ -1665,7 +1671,7 @@ Console.WriteLine("DockStyle.Fill: Moving control {0} to {1}:{2} {3}x{4} (prev w
 			}
 
 			if (IsHandleCreated) {
-				XplatUI.MoveWindow(Handle, x, y, width, height);
+				XplatUI.SetWindowPos(Handle, x, y, width, height);
 			}
 
 			UpdateBounds(x, y, width, height);

@@ -23,9 +23,15 @@
 //	Peter Bartok	pbartok@novell.com
 //
 //
-// $Revision: 1.17 $
+// $Revision: 1.18 $
 // $Modtime: $
 // $Log: XplatUIX11.cs,v $
+// Revision 1.18  2004/08/11 19:19:44  pbartok
+// - We had SetWindowPos and MoveWindow to set window positions and size,
+//   removed MoveWindow. We have GetWindowPos, so it made sense to keep
+//   SetWindowPos as matching counterpart
+// - Added some X11 sanity checking
+//
 // Revision 1.17  2004/08/11 18:55:46  pbartok
 // - Added method to calculate difference between decorated window and raw
 //   client area
@@ -334,12 +340,15 @@ namespace System.Windows.Forms {
 			;
 		}
 
-		internal override bool MoveWindow(IntPtr hWnd, int x, int y, int width, int height) {
-			XMoveResizeWindow(DisplayHandle, hWnd, x, y, width, height);
-			return true;
-		}
-
 		internal override void SetWindowPos(IntPtr handle, int x, int y, int width, int height) {
+			// X requires a sanity check for width & height; otherwise it dies
+			if (width < 1) {
+				width = 1;
+			}
+
+			if (height < 1) {
+				height = 1;
+			}
 			XMoveResizeWindow(DisplayHandle, handle, x, y, width, height);
 			return;
 		}
