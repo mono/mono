@@ -23,6 +23,11 @@ namespace System.Windows.Forms {
 		{
 		}
 
+		static Form ()
+		{
+			Gtk.Application.Init ();
+		}
+		
 		void delete_cb (object o, EventArgs args)
 		{
                         SignalArgs sa = (SignalArgs) args;
