@@ -1,3 +1,8 @@
+2003-12-19  Zoltan Varga  <vargaz@freemail.hu>
+
+	* icall.c (ves_icall_MonoField_GetValueInternal): Do not run the class
+	constructor when accessing literal fields.
+
 2003-12-17  Zoltan Varga  <vargaz@freemail.hu>
 
 	* appdomain.c (MONO_CORLIB_VERSION): Bump corlib version.
