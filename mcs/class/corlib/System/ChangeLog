@@ -1,3 +1,8 @@
+2003-07-23  Lluis Sanchez Gual <lluis@ximian.com>
+	
+	* Enum.cs: Fixed enum formatting. For flag enums, if one of
+	  the flags is unnamed, ToString() returns the integer value.
+
 2003-07-22  Jerome Laban <jlaban@wanadoo.fr>
 
 	* Guid.cs: Fixed ToString (), was producing incorrect string.

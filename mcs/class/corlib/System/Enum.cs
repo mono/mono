@@ -496,6 +496,7 @@ namespace System {
 						flags -= enumValue;
 					}
 				}
+				if (flags != 0) return asString;
 				}
 				break;
 			case TypeCode.Byte:{
@@ -511,6 +512,7 @@ namespace System {
 						flags -= enumValue;
 					}
 				}
+				if (flags != 0) return asString;
 				}
 				break;
 			case TypeCode.Int16: {
@@ -526,6 +528,7 @@ namespace System {
 						flags -= enumValue;
 					}
 				}
+				if (flags != 0) return asString;
 				}
 				break;
 			case TypeCode.Int32: {
@@ -541,6 +544,7 @@ namespace System {
 						flags -= enumValue;
 					}
 				}
+				if (flags != 0) return asString;
 				}
 				break;
 			case TypeCode.UInt16: {
@@ -556,6 +560,7 @@ namespace System {
 						flags -= enumValue;
 					}
 				}
+				if (flags != 0) return asString;
 				}
 				break;
 			case TypeCode.UInt32: {
@@ -571,6 +576,7 @@ namespace System {
 						flags -= enumValue;
 					}
 				}
+				if (flags != 0) return asString;
 				}
 				break;
 			case TypeCode.Int64: {
@@ -586,6 +592,7 @@ namespace System {
 						flags -= enumValue;
 					}
 				}
+				if (flags != 0) return asString;
 				}
 				break;
 			case TypeCode.UInt64: {
@@ -601,6 +608,7 @@ namespace System {
 						flags -= enumValue;
 					}
 				}
+				if (flags != 0) return asString;
 				}
 				break;
 			}
