@@ -1,4 +1,8 @@
-2004-06-09  Sanjay Gupta <gsanjay@novell.com>
+2004-06-10  Sanjay Gupta <gsanjay@novell.com>
+
+	* TestBitmap.cs: Corrected issues from my previous checkin.
+
+2004-06-10  Sanjay Gupta <gsanjay@novell.com>
 
 	* TestImageFormatConverter.cs, TestStringFormat.cs: Removed 
 	dependency on obsolete class, Assertion from NUnit.

@@ -30,7 +30,7 @@ namespace MonoTests.System.Drawing{
 		
 		}
 			
-		//[Test]
+		[Test]
 		public void TestPixels() 
 		{		
 			// Tests GetSetPixel/SetPixel			
@@ -80,8 +80,6 @@ namespace MonoTests.System.Drawing{
 			return sRslt;
 		}
 		
-	
-
 		//[Test]
 		public void MakeTransparent() 
 		{
@@ -100,7 +98,7 @@ namespace MonoTests.System.Drawing{
 			Assert.AreEqual (Color.Black.B, color.B);										
 		}
 		
-		//[Test]
+		[Test]
 		public void Clone()
 		{
 			string sInFile = getInFile ("bitmaps/almogaver24bits.bmp");
@@ -120,7 +118,7 @@ namespace MonoTests.System.Drawing{
 			Assert.AreEqual (colororg50, colornew50);				
 		}	
 		
-		//[Test]
+		[Test]
 		public void CloneImage()
 		{
 			string sInFile = getInFile ("bitmaps/almogaver24bits.bmp");			
@@ -186,7 +184,7 @@ namespace MonoTests.System.Drawing{
 			Rotate bitmap in diffent ways, and check the result
 			pixels using MD5
 		*/
-		//[Test]
+		[Test]
 		public void Rotate()
 		{
 			string sInFile = getInFile ("bitmaps/almogaver24bits.bmp");	
@@ -270,7 +268,7 @@ namespace MonoTests.System.Drawing{
 			firsts, changes them, and then using GetPixel does another check of the changes.
 			The results match the .Net framework
 		*/
-		//[Test]
+		[Test]
 		public void LockBitmap ()
 		{	
 			string hash = "";		
