@@ -41,50 +41,69 @@ namespace Mono.CSharp {
 	///   This is the base class for structs and classes.  
 	/// </summary>
 	public class TypeContainer : DeclSpace, IMemberContainer {
+		//
+		// During the construction/parsing phase we assemble everything into
+		// an arraylist, but during the DefineMembers invocation, we turn
+		// the ArrayList into a strongly typed array which is better for
+		// the extensive FindMember lookups.
+		//
+		
 		// Holds a list of classes and structures
-		ArrayList types;
+		ArrayList type_list;
+		TypeContainer [] types;
 
 		// Holds the list of properties
-		ArrayList properties;
+		ArrayList property_list;
+		Property [] properties;
 
 		// Holds the list of enumerations
-		ArrayList enums;
+		ArrayList enum_list;
+		Enum [] enums;
 
 		// Holds the list of delegates
-		ArrayList delegates;
+		ArrayList delegate_list;
+		Delegate [] delegates;
 		
 		// Holds the list of constructors
-		ArrayList instance_constructors;
+		ArrayList instance_constructor_list;
+		Constructor [] instance_constructors;
 
 		// Holds the list of fields
-		ArrayList fields;
+		ArrayList field_list;
+		Field [] fields;
 
 		// Holds a list of fields that have initializers
-		ArrayList initialized_fields;
+		ArrayList initialized_field_list;
 
 		// Holds a list of static fields that have initializers
-		ArrayList initialized_static_fields;
+		ArrayList initialized_static_field_list;
 
 		// Holds the list of constants
-		ArrayList constants;
+		ArrayList constant_list;
+		Const [] constants;
 
 		// Holds the list of
-		ArrayList interfaces;
+		ArrayList interface_list;
+		Interface [] interfaces;
 
 		// Holds order in which interfaces must be closed
 		ArrayList interface_order;
 		
 		// Holds the methods.
-		ArrayList methods;
+		ArrayList method_list;
+		Method [] methods;
 
 		// Holds the events
-		ArrayList events;
-
+		ArrayList event_list;
+		Event [] events;
+		
 		// Holds the indexers
-		ArrayList indexers;
+		ArrayList indexer_list;
+		Indexer [] indexers;
 
 		// Holds the operators
-		ArrayList operators;
+		ArrayList operator_list;
+		Operator [] operators;
 
 		// The emit context for toplevel objects.
 		EmitContext ec;
@@ -138,7 +157,6 @@ namespace Mono.CSharp {
 			: base (parent, name, l)
 		{
 			string n;
-			types = new ArrayList ();
 
 			if (parent == null)
 				n = "";
@@ -158,10 +176,10 @@ namespace Mono.CSharp {
 			if ((res = IsValid (basename)) != AdditionResult.Success)
 				return res;
 			
-			if (constants == null)
-				constants = new ArrayList ();
+			if (constant_list == null)
+				constant_list = new ArrayList ();
 
-			constants.Add (constant);
+			constant_list.Add (constant);
 			DefineName (Name + "." + basename, constant);
 
 			return AdditionResult.Success;
@@ -174,10 +192,10 @@ namespace Mono.CSharp {
 			if ((res = IsValid (e.Basename)) != AdditionResult.Success)
 				return res;
 
-			if (enums == null)
-				enums = new ArrayList ();
+			if (enum_list == null)
+				enum_list = new ArrayList ();
 
-			enums.Add (e);
+			enum_list.Add (e);
 			DefineName (e.Name, e);
 
 			return AdditionResult.Success;
@@ -191,7 +209,9 @@ namespace Mono.CSharp {
 				return res;
 
 			DefineName (c.Name, c);
-			types.Add (c);
+			if (type_list == null)
+				type_list = new ArrayList ();
+			type_list.Add (c);
 
 			return AdditionResult.Success;
 		}
@@ -204,7 +224,10 @@ namespace Mono.CSharp {
 				return res;
 
 			DefineName (s.Name, s);
-			types.Add (s);
+			if (type_list == null)
+				type_list = new ArrayList ();
+			
+			type_list.Add (s);
 
 			return AdditionResult.Success;
 		}
@@ -216,11 +239,11 @@ namespace Mono.CSharp {
 			if ((res = IsValid (d.Basename)) != AdditionResult.Success)
 				return res;
 
-			if (delegates == null)
-				delegates = new ArrayList ();
+			if (delegate_list == null)
+				delegate_list = new ArrayList ();
 			
 			DefineName (d.Name, d);
-			delegates.Add (d);
+			delegate_list.Add (d);
 
 			return AdditionResult.Success;
 		}
@@ -238,13 +261,13 @@ namespace Mono.CSharp {
 			if (basename == Basename)
 				return AdditionResult.EnclosingClash;
 
-			if (methods == null)
-				methods = new ArrayList ();
+			if (method_list == null)
+				method_list = new ArrayList ();
 
 			if (method.Name.IndexOf (".") != -1)
-				methods.Insert (0, method);
+				method_list.Insert (0, method);
 			else 
-				methods.Add (method);
+				method_list.Add (method);
 			
 			if (value == null)
 				DefineName (fullname, method);
@@ -275,10 +298,10 @@ namespace Mono.CSharp {
 					default_constructor = c;
 				}
 				
-				if (instance_constructors == null)
-					instance_constructors = new ArrayList ();
+				if (instance_constructor_list == null)
+					instance_constructor_list = new ArrayList ();
 				
-				instance_constructors.Add (c);
+				instance_constructor_list.Add (c);
 			}
 			
 			return AdditionResult.Success;
@@ -291,9 +314,9 @@ namespace Mono.CSharp {
 			if ((res = IsValid (iface.Basename)) != AdditionResult.Success)
 				return res;
 			
-			if (interfaces == null)
-				interfaces = new ArrayList ();
-			interfaces.Add (iface);
+			if (interface_list == null)
+				interface_list = new ArrayList ();
+			interface_list.Add (iface);
 			DefineName (iface.Name, iface);
 			
 			return AdditionResult.Success;
@@ -307,17 +330,17 @@ namespace Mono.CSharp {
 			if ((res = IsValid (basename)) != AdditionResult.Success)
 				return res;
 			
-			if (fields == null)
-				fields = new ArrayList ();
+			if (field_list == null)
+				field_list = new ArrayList ();
 			
-			fields.Add (field);
+			field_list.Add (field);
 			
 			if (field.HasInitializer){
 				if ((field.ModFlags & Modifiers.STATIC) != 0){
-					if (initialized_static_fields == null)
-						initialized_static_fields = new ArrayList ();
+					if (initialized_static_field_list == null)
+						initialized_static_field_list = new ArrayList ();
 
-					initialized_static_fields.Add (field);
+					initialized_static_field_list.Add (field);
 
 					//
 					// We have not seen a static constructor,
@@ -325,10 +348,10 @@ namespace Mono.CSharp {
 					//
 					have_static_constructor = true;
 				} else {
-					if (initialized_fields == null)
-						initialized_fields = new ArrayList ();
+					if (initialized_field_list == null)
+						initialized_field_list = new ArrayList ();
 				
-					initialized_fields.Add (field);
+					initialized_field_list.Add (field);
 				}
 			}
 
@@ -347,13 +370,13 @@ namespace Mono.CSharp {
 			if ((res = IsValid (basename)) != AdditionResult.Success)
 				return res;
 
-			if (properties == null)
-				properties = new ArrayList ();
+			if (property_list == null)
+				property_list = new ArrayList ();
 
 			if (prop.Name.IndexOf (".") != -1)
-				properties.Insert (0, prop);
+				property_list.Insert (0, prop);
 			else
-				properties.Add (prop);
+				property_list.Add (prop);
 			DefineName (Name + "." + basename, prop);
 
 			return AdditionResult.Success;
@@ -367,10 +390,10 @@ namespace Mono.CSharp {
 			if ((res = IsValid (basename)) != AdditionResult.Success)
 				return res;
 
-			if (events == null)
-				events = new ArrayList ();
+			if (event_list == null)
+				event_list = new ArrayList ();
 			
-			events.Add (e);
+			event_list.Add (e);
 			DefineName (Name + "." + basename, e);
 
 			return AdditionResult.Success;
@@ -378,23 +401,23 @@ namespace Mono.CSharp {
 
 		public AdditionResult AddIndexer (Indexer i)
 		{
-			if (indexers == null)
-				indexers = new ArrayList ();
+			if (indexer_list == null)
+				indexer_list = new ArrayList ();
 
 			if (i.InterfaceType != null)
-				indexers.Insert (0, i);
+				indexer_list.Insert (0, i);
 			else
-				indexers.Add (i);
+				indexer_list.Add (i);
 
 			return AdditionResult.Success;
 		}
 
 		public AdditionResult AddOperator (Operator op)
 		{
-			if (operators == null)
-				operators = new ArrayList ();
+			if (operator_list == null)
+				operator_list = new ArrayList ();
 
-			operators.Add (op);
+			operator_list.Add (op);
 
 			return AdditionResult.Success;
 		}
@@ -406,28 +429,92 @@ namespace Mono.CSharp {
 
 			interface_order.Add (iface);
 		}
-		
-		public ArrayList Types {
+
+		//
+		// The following properties will only return valid results
+		// after DefineMembers has been called.
+		//
+		public ArrayList TypeList {
 			get {
-				return types;
+				return type_list;
 			}
 		}
 
-		public ArrayList Methods {
+		public Method [] Methods {
 			get {
 				return methods;
 			}
 		}
 
-		public ArrayList Constants {
+		public Const [] Constants {
 			get {
 				return constants;
 			}
 		}
 
-		public ArrayList Interfaces {
+		public ArrayList InterfaceList {
 			get {
-				return interfaces;
+				return interface_list;
+			}
+		}
+		
+		public Field [] Fields {
+			get {
+				return fields;
+			}
+		}
+
+		public Constructor [] InstanceConstructors {
+			get {
+				return instance_constructors;
+			}
+		}
+
+		public Property [] Properties {
+			get {
+				return properties;
+			}
+		}
+
+		public Event [] Events {
+			get {
+				return events;
+			}
+		}
+		
+		public ArrayList EnumList {
+			get {
+				return enum_list;
+			}
+		}
+
+		public Enum [] Enums {
+			get {
+				return enums;
+			}
+		}
+
+		public Indexer [] Indexers {
+			get {
+				return indexers;
+			}
+		}
+
+		public Operator [] Operators {
+			get {
+				return operators;
+			}
+		}
+
+		public ArrayList DelegateList {
+			get {
+				return delegate_list;
+			}
+		}
+
+		public Delegate [] Delegates {
+			get {
+				return delegates;
 			}
 		}
 		
@@ -447,58 +534,6 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public ArrayList Fields {
-			get {
-				return fields;
-			}
-
-			set {
-				fields = value;
-			}
-		}
-
-		public ArrayList InstanceConstructors {
-			get {
-				return instance_constructors;
-			}
-		}
-
-		public ArrayList Properties {
-			get {
-				return properties;
-			}
-		}
-
-		public ArrayList Events {
-			get {
-				return events;
-			}
-		}
-		
-		public ArrayList Enums {
-			get {
-				return enums;
-			}
-		}
-
-		public ArrayList Indexers {
-			get {
-				return indexers;
-			}
-		}
-
-		public ArrayList Operators {
-			get {
-				return operators;
-			}
-		}
-
-		public ArrayList Delegates {
-			get {
-				return delegates;
-			}
-		}
-		
 		public Attributes OptAttributes {
 			get {
 				return attributes;
@@ -527,10 +562,10 @@ namespace Mono.CSharp {
 			Expression instance_expr;
 			
 			if (ec.IsStatic){
-				fields = initialized_static_fields;
+				fields = initialized_static_field_list;
 				instance_expr = null;
 			} else {
-				fields = initialized_fields;
+				fields = initialized_field_list;
 				instance_expr = new This (Location.Null).Resolve (ec);
 			}
 
@@ -590,7 +625,7 @@ namespace Mono.CSharp {
 		{
 			string n = TypeBuilder.FullName;
 			
-			foreach (Field f in initialized_fields){
+			foreach (Field f in initialized_field_list){
 				Report.Error (
 					573, Location,
 					"`" + n + "." + f.Name + "': can not have " +
@@ -829,24 +864,29 @@ namespace Mono.CSharp {
 			} else
 				RootContext.RegisterOrder (this); 
 				
-			if (Interfaces != null) {
-				foreach (Interface iface in Interfaces)
+			if (interface_list != null) {
+				foreach (Interface iface in interface_list)
 					iface.DefineType ();
+				interfaces = (Interface []) interface_list.ToArray (typeof (Interface));
+				interface_list = null;
 			}
 			
-			if (Types != null) {
-				foreach (TypeContainer tc in Types)
+			if (type_list != null) {
+				foreach (TypeContainer tc in type_list)
 					tc.DefineType ();
+				types = (TypeContainer []) type_list.ToArray (typeof (TypeContainer));
 			}
 
-			if (Delegates != null) {
-				foreach (Delegate d in Delegates)
+			if (delegate_list != null) {
+				foreach (Delegate d in delegate_list)
 					d.DefineType ();
+				delegates = (Delegate []) delegate_list.ToArray (typeof (Delegate));
 			}
 
-			if (Enums != null) {
-				foreach (Enum en in Enums)
+			if (enum_list != null) {
+				foreach (Enum en in enum_list)
 					en.DefineType ();
+				enums = (Enum []) enum_list.ToArray (typeof (Enum));
 			}
 
 			InTransit = false;
@@ -918,8 +958,8 @@ namespace Mono.CSharp {
 		void DefineIndexers ()
 		{
 			string class_indexer_name = null;
-			
-			foreach (Indexer i in Indexers){
+
+			foreach (Indexer i in indexer_list){
 				string name;
 				
 				i.Define (this);
@@ -944,6 +984,9 @@ namespace Mono.CSharp {
 			if (class_indexer_name == null)
 				class_indexer_name = "Item";
 			IndexerName = class_indexer_name;
+
+			indexers = (Indexer []) indexer_list.ToArray (typeof (Indexer));
+			indexer_list = null;
 		}
 
 		static void Error_KeywordNotAllowed (Location loc)
@@ -984,19 +1027,25 @@ namespace Mono.CSharp {
 				}
 			}
 			
-			if (constants != null)
-				DefineMembers (constants, defined_names);
+			if (constant_list != null){
+				DefineMembers (constant_list, defined_names);
+				constants = (Const []) constant_list.ToArray (typeof (Const));
+				constant_list = null;
+			}
 
-			if (fields != null)
-				DefineMembers (fields, defined_names);
+			if (field_list != null){
+				DefineMembers (field_list, defined_names);
+				fields = (Field []) field_list.ToArray (typeof (Field));
+				field_list = null;
+			}
 
 			if (this is Class){
-				if (instance_constructors == null){
+				if (instance_constructor_list == null){
 					if (default_constructor == null)
 						DefineDefaultConstructor (false);
 				}
 
-				if (initialized_static_fields != null &&
+				if (initialized_static_field_list != null &&
 				    default_static_constructor == null)
 					DefineDefaultConstructor (true);
 			}
@@ -1006,11 +1055,11 @@ namespace Mono.CSharp {
 				// Structs can not have initialized instance
 				// fields
 				//
-				if (initialized_static_fields != null &&
+				if (initialized_static_field_list != null &&
 				    default_static_constructor == null)
 					DefineDefaultConstructor (true);
 
-				if (initialized_fields != null)
+				if (initialized_field_list != null)
 					ReportStructInitializedInstanceError ();
 			}
 
@@ -1019,37 +1068,55 @@ namespace Mono.CSharp {
 			//
 			// Constructors are not in the defined_names array
 			//
-			if (instance_constructors != null)
-				DefineMembers (instance_constructors, null);
+			if (instance_constructor_list != null){
+				DefineMembers (instance_constructor_list, null);
+				instance_constructors = (Constructor []) instance_constructor_list.ToArray (typeof (Constructor));
+				instance_constructor_list = null;
+			}
 		
 			if (default_static_constructor != null)
 				default_static_constructor.Define (this);
 			
-			if (methods != null)
-				DefineMembers (methods, defined_names);
+			if (method_list != null){
+				DefineMembers (method_list, defined_names);
+				methods = (Method []) method_list.ToArray (typeof (Method));
+				method_list = null;
+			}
 
-			if (properties != null)
-				DefineMembers (properties, defined_names);
+			if (property_list != null){
+				DefineMembers (property_list, defined_names);
+				properties = (Property []) property_list.ToArray (typeof (Property));
+				property_list = null;
+			}
 
-			if (events != null)
-				DefineMembers (events, defined_names);
+			if (event_list != null){
+				DefineMembers (event_list, defined_names);
+				events = (Event []) event_list.ToArray (typeof (Event));
+				event_list = null;
+			}
 
-			if (indexers != null) {
+			if (indexer_list != null) {
 				DefineIndexers ();
 			} else
 				IndexerName = "Item";
 
-			if (operators != null){
-				DefineMembers (operators, null);
+			if (operator_list != null){
+				DefineMembers (operator_list, null);
+				operators = (Operator []) operator_list.ToArray (typeof (Operator));
+				operator_list = null;
 
 				CheckPairedOperators ();
 			}
 
-			if (enums != null)
-				DefineMembers (enums, defined_names);
+			if (enum_list != null){
+				DefineMembers (enum_list, defined_names);
+				enum_list = null;
+			}
 			
-			if (delegates != null)
-				DefineMembers (delegates, defined_names);
+			if (delegate_list != null){
+				DefineMembers (delegate_list, defined_names);
+				delegate_list = null;
+			}
 
 #if CACHE
 			if (TypeBuilder.BaseType != null)
@@ -1443,7 +1510,7 @@ namespace Mono.CSharp {
 					f.Emit (this);
 
 			if (events != null){
-				foreach (Event e in Events)
+				foreach (Event e in events)
 					e.Emit (this);
 			}
 
@@ -1525,18 +1592,18 @@ namespace Mono.CSharp {
 					iface.CloseType ();
 			}
 			
-			if (Types != null){
-				foreach (TypeContainer tc in Types)
+			if (types != null){
+				foreach (TypeContainer tc in types)
 					if (tc is Struct)
 						tc.CloseType ();
 
-				foreach (TypeContainer tc in Types)
+				foreach (TypeContainer tc in types)
 					if (!(tc is Struct))
 						tc.CloseType ();
 			}
 
-			if (Delegates != null)
-				foreach (Delegate d in Delegates)
+			if (delegates != null)
+				foreach (Delegate d in delegates)
 					d.CloseType ();
 		}
 

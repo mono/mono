@@ -1,5 +1,30 @@
 2003-02-18  Miguel de Icaza  <miguel@ximian.com>
 
+	* class.cs: Changed all the various members that can be part of a
+	class from being an ArrayList to be an Array of the right type.
+	During the DefineType type_list, interface_list, delegate_list and
+	enum_list are turned into types, interfaces, delegates and enums
+	arrays.  
+
+	And during the member population, indexer_list, event_list,
+	constant_list, field_list, instance_constructor_list, method_list,
+	operator_list and property_list are turned into their real arrays.
+
+	Although we could probably perform this operation earlier, for
+	good error reporting we need to keep the lists and remove the
+	lists for longer than required.
+
+	This optimization was triggered by Paolo profiling the compiler
+	speed on the output of `gen-sample-program.pl' perl script. 
+
+	* decl.cs (DeclSpace.ResolveType): Set the ContainerType, so we do
+	not crash in methods like MemberLookupFailed that use this field.  
+
+	This problem arises when the compiler fails to resolve a type
+	during interface type definition for example.
+
+2003-02-18  Miguel de Icaza  <miguel@ximian.com>
+
 	* expression.cs (Indexers.GetIndexersForType): Interfaces do not
 	inherit from System.Object, so we have to stop at null, not only
 	when reaching System.Object.
