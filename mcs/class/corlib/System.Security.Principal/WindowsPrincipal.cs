@@ -41,6 +41,8 @@ namespace System.Security.Principal {
 		[MonoTODO]
 		public virtual bool IsInRole (string role)
 		{
+			if (role == null)
+				return false;	// ArgumentNullException
 #if NET_1_0
 			// case sensitive (for 1.0)
 #else
