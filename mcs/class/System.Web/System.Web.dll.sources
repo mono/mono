@@ -439,6 +439,7 @@ System.Web.Util/WebEqualComparer.cs
 System.Web.Util/WebHashCodeProvider.cs
 System.Web.Util/WebTrace.cs
 System.Web.Util/WebEncoding.cs
+System.Web.Util/TimeUtil.cs
 System.Web.UI/IHierarchicalEnumerable.cs
 System.Web.UI/IHierarchyData.cs
 System.Web.UI/INavigateUIData.cs

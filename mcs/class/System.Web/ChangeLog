@@ -1,3 +1,8 @@
+2003-11-13  Jackson Harper  <jackson@ximian.com>
+
+	* System.web.dll.sources: Add System.Web.Util.TimeUtil.cs to the
+	build
+	
 2003-11-06 Jackson Harper <jackson@ximian.com>
 
 	* System.web.dll.sources: Add SessionId.cs to build
