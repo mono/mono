@@ -30,8 +30,7 @@ namespace System.Web.UI
 		string uiculture;
 		string errorPage;
 
-		// FIXME: this is here just for DesignTimeTemplateParser. Anything to do?
-		internal PageParser ()
+		public PageParser ()
 		{
 		}
 		

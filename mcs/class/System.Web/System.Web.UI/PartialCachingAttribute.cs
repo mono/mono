@@ -17,6 +17,9 @@ namespace System.Web.UI {
 		string varyByControls;
 		string varyByCustom;
 		string varyByParams;
+#if NET_1_1
+		bool shared;
+#endif
 		
 		public PartialCachingAttribute (int duration)
 		{
@@ -31,6 +34,18 @@ namespace System.Web.UI {
 			this.varyByControls = varyByControls;
 			this.varyByCustom = varyByCustom;
 		}
+
+#if NET_1_1
+		public PartialCachingAttribute (int duration, string varyByParams, string varyByControls,
+						string varyByCustom, bool shared)
+		{
+			this.duration = duration;
+			this.varyByParams = varyByParams;
+			this.varyByControls = varyByControls;
+			this.varyByCustom = varyByCustom;
+			this.shared = shared;
+		}
+#endif
 
 		public int Duration {
 			get { return duration; }
@@ -47,5 +62,11 @@ namespace System.Web.UI {
 		public string VaryByCustom {
 			get { return varyByCustom; }
 		}
+
+#if NET_1_1
+		public bool Shared {
+			get { return shared; }
+		}
+#endif
 	}
 }

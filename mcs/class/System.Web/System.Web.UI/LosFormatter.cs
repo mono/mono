@@ -15,6 +15,16 @@ namespace System.Web.UI {
 
 		ObjectStateFormatter osf = new ObjectStateFormatter ();
 		
+		public LosFormatter ()
+		{
+		}
+
+#if NET_1_1
+		[MonoTODO]
+		public LosFormatter (bool enableMac, string macKeyModifier)
+		{
+		}
+#endif	
 		public object Deserialize (Stream stream)
 		{
 			return osf.Deserialize (stream);

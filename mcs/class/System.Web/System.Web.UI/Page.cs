@@ -59,6 +59,7 @@ public class Page : TemplateControl, IHttpHandler
 	Hashtable hiddenFields;
 	internal Hashtable submitStatements;
 	bool handleViewState;
+	string viewStateUserKey;
 
 	[EditorBrowsable (EditorBrowsableState.Never)]
 	protected const string postEventArgumentID = "__EVENTARGUMENT";
@@ -293,6 +294,12 @@ public class Page : TemplateControl, IHttpHandler
 				_validators = new ValidatorCollection ();
 			return _validators;
 		}
+	}
+
+	[MonoTODO ("Use this when encrypting/decrypting ViewState")]
+	public string ViewStateUserKey {
+		get { return viewStateUserKey; }
+		set { viewStateUserKey = value; }
 	}
 
 	[Browsable (false)]
@@ -766,12 +773,12 @@ public class Page : TemplateControl, IHttpHandler
 		if (!hiddenFields.ContainsKey (hiddenFieldName))
 			hiddenFields.Add (hiddenFieldName, hiddenFieldInitialValue);
 	}
-	
-	[MonoTODO]
-	public void RegisterClientScriptFile (string a, string b, string c)
+	[MonoTODO("Used in HtmlForm")]
+	internal void RegisterClientScriptFile (string a, string b, string c)
 	{
 		throw new NotImplementedException ();
 	}
+
 
 	[MonoTODO]
 	[EditorBrowsable (EditorBrowsableState.Advanced)]
