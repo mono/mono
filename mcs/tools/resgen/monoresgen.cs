@@ -1,5 +1,5 @@
 /*
- * monoresgen: convert between the resource formats (.txt, .resources, .resx).
+ * resgen: convert between the resource formats (.txt, .resources, .resx).
  *
  * Copyright (c) 2002 Ximian, Inc
  *
@@ -46,8 +46,8 @@ class ResGen {
 	static void Usage () {
 		string Usage = @"Mono Resource Generator version 0.1
 Usage:
-		monoresgen source.ext [dest.ext]
-		monoresgen /compile source.ext[,dest.resources] [...]
+		resgen source.ext [dest.ext]
+		resgen /compile source.ext[,dest.resources] [...]
 
 Convert a resource file from one format to another.
 The currently supported formats are: '.txt' '.resources' '.resx' '.po'.
@@ -105,7 +105,7 @@ the output file name.
 
 			reader = GetReader (source, sname);
 
-			dest = new FileStream (dname, FileMode.OpenOrCreate, FileAccess.Write);
+			dest = new FileStream (dname, FileMode.OpenOrCreate | FileMode.Truncate, FileAccess.Write);
 			writer = GetWriter (dest, dname);
 
 			int rescount = 0;
@@ -457,7 +457,7 @@ class PoResourceWriter : IResourceWriter
 		s.WriteLine ("\"MIME-Version: 1.0\\n\"");
 		s.WriteLine ("\"Content-Type: text/plain; charset=UTF-8\\n\"");
 		s.WriteLine ("\"Content-Transfer-Encoding: 8bit\\n\"");
-		s.WriteLine ("\"X-Generator: monoresgen 0.1\\n\"");
+		s.WriteLine ("\"X-Generator: Mono resgen 0.1\\n\"");
 		s.WriteLine ("#\"Project-Id-Version: FILLME\\n\"");
 		s.WriteLine ("#\"POT-Creation-Date: yyyy-MM-dd HH:MM+zzzz\\n\"");
 		s.WriteLine ("#\"PO-Revision-Date: yyyy-MM-dd HH:MM+zzzz\\n\"");
