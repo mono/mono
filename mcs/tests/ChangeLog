@@ -1,5 +1,9 @@
 2004-08-28  Martin Baulig  <martin@ximian.com>
 
+	* gen-73.cs: New test for #62552.
+
+2004-08-28  Martin Baulig  <martin@ximian.com>
+
 	* gen-72.cs: New test for #58307.
 
 2004-08-24  Martin Baulig  <martin@ximian.com>
