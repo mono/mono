@@ -1,3 +1,5 @@
+2005-03-11 Manjula GHM <mmanjula@novell.com>
+	* Minor fix in the LoopStatement test case
 2005-03-08 Satya Sudha K <ksathyasudha@novell.com>
         *  Testcases for Delegates, Events and Inheritance
                 - Contributed by Sudharsan V <vsudharsan@novell.com>
