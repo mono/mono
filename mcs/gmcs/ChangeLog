@@ -1,5 +1,10 @@
 2003-09-04  Martin Baulig  <martin@ximian.com>
 
+	* expression.cs (ComposedCast.ResolveAsTypeStep): Added support
+	for arrays of generic type params (ie. `!0[]').
+
+2003-09-04  Martin Baulig  <martin@ximian.com>
+
 	* class.cs (TypeContainer.AsAccessible): Ignore generic parameters
 	for the moment.
 

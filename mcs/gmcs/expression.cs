@@ -7982,6 +7982,20 @@ namespace Mono.CSharp {
 			if (ltype == null)
 				return null;
 
+			if (ltype.IsUnboundGenericParameter) {
+				int rank = dim.Length-2;
+				if ((rank < 0) || (dim [0] != '[') || (dim [rank+1] != ']'))
+					return null;
+				for (int i = 0; i < rank; i++)
+					if (dim [i+1] != ',')
+						return null;
+
+				type = Array.CreateInstance (ltype, rank).GetType ();
+
+				eclass = ExprClass.Type;
+				return this;
+			}
+
 			//
 			// ltype.Fullname is already fully qualified, so we can skip
 			// a lot of probes, and go directly to TypeManager.LookupType
