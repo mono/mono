@@ -1,5 +1,9 @@
 2003-11-12  Zoltan Varga  <vargaz@freemail.hu>
 
+	* icall.c (ves_icall_System_Reflection_Assembly_GetTypes): Applied 
+	patch from Danilo Sagan (dsegan@gmx.net). Fix compilation under gcc
+	2.95.3.
+
 	* assembly.c (mono_assembly_open): Fix windows build. Applied patch 
 	from Peter Ross (pro@missioncriticalit.com).
 	
