@@ -1,3 +1,10 @@
+
+Mon Aug 9 13:30:53 CEST 2004 Paolo Molaro <lupus@ximian.com>
+
+	* culture-info.h, locales.c: fixes and chages to sue the new
+	optimized format of the locale data.
+	* culture-info-tables.h: regenerated.
+
 2004-08-06  Geoff Norton <gnorton@customerdna.com>
 	
 	* filewatcher.c: If HAVE_KQUEUE return mode 3 to use the new kqueue watcher
