@@ -1,3 +1,8 @@
+
+Tue May 21 17:25:49 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* MonoCustomAttrs.cs: handle inherit argument.
+
 2002-05-21  Nick Drochak  <ndrochak@gol.com>
 
 	* Math.cs (Pow): Change icall method name and insert parameter
