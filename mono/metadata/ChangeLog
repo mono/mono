@@ -1,6 +1,7 @@
 2003-02-12  Dietmar Maurer  <dietmar@ximian.com>
 
 	* class.c (class_compute_field_layout): always set field->parent 
+	(mono_ldtoken): use mono_defaults.fieldhandle_class;
 
 2003-02-11  Dick Porter  <dick@ximian.com>
 
