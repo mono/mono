@@ -1231,7 +1231,6 @@ namespace Mono.CSharp {
 					foreach (Property p in Properties) {
 						if (filter (p.PropertyBuilder, criteria) == true) {
 							members.Add (p.PropertyBuilder);
-							Console.WriteLine ("Added " + p.PropertyBuilder);
 						}
 					}
 
@@ -1239,7 +1238,6 @@ namespace Mono.CSharp {
 					foreach (Indexer ix in Indexers) {
 						if (filter (ix.PropertyBuilder, criteria) == true) {
 							members.Add (ix.PropertyBuilder);
-							Console.WriteLine ("Indexer add " + ix.PropertyBuilder.DeclaringType);
 						}
 					}
 			}

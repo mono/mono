@@ -889,7 +889,6 @@ namespace Mono.CSharp
 
 		bool eval_val (string s)
 		{
-			Console.WriteLine ("Evaluating " + s);
 			if (s == "true")
 				return true;
 			if (s == "false")
@@ -905,12 +904,13 @@ namespace Mono.CSharp
 
 		bool pp_primary (ref string s)
 		{
-			Console.WriteLine ("pp_primary: [" + s + "]");
 			s.Trim ();
 			int len = s.Length;
-			
+
 			if (len > 0){
-				if (s [0] == '('){
+				char c = s [0];
+				
+				if (c == '('){
 					s = s.Substring (1);
 					bool val = pp_expr (ref s);
 					if (s.Length > 0 && s [0] == ')')
@@ -918,13 +918,14 @@ namespace Mono.CSharp
 					report1517 ();
 					return false;
 				}
-				if (Char.IsLetter (s [0])){
+				
+				if (Char.IsLetter (c) || c == '_'){
 					int j = 1;
 
 					while (j < len){
-						char c = s [j];
+						c = s [j];
 						
-						if (Char.IsLetter (c) || Char.IsDigit (c)){
+						if (Char.IsLetter (c) || Char.IsDigit (c) || c == '_'){
 							j++;
 							continue;
 						}
@@ -943,7 +944,6 @@ namespace Mono.CSharp
 		
 		bool pp_unary (ref string s)
 		{
-			Console.WriteLine ("pp_unary: [" + s + "]");
 			s = s.Trim ();
 			int len = s.Length;
 
@@ -965,7 +965,6 @@ namespace Mono.CSharp
 		
 		bool pp_eq (ref string s)
 		{
-			Console.WriteLine ("pp_eq: [" + s + "]");
 			bool va = pp_unary (ref s);
 
 			s = s.Trim ();
@@ -993,7 +992,6 @@ namespace Mono.CSharp
 		
 		bool pp_and (ref string s)
 		{
-			Console.WriteLine ("pp_and: [" + s + "]");
 			bool va = pp_eq (ref s);
 
 			s = s.Trim ();
@@ -1017,7 +1015,6 @@ namespace Mono.CSharp
 		//
 		bool pp_expr (ref string s)
 		{
-			Console.WriteLine ("eval: [" + s + "]");
 			bool va = pp_and (ref s);
 
 			s = s.Trim ();
@@ -1044,7 +1041,6 @@ namespace Mono.CSharp
 		{
 			bool v = pp_expr (ref s);
 
-			Console.WriteLine ("Returning: " + v);
 			return v;
 		}
 		

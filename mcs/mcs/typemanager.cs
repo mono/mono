@@ -885,18 +885,20 @@ public class TypeManager {
 		//
 		// FIXME: Replace with something that works around S.R.E failure
 		//
-//#if FIXME
-//		  System.Attribute attr;
-//
-//		  attr = System.Attribute.GetCustomAttribute (t, TypeManager.default_member_type);
-//		  
-//		  if (attr != null)
-//			  {
-//				  DefaultMemberAttribute dma = (DefaultMemberAttribute) attr;
-//				  
-//				  return dma.MemberName;
-//			  }
-//#endif
+		System.Attribute attr;
+
+		if (t is TypeBuilder)
+			return "Item";
+		
+		attr = System.Attribute.GetCustomAttribute (t, TypeManager.default_member_type);
+		
+		if (attr != null)
+		{
+			DefaultMemberAttribute dma = (DefaultMemberAttribute) attr;
+			
+			return dma.MemberName;
+		}
+
 		return "Item";
 	}
 
