@@ -30,7 +30,7 @@ namespace MonoTests.Remoting
 
 	public delegate int DelegateSimple ();
 	public delegate string DelegatePrimitiveParams (int a, uint b, char c, string d);
-	public delegate string DelegatePrimitiveParamsInOut (ref int a1, out int a2, ref float b1, out float b2, ref char c1, out char c2, ref string d1, out string d2);
+	public delegate string DelegatePrimitiveParamsInOut (ref int a1, out int a2, ref float b1, out float b2, int filler, ref char c1, out char c2, ref string d1, out string d2);
 	public delegate Complex DelegateComplexParams (ArrayList a, Complex b, string c);
 	public delegate Complex DelegateComplexParamsInOut (ref ArrayList a, out Complex b, byte[] bytes, StringBuilder sb, string c);
 	public delegate void DelegateProcessContextData ();
@@ -53,10 +53,10 @@ namespace MonoTests.Remoting
 			return de.EndInvoke (ar);
 		}
 
-		public override string PrimitiveParamsInOut (ref int a1, out int a2, ref float b1, out float b2, ref char c1, out char c2, ref string d1, out string d2)
+		public override string PrimitiveParamsInOut (ref int a1, out int a2, ref float b1, out float b2, int filler, ref char c1, out char c2, ref string d1, out string d2)
 		{
 			DelegatePrimitiveParamsInOut de = new DelegatePrimitiveParamsInOut (RemoteObject.PrimitiveParamsInOut);
-			IAsyncResult ar = de.BeginInvoke (ref a1, out a2, ref b1, out b2, ref c1, out c2, ref d1, out d2, null,null);
+			IAsyncResult ar = de.BeginInvoke (ref a1, out a2, ref b1, out b2, filler, ref c1, out c2, ref d1, out d2, null,null);
 			AsyncCallTest.DoWork ();
 			return de.EndInvoke (ref a1, out a2, ref b1, out b2, ref c1, out c2, ref d1, out d2, ar);
 		}
@@ -104,10 +104,10 @@ namespace MonoTests.Remoting
 			return de.EndInvoke (ar);
 		}
 
-		public override string PrimitiveParamsInOut (ref int a1, out int a2, ref float b1, out float b2, ref char c1, out char c2, ref string d1, out string d2)
+		public override string PrimitiveParamsInOut (ref int a1, out int a2, ref float b1, out float b2, int filler, ref char c1, out char c2, ref string d1, out string d2)
 		{
 			DelegatePrimitiveParamsInOut de = new DelegatePrimitiveParamsInOut (RemoteObject.PrimitiveParamsInOut);
-			IAsyncResult ar = de.BeginInvoke (ref a1, out a2, ref b1, out b2, ref c1, out c2, ref d1, out d2, null,null);
+			IAsyncResult ar = de.BeginInvoke (ref a1, out a2, ref b1, out b2, filler, ref c1, out c2, ref d1, out d2, null,null);
 			AsyncCallTest.DoWork ();
 			return de.EndInvoke (ref a1, out a2, ref b1, out b2, ref c1, out c2, ref d1, out d2, ar);
 		}
@@ -155,10 +155,10 @@ namespace MonoTests.Remoting
 			return de.EndInvoke (ar);
 		}
 
-		public override string PrimitiveParamsInOut (ref int a1, out int a2, ref float b1, out float b2, ref char c1, out char c2, ref string d1, out string d2)
+		public override string PrimitiveParamsInOut (ref int a1, out int a2, ref float b1, out float b2, int filler, ref char c1, out char c2, ref string d1, out string d2)
 		{
 			DelegatePrimitiveParamsInOut de = new DelegatePrimitiveParamsInOut (RemoteObject.PrimitiveParamsInOut);
-			IAsyncResult ar = de.BeginInvoke (ref a1, out a2, ref b1, out b2, ref c1, out c2, ref d1, out d2, null,null);
+			IAsyncResult ar = de.BeginInvoke (ref a1, out a2, ref b1, out b2, filler, ref c1, out c2, ref d1, out d2, null,null);
 			AsyncCallTest.DoWork ();
 			return de.EndInvoke (ref a1, out a2, ref b1, out b2, ref c1, out c2, ref d1, out d2, ar);
 		}

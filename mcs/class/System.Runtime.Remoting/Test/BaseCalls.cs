@@ -64,9 +64,11 @@ namespace MonoTests.Remoting
 		
 		protected virtual void ShutdownServer ()
 		{
-			server.Stop ();
-			if (chs != null)
-				ChannelServices.UnregisterChannel (chs);
+			if (server != null) {
+				server.Stop ();
+				if (chs != null)
+					ChannelServices.UnregisterChannel (chs);
+			}
 		}
 
 		protected virtual RemoteObject CreateRemoteInstance ()
@@ -247,7 +249,7 @@ namespace MonoTests.Remoting
 			char c2, c1 = 's';
 			string d2, d1 = "asdASDzxcZXC";
 
-			string res = testerSurrogate.PrimitiveParamsInOut (ref a1, out a2, ref b1, out b2, ref c1, out c2, ref d1, out d2);
+			string res = testerSurrogate.PrimitiveParamsInOut (ref a1, out a2, ref b1, out b2, 9821, ref c1, out c2, ref d1, out d2);
 
 			AssertEquals ("ReturnValue", "9876543-82437.83-s-asdASDzxcZXC@" + remoteDomId, res);
 
@@ -416,7 +418,7 @@ namespace MonoTests.Remoting
 	{
 		int Simple ();
 		string PrimitiveParams (int a, uint b, char c, string d);
-		string PrimitiveParamsInOut (ref int a1, out int a2, ref float b1, out float b2, ref char c1, out char c2, ref string d1, out string d2);
+		string PrimitiveParamsInOut (ref int a1, out int a2, ref float b1, out float b2, int filler, ref char c1, out char c2, ref string d1, out string d2);
 		Complex ComplexParams (ArrayList a, Complex b, string c);
 		Complex ComplexParamsInOut (ref ArrayList a, out Complex b, [In,Out] byte[] bytes, [In,Out] StringBuilder sb, string c);
 		void ProcessContextData ();
@@ -429,7 +431,7 @@ namespace MonoTests.Remoting
 		public RemoteObject RemoteObject;
 		public abstract int Simple ();
 		public abstract string PrimitiveParams (int a, uint b, char c, string d);
-		public abstract string PrimitiveParamsInOut (ref int a1, out int a2, ref float b1, out float b2, ref char c1, out char c2, ref string d1, out string d2);
+		public abstract string PrimitiveParamsInOut (ref int a1, out int a2, ref float b1, out float b2, int filler, ref char c1, out char c2, ref string d1, out string d2);
 		public abstract Complex ComplexParams (ArrayList a, Complex b, string c);
 		public abstract Complex ComplexParamsInOut (ref ArrayList a, out Complex b, [In,Out] byte[] bytes, [In,Out] StringBuilder sb, string c);
 		public abstract void ProcessContextData ();
@@ -440,7 +442,7 @@ namespace MonoTests.Remoting
 		public AbstractRemoteObject RemoteObject;
 		public abstract int Simple ();
 		public abstract string PrimitiveParams (int a, uint b, char c, string d);
-		public abstract string PrimitiveParamsInOut (ref int a1, out int a2, ref float b1, out float b2, ref char c1, out char c2, ref string d1, out string d2);
+		public abstract string PrimitiveParamsInOut (ref int a1, out int a2, ref float b1, out float b2, int filler, ref char c1, out char c2, ref string d1, out string d2);
 		public abstract Complex ComplexParams (ArrayList a, Complex b, string c);
 		public abstract Complex ComplexParamsInOut (ref ArrayList a, out Complex b, [In,Out] byte[] bytes, [In,Out] StringBuilder sb, string c);
 		public abstract void ProcessContextData ();
@@ -451,7 +453,7 @@ namespace MonoTests.Remoting
 		public IRemoteObject RemoteObject;
 		public abstract int Simple ();
 		public abstract string PrimitiveParams (int a, uint b, char c, string d);
-		public abstract string PrimitiveParamsInOut (ref int a1, out int a2, ref float b1, out float b2, ref char c1, out char c2, ref string d1, out string d2);
+		public abstract string PrimitiveParamsInOut (ref int a1, out int a2, ref float b1, out float b2, int filler, ref char c1, out char c2, ref string d1, out string d2);
 		public abstract Complex ComplexParams (ArrayList a, Complex b, string c);
 		public abstract Complex ComplexParamsInOut (ref ArrayList a, out Complex b, [In,Out] byte[] bytes, [In,Out] StringBuilder sb, string c);
 		public abstract void ProcessContextData ();
@@ -466,7 +468,7 @@ namespace MonoTests.Remoting
 	{
 		public abstract int Simple ();
 		public abstract string PrimitiveParams (int a, uint b, char c, string d);
-		public abstract string PrimitiveParamsInOut (ref int a1, out int a2, ref float b1, out float b2, ref char c1, out char c2, ref string d1, out string d2);
+		public abstract string PrimitiveParamsInOut (ref int a1, out int a2, ref float b1, out float b2, int filler, ref char c1, out char c2, ref string d1, out string d2);
 		public abstract Complex ComplexParams (ArrayList a, Complex b, string c);
 		public abstract Complex ComplexParamsInOut (ref ArrayList a, out Complex b, [In,Out] byte[] bytes, [In,Out] StringBuilder sb, string c);
 		public abstract void ProcessContextData ();
@@ -488,7 +490,7 @@ namespace MonoTests.Remoting
 			return "" + a + "-" + b + "-" + c + "-" + d + "@" + Thread.GetDomainID();
 		}
 
-		public override string PrimitiveParamsInOut (ref int a1, out int a2, ref float b1, out float b2, ref char c1, out char c2, ref string d1, out string d2)
+		public override string PrimitiveParamsInOut (ref int a1, out int a2, ref float b1, out float b2, int filler, ref char c1, out char c2, ref string d1, out string d2)
 		{
 			string res = "" + a1 + "-" + b1.ToString(CultureInfo.InvariantCulture) + "-" + c1 + "-" + d1 + "@" + Thread.GetDomainID();
 			a2 = 12345678;

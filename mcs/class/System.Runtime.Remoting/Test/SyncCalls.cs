@@ -33,9 +33,9 @@ namespace MonoTests.Remoting
 			return RemoteObject.PrimitiveParams (a, b, c, d);
 		}
 
-		public override string PrimitiveParamsInOut (ref int a1, out int a2, ref float b1, out float b2, ref char c1, out char c2, ref string d1, out string d2)
+		public override string PrimitiveParamsInOut (ref int a1, out int a2, ref float b1, out float b2, int filler, ref char c1, out char c2, ref string d1, out string d2)
 		{
-			return RemoteObject.PrimitiveParamsInOut (ref a1, out a2, ref b1, out b2, ref c1, out c2, ref d1, out d2);
+			return RemoteObject.PrimitiveParamsInOut (ref a1, out a2, ref b1, out b2, filler, ref c1, out c2, ref d1, out d2);
 		}
 
 		public override Complex ComplexParams (ArrayList a, Complex b, string c)
@@ -66,9 +66,9 @@ namespace MonoTests.Remoting
 			return RemoteObject.PrimitiveParams (a, b, c, d);
 		}
 
-		public override string PrimitiveParamsInOut (ref int a1, out int a2, ref float b1, out float b2, ref char c1, out char c2, ref string d1, out string d2)
+		public override string PrimitiveParamsInOut (ref int a1, out int a2, ref float b1, out float b2, int filler, ref char c1, out char c2, ref string d1, out string d2)
 		{
-			return RemoteObject.PrimitiveParamsInOut (ref a1, out a2, ref b1, out b2, ref c1, out c2, ref d1, out d2);
+			return RemoteObject.PrimitiveParamsInOut (ref a1, out a2, ref b1, out b2, filler, ref c1, out c2, ref d1, out d2);
 		}
 
 		public override Complex ComplexParams (ArrayList a, Complex b, string c)
@@ -99,9 +99,9 @@ namespace MonoTests.Remoting
 			return RemoteObject.PrimitiveParams (a, b, c, d);
 		}
 
-		public override string PrimitiveParamsInOut (ref int a1, out int a2, ref float b1, out float b2, ref char c1, out char c2, ref string d1, out string d2)
+		public override string PrimitiveParamsInOut (ref int a1, out int a2, ref float b1, out float b2, int filler, ref char c1, out char c2, ref string d1, out string d2)
 		{
-			return RemoteObject.PrimitiveParamsInOut (ref a1, out a2, ref b1, out b2, ref c1, out c2, ref d1, out d2);
+			return RemoteObject.PrimitiveParamsInOut (ref a1, out a2, ref b1, out b2, filler, ref c1, out c2, ref d1, out d2);
 		}
 
 		public override Complex ComplexParams (ArrayList a, Complex b, string c)

@@ -187,7 +187,7 @@ namespace MonoTests.Remoting
 			}
 			catch (Exception ex)
 			{
-			//	Console.WriteLine (ex.ToString());
+				Console.WriteLine ("ERR:" + ex.ToString());
 				throw;
 			}
 			

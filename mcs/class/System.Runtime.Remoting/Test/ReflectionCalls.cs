@@ -35,19 +35,19 @@ namespace MonoTests.Remoting
 			return (string) m.Invoke (target, parms);
 		}
 
-		public static string PrimitiveParamsInOut (Type type, object target, ref int a1, out int a2, ref float b1, out float b2, ref char c1, out char c2, ref string d1, out string d2)
+		public static string PrimitiveParamsInOut (Type type, object target, ref int a1, out int a2, ref float b1, out float b2, int filler, ref char c1, out char c2, ref string d1, out string d2)
 		{
-			object[] parms = new object[] {a1,0,b1,0f,c1,'\0',d1,null};
+			object[] parms = new object[] {a1,0,b1,0f,filler,c1,'\0',d1,null};
 			MethodBase m = type.GetMethod ("PrimitiveParamsInOut");
 			string res = (string) m.Invoke (target, parms);
 			a1 = (int)parms[0];
 			b1 = (float)parms[2];
-			c1 = (char)parms[4];
-			d1 = (string)parms[6];
+			c1 = (char)parms[5];
+			d1 = (string)parms[7];
 			a2 = (int)parms[1];
 			b2 = (float)parms[3];
-			c2 = (char)parms[5];
-			d2 = (string)parms[7];
+			c2 = (char)parms[6];
+			d2 = (string)parms[8];
 			return res;
 		}
 
@@ -87,9 +87,9 @@ namespace MonoTests.Remoting
 			return ReflectionCallTest.PrimitiveParams (typeof (RemoteObject), RemoteObject, a, b, c, d);
 		}
 
-		public override string PrimitiveParamsInOut (ref int a1, out int a2, ref float b1, out float b2, ref char c1, out char c2, ref string d1, out string d2)
+		public override string PrimitiveParamsInOut (ref int a1, out int a2, ref float b1, out float b2, int filler, ref char c1, out char c2, ref string d1, out string d2)
 		{
-			return ReflectionCallTest.PrimitiveParamsInOut (typeof (RemoteObject), RemoteObject, ref a1, out a2, ref b1, out b2, ref c1, out c2, ref d1, out d2);
+			return ReflectionCallTest.PrimitiveParamsInOut (typeof (RemoteObject), RemoteObject, ref a1, out a2, ref b1, out b2, filler, ref c1, out c2, ref d1, out d2);
 		}
 
 		public override Complex ComplexParams (ArrayList a, Complex b, string c)
@@ -120,9 +120,9 @@ namespace MonoTests.Remoting
 			return ReflectionCallTest.PrimitiveParams (typeof (AbstractRemoteObject), RemoteObject, a, b, c, d);
 		}
 
-		public override string PrimitiveParamsInOut (ref int a1, out int a2, ref float b1, out float b2, ref char c1, out char c2, ref string d1, out string d2)
+		public override string PrimitiveParamsInOut (ref int a1, out int a2, ref float b1, out float b2, int filler, ref char c1, out char c2, ref string d1, out string d2)
 		{
-			return ReflectionCallTest.PrimitiveParamsInOut (typeof (AbstractRemoteObject), RemoteObject, ref a1, out a2, ref b1, out b2, ref c1, out c2, ref d1, out d2);
+			return ReflectionCallTest.PrimitiveParamsInOut (typeof (AbstractRemoteObject), RemoteObject, ref a1, out a2, ref b1, out b2, filler, ref c1, out c2, ref d1, out d2);
 		}
 
 		public override Complex ComplexParams (ArrayList a, Complex b, string c)
@@ -153,9 +153,9 @@ namespace MonoTests.Remoting
 			return ReflectionCallTest.PrimitiveParams (typeof (IRemoteObject), RemoteObject, a, b, c, d);
 		}
 
-		public override string PrimitiveParamsInOut (ref int a1, out int a2, ref float b1, out float b2, ref char c1, out char c2, ref string d1, out string d2)
+		public override string PrimitiveParamsInOut (ref int a1, out int a2, ref float b1, out float b2, int filler, ref char c1, out char c2, ref string d1, out string d2)
 		{
-			return ReflectionCallTest.PrimitiveParamsInOut (typeof (IRemoteObject), RemoteObject, ref a1, out a2, ref b1, out b2, ref c1, out c2, ref d1, out d2);
+			return ReflectionCallTest.PrimitiveParamsInOut (typeof (IRemoteObject), RemoteObject, ref a1, out a2, ref b1, out b2, filler, ref c1, out c2, ref d1, out d2);
 		}
 
 		public override Complex ComplexParams (ArrayList a, Complex b, string c)
