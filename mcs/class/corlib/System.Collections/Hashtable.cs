@@ -12,17 +12,16 @@ using System.Collections;
 using System.Runtime.Serialization;
 
 
-// TODO: Interfaces to implement: ISerializable and IDeserializationCallback;
 
 
 namespace System.Collections {
 
-	[MonoTODO]
 	[Serializable]
 	public class Hashtable : IDictionary, ICollection, 
 		IEnumerable, ICloneable, ISerializable, IDeserializationCallback
 	{
 
+		[Serializable]
 		internal struct Slot {
 			internal Object key;
 
@@ -181,15 +180,15 @@ namespace System.Collections {
 		{
 		}
 
-		[MonoTODO]
 		protected Hashtable (SerializationInfo info, StreamingContext context)
 		{
-//			loadFactor = info.GetValue ("LoadFactor", Type.GetType ("System.Float"));
-//			comparerRef = info.GetValue ("Comparer", typeof (object));
-//			hcpRef = info.GetValue ("HashCodeProvider", typeof (object));
-//			this.Count = info.GetValue ("HashSize");
-// 			this.Keys = info.GetValue ("Keys");
-// 			this.Values = info.GetValue ("Values");
+			loadFactor = (float) info.GetValue ("LoadFactor", typeof(float));
+			modificationCount = (int) info.GetValue ("Version", typeof(int));
+			comparerRef = (IComparer) info.GetValue ("Comparer", typeof (object));
+			hcpRef = (IHashCodeProvider) info.GetValue ("HashCodeProvider", typeof (object));
+			inUse = (int) info.GetValue ("HashSize", typeof(int));
+			table = (Slot[]) info.GetValue("Table", typeof(Slot[]));
+			threshold = (int) info.GetValue("Treshold", typeof(int));
  		}
 
 		//
@@ -407,22 +406,19 @@ namespace System.Collections {
 			return ht;
 		}
 
-		[MonoTODO]
 		public virtual void GetObjectData (SerializationInfo info, StreamingContext context)
 		{
 			info.AddValue ("LoadFactor", loadFactor);
 			info.AddValue ("Version", modificationCount);
 			info.AddValue ("Comparer", comparerRef);
 			info.AddValue ("HashCodeProvider", hcpRef);
-			info.AddValue ("HashSize", this.Count );
-			info.AddValue ("Keys", this.Keys);
-			info.AddValue ("Values", this.Values);
+			info.AddValue ("HashSize", inUse);
+			info.AddValue ("Table", table);
+			info.AddValue ("Treshold", threshold);
 		}
 
-		[MonoTODO]
 		public virtual void OnDeserialization (object sender)
 		{
-			throw new NotImplementedException ();
 		}
 
 		/// <summary>
@@ -1044,4 +1040,3 @@ namespace System.Collections {
 	} // Hashtable
 
 }
-

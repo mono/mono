@@ -8,6 +8,11 @@
 using System;
 using System.Collections;
 
+using System.IO;
+using System.Runtime.Serialization;
+using System.Runtime.Serialization.Formatters;
+using System.Runtime.Serialization.Formatters.Binary;
+
 using NUnit.Framework;
 
 
@@ -403,6 +408,41 @@ public class HashtableTest : TestCase {
 
 	// TODO - GetObjectData
 	// TODO - OnDeserialization
+
+	public void TestSerialization () {
+		Random r = new Random();
+		string filename = "hashtable_" + r.Next(99999).ToString() + ".dat";
+		Hashtable table1 = new Hashtable();
+		Hashtable table2;
+    	Stream str;
+	    BinaryFormatter formatter = new BinaryFormatter();
+
+		for (int i = 0; i < 100; i++) {
+			table1[i] = "TestString Key: " + i.ToString();
+		}
+		str = File.OpenWrite(filename);
+    	formatter.Serialize(str, table1);
+	    str.Close();
+
+		str = File.OpenRead(filename);
+		table2 = (Hashtable) formatter.Deserialize(str);
+		str.Close();
+
+		File.Delete(filename);
+
+		bool result;
+		foreach (DictionaryEntry de in table1) {
+			int key1 = (int) de.Key;
+			string val1 = (string) de.Value;
+			string val2 = (string) table2[key1];
+			if (val2 != val1) {
+				result = false;
+			}
+		}
+		result = true;
+
+		Assert("Binary Serialization Error", result);
+	}
 
 	public void TestRemove() {
 		{

@@ -1,3 +1,8 @@
+2003-02-15  Pedro Martínez Juliá  <yoros@wanadoo.es>
+
+	* Hashtable.cs: Make hashtable serializable (at least with binary
+	formatter). This process was started by the Hashtable maintainer.
+
 2003-02-09  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* ArrayList.cs: fixed setSize (!).
