@@ -1,3 +1,10 @@
+
+Wed May 8 11:50:31 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* attribute.cs: lookup attribute type name as the spec says: first the
+	bare attribute name and then name + "Attribute" (nant compiles with
+	mcs after this fix).
+
 2002-05-07  Miguel de Icaza  <miguel@ximian.com>
 
 	* expression.cs (Unary.TryReduceNegative): Ah!  Tricky!  Tricky!

@@ -64,18 +64,14 @@ namespace Mono.CSharp {
 
 		public CustomAttributeBuilder Resolve (EmitContext ec)
 		{
-			string name = Name;
 			bool MethodImplAttr = false;
 			bool MarshalAsAttr = false;
 
 			UsageAttr = false;
 
-			if (Name.IndexOf ("Attribute") == -1)
-				name = Name + "Attribute";
-			else if (Name.LastIndexOf ("Attribute") == 0)
-				name = Name + "Attribute";
-
-			Type = RootContext.LookupType (ec.DeclSpace, name, false, Location);
+			Type = RootContext.LookupType (ec.DeclSpace, Name, true, Location);
+			if (Type == null)
+				Type = RootContext.LookupType (ec.DeclSpace, Name + "Attribute", false, Location);
 
 			if (Type == null) {
 				Report.Error (
@@ -537,14 +533,9 @@ namespace Mono.CSharp {
 				return null;
 			}
 
-			string attr_name = Name;
-
-			if (Name.IndexOf ("Attribute") == -1)
-				attr_name = Name + "Attribute";
-			else if (Name.LastIndexOf ("Attribute") == 0)
-				attr_name = Name + "Attribute";
-			
-			Type = RootContext.LookupType (ec.DeclSpace, attr_name, false, Location);
+			Type = RootContext.LookupType (ec.DeclSpace, Name, true, Location);
+			if (Type == null)
+				Type = RootContext.LookupType (ec.DeclSpace, Name + "Attribute", false, Location);
 
 			if (Type == null) {
 				Report.Error (246, Location, "Could not find attribute '" + Name + "' (are you" +
