@@ -1,3 +1,10 @@
+2002-02-28  Martin Baulig  <martin@gnome.org>
+
+	* String.cs (TestCompare): Added a few tests.
+	(TestFormat): Please don't compare two strings with Assert (... == ...),
+	use AssertEquals instead - this gives you a better idea what went wrong
+	if the test fails.
+
 2002-02-28  Nick Drochak  <ndrochak@gol.com>
 
 	* BitConverterTest.cs: Test was trying to catch the wrong Exception.

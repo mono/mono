@@ -52,37 +52,53 @@ public class StringTest : TestCase
 
 		Assert (String.Compare (lesser, caps, true) == 0);
 		Assert (String.Compare (lesser, caps, false) != 0);
+		AssertEquals ("A01", String.Compare ("a", "b"), -1);
+		AssertEquals ("A02", String.Compare ("b", "a"), 1);
+		AssertEquals ("A03", String.Compare ("A", "a"), 1);
+		AssertEquals ("A04", String.Compare ("a", "A"), -1);
+
 
 		// TODO - test with CultureInfo
 
 		string needle = "ab";
 		string haystack = "abbcbacab";
-		AssertEquals("basic substring check", 0, 
+		AssertEquals("basic substring check #1", 0, 
 			     String.Compare(needle, 0, haystack, 0, 2));
-		AssertEquals("basic substring miss", -1,
+		AssertEquals("basic substring check #2", -1,
 			     String.Compare(needle, 0, haystack, 0, 3));
+		AssertEquals("basic substring check #3", 0, 
+			     String.Compare("ab", 0, "ab", 0, 2));
+		AssertEquals("basic substring check #4", 0, 
+			     String.Compare("ab", 0, "ab", 0, 3));
+		AssertEquals("basic substring check #5", 0, 
+			     String.Compare("abc", 0, "ab", 0, 2));
+		AssertEquals("basic substring check #6", 1, 
+			     String.Compare("abc", 0, "ab", 0, 5));
+		AssertEquals("basic substring check #7", -1, 
+			     String.Compare("ab", 0, "abc", 0, 5));
+
 		for (int i = 1; i <= (haystack.Length - needle.Length); i++) {
 			if (i != 7) {
-				Assert("loop substring check " + i, String.Compare(needle, 0, haystack, i, 2) != 0);
-				Assert("loop substring check " + i, String.Compare(needle, 0, haystack, i, 3) != 0);
+				Assert("loop substring check #1/" + i, String.Compare(needle, 0, haystack, i, 2) != 0);
+				Assert("loop substring check #2/" + i, String.Compare(needle, 0, haystack, i, 3) != 0);
 			} else {
-				AssertEquals("loop substring check " + i, 0, String.Compare(needle, 0, haystack, i, 2));
-				AssertEquals("loop substring check " + i, 0, String.Compare(needle, 0, haystack, i, 3));
+				AssertEquals("loop substring check #3/" + i, 0, String.Compare(needle, 0, haystack, i, 2));
+				AssertEquals("loop substring check #4/" + i, 0, String.Compare(needle, 0, haystack, i, 3));
 			}
 		}
 
 		needle = "AB";
-		AssertEquals("basic substring check", 0, 
+		AssertEquals("basic substring check #8", 0, 
 			     String.Compare(needle, 0, haystack, 0, 2, true));
-		AssertEquals("basic substring check", 1, 
+		AssertEquals("basic substring check #9", 1, 
 			     String.Compare(needle, 0, haystack, 0, 2, false));
 		for (int i = 1; i <= (haystack.Length - needle.Length); i++) {
 			if (i != 7) {
-				Assert("loop substring check " + i, String.Compare(needle, 0, haystack, i, 2, true) != 0);
-				Assert("loop substring check " + i, String.Compare(needle, 0, haystack, i, 2, false) != 0);
+				Assert("loop substring check #5/" + i, String.Compare(needle, 0, haystack, i, 2, true) != 0);
+				Assert("loop substring check #6/" + i, String.Compare(needle, 0, haystack, i, 2, false) != 0);
 			} else {
-				AssertEquals("loop substring check " + i, 0, String.Compare(needle, 0, haystack, i, 2, true));
-				AssertEquals("loop substring check " + i, 1, String.Compare(needle, 0, haystack, i, 2, false));
+				AssertEquals("loop substring check #7/" + i, 0, String.Compare(needle, 0, haystack, i, 2, true));
+				AssertEquals("loop substring check #8/" + i, 1, String.Compare(needle, 0, haystack, i, 2, false));
 			}
 		}
 
@@ -213,16 +229,16 @@ public class StringTest : TestCase
 
 	public void TestFormat ()
 	{
-		Assert ("Empty format string.", String.Format ("", 0) == "");
-		Assert ("Single argument.", String.Format ("{0}", 100) == "100");
-		Assert ("Single argument, right justified.", String.Format ("X{0,5}X", 37) == "X   37X");
-		Assert ("Single argument, left justified.", String.Format ("X{0,-5}X", 37) == "X37   X");
-		Assert ("Two arguments.", String.Format ("The {0} wise {1}.", 3, "men") == "The 3 wise men.");
-		Assert ("Three arguments.", String.Format ("{0} re {1} fa {2}.", "do", "me", "so") == "do re me fa so.");
-		Assert ("Formatted argument.", String.Format ("###{0:x8}#", 0xc0ffee) == "###00c0ffee#");
-		Assert ("Formatted argument, right justified.", String.Format ("#{0,5:x3}#", 0x33) == "#  033#");
-		Assert ("Formatted argument, left justified.", String.Format ("#{0,-5:x3}#", 0x33) == "#033  #");
-		Assert ("Escaped bracket", String.Format ("typedef struct _{0} {{ ... }} MonoObject;", "MonoObject") == "typedef struct _MonoObject { ... } MonoObject;");
+		AssertEquals ("Empty format string.", String.Format ("", 0), "");
+		AssertEquals ("Single argument.", String.Format ("{0}", 100), "100");
+		AssertEquals ("Single argument, right justified.", String.Format ("X{0,5}X", 37), "X   37X");
+		AssertEquals ("Single argument, left justified.", String.Format ("X{0,-5}X", 37), "X37   X");
+		AssertEquals ("Two arguments.", String.Format ("The {0} wise {1}.", 3, "men"), "The 3 wise men.");
+		AssertEquals ("Three arguments.", String.Format ("{0} re {1} fa {2}.", "do", "me", "so"), "do re me fa so.");
+		AssertEquals ("Formatted argument.", String.Format ("###{0:x8}#", 0xc0ffee), "###00c0ffee#");
+		AssertEquals ("Formatted argument, right justified.", String.Format ("#{0,5:x3}#", 0x33), "#  033#");
+		AssertEquals ("Formatted argument, left justified.", String.Format ("#{0,-5:x3}#", 0x33), "#033  #");
+		AssertEquals ("Escaped bracket", String.Format ("typedef struct _{0} {{ ... }} MonoObject;", "MonoObject"), "typedef struct _MonoObject { ... } MonoObject;");
 
 		// TODO test format exceptions
 
