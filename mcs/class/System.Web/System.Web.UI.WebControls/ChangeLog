@@ -1,5 +1,9 @@
 2004-10-04 Sanjay Gupta <gsanjay@novell.com>
 
+	* IButtonControl.cs: Corrected property name.
+
+2004-10-04 Sanjay Gupta <gsanjay@novell.com>
+
 	* ParameterCollection.cs: Updated.
 
 2004-10-04 Sanjay Gupta <gsanjay@novell.com>
