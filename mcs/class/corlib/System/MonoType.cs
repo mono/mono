@@ -15,16 +15,6 @@ using System.Runtime.Serialization;
 
 namespace System
 {
-	internal struct MonoTypeInfo {
-		public string name;
-		public string name_space;
-		public Type etype;
-		public Type nested_in;
-		public Assembly assembly;
-		public int rank;
-		public bool isprimitive;
-	}
-
 	[Serializable]
 	internal class MonoType : Type, ISerializable
 	{
@@ -32,9 +22,6 @@ namespace System
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private static extern void type_from_obj (MonoType type, Object obj);
 		
-		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		private static extern void get_type_info (IntPtr type, out MonoTypeInfo info);
-
 		[MonoTODO]
 		internal MonoType (Object obj)
 		{
@@ -416,20 +403,14 @@ namespace System
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		public extern override Type GetElementType ();
 
-		public override Type UnderlyingSystemType {
-			get {
-				MonoTypeInfo info;
-				get_type_info (_impl.Value, out info);
-				return info.etype;
-			}
+		public extern override Type UnderlyingSystemType {
+			[MethodImplAttribute(MethodImplOptions.InternalCall)]
+			get;
 		}
 
-		public override Assembly Assembly {
-			get {
-				MonoTypeInfo info;
-				get_type_info (_impl.Value, out info);
-				return info.assembly;
-			}
+		public extern override Assembly Assembly {
+			[MethodImplAttribute(MethodImplOptions.InternalCall)]
+			get;
 		}
 
 		public override string AssemblyQualifiedName {
@@ -475,29 +456,21 @@ namespace System
 
 		public override MemberTypes MemberType {
 			get {
-				MonoTypeInfo info;
-				get_type_info (_impl.Value, out info);
-				return info.nested_in == null? MemberTypes.TypeInfo: MemberTypes.NestedType;
-			}
-		}
-
-		public override string Name {
-			get {
-				MonoTypeInfo info;
-				get_type_info (_impl.Value, out info);
-				return info.name;
-			}
-		}
-
-		public override string Namespace {
-			get {
-				MonoTypeInfo info;
-				get_type_info (_impl.Value, out info);
-				if (info.nested_in == null)
-					return info.name_space;
+				if (DeclaringType != null)
+					return MemberTypes.NestedType;
 				else
-					return info.nested_in.Namespace;
+					return MemberTypes.TypeInfo;
 			}
+		}
+
+		public extern override string Name {
+			[MethodImplAttribute(MethodImplOptions.InternalCall)]
+			get;
+		}
+
+		public extern override string Namespace {
+			[MethodImplAttribute(MethodImplOptions.InternalCall)]
+			get;
 		}
 
 		public extern override Module Module {
@@ -505,19 +478,14 @@ namespace System
 			get;
 		}
 
-		public override Type DeclaringType {
-			get {
-				MonoTypeInfo info;
-				get_type_info (_impl.Value, out info);
-				return info.nested_in;
-			}
+		public extern override Type DeclaringType {
+			[MethodImplAttribute(MethodImplOptions.InternalCall)]
+			get;
 		}
 
 		public override Type ReflectedType {
 			get {
-				MonoTypeInfo info;
-				get_type_info (_impl.Value, out info);
-				return info.nested_in;
+				return DeclaringType;
 			}
 		}
 
@@ -527,13 +495,8 @@ namespace System
 			}
 		}
 
-		public override int GetArrayRank ()
-		{
-			MonoTypeInfo info;
-			
-			get_type_info (_impl.Value, out info);
-			return info.rank;
-		}
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		public extern override int GetArrayRank ();
 
 		public void GetObjectData(SerializationInfo info, StreamingContext context)
 		{

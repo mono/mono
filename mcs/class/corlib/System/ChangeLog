@@ -1,3 +1,8 @@
+2003-12-03  Zoltan Varga  <vargaz@freemail.hu>
+
+	* MonoType.cs: Get rid of get_type_info, use a separate icall for
+	each property instead.
+
 2003-12-02  Dick Porter  <dick@ximian.com>
 
 	* Decimal.cs: Fix NumberFormatInfo lookup.  Patch by
