@@ -1,5 +1,5 @@
 ////
-//// System.Windows.Forms.Binding
+//// System.Windows.Forms.Binding.cs
 ////
 //// Author:
 ////   stubbed out by Jaak Simm (jaaksimm@firm.ee)

@@ -1,5 +1,5 @@
 ////
-//// System.Windows.Forms.BindingManagerBase
+//// System.Windows.Forms.BindingManagerBase.cs
 ////
 //// Author:
 ////   stubbed out by Jaak Simm (jaaksimm@firm.ee)

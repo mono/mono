@@ -1,5 +1,5 @@
 ////
-//// System.Windows.Forms.BindingsCollection
+//// System.Windows.Forms.BindingsCollection.cs
 ////
 //// Author:
 ////   stubbed out by Jaak Simm (jaaksimm@firm.ee)

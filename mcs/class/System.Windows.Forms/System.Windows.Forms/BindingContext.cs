@@ -1,5 +1,5 @@
 ////
-//// System.Windows.Forms.BindingContext
+//// System.Windows.Forms.BindingContext.cs
 ////
 //// Author:
 ////   stubbed out by Jaak Simm (jaaksimm@firm.ee)
