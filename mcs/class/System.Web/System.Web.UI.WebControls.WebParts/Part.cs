@@ -40,9 +40,8 @@ namespace System.Web.UI.WebControls.WebParts
 	public abstract class Part : Panel, INamingContainer,
 	                             ICompositeControlDesignerAccessor
 	{
-		private Part()
-		{
-		}
+		internal Part()
+		{ }
 
 		public virtual PartChromeState ChromeState
 		{

@@ -1,5 +1,9 @@
 2004-09-28  Sanjay Gupta <gsanjay@novell.com>
 		
+	* Part.cs: Corrected access modifier of constructor.
+
+2004-09-28  Sanjay Gupta <gsanjay@novell.com>
+		
 	* WebPart.cs: Updated source and fixed bug 66907.
 
 2004-09-28  Sanjay Gupta <gsanjay@novell.com>
