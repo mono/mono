@@ -59,7 +59,7 @@ namespace MonoTests.System.Collections {
 			//
 			Assert.IsTrue (c.Compare ("a", "A") < 0);
 			
-			Assert.IsTrue (CultureInfo.InvariantCulture.CompareInfo.Compare ("a", "A", CompareOptions.Ordinal) < 0);
+			Assert.IsTrue (CultureInfo.InvariantCulture.CompareInfo.Compare ("a", "A", CompareOptions.Ordinal) > 0);
 		}
 	}
 }
