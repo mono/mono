@@ -1,3 +1,14 @@
+2004-12-12 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpWebResponse.cs: added ReadAll method.
+
+	* WebConnection.cs: in HandleError, set the response error after
+	closing the socket. Use an async. delegate to finish reading any prior
+	WebConnectionStream.
+
+	* HttpWebRequest.cs: for error responses that allow content, read the
+	stream immediately. Fixes bug #70483.
+
 2004-12-11 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* CookieContainer.cs: quote the port number.

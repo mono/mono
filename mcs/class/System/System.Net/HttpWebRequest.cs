@@ -698,7 +698,7 @@ namespace System.Net
 			
 			return result.Response;
 		}
-		
+
 		public override WebResponse GetResponse()
 		{
 			if (haveResponse && webResponse != null)
@@ -1077,7 +1077,10 @@ namespace System.Net
 						
 						writeStream.InternalClose ();
 						writeStream = null;
+						if (webResponse != null)
+							webResponse.ReadAll ();
 						webResponse = null;
+
 						throw new WebException ("This request requires buffering " +
 									"of data for authentication or " +
 									"redirection to be sucessful.");
@@ -1088,6 +1091,7 @@ namespace System.Net
 					string err = String.Format ("The remote server returned an error: ({0}) {1}.",
 								    (int) code, webResponse.StatusDescription);
 					throwMe = new WebException (err, null, protoError, webResponse);
+					webResponse.ReadAll ();
 				} else if ((int) code == 304 && allowAutoRedirect) {
 					string err = String.Format ("The remote server returned an error: ({0}) {1}.",
 								    (int) code, webResponse.StatusDescription);
@@ -1095,13 +1099,17 @@ namespace System.Net
 				} else if ((int) code >= 300 && allowAutoRedirect && redirects > maxAutoRedirect) {
 					throwMe = new WebException ("Max. redirections exceeded.", null,
 								    protoError, webResponse);
+					webResponse.ReadAll ();
 				}
 			}
 
 			if (throwMe == null) {
 				bool b = false;
-				if (allowAutoRedirect && (int) code >= 300)
+				if (allowAutoRedirect && (int) code >= 300) {
 					b = Redirect (result, code);
+					if (resp != null && (int) code != 304)
+						resp.ReadAll ();
+				}
 
 				return b;
 			}
@@ -1111,8 +1119,7 @@ namespace System.Net
 				writeStream = null;
 			}
 
-			if (webResponse != null)
-				webResponse = null;
+			webResponse = null;
 
 			throw throwMe;
 		}
