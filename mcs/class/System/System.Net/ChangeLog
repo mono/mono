@@ -1,3 +1,8 @@
+2004-12-10 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* WebConnection.cs:
+	* WebConnectionStream.cs: removed TryReconnect. It's no longer needed.
+
 2004-12-05 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* WebConnection.cs: set the event in Close so that if the queue is

@@ -808,35 +808,15 @@ namespace System.Net
 			try {
 				nstream.Write (buffer, offset, size);
 				// here SSL handshake should have been done
-				if (ssl && !certsAvailable) {
+				if (ssl && !certsAvailable)
 					GetCertificates ();
-				}
-			} catch (Exception) {
-			}
-		}
+			} catch (Exception e) {
+				if (e is WebException)
+					throw e;
 
-		internal bool TryReconnect ()
-		{
-			lock (this) {
-				if (!reused) {
-					HandleError (WebExceptionStatus.SendFailure, null, "TryReconnect");
-					return false;
-				}
-
-				Close (false);
-				reused = false;
-				Connect ();
-				if (status != WebExceptionStatus.Success) {
-					HandleError (WebExceptionStatus.SendFailure, null, "TryReconnect2");
-					return false;
-				}
-			
-				if (!CreateStream (Data.request)) {
-					HandleError (WebExceptionStatus.SendFailure, null, "TryReconnect3");
-					return false;
-				}
+				HandleError (WebExceptionStatus.SendFailure, e, "Write");
+				throw new WebException ("Not connected", e, WebExceptionStatus.SendFailure, null);
 			}
-			return true;
 		}
 
 		void Close (bool sendNext)

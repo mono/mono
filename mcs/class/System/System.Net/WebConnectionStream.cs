@@ -392,17 +392,10 @@ namespace System.Net
 
 			if (!allowBuffering || sendChunked) {
 				headersSent = true;
-				try {
-					cnc.Write (buffer, offset, size);
-				} catch (IOException) {
-					if (cnc.Connected)
-						throw;
+				if (!cnc.Connected)
+					throw new WebException ("Not connected", null, WebExceptionStatus.SendFailure, null);
 
-					if (!cnc.TryReconnect ())
-						throw;
-
-					cnc.Write (buffer, offset, size);
-				}
+				cnc.Write (buffer, offset, size);
 			} else {
 				headers = new byte [size];
 				Buffer.BlockCopy (buffer, offset, headers, 0, size);
@@ -426,32 +419,24 @@ namespace System.Net
 			byte [] bytes = writeBuffer.GetBuffer ();
 			int length = (int) writeBuffer.Length;
 			if (request.ContentLength != -1 && request.ContentLength < length) {
-				throw new ProtocolViolationException ("Specified Content-Length is less than the " +
-								      "number of bytes to write");
+				throw new WebException ("Specified Content-Length is less than the number of bytes to write", null,
+							WebExceptionStatus.ServerProtocolViolation, null);
 			}
 
 			request.InternalContentLength = length;
 			request.SendRequestHeaders ();
 			requestWritten = true;
-			while (true) {
-				cnc.Write (headers, 0, headers.Length);
-				if (!cnc.Connected) {
-					if (!cnc.TryReconnect ())
-						return;
+			cnc.Write (headers, 0, headers.Length);
+			if (!cnc.Connected)
+				throw new WebException ("Error writing request.", null, WebExceptionStatus.SendFailure, null);
 
-					continue;
-				}
-				headersSent = true;
+			headersSent = true;
+			if (cnc.Data.StatusCode != 0 && cnc.Data.StatusCode != 100)
+				return;
 
-				if (cnc.Data.StatusCode != 0 && cnc.Data.StatusCode != 100)
-					return;
-
-				cnc.Write (bytes, 0, length);
-				if (!cnc.Connected && cnc.TryReconnect ())
-					continue;
-
-				break;
-			}
+			cnc.Write (bytes, 0, length);
+			if (!cnc.Connected)
+				throw new WebException ("Error writing request.", null, WebExceptionStatus.SendFailure, null);
 		}
 
 		internal void InternalClose ()
