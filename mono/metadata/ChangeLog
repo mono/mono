@@ -1,4 +1,8 @@
 
+Thu Sep 5 13:09:46 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* gc.c: put HIDE_POINTER/REVEAL_POINTER only here.
+
 Wed Sep 4 19:23:09 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
 	* gc.c: fix weakreferences.
