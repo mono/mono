@@ -44,167 +44,134 @@ using System;
 using System.Globalization;
 using System.Text;
 using System.Reflection;
+using System.Resources;
 
 namespace Microsoft.VisualBasic.CompilerServices {
 	[System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)] 
 	[Microsoft.VisualBasic.CompilerServices.StandardModule] 
 	 public class Utils {
-		public const int SEVERITY_ERROR = Int32.MinValue;
-		public const int FACILITY_CONTROL = 655360;
-		public const int FACILITY_RPC = 65536;
-		public const int FACILITY_ITF = 262144;
-		public const int SCODE_FACILITY = 536805376;
-		public const char chPeriod = '.';
-		public const char chSpace = ' ';
-		public const char chIntlSpace = '\u3000';
-		public const char chZero = '0';
-		public const char chHyphen = '-';
-		public const char chPlus = '+';
-		public const char chNull = '\0';
-		public const char chLetterA = 'A';
-		public const char chLetterZ = 'Z';
-		public const char chColon = ':';
-		public const char chSlash = '/';
-		public const char chBackslash = '\\';
-		public const char chTab = '\t';
-		public const char chCharH0A = '\n';
-		public const char chCharH0B = '\t';
-		public const char chCharH0C = '\f';
-		public const char chCharH0D = '\r';
-		public const char chLineFeed = '\n';
-		public const char chDblQuote = '\"';
-		//TODO: why is this static, should it be const?
-		public static char[] m_achIntlSpace = new char[] { ' ', '\u3000' };
+		 public const int SEVERITY_ERROR = Int32.MinValue;
+		 public const int FACILITY_CONTROL = 655360;
+		 public const int FACILITY_RPC = 65536;
+		 public const int FACILITY_ITF = 262144;
+		 public const int SCODE_FACILITY = 536805376;
+		 public const char chPeriod = '.';
+		 public const char chSpace = ' ';
+		 public const char chIntlSpace = '\u3000';
+		 public const char chZero = '0';
+		 public const char chHyphen = '-';
+		 public const char chPlus = '+';
+		 public const char chNull = '\0';
+		 public const char chLetterA = 'A';
+		 public const char chLetterZ = 'Z';
+		 public const char chColon = ':';
+		 public const char chSlash = '/';
+		 public const char chBackslash = '\\';
+		 public const char chTab = '\t';
+		 public const char chCharH0A = '\n';
+		 public const char chCharH0B = '\t';
+		 public const char chCharH0C = '\f';
+		 public const char chCharH0D = '\r';
+		 public const char chLineFeed = '\n';
+		 public const char chDblQuote = '\"';
+		 //TODO: why is this static, should it be const?
+		 public static char[] m_achIntlSpace = new char[] { ' ', '\u3000' };
 
-		private const string FILE_NAME = "resources.MicrosoftVisualBasic";
-		//TODO:
-		//private const ResourceBundle RESOURCE_BUNDLE =
-		//	ResourceBundle.getBundle(FILE_NAME);
+		 private const  String FILE_NAME = "Microsoft.VisualBasic.VBUtils";
+		 private static ResourceManager RESOURCE_BUNDLE = new ResourceManager(FILE_NAME, Assembly.GetExecutingAssembly()) ;
+
+		 //    public static ResourceManager get_VBAResourceManager() throws NotImplementedException
+		 //    {
+		 //        throw new NotImplementedException("The method get_VBAResourceManager in class VisualBasic.CompilerServices.Utils is not supported");
+		 //    }
+
+		 public static string GetResourceString(string key) 
+		 {
+			 string str = null;
+			 try {
+				 str = RESOURCE_BUNDLE.GetString(key);
+			 }
+			 catch (Exception e) {
+				 str =  RESOURCE_BUNDLE.GetString("ID95");
+			 }
+
+			 return str;
+		 }
+
+		 public static string GetResourceString(string key, bool notUsed) 
+		 {
+			 return GetResourceString(key);
+		 }
+
+		 public static string GetResourceString (string key,string paramValue) 
+		 {
+			 StringBuilder sb = new StringBuilder(GetResourceString(key));
+			 sb.Replace("|1", paramValue);
+			 return sb.ToString();
+		 }
+
+		 public static string GetResourceString (string key, string paramValue1, string paramValue2) 
+		 {
+			 StringBuilder sb = new StringBuilder(GetResourceString(key));
+			 sb.Replace("|1", paramValue1);
+			 sb.Replace("|2", paramValue2);
+			 return sb.ToString();
+		 }
+
+		 public static string GetResourceString (string key, string param1, string param2, string param3) 
+		 {
+			 StringBuilder sb = new StringBuilder(GetResourceString(key));
+			 sb.Replace("|1", param1);
+			 sb.Replace("|2", param2);
+			 sb.Replace("|3", param3);
+			 return sb.ToString();
+		 }
 
 
+		 public static string GetResourceString (string key, string param1, string param2, string param3,
+							 string param4) 
+		 {
+			 StringBuilder sb = new StringBuilder(GetResourceString(key));
+			 sb.Replace("|1", param1);
+			 sb.Replace("|2", param2);
+			 sb.Replace("|3", param3);
+			 sb.Replace("|4", param4);
+			 return sb.ToString();
+		 }
 
-		//    public static ResourceManager get_VBAResourceManager() throws NotImplementedException
-		//    {
-		//        throw new NotImplementedException("The method get_VBAResourceManager in class VisualBasic.CompilerServices.Utils is not supported");
-		//    }
-//Mono code
-//		[MonoTODO ("Used by the Mainsoft people")]
-//		internal static string GetResourceString (string s)
-//		{
-//                        return string.Empty;
-//		}
+		 public static string GetResourceString (int ResourceId) 
+		 {
+			 string str = "ID" + ResourceId.ToString();
+			 return GetResourceString(str);
+		 }
 
-		[MonoTODO]
-		public static string GetResourceString(string key) {
-			string str = null;
-			//TODO:
-			str = key;//TODO: Get the resource!
-			//try {
-			//	//str = RESOURCE_BUNDLE.getString(key);
-			//}
-			//catch (MissingResourceException e) {
-			//	//TODO:
-			//	//try {
-			//	//	str = RESOURCE_BUNDLE.getString("ID95");
-			//	//}
-			//	//catch (MissingResourceException ex) {
-			//	//}
-			//}
-			//if (str == null)
-			//
-			//str = RESOURCE_BUNDLE.getString("ID95");
+		 public static void ThrowException (int hr) 
+		 {
+			 throw ExceptionUtils.VbMakeException(hr);
+		 }
 
-			return str;
-		}
-
-		[MonoTODO]
-		public static string GetResourceString(string key, bool notUsed) {
-			string str = null;
-			str = key;//TODO: Get the resource!
-			//try {
-			//	str = RESOURCE_BUNDLE.getString(key);
-			//}
-			//catch (MissingResourceException e) {
-			//}
-			return str;
-		}
-
-		public static string GetResourceString(string key, string paramValue) {
-			StringBuilder sb = new StringBuilder(GetResourceString(key));
-			sb.Replace("|1", paramValue);
-			return sb.ToString();
-		}
-
-		public static string GetResourceString(
-			string key,
-			string paramValue1,
-			string paramValue2) {
-			StringBuilder sb = new StringBuilder(GetResourceString(key));
-			sb.Replace("|1", paramValue1);
-			sb.Replace("|2", paramValue2);
-			return sb.ToString();
-		}
-
-		public static string GetResourceString(
-			string key,
-			string param1,
-			string param2,
-			string param3) {
-			StringBuilder sb = new StringBuilder(GetResourceString(key));
-			sb.Replace("|1", param1);
-			sb.Replace("|2", param2);
-			sb.Replace("|3", param3);
-			return sb.ToString();
-		}
-
-		public static string GetResourceString(
-			string key,
-			string param1,
-			string param2,
-			string param3,
-			string param4) {
-			StringBuilder sb = new StringBuilder(GetResourceString(key));
-			sb.Replace("|1", param1);
-			sb.Replace("|2", param2);
-			sb.Replace("|3", param3);
-			sb.Replace("|4", param4);
-			return sb.ToString();
-		}
-
-		public static string GetResourceString(int ResourceId) {
-			string str = "ID" + StringType.FromInteger(ResourceId);
-			return GetResourceString(str);
-		}
-
-		public static void ThrowException(int hr) {
-			throw ExceptionUtils.VbMakeException(hr);
-		}
-
-		/**
-		 * Method that returns true if given type is numeric type; otherwise false
-		 * @param tc Type to check numerity
-		 * @return true if given type is numeric; otherwise false
-		 */
-		public static bool IsNumericType(Type tc) {
-			TypeCode typeCode = Type.GetTypeCode(tc);
-			return IsNumericTypeCode((int)typeCode);
-		}
+		 public static bool IsNumericType (Type tc) 
+		 {
+			 TypeCode typeCode = Type.GetTypeCode(tc);
+			 return IsNumericTypeCode((int)typeCode);
+		 }
     
-		public static bool IsNumericTypeCode(int i) {
-			switch (i) {
-				case (int)TypeCode.Boolean:
-				case (int)TypeCode.Byte:
-				case (int)TypeCode.Int16:
-				case (int)TypeCode.Int32:
-				case (int)TypeCode.Int64:
-				case (int)TypeCode.Double:
-				case (int)TypeCode.Single:
-				case (int)TypeCode.Decimal:
-					return true;
-				default:
-					return false;
-			}
-		}
+		 public static bool IsNumericTypeCode (int i) 
+		 {
+			 switch (i) {
+			 case (int)TypeCode.Boolean:
+			 case (int)TypeCode.Byte:
+			 case (int)TypeCode.Int16:
+			 case (int)TypeCode.Int32:
+			 case (int)TypeCode.Int64:
+			 case (int)TypeCode.Double:
+			 case (int)TypeCode.Single:
+			 case (int)TypeCode.Decimal:
+				 return true;
+			 default:
+				 return false;
+			 }
+		 }
 
 		/**
 		 * This method change the given string which contains the suffix of array
@@ -213,113 +180,98 @@ namespace Microsoft.VisualBasic.CompilerServices {
 		 * @param sRank the given suffix 
 		 * @return string the suffix after the change
 		 */
-		private static string changeArraySuffix(string sRank) {
-			//StringBuffer sb = new StringBuffer(sRank);
-			StringBuilder sb = new StringBuilder();
-			
-			char currentChar;
+		 private static string changeArraySuffix(string sRank) 
+		 {
+			 StringBuilder sb = new StringBuilder(sRank);
+			 char currentChar;
 
-			for (int i = sRank.Length-1; i >= 0; i--) {
-				currentChar = sb[i];
-				if (currentChar == '(') { 
-					sb.Remove(i,1);
-					sb.Append(')');
+			 for (int i = sRank.Length-1; i >= 0; i--) {
+				 currentChar = sb[i];
+				 if (currentChar == '(') { 
+					 sb.Remove(i,1);
+					 sb.Append(')');
 
-				}
-				else if (currentChar == ')') { 
-					sb.Remove(i,1);
-					sb.Append('(');
+				 }
+				 else if (currentChar == ')') { 
+					 sb.Remove(i,1);
+					 sb.Append('(');
 
-				}
-				else if (currentChar == ',') { 
-					sb.Remove(i,1);
-					sb.Append(',');
+				 }
+				 else if (currentChar == ',') { 
+					 sb.Remove(i,1);
+					 sb.Append(',');
 
-				}
-			}
-			return sb.ToString();
-		}
+				 }
+			 }
+			 return sb.ToString();
+		 }
     
-		/**
-		 * This method returns the type name of this object in vb format
-		 * @param obj the given object
-		 * @return string the object's vb type name
-		 * @limit COM Objects is not supported
-		 */
-		public static string VBFriendlyName(object obj) {
-			if (obj == null)
-				return "Nothing";
-			Type type = obj.GetType();
-			return VBFriendlyName(type,obj);
-		}
+		 public static string VBFriendlyName (object obj) 
+		 {
+			 if (obj == null)
+				 return "Nothing";
+			 Type type = obj.GetType();
+			 return VBFriendlyName(type,obj);
+		 }
 
-		/**
-		 * Return the vb name of this type
-		 * @param type the given type
-		 * @return string the vb name of this type
-		 */
-		public static string VBFriendlyName(Type type) {
-			return VBFriendlyNameOfTypeName(type.Name);
-		}
+		 public static string VBFriendlyName (Type type) 
+		 {
+			 return VBFriendlyNameOfTypeName(type.Name);
+		 }
     
-		/**
-		 * Return the vb name of this type.
-		 * @param type the type of the given object
-		 * @param obj the given object
-		 * @return string the vb name of this object
-		 * @limit COM Objects is not supported
-		 */
-		public static string VBFriendlyName(Type type, object obj) {
+		 public static string VBFriendlyName (Type type, object obj) 
+		 {
 			
-			//if (StringStaticWrapper.CompareOrdinal(type.FullName, "System.__ComObject") //java code
-			if (string.CompareOrdinal(type.FullName, "System.__ComObject") == 0) {
-				//this shape of if was writen  since get_IsCOMObject is not implemented
-				//yet. in this flow only when the type name is "System.__ComObject" the
-				//not implementedException is thrown.
+			 //if (StringStaticWrapper.CompareOrdinal(type.FullName, "System.__ComObject") //java code
+			 if (string.CompareOrdinal(type.FullName, "System.__ComObject") == 0) {
+				 //this shape of if was writen  since get_IsCOMObject is not implemented
+				 //yet. in this flow only when the type name is "System.__ComObject" the
+				 //not implementedException is thrown.
 			
-				//TODO:
-				//if (type.IsCOMObject)
-				//	Information.TypeNameOfCOMObject(obj, false);
-			}
-			return VBFriendlyNameOfTypeName(type.Name);
-		}
+				 //TODO:
+				 //if (type.IsCOMObject)
+				 //	Information.TypeNameOfCOMObject(obj, false);
+			 }
+			 return VBFriendlyNameOfTypeName(type.Name);
+		 }
     
-		/**
+		 /**
 		 * This method return a Vb representation of the given type name.
 		 * If this is an array it is changed to vb presentation with () instead of 
 		 * []. 
 		 * @param typename the given type name.
 		 * @return string the vb presentation of the type name
 		 */
-		public static string VBFriendlyNameOfTypeName(string typename) {
-			string tmpStr = null;
-			int bracketIndex = 0;
-			int length = typename.Length - 1;
-			//if this is array type
-			if (typename[length] == ']') {
-				bracketIndex = typename.IndexOf("[");
-				if (bracketIndex + 1 == length)
-					tmpStr = "()";
-					//when there is more than one dimention    
-				else
-					tmpStr =
-						typename
-						.Substring(bracketIndex, length - bracketIndex + 1)
-						.Replace('[', '(')
-						.Replace(']', ')');
+		 public static string VBFriendlyNameOfTypeName (string typename) 
+		 {
+			 string tmpStr = null;
+			 int bracketIndex = 0;
+			 int length = typename.Length - 1;
+			 //if this is array type
+			 if (typename[length] == ']') {
+				 bracketIndex = typename.IndexOf("[");
+				 if (bracketIndex + 1 == length)
+					 tmpStr = "()";
+				 //when there is more than one dimention    
+				 else
+					 tmpStr =
+						 typename
+						 .Substring(bracketIndex, length - bracketIndex + 1)
+						 .Replace('[', '(')
+						 .Replace(']', ')');
 
-				typename = typename.Substring(0, bracketIndex);
-			}
+				 typename = typename.Substring(0, bracketIndex);
+			 }
         
-			tmpStr = (tmpStr==null) ? "" :changeArraySuffix(tmpStr);
+			 tmpStr = (tmpStr==null) ? "" :changeArraySuffix(tmpStr);
 
-			//this method returns the C# equivalent name if this type name is vb unique
-			//it returns null if the type name is like in C#
-			string str = Information.VbTypeName(typename);     
-			if (str == null)
-				str = typename;
-			return str + tmpStr;
-		}
+			 //this method returns the C# equivalent name if this type name is vb unique
+			 //it returns null if the type name is like in C#
+			 string str = Information.VbTypeName(typename);     
+			 if (str == null)
+				 str = typename;
+			 return str + tmpStr;
+		 }
 
 		/**
 		 * This method change the presentation of a number.

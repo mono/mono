@@ -23,6 +23,10 @@
  * This class allows to map VB6 exception number to the .NET exception.
  */
 using System;
+using System.Collections;
+using System.Reflection;
+using System.IO;
+
 namespace Microsoft.VisualBasic.CompilerServices {
 	[Microsoft.VisualBasic.CompilerServices.StandardModuleAttribute] 
 	[System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Never)] 
@@ -112,233 +116,219 @@ namespace Microsoft.VisualBasic.CompilerServices {
 		public const int E_INVALIDARG = -2147024809;
 		public const int CO_E_SERVER_EXEC_FAILURE = -2146959355;
 
-		//TODO: uncomment and convert
-		//    private static HashMap _dotNetToVBMap = new HashMap();
-		//    
-		//    private static HashMap _vbToDotNetClassMap = new HashMap();
-		//    
-		//    static
-		//    { 
-		//        //initializing the hash map that maps vb exception number to .NET exception
-		//        //classes
-		//        _vbToDotNetClassMap.put(new Integer(vbErrors.ReturnWOGoSub),InvalidOperationException.class);
-		//        _vbToDotNetClassMap.put(new Integer(vbErrors.ResumeWOErr),InvalidOperationException.class);
-		//        _vbToDotNetClassMap.put(new Integer(vbErrors.CantUseNull),InvalidOperationException.class);
-		//        _vbToDotNetClassMap.put(new Integer(vbErrors.DoesntImplementICollection),InvalidOperationException.class);
-		//        
-		//        _vbToDotNetClassMap.put(new Integer(vbErrors.IllegalFuncCall),ArgumentException.class);
-		//        _vbToDotNetClassMap.put(new Integer(vbErrors.NamedArgsNotSupported),ArgumentException.class);
-		//        _vbToDotNetClassMap.put(new Integer(vbErrors.NamedParamNotFound),ArgumentException.class);
-		//        _vbToDotNetClassMap.put(new Integer(vbErrors.ParameterNotOptional),ArgumentException.class);
-		//        
-		//        _vbToDotNetClassMap.put(new Integer(vbErrors.OLENoPropOrMethod),MissingMemberException.class);
-		//        
-		//        _vbToDotNetClassMap.put(new Integer(vbErrors.Overflow),OverflowException.class);
-		//        
-		//        _vbToDotNetClassMap.put(new Integer(vbErrors.OutOfMemory),OutOfMemoryException.class);
-		//        _vbToDotNetClassMap.put(new Integer(vbErrors.OutOfStrSpace),OutOfMemoryException.class);
-		//        
-		//        _vbToDotNetClassMap.put(new Integer(vbErrors.OutOfBounds),IndexOutOfRangeException.class);
-		//        
-		//        _vbToDotNetClassMap.put(new Integer(vbErrors.DivByZero),DivideByZeroException.class);
-		//        
-		//        _vbToDotNetClassMap.put(new Integer(vbErrors.TypeMismatch),InvalidCastException.class);
-		//        
-		//        _vbToDotNetClassMap.put(new Integer(vbErrors.OutOfStack),StackOverflowException.class);
-		//        
-		//        _vbToDotNetClassMap.put(new Integer(vbErrors.DLLLoadErr),TypeLoadException.class);
-		//        
-		//        _vbToDotNetClassMap.put(new Integer(vbErrors.FileNotFound),FileNotFoundException.class);
-		//        
-		//        _vbToDotNetClassMap.put(new Integer(vbErrors.EndOfFile),EndOfStreamException.class);
-		//        
-		//        _vbToDotNetClassMap.put(new Integer(vbErrors.BadFileNameOrNumber),IOException.class);
-		//        _vbToDotNetClassMap.put(new Integer(vbErrors.BadFileMode),IOException.class);
-		//        _vbToDotNetClassMap.put(new Integer(vbErrors.IOError),IOException.class);
-		//        _vbToDotNetClassMap.put(new Integer(vbErrors.FileAlreadyExists),IOException.class);
-		//        _vbToDotNetClassMap.put(new Integer(vbErrors.FileAlreadyOpen),IOException.class);
-		//        _vbToDotNetClassMap.put(new Integer(vbErrors.BadRecordLen),IOException.class);
-		//        _vbToDotNetClassMap.put(new Integer(vbErrors.DiskFull),IOException.class);
-		//        _vbToDotNetClassMap.put(new Integer(vbErrors.BadRecordNum),IOException.class);
-		//        _vbToDotNetClassMap.put(new Integer(vbErrors.TooManyFiles),IOException.class);
-		//        _vbToDotNetClassMap.put(new Integer(vbErrors.DevUnavailable),IOException.class);
-		//        _vbToDotNetClassMap.put(new Integer(vbErrors.PermissionDenied),IOException.class);
-		//        _vbToDotNetClassMap.put(new Integer(vbErrors.DiskNotReady),IOException.class);
-		//        _vbToDotNetClassMap.put(new Integer(vbErrors.DifferentDrive),IOException.class);
-		//        _vbToDotNetClassMap.put(new Integer(vbErrors.PathFileAccess),IOException.class);
-		//        
-		//        _vbToDotNetClassMap.put(new Integer(vbErrors.PathNotFound),FileNotFoundException.class);
-		//        _vbToDotNetClassMap.put(new Integer(vbErrors.OLEFileNotFound),FileNotFoundException.class);
-		//        
-		//        _vbToDotNetClassMap.put(new Integer(vbErrors.ObjNotSet),NullReferenceException.class);
-		//        
-		//        _vbToDotNetClassMap.put(new Integer(vbErrors.PropertyNotFound),MissingFieldException.class);
-		//        
-		//        _vbToDotNetClassMap.put(new Integer(vbErrors.CantCreateObject),system.Exception.class);
-		//        _vbToDotNetClassMap.put(new Integer(vbErrors.ServerNotFound),system.Exception.class);
-		//        
-		//        //initializing the hash map that maps .NET exception number to VB exception
-		//         //number      
-		//        _dotNetToVBMap.put(new Integer(ExceptionUtils.E_NOTIMPL),new Integer(vbErrors.NotYetImplemented));
-		//        _dotNetToVBMap.put(new Integer(ExceptionUtils.E_NOINTERFACE),new Integer(vbErrors.OLENotSupported));
-		//        _dotNetToVBMap.put(new Integer(ExceptionUtils.E_ABORT),new Integer(vbErrors.Abort));
-		//        _dotNetToVBMap.put(new Integer(ExceptionUtils.DISP_E_UNKNOWNINTERFACE),new Integer(vbErrors.OLENoPropOrMethod));
-		//        _dotNetToVBMap.put(new Integer(ExceptionUtils.DISP_E_MEMBERNOTFOUND),new Integer(vbErrors.OLENoPropOrMethod));
-		//        _dotNetToVBMap.put(new Integer(ExceptionUtils.DISP_E_PARAMNOTFOUND),new Integer(vbErrors.NamedParamNotFound));
-		//        _dotNetToVBMap.put(new Integer(ExceptionUtils.DISP_E_TYPEMISMATCH),new Integer(vbErrors.TypeMismatch));
-		//        _dotNetToVBMap.put(new Integer(ExceptionUtils.DISP_E_UNKNOWNNAME),new Integer(vbErrors.OLENoPropOrMethod));
-		//        _dotNetToVBMap.put(new Integer(ExceptionUtils.DISP_E_NONAMEDARGS),new Integer(vbErrors.NamedArgsNotSupported));
-		//        _dotNetToVBMap.put(new Integer(ExceptionUtils.DISP_E_BADVARTYPE),new Integer(vbErrors.InvalidTypeLibVariable));
-		//        _dotNetToVBMap.put(new Integer(ExceptionUtils.DISP_E_OVERFLOW),new Integer(vbErrors.Overflow));
-		//        _dotNetToVBMap.put(new Integer(ExceptionUtils.DISP_E_BADINDEX),new Integer(vbErrors.OutOfBounds));
-		//        _dotNetToVBMap.put(new Integer(ExceptionUtils.DISP_E_UNKNOWNLCID),new Integer(vbErrors.LocaleSettingNotSupported));
-		//        _dotNetToVBMap.put(new Integer(ExceptionUtils.DISP_E_ARRAYISLOCKED),new Integer(vbErrors.ArrayLocked));
-		//        _dotNetToVBMap.put(new Integer(ExceptionUtils.DISP_E_BADPARAMCOUNT),new Integer(vbErrors.FuncArityMismatch));
-		//        _dotNetToVBMap.put(new Integer(ExceptionUtils.DISP_E_NOTACOLLECTION),new Integer(vbErrors.NotEnum));
-		//        _dotNetToVBMap.put(new Integer(ExceptionUtils.DISP_E_DIVBYZERO),new Integer(vbErrors.DivByZero));
-		//        _dotNetToVBMap.put(new Integer(ExceptionUtils.TYPE_E_BUFFERTOOSMALL),new Integer(vbErrors.BufferTooSmall));
-		//        _dotNetToVBMap.put(new Integer(-2147319785),new Integer(vbErrors.IdentNotMember));
-		//        _dotNetToVBMap.put(new Integer(ExceptionUtils.TYPE_E_INVDATAREAD),new Integer(vbErrors.InvDataRead));
-		//        _dotNetToVBMap.put(new Integer(ExceptionUtils.TYPE_E_UNSUPFORMAT),new Integer(vbErrors.UnsupFormat));
-		//        _dotNetToVBMap.put(new Integer(ExceptionUtils.TYPE_E_REGISTRYACCESS),new Integer(vbErrors.RegistryAccess));
-		//        _dotNetToVBMap.put(new Integer(ExceptionUtils.TYPE_E_LIBNOTREGISTERED),new Integer(vbErrors.LibNotRegistered));
-		//        _dotNetToVBMap.put(new Integer(ExceptionUtils.TYPE_E_UNDEFINEDTYPE),new Integer(vbErrors.UndefinedType));
-		//        _dotNetToVBMap.put(new Integer(ExceptionUtils.TYPE_E_QUALIFIEDNAMEDISALLOWED),new Integer(vbErrors.QualifiedNameDisallowed));
-		//        _dotNetToVBMap.put(new Integer(ExceptionUtils.TYPE_E_INVALIDSTATE),new Integer(vbErrors.InvalidState));
-		//        _dotNetToVBMap.put(new Integer(ExceptionUtils.TYPE_E_WRONGTYPEKIND),new Integer(vbErrors.WrongTypeKind));
-		//        _dotNetToVBMap.put(new Integer(ExceptionUtils.TYPE_E_ELEMENTNOTFOUND),new Integer(vbErrors.ElementNotFound));
-		//        _dotNetToVBMap.put(new Integer(ExceptionUtils.TYPE_E_AMBIGUOUSNAME),new Integer(vbErrors.AmbiguousName));
-		//        _dotNetToVBMap.put(new Integer(ExceptionUtils.TYPE_E_NAMECONFLICT),new Integer(vbErrors.ModNameConflict));
-		//        _dotNetToVBMap.put(new Integer(ExceptionUtils.TYPE_E_UNKNOWNLCID),new Integer(vbErrors.UnknownLcid));
-		//        _dotNetToVBMap.put(new Integer(ExceptionUtils.TYPE_E_DLLFUNCTIONNOTFOUND),new Integer(vbErrors.InvalidDllFunctionName));
-		//        _dotNetToVBMap.put(new Integer(ExceptionUtils.TYPE_E_BADMODULEKIND),new Integer(vbErrors.BadModuleKind));
-		//        _dotNetToVBMap.put(new Integer(ExceptionUtils.TYPE_E_SIZETOOBIG),new Integer(vbErrors.SizeTooBig));
-		//        _dotNetToVBMap.put(new Integer(ExceptionUtils.TYPE_E_TYPEMISMATCH),new Integer(vbErrors.TypeMismatch));
-		//        _dotNetToVBMap.put(new Integer(ExceptionUtils.TYPE_E_OUTOFBOUNDS),new Integer(vbErrors.OutOfBounds));
-		//        _dotNetToVBMap.put(new Integer(ExceptionUtils.TYPE_E_IOERROR),new Integer(vbErrors.TypeMismatch));
-		//        _dotNetToVBMap.put(new Integer(ExceptionUtils.TYPE_E_CANTCREATETMPFILE),new Integer(vbErrors.CantCreateTmpFile));
-		//        _dotNetToVBMap.put(new Integer(ExceptionUtils.TYPE_E_CANTLOADLIBRARY),new Integer(vbErrors.DLLLoadErr));
-		//        _dotNetToVBMap.put(new Integer(ExceptionUtils.TYPE_E_INCONSISTENTPROPFUNCS),new Integer(vbErrors.InconsistentPropFuncs));
-		//        _dotNetToVBMap.put(new Integer(ExceptionUtils.TYPE_E_CIRCULARTYPE),new Integer(vbErrors.CircularType));
-		//        _dotNetToVBMap.put(new Integer(ExceptionUtils.STG_E_INVALIDFUNCTION),new Integer(vbErrors.BadFunctionId));
-		//        _dotNetToVBMap.put(new Integer(ExceptionUtils.STG_E_FILENOTFOUND),new Integer(vbErrors.FileNotFound));
-		//        _dotNetToVBMap.put(new Integer(ExceptionUtils.STG_E_PATHNOTFOUND),new Integer(vbErrors.PathNotFound));
-		//        _dotNetToVBMap.put(new Integer(ExceptionUtils.STG_E_TOOMANYOPENFILES),new Integer(vbErrors.TooManyFiles));
-		//        _dotNetToVBMap.put(new Integer(ExceptionUtils.STG_E_ACCESSDENIED),new Integer(vbErrors.PermissionDenied));
-		//        _dotNetToVBMap.put(new Integer(ExceptionUtils.STG_E_INVALIDHANDLE),new Integer(vbErrors.ReadFault));
-		//        _dotNetToVBMap.put(new Integer(ExceptionUtils.STG_E_INSUFFICIENTMEMORY),new Integer(vbErrors.OutOfMemory));
-		//        _dotNetToVBMap.put(new Integer(ExceptionUtils.STG_E_NOMOREFILES),new Integer(vbErrors.TooManyFiles));
-		//        _dotNetToVBMap.put(new Integer(ExceptionUtils.STG_E_DISKISWRITEPROTECTED),new Integer(vbErrors.PermissionDenied));
-		//        _dotNetToVBMap.put(new Integer(ExceptionUtils.STG_E_SEEKERROR),new Integer(vbErrors.SeekErr));
-		//        _dotNetToVBMap.put(new Integer(ExceptionUtils.STG_E_WRITEFAULT),new Integer(vbErrors.ReadFault));
-		//        _dotNetToVBMap.put(new Integer(ExceptionUtils.STG_E_READFAULT),new Integer(vbErrors.ReadFault));
-		//        _dotNetToVBMap.put(new Integer(ExceptionUtils.STG_E_SHAREVIOLATION),new Integer(vbErrors.PathFileAccess));
-		//        _dotNetToVBMap.put(new Integer(ExceptionUtils.STG_E_LOCKVIOLATION),new Integer(vbErrors.PermissionDenied));
-		//        _dotNetToVBMap.put(new Integer(ExceptionUtils.STG_E_FILEALREADYEXISTS),new Integer(vbErrors.PathFileAccess));
-		//        _dotNetToVBMap.put(new Integer(ExceptionUtils.STG_E_MEDIUMFULL),new Integer(vbErrors.DiskFull));
-		//        _dotNetToVBMap.put(new Integer(ExceptionUtils.STG_E_INVALIDHEADER),new Integer(vbErrors.InvDataRead));
-		//        _dotNetToVBMap.put(new Integer(ExceptionUtils.STG_E_INVALIDNAME),new Integer(vbErrors.FileNotFound));
-		//        _dotNetToVBMap.put(new Integer(ExceptionUtils.STG_E_UNKNOWN),new Integer(vbErrors.InvDataRead));
-		//        _dotNetToVBMap.put(new Integer(ExceptionUtils.STG_E_UNIMPLEMENTEDFUNCTION),new Integer(vbErrors.NotYetImplemented));
-		//        _dotNetToVBMap.put(new Integer(ExceptionUtils.STG_E_INUSE),new Integer(vbErrors.PermissionDenied));
-		//        _dotNetToVBMap.put(new Integer(ExceptionUtils.STG_E_NOTCURRENT),new Integer(vbErrors.PermissionDenied));
-		//        _dotNetToVBMap.put(new Integer(ExceptionUtils.STG_E_REVERTED),new Integer(vbErrors.WriteFault));
-		//        _dotNetToVBMap.put(new Integer(ExceptionUtils.STG_E_CANTSAVE),new Integer(vbErrors.IOError));
-		//        _dotNetToVBMap.put(new Integer(ExceptionUtils.STG_E_OLDFORMAT),new Integer(vbErrors.UnsupFormat));
-		//        _dotNetToVBMap.put(new Integer(ExceptionUtils.STG_E_OLDDLL),new Integer(vbErrors.UnsupFormat));
-		//        _dotNetToVBMap.put(new Integer(ExceptionUtils.STG_E_SHAREREQUIRED),new Integer(32789));
-		//        _dotNetToVBMap.put(new Integer(ExceptionUtils.STG_E_NOTFILEBASEDSTORAGE),new Integer(vbErrors.UnsupFormat));
-		//        _dotNetToVBMap.put(new Integer(ExceptionUtils.STG_E_EXTANTMARSHALLINGS),new Integer(vbErrors.UnsupFormat));
-		//        _dotNetToVBMap.put(new Integer(ExceptionUtils.CLASS_E_NOTLICENSED),new Integer(vbErrors.CantCreateObject));
-		//        _dotNetToVBMap.put(new Integer(ExceptionUtils.REGDB_E_CLASSNOTREG),new Integer(vbErrors.CantCreateObject));
-		//        _dotNetToVBMap.put(new Integer(ExceptionUtils.MK_E_UNAVAILABLE),new Integer(vbErrors.CantCreateObject));
-		//        _dotNetToVBMap.put(new Integer(ExceptionUtils.MK_E_INVALIDEXTENSION),new Integer(vbErrors.OLEFileNotFound));
-		//        _dotNetToVBMap.put(new Integer(ExceptionUtils.MK_E_CANTOPENFILE),new Integer(vbErrors.OLEFileNotFound));
-		//        _dotNetToVBMap.put(new Integer(ExceptionUtils.CO_E_CLASSSTRING),new Integer(vbErrors.CantCreateObject));
-		//        _dotNetToVBMap.put(new Integer(ExceptionUtils.CO_E_APPNOTFOUND),new Integer(vbErrors.CantCreateObject));
-		//        _dotNetToVBMap.put(new Integer(ExceptionUtils.CO_E_APPDIDNTREG),new Integer(vbErrors.CantCreateObject));
-		//        _dotNetToVBMap.put(new Integer(ExceptionUtils.E_ACCESSDENIED),new Integer(vbErrors.PermissionDenied));
-		//        _dotNetToVBMap.put(new Integer(ExceptionUtils.E_OUTOFMEMORY),new Integer(vbErrors.OutOfMemory));
-		//        _dotNetToVBMap.put(new Integer(ExceptionUtils.E_INVALIDARG),new Integer(vbErrors.IllegalFuncCall));
-		//        _dotNetToVBMap.put(new Integer(-2147023174),new Integer(vbErrors.ServerNotFound));
-		//        _dotNetToVBMap.put(new Integer(ExceptionUtils.CO_E_SERVER_EXEC_FAILURE),new Integer(vbErrors.CantCreateObject));
-		//
-		//        //new .NET values 
-		//        _dotNetToVBMap.put(new Integer(-2146233080),new Integer(vbErrors.OutOfBounds));//IndexOutOfRangeException
-		//        _dotNetToVBMap.put(new Integer(-2146233065),new Integer(vbErrors.OutOfBounds));//RankException
-		//        _dotNetToVBMap.put(new Integer(-2147467261),new Integer(vbErrors.ObjNotSet));//NullPointerException
-		//        _dotNetToVBMap.put(new Integer(-2146233066),new Integer(vbErrors.Overflow));//OverflowException
-		//        _dotNetToVBMap.put(new Integer(-2146233048),new Integer(vbErrors.Overflow));//NotFiniteNumberException
-		//        _dotNetToVBMap.put(new Integer(-2146233067),new Integer(vbErrors.TypeMismatch));//NotSupportedException
-		//        _dotNetToVBMap.put(new Integer(-2146233070),new Integer(vbErrors.OLENoPropOrMethod));//MissingMemberException
-		//        _dotNetToVBMap.put(new Integer(-2146233053),new Integer(vbErrors.InvalidDllFunctionName));//EntryPointNotFoundException
-		//        _dotNetToVBMap.put(new Integer(-2146233054),new Integer(vbErrors.CantCreateObject));//TypeLoadException
-		//        _dotNetToVBMap.put(new Integer(-2146233033),new Integer(vbErrors.TypeMismatch));//FormatException
-		//        _dotNetToVBMap.put(new Integer(-2147024893),new Integer(vbErrors.PathNotFound));//DirectoryNotFoundException
-		//        _dotNetToVBMap.put(new Integer(-2146232800),new Integer(vbErrors.IOError));//IOException
-		//        _dotNetToVBMap.put(new Integer(-2147024894),new Integer(vbErrors.FileNotFound));//FileNotFoundException     
-		//    }
-    
-    
-		public static int getVBFromDotNet(int number) {
-			return (int)-2147467263;
-			//return (int)_dotNetToVBMap.get(number);//uncomment and convert
+		private static Hashtable _dotNetToVBMap = new Hashtable();
+		private static Hashtable _vbToDotNetClassMap = new Hashtable();
+
+
+		static ExceptionUtils() {
+			// initializing the hash map that maps vb exception number to .NET exception classes
+			_vbToDotNetClassMap.Add(VBErrors.ReturnWOGoSub, typeof(InvalidOperationException));
+			_vbToDotNetClassMap.Add(VBErrors.ResumeWOErr, typeof(InvalidOperationException));
+			_vbToDotNetClassMap.Add(VBErrors.CantUseNull, typeof(InvalidOperationException));
+			_vbToDotNetClassMap.Add(VBErrors.DoesntImplementICollection, typeof(InvalidOperationException));
+        
+			_vbToDotNetClassMap.Add(VBErrors.IllegalFuncCall, typeof(ArgumentException));
+			_vbToDotNetClassMap.Add(VBErrors.NamedArgsNotSupported, typeof(ArgumentException));
+			_vbToDotNetClassMap.Add(VBErrors.NamedParamNotFound, typeof(ArgumentException));
+			_vbToDotNetClassMap.Add(VBErrors.ParameterNotOptional, typeof(ArgumentException));
+        
+			_vbToDotNetClassMap.Add(VBErrors.OLENoPropOrMethod, typeof(MissingMemberException));
+        
+			_vbToDotNetClassMap.Add(VBErrors.Overflow, typeof(OverflowException));
+        
+			_vbToDotNetClassMap.Add(VBErrors.OutOfMemory, typeof(OutOfMemoryException));
+			_vbToDotNetClassMap.Add(VBErrors.OutOfStrSpace, typeof(OutOfMemoryException));
+        
+			_vbToDotNetClassMap.Add(VBErrors.OutOfBounds, typeof(IndexOutOfRangeException));
+        
+			_vbToDotNetClassMap.Add(VBErrors.DivByZero, typeof(DivideByZeroException));
+        
+			_vbToDotNetClassMap.Add(VBErrors.TypeMismatch, typeof(InvalidCastException));
+        
+			_vbToDotNetClassMap.Add(VBErrors.OutOfStack, typeof(StackOverflowException));
+        
+			_vbToDotNetClassMap.Add(VBErrors.DLLLoadErr, typeof(TypeLoadException));
+        
+			_vbToDotNetClassMap.Add(VBErrors.FileNotFound, typeof(FileNotFoundException));
+        
+			_vbToDotNetClassMap.Add(VBErrors.EndOfFile, typeof(EndOfStreamException));
+        
+			_vbToDotNetClassMap.Add(VBErrors.BadFileNameOrNumber, typeof(IOException));
+			_vbToDotNetClassMap.Add(VBErrors.BadFileMode, typeof(IOException));
+			_vbToDotNetClassMap.Add(VBErrors.IOError, typeof(IOException));
+			_vbToDotNetClassMap.Add(VBErrors.FileAlreadyExists, typeof(IOException));
+			_vbToDotNetClassMap.Add(VBErrors.FileAlreadyOpen, typeof(IOException));
+			_vbToDotNetClassMap.Add(VBErrors.BadRecordLen, typeof(IOException));
+			_vbToDotNetClassMap.Add(VBErrors.DiskFull, typeof(IOException));
+			_vbToDotNetClassMap.Add(VBErrors.BadRecordNum, typeof(IOException));
+			_vbToDotNetClassMap.Add(VBErrors.TooManyFiles, typeof(IOException));
+			_vbToDotNetClassMap.Add(VBErrors.DevUnavailable, typeof(IOException));
+			_vbToDotNetClassMap.Add(VBErrors.PermissionDenied, typeof(IOException));
+			_vbToDotNetClassMap.Add(VBErrors.DiskNotReady, typeof(IOException));
+			_vbToDotNetClassMap.Add(VBErrors.DifferentDrive, typeof(IOException));
+			_vbToDotNetClassMap.Add(VBErrors.PathFileAccess, typeof(IOException));
+        
+			_vbToDotNetClassMap.Add(VBErrors.PathNotFound, typeof(FileNotFoundException));
+			_vbToDotNetClassMap.Add(VBErrors.OLEFileNotFound, typeof(FileNotFoundException));
+        
+			_vbToDotNetClassMap.Add(VBErrors.ObjNotSet, typeof(NullReferenceException));
+        
+			_vbToDotNetClassMap.Add(VBErrors.PropertyNotFound, typeof(MissingFieldException));
+        
+			_vbToDotNetClassMap.Add(VBErrors.CantCreateObject, typeof(Exception));
+			_vbToDotNetClassMap.Add(VBErrors.ServerNotFound, typeof(Exception));
+
+			// initializing the hash map that maps .NET exception number to VB exception number
+			_dotNetToVBMap.Add(ExceptionUtils.E_NOTIMPL,VBErrors.NotYetImplemented);
+			_dotNetToVBMap.Add(ExceptionUtils.E_NOINTERFACE,VBErrors.OLENotSupported);
+			_dotNetToVBMap.Add(ExceptionUtils.E_ABORT,VBErrors.Abort);
+			_dotNetToVBMap.Add(ExceptionUtils.DISP_E_UNKNOWNINTERFACE,VBErrors.OLENoPropOrMethod);
+			_dotNetToVBMap.Add(ExceptionUtils.DISP_E_MEMBERNOTFOUND,VBErrors.OLENoPropOrMethod);
+			_dotNetToVBMap.Add(ExceptionUtils.DISP_E_PARAMNOTFOUND,VBErrors.NamedParamNotFound);
+			_dotNetToVBMap.Add(ExceptionUtils.DISP_E_TYPEMISMATCH,VBErrors.TypeMismatch);
+			_dotNetToVBMap.Add(ExceptionUtils.DISP_E_UNKNOWNNAME,VBErrors.OLENoPropOrMethod);
+			_dotNetToVBMap.Add(ExceptionUtils.DISP_E_NONAMEDARGS,VBErrors.NamedArgsNotSupported);
+			_dotNetToVBMap.Add(ExceptionUtils.DISP_E_BADVARTYPE,VBErrors.InvalidTypeLibVariable);
+			_dotNetToVBMap.Add(ExceptionUtils.DISP_E_OVERFLOW,VBErrors.Overflow);
+			_dotNetToVBMap.Add(ExceptionUtils.DISP_E_BADINDEX,VBErrors.OutOfBounds);
+			_dotNetToVBMap.Add(ExceptionUtils.DISP_E_UNKNOWNLCID,VBErrors.LocaleSettingNotSupported);
+			_dotNetToVBMap.Add(ExceptionUtils.DISP_E_ARRAYISLOCKED,VBErrors.ArrayLocked);
+			_dotNetToVBMap.Add(ExceptionUtils.DISP_E_BADPARAMCOUNT,VBErrors.FuncArityMismatch);
+			_dotNetToVBMap.Add(ExceptionUtils.DISP_E_NOTACOLLECTION,VBErrors.NotEnum);
+			_dotNetToVBMap.Add(ExceptionUtils.DISP_E_DIVBYZERO,VBErrors.DivByZero);
+			_dotNetToVBMap.Add(ExceptionUtils.TYPE_E_BUFFERTOOSMALL,VBErrors.BufferTooSmall);
+			_dotNetToVBMap.Add(-2147319785,VBErrors.IdentNotMember);
+			_dotNetToVBMap.Add(ExceptionUtils.TYPE_E_INVDATAREAD,VBErrors.InvDataRead);
+			_dotNetToVBMap.Add(ExceptionUtils.TYPE_E_UNSUPFORMAT,VBErrors.UnsupFormat);
+			_dotNetToVBMap.Add(ExceptionUtils.TYPE_E_REGISTRYACCESS,VBErrors.RegistryAccess);
+			_dotNetToVBMap.Add(ExceptionUtils.TYPE_E_LIBNOTREGISTERED,VBErrors.LibNotRegistered);
+			_dotNetToVBMap.Add(ExceptionUtils.TYPE_E_UNDEFINEDTYPE,VBErrors.UndefinedType);
+			_dotNetToVBMap.Add(ExceptionUtils.TYPE_E_QUALIFIEDNAMEDISALLOWED,VBErrors.QualifiedNameDisallowed);
+			_dotNetToVBMap.Add(ExceptionUtils.TYPE_E_INVALIDSTATE,VBErrors.InvalidState);
+			_dotNetToVBMap.Add(ExceptionUtils.TYPE_E_WRONGTYPEKIND,VBErrors.WrongTypeKind);
+			_dotNetToVBMap.Add(ExceptionUtils.TYPE_E_ELEMENTNOTFOUND,VBErrors.ElementNotFound);
+			_dotNetToVBMap.Add(ExceptionUtils.TYPE_E_AMBIGUOUSNAME,VBErrors.AmbiguousName);
+			_dotNetToVBMap.Add(ExceptionUtils.TYPE_E_NAMECONFLICT,VBErrors.ModNameConflict);
+			_dotNetToVBMap.Add(ExceptionUtils.TYPE_E_UNKNOWNLCID,VBErrors.UnknownLcid);
+			_dotNetToVBMap.Add(ExceptionUtils.TYPE_E_DLLFUNCTIONNOTFOUND,VBErrors.InvalidDllFunctionName);
+			_dotNetToVBMap.Add(ExceptionUtils.TYPE_E_BADMODULEKIND,VBErrors.BadModuleKind);
+			_dotNetToVBMap.Add(ExceptionUtils.TYPE_E_SIZETOOBIG,VBErrors.SizeTooBig);
+			_dotNetToVBMap.Add(ExceptionUtils.TYPE_E_TYPEMISMATCH,VBErrors.TypeMismatch);
+			_dotNetToVBMap.Add(ExceptionUtils.TYPE_E_OUTOFBOUNDS,VBErrors.OutOfBounds);
+			_dotNetToVBMap.Add(ExceptionUtils.TYPE_E_IOERROR,VBErrors.TypeMismatch);
+			_dotNetToVBMap.Add(ExceptionUtils.TYPE_E_CANTCREATETMPFILE,VBErrors.CantCreateTmpFile);
+			_dotNetToVBMap.Add(ExceptionUtils.TYPE_E_CANTLOADLIBRARY,VBErrors.DLLLoadErr);
+			_dotNetToVBMap.Add(ExceptionUtils.TYPE_E_INCONSISTENTPROPFUNCS,VBErrors.InconsistentPropFuncs);
+			_dotNetToVBMap.Add(ExceptionUtils.TYPE_E_CIRCULARTYPE,VBErrors.CircularType);
+			_dotNetToVBMap.Add(ExceptionUtils.STG_E_INVALIDFUNCTION,VBErrors.BadFunctionId);
+			_dotNetToVBMap.Add(ExceptionUtils.STG_E_FILENOTFOUND,VBErrors.FileNotFound);
+			_dotNetToVBMap.Add(ExceptionUtils.STG_E_PATHNOTFOUND,VBErrors.PathNotFound);
+			_dotNetToVBMap.Add(ExceptionUtils.STG_E_TOOMANYOPENFILES,VBErrors.TooManyFiles);
+			_dotNetToVBMap.Add(ExceptionUtils.STG_E_ACCESSDENIED,VBErrors.PermissionDenied);
+			_dotNetToVBMap.Add(ExceptionUtils.STG_E_INVALIDHANDLE,VBErrors.ReadFault);
+			_dotNetToVBMap.Add(ExceptionUtils.STG_E_INSUFFICIENTMEMORY,VBErrors.OutOfMemory);
+			_dotNetToVBMap.Add(ExceptionUtils.STG_E_NOMOREFILES,VBErrors.TooManyFiles);
+			_dotNetToVBMap.Add(ExceptionUtils.STG_E_DISKISWRITEPROTECTED,VBErrors.PermissionDenied);
+			_dotNetToVBMap.Add(ExceptionUtils.STG_E_SEEKERROR,VBErrors.SeekErr);
+			_dotNetToVBMap.Add(ExceptionUtils.STG_E_WRITEFAULT,VBErrors.ReadFault);
+			_dotNetToVBMap.Add(ExceptionUtils.STG_E_READFAULT,VBErrors.ReadFault);
+			_dotNetToVBMap.Add(ExceptionUtils.STG_E_SHAREVIOLATION,VBErrors.PathFileAccess);
+			_dotNetToVBMap.Add(ExceptionUtils.STG_E_LOCKVIOLATION,VBErrors.PermissionDenied);
+			_dotNetToVBMap.Add(ExceptionUtils.STG_E_FILEALREADYEXISTS,VBErrors.PathFileAccess);
+			_dotNetToVBMap.Add(ExceptionUtils.STG_E_MEDIUMFULL,VBErrors.DiskFull);
+			_dotNetToVBMap.Add(ExceptionUtils.STG_E_INVALIDHEADER,VBErrors.InvDataRead);
+			_dotNetToVBMap.Add(ExceptionUtils.STG_E_INVALIDNAME,VBErrors.FileNotFound);
+			_dotNetToVBMap.Add(ExceptionUtils.STG_E_UNKNOWN,VBErrors.InvDataRead);
+			_dotNetToVBMap.Add(ExceptionUtils.STG_E_UNIMPLEMENTEDFUNCTION,VBErrors.NotYetImplemented);
+			_dotNetToVBMap.Add(ExceptionUtils.STG_E_INUSE,VBErrors.PermissionDenied);
+			_dotNetToVBMap.Add(ExceptionUtils.STG_E_NOTCURRENT,VBErrors.PermissionDenied);
+			_dotNetToVBMap.Add(ExceptionUtils.STG_E_REVERTED,VBErrors.WriteFault);
+			_dotNetToVBMap.Add(ExceptionUtils.STG_E_CANTSAVE,VBErrors.IOError);
+			_dotNetToVBMap.Add(ExceptionUtils.STG_E_OLDFORMAT,VBErrors.UnsupFormat);
+			_dotNetToVBMap.Add(ExceptionUtils.STG_E_OLDDLL,VBErrors.UnsupFormat);
+			_dotNetToVBMap.Add(ExceptionUtils.STG_E_SHAREREQUIRED,32789);
+			_dotNetToVBMap.Add(ExceptionUtils.STG_E_NOTFILEBASEDSTORAGE,VBErrors.UnsupFormat);
+			_dotNetToVBMap.Add(ExceptionUtils.STG_E_EXTANTMARSHALLINGS,VBErrors.UnsupFormat);
+			_dotNetToVBMap.Add(ExceptionUtils.CLASS_E_NOTLICENSED,VBErrors.CantCreateObject);
+			_dotNetToVBMap.Add(ExceptionUtils.REGDB_E_CLASSNOTREG,VBErrors.CantCreateObject);
+			_dotNetToVBMap.Add(ExceptionUtils.MK_E_UNAVAILABLE,VBErrors.CantCreateObject);
+			_dotNetToVBMap.Add(ExceptionUtils.MK_E_INVALIDEXTENSION,VBErrors.OLEFileNotFound);
+			_dotNetToVBMap.Add(ExceptionUtils.MK_E_CANTOPENFILE,VBErrors.OLEFileNotFound);
+			_dotNetToVBMap.Add(ExceptionUtils.CO_E_CLASSSTRING,VBErrors.CantCreateObject);
+			_dotNetToVBMap.Add(ExceptionUtils.CO_E_APPNOTFOUND,VBErrors.CantCreateObject);
+			_dotNetToVBMap.Add(ExceptionUtils.CO_E_APPDIDNTREG,VBErrors.CantCreateObject);
+			_dotNetToVBMap.Add(ExceptionUtils.E_ACCESSDENIED,VBErrors.PermissionDenied);
+			_dotNetToVBMap.Add(ExceptionUtils.E_OUTOFMEMORY,VBErrors.OutOfMemory);
+			_dotNetToVBMap.Add(ExceptionUtils.E_INVALIDARG,VBErrors.IllegalFuncCall);
+			_dotNetToVBMap.Add(-2147023174,VBErrors.ServerNotFound);
+			_dotNetToVBMap.Add(ExceptionUtils.CO_E_SERVER_EXEC_FAILURE,VBErrors.CantCreateObject);
+
+			// new .NET values
+			_dotNetToVBMap.Add(-2146233080,VBErrors.OutOfBounds);//IndexOutOfRangeException
+			_dotNetToVBMap.Add(-2146233065,VBErrors.OutOfBounds);//RankException
+			_dotNetToVBMap.Add(-2147467261,VBErrors.ObjNotSet);//NullPointerException
+			_dotNetToVBMap.Add(-2146233066,VBErrors.Overflow);//OverflowException
+			_dotNetToVBMap.Add(-2146233048,VBErrors.Overflow);//NotFiniteNumberException
+			_dotNetToVBMap.Add(-2146233067,VBErrors.TypeMismatch);//NotSupportedException
+			_dotNetToVBMap.Add(-2146233070,VBErrors.OLENoPropOrMethod);//MissingMemberException
+			_dotNetToVBMap.Add(-2146233053,VBErrors.InvalidDllFunctionName);//EntryPointNotFoundException
+			_dotNetToVBMap.Add(-2146233054,VBErrors.CantCreateObject);//TypeLoadException
+			_dotNetToVBMap.Add(-2146233033,VBErrors.TypeMismatch);//FormatException
+			_dotNetToVBMap.Add(-2147024893,VBErrors.PathNotFound);//DirectoryNotFoundException
+			_dotNetToVBMap.Add(-2146232800,VBErrors.IOError);//IOException
+			_dotNetToVBMap.Add(-2147024894,VBErrors.FileNotFound);//FileNotFoundException     
 		}
-    
+
+		public static int getVBFromDotNet(int number) 
+		{
+			return (int) _dotNetToVBMap[number];
+		}
+
 		public static int fromDotNetToVB(int number) {
-		
+
 			if (number > 0)
 				return 0;
 
 			if ((number & 536805376) == 655360)
 				return number & 65535;
 
-			//TODO:  uncomment and convert
-			//Integer vbNum =  (Integer)_dotNetToVBMap.get(new Integer(number)); //Mainsoft code  
 
-			// if (vbNum != null)
-			//     return vbNum.intValue();
-			// else
-			return number;
-
+			if(_dotNetToVBMap.Contains (number))
+				return (int) _dotNetToVBMap[number];
+			else
+				return number;
 		}
 
-		//TODO:convert
-		/**
-			 * This method returns relevant .NET exception according to given number, 
-			 * with given description as message.
-			 * @param number
-			 * @param description
-			 * @param VBDefinedError
-			 * @return java.lang.Exception
-			 */
-		//TODO: is it correct to replace Mainsoft's ClrBoolean with bool?
-		//public static Exception BuildException(int number, String description, ClrBoolean VBDefinedError) {
-		public static Exception BuildException(int number, string description, bool VBDefinedError) {
+		public static Exception BuildException(int number, string description, ref bool VBDefinedError) 
+		{
 			if (number != 0) {
-				//TODO:convert
-				//VBDefinedError.setValue(ClrBoolean.True);
-				//Class exceptionClass = (Class)_vbToDotNetClassMap.get(new Integer(number));
-				//if (exceptionClass != null)
-				//{
-				//    try
-				//    {
-				//        Constructor ctor = exceptionClass.getConstructor(new Class[] {string.class});
-				//        return (Exception)ctor.newInstance(new object[]{description});                    
-				//    }
-				//    catch (Exception e)
-				//    {
-				//        //Here should be Tracing !!!
-				//        System.out.println("Failed to initiate exception in ExceptionUtils.BuildException with number =" + number);
-				//        e.printStackTrace();
-				//    }
-				//}
-		
-				//VBDefinedError.setValue(ClrBoolean.False);
+				VBDefinedError = true;
+
+				Type exceptionType = (Type) _vbToDotNetClassMap[number];
+
+				if (exceptionType != null)
+				{
+					try
+					{
+						ConstructorInfo ci = exceptionType.GetConstructor(new Type [] {typeof(string)});
+						return (Exception)ci.Invoke(new object[]{description});                    
+					}
+					catch (Exception e)
+					{
+						//Here should be Tracing !!!
+						// Console.WriteLine("Failed to initiate exception in ExceptionUtils.BuildException with number =" + number);
+						// e.printStackTrace();
+					}
+				}
+	
+				VBDefinedError = false;
 				return new Exception(description);
 			}
 			return null;
 		}
+
+
+
 
 		/**
 		 * This method builds description string from resource file, replace given parameter
@@ -364,21 +354,21 @@ namespace Microsoft.VisualBasic.CompilerServices {
 		 * @param hr
 		 * @return java.lang.Exception
 		 */
-		public static Exception VbMakeException(int hr) {
-
+		public static Exception VbMakeException(int hr) 
+		{
 			string str = "";
 
-			//TODO:convert
-			//if (hr > 0 && hr <= 65535) {
-			//	str = VBUtils.GetResourceString(hr);
-			//	if (str == null)
-			//		str  = VBUtils.GetResourceString(95);
-			//}    
-			str = "VB error #95 ";
+			if (hr > 0 && hr <= 65535) {
+				str = VBUtils.GetResourceString(hr);
+				if (str == null)
+					str  = VBUtils.GetResourceString(95);
+			}    
+
 			return VbMakeExceptionEx(hr, str);
 		}
 
-		public static Exception VbMakeException(Exception ex, int hr) {
+		public static Exception VbMakeException(Exception ex, int hr)
+		{
 			//TODO: convert
 			//Information.Err().SetUnmappedError(hr);
 			return ex;
@@ -390,13 +380,14 @@ namespace Microsoft.VisualBasic.CompilerServices {
 		 * @param sMsg
 		 * @return java.lang.Exception
 		 */
+
 		//TODO: convert
 		public static Exception VbMakeExceptionEx(int number, string msg) {
 			//ClrBoolean bool = new ClrBoolean();
 			bool Bool = false; //new ClrBoolean();
 			Exception exp;
 		
-			exp = ExceptionUtils.BuildException(number, msg, Bool);
+			exp = ExceptionUtils.BuildException(number, msg, ref Bool);
 				//TODO: convert
 				// if (bool.getValue() == ClrBoolean.True)
 				//     Information.Err().SetUnmappedError(number);

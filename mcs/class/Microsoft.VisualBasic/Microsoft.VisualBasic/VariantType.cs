@@ -27,6 +27,7 @@ namespace Microsoft.VisualBasic {
 		Char = 18,
 		Long = 20,
 		UserDefinedType = 36,
-		Array = 8192
+		Array = 8192,
+		ObjectArray = 8201
 	};
 }

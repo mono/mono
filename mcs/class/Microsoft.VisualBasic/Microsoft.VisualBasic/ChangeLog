@@ -1,3 +1,13 @@
+2004-06-07  Jambunathan  <kjambunathan@novell.com>
+	* VariantType.cs: Minor changes
+	* VBUtils.txt: Newly created  error string resources for VB.NET
+	* VBUtils.resources: Newly created Compiled error string resources
+	for VB.NET
+	* VBUtils.cs: Changes wrt fetching of error string from 
+	newly added resource bundles
+	* Information.cs: Almost entirely  remerged from Mainsoft's code. 
+	Only Err related changes still need to be merged.
+	
 2004-05-31	Rafael Teixeira <rafaelteixeirabr@hotmail.com>
 	* Financial.cs:
 		Correct IRR and MIRR method signatures and prevent public default constructor, all according to Class Status Page (corcompare)

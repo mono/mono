@@ -24,17 +24,16 @@
 using System.Globalization;
 using System.Text;
 using System;
-namespace Microsoft.VisualBasic{
-	internal class VBUtils {
-		//    private static final String VB_FILE_NAME = "resources.MicrosoftVisualBasic";
-		//    private static final ResourceBundle VB_RESOURCE_BUNDLE =
-		//        ResourceBundle.getBundle(VB_FILE_NAME);
-		//
-		//    private static final String MAIN_FILE_NAME = "resources.Mscorlib";
-		//    private static final ResourceBundle MAIN_RESOURCE_BUNDLE = 
-		//        ResourceBundle.getBundle(MAIN_FILE_NAME);
+using System.Reflection;
+using System.Resources;
 
-		public static bool isNumber(string str, double[] val) {
+namespace Microsoft.VisualBasic {
+	internal class VBUtils {
+		private static string VB_FILE_NAME = "VBUtils";
+		private static ResourceManager VB_RESOURCE_BUNDLE = new ResourceManager(typeof(VBUtils));
+
+		public static bool isNumber(string str, double[] val) 
+		{
 			if (str == null)
 				str = "";
 
@@ -57,93 +56,87 @@ namespace Microsoft.VisualBasic{
 			val[0] = double.Parse(str, NumberStyles.Any, null);
 			return true;
 		}
-		//
-		//    public static String GetResourceString(String key)
-		//    {
-		//        String str = null;
-		//        try
-		//        {
-		//            str = VB_RESOURCE_BUNDLE.getString(key);
-		//        }
-		//        catch (MissingResourceException e)
-		//        {
-		////            try
-		////            {
-		////                str = MAIN_RESOURCE_BUNDLE.getString(key);
-		////            }
-		////            catch (MissingResourceException ex)
-		////            {
-		////            }
-		//        }
-		//        if (str == null)
-		//            str = VB_RESOURCE_BUNDLE.getString("ID95");
-		//
-		//        return str;
-		//    }
-		//
-		//    public static String GetResourceString(String key, String paramValue)
-		//    {
-		//        StringBuilder sb = new StringBuilder(GetResourceString(key));
-		//        sb.Replace("|1", paramValue);
-		//        return sb.toString();
-		//    }
-		//
-		//    public static String GetResourceString(
-		//        String key,
-		//        String paramValue1,
-		//        String paramValue2)
-		//    {
-		//        StringBuilder sb = new StringBuilder(GetResourceString(key));
-		//        sb.Replace("|1", paramValue1);
-		//        sb.Replace("|2", paramValue2);
-		//        return sb.toString();
-		//    }
-		//
-		//    public static String GetResourceString(
-		//        String key,
-		//        String param1,
-		//        String param2,
-		//        String param3)
-		//    {
-		//        StringBuilder sb = new StringBuilder(GetResourceString(key));
-		//        sb.Replace("|1", param1);
-		//        sb.Replace("|2", param2);
-		//        sb.Replace("|3", param3);
-		//        return sb.toString();
-		//    }
-		//
-		//    public static String GetResourceString(
-		//        String key,
-		//        String param1,
-		//        String param2,
-		//        String param3,
-		//        String param4)
-		//    {
-		//        StringBuilder sb = new StringBuilder(GetResourceString(key));
-		//        sb.Replace("|1", param1);
-		//        sb.Replace("|2", param2);
-		//        sb.Replace("|3", param3);
-		//        sb.Replace("|4", param4);
-		//        return sb.toString();
-		//    }
-		//
-		//    public static String GetResourceString(int ResourceId)
-		//    {
-		//        String str = "ID" + new Integer(ResourceId).toString();
-		//        return GetResourceString(str);
-		//    }
-		//
-		//    public static String GetResourceString(int ResourceId, String param1)
-		//    {
-		//        String str = "ID" + new Integer(ResourceId).toString();
-		//        return GetResourceString(str, param1);
-		//    }
-		//
-		//    public static java.lang.Exception VBException(java.lang.Exception ex, int hr)
-		//    {
-		//        Information.Err().SetUnmappedError(hr);
-		//        return ex;
-		//    }
+		
+		public static string GetResourceString(string key)
+		{
+			string str = null;
+
+			try {
+				str = VB_RESOURCE_BUNDLE.GetString(key);
+			}
+			catch(Exception e) {
+				// TODO
+
+			}
+
+			if (str == null)
+				str = VB_RESOURCE_BUNDLE.GetString("ID95");
+
+			return str;
+		}
+		
+		// 		public static string GetResourceString(string key, string paramValue)
+		// 		{
+		// 			StringBuilder sb = new StringBuilder(GetResourceString(key));
+		// 			sb.Replace("|1", paramValue);
+		// 			return sb.toString();
+		// 		}
+		
+		// 		public static string GetResourceString( string key,
+		// 			string paramValue1,
+		// 			string paramValue2)
+		// 			{
+		// 				StringBuilder sb = new StringBuilder(GetResourceString(key));
+		// 				sb.Replace("|1", paramValue1);
+		// 				sb.Replace("|2", paramValue2);
+		// 				return sb.toString();
+		// 			}
+		
+		// 		public static string GetResourceString(
+		// 			string key,
+		// 			string param1,
+		// 			string param2,
+		// 			string param3)
+		// 			{
+		// 				StringBuilder sb = new StringBuilder(GetResourceString(key));
+		// 				sb.Replace("|1", param1);
+		// 				sb.Replace("|2", param2);
+		// 				sb.Replace("|3", param3);
+		// 				return sb.toString();
+		// 			}
+		
+		// 		public static string GetResourceString(
+		// 			string key,
+		// 			string param1,
+		// 			string param2,
+		// 			string param3,
+		// 			string param4)
+		// 			{
+		// 				StringBuilder sb = new StringBuilder(GetResourceString(key));
+		// 				sb.Replace("|1", param1);
+		// 				sb.Replace("|2", param2);
+		// 				sb.Replace("|3", param3);
+		// 				sb.Replace("|4", param4);
+		// 				return sb.toString();
+		// 			}
+		
+		public static string GetResourceString(int ResourceId)
+		{
+			string str = "ID" + ResourceId.ToString();
+			return GetResourceString(str);
+		}
+		
+		// 		public static string GetResourceString(int ResourceId, string param1)
+		// 			{
+		// 				string str = "ID" + new Integer(ResourceId).toString();
+		// 				return GetResourceString(str, param1);
+		// 			}
+		
+		// 		public static java.lang.Exception VBException(java.lang.Exception ex, int hr)
+		// 			{
+		// 				Information.Err().SetUnmappedError(hr);
+		// 				return ex;
+		// 			}
 
 	}
 }
