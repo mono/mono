@@ -1,3 +1,8 @@
+2004-10-08  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlNamespaceManager.cs : GetNamespacesInScope() caused
+	  IndexOutOfRangeException (miscounted indexes).
+
 2004-10-04  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XmlWriter.cs : WriteNode(XPathNavigator,bool) should check null arg.

@@ -225,20 +225,21 @@ namespace System.Xml
 					else if (decls [declPos - i].Uri != null)
 						table.Add (decls [declPos - i].Prefix, decls [declPos - i].Uri);
 				return table;
-			}
-
-			for (int i = 0; i < declPos + count; i++) {
-				if (decls [i].Prefix == String.Empty && decls [i].Uri == String.Empty) {
-					if (table.Contains (String.Empty))
-						table.Remove (String.Empty);
+			} else {
+				for (int i = 0; i <= declPos; i++) {
+					if (decls [i].Prefix == String.Empty && decls [i].Uri == String.Empty) {
+						// removal of default namespace
+						if (table.Contains (String.Empty))
+							table.Remove (String.Empty);
+					}
+					else if (decls [i].Uri != null)
+						table [decls [i].Prefix] = decls [i].Uri;
 				}
-				else if (decls [i].Uri != null)
-					table [decls [i].Prefix] = decls [i].Uri;
-			}
 
-			if (scope == XmlNamespaceScope.All)
-				table.Add ("xml", XmlNamespaceManager.XmlnsXml);
-			return table;
+				if (scope == XmlNamespaceScope.All)
+					table.Add ("xml", XmlNamespaceManager.XmlnsXml);
+				return table;
+			}
 		}
 
 		public virtual bool HasNamespace (string prefix)
