@@ -15,12 +15,15 @@ using System.Web.Mobile;
 
 namespace System.Web.UI.MobileControls
 {
-	public abstract class MobileControl : Control
+	public abstract class MobileControl : Control//, IAttributeAccessor
 	{
 		private Style style;
 		private IControlAdapter adapter;
 
 		private bool enablePagination;
+
+		//public abstract string GetAttribute(string key);
+		//public abstract void   SetAttribute(string key, string value);
 
 		protected MobileControl()
 		{
@@ -152,6 +155,18 @@ namespace System.Web.UI.MobileControls
 			get
 			{
 				throw new NotImplementedException();
+			}
+		}
+
+		public virtual Style Style
+		{
+			get
+			{
+				if(this.style == null)
+				{
+					this.style = this.CreateStyle();
+				}
+				return this.style;
 			}
 		}
 

@@ -1,4 +1,8 @@
 
+2003-08-14	Gaurav Vaish <gvaish_mono AT lycos.com>
+
+	* MobileControl.cs       : Style { get; }             - Completed.
+
 2003-04-29	Gaurav Vaish <gvaish_mono AT lycos.com>
 
 	* MobilePage.cs          : Adapter { get; }           - Stubbed.
