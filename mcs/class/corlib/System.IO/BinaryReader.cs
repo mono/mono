@@ -42,13 +42,22 @@ namespace System.IO {
 		}
 
 		public virtual void Close() {
-			Dispose();
+			Dispose (true);
 			m_stream.Close();
 		}
+		
+		protected void Dispose (bool disposing)
+		{
+			if (disposing)
+				m_stream.Close ();
 
-		public virtual void Dispose() {
 			m_buffer = null;
 			m_buffer_used = 0;
+		}
+
+		void IDisposable.Dispose() 
+		{
+			Dispose (true);
 		}
 
 		protected virtual void FillBuffer(int bytes) {

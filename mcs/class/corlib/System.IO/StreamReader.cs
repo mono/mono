@@ -136,6 +136,15 @@ namespace System.IO {
 			Dispose (true);
 		}
 
+		protected override void Dispose (bool disposing)
+		{
+			if (disposing)
+				internalStream.Close ();
+			
+			rgbEncoded = null;
+			rgchDecoded = null;
+		}
+
 		public void DiscardBufferedData ()
 		{
 			pos = 0;

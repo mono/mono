@@ -40,7 +40,7 @@ namespace System.IO {
 		public StreamWriter (Stream stream, Encoding encoding)
 			: this (stream, encoding, DefaultBufferSize) {}
 
-		protected void Initialize(Encoding encoding, int bufferSize) {
+		internal void Initialize(Encoding encoding, int bufferSize) {
 			internalEncoding = encoding;
 			pos = 0;
 			BufferSize = Math.Max(bufferSize, MinimumBufferSize);
@@ -127,7 +127,7 @@ namespace System.IO {
 			}
 		}
 
-		public void Dispose() {
+		void Dispose() {
 			Dispose(true);
 			// Take yourself off of the Finalization queue 
 			// to prevent finalization code for this object

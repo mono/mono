@@ -1,3 +1,15 @@
+2002-07-31  Duncan Mak  <duncan@ximian.com>
+
+	* StreamReader.cs: 
+	(Dispose): Added and implmented.
+
+	* StreamWriter.cs: 
+	(Dispose): Fixed visibility.
+	(Initialize): Fixed visibility, made internal.
+
+	* BinaryReader.cs:
+	(Dispose): Fixed visibility.
+
 2002-07-28  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* File.cs:
