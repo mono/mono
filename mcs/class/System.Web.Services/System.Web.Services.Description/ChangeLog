@@ -1,3 +1,7 @@
+2005-02-07  Lluis Sanchez Gual <lluis@novell.com>
+
+	* HttpSimpleProtocolImporter.cs: Fixed warning.
+
 2004-11-08  Lluis Sanchez Gual  <lluis@novell.com>
 
 	* HttpPostProtocolReflector.cs: Avoid generating an empty part attribute.

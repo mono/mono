@@ -189,7 +189,6 @@ namespace System.Web.Services.Description
 				pids.AddUnique (inputMembers[n].MemberName, inputMembers[n]);
 
 			string varAsyncResult = pids.AddUnique ("asyncResult","asyncResult");
-			string varResults = pids.AddUnique ("results","results");
 			string varCallback = pids.AddUnique ("callback","callback");
 			string varAsyncState = pids.AddUnique ("asyncState","asyncState");
 
