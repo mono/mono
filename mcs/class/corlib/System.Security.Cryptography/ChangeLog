@@ -1,3 +1,8 @@
+2001-08-20  Sergey Chaban <serge@wildwestsoftware.com>
+
+	* DES.cs encryption core is about 30% faster than previous version.
+	* DESCryptoServiceProvider.cs added PKCS-5 padding.
+
 2001-08-09  Sergey Chaban <serge@wildwestsoftware.com>
 
 	* ToBase64Transform.cs: Base64Table now supports both encoding
