@@ -1,4 +1,33 @@
 2002-9-2  DennisHayes <dennish@raytek.com>
+	* checked in for Everaldo Canuto (everaldo.canuto@bol,com.br)
+	* BitmapData.cs
+	* ColorAdjustType.cs
+	* ColorChannelFlag.cs
+	* ColorMap.cs
+	* ColorMapType.cs
+	* ColorMatrix.cs
+	* ColorMatrixFlag.cs
+	* ColorMode.cs
+	* EmfPlusRecordType.cs
+	* EmfType.cs
+	* EncoderParameterValueType.cs
+	* EncoderValue.cs
+	* ImageCodecFlags.cs
+	* ImageCodecInfo.cs
+	* ImageFlags.cs
+	* ImageFormat.cs
+	* ImageLockMode.cs
+	* MetafileFrameUnit.cs
+	* MetafileHeader.cs
+	* MetaHeader.cs
+	* PaletteFlags.cs
+	* PixelFormat.cs
+	* PlayRecordCallback.cs
+	* PropertyItem.cs
+	* WmfPlaceableFileHeader.cs
+	* Added null classes for most/all classes, Many stubs, and some implmentation
+
+2002-9-2  DennisHayes <dennish@raytek.com>
 
 	* ColorPalette.cs
 	* FrameDimension.cs
