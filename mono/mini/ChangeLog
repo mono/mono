@@ -1,3 +1,8 @@
+2004-04-18  Zoltan Varga  <vargaz@freemail.hu>
+
+	* exceptions.cs (test_0_rethow_stacktrace): Make this work with
+	inlining.
+
 2004-04-18 Ben Maurer  <bmaurer@users.sourceforge.net>
 
 	* iltests.il, basic.cs: more tests for regalloc.
