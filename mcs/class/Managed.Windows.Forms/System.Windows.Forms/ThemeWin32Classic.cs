@@ -25,9 +25,12 @@
 //
 //
 //
-// $Revision: 1.13 $
+// $Revision: 1.14 $
 // $Modtime: $
 // $Log: ThemeWin32Classic.cs,v $
+// Revision 1.14  2004/08/09 21:34:54  jackson
+// Add support for drawing status bar and get status bar item sizes
+//
 // Revision 1.13  2004/08/09 21:21:49  jackson
 // Use known colors for default control colours
 //
@@ -306,6 +309,14 @@ namespace System.Windows.Forms
 
 		public Color DefaultWindowForeColor {
 			get { return Color.FromKnownColor (KnownColor.ControlText); }
+		}
+
+		public int SizeGripWidth {
+			get { return 15; }
+		}
+
+		public int StatusBarHorzGapWidth {
+			get { return 3; }
 		}
 
 		private enum DrawFrameControlStates
@@ -1046,9 +1057,21 @@ namespace System.Windows.Forms
 		}
 
 
-		public void DrawSizeGrip (Graphics graphics, Color backColor, Rectangle bounds)
+		public void DrawSizeGrip (Graphics dc, Color backColor, Rectangle bounds)
 		{
+			Point pt = new Point (bounds.Right - 2, bounds.Bottom - 1);
 
+			dc.DrawLine (pen_buttonface, pt.X - 12, pt.Y, pt.X, pt.Y);
+			dc.DrawLine (pen_buttonface, pt.X, pt.Y, pt.X, pt.Y - 13);
+
+			// diagonals
+			for (int i = 0; i < 11; i += 4) {
+				dc.DrawLine (pen_buttonshadow, pt.X - i, pt.Y, pt.X + 1, pt.Y - i - 2);
+				dc.DrawLine (pen_buttonshadow, pt.X - i - 1, pt.Y, pt.X + 1, pt.Y - i - 2);
+			}
+
+			for (int i = 3; i < 13; i += 4)
+				dc.DrawLine (pen_buttonhilight, pt.X - i, pt.Y, pt.X + 1, pt.Y - i - 1);
 		}
 
 
@@ -1494,6 +1517,90 @@ namespace System.Windows.Forms
 		
 		}
 
+
+		public void DrawStatusBar (Graphics dc, Rectangle area, StatusBar sb)
+		{
+			int horz_border = 2;
+			int vert_border = 2;
+
+			// Background
+			dc.FillRectangle (new SolidBrush (sb.BackColor), area);
+			
+			if (sb.ShowPanels && sb.Panels.Count == 0) {
+				// Create a default panel.
+				SolidBrush br_forecolor = new SolidBrush (sb.ForeColor);
+				StatusBarPanel panel = new StatusBarPanel ();
+				Rectangle new_area = new Rectangle (area.X + horz_border,
+						area.Y + horz_border,
+						area.Width - SizeGripWidth - horz_border,
+						area.Height - horz_border);
+				DrawStatusBarPanel (dc, new_area, br_forecolor, panel);
+			} else if (sb.ShowPanels) {
+				SolidBrush br_forecolor = new SolidBrush (sb.ForeColor);
+				int prev_x = area.X + horz_border;
+				int y = area.Y + vert_border;
+				for (int i = 0; i < sb.Panels.Count; i++) {
+					Rectangle pr = new Rectangle (prev_x, y,
+							sb.Panels [i].Width, area.Height);
+					prev_x += pr.Width + StatusBarHorzGapWidth;
+					DrawStatusBarPanel (dc, pr, br_forecolor, sb.Panels [i]);
+				}
+			}
+
+			if (sb.SizingGrip)
+				DrawSizeGrip (dc, ColorMain, area);
+
+		}
+
+
+		public void DrawStatusBarPanel (Graphics dc, Rectangle area,
+				SolidBrush br_forecolor, StatusBarPanel panel)
+		{
+			int border_size = 3; // this is actually const, even if the border style is none
+
+			area.Height -= border_size;
+			if (panel.BorderStyle != StatusBarPanelBorderStyle.None) {
+				Border3DStyle border_style = Border3DStyle.SunkenInner;
+				if (panel.BorderStyle == StatusBarPanelBorderStyle.Raised)
+					border_style = Border3DStyle.RaisedOuter;
+				DrawBorder3D(dc, area, border_style, Border3DSide.All);
+			}
+
+			if (panel.Style == StatusBarPanelStyle.OwnerDraw)
+				throw new NotImplementedException ("OwnerDraw StatusPanels");
+
+			int left = area.Left;
+			if (panel.Icon != null) {
+				left += 2;
+				int size = area.Height - border_size;
+				Rectangle ia = new Rectangle (left, border_size, size, size);
+				dc.DrawIcon (panel.Icon, left, area.Top);
+				left += panel.Icon.Width;
+			}
+
+			if (panel.Text == String.Empty)
+				return;
+
+			string text = panel.Text;
+			StringFormat string_format = new StringFormat ();
+			string_format.LineAlignment = StringAlignment.Center;
+			string_format.Alignment = StringAlignment.Near;
+			string_format.FormatFlags = StringFormatFlags.NoWrap;
+
+			if (text [0] == '\t') {
+				string_format.Alignment = StringAlignment.Center;
+				text = text.Substring (1);
+				if (text [0] == '\t') {
+					string_format.Alignment = StringAlignment.Far;
+					text = text.Substring (1);
+				}
+			}
+
+			float x = left + border_size;
+			float y = ((area.Bottom - area.Top) / 2.0F) + border_size;
+
+			dc.DrawString (text, panel.Parent.Font, br_forecolor, x, y, string_format);
+		}
 
 		/*
 			Private methods
