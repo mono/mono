@@ -97,6 +97,9 @@ namespace System.Xml
 		// Operators
 		public static bool operator == (XmlQualifiedName a, XmlQualifiedName b)
 		{
+			if((Object)a == (Object)b)
+				return true;
+
 			if((Object)a == null || (Object)b == null)
 				return false;
 

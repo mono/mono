@@ -1,3 +1,7 @@
+2003-05-18  Lluis Sanchez Gual <lluis@ideary.com>
+
+	* XmlQualifiedName.cs : Fixed bug in equality operator.
+
 2003-05-18  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
 
 	* XmlTextWriter.cs : patch by Jonathan Hogg. Flush() does not close
