@@ -1,3 +1,8 @@
+2005-01-31  Ben Maurer  <bmaurer@ximian.com>
+ 
+        * StringBuilder.cs (Remove): We need to do the check that the
+        string isnt being cached *before* we munge it.
+
 2005-01-11 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* StringBuilder.cs: when creating the StringBuilder from a string, the
