@@ -80,6 +80,7 @@ $(monobins_DATA):
 	-cp $(top_srcdir)/../mcs/tools/cilc/cilc.exe . || cp $(monobinsdir)/cilc.exe .
 	-cp $(top_srcdir)/../mcs/tools/mono-xsd/xsd.exe . || cp $(monobinsdir)/xsd.exe .
 	-cp $(top_srcdir)/../mcs/tools/wsdl/wsdl.exe . || cp $(monobinsdir)/wsdl.exe .
+	-cp $(top_srcdir)/../mcs/tools/genxs/genxs.exe . || cp $(monobinsdir)/genxs.exe .
         
 dist-hook:
 	for i in $(monobins_DATA) $(assemblies_DATA); do	\
