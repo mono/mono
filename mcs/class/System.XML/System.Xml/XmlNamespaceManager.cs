@@ -172,7 +172,7 @@ namespace System.Xml
 		{
 			string message = null;
 			if (prefix == PrefixXml && uri != XmlnsXml)
-				message = String.Format ("Prefix \"xml\" is only allowed to the fixed uri \"{0}\"", uri);
+				message = String.Format ("Prefix \"xml\" can only be bound to the fixed namespace URI \"{0}\". \"{1}\" is invalid.", XmlnsXml, uri);
 			else if (message == null && prefix == "xmlns")
 				message = "Declaring prefix named \"xmlns\" is not allowed to any namespace.";
 			else if (message == null && uri == XmlnsXmlns)

@@ -1,3 +1,11 @@
+2005-03-08  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlTextWriter.cs : namespace declaration check for those which starts
+	  with 'x' 'm' 'l' should not be done here (it might be 'declared'
+	  though reserved).
+	* XmlNamespaceManager.cs : error message for "'xml' prefix for
+	  different namespace" is incorrect.
+
 2005-03-07  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlDocument.cs : ugh, so I introduced extraneous reader.Read() in
