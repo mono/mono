@@ -353,8 +353,12 @@ namespace Mono.CSharp {
 
 			case ExprClass.MethodGroup:
 				if ((flags & ResolveFlags.MethodGroup) == 0) {
-					((MethodGroupExpr) e).ReportUsageError ();
-					return null;
+					MethodGroupExpr mg = (MethodGroupExpr) e;
+					Invocation i = new Invocation (mg, new ArrayList(), Location.Null);
+					Expression te = i.Resolve(ec);
+					//((MethodGroupExpr) e).ReportUsageError ();
+					//return null;
+					return te;
 				}
 				break;
 
@@ -419,8 +423,12 @@ namespace Mono.CSharp {
 							     " ExprClass is Invalid after resolve");
 
 				if (e.eclass == ExprClass.MethodGroup) {
-					((MethodGroupExpr) e).ReportUsageError ();
-					return null;
+					MethodGroupExpr mg = (MethodGroupExpr) e;
+					Invocation i = new Invocation (mg, new ArrayList(), Location.Null);
+					Expression te = i.Resolve(ec);
+					return te;
+					//((MethodGroupExpr) e).ReportUsageError ();
+					//return null;
 				}
 
 				if (e.type == null)
