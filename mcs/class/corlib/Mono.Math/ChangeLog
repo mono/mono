@@ -1,3 +1,8 @@
+2004-12-03  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* BigInteger.cs: Fix issue #70169 in ModPow when modulus is a power of
+	two.
+
 2004-10-25  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* BigInteger.cs: Fix issue #68452 when Randomize was being called on a
