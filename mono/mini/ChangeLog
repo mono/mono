@@ -1,3 +1,7 @@
+2003-05-01  Zoltan Varga  <vargaz@freemail.hu>
+
+	* driver.c (mini_main): Avoid assertion when no file name is given on 
+	the command line.
 
 Wed Apr 30 15:33:11 CEST 2003 Paolo Molaro <lupus@ximian.com>
 
