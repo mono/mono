@@ -1,3 +1,11 @@
+2004-09-27  Raja R Harinath  <rharinath@novell.com>
+
+	* library.make ($(test_nunit_dep)): Make sure NUnit is built for
+	the profile being tested.
+	(nunit-$(PROFILE).stamp): Rename from nunit.stamp.
+	* config-default.make (TEST_HARNESS): Look for 'nunit-console' in
+	profile-specific directory.
+
 2004-09-21  Raja R Harinath  <rharinath@novell.com>
 
 	* profiles/net_2_0_bootstrap.make: New file.

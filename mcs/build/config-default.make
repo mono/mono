@@ -7,7 +7,7 @@
 # there.
 
 RUNTIME_FLAGS = 
-TEST_HARNESS = $(topdir)/class/lib/nunit-console.exe
+TEST_HARNESS = $(topdir)/class/lib/$(PROFILE)/nunit-console.exe
 MCS_FLAGS = $(PLATFORM_DEBUG_FLAGS)
 MBAS_FLAGS = $(PLATFORM_DEBUG_FLAGS)
 LIBRARY_FLAGS = /noconfig

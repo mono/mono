@@ -133,9 +133,9 @@ test-local run-test-local run-test-ondotnet-local:
 	@:
 
 ifndef NO_TEST
-$(test_nunit_dep): $(topdir)/build/deps/nunit.stamp
+$(test_nunit_dep): $(topdir)/build/deps/nunit-$(PROFILE).stamp
 	@if test -f $@; then :; else rm -f $<; $(MAKE) $<; fi
-$(topdir)/build/deps/nunit.stamp:
+$(topdir)/build/deps/nunit-$(PROFILE).stamp:
 	cd ${topdir}/nunit20 && $(MAKE)
 	echo "stamp" >$@
 endif
