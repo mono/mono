@@ -179,8 +179,21 @@ namespace System.Xml
 			switch (reader.NodeType) {
 			case XmlNodeType.Element:
 				WriteStartElement (reader.Prefix, reader.LocalName, reader.NamespaceURI);
+#if false
 				WriteAttributes (reader, defattr);
 				reader.MoveToElement ();
+#else
+				// Well, I found that MS.NET took this way, since
+				// there was a error-prone SgmlReader that fails
+				// MoveToNextAttribute().
+				if (reader.HasAttributes) {
+					for (int i = 0; i < reader.AttributeCount; i++) {
+						reader.MoveToAttribute (i);
+						WriteAttribute (reader, defattr);
+					}
+					reader.MoveToElement ();
+				}
+#endif
 				if (reader.IsEmptyElement)
 					WriteEndElement ();
 				else {

@@ -1,3 +1,11 @@
+2004-04-20  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlDocumentNavigator.cs : MoveToFirstChild() failed when there is
+	  only an EntityReference (not navigatable) child. Bug #57248 fixed.
+	* XmlWriter.cs : Modified WriteNode() to use MoveToAttribute(int)
+	  instead of WriteAttributes() only for MS.NET behavior compatibility.
+	  This change makes SgmlReader usable (due to SgmlReader bug).
+
 2004-04-10  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlParserContext.cs : Fixed .ctor() not to reference null namespace

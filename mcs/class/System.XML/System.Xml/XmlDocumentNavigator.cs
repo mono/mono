@@ -51,7 +51,6 @@ namespace System.Xml
 		// Current namespace node (ancestor's attribute of current node).
 		private XmlAttribute nsNode;
 		private ArrayList iteratedNsNames = new ArrayList ();
-
 		#endregion
 
 		#region Properties
@@ -332,14 +331,16 @@ namespace System.Xml
 					} while (loop);
 					node = n;
 				} else {
+					XmlNode n2 = null;
 					do {
-						node = node.FirstChild;
+						n2 = node.FirstChild;
 						if (node.NodeType != XmlNodeType.EntityReference)
 							break;
-						node = node.NextSibling;
-					} while (node != null);
-					if (node == null)
+						n2 = node.NextSibling;
+					} while (n2 != null);
+					if (n2 == null)
 						return false;
+					node = n2;
 				}
 				return true;
 			}
