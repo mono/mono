@@ -1,3 +1,7 @@
+2005-01-26  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Tokenizer.cs : just throw SyntaxErrorException instead of Exception.
+
 2005-01-25  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* Expression.cs, ColumnReference.cs, BooleanExpression.cs,

@@ -255,7 +255,7 @@ namespace Mono.Data.SqlExpressions {
 					return ParseIdentifier ();
 				break;
 			}
-			throw new Exception ("invalid token: '" + cur + "'");
+			throw new SyntaxErrorException ("invalid token: '" + cur + "'");
 		}
 
 		///////////////////////////
