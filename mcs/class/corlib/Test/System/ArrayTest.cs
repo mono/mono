@@ -184,6 +184,16 @@ public class ArrayTest : Assertion
 		}
 	}
 
+	public void TestBinarySearch3()
+	{
+		int[] array = new int[100];
+
+		for (int i = 0; i < 100; i++)
+			array[i] = 10;
+
+		AssertEquals("#B30", 49, Array.BinarySearch(array, 10));
+	}
+
 	// TODO - testBinarySearch with explicit IComparer args
 
 	[Test]

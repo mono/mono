@@ -345,8 +345,8 @@ namespace System
 			if (!(value is IComparable))
 				throw new ArgumentException("value does not support IComparable");
 
-			return BinarySearch (array, array.GetLowerBound (0), array.GetLength (0),
-					     value, null);
+			return DoBinarySearch (array, array.GetLowerBound (0), array.GetLength (0),
+					       value, null);
 		}
 
 		public static int BinarySearch (Array array, object value, IComparer comparer)
@@ -360,8 +360,8 @@ namespace System
 			if ((comparer == null) && !(value is IComparable))
 				throw new ArgumentException("comparer is null and value does not support IComparable");
 
-			return BinarySearch (array, array.GetLowerBound (0), array.GetLength (0),
-					     value, comparer);
+			return DoBinarySearch (array, array.GetLowerBound (0), array.GetLength (0),
+					       value, comparer);
 		}
 
 		public static int BinarySearch (Array array, int index, int length, object value)
@@ -382,7 +382,7 @@ namespace System
 			if (!(value is IComparable))
 				throw new ArgumentException("value does not support IComparable");
 
-			return BinarySearch (array, index, length, value, null);
+			return DoBinarySearch (array, index, length, value, null);
 		}
 
 		public static int BinarySearch (Array array, int index,
@@ -406,53 +406,42 @@ namespace System
 			if ((comparer == null) && !(value is IComparable))
 				throw new ArgumentException("comparer is null and value does not support IComparable");
 
+			return DoBinarySearch (array, index, length, value, comparer);
+		}
+
+		static int DoBinarySearch (Array array, int index, int length, object value, IComparer comparer)
+		{
 			// cache this in case we need it
 			IComparable valueCompare = value as IComparable;
 
 			int iMin = index;
-			int iMax = index + length;
+			// Comment from Tum (tum@veridicus.com):
+			// *Must* start at index + length - 1 to pass rotor test co2460binarysearch_iioi
+			int iMax = index + length - 1;
 			int iCmp = 0;
 			try
 			{
-				// there's a subtle balance here between
-				// 1) the while condition
-				// 2) the rounding down of the '/ 2'
-				// 3) the asymetrical recursion
-				// 4) the fact that iMax starts beyond the end of the array
-				while (iMin < iMax)
+				while (iMin <= iMax)
 				{
 					int iMid = (iMin + iMax) / 2;
 					object elt = array.GetValueImpl (iMid);
 
-					// this order is from MSDN
-					if (comparer != null)
-						iCmp = comparer.Compare (value, elt);
-					else
-					{
-						IComparable eltCompare = elt as IComparable;
-						if (eltCompare != null)
-							iCmp = -eltCompare.CompareTo (value);
-						else
-							iCmp = valueCompare.CompareTo (elt);
-					}
++					iCmp = comparer.Compare (value, elt);
 
 					if (iCmp == 0)
 						return iMid;
 					else if (iCmp < 0)
-						iMax = iMid;
+						iMax = iMid - 1;
 					else
 						iMin = iMid + 1;	// compensate for the rounding down
 				}
 			}
-			catch (InvalidCastException e)
+			catch (Exception e)
 			{
-				throw new ArgumentException ("array", e);
+				throw new InvalidOperationException ("Comparer threw an exception", e);
 			}
 
-			if (iCmp > 0)
-				return ~iMax;
-			else
-				return ~iMin;
+			return ~iMin;
 		}
 
 		public static void Clear (Array array, int index, int length)

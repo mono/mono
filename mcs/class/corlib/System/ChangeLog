@@ -1,3 +1,8 @@
+2003-08-10  Miguel de Icaza  <miguel@ximian.com>
+
+	* Array.cs: Applied patch from Thong (Tum) Nguyen;  Removed
+	replicated tests, and have a routine that does the heavy lifting.
+
 2003-08-08  Lluis Sanchez Gual <lluis@ximian.com>
 
 	* DateTime.cs: Fixed DoParse. It was calling the wrong constructor
