@@ -1,4 +1,11 @@
-2005-01-05 Marek Safar <marek.safar@seznam.cz>
+2004-01-21 Marek Safar <marek.safar@seznam.cz>
+
+	* cs0102.cs,
+          cs0111-2.cs,
+          cs246-{2,3,4}.cs,
+          cs663.cs: New tests.
+
+2004-01-05 Marek Safar <marek.safar@seznam.cz>
 
 	* cs3001.cs,
 	  cs3001-1.cs,
