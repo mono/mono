@@ -62,6 +62,7 @@ System.Drawing/impl/gtk/Image.cs
 System.Drawing/impl/wine/Bitmap.cs
 System.Drawing/impl/wine/Brush.cs
 System.Drawing/impl/wine/Font.cs
+System.Drawing/impl/wine/FontFamily.cs
 System.Drawing/impl/wine/Graphics.cs
 System.Drawing/impl/wine/Icon.cs
 System.Drawing/impl/wine/Image.cs
