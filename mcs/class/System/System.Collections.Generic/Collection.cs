@@ -166,18 +166,7 @@ namespace System.Collections.Generic
 
 		public int IndexOf (T item)
 		{
-			if (item == null)
-				for (int i = 0; i < count; i++) {
-					if (contents [i] == null)
-						return i;
-				}
-			else 
-				for (int i = 0; i < count; i++) {
-					if (item.Equals (contents [i]))
-						return i;
-				}
-
-			return -1;
+			return Array.IndexOf<T> (contents, item);
 		}
 
 		public void Insert (int index, T item)

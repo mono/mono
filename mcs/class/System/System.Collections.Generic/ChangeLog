@@ -1,3 +1,8 @@
+2005-02-35  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* Collections.cs: Changed the code inside IndexOf, for
+	the use of Array.IndexOf<>, to keep clean the code.
+	
 2004-11-17  Carlos Alberto Cortez Guevara <carlos@unixmexico.org>
 
 	* Collections.cs: Avoid the call to Array.Clear () in RemoveItem (),
