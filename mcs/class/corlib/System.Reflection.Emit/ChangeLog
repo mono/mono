@@ -1,3 +1,7 @@
+2004-09-26  Zoltan Varga  <vargaz@freemail.hu>
+
+	* UnmanagedMarshal.cs: Add ToMarshalAsAttribute method.
+
 2004-09-25  Zoltan Varga  <vargaz@freemail.hu>
 
 	* TypeBuilder.cs: Add IsCreated method.

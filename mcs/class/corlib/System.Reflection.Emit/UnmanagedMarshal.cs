@@ -111,5 +111,14 @@ namespace System.Reflection.Emit {
 			return res;
 		}
 
+		internal MarshalAsAttribute ToMarshalAsAttribute () {
+			MarshalAsAttribute attr = new MarshalAsAttribute (t);
+			attr.ArraySubType = tbase;
+			attr.MarshalCookie = mcookie;
+			attr.MarshalType = marshaltype;
+			attr.MarshalTypeRef = marshaltyperef;
+			attr.SizeConst = count;
+			return attr;
+		}
 	}
 }
