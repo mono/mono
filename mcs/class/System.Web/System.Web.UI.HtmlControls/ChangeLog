@@ -1,3 +1,8 @@
+2003-11-24  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HtmlInputRadioButton.cs: initialize event indexer. Patch by Alon Gazit
+	<along@mainsoft.com>.
+
 2003-10-29 Jackson Harper <jackson@ximian.com>
 
 	* HtmlControl.cs: Make disabled an attribute of the control so it

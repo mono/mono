@@ -15,7 +15,7 @@ namespace System.Web.UI.HtmlControls{
 	[DefaultEvent("ServerChange")]
 	public class HtmlInputRadioButton : HtmlInputControl, IPostBackDataHandler{
 		
-		private static readonly object EventServerChange;
+		private static readonly object EventServerChange = new object ();
 		
 		public HtmlInputRadioButton(): base("radio"){}
 		
