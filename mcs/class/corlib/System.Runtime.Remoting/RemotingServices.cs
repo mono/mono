@@ -500,10 +500,9 @@ namespace System.Runtime.Remoting
 			// It will also get the object uri from the url.
 
 			object channelData = objRef.ChannelInfo != null ? objRef.ChannelInfo.ChannelData : null;
-			string url = (channelData == null) ? objRef.URI : null;
 
 			string objectUri;
-			IMessageSink sink = GetClientChannelSinkChain (url, channelData, out objectUri);
+			IMessageSink sink = GetClientChannelSinkChain (objRef.URI, channelData, out objectUri);
 
 			if (objectUri == null) objectUri = objRef.URI;
 

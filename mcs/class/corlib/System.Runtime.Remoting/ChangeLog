@@ -1,3 +1,9 @@
+2004-09-28  Lluis Sanchez Gual  <lluis@novell.com>
+
+	* RemotingServices.cs: Allways pass the uri when calling
+	  GetClientChannelSinkChain, even if it has channel data.
+	  This fixes bug 66768.
+	
 2004-09-27  Lluis Sanchez Gual  <lluis@novell.com>
 
 	* ServerIdentity.cs: Only set the target identity if it has not already
