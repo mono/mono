@@ -1,3 +1,9 @@
+2004-08-06  Jambunathan K  <kjambunathan@novell.com>
+	* mb-parser.jay: Changed expression grammar so that it now has a
+	  better semblance to those defined in section 11 of VB.NET spec.
+	  The 'expression' rule as it is now could possibly be buggy. So
+	  another iteration is a must.
+
 2004-08-06 Anirban Bhattacharjee <banirban@novell.com>
 	* class.cs: Event still needed to have a constructor which takes value of Implements clause.
 	* mb-parser.jay: Passing Implements clause value to the constructor

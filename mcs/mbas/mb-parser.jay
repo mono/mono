@@ -546,7 +546,7 @@ namespace Mono.MonoBASIC
 %token DIV            "/"
 %token OP_EXP         "^"
 %token INTERR         "?"
-%token OP_IDIV        "\\"
+%token OP_IDIV        "\\" //FIXME: This should be "\"
 %token OP_CONCAT      "&"
 %token EXCLAMATION    "!"
 
@@ -625,7 +625,7 @@ compilation_unit
 	: logical_end_of_line
 	  opt_option_directives
 	  opt_imports_directives 
-	  opt_global_attributes
+	  opt_attributes
 	  opt_declarations 
 	  EOF
 	  {
@@ -809,18 +809,9 @@ opt_params
 	| OPEN_PARENS opt_formal_parameter_list CLOSE_PARENS	{ $$ = $2; }
 	;
 
-opt_global_attributes
-	: /*empty */
-	| global_attributes
-	;
-
-global_attributes
-	: OPT_LT global_attribute_list OP_GT
-
-
 global_attribute_list
 	: global_attribute
-	| global_attribute_list, global_attribute
+	| global_attribute_list COMMA global_attribute
 	;
 
 global_attribute
@@ -840,12 +831,21 @@ opt_attributes
  	| attributes 	{ $$ = $1; }
  	;
 
+attr_begin
+	: OP_LT
+	;
+
+attr_end
+	: OP_GT
+	;
+
 attributes
-	: OP_LT attribute_list OP_GT
+	: attr_begin attribute_list attr_end
  	  {
  		AttributeSection sect = new AttributeSection (null, (ArrayList) $2);
 		$$ = new Attributes (sect, lexer.Location);
- 	  }	
+ 	  }
+	| attr_begin global_attribute_list attr_end logical_end_of_line
  	; 
 
 attribute_list
@@ -878,7 +878,7 @@ attribute
  	;
 
 attribute_name
-	: type_name 
+	: namespace_or_type_name 
 	;
 			
 opt_attribute_arguments
@@ -1643,11 +1643,6 @@ interface_member_declarator
 	| interface_event_declaration 
 	;
 
-opt_new
-	: /* empty */	{ $$ = false; }
-	| NEW		{ $$ = true; }
-	;
-	
 interface_method_declaration
 	: SUB identifier opt_params logical_end_of_line
 	  {
@@ -2132,11 +2127,6 @@ opt_evt_handler
 	  	// FIXME: this is blatantly wrong and crash-prone
 		$$ = (Expression) DecomposeQI ("MyBase." + (string)$4, lexer.Location);
 	  }
-	;	
-
-opt_empty_parens
-	: /* empty */
-	| OPEN_PARENS CLOSE_PARENS
 	;	
 
 constructor_declaration
@@ -3203,22 +3193,9 @@ array_creation_expression
 	  }
 	;	
 
-/*delegate_creation_expression
-	: NEW type OPEN_PARENS ADDRESSOF expression CLOSE_PARENS
-	  {
-	    ArrayList args = new ArrayList();
-		Argument arg = new Argument ((Expression) $5, Argument.AType.Expression);
-		args.Add (arg);
-	  
-		New n = new New ((Expression) $2, (ArrayList) args, lexer.Location);
-		$$ = n;
-	  }
-	;*/
-
 new_expression
 	: object_creation_expression
 	| array_creation_expression
-	//| delegate_creation_expression
 	;
 
 declaration_statement
@@ -3644,24 +3621,27 @@ dim_specifiers
 	  }	
 	;
 	
-/* Expressions */
 primary_expression
 	: literal
 	  {
-		// 7.5.1: Literals
+	  	//TODO
 	  }
-
+	| parenthesized_expression
+	| this_access
+	| base_access
 	| qualified_identifier
 	  {
 		string name = (string) $1;
 		$$ = DecomposeQI (name, lexer.Location);
 	  }
-	| parenthesized_expression
+	//FIXME: address_of_expression is apparently missing here
+	| get_type_expression
+	  {
+	  	// TODO
+	  }
 	| member_access
 	| invocation_expression
 	//| element_access
-	| this_access
-	| base_access
 	| new_expression
 	| cast_expression
 	;
@@ -3839,16 +3819,9 @@ variable_reference
 	: expression {/* note ("section 5.4"); */  $$ = $1;  }
 	;
 
-negation_expression
-	: NOT expression 
-	  {
-		$$ = new Unary (Unary.Operator.LogicalNot, (Expression) $2, lexer.Location);
-	  }
-	;
 		
 expression
-	: conditional_expression { $$ = $1; }
-	| negation_expression
+	: conditional_xor_expression { $$ = $1; }
 	/*| assignment_expression*/
 	;
 
@@ -3870,24 +3843,19 @@ this_access
 	  }
 	;
 
-unary_expression
-	: primary_expression
-	/*| NOT prefixed_unary_expression
-	  {
-		$$ = new Unary (Unary.Operator.LogicalNot, (Expression) $2, lexer.Location);
-	  }
-	| cast_expression */
-	;
-	
 cast_expression
-        : cast_operator OPEN_PARENS expression CLOSE_PARENS
+        : DIRECTCAST OPEN_PARENS expression COMMA type CLOSE_PARENS
 	  {
-		  $$ = new Cast ((Expression) $1, (Expression) $3, lexer.Location);
-	  }  	
+	  	// TODO
+	  } 
 	| CTYPE OPEN_PARENS expression COMMA type CLOSE_PARENS
 	  {
 		  $$ = new Cast ((Expression) $5, (Expression) $3, lexer.Location);
-	  } 	  	  	  
+	  } 	
+        | cast_operator OPEN_PARENS expression CLOSE_PARENS
+	  {
+		  $$ = new Cast ((Expression) $1, (Expression) $3, lexer.Location);
+	  }  	
 	;
 	
 cast_operator
@@ -3904,19 +3872,32 @@ cast_operator
 	| CSNG		{ $$ = TypeManager.system_single_expr; 		}
 	| CSTR		{ $$ = TypeManager.system_string_expr; 	}
 	;
+
+get_type_expression
+	: GETTYPE OPEN_PARENS type CLOSE_PARENS
+	  {
+	  	//TODO
+  	  }
+	;
 	
-	//
-	// The idea to split this out is from Rhys' grammar
-	// to solve the problem with casts.
-	//
+exponentiation_expression
+	: primary_expression
+	| exponentiation_expression OP_EXP primary_expression
+	  {
+	  	//TODO
+	  }			  	
+	;
+	
 prefixed_unary_expression
-	: unary_expression
+	: exponentiation_expression
 	| PLUS prefixed_unary_expression
 	  {
+	  	//FIXME: Is this rule correctly defined ?
 	  	$$ = new Unary (Unary.Operator.UnaryPlus, (Expression) $2, lexer.Location);
 	  }
 	| MINUS prefixed_unary_expression
 	  {
+	  	//FIXME: Is this rule correctly defined ?
 		$$ = new Unary (Unary.Operator.UnaryNegation, (Expression) $2, lexer.Location);
 	  }
 	;
@@ -3933,112 +3914,123 @@ multiplicative_expression
 		$$ = new Binary (Binary.Operator.Division,
 			         (Expression) $1, (Expression) $3, lexer.Location);
 	  }
-	| multiplicative_expression OP_IDIV prefixed_unary_expression
-	  {
-		$$ = new Binary (Binary.Operator.Division,
-			         (Expression) $1, (Expression) $3, lexer.Location);
-	  }	  
-	| multiplicative_expression MOD prefixed_unary_expression
-	  {
-		$$ = new Binary (Binary.Operator.Modulus,
-			         (Expression) $1, (Expression) $3, lexer.Location);
-	  }
 	;
 
-additive_expression
+integer_division_expression
 	: multiplicative_expression
-	| additive_expression PLUS multiplicative_expression
+	| integer_division_expression OP_IDIV multiplicative_expression
+          {
+	  	//FIXME: Is this right ?
+		$$ = new Binary (Binary.Operator.Division,
+			   (Expression) $1, (Expression) $3, lexer.Location);
+          }
+	;
+
+mod_expression
+	: integer_division_expression
+	| mod_expression MOD integer_division_expression
+	  {
+	      $$ = new Binary (Binary.Operator.Modulus,
+			       (Expression) $1, (Expression) $3, lexer.Location);
+	  }
+	;
+	
+additive_expression
+	: mod_expression
+	| additive_expression PLUS mod_expression
 	  {
 		$$ = new Binary (Binary.Operator.Addition,
 			         (Expression) $1, (Expression) $3, lexer.Location);
 	  }
-	| additive_expression MINUS multiplicative_expression
+	| additive_expression MINUS mod_expression
 	  {
 		$$ = new Binary (Binary.Operator.Subtraction,
 			         (Expression) $1, (Expression) $3, lexer.Location);
 	  }
-	| additive_expression OP_CONCAT multiplicative_expression
+	;
+
+concat_expression
+	: additive_expression
+	| concat_expression OP_CONCAT additive_expression
+          {
+	      // FIXME: This should only work for String expressions
+	      // We probably need to use something from the runtime
+	      $$ = new Binary (Binary.Operator.Addition,
+			       (Expression) $1, (Expression) $3, lexer.Location);
+	  }	
+	;
+
+shift_expression
+	: concat_expression
+	| shift_expression OP_SHIFT_LEFT concat_expression
 	  {
-	  	// FIXME: This should only work for String expressions
-	  	// We probably need to use something from the runtime
-		$$ = new Binary (Binary.Operator.Addition,
-			         (Expression) $1, (Expression) $3, lexer.Location);
-	  }	  
+	  	// TODO
+	  }
+	| shift_expression OP_SHIFT_RIGHT concat_expression
+	  {
+	  	//TODO
+	  }
 	;
 
 relational_expression
-	: additive_expression
-	| relational_expression OP_LT additive_expression
-	  {
-		$$ = new Binary (Binary.Operator.LessThan,
-			         (Expression) $1, (Expression) $3, lexer.Location);
-	  }
-	| relational_expression OP_GT additive_expression
-	  {
-		$$ = new Binary (Binary.Operator.GreaterThan,
-			         (Expression) $1, (Expression) $3, lexer.Location);
-	  }
-	| relational_expression OP_LE additive_expression
-	  {
-		$$ = new Binary (Binary.Operator.LessThanOrEqual,
-			         (Expression) $1, (Expression) $3, lexer.Location);
-	  }
-	| relational_expression OP_GE additive_expression
-	  {
-		$$ = new Binary (Binary.Operator.GreaterThanOrEqual,
-			         (Expression) $1, (Expression) $3, lexer.Location);
-	  }
-	| relational_expression IS unary_expression
-	  {
-		$$ = new Binary (Binary.Operator.Equality,
-			(Expression) $1, (Expression) $3, lexer.Location);
-	  }
-	| relational_expression AS type_name
-	  {
-		$$ = new As ((Expression) $1, (Expression) $3, lexer.Location);
-	  }
-	;
-
-equality_expression
-	: relational_expression
-	| equality_expression ASSIGN relational_expression
+	: shift_expression
+	| relational_expression ASSIGN shift_expression
 	  {
 		$$ = new Binary (Binary.Operator.Equality,
 			         (Expression) $1, (Expression) $3, lexer.Location);
 	  }
-	| equality_expression OP_NE relational_expression
+	| relational_expression OP_NE shift_expression
 	  {
 		$$ = new Binary (Binary.Operator.Inequality, 
 			         (Expression) $1, (Expression) $3, lexer.Location);
 	  }	  
-	;
-
-and_expression
-	: equality_expression
-	| and_expression AND equality_expression
+	| relational_expression OP_LT shift_expression
 	  {
-		$$ = new Binary (Binary.Operator.BitwiseAnd,
+		$$ = new Binary (Binary.Operator.LessThan,
 			         (Expression) $1, (Expression) $3, lexer.Location);
+	  }
+	| relational_expression OP_GT shift_expression
+	  {
+		$$ = new Binary (Binary.Operator.GreaterThan,
+			         (Expression) $1, (Expression) $3, lexer.Location);
+	  }
+	| relational_expression OP_LE shift_expression
+	  {
+		$$ = new Binary (Binary.Operator.LessThanOrEqual,
+			         (Expression) $1, (Expression) $3, lexer.Location);
+	  }
+	| relational_expression OP_GE shift_expression
+	  {
+		$$ = new Binary (Binary.Operator.GreaterThanOrEqual,
+			         (Expression) $1, (Expression) $3, lexer.Location);
+	  }
+	| relational_expression IS shift_expression
+	  {
+	  	//FIXME: Is this rule correctly defined ?
+	  }
+	| TYPEOF shift_expression IS namespace_or_type_name
+	  {
+		  //FIXME: Is this rule correctly defined ?
 	  }
 	;
 
-exclusive_or_expression
-	: and_expression
-	| exclusive_or_expression OP_XOR and_expression
+negation_expression
+	: relational_expression
+	| NOT negation_expression 
 	  {
-		$$ = new Binary (Binary.Operator.ExclusiveOr,
-			         (Expression) $1, (Expression) $3, lexer.Location);
+	  	//FIXME: Is this rule correctly defined ?
+		$$ = new Unary (Unary.Operator.LogicalNot, (Expression) $2, lexer.Location);
 	  }
 	;
-
+	
 conditional_and_expression
-	: exclusive_or_expression
-	| conditional_and_expression AND exclusive_or_expression
+	: negation_expression
+	| conditional_and_expression AND negation_expression
 	  {
 		$$ = new Binary (Binary.Operator.LogicalAnd,
 			         (Expression) $1, (Expression) $3, lexer.Location);
 	  }
-	| conditional_and_expression ANDALSO exclusive_or_expression
+	| conditional_and_expression ANDALSO negation_expression
 	  {	// FIXME: this is likely to be broken
 		$$ = new Binary (Binary.Operator.LogicalAnd,
 			         (Expression) $1, (Expression) $3, lexer.Location);
@@ -4059,8 +4051,13 @@ conditional_or_expression
 	  }
 	;
 
-conditional_expression
+conditional_xor_expression
 	: conditional_or_expression
+	| conditional_xor_expression XOR conditional_or_expression
+	{
+	      $$ = new Binary (Binary.Operator.ExclusiveOr,
+			       (Expression) $1, (Expression) $3, lexer.Location);
+	}
 	;
 
 assignment_expression
@@ -4078,48 +4075,6 @@ assignment_expression
 		n.isDelegate = true;
 		$$ = new Assign ((Expression) $1, (Expression) n, lexer.Location);
 	  }
-	| prefixed_unary_expression OP_MULT_ASSIGN expression
-	  {
-		Location l = lexer.Location;
-
-		$$ = new CompoundAssign (
-			Binary.Operator.Multiply, (Expression) $1, (Expression) $3, l);
-	  }
-	| prefixed_unary_expression OP_DIV_ASSIGN expression
-	  {
-		Location l = lexer.Location;
-
-		$$ = new CompoundAssign (
-			Binary.Operator.Division, (Expression) $1, (Expression) $3, l);
-	  }
-	| prefixed_unary_expression OP_IDIV_ASSIGN expression
-	  {
-		Location l = lexer.Location;
-
-		$$ = new CompoundAssign (
-			Binary.Operator.Division, (Expression) $1, (Expression) $3, l);
-	  }	  
-	| prefixed_unary_expression OP_ADD_ASSIGN expression
-	  {
-		Location l = lexer.Location;
-
-		$$ = new CompoundAssign (
-			Binary.Operator.Addition, (Expression) $1, (Expression) $3, l);
-	  }
-	| prefixed_unary_expression OP_SUB_ASSIGN expression
-	  {
-		Location l = lexer.Location;
-
-		$$ = new CompoundAssign (
-			Binary.Operator.Subtraction, (Expression) $1, (Expression) $3, l);
-	  }
-	| prefixed_unary_expression OP_CONCAT_ASSIGN expression
-	  {
-		Location l = lexer.Location;
-
-		$$ = new CompoundAssign (
-			Binary.Operator.Addition, (Expression) $1, (Expression) $3, l);
-	  }	  	  
 	;
 
 constant_expression
@@ -4131,16 +4086,12 @@ boolean_expression
 	;
 
 type
-	: type_name {  	/* class_type */
-		/*
-	           This does interfaces, delegates, struct_types, class_types,
-	           parent classes, and more! 4.2
-	         */
+	: namespace_or_type_name 
+	  {  	
 		$$ = DecomposeQI ((string) $1, lexer.Location); 
 	  }
 	| builtin_types 
-	/*| array_type 
-	 | pointer_type */
+	//| array_type 
 	;
 
 type_list
@@ -4160,37 +4111,45 @@ type_list
 	  }
 	;
 
-type_name
-	: namespace_or_type_name
-	;
-	
 namespace_or_type_name
 	: qualified_identifier
 	;
 
-/* Built-in / Integral types */
 builtin_types
 	: OBJECT	{ $$ = TypeManager.system_object_expr; }
-	| STRING	{ $$ = TypeManager.system_string_expr; }
+	| primitive_type
+	;
+
+primitive_type
+	: numeric_type
 	| BOOLEAN	{ $$ = TypeManager.system_boolean_expr; }
-	| DECIMAL	{ $$ = TypeManager.system_decimal_expr; }
-	| SINGLE	{ $$ = TypeManager.system_single_expr; }
-	| DOUBLE	{ $$ = TypeManager.system_double_expr; }
 	| DATE		{ $$ = TypeManager.system_date_expr; }
-	| integral_type
+	| CHAR		{ $$ = TypeManager.system_char_expr; }
+	| STRING	{ $$ = TypeManager.system_string_expr; }
+	;
+	
+
+numeric_type
+	: integral_type
+	| floating_point_type
+	| DECIMAL	{ $$ = TypeManager.system_decimal_expr; }
 	;
 
 integral_type
 	:
 	| BYTE		{ $$ = TypeManager.system_byte_expr; }
 	| SHORT		{ $$ = TypeManager.system_int16_expr; }
-	| LONG		{ $$ = TypeManager.system_int64_expr; }
 	| INTEGER	{ $$ = TypeManager.system_int32_expr; }
-	| CHAR		{ $$ = TypeManager.system_char_expr; }
+	| LONG		{ $$ = TypeManager.system_int64_expr; }
+	;
+	
+floating_point_type
+	: SINGLE	{ $$ = TypeManager.system_single_expr; }
+	| DOUBLE	{ $$ = TypeManager.system_double_expr; }
 	;
 
 interface_type
-	: type_name
+	: namespace_or_type_name
 	;
 	
 pp_directive
