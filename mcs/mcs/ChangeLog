@@ -1,3 +1,11 @@
+2001-12-04  Miguel de Icaza  <miguel@ximian.com>
+
+	* codegen.cs (EmitContext): Replace multiple variables with a
+	single pointer to the current Switch statement.
+
+	* statement.cs (GotoDefault, Switch): Adjust to cleaned up
+	EmitContext.
+
 2001-12-03  Miguel de Icaza  <miguel@ximian.com>
 
 	* statement.cs 
