@@ -1,3 +1,9 @@
+2005-02-22  Raja R Harinath  <rharinath@novell.com>
+
+	* cs0534-3.cs, cs0534-4.cs, CS0534-3-lib.cs, CS0534-4-lib.cs: New
+	files based on #71134.
+	* Makefile (all-local): Add CS0534-3-lib.dll and CS0534-4-lib.dll.
+
 2005-02-21  Raja R Harinath  <rharinath@novell.com>
 
 	* cs1594-1.cs, cs1594-2.cs, cs1594-3.cs: New tests based on #68955.
