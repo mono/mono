@@ -354,12 +354,8 @@ namespace Mono.MonoBASIC
 				return Token.CLOSE_PARENS;
 			case ',':
 				return Token.COMMA;
-			//case ':':
-			//	return Token.COLON;
 			case '?':
 				return Token.INTERR;
-			//case '&':
-			//	return Token.OP_CONCAT;				
 			}
 
 			d = peekChar ();
@@ -374,12 +370,15 @@ namespace Mono.MonoBASIC
 				doread = true;
 				return t;
 			}
-			if (c == '&'){
-				if (d == '=')
-					t = Token.OP_CONCAT_ASSIGN;
-				else
-					return Token.OP_CONCAT;
-				doread = true;
+			if (c == '&') {
+				t = handle_integer_literal_in_other_bases(d);
+				if (t == Token.NONE) {
+					if (d == '=') {
+						doread = true;
+						t = Token.OP_CONCAT_ASSIGN;
+					} else
+						return Token.OP_CONCAT;
+				}
 				return t;
 			}			
 			if (c == '-'){
@@ -392,10 +391,6 @@ namespace Mono.MonoBASIC
 			}
 
 			if (c == '='){
-				/*if (d == '='){
-					doread = true;
-					return Token.OP_EQ;
-				}*/
 				return Token.ASSIGN;
 			}
 
@@ -480,23 +475,6 @@ namespace Mono.MonoBASIC
 			return seen_digits;
 		}
 
-		void hex_digits (int c)
-		{
-			int d;
-
-			if (c != -1)
-				number.Append ((char) c);
-			while ((d = peekChar ()) != -1){
-				char e = Char.ToUpper ((char) d);
-				
-				if (Char.IsDigit (e) ||
-				    (e >= 'A' && e <= 'F')){
-					number.Append ((char) e);
-					getChar ();
-				} else
-					break;
-			}
-		}
 		
 		int real_type_suffix (int c)
 		{
@@ -506,10 +484,10 @@ namespace Mono.MonoBASIC
 			case 'F': case 'f':
 				t =  Token.LITERAL_SINGLE;
 				break;
-			case 'D': case 'd':
+			case 'R': case 'r':
 				t = Token.LITERAL_DOUBLE;
 				break;
-			case 'M': case 'm':
+			case 'D': case 'd':
 				 t= Token.LITERAL_DECIMAL;
 				break;
 			default:
@@ -521,23 +499,45 @@ namespace Mono.MonoBASIC
 
 		int integer_type_suffix (int c)
 		{
-			// FIXME: Handle U and L suffixes.
-			// We also need to see in which kind of
-			// Int the thing fits better according to the spec.
-			return Token.LITERAL_INTEGER;
+			int t;
+			
+			try {
+			
+				switch (c){
+				case 'S': case 's':
+					t =  Token.LITERAL_INTEGER; // SHORT ?
+					val = ((IConvertible)val).ToInt16(null);
+					break;
+				case 'I': case 'i':
+					t = Token.LITERAL_INTEGER;
+					val = ((IConvertible)val).ToInt32(null);
+					break;
+				case 'L': case 'l':
+					 t= Token.LITERAL_INTEGER; // LONG ?
+					 val = ((IConvertible)val).ToInt64(null);
+					break;
+				default:
+					if ((long)val <= System.Int32.MaxValue &&
+						(long)val >= System.Int32.MinValue) {
+						val = ((IConvertible)val).ToInt32(null);
+						return Token.LITERAL_INTEGER;
+					} else {
+						val = ((IConvertible)val).ToInt64(null);
+						return Token.LITERAL_INTEGER; // LONG ?
+					}
+				}
+				getChar ();
+				return t;
+			} catch (Exception e) {
+				val = e.ToString();
+				return Token.ERROR;
+			}
 		}
 		
-		void adjust_int (int t)
-		{
-			val = new System.Int32();
-			val = System.Int32.Parse (number.ToString (), 0);
-		}
-
 		int adjust_real (int t)
 		{
 			string s = number.ToString ();
 
-			Console.WriteLine (s);
 			switch (t){
 			case Token.LITERAL_DECIMAL:
 				val = new System.Decimal ();
@@ -565,6 +565,60 @@ namespace Mono.MonoBASIC
 			return t;
 		}
 
+		long hex_digits ()
+		{
+			System.Text.StringBuilder hexNumber = new System.Text.StringBuilder ();
+			
+			int d;
+
+			while ((d = peekChar ()) != -1){
+				char e = Char.ToUpper ((char) d);
+				
+				if (Char.IsDigit (e) || (e >= 'A' && e <= 'F')){
+					hexNumber.Append (e);
+					getChar ();
+				} else
+					break;
+			}
+			return System.Int64.Parse (hexNumber.ToString(), NumberStyles.HexNumber);
+		}
+
+		long octal_digits ()
+		{
+			long valueToReturn = 0;
+			
+			int d;
+
+			while ((d = peekChar ()) != -1){
+				char e = (char)d;			
+				if (Char.IsDigit (e) && (e < '8')){
+					valueToReturn *= 8;
+					valueToReturn += (d - (int)'0');
+					getChar ();
+				} else
+					break;
+			}
+			
+			return valueToReturn;
+		}
+
+		int handle_integer_literal_in_other_bases(int peek)
+		{
+			if (peek == 'h' || peek == 'H'){
+				getChar ();
+				val = hex_digits ();
+				return integer_type_suffix (peekChar ());
+			}
+			
+			if (peek == 'o' || peek == 'O'){
+				getChar ();
+				val = octal_digits ();
+				return integer_type_suffix (peekChar ());
+			}
+			
+			return Token.NONE;
+		}
+		
 		//
 		// Invoked if we know we have .digits or digits
 		//
@@ -577,30 +631,23 @@ namespace Mono.MonoBASIC
 			number.Length = 0;
 
 			if (Char.IsDigit ((char)c)){
-				if (c == '0' && peekChar () == 'x' || peekChar () == 'X'){
-					getChar ();
-					hex_digits (-1);
-					val = new System.Int32 ();
-					val = System.Int32.Parse (number.ToString (), NumberStyles.HexNumber);
-					return integer_type_suffix (peekChar ());
-				}
 				decimal_digits (c);
-				c = getChar ();
+				c = peekChar ();
 			}
 
 			//
 			// We need to handle the case of
-			// "1.1" vs "1.string" (LITERAL_SINGLE vs NUMBER DOT IDENTIFIER)
+			// "1.1" vs "1.ToString()" (LITERAL_SINGLE vs NUMBER DOT IDENTIFIER)
 			//
 			if (c == '.'){
-				if (decimal_digits ('.')){
+				if (decimal_digits (getChar())){
 					is_real = true;
 					c = peekChar ();
 				} else {
 					putback ('.');
 					number.Length -= 1;
-					adjust_int (Token.LITERAL_INTEGER);
-					return Token.LITERAL_INTEGER;
+					val = System.Int64.Parse(number.ToString());
+					return integer_type_suffix('.');
 				}
 			}
 			
@@ -625,25 +672,13 @@ namespace Mono.MonoBASIC
 
 			type = real_type_suffix (c);
 			if (type == Token.NONE && !is_real){
-				type = integer_type_suffix (c);
-				adjust_int (type);
-				putback (c);
-				return type;
-			} else
-				is_real = true;
-
-			if (is_real)
-				return adjust_real (type);
-
-			Console.WriteLine ("This should not be reached");
-			throw new Exception ("Is Number should never reach this point");
+				val = System.Int64.Parse(number.ToString());
+				return integer_type_suffix(c);
+			}
+			
+			return adjust_real (type);
 		}
 			
-		int escape (int c)
-		{
-			return peekChar ();
-		}
-
 		int getChar ()
 		{
 			if (putback_char != -1){
@@ -753,6 +788,13 @@ namespace Mono.MonoBASIC
 			return id.ToString ();
 		}
 
+		private bool is_doublequote(int currentChar)
+		{
+			return (currentChar == '"' || 
+					currentChar == 0x201C || // unicode left double-quote character
+					currentChar == 0x201D);  // unicode right double-quote character
+		}
+		
 		private bool tokens_seen = false;
 
 		public int xtoken ()
@@ -880,18 +922,31 @@ namespace Mono.MonoBASIC
 				}
 				
 				// Treat string literals
-				if (c == '"'){
+				if (is_doublequote(c)){
 					System.Text.StringBuilder s = new System.Text.StringBuilder ();
 
 					tokens_seen = true;
 
 					while ((c = getChar ()) != -1){
-						if (c == '"'){
-							if (peekChar() == '"')
+						if (is_doublequote(c)){
+							if (is_doublequote(peekChar()))
 								getChar();
 							else {
-								val = s.ToString ();
-								return Token.LITERAL_STRING;
+								//handle Char Literals
+								if (peekChar() == 'C' || peekChar() == 'c') {
+									getChar();
+									if (s.Length == 1) {
+										val = s[0];
+										return Token.LITERAL_CHARACTER;
+									} else {
+										val = "Incorrect length for a character literal";
+										return Token.ERROR;
+									}
+										
+								} else {
+									val = s.ToString ();
+									return Token.LITERAL_STRING;
+								}
 							}
 						}
 
@@ -900,6 +955,8 @@ namespace Mono.MonoBASIC
 							
 						s.Append ((char) c);
 					}
+					
+					return Token.ERROR;
 				}
 			
 				// expand tabs for location and ignore it as whitespace

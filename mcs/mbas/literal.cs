@@ -97,6 +97,18 @@ namespace Mono.MonoBASIC {
 		}
 	}
 
+	public class ShortLiteral : ShortConstant {
+		public ShortLiteral (short l) : base (l)
+		{
+		}
+
+		public override Expression DoResolve (EmitContext ec)
+		{
+			type = TypeManager.short_type;
+			return this;
+		}
+	}
+
 	public class UIntLiteral : UIntConstant {
 		public UIntLiteral (uint l) : base (l)
 		{

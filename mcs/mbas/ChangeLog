@@ -1,6 +1,16 @@
 2003/11/10  Rafael Teixeira <rafaelteixeirabr@hotmail.com>
+	* mb-tokenizer.cs : integer literal (Hex starts with &H not 0x), handle Octal literals (&O)
+	* 	handle unicode specialized double-quotes in string literals	
+	* 	corrected some mishandling of conversions in numeric literals
+	*	implemented support for char literals ("z"c)
+	* Makefile : verbose target uses verbose argument
+	* testmbas/WriteOK.vb: many tests for literals implemented
+	* literal.cs: correcting lack of a ShortLiteral class
+	* mb-parser.jay: removed support for unsigned int literals, added support for short int literals
+	
+2003/11/10  Rafael Teixeira <rafaelteixeirabr@hotmail.com>
 	* *.cs, mb-parser.jay: Switched all from defining/using namespace Mono.CSharp to Mono.MonoBASIC 
-    * location.cs: SymbolDocument now returns a SymbolDocumentWriter using the right (SymLanguageType.Basic) GUID
+	* location.cs: SymbolDocument now returns a SymbolDocumentWriter using the right (SymLanguageType.Basic) GUID
 	
 2003/10/17  Rafael Teixeira <rafaelteixeirabr@hotmail.com>
 	* genericparser.cs: 

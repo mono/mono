@@ -3072,13 +3072,11 @@ integer_literal
 		object v = lexer.Value;
 
 		if (v is int)
-			$$ = new IntLiteral ((Int32) v); 
-		else if (v is uint)
-			$$ = new UIntLiteral ((UInt32) v);
+			$$ = new IntLiteral ((Int32)v); 
+		else if (v is short)
+			$$ = new ShortLiteral ((Int16)v);
 		else if (v is long)
-			$$ = new LongLiteral ((Int64) v);
-		else if (v is ulong)
-			$$ = new ULongLiteral ((UInt64) v);
+			$$ = new LongLiteral ((Int64)v);
 		else
 			Console.WriteLine ("OOPS.  Unexpected result from scanner");
 			
@@ -3578,14 +3576,6 @@ integral_type
 	| LONG		{ $$ = TypeManager.system_int64_expr; }
 	| INTEGER	{ $$ = TypeManager.system_int32_expr; }
 	| CHAR		{ $$ = TypeManager.system_char_expr; }
-/*
-	| SBYTE		{ $$ = TypeManager.system_sbyte_expr; }
-	| UINT		{ $$ = TypeManager.system_uint32_expr; }
-	| ULONG		{ $$ = TypeManager.system_uint64_expr; }
-	| USHORT	{ $$ = TypeManager.system_uint16_expr; }
-	| CHAR		{ $$ = TypeManager.system_char_expr; }
-	| VOID		{ $$ = TypeManager.system_void_expr; }
-*/
 	;
 
 interface_type
@@ -4099,8 +4089,7 @@ protected override int parse ()
 	} 
 	catch (Exception e)
 	{
-		Report.Error (9999, lexer.Location, lexer.location + "Parsing error in " + lexer.ref_name + "\n");
-		Console.WriteLine (e);
+		Report.Error (9999, lexer.Location, lexer.location + "\nParsing error in " + lexer.ref_name + "\n" + e.ToString());
 	}
 	
 	return Report.Errors;
