@@ -23,9 +23,12 @@
 //	Peter Bartok	pbartok@novell.com
 //
 //
-// $Revision: 1.18 $
+// $Revision: 1.19 $
 // $Modtime: $
 // $Log: XplatUIWin32.cs,v $
+// Revision 1.19  2004/08/18 19:16:53  jordi
+// Move colors to a table
+//
 // Revision 1.18  2004/08/17 21:24:03  pbartok
 // - Finished IsVisible
 // - Added Win32GetWindowPlacement
@@ -312,7 +315,7 @@ namespace System.Windows.Forms {
 			VK_RMENU		= 0xA5
 		}
 
-		private enum GetSysColorIndex {
+		internal enum GetSysColorIndex {
 			COLOR_SCROLLBAR			=0,
 			COLOR_BACKGROUND		=1,
 			COLOR_ACTIVECAPTION		=2,
@@ -343,7 +346,8 @@ namespace System.Windows.Forms {
 			COLOR_3DSHADOW			=16,
 			COLOR_3DHIGHLIGHT		=20,
 			COLOR_3DHILIGHT			=20,
-			COLOR_BTNHILIGHT		=20
+			COLOR_BTNHILIGHT		=20,
+			COLOR_MAXVALUE			=24,/* Maximum value */
 		}       
 
 		private enum LoadCursorType {

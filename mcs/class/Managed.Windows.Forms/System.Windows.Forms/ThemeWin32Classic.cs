@@ -25,9 +25,12 @@
 //
 //
 //
-// $Revision: 1.22 $
+// $Revision: 1.23 $
 // $Modtime: $
 // $Log: ThemeWin32Classic.cs,v $
+// Revision 1.23  2004/08/18 19:16:53  jordi
+// Move colors to a table
+//
 // Revision 1.22  2004/08/17 19:29:11  jackson
 // Don't use KnownColor to create colours. It has a large startup time.
 //
@@ -104,6 +107,37 @@ namespace System.Windows.Forms
 {
 	internal class ThemeWin32Classic : ITheme
 	{		
+
+		uint [] theme_colors = {							/* AARRGGBB */
+			(uint) XplatUIWin32.GetSysColorIndex.COLOR_SCROLLBAR,			0xffc0c0c0,
+			(uint) XplatUIWin32.GetSysColorIndex.COLOR_BACKGROUND,			0xff008080,
+			(uint) XplatUIWin32.GetSysColorIndex.COLOR_ACTIVECAPTION,		0xff000080,
+			(uint) XplatUIWin32.GetSysColorIndex.COLOR_INACTIVECAPTION,		0xff808080,
+			(uint) XplatUIWin32.GetSysColorIndex.COLOR_MENU,			0xffc0c0c0,
+			(uint) XplatUIWin32.GetSysColorIndex.COLOR_WINDOW,			0xffffffff,
+			(uint) XplatUIWin32.GetSysColorIndex.COLOR_WINDOWFRAME,			0xff000000,
+			(uint) XplatUIWin32.GetSysColorIndex.COLOR_MENUTEXT,			0xff000000,
+			(uint) XplatUIWin32.GetSysColorIndex.COLOR_WINDOWTEXT,			0xff000000,
+			(uint) XplatUIWin32.GetSysColorIndex.COLOR_CAPTIONTEXT,			0xffffffff,
+			(uint) XplatUIWin32.GetSysColorIndex.COLOR_ACTIVEBORDER,		0xffc0c0c0,
+			(uint) XplatUIWin32.GetSysColorIndex.COLOR_INACTIVEBORDER,		0xffc0c0c0,
+			(uint) XplatUIWin32.GetSysColorIndex.COLOR_APPWORKSPACE,		0xff808080,
+			(uint) XplatUIWin32.GetSysColorIndex.COLOR_HIGHLIGHT,			0xff000080,
+			(uint) XplatUIWin32.GetSysColorIndex.COLOR_HIGHLIGHTTEXT,		0xffffffff,
+			(uint) XplatUIWin32.GetSysColorIndex.COLOR_BTNFACE,			0xffc0c0c0,
+			(uint) XplatUIWin32.GetSysColorIndex.COLOR_BTNSHADOW,			0xff808080,
+			(uint) XplatUIWin32.GetSysColorIndex.COLOR_GRAYTEXT,			0xff808080,
+			(uint) XplatUIWin32.GetSysColorIndex.COLOR_BTNTEXT,			0xff000000,
+			(uint) XplatUIWin32.GetSysColorIndex.COLOR_INACTIVECAPTIONTEXT,		0xffc0c0c0,
+			(uint) XplatUIWin32.GetSysColorIndex.COLOR_BTNHIGHLIGHT,		0xffffffff,
+			(uint) XplatUIWin32.GetSysColorIndex.COLOR_3DDKSHADOW,			0xff000000,			
+			(uint) XplatUIWin32.GetSysColorIndex.COLOR_3DLIGHT,			0xffe0e0e0,
+			(uint) XplatUIWin32.GetSysColorIndex.COLOR_INFOTEXT,			0xff000000,
+			(uint) XplatUIWin32.GetSysColorIndex.COLOR_INFOBK,			0xffffffff,
+		  
+		};
+
+		static private Array syscolors;
 		static private Pen pen_ticks;
 		static private Pen pen_disabled;
 		static private SolidBrush br_arrow;
@@ -142,6 +176,12 @@ namespace System.Windows.Forms
 			br_scrollbar_backgr = null;
 			br_trackbarbg = null;
 			br_trackbar_thumbhili = null;
+
+			/* Init Default colour array*/
+			syscolors =  Array.CreateInstance (typeof (Color), (uint) XplatUIWin32.GetSysColorIndex.COLOR_MAXVALUE+1);
+			
+			for (int i = 0; i < theme_colors.Length; i +=2) 
+				syscolors.SetValue (Color.FromArgb ((int)theme_colors[i+1]), (int) theme_colors[i]);
  
 			pen_ticks = new Pen (Color.Black);			
 			br_arrow = new SolidBrush (Color.Black);			
@@ -163,122 +203,118 @@ namespace System.Windows.Forms
 
 			default_font =	new Font (FontFamily.GenericSansSerif, 8.25f);
 		}
+
+		public Color GetColor (XplatUIWin32.GetSysColorIndex idx)
+		{
+			return (Color) syscolors.GetValue ((int)idx);
+		}
+
+		public void SetColor (XplatUIWin32.GetSysColorIndex idx, Color color)
+		{
+			syscolors.SetValue (color, (int) idx);
+		}
+
 		/* Windows System Colors. Based on Wine */
 		public Color ColorScrollbar {
-			get {return Color.FromArgb (255, 192, 192, 192);}
+			get {return GetColor (XplatUIWin32.GetSysColorIndex.COLOR_SCROLLBAR);}
 		}
 
 		public Color ColorBackground{
-			get {return Color.FromArgb (255, 0, 128, 128);}
+			get {return GetColor (XplatUIWin32.GetSysColorIndex.COLOR_BACKGROUND);}
 		}
 
 		public Color ColorActiveTitle{
-			get {return Color.FromArgb (255, 0, 0, 128);}
+			get {return GetColor (XplatUIWin32.GetSysColorIndex.COLOR_ACTIVECAPTION);}
 		}
 
 		public Color ColorInactiveTitle{
-			get {return Color.FromArgb (255, 128, 128, 128);}
+			get {return GetColor (XplatUIWin32.GetSysColorIndex.COLOR_INACTIVECAPTION);}
 		}
 
 		public Color ColorMenu{
-			get {return Color.FromArgb (255, 192, 192, 192);}
+			get {return GetColor (XplatUIWin32.GetSysColorIndex.COLOR_MENU);}
 		}
 
 		public Color ColorWindow{
-			get {return Color.FromArgb (255, 255, 255, 255);}
+			get {return GetColor (XplatUIWin32.GetSysColorIndex.COLOR_WINDOW);}
 		}
 
 		public Color ColorWindowFrame{
-			get {return Color.FromArgb (255, 0, 0, 0);}
+			get {return GetColor (XplatUIWin32.GetSysColorIndex.COLOR_WINDOWFRAME);}
 		}
 
 		public Color ColorMenuText{
-			get {return Color.FromArgb (255, 0, 0, 0);}
+			get {return GetColor (XplatUIWin32.GetSysColorIndex.COLOR_MENUTEXT);}
 		}
 
 		public Color ColorWindowText{
-			get {return Color.FromArgb (255, 0, 0, 0);}
+			get {return GetColor (XplatUIWin32.GetSysColorIndex.COLOR_WINDOWTEXT);}
 		}
 
 		public Color ColorTitleText{
-			get {return Color.FromArgb (255, 255, 255, 255);}
+			get {return GetColor (XplatUIWin32.GetSysColorIndex.COLOR_CAPTIONTEXT);}
 		}
 
 		public Color ColorActiveBorder{
-			get {return Color.FromArgb (255, 192, 192, 192);}
+			get {return GetColor (XplatUIWin32.GetSysColorIndex.COLOR_ACTIVEBORDER);}
 		}
 
 		public Color ColorInactiveBorder{
-			get {return Color.FromArgb (255, 192, 192, 192);}
+			get {return GetColor (XplatUIWin32.GetSysColorIndex.COLOR_INACTIVEBORDER);}
 		}
 
 		public Color ColorAppWorkSpace{
-			get {return Color.FromArgb (255, 128, 128, 128);}
+			get {return GetColor (XplatUIWin32.GetSysColorIndex.COLOR_APPWORKSPACE);}
 		}
 
 		public Color ColorHilight{
-			get {return Color.FromArgb (255, 0, 0, 128);}
+			get {return GetColor (XplatUIWin32.GetSysColorIndex.COLOR_HIGHLIGHT);}
 		}
 
 		public Color ColorHilightText{
-			get {return Color.FromArgb (255, 255, 255, 255);}
+			get {return GetColor (XplatUIWin32.GetSysColorIndex.COLOR_HIGHLIGHTTEXT);}
 		}
 
 		public Color ColorButtonFace{
-			get {return Color.FromArgb (255, 192, 192, 192);}
+			get {return GetColor (XplatUIWin32.GetSysColorIndex.COLOR_BTNFACE);}
 		}
 
 		public Color ColorButtonShadow{
-			get {return Color.FromArgb (255, 128, 128, 128);}
+			get {return GetColor (XplatUIWin32.GetSysColorIndex.COLOR_BTNSHADOW);}
 		}
 
 		public Color ColorGrayText{
-			get {return Color.FromArgb (255, 128, 128, 128);}
+			get {return GetColor (XplatUIWin32.GetSysColorIndex.COLOR_GRAYTEXT);}
 		}
 
 		public Color ColorButtonText{
-			get {return Color.FromArgb (255, 0, 0, 0);}
+			get {return GetColor (XplatUIWin32.GetSysColorIndex.COLOR_BTNTEXT);}
 		}
 
 		public Color ColorInactiveTitleText{
-			get {return Color.FromArgb (255, 192, 192, 192);}
+			get {return GetColor (XplatUIWin32.GetSysColorIndex.COLOR_INACTIVECAPTIONTEXT);}
 		}
 
 		public Color ColorButtonHilight{
-			get {return Color.FromArgb (255, 255, 255, 255);}
+			get {return GetColor (XplatUIWin32.GetSysColorIndex.COLOR_BTNHIGHLIGHT);}
 		}
 
 		public Color ColorButtonDkShadow{
-			get {return Color.FromArgb (255, 0, 0, 0);}
+			get {return GetColor (XplatUIWin32.GetSysColorIndex.COLOR_3DDKSHADOW);}
 		}
 
 		public Color ColorButtonLight{
-			get {return Color.FromArgb (255, 224, 224, 224);}
+			get {return GetColor (XplatUIWin32.GetSysColorIndex.COLOR_3DLIGHT);}
 		}
 
 		public Color ColorInfoText{
-			get {return Color.FromArgb (255, 0, 0, 0);}
+			get {return GetColor (XplatUIWin32.GetSysColorIndex.COLOR_INFOTEXT);}
 		}
 
 		public Color ColorInfoWindow{
-			get {return Color.FromArgb (255, 255, 255, 225);}
+			get {return GetColor (XplatUIWin32.GetSysColorIndex.COLOR_INFOBK);}
 		}
 
-		public Color ColorButtonAlternateFace{
-			get {return Color.FromArgb (255, 180, 180, 180);}
-		}
-
-		public Color ColorHotTrackingColor{
-			get {return Color.FromArgb (255, 0, 0, 255);}
-		}
-
-		public Color ColorGradientActiveTitle{
-			get {return Color.FromArgb (255, 16, 132, 208);}
-		}
-
-		public Color ColorGradientInactiveTitle {
-			get {return Color.FromArgb (255, 181, 181, 181);}
-		}
 
 		public Color DefaultControlBackColor {
 			get { return ColorButtonFace; }

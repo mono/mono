@@ -24,9 +24,12 @@
 //
 //
 //
-// $Revision: 1.10 $
+// $Revision: 1.11 $
 // $Modtime: $
 // $Log: ITheme.cs,v $
+// Revision 1.11  2004/08/18 19:16:53  jordi
+// Move colors to a table
+//
 // Revision 1.10  2004/08/15 23:20:54  ravindra
 // Changes to Theme for ToolBar control and also dos2unix format.
 //
@@ -62,14 +65,19 @@ using System.Drawing.Imaging;
 
 namespace System.Windows.Forms
 {
+
 	internal interface ITheme
 	{
+	
 		/* Default properties */
 		Color DefaultControlBackColor {get;}
 		Color DefaultControlForeColor {get;}
 		Font DefaultFont {get;}
 		Color DefaultWindowForeColor {get;}
 		Color DefaultWindowBackColor {get;}
+
+		Color GetColor (XplatUIWin32.GetSysColorIndex idx);
+		void SetColor (XplatUIWin32.GetSysColorIndex idx, Color color);
 
 		/* Windows System Colors. Based on Wine */
 		Color ColorScrollbar {get;} 		//COLOR_SCROLLBAR
@@ -97,10 +105,6 @@ namespace System.Windows.Forms
 		Color ColorButtonLight {get;} 		//COLOR_3DLIGHT
 		Color ColorInfoText {get;} 		//COLOR_INFOTEXT
 		Color ColorInfoWindow {get;} 		//COLOR_INFOBK
-		Color ColorButtonAlternateFace {get;} 	//COLOR_ALTERNATEBTNFACE
-		Color ColorHotTrackingColor {get;} 	//COLOR_HOTLIGHT
-		Color ColorGradientActiveTitle {get;} 	//COLOR_GRADIENTACTIVECAPTION
-		Color ColorGradientInactiveTitle {get;} //COLOR_GRADIENTINACTIVECAPTION
 
 		/*
 		  Control sizing properties
