@@ -1,4 +1,11 @@
 2002-8-1  DennisHayes <dennish@raytek.com>
+* System.Windows.Forms.csproj
+* System.Windows.Forms.csproj.user
+* System.Windows.Forms.sln
+* AssemblyInfo.cs * Not sure if this file is needed. not a part of the namespace, just visual studio
+* Added files to compile using visual Studio
+
+2002-8-1  DennisHayes <dennish@raytek.com>
 * Getopt.cs
 * removed, file contained only trash, not needed.
 
