@@ -12,6 +12,8 @@ using System;
 using System.Reflection;
 using System.Reflection.Emit;
 using System.Globalization;
+using System.Security;
+using System.Security.Permissions;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
@@ -101,6 +103,13 @@ namespace System.Reflection.Emit {
 
 		public override CallingConventions CallingConvention { 
 			get { return call_conv; }
+		}
+
+		[MonoTODO]
+		public string Signature {
+			get {
+				throw new NotImplementedException ();
+			}
 		}
 
 		public MethodToken GetToken() {
@@ -226,6 +235,27 @@ namespace System.Reflection.Emit {
 			RejectIfCreated ();
 			iattrs = attributes;
 		}
+
+		[MonoTODO]
+		public void AddDeclarativeSecurity( SecurityAction action, PermissionSet pset) {
+			RejectIfCreated ();
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public void SetMarshal (UnmanagedMarshal unmanagedMarshal)
+		{
+			RejectIfCreated ();
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public void SetSymCustomAttribute (string name, byte[] data)
+		{
+			RejectIfCreated ();
+			throw new NotImplementedException ();
+		}
+
 		internal override int get_next_table_index (object obj, int table, bool inc) {
 		    return type.get_next_table_index (obj, table, inc);
 		}

@@ -1,5 +1,7 @@
 2003-12-10  Zoltan Varga  <vargaz@freemail.hu>
 
+	* MethodBuilder.cs: Add stubs for missing methods.
+
 	* TypeBuilder.cs (GetEvents): Add new override.
 
 	* ModuleBuilder.cs: Implement some missing methods, add stubs for others.
