@@ -46,6 +46,12 @@ namespace System.Drawing.Imaging
 		internal PixelFormat pixel_format; // int
 		internal IntPtr address;
 		internal int reserved;
+
+		// following added to keep track of frames
+		internal int top;
+		internal int left;
+		internal int byteCount;
+		internal IntPtr bytes;
 		
 		public int Height {
 			get {

@@ -1,3 +1,8 @@
+2004-10-08  Ravindra  <rkumar@novell.com>
+
+	* BitmapData.cs: Synchronized the class with BitmapData struct
+	in libgdiplus.
+
 2004-06-13  Gert Driesen <drieseng@users.sourceforge.net>
 	
 	* EmfPlusRecordType.cs: fixed mismatches in enum field values
