@@ -1,3 +1,7 @@
+2002-08-20  Mark Crichton <crichton@gimp.org>
+
+	* sparc/tramp.c (mono_create_trampoline): Now works on Sparc.  Tested
+	on an Ultra 2 running Linux.
 
 Mon Aug 5 19:21:19 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
