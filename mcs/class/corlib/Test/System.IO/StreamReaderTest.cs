@@ -3,6 +3,7 @@
 // David Brandt (bucky@keystreams.com)
 //
 // (C) Ximian, Inc.  http://www.ximian.com
+// Copyright (C) 2004 Novell (http://www.novell.com)
 // 
 
 using NUnit.Framework;
@@ -587,5 +588,45 @@ public class StreamReaderTest : Assertion
 
 		AssertEquals ("#01", true, thrown);
 	}
+
+	[Test]
+	[ExpectedException (typeof (ArgumentNullException))]
+	public void Contructor_Stream_NullEncoding () 
+	{
+		StreamReader r = new StreamReader (new MemoryStream (), null);
+	}
+
+	[Test]
+	[ExpectedException (typeof (ArgumentNullException))]
+	public void Contructor_Path_NullEncoding () 
+	{
+		StreamReader r = new StreamReader (_codeFileName, null);
+	}
+
+	[Test]
+	[ExpectedException (typeof (ArgumentNullException))]
+	public void Read_Null () 
+	{
+		StreamReader r = new StreamReader (new MemoryStream ());
+		r.Read (null, 0, 0);
+	}
+
+	[Test]
+	[ExpectedException (typeof (ArgumentException))]
+	public void Read_IndexOverflow () 
+	{
+		char[] array = new char [16];
+		StreamReader r = new StreamReader (new MemoryStream (16));
+		r.Read (array, 1, Int32.MaxValue);
+	}	
+
+	[Test]
+	[ExpectedException (typeof (ArgumentException))]
+	public void Read_CountOverflow () 
+	{
+		char[] array = new char [16];
+		StreamReader r = new StreamReader (new MemoryStream (16));
+		r.Read (array, Int32.MaxValue, 1);
+	}	
 }
 }
