@@ -1,3 +1,10 @@
+2004-04-08  Bernie Solomon  <bernard@ugsolutions.com>
+
+	* locales.c:
+	ves_icall_System_Globalization_CultureInfo_construct_number_format
+        Fix g_assert so it compiles on fussier compilers re int/ptr
+	mismatch
+
 2004-04-08  Dick Porter  <dick@ximian.com>
 
 	* socket-io.h:
