@@ -394,6 +394,11 @@ Tests delegate creation inside an array;  This exposed a bug in the
 fact that New is called for DoResolve twice from array initialization.
 Bug #48800
 
+test-219.cs:
+------------
+Tests that we can call typeof(void) in an attribtue delcaration, since
+we removed previously typeof (System.Void) as a valid way of referencing void.
+
 verify-1.cs
 -----------
 Test whether we do not jump out of the method in a Try/Finally block.
