@@ -1,3 +1,10 @@
+2004-04-10  Miguel de Icaza  <miguel@ximian.com>
+
+	* expression.cs (Binary.ResolveOperator): Do no append strings
+	twice: since we can be invoked more than once (array evaluation)
+	on the same concatenation, take care of this here.  Based on a fix
+	from Ben (bug #56454)
+
 2004-04-08  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* codegen.cs: Fix another case where CS1548 must be reported (when 
