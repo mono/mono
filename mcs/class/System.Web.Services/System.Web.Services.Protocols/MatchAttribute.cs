@@ -28,6 +28,7 @@ namespace System.Web.Services.Protocols {
 			ignoreCase = false;
 			maxRepeats = -1;
 			this.pattern = pattern;
+			group = 1;
 		}
 
 		#endregion // Constructors

@@ -132,7 +132,7 @@ namespace System.Web.Services.Protocols {
 			MimeParameterWriter parameterWriter = (MimeParameterWriter) method.ParameterWriterType.Create ();
 			
 			string url = parameterWriter.GetRequestUrl (requestUrl, parameters);
-			WebRequest request = GetWebRequest (new Uri(url));
+			WebRequest request = GetWebRequest (new Uri(url, true));
 			
 			parameterWriter.InitializeRequest (request, parameters);
 			

@@ -1,3 +1,11 @@
+2003-12-16  Lluis Sanchez Gual <lluis@ximian.com>
+
+	* HttpSimpleClientProtocol.cs: Do not encode the request url, since it is
+	  already encoded by the MimeParameterWriter.
+	* MatchAttribute.cs: Set default value for Group to 1.
+	* TextReturnReader.cs: Implemented. With this it is possible to create an
+	  XML web service that parse the contents of a web page.
+
 2003-12-15  Lluis Sanchez Gual <lluis@ximian.com>
 
 	* HttpSoapWebServiceHandler.cs: Added check for valid SOAPAction header.
