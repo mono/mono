@@ -1,3 +1,30 @@
+2003-12-07  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* PublicKey.cs: New (1.2). Class that encapsulate an ASN.1 encoded 
+	public key. 
+	* X509BasicConstraintsExtension.cs: New (1.2). X.509 certification 
+	extension for BasicConstraints.
+	* X509CertificateEx.cs: New (1.2). Augmented class to use X.509 
+	certificates.
+	* X509CertificateExCollection.cs: New (1.2). Collection class for 
+	X509CertificateEx.
+	* X509CertificateExEnumerator.cs: New (1.2). Enumerator class for 
+	X509CertificateEx.
+	* X509ChainElement.cs: New (1.2). Information (certificate, status, 
+	informations) for a member of a certificate chain.
+	* X509ChainElementCollection.cs: New (1.2). Collection class for 
+	X509ChainElement.
+	* X509ChainElementEnumerator.cs: New (1.2). Enumerator class for 
+	X509ChainElement.
+	* X509ChainStatus.cs: New (1.2). Chain status (many can apply to a 
+	single X509ChainElement).
+	* X509Extension.cs: New (1.2). Base class for all certificate 
+	extensions.
+	* X509ExtensionCollection.cs: New (1.2). Collection class for 
+	X509Extension.
+	* X509ExtensionEnumerator.cs: New (1.2). Enumerator class for 
+	X509Extension.
+
 2003-11-08  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* OpenFlags.cs: New (1.2). Enumeration for certificate stores.
