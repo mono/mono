@@ -1,3 +1,9 @@
+Tue Jul 31 17:48:11 CEST 2001 Paolo Molaro <lupus@ximian.com>
+
+	* dis-cil.c, dis-cil.h, dump.c, dump.h, get.c, get.h, main.c, push-pop.h:
+	massive namespace cleanup.
+	* main.c: dis_locals() now just strigifies a MonoMethodHeader.
+
 2001-07-31  Dietmar Maurer  <dietmar@ximian.com>
 
 	* main.c (pinvoke_flags): impl.

@@ -1,4 +1,10 @@
 
+Tue Jul 31 17:54:02 CEST 2001 Paolo Molaro <lupus@ximian.com>
+
+	* metadata.h, metadata.c, Makefile.am, private.h, assembly.c, blob.h,
+	cil-coff.h, image.c, image.h, pedump.c, rawbuffer.c, rawbuffer.h, row-indexes.h,
+	tokentype.h: massive namespace cleanup.
+
 Mon Jul 30 20:11:01 CEST 2001 Paolo Molaro <lupus@ximian.com>
 
 	* metadata.h, metadata.c: decode exception clauses when parsing method header.

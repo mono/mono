@@ -1,3 +1,7 @@
+Tue Jul 31 17:52:53 CEST 2001 Paolo Molaro <lupus@ximian.com>
+
+	* interp.c: massive namespace cleanup.
+
 Mon Jul 30 20:09:58 CEST 2001 Paolo Molaro <lupus@ximian.com>
 
 	* interp.c: update to use mono_method->name.

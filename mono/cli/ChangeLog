@@ -1,3 +1,7 @@
+Tue Jul 31 17:45:44 CEST 2001 Paolo Molaro <lupus@ximian.com>
+
+	* class.c, cli.h, loader.c: massive namespace cleanup.
+
 2001-07-31  Dietmar Maurer  <dietmar@ximian.com>
 
 	* cli.h: added pinvoke flags to MonoMethodPInvoke, moved method
