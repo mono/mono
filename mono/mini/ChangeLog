@@ -1,4 +1,8 @@
 
+Wed Apr 21 16:38:28 CEST 2004 Paolo Molaro <lupus@ximian.com>
+
+	* mini-ppc.h, mini-ppc.c, cpu-g4.md: enable bigmul optimization.
+
 Wed Apr 21 16:20:32 CEST 2004 Paolo Molaro <lupus@ximian.com>
 
 	* mini.h, mini-ppc.c, cpu-g4.md: support for implicit exceptions.
