@@ -94,6 +94,7 @@ System.Web.Services.Protocols/MimeParameterWriter.cs
 System.Web.Services.Protocols/MimeReturnReader.cs
 System.Web.Services.Protocols/NopReturnReader.cs
 System.Web.Services.Protocols/PatternMatcher.cs
+System.Web.Services.Protocols/ServerProtocol.cs
 System.Web.Services.Protocols/SoapClientMessage.cs
 System.Web.Services.Protocols/SoapClientMethod.cs
 System.Web.Services.Protocols/SoapDocumentMethodAttribute.cs
