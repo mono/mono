@@ -1,5 +1,8 @@
 2005-02-20  Zoltan Varga  <vargaz@freemail.hu>
 
+	* marshal.c (emit_thread_interrupt_checkpoint_call): Mark the bblock 
+	containing the checkpoint call with NOT_TAKEN.
+	
 	* marshal.c (mono_marshal_get_managed_wrapper): Emit interrupt 
 	checkpoint before pushing the arguments, so they won't have to be
 	spilled to stack.
