@@ -415,7 +415,7 @@ namespace CIR {
 			
 			Argument a = (Argument) Arguments [0];
 			
-			if (!a.Resolve (ec))
+			if (!a.Resolve (ec, Location))
 				return null;
 			
 			Expression e = a.Expr;
@@ -516,7 +516,7 @@ namespace CIR {
 					--i;
 					Argument a = (Argument) Arguments [i];
 					
-					if (!a.Resolve (ec))
+					if (!a.Resolve (ec, Location))
 						return null;
 				}
 			}

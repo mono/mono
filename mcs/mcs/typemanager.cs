@@ -53,7 +53,8 @@ public class TypeManager {
 	static public Type monitor_type;
 	static public Type runtime_field_handle_type;
 	static public Type attribute_usage_type;
-
+	static public Type param_array_type;
+	
 	//
 	// Internal, not really used outside
 	//
@@ -71,6 +72,11 @@ public class TypeManager {
 	static public MethodInfo void_monitor_enter_object;
 	static public MethodInfo void_monitor_exit_object;
 	static public MethodInfo void_initializearray_array_fieldhandle;
+
+	//
+	// The attribute constructors.
+	//
+	static public ConstructorInfo cons_param_array_attribute;
 	
 	// <remarks>
 	//   Holds the Array of Assemblies that have been loaded
@@ -333,6 +339,16 @@ public class TypeManager {
 
 		return mi;
 	}
+
+	ConstructorInfo GetConstructor (Type t, Type [] args)
+	{
+		ConstructorInfo ci = t.GetConstructor (args);
+
+		if (ci == null)
+			throw new Exception ("Can not find the core constructor for `" + t.FullName + "'");
+
+		return ci;
+	}
 	
 	// <remarks>
 	//   The types have to be initialized after the initial
@@ -376,6 +392,7 @@ public class TypeManager {
 		intptr_type          = CoreLookupType ("System.IntPtr");
 
 		attribute_usage_type = CoreLookupType ("System.AttributeUsageAttribute");
+		param_array_type     = CoreLookupType ("System.ParamArrayAttribute");
 		
 		//
 		// Now load the default methods that we use.
@@ -416,6 +433,12 @@ public class TypeManager {
 		
 		void_initializearray_array_fieldhandle = GetMethod (
 			runtime_helpers_type, "InitializeArray", array_field_handle_arg);
+
+		//
+		// Attributes
+		//
+		cons_param_array_attribute = GetConstructor (
+			param_array_type, void_arg);
 		
 	}
 	

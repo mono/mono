@@ -545,7 +545,9 @@ named_argument_list
 named_argument
 	: IDENTIFIER ASSIGN expression
 	  {
-		$$ = new DictionaryEntry ((string) $1, new Argument ((Expression) $3, Argument.AType.Expression));
+		$$ = new DictionaryEntry (
+			(string) $1, 
+			new Argument ((Expression) $3, Argument.AType.Expression));
 	  }
 	;
 

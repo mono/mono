@@ -259,3 +259,8 @@
 	That emits the code to call Get and then leaves a this pointer
 	in the stack, so that later a Store can be emitted using that
 	this pointer (consider Property++ or Indexer++)
+
+* Static flow analysis
+
+	Required to warn about reachability of code and definite
+	assignemt as well as missing returns on functions.

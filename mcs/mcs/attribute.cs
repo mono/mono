@@ -102,7 +102,7 @@ namespace CIR {
 
 				Argument a = (Argument) pos_args [i];
 
-				if (!a.Resolve (ec))
+				if (!a.Resolve (ec, Location))
 					return null;
 
 				Expression e = Expression.Reduce (ec, a.Expr);
@@ -134,7 +134,7 @@ namespace CIR {
 				string member_name = (string) de.Key;
 				Argument a  = (Argument) de.Value;
 
-				if (!a.Resolve (ec))
+				if (!a.Resolve (ec, Location))
 					return null;
 
 				Expression member = Expression.MemberLookup (ec, Type, member_name, false,

@@ -24,10 +24,21 @@ namespace CIR {
 
 	public class ReflectionParameters : ParameterData {
 		ParameterInfo [] pi;
-
+		bool last_arg_is_params;
+		
 		public ReflectionParameters (ParameterInfo [] pi)
 		{
+			object a;
+			
 			this.pi = pi;
+
+			int count = pi.Length-1;
+			if (count > 0){
+				a = pi [count-1].GetCustomAttributes (TypeManager.param_array_type, false);
+			
+				if (a != null)
+					last_arg_is_params = true;
+			} 
 		}
 		       
 		public Type ParameterType (int pos)
@@ -45,6 +56,9 @@ namespace CIR {
 			if (pi [pos].IsIn)
 				sb.Append ("in ");
 
+			if (pos == pi.Length - 1)
+				sb.Append ("params ");
+			
 			sb.Append (TypeManager.CSharpName (ParameterType (pos)));
 
 			return sb.ToString ();
@@ -56,6 +70,10 @@ namespace CIR {
 			if (pi [pos].IsOut)
 				return Parameter.Modifier.OUT;
 
+			if (pos == pi.Length-1)
+				if (last_arg_is_params)
+					return Parameter.Modifier.PARAMS;
+			
 			return Parameter.Modifier.NONE;
 		}
 
@@ -92,12 +110,17 @@ namespace CIR {
 			if (param_types == null)
 				return null;
 
+			int len = parameters.FixedParameters.Length;
 			Parameter p;
-			
-			if (pos == parameters.FixedParameters.Length)
+
+			if (pos == len)
 				p = parameters.ArrayParameter;
-			else
+			else if (pos < len)
 				p = parameters.FixedParameters [pos];
+			else {
+				p = parameters.ArrayParameter;
+				pos = len;
+			}
 
 			Type t = param_types [pos];
 			string name = t.FullName;

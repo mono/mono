@@ -1869,9 +1869,17 @@ namespace CIR {
 						      i + 1, p [i].Attributes, p [i].Name);
 					
 				if (i != parameters.Length) {
+					ParameterBuilder pb;
+					
 					Parameter array_param = Parameters.ArrayParameter;
-					MethodBuilder.DefineParameter (i + 1, array_param.Attributes,
-								       array_param.Name);
+					pb = MethodBuilder.DefineParameter (
+						i + 1, array_param.Attributes,
+						array_param.Name);
+
+					CustomAttributeBuilder a = new CustomAttributeBuilder (
+						TypeManager.cons_param_array_attribute, new object [0]);
+
+					pb.SetCustomAttribute (a);
 				}
 			}
 
@@ -1886,23 +1894,22 @@ namespace CIR {
 			ILGenerator ig = MethodBuilder.GetILGenerator ();
 			EmitContext ec = new EmitContext (parent, ig, GetReturnType (parent), ModFlags);
 
-			if (OptAttributes != null) {
-				if (OptAttributes.AttributeSections != null) {
-					foreach (AttributeSection asec in OptAttributes.AttributeSections) {
-						if (asec.Attributes != null) {
-							foreach (Attribute a in asec.Attributes) {
-								CustomAttributeBuilder cb = a.Resolve (ec);
-								if (cb == null)
-									continue;
-
-								if (!Attribute.CheckAttribute (a, this)) {
-									Attribute.Error592 (a, Location);
-									return;
-								}
-								
-								MethodBuilder.SetCustomAttribute (cb);
-							}
+			if (OptAttributes != null && OptAttributes.AttributeSections != null) {
+				foreach (AttributeSection asec in OptAttributes.AttributeSections) {
+					if (asec.Attributes == null)
+						continue;
+					
+					foreach (Attribute a in asec.Attributes) {
+						CustomAttributeBuilder cb = a.Resolve (ec);
+						if (cb == null)
+							continue;
+						
+						if (!Attribute.CheckAttribute (a, this)) {
+							Attribute.Error592 (a, Location);
+							return;
 						}
+						
+						MethodBuilder.SetCustomAttribute (cb);
 					}
 				}
 			}
@@ -1937,7 +1944,7 @@ namespace CIR {
 					--i;
 
 					Argument a = (Argument) argument_list [i];
-					if (!a.Resolve (ec))
+					if (!a.Resolve (ec, location))
 						return false;
 				}
 			}
@@ -1966,7 +1973,7 @@ namespace CIR {
 		{
 			ec.ig.Emit (OpCodes.Ldarg_0);
 			if (argument_list != null)
-				Invocation.EmitArguments (ec, argument_list);
+				Invocation.EmitArguments (ec, null, argument_list);
 			ec.ig.Emit (OpCodes.Call, parent_constructor);
 		}
 	}

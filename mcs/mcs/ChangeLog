@@ -1,7 +1,44 @@
 2001-11-14  Miguel de Icaza  <miguel@ximian.com>
 
+	* support.cs (ReflectionParameters.ParameterModifier): Report
+	whether the argument is a PARAMS argument or not.
+
+	* class.cs: Set the attribute `ParamArrayAttribute' on the
+	parameter argument.
+
+	* typemanager.cs: Define param_array_type (ParamArrayAttribute)
+	and cons_param_array_attribute (ConstructorInfo for
+	ParamArrayAttribute)., 
+
+	* codegen.cs: Emit the return using the `Return' statement, that
+	way we can report the error correctly for missing return values. 
+
+	* class.cs (Method.Emit): Clean up.
+
+	* expression.cs (Argument.Resolve): Take another argument: the
+	location where this argument is used.  Notice that this is not
+	part of the "Argument" class as to reduce the size of the
+	structure (we know the approximate location anyways).
+
+	Test if the argument is a variable-reference, if not, then
+	complain with a 206.
+
+	(Argument.Emit): Emit addresses of variables.
+
+	(Argument.FullDesc): Simplify.
+
+	(Invocation.DoResolve): Update for Argument.Resolve.
+
+	(ElementAccess.DoResolve): ditto.
+
 	* delegate.cs (DelegateInvocation.Emit): Invocation of Invoke
 	method should be virtual, as this method is always virtual.
+
+	(NewDelegate.DoResolve): Update for Argument.Resolve.
+
+	* class.cs (ConstructorInitializer.DoResolve): ditto.
+	
+	* attribute.cs (Attribute.Resolve): ditto.
 
 2001-11-13  Miguel de Icaza  <miguel@ximian.com>
 

@@ -154,8 +154,11 @@ namespace CIR {
 				}
 			}
 
-			if (!has_ret)
-				ig.Emit (OpCodes.Ret);
+			if (!has_ret){
+				Statement s = new Return (null, Location.Null);
+
+				s.Emit (this);
+			}
 		}
 
 		// <summary>

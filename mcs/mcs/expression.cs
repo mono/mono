@@ -45,7 +45,7 @@ namespace CIR {
 		public override void Emit (EmitContext ec)
 		{
 			if (args != null) 
-				Invocation.EmitArguments (ec, args);
+				Invocation.EmitArguments (ec, mi, args);
 
 			ec.ig.Emit (OpCodes.Call, mi);
 			return;
@@ -476,9 +476,6 @@ namespace CIR {
 			
 		public UnaryMutator (Mode m, Expression e, Location l)
 		{
-			if (e == null)
-				throw new Exception ("oops");
-			
 			mode = m;
 			loc = l;
 			expr = e;
@@ -1360,7 +1357,7 @@ namespace CIR {
 				// Note that operators are static anyway
 				
 				if (Arguments != null) 
-					Invocation.EmitArguments (ec, Arguments);
+					Invocation.EmitArguments (ec, method, Arguments);
 				
 				if (method is MethodInfo)
 					ig.Emit (OpCodes.Call, (MethodInfo) method);
@@ -1817,7 +1814,7 @@ namespace CIR {
 
 		public readonly AType ArgType;
 		public Expression expr;
-
+		
 		public Argument (Expression expr, AType type)
 		{
 			this.expr = expr;
@@ -1853,29 +1850,34 @@ namespace CIR {
 
 	        public static string FullDesc (Argument a)
 		{
-			StringBuilder sb = new StringBuilder ();
-
-			if (a.ArgType == AType.Ref)
-				sb.Append ("ref ");
-
-			if (a.ArgType == AType.Out)
-				sb.Append ("out ");
-
-			sb.Append (TypeManager.CSharpName (a.Expr.Type));
-
-			return sb.ToString ();
+			return (a.ArgType == AType.Ref ? "ref " :
+				(a.ArgType == AType.Out ? "out " : "")) +
+				TypeManager.CSharpName (a.Expr.Type);
 		}
 		
-		public bool Resolve (EmitContext ec)
+		public bool Resolve (EmitContext ec, Location loc)
 		{
 			expr = expr.Resolve (ec);
 
+			if (ArgType == AType.Expression)
+				return expr != null;
+
+			if (expr.ExprClass != ExprClass.Variable){
+				Report.Error (206, loc,
+					      "A property or indexer can not be passed as an out or ref " +
+					      "parameter");
+				return false;
+			}
+				
 			return expr != null;
 		}
 
 		public void Emit (EmitContext ec)
 		{
-			expr.Emit (ec);
+			if (ArgType == AType.Ref || ArgType == AType.Out)
+				((IMemoryLocation)expr).AddressOf (ec);
+			else
+				expr.Emit (ec);
 		}
 	}
 
@@ -1884,7 +1886,7 @@ namespace CIR {
 	// </summary>
 	public class Invocation : ExpressionStatement {
 		public readonly ArrayList Arguments;
-		public readonly Location Location;
+		Location loc;
 
 		Expression expr;
 		MethodBase method = null;
@@ -1907,7 +1909,7 @@ namespace CIR {
 		{
 			this.expr = expr;
 			Arguments = arguments;
-			Location = l;
+			loc = l;
 		}
 
 		public Expression Expr {
@@ -2551,12 +2553,12 @@ namespace CIR {
 					bool IsDelegate = TypeManager.IsDelegateType (expr_type);
 					if (IsDelegate)
 						return (new DelegateInvocation (
-							this.expr, Arguments, Location)).Resolve (ec);
+							this.expr, Arguments, loc)).Resolve (ec);
 				}
 			}
 
 			if (!(expr is MethodGroupExpr)){
-				report118 (Location, this.expr, "method group");
+				report118 (loc, this.expr, "method group");
 				return null;
 			}
 
@@ -2568,16 +2570,15 @@ namespace CIR {
 					--i;
 					Argument a = (Argument) Arguments [i];
 
-					if (!a.Resolve (ec))
+					if (!a.Resolve (ec, loc))
 						return null;
 				}
 			}
 
-			method = OverloadResolve (ec, (MethodGroupExpr) this.expr, Arguments,
-						  Location);
+			method = OverloadResolve (ec, (MethodGroupExpr) this.expr, Arguments, loc);
 
 			if (method == null){
-				Error (-6, Location,
+				Error (-6, loc,
 				       "Could not find any applicable function for this argument list");
 				return null;
 			}
@@ -2589,18 +2590,66 @@ namespace CIR {
 			return this;
 		}
 
-		public static void EmitArguments (EmitContext ec, ArrayList Arguments)
+		// <summary>
+		//   Emits the list of arguments as an array
+		// </summary>
+		static void EmitParams (EmitContext ec, int idx, ArrayList arguments)
 		{
+			ILGenerator ig = ec.ig;
+			int count = arguments.Count - idx;
+			Argument a = (Argument) arguments [idx];
+			Type t = a.expr.Type;
+			string array_type = t.FullName + "[]";
+			LocalBuilder array;
+			
+			array = ec.GetTemporaryStorage (Type.GetType (array_type));
+			IntLiteral.EmitInt (ig, count);
+			ig.Emit (OpCodes.Newarr, t);
+			ig.Emit (OpCodes.Stloc, array);
+
+			int top = arguments.Count;
+			for (int j = idx; j < top; j++){
+				ig.Emit (OpCodes.Ldloc, array);
+				IntLiteral.EmitInt (ig, j - idx);
+				a.Emit (ec);
+				ig.Emit (OpCodes.Stelem_Ref);
+			}
+			ig.Emit (OpCodes.Ldloc, array);
+		}
+		
+		// <summary>
+		//   Emits a list of resolved Arguments that are in the arguments
+		//   ArrayList.
+		// 
+		//   The MethodBase argument might be null if the
+		//   emission of the arguments is known not to contain
+		//   a `params' field (for example in constructors or other routines
+		//   that keep their arguments in this structure
+		// </summary>
+		
+		public static void EmitArguments (EmitContext ec, MethodBase mb, ArrayList arguments)
+		{
+			ParameterData pd = null;
 			int top;
 
-			if (Arguments != null)
-				top = Arguments.Count;
+			if (arguments != null)
+				top = arguments.Count;
 			else
 				top = 0;
 
-			for (int i = 0; i < top; i++){
-				Argument a = (Argument) Arguments [i];
+			if (mb != null)
+				 pd = GetParameterData (mb);
 
+			for (int i = 0; i < top; i++){
+				Argument a = (Argument) arguments [i];
+
+				if (pd != null){
+					if (pd.ParameterModifier (i) == Parameter.Modifier.PARAMS){
+						EmitParams (ec, i, arguments);
+						return;
+					}
+				}
+					    
 				a.Emit (ec);
 			}
 		}
@@ -2649,7 +2698,7 @@ namespace CIR {
 			}
 
 			if (Arguments != null)
-				EmitArguments (ec, Arguments);
+				EmitArguments (ec, method, Arguments);
 
 			if (is_static || struct_call){
 				if (method is MethodInfo)
@@ -2688,7 +2737,7 @@ namespace CIR {
 		public readonly ArrayList Arguments;
 		public readonly string    RequestedType;
 
-		Location Location;
+		Location loc;
 		MethodBase method = null;
 
 		//
@@ -2697,11 +2746,11 @@ namespace CIR {
 		//
 		Expression value_target;
 		
-		public New (string requested_type, ArrayList arguments, Location loc)
+		public New (string requested_type, ArrayList arguments, Location l)
 		{
 			RequestedType = requested_type;
 			Arguments = arguments;
-			Location = loc;
+			loc = l;
 		}
 
 		public Expression ValueTypeVariable {
@@ -2724,19 +2773,19 @@ namespace CIR {
 			bool IsDelegate = TypeManager.IsDelegateType (type);
 			
 			if (IsDelegate)
-				return (new NewDelegate (type, Arguments, Location)).Resolve (ec);
+				return (new NewDelegate (type, Arguments, loc)).Resolve (ec);
 			
 			Expression ml;
 			
 			ml = MemberLookup (ec, type, ".ctor", false,
-					   MemberTypes.Constructor, AllBindingsFlags, Location);
+					   MemberTypes.Constructor, AllBindingsFlags, loc);
 			
 			bool is_struct = false;
 			is_struct = type.IsSubclassOf (TypeManager.value_type);
 			
 			if (! (ml is MethodGroupExpr)){
 				if (!is_struct){
-					report118 (Location, ml, "method group");
+					report118 (loc, ml, "method group");
 					return null;
 				}
 			}
@@ -2747,17 +2796,17 @@ namespace CIR {
 						--i;
 						Argument a = (Argument) Arguments [i];
 						
-						if (!a.Resolve (ec))
+						if (!a.Resolve (ec, loc))
 							return null;
 					}
 				}
 
 				method = Invocation.OverloadResolve (ec, (MethodGroupExpr) ml,
-								     Arguments, Location);
+								     Arguments, loc);
 			}
 			
 			if (method == null && !is_struct) {
-				Error (-6, Location,
+				Error (-6, loc,
 				       "New invocation: Can not find a constructor for " +
 				       "this argument list");
 				return null;
@@ -2785,7 +2834,7 @@ namespace CIR {
 
 				ml.AddressOf (ec);
 			} else {
-				Invocation.EmitArguments (ec, Arguments);
+				Invocation.EmitArguments (ec, method, Arguments);
 				ec.ig.Emit (OpCodes.Newobj, (ConstructorInfo) method);
 				return true;
 			}
@@ -2832,7 +2881,7 @@ namespace CIR {
 		string RequestedType;
 		string Rank;
 		ArrayList Initializers;
-		Location  Location;
+		Location  loc;
 		ArrayList Arguments;
 
 		MethodBase method = null;
@@ -2847,7 +2896,7 @@ namespace CIR {
 			RequestedType = requested_type;
 			Rank          = rank;
 			Initializers  = initializers;
-			Location      = l;
+			loc = l;
 
 			Arguments = new ArrayList ();
 
@@ -2861,7 +2910,7 @@ namespace CIR {
 			RequestedType = requested_type;
 			Rank = rank;
 			Initializers = initializers;
-			Location = l;
+			loc = l;
 		}
 
 		public static string FormArrayType (string base_type, int idx_count, string rank)
@@ -2928,15 +2977,15 @@ namespace CIR {
 				Expression ml;
 				
 				ml = MemberLookup (ec, type, ".ctor", false, MemberTypes.Constructor,
-						   AllBindingsFlags, Location);
+						   AllBindingsFlags, loc);
 				
 				if (!(ml is MethodGroupExpr)){
-					report118 (Location, ml, "method group");
+					report118 (loc, ml, "method group");
 					return null;
 				}
 				
 				if (ml == null) {
-					Report.Error (-6, Location, "New invocation: Can not find a constructor for " +
+					Report.Error (-6, loc, "New invocation: Can not find a constructor for " +
 						      "this argument list");
 					return null;
 				}
@@ -2946,15 +2995,15 @@ namespace CIR {
 						--i;
 						Argument a = (Argument) Arguments [i];
 						
-						if (!a.Resolve (ec))
+						if (!a.Resolve (ec, loc))
 							return null;
 					}
 				}
 				
-				method = Invocation.OverloadResolve (ec, (MethodGroupExpr) ml, Arguments, Location);
+				method = Invocation.OverloadResolve (ec, (MethodGroupExpr) ml, Arguments, loc);
 				
 				if (method == null) {
-					Report.Error (-6, Location, "New invocation: Can not find a constructor for " +
+					Report.Error (-6, loc, "New invocation: Can not find a constructor for " +
 						      "this argument list");
 					return null;
 				}
@@ -2972,7 +3021,7 @@ namespace CIR {
 						--i;
 						Argument a = (Argument) Arguments [i];
 						
-						if (!a.Resolve (ec))
+						if (!a.Resolve (ec, loc))
 							return null;
 						
 						args.Add (a.Type);
@@ -2990,7 +3039,7 @@ namespace CIR {
 							    arg_types);
 				
 				if (method == null) {
-					Report.Error (-6, Location, "New invocation: Can not find a constructor for " +
+					Report.Error (-6, loc, "New invocation: Can not find a constructor for " +
 						      "this argument list");
 					return null;
 				}
@@ -3006,11 +3055,11 @@ namespace CIR {
 			ILGenerator ig = ec.ig;
 			
 			if (IsOneDimensional) {
-				Invocation.EmitArguments (ec, Arguments);
+				Invocation.EmitArguments (ec, null, Arguments);
 				ig.Emit (OpCodes.Newarr, array_element_type);
 				
 			} else {
-				Invocation.EmitArguments (ec, Arguments);
+				Invocation.EmitArguments (ec, method, Arguments);
 
 				if (IsBuiltinType)
 					ig.Emit (OpCodes.Newobj, (ConstructorInfo) method);
@@ -3401,7 +3450,7 @@ namespace CIR {
 				--i;
 				Argument a = (Argument) Arguments [i];
 				
-				if (!a.Resolve (ec))
+				if (!a.Resolve (ec, loc))
 					return false;
 			}
 
