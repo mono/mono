@@ -125,7 +125,7 @@ namespace CIR {
 			
 			if (mi.Length == 1 && !(mi [0] is MethodBase))
 				return Expression.ExprClassFromMemberInfo (mi [0]);
-
+			
 			for (int i = 0; i < mi.Length; i++)
 				if (!(mi [i] is MethodBase)){
 					rc.Report.Error (-5, "Do not know how to reproduce this case: " + 
@@ -654,6 +654,7 @@ namespace CIR {
 		Expression left, right;
 		MethodBase method;
 		ArrayList  Arguments;
+		
 
 		public Binary (Operator oper, Expression left, Expression right)
 		{
@@ -910,8 +911,7 @@ namespace CIR {
 			if (left_expr != null || right_expr != null) {
 				//
 				// Now we need to form the union of these two sets and
-				// then call OverloadResolve
-				// on that.
+				// then call OverloadResolve on that.
 				//
 				MethodGroupExpr left_set = null, right_set = null;
 				int length1 = 0, length2 = 0;
@@ -925,7 +925,7 @@ namespace CIR {
 					right_set = (MethodGroupExpr) right_expr;
 					length2 = right_set.Methods.Length;
 				}
-				
+
 				MemberInfo [] mi = new MemberInfo [length1 + length2];
 				if (left_set != null)
 					left_set.Methods.CopyTo (mi, 0);
@@ -937,7 +937,7 @@ namespace CIR {
 				Arguments = new ArrayList ();
 				Arguments.Add (new Argument (left, Argument.AType.Expression));
 				Arguments.Add (new Argument (right, Argument.AType.Expression));
-				
+
 				method = Invocation.OverloadResolve (union, Arguments);
 				if (method != null)
 					return this;
@@ -1091,11 +1091,29 @@ namespace CIR {
 			OpCode opcode;
 
 			if (method != null) {
-				if (method is MethodInfo) {
-					Invocation.EmitArguments (ec, Arguments);
-					ec.ig.Emit (OpCodes.Call, (MethodInfo) method);
-					return;
-				}
+
+				bool is_static = method.IsStatic;
+
+				// FIXME : I am just not able to get this right !!
+				// There's something wrong with this part which causes
+				// an InvalidProgramException if this code is emitted
+				
+				//if (Arguments != null)
+				//	Invocation.EmitArguments (ec, Arguments);
+				
+				//if (is_static){
+				//	if (method is MethodInfo)
+				//		ig.Emit (OpCodes.Call, (MethodInfo) method);
+				//	else
+				//		ig.Emit (OpCodes.Call, (ConstructorInfo) method);
+				//} else {
+				//	if (method is MethodInfo)
+				//		ig.Emit (OpCodes.Callvirt, (MethodInfo) method);
+				//	else
+				//		ig.Emit (OpCodes.Callvirt, (ConstructorInfo) method);
+				//}
+				
+				//return;
 			}
 			
 			left.Emit (ec);
@@ -1528,9 +1546,9 @@ namespace CIR {
 				throw new Exception ("Expression of type " + a.Expr + " does not resolve its type");
 			}
 			
-			if (t == a.Expr.Type)
+			if (t == a.Expr.Type) 
 				return 0;
-
+			
 			// FIXME: Implement implicit conversions here.
 			// FIXME: Implement better conversion here.
 			
@@ -1714,7 +1732,7 @@ namespace CIR {
 			if (Arguments != null)
 				EmitArguments (ec, Arguments);
 
-			if (method.IsStatic){
+			if (is_static){
 				if (method is MethodInfo)
 					ec.ig.Emit (OpCodes.Call, (MethodInfo) method);
 				else
@@ -1794,7 +1812,7 @@ namespace CIR {
 
 			method = Invocation.OverloadResolve ((MethodGroupExpr) ml, Arguments);
 
-			if (method == null){
+			if (method == null) {
 				tc.RootContext.Report.Error (-6,
 				"New invocation: Can not find a constructor for this argument list");
 				return null;

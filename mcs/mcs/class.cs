@@ -216,9 +216,9 @@ namespace CIR {
 
 		public AdditionResult AddConstructor (Constructor c)
 		{
-			if (c.Name != Basename)
+			if (c.Name != Name) 
 				return AdditionResult.NotAConstructor;
-			
+
 			if (constructors == null)
 				constructors = new ArrayList ();
 
@@ -230,7 +230,7 @@ namespace CIR {
 				have_static_constructor = true;
 
 			Console.WriteLine ("Found a constructor for " + Name);
-			if (c.IsDefault ()){
+			if (c.IsDefault ()) {
 				if (is_static)
 					default_static_constructor = c;
 				else
@@ -529,6 +529,28 @@ namespace CIR {
 
 			c.ModFlags = mods;	
 		}
+
+		public void RegisterMethodBuilder (object element)
+		{
+			if (method_builders_to_methods == null)
+				method_builders_to_methods = new Hashtable ();
+
+			if (element is Method) {
+				Method m = (Method) element;
+				method_builders_to_methods.Add (m.MethodBuilder, m);
+			}
+			
+			if (element is Constructor) {
+				Constructor c = (Constructor) element;
+				method_builders_to_methods.Add (c.ConstructorBuilder, c);
+			}
+			
+			if (element is Operator) {
+				Operator op = (Operator) element;
+				method_builders_to_methods.Add (op.OperatorMethodBuilder, op.OperatorMethod);
+			}
+			
+		}
 		
 		//
 		// Populates our TypeBuilder with fields and methods
@@ -545,7 +567,7 @@ namespace CIR {
 					f.Define (this);
 			}
 
-			if (default_constructor == null)
+			if (default_constructor == null) 
 				DefineDefaultConstructor (false);
 
 			if (initialized_static_fields != null && default_static_constructor == null)
@@ -553,22 +575,16 @@ namespace CIR {
 
 			
 			if (Constructors != null){
-				if (method_builders_to_methods == null)
-					method_builders_to_methods = new Hashtable ();
-				
 				foreach (Constructor c in Constructors){
 					c.Define (this);
-					method_builders_to_methods.Add (c.ConstructorBuilder, c);
+					RegisterMethodBuilder (c);
 				}
 			} 
 
 			if (Methods != null){
-				if (method_builders_to_methods == null)
-					method_builders_to_methods = new Hashtable ();
-				
 				foreach (Method m in Methods){
 					m.Define (this);
-					method_builders_to_methods.Add (m.MethodBuilder, m);
+					RegisterMethodBuilder (m);
 				}
 			}
 
@@ -593,8 +609,10 @@ namespace CIR {
 			}
 
 			if (Operators != null) {
-				foreach (Operator o in Operators)
+				foreach (Operator o in Operators) {
 					o.Define (this);
+					RegisterMethodBuilder (o);
+				}
 			}
 
 			if (Delegates != null) {
@@ -682,6 +700,12 @@ namespace CIR {
 					if (filter (m.MethodBuilder, criteria) == true)
 						members.Add (m.MethodBuilder);
 				}
+
+				foreach (Operator o in Operators) {
+					if (filter (o.OperatorMethodBuilder, criteria) == true)
+						members.Add (o.OperatorMethodBuilder);
+				}
+				
 			}
 
 			// FIXME : This ain't right because EventBuilder is not a
@@ -1377,8 +1401,8 @@ namespace CIR {
 			False,
 
 			// Unary and Binary operators
-			Plus,
-			Minus,
+			Add,
+			Subtract,
 			
 			// Binary operators
 			Multiply,
@@ -1412,6 +1436,9 @@ namespace CIR {
 		public Attributes      OptAttributes;
 		public MethodBuilder   OperatorMethodBuilder;
 
+		public string MethodName;
+		public Method OperatorMethod;
+
 		public Operator (OpType type, string ret_type, int flags, string arg1type, string arg1name,
 				 string arg2type, string arg2name, Block block, Attributes attrs)
 		{
@@ -1428,33 +1455,27 @@ namespace CIR {
 
 		public void Define (TypeContainer parent)
 		{
-			MethodAttributes attr = Modifiers.MethodAttr (ModFlags);
+			MethodName = "Operator" + OperatorType;
 
-			string name = "Operator" + OperatorType;
-
-			Type ret_type = parent.LookupType (ReturnType, false);
-
-			Type [] param_types = new Type [2];
-
-			param_types [0] = parent.LookupType (FirstArgType, false);
-			if (SecondArgType != null)
-				param_types [1] = parent.LookupType (SecondArgType, false);
+			Parameter [] param_list = new Parameter [2];
+			param_list[0] = new Parameter (FirstArgType, FirstArgName,
+						       Parameter.Modifier.NONE, null);
 			
-			OperatorMethodBuilder = parent.TypeBuilder.DefineMethod (name, attr, ret_type, param_types);
-
-			OperatorMethodBuilder.DefineParameter (1, ParameterAttributes.None, FirstArgName);
-
 			if (SecondArgType != null)
-				OperatorMethodBuilder.DefineParameter (2, ParameterAttributes.None, SecondArgName);
-
+				param_list[1] = new Parameter (SecondArgType, SecondArgName,
+							       Parameter.Modifier.NONE, null);
+			
+			OperatorMethod = new Method (ReturnType, ModFlags, MethodName,
+						     new Parameters (param_list, null), OptAttributes);
+			
+			OperatorMethod.Define (parent);
+			OperatorMethodBuilder = OperatorMethod.MethodBuilder;
 		}
-
+		
 		public void Emit (TypeContainer parent)
 		{
-			ILGenerator ig = OperatorMethodBuilder.GetILGenerator ();
-			EmitContext ec = new EmitContext (parent, ig);
-
-			ec.EmitTopBlock (Block);
+			OperatorMethod.Block = Block;
+			OperatorMethod.Emit (parent);
 		}
 		
 

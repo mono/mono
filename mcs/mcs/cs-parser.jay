@@ -1107,8 +1107,8 @@ overloadable_operator
         | TRUE   { $$ = Operator.OpType.True; }
         | FALSE  { $$ = Operator.OpType.False; }
 // Unary and binary:
-        | PLUS { $$ = Operator.OpType.Plus; }
-        | MINUS { $$ = Operator.OpType.Minus; }
+        | PLUS { $$ = Operator.OpType.Add; }
+        | MINUS { $$ = Operator.OpType.Subtract; }
 // Binary:
         | STAR { $$ = Operator.OpType.Multiply; }
         | DIV {  $$ = Operator.OpType.Divide; }
@@ -3052,7 +3052,7 @@ void CheckUnaryOperator (Operator.OpType op)
 		
 	case Operator.OpType.Negate : case Operator.OpType.BitComplement : case Operator.OpType.Increment :
 	case Operator.OpType.Decrement :
-	case Operator.OpType.True : case Operator.OpType.False : case Operator.OpType.Plus : case Operator.OpType.Minus :
+	case Operator.OpType.True : case Operator.OpType.False : case Operator.OpType.Add : case Operator.OpType.Subtract :
 		
 		break;
 		
@@ -3068,7 +3068,7 @@ void CheckBinaryOperator (Operator.OpType op)
 {
 	switch (op) {
 		
-	case Operator.OpType.Plus : case Operator.OpType.Minus : case Operator.OpType.Multiply :
+	case Operator.OpType.Add : case Operator.OpType.Subtract : case Operator.OpType.Multiply :
 	case Operator.OpType.Divide :
 	case Operator.OpType.Modulo : case Operator.OpType.BitwiseAnd : case Operator.OpType.BitwiseOr :
 	case Operator.OpType.ExclusiveOr : case Operator.OpType.ShiftLeft : case Operator.OpType.ShiftRight :

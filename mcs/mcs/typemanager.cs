@@ -179,9 +179,9 @@ public class TypeManager {
 
 		if (tc == null)
 			return t.FindMembers (mt, bf, filter, criteria);
-		else
+		else 
 			return tc.FindMembers (mt, bf, filter, criteria);
-
+		
 	}
 
 	// <summary>

@@ -1,3 +1,25 @@
+2001-09-18  Ravi Pratap  <ravi@ximian.com>
+
+	* class.cs (TypeContainer::AddConstructor): Fix the check to
+	compare against Name, not Basename. 
+	(Operator::OpType): Change Plus and Minus to Add and Subtract.
+
+	* cs-parser.jay : Update accordingly.
+
+	* class.cs (TypeContainer::FindMembers): For the case where we are searching
+	for methods, don't forget to look into the operators too.
+	(RegisterMethodBuilder): Helper method to take care of this for
+	methods, constructors and operators.
+	(Operator::Define): Completely revamp.
+	(Operator.OperatorMethod, MethodName): New fields.
+	(TypeContainer::Populate): Move the registering of builders into
+	RegisterMethodBuilder.
+	(Operator::Emit): Re-write.
+
+	* expression.cs (Binary::Emit): Comment out code path to emit method
+	invocation stuff for the case when we have a user defined operator. I am
+	just not able to get it right !
+	
 2001-09-17  Miguel de Icaza  <miguel@ximian.com>
 
 	* expression.cs (Expression::OverloadResolve): Drop TypeContainer
