@@ -328,10 +328,9 @@ namespace Mono.CSharp.Debugger
 					type_die = new DiePointerType (parent_die, this);
 				else if (type.IsEnum)
 					type_die = new DieEnumType (parent_die, this);
-				else if (type.IsValueType) {
+				else if (type.IsValueType)
 					type_die = new DieStructureType (parent_die, this);
-					pointer_die = new DieInternalPointer (parent_die, type_die);
-				} else if (type.IsClass) {
+				else if (type.IsClass) {
 					type_die = new DieClassType (parent_die, this);
 					pointer_die = new DieInternalPointer (parent_die, type_die);
 				} else
