@@ -1,3 +1,10 @@
+2005-02-12  Ben Maurer  <bmaurer@ximian.com>
+
+	* domain-internals.h: add the hashtable here.
+
+	* class-internals.h: Remove `info' from MonoMethod
+
+	* domain.c: Add a new hashtable, jit_trampoline_hash
 
 Fri Feb 11 17:11:20 CET 2005 Paolo Molaro <lupus@ximian.com>
 
