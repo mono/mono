@@ -1,3 +1,7 @@
+2004-12-09  Miguel de Icaza  <miguel@ximian.com>
+
+	* delegate.cs: Fixed my fix from yesterday, sorry about that.
+
 2004-12-09  Marek Safar  <marek.safar@seznam.cz>
 
 	* anonymous.cs, class.cs, convert.cs, doc.cs, support.cs: 
