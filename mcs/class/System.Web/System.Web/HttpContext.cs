@@ -41,6 +41,7 @@ namespace System.Web
 		long timeoutBegin;
 		object configTimeout;
 		string errorPage;
+		IPrincipal user;
 
 		public HttpContext (HttpRequest Request, HttpResponse Response)
 		{
@@ -253,20 +254,10 @@ namespace System.Web
 			}
 		}
 
-		public IPrincipal User
-		{
-			get {
-				if (user == null) {
-					return Thread.CurrentPrincipal;
-				}
-				return user;
-			}
-			set {
-				user = value;
-				Thread.CurrentPrincipal = value;
-			}
+		public IPrincipal User {
+			get { return user; }
+			set { user = value; }
 		}
-		private IPrincipal user = null;
 
 		internal bool TimeoutPossible {
 			get { return (Interlocked.CompareExchange (ref timeoutPossible, 1, 1) == 1); }
