@@ -42,11 +42,18 @@ namespace System.IO
 	/// <summary>
 	/// 
 	/// </summary>
-	public sealed class File
+	public
+#if NET_2_0
+	static
+#else
+	sealed
+#endif
+	class File
 	{
-		private File () {}
 
-		
+#if !NET_2_0
+		private File () {}
+#endif
 		
 		public static StreamWriter AppendText (string path)
 		{	

@@ -45,9 +45,18 @@ using System.Text;
 
 namespace System.IO
 {
-	public sealed class Directory : Object
+	public
+#if NET_2_0
+	static
+#else
+	sealed
+#endif
+	class Directory
 	{
+
+#if !NET_2_0
 		private Directory () {}
+#endif
 		
 		public static DirectoryInfo CreateDirectory (string path)
 		{
