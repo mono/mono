@@ -4927,19 +4927,15 @@ namespace Mono.CSharp {
 			int count = arguments.Count - idx;
 			Argument a = (Argument) arguments [idx];
 			Type t = a.Expr.Type;
-			string array_type = t.FullName + "[]";
-			LocalBuilder array;
-
-			array = ig.DeclareLocal (TypeManager.LookupType (array_type));
+			
 			IntConstant.EmitInt (ig, count);
 			ig.Emit (OpCodes.Newarr, TypeManager.TypeToCoreType (t));
-			ig.Emit (OpCodes.Stloc, array);
 
 			int top = arguments.Count;
 			for (int j = idx; j < top; j++){
 				a = (Argument) arguments [j];
 				
-				ig.Emit (OpCodes.Ldloc, array);
+				ig.Emit (OpCodes.Dup);
 				IntConstant.EmitInt (ig, j - idx);
 
 				bool is_stobj;
@@ -4954,7 +4950,6 @@ namespace Mono.CSharp {
 				else
 					ig.Emit (op);
 			}
-			ig.Emit (OpCodes.Ldloc, array);
 		}
 		
 		/// <summary>
@@ -6138,9 +6133,6 @@ namespace Mono.CSharp {
 			int dims = bounds.Count;
 			int [] current_pos = new int [dims];
 			int top = array_data.Count;
-			LocalBuilder temp = ig.DeclareLocal (type);
-
-			ig.Emit (OpCodes.Stloc, temp);
 
 			MethodInfo set = null;
 
@@ -6182,7 +6174,8 @@ namespace Mono.CSharp {
 					    num_automatic_initializers <= max_automatic_initializers) {
 						Type etype = e.Type;
 						
-						ig.Emit (OpCodes.Ldloc, temp);
+						if (is_expression || i != top - 1)
+							ig.Emit (OpCodes.Dup);
 
 						for (int idx = 0; idx < dims; idx++) 
 							IntConstant.EmitInt (ig, current_pos [idx]);
@@ -6228,9 +6221,6 @@ namespace Mono.CSharp {
 					current_pos [j] = 0;
 				}
 			}
-
-			if (is_expression)
-				ig.Emit (OpCodes.Ldloc, temp);
 		}
 
 		void EmitArrayArguments (EmitContext ec)

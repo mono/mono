@@ -1,3 +1,22 @@
+2004-03-23 Ben Maurer  <bmaurer@users.sourceforge.net>
+
+	* expression.cs: Emit shorter il code for array init.
+
+	newarr
+	dup
+	// set 1
+	
+	// set 2
+
+	newarr
+	stloc.x
+
+	ldloc.x
+	// set 1
+
+	ldloc.x
+	// set 2
+
 2004-03-22 Ben Maurer  <bmaurer@users.sourceforge.net>
 
 	* statement.cs: Before, two switch blocks would be merged if the
