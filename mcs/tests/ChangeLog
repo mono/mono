@@ -1,5 +1,12 @@
 2001-10-05  Ravi Pratap  <ravi@ximian.com>
 
+	* test-16.cs : Update to exercise the code which selects the best 
+	conversion operator based on "most encompassing/encompassed type"
+
+	* test-7.cs : Update here too.
+
+2001-10-05  Ravi Pratap  <ravi@ximian.com>
+
 	* test-7.cs : Update to do explicit conversion tests.
 
 	* makefile : small fix.

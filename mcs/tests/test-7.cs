@@ -37,6 +37,7 @@ namespace Mine {
 
 			float f = (float) k;
 
+			// Note that the following will not be printed out for now
 			if (f == 2.0)
 				Console.WriteLine ("Explicit conversion correct.");
 
@@ -108,7 +109,7 @@ namespace Mine {
 		public static explicit operator float (Blah i)
 		{
 			Console.WriteLine ("Converting explicitly from Blah->float");
-			return 2.0;
+			return 2;
 		}
 
 	}
