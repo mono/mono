@@ -1,3 +1,13 @@
+2002-10-12  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* AllTests.cs: Added suite for RandomNumberGenerator, SHA1 and 
+        SHA1CryptoServiceProvider
+	* RandomNumberGeneratorTest.cs: New. Tests for Create and generic 
+        random quality tests (FIPS140-2)
+	* SHA1Test.cs: New. Tests for Create and generic SHA1 tests (FIPS180-1)
+	* SHA1CryptoServiceProviderTest.cs: New. Inherited SHA1Tests tests +
+        specific tests
+
 2002-10-10  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* DSATest.cs: Added non-abstract DSA class to test To/FromXmlString()
