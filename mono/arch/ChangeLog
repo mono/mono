@@ -1,3 +1,7 @@
+2004-03-11  Zoltan Varga  <vargaz@freemail.hu>
+
+	* sparc/sparc-codegen.h: Ongoing sparc work.
+
 2004-03-07  Duncan Mak  <duncan@ximian.com>
 
         * Makefile.am: Removed the reference to 'x86-64'. This was the cause
