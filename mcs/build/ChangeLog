@@ -1,3 +1,8 @@
+2005-01-14  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* library.make : output TestResult-ondotnet-(profile).log instead of
+	  TestResult-(profile).log for run-test-ondotnet.
+
 2005-01-13  Raja R Harinath  <rharinath@novell.com>
 
 	* profiles/default.make (MBAS) [!PLATFORM_MONO_NATIVE]: Use
