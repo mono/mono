@@ -1,3 +1,7 @@
+2004-04-06  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
+
+	* System.Management.dll.sources: Sorted, added assemblyinfos
+
 2003-03-20  Martin Willemoes Hansen <mwh@sysrq.dk>
 	
 	* Stubed out System.Management.Instrumentation
