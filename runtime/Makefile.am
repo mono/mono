@@ -15,6 +15,7 @@ assemblies_DATA =	\
 	System.Configuration.Install.dll	\
 	System.Runtime.Remoting.dll	\
 	System.Runtime.Serialization.Formatters.Soap.dll	\
+	Mono.CSharp.Debugger.dll	\
 	I18N.dll	\
 	I18N.West.dll	\
 	I18N.Rare.dll	\
