@@ -1090,6 +1090,8 @@ namespace Mono.CSharp {
 				return null;
 
 			expr = expr.Resolve (ec);
+			if (expr == null)
+				return null;
 			
 			return this;
 		}
