@@ -126,20 +126,9 @@ namespace System.Data {
 		/// <returns></returns>
 		public virtual DataColumn Add()
 		{
-			//FIXME:
 			string defaultName = GetNextDefaultColumnName ();
 			DataColumn column = new DataColumn (defaultName);
-			CollectionChangeEventArgs e = new CollectionChangeEventArgs(CollectionChangeAction.Add, this);
-			
-			column.SetTable(parentTable);
-			RegisterName(defaultName,column);
-			base.List.Add(column);
-			
-			if (column.AutoIncrement)
-				autoIncrement.Add(defaultName);
-
-			column.SetOrdinal(Count - 1);
-			OnCollectionChanged(e);
+			Add (column);
 			return column;
 		}
 
@@ -237,7 +226,8 @@ namespace System.Data {
 			}
 
 			if (column.AutoIncrement)
-				autoIncrement.Add(column.ColumnName);
+				autoIncrement.Add(column);
+
 			OnCollectionChanged (e);
 		}
 
@@ -530,12 +520,12 @@ namespace System.Data {
 			{
 				this[i].SetOrdinal( i );
 			}
-			
+
 			if (parentTable != null)
 				parentTable.OnRemoveColumn(column);
 
 			if (column.AutoIncrement)
-				autoIncrement.Remove(column.ColumnName);
+				autoIncrement.Remove(column);
 
 			OnCollectionChanged(e);
 			return;
@@ -585,13 +575,13 @@ namespace System.Data {
 		{
 			if (isAutoIncrement)
 			{
-				if (!autoIncrement.Contains(col.ColumnName))
-					autoIncrement.Add(col.ColumnName);
+				if (!autoIncrement.Contains(col))
+					autoIncrement.Add(col);
 			}
 			else
 			{
-				if (autoIncrement.Contains(col.ColumnName))
-					autoIncrement.Remove(col.ColumnName);
+				if (autoIncrement.Contains(col))
+					autoIncrement.Remove(col);
 			}
 		}
 

@@ -1,5 +1,11 @@
 2004-06-17  Boris Kirzner  <borisk@mainsoft.com>
 
+	* DataColumnCollection.cs : 
+	  - Fix : Add()	now delegates to Add(DataColumn).
+	  - autoIncrement list holds DataColumn objects, and not just column names.
+
+2004-06-17  Boris Kirzner  <borisk@mainsoft.com>
+
 	* DataColumn.cs : 
 	  - AutoIncrementValue fixes. Now AutoIncrement uses DataContainer.GetInt64 to avoid boxing.
 	  - DefaultValue fixes. Default value from now on is also stored in special record in 
