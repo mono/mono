@@ -1,3 +1,11 @@
+2003-02-19  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* All: Updated tests for NUnit2. Some big tests where splited in 
+	smaller ones.
+	* XmlDsigC14NTransformTest.cs: New, but almost empty, test suite.
+	* XmlDsigC14NWithCommentsTransformTest.cs: New, but almost empty, 
+	test suite.
+
 2002-11-28  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* AllTests.cs: Added missing test suites.

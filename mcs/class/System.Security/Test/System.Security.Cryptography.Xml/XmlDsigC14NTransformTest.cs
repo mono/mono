@@ -1,15 +1,14 @@
 //
-// XmlDsigBase64TransformTest.cs - NUnit Test Cases for XmlDsigBase64Transform
+// XmlDsigC14NTransformTest.cs - NUnit Test Cases for XmlDsigC14NTransform
 //
 // Author:
 //	Sebastien Pouliot (spouliot@motus.com)
 //
-// (C) 2002 Motus Technologies Inc. (http://www.motus.com)
+// (C) 2002, 2003 Motus Technologies Inc. (http://www.motus.com)
 //
 
 using System;
 using System.IO;
-using System.Security.Cryptography;
 using System.Security.Cryptography.Xml;
 using System.Text;
 using System.Xml;
@@ -19,21 +18,20 @@ using NUnit.Framework;
 namespace MonoTests.System.Security.Cryptography.Xml {
 
 	[TestFixture]
-	public class XmlDsigBase64TransformTest {
+	public class XmlDsigC14NTransformTest {
 
-		protected XmlDsigBase64Transform transform;
+		protected XmlDsigC14NTransform transform;
 
 		[SetUp]
 		protected void SetUp () 
 		{
-			transform = new XmlDsigBase64Transform ();
-			Type t = typeof (XmlDsigBase64Transform);
+			transform = new XmlDsigC14NTransform ();
 		}
 
 		[Test]
 		public void Properties () 
 		{
-			Assertion.AssertEquals ("Algorithm", "http://www.w3.org/2000/09/xmldsig#base64", transform.Algorithm);
+			Assertion.AssertEquals ("Algorithm", "http://www.w3.org/TR/2001/REC-xml-c14n-20010315", transform.Algorithm);
 
 			Type[] input = transform.InputTypes;
 			Assertion.Assert ("Input #", (input.Length == 3));
@@ -69,30 +67,20 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 			StringBuilder sb = new StringBuilder ();
 			int b = s.ReadByte ();
 			while (b != -1) {
-				sb.Append (b.ToString("X2"));
+				sb.Append (Convert.ToChar (b));
 				b = s.ReadByte ();
 			}
 			return sb.ToString ();
 		}
 
-		private byte[] Stream2Array (Stream s) 
-		{
-			string st = Stream2String (s);
-			byte[] array = new byte [st.Length / 2];
-			for (int i=0; i < array.Length; i++) {
-				string hex = st.Substring (i*2, 2);
-				array [i] = Convert.ToByte(hex, 16);
-			}
-			return array;
-		}
-
-		static private string base64 = "XmlDsigBase64Transform";
-		static private byte[] base64array = { 0x58, 0x6D, 0x6C, 0x44, 0x73, 0x69, 0x67, 0x42, 0x61, 0x73, 0x65, 0x36, 0x34, 0x54, 0x72, 0x61, 0x6E, 0x73, 0x66, 0x6F, 0x72, 0x6D };
+		static string xml = "<Test  attrib='at ' xmlns=\"http://www.go-mono.com/\" > \r\n <Toto/> text &amp; </Test   >";
+		static string c14xml1 = "<Test xmlns=\"http://www.go-mono.com/\" attrib=\"at \"> \r\n <Toto></Toto> text &amp; </Test>";
+		static string c14xml2 = "<Test xmlns=\"http://www.go-mono.com/\" attrib=\"at \"> \n <Toto></Toto> text &amp; </Test>";
 
 		private XmlDocument GetDoc () 
 		{
-			string xml = "<Test>" + Convert.ToBase64String (base64array) + "</Test>";
 			XmlDocument doc = new XmlDocument ();
+			doc.PreserveWhitespace = true;
 			doc.LoadXml (xml);
 			return doc;
 		}
@@ -103,50 +91,33 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 			XmlDocument doc = GetDoc ();
 			transform.LoadInput (doc);
 			Stream s = (Stream) transform.GetOutput ();
-			byte[] output = Stream2Array (s);
-			UTF8Encoding utf8 = new UTF8Encoding ();
-			Assertion.AssertEquals("XmlDocument", base64, utf8.GetString (output));
+			string output = Stream2String (s);
+			// ??? this keeps the \r\n (0x0D, 0x0A) ???
+			Assertion.AssertEquals("XmlDocument", c14xml1, output);
 		}
 
 		[Test]
-		public void LoadInputAsXmlNodeListFromXPath () 
-		{
-			XmlDocument doc = GetDoc ();
-			XmlNodeList xpath = doc.SelectNodes ("//.");
-			transform.LoadInput (xpath);
-			Stream s = (Stream) transform.GetOutput ();
-			byte[] output = Stream2Array (s);
-			UTF8Encoding utf8 = new UTF8Encoding ();
-			Assertion.AssertEquals("XPathNodeList", base64, utf8.GetString (output));
-		}
-
-		[Test]
-		[Ignore ("FIXME: works with Mono ??? why doesn't this works with MS ???")]
+		[Ignore("FIXME: why doesn't this works with MS ???")]
 		public void LoadInputAsXmlNodeList () 
 		{
 			XmlDocument doc = GetDoc ();
 			transform.LoadInput (doc.ChildNodes);
 			Stream s = (Stream) transform.GetOutput ();
-			byte[] output = Stream2Array (s);
-			UTF8Encoding utf8 = new UTF8Encoding ();
-			Assertion.AssertEquals("XmlChildNodes", base64, utf8.GetString (output));
+			string output = Stream2String (s);
+			Assertion.AssertEquals("XmlChildNodes", c14xml2, output);
 		}
 
 		[Test]
 		public void LoadInputAsStream () 
 		{
-			string base64 = "XmlDsigBase64Transform";
-			UTF8Encoding utf8 = new UTF8Encoding ();
-			byte[] base64array = utf8.GetBytes (base64);
-
 			MemoryStream ms = new MemoryStream ();
-			byte[] x = utf8.GetBytes (Convert.ToBase64String (base64array));
+			byte[] x = Encoding.ASCII.GetBytes (xml);
 			ms.Write (x, 0, x.Length);
 			ms.Position = 0;
 			transform.LoadInput (ms);
 			Stream s = (Stream) transform.GetOutput ();
-			byte[] output = Stream2Array (s);
-			Assertion.AssertEquals("MemoryStream", base64, utf8.GetString (output));
+			string output = Stream2String (s);
+			Assertion.AssertEquals("MemoryStream", c14xml2, output);
 		}
 
 		[Test]
