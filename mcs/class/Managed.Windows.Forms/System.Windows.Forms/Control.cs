@@ -1977,6 +1977,9 @@ namespace System.Windows.Forms
 		}
 
 		public Graphics CreateGraphics() {
+			if (!IsHandleCreated) {
+				this.CreateHandle();
+			}
 			return Graphics.FromHwnd(this.window.Handle);
 		}
 

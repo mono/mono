@@ -1,5 +1,10 @@
 2004-12-16  Peter Bartok  <pbartok@novell.com>
 
+	* Control.cs (CreateGraphics): Added check to make sure the
+	  handle of the window exists before calling Graphics.FromHwnd()
+
+2004-12-16  Peter Bartok  <pbartok@novell.com>
+
 	* TextBoxBase.cs: Initial check-in. DO NOT TRY TO USE THIS YET. It
 	  contains a lot of code that's not supposed to be there for the
 	  real thing, but required for developing/testing the textbox
