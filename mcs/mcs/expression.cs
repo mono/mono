@@ -7800,10 +7800,14 @@ namespace Mono.CSharp {
 			if (fe != null) {
 				IFixedBuffer ff = AttributeTester.GetFixedBuffer (fe.FieldInfo);
 				if (ff != null) {
+					if (!(fe.InstanceExpression is LocalVariableReference) && 
+						!(fe.InstanceExpression is This)) {
+						Error (1708, "Fixed buffers can only be accessed through locals or fields");
+						return null;
+					}
 // TODO: not sure whether it is correct
 //					if (!ec.InFixedInitializer) {
-//					if (!ec.InFixedInitializer) {
-//						Error (1666, "You cannot use fixed sized buffers contained in unfixed expressions. Try using the fixed statement.");
+//						Error (1666, "You cannot use fixed sized buffers contained in unfixed expressions. Try using the fixed statement");
 //						return null;
 //					}
 					return MakePointerAccess (ec, ff.ElementType);

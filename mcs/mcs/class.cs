@@ -5444,12 +5444,26 @@ namespace Mono.CSharp {
 				return false;
 			}
 
-			buffer_size = (int)c.GetValue ();
+			IntConstant buffer_size_const = c.ToInt (Location);
+			if (buffer_size_const == null)
+				return false;
+
+			buffer_size = buffer_size_const.Value;
+
 			if (buffer_size <= 0) {
 				Report.Error (1665, Location, "Fixed sized buffer '{0}' must have a length greater than zero", GetSignatureForError ());
 				return false;
 			}
-			buffer_size *= Expression.GetTypeSize (MemberType);
+
+			int type_size = Expression.GetTypeSize (MemberType);
+
+			if (buffer_size > int.MaxValue / type_size) {
+				Report.Error (1664, Location, "Fixed sized buffer of length '{0}' and type '{1}' exceeded 2^31 limit",
+					buffer_size.ToString (), TypeManager.CSharpName (MemberType));
+				return false;
+			}
+
+			buffer_size *= type_size;
 
 			// Define nested
 			string name = String.Format ("<{0}>__FixedBuffer{1}", Name, GlobalCounter++);
