@@ -1,1 +1,5 @@
+# These cause ICEs or crashes, and aren't well handled
+# by the *-expect-* mechanism
+
+cs0120-5.cs
 cs0131-3.cs
