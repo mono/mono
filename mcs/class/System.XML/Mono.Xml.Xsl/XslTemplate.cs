@@ -259,7 +259,7 @@ namespace Mono.Xml.Xsl {
 			
 			if (c.Input.NamespaceURI != Compiler.XsltNamespace) {
 				this.name = QName.Empty;
-				this.match = null;
+				this.match = c.CompilePattern ("/", c.Input);
 				this.mode = QName.Empty;
 			} else {
 				this.name = c.ParseQNameAttribute ("name");
@@ -274,8 +274,8 @@ namespace Mono.Xml.Xsl {
 						throw new XsltException ("Invalid priority number format.", ex, c.Input);
 					}
 				}
-				Parse (c);
 			}
+			Parse (c);
 			
 			stackSize = c.PopScope ().VariableHighTide;
 			
@@ -304,6 +304,11 @@ namespace Mono.Xml.Xsl {
 		}
 
 		private void Parse (Compiler c) {
+			if (c.Input.NamespaceURI != Compiler.XsltNamespace) {
+				content = c.CompileTemplateContent ();
+				return;
+			}
+
 			if (c.Input.MoveToFirstChild ()) {
 				bool alldone = true;
 				do {
