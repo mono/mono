@@ -1,3 +1,15 @@
+2004-01-14  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XsdIdentityState.cs :
+	  Now takes xsi:nil value into consideration for comparison.
+	  nsname:* was not handled correctly.
+	  Reject complexType as key value type (it is dynamic instance error).
+	* XsdKeyTable.cs : remoed unused code.
+	* XsdValidatingReader.cs :
+	  ID comparison was not done.
+	  {final} value of attribute definition was not used for default value.
+	  Get xsi:nil value from non-default value.
+
 2004-01-13  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XsdValidatingReader.cs :

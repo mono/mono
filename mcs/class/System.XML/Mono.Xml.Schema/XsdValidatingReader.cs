@@ -34,7 +34,7 @@ namespace Mono.Xml.Schema
 		XmlSchemaCollection schemas = new XmlSchemaCollection ();
 		bool namespaces = true;
 
-		ArrayList idList = new ArrayList ();
+		Hashtable idList = new Hashtable ();
 		ArrayList missingIDReferences = new ArrayList ();
 		string thisElementId;
 
@@ -97,6 +97,10 @@ namespace Mono.Xml.Schema
 		}
 
 		// Public Non-overrides
+
+		public int XsiNilDepth {
+			get { return xsiNilDepth; }
+		}
 
 		public bool Namespaces {
 			get { return namespaces; }
@@ -191,6 +195,46 @@ namespace Mono.Xml.Schema
 			}
 			return null;
 		}
+
+		/*
+		public ValueType ReadTypedValueType ()
+		{
+			XmlSchemaDatatype dt = SchemaType as XmlSchemaDatatype;
+			XmlSchemaSimpleType st = SchemaType as XmlSchemaSimpleType;
+			if (st != null)
+				dt = st.Datatype;
+			if (dt == null)
+				return null;
+
+			switch (NodeType) {
+			case XmlNodeType.Element:
+				if (IsEmptyElement)
+					return null;
+
+				storedCharacters.Length = 0;
+				bool loop = true;
+				do {
+					Read ();
+					switch (NodeType) {
+					case XmlNodeType.SignificantWhitespace:
+					case XmlNodeType.Text:
+					case XmlNodeType.CDATA:
+						storedCharacters.Append (Value);
+						break;
+					case XmlNodeType.Comment:
+						break;
+					default:
+						loop = false;
+						break;
+					}
+				} while (loop && !EOF);
+				return dt.ParseValueType (storedCharacters.ToString (), NameTable, ParserContext.NamespaceManager);
+			case XmlNodeType.Attribute:
+				return dt.ParseValueType (Value, NameTable, ParserContext.NamespaceManager);
+			}
+			return null;
+		}
+		*/
 
 		public ValidationEventHandler ValidationEventHandler;
 
@@ -360,7 +404,10 @@ namespace Mono.Xml.Schema
 			get {
 				if (currentDefaultAttribute < 0)
 					return reader.Value;
-				return defaultAttributes [currentDefaultAttribute].ValidatedDefaultValue;
+				string value = defaultAttributes [currentDefaultAttribute].ValidatedDefaultValue;
+				if (value == null)
+					value = defaultAttributes [currentDefaultAttribute].ValidatedFixedValue;
+				return value;
 			}
 		}
 
@@ -374,7 +421,10 @@ namespace Mono.Xml.Schema
 				int idx = this.FindDefaultAttribute ("lang", XmlNamespaceManager.XmlnsXml);
 				if (idx < 0)
 					return null;
-				return defaultAttributes [idx].ValidatedDefaultValue;
+				xmlLang = defaultAttributes [idx].ValidatedDefaultValue;
+				if (xmlLang == null)
+					xmlLang = defaultAttributes [idx].ValidatedFixedValue;
+				return xmlLang;
 			}
 		}
 
@@ -386,7 +436,10 @@ namespace Mono.Xml.Schema
 				int idx = this.FindDefaultAttribute ("space", XmlNamespaceManager.XmlnsXml);
 				if (idx < 0)
 					return XmlSpace.None;
-				return (XmlSpace) Enum.Parse (typeof (XmlSpace), defaultAttributes [idx].ValidatedDefaultValue, false);
+				string spaceSpec = defaultAttributes [idx].ValidatedDefaultValue;
+				if (spaceSpec == null)
+					spaceSpec = defaultAttributes [idx].ValidatedFixedValue;
+				return (XmlSpace) Enum.Parse (typeof (XmlSpace), spaceSpec, false);
 			}
 		}
 
@@ -503,8 +556,12 @@ namespace Mono.Xml.Schema
 			if (storedCharacters.Length == 0) {
 				// 3.3.4 Element Locally Valid (Element) 5.1.2
 				// TODO: check entire DefaultValid (3.3.6)
-				if (context.Element != null && context.Element.ValidatedDefaultValue != null)
-					value = context.Element.ValidatedDefaultValue;
+				if (context.Element != null) {
+					if (context.Element.ValidatedDefaultValue != null)
+						value = context.Element.ValidatedDefaultValue;
+					else if (context.Element.ValidatedFixedValue != null)
+						value = context.Element.ValidatedFixedValue;
+				}					
 			}
 
 			XmlSchemaDatatype dt = context.ActualType as XmlSchemaDatatype;
@@ -538,7 +595,7 @@ namespace Mono.Xml.Schema
 				XsdKeyEntryField field = this.currentKeyFieldConsumers [0] as XsdKeyEntryField;
 				if (field.Identity != null)
 					HandleError ("Two or more identical field was found. Former value is '" + field.Identity + "' .");
-				object identity = null;
+				object identity = null; // This means empty value
 				if (dt != null) {
 					try {
 						identity = dt.ParseValue (value, NameTable, ParserContext.NamespaceManager);
@@ -548,8 +605,8 @@ namespace Mono.Xml.Schema
 				}
 				if (identity == null)
 					identity = value;
-				
-				if (!field.SetIdentityField (identity, dt as XsdAnySimpleType, this))
+
+				if (!field.SetIdentityField (identity, reader.Depth == xsiNilDepth, dt as XsdAnySimpleType, this))
 					HandleError ("Two or more identical key value was found: '" + value + "' .");
 				this.currentKeyFieldConsumers.RemoveAt (0);
 			}
@@ -730,7 +787,7 @@ namespace Mono.Xml.Schema
 				ValidateStartElementParticle ();
 			}
 
-			string xsiNilValue = GetAttribute ("nil", XmlSchema.InstanceNamespace);
+			string xsiNilValue = reader.GetAttribute ("nil", XmlSchema.InstanceNamespace);
 			if (xsiNilValue != null)
 				xsiNilValue = xsiNilValue.Trim (XmlChar.WhitespaceChars);
 			bool isXsiNil = xsiNilValue == "true";
@@ -944,6 +1001,8 @@ namespace Mono.Xml.Schema
 						HandleError ("Required attribute " + attr.QualifiedName + " was not found.");
 					else if (attr.ValidatedDefaultValue != null)
 						defaultAttributesCache.Add (attr);
+					else if (attr.ValidatedFixedValue != null)
+						defaultAttributesCache.Add (attr);
 				}
 			}
 			defaultAttributes = (XmlSchemaAttribute []) 
@@ -1019,7 +1078,7 @@ namespace Mono.Xml.Schema
 				string normalized = dt.Normalize (reader.Value);
 				object parsedValue = null;
 				try {
-					dt.ParseValue (normalized, reader.NameTable, this.ParserContext.NamespaceManager);
+					parsedValue = dt.ParseValue (normalized, reader.NameTable, this.ParserContext.NamespaceManager);
 				} catch (Exception ex) { // FIXME: (wishlist) It is bad manner ;-(
 					HandleError ("Attribute value is invalid against its data type " + dt.TokenizedType, ex);
 				}
@@ -1055,7 +1114,10 @@ namespace Mono.Xml.Schema
 				if (thisElementId != null)
 					HandleError ("ID type attribute was already assigned in the containing element.");
 				thisElementId = normalized;
-				idList.Add (normalized);
+				if (idList.Contains (normalized))
+					HandleError ("Duplicate ID value was found.");
+				else
+					idList.Add (normalized, normalized);
 				break;
 			case XmlTokenizedType.IDREF:
 				if (missingIDReferences.Contains (normalized))
@@ -1301,10 +1363,12 @@ namespace Mono.Xml.Schema
 		private string GetDefaultAttribute (string localName, string ns)
 		{
 			int idx = this.FindDefaultAttribute (localName, ns);
-			if (idx >= 0)
-				return defaultAttributes [idx].ValidatedDefaultValue;
-			else
+			if (idx < 0)
 				return null;
+			string value = defaultAttributes [idx].ValidatedDefaultValue;
+			if (value == null)
+				value = defaultAttributes [idx].ValidatedFixedValue;
+			return value;
 		}
 
 		private int FindDefaultAttribute (string localName, string ns)

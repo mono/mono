@@ -17,13 +17,6 @@ namespace Mono.Xml.Schema
 	// Created per constraining element.
 	public class XsdKeyTable
 	{
-		/*
-		private ArrayList entries = new ArrayList ();
-		private ArrayList finishedEntries = new ArrayList ();
-		private XsdKeyEntry [] cachedEntries;
-		private XsdKeyEntry [] cachedFinishedEntries;
-		*/
-
 		private XsdIdentitySelector selector;
 		private XmlSchemaIdentityConstraint source;
 		private XmlQualifiedName qname;
@@ -39,24 +32,6 @@ namespace Mono.Xml.Schema
 		{
 			Reset (source, reader);
 		}
-
-		/*
-		public XsdKeyEntry [] Entries {
-			get {
-				if (cachedEntries == null)
-					cachedEntries = entries.ToArray (typeof (XsdKeyEntry)) as XsdKeyEntry [];
-				return cachedEntries;
-			}
-		}
-
-		public XsdKeyEntry [] FinishedEntries {
-			get {
-				if (cachedFinishedEntries == null)
-					cachedFinishedEntries = finishedEntries.ToArray (typeof (XsdKeyEntry)) as XsdKeyEntry [];
-				return cachedFinishedEntries;
-			}
-		}
-		*/
 
 		public XmlQualifiedName QualifiedName {
 			get { return qname; }

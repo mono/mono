@@ -40,6 +40,7 @@ namespace Mono.Xml.Schema
 		public XsdAnySimpleType FieldType;
 
 		public object Identity;
+		public bool IsXsiNil;
 
 		public int FieldFoundDepth;
 		public XsdIdentityPath FieldFoundPath;
@@ -48,12 +49,14 @@ namespace Mono.Xml.Schema
 		public bool Consumed;
 
 		// Return false if there is already the same key.
-		public bool SetIdentityField (object identity, XsdAnySimpleType type, XsdValidatingReader reader)
+		public bool SetIdentityField (object identity, bool isXsiNil, XsdAnySimpleType type, XsdValidatingReader reader)
 		{
 			IXmlLineInfo li = reader as IXmlLineInfo;
 
 			FieldFoundDepth = reader.Depth;
 			Identity = identity;
+			IsXsiNil = isXsiNil;
+			FieldFound |= isXsiNil;
 			FieldType = type;
 			Consuming = false;
 			Consumed = true;
@@ -119,7 +122,8 @@ namespace Mono.Xml.Schema
 					XmlQualifiedName qname = (XmlQualifiedName) qnameStack [entry.StartDepth + iter + 1];
 					if (step.NsName != null && qname.Namespace == step.NsName)
 						continue;
-					if (step.Name == qname.Name && step.Namespace == qname.Namespace)
+					if ((step.Name == "*" || step.Name == qname.Name) &&
+						step.Namespace == qname.Namespace)
 						continue;
 					else
 						break;
@@ -172,7 +176,7 @@ namespace Mono.Xml.Schema
 			object identity = reader.ReadTypedValue ();
 			if (identity == null)
 				identity = reader.Value;
-			if (!this.SetIdentityField (identity, dt as XsdAnySimpleType, reader))
+			if (!this.SetIdentityField (identity, reader.Depth - 1 == reader.XsiNilDepth , dt as XsdAnySimpleType, reader))
 				throw new XmlSchemaException ("Two or more identical field was found.", 
 					reader, reader.BaseURI, entry.KeySequence.SourceSchemaIdentity, null);
 			// HACK: This is not logical. Attributes never be cosuming,
@@ -337,6 +341,8 @@ namespace Mono.Xml.Schema
 			for (int i = 0; i < KeyFields.Count; i++) {
 				XsdKeyEntryField f = this.KeyFields [i];
 				XsdKeyEntryField of = other.KeyFields [i];
+				if (f.IsXsiNil && !of.IsXsiNil || !f.IsXsiNil && of.IsXsiNil)
+					return false;
 				if (!XmlSchemaUtil.IsSchemaDatatypeEquals (
 					of.FieldType, of.Identity, f.FieldType, f.Identity))
 					return false;	// does not match
@@ -362,17 +368,26 @@ namespace Mono.Xml.Schema
 							keyField.Consuming = false;
 					}
 					if (!keyField.Consumed) {
-						keyField.FieldFound = true;
-						keyField.FieldFoundPath = path;
-						keyField.FieldFoundDepth = reader.Depth;
-						keyField.Consuming = true;
-						IXmlLineInfo li = reader as IXmlLineInfo;
-						if (li != null && li.HasLineInfo ()) {
-							keyField.FieldHasLineInfo = true;
-							keyField.FieldLineNumber = li.LineNumber;
-							keyField.FieldLinePosition = li.LinePosition;
+						if (reader.XsiNilDepth == reader.Depth && !keyField.SetIdentityField (Guid.Empty, true, XsdAnySimpleType.Instance, reader))
+							throw new XmlSchemaException ("Two or more identical field was found.", reader, reader.BaseURI, KeySequence.SourceSchemaIdentity, null);
+						else {
+							XmlSchemaComplexType ct = reader.SchemaType as XmlSchemaComplexType;
+							if (ct != null && 
+								(ct.ContentType == XmlSchemaContentType.Empty || ct.ContentType == XmlSchemaContentType.ElementOnly) && 
+								reader.SchemaType != XmlSchemaComplexType.AnyType)
+								throw new XmlSchemaException ("Specified schema type is complex type, which is not allowed for identity constraints.", reader, reader.BaseURI, KeySequence.SourceSchemaIdentity, null);
+							keyField.FieldFound = true;
+							keyField.FieldFoundPath = path;
+							keyField.FieldFoundDepth = reader.Depth;
+							keyField.Consuming = true;
+							IXmlLineInfo li = reader as IXmlLineInfo;
+							if (li != null && li.HasLineInfo ()) {
+								keyField.FieldHasLineInfo = true;
+								keyField.FieldLineNumber = li.LineNumber;
+								keyField.FieldLinePosition = li.LinePosition;
+							}
+							reader.CurrentKeyFieldConsumers.Add (keyField);
 						}
-						reader.CurrentKeyFieldConsumers.Add (keyField);
 					}
 				}
 			}
