@@ -528,6 +528,7 @@ System.Runtime.Remoting.Channels/SinkProviderData.cs
 System.Runtime.Remoting.Channels/TransportHeaders.cs
 System.Runtime.Remoting.Channels/CrossAppDomainChannel.cs
 System.Runtime.Remoting.Contexts/Context.cs
+System.Runtime.Remoting.Contexts/ContextAttribute.cs
 System.Runtime.Remoting.Contexts/ContextProperty.cs
 System.Runtime.Remoting.Contexts/CrossContextChannel.cs
 System.Runtime.Remoting.Contexts/CrossContextDelegate.cs
