@@ -53,6 +53,7 @@ namespace Mono.Xml.XQuery.Parser
 	{
 		// See also FunctionCall production rule.
 		static Hashtable reservedFunctionNames;
+		static int yacc_verbose_flag;
 
 		static XQueryParser ()
 		{
