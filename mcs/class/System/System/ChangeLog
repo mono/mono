@@ -1,3 +1,8 @@
+2004-02-10  Jackson Harper  <jackson@ximian.com>
+
+	* Uri.cs: Preserve the trailing / if there is one when reducing
+	paths.
+	
 2004-02-08  Jackson Harper  <jackson@ximian.com>
 
 	* Uri.cs: IsLoopback has different behavoir then

@@ -959,7 +959,12 @@ namespace System
 				return "/";
 
 			result.Insert (0, "");
-			return String.Join ("/", (string []) result.ToArray (typeof (string)));
+
+			string res = String.Join ("/", (string []) result.ToArray (typeof (string)));
+			if (path.EndsWith ("/"))
+				res += '/';
+				
+			return res;
 		}
 				
 		private struct UriScheme 
