@@ -14,7 +14,7 @@
 # run the compiler; /r: flags are by default loaded from whatever's
 # in the MONO_PATH too).
 
-MCS = MONO_PATH="$(topdir)/class/lib:$$MONO_PATH" $(RUNTIME) -g $(topdir)/mcs/mcs.exe
+MCS = MONO_PATH="$(topdir)/class/lib/$(PROFILE):$$MONO_PATH" $(RUNTIME) --debug $(topdir)/mcs/mcs.exe
 BOOTSTRAP_MCS = $(MCS)
 
 # nuttzing!
@@ -22,4 +22,4 @@ BOOTSTRAP_MCS = $(MCS)
 profile-check:
 
 # Causes some build errors
-PROFILE_MCS_FLAGS = -d:GENERICS -d:NET_1_1
+PROFILE_MCS_FLAGS = -d:NET_1_1 -d:ONLY_1_1
