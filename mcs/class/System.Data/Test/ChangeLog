@@ -1,3 +1,7 @@
+2002-11-02  Ville Palo <vi64pa@koti.soon.fi>
+
+	* System.Data.SqlTypes/SqlDoubleTest.cs: More tests.
+	
 2002-10-31  Ville Palo <vi64pa@koti.soon.fi>
 
 	* System.Data.SqlTypes/SqlInt16Test.cs: Litle bugfix
