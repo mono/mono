@@ -1,3 +1,34 @@
+2003-08-05  Lluis Sanchez Gual <lluis@ximian.com>
+
+	* XmlSchemaImporter.cs: Implemented ImportTypeMapping and all needed parsing
+	  stuff.
+	* SoapReflectionImporter.cs: Set the type namespace parameter when creating a map.
+	* TypeData.cs: Added property that returns a TypeData that represents an array of
+	  the given TypeData.
+	* TypeTranslator.cs: Added GetArrayName() method.
+	  Added TypeDatas for missing primitive types.
+	* XmlCodeExporter.cs: Implemented ExportMembersMapping. Fixed generation of
+	  XmlRootAttribute. Added the namespace to all attributes being generated.
+	  Other fixes in the generation of code.
+	* XmlReflectionImporter: store the namespace of the type in the maps.
+	* XmlSchemaExporter.cs: Several fixes. Only set the "mixed" attribute if the
+	  class can generate text. Do not export inherited attributes of a class.
+	  Use the new root namespace stored in the map when generating the root element.
+	* XmlSerializationWriter: Always write a prefix when writing a qname, even if the
+	  namespace is the default namespace.
+	* XmlSerializationWriterInterpreter.cs: fixed missing "else".
+	* XmlTypeMapElementInfo.cs: In DataTypeNamespace property, return the type
+	  namespace instead of the map namespace (which can be different if the type
+	  has a XmlRoot element).
+	* XmlTypeMapMember.cs: Set the default value of the DefaultValue property
+	  to System.DBNull.Value.
+	* XmlTypeMapMemberElement.cs: ElementInfo property: In the getter Create
+	  the collection if it has not yet been created.
+	* XmlTypeMapping.cs: Added property XmlTypeNamespace which stores the namespace
+	  of the type. It may be different from the namespace of the map if the type
+	  has a XmlRoot element. Also added IsSimpleType property.
+	  In ClassMap, added AllMembers property.
+	
 2003-07-30  Lluis Sanchez Gual <lluis@ximian.com>
 
 	* TypeData.cs: Added new constructor and variables to allow the creation of

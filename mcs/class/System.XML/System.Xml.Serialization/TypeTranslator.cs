@@ -54,6 +54,7 @@ namespace System.Xml.Serialization
 			primitiveTypes.Add ("time", new TypeData (typeof (DateTime), "time", true));
 			primitiveTypes.Add ("NMTOKEN", new TypeData (typeof (string), "NMTOKEN", true));
 			primitiveTypes.Add ("NCName", new TypeData (typeof (string), "NCName", true));
+			primitiveTypes.Add ("language", new TypeData (typeof (string), "language", true));
 		}
 
 		public static TypeData GetTypeData (Type type)
@@ -71,7 +72,7 @@ namespace System.Xml.Serialization
 			string name;
 			if (type.IsArray) {
 				string sufix = GetTypeData (type.GetElementType ()).XmlType;
-				name = "ArrayOf" + Char.ToUpper (sufix [0]) + sufix.Substring (1);
+				name = GetArrayName (sufix);
 			}
 			else 
 				name = type.Name;
@@ -91,6 +92,17 @@ namespace System.Xml.Serialization
 			TypeData td = (TypeData) primitiveTypes[typeName];
 			if (td == null) throw new NotSupportedException ("Data type '" + typeName + "' not supported");
 			return td;
+		}
+
+		public static TypeData CreateCustomType (string typeName, string fullTypeName, string xmlType, SchemaTypes schemaType, TypeData listItemTypeData)
+		{
+			TypeData td = new TypeData (typeName, fullTypeName, xmlType, schemaType, listItemTypeData);
+			return td;
+		}
+
+		public static string GetArrayName (string elemName)
+		{
+			return "ArrayOf" + Char.ToUpper (elemName [0]) + elemName.Substring (1);
 		}
 	}
 }

@@ -299,7 +299,7 @@ namespace System.Xml.Serialization
 			}
 			else {
 				if (typeData.Type == typeof(XmlQualifiedName)) WriteElementQualifiedName (name, ns, (XmlQualifiedName)memberValue);
-				WriteElementString (name, ns, GetStringValue (mappedType, typeData, memberValue));
+				else WriteElementString (name, ns, GetStringValue (mappedType, typeData, memberValue));
 			}
 		}
 

@@ -22,7 +22,7 @@ namespace System.Xml.Serialization
 		int _index;
 		TypeData _typeData;
 		MemberInfo _member;
-		object _defaultValue;
+		object _defaultValue = System.DBNull.Value;
 
 		public XmlTypeMapMember()
 		{

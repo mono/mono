@@ -190,12 +190,8 @@ namespace System.Xml.Serialization {
 			string prefix = Writer.LookupPrefix (ns);
 			if (prefix == null) 
 			{
-				if (ns == String.Empty) {
-					prefix = String.Empty;
-				} else {
-					prefix = String.Format ("q{0}", ++qnameCount);
-					WriteAttribute ("xmlns", prefix, null, ns);
-				}
+				prefix = String.Format ("q{0}", ++qnameCount);
+				WriteAttribute ("xmlns", prefix, null, ns);
 			}
 			return prefix;
 		}

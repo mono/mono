@@ -19,18 +19,21 @@ namespace System.Xml.Serialization
 		private string elementName;
 		private string ns;
 		private string xmlType;
+		private string xmlTypeNamespace;
 		TypeData type;
 		XmlTypeMapping baseMap;
 		bool multiReferenceType = false;
+		bool isSimpleType;
 
 		ArrayList _derivedTypes = new ArrayList();
 
-		internal XmlTypeMapping(string elementName, string ns, TypeData typeData, string xmlType)
+		internal XmlTypeMapping(string elementName, string ns, TypeData typeData, string xmlType, string xmlTypeNamespace)
 		{
 			this.elementName = elementName;
 			this.ns = ns;
 			this.type = typeData;
 			this.xmlType = xmlType;
+			this.xmlTypeNamespace = xmlTypeNamespace;
 		}
 
 		public string ElementName
@@ -63,6 +66,11 @@ namespace System.Xml.Serialization
 			get { return xmlType; }
 		}
 
+		internal string XmlTypeNamespace
+		{
+			get { return xmlTypeNamespace; }
+		}
+
 		internal ArrayList DerivedTypes
 		{
 			get { return _derivedTypes; }
@@ -79,6 +87,12 @@ namespace System.Xml.Serialization
 		{
 			get { return baseMap; }
 			set { baseMap = value; }
+		}
+
+		internal bool IsSimpleType
+		{
+			get { return isSimpleType; }
+			set { isSimpleType = value; }
 		}
 
 		internal XmlTypeMapping GetRealTypeMap (string objectFullTypeName)
@@ -122,7 +136,10 @@ namespace System.Xml.Serialization
 			{
 				XmlTypeMapMemberAttribute atm = (XmlTypeMapMemberAttribute)member;
 				if (_attributeMembers == null) _attributeMembers = new Hashtable();
-				_attributeMembers.Add (atm.AttributeName + "/" + atm.Namespace, member);
+				string key = atm.AttributeName + "/" + atm.Namespace;
+				if (_attributeMembers.ContainsKey (key))
+					throw new InvalidOperationException ("The XML attribute named '" + atm.AttributeName + "' from namespace '" + atm.Namespace + "' already present in the current scope. Use XML attributes to specify another XML name or namespace for the attribute.");
+				_attributeMembers.Add (key, member);
 				return;
 			}
 			else if (member is XmlTypeMapMemberFlatList)
@@ -221,6 +238,11 @@ namespace System.Xml.Serialization
 			get { return _elementMembers; }
 		}
 
+		public ArrayList AllMembers
+		{
+			get { return _allMembers; }
+		}
+
 		public ICollection FlatLists
 		{
 			get { return _flatLists; }
@@ -278,8 +300,6 @@ namespace System.Xml.Serialization
 			get { return _itemInfo; }
 			set { _itemInfo = value; }
 		}
-
-
 
 		public XmlTypeMapElementInfo FindElement (object memberValue)
 		{

@@ -124,7 +124,7 @@ namespace System.Xml.Serialization {
 
 		XmlTypeMapping CreateTypeMapping (TypeData typeData, XmlRootAttribute root, string defaultXmlType, string defaultNamespace)
 		{
-			string membersNamespace = defaultNamespace;
+			string membersNamespace;
 			string elementName;
 			XmlAttributes atts = null;
 			if (defaultXmlType == null) defaultXmlType = typeData.XmlType;
@@ -147,12 +147,13 @@ namespace System.Xml.Serialization {
 			if (atts.XmlType != null)
 			{
 				if (atts.XmlType.Namespace != null && atts.XmlType.Namespace != string.Empty)
-					membersNamespace = atts.XmlType.Namespace;
+					defaultNamespace = atts.XmlType.Namespace;
 
 				if (atts.XmlType.TypeName != null && atts.XmlType.TypeName != string.Empty)
 					defaultXmlType = atts.XmlType.TypeName;
 			}
 
+			membersNamespace = defaultNamespace;
 			elementName = defaultXmlType;
 
 			if (root != null)
@@ -164,7 +165,7 @@ namespace System.Xml.Serialization {
 			}
 
 			if (membersNamespace == null) membersNamespace = "";
-			XmlTypeMapping map = new XmlTypeMapping (elementName, membersNamespace, typeData, defaultXmlType);
+			XmlTypeMapping map = new XmlTypeMapping (elementName, membersNamespace, typeData, defaultXmlType, defaultNamespace);
 			return map;
 		}
 
@@ -322,8 +323,8 @@ namespace System.Xml.Serialization {
 			else
 			{
 				XmlTypeMapElementInfo elem = ((XmlTypeMapElementInfo)list[0]);
-				if (elem.MappedType != null) baseName = GetArrayName (elem.MappedType.ElementName);
-				else baseName = GetArrayName (elem.ElementName);
+				if (elem.MappedType != null) baseName = TypeTranslator.GetArrayName (elem.MappedType.ElementName);
+				else baseName = TypeTranslator.GetArrayName (elem.ElementName);
 			}
 
 			// Avoid name colisions
@@ -348,11 +349,6 @@ namespace System.Xml.Serialization {
 			ImportTypeMapping (typeof(object)).DerivedTypes.Add (map);
 
 			return map;
-		}
-
-		string GetArrayName (string elemName)
-		{
-			return "ArrayOf" + Char.ToUpper (elemName [0]) + elemName.Substring (1);
 		}
 
 		XmlTypeMapping ImportXmlNodeMapping (Type type, XmlRootAttribute root, string defaultNamespace)

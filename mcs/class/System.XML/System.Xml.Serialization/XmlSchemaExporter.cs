@@ -3,6 +3,7 @@
 //
 // Author:
 //   Tim Coleman (tim@timcoleman.com)
+//   Lluis Sanchez Gual (lluis@ximian.com)
 //
 // Copyright (C) Tim Coleman, 2002
 //
@@ -17,7 +18,7 @@ namespace System.Xml.Serialization {
 		#region Fields
 
 		XmlSchemas schemas;
-		Hashtable exportedMaps;
+		Hashtable exportedMaps = new Hashtable();
 
 		#endregion
 
@@ -40,7 +41,6 @@ namespace System.Xml.Serialization {
 
 		public void ExportMembersMapping (XmlMembersMapping xmlMembersMapping)
 		{
-			exportedMaps = new Hashtable ();
 			XmlSchema schema = GetSchema (xmlMembersMapping.Namespace);
 
 			XmlSchemaElement selem = new XmlSchemaElement ();
@@ -68,15 +68,14 @@ namespace System.Xml.Serialization {
 
 		public void ExportTypeMapping (XmlTypeMapping xmlTypeMapping)
 		{
-			exportedMaps = new Hashtable ();
 			XmlSchema schema = GetSchema (null);
 			XmlTypeMapElementInfo einfo = new XmlTypeMapElementInfo (null, xmlTypeMapping.TypeData);
-			einfo.Namespace = "";
+			einfo.Namespace = xmlTypeMapping.Namespace;
 			einfo.ElementName = xmlTypeMapping.ElementName;
 			einfo.MappedType = xmlTypeMapping;
 			einfo.IsNullable = false;
 			AddSchemaElement (schema.Items, schema, einfo, false);
-			CompileSchemas ();
+//			CompileSchemas ();
 		}
 
 		void ExportClassSchema (XmlTypeMapping map)
@@ -84,16 +83,15 @@ namespace System.Xml.Serialization {
 			if (IsMapExported (map)) return;
 			SetMapExported (map);
 
-			XmlSchema schema = GetSchema (map.Namespace);
+			XmlSchema schema = GetSchema (map.XmlTypeNamespace);
 			XmlSchemaComplexType stype = new XmlSchemaComplexType ();
-			stype.Name = map.ElementName;
+			stype.Name = map.XmlType;
 			schema.Items.Add (stype);
 			if (map.BaseMap != null)
 			{
 				XmlSchemaComplexContent cstype = new XmlSchemaComplexContent ();
-				cstype.IsMixed = true;
 				XmlSchemaComplexContentExtension ext = new XmlSchemaComplexContentExtension ();
-				ext.BaseTypeName = new XmlQualifiedName (map.BaseMap.XmlType, map.BaseMap.Namespace);
+				ext.BaseTypeName = new XmlQualifiedName (map.BaseMap.XmlType, map.BaseMap.XmlTypeNamespace);
 				cstype.Content = ext;
 				stype.ContentModel = cstype;
 
@@ -113,7 +111,7 @@ namespace System.Xml.Serialization {
 				ExportMembersMapSchema (schema, (ClassMap)map.ObjectMap, map.BaseMap, stype.Attributes, out particle, out anyAttribute);
 				stype.Particle = particle;
 				stype.AnyAttribute = anyAttribute;
-				stype.IsMixed = true;
+				stype.IsMixed = ((ClassMap)map.ObjectMap).XmlTextCollector != null;
 			}
 		}
 
@@ -163,8 +161,10 @@ namespace System.Xml.Serialization {
 			ICollection attributes = map.AttributeMembers;
 			if (attributes != null)
 			{
-				foreach (XmlTypeMapMemberAttribute attr in attributes) 
+				foreach (XmlTypeMapMemberAttribute attr in attributes) {
+					if (baseMap != null && DefinedInBaseMap (baseMap, attr)) continue;
 					outAttributes.Add (GetSchemaAttribute (schema, attr));
+				}
 			}
 
 			XmlTypeMapMember anyAttrMember = map.DefaultAnyAttributeMember;
@@ -249,20 +249,20 @@ namespace System.Xml.Serialization {
 						break;
 
 					case SchemaTypes.Enum:
-						selem.SchemaTypeName = new XmlQualifiedName (einfo.MappedType.XmlType, einfo.MappedType.Namespace);
+						selem.SchemaTypeName = new XmlQualifiedName (einfo.MappedType.XmlType, einfo.MappedType.XmlTypeNamespace);
 						ImportNamespace (currentSchema, einfo.MappedType.Namespace);
 						ExportEnumSchema (einfo.MappedType);
 						break;
 
 					case SchemaTypes.Array: 
-						selem.SchemaTypeName = new XmlQualifiedName (einfo.MappedType.XmlType, einfo.MappedType.Namespace);;
+						selem.SchemaTypeName = new XmlQualifiedName (einfo.MappedType.XmlType, einfo.MappedType.XmlTypeNamespace);;
 						ImportNamespace (currentSchema, einfo.MappedType.Namespace);
 						ExportArraySchema (einfo.MappedType); 
 						break;
 
 					case SchemaTypes.Class:
 						if (einfo.MappedType.TypeData.Type != typeof(object)) {
-							selem.SchemaTypeName = new XmlQualifiedName (einfo.MappedType.XmlType, einfo.MappedType.Namespace);;
+							selem.SchemaTypeName = new XmlQualifiedName (einfo.MappedType.XmlType, einfo.MappedType.XmlTypeNamespace);;
 							ImportNamespace (currentSchema, einfo.MappedType.Namespace);
 							ExportClassSchema (einfo.MappedType);
 						}
@@ -293,7 +293,7 @@ namespace System.Xml.Serialization {
 			schema.Includes.Add (imp);
 		}
 
-		bool DefinedInBaseMap (XmlTypeMapping map, XmlTypeMapMemberElement member)
+		bool DefinedInBaseMap (XmlTypeMapping map, XmlTypeMapMember member)
 		{
 			if (((ClassMap)map.ObjectMap).FindMember (member.Name) != null)
 				return true;
@@ -344,8 +344,8 @@ namespace System.Xml.Serialization {
 			if (numInfos == 1)
 			{
 				XmlSchemaParticle selem = AddSchemaElement (destcol, currentSchema, (XmlTypeMapElementInfo) infos[infos.Count-1], true);
-				if (selem.MinOccursString == string.Empty) selem.MinOccursString = "0";
-				if (selem.MaxOccursString == string.Empty) selem.MaxOccursString = "unbounded";
+				selem.MinOccursString = "0";
+				selem.MaxOccursString = "unbounded";
 				return selem;
 			}
 			else
@@ -393,7 +393,6 @@ namespace System.Xml.Serialization {
 
 			XmlSchema schema = GetSchema (map.Namespace);
 			XmlSchemaComplexType stype = new XmlSchemaComplexType ();
-			stype.IsMixed = true;
 			stype.Name = map.ElementName;
 			schema.Items.Add (stype);
 
@@ -420,8 +419,8 @@ namespace System.Xml.Serialization {
 
 		void CompileSchemas ()
 		{
-			foreach (XmlSchema sc in schemas)
-				sc.Compile (null);
+//			foreach (XmlSchema sc in schemas)
+//				sc.Compile (null);
 		}
 
 		XmlSchema GetSchema (string ns)

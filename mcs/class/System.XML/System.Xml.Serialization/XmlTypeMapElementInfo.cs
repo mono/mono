@@ -64,7 +64,7 @@ namespace System.Xml.Serialization
 			get 
 			{ 
 				if (_mappedType == null) return XmlSchema.Namespace;
-				else return _mappedType.Namespace;
+				else return _mappedType.XmlTypeNamespace;
 			}
 		}
 

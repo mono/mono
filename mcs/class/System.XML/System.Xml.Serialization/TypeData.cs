@@ -23,6 +23,7 @@ namespace System.Xml.Serialization
 		string typeName;
 		string fullTypeName;
 		TypeData listItemTypeData;
+		TypeData listTypeData;
 
 		public TypeData (Type type, string elementName, bool isPrimitive)
 		{
@@ -48,7 +49,7 @@ namespace System.Xml.Serialization
 			}
 		}
 
-		public TypeData (string typeName, string fullTypeName, string xmlType, SchemaTypes schemaType, TypeData listItemTypeData)
+		internal TypeData (string typeName, string fullTypeName, string xmlType, SchemaTypes schemaType, TypeData listItemTypeData)
 		{
 			this.elementName = xmlType;
 			this.typeName = typeName;
@@ -144,6 +145,22 @@ namespace System.Xml.Serialization
 				return listItemType;
 			}
 		}
+
+		public TypeData ListTypeData
+		{
+			get
+			{
+				if (listTypeData != null) return listTypeData;
+				
+				listTypeData = new TypeData (TypeName + "[]",
+					FullTypeName + "[]",
+					TypeTranslator.GetArrayName(XmlType),
+					SchemaTypes.Array, this);
+
+				return listTypeData;
+			}
+		}
+
 
 		public static PropertyInfo GetIndexerProperty (Type collectionType)
 		{

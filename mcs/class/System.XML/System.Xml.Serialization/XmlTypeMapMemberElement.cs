@@ -27,7 +27,11 @@ namespace System.Xml.Serialization
 
 		public XmlTypeMapElementInfoList ElementInfo
 		{
-			get { return _elementInfo; }
+			get
+			{
+				if (_elementInfo == null) _elementInfo = new XmlTypeMapElementInfoList ();
+				return _elementInfo;
+			}
 			set { _elementInfo = value; }
 		}
 

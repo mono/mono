@@ -108,7 +108,7 @@ namespace System.Xml.Serialization {
 		XmlTypeMapping CreateTypeMapping (TypeData typeData, string defaultXmlType, string defaultNamespace)
 		{
 			string membersNamespace = defaultNamespace;
-			string elementName;
+
 			SoapAttributes atts = null;
 			if (defaultXmlType == null) defaultXmlType = typeData.XmlType;
 
@@ -133,10 +133,8 @@ namespace System.Xml.Serialization {
 					defaultXmlType = atts.SoapType.TypeName;
 			}
 
-			elementName = defaultXmlType;
-
 			if (membersNamespace == null) membersNamespace = "";
-			XmlTypeMapping map = new XmlTypeMapping (elementName, membersNamespace, typeData, defaultXmlType);
+			XmlTypeMapping map = new XmlTypeMapping (defaultXmlType, membersNamespace, typeData, defaultXmlType, membersNamespace);
 
 			relatedMaps.Add (map);
 			return map;
