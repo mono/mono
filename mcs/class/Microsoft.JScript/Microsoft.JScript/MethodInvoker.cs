@@ -7,7 +7,7 @@
 // (C) 2003, Cesar Lopez Nataren
 //
 
-namespace Microsoft.JScript
+namespace Microsoft.JScript.Tmp
 {
 	public abstract class MethodInvoker
 	{

@@ -6,13 +6,13 @@
 // (C) 2003, Cesar Octavio Lopez Nataren, <cesar@ciencias.unam.mx>
 //
 
-namespace Microsoft.JScript
+namespace Microsoft.JScript.Tmp
 {
 	using System;
 
 	public class DebugBreak : AST
 	{
-		public override object Visit (Visitor v, object args)
+		internal override object Visit (Visitor v, object args)
 		{
 			throw new NotImplementedException ();
 		}

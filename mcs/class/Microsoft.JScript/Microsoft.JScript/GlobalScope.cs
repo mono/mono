@@ -6,15 +6,16 @@
 // (C) 2003, Cesar Octavio Lopez Nataren, <cesar@ciencias.unam.mx>
 //
 
-namespace Microsoft.JScript
+namespace Microsoft.JScript.Tmp
 {
 	using System.Reflection;
 	using System;
 	using System.Runtime.InteropServices.Expando;
+	using Microsoft.JScript.Vsa;
 
 	public class GlobalScope : ActivationObject, IExpando
 	{
-		public GlobalScope (GlobalScope parent, VsaEngine engine, bool isComponentScope)
+		public GlobalScope (GlobalScope parent, VsaEngine engine)
 		{
 			throw new NotImplementedException ();
 		}

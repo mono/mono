@@ -7,7 +7,7 @@
 // (C) 2003, Cesar Lopez Nataren
 //
 
-namespace Microsoft.JScript
+namespace Microsoft.JScript.Tmp
 {
 	using System;
 
@@ -16,7 +16,7 @@ namespace Microsoft.JScript
 		public new object constructor;
 		public new object toExponential;
 		public new object toFixed;
-		public new object toLocaleString;
+		public object toLocaleString;
 		public new object toPrecision;
 		public new object toString;
 		public new object valueOf;

@@ -7,13 +7,14 @@
 // (C) 2003, Cesar Octavio Lopez Nataren, <cesar@ciencias.unam.mx>
 //
 
-namespace Microsoft.JScript
+namespace Microsoft.JScript.Tmp
 {
 	using System.Text;
 
 	public class VariableDeclaration : Statement
 	{
 		private string id;
+		private string type;
 		private AST assignExp;
 
 		internal VariableDeclaration ()
@@ -25,8 +26,14 @@ namespace Microsoft.JScript
 			set { id = value; }
 		}
 
+		
+		public string Type {
+			get { return type; }
+			set { type = value; }
+		}
 
-		public override object Visit (Visitor v, object args)
+
+		internal new object Visit (Visitor v, object args)
 		{
 			return v.VisitVariableDeclaration (this, args);
 		}

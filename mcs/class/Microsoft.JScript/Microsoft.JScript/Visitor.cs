@@ -7,9 +7,9 @@
 // (C) 2003, Cesar Lopez Nataren, <cesar@ciencias.unam.mx>
 //
 
-namespace Microsoft.JScript
+namespace Microsoft.JScript.Tmp
 {
-	public interface Visitor
+	internal interface Visitor
 	{
 		object VisitASTList (ASTList prog, object obj);
 
@@ -38,5 +38,9 @@ namespace Microsoft.JScript
 		object VisitTry (Try t, object args);
 
 		object VisitWith (With w, object args);
+
+		object VisitPrint (Print p, object args);
+
+		object VisitStringLiteral (StringLiteral sl, object args);
 	}
 }

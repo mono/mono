@@ -9,7 +9,7 @@
 
 using System.Collections;
 
-namespace Microsoft.JScript
+namespace Microsoft.JScript.Tmp
 {
 	internal class IdentificationTable
 	{

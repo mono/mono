@@ -6,9 +6,10 @@
 // (C) 2003, Cesar Octavio Lopez Nataren
 //
 
-namespace Microsoft.JScript
+namespace Microsoft.JScript.Tmp
 {
 	using System;
+	using Microsoft.JScript.Vsa;
 
 	public class Try : AST
 	{
@@ -23,7 +24,7 @@ namespace Microsoft.JScript
 		}
 
 
-		public override object Visit (Visitor v, object args)
+		internal override object Visit (Visitor v, object args)
 		{
 			return v.VisitTry (this, args);
 		}

@@ -7,7 +7,7 @@
 // (C) 2003, Cesar Lopez Nataren
 //
 
-namespace Microsoft.JScript
+namespace Microsoft.JScript.Tmp
 {
 	using System;
 	
@@ -25,7 +25,7 @@ namespace Microsoft.JScript
 		public new Object splice;
 		public new Object unshift;
 		public new Object toLocaleString;
-		public new Object toString;
+		public Object toString;
 	}
 }
 

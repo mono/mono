@@ -11,7 +11,7 @@
 using System;
 using System.Collections;
 
-namespace Microsoft.JScript
+namespace Microsoft.JScript.Tmp
 {
 	internal class SymbolTable
 	{
@@ -22,7 +22,7 @@ namespace Microsoft.JScript
 			symbols = new Hashtable ();
 		}
 		
-	
+
 		internal void Add (string id, VariableDeclaration d)
 		{
 			symbols.Add (id, d);

@@ -8,10 +8,10 @@
 // (C) 2003, Cesar Lopez Nataren, <cesar@ciencias.unam.mx>
 //
 
-using System;
-
-namespace Microsoft.JScript
+namespace Microsoft.JScript.Tmp
 {
+	using System;
+
 	internal class SemanticAnaliser : Visitor
 	{
 		private IdentificationTable symTab;
@@ -101,5 +101,20 @@ namespace Microsoft.JScript
 		{
 			throw new NotImplementedException ();
 		}
+
+
+		public object VisitPrint (Print p, object args)
+		{
+			throw new NotImplementedException ();
+		}
+
+	
+		//
+		// We dont need to check anything on literals.
+		//
+		public object VisitStringLiteral (StringLiteral sl, object args)
+		{
+			return null;
+		}		
 	}
 }

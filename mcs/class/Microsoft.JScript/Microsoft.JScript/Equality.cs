@@ -7,7 +7,7 @@
 // (C) 2003, Cesar Lopez Nataren
 //
 
-namespace Microsoft.JScript
+namespace Microsoft.JScript.Tmp
 {
 	using System;
 
@@ -31,7 +31,7 @@ namespace Microsoft.JScript
 		}
 
 
-		public override object Visit (Visitor v, object obj)
+		internal override object Visit (Visitor v, object obj)
 		{
 			throw new NotImplementedException ();
 		}

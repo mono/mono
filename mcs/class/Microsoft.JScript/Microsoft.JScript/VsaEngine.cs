@@ -6,13 +6,13 @@
 // (C) Cesar Octavio Lopez Nataren, <cesar@ciencias.unam.mx>
 //
 
-namespace Microsoft.JScript
+namespace Microsoft.JScript.Vsa.Tmp
 {
 	using System;
 	using System.Reflection;
 	using Microsoft.Vsa;
 
-	public class VsaEngine : /* BaseVsaEngine, */ IRedirectOutput
+	public class VsaEngine /* : BaseVsaEngine, IRedirectOutput */
 	{
 		public VsaEngine ()
 		{
@@ -110,12 +110,14 @@ namespace Microsoft.JScript
 			throw new NotImplementedException ();
 		}
 
+
 		/*
 		public override bool IsValidIdentifier (string ident)
 		{
 			throw new NotImplementedException ();
 		}
-		*/	
+		*/
+
 
 		public LenientGlobalObject LenientGlobalObject {
 			get { throw new NotImplementedException (); }

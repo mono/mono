@@ -7,14 +7,16 @@
 // (C) 2003, Cesar Octavio Lopez Nataren, <cesar@ciencias.unam.mx>
 //
 
-namespace Microsoft.JScript
+namespace Microsoft.JScript.Tmp
 {
 	using System;
 	using System.Text;
+	using Microsoft.JScript.Vsa;
 
 	public class FunctionDeclaration : AST
 	{
 		internal string id;
+		internal string returnType;	    
 		internal FormalParameterList parameters;
 		internal ASTList funcBody;
 	
@@ -35,7 +37,7 @@ namespace Microsoft.JScript
 		}
 
 		
-		public override object Visit (Visitor v, object args)
+		internal override object Visit (Visitor v, object args)
 		{
 			return v.VisitFunctionDeclaration (this, args);
 		}

@@ -7,10 +7,11 @@
 // (C) 2003, Cesar Lopez Nataren
 //
 
-namespace Microsoft.JScript
+namespace Microsoft.JScript.Tmp
 {
 	using System;
 	using System.Reflection;
+	using Microsoft.JScript.Vsa;
 
 	public sealed class StackFrame : ScriptObject, IActivationObject
 	{

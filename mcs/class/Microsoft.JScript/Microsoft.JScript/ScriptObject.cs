@@ -6,11 +6,12 @@
 // (C) 2003, Cesar Octavio Lopez Nataren, <cesar@ciencias.unam.mx>
 //
 
-namespace Microsoft.JScript
+namespace Microsoft.JScript.Tmp
 {
 	using System;
 	using System.Globalization;
 	using System.Reflection;
+	using Microsoft.JScript.Vsa;
 
 	public abstract class ScriptObject : IReflect
 	{

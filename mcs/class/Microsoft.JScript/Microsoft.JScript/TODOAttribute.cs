@@ -7,7 +7,7 @@
 // (C) Ximian, Inc.  http://www.ximian.com
 //
 
-namespace Microsoft.JScript {
+namespace Microsoft.JScript.Tmp {
 	using System;
 
 	/// <summary>
