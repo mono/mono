@@ -1,5 +1,14 @@
 2004-05-05  Sebastien Pouliot  <sebastien@ximian.com>
 
+	* DSACryptoServiceProvider.cs: Added globalization to exceptions.
+	* HMACSHA1.cs: Cleanup.
+	* SHA1CryptoServiceProvider.cs: Removed unused private methods.
+	* SHA1Managed.cs: Removed unused private methods.
+	* SHA384Managed.cs: Don't zeroize buffer on first initialization.
+	* SHA512Managed.cs: Don't zeroize buffer on first initialization.
+	
+2004-05-05  Sebastien Pouliot  <sebastien@ximian.com>
+
 	* Base64Constants.cs: New. Convert code into tables for better base64
 	performance.
 	* FromBase64Transform.cs: Updated to use the new tables. Source code

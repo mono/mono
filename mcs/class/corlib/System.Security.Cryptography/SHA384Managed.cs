@@ -20,25 +20,21 @@ public class SHA384Managed : SHA384 {
 	private byte[] xBuf;
 	private int xBufOff;
 
-	[CLSCompliant(false)]
 	private ulong byteCount1;
-	[CLSCompliant(false)]
 	private ulong byteCount2;
 
-	[CLSCompliant(false)]
 	private ulong H1, H2, H3, H4, H5, H6, H7, H8;
-	[CLSCompliant(false)]
-	private ulong[] W = new ulong [80];
+	private ulong[] W;
 	private int wOff;
 
 	public SHA384Managed () 
 	{
 		xBuf = new byte [8];
-		xBufOff = 0;
-		Initialize ();
+		W = new ulong [80];
+		Initialize (false); // limited initialization
 	}
 
-	public override void Initialize () 
+	private void Initialize (bool reuse) 
 	{
 		// SHA-384 initial hash value
 		// The first 64 bits of the fractional parts of the square roots
@@ -52,16 +48,23 @@ public class SHA384Managed : SHA384 {
 		H7 = 0xdb0c2e0d64f98fa7L;
 		H8 = 0x47b5481dbefa4fa4L;
 
-		byteCount1 = 0;
-		byteCount2 = 0;
+		if (reuse) {
+			byteCount1 = 0;
+			byteCount2 = 0;
 
-		xBufOff = 0;
-		for (int i = 0; i < xBuf.Length; i++) 
-			xBuf [i] = 0;
+			xBufOff = 0;
+			for (int i = 0; i < xBuf.Length; i++) 
+				xBuf [i] = 0;
 
-		wOff = 0;
-		for (int i = 0; i != W.Length; i++)
-			W [i] = 0;
+			wOff = 0;
+			for (int i = 0; i != W.Length; i++)
+				W [i] = 0;
+		}
+	}
+
+	public override void Initialize () 
+	{
+		Initialize (true); // reuse instance
 	}
 
 	// protected
@@ -70,14 +73,14 @@ public class SHA384Managed : SHA384 {
 	{
 		// fill the current word
 		while ((xBufOff != 0) && (count > 0)) {
-			update( rgb [start]);
+			update (rgb [start]);
 			start++;
 			count--;
 		}
 
 		// process whole words.
 		while (count > xBuf.Length) {
-			processWord(rgb, start);
+			processWord (rgb, start);
 			start += xBuf.Length;
 			count -= xBuf.Length;
 			byteCount1 += (ulong) xBuf.Length;
@@ -85,7 +88,7 @@ public class SHA384Managed : SHA384 {
 
 		// load in the remainder.
 		while (count > 0) {
-			update( rgb [start]);
+			update (rgb [start]);
 			start++;
 			count--;
 		}
@@ -93,7 +96,7 @@ public class SHA384Managed : SHA384 {
 
 	protected override byte[] HashFinal () 
 	{
-		adjustByteCounts();
+		adjustByteCounts ();
 
 		ulong lowBitLength = byteCount1 << 3;
 		ulong hiBitLength = byteCount2;
@@ -167,7 +170,7 @@ public class SHA384Managed : SHA384 {
 	private void processLength (ulong lowW, ulong hiW)
 	{
 		if (wOff > 14)
-			processBlock();
+			processBlock ();
 		W[14] = hiW;
 		W[15] = lowW;
 	}

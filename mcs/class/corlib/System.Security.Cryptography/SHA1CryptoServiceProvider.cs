@@ -3,9 +3,10 @@
 //
 // Authors:
 //	Matthew S. Ford (Matthew.S.Ford@Rose-Hulman.Edu)
-//	Sebastien Pouliot (spouliot@motus.com)
+//	Sebastien Pouliot (sebastien@ximian.com)
 //
 // Copyright 2001 by Matthew S. Ford.
+// (C) 2004 Novell (http://www.novell.com)
 //
 
 // Note:
@@ -496,17 +497,6 @@ namespace System.Security.Cryptography {
 		{
 			sha.Initialize ();
 		}
-
-		private void ProcessBlock (byte[] inputBuffer, int inputOffset) 
-		{
-			sha.ProcessBlock (inputBuffer, inputOffset);
-		}
-
-		private void ProcessFinalBlock (byte[] inputBuffer, int inputOffset, int inputCount) 
-		{
-			sha.ProcessFinalBlock (inputBuffer, inputOffset, inputCount);
-		}
 	}
-
 }
 

@@ -2,9 +2,10 @@
 // System.Security.Cryptography SHA1Managed Class implementation
 //
 // Author:
-//	Sebastien Pouliot (spouliot@motus.com)
+//	Sebastien Pouliot (sebastien@ximian.com)
 //
 // (C) 2002 Motus Technologies Inc. (http://www.motus.com)
+// (C) 2004 Novell (http://www.novell.com)
 //
 
 namespace System.Security.Cryptography {
@@ -13,7 +14,7 @@ namespace System.Security.Cryptography {
 // The MS Framework includes two (almost) identical class for SHA1.
 //	SHA1Managed (this file) is a 100% managed implementation.
 //	SHA1CryptoServiceProvider is a wrapper on CryptoAPI.
-// Mono must provide those two class for binayry compatibility.
+// Mono must provide those two class for binary compatibility.
 // In our case both class are wrappers around a managed internal class SHA1Internal.
 
 public class SHA1Managed : SHA1 {
@@ -40,16 +41,6 @@ public class SHA1Managed : SHA1 {
 	public override void Initialize () 
 	{
 		sha.Initialize ();
-	}
-
-	private void ProcessBlock (byte[] inputBuffer, int inputOffset) 
-	{
-		sha.ProcessBlock (inputBuffer, inputOffset);
-	}
-
-	private void ProcessFinalBlock (byte[] inputBuffer, int inputOffset, int inputCount) 
-	{
-		sha.ProcessFinalBlock (inputBuffer, inputOffset, inputCount);
 	}
 }
 

@@ -25,17 +25,17 @@ public class SHA512Managed : SHA512 {
 
 	private ulong H1, H2, H3, H4, H5, H6, H7, H8;
 
-	private ulong[] W = new ulong [80];
+	private ulong[] W;
 	private int wOff;
 
 	public SHA512Managed () 
 	{
 		xBuf = new byte [8];
-		xBufOff = 0;
-		Initialize ();
+		W = new ulong [80];
+		Initialize (false); // limited initialization
 	}
 
-	public override void Initialize () 
+	private void Initialize (bool reuse) 
 	{
 		// SHA-512 initial hash value
 		// The first 64 bits of the fractional parts of the square roots
@@ -49,16 +49,23 @@ public class SHA512Managed : SHA512 {
 		H7 = 0x1f83d9abfb41bd6bL;
 		H8 = 0x5be0cd19137e2179L;
 
-		byteCount1 = 0;
-		byteCount2 = 0;
+		if (reuse) {
+			byteCount1 = 0;
+			byteCount2 = 0;
 
-		xBufOff = 0;
-		for (int i = 0; i < xBuf.Length; i++) 
-			xBuf [i] = 0;
+			xBufOff = 0;
+			for (int i = 0; i < xBuf.Length; i++) 
+				xBuf [i] = 0;
 
-		wOff = 0;
-		for (int i = 0; i != W.Length; i++)
-			W [i] = 0;
+			wOff = 0;
+			for (int i = 0; i != W.Length; i++)
+				W [i] = 0;
+		}
+	}
+
+	public override void Initialize () 
+	{
+		Initialize (true); // reuse instance
 	}
 
 	// protected
@@ -67,14 +74,14 @@ public class SHA512Managed : SHA512 {
 	{
 		// fill the current word
 		while ((xBufOff != 0) && (count > 0)) {
-			update( rgb [start]);
+			update (rgb [start]);
 			start++;
 			count--;
 		}
 
 		// process whole words.
 		while (count > xBuf.Length) {
-			processWord(rgb, start);
+			processWord (rgb, start);
 			start += xBuf.Length;
 			count -= xBuf.Length;
 			byteCount1 += (ulong) xBuf.Length;
@@ -82,7 +89,7 @@ public class SHA512Managed : SHA512 {
 
 		// load in the remainder.
 		while (count > 0) {
-			update( rgb [start]);
+			update (rgb [start]);
 			start++;
 			count--;
 		}
@@ -90,15 +97,15 @@ public class SHA512Managed : SHA512 {
 
 	protected override byte[] HashFinal () 
 	{
-		adjustByteCounts();
+		adjustByteCounts ();
 
 		ulong lowBitLength = byteCount1 << 3;
 		ulong hiBitLength = byteCount2;
 
 		// add the pad bytes.
-		update ( (byte) 128);
+		update (128);
 		while (xBufOff != 0)
-			update ( (byte)0);
+			update (0);
 
 		processLength (lowBitLength, hiBitLength);
 		processBlock ();

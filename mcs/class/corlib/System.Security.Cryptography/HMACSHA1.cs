@@ -2,9 +2,10 @@
 // HMACSHA1.cs: Handles HMAC with SHA-1
 //
 // Author:
-//	Sebastien Pouliot (spouliot@motus.com)
+//	Sebastien Pouliot <sebastien@ximian.com>
 //
 // (C) 2002, 2003 Motus Technologies Inc. (http://www.motus.com)
+// (C) 2004 Novell (http://www.novell.com)
 //
 
 using System;
@@ -32,7 +33,9 @@ namespace System.Security.Cryptography {
 		private HMACAlgorithm hmac;
 		private bool m_disposed;
 	
-		public HMACSHA1 () : this (KeyBuilder.Key (8)) {}
+		public HMACSHA1 () : this (KeyBuilder.Key (8))
+		{
+		}
 	
 		public HMACSHA1 (byte[] rgbKey) : base ()
 		{
@@ -80,9 +83,9 @@ namespace System.Security.Cryptography {
 				throw new ObjectDisposedException ("HMACSHA1");
 			// let us throw an exception if hash name is invalid
 			// for HMACSHA1 (obviously this can't be done by the 
-			// generic HMAC class) 
-			if (! (hmac.Algo is SHA1))
-				throw new InvalidCastException ();
+			// generic HMAC class)
+			SHA1 sha = (SHA1) hmac.Algo;
+
 			State = 0;
 			hmac.Initialize ();
 		}
@@ -91,6 +94,7 @@ namespace System.Security.Cryptography {
 		{
 			if (m_disposed)
 				throw new ObjectDisposedException ("HMACSHA1");
+
 			if (State == 0) {
 				Initialize ();
 				State = 1;
@@ -102,6 +106,7 @@ namespace System.Security.Cryptography {
 		{
 			if (m_disposed)
 				throw new ObjectDisposedException ("HMACSHA1");
+
 			State = 0;
 			return hmac.Final ();
 		}
@@ -109,7 +114,9 @@ namespace System.Security.Cryptography {
 #else
 	public class HMACSHA1 : HMAC {
 
-		public HMACSHA1 () : this (KeyBuilder.Key (8)) {}
+		public HMACSHA1 () : this (KeyBuilder.Key (8))
+		{
+		}
 
 		public HMACSHA1 (byte[] rgbKey) : base () 
 		{

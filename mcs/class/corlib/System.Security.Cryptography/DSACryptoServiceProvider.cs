@@ -25,7 +25,7 @@ namespace System.Security.Cryptography {
 #else
 	public sealed class DSACryptoServiceProvider : DSA {
 #endif
-		private const int PROV_DSS = 3;		// from WinCrypt.h
+		private const int PROV_DSS_DH = 13;		// from WinCrypt.h
 
 		private KeyPairPersistence store;
 		private bool persistKey;
@@ -46,11 +46,20 @@ namespace System.Security.Cryptography {
 		// used (or exported). This should save us a lot of time (at
 		// least in the unit tests).
 
-		public DSACryptoServiceProvider () : this (1024, null) {}
+		public DSACryptoServiceProvider ()
+			: this (1024, null)
+		{
+		}
 
-		public DSACryptoServiceProvider (CspParameters parameters) : this (1024, parameters) {}
+		public DSACryptoServiceProvider (CspParameters parameters)
+			: this (1024, parameters)
+		{
+		}
 
-		public DSACryptoServiceProvider (int dwKeySize) : this (dwKeySize, null) {}
+		public DSACryptoServiceProvider (int dwKeySize)
+			: this (dwKeySize, null)
+		{
+		}
 
 		public DSACryptoServiceProvider (int dwKeySize, CspParameters parameters)
 		{
@@ -64,7 +73,7 @@ namespace System.Security.Cryptography {
 
 			persistKey = (parameters != null);
 			if (parameters == null) {
-				parameters = new CspParameters (PROV_DSS);
+				parameters = new CspParameters (PROV_DSS_DH);
 #if ! NET_1_0
 				if (useMachineKeyStore)
 					parameters.Flags |= CspProviderFlags.UseMachineKeyStore;
@@ -102,11 +111,7 @@ namespace System.Security.Cryptography {
 
 		public bool PersistKeyInCsp {
 			get { return persistKey; }
-			set {
-				persistKey = value;
-				if (persistKey)
-					OnKeyGenerated (dsa, null);
-			}
+			set { persistKey = value; }
 		}
 
 #if (NET_1_0 || NET_1_1)
@@ -133,8 +138,10 @@ namespace System.Security.Cryptography {
 
 		public override DSAParameters ExportParameters (bool includePrivateParameters) 
 		{
-			if ((includePrivateParameters) && (!privateKeyExportable))
-				throw new CryptographicException ("cannot export private key");
+			if ((includePrivateParameters) && (!privateKeyExportable)) {
+				throw new CryptographicException (
+					Locale.GetText ("Cannot export private key"));
+			}
 
 			return dsa.ExportParameters (includePrivateParameters);
 		}
@@ -173,8 +180,11 @@ namespace System.Security.Cryptography {
 		public byte[] SignHash (byte[] rgbHash, string str)
 		{
 			// right now only SHA1 is supported by FIPS186-2
-			if (String.Compare (str, "SHA1", true, CultureInfo.InvariantCulture) != 0)
-				throw new Exception (); // not documented
+			if (String.Compare (str, "SHA1", true, CultureInfo.InvariantCulture) != 0) {
+				// not documented
+				throw new CryptographicException (Locale.GetText ("Only SHA1 is supported."));
+			}
+
 			return dsa.CreateSignature (rgbHash);
 		}
 
@@ -191,8 +201,10 @@ namespace System.Security.Cryptography {
 		{
 			if (str == null)
 				str = "SHA1"; // default value
-			if (str != "SHA1")
-				throw new CryptographicException ();
+			if (String.Compare (str, "SHA1", true, CultureInfo.InvariantCulture) != 0) {
+				throw new CryptographicException (Locale.GetText ("Only SHA1 is supported."));
+			}
+
 			return dsa.VerifySignature (rgbHash, rgbSignature);
 		}
 
