@@ -1,5 +1,12 @@
 2004-03-16  Sebastien Pouliot  <sebastien@ximian.com>
 
+	* SignedXml.cs: Changed (again). This time we use the Stream when 
+	loading the document. We now pass 14 out of 15 of the Merlin's
+	tests (including one that MS fails). The only failing test is the
+	one that use the EnvelopedTransform (unfinished).
+
+2004-03-16  Sebastien Pouliot  <sebastien@ximian.com>
+
 	* SignedXml.cs: Commented my last changes to SignedXml as it made other
 	unis tests fail (in the c14n-izer).
 
