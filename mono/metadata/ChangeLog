@@ -1,5 +1,15 @@
 2001-09-23  Dick Porter  <dick@ximian.com>
 
+	* threads-dummy.c: 
+	* threads-dummy.h: New files of dummy threading routines
+
+	* Makefile.am (THREAD_SOURCE): Arrange to compile different thread
+	support code based on system specifics
+
+	Rename PTHREAD_LIBS to THREAD_LIBS
+	
+2001-09-23  Dick Porter  <dick@ximian.com>
+
 	* threads-pthread.c: Implement the System.Threading.Thread::Sleep,
 	Schedule (called when asked to Sleep for 0 ms) and CurrentThread
 	internal calls.
