@@ -3,7 +3,11 @@
 	* AllMembershipCondition.cs: Clean up. Removed FIXME.
 	* ApplicationDirectoryMembershipCondition.cs: Basic (incomplete) Check.
 	* ApplicationDirectory.cs: Added IBuiltInEvidence (to please corcompare).
+	* CodeGroup.cs: Now use Activator for [Named]PermissionSet. Change 
+	Equals so it can compile with mcs.
 	* Hash.cs: Added IBuiltInEvidence (to please corcompare).
+	* PolicyLevel.cs: Minor changes to use the new empty constructors in 
+	[Named]PermissionSet.
 	* PermissionRequestEvidence.cs: Added IBuiltInEvidence (to please 
 	corcompare). Now use SecurityElement in ToString.
 	* Publisher.cs: Added IBuiltInEvidence (to please corcompare).

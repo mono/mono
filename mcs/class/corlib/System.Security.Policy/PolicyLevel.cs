@@ -191,7 +191,9 @@ namespace System.Security.Policy {
 			if ((nps != null) && (nps.Children != null) && (nps.Children.Count > 0)) {
 				named_permission_sets.Clear ();
 				foreach (SecurityElement se in nps.Children) {
-					named_permission_sets.Add (new NamedPermissionSet (se));
+					NamedPermissionSet n = new NamedPermissionSet ();
+					n.FromXml (se);
+					named_permission_sets.Add (n);
 				}
 			}
 

@@ -5,10 +5,12 @@
 //
 // (C) 2001 Nick Drochak, All rights reserved.
 
+using System.Collections;
+using System.Globalization;
+using System.Reflection;
 using System.Security.Policy;
 using System.Security.Permissions;
-using System.Collections;
-using System;  // for MonoTODO attribute
+//using System;  // for MonoTODO attribute
 
 namespace System.Security.Policy {
 
@@ -123,8 +125,10 @@ namespace System.Security.Policy {
 			if (cg.Description != this.Description)
 				return false;
 
-//			if (!cg.MembershipCondition.Equals ((IMembershipCondition)this.MembershipCondition))
-//				return false;
+// FIXME: this compiles with CSC. Didn't succeed at creating a smaller/different test case :(
+//			if (!cg.MembershipCondition.Equals (m_membershipCondition))
+			if (cg.MembershipCondition.ToString () != m_membershipCondition.ToString ())
+				return false;
 
 			if (compareChildren) {
 				int childCount = cg.Children.Count;
@@ -170,7 +174,9 @@ namespace System.Security.Policy {
 			PermissionSet ps = null;
 			SecurityElement pset = e.SearchForChildByTag ("PermissionSet");
 			if (pset != null) {
-				ps = new NamedPermissionSet (pset);
+				Type classType = Type.GetType (pset.Attribute ("class"));
+				ps = (PermissionSet) Activator.CreateInstance (classType, true);
+				ps.FromXml (pset);
 			}
 			else
 				ps = new NamedPermissionSet ("Nothing", new PermissionSet (PermissionState.None));
