@@ -3106,12 +3106,29 @@ namespace Mono.CSharp {
 					continue;
 				}
 
-				if (c.ParameterTypes.Length != Arguments.Count)
-					continue;
+				bool ok = true;
 
-				for (int i = 0; i < Arguments.Count; ++i)
-					if (c.ParameterTypes [i] != ((Argument)Arguments [i]).Type)
+				int count = c.ParameterInfo.Count;
+				if ((count > 0) &&
+				    c.ParameterInfo.ParameterModifier (count - 1) == Parameter.Modifier.PARAMS) {
+					for (int i = 0; i < count-1; i++)
+						if (c.ParameterTypes [i] != ((Argument)Arguments [i]).Type) {
+							ok = false;
+							break;
+						}
+				} else {
+					if (c.ParameterTypes.Length != Arguments.Count)
 						continue;
+
+					for (int i = 0; i < Arguments.Count; ++i)
+						if (c.ParameterTypes [i] != ((Argument)Arguments [i]).Type) {
+							ok = false;
+							break;
+						}
+				}
+
+				if (!ok)
+					continue;
 
 				return c;
 			}
