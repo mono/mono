@@ -1,3 +1,9 @@
+
+Thu Sep 5 20:36:27 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* Binder.cs: finished the Binder class and implemented the default
+	binder.
+
 2002-09-03  Martin Baulig  <martin@gnome.org>
 
 	* Assembly.cs (Assembly.Location): Implemented.
