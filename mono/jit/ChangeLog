@@ -1,3 +1,8 @@
+2001-11-09  Miguel de Icaza  <miguel@ximian.com>
+
+	* testjit.c (mono_analyze_stack): Remove compiler warning by
+	testing against NULL.
+
 2001-11-09  Dick Porter  <dick@ximian.com>
 
 	* Makefile.am (testjit_LDADD): Don't need THREAD_LIBS any more

@@ -1,3 +1,11 @@
+2001-11-09  Miguel de Icaza  <miguel@ximian.com>
+
+	* assembly.c (mono_assembly_open): Implement a cache for the
+	assemblies. 
+
+	(mono_assembly_close): only destroy the assembly when the last
+	reference is gone.
+	
 2001-11-09  Dick Porter  <dick@ximian.com>
 
 	* Makefile.am (pedump_LDADD): Don't need THREAD_LIBS any more
