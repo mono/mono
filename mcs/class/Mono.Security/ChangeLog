@@ -3,6 +3,10 @@
     * Changed the license header to all the sources files
     to remove accents.
 
+    * Mono.Security.Protocol.Tls/TlsSessionState.cs:
+
+        - Removed old file.
+
 	* Mono.Security.Protocol.Tls/SslClientStream.cs:
 
 		- Try to improve record reading.
