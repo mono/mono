@@ -19,9 +19,9 @@ namespace System.Xml
 
 		internal static bool IsWhitespace (string str)
 		{
-			foreach (char c in str)
-				if (!IsWhitespace (c))
-					return false;
+			for (int i = 0; i < str.Length; i++)
+				if (!IsWhitespace (str [i])) return false;
+				
 			return true;
 		}
 

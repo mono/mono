@@ -1,3 +1,7 @@
+2003-08-18 Ben Maurer  <bmaurer@users.sourceforge.net>
+
+	* System.Xml.dll.source: add System.Xml/HighWaterStack.cs.
+
 2003-08-14  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
 
 	* System.Xml.dll.sources: Added Mono.Xml.Xsl.Operation/XslComment.cs 

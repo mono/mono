@@ -16,10 +16,16 @@ namespace System.Xml
 		#region Fields
 
 		private XmlNameTable nameTable;
-		private NamespaceScope currentScope;
+			
+		HighWaterStack decls = new HighWaterStack (50);
+		HighWaterStack scopes = new HighWaterStack (50);
+		Namespace defaultNamespace;
+		int count = 0;
+		
 		internal const string XmlnsXml = "http://www.w3.org/XML/1998/namespace";
 		internal const string XmlnsXmlns = "http://www.w3.org/2000/xmlns/";
 
+		string XMLNS, XML, XMLNS_URL, XML_URL;
 		#endregion
 
 		#region Constructor
@@ -28,16 +34,10 @@ namespace System.Xml
 		{
 			this.nameTable = nameTable;
 
-			nameTable.Add ("xmlns");
-			nameTable.Add ("xml");
-			nameTable.Add (String.Empty);
-			nameTable.Add (XmlnsXmlns);
-			nameTable.Add (XmlnsXml);
-
-			PushScope ();
-			currentScope.Namespaces = new Hashtable ();
-			currentScope.Namespaces.Add ("xml", XmlnsXml);
-			currentScope.Namespaces.Add ("xmlns", XmlnsXmlns);
+			XMLNS = nameTable.Add ("xmlns");
+			XML = nameTable.Add ("xml");
+			XMLNS_URL = nameTable.Add (XmlnsXmlns);
+			XML_URL = nameTable.Add (XmlnsXml);
 		}
 
 		#endregion
@@ -45,7 +45,7 @@ namespace System.Xml
 		#region Properties
 
 		public virtual string DefaultNamespace {
-			get { return LookupNamespace (String.Empty); }
+			get { return (defaultNamespace == null) ? String.Empty : defaultNamespace.Uri; }
 		}
 
 		public XmlNameTable NameTable {
@@ -66,12 +66,30 @@ namespace System.Xml
 
 			IsValidDeclaration (prefix, uri, true);
 
-			if (currentScope.Namespaces == null)
-				currentScope.Namespaces = new Hashtable ();
+			prefix = nameTable.Add (prefix);
+			uri = nameTable.Add (uri);
 
-			if (prefix != String.Empty)
-				nameTable.Add (prefix);
-			currentScope.Namespaces [prefix] = nameTable.Add (uri);
+			// Is it already in the table?
+			for (int i = decls.Length - 1; i >= decls.Length - count; i--) {
+				Namespace decl = (Namespace)decls [i];
+				if (AtomStrEq (decl.Prefix, prefix)) {
+					// Then redefine it
+					decl.Uri = uri;
+					return;
+				}
+			}
+			
+			// Otherwise, we are going to add it as a new object
+			Namespace newDecl = (Namespace) decls.Push ();
+			if (newDecl == null) {
+				newDecl = new Namespace ();
+				decls.AddToTop (newDecl);
+			}
+			newDecl.Prefix = prefix;
+			newDecl.Uri = uri;
+			count++;
+			if (prefix == String.Empty)
+				defaultNamespace = newDecl;
 		}
 
 		internal static string IsValidDeclaration (string prefix, string uri, bool throwException)
@@ -93,56 +111,72 @@ namespace System.Xml
 
 		public virtual IEnumerator GetEnumerator ()
 		{
-			if (currentScope.Namespaces == null)
-				currentScope.Namespaces = new Hashtable ();
-
-			return currentScope.Namespaces.Keys.GetEnumerator ();
+			Hashtable p = new Hashtable (count);
+			for (int i = decls.Length - 1; i >= decls.Length - count; i--) {
+				Namespace decl = (Namespace)decls [i];
+				if (decl.Prefix != String.Empty && decl.Uri != null)
+					p [decl.Prefix] = decl.Uri;
+			}
+			p [String.Empty] = DefaultNamespace;
+			p [XML] = XML_URL;
+			p [XMLNS] = XMLNS_URL;
+			return p.Keys.GetEnumerator ();
 		}
 
 		public virtual bool HasNamespace (string prefix)
 		{
-			return currentScope != null && currentScope.Namespaces != null && currentScope.Namespaces.Contains (prefix);
+			if (prefix == null) return false;
+			
+			for (int i = decls.Length - 1; i >= decls.Length - count; i--) {
+				Namespace decl = (Namespace)decls [i];
+				if (AtomStrEq (decl.Prefix, prefix) && decl.Uri != null)
+					return true;
+			}
+			return false;
 		}
 
 		public virtual string LookupNamespace (string prefix)
 		{
-			NamespaceScope scope = currentScope;
+			if (prefix == null)
+				return null;
 
-			while (scope != null) {
-				if (scope.Namespaces != null && scope.Namespaces.Contains (prefix))
-					return scope.Namespaces[prefix] as string;
-				scope = scope.Next;
+			if (prefix == String.Empty)
+				return DefaultNamespace;
+
+			if (AtomStrEq (XML, prefix))
+				return XML_URL;
+
+			if (AtomStrEq (XMLNS, prefix))
+				return XMLNS_URL;
+
+			for (int i = decls.Length - 1; i >= 0; i--) {
+				Namespace decl = (Namespace)decls [i];
+				if (AtomStrEq (decl.Prefix, prefix) && decl.Uri != null)
+					return decl.Uri;
 			}
-
-			switch (prefix) {
-			case "xmlns":
-				return nameTable.Get (XmlnsXmlns);
-			case "xml":
-				return nameTable.Get (XmlnsXml);
-			case "":
-				return nameTable.Get (String.Empty);
-			}
-
 			return null;
 		}
+
 
 		public virtual string LookupPrefix (string uri)
 		{
 			if (uri == null)
 				return null;
 
-			NamespaceScope scope = currentScope;
+			if (AtomStrEq (DefaultNamespace, uri))
+				return String.Empty;
+			
+			if (AtomStrEq (XML_URL, uri))
+				return XML;
+			
+			if (AtomStrEq (XMLNS_URL, uri))
+				return XMLNS;
 
-			while (scope != null) 
-			{
-				if (scope.Namespaces != null && scope.Namespaces.ContainsValue (uri)) {
-					foreach (DictionaryEntry entry in scope.Namespaces) {
-						if (entry.Value.ToString() == uri)
-							return nameTable.Get (entry.Key as string) as string;
-					}
-				}
 
-				scope = scope.Next;
+			for (int i = decls.Length - 1; i >= 0; i--) {
+				Namespace decl = (Namespace)decls [i];
+				if (AtomStrEq (decl.Uri, uri) && decl.Uri != null)
+					return decl.Prefix;
 			}
 
 			// ECMA specifies that this method returns String.Empty
@@ -155,17 +189,29 @@ namespace System.Xml
 
 		public virtual bool PopScope ()
 		{
-			if (currentScope != null)
-				currentScope = currentScope.Next;
-
-			return currentScope != null;
+			Scope current = (Scope)scopes.Pop ();
+			if (current == null) {
+				return false;
+			} else {
+				for (int i = 0; i < count; i++)
+					decls.Pop ();
+					
+				defaultNamespace = current.DefaultNamespace;
+				count = current.Count;
+				return true;
+			}
 		}
 
 		public virtual void PushScope ()
 		{
-			NamespaceScope newScope = new NamespaceScope ();
-			newScope.Next = currentScope;
-			currentScope = newScope;
+			Scope current = (Scope)scopes.Push ();
+			if (current == null) {
+				current = new Scope ();
+				scopes.AddToTop (current);
+			}
+			current.DefaultNamespace = defaultNamespace;
+			current.Count = count;
+			count = 0;
 		}
 
 		public virtual void RemoveNamespace (string prefix, string uri)
@@ -176,27 +222,35 @@ namespace System.Xml
 			if (uri == null)
 				throw new ArgumentNullException ("uri");
 
-			if (currentScope == null || currentScope.Namespaces == null)
-				return;
-
 			string p = nameTable.Get (prefix);
 			string u = nameTable.Get (uri);
 			if (p == null || u == null)
 				return;
 				
-			string storedUri = currentScope.Namespaces [p] as string;
-			if (storedUri == null || storedUri != u)
-				return;
+			for (int i = decls.Length - 1; i >= decls.Length - count; i--) {
+				Namespace n = (Namespace)decls [i];
+				if (AtomStrEq (n.Prefix, p) && AtomStrEq (n.Uri, u))
+					n.Uri = null;
+			}
+		}
+		
+		bool AtomStrEq (string a, string b) {
+			if (String.Equals (a, b) && !Object.ReferenceEquals (a, b)) {
+				Console.Error.WriteLine ("WARNING: {0} not interned", a);
+			}
+			
+			return String.Equals (a, b);
 
-			currentScope.Namespaces.Remove (p);
 		}
 
 		#endregion
+		class Namespace {
+			public string Prefix, Uri;
 	}
 
-	internal class NamespaceScope
-	{
-		internal NamespaceScope Next;
-		internal Hashtable Namespaces;
+		class Scope {
+			public Namespace DefaultNamespace;
+			public int Count;
+		}
 	}
 }

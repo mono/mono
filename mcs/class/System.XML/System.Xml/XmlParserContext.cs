@@ -134,18 +134,14 @@ namespace System.Xml
 			}
 			this.encoding = enc;
 
-			baseURIStack = new Stack ();
-			xmlLangStack = new Stack ();
-			xmlSpaceStack = new Stack ();
-			baseURIStack.Push (baseURI != null ? baseURI : String.Empty);
-			xmlLangStack.Push (xmlLang);
-			xmlSpaceStack.Push (xmlSpace);
+			PushScope ();
+			this.BaseURI = baseURI != null ? baseURI : String.Empty;
+			this.XmlLang = xmlLang;
+			this.XmlSpace = xmlSpace;
 		}
 		#endregion
 
 		#region Fields
-
-		private string baseURI;
 		private string docTypeName;
 		private Encoding encoding;
 		private string internalSubset;
@@ -153,11 +149,8 @@ namespace System.Xml
 		private XmlNameTable nameTable;
 		private string publicID;
 		private string systemID;
-		private string xmlLang;
-		private XmlSpace xmlSpace;
-		private Stack baseURIStack;
-		private Stack xmlLangStack;
-		private Stack xmlSpaceStack;
+		private HighWaterStack scopeStack = new HighWaterStack (50);
+		Scope current;
 		private DTDObjectModel dtd;
 
 		#endregion
@@ -165,8 +158,8 @@ namespace System.Xml
 		#region Properties
 
 		public string BaseURI {
-			get { return baseURI != null ? baseURI : baseURIStack.Peek () as string; }
-			set { baseURI = value; }
+			get { return current.baseUri; }
+			set { current.baseUri = value; }
 		}
 
 		public string DocTypeName {
@@ -210,13 +203,13 @@ namespace System.Xml
 		}
 
 		public string XmlLang {
-			get { return xmlLang != null ? xmlLang : xmlLangStack.Peek () as string; }
-			set { xmlLang = value; }
+			get { return current.xmlLang; }
+			set { current.xmlLang = value; }
 		}
 
 		public XmlSpace XmlSpace {
-			get { return xmlSpace != XmlSpace.None ? xmlSpace : (XmlSpace) xmlSpaceStack.Peek (); }
-			set { xmlSpace = value; }
+			get { return current.xmlSpace; }
+			set { current.xmlSpace = value; }
 		}
 
 		#endregion
@@ -224,22 +217,27 @@ namespace System.Xml
 		#region Methods
 		internal void PushScope ()
 		{
-			baseURIStack.Push (BaseURI);
-			xmlLangStack.Push (XmlLang);
-			xmlSpaceStack.Push (XmlSpace);
-			baseURI = null;
-			xmlLang = null;
-			xmlSpace = XmlSpace.None;
+			current = (Scope)scopeStack.Push ();
+			if (current == null) {
+				current = new Scope ();
+				scopeStack.AddToTop (current);
+			} else {
+				current.baseUri = String.Empty;
+				current.xmlLang = String.Empty;
+				current.xmlSpace = XmlSpace.None;
+			}
 		}
 
 		internal void PopScope ()
 		{
-			baseURIStack.Pop ();
-			xmlLangStack.Pop ();
-			xmlSpaceStack.Pop ();
-			baseURI = null;
-			xmlLang = null;
-			xmlSpace = XmlSpace.None;
+			current = (Scope)scopeStack.Pop ();
+		}
+		
+		class Scope {
+			public string baseUri, xmlLang;
+			public XmlSpace xmlSpace;
+			
+			public Scope () {}
 		}
 		#endregion
 	}

@@ -1,5 +1,18 @@
 2003-08-18 Ben Maurer  <bmaurer@users.sourceforge.net>
 
+	* XmlChar.cs (IsWhitespace): Spare enumerator allocation.
+	* XmlTextWriter.cs (WriteWhitespace): Enumerators are very high in
+	fat, use low-fat loops instead. Even better, call the function
+	inside XmlChar for code reuse.
+	* HighWaterStack.cs (added): New class that acts like a Stack, but
+	helps with memory allocation.
+	* XmlNamespaceManager.cs, XmlParserContext.cs: Rewrote to use
+	HighWaterStack.
+	* XmlTextReader.cs: Remove orderedAttributesEnumerator variable,
+	use a variable that stores the position in the ArrayList.
+	
+2003-08-18 Ben Maurer  <bmaurer@users.sourceforge.net>
+
 	* XmlTextWriter.cs: Begin diet. String.Format has too much
 	saturated fat, lets replace with the fat-free .Write ()
 	calls. Effects best seen when Paolo's StreamWriter patch is

@@ -390,13 +390,11 @@ namespace System.Xml
 			if (attributes == null || orderedAttributes.Count < i || i < 0)
 				throw new ArgumentOutOfRangeException ("attribute index out of range.");
 
-			if (orderedAttributesEnumerator == null) {
+			if (orderedAttributesPos == -1) {
 				SaveProperties ();
 			}
 
-			orderedAttributesEnumerator = orderedAttributes.GetEnumerator ();
-			for (int n=0; n<=i; n++)
-				orderedAttributesEnumerator.MoveNext();
+			orderedAttributesPos = i;
 
 			string name = orderedAttributes [i] as string;
 			string value = attributes [name] as string;
@@ -419,17 +417,15 @@ namespace System.Xml
 			if (attributes == null)
 				return false;
 
-			if (orderedAttributesEnumerator == null) {
+			if (orderedAttributesPos == -1) {
 				SaveProperties ();
 			}
 
-			orderedAttributesEnumerator = orderedAttributes.GetEnumerator ();
-			while (orderedAttributesEnumerator.MoveNext ()) {
-				if(name == orderedAttributesEnumerator.Current as string) {
+			for (orderedAttributesPos = 0; orderedAttributesPos < orderedAttributes.Count; orderedAttributesPos++)
+				if (name == orderedAttributes [orderedAttributesPos] as string) {
 					match = true;
 					break;
 				}
-			}
 
 			if (match) {
 				string value = attributes [name] as string;
@@ -463,8 +459,8 @@ namespace System.Xml
 
 		public override bool MoveToElement ()
 		{
-			if (orderedAttributesEnumerator != null) {
-				orderedAttributesEnumerator = null;
+			if (orderedAttributesPos != -1) {
+				orderedAttributesPos = -1;
 				if (isPropertySaved)
 					RestoreProperties ();
 				insideAttribute = false;
@@ -485,13 +481,12 @@ namespace System.Xml
 			if (attributes == null)
 				return false;
 
-			if (orderedAttributesEnumerator == null) {
+			if (orderedAttributesPos == -1)
 				SaveProperties ();
-				orderedAttributesEnumerator = orderedAttributes.GetEnumerator ();
-			}
 
-			if (orderedAttributesEnumerator.MoveNext ()) {
-				string name = orderedAttributesEnumerator.Current as string;
+
+			if (++orderedAttributesPos < orderedAttributes.Count) {
+				string name = orderedAttributes [orderedAttributesPos] as string;
 				string value = attributes [name] as string;
 				SetProperties (
 					XmlNodeType.Attribute, // nodeType
@@ -781,7 +776,7 @@ namespace System.Xml
 
 		private Hashtable attributes;
 		private ArrayList orderedAttributes;
-		private IEnumerator orderedAttributesEnumerator;
+		private int orderedAttributesPos = -1;
 
 		private bool returnEntityReference;
 		private string entityReferenceName;
@@ -849,7 +844,7 @@ namespace System.Xml
 			attributes = new Hashtable ();
 			attributeString = String.Empty;
 			orderedAttributes = new ArrayList ();
-			orderedAttributesEnumerator = null;
+			orderedAttributesPos = -1;
 
 			returnEntityReference = false;
 			entityReferenceName = String.Empty;
@@ -1012,7 +1007,7 @@ namespace System.Xml
 				orderedAttributes.Clear ();
 			}
 
-			orderedAttributesEnumerator = null;
+			orderedAttributesPos = -1;
 		}
 
 		private int PeekChar ()

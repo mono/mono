@@ -821,10 +821,8 @@ namespace System.Xml
 
 		public override void WriteWhitespace (string ws)
 		{
-			foreach (char c in ws) {
-				if ((c != ' ') && (c != '\t') && (c != '\r') && (c != '\n'))
-					throw new ArgumentException ();
-			}
+			if (!XmlChar.IsWhitespace (ws))
+				throw new ArgumentException ("Invalid Whitespace");
 
 			CheckState ();
 

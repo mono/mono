@@ -45,6 +45,7 @@ System.Xml/DTDObjectModel.cs
 System.Xml/DTDValidatingReader.cs
 System.Xml/EntityHandling.cs
 System.Xml/Formatting.cs
+System.Xml/HighWaterStack.cs
 System.Xml/IXmlLineInfo.cs
 System.Xml/NameTable.cs
 System.Xml/ReadState.cs
