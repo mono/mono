@@ -32,13 +32,13 @@ public abstract class Decoder
 {
 
 	// Constructor.
-	protected Decoder() {}
+	protected Decoder () {}
 
 	// Get the number of characters needed to decode a buffer.
-	public abstract int GetCharCount(byte[] bytes, int index, int count);
+	public abstract int GetCharCount (byte[] bytes, int index, int count);
 
 	// Get the characters that result from decoding a buffer.
-	public abstract int GetChars(byte[] bytes, int byteIndex, int byteCount,
+	public abstract int GetChars (byte[] bytes, int byteIndex, int byteCount,
 								 char[] chars, int charIndex);
 
 }; // class Decoder

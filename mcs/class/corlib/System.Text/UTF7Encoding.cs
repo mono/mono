@@ -84,130 +84,100 @@ class UTF7Encoding : Encoding
 	};
 
 	// Constructors.
-	public UTF7Encoding()
-			: base(UTF7_CODE_PAGE)
-			{
-				allowOptionals = false;
-			}
-	public UTF7Encoding(bool allowOptionals)
-			: base(UTF7_CODE_PAGE)
-			{
-				this.allowOptionals = allowOptionals;
-			}
+	public UTF7Encoding ()
+	: base (UTF7_CODE_PAGE)
+	{
+		allowOptionals = false;
+	}
+	public UTF7Encoding (bool allowOptionals)
+	: base (UTF7_CODE_PAGE)
+	{
+		this.allowOptionals = allowOptionals;
+	}
 
 	// Internal version of "GetByteCount" that can handle
 	// a rolling state between calls.
 	private static int InternalGetByteCount
 				(char[] chars, int index, int count, bool flush,
 				 int leftOver, bool allowOptionals)
-			{
-				// Validate the parameters.
-				if(chars == null)
-				{
-					throw new ArgumentNullException("chars");
-				}
-				if(index < 0 || index > chars.Length)
-				{
-					throw new ArgumentOutOfRangeException
-						("index", _("ArgRange_Array"));
-				}
-				if(count < 0 || count > (chars.Length - index))
-				{
-					throw new ArgumentOutOfRangeException
-						("count", _("ArgRange_Array"));
-				}
+	{
+		// Validate the parameters.
+		if (chars == null) {
+			throw new ArgumentNullException ("chars");
+		}
+		if (index < 0 || index > chars.Length) {
+			throw new ArgumentOutOfRangeException ("index", _("ArgRange_Array"));
+		}
+		if (count < 0 || count > (chars.Length - index)) {
+			throw new ArgumentOutOfRangeException ("count", _("ArgRange_Array"));
+		}
 
-				// Determine the length of the output.
-				int length = 0;
-				int leftOverSize = (leftOver >> 8);
-				byte[] rules = encodingRules;
-				int ch, rule;
-				while(count > 0)
-				{
-					ch = (int)(chars[index++]);
-					--count;
-					if(ch < 0x0080)
-					{
-						rule = rules[ch];
-					}
-					else
-					{
-						rule = 0;
-					}
-					switch(rule)
-					{
-						case 0:
-						{
-							// Handle characters that must be fully encoded.
-							if(leftOverSize == 0)
-							{
-								++length;
-							}
-							leftOverSize += 16;
-							while(leftOverSize >= 6)
-							{
-								++length;
-								leftOverSize -= 6;
-							}
-						}
-						break;
-
-						case 1:
-						{
-							// The character is encoded as itself.
-							if(leftOverSize != 0)
-							{
-								// Flush the previous encoded sequence.
-								length += 2;
-								leftOverSize = 0;
-							}
-							++length;
-						}
-						break;
-
-						case 2:
-						{
-							// The character may need to be encoded.
-							if(allowOptionals)
-							{
-								goto case 1;
-							}
-							else
-							{
-								goto case 0;
-							}
-						}
-						// Not reached.
-
-						case 3:
-						{
-							// Encode the plus sign as "+-".
-							if(leftOverSize != 0)
-							{
-								// Flush the previous encoded sequence.
-								length += 2;
-								leftOverSize = 0;
-							}
-							length += 2;
-						}
-						break;
-					}
-				}
-				if(leftOverSize != 0 && flush)
-				{
-					length += 2;
-				}
-
-				// Return the length to the caller.
-				return length;
+		// Determine the length of the output.
+		int length = 0;
+		int leftOverSize = (leftOver >> 8);
+		byte[] rules = encodingRules;
+		int ch, rule;
+		while (count > 0) {
+			ch = (int)(chars[index++]);
+			--count;
+			if (ch < 0x0080) {
+				rule = rules[ch];
+			} else {
+				rule = 0;
 			}
+			switch (rule) {
+			case 0:
+				// Handle characters that must be fully encoded.
+				if (leftOverSize == 0) {
+					++length;
+				}
+				leftOverSize += 16;
+				while (leftOverSize >= 6) {
+					++length;
+					leftOverSize -= 6;
+				}
+				break;
+			case 1:
+				// The character is encoded as itself.
+				if (leftOverSize != 0) {
+					// Flush the previous encoded sequence.
+					length += 2;
+					leftOverSize = 0;
+				}
+				++length;
+				break;
+			case 2:
+				// The character may need to be encoded.
+				if (allowOptionals) {
+					goto case 1;
+				} else {
+					goto case 0;
+				}
+			// Not reached.
+			case 3:
+				// Encode the plus sign as "+-".
+				if (leftOverSize != 0) {
+					// Flush the previous encoded sequence.
+					length += 2;
+					leftOverSize = 0;
+				}
+				length += 2;
+				break;
+			}
+		}
+		if (leftOverSize != 0 && flush) {
+			length += 2;
+		}
+
+		// Return the length to the caller.
+		return length;
+	}
 
 	// Get the number of bytes needed to encode a character buffer.
-	public override int GetByteCount(char[] chars, int index, int count)
-			{
-				return InternalGetByteCount(chars, index, count,
-											true, 0, allowOptionals);
-			}
+	public override int GetByteCount (char[] chars, int index, int count)
+	{
+		return InternalGetByteCount (chars, index, count, true, 0, allowOptionals);
+	}
 
 	// Internal version of "GetBytes" that can handle a
 	// rolling state between calls.
@@ -215,527 +185,403 @@ class UTF7Encoding : Encoding
 				(char[] chars, int charIndex, int charCount,
 				 byte[] bytes, int byteIndex, bool flush,
 				 ref int leftOver, bool allowOptionals)
-			{
-				// Validate the parameters.
-				if(chars == null)
-				{
-					throw new ArgumentNullException("chars");
-				}
-				if(bytes == null)
-				{
-					throw new ArgumentNullException("bytes");
-				}
-				if(charIndex < 0 || charIndex > chars.Length)
-				{
-					throw new ArgumentOutOfRangeException
-						("charIndex", _("ArgRange_Array"));
-				}
-				if(charCount < 0 || charCount > (chars.Length - charIndex))
-				{
-					throw new ArgumentOutOfRangeException
-						("charCount", _("ArgRange_Array"));
-				}
-				if(byteIndex < 0 || byteIndex > bytes.Length)
-				{
-					throw new ArgumentOutOfRangeException
-						("byteIndex", _("ArgRange_Array"));
-				}
+	{
+		// Validate the parameters.
+		if (chars == null) {
+			throw new ArgumentNullException ("chars");
+		}
+		if (bytes == null) {
+			throw new ArgumentNullException ("bytes");
+		}
+		if (charIndex < 0 || charIndex > chars.Length) {
+			throw new ArgumentOutOfRangeException ("charIndex", _("ArgRange_Array"));
+		}
+		if (charCount < 0 || charCount > (chars.Length - charIndex)) {
+			throw new ArgumentOutOfRangeException ("charCount", _("ArgRange_Array"));
+		}
+		if (byteIndex < 0 || byteIndex > bytes.Length) {
+			throw new ArgumentOutOfRangeException ("byteIndex", _("ArgRange_Array"));
+		}
 
-				// Convert the characters.
-				int posn = byteIndex;
-				int byteLength = bytes.Length;
-				int leftOverSize = (leftOver >> 8);
-				int leftOverBits = (leftOver & 0xFF);
-				byte[] rules = encodingRules;
-				String base64 = base64Chars;
-				int ch, rule;
-				while(charCount > 0)
-				{
-					ch = (int)(chars[charIndex++]);
-					--charCount;
-					if(ch < 0x0080)
-					{
-						rule = rules[ch];
+		// Convert the characters.
+		int posn = byteIndex;
+		int byteLength = bytes.Length;
+		int leftOverSize = (leftOver >> 8);
+		int leftOverBits = (leftOver & 0xFF);
+		byte[] rules = encodingRules;
+		String base64 = base64Chars;
+		int ch, rule;
+		while (charCount > 0) {
+			ch = (int)(chars[charIndex++]);
+			--charCount;
+			if (ch < 0x0080) {
+				rule = rules[ch];
+			} else {
+				rule = 0;
+			}
+			switch (rule) {
+			case 0:
+				// Handle characters that must be fully encoded.
+				if (leftOverSize == 0) {
+					if (posn >= byteLength) {
+						throw new ArgumentException (_("Arg_InsufficientSpace"), "bytes");
 					}
-					else
-					{
-						rule = 0;
-					}
-					switch(rule)
-					{
-						case 0:
-						{
-							// Handle characters that must be fully encoded.
-							if(leftOverSize == 0)
-							{
-								if(posn >= byteLength)
-								{
-									throw new ArgumentException
-										(_("Arg_InsufficientSpace"), "bytes");
-								}
-								bytes[posn++] = (byte)'+';
-							}
-							leftOverBits = ((leftOverBits << 16) | ch);
-							leftOverSize += 16;
-							while(leftOverSize >= 6)
-							{
-								if(posn >= byteLength)
-								{
-									throw new ArgumentException
-										(_("Arg_InsufficientSpace"), "bytes");
-								}
-								leftOverSize -= 6;
-								bytes[posn++] = (byte)(base64
-									[leftOverBits >> leftOverSize]);
-								leftOverBits &= ((1 << leftOverSize) - 1);
-							}
-						}
-						break;
-
-						case 1:
-						{
-							// The character is encoded as itself.
-							if(leftOverSize != 0)
-							{
-								// Flush the previous encoded sequence.
-								if((posn + 2) > byteLength)
-								{
-									throw new ArgumentException
-										(_("Arg_InsufficientSpace"), "bytes");
-								}
-								bytes[posn++] = (byte)(base64
-									[leftOverBits << (6 - leftOverSize)]);
-								bytes[posn++] = (byte)'-';
-								leftOverSize = 0;
-								leftOverBits = 0;
-							}
-							if(posn >= byteLength)
-							{
-								throw new ArgumentException
-									(_("Arg_InsufficientSpace"), "bytes");
-							}
-							bytes[posn++] = (byte)ch;
-						}
-						break;
-
-						case 2:
-						{
-							// The character may need to be encoded.
-							if(allowOptionals)
-							{
-								goto case 1;
-							}
-							else
-							{
-								goto case 0;
-							}
-						}
-						// Not reached.
-
-						case 3:
-						{
-							// Encode the plus sign as "+-".
-							if(leftOverSize != 0)
-							{
-								// Flush the previous encoded sequence.
-								if((posn + 2) > byteLength)
-								{
-									throw new ArgumentException
-										(_("Arg_InsufficientSpace"), "bytes");
-								}
-								bytes[posn++] = (byte)(base64
-									[leftOverBits << (6 - leftOverSize)]);
-								bytes[posn++] = (byte)'-';
-								leftOverSize = 0;
-								leftOverBits = 0;
-							}
-							if((posn + 2) > byteLength)
-							{
-								throw new ArgumentException
-									(_("Arg_InsufficientSpace"), "bytes");
-							}
-							bytes[posn++] = (byte)'+';
-							bytes[posn++] = (byte)'-';
-						}
-						break;
-					}
+					bytes[posn++] = (byte)'+';
 				}
-				if(leftOverSize != 0 && flush)
-				{
-					if((posn + 2) > byteLength)
-					{
-						throw new ArgumentException
-							(_("Arg_InsufficientSpace"), "bytes");
+				leftOverBits = ((leftOverBits << 16) | ch);
+				leftOverSize += 16;
+				while (leftOverSize >= 6) {
+					if (posn >= byteLength) {
+						throw new ArgumentException (_("Arg_InsufficientSpace"), "bytes");
 					}
-					bytes[posn++] = (byte)(base64
-						[leftOverBits << (6 - leftOverSize)]);
+					leftOverSize -= 6;
+					bytes[posn++] = (byte)(base64 [leftOverBits >> leftOverSize]);
+					leftOverBits &= ((1 << leftOverSize) - 1);
+				}
+				break;
+			case 1:
+				// The character is encoded as itself.
+				if (leftOverSize != 0) {
+					// Flush the previous encoded sequence.
+					if ((posn + 2) > byteLength) {
+						throw new ArgumentException (_("Arg_InsufficientSpace"), "bytes");
+					}
+					bytes[posn++] = (byte)(base64 [leftOverBits << (6 - leftOverSize)]);
 					bytes[posn++] = (byte)'-';
 					leftOverSize = 0;
 					leftOverBits = 0;
 				}
-				leftOver = ((leftOverSize << 8) | leftOverBits);
-
-				// Return the length to the caller.
-				return posn - byteIndex;
+				if (posn >= byteLength) {
+					throw new ArgumentException (_("Arg_InsufficientSpace"), "bytes");
+				}
+				bytes[posn++] = (byte)ch;
+				break;
+			case 2:
+				// The character may need to be encoded.
+				if (allowOptionals) {
+					goto case 1;
+				} else {
+					goto case 0;
+				}
+				// Not reached.
+			case 3:
+				// Encode the plus sign as "+-".
+				if (leftOverSize != 0) {
+					// Flush the previous encoded sequence.
+					if ((posn + 2) > byteLength) {
+						throw new ArgumentException (_("Arg_InsufficientSpace"), "bytes");
+					}
+					bytes[posn++] = (byte)(base64 [leftOverBits << (6 - leftOverSize)]);
+					bytes[posn++] = (byte)'-';
+					leftOverSize = 0;
+					leftOverBits = 0;
+				}
+				if ((posn + 2) > byteLength) {
+					throw new ArgumentException (_("Arg_InsufficientSpace"), "bytes");
+				}
+				bytes[posn++] = (byte)'+';
+				bytes[posn++] = (byte)'-';
+				break;
 			}
+		}
+		if (leftOverSize != 0 && flush) {
+			if ((posn + 2) > byteLength) {
+				throw new ArgumentException (_("Arg_InsufficientSpace"), "bytes");
+			}
+			bytes[posn++] = (byte)(base64 [leftOverBits << (6 - leftOverSize)]);
+			bytes[posn++] = (byte)'-';
+			leftOverSize = 0;
+			leftOverBits = 0;
+		}
+		leftOver = ((leftOverSize << 8) | leftOverBits);
+
+		// Return the length to the caller.
+		return posn - byteIndex;
+	}
 
 	// Get the bytes that result from encoding a character buffer.
-	public override int GetBytes(char[] chars, int charIndex, int charCount,
+	public override int GetBytes (char[] chars, int charIndex, int charCount,
 								 byte[] bytes, int byteIndex)
-			{
-				int leftOver = 0;
-				return InternalGetBytes(chars, charIndex, charCount,
-									    bytes, byteIndex, true,
-										ref leftOver, allowOptionals);
-			}
+	{
+		int leftOver = 0;
+		return InternalGetBytes (chars, charIndex, charCount, bytes, byteIndex, true,
+								ref leftOver, allowOptionals);
+	}
 
 	// Internal version of "GetCharCount" that can handle
 	// a rolling state between call.s
 	private static int InternalGetCharCount
 					(byte[] bytes, int index, int count, int leftOver)
-			{
-				// Validate the parameters.
-				if(bytes == null)
-				{
-					throw new ArgumentNullException("bytes");
-				}
-				if(index < 0 || index > bytes.Length)
-				{
-					throw new ArgumentOutOfRangeException
-						("index", _("ArgRange_Array"));
-				}
-				if(count < 0 || count > (bytes.Length - index))
-				{
-					throw new ArgumentOutOfRangeException
-						("count", _("ArgRange_Array"));
-				}
+	{
+		// Validate the parameters.
+		if (bytes == null) {
+			throw new ArgumentNullException ("bytes");
+		}
+		if (index < 0 || index > bytes.Length) {
+			throw new ArgumentOutOfRangeException ("index", _("ArgRange_Array"));
+		}
+		if (count < 0 || count > (bytes.Length - index)) {
+			throw new ArgumentOutOfRangeException ("count", _("ArgRange_Array"));
+		}
 
-				// Determine the length of the result.
-				int length = 0;
-				int byteval, b64value;
-				bool normal = ((leftOver & 0x01000000) == 0);
-				bool prevIsPlus = ((leftOver & 0x02000000) != 0);
-				int leftOverSize = ((leftOver >> 16) & 0xFF);
-				sbyte[] base64 = base64Values;
-				while(count > 0)
-				{
-					byteval = (int)(bytes[index++]);
-					--count;
-					if(normal)
-					{
-						if(byteval != '+')
-						{
-							// Directly-encoded character.
-							++length;
-						}
-						else
-						{
-							// Start of a base64-encoded character.
-							normal = false;
-							prevIsPlus = true;
-						}
-					}
-					else
-					{
-						// Process the next byte in a base64 sequence.
-						if(byteval == (int)'-')
-						{
-							// End of a base64 sequence.
-							if(prevIsPlus || leftOverSize > 0)
-							{
-								++length;
-								leftOverSize = 0;
-							}
-							normal = true;
-						}
-						else if((b64value = base64[byteval]) != -1)
-						{
-							// Extra character in a base64 sequence.
-							leftOverSize += 6;
-							if(leftOverSize >= 16)
-							{
-								++length;
-								leftOverSize -= 16;
-							}
-						}
-						else
-						{
-							// Normal character terminating a base64 sequence.
-							if(leftOverSize > 0)
-							{
-								++length;
-								leftOverSize = 0;
-							}
-							++length;
-							normal = true;
-						}
-						prevIsPlus = false;
-					}
+		// Determine the length of the result.
+		int length = 0;
+		int byteval, b64value;
+		bool normal = ((leftOver & 0x01000000) == 0);
+		bool prevIsPlus = ((leftOver & 0x02000000) != 0);
+		int leftOverSize = ((leftOver >> 16) & 0xFF);
+		sbyte[] base64 = base64Values;
+		while (count > 0) {
+			byteval = (int)(bytes[index++]);
+			--count;
+			if (normal) {
+				if (byteval != '+') {
+					// Directly-encoded character.
+					++length;
+				} else {
+					// Start of a base64-encoded character.
+					normal = false;
+					prevIsPlus = true;
 				}
-
-				// Return the final length to the caller.
-				return length;
+			} else {
+				// Process the next byte in a base64 sequence.
+				if (byteval == (int)'-') {
+					// End of a base64 sequence.
+					if (prevIsPlus || leftOverSize > 0) {
+						++length;
+						leftOverSize = 0;
+					}
+					normal = true;
+				} else if ((b64value = base64[byteval]) != -1) {
+					// Extra character in a base64 sequence.
+					leftOverSize += 6;
+					if (leftOverSize >= 16) {
+						++length;
+						leftOverSize -= 16;
+					}
+				} else {
+					// Normal character terminating a base64 sequence.
+					if (leftOverSize > 0) {
+						++length;
+						leftOverSize = 0;
+					}
+					++length;
+					normal = true;
+				}
+				prevIsPlus = false;
 			}
+		}
+
+		// Return the final length to the caller.
+		return length;
+	}
 
 	// Get the number of characters needed to decode a byte buffer.
-	public override int GetCharCount(byte[] bytes, int index, int count)
-			{
-				return InternalGetCharCount(bytes, index, count, 0);
-			}
+	public override int GetCharCount (byte[] bytes, int index, int count)
+	{
+		return InternalGetCharCount (bytes, index, count, 0);
+	}
 
 	// Internal version of "GetChars" that can handle a
 	// rolling state between calls.
-	private static int InternalGetChars
-				(byte[] bytes, int byteIndex, int byteCount,
+	private static int InternalGetChars (byte[] bytes, int byteIndex, int byteCount,
 				 char[] chars, int charIndex, ref int leftOver)
-			{
-				// Validate the parameters.
-				if(bytes == null)
-				{
-					throw new ArgumentNullException("bytes");
-				}
-				if(chars == null)
-				{
-					throw new ArgumentNullException("chars");
-				}
-				if(byteIndex < 0 || byteIndex > bytes.Length)
-				{
-					throw new ArgumentOutOfRangeException
-						("byteIndex", _("ArgRange_Array"));
-				}
-				if(byteCount < 0 || byteCount > (bytes.Length - byteIndex))
-				{
-					throw new ArgumentOutOfRangeException
-						("byteCount", _("ArgRange_Array"));
-				}
-				if(charIndex < 0 || charIndex > chars.Length)
-				{
-					throw new ArgumentOutOfRangeException
-						("charIndex", _("ArgRange_Array"));
-				}
+	{
+		// Validate the parameters.
+		if (bytes == null) {
+			throw new ArgumentNullException ("bytes");
+		}
+		if (chars == null) {
+			throw new ArgumentNullException ("chars");
+		}
+		if (byteIndex < 0 || byteIndex > bytes.Length) {
+			throw new ArgumentOutOfRangeException ("byteIndex", _("ArgRange_Array"));
+		}
+		if (byteCount < 0 || byteCount > (bytes.Length - byteIndex)) {
+			throw new ArgumentOutOfRangeException ("byteCount", _("ArgRange_Array"));
+		}
+		if (charIndex < 0 || charIndex > chars.Length) {
+			throw new ArgumentOutOfRangeException ("charIndex", _("ArgRange_Array"));
+		}
 
-				// Convert the bytes into characters.
-				int posn = charIndex;
-				int charLength = chars.Length;
-				int byteval, b64value;
-				bool normal = ((leftOver & 0x01000000) == 0);
-				bool prevIsPlus = ((leftOver & 0x02000000) != 0);
-				int leftOverSize = ((leftOver >> 16) & 0xFF);
-				int leftOverBits = (leftOver & 0xFFFF);
-				sbyte[] base64 = base64Values;
-				while(byteCount > 0)
-				{
-					byteval = (int)(bytes[byteIndex++]);
-					--byteCount;
-					if(normal)
-					{
-						if(byteval != '+')
-						{
-							// Directly-encoded character.
-							if(posn >= charLength)
-							{
-								throw new ArgumentException
-									(_("Arg_InsufficientSpace"), "chars");
-							}
-							chars[posn++] = (char)byteval;
-						}
-						else
-						{
-							// Start of a base64-encoded character.
-							normal = false;
-							prevIsPlus = true;
-						}
+		// Convert the bytes into characters.
+		int posn = charIndex;
+		int charLength = chars.Length;
+		int byteval, b64value;
+		bool normal = ((leftOver & 0x01000000) == 0);
+		bool prevIsPlus = ((leftOver & 0x02000000) != 0);
+		int leftOverSize = ((leftOver >> 16) & 0xFF);
+		int leftOverBits = (leftOver & 0xFFFF);
+		sbyte[] base64 = base64Values;
+		while (byteCount > 0) {
+			byteval = (int)(bytes[byteIndex++]);
+			--byteCount;
+			if (normal) {
+				if (byteval != '+') {
+					// Directly-encoded character.
+					if (posn >= charLength) {
+						throw new ArgumentException (_("Arg_InsufficientSpace"), "chars");
 					}
-					else
-					{
-						// Process the next byte in a base64 sequence.
-						if(byteval == (int)'-')
-						{
-							// End of a base64 sequence.
-							if(prevIsPlus)
-							{
-								if(posn >= charLength)
-								{
-									throw new ArgumentException
-										(_("Arg_InsufficientSpace"), "chars");
-								}
-								chars[posn++] = '+';
-							}
-							else if(leftOverSize > 0)
-							{
-								if(posn >= charLength)
-								{
-									throw new ArgumentException
-										(_("Arg_InsufficientSpace"), "chars");
-								}
-								chars[posn++] =
-									(char)(leftOverBits << (16 - leftOverSize));
-								leftOverSize = 0;
-								leftOverBits = 0;
-							}
-							normal = true;
-						}
-						else if((b64value = base64[byteval]) != -1)
-						{
-							// Extra character in a base64 sequence.
-							leftOverBits = (leftOverBits << 6) | b64value;
-							leftOverSize += 6;
-							if(leftOverSize >= 16)
-							{
-								if(posn >= charLength)
-								{
-									throw new ArgumentException
-										(_("Arg_InsufficientSpace"), "chars");
-								}
-								leftOverSize -= 16;
-								chars[posn++] =
-									(char)(leftOverBits >> leftOverSize);
-								leftOverBits &= ((1 << leftOverSize) - 1);
-							}
-						}
-						else
-						{
-							// Normal character terminating a base64 sequence.
-							if(leftOverSize > 0)
-							{
-								if(posn >= charLength)
-								{
-									throw new ArgumentException
-										(_("Arg_InsufficientSpace"), "chars");
-								}
-								chars[posn++] =
-									(char)(leftOverBits << (16 - leftOverSize));
-								leftOverSize = 0;
-								leftOverBits = 0;
-							}
-							if(posn >= charLength)
-							{
-								throw new ArgumentException
-									(_("Arg_InsufficientSpace"), "chars");
-							}
-							chars[posn++] = (char)byteval;
-							normal = true;
-						}
-						prevIsPlus = false;
-					}
+					chars[posn++] = (char)byteval;
+				} else {
+					// Start of a base64-encoded character.
+					normal = false;
+					prevIsPlus = true;
 				}
-				leftOver = (leftOverBits | (leftOverSize << 16) |
-						    (normal ? 0 : 0x01000000) |
-						    (prevIsPlus ? 0x02000000 : 0));
-
-				// Return the final length to the caller.
-				return posn - charIndex;
+			} else {
+				// Process the next byte in a base64 sequence.
+				if (byteval == (int)'-') {
+					// End of a base64 sequence.
+					if (prevIsPlus) {
+						if (posn >= charLength) {
+							throw new ArgumentException (_("Arg_InsufficientSpace"), "chars");
+						}
+						chars[posn++] = '+';
+					} else if (leftOverSize > 0) {
+						if (posn >= charLength) {
+							throw new ArgumentException (_("Arg_InsufficientSpace"), "chars");
+						}
+						chars[posn++] = (char)(leftOverBits << (16 - leftOverSize));
+						leftOverSize = 0;
+						leftOverBits = 0;
+					}
+					normal = true;
+				} else if ((b64value = base64[byteval]) != -1) {
+					// Extra character in a base64 sequence.
+					leftOverBits = (leftOverBits << 6) | b64value;
+					leftOverSize += 6;
+					if (leftOverSize >= 16) {
+						if (posn >= charLength) {
+							throw new ArgumentException (_("Arg_InsufficientSpace"), "chars");
+						}
+						leftOverSize -= 16;
+						chars[posn++] = (char)(leftOverBits >> leftOverSize);
+						leftOverBits &= ((1 << leftOverSize) - 1);
+					}
+				} else {
+					// Normal character terminating a base64 sequence.
+					if (leftOverSize > 0) {
+						if (posn >= charLength) {
+							throw new ArgumentException (_("Arg_InsufficientSpace"), "chars");
+						}
+						chars[posn++] = (char)(leftOverBits << (16 - leftOverSize));
+						leftOverSize = 0;
+						leftOverBits = 0;
+					}
+					if (posn >= charLength) {
+						throw new ArgumentException (_("Arg_InsufficientSpace"), "chars");
+					}
+					chars[posn++] = (char)byteval;
+					normal = true;
+				}
+				prevIsPlus = false;
 			}
+		}
+		leftOver = (leftOverBits | (leftOverSize << 16) |
+				    (normal ? 0 : 0x01000000) |
+				    (prevIsPlus ? 0x02000000 : 0));
+
+		// Return the final length to the caller.
+		return posn - charIndex;
+	}
 
 	// Get the characters that result from decoding a byte buffer.
-	public override int GetChars(byte[] bytes, int byteIndex, int byteCount,
+	public override int GetChars (byte[] bytes, int byteIndex, int byteCount,
 								 char[] chars, int charIndex)
-			{
-				int leftOver = 0;
-				return InternalGetChars(bytes, byteIndex, byteCount,
-										chars, charIndex, ref leftOver);
-			}
+	{
+		int leftOver = 0;
+		return InternalGetChars (bytes, byteIndex, byteCount, chars, charIndex, ref leftOver);
+	}
 
 	// Get the maximum number of bytes needed to encode a
 	// specified number of characters.
-	public override int GetMaxByteCount(int charCount)
-			{
-				if(charCount < 0)
-				{
-					throw new ArgumentOutOfRangeException
-						("charCount", _("ArgRange_NonNegative"));
-				}
-				return charCount * 5;
-			}
+	public override int GetMaxByteCount (int charCount)
+	{
+		if (charCount < 0) {
+			throw new ArgumentOutOfRangeException ("charCount", _("ArgRange_NonNegative"));
+		}
+		return charCount * 5;
+	}
 
 	// Get the maximum number of characters needed to decode a
 	// specified number of bytes.
-	public override int GetMaxCharCount(int byteCount)
-			{
-				if(byteCount < 0)
-				{
-					throw new ArgumentOutOfRangeException
-						("byteCount", _("ArgRange_NonNegative"));
-				}
-				return byteCount;
-			}
+	public override int GetMaxCharCount (int byteCount)
+	{
+		if (byteCount < 0) {
+			throw new ArgumentOutOfRangeException ("byteCount", _("ArgRange_NonNegative"));
+		}
+		return byteCount;
+	}
 
 	// Get a UTF7-specific decoder that is attached to this instance.
-	public override Decoder GetDecoder()
-			{
-				return new UTF7Decoder();
-			}
+	public override Decoder GetDecoder ()
+	{
+		return new UTF7Decoder ();
+	}
 
 	// Get a UTF7-specific encoder that is attached to this instance.
-	public override Encoder GetEncoder()
-			{
-				return new UTF7Encoder(allowOptionals);
-			}
+	public override Encoder GetEncoder ()
+	{
+		return new UTF7Encoder (allowOptionals);
+	}
 
 #if !ECMA_COMPAT
 
 	// Get the mail body name for this encoding.
 	public override String BodyName
-			{
-				get
-				{
-					return "utf-7";
-				}
-			}
+	{
+		get {
+			return "utf-7";
+		}
+	}
 
 	// Get the human-readable name for this encoding.
 	public override String EncodingName
-			{
-				get
-				{
-					return "Unicode (UTF-7)";
-				}
-			}
+	{
+		get {
+			return "Unicode (UTF-7)";
+		}
+	}
 
 	// Get the mail agent header name for this encoding.
 	public override String HeaderName
-			{
-				get
-				{
-					return "utf-7";
-				}
-			}
+	{
+		get {
+			return "utf-7";
+		}
+	}
 
 	// Determine if this encoding can be displayed in a mail/news agent.
 	public override bool IsMailNewsDisplay
-			{
-				get
-				{
-					return true;
-				}
-			}
+	{
+		get {
+			return true;
+		}
+	}
 
 	// Determine if this encoding can be saved from a mail/news agent.
 	public override bool IsMailNewsSave
-			{
-				get
-				{
-					return true;
-				}
-			}
+	{
+		get {
+			return true;
+		}
+	}
 
 	// Get the IANA-preferred Web name for this encoding.
 	public override String WebName
-			{
-				get
-				{
-					return "utf-7";
-				}
-			}
+	{
+		get {
+			return "utf-7";
+		}
+	}
 
 	// Get the Windows code page represented by this object.
 	public override int WindowsCodePage
-			{
-				get
-				{
-					return UnicodeEncoding.UNICODE_CODE_PAGE;
-				}
-			}
+	{
+		get {
+			return UnicodeEncoding.UNICODE_CODE_PAGE;
+		}
+	}
 
 #endif // !ECMA_COMPAT
 
@@ -746,23 +592,22 @@ class UTF7Encoding : Encoding
 		private int leftOver;
 
 		// Constructor.
-		public UTF7Decoder()
-				{
-					leftOver = 0;
-				}
+		public UTF7Decoder ()
+		{
+			leftOver = 0;
+		}
 
 		// Override inherited methods.
-		public override int GetCharCount(byte[] bytes, int index, int count)
-				{
-					return InternalGetCharCount(bytes, index, count, leftOver);
-				}
-		public override int GetChars(byte[] bytes, int byteIndex,
+		public override int GetCharCount (byte[] bytes, int index, int count)
+		{
+			return InternalGetCharCount (bytes, index, count, leftOver);
+		}
+		public override int GetChars (byte[] bytes, int byteIndex,
 									 int byteCount, char[] chars,
 									 int charIndex)
-				{
-					return InternalGetChars(bytes, byteIndex, byteCount,
-											chars, charIndex, ref leftOver);
-				}
+		{
+			return InternalGetChars (bytes, byteIndex, byteCount, chars, charIndex, ref leftOver);
+		}
 
 	} // class UTF7Decoder
 
@@ -773,27 +618,27 @@ class UTF7Encoding : Encoding
 		private int leftOver;
 
 		// Constructor.
-		public UTF7Encoder(bool allowOptionals)
-				{
-					this.allowOptionals = allowOptionals;
-					this.leftOver = 0;
-				}
+		public UTF7Encoder (bool allowOptionals)
+		{
+			this.allowOptionals = allowOptionals;
+			this.leftOver = 0;
+		}
 
 		// Override inherited methods.
-		public override int GetByteCount(char[] chars, int index,
+		public override int GetByteCount (char[] chars, int index,
 										 int count, bool flush)
-				{
-					return InternalGetByteCount
-						(chars, index, count, flush, leftOver, allowOptionals);
-				}
-		public override int GetBytes(char[] chars, int charIndex,
+		{
+			return InternalGetByteCount
+				(chars, index, count, flush, leftOver, allowOptionals);
+		}
+		public override int GetBytes (char[] chars, int charIndex,
 									 int charCount, byte[] bytes,
 									 int byteIndex, bool flush)
-				{
-					return InternalGetBytes(chars, charIndex, charCount,
-											bytes, byteIndex, flush,
-											ref leftOver, allowOptionals);
-				}
+		{
+			return InternalGetBytes (chars, charIndex, charCount,
+									bytes, byteIndex, flush,
+									ref leftOver, allowOptionals);
+		}
 
 	} // class UTF7Encoder
 
