@@ -1,3 +1,7 @@
+2005-03-23  Jackson Harper  <jackson@ximian.com>
+
+	* TabControl.cs: Fix typo, emilinates an unneeded expose event.
+
 2005-03-22  Jonathan Chambers  <jonathan.chambers@ansys.com>
 
 	* CategoryGridEntry.cs: Added

@@ -476,7 +476,7 @@ namespace System.Windows.Forms {
 
 		private void MouseUpHandler (object sender, MouseEventArgs e)
 		{
-			if (ShowSlider && (left_slider_state != ButtonState.Pushed || right_slider_state != ButtonState.Pushed)) {
+			if (ShowSlider && (left_slider_state == ButtonState.Pushed || right_slider_state == ButtonState.Pushed)) {
 				Rectangle invalid;
 				if (left_slider_state == ButtonState.Pushed)
 					invalid = ThemeEngine.Current.GetTabControlLeftScrollRect (this);
