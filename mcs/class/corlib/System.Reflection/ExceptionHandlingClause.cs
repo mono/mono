@@ -35,56 +35,58 @@ using System.Runtime.InteropServices;
 namespace System.Reflection {
 
 	public sealed class ExceptionHandlingClause {
+		#region Sync with reflection.h
+		internal Type catch_type;
+		internal int filter_offset;
+		internal ExceptionHandlingClauseFlags flags;
+		internal int try_offset;
+		internal int try_length;
+		internal int handler_offset;
+		internal int handler_length;
+		#endregion
 
 		internal ExceptionHandlingClause () {
 		}
 
-		[MonoTODO]
 		public Type CatchType {
 			get {
-				throw new NotImplementedException ();
+				return catch_type;
 			}
 		}
 
-		[MonoTODO]
 		public int FilterOffset {
 			get {
-				throw new NotImplementedException ();
+				return filter_offset;
 			}
 		}
 
-		[MonoTODO]
 		public ExceptionHandlingClauseFlags Flags {
 			get {
-				throw new NotImplementedException ();
+				return flags;
 			}
 		}
 
-		[MonoTODO]
 		public int HandlerLength {
 			get {
-				throw new NotImplementedException ();
+				return handler_length;
 			}
 		}
 
-		[MonoTODO]
 		public int HandlerOffset {
 			get {
-				throw new NotImplementedException ();
+				return handler_offset;
 			}
 		}
 
-		[MonoTODO]
 		public int TryLength {
 			get {
-				throw new NotImplementedException ();
+				return try_length;
 			}
 		}
 
-		[MonoTODO]
 		public int TryOffset {
 			get {
-				throw new NotImplementedException ();
+				return try_offset;
 			}
 		}
 	}
