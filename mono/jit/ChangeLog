@@ -1,3 +1,8 @@
+
+Tue Sep 18 13:19:16 CEST 2001 Paolo Molaro <lupus@ximian.com>
+
+	* testjit.c: better/faster align code. Handle ldloc.s and stloc.s.
+
 2001-09-17  Miguel de Icaza  <miguel@ximian.com>
 
 	* testjit.c (mono_compile_method): Provide better error reporting.
