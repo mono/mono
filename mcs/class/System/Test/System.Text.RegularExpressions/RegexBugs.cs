@@ -79,5 +79,30 @@ namespace MonoTests.System.Text.RegularExpressions
 			Match m = regVar.Match ("{   }");
 			AssertEquals ("BR #01", false, m.Success);
 		}
+
+                [Test]
+                public void RangeIgnoreCase() // bug 45976
+                {
+                        string str = "AAABBBBAAA" ;
+                        AssertEquals("RIC #01", true, Regex.IsMatch(str, @"[A-F]+", RegexOptions.IgnoreCase));
+                        AssertEquals("RIC #02", true, Regex.IsMatch(str, @"[a-f]+", RegexOptions.IgnoreCase));
+                        AssertEquals("RIC #03", true, Regex.IsMatch(str, @"[A-Fa-f]+", RegexOptions.IgnoreCase));
+                        AssertEquals("RIC #04", true, Regex.IsMatch(str, @"[AB]+", RegexOptions.IgnoreCase));
+                        AssertEquals("RIC #05", true, Regex.IsMatch(str, @"[A-B]+", RegexOptions.IgnoreCase));
+
+                        str = "AaaBBBaAa" ;
+                        AssertEquals("RIC #06", true, Regex.IsMatch(str, @"[A-F]+", RegexOptions.IgnoreCase));
+                        AssertEquals("RIC #07", true, Regex.IsMatch(str, @"[a-f]+", RegexOptions.IgnoreCase));
+                        AssertEquals("RIC #08", true, Regex.IsMatch(str, @"[A-Fa-f]+", RegexOptions.IgnoreCase));
+                        AssertEquals("RIC #09", true, Regex.IsMatch(str, @"[AB]+", RegexOptions.IgnoreCase));
+                        AssertEquals("RIC #10", true, Regex.IsMatch(str, @"[A-B]+", RegexOptions.IgnoreCase));
+
+			str = "Aaa[";
+			AssertEquals("RIC #11", true, Regex.IsMatch(str, @"[A-a]+", RegexOptions.IgnoreCase));
+			
+			str = "Ae";
+			AssertEquals("RIC #12", false, Regex.IsMatch(str, @"[A-a]+", RegexOptions.IgnoreCase));
+
+                }
 	}
 }
