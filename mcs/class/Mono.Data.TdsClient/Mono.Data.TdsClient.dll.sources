@@ -1,3 +1,4 @@
+Assembly/AssemblyInfo.cs
 Assembly/Locale.cs
 Mono.Data.TdsClient/TdsCommand.cs
 Mono.Data.TdsClient/TdsConnection.cs
