@@ -9,6 +9,7 @@ Mono.Math/PrimeTestingTest.cs
 Mono.Math/SearchGeneratorTest.cs
 Mono.Security/ASN1ConvertTest.cs
 Mono.Security/StrongNameTest.cs
+Mono.Security.Authenticode/AuthenticodeDeformatterTest.cs
 Mono.Security.Authenticode/PrivateKeyTest.cs
 Mono.Security.Authenticode/SoftwarePublisherCertificateTest.cs
 Mono.Security.Cryptography/ARC4ManagedTest.cs

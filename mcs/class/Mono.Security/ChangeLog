@@ -1,3 +1,8 @@
+2004-09-07  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Mono.Security_test.dll.sources: Added unit tests for Authenticode
+	Deformatter.
+
 2004-07-27 Carlos Guzman Alvarez  <carlosga@telefonica.net>
 
 	* Mono.Security.Protocol.Tls.Handshake.Server/TlsClientKeyExchange.cs:
