@@ -31,8 +31,8 @@ namespace System.Data.OracleClient.Oci {
 
 		#region Constructors
 
-		public OciBindHandle (OciHandle parent, IntPtr newHandle)
-			: base (OciHandleType.Bind, parent, newHandle)
+		public OciBindHandle (OciHandle parent)
+			: base (OciHandleType.Bind, parent, IntPtr.Zero)
 		{
 		}
 

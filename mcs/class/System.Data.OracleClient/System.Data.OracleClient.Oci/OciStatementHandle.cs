@@ -24,17 +24,12 @@ namespace System.Data.OracleClient.Oci {
 	{
 		#region Fields
 
-		OciStatementLanguage language;
-		OciStatementMode mode;
-		OciServiceHandle serviceHandle;
-		OciErrorHandle errorHandle;
-
-		ArrayList values;
-		ArrayList parameters;
-
-		bool disposed = false;
-		bool moreResults;
 		int columnCount;
+		bool disposed = false;
+		OciErrorHandle errorHandle;
+		bool moreResults;
+		OciServiceHandle serviceHandle;
+		ArrayList values;
 	
 		#endregion // Fields
 
@@ -43,9 +38,6 @@ namespace System.Data.OracleClient.Oci {
 		public OciStatementHandle (OciHandle parent, IntPtr handle)
 			: base (OciHandleType.Statement, parent, handle)
 		{
-			parameters = new ArrayList ();
-			language = OciStatementLanguage.NTV;
-			mode = OciStatementMode.Default;
 			moreResults = false;
 		}
 
@@ -62,11 +54,6 @@ namespace System.Data.OracleClient.Oci {
 			set { errorHandle = value; }
 		}
 
-		public OciStatementLanguage Language {
-			get { return language; }
-			set { language = value; }
-		}
-
 		public OciServiceHandle Service {
 			get { return serviceHandle; }
 			set { serviceHandle = value; }
@@ -79,22 +66,6 @@ namespace System.Data.OracleClient.Oci {
 		#endregion // Properties
 
 		#region Methods
-
-		[DllImport ("oci")]
-		static extern int OCIBindByName (IntPtr stmtp,
-						out IntPtr bindpp,
-						IntPtr errhp,
-						string placeholder,
-						int placeh_len,
-						IntPtr valuep,
-						int value_sz,
-						[MarshalAs (UnmanagedType.U4)] OciDataType dty,
-						ref int indp,
-						IntPtr alenp,
-						ushort rcodep,
-						uint maxarr_len,
-						IntPtr curelp,
-						uint mode);
 
 		[DllImport ("oci")]
 		static extern int OCIDescriptorFree (IntPtr descp,
@@ -146,9 +117,9 @@ namespace System.Data.OracleClient.Oci {
 			IntPtr handle = IntPtr.Zero;
 			int status = 0;
 
-			status = OCIParamGet (Handle,
+			status = OCIParamGet (this,
 						OciHandleType.Statement,
-						ErrorHandle.Handle,
+						ErrorHandle,
 						out handle,
 						position + 1);
 
@@ -169,62 +140,6 @@ namespace System.Data.OracleClient.Oci {
 			defineHandle.DefineByPosition (position);
 
 			return defineHandle;
-		}
-
-		public OciBindHandle GetBindHandle (string name, object val, OciDataType type)
-		{
-			IntPtr handle = IntPtr.Zero;
-			IntPtr value = IntPtr.Zero;
-			int indicator = 0;
-
-			string stringValue = val.ToString ();
-			int definedSize = 0;
-			int status = 0;
-
-			if (val == DBNull.Value)
-				indicator = -1;
-			else
-				switch (type) {
-				case OciDataType.Number:
-				case OciDataType.Integer:
-				case OciDataType.Float:
-				case OciDataType.VarNum:
-					type = OciDataType.Char;
-					definedSize = stringValue.Length;
-					value = Marshal.StringToHGlobalAnsi (stringValue);
-					break;
-				case OciDataType.Date:
-					break;
-				default:
-					type = OciDataType.Char;
-					definedSize = stringValue.Length;
-					value = Marshal.StringToHGlobalAnsi (stringValue);
-					break;
-				}
-
-			status = OCIBindByName (Handle,
-						out handle,
-						ErrorHandle,
-						name,
-						name.Length,
-						value,
-						definedSize,
-						type,
-						ref indicator,
-						IntPtr.Zero,
-						0,
-						0,
-						IntPtr.Zero,
-						0);
-
-			if (status != 0) {
-				OciErrorInfo info = ErrorHandle.HandleError ();
-				throw new OracleException (info.ErrorCode, info.ErrorMessage);
-			}
-
-			OciBindHandle output = new OciBindHandle (this, handle);
-			output.Value = value;
-			return output;
 		}
 
 		void Define ()
@@ -250,9 +165,9 @@ namespace System.Data.OracleClient.Oci {
 			columnCount = 0;
 			moreResults = false;
 
-			status = OCIStmtExecute (Service.Handle,
+			status = OCIStmtExecute (Service,
 						Handle,
-						ErrorHandle.Handle,
+						ErrorHandle,
 						nonQuery,
 						0,
 						IntPtr.Zero,
@@ -273,7 +188,6 @@ namespace System.Data.OracleClient.Oci {
 				OciErrorInfo info = ErrorHandle.HandleError ();
 				throw new OracleException (info.ErrorCode, info.ErrorMessage);
 			}
-
 			return true;
 		}
 
@@ -314,12 +228,13 @@ namespace System.Data.OracleClient.Oci {
 		public void Prepare (string commandText)
 		{
 			int status = 0;
-			status = OCIStmtPrepare (Handle,
-						errorHandle.Handle,
+
+			status = OCIStmtPrepare (this,
+						ErrorHandle,
 						commandText,
 						commandText.Length,
-						language,
-						mode);
+						OciStatementLanguage.NTV,
+						OciStatementMode.Default);
 			if (status != 0) {
 				OciErrorInfo info = ErrorHandle.HandleError ();
 				throw new OracleException (info.ErrorCode, info.ErrorMessage);

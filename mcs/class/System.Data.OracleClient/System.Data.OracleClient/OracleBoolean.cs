@@ -23,13 +23,13 @@ namespace System.Data.OracleClient {
 		#region Fields
 
 		public static readonly OracleBoolean False = new OracleBoolean (false);
-		public static readonly OracleBoolean Null = CreateNullOracleBoolean ();
+		public static readonly OracleBoolean Null = new OracleBoolean ();
 		public static readonly OracleBoolean One = new OracleBoolean (1);
 		public static readonly OracleBoolean True = new OracleBoolean (true);
 		public static readonly OracleBoolean Zero = new OracleBoolean (0);
 
 		bool value;
-		internal bool isNull;
+		bool notNull;
 
 		#endregion // Fields
 
@@ -38,7 +38,7 @@ namespace System.Data.OracleClient {
 		public OracleBoolean (bool value)
 		{
 			this.value = value;
-			isNull = false;
+			notNull = true;
 		}
 
 		public OracleBoolean (int value)
@@ -55,7 +55,7 @@ namespace System.Data.OracleClient {
 		}
 
 		public bool IsNull {
-			get { return isNull; }
+			get { return !notNull; }
 		}
 
 		public bool IsTrue {
@@ -81,13 +81,6 @@ namespace System.Data.OracleClient {
 		public int CompareTo (object obj)
 		{
 			throw new NotImplementedException ();
-		}
-
-		internal static OracleBoolean CreateNullOracleBoolean ()
-		{
-			OracleBoolean x = new OracleBoolean ();
-			x.isNull = true;
-			return x;
 		}
 
 		[MonoTODO]

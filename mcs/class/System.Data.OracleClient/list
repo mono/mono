@@ -16,6 +16,7 @@ System.Data.OracleClient.Oci/OciLobLocator.cs
 System.Data.OracleClient.Oci/OciLobType.cs
 System.Data.OracleClient.Oci/OciParameterDescriptor.cs
 System.Data.OracleClient.Oci/OciPointerType.cs
+System.Data.OracleClient.Oci/OciRowIdDescriptor.cs
 System.Data.OracleClient.Oci/OciServerHandle.cs
 System.Data.OracleClient.Oci/OciServiceHandle.cs
 System.Data.OracleClient.Oci/OciSessionHandle.cs

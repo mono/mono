@@ -17,7 +17,7 @@
 //
 
 namespace System.Data.OracleClient.Oci {
-	public enum OciDataType {
+	internal enum OciDataType {
 		VarChar2 = 0x01,
 		Number = 0x02,
 		Integer = 0x03,

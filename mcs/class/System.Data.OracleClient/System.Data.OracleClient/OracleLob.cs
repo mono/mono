@@ -363,7 +363,7 @@ namespace System.Data.OracleClient {
 				Array.Copy (buffer, offset, value, 0, count);
 			}
 
-			position += locator.Write (value, (uint) offset, (uint) value.Length, LobType);
+			position += locator.Write (value, (uint) Position, (uint) value.Length, LobType);
 		}
 
 		#endregion // Methods

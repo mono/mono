@@ -43,11 +43,6 @@ namespace System.Data.OracleClient.Oci {
 
 		#region Properties
 
-		public OciErrorHandle ErrorHandle {
-			get { return errorHandle; }
-			set { errorHandle = value; }
-		}
-
 		public OciServiceHandle Service {
 			get { return serviceHandle; }
 			set { serviceHandle = value; }
@@ -81,35 +76,38 @@ namespace System.Data.OracleClient.Oci {
 							uint mode);
 
 
-		public bool Begin (OciCredentialType credentialType, OciSessionMode mode)
+		public bool BeginSession (OciCredentialType credentialType, OciSessionMode mode, OciErrorHandle error)
 		{
+			errorHandle = error;
+
 			int status = 0;
 
-			status = OciGlue.OCIAttrSetString (Handle,
-						OciHandleType.Session,
-						username,
-						(uint) username.Length,
-						OciAttributeType.Username,
-						errorHandle.Handle);
+			status = OciGlue.OCIAttrSetString (this,
+							OciHandleType.Session,
+							username,
+							(uint) username.Length,
+							OciAttributeType.Username,
+							errorHandle);
 
 			if (status != 0) 
 				return false;
 
-			status = OciGlue.OCIAttrSetString (Handle,
-						OciHandleType.Session,
-						password,
-						(uint) password.Length,
-						OciAttributeType.Password,
-						errorHandle.Handle);
+			status = OciGlue.OCIAttrSetString (this,
+							OciHandleType.Session,
+							password,
+							(uint) password.Length,
+							OciAttributeType.Password,
+							errorHandle);
 
 			if (status != 0) 
 				return false;
 
-			status = OCISessionBegin (Service.Handle,
-						errorHandle.Handle,
+			status = OCISessionBegin (Service,
+						errorHandle,
 						Handle,
 						credentialType,
 						mode);
+
 			if (status != 0) 
 				return false;
 
@@ -118,16 +116,18 @@ namespace System.Data.OracleClient.Oci {
 			return true;
 		}
 
+		public void EndSession (OciErrorHandle error)
+		{
+			if (!begun)
+				return;
+			OCISessionEnd (Service, error, this, 0);
+		}
+
 		protected override void Dispose (bool disposing)
 		{
 			if (!disposed) {
 				try {
-					if (begun) {
-						OCISessionEnd (Service.Handle,
-								errorHandle.Handle,
-								Handle,
-								0);
-					}
+					EndSession (errorHandle);
 					disposed = false;
 				} finally {
 					base.Dispose (disposing);

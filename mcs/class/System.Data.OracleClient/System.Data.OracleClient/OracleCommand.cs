@@ -36,8 +36,8 @@ namespace System.Data.OracleClient {
 		OracleParameterCollection parameters;
 		OracleTransaction transaction;
 		UpdateRowSource updatedRowSource;
-	
-		OciStatementHandle statement = null;
+
+		OciStatementHandle preparedStatement;
 		OciStatementType statementType;
 
 		#endregion // Fields
@@ -61,8 +61,7 @@ namespace System.Data.OracleClient {
 
 		public OracleCommand (string commandText, OracleConnection connection, OracleTransaction tx)
 		{
-			statement = null;
-
+			preparedStatement = null;
 			CommandText = commandText;
 			Connection = connection;
 			Transaction = tx;
@@ -95,6 +94,14 @@ namespace System.Data.OracleClient {
 		public bool DesignTimeVisible {
 			get { return designTimeVisible; }
 			set { designTimeVisible = value; }
+		}
+
+		internal OciEnvironmentHandle Environment {
+			get { return Connection.Environment; }
+		}
+
+		internal OciErrorHandle ErrorHandle {
+			get { return Connection.ErrorHandle; }
 		}
 
 		int IDbCommand.CommandTimeout {
@@ -142,10 +149,34 @@ namespace System.Data.OracleClient {
 
 		#region Methods
 
-		void BindParameters (OciStatementHandle statement)
+		private void AssertCommandTextIsSet ()
+		{
+			if (CommandText == String.Empty || CommandText == null)
+				throw new InvalidOperationException ("The command text for this Command has not been set.");
+		}
+
+		private void AssertConnectionIsOpen ()
+		{
+			if (Connection == null || Connection.State == ConnectionState.Closed)
+				throw new InvalidOperationException ("An open Connection object is required to continue.");
+		}
+
+		private void AssertNoDataReader ()
+		{
+			if (Connection.DataReader != null)
+				throw new InvalidOperationException ("There is already an open DataReader associated with this Connection which must be closed first.");
+		}
+
+		private void AssertTransactionMatch ()
+		{
+			if (Connection.Transaction != null && Transaction != Connection.Transaction)
+				throw new InvalidOperationException ("Execute requires the Command object to have a Transaction object when the Connection object assigned to the command is in a pending local transaction.  The Transaction property of the Command has not been initialized.");
+		}
+
+		private void BindParameters (OciStatementHandle statement)
 		{
 			foreach (OracleParameter p in Parameters) 
-				p.Bind (statement);
+				p.Bind (statement, Connection);
 		}
 
 		[MonoTODO]
@@ -172,23 +203,51 @@ namespace System.Data.OracleClient {
 			return new OracleParameter ();
 		}
 
+		private int ExecuteNonQueryInternal (OciStatementHandle statement)
+		{
+			if (preparedStatement == null)
+				statement.Prepare (CommandText);
+
+			BindParameters (statement);
+			statement.ExecuteNonQuery ();
+
+			int rowsAffected = statement.GetAttributeInt32 (OciAttributeType.RowCount, ErrorHandle);
+			
+			statement.Dispose ();
+			return rowsAffected;
+		}
+
 		public int ExecuteNonQuery () 
 		{
-			int rowsAffected = -1;
-
-			ValidateCommand ("ExecuteNonQuery");
+			AssertConnectionIsOpen ();
+			AssertTransactionMatch ();
+			AssertCommandTextIsSet ();
 
 			if (Transaction != null)
 				Transaction.AttachToServiceContext ();
 
-			statement.ExecuteNonQuery ();
-			return rowsAffected;
+			return ExecuteNonQueryInternal (GetStatementHandle ());
 		}
 
-		[MonoTODO]
 		public int ExecuteOracleNonQuery (out OracleString rowid)
 		{
-			throw new NotImplementedException ();
+			AssertConnectionIsOpen ();
+			AssertTransactionMatch ();
+			AssertCommandTextIsSet ();
+
+			if (Transaction != null)
+				Transaction.AttachToServiceContext ();
+
+			OciStatementHandle statement = GetStatementHandle ();
+
+			int retval = ExecuteNonQueryInternal (statement);
+
+			OciRowIdDescriptor descriptor = (OciRowIdDescriptor) Environment.Allocate (OciHandleType.RowId);
+			descriptor.SetHandle (statement.GetAttributeIntPtr (OciAttributeType.RowId, ErrorHandle));
+
+			rowid = new OracleString (descriptor.GetRowId (ErrorHandle));
+
+			return retval;
 		}
 
 		[MonoTODO]
@@ -204,9 +263,19 @@ namespace System.Data.OracleClient {
 
 		public OracleDataReader ExecuteReader (CommandBehavior behavior)
 		{
-			ValidateCommand ("ExecuteNonQuery");
+			AssertConnectionIsOpen ();
+			AssertTransactionMatch ();
+			AssertCommandTextIsSet ();
+			AssertNoDataReader ();
+
 			if (Transaction != null)
 				Transaction.AttachToServiceContext ();
+
+			OciStatementHandle statement = GetStatementHandle ();
+
+			if (preparedStatement == null)
+				statement.Prepare (CommandText);
+			BindParameters (statement);
 			statement.ExecuteQuery ();
 
 			return new OracleDataReader (this, statement);
@@ -216,9 +285,18 @@ namespace System.Data.OracleClient {
 		{
 			object output;
 
-			ValidateCommand ("ExecuteScalar");
+			AssertConnectionIsOpen ();
+			AssertTransactionMatch ();
+			AssertCommandTextIsSet ();
+
 			if (Transaction != null)
 				Transaction.AttachToServiceContext ();
+
+			OciStatementHandle statement = GetStatementHandle ();
+			if (preparedStatement == null)
+				statement.Prepare (CommandText);
+			BindParameters (statement);
+
 			statement.ExecuteQuery ();
 
 			if (statement.Fetch ()) 
@@ -227,6 +305,18 @@ namespace System.Data.OracleClient {
 				output = DBNull.Value;
 
 			return output;
+		}
+
+		private OciStatementHandle GetStatementHandle ()
+		{
+			AssertConnectionIsOpen ();
+			if (preparedStatement != null) 
+				return preparedStatement;
+			
+			OciStatementHandle h = (OciStatementHandle) Connection.Environment.Allocate (OciHandleType.Statement);
+			h.ErrorHandle = Connection.ErrorHandle;
+			h.Service = Connection.ServiceContext;
+			return h;
 		}
 
 		IDbDataParameter IDbCommand.CreateParameter ()
@@ -246,25 +336,10 @@ namespace System.Data.OracleClient {
 
 		public void Prepare ()
 		{
-			ValidateCommand ("Prepare");
-			BindParameters (statement);
-		}
-
-		private void ValidateCommand (string method)
-		{
-			if (Connection == null)
-				throw new InvalidOperationException (String.Format ("{0} requires a Connection object to continue.", method));
-			if (Connection.Transaction != null && Transaction != Connection.Transaction)
-				throw new InvalidOperationException ("The Connection object does not have the same transaction as the command object.");
-			if (Connection.State != ConnectionState.Open)
-				throw new InvalidOperationException (String.Format ("{0} requires an open Connection object to continue. This connection is closed.", method));
-			if (CommandText == String.Empty || CommandText == null)
-				throw new InvalidOperationException ("The command text for this Command has not been set.");
-			if (Connection.DataReader != null)
-				throw new InvalidOperationException ("There is already an open DataReader associated with this Connection which must be closed first.");
-			if (statement == null)
-				statement = Connection.Oci.CreateStatement ();
+			AssertConnectionIsOpen ();
+			OciStatementHandle statement = GetStatementHandle ();
 			statement.Prepare (CommandText);
+			preparedStatement = statement;
 		}
 
 		#endregion // Methods

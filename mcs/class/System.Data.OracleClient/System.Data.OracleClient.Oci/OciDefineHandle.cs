@@ -124,15 +124,6 @@ namespace System.Data.OracleClient.Oci {
 							IntPtr rcodep,
 							uint mode);
 
-
-		[DllImport ("oci")]
-		static extern int OCIDateTimeGetDate (IntPtr hndl,
-						IntPtr err,
-						byte[] datetime,
-						out short year,
-						out byte month,
-						out byte day);
-
 		void Define (int position)
 		{
 			switch (definedType) {
@@ -237,7 +228,6 @@ namespace System.Data.OracleClient.Oci {
 			}
 		}
 
-		[MonoTODO ("This will be an override when this is properly derived from OciHandle.")]
 		protected override void Dispose (bool disposing) 
 		{
 			if (!disposed) {
@@ -299,20 +289,21 @@ namespace System.Data.OracleClient.Oci {
 		[MonoTODO ("Be able to handle negative dates... i.e. BCE.")]
 		public DateTime UnpackDate ()
 		{
-				byte century = Marshal.ReadByte (value, 0);
-				byte year = Marshal.ReadByte (value, 1);
-				byte month = Marshal.ReadByte (value, 2);
-				byte day = Marshal.ReadByte (value, 3);
-				byte hour = Marshal.ReadByte (value, 4);
-				byte minute = Marshal.ReadByte (value, 5);
-				byte second = Marshal.ReadByte (value, 6);
+			byte century = Marshal.ReadByte (value, 0);
+			byte year = Marshal.ReadByte (value, 1);
+			byte month = Marshal.ReadByte (value, 2);
+			byte day = Marshal.ReadByte (value, 3);
+			byte hour = Marshal.ReadByte (value, 4);
+			byte minute = Marshal.ReadByte (value, 5);
+			byte second = Marshal.ReadByte (value, 6);
 
-				return new DateTime ((century - 100) * 100 + (year - 100),
+			return new DateTime ((century - 100) * 100 + (year - 100),
 						month,
 						day,
 						hour - 1,
 						minute - 1,
 						second - 1);
+
 		}
 
 		#endregion // Methods

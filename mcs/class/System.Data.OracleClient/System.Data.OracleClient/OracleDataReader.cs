@@ -33,11 +33,12 @@ namespace System.Data.OracleClient {
 		ArrayList dataTypeNames;
 		bool disposed = false;
 		bool isClosed;
-		bool isSelect;
 		bool hasRows;
 		bool moreResults;
 		DataTable schemaTable;
 
+		int recordsAffected = -1;
+		OciStatementType statementType;
 		OciStatementHandle statement;
 
 		#endregion // Fields
@@ -49,9 +50,9 @@ namespace System.Data.OracleClient {
 			this.command = command;
 			this.hasRows = false;
 			this.isClosed = false;
-			this.isSelect = (command.CommandText.Trim ().ToUpper ().StartsWith ("SELECT"));
 			this.schemaTable = ConstructSchemaTable ();
 			this.statement = statement;
+			this.statementType = statement.GetStatementType ();
 		}
 
 		~OracleDataReader ()
@@ -89,12 +90,10 @@ namespace System.Data.OracleClient {
 
 		public int RecordsAffected {
 			get { 
-				// FIXME: get RecordsAffected for DML, otherwise, -1
-				return -1;
-				//if (isSelect) 
-				//	return -1;
-				//else
-				//	throw new NotImplementedException ();
+				if (statementType == OciStatementType.Select)
+					return -1;
+				else
+					return GetRecordsAffected ();
 			}
 		}
 
@@ -303,6 +302,13 @@ namespace System.Data.OracleClient {
 				if (String.Compare (((string) schemaRow ["ColumnName"]), name, true) == 0)
 					return (int) schemaRow ["ColumnOrdinal"];
 			throw new IndexOutOfRangeException ();
+		}
+
+		private int GetRecordsAffected ()
+		{
+			if (recordsAffected == -1) 
+				recordsAffected = statement.GetAttributeInt32 (OciAttributeType.RowCount, command.ErrorHandle);
+			return recordsAffected;
 		}
 
 		public DataTable GetSchemaTable ()

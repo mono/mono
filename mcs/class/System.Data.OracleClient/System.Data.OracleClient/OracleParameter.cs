@@ -20,6 +20,7 @@ using System.Collections;
 using System.ComponentModel;
 using System.Data;
 using System.Data.OracleClient.Oci;
+using System.Runtime.InteropServices;
 
 namespace System.Data.OracleClient {
 	public sealed class OracleParameter : MarshalByRefObject, IDbDataParameter, IDataParameter, ICloneable
@@ -30,7 +31,7 @@ namespace System.Data.OracleClient {
 		OracleType oracleType = OracleType.VarChar;
 		OciDataType ociType;
 		int size;
-		ParameterDirection direction;
+		ParameterDirection direction = ParameterDirection.Input;
 		bool isNullable;
 		byte precision;
 		byte scale;
@@ -164,9 +165,76 @@ namespace System.Data.OracleClient {
 
 		#region Methods
 
-		internal void Bind (OciStatementHandle handle)
+		[DllImport ("oci")]
+		static extern int OCIBindByName (IntPtr stmtp,
+						out IntPtr bindpp,
+						IntPtr errhp,
+						string placeholder,
+						int placeh_len,
+						IntPtr valuep,
+						int value_sz,
+						[MarshalAs (UnmanagedType.U2)] OciDataType dty,
+						int indp,
+						IntPtr alenp,
+						IntPtr rcodep,
+						uint maxarr_len,
+						IntPtr curelp,
+						uint mode);
+
+
+		private void AssertSizeIsSet ()
 		{
-			bindHandle = handle.GetBindHandle (ParameterName, value, ociType);
+			if (!sizeSet)
+				throw new Exception ("Size must be set.");
+		}
+
+		internal void Bind (OciStatementHandle statement, OracleConnection connection)
+		{
+			if (bindHandle == null)
+				bindHandle = new OciBindHandle ((OciHandle) statement);
+
+			IntPtr tmpHandle = bindHandle.Handle;
+
+			if (Direction != ParameterDirection.Input)
+				AssertSizeIsSet ();
+			if (!sizeSet)
+				size = InferSize ();
+
+			int status = 0;
+			int indicator = 0;
+			OciDataType bindType = ociType;
+			IntPtr bindValue = IntPtr.Zero;
+			int bindSize = size;
+
+			if (value == DBNull.Value)
+				indicator = -1;
+			else {
+				bindType = OciDataType.VarChar2; // FIXME
+				bindValue = Marshal.StringToHGlobalAnsi (value.ToString ());
+				bindSize = value.ToString ().Length;
+			}
+
+			status = OCIBindByName (statement,
+						out tmpHandle,
+						connection.ErrorHandle,
+						ParameterName,
+						ParameterName.Length,
+						bindValue,
+						bindSize,
+						bindType,
+						indicator,
+						IntPtr.Zero,
+						IntPtr.Zero,
+						0,
+						IntPtr.Zero,
+						0);
+
+			if (status != 0) {
+				OciErrorInfo info = connection.ErrorHandle.HandleError ();
+				throw new OracleException (info.ErrorCode, info.ErrorMessage);
+			}
+
+			bindHandle.SetHandle (tmpHandle);
 		}
 
 		[MonoTODO]
@@ -216,6 +284,12 @@ namespace System.Data.OracleClient {
 			default:
 				throw new ArgumentException (exception);
 			}
+		}
+
+		[MonoTODO ("different size depending on type.")]
+		private int InferSize ()
+		{
+			return value.ToString ().Length;
 		}
 
 		public void SetDbType (DbType type)

@@ -26,65 +26,67 @@ namespace System.Data.OracleClient.Oci {
 		bool disposed = false;
 		bool attached = false;
 		OciErrorHandle errorHandle;
-		string tnsname;
 
 		#endregion // Fields
 
 		#region Constructors
 
-		public OciServerHandle (OciHandle parent, IntPtr handle)
-			: base (OciHandleType.Server, parent, handle)
+		public OciServerHandle (OciHandle parent, IntPtr newHandle)
+			: base (OciHandleType.Server, parent, newHandle)
 		{
 		}
 
 		#endregion // Constructors
 
-		#region Properties
-
-		public OciErrorHandle ErrorHandle {
-			get { return errorHandle; }
-			set { errorHandle = value; }
-		}
-
-		public string TNSName {
-			get { return tnsname; }
-			set { tnsname = value; }
-		}
-
-		#endregion // Properties
-
 		#region Methods
 
 		[DllImport ("oci")]
-		public static extern int OCIServerAttach (IntPtr srvhp,
-							IntPtr errhp,
-							string dblink,
-							[MarshalAs (UnmanagedType.U4)] int dblink_len,
-							uint mode);
+		static extern int OCIServerAttach (IntPtr srvhp,
+						IntPtr errhp,
+						string dblink,
+						[MarshalAs (UnmanagedType.U4)] int dblink_len,
+						uint mode);
 
 		[DllImport ("oci")]
-		public static extern int OCIServerDetach (IntPtr srvhp,
-							IntPtr errhp,
-							uint mode);
+		static extern int OCIServerDetach (IntPtr srvhp,
+						IntPtr errhp,
+						uint mode);
 
-		public bool Attach ()
+		public bool Attach (string tnsname, OciErrorHandle error)
 		{
-			int status = 0;
-			status = OCIServerAttach (Handle,
-						errorHandle.Handle,
-						tnsname,
-						tnsname.Length,
-						0);
-			attached = (status == 0);
+			errorHandle = error;
+
+			int status = OCIServerAttach (this, error, tnsname, tnsname.Length, 0);
+
+			if (status != 0) {
+				OciErrorInfo info = errorHandle.HandleError ();
+				throw new OracleException (info.ErrorCode, info.ErrorMessage);
+			}
+
+			attached = true;
 			return attached;
+		}
+
+		public void Detach (OciErrorHandle error)
+		{
+			if (!attached) 
+				return;
+
+			int status = OCIServerDetach (this, error, 0);
+
+			if (status != 0) {
+				OciErrorInfo info = errorHandle.HandleError ();
+				throw new OracleException (info.ErrorCode, info.ErrorMessage);
+			}
+
+			attached = false;
 		}
 
 		protected override void Dispose (bool disposing)
 		{
 			if (!disposed) {
 				try {
-					if (attached)
-						OCIServerDetach (Handle, errorHandle, 0);
+					Detach (errorHandle);
 					disposed = true;
 				} finally {
 					base.Dispose (disposing);

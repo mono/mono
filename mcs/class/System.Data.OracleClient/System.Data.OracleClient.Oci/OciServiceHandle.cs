@@ -71,26 +71,24 @@ namespace System.Data.OracleClient.Oci {
 		public bool SetServer (OciServerHandle handle)
 		{
 			server = handle;
-			int status = 0;
-			status = OciGlue.OCIAttrSet (Handle,
-						HandleType,
-						server,
-						0,
-						OciAttributeType.Server,
-						errorHandle);
+			int status = OciGlue.OCIAttrSet (this,
+							HandleType,
+							server,
+							0,
+							OciAttributeType.Server,
+							ErrorHandle);
 			return (status == 0);
 		}
 
 		public bool SetSession (OciSessionHandle handle)
 		{
 			session = handle;
-			int status = 0;
-			status = OciGlue.OCIAttrSet (Handle,
-						HandleType,
-						session,
-						0,
-						OciAttributeType.Session,
-						errorHandle);
+			int status = OciGlue.OCIAttrSet (this,
+							HandleType,
+							session,
+							0,
+							OciAttributeType.Session,
+							ErrorHandle);
 			return (status == 0);
 		}
 

@@ -52,15 +52,6 @@ namespace System.Data.OracleClient.Oci {
 			get { return parent; }
 		}
 
-		/*
-		public HandleRef Handle {
-			get { 
-				HandleRef hr = new HandleRef (this, handle);
-				GC.KeepAlive (this);
-				return hr;
-			}
-		}
-		*/
 		public IntPtr Handle { 
 			get { return handle; }
 		}
@@ -109,6 +100,14 @@ namespace System.Data.OracleClient.Oci {
 		static extern int OCIAttrGetInt32 (IntPtr trgthndlp,
 						[MarshalAs (UnmanagedType.U4)] OciHandleType trghndltyp,
 						out int attributep,
+						IntPtr sizep,
+						[MarshalAs (UnmanagedType.U4)] OciAttributeType attrtype,
+						IntPtr errhp);
+
+		[DllImport ("oci", EntryPoint = "OCIAttrGet")]
+		static extern int OCIAttrGetIntPtr (IntPtr trgthndlp,
+						[MarshalAs (UnmanagedType.U4)] OciHandleType trghndltyp,
+						out IntPtr attributep,
 						IntPtr sizep,
 						[MarshalAs (UnmanagedType.U4)] OciAttributeType attrtype,
 						IntPtr errhp);
@@ -167,6 +166,8 @@ namespace System.Data.OracleClient.Oci {
 				return new OciTransactionHandle (this, newHandle);
 			case OciHandleType.LobLocator:
 				return new OciLobLocator (this, newHandle);
+			case OciHandleType.RowId:
+				return new OciRowIdDescriptor (this, newHandle);
 			}
 			return null;
 		}
@@ -265,6 +266,25 @@ namespace System.Data.OracleClient.Oci {
 			int output;
 
 			status = OCIAttrGetInt32 (Handle,
+						HandleType,
+						out output,
+						IntPtr.Zero,
+						attrType,
+						errorHandle);
+
+			if (status != 0) {
+				OciErrorInfo info = errorHandle.HandleError ();
+				throw new OracleException (info.ErrorCode, info.ErrorMessage);
+			}
+
+			return output;
+		}
+
+		public IntPtr GetAttributeIntPtr (OciAttributeType attrType, OciErrorHandle errorHandle)
+		{
+			int status = 0;
+			IntPtr output = IntPtr.Zero;
+			status = OCIAttrGetIntPtr (Handle,
 						HandleType,
 						out output,
 						IntPtr.Zero,

@@ -137,8 +137,8 @@ namespace System.Data.OracleClient.Oci {
 		public void BeginBatch (OracleLobOpenMode mode)
 		{
 			int status = 0;
-			status = OCILobOpen (service.Handle, 
-						errorHandle.Handle,
+			status = OCILobOpen (Service, 
+						ErrorHandle,
 						Handle,
 						(byte) mode);
 
@@ -171,9 +171,7 @@ namespace System.Data.OracleClient.Oci {
 		public void EndBatch ()
 		{
 			int status = 0;
-			status = OCILobClose (service.Handle, 
-						errorHandle.Handle,
-						Handle);
+			status = OCILobClose (Service, ErrorHandle, this);
 
 			if (status != 0) {
 				OciErrorInfo info = ErrorHandle.HandleError ();
@@ -185,9 +183,9 @@ namespace System.Data.OracleClient.Oci {
 		{
 			int status = 0;
 			uint output = amount;
-			status = OCILobErase (service.Handle,
-						errorHandle.Handle,
-						Handle,
+			status = OCILobErase (Service,
+						ErrorHandle,
+						this,
 						ref output,
 						(uint) offset);
 
@@ -203,9 +201,9 @@ namespace System.Data.OracleClient.Oci {
 		{
 			int status = 0;
 			uint output;
-			status = OCILobGetChunkSize (service.Handle, 
-							errorHandle.Handle,
-							Handle,
+			status = OCILobGetChunkSize (Service,
+							ErrorHandle,
+							this,
 							out output);
 
 			if (status != 0) {
@@ -220,10 +218,10 @@ namespace System.Data.OracleClient.Oci {
 		{
 			int status = 0;
 			uint output;
-			status = OCILobGetLength (service.Handle, 
-							errorHandle.Handle,
-							Handle,
-							out output);
+			status = OCILobGetLength (Service, 
+						ErrorHandle,
+						this,
+						out output);
 			if (status != 0) {
 				OciErrorInfo info = ErrorHandle.HandleError ();
 				throw new OracleException (info.ErrorCode, info.ErrorMessage);
@@ -245,9 +243,9 @@ namespace System.Data.OracleClient.Oci {
 			if (!binary) 
 				amount /= 2;
 
-			status = OCILobRead (service.Handle,
-						errorHandle.Handle,
-						Handle,
+			status = OCILobRead (Service,
+						ErrorHandle,
+						this,
 						ref amount,
 						offset,
 						buffer,
@@ -268,9 +266,9 @@ namespace System.Data.OracleClient.Oci {
 		public void Trim (uint newlen)
 		{
 			int status = 0;
-			status = OCILobTrim (service.Handle,
-						errorHandle.Handle,
-						Handle,
+			status = OCILobTrim (Service,
+						ErrorHandle,
+						this,
 						newlen);
 
 			if (status != 0) {
@@ -288,9 +286,9 @@ namespace System.Data.OracleClient.Oci {
 			if (type == OracleType.Clob)
 				amount /= 2;
 
-			status = OCILobWrite (service.Handle,
-						errorHandle.Handle,
-						Handle,
+			status = OCILobWrite (Service,
+						ErrorHandle,
+						this,
 						ref amount,
 						offset,
 						buffer,

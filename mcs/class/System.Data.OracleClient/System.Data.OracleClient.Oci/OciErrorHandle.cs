@@ -29,8 +29,8 @@ namespace System.Data.OracleClient.Oci {
 
 		#region Constructors
 
-		public OciErrorHandle (OciHandle parent, IntPtr handle)
-			: base (OciHandleType.Error, parent, handle)
+		public OciErrorHandle (OciHandle parent, IntPtr newHandle)
+			: base (OciHandleType.Error, parent, newHandle)
 		{
 		}
 
@@ -55,7 +55,7 @@ namespace System.Data.OracleClient.Oci {
 			int errbufSize = 512;
 			IntPtr errbuf = Marshal.AllocHGlobal (errbufSize);
 
-			OciGlue.OCIErrorGet (Handle, 
+			OciGlue.OCIErrorGet (this, 
 						1,
 						IntPtr.Zero,
 						out info.ErrorCode,

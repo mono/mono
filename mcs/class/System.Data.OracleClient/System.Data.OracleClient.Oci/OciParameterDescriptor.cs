@@ -1,5 +1,5 @@
 // 
-// OciLobLocator.cs 
+// OciParameterDescriptor.cs 
 //  
 // Part of managed C#/.NET library System.Data.OracleClient.dll
 //

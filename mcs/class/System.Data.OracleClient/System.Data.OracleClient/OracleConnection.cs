@@ -85,6 +85,18 @@ namespace System.Data.OracleClient
 			set { dataReader = value; }
 		}
 
+		internal OciEnvironmentHandle Environment {
+			get { return oci.Environment; }
+		}
+
+		internal OciErrorHandle ErrorHandle {
+			get { return oci.ErrorHandle; }
+		}
+
+		internal OciServiceHandle ServiceContext {
+			get { return oci.ServiceContext; }
+		}
+
 		public ConnectionState State {
 			get { return state; }
 		}

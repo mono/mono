@@ -39,7 +39,7 @@ namespace System.Data.OracleClient.Oci {
 		protected override void FreeHandle ()
 		{
 			int status = 0;
-			status = OCIDescriptorFree (Handle, HandleType);
+			status = OCIDescriptorFree (this, HandleType);
 		}
 
 		#endregion // Methods

@@ -28,16 +28,14 @@ using System.Text;
 namespace System.Data.OracleClient.Oci {
 	internal sealed class OciGlue 
 	{
+		#region Fields
+
 		bool connected;
 		OciEnvironmentHandle environment;
 		OciErrorHandle error;
 		OciServerHandle server;
 		OciServiceHandle service;
 		OciSessionHandle session;
-
-		public bool Connected {
-			get { return connected; }
-		}
 
 		// other codes
 		public const int OCI_DEFAULT = 0;
@@ -50,6 +48,30 @@ namespace System.Data.OracleClient.Oci {
 		public const int OCI_NEED_DATA = 99;
 		public const int OCI_STILL_EXECUTING = -3123;
 		public const int OCI_CONTINUE = -24200;
+
+		#endregion // Fields
+
+		#region Properties
+
+		public bool Connected {
+			get { return connected; }
+		}
+
+		public OciEnvironmentHandle Environment {
+			get { return environment; }
+		}
+
+		public OciErrorHandle ErrorHandle {
+			get { return error; }
+		}
+
+		public OciServiceHandle ServiceContext {
+			get { return service; }
+		}
+
+		#endregion // Properties
+
+		#region Methods
 
 		[DllImport ("oci", EntryPoint = "OCIAttrSet")]
 		public static extern int OCIAttrSet (IntPtr trgthndlp,
@@ -103,8 +125,6 @@ namespace System.Data.OracleClient.Oci {
 				Disconnect ();
 				throw new OracleException (info.ErrorCode, info.ErrorMessage);
 			}
-			server.ErrorHandle = error;
-			server.TNSName = conInfo.Database;
 
 			session = (OciSessionHandle) environment.Allocate (OciHandleType.Session);
 			if (session == null) {
@@ -112,12 +132,11 @@ namespace System.Data.OracleClient.Oci {
 				Disconnect ();
 				throw new OracleException (info.ErrorCode, info.ErrorMessage);
 			}
-			session.ErrorHandle = error;
 			session.Username = conInfo.Username;
 			session.Password = conInfo.Password;
 			session.Service = service;
 				
-			if (!server.Attach ()) {
+			if (!server.Attach (conInfo.Database, ErrorHandle)) {
 				OciErrorInfo info = error.HandleError ();
 				Disconnect ();
 				throw new OracleException (info.ErrorCode, info.ErrorMessage);
@@ -129,7 +148,7 @@ namespace System.Data.OracleClient.Oci {
 				throw new OracleException (info.ErrorCode, info.ErrorMessage);
 			}
 
-			if (!session.Begin (OciCredentialType.RDBMS, OciSessionMode.Default)) {
+			if (!session.BeginSession (OciCredentialType.RDBMS, OciSessionMode.Default, ErrorHandle)) {
 				OciErrorInfo info = error.HandleError ();
 				Disconnect ();
 				throw new OracleException (info.ErrorCode, info.ErrorMessage);
@@ -184,5 +203,7 @@ namespace System.Data.OracleClient.Oci {
 			if (environment != null)
 				environment.Dispose ();
 		}
+
+		#endregion // Methods
 	}
 }
