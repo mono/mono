@@ -786,16 +786,24 @@ namespace Mono.CSharp
 		 * ICodeGenerator
 		 */
 
-		//[MonoTODO]
-		protected override string CreateEscapedIdentifier( string value )
+		protected override string CreateEscapedIdentifier (string value)
 		{
-			return value;
+			return GetSafeName (value);
 		}
 
-		//[MonoTODO]
-		protected override string CreateValidIdentifier( string value )
+		protected override string CreateValidIdentifier (string value)
 		{
-			return value;
+			if (value == null)
+				throw new NullReferenceException ();
+
+			if (keywordsTable == null) {
+				FillKeywordTable ();
+			}
+
+			if (keywordsTable.Contains (value))
+				return "_" + value;
+			else
+				return value;
 		}
 
 		protected override string GetTypeOutput( CodeTypeReference type )
@@ -902,11 +910,16 @@ namespace Mono.CSharp
 		string GetSafeName (string id)
 		{
 			if (keywordsTable == null) {
-				keywordsTable = new Hashtable ();
-				foreach (string keyword in keywords) keywordsTable.Add (keyword,keyword);
+				FillKeywordTable ();
 			}
 			if (keywordsTable.Contains (id)) return "@" + id;
 			else return id;
+		}
+
+		static void FillKeywordTable ()
+		{
+			keywordsTable = new Hashtable ();
+				foreach (string keyword in keywords) keywordsTable.Add (keyword,keyword);
 		}
 
 		static Hashtable keywordsTable;

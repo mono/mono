@@ -1,3 +1,8 @@
+2004-01-21  Atsushi Enomoto <atsushi@ximian.com>
+
+	* CSharpCodeGenerator.cs: Implemented CreateEscapedIdentifier() and
+	  CreateValidIdentifier().
+
 2004-01-19  Lluis Sanchez Gual <lluis@ximian.com>
 
 	* CSharpCodeGenerator.cs: Do not generate access and scope modifiers for
