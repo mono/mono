@@ -42,5 +42,18 @@ namespace MonoTests.System.Xml
 			AssertEquals ("not all attributes removed.", false, xmlElement.HasAttribute ("type"));
 		}
 
+		public void TestAppend () 
+		{
+			XmlDocument xmlDoc = new XmlDocument ();
+			XmlElement xmlEl = xmlDoc.CreateElement ("TestElement");
+			XmlAttribute xmlAttribute = xmlEl.SetAttributeNode ("attr1", "namespace1");
+			XmlNode xmlNode = xmlDoc.CreateNode (XmlNodeType.Attribute, "attr3", "namespace1");
+			XmlAttribute xmlAttribute3 = xmlNode as XmlAttribute;
+			XmlAttributeCollection attributeCol = xmlEl.Attributes;
+			xmlAttribute3 = attributeCol.Append (xmlAttribute3);
+			AssertEquals ("attribute name not properly created.", true, xmlAttribute3.Name.Equals ("attr3"));
+			AssertEquals ("attribute namespace not properly created.", true, xmlAttribute3.NamespaceURI.Equals ("namespace1"));
+		}
+
 	}
 }

@@ -205,5 +205,15 @@ namespace MonoTests.System.Xml
 			xmlElement.RemoveAllAttributes ();
 			AssertEquals ("attributes not properly removed.", false, xmlElement.HasAttribute ("type"));
 		}
+
+		public void TestSetAttributeNode()
+		{
+			XmlDocument xmlDoc = new XmlDocument ();
+			XmlElement xmlEl = xmlDoc.CreateElement ("TestElement");
+			XmlAttribute xmlAttribute = xmlEl.SetAttributeNode ("attr1", "namespace1");
+			XmlAttribute xmlAttribute2 = xmlEl.SetAttributeNode ("attr2", "namespace2");
+			AssertEquals ("attribute name not properly created.", true, xmlAttribute.Name.Equals ("attr1"));
+			AssertEquals ("attribute namespace not properly created.", true, xmlAttribute.NamespaceURI.Equals ("namespace1"));
+		}
 	}
 }
