@@ -1,3 +1,8 @@
+2001-08-16  Alex Graveley  <alex@ximian.com>
+
+	* Makefile.am (mono_int_LDADD): Link with ../../libffi/libffi.a
+	instead of ../../libffi/.libs/libffi.a.
+
 2001-08-10  Dietmar Maurer  <dietmar@ximian.com>
 
 	* interp.c (ves_exec_method): impl CASTCLASS
