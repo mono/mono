@@ -24,7 +24,7 @@ namespace System.Web.SessionState
 	internal class SessionContainer
 	{
 		private HttpSessionState _state;
-		private long _last_access;
+		private DateTime last_access;
 
 		public SessionContainer (HttpSessionState state)
 		{
@@ -34,14 +34,13 @@ namespace System.Web.SessionState
 
 		public void Touch ()
 		{
-			_last_access = DateTime.Now.Millisecond;	    
+			last_access = DateTime.Now;
 		}
 
 		public HttpSessionState SessionState {
 			get {
 				//Check if we should abandon it.
-				if (_state != null &&
-				    (DateTime.Now.Millisecond - _last_access) > (_state.Timeout * 60 * 1000))
+				if (_state != null && last_access.AddMinutes (_state.Timeout) < DateTime.Now)
 					_state.Abandon ();
 
 				return _state;

@@ -1,3 +1,9 @@
+2003-10-28 Jackson Harper <jackson@ximian.com>
+
+	* SessionInProcHandler.cs: Compute timeouts
+	correctly. DateTime.Milliseconds is the just the milliseconds part
+	of the time, it is not the entire time as milliseconds.
+	
 2003-10-13 Ben Maurer  <bmaurer@users.sourceforge.net>
 
 	* SessionStateModule.cs: prevent Context.State from being null if
