@@ -969,7 +969,11 @@ public class TypeManager {
 		param_array_type     = CoreLookupType ("System.ParamArrayAttribute");
 		in_attribute_type    = CoreLookupType ("System.Runtime.InteropServices.InAttribute");
 
-		guid_attr_type        = CoreLookupType ("System.Runtime.InteropServices.GuidAttribute");
+		//
+		// Sigh. Remove this before the release.  Wonder what versions of Mono
+		// people are running.
+		//
+		guid_attr_type        = LookupType ("System.Runtime.InteropServices.GuidAttribute");
 
 		unverifiable_code_type= CoreLookupType ("System.Security.UnverifiableCodeAttribute");
 
