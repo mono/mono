@@ -1,3 +1,11 @@
+2003-11-14  Martin Baulig  <martin@ximian.com>
+
+	* reflection.h (MonoReflectionGenericInst): Added `MonoArray *interfaces'.
+
+	* reflection.c (mono_reflection_bind_generic_parameters): If we're
+	an interface type, populate `res->interfaces' with instantiated
+	versions of all the interfaces we inherit.
+
 2003-11-13  Aleksey Demakov  <avd@openlinksw.com>
 
 	* assembly.c (mono_assembly_load): Fixed problem finding mscorlib.dll
