@@ -2187,8 +2187,7 @@ namespace System.Windows.Forms
 
 			string text = panel.Text;
 			StringFormat string_format = new StringFormat ();
-			string_format.LineAlignment = StringAlignment.Center;
-			string_format.Alignment = StringAlignment.Near;
+			string_format.Trimming = StringTrimming.Character;
 			string_format.FormatFlags = StringFormatFlags.NoWrap;
 
 			if (text [0] == '\t') {
@@ -2200,10 +2199,13 @@ namespace System.Windows.Forms
 				}
 			}
 
-			float x = left + border_size;
-			float y = ((area.Bottom - area.Top) / 2.0F) + border_size;
-
-			dc.DrawString (text, panel.Parent.Font, br_forecolor, x, y, string_format);
+			int x = left + border_size;
+			int y = border_size + 2;
+			Rectangle r = new Rectangle (x, y, 
+				area.Right - x - border_size,
+				area.Bottom - y - border_size);
+			
+			dc.DrawString (text, panel.Parent.Font, br_forecolor, r, string_format);
 		}
 
 		public override int StatusBarSizeGripWidth {
@@ -2510,7 +2512,6 @@ namespace System.Windows.Forms
 				}
 			}
 
-			
 			if (page.Focused) {
 				using (Pen pen = new Pen (Color.Black, 1) ) {
 					pen.DashStyle = DashStyle.Dot;
