@@ -1,6 +1,55 @@
-2002-07-19 Tim Coleman  <tim@timcoleman.com>
-	* ChangeLog:
-	* LogicalMethodInfo.cs:
+2002-07-20 Tim Coleman  <tim@timcoleman.com>
+	* AnyReturnReader.cs:
+	* HtmlFormParameterReader.cs:
+	* HtmlFormParameterWriter.cs:
+	* HttpGetClientProtocol.cs:
+	* HttpMethodAttribute.cs:
+	* HttpPostClientProtocol.cs:
+	* HttpSimpleClientProtocol.cs:
+	* HttpWebClientProtocol.cs:
+	* MatchAttribute.cs:
+	* MimeFormatter.cs:
+	* MimeParameterReader.cs:
+	* MimeParameterWriter.cs:
+	* MimeReturnReader.cs:
+	* NopReturnReader.cs:
+	* PatternMatcher.cs:
+	* SoapClientMessage.cs:
+	* SoapDocumentMethodAttribute.cs:
+	* SoapDocumentServiceAttribute.cs:
+	* SoapException.cs:
+	* SoapExtensionAttribute.cs:
+	* SoapExtension.cs:
+	* SoapHeaderAttribute.cs:
+	* SoapHeaderCollection.cs:
+	* SoapHeader.cs:
+	* SoapHeaderDirection.cs:
+	* SoapHttpClientProtocol.cs:
+	* SoapMessage.cs:
+	* SoapMessageStage.cs:
+	* SoapParameterStyle.cs:
+	* SoapRpcMethodAttribute.cs:
+	* SoapRpcServiceAttribute.cs:
+	* SoapServerMessage.cs:
+	* SoapServiceRoutingStyle.cs:
+	* SoapUnknownHeader.cs:
+	* TextReturnReader.cs:
+	* UrlEncodedParameterWriter.cs:
+	* UrlParameterReader.cs:
+	* UrlParameterWriter.cs:
+	* ValueCollectionParameterReader.cs:
+	* WebClientAsyncResult.cs:
+	* WebClientProtocol.cs:
+	* WebServiceHandlerFactory.cs:
+	* XmlReturnReader.cs:
+		Added new stubbs and some implementation
 	* LogicalMethodTypes.cs:
-		Add required classes to make System.Web.Services.Description
-		buildable.
+		Added [Serializable] attribute which was missing.
+	 
+2002-07-19 Tim Coleman  <tim@timcoleman.com>
+ 	* ChangeLog:
+ 	* LogicalMethodInfo.cs:
+ 	* LogicalMethodTypes.cs:
+ 		Add required classes to make System.Web.Services.Description
+ 		buildable.
+
