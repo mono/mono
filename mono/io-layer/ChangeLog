@@ -1,3 +1,8 @@
+2002-04-15  Dick Porter  <dick@ximian.com>
+
+	* atomic.h: use xaddl for InterlockedIncrement() and
+	InterlockedDecrement().  Use cmpxchgl in a loop for
+	InterlockedExchange() and InterlockedExchangePointer().
 
 Mon Apr 15 13:31:22 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
