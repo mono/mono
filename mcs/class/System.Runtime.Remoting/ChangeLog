@@ -1,3 +1,8 @@
+2004-03-31  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
+
+	* System.Runtime.Remoting.dll.sources: Added:
+	  AssemblyInfo and Locale
+
 2003-12-03  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
 
 	* Makefile : added reference to System.Web.Services.dll
