@@ -21,6 +21,7 @@ using System.Xml.Xsl;
 using System.IO;
 
 using Mono.Xml.Xsl.Operations;
+using Mono.Xml.XPath;
 
 using QName = System.Xml.XmlQualifiedName;
 
@@ -246,9 +247,14 @@ namespace Mono.Xml.Xsl {
 		
 #endregion
 #region Compile
-		public XPathExpression CompilePattern (string pattern)
+		public Pattern CompilePattern (string pattern)
 		{
-			return CompileExpression (pattern); // TODO validate, get priority
+			if (pattern == null || pattern == "") return null;
+			Pattern p = Pattern.Compile (pattern);
+			
+			exprStore.AddPattern (p, this);
+			
+			return p;
 		}
 		
 		public XPathExpression CompileExpression (string expression)
@@ -563,6 +569,17 @@ namespace Mono.Xml.Xsl {
 			exprToDocument [e] = nsScope;
 		}
 		
+		public void AddPattern (Pattern p, Compiler c)
+		{
+			exprToVarCtx [p] = c.CurrentVariableScope;
+			
+			XPathNavigator nsScope = c.Input.Clone ();
+			if (nsScope.NodeType == XPathNodeType.Attribute)
+				nsScope.MoveToParent ();
+			
+			exprToDocument [p] = nsScope;
+		}
+		
 		public void AddSort (XPathExpression e, Sort s)
 		{
 			if (exprToSorts.Contains (e))
@@ -585,6 +602,13 @@ namespace Mono.Xml.Xsl {
 					s.AddToExpr (expr,p);
 			}
 			return expr;
+		}
+		
+		public bool PatternMatches (Pattern p, XslTransformProcessor proc, XPathNavigator n)
+		{
+			XsltContext c = new XsltCompiledContext (proc, (VariableScope)exprToVarCtx [p], (XPathNavigator)exprToDocument [p]);
+			
+			return p.Matches (n, c);
 		}
 	}
 	

@@ -62,18 +62,20 @@ namespace Mono.Xml.XPath {
 			if (filter == null && patternPrevious == null)
 				return true;
 			
-			if (isAncestor) {
-				XPathNavigator parent = node.Clone ();
-				if (!patternPrevious.Matches (parent, ctx))
-					return false;
-			} else {
-				XPathNavigator anc = node.Clone ();
-				while (true) {
-					if (!anc.MoveToParent ())
+			if (patternPrevious != null) {
+				if (isAncestor) {
+					XPathNavigator parent = node.Clone ();
+					if (!patternPrevious.Matches (parent, ctx))
 						return false;
-					
-					if (patternPrevious.Matches (anc, ctx))
-						break;
+				} else {
+					XPathNavigator anc = node.Clone ();
+					while (true) {
+						if (!anc.MoveToParent ())
+							return false;
+						
+						if (patternPrevious.Matches (anc, ctx))
+							break;
+					}
 				}
 			}
 

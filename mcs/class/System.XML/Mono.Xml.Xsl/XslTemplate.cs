@@ -15,6 +15,7 @@ using System.Xml;
 using System.Xml.XPath;
 using System.Xml.Xsl;
 using Mono.Xml.Xsl.Operations;
+using Mono.Xml.XPath;
 
 using QName = System.Xml.XmlQualifiedName;
 
@@ -42,10 +43,10 @@ namespace Mono.Xml.Xsl {
 			unnamedTemplates.Add (template);
 		}
 		
-		public XslTemplate FindMatch (XPathNavigator node)
+		public XslTemplate FindMatch (XPathNavigator node, XslTransformProcessor p)
 		{
 			foreach (XslTemplate t in this.unnamedTemplates)
-				if (node.Matches (t.Match)) return t;
+				if (p.Matches (t.Match, node)) return t;
 					
 			return null;
 		}
@@ -99,20 +100,20 @@ namespace Mono.Xml.Xsl {
 			templateTables.Add (table.Mode, table);
 		}
 		
-		public XslTemplate FindMatch (XPathNavigator node, XmlQualifiedName mode)
+		public XslTemplate FindMatch (XPathNavigator node, XmlQualifiedName mode, XslTransformProcessor p)
 		{	
 			XslTemplate ret;
 			
 			if (this [mode] != null)
 			{
-				ret =  this [mode].FindMatch (node);
+				ret =  this [mode].FindMatch (node, p);
 				if (ret != null) return ret;
 			}
 			
 			for (int i = parent.Imports.Count - 1; i >= 0; i--)
 			{
 				XslStylesheet s = (XslStylesheet)parent.Imports [i];
-				ret = s.Templates.FindMatch (node, mode);
+				ret = s.Templates.FindMatch (node, mode, p);
 				if (ret != null)
 					return ret;
 			}
@@ -140,7 +141,7 @@ namespace Mono.Xml.Xsl {
 	public class XslTemplate
 	{
 		XmlQualifiedName name;
-		XPathExpression match;
+		Pattern match;
 		XmlQualifiedName mode;
 		double priority;
 		Hashtable parameters;
@@ -181,7 +182,7 @@ namespace Mono.Xml.Xsl {
 			get { return name; }
 		}
 
-		public XPathExpression Match {
+		public Pattern Match {
 			get {
 				return match;
 			}

@@ -15,6 +15,7 @@ using System.Xml;
 using System.Xml.XPath;
 using System.Xml.Xsl;
 using System.Text;
+using Mono.Xml.XPath;
 
 namespace Mono.Xml.Xsl.Operations {
 	public class XslNumber : XslCompiledElement {
@@ -23,9 +24,9 @@ namespace Mono.Xml.Xsl.Operations {
 		//   level = "single" | "multiple" | "any"
 		XslNumberingLevel level;
 		//   count = pattern
-		XPathExpression count;
+		Pattern count;
 		//   from = pattern
-		XPathExpression from;
+		Pattern from;
 		//   value = number-expression
 		XPathExpression value;
 		//   format = { string }
@@ -211,7 +212,7 @@ namespace Mono.Xml.Xsl.Operations {
 				return item.LocalName == p.CurrentNode.LocalName &&
 					item.NamespaceURI == p.CurrentNode.NamespaceURI;
 			else
-				return item.Matches (count);
+				return p.Matches (count, item);
 		}
 		
 		bool MatchesFrom (XPathNavigator item, XslTransformProcessor p)
@@ -219,7 +220,7 @@ namespace Mono.Xml.Xsl.Operations {
 			if (from == null)
 				return item.NodeType == XPathNodeType.Root;
 			else
-				return item.Matches (from);
+				return p.Matches (from, item);
 		}
 		
 		class XslNumberFormatter {

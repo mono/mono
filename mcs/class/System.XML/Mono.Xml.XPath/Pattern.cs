@@ -16,7 +16,7 @@ using System.Xml.XPath;
 using System.Xml.Xsl;
 
 namespace Mono.Xml.XPath {
-	internal abstract class Pattern {
+	public abstract class Pattern {
 		
 		public static Pattern Compile (string s)
 		{
@@ -27,7 +27,7 @@ namespace Mono.Xml.XPath {
 			return Compile (expr);
 		}
 		
-		public static Pattern Compile (Expression e)
+		internal static Pattern Compile (Expression e)
 		{		
 			if (e is ExprUNION)
 				return new UnionPattern (

@@ -16,6 +16,7 @@ using System.Xml;
 using System.Xml.XPath;
 using System.Xml.Xsl;
 using Mono.Xml.Xsl.Operations;
+using Mono.Xml.XPath;
 
 using QName = System.Xml.XmlQualifiedName;
 
@@ -150,7 +151,7 @@ namespace Mono.Xml.Xsl {
 			
 			for (int i = currentTemplate.Parent.Imports.Count - 1; i >= 0; i--) {
 				XslStylesheet s = (XslStylesheet)currentTemplate.Parent.Imports [i];
-				t = s.Templates.FindMatch (CurrentNode, currentTemplate.Mode);
+				t = s.Templates.FindMatch (CurrentNode, currentTemplate.Mode, this);
 				if (t != null) {					
 					currentTemplateStack.Push (t);
 					t.Evaluate (this);
@@ -191,7 +192,7 @@ namespace Mono.Xml.Xsl {
 		
 		XslTemplate FindTemplate (XPathNavigator node, QName mode)
 		{
-			XslTemplate ret = style.Templates.FindMatch (CurrentNode, mode);
+			XslTemplate ret = style.Templates.FindMatch (CurrentNode, mode, this);
 			
 			if (ret != null) return ret;
 
@@ -268,6 +269,12 @@ namespace Mono.Xml.Xsl {
 		#endregion
 		
 		#region Evaluate
+		
+		public bool Matches (Pattern p, XPathNavigator n)
+		{
+			return CompiledStyle.ExpressionStore.PatternMatches (p, this, n);
+		}
+		
 		public object Evaluate (XPathExpression expr)
 		{
 			expr = CompiledStyle.ExpressionStore.PrepForExecution (expr, this);
