@@ -1,3 +1,8 @@
+2002-03-13  Nick Drochak  <ndrochak@gol.com>
+
+	* Enum.cs: Add IConvertible methods. Cyclic dependancy fixed in the
+	runtime that goes with this patch.
+
 2002-03-10  Martin Baulig  <martin@gnome.org>
 
 	* Int32.cs (Parse): Correctly parse negative numbers.

@@ -28,7 +28,112 @@ namespace System {
 	};
 
 	[MonoTODO]
-	public abstract class Enum : ValueType, IComparable {
+	public abstract class Enum : ValueType, IComparable, IConvertible {
+
+		// IConvertible methods Start -->
+
+		[CLSCompliant(false)]
+		public TypeCode GetTypeCode () {
+			MonoEnumInfo info;
+			MonoEnumInfo.GetInfo (this.GetType (), out info);
+			return Type.GetTypeCode (info.utype);
+		}
+
+		[MonoTODO]
+		bool IConvertible.ToBoolean (IFormatProvider provider)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		byte IConvertible.ToByte (IFormatProvider provider)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		char IConvertible.ToChar (IFormatProvider provider)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		DateTime IConvertible.ToDateTime (IFormatProvider provider)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		decimal IConvertible.ToDecimal (IFormatProvider provider)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		double IConvertible.ToDouble (IFormatProvider provider)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		short IConvertible.ToInt16 (IFormatProvider provider)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		int IConvertible.ToInt32 (IFormatProvider provider)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		long IConvertible.ToInt64 (IFormatProvider provider)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+    		[CLSCompliant(false)]
+		sbyte IConvertible.ToSByte (IFormatProvider provider)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		float IConvertible.ToSingle (IFormatProvider provider)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		object IConvertible.ToType (Type conversionType, IFormatProvider provider)
+		{
+			throw new NotImplementedException ();
+		}
+		
+		[MonoTODO]
+    		[CLSCompliant(false)]
+		public ushort ToUInt16 (IFormatProvider provider)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+    		[CLSCompliant(false)]
+		uint IConvertible.ToUInt32 (IFormatProvider provider)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+    		[CLSCompliant(false)]
+		ulong IConvertible.ToUInt64 (IFormatProvider provider)
+		{
+			throw new NotImplementedException ();
+		}
+
+		// <-- End IConvertible methods
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private extern object get_value ();
@@ -121,6 +226,7 @@ namespace System {
 			return ToString (format, null);
 		}
 
+		[MonoTODO]
 		public string ToString (String format, IFormatProvider provider)
 		{
 			// fixme: consider format and provider
