@@ -1,3 +1,29 @@
+2003-06-06  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* AuthenticationManager.cs:
+	* Authorization.cs:
+	* BasicClient.cs: new file.
+	* ChunkStream.cs: new file.
+	* Cookie.cs:
+	* CookieContainer.cs:
+	* GlobalProxySelection.cs:
+	* HttpWebRequest.cs:
+	* HttpWebResponse.cs:
+	* IAuthenticationModule.cs:
+	* ServicePoint.cs:
+	* ServicePointManager.cs:
+	* WebAsyncResult.cs: new file.
+	* WebConnection.cs: new file.
+	* WebConnectionData.cs: new file.
+	* WebConnectionGroup.cs: new file.
+	* WebConnectionStream.cs: new file.
+	* WebException.cs:
+	* WebHeaderCollection.cs:
+	* WebProxy.cs:
+	* WebResponse.cs:
+
+	Reworked HttpWebRequest and related classes.
+
 2003-05-30  Miguel de Icaza  <miguel@ximian.com>
 
 	* HttpWebRequest.cs (EndGetResponse): Do not throw exceptions on

@@ -2,54 +2,135 @@
 // System.Net.AuthenticationManager.cs
 //
 // Author:
-//   Miguel de Icaza (miguel@ximian.com)
+// 	Miguel de Icaza (miguel@ximian.com)
+//	Gonzalo Paniagua Javier (gonzalo@ximian.com)
 //
-// (C) Ximian, Inc.  http://www.ximian.com
+// (C) 2002,2003 Ximian, Inc. (http://www.ximian.com)
 //
 
 using System.Collections;
 
-namespace System.Net {
-
-	public class AuthenticationManager {
-
+namespace System.Net
+{
+	public class AuthenticationManager
+	{
 		static ArrayList modules;
 
+		static void EnsureModules ()
+		{
+			if (modules != null)
+				return;
+
+			lock (typeof (AuthenticationManager)) {
+				if (modules != null)
+					return;
+				
+				modules = new ArrayList ();
+			}
+		}
+		
 		public static IEnumerator RegisteredModules {
 			get {
-				if (modules == null)
-					modules = new ArrayList ();
-
-				return modules as IEnumerator;
+				EnsureModules ();
+				return modules.GetEnumerator ();
 			}
 		}
 
-		[MonoTODO]
-		public static Authorization PreAuthenticate (WebRequest request,
-							     ICredentials credentials)
+		public static Authorization Authenticate (string challenge, WebRequest request, ICredentials credentials)
 		{
-			// FIXME: implement
+			if (request == null)
+				throw new ArgumentNullException ("request");
+
+			if (credentials == null)
+				throw new ArgumentNullException ("credentials");
+
+			if (challenge == null)
+				throw new ArgumentNullException ("challenge");
+
+			return DoAuthenticate (challenge, request, credentials);
+		}
+
+		static Authorization DoAuthenticate (string challenge, WebRequest request, ICredentials credentials)
+		{
+			EnsureModules ();
+			lock (modules) {
+				foreach (IAuthenticationModule mod in modules) {
+					Authorization auth = mod.Authenticate (challenge, request, credentials);
+					if (auth == null)
+						continue;
+
+					auth.Module = mod;
+					return auth;
+				}
+			}
+
+			return null;
+		}
+
+		[MonoTODO]
+		public static Authorization PreAuthenticate (WebRequest request, ICredentials credentials)
+		{
+			if (request == null)
+				throw new ArgumentNullException ("request");
+
+			if (credentials == null)
+				return null;
 			return null;
 		}
 
 		public static void Register (IAuthenticationModule authenticationModule)
 		{
-			if (modules == null)
-				modules = new ArrayList ();
+			if (authenticationModule == null)
+				throw new ArgumentNullException ("authenticationModule");
 
-			modules.Add (authenticationModule);
+			DoUnregister (authenticationModule.AuthenticationType, false);
+			lock (modules)
+				modules.Add (authenticationModule);
 		}
 
-		[MonoTODO]
 		public static void Unregister (IAuthenticationModule authenticationModule)
 		{
-			// FIXME: implement
+			if (authenticationModule == null)
+				throw new ArgumentNullException ("authenticationModule");
+
+			EnsureModules ();
+			lock (modules) {
+				if (modules.Contains (authenticationModule))
+					modules.Remove (authenticationModule);
+				else
+					throw new InvalidOperationException ("No such module registered.");
+			}
 		}
 
-		[MonoTODO]
 		public static void Unregister (string authenticationScheme)
 		{
-			// FIXME: implement
+			if (authenticationScheme == null)
+				throw new ArgumentNullException ("authenticationScheme");
+			
+			DoUnregister (authenticationScheme, true);
+		}
+
+		static void DoUnregister (string authenticationScheme, bool throwEx)
+		{
+			EnsureModules ();
+			lock (modules) {
+				IAuthenticationModule module = null;
+				foreach (IAuthenticationModule mod in modules) {
+					string modtype = mod.AuthenticationType;
+					if (String.Compare (modtype, authenticationScheme, true) == 0) {
+						module = mod;
+						break;
+					}
+				}
+
+				if (module == null) {
+					if (throwEx)
+						throw new InvalidOperationException ("Scheme not registered.");
+				} else {
+					modules.Remove (module);
+				}
+			}
 		}
 	}
 }
+

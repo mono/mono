@@ -15,6 +15,7 @@ namespace System.Net {
 		bool complete;
 		string connectionGroupId;
 		string [] protectionRealm;
+		IAuthenticationModule module;
 		
 		public Authorization (string token) : this (token, true)
 		{
@@ -47,6 +48,11 @@ namespace System.Net {
 		public string[] ProtectionRealm {
 			get { return protectionRealm; }
 			set { protectionRealm = value; }
-		}		
+		}
+
+		internal IAuthenticationModule Module {
+			get { return module; }
+			set { module = value; }
+		}
 	}
 }

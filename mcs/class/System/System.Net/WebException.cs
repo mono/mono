@@ -13,7 +13,7 @@ namespace System.Net
 	public class WebException : InvalidOperationException, ISerializable
 	{
 		private WebResponse response;
-		private WebExceptionStatus status;
+		private WebExceptionStatus status = WebExceptionStatus.RequestCanceled;
 		
 
 		// Constructors

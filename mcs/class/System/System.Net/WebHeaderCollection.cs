@@ -1,8 +1,11 @@
 //
 // System.Net.WebHeaderCollection
 //
-// Author:
-//   Lawrence Pit (loz@cable.a2000.nl)
+// Authors:
+// 	Lawrence Pit (loz@cable.a2000.nl)
+//	Gonzalo Paniagua Javier (gonzalo@ximian.com)
+//
+// (c) 2003 Ximian, Inc. (http://www.ximian.com)
 //
 
 using System;
@@ -20,61 +23,58 @@ namespace System.Net
 	[ComVisible(true)]
 	public class WebHeaderCollection : NameValueCollection, ISerializable
 	{
-		private static readonly int [] restricted;
-		private static readonly int [] multiValue;
+		private static readonly Hashtable restricted;
+		private static readonly Hashtable multiValue;
 		private bool internallyCreated = false;
 		
 		// Static Initializer
 		
 		static WebHeaderCollection () 
 		{
-			// For performance reasons we initialize the following
-			// tables by taking the hashcode of header names.
-			// When you add a header make sure all characters are in 
-			// lowercase.
-			
 			// the list of restricted header names as defined 
 			// by the ms.net spec
-			ArrayList a = new ArrayList ();
-			a.Add ("accept".GetHashCode ());
-			a.Add ("connection".GetHashCode ());
-			a.Add ("content-length".GetHashCode ());
-			a.Add ("content-type".GetHashCode ());
-			a.Add ("date".GetHashCode ());
-			a.Add ("expect".GetHashCode ());    // ??? What is this anyway?
-			a.Add ("host".GetHashCode ());
-			a.Add ("range".GetHashCode ());
-			a.Add ("referer".GetHashCode ());
-			a.Add ("transfer-encoding".GetHashCode ());
-			a.Add ("user-agent".GetHashCode ());			
-			restricted = (int []) a.ToArray (typeof (int));
+			restricted = new Hashtable (CaseInsensitiveHashCodeProvider.Default,
+						    CaseInsensitiveComparer.Default);
+
+			restricted.Add ("accept", true);
+			restricted.Add ("connection", true);
+			restricted.Add ("content-length", true);
+			restricted.Add ("content-type", true);
+			restricted.Add ("date", true);
+			restricted.Add ("expect", true);
+			restricted.Add ("host", true);
+			restricted.Add ("range", true);
+			restricted.Add ("referer", true);
+			restricted.Add ("transfer-encoding", true);
+			restricted.Add ("user-agent", true);			
 			
 			// see par 14 of RFC 2068 to see which header names
 			// accept multiple values each separated by a comma
-			a = new ArrayList ();
-			a.Add ("accept".GetHashCode ());
-			a.Add ("accept-charset".GetHashCode ());
-			a.Add ("accept-encoding".GetHashCode ());
-			a.Add ("accept-language".GetHashCode ());
-			a.Add ("accept-ranges".GetHashCode ());
-			a.Add ("allow".GetHashCode ());
-			a.Add ("authorization".GetHashCode ());
-			a.Add ("cache-control".GetHashCode ());
-			a.Add ("connection".GetHashCode ());
-			a.Add ("content-encoding".GetHashCode ());
-			a.Add ("content-language".GetHashCode ());			
-			a.Add ("expect".GetHashCode ());		
-			a.Add ("if-match".GetHashCode ());
-			a.Add ("if-none-match".GetHashCode ());
-			a.Add ("proxy-authenticate".GetHashCode ());
-			a.Add ("public".GetHashCode ());			
-			a.Add ("range".GetHashCode ());
-			a.Add ("transfer-encoding".GetHashCode ());
-			a.Add ("upgrade".GetHashCode ());
-			a.Add ("vary".GetHashCode ());
-			a.Add ("via".GetHashCode ());
-			a.Add ("warning".GetHashCode ());
-			multiValue = (int []) a.ToArray (typeof (int));
+			multiValue = new Hashtable (CaseInsensitiveHashCodeProvider.Default,
+						    CaseInsensitiveComparer.Default);
+
+			multiValue.Add ("accept", true);
+			multiValue.Add ("accept-charset", true);
+			multiValue.Add ("accept-encoding", true);
+			multiValue.Add ("accept-language", true);
+			multiValue.Add ("accept-ranges", true);
+			multiValue.Add ("allow", true);
+			multiValue.Add ("authorization", true);
+			multiValue.Add ("cache-control", true);
+			multiValue.Add ("connection", true);
+			multiValue.Add ("content-encoding", true);
+			multiValue.Add ("content-language", true);			
+			multiValue.Add ("expect", true);		
+			multiValue.Add ("if-match", true);
+			multiValue.Add ("if-none-match", true);
+			multiValue.Add ("proxy-authenticate", true);
+			multiValue.Add ("public", true);			
+			multiValue.Add ("range", true);
+			multiValue.Add ("transfer-encoding", true);
+			multiValue.Add ("upgrade", true);
+			multiValue.Add ("vary", true);
+			multiValue.Add ("via", true);
+			multiValue.Add ("warning", true);
 		}
 		
 		// Constructors
@@ -91,9 +91,9 @@ namespace System.Net
 					  serializationInfo.GetString ("v" + i));
 		}
 		
-		internal WebHeaderCollection (bool dummy) : base ()
+		internal WebHeaderCollection (bool internallyCreated)
 		{	
-			this.internallyCreated = true;
+			this.internallyCreated = internallyCreated;
 		}		
 		
 		// Methods
@@ -104,7 +104,7 @@ namespace System.Net
 				throw new ArgumentNullException ("header");
 			int pos = header.IndexOf (':');
 			if (pos == -1)
-				throw new ArgumentException ("no colon found");				
+				throw new ArgumentException ("no colon found", "header");				
 			this.Add (header.Substring (0, pos), 
 				  header.Substring (pos + 1));
 		}
@@ -154,18 +154,17 @@ namespace System.Net
 
 		public static bool IsRestricted (string headerName)
 		{
-			int hashCode = headerName.ToLower ().GetHashCode ();
-			for (int i = 0; i < restricted.Length; i++) 
-				if (restricted [i] == hashCode)
-					return true;
-			return false;
+			if (headerName == null)
+				throw new ArgumentNullException ("headerName");
+
+			if (headerName == "") // MS throw nullexception here!
+				throw new ArgumentException ("empty string", "headerName");
+
+			return restricted.ContainsKey (headerName);
 		}
 
-		[MonoTODO]
 		public override void OnDeserialization (object sender)
 		{
-			// no idea what to do here... spec doesn't say much
-			throw new NotImplementedException ();
 		}
 
 		public override void Remove (string name)
@@ -246,16 +245,15 @@ namespace System.Net
 		
 		// Private Methods
 		
-		private static bool IsMultiValue (string headerName)
+		internal static bool IsMultiValue (string headerName)
 		{
-			int hashCode = headerName.ToLower ().GetHashCode ();
-			for (int i = 0; i < multiValue.Length; i++) 
-				if (multiValue [i] == hashCode)
-					return true;
-			return false;
+			if (headerName == null || headerName == "")
+				return false;
+
+			return multiValue.ContainsKey (headerName);
 		}		
 		
-		private bool IsHeaderValue (string value)
+		internal static bool IsHeaderValue (string value)
 		{
 			// TEXT any 8 bit value except CTL's (0-31 and 127)
 			//      but including \r\n space and \t
@@ -279,7 +277,7 @@ namespace System.Net
 			return true;
 		}
 		
-		private bool IsHeaderName (string name)
+		internal static bool IsHeaderName (string name)
 		{
 			// token          = 1*<any CHAR except CTLs or tspecials>
 			// tspecials      = "(" | ")" | "<" | ">" | "@"

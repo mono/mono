@@ -51,6 +51,7 @@ namespace System.Net {
 			expires = DateTime.MinValue;
 			timestamp = DateTime.Now;
 			version = 0;		
+			domain = "";
 		}		
 			
 		public Cookie (string name, string value, string path) 
@@ -270,7 +271,7 @@ namespace System.Net {
 			}
 			return true;
 	    	}	    
-		
+
 	}
 }
 

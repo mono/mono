@@ -20,86 +20,35 @@ namespace System.Net
 	[Serializable]
 	public class HttpWebResponse : WebResponse, ISerializable, IDisposable
 	{
-		private Uri uri;
-		private WebHeaderCollection webHeaders;
-		private CookieCollection cookieCollection = null;
-		private string method = null;
-		private Version version = null;
-		private HttpStatusCode statusCode;
-		private string statusDescription = null;
+		Uri uri;
+		WebHeaderCollection webHeaders;
+		CookieCollection cookieCollection = null;
+		string method;
+		Version version;
+		HttpStatusCode statusCode;
+		string statusDescription;
 		bool chunked;
+		long contentLength = -1;
+		string contentType;
 
-		private HttpWebResponseStream responseStream;		
-		private bool disposed = false;
+		bool disposed = false;
+		WebConnectionStream stream;
 		
 		// Constructors
 		
-		internal HttpWebResponse (Uri uri, string method, Socket socket, int timeout, EventHandler onClose)
-		{ 
-			Text.StringBuilder value = null;
-			string last = null;
-			string line = null;
-			string[] protocol, header;
-
+		internal HttpWebResponse (Uri uri, string method, WebConnectionData data)
+		{
 			this.uri = uri;
 			this.method = method;
-			this.webHeaders = new WebHeaderCollection();
-
-			responseStream = new HttpWebResponseStream (socket, onClose);
-			if (!socket.Poll (timeout, SelectMode.SelectRead))
-				throw new WebException("The request timed out", WebExceptionStatus.Timeout);
-
-			this.statusCode = 0;
-			do {
-				if (statusCode == HttpStatusCode.Continue)
-					while ((line = ReadHttpLine (responseStream)) != "");
-
-				line = ReadHttpLine (responseStream);
-
-				protocol = line.Split (' ');
-			
-				switch (protocol[0]) {
-					case "HTTP/1.0":
-						this.version = HttpVersion.Version10;
-						break;
-					case "HTTP/1.1":
-						this.version = HttpVersion.Version11;
-						break;
-					default:
-						throw new WebException ("Unrecognized HTTP Version: " + line);
-				}
-			
-				this.statusCode = (HttpStatusCode) Int32.Parse (protocol[1]);
-			} while (this.statusCode == HttpStatusCode.Continue);
-
-			while ((line = ReadHttpLine (responseStream)).Length != 0) {
-				if (!Char.IsWhiteSpace (line[0])) { // new header
-					header = line.Split (new char[] {':'}, 2);
-					if (header.Length != 2)
-						throw new WebException ("Bad HTTP Header");
-					if (last != null) { // not the first header
-						if (last.Equals ("Set-Cookie"))
-							SetCookie (value.ToString());
-						else if (last.Equals ("Set-Cookie2"))
-							SetCookie2 (value.ToString());
-						else //don't save Set-Cookie headers
-							this.webHeaders[last] = value.ToString();
-					}
-					last = header[0];
-					value = new Text.StringBuilder (header[1].Trim());
-					if (last == "Transfer-Encoding" && header [1].IndexOf ("chunked") != -1)
-						chunked = true;
-				}
-				else
-					value.Append (line.Trim());
-			}
-			
-			responseStream.Chunked = chunked;
-			this.webHeaders[last] = value.ToString(); // otherwise we miss the last header
-
-			responseStream.BytesLeft = ContentLength;
+			webHeaders = data.Headers;
+			version = data.Version;
+			statusCode = (HttpStatusCode) data.StatusCode;
+			statusDescription = data.StatusDescription;
+			stream = data.stream;
+			FillCookies ();
 		}
-		
+
+		[MonoTODO("Check this out and update if needed")] //Gon
 		protected HttpWebResponse (SerializationInfo serializationInfo, StreamingContext streamingContext)
 		{
 			uri = (Uri) serializationInfo.GetValue ("uri", typeof (Uri));
@@ -146,20 +95,28 @@ namespace System.Net
 		}
 		
 		public override long ContentLength {		
-			get { 
+			get {
 				CheckDisposed ();
+				if (contentLength != -1)
+					return contentLength;
+
 				try {
-					return Int64.Parse (webHeaders ["Content-Length"]); 
+					contentLength = (long) UInt64.Parse (webHeaders ["Content-Length"]); 
 				} catch (Exception) {
 					return -1;
 				}
+
+				return contentLength;
 			}
 		}
 		
 		public override string ContentType {		
 			get {
 				CheckDisposed ();
-				return webHeaders ["Content-Type"];
+				if (contentType == null)
+					contentType = webHeaders ["Content-Type"];
+
+				return contentType;
 			}
 		}
 		
@@ -173,8 +130,7 @@ namespace System.Net
 			}
 			set {
 				CheckDisposed ();
-				// ?? don't understand how you can set cookies on a response.
-				throw new NotSupportedException ();
+				cookieCollection = value;
 			}
 		}
 		
@@ -250,15 +206,17 @@ namespace System.Net
 		public string GetResponseHeader (string headerName)
 		{
 			CheckDisposed ();
-			return webHeaders [headerName];
+			string value = webHeaders [headerName];
+			return (value != null) ? value : "";
 		}
 		
 		public override Stream GetResponseStream ()
 		{
 			CheckDisposed ();
-			if (method.Equals ("HEAD")) // see par 4.3 & 9.4
+			if (0 == String.Compare (method, "HEAD", true)) // see par 4.3 & 9.4
 				return Stream.Null;  
-			return responseStream;
+
+			return stream;
 		}
 		
 		void ISerializable.GetObjectData (SerializationInfo serializationInfo,
@@ -278,11 +236,6 @@ namespace System.Net
 
 		// Cleaning up stuff
 
-		~HttpWebResponse ()
-		{
-			Dispose (false);
-		}		
-		
 		public override void Close ()
 		{
 			((IDisposable) this).Dispose ();
@@ -311,10 +264,10 @@ namespace System.Net
 			}
 			
 			// release unmanaged resources
-			Stream stream = responseStream;
-			responseStream = null;
-			if (stream != null)
-				stream.Close ();
+			Stream st = stream;
+			stream = null;
+			if (st != null)
+				st.Close ();
 		}
 		
 		private void CheckDisposed () 
@@ -323,44 +276,49 @@ namespace System.Net
 				throw new ObjectDisposedException (GetType ().FullName);
 		}
 
-		private static string ReadHttpLine (Stream stream)
+		void FillCookies ()
 		{
-			StringBuilder line = new StringBuilder();
-			byte last = (byte)'\n';
-			bool read_last = false;
-			int c;
-			
-			while ((c = stream.ReadByte ()) != -1) {
-				if (c == '\r') {
-					if ((last = (byte) stream.ReadByte ()) == '\n') // headers; not at EOS
-						break;
-					read_last = true;
-				}
+			if (webHeaders == null)
+				return;
 
-				line.Append ((char) c);
-				if (read_last) {
-					line.Append (Convert.ToChar (last));
-					read_last = false;
-				}
+			string val = webHeaders ["Set-Cookie"];
+			if (val != null && val.Trim () != "")
+				SetCookie (val);
+
+			val = webHeaders ["Set-Cookie2"];
+			if (val != null && val.Trim () != "")
+				SetCookie2 (val);
+		}
+		
+		static string [] SplitValue (string input)
+		{
+			string [] result = new string [2];
+			int eq = input.IndexOf ('=');
+			if (eq == -1) {
+				result [0] = "invalid";
+			} else {
+				result [0] = input.Substring (0, eq).Trim ().ToUpper ();
+				result [1] = input.Substring (eq + 1);
 			}
 			
-			return line.ToString();
+			return result;
 		}
-
-		private void SetCookie (string cookie_str)
+		
+		[MonoTODO ("Parse dates")]
+		void SetCookie (string cookie_str)
 		{
 			string[] parts = null;
 			Collections.Queue options = null;
 			Cookie cookie = null;
 
 			options = new Collections.Queue (cookie_str.Split (';'));
-			parts = ((string)options.Dequeue()).Split ('='); // NAME=VALUE must be first
+			parts = SplitValue ((string) options.Dequeue()); // NAME=VALUE must be first
 
 			cookie = new Cookie (parts[0], parts[1]);
 
 			while (options.Count > 0) {
-				parts = ((string)options.Dequeue()).Split ('=');
-				switch (parts[0].ToUpper()) { // cookie options are case-insensitive
+				parts = SplitValue ((string) options.Dequeue());
+				switch (parts [0]) {
 					case "COMMENT":
 						if (cookie.Comment == null)
 							cookie.Comment = parts[1];
@@ -373,7 +331,7 @@ namespace System.Net
 						cookie.Discard = true;
 					break;
 					case "DOMAIN":
-						if (cookie.Domain == null)
+						if (cookie.Domain == "")
 							cookie.Domain = parts[1];
 					break;
 					case "MAX-AGE": // RFC Style Set-Cookie2
@@ -381,11 +339,13 @@ namespace System.Net
 							cookie.Expires = cookie.TimeStamp.AddSeconds (Int32.Parse (parts[1]));
 					break;
 					case "EXPIRES": // Netscape Style Set-Cookie
-						if (cookie.Expires == DateTime.MinValue)
-							cookie.Expires = DateTime.Parse (parts[1]);
+						if (cookie.Expires == DateTime.MinValue) {
+							//FIXME: Does DateTime parse something like: "Sun, 17-Jan-2038 19:14:07 GMT"?
+							//cookie.Expires = DateTime.ParseExact (parts[1]);
+							cookie.Expires = DateTime.Now.AddDays (1);
+						}
 					break;
 					case "PATH":
-						if (cookie.Path == null)
 							cookie.Path = parts[1];
 					break;
 					case "PORT":
@@ -404,230 +364,18 @@ namespace System.Net
 			if (cookieCollection == null)
 				cookieCollection = new CookieCollection();
 
-			if (cookie.Domain == null)
+			if (cookie.Domain == "")
 				cookie.Domain = uri.Host;
 
 			cookieCollection.Add (cookie);
 		}
 
-		private void SetCookie2 (string cookies_str)
+		void SetCookie2 (string cookies_str)
 		{
-			string[] cookies = cookies_str.Split (',');
+			string [] cookies = cookies_str.Split (',');
 	
 			foreach (string cookie_str in cookies)
 				SetCookie (cookie_str);
-
-		}
-
-		class HttpWebResponseStream : NetworkStream
-		{
-			bool disposed;
-			bool chunked;
-			int chunkSize;
-			int chunkLeft;
-			bool readingChunkSize;
-			EventHandler onClose;
-			//
-			// If ContentLength provided, the number of bytes left to read
-			//
-			internal long BytesLeft = -1;
-
-			public HttpWebResponseStream (Socket socket, EventHandler onClose)
-				: base (socket, FileAccess.Read, false)
-			{
-				this.onClose = onClose;
-				chunkSize = -1;
-				chunkLeft = 0;
-			}
-
-			public bool Chunked {
-				get { return chunked; }
-				set { chunked = value; }
-			}
-			
-			protected override void Dispose (bool disposing)
-			{
-				if (disposed)
-					return;
-
-				disposed = true;
-				if (disposing) {
-					/* This does not work !??
-					if (Socket.Connected)
-						Socket.Shutdown (SocketShutdown.Receive);
-					*/
-
-					if (onClose != null)
-						onClose (this, EventArgs.Empty);
-				}
-
-				onClose = null;
-				base.Dispose (disposing);
-			}
-
-			void ReadChunkSize ()
-			{
-				bool cr = false;
-				bool lf = false;
-				int size = 0;
-				// 8 hex digits should be enough
-				for (int i = 0; i < 10; i++) {
-					char c = Char.ToUpper ((char) ReadByte ());
-					if (c == '\r') {
-						if (!cr) {
-							cr = true;
-							continue;
-						}
-						throw new IOException ("Bad stream: 2 CR");
-					} 
-					
-					if (c == '\n' && cr == true) {
-						if (!lf) {
-							lf = true;
-							break;
-						}
-
-						throw new IOException ("Bad stream: got LF but no CR");
-					}
-					
-					if (i < 8 && ((c >= '0' && c <= '9') || c >= 'A' && c <= 'F')) {
-						size = size << 4;
-						if (c >= 'A' && c <= 'F')
-							size += c - 'A' + 10;
-						else
-							size += c - '0';
-						continue;
-					}
-
-					throw new IOException ("Bad stream: got " + c);
-				}
-
-				if (!cr || !lf)
-					throw new IOException ("Bad stream: no CR or LF after chunk size");
-
-				chunkSize = size;
-				chunkLeft = size;
-			}
-
-			int GetMaxSizeFromChunkLeft (int requestedSize)
-			{
-				if (!chunked)
-					return requestedSize;
-
-				if (chunkSize == -1 || chunkLeft == 0) {
-					lock (this) {
-						if (chunkSize == -1 || chunkLeft == 0) {
-							readingChunkSize = true;
-							try {
-								ReadChunkSize ();
-							} finally {
-								readingChunkSize = false;
-							}
-						}
-					}
-				}
-
-				return (chunkLeft < requestedSize) ? chunkLeft : requestedSize;
-			}
-			
-			public override IAsyncResult BeginRead (byte [] buffer, int offset, int size,
-								AsyncCallback callback, object state)
-			{
-				CheckDisposed ();				
-				IAsyncResult retval;
-
-				if (buffer == null)
-					throw new ArgumentNullException ("buffer is null");
-
-				int len = buffer.Length;
-				if (offset < 0 || offset >= len)
-					throw new ArgumentOutOfRangeException ("offset exceeds the size of buffer");
-
-				if (offset + size < 0 || offset+size > len)
-					throw new ArgumentOutOfRangeException ("offset+size exceeds the size of buffer");
-
-				if (!readingChunkSize)
-					size = GetMaxSizeFromChunkLeft (size);
-
-				try {
-					retval = base.BeginRead (buffer, offset, size, callback, state);
-				} catch {
-					throw new IOException ("BeginReceive failure");
-				}
-
-				return retval;
-			}
-
-			public override int EndRead (IAsyncResult ar)
-			{
-				CheckDisposed ();
-				int res;
-
-				if (BytesLeft == 0)
-					return 0;
-				
-				if (ar == null)
-					throw new ArgumentNullException ("async result is null");
-
-				try {
-					res = base.EndRead (ar);
-					if (BytesLeft != -1)
-						BytesLeft -= res;
-				} catch (Exception e) {
-					throw new IOException ("EndRead failure", e);
-				}
-
-				AdjustChunkLeft (res);
-				return res;
-			}
-
-			public override int Read (byte [] buffer, int offset, int size)
-			{
-				CheckDisposed ();
-				int res;
-				if (buffer == null)
-					throw new ArgumentNullException ("buffer is null");
-
-				if (offset < 0 || offset >= buffer.Length)
-					throw new ArgumentOutOfRangeException ("offset exceeds the size of buffer");
-
-				if (offset + size < 0 || offset + size > buffer.Length)
-					throw new ArgumentOutOfRangeException ("offset+size exceeds the size of buffer");
-
-				if (!readingChunkSize)
-					size = GetMaxSizeFromChunkLeft (size);
-
-				try {
-					if (BytesLeft == 0)
-						return 0;
-				
-					res = base.Read (buffer, offset, size);
-					if (BytesLeft != -1)
-						BytesLeft -= res;
-				} catch (Exception e) {
-					throw new IOException ("Read failure", e);
-				}
-
-				AdjustChunkLeft (res);
-
-				return res;
-			}
-
-			void CheckDisposed ()
-			{
-				if (disposed)
-					throw new ObjectDisposedException (GetType ().FullName);
-			}
-
-			void AdjustChunkLeft (int read)
-			{
-				if (!chunked)
-					return;
-
-				chunkLeft -= read;
-				if (chunkLeft < 0)
-					chunkLeft = 0;
-			}
 		}
 	}	
 }

@@ -12,19 +12,11 @@ namespace System.Net {
 	// <remarks>
 	//   Authentication interface for Web client authentication modules.
 	// </remarks>
-	public interface IAuthenticationModule {
-		string AuthenticationType {
-			get;
-		}
-
-		bool CanPreAuthenticate {
-			get;
-		}
-
-		bool CanRespond (string challenge);
-
+	public interface IAuthenticationModule
+	{
+		Authorization Authenticate (string challenge, WebRequest request, ICredentials credentials);
 		Authorization PreAuthenticate (WebRequest request, ICredentials credentials);
-
-		Authorization Respond (string challenge, WebRequest request, ICredentials credentials);
+		string AuthenticationType { get; }
+		bool CanPreAuthenticate { get; }
 	}
 }

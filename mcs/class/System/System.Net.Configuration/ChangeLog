@@ -1,3 +1,10 @@
+2003-06-06  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* DefaultProxyHandler.cs: new file.
+	* NetAuthenticationModuleHandler.cs: new file. 
+
+	Reworked HttpWebRequest and related classes.
+
 2003-05-09  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* ConnectionManagementHandler.cs: New file that handles

@@ -7,6 +7,7 @@
 
 using System;
 using System.Collections;
+using System.Configuration;
 using System.IO;
 using System.Runtime.Serialization;
 
@@ -16,26 +17,39 @@ namespace System.Net
 	{
 		private static IWebProxy proxy;
 		
-		// Static Initializer
-		
-		static GlobalProxySelection ()
-		{
-			proxy = GetEmptyWebProxy ();
-			
-			// TODO: create proxy object based on information from
-			//       the global or application configuration file.
-		}
-		
 		// Constructors
-		
 		public GlobalProxySelection() { }
 		
 		// Properties
 		
+		static IWebProxy GetProxy ()
+		{
+			if (proxy != null)
+				return proxy;
+
+			lock (typeof (GlobalProxySelection)) {
+				if (proxy != null)
+					return proxy;
+
+				object p = ConfigurationSettings.GetConfig ("system.net/defaultProxy");
+				if (p == null)
+					p = new EmptyWebProxy ();
+
+				proxy = (IWebProxy) p;
+			}
+
+			return proxy;
+		}
+		
 		public static IWebProxy Select {
-			get { return proxy; }
-			set { 
-				proxy = (value == null) ? GetEmptyWebProxy () : value; 
+			get { return GetProxy (); }
+			set {
+				if (value == null)
+					throw new ArgumentNullException ("GlobalProxySelection.Select",
+							"null IWebProxy not allowed. Use GetEmptyWebProxy ()");
+
+				lock (typeof (GlobalProxySelection))
+					proxy = value; 
 			}
 		}
 		

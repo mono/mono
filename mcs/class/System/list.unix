@@ -387,8 +387,12 @@ System.IO/WaitForChangedResult.cs
 System.IO/WatcherChangeTypes.cs
 System.Net/AuthenticationManager.cs
 System.Net/Authorization.cs
+System.Net/BasicClient.cs
+System.Net/ChunkStream.cs
 System.Net/ConnectionModes.cs
 System.Net.Configuration/ConnectionManagementHandler.cs
+System.Net.Configuration/DefaultProxyHandler.cs
+System.Net.Configuration/NetAuthenticationModuleHandler.cs
 System.Net/CookieCollection.cs
 System.Net/CookieContainer.cs
 System.Net/Cookie.cs
@@ -445,6 +449,11 @@ System.Net.Sockets/TcpListener.cs
 System.Net.Sockets/UdpClient.cs
 System.Net/TransportType.cs
 System.Net/WebClient.cs
+System.Net/WebAsyncResult.cs
+System.Net/WebConnection.cs
+System.Net/WebConnectionData.cs
+System.Net/WebConnectionGroup.cs
+System.Net/WebConnectionStream.cs
 System.Net/WebException.cs
 System.Net/WebExceptionStatus.cs
 System.Net/WebHeaderCollection.cs

@@ -103,18 +103,15 @@ namespace System.Net
 		
 		// Methods
 		
-		[MonoTODO]
+		[MonoTODO("Can we get this info under windows from the system?")]
 		public static WebProxy GetDefaultProxy ()
 		{
-			// for Mono we should probably read in these settings
-			// from the global application configuration file
-			
-			// for now, return the empty WebProxy to indicate
-			// no proxy is used
-			// return GlobalProxySelection.GetEmptyWebProxy ();
-			// ??
-			
-			throw new NotImplementedException ();
+			// Select gets a WebProxy from config files, if available.
+			IWebProxy p = GlobalProxySelection.Select;
+			if (p is WebProxy)
+				return (WebProxy) p;
+
+			return new WebProxy ();
 		}
 		
 		public Uri GetProxy (Uri destination)

@@ -30,13 +30,24 @@ using System.Security.Cryptography.X509Certificates;
 
 namespace System.Net 
 {
+	class DummyPolicy : ICertificatePolicy
+	{
+		public bool CheckValidationResult (ServicePoint point,
+						   X509Certificate certificate,
+						   WebRequest request,
+						   int certificateProblem)
+		{
+			return (certificateProblem == 0);
+		}
+	}
+	
 	public class ServicePointManager
 	{
 		private static HybridDictionary servicePoints = new HybridDictionary ();
 		
 		// Static properties
 		
-		private static ICertificatePolicy policy = null;
+		private static ICertificatePolicy policy = new DummyPolicy ();
 		private static int defaultConnectionLimit = DefaultPersistentConnectionLimit;
 		private static int maxServicePointIdleTime = 900000; // 15 minutes
 		private static int maxServicePoints = 0;
@@ -61,8 +72,9 @@ namespace System.Net
 		public static int DefaultConnectionLimit {
 			get { return defaultConnectionLimit; }
 			set { 
-				if (value < 0)
+				if (value <= 0)
 					throw new ArgumentOutOfRangeException ("value");
+
 				defaultConnectionLimit = value; 
 			}
 		}
@@ -85,6 +97,7 @@ namespace System.Net
 			set {  
 				if (value < 0)
 					throw new ArgumentException ("value");				
+
 				maxServicePoints = value;
 				RecycleServicePoints ();
 			}
@@ -104,22 +117,25 @@ namespace System.Net
 		
 		public static ServicePoint FindServicePoint (Uri address, IWebProxy proxy)
 		{
-			RecycleServicePoints ();
-			
 			if (address == null)
 				throw new ArgumentNullException ("address");
 
+			RecycleServicePoints ();
+			
 			if (proxy != null && !proxy.IsBypassed(address)) {
-				address = proxy.GetProxy (address);				
+				address = proxy.GetProxy (address);
+				if (address.Scheme != "http" && address.Scheme != "https")
+					throw new NotSupportedException ("Proxy scheme not supported.");
 			} 
 
 			address = new Uri (address.Scheme + "://" + address.Authority);
 			
 			ServicePoint sp = null;
 			lock (servicePoints) {
-				sp = (ServicePoint) servicePoints [address];
+				sp = servicePoints [address] as ServicePoint;
 				if (sp != null)
 					return sp;
+
 				if (maxServicePoints > 0 && servicePoints.Count >= maxServicePoints)
 					throw new InvalidOperationException ("maximum number of service points reached");
 				sp = new ServicePoint (address, defaultConnectionLimit, maxServicePointIdleTime);
