@@ -1,3 +1,13 @@
+2003-08-22  Duncan Mak  <duncan@ximian.com>
+
+	* Tds.cs (ProcessEndToken): RecordsAffected was not filled
+	correctly. I've found out that the record count was submitted for
+	TdsPacketSubType.Done. So I changed the behaviour to include this
+	(without deeper knowledge of the TDS protocol). Patch from Jörg
+	Rosenkranz <joergr@voelcker.com>.
+
+	This is part of a fix to bug #40315.
+	
 2003-05-07  Miguel de Icaza  <miguel@ximian.com>
 
 	Patches from Igor Nosyryev <nosyryev@attbi.com>

@@ -283,6 +283,7 @@ namespace System.Data.SqlClient {
 
 			try {
 				Execute (CommandBehavior.Default, false);
+				result = Connection.Tds.RecordsAffected;
 			}
 			catch (TdsTimeoutException e) {
 				throw SqlException.FromTdsInternalException ((TdsInternalException) e);

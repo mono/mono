@@ -1,3 +1,11 @@
+2003-08-22  Duncan Mak  <duncan@ximian.com>
+
+	* SqlCommand.cs (ExecuteNonQuery): Return
+	Connection.Tds.RecordsAffected if it is successful.  Patch from
+	Jörg Rosenkranz <joergr@voelcker.com>.
+
+	This is part of a fix to bug #40315.
+
 2003-08-20  Duncan Mak  <duncan@ximian.com>
 
 	* SqlConnectionPool.cs (ReleaseConnection): A patch from Joerg

@@ -915,10 +915,15 @@ namespace Mono.Data.Tds.Protocol {
 			moreResults = ((status & 0x01) != 0);
 			bool cancelled = ((status & 0x20) != 0);
 
-			if (type == TdsPacketSubType.DoneProc)  {
-				doneProc = true;
-				if (rowCount > 0)
-					recordsAffected += rowCount;
+			switch (type) {
+				case TdsPacketSubType.DoneProc:
+					doneProc = true;
+					goto case TdsPacketSubType.Done;
+
+				case TdsPacketSubType.Done:
+					if (rowCount > 0)
+						recordsAffected += rowCount;
+					break;
 			}
 
 			if (moreResults) 

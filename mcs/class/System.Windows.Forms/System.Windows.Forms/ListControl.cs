@@ -21,6 +21,7 @@ namespace System.Windows.Forms {
 
 		protected string DisplayMember_ = String.Empty;
 
+		private object _dataSource;
 		//ControlStyles controlStyles;
 		//
 		//  --- Public Properties
@@ -28,10 +29,18 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		public object DataSource {
 			get {
-				throw new NotImplementedException ();
+				return _dataSource;
 			}
+
 			set {
-				//FIXME:
+				if (_dataSource != value) {
+					if ((value is IList) || (value is System.ComponentModel.IListSource)) {
+						_dataSource = value;
+						OnDataSourceChanged (new EventArgs ());
+
+					} else
+						throw new Exception ("Complex DataBinding accepts as a data source either an IList or an IListSource");
+				}
 			}
 		}
 		[MonoTODO]

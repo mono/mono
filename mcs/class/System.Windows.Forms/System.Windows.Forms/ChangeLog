@@ -1,3 +1,8 @@
+2003-08-22  Duncan Mak  <duncan@ximian.com>
+
+	* ListControl.cs (DataSource): Implementation by Brian Takita
+	<brian.takita@runbox.com>.
+
 2003-08-12 Aleksey Ryabchuk <ryabchuk@yahoo.com>
 	* MenuItem.cs : added missing properties, so menu sample app can be compiled
 
