@@ -255,7 +255,7 @@ namespace Mono.CSharp
 %%
 
 compilation_unit
-	: opt_using_directives opt_attributes opt_namespace_member_declarations opt_attributes opt_EOF
+	: opt_using_directives opt_namespace_member_declarations opt_attributes opt_EOF
 	  {
 		// Check that using comes only before namespace elements
 	  }
