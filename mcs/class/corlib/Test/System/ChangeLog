@@ -1,3 +1,9 @@
+2004-01-27  Nick Drochak <ndrochak@gol.com>
+
+	* AppDomainSetupTest.cs: When I run this on .NET the AppBase uses the
+	temp dir.  Perhaps a different runner gives different results? I'm
+	using 'make run-test' from the mcs directory.
+
 2004-01-22 David Sheldon <dave-mono@earth.li>
 
        * AppDomainSetupTest: Changed test 3 to test that the

@@ -39,8 +39,8 @@ namespace MonoTests.System
 		public void ApplicationBase3 ()
 		{
 			AppDomainSetup setup = new AppDomainSetup ();
+			string expected = Path.Combine (Path.GetTempPath (), "lalala");
 			setup.ApplicationBase = "lalala";
-			string expected = Path.Combine (curDir, "lalala");
 			AssertEquals ("AB3 #01", expected, setup.ApplicationBase);
 		}
 
