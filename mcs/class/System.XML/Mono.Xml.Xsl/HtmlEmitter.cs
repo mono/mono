@@ -186,7 +186,7 @@ namespace Mono.Xml.Xsl
 			string formatName = localName;
 
 			writer.Write ('<');
-			if (nsURI != String.Empty || !IsHtmlElement (localName)) {
+			if (nsURI != String.Empty) {// && !IsHtmlElement (localName)) {
 				// XML output
 				if (prefix != String.Empty) {
 					formatName = String.Concat (prefix, ":", localName);

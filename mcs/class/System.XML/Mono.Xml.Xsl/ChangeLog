@@ -1,5 +1,12 @@
 2005-03-02  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* GenericOutputter.cs : On WriteStartElement(), prefix should be an
+	  empty string when nsURI is empty.
+	* HtmlEmitter.cs : non-HTML elements in default namespace are treated
+	  unlike xml but like span, as written in the spec 16.2.
+
+2005-03-02  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* XslCompiledContext.cs, XslTransformProcessor.cs :
 	  According to errata E25, those namespaces 1) that has the same
 	  name as current element's prefix, or an empty name when current

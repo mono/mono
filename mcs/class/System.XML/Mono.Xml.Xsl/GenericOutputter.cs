@@ -236,6 +236,8 @@ namespace Mono.Xml.Xsl
 						_currentOutput.DoctypePublic, _currentOutput.DoctypeSystem);
 			}
 			CheckState ();
+			if (nsURI == String.Empty)
+				prefix = String.Empty;
 			Emitter.WriteStartElement (prefix, localName, nsURI);
 			_state = WriteState.Element;
 			if (_nsManager.LookupNamespace (prefix, false) != nsURI)
