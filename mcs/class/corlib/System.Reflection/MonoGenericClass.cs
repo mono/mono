@@ -40,13 +40,13 @@ using System.Runtime.Serialization;
 
 namespace System.Reflection
 {
-	internal class MonoGenericInst : MonoType
+	internal class MonoGenericClass : MonoType
 	{
 		protected Type generic_type;
 		bool initialized;
 
 		[MonoTODO]
-		internal MonoGenericInst ()
+		internal MonoGenericClass ()
 			: base (null)
 		{
 			// this should not be used
@@ -87,7 +87,7 @@ namespace System.Reflection
 			if (initialized)
 				return;
 
-			MonoGenericInst parent = GetParentType ();
+			MonoGenericClass parent = GetParentType ();
 			if (parent != null)
 				parent.initialize ();
 
@@ -101,14 +101,14 @@ namespace System.Reflection
 		}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		protected extern MonoGenericInst GetParentType ();
+		protected extern MonoGenericClass GetParentType ();
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		protected extern MonoGenericInst[] GetInterfaces_internal ();
+		protected extern MonoGenericClass[] GetInterfaces_internal ();
 
 		public override Type BaseType {
 			get {
-				MonoGenericInst parent = GetParentType ();
+				MonoGenericClass parent = GetParentType ();
 				return parent != null ? parent : generic_type.BaseType;
 			}
 		}
@@ -134,7 +134,7 @@ namespace System.Reflection
 
 			Type current_type = this;
 			do {
-				MonoGenericInst gi = current_type as MonoGenericInst;
+				MonoGenericClass gi = current_type as MonoGenericClass;
 				if (gi != null)
 					l.AddRange (gi.GetMethods_impl (bf, this));
 				else if (current_type is TypeBuilder)
@@ -205,7 +205,7 @@ namespace System.Reflection
 
 			Type current_type = this;
 			do {
-				MonoGenericInst gi = current_type as MonoGenericInst;
+				MonoGenericClass gi = current_type as MonoGenericClass;
 				if (gi != null)
 					l.AddRange (gi.GetConstructors_impl (bf, this));
 				else if (current_type is TypeBuilder)
@@ -274,7 +274,7 @@ namespace System.Reflection
 
 			Type current_type = this;
 			do {
-				MonoGenericInst gi = current_type as MonoGenericInst;
+				MonoGenericClass gi = current_type as MonoGenericClass;
 				if (gi != null)
 					l.AddRange (gi.GetFields_impl (bf, this));
 				else if (current_type is TypeBuilder)
@@ -342,7 +342,7 @@ namespace System.Reflection
 
 			Type current_type = this;
 			do {
-				MonoGenericInst gi = current_type as MonoGenericInst;
+				MonoGenericClass gi = current_type as MonoGenericClass;
 				if (gi != null)
 					l.AddRange (gi.GetProperties_impl (bf, this));
 				else if (current_type is TypeBuilder)
@@ -416,7 +416,7 @@ namespace System.Reflection
 
 			Type current_type = this;
 			do {
-				MonoGenericInst gi = current_type as MonoGenericInst;
+				MonoGenericClass gi = current_type as MonoGenericClass;
 				if (gi != null)
 					l.AddRange (gi.GetEvents_impl (bf, this));
 				else if (current_type is TypeBuilder)

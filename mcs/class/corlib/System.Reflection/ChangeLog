@@ -1,3 +1,8 @@
+2004-11-30  Martin Baulig  <martin@ximian.com>
+
+	* MonoGenericInst.cs: Renamed to MonoGenericClass.cs and also
+	renamed the class from `MonoGenericInst' to `MonoGenericClass'.
+
 2004-11-05  Zoltan Varga  <vargaz@freemail.hu>
 
 	* AssemblyName.cs (FullName): Omit default values from full name.
