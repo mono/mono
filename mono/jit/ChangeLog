@@ -1,5 +1,30 @@
 2002-05-21  Martin Baulig  <martin@gnome.org>
 
+	* debug.c (mono_debug_open_file): Renamed to mono_debug_open(), now takes
+	a `MonoAssembly *' argument instead of a `char *filename' one.  Also added
+	`const char **args' argument.
+
+	* mono.c (mono_jit_assembly): Renamed to mono_jit_compile_image(), added
+	`int verbose' argument and made it public.
+	(mono_jit_compile_class): New public function,  moved the code to compile
+	all methods in a class here from main().
+	(--compile): The argument can now also be an image (in `@imagename' format).
+	Updated documentation for this command line argument.
+	(--precompile): New command line argument to precompile an image/class/method
+	before executing the main app.  This argument can be given multiple times.
+	(--break): Renamed the "--debug" command line argument to "--break".
+	(--debug): New command line argument to specify the debugging format.
+	(--stabs, --dwarf, --dwarf-plus): Removed, obsoleted by "--debug".
+	(--debug-args): New command line argument.  This is a comma-separated list of
+	additional arguments for the symbol writer.
+	(usage): Beautified the help text a bit.
+
+	* debug-dwarf2-plus.c (mono_debug_open_assembly_dwarf2_plus): Use the new
+	public mono_jit_compile_image() function rather than duplication this
+	functionality here.
+
+2002-05-21  Martin Baulig  <martin@gnome.org>
+
 	* debug-dwarf2-plus.c: This is now working again :-)
 
 	* debug.c (mono_debug_open_file): When using MONO_DEBUG_FORMAT_DWARF2_PLUS,
