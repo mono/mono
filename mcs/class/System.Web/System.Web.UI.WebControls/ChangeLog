@@ -1,3 +1,8 @@
+2003-11-16  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* ListItem.cs: prevent nullrefs ni Get/SetAttribute. Thanks to Alon
+	Gazit <along@mainsoft.com>.
+
 2003-11-13  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* RadioButton.cs: fixed RenderInputTag for negative TabIndex values.

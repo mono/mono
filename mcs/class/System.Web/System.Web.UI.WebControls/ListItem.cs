@@ -128,14 +128,17 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
-		string IAttributeAccessor.GetAttribute(string key)
+		string IAttributeAccessor.GetAttribute (string key)
 		{
-			return attributes[key];
+			if (attributes == null)
+				return null;
+
+			return attributes [key];
 		}
 
-		void IAttributeAccessor.SetAttribute(string key, string value)
+		void IAttributeAccessor.SetAttribute (string key, string value)
 		{
-			attributes[key] = value;
+			Attributes [key] = value;
 		}
 
 		/// <remarks>
