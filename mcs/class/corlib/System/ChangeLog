@@ -1,5 +1,8 @@
 2004-05-25  Sebastien Pouliot  <sebastien@ximian.com>
 
+	* Guid.cs: Added an internal method to create a random Guid without
+	using CryptoConfig (which is heavy on first use). This is only used
+	in S.R.E.ModuleBuilder to speedup MCS compilation.
 	* String.cs: Fixed reported exception for PadLeft|Right. Fixed 
 	possible integer overflow in methods that takes index and count
 	as parameters.

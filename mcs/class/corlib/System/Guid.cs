@@ -218,8 +218,6 @@ namespace System
 				return g;
 			}
 		}
-	
-		private static RandomNumberGenerator _rng = RandomNumberGenerator.Create ();
 
 		private static void CheckNull (object o)
 		{
@@ -397,22 +395,54 @@ namespace System
 			return (char)((b<0xA)?('0' + b):('a' + b - 0xA));
 		}
 
+		private static object _rngAccess = new object ();
+		private static RandomNumberGenerator _rng;
+		private static RandomNumberGenerator _fastRng;
+
 		// generated as per section 3.4 of the specification
 		public static Guid NewGuid ()
 		{
 			byte[] b = new byte [16];
 
-			// access the prng
-			lock (_rng) {
+			// thread-safe access to the prng
+			lock (_rngAccess) {
+				if (_rng == null)
+					_rng = RandomNumberGenerator.Create ();
 				_rng.GetBytes (b);
 			}
-	
+
 			Guid res = new Guid (b);
 			// Mask in Variant 1-0 in Bit[7..6]
 			res._clockSeqHiAndReserved = (byte) ((res._clockSeqHiAndReserved & 0x3fu) | 0x80u);
 			// Mask in Version 4 (random based Guid) in Bits[15..13]
 			res._timeHighAndVersion = (ushort) ((res._timeHighAndVersion & 0x0fffu) | 0x4000u);
+
 			return res;
+		}
+
+		// used in ModuleBuilder so mcs doesn't need to invoke 
+		// CryptoConfig for simple assemblies.
+		internal static byte[] FastNewGuidArray ()
+		{
+			byte[] guid = new byte [16];
+
+			// thread-safe access to the prng
+			lock (_rngAccess) {
+				// if known, use preferred RNG
+				if (_rng != null)
+					_fastRng = _rng;
+				// else use hardcoded default RNG (bypassing CryptoConfig)
+				if (_fastRng == null)
+					_fastRng = new RNGCryptoServiceProvider ();
+				_fastRng.GetBytes (guid);
+			}
+
+			// Mask in Variant 1-0 in Bit[7..6]
+			guid [8] = (byte) ((guid [8] & 0x3f) | 0x80);
+			// Mask in Version 4 (random based Guid) in Bits[15..13]
+			guid [7] = (byte) ((guid [7] & 0x0f) | 0x40);
+
+			return guid;
 		}
 
 		public byte[] ToByteArray ()
