@@ -102,9 +102,9 @@ namespace System.Web.Configuration
 						continue;
 					}
 
-					aname = aname + ".dll";
+					aname = ShortAsmName (aname);
 					if (!assemblies.Contains (aname))
-						assemblies.Add (ShortAsmName (aname));
+						assemblies.Add (aname);
 
 					continue;
 				}
@@ -114,8 +114,8 @@ namespace System.Web.Configuration
 						config.AssembliesInBin = false;
 						continue;
 					}
-					aname = aname + ".dll";
-					assemblies.Remove (ShortAsmName (aname));
+					aname = ShortAsmName (aname);
+					assemblies.Remove (aname);
 					continue;
 				}
 
@@ -171,8 +171,8 @@ namespace System.Web.Configuration
 		{
 			int i = long_name.IndexOf (',');
 			if (i < 0)
-				return long_name;
-			return long_name.Substring (0, i);
+				return long_name + ".dll";
+			return long_name.Substring (0, i) + ".dll";
 		}
 		
 		static void ThrowException (string message, XmlNode node)
