@@ -29,9 +29,12 @@
 //	Jaak Simm		jaaksimm@firm.ee
 //	John Sohn		jsohn@columbus.rr.com
 //
-// $Revision: 1.58 $
+// $Revision: 1.59 $
 // $Modtime: $
 // $Log: Control.cs,v $
+// Revision 1.59  2004/09/06 12:55:07  jordi
+// Caches ClientRectangle rectangle value
+//
 // Revision 1.58  2004/09/02 22:24:50  pbartok
 // - Added sanity check to creation of double buffer bitmap
 //
@@ -280,6 +283,7 @@ namespace System.Windows.Forms
 		internal bool			tab_stop = true;	// is the control a tab stop?
 		internal bool			is_disposed;		// has the window already been disposed?
 		internal Size			client_size;		// size of the client area (window excluding decorations)
+		internal Rectangle		client_rect;		// rectangle with the client area (window excluding decorations)
 		internal ControlStyles		control_style;		// rather win32-specific, style bits for control
 		internal ImeMode		ime_mode = ImeMode.Inherit;
 		internal bool			layout_pending;		// true if our parent needs to re-layout us
@@ -645,8 +649,7 @@ namespace System.Windows.Forms
 		#endregion	// ControlCollection Class
 		
 		#region Public Constructors
-		public Control() {
-			Rectangle	client_rect;
+		public Control() {			
 
 			creator_thread = Thread.CurrentThread;
 			controls = new Hashtable();
@@ -1009,7 +1012,9 @@ namespace System.Windows.Forms
 
 		public Rectangle ClientRectangle {
 			get {
-				return new Rectangle(0, 0, client_size.Width, client_size.Height);
+				client_rect.Width = client_size.Width;
+				client_rect.Height = client_size.Height;
+				return client_rect;
 			}
 		}
 
