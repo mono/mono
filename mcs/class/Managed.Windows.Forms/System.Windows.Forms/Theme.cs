@@ -23,9 +23,12 @@
 //	Jordi Mas i Hernandez, jordi@ximian.com
 //
 //
-// $Revision: 1.6 $
+// $Revision: 1.7 $
 // $Modtime: $
 // $Log: Theme.cs,v $
+// Revision 1.7  2004/09/07 09:40:15  jordi
+// LinkLabel fixes, methods, multiple links
+//
 // Revision 1.6  2004/09/02 16:32:54  jordi
 // implements resource pool for pens, brushes, and hatchbruses
 //
@@ -310,6 +313,8 @@ namespace System.Windows.Forms
 
 		public abstract void DrawStringDisabled (Graphics graphics, string s, Font font, Color color, RectangleF layoutRectangle,
 			StringFormat format);
+			
+		public abstract void DrawBorderStyle (Graphics dc, Rectangle area, BorderStyle border_style);
 
 		/*
 			Methods that draw complete controls			

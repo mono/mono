@@ -24,9 +24,12 @@
 //	Peter Bartok, pbartok@novell.com
 //
 //
-// $Revision: 1.13 $
+// $Revision: 1.14 $
 // $Modtime: $
 // $Log: Label.cs,v $
+// Revision 1.14  2004/09/07 09:40:15  jordi
+// LinkLabel fixes, methods, multiple links
+//
 // Revision 1.13  2004/09/04 17:10:18  jordi
 // Refresh when font changed
 //
@@ -72,8 +75,7 @@ namespace System.Windows.Forms
     		private ImageList image_list;
 		internal ContentAlignment image_align;
 		internal StringFormat string_format;
-    		internal ContentAlignment text_align;
-    		protected Rectangle paint_area = new Rectangle ();
+    		internal ContentAlignment text_align;    		
     		static SizeF req_witdthsize = new SizeF (0,0);
 
     		#region Events
@@ -443,6 +445,7 @@ namespace System.Windows.Forms
     		{
 			base.OnFontChanged (e);
 			CalcPreferredHeight ();
+			Refresh ();
     		}
 
 
@@ -552,14 +555,11 @@ namespace System.Windows.Forms
 		}
 
     		internal void Draw ()
-		{
-			paint_area.Width = Width;
-			paint_area.Height = Height;
-
-			ThemeEngine.Current.DrawLabel (DeviceContext, paint_area, BorderStyle, Text,
+		{			
+			ThemeEngine.Current.DrawLabel (DeviceContext, ClientRectangle, BorderStyle, Text,
 				ForeColor, BackColor, Font, string_format, Enabled);
 
-			DrawImage (DeviceContext, Image, paint_area, image_align);
+			DrawImage (DeviceContext, Image, ClientRectangle, image_align);
 		}
 
     		private void OnHandleCreatedLB (Object o, EventArgs e)

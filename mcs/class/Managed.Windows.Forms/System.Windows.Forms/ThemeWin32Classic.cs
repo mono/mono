@@ -25,9 +25,12 @@
 //
 //
 //
-// $Revision: 1.33 $
+// $Revision: 1.34 $
 // $Modtime: $
 // $Log: ThemeWin32Classic.cs,v $
+// Revision 1.34  2004/09/07 09:40:15  jordi
+// LinkLabel fixes, methods, multiple links
+//
 // Revision 1.33  2004/09/05 08:03:51  jordi
 // fixes bugs, adds flashing on certain situations
 //
@@ -2425,9 +2428,8 @@ namespace System.Windows.Forms
 				area.Y + 2, area.Width - 4, area.Height - 4);
 			
 		}
-
 		
-		private void DrawBorderStyle (Graphics dc, Rectangle area, BorderStyle border_style)
+		public override void DrawBorderStyle (Graphics dc, Rectangle area, BorderStyle border_style)
 		{
 			switch (border_style){
 			case BorderStyle.Fixed3D:				
