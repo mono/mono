@@ -10,7 +10,7 @@ using System.Runtime.Remoting.Messaging;
 
 namespace System.Runtime.Remoting.Channels {
 
-	public interface IClientFormatterSink :  IMessageSink, IClientChannelSink, IChannelSinkBase
+	public interface IClientFormatterSink : IMessageSink, IClientChannelSink, IChannelSinkBase
 	{
 		
 	}

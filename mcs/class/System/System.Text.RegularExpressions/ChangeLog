@@ -1,3 +1,10 @@
+2002-07-30  Juli Mallett  <jmallett@FreeBSD.org>
+
+	* regex.cs: Fixed bug where the expression would not be
+	re-evaluated for grouping purposes when factory caches were
+	used, resulting in no groups being recognised after one call
+	with a given pattern and no change in options.
+
 2002-05-13  Dan Lewis  <dihlewis@yahoo.co.uk>
 
 	* regex.cs: Fixed bug in split.
