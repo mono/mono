@@ -29,9 +29,12 @@
 //	Jaak Simm		jaaksimm@firm.ee
 //	John Sohn		jsohn@columbus.rr.com
 //
-// $Revision: 1.44 $
+// $Revision: 1.45 $
 // $Modtime: $
 // $Log: Control.cs,v $
+// Revision 1.45  2004/08/21 22:19:30  pbartok
+// - Signature fixes
+//
 // Revision 1.44  2004/08/21 20:53:13  pbartok
 // - Updated to match new GrabWindow signature
 //
@@ -250,7 +253,7 @@ namespace System.Windows.Forms
 		internal BindingContext		binding_context;	// TODO
 		internal RightToLeft		right_to_left;		// drawing direction for control
 		internal int			layout_suspended;
-		protected bool			double_buffering;
+		internal bool			double_buffering;
 
 		private Graphics		dc_mem;			// Graphics context for double buffering
 		private Bitmap			bmp_mem;		// Bitmap for double buffering control
@@ -568,15 +571,6 @@ namespace System.Windows.Forms
 			bounds.Height=height;
 			SetBoundsCore(left, top, width, height, BoundsSpecified.All);
 			Text=text;
-		}
-
-		~Control() {
-			Dispose(true);
-		}
-
-		public void Dispose() {
-			Dispose(true);
-			GC.SuppressFinalize(this);
 		}
 
 		protected override void Dispose(bool disposing) {

@@ -31,9 +31,12 @@
 //	Daniel Carrera, dcarrera@math.toronto.edu (stubbed out)
 //
 //
-// $Revision: 1.9 $
+// $Revision: 1.10 $
 // $Modtime: $
 // $Log: Label.cs,v $
+// Revision 1.10  2004/08/21 22:21:13  pbartok
+// - Signature fixes
+//
 // Revision 1.9  2004/08/11 18:54:11  pbartok
 // - Forcing redraw on resize
 //
@@ -67,10 +70,10 @@ namespace System.Windows.Forms
     		private bool use_mnemonic;
     		private int image_index = -1;
     		private ImageList image_list;
-		protected Rectangle paint_area;
-		protected ContentAlignment image_align;
-		protected StringFormat string_format;    		
-    		protected ContentAlignment text_align;
+		internal Rectangle paint_area;
+		internal ContentAlignment image_align;
+		internal StringFormat string_format;    		
+    		internal ContentAlignment text_align;
 
     		#region Events
     		public event EventHandler AutoSizeChanged;
