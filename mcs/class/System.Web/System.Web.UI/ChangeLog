@@ -1,5 +1,11 @@
 2003-08-26  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* Page.cs: check if controls that require postback have
+	been changed by an event and register them to be notified of data
+	changed event.
+
+2003-08-26  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* Control.cs: patch by yaronshkop@hotmail.com (Yaron Shkop) that fixes
 	bug #47866.
 

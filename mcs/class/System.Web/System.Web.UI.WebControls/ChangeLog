@@ -1,5 +1,12 @@
 2003-08-26  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* CheckBox.cs: in LoadPostData, only return
+	true when the new data is different from the one we had. Fixed
+	conditions to save Checked state. Thanks to yaronshkop@hotmail.com
+	(Yaron Shkop).
+
+2003-08-26  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* Style.cs: Font.Strikeout renders as 'line-through'. Fixes bug #47871.
 
 2003-08-25  Gonzalo Paniagua Javier <gonzalo@ximian.com>

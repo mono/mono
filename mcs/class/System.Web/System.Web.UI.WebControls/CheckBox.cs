@@ -74,18 +74,11 @@ namespace System.Web.UI.WebControls
 		private bool SaveCheckedViewState
 		{
 			get {
-				if (Events [CheckedChangedEvent] != null){
-					if (!Enabled)
-						return true;
+				if (Events [CheckedChangedEvent] != null || !Enabled)
+					return true;
 
-					Type type = GetType ();
-					if (type == typeof (CheckBox))
-						return false;
-
-					if (type == typeof (RadioButton))
-						return false;
-				}
-				return true;
+				Type type = GetType ();
+				return (type != typeof (CheckBox) && type != typeof (RadioButton));
 			}
 		}
 
@@ -211,13 +204,12 @@ namespace System.Web.UI.WebControls
 		bool IPostBackDataHandler.LoadPostData (string postDataKey, NameValueCollection postCollection)
 		{
 			string postedVal = postCollection [postDataKey];
+			bool haveData = (postedVal != null && postedVal.Length > 0);
+			if (haveData == Checked)
+				return false;
 
-			if (postedVal != null && postedVal.Length > 0) {
-				Checked = !Checked;
-				return true;
-			}
-
-			return false;
+			Checked = haveData;
+			return true;;
 		}
 		
 		void IPostBackDataHandler.RaisePostDataChangedEvent()

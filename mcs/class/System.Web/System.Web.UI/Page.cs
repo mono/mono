@@ -541,12 +541,34 @@ public class Page : TemplateControl, IHttpHandler
 					if (requiresPostDataChanged == null)
 						requiresPostDataChanged = new ArrayList ();
 					requiresPostDataChanged.Add (pbdh);
+					if (_requiresPostBack != null)
+						_requiresPostBack.Remove (ctrl.ID);
 				}
 			} else if (!second) {
 				if (secondPostData == null)
 					secondPostData = new NameValueCollection ();
 				secondPostData.Add (real_id, data [id]);
 			}
+		}
+
+		if (_requiresPostBack != null) {
+			string [] handlers = (string []) _requiresPostBack.ToArray (typeof (string));
+			foreach (string id in handlers) {
+				IPostBackDataHandler pbdh = FindControl (id) as IPostBackDataHandler;
+				if (pbdh == null)
+					continue;
+			
+				_requiresPostBack.Remove (id);
+				if (pbdh.LoadPostData (id, data)) {
+					if (requiresPostDataChanged == null)
+						requiresPostDataChanged = new ArrayList ();
+
+					requiresPostDataChanged.Add (pbdh);
+				}
+			}
+			
+			if (_requiresPostBack.Count == 0)
+				_requiresPostBack = null;
 		}
 	}
 
@@ -623,7 +645,7 @@ public class Page : TemplateControl, IHttpHandler
 		foreach (IPostBackDataHandler ipdh in requiresPostDataChanged)
 			ipdh.RaisePostDataChangedEvent ();
 
-		requiresPostDataChanged.Clear ();
+		requiresPostDataChanged = null;
 	}
 
 	[EditorBrowsable (EditorBrowsableState.Advanced)]
@@ -755,6 +777,10 @@ public class Page : TemplateControl, IHttpHandler
 		pair.First = SaveViewStateRecursive ();
 		if (_requiresPostBack != null && _requiresPostBack.Count > 0)
 			pair.Second = _requiresPostBack;
+
+		if (pair.First == null && pair.Second == null)
+			pair = null;
+
 		SavePageStateToPersistenceMedium (pair);
 	}
 
