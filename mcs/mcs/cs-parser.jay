@@ -1601,22 +1601,28 @@ unary_expression
 	  {
 		$$ = new Unary (Unary.Operator.AddressOf, (Expression) $2);
 	  }
-	| OP_INC unary_expression 
-	  {
-		$$ = new Unary (Unary.Operator.PreIncrement, (Expression) $2);
-	  }
-	| OP_DEC unary_expression 
-	  {
-		$$ = new Unary (Unary.Operator.PreDecrement, (Expression) $2);
-	  }
+	| pre_increment_expression
+	| pre_decrement_expression 
         | cast_expression 
-
-	  // FIXME: We should macro-expand cast-expression to get rid of a shift/reduce
 	/*
 	 we can not do cast expressions at this level,
 	 as there is an ambiguity.  Check "Cast Expressions" 7.6.8
 	 for the recipe to handle this.
 	 */
+	;
+
+pre_increment_expression
+	: OP_INC unary_expression 
+	  {
+		$$ = new Unary (Unary.Operator.PreIncrement, (Expression) $2);
+	  }
+	;
+
+pre_decrement_expression
+	: OP_DEC unary_expression 
+	  {
+		$$ = new Unary (Unary.Operator.PreDecrement, (Expression) $2);
+	  }
 	;
 
 cast_expression
