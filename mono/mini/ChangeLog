@@ -1,5 +1,7 @@
 2003-09-15  Zoltan Varga  <vargaz@freemail.hu>
 
+	* TODO: New todo item.
+
 	* tramp-x86.c (x86_class_init_trampoline): New trampoline function
 	which calls mono_runtime_class_init and patches the call site to
 	avoid further calls.
