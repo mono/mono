@@ -366,8 +366,10 @@ namespace Mono.ILASM {
 
                                 pefile.WritePEFile ();
 
-				if (symwriter != null)
-					symwriter.Write ();
+				if (symwriter != null) {
+					Guid guid = pefile.GetThisModule ().Guid;
+					symwriter.Write (guid);
+				}
                         } catch {
                                 throw;
                         } finally {

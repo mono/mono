@@ -11,24 +11,19 @@ using PEAPI;
 using System;
 using System.IO;
 using System.Collections;
-using Mono.CSharp.Debugger;
+using Mono.CompilerServices.SymbolWriter;
 
 namespace Mono.ILASM {
 
-	public class SymbolWriter
+	public class SymbolWriter : MonoSymbolWriter
 	{
-		string filename;
-		MonoSymbolFile file;
 		ArrayList sources;
 		SourceMethod current_method;
 		SourceFile current_source;
 
 		public SymbolWriter (string filename)
+			: base (filename)
 		{
-			this.filename = filename;
-
-			file = new MonoSymbolFile ();
-
 			sources = new ArrayList ();
 		}
 
@@ -56,16 +51,12 @@ namespace Mono.ILASM {
 			current_source = null;
 		}
 
-		public void Write ()
+		public void Write (Guid guid)
 		{
 			foreach (SourceFile source in sources)
 				source.Write ();
 
-			using (FileStream stream = new FileStream (
-				       filename, FileMode.Create, FileAccess.Write)) {
-				byte[] data = file.CreateSymbolFile ();
-				stream.Write (data, 0, data.Length);
-			}
+			WriteSymbolFile (guid);
 		}
 	}
 
@@ -116,11 +107,10 @@ namespace Mono.ILASM {
 			LineNumberEntry[] lne = new LineNumberEntry [lines.Count];
 			lines.CopyTo (lne);
 
-			int num_params = method.ParamTypeList ().Length;
 			uint token = ((uint) PEAPI.MDTable.Method << 24) | pemethod.Row;
 
 			file.DefineMethod (
-				method.Name, (int) token, num_params, null, lne, null,
+				method.Name, (int) token, null, lne, null,
 				StartLine, EndLine, 0);
 		}
 	}
