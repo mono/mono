@@ -1,3 +1,8 @@
+2002-12-16  Sebastien Pouliot <spouliot@videotron.ca>
+
+	* corlib_linux_test.args: added StrongNamePublicKeyBlob and
+	StrongName test files.
+
 2002-12-15  Sebastien Pouliot <spouliot@videotron.ca>
 
 	* corlib_linux_test.args: added Publisher and
