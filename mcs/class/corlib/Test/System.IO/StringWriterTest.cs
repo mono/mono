@@ -4,8 +4,9 @@
 // Authors:
 //	Marcin Szczepanski (marcins@zipworld.com.au)
 //	Ben Maurer <bmaurer@users.sourceforge.net>
+//	Sebastien Pouliot  <sebastien@ximian.com>
 //
-// TODO: Add some testing for exceptions
+// Copyright (C) 2004 Novell (http://www.novell.com)
 //
 
 using NUnit.Framework;
@@ -160,7 +161,119 @@ public class StringWriterTest : Assertion {
         	}        	        	
         }
 
+	[Test]
+	// strangely this is accepted [ExpectedException (typeof (ArgumentNullException))]
+	public void WriteString_Null ()
+	{
+        	StringWriter writer = new StringWriter ();
+		writer.Write (null);
+	}
 
+	[Test]
+	[ExpectedException (typeof (ArgumentNullException))]
+	public void WriteChars_Null ()
+	{
+        	StringWriter writer = new StringWriter ();
+		writer.Write (null, 0, 0);
+	}
+
+	[Test]
+	[ExpectedException (typeof (ArgumentOutOfRangeException))]
+	public void WriteChars_IndexNegative ()
+	{
+		char[] c = new char [2] { 'a', 'b' };
+        	StringWriter writer = new StringWriter ();
+		writer.Write (c, -1, 0);
+	}
+
+	[Test]
+	[ExpectedException (typeof (ArgumentOutOfRangeException))]
+	public void WriteChars_CountNegative ()
+	{
+		char[] c = new char [2] { 'a', 'b' };
+        	StringWriter writer = new StringWriter ();
+		writer.Write (c, 0, -1);
+	}
+
+	[Test]
+	[ExpectedException (typeof (ArgumentException))]
+	public void WriteChars_IndexOverflow ()
+	{
+		char[] c = new char [2] { 'a', 'b' };
+        	StringWriter writer = new StringWriter ();
+		writer.Write (c, Int32.MaxValue, 0);
+	}
+
+	[Test]
+	[ExpectedException (typeof (ArgumentException))]
+	public void WriteChars_CountOverflow ()
+	{
+		char[] c = new char [2] { 'a', 'b' };
+        	StringWriter writer = new StringWriter ();
+		writer.Write (c, 0, Int32.MaxValue);
+	}
+
+	[Test]
+	public void Disposed_Encoding ()
+	{
+        	StringWriter writer = new StringWriter ();
+		writer.Close ();
+		AssertNotNull ("Disposed-Encoding", writer.Encoding);
+	}
+
+	[Test]
+	public void Disposed_DoubleClose ()
+	{
+        	StringWriter writer = new StringWriter ();
+		writer.Close ();
+		writer.Close ();
+	}
+
+	[Test]
+	public void Disposed_GetStringBuilder ()
+	{
+        	StringWriter writer = new StringWriter ();
+		writer.Write ("Mono");
+		writer.Close ();
+		AssertNotNull ("Disposed-GetStringBuilder", writer.GetStringBuilder ());
+	}
+
+	[Test]
+	public void Disposed_ToString ()
+	{
+        	StringWriter writer = new StringWriter ();
+		writer.Write ("Mono");
+		writer.Close ();
+		AssertEquals ("Disposed-ToString", "Mono", writer.ToString ());
+	}
+
+	[Test]
+	[ExpectedException (typeof (ObjectDisposedException))]
+	public void Disposed_WriteChar ()
+	{
+        	StringWriter writer = new StringWriter ();
+		writer.Close ();
+		writer.Write ('c');
+	}
+
+	[Test]
+	[ExpectedException (typeof (ObjectDisposedException))]
+	public void Disposed_WriteString ()
+	{
+        	StringWriter writer = new StringWriter ();
+		writer.Close ();
+		writer.Write ("mono");
+	}
+
+	[Test]
+	[ExpectedException (typeof (ObjectDisposedException))]
+	public void Disposed_WriteChars ()
+	{
+		char[] c = new char [2] { 'a', 'b' };
+        	StringWriter writer = new StringWriter ();
+		writer.Close ();
+		writer.Write (c, 0, 2);
+	}
 }
 
 }

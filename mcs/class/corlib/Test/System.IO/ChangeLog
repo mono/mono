@@ -3,6 +3,8 @@
 	* MemoryStreamTest.cs: Test that we zeroize old data when we manipulate
 	the length of the stream. Verify that we throw the same exceptions as
 	MS fx.
+	* StringWriterTest.cs: New tests for integer overflow and disposed 
+	exceptions.
 
 2004-05-20  Sebastien Pouliot  <sebastien@ximian.com>
 
