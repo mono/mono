@@ -30,7 +30,6 @@
 ./Mono.Security.X509.Extensions/KeyUsageExtension.cs
 ./Mono.Security.X509.Extensions/SubjectAltNameExtension.cs
 ./Mono.Security.Cryptography/TlsHMAC.cs
-./Mono.Security.Protocol.Tls/AssemblyInfo.cs
 ./Mono.Security.Protocol.Tls/TlsAbstractCipherSuite.cs
 ./Mono.Security.Protocol.Tls/TlsCipherSuite.cs
 ./Mono.Security.Protocol.Tls/TlsCipherSuiteCollection.cs

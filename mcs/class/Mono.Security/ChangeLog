@@ -1,3 +1,8 @@
+2003-10-20  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* Mono.Security.dll.sources: Removed AssemblyInfo.cs from build.
+	This file is for TLS not for the complete Mono.Security assembly.
+
 2003-10-20  Duncan Mak  <duncan@ximian.com>
 
 	* Mono.Security.dll.sources: Added TlsAbstractCipherSuite.cs,
