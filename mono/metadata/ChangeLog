@@ -1,3 +1,8 @@
+2005-03-10 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* filewatcher.c: commented out the code for windows watcher, as we don't
+	use it (we use the managed implementation instead).
+
 2005-03-10  Zoltan Varga  <vargaz@freemail.hu>
 
 	* object-internals.h (MonoThread): Remove 'unused1' field.
