@@ -12,6 +12,7 @@
 using System;
 using System.Text;
 using System.Xml.XPath;
+using Mono.Xml;
 
 namespace System.Xml
 {
@@ -263,6 +264,12 @@ namespace System.Xml
 			w.WriteEndAttribute ();
 		}
 
+		internal DTDAttributeDefinition GetAttributeDefinition ()
+		{
+			// If it is default, then directly create new attribute.
+			DTDAttListDeclaration attList = OwnerDocument.DocumentType != null ? OwnerDocument.DocumentType.DTD.AttListDecls [OwnerElement.Name] : null;
+			return attList != null ? attList [Name] : null;
+		}
 		#endregion
 	}
 }

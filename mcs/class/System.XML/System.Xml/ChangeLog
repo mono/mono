@@ -1,5 +1,12 @@
 2004-03-24  Atsushi Enomoto <atsushi@ximian.com>
 
+	* XmlCharacterData.cs : ReplaceData() should reject negative integer
+	  value for count argument.
+	* XmlAttribute.cs, XmlAttributeCollection.cs, XmlNamedNodeMap.cs :
+	  On RemoveNamedItem(), default attribute value should be restored.
+
+2004-03-24  Atsushi Enomoto <atsushi@ximian.com>
+
 	* XmlAttributeCollection.cs : Remove() should throw an exception when
 	  target attribute is not included in the collection.
 	* XmlDocument.cs : ImportNode() should reject null node.

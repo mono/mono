@@ -10,6 +10,7 @@
 
 using System;
 using System.Collections;
+using Mono.Xml;
 
 namespace System.Xml
 {
@@ -72,6 +73,19 @@ namespace System.Xml
 					if (node.IsReadOnly)
 						throw new InvalidOperationException ("Cannot remove. This node is read only: " + name);
 					nodeList.Remove (node);
+					// Since XmlAttributeCollection does not override
+					// it while attribute have to keep it in the
+					// collection, it adds to the collection immediately.
+					XmlAttribute attr = node as XmlAttribute;
+					if (attr != null) {
+						DTDAttributeDefinition def = attr.GetAttributeDefinition ();
+						if (def != null && def.DefaultValue != null) {
+							XmlAttribute newAttr = attr.OwnerDocument.CreateAttribute (attr.Prefix, attr.LocalName, attr.NamespaceURI, true, false);
+							newAttr.Value = def.DefaultValue;
+							newAttr.SetDefault ();
+							attr.OwnerElement.SetAttributeNode (newAttr);
+						}
+					}
 					return node;
 				}
 			}

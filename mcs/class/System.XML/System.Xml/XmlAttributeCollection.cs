@@ -152,8 +152,7 @@ namespace System.Xml
 				ownerDocument.onNodeRemoved (node, ownerElement);
 			}
 			// If it is default, then directly create new attribute.
-			DTDAttListDeclaration attList = ownerDocument.DocumentType != null ? ownerDocument.DocumentType.DTD.AttListDecls [ownerElement.Name] : null;
-			DTDAttributeDefinition def = attList != null ? attList [retAttr.Name] : null;
+			DTDAttributeDefinition def = retAttr.GetAttributeDefinition ();
 			if (def != null && def.DefaultValue != null) {
 				XmlAttribute attr = ownerDocument.CreateAttribute (
 					retAttr.Prefix, retAttr.LocalName, retAttr.NamespaceURI);

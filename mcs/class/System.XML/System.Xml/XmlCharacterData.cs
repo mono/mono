@@ -116,6 +116,9 @@ namespace System.Xml
 			if ((offset < 0) || (offset > data.Length))
 				throw new ArgumentOutOfRangeException ("offset", "Must be non-negative and must not be greater than the length of this instance.");
 
+			if (count < 0)
+				throw new ArgumentOutOfRangeException ("count", "Must be non-negative.");
+
 			if (strData == null)
 				throw new ArgumentNullException ("strData", "Must be non-null.");
 
