@@ -141,6 +141,16 @@ namespace MonoTests.System.Security.Permissions {
 		}
 
 		[Test]
+#if !NET_2_0
+		[ExpectedException (typeof (NullReferenceException))]
+#endif
+		public void Copy_None ()
+		{
+			UrlIdentityPermission uip = new UrlIdentityPermission (PermissionState.None);
+			UrlIdentityPermission copy = (UrlIdentityPermission)uip.Copy ();
+		}
+
+		[Test]
 		public void Intersect_Null ()
 		{
 			UrlIdentityPermission uip = new UrlIdentityPermission (PermissionState.None);
