@@ -1,7 +1,11 @@
+2003-09-18  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* CSharpCodeCompiler.cs: don't leave temporary files around.
+
 2003-09-04  Lluis Sanchez Gual <lluis@ximian.com>
 
-	* CSharpCodeGenerator.cs: Fixed generation of array construction with initializers.
-	  Render return type custom attributes.
+	* CSharpCodeGenerator.cs: Fixed generation of array construction with
+	initializers. Render return type custom attributes.
 
 2003-08-15  Jaroslaw Kowalski <jarek@atm.com.pl>
 

@@ -46,9 +46,8 @@ namespace Mono.CSharp
 			
 			StringCollection assemblies = options.ReferencedAssemblies;
 
-			foreach (CodeCompileUnit e in ea)
-			{
-				fileNames[i]=Path.ChangeExtension(Path.GetTempFileName(),"cs");
+			foreach (CodeCompileUnit e in ea) {
+				fileNames [i] = GetTempFileNameWithExtension ("cs");
 				FileStream f=new FileStream(fileNames[i],FileMode.OpenOrCreate);
 				StreamWriter s=new StreamWriter(f);
 				if (e.ReferencedAssemblies != null) {
@@ -63,15 +62,22 @@ namespace Mono.CSharp
 				f.Close();
 				i++;
 			}
-			return CompileAssemblyFromFileBatch(options,fileNames);
+			return CompileAssemblyFromFileBatch (options, fileNames, true);
 		}
+		
 		public CompilerResults CompileAssemblyFromFile (
 			CompilerParameters options,string fileName)
 		{
-			return CompileAssemblyFromFileBatch(options,new string[]{fileName});
+			return CompileAssemblyFromFileBatch (options, new string []{fileName}, false);
 		}
-		public CompilerResults CompileAssemblyFromFileBatch (
-			CompilerParameters options,string[] fileNames)
+
+		public CompilerResults CompileAssemblyFromFileBatch (CompilerParameters options, string[] fileNames)
+		{
+			return CompileAssemblyFromFileBatch (options, fileNames, false);
+		}
+		
+		CompilerResults CompileAssemblyFromFileBatch (CompilerParameters options, string [] fileNames,
+							      bool removeFiles)
 		{
 			if (null == options)
 				throw new ArgumentNullException("options");
@@ -112,6 +118,14 @@ namespace Mono.CSharp
 				results.CompiledAssembly=Assembly.LoadFrom(options.OutputAssembly);
 			else
 				results.CompiledAssembly=null;
+
+			if (removeFiles) {
+				foreach (string fi in fileNames) {
+					FileInfo info = new FileInfo (fi);
+					info.Delete ();
+				}
+			}
+			
 			return results;
 		}
 		public CompilerResults CompileAssemblyFromSource (
@@ -124,9 +138,8 @@ namespace Mono.CSharp
 		{
 			string[] fileNames=new string[sources.Length];
 			int i=0;
-			foreach (string source in sources)
-			{
-				fileNames[i]=Path.ChangeExtension(Path.GetTempFileName(),"cs");
+			foreach (string source in sources) {
+				fileNames [i] = GetTempFileNameWithExtension ("cs");
 				FileStream f=new FileStream(fileNames[i],FileMode.OpenOrCreate);
 				StreamWriter s=new StreamWriter(f);
 				s.Write(source);
@@ -134,7 +147,7 @@ namespace Mono.CSharp
 				f.Close();
 				i++;
 			}
-			return CompileAssemblyFromFileBatch(options,fileNames);
+			return CompileAssemblyFromFileBatch (options, fileNames, true);
 		}
 		private static string BuildArgs(
 			CompilerParameters options,string[] fileNames)
@@ -153,7 +166,7 @@ namespace Mono.CSharp
 				args.AppendFormat ("/warn:{0} ", options.WarningLevel);
 
 			if (options.OutputAssembly==null)
-				options.OutputAssembly=Path.ChangeExtension(Path.GetTempFileName(),"dll");
+				options.OutputAssembly = GetTempFileNameWithExtension ("dll");
 			args.AppendFormat("/out:\"{0}\" ",options.OutputAssembly);
 			if (null != options.ReferencedAssemblies)
 			{
@@ -186,6 +199,26 @@ namespace Mono.CSharp
 			error.ErrorNumber=match.Result("${number}");
 			error.ErrorText=match.Result("${message}");
 			return error;
+		}
+
+		static string GetTempFileNameWithExtension (string extension)
+		{
+			Exception exc;
+			string extFile;
+
+			do {
+				string tmpFile = Path.GetTempFileName ();
+				FileInfo fileInfo = new FileInfo (tmpFile);
+				extFile = Path.ChangeExtension (tmpFile, extension);
+				try {
+					fileInfo.MoveTo (extFile);
+					exc = null;
+				} catch (Exception e) {
+					exc = e;
+				}
+			} while (exc != null);
+
+			return extFile;
 		}
 	}
 }
