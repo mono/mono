@@ -1,3 +1,8 @@
+2004-09-30 Anirban Bhattacharjee <banirban@novell.com>
+	* EventH.vb:
+	* EventI.vb:
+		Couple of more scenario got covered
+
 2004-09-29 K Satya Sudha
         * Makefile : Modified it to log the names of the testcases that 
                      passed successfully 

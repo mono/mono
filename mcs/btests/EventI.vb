@@ -4,24 +4,38 @@ Class C
 	Delegate Sub EH()
 	Public Event E as EH
 
-	Public Sub S()
+	Public Sub S
 		RaiseEvent E
 	End Sub
 
-	Sub xh() 
+	Sub xh 
 		Console.WriteLine("event called")
 	End Sub
+
+	shared sub s
+	end sub
 End Class
 
 Class C1
 	Inherits C
 
-	Sub call_S()
-		dim x as C = new C()
-		AddHandler x.E, AddressOf MyBase.xh
-		x.S()
+	Delegate Sub EH1()
+	Public Event E1 as EH1
+
+	Sub xh1()
+		Console.WriteLine("event called 1")
 	End Sub
 
+	Sub call_S()
+		AddHandler MyBase.E, AddressOf MyBase.xh
+		MyBase.S()
+		RemoveHandler MyBase.E, AddressOf MyBase.xh
+			
+	
+		AddHandler Me.E1, AddressOf Me.xh1
+		RaiseEvent E1
+		RemoveHandler Me.E1, AddressOf Me.xh1
+	End Sub
 End Class
 
 Module M
