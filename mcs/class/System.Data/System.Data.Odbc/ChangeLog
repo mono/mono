@@ -1,3 +1,6 @@
+2004-08-30 Umadevi S (sumadevi@novell.com)
+	* OdbcType.cs - removed inheritance from short.
+
 2004-08-27 Sureshkumar T (tsureshkumar@novell.com)
 	* OdbcDataReader.cs - fixed bug #63539 - TINYINT ODBC datatype is converted into System.Byte
 
