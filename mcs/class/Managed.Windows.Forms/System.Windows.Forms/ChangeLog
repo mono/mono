@@ -1,3 +1,11 @@
+2004-11-17  Peter Bartok  <pbartok@novell.com>
+
+	* XplatUIWin32.cs: Added double-click events to the class style
+	* Control.cs (WndProc): 
+	  - Added handling of click-count to MouseDown/ MouseUp events. 
+	  - Added handling of middle and right mouse buttons
+	  - Removed old debug code
+
 2004-11-17  Jackson Harper  <jackson@ximian.com>
 
 	* XplatUIX11.cs: Use the new Mono.Unix namespace.
