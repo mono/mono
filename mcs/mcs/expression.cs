@@ -3327,6 +3327,9 @@ namespace Mono.CSharp {
 			bool struct_call = false;
 				
 			if (!is_static){
+				
+				if (method.DeclaringType.IsValueType)
+					struct_call = true;
 				//
 				// If this is ourselves, push "this"
 				//

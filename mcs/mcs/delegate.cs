@@ -96,6 +96,8 @@ namespace Mono.CSharp {
 									    CallingConventions.Standard,
 									    const_arg_types);
 
+			ConstructorBuilder.DefineParameter (1, ParameterAttributes.None, "object");
+			ConstructorBuilder.DefineParameter (2, ParameterAttributes.None, "method");
 			//
 			// HACK because System.Reflection.Emit is lame
 			//

@@ -14,6 +14,7 @@ using System.Collections;
 using System.Reflection;
 using System.Reflection.Emit;
 using System.Runtime.InteropServices;
+using System.Runtime.CompilerServices;
 using System.Text;
 
 namespace Mono.CSharp {
@@ -35,6 +36,8 @@ namespace Mono.CSharp {
 		public bool Inherited;
 
 		public bool UsageAttr = false;
+		
+		public MethodImplOptions ImplOptions;
 		
 		public Attribute (string name, ArrayList args, Location loc)
 		{
@@ -61,6 +64,7 @@ namespace Mono.CSharp {
 		public CustomAttributeBuilder Resolve (EmitContext ec)
 		{
 			string name = Name;
+			bool MethodImplAttr = false;
 
 			UsageAttr = false;
 
@@ -80,6 +84,8 @@ namespace Mono.CSharp {
 
 			if (Type == TypeManager.attribute_usage_type)
 				UsageAttr = true;
+			if (Type == TypeManager.methodimpl_attr_type)
+				MethodImplAttr = true;
 			
 			// Now we extract the positional and named arguments
 			
@@ -112,6 +118,10 @@ namespace Mono.CSharp {
 
 					if (UsageAttr)
 						this.Targets = (AttributeTargets) pos_values [0];
+
+					if (MethodImplAttr)
+						this.ImplOptions = (MethodImplOptions) pos_values [0];
+					
 				} else { 
 					error182 ();
 					return null;
@@ -406,9 +416,14 @@ namespace Mono.CSharp {
 
 					
 					if (kind is Method) {
-						if (a.Type != TypeManager.dllimport_type)
+						if (a.Type == TypeManager.methodimpl_attr_type) {
+							if (a.ImplOptions == MethodImplOptions.InternalCall)
+								((MethodBuilder) builder).SetImplementationFlags (
+									   MethodImplAttributes.InternalCall |
+									   MethodImplAttributes.Runtime);
+						} else if (a.Type != TypeManager.dllimport_type)
 							((MethodBuilder) builder).SetCustomAttribute (cb);
-
+						
 					} else if (kind is Constructor) {
 						((ConstructorBuilder) builder).SetCustomAttribute (cb);
 

@@ -55,6 +55,7 @@ public class TypeManager {
 	static public Type runtime_field_handle_type;
 	static public Type attribute_usage_type;
 	static public Type dllimport_type;
+	static public Type methodimpl_attr_type;
 	static public Type param_array_type;
 	
 	//
@@ -416,6 +417,7 @@ public class TypeManager {
 
 		attribute_usage_type = CoreLookupType ("System.AttributeUsageAttribute");
 		dllimport_type       = CoreLookupType ("System.Runtime.InteropServices.DllImportAttribute");
+		methodimpl_attr_type = CoreLookupType ("System.Runtime.CompilerServices.MethodImplAttribute");
 		param_array_type     = CoreLookupType ("System.ParamArrayAttribute");
 		
 		//

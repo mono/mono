@@ -2087,7 +2087,6 @@ namespace Mono.CSharp {
 							flags |= MethodAttributes.PinvokeImpl;
 							dllimport_attr = a;
 						}
-				
 				}
 			}
 

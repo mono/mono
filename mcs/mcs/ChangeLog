@@ -1,3 +1,16 @@
+2001-12-29  Ravi Pratap  <ravi@ximian.com>
+
+	* typemanager.cs (methodimpl_attr_type): Add to hold the type
+	corresponding to System.Runtime.CompilerServices.MethodImplAttribute.
+
+	(InitCoreTypes): Update accordingly.
+
+	* attribute.cs (Resolve): Remember if the attribute is a MethodImplAttribute
+	so we can quickly store the state.
+
+	(ApplyAttributes): Set the current implementation flags
+	for InternalCall methods.
+
 2001-12-29  Miguel de Icaza  <miguel@ximian.com>
 
 	* expression.cs (EmitCall): if a method is not virtual, then do
