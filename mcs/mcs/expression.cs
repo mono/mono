@@ -3862,6 +3862,25 @@ namespace Mono.CSharp {
 
 			Type decl_type = method.DeclaringType;
 
+			if (!RootContext.StdLib) {
+				// Replace any calls to the system's System.Array type with calls to
+				// the newly created one.
+				if (method == TypeManager.system_int_array_get_length)
+					method = TypeManager.int_array_get_length;
+				else if (method == TypeManager.system_int_array_get_rank)
+					method = TypeManager.int_array_get_rank;
+				else if (method == TypeManager.system_object_array_clone)
+					method = TypeManager.object_array_clone;
+				else if (method == TypeManager.system_int_array_get_length_int)
+					method = TypeManager.int_array_get_length_int;
+				else if (method == TypeManager.system_int_array_get_lower_bound_int)
+					method = TypeManager.int_array_get_lower_bound_int;
+				else if (method == TypeManager.system_int_array_get_upper_bound_int)
+					method = TypeManager.int_array_get_upper_bound_int;
+				else if (method == TypeManager.system_void_array_copyto_array_int)
+					method = TypeManager.void_array_copyto_array_int;
+			}
+
 			//
 			// This checks the `ConditionalAttribute' on the method, and the
 			// ObsoleteAttribute

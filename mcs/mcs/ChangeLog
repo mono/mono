@@ -1,3 +1,13 @@
+2002-07-02  Martin Baulig  <martin@gnome.org>
+
+	* expression.cs (Invocation.EmitCall): When compiling corlib,
+	replace all calls to the system's System.Array type to calls to
+	the newly created one.
+
+	* typemanager.cs (TypeManager.InitCodeHelpers): Added a few more
+	System.Array methods.
+	(TypeManager.InitCoreTypes): When compiling corlib, get the methods
+	from the system's System.Array type which must be replaced.
 
 Tue Jul 2 19:05:05 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
