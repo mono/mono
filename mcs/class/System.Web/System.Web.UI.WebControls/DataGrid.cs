@@ -500,7 +500,7 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
-		public event DataGridCommandEventHandler ItemCreated
+		public event DataGridItemEventHandler ItemCreated
 		{
 			add
 			{
@@ -524,7 +524,7 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
-		public event DataGridCommandEventHandler PageIndexChanged
+		public event DataGridPageChangedEventHandler PageIndexChanged
 		{
 			add
 			{

@@ -1,3 +1,7 @@
+2003-07-30  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* DataGrid.cs: fixed signature of ItemCreated and PageIndexChanged.
+
 2003-07-21  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* CheckBoxList.cs: fixes bug reported on the list about the state of
