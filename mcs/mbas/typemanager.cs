@@ -464,13 +464,13 @@ public class TypeManager {
 		Type t;
 
 		foreach (Assembly a in assemblies){
-			t = a.GetType (name);
+			t = a.GetType (name, false, true);
 			if (t != null)
 				return t;
 		}
 
 		foreach (ModuleBuilder mb in modules) {
-			t = mb.GetType (name);
+			t = mb.GetType (name, false, true);
 			if (t != null){
 				return t;
 			}
@@ -664,7 +664,7 @@ public class TypeManager {
 		sig.name = name;
 		sig.args = args;
 		
-		list = FindMembers (t, MemberTypes.Method, instance_and_static | BindingFlags.Public,
+		list = FindMembers (t, MemberTypes.Method, instance_and_static | BindingFlags.Public| BindingFlags.IgnoreCase,
 				    signature_filter, sig);
 		if (list.Count == 0) {
 			Report.Error (-19, "Can not find the core function `" + name + "'");
@@ -692,7 +692,7 @@ public class TypeManager {
 		sig.args = args;
 		
 		list = FindMembers (t, MemberTypes.Constructor,
-				    instance_and_static | BindingFlags.Public | BindingFlags.DeclaredOnly,
+				    instance_and_static | BindingFlags.Public | BindingFlags.DeclaredOnly | BindingFlags.IgnoreCase,
 				    signature_filter, sig);
 		if (list.Count == 0){
 			Report.Error (-19, "Can not find the core constructor for type `" + t.Name + "'");
@@ -948,7 +948,7 @@ public class TypeManager {
 					      MemberFilter filter, object criteria)
 	{
 		DeclSpace decl = (DeclSpace) builder_to_declspace [t];
-bf |= BindingFlags.IgnoreCase;
+		bf |= BindingFlags.IgnoreCase;
 		//
 		// `builder_to_declspace' contains all dynamic types.
 		//
@@ -974,7 +974,7 @@ bf |= BindingFlags.IgnoreCase;
 		//
 		if ((bf & instance_and_static) == instance_and_static){
 			MemberInfo [] i_members = t.FindMembers (
-				mt, bf & ~BindingFlags.Static, filter, criteria);
+				mt, (bf & ~BindingFlags.Static) | BindingFlags.IgnoreCase, filter, criteria);
 
 			int i_len = i_members.Length;
 			if (i_len == 1){
@@ -988,7 +988,7 @@ bf |= BindingFlags.IgnoreCase;
 			}
 				
 			MemberInfo [] s_members = t.FindMembers (
-				mt, bf & ~BindingFlags.Instance, filter, criteria);
+				mt, (bf & ~BindingFlags.Instance) | BindingFlags.IgnoreCase, filter, criteria);
 
 			int s_len = s_members.Length;
 			if (i_len > 0 || s_len > 0)
@@ -1048,7 +1048,7 @@ bf |= BindingFlags.IgnoreCase;
 
 			MemberList list;
 			Timer.StartTimer (TimerType.FindMembers);
-			list = decl.FindMembers (mt, bf | BindingFlags.DeclaredOnly,
+			list = decl.FindMembers (mt, bf | BindingFlags.DeclaredOnly | BindingFlags.IgnoreCase,
 						 FilterWithClosure_delegate, name);
 			Timer.StopTimer (TimerType.FindMembers);
 			used_cache = false;
@@ -2124,7 +2124,7 @@ bf |= BindingFlags.IgnoreCase;
 			closure_queried_type = current_type;
 
 			Timer.StopTimer (TimerType.MemberLookup);
-
+bf |= BindingFlags.IgnoreCase;
 			list = MemberLookup_FindMembers (current_type, mt, bf, name, out used_cache);
 
 			Timer.StartTimer (TimerType.MemberLookup);
@@ -2325,7 +2325,7 @@ public sealed class TypeHandle : IMemberContainer {
 		if (mt == MemberTypes.Event)
 			return new MemberList (type.GetEvents (bf | BindingFlags.DeclaredOnly));
 		else
-			return new MemberList (type.FindMembers (mt, bf | BindingFlags.DeclaredOnly,
+			return new MemberList (type.FindMembers (mt, bf | BindingFlags.DeclaredOnly | BindingFlags.IgnoreCase,
 								 null, null));
 	}
 
