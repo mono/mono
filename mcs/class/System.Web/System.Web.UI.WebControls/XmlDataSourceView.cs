@@ -66,13 +66,7 @@ namespace System.Web.UI.WebControls {
 						DataSourceSelectArguments arguments)
 		{
 			throw new NotImplementedException ();
-		}
-		
-		[MonoTODO ("Extra method to keep things compiling, need to remove later")]
-		public override IEnumerable Select ()
-		{
-			throw new NotImplementedException ();
-		}
+		}		
 	}
 }
 #endif

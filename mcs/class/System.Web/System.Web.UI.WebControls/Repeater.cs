@@ -5,10 +5,12 @@
 //   Gaurav Vaish (gvaish@iitk.ac.in)
 //   Gonzalo Paniagua Javier (gonzalo@ximian.com)
 //   Andreas Nahr (ClassDevelopment@A-SoftTech.com)
+//   Sanjay Gupta (gsanjay@novell.com)
 //
 // (c) 2002 Ximian, Inc. (http://www.ximian.com)
 // (C) Gaurav Vaish (2002)
 // (C) 2003 Andreas Nahr
+// (C) 2004 Novell, Inc. (http://www.novell.com)
 //
 
 //
@@ -487,7 +489,7 @@ namespace System.Web.UI.WebControls
 				
 				IDataSource ds = this.GetDataSourceObject () as IDataSource;
 				if (ds != null && DataSourceID != "")
-					return ds.GetView (DataMember).Select ();
+					return ds.GetView (DataMember).ExecuteSelect (selectArguments);
 				else if (DataSource != null)
 					return DataSourceHelper.GetResolvedDataSource (DataSource, DataMember);
 				else
@@ -522,6 +524,12 @@ namespace System.Web.UI.WebControls
 			}
 			
 			protected bool inited;
+
+			DataSourceSelectArguments selectArguments = null;
+	
+			protected DataSourceSelectArguments SelectArguments {
+				get { return selectArguments; }
+			}
 				
 		#else
 			IEnumerable GetResolvedDataSource ()

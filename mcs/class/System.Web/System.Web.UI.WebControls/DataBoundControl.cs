@@ -3,8 +3,10 @@
 //
 // Authors:
 //	Ben Maurer (bmaurer@users.sourceforge.net)
+//	Sanjay Gupta (gsanjay@novell.com)
 //
 // (C) 2003 Ben Maurer
+// (C) 2004 Novell, Inc. (http://www.novell.com)
 //
 
 //
@@ -73,7 +75,7 @@ namespace System.Web.UI.WebControls {
 			
 			IDataSource ds = GetDataSourceObject () as IDataSource;
 			if (ds != null && DataSourceID != "")
-				return ds.GetView (DataMember).Select ();
+				return ds.GetView (DataMember).ExecuteSelect (selectArguments);
 			else if (DataSource != null)
 				return DataSourceHelper.GetResolvedDataSource (DataSource, DataMember);
 			else
@@ -188,6 +190,12 @@ namespace System.Web.UI.WebControls {
 		}
 		
 		protected bool inited;
+		
+		DataSourceSelectArguments selectArguments = null;
+			
+		protected DataSourceSelectArguments SelectArguments {
+			get { return selectArguments; }
+		}
 	}
 }
 #endif

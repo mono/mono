@@ -59,12 +59,6 @@ namespace System.Web.UI.WebControls {
 			throw new NotImplementedException ();
 		}
 		
-		[MonoTODO ("Extra method to keep things compiling, need to remove later")]
-		public override IEnumerable Select ()
-		{
-			throw new NotImplementedException ();
-		}
-
 		SiteMapNodeCollection collection;
 		string viewName;
 		SiteMapDataSource owner;
