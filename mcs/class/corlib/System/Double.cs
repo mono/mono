@@ -56,6 +56,13 @@ namespace System {
 			if (!(o is System.Double))
 				return false;
 
+			if (IsNaN ((double)o)) {
+				if (IsNaN(value))
+					return true;
+				else
+					return false;
+			}
+
 			return ((double) o) == value;
 		}
 
