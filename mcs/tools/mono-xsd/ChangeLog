@@ -1,3 +1,7 @@
+2003-06-04  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
+
+	* (temporarily) added XSD2Class.cs.
+
 2003-03-25  Duncan Mak  <duncan@ximian.com>
 
 	* MonoXSD.cs: Added support for two command line arguments:
