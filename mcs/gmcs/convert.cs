@@ -24,7 +24,10 @@ namespace Mono.CSharp {
 		// for ImplicitStandardConversion as long as it is known that
 		// no anonymous method will play a role.
 		//
-		public const EmitContext ConstantEC = null;
+		// FIXME: renamed from `const' to `static' to allow bootstraping from older
+		// versions of the compiler that could not cope with this construct.
+		//
+		public static EmitContext ConstantEC = null;
 		
 		static void Error_CannotConvertType (Location loc, Type source, Type target)
 		{

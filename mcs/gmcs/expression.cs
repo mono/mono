@@ -3096,7 +3096,11 @@ namespace Mono.CSharp {
 	public class StringConcat : Expression {
 		ArrayList operands;
 		bool invalid = false;
-		
+		bool emit_conv_done = false;
+		//
+		// Are we also concating objects?
+		//
+		bool is_strings_only = true;
 		
 		public StringConcat (EmitContext ec, Location loc, Expression left, Expression right)
 		{
@@ -3151,13 +3155,12 @@ namespace Mono.CSharp {
 			MethodInfo concat_method = null;
 			
 			//
-			// Are we also concating objects?
-			//
-			bool is_strings_only = true;
-			
-			//
 			// Do conversion to arguments; check for strings only
 			//
+			
+			// This can get called multiple times, so we have to deal with that.
+			if (!emit_conv_done) {
+				emit_conv_done = true;
 			for (int i = 0; i < operands.Count; i ++) {
 				Expression e = (Expression) operands [i];
 				is_strings_only &= e.Type == TypeManager.string_type;
@@ -3171,9 +3174,10 @@ namespace Mono.CSharp {
 					// method might look at the type of this expression, see it is a
 					// string and emit a string [] when we want an object [];
 					
-					e = Convert.ImplicitConversion (ec, e, TypeManager.object_type, loc);
+						e = new EmptyCast (e, TypeManager.object_type);
 				}
 				operands [i] = new Argument (e, Argument.AType.Expression);
+			}
 			}
 			
 			//
@@ -3650,7 +3654,11 @@ namespace Mono.CSharp {
 
 		override public Expression DoResolveLValue (EmitContext ec, Expression right_side)
 		{
-			return DoResolveBase (ec, right_side);
+			Expression ret = DoResolveBase (ec, right_side);
+			if (ret != null)
+				CheckObsoleteAttribute (ret.Type);
+			
+			return ret;
 		}
 
 		public bool VerifyFixed (bool is_expression)
@@ -5080,6 +5088,13 @@ namespace Mono.CSharp {
 						a.Expr = conv;
 				}
 
+				if (parameter_type.IsPointer){
+					if (!ec.InUnsafe){
+						UnsafeError (loc);
+						return false;
+					}
+				}
+				
 				Parameter.Modifier a_mod = a.GetParameterModifier () &
 					unchecked (~(Parameter.Modifier.OUT | Parameter.Modifier.REF));
 				Parameter.Modifier p_mod = pd.ParameterModifier (j) &

@@ -270,14 +270,14 @@ namespace Mono.CSharp {
 				// According to section 16.3.1, the namespace-or-type-name is resolved
 				// as if the immediately containing namespace body has no using-directives.
 				resolved = NamespaceEntry.Lookup (
-					null, alias, Alias.CountTypeArguments, true, false, Location);
+					null, alias, Alias.CountTypeArguments, true, Location);
 
 				NamespaceEntry curr_ns = NamespaceEntry.Parent;
 
 				while ((curr_ns != null) && (resolved == null)) {
 					resolved = curr_ns.Lookup (
 						null, alias, Alias.CountTypeArguments,
-						false, false, Location);
+						false, Location);
 
 					if (resolved == null)
 						curr_ns = curr_ns.Parent;
@@ -419,7 +419,7 @@ namespace Mono.CSharp {
 		}
 
 		public IAlias Lookup (DeclSpace ds, string name, int num_type_params,
-				      bool ignore_using, bool silent, Location loc)
+				      bool ignore_using, Location loc)
 		{
 			IAlias o;
 			Namespace ns;
@@ -432,7 +432,7 @@ namespace Mono.CSharp {
 				string first = name.Substring (0, pos);
 				string last = name.Substring (pos + 1);
 
-				o = Lookup (ds, first, 0, ignore_using, silent, loc);
+				o = Lookup (ds, first, 0, ignore_using, loc);
 				if (o == null)
 					return null;
 
@@ -480,8 +480,7 @@ namespace Mono.CSharp {
 				match = using_ns.Lookup (ds, name, loc);
 				if ((match != null) && match.IsType){
 					if (t != null) {
-						if (!silent)
-							DeclSpace.Error_AmbiguousTypeReference (loc, name, t.Name, match.Name);
+						DeclSpace.Error_AmbiguousTypeReference (loc, name, t.Name, match.Name);
 						return null;
 					} else {
 						t = match;
@@ -628,7 +627,7 @@ namespace Mono.CSharp {
 						continue;
 					}
 
-					error246 (entry.Location, entry.Alias.ToString ());
+					error246 (entry.Location, entry.Alias.GetPartialName ());
 				}
 			}
 		}

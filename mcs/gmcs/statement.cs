@@ -604,7 +604,7 @@ namespace Mono.CSharp {
 			} else
 				vector.CheckOutParameters (ec.CurrentBranching);
 
-			if (!in_exc)
+			if (in_exc)
 				ec.NeedReturnLabel ();
 
 			ec.CurrentBranching.CurrentUsageVector.Return ();

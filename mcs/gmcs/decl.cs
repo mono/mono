@@ -90,12 +90,16 @@ namespace Mono.CSharp {
 		public string GetMethodName ()
 		{
 			if (Left != null)
-				return Left.GetFullName () + "." + Name;
+				return Left.GetPartialName () + "." + Name;
 			else
 				return Name;
 		}
 
-		public string GetFullName ()
+		///
+		/// This returns exclusively the name as seen on the source code
+		/// it is not the fully qualifed type after resolution
+		///
+		public string GetPartialName ()
 		{
 			string full_name;
 			if (TypeArguments != null)
@@ -103,7 +107,7 @@ namespace Mono.CSharp {
 			else
 				full_name = Name;
 			if (Left != null)
-				return Left.GetFullName () + "." + full_name;
+				return Left.GetPartialName () + "." + full_name;
 			else
 				return full_name;
 		}
@@ -194,6 +198,9 @@ namespace Mono.CSharp {
 
 		public override string ToString ()
 		{
+			throw new Exception ("This exception is thrown because someone is miss-using\n" +
+					     "MemberName.ToString in the compiler.  Please report this bug");
+
 			string full_name;
 			if (TypeArguments != null)
 				full_name = Name + "<" + TypeArguments + ">";

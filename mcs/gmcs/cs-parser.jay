@@ -687,6 +687,11 @@ named_argument_list
 
 		$$ = args;
 	  }
+	  | named_argument_list COMMA expression
+	    {
+		  Report.Error (1016, lexer.Location, "Named attribute argument expected");
+		  $$ = null;
+		}
         ;
 
 named_argument
@@ -935,6 +940,11 @@ variable_initializer
 	  {
 		$$ = new StackAlloc ((Expression) $2, (Expression) $4, lexer.Location);
 	  }
+	| STACKALLOC type
+	  {
+		Report.Error (1575, lexer.Location, "A stackalloc expression requires [] after type");
+                $$ = null;
+	  }
 	;
 
 method_declaration
@@ -1151,6 +1161,13 @@ fixed_parameter
 	| opt_attributes
 	  opt_parameter_modifier
 	  type
+	  {
+		Report.Error (1001, lexer.Location, "Identifier expected");
+		$$ = null;
+	  }
+	| opt_attributes
+	  opt_parameter_modifier
+	  type
 	  error {
 		CheckIdentifierToken (yyToken);
 		$$ = null;
@@ -1182,6 +1199,11 @@ parameter_array
 	  { 
 		$$ = new Parameter ((Expression) $3, (string) $4, Parameter.Modifier.PARAMS, (Attributes) $1);
 		note ("type must be a single-dimension array type"); 
+	  }
+	| opt_attributes PARAMS parameter_modifier type IDENTIFIER 
+	  {
+		Report.Error (1611, lexer.Location, "The params parameter cannot be declared as ref or out");
+                $$ = null;
 	  }
 	| opt_attributes PARAMS type error {
 		CheckIdentifierToken (yyToken);
@@ -1253,7 +1275,7 @@ opt_set_accessor_declaration
 	;
 
 get_accessor_declaration
-	: opt_attributes GET
+	: opt_attributes opt_modifiers GET
 	  {
 		// If this is not the case, then current_local_parameters has already
 		// been set in indexer_declaration
@@ -1265,14 +1287,14 @@ get_accessor_declaration
 	  }
           accessor_body
 	  {
-		$$ = new Accessor ((ToplevelBlock) $4, (Attributes) $1, lexer.Location);
+		$$ = new Accessor ((ToplevelBlock) $5, (int) $2, (Attributes) $1, lexer.Location);
 		current_local_parameters = null;
 		lexer.PropertyParsing = true;
 	  }
 	;
 
 set_accessor_declaration
-	: opt_attributes SET 
+	: opt_attributes opt_modifiers SET 
 	  {
 		Parameter [] args;
 		Parameter implicit_value_parameter = new Parameter (
@@ -1302,7 +1324,7 @@ set_accessor_declaration
 	  }
 	  accessor_body
 	  {
-		$$ = new Accessor ((ToplevelBlock) $4, (Attributes) $1, lexer.Location);
+		$$ = new Accessor ((ToplevelBlock) $5, (int) $2, (Attributes) $1, lexer.Location);
 		current_local_parameters = null;
 		lexer.PropertyParsing = true;
 	  }
@@ -1890,6 +1912,12 @@ event_accessor_declarations
 	}	
 	| add_accessor_declaration  { $$ = null; } 
 	| remove_accessor_declaration { $$ = null; } 
+	| error
+	{ 
+		Report.Error (1055, lexer.Location, "An add or remove accessor expected");
+		$$ = null;
+	}
+	| { $$ = null; }
 	;
 
 add_accessor_declaration
@@ -1907,7 +1935,7 @@ add_accessor_declaration
 	  }
           block
 	  {
-		$$ = new Accessor ((ToplevelBlock) $4, (Attributes) $1, lexer.Location);
+		$$ = new Accessor ((ToplevelBlock) $4, 0, (Attributes) $1, lexer.Location);
 		lexer.EventParsing = true;
 	  }
 	| opt_attributes ADD error {
@@ -1931,7 +1959,7 @@ remove_accessor_declaration
 	  }
           block
 	  {
-		$$ = new Accessor ((ToplevelBlock) $4, (Attributes) $1, lexer.Location);
+		$$ = new Accessor ((ToplevelBlock) $4, 0, (Attributes) $1, lexer.Location);
 		lexer.EventParsing = true;
 	  }
 	| opt_attributes REMOVE error {
@@ -2604,6 +2632,11 @@ array_creation_expression
 	  {
 		$$ = new ArrayCreation ((Expression) $2, (string) $3, (ArrayList) $4, lexer.Location);
 	  }
+	| NEW error
+	  {
+		Report.Error (1031, lexer.Location, "Type expected");
+                $$ = null;
+	  }          
 	| NEW type error 
 	  {
 		Report.Error (1526, lexer.Location, "new expression requires () or [] after type");
@@ -4352,9 +4385,9 @@ public class InterfaceAccessorInfo {
                                       Attributes get_attrs, Attributes set_attrs, Location get_loc, Location set_loc)
         {
 		if (has_get)
-			Get = new Accessor (null, get_attrs, get_loc);
+			Get = new Accessor (null, 0, get_attrs, get_loc);
 		if (has_set)
-			Set = new Accessor (null, set_attrs, set_loc);
+			Set = new Accessor (null, 0, set_attrs, set_loc);
         }
 }
 

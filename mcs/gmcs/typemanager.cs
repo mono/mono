@@ -96,6 +96,7 @@ public class TypeManager {
 	static public Type mbr_type;
 	static public Type struct_layout_attribute_type;
 	static public Type field_offset_attribute_type;
+	static public Type security_attr_type;
 
 	static public Type generic_ienumerator_type;
 	static public Type generic_ienumerable_type;
@@ -1228,6 +1229,7 @@ public class TypeManager {
 		cls_compliant_attribute_type = CoreLookupType ("System.CLSCompliantAttribute");
 		struct_layout_attribute_type = CoreLookupType ("System.Runtime.InteropServices.StructLayoutAttribute");
 		field_offset_attribute_type = CoreLookupType ("System.Runtime.InteropServices.FieldOffsetAttribute");
+		security_attr_type = CoreLookupType ("System.Security.Permissions.SecurityAttribute");
 
 		//
 		// Generic types

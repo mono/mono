@@ -1,3 +1,167 @@
+2004-11-07  Miguel de Icaza  <miguel@ximian.com>
+
+	* expression.cs (Invocation.OverloadResolve): Flag error if we are
+	calling an unsafe method from a safe location.
+
+2004-11-06  Marek Safar  <marek.safar@seznam.cz>
+
+	Fix #69167
+	* codegen.cs (ApplyAttributeBuilder): Do not return; it is only warning.
+
+2004-11-06  Miguel de Icaza  <miguel@ximian.com>
+
+	* namespace.cs (VerifyUsing): use GetPartialName instead of
+	ToString. 
+
+2004-11-05  Miguel de Icaza  <miguel@ximian.com>
+
+	* statement.cs (Return.Resolve): Fix regression in typo: if
+	`in_exc', we have to request a NeedReturnLabel, this was a typo
+	introduced in the anonymous method check-in.  Fixes #69131.
+
+	* Indexers were using the ShortName when defining themselves,
+	causing a regression in the compiler bootstrap when applying the
+	patch from 2004-11-02 (first part), now they use their full name
+	and the bug is gone.
+
+2004-11-04  Zoltan Varga  <vargaz@freemail.hu>
+
+	* driver.cs: Strip the path from the names of embedded resources. Fixes
+	#68519.
+
+2004-11-04  Raja R Harinath  <rharinath@novell.com>
+
+	Fix error message regression: cs0104-2.cs.
+	* namespace.cs (NamespaceEntry.Lookup): Remove 'silent' flag.
+	(AliasEntry.Resolve): Update.
+	* rootcontext.cs (RootContext.NamespaceLookup): Update.  Remove
+	'silent' flag.
+	(RootContext.LookupType): Update.
+
+2004-11-03  Carlos Alberto Cortez <carlos@unixmexico.org>
+
+	* cs-parser.jay: Add support for handling accessor modifiers
+	* class: Add support port accessor modifiers and error checking,
+	define PropertyMethod.Define as virtual (not abstract anymore)
+	* ecore.cs: Add checking for proeprties access with access modifiers
+	* iterators.cs: Modify Accessor constructor call based in the modified
+	constructor
+2004-11-02  Ben Maurer  <bmaurer@ximian.com>
+
+	* expression.cs (StringConcat): Handle being called twice,
+	as when we have a concat in a field init with more than two
+	ctors in the class
+
+2004-11-02  Miguel de Icaza  <miguel@ximian.com>
+
+	* class.cs (Event.Define, Indexer.Define, Property.Define): Do not
+	special case explicit implementations, we should always produce
+	the .property or .event declaration.
+	
+	* decl.cs (MemberName): Renamed GetFullName to GetPartialName
+	since it will not return correct data if people use this
+	unresolved in the presence of using statements (see test-313).
+
+	* class.cs (MethodData.Define): If we are an explicit interface
+	implementation, set the method name to the full name of the
+	interface plus the name of the method.  
+
+	Notice that using the method.MethodName.GetFullName() does not
+	work, as it will only contain the name as declared on the source
+	file (it can be a shorthand in the presence of using statements)
+	and not the fully qualifed type name, for example:
+
+	using System;
+
+	class D : ICloneable {
+		object ICloneable.Clone ()  {
+		}
+	}
+
+	Would produce a method called `ICloneable.Clone' instead of
+	`System.ICloneable.Clone'.
+
+	* namespace.cs (Alias.Resolve): Use GetPartialName.
+	
+2004-11-01  Marek Safar  <marek.safar@seznam.cz>
+
+	* cs-parser.jay: Add error 1055 report.
+
+2004-11-01  Miguel de Icaza  <miguel@ximian.com>
+
+	* assign.cs (Assign.DoResolve): Only do the transform of
+	assignment into a New if the types are compatible, if not, fall
+	through and let the implicit code deal with the errors and with
+	the necessary conversions. 
+
+2004-11-01  Marek Safar  <marek.safar@seznam.cz>
+
+	* cs-parser.jay: Add error 1031 report.
+
+	* cs-tokenizer.cs: Add location for error 1038.
+
+2004-10-31  Marek Safar  <marek.safar@seznam.cz>
+
+	* cs-parser.jay: Add error 1016 report.
+
+2004-10-31  Marek Safar  <marek.safar@seznam.cz>
+
+	* cs-parser.jay: Add errors 1575,1611 report.
+
+2004-10-31  Marek Safar  <marek.safar@seznam.cz>
+
+	* cs-parser.jay: Add error 1001 report.
+
+2004-10-31  Marek Safar  <marek.safar@seznam.cz>
+
+	Fix #68850
+	* attribute.cs (GetMarshal): Add method argument for
+	caller identification.
+
+	* class.cs, codegen.cs, enum.cs, parameter.cs: Added
+	agument for GetMarshal and RuntimeMissingSupport.
+
+2004-10-31  Marek Safar  <marek.safar@seznam.cz>
+
+	* attribute.cs (ExtractSecurityPermissionSet): Removed
+	TypeManager.code_access_permission_type.
+
+	* typemanager.cs: Removed TypeManager.code_access_permission_type.
+
+2004-10-27  Miguel de Icaza  <miguel@ximian.com>
+
+	* expression.cs (LocalVariableReference.DoResolveLValue): Check
+	for obsolete use of a variable here.   Fixes regression on errors
+	cs0619-25 and cs0619-26.
+
+2004-10-27  Marek Safar  <marek.safar@seznam.cz>
+
+	Fix #62358, implemented security attribute encoding.
+
+	* attribute.cs (Attribute.CheckSecurityActionValididy): New method.
+	Tests permitted SecurityAction for assembly or other types.
+	(Assembly.ExtractSecurityPermissionSet): New method. Transforms
+	data from SecurityPermissionAttribute to PermisionSet class.
+
+	* class.cs (ApplyAttributeBuilder): Added special handling
+	for System.Security.Permissions.SecurityAttribute based types.
+
+	* codegen.cs (AssemblyClass.ApplyAttributeBuilder): Added
+	special handling for System.Security.Permissions.SecurityAttribute
+	based types.
+
+	* enum.cs (ApplyAttributeBuilder): Added special handling
+	for System.Security.Permissions.SecurityAttribute based types.
+
+	* parameter.cs (ApplyAttributeBuilder): Added special handling
+	for System.Security.Permissions.SecurityAttribute based types.
+
+	* rootcontext.cs: Next 2 core types.
+
+	* typemanager.cs (TypeManager.security_permission_attr_type):
+	Built in type for the SecurityPermission Attribute.
+	(code_access_permission_type): Build in type.
+
 2004-10-17  Miguel de Icaza  <miguel@ximian.com>
 
 	* expression.cs (LocalVariableReference.DoResolveBase, Emit):

@@ -11,10 +11,13 @@
 using System;
 using System.IO;
 using System.Collections;
+using System.Collections.Specialized;
 using System.Reflection;
 using System.Reflection.Emit;
 using System.Runtime.InteropServices;
+using System.Security;
 using System.Security.Cryptography;
+using System.Security.Permissions;
 
 using Mono.Security.Cryptography;
 
@@ -1054,6 +1057,8 @@ namespace Mono.CSharp {
                     
 		bool is_cls_compliant;
 
+		ListDictionary declarative_security;
+
 		static string[] attribute_targets = new string [] { "assembly" };
 
 		public AssemblyClass (): base ()
@@ -1232,7 +1237,45 @@ namespace Mono.CSharp {
 
 		public override void ApplyAttributeBuilder (Attribute a, CustomAttributeBuilder customBuilder)
 		{
+			if (a.Type.IsSubclassOf (TypeManager.security_attr_type) && a.CheckSecurityActionValidity (true)) {
+				if (declarative_security == null)
+					declarative_security = new ListDictionary ();
+
+				a.ExtractSecurityPermissionSet (declarative_security);
+				return;
+			}
+
 			Builder.SetCustomAttribute (customBuilder);
+		}
+
+		public override void Emit (TypeContainer tc)
+		{
+			base.Emit (tc);
+
+			if (declarative_security != null) {
+
+				MethodInfo add_permission = typeof (AssemblyBuilder).GetMethod ("AddPermissionRequests", BindingFlags.Instance | BindingFlags.NonPublic);
+				object builder_instance = Builder;
+
+				try {
+					// Microsoft runtime hacking
+					if (add_permission == null) {
+						Type assembly_builder = typeof (AssemblyBuilder).Assembly.GetType ("System.Reflection.Emit.AssemblyBuilderData");
+						add_permission = assembly_builder.GetMethod ("AddPermissionRequests", BindingFlags.Instance | BindingFlags.NonPublic);
+
+						FieldInfo fi = typeof (AssemblyBuilder).GetField ("m_assemblyData", BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.GetField);
+						builder_instance = fi.GetValue (Builder);
+					}
+
+					object[] args = new object [] { declarative_security [SecurityAction.RequestMinimum],
+												  declarative_security [SecurityAction.RequestOptional],
+												  declarative_security [SecurityAction.RequestRefuse] };
+					add_permission.Invoke (builder_instance, args);
+				}
+				catch {
+					Report.RuntimeMissingSupport (Location.Null, "assembly permission setting");
+				}
+			}
 		}
 
 		public override string[] ValidAttributeTargets {
@@ -1284,7 +1327,6 @@ namespace Mono.CSharp {
 		{
 			if (a != null && a.Type == TypeManager.cls_compliant_attribute_type) {
 				Report.Warning (3012, a.Location, "You must specify the CLSCompliant attribute on the assembly, not the module, to enable CLS compliance checking");
-				return;
 			}
 
 			Builder.SetCustomAttribute (customBuilder);
