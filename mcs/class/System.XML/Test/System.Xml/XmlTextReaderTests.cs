@@ -40,8 +40,8 @@ namespace MonoTests.System.Xml
 			string value,
 			int attributeCount)
 		{
-			Assert (xmlReader.Read ());
-			Assert (xmlReader.ReadState == ReadState.Interactive);
+			Assert ("#Read", xmlReader.Read ());
+			Assert ("#ReadState", xmlReader.ReadState == ReadState.Interactive);
 			Assert (!xmlReader.EOF);
 			AssertNodeValues (xmlReader, nodeType, depth, isEmptyElement, name, prefix, localName, namespaceURI, value, attributeCount);
 		}
@@ -795,7 +795,7 @@ namespace MonoTests.System.Xml
 
 			AssertNode(xmlReader, XmlNodeType.Element, 1, false, "bar", "", "bar", "NSURI", "", 1);
 
-			AssertNode(xmlReader, XmlNodeType.Text, 2, false, "", "", "", "NSURI", "TEXT NODE", 0);
+			AssertNode(xmlReader, XmlNodeType.Text, 2, false, "", "", "", "", "TEXT NODE", 0);
 
 			AssertNode(xmlReader, XmlNodeType.EndElement, 1, false, "bar", "", "bar", "NSURI", "", 0);
 
@@ -824,17 +824,18 @@ namespace MonoTests.System.Xml
 			xmlReader.MoveToFirstAttribute ();
 			xmlReader.ReadAttributeValue ();
 			AssertEquals ("hello ", xmlReader.Value);
-			xmlReader.ReadAttributeValue ();
+			Assert (xmlReader.ReadAttributeValue ());
 			AssertEquals (XmlNodeType.EntityReference, xmlReader.NodeType);
 			AssertEquals ("ent", xmlReader.Name);
 			AssertEquals (XmlNodeType.EntityReference, xmlReader.NodeType);
-			xmlReader.ReadAttributeValue ();
+			Assert (xmlReader.ReadAttributeValue ());
 			AssertEquals (" world", xmlReader.Value);
 			AssertEquals (XmlNodeType.Text, xmlReader.NodeType);
+			Assert (!xmlReader.ReadAttributeValue ());
+			AssertEquals (" world", xmlReader.Value); // remains
+			AssertEquals (XmlNodeType.Text, xmlReader.NodeType);
 			xmlReader.ReadAttributeValue ();
-			AssertEquals (XmlNodeType.None, xmlReader.NodeType);
-			xmlReader.ReadAttributeValue ();
-			AssertEquals (XmlNodeType.None, xmlReader.NodeType);
+			AssertEquals (XmlNodeType.Text, xmlReader.NodeType);
 		}
 
 		[Test]
@@ -861,6 +862,126 @@ namespace MonoTests.System.Xml
 			AssertEquals ("initial.ReadState", ReadState.Initial, reader.ReadState);
 			AssertEquals ("initial.EOF", false, reader.EOF);
 			AssertEquals ("initial.NodeType", XmlNodeType.None, reader.NodeType);
+		}
+
+		[Test]
+		public void EntityReference ()
+		{
+			string xml = "<foo>&bar;</foo>";
+			XmlReader xmlReader = new XmlTextReader (new StringReader (xml));
+			AssertNode (
+				xmlReader, // xmlReader
+				XmlNodeType.Element, // nodeType
+				0, //depth
+				false, // isEmptyElement
+				"foo", // name
+				String.Empty, // prefix
+				"foo", // localName
+				String.Empty, // namespaceURI
+				String.Empty, // value
+				0 // attributeCount
+			);
+
+			AssertNode (
+				xmlReader, // xmlReader
+				XmlNodeType.EntityReference, // nodeType
+				1, //depth
+				false, // isEmptyElement
+				"bar", // name
+				String.Empty, // prefix
+				"bar", // localName
+				String.Empty, // namespaceURI
+				String.Empty, // value
+				0 // attributeCount
+			);
+
+			AssertNode (
+				xmlReader, // xmlReader
+				XmlNodeType.EndElement, // nodeType
+				0, //depth
+				false, // isEmptyElement
+				"foo", // name
+				String.Empty, // prefix
+				"foo", // localName
+				String.Empty, // namespaceURI
+				String.Empty, // value
+				0 // attributeCount
+			);
+
+			AssertEndDocument (xmlReader);
+		}
+
+		[Test]
+		public void EntityReferenceInsideText ()
+		{
+			string xml = "<foo>bar&baz;quux</foo>";
+			XmlReader xmlReader = new XmlTextReader (new StringReader (xml));
+			AssertNode (
+				xmlReader, // xmlReader
+				XmlNodeType.Element, // nodeType
+				0, //depth
+				false, // isEmptyElement
+				"foo", // name
+				String.Empty, // prefix
+				"foo", // localName
+				String.Empty, // namespaceURI
+				String.Empty, // value
+				0 // attributeCount
+			);
+
+			AssertNode (
+				xmlReader, // xmlReader
+				XmlNodeType.Text, // nodeType
+				1, //depth
+				false, // isEmptyElement
+				String.Empty, // name
+				String.Empty, // prefix
+				String.Empty, // localName
+				String.Empty, // namespaceURI
+				"bar", // value
+				0 // attributeCount
+			);
+
+			AssertNode (
+				xmlReader, // xmlReader
+				XmlNodeType.EntityReference, // nodeType
+				1, //depth
+				false, // isEmptyElement
+				"baz", // name
+				String.Empty, // prefix
+				"baz", // localName
+				String.Empty, // namespaceURI
+				String.Empty, // value
+				0 // attributeCount
+			);
+
+			AssertNode (
+				xmlReader, // xmlReader
+				XmlNodeType.Text, // nodeType
+				1, //depth
+				false, // isEmptyElement
+				String.Empty, // name
+				String.Empty, // prefix
+				String.Empty, // localName
+				String.Empty, // namespaceURI
+				"quux", // value
+				0 // attributeCount
+			);
+
+			AssertNode (
+				xmlReader, // xmlReader
+				XmlNodeType.EndElement, // nodeType
+				0, //depth
+				false, // isEmptyElement
+				"foo", // name
+				String.Empty, // prefix
+				"foo", // localName
+				String.Empty, // namespaceURI
+				String.Empty, // value
+				0 // attributeCount
+			);
+
+			AssertEndDocument (xmlReader);
 		}
 
 //		[Test] Comment out in the meantime.

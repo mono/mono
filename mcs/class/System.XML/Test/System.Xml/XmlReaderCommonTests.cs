@@ -137,6 +137,7 @@ namespace MonoTests.System.Xml
 				throw new AssertionException ("XmlTextReader failed:  " + ex.Message, ex);
 			}
 
+			document.XmlResolver = null;
 			document.LoadXml (xml);
 			xnr = new XmlNodeReader (document);
 			try {
@@ -561,138 +562,6 @@ namespace MonoTests.System.Xml
 				String.Empty, // localName
 				String.Empty, // namespaceURI
 				"<>&'\"", // value
-				0 // attributeCount
-			);
-
-			AssertNode (
-				xmlReader, // xmlReader
-				XmlNodeType.EndElement, // nodeType
-				0, //depth
-				false, // isEmptyElement
-				"foo", // name
-				String.Empty, // prefix
-				"foo", // localName
-				String.Empty, // namespaceURI
-				String.Empty, // value
-				0 // attributeCount
-			);
-
-			AssertEndDocument (xmlReader);
-		}
-
-		[Test]
-		public void EntityReference ()
-		{
-			string xml = "<foo>&bar;</foo>";
-			RunTest (xml, new TestMethod (EntityReference));
-		}
-
-		public void EntityReference (XmlReader xmlReader)
-		{
-			AssertStartDocument (xmlReader);
-
-			AssertNode (
-				xmlReader, // xmlReader
-				XmlNodeType.Element, // nodeType
-				0, //depth
-				false, // isEmptyElement
-				"foo", // name
-				String.Empty, // prefix
-				"foo", // localName
-				String.Empty, // namespaceURI
-				String.Empty, // value
-				0 // attributeCount
-			);
-
-			AssertNode (
-				xmlReader, // xmlReader
-				XmlNodeType.EntityReference, // nodeType
-				1, //depth
-				false, // isEmptyElement
-				"bar", // name
-				String.Empty, // prefix
-				"bar", // localName
-				String.Empty, // namespaceURI
-				String.Empty, // value
-				0 // attributeCount
-			);
-
-			AssertNode (
-				xmlReader, // xmlReader
-				XmlNodeType.EndElement, // nodeType
-				0, //depth
-				false, // isEmptyElement
-				"foo", // name
-				String.Empty, // prefix
-				"foo", // localName
-				String.Empty, // namespaceURI
-				String.Empty, // value
-				0 // attributeCount
-			);
-
-			AssertEndDocument (xmlReader);
-		}
-
-		[Test]
-		public void EntityReferenceInsideText ()
-		{
-			string xml = "<foo>bar&baz;quux</foo>";
-			RunTest (xml, new TestMethod (EntityReferenceInsideText));
-		}
-
-		public void EntityReferenceInsideText (XmlReader xmlReader)
-		{
-			AssertStartDocument (xmlReader);
-
-			AssertNode (
-				xmlReader, // xmlReader
-				XmlNodeType.Element, // nodeType
-				0, //depth
-				false, // isEmptyElement
-				"foo", // name
-				String.Empty, // prefix
-				"foo", // localName
-				String.Empty, // namespaceURI
-				String.Empty, // value
-				0 // attributeCount
-			);
-
-			AssertNode (
-				xmlReader, // xmlReader
-				XmlNodeType.Text, // nodeType
-				1, //depth
-				false, // isEmptyElement
-				String.Empty, // name
-				String.Empty, // prefix
-				String.Empty, // localName
-				String.Empty, // namespaceURI
-				"bar", // value
-				0 // attributeCount
-			);
-
-			AssertNode (
-				xmlReader, // xmlReader
-				XmlNodeType.EntityReference, // nodeType
-				1, //depth
-				false, // isEmptyElement
-				"baz", // name
-				String.Empty, // prefix
-				"baz", // localName
-				String.Empty, // namespaceURI
-				String.Empty, // value
-				0 // attributeCount
-			);
-
-			AssertNode (
-				xmlReader, // xmlReader
-				XmlNodeType.Text, // nodeType
-				1, //depth
-				false, // isEmptyElement
-				String.Empty, // name
-				String.Empty, // prefix
-				String.Empty, // localName
-				String.Empty, // namespaceURI
-				"quux", // value
 				0 // attributeCount
 			);
 

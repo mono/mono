@@ -1,3 +1,22 @@
+2003-05-16  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
+
+	* XmlAttributeTests.cs : added NamespaceAttributes() and WriteTo().
+	* XmlDocumentTests.cs : fixed invalid xml of DocumentWithDoctypeDecl()
+	  and not well-formed xml of OuterXmlWithDefaultXmlns().
+	* XmlElementTests.cs : added IsEmpty(). fixed not well-formed xml of
+	  WriteToWithDefaultNamespace().
+	* XmlNodeReaderTests.cs : fixed incorrect result expectation of 
+	  ReadInnerXmlWrongInit().
+	* XmlNodeTets.cs : applied USE_VERSION_1_1 for InsertBefore()/-After().
+	* XmlReaderCommonTests.cs, 
+	  XmlTextReaderTests.cs : moved EntityReference() and EntityReference-
+	  InsideText() to XmlTextReaderTests.cs, since XmlNodeReader is expected
+	  to resolve these entity references.
+	* XmlTextWriterTests.cs : removed English-dependent error message check.
+	  fixed incorrect state-check ignorant blocks of WriteAttributes ().
+	* XmlWriterTests.cs : modified WriteNodeFullDocument() and WriteNode-
+	  XmlDecl() as MS.NET results in.
+
 2003-05-13  Martin Willemoes Hansen <mwh@sysrq.dk>
 
 	* Tests inherits from Assertion and Assertion. prefixes removed

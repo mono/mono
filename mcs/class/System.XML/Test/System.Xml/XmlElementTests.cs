@@ -255,6 +255,32 @@ namespace MonoTests.System.Xml
 		}
 
 		[Test]
+		public void InnerTextAndEvent ()
+		{
+			XmlDocument doc = new XmlDocument ();
+			doc.LoadXml ("<root><child>text</child><child2><![CDATA[cdata]]></child2></root>");
+			doc.NodeInserted += new XmlNodeChangedEventHandler (
+				OnNodeInserted);
+			doc.NodeRemoved += new XmlNodeChangedEventHandler (
+				OnNodeRemoved);
+			// If only one child of the element is Text node,
+			// then no events are fired.
+			doc.DocumentElement.FirstChild.InnerText = "no events fired.";
+			AssertEquals ("NoInsertEventFired", false, Inserted);
+			AssertEquals ("NoRemoveEventFired", false, Removed);
+			AssertEquals ("SetInnerTextToSingleText", "no events fired.", doc.DocumentElement.FirstChild.InnerText);
+			Inserted = false;
+			Removed = false;
+
+			// if only one child of the element is CDataSection,
+			// then events are fired.
+			doc.DocumentElement.LastChild.InnerText = "events are fired.";
+			AssertEquals ("InsertedEventFired", true, Inserted);
+			AssertEquals ("RemovedEventFired", true, Removed);
+			AssertEquals ("SetInnerTextToCDataSection", "events are fired.", doc.DocumentElement.LastChild.InnerText);
+		}
+
+		[Test]
 		public void InnerXmlSetter ()
 		{
 			XmlDocument doc = new XmlDocument ();
@@ -284,6 +310,14 @@ namespace MonoTests.System.Xml
 		}
 
 		[Test]
+		public void IsEmpty ()
+		{
+			document.LoadXml ("<root><foo/><bar></bar></root>");
+			Assertion.AssertEquals ("Empty", true, ((XmlElement) document.DocumentElement.FirstChild).IsEmpty);
+			Assertion.AssertEquals ("Empty", false, ((XmlElement) document.DocumentElement.LastChild).IsEmpty);
+		}
+
+		[Test]
 		public void RemoveAttribute ()
 		{
 			string xlinkURI = "http://www.w3.org/1999/XLink";
@@ -303,7 +337,7 @@ namespace MonoTests.System.Xml
 		public void WriteToWithDefaultNamespace ()
 		{
 			XmlDocument doc = new XmlDocument ();
-			doc.LoadXml ("<RetrievalElement URI=\"\"xmlns=\"http://www.w3.org/2000/09/xmldsig#\" />");
+			doc.LoadXml ("<RetrievalElement URI=\"\" xmlns=\"http://www.w3.org/2000/09/xmldsig#\" />");
 			StringWriter sw = new StringWriter ();
 			XmlTextWriter xtw = new XmlTextWriter (sw);
 			doc.DocumentElement.WriteTo (xtw);
@@ -328,30 +362,5 @@ namespace MonoTests.System.Xml
 			Assert (doc.OuterXml.IndexOf ("xmlns:html=\"http://www.w3.org/1999/xhtml\"") > 0);
 		}
 
-		[Test]
-		public void InnerTextAndEvent ()
-		{
-			XmlDocument doc = new XmlDocument ();
-			doc.LoadXml ("<root><child>text</child><child2><![CDATA[cdata]]></child2></root>");
-			doc.NodeInserted += new XmlNodeChangedEventHandler (
-				OnNodeInserted);
-			doc.NodeRemoved += new XmlNodeChangedEventHandler (
-				OnNodeRemoved);
-			// If only one child of the element is Text node,
-			// then no events are fired.
-			doc.DocumentElement.FirstChild.InnerText = "no events fired.";
-			AssertEquals ("NoInsertEventFired", false, Inserted);
-			AssertEquals ("NoRemoveEventFired", false, Removed);
-			AssertEquals ("SetInnerTextToSingleText", "no events fired.", doc.DocumentElement.FirstChild.InnerText);
-			Inserted = false;
-			Removed = false;
-
-			// if only one child of the element is CDataSection,
-			// then events are fired.
-			doc.DocumentElement.LastChild.InnerText = "events are fired.";
-			AssertEquals ("InsertedEventFired", true, Inserted);
-			AssertEquals ("RemovedEventFired", true, Removed);
-			AssertEquals ("SetInnerTextToCDataSection", "events are fired.", doc.DocumentElement.LastChild.InnerText);
-		}
 	}
 }

@@ -47,8 +47,7 @@ namespace MonoTests.System.Xml
 			StringReader sr = new StringReader (xml);
 			XmlTextReader xtr = new XmlTextReader (sr);
 			xtw.WriteNode (xtr, false);
-			AssertEquals (xml.Replace ("'", "\""),
-				writer.ToString ());
+			AssertEquals (xml, writer.ToString ());
 		}
 
 		[Test]
@@ -60,7 +59,7 @@ namespace MonoTests.System.Xml
 			XmlTextReader xtr = new XmlTextReader (sr);
 			xtr.Read ();
 			xtw.WriteNode (xtr, false);
-			AssertEquals ("<?xml version=\"1.0\"?>",
+			AssertEquals ("<?xml version='1.0'?>",
 				 writer.ToString ());
 		}
 

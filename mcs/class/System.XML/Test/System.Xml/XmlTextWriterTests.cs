@@ -92,12 +92,12 @@ namespace MonoTests.System.Xml
 		public void AttributeNamespacesXmlnsXmlns ()
 		{
 			xtw.WriteStartElement ("foo");
-			try 
-			{
+			try {
 				xtw.WriteAttributeString ("xmlns", "xmlns", null, "http://abc.def");
 				Fail ("any prefix which name starts from \"xml\" must not be allowed.");
-			} 
+			}
  			catch (ArgumentException e) {}
+			xtw.WriteAttributeString ("", "xmlns", null, "http://abc.def");
 		}
 
 		[Test]
@@ -199,7 +199,9 @@ namespace MonoTests.System.Xml
 				Fail ("WriteCData after Close Should have thrown an InvalidOperationException.");
 			} 
 			catch (InvalidOperationException e) {
-				AssertEquals ("Exception message is incorrect.", "The Writer is closed.", e.Message);
+				// Don't rely on English message assertion.
+				// It is enough to check an exception occurs.
+//				AssertEquals ("Exception message is incorrect.", "The Writer is closed.", e.Message);
 			}
 
 			try {
@@ -207,7 +209,7 @@ namespace MonoTests.System.Xml
 				Fail ("WriteComment after Close Should have thrown an InvalidOperationException.");
 			} 
 			catch (InvalidOperationException e) {
-				AssertEquals ("Exception message is incorrect.", "The Writer is closed.", e.Message);
+//				AssertEquals ("Exception message is incorrect.", "The Writer is closed.", e.Message);
 			}
 
 			try {
@@ -215,7 +217,7 @@ namespace MonoTests.System.Xml
 				Fail ("WriteProcessingInstruction after Close Should have thrown an InvalidOperationException.");
 			} 
 			catch (InvalidOperationException e) {
-				AssertEquals ("Exception message is incorrect.", "The Writer is closed.", e.Message);
+//				AssertEquals ("Exception message is incorrect.", "The Writer is closed.", e.Message);
 			}
 
 			try {
@@ -223,7 +225,7 @@ namespace MonoTests.System.Xml
 				Fail ("WriteStartElement after Close Should have thrown an InvalidOperationException.");
 			} 
 			catch (InvalidOperationException e) {
-				AssertEquals ("Exception message is incorrect.", "The Writer is closed.", e.Message);
+//				AssertEquals ("Exception message is incorrect.", "The Writer is closed.", e.Message);
 			}
 
 			try 
@@ -233,7 +235,7 @@ namespace MonoTests.System.Xml
 			} 
 			catch (InvalidOperationException e) 
 			{
-				AssertEquals ("Exception message is incorrect.", "The Writer is closed.", e.Message);
+//				AssertEquals ("Exception message is incorrect.", "The Writer is closed.", e.Message);
 			}
 
 			try {
@@ -241,7 +243,7 @@ namespace MonoTests.System.Xml
 				Fail ("WriteString after Close Should have thrown an InvalidOperationException.");
 			} 
 			catch (InvalidOperationException e) {
-				AssertEquals ("Exception message is incorrect.", "The Writer is closed.", e.Message);
+//				AssertEquals ("Exception message is incorrect.", "The Writer is closed.", e.Message);
 			}
 		}
 
@@ -334,8 +336,10 @@ namespace MonoTests.System.Xml
 				Fail("Should have thrown an InvalidOperationException.");
 			} 
 			catch (InvalidOperationException e) {
-				AssertEquals ("Exception message is incorrect.",
-					"WriteStartDocument should be the first call.", e.Message);
+				// Don't rely on English message assertion.
+				// It is enough to check an exception occurs.
+//				AssertEquals ("Exception message is incorrect.",
+//					"WriteStartDocument should be the first call.", e.Message);
 			}
 
 			xtw = new XmlTextWriter (sw = new StringWriter ());
@@ -719,7 +723,9 @@ namespace MonoTests.System.Xml
 				xtw.WriteEndElement ();
 				Fail ("Should have thrown an InvalidOperationException.");
 			} catch (InvalidOperationException e) {
-				AssertEquals ("Exception message is incorrect.", "There was no XML start tag open.", e.Message);
+				// Don't rely on English message assertion.
+				// It is enough to check an exception occurs.
+//				AssertEquals ("Exception message is incorrect.", "There was no XML start tag open.", e.Message);
 			}
 
 			xtw.WriteStartElement ("foo");
@@ -999,13 +1005,22 @@ namespace MonoTests.System.Xml
 			ctx = new XmlParserContext(doc.NameTable, new XmlNamespaceManager(doc.NameTable), "", XmlSpace.Default);
 			xtr = new XmlTextReader("<?xml version='1.0'		 standalone='no'?><root a1='A' b2='B' c3='C'><foo><bar /></foo></root>", XmlNodeType.Document, ctx);
 			xtr.Read();	// read XMLDecl
+			AssertEquals (XmlNodeType.XmlDeclaration, xtr.NodeType);
+			sw = new StringWriter ();
+			wr = new XmlTextWriter (sw);
+
+			// This block raises an error on MS.NET 1.0.
 			wr.WriteAttributes(xtr, false);
 			// This method don't always have to take this double-quoted style...
 			AssertEquals("#WriteAttributes.XmlDecl.2", "version=\"1.0\" standalone=\"no\"", sw.ToString().Trim());
 
+			sw = new StringWriter ();
+			wr = new XmlTextWriter (sw);
 			sb.Remove(0, sb.Length);	// init
+
 			xtr.Read();	// read root
-			wr.WriteStartElement(xtr.LocalName, xtr.Value);
+			AssertEquals (XmlNodeType.Element, xtr.NodeType);
+			wr.WriteStartElement(xtr.LocalName, xtr.NamespaceURI);
 			wr.WriteAttributes(xtr, false);
 			wr.WriteEndElement();
 			wr.Close();

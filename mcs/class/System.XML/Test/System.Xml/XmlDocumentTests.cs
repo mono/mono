@@ -869,11 +869,7 @@ namespace MonoTests.System.Xml
 			}
 #endif
 			// Should this be commented out?
-			try {
-				doc.LoadXml ("<!DOCTYPE test [<!ELEMENT foo >]><root />");
-			} catch (XmlException) {
-				Fail("#DoctypeDecl.ElementDecl");
-			}
+			doc.LoadXml ("<!DOCTYPE test [<!ELEMENT foo EMPTY>]><test><foo/></test>");
 		}
 
 		[Test]
@@ -892,7 +888,7 @@ namespace MonoTests.System.Xml
 		{
 			XmlDocument doc = new XmlDocument ();
 			doc.LoadXml ("<iq type=\"get\" id=\"ATECLIENT_1\"><query xmlns=\"jabber:iq:auth\"><username></username></query></iq>");
-			AssertEquals ("<iq type=\"get\" id=\"ATECLIENT_1\"><query xmlns=\"jabber:iq:auth\"><username /></query></iq>", doc.OuterXml);
+			AssertEquals ("<iq type=\"get\" id=\"ATECLIENT_1\"><query xmlns=\"jabber:iq:auth\"><username></username></query></iq>", doc.OuterXml);
 		}
 
 		[Test]

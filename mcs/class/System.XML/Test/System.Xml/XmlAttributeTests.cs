@@ -7,6 +7,7 @@
 // (C) 2003 Martin Willemoes Hansen
 
 using System;
+using System.IO;
 using System.Xml;
 
 using NUnit.Framework;
@@ -68,6 +69,22 @@ namespace MonoTests.System.Xml
 		}
 
 		[Test]
+		public void NamespaceAttributes ()
+		{
+			try {
+				doc.CreateAttribute ("", "xmlns", "urn:foo");
+				Assertion.Fail ("Creating xmlns attribute with invalid nsuri should be error.");
+			} catch (Exception) {
+			}
+			doc.LoadXml ("<root/>");
+			try {
+				doc.DocumentElement.SetAttribute ("xmlns", "urn:foo", "urn:bar");
+				Assertion.Fail ("SetAttribute for xmlns with invalid nsuri should be error.");
+			} catch (ArgumentException) {
+			}
+		}
+
+		[Test]
 		public void HasChildNodes ()
 		{
 			Assert (attr.HasChildNodes);
@@ -122,7 +139,6 @@ namespace MonoTests.System.Xml
 			} catch(Exception ex) {
 				Fail(ex.Message);
 			} finally {
-				doc.LoadXml (original);
 				doc.NodeChanged -= eh;
 			}
 		}
@@ -131,6 +147,21 @@ namespace MonoTests.System.Xml
 		{
 			if(e.NewParent.Value == "fire")
 				doc.DocumentElement.SetAttribute ("appended", "event was fired");
+		}
+
+		[Test]
+		public void WriteTo ()
+		{
+			doc.AppendChild (doc.CreateElement ("root"));
+			doc.DocumentElement.SetAttribute ("attr","");
+			doc.DocumentElement.Attributes ["attr"].InnerXml = "&ent;";
+			StringWriter sw = new StringWriter ();
+			XmlTextWriter xtw = new XmlTextWriter (sw);
+			xtw.WriteStartElement ("result");
+			XmlAttribute attr = doc.DocumentElement.Attributes ["attr"];
+			attr.WriteTo (xtw);
+			xtw.Close ();
+			Assertion.AssertEquals ("<result attr=\"&ent;\" />", sw.ToString ());
 		}
 	}
 }

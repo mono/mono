@@ -129,11 +129,19 @@ namespace MonoTests.System.Xml
 			docelem.InsertBefore(document.CreateElement("good_child"), docelem.FirstChild);
 			AssertEquals("InsertBefore.Normal", "good_child", docelem.FirstChild.Name);
 			// These are required for .NET 1.0 but not for .NET 1.1.
-//			try {
-//				document.InsertBefore (document.CreateElement ("BAD_MAN"), docelem);
-//				Fail ("#InsertBefore.BadPositionButNoError.1");
-//			}
-//			catch (XmlException) {}
+			try {
+				document.InsertBefore (document.CreateElement ("BAD_MAN"), docelem);
+#if !USE_VERSION_1_1
+				Fail ("#InsertBefore.BadPositionButNoError.1");
+#endif
+			}
+#if USE_VERSION_1_1
+			catch (XmlException ex) {
+				throw ex;
+			}
+#else
+			catch (Exception) {}
+#endif
 		}
 
 		[Test]
@@ -149,11 +157,20 @@ namespace MonoTests.System.Xml
 			AssertEquals("InsertAfter.Last", "sub2", docelem.LastChild.Name);
 			AssertEquals("InsertAfter.Prev", "good_child", docelem.FirstChild.NextSibling.Name);
 			AssertEquals("InsertAfter.Next", "good_child", docelem.LastChild.PreviousSibling.Name);
-			// this doesn't throw an exception
-			document.InsertAfter(document.CreateElement("BAD_MAN"), docelem);
-			AssertEquals("InsertAfter with bad location", 
+			// this doesn't throw any exception *only on .NET 1.1*
+			// .NET 1.0 throws an exception.
+			try {
+				document.InsertAfter(document.CreateElement("BAD_MAN"), docelem);
+#if USE_VERSION_1_1
+				AssertEquals("InsertAfter with bad location", 
 				"<root><sub1 /><good_child /><sub2 /></root><BAD_MAN />",
-				document.InnerXml);
+					document.InnerXml);
+			} catch (XmlException ex) {
+				throw ex;
+			}
+#else
+			} catch (Exception ex) {}
+#endif
 }
 
 		[Test]
