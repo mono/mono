@@ -1,3 +1,7 @@
+2005-02-02  Ben Maurer  <bmaurer@ximian.com>
+
+	* reflection.c, appdomain.c: Replace a few manual searches that
+	Zoltan missed. (Paolo approved this part of my initial patch).
 
 Wed Feb 2 16:32:08 CET 2005 Paolo Molaro <lupus@ximian.com>
 
