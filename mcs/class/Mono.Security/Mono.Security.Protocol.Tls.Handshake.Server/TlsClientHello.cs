@@ -118,9 +118,9 @@ namespace Mono.Security.Protocol.Tls.Handshake.Server
 			}
 			else
 			{
-				this.Context.RecordProtocol.SendAlert(AlertDescription.ProtocolVersion);
-
-				throw this.Context.CreateException("Incorrect protocol version received from server");
+				throw new TlsException(
+					AlertDescription.ProtocolVersion,
+					"Incorrect protocol version received from server");
 			}
 		}
 
@@ -139,9 +139,9 @@ namespace Mono.Security.Protocol.Tls.Handshake.Server
 
 			if (this.Context.Cipher == null)
 			{
-				this.Context.RecordProtocol.SendAlert(AlertDescription.InsuficientSecurity);
-
-				throw this.Context.CreateException("Insuficient Security");
+				throw new TlsException(
+					AlertDescription.InsuficientSecurity,
+					"Insuficient Security");
 			}
 		}
 

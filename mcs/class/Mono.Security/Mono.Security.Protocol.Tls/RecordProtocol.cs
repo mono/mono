@@ -81,7 +81,9 @@ namespace Mono.Security.Protocol.Tls
 		{
 			if (this.context.ConnectionEnd)
 			{
-				throw this.context.CreateException("The session is finished and it's no longer valid.");
+				throw new TlsException(
+					AlertDescription.InternalError,
+					"The session is finished and it's no longer valid.");
 			}
 			
 			// Try to read the Record Content Type
@@ -112,7 +114,9 @@ namespace Mono.Security.Protocol.Tls
 			if (protocol != this.context.Protocol && 
 				this.context.ProtocolNegotiated)
 			{
-				throw this.context.CreateException("Invalid protocol version on message received from server");
+				throw new TlsException(
+					AlertDescription.ProtocolVersion,
+					"Invalid protocol version on message received from server");
 			}
 
 			// Decrypt message contents if needed
@@ -162,7 +166,9 @@ namespace Mono.Security.Protocol.Tls
 					break;
 
 				default:
-					throw this.context.CreateException("Unknown record received from server.");
+					throw new TlsException(
+						AlertDescription.UnexpectedMessage,
+						"Unknown record received from server.");
 			}
 
 			return result;
@@ -185,7 +191,7 @@ namespace Mono.Security.Protocol.Tls
 			switch (alertLevel)
 			{
 				case AlertLevel.Fatal:
-					throw this.context.CreateException(alertLevel, alertDesc);					
+					throw new TlsException(alertLevel, alertDesc);
 
 				case AlertLevel.Warning:
 				default:
@@ -205,26 +211,27 @@ namespace Mono.Security.Protocol.Tls
 
 		public void SendAlert(AlertDescription description)
 		{
-			this.SendAlert(new Alert(this.Context, description));
+			this.SendAlert(new Alert(description));
 		}
 
 		public void SendAlert(
 			AlertLevel			level, 
 			AlertDescription	description)
 		{
-			this.SendAlert(new Alert(this.Context, level, description));
+			this.SendAlert(new Alert(level, description));
 		}
 
 		public void SendAlert(Alert alert)
 		{			
 			// Write record
-			this.SendRecord(ContentType.Alert, alert.ToArray());
+			this.SendRecord(
+				ContentType.Alert, 
+				new byte[]{(byte)alert.Level, (byte)alert.Description});
 
-			// Update session
-			alert.Update();
-
-			// Reset message contents
-			alert.Reset();
+			if (alert.IsCloseNotify)
+			{
+				this.context.ConnectionEnd = true;
+			}
 		}
 
 		#endregion
@@ -253,7 +260,9 @@ namespace Mono.Security.Protocol.Tls
 		{
 			if (this.context.ConnectionEnd)
 			{
-				throw this.context.CreateException("The session is finished and it's no longer valid.");
+				throw new TlsException(
+					AlertDescription.InternalError,
+					"The session is finished and it's no longer valid.");
 			}
 
 			byte[] record = this.EncodeRecord(contentType, recordData);
@@ -278,7 +287,9 @@ namespace Mono.Security.Protocol.Tls
 		{
 			if (this.context.ConnectionEnd)
 			{
-				throw this.context.CreateException("The session is finished and it's no longer valid.");
+				throw new TlsException(
+					AlertDescription.InternalError,
+					"The session is finished and it's no longer valid.");
 			}
 
 			TlsStream record = new TlsStream();

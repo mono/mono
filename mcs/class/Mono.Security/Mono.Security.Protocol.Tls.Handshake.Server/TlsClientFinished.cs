@@ -79,9 +79,9 @@ namespace Mono.Security.Protocol.Tls.Handshake.Server
 
 			if (decryptError)
 			{
-				this.Context.RecordProtocol.SendAlert(AlertDescription.DecryptError);
-
-				throw new TlsException("Decrypt error.");
+				throw new TlsException(
+					AlertDescription.DecryptError,
+					"Decrypt error.");
 			}
 		}
 
@@ -117,9 +117,9 @@ namespace Mono.Security.Protocol.Tls.Handshake.Server
 
 			if (decryptError)
 			{
-				this.Context.RecordProtocol.SendAlert(AlertDescription.DecryptError);
-
-				throw new TlsException("Decrypt error.");
+				throw new TlsException(
+					AlertDescription.DecryptError,
+					"Decrypt error.");
 			}
 		}
 

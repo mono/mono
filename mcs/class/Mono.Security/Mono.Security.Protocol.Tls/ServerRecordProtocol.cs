@@ -122,7 +122,9 @@ namespace Mono.Security.Protocol.Tls
 					return new TlsClientFinished(this.context, buffer);
 
 				default:
-					throw this.context.CreateException("Unknown server handshake message received ({0})", type.ToString());
+					throw new TlsException(
+						AlertDescription.UnexpectedMessage,
+						String.Format("Unknown server handshake message received ({0})", type.ToString()));
 			}
 		}
 

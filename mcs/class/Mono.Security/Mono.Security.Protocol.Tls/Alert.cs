@@ -66,45 +66,26 @@ namespace Mono.Security.Protocol.Tls
 
 	#endregion
 	
-	internal class Alert : TlsStream
+	internal class Alert
 	{
 		#region Fields
 
-		private Context				context;
 		private AlertLevel			level;
 		private AlertDescription	description;
 
 		#endregion
 
-		#region Constructors
-
-		public Alert(
-			Context				context,
-			AlertDescription	description) : base()
-		{
-			this.context		= context;
-			this.description	= description;
-			
-			this.inferAlertLevel();
-
-			this.fill();
-		}
-
-		public Alert(
-			Context				context,
-			AlertLevel			level,
-			AlertDescription	description) : base()
-		{
-			this.context		= context;
-			this.level			= level;
-			this.description	= description;
-
-			this.fill();
-		}
-
-		#endregion
-
 		#region Properties
+
+		public AlertLevel Level
+		{
+			get { return this.level; }
+		}
+
+		public AlertDescription Description
+		{
+			get { return this.description; }
+		}
 
 		public string Message
 		{
@@ -113,18 +94,12 @@ namespace Mono.Security.Protocol.Tls
 
 		public bool IsWarning
 		{
-			get
-			{
-				return this.level == AlertLevel.Warning ? true : false;
-			}
+			get { return this.level == AlertLevel.Warning ? true : false; }
 		}
 
 		public bool IsFatal
 		{
-			get
-			{
-				return this.level == AlertLevel.Fatal ? true : false;
-			}
+			get { return this.level == AlertLevel.Fatal ? true : false; }
 		}
 
 		public bool IsCloseNotify
@@ -143,34 +118,25 @@ namespace Mono.Security.Protocol.Tls
 
 		#endregion
 
-		#region Methods
-		
-		public void Update()
-		{
-			if ( this.description == AlertDescription.CloseNotify )
-			{
-				this.context.ConnectionEnd = true;
-			}
+		#region Constructors
 
-			if (this.IsFatal)
-			{
-				this.context.ConnectionEnd = true;
-				if (this.context is ServerContext)
-				{
-					((ServerContext)this.context).SslStream.Close();
-				}
-			}
+		public Alert(AlertDescription description)
+		{
+			this.inferAlertLevel();
+			this.description = description;
+		}
+
+		public Alert(
+			AlertLevel			level,
+			AlertDescription	description)
+		{
+			this.level			= level;
+			this.description	= description;
 		}
 
 		#endregion
 
 		#region Private Methods
-
-		private void fill()
-		{
-			this.Write((byte)level);
-			this.Write((byte)description);
-		}
 
 		private void inferAlertLevel()
 		{

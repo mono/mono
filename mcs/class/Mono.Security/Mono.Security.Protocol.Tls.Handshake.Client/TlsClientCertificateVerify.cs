@@ -55,7 +55,34 @@ namespace Mono.Security.Protocol.Tls.Handshake.Client
 
 		protected override void ProcessAsSsl3()
 		{
-			throw new NotSupportedException();
+			AsymmetricAlgorithm privKey = null;
+			ClientContext		context = (ClientContext)this.Context;
+			
+			privKey = context.SslStream.RaisePrivateKeySelection(
+				context.ClientSettings.ClientCertificate,
+				context.ClientSettings.TargetHost);
+
+			if (privKey == null)
+			{
+				throw new TlsException(
+					AlertDescription.UserCancelled,
+					"Client certificate Private Key unavailable.");
+			}
+			else
+			{
+				SslHandshakeHash hash = new SslHandshakeHash(context.MasterSecret);			
+				hash.TransformFinalBlock(
+					context.HandshakeMessages.ToArray(), 
+					0, 
+					(int)context.HandshakeMessages.Length);
+
+				// RSAManaged of the selected ClientCertificate 
+				// (at this moment the first one)
+				RSA rsa = this.getClientCertRSA((RSA)privKey);
+
+				// Write message
+				this.Write(hash.CreateSignature(rsa));
+			}
 		}
 
 		protected override void ProcessAsTls1()
@@ -64,12 +91,14 @@ namespace Mono.Security.Protocol.Tls.Handshake.Client
 			ClientContext		context = (ClientContext)this.Context;
 			
 			privKey = context.SslStream.RaisePrivateKeySelection(
-				this.Context.ClientSettings.ClientCertificate,
-				this.Context.ClientSettings.TargetHost);
+				context.ClientSettings.ClientCertificate,
+				context.ClientSettings.TargetHost);
 
 			if (privKey == null)
 			{
-				throw this.Context.CreateException("Client certificate Private Key unavailable.");
+				throw new TlsException(
+					AlertDescription.UserCancelled,
+					"Client certificate Private Key unavailable.");
 			}
 			else
 			{

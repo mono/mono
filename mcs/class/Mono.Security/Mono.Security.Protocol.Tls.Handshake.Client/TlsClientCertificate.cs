@@ -65,7 +65,9 @@ namespace Mono.Security.Protocol.Tls.Handshake.Client
 			if (context.ClientSettings.Certificates == null ||
 				context.ClientSettings.Certificates.Count == 0)
 			{
-				throw this.Context.CreateException("Client certificate requested by the server and no client certificate specified.");
+				throw new TlsException(
+					AlertDescription.UserCancelled,
+					"Client certificate requested by the server and no client certificate specified.");
 			}
 			
 			// Select a valid certificate
@@ -79,7 +81,9 @@ namespace Mono.Security.Protocol.Tls.Handshake.Client
 
 			if (clientCert == null)
 			{
-				throw this.Context.CreateException("Client certificate requested by the server and no client certificate specified.");
+				throw new TlsException(
+					AlertDescription.UserCancelled,
+					"Client certificate requested by the server and no client certificate specified.");
 			}
 
 			// Update the selected client certificate

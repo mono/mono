@@ -110,7 +110,9 @@ namespace Mono.Security.Protocol.Tls.Handshake.Client
 
 			if (!isValidSignature)
 			{
-				throw this.Context.CreateException("Data was not signed with the server certificate.");
+				throw new TlsException(
+					AlertDescription.DecodeError,
+					"Data was not signed with the server certificate.");
 			}
 		}
 

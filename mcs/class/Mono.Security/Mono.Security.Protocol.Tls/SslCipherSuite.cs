@@ -64,8 +64,8 @@ namespace Mono.Security.Protocol.Tls
 			/* Pad the key for inner and outer digest */
 			for (int i = 0; i < padLength; ++i) 
 			{
-				pad1[i] = 0x36;
-				pad2[i] = 0x5C;
+				this.pad1[i] = 0x36;
+				this.pad2[i] = 0x5C;
 			}
 		}
 
@@ -167,6 +167,7 @@ namespace Mono.Security.Protocol.Tls
 			
 			char	labelChar	= 'A';
 			int		count		= 1;
+
 			while (tmp.Length < this.KeyBlockSize)
 			{
 				string label = String.Empty;
@@ -187,8 +188,8 @@ namespace Mono.Security.Protocol.Tls
 			}
 			
 			// Create keyblock
-			TlsStream keyBlock = new TlsStream(tmp.ToArray());
-
+			TlsStream keyBlock = new TlsStream(tmp.ToArray());			
+			
 			this.Context.ClientWriteMAC = keyBlock.ReadBytes(this.HashSize);
 			this.Context.ServerWriteMAC = keyBlock.ReadBytes(this.HashSize);
 			this.Context.ClientWriteKey = keyBlock.ReadBytes(this.KeyMaterialSize);

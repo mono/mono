@@ -53,7 +53,7 @@ namespace Mono.Security.Protocol.Tls
 
 		public override byte[] CreateSignature(byte[] rgbHash)
 		{
-			if (key == null)
+			if (this.key == null)
 			{
 				throw new CryptographicUnexpectedOperationException("The key is a null reference");
 			}

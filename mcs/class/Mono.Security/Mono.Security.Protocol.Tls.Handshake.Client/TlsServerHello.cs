@@ -128,7 +128,9 @@ namespace Mono.Security.Protocol.Tls.Handshake.Client
 			}
 			else
 			{
-				throw this.Context.CreateException("Incorrect protocol version received from server");
+				throw new TlsException(
+					AlertDescription.ProtocolVersion,
+					"Incorrect protocol version received from server");
 			}
 		}
 

@@ -72,26 +72,29 @@ namespace Mono.Security.Protocol.Tls
 	
 		public bool Contains(string name)
 		{
-			return(-1 != IndexOf(name));
+			return (-1 != this.IndexOf(name));
 		}
 		
 		public int IndexOf(string name)
 		{
 			int index = 0;
+
 			foreach (CipherSuite suite in this)
 			{
-				if (cultureAwareCompare(suite.Name, name))
+				if (this.cultureAwareCompare(suite.Name, name))
 				{
 					return index;
 				}
 				index++;
 			}
+
 			return -1;
 		}
 
 		public int IndexOf(short code)
 		{
 			int index = 0;
+
 			foreach (CipherSuite suite in this)
 			{
 				if (suite.Code == code)
@@ -100,12 +103,13 @@ namespace Mono.Security.Protocol.Tls
 				}
 				index++;
 			}
+
 			return -1;
 		}
 
 		public void RemoveAt(string errorMessage)
 		{
-			RemoveAt(IndexOf(errorMessage));
+			this.RemoveAt(this.IndexOf(errorMessage));
 		}
 
 		public CipherSuite Add(

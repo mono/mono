@@ -419,29 +419,5 @@ namespace Mono.Security.Protocol.Tls
 		}
 
 		#endregion
-
-		#region Exception Methods
-
-		public TlsException CreateException(
-			AlertLevel			alertLevel, 
-			AlertDescription	alertDesc)
-		{
-			return CreateException(Alert.GetAlertMessage(alertDesc));
-		}
-
-		public TlsException CreateException(string format, params object[] args)
-		{
-			StringBuilder message = new StringBuilder();
-			message.AppendFormat(format, args);
-
-			return CreateException(message.ToString());
-		}
-
-		public TlsException CreateException(string message)
-		{
-			return new TlsException(message);
-		}
-
-		#endregion
 	}
 }

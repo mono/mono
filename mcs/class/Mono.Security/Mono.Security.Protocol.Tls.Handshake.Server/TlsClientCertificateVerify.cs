@@ -41,25 +41,50 @@ namespace Mono.Security.Protocol.Tls.Handshake.Server
 
 		#endregion
 
-		#region Methods
-
-		public override void Update()
-		{
-			throw new NotSupportedException();
-		}
-
-		#endregion
-
 		#region Protected Methods
 
 		protected override void ProcessAsSsl3()
 		{
-			throw new NotSupportedException();
+			ServerContext	context		= (ServerContext)this.Context;
+			byte[]			signature	= this.ReadBytes((int)this.Length);
+
+			// Verify signature
+			SslHandshakeHash hash = new SslHandshakeHash(context.MasterSecret);			
+			hash.TransformFinalBlock(
+				context.HandshakeMessages.ToArray(), 
+				0, 
+				(int)context.HandshakeMessages.Length);
+
+			if (!hash.VerifySignature(
+				context.ClientSettings.CertificateRSA,
+				signature))
+			{
+				throw new TlsException(
+					AlertDescription.HandshakeFailiure,
+					"Handshake Failiure.");
+			}
 		}
 
 		protected override void ProcessAsTls1()
 		{
-			throw new NotSupportedException();
+			ServerContext	context		= (ServerContext)this.Context;
+			byte[]			signature	= this.ReadBytes((int)this.Length);			
+
+			// Verify signature
+			MD5SHA1 hash = new MD5SHA1();
+			hash.ComputeHash(
+				context.HandshakeMessages.ToArray(),
+				0,
+				(int)context.HandshakeMessages.Length);
+
+			if (!hash.VerifySignature(
+				context.ClientSettings.CertificateRSA,
+				signature))
+			{
+				throw new TlsException(
+					AlertDescription.HandshakeFailiure,
+					"Handshake Failiure.");
+			}
 		}
 
 		#endregion

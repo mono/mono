@@ -55,7 +55,7 @@ namespace Mono.Security.Protocol.Tls
 			byte[] rgbHash,
 			byte[] rgbSignature)
 		{
-			if (key == null)
+			if (this.key == null)
 			{
 				throw new CryptographicUnexpectedOperationException("The key is a null reference");
 			}

@@ -25,6 +25,8 @@
 using System;
 using System.Text;
 using System.Security.Cryptography.X509Certificates;
+using Mono.Security.Cryptography;
+using X509 = Mono.Security.X509;
 
 namespace Mono.Security.Protocol.Tls
 {
@@ -36,6 +38,7 @@ namespace Mono.Security.Protocol.Tls
 		private X509CertificateCollection	certificates;
 		private SecurityCompressionType		compressionMethod;
 		private X509Certificate				clientCertificate;
+		private RSAManaged					certificateRSA;
 	
 		#endregion
 
@@ -69,9 +72,17 @@ namespace Mono.Security.Protocol.Tls
 		public X509Certificate ClientCertificate
 		{
 			get { return this.clientCertificate; }
-			set { this.clientCertificate = value; }
+			set 
+			{ 
+				this.clientCertificate = value; 
+				this.UpdateCertificateRSA();
+			}
 		}
 
+		public RSAManaged CertificateRSA
+		{
+			get { return this.certificateRSA; }
+		}
 
 		#endregion
 
@@ -82,6 +93,28 @@ namespace Mono.Security.Protocol.Tls
 			this.compressionMethod	= SecurityCompressionType.None;
 			this.certificates		= new X509CertificateCollection();
 			this.targetHost			= String.Empty;
+		}
+
+		#endregion
+
+		#region Methods
+
+		public void UpdateCertificateRSA()
+		{
+			if (this.clientCertificate == null)
+			{
+				this.certificateRSA = null;
+			}
+			else
+			{
+				X509.X509Certificate cert = new X509.X509Certificate(this.clientCertificate.GetRawCertData());
+
+				this.certificateRSA = new RSAManaged(
+					cert.RSA.KeySize);
+
+				this.certificateRSA.ImportParameters(
+					cert.RSA.ExportParameters(false));
+			}
 		}
 
 		#endregion

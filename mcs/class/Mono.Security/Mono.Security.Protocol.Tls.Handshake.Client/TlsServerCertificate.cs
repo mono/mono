@@ -176,7 +176,8 @@ namespace Mono.Security.Protocol.Tls.Handshake.Client
 
 		private void validateCertificates(X509CertificateCollection certificates)
 		{
-			ClientContext context = (ClientContext)this.Context;
+			ClientContext		context			= (ClientContext)this.Context;
+			AlertDescription	description		= AlertDescription.BadCertificate;
 
 			// the leaf is the web server certificate
 			X509Certificate leaf = certificates [0];
@@ -225,28 +226,38 @@ namespace Mono.Security.Protocol.Tls.Handshake.Client
 						// WinError.h TRUST_E_BASIC_CONSTRAINTS 0x80096019
 						errors.Add ((int)-2146869223);
 						break;
+					
 					case X509ChainStatusFlags.NotSignatureValid:
 						// WinError.h TRUST_E_BAD_DIGEST 0x80096010
 						errors.Add ((int)-2146869232);
 						break;
+					
 					case X509ChainStatusFlags.NotTimeNested:
 						// WinError.h CERT_E_VALIDITYPERIODNESTING 0x800B0102
 						errors.Add ((int)-2146762494);
 						break;
+					
 					case X509ChainStatusFlags.NotTimeValid:
 						// WinError.h CERT_E_EXPIRED 0x800B0101
+						description	= AlertDescription.CertificateExpired;
 						errors.Add ((int)-2146762495);
 						break;
+					
 					case X509ChainStatusFlags.PartialChain:
 						// WinError.h CERT_E_CHAINING 0x800B010A
+						description	= AlertDescription.UnknownCA;
 						errors.Add ((int)-2146762486);
 						break;
+					
 					case X509ChainStatusFlags.UntrustedRoot:
 						// WinError.h CERT_E_UNTRUSTEDROOT 0x800B0109
+						description	= AlertDescription.UnknownCA;
 						errors.Add ((int)-2146762487);
 						break;
+					
 					default:
 						// unknown error
+						description	= AlertDescription.CertificateUnknown;
 						errors.Add ((int)verify.Status);
 						break;
 				}
@@ -258,7 +269,9 @@ namespace Mono.Security.Protocol.Tls.Handshake.Client
 				cert, 
 				certificateErrors))
 			{
-				throw context.CreateException("Invalid certificate received form server.");
+				throw new TlsException(
+					description,
+					"Invalid certificate received form server.");
 			}
 		}
 
@@ -307,17 +320,15 @@ namespace Mono.Security.Protocol.Tls.Handshake.Client
 			ClientContext context = (ClientContext)this.Context;
 
 			string	domainName = String.Empty;
-			Regex search = new Regex(@"([\w\s\d]*)\s*=\s*([^,]*)");
+			Regex search = new Regex(@"CN\s*=\s*([^,]*)");
 
 			MatchCollection	elements = search.Matches(subjectName);
 
-			foreach (Match element in elements)
+			if (elements.Count == 1)
 			{
-				switch (element.Groups[1].Value.Trim().ToUpper())
+				if (elements[0].Success)
 				{
-					case "CN":
-						domainName = element.Groups[2].Value;
-						break;
+					domainName = elements[0].Groups[1].Value.ToString();
 				}
 			}
 

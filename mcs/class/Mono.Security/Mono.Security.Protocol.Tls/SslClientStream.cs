@@ -729,8 +729,18 @@ namespace Mono.Security.Protocol.Tls
 					// Clear Key Info
 					this.context.ClearKeyInfo();
 				}
-				catch
+				catch (TlsException ex)
 				{
+					this.protocol.SendAlert(ex.Alert);
+					this.Close();
+
+					throw new IOException("The authentication or decryption has failed.");
+				}
+				catch (Exception)
+				{
+					this.protocol.SendAlert(AlertDescription.InternalError);
+					this.Close();
+
 					throw new IOException("The authentication or decryption has failed.");
 				}
 			}

@@ -61,28 +61,28 @@ namespace Mono.Security.Protocol.Tls
 
 		public override bool CanWrite
 		{
-			get { return canWrite; }
+			get { return this.canWrite; }
 		}
 
 		public override bool CanRead
 		{
-			get { return canRead; }
+			get { return this.canRead; }
 		}
 
 		public override bool CanSeek
 		{
-			get { return buffer.CanSeek; }
+			get { return this.buffer.CanSeek; }
 		}
 
 		public override long Position
 		{
-			get { return buffer.Position; }
-			set { buffer.Position = value; }
+			get { return this.buffer.Position; }
+			set { this.buffer.Position = value; }
 		}
 
 		public override long Length
 		{
-			get { return buffer.Length; }
+			get { return this.buffer.Length; }
 		}
 
 		#endregion
@@ -154,13 +154,13 @@ namespace Mono.Security.Protocol.Tls
 
 		public void Write(byte value)
 		{
-			WriteByte(value);
+			this.WriteByte(value);
 		}
 
 		public void Write(short value)
 		{
 			byte[] bytes = BitConverter.GetBytes((short)IPAddress.HostToNetworkOrder(value));
-			Write(bytes);
+			this.Write(bytes);
 		}
 
 		public void WriteInt24(int value)
@@ -170,24 +170,24 @@ namespace Mono.Security.Protocol.Tls
 				
 			Buffer.BlockCopy(BitConverter.GetBytes(int24), 1, content, 0, 3);
 
-			Write(content);
+			this.Write(content);
 		}
 
 		public void Write(int value)
 		{
 			byte[] bytes = BitConverter.GetBytes((int)IPAddress.HostToNetworkOrder(value));
-			Write(bytes);
+			this.Write(bytes);
 		}
 
 		public void Write(long value)
 		{
 			byte[] bytes = BitConverter.GetBytes((long)IPAddress.HostToNetworkOrder(value));
-			Write(bytes);
+			this.Write(bytes);
 		}
 
 		public void Write(byte[] buffer)
 		{
-			Write(buffer, 0, buffer.Length);
+			this.Write(buffer, 0, buffer.Length);
 		}
 
 		#endregion
@@ -196,13 +196,13 @@ namespace Mono.Security.Protocol.Tls
 
 		public void Reset()
 		{
-			buffer.SetLength(0);
-			buffer.Position = 0;
+			this.buffer.SetLength(0);
+			this.buffer.Position = 0;
 		}
 
 		public byte[] ToArray()
 		{
-			return buffer.ToArray();
+			return this.buffer.ToArray();
 		}
 
 		#endregion
@@ -211,22 +211,22 @@ namespace Mono.Security.Protocol.Tls
 
 		public override void Flush()
 		{
-			buffer.Flush();
+			this.buffer.Flush();
 		}
 
 		public override void SetLength(long length)
 		{
-			buffer.SetLength(length);
+			this.buffer.SetLength(length);
 		}
 
 		public override long Seek(long offset, System.IO.SeekOrigin loc)
 		{
-			return buffer.Seek(offset, loc);
+			return this.buffer.Seek(offset, loc);
 		}
 
 		public override int Read(byte[] buffer, int offset, int count)
 		{
-			if (canRead)
+			if (this.canRead)
 			{
 				return this.buffer.Read(buffer, offset, count);
 			}
@@ -235,7 +235,7 @@ namespace Mono.Security.Protocol.Tls
 
 		public override void Write(byte[] buffer, int offset, int count)
 		{
-			if (canWrite)
+			if (this.canWrite)
 			{
 				this.buffer.Write(buffer, offset, count);
 			}

@@ -29,8 +29,23 @@ using System.Runtime.Serialization;
 namespace Mono.Security.Protocol.Tls
 {
 	[Serializable]
-	public sealed class TlsException : Exception
+	internal sealed class TlsException : Exception
 	{	
+		#region Fields
+
+		private Alert alert;
+
+		#endregion
+
+		#region Properties
+
+		public Alert Alert
+		{
+			get { return this.alert; }
+		}
+
+		#endregion
+
 		#region Constructors
 		
 		internal TlsException(string message) : base(message)
@@ -43,6 +58,34 @@ namespace Mono.Security.Protocol.Tls
 		
 		internal TlsException(string message, Exception ex) : base(message, ex)
 		{
+		}
+
+		internal TlsException(
+			AlertLevel			level,
+			AlertDescription	description) 
+			: this (level, description, Alert.GetAlertMessage(description))
+		{
+		}
+
+		internal TlsException(
+			AlertLevel			level,
+			AlertDescription	description,
+			string				message) : base (message)
+		{
+			this.alert = new Alert(level, description);
+		}
+
+		internal TlsException(
+			AlertDescription description) 
+			: this (description, Alert.GetAlertMessage(description))
+		{
+		}
+
+		internal TlsException(
+			AlertDescription	description,
+			string				message) : base (message)
+		{
+			this.alert = new Alert(description);
 		}
 
 		#endregion

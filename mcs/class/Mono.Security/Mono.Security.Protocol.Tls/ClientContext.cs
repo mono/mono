@@ -73,8 +73,7 @@ namespace Mono.Security.Protocol.Tls
 
 		public override void Clear()
 		{
-			this.clientHelloProtocol	= 0;
-
+			this.clientHelloProtocol = 0;
 			base.Clear();
 		}
 

@@ -39,15 +39,6 @@ namespace Mono.Security.Protocol.Tls.Handshake.Server
 
 		#endregion
 
-		#region Methods
-
-		public override void Update()
-		{
-			throw new NotSupportedException();
-		}
-
-		#endregion
-
 		#region Protected Methods
 
 		protected override void ProcessAsSsl3()

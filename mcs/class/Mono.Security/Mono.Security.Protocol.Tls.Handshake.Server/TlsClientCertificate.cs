@@ -66,7 +66,16 @@ namespace Mono.Security.Protocol.Tls.Handshake.Server
 			int length = this.ReadInt24();
 			this.clientCertificate = new X509Certificate(this.ReadBytes(length));
 
-#warning "Is client certificate validation needed ??"
+			this.validateCertificate(this.clientCertificate);
+		}
+
+		#endregion
+
+		#region Private Methods
+
+		private void validateCertificate(X509Certificate certificate)
+		{
+			#warning "Validate client certificate"
 		}
 
 		#endregion

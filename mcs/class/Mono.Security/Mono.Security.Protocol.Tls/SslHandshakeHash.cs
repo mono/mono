@@ -65,62 +65,90 @@ namespace Mono.Security.Protocol.Tls
 
 		public override void Initialize()
 		{
-			md5.Initialize();
-			sha.Initialize();
-			initializePad();
-			hashing = false;
+			this.md5.Initialize();
+			this.sha.Initialize();
+			this.initializePad();
+			this.hashing = false;
 		}
 
 		protected override byte[] HashFinal()
 		{
-			if (!hashing)
+			if (!this.hashing)
 			{
-				hashing = true;
+				this.hashing = true;
 			}
 
 			// Finalize the md5 hash
-			md5.TransformBlock(this.secret, 0, this.secret.Length, this.secret, 0);
-			md5.TransformFinalBlock(this.innerPadMD5, 0, this.innerPadMD5.Length);
+			this.md5.TransformBlock(this.secret, 0, this.secret.Length, this.secret, 0);
+			this.md5.TransformFinalBlock(this.innerPadMD5, 0, this.innerPadMD5.Length);
 
-			byte[] firstResultMD5 = md5.Hash;
+			byte[] firstResultMD5 = this.md5.Hash;
 
-			md5.Initialize();
-			md5.TransformBlock(this.secret, 0, this.secret.Length, this.secret, 0);
-			md5.TransformBlock(this.outerPadMD5, 0, this.outerPadMD5.Length, this.outerPadMD5, 0);
-			md5.TransformFinalBlock(firstResultMD5, 0, firstResultMD5.Length);
+			this.md5.Initialize();
+			this.md5.TransformBlock(this.secret, 0, this.secret.Length, this.secret, 0);
+			this.md5.TransformBlock(this.outerPadMD5, 0, this.outerPadMD5.Length, this.outerPadMD5, 0);
+			this.md5.TransformFinalBlock(firstResultMD5, 0, firstResultMD5.Length);
 			
 			// Finalize the sha1 hash
-			sha.TransformBlock(this.secret, 0, this.secret.Length, this.secret, 0);
-			sha.TransformFinalBlock(this.innerPadSHA, 0, this.innerPadSHA.Length);
+			this.sha.TransformBlock(this.secret, 0, this.secret.Length, this.secret, 0);
+			this.sha.TransformFinalBlock(this.innerPadSHA, 0, this.innerPadSHA.Length);
 
-			byte[] firstResultSHA = sha.Hash;
+			byte[] firstResultSHA = this.sha.Hash;
 			
-			sha.Initialize();
-			sha.TransformBlock(this.secret, 0, this.secret.Length, this.secret, 0);
-			sha.TransformBlock(this.outerPadSHA, 0, this.outerPadSHA.Length, this.outerPadSHA, 0);
-			sha.TransformFinalBlock(firstResultSHA, 0, firstResultSHA.Length);
+			this.sha.Initialize();
+			this.sha.TransformBlock(this.secret, 0, this.secret.Length, this.secret, 0);
+			this.sha.TransformBlock(this.outerPadSHA, 0, this.outerPadSHA.Length, this.outerPadSHA, 0);
+			this.sha.TransformFinalBlock(firstResultSHA, 0, firstResultSHA.Length);
 
 			this.Initialize();
 
 			byte[] result = new byte[36];
 
-			Buffer.BlockCopy(md5.Hash, 0, result, 0, 16);
-			Buffer.BlockCopy(sha.Hash, 0, result, 16, 20);
+			Buffer.BlockCopy(this.md5.Hash, 0, result, 0, 16);
+			Buffer.BlockCopy(this.sha.Hash, 0, result, 16, 20);
 
 			return result;
 		}
 
-		protected override void HashCore(
-			byte[] array,
-			int ibStart,
-			int cbSize)
+		protected override void HashCore(byte[] array, int ibStart, int cbSize)
 		{
-			if (!hashing)
+			if (!this.hashing)
 			{
-				hashing = true;
+				this.hashing = true;
 			}
-			md5.TransformBlock(array, ibStart, cbSize, array, ibStart);
-			sha.TransformBlock(array, ibStart, cbSize, array, ibStart);
+
+			this.md5.TransformBlock(array, ibStart, cbSize, array, ibStart);
+			this.sha.TransformBlock(array, ibStart, cbSize, array, ibStart);
+		}
+
+		public byte[] CreateSignature(RSA rsa) 
+		{
+			if (rsa == null)
+			{
+				throw new CryptographicUnexpectedOperationException ("missing key");
+			}
+
+			RSASslSignatureFormatter f = new RSASslSignatureFormatter(rsa);
+			f.SetHashAlgorithm("SslHash");
+
+			return f.CreateSignature(this.Hash);
+		}
+
+		public bool VerifySignature(RSA rsa, byte[] rgbSignature) 
+		{
+			if (rsa == null)
+			{
+				throw new CryptographicUnexpectedOperationException ("missing key");
+			}
+			if (rgbSignature == null)
+			{
+				throw new ArgumentNullException ("rgbSignature");
+			}
+
+			RSASslSignatureDeformatter d = new RSASslSignatureDeformatter(rsa);
+			d.SetHashAlgorithm("SslHash");
+
+			return d.VerifySignature(this.Hash, rgbSignature);
 		}
 
 		#endregion
