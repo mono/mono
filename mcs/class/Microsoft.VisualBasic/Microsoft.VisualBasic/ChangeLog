@@ -1,3 +1,9 @@
+2004-06-10  Jambunathan K  <kjambunathan@novell.com>
+	* VBUtils.cs: Implemented more GetResourceString() methods
+	* Information.cs: Completed Information.Err
+	* ErrObject.cs: Almost entirely merged from Mainsoft's code
+	All three files need a thorough review.
+
 2004-06-07  Jambunathan  <kjambunathan@novell.com>
 	* VariantType.cs: Minor changes
 	* VBUtils.txt: Newly created  error string resources for VB.NET

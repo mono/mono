@@ -75,50 +75,39 @@ namespace Microsoft.VisualBasic {
 			return str;
 		}
 		
-		// 		public static string GetResourceString(string key, string paramValue)
-		// 		{
-		// 			StringBuilder sb = new StringBuilder(GetResourceString(key));
-		// 			sb.Replace("|1", paramValue);
-		// 			return sb.toString();
-		// 		}
+		public static string GetResourceString (string key, string paramValue)
+		{
+			StringBuilder sb = new StringBuilder(GetResourceString(key));
+			sb.Replace("|1", paramValue);
+			return sb.ToString();
+		}
 		
-		// 		public static string GetResourceString( string key,
-		// 			string paramValue1,
-		// 			string paramValue2)
-		// 			{
-		// 				StringBuilder sb = new StringBuilder(GetResourceString(key));
-		// 				sb.Replace("|1", paramValue1);
-		// 				sb.Replace("|2", paramValue2);
-		// 				return sb.toString();
-		// 			}
+		public static string GetResourceString (string key, string paramValue1, string paramValue2)
+		{
+			StringBuilder sb = new StringBuilder(GetResourceString(key));
+			sb.Replace("|1", paramValue1);
+			sb.Replace("|2", paramValue2);
+			return sb.ToString();
+		}
 		
-		// 		public static string GetResourceString(
-		// 			string key,
-		// 			string param1,
-		// 			string param2,
-		// 			string param3)
-		// 			{
-		// 				StringBuilder sb = new StringBuilder(GetResourceString(key));
-		// 				sb.Replace("|1", param1);
-		// 				sb.Replace("|2", param2);
-		// 				sb.Replace("|3", param3);
-		// 				return sb.toString();
-		// 			}
+		public static string GetResourceString (string key, string param1, string param2, string param3)
+		{
+			StringBuilder sb = new StringBuilder(GetResourceString(key));
+			sb.Replace("|1", param1);
+			sb.Replace("|2", param2);
+			sb.Replace("|3", param3);
+			return sb.ToString();
+		}
 		
-		// 		public static string GetResourceString(
-		// 			string key,
-		// 			string param1,
-		// 			string param2,
-		// 			string param3,
-		// 			string param4)
-		// 			{
-		// 				StringBuilder sb = new StringBuilder(GetResourceString(key));
-		// 				sb.Replace("|1", param1);
-		// 				sb.Replace("|2", param2);
-		// 				sb.Replace("|3", param3);
-		// 				sb.Replace("|4", param4);
-		// 				return sb.toString();
-		// 			}
+		public static string GetResourceString (string key, string param1, string param2, string param3, string param4)
+		{
+			StringBuilder sb = new StringBuilder(GetResourceString(key));
+			sb.Replace("|1", param1);
+			sb.Replace("|2", param2);
+			sb.Replace("|3", param3);
+			sb.Replace("|4", param4);
+			return sb.ToString();
+		}
 		
 		public static string GetResourceString(int ResourceId)
 		{
@@ -126,11 +115,11 @@ namespace Microsoft.VisualBasic {
 			return GetResourceString(str);
 		}
 		
-		// 		public static string GetResourceString(int ResourceId, string param1)
-		// 			{
-		// 				string str = "ID" + new Integer(ResourceId).toString();
-		// 				return GetResourceString(str, param1);
-		// 			}
+		public static string GetResourceString(int ResourceId, string param1)
+		{
+			string str = "ID" + ResourceId.ToString();
+			return GetResourceString(str, param1);
+		}
 		
 		// 		public static java.lang.Exception VBException(java.lang.Exception ex, int hr)
 		// 			{

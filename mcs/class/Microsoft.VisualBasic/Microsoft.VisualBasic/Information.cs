@@ -247,17 +247,15 @@ namespace Microsoft.VisualBasic
 			return Array.GetLowerBound(Rank);
 		}
 
-		[MonoTODO]
 		public static Microsoft.VisualBasic.ErrObject Err() 
 		{ 
-			throw new NotImplementedException();
+			return ProjectData.Err;
 		}
 
-		[MonoTODO]
 		[System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Never)] 
 		public static System.Int32 Erl () 
 		{ 
-			throw new NotImplementedException(); 
+			return ProjectData.Err.Erl;
 		}
 
 		public static System.String TypeName (System.Object VarName) 

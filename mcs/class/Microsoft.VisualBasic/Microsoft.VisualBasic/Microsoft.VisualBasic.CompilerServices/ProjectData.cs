@@ -16,65 +16,47 @@ using System.Runtime.InteropServices;
 
 namespace Microsoft.VisualBasic.CompilerServices
 {
-	/// <summary>
-	/// FIXME: Summary description for ProjectData.
-	/// </summary>
-	
+
 	[MonoTODO]
 	[EditorBrowsable(EditorBrowsableState.Never)]
 	[StructLayout(LayoutKind.Auto)] 
-	public class ProjectData{
+	public class ProjectData {
+
+		internal static int erl;
+		internal static Microsoft.VisualBasic.ErrObject pErr = new ErrObject();
 
 		internal static System.Exception projectError;
-		internal static int erl;
-		internal static Microsoft.VisualBasic.ErrObject pErr;
+
+
+		public static void ClearProjectError ()
+		{
+			pErr.Clear();
+		}
 
 		internal static Microsoft.VisualBasic.ErrObject Err 
 		{
-			get
-			{
-				if (pErr==null)
-					pErr=new ErrObject();
-
+			get {
 				return pErr;
 			}
-			set
-			{
-				pErr = value;
-			}
 		}
 
-		/// <summary>
-		/// FIXME: Summary description for ClearProjectError
-		/// </summary>
-		public static void ClearProjectError()
+		public static Exception CreateProjectError(int hr)
 		{
-			projectError = null;
-			erl = 0;
+			pErr.Clear();
+			return pErr.CreateException(hr, VBUtils.GetResourceString(pErr.MapErrorNumber(hr)));
 		}
 
-		/// <summary>
-		/// FIXME: Summary description for SetProjectError
-		/// </summary>
-		/// <param name="ex">FIXME: Required. Summary description for ex</param>
-		[MonoTODO]
-		public static void SetProjectError(System.Exception ex)
+		public static void SetProjectError(Exception ex)
 		{
-			SetProjectError(ex, 0);
+			pErr.CaptureException(ex);
 		}
 
-		/// <summary>
-		/// FIXME: Summary description for SetProjectError
-		/// </summary>
-		/// <param name="ex">FIXME: Required. Summary description for ex</param>
-		/// <param name="lErl">FIXME: Required. Summary description for lErl</param>
-		[MonoTODO]
-		public static void SetProjectError(System.Exception ex, int lErl)
+		public static void SetProjectError(Exception ex, int lErl)
 		{
-			projectError = ex;
-			erl = lErl;
-			Err.SetException (ex);
+			pErr.CaptureException(ex, lErl);
 		}
+ 
+
 		
 		/*
 		[MonoTODO]

@@ -1,3 +1,6 @@
+2004-06-10  Jambunathan K <kjambunathan@novell.com>
+	* ProjectData.cs: Remerged from Mainsoft's codebase
+
 2004-06-07  Jambunathan K  <kjambunathan@novell.com>
 	* VBErrors.cs: Newly adopted from Mainsoft's codebase
 	* Utils.cs: Fixed formatting. Also some minor changes.
