@@ -81,11 +81,11 @@ namespace Mono.Xml.XPath2
 		public abstract XPathItem CurrentCore { get; }
 
 		// Returns 0 if not started, otherwise returns XPath positional integer.
-		public int Position {
+		public virtual int Position {
 			get { return position; }
 		}
 
-		public bool MoveNext ()
+		public virtual bool MoveNext ()
 		{
 			if (!MoveNextCore ())
 				return false;
@@ -585,11 +585,17 @@ namespace Mono.Xml.XPath2
 	{
 		XPathNavigator node;
 		XPathNavigator current;
+		bool emptyInput;
 
 		public NodeIterator (XPathSequence iter)
 			: base (iter.Context)
 		{
-//			XPathItem item = iter.Context.CurrentItem;
+			if (iter.Position == 0) {
+				if (!iter.MoveNext ()) {
+					emptyInput = true;
+					return;
+				}
+			}
 			XPathItem item = iter.Current;
 			node = item as XPathNavigator;
 			if (node == null)
@@ -600,15 +606,20 @@ namespace Mono.Xml.XPath2
 		internal NodeIterator (NodeIterator other, bool cloneFlag)
 			: base (other)
 		{
-			node = other.node.Clone ();
+			if (other.emptyInput)
+				emptyInput = true;
+			else
+				node = other.node.Clone ();
 		}
 
 		internal XPathNavigator Node {
 			get { return node; }
 		}
 
-		protected override bool MoveNextCore ()
+		public override bool MoveNext ()
 		{
+			if (emptyInput)
+				return false;
 			if (!base.MoveNext ())
 				return false;
 			current = null;

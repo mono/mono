@@ -1,5 +1,11 @@
 2004-08-30  Atsushi Enomoto <atsushi@ximian.com>
 
+	* XPathSequence.cs : fixed NodeIterator to get correct current node
+	  from the input sequence. Now open MoveNext() again as public to
+	  allow override by NodeIterator.
+
+2004-08-30  Atsushi Enomoto <atsushi@ximian.com>
+
 	* XPath2Expression.cs : empty ExprSequence should not be allowed for
 	  FLWORExpr.WhereClause. It should be null.
 	* XPathSequence.cs : ExprSequenceIterator.Clone() was missing copy of
