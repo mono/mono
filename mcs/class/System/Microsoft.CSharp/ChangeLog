@@ -1,3 +1,8 @@
+2003-07-04  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* CSharpCodeCompiler.cs: ignore debug statistics in mcs output when
+	debug is turned on.
+
 2003-07-02  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* CSharpCodeCompiler.cs: patch from pelle.johnsen@mail.dk (Pelle

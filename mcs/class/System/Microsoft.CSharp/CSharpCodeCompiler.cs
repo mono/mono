@@ -163,6 +163,10 @@ namespace Mono.CSharp
 		}
 		private static CompilerError CreateErrorFromString(string error_string)
 		{
+			// When IncludeDebugInformation is true, prevents the debug symbols stats from braeking this.
+			if (error_string.StartsWith ("WROTE SYMFILE") || error_string.StartsWith ("OffsetTable"))
+				return null;
+
 			CompilerError error=new CompilerError();
 			Regex reg = new Regex (@"^(\s*(?<file>.*)\((?<line>\d*)(,(?<column>\d*))?\)\s+)*(?<level>\w+)\s*(?<number>.*):\s(?<message>.*)",
 				RegexOptions.Compiled | RegexOptions.ExplicitCapture);
