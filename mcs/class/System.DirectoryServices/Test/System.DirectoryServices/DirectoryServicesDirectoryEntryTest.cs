@@ -820,6 +820,28 @@ namespace MonoTests.System.DirectoryServices
 
 
 		[Test]
+		public void DirectoryEntry_SchemaClassName()
+		{
+			de = new DirectoryEntry();
+			Assert.AreEqual(de.SchemaClassName,"domainDNS");
+
+
+			de = new DirectoryEntry(LDAPServerConnectionString);
+			Assert.AreEqual(de.SchemaClassName,"organization");
+
+
+			de = new DirectoryEntry(LDAPServerConnectionString,
+									LDAPServerUsername,
+									LDAPServerPassword,
+									AuthenticationTypes.ServerBind);
+			Assert.AreEqual(de.SchemaClassName,"organization");
+
+			DirectoryEntry de2 = de.Children.Add("ou=My Child","Class");
+			Assert.AreEqual(de2.SchemaClassName,"Class");
+			Assert.AreEqual(((PropertyValueCollection)de2.Properties["structuralObjectClass"]).Value,null);
+		}
+
+		[Test]
 		public void DirectoryEntry_SchemaEntry()
 		{
 			de = new DirectoryEntry();

@@ -1,3 +1,7 @@
+2005-03-20  Boris Kirzner  <borisk@mainsoft.com>
+
+	* DirectoryServicesDirectoryEntryTest.cs: Added DirectoryEntry_SchemaClassName test.
+
 2005-03-17  Boris Kirzner  <borisk@mainsoft.com>
 
 	* DirectoryServicesDirectoryEntryTest.cs: New. Unit tests for DirectoryServices.DirectoryEntry.
