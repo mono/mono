@@ -1,3 +1,6 @@
+2003-02-13  Tim Coleman <tim@timcoleman.com>
+	* makefile.gnu: Add System.Data.OracleClient to linux build.
+
 2003-02-10  Nick Drochak  <ndrochak@gol.com>
 
 	* library.build:

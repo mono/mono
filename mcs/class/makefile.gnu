@@ -22,6 +22,7 @@ DIRS =	corlib				\
 	Mono.Data.SqliteClient		\
 	Mono.Data.SybaseClient		\
 	Mono.Data.TdsClient		\
+	System.Data.OracleClient	\
 	Mono.PEToolkit			\
 	Accessibility			\
 	Microsoft.VisualBasic		\
