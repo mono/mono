@@ -1,3 +1,6 @@
+2004-11-25  Zoltan Varga  <vargaz@freemail.hu>
+
+	* amd64/amd64-codegen.h: Updates to support the PIC changes.
 
 Fri Nov 19 17:29:22 CET 2004 Paolo Molaro <lupus@ximian.com>
 
