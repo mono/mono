@@ -1,3 +1,8 @@
+2004-04-30  Raja R Harinath  <rharinath@novell.com>
+
+	* Makefile (SUBDIRS): Remove 'gmcs' for now.
+	(all): Simplify.
+
 2004-04-29  Jackson Harper  <jackson@ximian.com>
 
 	* Makefile: Put the PROFILE= stuff before the target, this is more

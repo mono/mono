@@ -1,5 +1,5 @@
 thisdir := .
-SUBDIRS := build jay mcs class mbas nunit20 monoresgen ilasm tools tests errors docs gmcs
+SUBDIRS := build jay mcs class mbas nunit20 monoresgen ilasm tools tests errors docs
 OVERRIDE_BARE_TARGETS = hells yeah
 include build/rules.make
 
@@ -8,8 +8,8 @@ include build/rules.make
 #all: platform-check profile-check all-recursive #all-local
 
 all:
-	$(MAKE) PROFILE=default all-profile || exit 1; \
-	$(MAKE) PROFILE=net_2_0 all-profile || exit 1;
+	$(MAKE) PROFILE=default all-profile
+	$(MAKE) PROFILE=net_2_0 all-profile
 
 all-profile: platform-check profile-check all-recursive
 
