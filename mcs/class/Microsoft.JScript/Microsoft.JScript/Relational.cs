@@ -42,12 +42,12 @@ namespace Microsoft.JScript {
 			this.parent = parent;
 			this.left = left;
 			this.right = right;
-			this.current_op = op;
+			this.op = op;
 		}
 		
 		public Relational (int operatorTok)
 		{
-			this.current_op = (JSToken) operatorTok;
+			op = (JSToken) operatorTok;
 		}
 
 		public double EvaluateRelational (object v1, object v2)
@@ -67,8 +67,8 @@ namespace Microsoft.JScript {
 
 			sb.Append (left.ToString ());
 
-			if (current_op != JSToken.None)
-				sb.Append (current_op + " ");
+			if (op != JSToken.None)
+				sb.Append (op + " ");
 
 			if (right != null)
 				sb.Append (right.ToString ());
@@ -95,18 +95,31 @@ namespace Microsoft.JScript {
 
 		internal override void Emit (EmitContext ec)
 		{
-			if (current_op == JSToken.None &&  right == null) {
-				left.Emit (ec);
-				return;
-			}			
-
-			Type t = typeof (Relational);						
 			ILGenerator ig = ec.ig;
 
+			if (op == JSToken.None &&  right == null) {
+				left.Emit (ec);
+				return;
+			} else if (op == JSToken.InstanceOf) {
+				if (left != null)
+					left.Emit (ec);
+				if (right != null)
+					right.Emit (ec);
+				ig.Emit (OpCodes.Call, typeof (InstanceOf).GetMethod ("JScriptInstanceof"));
+				return;
+			} else 	if (op == JSToken.In) {
+				if (left != null)
+					left.Emit (ec);
+				if (right != null)
+					right.Emit (ec);
+				ig.Emit (OpCodes.Call, typeof (In).GetMethod ("JScriptIn"));
+				return;
+			} 
+			Type t = typeof (Relational);						
 			LocalBuilder loc = ig.DeclareLocal (t);			
 			ConstructorInfo ctr_info;
 			
-			switch (current_op) {
+			switch (op) {
 			case JSToken.GreaterThan:
 				ig.Emit (OpCodes.Ldc_I4_S, (byte) 57);
 				break;
@@ -132,36 +145,41 @@ namespace Microsoft.JScript {
 				right.Emit (ec);
 
 			ig.Emit (OpCodes.Call, t.GetMethod ("EvaluateRelational"));
-			ig.Emit (OpCodes.Ldc_I4_0);
-			ig.Emit (OpCodes.Conv_R8);
 
-			Label a, b;
-			a = ig.DefineLabel ();
-			b = ig.DefineLabel ();
+			if (no_effect) {
+				ig.Emit (OpCodes.Ldc_I4_0);
+				ig.Emit (OpCodes.Conv_R8);
 
-			switch (current_op) {
-			case JSToken.GreaterThan:
-				ig.Emit (OpCodes.Bgt_S, a);
-				break;
-			case JSToken.LessThan:
-				ig.Emit (OpCodes.Blt_S, a);
-				break;
-			case JSToken.LessThanEqual:
-				ig.Emit (OpCodes.Ble_S, a);
-				break;
-			case JSToken.GreaterThanEqual:
-				ig.Emit (OpCodes.Bge_S, a);
-				break;
-			}			
+				Label a, b;
+				a = ig.DefineLabel ();
+				b = ig.DefineLabel ();
+				
+				switch (op) {
+				case JSToken.GreaterThan:
+					ig.Emit (OpCodes.Bgt_S, a);
+					break;
+				case JSToken.LessThan:
+					ig.Emit (OpCodes.Blt_S, a);
+					break;
+				case JSToken.LessThanEqual:
+					ig.Emit (OpCodes.Ble_S, a);
+					break;
+				case JSToken.GreaterThanEqual:
+					ig.Emit (OpCodes.Bge_S, a);
+					break;
+				}			
 
-			ig.Emit (OpCodes.Ldc_I4_0);
-			ig.Emit (OpCodes.Br_S, b);
-			ig.MarkLabel (a);
-			ig.Emit (OpCodes.Ldc_I4_1);
-			ig.MarkLabel (b);
+				ig.Emit (OpCodes.Ldc_I4_0);
+				ig.Emit (OpCodes.Br_S, b);
+				ig.MarkLabel (a);
+				ig.Emit (OpCodes.Ldc_I4_1);
+				ig.MarkLabel (b);
 
-			if (no_effect)				
-				ig.Emit (OpCodes.Pop);
+				if (no_effect)
+					ig.Emit (OpCodes.Pop);
+				else
+					ig.Emit (OpCodes.Box, typeof (bool));
+			} 
 		}
 	}
 }
