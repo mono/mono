@@ -1,6 +1,13 @@
+2001-09-21  Dietmar Maurer  <dietmar@ximian.com>
+
+	* x86.brg: implemented long MUL/DIV
+
+	* testjit.c (tree_allocate_regs): added a way to prevent EDX usage
+	for operations like idiv. it is also possible to assign specific registers.
+
 2001-09-20  Dietmar Maurer  <dietmar@ximian.com>
 
-	* x86.brg: addes basic support for long
+	* x86.brg: added basic support for long
 
 	* testjit.c (mono_compile_method): implemented POP
 
