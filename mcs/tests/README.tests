@@ -63,7 +63,7 @@ Test cases listed by Category:
 
 * Type resolution and name lookup
 
-  test-198.cs test-201.cs test-202.cs test-203.cs
+  test-198.cs test-201.cs test-202.cs test-203.cs test-214.cs
 
 Test cases listed by Number:
 ============================
@@ -368,6 +368,11 @@ test-213.cs
 -----------
 
 Unboxing struct from interface type; bug #47822.
+
+test-214.cs
+-----------
+
+Namespace lookups; bug #47853.
 
 verify-1.cs
 -----------
