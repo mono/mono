@@ -12,7 +12,7 @@
 
 namespace System.ComponentModel {
 
-	[AttributeUsage (AttributeTargets.Property | AttributeTargets.Event)]
+	[AttributeUsage (AttributeTargets.All)]
 	public class CategoryAttribute : Attribute
 	{
 		private string category;
