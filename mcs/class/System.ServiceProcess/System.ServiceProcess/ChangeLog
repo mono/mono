@@ -1,3 +1,8 @@
+2004-04-04  Joerg Rosenkranz  <joergr@voelcker.com>
+
+	* ServiceBase.cs: Introduced static field for interoperation with monod.
+	Implemented Run methods.
+	
 2004-01-23  Geoff Norton  <gnorton@customerdna.com>
 
 	* ServiceBase.cs: Implement missing virtuals.

@@ -4,8 +4,10 @@
 // Authors:
 //      Cesar Octavio Lopez Nataren (cesar@ciencias.unam.mx)
 //      Duncan Mak (duncan@ximian.com)
+//      Joerg Rosenkranz (joergr@voelcker.com)
 //
 // (C) 2003, Ximian Inc and Cesar Octavio Lopez Nataren.
+// (C) 2005, Voelcker Informatik AG
 //
 
 //
@@ -38,6 +40,9 @@ namespace System.ServiceProcess
 {
 	public class ServiceBase : System.ComponentModel.Component
 	{
+		// This member is used for interoperation with monod
+		internal static ServiceBase [] RegisteredServices = null;
+		
 		public ServiceBase() { }
 
                 public const int MaxNameLength = 80;
@@ -149,9 +154,15 @@ namespace System.ServiceProcess
 
 		protected virtual void OnShutdown () { }
 
-                public static void Run (ServiceBase service) { }
+        public static void Run (ServiceBase service) 
+		{
+			Run (new ServiceBase [] {service});
+		}
 
-		public static void Run (ServiceBase [] ServicesToRun) { }
+		public static void Run (ServiceBase [] servicesToRun) 
+		{
+			RegisteredServices = servicesToRun;
+		}
 
 	}
 }
