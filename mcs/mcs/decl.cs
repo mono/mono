@@ -402,7 +402,7 @@ namespace Mono.CSharp {
 		/// </summary>
 		protected bool AddToContainer (MemberCore symbol, bool is_method, string fullname, string basename)
 		{
-			if (basename == Basename) {
+			if (basename == Basename && !(this is Interface)) {
 				Report.SymbolRelatedToPreviousError (this);
 				Report.Error (542, "'{0}': member names cannot be the same as their enclosing type", symbol.Location, symbol.GetSignatureForError ());
 				return false;
@@ -1262,7 +1262,7 @@ namespace Mono.CSharp {
 		/// <summary>
 		///   Create a new MemberCache for the given IMemberContainer `container'.
 		/// </summary>
-		public MemberCache (IMemberContainer container)
+		public MemberCache (IMemberContainer container, bool setup_inherited_interfaces)
 		{
 			this.Container = container;
 
@@ -1279,8 +1279,8 @@ namespace Mono.CSharp {
 				if (Container.ParentContainer != null)
 					parent = Container.ParentContainer.MemberCache;
 				else
-					parent = TypeHandle.ObjectType.MemberCache;
-				member_hash = SetupCacheForInterface (parent);
+					parent = null;
+				member_hash = SetupCacheForInterface (parent, setup_inherited_interfaces);
 			} else if (Container.ParentContainer != null)
 				member_hash = SetupCache (Container.ParentContainer.MemberCache);
 			else
@@ -1306,11 +1306,13 @@ namespace Mono.CSharp {
 		Hashtable SetupCache (MemberCache parent)
 		{
 			Hashtable hash = new Hashtable ();
+			if (parent == null)
+				return hash;
 
 			IDictionaryEnumerator it = parent.member_hash.GetEnumerator ();
 			while (it.MoveNext ()) {
 				hash [it.Key] = ((ArrayList) it.Value).Clone ();
-                        }
+			}
                                 
 			return hash;
 		}
@@ -1341,9 +1343,13 @@ namespace Mono.CSharp {
 		///   Type.GetMembers() won't return any inherited members for interface types,
 		///   so we need to do this manually.  Interfaces also inherit from System.Object.
 		/// </summary>
-		Hashtable SetupCacheForInterface (MemberCache parent)
+		Hashtable SetupCacheForInterface (MemberCache parent, bool deep_setup)
 		{
 			Hashtable hash = SetupCache (parent);
+
+			if (!deep_setup)
+				return hash;
+
 			TypeExpr [] ifaces = TypeManager.GetInterfaces (Container.Type);
 
 			foreach (TypeExpr iface in ifaces) {
@@ -1367,8 +1373,10 @@ namespace Mono.CSharp {
 		{
 			// We need to call AddMembers() with a single member type at a time
 			// to get the member type part of CacheEntry.EntryType right.
-			AddMembers (MemberTypes.Constructor, container);
-			AddMembers (MemberTypes.Field, container);
+			if (!container.IsInterface) {
+				AddMembers (MemberTypes.Constructor, container);
+				AddMembers (MemberTypes.Field, container);
+			}
 			AddMembers (MemberTypes.Method, container);
 			AddMembers (MemberTypes.Property, container);
 			AddMembers (MemberTypes.Event, container);
@@ -1518,7 +1526,7 @@ namespace Mono.CSharp {
 		///   number to speed up the searching process.
 		/// </summary>
 		[Flags]
-		protected enum EntryType {
+		protected internal enum EntryType {
 			None		= 0x000,
 
 			Instance	= 0x001,
@@ -1541,7 +1549,7 @@ namespace Mono.CSharp {
 			MaskType	= Constructor|Event|Field|Method|Property|NestedType
 		}
 
-		protected struct CacheEntry {
+		protected internal struct CacheEntry {
 			public readonly IMemberContainer Container;
 			public readonly EntryType EntryType;
 			public readonly MemberInfo Member;
