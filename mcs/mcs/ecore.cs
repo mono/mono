@@ -921,7 +921,7 @@ namespace Mono.CSharp {
 				sb.Append (valid [i]);
 			}
 
-			Error (119, "Expression denotes a `" + ExprClassName () + "' where " +
+			Report.Error (119, loc, "Expression denotes a `" + ExprClassName () + "' where " +
 			       "a `" + sb.ToString () + "' was expected");
 		}
 		
