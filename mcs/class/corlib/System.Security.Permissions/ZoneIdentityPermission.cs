@@ -76,7 +76,7 @@ namespace System.Security.Permissions {
 					"Invalid permission"));
 			}
 
-			return (zone == zip.zone);
+			return ((zone == SecurityZone.NoZone) || (zone == zip.zone));
 		}
 
 		public override IPermission Union (IPermission target)
