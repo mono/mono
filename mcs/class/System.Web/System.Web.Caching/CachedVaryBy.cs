@@ -10,6 +10,7 @@
 
 using System;
 using System.Text;
+using System.Collections;
 
 namespace System.Web.Caching {
 
@@ -18,14 +19,26 @@ namespace System.Web.Caching {
 		private string[] prms;
 		private string[] headers;
 		private string custom;
-
-		internal CachedVaryBy (HttpCachePolicy policy)
+		private string key;
+		private ArrayList item_list;
+		
+		internal CachedVaryBy (HttpCachePolicy policy, string key)
 		{
 			prms = policy.VaryByParams.GetParamNames ();
 			headers = policy.VaryByHeaders.GetHeaderNames ();
 			custom = policy.GetVaryByCustom ();
+			this.key = key;
+			item_list = new ArrayList ();
 		}
 
+		internal ArrayList ItemList {
+			get { return item_list; }
+		}
+
+		internal string Key {
+			get { return key; }
+		}
+		
 		internal string CreateKey (string file_path, HttpContext context)
 		{
 			StringBuilder builder = new StringBuilder ();

@@ -9,11 +9,14 @@
 
 using System.Web;
 using System.Web.Util;
+using System.Collections;
 
 namespace System.Web.Caching {
 	
 	internal sealed class OutputCacheModule : IHttpModule {
 
+		private CacheItemRemovedCallback response_removed;
+		
 		public OutputCacheModule ()
 		{
 		}
@@ -31,6 +34,8 @@ namespace System.Web.Caching {
 			app.AddOnUpdateRequestCacheAsync (
 				new BeginEventHandler (OnBeginUpdateCache),
 				new EndEventHandler (OnEndUpdateCache));
+ 
+			response_removed = new CacheItemRemovedCallback (OnRawResponseRemoved);
 		}
 
 		IAsyncResult OnBeginRequestCache (object o, EventArgs args, AsyncCallback cb, object data)
@@ -105,9 +110,12 @@ namespace System.Web.Caching {
 			bool lookup = true;
 			
 			if (varyby == null) {
-				varyby = new CachedVaryBy (context.Response.Cache);
+				int secs = (ideal_duration > context.Response.Cache.Duration ?
+						ideal_duration : context.Response.Cache.Duration);
+				varyby = new CachedVaryBy (context.Response.Cache, vary_key);
 				context.Cache.InsertPrivate (vary_key, varyby, null,
-						Cache.NoAbsoluteExpiration, Cache.NoSlidingExpiration,
+						Cache.NoAbsoluteExpiration,
+						Cache.NoSlidingExpiration,
 						CacheItemPriority.Normal, null);
 				lookup = false;
 			} 
@@ -125,10 +133,24 @@ namespace System.Web.Caching {
 				context.Cache.InsertPrivate (key, c, new CacheDependency (files, keys),
 						context.Response.Cache.Expires,
 						Cache.NoSlidingExpiration,
-						CacheItemPriority.Normal, null);
+						CacheItemPriority.Normal, response_removed);
+				c.VaryBy = varyby;
+				varyby.ItemList.Add (key);
 			} 
 		}
 
+		private void OnRawResponseRemoved (string key, object value, CacheItemRemovedReason reason)
+		{
+			CachedRawResponse c = (CachedRawResponse) value;
+
+			c.VaryBy.ItemList.Remove (key);			
+			if (c.VaryBy.ItemList.Count != 0)
+				return;
+			
+			Cache cache = HttpRuntime.Cache;
+			cache.Remove (c.VaryBy.Key);
+		}
+		
 		private bool IsExpired (HttpContext context, CachedRawResponse crr)
 		{
 			if (crr == null || context.Timestamp > crr.Policy.Expires)

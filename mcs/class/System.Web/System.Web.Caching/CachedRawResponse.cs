@@ -17,6 +17,7 @@ namespace System.Web.Caching {
 	internal class CachedRawResponse {
 
 		private HttpCachePolicy policy;
+		private CachedVaryBy varyby;
 		private int status_code;
 		private string status_desc;
 		private int content_length;
@@ -27,6 +28,7 @@ namespace System.Web.Caching {
 		internal CachedRawResponse (HttpCachePolicy policy)
 		{
 			this.policy = policy;
+			this.varyby = varyby;
 			this.buffer = new byte [HttpWriter.MaxBufferSize];
 		}
 
@@ -34,7 +36,12 @@ namespace System.Web.Caching {
 			get { return policy; }
 			set { policy = value; }
 		}
-	      
+
+		internal CachedVaryBy VaryBy {
+			get { return varyby; }
+			set { varyby = value; }
+		}
+		
 		internal int StatusCode {
 			get { return status_code; }
 			set { status_code = value; }

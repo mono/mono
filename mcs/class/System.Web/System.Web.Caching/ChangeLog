@@ -1,3 +1,12 @@
+2004-01-11  Jackson Harper <jackson@ximian.com>
+
+	* OutputCacheModule.cs: Remove varyby objects when there are no
+	more raw responses that belong to them.
+	* CachedRawResponse.cs: Keep a reference to the VaryBy object that
+	this response belongs to this is so the varyby can be cleaned up.
+	* CachedVaryBy.cs: Keep a reference to the keys that belong to the
+	varyby and a reference to the varyby's key.
+	
 2004-01-04  Jackson Harper <jackson@ximian.com>
 
 	* OutputCacheModule.cs: Dont cache items when trace is enabled.
