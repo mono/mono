@@ -1,3 +1,7 @@
+2003-12-15  Sanjay Gupta <gsanjay@novell.com>
+	* match.cs: Check for null value before Substring method call.  
+	Fixes bug #52034.
+
 2003-11-21  Juraj Skripsky <js@hotfeet.ch>
 
 	* quicksearch.cs: Create and use hashtable only for "long" search 
