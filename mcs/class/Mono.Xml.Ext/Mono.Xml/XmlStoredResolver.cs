@@ -19,7 +19,7 @@ using System.Collections;
 using System.Net;
 using System.Xml;
 
-namespace Mono.Xml.Ext
+namespace Mono.Xml
 {
 	public class XmlStoredResolver : XmlResolver
 	{
