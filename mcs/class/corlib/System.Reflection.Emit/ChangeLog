@@ -1,3 +1,9 @@
+2004-04-28  Raja R Harinath  <rharinath@novell.com>
+
+	* TypeBuilder.cs (SetCustomAttribute): Handle the presence of the
+	full type name in the data stream.  This is emitted for value
+	types by the Mono runtime.
+
 2004-04-23  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* ConstructorBuilder.cs, DynamicMethod.cs, EnumBuilder.cs,

@@ -1108,8 +1108,19 @@ namespace System.Reflection.Emit {
 				for (int i = 0; i < nnamed; ++i) {
 					byte named_type = data [pos++];
 					byte type = data [pos++];
-					int len = CustomAttributeBuilder.decode_len (data, pos, out pos);
-					string named_name = CustomAttributeBuilder.string_from_bytes (data, pos, len);
+					int len;
+					string named_name;
+
+					if (type == 0x55) {
+						len = CustomAttributeBuilder.decode_len (data, pos, out pos);
+						string named_typename = CustomAttributeBuilder.string_from_bytes (data, pos, len);
+						pos += len;
+						// FIXME: Check that 'named_type' and 'named_typename' match, etc.
+						//        See related code/FIXME in mono/mono/metadata/reflection.c
+					}
+
+					len = CustomAttributeBuilder.decode_len (data, pos, out pos);
+					named_name = CustomAttributeBuilder.string_from_bytes (data, pos, len);
 					pos += len;
 					/* all the fields are integers in StructLayout */
 					int value = (int)data [pos++];
