@@ -1,3 +1,15 @@
+2005-01-03  Jackson Harper  <jackson@ximian.com>
+
+	* TreeView.cs:
+	  - Collapse and uncheck all nodes when CheckBoxes is disabled.
+	  - Checkboxes are always aligned to the bottom of the node,
+	  regardless of item height.
+	  - Use the node bounds to draw the text so we can center it when
+	  the item height is greater then the font height.
+	  - Node::Bounds are only the text part of the node.
+	* TreeNode.cs: New method to combine collapsing and unchecking all
+	  nodes recursively.
+
 2005-01-02  Jackson Harper  <jackson@ximian.com>
 
 	* TreeView.cs: Draw checkmarks, handle detecting check mark clicks

@@ -377,11 +377,25 @@ namespace System.Windows.Forms {
 			CollapseRecursive (this);
 		}
 
+		internal void CollapseAllUncheck ()
+		{
+			CollapseUncheckRecursive (this);
+		}
+
 		private void CollapseRecursive (TreeNode node)
 		{
 			node.Collapse ();
 			foreach (TreeNode child in node.Nodes) {
 				CollapseRecursive (child);
+			}
+		}
+
+		private void CollapseUncheckRecursive (TreeNode node)
+		{
+			node.Collapse ();
+			node.Checked = false;
+			foreach (TreeNode child in node.Nodes) {
+				CollapseUncheckRecursive (child);
 			}
 		}
 

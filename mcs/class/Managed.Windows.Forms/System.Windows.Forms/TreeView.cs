@@ -262,7 +262,8 @@ namespace System.Windows.Forms {
 				// collapses the entire tree, but enabling them does not affect the
 				// state of the tree.
 				if (!checkboxes)
-					CollapseAll ();
+					root_node.CollapseAllUncheck ();
+
 				Refresh ();
 			}
 		}
@@ -538,7 +539,7 @@ namespace System.Windows.Forms {
 			}
 
 			DeviceContext.FillRectangle (new SolidBrush (Color.White), fill);
-			
+
 			int depth = 0;
 			int item_height = ItemHeight;
 			Font font = Font;
@@ -614,7 +615,7 @@ namespace System.Windows.Forms {
 
 		private void DrawNodeCheckBox (TreeNode node, int x, int y)
 		{
-			int offset = (ItemHeight - 10) / 2;
+			int offset = (ItemHeight - 13);
 
 			node.UpdateCheckBoxBounds (x + 3, y + offset, 10, 10);
 
@@ -694,8 +695,6 @@ namespace System.Windows.Forms {
 			int _n_count = node.nodes.Count;
 			int middle = y + (item_height / 2);
 
-			UpdateNodeBounds (node, x, y, item_height);
-
 			if (show_root_lines || node.Parent != null) {
 				x += 5;
 				if (_n_count > 0) {
@@ -724,9 +723,16 @@ namespace System.Windows.Forms {
 				ox += ImageList.ImageSize.Width + 3; // leave a little space so the text isn't against the image
 			}
 
-			
+			UpdateNodeBounds (node, x, y, item_height);
+
 			if (visible) {
-				DeviceContext.DrawString (node.Text, font, new SolidBrush (Color.Black), ox, y + 2);
+				if (node.BackColor != BackColor)
+					DeviceContext.FillRectangle (new SolidBrush (node.BackColor), node.Bounds);
+				Rectangle r = node.Bounds;
+				StringFormat format = new StringFormat ();
+				format.LineAlignment = StringAlignment.Center;
+				r.Y += 2; // we have to adjust this to get nice middle alignment
+				DeviceContext.DrawString (node.Text, font, new SolidBrush (Color.Black), r, format);
 				y += item_height + 1;
 			}
 
