@@ -59,7 +59,7 @@ namespace CIR {
 		{
 			TypeAttributes attr = Modifiers.TypeAttr (ModFlags, parent);
 
-			Type t = System.Type.GetType (type);
+			Type t = parent.LookupType (type, false);
 
 			EnumBuilder = parent.RootContext.CodeGen.ModuleBuilder.DefineEnum (name, attr, t);
 		}

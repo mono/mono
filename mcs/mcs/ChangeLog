@@ -1,5 +1,10 @@
 2001-09-14  Ravi Pratap  <ravi@ximian.com>
 
+	* enum.cs (Enum::Define): Modify to call the Lookup method on the
+	parent instead of a direct call to GetType.
+
+2001-09-14  Ravi Pratap  <ravi@ximian.com>
+
 	* class.cs (TypeContainer::TypeAttr): Remove property code and move it into
 	Modifiers.TypeAttr. This should just be a call to that method.
 
