@@ -1,3 +1,7 @@
+2004-07-23  zovarga  <vargaz@freemail.hu>
+
+	* *-amd64.*: Add beginnings of AMD64 backend.
+
 2004-07-22  Ben Maurer  <bmaurer@ximian.com>
 
 	* mini.c (print_dfn): commenting out the code that prints
