@@ -106,6 +106,9 @@ namespace System.Windows.Forms {
 
 		public virtual int Add (TreeNode node)
 		{
+			if (node == null)
+				throw new ArgumentNullException("node");
+
 			if (owner != null && owner.TreeView != null && owner.TreeView.Sorted)
 				return AddSorted (node);
 			SetData (node);
@@ -120,6 +123,9 @@ namespace System.Windows.Forms {
 
 		public virtual void AddRange (TreeNode [] nodes)
 		{
+			if (nodes == null)
+				throw new ArgumentNullException("node");
+
 			// We can't just use Array.Copy because the nodes also
 			// need to have some properties set when they are added.
 			for (int i = 0; i < nodes.Length; i++)

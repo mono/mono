@@ -35,6 +35,11 @@ namespace System.Windows.Forms {
 		private Color back_color;
 		private Font font;
 
+		internal OwnerDrawPropertyBag ()
+		{
+			fore_color = back_color = Color.Empty;
+		}
+
 		private OwnerDrawPropertyBag (Color fore_color, Color back_color, Font font)
 		{
 			this.fore_color = fore_color;

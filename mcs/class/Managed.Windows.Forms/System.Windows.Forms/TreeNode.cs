@@ -30,7 +30,7 @@ using System.Runtime.Serialization;
 namespace System.Windows.Forms {
 
 	[Serializable]
-	public class TreeNode : MarshalByRefObject /*, ICloneable, ISerializable */ {
+	public class TreeNode : MarshalByRefObject, ICloneable /*, ISerializable */ {
 
 		private TreeView tree_view;
 		internal TreeNode parent;
@@ -38,8 +38,7 @@ namespace System.Windows.Forms {
 
 		private string text;
 		private int image_index = -1;
-		private int selected_image_index;
-		private string full_path;
+		private int selected_image_index = -1;
 		internal TreeNodeCollection nodes;
 		
 		private bool is_expanded = true;
@@ -73,7 +72,7 @@ namespace System.Windows.Forms {
 		public TreeNode (string text, int image_index, int selected_image_index) : this (text)
 		{
 			this.image_index = image_index;
-			this.selected_image_index = image_index;
+			this.selected_image_index = selected_image_index;
 		}
 
 		public TreeNode (string text, int image_index, int selected_image_index,
@@ -95,6 +94,24 @@ namespace System.Windows.Forms {
 				return tree_view;
 			}
 		}
+
+		#region ICloneable Members
+
+		public object Clone()
+		{
+			TreeNode tn = new TreeNode (text, image_index, selected_image_index);
+			if (nodes != null) {
+				foreach (TreeNode child in nodes)
+					tn.Nodes.Add ((TreeNode)child.Clone ());
+			}
+			tn.Tag = tag;
+			tn.Checked = Checked;
+			if (prop_bag != null)
+				tn.prop_bag = OwnerDrawPropertyBag.Copy (prop_bag);
+			return tn;
+		}
+
+		#endregion
 
 		public TreeNode Parent {
 			get {
@@ -128,18 +145,36 @@ namespace System.Windows.Forms {
 		}
 
 		public Color BackColor {
-			get { return prop_bag.BackColor; }
-			set { prop_bag.BackColor = value; }
+			get { 
+				return prop_bag == null ? Color.Empty : prop_bag.BackColor;
+			}
+			set { 
+				if (prop_bag == null)
+					prop_bag = new OwnerDrawPropertyBag ();
+				prop_bag.BackColor = value;
+			}
 		}
 
 		public Color ForeColor {
-			get { return prop_bag.ForeColor; }
-			set { prop_bag.ForeColor = value; }
+			get { 
+				return prop_bag == null ? Color.Empty : prop_bag.ForeColor;
+			}
+			set {
+				if (prop_bag == null)
+					prop_bag = new OwnerDrawPropertyBag ();
+				prop_bag.ForeColor = value;
+			}
 		}
 
 		public Font NodeFont {
-			get { return prop_bag.Font; }
-			set { prop_bag.Font = value; }
+			get {
+				return prop_bag == null ? null : prop_bag.Font;
+			}
+			set {
+				if (prop_bag == null)
+					prop_bag = new OwnerDrawPropertyBag (); 
+				prop_bag.Font = value;
+			}
 		}
 
 		public TreeNodeCollection Nodes {
@@ -160,19 +195,25 @@ namespace System.Windows.Forms {
 
 		public string FullPath {
 			get {
-				if (full_path != null)
-					return full_path;
+				if (tree_view == null)
+					throw new Exception ("No TreeView associated");
 
 				StringBuilder builder = new StringBuilder ();
-				string ps = (TreeView == null ? "/" : TreeView.PathSeparator);
-				for (int i = 0; i < nodes.Count; i++) {
-					builder.Append (nodes [i].Text);
-					if (i - 1 != nodes.Count)
-						builder.Append (ps);
-				}
-				full_path = builder.ToString ();
-				return full_path;
+				BuildFullPath (builder);
+				return builder.ToString ();
 			}
+		}
+
+		bool BuildFullPath (StringBuilder path)
+		{
+			if (parent == null)
+				return false;
+
+			if (parent.BuildFullPath (path))
+				path.Append (tree_view.PathSeparator);
+
+			path.Append (text);
+			return true;
 		}
 
 		public bool IsExpanded {
@@ -225,7 +266,7 @@ namespace System.Windows.Forms {
 
 		public TreeNode LastNode {
 			get {
-				return Nodes [Nodes.Count - 1];
+				return (nodes == null || nodes.Count == 0) ? null : nodes [nodes.Count - 1];
 			}
 		}
 
