@@ -164,6 +164,9 @@ namespace System.Resources
 
 		protected virtual void ReadResources ()
 		{
+			if (Reader == null)
+				throw new InvalidOperationException ("ResourceSet is closed.");
+			
 			IDictionaryEnumerator i = Reader.GetEnumerator();
 
 			if (Table == null)

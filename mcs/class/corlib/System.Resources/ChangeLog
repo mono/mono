@@ -1,3 +1,7 @@
+2004-04-08  Lluis Sanchez <lluis@ximian.com>
+
+	* ResourceSet.cs: Added minor null check.
+
 2004-02-03  Jackson Harper <jackson@ximian.com>
 
 	* ResourceSet.cs: Do not throw an exception for null strings.
