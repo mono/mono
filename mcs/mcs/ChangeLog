@@ -1,3 +1,12 @@
+2002-06-21  Martin Baulig  <martin@gnome.org>
+
+	* ecore.cs (Expression.ExplicitReferenceConversionExists): Use
+	`target_type.IsArray' instead of `target_type.IsSubclassOf (TypeManager.array_type)'.
+	(Expression.ConvertReferenceExplicit): Likewise.
+
+	* expression.cs (ElementAccess.DoResolve): Likewise.
+	(ElementAccess.DoResolveLValue): Likewise.
+
 2002-06-10  Martin Baulig  <martin@gnome.org>
 
 	* interface.cs (Interface.PopulateIndexer): When creating the setter, we need to

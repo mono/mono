@@ -5503,7 +5503,7 @@ namespace Mono.CSharp {
 			//
 			Type t = Expr.Type;
 
-			if (t.IsSubclassOf (TypeManager.array_type))
+			if (t.IsArray)
 				return (new ArrayAccess (this)).Resolve (ec);
 			else if (t.IsPointer)
 				return MakePointerAccess ();
@@ -5517,7 +5517,7 @@ namespace Mono.CSharp {
 				return null;
 
 			Type t = Expr.Type;
-			if (t.IsSubclassOf (TypeManager.array_type))
+			if (t.IsArray)
 				return (new ArrayAccess (this)).ResolveLValue (ec, right_side);
 			else if (t.IsPointer)
 				return MakePointerAccess ();

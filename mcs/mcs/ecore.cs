@@ -1854,7 +1854,7 @@ namespace Mono.CSharp {
 
 			// From System.Array to any array-type
 			if (source_type == TypeManager.array_type &&
-			    target_type.IsSubclassOf (TypeManager.array_type)){
+			    target_type.IsArray){
 				return true;
 			}
 
@@ -1953,7 +1953,7 @@ namespace Mono.CSharp {
 
 			// From System.Array to any array-type
 			if (source_type == TypeManager.array_type &&
-			    target_type.IsSubclassOf (TypeManager.array_type)){
+			    target_type.IsArray) {
 				return new ClassCast (source, target_type);
 			}
 
