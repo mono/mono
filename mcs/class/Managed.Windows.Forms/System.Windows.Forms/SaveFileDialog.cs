@@ -41,9 +41,11 @@ namespace System.Windows.Forms
 		{
 			form.Text = "Save";
 			
-			form.Size =  new Size( 554, 384 );
+			form.Size =  new Size( 554, 405 ); // 384
 			
 			OpenSaveButtonText = "Save";
+			
+			SearchSaveLabelText = "Save in:";
 			
 			fileDialogPanel = new FileDialogPanel( this );
 		}
@@ -87,3 +89,4 @@ namespace System.Windows.Forms
 		}
 	}
 }
+

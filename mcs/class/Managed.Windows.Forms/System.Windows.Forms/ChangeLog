@@ -1,3 +1,12 @@
+2005-03-16  Alexander Olk  <xenomorph2@onlinehome.de>
+
+	* FileDialog.cs, OpenFileDialog.cs, SaveFileDialog.cs:
+	  - Removed vertical ToolBar and replaced it with a custom panel
+	    (desktop and home button already work)
+	  - Added Help button (some controls get resized or relocated then)
+	  - Draw correct text depending on Open or Save.
+	  - Fixed some typos...
+
 2005-03-16  Jordi Mas i Hernandez <jordi@ximian.com>
 
 	* ScrollBar.cs:
@@ -20,7 +29,7 @@
 	    is sent via SendMessage on BeginPaint call on Win32
 	* XplatUIX11.cs:
 	  - Added EraseWindowBackground() method
-	  - No longer sends WM_ERASEBKGND on .Expose, but on call to 
+	  - No longer sends WM_ERASEBKGND on .Expose, but on call to
 	    PaintEventStart, which more closely matches Win32 behaviour
 	  - Fixed Invalidate() call, now updates new ErasePending Hwnd property
 	  - Fixed SetFocus() to properly deal with client and whole windows
@@ -72,7 +81,7 @@
 	* XplatUI.cs: Added SetIcon() method
 	* XplatUIDriver.cs: Added SetIcon() abstract
 	* XplatUIOSX.cs: Stubbed out SetIcon() method
-	* XplatUIX11.cs: 
+	* XplatUIX11.cs:
 	  - Implemented SetIcon() support
 	  - Moved SetMenu() and SetBorderStyle() to proper alphabetical pos
 	  - Switched to unix line endings
@@ -93,7 +102,7 @@
 	* Control.cs: Fixed bug #73190; now invokes CreateControl (which
 	  in turn triggers OnCreateContro) when creating a handle for the
 	  first time.
-	* TextControl.cs: Fixed endless loop in certain cases when 
+	* TextControl.cs: Fixed endless loop in certain cases when
 	  replacing the current selection
 
 2005-03-08  Jordi Mas i Hernandez <jordi@ximian.com>
@@ -108,11 +117,11 @@
 	* Hwnd.cs: Added DefaultClientRectangle property
 	* XplatUI.cs: Now using the X11 driver Where() method, which provides
 	  more detailed debug information
-	* XplatUIX11.cs: 
-	  - Fixed size-change feedback loop, where we would pull an old size 
-	    off the queue and mistakenly change our window's size to an 
+	* XplatUIX11.cs:
+	  - Fixed size-change feedback loop, where we would pull an old size
+	    off the queue and mistakenly change our window's size to an
 	    earlier value
-	  - Now compressing ConfigureNotify events, to reduce looping and 
+	  - Now compressing ConfigureNotify events, to reduce looping and
 	    redraw issues
 	* TextBoxBase.cs: Preventing crash when no text is set and ToString()
 	  is called
@@ -134,7 +143,7 @@
 2005-03-04  Jackson Harper  <jackson@ximian.com>
 
 	* Binding.cs: Implement data type parsing and converting on pulled
-	data. TODO: Are there more ways the data can be converted? 
+	data. TODO: Are there more ways the data can be converted?
 
 2005-03-04  Jackson Harper  <jackson@ximian.com>
 
@@ -155,7 +164,7 @@
 	  
 	* ThemeWin32Classic.cs:
 	  - Fixes CheckBox focus rectangle
-	  - Fixes ColumnHeader drawing 	  
+	  - Fixes ColumnHeader drawing
 
 
 2005-03-03  Jackson Harper  <jackson@ximian.com>
@@ -177,7 +186,7 @@
 
 2005-03-01  Jordi Mas i Hernandez <jordi@ximian.com>
 
-	* ComboBox.cs: 
+	* ComboBox.cs:
 		- Handle focus event
 		- Fix scrollbar events
 		- Discard highlighted item if remove it
@@ -237,14 +246,14 @@
 
 2005-02-26  Peter Bartok  <pbartok@novell.com>
 
-	* Control.cs: 
+	* Control.cs:
 	  - Now calling OnHandleDestroyed from DestroyHandle()
 	    instead of Dispose()
 	  - Removed bogus call to controls.Remove() from DestroyHandle()
 
 2005-02-26  Peter Bartok  <pbartok@novell.com>
 
-	* Control.cs: Properly destroy child windows when our handle is 
+	* Control.cs: Properly destroy child windows when our handle is
 	  destroyed
 
 2005-02-25  Peter Bartok  <pbartok@novell.com>
@@ -269,7 +278,7 @@
 2005-02-25  Jackson Harper  <jackson@ximian.com>
 
 	* PropertyManager.cs: Implement editing features
-	* CurrencyManager.cs: 
+	* CurrencyManager.cs:
 	* Binding.cs: First attempt at UpdateIsBinding
 	* BindingManagerBase.cs: Call UpdateIsBinding before
 	pushing/pulling data.
@@ -297,14 +306,14 @@
 
 	* ThemeWin32Classic.cs: Adds Cliping to TrackBar drawing
 	* ScrollBar.cs: Fixes bug
-	* TrackBar.cs: removes death code, clipping, mimize refreshes, 
+	* TrackBar.cs: removes death code, clipping, mimize refreshes,
 	 keyboard navigation enhancements
 
 2005-02-24  Jordi Mas i Hernandez <jordi@ximian.com>
 
 	* Control.cs: Call DefWndProc at WM_PAINT only if UserPaint not defined
 	* GroupBox.cs: Add control styles
-	* Label.cs: Add control styles	
+	* Label.cs: Add control styles
 	* UpDownBase.cs: Add control styles
 	* ListBox.cs: Add control styles
 	* XplatUIWin32.cs: Fixes wrong parameter order
@@ -341,7 +350,7 @@
 	BindingManagerBase uses to ensure bindings aren't added twice to
 	the collection.
 	* PropertyManager.cs: Stubbed out.
-	* Control.cs: 
+	* Control.cs:
 	* ContainerControl.cs: Hook up databinding
 	
 2005-02-22  Geoff Norton  <gnorton@customerdna.com>
@@ -366,7 +375,7 @@
 	* ComboBox.cs: Move ComboBox drawing code to Theme class
 	* MenuItem.cs: Move menu drawing code to Theme class
 	* MenuAPI.cs: Move menu drawing code to Theme class
-	* ThemeWin32Classic.cs: New methods 
+	* ThemeWin32Classic.cs: New methods
 	* CheckedListBox.cs: Move CheckedListbox drawing code to Theme class
 	* ListBox.cs: Move Listbox drawing code to Theme class
 	* Theme.cs: New methods
@@ -376,10 +385,10 @@
 	* Control.cs:
 	  - Fixed ProcessKeyEventArgs to also handle WM_SYSKEY messages (and
 	    only process mnemonics on those)
-	  - Fixed event sequence for key handling; first calling 
+	  - Fixed event sequence for key handling; first calling
 	    ProcessKeyEventArgs now
-	* TextBoxBase.cs: 
-	  - Removed WM_KEYDOWN hook, instead we now use ProcessDialogKey() 
+	* TextBoxBase.cs:
+	  - Removed WM_KEYDOWN hook, instead we now use ProcessDialogKey()
 	    for processing non-character keys
 	  - Fixed WM_CHAR to generate proper event sequence before processing
 	* XplatUIWin32.cs: Added ALT key state to ModifierKeys property
@@ -398,7 +407,7 @@
 	  - Changed to match new ScrollWindow argument
 	  - Fixed GetWindowPos/SetWindowPos behaviour for toplevel controls,
 	    now handles the implicit parent window a WM puts around us
-	* ScrollableControl.cs: Implemented (not the prettiest, but it seems 
+	* ScrollableControl.cs: Implemented (not the prettiest, but it seems
 	  to work)
 	* TextBoxBase.cs: Adjusted to new ScrollWindow arguments
 	* TreeView.cs: Adjusted to new ScrollWindow arguments
@@ -435,7 +444,7 @@
 
 2005-02-17  Jordi Mas i Hernandez <jordi@ximian.com>
 
-	* Form.cs: 
+	* Form.cs:
 		- Redraw non client are on Setmenu
 		- Calc proper menu starting point
 
@@ -548,7 +557,7 @@
 	    receives focus
 	* Form.cs: Setting toplevel flag for Forms (this was lost in the
 	  FormParent rewrite)
-	* ThemeWin32Classic.cs: 
+	* ThemeWin32Classic.cs:
 	  - DrawCheckBox(): Fixed stringformat to show hotkeys
 	  - DrawRadioButton(): Fixed stringformat to show hotkeys
 	* CommonDialog.cs: Removed WndProc override, not needed
@@ -565,7 +574,7 @@
 	
 	Add attributes.
 	
-	* UpDownBase.cs: Add the designer attributes. 
+	* UpDownBase.cs: Add the designer attributes.
 
 2005-02-13  Peter Bartok  <pbartok@novell.com>
 
@@ -584,16 +593,16 @@
 	* Keys.cs: Added missing attributes
 	* SelectionRange.cs: Added missing attributes
 	* SelectionRangeConverter.cs: Added
-	* XplatUI.cs: 
-	  - Introduced SetBorderStyle, SetMenu, GetMenuDC and 
+	* XplatUI.cs:
+	  - Introduced SetBorderStyle, SetMenu, GetMenuDC and
 	    ReleaseMenuDC methods
 	  - Renamed ReleaseWindow to UngrabWindow
 	  - Added proper startup notice to allow version identification
-	* Form.cs: 
+	* Form.cs:
 	  - Added missing attributes
 	  - Removed FormParent concept
 	* Label.cs: Removed border_style field, now in Control
-	* RadioButton.cs: Now properly selects RadioButton when focus is 
+	* RadioButton.cs: Now properly selects RadioButton when focus is
 	  received
 	* ThemeGtk.cs: Fixed SetDisplay call to match new X11 behaviour
 	* Control.cs:
@@ -645,11 +654,11 @@
 	* MainMenu.cs: fixes ToString
 	* MenuItem.cs: fixes methods GetContextMenu, GetMainMenu
 	* ListBox.cs: fixes event position
-	* TrackBar.cs: adds missing attributes and events 	 
+	* TrackBar.cs: adds missing attributes and events
 	
 2005-02-10  Jordi Mas i Hernandez <jordi@ximian.com>
 
-	* MenuItem.cs: Use SystemInformation and bug fixes	
+	* MenuItem.cs: Use SystemInformation and bug fixes
 	* MenuAPI.cs: Use SystemInformation and bug fixes
 
 2005-02-09  Jackson Harper  <jackson@ximian.com>
@@ -704,7 +713,7 @@
 
 2005-02-08  Jordi Mas i Hernandez <jordi@ximian.com>
 	
-	* ComboBox.cs:	
+	* ComboBox.cs:
 		- Fixes button when no items available in dropdown
 		- Fixes repainting problems
 		- Adds the class attributes
@@ -722,7 +731,7 @@
 2005-02-07  Geoff Norton  <gnorton@customerdna.com>
 
 	* XplatUIOSX.cs: Really fix working at resolutions not 1024x768.
-	Get the display size from the main displayid.  We currently dont 
+	Get the display size from the main displayid.  We currently dont
 	support multiple display configurations.
 
 2005-02-07  Geoff Norton  <gnorton@customerdna.com>
@@ -747,8 +756,8 @@
 
 2005-02-05  John BouAntoun  <jba-mono@optusnet.com.au>
 	
-	* DateTimePicker.cs: 
-		- Fixed crash on DateTime.Parse, use Constructor instead 
+	* DateTimePicker.cs:
+		- Fixed crash on DateTime.Parse, use Constructor instead
 
 2005-02-04  Jordi Mas i Hernandez <jordi@ximian.com>
 	
@@ -799,7 +808,7 @@
 		
 2005-02-02  Peter Bartok  <pbartok@novell.com>
 
-	* HandleData.cs: Introduced static methods to allow class 
+	* HandleData.cs: Introduced static methods to allow class
 	  to be more self-contained and track it's own HandleData objects
 	* XplatUIOSX.cs, XplatUIWin32.cs, XplatUIX11.cs: Fixed usage of
 	  HandleData to use new static methods
@@ -817,7 +826,7 @@
 		- Several fixes
 		- ObjectCollection.Insert implementation
 		- No selection after clean
-		- Small fixes		
+		- Small fixes
 
 2005-01-31	John BouAntoun  <jba-mono@optusnet.com.au>
 
@@ -827,7 +836,7 @@
 
 	* Combobox.cs:
 		- Caches ItemHeight calculation for OwnerDrawVariable
-		- Handles dropdown properly 
+		- Handles dropdown properly
 		- Fixes several minor bugs
 
 2005-01-31  Jordi Mas i Hernandez <jordi@ximian.com>
@@ -839,7 +848,7 @@
 
 2005-01-31  Geoff Norton  <gnorton@customerdna.com>
 	
-	* XplatUIOSX.cs: Call ExitToShell in our teardown to avoid a 
+	* XplatUIOSX.cs: Call ExitToShell in our teardown to avoid a
 	crash reporter log.
 
 2005-01-31  Geoff Norton  <gnorton@customerdna.com>
@@ -848,7 +857,7 @@
 
 2005-01-31  Geoff Norton  <gnorton@customerdna.com>
 
-	* XplatUIOSX.cs: SetWindowStyle implemented.  Reposition views in 
+	* XplatUIOSX.cs: SetWindowStyle implemented.  Reposition views in
 	their parent at creation time rather than lazily later.  Fixes a major
 	regression we were experiencing.
 
@@ -898,7 +907,7 @@
 	* ArrangeStartingPositon.cs: Added
 	* SystemInformation.cs: Implemented
 	* XplatUI.cs, XplatUIDriver.cs, XplatUIOSX.cs, XplatUIWin32.cs,
-	  XplatUIX11.cs, Theme.cs: Added/implemented new static properties 
+	  XplatUIX11.cs, Theme.cs: Added/implemented new static properties
 	  used by SystemInformation class
 	* X11Strucs.cs: Added XSizeHints structure
 	* MenuAPI.cs:
@@ -932,7 +941,7 @@
 2005-01-28  Jordi Mas i Hernandez <jordi@ximian.com>
 
 	* CheckedListBox.cs:
-		- Draw focus 
+		- Draw focus
 		- Fixed Drawing
 		- Missing methods and events
 
@@ -975,9 +984,9 @@
 	  - UpdateBounds after creation to find out where the WM placed us
 	  - Make sure that if the ParentForm changes location the Form
 	    is notified
-	* XplatUIX11.cs: XGetGeometry will not return the coords relative 
-	    to the root, but to whatever the WM placed around us. 
-	    Translate to root coordinates before returning toplevel 
+	* XplatUIX11.cs: XGetGeometry will not return the coords relative
+	    to the root, but to whatever the WM placed around us.
+	    Translate to root coordinates before returning toplevel
 	    coordinates
 	* XplatUIWin32.cs: Removed debug output
 	* XplatUIOSX.cs, XplatUI.cs, XplatUIDriver.cs: Added toplevel
@@ -1017,11 +1026,11 @@
 2005-01-26  Peter Bartok  <pbartok@novell.com>
 
 	* XplatUI.cs, XplatUIDriver.cs: Added Systray methods
-	* XplatUIWin32.cs: Implemented SystrayAdd(), SystrayChange() 
+	* XplatUIWin32.cs: Implemented SystrayAdd(), SystrayChange()
 	  and SystrayRemove() methods
 	* XplatUIOSX.cs: Stubbed Systray methods
 	* XplatUIX11.cs:
-	  - Implemented SystrayAdd(), SystrayChange() and SystrayRemove() 
+	  - Implemented SystrayAdd(), SystrayChange() and SystrayRemove()
 	    methods
 	  - Fixed broken XChangeProperty calls (marshalling messed up things)
 	* X11Structs.cs: Added enums and structs required for Size hinting
@@ -1052,24 +1061,24 @@
 
 2005-01-26  Jordi Mas i Hernandez <jordi@ximian.com>
 
-	* MenuAPI.cs: 
-		- MenuBar tracking only starts when item is first clicked 
+	* MenuAPI.cs:
+		- MenuBar tracking only starts when item is first clicked
 		- Fixes menu hidding for multiple subitems
 		- Unselect item in MenuBar when item Executed
 		- Fixes bug 71495
 
 2005-01-25  Jordi Mas i Hernandez <jordi@ximian.com>
 
-	* ListControl.cs: 
+	* ListControl.cs:
 		- IsInputKey for ListBox
 	* ListBox.cs:
-		- Focus item 
+		- Focus item
 		- Shift and Control item selection
 		- Implement SelectionMode.MultiExtended
 		- Fixes RightToLeft
 	* ComboBox.cs:
 		- IsInputKey implemented
-		- Do not generate OnTextChangedEdit on internal txt changes		
+		- Do not generate OnTextChangedEdit on internal txt changes
 		
 2005-01-23  Peter Bartok  <pbartok@novell.com>
 
@@ -1086,9 +1095,9 @@
 	  - ControlNativeWindow: Renamed 'control' variable to more intuitive
 	    name 'owner'
 	  - ControlNativeWindow: Added Owner property
-	  - Removed usage of Refresh() on property changes, changed into 
-	    Invalidate(), we need to wait until the queue is processed for 
-	    updates, direct calls might cause problems if not all vars for 
+	  - Removed usage of Refresh() on property changes, changed into
+	    Invalidate(), we need to wait until the queue is processed for
+	    updates, direct calls might cause problems if not all vars for
 	    Paint are initialized
 	  - Added call to UpdateStyles() when creating the window, to set any
 	    styles that CreateWindow might have ignored.
@@ -1110,7 +1119,7 @@
 
 
 	(OnTextBoxChanged): Set UserEdit to true here to track whether the
-	user has made changes that require validation.  
+	user has made changes that require validation.
 
 	Reset changing to avoid loops.
 
@@ -1119,10 +1128,10 @@
 	* NumericUpDown.cs: Display value at startup.
 
 	* UpDownBase.cs (Text): Do not call UpdateEditText here, only call
-	ValidateEditText. 
+	ValidateEditText.
 
 	* NumericUpDown.cs: Minimum, Maximum, Text, Value properties
-	filled in.  Added some basic parsing of text.  
+	filled in.  Added some basic parsing of text.
 
 	Still missing the OnXXX method overrides, and figuring out the
 	events that must be emitted.
@@ -1168,7 +1177,7 @@
 
 	* ListBox.cs:
 		- Owner draw support
-		- Fixes		
+		- Fixes
 		
 2005-01-20  Jackson Harper  <jackson@ximian.com>
 
@@ -1205,19 +1214,19 @@
 	  - Added missing attributes
 	  - Added clip window styles
 	* CheckBox.cs: Added missing attributes
-	* CommonDialog.cs: 
+	* CommonDialog.cs:
 	  - FormParentWindow.CreateParams: Added required clip styles
 	* Form.cs (ProcessDialogKey): Fixed handling of Escape key, now
-	  also filters modifier keys 
+	  also filters modifier keys
 	* MessageBox.cs:
-	  - Added assignment of Accept and Cancel button to enable Enter 
+	  - Added assignment of Accept and Cancel button to enable Enter
 	    and Esc keys in MessageBox dialogs
 	  - FormParentWindow.CreateParams: Added required clip styles
 	* RadioButton.cs: Added missing attributes
 	* TextControl.cs: No longer draws selection if control does not
 	  have focus
-	* TextBoxBase.cs: 
-	  - Now draws simple rectangle around test area to make it obvious 
+	* TextBoxBase.cs:
+	  - Now draws simple rectangle around test area to make it obvious
 	    there's a control. This is a hack until we properly support borders
 	  - A few simple fixes to support selections better, now erases selected
 	    text when typing, and resets selection when using movement keys
@@ -1226,7 +1235,7 @@
 
 	* UpDownBase.cs: Added some new properties.
 
-	* DomainUpDown.cs: Implement a lot to get my test working. 
+	* DomainUpDown.cs: Implement a lot to get my test working.
 
 2005-01-19  Geoff Norton  <gnorton@customerdna.com>
 
@@ -1260,8 +1269,8 @@
 
 	* Button.cs: Implemented DoubleClick event
 	* ButtonBase.cs:
-	  - Fixed keyboard handling to behave like MS, where the press of 
-	    Spacebar is equivalent to a mousedown, and the key release is 
+	  - Fixed keyboard handling to behave like MS, where the press of
+	    Spacebar is equivalent to a mousedown, and the key release is
 	    equivalent to mouseup. Now a spacebar push will give the same
 	    visual feedback like a mouse click.
 	  - Added missing attributes
@@ -1273,7 +1282,7 @@
 	* CommonDialog.cs: Added missing attribute
 	* ContextMenu.cs: Added missing attributes
 	* RadioButton.cs:
-	  - AutoChecked buttons do not allow to be unselected when clicked 
+	  - AutoChecked buttons do not allow to be unselected when clicked
 	    (otherwise we might end up with no selected buttons in a group)
 	  - Added missing attributes
 	  - Implemented DoubleClickEvent
@@ -1286,7 +1295,7 @@
 
 2005-01-18  Peter Bartok  <pbartok@novell.com>
 
-	* Form.cs: 
+	* Form.cs:
 	  - Added method to parent window that allows triggering size
 	    calculations when a menu is added/removed
 	  - set_Menu: Cleaned up mess from early days of Form and Control,
@@ -1308,9 +1317,9 @@
 
 2005-01-18  Peter Bartok  <pbartok@novell.com>
 
-	* TextControl.cs: 
-	  - Sentinel is no longer static, each Document gets it's own, this 
-	    avoids locking or alternatively overwrite problems when more 
+	* TextControl.cs:
+	  - Sentinel is no longer static, each Document gets it's own, this
+	    avoids locking or alternatively overwrite problems when more
 	    than one text control is used simultaneously.
 	  - Switched to use Hilight and HilightText brushes for text selection
 
@@ -1351,7 +1360,7 @@
 
 2005-01-17  Peter Bartok  <pbartok@novell.com>
 
-	* Control.cs: 
+	* Control.cs:
 	  - Implemented InvokeGotFocus() method
 	  - Implemented InvokeLostFocus() method
 	  - Implemented InvokePaint() method
@@ -1371,11 +1380,11 @@
 	  - Implemented ScaleCore() method
 	  - Implemented Update() method
 	  - Removed unused variables
-	  - Stubbed AccessibilityNotifyClients and 
-	    ControlAccessibleObject.NotifyClients() methods (dunno what to do 
+	  - Stubbed AccessibilityNotifyClients and
+	    ControlAccessibleObject.NotifyClients() methods (dunno what to do
 	    with those yet)
 	  - Now setting proper default for RightToLeft property
-	  - Fixed bug in SetClientSizeCore that would cause windows to get 
+	  - Fixed bug in SetClientSizeCore that would cause windows to get
 	    really big
 	  - Now sending Click/DoubleClick events
 	  - Now selecting controls when left mouse button is clicked on
@@ -1392,7 +1401,7 @@
 	  style to avoid interference with internal click handler (which is
 	  different than standard Control click handling)
 	* RadioButton.cs:
-	  - Now unchecks all sibling radio buttons when control is 
+	  - Now unchecks all sibling radio buttons when control is
 	    selected (Fixes #68756)
 	  - Removed internal tabstop variable, using the one inherited from
 	    Control
@@ -1447,7 +1456,7 @@
 
 	* Control.cs:
 	  - WndProc(): Now handles EnableNotifyMessage
-	  - SelectNextControl(): Fixed bug where if no child or sibling 
+	  - SelectNextControl(): Fixed bug where if no child or sibling
 	    controls exist we looped endlessly
 
 2005-01-14  Jackson Harper  <jackson@ximian.com>
@@ -1472,7 +1481,7 @@
 	* PictureBox.cs: Implement missing methods (except ToString, need
 	to test that on windows) and events. When visibility is changed we
 	need to redraw the image because the buffers are killed. When size
-	is changed refresh if the sizemode needs it.	
+	is changed refresh if the sizemode needs it.
 
 2005-01-13  Peter Bartok  <pbartok@novell.com>
 
@@ -1564,7 +1573,7 @@
 	* XplatUIStructs.cs: Added PeekMessageFlags
 	* X11Structs: Added missing border_width field to XWindowChanges struct
 	* XplatUIX11.cs:
-	  - PeekMessage: Now throws exception if flags which are not yet 
+	  - PeekMessage: Now throws exception if flags which are not yet
 	    supported are passed
 	  - Implemented SetWindowStyle() method
 	  - Fixed SetZOrder to handle AfterHwnd properly
@@ -1577,7 +1586,7 @@
 
 2005-01-12  Geoff Norton  <gnorton@customerdna.com>
 
-	* XplatUIOSX.cs: Fix SetZOrder (this needs more testing with a 3 
+	* XplatUIOSX.cs: Fix SetZOrder (this needs more testing with a 3
 	button mouse).
 
 
@@ -1668,7 +1677,7 @@
 2005-01-09  Peter Bartok <pbartok@novell.com>
 
 	* XplatUI.cs, XplatUIDriver.cs, XplatUIWin32.cs, XplatUIOSX.cs,
-	  XplatUIX11.cs: Added ability to control ScrollWindow expose and 
+	  XplatUIX11.cs: Added ability to control ScrollWindow expose and
 	  an overload for ScrollWindow to allow only scrolling a rectangle
 
 2005-01-09  Peter Bartok <pbartok@novell.com>
@@ -1730,7 +1739,7 @@
 	  - Implemented GetWindowState() and SetWindowState() methods
 	* TextBoxBase.cs (set_Lines):
 	  - Now uses Foreground color for text added via Text property (Duh!)
-	  - Added code to remember programmatically requested size (fixes 
+	  - Added code to remember programmatically requested size (fixes
 	    behaviour when Multiline is set after Size)
 	  - Added AutoSize logic
 
@@ -1796,7 +1805,7 @@
 	  - Commented out owner assignment for modal dialogs (causes problems
 	    on Win32, since the owner will be disabled)
 	  - Reworked some Active/Focus handling (still incomplete)
-	* CommonDialog.cs: Commented out owner assignment for modal dialogs 
+	* CommonDialog.cs: Commented out owner assignment for modal dialogs
 	  (causes problems on Win32, since the owner will be disabled)
 	* IWin32Window: Added ComVisible attribute
 
@@ -1808,7 +1817,7 @@
 2005-01-05  Peter Bartok <pbartok@novell.com>
 
 	* XplatUI.cs, XplatUIOSX.cs, XplatUIWin32.cs, XplatUIDriver.cs,
-	  XplatUIX11.cs, X11Structs.cs, Form.cs: Framework code required 
+	  XplatUIX11.cs, X11Structs.cs, Form.cs: Framework code required
 	  to implement focus and activation handling; still incomplete and
 	  with debug output
 
@@ -1835,7 +1844,7 @@
 2005-01-04  Jackson Harper  <jackson@ximian.com>
 
 	* TreeNode.cs: Patches by Kazuki Oikawa (kazuki@panicode.com) for
-	handling focus, return correct colors and fonts, 
+	handling focus, return correct colors and fonts,
 	* TreeView.cs: Patches by Kazuki Oikawa (kazuki@panicode.com) to
 	handle selection, horizontal scrolling, and mouse interaction.
 
@@ -1864,7 +1873,7 @@
 	* FeatureSupport.cs: Added
 	* OSFeature.cs: Added
 	* Theme.cs: Added abstract Version property to support OSFeature
-	* ThemeWin32Classic.cs: Added Version property to 
+	* ThemeWin32Classic.cs: Added Version property to
 	  support OSFeature.Themes
 	* ProgressBar.cs: Removed OnPaintBackground override, not required since
 	  the proper styles to avoid background drawing are set, also doesn't
@@ -1889,7 +1898,7 @@
 
 2005-01-04  Peter Bartok <pbartok@novell.com>
 
-	* TextControl.cs: Switched Line, LineTag and Document classes to 
+	* TextControl.cs: Switched Line, LineTag and Document classes to
 	  internal
 
 2005-01-04  Jordi Mas i Hernandez <jordi@ximian.com>
@@ -1905,7 +1914,7 @@
 
 	* Form.cs (ShowDialog): Set parent to owner, if provided
 	* GroupBox.cs: Removed unused vars
-	* TextControl.cs: 
+	* TextControl.cs:
 	  - Added GetHashCode() for Document and LineTag classes
 	  - Removed unused variables
 	  - Added CharIndexToLineTag() and LineTagToCharIndex() methods
@@ -1915,7 +1924,7 @@
 	  new keyword where required
 	* LinkLabel.cs: Added new keyword where required
 	* Control.cs (WndProc): Removed unused variable
-	* TextBoxBase.cs: 
+	* TextBoxBase.cs:
 	  - Finished SelectionLength property
 	  - Implemented SelectionStart property
 	  - Implemented Text property
@@ -1951,7 +1960,7 @@
 	* TextBox.cs:
 	  - set_Text: Tied into TextControl
 	  - set_TextAlignment: Tied into TextControl
-	* TextControl.cs: 
+	* TextControl.cs:
 	  - Added alignment properties and implemented alignment handling
 	    and drawing (still has a bug, not generating proper expose events)
 	  - Added new Line() constructor to allow passing the line alignment
@@ -2004,16 +2013,16 @@
 
 2004-12-28  Peter Bartok  <pbartok@novell.com>
 
-	* Control.cs (WndProc): Added WM_HELP handler, now generates 
+	* Control.cs (WndProc): Added WM_HELP handler, now generates
 	  HelpRequested event
 	* Form.cs: Added HelpButton property and required support code
 	* XplatUIStructs.cs: Added HELPINFO structure for WM_HELP handling
 
 2004-12-28  Peter Bartok  <pbartok@novell.com>
 
-	* CommonDialog.cs: 
+	* CommonDialog.cs:
 	  - Made DialogForm.owner variable internal
-	  - Added check to ensure owner form is set before setting 
+	  - Added check to ensure owner form is set before setting
 	    owner properties in CreateParams
 
 2004-12-28  Geoff Norton  <gnorton@customerdna.com>
@@ -2034,7 +2043,7 @@
 
 	* In preparation for making Managed.Windows.Forms the default build target
 	  for System.Windows.Forms, the following stubbed files were added.
-	  Dialogs are currently being implemented by contributors and are only 
+	  Dialogs are currently being implemented by contributors and are only
 	  short-term place holders.
 	* ColorDialog.cs: Initial check-in (minmal stub)
 	* DataGrid.cs: Initial check-in (minimal stub)
@@ -2050,7 +2059,7 @@
 	* Splitter.cs: Initial check-in (for Jackson)
 	* SplitterEventArgs.cs: Initial check-in (for Jackson)
 	* SplitterEventHandler.cs: Initial check-in (for Jackson)
-	* TextBox.cs: Initial check-in; still needs some wiring to 
+	* TextBox.cs: Initial check-in; still needs some wiring to
 	  TextControl backend
 	* Form.cs: Implemented ControlBox property
 	* MessageBox.cs: Added proper coding for Minimize/Maximize/ControlBox
@@ -2112,13 +2121,13 @@
 	    define must be set
 	  - Removed some useless debug output
 
-	* XplatUIX11.cs: 
-	  - Removed r37929 (SetModal patch from Ashwin Bharambe), was 
+	* XplatUIX11.cs:
+	  - Removed r37929 (SetModal patch from Ashwin Bharambe), was
 	    not working as expected
 	  - Implemented modal_window stack and checking for _WM_ACTIVE_WINDOW
 	    property to allow switching back to the modal window if focus is
 	    given to another one of our windows (Application Modal)
-	  - Now only sets override_redirect if we create a window 
+	  - Now only sets override_redirect if we create a window
 	    without WS_CAPTION
 	  - Moved EventMask selection before mapping of newly created window
 	    so we can catch the map event as well
@@ -2143,7 +2152,7 @@
 
 2004-12-18  Peter Bartok  <pbartok@novell.com>
 
-	* XplatUIX11.cs (SetModal): Applied patch from Ashwin Bharambe, 
+	* XplatUIX11.cs (SetModal): Applied patch from Ashwin Bharambe,
 	  implementing SetModal() method
 
 2004-12-18  Peter Bartok  <pbartok@novell.com>
@@ -2177,7 +2186,7 @@
 
 2004-12-17  Geoff Norton  <gnorton@customerdna.com>
 
-	* XplatUIOSX.cs: Find the missing caret; caret was dissappearing after a 
+	* XplatUIOSX.cs: Find the missing caret; caret was dissappearing after a
 	keyboard event moved it.  Create a new graphics context for each paint resolves this
 
 2004-12-17  Geoff Norton  <gnorton@customerdna.com>
@@ -2185,7 +2194,7 @@
 	* XplatUIOSX.cs: Fix hard cpu eat on loop with existing timers,
 	Make caret exist and go blink blink.  Initial keyboard support.
 	Fix exception handler, Add Invalidate support.  Change way RefreshWindow
-	works.  
+	works.
 
 2004-12-17  Jackson Harper  <jackson@ximian.com>
 
@@ -2238,8 +2247,8 @@
 	  - Added Debug section for Combining lines
 	  - Delete(): Now copies all remaining properties of a line
 	  
-	* TextBoxBase.cs: 
-	  - Left mousebutton now sets the caret (and middle button still acts 
+	* TextBoxBase.cs:
+	  - Left mousebutton now sets the caret (and middle button still acts
 	    as formatting tester, which must go away soon)
 	  - Added Debug section for Deleting/Combining lines
 	  - Fixed calculations for UpdateView after Combining lines
@@ -2248,7 +2257,7 @@
 
 	* TextControl.cs: Now properly aligns text on a baseline, using the
 	  new XplatUI.GetFontMetrics() method. Simplified several calculations
-	* TextBoxBase.cs: Moved #endif to allow compiling if Debug is not 
+	* TextBoxBase.cs: Moved #endif to allow compiling if Debug is not
 	  defined
 
 2004-12-16  Peter Bartok  <pbartok@novell.com>
@@ -2352,7 +2361,7 @@
 	* ThemeWin32Classic.cs: use ResPool (caching) instead of creating
 	  brushes everytime
 	* Control.cs: fixes IsMnemonic (support for &&, case insensitive, etc)
-	* ButtonBase.cs: Show HotkeyPrefix (not the &)	
+	* ButtonBase.cs: Show HotkeyPrefix (not the &)
 
 2004-12-12  John BouAntoun  <jba-mon@optusnet.com.au>
 	
@@ -2396,28 +2405,28 @@
 2004-12-10  Jordi Mas i Hernandez <jordi@ximian.com>
 
 	* ListBox.cs: fire events, implement missing methods and properties,
-	sorting. 
+	sorting.
 
 2004-12-10  John BouAntoun <jba-mono@optusnet.com.au>
 
-	* MonthCalendar.cs: invalidation bug fixing 
+	* MonthCalendar.cs: invalidation bug fixing
 	* ThemeWin32Classic.cs: paint fixing
 
 2004-12-09  Geoff Norton  <gnorton@customerdna.com>
 
-	* XplatUIOSX.cs: Refactor to pass the real hwnd into Graphics.FromHwnd, we 
+	* XplatUIOSX.cs: Refactor to pass the real hwnd into Graphics.FromHwnd, we
 	prepare the CGContextRef there now.
 
 2004-12-09  John BouAntoun <jba-mono@optusnet.com.au>
 
-	* MonthCalendar.cs: 
-	  - optimisationL only invalidate areas that have changed 
+	* MonthCalendar.cs:
+	  - optimisationL only invalidate areas that have changed
 	* ThemeWin32Classic.cs:
 	  - only paint parts that intersect with clip_area
 
 2004-12-09  Peter Bartok  <pbartok@novell.com>
 
-	* Application.cs: Undid changes from r37004 which cause problems 
+	* Application.cs: Undid changes from r37004 which cause problems
 	on X11
 
 2004-12-09  Ravindra  <rkumar@novell.com>
@@ -2466,7 +2475,7 @@
 
 2004-12-06  Peter Bartok <pbartok@novell.com>
 
-	* Control.cs (Parent): Added check and exception to prevent 
+	* Control.cs (Parent): Added check and exception to prevent
 	circular parenting
 
 2004-12-03  Jordi Mas i Hernandez <jordi@ximian.com>
@@ -2542,7 +2551,7 @@
 
 2004-12-01  Jordi Mas i Hernandez <jordi@ximian.com>
 
-	* ThemeWin32Classic.cs: remove cache of brush and pens for 
+	* ThemeWin32Classic.cs: remove cache of brush and pens for
 	specific controls and use the global system, fixes scrollbutton
 	bugs (for small sizes, disabled, etc)
 	
@@ -2566,7 +2575,7 @@
 
 2004-11-30  Jordi Mas i Hernandez <jordi@ximian.com>
 
-	* MonthCalendar.cs, ListView.cs: use Theme colours instead of 
+	* MonthCalendar.cs, ListView.cs: use Theme colours instead of
 	System.Colors
 	
 2004-11-30  Ravindra <rkumar@novell.com>
@@ -2590,12 +2599,12 @@
 
 	* TreeNode.cs, TreeNodeCollection.cs, TreeView.cs,
 	  TreeViewAction.cs, TreeViewEventArgs.cs: Removed new files.
-          I am removing these files as they conflict with already completed 
-          work. While it is fantastic to get contributions to MWF, I 
-          respectfully ask that everyone please coordinate their contributions 
-          through mono-winforms-list or #mono-winforms at this time. We're 
-          explicitly avoiding stubbing and don't want controls that don't have 
-          their basic functionality implemented in svn. Please also see 
+          I am removing these files as they conflict with already completed
+          work. While it is fantastic to get contributions to MWF, I
+          respectfully ask that everyone please coordinate their contributions
+          through mono-winforms-list or #mono-winforms at this time. We're
+          explicitly avoiding stubbing and don't want controls that don't have
+          their basic functionality implemented in svn. Please also see
           http://www.mono-project.com/contributing/winforms.html
 
 
@@ -2615,38 +2624,38 @@
 
 2004-11-29  John BouAntoun <jba-mono@optusnet.com.au>
 
-	* MonthCalendar.cs: 
+	* MonthCalendar.cs:
 	  - Fix NextMonthDate and PrevMonthDate click moving calendar
 
 2004-11-26  John BouAntoun <jba-mono@optusnet.com.au>
 
-	* MonthCalendar.cs: 
+	* MonthCalendar.cs:
 	  - Fix usage of ScrollChange Property when scrolling months
 
 2004-11-26  Jordi Mas i Hernandez <jordi@ximian.com>
 
 	* Menu.cs, MainMenu.cs, MenuItem.cs, MenuAPI.cs
 	 - Fixes menu destroying
-	 - Support adding and removing items on already created menus	 	
+	 - Support adding and removing items on already created menus
 
 2004-11-26  John BouAntoun <jba-mono@optusnet.com.au>
 
-	* MonthCalendar.cs: 
+	* MonthCalendar.cs:
 	  - Re-worked all bolded dates handling to match win32
 	* ThemeWin32Classic.cs:
 	  - Fixed rendering with bolded dates
 
 2004-11-25  Jordi Mas i Hernandez <jordi@ximian.com>
 
-	* ListBox.cs, Theme.cs, ThemeWin32Classic.cs:	
-	- Horizontal scroolbar	
+	* ListBox.cs, Theme.cs, ThemeWin32Classic.cs:
+	- Horizontal scroolbar
 	- Multicolumn
 	- Fixes
 
 
 2004-11-25  John BouAntoun <jba-mono@optusnet.com.au>
 
-	* MonthCalendar.cs: 
+	* MonthCalendar.cs:
 	  - Fix Usage of MaxSelectionCount from SelectionRange
 	  - Fixed Shift + Cursor Selection
 	  - Fixed Shift + (Pg up/Pg dn, Home/End) selection
@@ -2657,7 +2666,7 @@
 
 	* XplatUI.cs (DispatchMessage): Switched to return IntPtr
 	* XplatUIDriver.cs (DispatchMessage): Switched to return IntPtr
-	* XplatUIX11.cs: 
+	* XplatUIX11.cs:
 	  - CreatedKeyBoardMsg now updates keystate with Alt key
 	  - Added workaround for timer crash to CheckTimers, Jackson will
 	    develop a proper fix and check in later
@@ -2692,21 +2701,21 @@
 
 2004-11-24  John BouAntoun <jba-mono@optusnet.com.au>
 
-	* ThemeWin32Classic.cs: 
+	* ThemeWin32Classic.cs:
 		- Fixed Drawing Last month in grid (sometimes not showing)
 	* MonthCalendar.cs:
 		- Fixed title width calculation bug (makeing title small)
 
 2004-11-23  Peter Bartok <pbartok@novell.com>
 
-	* XplatUIX11.cs: 
+	* XplatUIX11.cs:
 	  - Added generation of WM_MOUSEHOVER event
 	  - Added missing assignment of async_method atom
 	  - Fixed WM_ERASEBKGND; now only redraws the exposed area
 
 2004-11-23  John BouAntoun <jba-mono@optusnet.com.au>
 
-	* ThemeWin32Classic.cs: 
+	* ThemeWin32Classic.cs:
 		- Fixed Drawing of today circle when showtodaycircle not set
 		- fixed drawing of first and last month in the grid (gay dates)
 	* MonthCalendar.cs:
@@ -2739,18 +2748,18 @@
 	* UpDownBase.cs: Added new implementation.
 
 	* XplatUIWin32.cs (KeyboardSpeed, KeyboardDelay): added default
-	implementations. 
+	implementations.
 	
 	* XplatUIX11.cs (KeyboardSpeed, KeyboardDelay): added default
-	implementations. 
+	implementations.
 
 	* XplatUIDriver.cs ((KeyboardSpeed, KeyboardDelay): added new
-	methods. 
+	methods.
 
 2004-11-21  Miguel de Icaza  <miguel@ximian.com>
 
 	* Timer.cs  (Dispose): Should call the base dispose when
-	overriding. 
+	overriding.
 
 2004-11-19  Jordi Mas i Hernandez <jordi@ximian.com>
 
@@ -2778,8 +2787,8 @@
 2004-11-17  Peter Bartok  <pbartok@novell.com>
 
 	* XplatUIWin32.cs: Added double-click events to the class style
-	* Control.cs (WndProc): 
-	  - Added handling of click-count to MouseDown/ MouseUp events. 
+	* Control.cs (WndProc):
+	  - Added handling of click-count to MouseDown/ MouseUp events.
 	  - Added handling of middle and right mouse buttons
 	  - Removed old debug code
 
@@ -2870,12 +2879,12 @@
 
 2004-11-09  jba  <jba-mono@optusnet.com.au>
 
-	* ThemeWin32Classic.cs 
+	* ThemeWin32Classic.cs
 	(DrawButtonBase): Fix verticle text rect clipping in windows
 	(DrawCheckBox): Fix CheckAlign.TopCenter and CheckAlign.BottomCenter
-	rendering and incorrect text rect clipping 
+	rendering and incorrect text rect clipping
 	(DrawRadioButton): Fix CheckAlign.TopCenter and CheckAlign.BottomCenter
-	rendering and incorrect text rect clipping 
+	rendering and incorrect text rect clipping
 	
 2004-11-08  Jackson Harper  <jackson@ximian.com>
 

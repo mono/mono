@@ -43,9 +43,13 @@ namespace System.Windows.Forms
 		{
 			form.Text = "Open";
 			
-			form.Size =  new Size( 554, 384 );
+			form.Size =  new Size( 554, 405 ); // 384
 			
 			OpenSaveButtonText = "Open";
+			
+			SearchSaveLabelText = "Search in:";
+			
+			FileDialogShowReadOnly = showReadOnly;
 			
 			fileDialogPanel = new FileDialogPanel( this );
 		}
@@ -88,6 +92,7 @@ namespace System.Windows.Forms
 			set
 			{
 				showReadOnly = value;
+				FileDialogShowReadOnly = value;
 			}
 		}
 		
@@ -118,4 +123,5 @@ namespace System.Windows.Forms
 		}
 	}
 }
+
 
