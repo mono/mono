@@ -145,7 +145,11 @@ namespace MonoTests.System.Web {
 			// No intersection with null
 			foreach (AspNetHostingPermissionLevel ppl in AllLevel) {
 				anhp.Level = ppl;
+#if NET_2_0
 				Assert.IsNull (anhp.Intersect (null), ppl.ToString ());
+#else
+				Assert.AreEqual (anhp.ToString (), anhp.Intersect (null).ToString (), ppl.ToString ());
+#endif
 			}
 		}
 

@@ -1,3 +1,9 @@
+2005-01-18  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* AspNetHostingPermissionTest.cs: Fixed for NET_1_1 which has a 
+	different (but bad) behaviour for intersecting with null.
+
+
 2004-09-10  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* AspNetHostingPermissionAttributeTest.cs: New. Unit tests for AspNet
