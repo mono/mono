@@ -1,3 +1,8 @@
+2003-11-15  Todd Berman  <tberman@gentoo.org>
+	
+	* gacutil.cs: Added reference counting for installation and deletion.
+	An assembly will have a RefCount of 1 if --force is used.
+
 2003-11-14  Todd Berman  <tberman@gentoo.org>
 
 	* gacutil.cs: added proper removal of assemblies, now the version=

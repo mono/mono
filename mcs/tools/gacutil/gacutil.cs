@@ -54,6 +54,9 @@ namespace Mono.Tools
 				case "--un-install":
 					UninstallAssemblies (remainder_args);
 					break;
+				default:
+					ShowHelp (false);
+					break;
 			}
 		}
 
@@ -85,6 +88,7 @@ namespace Mono.Tools
 					searchString += (string) paramInfo["version"] + "*";
 				}
 			} else {
+				//FIXME: Is this code really needed? No refcounting here yet.
 				if (Directory.Exists (gac_path + paramInfo["assembly"])) {
 					Directory.Delete (gac_path + Path.DirectorySeparatorChar + paramInfo["assembly"], true);
 					Console.WriteLine ("All assemblies with the name '" + paramInfo["assembly"] + " removed from the GAC");
@@ -98,8 +102,15 @@ namespace Mono.Tools
 			string[] directories = Directory.GetDirectories (gac_path, searchString);
 
 			foreach (string dir in directories) {
-				Directory.Delete (dir, true);
-				Console.WriteLine ("Assembly removed from the gac");
+				Hashtable info = GetAssemblyInfo (dir + Path.DirectorySeparatorChar + "__AssemblyInfo__");
+				if(Convert.ToInt32 (info["RefCount"]) == 1) {
+					Directory.Delete (dir, true);
+					Console.WriteLine ("Assembly removed from the gac.");
+				} else {
+					info["RefCount"] = ((int) Convert.ToInt32 (info["RefCount"]) - 1).ToString ();
+					WriteAssemblyInfo (dir + Path.DirectorySeparatorChar + "__AssemblyInfo__", info);
+					Console.WriteLine ("Assembly was not deleted because its still needed by other applications");
+				}
 			}
 			
 		}
@@ -128,6 +139,15 @@ namespace Mono.Tools
 				}
 			}
 			return infoHash;
+		}
+
+		private void WriteAssemblyInfo (string filename, Hashtable info)
+		{
+			using (StreamWriter s = File.CreateText (filename)) {
+				foreach (string key in info.Keys) {
+					s.WriteLine (key + "=" + (string) info[key]);
+				}
+			}
 		}
 
 		public void InstallAssembly (string[] args)
@@ -164,7 +184,10 @@ namespace Mono.Tools
 			string fullPath = String.Format ("{0}{3}{1}{3}{2}{3}", gac_path, an.Name, version_token, Path.DirectorySeparatorChar);
 
 			if (File.Exists (fullPath + an.Name + ".dll") && force == false) {
-				Console.WriteLine ("ERROR: assembly is already in gac");
+				Hashtable assemInfo = GetAssemblyInfo (fullPath + "__AssemblyInfo__");
+				assemInfo["RefCount"] = ((int) Convert.ToInt32 (assemInfo["RefCount"]) + 1).ToString ();
+				WriteAssemblyInfo (fullPath + "__AssemblyInfo__", assemInfo);
+				Console.WriteLine ("RefCount of assembly '" + an.Name + "' increased by one.");
 				return;
 			}
 
@@ -175,9 +198,12 @@ namespace Mono.Tools
 
 			File.Copy (args[0], fullPath + an.Name + ".dll", force);
 
-			StreamWriter sr = File.CreateText (fullPath + "__AssemblyInfo__");
-			sr.WriteLine ("DisplayName=" + an.FullName);
-			sr.Close ();
+			Hashtable info = new Hashtable ();
+
+			info["DisplayName"] = an.FullName;
+			info["RefCount"] = 1.ToString ();
+
+			WriteAssemblyInfo (fullPath + "__AssemblyInfo__", info);
 
 			Console.WriteLine ("Assembly installed into the gac");
 		}
