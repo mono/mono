@@ -4,6 +4,7 @@
 	Use the GObject of the object if it already has one, rather than creating a
 	new GObject instance of our own. Store the reference to the MonoObject in
 	a GObject data field.
+	Explicit casts in generated code to avoid compiler warnings.
 
 2004-12-12  Alp Toker  <alp@atoker.com>
 
