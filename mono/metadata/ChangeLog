@@ -1,4 +1,8 @@
 
+Wed Feb 27 22:15:17 CET 2002 Paolo Molaro <lupus@ximian.com>
+
+	* icall.c: fix order in assembly qualified name icall.
+
 Wed Feb 27 18:45:03 CET 2002 Paolo Molaro <lupus@ximian.com>
 
 	* class.c: do not free str, since we store it in the hash table.
