@@ -5870,7 +5870,7 @@ namespace Mono.CSharp {
 					Expression tmp = (Expression) o;
 					tmp = tmp.Resolve (ec);
 					if (tmp == null)
-						continue;
+						return false;
 
 					// Console.WriteLine ("I got: " + tmp);
 					// Handle initialization from vars, fields etc.
