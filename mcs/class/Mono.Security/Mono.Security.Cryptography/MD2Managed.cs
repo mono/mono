@@ -90,7 +90,7 @@ namespace Mono.Security.Cryptography {
 			/* Transform as many times as possible. */
 			if (cbSize >= partLen) {
 				// MD2_memcpy((POINTER)&context->buffer[index], (POINTER)input, partLen);
-				Array.Copy (array, ibStart, buffer, index, partLen);
+				Buffer.BlockCopy (array, ibStart, buffer, index, partLen);
 				// MD2Transform (context->state, context->checksum, context->buffer);
 				MD2Transform (state, checksum, buffer, 0);
 
@@ -106,7 +106,7 @@ namespace Mono.Security.Cryptography {
 
 			/* Buffer remaining input */
 			// MD2_memcpy((POINTER)&context->buffer[index], (POINTER)&input[i], inputLen-i);
-			Array.Copy (array, ibStart + i, buffer, index, (cbSize - i));
+			Buffer.BlockCopy (array, ibStart + i, buffer, index, (cbSize - i));
 		}
 
 		protected override byte[] HashFinal ()
@@ -143,9 +143,9 @@ namespace Mono.Security.Cryptography {
 
 			/* Form encryption block from state, block, state ^ block. */
 			// MD2_memcpy ((POINTER)x, (POINTER)state, 16);
-			Array.Copy (state, 0, x, 0, 16);
+			Buffer.BlockCopy (state, 0, x, 0, 16);
 			// MD2_memcpy ((POINTER)x+16, (POINTER)block, 16);
-			Array.Copy (block, index, x, 16, 16);
+			Buffer.BlockCopy (block, index, x, 16, 16);
 
 			// for (i = 0; i < 16; i++) x[i+32] = state[i] ^ block[i];
 			for (int i = 0; i < 16; i++)
@@ -161,7 +161,7 @@ namespace Mono.Security.Cryptography {
 
 			/* Save new state */
 			// MD2_memcpy ((POINTER)state, (POINTER)x, 16);
-			Array.Copy (x, 0, state, 0, 16);
+			Buffer.BlockCopy (x, 0, state, 0, 16);
 
 			/* Update checksum. */
 			t = checksum [15];

@@ -3,9 +3,10 @@
 //	ftp://ftp.rsasecurity.com/pub/pkcs/doc/pkcs-8.doc
 //
 // Author:
-//	Sebastien Pouliot (spouliot@motus.com)
+//	Sebastien Pouliot <sebastien@ximian.com>
 //
 // (C) 2003 Motus Technologies Inc. (http://www.motus.com)
+// (C) 2004 Novell (http://www.novell.com)
 //
 
 using System;
@@ -18,12 +19,16 @@ using Mono.Security.X509;
 
 namespace Mono.Security.Cryptography {
 
-	public class PKCS8 {
+	public sealed class PKCS8 {
 
 		public enum KeyInfo {
 			PrivateKey,
 			EncryptedPrivateKey,
 			Unknown
+		}
+
+		private PKCS8 () 
+		{
 		}
 
 		static public KeyInfo GetType (byte[] data) 
@@ -98,8 +103,16 @@ namespace Mono.Security.Cryptography {
 			}
 
 			public byte[] PrivateKey {
-				get { return _key; }
-				set { _key = value; }
+				get {
+					if (_key == null)
+						return null;
+					return (byte[]) _key.Clone (); 
+				}
+				set { 
+					if (value == null)
+						throw new ArgumentNullException ("PrivateKey");
+					_key = (byte[]) value.Clone (); 
+				}
 			}
 
 			public int Version {
@@ -131,7 +144,7 @@ namespace Mono.Security.Cryptography {
 				ASN1 algorithm = privateKeyAlgorithm [0];
 				if (algorithm.Tag != 0x06)
 					throw new CryptographicException ("missing algorithm OID");
-				_algorithm = ASN1Convert.ToOID (algorithm);
+				_algorithm = ASN1Convert.ToOid (algorithm);
 
 				ASN1 privateKey = privateKeyInfo [2];
 				_key = privateKey.Value;
@@ -148,7 +161,7 @@ namespace Mono.Security.Cryptography {
 			public byte[] GetBytes () 
 			{
 				ASN1 privateKeyAlgorithm = new ASN1 (0x30);
-				privateKeyAlgorithm.Add (ASN1Convert.FromOID (_algorithm));
+				privateKeyAlgorithm.Add (ASN1Convert.FromOid (_algorithm));
 				privateKeyAlgorithm.Add (new ASN1 (0x05)); // ASN.1 NULL
 
 				ASN1 pki = new ASN1 (0x30);
@@ -392,7 +405,7 @@ namespace Mono.Security.Cryptography {
 				ASN1 algorithm = encryptionAlgorithm [0];
 				if (algorithm.Tag != 0x06)
 					throw new CryptographicException ("invalid algorithm");
-				_algorithm = ASN1Convert.ToOID (algorithm);
+				_algorithm = ASN1Convert.ToOid (algorithm);
 				// parameters ANY DEFINED BY algorithm OPTIONAL
 				if (encryptionAlgorithm.Count > 1) {
 					ASN1 parameters = encryptionAlgorithm [1];
@@ -426,7 +439,7 @@ namespace Mono.Security.Cryptography {
 					throw new CryptographicException ("No algorithm OID specified");
 
 				ASN1 encryptionAlgorithm = new ASN1 (0x30);
-				encryptionAlgorithm.Add (ASN1Convert.FromOID (_algorithm));
+				encryptionAlgorithm.Add (ASN1Convert.FromOid (_algorithm));
 
 				// parameters ANY DEFINED BY algorithm OPTIONAL
 				if ((_iterations > 0) || (_salt != null)) {

@@ -1,3 +1,20 @@
+2004-04-22  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* CryptoConvert.cs: FxCop-ized. Sealed class. Use Buffer.BlockCopy.
+	* CryptoTools.cs: FxCop-ized. Sealed KeyBuilder class. Delay creation
+	of RNG object. Use Buffer.BlockCopy.
+	* DiffieHellman.cs: FxCop-ized. Removed public constructor.
+	* DiffieHellmanManaged.cs: FxCop-ized. Actualized with changes from
+	BigInteger.
+	* KeyPairPersistance.cs: FxCop-ized. Updated version for management
+	of keypairs.
+	* MD2Managed.cs: Use Buffer.BlockCopy instead of Array.Copy.
+	* PKCS1.cs: FxCop-ized. Sealed class. Use Buffer.BlockCopy instead of
+	Array.Copy. Also includes endian patches from Bernie Solomon.
+	* PKCS8.cs: FxCop-ized. Sealed class. 
+	* RSAManaged.cs: FxCop-ized. Actualized with changes from BigInteger.
+	* SymmetricTransform.cs: Use Buffer.BlockCopy instead of Array.Copy.
+
 2004-04-20  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* CryptoConvert.cs: Synched with corlib version to get endian fixes 

@@ -27,16 +27,16 @@ namespace Mono.Security.Cryptography {
 		/// <summary>
 		/// Initializes a new <see cref="DiffieHellmanManaged"/> instance.
 		/// </summary>
-		/// <param name="bitlen">The length, in bits, of the public P parameter.</param>
+		/// <param name="bitLength">The length, in bits, of the public P parameter.</param>
 		/// <param name="l">The length, in bits, of the secret value X. This parameter can be set to 0 to use the default size.</param>
-		/// <param name="keygen">One of the <see cref="DHKeyGeneration"/> values.</param>
+		/// <param name="method">One of the <see cref="DHKeyGeneration"/> values.</param>
 		/// <remarks>The larger the bit length, the more secure the algorithm is. The default is 1024 bits. The minimum bit length is 128 bits.<br/>The size of the private value will be one fourth of the bit length specified.</remarks>
 		/// <exception cref="ArgumentException">The specified bit length is invalid.</exception>
-		public DiffieHellmanManaged(int bitlen, int l, DHKeyGeneration keygen) {
-			if (bitlen < 256 || l < 0)
+		public DiffieHellmanManaged(int bitLength, int l, DHKeyGeneration method) {
+			if (bitLength < 256 || l < 0)
 				throw new ArgumentException();
 			BigInteger p, g;
-			GenerateKey(bitlen, keygen, out p, out g);
+			GenerateKey (bitLength, method, out p, out g);
 			Initialize(p, g, null, l, false);
 		}
 		/// <summary>
@@ -75,19 +75,19 @@ namespace Mono.Security.Cryptography {
 		// initializes the private variables (throws CryptographicException)
 		private void Initialize(BigInteger p, BigInteger g, BigInteger x, int secretLen, bool checkInput) {
 			if (checkInput) {
-				if (!p.isProbablePrime() || g <= 0 || g >= p || (x != null && (x <= 0 || x > p - 2)))
+				if (!p.IsProbablePrime() || g <= 0 || g >= p || (x != null && (x <= 0 || x > p - 2)))
 					throw new CryptographicException();
 			}
 			// default is to generate a number as large as the prime this
 			// is usually overkill, but it's the most secure thing we can
 			// do if the user doesn't specify a desired secret length ...
 			if (secretLen == 0)
-				secretLen = p.bitCount();
+				secretLen = p.BitCount();
 			m_P = p;
 			m_G = g;
 			if (x == null) {
 				BigInteger pm1 = m_P - 1;
-				for(m_X = BigInteger.genRandom(secretLen); m_X >= pm1 || m_X == 0; m_X = BigInteger.genRandom(secretLen)) {}
+				for(m_X = BigInteger.GenerateRandom(secretLen); m_X >= pm1 || m_X == 0; m_X = BigInteger.GenerateRandom(secretLen)) {}
 			} else {
 				m_X = x;
 			}
@@ -97,8 +97,8 @@ namespace Mono.Security.Cryptography {
 		/// </summary>
 		/// <returns>The key exchange data to be sent to the intended recipient.</returns>
 		public override byte[] CreateKeyExchange() {
-			BigInteger y = m_G.modPow(m_X, m_P);
-			byte[] ret = y.getBytes();
+			BigInteger y = m_G.ModPow(m_X, m_P);
+			byte[] ret = y.GetBytes();
 			y.Clear();
 			return ret;
 		}
@@ -109,8 +109,8 @@ namespace Mono.Security.Cryptography {
 		/// <returns>The shared key derived from the key exchange data.</returns>
 		public override byte[] DecryptKeyExchange(byte[] keyEx) {
 			BigInteger pvr = new BigInteger(keyEx);
-			BigInteger z = pvr.modPow(m_X, m_P);
-			byte[] ret = z.getBytes();
+			BigInteger z = pvr.ModPow(m_X, m_P);
+			byte[] ret = z.GetBytes();
 			z.Clear();
 			return ret;
 		}
@@ -148,10 +148,10 @@ namespace Mono.Security.Cryptography {
 		/// <returns>The parameters for <see cref="DiffieHellman"/>.</returns>
 		public override DHParameters ExportParameters(bool includePrivateParameters) {
 			DHParameters ret = new DHParameters();
-			ret.P = m_P.getBytes();
-			ret.G = m_G.getBytes();
+			ret.P = m_P.GetBytes();
+			ret.G = m_G.GetBytes();
 			if (includePrivateParameters) {
-				ret.X = m_X.getBytes();
+				ret.X = m_X.GetBytes();
 			}
 			return ret;
 		}
@@ -197,7 +197,7 @@ namespace Mono.Security.Cryptography {
 				// 4. If g = 1 go to step 2
 			//	BigInteger j = (p - 1) / q;
 			} else { // random
-				p = BigInteger.genPseudoPrime(bitlen);
+				p = BigInteger.GeneratePseudoPrime(bitlen);
 				g = new BigInteger(3); // always use 3 as a generator
 			}
 		}

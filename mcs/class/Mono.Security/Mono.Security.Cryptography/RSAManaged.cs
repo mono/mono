@@ -50,11 +50,13 @@ namespace Mono.Security.Cryptography {
 		private BigInteger n;		// modulus
 		private BigInteger e;
 
-		public RSAManaged () : this (defaultKeySize) {}
-
-		public RSAManaged (int dwKeySize) 
+		public RSAManaged () : this (defaultKeySize)
 		{
-			KeySizeValue = dwKeySize;
+		}
+
+		public RSAManaged (int keySize) 
+		{
+			KeySizeValue = keySize;
 			LegalKeySizesValue = new KeySizes [1];
 			LegalKeySizesValue [0] = new KeySizes (384, 16384, 8);
 		}
@@ -75,7 +77,7 @@ namespace Mono.Security.Cryptography {
 	
 			// generate p, prime and (p-1) relatively prime to e
 			for (;;) {
-				p = BigInteger.genPseudoPrime (pbitlength);
+				p = BigInteger.GeneratePseudoPrime (pbitlength);
 				if (p % uint_e != 1)
 					break;
 			}
@@ -84,14 +86,14 @@ namespace Mono.Security.Cryptography {
 				// generate q, prime and (q-1) relatively prime to e,
 				// and not equal to p
 				for (;;) {
-					q = BigInteger.genPseudoPrime (qbitlength);
+					q = BigInteger.GeneratePseudoPrime (qbitlength);
 					if ((q % uint_e != 1) && (p != q))
 						break;
 				}
 	
 				// calculate the modulus
 				n = p * q;
-				if (n.bitCount () == KeySize)
+				if (n.BitCount () == KeySize)
 					break;
 	
 				// if we get here our primes aren't big enough, make the largest
@@ -105,18 +107,18 @@ namespace Mono.Security.Cryptography {
 			BigInteger phi = pSub1 * qSub1;
 	
 			// calculate the private exponent
-			d = e.modInverse (phi);
+			d = e.ModInverse (phi);
 	
 			// calculate the CRT factors
 			dp = d % pSub1;
 			dq = d % qSub1;
-			qInv = q.modInverse (p);
+			qInv = q.ModInverse (p);
 	
 			keypairGenerated = true;
 			isCRTpossible = true;
 
 			if (KeyGenerated != null)
-				KeyGenerated (this);
+				KeyGenerated (this, null);
 		}
 		
 		// overrides from RSA class
@@ -125,7 +127,7 @@ namespace Mono.Security.Cryptography {
 			get { 
 				// in case keypair hasn't been (yet) generated
 				if (keypairGenerated)
-					return n.bitCount (); 
+					return n.BitCount (); 
 				else
 					return base.KeySize;
 			}
@@ -159,9 +161,9 @@ namespace Mono.Security.Cryptography {
 			// optimized by using CRT (Chinese Remainder Theorem)
 			if (isCRTpossible) {
 				// m1 = c^dp mod p
-				BigInteger m1 = input.modPow (dp, p);
+				BigInteger m1 = input.ModPow (dp, p);
 				// m2 = c^dq mod q
-				BigInteger m2 = input.modPow (dq, q);
+				BigInteger m2 = input.ModPow (dq, q);
 				BigInteger h;
 				if (m2 > m1) {
 					// thanks to benm!
@@ -177,9 +179,9 @@ namespace Mono.Security.Cryptography {
 			}
 			else {
 				// m = c^d mod n
-				output = input.modPow (d, n);
+				output = input.ModPow (d, n);
 			}
-			byte[] result = output.getBytes ();
+			byte[] result = output.GetBytes ();
 			// zeroize value
 			input.Clear ();	
 			output.Clear ();
@@ -195,8 +197,8 @@ namespace Mono.Security.Cryptography {
 				GenerateKeyPair ();
 
 			BigInteger input = new BigInteger (rgb);
-			BigInteger output = input.modPow (e, n);
-			byte[] result = output.getBytes ();
+			BigInteger output = input.ModPow (e, n);
+			byte[] result = output.GetBytes ();
 			// zeroize value
 			input.Clear ();	
 			output.Clear ();
@@ -212,21 +214,21 @@ namespace Mono.Security.Cryptography {
 				GenerateKeyPair ();
 	
 			RSAParameters param = new RSAParameters ();
-			param.Exponent = e.getBytes ();
-			param.Modulus = n.getBytes ();
+			param.Exponent = e.GetBytes ();
+			param.Modulus = n.GetBytes ();
 			if (includePrivateParameters) {
 				// some parameters are required for exporting the private key
 				if ((d == null) || (p == null) || (q == null))
 					throw new CryptographicException ("Missing private key");
-				param.D = d.getBytes ();
-				param.P = p.getBytes ();
-				param.Q = q.getBytes ();
+				param.D = d.GetBytes ();
+				param.P = p.GetBytes ();
+				param.Q = q.GetBytes ();
 				// but CRT parameters are optionals
 				if ((dp != null) && (dq != null) && (qInv != null)) {
 					// and we include them only if we have them all
-					param.DP = dp.getBytes ();
-					param.DQ = dq.getBytes ();
-					param.InverseQ = qInv.getBytes ();
+					param.DP = dp.GetBytes ();
+					param.DQ = dq.GetBytes ();
+					param.InverseQ = qInv.GetBytes ();
 				}
 			}
 			return param;
@@ -310,7 +312,7 @@ namespace Mono.Security.Cryptography {
 			m_disposed = true;
 		}
 
-		public delegate void KeyGeneratedEventHandler (object sender);
+		public delegate void KeyGeneratedEventHandler (object sender, EventArgs e);
 
 		public event KeyGeneratedEventHandler KeyGenerated;
 	}

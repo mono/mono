@@ -36,11 +36,6 @@ namespace Mono.Security.Cryptography {
 		}
 
 		/// <summary>
-		/// Initializes a new <see cref="DiffieHellman"/> instance.
-		/// </summary>
-		public DiffieHellman() {}
-
-		/// <summary>
 		/// When overridden in a derived class, creates the key exchange data. 
 		/// </summary>
 		/// <returns>The key exchange data to be sent to the intended recipient.</returns>
@@ -48,9 +43,9 @@ namespace Mono.Security.Cryptography {
 		/// <summary>
 		/// When overridden in a derived class, extracts secret information from the key exchange data.
 		/// </summary>
-		/// <param name="keyEx">The key exchange data within which the secret information is hidden.</param>
+		/// <param name="keyex">The key exchange data within which the secret information is hidden.</param>
 		/// <returns>The secret information derived from the key exchange data.</returns>
-		public abstract byte[] DecryptKeyExchange(byte[] keyEx);
+		public abstract byte[] DecryptKeyExchange (byte[] keyex);
 
 		/// <summary>
 		/// When overridden in a derived class, exports the <see cref="DHParameters"/>.
