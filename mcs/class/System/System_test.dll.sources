@@ -3,6 +3,7 @@ Microsoft.CSharp/CodeGeneratorFromExpressionTest.cs
 Microsoft.CSharp/CodeGeneratorFromNamespaceTest.cs
 Microsoft.CSharp/CodeGeneratorFromStatementTest.cs
 Microsoft.CSharp/CodeGeneratorFromTypeTest.cs
+Microsoft.CSharp/CodeGeneratorIdentifierTest.cs
 Microsoft.CSharp/CodeGeneratorTestBase.cs
 Microsoft.VisualBasic/VBCodeProviderTest.cs
 System/UriBuilderTest.cs
