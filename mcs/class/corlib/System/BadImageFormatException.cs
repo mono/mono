@@ -87,7 +87,10 @@ namespace System
 
 		public override string ToString ()
 		{
-			return inner.ToString();
+			if (inner != null)
+				return inner.ToString();
+			else
+				return base.ToString ();
 		}
 	}
 }
